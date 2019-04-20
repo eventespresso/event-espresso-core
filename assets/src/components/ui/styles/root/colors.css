@@ -1,515 +1,399 @@
+/**
+ * Various colors for the Default template.
+ */
+    /** Pink **/
 .ee-pink-background-color {
-    background-color: var(--ee-color-pink, #E44064);
+    background-color: var(--ee-color-pink, #ff55c0);
 }
-
-.ee-pink-background-color.with-bright-contrast {
-    background-color: var(--ee-color-pink-contrast-bright, #c8f7c5);
+.ee-pink-background-color.with-accessible-foreground {
+    color: var( --ee-color-pink-foreground-contrast, #0a0000 );
 }
-
-.ee-pink-background-color.with-dark-contrast {
-    background-color: var(--ee-color-pink-contrast-dark, #000);
+.ee-pink-background-color.with-accessible-foreground.with-hover:hover,
+.ee-pink-background-color.with-linear-gradient.with-accessible-foreground.with-hover:hover,
+.ee-pink-background-color.with-linear-gradient.with-hover:hover,
+.ee-pink-background-color.with-hover:hover {
+    background-image: none;
+    background-color: var( --ee-color-pink-hover-contrast, #ffa3dd );
 }
-
 .ee-pink-color {
-    color: var(--ee-color-pink, #E44064);
+    color: var(--ee-color-pink, #ff55c0);
 }
-
-.ee-pink-color.with-bright-contrast {
-    color: var(--ee-color-pink-contrast-bright, #c8f7c5);
+.ee-pink-color.with-accessible-background {
+    background-color: var(--ee-color-pink-background-contrast, #0a0000 );
 }
-
-.ee-pink-color.with-dark-contrast {
-    color: var(--ee-color-pink-contrast-dark, #000);
+.ee-pink-color.with-accessible-background.with-hover:hover {
+    background-color: var(--ee-color-pink-hover, #550000);
 }
-
 .ee-pink-background-color.with-linear-gradient {
     background-image: linear-gradient(
-        var(--ee-pink-background-gradient-x, #F65077),
-        var(--ee-pink-background-gradient-y, #E44064)
+        var(--ee-pink-background-gradient-x, #f65077),
+        var(--ee-pink-background-gradient-y, #ff55c0)
     );
 }
-
-.ee-pink-background-color.with-hover:hover {
-    background-color: var(--ee-color-pink-hover, #F65077);
+.ee-pink-background-color.with-linear-gradient.with-accessible-foreground {
+    color: var(--ee-color-pink-background-contrast, #0a0000 );
 }
 
-.ee-pink-background-color.with-bright-contrast.with-hover:hover {
-    background-color: var(--ee-color-pink-contrast-bright, #c8f7c5);
-}
-
-.ee-pink-background-color.with-dark-contrast.with-hover:hover {
-    background-color: var(--ee-color-pink-contrast-dark, #000);
-}
-
+    /** Green **/
 .ee-green-background-color {
-    background-color: var(--ee-color-green, #70CC50);
+    background-color: var(--ee-color-green, #70cc50);
 }
-
-.ee-green-background-color.with-bright-contrast {
-    background-color: var(--ee-color-green-contrast-bright, #0000e0);
+.ee-green-background-color.with-accessible-foreground {
+    color: var( --ee-color-green-foreground-contrast, #002a00 );
 }
-
-.ee-green-background-color.with-dark-contrast {
-    background-color: var(--ee-color-green-contrast-dark, #00202a);
+.ee-green-background-color.with-accessible-foreground.with-hover:hover,
+.ee-green-background-color.with-linear-gradient.with-accessible-foreground.with-hover:hover,
+.ee-green-background-color.with-linear-gradient.with-hover:hover,
+.ee-green-background-color.with-hover:hover {
+    background-image: none;
+    background-color: var( --ee-color-green-hover-contrast, #bee7b1 );
 }
-
 .ee-green-color {
-    color: var(--ee-color-green, #70CC50);
+    color: var(--ee-color-green, #70cc50);
 }
-
-.ee-green-color.with-bright-contrast {
-    color: var(--ee-color-green-contrast-bright, #0000e0);
+.ee-green-color.with-accessible-background {
+    background-color: var(--ee-color-green-background-contrast, #002a00 );
 }
-
-.ee-green-color.with-dark-contrast {
-    color: var(--ee-color-green-contrast-dark, #00202a);
+.ee-green-color.with-accessible-background.with-hover:hover {
+    background-color: var(--ee-color-green-hover, #2a2440);
 }
-
 .ee-green-background-color.with-linear-gradient {
     background-image: linear-gradient(
-        var(--ee-green-background-gradient-x, #80DD5E),
-        var(--ee-green-background-gradient-y, #70CC50)
+        var(--ee-green-background-gradient-x, #80dd5e),
+        var(--ee-green-background-gradient-y, #70cc50)
     );
 }
-
-.ee-green-background-color.with-hover:hover {
-    background-color: var(--ee-color-green-hover, #80DD5E);
+.ee-green-background-color.with-linear-gradient.with-accessible-foreground {
+    color: var(--ee-color-green-background-contrast, #002a00 );
 }
 
-.ee-green-background-color.with-bright-contrast.with-hover:hover {
-    background-color: var(--ee-color-green-contrast-bright, #0000e0);
-}
-
-.ee-green-background-color.with-dark-contrast.with-hover:hover {
-    background-color: var(--ee-color-green-contrast-dark, #00202a);
-}
-
+    /** Dark Green **/
 .ee-dark-green-background-color {
-    background-color: var(--ee-color-dark-green, #009900);
+    background-color: var(--ee-color-dark-green, #006600);
 }
-
-.ee-dark-green-background-color.with-bright-contrast {
-    background-color: var(--ee-color-dark-green-contrast-bright, #0000b5);
+.ee-dark-green-background-color.with-accessible-foreground {
+    color: var( --ee-color-dark-green-foreground-contrast, #fcfcfc );
 }
-
-.ee-dark-green-background-color.with-dark-contrast {
-    background-color: var(--ee-color-dark-green-contrast-dark, #00202a);
+.ee-dark-green-background-color.with-accessible-foreground.with-hover:hover,
+.ee-dark-green-background-color.with-linear-gradient.with-accessible-foreground.with-hover:hover,
+.ee-dark-green-background-color.with-linear-gradient.with-hover:hover,
+.ee-dark-green-background-color.with-hover:hover {
+    background-image: none;
+    background-color: var( --ee-color-dark-green-hover-contrast, #004200 );
 }
-
 .ee-dark-green-color {
-    color: var(--ee-color-dark-green, #009900);
+    color: var(--ee-color-dark-green, #006600);
 }
-
-.ee-dark-green-color.with-bright-contrast {
-    color: var(--ee-color-dark-green-contrast-bright, #0000b5);
+.ee-dark-green-color.with-accessible-background {
+    background-color: var(--ee-color-dark-green-background-contrast, #fcfcfc );
 }
-
-.ee-dark-green-color.with-dark-contrast {
-    color: var(--ee-color-dark-green-contrast-dark, #00202a);
+.ee-dark-green-color.with-accessible-background.with-hover:hover {
+    background-color: var(--ee-color-dark-green-hover, #e3e3e3);
 }
-
 .ee-dark-green-background-color.with-linear-gradient {
     background-image: linear-gradient(
-        var(--ee-dark-green-background-gradient-x, #80DD5E),
-        var(--ee-dark-green-background-gradient-y, #009900)
+        var(--ee-dark-green-background-gradient-x, #80dd5e),
+        var(--ee-dark-green-background-gradient-y, #006600)
     );
 }
-
-.ee-dark-green-background-color.with-hover:hover {
-    background-color: var(--ee-color-dark-green-hover, #80DD5E);
+.ee-dark-green-background-color.with-linear-gradient.with-accessible-foreground {
+    color: var(--ee-color-dark-green-background-contrast, #fcfcfc );
 }
 
-.ee-dark-green-background-color.with-bright-contrast.with-hover:hover {
-    background-color: var(--ee-color-dark-green-contrast-bright, #0000b5);
-}
-
-.ee-dark-green-background-color.with-dark-contrast.with-hover:hover {
-    background-color: var(--ee-color-dark-green-contrast-dark, #00202a);
-}
-
+    /** Red **/
 .ee-red-background-color {
-    background-color: var(--ee-color-red, #B4113F);
+    background-color: var(--ee-color-red, #ad103c);
 }
-
-.ee-red-background-color.with-bright-contrast {
-    background-color: var(--ee-color-red-contrast-bright, #f1f227);
+.ee-red-background-color.with-accessible-foreground {
+    color: var( --ee-color-red-foreground-contrast, #fff );
 }
-
-.ee-red-background-color.with-dark-contrast {
-    background-color: var(--ee-color-red-contrast-dark, #000);
+.ee-red-background-color.with-accessible-foreground.with-hover:hover,
+.ee-red-background-color.with-linear-gradient.with-accessible-foreground.with-hover:hover,
+.ee-red-background-color.with-linear-gradient.with-hover:hover,
+.ee-red-background-color.with-hover:hover {
+    background-image: none;
+    background-color: var( --ee-color-red-hover-contrast, #f0f0f0 );
 }
-
 .ee-red-color {
-    color: var(--ee-color-red, #B4113F);
+    color: var(--ee-color-red, #ad103c);
 }
-
-.ee-red-color.with-bright-contrast {
-    color: var(--ee-color-red-contrast-bright, #f1f227);
+.ee-red-color.with-accessible-background {
+    background-color: var(--ee-color-red-background-contrast, #fff );
 }
-
-.ee-red-color.with-dark-contrast {
-    color: var(--ee-color-red-contrast-dark, #000);
+.ee-red-color.with-accessible-background.with-hover:hover {
+    background-color: var(--ee-color-red-hover, #c8194e);
 }
-
 .ee-red-background-color.with-linear-gradient {
     background-image: linear-gradient(
-        var(--ee-red-background-gradient-x, #C8194E),
-        var(--ee-red-background-gradient-y, #B4113F)
+        var(--ee-red-background-gradient-x, #c8194e),
+        var(--ee-red-background-gradient-y, #b4113f)
     );
 }
-
-.ee-red-background-color.with-hover:hover {
-    background-color: var(--ee-color-red-hover, #C8194E);
+.ee-red-background-color.with-linear-gradient.with-accessible-foreground {
+    color: var(--ee-color-red-background-contrast, #fff );
 }
 
-.ee-red-background-color.with-bright-contrast.with-hover:hover {
-    background-color: var(--ee-color-red-contrast-bright, #f1f227);
-}
-
-.ee-red-background-color.with-dark-contrast.with-hover:hover {
-    background-color: var(--ee-color-red-contrast-dark, #000);
-}
-
+    /** Orange **/
 .ee-orange-background-color {
-    background-color: var(--ee-color-orange, #E76700);
+    background-color: var(--ee-color-orange, #ff7e14);
 }
-
-.ee-orange-background-color.with-bright-contrast {
-    background-color: var(--ee-color-orange-contrast-bright, #fff);
+.ee-orange-background-color.with-accessible-foreground {
+    color: var( --ee-color-orange-foreground-contrast, #171717 );
 }
-
-.ee-orange-background-color.with-dark-contrast {
-    background-color: var(--ee-color-orange-contrast-dark, #000);
+.ee-orange-background-color.with-accessible-foreground.with-hover:hover,
+.ee-orange-background-color.with-linear-gradient.with-accessible-foreground.with-hover:hover,
+.ee-orange-background-color.with-linear-gradient.with-hover:hover,
+.ee-orange-background-color.with-hover:hover {
+    background-image: none;
+    background-color: var( --ee-color-orange-hover-contrast, #ff9d4d );
 }
-
 .ee-orange-color {
-    color: var(--ee-color-orange, #E76700);
+    color: var(--ee-color-orange, #ff7e14);
 }
-
-.ee-orange-color.with-bright-contrast {
-    color: var(--ee-color-orange-contrast-bright, #fff);
+.ee-orange-color.with-accessible-background {
+    background-color: var(--ee-color-orange-background-contrast, #171717 );
 }
-
-.ee-orange-color.with-dark-contrast {
-    color: var(--ee-color-orange-contrast-dark, #000);
+.ee-orange-color.with-accessible-background.with-hover:hover {
+    background-color: var(--ee-color-orange-hover, #383838);
 }
-
 .ee-orange-background-color.with-linear-gradient {
     background-image: linear-gradient(
-        var(--ee-orange-background-gradient-x, #FA730B),
-        var(--ee-orange-background-gradient-y, #E76700)
+        var(--ee-orange-background-gradient-x, #fa730b),
+        var(--ee-orange-background-gradient-y, #e76700)
     );
 }
-
-.ee-orange-background-color.with-hover {
-    background-color: var(--ee-color-orange-hover, #FA730B);
+.ee-orange-background-color.with-linear-gradient.with-accessible-foreground {
+    color: var(--ee-color-orange-background-contrast, #171717 );
 }
 
-.ee-orange-background-color.with-bright-contrast.with-hover:hover {
-    background-color: var(--ee-color-orange-contrast-bright, #fff);
-}
-
-.ee-orange-background-color.with-dark-contrast.with-hover:hover {
-    background-color: var(--ee-color-orange-contrast-dark, #000);
-}
-
-.ee-blue-background-color {
-    background-color: var(--ee-color-blue, #005B9E);
-}
-
-.ee-blue-background-color.with-bright-contrast {
-    background-color: var(--ee-color-blue-contrast-bright, #fff);
-}
-
-.ee-blue-background-color.with-dark-contrast {
-    background-color: var(--ee-color-blue-contrast-dark, #d5d5d5);
-}
-
-.ee-blue-color {
-    color: var(--ee-color-blue, #005B9E);
-}
-
-.ee-blue-color.with-bright-contrast {
-    color: var(--ee-color-blue-contrast-bright, #fff);
-}
-
-.ee-blue-color.with-dark-contrast {
-    color: var(--ee-color-blue-contrast-dark, #d5d5d5);
-}
-
-.ee-blue-background-color.with-linear-gradient {
-    background-image: linear-gradient(
-        var(--ee-blue-background-gradient-x, #066DB1),
-        var(--ee-blue-background-gradient-y, #005B9E)
-    );
-}
-
-.ee-blue-background-color.with-hover {
-    background-color: var(--ee-color-blue-hover, #066DB1);
-}
-
-.ee-blue-background-color.with-bright-contrast.with-hover:hover {
-    background-color: var(--ee-color-blue-contrast-bright, #fff);
-}
-
-.ee-blue-background-color.with-dark-contrast.with-hover:hover {
-    background-color: var(--ee-color-blue-contrast-dark, #d5d5d5);
-}
-
+    /** Light Blue **/
 .ee-light-blue-background-color {
-    background-color: var(--ee-color-light-blue, #00B1CA);
+    background-color: var(--ee-color-light-blue, #00b1ca);
 }
-
-.ee-light-blue-background-color.with-bright-contrast {
-    background-color: var(--ee-color-light-blue-contrast-bright, #0000b5);
+.ee-light-blue-background-color.with-accessible-foreground {
+    color: var( --ee-color-light-blue-foreground-contrast, #041525 );
 }
-
-.ee-light-blue-background-color.with-dark-contrast {
-    background-color: var(--ee-color-light-blue-contrast-dark, #050709);
+.ee-light-blue-background-color.with-accessible-foreground.with-hover:hover,
+.ee-light-blue-background-color.with-linear-gradient.with-accessible-foreground.with-hover:hover,
+.ee-light-blue-background-color.with-linear-gradient.with-hover:hover,
+.ee-light-blue-background-color.with-hover:hover {
+    background-image: none;
+    background-color: var( --ee-color-light-blue-hover-contrast, #00e1ff );
 }
-
 .ee-light-blue-color {
-    color: var(--ee-color-light-blue, #00B1CA);
+    color: var(--ee-color-light-blue, #00b1ca);
 }
-
-.ee-light-blue-color.with-bright-contrast {
-    color: var(--ee-color-light-blue-contrast-bright, #0000b5);
+.ee-light-blue-color.with-accessible-background {
+    background-color: var(--ee-color-light-blue-background-contrast, #041525 );
 }
-
-.ee-light-blue-color.with-dark-contrast {
-    color: var(--ee-color-light-blue-contrast-dark, #050709);
+.ee-light-blue-color.with-accessible-background.with-hover:hover {
+    background-color: var(--ee-color-light-blue-hover, #133762);
 }
-
 .ee-light-blue-background-color.with-linear-gradient {
     background-image: linear-gradient(
-        var(--ee-light-blue-background-gradient-x, #066DB1),
-        var(--ee-light-blue-background-gradient-y, #00B1CA)
+        var(--ee-light-blue-background-gradient-x, #066b1),
+        var(--ee-light-blue-background-gradient-y, #00b1ca)
     );
 }
-
-.ee-light-blue-background-color.with-hover {
-    background-color: var(--ee-color-light-blue-hover, #066DB1);
+.ee-light-blue-background-color.with-linear-gradient.with-accessible-foreground {
+    color: var(--ee-color-light-blue-background-contrast, #041525 );
 }
 
-.ee-light-blue-background-color.with-bright-contrast.with-hover:hover {
-    background-color: var(--ee-color-light-blue-contrast-bright, #0000b5);
+    /** Blue **/
+.ee-blue-background-color {
+    background-color: var(--ee-color-blue, #005b93);
+}
+.ee-blue-background-color.with-accessible-foreground {
+    color: var( --ee-color-blue-foreground-contrast, #fff );
+}
+.ee-blue-background-color.with-accessible-foreground.with-hover:hover,
+.ee-blue-background-color.with-linear-gradient.with-accessible-foreground.with-hover:hover,
+.ee-blue-background-color.with-linear-gradient.with-hover:hover,
+.ee-blue-background-color.with-hover:hover {
+    background-image: none;
+    background-color: var( --ee-color-blue-hover-contrast, #003e6b );
+}
+.ee-blue-color {
+    color: var(--ee-color-blue, #005b93);
+}
+.ee-blue-color.with-accessible-background {
+    background-color: var(--ee-color-blue-background-contrast, #fff );
+}
+.ee-blue-color.with-accessible-background.with-hover:hover {
+    background-color: var(--ee-color-blue-hover, #f0f0f0);
+}
+.ee-blue-background-color.with-linear-gradient {
+    background-image: linear-gradient(
+        var(--ee-blue-background-gradient-x, #066db1),
+        var(--ee-blue-background-gradient-y, #005b93)
+    );
+}
+.ee-blue-background-color.with-linear-gradient.with-accessible-foreground {
+    color: var(--ee-color-blue-background-contrast, #fff );
 }
 
-.ee-light-blue-background-color.with-dark-contrast.with-hover:hover {
-    background-color: var(--ee-color-light-blue-contrast-dark, #050709);
-}
-
+    /** Yellow **/
 .ee-yellow-background-color {
-    background-color: var(--ee-color-yellow, #F8D755);
+    background-color: var(--ee-color-yellow, #f8d755);
 }
-
-.ee-yellow-background-color.with-bright-contrast {
-    background-color: var(--ee-color-yellow-contrast-bright, #e63022);
+.ee-yellow-background-color.with-accessible-foreground {
+    color: var( --ee-color-yellow-foreground-contrast, #1d1905 );
 }
-
-.ee-yellow-background-color.with-dark-contrast {
-    background-color: var(--ee-color-yellow-contrast-dark, #4b6a88);
+.ee-yellow-background-color.with-accessible-foreground.with-hover:hover,
+.ee-yellow-background-color.with-linear-gradient.with-accessible-foreground.with-hover:hover,
+.ee-yellow-background-color.with-linear-gradient.with-hover:hover,
+.ee-yellow-background-color.with-hover:hover {
+    background-image: none;
+    background-color: var( --ee-color-yellow-hover-contrast, #f9eaaf );
 }
-
 .ee-yellow-color {
-    color: var(--ee-color-yellow, #F8D755);
+    color: var(--ee-color-yellow, #f8d755);
 }
-
-.ee-yellow-color.with-bright-contrast {
-    color: var(--ee-color-yellow-contrast-bright, #e63022);
+.ee-yellow-color.with-accessible-background {
+    background-color: var(--ee-color-yellow-background-contrast, #1d1905 );
 }
-
-.ee-yellow-color.with-dark-contrast {
-    color: var(--ee-color-yellow-contrast-dark, #4b6a88);
+.ee-yellow-color.with-accessible-background.with-hover:hover {
+    background-color: var(--ee-color-yellow-hover, #48400f);
 }
-
 .ee-yellow-background-color.with-linear-gradient {
     background-image: linear-gradient(
-        var(--ee-yellow-background-gradient-x, #FEDF6C),
-        var(--ee-yellow-background-gradient-y, #F8D755)
+        var(--ee-yellow-background-gradient-x, #f3df6c),
+        var(--ee-yellow-background-gradient-y, #f8d755)
     );
 }
-
-.ee-yellow-background-color.with-hover {
-    background-color: var(--ee-color-yellow-hover, #FEDF6C);
+.ee-yellow-background-color.with-linear-gradient.with-accessible-foreground {
+    color: var(--ee-color-yellow-background-contrast, #1d1905 );
 }
 
-.ee-yellow-background-color.with-bright-contrast.with-hover:hover {
-    background-color: var(--ee-color-yellow-contrast-bright, #e63022);
-}
-
-.ee-yellow-background-color.with-dark-contrast.with-hover:hover {
-    background-color: var(--ee-color-yellow-contrast-dark, #4b6a88);
-}
-
+    /** Grey **/
 .ee-grey-background-color {
-    background-color: var(--ee-color-grey, #A39D9C);
+    background-color: var(--ee-color-grey, #ac9d9c);
 }
-
-.ee-grey-background-color.with-bright-contrast {
-    background-color: var(--ee-color-grey-contrast-bright, #0000e0);
+.ee-grey-background-color.with-accessible-foreground {
+    color: var( --ee-color-grey-foreground-contrast, #141414 );
 }
-
-.ee-grey-background-color.with-dark-contrast {
-    background-color: var(--ee-color-grey-contrast-dark, #05182a);
+.ee-grey-background-color.with-accessible-foreground.with-hover:hover,
+.ee-grey-background-color.with-linear-gradient.with-accessible-foreground.with-hover:hover,
+.ee-grey-background-color.with-linear-gradient.with-hover:hover,
+.ee-grey-background-color.with-hover:hover {
+    background-image: none;
+    background-color: var( --ee-color-grey-hover-contrast, #ebeaea );
 }
-
 .ee-grey-color {
-    color: var(--ee-color-grey, #A39D9C);
+    color: var(--ee-color-grey, #ac9d9c);
 }
-
-.ee-grey-color.with-bright-contrast {
-    color: var(--ee-color-grey-contrast-bright, #0000e0);
+.ee-grey-color.with-accessible-background {
+    background-color: var(--ee-color-grey-background-contrast, #141414 );
 }
-
-.ee-grey-color.with-dark-contrast {
-    color: var(--ee-color-grey-contrast-dark, #05182a);
+.ee-grey-color.with-accessible-background.with-hover:hover {
+    background-color: var(--ee-color-grey-hover, #333);
 }
-
 .ee-grey-background-color.with-linear-gradient {
     background-image: linear-gradient(
-        var(--ee-grey-background-gradient-x, #59595B),
-        var(--ee-grey-background-gradient-y, #A39D9C)
+        var(--ee-grey-background-gradient-x, #59595b),
+        var(--ee-grey-background-gradient-y, #ac9d9c)
     );
 }
-
-.ee-grey-background-color.with-hover {
-    background-color: var(--ee-color-grey-hover, #59595B);
+.ee-grey-background-color.with-linear-gradient.with-accessible-foreground {
+    color: var(--ee-color-grey-background-contrast, #141414 );
 }
 
-.ee-grey-background-color.with-bright-contrast.with-hover:hover {
-    background-color: var(--ee-color-grey-contrast-bright, #0000e0);
-}
-
-.ee-grey-background-color.with-dark-contrast.with-hover:hover {
-    background-color: var(--ee-color-grey-contrast-dark, #05182a);
-}
-
+    /** Dark Grey **/
 .ee-dark-grey-background-color {
     background-color: var(--ee-color-dark-grey, #464549);
 }
-
-.ee-dark-grey-background-color.with-bright-contrast {
-    background-color: var(--ee-color-dark-grey-contrast-bright, #baf73c);
+.ee-dark-grey-background-color.with-accessible-foreground {
+    color: var( --ee-color-dark-grey-foreground-contrast, #dedede );
 }
-
-.ee-dark-grey-background-color.with-dark-contrast {
-    background-color: var(--ee-color-dark-grey-contrast-dark, #00aa55);
+.ee-dark-grey-background-color.with-accessible-foreground.with-hover:hover,
+.ee-dark-grey-background-color.with-linear-gradient.with-accessible-foreground.with-hover:hover,
+.ee-dark-grey-background-color.with-linear-gradient.with-hover:hover,
+.ee-dark-grey-background-color.with-hover:hover {
+    background-image: none;
+    background-color: var( --ee-color-dark-grey-hover-contrast, #141415 );
 }
-
 .ee-dark-grey-color {
     color: var(--ee-color-dark-grey, #464549);
 }
-
-.ee-dark-grey-color.with-bright-contrast {
-    color: var(--ee-color-dark-grey-contrast-bright, #baf73c);
+.ee-dark-grey-color.with-accessible-background {
+    background-color: var(--ee-color-dark-grey-background-contrast, #dedede );
 }
-
-.ee-dark-grey-color.with-dark-contrast {
-    color: var(--ee-color-dark-grey-contrast-dark, #00aa55);
+.ee-dark-grey-color.with-accessible-background.with-hover:hover {
+    background-color: var(--ee-color-dark-grey-hover, #fafafa);
 }
-
 .ee-dark-grey-background-color.with-linear-gradient {
     background-image: linear-gradient(
-        var(--ee-dark-grey-background-gradient-x, #59595B),
+        var(--ee-dark-grey-background-gradient-x, #59595b),
         var(--ee-dark-grey-background-gradient-y, #464549)
     );
 }
-
-.ee-dark-grey-background-color.with-hover {
-    background-color: var(--ee-color-dark-grey-hover, #59595B);
+.ee-dark-grey-background-color.with-linear-gradient.with-accessible-foreground {
+    color: var(--ee-color-dark-grey-background-contrast, #dedede );
 }
 
-.ee-dark-grey-background-color.with-bright-contrast.with-hover:hover {
-    background-color: var(--ee-color-dark-grey-contrast-bright, #baf73c);
-}
-
-.ee-dark-grey-background-color.with-dark-contrast.with-hover:hover {
-    background-color: var(--ee-color-dark-grey-contrast-dark, #00aa55);
-}
-
+    /** Black **/
 .ee-black-background-color {
-    background-color: var(--ee-color-black, #2F3334);
+    background-color: var(--ee-color-black, #2f3334);
 }
-
-.ee-black-background-color.with-bright-contrast {
-    background-color: var(--ee-color-black-contrast-bright, #fefefe);
+.ee-black-background-color.with-accessible-foreground {
+    color: var( --ee-color-black-foreground-contrast, #eee );
 }
-
-.ee-black-background-color.with-dark-contrast {
-    background-color: var(--ee-color-black-contrast-dark, #4183d7);
+.ee-black-background-color.with-accessible-foreground.with-hover:hover,
+.ee-black-background-color.with-linear-gradient.with-accessible-foreground.with-hover:hover,
+.ee-black-background-color.with-linear-gradient.with-hover:hover,
+.ee-black-background-color.with-hover:hover {
+    background-image: none;
+    background-color: var( --ee-color-black-hover-contrast, #535e5f );
 }
-
 .ee-black-color {
-    color: var(--ee-color-black, #2F3334);
+    color: var(--ee-color-black, #2f3334);
 }
-
-.ee-black-color.with-bright-contrast {
-    color: var(--ee-color-black-contrast-bright, #fefefe);
+.ee-black-color.with-accessible-background {
+    background-color: var(--ee-color-black-background-contrast, #eee );
 }
-
-.ee-black-color.with-dark-contrast {
-    color: var(--ee-color-black-contrast-dark, #4183d7);
+.ee-black-color.with-accessible-background.with-hover:hover {
+    background-color: var(--ee-color-black-hover, #fff);
 }
-
 .ee-black-background-color.with-linear-gradient {
     background-image: linear-gradient(
         var(--ee-black-background-gradient-x, #424646),
-        var(--ee-black-background-gradient-y, #2F3334)
+        var(--ee-black-background-gradient-y, #2f3334)
     );
 }
-
-.ee-black-background-color.with-hover {
-    background-color: var(--ee-color-black-hover, #424646);
+.ee-black-background-color.with-linear-gradient.with-accessible-foreground {
+    color: var(--ee-color-black-background-contrast, #eee );
 }
 
-.ee-black-background-color.with-bright-contrast.with-hover:hover {
-    background-color: var(--ee-color-black-contrast-bright, #fefefe);
-}
-
-.ee-black-background-color.with-dark-contrast.with-hover:hover {
-    background-color: var(--ee-color-black-contrast-dark, #4183d7);
-}
-
+    /** White **/
 .ee-white-background-color {
     background-color: var(--ee-color-white, #fff);
 }
-
-.ee-white-background-color.with-bright-contrast {
-    background-color: var(--ee-color-white-contrast-bright, #7462e0);
+.ee-white-background-color.with-accessible-foreground {
+    color: var( --ee-color-white-foreground-contrast, #292929 );
 }
-
-.ee-white-background-color.with-dark-contrast {
-    background-color: var(--ee-color-white-contrast-dark, #2e343b);
+.ee-white-background-color.with-accessible-foreground.with-hover:hover,
+.ee-white-background-color.with-linear-gradient.with-accessible-foreground.with-hover:hover,
+.ee-white-background-color.with-linear-gradient.with-hover:hover,
+.ee-white-background-color.with-hover:hover {
+    background-image: none;
+    background-color: var( --ee-color-white-hover-contrast, #d9d9d9 );
 }
-
 .ee-white-color {
     color: var(--ee-color-white, #fff);
 }
-
-.ee-white-color.with-bright-contrast {
-    color: var(--ee-color-white-contrast-bright, #7462e0);
+.ee-white-color.with-accessible-background {
+    background-color: var(--ee-color-white-background-contrast, #292929 );
 }
-
-.ee-white-color.with-dark-contrast {
-    color: var(--ee-color-white-contrast-dark, #2e343b);
+.ee-white-color.with-accessible-background.with-hover:hover {
+    background-color: var(--ee-color-white-hover, #595959);
 }
-
 .ee-white-background-color.with-linear-gradient {
     background-image: linear-gradient(
         var(--ee-white-background-gradient-x, #ffecdb),
         var(--ee-white-background-gradient-y, #fff)
     );
 }
-
-.ee-white-background-color.with-hover {
-    background-color: var(--ee-color-white-hover, #ffecdb);
+.ee-white-background-color.with-linear-gradient.with-accessible-foreground {
+    color: var(--ee-color-white-background-contrast, #292929 );
 }
 
-.ee-white-background-color.with-bright-contrast.with-hover:hover {
-    background-color: var(--ee-color-white-contrast-bright, #7462e0);
-}
-
-.ee-white-background-color.with-dark-contrast.with-hover:hover {
-    background-color: var(--ee-color-white-contrast-dark, #2e343b);
-}

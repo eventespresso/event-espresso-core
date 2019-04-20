@@ -1,0 +1,722 @@
+<html>
+    <head>
+        <title>Demo of Default styles</title>
+            <link href="../button-variables.css" rel="stylesheet">
+            <link href="../color-variables.css" rel="stylesheet">
+            <link href="../sizes-variables.css" rel="stylesheet">
+            <link href="../../../root/buttons.css" rel="stylesheet">
+            <link href="../../../root/colors.css" rel="stylesheet">
+            <link href="../../../root/entity-status.css" rel="stylesheet">
+            <link href="../../../root/shadows.css" rel="stylesheet">
+            <link href="../../../root/sizes.css" rel="stylesheet">
+        <link href="./demo.css" rel="stylesheet">
+    </head>
+    <body>
+        <h1>Demo of styles for the <strong>Default</strong> theme.</h1>
+            <section class="demo-section">
+    <h2>Colors</h2>
+    <p>Accessible colors are exposed in the scheme via the appropriate <code>with-accessible-*</code> modifier. Background/Foreground ratios meet the WCAG AAA Color contrast requirements.  However, keep in mind that if you use a color on a different background you'll need to make sure it's WCAG AAA compliant.</p>
+    <p>
+        The following schema is used for color type classes:
+    </p>
+    <ul>
+        <li><code class="alternate"><strong>ee-{color}-color</strong></code>: For text color.</li>
+        <li><code class="alternate"><strong>ee-{color}-background-color</strong></code>: For background color</li>
+        <li><code class="alternate"><strong>with-accessible-background</strong></code>: used with the ee-*-color class to add an accessible background color.
+        </li>
+        <li><code class="alternate"><strong>with-accessible-foreground</strong></code>: Used with the ee-*-background-color class to add an accessible foreground color.
+        </li>
+        <li><code class="alternate"><strong>with-linear-gradient</strong></code>: Applies a linear-gradient background for the given color
+            class
+        </li>
+        <li><code class="alternate"><strong>with-hover</strong></code>: Used on selectors with an applied background to provide an accessible hover state for the background.</li>
+    </ul>
+    <div class="demo-items">
+            <div class="demo-item">
+    <h3>Pink</h3>
+    <div class="demo-swatch">
+        <code>.ee-pink-background-color</code><br>
+        <div class="demo-box ee-pink-background-color"></div>
+    </div>
+    <div class="demo-swatch">
+        <code>.ee-pink-background-color.with-hover</code><br>
+        <div class="demo-box ee-pink-background-color with-hover"></div>
+    </div>
+    <div class="demo-swatch">
+        <code>.ee-pink-background-color.with-linear-gradient</code><br>
+        <div class="demo-box ee-pink-background-color with-linear-gradient"></div>
+    </div>
+    <div class="demo-swatch">
+        <code>.ee-pink-background-color.with-linear-gradient.with-hover</code><br>
+        <div class="demo-box ee-pink-background-color with-linear-gradient with-hover"></div>
+    </div>
+    <div class="demo-swatch">
+        <code>.ee-pink-background-color.with-accessible-foreground</code><br>
+        <div class="demo-box with-text ee-pink-background-color with-accessible-foreground">
+            <p>Sample Text</p>
+        </div>
+    </div>
+    <div class="demo-swatch">
+        <code>.ee-pink-background-color.with-accessible-foreground.with-linear-gradient</code><br>
+        <div class="demo-box with-text ee-pink-background-color with-accessible-foreground with-linear-gradient">
+            <p>Sample Text</p>
+        </div>
+    </div>
+    <div class="demo-swatch">
+        <code>.ee-pink-background-color.with-accessible-foreground.with-linear-gradient.with-hover</code><br>
+        <div class="demo-box with-text ee-pink-background-color with-accessible-foreground with-linear-gradient with-hover">
+            <p>Sample Text</p>
+        </div>
+    </div>
+    <div class="demo-swatch">
+        <code>.ee-pink-color</code>
+        <div class="demo-box with-text ee-pink-color">
+            <p>Sample Text</p>
+        </div>
+    </div>
+    <div class="demo-swatch">
+        <code>.ee-pink-color.with-accessible-background</code>
+        <div class="demo-box with-text ee-pink-color with-accessible-background">
+            <p>Sample Text</p>
+        </div>
+    </div>
+    <div class="demo-swatch">
+        <code>.ee-pink-color.with-accessible-background.with-hover</code>
+        <div class="demo-box with-text ee-pink-color with-accessible-background with-hover">
+            <p>
+                Sample Text
+            </p>
+        </div>
+    </div>
+</div>
+            <div class="demo-item">
+    <h3>Green</h3>
+    <div class="demo-swatch">
+        <code>.ee-green-background-color</code><br>
+        <div class="demo-box ee-green-background-color"></div>
+    </div>
+    <div class="demo-swatch">
+        <code>.ee-green-background-color.with-hover</code><br>
+        <div class="demo-box ee-green-background-color with-hover"></div>
+    </div>
+    <div class="demo-swatch">
+        <code>.ee-green-background-color.with-linear-gradient</code><br>
+        <div class="demo-box ee-green-background-color with-linear-gradient"></div>
+    </div>
+    <div class="demo-swatch">
+        <code>.ee-green-background-color.with-linear-gradient.with-hover</code><br>
+        <div class="demo-box ee-green-background-color with-linear-gradient with-hover"></div>
+    </div>
+    <div class="demo-swatch">
+        <code>.ee-green-background-color.with-accessible-foreground</code><br>
+        <div class="demo-box with-text ee-green-background-color with-accessible-foreground">
+            <p>Sample Text</p>
+        </div>
+    </div>
+    <div class="demo-swatch">
+        <code>.ee-green-background-color.with-accessible-foreground.with-linear-gradient</code><br>
+        <div class="demo-box with-text ee-green-background-color with-accessible-foreground with-linear-gradient">
+            <p>Sample Text</p>
+        </div>
+    </div>
+    <div class="demo-swatch">
+        <code>.ee-green-background-color.with-accessible-foreground.with-linear-gradient.with-hover</code><br>
+        <div class="demo-box with-text ee-green-background-color with-accessible-foreground with-linear-gradient with-hover">
+            <p>Sample Text</p>
+        </div>
+    </div>
+    <div class="demo-swatch">
+        <code>.ee-green-color</code>
+        <div class="demo-box with-text ee-green-color">
+            <p>Sample Text</p>
+        </div>
+    </div>
+    <div class="demo-swatch">
+        <code>.ee-green-color.with-accessible-background</code>
+        <div class="demo-box with-text ee-green-color with-accessible-background">
+            <p>Sample Text</p>
+        </div>
+    </div>
+    <div class="demo-swatch">
+        <code>.ee-green-color.with-accessible-background.with-hover</code>
+        <div class="demo-box with-text ee-green-color with-accessible-background with-hover">
+            <p>
+                Sample Text
+            </p>
+        </div>
+    </div>
+</div>
+            <div class="demo-item">
+    <h3>Dark Green</h3>
+    <div class="demo-swatch">
+        <code>.ee-dark-green-background-color</code><br>
+        <div class="demo-box ee-dark-green-background-color"></div>
+    </div>
+    <div class="demo-swatch">
+        <code>.ee-dark-green-background-color.with-hover</code><br>
+        <div class="demo-box ee-dark-green-background-color with-hover"></div>
+    </div>
+    <div class="demo-swatch">
+        <code>.ee-dark-green-background-color.with-linear-gradient</code><br>
+        <div class="demo-box ee-dark-green-background-color with-linear-gradient"></div>
+    </div>
+    <div class="demo-swatch">
+        <code>.ee-dark-green-background-color.with-linear-gradient.with-hover</code><br>
+        <div class="demo-box ee-dark-green-background-color with-linear-gradient with-hover"></div>
+    </div>
+    <div class="demo-swatch">
+        <code>.ee-dark-green-background-color.with-accessible-foreground</code><br>
+        <div class="demo-box with-text ee-dark-green-background-color with-accessible-foreground">
+            <p>Sample Text</p>
+        </div>
+    </div>
+    <div class="demo-swatch">
+        <code>.ee-dark-green-background-color.with-accessible-foreground.with-linear-gradient</code><br>
+        <div class="demo-box with-text ee-dark-green-background-color with-accessible-foreground with-linear-gradient">
+            <p>Sample Text</p>
+        </div>
+    </div>
+    <div class="demo-swatch">
+        <code>.ee-dark-green-background-color.with-accessible-foreground.with-linear-gradient.with-hover</code><br>
+        <div class="demo-box with-text ee-dark-green-background-color with-accessible-foreground with-linear-gradient with-hover">
+            <p>Sample Text</p>
+        </div>
+    </div>
+    <div class="demo-swatch">
+        <code>.ee-dark-green-color</code>
+        <div class="demo-box with-text ee-dark-green-color">
+            <p>Sample Text</p>
+        </div>
+    </div>
+    <div class="demo-swatch">
+        <code>.ee-dark-green-color.with-accessible-background</code>
+        <div class="demo-box with-text ee-dark-green-color with-accessible-background">
+            <p>Sample Text</p>
+        </div>
+    </div>
+    <div class="demo-swatch">
+        <code>.ee-dark-green-color.with-accessible-background.with-hover</code>
+        <div class="demo-box with-text ee-dark-green-color with-accessible-background with-hover">
+            <p>
+                Sample Text
+            </p>
+        </div>
+    </div>
+</div>
+            <div class="demo-item">
+    <h3>Red</h3>
+    <div class="demo-swatch">
+        <code>.ee-red-background-color</code><br>
+        <div class="demo-box ee-red-background-color"></div>
+    </div>
+    <div class="demo-swatch">
+        <code>.ee-red-background-color.with-hover</code><br>
+        <div class="demo-box ee-red-background-color with-hover"></div>
+    </div>
+    <div class="demo-swatch">
+        <code>.ee-red-background-color.with-linear-gradient</code><br>
+        <div class="demo-box ee-red-background-color with-linear-gradient"></div>
+    </div>
+    <div class="demo-swatch">
+        <code>.ee-red-background-color.with-linear-gradient.with-hover</code><br>
+        <div class="demo-box ee-red-background-color with-linear-gradient with-hover"></div>
+    </div>
+    <div class="demo-swatch">
+        <code>.ee-red-background-color.with-accessible-foreground</code><br>
+        <div class="demo-box with-text ee-red-background-color with-accessible-foreground">
+            <p>Sample Text</p>
+        </div>
+    </div>
+    <div class="demo-swatch">
+        <code>.ee-red-background-color.with-accessible-foreground.with-linear-gradient</code><br>
+        <div class="demo-box with-text ee-red-background-color with-accessible-foreground with-linear-gradient">
+            <p>Sample Text</p>
+        </div>
+    </div>
+    <div class="demo-swatch">
+        <code>.ee-red-background-color.with-accessible-foreground.with-linear-gradient.with-hover</code><br>
+        <div class="demo-box with-text ee-red-background-color with-accessible-foreground with-linear-gradient with-hover">
+            <p>Sample Text</p>
+        </div>
+    </div>
+    <div class="demo-swatch">
+        <code>.ee-red-color</code>
+        <div class="demo-box with-text ee-red-color">
+            <p>Sample Text</p>
+        </div>
+    </div>
+    <div class="demo-swatch">
+        <code>.ee-red-color.with-accessible-background</code>
+        <div class="demo-box with-text ee-red-color with-accessible-background">
+            <p>Sample Text</p>
+        </div>
+    </div>
+    <div class="demo-swatch">
+        <code>.ee-red-color.with-accessible-background.with-hover</code>
+        <div class="demo-box with-text ee-red-color with-accessible-background with-hover">
+            <p>
+                Sample Text
+            </p>
+        </div>
+    </div>
+</div>
+            <div class="demo-item">
+    <h3>Orange</h3>
+    <div class="demo-swatch">
+        <code>.ee-orange-background-color</code><br>
+        <div class="demo-box ee-orange-background-color"></div>
+    </div>
+    <div class="demo-swatch">
+        <code>.ee-orange-background-color.with-hover</code><br>
+        <div class="demo-box ee-orange-background-color with-hover"></div>
+    </div>
+    <div class="demo-swatch">
+        <code>.ee-orange-background-color.with-linear-gradient</code><br>
+        <div class="demo-box ee-orange-background-color with-linear-gradient"></div>
+    </div>
+    <div class="demo-swatch">
+        <code>.ee-orange-background-color.with-linear-gradient.with-hover</code><br>
+        <div class="demo-box ee-orange-background-color with-linear-gradient with-hover"></div>
+    </div>
+    <div class="demo-swatch">
+        <code>.ee-orange-background-color.with-accessible-foreground</code><br>
+        <div class="demo-box with-text ee-orange-background-color with-accessible-foreground">
+            <p>Sample Text</p>
+        </div>
+    </div>
+    <div class="demo-swatch">
+        <code>.ee-orange-background-color.with-accessible-foreground.with-linear-gradient</code><br>
+        <div class="demo-box with-text ee-orange-background-color with-accessible-foreground with-linear-gradient">
+            <p>Sample Text</p>
+        </div>
+    </div>
+    <div class="demo-swatch">
+        <code>.ee-orange-background-color.with-accessible-foreground.with-linear-gradient.with-hover</code><br>
+        <div class="demo-box with-text ee-orange-background-color with-accessible-foreground with-linear-gradient with-hover">
+            <p>Sample Text</p>
+        </div>
+    </div>
+    <div class="demo-swatch">
+        <code>.ee-orange-color</code>
+        <div class="demo-box with-text ee-orange-color">
+            <p>Sample Text</p>
+        </div>
+    </div>
+    <div class="demo-swatch">
+        <code>.ee-orange-color.with-accessible-background</code>
+        <div class="demo-box with-text ee-orange-color with-accessible-background">
+            <p>Sample Text</p>
+        </div>
+    </div>
+    <div class="demo-swatch">
+        <code>.ee-orange-color.with-accessible-background.with-hover</code>
+        <div class="demo-box with-text ee-orange-color with-accessible-background with-hover">
+            <p>
+                Sample Text
+            </p>
+        </div>
+    </div>
+</div>
+            <div class="demo-item">
+    <h3>Light Blue</h3>
+    <div class="demo-swatch">
+        <code>.ee-light-blue-background-color</code><br>
+        <div class="demo-box ee-light-blue-background-color"></div>
+    </div>
+    <div class="demo-swatch">
+        <code>.ee-light-blue-background-color.with-hover</code><br>
+        <div class="demo-box ee-light-blue-background-color with-hover"></div>
+    </div>
+    <div class="demo-swatch">
+        <code>.ee-light-blue-background-color.with-linear-gradient</code><br>
+        <div class="demo-box ee-light-blue-background-color with-linear-gradient"></div>
+    </div>
+    <div class="demo-swatch">
+        <code>.ee-light-blue-background-color.with-linear-gradient.with-hover</code><br>
+        <div class="demo-box ee-light-blue-background-color with-linear-gradient with-hover"></div>
+    </div>
+    <div class="demo-swatch">
+        <code>.ee-light-blue-background-color.with-accessible-foreground</code><br>
+        <div class="demo-box with-text ee-light-blue-background-color with-accessible-foreground">
+            <p>Sample Text</p>
+        </div>
+    </div>
+    <div class="demo-swatch">
+        <code>.ee-light-blue-background-color.with-accessible-foreground.with-linear-gradient</code><br>
+        <div class="demo-box with-text ee-light-blue-background-color with-accessible-foreground with-linear-gradient">
+            <p>Sample Text</p>
+        </div>
+    </div>
+    <div class="demo-swatch">
+        <code>.ee-light-blue-background-color.with-accessible-foreground.with-linear-gradient.with-hover</code><br>
+        <div class="demo-box with-text ee-light-blue-background-color with-accessible-foreground with-linear-gradient with-hover">
+            <p>Sample Text</p>
+        </div>
+    </div>
+    <div class="demo-swatch">
+        <code>.ee-light-blue-color</code>
+        <div class="demo-box with-text ee-light-blue-color">
+            <p>Sample Text</p>
+        </div>
+    </div>
+    <div class="demo-swatch">
+        <code>.ee-light-blue-color.with-accessible-background</code>
+        <div class="demo-box with-text ee-light-blue-color with-accessible-background">
+            <p>Sample Text</p>
+        </div>
+    </div>
+    <div class="demo-swatch">
+        <code>.ee-light-blue-color.with-accessible-background.with-hover</code>
+        <div class="demo-box with-text ee-light-blue-color with-accessible-background with-hover">
+            <p>
+                Sample Text
+            </p>
+        </div>
+    </div>
+</div>
+            <div class="demo-item">
+    <h3>Blue</h3>
+    <div class="demo-swatch">
+        <code>.ee-blue-background-color</code><br>
+        <div class="demo-box ee-blue-background-color"></div>
+    </div>
+    <div class="demo-swatch">
+        <code>.ee-blue-background-color.with-hover</code><br>
+        <div class="demo-box ee-blue-background-color with-hover"></div>
+    </div>
+    <div class="demo-swatch">
+        <code>.ee-blue-background-color.with-linear-gradient</code><br>
+        <div class="demo-box ee-blue-background-color with-linear-gradient"></div>
+    </div>
+    <div class="demo-swatch">
+        <code>.ee-blue-background-color.with-linear-gradient.with-hover</code><br>
+        <div class="demo-box ee-blue-background-color with-linear-gradient with-hover"></div>
+    </div>
+    <div class="demo-swatch">
+        <code>.ee-blue-background-color.with-accessible-foreground</code><br>
+        <div class="demo-box with-text ee-blue-background-color with-accessible-foreground">
+            <p>Sample Text</p>
+        </div>
+    </div>
+    <div class="demo-swatch">
+        <code>.ee-blue-background-color.with-accessible-foreground.with-linear-gradient</code><br>
+        <div class="demo-box with-text ee-blue-background-color with-accessible-foreground with-linear-gradient">
+            <p>Sample Text</p>
+        </div>
+    </div>
+    <div class="demo-swatch">
+        <code>.ee-blue-background-color.with-accessible-foreground.with-linear-gradient.with-hover</code><br>
+        <div class="demo-box with-text ee-blue-background-color with-accessible-foreground with-linear-gradient with-hover">
+            <p>Sample Text</p>
+        </div>
+    </div>
+    <div class="demo-swatch">
+        <code>.ee-blue-color</code>
+        <div class="demo-box with-text ee-blue-color">
+            <p>Sample Text</p>
+        </div>
+    </div>
+    <div class="demo-swatch">
+        <code>.ee-blue-color.with-accessible-background</code>
+        <div class="demo-box with-text ee-blue-color with-accessible-background">
+            <p>Sample Text</p>
+        </div>
+    </div>
+    <div class="demo-swatch">
+        <code>.ee-blue-color.with-accessible-background.with-hover</code>
+        <div class="demo-box with-text ee-blue-color with-accessible-background with-hover">
+            <p>
+                Sample Text
+            </p>
+        </div>
+    </div>
+</div>
+            <div class="demo-item">
+    <h3>Yellow</h3>
+    <div class="demo-swatch">
+        <code>.ee-yellow-background-color</code><br>
+        <div class="demo-box ee-yellow-background-color"></div>
+    </div>
+    <div class="demo-swatch">
+        <code>.ee-yellow-background-color.with-hover</code><br>
+        <div class="demo-box ee-yellow-background-color with-hover"></div>
+    </div>
+    <div class="demo-swatch">
+        <code>.ee-yellow-background-color.with-linear-gradient</code><br>
+        <div class="demo-box ee-yellow-background-color with-linear-gradient"></div>
+    </div>
+    <div class="demo-swatch">
+        <code>.ee-yellow-background-color.with-linear-gradient.with-hover</code><br>
+        <div class="demo-box ee-yellow-background-color with-linear-gradient with-hover"></div>
+    </div>
+    <div class="demo-swatch">
+        <code>.ee-yellow-background-color.with-accessible-foreground</code><br>
+        <div class="demo-box with-text ee-yellow-background-color with-accessible-foreground">
+            <p>Sample Text</p>
+        </div>
+    </div>
+    <div class="demo-swatch">
+        <code>.ee-yellow-background-color.with-accessible-foreground.with-linear-gradient</code><br>
+        <div class="demo-box with-text ee-yellow-background-color with-accessible-foreground with-linear-gradient">
+            <p>Sample Text</p>
+        </div>
+    </div>
+    <div class="demo-swatch">
+        <code>.ee-yellow-background-color.with-accessible-foreground.with-linear-gradient.with-hover</code><br>
+        <div class="demo-box with-text ee-yellow-background-color with-accessible-foreground with-linear-gradient with-hover">
+            <p>Sample Text</p>
+        </div>
+    </div>
+    <div class="demo-swatch">
+        <code>.ee-yellow-color</code>
+        <div class="demo-box with-text ee-yellow-color">
+            <p>Sample Text</p>
+        </div>
+    </div>
+    <div class="demo-swatch">
+        <code>.ee-yellow-color.with-accessible-background</code>
+        <div class="demo-box with-text ee-yellow-color with-accessible-background">
+            <p>Sample Text</p>
+        </div>
+    </div>
+    <div class="demo-swatch">
+        <code>.ee-yellow-color.with-accessible-background.with-hover</code>
+        <div class="demo-box with-text ee-yellow-color with-accessible-background with-hover">
+            <p>
+                Sample Text
+            </p>
+        </div>
+    </div>
+</div>
+            <div class="demo-item">
+    <h3>Grey</h3>
+    <div class="demo-swatch">
+        <code>.ee-grey-background-color</code><br>
+        <div class="demo-box ee-grey-background-color"></div>
+    </div>
+    <div class="demo-swatch">
+        <code>.ee-grey-background-color.with-hover</code><br>
+        <div class="demo-box ee-grey-background-color with-hover"></div>
+    </div>
+    <div class="demo-swatch">
+        <code>.ee-grey-background-color.with-linear-gradient</code><br>
+        <div class="demo-box ee-grey-background-color with-linear-gradient"></div>
+    </div>
+    <div class="demo-swatch">
+        <code>.ee-grey-background-color.with-linear-gradient.with-hover</code><br>
+        <div class="demo-box ee-grey-background-color with-linear-gradient with-hover"></div>
+    </div>
+    <div class="demo-swatch">
+        <code>.ee-grey-background-color.with-accessible-foreground</code><br>
+        <div class="demo-box with-text ee-grey-background-color with-accessible-foreground">
+            <p>Sample Text</p>
+        </div>
+    </div>
+    <div class="demo-swatch">
+        <code>.ee-grey-background-color.with-accessible-foreground.with-linear-gradient</code><br>
+        <div class="demo-box with-text ee-grey-background-color with-accessible-foreground with-linear-gradient">
+            <p>Sample Text</p>
+        </div>
+    </div>
+    <div class="demo-swatch">
+        <code>.ee-grey-background-color.with-accessible-foreground.with-linear-gradient.with-hover</code><br>
+        <div class="demo-box with-text ee-grey-background-color with-accessible-foreground with-linear-gradient with-hover">
+            <p>Sample Text</p>
+        </div>
+    </div>
+    <div class="demo-swatch">
+        <code>.ee-grey-color</code>
+        <div class="demo-box with-text ee-grey-color">
+            <p>Sample Text</p>
+        </div>
+    </div>
+    <div class="demo-swatch">
+        <code>.ee-grey-color.with-accessible-background</code>
+        <div class="demo-box with-text ee-grey-color with-accessible-background">
+            <p>Sample Text</p>
+        </div>
+    </div>
+    <div class="demo-swatch">
+        <code>.ee-grey-color.with-accessible-background.with-hover</code>
+        <div class="demo-box with-text ee-grey-color with-accessible-background with-hover">
+            <p>
+                Sample Text
+            </p>
+        </div>
+    </div>
+</div>
+            <div class="demo-item">
+    <h3>Dark Grey</h3>
+    <div class="demo-swatch">
+        <code>.ee-dark-grey-background-color</code><br>
+        <div class="demo-box ee-dark-grey-background-color"></div>
+    </div>
+    <div class="demo-swatch">
+        <code>.ee-dark-grey-background-color.with-hover</code><br>
+        <div class="demo-box ee-dark-grey-background-color with-hover"></div>
+    </div>
+    <div class="demo-swatch">
+        <code>.ee-dark-grey-background-color.with-linear-gradient</code><br>
+        <div class="demo-box ee-dark-grey-background-color with-linear-gradient"></div>
+    </div>
+    <div class="demo-swatch">
+        <code>.ee-dark-grey-background-color.with-linear-gradient.with-hover</code><br>
+        <div class="demo-box ee-dark-grey-background-color with-linear-gradient with-hover"></div>
+    </div>
+    <div class="demo-swatch">
+        <code>.ee-dark-grey-background-color.with-accessible-foreground</code><br>
+        <div class="demo-box with-text ee-dark-grey-background-color with-accessible-foreground">
+            <p>Sample Text</p>
+        </div>
+    </div>
+    <div class="demo-swatch">
+        <code>.ee-dark-grey-background-color.with-accessible-foreground.with-linear-gradient</code><br>
+        <div class="demo-box with-text ee-dark-grey-background-color with-accessible-foreground with-linear-gradient">
+            <p>Sample Text</p>
+        </div>
+    </div>
+    <div class="demo-swatch">
+        <code>.ee-dark-grey-background-color.with-accessible-foreground.with-linear-gradient.with-hover</code><br>
+        <div class="demo-box with-text ee-dark-grey-background-color with-accessible-foreground with-linear-gradient with-hover">
+            <p>Sample Text</p>
+        </div>
+    </div>
+    <div class="demo-swatch">
+        <code>.ee-dark-grey-color</code>
+        <div class="demo-box with-text ee-dark-grey-color">
+            <p>Sample Text</p>
+        </div>
+    </div>
+    <div class="demo-swatch">
+        <code>.ee-dark-grey-color.with-accessible-background</code>
+        <div class="demo-box with-text ee-dark-grey-color with-accessible-background">
+            <p>Sample Text</p>
+        </div>
+    </div>
+    <div class="demo-swatch">
+        <code>.ee-dark-grey-color.with-accessible-background.with-hover</code>
+        <div class="demo-box with-text ee-dark-grey-color with-accessible-background with-hover">
+            <p>
+                Sample Text
+            </p>
+        </div>
+    </div>
+</div>
+            <div class="demo-item">
+    <h3>Black</h3>
+    <div class="demo-swatch">
+        <code>.ee-black-background-color</code><br>
+        <div class="demo-box ee-black-background-color"></div>
+    </div>
+    <div class="demo-swatch">
+        <code>.ee-black-background-color.with-hover</code><br>
+        <div class="demo-box ee-black-background-color with-hover"></div>
+    </div>
+    <div class="demo-swatch">
+        <code>.ee-black-background-color.with-linear-gradient</code><br>
+        <div class="demo-box ee-black-background-color with-linear-gradient"></div>
+    </div>
+    <div class="demo-swatch">
+        <code>.ee-black-background-color.with-linear-gradient.with-hover</code><br>
+        <div class="demo-box ee-black-background-color with-linear-gradient with-hover"></div>
+    </div>
+    <div class="demo-swatch">
+        <code>.ee-black-background-color.with-accessible-foreground</code><br>
+        <div class="demo-box with-text ee-black-background-color with-accessible-foreground">
+            <p>Sample Text</p>
+        </div>
+    </div>
+    <div class="demo-swatch">
+        <code>.ee-black-background-color.with-accessible-foreground.with-linear-gradient</code><br>
+        <div class="demo-box with-text ee-black-background-color with-accessible-foreground with-linear-gradient">
+            <p>Sample Text</p>
+        </div>
+    </div>
+    <div class="demo-swatch">
+        <code>.ee-black-background-color.with-accessible-foreground.with-linear-gradient.with-hover</code><br>
+        <div class="demo-box with-text ee-black-background-color with-accessible-foreground with-linear-gradient with-hover">
+            <p>Sample Text</p>
+        </div>
+    </div>
+    <div class="demo-swatch">
+        <code>.ee-black-color</code>
+        <div class="demo-box with-text ee-black-color">
+            <p>Sample Text</p>
+        </div>
+    </div>
+    <div class="demo-swatch">
+        <code>.ee-black-color.with-accessible-background</code>
+        <div class="demo-box with-text ee-black-color with-accessible-background">
+            <p>Sample Text</p>
+        </div>
+    </div>
+    <div class="demo-swatch">
+        <code>.ee-black-color.with-accessible-background.with-hover</code>
+        <div class="demo-box with-text ee-black-color with-accessible-background with-hover">
+            <p>
+                Sample Text
+            </p>
+        </div>
+    </div>
+</div>
+            <div class="demo-item">
+    <h3>White</h3>
+    <div class="demo-swatch">
+        <code>.ee-white-background-color</code><br>
+        <div class="demo-box ee-white-background-color"></div>
+    </div>
+    <div class="demo-swatch">
+        <code>.ee-white-background-color.with-hover</code><br>
+        <div class="demo-box ee-white-background-color with-hover"></div>
+    </div>
+    <div class="demo-swatch">
+        <code>.ee-white-background-color.with-linear-gradient</code><br>
+        <div class="demo-box ee-white-background-color with-linear-gradient"></div>
+    </div>
+    <div class="demo-swatch">
+        <code>.ee-white-background-color.with-linear-gradient.with-hover</code><br>
+        <div class="demo-box ee-white-background-color with-linear-gradient with-hover"></div>
+    </div>
+    <div class="demo-swatch">
+        <code>.ee-white-background-color.with-accessible-foreground</code><br>
+        <div class="demo-box with-text ee-white-background-color with-accessible-foreground">
+            <p>Sample Text</p>
+        </div>
+    </div>
+    <div class="demo-swatch">
+        <code>.ee-white-background-color.with-accessible-foreground.with-linear-gradient</code><br>
+        <div class="demo-box with-text ee-white-background-color with-accessible-foreground with-linear-gradient">
+            <p>Sample Text</p>
+        </div>
+    </div>
+    <div class="demo-swatch">
+        <code>.ee-white-background-color.with-accessible-foreground.with-linear-gradient.with-hover</code><br>
+        <div class="demo-box with-text ee-white-background-color with-accessible-foreground with-linear-gradient with-hover">
+            <p>Sample Text</p>
+        </div>
+    </div>
+    <div class="demo-swatch">
+        <code>.ee-white-color</code>
+        <div class="demo-box with-text ee-white-color">
+            <p>Sample Text</p>
+        </div>
+    </div>
+    <div class="demo-swatch">
+        <code>.ee-white-color.with-accessible-background</code>
+        <div class="demo-box with-text ee-white-color with-accessible-background">
+            <p>Sample Text</p>
+        </div>
+    </div>
+    <div class="demo-swatch">
+        <code>.ee-white-color.with-accessible-background.with-hover</code>
+        <div class="demo-box with-text ee-white-color with-accessible-background with-hover">
+            <p>
+                Sample Text
+            </p>
+        </div>
+    </div>
+</div>
+    </div>
+</section>
+    </body>
+</html>

@@ -1,104 +1,163 @@
 /**
-    - color suffix is the primary
-    - "contrast-bright" suffix is accessible bright contrast for the main color.
-    - "contrast-dark" suffix is accessible dark contrast for the main color.
-
-    Typically the difference between bright and dark contrast variables is that bright will tend to be
-    brighter colors whereas dark will tend to be duller colors.  But both have an accessible acceptance
-    store for color contrast.
-
+    Color Variables for the Default template.
     A useful tool for doing color-safe palettes is http://colorsafe.co/
+    Also: https://webaim.org/resources/contrastchecker/
  */
 :root {
-    --ee-color-pink: #E44064;
-    --ee-pink-background-gradient-x: #F65077;
-    --ee-pink-background-gradient-y: #E44064;
-    --ee-color-pink-hover: #F65077;
-    --ee-color-pink-contrast-bright: #c8f7c5;
-    --ee-color-pink-contrast-dark: #000;
+        /** Pink **/
+    --ee-color-pink: #ff55c0;
+    --ee-color-pink-background-contrast: #0a0000;
+    --ee-color-pink-foreground-contrast: #0a0000;
+    --ee-pink-background-gradient-x: #f65077;
+    --ee-pink-background-gradient-y: #ff55c0;
+    --ee-color-pink-hover: #550000;
+    --ee-color-pink-hover-contrast: #ffa3dd;
+    --ee-color-pink-01-transparency: rgba( 255,85,192,0.01 );
+    --ee-color-pink-25-transparency: rgba( 255,85,192,0.25 );
+    --ee-color-pink-50-transparency: rgba( 255,85,192,0.50 );
+    --ee-color-pink-75-transparency: rgba( 255,85,192,0.75 );
 
-    --ee-color-green: #70CC50;
-    --ee-green-background-gradient-x: #80DD5E;
-    --ee-green-background-gradient-y: #70CC50;
-    --ee-color-green-hover: #80DD5E;
-    --ee-color-green-contrast-bright: #0000e0;
-    --ee-color-green-contrast-dark: #00202a;
+        /** Green **/
+    --ee-color-green: #70cc50;
+    --ee-color-green-background-contrast: #002a00;
+    --ee-color-green-foreground-contrast: #002a00;
+    --ee-green-background-gradient-x: #80dd5e;
+    --ee-green-background-gradient-y: #70cc50;
+    --ee-color-green-hover: #2a2440;
+    --ee-color-green-hover-contrast: #bee7b1;
+    --ee-color-green-01-transparency: rgba( 112,204,80,0.01 );
+    --ee-color-green-25-transparency: rgba( 112,204,80,0.25 );
+    --ee-color-green-50-transparency: rgba( 112,204,80,0.50 );
+    --ee-color-green-75-transparency: rgba( 112,204,80,0.75 );
 
-    --ee-color-dark-green: #009900;
-    --ee-dark-green-background-gradient-x: #80DD5E;
-    --ee-dark-green-background-gradient-y: #009900;
-    --ee-color-dark-green-hover: #80DD5E;
-    --ee-color-dark-green-contrast-bright: #0000b5;
-    --ee-color-dark-green-contrast-dark: #00202a;
+        /** Dark Green **/
+    --ee-color-dark-green: #006600;
+    --ee-color-dark-green-background-contrast: #fcfcfc;
+    --ee-color-dark-green-foreground-contrast: #fcfcfc;
+    --ee-dark-green-background-gradient-x: #80dd5e;
+    --ee-dark-green-background-gradient-y: #006600;
+    --ee-color-dark-green-hover: #e3e3e3;
+    --ee-color-dark-green-hover-contrast: #004200;
+    --ee-color-dark-green-01-transparency: rgba( 0,102,0,0.01 );
+    --ee-color-dark-green-25-transparency: rgba( 0,102,0,0.25 );
+    --ee-color-dark-green-50-transparency: rgba( 0,102,0,0.50 );
+    --ee-color-dark-green-75-transparency: rgba( 0,102,0,0.75 );
 
-    --ee-color-red: #B4113F;
-    --ee-red-background-gradient-x: #C8194E;
-    --ee-red-background-gradient-y: #B4113F;
-    --ee-color-red-hover: #C8194E;
-    --ee-color-red-contrast-bright: #f1f227;
-    --ee-color-red-contrast-dark: #000;
+        /** Red **/
+    --ee-color-red: #ad103c;
+    --ee-color-red-background-contrast: #fff;
+    --ee-color-red-foreground-contrast: #fff;
+    --ee-red-background-gradient-x: #c8194e;
+    --ee-red-background-gradient-y: #b4113f;
+    --ee-color-red-hover: #c8194e;
+    --ee-color-red-hover-contrast: #f0f0f0;
+    --ee-color-red-01-transparency: rgba( 173,16,60,0.01 );
+    --ee-color-red-25-transparency: rgba( 173,16,60,0.25 );
+    --ee-color-red-50-transparency: rgba( 173,16,60,0.50 );
+    --ee-color-red-75-transparency: rgba( 173,16,60,0.75 );
 
-    --ee-color-orange: #E76700;
-    --ee-orange-background-gradient-x: #FA730B;
-    --ee-orange-background-gradient-y: #E76700;
-    --ee-color-orange-hover: #FA730B;
-    --ee-color-orange-contrast-bright: #fff;
-    --ee-color-orange-contrast-dark: #000;
+        /** Orange **/
+    --ee-color-orange: #ff7e14;
+    --ee-color-orange-background-contrast: #171717;
+    --ee-color-orange-foreground-contrast: #171717;
+    --ee-orange-background-gradient-x: #fa730b;
+    --ee-orange-background-gradient-y: #e76700;
+    --ee-color-orange-hover: #383838;
+    --ee-color-orange-hover-contrast: #ff9d4d;
+    --ee-color-orange-01-transparency: rgba( 173,16,60,0.01 );
+    --ee-color-orange-25-transparency: rgba( 173,16,60,0.25 );
+    --ee-color-orange-50-transparency: rgba( 173,16,60,0.50 );
+    --ee-color-orange-75-transparency: rgba( 173,16,60,0.75 );
 
-    --ee-color-light-blue: #00B1CA;
-    --ee-light-blue-background-gradient-x: #066DB1;
-    --ee-light-blue-background-gradient-y: #00B1CA;
-    --ee-color-light-blue-hover: #066DB1;
-    --ee-color-light-blue-contrast-bright: #0000b5;
-    --ee-color-light-blue-contrast-dark: #050709;
+        /** Light Blue **/
+    --ee-color-light-blue: #00b1ca;
+    --ee-color-light-blue-background-contrast: #041525;
+    --ee-color-light-blue-foreground-contrast: #041525;
+    --ee-light-blue-background-gradient-x: #066b1;
+    --ee-light-blue-background-gradient-y: #00b1ca;
+    --ee-color-light-blue-hover: #133762;
+    --ee-color-light-blue-hover-contrast: #00e1ff;
+    --ee-color-light-blue-01-transparency: rgba( 0,177,202,0.01 );
+    --ee-color-light-blue-25-transparency: rgba( 0,177,202,0.25 );
+    --ee-color-light-blue-50-transparency: rgba( 0,177,202,0.50 );
+    --ee-color-light-blue-75-transparency: rgba( 0,177,202,0.75 );
 
-    --ee-color-blue: #005B9E;
-    --ee-blue-background-gradient-x: #066DB1;
-    --ee-blue-background-gradient-y: #005B9E;
-    --ee-color-blue-hover: #066DB1;
-    --ee-color-blue-contrast-bright: #fff;
-    --ee-color-blue-contrast-dark: #d5d5d5;
+        /** Blue **/
+    --ee-color-blue: #005b93;
+    --ee-color-blue-background-contrast: #fff;
+    --ee-color-blue-foreground-contrast: #fff;
+    --ee-blue-background-gradient-x: #066db1;
+    --ee-blue-background-gradient-y: #005b93;
+    --ee-color-blue-hover: #f0f0f0;
+    --ee-color-blue-hover-contrast: #003e6b;
+    --ee-color-blue-01-transparency: rgba( 0,91,147,0.01 );
+    --ee-color-blue-25-transparency: rgba( 0,91,147,0.25 );
+    --ee-color-blue-50-transparency: rgba( 0,91,147,0.50 );
+    --ee-color-blue-75-transparency: rgba( 0,91,147,0.75 );
 
-    --ee-color-yellow: #F8D755;
-    --ee-yellow-background-gradient-x: #FEDF6C;
-    --ee-yellow-background-gradient-y: #F8D755;
-    --ee-color-yellow-hover: #FEDF6C;
-    --ee-color-yellow-contrast-bright: #e63022;
-    --ee-color-yellow-contrast-dark: #4b6a88;
+        /** Yellow **/
+    --ee-color-yellow: #f8d755;
+    --ee-color-yellow-background-contrast: #1d1905;
+    --ee-color-yellow-foreground-contrast: #1d1905;
+    --ee-yellow-background-gradient-x: #f3df6c;
+    --ee-yellow-background-gradient-y: #f8d755;
+    --ee-color-yellow-hover: #48400f;
+    --ee-color-yellow-hover-contrast: #f9eaaf;
+    --ee-color-yellow-01-transparency: rgba( 248,215,85,0.01 );
+    --ee-color-yellow-25-transparency: rgba( 248,215,85,0.25 );
+    --ee-color-yellow-50-transparency: rgba( 248,215,85,0.50 );
+    --ee-color-yellow-75-transparency: rgba( 248,215,85,0.75 );
 
-    --ee-color-grey: #AC9D9C;
-    --ee-grey-background-gradient-x: #59595B;
-    --ee-grey-background-gradient-y: #AC9D9C;
-    --ee-color-grey-hover: #59595B;
-    --ee-color-grey-contrast-bright: #0000e0;
-    --ee-color-grey-contrast-dark: #05182a;
+        /** Grey **/
+    --ee-color-grey: #ac9d9c;
+    --ee-color-grey-background-contrast: #141414;
+    --ee-color-grey-foreground-contrast: #141414;
+    --ee-grey-background-gradient-x: #59595b;
+    --ee-grey-background-gradient-y: #ac9d9c;
+    --ee-color-grey-hover: #333;
+    --ee-color-grey-hover-contrast: #ebeaea;
+    --ee-color-grey-01-transparency: rgba( 172,157,156,0.01 );
+    --ee-color-grey-25-transparency: rgba( 172,157,156,0.25 );
+    --ee-color-grey-50-transparency: rgba( 172,157,156,0.50 );
+    --ee-color-grey-75-transparency: rgba( 172,157,156,0.75 );
 
+        /** Dark Grey **/
     --ee-color-dark-grey: #464549;
-    --ee-dark-grey-background-gradient-x: #59595B;
+    --ee-color-dark-grey-background-contrast: #dedede;
+    --ee-color-dark-grey-foreground-contrast: #dedede;
+    --ee-dark-grey-background-gradient-x: #59595b;
     --ee-dark-grey-background-gradient-y: #464549;
-    --ee-color-dark-grey-hover: #59595B;
-    --ee-color-dark-grey-contrast-bright: #baf73c;
-    --ee-color-dark-grey-contrast-dark: #00aa55;
+    --ee-color-dark-grey-hover: #fafafa;
+    --ee-color-dark-grey-hover-contrast: #141415;
+    --ee-color-dark-grey-01-transparency: rgba( 70,69,73,0.01 );
+    --ee-color-dark-grey-25-transparency: rgba( 70,69,73,0.25 );
+    --ee-color-dark-grey-50-transparency: rgba( 70,69,73,0.50 );
+    --ee-color-dark-grey-75-transparency: rgba( 70,69,73,0.75 );
 
-    --ee-color-black: #2F3334;
+        /** Black **/
+    --ee-color-black: #2f3334;
+    --ee-color-black-background-contrast: #eee;
+    --ee-color-black-foreground-contrast: #eee;
     --ee-black-background-gradient-x: #424646;
-    --ee-black-background-gradient-y: #2F3334;
-    --ee-color-black-hover: #424646;
-    --ee-color-black-contrast-bright: #fefefe;
-    --ee-color-black-contrast-dark: #4183d7;
-    --ee-color-black-01-transparency: rgba( 0,0,0,0.01 );
-    --ee-color-black-25-transparency: rgba( 0,0,0,0.25 );
-    --ee-color-black-50-transparency: rgba( 0,0,0,0.50 );
-    --ee-color-black-75-transparency: rgba( 0,0,0,0.75 );
+    --ee-black-background-gradient-y: #2f3334;
+    --ee-color-black-hover: #fff;
+    --ee-color-black-hover-contrast: #535e5f;
+    --ee-color-black-01-transparency: rgba( 47,51,52,0.01 );
+    --ee-color-black-25-transparency: rgba( 47,51,52,0.25 );
+    --ee-color-black-50-transparency: rgba( 47,51,52,0.50 );
+    --ee-color-black-75-transparency: rgba( 47,51,52,0.75 );
 
+        /** White **/
     --ee-color-white: #fff;
+    --ee-color-white-background-contrast: #292929;
+    --ee-color-white-foreground-contrast: #292929;
     --ee-white-background-gradient-x: #ffecdb;
     --ee-white-background-gradient-y: #fff;
-    --ee-color-white-hover: #ffecdb;
-    --ee-color-white-contrast-bright: #7462e0;
-    --ee-color-white-contrast-dark: #2e343b;
+    --ee-color-white-hover: #595959;
+    --ee-color-white-hover-contrast: #d9d9d9;
     --ee-color-white-01-transparency: rgba( 255,255,255,0.01 );
     --ee-color-white-25-transparency: rgba( 255,255,255,0.25 );
     --ee-color-white-50-transparency: rgba( 255,255,255,0.50 );
     --ee-color-white-75-transparency: rgba( 255,255,255,0.75 );
+
 }
