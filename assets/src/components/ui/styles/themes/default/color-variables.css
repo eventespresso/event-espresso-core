@@ -49,8 +49,8 @@
     --ee-color-red-foreground-contrast: #fff;
     --ee-red-background-gradient-x: #c8194e;
     --ee-red-background-gradient-y: #b4113f;
-    --ee-color-red-hover: #c8194e;
-    --ee-color-red-hover-contrast: #f0f0f0;
+    --ee-color-red-hover: #f0f0f0;
+    --ee-color-red-hover-contrast: #c8194e;
     --ee-color-red-01-transparency: rgba( 173,16,60,0.01 );
     --ee-color-red-25-transparency: rgba( 173,16,60,0.25 );
     --ee-color-red-50-transparency: rgba( 173,16,60,0.50 );

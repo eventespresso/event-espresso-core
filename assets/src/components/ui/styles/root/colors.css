@@ -112,7 +112,7 @@
 .ee-red-background-color.with-linear-gradient.with-hover:hover,
 .ee-red-background-color.with-hover:hover {
     background-image: none;
-    background-color: var( --ee-color-red-hover-contrast, #f0f0f0 );
+    background-color: var( --ee-color-red-hover-contrast, #c8194e );
 }
 .ee-red-color {
     color: var(--ee-color-red, #ad103c);
@@ -121,7 +121,7 @@
     background-color: var(--ee-color-red-background-contrast, #fff );
 }
 .ee-red-color.with-accessible-background.with-hover:hover {
-    background-color: var(--ee-color-red-hover, #c8194e);
+    background-color: var(--ee-color-red-hover, #f0f0f0);
 }
 .ee-red-background-color.with-linear-gradient {
     background-image: linear-gradient(
