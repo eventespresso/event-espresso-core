@@ -79,6 +79,7 @@
 		"eslint": "^5.16.0",
 		"eslint-plugin-jest": "22.5.1",
 		"license-checker": "^25.0.1",
+		"handlebars": "^4.1.2",
 		"lodash": "^4.17.11",
 		"mini-css-extract-plugin": "^0.6.0",
 		"pegjs": "^0.10.0",
