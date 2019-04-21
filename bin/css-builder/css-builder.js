@@ -9,6 +9,7 @@ const { startCase } = require( 'lodash' );
 const getCssFiles = require( './get-css-files' );
 const buildSectionTemplates = require( './build-section-templates' );
 const buildColorCssItems = require( './build-color-css-items' );
+const buildStatusItems = require( './build-status-items' );
 
 // constants;
 const DONE = chalk.reset.inverse.bold.green( 'DONE' );
@@ -42,13 +43,15 @@ function writeCssDemoFile() {
 /**
  * Write the main file template
  */
-function writeCssDemoMainFile() {
+function writeCssDemoMainFile( themeDirectory ) {
+	themeDirectory = themeDirectory === undefined ? 'default' : themeDirectory;
+	const config = getConfig( themeDirectory );
 	const mainTemplateVars = {
 		themeName: 'Default',
 		variableStylesheets: getCssFiles( 'themes/default', true ),
 		baseStylesheets: getCssFiles( 'root' ),
 		overrideStylesheets: getCssFiles( 'themes/default' ),
-		demoSections: buildSectionTemplates(),
+		demoSections: buildSectionTemplates( config ),
 	};
 	const mainTemplate = compile( MAIN_TEMPLATE );
 	const demoHtml = mainTemplate( mainTemplateVars );
@@ -103,6 +106,32 @@ function writeColorsCss( themeDirectory, variables = false ) {
 	);
 }
 
+function writeEntityStatusCss( themeDirectory ) {
+	if ( themeDirectory !== 'default' ) {
+		return;
+	}
+	const destPath = path.resolve( STYLES_DIRECTORY, 'root', 'entity-status.css' );
+	const config = getConfig( themeDirectory );
+	const entityStatusItems = buildStatusItems( config );
+	const templatePath = path.resolve( CSS_TEMPLATES_PATH, 'entity-status.css.handlebars' );
+	const template = compile( fs.readFileSync( templatePath, 'utf8' ) );
+	const parsedTemplate = template( {
+		themeName: startCase( themeDirectory ),
+		status_groups: entityStatusItems,
+	} );
+	process.stdout.write( `${ path.basename( destPath ) }\n` );
+	fs.writeFileSync( destPath, parsedTemplate );
+	process.stdout.write(
+		chalk.green(
+			chalk.green( '  \u2022 ' ) +
+			path.relative( CSS_TEMPLATES_PATH, 'entity-status.css.handlebars' ) +
+			chalk.green( ' \u21D2 ' ) +
+			path.relative( STYLES_DIRECTORY, destPath ) +
+			'\n'
+		)
+	);
+}
+
 function createDemos() {
 	const destPath = path.resolve( STYLES_DIRECTORY, 'themes', 'default', 'demo' );
 	process.stdout.write( `Writing css demo files: ${ path.basename( destPath ) }\n` );
@@ -117,6 +146,7 @@ function createDemos() {
 function buildFiles() {
 	writeColorsCss( 'default' );
 	writeColorsCss( 'default', true );
+	writeEntityStatusCss('default');
 	createDemos();
 	process.stdout.write( `${ DONE }\n` );
 }

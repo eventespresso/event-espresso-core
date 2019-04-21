@@ -1,3 +1,4 @@
+const { find } = require( 'lodash' );
 const colors = [
 	{
 		color: 'pink',
@@ -157,6 +158,133 @@ const colors = [
 	},
 ];
 
+const statuses = {
+	transaction: [
+		{
+			status_label: 'completed',
+			status_code: 'TCM',
+			color: find( colors, [ 'color', 'green' ] ),
+		},
+		{
+			status_label: 'failed',
+			status_code: 'TFL',
+			color: find( colors, [ 'color', 'pink' ] ),
+		},
+		{
+			status_label: 'open',
+			status_code: 'TOP',
+			color: find( colors, [ 'color', 'orange' ] ),
+		},
+		{
+			status_label: 'abandoned',
+			status_code: 'TAB',
+			color: find( colors, [ 'color', 'abandoned' ] ),
+		},
+		{
+			status_label: 'incomplete',
+			status_code: 'TIN',
+			color: find( colors, [ 'color', 'light-blue' ] ),
+		},
+	],
+	payment: [
+		{
+			status_label: 'approved',
+			status_code: 'PAP',
+			color: find( colors, [ 'color', 'green' ] ),
+		},
+		{
+			status_label: 'declined',
+			status_code: 'PDC',
+			color: find( colors, [ 'color', 'pink' ] ),
+		},
+		{
+			status_label: 'cancelled',
+			status_code: 'PCN',
+			color: find( colors, [ 'color', 'grey' ] ),
+		},
+		{
+			status_label: 'failed',
+			status_code: 'PFL',
+			color: find( colors, [ 'color', 'orange' ] ),
+		},
+		{
+			status_label: 'pending',
+			status_code: 'PPN',
+			color: find( colors, [ 'color', 'light-blue' ] ),
+		},
+	],
+	registration: [
+		{
+			status_label: 'approved',
+			status_code: 'RAP',
+			color: find( colors, [ 'color', 'green' ] ),
+		},
+		{
+			status_label: 'declined',
+			status_code: 'RDC',
+			color: find( colors, [ 'color', 'pink' ] ),
+		},
+		{
+			status_label: 'not approved',
+			status_code: 'RNA',
+			color: find( colors, [ 'color', 'orange' ] ),
+		},
+		{
+			status_label: 'pending',
+			status_code: 'RPP',
+			color: find( colors, [ 'color', 'light-blue' ] ),
+		},
+		{
+			status_label: 'cancelled',
+			status_code: 'RCN',
+			color: find( colors, [ 'color', 'grey' ] ),
+		},
+		{
+			status_label: 'incomplete',
+			status_code: 'RIC',
+			color: find( colors, [ 'color', 'yellow' ] ),
+		},
+	],
+	datetime: [
+		{
+			status_label: 'active',
+			status_code: 'DTA',
+			color: find( colors, [ 'color', 'green' ] ),
+		},
+		{
+			status_label: 'cancelled',
+			status_code: 'DTC',
+			color: find( colors, [ 'color', 'pink' ] ),
+		},
+		{
+			status_label: 'expired',
+			status_code: 'DTE',
+			color: find( colors, [ 'color', 'grey' ] ),
+		},
+		{
+			status_label: 'sold out',
+			status_code: 'DTS',
+			color: find( colors, [ 'color', 'yellow' ] ),
+		},
+		{
+			status_label: 'inactive',
+			status_code: 'DTI',
+			color: find( colors, [ 'color', 'dark-grey' ] ),
+		},
+		{
+			status_label: 'postponed',
+			status_code: 'DTP',
+			color: find( colors, [ 'color', 'orange' ] ),
+		},
+		{
+			status_label: 'upcoming',
+			status_code: 'DTU',
+			color: find( colors, [ 'color', 'light-blue' ] ),
+		},
+	],
+};
+
 module.exports = {
 	colors,
+	statuses,
 };

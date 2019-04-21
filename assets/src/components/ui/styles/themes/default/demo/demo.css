@@ -29,6 +29,7 @@ body {
     background-color: #f2f6f5;
     padding: 10px;
     margin: 10px;
+    max-width: calc( 33% - 40px );
 }
 .demo-swatch {
     margin-bottom: 10px;

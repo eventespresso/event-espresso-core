@@ -1112,5 +1112,880 @@
 </div>
     </div>
 </section>
+            <section class="demo-section">
+    <h2>Entity Status Colors</h2>
+    <p>These are status colors for various Event Espresso model entities. The following schema is used for the class names:</p>
+    <ul>
+        <li><code class="alternate">.ee-status-color-{status_code}</code>: The text will be colored for the given status code.</li>
+        <li><code class="alternate">.ee-status-background-color-{status_code}</code>: The background color will be colored for the given status code.</li>
+        <li><code class="alternate">.ee-status-color-{status_code}.with-accessible-background</code>: This will add a background color that meets the accessible color contrast ratio.</li>
+        <li><code class="alternate">.ee-status-color-{status_code}.with-accessible-background.with-hover</code>: This adds a hover color to the element.</li>
+        <li><code class="alternate">.ee-status-background-color-{status_code}.with-accessible-foreground</code>: This will apply a color to the content with an accessible color contrast ratio.</li>
+        <li><code class="alternate">.ee-status-background-color-{status_code}.with-accessible-foreground.with-hover</code>: Applies a color for the hover event on the selector.</li>
+    </ul>
+    <h3>Transaction</h3>
+<div class="demo-items">
+    <div class="demo-item">
+    <h4>Transaction Completed (TCM)</h4>
+    <div class="demo-swatch">
+        <code>.ee-status-color-TCM</code>
+        <div class="demo-box with-text ee-status-color-TCM">
+            <p>Sample Text</p>
+        </div>
+    </div>
+    <div class="demo-swatch">
+        <code>.ee-status-color-TCM.with-accessible-background</code>
+        <div class="demo-box with-text ee-status-color-TCM with-accessible-background">
+            <p>Sample Text</p>
+        </div>
+    </div>
+    <div class="demo-swatch">
+        <code>.ee-status-color-TCM.with-accessible-background.with-hover</code>
+        <div class="demo-box with-text ee-status-color-TCM with-accessible-background with-hover">
+            <p>Sample Text</p>
+        </div>
+    </div>
+    <div class="demo-swatch">
+        <code>.ee-status-background-color-TCM</code>
+        <div class="demo-box ee-status-background-color-TCM"></div>
+    </div>
+    <div class="demo-swatch">
+        <code>.ee-status-background-color-TCM.with-accessible-foreground</code>
+        <div class="demo-box with-text ee-status-background-color-TCM with-accessible-foreground">
+            <p>Sample Text</p>
+        </div>
+    </div>
+    <div class="demo-swatch">
+        <code>.ee-status-background-color-TCM.with-accessible-foreground.with-hover</code>
+        <div class="demo-box with-text ee-status-background-color-TCM with-accessible-foreground with-hover">
+            <p>Sample Text</p>
+        </div>
+    </div>
+</div>
+    <div class="demo-item">
+    <h4>Transaction Failed (TFL)</h4>
+    <div class="demo-swatch">
+        <code>.ee-status-color-TFL</code>
+        <div class="demo-box with-text ee-status-color-TFL">
+            <p>Sample Text</p>
+        </div>
+    </div>
+    <div class="demo-swatch">
+        <code>.ee-status-color-TFL.with-accessible-background</code>
+        <div class="demo-box with-text ee-status-color-TFL with-accessible-background">
+            <p>Sample Text</p>
+        </div>
+    </div>
+    <div class="demo-swatch">
+        <code>.ee-status-color-TFL.with-accessible-background.with-hover</code>
+        <div class="demo-box with-text ee-status-color-TFL with-accessible-background with-hover">
+            <p>Sample Text</p>
+        </div>
+    </div>
+    <div class="demo-swatch">
+        <code>.ee-status-background-color-TFL</code>
+        <div class="demo-box ee-status-background-color-TFL"></div>
+    </div>
+    <div class="demo-swatch">
+        <code>.ee-status-background-color-TFL.with-accessible-foreground</code>
+        <div class="demo-box with-text ee-status-background-color-TFL with-accessible-foreground">
+            <p>Sample Text</p>
+        </div>
+    </div>
+    <div class="demo-swatch">
+        <code>.ee-status-background-color-TFL.with-accessible-foreground.with-hover</code>
+        <div class="demo-box with-text ee-status-background-color-TFL with-accessible-foreground with-hover">
+            <p>Sample Text</p>
+        </div>
+    </div>
+</div>
+    <div class="demo-item">
+    <h4>Transaction Open (TOP)</h4>
+    <div class="demo-swatch">
+        <code>.ee-status-color-TOP</code>
+        <div class="demo-box with-text ee-status-color-TOP">
+            <p>Sample Text</p>
+        </div>
+    </div>
+    <div class="demo-swatch">
+        <code>.ee-status-color-TOP.with-accessible-background</code>
+        <div class="demo-box with-text ee-status-color-TOP with-accessible-background">
+            <p>Sample Text</p>
+        </div>
+    </div>
+    <div class="demo-swatch">
+        <code>.ee-status-color-TOP.with-accessible-background.with-hover</code>
+        <div class="demo-box with-text ee-status-color-TOP with-accessible-background with-hover">
+            <p>Sample Text</p>
+        </div>
+    </div>
+    <div class="demo-swatch">
+        <code>.ee-status-background-color-TOP</code>
+        <div class="demo-box ee-status-background-color-TOP"></div>
+    </div>
+    <div class="demo-swatch">
+        <code>.ee-status-background-color-TOP.with-accessible-foreground</code>
+        <div class="demo-box with-text ee-status-background-color-TOP with-accessible-foreground">
+            <p>Sample Text</p>
+        </div>
+    </div>
+    <div class="demo-swatch">
+        <code>.ee-status-background-color-TOP.with-accessible-foreground.with-hover</code>
+        <div class="demo-box with-text ee-status-background-color-TOP with-accessible-foreground with-hover">
+            <p>Sample Text</p>
+        </div>
+    </div>
+</div>
+    <div class="demo-item">
+    <h4>Transaction Abandoned (TAB)</h4>
+    <div class="demo-swatch">
+        <code>.ee-status-color-TAB</code>
+        <div class="demo-box with-text ee-status-color-TAB">
+            <p>Sample Text</p>
+        </div>
+    </div>
+    <div class="demo-swatch">
+        <code>.ee-status-color-TAB.with-accessible-background</code>
+        <div class="demo-box with-text ee-status-color-TAB with-accessible-background">
+            <p>Sample Text</p>
+        </div>
+    </div>
+    <div class="demo-swatch">
+        <code>.ee-status-color-TAB.with-accessible-background.with-hover</code>
+        <div class="demo-box with-text ee-status-color-TAB with-accessible-background with-hover">
+            <p>Sample Text</p>
+        </div>
+    </div>
+    <div class="demo-swatch">
+        <code>.ee-status-background-color-TAB</code>
+        <div class="demo-box ee-status-background-color-TAB"></div>
+    </div>
+    <div class="demo-swatch">
+        <code>.ee-status-background-color-TAB.with-accessible-foreground</code>
+        <div class="demo-box with-text ee-status-background-color-TAB with-accessible-foreground">
+            <p>Sample Text</p>
+        </div>
+    </div>
+    <div class="demo-swatch">
+        <code>.ee-status-background-color-TAB.with-accessible-foreground.with-hover</code>
+        <div class="demo-box with-text ee-status-background-color-TAB with-accessible-foreground with-hover">
+            <p>Sample Text</p>
+        </div>
+    </div>
+</div>
+    <div class="demo-item">
+    <h4>Transaction Incomplete (TIN)</h4>
+    <div class="demo-swatch">
+        <code>.ee-status-color-TIN</code>
+        <div class="demo-box with-text ee-status-color-TIN">
+            <p>Sample Text</p>
+        </div>
+    </div>
+    <div class="demo-swatch">
+        <code>.ee-status-color-TIN.with-accessible-background</code>
+        <div class="demo-box with-text ee-status-color-TIN with-accessible-background">
+            <p>Sample Text</p>
+        </div>
+    </div>
+    <div class="demo-swatch">
+        <code>.ee-status-color-TIN.with-accessible-background.with-hover</code>
+        <div class="demo-box with-text ee-status-color-TIN with-accessible-background with-hover">
+            <p>Sample Text</p>
+        </div>
+    </div>
+    <div class="demo-swatch">
+        <code>.ee-status-background-color-TIN</code>
+        <div class="demo-box ee-status-background-color-TIN"></div>
+    </div>
+    <div class="demo-swatch">
+        <code>.ee-status-background-color-TIN.with-accessible-foreground</code>
+        <div class="demo-box with-text ee-status-background-color-TIN with-accessible-foreground">
+            <p>Sample Text</p>
+        </div>
+    </div>
+    <div class="demo-swatch">
+        <code>.ee-status-background-color-TIN.with-accessible-foreground.with-hover</code>
+        <div class="demo-box with-text ee-status-background-color-TIN with-accessible-foreground with-hover">
+            <p>Sample Text</p>
+        </div>
+    </div>
+</div>
+</div>
+    <h3>Payment</h3>
+<div class="demo-items">
+    <div class="demo-item">
+    <h4>Payment Approved (PAP)</h4>
+    <div class="demo-swatch">
+        <code>.ee-status-color-PAP</code>
+        <div class="demo-box with-text ee-status-color-PAP">
+            <p>Sample Text</p>
+        </div>
+    </div>
+    <div class="demo-swatch">
+        <code>.ee-status-color-PAP.with-accessible-background</code>
+        <div class="demo-box with-text ee-status-color-PAP with-accessible-background">
+            <p>Sample Text</p>
+        </div>
+    </div>
+    <div class="demo-swatch">
+        <code>.ee-status-color-PAP.with-accessible-background.with-hover</code>
+        <div class="demo-box with-text ee-status-color-PAP with-accessible-background with-hover">
+            <p>Sample Text</p>
+        </div>
+    </div>
+    <div class="demo-swatch">
+        <code>.ee-status-background-color-PAP</code>
+        <div class="demo-box ee-status-background-color-PAP"></div>
+    </div>
+    <div class="demo-swatch">
+        <code>.ee-status-background-color-PAP.with-accessible-foreground</code>
+        <div class="demo-box with-text ee-status-background-color-PAP with-accessible-foreground">
+            <p>Sample Text</p>
+        </div>
+    </div>
+    <div class="demo-swatch">
+        <code>.ee-status-background-color-PAP.with-accessible-foreground.with-hover</code>
+        <div class="demo-box with-text ee-status-background-color-PAP with-accessible-foreground with-hover">
+            <p>Sample Text</p>
+        </div>
+    </div>
+</div>
+    <div class="demo-item">
+    <h4>Payment Declined (PDC)</h4>
+    <div class="demo-swatch">
+        <code>.ee-status-color-PDC</code>
+        <div class="demo-box with-text ee-status-color-PDC">
+            <p>Sample Text</p>
+        </div>
+    </div>
+    <div class="demo-swatch">
+        <code>.ee-status-color-PDC.with-accessible-background</code>
+        <div class="demo-box with-text ee-status-color-PDC with-accessible-background">
+            <p>Sample Text</p>
+        </div>
+    </div>
+    <div class="demo-swatch">
+        <code>.ee-status-color-PDC.with-accessible-background.with-hover</code>
+        <div class="demo-box with-text ee-status-color-PDC with-accessible-background with-hover">
+            <p>Sample Text</p>
+        </div>
+    </div>
+    <div class="demo-swatch">
+        <code>.ee-status-background-color-PDC</code>
+        <div class="demo-box ee-status-background-color-PDC"></div>
+    </div>
+    <div class="demo-swatch">
+        <code>.ee-status-background-color-PDC.with-accessible-foreground</code>
+        <div class="demo-box with-text ee-status-background-color-PDC with-accessible-foreground">
+            <p>Sample Text</p>
+        </div>
+    </div>
+    <div class="demo-swatch">
+        <code>.ee-status-background-color-PDC.with-accessible-foreground.with-hover</code>
+        <div class="demo-box with-text ee-status-background-color-PDC with-accessible-foreground with-hover">
+            <p>Sample Text</p>
+        </div>
+    </div>
+</div>
+    <div class="demo-item">
+    <h4>Payment Cancelled (PCN)</h4>
+    <div class="demo-swatch">
+        <code>.ee-status-color-PCN</code>
+        <div class="demo-box with-text ee-status-color-PCN">
+            <p>Sample Text</p>
+        </div>
+    </div>
+    <div class="demo-swatch">
+        <code>.ee-status-color-PCN.with-accessible-background</code>
+        <div class="demo-box with-text ee-status-color-PCN with-accessible-background">
+            <p>Sample Text</p>
+        </div>
+    </div>
+    <div class="demo-swatch">
+        <code>.ee-status-color-PCN.with-accessible-background.with-hover</code>
+        <div class="demo-box with-text ee-status-color-PCN with-accessible-background with-hover">
+            <p>Sample Text</p>
+        </div>
+    </div>
+    <div class="demo-swatch">
+        <code>.ee-status-background-color-PCN</code>
+        <div class="demo-box ee-status-background-color-PCN"></div>
+    </div>
+    <div class="demo-swatch">
+        <code>.ee-status-background-color-PCN.with-accessible-foreground</code>
+        <div class="demo-box with-text ee-status-background-color-PCN with-accessible-foreground">
+            <p>Sample Text</p>
+        </div>
+    </div>
+    <div class="demo-swatch">
+        <code>.ee-status-background-color-PCN.with-accessible-foreground.with-hover</code>
+        <div class="demo-box with-text ee-status-background-color-PCN with-accessible-foreground with-hover">
+            <p>Sample Text</p>
+        </div>
+    </div>
+</div>
+    <div class="demo-item">
+    <h4>Payment Failed (PFL)</h4>
+    <div class="demo-swatch">
+        <code>.ee-status-color-PFL</code>
+        <div class="demo-box with-text ee-status-color-PFL">
+            <p>Sample Text</p>
+        </div>
+    </div>
+    <div class="demo-swatch">
+        <code>.ee-status-color-PFL.with-accessible-background</code>
+        <div class="demo-box with-text ee-status-color-PFL with-accessible-background">
+            <p>Sample Text</p>
+        </div>
+    </div>
+    <div class="demo-swatch">
+        <code>.ee-status-color-PFL.with-accessible-background.with-hover</code>
+        <div class="demo-box with-text ee-status-color-PFL with-accessible-background with-hover">
+            <p>Sample Text</p>
+        </div>
+    </div>
+    <div class="demo-swatch">
+        <code>.ee-status-background-color-PFL</code>
+        <div class="demo-box ee-status-background-color-PFL"></div>
+    </div>
+    <div class="demo-swatch">
+        <code>.ee-status-background-color-PFL.with-accessible-foreground</code>
+        <div class="demo-box with-text ee-status-background-color-PFL with-accessible-foreground">
+            <p>Sample Text</p>
+        </div>
+    </div>
+    <div class="demo-swatch">
+        <code>.ee-status-background-color-PFL.with-accessible-foreground.with-hover</code>
+        <div class="demo-box with-text ee-status-background-color-PFL with-accessible-foreground with-hover">
+            <p>Sample Text</p>
+        </div>
+    </div>
+</div>
+    <div class="demo-item">
+    <h4>Payment Pending (PPN)</h4>
+    <div class="demo-swatch">
+        <code>.ee-status-color-PPN</code>
+        <div class="demo-box with-text ee-status-color-PPN">
+            <p>Sample Text</p>
+        </div>
+    </div>
+    <div class="demo-swatch">
+        <code>.ee-status-color-PPN.with-accessible-background</code>
+        <div class="demo-box with-text ee-status-color-PPN with-accessible-background">
+            <p>Sample Text</p>
+        </div>
+    </div>
+    <div class="demo-swatch">
+        <code>.ee-status-color-PPN.with-accessible-background.with-hover</code>
+        <div class="demo-box with-text ee-status-color-PPN with-accessible-background with-hover">
+            <p>Sample Text</p>
+        </div>
+    </div>
+    <div class="demo-swatch">
+        <code>.ee-status-background-color-PPN</code>
+        <div class="demo-box ee-status-background-color-PPN"></div>
+    </div>
+    <div class="demo-swatch">
+        <code>.ee-status-background-color-PPN.with-accessible-foreground</code>
+        <div class="demo-box with-text ee-status-background-color-PPN with-accessible-foreground">
+            <p>Sample Text</p>
+        </div>
+    </div>
+    <div class="demo-swatch">
+        <code>.ee-status-background-color-PPN.with-accessible-foreground.with-hover</code>
+        <div class="demo-box with-text ee-status-background-color-PPN with-accessible-foreground with-hover">
+            <p>Sample Text</p>
+        </div>
+    </div>
+</div>
+</div>
+    <h3>Registration</h3>
+<div class="demo-items">
+    <div class="demo-item">
+    <h4>Registration Approved (RAP)</h4>
+    <div class="demo-swatch">
+        <code>.ee-status-color-RAP</code>
+        <div class="demo-box with-text ee-status-color-RAP">
+            <p>Sample Text</p>
+        </div>
+    </div>
+    <div class="demo-swatch">
+        <code>.ee-status-color-RAP.with-accessible-background</code>
+        <div class="demo-box with-text ee-status-color-RAP with-accessible-background">
+            <p>Sample Text</p>
+        </div>
+    </div>
+    <div class="demo-swatch">
+        <code>.ee-status-color-RAP.with-accessible-background.with-hover</code>
+        <div class="demo-box with-text ee-status-color-RAP with-accessible-background with-hover">
+            <p>Sample Text</p>
+        </div>
+    </div>
+    <div class="demo-swatch">
+        <code>.ee-status-background-color-RAP</code>
+        <div class="demo-box ee-status-background-color-RAP"></div>
+    </div>
+    <div class="demo-swatch">
+        <code>.ee-status-background-color-RAP.with-accessible-foreground</code>
+        <div class="demo-box with-text ee-status-background-color-RAP with-accessible-foreground">
+            <p>Sample Text</p>
+        </div>
+    </div>
+    <div class="demo-swatch">
+        <code>.ee-status-background-color-RAP.with-accessible-foreground.with-hover</code>
+        <div class="demo-box with-text ee-status-background-color-RAP with-accessible-foreground with-hover">
+            <p>Sample Text</p>
+        </div>
+    </div>
+</div>
+    <div class="demo-item">
+    <h4>Registration Declined (RDC)</h4>
+    <div class="demo-swatch">
+        <code>.ee-status-color-RDC</code>
+        <div class="demo-box with-text ee-status-color-RDC">
+            <p>Sample Text</p>
+        </div>
+    </div>
+    <div class="demo-swatch">
+        <code>.ee-status-color-RDC.with-accessible-background</code>
+        <div class="demo-box with-text ee-status-color-RDC with-accessible-background">
+            <p>Sample Text</p>
+        </div>
+    </div>
+    <div class="demo-swatch">
+        <code>.ee-status-color-RDC.with-accessible-background.with-hover</code>
+        <div class="demo-box with-text ee-status-color-RDC with-accessible-background with-hover">
+            <p>Sample Text</p>
+        </div>
+    </div>
+    <div class="demo-swatch">
+        <code>.ee-status-background-color-RDC</code>
+        <div class="demo-box ee-status-background-color-RDC"></div>
+    </div>
+    <div class="demo-swatch">
+        <code>.ee-status-background-color-RDC.with-accessible-foreground</code>
+        <div class="demo-box with-text ee-status-background-color-RDC with-accessible-foreground">
+            <p>Sample Text</p>
+        </div>
+    </div>
+    <div class="demo-swatch">
+        <code>.ee-status-background-color-RDC.with-accessible-foreground.with-hover</code>
+        <div class="demo-box with-text ee-status-background-color-RDC with-accessible-foreground with-hover">
+            <p>Sample Text</p>
+        </div>
+    </div>
+</div>
+    <div class="demo-item">
+    <h4>Registration Not Approved (RNA)</h4>
+    <div class="demo-swatch">
+        <code>.ee-status-color-RNA</code>
+        <div class="demo-box with-text ee-status-color-RNA">
+            <p>Sample Text</p>
+        </div>
+    </div>
+    <div class="demo-swatch">
+        <code>.ee-status-color-RNA.with-accessible-background</code>
+        <div class="demo-box with-text ee-status-color-RNA with-accessible-background">
+            <p>Sample Text</p>
+        </div>
+    </div>
+    <div class="demo-swatch">
+        <code>.ee-status-color-RNA.with-accessible-background.with-hover</code>
+        <div class="demo-box with-text ee-status-color-RNA with-accessible-background with-hover">
+            <p>Sample Text</p>
+        </div>
+    </div>
+    <div class="demo-swatch">
+        <code>.ee-status-background-color-RNA</code>
+        <div class="demo-box ee-status-background-color-RNA"></div>
+    </div>
+    <div class="demo-swatch">
+        <code>.ee-status-background-color-RNA.with-accessible-foreground</code>
+        <div class="demo-box with-text ee-status-background-color-RNA with-accessible-foreground">
+            <p>Sample Text</p>
+        </div>
+    </div>
+    <div class="demo-swatch">
+        <code>.ee-status-background-color-RNA.with-accessible-foreground.with-hover</code>
+        <div class="demo-box with-text ee-status-background-color-RNA with-accessible-foreground with-hover">
+            <p>Sample Text</p>
+        </div>
+    </div>
+</div>
+    <div class="demo-item">
+    <h4>Registration Pending (RPP)</h4>
+    <div class="demo-swatch">
+        <code>.ee-status-color-RPP</code>
+        <div class="demo-box with-text ee-status-color-RPP">
+            <p>Sample Text</p>
+        </div>
+    </div>
+    <div class="demo-swatch">
+        <code>.ee-status-color-RPP.with-accessible-background</code>
+        <div class="demo-box with-text ee-status-color-RPP with-accessible-background">
+            <p>Sample Text</p>
+        </div>
+    </div>
+    <div class="demo-swatch">
+        <code>.ee-status-color-RPP.with-accessible-background.with-hover</code>
+        <div class="demo-box with-text ee-status-color-RPP with-accessible-background with-hover">
+            <p>Sample Text</p>
+        </div>
+    </div>
+    <div class="demo-swatch">
+        <code>.ee-status-background-color-RPP</code>
+        <div class="demo-box ee-status-background-color-RPP"></div>
+    </div>
+    <div class="demo-swatch">
+        <code>.ee-status-background-color-RPP.with-accessible-foreground</code>
+        <div class="demo-box with-text ee-status-background-color-RPP with-accessible-foreground">
+            <p>Sample Text</p>
+        </div>
+    </div>
+    <div class="demo-swatch">
+        <code>.ee-status-background-color-RPP.with-accessible-foreground.with-hover</code>
+        <div class="demo-box with-text ee-status-background-color-RPP with-accessible-foreground with-hover">
+            <p>Sample Text</p>
+        </div>
+    </div>
+</div>
+    <div class="demo-item">
+    <h4>Registration Cancelled (RCN)</h4>
+    <div class="demo-swatch">
+        <code>.ee-status-color-RCN</code>
+        <div class="demo-box with-text ee-status-color-RCN">
+            <p>Sample Text</p>
+        </div>
+    </div>
+    <div class="demo-swatch">
+        <code>.ee-status-color-RCN.with-accessible-background</code>
+        <div class="demo-box with-text ee-status-color-RCN with-accessible-background">
+            <p>Sample Text</p>
+        </div>
+    </div>
+    <div class="demo-swatch">
+        <code>.ee-status-color-RCN.with-accessible-background.with-hover</code>
+        <div class="demo-box with-text ee-status-color-RCN with-accessible-background with-hover">
+            <p>Sample Text</p>
+        </div>
+    </div>
+    <div class="demo-swatch">
+        <code>.ee-status-background-color-RCN</code>
+        <div class="demo-box ee-status-background-color-RCN"></div>
+    </div>
+    <div class="demo-swatch">
+        <code>.ee-status-background-color-RCN.with-accessible-foreground</code>
+        <div class="demo-box with-text ee-status-background-color-RCN with-accessible-foreground">
+            <p>Sample Text</p>
+        </div>
+    </div>
+    <div class="demo-swatch">
+        <code>.ee-status-background-color-RCN.with-accessible-foreground.with-hover</code>
+        <div class="demo-box with-text ee-status-background-color-RCN with-accessible-foreground with-hover">
+            <p>Sample Text</p>
+        </div>
+    </div>
+</div>
+    <div class="demo-item">
+    <h4>Registration Incomplete (RIC)</h4>
+    <div class="demo-swatch">
+        <code>.ee-status-color-RIC</code>
+        <div class="demo-box with-text ee-status-color-RIC">
+            <p>Sample Text</p>
+        </div>
+    </div>
+    <div class="demo-swatch">
+        <code>.ee-status-color-RIC.with-accessible-background</code>
+        <div class="demo-box with-text ee-status-color-RIC with-accessible-background">
+            <p>Sample Text</p>
+        </div>
+    </div>
+    <div class="demo-swatch">
+        <code>.ee-status-color-RIC.with-accessible-background.with-hover</code>
+        <div class="demo-box with-text ee-status-color-RIC with-accessible-background with-hover">
+            <p>Sample Text</p>
+        </div>
+    </div>
+    <div class="demo-swatch">
+        <code>.ee-status-background-color-RIC</code>
+        <div class="demo-box ee-status-background-color-RIC"></div>
+    </div>
+    <div class="demo-swatch">
+        <code>.ee-status-background-color-RIC.with-accessible-foreground</code>
+        <div class="demo-box with-text ee-status-background-color-RIC with-accessible-foreground">
+            <p>Sample Text</p>
+        </div>
+    </div>
+    <div class="demo-swatch">
+        <code>.ee-status-background-color-RIC.with-accessible-foreground.with-hover</code>
+        <div class="demo-box with-text ee-status-background-color-RIC with-accessible-foreground with-hover">
+            <p>Sample Text</p>
+        </div>
+    </div>
+</div>
+</div>
+    <h3>Datetime</h3>
+<div class="demo-items">
+    <div class="demo-item">
+    <h4>Datetime Active (DTA)</h4>
+    <div class="demo-swatch">
+        <code>.ee-status-color-DTA</code>
+        <div class="demo-box with-text ee-status-color-DTA">
+            <p>Sample Text</p>
+        </div>
+    </div>
+    <div class="demo-swatch">
+        <code>.ee-status-color-DTA.with-accessible-background</code>
+        <div class="demo-box with-text ee-status-color-DTA with-accessible-background">
+            <p>Sample Text</p>
+        </div>
+    </div>
+    <div class="demo-swatch">
+        <code>.ee-status-color-DTA.with-accessible-background.with-hover</code>
+        <div class="demo-box with-text ee-status-color-DTA with-accessible-background with-hover">
+            <p>Sample Text</p>
+        </div>
+    </div>
+    <div class="demo-swatch">
+        <code>.ee-status-background-color-DTA</code>
+        <div class="demo-box ee-status-background-color-DTA"></div>
+    </div>
+    <div class="demo-swatch">
+        <code>.ee-status-background-color-DTA.with-accessible-foreground</code>
+        <div class="demo-box with-text ee-status-background-color-DTA with-accessible-foreground">
+            <p>Sample Text</p>
+        </div>
+    </div>
+    <div class="demo-swatch">
+        <code>.ee-status-background-color-DTA.with-accessible-foreground.with-hover</code>
+        <div class="demo-box with-text ee-status-background-color-DTA with-accessible-foreground with-hover">
+            <p>Sample Text</p>
+        </div>
+    </div>
+</div>
+    <div class="demo-item">
+    <h4>Datetime Cancelled (DTC)</h4>
+    <div class="demo-swatch">
+        <code>.ee-status-color-DTC</code>
+        <div class="demo-box with-text ee-status-color-DTC">
+            <p>Sample Text</p>
+        </div>
+    </div>
+    <div class="demo-swatch">
+        <code>.ee-status-color-DTC.with-accessible-background</code>
+        <div class="demo-box with-text ee-status-color-DTC with-accessible-background">
+            <p>Sample Text</p>
+        </div>
+    </div>
+    <div class="demo-swatch">
+        <code>.ee-status-color-DTC.with-accessible-background.with-hover</code>
+        <div class="demo-box with-text ee-status-color-DTC with-accessible-background with-hover">
+            <p>Sample Text</p>
+        </div>
+    </div>
+    <div class="demo-swatch">
+        <code>.ee-status-background-color-DTC</code>
+        <div class="demo-box ee-status-background-color-DTC"></div>
+    </div>
+    <div class="demo-swatch">
+        <code>.ee-status-background-color-DTC.with-accessible-foreground</code>
+        <div class="demo-box with-text ee-status-background-color-DTC with-accessible-foreground">
+            <p>Sample Text</p>
+        </div>
+    </div>
+    <div class="demo-swatch">
+        <code>.ee-status-background-color-DTC.with-accessible-foreground.with-hover</code>
+        <div class="demo-box with-text ee-status-background-color-DTC with-accessible-foreground with-hover">
+            <p>Sample Text</p>
+        </div>
+    </div>
+</div>
+    <div class="demo-item">
+    <h4>Datetime Expired (DTE)</h4>
+    <div class="demo-swatch">
+        <code>.ee-status-color-DTE</code>
+        <div class="demo-box with-text ee-status-color-DTE">
+            <p>Sample Text</p>
+        </div>
+    </div>
+    <div class="demo-swatch">
+        <code>.ee-status-color-DTE.with-accessible-background</code>
+        <div class="demo-box with-text ee-status-color-DTE with-accessible-background">
+            <p>Sample Text</p>
+        </div>
+    </div>
+    <div class="demo-swatch">
+        <code>.ee-status-color-DTE.with-accessible-background.with-hover</code>
+        <div class="demo-box with-text ee-status-color-DTE with-accessible-background with-hover">
+            <p>Sample Text</p>
+        </div>
+    </div>
+    <div class="demo-swatch">
+        <code>.ee-status-background-color-DTE</code>
+        <div class="demo-box ee-status-background-color-DTE"></div>
+    </div>
+    <div class="demo-swatch">
+        <code>.ee-status-background-color-DTE.with-accessible-foreground</code>
+        <div class="demo-box with-text ee-status-background-color-DTE with-accessible-foreground">
+            <p>Sample Text</p>
+        </div>
+    </div>
+    <div class="demo-swatch">
+        <code>.ee-status-background-color-DTE.with-accessible-foreground.with-hover</code>
+        <div class="demo-box with-text ee-status-background-color-DTE with-accessible-foreground with-hover">
+            <p>Sample Text</p>
+        </div>
+    </div>
+</div>
+    <div class="demo-item">
+    <h4>Datetime Sold Out (DTS)</h4>
+    <div class="demo-swatch">
+        <code>.ee-status-color-DTS</code>
+        <div class="demo-box with-text ee-status-color-DTS">
+            <p>Sample Text</p>
+        </div>
+    </div>
+    <div class="demo-swatch">
+        <code>.ee-status-color-DTS.with-accessible-background</code>
+        <div class="demo-box with-text ee-status-color-DTS with-accessible-background">
+            <p>Sample Text</p>
+        </div>
+    </div>
+    <div class="demo-swatch">
+        <code>.ee-status-color-DTS.with-accessible-background.with-hover</code>
+        <div class="demo-box with-text ee-status-color-DTS with-accessible-background with-hover">
+            <p>Sample Text</p>
+        </div>
+    </div>
+    <div class="demo-swatch">
+        <code>.ee-status-background-color-DTS</code>
+        <div class="demo-box ee-status-background-color-DTS"></div>
+    </div>
+    <div class="demo-swatch">
+        <code>.ee-status-background-color-DTS.with-accessible-foreground</code>
+        <div class="demo-box with-text ee-status-background-color-DTS with-accessible-foreground">
+            <p>Sample Text</p>
+        </div>
+    </div>
+    <div class="demo-swatch">
+        <code>.ee-status-background-color-DTS.with-accessible-foreground.with-hover</code>
+        <div class="demo-box with-text ee-status-background-color-DTS with-accessible-foreground with-hover">
+            <p>Sample Text</p>
+        </div>
+    </div>
+</div>
+    <div class="demo-item">
+    <h4>Datetime Inactive (DTI)</h4>
+    <div class="demo-swatch">
+        <code>.ee-status-color-DTI</code>
+        <div class="demo-box with-text ee-status-color-DTI">
+            <p>Sample Text</p>
+        </div>
+    </div>
+    <div class="demo-swatch">
+        <code>.ee-status-color-DTI.with-accessible-background</code>
+        <div class="demo-box with-text ee-status-color-DTI with-accessible-background">
+            <p>Sample Text</p>
+        </div>
+    </div>
+    <div class="demo-swatch">
+        <code>.ee-status-color-DTI.with-accessible-background.with-hover</code>
+        <div class="demo-box with-text ee-status-color-DTI with-accessible-background with-hover">
+            <p>Sample Text</p>
+        </div>
+    </div>
+    <div class="demo-swatch">
+        <code>.ee-status-background-color-DTI</code>
+        <div class="demo-box ee-status-background-color-DTI"></div>
+    </div>
+    <div class="demo-swatch">
+        <code>.ee-status-background-color-DTI.with-accessible-foreground</code>
+        <div class="demo-box with-text ee-status-background-color-DTI with-accessible-foreground">
+            <p>Sample Text</p>
+        </div>
+    </div>
+    <div class="demo-swatch">
+        <code>.ee-status-background-color-DTI.with-accessible-foreground.with-hover</code>
+        <div class="demo-box with-text ee-status-background-color-DTI with-accessible-foreground with-hover">
+            <p>Sample Text</p>
+        </div>
+    </div>
+</div>
+    <div class="demo-item">
+    <h4>Datetime Postponed (DTP)</h4>
+    <div class="demo-swatch">
+        <code>.ee-status-color-DTP</code>
+        <div class="demo-box with-text ee-status-color-DTP">
+            <p>Sample Text</p>
+        </div>
+    </div>
+    <div class="demo-swatch">
+        <code>.ee-status-color-DTP.with-accessible-background</code>
+        <div class="demo-box with-text ee-status-color-DTP with-accessible-background">
+            <p>Sample Text</p>
+        </div>
+    </div>
+    <div class="demo-swatch">
+        <code>.ee-status-color-DTP.with-accessible-background.with-hover</code>
+        <div class="demo-box with-text ee-status-color-DTP with-accessible-background with-hover">
+            <p>Sample Text</p>
+        </div>
+    </div>
+    <div class="demo-swatch">
+        <code>.ee-status-background-color-DTP</code>
+        <div class="demo-box ee-status-background-color-DTP"></div>
+    </div>
+    <div class="demo-swatch">
+        <code>.ee-status-background-color-DTP.with-accessible-foreground</code>
+        <div class="demo-box with-text ee-status-background-color-DTP with-accessible-foreground">
+            <p>Sample Text</p>
+        </div>
+    </div>
+    <div class="demo-swatch">
+        <code>.ee-status-background-color-DTP.with-accessible-foreground.with-hover</code>
+        <div class="demo-box with-text ee-status-background-color-DTP with-accessible-foreground with-hover">
+            <p>Sample Text</p>
+        </div>
+    </div>
+</div>
+    <div class="demo-item">
+    <h4>Datetime Upcoming (DTU)</h4>
+    <div class="demo-swatch">
+        <code>.ee-status-color-DTU</code>
+        <div class="demo-box with-text ee-status-color-DTU">
+            <p>Sample Text</p>
+        </div>
+    </div>
+    <div class="demo-swatch">
+        <code>.ee-status-color-DTU.with-accessible-background</code>
+        <div class="demo-box with-text ee-status-color-DTU with-accessible-background">
+            <p>Sample Text</p>
+        </div>
+    </div>
+    <div class="demo-swatch">
+        <code>.ee-status-color-DTU.with-accessible-background.with-hover</code>
+        <div class="demo-box with-text ee-status-color-DTU with-accessible-background with-hover">
+            <p>Sample Text</p>
+        </div>
+    </div>
+    <div class="demo-swatch">
+        <code>.ee-status-background-color-DTU</code>
+        <div class="demo-box ee-status-background-color-DTU"></div>
+    </div>
+    <div class="demo-swatch">
+        <code>.ee-status-background-color-DTU.with-accessible-foreground</code>
+        <div class="demo-box with-text ee-status-background-color-DTU with-accessible-foreground">
+            <p>Sample Text</p>
+        </div>
+    </div>
+    <div class="demo-swatch">
+        <code>.ee-status-background-color-DTU.with-accessible-foreground.with-hover</code>
+        <div class="demo-box with-text ee-status-background-color-DTU with-accessible-foreground with-hover">
+            <p>Sample Text</p>
+        </div>
+    </div>
+</div>
+</div>
+</section>
     </body>
 </html>

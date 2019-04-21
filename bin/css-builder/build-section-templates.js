@@ -1,7 +1,7 @@
 const fs = require( 'fs' );
 const path = require( 'path' );
 const { compile } = require( 'handlebars' );
-const { startCase } = require( 'lodash' );
+const { startCase, map } = require( 'lodash' );
 
 /**
  * Constant for the path holding all the handlebar demo templates.
@@ -43,15 +43,58 @@ function buildColorsSection() {
 	return sectionTemplate( { colorDemoItems } );
 }
 
+function buildEntityStatusSection( themeConfig ) {
+	const sectionTemplate = compile( fs.readFileSync(
+		path.resolve( TEMPLATES_PATH, 'entity-status-section.html' ),
+		'utf-8'
+	) );
+	const sectionGroupTemplate = compile( fs.readFileSync(
+		path.resolve( TEMPLATES_PATH, 'entity-status-group.html' ),
+		'utf-8'
+	) );
+	const sectionItemTemplate = compile( fs.readFileSync(
+		path.resolve( TEMPLATES_PATH, 'entity-status-item.html' ),
+		'utf8'
+	) );
+	const entityGroups = map( themeConfig.statuses, ( entityConfig, entityName ) => {
+		return sectionGroupTemplate(
+			{
+				entityName: startCase( entityName ),
+				entityItems: entityConfig.map( ( {
+					status_label,
+					status_code
+				} ) => {
+					return sectionItemTemplate(
+						{
+							statusLabel: `${ startCase( entityName ) } ${ startCase( status_label ) }`,
+							statusCode: status_code
+						}
+					);
+				} ),
+			}
+		);
+	} );
+	return sectionTemplate( { entityGroups } );
+}
+
 /**
  * A function that builds an returns an array of section templates for the
  * css demo html.
  *
  * @return {string[]} An array of sections html strings.
  */
-function buildSectionTemplates() {
+
+/**
+ * A function that builds an returns an array of section templates for the
+ * css demo html.
+ *
+ * @param {Object} themeConfig  The configuration object for the theme.
+ * @return {Array} An array of sections for the main template.
+ */
+function buildSectionTemplates( themeConfig ) {
 	return [
 		buildColorsSection(),
+		buildEntityStatusSection( themeConfig ),
 	];
 }
 
