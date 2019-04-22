@@ -40,11 +40,11 @@ class EE_DMS_4_1_0_answers extends EE_Data_Migration_Script_Stage_Table
         $this->_pretty_name = __("Answers", "event_espresso");
         $this->_old_table = $wpdb->prefix."events_answer";
         // join to attendee and then join to events table
+        $this->select_expression = 'ans.*, e.event_status';
         $this->_extra_where_sql = ' AS ans 
             INNER JOIN ' . $wpdb->prefix . 'events_attendee AS att ON ans.attendee_id = att.id
             INNER JOIN ' . $wpdb->prefix . 'events_detail AS e ON att.event_id = e.id 
             WHERE e.event_status !="D"';
-        $this->select_expression = 'att.*, e.event_status';
         $this->_new_answer_table = $wpdb->prefix."esp_answer";
         $this->_new_question_table = $wpdb->prefix."esp_question";
         parent::__construct();
