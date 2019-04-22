@@ -13,25 +13,11 @@ const TEMPLATES_PATH = path.resolve( __dirname, 'demo-templates' );
  * A function that builds the colors section for css demo html.
  * @return {string}  Colors section html.
  */
-function buildColorsSection() {
+function buildColorsSection( { colors } ) {
 	const colorsSectionTemplate = fs.readFileSync( path.resolve( TEMPLATES_PATH, 'colors-section-template.html' ), 'utf8' );
 	const colorsDemoItemTemplate = fs.readFileSync( path.resolve( TEMPLATES_PATH, 'color-demo-item.html' ), 'utf8' );
-	const colors = [
-		'pink',
-		'green',
-		'dark-green',
-		'red',
-		'orange',
-		'light-blue',
-		'blue',
-		'yellow',
-		'grey',
-		'dark-grey',
-		'black',
-		'white',
-	];
 	const template = compile( colorsDemoItemTemplate );
-	const colorDemoItems = colors.map( ( color ) => {
+	const colorDemoItems = colors.map( ( { color } ) => {
 		return template(
 			{
 				ColorLabel: startCase( color ),
@@ -43,7 +29,7 @@ function buildColorsSection() {
 	return sectionTemplate( { colorDemoItems } );
 }
 
-function buildEntityStatusSection( themeConfig ) {
+function buildEntityStatusSection( { statuses } ) {
 	const sectionTemplate = compile( fs.readFileSync(
 		path.resolve( TEMPLATES_PATH, 'entity-status-section.html' ),
 		'utf-8'
@@ -56,7 +42,7 @@ function buildEntityStatusSection( themeConfig ) {
 		path.resolve( TEMPLATES_PATH, 'entity-status-item.html' ),
 		'utf8'
 	) );
-	const entityGroups = map( themeConfig.statuses, ( entityConfig, entityName ) => {
+	const entityGroups = map( statuses, ( entityConfig, entityName ) => {
 		return sectionGroupTemplate(
 			{
 				entityName: startCase( entityName ),
@@ -77,6 +63,26 @@ function buildEntityStatusSection( themeConfig ) {
 	return sectionTemplate( { entityGroups } );
 }
 
+function buildButtonSection( { colors } ) {
+	const sectionTemplate = compile( fs.readFileSync(
+		path.resolve( TEMPLATES_PATH, 'button-section.html' ),
+		'utf-8'
+	) );
+	const sectionItemTemplate = compile( fs.readFileSync(
+		path.resolve( TEMPLATES_PATH, 'button-item.html' ),
+		'utf8'
+	) );
+	const sectionItems = colors.map( ( { color } ) => {
+		return sectionItemTemplate(
+			{
+				colorLabel: startCase( color ),
+				color,
+			}
+		);
+	} );
+	return sectionTemplate( { sectionItems } );
+}
+
 /**
  * A function that builds an returns an array of section templates for the
  * css demo html.
@@ -93,8 +99,9 @@ function buildEntityStatusSection( themeConfig ) {
  */
 function buildSectionTemplates( themeConfig ) {
 	return [
-		buildColorsSection(),
+		buildColorsSection( themeConfig ),
 		buildEntityStatusSection( themeConfig ),
+		buildButtonSection( themeConfig ),
 	];
 }
 

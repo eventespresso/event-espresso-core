@@ -1,0 +1,76 @@
+<section class="demo-section">
+    <h2>Buttons Demo</h2>
+    <p>
+        This demonstrates the variety of button styles and how they are impacted by various modifier css classes.
+    </p>
+    <p>
+        <strong>Note:</strong> WordPress styles are not loaded for this demo, so buttons will appear differently in the WordPress context.
+    </p>
+    <div class="demo-items">
+        <div class="demo-item">
+            <h3>Base Button</h3>
+            <p>This demonstrates the base styles for the buttons.</p>
+            <div class="demo-swatch">
+                <code>.ee-button</code><br>
+                <button class="ee-button">A Button</button>
+            </div>
+            <div class="demo-swatch">
+                <code>.ee-button.with-hover</code><br>
+                <button class="ee-button with-hover">A Button</button>
+            </div>
+            <div class="demo-swatch">
+                <code>.ee-button.for-registration</code><br>
+                <button class="ee-button for-registration">A Button</button>
+            </div>
+            <div class="demo-swatch">
+                <code>.ee-button.for-registration.with-hover</code><br>
+                <button class="ee-button for-registration with-hover">A Button</button>
+            </div>
+            <div class="demo-swatch">
+                <code>input.ee-button.for-registration</code><br>
+                <div>
+                    <input type="submit" class="ee-button for-registration" value="A Button">
+                    <div class="clear-float"></div>
+                </div>
+            </div>
+            <div class="demo-swatch">
+                <code>input.ee-button.for-registration.with-hover</code><br>
+                <div>
+                    <input type="submit" class="ee-button for-registration with-hover" value="A Button">
+                    <div class="clear-float"></div>
+                </div>
+            </div>
+            <div class="demo-swatch">
+                <code>.ee-button.small</code><br>
+                <button class="ee-button small">A Button</button>
+            </div>
+            <div class="demo-swatch">
+                <code>.ee-button.medium</code><br>
+                <button class="ee-button medium">A Button</button>
+            </div>
+            <div class="demo-swatch">
+                <code>.ee-button.large</code><br>
+                <button class="ee-button large">A Button</button>
+            </div>
+            <div class="demo-swatch">
+                <code>.ee-button.huge</code><br>
+                <button class="ee-button huge">A Button</button>
+            </div>
+            <div class="demo-swatch">
+                <code>.ee-button.with-border-radius-normal</code><br>
+                <button class="ee-button with-border-radius-normal">A Button</button>
+            </div>
+            <div class="demo-swatch">
+                <code>.ee-button.with-border-radius-small</code><br>
+                <button class="ee-button with-border-radius-small">A Button</button>
+            </div>
+            <div class="demo-swatch">
+                <code>.ee-button.with-0x1x3-dark-box-shadow</code><br>
+                <button class="ee-button with-0x1x3-dark-box-shadow">A Button</button>
+            </div>
+        </div>
+        {{#each sectionItems}}
+        {{{this}}}
+        {{/each}}
+    </div>
+</section>

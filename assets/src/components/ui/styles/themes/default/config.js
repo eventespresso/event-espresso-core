@@ -178,7 +178,7 @@ const statuses = {
 		{
 			status_label: 'abandoned',
 			status_code: 'TAB',
-			color: find( colors, [ 'color', 'abandoned' ] ),
+			color: find( colors, [ 'color', 'yellow' ] ),
 		},
 		{
 			status_label: 'incomplete',

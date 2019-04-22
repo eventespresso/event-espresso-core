@@ -132,6 +132,25 @@ function writeEntityStatusCss( themeDirectory ) {
 	);
 }
 
+function writeButtonCss( themeDirectory ) {
+	if ( themeDirectory !== 'default' ) {
+		return;
+	}
+	const cssFile = fs.readFileSync( path.resolve( CSS_TEMPLATES_PATH, 'buttons.css' ), 'utf8' );
+	const destPath = path.resolve( STYLES_DIRECTORY, 'root', 'buttons.css' );
+	process.stdout.write( `${ path.basename( destPath ) }\n` );
+	fs.writeFileSync( destPath, cssFile );
+	process.stdout.write(
+		chalk.green(
+			chalk.green( '  \u2022 ' ) +
+			path.relative( CSS_TEMPLATES_PATH, 'buttons.css') +
+			chalk.green( ' \u21D2 ' ) +
+			path.relative( STYLES_DIRECTORY, destPath ) +
+			'\n'
+		)
+	)
+}
+
 function createDemos() {
 	const destPath = path.resolve( STYLES_DIRECTORY, 'themes', 'default', 'demo' );
 	process.stdout.write( `Writing css demo files: ${ path.basename( destPath ) }\n` );
@@ -146,7 +165,8 @@ function createDemos() {
 function buildFiles() {
 	writeColorsCss( 'default' );
 	writeColorsCss( 'default', true );
-	writeEntityStatusCss('default');
+	writeEntityStatusCss( 'default' );
+	writeButtonCss( 'default' );
 	createDemos();
 	process.stdout.write( `${ DONE }\n` );
 }

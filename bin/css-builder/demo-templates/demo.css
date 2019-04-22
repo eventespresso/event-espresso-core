@@ -36,6 +36,9 @@ body {
     border: 1px dotted;
     padding: 5px;
 }
+.demo-swatch button{
+    margin-top: 10px;
+}
 .demo-box {
     width: 75px;
     height: 50px;
@@ -48,4 +51,7 @@ body {
 }
 .demo-section.hidden {
     display: none;
+}
+.clear-float {
+    clear: both;
 }
