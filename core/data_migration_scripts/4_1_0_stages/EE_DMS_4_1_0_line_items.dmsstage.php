@@ -49,6 +49,7 @@ class EE_DMS_4_1_0_line_items extends EE_Data_Migration_Script_Stage_Table
         $this->_extra_where_sql = ' AS att
             INNER JOIN ' . $wpdb->prefix . 'events_detail AS e ON att.event_id=e.id
             WHERE e.event_status!="D"';
+        $this->select_expression = 'att.*, e.event_status';
         $this->_new_transaction_table = $wpdb->prefix."esp_transaction";
         $this->_new_line_table = $wpdb->prefix."esp_line_item";
         $this->_new_reg_table = $wpdb->prefix."esp_registration";
