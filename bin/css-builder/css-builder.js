@@ -148,7 +148,42 @@ function writeButtonCss( themeDirectory ) {
 			path.relative( STYLES_DIRECTORY, destPath ) +
 			'\n'
 		)
-	)
+	);
+}
+
+function writeShadowCss( themeDirectory ) {
+	if ( themeDirectory !== 'default' ) {
+		return;
+	}
+	const mainTemplate = compile(
+		fs.readFileSync( path.resolve( CSS_TEMPLATES_PATH, 'shadows-main.css.handlebars' ), 'utf8' )
+	);
+	const itemTemplate = compile(
+		fs.readFileSync( path.resolve( CSS_TEMPLATES_PATH, 'shadows-item.css.handlebars' ), 'utf8' )
+	);
+	const { colors }= getConfig( themeDirectory );
+	const destPath = path.resolve( STYLES_DIRECTORY, 'root', 'shadows.css' );
+	process.stdout.write( `${ path.basename( destPath ) }\n` );
+	const shadowItems = colors.map( ( { color, rgba1, rgba2, rgba3 } ) => {
+		return itemTemplate( {
+			colorLabel: startCase( color ),
+			color,
+			rgba1,
+			rgba2,
+			rgba3,
+		} );
+	} );
+	const cssFile = mainTemplate( { shadowItems } );
+	fs.writeFileSync( destPath, cssFile );
+	process.stdout.write(
+		chalk.green(
+			chalk.green( '  \u2022 ' ) +
+			path.relative( CSS_TEMPLATES_PATH, 'shadows-main.css.handlebars') +
+			chalk.green( ' \u21D2 ' ) +
+			path.relative( STYLES_DIRECTORY, destPath ) +
+			'\n'
+		)
+	);
 }
 
 function createDemos() {
@@ -167,6 +202,7 @@ function buildFiles() {
 	writeColorsCss( 'default', true );
 	writeEntityStatusCss( 'default' );
 	writeButtonCss( 'default' );
+	writeShadowCss( 'default' );
 	createDemos();
 	process.stdout.write( `${ DONE }\n` );
 }

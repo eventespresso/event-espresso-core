@@ -1,6 +1,87 @@
-.with-0x1x3-dark-box-shadow  {
-    box-shadow: 0 1px 3px var( --ee-color-black-50-transparency, rgba( 0, 0, 0, 0.5 ) );
+/**
+ * Various selectors for applying shadow modifiers to elements.
+ */
+/* Pink shadows */
+.with-small-pink-box-shadow  {
+    box-shadow: 0 1px 3px var( --ee-color-pink-50-transparency, rgba( 255, 85, 192, 0.5 ) );
 }
-.with-0x-1x0-dark-text-shadow {
-    text-shadow: 0 -1px 0 var( --ee-color-black-25-transparency, rgba( 0, 0, 0, 0.25 ) );
+.with-small-pink-text-shadow {
+    text-shadow: 0 -1px 0 var( --ee-color-pink-25-transparency, rgba( 255, 85, 192, 0.25 ) );
+}
+/* Green shadows */
+.with-small-green-box-shadow  {
+    box-shadow: 0 1px 3px var( --ee-color-green-50-transparency, rgba( 112, 204, 80, 0.5 ) );
+}
+.with-small-green-text-shadow {
+    text-shadow: 0 -1px 0 var( --ee-color-green-25-transparency, rgba( 112, 204, 80, 0.25 ) );
+}
+/* Dark Green shadows */
+.with-small-dark-green-box-shadow  {
+    box-shadow: 0 1px 3px var( --ee-color-dark-green-50-transparency, rgba( 0, 102, 0, 0.5 ) );
+}
+.with-small-dark-green-text-shadow {
+    text-shadow: 0 -1px 0 var( --ee-color-dark-green-25-transparency, rgba( 0, 102, 0, 0.25 ) );
+}
+/* Red shadows */
+.with-small-red-box-shadow  {
+    box-shadow: 0 1px 3px var( --ee-color-red-50-transparency, rgba( 173, 16, 60, 0.5 ) );
+}
+.with-small-red-text-shadow {
+    text-shadow: 0 -1px 0 var( --ee-color-red-25-transparency, rgba( 173, 16, 60, 0.25 ) );
+}
+/* Orange shadows */
+.with-small-orange-box-shadow  {
+    box-shadow: 0 1px 3px var( --ee-color-orange-50-transparency, rgba( 173, 16, 60, 0.5 ) );
+}
+.with-small-orange-text-shadow {
+    text-shadow: 0 -1px 0 var( --ee-color-orange-25-transparency, rgba( 173, 16, 60, 0.25 ) );
+}
+/* Light Blue shadows */
+.with-small-light-blue-box-shadow  {
+    box-shadow: 0 1px 3px var( --ee-color-light-blue-50-transparency, rgba( 0, 177, 202, 0.5 ) );
+}
+.with-small-light-blue-text-shadow {
+    text-shadow: 0 -1px 0 var( --ee-color-light-blue-25-transparency, rgba( 0, 177, 202, 0.25 ) );
+}
+/* Blue shadows */
+.with-small-blue-box-shadow  {
+    box-shadow: 0 1px 3px var( --ee-color-blue-50-transparency, rgba( 0, 91, 147, 0.5 ) );
+}
+.with-small-blue-text-shadow {
+    text-shadow: 0 -1px 0 var( --ee-color-blue-25-transparency, rgba( 0, 91, 147, 0.25 ) );
+}
+/* Yellow shadows */
+.with-small-yellow-box-shadow  {
+    box-shadow: 0 1px 3px var( --ee-color-yellow-50-transparency, rgba( 248, 215, 85, 0.5 ) );
+}
+.with-small-yellow-text-shadow {
+    text-shadow: 0 -1px 0 var( --ee-color-yellow-25-transparency, rgba( 248, 215, 85, 0.25 ) );
+}
+/* Grey shadows */
+.with-small-grey-box-shadow  {
+    box-shadow: 0 1px 3px var( --ee-color-grey-50-transparency, rgba( 172, 157, 156, 0.5 ) );
+}
+.with-small-grey-text-shadow {
+    text-shadow: 0 -1px 0 var( --ee-color-grey-25-transparency, rgba( 172, 157, 156, 0.25 ) );
+}
+/* Dark Grey shadows */
+.with-small-dark-grey-box-shadow  {
+    box-shadow: 0 1px 3px var( --ee-color-dark-grey-50-transparency, rgba( 70, 69, 73, 0.5 ) );
+}
+.with-small-dark-grey-text-shadow {
+    text-shadow: 0 -1px 0 var( --ee-color-dark-grey-25-transparency, rgba( 70, 69, 73, 0.25 ) );
+}
+/* Black shadows */
+.with-small-black-box-shadow  {
+    box-shadow: 0 1px 3px var( --ee-color-black-50-transparency, rgba( 47, 51, 52, 0.5 ) );
+}
+.with-small-black-text-shadow {
+    text-shadow: 0 -1px 0 var( --ee-color-black-25-transparency, rgba( 47, 51, 52, 0.25 ) );
+}
+/* White shadows */
+.with-small-white-box-shadow  {
+    box-shadow: 0 1px 3px var( --ee-color-white-50-transparency, rgba( 255, 255, 255, 0.5 ) );
+}
+.with-small-white-text-shadow {
+    text-shadow: 0 -1px 0 var( --ee-color-white-25-transparency, rgba( 255, 255, 255, 0.25 ) );
 }

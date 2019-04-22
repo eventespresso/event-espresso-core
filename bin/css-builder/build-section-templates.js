@@ -83,6 +83,26 @@ function buildButtonSection( { colors } ) {
 	return sectionTemplate( { sectionItems } );
 }
 
+function buildShadowsSection( { colors } ) {
+	const sectionTemplate = compile( fs.readFileSync(
+		path.resolve( TEMPLATES_PATH, 'shadows-section.html' ),
+		'utf-8'
+	) );
+	const sectionItemTemplate = compile( fs.readFileSync(
+		path.resolve( TEMPLATES_PATH, 'shadows-item.html' ),
+		'utf8'
+	) );
+	const sectionItems = colors.map( ( { color } ) => {
+		return sectionItemTemplate(
+			{
+				colorLabel: startCase( color ),
+				color,
+			}
+		);
+	} );
+	return sectionTemplate( { sectionItems } );
+}
+
 /**
  * A function that builds an returns an array of section templates for the
  * css demo html.
@@ -102,6 +122,7 @@ function buildSectionTemplates( themeConfig ) {
 		buildColorsSection( themeConfig ),
 		buildEntityStatusSection( themeConfig ),
 		buildButtonSection( themeConfig ),
+		buildShadowsSection( themeConfig ),
 	];
 }
 
