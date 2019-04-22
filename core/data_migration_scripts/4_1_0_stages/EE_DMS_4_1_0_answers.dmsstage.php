@@ -44,6 +44,7 @@ class EE_DMS_4_1_0_answers extends EE_Data_Migration_Script_Stage_Table
             INNER JOIN ' . $wpdb->prefix . 'events_attendee AS att ON ans.attendee_id = att.id
             INNER JOIN ' . $wpdb->prefix . 'events_detail AS e ON att.event_id = e.id 
             WHERE e.event_status !="D"';
+        $this->select_expression = 'att.*, e.event_status';
         $this->_new_answer_table = $wpdb->prefix."esp_answer";
         $this->_new_question_table = $wpdb->prefix."esp_question";
         parent::__construct();
