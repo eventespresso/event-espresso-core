@@ -83,7 +83,6 @@ function* createRelations(
 ) {
 	relationName = pluralModelName( relationName );
 	const singularRelationName = singularModelName( relationName );
-	const pluralRelationName = pluralModelName( relationName );
 
 	try {
 		assertArrayHasEntitiesForModel( relationEntities, singularRelationName );
@@ -97,6 +96,7 @@ function* createRelations(
 		return;
 	}
 	const relationIds = getIdsFromBaseEntityArray( relationEntities );
+	const pluralRelationName = pluralModelName( relationName );
 	yield dispatch(
 		REDUCER_KEY,
 		'receiveEntitiesAndResolve',
