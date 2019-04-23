@@ -37,7 +37,7 @@
 		"@babel/plugin-transform-react-jsx": "^7.0.0",
 		"@babel/polyfill": "^7.4.3",
 		"@babel/preset-react": "^7.0.0",
-		"@babel/runtime-corejs2": "7.0.0",
+		"@babel/runtime-corejs2": "7.4.3",
 		"@wordpress/a11y": "^2.2.0",
 		"@wordpress/api-fetch": "^1.1.1",
 		"@wordpress/autop": "^1.1.3",
