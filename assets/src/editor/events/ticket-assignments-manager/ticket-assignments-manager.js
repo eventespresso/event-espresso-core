@@ -38,8 +38,15 @@ class TicketAssignmentsManager extends Component {
 	static propTypes = {
 		entities: PropTypes.arrayOf( PropTypes.object ).isRequired,
 		tickets: PropTypes.arrayOf( PropTypes.object ).isRequired,
-		filterEntity: PropTypes.object,
-		filterFor: PropTypes.string,
+		eventDateTicketMap: PropTypes.object.isRequired,
+		addTickets: PropTypes.func.isRequired,
+		removeTickets: PropTypes.func.isRequired,
+		closeModal: PropTypes.func.isRequired,
+		allDates: PropTypes.arrayOf( PropTypes.object ),
+		allTickets: PropTypes.arrayOf( PropTypes.object ),
+		pagination: PropTypes.object,
+		onUpdate: PropTypes.func,
+		resetRelationsMap: PropTypes.func,
 	};
 
 	constructor( props ) {
@@ -72,6 +79,23 @@ class TicketAssignmentsManager extends Component {
 			} );
 			this.closeModal();
 		}
+	};
+
+	/**
+	 * updates ticket date relations
+	 *
+	 * @function
+	 */
+	processChanges = async () => {
+		this.setState( { submitting: true } );
+		const wasUpdated = await handler.processChanges(
+			this.props.entities,
+			this.state.assigned,
+			this.props.addTickets,
+			this.state.removed,
+			this.props.removeTickets
+		);
+		this.toggleEditor( wasUpdated );
 	};
 
 	/**
@@ -599,9 +623,9 @@ class TicketAssignmentsManager extends Component {
 		const {
 			entities,
 			tickets,
+			allDates,
+			allTickets,
 			eventDateTicketMap,
-			addTickets,
-			removeTickets,
 			onUpdate,
 			closeModal,
 			resetRelationsMap,
@@ -621,25 +645,13 @@ class TicketAssignmentsManager extends Component {
 			tickets: {},
 		};
 		const noAssignments = this.countTicketAssignments(
-			this.props.allDates || dates,
-			this.props.allTickets || tickets,
+			allDates || dates,
+			allTickets || tickets,
 			eventDateTicketMap
 		);
 		// console.log( ' > ticketDates: ', this.ticketDates );
 		// console.log( ' > assignmentCounts: ', this.assignmentCounts );
 		// console.log( ' > noAssignments: ', noAssignments );
-
-		const processChanges = async () => {
-			this.setState( { submitting: true } );
-			const wasUpdated = await handler.processChanges(
-				dates,
-				this.state.assigned,
-				addTickets,
-				this.state.removed,
-				removeTickets
-			);
-			this.toggleEditor( wasUpdated );
-		};
 
 		const dateCount = dates.length;
 		let tableId = 'ee-ticket-assignments-manager-';
@@ -679,7 +691,7 @@ class TicketAssignmentsManager extends Component {
 					{ pagination }
 				</FormSection>
 				<FormSaveCancelButtons
-					submitButton={ this.submitButton( processChanges ) }
+					submitButton={ this.submitButton( this.processChanges ) }
 					cancelButton={ this.cancelButton() }
 				/>
 			</FormWrapper>
