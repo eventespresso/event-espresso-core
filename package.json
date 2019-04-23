@@ -76,6 +76,7 @@
 		"cssnano": "^4.1.10",
 		"deep-freeze": "0.0.1",
 		"equivalent-key-map": "^0.2.2",
+		"eslint": "^5.16.0",
 		"eslint-plugin-jest": "22.4.1",
 		"license-checker": "^25.0.1",
 		"lodash": "^4.17.11",
