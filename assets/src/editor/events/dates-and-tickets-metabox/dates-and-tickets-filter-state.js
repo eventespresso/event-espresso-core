@@ -2,7 +2,7 @@
  * External dependencies
  */
 import PropTypes from 'prop-types';
-import { uniq } from 'lodash';
+import { isEmpty, uniq } from 'lodash';
 import { compose } from '@wordpress/compose';
 import { withSelect } from '@wordpress/data';
 import { isModelEntityOfModel } from '@eventespresso/validators';
@@ -154,7 +154,13 @@ export default compose( [
 			}
 			let tickets = [];
 			dates.forEach( ( date ) => {
-				tickets = tickets.concat( getRelatedEntities( date, 'tickets' ) );
+				const relatedTickets = getRelatedEntities( date, 'tickets' );
+				if (
+					Array.isArray( relatedTickets ) &&
+					! isEmpty( relatedTickets )
+				) {
+					tickets = tickets.concat( relatedTickets );
+				}
 			} );
 			return uniq( tickets );
 		};
