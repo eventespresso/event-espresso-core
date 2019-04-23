@@ -10,4 +10,5 @@ export { default as FancyButton } from './fancy-button';
 export { default as IconMenuItem } from './icon-menu-item';
 export { default as ResponsiveTable, EspressoTable } from './responsive-table';
 export * from './image';
+export * from './menu';
 import './colors-default-theme-2019.css';

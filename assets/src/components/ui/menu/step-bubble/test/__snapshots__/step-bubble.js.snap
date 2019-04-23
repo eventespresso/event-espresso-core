@@ -1,0 +1,25 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`StepBubble generates expected shape for default props 1`] = `
+<button
+  className="ee-step-bubble-item ee-clickable"
+  onClick={[Function]}
+  onKeyPress={[Function]}
+  role="menuitem"
+  tabIndex={-1}
+>
+  <div
+    className="progress-step-line"
+  />
+  <div
+    className="ee-step-bubble"
+  >
+    <p>
+      1
+    </p>
+  </div>
+  <Pure(StepText)
+    content="foo"
+  />
+</button>
+`;
