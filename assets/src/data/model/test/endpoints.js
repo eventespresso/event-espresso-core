@@ -29,7 +29,7 @@ describe( 'getEndpoint()', () => {
 		const t = () => {
 			getEndpoint( 'model_not_exist' );
 		};
-		expect( t ).toThrowError( Exception );
+		expect( t ).toThrow( Exception );
 	} );
 
 	it( 'returns the correct endpoint value for the requested model', () => {
