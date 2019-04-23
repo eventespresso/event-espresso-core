@@ -63,7 +63,7 @@
 		"@wordpress/plugins": "^2.2.0",
 		"@wordpress/scripts": "^3.1.0",
 		"@wordpress/url": "^2.5.0",
-		"@wordpress/viewport": "^1.0.4",
+		"@wordpress/viewport": "^2.3.0",
 		"autoprefixer": "^8.6.5",
 		"babel-loader": "8.0.0",
 		"babel-plugin-dev-expression": "^0.2.1",
