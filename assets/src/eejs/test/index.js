@@ -16,7 +16,7 @@ describe( 'eejs', () => {
 			throw new Exception( 'error thrown' );
 		};
 		it( 'should throw error with msg "error thrown"', () => {
-			expect( t ).toThrowError( 'error thrown' );
+			expect( t ).toThrow( 'error thrown' );
 		} );
 		it( 'should throw an error which is an instance of "Exception"', () => {
 			expect( t ).toThrow( Exception );

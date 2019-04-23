@@ -52,14 +52,14 @@ describe( 'DateTime Value Object', () => {
 				it( 'throws an error when provided an invalid argument for ' +
 					'iso8601DateString parameter', () => {
 					const throwsError = () => new DateTime( 'invalid' );
-					expect( throwsError ).toThrowError( InvalidISO8601String );
+					expect( throwsError ).toThrow( InvalidISO8601String );
 				} );
 				it( 'throws an error when provided an invalid timezone string',
 					() => {
 						const throwsError = () => new DateTime(
 							new Date().toISOString(), 'invalid'
 						);
-						expect( throwsError ).toThrowError( InvalidTimezone );
+						expect( throwsError ).toThrow( InvalidTimezone );
 					}
 				);
 				it( 'throws an error when provided an invalid locale', () => {
@@ -68,7 +68,7 @@ describe( 'DateTime Value Object', () => {
 						'UTC',
 						'invalid'
 					);
-					expect( throwsError ).toThrowError( InvalidLocale );
+					expect( throwsError ).toThrow( InvalidLocale );
 				} );
 				describe( 'create getters and setters on instantiation', () => {
 					const newValues = {
