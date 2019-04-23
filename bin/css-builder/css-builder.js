@@ -10,6 +10,7 @@ const getCssFiles = require( './get-css-files' );
 const buildSectionTemplates = require( './build-section-templates' );
 const buildColorCssItems = require( './build-color-css-items' );
 const buildStatusItems = require( './build-status-items' );
+const buildSizesItems = require( './build-sizes-items' );
 
 // constants;
 const DONE = chalk.reset.inverse.bold.green( 'DONE' );
@@ -186,6 +187,18 @@ function writeShadowCss( themeDirectory ) {
 	);
 }
 
+function writeSizesCss( themeDirectory, variables = false ) {
+	if ( themeDirectory !== 'default' && ! variables ) {
+		return;
+	}
+	const config = getConfig( themeDirectory );
+	if ( variables ) {
+		buildSizesItems.buildVariables( themeDirectory, config );
+	} else {
+		buildSizesItems.buildMain( themeDirectory, config );
+	}
+}
+
 function createDemos() {
 	const destPath = path.resolve( STYLES_DIRECTORY, 'themes', 'default', 'demo' );
 	process.stdout.write( `Writing css demo files: ${ path.basename( destPath ) }\n` );
@@ -203,6 +216,8 @@ function buildFiles() {
 	writeEntityStatusCss( 'default' );
 	writeButtonCss( 'default' );
 	writeShadowCss( 'default' );
+	writeSizesCss( 'default' );
+	writeSizesCss( 'default', true );
 	createDemos();
 	process.stdout.write( `${ DONE }\n` );
 }

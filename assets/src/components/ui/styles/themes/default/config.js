@@ -1,4 +1,4 @@
-const { find } = require( 'lodash' );
+const { find, range } = require( 'lodash' );
 const colors = [
 	{
 		color: 'pink',
@@ -284,7 +284,44 @@ const statuses = {
 	],
 };
 
+const sizes = {
+	defaultSizes: range( 1, 25 ),
+	sizeMap: {
+		size1:1,
+		size2:2,
+		size3:3,
+		size4:4,
+		size5:5,
+		size6:6,
+		size7:7,
+		size8:8,
+		size9:9,
+		size10:10,
+		size11:11,
+		size12:12,
+		size13:13,
+		size14:14,
+		size15:15,
+		size16:16,
+		size17:17,
+		size18:18,
+		size19:19,
+		size20:20,
+		size21:21,
+		size22:22,
+		size23:23,
+		size24:24
+	},
+	sizeSmall: 11,
+	sizeMedium: 13,
+	sizeLarge: 14,
+	sizeHuge: 16,
+	radiusSmall: 3,
+	radiusNormal: 6,
+};
+
 module.exports = {
 	colors,
 	statuses,
+	sizes,
 };

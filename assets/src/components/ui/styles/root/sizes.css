@@ -1,3 +1,7 @@
+/**
+ * Various size related modifiers
+ */
+
 /** Numerical font-size **/
 .with-font-size-1 {
     font-size: calc(var(--ee-size-1, 1) * 1px);
@@ -41,17 +45,32 @@
 .with-font-size-14 {
     font-size: calc(var(--ee-size-14, 14) * 1px);
 }
+.with-font-size-15 {
+    font-size: calc(var(--ee-size-15, 15) * 1px);
+}
 .with-font-size-16 {
     font-size: calc(var(--ee-size-16, 16) * 1px);
+}
+.with-font-size-17 {
+    font-size: calc(var(--ee-size-17, 17) * 1px);
 }
 .with-font-size-18 {
     font-size: calc(var(--ee-size-18, 18) * 1px);
 }
+.with-font-size-19 {
+    font-size: calc(var(--ee-size-19, 19) * 1px);
+}
 .with-font-size-20 {
     font-size: calc(var(--ee-size-20, 20) * 1px);
 }
+.with-font-size-21 {
+    font-size: calc(var(--ee-size-21, 21) * 1px);
+}
 .with-font-size-22 {
     font-size: calc(var(--ee-size-22, 22) * 1px);
+}
+.with-font-size-23 {
+    font-size: calc(var(--ee-size-23, 23) * 1px);
 }
 .with-font-size-24 {
     font-size: calc(var(--ee-size-24, 24) * 1px);
@@ -59,7 +78,7 @@
 
 /** Named relative font size **/
 .with-font-size-small {
-    font-size: calc(var(--ee-font-size-small, 11) * 1px);
+    font-size: calc(var(--ee-font-size-small, 11 ) * 1px);
 }
 .with-font-size-medium {
     font-size: calc(var(--ee-font-size-medium, 13) * 1px);

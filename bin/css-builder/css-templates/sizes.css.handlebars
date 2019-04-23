@@ -1,0 +1,30 @@
+/**
+ * Various size related modifiers
+ */
+
+/** Numerical font-size **/
+{{#each sizeItems}}
+{{{this}}}
+{{/each}}
+
+/** Named relative font size **/
+.with-font-size-small {
+    font-size: calc(var(--ee-font-size-small, {{ sizeMap.size11 }} ) * 1px);
+}
+.with-font-size-medium {
+    font-size: calc(var(--ee-font-size-medium, {{ sizeMap.size13 }}) * 1px);
+}
+.with-font-size-large {
+    font-size: calc(var(--ee-font-size-large, {{ sizeMap.size14 }}) * 1px);
+}
+.with-font-size-huge {
+    font-size: calc(var(--ee-font-size-huge, {{ sizeMap.size16 }}) * 1px);
+}
+
+/** Named relative border-radius **/
+.with-border-radius-small {
+    border-radius: calc(var(--ee-radius-size-small, {{ sizeMap.size3 }}) * 1px);
+}
+.with-border-radius-normal {
+    border-radius: calc(var(--ee-radius-size-normal, {{ sizeMap.size6 }}) * 1px);
+}

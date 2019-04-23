@@ -1,7 +1,7 @@
 const fs = require( 'fs' );
 const path = require( 'path' );
 const { compile } = require( 'handlebars' );
-const { startCase, map } = require( 'lodash' );
+const { startCase, map, values } = require( 'lodash' );
 
 /**
  * Constant for the path holding all the handlebar demo templates.
@@ -103,6 +103,35 @@ function buildShadowsSection( { colors } ) {
 	return sectionTemplate( { sectionItems } );
 }
 
+function buildSizesSection( { sizes } ) {
+	const sectionTemplate = compile( fs.readFileSync(
+		path.resolve( TEMPLATES_PATH, 'size-section-template.html' ),
+		'utf8'
+	) );
+	const fontSizeTemplate = compile( fs.readFileSync(
+		path.resolve( TEMPLATES_PATH, 'font-size-item.html' ),
+		'utf8'
+	) );
+	const borderSizeTemplate = compile( fs.readFileSync(
+		path.resolve( TEMPLATES_PATH, 'border-radius-item.html' ),
+		'utf8'
+	) );
+	const { sizeMap } = sizes;
+	const numericalItems = values( sizeMap )
+		.map( ( size ) => fontSizeTemplate( { size } ) );
+	const relativeItems = [ 'small', 'medium', 'large', 'huge' ].map(
+		( size ) => fontSizeTemplate( { size } )
+	);
+	const radiusItems = [ 'small', 'normal' ].map(
+		( size ) => borderSizeTemplate( { size } )
+	);
+	return sectionTemplate( {
+		numericalItems,
+		relativeItems,
+		radiusItems,
+	} );
+}
+
 /**
  * A function that builds an returns an array of section templates for the
  * css demo html.
@@ -123,6 +152,7 @@ function buildSectionTemplates( themeConfig ) {
 		buildEntityStatusSection( themeConfig ),
 		buildButtonSection( themeConfig ),
 		buildShadowsSection( themeConfig ),
+		buildSizesSection( themeConfig ),
 	];
 }
 
