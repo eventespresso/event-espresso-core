@@ -55,9 +55,7 @@ function* removeRelationForEntity(
 	relationName,
 	relationEntityId
 ) {
-	const singularRelationName = singularModelName( relationName );
 	const pluralRelationName = pluralModelName( relationName );
-	yield removeEntityById( singularRelationName, relationEntityId );
 	yield removeRelatedEntities(
 		modelName,
 		entityId,
