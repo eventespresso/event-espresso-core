@@ -2,6 +2,7 @@
  * External imports
  */
 import { uniq } from 'lodash';
+import warning from 'warning';
 import { compose, withState } from '@wordpress/compose';
 import { withSelect, withDispatch } from '@wordpress/data';
 import {
@@ -10,7 +11,6 @@ import {
 	withFormContainerAndPlaceholder,
 } from '@eventespresso/higher-order-components';
 import { __ } from '@eventespresso/i18n';
-import { dateTimeModel, ticketModel } from '@eventespresso/model';
 import { isModelEntityOfModel } from '@eventespresso/validators';
 
 /**
@@ -20,9 +20,6 @@ import {
 	sortDatesList,
 } from '../dates-and-times/editor-date/filter-bar/dates-list-filter-utils';
 import { default as TicketAssignmentsManager } from './ticket-assignments-manager';
-
-const { MODEL_NAME: DATETIME } = dateTimeModel;
-const { MODEL_NAME: TICKET } = ticketModel;
 
 /**
  * withDatesAndTicketsManagerState
@@ -71,13 +68,13 @@ export default compose( [
 		if ( ! editorOpen || initialized ) {
 			return dtmProps;
 		}
-		if ( isModelEntityOfModel( date, DATETIME ) ) {
+		if ( isModelEntityOfModel( date, 'datetime' ) ) {
 			dtmProps = {
 				initialized: true,
 				entities: [ date ],
 				tickets: allTickets,
 			};
-		} else if ( isModelEntityOfModel( ticket, TICKET ) ) {
+		} else if ( isModelEntityOfModel( ticket, 'ticket' ) ) {
 			dtmProps = {
 				initialized: true,
 				entities: sortDatesList( allDates ),
@@ -116,71 +113,58 @@ export default compose( [
 		return dtmProps;
 	} ),
 	withDispatch( ( dispatch ) => {
-		const addTickets = ( date, tickets ) => new Promise(
-			( resolve, reject ) => {
-				if ( ! isModelEntityOfModel( date, DATETIME ) ) {
-					reject(
-						'date is not a BaseEntity of the model ' + DATETIME
+		const addTickets = ( date, tickets ) => {
+			warning(
+				isModelEntityOfModel( date, 'datetime' ),
+				'date is not a BaseEntity of the datetime model.'
+			);
+			const { createRelation } = dispatch( 'eventespresso/core' );
+			const relationsAdded = [];
+			if ( Array.isArray( tickets ) ) {
+				for ( const ticket of tickets ) {
+					warning(
+						isModelEntityOfModel( ticket, 'ticket' ),
+						'ticket is not a BaseEntity of the ticket model.'
+					);
+					relationsAdded.push(
+						createRelation(
+							'datetime',
+							date.id,
+							'tickets',
+							ticket
+						)
 					);
 				}
-				const {
-					createRelation,
-					persistRelationsForEntityIdAndRelation,
-				} = dispatch( 'eventespresso/core' );
-				if ( Array.isArray( tickets ) ) {
-					tickets.forEach( async ( ticket ) => {
-						if ( isModelEntityOfModel( ticket, TICKET ) ) {
-							createRelation(
-								DATETIME,
-								date.id,
-								TICKET,
-								ticket
-							);
-						}
-					} );
-				}
-				resolve(
-					persistRelationsForEntityIdAndRelation(
-						DATETIME,
-						date.id,
-						TICKET
-					)
-				);
 			}
-		);
-		const removeTickets = ( date, tickets ) => new Promise(
-			( resolve, reject ) => {
-				if ( ! isModelEntityOfModel( date, DATETIME ) ) {
-					reject(
-						'date is not a BaseEntity of the model ' + DATETIME
+			return Promise.all( relationsAdded );
+		};
+		const removeTickets = ( date, tickets ) => {
+			warning(
+				isModelEntityOfModel( date, 'datetime' ),
+				'date is not a BaseEntity of the datetime model.'
+			);
+			const {
+				removeRelationForEntity,
+			} = dispatch( 'eventespresso/core' );
+			const relationsRemoved = [];
+			if ( Array.isArray( tickets ) ) {
+				tickets.forEach( ( ticket ) => {
+					warning(
+						isModelEntityOfModel( ticket, 'ticket' ),
+						'ticket is not a BaseEntity of the ticket model.'
 					);
-				}
-				const {
-					removeRelationForEntity,
-					persistRelationsForEntityIdAndRelation,
-				} = dispatch( 'eventespresso/core' );
-				if ( Array.isArray( tickets ) ) {
-					tickets.forEach( ( ticket ) => {
-						if ( isModelEntityOfModel( ticket, TICKET ) ) {
-							removeRelationForEntity(
-								DATETIME,
-								date.id,
-								TICKET,
-								ticket.id
-							);
-						}
-					} );
-				}
-				resolve(
-					persistRelationsForEntityIdAndRelation(
-						DATETIME,
-						date.id,
-						TICKET,
-						false
-					)
-				);
+					relationsRemoved.push(
+						removeRelationForEntity(
+							'datetime',
+							date.id,
+							'tickets',
+							ticket.id
+						)
+					);
+				} );
 			}
-		);
+			return Promise.all( relationsRemoved );
+		};
 		return { addTickets, removeTickets };
 	} ),
 	withEditorModal( {
