@@ -25,10 +25,12 @@ const MAIN_TEMPLATE = fs.readFileSync( path.resolve( DEMO_TEMPLATES_PATH, 'main_
 
 /**
  * Write the demo css file.
+ *
+ * @param {string} themeDirectory
  */
-function writeCssDemoFile() {
+function writeCssDemoFile( themeDirectory ) {
 	const demoCss = fs.readFileSync( path.resolve( DEMO_TEMPLATES_PATH, 'demo.css' ), 'utf8' );
-	const destPath = path.resolve( STYLES_DIRECTORY, 'themes', 'default', 'demo', 'demo' );
+	const destPath = path.resolve( STYLES_DIRECTORY, 'themes', themeDirectory, 'demo', 'demo' );
 	process.stdout.write( `${ path.basename( destPath ) }\n` );
 	fs.writeFileSync( destPath + '.css', demoCss );
 	process.stdout.write(
@@ -43,7 +45,9 @@ function writeCssDemoFile() {
 }
 
 /**
- * Write the main file template
+ * Write the main demo file template (index.html)
+ *
+ * @param {string} themeDirectory
  */
 function writeCssDemoMainFile( themeDirectory ) {
 	themeDirectory = themeDirectory === undefined ? 'default' : themeDirectory;
@@ -71,11 +75,27 @@ function writeCssDemoMainFile( themeDirectory ) {
 	)
 }
 
+/**
+ * Get the configuration object for the given theme directory
+ *
+ * @param {string} themeDirectory
+ * @return {Object}  The configuration object for that theme.
+ */
 function getConfig( themeDirectory ) {
 	const destPath = path.resolve( STYLES_DIRECTORY, 'themes', themeDirectory );
 	return require( `${ destPath }/config` );
 }
 
+/**
+ * Writes the colors css stylesheet file
+ *
+ * Note: Currently this only builds and writes the colors.css (or
+ * colors-variables) stylesheets for the default theme.
+ * The main stylesheet for the default theme is the `root` colors.css stylesheet.
+ *
+ * @param {string} themeDirectory
+ * @param variables  Whether to build the variables stylesheet or not.
+ */
 function writeColorsCss( themeDirectory, variables = false ) {
 	if ( themeDirectory !== 'default' && ! variables ) {
 		return;
@@ -108,6 +128,13 @@ function writeColorsCss( themeDirectory, variables = false ) {
 	);
 }
 
+/**
+ * Writes the entity status stylesheeet.
+ *
+ * Note: Currently this only builds the root stylesheet for `entity-status.css`
+ *
+ * @param themeDirectory
+ */
 function writeEntityStatusCss( themeDirectory ) {
 	if ( themeDirectory !== 'default' ) {
 		return;
@@ -136,6 +163,9 @@ function writeEntityStatusCss( themeDirectory ) {
 
 /**
  * Writes the button css for a given theme.
+ *
+ * Note: Currently this only builds the root `buttons.css` stylesheet.
+ *
  * @param {string} themeDirectory
  */
 function writeButtonCss( themeDirectory ) {
@@ -159,6 +189,9 @@ function writeButtonCss( themeDirectory ) {
 
 /**
  * Writes the shadow css for a given theme.
+ *
+ * Note: currently this only builds the root shadows.css stylesheet.
+ *
  * @param {string} themeDirectory
  */
 function writeShadowCss( themeDirectory ) {
@@ -196,6 +229,16 @@ function writeShadowCss( themeDirectory ) {
 	);
 }
 
+/**
+ * Writes the sizes and sizes-variables stylesheets for the given theme.
+ *
+ * Note: Currently this only builds the root sizes.css stylesheet and 'default'
+ * sizes-variables.css stylesheet.
+ *
+ * @param {string} themeDirectory
+ * @param {boolean} variables  If true then the variables stylesheet is built,
+ * otherwise the main stylesheet is built.
+ */
 function writeSizesCss( themeDirectory, variables = false ) {
 	if ( themeDirectory !== 'default' && ! variables ) {
 		return;
@@ -208,14 +251,22 @@ function writeSizesCss( themeDirectory, variables = false ) {
 	}
 }
 
-function createDemos() {
-	const destPath = path.resolve( STYLES_DIRECTORY, 'themes', 'default', 'demo' );
+/**
+ * Create the demo files for the given theme.
+ */
+function createDemos( themeDirectory ) {
+	const destPath = path.resolve( STYLES_DIRECTORY, 'themes', themeDirectory, 'demo' );
 	process.stdout.write( `Writing css demo files: ${ path.basename( destPath ) }\n` );
 	mkdirp.sync( path.dirname( destPath ) );
-	writeCssDemoFile();
-	writeCssDemoMainFile();
+	writeCssDemoFile( themeDirectory );
+	writeCssDemoMainFile( themeDirectory );
 }
 
+/**
+ * Writes the index.js file as the entrypoint for the webpack build process.
+ *
+ * @param {string} themeDirectory
+ */
 function createIndexFile( themeDirectory ) {
 	const destPath = path.resolve(
 		STYLES_DIRECTORY,
@@ -244,7 +295,7 @@ function buildFiles() {
 	writeShadowCss( 'default' );
 	writeSizesCss( 'default' );
 	writeSizesCss( 'default', true );
-	createDemos();
+	createDemos( 'default' );
 	createIndexFile( 'default' );
 	process.stdout.write( `${ DONE }\n` );
 }

@@ -11,6 +11,7 @@ const TEMPLATES_PATH = path.resolve( __dirname, 'demo-templates' );
 
 /**
  * A function that builds the colors section for css demo html.
+ * @param {Array} Array of color configuration objects to build demos for.
  * @return {string}  Colors section html.
  */
 function buildColorsSection( { colors } ) {
@@ -29,6 +30,12 @@ function buildColorsSection( { colors } ) {
 	return sectionTemplate( { colorDemoItems } );
 }
 
+/**
+ * A function that builds the entity status section for the css demo html
+ * @param {Object} statuses  Statuses configuration object to build the demo
+ * items for.
+ * @return {string} Status section html.
+ */
 function buildEntityStatusSection( { statuses } ) {
 	const sectionTemplate = compile( fs.readFileSync(
 		path.resolve( TEMPLATES_PATH, 'entity-status-section.html' ),
@@ -63,6 +70,11 @@ function buildEntityStatusSection( { statuses } ) {
 	return sectionTemplate( { entityGroups } );
 }
 
+/**
+ * A function that builds the button section for the css demo html.
+ * @param {Array} colors  Array of color configuration objects
+ * @return {string} The section html.
+ */
 function buildButtonSection( { colors } ) {
 	const sectionTemplate = compile( fs.readFileSync(
 		path.resolve( TEMPLATES_PATH, 'button-section.html' ),
@@ -83,6 +95,12 @@ function buildButtonSection( { colors } ) {
 	return sectionTemplate( { sectionItems } );
 }
 
+/**
+ * A function that builds the shadows section for the css demo html.
+ *
+ * @param {Array} colors  An array of color configuration objects
+ * @return {string}  The section html
+ */
 function buildShadowsSection( { colors } ) {
 	const sectionTemplate = compile( fs.readFileSync(
 		path.resolve( TEMPLATES_PATH, 'shadows-section.html' ),
@@ -103,6 +121,12 @@ function buildShadowsSection( { colors } ) {
 	return sectionTemplate( { sectionItems } );
 }
 
+/**
+ * A function the builds the sizes section for the css demo html
+ *
+ * @param {Object} sizes
+ * @return {string} The section html.
+ */
 function buildSizesSection( { sizes } ) {
 	const sectionTemplate = compile( fs.readFileSync(
 		path.resolve( TEMPLATES_PATH, 'size-section-template.html' ),

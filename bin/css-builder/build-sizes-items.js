@@ -7,6 +7,11 @@ const chalk = require( 'chalk' );
 const CSS_TEMPLATES_PATH = path.resolve( __dirname, 'css-templates' );
 const STYLES_DIRECTORY = path.resolve( __dirname, '../../assets/src/components/ui/styles' );
 
+/**
+ * Builds the sizes variable css files for the given theme.
+ * @param {string} themeDirectory  The theme directory
+ * @param {Object} sizes The sizes configuration object.
+ */
 function buildVariables( themeDirectory, { sizes } ) {
 	const destPath = path.resolve( STYLES_DIRECTORY, 'themes', themeDirectory, 'sizes-variables.css' );
 	const mainTemplate = compile( fs.readFileSync(
@@ -42,6 +47,14 @@ function buildVariables( themeDirectory, { sizes } ) {
 		)
 	);
 }
+
+/**
+ * Builds the sizes css stylesheet for the given theme.
+ * Note: `'default'` theme will result in generating the root size stylesheets.
+ *
+ * @param {string} themeDirectory
+ * @param {Object} sizes Sizes configuration object
+ */
 function buildMain( themeDirectory, { sizes } ) {
 	const destPath = path.resolve( STYLES_DIRECTORY, 'root', 'sizes.css' );
 	const mainTemplate = compile( fs.readFileSync(
