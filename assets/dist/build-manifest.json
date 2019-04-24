@@ -1,6 +1,6 @@
 {
   "components.css": "ee-components.10aa00b0631273cd32e3.dist.css",
-  "components.js": "ee-components.a32bbca96357647929c8.dist.js",
+  "components.js": "ee-components.cfdd04d9c17b8f4e22a0.dist.js",
   "data-stores.js": "ee-data-stores.b068cf0da00da23bff0f.dist.js",
   "editor-hocs.js": "ee-editor-hocs.15a813aac7a51b5473cb.dist.js",
   "eejs.js": "ee-eejs.7ff27c87459cc11917cb.dist.js",
@@ -14,7 +14,7 @@
   "model.js": "ee-model.2ea0bb53030ba083d582.dist.js",
   "validators.js": "ee-validators.299a9413a62fd9fadb1c.dist.js",
   "valueObjects.js": "ee-valueObjects.22ceae6aa5010d4c9d88.dist.js",
-  "vendor.js": "ee-vendor.09f6c3d07dfa03f8ff6a.dist.js",
+  "vendor.js": "ee-vendor.5f4ac36545f1cc250434.dist.js",
   "wp-plugins-page.css": "ee-wp-plugins-page.bff04b6b9d88e9edd2bb.dist.css",
   "wp-plugins-page.js": "ee-wp-plugins-page.7ad904fab88dff79ece1.dist.js"
 }
