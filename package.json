@@ -4,10 +4,15 @@
 	"description": "Event Espresso core js and css.",
 	"main": "webpack.dev.js",
 	"repository": "git+https://github.com/eventespresso/event-espresso-core.git",
+	"watch": {
+		"build:css": {
+			"patterns": [ "bin/css-builder", "assets/src/components/ui/styles" ]
+		}
+	},
 	"scripts": {
-		"prebuild": "npm run check-engines",
+		"prebuild": "npm run check-engines && npm run build:css",
 		"prewatch": "npm run check-engines",
-		"watch": "webpack --watch --config webpack.dev.js",
+		"watch": "concurrently \"webpack --watch --config webpack.dev.js\" \"npm-watch build:css\"",
 		"build": "cross-env NODE_ENV=production webpack --config webpack.prod.js",
 		"watch-poll": "webpack --watch --watch-poll --config webpack.dev.js",
 		"lint": "wp-scripts lint-js .",
@@ -108,6 +113,7 @@
 		"memize": "^1.0.5",
 		"moment-duration-format": "^2.2.2",
 		"moment-timezone": "^0.5.25",
+		"npm-watch": "^0.6.0",
 		"pluralize": "^7.0.0",
 		"prop-types": "^15.7.2",
 		"querystringify": "^2.1.1",
