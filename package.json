@@ -6,7 +6,11 @@
 	"repository": "git+https://github.com/eventespresso/event-espresso-core.git",
 	"watch": {
 		"build:css": {
-			"patterns": [ "bin/css-builder", "assets/src/components/ui/styles" ]
+			"patterns": [
+				"bin/css-builder",
+				"assets/src/components/ui/styles"
+			],
+			"ignore": "index.js"
 		}
 	},
 	"scripts": {
