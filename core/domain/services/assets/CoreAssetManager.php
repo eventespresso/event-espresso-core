@@ -483,7 +483,7 @@ class CoreAssetManager extends AssetManager
             CoreAssetManager::CSS_HANDLE_COMPONENTS,
             $this->registry->getCssUrl(
                 $this->domain->assetNamespace(),
-                'components',
+                'components'
             ),
             [CoreAssetManager::CSS_HANDLE_CORE_CSS_DEFAULT]
         );
