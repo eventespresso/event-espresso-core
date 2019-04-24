@@ -36,23 +36,32 @@ class Price_Types_List_Table extends EE_Admin_List_Table
     protected function _set_properties()
     {
         $this->_wp_list_args = array(
-            'singular' => __('price type', 'event_espresso'),
-            'plural'   => __('price types', 'event_espresso'),
+            'singular' => esc_html__('price type', 'event_espresso'),
+            'plural'   => esc_html__('price types', 'event_espresso'),
             'ajax'     => true,
             'screen'   => $this->_admin_page->get_current_screen()->id,
         );
 
         $this->_columns = array(
             'cb'        => '<input type="checkbox" />', // Render a checkbox instead of text
-            'name'      => __('Name', 'event_espresso'),
-            'base_type' => '<div class="jst-cntr">' . __('Base Type', 'event_espresso') . '</div>',
-            'percent'   => '<div class="jst-cntr">' . __('Applied', 'event_espresso') . '<br/>'
-                           . __('as ', 'event_espresso') . '<span class="big-text">'
-                           . __('%', 'event_espresso') . '</span>'
-                           . __(' or ', 'event_espresso') . '<span class="big-text">'
-                           . __('$', 'event_espresso') . '</span></div>',
-            'order'     => '<div class="jst-cntr">' . __('Order of', 'event_espresso') . '<br/>'
-                           . __('Application', 'event_espresso') . '</div>',
+            'name'      => esc_html__('Name', 'event_espresso'),
+            'base_type' => '<div class="jst-cntr">' . esc_html__('Base Type', 'event_espresso') . '</div>',
+            'percent'   => '<div class="jst-cntr">'
+                           . sprintf(
+                               /* translators: 1: HTML new line, 2: open span tag, 3: close span tag */
+                               esc_html__('Applied %1$s as %2$s%%%3$s or %2$s$%3$s', 'event_espresso'),
+                               '<br/>',
+                               '<span class="big-text">',
+                               '</span>'
+                           )
+                           . '</div>',
+            'order'     => '<div class="jst-cntr">'
+                           . sprintf(
+                               /* translators: HTML new line */
+                               esc_html__('Order of %s Application', 'event_espresso'),
+                               '<br/>'
+                           )
+                           . '</div>',
         );
 
         $this->_sortable_columns = array(
@@ -108,9 +117,14 @@ class Price_Types_List_Table extends EE_Admin_List_Table
                 'action' => 'edit_price_type',
                 'id'     => $item->ID(),
             ), PRICING_ADMIN_URL);
-            $actions['edit'] = '<a href="' . $edit_lnk_url . '" title="'
-                               . esc_attr__('Edit Price Type', 'event_espresso') . '">'
-                               . __('Edit', 'event_espresso') . '</a>';
+            $actions['edit'] = '<a href="' . $edit_lnk_url . '" aria-label="'
+                               . sprintf(
+                                   /* translators: The name of the price type */
+                                   esc_attr__('Edit Price Type (%s)', 'event_espresso'),
+                                   $item->name()
+                               )
+                               . '">'
+                               . esc_html__('Edit', 'event_espresso') . '</a>';
         }
 
         $name_link = EE_Registry::instance()->CAP->current_user_can(
@@ -118,8 +132,13 @@ class Price_Types_List_Table extends EE_Admin_List_Table
             'pricing_edit_price_type',
             $item->ID()
         )
-            ? '<a href="' . $edit_lnk_url . '" title="'
-              . esc_attr__('Edit Price Type', 'event_espresso') . '">'
+            ? '<a href="' . $edit_lnk_url . '" aria-label="'
+              . sprintf(
+                  /* translators: The name of the price type */
+                  esc_attr__('Edit Price Type (%s)', 'event_espresso'),
+                  $item->name()
+              )
+              . '">'
               . stripslashes($item->name()) . '</a>'
             : $item->name();
 
@@ -136,9 +155,14 @@ class Price_Types_List_Table extends EE_Admin_List_Table
                         'id'       => $item->ID(),
                         'noheader' => true,
                     ), PRICING_ADMIN_URL);
-                    $actions['trash'] = '<a href="' . $trash_lnk_url . '" title="'
-                                        . esc_attr__('Move Price Type to Trash', 'event_espresso') . '">'
-                                        . __('Move to Trash', 'event_espresso') . '</a>';
+                    $actions['trash'] = '<a href="' . $trash_lnk_url . '" aria-label="'
+                                        . sprintf(
+                                            /* translators: The name of the price type */
+                                            esc_attr__('Move Price Type %s to Trash', 'event_espresso'),
+                                            $item->name()
+                                        )
+                                        . '">'
+                                        . esc_html__('Move to Trash', 'event_espresso') . '</a>';
                 }
             } else {
                 // restore price link
@@ -152,9 +176,14 @@ class Price_Types_List_Table extends EE_Admin_List_Table
                         'id'       => $item->ID(),
                         'noheader' => true,
                     ), PRICING_ADMIN_URL);
-                    $actions['restore'] = '<a href="' . $restore_lnk_url . '" title="'
-                                          . esc_attr__('Restore Price Type', 'event_espresso') . '">'
-                                          . __('Restore', 'event_espresso') . '</a>';
+                    $actions['restore'] = '<a href="' . $restore_lnk_url . '" aria-label="'
+                                          . sprintf(
+                                              /* translators: The name of the price type */
+                                              esc_attr__('Restore Price Type (%s)', 'event_espresso'),
+                                              $item->name()
+                                          )
+                                          . '">'
+                                          . esc_html__('Restore', 'event_espresso') . '</a>';
                 }
                 // delete price link
                 if (EE_Registry::instance()->CAP->current_user_can(
@@ -167,9 +196,14 @@ class Price_Types_List_Table extends EE_Admin_List_Table
                         'id'       => $item->ID(),
                         'noheader' => true,
                     ), PRICING_ADMIN_URL);
-                    $actions['delete'] = '<a href="' . $delete_lnk_url . '" title="'
-                                         . esc_attr__('Delete Price Type Permanently', 'event_espresso') . '">'
-                                         . __('Delete Permanently', 'event_espresso') . '</a>';
+                    $actions['delete'] = '<a href="' . $delete_lnk_url . '" aria-label="'
+                                         . sprintf(
+                                             /* translators: The name of the price type */
+                                             esc_attr__('Delete Price Type %s Permanently', 'event_espresso'),
+                                             $item->name()
+                                         )
+                                         . '">'
+                                         . esc_html__('Delete Permanently', 'event_espresso') . '</a>';
                 }
             }
         }
