@@ -1,7 +1,6 @@
 /**
  * Internal Imports
  */
-import { removeEntityById } from './remove-entities';
 import {
 	receiveDirtyRelationDeletion,
 } from './receive-relations';
@@ -12,10 +11,7 @@ import {
 /**
  * External imports
  */
-import {
-	singularModelName,
-	pluralModelName,
-} from '@eventespresso/model';
+import { pluralModelName } from '@eventespresso/model';
 
 /**
  * Action generator yielding actions for handling removing the queued relations
