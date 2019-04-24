@@ -11,6 +11,7 @@ const buildSectionTemplates = require( './build-section-templates' );
 const buildColorCssItems = require( './build-color-css-items' );
 const buildStatusItems = require( './build-status-items' );
 const buildSizesItems = require( './build-sizes-items' );
+const getIndexPaths = require( './get-index-paths' );
 
 // constants;
 const DONE = chalk.reset.inverse.bold.green( 'DONE' );
@@ -215,6 +216,23 @@ function createDemos() {
 	writeCssDemoMainFile();
 }
 
+function createIndexFile( themeDirectory ) {
+	const destPath = path.resolve(
+		STYLES_DIRECTORY,
+		'themes',
+		'default',
+		'index.js'
+	);
+	process.stdout.write( `Creating index.js for styles: \n` );
+	const indexPaths = getIndexPaths( themeDirectory );
+	fs.writeFileSync(
+		destPath,
+		indexPaths.map(
+			( file ) => `import '${ file }';`
+		).join( '\n' )
+	);
+}
+
 /**
  * Invoked for building the files.
  */
@@ -227,6 +245,7 @@ function buildFiles() {
 	writeSizesCss( 'default' );
 	writeSizesCss( 'default', true );
 	createDemos();
+	createIndexFile( 'default' );
 	process.stdout.write( `${ DONE }\n` );
 }
 

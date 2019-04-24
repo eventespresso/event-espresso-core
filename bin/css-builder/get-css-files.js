@@ -92,15 +92,20 @@ function getCssRelativePath( directory, file ) {
  *
  * @param {boolean} variablesOnly Whether to only return variable css files or
  * not.
+ * @param {boolean} relative  Whether to return the path relative to the demo
+ * directory.
  * @return {string[]}  An array of relative css file paths for all the css files
  * found in the given directory.
  */
-function getCssFiles( directory, variablesOnly = false ) {
+function getCssFiles( directory, variablesOnly = false, relative = true ) {
 	const filesToRead = path.join( STYLES_DIRECTORY, directory );
 	return fs
 		.readdirSync( filesToRead )
 		.filter( filterItems( variablesOnly, directory ) )
-		.map( ( file ) => getCssRelativePath( directory, file ) );
+		.map( ( file ) =>  relative ?
+			getCssRelativePath( directory, file ) :
+			file
+		)
 }
 
 module.exports = getCssFiles;
