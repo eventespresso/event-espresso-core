@@ -133,6 +133,10 @@ function writeEntityStatusCss( themeDirectory ) {
 	);
 }
 
+/**
+ * Writes the button css for a given theme.
+ * @param {string} themeDirectory
+ */
 function writeButtonCss( themeDirectory ) {
 	if ( themeDirectory !== 'default' ) {
 		return;
@@ -152,6 +156,10 @@ function writeButtonCss( themeDirectory ) {
 	);
 }
 
+/**
+ * Writes the shadow css for a given theme.
+ * @param {string} themeDirectory
+ */
 function writeShadowCss( themeDirectory ) {
 	if ( themeDirectory !== 'default' ) {
 		return;
