@@ -243,9 +243,9 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class implements EEI_Line_Item_Objec
      */
     public function date_range($dt_frmt = '', $conjunction = ' - ')
     {
-        $first_date = $this->first_datetime() instanceof EE_Datetime ? $this->first_datetime()->start_date($dt_frmt)
+        $first_date = $this->first_datetime() instanceof EE_Datetime ? $this->first_datetime()->get_i18n_datetime('DTT_EVT_start', $dt_frmt)
             : '';
-        $last_date = $this->last_datetime() instanceof EE_Datetime ? $this->last_datetime()->end_date($dt_frmt) : '';
+        $last_date = $this->last_datetime() instanceof EE_Datetime ? $this->last_datetime()->get_i18n_datetime('DTT_EVT_end', $dt_frmt) : '';
 
         return $first_date && $last_date ? $first_date . $conjunction . $last_date : '';
     }
