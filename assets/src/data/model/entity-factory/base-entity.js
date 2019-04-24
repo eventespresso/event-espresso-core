@@ -183,7 +183,7 @@ const createEntityFactory = ( modelName, schema, fieldPrefixes = [] ) => {
 		 * is for from any given factory.
 		 * @type string
 		 */
-		modelName: modelName,
+		modelName,
 		/**
 		 * This is the class definition for the Entity.  Typically this is
 		 * retrieved for the ability to do instanceof checks.
