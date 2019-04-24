@@ -118,34 +118,20 @@ export default compose( [
 				isModelEntityOfModel( date, 'datetime' ),
 				'date is not a BaseEntity of the datetime model.'
 			);
-			const { createRelation } = dispatch( 'eventespresso/core' );
-			const relationsAdded = [];
-			if ( Array.isArray( tickets ) ) {
-				for ( const ticket of tickets ) {
-					warning(
-						isModelEntityOfModel( ticket, 'ticket' ),
-						'ticket is not a BaseEntity of the ticket model.'
-					);
-					relationsAdded.push(
-						createRelation(
-							'datetime',
-							date.id,
-							'tickets',
-							ticket
-						)
-					);
-				}
-			}
-			return Promise.all( relationsAdded );
+			const { createRelations } = dispatch( 'eventespresso/core' );
+			return createRelations(
+				'datetime',
+				date.id,
+				'tickets',
+				tickets
+			);
 		};
 		const removeTickets = ( date, tickets ) => {
 			warning(
 				isModelEntityOfModel( date, 'datetime' ),
 				'date is not a BaseEntity of the datetime model.'
 			);
-			const {
-				removeRelationForEntity,
-			} = dispatch( 'eventespresso/core' );
+			const { removeRelationForEntity } = dispatch( 'eventespresso/core' );
 			const relationsRemoved = [];
 			if ( Array.isArray( tickets ) ) {
 				tickets.forEach( ( ticket ) => {

@@ -2,12 +2,9 @@
  * External imports
  */
 import { find, findIndex, isArray, isEmpty, isUndefined, omitBy } from 'lodash';
-import { dateTimeModel } from '@eventespresso/model';
 import { isModelEntityOfModel } from '@eventespresso/validators';
 
 const noIndex = -1;
-
-const { MODEL_NAME: DATETIME } = dateTimeModel;
 
 /**
  * @function
@@ -28,29 +25,25 @@ export const processChanges = (
 	const relationUpdates = [];
 	for ( let dateID in removed ) {
 		dateID = parseInt( dateID );
-		if ( removed.hasOwnProperty( dateID ) ) {
-			const date = find( dates, { id: dateID } );
-			if ( isModelEntityOfModel( date, DATETIME ) ) {
-				const ticketsToRemove = removed[ dateID ];
-				if ( isArray( ticketsToRemove ) ) {
-					relationUpdates.push(
-						removeTickets( date, ticketsToRemove )
-					);
-				}
+		const date = find( dates, { id: dateID } );
+		if ( isModelEntityOfModel( date, 'datetime' ) ) {
+			const ticketsToRemove = removed[ dateID ];
+			if ( isArray( ticketsToRemove ) ) {
+				relationUpdates.push(
+					removeTickets( date, ticketsToRemove )
+				);
 			}
 		}
 	}
 	for ( let dateID in assigned ) {
 		dateID = parseInt( dateID );
-		if ( assigned.hasOwnProperty( dateID ) ) {
-			const date = find( dates, { id: dateID } );
-			if ( isModelEntityOfModel( date, DATETIME ) ) {
-				const ticketsToAssign = assigned[ dateID ];
-				if ( isArray( ticketsToAssign ) ) {
-					relationUpdates.push(
-						addTickets( date, ticketsToAssign )
-					);
-				}
+		const date = find( dates, { id: dateID } );
+		if ( isModelEntityOfModel( date, 'datetime' ) ) {
+			const ticketsToAssign = assigned[ dateID ];
+			if ( isArray( ticketsToAssign ) ) {
+				relationUpdates.push(
+					addTickets( date, ticketsToAssign )
+				);
 			}
 		}
 	}
