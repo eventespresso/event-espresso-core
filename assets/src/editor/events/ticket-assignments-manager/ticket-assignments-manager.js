@@ -1,7 +1,7 @@
 /**
  * External imports
  */
-import { findIndex, isFunction } from 'lodash';
+import { filter, findIndex, isFunction } from 'lodash';
 import PropTypes from 'prop-types';
 import warning from 'warning';
 import { IconButton } from '@wordpress/components';
@@ -86,16 +86,20 @@ class TicketAssignmentsManager extends Component {
 	 *
 	 * @function
 	 */
-	processChanges = async () => {
+	processChanges = () => {
 		this.setState( { submitting: true } );
-		const wasUpdated = await handler.processChanges(
+		handler.processChanges(
 			this.props.entities,
 			this.state.assigned,
 			this.props.addTickets,
 			this.state.removed,
 			this.props.removeTickets
-		);
-		this.toggleEditor( wasUpdated );
+		).then( ( updates ) => {
+			const wasUpdated = filter( updates, ( updated ) => {
+				return !! updated;
+			} );
+			this.toggleEditor( wasUpdated.length > 0 );
+		} );
 	};
 
 	/**

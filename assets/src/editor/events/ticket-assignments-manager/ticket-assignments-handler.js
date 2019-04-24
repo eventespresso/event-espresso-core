@@ -1,7 +1,7 @@
 /**
  * External imports
  */
-import { filter, find, findIndex, isArray, isEmpty, isUndefined, omitBy } from 'lodash';
+import { find, findIndex, isArray, isEmpty, isUndefined, omitBy } from 'lodash';
 import { dateTimeModel } from '@eventespresso/model';
 import { isModelEntityOfModel } from '@eventespresso/validators';
 
@@ -18,7 +18,7 @@ const { MODEL_NAME: DATETIME } = dateTimeModel;
  * @param {Function} removeTickets
  * @return {Promise} resolves to true if updates occurred
  */
-export const processChanges = async (
+export const processChanges = (
 	dates,
 	assigned,
 	addTickets,
@@ -54,12 +54,7 @@ export const processChanges = async (
 			}
 		}
 	}
-	return Promise.all( relationUpdates ).then( ( updates ) => {
-		const wasUpdated = filter( updates, ( updated ) => {
-			return ! ! updated;
-		} );
-		return wasUpdated.length > 0;
-	} );
+	return Promise.all( relationUpdates );
 };
 
 /**
