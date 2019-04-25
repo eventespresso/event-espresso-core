@@ -51,9 +51,11 @@ const DatesAndTicketsFilterState = ( {
 	loading,
 	loadingDates,
 	loadingTickets,
-	eventDates,
-	eventDateTickets,
-	getRelatedTickets,
+	datetimes,
+	allDates,
+	tickets,
+	allTickets,
+	// getRelatedTickets,
 	showDates,
 	sortDates,
 	showTickets,
@@ -62,32 +64,19 @@ const DatesAndTicketsFilterState = ( {
 	render,
 	...otherProps
 } ) => {
-	const datetimes = getFilteredDatesList(
-		eventDates,
-		showDates,
-		sortDates
-	);
-	const tickets = getFilteredTicketsList(
-		isChained ?
-			getRelatedTickets( datetimes ) :
-			eventDateTickets,
-		showTickets,
-		sortTickets
-	);
 	return render( {
-		loading: loading,
-		loadingDates: loadingDates,
-		loadingTickets: loadingTickets,
-		datetimes: datetimes,
-		allDates: eventDates,
-		tickets: tickets,
-		allTickets: eventDateTickets,
-		showDates: showDates,
-		sortDates: sortDates,
-		showTickets: showTickets,
-		sortTickets: sortTickets,
-		isChained: isChained,
-		getRelatedTickets: getRelatedTickets,
+		loading,
+		loadingDates,
+		loadingTickets,
+		datetimes,
+		allDates,
+		tickets,
+		allTickets,
+		showDates,
+		sortDates,
+		showTickets,
+		sortTickets,
+		isChained,
 		...otherProps,
 	} );
 };
@@ -164,12 +153,26 @@ export default compose( [
 			} );
 			return uniq( tickets );
 		};
+		const datetimes = getFilteredDatesList(
+			eventDates,
+			ownProps.showDates,
+			ownProps.sortDates
+		);
+		let tickets = ownProps.isChained ?
+			getRelatedTickets( datetimes ) :
+			eventDateTickets;
+		tickets = getFilteredTicketsList(
+			tickets,
+			ownProps.showTickets,
+			ownProps.sortTickets
+		);
 		return {
 			event,
-			eventDates,
-			eventDateTickets,
-			getRelatedTickets,
-			loading: loading,
+			datetimes,
+			allDates: eventDates,
+			tickets,
+			allTickets: eventDateTickets,
+			loading,
 			loadingDates: ! dateRelationsResolved,
 			loadingTickets: ! ticketRelationsResolved,
 		};
