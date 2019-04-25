@@ -1,10 +1,10 @@
 /**
  * External imports
  */
-import { warning } from 'warning';
+import warning from 'warning';
 import { Component } from '@wordpress/element';
 import { compose, withState, withSafeTimeout } from '@wordpress/compose';
-import { withSelect, withDispatch } from '@wordpress/data';
+import { withDispatch } from '@wordpress/data';
 import { isModelEntityOfModel } from '@eventespresso/validators';
 import { __, _x, sprintf } from '@eventespresso/i18n';
 import { withEditorModal } from '@eventespresso/higher-order-components';
@@ -13,6 +13,9 @@ import { Money, SiteCurrency } from '@eventespresso/value-objects';
 /**
  * Internal dependencies
  */
+import {
+	default as withSelectTicketPricesAndPriceTypes,
+} from '../../data/with-select-ticket-prices-and-price-types';
 import {
 	default as TicketPriceCalculatorForm,
 } from './ticket-price-calculator-form';
@@ -26,8 +29,6 @@ import {
 import {
 	ticketPriceCalculatorSubmitHandler,
 } from './ticket-price-calculator-submit-handler';
-
-const DEFAULT_EMPTY_ARRAY = [];
 
 /**
  * TicketPriceCalculatorFormModal
@@ -116,6 +117,7 @@ class TicketPriceCalculatorFormModal extends Component {
 
 /**
  * Enhanced TicketPriceCalculatorForm with Modal
+ * withSelectTicketPricesAndPriceTypes
  */
 export default compose( [
 	withSafeTimeout,
@@ -133,38 +135,7 @@ export default compose( [
 			'event_espresso'
 		),
 	} ),
-	withSelect( ( select, ownProps ) => {
-		const { getRelatedEntities } = select( 'eventespresso/core' );
-		const { getEntities } = select( 'eventespresso/lists' );
-		const { hasFinishedResolution } = select( 'core/data' );
-		const ticket = ownProps.ticket;
-		let prices = DEFAULT_EMPTY_ARRAY;
-		if ( isModelEntityOfModel( ticket, 'ticket' ) ) {
-			prices = getRelatedEntities( ticket, 'prices' );
-		}
-		const priceTypes = getEntities( 'price_type' );
-		const pricesResolved = hasFinishedResolution(
-			'eventespresso/core',
-			'getRelatedEntities',
-			[ ticket, 'prices' ]
-		);
-		const priceTypesResolved = hasFinishedResolution(
-			'eventespresso/lists',
-			'getEntities',
-			[ 'price_type' ]
-		);
-		return pricesResolved && priceTypesResolved ? {
-			loading: false,
-			ticket,
-			prices,
-			priceTypes,
-		} : {
-			loading: true,
-			ticket,
-			prices: [],
-			priceTypes: [],
-		};
-	} ),
+	withSelectTicketPricesAndPriceTypes,
 	withDispatch( ( dispatch, ownProps ) => {
 		const { newModifiers, deletedModifiers } = ownProps;
 		const {
