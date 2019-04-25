@@ -97,6 +97,7 @@
 		"@wordpress/i18n": "^1.2.3",
 		"@wordpress/is-shallow-equal": "^1.1.4",
 		"accounting-js": "^1.1.1",
+		"babel-runtime": "^6.26.0",
 		"classnames": "^2.2.6",
 		"cuid": "^2.1.6",
 		"decimal.js-light": "^2.5.0",
