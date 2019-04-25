@@ -73,6 +73,7 @@ export class FormInput extends Component {
 			htmlId,
 			InputLayout,
 			changeListener = null,
+			afterInput = null,
 			...rest
 		} = this.props;
 		let {
@@ -207,6 +208,12 @@ export class FormInput extends Component {
 					/>
 				);
 		}
+		formInput = afterInput ? (
+			<div className={ 'ee-after-input-wrapper' }>
+				{ formInput }
+				<div className={ 'ee-after-input-div' }>{ afterInput }</div>
+			</div>
+		) : formInput;
 		const formListener = isFunction( changeListener ) ? (
 			<OnChange name={ name }>
 				{ changeListener }

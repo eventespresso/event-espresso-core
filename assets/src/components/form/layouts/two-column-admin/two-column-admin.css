@@ -536,6 +536,7 @@
     font-style: italic;
     line-height: inherit;
     margin: .5em 0;
+    white-space: pre-wrap;
 }
 
 .ee-two-column-admin .espresso-input-help-text.left {
@@ -655,6 +656,16 @@
     display: none !important;
 }
 
+
+.ee-two-column-admin .ee-after-input-wrapper {
+    display: flex;
+    flex-flow: row nowrap;
+}
+
+.ee-two-column-admin .ee-after-input-div {
+    display: inline-block;
+    margin-left: 1rem;
+}
 
 /* Media Queries for specific screen sizes
  * -------------------------------------------------------------------------*/
