@@ -2,7 +2,7 @@
  * External imports
  */
 import { indexOf } from 'lodash';
-import { __ } from '@eventespresso/i18n';
+import { __, sprintf } from '@eventespresso/i18n';
 import { validations } from '@eventespresso/components';
 
 /**
@@ -12,6 +12,7 @@ import { validations } from '@eventespresso/components';
  *
  * @function
  * @param {Object} ticket  EE Ticket object
+ * @param {Object} calculator TicketPriceCalculatorFormModal
  * @param {Array} exclude  Array of field names to not display inputs for
  * @param {Array} currentValues  Array of input values
  * @param {Object} FormInput Input object to use
@@ -19,6 +20,7 @@ import { validations } from '@eventespresso/components';
  */
 export const ticketEntityFormInputs = (
 	ticket,
+	calculator,
 	exclude = [],
 	currentValues = [],
 	FormInput,
@@ -42,10 +44,6 @@ export const ticketEntityFormInputs = (
 				initialValue={ values[ `${ prefix }-id` ] }
 				label={ __( 'Ticket ID', 'event_espresso' ) }
 				htmlId={ `${ prefix }-id` }
-				// validators={ [
-				// 	validations.isInteger,
-				// 	validations.minNumber( 0 ),
-				// ] }
 				inputWidth={ 3 }
 				required
 				min={ 0 }
@@ -88,15 +86,21 @@ export const ticketEntityFormInputs = (
 				initialValue={ values[ `${ prefix }-price` ] || null }
 				label={ __( 'Ticket Price', 'event_espresso' ) }
 				htmlId={ `${ prefix }-price` }
-				helpText={ __(
-					'The amount of money charged for this ticket. Leave blank' +
-					' to make this ticket selection free.',
-					'event_espresso',
+				helpText={ sprintf(
+					__(
+						'The amount of money charged for this ticket. Leave blank' +
+						' to make this ticket selection free.%s' +
+						'Click the button after the input to use the Ticket' +
+						' Price Calculator (warning: will close this edit form)',
+						'event_espresso',
+					),
+					'\n'
 				) }
 				inputWidth={ 3 }
 				min={ 0 }
 				step="0.01"
-			/>,
+				afterInput={ calculator }
+			/>
 		);
 	}
 	if ( indexOf( exclude, 'taxable' ) < 0 ) {
@@ -217,13 +221,17 @@ export const ticketEntityFormInputs = (
 				initialValue={ values[ `${ prefix }-uses` ] || Infinity }
 				label={ __( 'Number of Uses', 'event_espresso' ) }
 				htmlId={ `${ prefix }-uses` }
-				helpText={ __(
-					'The number of event dates this ticket can be used for. ' +
-					'Example: A ticket might have access to 4 different' +
-					' dates, but setting this field to 2 would mean that the' +
-					' ticket could only be used twice.' +
-					'Leave blank for no limit.',
-					'event_espresso',
+				helpText={ sprintf(
+					__(
+						'Controls the total number of times this ticket' +
+						' can be used, regardless of the number of' +
+						' dates it is assigned to.%sExample: A ticket might' +
+						' have access to 4 different dates, but setting this' +
+						' field to 2 would mean that the ticket could only' +
+						' be used twice. Leave blank for no limit.',
+						'event_espresso',
+					),
+					'\n'
 				) }
 				inputWidth={ 3 }
 				min={ 0 }

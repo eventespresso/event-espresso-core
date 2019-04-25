@@ -79,6 +79,19 @@ class EditorTicketActionsMenu extends Component {
 	/**
 	 * @function
 	 * @param {Object} ticket    JSON object defining the Ticket
+	 * @return {TicketPriceCalculatorFormModal} rendered calculator
+	 */
+	ticketPriceCalculator = ( ticket ) => (
+		<TicketPriceCalculatorFormModal
+			ticket={ ticket }
+			closeModal={ this.toggleCalculator }
+			editorOpen={ this.state.calculator }
+		/>
+	);
+
+	/**
+	 * @function
+	 * @param {Object} ticket    JSON object defining the Ticket
 	 * @param {Array} relatedDates    Event Dates for the Ticket
 	 * @param {boolean} datesLoaded
 	 * @return {DropDownMenu}    Edit Ticket DropDownMenu
@@ -290,6 +303,13 @@ class EditorTicketActionsMenu extends Component {
 					ticket={ ticket }
 					closeModal={ this.toggleEditor }
 					editorOpen={ this.state.editorOpen }
+					calculator={
+						this.calculatePriceMenuItem(
+							ticket,
+							prices,
+							pricesLoaded
+						)
+					}
 				/>
 				<TicketAssignmentsManagerModal
 					ticket={ ticket }
@@ -308,11 +328,7 @@ class EditorTicketActionsMenu extends Component {
 						closeButtonLabel: null,
 					} }
 				/>
-				<TicketPriceCalculatorFormModal
-					ticket={ ticket }
-					closeModal={ this.toggleCalculator }
-					editorOpen={ this.state.calculator }
-				/>
+				{ this.ticketPriceCalculator( ticket ) }
 			</div>
 		) : null;
 	}

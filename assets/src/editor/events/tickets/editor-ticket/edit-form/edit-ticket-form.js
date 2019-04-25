@@ -24,6 +24,7 @@ class EditTicketForm extends Component {
 	render() {
 		const {
 			ticket,
+			calculator,
 			submitButton,
 			cancelButton,
 			currentValues = {},
@@ -62,6 +63,7 @@ class EditTicketForm extends Component {
 		];
 		const formRows = ticketEntityFormInputs(
 			ticket,
+			calculator,
 			exclude,
 			currentValues,
 			FormInput
