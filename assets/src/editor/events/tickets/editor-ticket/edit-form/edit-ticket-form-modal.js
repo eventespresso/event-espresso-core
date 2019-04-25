@@ -41,10 +41,10 @@ class EditTicketFormModal extends Component {
 	 * @param {Object} data
 	 */
 	submitHandler = async ( data ) => {
-		const ticket = await ticketEntityFormSubmitHandler(
-			this.state.ticket,
-			data
-		);
+		const ticket = await ticketEntityFormSubmitHandler( {
+			ticket: this.state.ticket,
+			formData: data,
+		} );
 		this.setState( { ticket: ticket } );
 		this.toggleEditor();
 	};
