@@ -27,9 +27,8 @@ export const ticketEntityFormSchema = ( ticket ) => {
 		[ `${ prefix }-required` ]: ticket.required || false,
 		[ `${ prefix }-min` ]: ticket.min || null,
 		[ `${ prefix }-max` ]: stripInfinity( ticket.max ),
-		[ `${ prefix }-price` ]: ticket.price.amount &&
-		ticket.price.amount.amount ?
-			ticket.price.amount.amount.toNumber() :
+		[ `${ prefix }-price` ]: ticket.price && ticket.price.amount ?
+			ticket.price.amount.toNumber() :
 			null,
 		[ `${ prefix }-start` ]: ticket.startDate.toISO(),
 		[ `${ prefix }-end` ]: ticket.endDate.toISO(),
