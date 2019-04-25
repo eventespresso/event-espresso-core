@@ -55,7 +55,6 @@ const DatesAndTicketsFilterState = ( {
 	allDates,
 	tickets,
 	allTickets,
-	// getRelatedTickets,
 	showDates,
 	sortDates,
 	showTickets,
