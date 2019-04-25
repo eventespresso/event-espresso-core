@@ -153,9 +153,12 @@ class EE_Datetime_Test extends EE_UnitTestCase{
         $now_for_test = new DateTime( 'now', $timezone );
         // set time explicitly
         $now_for_test->setTime(14, 00);
-        $upcoming_start_date = (clone $now_for_test)->add(new DateInterval('P1D'));
-		$past_start_date = (clone $now_for_test)->sub(new DateInterval('P2D'));
-		$upcoming_end_date = (clone $now_for_test)->add(new DateInterval('P2D'));
+        $upcoming_start_date = clone $now_for_test;
+        $past_start_date = clone $now_for_test;
+        $upcoming_end_date = clone $now_for_test;
+        $upcoming_start_date->add(new DateInterval('P1D'));
+		$past_start_date->sub(new DateInterval('P2D'));
+		$upcoming_end_date->add(new DateInterval('P2D'));
 		$current = clone $now_for_test;
 		$formats = array( 'Y-d-m',  'h:i a' );
 		$full_format = implode( ' ', $formats );
