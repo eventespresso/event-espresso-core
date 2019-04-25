@@ -211,7 +211,7 @@ const getBasePriceFormFieldID = ( ticketID, formData ) => {
  * @param {Array} priceModifiers
  * @return {number} total
  */
-const calculateTicketBasePrice = ( total, priceModifiers ) => {
+export const calculateTicketBasePrice = ( total, priceModifiers ) => {
 	priceModifiers = sortBy( priceModifiers, [ 'order', 'id' ] );
 	priceModifiers = reverse( priceModifiers );
 	priceModifiers.forEach( ( priceModifier ) => {
