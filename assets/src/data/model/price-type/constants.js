@@ -1,5 +1,5 @@
 
-export const MODEL_NAME = 'price';
+export const MODEL_NAME = 'price_type';
 
 export const BASE_PRICE_TYPES = {
 	BASE_PRICE: 1,
