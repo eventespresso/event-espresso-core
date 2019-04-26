@@ -6,6 +6,7 @@ use EventEspresso\core\domain\RequiresDomainInterface;
 use EventEspresso\core\exceptions\ExceptionLogger;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
+use EventEspresso\core\services\request\middleware\RecommendedVersions;
 
 /**
  * Class EE_Register_Addon
@@ -570,7 +571,7 @@ class EE_Register_Addon implements EEI_Plugin_API
                 '<span style="font-weight: bold; color: #D54E21;">',
                 '</span><br />'
             );
-        } elseif (version_compare($wp_version, $addon_settings['min_wp_version'], '<')) {
+        } elseif (RecommendedVersions::compareWordPressVersion($addon_settings['min_wp_version'], '<')) {
             $incompatibility_message = sprintf(
                 __(
                     '%4$sIMPORTANT!%5$sThe Event Espresso "%1$s" addon requires WordPress version "%2$s" or greater.%3$sPlease update your version of WordPress to use the "%1$s" addon and to keep your site secure.',
