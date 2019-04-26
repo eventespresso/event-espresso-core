@@ -155,4 +155,5 @@ class EditorDatesList extends Component {
 export default compose( [
 	withEditor,
 	withTicketAssignmentsManager,
-] )( PaginatedDatesListWithFilterBar( EditorDatesList ) );
+	PaginatedDatesListWithFilterBar,
+] )( EditorDatesList );
