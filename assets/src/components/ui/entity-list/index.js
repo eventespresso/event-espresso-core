@@ -39,14 +39,13 @@ const EntityList = ( {
 	noResultsText = '',
 	...otherProps
 } ) => {
-	let entityList = null;
 	entities = Array.isArray( entities ) ? entities : [];
 	// Remove undefined from the array
 	entities = without( entities, undefined );
 	htmlClass = htmlClass ?
 		`${ htmlClass } ee-editor-entity-list` :
 		'ee-editor-entity-list';
-	entityList = view === 'grid' ? (
+	let entityList = view === 'grid' ? (
 		<EntityGridView
 			entities={ entities }
 			htmlClass={ htmlClass }
