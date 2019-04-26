@@ -254,6 +254,7 @@ abstract class BlockAssetManager extends AssetManager implements BlockAssetManag
                 'wp-i18n',      // Provides localization functions
                 'wp-element',   // Provides React.Component
                 'wp-components', // Provides many prebuilt components and controls
+                'wp-block-editor', // block editor components
                 CoreAssetManager::JS_HANDLE_EDITOR_HOCS,
                 $this->getScriptHandle(),
             );
