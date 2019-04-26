@@ -6,7 +6,6 @@
 		"!**/vendor/**",
 		"!**/test/**"
 	],
-	"moduleDirectories": ["node_modules"],
 	"moduleNameMapper": {
 		"@eventespresso\\/(eejs)": "assets/src/$1",
 		"@eventespresso\/helpers": "assets/src/data/helpers",
@@ -19,7 +18,8 @@
 		"@wordpress/i18n": "<rootDir>/tests/javascript-config/unit/mocks/i18n",
 		"@eventespresso/i18n": "<rootDir>/tests/javascript-config/unit/mocks/i18n",
 		"@wordpress/is-shallow-equal/objects": "<rootDir>/node_modules/@wordpress/is-shallow-equal/build/objects",
-		"@test/fixtures": "<rootDir>/tests/javascript-config/unit/fixtures"
+		"@test/fixtures": "<rootDir>/tests/javascript-config/unit/fixtures",
+		"simple-html-token": "<rootDir>/tests/javascript-config/unit/mocks/simple-html-token"
 	},
 	"preset": "@wordpress/jest-preset-default",
 	"setupFiles": [
