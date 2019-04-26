@@ -1,6 +1,7 @@
 /**
  * External imports
  */
+import { isFunction } from 'lodash';
 import { Component } from '@wordpress/element';
 import { __ } from '@eventespresso/i18n';
 import { withEditorModal } from '@eventespresso/higher-order-components';
@@ -21,7 +22,8 @@ import {
 class EditTicketFormModal extends Component {
 	constructor( props ) {
 		super( props );
-		this.toggleEditor = props.closeModal;
+		this.onUpdate = props.onUpdate;
+		this.toggleEditor = props.toggleEditor;
 		this.state = {
 			ticket: props.ticket ? props.ticket : {},
 			originalTicket: props.ticket ? props.ticket : {},
@@ -45,7 +47,10 @@ class EditTicketFormModal extends Component {
 			ticket: this.state.ticket,
 			formData: data,
 		} );
-		this.setState( { ticket: ticket } );
+		this.setState( { ticket } );
+		if ( isFunction( this.onUpdate ) ) {
+			this.onUpdate( ticket );
+		}
 		this.toggleEditor();
 	};
 

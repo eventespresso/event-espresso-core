@@ -23,6 +23,7 @@ class EditEventDateFormModal extends Component {
 	static propTypes = {
 		event: PropTypes.object,
 		eventDate: PropTypes.object,
+		toggleEditor: PropTypes.func.isRequired,
 		loadHandler: PropTypes.func,
 		submitHandler: PropTypes.func,
 		resetHandler: PropTypes.func,
@@ -31,7 +32,6 @@ class EditEventDateFormModal extends Component {
 
 	constructor( props ) {
 		super( props );
-		this.toggleEditor = props.closeModal;
 		this.state = {
 			eventDate: props.eventDate ? props.eventDate : {},
 			originalEventDate: props.eventDate ? props.eventDate : {},
@@ -58,8 +58,8 @@ class EditEventDateFormModal extends Component {
 			data
 		).then(
 			( eventDate ) => {
-				this.setState( { eventDate: eventDate } );
-				this.toggleEditor();
+				this.setState( { eventDate } );
+				this.props.toggleEditor();
 				// this.props.onUpdate();
 			}
 		);
