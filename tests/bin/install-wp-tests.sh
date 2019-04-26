@@ -48,7 +48,7 @@ elif [[ $WP_VERSION = 'next' ]]; then
    # first we need to get what the latest version is
    set_latest_version
    NEXT_VERSION=$(bump_version)
-   download http://api.wordpress.org/core/version-check/1.7/?version=${NEXT_VERSION}&_beta_tester=1 /tmp/wp-next.json
+   download http://api.wordpress.org/core/version-check/1.7/?_beta_tester=1&version=${NEXT_VERSION} /tmp/wp-next.json
    REVISION=$(grep -o -m 1 '"version":"[^"]*' /tmp/wp-next.json | head -1 | sed 's/"version":"//' | awk -F '-' '{print $3}')
    if [[ -z "$NEXT_VERSION" ]]; then
 		echo "Next WordPress version could not be found"
