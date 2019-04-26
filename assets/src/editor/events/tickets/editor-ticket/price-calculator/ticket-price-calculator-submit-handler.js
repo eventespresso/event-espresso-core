@@ -14,7 +14,7 @@ import { updateTicket } from '../action-handlers/update-ticket';
 import {
 	shortenCuid,
 	TICKET_PRICE_CALCULATOR_FORM_INPUT_PREFIX,
-} from './ticket-price-calculator-form-data-map';
+} from './';
 
 /**
  * updates Ticket and Price Entity properties given the supplied form data
@@ -36,7 +36,7 @@ export const ticketPriceCalculatorSubmitHandler = async (
 			sprintf(
 				__(
 					'invalid ticket entity supplied to' +
-					' ticketPriceCalculatorSubmitHandler(): ',
+					' ticketPriceCalculatorSubmitHandler(): %s',
 					'event_espresso'
 				),
 				ticket

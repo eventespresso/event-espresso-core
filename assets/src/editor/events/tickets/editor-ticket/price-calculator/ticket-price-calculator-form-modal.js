@@ -17,18 +17,12 @@ import {
 	default as withSelectTicketPricesAndPriceTypes,
 } from '../../data/with-select-ticket-prices-and-price-types';
 import {
-	default as TicketPriceCalculatorForm,
-} from './ticket-price-calculator-form';
-import {
-	ticketPriceCalculatorFormDataMap,
-} from './ticket-price-calculator-form-data-map';
-import {
 	calculateTicketPrices,
 	ticketPriceCalculator,
-} from './ticket-price-calculator';
-import {
+	TicketPriceCalculatorForm,
+	ticketPriceCalculatorFormDataMap,
 	ticketPriceCalculatorSubmitHandler,
-} from './ticket-price-calculator-submit-handler';
+} from './';
 
 /**
  * TicketPriceCalculatorFormModal
@@ -65,7 +59,7 @@ class TicketPriceCalculatorFormModal extends Component {
 		);
 		if ( isModelEntityOfModel( ticket, 'ticket' ) ) {
 			this.props.setState( { formChanges: false } );
-			this.toggleEditor();
+			this.props.toggleEditor();
 		}
 		if ( Array.isArray( ticket ) ) {
 			warning( false, ticket.join( '/n' ) );
@@ -79,10 +73,9 @@ class TicketPriceCalculatorFormModal extends Component {
 			prices,
 			priceTypes,
 			reverseCalculate,
-			closeModal,
+			toggleEditor,
 			...extraProps
 		} = this.props;
-		this.toggleEditor = closeModal;
 		const formProps = loading ?
 			{ loading } :
 			{
@@ -98,7 +91,7 @@ class TicketPriceCalculatorFormModal extends Component {
 				decorators={ ticketPriceCalculator }
 				loadHandler={ null }
 				submitHandler={ this.submitHandler }
-				resetHandler={ closeModal }
+				resetHandler={ toggleEditor }
 				loadingNotice={
 					sprintf(
 						_x(

@@ -18,10 +18,10 @@ import { Money, SiteCurrency } from '@eventespresso/value-objects';
  * Internal dependencies
  */
 import {
+	parseMoneyValue,
 	shortenCuid,
 	TICKET_PRICE_CALCULATOR_FORM_INPUT_PREFIX,
-} from './ticket-price-calculator-form-data-map';
-import { parseMoneyValue } from './ticket-price-calculator';
+} from './';
 import './style.css';
 
 const { MODEL_NAME: TICKET } = ticketModel;
@@ -42,11 +42,6 @@ const {
  * @constructor
  */
 class TicketPriceCalculatorForm extends Component {
-	constructor( props ) {
-		super( props );
-		this.toggleEditor = props.closeModal;
-	}
-
 	/**
 	 * @function
 	 * @param {Array} priceTypes
