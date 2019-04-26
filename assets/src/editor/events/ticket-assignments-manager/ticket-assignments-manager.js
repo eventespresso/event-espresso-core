@@ -41,7 +41,7 @@ class TicketAssignmentsManager extends Component {
 		eventDateTicketMap: PropTypes.object.isRequired,
 		addTickets: PropTypes.func.isRequired,
 		removeTickets: PropTypes.func.isRequired,
-		closeModal: PropTypes.func.isRequired,
+		toggleEditor: PropTypes.func.isRequired,
 		allDates: PropTypes.arrayOf( PropTypes.object ),
 		allTickets: PropTypes.arrayOf( PropTypes.object ),
 		pagination: PropTypes.object,
@@ -64,7 +64,7 @@ class TicketAssignmentsManager extends Component {
 	 * @param {boolean} update
 	 */
 	toggleEditor = ( update = false ) => {
-		if ( isFunction( this.closeModal ) ) {
+		if ( isFunction( this.props.toggleEditor ) ) {
 			if ( update && isFunction( this.onUpdate ) ) {
 				this.onUpdate();
 			}
@@ -77,7 +77,7 @@ class TicketAssignmentsManager extends Component {
 				submitting: false,
 				formError: '',
 			} );
-			this.closeModal();
+			this.props.toggleEditor();
 		}
 	};
 
@@ -420,7 +420,7 @@ class TicketAssignmentsManager extends Component {
 		const {
 			currentlyAssigned,
 			canRemoveAssignment,
-		} = this.getActionModifiers = (
+		} = this.getActionModifiers(
 			hasTicket,
 			isAssigned,
 			isRemoved,
@@ -432,7 +432,7 @@ class TicketAssignmentsManager extends Component {
 			canRemoveAssignment,
 			totalDateAssignmentsForTicket
 		);
-		const assignmentsErrorClass = this.getAssignmentsErrorClass = (
+		const assignmentsErrorClass = this.getAssignmentsErrorClass(
 			totalTicketAssignmentsForDate,
 			totalDateAssignmentsForTicket
 		);
@@ -774,13 +774,11 @@ class TicketAssignmentsManager extends Component {
 			allTickets,
 			eventDateTicketMap,
 			onUpdate,
-			closeModal,
 			resetRelationsMap,
 			pagination,
 		} = this.props;
 		const dates = entities;
 		this.onUpdate = onUpdate;
-		this.closeModal = closeModal;
 		this.resetRelationsMap = resetRelationsMap;
 		this.dateCount = dates.length;
 		this.ticketCount = tickets.length;
@@ -817,7 +815,7 @@ class TicketAssignmentsManager extends Component {
 							)
 						}
 						metaData={ {
-							tableId: tableId,
+							tableId,
 							tableCaption: __(
 								'Ticket Assignments',
 								'event_espresso'
