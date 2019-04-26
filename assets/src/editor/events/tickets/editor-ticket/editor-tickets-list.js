@@ -2,7 +2,7 @@
  * External dependencies
  */
 import { compose } from '@wordpress/compose';
-import { dispatch, withSelect } from '@wordpress/data';
+import { dispatch } from '@wordpress/data';
 import { Component } from '@wordpress/element';
 import {
 	EntityList,
@@ -16,10 +16,11 @@ import { isModelEntityOfModel } from '@eventespresso/validators';
 /**
  * Internal dependencies
  */
+import { withPriceTypes } from '../data';
 import { EditTicketFormModal } from '../';
 import { EditorTicketsGridView } from './grid-view/';
 import { EditorTicketsListView } from './list-view/';
-import { default as PaginatedTicketsListWithFilterBar } from './filter-bar';
+import PaginatedTicketsListWithFilterBar from './filter-bar';
 import {
 	ticketPriceCalculatorMenuItem,
 	TicketPriceCalculatorFormModal,
@@ -170,12 +171,9 @@ class EditorTicketsList extends Component {
 }
 
 export default compose( [
-	PaginatedTicketsListWithFilterBar,
+	withPriceTypes,
 	withEditor,
 	withTicketPriceCalculator,
 	withTicketAssignmentsManager,
-	withSelect( ( select, ownProps ) => {
-		select( 'eventespresso/lists' ).getEntities( 'price_type' );
-		return { ...ownProps };
-	} ),
+	PaginatedTicketsListWithFilterBar,
 ] )( EditorTicketsList );
