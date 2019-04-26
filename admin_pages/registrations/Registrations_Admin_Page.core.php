@@ -2598,6 +2598,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
                     'REG_ID' => array('!=', $this->_registration->ID()),
                 ),
                 'force_join' => array('Attendee'),
+                'default_where_conditions' => 'other_models_only',
             )
         );
         $this->_template_args['attendees'] = array();
