@@ -22,17 +22,39 @@ download() {
     fi
 }
 
-if [[ $WP_VERSION =~ [0-9]+\.[0-9]+(\.[0-9]+)? ]]; then
-	WP_TESTS_TAG="tags/$WP_VERSION"
-else
-	# http serves a single offer, whereas https serves multiple. we only want one
+set_latest_version() {
+    # http serves a single offer, whereas https serves multiple. we only want one
 	download http://api.wordpress.org/core/version-check/1.7/ /tmp/wp-latest.json
-	grep '[0-9]+\.[0-9]+(\.[0-9]+)?' /tmp/wp-latest.json
+    grep '[0-9]+\.[0-9]+(\.[0-9]+)?' /tmp/wp-latest.json
 	LATEST_VERSION=$(grep -o '"version":"[^"]*' /tmp/wp-latest.json | sed 's/"version":"//')
 	if [[ -z "$LATEST_VERSION" ]]; then
 		echo "Latest WordPress version could not be found"
 		exit 1
 	fi
+}
+
+bump_version() {
+    major=$(echo "$LATEST_VERSION" | awk -F '.' '{print $1}')
+    minor=$( echo "$LATEST_VERSION" | awk -F '.' '{print $2}')
+    minor=$(( $minor + 1 ))
+    echo "${major}.${minor}"
+}
+
+if [[ $WP_VERSION =~ [0-9]+\.[0-9]+(\.[0-9]+)? ]]; then
+	WP_TESTS_TAG="tags/$WP_VERSION"
+elif [[ $WP_VERSION = 'next' ]]; then
+   # first we need to get what the latest version is
+   set_latest_version
+   NEXT_VERSION=$(bump_version)
+   download http://api.wordpress.org/core/version-check/1.7/?version=${NEXT_VERSION}&_beta_tester=1 /tmp/wp-next.json
+   REVISION=$(grep -o -m 1 '"version":"[^"]*' /tmp/wp-next.json | head -1 | sed 's/"version":"//' | awk -F '-' '{print $3}')
+   if [[ -z "$NEXT_VERSION" ]]; then
+		echo "Next WordPress version could not be found"
+		exit 1
+	fi
+	WP_TESTS_TAG=trunk
+else
+    set_latest_version
 	WP_TESTS_TAG="tags/$LATEST_VERSION"
 fi
 
@@ -45,6 +67,13 @@ install_wp() {
 	fi
 
 	mkdir -p $WP_CORE_DIR
+
+	if [ $WP_VERSION == 'next' ]; then
+	    download https://wordpress.org/nightly-builds/wordpress-latest.zip /tmp/wordpress.zip
+	    unzip /tmp/wordpress.zip $WP_CORE_DIR
+	    download https://raw.github.com/markoheijnen/wp-mysqli/master/db.php $WP_CORE_DIR/wp-content/db.php
+	    return;
+	fi
 
 	if [ $WP_VERSION == 'latest' ]; then
 		local ARCHIVE_NAME='latest'
@@ -70,7 +99,11 @@ install_test_suite() {
 	if [ ! -d $WP_TESTS_DIR ]; then
 		# set up testing suite
 		mkdir -p $WP_TESTS_DIR
-		svn co --quiet https://develop.svn.wordpress.org/${WP_TESTS_TAG}/tests/phpunit/includes/ $WP_TESTS_DIR/includes
+		if [ $WP_VERSION == 'next' ]; then
+		    svn co --quite -r ${REVISION} https://develop.svn.wordpress.org/trunk/tests/phpunit/includes/ $WP_TESTS_DIR/includes
+		else
+		    svn co --quiet https://develop.svn.wordpress.org/${WP_TESTS_TAG}/tests/phpunit/includes/ $WP_TESTS_DIR/includes
+		fi
 	fi
 
 	cd $WP_TESTS_DIR
