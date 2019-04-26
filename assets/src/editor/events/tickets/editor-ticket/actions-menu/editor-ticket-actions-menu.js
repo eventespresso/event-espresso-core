@@ -3,7 +3,6 @@
  */
 import { isEmpty } from 'lodash';
 import { compose } from '@wordpress/compose';
-import { withSelect } from '@wordpress/data';
 import { Component, Fragment } from '@wordpress/element';
 import { applyFilters } from '@wordpress/hooks';
 import {
@@ -18,6 +17,7 @@ import { isModelEntityOfModel } from '@eventespresso/validators';
 /**
  * Internal dependencies
  */
+import { withTicketDatetimes, withTicketPrices } from '../../data';
 import { EditTicketFormModal } from '../';
 import { copyTicket, trashTicket } from '../action-handlers';
 import { EntityActionMenuItem } from '../../../entity-action-menu-item';
@@ -190,7 +190,7 @@ class EditorTicketActionsMenu extends Component {
 			toggleCalculator,
 			showTicketAssignments,
 			toggleTicketAssignments,
-			relatedDates = [],
+			ticketDatetimes = [],
 			datesLoaded = false,
 			noBasePrice = false,
 		} = this.props;
@@ -204,7 +204,7 @@ class EditorTicketActionsMenu extends Component {
 		);
 		const sidebarMenuItems = this.getSidebarMenuItems(
 			ticket,
-			relatedDates,
+			ticketDatetimes,
 			datesLoaded,
 			calculator
 		);
@@ -251,26 +251,6 @@ export default compose( [
 	withEditor,
 	withTicketPriceCalculator,
 	withTicketAssignmentsManager,
-	withSelect( ( select, ownProps ) => {
-		const { getRelatedEntities } = select( 'eventespresso/core' );
-		const { hasFinishedResolution } = select( 'core/data' );
-		const ticket = ownProps.ticket;
-		if ( isModelEntityOfModel( ticket, 'ticket' ) ) {
-			const relatedDates = getRelatedEntities( ticket, 'datetimes' );
-			const prices = getRelatedEntities( ticket, 'prices' );
-			const datesLoaded = hasFinishedResolution(
-				'eventespresso/core',
-				'getRelatedEntities',
-				[ ticket, 'datetimes' ]
-			);
-			const pricesLoaded = hasFinishedResolution(
-				'eventespresso/core',
-				'getRelatedEntities',
-				[ ticket, 'prices' ]
-			);
-			const noBasePrice = pricesLoaded && isEmpty( prices );
-			return { relatedDates, datesLoaded, noBasePrice };
-		}
-		return {};
-	} ),
+	withTicketDatetimes,
+	withTicketPrices,
 ] )( EditorTicketActionsMenu );
