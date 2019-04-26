@@ -1,5 +1,5 @@
 export { default as withBaseControl } from './base-control';
-export { default as withEditorModal } from './editor-modal';
+export { withEditor, withEditorModal } from './editor-modal';
 export {
 	PaginatedEntityListWithFilterBar,
 	PaginatedEntityListWithFilterBarAndState,
