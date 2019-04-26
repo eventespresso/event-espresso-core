@@ -35,7 +35,7 @@ set_latest_version() {
 
 bump_version() {
     major=$(echo "$LATEST_VERSION" | awk -F '.' '{print $1}')
-    minor=$( echo "$LATEST_VERSION" | awk -F '.' '{print $2}')
+    minor=$(echo "$LATEST_VERSION" | awk -F '.' '{print $2}')
     minor=$(( $minor + 1 ))
     echo "${major}.${minor}"
 }
@@ -69,8 +69,8 @@ install_wp() {
 	mkdir -p $WP_CORE_DIR
 
 	if [ $WP_VERSION == 'next' ]; then
-	    download https://wordpress.org/nightly-builds/wordpress-latest.zip /tmp/wordpress.zip
-	    unzip /tmp/wordpress.zip $WP_CORE_DIR
+	    download https://wordpress.org/nightly-builds/wordpress-latest.zip /tmp/wordpress-latest.zip
+	    unzip /tmp/wordpress-latest.zip -d $WP_CORE_DIR
 	    download https://raw.github.com/markoheijnen/wp-mysqli/master/db.php $WP_CORE_DIR/wp-content/db.php
 	    return;
 	fi
