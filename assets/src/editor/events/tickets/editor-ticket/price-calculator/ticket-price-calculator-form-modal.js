@@ -13,9 +13,8 @@ import { Money, SiteCurrency } from '@eventespresso/value-objects';
 /**
  * Internal dependencies
  */
-import {
-	default as withSelectTicketPricesAndPriceTypes,
-} from '../../data/with-select-ticket-prices-and-price-types';
+import { withTicketPrices } from '../../data/with-ticket-prices';
+import { withPriceTypes } from '../../data/with-price-types';
 import {
 	calculateTicketPrices,
 	ticketPriceCalculator,
@@ -68,14 +67,16 @@ class TicketPriceCalculatorFormModal extends Component {
 
 	render() {
 		const {
-			loading,
 			ticket,
 			prices,
+			pricesLoaded,
 			priceTypes,
+			priceTypesLoaded,
 			reverseCalculate,
 			toggleEditor,
 			...extraProps
 		} = this.props;
+		const loading = ! ( pricesLoaded && priceTypesLoaded );
 		const formProps = loading ?
 			{ loading } :
 			{
@@ -113,6 +114,8 @@ class TicketPriceCalculatorFormModal extends Component {
  * withSelectTicketPricesAndPriceTypes
  */
 export default compose( [
+	withPriceTypes,
+	withTicketPrices,
 	withSafeTimeout,
 	withState( {
 		formChanges: false,
@@ -128,7 +131,6 @@ export default compose( [
 			'event_espresso'
 		),
 	} ),
-	withSelectTicketPricesAndPriceTypes,
 	withDispatch( ( dispatch, ownProps ) => {
 		const { newModifiers, deletedModifiers } = ownProps;
 		const {
