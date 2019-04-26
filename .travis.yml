@@ -64,6 +64,8 @@ jobs:
       env:
         - PHP_LINT=1
         - PHP_LINT_WITH_WARNINGS=yes
+    - php: 7.3
+      env: WP_VERSION=next
   include:
     - stage: test
       if: NOT commit_message =~ js_only AND NOT commit_message =~ dependabot
@@ -84,6 +86,9 @@ jobs:
         - composer install || exit 1
         - composer config-eventespressocs || exit 1
         - npm run lint-php || exit 1
+    - php: 7.3
+      if: NOT commit_message =~ js_only AND NOT commit_message =~ dependabot
+      env: WP_VERSION=next
     - env:
         - JAVASCRIPT_TESTS=1
       language: node_js
@@ -114,10 +119,6 @@ jobs:
     # multisite
     - php: 7.2
       env: WP_MULTISITE=1
-      if: NOT commit_message =~ js_only AND NOT commit_message =~ dependabot
-    # wp 4.5 builds
-    - php: 5.6
-      env: WP_VERSION=4.5
       if: NOT commit_message =~ js_only AND NOT commit_message =~ dependabot
     - php: nightly
       if: NOT commit_message =~ js_only AND NOT commit_message =~ dependabot
