@@ -12,6 +12,7 @@ const externals = {
 	'@wordpress/element': 'wp.element',
 	'@wordpress/components': 'wp.components',
 	'@wordpress/blocks': 'wp.blocks',
+	'@wordpress/block-editor': 'wp.blockEditor',
 	'@wordpress/editor': 'wp.editor',
 	'@wordpress/compose': 'wp.compose',
 	'@wordpress/hooks': 'wp.hooks',
