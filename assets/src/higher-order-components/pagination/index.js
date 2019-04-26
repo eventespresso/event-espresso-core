@@ -81,7 +81,7 @@ export default ( paginationConfig = {} ) => createHigherOrderComponent(
 						{
 							first: __( 'First', 'event_espresso' ),
 							last: __( 'Last', 'event_espresso' ),
-							previous: __( 'Previous', 'event_espresso' ),
+							previous: __( 'Prev', 'event_espresso' ),
 							next: __( 'Next', 'event_espresso' ),
 						};
 					const noResultsText = paginationConfig.noResultsText ?
