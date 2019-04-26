@@ -26,7 +26,7 @@ class FormSaveCancelButtons extends Component {
 	render() {
 		const {
 			submitButton,
-			cancelButton,
+			cancelButton = null,
 			colSize = 12,
 			offset = 0,
 		} = this.props;
