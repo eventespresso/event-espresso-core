@@ -83,7 +83,6 @@ function* createRelations(
 ) {
 	relationName = pluralModelName( relationName );
 	const singularRelationName = singularModelName( relationName );
-	const pluralRelationName = pluralModelName( relationName );
 
 	try {
 		assertArrayHasEntitiesForModel( relationEntities, singularRelationName );
@@ -92,12 +91,12 @@ function* createRelations(
 			false,
 			'Incoming relation Entities do not contain BaseEntity instances ' +
 			'for the given relation model (%s)',
-			'',
 			singularRelationName,
 		);
 		return;
 	}
 	const relationIds = getIdsFromBaseEntityArray( relationEntities );
+	const pluralRelationName = pluralModelName( relationName );
 	yield dispatch(
 		REDUCER_KEY,
 		'receiveEntitiesAndResolve',

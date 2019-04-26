@@ -1,7 +1,7 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`EventAttendeesEditor Block block edit matches snapshot for no props 1`] = `
-<React.Fragment>
+<Fragment>
   <Placeholder>
     <_default />
   </Placeholder>
@@ -120,11 +120,11 @@ exports[`EventAttendeesEditor Block block edit matches snapshot for no props 1`]
       </PanelBody>
     </WithSelect(NotWithPostTypeCheck)>
   </IfBlockEditSelected(InspectorControlsFill)>
-</React.Fragment>
+</Fragment>
 `;
 
 exports[`EventAttendeesEditor Block block edit matches snapshot with isLoading false and has attendees 1`] = `
-<React.Fragment>
+<Fragment>
   <EventAttendeeList
     attendees={
       Array [
@@ -261,11 +261,11 @@ exports[`EventAttendeesEditor Block block edit matches snapshot with isLoading f
       </PanelBody>
     </WithSelect(NotWithPostTypeCheck)>
   </IfBlockEditSelected(InspectorControlsFill)>
-</React.Fragment>
+</Fragment>
 `;
 
 exports[`EventAttendeesEditor Block block edit matches snapshot with isLoading false and no attendees 1`] = `
-<React.Fragment>
+<Fragment>
   <Placeholder>
     There are no attendees for selected options.
   </Placeholder>
@@ -384,5 +384,5 @@ exports[`EventAttendeesEditor Block block edit matches snapshot with isLoading f
       </PanelBody>
     </WithSelect(NotWithPostTypeCheck)>
   </IfBlockEditSelected(InspectorControlsFill)>
-</React.Fragment>
+</Fragment>
 `;

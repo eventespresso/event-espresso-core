@@ -760,8 +760,9 @@ class EE_DMS_4_1_0_attendees extends EE_Data_Migration_Script_Stage_Table
     private function _insert_new_payment($old_attendee, $new_txn_id)
     {
         global $wpdb;
-        // only add a payment for primary attendees
-        $old_pay_stati_indicating_no_payment = array('Pending', 'Incomplete', 'Not Completed');
+        // Only add a payment for primary attendees. Important note: partial payments were marked as "Pending".
+        // Also, an offline payment had blank status (ie, "").
+        $old_pay_stati_indicating_no_payment = array('', 'Incomplete', 'Not Completed');
         // if this is for a primary 3.1 attendee which WASN'T free and has a completed, cancelled, or declined payment...
         if (intval($old_attendee['is_primary']) && floatval($old_attendee['total_cost']) && !in_array($old_attendee['payment_status'], $old_pay_stati_indicating_no_payment)) {
             $pay_status_mapping = array(
@@ -778,12 +779,13 @@ class EE_DMS_4_1_0_attendees extends EE_Data_Migration_Script_Stage_Table
                 'PAY_timestamp' => $this->get_migration_script()->convert_date_string_to_utc($this, $old_attendee, $old_attendee['date']),
                 'PAY_method' => 'CART',
                 'PAY_amount' => $old_attendee['amount_pd'],
+                // 'txn_type' was used both for the gateway's name, and for other payment notes.
                 'PAY_gateway' => $old_attendee['txn_type'],
+                'PAY_extra_accntng' => $old_attendee['txn_type'],
                 'PAY_gateway_response' => '',
                 'PAY_txn_id_chq_nmbr' => substr($old_attendee['txn_id'], 0, 32),
                 'PAY_via_admin' => $by_admin,
                 'PAY_details' => $old_attendee['transaction_details']
-
             );
             $datatypes = array(
                 '%d',// TXN_Id

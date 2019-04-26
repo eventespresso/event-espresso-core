@@ -300,14 +300,14 @@ describe( 'getRelationSchema()', () => {
 	} );
 	it( 'throws an error if a schema is not returned', () => {
 		const test = () => fulfillment.next( null );
-		expect( test ).toThrowError();
+		expect( test ).toThrow();
 	} );
 	it( 'throws an error if there is no schema for the relation in the returned' +
 		'model schema', () => {
 		reset();
 		fulfillment.next();
 		const test = () => fulfillment.next( {} );
-		expect( test ).toThrowError();
+		expect( test ).toThrow();
 	} );
 	it( 'yields the receiveRelationSchema action when a schema is ' +
 		'returned', () => {

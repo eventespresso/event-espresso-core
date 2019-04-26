@@ -10,9 +10,6 @@ import {
 	removeRelatedEntities,
 } from '../remove-relations';
 import {
-	removeEntityById,
-} from '../remove-entities';
-import {
 	receiveDirtyRelationDeletion,
 } from '../receive-relations';
 
@@ -46,10 +43,6 @@ describe( 'removeRelationForEntity()', () => {
 		20,
 	);
 	[
-		[
-			removeEntityById,
-			[ 'datetime', 20 ],
-		],
 		[
 			removeRelatedEntities,
 			[ 'event', 10, 'datetimes', [ 20 ] ],
