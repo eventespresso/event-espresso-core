@@ -70,7 +70,7 @@ install_wp() {
 
 	if [ $WP_VERSION == 'next' ]; then
 	    download https://wordpress.org/nightly-builds/wordpress-latest.zip /tmp/wordpress-latest.zip
-	    unzip /tmp/wordpress-latest.zip -d $WP_CORE_DIR
+	    unzip /tmp/wordpress-latest.zip -d /tmp/
 	    download https://raw.github.com/markoheijnen/wp-mysqli/master/db.php $WP_CORE_DIR/wp-content/db.php
 	    return;
 	fi
