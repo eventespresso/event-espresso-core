@@ -2,6 +2,7 @@
  * External imports
  */
 import { isEmpty } from 'lodash';
+import { compose } from '@wordpress/compose';
 import { withSelect } from '@wordpress/data';
 import { Component, Fragment } from '@wordpress/element';
 import { applyFilters } from '@wordpress/hooks';
@@ -11,6 +12,7 @@ import {
 	IconMenuItem,
 } from '@eventespresso/components';
 import { __, sprintf, _x } from '@eventespresso/i18n';
+import { withEditor } from '@eventespresso/higher-order-components';
 import { isModelEntityOfModel } from '@eventespresso/validators';
 
 /**
@@ -19,10 +21,15 @@ import { isModelEntityOfModel } from '@eventespresso/validators';
 import { EditTicketFormModal } from '../';
 import { copyTicket, trashTicket } from '../action-handlers';
 import { EntityActionMenuItem } from '../../../entity-action-menu-item';
-import { TicketAssignmentsManagerModal } from '../../../ticket-assignments-manager';
 import {
-	default as TicketPriceCalculatorFormModal,
-} from '../price-calculator/ticket-price-calculator-form-modal';
+	ticketPriceCalculatorMenuItem,
+	TicketPriceCalculatorFormModal,
+	withTicketPriceCalculator,
+} from '../price-calculator';
+import {
+	withTicketAssignmentsManager,
+	TicketAssignmentsManagerModal,
+} from '../../../ticket-assignments-manager';
 import './style.css';
 
 /**
@@ -34,61 +41,6 @@ import './style.css';
  * @return {Object} rendered menu
  */
 class EditorTicketActionsMenu extends Component {
-	constructor( props ) {
-		super( props );
-		this.state = {
-			editorOpen: false,
-			assignDates: false,
-			calculator: false,
-		};
-	}
-
-	/**
-	 * opens and closes EditTicketFormModal
-	 *
-	 * @function
-	 */
-	toggleEditor = () => {
-		this.setState( ( prevState ) => (
-			{ editorOpen: ! prevState.editorOpen }
-		) );
-	};
-
-	/**
-	 * opens and closes TicketAssignmentsManagerModal
-	 *
-	 * @function
-	 */
-	toggleTickets = () => {
-		this.setState( ( prevState ) => (
-			{ assignDates: ! prevState.assignDates }
-		) );
-	};
-
-	/**
-	 * opens and closes TicketPriceCalculatorModal
-	 *
-	 * @function
-	 */
-	toggleCalculator = () => {
-		this.setState( ( prevState ) => (
-			{ calculator: ! prevState.calculator }
-		) );
-	};
-
-	/**
-	 * @function
-	 * @param {Object} ticket    JSON object defining the Ticket
-	 * @return {TicketPriceCalculatorFormModal} rendered calculator
-	 */
-	ticketPriceCalculator = ( ticket ) => (
-		<TicketPriceCalculatorFormModal
-			ticket={ ticket }
-			closeModal={ this.toggleCalculator }
-			editorOpen={ this.state.calculator }
-		/>
-	);
-
 	/**
 	 * @function
 	 * @param {Object} ticket    JSON object defining the Ticket
@@ -106,7 +58,7 @@ class EditorTicketActionsMenu extends Component {
 					{
 						title: __( 'edit ticket', 'event_espresso' ),
 						icon: 'edit',
-						onClick: this.toggleEditor,
+						onClick: this.props.toggleEditor,
 					},
 					{
 						title: __( 'copy ticket', 'event_espresso' ),
@@ -141,7 +93,7 @@ class EditorTicketActionsMenu extends Component {
 				htmlClass="edit-ticket"
 				dashicon="edit"
 				tooltipPosition="top right"
-				onClick={ this.toggleEditor }
+				onClick={ this.props.toggleEditor }
 			/>
 		);
 	};
@@ -168,34 +120,8 @@ class EditorTicketActionsMenu extends Component {
 				htmlClass={ 'assign-ticket-dates' }
 				dashicon={ <EspressoIcon icon="calendar" /> }
 				tooltipPosition="top right"
-				onClick={ this.toggleTickets }
+				onClick={ this.props.toggleTicketAssignments }
 				itemCount={ datesLoaded ? relatedDates.length : null }
-			/>
-		);
-	};
-
-	/**
-	 * @function
-	 * @param {Object} ticket JSON object defining the Ticket
-	 * @param {Array} prices
-	 * @param {boolean} pricesLoaded
-	 * @return {IconMenuItem}    View Tickets for Ticket IconMenuItem
-	 */
-	calculatePriceMenuItem = ( ticket, prices, pricesLoaded ) => {
-		const noBasePrice = pricesLoaded && isEmpty( prices );
-		const tooltip = noBasePrice ?
-			__( 'warning! no ticket price set - click to fix', 'event_espresso' ) :
-			__( 'ticket price calculator', 'event_espresso' );
-		return (
-			<IconMenuItem
-				index={ 2 }
-				tooltip={ tooltip }
-				id={ `calculate-ticket-price-ticket-${ ticket.id }` }
-				htmlClass={ 'calculate-tickets-price' }
-				dashicon={ <EspressoIcon icon="calculator" /> }
-				tooltipPosition="top right"
-				onClick={ this.toggleCalculator }
-				itemCount={ noBasePrice ? 0 : null }
 			/>
 		);
 	};
@@ -205,25 +131,21 @@ class EditorTicketActionsMenu extends Component {
 	 * @param {Object} ticket 	model object defining the Ticket
 	 * @param {Array} relatedDates    Event Dates for the Ticket
 	 * @param {boolean} datesLoaded
-	 * @param {Array} prices
-	 * @param {boolean} pricesLoaded
+	 * @param {Object} calculator button for launching price calculator
 	 * @return {Array}          Array of IconMenuItem objects
 	 */
 	getSidebarMenuItems = (
 		ticket,
 		relatedDates,
 		datesLoaded,
-		prices,
-		pricesLoaded
+		calculator,
 	) => {
 		const sidebarMenuItems = [];
 		sidebarMenuItems.push(
 			this.mainDropDownMenu( ticket, relatedDates, datesLoaded )
 		);
 		sidebarMenuItems.push( this.editTicketMenuItem( ticket ) );
-		sidebarMenuItems.push(
-			this.calculatePriceMenuItem( ticket, prices, pricesLoaded )
-		);
+		sidebarMenuItems.push( calculator );
 		sidebarMenuItems.push(
 			this.assignDatesMenuItem( ticket, relatedDates, datesLoaded )
 		);
@@ -236,27 +158,10 @@ class EditorTicketActionsMenu extends Component {
 
 	/**
 	 * @function
-	 * @param {Object} ticket 		model object defining the Ticket
-	 * @param {Array} relatedDates 	Event Dates for the Ticket
-	 * @param {boolean} datesLoaded
-	 * @param {Array} prices
-	 * @param {boolean} pricesLoaded
+	 * @param {Array} sidebarMenuItems
 	 * @return {Array} 				Array of rendered IconMenuItem list items
 	 */
-	sidebarMenu = (
-		ticket,
-		relatedDates,
-		datesLoaded,
-		prices,
-		pricesLoaded
-	) => {
-		const sidebarMenuItems = this.getSidebarMenuItems(
-			ticket,
-			relatedDates,
-			datesLoaded,
-			prices,
-			pricesLoaded
-		);
+	sidebarMenu = ( sidebarMenuItems ) => {
 		return sidebarMenuItems.map(
 			( sidebarMenuItem, index ) => {
 				return (
@@ -279,43 +184,47 @@ class EditorTicketActionsMenu extends Component {
 		const {
 			ticket,
 			allDates,
+			editorOpen,
+			toggleEditor,
+			showCalculator,
+			toggleCalculator,
+			showTicketAssignments,
+			toggleTicketAssignments,
 			relatedDates = [],
 			datesLoaded = false,
-			prices = [],
-			pricesLoaded = false,
+			noBasePrice = false,
 		} = this.props;
 		if ( ! isModelEntityOfModel( ticket, 'ticket' ) ) {
 			return null;
 		}
+		const calculator = ticketPriceCalculatorMenuItem(
+			ticket,
+			toggleCalculator,
+			noBasePrice
+		);
+		const sidebarMenuItems = this.getSidebarMenuItems(
+			ticket,
+			relatedDates,
+			datesLoaded,
+			calculator
+		);
 		return ticket && ticket.id ? (
 			<div
 				id={ `ee-editor-ticket-actions-menu-${ ticket.id }` }
 				className={ 'ee-editor-ticket-actions-menu' }
 			>
-				{ this.sidebarMenu(
-					ticket,
-					relatedDates,
-					datesLoaded,
-					prices,
-					pricesLoaded
-				) }
+				{ this.sidebarMenu( sidebarMenuItems ) }
 				<EditTicketFormModal
 					ticket={ ticket }
-					closeModal={ this.toggleEditor }
-					editorOpen={ this.state.editorOpen }
-					calculator={
-						this.calculatePriceMenuItem(
-							ticket,
-							prices,
-							pricesLoaded
-						)
-					}
+					toggleEditor={ toggleEditor }
+					editorOpen={ editorOpen }
+					calculator={ calculator }
 				/>
 				<TicketAssignmentsManagerModal
 					ticket={ ticket }
 					allDates={ allDates }
-					closeModal={ this.toggleTickets }
-					editorOpen={ this.state.assignDates }
+					toggleEditor={ toggleTicketAssignments }
+					editorOpen={ showTicketAssignments }
 					modalProps={ {
 						title: sprintf(
 							_x(
@@ -328,30 +237,40 @@ class EditorTicketActionsMenu extends Component {
 						closeButtonLabel: null,
 					} }
 				/>
-				{ this.ticketPriceCalculator( ticket ) }
+				<TicketPriceCalculatorFormModal
+					ticket={ ticket }
+					toggleEditor={ toggleCalculator }
+					editorOpen={ showCalculator }
+				/>
 			</div>
 		) : null;
 	}
 }
 
-export default withSelect( ( select, ownProps ) => {
-	const { getRelatedEntities } = select( 'eventespresso/core' );
-	const { hasFinishedResolution } = select( 'core/data' );
-	const ticket = ownProps.ticket;
-	if ( isModelEntityOfModel( ticket, 'ticket' ) ) {
-		const relatedDates = getRelatedEntities( ticket, 'datetimes' );
-		const prices = getRelatedEntities( ticket, 'prices' );
-		const datesLoaded = hasFinishedResolution(
-			'eventespresso/core',
-			'getRelatedEntities',
-			[ ticket, 'datetimes' ]
-		);
-		const pricesLoaded = hasFinishedResolution(
-			'eventespresso/core',
-			'getRelatedEntities',
-			[ ticket, 'prices' ]
-		);
-		return { relatedDates, datesLoaded, prices, pricesLoaded };
-	}
-	return {};
-} )( EditorTicketActionsMenu );
+export default compose( [
+	withEditor,
+	withTicketPriceCalculator,
+	withTicketAssignmentsManager,
+	withSelect( ( select, ownProps ) => {
+		const { getRelatedEntities } = select( 'eventespresso/core' );
+		const { hasFinishedResolution } = select( 'core/data' );
+		const ticket = ownProps.ticket;
+		if ( isModelEntityOfModel( ticket, 'ticket' ) ) {
+			const relatedDates = getRelatedEntities( ticket, 'datetimes' );
+			const prices = getRelatedEntities( ticket, 'prices' );
+			const datesLoaded = hasFinishedResolution(
+				'eventespresso/core',
+				'getRelatedEntities',
+				[ ticket, 'datetimes' ]
+			);
+			const pricesLoaded = hasFinishedResolution(
+				'eventespresso/core',
+				'getRelatedEntities',
+				[ ticket, 'prices' ]
+			);
+			const noBasePrice = pricesLoaded && isEmpty( prices );
+			return { relatedDates, datesLoaded, noBasePrice };
+		}
+		return {};
+	} ),
+] )( EditorTicketActionsMenu );
