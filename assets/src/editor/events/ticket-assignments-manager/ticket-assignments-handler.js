@@ -124,36 +124,21 @@ export const assignTicket = ( prevState, date, ticket ) => {
  *              			collection matching supplied ticket
  */
 export const assignedCount = ( assigned, date = null, ticket = null ) => {
-	// console.log( ' - - - - - - - - - - - - - - - - - - - ' );
-	// console.log( 'assignedCount' );
-	// console.log( 'date | # tickets' );
 	if ( date && date.id && isArray( assigned[ date.id ] ) ) {
-		// console.log( date.id, ' | ', assigned[ date.id ].length );
-		// console.log( ' - - - - - - - - - - - - - - - - - - - ' );
 		return assigned[ date.id ].length;
 	}
 	let index = 0;
 	let count = 0;
 	if ( ticket && ticket.id ) {
 		for ( const dateID in assigned ) {
-			// console.log( ' > > assigned[ dateID ]', dateTickets,
 			if ( isArray( assigned[ dateID ] ) ) {
-				// console.log(
-				// 	' > date.id === dateID',
-				// 	date.id, dateID,
-				// 	date.id === dateID
-				// );
 				index = findIndex( assigned[ dateID ], { id: ticket.id } );
-				// console.log( ' > index', index );
 				if ( index > noIndex ) {
-					// console.log( 'ticket', ' | ', ticket.id );
 					count++;
 				}
 			}
 		}
 	}
-	// console.log( date.id, ' | ', count );
-	// console.log( ' - - - - - - - - - - - - - - - - - - - ' );
 	return count;
 };
 
@@ -231,31 +216,21 @@ export const removeTicket = ( prevState, date, ticket ) => {
  *              			collection matching supplied ticket
  */
 export const removedCount = ( removed, date = null, ticket = null ) => {
-	// console.log( ' - - - - - - - - - - - - - - - - - - - ' );
-	// console.log( 'removedCount' );
-	// console.log( 'date | # tickets' );
 	if ( date && date.id && isArray( removed[ date.id ] ) ) {
-		// console.log( date.id, ' | ', removed[ date.id ].length );
-		// console.log( ' - - - - - - - - - - - - - - - - - - - ' );
 		return removed[ date.id ].length;
 	}
-	// console.log( ' > ticket', ticket.id, ticket.name );
 	let index = 0;
 	let count = 0;
 	if ( ticket && ticket.id ) {
 		for ( const dateID in removed ) {
 			if ( isArray( removed[ dateID ] ) ) {
 				index = findIndex( removed[ dateID ], { id: ticket.id } );
-				// console.log( ' > index', index );
 				if ( index > noIndex ) {
-					// console.log( 'ticket', ' | ', ticket.id );
 					count++;
 				}
 			}
 		}
 	}
-	// console.log( date.id, ' | ', count );
-	// console.log( ' - - - - - - - - - - - - - - - - - - - ' );
 	return count;
 };
 
@@ -267,19 +242,7 @@ export const removedCount = ( removed, date = null, ticket = null ) => {
  * @return {Object} updated state
  */
 const cleanState = ( prevState ) => {
-	// console.log( 'prevState.assigned', prevState.assigned );
-	// console.log( 'prevState.removed', prevState.removed );
-	const assigned = omitBy(
-		prevState.assigned,
-		isUndefined
-	);
-	const removed = omitBy(
-		prevState.removed,
-		isUndefined
-	); // console.log( 'assigned', assigned );
-	// console.log( 'removed', removed );
-	return {
-		assigned: assigned,
-		removed: removed,
-	};
+	const assigned = omitBy( prevState.assigned, isUndefined );
+	const removed = omitBy( prevState.removed, isUndefined );
+	return { assigned, removed };
 };

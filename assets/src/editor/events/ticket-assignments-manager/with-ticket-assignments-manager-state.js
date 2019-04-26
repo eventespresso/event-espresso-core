@@ -22,7 +22,7 @@ import {
 import { default as TicketAssignmentsManager } from './ticket-assignments-manager';
 
 /**
- * withDatesAndTicketsManagerState
+ * withTicketAssignmentsManagerState
  * Higher-Order-Component that wraps an "EntityListFilterBar" component
  * in order to provide state management for it and its children
  *
@@ -108,7 +108,7 @@ export default compose( [
 			...dtmProps,
 			eventDateTicketMap,
 			resetRelationsMap,
-			loading: loading,
+			loading,
 		} );
 		return dtmProps;
 	} ),
