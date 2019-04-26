@@ -2,11 +2,13 @@
  * External imports
  */
 import { isEmpty } from 'lodash';
+import { compose } from '@wordpress/compose';
 import { withSelect } from '@wordpress/data';
 import { Component, Fragment } from '@wordpress/element';
 import { applyFilters } from '@wordpress/hooks';
 import { DropDownMenu, IconMenuItem } from '@eventespresso/components';
 import { __, sprintf, _x } from '@eventespresso/i18n';
+import { withEditor } from '@eventespresso/higher-order-components';
 import { dateTimeModel } from '@eventespresso/model';
 import { isModelEntityOfModel } from '@eventespresso/validators';
 
@@ -16,7 +18,10 @@ import { isModelEntityOfModel } from '@eventespresso/validators';
 import { EditEventDateFormModal } from '../';
 import { copyEventDate, trashEventDate } from '../action-handlers';
 import { EntityActionMenuItem } from '../../../entity-action-menu-item';
-import { TicketAssignmentsManagerModal } from '../../../ticket-assignments-manager';
+import {
+	withTicketAssignmentsManager,
+	TicketAssignmentsManagerModal,
+} from '../../../ticket-assignments-manager';
 import './style.css';
 
 const { MODEL_NAME: DATETIME } = dateTimeModel;
@@ -30,36 +35,6 @@ const { MODEL_NAME: DATETIME } = dateTimeModel;
  * @return {Object} rendered menu
  */
 class EditorDateActionsMenu extends Component {
-	constructor( props ) {
-		super( props );
-		this.state = {
-			editorOpen: false,
-			editTickets: false,
-		};
-	}
-
-	/**
-	 * opens and closes EditEventDateFormModal
-	 *
-	 * @function
-	 */
-	toggleEditor = () => {
-		this.setState( ( prevState ) => (
-			{ editorOpen: ! prevState.editorOpen }
-		) );
-	};
-
-	/**
-	 * opens and closes TicketAssignmentsManagerModal
-	 *
-	 * @function
-	 */
-	toggleTickets = () => {
-		this.setState( ( prevState ) => (
-			{ editTickets: ! prevState.editTickets }
-		) );
-	};
-
 	/**
 	 * @function
 	 * @param {Object} eventDate    	 JSON object defining the Event Date
@@ -76,7 +51,7 @@ class EditorDateActionsMenu extends Component {
 					{
 						title: __( 'edit date', 'event_espresso' ),
 						icon: 'edit',
-						onClick: this.toggleEditor,
+						onClick: this.props.toggleEditor,
 					},
 					{
 						title: __( 'copy date', 'event_espresso' ),
@@ -117,7 +92,7 @@ class EditorDateActionsMenu extends Component {
 				id={ `edit-date-${ eventDate.id }` }
 				htmlClass="edit-date"
 				dashicon="edit"
-				onClick={ this.toggleEditor }
+				onClick={ this.props.toggleEditor }
 			/>
 		);
 	};
@@ -143,7 +118,7 @@ class EditorDateActionsMenu extends Component {
 				id={ `view-tickets-date-${ eventDate.id }` }
 				htmlClass="view-tickets-date"
 				dashicon="tickets-alt"
-				onClick={ this.toggleTickets }
+				onClick={ this.props.toggleTicketAssignments }
 				itemCount={ ticketsLoaded ? relatedTickets.length : null }
 			/>
 		);
@@ -208,6 +183,10 @@ class EditorDateActionsMenu extends Component {
 			event,
 			eventDate,
 			allTickets,
+			editorOpen,
+			toggleEditor,
+			showTicketAssignments,
+			toggleTicketAssignments,
 			relatedTickets = [],
 			ticketsLoaded = false,
 		} = this.props;
@@ -223,14 +202,14 @@ class EditorDateActionsMenu extends Component {
 				<EditEventDateFormModal
 					event={ event }
 					eventDate={ eventDate }
-					closeModal={ this.toggleEditor }
-					editorOpen={ this.state.editorOpen }
+					toggleEditor={ toggleEditor }
+					editorOpen={ editorOpen }
 				/>
 				<TicketAssignmentsManagerModal
 					date={ eventDate }
 					allTickets={ allTickets }
-					closeModal={ this.toggleTickets }
-					editorOpen={ this.state.editTickets }
+					toggleEditor={ toggleTicketAssignments }
+					editorOpen={ showTicketAssignments }
 					modalProps={ {
 						title: sprintf(
 							_x(
@@ -250,18 +229,22 @@ class EditorDateActionsMenu extends Component {
 	}
 }
 
-export default withSelect( ( select, ownProps ) => {
-	const { getRelatedEntities } = select( 'eventespresso/core' );
-	const { hasFinishedResolution } = select( 'core/data' );
-	const eventDate = ownProps.eventDate;
-	if ( isModelEntityOfModel( eventDate, 'datetime' ) ) {
-		const relatedTickets = getRelatedEntities( eventDate, 'tickets' );
-		const ticketsLoaded = hasFinishedResolution(
-			'eventespresso/core',
-			'getRelatedEntities',
-			[ eventDate, 'tickets' ]
-		);
-		return { relatedTickets, ticketsLoaded };
-	}
-	return {};
-} )( EditorDateActionsMenu );
+export default compose( [
+	withEditor,
+	withTicketAssignmentsManager,
+	withSelect( ( select, ownProps ) => {
+		const { getRelatedEntities } = select( 'eventespresso/core' );
+		const { hasFinishedResolution } = select( 'core/data' );
+		const eventDate = ownProps.eventDate;
+		if ( isModelEntityOfModel( eventDate, 'datetime' ) ) {
+			const relatedTickets = getRelatedEntities( eventDate, 'tickets' );
+			const ticketsLoaded = hasFinishedResolution(
+				'eventespresso/core',
+				'getRelatedEntities',
+				[ eventDate, 'tickets' ]
+			);
+			return { relatedTickets, ticketsLoaded };
+		}
+		return {};
+	} ),
+] )( EditorDateActionsMenu );
