@@ -19,7 +19,7 @@ import {
 
 const { BASE_PRICE_TYPES } = priceTypeModel;
 const { getRelatedEntities } = select( 'eventespresso/core' );
-const { persistEntityRecord } = dispatch( 'eventespresso/core' );
+const { createEntity, persistEntityRecord } = dispatch( 'eventespresso/core' );
 const { getEntities } = select( 'eventespresso/lists' );
 
 /**
@@ -67,7 +67,7 @@ const recalculateTicketBasePrice = async ( ticket ) => {
 		ticket.price.amount.toNumber(),
 		priceModifiers
 	);
-	const ticketBasePrice = find(
+	let ticketBasePrice = find(
 		prices,
 		async ( price ) => {
 			warning(
@@ -82,6 +82,9 @@ const recalculateTicketBasePrice = async ( ticket ) => {
 			return priceType.pbtId === BASE_PRICE_TYPES.BASE_PRICE;
 		}
 	);
+	if ( ! isModelEntityOfModel( ticketBasePrice, 'price' ) ) {
+		ticketBasePrice = await createEntity( 'price', { PRT_ID: 1 } );
+	}
 	ticketBasePrice.amount = new Money( newBasePrice, SiteCurrency );
 	await updatePrice( ticketBasePrice, ticket );
 	return ticket;
