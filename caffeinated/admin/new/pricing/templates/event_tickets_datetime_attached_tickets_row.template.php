@@ -1,9 +1,5 @@
 <tr id="advanced-dtt-edit-row-<?php echo $dtt_row; ?>" class="advanced-dtt-edit-row">
-    <?php if (WP_DEBUG) {  // for now we are only showing reserved counts if WP_DEBUG is on ?>
     <td colspan="7">
-    <?php } else { ?>
-    <td colspan="6">
-    <?php } ?>
         <section id="edit-event-datetime-tickets-<?php echo $dtt_row; ?>"
                  class="datetime-tickets-edit"<?php echo $show_tickets_row; ?>>
             <div class="datetime-description-container">
