@@ -14,8 +14,7 @@ The following actions are used for any creating entities or adding created entit
 | [`receiveEntitiesAndResolve`](./entities/create.md#receiveentitiesandresolve-modelname-entities-)                             | Same as `receiveEntityAndResolves` except handles multiple entities.                                                                                                                               |
 | [`createRelation`](./relations/create.md#createrelation-modelname-entityid-relationname-relationentity-)                      | Creates a relation between the given relation entity and model entity id                                                                                                                           |
 | [`createRelations`](./relations/create.md#createrelations-modelname-entityid-relationname-relationentities-)                  | Same as `createRelation` except adds relation for multiple given relation entities.                                                                                                                |
-| [`resolveRelationRecordForRelation`](./relations/create
-.md#resolverelationrecordforrelation-relationentity-modelname-modelid-)| This handles receiving the relation entity and dispatching all the related state actions for that relation including resolving selectors for the given relation entity and model name and model id |
+| [`resolveRelationRecordForRelation`](./relations/create.md#resolverelationrecordforrelation-relationentity-modelname-modelid-)| This handles receiving the relation entity and dispatching all the related state actions for that relation including resolving selectors for the given relation entity and model name and model id |
 
 ### Delete ([entities](./entities/delete.md) & [relations](./relations/delete.md))
 
