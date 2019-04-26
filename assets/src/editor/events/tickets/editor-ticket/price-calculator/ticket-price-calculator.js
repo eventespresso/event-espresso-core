@@ -8,7 +8,7 @@ import { priceTypeModel } from '@eventespresso/model';
 import { isModelEntityOfModel } from '@eventespresso/validators';
 import { SiteCurrency } from '@eventespresso/value-objects';
 
-export const TICKET_PRICE_CALCULATOR_FORM_INPUT_PREFIX = 'ee-ticket-price-calculator';
+import { TICKET_PRICE_CALCULATOR_FORM_INPUT_PREFIX } from './';
 
 export const getPriceTypeObjects = () => select( 'eventespresso/lists' )
 	.getEntities( 'price_type' );
