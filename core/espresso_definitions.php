@@ -1,8 +1,8 @@
 <?php
 // define versions
 define('EVENT_ESPRESSO_VERSION', espresso_version());
-define('EE_MIN_WP_VER_REQUIRED', '4.5');
-define('EE_MIN_WP_VER_RECOMMENDED', '4.9');
+define('EE_MIN_WP_VER_REQUIRED', '5.2');
+define('EE_MIN_WP_VER_RECOMMENDED', '5.2');
 define('EE_MIN_PHP_VER_RECOMMENDED', '5.6.32');
 define('EE_SUPPORT_EMAIL', 'support@eventespresso.com');
 // used to be DIRECTORY_SEPARATOR, but that caused issues on windows
