@@ -3,7 +3,6 @@
  */
 import { isEmpty } from 'lodash';
 import { compose } from '@wordpress/compose';
-import { withSelect } from '@wordpress/data';
 import { Component, Fragment } from '@wordpress/element';
 import { applyFilters } from '@wordpress/hooks';
 import { DropDownMenu, IconMenuItem } from '@eventespresso/components';
@@ -15,6 +14,7 @@ import { isModelEntityOfModel } from '@eventespresso/validators';
 /**
  * Internal dependencies
  */
+import { withDatetimeTickets } from '../../data';
 import { EditEventDateFormModal } from '../';
 import { copyEventDate, trashEventDate } from '../action-handlers';
 import { EntityActionMenuItem } from '../../../entity-action-menu-item';
@@ -38,11 +38,11 @@ class EditorDateActionsMenu extends Component {
 	/**
 	 * @function
 	 * @param {Object} eventDate    	 JSON object defining the Event Date
-	 * @param {Array} relatedTickets    Tickets for Event Date
+	 * @param {Array} datetimeTickets    Tickets for Event Date
 	 * @param {boolean} ticketsLoaded
 	 * @return {DropDownMenu}    		 Edit Event Date DropDownMenu
 	 */
-	mainDropDownMenu = ( eventDate, relatedTickets, ticketsLoaded ) => {
+	mainDropDownMenu = ( eventDate, datetimeTickets, ticketsLoaded ) => {
 		return (
 			<DropDownMenu
 				tooltip={ __( 'event date main menu', 'event_espresso' ) }
@@ -58,7 +58,7 @@ class EditorDateActionsMenu extends Component {
 						icon: 'admin-page',
 						onClick: () => copyEventDate(
 							eventDate,
-							relatedTickets,
+							datetimeTickets,
 							ticketsLoaded
 						),
 					},
@@ -100,12 +100,12 @@ class EditorDateActionsMenu extends Component {
 	/**
 	 * @function
 	 * @param {Object} eventDate JSON object defining the Event Date
-	 * @param {Array} relatedTickets    Tickets for Event Date
+	 * @param {Array} datetimeTickets    Tickets for Event Date
 	 * @param {boolean} ticketsLoaded
 	 * @return {IconMenuItem}    View Tickets for Event Date IconMenuItem
 	 */
-	viewTicketsMenuItem = ( eventDate, relatedTickets, ticketsLoaded ) => {
-		const tooltip = ticketsLoaded && isEmpty( relatedTickets ) ?
+	viewTicketsMenuItem = ( eventDate, datetimeTickets, ticketsLoaded ) => {
+		const tooltip = ticketsLoaded && isEmpty( datetimeTickets ) ?
 			__(
 				'warning! no assigned tickets - click to fix',
 				'event_espresso'
@@ -119,7 +119,7 @@ class EditorDateActionsMenu extends Component {
 				htmlClass="view-tickets-date"
 				dashicon="tickets-alt"
 				onClick={ this.props.toggleTicketAssignments }
-				itemCount={ ticketsLoaded ? relatedTickets.length : null }
+				itemCount={ ticketsLoaded ? datetimeTickets.length : null }
 			/>
 		);
 	};
@@ -127,21 +127,21 @@ class EditorDateActionsMenu extends Component {
 	/**
 	 * @function
 	 * @param {Object} eventDate    	 JSON object defining the Event Date
-	 * @param {Array} relatedTickets    Tickets for Event Date
+	 * @param {Array} datetimeTickets    Tickets for Event Date
 	 * @param {boolean} ticketsLoaded
 	 * @return {Array}    				 Array of IconMenuItem objects
 	 */
-	getSidebarMenuItems = ( eventDate, relatedTickets, ticketsLoaded ) => {
+	getSidebarMenuItems = ( eventDate, datetimeTickets, ticketsLoaded ) => {
 		const sidebarMenuItems = [];
 		sidebarMenuItems.push(
-			this.mainDropDownMenu( eventDate, relatedTickets, ticketsLoaded )
+			this.mainDropDownMenu( eventDate, datetimeTickets, ticketsLoaded )
 		);
 		sidebarMenuItems.push( this.editDateMenuItem( eventDate ) );
 		sidebarMenuItems.push(
-			this.viewTicketsMenuItem( eventDate, relatedTickets, ticketsLoaded )
+			this.viewTicketsMenuItem( eventDate, datetimeTickets, ticketsLoaded )
 		);
 		return applyFilters(
-			'FHEE__EditorDates__EditorDateSidebar__SidebarMenuItems',
+			'FHEE__EditorDateActionsMenu__SidebarMenuItems',
 			sidebarMenuItems,
 			eventDate
 		);
@@ -150,14 +150,14 @@ class EditorDateActionsMenu extends Component {
 	/**
 	 * @function
 	 * @param {Object} eventDate    	JSON object defining the Event Date
-	 * @param {Array} relatedTickets 	Tickets for Event Date
+	 * @param {Array} datetimeTickets 	Tickets for Event Date
 	 * @param {boolean} ticketsLoaded
 	 * @return {Array} Array of rendered IconMenuItem list items
 	 */
-	sidebarMenu = ( eventDate, relatedTickets, ticketsLoaded ) => {
+	sidebarMenu = ( eventDate, datetimeTickets, ticketsLoaded ) => {
 		const sidebarMenuItems = this.getSidebarMenuItems(
 			eventDate,
-			relatedTickets,
+			datetimeTickets,
 			ticketsLoaded
 		);
 		return sidebarMenuItems.map(
@@ -187,7 +187,7 @@ class EditorDateActionsMenu extends Component {
 			toggleEditor,
 			showTicketAssignments,
 			toggleTicketAssignments,
-			relatedTickets = [],
+			datetimeTickets = [],
 			ticketsLoaded = false,
 		} = this.props;
 		if ( ! isModelEntityOfModel( eventDate, DATETIME ) ) {
@@ -198,7 +198,7 @@ class EditorDateActionsMenu extends Component {
 				id={ `ee-editor-date-actions-menu-${ eventDate.id }` }
 				className={ 'ee-editor-date-actions-menu' }
 			>
-				{ this.sidebarMenu( eventDate, relatedTickets, ticketsLoaded ) }
+				{ this.sidebarMenu( eventDate, datetimeTickets, ticketsLoaded ) }
 				<EditEventDateFormModal
 					event={ event }
 					eventDate={ eventDate }
@@ -232,19 +232,5 @@ class EditorDateActionsMenu extends Component {
 export default compose( [
 	withEditor,
 	withTicketAssignmentsManager,
-	withSelect( ( select, ownProps ) => {
-		const { getRelatedEntities } = select( 'eventespresso/core' );
-		const { hasFinishedResolution } = select( 'core/data' );
-		const eventDate = ownProps.eventDate;
-		if ( isModelEntityOfModel( eventDate, 'datetime' ) ) {
-			const relatedTickets = getRelatedEntities( eventDate, 'tickets' );
-			const ticketsLoaded = hasFinishedResolution(
-				'eventespresso/core',
-				'getRelatedEntities',
-				[ eventDate, 'tickets' ]
-			);
-			return { relatedTickets, ticketsLoaded };
-		}
-		return {};
-	} ),
+	withDatetimeTickets,
 ] )( EditorDateActionsMenu );
