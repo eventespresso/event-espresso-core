@@ -9,7 +9,14 @@ import { withEntityPagination } from '@eventespresso/higher-order-components';
 import {
 	default as withDatesListFilterBar,
 } from './with-dates-list-filter-bar';
+export {
+	getFilteredDatesList,
+	default as withDatesListFilterBar,
+} from './with-dates-list-filter-bar';
 import {
+	default as withDatesListFilterState,
+} from './with-dates-list-filter-state';
+export {
 	default as withDatesListFilterState,
 } from './with-dates-list-filter-state';
 
