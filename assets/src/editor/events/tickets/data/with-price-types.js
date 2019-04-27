@@ -13,7 +13,7 @@ import { withSelect } from '@wordpress/data';
  */
 export const withPriceTypes = withSelect(
 	( select ) => {
-		const { getEntities } = select( 'eventespresso/core' );
+		const { getEntities } = select( 'eventespresso/lists' );
 		const priceTypes = getEntities( 'price_type' );
 		const { hasFinishedResolution } = select( 'core/data' );
 		const priceTypesLoaded = hasFinishedResolution(
