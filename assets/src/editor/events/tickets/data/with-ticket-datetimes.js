@@ -8,6 +8,12 @@ const EMPTY_OBJECT = {};
 
 /**
  * withTicketDatetimes
+ * returns an object containing the following:
+ *    ticket - the same ticket entity that was supplied
+ *    ticketDatetimes - an array of datetime entities for the supplied ticket
+ *    datesLoaded - boolean true if loading is complete
+ *
+ * @function
  */
 export const withTicketDatetimes = withSelect(
 	( select, ownProps ) => {

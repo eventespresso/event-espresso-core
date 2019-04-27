@@ -6,6 +6,18 @@ import { isModelEntityOfModel } from '@eventespresso/validators';
 
 const EMPTY_OBJECT = {};
 
+/**
+ * withEventDatetimes
+ * returns an object containing the following:
+ *    eventDates - an array of datetime entities for the supplied event
+ *    eventDatesLoaded - boolean true if loading is complete
+ *
+ * !!! IMPORTANT !!!
+ * ONLY USE THIS AFTER THE CALL TO hasFinishedResolution() in the
+ * withEvent() DATA HOC has completed and resolved true
+ *
+ * @function
+ */
 export const withEventDatetimes = withSelect(
 	( select, ownProps ) => {
 		const { event, eventLoaded } = ownProps;

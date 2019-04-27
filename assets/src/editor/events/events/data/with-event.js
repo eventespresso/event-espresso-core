@@ -6,6 +6,14 @@ import { isModelEntityOfModel } from '@eventespresso/validators';
 
 const EMPTY_OBJECT = {};
 
+/**
+ * withEvent
+ * returns an object containing the following:
+ *    event - the event entity for the supplied eventId
+ *    eventLoaded - boolean true if loading is complete
+ *
+ * @function
+ */
 export const withEvent = withSelect(
 	( select, ownProps ) => {
 		const eventId = ownProps.eventId;
