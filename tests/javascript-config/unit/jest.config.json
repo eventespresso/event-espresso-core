@@ -18,8 +18,7 @@
 		"@wordpress/i18n": "<rootDir>/tests/javascript-config/unit/mocks/i18n",
 		"@eventespresso/i18n": "<rootDir>/tests/javascript-config/unit/mocks/i18n",
 		"@wordpress/is-shallow-equal/objects": "<rootDir>/node_modules/@wordpress/is-shallow-equal/build/objects",
-		"@test/fixtures": "<rootDir>/tests/javascript-config/unit/fixtures",
-		"simple-html-token": "<rootDir>/tests/javascript-config/unit/mocks/simple-html-token"
+		"@test/fixtures": "<rootDir>/tests/javascript-config/unit/fixtures"
 	},
 	"preset": "@wordpress/jest-preset-default",
 	"setupFiles": [
@@ -32,5 +31,8 @@
 	],
 	"transform": {
 		"^.+\\.jsx?$": "<rootDir>/tests/javascript-config/unit/babel-transform"
-	}
+	},
+	"transformIgnorePatterns": [
+		"node_modules/(?!(simple-html-tokenizer)/)"
+	]
 }
