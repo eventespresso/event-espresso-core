@@ -2,31 +2,30 @@
  * External dependencies
  */
 import PropTypes from 'prop-types';
-import { isEmpty, uniq } from 'lodash';
 import { compose } from '@wordpress/compose';
 import { withSelect } from '@wordpress/data';
-import { isModelEntityOfModel } from '@eventespresso/validators';
 
 /**
  * Internal imports
  */
 import '../../editor.css';
 import {
-	default as withDatesListFilterState,
-} from '../dates-and-times/editor-date/filter-bar/with-dates-list-filter-state';
-import {
+	withDatesListFilterState,
 	getFilteredDatesList,
-} from '../dates-and-times/editor-date/filter-bar/with-dates-list-filter-bar';
+} from '../dates-and-times/editor-date/filter-bar';
 import {
 	default as withTicketsListFilterState,
 } from '../tickets/editor-ticket/filter-bar/with-tickets-list-filter-state';
 import {
 	getFilteredTicketsList,
 } from '../tickets/editor-ticket/filter-bar/with-tickets-list-filter-bar';
+import { withEvent, withEventDatetimes } from '../events/data';
 import {
-	condenseArray,
-	getDatetimeEntityIds,
-} from './dates-and-tickets-filter-state-utils';
+	withGetRelatedTicketsForEventDates,
+	withTicketsForAllEventDates,
+} from '../dates-and-times/data';
+
+const EMPTY_ARRAY = [];
 
 /**
  * DatesAndTicketsFilterState
@@ -35,9 +34,10 @@ import {
  * @param {boolean} loading
  * @param {boolean} loadingDates
  * @param {boolean} loadingTickets
- * @param {Array} eventDates
- * @param {Array} eventDateTickets
- * @param {Function} getRelatedTickets
+ * @param {Array} datetimes
+ * @param {Array} allDates
+ * @param {Array} tickets
+ * @param {Array} allTickets
  * @param {string} showDates
  * @param {string} sortDates
  * @param {string} showTickets
@@ -48,13 +48,13 @@ import {
  * @return {Object} rendered DatesAndTicketsMetabox
  */
 const DatesAndTicketsFilterState = ( {
-	loading,
-	loadingDates,
-	loadingTickets,
-	datetimes,
-	allDates,
-	tickets,
-	allTickets,
+	loading = true,
+	loadingDates = true,
+	loadingTickets = true,
+	datetimes = EMPTY_ARRAY,
+	allDates = EMPTY_ARRAY,
+	tickets = EMPTY_ARRAY,
+	allTickets = EMPTY_ARRAY,
 	showDates,
 	sortDates,
 	showTickets,
@@ -95,85 +95,64 @@ DatesAndTicketsFilterState.propTypes = {
 export default compose( [
 	withDatesListFilterState,
 	withTicketsListFilterState,
+	withEvent,
+	withEventDatetimes,
+	withTicketsForAllEventDates,
+	withGetRelatedTicketsForEventDates,
 	withSelect( ( select, ownProps ) => {
-		let loading = true;
-		let eventDates = [];
-		let eventDateTickets = [];
-		let dateRelationsResolved = false;
-		let ticketRelationsResolved = false;
 		const {
-			getEventById,
-			getRelatedEntities,
-			getRelatedEntitiesForIds,
-		} = select( 'eventespresso/core' );
-		const { hasFinishedResolution } = select( 'core/data' );
-		const event = getEventById( ownProps.eventId );
-		if ( isModelEntityOfModel( event, 'event' ) ) {
-			loading = false;
-			eventDates = getRelatedEntities( event, 'datetimes' );
-			eventDates = condenseArray( eventDates );
-			dateRelationsResolved = hasFinishedResolution(
-				'eventespresso/core',
-				'getRelatedEntities',
-				[ event, 'datetimes' ]
-			);
-			if ( dateRelationsResolved ) {
-				const eventDateIds = getDatetimeEntityIds( eventDates );
-				eventDateTickets = getRelatedEntitiesForIds(
-					'datetime',
-					eventDateIds,
-					'tickets'
-				);
-				ticketRelationsResolved = hasFinishedResolution(
-					'eventespresso/core',
-					'getRelatedEntitiesForIds',
-					[ 'datetime', eventDateIds, 'tickets' ]
-				);
-			}
+			event,
+			eventLoaded,
+			eventDates,
+			eventDatesLoaded,
+			eventDateTickets,
+			eventDateTicketsLoaded,
+			showDates,
+			sortDates,
+			showTickets,
+			sortTickets,
+			getRelatedTicketsForEventDates,
+		} = ownProps;
+		if ( ! eventLoaded || ! eventDatesLoaded ) {
+			return {
+				event,
+				datetimes: EMPTY_ARRAY,
+				allDates: EMPTY_ARRAY,
+				tickets: EMPTY_ARRAY,
+				allTickets: EMPTY_ARRAY,
+				loading: ! eventLoaded,
+				loadingDates: ! eventDatesLoaded,
+				loadingTickets: true,
+			};
 		}
-		/**
-		 * @function
-		 * @param {Array} dates
-		 * @return {Array} tickets
-		 */
-		const getRelatedTickets = ( dates ) => {
-			if ( ! ticketRelationsResolved ) {
-				return null;
-			}
-			let tickets = [];
-			dates.forEach( ( date ) => {
-				const relatedTickets = getRelatedEntities( date, 'tickets' );
-				if (
-					Array.isArray( relatedTickets ) &&
-					! isEmpty( relatedTickets )
-				) {
-					tickets = tickets.concat( relatedTickets );
-				}
-			} );
-			return uniq( tickets );
-		};
+		// apply filter bar filters
 		const datetimes = getFilteredDatesList(
 			eventDates,
-			ownProps.showDates,
-			ownProps.sortDates
+			showDates,
+			sortDates
 		);
-		let tickets = ownProps.isChained ?
-			getRelatedTickets( datetimes ) :
-			eventDateTickets;
-		tickets = getFilteredTicketsList(
-			tickets,
-			ownProps.showTickets,
-			ownProps.sortTickets
-		);
+		let tickets = EMPTY_ARRAY;
+		if ( eventDateTicketsLoaded ) {
+			// show tickets for ALL dates or for filtered subset from above?
+			tickets = ownProps.isChained ?
+				getRelatedTicketsForEventDates( datetimes ) :
+				eventDateTickets;
+			// apply filter bar filters
+			tickets = getFilteredTicketsList(
+				tickets,
+				showTickets,
+				sortTickets
+			);
+		}
 		return {
 			event,
 			datetimes,
 			allDates: eventDates,
 			tickets,
 			allTickets: eventDateTickets,
-			loading,
-			loadingDates: ! dateRelationsResolved,
-			loadingTickets: ! ticketRelationsResolved,
+			loading: ! eventLoaded,
+			loadingDates: ! eventDatesLoaded,
+			loadingTickets: ! eventDateTicketsLoaded,
 		};
 	} ),
 ] )( DatesAndTicketsFilterState );
