@@ -15,7 +15,7 @@ common.forEach( ( config, index ) => {
 			},
 		};
 		common[ index ].plugins = [
-			new CleanWebpackPlugin( [ 'assets/dist', 'translation-map.json' ] ),
+			new CleanWebpackPlugin(),
 		];
 	}
 	common[ index ] = merge( config, {
