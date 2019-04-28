@@ -1,20 +1,20 @@
 {
   "components.css": "ee-components.10aa00b0631273cd32e3.dist.css",
-  "components.js": "ee-components.96cc65e4fc7a7c2c1d2e.dist.js",
-  "data-stores.js": "ee-data-stores.7cf740d3d1ec0ddfb2ad.dist.js",
+  "components.js": "ee-components.650f5017c5f64e452fac.dist.js",
+  "data-stores.js": "ee-data-stores.053a5ebad5a44382fc84.dist.js",
   "editor-hocs.js": "ee-editor-hocs.15a813aac7a51b5473cb.dist.js",
   "eejs.js": "ee-eejs.55b5e7d683f2c40e4069.dist.js",
   "eventespresso-core-blocks-frontend.css": "ee-eventespresso-core-blocks-frontend.883f26b19aa88cfe9891.dist.css",
   "eventespresso-core-blocks-frontend.js": "ee-eventespresso-core-blocks-frontend.3e0494a23b30a299d1b4.dist.js",
   "eventespresso-core-blocks.css": "ee-eventespresso-core-blocks.883f26b19aa88cfe9891.dist.css",
-  "eventespresso-core-blocks.js": "ee-eventespresso-core-blocks.9c2918965ff43bcb2c65.dist.js",
+  "eventespresso-core-blocks.js": "ee-eventespresso-core-blocks.ad6e713277b81fc37cd7.dist.js",
   "helpers.js": "ee-helpers.a2c28ce4b27c88a6c6e1.dist.js",
-  "hocs.js": "ee-hocs.41a993ab91c55b2ed293.dist.js",
+  "hocs.js": "ee-hocs.273f4576d3a41ff86893.dist.js",
   "manifest.js": "ee-manifest.45b8faa573682047153a.dist.js",
-  "model.js": "ee-model.2ea0bb53030ba083d582.dist.js",
+  "model.js": "ee-model.9573ef7d6e635c309072.dist.js",
   "validators.js": "ee-validators.299a9413a62fd9fadb1c.dist.js",
   "valueObjects.js": "ee-valueObjects.22ceae6aa5010d4c9d88.dist.js",
-  "vendor.js": "ee-vendor.83d3ed4b0640453abc59.dist.js",
+  "vendor.js": "ee-vendor.807e59909b871a4075d9.dist.js",
   "wp-plugins-page.css": "ee-wp-plugins-page.bff04b6b9d88e9edd2bb.dist.css",
-  "wp-plugins-page.js": "ee-wp-plugins-page.7ad904fab88dff79ece1.dist.js"
+  "wp-plugins-page.js": "ee-wp-plugins-page.ee158e804961a210bb23.dist.js"
 }
