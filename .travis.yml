@@ -110,7 +110,7 @@ jobs:
         - BUILD_TEST=1
       before_install:
         - nvm install && nvm use
-        - npm install npm --latest-npm
+        - nvm install npm --latest-npm
       before_script:
         - npm --version
         - node --version
