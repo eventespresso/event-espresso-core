@@ -107,7 +107,7 @@
 		"moment-duration-format": "^2.2.2",
 		"moment-timezone": "^0.5.25",
 		"pluralize": "^7.0.0",
-		"prop-types": "^15.6.2",
+		"prop-types": "^15.7.2",
 		"querystringify": "^2.1.1",
 		"react-redux": "^7.0.2",
 		"react-select": "^2.4.3",
