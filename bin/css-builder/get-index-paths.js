@@ -2,7 +2,7 @@ const path = require( 'path' );
 const getCssFiles = require( './get-css-files' );
 const chalk = require( 'chalk' );
 
-const STYLES_DIRECTORY = path.posix.resolve( __dirname, '../../assets/src/components/ui/styles' );
+const STYLES_DIRECTORY = path.resolve( __dirname, '../../assets/src/components/ui/styles' );
 
 /**
  * Get the relative path for the given file, theme directory and whether we want
@@ -20,11 +20,11 @@ const STYLES_DIRECTORY = path.posix.resolve( __dirname, '../../assets/src/compon
  * @return {string}  The generated relative path for the file.
  */
 function getRelativePath( file, themeDirectory, toRoot = false ) {
-	const from = path.posix.resolve( STYLES_DIRECTORY, 'themes', themeDirectory );
+	const from = path.resolve( STYLES_DIRECTORY, 'themes', themeDirectory );
 	const to = toRoot ?
-		path.posix.resolve( STYLES_DIRECTORY, 'root', file ) :
+		path.resolve( STYLES_DIRECTORY, 'root', file ) :
 		from;
-	return toRoot ? path.posix.relative( from, to ) : `./${ file }`;
+	return toRoot ? path.relative( from, to ) : `./${ file }`;
 }
 
 /**
