@@ -21,7 +21,7 @@ if (!defined('EVENT_ESPRESSO_VERSION'))
 class EE_Datetime_Test extends EE_UnitTestCase{
 
     /**
-     * @since $VID:$
+     * @since 4.9.80.p
      * @throws EE_Error
      * @throws InvalidArgumentException
      * @throws ReflectionException
@@ -145,18 +145,21 @@ class EE_Datetime_Test extends EE_UnitTestCase{
 	/**
 	 * This tests the ticket_types_available_for_purchase method.
 	 * @since 4.6.0
+     * @group testDate
 	 */
 	public function test_ticket_types_available_for_purchase() {
-		//@todo remove once test fixed.
-		$this->markTestSkipped(
-			'See https://events.codebasehq.com/projects/event-espresso/tickets/9635'
-		);/**/
 		//setup some dates we'll use for testing with.
 		$timezone = new DateTimeZone( 'America/Toronto' );
-		$upcoming_start_date = new DateTime( "now +1day", $timezone );
-		$past_start_date = new DateTime( "now -2days", $timezone );
-		$upcoming_end_date = new DateTime( "now +2days", $timezone );
-		$current = new DateTime( "now", $timezone );
+        $now_for_test = new DateTime( 'now', $timezone );
+        // set time explicitly
+        $now_for_test->setTime(14, 00);
+        $upcoming_start_date = clone $now_for_test;
+        $past_start_date = clone $now_for_test;
+        $upcoming_end_date = clone $now_for_test;
+        $upcoming_start_date->add(new DateInterval('P1D'));
+		$past_start_date->sub(new DateInterval('P2D'));
+		$upcoming_end_date->add(new DateInterval('P2D'));
+		$current = clone $now_for_test;
 		$formats = array( 'Y-d-m',  'h:i a' );
 		$full_format = implode( ' ', $formats );
 

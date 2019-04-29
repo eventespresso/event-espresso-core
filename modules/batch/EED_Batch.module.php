@@ -1,5 +1,10 @@
 <?php
 
+use EventEspresso\core\exceptions\InvalidDataTypeException;
+use EventEspresso\core\exceptions\InvalidInterfaceException;
+use EventEspresso\core\services\loaders\LoaderFactory;
+use EventEspresso\core\services\loaders\LoaderInterface;
+
 define('BATCH_URL', plugin_dir_url(__FILE__));
 
 /**
@@ -55,6 +60,11 @@ class EED_Batch extends EED_Module
     protected $_job_step_response = null;
 
     /**
+     * @var LoaderInterface
+     */
+    protected $loader;
+
+    /**
      * Gets the batch instance
      *
      * @return EED_Batch
@@ -91,6 +101,21 @@ class EED_Batch extends EED_Module
         add_action('wp_ajax_espresso_batch_cleanup', array(self::instance(), 'batch_cleanup'));
         add_action('wp_ajax_nopriv_espresso_batch_continue', array(self::instance(), 'batch_continue'));
         add_action('wp_ajax_nopriv_espresso_batch_cleanup', array(self::instance(), 'batch_cleanup'));
+    }
+
+    /**
+     * @since 4.9.80.p
+     * @return LoaderInterface
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     */
+    protected function getLoader()
+    {
+        if (!$this->loader instanceof LoaderInterface) {
+            $this->loader = LoaderFactory::getLoader();
+        }
+        return $this->loader;
     }
 
     /**
@@ -208,7 +233,7 @@ class EED_Batch extends EED_Module
             $_REQUEST,
             array_flip(array('action', 'page', 'ee', 'batch'))
         );
-        $batch_runner = new EventEspressoBatchRequest\BatchRequestProcessor();
+        $batch_runner = $this->getLoader()->getShared('EventEspressoBatchRequest\BatchRequestProcessor');
         // eg 'EventEspressoBatchRequest\JobHandlers\RegistrationsReport'
         $job_response = $batch_runner->create_job($job_handler_classname, $request_data);
         // remember the response for later. We need it to display the page body
@@ -263,7 +288,7 @@ class EED_Batch extends EED_Module
     public function batch_continue()
     {
         $job_id = sanitize_text_field($_REQUEST['job_id']);
-        $batch_runner = new EventEspressoBatchRequest\BatchRequestProcessor();
+        $batch_runner = $this->getLoader()->getShared('EventEspressoBatchRequest\BatchRequestProcessor');
         $response_obj = $batch_runner->continue_job($job_id);
         $this->_return_json($response_obj->to_array());
     }
@@ -276,7 +301,7 @@ class EED_Batch extends EED_Module
     public function batch_cleanup()
     {
         $job_id = sanitize_text_field($_REQUEST['job_id']);
-        $batch_runner = new EventEspressoBatchRequest\BatchRequestProcessor();
+        $batch_runner = $this->getLoader()->getShared('EventEspressoBatchRequest\BatchRequestProcessor');
         $response_obj = $batch_runner->cleanup_job($job_id);
         $this->_return_json($response_obj->to_array());
     }

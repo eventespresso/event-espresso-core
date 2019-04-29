@@ -1361,6 +1361,7 @@ class Read_Test extends EE_REST_TestCase
      * Verify that if we loop over them and render their pretty content (which renders shortcodes)
      * we don't accidentally cache the shortcode from one event to the other
      * @group 10851
+     * @group big_rest_tests
      */
     public function testShortcodesNotCachedForDifferentEvents()
     {

@@ -46,6 +46,7 @@ class EE_DMS_4_1_0_line_items extends EE_Data_Migration_Script_Stage_Table
         global $wpdb;
         $this->_pretty_name = __("Line Items", "event_espresso");
         $this->_old_table = $wpdb->prefix."events_attendee";
+        $this->select_expression = 'att.*, e.event_status';
         $this->_extra_where_sql = ' AS att
             INNER JOIN ' . $wpdb->prefix . 'events_detail AS e ON att.event_id=e.id
             WHERE e.event_status!="D"';

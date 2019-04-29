@@ -15,6 +15,7 @@ import {
 	getRelationType,
 	getRelationSchema,
 	getRelationResponseType,
+	getRelationPrimaryKeyString,
 } from '../resolvers';
 import {
 	receiveSchemaForModel,
@@ -299,14 +300,14 @@ describe( 'getRelationSchema()', () => {
 	} );
 	it( 'throws an error if a schema is not returned', () => {
 		const test = () => fulfillment.next( null );
-		expect( test ).toThrowError();
+		expect( test ).toThrow();
 	} );
 	it( 'throws an error if there is no schema for the relation in the returned' +
 		'model schema', () => {
 		reset();
 		fulfillment.next();
 		const test = () => fulfillment.next( {} );
-		expect( test ).toThrowError();
+		expect( test ).toThrow();
 	} );
 	it( 'yields the receiveRelationSchema action when a schema is ' +
 		'returned', () => {
@@ -326,5 +327,45 @@ describe( 'getRelationSchema()', () => {
 				'foo'
 			)
 		);
+	} );
+} );
+describe( 'getRelationPrimaryKeyString()', () => {
+	let fulfillment;
+	const reset = () => fulfillment = getRelationPrimaryKeyString(
+		'event',
+		'datetime'
+	);
+	it( 'yields resolve select action for the getRelationType selector', () => {
+		reset();
+		const { value } = fulfillment.next();
+		expect( value ).toEqual(
+			resolveSelect(
+				SCHEMA_REDUCER_KEY,
+				'getRelationType',
+				'event',
+				'datetimes'
+			)
+		);
+	} );
+	it( 'returns empty string if relation type cannot be retrieved', () => {
+		const { value, done } = fulfillment.next( '' );
+		expect( value ).toBe( '' );
+		expect( done ).toBe( true );
+	} );
+	it( 'returns expected value when relationType is ' +
+		'EE_Belongs_To_Relation', () => {
+		reset();
+		fulfillment.next();
+		const { value, done } = fulfillment.next( 'EE_Belongs_To_Relation' );
+		expect( value ).toBe( 'DTT_ID' );
+		expect( done ).toBe( true );
+	} );
+	it( 'returns expected value when relationType is not ' +
+		'EE_Belongs_To_Relation', () => {
+		reset();
+		fulfillment.next();
+		const { value, done } = fulfillment.next( 'foo' );
+		expect( value ).toBe( 'Datetime.DTT_ID' );
+		expect( done ).toBe( true );
 	} );
 } );

@@ -32,5 +32,8 @@
 	],
 	"transform": {
 		"^.+\\.jsx?$": "<rootDir>/tests/javascript-config/unit/babel-transform"
-	}
+	},
+	"transformIgnorePatterns": [
+		"node_modules/(?!(simple-html-tokenizer)/)"
+	]
 }

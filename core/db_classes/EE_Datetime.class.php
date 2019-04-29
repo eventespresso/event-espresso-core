@@ -1327,7 +1327,7 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class
     /**
      * Increments sold by amount passed by $qty, and persists it immediately to the database.
      *
-     * @deprecated $VID:$
+     * @deprecated 4.9.80.p
      * @param int $qty
      * @return boolean
      * @throws ReflectionException
@@ -1341,7 +1341,7 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class
         EE_Error::doing_it_wrong(
             __FUNCTION__,
             esc_html__('Please use EE_Datetime::increaseSold() instead', 'event_espresso'),
-            '$VID:$',
+            '4.9.80.p',
             '5.0.0.p'
         );
         return $this->increaseSold($qty);
@@ -1352,7 +1352,7 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class
      * Decrements (subtracts) sold amount passed by $qty directly in the DB and on the model object. (Ie, no need
      * to save afterwards.)
      *
-     * @deprecated $VID:$
+     * @deprecated 4.9.80.p
      * @param int $qty
      * @return boolean
      * @throws ReflectionException
@@ -1366,7 +1366,7 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class
         EE_Error::doing_it_wrong(
             __FUNCTION__,
             esc_html__('Please use EE_Datetime::decreaseSold() instead', 'event_espresso'),
-            '$VID:$',
+            '4.9.80.p',
             '5.0.0.p'
         );
         return $this->decreaseSold($qty);
@@ -1376,7 +1376,7 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class
     /**
      * Increments reserved by amount passed by $qty, and persists it immediately to the database.
      *
-     * @deprecated $VID:$
+     * @deprecated 4.9.80.p
      * @param int $qty
      * @return boolean indicating success
      * @throws ReflectionException
@@ -1390,7 +1390,7 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class
         EE_Error::doing_it_wrong(
             __FUNCTION__,
             esc_html__('Please use EE_Datetime::increaseReserved() instead', 'event_espresso'),
-            '$VID:$',
+            '4.9.80.p',
             '5.0.0.p'
         );
         return $this->increaseReserved($qty);
@@ -1400,7 +1400,7 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class
     /**
      * Decrements (subtracts) reserved by amount passed by $qty, and persists it immediately to the database.
      *
-     * @deprecated $VID:$
+     * @deprecated 4.9.80.p
      * @param int $qty
      * @return boolean
      * @throws ReflectionException
@@ -1414,7 +1414,7 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class
         EE_Error::doing_it_wrong(
             __FUNCTION__,
             esc_html__('Please use EE_Datetime::decreaseReserved() instead', 'event_espresso'),
-            '$VID:$',
+            '4.9.80.p',
             '5.0.0.p'
         );
         return $this->decreaseReserved($qty);

@@ -2,6 +2,7 @@ const path = require( 'path' );
 const assets = './assets/src/';
 const miniExtract = require( 'mini-css-extract-plugin' );
 const autoprefixer = require( 'autoprefixer' );
+const cssnano = require( 'cssnano' );
 const externals = {
 	jquery: 'jQuery',
 	'@eventespresso/eejs': 'eejs',
@@ -224,20 +225,16 @@ const config = [
 								modules: true,
 								localIdentName: '[local]',
 							},
-							//can't use minimize because cssnano (the
-							// dependency) doesn't parser the browserlist
-							// extension in package.json correctly, there's
-							// a pending update for it but css-loader
-							// doesn't have the latest yet.
-							// options: {
-							//     minimize: true
-							// }
 						},
 						{
 							loader: 'postcss-loader',
 							options: {
+								// eslint-disable-next-line object-shorthand
 								plugins: function() {
-									return [ autoprefixer ];
+									return [
+										autoprefixer,
+										cssnano( { preset: 'default' } ),
+									];
 								},
 								sourceMap: true,
 							},
@@ -283,20 +280,16 @@ const config = [
 								modules: true,
 								localIdentName: '[local]',
 							},
-							//can't use minimize because cssnano (the
-							// dependency) doesn't parser the browserlist
-							// extension in package.json correctly, there's
-							// a pending update for it but css-loader
-							// doesn't have the latest yet.
-							// options: {
-							//     minimize: true
-							// }
 						},
 						{
 							loader: 'postcss-loader',
 							options: {
+								// eslint-disable-next-line object-shorthand
 								plugins: function() {
-									return [ autoprefixer ];
+									return [
+										autoprefixer,
+										cssnano( { preset: 'default' } ),
+									];
 								},
 								sourceMap: true,
 							},
@@ -358,20 +351,16 @@ const config = [
 								modules: true,
 								localIdentName: '[local]',
 							},
-							//can't use minimize because cssnano (the
-							// dependency) doesn't parser the browserlist
-							// extension in package.json correctly, there's
-							// a pending update for it but css-loader
-							// doesn't have the latest yet.
-							// options: {
-							//     minimize: true
-							// }
 						},
 						{
 							loader: 'postcss-loader',
 							options: {
+								// eslint-disable-next-line object-shorthand
 								plugins: function() {
-									return [ autoprefixer ];
+									return [
+										autoprefixer,
+										cssnano( { preset: 'default' } ),
+									];
 								},
 								sourceMap: true,
 							},

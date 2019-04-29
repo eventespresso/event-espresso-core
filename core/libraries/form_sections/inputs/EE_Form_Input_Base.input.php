@@ -616,7 +616,7 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable
      * @param string $value
      * @return null|string
      */
-    private function _sanitize($value)
+    protected function _sanitize($value)
     {
         return $value !== null ? stripslashes(html_entity_decode(trim($value))) : null;
     }

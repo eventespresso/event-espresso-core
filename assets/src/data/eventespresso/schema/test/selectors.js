@@ -14,6 +14,7 @@ import {
 	getRelationSchema,
 	getRelationType,
 	getRelationResponseType,
+	getRelationPrimaryKeyString,
 } from '../selectors';
 import { mockStateForTests } from './fixtures';
 
@@ -22,11 +23,6 @@ import { mockStateForTests } from './fixtures';
  */
 import { select } from '@wordpress/data';
 import { EventSchema, EventFactory } from '@test/fixtures';
-
-jest.mock( '@wordpress/data', () => ( {
-	...require.requireActual( '@wordpress/data' ),
-	select: jest.fn().mockReturnValue( {} ),
-} ) );
 
 describe( 'testing getters', () => {
 	[
@@ -269,5 +265,39 @@ describe( 'getRelationSchema()', () => {
 				'bar',
 			)
 		).toBeNull();
+	} );
+} );
+describe( 'getRelationPrimaryKeyString', () => {
+	beforeEach( () => {
+		getRelationPrimaryKeyString.clear();
+	} );
+	it( 'returns expected value for relation that exists on ' +
+		'EE_Belongs_To_Relation', () => {
+		expect(
+			getRelationPrimaryKeyString(
+				mockStateForTests,
+				'datetime',
+				'event'
+			)
+		).toBe( 'EVT_ID' );
+	} );
+	it( 'returns expected value for relation that exists when ' +
+		'relation type is not EE_Belongs_To_Relation', () => {
+		expect(
+			getRelationPrimaryKeyString(
+				mockStateForTests,
+				'event',
+				'datetime',
+			)
+		).toBe( 'Datetime.DTT_ID' );
+	} );
+	it( 'returns empty string for relation that does not exist', () => {
+		expect(
+			getRelationPrimaryKeyString(
+				mockStateForTests,
+				'foo',
+				'bar',
+			)
+		).toBe( '' );
 	} );
 } );

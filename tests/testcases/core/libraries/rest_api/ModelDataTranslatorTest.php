@@ -291,7 +291,6 @@ class ModelDataTranslatorTest extends EE_REST_TestCase
      * @param mixed $inputted_json_value
      * @param EE_Model_Field_Base $field_obj
      * @group        9222
-     * @group current
      */
     public function testPrepareFieldValueFromJsonOk(
         $expected_result,

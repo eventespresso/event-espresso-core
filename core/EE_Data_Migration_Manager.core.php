@@ -656,7 +656,7 @@ class EE_Data_Migration_Manager implements ResettableInterface
         // ok so we definitely have a data migration script
         try {
             // how big of a bite do we want to take? Allow users to easily override via their wp-config
-            if (! absint($step_size) > 0) {
+            if (absint($step_size) < 1) {
                 $step_size = defined('EE_MIGRATION_STEP_SIZE') && absint(EE_MIGRATION_STEP_SIZE)
                     ? EE_MIGRATION_STEP_SIZE : EE_Data_Migration_Manager::step_size;
             }

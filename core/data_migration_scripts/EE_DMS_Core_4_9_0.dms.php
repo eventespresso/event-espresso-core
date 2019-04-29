@@ -407,7 +407,7 @@ class EE_DMS_Core_4_9_0 extends EE_Data_Migration_Script_Base
 				QST_system varchar(25) DEFAULT NULL,
 				QST_type varchar(25) NOT NULL DEFAULT "TEXT",
 				QST_required tinyint(1) unsigned NOT NULL DEFAULT 0,
-				QST_required_text varchar(100) NULL,
+				QST_required_text text NULL,
 				QST_order tinyint(2) unsigned NOT NULL DEFAULT 0,
 				QST_admin_only tinyint(1) NOT NULL DEFAULT 0,
 				QST_max smallint(5) NOT NULL DEFAULT -1,
@@ -415,7 +415,7 @@ class EE_DMS_Core_4_9_0 extends EE_Data_Migration_Script_Base
 				QST_deleted tinyint(2) unsigned NOT NULL DEFAULT 0,
 				PRIMARY KEY  (QST_ID),
 				KEY QST_order (QST_order)';
-        $this->_table_has_not_changed_since_previous($table_name, $sql, 'ENGINE=InnoDB');
+        $this->_table_is_changed_in_this_version($table_name, $sql, 'ENGINE=InnoDB');
         $table_name = 'esp_question_group_question';
         $sql = "QGQ_ID int(10) unsigned NOT NULL AUTO_INCREMENT,
 				QSG_ID int(10) unsigned NOT NULL,

@@ -49,19 +49,19 @@ export function* receiveLatestCheckin(
 		[ 'checkin', checkinEntity.id ]
 	);
 	yield dispatch(
-		'core/data',
-		'finishResolution',
-		REDUCER_KEY,
-		'getLatestCheckin',
-		[ registrationId, dateTimeId ]
-	);
-	yield dispatch(
 		REDUCER_KEY,
 		'receiveSelectorValue',
 		'getLatestCheckin',
 		checkinEntity.id,
 		registrationId,
 		dateTimeId,
+	);
+	yield dispatch(
+		'core/data',
+		'finishResolution',
+		REDUCER_KEY,
+		'getLatestCheckin',
+		[ registrationId, dateTimeId ]
 	);
 }
 
