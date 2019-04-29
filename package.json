@@ -69,7 +69,7 @@
 		"babel-runtime": "^6.26.0",
 		"clean-webpack-plugin": "^2.0.1",
 		"codecov": "^3.3.0",
-		"concurrently": "^3.6.1",
+		"concurrently": "^4.1.0",
 		"core-js": "2.5.7",
 		"cross-env": "5.2.0",
 		"css-loader": "^2.1.1",
