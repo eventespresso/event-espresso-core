@@ -34,28 +34,28 @@
     color: var(--ee-color-pink-background-contrast, #0a0000 );
 }
 .ee-pink-background-color.with-01-transparency {
-    background-color: var(--ee-color-pink-01-transparency, rgb( , , , 0.01));
+    background-color: var(--ee-color-pink-01-transparency, rgb( 255, 85, 192, 0.01));
 }
 .ee-pink-background-color.with-01-transparency.with-hover:hover {
-    background-color: var(--ee-color-pink-25-transparency, rgb( , , , 0.25));
+    background-color: var(--ee-color-pink-25-transparency, rgb( 255, 85, 192, 0.25));
 }
 .ee-pink-background-color.with-25-transparency {
-    background-color: var(--ee-color-pink-25-transparency, rgb( , , , 0.25));
+    background-color: var(--ee-color-pink-25-transparency, rgb( 255, 85, 192, 0.25));
 }
 .ee-pink-background-color.with-25-transparency.with-hover:hover {
-    background-color: var(--ee-color-pink-01-transparency, rgb( , , , 0.01));
+    background-color: var(--ee-color-pink-01-transparency, rgb( 255, 85, 192, 0.01));
 }
 .ee-pink-background-color.with-50-transparency {
-    background-color: var(--ee-color-pink-50-transparency, rgb( , , , 0.50));
+    background-color: var(--ee-color-pink-50-transparency, rgb( 255, 85, 192, 0.50));
 }
 .ee-pink-background-color.with-50-transparency.with-hover:hover {
-    background-color: var(--ee-color-pink-25-transparency, rgb( , , , 0.25));
+    background-color: var(--ee-color-pink-25-transparency, rgb( 255, 85, 192, 0.25));
 }
 .ee-pink-background-color.with-75-transparency {
-    background-color: var(--ee-color-pink-75-transparency, rgb( , , , 0.75));
+    background-color: var(--ee-color-pink-75-transparency, rgb( 255, 85, 192, 0.75));
 }
 .ee-pink-background-color.with-75-transparency.with-hover:hover {
-    background-color: var(--ee-color-pink-50-transparency, rgb( , , , 0.50));
+    background-color: var(--ee-color-pink-50-transparency, rgb( 255, 85, 192, 0.50));
 }
     /** Green **/
 .ee-green-background-color {
@@ -90,28 +90,28 @@
     color: var(--ee-color-green-background-contrast, #002a00 );
 }
 .ee-green-background-color.with-01-transparency {
-    background-color: var(--ee-color-green-01-transparency, rgb( , , , 0.01));
+    background-color: var(--ee-color-green-01-transparency, rgb( 112, 204, 80, 0.01));
 }
 .ee-green-background-color.with-01-transparency.with-hover:hover {
-    background-color: var(--ee-color-green-25-transparency, rgb( , , , 0.25));
+    background-color: var(--ee-color-green-25-transparency, rgb( 112, 204, 80, 0.25));
 }
 .ee-green-background-color.with-25-transparency {
-    background-color: var(--ee-color-green-25-transparency, rgb( , , , 0.25));
+    background-color: var(--ee-color-green-25-transparency, rgb( 112, 204, 80, 0.25));
 }
 .ee-green-background-color.with-25-transparency.with-hover:hover {
-    background-color: var(--ee-color-green-01-transparency, rgb( , , , 0.01));
+    background-color: var(--ee-color-green-01-transparency, rgb( 112, 204, 80, 0.01));
 }
 .ee-green-background-color.with-50-transparency {
-    background-color: var(--ee-color-green-50-transparency, rgb( , , , 0.50));
+    background-color: var(--ee-color-green-50-transparency, rgb( 112, 204, 80, 0.50));
 }
 .ee-green-background-color.with-50-transparency.with-hover:hover {
-    background-color: var(--ee-color-green-25-transparency, rgb( , , , 0.25));
+    background-color: var(--ee-color-green-25-transparency, rgb( 112, 204, 80, 0.25));
 }
 .ee-green-background-color.with-75-transparency {
-    background-color: var(--ee-color-green-75-transparency, rgb( , , , 0.75));
+    background-color: var(--ee-color-green-75-transparency, rgb( 112, 204, 80, 0.75));
 }
 .ee-green-background-color.with-75-transparency.with-hover:hover {
-    background-color: var(--ee-color-green-50-transparency, rgb( , , , 0.50));
+    background-color: var(--ee-color-green-50-transparency, rgb( 112, 204, 80, 0.50));
 }
     /** Dark Green **/
 .ee-dark-green-background-color {
@@ -146,28 +146,28 @@
     color: var(--ee-color-dark-green-background-contrast, #fcfcfc );
 }
 .ee-dark-green-background-color.with-01-transparency {
-    background-color: var(--ee-color-dark-green-01-transparency, rgb( , , , 0.01));
+    background-color: var(--ee-color-dark-green-01-transparency, rgb( 0, 102, 0, 0.01));
 }
 .ee-dark-green-background-color.with-01-transparency.with-hover:hover {
-    background-color: var(--ee-color-dark-green-25-transparency, rgb( , , , 0.25));
+    background-color: var(--ee-color-dark-green-25-transparency, rgb( 0, 102, 0, 0.25));
 }
 .ee-dark-green-background-color.with-25-transparency {
-    background-color: var(--ee-color-dark-green-25-transparency, rgb( , , , 0.25));
+    background-color: var(--ee-color-dark-green-25-transparency, rgb( 0, 102, 0, 0.25));
 }
 .ee-dark-green-background-color.with-25-transparency.with-hover:hover {
-    background-color: var(--ee-color-dark-green-01-transparency, rgb( , , , 0.01));
+    background-color: var(--ee-color-dark-green-01-transparency, rgb( 0, 102, 0, 0.01));
 }
 .ee-dark-green-background-color.with-50-transparency {
-    background-color: var(--ee-color-dark-green-50-transparency, rgb( , , , 0.50));
+    background-color: var(--ee-color-dark-green-50-transparency, rgb( 0, 102, 0, 0.50));
 }
 .ee-dark-green-background-color.with-50-transparency.with-hover:hover {
-    background-color: var(--ee-color-dark-green-25-transparency, rgb( , , , 0.25));
+    background-color: var(--ee-color-dark-green-25-transparency, rgb( 0, 102, 0, 0.25));
 }
 .ee-dark-green-background-color.with-75-transparency {
-    background-color: var(--ee-color-dark-green-75-transparency, rgb( , , , 0.75));
+    background-color: var(--ee-color-dark-green-75-transparency, rgb( 0, 102, 0, 0.75));
 }
 .ee-dark-green-background-color.with-75-transparency.with-hover:hover {
-    background-color: var(--ee-color-dark-green-50-transparency, rgb( , , , 0.50));
+    background-color: var(--ee-color-dark-green-50-transparency, rgb( 0, 102, 0, 0.50));
 }
     /** Red **/
 .ee-red-background-color {
@@ -202,28 +202,28 @@
     color: var(--ee-color-red-background-contrast, #fff );
 }
 .ee-red-background-color.with-01-transparency {
-    background-color: var(--ee-color-red-01-transparency, rgb( , , , 0.01));
+    background-color: var(--ee-color-red-01-transparency, rgb( 173, 16, 60, 0.01));
 }
 .ee-red-background-color.with-01-transparency.with-hover:hover {
-    background-color: var(--ee-color-red-25-transparency, rgb( , , , 0.25));
+    background-color: var(--ee-color-red-25-transparency, rgb( 173, 16, 60, 0.25));
 }
 .ee-red-background-color.with-25-transparency {
-    background-color: var(--ee-color-red-25-transparency, rgb( , , , 0.25));
+    background-color: var(--ee-color-red-25-transparency, rgb( 173, 16, 60, 0.25));
 }
 .ee-red-background-color.with-25-transparency.with-hover:hover {
-    background-color: var(--ee-color-red-01-transparency, rgb( , , , 0.01));
+    background-color: var(--ee-color-red-01-transparency, rgb( 173, 16, 60, 0.01));
 }
 .ee-red-background-color.with-50-transparency {
-    background-color: var(--ee-color-red-50-transparency, rgb( , , , 0.50));
+    background-color: var(--ee-color-red-50-transparency, rgb( 173, 16, 60, 0.50));
 }
 .ee-red-background-color.with-50-transparency.with-hover:hover {
-    background-color: var(--ee-color-red-25-transparency, rgb( , , , 0.25));
+    background-color: var(--ee-color-red-25-transparency, rgb( 173, 16, 60, 0.25));
 }
 .ee-red-background-color.with-75-transparency {
-    background-color: var(--ee-color-red-75-transparency, rgb( , , , 0.75));
+    background-color: var(--ee-color-red-75-transparency, rgb( 173, 16, 60, 0.75));
 }
 .ee-red-background-color.with-75-transparency.with-hover:hover {
-    background-color: var(--ee-color-red-50-transparency, rgb( , , , 0.50));
+    background-color: var(--ee-color-red-50-transparency, rgb( 173, 16, 60, 0.50));
 }
     /** Orange **/
 .ee-orange-background-color {
@@ -258,28 +258,28 @@
     color: var(--ee-color-orange-background-contrast, #171717 );
 }
 .ee-orange-background-color.with-01-transparency {
-    background-color: var(--ee-color-orange-01-transparency, rgb( , , , 0.01));
+    background-color: var(--ee-color-orange-01-transparency, rgb( 173, 16, 60, 0.01));
 }
 .ee-orange-background-color.with-01-transparency.with-hover:hover {
-    background-color: var(--ee-color-orange-25-transparency, rgb( , , , 0.25));
+    background-color: var(--ee-color-orange-25-transparency, rgb( 173, 16, 60, 0.25));
 }
 .ee-orange-background-color.with-25-transparency {
-    background-color: var(--ee-color-orange-25-transparency, rgb( , , , 0.25));
+    background-color: var(--ee-color-orange-25-transparency, rgb( 173, 16, 60, 0.25));
 }
 .ee-orange-background-color.with-25-transparency.with-hover:hover {
-    background-color: var(--ee-color-orange-01-transparency, rgb( , , , 0.01));
+    background-color: var(--ee-color-orange-01-transparency, rgb( 173, 16, 60, 0.01));
 }
 .ee-orange-background-color.with-50-transparency {
-    background-color: var(--ee-color-orange-50-transparency, rgb( , , , 0.50));
+    background-color: var(--ee-color-orange-50-transparency, rgb( 173, 16, 60, 0.50));
 }
 .ee-orange-background-color.with-50-transparency.with-hover:hover {
-    background-color: var(--ee-color-orange-25-transparency, rgb( , , , 0.25));
+    background-color: var(--ee-color-orange-25-transparency, rgb( 173, 16, 60, 0.25));
 }
 .ee-orange-background-color.with-75-transparency {
-    background-color: var(--ee-color-orange-75-transparency, rgb( , , , 0.75));
+    background-color: var(--ee-color-orange-75-transparency, rgb( 173, 16, 60, 0.75));
 }
 .ee-orange-background-color.with-75-transparency.with-hover:hover {
-    background-color: var(--ee-color-orange-50-transparency, rgb( , , , 0.50));
+    background-color: var(--ee-color-orange-50-transparency, rgb( 173, 16, 60, 0.50));
 }
     /** Light Blue **/
 .ee-light-blue-background-color {
@@ -314,28 +314,28 @@
     color: var(--ee-color-light-blue-background-contrast, #041525 );
 }
 .ee-light-blue-background-color.with-01-transparency {
-    background-color: var(--ee-color-light-blue-01-transparency, rgb( , , , 0.01));
+    background-color: var(--ee-color-light-blue-01-transparency, rgb( 0, 177, 202, 0.01));
 }
 .ee-light-blue-background-color.with-01-transparency.with-hover:hover {
-    background-color: var(--ee-color-light-blue-25-transparency, rgb( , , , 0.25));
+    background-color: var(--ee-color-light-blue-25-transparency, rgb( 0, 177, 202, 0.25));
 }
 .ee-light-blue-background-color.with-25-transparency {
-    background-color: var(--ee-color-light-blue-25-transparency, rgb( , , , 0.25));
+    background-color: var(--ee-color-light-blue-25-transparency, rgb( 0, 177, 202, 0.25));
 }
 .ee-light-blue-background-color.with-25-transparency.with-hover:hover {
-    background-color: var(--ee-color-light-blue-01-transparency, rgb( , , , 0.01));
+    background-color: var(--ee-color-light-blue-01-transparency, rgb( 0, 177, 202, 0.01));
 }
 .ee-light-blue-background-color.with-50-transparency {
-    background-color: var(--ee-color-light-blue-50-transparency, rgb( , , , 0.50));
+    background-color: var(--ee-color-light-blue-50-transparency, rgb( 0, 177, 202, 0.50));
 }
 .ee-light-blue-background-color.with-50-transparency.with-hover:hover {
-    background-color: var(--ee-color-light-blue-25-transparency, rgb( , , , 0.25));
+    background-color: var(--ee-color-light-blue-25-transparency, rgb( 0, 177, 202, 0.25));
 }
 .ee-light-blue-background-color.with-75-transparency {
-    background-color: var(--ee-color-light-blue-75-transparency, rgb( , , , 0.75));
+    background-color: var(--ee-color-light-blue-75-transparency, rgb( 0, 177, 202, 0.75));
 }
 .ee-light-blue-background-color.with-75-transparency.with-hover:hover {
-    background-color: var(--ee-color-light-blue-50-transparency, rgb( , , , 0.50));
+    background-color: var(--ee-color-light-blue-50-transparency, rgb( 0, 177, 202, 0.50));
 }
     /** Blue **/
 .ee-blue-background-color {
@@ -370,28 +370,28 @@
     color: var(--ee-color-blue-background-contrast, #fff );
 }
 .ee-blue-background-color.with-01-transparency {
-    background-color: var(--ee-color-blue-01-transparency, rgb( , , , 0.01));
+    background-color: var(--ee-color-blue-01-transparency, rgb( 0, 91, 147, 0.01));
 }
 .ee-blue-background-color.with-01-transparency.with-hover:hover {
-    background-color: var(--ee-color-blue-25-transparency, rgb( , , , 0.25));
+    background-color: var(--ee-color-blue-25-transparency, rgb( 0, 91, 147, 0.25));
 }
 .ee-blue-background-color.with-25-transparency {
-    background-color: var(--ee-color-blue-25-transparency, rgb( , , , 0.25));
+    background-color: var(--ee-color-blue-25-transparency, rgb( 0, 91, 147, 0.25));
 }
 .ee-blue-background-color.with-25-transparency.with-hover:hover {
-    background-color: var(--ee-color-blue-01-transparency, rgb( , , , 0.01));
+    background-color: var(--ee-color-blue-01-transparency, rgb( 0, 91, 147, 0.01));
 }
 .ee-blue-background-color.with-50-transparency {
-    background-color: var(--ee-color-blue-50-transparency, rgb( , , , 0.50));
+    background-color: var(--ee-color-blue-50-transparency, rgb( 0, 91, 147, 0.50));
 }
 .ee-blue-background-color.with-50-transparency.with-hover:hover {
-    background-color: var(--ee-color-blue-25-transparency, rgb( , , , 0.25));
+    background-color: var(--ee-color-blue-25-transparency, rgb( 0, 91, 147, 0.25));
 }
 .ee-blue-background-color.with-75-transparency {
-    background-color: var(--ee-color-blue-75-transparency, rgb( , , , 0.75));
+    background-color: var(--ee-color-blue-75-transparency, rgb( 0, 91, 147, 0.75));
 }
 .ee-blue-background-color.with-75-transparency.with-hover:hover {
-    background-color: var(--ee-color-blue-50-transparency, rgb( , , , 0.50));
+    background-color: var(--ee-color-blue-50-transparency, rgb( 0, 91, 147, 0.50));
 }
     /** Yellow **/
 .ee-yellow-background-color {
@@ -426,28 +426,28 @@
     color: var(--ee-color-yellow-background-contrast, #1d1905 );
 }
 .ee-yellow-background-color.with-01-transparency {
-    background-color: var(--ee-color-yellow-01-transparency, rgb( , , , 0.01));
+    background-color: var(--ee-color-yellow-01-transparency, rgb( 248, 215, 85, 0.01));
 }
 .ee-yellow-background-color.with-01-transparency.with-hover:hover {
-    background-color: var(--ee-color-yellow-25-transparency, rgb( , , , 0.25));
+    background-color: var(--ee-color-yellow-25-transparency, rgb( 248, 215, 85, 0.25));
 }
 .ee-yellow-background-color.with-25-transparency {
-    background-color: var(--ee-color-yellow-25-transparency, rgb( , , , 0.25));
+    background-color: var(--ee-color-yellow-25-transparency, rgb( 248, 215, 85, 0.25));
 }
 .ee-yellow-background-color.with-25-transparency.with-hover:hover {
-    background-color: var(--ee-color-yellow-01-transparency, rgb( , , , 0.01));
+    background-color: var(--ee-color-yellow-01-transparency, rgb( 248, 215, 85, 0.01));
 }
 .ee-yellow-background-color.with-50-transparency {
-    background-color: var(--ee-color-yellow-50-transparency, rgb( , , , 0.50));
+    background-color: var(--ee-color-yellow-50-transparency, rgb( 248, 215, 85, 0.50));
 }
 .ee-yellow-background-color.with-50-transparency.with-hover:hover {
-    background-color: var(--ee-color-yellow-25-transparency, rgb( , , , 0.25));
+    background-color: var(--ee-color-yellow-25-transparency, rgb( 248, 215, 85, 0.25));
 }
 .ee-yellow-background-color.with-75-transparency {
-    background-color: var(--ee-color-yellow-75-transparency, rgb( , , , 0.75));
+    background-color: var(--ee-color-yellow-75-transparency, rgb( 248, 215, 85, 0.75));
 }
 .ee-yellow-background-color.with-75-transparency.with-hover:hover {
-    background-color: var(--ee-color-yellow-50-transparency, rgb( , , , 0.50));
+    background-color: var(--ee-color-yellow-50-transparency, rgb( 248, 215, 85, 0.50));
 }
     /** Grey **/
 .ee-grey-background-color {
@@ -482,28 +482,28 @@
     color: var(--ee-color-grey-background-contrast, #141414 );
 }
 .ee-grey-background-color.with-01-transparency {
-    background-color: var(--ee-color-grey-01-transparency, rgb( , , , 0.01));
+    background-color: var(--ee-color-grey-01-transparency, rgb( 172, 157, 156, 0.01));
 }
 .ee-grey-background-color.with-01-transparency.with-hover:hover {
-    background-color: var(--ee-color-grey-25-transparency, rgb( , , , 0.25));
+    background-color: var(--ee-color-grey-25-transparency, rgb( 172, 157, 156, 0.25));
 }
 .ee-grey-background-color.with-25-transparency {
-    background-color: var(--ee-color-grey-25-transparency, rgb( , , , 0.25));
+    background-color: var(--ee-color-grey-25-transparency, rgb( 172, 157, 156, 0.25));
 }
 .ee-grey-background-color.with-25-transparency.with-hover:hover {
-    background-color: var(--ee-color-grey-01-transparency, rgb( , , , 0.01));
+    background-color: var(--ee-color-grey-01-transparency, rgb( 172, 157, 156, 0.01));
 }
 .ee-grey-background-color.with-50-transparency {
-    background-color: var(--ee-color-grey-50-transparency, rgb( , , , 0.50));
+    background-color: var(--ee-color-grey-50-transparency, rgb( 172, 157, 156, 0.50));
 }
 .ee-grey-background-color.with-50-transparency.with-hover:hover {
-    background-color: var(--ee-color-grey-25-transparency, rgb( , , , 0.25));
+    background-color: var(--ee-color-grey-25-transparency, rgb( 172, 157, 156, 0.25));
 }
 .ee-grey-background-color.with-75-transparency {
-    background-color: var(--ee-color-grey-75-transparency, rgb( , , , 0.75));
+    background-color: var(--ee-color-grey-75-transparency, rgb( 172, 157, 156, 0.75));
 }
 .ee-grey-background-color.with-75-transparency.with-hover:hover {
-    background-color: var(--ee-color-grey-50-transparency, rgb( , , , 0.50));
+    background-color: var(--ee-color-grey-50-transparency, rgb( 172, 157, 156, 0.50));
 }
     /** Dark Grey **/
 .ee-dark-grey-background-color {
@@ -538,28 +538,28 @@
     color: var(--ee-color-dark-grey-background-contrast, #dedede );
 }
 .ee-dark-grey-background-color.with-01-transparency {
-    background-color: var(--ee-color-dark-grey-01-transparency, rgb( , , , 0.01));
+    background-color: var(--ee-color-dark-grey-01-transparency, rgb( 70, 69, 73, 0.01));
 }
 .ee-dark-grey-background-color.with-01-transparency.with-hover:hover {
-    background-color: var(--ee-color-dark-grey-25-transparency, rgb( , , , 0.25));
+    background-color: var(--ee-color-dark-grey-25-transparency, rgb( 70, 69, 73, 0.25));
 }
 .ee-dark-grey-background-color.with-25-transparency {
-    background-color: var(--ee-color-dark-grey-25-transparency, rgb( , , , 0.25));
+    background-color: var(--ee-color-dark-grey-25-transparency, rgb( 70, 69, 73, 0.25));
 }
 .ee-dark-grey-background-color.with-25-transparency.with-hover:hover {
-    background-color: var(--ee-color-dark-grey-01-transparency, rgb( , , , 0.01));
+    background-color: var(--ee-color-dark-grey-01-transparency, rgb( 70, 69, 73, 0.01));
 }
 .ee-dark-grey-background-color.with-50-transparency {
-    background-color: var(--ee-color-dark-grey-50-transparency, rgb( , , , 0.50));
+    background-color: var(--ee-color-dark-grey-50-transparency, rgb( 70, 69, 73, 0.50));
 }
 .ee-dark-grey-background-color.with-50-transparency.with-hover:hover {
-    background-color: var(--ee-color-dark-grey-25-transparency, rgb( , , , 0.25));
+    background-color: var(--ee-color-dark-grey-25-transparency, rgb( 70, 69, 73, 0.25));
 }
 .ee-dark-grey-background-color.with-75-transparency {
-    background-color: var(--ee-color-dark-grey-75-transparency, rgb( , , , 0.75));
+    background-color: var(--ee-color-dark-grey-75-transparency, rgb( 70, 69, 73, 0.75));
 }
 .ee-dark-grey-background-color.with-75-transparency.with-hover:hover {
-    background-color: var(--ee-color-dark-grey-50-transparency, rgb( , , , 0.50));
+    background-color: var(--ee-color-dark-grey-50-transparency, rgb( 70, 69, 73, 0.50));
 }
     /** Black **/
 .ee-black-background-color {
@@ -594,28 +594,28 @@
     color: var(--ee-color-black-background-contrast, #eee );
 }
 .ee-black-background-color.with-01-transparency {
-    background-color: var(--ee-color-black-01-transparency, rgb( , , , 0.01));
+    background-color: var(--ee-color-black-01-transparency, rgb( 47, 51, 52, 0.01));
 }
 .ee-black-background-color.with-01-transparency.with-hover:hover {
-    background-color: var(--ee-color-black-25-transparency, rgb( , , , 0.25));
+    background-color: var(--ee-color-black-25-transparency, rgb( 47, 51, 52, 0.25));
 }
 .ee-black-background-color.with-25-transparency {
-    background-color: var(--ee-color-black-25-transparency, rgb( , , , 0.25));
+    background-color: var(--ee-color-black-25-transparency, rgb( 47, 51, 52, 0.25));
 }
 .ee-black-background-color.with-25-transparency.with-hover:hover {
-    background-color: var(--ee-color-black-01-transparency, rgb( , , , 0.01));
+    background-color: var(--ee-color-black-01-transparency, rgb( 47, 51, 52, 0.01));
 }
 .ee-black-background-color.with-50-transparency {
-    background-color: var(--ee-color-black-50-transparency, rgb( , , , 0.50));
+    background-color: var(--ee-color-black-50-transparency, rgb( 47, 51, 52, 0.50));
 }
 .ee-black-background-color.with-50-transparency.with-hover:hover {
-    background-color: var(--ee-color-black-25-transparency, rgb( , , , 0.25));
+    background-color: var(--ee-color-black-25-transparency, rgb( 47, 51, 52, 0.25));
 }
 .ee-black-background-color.with-75-transparency {
-    background-color: var(--ee-color-black-75-transparency, rgb( , , , 0.75));
+    background-color: var(--ee-color-black-75-transparency, rgb( 47, 51, 52, 0.75));
 }
 .ee-black-background-color.with-75-transparency.with-hover:hover {
-    background-color: var(--ee-color-black-50-transparency, rgb( , , , 0.50));
+    background-color: var(--ee-color-black-50-transparency, rgb( 47, 51, 52, 0.50));
 }
     /** White **/
 .ee-white-background-color {
@@ -650,26 +650,26 @@
     color: var(--ee-color-white-background-contrast, #292929 );
 }
 .ee-white-background-color.with-01-transparency {
-    background-color: var(--ee-color-white-01-transparency, rgb( , , , 0.01));
+    background-color: var(--ee-color-white-01-transparency, rgb( 255, 255, 255, 0.01));
 }
 .ee-white-background-color.with-01-transparency.with-hover:hover {
-    background-color: var(--ee-color-white-25-transparency, rgb( , , , 0.25));
+    background-color: var(--ee-color-white-25-transparency, rgb( 255, 255, 255, 0.25));
 }
 .ee-white-background-color.with-25-transparency {
-    background-color: var(--ee-color-white-25-transparency, rgb( , , , 0.25));
+    background-color: var(--ee-color-white-25-transparency, rgb( 255, 255, 255, 0.25));
 }
 .ee-white-background-color.with-25-transparency.with-hover:hover {
-    background-color: var(--ee-color-white-01-transparency, rgb( , , , 0.01));
+    background-color: var(--ee-color-white-01-transparency, rgb( 255, 255, 255, 0.01));
 }
 .ee-white-background-color.with-50-transparency {
-    background-color: var(--ee-color-white-50-transparency, rgb( , , , 0.50));
+    background-color: var(--ee-color-white-50-transparency, rgb( 255, 255, 255, 0.50));
 }
 .ee-white-background-color.with-50-transparency.with-hover:hover {
-    background-color: var(--ee-color-white-25-transparency, rgb( , , , 0.25));
+    background-color: var(--ee-color-white-25-transparency, rgb( 255, 255, 255, 0.25));
 }
 .ee-white-background-color.with-75-transparency {
-    background-color: var(--ee-color-white-75-transparency, rgb( , , , 0.75));
+    background-color: var(--ee-color-white-75-transparency, rgb( 255, 255, 255, 0.75));
 }
 .ee-white-background-color.with-75-transparency.with-hover:hover {
-    background-color: var(--ee-color-white-50-transparency, rgb( , , , 0.50));
+    background-color: var(--ee-color-white-50-transparency, rgb( 255, 255, 255, 0.50));
 }
