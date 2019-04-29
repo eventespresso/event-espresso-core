@@ -12,7 +12,7 @@ use EventEspresso\core\services\json\JsonSerializableAndUnserializable;
  *
  * @package     Event Espresso
  * @author         Mike Nelson
- * @since         $VID:$
+ * @since         4.9.80.p
  *
  */
 interface JsonWpOptionSerializableInterface extends JsonSerializableAndUnserializable
@@ -20,7 +20,7 @@ interface JsonWpOptionSerializableInterface extends JsonSerializableAndUnseriali
     /**
      * Gets the value to use for wp_options.option_name. Note this is not static, so it can use object properties to
      * determine what option name to use.
-     * @since $VID:$
+     * @since 4.9.80.p
      * @return string
      */
     public function getWpOptionName();

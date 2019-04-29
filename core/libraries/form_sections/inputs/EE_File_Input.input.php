@@ -75,7 +75,7 @@ class EE_File_Input extends EE_Form_Input_Base
     /**
      * $_FILES has a really weird structure. So we let `FilesDataHandler` take care of finding the file info for
      * this input.
-     * @since $VID:$
+     * @since 4.9.80.p
      * @param array $req_data
      * @return FileSubmissionInterface
      * @throws InvalidArgumentException

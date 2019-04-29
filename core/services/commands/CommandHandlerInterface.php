@@ -17,7 +17,7 @@ interface CommandHandlerInterface
      *
      * @param CommandInterface $command
      * @return CommandHandlerInterface
-     * @since $VID:$
+     * @since 4.9.80.p
      */
     public function verify(CommandInterface $command);
 

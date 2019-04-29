@@ -610,7 +610,7 @@ abstract class FormHandler implements FormHandlerInterface
 
     /**
      * Determines if this form needs "enctype='multipart/form-data'" or not.
-     * @since $VID:$
+     * @since 4.9.80.p
      * @return bool
      * @throws EE_Error
      */

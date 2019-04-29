@@ -26,7 +26,7 @@ abstract class CommandHandler implements CommandHandlerInterface
      * @param CommandInterface $command
      * @return CommandHandler
      * @throws InvalidEntityException
-     * @since $VID:$
+     * @since 4.9.80.p
      */
     public function verify(CommandInterface $command)
     {
