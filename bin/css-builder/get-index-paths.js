@@ -3,6 +3,7 @@ const getCssFiles = require( './get-css-files' );
 const chalk = require( 'chalk' );
 
 const STYLES_DIRECTORY = path.resolve( __dirname, '../../assets/src/components/ui/styles' );
+const pathRegex = new RegExp( '\\' + path.sep, 'g' );
 
 /**
  * Get the relative path for the given file, theme directory and whether we want
@@ -24,7 +25,8 @@ function getRelativePath( file, themeDirectory, toRoot = false ) {
 	const to = toRoot ?
 		path.resolve( STYLES_DIRECTORY, 'root', file ) :
 		from;
-	return toRoot ? path.relative( from, to ) : `./${ file }`;
+	const relativePath = toRoot ? path.relative( from, to ) : `./${ file }`;
+	return relativePath.replace( pathRegex, '/' );
 }
 
 /**
