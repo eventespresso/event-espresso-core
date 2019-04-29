@@ -35,7 +35,6 @@ function buildVariables( themeDirectory, { sizes } ) {
 		sizeItems,
 		...sizes,
 	} );
-	process.stdout.write( `${ path.basename( destPath ) }\n` );
 	fs.writeFileSync( destPath, mainResult );
 	process.stdout.write(
 		chalk.green(
@@ -73,7 +72,6 @@ function buildMain( themeDirectory, { sizes } ) {
 		sizeItems,
 		...sizes
 	} );
-	process.stdout.write( `${ path.basename( destPath ) }\n` );
 	fs.writeFileSync( destPath, mainResult );
 	process.stdout.write(
 		chalk.green(

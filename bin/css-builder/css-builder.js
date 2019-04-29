@@ -31,7 +31,6 @@ const MAIN_TEMPLATE = fs.readFileSync( path.resolve( DEMO_TEMPLATES_PATH, 'main_
 function writeCssDemoFile( themeDirectory ) {
 	const demoCss = fs.readFileSync( path.resolve( DEMO_TEMPLATES_PATH, 'demo.css' ), 'utf8' );
 	const destPath = path.resolve( STYLES_DIRECTORY, 'themes', themeDirectory, 'demo', 'demo' );
-	process.stdout.write( `${ path.basename( destPath ) }\n` );
 	fs.writeFileSync( destPath + '.css', demoCss );
 	process.stdout.write(
 		chalk.green(
@@ -62,7 +61,6 @@ function writeCssDemoMainFile( themeDirectory ) {
 	const mainTemplate = compile( MAIN_TEMPLATE );
 	const demoHtml = mainTemplate( mainTemplateVars );
 	const destPath = path.resolve( STYLES_DIRECTORY, 'themes', 'default', 'demo', 'index' );
-	process.stdout.write( `${ path.basename( destPath ) }\n` );
 	fs.writeFileSync( destPath + '.html', demoHtml );
 	process.stdout.write(
 		chalk.green(
@@ -115,7 +113,6 @@ function writeColorsCss( themeDirectory, variables = false ) {
 		themeName: startCase( themeDirectory ),
 		colorItems,
 	} );
-	process.stdout.write( `${ path.basename( destPath ) }\n` );
 	fs.writeFileSync( destPath, parsedTemplate );
 	process.stdout.write(
 		chalk.green(
@@ -148,7 +145,6 @@ function writeEntityStatusCss( themeDirectory ) {
 		themeName: startCase( themeDirectory ),
 		status_groups: entityStatusItems,
 	} );
-	process.stdout.write( `${ path.basename( destPath ) }\n` );
 	fs.writeFileSync( destPath, parsedTemplate );
 	process.stdout.write(
 		chalk.green(
@@ -174,7 +170,6 @@ function writeButtonCss( themeDirectory ) {
 	}
 	const cssFile = fs.readFileSync( path.resolve( CSS_TEMPLATES_PATH, 'buttons.css' ), 'utf8' );
 	const destPath = path.resolve( STYLES_DIRECTORY, 'root', 'buttons.css' );
-	process.stdout.write( `${ path.basename( destPath ) }\n` );
 	fs.writeFileSync( destPath, cssFile );
 	process.stdout.write(
 		chalk.green(
@@ -206,7 +201,6 @@ function writeShadowCss( themeDirectory ) {
 	);
 	const { colors }= getConfig( themeDirectory );
 	const destPath = path.resolve( STYLES_DIRECTORY, 'root', 'shadows.css' );
-	process.stdout.write( `${ path.basename( destPath ) }\n` );
 	const shadowItems = colors.map( ( { color, rgba1, rgba2, rgba3 } ) => {
 		return itemTemplate( {
 			colorLabel: startCase( color ),
@@ -256,7 +250,11 @@ function writeSizesCss( themeDirectory, variables = false ) {
  */
 function createDemos( themeDirectory ) {
 	const destPath = path.resolve( STYLES_DIRECTORY, 'themes', themeDirectory, 'demo' );
-	process.stdout.write( `Writing css demo files: ${ path.basename( destPath ) }\n` );
+	process.stdout.write(
+		chalk.magenta(
+			`Writing css demo files: ${ path.basename( destPath ) }\n`
+		)
+	);
 	mkdirp.sync( path.dirname( destPath ) );
 	writeCssDemoFile( themeDirectory );
 	writeCssDemoMainFile( themeDirectory );
@@ -274,7 +272,9 @@ function createIndexFile( themeDirectory ) {
 		'default',
 		'index.js'
 	);
-	process.stdout.write( `Creating index.js for styles: \n` );
+	process.stdout.write( chalk.magenta(
+		`Creating index.js for styles: \n` )
+	);
 	const indexPaths = getIndexPaths( themeDirectory );
 	fs.writeFileSync(
 		destPath,
@@ -300,6 +300,8 @@ function buildFiles() {
 	process.stdout.write( `${ DONE }\n` );
 }
 
-process.stdout.write( chalk.inverse( '>> Building global CSS stylesheets (and demo) \n' ) );
+process.stdout.write( chalk.magenta(
+	'>> Building global CSS stylesheets (and demo) \n' )
+);
 buildFiles();
 process.stdout.write( '\n' );
