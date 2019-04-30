@@ -1,0 +1,60 @@
+.ee-status-circle {
+    display: inline-block;
+    height: 20px;
+    width: 20px;
+    margin-left: 8px;
+    vertical-align: top;
+    border-radius: 20px;
+    background-color: #eee;
+}
+
+.circle-size-128 {
+    height: 128px;
+    width: 128px;
+    border-radius: 128px;
+}
+
+.circle-size-64 {
+    height: 64px;
+    width: 64px;
+    border-radius: 64px;
+}
+
+.circle-size-32 {
+    height: 32px;
+    width: 32px;
+    border-radius: 32px;
+}
+
+.circle-size-20 {
+    height: 20px;
+    width: 20px;
+    border-radius: 20px;
+}
+
+.circle-size-12 {
+    height: 12px;
+    width: 12px;
+    border-radius: 12px;
+}
+
+/** the following styles should probably go in some sort of global stylesheet for statuses **/
+.status-bg-TFL, .status-bg-RDC, .status-bg-PDC {
+    background-color: #E44064;
+}
+
+.status-bg-TCM, .status-bg-RAP, .status-bg-PAP {
+    background-color: #70CC50;
+}
+
+.status-bg-TOP, .status-bg-RNA, .status-bg-PFL {
+    background-color: #E76700;
+}
+
+.status-bg-TIN, .status-bg-RPP, .status-bg-PPN {
+    background-color: #00B1CA;
+}
+
+.status-bg-RCN, .status-bg-PCN {
+    background-color: #AC9D9C;
+}
