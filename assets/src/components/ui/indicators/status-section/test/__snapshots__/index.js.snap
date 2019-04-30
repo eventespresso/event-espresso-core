@@ -1,0 +1,24 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`StatusSection returns expected shape for default props (with required values) 1`] = `
+<section
+  className="ee-status-section-container"
+>
+  <span
+    className="ee-status-section-label"
+  >
+    Transaction Status:
+  </span>
+  <span
+    className="ee-status-section-value"
+  >
+    Failed
+  </span>
+  <StatusCircle
+    circleSize="circle-size-20"
+    className=""
+    statusCode="TFL"
+    statusLabel="Transaction Status:"
+  />
+</section>
+`;
