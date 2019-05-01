@@ -134,22 +134,28 @@ class InvisibleRecaptcha
     {
         static $previous_recaptcha_response = array();
         $grecaptcha_response = $request->getRequestParam('g-recaptcha-response');
-        if ($grecaptcha_response === null) {
-            $this->generateError(
+        // if this token has already been verified, then return previous response
+        if (isset($previous_recaptcha_response[ $grecaptcha_response ])) {
+            return $previous_recaptcha_response[ $grecaptcha_response ];
+        }
+        // still here but no g-recaptcha-response ? - verification failed
+        if (! $grecaptcha_response) {
+            EE_Error::add_error(
                 sprintf(
+                    /* translators: 1: missing parameter */
                     esc_html__(
-                        'The "%1$s" parameter is missing.',
+                        // @codingStandardsIgnoreStart
+                        'We\'re sorry but an attempt to verify the form\'s reCAPTCHA has failed. Missing "%1$s". Please try again.',
+                        // @codingStandardsIgnoreEnd
                         'event_espresso'
                     ),
                     'g-recaptcha-response'
                 ),
-                true
+                __FILE__,
+                __FUNCTION__,
+                __LINE__
             );
             return false;
-        }
-        // if this token has already been verified, then return previous response
-        if (isset($previous_recaptcha_response[ $grecaptcha_response ])) {
-            return $previous_recaptcha_response[ $grecaptcha_response ];
         }
         // will update to true if everything passes
         $previous_recaptcha_response[ $grecaptcha_response ] = false;
@@ -238,6 +244,10 @@ class InvisibleRecaptcha
                 'recaptcha_passed' => $this->recaptchaPassed(),
                 'wp_debug'         => WP_DEBUG,
                 'disable_submit'   => defined('EE_EVENT_QUEUE_BASE_URL'),
+                'failed_message'   => esc_html__(
+                    'We\'re sorry but an attempt to verify the form\'s reCAPTCHA has failed. Please try again.',
+                    'event_espresso'
+                )
             )
         );
     }
