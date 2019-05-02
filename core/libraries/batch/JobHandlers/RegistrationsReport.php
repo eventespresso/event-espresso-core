@@ -456,7 +456,7 @@ class RegistrationsReport extends JobHandlerFile
                 ));
                 // now fill out the questions THEY answered
                 foreach ($answers as $answer_row) {
-                    if($answer_row['Question.QST_system']){
+                    if ($answer_row['Question.QST_system']) {
                         // it's an answer to a system question. That was already displayed as part of the attendee
                         // fields, so don't write it out again thanks.
                         continue;
