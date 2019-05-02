@@ -1,0 +1,10 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`CheckInButton renders as expected for default props 1`] = `
+<ForwardRef(Button)
+  className="ee-green ee-button ee-roundish"
+  onClick={[Function]}
+>
+  Check In
+</ForwardRef(Button)>
+`;
