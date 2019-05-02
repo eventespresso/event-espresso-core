@@ -1,0 +1,8 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`CheckInStatusIcon renders as expected for default props 1`] = `
+<Dashicon
+  className="ee-red"
+  icon="no-alt"
+/>
+`;
