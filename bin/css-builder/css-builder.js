@@ -59,10 +59,11 @@ function setDefaultValues( config ) {
 /**
  * Writes the stylesheet file
  *
+ * @param {string} theme
  * @param {string} fileName
  * @param {string} fileData
  */
-function buildStylesheet( fileName, fileData ) {
+function buildStylesheet( theme, fileName, fileData ) {
 	const filePath = path.resolve(
 		STYLES_DIRECTORY,
 		'themes',
@@ -104,7 +105,7 @@ function writeColorsCss( theme, config ) {
 			extraColors: buildColorStylesheets.extraColors( config ),
 		}
 	);
-	buildStylesheet( fileName, fileData );
+	buildStylesheet( theme, fileName, fileData );
 }
 
 /**
@@ -131,7 +132,7 @@ function writeSizesCss( theme, config ) {
 			radiusSizes: buildSizesStylesheets.radiusSizes( config ),
 		}
 	);
-	buildStylesheet( fileName, fileData );
+	buildStylesheet( theme, fileName, fileData );
 }
 
 /**
@@ -232,7 +233,9 @@ function buildFiles( theme = 'default' ) {
 	writeSizesCss( theme, config );
 	// createDemos( theme, config );
 	createIndexFile( theme );
-	process.stdout.write( chalk.reset.inverse.bold.green( '\nDONE\n' ) );
+	process.stdout.write(
+		'\n' + chalk.reset.inverse.bold.green( 'DONE' ) + '\n'
+	);
 }
 
 buildFiles();
