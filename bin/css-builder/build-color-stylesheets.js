@@ -80,15 +80,13 @@ function themeColors( config ) {
 						colorHex,
 						config.themeColors.blackAndWhiteContrast
 					),
-					textHighContrastColorHex: generateHighContrast(
+					textHighContrastColorHex: findContrastColor(
 						highContrast,
-						config.themeColors.rgbModifier,
-						config.themeColors.darkTheme
+						config.themeColors.blackAndWhiteContrast
 					),
-					textLowContrastColorHex: generateHighContrast(
+					textLowContrastColorHex: findContrastColor(
 						lowContrast,
-						config.themeColors.rgbModifier,
-						config.themeColors.darkTheme
+						config.themeColors.blackAndWhiteContrast
 					),
 				}
 			)
