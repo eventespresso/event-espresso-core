@@ -1,10 +1,42 @@
+/** -------------------------------------------------------------------------
+* Event Espresso {{ themeName }} Theme Color Variables Stylesheet
+* © 2019 Event Espresso
+* ------------------------------------------------------------------------- */
+
 /**
-    Color Variables for the {{ themeName }} template.
-    A useful tool for doing color-safe palettes is http://colorsafe.co/
-    Also: https://webaim.org/resources/contrastchecker/
- */
+* A useful tool for building color-safe palettes is http://colorsafe.co/
+* Also: https://webaim.org/resources/contrastchecker/
+*/
+
 :root {
-    {{#each colorItems}}
-        {{{this}}}
-    {{/each}}
+
+    /** ----------------------------
+    *   Main Theme Color Variables
+    * ------------------------------ */
+{{#each themeColorVars}}
+    {{{this}}}
+{{/each}}
+
+
+    /** ----------------------
+    *   Font Color Variables
+    * ------------------------ */
+{{#each fontColors}}
+    {{{this}}}
+{{/each}}
+
+    /** ----------------------------
+    *   Additional Color Variables
+    * ------------------------------ */
+{{#each extraColors}}
+    {{{this}}}
+{{/each}}
+
+    /** ----------------------
+    *   Base Color Variables
+    * ------------------------ */
+{{#each baseColorVars}}
+    {{{this}}}
+{{/each}}
+
 }
