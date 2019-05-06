@@ -37,8 +37,12 @@ const withLatestCheckin = createHigherOrderComponent(
 				}
 				const { getLatestCheckin } = select( 'eventespresso/core' );
 				const { hasFinishedResolution } = select( 'core/data' );
+				const checkInEntity = getLatestCheckin(
+					registration.id,
+					datetimeId
+				);
 				return {
-					checkinEntity: getLatestCheckin( registration.id, datetimeId ),
+					checkinEntity: checkInEntity || null,
 					hasResolvedCheckin: hasFinishedResolution(
 						'eventespresso/core',
 						'getLatestCheckin',
