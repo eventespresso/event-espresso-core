@@ -1,5 +1,7 @@
 <?php
 
+use EventEspresso\core\exceptions\InvalidDataTypeException;
+use EventEspresso\core\exceptions\InvalidInterfaceException;
 use EventEspresso\core\services\loaders\LoaderFactory;
 
 /**
@@ -27,7 +29,11 @@ class Payments_Admin_Page extends EE_Admin_Page
      * @Constructor
      * @access public
      * @param bool $routing indicate whether we want to just load the object and handle routing or just load the object.
-     * @return \Payments_Admin_Page
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws ReflectionException
      */
     public function __construct($routing = true)
     {
@@ -163,6 +169,12 @@ class Payments_Admin_Page extends EE_Admin_Page
 
     /**
      * @return array
+     * @throws DomainException
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws ReflectionException
      */
     protected function _add_payment_method_help_tabs()
     {
@@ -253,9 +265,9 @@ class Payments_Admin_Page extends EE_Admin_Page
     {
         /**
          * first let's ensure payment methods have been setup. We do this here because when people activate a
-         * payment method for the first time (as an addon), it may not setup its capabilities or get registered correctly due
-         * to the loading process.  However, people MUST setup the details for the payment method so its safe to do a
-         * recheck here.
+         * payment method for the first time (as an addon), it may not setup its capabilities or get registered
+         * correctly due to the loading process.  However, people MUST setup the details for the payment method so its
+         * safe to do a recheck here.
          */
         EE_Registry::instance()->load_lib('Payment_Method_Manager');
         EEM_Payment_Method::instance()->verify_button_urls();
@@ -365,7 +377,7 @@ class Payments_Admin_Page extends EE_Admin_Page
      *    returns TRUE if the passed payment method is properly constructed and the logged in user has the correct
      *    capabilities to access it
      *
-     * @param \EE_Payment_Method $payment_method
+     * @param EE_Payment_Method $payment_method
      * @return boolean
      */
     protected function _verify_payment_method($payment_method)
@@ -423,8 +435,8 @@ class Payments_Admin_Page extends EE_Admin_Page
      * Gets the form for all the settings related to this payment method type
      *
      * @access protected
-     * @param \EE_Payment_Method $payment_method
-     * @return \EE_Form_Section_Proper
+     * @param EE_Payment_Method $payment_method
+     * @return EE_Form_Section_Proper
      */
     protected function _generate_payment_method_settings_form(EE_Payment_Method $payment_method)
     {
@@ -464,8 +476,8 @@ class Payments_Admin_Page extends EE_Admin_Page
      * _pci_dss_compliance
      *
      * @access protected
-     * @param \EE_Payment_Method $payment_method
-     * @return \EE_Form_Section_Proper
+     * @param EE_Payment_Method $payment_method
+     * @return EE_Form_Section_Proper
      */
     protected function _pci_dss_compliance(EE_Payment_Method $payment_method)
     {
@@ -507,8 +519,8 @@ class Payments_Admin_Page extends EE_Admin_Page
      * _currency_support
      *
      * @access protected
-     * @param \EE_Payment_Method $payment_method
-     * @return \EE_Form_Section_Proper
+     * @param EE_Payment_Method $payment_method
+     * @return EE_Form_Section_Proper
      */
     protected function _currency_support(EE_Payment_Method $payment_method)
     {
@@ -545,8 +557,8 @@ class Payments_Admin_Page extends EE_Admin_Page
      * _update_payment_method_button
      *
      * @access protected
-     * @param \EE_Payment_Method $payment_method
-     * @return \EE_Form_Section_HTML
+     * @param EE_Payment_Method $payment_method
+     * @return EE_Payment_Method_Form
      */
     protected function _payment_method_settings(EE_Payment_Method $payment_method)
     {
@@ -560,8 +572,8 @@ class Payments_Admin_Page extends EE_Admin_Page
      *
      * @param EE_Form_Section_Proper $form_section
      * @param string                 $payment_method_name
-     * @return \EE_Payment_Method_Form
-     * @throws \EE_Error
+     * @return EE_Payment_Method_Form
+     * @throws EE_Error
      */
     protected function _simplify_form($form_section, $payment_method_name = '')
     {
@@ -593,8 +605,8 @@ class Payments_Admin_Page extends EE_Admin_Page
      * _update_payment_method_button
      *
      * @access protected
-     * @param \EE_Payment_Method $payment_method
-     * @return \EE_Form_Section_HTML
+     * @param EE_Payment_Method $payment_method
+     * @return EE_Form_Section_HTML
      */
     protected function _update_payment_method_button(EE_Payment_Method $payment_method)
     {
@@ -627,8 +639,8 @@ class Payments_Admin_Page extends EE_Admin_Page
      * _deactivate_payment_method_button
      *
      * @access protected
-     * @param \EE_Payment_Method $payment_method
-     * @return \EE_Form_Section_Proper
+     * @param EE_Payment_Method $payment_method
+     * @return EE_Form_Section_Proper
      */
     protected function _deactivate_payment_method_button(EE_Payment_Method $payment_method)
     {
@@ -665,8 +677,8 @@ class Payments_Admin_Page extends EE_Admin_Page
      * _activate_payment_method_button
      *
      * @access protected
-     * @param \EE_Payment_Method $payment_method
-     * @return \EE_Form_Section_Proper
+     * @param EE_Payment_Method $payment_method
+     * @return EE_Form_Section_Proper
      */
     protected function _activate_payment_method_button(EE_Payment_Method $payment_method)
     {
@@ -728,7 +740,7 @@ class Payments_Admin_Page extends EE_Admin_Page
      * _fine_print
      *
      * @access protected
-     * @return \EE_Form_Section_HTML
+     * @return EE_Form_Section_HTML
      */
     protected function _fine_print()
     {
@@ -878,8 +890,8 @@ class Payments_Admin_Page extends EE_Admin_Page
      * @throws DomainException
      * @throws EE_Error
      * @throws InvalidArgumentException
-     * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
-     * @throws \EventEspresso\core\exceptions\InvalidInterfaceException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
      */
     protected function _payment_settings()
     {
@@ -898,8 +910,8 @@ class Payments_Admin_Page extends EE_Admin_Page
      * @return void
      * @throws EE_Error
      * @throws InvalidArgumentException
-     * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
-     * @throws \EventEspresso\core\exceptions\InvalidInterfaceException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
      */
     protected function _update_payment_settings()
     {
@@ -947,8 +959,8 @@ class Payments_Admin_Page extends EE_Admin_Page
      * @return EE_Form_Section_Proper
      * @throws EE_Error
      * @throws InvalidArgumentException
-     * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
-     * @throws \EventEspresso\core\exceptions\InvalidInterfaceException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
      */
     protected function getPaymentSettingsForm()
     {
@@ -971,7 +983,7 @@ class Payments_Admin_Page extends EE_Admin_Page
                             )
                         )
                     ),
-                    'gateway_log_lifespan' => new \EE_Select_Input(
+                    'gateway_log_lifespan' => new EE_Select_Input(
                         $reg_config->gatewayLogLifespanOptions(),
                         array(
                             'html_label_text' => esc_html__('Gateway Logs Lifespan', 'event_espresso'),
