@@ -471,26 +471,28 @@ class Payments_Admin_Page extends EE_Admin_Page
     {
         if ($payment_method->type_obj()->requires_https()) {
             return new EE_Form_Section_HTML(
-                EEH_HTML::tr(
-                    EEH_HTML::th(
-                        EEH_HTML::label(
-                            EEH_HTML::strong(__('IMPORTANT', 'event_espresso'), '', 'important-notice')
-                        )
-                    ) .
-                    EEH_HTML::td(
-                        EEH_HTML::strong(
-                            __(
-                                'You are responsible for your own website security and Payment Card Industry Data Security Standards (PCI DSS) compliance.',
-                                'event_espresso'
+                EEH_HTML::table(
+                    EEH_HTML::tr(
+                        EEH_HTML::th(
+                            EEH_HTML::label(
+                                EEH_HTML::strong(__('IMPORTANT', 'event_espresso'), '', 'important-notice')
                             )
-                        )
-                        .
-                        EEH_HTML::br()
-                        .
-                        __('Learn more about ', 'event_espresso')
-                        . EEH_HTML::link(
-                            'https://www.pcisecuritystandards.org/merchants/index.php',
-                            __('PCI DSS compliance', 'event_espresso')
+                        ) .
+                        EEH_HTML::td(
+                            EEH_HTML::strong(
+                                __(
+                                    'You are responsible for your own website security and Payment Card Industry Data Security Standards (PCI DSS) compliance.',
+                                    'event_espresso'
+                                )
+                            )
+                            .
+                            EEH_HTML::br()
+                            .
+                            __('Learn more about ', 'event_espresso')
+                            . EEH_HTML::link(
+                                'https://www.pcisecuritystandards.org/merchants/index.php',
+                                __('PCI DSS compliance', 'event_espresso')
+                            )
                         )
                     )
                 )
@@ -512,20 +514,22 @@ class Payments_Admin_Page extends EE_Admin_Page
     {
         if (! $payment_method->usable_for_currency(EE_Config::instance()->currency->code)) {
             return new EE_Form_Section_HTML(
-                EEH_HTML::tr(
-                    EEH_HTML::th(
-                        EEH_HTML::label(
-                            EEH_HTML::strong(__('IMPORTANT', 'event_espresso'), '', 'important-notice')
-                        )
-                    ) .
-                    EEH_HTML::td(
-                        EEH_HTML::strong(
-                            sprintf(
-                                __(
-                                    'This payment method does not support the currency set on your site (%1$s). Please activate a different payment method or change your site\'s country and associated currency.',
-                                    'event_espresso'
-                                ),
-                                EE_Config::instance()->currency->code
+                EEH_HTML::table(
+                    EEH_HTML::tr(
+                        EEH_HTML::th(
+                            EEH_HTML::label(
+                                EEH_HTML::strong(__('IMPORTANT', 'event_espresso'), '', 'important-notice')
+                            )
+                        ) .
+                        EEH_HTML::td(
+                            EEH_HTML::strong(
+                                sprintf(
+                                    __(
+                                        'This payment method does not support the currency set on your site (%1$s). Please activate a different payment method or change your site\'s country and associated currency.',
+                                        'event_espresso'
+                                    ),
+                                    EE_Config::instance()->currency->code
+                                )
                             )
                         )
                     )
@@ -606,11 +610,13 @@ class Payments_Admin_Page extends EE_Admin_Page
             )
         );
         return new EE_Form_Section_HTML(
-            EEH_HTML::no_row(EEH_HTML::br(2)) .
-            EEH_HTML::tr(
-                EEH_HTML::th(__('Update Settings', 'event_espresso')) .
-                EEH_HTML::td(
-                    $update_button->get_html_for_input()
+            EEH_HTML::table(
+                EEH_HTML::no_row(EEH_HTML::br(2)) .
+                EEH_HTML::tr(
+                    EEH_HTML::th(__('Update Settings', 'event_espresso')) .
+                    EEH_HTML::td(
+                        $update_button->get_html_for_input()
+                    )
                 )
             )
         );
@@ -631,21 +637,23 @@ class Payments_Admin_Page extends EE_Admin_Page
             $payment_method->admin_name()
         );
         return new EE_Form_Section_HTML(
-            EEH_HTML::tr(
-                EEH_HTML::th(__('Deactivate Payment Method', 'event_espresso')) .
-                EEH_HTML::td(
-                    EEH_HTML::link(
-                        EE_Admin_Page::add_query_args_and_nonce(
-                            array(
-                                'action'         => 'deactivate_payment_method',
-                                'payment_method' => $payment_method->slug(),
+            EEH_HTML::table(
+                EEH_HTML::tr(
+                    EEH_HTML::th(__('Deactivate Payment Method', 'event_espresso')) .
+                    EEH_HTML::td(
+                        EEH_HTML::link(
+                            EE_Admin_Page::add_query_args_and_nonce(
+                                array(
+                                    'action'         => 'deactivate_payment_method',
+                                    'payment_method' => $payment_method->slug(),
+                                ),
+                                EE_PAYMENTS_ADMIN_URL
                             ),
-                            EE_PAYMENTS_ADMIN_URL
-                        ),
-                        $link_text_and_title,
-                        $link_text_and_title,
-                        'deactivate_' . $payment_method->slug(),
-                        'espresso-button button-secondary'
+                            $link_text_and_title,
+                            $link_text_and_title,
+                            'deactivate_' . $payment_method->slug(),
+                            'espresso-button button-secondary'
+                        )
                     )
                 )
             )
@@ -676,34 +684,36 @@ class Payments_Admin_Page extends EE_Admin_Page
                     'FHEE__Payments_Admin_Page___activate_payment_method_button__form_subsections',
                     array(
                         new EE_Form_Section_HTML(
-                            EEH_HTML::tr(
-                                EEH_HTML::td(
-                                    $payment_method->type_obj()->introductory_html(),
-                                    '',
-                                    '',
-                                    '',
-                                    'colspan="2"'
-                                )
-                            ) .
-                            EEH_HTML::tr(
-                                EEH_HTML::th(
-                                    EEH_HTML::label(__('Click to Activate ', 'event_espresso'))
-                                ) .
-                                EEH_HTML::td(
-                                    EEH_HTML::link(
-                                        EE_Admin_Page::add_query_args_and_nonce(
-                                            array(
-                                                'action'              => 'activate_payment_method',
-                                                'payment_method_type' => $payment_method->type(),
-                                            ),
-                                            EE_PAYMENTS_ADMIN_URL
-                                        ),
-                                        $link_text_and_title,
-                                        $link_text_and_title,
-                                        'activate_' . $payment_method->slug(),
-                                        'espresso-button-green button-primary'
+                            EEH_HTMl::table(
+                                EEH_HTML::tr(
+                                    EEH_HTML::td(
+                                        $payment_method->type_obj()->introductory_html(),
+                                        '',
+                                        '',
+                                        '',
+                                        'colspan="2"'
                                     )
-                                )
+                                ) .
+                                EEH_HTML::tr(
+                                    EEH_HTML::th(
+                                        EEH_HTML::label(__('Click to Activate ', 'event_espresso'))
+                                    ) .
+                                    EEH_HTML::td(
+                                        EEH_HTML::link(
+                                            EE_Admin_Page::add_query_args_and_nonce(
+                                                array(
+                                                    'action'              => 'activate_payment_method',
+                                                    'payment_method_type' => $payment_method->type(),
+                                                ),
+                                                EE_PAYMENTS_ADMIN_URL
+                                            ),
+                                            $link_text_and_title,
+                                            $link_text_and_title,
+                                            'activate_' . $payment_method->slug(),
+                                            'espresso-button-green button-primary'
+                                        )
+                                    )
+                            )
                             )
                         ),
                     ),
@@ -723,10 +733,12 @@ class Payments_Admin_Page extends EE_Admin_Page
     protected function _fine_print()
     {
         return new EE_Form_Section_HTML(
-            EEH_HTML::tr(
-                EEH_HTML::th() .
-                EEH_HTML::td(
-                    EEH_HTML::p(__('All fields marked with a * are required fields', 'event_espresso'), '', 'grey-text')
+            EEH_HTML::table(
+                EEH_HTML::tr(
+                    EEH_HTML::th() .
+                    EEH_HTML::td(
+                        EEH_HTML::p(__('All fields marked with a * are required fields', 'event_espresso'), '', 'grey-text')
+                    )
                 )
             )
         );
