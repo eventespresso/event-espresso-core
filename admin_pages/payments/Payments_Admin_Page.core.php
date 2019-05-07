@@ -725,7 +725,7 @@ class Payments_Admin_Page extends EE_Admin_Page
                                             'espresso-button-green button-primary'
                                         )
                                     )
-                            )
+                                )
                             )
                         ),
                     ),

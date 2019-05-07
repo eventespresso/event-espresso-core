@@ -9,4 +9,3 @@
  * @author                Mike Nelson
  */
 do_action('AHEE__EE_Mijireh__settings_end');
-?>
