@@ -696,7 +696,7 @@ class Payments_Admin_Page extends EE_Admin_Page
                     'FHEE__Payments_Admin_Page___activate_payment_method_button__form_subsections',
                     array(
                         new EE_Form_Section_HTML(
-                            EEH_HTMl::table(
+                            EEH_HTML::table(
                                 EEH_HTML::tr(
                                     EEH_HTML::td(
                                         $payment_method->type_obj()->introductory_html(),
