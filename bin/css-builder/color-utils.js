@@ -1,3 +1,8 @@
+/* CONSTANTS */
+const REGEX_HEX = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i;
+const REGEX_HEX_SHORTHAND = /^#?([a-f\d])([a-f\d])([a-f\d])$/i;
+const GREYSCALE_LEVELS = 12;
+
 /**
  * converts RGB color code to HEX color code
  *
@@ -10,8 +15,6 @@ const rgbToHex = ( rgb ) => {
 	).toString( 16 ).slice( 1 );
 };
 
-const hexRegex = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i;
-
 /**
  * converts HEX color code to RGB color code
  *
@@ -20,15 +23,13 @@ const hexRegex = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i;
  */
 const hexToRgb = ( hex ) => {
 	hex = convertHexTriplet( hex );
-	const result = hexRegex.exec( hex );
+	const result = REGEX_HEX.exec( hex );
 	return result ? {
 		r: parseInt( result[ 1 ], 16 ),
 		g: parseInt( result[ 2 ], 16 ),
 		b: parseInt( result[ 3 ], 16 )
 	} : null;
 };
-
-const shorthandRegex = /^#?([a-f\d])([a-f\d])([a-f\d])$/i;
 
 /**
  * converts shorthand HEX color code to full hex code
@@ -37,7 +38,7 @@ const shorthandRegex = /^#?([a-f\d])([a-f\d])([a-f\d])$/i;
  * @return {string} hex    ex: #0033FF
  */
 const convertHexTriplet = ( hex ) => {
-	return hex.replace( shorthandRegex, ( m, r, g, b ) => {
+	return hex.replace( REGEX_HEX_SHORTHAND, ( m, r, g, b ) => {
 		return r + r + g + g + b + b;
 	} );
 };
@@ -138,50 +139,52 @@ const findContrastColor = ( color, bw = false, level = 'AAA' ) => {
 };
 
 /**
- * given a single r, g, or b value from the theme background,
- * will calculate the difference between the background and black or white
+ * given the r, g, or b value from the theme's black and white colors,
+ * will calculate the difference between the two
  *
- * @param {number } value single r, g, or b value for a color
- * @param {boolean} darkTheme whether theme is dark
+ * @param {number } black single r, g, or b value for the theme's black color
+ * @param {number } white single r, g, or b value for the theme's white color
  * @return {number} difference between supplied value and black or white
  */
-const calculateDifferenceFromBg = ( value, darkTheme = false ) => {
-	// dark themes will have low color values like 25 (or whatever)
-	// so we'll subtract that from 255 to get 230 (or whatever)
-	// and then divide that by 10 to get a "step" value of 23 (or whatever)
+const calculateBwDifference = ( black, white ) => {
+	// dark colors have low rgb values like 25 (or whatever)
+	// whereas whites have higher rgb values like 255
+	// so we'll subtract black from white to get 230 (or whatever)
+	// and then divide that by 11 to get a "step" value of 23 (or whatever)
 	// which is what we will use to incrementally generate our greys
-	value = darkTheme ? 255 - value : value;
-	return Math.round( value / 10 );
+	return Math.round( ( white - black ) / ( GREYSCALE_LEVELS + 1 ) );
 };
 
 /**
- * given the hex code color for the theme background,
- * will find 9 incrementally darker or lighter shades of grey
- * that are evenly distributed between the background and black or white
+ * given the hex code color for the theme's black and white colors,
+ * will find set number (GREYSCALE_LEVELS) of incrementally darker or
+ * lighter shades of grey that are evenly distributed between the two
  *
- * @param {string } background hex code for grey tone
+ * @param {string } black hex code for theme's black color
+ * @param {string } white hex code for theme's black color
  * @param {boolean} darkTheme whether theme is dark
  * @return {Array} 9 grey HEX colors from near black to near white
  */
-const generateGreysFromBg = ( background, darkTheme = false ) => {
-	const bgRgb = hexToRgb( background );
-	// compute step difference to background
+const generateGreyScale = ( black, white, darkTheme = false ) => {
+	const blackRgb = hexToRgb( black );
+	const whiteRgb = hexToRgb( white );
+	// compute step difference between black and white
 	const rgbMod = {
-		r: calculateDifferenceFromBg( bgRgb.r, darkTheme ),
-		g: calculateDifferenceFromBg( bgRgb.g, darkTheme ),
-		b: calculateDifferenceFromBg( bgRgb.b, darkTheme ),
+		r: calculateBwDifference( blackRgb.r, whiteRgb.r ),
+		g: calculateBwDifference( blackRgb.g, whiteRgb.g ),
+		b: calculateBwDifference( blackRgb.b, whiteRgb.b ),
 	};
 	// add bg color to our array of greys
-	let rgbGrey = [ bgRgb ];
-	// add 9 steps towards background color
-	for ( let x = 0; x < 9; x++ ) {
+	let rgbGrey = darkTheme ? [ blackRgb ] : [ whiteRgb ];
+	// add 10 steps towards background color
+	for ( let x = 0; x < GREYSCALE_LEVELS; x++ ) {
 		rgbGrey.push( modifyRgb( rgbGrey[ x ], rgbMod, darkTheme ) );
 	}
-	// flip the array if it's a light theme
-	rgbGrey = darkTheme ? rgbGrey : rgbGrey.reverse();
-	// convert 9 of the rgb colors to hex (this will skip the background)
+	// flip the array
+	rgbGrey = rgbGrey.reverse();
+	// convert 10 of the rgb colors to hex (this will skip the background)
 	const hexGreys = [];
-	for ( let x = 0; x < 9; x++ ) {
+	for ( let x = 0; x < GREYSCALE_LEVELS; x++ ) {
 		hexGreys.push( rgbToHex( rgbGrey[ x ] ) );
 	}
 	return hexGreys;
@@ -284,7 +287,7 @@ const difference = ( color1, color2 ) => {
 module.exports = {
 	generateHighContrast,
 	findContrastColor,
-	generateGreysFromBg,
+	generateGreyScale,
 	generateLowContrast,
 	isDarkTheme,
 };
