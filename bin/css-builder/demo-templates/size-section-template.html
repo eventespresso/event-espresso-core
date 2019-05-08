@@ -1,27 +1,58 @@
 <section class="demo-section">
-    <h2>Size Selectors</h2>
-    <p>Various selectors modifying size elements.</p>
-    <div class="demo-items">
-        <div class="demo-item">
-            <h3>Numerical Font-Size Selectors</h3>
-            <p>A collection of numerically based font-size modifiers.</p>
-            {{#each numericalItems}}
-            {{{this}}}
-            {{/each}}
-        </div>
-        <div class="demo-item">
-            <h3>Relative Font-Size Selectors</h3>
-            <p>A collection of relative named font-size modifiers.</p>
-            {{#each relativeItems}}
-            {{{this}}}
-            {{/each}}
-        </div>
-        <div class="demo-item">
-            <h3>Border Radius Selectors</h3>
-            <p>A collection of border radius modifiers.</p>
-            {{#each radiusItems}}
-            {{{this}}}
-            {{/each}}
-        </div>
+    <h2 id="font-sizes" class="ee-focus-priority-2">Font-Sizes</h2>
+    <p class="section-intro">
+        Having text that meets WCAG requirements does not just mean using contrasting colors, as there is
+        also an interaction with the size of the font. Smaller fonts require colors that have a higher contrast
+        compared to the background color they are placed on. Although not a technical requirement, line-height and
+        spacing can also affect readability, especially with smaller font sizes.
+    </p>
+    <p class="section-intro">
+        To make it as easy as possible to maintain accessibility as well as a harmonious design aesthetic, we have
+        combined several CSS properties together using the semantically relevant "focus-priority" class name. The
+        "focus-priority" classes range in value from <code>.ee-focus-priority-1</code> to
+        <code>.ee-focus-priority-9</code> and represent the visual hierarchy that you wish to impart on your
+        application. Elements with a higher "focus-priority" are ones that a user should see and read first and
+        therefore use larger font sizes, but can get away with using lower contrast colors. Elements with a
+        lower "focus-priority" are ones that a user should see or read after other elements and utilize smaller font
+        sizes, but higher contrast colors to remain accessible. This of course is subjective and these styles can be
+        applied solely to adjust appearance as desired.
+    </p>
+    <div class="demo-items three-columns">
+        {{#each fontSizes}}
+        {{{this}}}
+        {{/each}}
+    </div>
+    <h2 class="ee-focus-priority-2">Margin Sizes</h2>
+    <p class="section-intro">
+        Each theme can specify a <code>marginDefault</code> property which gets applied to a set of default margin
+        sizes to dynamically generate a total of 9 margin sizes. If themes require more control, they can also define
+        all of the <code>marginSizeModifiers</code> separately. The results are the following CSS variables:
+    </p>
+    <div id="margin-sizes" class="demo-items three-columns">
+        {{#each marginSizes}}
+        {{{this}}}
+        {{/each}}
+    </div>
+    <h2 class="ee-focus-priority-2">Padding Sizes</h2>
+    <p class="section-intro">
+        Each theme can specify a <code>paddingDefault</code> property which gets applied to a set of default padding
+        sizes to dynamically generate a total of 9 padding sizes. If themes require more control, they can also define
+        all of the <code>paddingSizeModifiers</code> separately. The results are the following CSS variables:
+    </p>
+    <div id="padding-sizes" class="demo-items three-columns">
+        {{#each paddingSizes}}
+        {{{this}}}
+        {{/each}}
+    </div>
+    <h2 class="ee-focus-priority-2">Border Radius-Sizes</h2>
+    <p class="section-intro">
+        Each theme can specify a <code>radiusDefault</code> property which gets applied to a set of default radius
+        sizes to dynamically generate a total of 5 radius sizes. If themes require more control, they can also define
+        all of the <code>radiusSizeModifiers</code> separately. The results are the following CSS variables:
+    </p>
+    <div id="border-radius" class="demo-items three-columns">
+        {{#each radiusSizes}}
+        {{{this}}}
+        {{/each}}
     </div>
 </section>
