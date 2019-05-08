@@ -25,9 +25,9 @@ const TableHeadingCell = ( {
 	htmlClass = htmlClass ?
 		`${ htmlClass } ee-rTable-${ rowType }-th col-${ colNumber }` :
 		`ee-rTable-${ rowType }-th col-${ colNumber }`;
-	rowType += 'ThClass';
-	htmlClass = classes[ rowType ] ?
-		`${ htmlClass } ${ classes[ rowType ] }` :
+	const rowTypeClass = rowType + 'ThClass';
+	htmlClass = classes[ rowTypeClass ] ?
+		`${ htmlClass } ${ classes[ rowTypeClass ] }` :
 		htmlClass;
 	if ( rowType === 'header' ) {
 		extraProps.role = "columnheader";
