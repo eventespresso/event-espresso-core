@@ -1,8 +1,3 @@
-/** -------------------------------------------------------------------------
-* Event Espresso Font Styles Stylesheet
-* © 2019 Event Espresso
-* ------------------------------------------------------------------------- */
-
 .ee-focus-priority-1 {
     color: var(--ee-default-text-color-super-low-contrast);
     font-size: var(--ee-font-size-extreme);

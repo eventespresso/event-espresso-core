@@ -101,16 +101,3 @@
     font-size: calc(var(--ee-font-size-big) * 1px);
     padding: calc(var(--ee-padding-smaller) * 1rem) calc(var(--ee-padding-small) * 1rem);
 }
-
-/*:root {*/
-
-/*    --ee-padding-micro: 0.25;*/
-/*    --ee-padding-tiny: 0.5;*/
-/*    --ee-padding-smaller: 1;*/
-/*    --ee-padding-small: 1.5;*/
-/*    --ee-padding-default: 2;*/
-/*    --ee-padding-big: 2.5;*/
-/*    --ee-padding-bigger: 3;*/
-/*    --ee-padding-huge: 3.5;*/
-/*    --ee-padding-extreme: 4;*/
-/*}*/
