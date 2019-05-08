@@ -3,7 +3,6 @@
  */
 import { Component } from '@wordpress/element';
 import PropTypes from 'prop-types'
-import { __ } from '@eventespresso/i18n';
 import { DropdownMenu } from '@wordpress/components';
 
 /**
