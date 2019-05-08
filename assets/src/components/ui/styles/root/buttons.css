@@ -1,66 +1,116 @@
 .ee-button,
 .ee-button:active,
+.ee-button:focus,
 .ee-button:visited {
-    display: inline-block;
-    position: relative;
-    top: -2px;
-    margin: 0 0 1em;
-    background-color: var( --ee-color-light-blue, #00B1CA );
-    background-image: linear-gradient(
-        var( --ee-light-blue-background-gradient-x, #066DB1 ),
-        var( --ee-light-blue-background-gradient-y, #00B1CA )
-    );
-    border: 1px solid var( --ee-color-black-01-transparency, rgba( 0,0,0,0.01 ) );
-    border-top: 1px solid var( --ee-color-white-50-transparency, rgba( 255,255,255,0.5 ) );
-    border-bottom: 1px solid var( --ee-color-black-25-transparency, rgba( 0, 0, 0, 0.25) );
-    font-weight: normal;
+    border-radius: calc(var(--ee-border-radius-small) * 1px);
+    /*box-shadow: var(--ee-box-shadow-small);*/
+    box-sizing: border-box !important;
     cursor: pointer;
-    color: var( --ee-color-light-blue-foreground-contrast, #041525 );
+    display: inline-block;
+    font-size: calc(var(--ee-font-size-small) * 1px);
+    font-weight: normal;
+    line-height: calc(var(--ee-line-height-modifier) * 1rem);
+    margin: 0 0 calc(var(--ee-margin-smaller) * 1rem);
+    outline: none !important;
+    position: relative;
+    padding: calc(var(--ee-padding-tiny) * 1rem) calc(var(--ee-padding-smaller) * 1rem);
     text-decoration: none;
     text-align: center;
-    line-height: 1em;
-    border-radius: 0;
-    box-shadow: none;
+    top: -1px;
 }
 
-.ee-button.with-hover:hover:not(.with-accessible-background,.with-accessible-foreground),
-.ee-button.for-registration.with-hover:hover:not(.with-accessible-background,.with-accessible-foreground),
-input.ee-button.for-registration.with-hover:hover:not(.with-accessible-background.with-accessible-foreground) {
-    opacity: 0.5;
+.ee-button:active { top: 0; }
+
+
+/* BUTTON COLORS */
+
+.ee-button-default {
+    background: var(--ee-color-grey-9);
+    border: 1px solid var(--ee-color-grey-9);
+    border-bottom: 1px solid var(--ee-color-grey-8);
+    color: var(--ee-default-text-color-high-contrast);
 }
 
-.ee-button:active { top:-1px; }
-
-/* REGISTER BUTTON */
-
-.ee-button.for-registration,
-.ee-button.for-registration:active,
-.ee-button.for-registration:visited {
-    margin: 0;
-    font-weight: bold;
-    text-shadow: 0 -1px 0px var( --ee-color-black-25-transparency, rgba( 0, 0, 0, 0.25 ) );
-}
-input.ee-button.for-registration {
-    float: right;
+.ee-button-default:hover {
+    background: var(--ee-background-color);
 }
 
+.ee-button-primary {
+    background: var(--ee-color-primary);
+    border: 1px solid var(--ee-color-primary);
+    border-bottom: 1px solid var(--ee-color-primary-high-contrast);
+    color: var(--ee-text-on-primary);
+}
+
+.ee-button-primary:hover {
+    background: var(--ee-color-primary-low-contrast);
+}
+
+.ee-button-secondary {
+    background: var(--ee-color-secondary);
+    border: 1px solid var(--ee-color-secondary);
+    border-bottom: 1px solid var(--ee-color-secondary-high-contrast);
+    color: var(--ee-text-on-secondary);
+}
+
+.ee-button-secondary:hover {
+    background: var(--ee-color-secondary-low-contrast);
+}
+
+.ee-button-accent {
+    background: var(--ee-color-accent);
+    border: 1px solid var(--ee-color-accent);
+    border-bottom: 1px solid var(--ee-color-accent-high-contrast);
+    color: var(--ee-text-on-accent);
+}
+
+.ee-button-accent:hover {
+    background: var(--ee-color-accent-low-contrast);
+}
 
 /* BUTTON SIZES */
 
-.small.ee-button, .small.ee-button:visited {
-    font-size: calc( var( --ee-font-size-small, 11 ) * 1px );
-    padding: 5px 10px 5px;
+.tiny.ee-button,
+.tiny.ee-button:active,
+.tiny.ee-button:focus,
+.tiny.ee-button:visited {
+    font-size: calc(var(--ee-font-size-tiny) * 1px);
+    padding: calc(var(--ee-padding-micro) * .5rem) calc(var(--ee-padding-tiny) * 1rem);
 }
-.ee-button, .ee-button:visited,
-.medium.ee-button, .medium.ee-button:visited {
-    font-size: calc( var( --ee-font-size-medium, 13 ) * 1px );
-    padding: 6px 12px 7px;
+
+.small.ee-button,
+.small.ee-button:active,
+.small.ee-button:focus,
+.small.ee-button:visited {
+    font-size: calc(var(--ee-font-size-smaller) * 1px);
+    padding: calc(var(--ee-padding-micro) * 1rem) calc(var(--ee-padding-tiny) * 1rem);
 }
-.large.ee-button, .large.ee-button:visited {
-    font-size: calc( var( --ee-font-size-large, 14 ) * 1px );
-    padding: 8px 16px 9px;
+
+.big.ee-button,
+.big.ee-button:active,
+.big.ee-button:focus,
+.big.ee-button:visited {
+    font-size: calc(var(--ee-font-size-default) * 1px);
+    padding: calc(var(--ee-padding-smaller) * 1rem) calc(var(--ee-padding-small) * 1rem);
 }
-.huge.ee-button, .huge.ee-button:visited {
-    font-size: calc( var( --ee-font-size-huge, 16 ) * 1px );
-    padding: 14px 32px 16px;
+
+.huge.ee-button,
+.huge.ee-button:active,
+.huge.ee-button:focus,
+.huge.ee-button:visited {
+    font-size: calc(var(--ee-font-size-big) * 1px);
+    padding: calc(var(--ee-padding-smaller) * 1rem) calc(var(--ee-padding-small) * 1rem);
 }
+
+/*:root {*/
+
+/*    --ee-padding-micro: 0.25;*/
+/*    --ee-padding-tiny: 0.5;*/
+/*    --ee-padding-smaller: 1;*/
+/*    --ee-padding-small: 1.5;*/
+/*    --ee-padding-default: 2;*/
+/*    --ee-padding-big: 2.5;*/
+/*    --ee-padding-bigger: 3;*/
+/*    --ee-padding-huge: 3.5;*/
+/*    --ee-padding-extreme: 4;*/
+/*}*/

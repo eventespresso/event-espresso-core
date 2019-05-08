@@ -1,471 +1,256 @@
-/**
- * Contains all the status css selectors for entity statuses for the Default theme.
- */
-        /** Transaction Statuses **/
-        /** transaction completed **/
-    .ee-status-color-TCM {
-        color: var(--ee-color-green, #70cc50);
-    }
-    .ee-status-color-TCM.with-accessible-background {
-        background-color: var(--ee-color-green-background-contrast, #002a00)
-    }
-    .ee-status-color-TCM.with-accessible-background.with-hover:hover {
-        background-color: var(--ee-color-green-hover, #2a2440)
-    }
-    .ee-status-background-color-TCM {
-        background-color: var(--ee-color-green, #70cc50);
-    }
-    .ee-status-background-color-TCM.with-accessible-foreground {
-        color: var( --ee-color-green-foreground-contrast, #002a00 );
-    }
-    .ee-status-background-color-TCM.with-accessible-foreground.with-hover:hover {
-        background-color: var( --ee-color-green-hover-contrast, #bee7b1 );
-    }
+/** -------------------------------------------------------------------------
+* Event Espresso Entity Status Colors Stylesheet
+* © 2019 Event Espresso
+* ------------------------------------------------------------------------- */
 
-        /** transaction failed **/
-    .ee-status-color-TFL {
-        color: var(--ee-color-pink, #ff55c0);
-    }
-    .ee-status-color-TFL.with-accessible-background {
-        background-color: var(--ee-color-pink-background-contrast, #0a0000)
-    }
-    .ee-status-color-TFL.with-accessible-background.with-hover:hover {
-        background-color: var(--ee-color-pink-hover, #550000)
-    }
-    .ee-status-background-color-TFL {
-        background-color: var(--ee-color-pink, #ff55c0);
-    }
-    .ee-status-background-color-TFL.with-accessible-foreground {
-        color: var( --ee-color-pink-foreground-contrast, #0a0000 );
-    }
-    .ee-status-background-color-TFL.with-accessible-foreground.with-hover:hover {
-        background-color: var( --ee-color-pink-hover-contrast, #ffa3dd );
-    }
+/** Transaction Statuses **/
 
-        /** transaction open **/
-    .ee-status-color-TOP {
-        color: var(--ee-color-orange, #ff7e14);
-    }
-    .ee-status-color-TOP.with-accessible-background {
-        background-color: var(--ee-color-orange-background-contrast, #171717)
-    }
-    .ee-status-color-TOP.with-accessible-background.with-hover:hover {
-        background-color: var(--ee-color-orange-hover, #383838)
-    }
-    .ee-status-background-color-TOP {
-        background-color: var(--ee-color-orange, #ff7e14);
-    }
-    .ee-status-background-color-TOP.with-accessible-foreground {
-        color: var( --ee-color-orange-foreground-contrast, #171717 );
-    }
-    .ee-status-background-color-TOP.with-accessible-foreground.with-hover:hover {
-        background-color: var( --ee-color-orange-hover-contrast, #ff9d4d );
-    }
+/** transaction open **/
+.ee-status-color-TOP {
+    color: var(--ee-color-orange);
+}
 
-        /** transaction abandoned **/
-    .ee-status-color-TAB {
-        color: var(--ee-color-yellow, #f8d755);
-    }
-    .ee-status-color-TAB.with-accessible-background {
-        background-color: var(--ee-color-yellow-background-contrast, #1d1905)
-    }
-    .ee-status-color-TAB.with-accessible-background.with-hover:hover {
-        background-color: var(--ee-color-yellow-hover, #48400f)
-    }
-    .ee-status-background-color-TAB {
-        background-color: var(--ee-color-yellow, #f8d755);
-    }
-    .ee-status-background-color-TAB.with-accessible-foreground {
-        color: var( --ee-color-yellow-foreground-contrast, #1d1905 );
-    }
-    .ee-status-background-color-TAB.with-accessible-foreground.with-hover:hover {
-        background-color: var( --ee-color-yellow-hover-contrast, #f9eaaf );
-    }
+.ee-status-background-color-TOP {
+    background-color: var(--ee-color-orange);
+    color: var(--ee-text-on-orange);
+}
 
-        /** transaction incomplete **/
-    .ee-status-color-TIN {
-        color: var(--ee-color-light-blue, #00b1ca);
-    }
-    .ee-status-color-TIN.with-accessible-background {
-        background-color: var(--ee-color-light-blue-background-contrast, #041525)
-    }
-    .ee-status-color-TIN.with-accessible-background.with-hover:hover {
-        background-color: var(--ee-color-light-blue-hover, #133762)
-    }
-    .ee-status-background-color-TIN {
-        background-color: var(--ee-color-light-blue, #00b1ca);
-    }
-    .ee-status-background-color-TIN.with-accessible-foreground {
-        color: var( --ee-color-light-blue-foreground-contrast, #041525 );
-    }
-    .ee-status-background-color-TIN.with-accessible-foreground.with-hover:hover {
-        background-color: var( --ee-color-light-blue-hover-contrast, #00e1ff );
-    }
+/** transaction completed **/
+.ee-status-color-TCM {
+    color: var(--ee-color-green);
+}
 
+.ee-status-background-color-TCM {
+    background-color: var(--ee-color-green);
+    color: var(--ee-text-on-green);
+}
 
-        /** Payment Statuses **/
-        /** payment approved **/
-    .ee-status-color-PAP {
-        color: var(--ee-color-green, #70cc50);
-    }
-    .ee-status-color-PAP.with-accessible-background {
-        background-color: var(--ee-color-green-background-contrast, #002a00)
-    }
-    .ee-status-color-PAP.with-accessible-background.with-hover:hover {
-        background-color: var(--ee-color-green-hover, #2a2440)
-    }
-    .ee-status-background-color-PAP {
-        background-color: var(--ee-color-green, #70cc50);
-    }
-    .ee-status-background-color-PAP.with-accessible-foreground {
-        color: var( --ee-color-green-foreground-contrast, #002a00 );
-    }
-    .ee-status-background-color-PAP.with-accessible-foreground.with-hover:hover {
-        background-color: var( --ee-color-green-hover-contrast, #bee7b1 );
-    }
+/** transaction incomplete **/
+.ee-status-color-TIN {
+    color: var(--ee-color-blue);
+}
 
-        /** payment declined **/
-    .ee-status-color-PDC {
-        color: var(--ee-color-pink, #ff55c0);
-    }
-    .ee-status-color-PDC.with-accessible-background {
-        background-color: var(--ee-color-pink-background-contrast, #0a0000)
-    }
-    .ee-status-color-PDC.with-accessible-background.with-hover:hover {
-        background-color: var(--ee-color-pink-hover, #550000)
-    }
-    .ee-status-background-color-PDC {
-        background-color: var(--ee-color-pink, #ff55c0);
-    }
-    .ee-status-background-color-PDC.with-accessible-foreground {
-        color: var( --ee-color-pink-foreground-contrast, #0a0000 );
-    }
-    .ee-status-background-color-PDC.with-accessible-foreground.with-hover:hover {
-        background-color: var( --ee-color-pink-hover-contrast, #ffa3dd );
-    }
+.ee-status-background-color-TIN {
+    background-color: var(--ee-color-blue);
+    color: var(--ee-text-on-blue);
+}
 
-        /** payment cancelled **/
-    .ee-status-color-PCN {
-        color: var(--ee-color-grey, #ac9d9c);
-    }
-    .ee-status-color-PCN.with-accessible-background {
-        background-color: var(--ee-color-grey-background-contrast, #141414)
-    }
-    .ee-status-color-PCN.with-accessible-background.with-hover:hover {
-        background-color: var(--ee-color-grey-hover, #333)
-    }
-    .ee-status-background-color-PCN {
-        background-color: var(--ee-color-grey, #ac9d9c);
-    }
-    .ee-status-background-color-PCN.with-accessible-foreground {
-        color: var( --ee-color-grey-foreground-contrast, #141414 );
-    }
-    .ee-status-background-color-PCN.with-accessible-foreground.with-hover:hover {
-        background-color: var( --ee-color-grey-hover-contrast, #ebeaea );
-    }
+/** transaction abandoned **/
+.ee-status-color-TAB {
+    color: var(--ee-color-gold);
+}
 
-        /** payment failed **/
-    .ee-status-color-PFL {
-        color: var(--ee-color-orange, #ff7e14);
-    }
-    .ee-status-color-PFL.with-accessible-background {
-        background-color: var(--ee-color-orange-background-contrast, #171717)
-    }
-    .ee-status-color-PFL.with-accessible-background.with-hover:hover {
-        background-color: var(--ee-color-orange-hover, #383838)
-    }
-    .ee-status-background-color-PFL {
-        background-color: var(--ee-color-orange, #ff7e14);
-    }
-    .ee-status-background-color-PFL.with-accessible-foreground {
-        color: var( --ee-color-orange-foreground-contrast, #171717 );
-    }
-    .ee-status-background-color-PFL.with-accessible-foreground.with-hover:hover {
-        background-color: var( --ee-color-orange-hover-contrast, #ff9d4d );
-    }
+.ee-status-background-color-TAB {
+    background-color: var(--ee-color-gold);
+    color: var(--ee-text-on-gold);
+}
 
-        /** payment pending **/
-    .ee-status-color-PPN {
-        color: var(--ee-color-light-blue, #00b1ca);
-    }
-    .ee-status-color-PPN.with-accessible-background {
-        background-color: var(--ee-color-light-blue-background-contrast, #041525)
-    }
-    .ee-status-color-PPN.with-accessible-background.with-hover:hover {
-        background-color: var(--ee-color-light-blue-hover, #133762)
-    }
-    .ee-status-background-color-PPN {
-        background-color: var(--ee-color-light-blue, #00b1ca);
-    }
-    .ee-status-background-color-PPN.with-accessible-foreground {
-        color: var( --ee-color-light-blue-foreground-contrast, #041525 );
-    }
-    .ee-status-background-color-PPN.with-accessible-foreground.with-hover:hover {
-        background-color: var( --ee-color-light-blue-hover-contrast, #00e1ff );
-    }
+/** transaction failed **/
+.ee-status-color-TFL {
+    color: var(--ee-color-hot-pink);
+}
+
+.ee-status-background-color-TFL {
+    background-color: var(--ee-color-hot-pink);
+    color: var(--ee-text-on-hot-pink);
+}
+
+/** Payment Statuses **/
+/** payment approved **/
+.ee-status-color-PAP {
+    color: var(--ee-color-green);
+}
+
+.ee-status-background-color-PAP {
+    background-color: var(--ee-color-green);
+    color: var(--ee-text-on-green);
+}
+
+/** payment declined **/
+.ee-status-color-PDC {
+    color: var(--ee-color-hot-pink);
+}
+
+.ee-status-background-color-PDC {
+    background-color: var(--ee-color-hot-pink);
+    color: var(--ee-text-on-hot-pink);
+}
+
+/** payment cancelled **/
+.ee-status-color-PCN {
+    color: var(--ee-color-grey-6);
+}
+
+.ee-status-background-color-PCN {
+    background-color: var(--ee-color-grey-6);
+    color: var(--ee-text-on-grey-6);
+}
+
+/** payment failed **/
+.ee-status-color-PFL {
+    color: var(--ee-color-orange);
+}
+
+.ee-status-background-color-PFL {
+    background-color: var(--ee-color-orange);
+    color: var(--ee-text-on-orange);
+}
+
+/** payment pending **/
+.ee-status-color-PPN {
+    color: var(--ee-color-blue);
+}
+
+.ee-status-background-color-PPN {
+    background-color: var(--ee-color-blue);
+    color: var(--ee-text-on-blue);
+}
 
 
-        /** Registration Statuses **/
-        /** registration approved **/
-    .ee-status-color-RAP {
-        color: var(--ee-color-green, #70cc50);
-    }
-    .ee-status-color-RAP.with-accessible-background {
-        background-color: var(--ee-color-green-background-contrast, #002a00)
-    }
-    .ee-status-color-RAP.with-accessible-background.with-hover:hover {
-        background-color: var(--ee-color-green-hover, #2a2440)
-    }
-    .ee-status-background-color-RAP {
-        background-color: var(--ee-color-green, #70cc50);
-    }
-    .ee-status-background-color-RAP.with-accessible-foreground {
-        color: var( --ee-color-green-foreground-contrast, #002a00 );
-    }
-    .ee-status-background-color-RAP.with-accessible-foreground.with-hover:hover {
-        background-color: var( --ee-color-green-hover-contrast, #bee7b1 );
-    }
+/** Registration Statuses **/
 
-        /** registration declined **/
-    .ee-status-color-RDC {
-        color: var(--ee-color-pink, #ff55c0);
-    }
-    .ee-status-color-RDC.with-accessible-background {
-        background-color: var(--ee-color-pink-background-contrast, #0a0000)
-    }
-    .ee-status-color-RDC.with-accessible-background.with-hover:hover {
-        background-color: var(--ee-color-pink-hover, #550000)
-    }
-    .ee-status-background-color-RDC {
-        background-color: var(--ee-color-pink, #ff55c0);
-    }
-    .ee-status-background-color-RDC.with-accessible-foreground {
-        color: var( --ee-color-pink-foreground-contrast, #0a0000 );
-    }
-    .ee-status-background-color-RDC.with-accessible-foreground.with-hover:hover {
-        background-color: var( --ee-color-pink-hover-contrast, #ffa3dd );
-    }
+/** registration approved **/
+.ee-status-color-RAP {
+    color: var(--ee-color-green);
+}
 
-        /** registration not approved **/
-    .ee-status-color-RNA {
-        color: var(--ee-color-orange, #ff7e14);
-    }
-    .ee-status-color-RNA.with-accessible-background {
-        background-color: var(--ee-color-orange-background-contrast, #171717)
-    }
-    .ee-status-color-RNA.with-accessible-background.with-hover:hover {
-        background-color: var(--ee-color-orange-hover, #383838)
-    }
-    .ee-status-background-color-RNA {
-        background-color: var(--ee-color-orange, #ff7e14);
-    }
-    .ee-status-background-color-RNA.with-accessible-foreground {
-        color: var( --ee-color-orange-foreground-contrast, #171717 );
-    }
-    .ee-status-background-color-RNA.with-accessible-foreground.with-hover:hover {
-        background-color: var( --ee-color-orange-hover-contrast, #ff9d4d );
-    }
+.ee-status-background-color-RAP {
+    background-color: var(--ee-color-green);
+    color: var(--ee-text-on-green);
+}
 
-        /** registration pending **/
-    .ee-status-color-RPP {
-        color: var(--ee-color-light-blue, #00b1ca);
-    }
-    .ee-status-color-RPP.with-accessible-background {
-        background-color: var(--ee-color-light-blue-background-contrast, #041525)
-    }
-    .ee-status-color-RPP.with-accessible-background.with-hover:hover {
-        background-color: var(--ee-color-light-blue-hover, #133762)
-    }
-    .ee-status-background-color-RPP {
-        background-color: var(--ee-color-light-blue, #00b1ca);
-    }
-    .ee-status-background-color-RPP.with-accessible-foreground {
-        color: var( --ee-color-light-blue-foreground-contrast, #041525 );
-    }
-    .ee-status-background-color-RPP.with-accessible-foreground.with-hover:hover {
-        background-color: var( --ee-color-light-blue-hover-contrast, #00e1ff );
-    }
+/** registration pending **/
+.ee-status-color-RPP {
+    color: var(--ee-color-blue);
+}
 
-        /** registration cancelled **/
-    .ee-status-color-RCN {
-        color: var(--ee-color-grey, #ac9d9c);
-    }
-    .ee-status-color-RCN.with-accessible-background {
-        background-color: var(--ee-color-grey-background-contrast, #141414)
-    }
-    .ee-status-color-RCN.with-accessible-background.with-hover:hover {
-        background-color: var(--ee-color-grey-hover, #333)
-    }
-    .ee-status-background-color-RCN {
-        background-color: var(--ee-color-grey, #ac9d9c);
-    }
-    .ee-status-background-color-RCN.with-accessible-foreground {
-        color: var( --ee-color-grey-foreground-contrast, #141414 );
-    }
-    .ee-status-background-color-RCN.with-accessible-foreground.with-hover:hover {
-        background-color: var( --ee-color-grey-hover-contrast, #ebeaea );
-    }
+.ee-status-background-color-RPP {
+    background-color: var(--ee-color-blue);
+    color: var(--ee-text-on-blue);
+}
 
-        /** registration incomplete **/
-    .ee-status-color-RIC {
-        color: var(--ee-color-yellow, #f8d755);
-    }
-    .ee-status-color-RIC.with-accessible-background {
-        background-color: var(--ee-color-yellow-background-contrast, #1d1905)
-    }
-    .ee-status-color-RIC.with-accessible-background.with-hover:hover {
-        background-color: var(--ee-color-yellow-hover, #48400f)
-    }
-    .ee-status-background-color-RIC {
-        background-color: var(--ee-color-yellow, #f8d755);
-    }
-    .ee-status-background-color-RIC.with-accessible-foreground {
-        color: var( --ee-color-yellow-foreground-contrast, #1d1905 );
-    }
-    .ee-status-background-color-RIC.with-accessible-foreground.with-hover:hover {
-        background-color: var( --ee-color-yellow-hover-contrast, #f9eaaf );
-    }
+/** registration wait list **/
+.ee-status-color-RWL {
+    color: var(--ee-color-purple);
+}
+
+.ee-status-background-color-RWL {
+    background-color: var(--ee-color-purple);
+    color: var(--ee-text-on-purple);
+}
+
+/** registration incomplete **/
+.ee-status-color-RIC {
+    color: var(--ee-color-gold);
+}
+
+.ee-status-background-color-RIC {
+    background-color: var(--ee-color-gold);
+    color: var(--ee-text-on-gold);
+}
+
+/** registration not approved **/
+.ee-status-color-RNA {
+    color: var(--ee-color-orange);
+}
+
+.ee-status-background-color-RNA {
+    background-color: var(--ee-color-orange);
+    color: var(--ee-text-on-orange);
+}
+
+/** registration declined **/
+.ee-status-color-RDC {
+    color: var(--ee-color-hot-pink);
+}
+
+.ee-status-background-color-RDC {
+    background-color: var(--ee-color-hot-pink);
+    color: var(--ee-text-on-hot-pink);
+}
+
+/** registration cancelled **/
+.ee-status-color-RCN {
+    color: var(--ee-color-grey-6);
+}
+
+.ee-status-background-color-RCN {
+    background-color: var(--ee-color-grey-6);
+    color: var(--ee-text-on-grey-6);
+}
 
 
-        /** Datetime Statuses **/
-        /** datetime active **/
-    .ee-status-color-DTA {
-        color: var(--ee-color-green, #70cc50);
-    }
-    .ee-status-color-DTA.with-accessible-background {
-        background-color: var(--ee-color-green-background-contrast, #002a00)
-    }
-    .ee-status-color-DTA.with-accessible-background.with-hover:hover {
-        background-color: var(--ee-color-green-hover, #2a2440)
-    }
-    .ee-status-background-color-DTA {
-        background-color: var(--ee-color-green, #70cc50);
-    }
-    .ee-status-background-color-DTA.with-accessible-foreground {
-        color: var( --ee-color-green-foreground-contrast, #002a00 );
-    }
-    .ee-status-background-color-DTA.with-accessible-foreground.with-hover:hover {
-        background-color: var( --ee-color-green-hover-contrast, #bee7b1 );
-    }
+/** Datetime Statuses **/
 
-        /** datetime cancelled **/
-    .ee-status-color-DTC {
-        color: var(--ee-color-pink, #ff55c0);
-    }
-    .ee-status-color-DTC.with-accessible-background {
-        background-color: var(--ee-color-pink-background-contrast, #0a0000)
-    }
-    .ee-status-color-DTC.with-accessible-background.with-hover:hover {
-        background-color: var(--ee-color-pink-hover, #550000)
-    }
-    .ee-status-background-color-DTC {
-        background-color: var(--ee-color-pink, #ff55c0);
-    }
-    .ee-status-background-color-DTC.with-accessible-foreground {
-        color: var( --ee-color-pink-foreground-contrast, #0a0000 );
-    }
-    .ee-status-background-color-DTC.with-accessible-foreground.with-hover:hover {
-        background-color: var( --ee-color-pink-hover-contrast, #ffa3dd );
-    }
+/** datetime sold out **/
+.ee-status-color-DTS {
+    color: var(--ee-color-gold);
+}
 
-        /** datetime expired **/
-    .ee-status-color-DTE {
-        color: var(--ee-color-grey, #ac9d9c);
-    }
-    .ee-status-color-DTE.with-accessible-background {
-        background-color: var(--ee-color-grey-background-contrast, #141414)
-    }
-    .ee-status-color-DTE.with-accessible-background.with-hover:hover {
-        background-color: var(--ee-color-grey-hover, #333)
-    }
-    .ee-status-background-color-DTE {
-        background-color: var(--ee-color-grey, #ac9d9c);
-    }
-    .ee-status-background-color-DTE.with-accessible-foreground {
-        color: var( --ee-color-grey-foreground-contrast, #141414 );
-    }
-    .ee-status-background-color-DTE.with-accessible-foreground.with-hover:hover {
-        background-color: var( --ee-color-grey-hover-contrast, #ebeaea );
-    }
+.ee-status-background-color-DTS {
+    background-color: var(--ee-color-gold);
+    color: var(--ee-text-on-gold);
+}
 
-        /** datetime sold out **/
-    .ee-status-color-DTS {
-        color: var(--ee-color-yellow, #f8d755);
-    }
-    .ee-status-color-DTS.with-accessible-background {
-        background-color: var(--ee-color-yellow-background-contrast, #1d1905)
-    }
-    .ee-status-color-DTS.with-accessible-background.with-hover:hover {
-        background-color: var(--ee-color-yellow-hover, #48400f)
-    }
-    .ee-status-background-color-DTS {
-        background-color: var(--ee-color-yellow, #f8d755);
-    }
-    .ee-status-background-color-DTS.with-accessible-foreground {
-        color: var( --ee-color-yellow-foreground-contrast, #1d1905 );
-    }
-    .ee-status-background-color-DTS.with-accessible-foreground.with-hover:hover {
-        background-color: var( --ee-color-yellow-hover-contrast, #f9eaaf );
-    }
+/** datetime active **/
+.ee-status-color-DTA {
+    color: var(--ee-color-green);
+}
 
-        /** datetime inactive **/
-    .ee-status-color-DTI {
-        color: var(--ee-color-dark-grey, #464549);
-    }
-    .ee-status-color-DTI.with-accessible-background {
-        background-color: var(--ee-color-dark-grey-background-contrast, #dedede)
-    }
-    .ee-status-color-DTI.with-accessible-background.with-hover:hover {
-        background-color: var(--ee-color-dark-grey-hover, #fafafa)
-    }
-    .ee-status-background-color-DTI {
-        background-color: var(--ee-color-dark-grey, #464549);
-    }
-    .ee-status-background-color-DTI.with-accessible-foreground {
-        color: var( --ee-color-dark-grey-foreground-contrast, #dedede );
-    }
-    .ee-status-background-color-DTI.with-accessible-foreground.with-hover:hover {
-        background-color: var( --ee-color-dark-grey-hover-contrast, #141415 );
-    }
+.ee-status-background-color-DTA {
+    background-color: var(--ee-color-green);
+    color: var(--ee-text-on-green);
+}
 
-        /** datetime postponed **/
-    .ee-status-color-DTP {
-        color: var(--ee-color-orange, #ff7e14);
-    }
-    .ee-status-color-DTP.with-accessible-background {
-        background-color: var(--ee-color-orange-background-contrast, #171717)
-    }
-    .ee-status-color-DTP.with-accessible-background.with-hover:hover {
-        background-color: var(--ee-color-orange-hover, #383838)
-    }
-    .ee-status-background-color-DTP {
-        background-color: var(--ee-color-orange, #ff7e14);
-    }
-    .ee-status-background-color-DTP.with-accessible-foreground {
-        color: var( --ee-color-orange-foreground-contrast, #171717 );
-    }
-    .ee-status-background-color-DTP.with-accessible-foreground.with-hover:hover {
-        background-color: var( --ee-color-orange-hover-contrast, #ff9d4d );
-    }
+/** datetime upcoming **/
+.ee-status-color-DTU {
+    color: var(--ee-color-blue);
+}
 
-        /** datetime upcoming **/
-    .ee-status-color-DTU {
-        color: var(--ee-color-light-blue, #00b1ca);
-    }
-    .ee-status-color-DTU.with-accessible-background {
-        background-color: var(--ee-color-light-blue-background-contrast, #041525)
-    }
-    .ee-status-color-DTU.with-accessible-background.with-hover:hover {
-        background-color: var(--ee-color-light-blue-hover, #133762)
-    }
-    .ee-status-background-color-DTU {
-        background-color: var(--ee-color-light-blue, #00b1ca);
-    }
-    .ee-status-background-color-DTU.with-accessible-foreground {
-        color: var( --ee-color-light-blue-foreground-contrast, #041525 );
-    }
-    .ee-status-background-color-DTU.with-accessible-foreground.with-hover:hover {
-        background-color: var( --ee-color-light-blue-hover-contrast, #00e1ff );
-    }
+.ee-status-background-color-DTU {
+    background-color: var(--ee-color-blue);
+    color: var(--ee-text-on-blue);
+}
+
+/** datetime postponed **/
+.ee-status-color-DTP {
+    color: var(--ee-color-purple);
+}
+
+.ee-status-background-color-DTP {
+    background-color: var(--ee-color-purple);
+    color: var(--ee-text-on-purple);
+}
+
+/** datetime cancelled **/
+.ee-status-color-DTC {
+    color: var(--ee-color-hot-pink);
+}
+
+.ee-status-background-color-DTC {
+    background-color: var(--ee-color-hot-pink);
+    color: var(--ee-text-on-hot-pink);
+}
+
+/** datetime expired **/
+.ee-status-color-DTE {
+    color: var(--ee-color-grey-6);
+}
+
+.ee-status-background-color-DTE {
+    background-color: var(--ee-color-grey-6);
+    color: var(--ee-text-on-grey-6);
+}
+
+
+/** datetime inactive **/
+.ee-status-color-DTI {
+    color: var(--ee-color-grey-1);
+}
+
+.ee-status-background-color-DTI {
+    background-color: var(--ee-color-grey-1);
+    color: var(--ee-text-on-grey-1);
+}
 
 
