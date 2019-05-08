@@ -32,6 +32,7 @@ class EntityDetailsPanel extends Component {
 					PropTypes.object,
 					PropTypes.string,
 				] ).isRequired,
+				htmlClass: PropTypes.string,
 				editable: PropTypes.shape( {
 					onChange: PropTypes.func.isRequired,
 					placeholder: PropTypes.string,
