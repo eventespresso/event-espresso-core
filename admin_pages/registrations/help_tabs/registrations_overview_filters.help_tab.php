@@ -2,7 +2,6 @@
 <p>
 <?php _e('Filters are a way to show registrations that fall into certain criteria.', 'event_espresso'); ?>
 </p>
-<p>
 <ul>
 <li>
 <strong><?php _e('Filter by Month / Year', 'event_espresso'); ?></strong><br />
@@ -38,4 +37,3 @@
 </li>
 </ul>
 </ul>
-</p>

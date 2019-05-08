@@ -6,7 +6,6 @@
 <strong><?php _e('Notice', 'event_espresso'); ?></strong><br />
 <?php _e('System questions groups may have some options disabled. This is to ensure that your registrations don\'t break from accidental changes.', 'event_espresso'); ?>
 </p>
-<p>
 <ul>
 <li>
 <strong><?php _e('Group Name', 'event_espresso'); ?></strong><br />
@@ -37,7 +36,6 @@
 <?php _e('This shows all available custom questions. If checked, then that question will appear with this question group. Questions that appear here can also be sorted using drag and drop.', 'event_espresso'); ?>
 </li>
 </ul>
-</p>
 <p>
 <strong><?php _e('Recommendations', 'event_espresso'); ?></strong><br />
 <?php _e('Want to see a tour of this screen? Click on the Edit Question Group Tour button which appears on the right side of the page. <br />To learn more about the options on this page, take a look at the different tabs that appear on the left side of the page.', 'event_espresso'); ?>

@@ -2,7 +2,6 @@
 <p>
 <?php _e('This area of the table shows information about any events that were included in this transactions.', 'event_espresso'); ?>
 </p>
-<p>
 <ul>
 <li>
 <strong><?php _e('Line Item ID', 'event_espresso'); ?></strong><br />
@@ -41,9 +40,7 @@
 <?php _e('The total after any discounts and surcharges have been applied.', 'event_espresso'); ?>
 </li>
 </ul>
-</p>
 <p><strong><?php _e('Transaction Session Details', 'event_espresso'); ?></strong></p>
-<p>
 <ul>
 <li>
 <strong><?php _e('Registration Session', 'event_espresso'); ?></strong><br />

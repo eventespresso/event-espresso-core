@@ -1,5 +1,4 @@
 <p><strong><?php _e('Registrations Table Column Headings', 'event_espresso'); ?></strong></p>
-<p>
 <ul>
 <li>
 <strong><?php _e('ID', 'event_espresso'); ?></strong><br />
@@ -34,4 +33,3 @@
 <?php _e('Using the action buttons you can View Registration Details <span class="dashicons dashicons-search"></span>, Edit Contact Details <span class="dashicons dashicons-businessman"></span>, Resend Registration Details <span class="ee-icon ee-icon-email-send"></span>, and View Transaction Details <span class="ee-icon ee-icon-cash"></span>.', 'event_espresso'); ?>
 </li>
 </ul>
-</p>

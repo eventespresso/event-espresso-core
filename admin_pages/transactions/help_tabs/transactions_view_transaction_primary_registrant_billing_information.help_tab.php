@@ -2,7 +2,6 @@
 <p>
 <?php _e('Shows contact information about the primary registrant.', 'event_espresso'); ?>
 </p>
-<p>
 <ul>
 <li>
 <strong><?php _e('Name', 'event_espresso'); ?></strong><br />
@@ -21,7 +20,6 @@
 <?php _e('Shows the address for the primary contact.', 'event_espresso'); ?>
 </li>
 </ul>
-</p>
 <p>
 <?php _e('You can edit information about an Registrant by clicking on the View/Edit this Contact link.', 'event_espresso'); ?><br />
 </p>

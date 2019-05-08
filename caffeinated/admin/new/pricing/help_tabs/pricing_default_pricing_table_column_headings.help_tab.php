@@ -1,5 +1,4 @@
 <p><strong><?php _e('Default Pricing Table Column Headings', 'event_espresso'); ?></strong></p>
-<p>
 <ul>
 <li>
 <strong><?php _e('Name', 'event_espresso'); ?></strong><br />
@@ -48,4 +47,3 @@
 <?php _e('This is the value of the default pricing and is shown as a flat amount or a percentage.', 'event_espresso'); ?>
 </li>
 </ul>
-</p>

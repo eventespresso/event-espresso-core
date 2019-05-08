@@ -1,5 +1,4 @@
 <p><strong><?php _e('Venue Categories Table Column Headings', 'event_espresso'); ?></strong></p>
-<p>
 <ul>
 <li>
 <strong><?php _e('ID', 'event_espresso'); ?></strong><br />
@@ -18,4 +17,3 @@
 <?php _e('The number of venues that are currently associated with this category.', 'event_espresso'); ?>
 </li>
 </ul>
-</p>

@@ -1,5 +1,4 @@
 <p><strong><?php _e('Event Categories Table Column Headings', 'event_espresso'); ?></strong></p>
-<p>
 <ul>
 <li>
 <strong><?php _e('ID', 'event_espresso'); ?></strong><br />
@@ -18,4 +17,3 @@
 <?php _e('This is the number of events that are currently part of this category.', 'event_espresso'); ?>
 </li>
 </ul>
-</p>

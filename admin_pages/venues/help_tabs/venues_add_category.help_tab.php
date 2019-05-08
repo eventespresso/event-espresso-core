@@ -2,7 +2,6 @@
 <p>
 <?php _e('This page allows you to add a new venue category.', 'event_espresso'); ?>
 </p>
-<p>
 <ul>
 <li>
 <strong><?php _e('Category Name', 'event_espresso'); ?></strong><br />
@@ -17,7 +16,6 @@
 <?php _e('The rich text editor can be used to create a description for your venue category.', 'event_espresso'); ?>
 </li>
 </ul>
-</p>
 <p>
 <strong><?php _e('Recommendations', 'event_espresso'); ?></strong><br />
 <?php _e('Want to see a tour of this screen? Click on the Add New Venue Category Tour button which appears on the right side of the page.', 'event_espresso'); ?>

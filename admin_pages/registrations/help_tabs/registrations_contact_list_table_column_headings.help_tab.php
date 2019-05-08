@@ -1,5 +1,4 @@
 <p><strong><?php _e('Contact List Table Column Headings', 'event_espresso'); ?></strong></p>
-<p>
 <ul>
 <li>
 <strong><?php _e('ID', 'event_espresso'); ?></strong><br />
@@ -38,4 +37,3 @@
 <?php _e('This is the country for a contact.', 'event_espresso'); ?>
 </li>
 </ul>
-</p>

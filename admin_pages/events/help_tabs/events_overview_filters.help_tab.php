@@ -2,7 +2,6 @@
 <p>
 <?php _e('Filters are a way to show events based on certain criteria.', 'event_espresso'); ?>
 </p>
-<p>
 <ul>
 <li>
 <strong><?php _e('Filter by Status', 'event_espresso'); ?></strong><br />
@@ -17,4 +16,3 @@
 <?php _e('Show events from a specific category.', 'event_espresso'); ?>
 </li>
 </ul>
-</p>

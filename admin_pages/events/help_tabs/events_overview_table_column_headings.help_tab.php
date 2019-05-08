@@ -1,5 +1,4 @@
 <p><strong><?php _e('Events Overview Table Column Headings', 'event_espresso'); ?></strong></p>
-<p>
 <ul>
 <li>
 <strong><?php _e('ID', 'event_espresso'); ?></strong><br />
@@ -31,7 +30,6 @@
 <?php _e('The following actions are available for the action buttons: View event, Edit Event Details, View Registrations for Event, View Event Reports.', 'event_espresso'); ?>
 </li>
 </ul>
-</p>
 <p>
 <strong><?php _e('Event Name (Status)', 'event_espresso'); ?></strong><br />
 <?php _e('The name of an event may also have a status that appears directly to the left of the name. Some examples may be "event name (draft)" or "event name (sold_out). This status next to the event name is shown when the post status for an event is set to something different than published. This status is different than the status that is shown in the status column. When tickets for an event are sold out, the post status will automatically change to sold out. However, its still possible for an event admin to manually change this status from sold out back to published.', 'event_espresso'); ?>

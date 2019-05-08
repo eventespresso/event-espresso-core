@@ -1,5 +1,4 @@
 <p><strong><?php _e('Questions Overview Table Column Headings', 'event_espresso'); ?></strong></p>
-<p>
 <ul>
 <li>
 <strong><?php _e('ID', 'event_espresso'); ?></strong><br />
@@ -52,7 +51,6 @@
 <?php _e('This is short for "required" and shows if a question must be answered in the registration form.', 'event_espresso'); ?>
 </li>
 </ul>
-</p>
 <p>
 <strong><?php _e('Notice', 'event_espresso'); ?></strong><br />
 <?php _e('System questions are created by Event Espresso and cannot be deleted. However, they can be edited. Be careful when editing these system questions as they are required for registrations to work correctly.', 'event_espresso'); ?>

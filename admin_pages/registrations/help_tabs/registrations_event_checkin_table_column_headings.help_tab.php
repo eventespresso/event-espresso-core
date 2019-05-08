@@ -1,5 +1,4 @@
 <p><strong><?php _e('Event Check-In Table Column Headings', 'event_espresso'); ?></strong></p>
-<p>
 <ul>
 <li>
 <strong><?php _e('Check-In', 'event_espresso'); ?></strong><br />
@@ -46,4 +45,3 @@
 <?php _e('This is the name of the ticket that was selected by the registrant.', 'event_espresso'); ?>
 </li>
 </ul>
-</p>

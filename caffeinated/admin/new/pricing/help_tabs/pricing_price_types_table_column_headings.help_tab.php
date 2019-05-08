@@ -1,5 +1,4 @@
 <p><strong><?php _e('Price Types Table Column Headings', 'event_espresso'); ?></strong></p>
-<p>
 <ul>
 <li>
 <strong><?php _e('Base Price', 'event_espresso'); ?></strong><br />
@@ -18,4 +17,3 @@
 <?php _e('Taxes are a special price type. While you can view the value of a tax price on a single ticket in the event editor, taxes are only applied to the cart total after all other modifiers have been added or subtracted from the base price.', 'event_espresso'); ?>
 </li>
 </ul>
-</p>

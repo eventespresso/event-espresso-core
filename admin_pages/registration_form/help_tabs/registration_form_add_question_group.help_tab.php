@@ -2,7 +2,6 @@
 <p>
 <?php _e('This page allows you to add a new question group for Event Espresso.', 'event_espresso'); ?>
 </p>
-<p>
 <ul>
 <li>
 <strong><?php _e('Group Name', 'event_espresso'); ?></strong><br />
@@ -33,7 +32,6 @@
 <?php _e('This shows all available custom questions. If checked, then that question will appear with this question group.', 'event_espresso'); ?>
 </li>
 </ul>
-</p>
 <p>
 <strong><?php _e('Recommendations', 'event_espresso'); ?></strong><br />
 <?php _e('Want to see a tour of this screen? Click on the Add New Question Group Tour button which appears on the right side of the page. <br />To learn more about the options on this page, take a look at the different tabs that appear on the left side of the page.', 'event_espresso'); ?>

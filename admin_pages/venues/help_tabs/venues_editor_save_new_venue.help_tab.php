@@ -2,7 +2,6 @@
 <p>
 <?php _e('Quickly publish your venue to allow linking to an event or multiple events.', 'event_espresso'); ?><br />
 </p>
-<p>
 <ul>
 <li>
 <strong><?php _e('Status', 'event_espresso'); ?></strong><br />
@@ -33,4 +32,3 @@
 <?php _e('Click the Move to Trash link to move a venue to the trash.', 'event_espresso'); ?>
 </li>
 </ul>
-</p>
