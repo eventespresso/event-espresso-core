@@ -12,7 +12,7 @@ use PHPUnit_Framework_TestCase;
  *
  * @package     Event Espresso
  * @author         Mike Nelson
- * @since         $VID:$
+ * @since         4.9.80.p
  * @group current
  *
  */

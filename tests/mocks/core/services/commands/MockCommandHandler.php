@@ -37,7 +37,7 @@ class MockCommandHandler implements CommandHandlerInterface
      * @param CommandInterface $command
      * @return $this|CommandHandlerInterface
      * @throws InvalidEntityException
-     * @since $VID:$
+     * @since 4.9.80.p
      */
     public function verify(CommandInterface $command)
     {

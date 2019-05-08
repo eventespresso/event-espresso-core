@@ -33,7 +33,7 @@ use UnexpectedValueException;
  *
  * @package     Event Espresso
  * @author         Mike Nelson
- * @since         $VID:$
+ * @since         4.9.80.p
  *
  */
 class FilesDataHandler
@@ -63,7 +63,7 @@ class FilesDataHandler
     }
 
     /**
-     * @since $VID:$
+     * @since 4.9.80.p
      * @return CollectionInterface | FileSubmissionInterface[]
      * @throws UnexpectedValueException
      * @throws InvalidArgumentException
@@ -76,7 +76,7 @@ class FilesDataHandler
 
     /**
      * Sets up the file objects from the request's $_FILES data.
-     * @since $VID:$
+     * @since 4.9.80.p
      * @throws UnexpectedValueException
      * @throws InvalidArgumentException
      * @throws \EventEspresso\core\exceptions\InvalidInterfaceException
@@ -107,7 +107,7 @@ class FilesDataHandler
 
     /**
      * Detects if $_FILES is a weird multi-dimensional array that needs fixing or not.
-     * @since $VID:$
+     * @since 4.9.80.p
      * @param $files_data
      * @return bool
      * @throws UnexpectedValueException
@@ -151,7 +151,7 @@ class FilesDataHandler
      * name="my[hierarchical][form]">`): it leaves the top-level form part alone, but replaces the SECOND part with
      * "name", "size", "tmp_name", etc. So that file's data is located at "my[name][hierarchical][form]",
      * "my[size][hierarchical][form]", "my[tmp_name][hierarchical][form]", etc. It's really weird.
-     * @since $VID:$
+     * @since 4.9.80.p
      * @param $files_data
      * @return array
      */
@@ -176,7 +176,7 @@ class FilesDataHandler
 
     /**
      * Recursively explores the array until it finds a leaf node, and tacks `$type` as a final index in front of it.
-     * @since $VID:$
+     * @since 4.9.80.p
      * @param $data array|string
      * @param $type 'name', 'tmp_name', 'size', or 'error'
      * @param $name string
@@ -204,7 +204,7 @@ class FilesDataHandler
      * Takes the organized $_FILES array (where all file info is located at the same spot as you'd expect an input
      * to be in $_GET or $_POST, with all the file's data located side-by-side in an array) and creates a
      * multi-dimensional array of FileSubmissionInterface objects. Stores it in `$this->file_objects`.
-     * @since $VID:$
+     * @since 4.9.80.p
      * @param array $organized_files $_FILES but organized like $_POST
      * @param array $name_parts_so_far for multidimensional HTML form names,
      * @throws UnexpectedValueException
@@ -249,7 +249,7 @@ class FilesDataHandler
     /**
      * Takes the input name parts, like `['my', 'great', 'file', 'input1']`
      * and returns the HTML name for it, "my[great][file][input1]"
-     * @since $VID:$
+     * @since 4.9.80.p
      * @param $parts
      * @throws UnexpectedValueException
      */
@@ -274,7 +274,7 @@ class FilesDataHandler
      * Eg if you're looking for an input named "my[great][file][input1]", $name_parts
      * should be `['my', 'great', 'file', 'input1']`.
      * Alternatively, you could use `FileDataHandler::getFileObject('my[great][file][input1]');`
-     * @since $VID:$
+     * @since 4.9.80.p
      * @param $name_parts
      * @throws UnexpectedValueException
      * @return FileSubmissionInterface
@@ -286,7 +286,7 @@ class FilesDataHandler
 
     /**
      * Gets the FileSubmissionInterface corresponding to the HTML name provided.
-     * @since $VID:$
+     * @since 4.9.80.p
      * @param $html_name
      * @return mixed
      * @throws InvalidArgumentException

@@ -6,6 +6,7 @@ export {
 	EntityListFilterBar,
 } from './filter-bar';
 export { default as withMoney } from './money';
+export { default as withLatestCheckin } from './with-latest-checkin';
 export { default as withEntityPagination } from './pagination';
 export {
 	default as withFormContainerAndPlaceholder,

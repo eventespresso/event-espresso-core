@@ -21,7 +21,7 @@ if (!defined('EVENT_ESPRESSO_VERSION'))
 class EE_Datetime_Test extends EE_UnitTestCase{
 
     /**
-     * @since $VID:$
+     * @since 4.9.80.p
      * @throws EE_Error
      * @throws InvalidArgumentException
      * @throws ReflectionException

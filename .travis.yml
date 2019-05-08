@@ -91,14 +91,39 @@ jobs:
         - node
       before_install:
         - nvm install && nvm use
-        - npm install npm --latest-npm
+        - nvm install --latest-npm
+      before_script:
+        - npm --version
+        - node --version
       script:
-        - npm run ci || exit 1
+        - npm run ci:test || exit 1
     - language: node_js
       env:
         - LICENSE_CHECK=1
+      before_script:
+        - npm --version
+        - node --version
       script:
         - npm run lc || exit 1
+    - language: node_js
+      env:
+        - BUILD_TEST=1
+      before_install:
+        - nvm install && nvm use
+        - nvm install --latest-npm
+      before_script:
+        - npm --version
+        - node --version
+      script:
+        - npm run ci:build || exit 1
+    - language: node_js
+      env:
+        - JS_LINT=1
+      before_script:
+        - npm --version
+        - node --version
+      script:
+        - npm run ci:lint || exit 1
     - php: 7.3
       if: NOT commit_message =~ js_only AND NOT commit_message =~ dependabot
     - php: 7.2

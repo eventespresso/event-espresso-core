@@ -253,9 +253,10 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class implements EEI_Line_Item_Objec
      */
     public function date_range($dt_frmt = '', $conjunction = ' - ')
     {
-        $first_date = $this->first_datetime() instanceof EE_Datetime ? $this->first_datetime()->start_date($dt_frmt)
+        $dt_frmt = ! empty($dt_frmt) ? $dt_frmt : $this->_dt_frmt;
+        $first_date = $this->first_datetime() instanceof EE_Datetime ? $this->first_datetime()->get_i18n_datetime('DTT_EVT_start', $dt_frmt)
             : '';
-        $last_date = $this->last_datetime() instanceof EE_Datetime ? $this->last_datetime()->end_date($dt_frmt) : '';
+        $last_date = $this->last_datetime() instanceof EE_Datetime ? $this->last_datetime()->get_i18n_datetime('DTT_EVT_end', $dt_frmt) : '';
 
         return $first_date && $last_date ? $first_date . $conjunction . $last_date : '';
     }
@@ -760,7 +761,7 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class implements EEI_Line_Item_Objec
      * Increments sold by amount passed by $qty AND decrements the reserved count on both this ticket and its
      * associated datetimes.
      *
-     * @since $VID:$
+     * @since 4.9.80.p
      * @param int $qty
      * @return boolean
      * @throws EE_Error
@@ -795,7 +796,7 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class implements EEI_Line_Item_Objec
     /**
      * On each datetime related to this ticket, increases its sold count and decreases its reserved count by $qty.
      *
-     * @since $VID:$
+     * @since 4.9.80.p
      * @param int $qty positive or negative. Positive means to increase sold counts (and decrease reserved counts),
      *             Negative means to decreases old counts (and increase reserved counts).
      * @param EE_Datetime[] $datetimes
@@ -820,7 +821,7 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class implements EEI_Line_Item_Objec
      * DB and then updates the model objects.
      * Does not affect the reserved counts.
      *
-     * @since $VID:$
+     * @since 4.9.80.p
      * @param int $qty
      * @return boolean
      * @throws EE_Error
@@ -852,7 +853,7 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class implements EEI_Line_Item_Objec
     /**
      * Decreases sold on related datetimes
      *
-     * @since $VID:$
+     * @since 4.9.80.p
      * @param int $qty
      * @param EE_Datetime[] $datetimes
      * @return void
@@ -905,7 +906,7 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class implements EEI_Line_Item_Objec
     /**
      * Increments reserved by amount passed by $qty, and persists it immediately to the database.
      *
-     * @since $VID:$
+     * @since 4.9.80.p
      * @param int    $qty
      * @param string $source
      * @return bool whether we successfully reserved the ticket or not.
@@ -954,7 +955,7 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class implements EEI_Line_Item_Objec
     /**
      * Increases reserved counts on related datetimes
      *
-     * @since $VID:$
+     * @since 4.9.80.p
      * @param int $qty
      * @param EE_Datetime[] $datetimes
      * @return boolean indicating success
@@ -994,7 +995,7 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class implements EEI_Line_Item_Objec
     /**
      * Decrements (subtracts) reserved by amount passed by $qty, and persists it immediately to the database.
      *
-     * @since $VID:$
+     * @since 4.9.80.p
      * @param int    $qty
      * @param bool   $adjust_datetimes
      * @param string $source
@@ -1031,7 +1032,7 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class implements EEI_Line_Item_Objec
     /**
      * Decreases the reserved count on the specified datetimes.
      *
-     * @since $VID:$
+     * @since 4.9.80.p
      * @param int           $qty
      * @param EE_Datetime[] $datetimes
      * @throws EE_Error
@@ -1559,7 +1560,7 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class implements EEI_Line_Item_Objec
      * Increments sold by amount passed by $qty AND decrements the reserved count on both this ticket and its
      * associated datetimes.
      *
-     * @deprecated $VID:$
+     * @deprecated 4.9.80.p
      * @param int $qty
      * @return void
      * @throws EE_Error
@@ -1573,7 +1574,7 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class implements EEI_Line_Item_Objec
         EE_Error::doing_it_wrong(
             __FUNCTION__,
             esc_html__('Please use EE_Ticket::increaseSold() instead', 'event_espresso'),
-            '$VID:$',
+            '4.9.80.p',
             '5.0.0.p'
         );
         $this->increaseSold($qty);
@@ -1583,7 +1584,7 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class implements EEI_Line_Item_Objec
     /**
      * On each datetime related to this ticket, increases its sold count and decreases its reserved count by $qty.
      *
-     * @deprecated $VID:$
+     * @deprecated 4.9.80.p
      * @param int $qty positive or negative. Positive means to increase sold counts (and decrease reserved counts),
      *                 Negative means to decreases old counts (and increase reserved counts).
      * @throws EE_Error
@@ -1597,7 +1598,7 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class implements EEI_Line_Item_Objec
         EE_Error::doing_it_wrong(
             __FUNCTION__,
             esc_html__('Please use EE_Ticket::increaseSoldForDatetimes() instead', 'event_espresso'),
-            '$VID:$',
+            '4.9.80.p',
             '5.0.0.p'
         );
         $this->increaseSoldForDatetimes($qty);
@@ -1609,7 +1610,7 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class implements EEI_Line_Item_Objec
      * DB and then updates the model objects.
      * Does not affect the reserved counts.
      *
-     * @deprecated $VID:$
+     * @deprecated 4.9.80.p
      * @param int $qty
      * @return void
      * @throws EE_Error
@@ -1623,7 +1624,7 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class implements EEI_Line_Item_Objec
         EE_Error::doing_it_wrong(
             __FUNCTION__,
             esc_html__('Please use EE_Ticket::decreaseSold() instead', 'event_espresso'),
-            '$VID:$',
+            '4.9.80.p',
             '5.0.0.p'
         );
         $this->decreaseSold($qty);
@@ -1633,7 +1634,7 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class implements EEI_Line_Item_Objec
     /**
      * Decreases sold on related datetimes
      *
-     * @deprecated $VID:$
+     * @deprecated 4.9.80.p
      * @param int $qty
      * @return void
      * @throws EE_Error
@@ -1647,7 +1648,7 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class implements EEI_Line_Item_Objec
         EE_Error::doing_it_wrong(
             __FUNCTION__,
             esc_html__('Please use EE_Ticket::decreaseSoldForDatetimes() instead', 'event_espresso'),
-            '$VID:$',
+            '4.9.80.p',
             '5.0.0.p'
         );
         $this->decreaseSoldForDatetimes($qty);
@@ -1657,7 +1658,7 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class implements EEI_Line_Item_Objec
     /**
      * Increments reserved by amount passed by $qty, and persists it immediately to the database.
      *
-     * @deprecated $VID:$
+     * @deprecated 4.9.80.p
      * @param int    $qty
      * @param string $source
      * @return bool whether we successfully reserved the ticket or not.
@@ -1672,7 +1673,7 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class implements EEI_Line_Item_Objec
         EE_Error::doing_it_wrong(
             __FUNCTION__,
             esc_html__('Please use EE_Ticket::increaseReserved() instead', 'event_espresso'),
-            '$VID:$',
+            '4.9.80.p',
             '5.0.0.p'
         );
         return $this->increaseReserved($qty);
@@ -1682,7 +1683,7 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class implements EEI_Line_Item_Objec
     /**
      * Increases sold on related datetimes
      *
-     * @deprecated $VID:$
+     * @deprecated 4.9.80.p
      * @param int $qty
      * @return boolean indicating success
      * @throws EE_Error
@@ -1696,7 +1697,7 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class implements EEI_Line_Item_Objec
         EE_Error::doing_it_wrong(
             __FUNCTION__,
             esc_html__('Please use EE_Ticket::increaseReservedForDatetimes() instead', 'event_espresso'),
-            '$VID:$',
+            '4.9.80.p',
             '5.0.0.p'
         );
         return $this->increaseReservedForDatetimes($qty);
@@ -1706,7 +1707,7 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class implements EEI_Line_Item_Objec
     /**
      * Decrements (subtracts) reserved by amount passed by $qty, and persists it immediately to the database.
      *
-     * @deprecated $VID:$
+     * @deprecated 4.9.80.p
      * @param int    $qty
      * @param bool   $adjust_datetimes
      * @param string $source
@@ -1722,7 +1723,7 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class implements EEI_Line_Item_Objec
         EE_Error::doing_it_wrong(
             __FUNCTION__,
             esc_html__('Please use EE_Ticket::decreaseReserved() instead', 'event_espresso'),
-            '$VID:$',
+            '4.9.80.p',
             '5.0.0.p'
         );
         $this->decreaseReserved($qty);
@@ -1732,7 +1733,7 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class implements EEI_Line_Item_Objec
     /**
      * Decreases reserved on related datetimes
      *
-     * @deprecated $VID:$
+     * @deprecated 4.9.80.p
      * @param int $qty
      * @return void
      * @throws EE_Error
@@ -1746,7 +1747,7 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class implements EEI_Line_Item_Objec
         EE_Error::doing_it_wrong(
             __FUNCTION__,
             esc_html__('Please use EE_Ticket::decreaseReservedForDatetimes() instead', 'event_espresso'),
-            '$VID:$',
+            '4.9.80.p',
             '5.0.0.p'
         );
         $this->decreaseReservedForDatetimes($qty);

@@ -10,7 +10,7 @@ namespace EventEspresso\core\services\json;
  *
  * @package     Event Espresso
  * @author         Mike Nelson
- * @since         $VID:$
+ * @since         4.9.80.p
  *
  */
 interface JsonSerializableAndUnserializable
@@ -18,14 +18,14 @@ interface JsonSerializableAndUnserializable
     /**
      * Creates a simple PHP array or stdClass from this object's properties, which can be easily serialized using
      * wp_json_serialize().
-     * @since $VID:$
+     * @since 4.9.80.p
      * @return mixed
      */
     public function toJsonSerializableData();
 
     /**
      * Initializes this object from data
-     * @since $VID:$
+     * @since 4.9.80.p
      * @param mixed $data
      * @return boolean success
      */

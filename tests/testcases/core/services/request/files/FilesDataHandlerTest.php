@@ -14,14 +14,14 @@ use PHPUnit_Framework_TestCase;
  *
  * @package     Event Espresso
  * @author         Mike Nelson
- * @since         $VID:$
+ * @since         4.9.80.p
  * @group current
  *
  */
 class FilesDataHandlerTest extends PHPUnit_Framework_TestCase
 {
     /**
-     * @since $VID:$
+     * @since 4.9.80.p
      */
     public function testGetOrganizedFilesEmptyArray()
     {
@@ -37,7 +37,7 @@ class FilesDataHandlerTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @since $VID:$
+     * @since 4.9.80.p
      */
     public function testGetOrganizedFiles2dArray()
     {
@@ -67,7 +67,7 @@ class FilesDataHandlerTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @since $VID:$
+     * @since 4.9.80.p
      */
     public function testGetOrganizedFiles3dArray()
     {
@@ -123,7 +123,7 @@ class FilesDataHandlerTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @since $VID:$
+     * @since 4.9.80.p
      */
     public function testGetOrganizedFiles2dAnd3dArray()
     {
@@ -181,7 +181,7 @@ class FilesDataHandlerTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @since $VID:$
+     * @since 4.9.80.p
      */
     public function testGetOrganizedFiles4dArray()
     {

@@ -405,6 +405,7 @@ final class EE_Capabilities extends EE_Base
                     'ee_edit_registrations',
                     'ee_edit_others_registrations',
                     'ee_delete_registrations',
+                    'ee_delete_others_registrations',
                     // checkins
                     'ee_read_others_checkins',
                     'ee_read_checkins',
@@ -550,6 +551,7 @@ final class EE_Capabilities extends EE_Base
                     'ee_edit_others_registrations',
                     'ee_delete_registration',
                     'ee_delete_registrations',
+                    'ee_delete_others_registrations',
                     // checkins
                     'ee_read_others_checkins',
                     'ee_read_checkins',

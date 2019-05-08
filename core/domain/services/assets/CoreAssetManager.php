@@ -9,6 +9,7 @@ use EE_Template_Config;
 use EED_Core_Rest_Api;
 use EEH_DTT_Helper;
 use EEH_Qtip_Loader;
+use EventEspresso\core\domain\Domain;
 use EventEspresso\core\domain\DomainInterface;
 use EventEspresso\core\domain\values\assets\JavascriptAsset;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
@@ -312,6 +313,8 @@ class CoreAssetManager extends AssetManager
                 'admin_url' => admin_url('/'),
             )
         );
+        // Event Espresso brand name
+        $this->registry->addData('brandName', Domain::brandName());
         /** site formatting values **/
         $this->registry->addData(
             'site_formats',
