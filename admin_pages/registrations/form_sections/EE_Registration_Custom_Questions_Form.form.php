@@ -123,10 +123,15 @@ class EE_Registration_Custom_Questions_Form extends EE_Form_Section_Proper
             $this->_registration->ID()
         )) {
             $parts_of_subsection['edit_link'] = new EE_Form_Section_HTML(
-                '<tr><th/><td class="reg-admin-edit-attendee-question-td"><a class="reg-admin-edit-attendee-question-lnk" href="#" aria-label="' . esc_attr__('click to edit question', 'event_espresso') . '">
+                EEH_HTML::table(
+                    EEH_HTML::tr(
+                       '<th/><td class="reg-admin-edit-attendee-question-td"><a class="reg-admin-edit-attendee-question-lnk" href="#" aria-label="' . esc_attr__('click to edit question', 'event_espresso') . '">
 		  			<span class="reg-admin-edit-question-group-spn">' . __('edit the above question group', 'event_espresso') . '</span>
 		  			<div class="dashicons dashicons-edit"></div>
-		  		</a></td></tr>'
+		  		</a></td>'
+                    ) .
+                    EEH_HTML::no_row('',2)
+                )
             );
         }
         return new EE_Form_Section_Proper(
