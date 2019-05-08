@@ -43,7 +43,7 @@ function themeColors( config ) {
 	let colors = [];
 	const themeColors = [ 'primary', 'secondary', 'accent' ];
 	themeColors.forEach( ( themeColor ) => {
-		const colorHex = config.theme[ themeColor ];
+		const colorHex = config.meta[ themeColor ];
 		colors.push( compileColorTemplate( config, colorHex, themeColor ) );
 	} );
 	return colors;
@@ -60,13 +60,13 @@ function themeColors( config ) {
 function compileColorTemplate( config, colorHex, colorName ) {
 	const highContrast = generateHighContrast(
 		colorHex,
-		config.theme.rgbModifier,
-		config.theme.darkTheme
+		config.meta.rgbModifier,
+		config.meta.darkTheme
 	);
 	const lowContrast = generateLowContrast(
 		colorHex,
-		config.theme.rgbModifier,
-		config.theme.darkTheme
+		config.meta.rgbModifier,
+		config.meta.darkTheme
 	);
 	return colorTemplateCompiler(
 		{
@@ -77,15 +77,15 @@ function compileColorTemplate( config, colorHex, colorName ) {
 			lowContrastColorHex: lowContrast,
 			textContrastColorHex: findContrastColor(
 				colorHex,
-				config.theme.blackAndWhiteContrast
+				config.meta.blackAndWhiteContrast
 			),
 			textHighContrastColorHex: findContrastColor(
 				highContrast,
-				config.theme.blackAndWhiteContrast
+				config.meta.blackAndWhiteContrast
 			),
 			textLowContrastColorHex: findContrastColor(
 				lowContrast,
-				config.theme.blackAndWhiteContrast
+				config.meta.blackAndWhiteContrast
 			),
 		}
 	)
@@ -102,33 +102,33 @@ function textColors( config ) {
 		[ TEMPLATES_PATH, 'font-colors.css.handlebars' ]
 	);
 	const defaultText = findContrastColor(
-		config.theme.background,
-		config.theme.blackAndWhiteContrast
+		config.meta.background,
+		config.meta.blackAndWhiteContrast
 	);
 	const highContrastText = generateHighContrast(
 		defaultText,
-		config.theme.rgbModifier,
-		config.theme.darkTheme
+		config.meta.rgbModifier,
+		config.meta.darkTheme
 	);
 	const superHighContrastText = generateHighContrast(
 		highContrastText,
-		config.theme.rgbModifier,
-		config.theme.darkTheme
+		config.meta.rgbModifier,
+		config.meta.darkTheme
 	);
 	const lowContrastText = generateLowContrast(
 		defaultText,
-		config.theme.rgbModifier,
-		config.theme.darkTheme
+		config.meta.rgbModifier,
+		config.meta.darkTheme
 	);
 	const superLowContrastText = generateLowContrast(
 		lowContrastText,
-		config.theme.rgbModifier,
-		config.theme.darkTheme
+		config.meta.rgbModifier,
+		config.meta.darkTheme
 	);
 	return [
 		templateCompiler(
 			{
-				themeLabel: startCase( config.theme.name ),
+				themeLabel: startCase( config.meta.name ),
 				textType: 'default',
 				defaultText: defaultText,
 				superHighContrast: superHighContrastText,
@@ -150,11 +150,11 @@ function extraColors( config ) {
 	const templateCompiler = getTemplateCompiler(
 		[ TEMPLATES_PATH, 'extra-colors.css.handlebars' ]
 	);
-	const background = config.theme.background;
+	const background = config.meta.background;
 	const greys = generateGreyScale(
 		config.colors.black || '#000000',
 		config.colors.white || '#FFFFFF',
-		config.theme.darkTheme
+		config.meta.darkTheme
 	);
 	const templateVars = {
 		bgColorHex: background,
@@ -164,7 +164,7 @@ function extraColors( config ) {
 		templateVars[ `grey${ x }ColorHex` ] = greys[ x ];
 		templateVars[ `textOnGrey${ x }ColorHex` ] = findContrastColor(
 			greys[ x ],
-			config.theme.blackAndWhiteContrast
+			config.meta.blackAndWhiteContrast
 		);
 	}
 	return [ templateCompiler( templateVars ) ];

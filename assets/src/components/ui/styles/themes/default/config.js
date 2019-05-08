@@ -24,7 +24,7 @@ const colors =  {
 	white: '#ffffff',
 };
 
-const theme = {
+const meta = {
 	name: '2019 Default',
 	primary: colors.blue,
 	secondary: colors.green,
@@ -50,7 +50,7 @@ const sizes = {
 
 module.exports = {
 	folder: 'themes/default',
-	colors: colors,
-	theme: theme,
+	colors,
+	meta,
 	sizes,
 };

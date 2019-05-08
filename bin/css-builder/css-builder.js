@@ -40,18 +40,18 @@ function getConfig( theme ) {
  * @return {Object} config
  */
 function setDefaultValues( config ) {
-	config.theme.background = config.theme.background ?
-		config.theme.background :
+	config.meta.background = config.meta.background ?
+		config.meta.background :
 		'#ffffff';
-	config.theme.darkTheme = colorUtils.isDarkTheme(
-		config.theme.background
+	config.meta.darkTheme = colorUtils.isDarkTheme(
+		config.meta.background
 	);
-	config.theme.rgbModifier = config.theme.rgbModifier ?
-		config.theme.rgbModifier :
+	config.meta.rgbModifier = config.meta.rgbModifier ?
+		config.meta.rgbModifier :
 		{ r: 32, g: 32, b: 32 };
-	config.theme.blackAndWhiteContrast
-		= config.theme.blackAndWhiteContrast ?
-		config.theme.blackAndWhiteContrast :
+	config.meta.blackAndWhiteContrast
+		= config.meta.blackAndWhiteContrast ?
+		config.meta.blackAndWhiteContrast :
 		false;
 	return config;
 }
@@ -98,7 +98,7 @@ function writeColorsCss( theme, config ) {
 	const fileData = parseCssTemplate(
 		[ CSS_TEMPLATES_PATH, `section-${ fileName }.handlebars` ],
 		{
-			themeName: startCase( config.theme.name ),
+			themeName: startCase( config.meta.name ),
 			baseColorVars: buildColorStylesheets.baseColors( config ),
 			themeColorVars: buildColorStylesheets.themeColors( config ),
 			textColors: buildColorStylesheets.textColors( config ),
@@ -125,7 +125,7 @@ function writeSizesCss( theme, config ) {
 	const fileData = parseCssTemplate(
 		[ CSS_TEMPLATES_PATH, `section-${ fileName }.handlebars` ],
 		{
-			themeName: startCase( config.theme.name ),
+			themeName: startCase( config.meta.name ),
 			fontSizes: buildSizesStylesheets.fontSizes( config ),
 			marginSizes: buildSizesStylesheets.marginSizes( config ),
 			paddingSizes: buildSizesStylesheets.paddingSizes( config ),
@@ -162,7 +162,7 @@ function writeCssDemoMainFile( theme, config ) {
 	const fileData = parseCssTemplate(
 		[ DEMO_TEMPLATES_PATH, 'main_template.html' ],
 		{
-			themeName: config.theme.name,
+			themeName: config.meta.name,
 			variableStylesheets: getCssFiles( config.folder, true ),
 			baseStylesheets: getCssFiles( 'root' ),
 			overrideStylesheets: getCssFiles( config.folder ),
