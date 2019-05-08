@@ -9,10 +9,14 @@ const {
 	generateHighContrast,
 	generateLowContrast,
 	findContrastColor,
-	generateGreysFromBg,
+	generateGreyScale,
 } = colorUtils;
 
 const { getTemplateCompiler } = fileUtils;
+
+const colorTemplateCompiler = getTemplateCompiler(
+	[ TEMPLATES_PATH, 'color.css.handlebars' ]
+);
 
 /**
  * builds the theme base colors stylesheet
@@ -21,25 +25,10 @@ const { getTemplateCompiler } = fileUtils;
  * @return {Array} The build content for writing to a final file.
  */
 function baseColors( config ) {
-	const templateCompiler = getTemplateCompiler(
-		[ TEMPLATES_PATH, 'base-colors.css.handlebars' ]
-	);
 	let colors = [];
-	for ( const colorName in config.baseColors ) {
-		const colorHex = config.baseColors[ colorName ];
-		colors.push(
-			templateCompiler(
-				{
-					colorLabel: startCase( colorName ),
-					colorName: colorName,
-					colorHex: colorHex,
-					colorContrast: findContrastColor(
-						colorHex,
-						config.themeColors.blackAndWhiteContrast
-					)
-				}
-			)
-		);
+	for ( const colorName in config.colors ) {
+		const colorHex = config.colors[ colorName ];
+		colors.push( compileColorTemplate( config, colorHex, colorName ) );
 	}
 	return colors;
 }
@@ -51,48 +40,55 @@ function baseColors( config ) {
  * @return {Array} The build content for writing to a final file.
  */
 function themeColors( config ) {
-	const templateCompiler = getTemplateCompiler(
-		[ TEMPLATES_PATH, 'theme-colors.css.handlebars' ]
-	);
 	let colors = [];
 	const themeColors = [ 'primary', 'secondary', 'accent' ];
 	themeColors.forEach( ( themeColor ) => {
-		const colorHex = config.themeColors[ themeColor ];
-		const highContrast = generateHighContrast(
-			colorHex,
-			config.themeColors.rgbModifier,
-			config.themeColors.darkTheme
-		);
-		const lowContrast = generateLowContrast(
-			colorHex,
-			config.themeColors.rgbModifier,
-			config.themeColors.darkTheme
-		);
-		colors.push(
-			templateCompiler(
-				{
-					themeColorLabel: startCase( themeColor ),
-					themeColor: themeColor,
-					colorHex: colorHex,
-					highContrastColorHex: highContrast,
-					lowContrastColorHex: lowContrast,
-					textContrastColorHex: findContrastColor(
-						colorHex,
-						config.themeColors.blackAndWhiteContrast
-					),
-					textHighContrastColorHex: findContrastColor(
-						highContrast,
-						config.themeColors.blackAndWhiteContrast
-					),
-					textLowContrastColorHex: findContrastColor(
-						lowContrast,
-						config.themeColors.blackAndWhiteContrast
-					),
-				}
-			)
-		);
+		const colorHex = config.theme[ themeColor ];
+		colors.push( compileColorTemplate( config, colorHex, themeColor ) );
 	} );
 	return colors;
+}
+
+/**
+ * builds the template for the provided color
+ *
+ * @param {Object} config The configuration object for the theme
+ * @param {string} colorHex
+ * @param {string} colorName
+ * @return {string} color content
+ */
+function compileColorTemplate( config, colorHex, colorName ) {
+	const highContrast = generateHighContrast(
+		colorHex,
+		config.theme.rgbModifier,
+		config.theme.darkTheme
+	);
+	const lowContrast = generateLowContrast(
+		colorHex,
+		config.theme.rgbModifier,
+		config.theme.darkTheme
+	);
+	return colorTemplateCompiler(
+		{
+			colorLabel: startCase( colorName ),
+			colorName: colorName,
+			colorHex: colorHex,
+			highContrastColorHex: highContrast,
+			lowContrastColorHex: lowContrast,
+			textContrastColorHex: findContrastColor(
+				colorHex,
+				config.theme.blackAndWhiteContrast
+			),
+			textHighContrastColorHex: findContrastColor(
+				highContrast,
+				config.theme.blackAndWhiteContrast
+			),
+			textLowContrastColorHex: findContrastColor(
+				lowContrast,
+				config.theme.blackAndWhiteContrast
+			),
+		}
+	)
 }
 
 /**
@@ -101,38 +97,38 @@ function themeColors( config ) {
  * @param {Object} config The configuration object for the theme
  * @return {Array} The build content for writing to a final file.
  */
-function fontColors( config ) {
+function textColors( config ) {
 	const templateCompiler = getTemplateCompiler(
 		[ TEMPLATES_PATH, 'font-colors.css.handlebars' ]
 	);
 	const defaultText = findContrastColor(
-		config.themeColors.background,
-		config.themeColors.blackAndWhiteContrast
+		config.theme.background,
+		config.theme.blackAndWhiteContrast
 	);
 	const highContrastText = generateHighContrast(
 		defaultText,
-		config.themeColors.rgbModifier,
-		config.themeColors.darkTheme
+		config.theme.rgbModifier,
+		config.theme.darkTheme
 	);
 	const superHighContrastText = generateHighContrast(
 		highContrastText,
-		config.themeColors.rgbModifier,
-		config.themeColors.darkTheme
+		config.theme.rgbModifier,
+		config.theme.darkTheme
 	);
 	const lowContrastText = generateLowContrast(
 		defaultText,
-		config.themeColors.rgbModifier,
-		config.themeColors.darkTheme
+		config.theme.rgbModifier,
+		config.theme.darkTheme
 	);
 	const superLowContrastText = generateLowContrast(
 		lowContrastText,
-		config.themeColors.rgbModifier,
-		config.themeColors.darkTheme
+		config.theme.rgbModifier,
+		config.theme.darkTheme
 	);
 	return [
 		templateCompiler(
 			{
-				themeLabel: startCase( config.themeName ),
+				themeLabel: startCase( config.theme.name ),
 				textType: 'default',
 				defaultText: defaultText,
 				superHighContrast: superHighContrastText,
@@ -154,33 +150,29 @@ function extraColors( config ) {
 	const templateCompiler = getTemplateCompiler(
 		[ TEMPLATES_PATH, 'extra-colors.css.handlebars' ]
 	);
-	const background = config.themeColors.background;
-	const greys = generateGreysFromBg(
-		background,
-		config.themeColors.darkTheme
+	const background = config.theme.background;
+	const greys = generateGreyScale(
+		config.colors.black || '#000000',
+		config.colors.white || '#FFFFFF',
+		config.theme.darkTheme
 	);
-	return [
-		templateCompiler(
-			{
-				bgColorHex: background,
-				borderColorHex: findContrastColor( background, false, 'AA' ),
-				grey1ColorHex: greys[ 0 ],
-				grey2ColorHex: greys[ 1 ],
-				grey3ColorHex: greys[ 2 ],
-				grey4ColorHex: greys[ 3 ],
-				grey5ColorHex: greys[ 4 ],
-				grey6ColorHex: greys[ 5 ],
-				grey7ColorHex: greys[ 6 ],
-				grey8ColorHex: greys[ 7 ],
-				grey9ColorHex: greys[ 8 ],
-			}
-		)
-	];
+	const templateVars = {
+		bgColorHex: background,
+		borderColorHex: findContrastColor( background, false, 'AA' ),
+	};
+	for ( let x = 0; x < greys.length; x++ ) {
+		templateVars[ `grey${ x }ColorHex` ] = greys[ x ];
+		templateVars[ `textOnGrey${ x }ColorHex` ] = findContrastColor(
+			greys[ x ],
+			config.theme.blackAndWhiteContrast
+		);
+	}
+	return [ templateCompiler( templateVars ) ];
 }
 
 module.exports = {
 	baseColors,
 	themeColors,
-	fontColors,
+	textColors,
 	extraColors,
 };

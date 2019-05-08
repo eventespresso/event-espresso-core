@@ -9,15 +9,15 @@ const templateCompiler = getTemplateCompiler(
 );
 
 const defaultFontSizeModifiers = {
-	micro: .9,
-	tiny: 1,
-	smaller: 1.1,
-	small: 1.2,
-	default: 1.4,
-	big: 1.6,
-	bigger: 1.8,
-	huge: 2.4,
-	extreme: 3.2,
+	micro: 1.1,
+	tiny: 1.2,
+	smaller: 1.4,
+	small: 1.6,
+	default: 1.8,
+	big: 2.4,
+	bigger: 3.2,
+	huge: 4.5,
+	extreme: 6.0,
 };
 const defaultSizeModifiers = {
 	micro: .125,
@@ -31,11 +31,11 @@ const defaultSizeModifiers = {
 	extreme: 2,
 };
 const defaultRadiusModifiers = {
-	small: .667,
-	default: 1,
-	big: 1.333,
-	bigger: 2,
-	huge: 4,
+	small: 1,
+	default: 1.333,
+	big: 2,
+	bigger: 4,
+	huge: 8,
 };
 
 /**
@@ -61,6 +61,14 @@ function fontSizes( config ) {
 			);
 		}
 	}
+	sizes.push(
+		templateCompiler( {
+			modifier: 'line-height-modifier',
+			value: config.sizes.lineHeightModifier ?
+				config.sizes.lineHeightModifier :
+				1.5,
+		} )
+	);
 	return sizes;
 }
 
