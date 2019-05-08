@@ -40,18 +40,18 @@ function getConfig( theme ) {
  * @return {Object} config
  */
 function setDefaultValues( config ) {
-	config.themeColors.background = config.themeColors.background ?
-		config.themeColors.background :
+	config.theme.background = config.theme.background ?
+		config.theme.background :
 		'#ffffff';
-	config.themeColors.darkTheme = colorUtils.isDarkTheme(
-		config.themeColors.background
+	config.theme.darkTheme = colorUtils.isDarkTheme(
+		config.theme.background
 	);
-	config.themeColors.rgbModifier = config.themeColors.rgbModifier ?
-		config.themeColors.rgbModifier :
+	config.theme.rgbModifier = config.theme.rgbModifier ?
+		config.theme.rgbModifier :
 		{ r: 32, g: 32, b: 32 };
-	config.themeColors.blackAndWhiteContrast
-		= config.themeColors.blackAndWhiteContrast ?
-		config.themeColors.blackAndWhiteContrast :
+	config.theme.blackAndWhiteContrast
+		= config.theme.blackAndWhiteContrast ?
+		config.theme.blackAndWhiteContrast :
 		false;
 	return config;
 }
@@ -96,12 +96,12 @@ function writeColorsCss( theme, config ) {
 	}
 	const fileName = 'color-variables.css';
 	const fileData = parseCssTemplate(
-		[ CSS_TEMPLATES_PATH, `${ fileName }.handlebars` ],
+		[ CSS_TEMPLATES_PATH, `section-${ fileName }.handlebars` ],
 		{
-			themeName: startCase( config.themeName ),
+			themeName: startCase( config.theme.name ),
 			baseColorVars: buildColorStylesheets.baseColors( config ),
 			themeColorVars: buildColorStylesheets.themeColors( config ),
-			fontColors: buildColorStylesheets.fontColors( config ),
+			textColors: buildColorStylesheets.textColors( config ),
 			extraColors: buildColorStylesheets.extraColors( config ),
 		}
 	);
@@ -123,9 +123,9 @@ function writeSizesCss( theme, config ) {
 	}
 	const fileName = 'size-variables.css';
 	const fileData = parseCssTemplate(
-		[ CSS_TEMPLATES_PATH, `${ fileName }.handlebars` ],
+		[ CSS_TEMPLATES_PATH, `section-${ fileName }.handlebars` ],
 		{
-			themeName: startCase( config.themeName ),
+			themeName: startCase( config.theme.name ),
 			fontSizes: buildSizesStylesheets.fontSizes( config ),
 			marginSizes: buildSizesStylesheets.marginSizes( config ),
 			paddingSizes: buildSizesStylesheets.paddingSizes( config ),
@@ -162,7 +162,7 @@ function writeCssDemoMainFile( theme, config ) {
 	const fileData = parseCssTemplate(
 		[ DEMO_TEMPLATES_PATH, 'main_template.html' ],
 		{
-			themeName: config.themeName,
+			themeName: config.theme.name,
 			variableStylesheets: getCssFiles( config.folder, true ),
 			baseStylesheets: getCssFiles( 'root' ),
 			overrideStylesheets: getCssFiles( config.folder ),
@@ -231,7 +231,7 @@ function buildFiles( theme = 'default' ) {
 	config = setDefaultValues( config );
 	writeColorsCss( theme, config );
 	writeSizesCss( theme, config );
-	// createDemos( theme, config );
+	createDemos( theme, config );
 	createIndexFile( theme );
 	process.stdout.write(
 		'\n' + chalk.reset.inverse.bold.green( 'DONE' ) + '\n'

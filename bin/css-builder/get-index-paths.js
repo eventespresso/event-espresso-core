@@ -43,7 +43,7 @@ function getIndexPaths( themeDirectory ) {
 				const relativePath = getRelativePath( file, themeDirectory );
 				process.stdout.write(
 					chalk.green(
-						chalk.green( ' \u21D2 ' ) +
+						chalk.green( ' \u2022 ' ) +
 						relativePath + '\n'
 					)
 				);
@@ -54,7 +54,7 @@ function getIndexPaths( themeDirectory ) {
 				const relativePath = getRelativePath( file, themeDirectory, true );
 				process.stdout.write(
 					chalk.green(
-						chalk.green( ' \u21D2 ' ) +
+						chalk.green( ' \u2022 ' ) +
 						relativePath + '\n'
 					)
 				);
@@ -66,7 +66,7 @@ function getIndexPaths( themeDirectory ) {
 				const relativePath = getRelativePath( file, themeDirectory );
 				process.stdout.write(
 					chalk.green(
-						chalk.green( ' \u21D2 ' ) +
+						chalk.green( ' \u2022 ' ) +
 						relativePath + '\n'
 					)
 				);

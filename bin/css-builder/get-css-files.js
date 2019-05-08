@@ -87,11 +87,9 @@ function getCssRelativePath( directory, file ) {
  * A function for reading and returning a list of css files for relative path
  * inclusion (for the given arguments).
  *
- * @param {string} directory  The directory (relative to the componets/ui/styles
- * path for which to retrieve the css files from.
- *
- * @param {boolean} variablesOnly Whether to only return variable css files or
- * not.
+ * @param {string} directory  	The directory (relative to the
+ * components/ui/styles path) for which to retrieve the css files from.
+ * @param {boolean} variablesOnly Whether to only return variable css files
  * @param {boolean} relative  Whether to return the path relative to the demo
  * directory.
  * @return {string[]}  An array of relative css file paths for all the css files
