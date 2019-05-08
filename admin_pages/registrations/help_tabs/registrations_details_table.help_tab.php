@@ -1,12 +1,10 @@
 <p>
 <?php _e('The Registration Details table shows Registration Items that are associated with a registration. You can resend registration information by clicking on the Resend Registration button. You can also view a transaction for a registration by clicking on the View Transaction button.', 'event_espresso'); ?>
 </p>
-</p>
 <p><strong><?php _e('Registration Items', 'event_espresso'); ?></strong></p>
 <p>
 <?php _e('This area of the table shows information about any events that were included in this registration.', 'event_espresso'); ?><br />
 </p>
-<p>
 <ul>
 <li>
 <strong><?php _e('Line Item ID', 'event_espresso'); ?></strong><br />
@@ -45,9 +43,7 @@
 <?php _e('The total after any discounts and surcharges have been applied.', 'event_espresso'); ?>
 </li>
 </ul>
-</p>
 <p><strong><?php _e('Registration Session Details', 'event_espresso'); ?></strong></p>
-<p>
 <ul>
 <li>
 <strong><?php _e('Registration ID', 'event_espresso'); ?></strong><br />
