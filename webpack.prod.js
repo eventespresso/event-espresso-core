@@ -37,7 +37,7 @@ common.forEach( ( config, index ) => {
 					validators: 'eventespresso-validators',
 					'editor-hocs': 'eventespresso-editor-hocs',
 				},
-				excludes: [ 'eejs', 'vendor' ],
+				excludes: [ 'eejs', 'vendor', 'core-default-theme' ],
 			} ),
 			new WebpackAssetsManifest( {
 				output: path.resolve( __dirname,
