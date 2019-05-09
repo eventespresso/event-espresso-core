@@ -14,10 +14,6 @@ import { getDatetimeEntityIds } from './utils';
  * 	eventDateTickets - an array of ticket entities for the supplied event date
  * 	eventDateTicketsLoaded - boolean true if loading is complete
  *
- * !!! IMPORTANT !!!
- * ONLY USE THIS AFTER THE CALL TO hasFinishedResolution() in the
- * withEventDatetimes() DATA HOC has completed and resolved true
- *
  * @function
  */
 export const withTicketsForAllEventDates = withSelect(
