@@ -23,11 +23,11 @@
     font-size: 1rem;
     font-style: italic;
     height: auto;
-    line-height: 36px;
+    line-height: 1.25rem;
     position: relative;
 }
 
-.ee-form-info span {
+.ee-form-info-text {
     height: 100%;
 }
 

@@ -75,7 +75,7 @@ const FormInfoBase = ( {
 			className={ htmlClass }
 		>
 			{ typeIcon }
-			<span className="ee-form-info-text">{ formInfo }</span>
+			<div className="ee-form-info-text">{ formInfo }</div>
 			{ dismiss }
 		</div>
 	) : null;
