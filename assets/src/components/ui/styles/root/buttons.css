@@ -1,0 +1,103 @@
+.ee-button,
+.ee-button:active,
+.ee-button:focus,
+.ee-button:visited {
+    border-radius: calc(var(--ee-border-radius-small) * 1px);
+    /*box-shadow: var(--ee-box-shadow-small);*/
+    box-sizing: border-box !important;
+    cursor: pointer;
+    display: inline-block;
+    font-size: calc(var(--ee-font-size-small) * 1px);
+    font-weight: normal;
+    line-height: calc(var(--ee-line-height-modifier) * 1rem);
+    margin: 0 0 calc(var(--ee-margin-smaller) * 1rem);
+    outline: none !important;
+    position: relative;
+    padding: calc(var(--ee-padding-tiny) * 1rem) calc(var(--ee-padding-smaller) * 1rem);
+    text-decoration: none;
+    text-align: center;
+    top: -1px;
+}
+
+.ee-button:active { top: 0; }
+
+
+/* BUTTON COLORS */
+
+.ee-button-default {
+    background: var(--ee-color-grey-9);
+    border: 1px solid var(--ee-color-grey-9);
+    border-bottom: 1px solid var(--ee-color-grey-8);
+    color: var(--ee-default-text-color-high-contrast);
+}
+
+.ee-button-default:hover {
+    background: var(--ee-background-color);
+}
+
+.ee-button-primary {
+    background: var(--ee-color-primary);
+    border: 1px solid var(--ee-color-primary);
+    border-bottom: 1px solid var(--ee-color-primary-high-contrast);
+    color: var(--ee-text-on-primary);
+}
+
+.ee-button-primary:hover {
+    background: var(--ee-color-primary-low-contrast);
+}
+
+.ee-button-secondary {
+    background: var(--ee-color-secondary);
+    border: 1px solid var(--ee-color-secondary);
+    border-bottom: 1px solid var(--ee-color-secondary-high-contrast);
+    color: var(--ee-text-on-secondary);
+}
+
+.ee-button-secondary:hover {
+    background: var(--ee-color-secondary-low-contrast);
+}
+
+.ee-button-accent {
+    background: var(--ee-color-accent);
+    border: 1px solid var(--ee-color-accent);
+    border-bottom: 1px solid var(--ee-color-accent-high-contrast);
+    color: var(--ee-text-on-accent);
+}
+
+.ee-button-accent:hover {
+    background: var(--ee-color-accent-low-contrast);
+}
+
+/* BUTTON SIZES */
+
+.tiny.ee-button,
+.tiny.ee-button:active,
+.tiny.ee-button:focus,
+.tiny.ee-button:visited {
+    font-size: calc(var(--ee-font-size-tiny) * 1px);
+    padding: calc(var(--ee-padding-micro) * .5rem) calc(var(--ee-padding-tiny) * 1rem);
+}
+
+.small.ee-button,
+.small.ee-button:active,
+.small.ee-button:focus,
+.small.ee-button:visited {
+    font-size: calc(var(--ee-font-size-smaller) * 1px);
+    padding: calc(var(--ee-padding-micro) * 1rem) calc(var(--ee-padding-tiny) * 1rem);
+}
+
+.big.ee-button,
+.big.ee-button:active,
+.big.ee-button:focus,
+.big.ee-button:visited {
+    font-size: calc(var(--ee-font-size-default) * 1px);
+    padding: calc(var(--ee-padding-smaller) * 1rem) calc(var(--ee-padding-small) * 1rem);
+}
+
+.huge.ee-button,
+.huge.ee-button:active,
+.huge.ee-button:focus,
+.huge.ee-button:visited {
+    font-size: calc(var(--ee-font-size-big) * 1px);
+    padding: calc(var(--ee-padding-smaller) * 1rem) calc(var(--ee-padding-small) * 1rem);
+}

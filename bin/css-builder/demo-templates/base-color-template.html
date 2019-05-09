@@ -1,0 +1,30 @@
+<div class="demo-item colors-demo">
+    <h4 class="base-color ee-focus-priority-4">{{colorLabel}}</h4>
+    {{#if isGrey}}
+    <div class="ee-container ee-with-color-{{color}}">
+        <p><code>--ee-color-{{color}}</code><br />- primarily intended for setting the background color of an
+            element</p>
+        <p><code>--ee-text-on-{{color}}</code><br/>- A WCAG compliant contrast for this color.</p>
+    </div>
+    {{else}}
+    <div class="ee-container ee-with-color-{{color}}-high-contrast">
+        <p>
+            <code>--ee-color-{{color}}-high-contrast</code><br/>- A higher contrast shade of <code>--ee-color-{{color}}</code>.
+        </p>
+        <p><code>--ee-text-on-{{color}}-high-contrast</code><br/>- A WCAG compliant contrast for this color.</p>
+    </div>
+    <div class="ee-container ee-with-color-{{color}}">
+        <p>
+            <code>--ee-color-{{color}}</code><br/>- primarily intended for setting the background color of an element
+        </p>
+        <p><code>--ee-text-on-{{color}}</code><br/>- A WCAG compliant contrast for this color.</p>
+    </div>
+    <div class="ee-container ee-with-color-{{color}}-low-contrast">
+        <p>
+            <code>--ee-color-{{color}}-low-contrast</code><br/>- A lower contrast shade of the <code>--ee-color-{{color
+            }}</code> color.
+        </p>
+        <p><code>--ee-text-on-{{color}}-low-contrast</code><br/>- A WCAG compliant contrast for this color.</p>
+    </div>
+    {{/if}}
+</div>
