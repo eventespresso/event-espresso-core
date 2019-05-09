@@ -101,13 +101,7 @@ export default createHigherOrderComponent(
 				),
 			};
 		} ),
-		( WrappedComponent ) => {
-			return class extends Component {
-				render() {
-					return <WrappedComponent { ...this.props } />;
-				}
-			};
-		},
+		( WrappedComponent ) => ( props ) => <WrappedComponent { ...props } />,
 	] ),
 	'withDatesListFilterState'
 );
