@@ -15,8 +15,7 @@ const EMPTY_OBJECT = {};
  * @function
  */
 export const withEvent = withSelect(
-	( select, ownProps ) => {
-		const eventId = ownProps.eventId;
+	( select, { eventId } ) => {
 		if ( eventId ) {
 			const { getEventById } = select( 'eventespresso/core' );
 			const { hasFinishedResolution } = select( 'core/data' );
@@ -24,7 +23,7 @@ export const withEvent = withSelect(
 			const eventLoaded = hasFinishedResolution(
 				'eventespresso/core',
 				'getEventById',
-				[ ownProps.eventId ]
+				[ eventId ]
 			);
 			if ( eventLoaded && isModelEntityOfModel( event, 'event' ) ) {
 				return { event, eventLoaded };

@@ -19,8 +19,7 @@ const EMPTY_OBJECT = {};
  * @function
  */
 export const withEventDatetimes = withSelect(
-	( select, ownProps ) => {
-		const { event, eventLoaded } = ownProps;
+	( select, { event, eventLoaded } ) => {
 		if ( eventLoaded && isModelEntityOfModel( event, 'event' ) ) {
 			const { getRelatedEntities } = select( 'eventespresso/core' );
 			const { hasFinishedResolution } = select( 'core/data' );

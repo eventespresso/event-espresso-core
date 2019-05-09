@@ -21,8 +21,7 @@ import { getDatetimeEntityIds } from './utils';
  * @function
  */
 export const withTicketsForAllEventDates = withSelect(
-	( select, ownProps ) => {
-		const { eventDates, eventDatesLoaded } = ownProps;
+	( select, { eventDates, eventDatesLoaded } ) => {
 		if ( eventDatesLoaded ) {
 			const { getRelatedEntitiesForIds } = select( 'eventespresso/core' );
 			const { hasFinishedResolution } = select( 'core/data' );
