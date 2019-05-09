@@ -165,7 +165,7 @@ footer a:hover{ color: var(--ee-color-green-low-contrast); }
 }
 
 #toggle-menu {
-    background: url('./icons8-menu-filled.svg');
+    background: url('menu-icon-48.png');
     color: var(--ee-text-on-grey-4);
     height: 48px;
     position: relative;
