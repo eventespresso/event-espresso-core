@@ -1,10 +1,10 @@
 {
-  "components.css": "ee-components.7e1dd3d24f8e9c487867.dist.css",
-  "components.js": "ee-components.6d2accacfad529561bcc.dist.js",
+  "components.css": "ee-components.c265dafd39c8527d6c62.dist.css",
+  "components.js": "ee-components.fd419cf76da3fad10d16.dist.js",
   "data-stores.js": "ee-data-stores.5fd5528d896f80ac96c6.dist.js",
   "editor-hocs.js": "ee-editor-hocs.15a813aac7a51b5473cb.dist.js",
   "editor.css": "ee-editor.a485ed2015f58ff4a121.dist.css",
-  "editor.js": "ee-editor.d8e480073b23921c09be.dist.js",
+  "editor.js": "ee-editor.865eca5a82aef777913b.dist.js",
   "eejs.js": "ee-eejs.aa5cd387b1c3c7725f7c.dist.js",
   "eventespresso-core-blocks-frontend.css": "ee-eventespresso-core-blocks-frontend.13d6f8c88d7a61b693dc.dist.css",
   "eventespresso-core-blocks-frontend.js": "ee-eventespresso-core-blocks-frontend.2504b989b586572b348b.dist.js",
