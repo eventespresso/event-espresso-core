@@ -71,8 +71,8 @@ function compileColorTemplate( config, colorHex, colorName ) {
 	return colorTemplateCompiler(
 		{
 			colorLabel: startCase( colorName ),
-			colorName: colorName,
-			colorHex: colorHex,
+			colorName,
+			colorHex,
 			highContrastColorHex: highContrast,
 			lowContrastColorHex: lowContrast,
 			textContrastColorHex: findContrastColor(
@@ -130,7 +130,7 @@ function textColors( config ) {
 			{
 				themeLabel: startCase( config.meta.name ),
 				textType: 'default',
-				defaultText: defaultText,
+				defaultText,
 				superHighContrast: superHighContrastText,
 				highContrast: highContrastText,
 				lowContrast: lowContrastText,

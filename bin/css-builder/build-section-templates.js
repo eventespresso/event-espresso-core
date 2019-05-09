@@ -36,7 +36,7 @@ function buildColorsSection( themeConfig ) {
 		colorDemoItems.push(
 			themeTemplate( {
 				colorLabel: startCase( color ),
-				color: color,
+				color,
 				desc: themeColorDesc[ color ],
 				isDefault: color === 'default',
 			} )
@@ -47,7 +47,7 @@ function buildColorsSection( themeConfig ) {
 		baseColorItems.push(
 			baseTemplate( {
 				colorLabel: startCase( color ),
-				color: color,
+				color,
 				isGrey: false,
 			} )
 		);
@@ -59,7 +59,7 @@ function buildColorsSection( themeConfig ) {
 		greys.push(
 			baseTemplate( {
 				colorLabel: startCase( color ),
-				color: color,
+				color,
 				isGrey: true,
 			} )
 		);
@@ -68,7 +68,7 @@ function buildColorsSection( themeConfig ) {
 	return sectionTemplate( {
 		themeColors: colorDemoItems,
 		baseColors: baseColorItems,
-		greys: greys,
+		greys,
 	} );
 }
 
@@ -134,7 +134,7 @@ function buildButtonSection() {
 		sectionItems.push(
 			sectionItemTemplate( {
 				colorLabel: startCase( color ),
-				color: color,
+				color,
 			} )
 		);
 	} );
