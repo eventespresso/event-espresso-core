@@ -93,12 +93,12 @@ DatesAndTicketsFilterState.propTypes = {
 };
 
 export default compose( [
-	withDatesListFilterState,
-	withTicketsListFilterState,
 	withEvent,
 	withEventDatetimes,
 	withTicketsForAllEventDates,
 	withGetRelatedTicketsForEventDates,
+	withDatesListFilterState,
+	withTicketsListFilterState,
 	withSelect( ( select, ownProps ) => {
 		const {
 			event,
@@ -112,6 +112,7 @@ export default compose( [
 			showTickets,
 			sortTickets,
 			getRelatedTicketsForEventDates,
+			isChained,
 		} = ownProps;
 		if ( ! eventLoaded || ! eventDatesLoaded ) {
 			return {
@@ -134,7 +135,7 @@ export default compose( [
 		let tickets = EMPTY_ARRAY;
 		if ( eventDateTicketsLoaded ) {
 			// show tickets for ALL dates or for filtered subset from above?
-			tickets = ownProps.isChained ?
+			tickets = isChained ?
 				getRelatedTicketsForEventDates( datetimes ) :
 				eventDateTickets;
 			// apply filter bar filters
