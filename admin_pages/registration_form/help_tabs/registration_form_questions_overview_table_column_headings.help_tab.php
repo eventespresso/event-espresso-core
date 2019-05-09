@@ -1,8 +1,17 @@
+<?php
+use EventEspresso\core\domain\Domain;
+?>
 <p><strong><?php esc_html_e('Questions Overview Table Column Headings', 'event_espresso'); ?></strong></p>
 <ul>
 <li>
 <strong><?php esc_html_e('ID', 'event_espresso'); ?></strong><br />
-<?php esc_html_e('This is the numerical ID for the question. This value is used internally for Event Espresso.', 'event_espresso'); ?>
+<?php printf(
+    esc_html__(
+        'This is the numerical ID for the question. This value is used internally for %s.',
+        'event_espresso'
+    ),
+    Domain::brandName()
+); ?>
 </li>
 <li>
 <strong><?php esc_html_e('Question', 'event_espresso'); ?></strong><br />
@@ -53,5 +62,11 @@
 </ul>
 <p>
 <strong><?php esc_html_e('Notice', 'event_espresso'); ?></strong><br />
-<?php esc_html_e('System questions are created by Event Espresso and cannot be deleted. However, they can be edited. Be careful when editing these system questions as they are required for registrations to work correctly.', 'event_espresso'); ?>
+<?php printf(
+    esc_html__(
+        'System questions are created by %s and cannot be deleted. However, they can be edited. Be careful when editing these system questions as they are required for registrations to work correctly.',
+        'event_espresso'
+    ),
+    Domain::brandName()
+); ?>
 </p>

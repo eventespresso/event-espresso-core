@@ -1,6 +1,12 @@
+<?php
+use EventEspresso\core\domain\Domain;
+?>
 <p><strong><?php esc_html_e('Add New Price Type', 'event_espresso'); ?></strong></p>
 <p>
-<?php esc_html_e('This page allows you to create a new price type for Event Espresso.', 'event_espresso'); ?>
+<?php printf(
+    esc_html__('This page allows you to create a new price type for %s.', 'event_espresso'),
+    Domain::brandName()
+); ?>
 </p>
 <ul>
 <li>

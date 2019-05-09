@@ -1,6 +1,12 @@
+<?php
+use EventEspresso\core\domain\Domain;
+?>
 <p><strong><?php esc_html_e('Add New Question', 'event_espresso'); ?></strong></p>
 <p>
-<?php esc_html_e('This page allows you to add a new question for Event Espresso.', 'event_espresso'); ?>
+<?php printf(
+    esc_html__('This page allows you to add a new question for %s.', 'event_espresso'),
+    Domain::brandName()
+); ?>
 </p>
 <ul>
 <li>
