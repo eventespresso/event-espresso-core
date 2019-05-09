@@ -78,7 +78,7 @@
 		"babel-plugin-dev-expression": "^0.2.1",
 		"babel-runtime": "^6.26.0",
 		"clean-webpack-plugin": "^2.0.2",
-		"codecov": "^3.3.0",
+		"codecov": "^3.4.0",
 		"concurrently": "^4.1.0",
 		"core-js": "2.5.7",
 		"cross-env": "5.2.0",
