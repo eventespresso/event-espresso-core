@@ -4,12 +4,12 @@
 </p>
 <p class="ee-attention">
 <?php printf(
-	esc_html__(
-		'Notice: Due to a %1$scurrent bug in the WordPress core%2$s, your event should always have at least a title or description or excerpt. Saving an event without at least one of these fields filled out with information will result in your event not saving correctly. You will then need to recreate your event by clicking on the Add Event button.',
-		'event_espresso'
-	),
-	'<a href="https://core.trac.wordpress.org/ticket/17115#comment:15">',
-	'</a>'
+    esc_html__(
+        'Notice: Due to a %1$scurrent bug in the WordPress core%2$s, your event should always have at least a title or description or excerpt. Saving an event without at least one of these fields filled out with information will result in your event not saving correctly. You will then need to recreate your event by clicking on the Add Event button.',
+        'event_espresso'
+    ),
+    '<a href="https://core.trac.wordpress.org/ticket/17115#comment:15">',
+    '</a>'
 ); ?>
 </p>
 <ul>
