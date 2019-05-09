@@ -1,8 +1,17 @@
+<?php
+use EventEspresso\core\domain\Domain;
+?>
 <p><strong><?php esc_html_e('Registrations Table Column Headings', 'event_espresso'); ?></strong></p>
 <ul>
 <li>
 <strong><?php esc_html_e('ID', 'event_espresso'); ?></strong><br />
-<?php esc_html_e('The is the numerical ID of an registration. This value is used internally for Event Espresso.', 'event_espresso'); ?>
+<?php printf(
+    esc_html__(
+        'The is the numerical ID of an registration. This value is used internally for %s.',
+        'event_espresso'
+    ),
+    Domain::brandName()
+); ?>
 </li>
 <li>
 <strong><?php esc_html_e('Name', 'event_espresso'); ?></strong><br />
@@ -31,14 +40,14 @@
 <li>
 <strong><?php esc_html_e('Actions', 'event_espresso'); ?></strong><br />
 <?php printf(
-	esc_html__(
-		'Using the action buttons you can View Registration Details %1$s, Edit Contact Details %2$s, Resend Registration Details %3$s, and View Transaction Details %4$s.',
-		'event_espresso'
-	),
-	'<span class="dashicons dashicons-search"></span>',
-	'<span class="dashicons dashicons-businessman"></span>',
-	'<span class="ee-icon ee-icon-email-send"></span>',
-	'<span class="ee-icon ee-icon-cash"></span>'
+    esc_html__(
+        'Using the action buttons you can View Registration Details %1$s, Edit Contact Details %2$s, Resend Registration Details %3$s, and View Transaction Details %4$s.',
+        'event_espresso'
+    ),
+    '<span class="dashicons dashicons-search"></span>',
+    '<span class="dashicons dashicons-businessman"></span>',
+    '<span class="ee-icon ee-icon-email-send"></span>',
+    '<span class="ee-icon ee-icon-cash"></span>'
 ); ?>
 </li>
 </ul>

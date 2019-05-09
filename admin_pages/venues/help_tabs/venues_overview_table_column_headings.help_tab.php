@@ -1,8 +1,14 @@
+<?php
+use EventEspresso\core\domain\Domain;
+?>
 <p><strong><?php esc_html_e('Venues Overview Table Column Headings', 'event_espresso'); ?></strong></p>
 <ul>
 <li>
 <strong><?php esc_html_e('ID', 'event_espresso'); ?></strong><br />
-<?php esc_html_e('This is the numerical ID for a venue. This value is used internally for Event Espresso.', 'event_espresso'); ?>
+<?php printf(
+    esc_html__('This is the numerical ID for a venue. This value is used internally for %s.', 'event_espresso'),
+    Domain::brandName()
+); ?>
 </li>
 <li>
 <strong><?php esc_html_e('Name', 'event_espresso'); ?></strong><br />
@@ -19,8 +25,8 @@
 <li>
 <strong><?php esc_html_e('Capacity', 'event_espresso'); ?></strong><br />
 <?php printf(
-	esc_html__('This is the capacity of the venue. If no limit is set, then the capacity will be set to infinity (%s).', 'event_espresso'),
-	'&#8734'
+    esc_html__('This is the capacity of the venue. If no limit is set, then the capacity will be set to infinity (%s).', 'event_espresso'),
+    '&#8734'
 ); ?>
 </li>
 </ul>
