@@ -314,6 +314,7 @@ abstract class EE_Admin_Hooks extends EE_Base
             if (! isset($this->_scripts_styles['enqueues'])) {
                 return;
             }  //not sure if we should throw an error here or not.
+
             foreach ($this->_scripts_styles['enqueues'] as $ref => $routes) {
                 // make sure $routes is an array
                 $routes = (array) $routes;
@@ -357,9 +358,23 @@ abstract class EE_Admin_Hooks extends EE_Base
     private function _set_defaults()
     {
         $this->_ajax_func = $this->_init_func = $this->_metaboxes = $this->_scripts = $this->_styles = $this->_wp_action_filters_priority = array();
-        $this->_current_route = isset($_REQUEST['action']) ? $_REQUEST['action'] : 'default';
+        $this->_current_route = $this->getCurrentRoute();
         $this->caller = get_class($this);
         $this->_extend = stripos($this->caller, 'Extend') ? true : false;
+    }
+
+
+    /**
+     * A helper for determining the current route.
+     * @return string
+     */
+    private function getCurrentRoute()
+    {
+        // list tables do something else with 'action' for bulk actions.
+        $action = ! empty($_REQUEST['action']) && $_REQUEST['action'] !== '-1' ? $_REQUEST['action'] : 'default';
+        // we set a 'route' variable in some cases where action is being used by something else.
+        $action = $action === 'default' && isset($_REQUEST['route']) ? $_REQUEST['route'] : $action;
+        return sanitize_key($action);
     }
 
 

@@ -105,6 +105,7 @@ class I18nRegistry
                     $translations_for_domain['translations'],
                     $translations_for_domain['domain']
                 );
+                unset($this->queued_handle_translations[$handle]);
             }
         }
         return $handles;
