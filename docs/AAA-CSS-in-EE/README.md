@@ -20,7 +20,7 @@ function myStyles() {
 
 Alternatively, if you are using the classes from this stylesheet in a react component, you may also be utilizing the [ee components library](../AA--Javascript-in-EE/components/README.md).  the `CoreAssetManager::CSS_HANDLE_COMPONENTS` already has the default core css as a dependency so you can safely list it only as a dependency.
 
-As a part of the build process, a demo html file is created that highlights all the available classes and gives a visual example outlining its usage.  You can view this file [here](https://htmlpreview.github.io?https://github.com/eventespresso/event-espresso-core/tree/master/assets/src/components/ui/styles/themes/default/demo/index.html)
+As a part of the build process, a demo html file is created that highlights all the available classes and gives a visual example outlining its usage.  You can view this file [here](https://htmlpreview.github.io/?https://raw.githubusercontent.com/eventespresso/event-espresso-core/master/assets/src/components/ui/styles/themes/default/demo/index.html)
 
 ## Developing
 
