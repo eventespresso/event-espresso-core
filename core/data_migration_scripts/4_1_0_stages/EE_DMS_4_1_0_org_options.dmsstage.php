@@ -190,8 +190,8 @@ class EE_DMS_4_1_0_org_options extends EE_Data_Migration_Script_Stage
                 $c->currency->name = $country_row['CNT_cur_single'];    // Dollar
                 $c->currency->plural = $country_row['CNT_cur_plural'];  // Dollars
                 $c->currency->sign =  $country_row['CNT_cur_sign'];             // currency sign: $
-                $c->currency->sign_b4 = intval($country_row['CNT_cur_sign_b4']);        // currency sign before or after: $TRUE  or  FALSE$
-                $c->currency->dec_plc = intval($country_row['CNT_cur_dec_plc']);    // decimal places: 2 = 0.00  3 = 0.000
+                $c->currency->sign_b4 = filter_var($country_row['CNT_cur_sign_b4'], FILTER_VALIDATE_BOOLEAN);        // currency sign before or after: $TRUE  or  FALSE$
+                $c->currency->dec_plc = (int) $country_row['CNT_cur_dec_plc'];    // decimal places: 2 = 0.00  3 = 0.000
                 $c->currency->dec_mrk = $country_row['CNT_cur_dec_mrk'];    // decimal mark: (comma) ',' = 0,01   or (decimal) '.' = 0.01
                 $c->currency->thsnds = $country_row['CNT_cur_thsnds'];  // thousands separator: (comma) ',' = 1,000   or (decimal) '.' = 1.000
   //            $c->currency = new EE_Currency_Config($c->organization->CNT_ISO);break;

@@ -1,0 +1,61 @@
+<section class="demo-section">
+    <h2 id="colors" class="ee-focus-priority-2">Theme Colors</h2>
+    <p class="section-intro">
+        Themes define four main colors that are used to dynamically generate a large number of CSS variables
+        for styling HTML components. CSS variables are combined into semantically useful CSS classes that can be used
+        to apply multiple styles at once to an element. All colors have dynamically generated alternates that meet
+        or exceed Web Content Accessibility Guidelines (WCAG) AA or AAA color contrast requirements that follow the
+        utilize following naming schema:
+    </p>
+    <ul>
+        <li><code>--ee-color-{ color }</code> - primarily intended for setting the background color of an element</li>
+        <li><code>--ee-text-on-{ color }</code> - A WCAG compliant text color for the above.</li>
+        <li><code>--ee-color-{ color }-high-contrast</code> - A higher contrast shade of the default color <span
+        class="ee-focus-priority-6">(ie: darker than the default for lighter themes or lighter for dark
+            themes)</span></li>
+        <li><code>--ee-text-on-{ color }-high-contrast</code> - A WCAG compliant text color for the above.</li>
+        <li><code>--ee-color-{ color }-low-contrast</code> - A lower contrast shade of the default color <span
+            class="ee-focus-priority-6">(ie: lighter than the default for lighter themes or darker for dark
+            themes)</span></li>
+        <li><code>--ee-text-on-{ color }-low-contrast</code> - A WCAG compliant text color for the above.</li>
+    </ul>
+    <p>
+        That said, not all colors work with each other, so be careful when applying colors to text that are not the
+        designated contrast alternative for the background the text is on. Be sure to check your color combinations
+        with tools like: <a href="http://colorsafe.co/">http://colorsafe.co/</a> or
+        <a href="https://webaim.org/resources/contrastchecker/">https://webaim.org/resources/contrastchecker/</a>
+    </p>
+    <div class="demo-items two-columns">
+        {{#each themeColors}}
+            {{{this}}}
+        {{/each}}
+    </div>
+    <h2 id="base-colors" class="ee-focus-priority-2">Base Colors</h2>
+    <p class="section-intro">
+        Themes can also define a full spectrum of colors that will be used to dynamically generate three pairs of CSS
+        variables using the same naming schema as the theme colors above. So the defined color plus high and low
+        contrasting alternatives.
+    </p>
+    <p class="section-intro">
+        On light themes the high contrast alternative will be darker in comparison to the
+        theme's background color. On dark themes it will be reversed, so the high contrast alternative will now be
+        lighter in shade, but still higher in contrast in comparison to the background color.
+    </p>
+    <div class="demo-items three-columns">
+        {{#each baseColors}}
+            {{{this}}}
+        {{/each}}
+    </div>
+    <h2 id="greys" class="ee-focus-priority-2">Greys</h2>
+    <p class="section-intro">
+        Themes also dynamically generate 12 levels of grey scale colors using the black and white colors defined by
+        the theme as the two extremes. Greys only have one corresponding text color and no high or low contrast
+        alternatives. For dark themes the grey scale will be reversed, so <code>--ee-color-grey-0</code> will be the
+        lightest shade, since it is intended to have the highest contrast compared to the theme's background color.
+    </p>
+    <div class="demo-items three-columns">
+        {{#each greys}}
+            {{{this}}}
+        {{/each}}
+    </div>
+</section>

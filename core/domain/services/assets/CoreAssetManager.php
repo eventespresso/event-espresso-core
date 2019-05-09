@@ -96,6 +96,8 @@ class CoreAssetManager extends AssetManager
 
     const CSS_HANDLE_COMPONENTS = 'eventespresso-components';
 
+    const CSS_HANDLE_CORE_CSS_DEFAULT = 'eventespresso-core-css-default';
+
     /**
      * @var EE_Currency_Config $currency_config
      */
@@ -470,12 +472,20 @@ class CoreAssetManager extends AssetManager
             }
         }
         $this->addStylesheet(
+            CoreAssetManager::CSS_HANDLE_CORE_CSS_DEFAULT,
+            $this->registry->getCssUrl(
+                $this->domain->assetNamespace(),
+                'core-default-theme'
+            ),
+            ['dashicons']
+        );
+        $this->addStylesheet(
             CoreAssetManager::CSS_HANDLE_COMPONENTS,
             $this->registry->getCssUrl(
                 $this->domain->assetNamespace(),
                 'components'
             ),
-            ['wp-components']
+            [CoreAssetManager::CSS_HANDLE_CORE_CSS_DEFAULT, 'wp-components']
         );
     }
 

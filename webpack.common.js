@@ -413,6 +413,9 @@ const config = [
 			'eventespresso-core-blocks-frontend': [
 				assets + 'blocks/index-frontend.js',
 			],
+			'core-default-theme': [
+				assets + 'components/ui/styles/themes/default/index.js',
+			],
 		},
 		externals: Object.assign( externals, {
 			'@eventespresso/validators': 'eejs.validators',

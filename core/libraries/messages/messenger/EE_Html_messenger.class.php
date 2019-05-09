@@ -193,7 +193,7 @@ class EE_Html_messenger extends EE_messenger
      */
     public function do_secondary_messenger_hooks($sending_messenger_name)
     {
-        if ($sending_messenger_name = 'pdf') {
+        if ($sending_messenger_name === 'pdf') {
             add_filter('EE_messenger__get_variation__variation', array($this, 'add_html_css'), 10, 8);
         }
     }

@@ -25,6 +25,7 @@
 		"domelementtype",
 		"nomnom",
 		"colors",
-		"underscore"
+		"underscore",
+		"detect-libc"
 	]
 }
