@@ -1,7 +1,6 @@
 /**
  * External imports
  */
-import { Component } from '@wordpress/element';
 import { createHigherOrderComponent, compose } from '@wordpress/compose';
 import { withSelect, withDispatch } from '@wordpress/data';
 
@@ -112,13 +111,6 @@ export default createHigherOrderComponent(
 				),
 			};
 		} ),
-		( WrappedComponent ) => {
-			return class extends Component {
-				render() {
-					return <WrappedComponent { ...this.props } />;
-				}
-			};
-		},
 	] ),
 	'withTicketsListFilterState'
 );
