@@ -3,13 +3,13 @@
 <li>
 <strong><?php esc_html_e('Check-In', 'event_espresso'); ?></strong><br />
 <?php printf(
-	esc_html__(
-		'Shows the Check-In status for an registrant. Available statuses are checked in %1$s, checked out %2$s, or no check-in record is available %3$s.',
-		'event_espresso'
-	),
-	'<span class="ee-icon ee-icon-check-in"></span>',
-	'<span class="ee-icon ee-icon-check-out"></span>',
-	'<span class="dashicons dashicons-no"></span>'
+    esc_html__(
+        'Shows the Check-In status for an registrant. Available statuses are checked in %1$s, checked out %2$s, or no check-in record is available %3$s.',
+        'event_espresso'
+    ),
+    '<span class="ee-icon ee-icon-check-in"></span>',
+    '<span class="ee-icon ee-icon-check-out"></span>',
+    '<span class="dashicons dashicons-no"></span>'
 ); ?>
 </li>
 <li>
