@@ -94,7 +94,7 @@ export const withFormHandler = ( FormComponent ) => {
 				<FormErrorBoundary errorMessage={ errorMessage } >
 					<Form
 						onSubmit={ submitHandler }
-						initialValues={ formData }
+						initialValues={ formData || {} }
 						decorators={ castArray( decorators ) }
 						mutators={ mutators }
 						render={ ( {
@@ -134,7 +134,7 @@ export const withFormHandler = ( FormComponent ) => {
 									/>
 									<FormContainer loading={ loading } >
 										<FormComponent
-											initialValues={ formData }
+											initialValues={ formData || {} }
 											currentValues={ values }
 											submitButton={ submitButton }
 											cancelButton={ cancelButton }
