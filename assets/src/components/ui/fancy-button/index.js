@@ -2,6 +2,7 @@
  * External dependencies
  */
 import { Button } from '@wordpress/components';
+import classNames from 'classnames';
 
 /**
  * Internal imports
@@ -31,52 +32,43 @@ const FancyButton = ( {
 	htmlClass = '',
 	...buttonProps
 } ) => {
+	const isWPStyle = style === 'wp-primary' || style === 'wp-default';
 	let iconSize = 24;
-	let sizeClass = 'ee-medium-button';
-	htmlClass = htmlClass !== '' ?
-		`${ htmlClass } ee-fancy-button ee-form-button` :
-		'ee-fancy-button ee-form-button';
+	let sizeClass = {
+		'ee-medium-button': true,
+		'ee-tiny-button': size === 'tiny',
+		'ee-small-button': size === 'small',
+		'ee-big-button': size === 'big',
+		'ee-huge-button': size === 'huge',
+		'is-small': ( size === 'tiny' || size === 'small' ) && isWPStyle,
+		'is-large': ( size === 'big' || size === 'huge' ) && isWPStyle,
+	};
+	htmlClass = classNames( {
+		'ee-fancy-button': true,
+		'ee-form-button': true,
+		[ htmlClass ] : htmlClass,
+		'ee-button-wp': isWPStyle,
+		'is-button': isWPStyle,
+		'is-default': style === 'wp-default',
+		'is-primary': style === 'wp-primary',
+		'woosh': style === 'woosh',
+		'twotone': style === 'twotone',
+		...sizeClass
+	} );
 	switch ( size ) {
 		case 'tiny':
 			iconSize = 18;
-			sizeClass = style === 'wp-primary' || style === 'wp-default' ?
-				'is-small ee-tiny-button' :
-				'ee-tiny-button';
 			break;
 		case 'small':
 			iconSize = 21;
-			sizeClass = style === 'wp-primary' || style === 'wp-default' ?
-				'is-small ee-small-button' :
-				'ee-small-button';
 			break;
 		case 'big':
 			iconSize = 27;
-			sizeClass = style === 'wp-primary' || style === 'wp-default' ?
-				'is-large ee-big-button' :
-				'ee-big-button';
 			break;
 		case 'huge':
 			iconSize = 30;
-			sizeClass = style === 'wp-primary' || style === 'wp-default' ?
-				'is-large ee-huge-button' :
-				'ee-huge-button';
 			break;
 	}
-	switch ( style ) {
-		case 'wp-default':
-			htmlClass += ' ee-button-wp is-button is-default';
-			break;
-		case 'wp-primary':
-			htmlClass += ' ee-button-wp is-button is-primary';
-			break;
-		case 'woosh':
-			htmlClass += ' ee-button-woosh';
-			break;
-		case 'twotone':
-			htmlClass += ' ee-button-twotone';
-			break;
-	}
-	htmlClass += ' ' + sizeClass;
 	if ( icon ) {
 		icon = (
 			<span className="img-wrap">
