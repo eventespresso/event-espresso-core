@@ -649,17 +649,56 @@ describe( 'createEntityFactory()', () => {
 		const factory = createEntityFactory(
 			'event',
 			EventSchema.schema,
-			[ 'EVT_ID' ]
+			[ 'EVT' ]
 		);
-		it( 'returns a new instance of BaseEntity', () => {
-			const entity = factory.fromExisting( EventResponse );
-			const newEntity = entity.clone;
-			expect( newEntity ).not.toBe( entity );
+		let entity;
+		beforeEach( () => {
+			entity = factory.fromExisting( EventResponse );
 		} );
-		it( 'returns a new instance that differs only in id', () => {
-			const entity = factory.fromExisting( EventResponse );
-			const newEntity = entity.clone;
-			expect( newEntity.forUpdate ).toEqual( entity.forUpdate );
+		afterEach( () => {
+			entity = null;
+		} );
+		describe( 'not keeping id of original', () => {
+			it( 'returns a new instance of BaseEntity', () => {
+				const newEntity = entity.clone();
+				expect( newEntity ).not.toBe( entity );
+			} );
+			it( 'returns a new instance that differs only in id', () => {
+				const newEntity = entity.clone();
+				expect( newEntity.forUpdate ).toEqual( entity.forUpdate );
+			} );
+			it( 'has state of new', () => {
+				const newEntity = entity.clone();
+				expect( newEntity.isNew ).toBe( true );
+			} );
+			it( 'primary key can be modified', () => {
+				const newEntity = entity.clone();
+				newEntity.id = 999;
+				expect( newEntity.id ).toEqual( 999 );
+				expect( newEntity.isNew ).toBe( true );
+			} );
+		} );
+		describe( 'keeping id of original', () => {
+			it( 'returns a new instance of BaseEntity', () => {
+				const newEntity = entity.clone( true );
+				expect( newEntity ).not.toBe( entity );
+			} );
+			it( 'returns a new instance that shares the same id as ' +
+				'original', () => {
+				const newEntity = entity.clone( true );
+				expect( newEntity.id ).toEqual( entity.id );
+			} );
+			it( 'has same state as original', () => {
+				const newEntity = entity.clone( true );
+				expect( newEntity.saveState ).toEqual( entity.saveState );
+				expect( newEntity.isClean ).toBe( true );
+			} );
+			it( 'primary key can not be modified (when save state is not ' +
+				'new)', () => {
+				const newEntity = entity.clone( true );
+				newEntity.id = 999;
+				expect( newEntity.id ).toEqual( entity.id );
+			} );
 		} );
 	} );
 } );
