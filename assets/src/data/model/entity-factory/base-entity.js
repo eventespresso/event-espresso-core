@@ -2,6 +2,7 @@
  * External imports
  */
 import { isArray, upperFirst, camelCase } from 'lodash';
+import memoize from 'memize';
 
 /**
  * Internal imports
@@ -129,11 +130,11 @@ class BaseEntity {
 	get clone() {
 		return ( keepId = false ) => {
 			// @todo memoize this
-			const factory = createEntityFactory(
+			const factory = memoize( createEntityFactory(
 				this.modelName,
 				{ $schema: {}, properties: this.schema },
 				this.fieldPrefixes
-			);
+			) );
 			const newEntity = factory.createNew( this.forClone );
 			if ( keepId ) {
 				newEntity.id = this.id;
