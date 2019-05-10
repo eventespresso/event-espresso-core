@@ -6,11 +6,6 @@ import { dateTimeModel } from '@eventespresso/model';
 import { DateTime } from '@eventespresso/value-objects';
 import { isModelEntityOfModel } from '@eventespresso/validators';
 
-/**
- * Internal dependencies
- */
-import { updateEventDate } from '../action-handlers/update-event-date';
-
 const { MODEL_NAME: DATETIME } = dateTimeModel;
 
 /**
@@ -21,12 +16,11 @@ const { MODEL_NAME: DATETIME } = dateTimeModel;
  * @param {Object} eventEntity EE Event object
  * @param {Object} dateEntity  EE Date object
  * @param {Object} formData
- * @return {Promise} updated dateEntity upon resolution
  */
 export const eventDateEntityFormSubmitHandler = (
 	eventEntity,
 	dateEntity,
-	formData
+	formData,
 ) => {
 	if ( ! isModelEntityOfModel( dateEntity, DATETIME ) ) {
 		throw Error(
@@ -44,5 +38,4 @@ export const eventDateEntityFormSubmitHandler = (
 	dateEntity.order = parseInt( formData[ `${ prefix }-order` ] || 0 );
 	dateEntity.parent = parseInt( formData[ `${ prefix }-parent` ] || 0 );
 	dateEntity.deleted = !! formData[ `${ prefix }-deleted` ] || false;
-	return updateEventDate( eventEntity, dateEntity );
 };

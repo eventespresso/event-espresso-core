@@ -22,6 +22,7 @@ import {
 	withTicketAssignmentsManager,
 	TicketAssignmentsManagerModal,
 } from '../../ticket-assignments-manager';
+import withUpdateEventDateRelation from './action-handlers/with-update-event-date-relation';
 
 const {
 	FormWrapper,
@@ -138,14 +139,16 @@ export default compose( [
 	withEditor,
 	withTicketAssignmentsManager,
 	PaginatedDatesListWithFilterBar,
-	withDispatch( ( dispatch ) => {
+	withUpdateEventDateRelation,
+	withDispatch( ( dispatch, { event, updateEventDateRelation } ) => {
 		const { createEntity } = dispatch( 'eventespresso/core' );
 		const addNewEventDate = ( setState, toggleEditor ) => {
 			createEntity( 'datetime', {} ).then(
 				( newEventDate ) => {
 					setState( { newEventDate } );
+					updateEventDateRelation( event, newEventDate );
 					toggleEditor();
-				}
+				},
 			);
 		};
 		return { addNewEventDate };

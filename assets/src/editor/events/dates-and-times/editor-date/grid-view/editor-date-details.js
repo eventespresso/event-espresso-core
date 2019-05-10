@@ -10,11 +10,6 @@ import { dateTimeModel } from '@eventespresso/model';
 import { isModelEntityOfModel } from '@eventespresso/validators';
 import classNames from 'classnames';
 
-/**
- * Internal dependencies
- */
-import { updateEventDate } from '../action-handlers/update-event-date';
-
 const { MODEL_NAME: DATETIME } = dateTimeModel;
 /**
  * EditorDateDetails
@@ -45,8 +40,8 @@ class EditorDateDetails extends Component {
 					htmlId={ `event-date-name-${ eventDate.id }` }
 					type="text"
 					value={ eventDate.name }
-					onChange={ async ( name ) => {
-						return await this.updateName( name, event, eventDate );
+					onChange={ ( name ) => {
+						return this.updateName( name, event, eventDate );
 					} }
 					label={ __( 'Date Name', 'event_espresso' ) }
 					noticeStyle={
@@ -81,8 +76,8 @@ class EditorDateDetails extends Component {
 					htmlId={ `event-date-desc-${ eventDate.id }` }
 					type="textarea"
 					value={ eventDate.description }
-					onChange={ async ( desc ) => {
-						return await this.updateDescription(
+					onChange={ ( desc ) => {
+						return this.updateDescription(
 							desc,
 							event,
 							eventDate
@@ -157,8 +152,8 @@ class EditorDateDetails extends Component {
 				editable: {
 					type: 'text',
 					valueType: 'number',
-					onChange: async ( capacity ) => {
-						return await this.updateCapacity(
+					onChange: ( capacity ) => {
+						return this.updateCapacity(
 							capacity,
 							event,
 							eventDate
@@ -218,13 +213,12 @@ class EditorDateDetails extends Component {
 	 * @param {Object} eventDate    model object defining the Event Date
 	 * @return {boolean} true if saved
 	 */
-	updateName = async ( name, event, eventDate ) => {
+	updateName = ( name, event, eventDate ) => {
 		if (
 			isModelEntityOfModel( eventDate, DATETIME ) &&
 			eventDate.name !== name
 		) {
 			eventDate.name = name;
-			return updateEventDate( event, eventDate );
 		}
 	};
 
@@ -241,7 +235,6 @@ class EditorDateDetails extends Component {
 			eventDate.description !== description
 		) {
 			eventDate.description = description;
-			return updateEventDate( event, eventDate );
 		}
 	};
 
@@ -252,14 +245,13 @@ class EditorDateDetails extends Component {
 	 * @param {Object} eventDate    model object defining the Event Date
 	 * @return {boolean} true if saved
 	 */
-	updateCapacity = async ( capacity, event, eventDate ) => {
+	updateCapacity = ( capacity, event, eventDate ) => {
 		capacity = parseInt( capacity );
 		if (
 			isModelEntityOfModel( eventDate, DATETIME ) &&
 			eventDate.regLimit !== capacity
 		) {
 			eventDate.regLimit = capacity;
-			return updateEventDate( event, eventDate );
 		}
 	};
 
