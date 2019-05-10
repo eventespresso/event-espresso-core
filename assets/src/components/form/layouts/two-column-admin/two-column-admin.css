@@ -341,6 +341,10 @@
     line-height: inherit;
 }
 
+.ee-two-column-admin button {
+    margin: 0 0 calc(var(--ee-margin-micro) * 1.5rem);
+}
+
 .ee-two-column-admin input:disabled,
 .ee-two-column-admin select:disabled,
 .ee-two-column-admin textarea:disabled {
