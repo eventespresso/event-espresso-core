@@ -90,11 +90,7 @@ class EditorDatesList extends Component {
 					'Ticket Assignments',
 					'event_espresso'
 				) }
-				onClick={ ( e ) => {
-					e.preventDefault();
-					e.stopPropagation();
-					this.props.toggleTicketAssignments();
-				} }
+				onClick={ this.props.toggleTicketAssignments }
 			/>
 		);
 	};
