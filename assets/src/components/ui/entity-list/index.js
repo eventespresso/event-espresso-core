@@ -4,6 +4,7 @@
 import { filter, without } from 'lodash';
 import { Fragment } from '@wordpress/element';
 import { __ } from '@eventespresso/i18n';
+import classNames from 'classnames';
 
 /**
  * Internal dependencies
@@ -42,9 +43,9 @@ const EntityList = ( {
 	entities = Array.isArray( entities ) ? entities : [];
 	// Remove undefined from the array
 	entities = without( entities, undefined );
-	htmlClass = htmlClass ?
-		`${ htmlClass } ee-editor-entity-list` :
-		'ee-editor-entity-list';
+	htmlClass = classNames( 'ee-editor-entity-list', {
+		[ htmlClass ]: htmlClass
+	} );
 	let entityList = view === 'grid' ? (
 		<EntityGridView
 			entities={ entities }
