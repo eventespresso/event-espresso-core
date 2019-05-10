@@ -16,7 +16,7 @@ import { __ } from '@eventespresso/i18n';
  * Internal dependencies
  */
 import { EditorDatesGridView, EditorDatesListView } from './';
-import { default as PaginatedDatesListWithFilterBar } from './filter-bar';
+import PaginatedDatesListWithFilterBar from './filter-bar';
 import { EditEventDateFormModal } from '../';
 import {
 	withTicketAssignmentsManager,
