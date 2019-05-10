@@ -6,7 +6,7 @@ import { isModelEntityOfModel } from '@eventespresso/validators';
 /**
  * Internal dependencies
  */
-import { default as EditorDateGridItem } from './editor-date-grid-item';
+import EditorDateGridItem from './editor-date-grid-item';
 import './editor-dates-grid-view.css';
 
 /**

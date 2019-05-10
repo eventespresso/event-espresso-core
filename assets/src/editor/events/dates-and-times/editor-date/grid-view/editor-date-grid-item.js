@@ -15,7 +15,7 @@ import { isModelEntityOfModel } from '@eventespresso/validators';
 /**
  * Internal dependencies
  */
-import { default as EditorDateDetails } from './editor-date-details';
+import EditorDateDetails from './editor-date-details';
 import { EditorDateActionsMenu } from '../';
 
 const { getBackgroundColorClass, MODEL_NAME } = dateTimeModel;
