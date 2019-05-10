@@ -20,15 +20,9 @@ import {
  * Internal imports
  */
 import '../../editor.css';
-import {
-	default as EditorDatesList,
-} from '../dates-and-times/editor-date/editor-dates-list';
-import {
-	default as EditorTicketsList,
-} from '../tickets/editor-ticket/editor-tickets-list';
-import {
-	default as DatesAndTicketsFilterState,
-} from './dates-and-tickets-filter-state';
+import EditorDatesList from '../dates-and-times/editor-date/editor-dates-list';
+import EditorTicketsList from '../tickets/editor-ticket/editor-tickets-list';
+import DatesAndTicketsFilterState from './dates-and-tickets-filter-state';
 
 /**
  * DatesAndTicketsMetabox
