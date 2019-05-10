@@ -100,13 +100,19 @@ export const createGetterAndSetter = (
 			return propertyValue;
 		},
 		set( receivedValue ) {
+			const isPrimaryField = isPrimaryKeyField( fieldName, instance.schema );
+			if ( ! instance.isNew && isPrimaryField ) {
+				return;
+			}
 			assertValidValueForPreparedField(
 				fieldName,
 				receivedValue,
 				instance
 			);
-			setSaveState( instance, SAVE_STATE.DIRTY );
-			setFieldToPersist( instance, fieldName );
+			if ( ! isPrimaryField ) {
+				setSaveState( instance, SAVE_STATE.DIRTY );
+				setFieldToPersist( instance, fieldName );
+			}
 			propertyValue = receivedValue;
 		},
 		...opts,
@@ -286,13 +292,13 @@ const populatePrimaryKeys = ( instance ) => {
 		if ( instance[ schemaField ] ) {
 			delete instance[ schemaField ];
 		}
-		createGetter(
+		createGetterAndSetter(
 			instance,
 			schemaField,
 			cuid(),
 			{ configurable: true, enumerable: true }
 		);
-		createAliasGetterForField( instance, schemaField );
+		createAliasGetterAndSetterForField( instance, schemaField );
 	} );
 	createPrimaryKeyFieldGetters(
 		instance,

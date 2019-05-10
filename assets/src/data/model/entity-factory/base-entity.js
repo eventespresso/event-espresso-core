@@ -127,13 +127,20 @@ class BaseEntity {
 	 * @return {BaseEntity} A new instance of BaseEntity
 	 */
 	get clone() {
-		return new BaseEntity(
-			this.modelName,
-			this.forClone,
-			{ $schema: {}, properties: this.schema },
-			this.fieldPrefixes,
-			true
-		);
+		return ( keepId = false ) => {
+			// @todo memoize this
+			const factory = createEntityFactory(
+				this.modelName,
+				{ $schema: {}, properties: this.schema },
+				this.fieldPrefixes
+			);
+			const newEntity = factory.createNew( this.forClone );
+			if ( keepId ) {
+				newEntity.id = this.id;
+				setSaveState( this, SAVE_STATE.CLEAN );
+			}
+			return newEntity;
+		};
 	}
 
 	static name = 'BaseEntity'
