@@ -2,7 +2,7 @@
  * External imports
  */
 import { compose } from '@wordpress/compose';
-import { dispatch } from '@wordpress/data';
+import { withDispatch } from '@wordpress/data';
 import { Component } from '@wordpress/element';
 import {
 	EntityList,
@@ -28,8 +28,6 @@ const {
 	FormSaveCancelButtons,
 } = twoColumnAdminFormLayout;
 
-const { createEntity } = dispatch( 'eventespresso/core' );
-
 /**
  * EditorDatesList
  * EntityList component for displaying event dates in the editor
@@ -48,31 +46,19 @@ class EditorDatesList extends Component {
 
 	/**
 	 * @function
-	 */
-	addNewEventDate = () => {
-		createEntity( 'datetime', {} ).then(
-			( newEventDate ) => {
-				this.setState( () => ( { newEventDate } ) );
-				this.props.toggleEditor();
-			}
-		);
-	};
-
-	/**
-	 * @function
 	 * @return {Object} rendered button
 	 */
 	addNewDateButton = () => {
+		const addDate = () => this.props.addNewEventDate(
+			( state ) => this.setState( state ),
+			this.props.toggleEditor
+		);
 		return (
 			<FancyButton
 				icon="calendar"
 				style="wp-default"
 				buttonText={ __( 'Add New Date', 'event_espresso' ) }
-				onClick={ ( e ) => {
-					e.preventDefault();
-					e.stopPropagation();
-					this.addNewEventDate();
-				} }
+				onClick={ addDate }
 			/>
 		);
 	};
@@ -152,4 +138,16 @@ export default compose( [
 	withEditor,
 	withTicketAssignmentsManager,
 	PaginatedDatesListWithFilterBar,
+	withDispatch( ( dispatch ) => {
+		const { createEntity } = dispatch( 'eventespresso/core' );
+		const addNewEventDate = ( setState, toggleEditor ) => {
+			createEntity( 'datetime', {} ).then(
+				( newEventDate ) => {
+					setState( { newEventDate } );
+					toggleEditor();
+				}
+			);
+		};
+		return { addNewEventDate };
+	} ),
 ] )( EditorDatesList );
