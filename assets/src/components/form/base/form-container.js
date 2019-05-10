@@ -4,6 +4,12 @@
 import './form-container.css';
 
 /**
+ * External imports
+ */
+import classNames from 'classnames';
+
+
+/**
  * FormContainer is a wrapper that hides the form while it is loading,
  * then fades it in once loading is complete
  *
@@ -14,14 +20,13 @@ import './form-container.css';
  * @return {Object} form
  */
 export const FormContainer = ( { children, htmlClass, loading } ) => {
-	htmlClass = htmlClass ?
-		`${ htmlClass } ee-form-container-div` :
-		'ee-form-container-div';
-	htmlClass = loading ?
-		htmlClass :
-		`${ htmlClass } ee-form-fade-in`;
+	const containerClass = classNames( {
+		'ee-form-container-div': true,
+		[ `${ htmlClass }` ]: htmlClass,
+		'ee-form-fade-in': ! loading,
+	} );
 	return (
-		<div className={ htmlClass } >
+		<div className={ containerClass } >
 			{ ! loading && children }
 		</div>
 	);

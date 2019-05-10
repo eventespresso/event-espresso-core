@@ -3,6 +3,7 @@
  */
 import { Spinner } from '@wordpress/components';
 import { _x, sprintf } from '@eventespresso/i18n';
+import classNames from 'classnames';
 
 /**
  * Internal imports
@@ -19,8 +20,7 @@ import './form-placeholder.css';
  * @return {Object} spinner
  */
 export const FormPlaceholder = ( { loading, notice = '' } ) => {
-	notice = notice ?
-		notice :
+	notice = notice ||
 		sprintf(
 			_x( 'loading%s', 'loading...', 'event_espresso' ),
 			String.fromCharCode( '8230' )
@@ -28,9 +28,10 @@ export const FormPlaceholder = ( { loading, notice = '' } ) => {
 	return (
 		<div
 			className={
-				loading ?
-					'ee-form-placeholder-div' :
-					'ee-form-placeholder-div ee-form-fade-out'
+				classNames( {
+					'ee-form-placeholder-div': true,
+					'ee-form-fade-out': ! loading,
+				} )
 			}
 		>
 			<div className="ee-loading-div">
