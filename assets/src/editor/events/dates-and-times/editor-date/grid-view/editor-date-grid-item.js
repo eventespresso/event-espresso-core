@@ -11,6 +11,7 @@ import {
 } from '@eventespresso/components';
 import { dateTimeModel } from '@eventespresso/model';
 import { isModelEntityOfModel } from '@eventespresso/validators';
+import classNames from 'classnames';
 
 /**
  * Internal dependencies
@@ -86,12 +87,16 @@ class EditorDateGridItem extends Component {
 				labelPosition="top right"
 			/>
 		) : null;
-		const dateStyleClass = showDate === 'both' ?
-			'ee-editor-date-range' :
-			'ee-editor-date-single';
+		const dateStyleClass = classNames(
+			'ee-editor-date-main',
+			{
+				'ee-editor-date-range': showDate === 'both',
+				'ee-editor-date-single': showDate !== 'both',
+			}
+		);
 		return (
 			<Fragment>
-				<div className={ `ee-editor-date-main ${ dateStyleClass }` }>
+				<div className={ dateStyleClass }>
 					{ this.displayDate( eventDate, showDate ) }
 					<EditorDateDetails
 						event={ event }
