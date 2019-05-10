@@ -3,6 +3,7 @@
  */
 import { Component } from '@wordpress/element';
 import { Dashicon, Path, SVG } from '@wordpress/components';
+import classNames from 'classnames';
 
 export const ESPRESSO_ICON_CALCULATOR = 'calculator';
 export const ESPRESSO_ICON_CALENDAR = 'calendar';
@@ -106,7 +107,12 @@ export class EspressoIcon extends Component {
 				role="img"
 				focusable="false"
 				className={
-					`${ className } dashicon dashicons-${ icon } espresso-icon`
+					classNames(
+						className,
+						'dashicon',
+						`dashicons-${ icon }`,
+						'espresso-icon'
+					)
 				}
 				xmlns="http://www.w3.org/2000/svg"
 				width={ size }
