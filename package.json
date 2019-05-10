@@ -4,10 +4,19 @@
 	"description": "Event Espresso core js and css.",
 	"main": "webpack.dev.js",
 	"repository": "git+https://github.com/eventespresso/event-espresso-core.git",
+	"watch": {
+		"build:css": {
+			"patterns": [
+				"bin/css-builder",
+				"assets/src/components/ui/styles"
+			],
+			"ignore": "index.js"
+		}
+	},
 	"scripts": {
-		"prebuild": "npm run check-engines",
+		"prebuild": "npm run check-engines && npm run build:css",
 		"prewatch": "npm run check-engines",
-		"watch": "webpack --watch --config webpack.dev.js",
+		"watch": "concurrently \"webpack --watch --config webpack.dev.js\" \"npm-watch build:css\"",
 		"build": "cross-env NODE_ENV=production webpack --config webpack.prod.js",
 		"watch-poll": "webpack --watch --watch-poll --config webpack.dev.js",
 		"lint": "wp-scripts lint-js .",
@@ -26,7 +35,8 @@
 		"test-unit:coverage": "npm run test-unit -- --coverage",
 		"test-unit:coverage-ci": "npm run test-unit -- --coverage --maxWorkers 1 && codecov",
 		"test-unit:watch": "npm run test-unit -- --watch",
-		"lc": "jsgl --local ./"
+		"lc": "jsgl --local ./",
+		"build:css": "node ./bin/css-builder/css-builder.js"
 	},
 	"author": "Event Espresso",
 	"license": "GPL-2.0",
@@ -68,7 +78,7 @@
 		"babel-plugin-dev-expression": "^0.2.1",
 		"babel-runtime": "^6.26.0",
 		"clean-webpack-plugin": "^2.0.2",
-		"codecov": "^3.3.0",
+		"codecov": "^3.4.0",
 		"concurrently": "^4.1.0",
 		"core-js": "2.5.7",
 		"cross-env": "5.2.0",
@@ -79,6 +89,7 @@
 		"eslint": "^5.16.0",
 		"eslint-plugin-jest": "22.5.1",
 		"license-checker": "^25.0.1",
+		"handlebars": "^4.1.2",
 		"lodash": "^4.17.11",
 		"mini-css-extract-plugin": "^0.6.0",
 		"pegjs": "^0.10.0",
@@ -88,7 +99,7 @@
 		"react-dom": "^16.8.6",
 		"react-test-renderer": "^16.8.6",
 		"recast": "^0.17.6",
-		"webpack": "^4.30.0",
+		"webpack": "^4.31.0",
 		"webpack-assets-manifest": "^3.1.1",
 		"webpack-cli": "^3.3.2",
 		"webpack-merge": "^4.2.1"
@@ -106,6 +117,7 @@
 		"memize": "^1.0.5",
 		"moment-duration-format": "^2.2.2",
 		"moment-timezone": "^0.5.25",
+		"npm-watch": "^0.6.0",
 		"pluralize": "^7.0.0",
 		"prop-types": "^15.7.2",
 		"querystringify": "^2.1.1",
