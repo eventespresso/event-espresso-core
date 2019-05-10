@@ -3,6 +3,7 @@
  */
 import { withSelect } from '@wordpress/data';
 import { isModelEntityOfModel } from '@eventespresso/validators';
+import { createHigherOrderComponent } from '@wordpress/compose';
 
 const EMPTY_OBJECT = {};
 
@@ -18,21 +19,24 @@ const EMPTY_OBJECT = {};
  *
  * @function
  */
-export const withEventDatetimes = withSelect(
-	( select, { event, eventLoaded } ) => {
-		if ( eventLoaded && isModelEntityOfModel( event, 'event' ) ) {
-			const { getRelatedEntities } = select( 'eventespresso/core' );
-			const { hasFinishedResolution } = select( 'core/data' );
-			const eventDates = getRelatedEntities( event, 'datetimes' );
-			const eventDatesLoaded = hasFinishedResolution(
-				'eventespresso/core',
-				'getRelatedEntities',
-				[ event, 'datetimes' ]
-			);
-			if ( eventDatesLoaded ) {
-				return { eventDates, eventDatesLoaded };
+export const withEventDatetimes = createHigherOrderComponent(
+	withSelect(
+		( select, { event, eventLoaded } ) => {
+			if ( eventLoaded && isModelEntityOfModel( event, 'event' ) ) {
+				const { getRelatedEntities } = select( 'eventespresso/core' );
+				const { hasFinishedResolution } = select( 'core/data' );
+				const eventDates = getRelatedEntities( event, 'datetimes' );
+				const eventDatesLoaded = hasFinishedResolution(
+					'eventespresso/core',
+					'getRelatedEntities',
+					[ event, 'datetimes' ]
+				);
+				if ( eventDatesLoaded ) {
+					return { eventDates, eventDatesLoaded };
+				}
 			}
+			return EMPTY_OBJECT;
 		}
-		return EMPTY_OBJECT;
-	}
+	),
+	'withEventDatetimes'
 );

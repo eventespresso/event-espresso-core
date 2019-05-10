@@ -2,6 +2,7 @@
  * External imports
  */
 import { withSelect } from '@wordpress/data';
+import { createHigherOrderComponent } from '@wordpress/compose';
 
 /**
  * Internal imports
@@ -16,26 +17,29 @@ import { getDatetimeEntityIds } from './utils';
  *
  * @function
  */
-export const withTicketsForAllEventDates = withSelect(
-	( select, { eventDates, eventDatesLoaded } ) => {
-		if ( eventDatesLoaded ) {
-			const { getRelatedEntitiesForIds } = select( 'eventespresso/core' );
-			const { hasFinishedResolution } = select( 'core/data' );
-			const eventDateIds = getDatetimeEntityIds( eventDates );
-			const eventDateTickets = getRelatedEntitiesForIds(
-				'datetime',
-				eventDateIds,
-				'tickets'
-			);
-			const eventDateTicketsLoaded = hasFinishedResolution(
-				'eventespresso/core',
-				'getRelatedEntitiesForIds',
-				[ 'datetime', eventDateIds, 'tickets' ]
-			);
-			if ( eventDateTicketsLoaded ) {
-				return { eventDateTickets, eventDateTicketsLoaded };
+export const withTicketsForAllEventDates = createHigherOrderComponent(
+	withSelect(
+		( select, { eventDates, eventDatesLoaded } ) => {
+			if ( eventDatesLoaded ) {
+				const { getRelatedEntitiesForIds } = select( 'eventespresso/core' );
+				const { hasFinishedResolution } = select( 'core/data' );
+				const eventDateIds = getDatetimeEntityIds( eventDates );
+				const eventDateTickets = getRelatedEntitiesForIds(
+					'datetime',
+					eventDateIds,
+					'tickets'
+				);
+				const eventDateTicketsLoaded = hasFinishedResolution(
+					'eventespresso/core',
+					'getRelatedEntitiesForIds',
+					[ 'datetime', eventDateIds, 'tickets' ]
+				);
+				if ( eventDateTicketsLoaded ) {
+					return { eventDateTickets, eventDateTicketsLoaded };
+				}
 			}
+			return {};
 		}
-		return {};
-	}
+	),
+	'withTicketsForAllEventDates'
 );

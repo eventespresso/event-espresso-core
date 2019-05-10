@@ -4,6 +4,7 @@
 import { isEmpty, uniq } from 'lodash';
 import { withSelect } from '@wordpress/data';
 import { isModelEntityOfModel } from '@eventespresso/validators';
+import { createHigherOrderComponent } from '@wordpress/compose';
 
 const EMPTY_ARRAY = [];
 
@@ -19,36 +20,39 @@ const EMPTY_ARRAY = [];
  *
  * @function
  */
-export const withGetRelatedTicketsForEventDates = withSelect(
-	( select ) => {
-		const { getRelatedEntities } = select( 'eventespresso/core' );
-		/**
-		 * @function
-		 * @param {Array} eventDates
-		 * @return {Array} tickets
-		 */
-		const getRelatedTicketsForEventDates = ( eventDates ) => {
-			let datetimeTickets = EMPTY_ARRAY;
-			if ( Array.isArray( eventDates ) ) {
-				eventDates.forEach( ( eventDate ) => {
-					if ( isModelEntityOfModel( eventDate, 'datetime' ) ) {
-						const relatedTickets = getRelatedEntities(
-							eventDate,
-							'tickets'
-						);
-						if (
-							Array.isArray( relatedTickets ) &&
-							! isEmpty( relatedTickets )
-						) {
-							datetimeTickets = datetimeTickets.concat(
-								relatedTickets
+export const withGetRelatedTicketsForEventDates = createHigherOrderComponent(
+	withSelect(
+		( select ) => {
+			const { getRelatedEntities } = select( 'eventespresso/core' );
+			/**
+			 * @function
+			 * @param {Array} eventDates
+			 * @return {Array} tickets
+			 */
+			const getRelatedTicketsForEventDates = ( eventDates ) => {
+				let datetimeTickets = EMPTY_ARRAY;
+				if ( Array.isArray( eventDates ) ) {
+					eventDates.forEach( ( eventDate ) => {
+						if ( isModelEntityOfModel( eventDate, 'datetime' ) ) {
+							const relatedTickets = getRelatedEntities(
+								eventDate,
+								'tickets'
 							);
+							if (
+								Array.isArray( relatedTickets ) &&
+								! isEmpty( relatedTickets )
+							) {
+								datetimeTickets = datetimeTickets.concat(
+									relatedTickets
+								);
+							}
 						}
-					}
-				} );
-			}
-			return uniq( datetimeTickets );
-		};
-		return { getRelatedTicketsForEventDates };
-	}
+					} );
+				}
+				return uniq( datetimeTickets );
+			};
+			return { getRelatedTicketsForEventDates };
+		}
+	),
+	'withGetRelatedTicketsForEventDates'
 );
