@@ -134,6 +134,10 @@
 
 @media only screen and (max-width: 1600px) {
 
+}
+
+@media only screen and (max-width: 1280px) {
+
     .ee-tickets-list-list-view {
         display: flex;
         flex-flow: row wrap;
@@ -145,6 +149,7 @@
         min-width: 260px;
         width: 47.5%;
     }
+
     /* headers row */
     .ee-tickets-list-list-view > div:nth-of-type(1) {
         display: none !important;
@@ -189,6 +194,7 @@
     .ee-ticket-list-item-value {
         display: inline-block;
     }
+
     /* Date Name in status bar value */
     .ee-editor-ticket-list-items > div:nth-of-type(1) .ee-ticket-list-item-value {
         display: block;
@@ -200,9 +206,10 @@
         padding: 10px;
         width: auto;
     }
+
     /* Name */
     .ee-editor-ticket-list-items > div:nth-of-type(3),
-    /* status bar */
+        /* status bar */
     .ee-editor-ticket-list-items > div:nth-of-type(1) .ee-ticket-list-item-label {
         display: none;
     }
@@ -220,9 +227,6 @@
         right: unset;
     }
 
-}
-
-@media only screen and (max-width: 1280px) {
 }
 
 @media only screen and (max-width: 1024px) {
