@@ -8,6 +8,7 @@ import { data } from '@eventespresso/eejs';
 import { __ } from '@eventespresso/i18n';
 import { dateTimeModel } from '@eventespresso/model';
 import { isModelEntityOfModel } from '@eventespresso/validators';
+import classNames from 'classnames';
 
 /**
  * Internal dependencies
@@ -32,9 +33,12 @@ class EditorDateDetails extends Component {
 	 * @return {string}    date name
 	 */
 	dateName = ( event, eventDate ) => {
-		const htmlClass = eventDate.name && eventDate.name.length > 40 ?
-			'ee-editor-date-name-heading ee-long-title' :
-			'ee-editor-date-name-heading';
+		const htmlClass = classNames(
+			'ee-editor-date-name-heading',
+			{
+				'ee-long-title': eventDate.name && eventDate.name.length > 40,
+			}
+		);
 		return (
 			<h1 className={ htmlClass }>
 				<InlineEditInput
@@ -65,9 +69,12 @@ class EditorDateDetails extends Component {
 	 * @return {string} date description
 	 */
 	description = ( event, eventDate, showDesc ) => {
-		const htmlClass = showDesc === 'excerpt' ?
-			'ee-editor-date-desc-div ee-date-desc-excerpt' :
-			'ee-editor-date-desc-div';
+		const htmlClass = classNames(
+			'ee-editor-date-desc-div',
+			{
+				'ee-date-desc-excerpt': showDesc === 'excerpt',
+			}
+		);
 		return (
 			<div className={ htmlClass }>
 				<InlineEditInput
