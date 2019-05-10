@@ -741,13 +741,20 @@ export const setRelationsResource = (
  *
  * @param {Object} instance
  * @param {string} saveState Expected to be one of SAVE_STATE constant values.
+ * @param {boolean} override Set to true when overriding the default logic for
+ * setting state.  When true, the saveState is set to whatever the incoming
+ * saveState value is.
  */
-export const setSaveState = ( instance, saveState ) => {
+export const setSaveState = ( instance, saveState, override = false ) => {
 	const currentState = instance[ PRIVATE_PROPERTIES.SAVE_STATE ];
 	switch ( saveState ) {
 		case SAVE_STATE.DIRTY:
 		case SAVE_STATE.NEW:
 		case SAVE_STATE.CLEAN:
+			if ( override ) {
+				instance[ PRIVATE_PROPERTIES.SAVE_STATE ] = saveState;
+				break;
+			}
 			instance[ PRIVATE_PROPERTIES.SAVE_STATE ] =
 				currentState === SAVE_STATE.CLEAN ?
 					saveState :

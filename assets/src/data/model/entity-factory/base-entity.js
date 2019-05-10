@@ -137,7 +137,7 @@ class BaseEntity {
 			const newEntity = factory.createNew( this.forClone );
 			if ( keepId ) {
 				newEntity.id = this.id;
-				setSaveState( this, newEntity.saveState );
+				setSaveState( newEntity, this.saveState, true );
 			}
 			return newEntity;
 		};
