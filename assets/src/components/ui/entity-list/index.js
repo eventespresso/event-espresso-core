@@ -43,9 +43,7 @@ const EntityList = ( {
 	entities = Array.isArray( entities ) ? entities : [];
 	// Remove undefined from the array
 	entities = without( entities, undefined );
-	htmlClass = classNames( 'ee-editor-entity-list', {
-		[ htmlClass ]: htmlClass
-	} );
+	htmlClass = classNames( 'ee-editor-entity-list', htmlClass );
 	let entityList = view === 'grid' ? (
 		<EntityGridView
 			entities={ entities }
