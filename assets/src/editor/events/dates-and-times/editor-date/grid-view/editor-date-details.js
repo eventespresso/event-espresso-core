@@ -4,13 +4,15 @@
 import { Dashicon, Tooltip } from '@wordpress/components';
 import { Component } from '@wordpress/element';
 import { EntityDetailsPanel, InlineEditInput } from '@eventespresso/components';
-import { data } from '@eventespresso/eejs';
+import { routes } from '@eventespresso/eejs';
+import { addQueryArgs } from '@wordpress/url';
 import { __ } from '@eventespresso/i18n';
 import { dateTimeModel } from '@eventespresso/model';
 import { isModelEntityOfModel } from '@eventespresso/validators';
 import classNames from 'classnames';
 
 const { MODEL_NAME: DATETIME } = dateTimeModel;
+const { ADMIN_ROUTES, ADMIN_ROUTE_ACTION_DEFAULT, getAdminUrl } = routes;
 /**
  * EditorDateDetails
  *
@@ -168,15 +170,19 @@ class EditorDateDetails extends Component {
 	 * dateSoldReservedCapacity
 	 *
 	 * @function
+	 * @param {Object} event        Base entity instance for event.
 	 * @param {Object} eventDate    model object defining the Event Date
 	 * @return {string}    link to registrations list table for datetime
 	 */
-	getDatetimeRegistrationsLink = ( eventDate ) => {
-		let regListUrl = data.paths.admin_url;
-		regListUrl += 'admin.php?page=espresso_registrations';
-		regListUrl += `&event_id=${ eventDate.evtId }`;
-		regListUrl += `&datetime_id=${ eventDate.id }`;
-		regListUrl += '&action=default&return=edit';
+	getDatetimeRegistrationsLink = ( event, eventDate ) => {
+		const regListUrl = addQueryArgs(
+			getAdminUrl( ADMIN_ROUTES.REGISTRATIONS, ADMIN_ROUTE_ACTION_DEFAULT ),
+			{
+				event_id: event.id,
+				datetime_id: eventDate.id,
+				return: 'edit',
+			}
+		);
 		return (
 			<Tooltip
 				text={ __(
