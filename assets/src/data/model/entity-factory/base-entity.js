@@ -129,12 +129,12 @@ class BaseEntity {
 	 */
 	get clone() {
 		return ( keepId = false ) => {
-			// @todo memoize this
-			const factory = memoize( createEntityFactory(
+			const createFactory = memoize( () => createEntityFactory(
 				this.modelName,
 				{ $schema: {}, properties: this.schema },
 				this.fieldPrefixes
 			) );
+			const factory = createFactory();
 			const newEntity = factory.createNew( this.forClone );
 			if ( keepId ) {
 				newEntity.id = this.id;

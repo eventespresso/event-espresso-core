@@ -700,5 +700,24 @@ describe( 'createEntityFactory()', () => {
 				expect( newEntity.id ).toEqual( entity.id );
 			} );
 		} );
+		describe( 'memized factory behaviour on clone', () => {
+			const dttFactory = createEntityFactory(
+				'datetime',
+				DateTimeSchema.schema,
+				[ 'DTT_EVT', 'DTT' ]
+			);
+			const dttEntity = dttFactory.fromExisting( AuthedDateTimeResponse );
+			it( 'keeps different entity factories separate', () => {
+				// first clone event entity to set the memized factory value.
+				entity.clone();
+				// next clone datetime entity
+				const dateClone = dttEntity.clone( true );
+				expect( dateClone.id ).toEqual( dttEntity.id );
+
+				//clone event again
+				const eventClone = entity.clone( true );
+				expect( eventClone.id ).toEqual( entity.id );
+			} );
+		} );
 	} );
 } );
