@@ -10,7 +10,7 @@ import classNames from 'classnames';
  * Internal dependencies
  */
 import './style.css';
-import { default as CalendarPageDate } from '../calendar-page-date';
+import CalendarPageDate from '../calendar-page-date';
 
 /**
  * Displays a pair of calendar dates representing a date range
