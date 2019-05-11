@@ -13,9 +13,8 @@ import {
 	withDatesListFilterState,
 	getFilteredDatesList,
 } from '../dates-and-times/editor-date/filter-bar';
-import {
-	default as withTicketsListFilterState,
-} from '../tickets/editor-ticket/filter-bar/with-tickets-list-filter-state';
+import withTicketsListFilterState from
+	'../tickets/editor-ticket/filter-bar/with-tickets-list-filter-state';
 import {
 	getFilteredTicketsList,
 } from '../tickets/editor-ticket/filter-bar/with-tickets-list-filter-bar';
