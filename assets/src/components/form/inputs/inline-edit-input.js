@@ -6,6 +6,7 @@ import PropTypes from 'prop-types';
 import { Component, createRef, Fragment } from '@wordpress/element';
 import { ENTER, ESCAPE, SPACE } from '@wordpress/keycodes';
 import { __ } from '@eventespresso/i18n';
+import classNames from 'classnames';
 
 /**
  * Internal imports
@@ -195,9 +196,13 @@ export class InlineEditInput extends Component {
 		typeof this.state.value === 'number' ?
 			this.state.value :
 			'';
-		const htmlClass = valueType === 'number' ?
-			'ee-inline-edit-input ee-inline-edit-input-number form-control' :
-			'ee-inline-edit-input form-control';
+		const htmlClass = classNames(
+			'ee-inline-input',
+			'form-control',
+			{
+				'ee-inline-edit-input-number': valueType === 'number',
+			},
+		);
 		const input = type === 'textarea' ? (
 			<textarea
 				ref={ this.input }
