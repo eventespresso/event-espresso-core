@@ -2,6 +2,7 @@
  * External imports
  */
 import { isModelEntityOfModel } from '@eventespresso/validators';
+import classNames from 'classnames';
 
 /**
  * Internal dependencies
@@ -25,9 +26,7 @@ export const EditorDatesGridView = ( {
 	htmlClass,
 	...otherProps
 } ) => {
-	htmlClass = htmlClass ?
-		`${ htmlClass } ee-dates-list-grid-view` :
-		'ee-dates-list-grid-view';
+	htmlClass = classNames( htmlClass, 'ee-dates-list-grid-view' );
 	return (
 		<div className={ htmlClass }>
 			{
