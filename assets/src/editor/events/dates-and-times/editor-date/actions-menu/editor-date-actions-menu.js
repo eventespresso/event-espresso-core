@@ -16,7 +16,7 @@ import { isModelEntityOfModel } from '@eventespresso/validators';
  */
 import { withDatetimeTickets } from '../../data';
 import { EditEventDateFormModal } from '../';
-import { withCopyEventDate, trashEventDate } from '../action-handlers';
+import { withCopyEventDate, withTrashEventDate } from '../action-handlers';
 import { EntityActionMenuItem } from '../../../entity-action-menu-item';
 import {
 	withTicketAssignmentsManager,
@@ -59,7 +59,7 @@ class EditorDateActionsMenu extends Component {
 					{
 						title: __( 'trash date', 'event_espresso' ),
 						icon: 'trash',
-						onClick: () => trashEventDate( eventDate ),
+						onClick: this.props.trashEventDate,
 					},
 					{
 						title: __( 'edit venue', 'event_espresso' ),
@@ -228,4 +228,5 @@ export default compose( [
 	withTicketAssignmentsManager,
 	withDatetimeTickets,
 	withCopyEventDate,
+	withTrashEventDate,
 ] )( EditorDateActionsMenu );
