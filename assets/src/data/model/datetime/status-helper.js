@@ -61,7 +61,6 @@ export const isRecentlyExpired = ( DateTimeEntity ) => {
 export const isSoldOut = ( DateTimeEntity ) => {
 	assertDateTimeEntity( DateTimeEntity );
 	const cap = DateTimeEntity.regLimit;
-	console.log( cap, DateTimeEntity.sold );
 	return ( cap !== null && cap !== 'INF' && cap !== Infinity && cap !== -1 ) &&
 		DateTimeEntity.sold >= cap;
 };
