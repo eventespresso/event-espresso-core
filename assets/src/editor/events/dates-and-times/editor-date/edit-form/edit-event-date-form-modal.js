@@ -100,7 +100,6 @@ export default compose( [
 	withDispatch( ( dispatch, { updateEventDateRelation } ) => {
 		const { receiveAndReplaceEntityRecords } = dispatch( 'eventespresso/core' );
 		const replaceDateInStore = ( replaceDate, originalDate, eventEntity ) => {
-			replaceDate.id = originalDate.id;
 			receiveAndReplaceEntityRecords( DATETIME, [ replaceDate ] );
 			updateEventDateRelation( eventEntity, replaceDate );
 		};
