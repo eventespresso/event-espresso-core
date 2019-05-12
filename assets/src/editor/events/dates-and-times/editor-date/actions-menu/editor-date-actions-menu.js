@@ -38,8 +38,6 @@ class EditorDateActionsMenu extends Component {
 	/**
 	 * @function
 	 * @param {Object} eventDate    	 JSON object defining the Event Date
-	 * @param {Array} datetimeTickets    Tickets for Event Date
-	 * @param {boolean} ticketsLoaded
 	 * @return {DropDownMenu}    		 Edit Event Date DropDownMenu
 	 */
 	mainDropDownMenu = ( eventDate ) => {
