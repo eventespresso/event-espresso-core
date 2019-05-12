@@ -12,7 +12,7 @@ import { dateTimeModel } from '@eventespresso/model';
 /**
  * Internal dependencies
  */
-import { default as EditEventDateForm } from './edit-event-date-form';
+import EditEventDateForm from './edit-event-date-form';
 import { eventDateEntityFormSchema } from './event-date-entity-form-schema';
 import {
 	eventDateEntityFormSubmitHandler,
