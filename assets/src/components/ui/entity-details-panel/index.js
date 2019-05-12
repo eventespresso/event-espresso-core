@@ -94,7 +94,7 @@ class EntityDetailsPanel extends Component {
 	render() {
 		const { details } = this.props;
 		let { htmlClass } = this.props;
-		const htmlClass = classNames( htmlClass, 'ee-entity-details-panel-div' );
+		htmlClass = classNames( htmlClass, 'ee-entity-details-panel-div' );
 		return (
 			<div className={ htmlClass }>
 				{
