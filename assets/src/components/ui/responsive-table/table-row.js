@@ -1,4 +1,9 @@
 /**
+ * External imports
+ */
+import classNames from 'classnames';
+
+/**
  * @param {Array} children
  * @param {number} rowNumber
  * @param {string} htmlId
@@ -18,16 +23,16 @@ const TableRow = ( {
 	rowType = 'body',
 	...extraProps
 } ) => {
+	rowType += 'RowClass';
 	htmlId = htmlId ?
 		`${ htmlId }-row-${ rowNumber }` :
 		`ee-rTable-row-${ rowNumber }`;
-	htmlClass = htmlClass ?
-		`${ htmlClass } ee-rTable-${ rowType }-row row-${ rowNumber }` :
-		`ee-rTable-${ rowType }-row row-${ rowNumber }`;
-	rowType += 'RowClass';
-	htmlClass = classes[ rowType ] ?
-		`${ htmlClass } ${ classes[ rowType ] }` :
-		htmlClass;
+	htmlClass = classNames(
+		htmlClass,
+		`ee-rTable-${ rowType }-row`,
+		`row-${ rowNumber }`,
+		classes[ rowType ],
+	);
 	return (
 		<tr id={ htmlId } className={ htmlClass } { ...extraProps } >
 			{ children }
