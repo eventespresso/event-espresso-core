@@ -1,5 +1,5 @@
 <p><strong><?php esc_html_e('Message Template Editor', 'event_espresso'); ?></strong></p>
-<p><?php _e('Here are a few things that you should know about the Message Template Editor:', 'event_espresso'); ?></p>
+<p><?php esc_html_e('Here are a few things that you should know about the Message Template Editor:', 'event_espresso'); ?></p>
 <p><strong><?php esc_html_e('1. The Event Editor Title', 'event_espresso'); ?></strong></p>
 <p><?php echo $img1; ?></p>
 <p>
@@ -57,7 +57,7 @@
     ); ?>
 </p>
 <p>
-    <?php _e(
+    <?php esc_html_e(
         'This box is at a fixed height, but contents are scrollable. You can click the question mark to find out what the given shortcode will parse to when used in your template.',
         'event_espresso'
     ); ?></p>
@@ -86,14 +86,14 @@
 </p>
 <p>
     <strong><?php esc_html_e('Recommendations', 'event_espresso'); ?></strong><br/>
-    <?php _e(
-        'Want to see a tour of this screen? Click on the Message Template Editor Tour button which appears on the right side of the page. <br />To learn more about the options on this page, take a look at the different tabs that appear on the left side of the page.',
+    <?php esc_html_e(
+        'Want to see a tour of this screen? Click on the Message Template Editor Tour button which appears on the right side of the page. To learn more about the options on this page, take a look at the different tabs that appear on the left side of the page.',
         'event_espresso'
     ); ?>
 </p>
 <p>
     <strong><?php esc_html_e('Screen Options', 'event_espresso'); ?></strong><br/>
-    <?php _e(
+    <?php esc_html_e(
         'You can customize the information that is shown on this page by toggling the Screen Options tab. Then you can add or remove checkmarks to hide or show certain content.',
         'event_espresso'
     ); ?>
