@@ -908,7 +908,6 @@ export default compose( [
 				}
 			}
 		} );
-		// setState( { initialized } );
 		return {
 			...dtmProps,
 			loading,
