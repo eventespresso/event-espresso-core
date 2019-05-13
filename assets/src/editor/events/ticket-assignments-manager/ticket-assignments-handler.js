@@ -23,26 +23,38 @@ export const processChanges = (
 	removeTickets
 ) => {
 	const relationUpdates = [];
-	for ( let dateID in removed ) {
-		dateID = parseInt( dateID );
-		const date = find( dates, { id: dateID } );
-		if ( isModelEntityOfModel( date, 'datetime' ) ) {
+	for ( const dateID in removed ) {
+		const dateEntity = find(
+			dates,
+			( date ) => {
+				return date.id === dateID ||
+					date.id === parseInt( dateID );
+
+			}
+		);
+		if ( isModelEntityOfModel( dateEntity, 'datetime' ) ) {
 			const ticketsToRemove = removed[ dateID ];
 			if ( isArray( ticketsToRemove ) ) {
 				relationUpdates.push(
-					removeTickets( date, ticketsToRemove )
+					removeTickets( dateEntity, ticketsToRemove )
 				);
 			}
 		}
 	}
-	for ( let dateID in assigned ) {
-		dateID = parseInt( dateID );
-		const date = find( dates, { id: dateID } );
-		if ( isModelEntityOfModel( date, 'datetime' ) ) {
+	for ( const dateID in assigned ) {
+		const dateEntity = find(
+			dates,
+			( date ) => {
+				return date.id === dateID ||
+					date.id === parseInt( dateID );
+
+			}
+		);
+		if ( isModelEntityOfModel( dateEntity, 'datetime' ) ) {
 			const ticketsToAssign = assigned[ dateID ];
 			if ( isArray( ticketsToAssign ) ) {
 				relationUpdates.push(
-					addTickets( date, ticketsToAssign )
+					addTickets( dateEntity, ticketsToAssign )
 				);
 			}
 		}
