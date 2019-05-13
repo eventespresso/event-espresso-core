@@ -18,10 +18,7 @@ import { __ } from '@eventespresso/i18n';
 import { EditorDatesGridView, EditorDatesListView } from './';
 import PaginatedDatesListWithFilterBar from './filter-bar';
 import { EditEventDateFormModal } from '../';
-import {
-	withTicketAssignmentsManager,
-	TicketAssignmentsManagerModal,
-} from '../../ticket-assignments-manager';
+import { withTicketAssignmentsManagerModal } from '../../ticket-assignments-manager';
 import withUpdateEventDateRelation from './action-handlers/with-update-event-date-relation';
 
 const {
@@ -91,8 +88,6 @@ class EditorDatesList extends Component {
 			allTickets,
 			editorOpen,
 			toggleEditor,
-			showTicketAssignments,
-			toggleTicketAssignments,
 			...otherProps
 		} = this.props;
 		return (
@@ -117,19 +112,6 @@ class EditorDatesList extends Component {
 					toggleEditor={ toggleEditor }
 					editorOpen={ editorOpen }
 				/>
-				<TicketAssignmentsManagerModal
-					allDates={ allDates }
-					allTickets={ allTickets }
-					toggleEditor={ toggleTicketAssignments }
-					editorOpen={ showTicketAssignments }
-					modalProps={ {
-						title: __(
-							'Ticket Assignments for All Event Dates',
-							'event_espresso'
-						),
-						closeButtonLabel: null,
-					} }
-				/>
 			</FormWrapper>
 		);
 	}
@@ -137,7 +119,6 @@ class EditorDatesList extends Component {
 
 export default compose( [
 	withEditor,
-	withTicketAssignmentsManager,
 	PaginatedDatesListWithFilterBar,
 	withUpdateEventDateRelation,
 	withDispatch( ( dispatch, { event, updateEventDateRelation } ) => {
@@ -153,4 +134,13 @@ export default compose( [
 		};
 		return { addNewEventDate };
 	} ),
+	withTicketAssignmentsManagerModal( () => (
+		{
+			title: __(
+				'Ticket Assignments for All Event Dates',
+				'event_espresso'
+			),
+			closeButtonLabel: null,
+		}
+	) ),
 ] )( EditorDatesList );

@@ -26,10 +26,7 @@ import {
 	TicketPriceCalculatorFormModal,
 	withTicketPriceCalculator,
 } from '../price-calculator';
-import {
-	withTicketAssignmentsManager,
-	TicketAssignmentsManagerModal,
-} from '../../../ticket-assignments-manager';
+import { withTicketAssignmentsManagerModal } from '../../../ticket-assignments-manager';
 import './style.css';
 
 /**
@@ -183,13 +180,10 @@ class EditorTicketActionsMenu extends Component {
 	render() {
 		const {
 			ticket,
-			allDates,
 			editorOpen,
 			toggleEditor,
 			showCalculator,
 			toggleCalculator,
-			showTicketAssignments,
-			toggleTicketAssignments,
 			ticketDatetimes = [],
 			datesLoaded = false,
 			noBasePrice = false,
@@ -220,23 +214,6 @@ class EditorTicketActionsMenu extends Component {
 					editorOpen={ editorOpen }
 					calculator={ calculator }
 				/>
-				<TicketAssignmentsManagerModal
-					ticket={ ticket }
-					allDates={ allDates }
-					toggleEditor={ toggleTicketAssignments }
-					editorOpen={ showTicketAssignments }
-					modalProps={ {
-						title: sprintf(
-							_x(
-								'Date Assignments for Ticket:  %1$s',
-								'Date Assignments for Ticket:  Ticket name',
-								'event_espresso'
-							),
-							ticket.name
-						),
-						closeButtonLabel: null,
-					} }
-				/>
 				<TicketPriceCalculatorFormModal
 					ticket={ ticket }
 					toggleEditor={ toggleCalculator }
@@ -250,7 +227,19 @@ class EditorTicketActionsMenu extends Component {
 export default compose( [
 	withEditor,
 	withTicketPriceCalculator,
-	withTicketAssignmentsManager,
+	withTicketAssignmentsManagerModal( ( { ticket } ) => (
+		{
+			title: sprintf(
+				_x(
+					'Date Assignments for Ticket:  %1$s',
+					'Date Assignments for Ticket:  Ticket name',
+					'event_espresso'
+				),
+				ticket.name
+			),
+			closeButtonLabel: null,
+		}
+	) ),
 	withTicketDatetimes,
 	withTicketPrices,
 ] )( EditorTicketActionsMenu );

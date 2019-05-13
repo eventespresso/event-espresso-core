@@ -18,10 +18,7 @@ import { withDatetimeTickets } from '../../data';
 import { EditEventDateFormModal } from '../';
 import { withCopyEventDate, withTrashEventDate } from '../action-handlers';
 import { EntityActionMenuItem } from '../../../entity-action-menu-item';
-import {
-	withTicketAssignmentsManager,
-	TicketAssignmentsManagerModal,
-} from '../../../ticket-assignments-manager';
+import { withTicketAssignmentsManagerModal } from '../../../ticket-assignments-manager';
 import './style.css';
 
 const { MODEL_NAME: DATETIME } = dateTimeModel;
@@ -176,11 +173,8 @@ class EditorDateActionsMenu extends Component {
 		const {
 			event,
 			eventDate,
-			allTickets,
 			editorOpen,
 			toggleEditor,
-			showTicketAssignments,
-			toggleTicketAssignments,
 			datetimeTickets = [],
 			ticketsLoaded = false,
 		} = this.props;
@@ -199,25 +193,6 @@ class EditorDateActionsMenu extends Component {
 					toggleEditor={ toggleEditor }
 					editorOpen={ editorOpen }
 				/>
-				<TicketAssignmentsManagerModal
-					date={ eventDate }
-					allTickets={ allTickets }
-					toggleEditor={ toggleTicketAssignments }
-					editorOpen={ showTicketAssignments }
-					modalProps={ {
-						title: sprintf(
-							_x(
-								'Ticket Assignments for: %1$s',
-								'Ticket Assignments for: Date & date name',
-								'event_espresso'
-							),
-							`${ eventDate.name } (${
-								eventDate.start.toFormat( 'ddd MMM DD, YYYY' )
-							})`
-						),
-						closeButtonLabel: null,
-					} }
-				/>
 			</div>
 		) : null;
 	}
@@ -225,7 +200,21 @@ class EditorDateActionsMenu extends Component {
 
 export default compose( [
 	withEditor,
-	withTicketAssignmentsManager,
+	withTicketAssignmentsManagerModal(
+		( { eventDate } ) => ( {
+			title: sprintf(
+				_x(
+					'Ticket Assignments for: %1$s',
+					'Ticket Assignments for: Date & date name',
+					'event_espresso'
+				),
+				`${ eventDate.name } (${
+					eventDate.start.toFormat( 'ddd MMM DD, YYYY' )
+				})`
+			),
+			closeButtonLabel: null,
+		} )
+	),
 	withDatetimeTickets,
 	withCopyEventDate,
 	withTrashEventDate,

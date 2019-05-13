@@ -26,10 +26,7 @@ import {
 	TicketPriceCalculatorFormModal,
 	withTicketPriceCalculator,
 } from './price-calculator';
-import {
-	withTicketAssignmentsManager,
-	TicketAssignmentsManagerModal,
-} from '../../ticket-assignments-manager';
+import { withTicketAssignmentsManagerModal } from '../../ticket-assignments-manager';
 
 const {
 	FormWrapper,
@@ -112,8 +109,6 @@ class EditorTicketsList extends Component {
 			toggleEditor,
 			showCalculator,
 			toggleCalculator,
-			showTicketAssignments,
-			toggleTicketAssignments,
 			view = 'grid',
 			...otherProps
 		} = this.props;
@@ -152,19 +147,6 @@ class EditorTicketsList extends Component {
 					toggleEditor={ toggleCalculator }
 					editorOpen={ showCalculator }
 				/>
-				<TicketAssignmentsManagerModal
-					ticket={ this.state.newTicket }
-					allDates={ allDates }
-					toggleEditor={ toggleTicketAssignments }
-					editorOpen={ showTicketAssignments }
-					modalProps={ {
-						title: __(
-							'Ticket Assignments for All Event Dates',
-							'event_espresso'
-						),
-						closeButtonLabel: null,
-					} }
-				/>
 			</FormWrapper>
 		);
 	}
@@ -174,6 +156,14 @@ export default compose( [
 	withPriceTypes,
 	withEditor,
 	withTicketPriceCalculator,
-	withTicketAssignmentsManager,
 	PaginatedTicketsListWithFilterBar,
+	withTicketAssignmentsManagerModal( () => (
+		{
+			title: __(
+				'Ticket Assignments for All Event Dates',
+				'event_espresso'
+			),
+			closeButtonLabel: null,
+		}
+	) ),
 ] )( EditorTicketsList );

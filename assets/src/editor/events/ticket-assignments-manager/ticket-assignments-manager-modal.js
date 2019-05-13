@@ -1,7 +1,7 @@
 /**
  * External imports
  */
-import { filter, findIndex, isFunction } from 'lodash';
+import { filter, findIndex, isFunction, uniq } from 'lodash';
 import PropTypes from 'prop-types';
 import warning from 'warning';
 import { IconButton } from '@wordpress/components';
@@ -14,6 +14,13 @@ import {
 } from '@eventespresso/components';
 import { __ } from '@eventespresso/i18n';
 import { dateTimeModel, ticketModel } from '@eventespresso/model';
+import { compose } from '@wordpress/compose';
+import {
+	withEntityPagination,
+	withFormContainerAndPlaceholder,
+	withEditorModal,
+} from '@eventespresso/higher-order-components';
+import { withDispatch, withSelect } from '@wordpress/data';
 import { isModelEntityOfModel } from '@eventespresso/validators';
 
 /**
@@ -21,6 +28,7 @@ import { isModelEntityOfModel } from '@eventespresso/validators';
  */
 import * as handler from './ticket-assignments-handler';
 import './ticket-assignments-manager.css';
+import { sortDatesList } from '../dates-and-times/editor-date/filter-bar/dates-list-filter-utils';
 
 const noIndex = -1;
 
@@ -34,7 +42,7 @@ const {
 const { getBackgroundColorClass: getDateBgColorClass } = dateTimeModel;
 const { getBackgroundColorClass: getTicketBgColorClass } = ticketModel;
 
-class TicketAssignmentsManager extends Component {
+class TicketAssignmentsManagerModal extends Component {
 	static propTypes = {
 		entities: PropTypes.arrayOf( PropTypes.object ).isRequired,
 		tickets: PropTypes.arrayOf( PropTypes.object ).isRequired,
@@ -46,7 +54,6 @@ class TicketAssignmentsManager extends Component {
 		allTickets: PropTypes.arrayOf( PropTypes.object ),
 		pagination: PropTypes.object,
 		onUpdate: PropTypes.func,
-		resetRelationsMap: PropTypes.func,
 	};
 
 	constructor( props ) {
@@ -67,9 +74,6 @@ class TicketAssignmentsManager extends Component {
 		if ( isFunction( this.props.toggleEditor ) ) {
 			if ( update && isFunction( this.onUpdate ) ) {
 				this.onUpdate();
-			}
-			if ( isFunction( this.resetRelationsMap ) ) {
-				this.resetRelationsMap();
 			}
 			this.setState( {
 				assigned: {},
@@ -837,4 +841,126 @@ class TicketAssignmentsManager extends Component {
 	}
 }
 
-export default TicketAssignmentsManager;
+export default compose( [
+	withEditorModal( {
+		title: __( 'Event Date Ticket Assignments', 'event_espresso' ),
+		customClass: 'ee-event-date-tickets-manager-modal',
+		closeButtonLabel: __( 'close event date tickets manager',
+			'event_espresso'
+		),
+	} ),
+	withSelect( ( select, ownProps ) => {
+		const {
+			editorOpen,
+			date,
+			allDates,
+			ticket,
+			allTickets,
+			entities = [],
+			tickets = [],
+		} = ownProps;
+		let { initialized = false, loading } = ownProps;
+		let dtmProps = {
+			loading,
+			entities,
+			tickets,
+			notice: __(
+				'loading event date ticket assignments',
+				'event_espresso'
+			),
+		};
+		if ( ! editorOpen || initialized ) {
+			return {};
+		}
+		if ( isModelEntityOfModel( date, 'datetime' ) ) {
+			dtmProps = {
+				entities: [ date ],
+				tickets: allTickets,
+			};
+			initialized = true;
+		} else if ( isModelEntityOfModel( ticket, 'ticket' ) ) {
+			dtmProps = {
+				entities: sortDatesList( allDates ),
+				tickets: [ ticket ],
+			};
+			initialized = true;
+		} else if ( Array.isArray( allDates ) && Array.isArray( allTickets ) ) {
+			dtmProps = {
+				entities: sortDatesList( allDates ),
+				tickets: allTickets,
+			};
+			initialized = true;
+		}
+		const { getRelatedEntities } = select( 'eventespresso/core' );
+		const { hasFinishedResolution } = select( 'core/data' );
+		const eventDateTicketMap = {};
+		dtmProps.entities.forEach( ( dateEntity ) => {
+			if ( isModelEntityOfModel( dateEntity, 'datetime' ) ) {
+				const relatedTickets = getRelatedEntities( dateEntity, 'tickets' );
+				const ticketRelationsResolved = hasFinishedResolution(
+					'eventespresso/core',
+					'getRelatedEntities',
+					[ dateEntity, 'tickets' ]
+				);
+				if ( ticketRelationsResolved ) {
+					loading = false;
+					eventDateTicketMap[ dateEntity.id ] = uniq( relatedTickets );
+				}
+			}
+		} );
+		// setState( { initialized } );
+		return {
+			...dtmProps,
+			loading,
+			eventDateTicketMap,
+			initialized,
+		};
+	} ),
+	withDispatch( ( dispatch ) => {
+		const addTickets = ( date, tickets ) => {
+			warning(
+				isModelEntityOfModel( date, 'datetime' ),
+				'date is not a BaseEntity of the datetime model.'
+			);
+			const { createRelations } = dispatch( 'eventespresso/core' );
+			return createRelations(
+				'datetime',
+				date.id,
+				'tickets',
+				tickets
+			);
+		};
+		const removeTickets = ( date, tickets ) => {
+			warning(
+				isModelEntityOfModel( date, 'datetime' ),
+				'date is not a BaseEntity of the datetime model.'
+			);
+			const { removeRelationForEntity } = dispatch( 'eventespresso/core' );
+			const relationsRemoved = [];
+			if ( Array.isArray( tickets ) ) {
+				tickets.forEach( ( ticket ) => {
+					warning(
+						isModelEntityOfModel( ticket, 'ticket' ),
+						'ticket is not a BaseEntity of the ticket model.'
+					);
+					relationsRemoved.push(
+						removeRelationForEntity(
+							'datetime',
+							date.id,
+							'tickets',
+							ticket.id
+						)
+					);
+				} );
+			}
+			return Promise.all( relationsRemoved );
+		};
+		return { addTickets, removeTickets };
+	} ),
+	withFormContainerAndPlaceholder,
+	withEntityPagination( {
+		returnAsProp: true,
+		entitiesPerPage: 6,
+		position: 'bottom',
+	} ),
+] )( TicketAssignmentsManagerModal );
