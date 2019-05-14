@@ -8,6 +8,7 @@ import { dateTimeModel } from '@eventespresso/model';
 import { isModelEntityOfModel } from '@eventespresso/validators';
 import { routes } from '@eventespresso/eejs';
 import { addQueryArgs } from '@wordpress/url';
+import { ifCondition } from '@wordpress/compose';
 
 const { ADMIN_ROUTES, ADMIN_ROUTE_ACTION_DEFAULT, getAdminUrl } = routes;
 
@@ -89,9 +90,6 @@ class EditorDateListItem extends Component {
 			allTickets,
 			eventDateTicketMap,
 		} = this.props;
-		if ( ! isModelEntityOfModel( eventDate, DATETIME ) ) {
-			return null;
-		}
 		this.id = `event-date-ticket-list-modal-${ eventDate.id }`;
 		const statusClass = this.getStatusClass( eventDate );
 		const bgClass = getBackgroundColorClass( eventDate );
@@ -196,4 +194,7 @@ class EditorDateListItem extends Component {
 	}
 }
 
-export default EditorDateListItem;
+export default ifCondition(
+	( { eventDate } ) => isModelEntityOfModel( eventDate, DATETIME )
+)( EditorDateListItem );
+
