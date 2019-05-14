@@ -27,8 +27,6 @@ export default createHigherOrderComponent(
 		( Entity ) => {
 			return class EntityPaperFrame extends Component {
 				render() {
-					// console.log( '' );
-					// console.log( 'withEntityPaperFrame.render() props: ', this.props );
 					const {
 						instanceId,
 						...otherProps
