@@ -1,5 +1,4 @@
-<div class="changelog">
-    <?php
+<?php
     // maintenance mode on?
     if (EE_Maintenance_Mode::instance()->level() == EE_Maintenance_Mode::level_2_complete_maintenance) {
         ?>
@@ -24,8 +23,8 @@
         </div>
         <?php
     }
-    ?>
-
+?>
+<div class="headline-feature">
     <h2 class="about-headline-callout">
         <?php esc_html_e(
             'Welcome to the Decaf (free) Version of Event Espresso 4!',
@@ -56,8 +55,9 @@
             '<a href="http://eventespresso.com/?utm_source=wordpress_org&amp;utm_medium=link&amp;utm_campaign=plugin_description_tab&amp;utm_content=EE4+Decaf">',
             '</a>'
         ); ?></p>
-    <div class="feature-section col three-col about-updates">
-        <div class="col-1">
+</div>
+    <div class="feature-section col three-col about-updates has-3-columns is-fullwidth">
+        <div class="column col-1">
             <img src="<?php echo EE_GLOBAL_ASSETS_URL; ?>images/screenshots/publish_meta_box.jpg">
             <h3><?php esc_html_e('Optimized aesthetic', 'event_espresso'); ?></h3>
             <p><?php
@@ -66,7 +66,7 @@
                     'event_espresso'
                 ); ?></p>
         </div>
-        <div class="col-2">
+        <div class="column col-2">
             <img src="<?php echo EE_GLOBAL_ASSETS_URL; ?>images/screenshots/registrations-overview.jpg">
             <h3><?php esc_html_e('Integrated management', 'event_espresso'); ?></h3>
             <p><?php
@@ -75,7 +75,7 @@
                     'event_espresso'
                 ); ?></p>
         </div>
-        <div class="col-3 last-feature">
+        <div class="column col-3 last-feature">
             <img src="<?php echo EE_GLOBAL_ASSETS_URL; ?>images/screenshots/refined-bookkeeping.jpg">
             <h3><?php esc_html_e('Easy bookkeeping', 'event_espresso'); ?></h3>
             <p><?php
@@ -86,12 +86,10 @@
         </div>
     </div>
 
-</div>
 <hr>
 
-<div class="changelog">
-    <div class="feature-section col two-col">
-        <div>
+    <div class="feature-section col two-col has-2-columns is-fullwidth">
+        <div class="column">
             <h3><?php esc_html_e('Higher customer retention', 'event_espresso'); ?></h3>
             <p><?php
                 esc_html_e(
@@ -105,16 +103,13 @@
                     'event_espresso'
                 ); ?></p>
         </div>
-        <div class="last-feature about-colors-img">
+        <div class="column last-feature about-colors-img">
             <img src="<?php echo EE_GLOBAL_ASSETS_URL; ?>images/screenshots/registrtation-page-large.jpg">
         </div>
     </div>
-</div>
 
-
-<div class="changelog">
-    <div class="feature-section col two-col">
-        <div>
+    <div class="feature-section col two-col has-2-columns is-fullwidth">
+        <div class="column">
             <h3><?php esc_html_e('Refined event management', 'event_espresso'); ?></h3>
             <p><?php
                 esc_html_e(
@@ -134,22 +129,20 @@
                     'event_espresso'
                 ); ?></p>
         </div>
-        <div class="last-feature about-themes-img">
+        <div class="last-feature about-themes-img column">
             <img src="<?php echo EE_GLOBAL_ASSETS_URL; ?>images/screenshots/event-management.jpg">
         </div>
     </div>
-</div>
-<br/>
+
 <hr>
 
-<div class="changelog about-event-espresso">
     <h2 class="about-headline-callout"><?php
         esc_html_e(
             'People Like You Manage Event Registration with WordPress',
             'event_espresso'
         ); ?></h2>
-    <div class="feature-section col two-col">
-        <div class="grid_6">
+    <div class="feature-section col two-col has-2-columns is-fullwidth">
+        <div class="column">
             <p><?php
                 echo sprintf(
                     esc_html__(
@@ -165,7 +158,7 @@
                     'event_espresso'
                 ); ?></p>
         </div>
-        <div class="grid_6">
+        <div class="column">
             <p><?php
                 echo sprintf(
                     esc_html__(
@@ -183,8 +176,8 @@
         </div>
     </div>
 
-    <div class="feature-section col two-col">
-        <div>
+    <div class="feature-section col two-col has-2-columns is-fullwidth">
+        <div class="column">
             <h3><?php
                 esc_html_e(
                     'Turn your blog into a complete event registration and management system',
@@ -207,19 +200,21 @@
                     '</a>'
                 ); ?></p>
         </div>
-        <div><img src="<?php echo EE_GLOBAL_ASSETS_URL; ?>images/screenshots/single-event-page.jpg"></div>
+        <div class="column"><img src="<?php echo EE_GLOBAL_ASSETS_URL; ?>images/screenshots/single-event-page.jpg"></div>
     </div>
 
-
-</div>
 <hr>
 
-<h3><?php esc_html_e('Pick a theme, any theme', 'event_espresso'); ?></h3>
-<p><?php
-    esc_html_e(
-        'We’ve made it super easy to integrate Event Espresso with almost any properly coded WordPress theme, including many of the thousands of themes available on WordPress.org. The image below shows the same Event Espresso ticketing page across three diffrent WordPress themes.',
-        'event_espresso'
-    ); ?></p>
-<p><img class="about-overview-img" src="<?php echo EE_GLOBAL_ASSETS_URL; ?>images/screenshots/multiple-themes.jpg"/></p>
+    <h2><?php esc_html_e('Pick a theme, any theme', 'event_espresso'); ?></h2>
+    <div class="feature-section has-1-column is-fullwidth">
+        <div class="column">
+            <p><?php
+            esc_html_e(
+                'We’ve made it super easy to integrate Event Espresso with almost any properly coded WordPress theme, including many of the thousands of themes available on WordPress.org. The image below shows the same Event Espresso ticketing page across three diffrent WordPress themes.',
+                'event_espresso'
+            ); ?></p>
+            <p><img class="about-overview-img" src="<?php echo EE_GLOBAL_ASSETS_URL; ?>images/screenshots/multiple-themes.jpg"/></p>
+        </div>
+    </div>
 <hr>
 
