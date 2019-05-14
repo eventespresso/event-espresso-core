@@ -113,6 +113,7 @@ class StatsGatherer
      */
     public function stats()
     {
+        global $wp_version;
         $stats = $this->paymentMethodStats();
         // a-ok so let's setup our stats.
         $stats = array_merge($stats, array(
@@ -142,6 +143,7 @@ class StatsGatherer
                 '.',
                 array(PHP_MAJOR_VERSION, PHP_MINOR_VERSION, PHP_RELEASE_VERSION)
             ),
+            'wpversion'                       => $wp_version,
         ));
         // remove any values that equal null.  This ensures any stats that weren't retrieved successfully are excluded.
         return array_filter($stats, function ($value) {
