@@ -335,7 +335,7 @@
             </ul>
         </div>
 
-        <div class="col-3 last-feature">
+        <div class="column col-3 last-feature">
             <h3><a href="https://wordpress.org/support/topic/there-is-only-1-event-registration-plugin/">There is only 1
                     Event Registration Plugin!</a></h3>
             <div class="wporg-ratings" title="5 out of 5 stars" style="color:#ffb900;"><span
