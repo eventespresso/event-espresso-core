@@ -20,8 +20,8 @@
             href="http://evts.io/EEDecafFBReviews">Facebook</a>, <a href="http://evts.io/EEDecafReviews"
                                                                     target="_blank" rel="noopener noreferrer">WordPress.org</a> and <a
             href="https://eventespresso.com/about/testimonials/">EventEspresso.com</a>:</p>
-    <div class="feature-section col has-3-columns is-fullwidth three-col about-updates">
-        <div class="column col-1">
+    <div class="feature-section has-3-columns is-fullwidth three-col about-updates">
+        <div class="column col">
             <h3>
                 <a href="https://wordpress.org/support/topic/amazing-plugin-has-been-running-our-school-for-over-5-years-now/">Amazing
                     Plugin – has been running our school for over 5 years now!</a></h3>
@@ -58,7 +58,7 @@
                 </li><!-- .review-body -->
             </ul>
         </div>
-        <div class="column col-2">
+        <div class="column col">
             <h3><a href="https://wordpress.org/support/topic/elegant-event-management-for-wordpress/">Elegant event
                     management for WordPress</a></h3>
             <div class="wporg-ratings" title="5 out of 5 stars" style="color:#ffb900;"><span
@@ -99,7 +99,7 @@
                 </li><!-- .review-body -->
             </ul>
         </div>
-        <div class="column col-3 last-feature">
+        <div class="column col last-feature">
             <h3><a href="https://wordpress.org/support/topic/the-best-event-plugin-system-we-have-used/">The best event
                     plugin system we have used!</a></h3>
             <div class="wporg-ratings" title="5 out of 5 stars" style="color:#ffb900;"><span
@@ -147,8 +147,8 @@
     ?>
     &nbsp;
     <hr/>
-    <div class="feature-section col has-3-columns is-fullwidth three-col about-updates">
-        <div class="column col-1">
+    <div class="feature-section has-3-columns is-fullwidth three-col about-updates">
+        <div class="column col">
             <h3><a href="https://wordpress.org/support/topic/using-ee-for-duluth-folk-school-registration/">Using EE for
                     Duluth Folk School Registration</a></h3>
             <div class="wporg-ratings" title="5 out of 5 stars" style="color:#ffb900;"><span
@@ -185,7 +185,7 @@
                 </li><!-- .review-body -->
             </ul>
         </div>
-        <div class="column col-2">
+        <div class="column col">
             <h3><a href="https://wordpress.org/support/topic/excellent-event-plugin-3/">Excellent Event Plugin</a></h3>
             <div class="wporg-ratings" title="5 out of 5 stars" style="color:#ffb900;"><span
                     class="dashicons dashicons-star-filled"></span><span class="dashicons dashicons-star-filled"></span><span
@@ -221,7 +221,7 @@
                 </li><!-- .review-body -->
             </ul>
         </div>
-        <div class="column col-3 last-feature">
+        <div class="column col last-feature">
             <h3><a href="https://wordpress.org/support/topic/event-espresso-to-the-max/">Event Espresso to the MAX!</a>
             </h3>
             <div class="wporg-ratings" title="5 out of 5 stars" style="color:#ffb900;"><span
@@ -267,8 +267,8 @@
     ?>
     &nbsp;
     <hr/>
-    <div class="feature-section col has-3-columns is-fullwidth three-col about-updates">
-        <div class="column col-1">
+    <div class="feature-section has-3-columns is-fullwidth three-col about-updates">
+        <div class="column col">
             <h3><a href="https://wordpress.org/support/topic/a-comprehensive-event-management-plugin/">A comprehensive
                     Event management plugin</a></h3>
             <div class="wporg-ratings" title="5 out of 5 stars" style="color:#ffb900;"><span
@@ -302,7 +302,7 @@
             </ul>
         </div>
 
-        <div class="column col-2">
+        <div class="column col">
             <h3><a href="https://wordpress.org/support/topic/event-espresso-does-it-all/">Event Espresso Does It All</a>
             </h3>
             <div class="wporg-ratings" title="5 out of 5 stars" style="color:#ffb900;"><span
@@ -334,7 +334,7 @@
             </ul>
         </div>
 
-        <div class="column col-3 last-feature">
+        <div class="column col last-feature">
             <h3><a href="https://wordpress.org/support/topic/there-is-only-1-event-registration-plugin/">There is only 1
                     Event Registration Plugin!</a></h3>
             <div class="wporg-ratings" title="5 out of 5 stars" style="color:#ffb900;"><span
