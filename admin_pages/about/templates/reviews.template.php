@@ -20,7 +20,7 @@
             href="http://evts.io/EEDecafFBReviews">Facebook</a>, <a href="http://evts.io/EEDecafReviews"
                                                                     target="_blank" rel="noopener noreferrer">WordPress.org</a> and <a
             href="https://eventespresso.com/about/testimonials/">EventEspresso.com</a>:</p>
-    <div class="feature-section has-3-columns is-fullwidth three-col about-updates">
+    <div class="feature-section has-3-columns is-fullwidth three-col">
         <div class="column col">
             <h3>
                 <a href="https://wordpress.org/support/topic/amazing-plugin-has-been-running-our-school-for-over-5-years-now/">Amazing
@@ -147,7 +147,7 @@
     ?>
     &nbsp;
     <hr/>
-    <div class="feature-section has-3-columns is-fullwidth three-col about-updates">
+    <div class="feature-section has-3-columns is-fullwidth three-col">
         <div class="column col">
             <h3><a href="https://wordpress.org/support/topic/using-ee-for-duluth-folk-school-registration/">Using EE for
                     Duluth Folk School Registration</a></h3>
@@ -267,7 +267,7 @@
     ?>
     &nbsp;
     <hr/>
-    <div class="feature-section has-3-columns is-fullwidth three-col about-updates">
+    <div class="feature-section has-3-columns is-fullwidth three-col">
         <div class="column col">
             <h3><a href="https://wordpress.org/support/topic/a-comprehensive-event-management-plugin/">A comprehensive
                     Event management plugin</a></h3>

@@ -56,8 +56,8 @@ if (EE_Maintenance_Mode::instance()->level() == EE_Maintenance_Mode::level_2_com
             '</a>'
         ); ?></p>
 </div>
-    <div class="feature-section col three-col about-updates has-3-columns is-fullwidth">
-        <div class="column col-1">
+    <div class="feature-section has-3-columns is-fullwidth three-col">
+        <div class="column col">
             <img src="<?php echo EE_GLOBAL_ASSETS_URL; ?>images/screenshots/publish_meta_box.jpg">
             <h3><?php esc_html_e('Optimized aesthetic', 'event_espresso'); ?></h3>
             <p><?php
@@ -66,7 +66,7 @@ if (EE_Maintenance_Mode::instance()->level() == EE_Maintenance_Mode::level_2_com
                     'event_espresso'
                 ); ?></p>
         </div>
-        <div class="column col-2">
+        <div class="column col">
             <img src="<?php echo EE_GLOBAL_ASSETS_URL; ?>images/screenshots/registrations-overview.jpg">
             <h3><?php esc_html_e('Integrated management', 'event_espresso'); ?></h3>
             <p><?php
@@ -75,7 +75,7 @@ if (EE_Maintenance_Mode::instance()->level() == EE_Maintenance_Mode::level_2_com
                     'event_espresso'
                 ); ?></p>
         </div>
-        <div class="column col-3 last-feature">
+        <div class="column col last-feature">
             <img src="<?php echo EE_GLOBAL_ASSETS_URL; ?>images/screenshots/refined-bookkeeping.jpg">
             <h3><?php esc_html_e('Easy bookkeeping', 'event_espresso'); ?></h3>
             <p><?php
@@ -88,8 +88,8 @@ if (EE_Maintenance_Mode::instance()->level() == EE_Maintenance_Mode::level_2_com
 
 <hr>
 
-    <div class="feature-section col two-col has-2-columns is-fullwidth">
-        <div class="column">
+    <div class="feature-section has-2-columns is-fullwidth two-col">
+        <div class="column col">
             <h3><?php esc_html_e('Higher customer retention', 'event_espresso'); ?></h3>
             <p><?php
                 esc_html_e(
@@ -103,13 +103,13 @@ if (EE_Maintenance_Mode::instance()->level() == EE_Maintenance_Mode::level_2_com
                     'event_espresso'
                 ); ?></p>
         </div>
-        <div class="column last-feature about-colors-img">
+        <div class="column col last-feature about-colors-img">
             <img src="<?php echo EE_GLOBAL_ASSETS_URL; ?>images/screenshots/registrtation-page-large.jpg">
         </div>
     </div>
 
-    <div class="feature-section col two-col has-2-columns is-fullwidth">
-        <div class="column">
+    <div class="feature-section has-2-columns is-fullwidth two-col">
+        <div class="column col">
             <h3><?php esc_html_e('Refined event management', 'event_espresso'); ?></h3>
             <p><?php
                 esc_html_e(
@@ -129,7 +129,7 @@ if (EE_Maintenance_Mode::instance()->level() == EE_Maintenance_Mode::level_2_com
                     'event_espresso'
                 ); ?></p>
         </div>
-        <div class="last-feature about-themes-img column">
+        <div class="column col last-feature about-themes-img">
             <img src="<?php echo EE_GLOBAL_ASSETS_URL; ?>images/screenshots/event-management.jpg">
         </div>
     </div>
@@ -141,8 +141,8 @@ if (EE_Maintenance_Mode::instance()->level() == EE_Maintenance_Mode::level_2_com
             'People Like You Manage Event Registration with WordPress',
             'event_espresso'
         ); ?></h2>
-    <div class="feature-section col two-col has-2-columns is-fullwidth">
-        <div class="column">
+    <div class="feature-section has-2-columns is-fullwidth two-col">
+        <div class="column col">
             <p><?php
                 echo sprintf(
                     esc_html__(
@@ -158,7 +158,7 @@ if (EE_Maintenance_Mode::instance()->level() == EE_Maintenance_Mode::level_2_com
                     'event_espresso'
                 ); ?></p>
         </div>
-        <div class="column">
+        <div class="column col">
             <p><?php
                 echo sprintf(
                     esc_html__(
@@ -176,8 +176,8 @@ if (EE_Maintenance_Mode::instance()->level() == EE_Maintenance_Mode::level_2_com
         </div>
     </div>
 
-    <div class="feature-section col two-col has-2-columns is-fullwidth">
-        <div class="column">
+    <div class="feature-section has-2-columns is-fullwidth two-col">
+        <div class="column col">
             <h3><?php
                 esc_html_e(
                     'Turn your blog into a complete event registration and management system',
@@ -200,14 +200,14 @@ if (EE_Maintenance_Mode::instance()->level() == EE_Maintenance_Mode::level_2_com
                     '</a>'
                 ); ?></p>
         </div>
-        <div class="column"><img src="<?php echo EE_GLOBAL_ASSETS_URL; ?>images/screenshots/single-event-page.jpg"></div>
+        <div class="column col"><img src="<?php echo EE_GLOBAL_ASSETS_URL; ?>images/screenshots/single-event-page.jpg"></div>
     </div>
 
 <hr>
 
     <h2><?php esc_html_e('Pick a theme, any theme', 'event_espresso'); ?></h2>
-    <div class="feature-section has-1-column is-fullwidth">
-        <div class="column">
+    <div class="feature-section has-1-column is-fullwidth is-wide one-col">
+        <div class="column col">
             <p><?php
             esc_html_e(
                 'We’ve made it super easy to integrate Event Espresso with almost any properly coded WordPress theme, including many of the thousands of themes available on WordPress.org. The image below shows the same Event Espresso ticketing page across three diffrent WordPress themes.',
