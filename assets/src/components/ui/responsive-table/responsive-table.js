@@ -5,18 +5,19 @@ import { first, isArray, isEmpty, isFunction } from 'lodash';
 import warning from 'warning';
 import PropTypes from 'prop-types';
 import { Component } from '@wordpress/element';
+import classNames from 'classnames';
 
 /**
  * Internal dependencies
  */
-import { default as Table } from './table';
-import { default as TableHeader } from './table-header';
-import { default as TableBody } from './table-body';
-import { default as TableFooter } from './table-footer';
-import { default as TableRow } from './table-row';
-import { default as TableHeadingCell } from './table-heading-cell';
-import { default as TableDataCell } from './table-data-cell';
-import { default as ResponsiveCell } from './responsive-cell';
+import Table from './table';
+import TableHeader from './table-header';
+import TableBody from './table-body';
+import TableFooter from './table-footer';
+import TableRow from './table-row';
+import TableHeadingCell from './table-heading-cell';
+import TableDataCell from './table-data-cell';
+import ResponsiveCell from './responsive-cell';
 import './style.css';
 
 /**
@@ -61,7 +62,6 @@ class ResponsiveTable extends Component {
 			)
 		).isRequired,
 		metaData: PropTypes.shape( {
-			tableId: PropTypes.string,
 			tableCaption: PropTypes.string.isRequired,
 			showTableFooter: PropTypes.bool,
 			hasRowHeaders: PropTypes.bool,
@@ -85,21 +85,14 @@ class ResponsiveTable extends Component {
 	 * @function
 	 * @param {Object} metaData
 	 */
-	setMetaData = ( metaData ) => {
-		this.tableId = metaData.tableId ?
-			metaData.tableId :
-			'ee-rTable-' +
+	setMetaData = ( metaData = {} ) => {
+		this.tableId = 'ee-rTable-' +
 			Math.random().toString( 36 ).substr( 2, 9 );
-		this.tableCaption = metaData.tableCaption ?
-			metaData.tableCaption :
-			'';
+		this.tableCaption = metaData.tableCaption || '';
 		this.captionID = `${ this.tableId }-caption`;
-		this.showTableFooter = metaData.showTableFooter ?
-			metaData.showTableFooter :
-			true;
-		this.hasRowHeaders = metaData.hasRowHeaders ?
-			metaData.hasRowHeaders :
-			false;
+		this.showTableFooter = typeof metaData.showTableFooter === 'undefined' ?
+			true : metaData.showTableFooter;
+		this.hasRowHeaders = !! metaData.hasRowHeaders;
 	};
 
 	/**
@@ -108,45 +101,24 @@ class ResponsiveTable extends Component {
 	 */
 	setCssClasses = ( classes ) => {
 		this.classes = {
-			tableClass: classes.tableClass ?
-				classes.tableClass :
-				'',
-			headerClass: classes.headerClass ?
-				classes.headerClass :
-				'',
-			headerRowClass: classes.headerRowClass ?
-				classes.headerRowClass :
-				'',
-			headerThClass: classes.headerThClass ?
-				classes.headerThClass :
-				'',
-			bodyClass: classes.bodyClass ?
-				classes.bodyClass :
-				'',
-			bodyRowClass: classes.bodyRowClass ?
-				classes.bodyRowClass :
-				'',
-			bodyThClass: classes.bodyThClass ?
-				classes.bodyThClass :
-				'',
-			bodyTdClass: classes.bodyTdClass ?
-				classes.bodyTdClass :
-				'',
-			footerClass: classes.footerClass ?
-				classes.footerClass :
-				'',
-			footerRowClass: classes.footerRowClass ?
-				classes.footerRowClass :
-				'',
-			footerThClass: classes.footerThClass ?
-				classes.footerThClass :
-				'',
+			tableClass: classes.tableClass || '',
+			headerClass: classes.headerClass || '',
+			headerRowClass: classes.headerRowClass || '',
+			headerThClass: classes.headerThClass || '',
+			bodyClass: classes.bodyClass || '',
+			bodyRowClass: classes.bodyRowClass || '',
+			bodyThClass: classes.bodyThClass || '',
+			bodyTdClass: classes.bodyTdClass || '',
+			footerClass: classes.footerClass || '',
+			footerRowClass: classes.footerRowClass || '',
+			footerThClass: classes.footerThClass || '',
 		};
-		if ( this.hasRowHeaders ) {
-			this.classes.tableClass = this.classes.tableClass ?
-				`${ this.classes.tableClass } ee-rTable-has-row-headers` :
-				this.classes.tableClass;
-		}
+		this.classes.tableClass = classNames(
+			this.classes.tableClass,
+			{
+				'ee-rTable-has-row-headers': this.hasRowHeaders
+			}
+		);
 	};
 
 	/**
@@ -157,16 +129,12 @@ class ResponsiveTable extends Component {
 	 */
 	tableHeader = ( columns, isFooter = false ) => {
 		this.rowNumber++;
-		// console.log( '' );
-		// console.log( 'rowNumber', this.rowNumber );
 		const rowType = isFooter === true ? 'footer' : 'header';
 		let rowProps = {};
 		let indexMod = 0;
 		const headerCells = columns.map(
 			( column, colNumber ) => {
-				// console.log( ' > colNumber', colNumber );
-				// console.log( ' > indexMod', indexMod );
-				column.rowType = column.rowType ? column.rowType : rowType;
+				column.rowType = column.rowType || rowType;
 				if ( column.type && column.type === 'row' ) {
 					rowProps = column;
 					indexMod++;
@@ -174,7 +142,6 @@ class ResponsiveTable extends Component {
 				}
 				this.columns.push( column );
 				colNumber -= indexMod;
-				// console.log( ' > > colNumber', colNumber );
 				const hasRenderCallback = isFunction( column.render );
 				warning(
 					hasRenderCallback || column.hasOwnProperty( 'value' ),
@@ -218,8 +185,6 @@ class ResponsiveTable extends Component {
 	 * @return {Object} rendered column header cell
 	 */
 	headingCell = ( rowNumber, colNumber, cellProps ) => {
-		// console.log( ' >>> headingCell', `row-${ rowNumber }-col-${ colNumber }` );
-		// console.log( '   -----------' );
 		return (
 			<TableHeadingCell
 				key={ `row-${ rowNumber }-col-${ colNumber }` }
@@ -252,10 +217,7 @@ class ResponsiveTable extends Component {
 		let indexMod = 0;
 		const rowCells = dataRow.map(
 			( cellData, colNumber ) => {
-				// console.log( ' > colNumber', colNumber );
-				// console.log( ' > indexMod', indexMod );
-				// console.log( ' > > cellData', cellData );
-				cellData.rowType = cellData.rowType ? cellData.rowType : 'body';
+				cellData.rowType = cellData.rowType || 'body';
 				if ( cellData.type && cellData.type === 'row' ) {
 					rowProps = cellData;
 					indexMod++;
@@ -265,9 +227,6 @@ class ResponsiveTable extends Component {
 				// before grabbing element from column data
 				colNumber -= indexMod;
 				const column = this.columns[ colNumber ];
-				// console.log( ' > colNumber - indexMod', colNumber );
-				// console.log( ' > > colNumber', colNumber );
-				// console.log( ' > > columns[ colNumber ]', colNumber, column );
 				if ( ! column ) {
 					warning(
 						false,
@@ -305,10 +264,6 @@ class ResponsiveTable extends Component {
 	 * @return {Object} rendered headings row
 	 */
 	dataCell = ( rowNumber, colNumber, column, cellData ) => {
-		if ( ! ( this.hasRowHeaders && colNumber === 0 ) ) {
-			// console.log( ' >>> dataCell', `row-${ rowNumber }-col-${ colNumber }` );
-			// console.log( '   -----------' );
-		}
 		return this.hasRowHeaders && colNumber === 0 ? (
 			this.headingCell( rowNumber, colNumber, cellData )
 		) : (
@@ -339,17 +294,15 @@ class ResponsiveTable extends Component {
 		if ( isEmpty( columns ) ) {
 			return null;
 		}
-		// console.log( '' );
-		// console.log( 'ResponsiveTable.render()' );
-		// console.log( ' > props: ', this.props );
-		// console.log( ' > columns: ', columns );
-		// console.log( ' > rowData: ', rowData );
 		this.setMetaData( metaData );
-		this.setCssClasses( classes ? classes : {} );
+		this.setCssClasses( classes || {} );
 		this.columns = [];
 		this.rowNumber = -1;
 		const tableHeader = this.tableHeader( columns );
-		this.classes.tableClass += ` ee-rTable-column-count-${ this.columns.length }`;
+		this.classes.tableClass = classNames(
+			this.classes.tableClass,
+			`ee-rTable-column-count-${ this.columns.length }`
+		);
 		this.showTableFooter = this.showTableFooter && ! isEmpty( footerData );
 		return (
 			<Table
