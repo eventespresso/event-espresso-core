@@ -1,4 +1,4 @@
-    <div class="headline-feature">
+<div class="headline-feature">
     <h2 class="about-headline-callout"><?php esc_html_e('Welcome to Event Espresso 4!', 'event_espresso'); ?></h2>
     <p><?php
         echo sprintf(
@@ -23,7 +23,7 @@
             '<a href="http://eventespresso.com/?utm_source=wordpress_org&amp;utm_medium=link&amp;utm_campaign=espresso_about_tab&amp;utm_content=EE4+Decaf" rel="nofollow">',
             '</a>'
         ); ?></p>
-    </div>
+</div>
     <div class="feature-section col three-col about-updates has-3-columns is-fullwidth">
         <div class="column col-1">
             <img src="<?php echo EE_GLOBAL_ASSETS_URL; ?>images/screenshots/publish_meta_box.jpg">
@@ -178,7 +178,7 @@
 <hr>
 
     <h2 class="about-headline-callout">
-        <?php esc_html_e('Pick a theme, any theme'); ?>
+        <?php esc_html_e('Pick a theme, any theme', 'event_espresso'); ?>
     </h2>
     <div class="feature-section has-1-column is-fullwidth">
         <div class="column">
@@ -190,7 +190,6 @@
             <p><img class="about-overview-img" src="<?php echo EE_GLOBAL_ASSETS_URL; ?>images/screenshots/multiple-themes.jpg"/></p>
         </div>
     </div>
-
-    <hr>
+<hr>
 
 
