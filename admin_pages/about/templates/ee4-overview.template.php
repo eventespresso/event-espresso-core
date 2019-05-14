@@ -1,28 +1,28 @@
 <?php
-    // maintenance mode on?
-    if (EE_Maintenance_Mode::instance()->level() == EE_Maintenance_Mode::level_2_complete_maintenance) {
-        ?>
-        <div class="ee-attention">
-            <h2 class="ee-maintenance-mode-callout">
-                <?php esc_html_e(
-                    'Event Espresso is in full maintenance mode.',
+// maintenance mode on?
+if (EE_Maintenance_Mode::instance()->level() == EE_Maintenance_Mode::level_2_complete_maintenance) {
+    ?>
+    <div class="ee-attention">
+        <h2 class="ee-maintenance-mode-callout">
+            <?php esc_html_e(
+                'Event Espresso is in full maintenance mode.',
+                'event_espresso'
+            ); ?></h2>
+        <p>
+            <?php
+            printf(
+                esc_html__(
+                    'A previous version of Event Espresso has detected. But before anything else can happen, we need to know whether or not to migrate (copy over) your existing event data so that it can be utilized by EE4. For more instructions on what to do, please visit the %sEvent Espresso Maintenance%s page.',
                     'event_espresso'
-                ); ?></h2>
-            <p>
-                <?php
-                printf(
-                    esc_html__(
-                        'A previous version of Event Espresso has detected. But before anything else can happen, we need to know whether or not to migrate (copy over) your existing event data so that it can be utilized by EE4. For more instructions on what to do, please visit the %sEvent Espresso Maintenance%s page.',
-                        'event_espresso'
-                    ),
-                    '<a href="admin.php?page=espresso_maintenance_settings">',
-                    '</a>'
-                );
-                ?>
-            </p>
-        </div>
-        <?php
-    }
+                ),
+                '<a href="admin.php?page=espresso_maintenance_settings">',
+                '</a>'
+            );
+            ?>
+        </p>
+    </div>
+    <?php
+}
 ?>
 <div class="headline-feature">
     <h2 class="about-headline-callout">
