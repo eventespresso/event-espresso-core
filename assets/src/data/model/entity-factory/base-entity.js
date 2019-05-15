@@ -2,6 +2,7 @@
  * External imports
  */
 import { isArray, upperFirst, camelCase } from 'lodash';
+import memoize from 'memize';
 
 /**
  * Internal imports
@@ -127,13 +128,20 @@ class BaseEntity {
 	 * @return {BaseEntity} A new instance of BaseEntity
 	 */
 	get clone() {
-		return new BaseEntity(
-			this.modelName,
-			this.forClone,
-			{ $schema: {}, properties: this.schema },
-			this.fieldPrefixes,
-			true
-		);
+		return ( keepId = false ) => {
+			const createFactory = memoize( () => createEntityFactory(
+				this.modelName,
+				{ $schema: {}, properties: this.schema },
+				this.fieldPrefixes
+			) );
+			const factory = createFactory();
+			const newEntity = factory.createNew( this.forClone );
+			if ( keepId ) {
+				newEntity.id = this.id;
+				setSaveState( newEntity, this.saveState, true );
+			}
+			return newEntity;
+		};
 	}
 
 	static name = 'BaseEntity'

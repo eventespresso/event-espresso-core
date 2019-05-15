@@ -2,7 +2,6 @@
 <p>
 <?php esc_html_e('Customize the registration for your event.', 'event_espresso'); ?>
 </p>
-<p>
 <ul>
 <li>
 <strong><?php esc_html_e('Active Status', 'event_espresso'); ?></strong><br />
@@ -57,4 +56,3 @@
 <?php esc_html_e('Select the default registration status for this event. The options are Approved, Not Approved, and Pending Payment.', 'event_espresso'); ?>
 </li>
 </ul>
-</p>
