@@ -17,7 +17,9 @@ import { snakeCase } from 'lodash';
  *
  * @type {string}
  */
-export const DEFAULT_TIMEZONE_STRING = TIMEZONE_CONFIG.string;
+export const DEFAULT_TIMEZONE_STRING = TIMEZONE_CONFIG.string === '' ?
+	'UTC' :
+	TIMEZONE_CONFIG.string;
 
 /**
  * Default offset

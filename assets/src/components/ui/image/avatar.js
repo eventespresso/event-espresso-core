@@ -3,6 +3,7 @@
  */
 import PropTypes from 'prop-types';
 import { __ } from '@eventespresso/i18n';
+
 /**
  * WordPress dependencies
  */
