@@ -1,0 +1,38 @@
+.ee-container,
+.ee-container-default,
+.ee-container-primary,
+.ee-container-secondary,
+.ee-container-accent {
+    border-radius: calc(var(--ee-border-radius-default) * 1px);
+    -moz-border-radius: calc(var(--ee-border-radius-default) * 1px);
+    -webkit-border-radius: calc(var(--ee-border-radius-default) * 1px);
+    box-sizing: border-box !important;
+    font-size: calc(var(--ee-font-size-default) * 1px);
+    line-height: calc(var(--ee-line-height-modifier));
+    margin: calc(var(--ee-margin-smaller) * 1rem) 0 calc(var(--ee-margin-default) * 1rem);
+    padding: calc(var(--ee-padding-default) * 1rem);
+}
+
+.ee-container-default {
+    background: var(--ee-background-color);
+    border: 1px solid var(--ee-border-color);
+    color: var(--ee-default-text-color);
+}
+
+.ee-container-primary {
+    background: var(--ee-color-primary);
+    border: 1px solid var(--ee-color-primary);
+    color: var(--ee-text-on-primary);
+}
+
+.ee-container-secondary {
+    background: var(--ee-color-secondary);
+    border: 1px solid var(--ee-color-secondary);
+    color: var(--ee-text-on-secondary);
+}
+
+.ee-container-accent {
+    background: var(--ee-color-accent);
+    border: 1px solid var(--ee-color-accent);
+    color: var(--ee-text-on-accent);
+}

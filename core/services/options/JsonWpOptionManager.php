@@ -11,7 +11,7 @@ use stdClass;
  *
  * @package     Event Espresso
  * @author         Mike Nelson
- * @since         $VID:$
+ * @since         4.9.80.p
  *
  */
 class JsonWpOptionManager
@@ -19,7 +19,7 @@ class JsonWpOptionManager
     /**
      * Updates the object with what's in the DB (specifically, the wp_options table). If nothing is in the DB, leaves
      * the object alone and returns false.
-     * @since $VID:$
+     * @since 4.9.80.p
      * @param JsonWpOptionSerializableInterface $obj
      * @return bool
      */
@@ -37,7 +37,7 @@ class JsonWpOptionManager
 
     /**
      * Saves the object's data to the wp_options table for later use.
-     * @since $VID:$
+     * @since 4.9.80.p
      * @param JsonWpOptionSerializableInterface $obj
      * @return bool
      */

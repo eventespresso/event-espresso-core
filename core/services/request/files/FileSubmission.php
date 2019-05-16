@@ -14,7 +14,7 @@ use InvalidArgumentException;
  *
  * @package     Event Espresso
  * @author         Mike Nelson
- * @since         $VID:$
+ * @since         4.9.80.p
  *
  */
 class FileSubmission implements FileSubmissionInterface
@@ -100,7 +100,7 @@ class FileSubmission implements FileSubmissionInterface
     }
 
     /**
-     * @since $VID:$
+     * @since 4.9.80.p
      * @return string
      */
     protected function determineType()
@@ -114,7 +114,7 @@ class FileSubmission implements FileSubmissionInterface
 
     /**
      * Gets the file's extension.
-     * @since $VID:$
+     * @since 4.9.80.p
      * @return string
      */
     public function getExtension()
@@ -127,7 +127,7 @@ class FileSubmission implements FileSubmissionInterface
 
     /**
      * Determine's the file's extension given the temporary file.
-     * @since $VID:$
+     * @since 4.9.80.p
      * @return string
      */
     protected function determineExtension()
@@ -161,7 +161,7 @@ class FileSubmission implements FileSubmissionInterface
     }
 
     /**
-     * @since $VID:$
+     * @since 4.9.80.p
      * @return string
      */
     public function __toString()

@@ -251,7 +251,7 @@ class EED_Ticket_Sales_Monitor_Test extends EE_UnitTestCase
 
     /**
      * Validates EED_Ticket_Sales_Monitor::validate_ticket_sale properly detects when a sale is ok.
-     * @since $VID:$
+     * @since 4.9.80.p
      * @throws EE_Error
      * @throws InvalidArgumentException
      * @throws ReflectionException
@@ -307,7 +307,7 @@ class EED_Ticket_Sales_Monitor_Test extends EE_UnitTestCase
 
     /**
      * Validates EED_Ticket_Sales_Monitor::validate_ticket_sale properly detects when a sale shouldn't occur.
-     * @since $VID:$
+     * @since 4.9.80.p
      * @throws EE_Error
      * @throws InvalidArgumentException
      * @throws ReflectionException
@@ -367,7 +367,7 @@ class EED_Ticket_Sales_Monitor_Test extends EE_UnitTestCase
      * Normally, this runs into a concurrency problem because we first READ to verify the ticket sale is ok, and afterwards update.
      * A problematic request is one where the DB is updated between when we read and update the DB because we will update the
      * DB based on stale data.
-     * @since $VID:$
+     * @since 4.9.80.p
      * @group current
      */
     public function testValidateTicketSaleConcurrentRequestTicketLimitReached()
@@ -442,7 +442,7 @@ class EED_Ticket_Sales_Monitor_Test extends EE_UnitTestCase
      * Normally, this runs into a concurrency problem because we first READ to verify the ticket sale is ok, and afterwards update.
      * A problematic request is one where the DB is updated between when we read and update the DB because we will update the
      * DB based on stale data.
-     * @since $VID:$
+     * @since 4.9.80.p
      * @group current
      */
     public function testValidateTicketSaleConcurrentRequestDatetimeLimitReached()

@@ -40,6 +40,7 @@ class EE_DMS_4_1_0_answers extends EE_Data_Migration_Script_Stage_Table
         $this->_pretty_name = __("Answers", "event_espresso");
         $this->_old_table = $wpdb->prefix."events_answer";
         // join to attendee and then join to events table
+        $this->select_expression = 'ans.*, e.event_status';
         $this->_extra_where_sql = ' AS ans 
             INNER JOIN ' . $wpdb->prefix . 'events_attendee AS att ON ans.attendee_id = att.id
             INNER JOIN ' . $wpdb->prefix . 'events_detail AS e ON att.event_id = e.id 
@@ -61,7 +62,7 @@ class EE_DMS_4_1_0_answers extends EE_Data_Migration_Script_Stage_Table
         }
         // as inefficient as this sounds, we create an answer per REGISTRATION, (even if the registrations use the same attendee)
         foreach ($regs as $new_reg_id) {
-            $new_answer_id = $this->_insert_new_answer($old_row, $new_reg_id);
+            $this->_insert_new_answer($old_row, $new_reg_id);
         }
     }
     /**
@@ -77,8 +78,14 @@ class EE_DMS_4_1_0_answers extends EE_Data_Migration_Script_Stage_Table
         $old_question_table = $wpdb->prefix."events_question";
         $new_question_id = $this->get_migration_script()->get_mapping_new_pk($old_question_table, $old_answer['question_id'], $this->_new_question_table);
 
-        $question_type = $this->_get_question_type($new_question_id);
-        if (in_array($question_type, array('MULTIPLE'))) {
+        $question_row = $this->_get_question_type_and_system($new_question_id);
+        if ($question_row['QST_system']) {
+            // It's an answer to a system question? EE3 used to store that on both the attendee and the answers column,
+            // but not EE4! It's just stored in the attendee meta table. The answers table is ONLY for answers to custom
+            // questions.
+            return 0;
+        }
+        if (in_array($question_row['QST_type'], array('MULTIPLE'))) {
             $ans_value = serialize(explode(",", stripslashes($old_answer['answer'])));
         } else {
             $ans_value = stripslashes($old_answer['answer']);
@@ -106,12 +113,21 @@ class EE_DMS_4_1_0_answers extends EE_Data_Migration_Script_Stage_Table
      * Gets the question's type
      * @global type $wpdb
      * @param type $question_id
-     * @return string
+     * @return array {
+     *  @type string $QST_type
+     *  @type string $QST_system
+     * }
      */
-    private function _get_question_type($question_id)
+    private function _get_question_type_and_system($question_id)
     {
         global $wpdb;
-        $type = $wpdb->get_var($wpdb->prepare("SELECT QST_type FROM ".$this->_new_question_table." WHERE QST_ID=%d LIMIT 1", $question_id));
-        return $type;
+        $row = $wpdb->get_row(
+            $wpdb->prepare(
+                "SELECT QST_type, QST_system FROM ".$this->_new_question_table." WHERE QST_ID=%d LIMIT 1",
+                $question_id
+            ),
+            ARRAY_A
+        );
+        return $row;
     }
 }

@@ -9,6 +9,7 @@ use EE_Template_Config;
 use EED_Core_Rest_Api;
 use EEH_DTT_Helper;
 use EEH_Qtip_Loader;
+use EventEspresso\core\domain\Domain;
 use EventEspresso\core\domain\DomainInterface;
 use EventEspresso\core\domain\values\assets\JavascriptAsset;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
@@ -94,6 +95,8 @@ class CoreAssetManager extends AssetManager
     const CSS_HANDLE_CUSTOM = 'espresso_custom_css';
 
     const CSS_HANDLE_COMPONENTS = 'eventespresso-components';
+
+    const CSS_HANDLE_CORE_CSS_DEFAULT = 'eventespresso-core-css-default';
 
     /**
      * @var EE_Currency_Config $currency_config
@@ -312,6 +315,8 @@ class CoreAssetManager extends AssetManager
                 'admin_url' => admin_url('/'),
             )
         );
+        // Event Espresso brand name
+        $this->registry->addData('brandName', Domain::brandName());
         /** site formatting values **/
         $this->registry->addData(
             'site_formats',
@@ -467,11 +472,20 @@ class CoreAssetManager extends AssetManager
             }
         }
         $this->addStylesheet(
+            CoreAssetManager::CSS_HANDLE_CORE_CSS_DEFAULT,
+            $this->registry->getCssUrl(
+                $this->domain->assetNamespace(),
+                'core-default-theme'
+            ),
+            ['dashicons']
+        );
+        $this->addStylesheet(
             CoreAssetManager::CSS_HANDLE_COMPONENTS,
             $this->registry->getCssUrl(
                 $this->domain->assetNamespace(),
                 'components'
-            )
+            ),
+            [CoreAssetManager::CSS_HANDLE_CORE_CSS_DEFAULT]
         );
     }
 

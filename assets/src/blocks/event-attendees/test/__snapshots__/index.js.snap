@@ -1,12 +1,12 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`EventAttendeesEditor Block block edit matches snapshot for no props 1`] = `
-<React.Fragment>
+<Fragment>
   <Placeholder>
-    <_default />
+    <Spinner />
   </Placeholder>
   <IfBlockEditSelected(InspectorControlsFill)>
-    <PanelBody
+    <ForwardRef(PanelBody)
       title="Filter By Settings"
     >
       <WithBaseControl(EventSelect)
@@ -87,8 +87,8 @@ exports[`EventAttendeesEditor Block block edit matches snapshot for no props 1`]
         }
         value="ASC"
       />
-    </PanelBody>
-    <PanelBody
+    </ForwardRef(PanelBody)>
+    <ForwardRef(PanelBody)
       title="Gravatar Setttings"
     >
       <WithInstanceId(ToggleControl)
@@ -97,18 +97,18 @@ exports[`EventAttendeesEditor Block block edit matches snapshot for no props 1`]
         label="Display Gravatar"
         onChange={[Function]}
       />
-      <WithInstanceId(RangeControl)
+      <WithInstanceId(WithState(RangeControl))
         label="Size of Gravatar"
         max={128}
         min={10}
         onChange={[Function]}
         value={24}
       />
-    </PanelBody>
+    </ForwardRef(PanelBody)>
     <WithSelect(NotWithPostTypeCheck)
       excludedPostTypeSlugs="page"
     >
-      <PanelBody
+      <ForwardRef(PanelBody)
         title="Archive Settings"
       >
         <WithInstanceId(ToggleControl)
@@ -117,14 +117,14 @@ exports[`EventAttendeesEditor Block block edit matches snapshot for no props 1`]
           label="Display on Archives"
           onChange={[Function]}
         />
-      </PanelBody>
+      </ForwardRef(PanelBody)>
     </WithSelect(NotWithPostTypeCheck)>
   </IfBlockEditSelected(InspectorControlsFill)>
-</React.Fragment>
+</Fragment>
 `;
 
 exports[`EventAttendeesEditor Block block edit matches snapshot with isLoading false and has attendees 1`] = `
-<React.Fragment>
+<Fragment>
   <EventAttendeeList
     attendees={
       Array [
@@ -147,7 +147,7 @@ exports[`EventAttendeesEditor Block block edit matches snapshot with isLoading f
     showGravatar={true}
   />
   <IfBlockEditSelected(InspectorControlsFill)>
-    <PanelBody
+    <ForwardRef(PanelBody)
       title="Filter By Settings"
     >
       <WithBaseControl(EventSelect)
@@ -228,8 +228,8 @@ exports[`EventAttendeesEditor Block block edit matches snapshot with isLoading f
         }
         value="ASC"
       />
-    </PanelBody>
-    <PanelBody
+    </ForwardRef(PanelBody)>
+    <ForwardRef(PanelBody)
       title="Gravatar Setttings"
     >
       <WithInstanceId(ToggleControl)
@@ -238,18 +238,18 @@ exports[`EventAttendeesEditor Block block edit matches snapshot with isLoading f
         label="Display Gravatar"
         onChange={[Function]}
       />
-      <WithInstanceId(RangeControl)
+      <WithInstanceId(WithState(RangeControl))
         label="Size of Gravatar"
         max={128}
         min={10}
         onChange={[Function]}
         value={24}
       />
-    </PanelBody>
+    </ForwardRef(PanelBody)>
     <WithSelect(NotWithPostTypeCheck)
       excludedPostTypeSlugs="page"
     >
-      <PanelBody
+      <ForwardRef(PanelBody)
         title="Archive Settings"
       >
         <WithInstanceId(ToggleControl)
@@ -258,19 +258,19 @@ exports[`EventAttendeesEditor Block block edit matches snapshot with isLoading f
           label="Display on Archives"
           onChange={[Function]}
         />
-      </PanelBody>
+      </ForwardRef(PanelBody)>
     </WithSelect(NotWithPostTypeCheck)>
   </IfBlockEditSelected(InspectorControlsFill)>
-</React.Fragment>
+</Fragment>
 `;
 
 exports[`EventAttendeesEditor Block block edit matches snapshot with isLoading false and no attendees 1`] = `
-<React.Fragment>
+<Fragment>
   <Placeholder>
     There are no attendees for selected options.
   </Placeholder>
   <IfBlockEditSelected(InspectorControlsFill)>
-    <PanelBody
+    <ForwardRef(PanelBody)
       title="Filter By Settings"
     >
       <WithBaseControl(EventSelect)
@@ -351,8 +351,8 @@ exports[`EventAttendeesEditor Block block edit matches snapshot with isLoading f
         }
         value="ASC"
       />
-    </PanelBody>
-    <PanelBody
+    </ForwardRef(PanelBody)>
+    <ForwardRef(PanelBody)
       title="Gravatar Setttings"
     >
       <WithInstanceId(ToggleControl)
@@ -361,18 +361,18 @@ exports[`EventAttendeesEditor Block block edit matches snapshot with isLoading f
         label="Display Gravatar"
         onChange={[Function]}
       />
-      <WithInstanceId(RangeControl)
+      <WithInstanceId(WithState(RangeControl))
         label="Size of Gravatar"
         max={128}
         min={10}
         onChange={[Function]}
         value={24}
       />
-    </PanelBody>
+    </ForwardRef(PanelBody)>
     <WithSelect(NotWithPostTypeCheck)
       excludedPostTypeSlugs="page"
     >
-      <PanelBody
+      <ForwardRef(PanelBody)
         title="Archive Settings"
       >
         <WithInstanceId(ToggleControl)
@@ -381,8 +381,8 @@ exports[`EventAttendeesEditor Block block edit matches snapshot with isLoading f
           label="Display on Archives"
           onChange={[Function]}
         />
-      </PanelBody>
+      </ForwardRef(PanelBody)>
     </WithSelect(NotWithPostTypeCheck)>
   </IfBlockEditSelected(InspectorControlsFill)>
-</React.Fragment>
+</Fragment>
 `;

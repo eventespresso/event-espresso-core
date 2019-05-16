@@ -105,7 +105,7 @@ class EED_Batch extends EED_Module
     }
 
     /**
-     * @since $VID:$
+     * @since 4.9.80.p
      * @return LoaderInterface
      * @throws InvalidArgumentException
      * @throws InvalidDataTypeException

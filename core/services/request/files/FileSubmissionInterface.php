@@ -9,7 +9,7 @@ namespace EventEspresso\core\services\request\files;
  *
  * @package     Event Espresso
  * @author         Mike Nelson
- * @since         $VID:$
+ * @since         4.9.80.p
  *
  */
 interface FileSubmissionInterface
@@ -37,7 +37,7 @@ interface FileSubmissionInterface
 
     /**
      * Should just return the filename.
-     * @since $VID:$
+     * @since 4.9.80.p
      * @return string
      */
     public function __toString();

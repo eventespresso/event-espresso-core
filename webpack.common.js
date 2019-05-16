@@ -229,6 +229,7 @@ const config = [
 						{
 							loader: 'postcss-loader',
 							options: {
+								// eslint-disable-next-line object-shorthand
 								plugins: function() {
 									return [
 										autoprefixer,
@@ -283,6 +284,7 @@ const config = [
 						{
 							loader: 'postcss-loader',
 							options: {
+								// eslint-disable-next-line object-shorthand
 								plugins: function() {
 									return [
 										autoprefixer,
@@ -317,6 +319,9 @@ const config = [
 			],
 			'eventespresso-core-blocks-frontend': [
 				assets + 'blocks/index-frontend.js',
+			],
+			'core-default-theme': [
+				assets + 'components/ui/styles/themes/default/index.js',
 			],
 		},
 		externals: Object.assign( externals, {
@@ -353,6 +358,7 @@ const config = [
 						{
 							loader: 'postcss-loader',
 							options: {
+								// eslint-disable-next-line object-shorthand
 								plugins: function() {
 									return [
 										autoprefixer,

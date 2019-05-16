@@ -849,6 +849,8 @@ final class EE_System implements ResettableInterface
         $this->loader->getShared('EE_Load_Textdomain');
         // load textdomain
         EE_Load_Textdomain::load_textdomain();
+        // load caf stuff a chance to play during the activation process too.
+        $this->_maybe_brew_regular();
         // load and setup EE_Config and EE_Network_Config
         $config = $this->loader->getShared('EE_Config');
         $this->loader->getShared('EE_Network_Config');
@@ -865,8 +867,6 @@ final class EE_System implements ResettableInterface
         }
         // get model names
         $this->_parse_model_names();
-        // load caf stuff a chance to play during the activation process too.
-        $this->_maybe_brew_regular();
         // configure custom post type definitions
         $this->loader->getShared('EventEspresso\core\domain\entities\custom_post_types\CustomTaxonomyDefinitions');
         $this->loader->getShared('EventEspresso\core\domain\entities\custom_post_types\CustomPostTypeDefinitions');
