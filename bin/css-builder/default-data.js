@@ -27,11 +27,13 @@ const defaultSizes = [
 ];
 
 const defaultRadii = [
+	'none',
 	'small',
 	'default',
 	'big',
 	'bigger',
 	'huge',
+	'full',
 ];
 
 const fontSizeDesc = {
