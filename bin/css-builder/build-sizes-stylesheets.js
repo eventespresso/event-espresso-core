@@ -31,11 +31,13 @@ const defaultSizeModifiers = {
 	extreme: 2,
 };
 const defaultRadiusModifiers = {
+	none: 0,
 	small: 1,
 	default: 1.333,
 	big: 2,
 	bigger: 4,
 	huge: 8,
+	full: 250,
 };
 
 /**
@@ -56,7 +58,7 @@ function fontSizes( config ) {
 			sizes.push(
 				templateCompiler( {
 					modifier: `font-size-${ modifier }`,
-					value,
+					value: value + 'px',
 				} )
 			);
 		}
@@ -89,7 +91,7 @@ function marginSizes( config ) {
 		sizes.push(
 			templateCompiler( {
 				modifier: `margin-${ modifier }`,
-				value,
+				value: value + 'rem',
 			} )
 		);
 	}
@@ -113,7 +115,7 @@ function paddingSizes( config ) {
 		sizes.push(
 			templateCompiler( {
 				modifier: `padding-${ modifier }`,
-				value,
+				value: value +'rem',
 			} )
 		);
 	}
@@ -137,7 +139,7 @@ function radiusSizes( config ) {
 		sizes.push(
 			templateCompiler( {
 				modifier: `border-radius-${ modifier }`,
-				value: Math.round( value ),
+				value: Math.round( value ) + 'px',
 			} )
 		);
 	}
