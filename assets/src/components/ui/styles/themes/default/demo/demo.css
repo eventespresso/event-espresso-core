@@ -10,9 +10,9 @@ body {
     background-color: var(--ee-background-color);
     color: var(--ee-default-text-color);
     font-family: system, -apple-system, ".SFNSText-Regular", "San Francisco", "Roboto", "Segoe UI", "Helvetica Neue", "Lucida Grande", sans-serif;
-    font-size: calc(var(--ee-font-size-default) * 1px);
+    font-size: var(--ee-font-size-default);
     line-height: var(--ee-line-height-modifier);
-    padding: calc(74px + var(--ee-padding-default) * 1rem) 0 0;
+    padding: calc(74px + var(--ee-padding-default)) 0 0;
     margin: 0;
     width: 100%;
     word-wrap: break-word;
@@ -21,7 +21,7 @@ body {
 .wrapper {
     margin: 0 auto;
     max-width: 1280px;
-    padding: 0 calc(var(--ee-padding-small) * 1rem);
+    padding: 0 var(--ee-padding-small);
     position: relative;
 }
 
@@ -32,7 +32,7 @@ header {
     height: auto;
     line-height: 1.2;
     min-height: 74px;
-    padding: calc(var(--ee-padding-smaller) * 1rem) 0;
+    padding: var(--ee-padding-smaller) 0;
     position: fixed;
     margin: 0;
     top: 0;
@@ -41,7 +41,7 @@ header {
 }
 
 header h4 {
-    margin: calc(var(--ee-padding-tiny) * 1.5rem) calc(var(--ee-padding-smaller) * 1rem) 0;
+    margin: var(--ee-padding-tiny) var(--ee-padding-smaller) 0;
     position: relative;
     white-space: nowrap;
     z-index: 5;
@@ -54,7 +54,7 @@ header h4 {
 }
 .espresso-icon {
     border: 2px solid var(--ee-color-white);
-    border-radius: calc(var(--ee-border-radius-bigger) * 1px);
+    border-radius: var(--ee-border-radius-bigger);
     float: left;
     margin: 0;
     padding: 3px;
@@ -65,8 +65,8 @@ header h4 {
 footer {
     background-color: #302B30;
     color: var(--ee-color-white);
-    padding: calc(var(--ee-padding-smaller) * 1rem) 0;
-    margin: calc(var(--ee-padding-default) * 1rem) 0 0;
+    padding: var(--ee-padding-smaller) 0;
+    margin: var(--ee-padding-default) 0 0;
     width: 100%;
 }
 footer span {
@@ -121,7 +121,7 @@ footer a:hover{ color: var(--ee-color-green-low-contrast); }
     height: auto;
     list-style: none;
     margin: 0;
-    padding: calc(var(--ee-padding-default) * 1rem) calc(var(--ee-padding-bigger) * 1rem);
+    padding: var(--ee-padding-default) var(--ee-padding-bigger);
 }
 
 .isActive #menu {
@@ -146,7 +146,7 @@ footer a:hover{ color: var(--ee-color-green-low-contrast); }
 #close-menu {
     background: none;
     border: 2px solid var(--ee-color-grey-7);
-    border-radius: calc(var(--ee-border-radius-bigger) * 10px);
+    border-radius: var(--ee-border-radius-bigger);
     color: var(--ee-color-white);
     font-size: var(--ee-font-size-bigger);
     font-weight: bold;
@@ -189,28 +189,28 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 h1 {
-    margin: calc(var(--ee-margin-bigger) * 1rem) 0 calc(var(--ee-margin-small) * 1rem);
+    margin: var(--ee-margin-bigger) 0 var(--ee-margin-small);
 }
 
 h2 {
-    margin: calc(var(--ee-margin-big) * 1rem) 0 calc(var(--ee-margin-small) * 1rem);
+    margin: var(--ee-margin-big) 0 var(--ee-margin-small);
 }
 
 h3 {
     font-family: Impact, Haettenschweiler, "Franklin Gothic Bold", Charcoal, "Helvetica Inserat", "Bitstream Vera Sans Bold", "Arial Black", sans-serif;
-    margin: calc(var(--ee-margin-default) * 1rem) 0 calc(var(--ee-margin-micro) * 1rem);
+    margin: var(--ee-margin-default) 0 var(--ee-margin-micro);
 }
 
 h4 {
-    margin: calc(var(--ee-margin-small) * 1rem) 0 calc(var(--ee-margin-smaller) * 1rem);
+    margin: var(--ee-margin-small) 0 var(--ee-margin-smaller);
 }
 
 h5 {
-    margin: calc(var(--ee-margin-smaller) * 1rem) 0 calc(var(--ee-margin-smaller) * 1rem);
+    margin: var(--ee-margin-smaller) 0 var(--ee-margin-smaller);
 }
 
 h6 {
-    margin: calc(var(--ee-margin-tiny) * 1rem) 0 calc(var(--ee-margin-tiny) * 1rem);
+    margin: var(--ee-margin-tiny) 0 var(--ee-margin-tiny);
 }
 
 ul {
@@ -220,7 +220,7 @@ ul {
 
 
 li {
-    margin: 0 0 calc(var(--ee-padding-smaller) * 1rem);
+    margin: 0 0 var(--ee-padding-smaller);
 }
 
 .intro {
@@ -233,19 +233,19 @@ li {
 
 code {
     background-color: var(--ee-color-grey-9);
-    border-radius: calc(var(--ee-border-radius-small) * 1px);
+    border-radius: var(--ee-border-radius-small);
     text-shadow: none !important;
     color: var(--ee-default-text-color-super-high-contrast);
     display: inline-block;
     font-family: Consolas, "Andale Mono WT", "Andale Mono", "Lucida Console", "Lucida Sans Typewriter", "DejaVu Sans Mono", "Bitstream Vera Sans Mono", "Liberation Mono", "Nimbus Mono L", Monaco, "Courier New", Courier, monospace;
-    font-size: calc(var(--ee-font-size-smaller) * 1px);
-    padding: calc(var(--ee-padding-micro) * .5rem) calc(var(--ee-padding-tiny) * 1rem);
-    margin: calc(var(--ee-padding-micro) * .5rem) calc(var(--ee-padding-micro) * 1rem);
+    font-size: var(--ee-font-size-smaller);
+    padding: var(--ee-padding-micro) var(--ee-padding-tiny);
+    margin: var(--ee-padding-micro) var(--ee-padding-micro);
     white-space: nowrap;
 }
 
 h4 code {
-    padding: calc(var(--ee-padding-micro) * .5rem) calc(var(--ee-padding-smaller) * 1rem);
+    padding: var(--ee-padding-micro) var(--ee-padding-smaller);
 }
 
 .demo-section {
@@ -276,15 +276,15 @@ h4 code {
 }
 
 .demo-item {
-    margin-bottom: calc(var(--ee-margin-default) * 1rem);
+    margin-bottom: var(--ee-margin-default);
 }
 
 .demo-swatch {
-    margin: calc(var(--ee-margin-smaller) * 1rem) 0;
+    margin: var(--ee-margin-smaller) 0;
 }
 
 .demo-box h2 {
-    margin: calc(var(--ee-margin-default) * 1rem);
+    margin: var(--ee-margin-default);
 }
 
 .demo-section.hidden {
@@ -303,6 +303,7 @@ h4 code {
 }
 .border-radius-demo .demo-square {
     background: none;
+    min-height: 120px;
 }
 .padding-demo .demo-square {
     width: 100%;
@@ -324,7 +325,7 @@ h4 code {
 
 
 .ee-container p + p {
-    margin: calc(var(--ee-margin-default) * 1rem) 0 0;
+    margin: var(--ee-margin-default) 0 0;
 }
 
 .ee-with-primary-color {
@@ -350,27 +351,33 @@ h4 code {
 }
 
 .with-default-padding {
-    padding: calc(var(--ee-padding-smaller) * 1rem) calc(var(--ee-padding-default) * 1rem);
+    padding: var(--ee-padding-smaller) var(--ee-padding-default);
 }
 .with-default-margin {
-    margin: calc(var(--ee-padding-default) * 1rem);
+    margin: var(--ee-padding-default);
 }
 
 
+.with-border-radius-none {
+    border-radius: var(--ee-border-radius-none);
+}
 .with-border-radius-small {
-    border-radius: calc(var(--ee-border-radius-small) * 1px);
+    border-radius: var(--ee-border-radius-small);
 }
 .with-border-radius-default {
-    border-radius: calc(var(--ee-border-radius-default) * 1px);
+    border-radius: var(--ee-border-radius-default);
 }
 .with-border-radius-big {
-    border-radius: calc(var(--ee-border-radius-big) * 1px);
+    border-radius: var(--ee-border-radius-big);
 }
 .with-border-radius-bigger {
-    border-radius: calc(var(--ee-border-radius-bigger) * 1px);
+    border-radius: var(--ee-border-radius-bigger);
 }
 .with-border-radius-huge {
-    border-radius: calc(var(--ee-border-radius-huge) * 1px);
+    border-radius: var(--ee-border-radius-huge);
+}
+.with-border-radius-full {
+    border-radius: var(--ee-border-radius-full);
 }
 
 
@@ -378,63 +385,69 @@ h4 code {
 
 /** margin sizes **/
 
+.with-margin-size-none {
+    margin: var(--ee-margin-none);
+}
 .with-margin-size-micro {
-    margin: calc(var(--ee-margin-micro) * 1rem);
+    margin: var(--ee-margin-micro);
 }
 .with-margin-size-tiny {
-    margin: calc(var(--ee-margin-tiny) * 1rem);
+    margin: var(--ee-margin-tiny);
 }
 .with-margin-size-smaller {
-    margin: calc(var(--ee-margin-smaller) * 1rem);
+    margin: var(--ee-margin-smaller);
 }
 .with-margin-size-small {
-    margin: calc(var(--ee-margin-small) * 1rem);
+    margin: var(--ee-margin-small);
 }
 .with-margin-size-default {
-    margin: calc(var(--ee-margin-default) * 1rem);
+    margin: var(--ee-margin-default);
 }
 .with-margin-size-big {
-    margin: calc(var(--ee-margin-big) * 1rem);
+    margin: var(--ee-margin-big);
 }
 .with-margin-size-bigger {
-    margin: calc(var(--ee-margin-bigger) * 1rem);
+    margin: var(--ee-margin-bigger);
 }
 .with-margin-size-huge {
-    margin: calc(var(--ee-margin-huge) * 1rem);
+    margin: var(--ee-margin-huge);
 }
 .with-margin-size-extreme {
-    margin: calc(var(--ee-margin-extreme) * 1rem);
+    margin: var(--ee-margin-extreme);
 }
 
 
 /** padding sizes **/
 
+.with-padding-size-none {
+    padding: var(--ee-padding-none);
+}
 .with-padding-size-micro {
-    padding: calc(var(--ee-padding-micro) * 1rem);
+    padding: var(--ee-padding-micro);
 }
 .with-padding-size-tiny {
-    padding: calc(var(--ee-padding-tiny) * 1rem);
+    padding: var(--ee-padding-tiny);
 }
 .with-padding-size-smaller {
-    padding: calc(var(--ee-padding-smaller) * 1rem);
+    padding: var(--ee-padding-smaller);
 }
 .with-padding-size-small {
-    padding: calc(var(--ee-padding-small) * 1rem);
+    padding: var(--ee-padding-small);
 }
 .with-padding-size-default {
-    padding: calc(var(--ee-padding-default) * 1rem);
+    padding: var(--ee-padding-default);
 }
 .with-padding-size-big {
-    padding: calc(var(--ee-padding-big) * 1rem);
+    padding: var(--ee-padding-big);
 }
 .with-padding-size-bigger {
-    padding: calc(var(--ee-padding-bigger) * 1rem);
+    padding: var(--ee-padding-bigger);
 }
 .with-padding-size-huge {
-    padding: calc(var(--ee-padding-huge) * 1rem);
+    padding: var(--ee-padding-huge);
 }
 .with-padding-size-extreme {
-    padding: calc(var(--ee-padding-extreme) * 1rem);
+    padding: var(--ee-padding-extreme);
 }
 
 
@@ -634,12 +647,12 @@ h4 code {
 @media screen and (max-width: 600px) {
 
     body {
-        font-size: calc(var(--ee-font-size-smaller) * 1px);
+        font-size: var(--ee-font-size-smaller);
     }
 
     .wrapper {
         max-width: 100%;
-        padding: 0 calc(var(--ee-padding-small) * 1rem);
+        padding: 0 var(--ee-padding-small);
     }
 
     header.isActive .wrapper {
@@ -656,22 +669,22 @@ h4 code {
 
     h1 {
         font-size: var(--ee-font-size-huge);
-        margin: calc(var(--ee-padding-big) * 1rem) 0 calc(var(--ee-padding-small) * 1rem);
+        margin: var(--ee-padding-big) 0 var(--ee-padding-small);
     }
 
     h2 {
         font-size: var(--ee-font-size-bigger);
-        margin: calc(var(--ee-padding-default) * 1rem) 0 calc(var(--ee-padding-micro) * 1rem);
+        margin: var(--ee-padding-default) 0 var(--ee-padding-micro);
     }
 
     h3 {
         font-size: var(--ee-font-size-big);
-        margin: calc(var(--ee-padding-small) * 1rem) 0 calc(var(--ee-padding-smaller) * 1rem);
+        margin: var(--ee-padding-small) 0 var(--ee-padding-smaller);
     }
 
     h4 {
         font-size: var(--ee-font-size-default);
-        margin: calc(var(--ee-padding-smaller) * 1rem) 0 calc(var(--ee-padding-smaller) * 1rem);
+        margin: var(--ee-padding-smaller) 0 var(--ee-padding-smaller);
     }
 
     .isActive #navigation {
@@ -682,7 +695,7 @@ h4 code {
         overflow-y: scroll;
         -webkit-overflow-scrolling: touch;
         position: absolute;
-        top: calc(var(--ee-padding-smaller) * -1rem);
+        top: var(--ee-padding-smaller);
         width: 100%
     }
 
@@ -724,11 +737,11 @@ h4 code {
 @media only screen and (max-width: 480px) {
 
     body {
-        font-size: calc(var(--ee-font-size-small) * 1px);
+        font-size: var(--ee-font-size-small);
     }
 
     .wrapper {
-        padding: 0 calc(var(--ee-padding-smaller) * 1rem);
+        padding: 0 var(--ee-padding-smaller);
     }
 
 }

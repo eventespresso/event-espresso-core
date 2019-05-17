@@ -1,44 +1,46 @@
 :root {
 
     /** font sizes **/
-    --ee-font-size-micro: 11;
-    --ee-font-size-tiny: 12;
-    --ee-font-size-smaller: 14;
-    --ee-font-size-small: 16;
-    --ee-font-size-default: 18;
-    --ee-font-size-big: 24;
-    --ee-font-size-bigger: 32;
-    --ee-font-size-huge: 45;
-    --ee-font-size-extreme: 60;
+    --ee-font-size-micro: 11px;
+    --ee-font-size-tiny: 12px;
+    --ee-font-size-smaller: 14px;
+    --ee-font-size-small: 16px;
+    --ee-font-size-default: 18px;
+    --ee-font-size-big: 24px;
+    --ee-font-size-bigger: 32px;
+    --ee-font-size-huge: 45px;
+    --ee-font-size-extreme: 60px;
     --ee-line-height-modifier: 1.5;
 
     /** padding sizes **/
-    --ee-padding-micro: 0.25;
-    --ee-padding-tiny: 0.5;
-    --ee-padding-smaller: 1;
-    --ee-padding-small: 1.5;
-    --ee-padding-default: 2;
-    --ee-padding-big: 2.5;
-    --ee-padding-bigger: 3;
-    --ee-padding-huge: 3.5;
-    --ee-padding-extreme: 4;
+    --ee-padding-micro: 0.25rem;
+    --ee-padding-tiny: 0.5rem;
+    --ee-padding-smaller: 1rem;
+    --ee-padding-small: 1.5rem;
+    --ee-padding-default: 2rem;
+    --ee-padding-big: 2.5rem;
+    --ee-padding-bigger: 3rem;
+    --ee-padding-huge: 3.5rem;
+    --ee-padding-extreme: 4rem;
 
     /** margin sizes **/
-    --ee-margin-micro: 0.25;
-    --ee-margin-tiny: 0.5;
-    --ee-margin-smaller: 1;
-    --ee-margin-small: 1.5;
-    --ee-margin-default: 2;
-    --ee-margin-big: 2.5;
-    --ee-margin-bigger: 3;
-    --ee-margin-huge: 3.5;
-    --ee-margin-extreme: 4;
+    --ee-margin-micro: 0.25rem;
+    --ee-margin-tiny: 0.5rem;
+    --ee-margin-smaller: 1rem;
+    --ee-margin-small: 1.5rem;
+    --ee-margin-default: 2rem;
+    --ee-margin-big: 2.5rem;
+    --ee-margin-bigger: 3rem;
+    --ee-margin-huge: 3.5rem;
+    --ee-margin-extreme: 4rem;
 
     /** border radius sizes **/
-    --ee-border-radius-small: 4;
-    --ee-border-radius-default: 5;
-    --ee-border-radius-big: 8;
-    --ee-border-radius-bigger: 16;
-    --ee-border-radius-huge: 32;
+    --ee-border-radius-none: 0px;
+    --ee-border-radius-small: 4px;
+    --ee-border-radius-default: 5px;
+    --ee-border-radius-big: 8px;
+    --ee-border-radius-bigger: 16px;
+    --ee-border-radius-huge: 32px;
+    --ee-border-radius-full: 1000px;
 
 }
