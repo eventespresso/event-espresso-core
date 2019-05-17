@@ -12,6 +12,7 @@ const aliases = {
 	'@eventespresso/higher-order-components': path.resolve( __dirname, assets + 'higher-order-components' ),
 	'@eventespresso/components': path.resolve( __dirname, assets + 'components' ),
 	'@eventespresso/editor-hocs': path.resolve( __dirname, assets + 'editor/hocs' ),
+	'@eventespresso/hooks': path.resolve( __dirname, assets + 'hooks' ),
 	'@test/fixtures': path.resolve( __dirname, 'tests/javascript-config/unit/fixtures' ),
 };
 module.exports = {

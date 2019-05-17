@@ -36,6 +36,8 @@ common.forEach( ( config, index ) => {
 					model: 'eventespresso-model',
 					validators: 'eventespresso-validators',
 					'editor-hocs': 'eventespresso-editor-hocs',
+					editor: 'eventespresso-editor',
+					hooks: 'eventespresso-hooks',
 				},
 				excludes: [ 'eejs', 'vendor', 'core-default-theme' ],
 			} ),

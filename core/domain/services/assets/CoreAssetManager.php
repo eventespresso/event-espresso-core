@@ -77,6 +77,8 @@ class CoreAssetManager extends AssetManager
 
     const JS_HANDLE_COMPONENTS = 'eventespresso-components';
 
+    const JS_HANDLE_HOOKS = 'eventespresso-hooks';
+
     const JS_HANDLE_EDITOR_HOCS = 'eventespresso-editor-hocs';
 
     const JS_HANDLE_VALIDATORS = 'eventespresso-validators';
@@ -273,6 +275,13 @@ class CoreAssetManager extends AssetManager
                      );
                  }
              );
+        $this->addJavascript(
+            CoreAssetManager::JS_HANDLE_HOOKS,
+            $this->registry->getJsUrl( $this->domain->assetNamespace(), 'hooks' ),
+            [
+                CoreAssetManager::JS_HANDLE_CORE
+            ]
+        );
 
         $this->addJavascript(
             CoreAssetManager::JS_HANDLE_HOCS,
@@ -280,6 +289,7 @@ class CoreAssetManager extends AssetManager
             array(
                 CoreAssetManager::JS_HANDLE_DATA_STORES,
                 CoreAssetManager::JS_HANDLE_VALUE_OBJECTS,
+                CoreAssetManager::JS_HANDLE_HOOKS,
                 'wp-components',
             )
         )->setRequiresTranslation();
@@ -290,6 +300,7 @@ class CoreAssetManager extends AssetManager
             array(
                 CoreAssetManager::JS_HANDLE_DATA_STORES,
                 CoreAssetManager::JS_HANDLE_VALUE_OBJECTS,
+                CoreAssetManager::JS_HANDLE_HOOKS,
                 'wp-components',
             )
         )
