@@ -63,8 +63,8 @@
     <p align="right"><a href="https://eventespresso.com/2018/12/event-espresso-and-wordpress-5-0/?ee_ver=ee4&utm_source=ee4_plugin_admin&utm_medium=link&utm_campaign=event_espresso_about_page&utm_content=gutenberg_link&ap_id=EEspresso" target="_blank">Read More</a>
     <hr>
     <h4>New Date and Time Filter Max Checked Option</h4>
-    <p>NEED CONTENT</p>
-    <p align="right"><a href="####?ee_ver=ee4&utm_source=ee4_plugin_admin&utm_medium=link&utm_campaign=event_espresso_about_page&utm_content=rest_api_core_link&ap_id=EEspresso#questions" target="_blank">Read More</a>
+    <p>Do you have events with lots of datetimes, with a number different tickets for each datetime? If so, this feature will help tidy up the event page by reducing the number of ticket options shown. The end user can view more ticket options by selecting more dates.</p>
+    <p align="right"><a href="/wp-admin/admin.php?page=espresso_events&action=template_settings#ticket_selector_settings_tbl-datetime-selector-max-checked" target="_blank">Open Ticket Selector Template Settings</a>
     <hr>
     <h4>GDPR Compliance Features</h4>
     <p>Along with the new GDPR regulations comes new features in WordPress and Event Espresso 4. The<a href="https://wordpress.org/news/2018/05/wordpress-4-9-6-privacy-and-maintenance-release/"> latest Privacy and Maintenance release of WordPress, 4.9.6,</a> comes with many features to help your website become GDPR compliant. Event Espresso has contributed to those new features, and makes use of them in Event Espresso 4.9.62. Below is a list of new features that are shipping with Event Espresso to support the new GDPR regulations.</p>
