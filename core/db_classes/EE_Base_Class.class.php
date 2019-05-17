@@ -3058,7 +3058,7 @@ abstract class EE_Base_Class
     /**
      * Change $fields' values to $new_value_sql (which is a string of raw SQL)
      *
-     * @since $VID:$
+     * @since 4.9.80.p
      * @param EE_Model_Field_Base[] $fields
      * @param string $new_value_sql
      *      example: 'column_name=123',
@@ -3157,7 +3157,7 @@ abstract class EE_Base_Class
      * Nudges $field_name's value by $quantity, without any conditionals (in comparison to bumpConditionally()).
      * Does not allow negative values, however.
      *
-     * @since $VID:$
+     * @since 4.9.80.p
      * @param array $fields_n_quantities keys are the field names, and values are the amount by which to bump them
      *                                   (positive or negative). One important gotcha: all these values must be
      *                                   on the same table (eg don't pass in one field for the posts table and
@@ -3216,7 +3216,7 @@ abstract class EE_Base_Class
      * Returns true if the value was successfully bumped, and updates the value on this model object.
      * Otherwise returns false.
      *
-     * @since $VID:$
+     * @since 4.9.80.p
      * @param string $field_name_to_bump
      * @param string $field_name_affecting_total
      * @param string $limit_field_name

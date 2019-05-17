@@ -1772,20 +1772,22 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
                     )
                 ),
                 'current_status'     => new EE_Form_Section_HTML(
-                    EEH_HTML::tr(
-                        EEH_HTML::th(
-                            EEH_HTML::label(
-                                EEH_HTML::strong(
-                                    esc_html__('Current Registration Status', 'event_espresso')
+                    EEH_HTML::table(
+                        EEH_HTML::tr(
+                            EEH_HTML::th(
+                                EEH_HTML::label(
+                                    EEH_HTML::strong(
+                                        esc_html__('Current Registration Status', 'event_espresso')
+                                    )
                                 )
                             )
-                        )
-                        . EEH_HTML::td(
-                            EEH_HTML::strong(
-                                $this->_registration->pretty_status(),
-                                '',
-                                'status-' . $this->_registration->status_ID(),
-                                'line-height: 1em; font-size: 1.5em; font-weight: bold;'
+                            . EEH_HTML::td(
+                                EEH_HTML::strong(
+                                    $this->_registration->pretty_status(),
+                                    '',
+                                    'status-' . $this->_registration->status_ID(),
+                                    'line-height: 1em; font-size: 1.5em; font-weight: bold;'
+                                )
                             )
                         )
                     )
@@ -2598,6 +2600,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
                     'REG_ID' => array('!=', $this->_registration->ID()),
                 ),
                 'force_join' => array('Attendee'),
+                'default_where_conditions' => 'other_models_only',
             )
         );
         $this->_template_args['attendees'] = array();

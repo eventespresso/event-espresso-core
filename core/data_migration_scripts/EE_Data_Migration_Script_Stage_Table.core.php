@@ -19,6 +19,11 @@ abstract class EE_Data_Migration_Script_Stage_Table extends EE_Data_Migration_Sc
     protected $_old_table;
 
     /**
+     * @var string The columns to select. May be overridden for children.
+     */
+    protected $select_expression = '*';
+
+    /**
      * Set in the constructor to add this sql to both the counting query in
      * EE_Data_Migration_Script_Stage_Table::_count_records_to_migrate() and
      * EE_Data_Migration_Script_Stage_Table::_get_rows().
@@ -65,7 +70,7 @@ abstract class EE_Data_Migration_Script_Stage_Table extends EE_Data_Migration_Sc
     {
         global $wpdb;
         $start_at_record = $this->count_records_migrated();
-        $query = "SELECT * FROM {$this->_old_table} {$this->_extra_where_sql} " . $wpdb->prepare(
+        $query = "SELECT {$this->select_expression} FROM {$this->_old_table} {$this->_extra_where_sql} " . $wpdb->prepare(
             "LIMIT %d, %d",
             $start_at_record,
             $limit

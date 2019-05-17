@@ -1,0 +1,14 @@
+<section class="demo-section">
+    <h2 id="status-colors" class="ee-focus-priority-2">Entity Status Colors</h2>
+    <p>These are status colors for various Event Espresso model entities. The following schema is used for the class names:</p>
+    <ul>
+        <li><code class="alternate">.ee-status-color-{status_code}</code><br />
+            The text color will be set for the given status code.</li>
+        <li><code class="alternate">.ee-status-background-color-{status_code}</code><br/>
+            The background color will be set for the given status code and the text color will be set to a WCAG
+            compliant contrast</li>
+    </ul>
+    {{#each entityGroups}}
+    {{{this}}}
+    {{/each}}
+</section>

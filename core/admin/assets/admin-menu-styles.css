@@ -97,26 +97,15 @@ div.TB-ee-frame a {
 	top: 0;
 	right: 0;
 }
-
-.espresso-admin .about-text {
-	width: 80%;
+@media only screen and (max-width: 500px) {
+	.about-wrap .ee-badge {
+		position: relative;
+		left: 50%;
+		transform: translateX(-50%);
+		margin-bottom: 1.5em;
+	}
 }
 
-.feature-section.col.three-col.about-updates > div {
-	float: left;
-	margin: 20px;
-	width: 300px;
-}
-
-.feature-section.col.two-col > div {
-	float: left;
-	margin: 20px;
-	width: 400px;
-}
-
-.about-wrap .feature-section {
-	padding-bottom: 0;
-}
 /**** ee decaf reviews *****/
 .review-user-nicename {
     float: right;
@@ -203,6 +192,7 @@ div.TB-ee-frame a {
     height: 35px;
     width: 35px;
 }
+
 .featured-section .button-hero .dashicons{
     font-size:16px;
     vertical-align:middle;
@@ -211,11 +201,9 @@ div.TB-ee-frame a {
 .featured-section .ti-about-page-text-center {
     text-align: center;
 }
+
 .decaf-regular-table .text-right {
     text-align: right;
-}
-.about-wrap .feature-section.two-col .col {
-    margin-top: 40px;
 }
 
 /******************* DASHICONS ****************** */

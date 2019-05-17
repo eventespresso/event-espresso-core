@@ -3,6 +3,7 @@
 namespace EventEspresso\core\libraries\form_sections\form_handlers;
 
 use EE_Error;
+use EE_File_Input;
 use EE_Form_Section_HTML;
 use EE_Registry;
 use EE_Submit_Input;
@@ -585,7 +586,14 @@ abstract class FormHandler implements FormHandlerInterface
         if ($form_config === FormHandler::ADD_FORM_TAGS_AND_SUBMIT
             || $form_config === FormHandler::ADD_FORM_TAGS_ONLY
         ) {
-            $form_html .= $this->form()->form_open($this->formAction());
+            $additional_props = $this->requiresMultipartEnctype()
+                ? 'enctype="multipart/form-data"'
+                : '';
+            $form_html .= $this->form()->form_open(
+                $this->formAction(),
+                'POST',
+                $additional_props
+            );
         }
         $form_html .= $this->form(true)->get_html();
         if ($form_config === FormHandler::ADD_FORM_TAGS_AND_SUBMIT
@@ -598,6 +606,22 @@ abstract class FormHandler implements FormHandlerInterface
             ''
         );
         return $form_html;
+    }
+
+    /**
+     * Determines if this form needs "enctype='multipart/form-data'" or not.
+     * @since 4.9.80.p
+     * @return bool
+     * @throws EE_Error
+     */
+    public function requiresMultipartEnctype()
+    {
+        foreach ($this->form()->inputs_in_subsections() as $input) {
+            if ($input instanceof EE_File_Input) {
+                return true;
+            }
+        }
+        return false;
     }
 
 

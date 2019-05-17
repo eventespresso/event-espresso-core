@@ -95,6 +95,10 @@ class EE_DMS_4_1_0_gateways extends EE_Data_Migration_Script_Stage
                 break;
             case 'Invoice':
                 $new_gateway_settings['invoice_logo_url'] = $old_gateway_settings['image_url'];
+                // Dont' migrate the old invoice payee address. It was usually given dummy data. And in EE4
+                // it gets used in the receipts which are available to everyone. So usually it's best to not
+                // migrate this.
+                unset($new_gateway_settings['payment_address']);
                 break;
             case 'Paypal_Pro':
                 $new_gateway_settings['email'] = $old_gateway_settings['paypal_pro_email'];

@@ -8,7 +8,6 @@
         '<em>',
         '</em>'
     ); ?></p>
-<p>
 <ul>
     <li>
         <strong><?php esc_html_e('Registration Confirmation', 'event_espresso'); ?></strong><br/>
@@ -19,7 +18,6 @@
         <?php esc_html_e('Triggered by frontend payments', 'event_espresso'); ?>
     </li>
 </ul>
-</p>
 <p><strong><?php esc_html_e('Contexts', 'event_espresso'); ?></strong></p>
 <p>
     <?php esc_html_e(

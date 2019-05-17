@@ -58,6 +58,7 @@ class Events_Admin_List_Table extends EE_Admin_List_Table
             // 'tkts_sold' => esc_html__('Tickets Sold', 'event_espresso'),
             'actions'         => esc_html__('Actions', 'event_espresso'),
         );
+        $this->addConditionalColumns();
         $this->_sortable_columns = array(
             'id'              => array('EVT_ID' => true),
             'name'            => array('EVT_name' => false),
@@ -66,8 +67,9 @@ class Events_Admin_List_Table extends EE_Admin_List_Table
             'start_date_time' => array('Datetime.DTT_EVT_start' => false),
             'reg_begins'      => array('Datetime.Ticket.TKT_start_date' => false),
         );
+
         $this->_primary_column = 'id';
-        $this->_hidden_columns = array('author');
+        $this->_hidden_columns = array('author', 'event_category');
     }
 
 
@@ -367,6 +369,26 @@ class Events_Admin_List_Table extends EE_Admin_List_Table
 
 
     /**
+     * @param EE_Event $event
+     * @return string
+     * @throws EE_Error
+     */
+    public function column_event_category(EE_Event $event)
+    {
+        $event_categories = $event->get_all_event_categories();
+        return implode(
+            ', ',
+            array_map(
+                function (EE_Term $category) {
+                    return $category->name();
+                },
+                $event_categories
+            )
+        );
+    }
+
+
+    /**
      * @param EE_Event $item
      * @return string
      * @throws EE_Error
@@ -514,5 +536,32 @@ class Events_Admin_List_Table extends EE_Admin_List_Table
             $item,
             'div'
         );
+    }
+
+
+    /**
+     * Helper for adding columns conditionally
+     *
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     */
+    private function addConditionalColumns()
+    {
+        $event_category_count = EEM_Term::instance()->count(
+            [['Term_Taxonomy.taxonomy' => EEM_CPT_Base::EVENT_CATEGORY_TAXONOMY]]
+        );
+        if ($event_category_count === 0) {
+            return;
+        }
+        $column_array = [];
+        foreach ($this->_columns as $column => $column_label) {
+            $column_array[ $column ] = $column_label;
+            if ($column === 'venue') {
+                $column_array['event_category'] = esc_html__('Event Category', 'event_espresso');
+            }
+        }
+        $this->_columns = $column_array;
     }
 }

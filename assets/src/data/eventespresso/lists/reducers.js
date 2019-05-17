@@ -1,13 +1,16 @@
 /**
  * Internal dependencies
  */
-import { DEFAULT_LISTS_STATE } from '../../model';
-import { ACTION_TYPES as types } from './action-types';
+import {
+	ACTION_TYPES as types,
+	RESET_TYPES as resetTypes,
+} from './action-types';
 
 /**
  * External dependencies
  */
 import { fromJS, Set, OrderedMap } from 'immutable';
+import { DEFAULT_LISTS_STATE } from '@eventespresso/model';
 
 /**
  * Reducer managing item list state.
@@ -36,6 +39,12 @@ export function receiveListItems(
 				items.map( ( entity ) => [ entity.id, entity ] )
 			);
 			break;
+		case resetTypes.RESET_ALL_STATE:
+			return fromJS( DEFAULT_LISTS_STATE );
+		case resetTypes.RESET_STATE_FOR_IDENTIFIER:
+			return state.delete( identifier );
+		case resetTypes.RESET_SPECIFIC_STATE_FOR_IDENTIFIER:
+			return state.deleteIn( [ identifier, queryString ] );
 		default :
 			doUpdate = false;
 	}
