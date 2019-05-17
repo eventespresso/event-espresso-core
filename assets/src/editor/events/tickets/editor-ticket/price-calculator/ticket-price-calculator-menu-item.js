@@ -4,6 +4,7 @@
 import { EspressoIcon, IconMenuItem } from '@eventespresso/components';
 import { __ } from '@eventespresso/i18n';
 import { isModelEntityOfModel } from '@eventespresso/validators';
+import withTicketPriceCalculatorFormModal from './with-ticket-price-calculator-form-modal';
 
 /**
  * @function ticketPriceCalculatorMenuItem
@@ -12,11 +13,11 @@ import { isModelEntityOfModel } from '@eventespresso/validators';
  * @param {boolean} noBasePrice
  * @return {IconMenuItem}    View Tickets for Ticket IconMenuItem
  */
-export const ticketPriceCalculatorMenuItem = (
+export const TicketPriceCalculatorMenuItem = ( {
 	ticket,
 	toggleCalculator,
-	noBasePrice = false
-) => {
+	noBasePrice = false,
+} ) => {
 	const tooltip = noBasePrice ?
 		__( 'warning! no ticket price set - click to fix', 'event_espresso' ) :
 		__( 'ticket price calculator', 'event_espresso' );
@@ -33,3 +34,5 @@ export const ticketPriceCalculatorMenuItem = (
 		/>
 	) : null;
 };
+
+export default withTicketPriceCalculatorFormModal( TicketPriceCalculatorMenuItem );

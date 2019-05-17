@@ -10,6 +10,8 @@ import { SiteCurrency } from '@eventespresso/value-objects';
 
 import { TICKET_PRICE_CALCULATOR_FORM_INPUT_PREFIX } from './';
 
+// @TODO, there's still some dependencies on things in here in other components
+// so I need to refactor those things before I can remove this
 export const getPriceTypeObjects = () => select( 'eventespresso/lists' )
 	.getEntities( 'price_type' );
 

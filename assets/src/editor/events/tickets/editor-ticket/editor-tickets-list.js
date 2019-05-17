@@ -2,7 +2,7 @@
  * External dependencies
  */
 import { compose } from '@wordpress/compose';
-import { dispatch } from '@wordpress/data';
+import { withDispatch } from '@wordpress/data';
 import { Component } from '@wordpress/element';
 import {
 	EntityList,
@@ -22,9 +22,7 @@ import { EditorTicketsGridView } from './grid-view/';
 import { EditorTicketsListView } from './list-view/';
 import PaginatedTicketsListWithFilterBar from './filter-bar';
 import {
-	ticketPriceCalculatorMenuItem,
-	TicketPriceCalculatorFormModal,
-	withTicketPriceCalculator,
+	TicketPriceCalculatorMenuItem,
 } from './price-calculator';
 import { withTicketAssignmentsManagerModal } from '../../ticket-assignments-manager';
 
@@ -32,7 +30,6 @@ const {
 	FormWrapper,
 	FormSaveCancelButtons,
 } = twoColumnAdminFormLayout;
-const { createEntity } = dispatch( 'eventespresso/core' );
 
 /**
  * EditorTicketsList
@@ -47,10 +44,7 @@ const { createEntity } = dispatch( 'eventespresso/core' );
 class EditorTicketsList extends Component {
 	constructor( props ) {
 		super( props );
-		this.state = {
-			managerOpen: false,
-			newTicket: null,
-		};
+		this.state = { newTicket: null };
 	}
 
 	/**
@@ -72,31 +66,19 @@ class EditorTicketsList extends Component {
 
 	/**
 	 * @function
-	 */
-	addNewTicket = () => {
-		createEntity( 'ticket', {} ).then(
-			( newTicket ) => {
-				this.setState( () => ( { newTicket } ) );
-				this.props.toggleEditor();
-			}
-		);
-	};
-
-	/**
-	 * @function
 	 * @return {Object} rendered button
 	 */
 	addNewTicketButton = () => {
+		const addTicket = () => this.props.addNewTicket(
+			( state ) => this.setState( state ),
+			this.props.toggleEditor
+		);
 		return (
 			<FancyButton
 				icon="tickets-alt"
 				style="wp-default"
 				buttonText={ __( 'Add New Ticket', 'event_espresso' ) }
-				onClick={ ( e ) => {
-					e.preventDefault();
-					e.stopPropagation();
-					this.addNewTicket();
-				} }
+				onClick={ addTicket }
 			/>
 		);
 	};
@@ -107,15 +89,12 @@ class EditorTicketsList extends Component {
 			allDates,
 			editorOpen,
 			toggleEditor,
-			showCalculator,
-			toggleCalculator,
 			view = 'grid',
 			...otherProps
 		} = this.props;
-		const calculator = ticketPriceCalculatorMenuItem(
-			this.state.newTicket,
-			toggleCalculator
-		);
+		const calculator = <TicketPriceCalculatorMenuItem
+			ticket={ this.state.newTicket }
+		/>;
 		return (
 			<FormWrapper>
 				<EntityList
@@ -142,11 +121,6 @@ class EditorTicketsList extends Component {
 					onUpdate={ this.toggleTicketManager }
 					calculator={ calculator }
 				/>
-				<TicketPriceCalculatorFormModal
-					ticket={ this.state.newTicket }
-					toggleEditor={ toggleCalculator }
-					editorOpen={ showCalculator }
-				/>
 			</FormWrapper>
 		);
 	}
@@ -155,7 +129,20 @@ class EditorTicketsList extends Component {
 export default compose( [
 	withPriceTypes,
 	withEditor,
-	withTicketPriceCalculator,
+	withDispatch(
+		( dispatch ) => {
+			const { createEntity } = dispatch( 'eventespresso/core' );
+			const addNewTicket = ( setState, toggleEditor ) => {
+				createEntity( 'ticket', {} ).then(
+					( newTicket ) => {
+						setState( { newTicket } );
+						toggleEditor();
+					}
+				);
+			};
+			return { addNewTicket };
+		}
+	),
 	PaginatedTicketsListWithFilterBar,
 	withTicketAssignmentsManagerModal( () => (
 		{

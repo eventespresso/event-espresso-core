@@ -84,6 +84,7 @@ export const withFormHandler = ( FormComponent ) => {
 				decorators = [],
 				mutators = {},
 				formChanges = false,
+				setMutatorCallbacks = () => null,
 				...formProps
 			} = this.props;
 			let { formData = null } = this.props;
@@ -105,6 +106,7 @@ export const withFormHandler = ( FormComponent ) => {
 							pristine,
 							invalid,
 						} ) => {
+							setMutatorCallbacks( form.mutators );
 							pristine = pristine && ! this.state.changes;
 							const submitButton = (
 								<FormSubmitButton

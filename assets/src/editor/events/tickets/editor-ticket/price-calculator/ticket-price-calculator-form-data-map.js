@@ -4,7 +4,7 @@
 import { isArray, isEmpty, uniq } from 'lodash';
 import { isModelEntityOfModel } from '@eventespresso/validators';
 
-import { TICKET_PRICE_CALCULATOR_FORM_INPUT_PREFIX } from './';
+import { TICKET_PRICE_CALCULATOR_FORM_INPUT_PREFIX } from './constants';
 
 /**
  * @function

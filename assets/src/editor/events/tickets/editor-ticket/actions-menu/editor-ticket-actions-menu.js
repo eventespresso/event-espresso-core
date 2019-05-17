@@ -3,7 +3,7 @@
  */
 import { isEmpty } from 'lodash';
 import { compose } from '@wordpress/compose';
-import { Component, Fragment } from '@wordpress/element';
+import { Component, Fragment, isValidElement } from '@wordpress/element';
 import { applyFilters } from '@wordpress/hooks';
 import {
 	DropDownMenu,
@@ -21,11 +21,7 @@ import { withTicketDatetimes, withTicketPrices } from '../../data';
 import { EditTicketFormModal } from '../';
 import { copyTicket, trashTicket } from '../action-handlers';
 import { EntityActionMenuItem } from '../../../entity-action-menu-item';
-import {
-	ticketPriceCalculatorMenuItem,
-	TicketPriceCalculatorFormModal,
-	withTicketPriceCalculator,
-} from '../price-calculator';
+import { TicketPriceCalculatorMenuItem } from '../price-calculator';
 import { withTicketAssignmentsManagerModal } from '../../../ticket-assignments-manager';
 import './style.css';
 
@@ -166,7 +162,8 @@ class EditorTicketActionsMenu extends Component {
 					(
 						sidebarMenuItem.type === DropDownMenu ||
 						sidebarMenuItem.type === EntityActionMenuItem ||
-						sidebarMenuItem.type === IconMenuItem
+						sidebarMenuItem.type === IconMenuItem ||
+						isValidElement( sidebarMenuItem )
 					) ?
 						<Fragment key={ index }>
 							{ sidebarMenuItem }
@@ -182,8 +179,6 @@ class EditorTicketActionsMenu extends Component {
 			ticket,
 			editorOpen,
 			toggleEditor,
-			showCalculator,
-			toggleCalculator,
 			ticketDatetimes = [],
 			datesLoaded = false,
 			noBasePrice = false,
@@ -191,11 +186,10 @@ class EditorTicketActionsMenu extends Component {
 		if ( ! isModelEntityOfModel( ticket, 'ticket' ) ) {
 			return null;
 		}
-		const calculator = ticketPriceCalculatorMenuItem(
-			ticket,
-			toggleCalculator,
-			noBasePrice
-		);
+		const calculator = <TicketPriceCalculatorMenuItem
+			ticket={ ticket }
+			noBasePrice={ noBasePrice }
+		/>;
 		const sidebarMenuItems = this.getSidebarMenuItems(
 			ticket,
 			ticketDatetimes,
@@ -214,11 +208,6 @@ class EditorTicketActionsMenu extends Component {
 					editorOpen={ editorOpen }
 					calculator={ calculator }
 				/>
-				<TicketPriceCalculatorFormModal
-					ticket={ ticket }
-					toggleEditor={ toggleCalculator }
-					editorOpen={ showCalculator }
-				/>
 			</div>
 		) : null;
 	}
@@ -226,7 +215,6 @@ class EditorTicketActionsMenu extends Component {
 
 export default compose( [
 	withEditor,
-	withTicketPriceCalculator,
 	withTicketAssignmentsManagerModal( ( { ticket } ) => (
 		{
 			title: sprintf(
