@@ -26,7 +26,7 @@
             '</a>'
         ); ?>
     </p>
-</div>
+</div><!-- end .changelog .point-releases -->
 
 <div class="changelog">
     <?php
@@ -119,3 +119,4 @@
             target="_blank">PayPal Express Checkout Smart Payment Buttons (with Venmo) Payment Gateway</a> for Event Espresso 4.</p>
 
     <hr>
+</div><!-- end .changelog -->
