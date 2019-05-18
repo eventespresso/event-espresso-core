@@ -355,7 +355,6 @@ const resetStateForModel = ( state, action ) => {
 	return state;
 };
 
-
 /**
  * Helper for clearing the entries in the dirty relations state for the given
  * modelName.
