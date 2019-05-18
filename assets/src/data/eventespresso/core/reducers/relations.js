@@ -44,12 +44,14 @@ const normalizedReceiveAndRemoveRelations = ( state, action ) => {
 	if ( state.hasIn( [ 'entityMap', modelName ] ) ) {
 		return receiveAndRemoveRelations( state, action );
 	}
-	// if the singular form of the relation model name exists, then we need to
+	// if the singular form of the relation model name exists in entityMap or if
+	// the plural form of the modelname exists in the index, then we need to
 	// flip things so we're normalizing to always have an index from a single
 	// modelName for this relation type.
-	if ( state.hasIn(
-		[ 'entityMap', singularModelName( relationName ) ]
-	) ) {
+	if (
+		state.hasIn( [ 'entityMap', singularModelName( relationName ) ] ) ||
+		state.hasIn( [ 'index', pluralModelName( modelName ) ] )
+	) {
 		const newAction = {
 			...action,
 			modelName: singularModelName( relationName ),
