@@ -30,6 +30,12 @@ const originalState = mockStateForTests.relations
 	).setIn(
 		[ 'entityMap', 'event', testCuid, 'datetimes' ],
 		Set.of( 55 )
+	).setIn(
+		[ 'index', 'prices', 22 ],
+		Map().set( 'priceTypes', Set.of( 10 ) )
+	).setIn(
+		[ 'entityMap', 'priceType', 10, 'prices' ],
+		Set.of( 22 )
 	);
 
 describe( normalizedReceiveAndRemoveRelations.name + '()', () => {
@@ -80,6 +86,24 @@ describe( normalizedReceiveAndRemoveRelations.name + '()', () => {
 								[ 'index', 'datetimes', 55, 'event' ],
 								Set.of( 10 ),
 							).deleteIn( [ 'entityMap', 'event', testCuid ] ),
+					],
+					[
+						'correctly normalize incoming relation and return ' +
+						'expected state for prices when prices exists in ' +
+						'the index already and the relation does not exist yet',
+						'price',
+						'ticket',
+						200,
+						[ testCuid ],
+						originalState
+							.setIn(
+								[ 'index', 'prices', 200, 'ticket' ],
+								Set.of( testCuid ),
+							).setIn(
+								[ 'entityMap', 'ticket', testCuid, 'prices' ],
+								Set.of( 200 )
+							),
+						originalState,
 					],
 					[
 						'expected state for existing entities relations in state',
@@ -285,14 +309,21 @@ describe( 'RESET_STATE_FOR_MODEL', () => {
 	} );
 	it( 'returns expected state for model existing in state (when it would ' +
 		'clear the entire state)', () => {
-		const newState = reducer(
+		const firstClear = reducer(
 			originalState,
 			{
 				type: resetTypes.RESET_STATE_FOR_MODEL,
 				modelName: 'event',
 			}
 		);
-		expect( newState.toJS() ).toEqual( DEFAULT_CORE_STATE.relations );
+		const secondClear = reducer(
+			firstClear,
+			{
+				type: resetTypes.RESET_STATE_FOR_MODEL,
+				modelName: 'price',
+			}
+		);
+		expect( secondClear.toJS() ).toEqual( DEFAULT_CORE_STATE.relations );
 	} );
 	it( 'returns expected state for model existing in state (when there are ' +
 		'other relations in the state', () => {
