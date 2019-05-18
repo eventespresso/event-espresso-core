@@ -32,7 +32,7 @@ const originalState = mockStateForTests.relations
 		Set.of( 55 )
 	).setIn(
 		[ 'index', 'prices', 22 ],
-		Map().set( 'priceTypes', Set.of( 10 ) )
+		Map().set( 'priceType', Set.of( 10 ) )
 	).setIn(
 		[ 'entityMap', 'priceType', 10, 'prices' ],
 		Set.of( 22 )

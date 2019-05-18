@@ -352,52 +352,9 @@ const resetStateForModel = ( state, action ) => {
 		);
 	}
 
-	// loop through entityMap state to see if modelName exists as a child.
-	state = clearModelFromSubstate( state, 'entityMap', pluralName );
-
-	// loop through index state to see if modelName exists as child.
-	state = clearModelFromSubstate( state, 'index', singularName );
-
 	return state;
 };
 
-/**
- * Clears the substate from the given indexPath name if the modelName to clear
- * is found in it.
- *
- * @param {Map} state
- * @param {string} indexPathName  The index path to clear ( eg. 'index', or
- * 'entityMap')
- * @param {string} modelNameToClear  The name of the model to clear from the
- * substate if it exists.
- * @return {Map}  The new state
- */
-const clearModelFromSubstate = ( state, indexPathName, modelNameToClear ) => {
-	return state.set(
-		indexPathName,
-		state.get( indexPathName ).withMutations(
-			( indexPathState ) => {
-				indexPathState.forEach( ( relationData, relationName ) => {
-					relationData.forEach( ( modelData, relationId ) => {
-						const path = [ relationName, relationId, modelNameToClear ];
-						if ( indexPathState.hasIn( path ) ) {
-							indexPathState.deleteIn( path );
-							indexPathState = removeEmptyFromState(
-								indexPathState,
-								[ relationName, relationId ],
-								0,
-								false
-							);
-							return false;
-						}
-					} );
-					return false;
-				} );
-				return indexPathState;
-			}
-		)
-	);
-};
 
 /**
  * Helper for clearing the entries in the dirty relations state for the given
