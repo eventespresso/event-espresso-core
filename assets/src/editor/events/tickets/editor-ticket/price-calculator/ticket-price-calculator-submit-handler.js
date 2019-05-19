@@ -81,17 +81,6 @@ export const ticketPriceCalculatorSubmitHandler = async (
 		} );
 	}
 	ticket = await updateTicket( ticket );
-	if ( isModelEntityOfModel( ticket, 'ticket' ) ) {
-		const {
-			persistRelationsForEntityIdAndRelation,
-		} = dispatch( 'eventespresso/core' );
-		await persistRelationsForEntityIdAndRelation(
-			'ticket',
-			ticketId,
-			'prices'
-		);
-		return ticket;
-	}
 	errors.push(
 		sprintf(
 			__( 'update for ticket %s failed', 'event_espresso' ),

@@ -110,7 +110,7 @@ export default compose( [
 			sortDates,
 			showTickets,
 			sortTickets,
-			getRelatedTicketsForEventDates,
+			datetimeTickets,
 			isChained,
 		} = ownProps;
 		if ( ! eventLoaded || ! eventDatesLoaded ) {
@@ -135,7 +135,7 @@ export default compose( [
 		if ( eventDateTicketsLoaded ) {
 			// show tickets for ALL dates or for filtered subset from above?
 			tickets = isChained ?
-				getRelatedTicketsForEventDates( datetimes ) :
+				datetimeTickets :
 				eventDateTickets;
 			// apply filter bar filters
 			tickets = getFilteredTicketsList(

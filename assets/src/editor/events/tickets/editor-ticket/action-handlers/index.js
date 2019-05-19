@@ -1,3 +1,3 @@
-export { copyTicket } from './copy-ticket';
 export { updateTicket } from './update-ticket';
-export { trashTicket } from './trash-ticket';
+export { default as withCopyTicket } from './with-copy-ticket';
+export { default as withTrashTicket } from './with-trash-ticket';

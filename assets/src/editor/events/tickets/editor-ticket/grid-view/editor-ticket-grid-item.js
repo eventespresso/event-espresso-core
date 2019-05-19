@@ -42,10 +42,6 @@ class EditorTicketGridItem extends Component {
 	displayTicket = ( ticket, showDate ) => {
 		let sidebarColorClass = 'ee-editor-ticket-calendar-sidebar ';
 		sidebarColorClass += getBackgroundColorClass( ticket );
-		// const startDate = moment( ticket.startDate );
-		const start = ticket.startDate.toFormat( 'h:mm a' );
-		// const endDate = moment( ticket.endDate );
-		const end = ticket.endDate.toFormat( 'h:mm a' );
 		const ticketStatusID = status( ticket );
 		let label = '';
 		if ( showDate === 'start' ) {
@@ -67,6 +63,7 @@ class EditorTicketGridItem extends Component {
 
 		switch ( showDate ) {
 			case 'end' :
+				const end = ticket.endDate.toFormat( 'h:mm a' );
 				return <BiggieCalendarDate
 					date={ ticket.endDate }
 					htmlClass={ sidebarColorClass }
@@ -86,6 +83,7 @@ class EditorTicketGridItem extends Component {
 				);
 			case 'start' :
 			default :
+				const start = ticket.startDate.toFormat( 'h:mm a' );
 				return <BiggieCalendarDate
 					date={ ticket.startDate }
 					htmlClass={ sidebarColorClass }

@@ -22,36 +22,28 @@ const EMPTY_ARRAY = [];
  */
 export const withGetRelatedTicketsForEventDates = createHigherOrderComponent(
 	withSelect(
-		( select ) => {
+		( select, { eventDates } ) => {
 			const { getRelatedEntities } = select( 'eventespresso/core' );
-			/**
-			 * @function
-			 * @param {Array} eventDates
-			 * @return {Array} tickets
-			 */
-			const getRelatedTicketsForEventDates = ( eventDates ) => {
-				let datetimeTickets = EMPTY_ARRAY;
-				if ( Array.isArray( eventDates ) ) {
-					eventDates.forEach( ( eventDate ) => {
-						if ( isModelEntityOfModel( eventDate, 'datetime' ) ) {
-							const relatedTickets = getRelatedEntities(
-								eventDate,
-								'tickets'
+			let datetimeTickets = EMPTY_ARRAY;
+			if ( Array.isArray( eventDates ) ) {
+				eventDates.forEach( ( eventDate ) => {
+					if ( isModelEntityOfModel( eventDate, 'datetime' ) ) {
+						const relatedTickets = getRelatedEntities(
+							eventDate,
+							'tickets'
+						);
+						if (
+							Array.isArray( relatedTickets ) &&
+							! isEmpty( relatedTickets )
+						) {
+							datetimeTickets = datetimeTickets.concat(
+								relatedTickets
 							);
-							if (
-								Array.isArray( relatedTickets ) &&
-								! isEmpty( relatedTickets )
-							) {
-								datetimeTickets = datetimeTickets.concat(
-									relatedTickets
-								);
-							}
 						}
-					} );
-				}
-				return uniq( datetimeTickets );
-			};
-			return { getRelatedTicketsForEventDates };
+					}
+				} );
+			}
+			return { datetimeTickets };
 		}
 	),
 	'withGetRelatedTicketsForEventDates'
