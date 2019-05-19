@@ -38,10 +38,9 @@ const getRelationIdsForEntityRelation = createSelector(
 		}
 		let modelName = singularModelName( entity.modelName );
 		relationName = pluralModelName( relationName );
-		if ( state.relations.hasIn( [ 'entityMap', modelName, entity.id, relationName ] ) ) {
+		if ( state.relations.hasIn( [ modelName, entity.id, relationName ] ) ) {
 			return ( state.relations.getIn(
 				[
-					'entityMap',
 					modelName,
 					entity.id,
 					relationName,
@@ -50,10 +49,9 @@ const getRelationIdsForEntityRelation = createSelector(
 		}
 		modelName = pluralModelName( modelName );
 		relationName = singularModelName( relationName );
-		if ( state.relations.hasIn( [ 'index', modelName, entity.id, relationName ] ) ) {
+		if ( state.relations.hasIn( [ modelName, entity.id, relationName ] ) ) {
 			return ( state.relations.getIn(
 				[
-					'index',
 					modelName,
 					entity.id,
 					relationName,
@@ -73,13 +71,11 @@ const getRelationIdsForEntityRelation = createSelector(
 			pluralRelationName = pluralModelName( singularRelationName );
 		return [
 			state.relations.getIn( [
-				'entityMap',
 				singularModel,
 				id,
 				pluralRelationName,
 			] ),
 			state.relations.getIn( [
-				'index',
 				pluralModel,
 				id,
 				singularRelationName,
@@ -292,28 +288,18 @@ const countRelationModelsIndexedForEntity = createSelector(
 		entityId
 	) => {
 		const singleName = singularModelName( modelName );
-		const pluralName = pluralModelName( modelName );
 		entityId = normalizeEntityId( entityId );
-		// first from the entityMap
-		let countRelations = (
+		// we can just get this from the context of the model
+		return (
 			state.relations
-				.getIn( [ 'entityMap', singleName, entityId ] ) || Map()
+				.getIn( [ singleName, entityId ] ) || Map()
 		).count();
-
-		// consider maybe in the index (exists as a relation for another model)
-		countRelations += (
-			state.relations
-				.getIn( [ 'index', pluralName, entityId ] ) || Map()
-		).count();
-		return countRelations;
 	},
 	( state, modelName, entityId ) => {
 		const singleName = singularModelName( modelName );
-		const pluralName = pluralModelName( modelName );
 		entityId = normalizeEntityId( entityId );
 		return [
-			state.relations.getIn( [ 'entityMap', singleName, entityId ] ),
-			state.relations.getIn( [ 'index', pluralName, entityId ] ),
+			state.relations.getIn( [ singleName, entityId ] ),
 		];
 	}
 );
