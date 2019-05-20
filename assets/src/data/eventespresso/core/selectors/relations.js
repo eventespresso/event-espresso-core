@@ -36,7 +36,7 @@ const getRelationIdsForEntityRelation = createSelector(
 		if ( ! isModelEntity( entity ) ) {
 			throw new InvalidModelEntity( '', entity );
 		}
-		let modelName = singularModelName( entity.modelName );
+		const modelName = singularModelName( entity.modelName );
 		relationName = pluralModelName( relationName );
 		if ( state.relations.hasIn( [ modelName, entity.id, relationName ] ) ) {
 			return ( state.relations.getIn(
@@ -47,17 +47,6 @@ const getRelationIdsForEntityRelation = createSelector(
 				],
 			) || Set() ).toArray();
 		}
-		modelName = pluralModelName( modelName );
-		relationName = singularModelName( relationName );
-		if ( state.relations.hasIn( [ modelName, entity.id, relationName ] ) ) {
-			return ( state.relations.getIn(
-				[
-					modelName,
-					entity.id,
-					relationName,
-				]
-			) || Set() ).toArray();
-		}
 		return [];
 	},
 	( state, entity, relationName ) => {
@@ -65,20 +54,13 @@ const getRelationIdsForEntityRelation = createSelector(
 			return [ DEFAULT_EMPTY_SET ];
 		}
 		const singularModel = singularModelName( entity.modelName ),
-			pluralModel = pluralModelName( singularModel ),
 			id = entity.id,
-			singularRelationName = singularModelName( relationName ),
-			pluralRelationName = pluralModelName( singularRelationName );
+			pluralRelationName = pluralModelName( relationName );
 		return [
 			state.relations.getIn( [
 				singularModel,
 				id,
 				pluralRelationName,
-			] ),
-			state.relations.getIn( [
-				pluralModel,
-				id,
-				singularRelationName,
 			] ),
 		];
 	}
