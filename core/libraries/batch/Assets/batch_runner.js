@@ -233,7 +233,7 @@ function EE_BatchRunner( continue_url, continue_data, continue_callback, cleanup
         //if client code has been good enough to provide us with an internationalized error message, add that
         //especially nice if there is no pre-filled error_message
         if (typeof(eei18n)!=='undefined'){
-            error_message += '<br>' + eei18n.error_message;
+            error_message += '<br>' + eei18n.batchJobError;
         }
         if (typeof( this.progress_area ) !== 'undefined') {
             this.update_progress(error_message);

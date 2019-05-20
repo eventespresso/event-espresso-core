@@ -1,5 +1,6 @@
 <?php
 
+use EventEspresso\core\domain\services\assets\CoreAssetManager;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
 use EventEspresso\core\services\loaders\LoaderFactory;
@@ -202,10 +203,17 @@ class EED_Batch extends EED_Module
      */
     protected function _enqueue_batch_job_scripts_and_styles_and_start_job()
     {
+        // just copy the bits of EE admin's eei18n that we need in the JS
+        EE_Registry::$i18n_js_strings['batchJobError'] =  esc_html__(
+            'An error occurred and the job has been stopped. Please refresh the page to try again.',
+            'event_espresso'
+        );
         wp_register_script(
             'progress_bar',
             EE_PLUGIN_DIR_URL . 'core/libraries/batch/Assets/progress_bar.js',
-            array('jquery')
+            array('jquery'),
+            EVENT_ESPRESSO_VERSION,
+            true
         );
         wp_enqueue_style(
             'progress_bar',
@@ -216,17 +224,9 @@ class EED_Batch extends EED_Module
         wp_enqueue_script(
             'batch_runner',
             EE_PLUGIN_DIR_URL . 'core/libraries/batch/Assets/batch_runner.js',
-            array('progress_bar')
-        );
-        // just copy the bits of EE admin's eei18n that we need in the JS
-        wp_localize_script(
-            'batch_runner',
-            'eei18n',
-            array(
-                'ajax_url'      => WP_AJAX_URL,
-                'is_admin'      => (bool) is_admin(),
-                'error_message' => esc_html__('An error occurred and the job has been stopped. Please refresh the page to try again.', 'event_espresso'),
-            )
+            array('progress_bar', CoreAssetManager::JS_HANDLE_CORE),
+            EVENT_ESPRESSO_VERSION,
+            true
         );
         $job_handler_classname = stripslashes($_GET['job_handler']);
         $request_data = array_diff_key(
