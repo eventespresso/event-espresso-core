@@ -25,6 +25,9 @@ import { TicketPriceCalculatorMenuItem } from '../price-calculator';
 import { withTicketAssignmentsManagerModal } from '../../../ticket-assignments-manager';
 import './style.css';
 
+// @todo move the various render components outside of the functional component
+// right now they are regenerated every time EditorTicketActionsMenu is re-rendered.
+
 const EditorTicketActionsMenu = ( {
 	ticket,
 	editorOpen,
@@ -35,6 +38,7 @@ const EditorTicketActionsMenu = ( {
 	copyTicket,
 	trashTicket,
 	toggleTicketAssignments,
+	doRefresh,
 } ) => {
 	const mainDropDownMenu = () => {
 		return (
@@ -148,6 +152,7 @@ const EditorTicketActionsMenu = ( {
 	const calculator = <TicketPriceCalculatorMenuItem
 		ticket={ ticket }
 		noBasePrice={ noBasePrice }
+		doRefresh={ doRefresh }
 	/>;
 
 	const sidebarMenuItems = getSidebarMenuItems( calculator );

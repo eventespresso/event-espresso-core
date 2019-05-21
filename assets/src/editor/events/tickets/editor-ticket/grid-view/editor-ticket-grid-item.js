@@ -2,8 +2,9 @@
  * External imports
  */
 // import moment from 'moment-timezone';
-import { Component, Fragment } from '@wordpress/element';
+import { Component, Fragment, useReducer } from '@wordpress/element';
 import { __ } from '@eventespresso/i18n';
+import { compose } from '@wordpress/compose';
 import {
 	BiggieCalendarDate,
 	CalendarDateRange,
@@ -24,6 +25,11 @@ const {
 	status,
 	TICKET_STATUS_ID,
 } = ticketModel;
+
+/**
+ * @todo need to do the same thing I did in here for refreshing/rerendering the
+ * item with `EditorTicketListItem`.
+ */
 
 /**
  * EditorTicketGridItem
@@ -101,6 +107,7 @@ class EditorTicketGridItem extends Component {
 			eventDateTicketMap,
 			onUpdate,
 			displayTicketDate = 'start',
+			doRefresh,
 		} = this.props;
 		if ( ! isModelEntityOfModel( ticket, ticketModel.MODEL_NAME ) ) {
 			return null;
@@ -119,10 +126,17 @@ class EditorTicketGridItem extends Component {
 					allDates={ allDates }
 					eventDateTicketMap={ eventDateTicketMap }
 					onUpdate={ onUpdate }
+					doRefresh={ doRefresh }
 				/>
 			</Fragment>
 		);
 	}
 }
 
-export default withEntityPaperFrame( EditorTicketGridItem );
+export default compose( [
+	( WrappedComponent ) => ( props ) => {
+		const [ , doRefresh ] = useReducer( ( s ) => s + 1, 0 );
+		return <WrappedComponent { ...props } doRefresh={ doRefresh } />;
+	},
+	withEntityPaperFrame,
+] )( EditorTicketGridItem );

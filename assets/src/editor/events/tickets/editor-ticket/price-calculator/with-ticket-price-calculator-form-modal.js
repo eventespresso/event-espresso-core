@@ -160,18 +160,22 @@ export default createHigherOrderComponent( compose( [
 		};
 		return { addPriceModifier, trashPriceModifier };
 	} ),
-	( OriginalComponent ) => ( props ) => {
+	( OriginalComponent ) => ( { doRefresh = () => null, ...otherProps } ) => {
 		const [ showCalculator, setShowCalculator ] = useState( false );
 		const toggleCalculator = useCallback( () => {
+			// @todo, at some point we should only do a refresh if the calculator
+			// form actually has changes. For now, this isn't a super expensive
+			// action so it's fine as is.
+			doRefresh();
 			setShowCalculator( ( prevShowCalculator ) => ! prevShowCalculator );
-		} );
+		}, [ doRefresh ] );
 		return <Fragment>
 			<OriginalComponent
-				{ ...props }
+				{ ...otherProps }
 				toggleCalculator={ toggleCalculator }
 			/>
 			<TicketPriceCalculatorFormModal
-				{ ...props }
+				{ ...otherProps }
 				editorOpen={ showCalculator }
 				toggleEditor={ toggleCalculator }
 			/>
