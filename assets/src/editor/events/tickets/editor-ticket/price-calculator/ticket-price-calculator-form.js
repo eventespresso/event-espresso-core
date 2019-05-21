@@ -1,7 +1,7 @@
 /**
  * External imports
  */
-import { isEmpty, filter, find, last, sortBy } from 'lodash';
+import { isEmpty, filter, find, last, sortBy, first } from 'lodash';
 import { Component, Fragment } from '@wordpress/element';
 import { Dashicon, IconButton, Tooltip } from '@wordpress/components';
 import { sprintf, __ } from '@eventespresso/i18n';
@@ -186,6 +186,15 @@ class TicketPriceCalculatorForm extends Component {
 		];
 	};
 
+	getDefaultPriceTypeId = () => {
+		return first(
+			filter(
+				this.priceTypes,
+				( priceType ) => priceType.id !== 1
+			)
+		).id;
+	};
+
 	/**
 	 * @function
 	 * @param {Object} ticket
@@ -201,7 +210,7 @@ class TicketPriceCalculatorForm extends Component {
 		values,
 		price,
 		priceTypeOptions,
-		lastRow
+		lastRow,
 	) => {
 		const priceId = shortenCuid( price.id );
 		const prefix = `${ ticketPrefix }-price-${ priceId }`;
@@ -244,6 +253,13 @@ class TicketPriceCalculatorForm extends Component {
 							value={ priceTypeId }
 							options={ priceTypeOptions }
 							htmlId={ `${ prefix }-type` }
+							changeListener={
+								( value ) => {
+									price.prtId = value ?
+										parseInt( value, 10 ) :
+										this.getDefaultPriceTypeId();
+								}
+							}
 							disabled={
 								price.prtId === BASE_PRICE_TYPES.BASE_PRICE
 							}

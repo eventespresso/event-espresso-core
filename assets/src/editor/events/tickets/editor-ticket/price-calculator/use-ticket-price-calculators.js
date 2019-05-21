@@ -1,7 +1,7 @@
 /**
  * External imports
  */
-import { find, reverse, sortBy, last } from 'lodash';
+import { find, reverse, sortBy, first, filter } from 'lodash';
 import { priceTypeModel } from '@eventespresso/model';
 import { isModelEntityOfModel } from '@eventespresso/validators';
 import { useCallback } from '@wordpress/element';
@@ -40,7 +40,7 @@ const getPriceTypeForPrice = ( price, priceTypes ) => {
 	if ( isModelEntityOfModel( priceType, 'price_type' ) ) {
 		return priceType;
 	}
-	return last( priceTypes );
+	return first( filter( priceTypes, ( pt ) => pt.id !== 1 ) );
 };
 
 const useTicketPriceCalculators = ( priceTypes, priceTypesLoaded ) => {
