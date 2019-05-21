@@ -1,6 +1,7 @@
 /**
  * External imports
  */
+import { __ } from '@eventespresso/i18n';
 import { isModelEntityOfModel } from '@eventespresso/validators';
 
 /**
@@ -78,11 +79,31 @@ export const isUpcoming = ( DateTimeEntity ) => {
 /**
  * @function
  * @param {Object} DateTimeEntity model object
- * @return {boolean} true if ticket is archived
+ * @return {boolean} true if date is archived
  */
 export const isTrashed = ( DateTimeEntity ) => {
 	assertDateTimeEntity( DateTimeEntity );
 	return DateTimeEntity.deleted;
+};
+
+/**
+ * @function
+ * @param {Object} DateTimeEntity model object
+ * @return {boolean} true if date is cancelled
+ */
+export const isCancelled = ( DateTimeEntity ) => {
+	assertDateTimeEntity( DateTimeEntity );
+	return DateTimeEntity.cancelled;
+};
+
+/**
+ * @function
+ * @param {Object} DateTimeEntity model object
+ * @return {boolean} true if date has been postponed
+ */
+export const isPostponed = ( DateTimeEntity ) => {
+	assertDateTimeEntity( DateTimeEntity );
+	return DateTimeEntity.postponed;
 };
 
 /**
@@ -107,6 +128,12 @@ export const status = ( DateTimeEntity ) => {
 	if ( isActive( DateTimeEntity ) ) {
 		return DATETIME_STATUS_ID.ACTIVE;
 	}
+	if ( isCancelled( DateTimeEntity ) ) {
+		return DATETIME_STATUS_ID.CANCELLED;
+	}
+	if ( isPostponed( DateTimeEntity ) ) {
+		return DATETIME_STATUS_ID.POSTPONED;
+	}
 	return DATETIME_STATUS_ID.INACTIVE;
 };
 
@@ -115,56 +142,43 @@ export const status = ( DateTimeEntity ) => {
  * @param {Object} DateTimeEntity model object
  * @return {string}    CSS class for the background color
  */
-export const statusColorClass = ( DateTimeEntity ) => {
-	switch ( status( DateTimeEntity ) ) {
-		case DATETIME_STATUS_ID.ACTIVE :
-			return 'green';
-		case DATETIME_STATUS_ID.CANCELLED :
-			return 'red';
-		case DATETIME_STATUS_ID.EXPIRED :
-			return 'lite-grey';
-		case DATETIME_STATUS_ID.INACTIVE :
-			return 'dark-blue';
-		case DATETIME_STATUS_ID.POSTPONED :
-			return 'purple';
-		case DATETIME_STATUS_ID.SOLD_OUT :
-			return 'gold';
-		case DATETIME_STATUS_ID.TRASHED :
-			return 'dark-grey';
-		case DATETIME_STATUS_ID.UPCOMING :
-		default:
-			return 'blue';
-	}
-};
-
-/**
- * @function
- * @param {Object} DateTimeEntity model object
- * @return {string}    CSS class for the background color
- */
 export const getBackgroundColorClass = ( DateTimeEntity ) => {
-	return `ee-${ statusColorClass( DateTimeEntity ) }-background`;
+	return `ee-status-background-color-${ status( DateTimeEntity ) }`;
 };
 
 /**
  * @function
  * @param {Object} DateTimeEntity model object
- * @param {string} border 'all', 'top', 'right', 'bottom', 'left'
- * @return {string}    CSS class for the background color
+ * @return {string} date status
  */
-export const getBorderColorClass = ( DateTimeEntity, border = 'all' ) => {
-	const color = statusColorClass( DateTimeEntity );
-	switch ( border ) {
-		case 'all':
-			return `ee-${ color }-border`;
-		case 'top':
-			return `ee-${ color }-border-top`;
-		case 'right':
-			return `ee-${ color }-border-right`;
-		case 'bottom':
-			return `ee-${ color }-border-bottom`;
-		case 'left':
-			return `ee-${ color }-border-left`;
+export const getDateTimeStatusTextLabel = ( DateTimeEntity ) => {
+	let dateStatus = '';
+	switch ( status( DateTimeEntity ) ) {
+		case DATETIME_STATUS_ID.SOLD_OUT :
+			dateStatus = __( 'sold out', 'event_espresso' );
+			break;
+		case DATETIME_STATUS_ID.EXPIRED :
+			dateStatus = __( 'expired', 'event_espresso' );
+			break;
+		case DATETIME_STATUS_ID.UPCOMING :
+			dateStatus = __( 'upcoming', 'event_espresso' );
+			break;
+		case DATETIME_STATUS_ID.ACTIVE :
+			dateStatus = __( 'active', 'event_espresso' );
+			break;
+		case DATETIME_STATUS_ID.TRASHED :
+			dateStatus = __( 'archived', 'event_espresso' );
+			break;
+		case DATETIME_STATUS_ID.CANCELLED :
+			dateStatus = __( 'cancelled', 'event_espresso' );
+			break;
+		case DATETIME_STATUS_ID.POSTPONED :
+			dateStatus = __( 'postponed', 'event_espresso' );
+			break;
+		case DATETIME_STATUS_ID.INACTIVE :
+		default:
+			dateStatus = __( 'inactive', 'event_espresso' );
+			break;
 	}
+	return dateStatus;
 };
-

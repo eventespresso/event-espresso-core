@@ -106,31 +106,10 @@ export const status = ( TicketEntity ) => {
 /**
  * @function
  * @param {Object} TicketEntity model object
- * @return {string} CSS class corresponding to the background color
- * 					for the ticket container based on the ticket status
- */
-export const statusColorClass = ( TicketEntity ) => {
-	switch ( status( TicketEntity ) ) {
-		case TICKET_STATUS_ID.ONSALE :
-			return 'green';
-		case TICKET_STATUS_ID.EXPIRED :
-			return 'lite-grey';
-		case TICKET_STATUS_ID.SOLD_OUT :
-			return 'gold';
-		case TICKET_STATUS_ID.PENDING :
-			return 'blue';
-		case TICKET_STATUS_ID.ARCHIVED :
-			return 'dark-grey';
-	}
-};
-
-/**
- * @function
- * @param {Object} TicketEntity model object
  * @return {string} ticket status
  */
 export const getTicketStatusTextLabel = ( TicketEntity ) => {
-	let ticketStatus = null;
+	let ticketStatus = '';
 	switch ( status( TicketEntity ) ) {
 		case TICKET_STATUS_ID.SOLD_OUT :
 			ticketStatus = __( 'sold out', 'event_espresso' );
@@ -157,27 +136,5 @@ export const getTicketStatusTextLabel = ( TicketEntity ) => {
  * @return {string}    CSS class for the background color
  */
 export const getBackgroundColorClass = ( TicketEntity ) => {
-	return `ee-${ statusColorClass( TicketEntity ) }-background`;
-};
-
-/**
- * @function
- * @param {Object} TicketEntity model object
- * @param {string} border 'all', 'top', 'right', 'bottom', 'left'
- * @return {string}    CSS class for the background color
- */
-export const getBorderColorClass = ( TicketEntity, border = 'all' ) => {
-	const color = statusColorClass( TicketEntity );
-	switch ( border ) {
-		case 'all':
-			return `ee-${ color }-border`;
-		case 'top':
-			return `ee-${ color }-border-top`;
-		case 'right':
-			return `ee-${ color }-border-right`;
-		case 'bottom':
-			return `ee-${ color }-border-bottom`;
-		case 'left':
-			return `ee-${ color }-border-left`;
-	}
+	return `ee-status-background-color-${ status( TicketEntity ) }`;
 };
