@@ -3,7 +3,7 @@
  */
 import { isEmpty } from 'lodash';
 import { compose } from '@wordpress/compose';
-import { Component, Fragment, isValidElement } from '@wordpress/element';
+import { Fragment, isValidElement } from '@wordpress/element';
 import { applyFilters } from '@wordpress/hooks';
 import {
 	DropDownMenu,
@@ -19,7 +19,7 @@ import { isModelEntityOfModel } from '@eventespresso/validators';
  */
 import { withTicketDatetimes, withTicketPrices } from '../../data';
 import { EditTicketFormModal } from '../';
-import { withCopyTicket, withTrashTicket} from '../action-handlers';
+import { withCopyTicket, withTrashTicket } from '../action-handlers';
 import { EntityActionMenuItem } from '../../../entity-action-menu-item';
 import { TicketPriceCalculatorMenuItem } from '../price-calculator';
 import { withTicketAssignmentsManagerModal } from '../../../ticket-assignments-manager';
