@@ -77,7 +77,6 @@ export const withFormHandler = ( FormComponent ) => {
 		render() {
 			const {
 				loading,
-				submitHandler,
 				resetHandler,
 				errorMessage = '',
 				loadingNotice = '',
@@ -91,6 +90,8 @@ export const withFormHandler = ( FormComponent ) => {
 			formData = formData === null && ! isEmpty( this.state.data ) ?
 				this.state.data :
 				formData;
+			const showSubmit = typeof this.props.submitHandler === 'function';
+			const submitHandler = this.props.submitHandler || ( () => null );
 			return (
 				<FormErrorBoundary errorMessage={ errorMessage } >
 					<Form
@@ -108,26 +109,26 @@ export const withFormHandler = ( FormComponent ) => {
 						} ) => {
 							setMutatorCallbacks( form.mutators );
 							pristine = pristine && ! this.state.changes;
-							const submitButton = (
+							const submitButton = showSubmit ?
 								<FormSubmitButton
 									submitting={ submitting }
 									disabled={
 										( pristine || invalid ) && ! formChanges
 									}
-								/>
-							);
+								/> :
+								null;
 							const formReset = ( event ) => {
 								this.reset();
 								resetHandler( event );
 								form.reset( event );
 							};
-							const cancelButton = (
+							const cancelButton = resetHandler ?
 								<FormCancelButton
 									onClick={ formReset }
 									pristine={ pristine }
 									submitting={ submitting }
-								/>
-							);
+								/> :
+								null;
 							return (
 								<form onSubmit={ handleSubmit }>
 									<FormPlaceholder
