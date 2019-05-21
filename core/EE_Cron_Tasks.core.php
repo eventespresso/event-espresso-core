@@ -423,11 +423,7 @@ class EE_Cron_Tasks extends EE_Base
                         $transaction_processor = EE_Registry::instance()->load_class('Transaction_Processor');
                         $transaction_processor->update_transaction_and_registrations_after_checkout_or_payment(
                             $transaction,
-                            $transaction->last_payment(),
-                            [
-                                ['Registration.STS_ID' => 'RPP'],
-                                'order_by' => ['REG_count' => 'ASC']
-                            ]
+                            $transaction->last_payment()
                         );
                         do_action(
                             'AHEE__EE_Cron_Tasks__process_expired_transactions__completed_transaction',
