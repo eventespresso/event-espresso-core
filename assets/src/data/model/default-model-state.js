@@ -44,10 +44,7 @@ export const DEFAULT_CORE_STATE = {
 	entities: {
 		...getDefaultModelEntitiesObject(),
 	},
-	relations: {
-		index: {},
-		entityMap: {},
-	},
+	relations: {},
 	dirty: {
 		relations: {
 			index: {},
