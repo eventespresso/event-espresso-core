@@ -1,7 +1,6 @@
 /**
  * External imports
  */
-import warning from 'warning';
 import { compose, withState, createHigherOrderComponent } from '@wordpress/compose';
 import { withDispatch } from '@wordpress/data';
 import { isModelEntityOfModel } from '@eventespresso/validators';
@@ -18,7 +17,6 @@ import useTicketPriceCalculatorFormDecorator from './use-ticket-price-calculator
 import {
 	TicketPriceCalculatorForm,
 	ticketPriceCalculatorFormDataMap,
-	ticketPriceCalculatorSubmitHandler,
 } from './';
 
 /**
@@ -38,7 +36,6 @@ const TicketPriceCalculatorFormModal = withEditorModal( {
 	pricesLoaded,
 	priceTypes,
 	priceTypesLoaded,
-	toggleEditor,
 	...extraProps
 } ) => {
 	const {
@@ -63,25 +60,6 @@ const TicketPriceCalculatorFormModal = withEditorModal( {
 		setFormData( { ...newFormData, ...totals } );
 	}, [ ticket, prices, reverseCalculate, calculateTicketPrices ] );
 
-	/**
-	 * @function
-	 * @param {Object} newFormData
-	 */
-	const submitHandler = async ( newFormData ) => {
-		const newTicket = await ticketPriceCalculatorSubmitHandler(
-			this.props.ticket,
-			this.props.prices,
-			newFormData
-		);
-		if ( isModelEntityOfModel( ticket, 'ticket' ) ) {
-			this.props.setState( { formChanges: false } );
-			this.props.toggleEditor();
-		}
-		if ( Array.isArray( newTicket ) ) {
-			warning( false, ticket.join( '/n' ) );
-		}
-	};
-
 	const loading = ! ( pricesLoaded && priceTypesLoaded );
 	const formProps = loading ?
 		{ loading } :
@@ -101,8 +79,8 @@ const TicketPriceCalculatorFormModal = withEditorModal( {
 			setMutatorCallbacks={ setMutatorCallbacks }
 			setReverseCalculate={ setReverseCalculate }
 			loadHandler={ null }
-			submitHandler={ submitHandler }
-			resetHandler={ toggleEditor }
+			submitHandler={ null }
+			resetHandler={ null }
 			loadingNotice={
 				sprintf(
 					_x(

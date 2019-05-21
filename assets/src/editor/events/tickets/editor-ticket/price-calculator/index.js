@@ -21,6 +21,3 @@ export {
 export {
 	default as TicketPriceCalculatorMenuItem,
 } from './ticket-price-calculator-menu-item';
-export {
-	ticketPriceCalculatorSubmitHandler,
-} from './ticket-price-calculator-submit-handler';
