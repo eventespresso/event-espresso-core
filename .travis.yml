@@ -134,14 +134,12 @@ jobs:
       if: NOT commit_message =~ js_only AND NOT commit_message =~ dependabot
     - php: 5.6
       if: NOT commit_message =~ js_only AND NOT commit_message =~ dependabot
-    - php: 5.5
-      if: NOT commit_message =~ js_only AND NOT commit_message =~ dependabot
     # multisite
     - php: 7.2
       env: WP_MULTISITE=1
       if: NOT commit_message =~ js_only AND NOT commit_message =~ dependabot
     # wp 4.5 builds
-    - php: 5.6
+    - php: 5.5
       env: WP_VERSION=4.5
       if: NOT commit_message =~ js_only AND NOT commit_message =~ dependabot
     - php: nightly
