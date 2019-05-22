@@ -38,19 +38,19 @@
     *   Text Color Variables
     * ------------------------ */
     
-    --ee-default-text-color: #534f4f;
-    --ee-default-text-color-super-high-contrast: #130f0f;
-    --ee-default-text-color-high-contrast: #332f2f;
-    --ee-default-text-color-low-contrast: #736f6f;
-    --ee-default-text-color-super-low-contrast: #938f8f;
+    --ee-default-text-color: #595959;
+    --ee-default-text-color-super-high-contrast: #191919;
+    --ee-default-text-color-high-contrast: #393939;
+    --ee-default-text-color-low-contrast: #797979;
+    --ee-default-text-color-super-low-contrast: #999999;
 
 
     /** ----------------------------
     *   Additional Color Variables
     * ------------------------------ */
     
-    --ee-background-color: #F3EFEF;
-    --ee-border-color: #706c6c;
+    --ee-background-color: #ffffff;
+    --ee-border-color: #767676;
 
     --ee-color-grey-0: #272727;
     --ee-text-on-grey-0: #b2b2b2;
@@ -182,12 +182,12 @@
     --ee-text-on-green-low-contrast: #1f3900;
     
     /** Bright Green **/
-    --ee-color-bright-green: #31934d;
-    --ee-color-bright-green-high-contrast: #11732d;
-    --ee-color-bright-green-low-contrast: #51b36d;
-    --ee-text-on-bright-green: #000000;
-    --ee-text-on-bright-green-high-contrast: #ffffff;
-    --ee-text-on-bright-green-low-contrast: #001900;
+    --ee-color-bright-green: #71b94c;
+    --ee-color-bright-green-high-contrast: #51992c;
+    --ee-color-bright-green-low-contrast: #91d96c;
+    --ee-text-on-bright-green: #002300;
+    --ee-text-on-bright-green-high-contrast: #000000;
+    --ee-text-on-bright-green-low-contrast: #004100;
     
     /** Dark Green **/
     --ee-color-dark-green: #4d6021;

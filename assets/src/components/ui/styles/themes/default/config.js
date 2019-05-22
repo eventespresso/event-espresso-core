@@ -10,7 +10,7 @@ const colors =  {
 	'yellow-green': '#d3d600',
 	'light-green': '#a9ce47',
 	green: '#91ab30',
-	'bright-green': '#31934d',
+	'bright-green': '#71b94c',
 	'dark-green': '#4d6021',
 	'blue-green': '#399f94',
 	blue: '#297abc',
@@ -29,7 +29,7 @@ const meta = {
 	primary: colors.blue,
 	secondary: colors.green,
 	accent: colors[ 'hot-pink' ],
-	background: '#F3EFEF',
+	background: colors.white,
 	// offset applied when generating high and low contrast alternates
 	rgbModifier: { r: 32, g: 32, b: 32 },
 	// whether to only use black and white for contrast text colors
