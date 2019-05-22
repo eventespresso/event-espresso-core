@@ -59,7 +59,7 @@ class WordpressHeartbeat
             $this->loader->getShared(
                 'EventEspresso\core\domain\services\admin\ajax\EventEditorHeartbeat'
             );
-        } elseif ($screenID === 'front' && ! empty($heartbeat_data[self::RESPONSE_KEY_THANK_YOU_PAGE])) {
+        } elseif ($screenID === 'front' && ! empty($heartbeat_data[ self::RESPONSE_KEY_THANK_YOU_PAGE ])) {
             $this->loader->getShared(
                 'EventEspresso\core\domain\services\admin\ajax\ThankYouPageIpnMonitor'
             );

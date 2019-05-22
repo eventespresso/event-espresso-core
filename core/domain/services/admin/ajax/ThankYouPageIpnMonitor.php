@@ -196,10 +196,10 @@ class ThankYouPageIpnMonitor
      */
     private function setTransactionDetails($response, $status_only = false)
     {
-        if( ! $status_only && ! isset($response[ $this->heartbeat ]['transaction_details'])) {
+        if (! $status_only && ! isset($response[ $this->heartbeat ]['transaction_details'])) {
             $response[ $this->heartbeat ]['transaction_details'] = $this->thank_you_page->get_transaction_details();
         }
-        if( ! isset($response[ $this->heartbeat ]['txn_status'])) {
+        if (! isset($response[ $this->heartbeat ]['txn_status'])) {
             $response[ $this->heartbeat ]['txn_status'] = $this->transaction->status_ID();
         }
         return $response;
