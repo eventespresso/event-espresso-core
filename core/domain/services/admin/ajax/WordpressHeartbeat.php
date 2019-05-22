@@ -17,6 +17,8 @@ use EventEspresso\core\services\request\RequestInterface;
 class WordpressHeartbeat
 {
 
+    const RESPONSE_KEY_THANK_YOU_PAGE = 'espresso_thank_you_page';
+
     /**
      * @var LoaderInterface $loader
      */
@@ -57,7 +59,7 @@ class WordpressHeartbeat
             $this->loader->getShared(
                 'EventEspresso\core\domain\services\admin\ajax\EventEditorHeartbeat'
             );
-        } elseif ($screenID === 'front' && ! empty($heartbeat_data['espresso_thank_you_page'])) {
+        } elseif ($screenID === 'front' && ! empty($heartbeat_data[self::RESPONSE_KEY_THANK_YOU_PAGE])) {
             $this->loader->getShared(
                 'EventEspresso\core\domain\services\admin\ajax\ThankYouPageIpnMonitor'
             );
