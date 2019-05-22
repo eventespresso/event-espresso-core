@@ -94,7 +94,7 @@ class ThankYouPageIpnMonitor
         $since = isset($data['espresso_thank_you_page']['get_payments_since'])
             ? $data['espresso_thank_you_page']['get_payments_since']
             : 0;
-        return $this->paymentDetails($since);
+        return $this->paymentDetails($since, $response);
     }
 
 
@@ -181,7 +181,7 @@ class ThankYouPageIpnMonitor
      * @return array
      * @throws EE_Error
      */
-    private function paymentDetails($since)
+    private function paymentDetails($since, $response)
     {
         // then check for payments
         $payments = $this->thank_you_page->get_txn_payments($since);
