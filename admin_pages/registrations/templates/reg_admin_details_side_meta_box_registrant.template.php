@@ -1,18 +1,18 @@
 <div id="admin-side-mbox-primary-registrant-dv" class="admin-side-mbox-dv">
-    <p class="clearfix">
+    <div class="clearfix">
         <span class="admin-side-mbox-label-spn lt-grey-txt float-left">
             <?php esc_html_e('Name', 'event_espresso'); ?>
         </span><?php echo $fname . ' ' . $lname; ?>
-    </p>
-    <p class="clearfix">
+    </div>
+    <div class="clearfix">
         <span class="admin-side-mbox-label-spn lt-grey-txt float-left">
             <?php esc_html_e('Email', 'event_espresso'); ?>
         </span>
         <a href="mailto:<?php echo $email; ?>">
             <?php echo $email; ?>
         </a>
-    </p>
-    <p class="clearfix">
+    </div>
+    <div class="clearfix">
         <span class="admin-side-mbox-label-spn lt-grey-txt float-left">
             <?php esc_html_e('Phone #', 'event_espresso'); ?>
         </span>
@@ -21,19 +21,19 @@
                 <?php echo $phone; ?>
             </a>
         <?php endif; ?>
-    </p>
-    <p class="clearfix">
+    </div>
+    <div class="clearfix">
         <span class="admin-side-mbox-label-spn lt-grey-txt float-left">
             <?php esc_html_e('Address', 'event_espresso'); ?>
         </span>
     <div class="admin-side-mbox-text-dv">
         <?php echo $formatted_address; ?>
     </div>
-    </p>
+    </div>
 </div>
 
 
-<p class="contact-details-buttons">
+<div class="contact-details-buttons">
     <?php
     if ($att_check instanceof EE_Attendee
         && EE_Registry::instance()->CAP->current_user_can(
@@ -60,4 +60,4 @@
 <?php
     endif;
 ?>
-</p>
+</div>
