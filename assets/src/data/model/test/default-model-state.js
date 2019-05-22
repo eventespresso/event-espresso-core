@@ -34,10 +34,7 @@ describe( 'DEFAULT_CORE_STATE', () => {
 				checkin: {},
 				registration: {},
 			},
-			relations: {
-				index: {},
-				entityMap: {},
-			},
+			relations: {},
 			dirty: {
 				relations: {
 					index: {},
