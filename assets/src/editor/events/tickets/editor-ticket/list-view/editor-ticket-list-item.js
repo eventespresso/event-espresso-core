@@ -1,7 +1,7 @@
 /**
  * External imports
  */
-import { Component } from '@wordpress/element';
+import { Component, useReducer } from '@wordpress/element';
 import { __ } from '@eventespresso/i18n';
 import { ticketModel } from '@eventespresso/model';
 import { isModelEntityOfModel } from '@eventespresso/validators';
@@ -47,6 +47,7 @@ class EditorTicketListItem extends Component {
 			allDates,
 			eventDateTicketMap,
 			onUpdate,
+			doRefresh,
 		} = this.props;
 		if ( ! isModelEntityOfModel( ticket, TICKET ) ) {
 			return null;
@@ -143,6 +144,7 @@ class EditorTicketListItem extends Component {
 							allDates={ allDates }
 							eventDateTicketMap={ eventDateTicketMap }
 							onUpdate={ onUpdate }
+							doRefresh={ doRefresh }
 						/>
 					</div>
 				</div>
@@ -152,4 +154,9 @@ class EditorTicketListItem extends Component {
 	}
 }
 
-export default EditorTicketListItem;
+export default (
+	( WrappedComponent ) => ( props ) => {
+		const [ , doRefresh ] = useReducer( ( s ) => s + 1, 0 );
+		return <WrappedComponent { ...props } doRefresh={ doRefresh } />;
+	}
+)( EditorTicketListItem );
