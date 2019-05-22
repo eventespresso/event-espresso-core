@@ -27,11 +27,6 @@ const {
 } = ticketModel;
 
 /**
- * @todo need to do the same thing I did in here for refreshing/rerendering the
- * item with `EditorTicketListItem`.
- */
-
-/**
  * EditorTicketGridItem
  *
  * @function
