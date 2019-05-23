@@ -3,7 +3,7 @@
  */
 import { isEmpty } from 'lodash';
 import { compose } from '@wordpress/compose';
-import { Fragment, isValidElement } from '@wordpress/element';
+import { Fragment, isValidElement, useCallback } from '@wordpress/element';
 import { applyFilters } from '@wordpress/hooks';
 import {
 	DropDownMenu,
@@ -26,6 +26,7 @@ import { withTicketAssignmentsManagerModal } from '../../../ticket-assignments-m
 import './style.css';
 
 // @todo move the various render components outside of the functional component
+// or wrap them with `useCallback` and the appropriate dependencies.
 // right now they are regenerated every time EditorTicketActionsMenu is re-rendered.
 
 const EditorTicketActionsMenu = ( {
@@ -40,6 +41,12 @@ const EditorTicketActionsMenu = ( {
 	toggleTicketAssignments,
 	doRefresh,
 } ) => {
+	// this is needed at the top of the file to follow hook rules
+	// eslint-disable-next-line @wordpress/no-unused-vars-before-return
+	const toggleRefreshOnEditorToggle = useCallback( () => {
+		doRefresh();
+		toggleEditor();
+	}, [ toggleEditor, doRefresh ] )
 	const mainDropDownMenu = () => {
 		return (
 			<DropDownMenu
@@ -165,7 +172,7 @@ const EditorTicketActionsMenu = ( {
 			{ sidebarMenu( sidebarMenuItems ) }
 			<EditTicketFormModal
 				ticket={ ticket }
-				toggleEditor={ toggleEditor }
+				toggleEditor={ toggleRefreshOnEditorToggle }
 				editorOpen={ editorOpen }
 				calculator={ calculator }
 			/>
