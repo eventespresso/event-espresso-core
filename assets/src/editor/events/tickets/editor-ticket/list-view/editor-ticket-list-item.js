@@ -157,6 +157,9 @@ class EditorTicketListItem extends Component {
 export default (
 	( WrappedComponent ) => ( props ) => {
 		const [ , doRefresh ] = useReducer( ( s ) => s + 1, 0 );
-		return <WrappedComponent { ...props } doRefresh={ doRefresh } />;
+		const refresher = () => {
+			doRefresh( {} );
+		};
+		return <WrappedComponent { ...props } doRefresh={ refresher } />;
 	}
 )( EditorTicketListItem );
