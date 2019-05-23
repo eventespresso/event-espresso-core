@@ -11,19 +11,36 @@ import {
 	IconMenuItem,
 } from '@eventespresso/components';
 import { __, sprintf, _x } from '@eventespresso/i18n';
-import { withEditor } from '@eventespresso/higher-order-components';
 import { isModelEntityOfModel } from '@eventespresso/validators';
 
 /**
  * Internal dependencies
  */
 import { withTicketDatetimes, withTicketPrices } from '../../data';
-import { EditTicketFormModal } from '../';
+import withEditTicketFormModal from '../edit-form/with-edit-ticket-form-modal';
 import { withCopyTicket, withTrashTicket } from '../action-handlers';
 import { EntityActionMenuItem } from '../../../entity-action-menu-item';
-import { TicketPriceCalculatorMenuItem } from '../price-calculator';
+import {
+	TicketPriceCalculatorMenuItem,
+	withTicketPriceCalculatorFormModal
+} from '../price-calculator';
 import { withTicketAssignmentsManagerModal } from '../../../ticket-assignments-manager';
 import './style.css';
+
+const EditTicketMenuItem = ( {
+	ticket,
+	toggleTicketEditor,
+} ) => {
+	return <IconMenuItem
+		index={ 1 }
+		tooltip={ __( 'edit ticket details', 'event_espresso' ) }
+		id={ `edit-ticket-${ ticket.id }` }
+		htmlClass="edit-ticket"
+		dashicon="edit"
+		tooltipPosition="top right"
+		onClick={ toggleTicketEditor }
+	/>;
+};
 
 // @todo move the various render components outside of the functional component
 // or wrap them with `useCallback` and the appropriate dependencies.
@@ -31,22 +48,16 @@ import './style.css';
 
 const EditorTicketActionsMenu = ( {
 	ticket,
-	editorOpen,
-	toggleEditor,
+	toggleTicketEditor,
 	ticketDatetimes = [],
 	datesLoaded = false,
 	noBasePrice = false,
 	copyTicket,
 	trashTicket,
 	toggleTicketAssignments,
+	toggleCalculator,
 	doRefresh,
 } ) => {
-	// this is needed at the top of the file to follow hook rules
-	// eslint-disable-next-line @wordpress/no-unused-vars-before-return
-	const toggleRefreshOnEditorToggle = useCallback( () => {
-		doRefresh();
-		toggleEditor();
-	}, [ toggleEditor, doRefresh ] )
 	const mainDropDownMenu = () => {
 		return (
 			<DropDownMenu
@@ -57,7 +68,8 @@ const EditorTicketActionsMenu = ( {
 					{
 						title: __( 'edit ticket', 'event_espresso' ),
 						icon: 'edit',
-						onClick: toggleEditor,
+						onClick: toggleTicketEditor,
+						ticket,
 					},
 					{
 						title: __( 'copy ticket', 'event_espresso' ),
@@ -74,20 +86,6 @@ const EditorTicketActionsMenu = ( {
 						onClick: () => trashTicket( ticket ),
 					},
 				] }
-			/>
-		);
-	};
-
-	const editTicketMenuItem = () => {
-		return (
-			<IconMenuItem
-				index={ 1 }
-				tooltip={ __( 'edit ticket details', 'event_espresso' ) }
-				id={ `edit-ticket-${ ticket.id }` }
-				htmlClass="edit-ticket"
-				dashicon="edit"
-				tooltipPosition="top right"
-				onClick={ toggleEditor }
 			/>
 		);
 	};
@@ -113,13 +111,26 @@ const EditorTicketActionsMenu = ( {
 		);
 	};
 
-	const getSidebarMenuItems = ( calculator ) => {
+	const getSidebarMenuItems = () => {
 		const sidebarMenuItems = [];
 		sidebarMenuItems.push(
 			mainDropDownMenu()
 		);
-		sidebarMenuItems.push( editTicketMenuItem() );
-		sidebarMenuItems.push( calculator );
+		sidebarMenuItems.push(
+			<EditTicketMenuItem
+				ticket={ ticket }
+				noBasePrice={ noBasePrice }
+				toggleTicketEditor={ toggleTicketEditor }
+				toggleCalculator={ toggleCalculator }
+				doRefresh={ doRefresh }
+			/>
+		);
+		sidebarMenuItems.push( <TicketPriceCalculatorMenuItem
+			ticket={ ticket }
+			noBasePrice={ noBasePrice }
+			doRefresh={ doRefresh }
+			toggleCalculator={ toggleCalculator }
+		/> );
 		sidebarMenuItems.push( assignDatesMenuItem() );
 		/**
 		 * @todo, This could be fragile because of render execution
@@ -156,13 +167,7 @@ const EditorTicketActionsMenu = ( {
 		return null;
 	}
 
-	const calculator = <TicketPriceCalculatorMenuItem
-		ticket={ ticket }
-		noBasePrice={ noBasePrice }
-		doRefresh={ doRefresh }
-	/>;
-
-	const sidebarMenuItems = getSidebarMenuItems( calculator );
+	const sidebarMenuItems = getSidebarMenuItems();
 
 	return ticket && ticket.id ? (
 		<div
@@ -170,18 +175,13 @@ const EditorTicketActionsMenu = ( {
 			className={ 'ee-editor-ticket-actions-menu' }
 		>
 			{ sidebarMenu( sidebarMenuItems ) }
-			<EditTicketFormModal
-				ticket={ ticket }
-				toggleEditor={ toggleRefreshOnEditorToggle }
-				editorOpen={ editorOpen }
-				calculator={ calculator }
-			/>
 		</div>
 	) : null;
 };
 
 export default compose( [
-	withEditor,
+	withTicketPriceCalculatorFormModal,
+	withEditTicketFormModal,
 	withTicketAssignmentsManagerModal( ( { ticket } ) => (
 		{
 			title: sprintf(
