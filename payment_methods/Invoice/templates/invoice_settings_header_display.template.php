@@ -10,6 +10,7 @@
  * ------------------------------------------------------------------------
  */
 ?>
+<table>
     <tr>
         <th><h3><?php _e("Invoice Display Settings", 'event_espresso'); ?></h3></th>
         <td>
@@ -20,3 +21,4 @@
                 ); ?></span>
         </td>
     </tr>
+</table>
