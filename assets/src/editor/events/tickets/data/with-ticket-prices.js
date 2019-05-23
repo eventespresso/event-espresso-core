@@ -34,7 +34,6 @@ export const withTicketPrices = withSelect(
 					noBasePrice: isEmpty( prices ),
 					pricesLoaded,
 					prices,
-					ticket,
 				};
 			}
 		}
