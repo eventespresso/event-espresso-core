@@ -19,5 +19,6 @@ export {
 	default as withTicketPriceCalculatorFormModal,
 } from './with-ticket-price-calculator-form-modal';
 export {
-	default as TicketPriceCalculatorMenuItem,
+	default as TicketPriceCalculatorMenuItemWithModal,
+	TicketPriceCalculatorMenuItem,
 } from './ticket-price-calculator-menu-item';
