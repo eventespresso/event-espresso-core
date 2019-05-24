@@ -3,6 +3,7 @@
  */
 import { EspressoIcon, IconMenuItem } from '@eventespresso/components';
 import { __ } from '@eventespresso/i18n';
+import { flow } from 'lodash';
 import { isModelEntityOfModel } from '@eventespresso/validators';
 import { useCallback } from '@wordpress/element';
 
@@ -13,14 +14,23 @@ import withTicketPriceCalculatorFormModal from './with-ticket-price-calculator-f
 
 export const TicketPriceCalculatorMenuItem = ( {
 	ticket,
-	toggleCalculator,
-	additionalOnClick = () => null,
+	toggleCalculator = () => null,
+	onOpenTicketCalculator = () => null,
+	onCloseTicketCalculator = () => null,
+	showCalculator,
 	noBasePrice = false,
 } ) => {
 	const toggle = useCallback( () => {
-		additionalOnClick();
-		toggleCalculator();
-	}, [ toggleCalculator, additionalOnClick ] );
+		const toggleAction = showCalculator ?
+			flow( toggleCalculator, onCloseTicketCalculator ) :
+			flow( onOpenTicketCalculator, toggleCalculator );
+		toggleAction();
+	}, [
+		toggleCalculator,
+		showCalculator,
+		onOpenTicketCalculator,
+		onCloseTicketCalculator,
+	] );
 	const tooltip = noBasePrice ?
 		__( 'warning! no ticket price set - click to fix', 'event_espresso' ) :
 		__( 'ticket price calculator', 'event_espresso' );

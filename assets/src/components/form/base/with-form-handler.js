@@ -66,10 +66,10 @@ export const withFormHandler = ( FormComponent ) => {
 		/**
 		 * @function
 		 */
-		async componentDidMount() {
+		componentDidMount() {
 			if ( isFunction( this.props.loadHandler ) ) {
 				this.setState( { loading: true } );
-				const data = await this.props.loadHandler();
+				const data = this.props.loadHandler();
 				this.setState( { loading: false, data } );
 			}
 		}

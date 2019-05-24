@@ -3,7 +3,7 @@
  */
 import { isEmpty } from 'lodash';
 import { compose } from '@wordpress/compose';
-import { Fragment, isValidElement, useCallback } from '@wordpress/element';
+import { Fragment, isValidElement } from '@wordpress/element';
 import { applyFilters } from '@wordpress/hooks';
 import {
 	DropDownMenu,
@@ -21,7 +21,7 @@ import withEditTicketFormModal from '../edit-form/with-edit-ticket-form-modal';
 import { withCopyTicket, withTrashTicket } from '../action-handlers';
 import {
 	TicketPriceCalculatorMenuItem,
-	withTicketPriceCalculatorFormModal
+	withTicketPriceCalculatorFormModal,
 } from '../price-calculator';
 import { withTicketAssignmentsManagerModal } from '../../../ticket-assignments-manager';
 import './style.css';

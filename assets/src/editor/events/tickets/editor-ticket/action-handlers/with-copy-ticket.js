@@ -37,6 +37,8 @@ const withCopyTicket = createHigherOrderComponent(
 					ticketDatetimes
 				);
 			}
+			// @todo, this is not quite done because it needs to add the relations
+			// of the prices to the priceType.
 			// get related prices clone, and add.
 			const relatedPrices = getRelatedEntities( ticket, 'prices' );
 			if ( relatedPrices ) {

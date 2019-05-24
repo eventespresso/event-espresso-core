@@ -1,29 +1,26 @@
 /**
  * External dependencies
  */
-import { compose } from '@wordpress/compose';
+import { compose, createHigherOrderComponent } from '@wordpress/compose';
 import { withDispatch } from '@wordpress/data';
-import { Component } from '@wordpress/element';
+import { useState, useMemo, useEffect } from '@wordpress/element';
 import {
 	EntityList,
 	FancyButton,
 	twoColumnAdminFormLayout,
 } from '@eventespresso/components';
-import { withEditor } from '@eventespresso/higher-order-components';
 import { __ } from '@eventespresso/i18n';
-import { isModelEntityOfModel } from '@eventespresso/validators';
+import { find } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import { withPriceTypes } from '../data';
-import { EditTicketFormModal } from '../';
+import { withPriceTypes } from '../data/with-price-types';
+import { withTicketPriceCalculatorFormModal } from './price-calculator';
+import { withEditTicketFormModal } from './edit-form';
 import { EditorTicketsGridView } from './grid-view/';
 import { EditorTicketsListView } from './list-view/';
 import PaginatedTicketsListWithFilterBar from './filter-bar';
-import {
-	TicketPriceCalculatorMenuItem,
-} from './price-calculator';
 import { withTicketAssignmentsManagerModal } from '../../ticket-assignments-manager';
 
 const {
@@ -31,119 +28,87 @@ const {
 	FormSaveCancelButtons,
 } = twoColumnAdminFormLayout;
 
-/**
- * EditorTicketsList
- * EntityList component for displaying event tickets in the editor
- *
- * @function
- * @param {Array} entities    array of JSON objects defining the tickets
- * @param {string} view
- * @param {mixed} otherProps
- * @return {Component}          list of rendered tickets
- */
-class EditorTicketsList extends Component {
-	constructor( props ) {
-		super( props );
-		this.state = { newTicket: null };
-	}
-
-	/**
-	 * opens and closes TicketAssignmentsManagerModal
-	 *
-	 * @function
-	 * @param {Object} ticket
-	 */
-	toggleTicketManager = ( ticket ) => {
-		this.setState( ( prevState ) => (
-			{
-				newTicket: isModelEntityOfModel( ticket, 'ticket' ) ?
-					ticket :
-					prevState.newTicket,
-			}
-		) );
-		this.props.toggleTicketAssignments();
-	};
-
+const EditorTicketsList = ( {
+	entities,
+	allDates,
+	addNewTicket,
+	toggleTicketEditor,
+	ticket = null,
+	view = 'grid',
+	...otherProps
+} ) => {
+	useEffect( () => {
+		if ( ticket !== null ) {
+			toggleTicketEditor();
+		}
+	}, [ ticket ] );
 	/**
 	 * @function
 	 * @return {Object} rendered button
 	 */
-	addNewTicketButton = () => {
-		const addTicket = () => this.props.addNewTicket(
-			( state ) => this.setState( state ),
-			this.props.toggleEditor
-		);
-		return (
-			<FancyButton
-				icon="tickets-alt"
-				style="wp-default"
-				buttonText={ __( 'Add New Ticket', 'event_espresso' ) }
-				onClick={ addTicket }
+	const addNewTicketButton = useMemo(
+		() => {
+			return (
+				<FancyButton
+					icon="tickets-alt"
+					style="wp-default"
+					buttonText={ __( 'Add New Ticket', 'event_espresso' ) }
+					onClick={ addNewTicket }
+				/>
+			);
+		},
+		[ addNewTicket ]
+	);
+
+	return (
+		<FormWrapper>
+			<EntityList
+				entities={ entities }
+				allDates={ allDates }
+				EntityGridView={ EditorTicketsGridView }
+				EntityListView={ EditorTicketsListView }
+				view={ view }
+				noResultsText={
+					__(
+						'no results found (try changing filters)',
+						'event_espresso'
+					)
+				}
+				{ ...otherProps }
 			/>
-		);
-	};
+			<FormSaveCancelButtons submitButton={ addNewTicketButton } />
+		</FormWrapper>
+	);
+};
 
-	render() {
-		const {
-			entities,
-			allDates,
-			editorOpen,
-			toggleEditor,
-			view = 'grid',
-			...otherProps
-		} = this.props;
-		const calculator = <TicketPriceCalculatorMenuItem
-			ticket={ this.state.newTicket }
-		/>;
-		return (
-			<FormWrapper>
-				<EntityList
-					entities={ entities }
-					allDates={ allDates }
-					EntityGridView={ EditorTicketsGridView }
-					EntityListView={ EditorTicketsListView }
-					view={ view }
-					noResultsText={
-						__(
-							'no results found (try changing filters)',
-							'event_espresso'
-						)
-					}
-					{ ...otherProps }
-				/>
-				<FormSaveCancelButtons
-					submitButton={ this.addNewTicketButton() }
-				/>
-				<EditTicketFormModal
-					ticket={ this.state.newTicket }
-					toggleEditor={ toggleEditor }
-					editorOpen={ editorOpen }
-					onUpdate={ this.toggleTicketManager }
-					calculator={ calculator }
-				/>
-			</FormWrapper>
-		);
-	}
-}
-
+/**
+ * @todo need to replace things in here with the withTicketEditorFormModal
+ * and also do the ticket calculator changes too.  this will allow us to get rid
+ * of the `edit-ticket-form-modal` file.
+ */
 export default compose( [
 	withPriceTypes,
-	withEditor,
-	withDispatch(
-		( dispatch ) => {
-			const { createEntity } = dispatch( 'eventespresso/core' );
-			const addNewTicket = ( setState, toggleEditor ) => {
-				createEntity( 'ticket', {} ).then(
-					( newTicket ) => {
-						setState( { newTicket } );
-						toggleEditor();
-					}
-				);
-			};
-			return { addNewTicket };
-		}
+	createHigherOrderComponent(
+		( WrappedComponent ) => ( props ) => {
+			const [ newTicket, setNewTicket ] = useState( null );
+			const basePriceType = useMemo(
+				() => {
+					return find(
+						props.priceTypes,
+						( priceType ) => priceType.pbtId === 1
+					);
+				},
+				[ props.priceTypes ]
+			);
+			return <WrappedComponent
+				setNewTicket={ setNewTicket }
+				ticket={ newTicket }
+				basePriceType={ basePriceType }
+				{ ...props }
+			/>;
+		},
+		'withNewTicket'
 	),
-	PaginatedTicketsListWithFilterBar,
 	withTicketAssignmentsManagerModal( () => (
 		{
 			title: __(
@@ -153,4 +118,37 @@ export default compose( [
 			closeButtonLabel: null,
 		}
 	) ),
+	// add ticketAssignments ManagerModal onClose
+	createHigherOrderComponent(
+		( WrappedComponent ) => ( props ) => {
+			return <WrappedComponent
+				{ ...props }
+				onCloseTicketEditor={ props.toggleTicketAssignments }
+			/>;
+		},
+		'withOnCloseTicketEditor'
+	),
+	withTicketPriceCalculatorFormModal,
+	withEditTicketFormModal,
+	withDispatch(
+		( dispatch, { setNewTicket, basePriceType } ) => {
+			const { createEntity, createRelations } = dispatch( 'eventespresso/core' );
+			const addNewTicket = async () => {
+				const newTicket = await createEntity( 'ticket', {} );
+				const newBasePrice = await createEntity(
+					'price',
+					{ prtId: basePriceType.id }
+				);
+				createRelations(
+					'ticket',
+					newTicket.id,
+					'prices',
+					[ newBasePrice ]
+				);
+				setNewTicket( newTicket );
+			};
+			return { addNewTicket };
+		}
+	),
+	PaginatedTicketsListWithFilterBar,
 ] )( EditorTicketsList );

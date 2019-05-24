@@ -17,7 +17,7 @@ import { isModelEntityOfModel } from '@eventespresso/validators';
  * Internal dependencies
  */
 import { EditorTicketDetails } from './';
-import { EditorTicketActionsMenu } from '../actions-menu';
+import EditorTicketActionsMenu from '../actions-menu/editor-ticket-actions-menu';
 
 const {
 	getBackgroundColorClass,
@@ -100,7 +100,6 @@ class EditorTicketGridItem extends Component {
 			ticket,
 			allDates,
 			eventDateTicketMap,
-			onUpdate,
 			displayTicketDate = 'start',
 			doRefresh,
 		} = this.props;
@@ -120,7 +119,6 @@ class EditorTicketGridItem extends Component {
 					ticket={ ticket }
 					allDates={ allDates }
 					eventDateTicketMap={ eventDateTicketMap }
-					onUpdate={ onUpdate }
 					doRefresh={ doRefresh }
 				/>
 			</Fragment>

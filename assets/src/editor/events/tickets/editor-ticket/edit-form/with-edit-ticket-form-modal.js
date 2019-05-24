@@ -42,17 +42,20 @@ export default createHigherOrderComponent(
 		noBasePrice,
 		doRefresh,
 		toggleCalculator,
+		onCloseTicketEditor = () => null,
+		onOpenTicketEditor = () => null,
 		...otherProps
 	} ) => {
 		const [ showEditor, setShowEditor ] = useState( false );
 		const toggleTicketEditor = useCallback( () => {
 			setShowEditor( ( prevShowEditor ) => ! prevShowEditor );
-		} );
+		}, [ ticket ] );
 		const calculator = <TicketPriceCalculatorMenuItem
 			ticket={ ticket }
 			noBasePrice={ noBasePrice }
-			additionalOnClick={ toggleTicketEditor }
+			onOpenTicketCalculator={ toggleTicketEditor }
 			toggleCalculator={ toggleCalculator }
+			onCloseTicketCalculator={ toggleTicketEditor }
 			doRefresh={ doRefresh }
 		/>;
 		return <Fragment>
@@ -67,11 +70,13 @@ export default createHigherOrderComponent(
 				{ ...otherProps }
 				ticket={ ticket }
 				editorOpen={ showEditor }
+				onOpen={ onOpenTicketEditor }
+				onClose={ onCloseTicketEditor }
 				toggleEditor={ toggleTicketEditor }
 				calculator={ calculator }
 				doRefresh={ doRefresh }
 			/>
 		</Fragment>;
-	}
-	, 'withEditTicketFormModal'
+	},
+	'withEditTicketFormModal'
 );

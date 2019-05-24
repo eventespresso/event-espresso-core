@@ -9,7 +9,7 @@ import { isModelEntityOfModel } from '@eventespresso/validators';
 /**
  * Internal dependencies
  */
-import { EditorTicketActionsMenu } from '../actions-menu';
+import EditorTicketActionsMenu from '../actions-menu/editor-ticket-actions-menu';
 
 const { MODEL_NAME: TICKET, getBackgroundColorClass } = ticketModel;
 
@@ -46,7 +46,6 @@ class EditorTicketListItem extends Component {
 			ticket,
 			allDates,
 			eventDateTicketMap,
-			onUpdate,
 			doRefresh,
 		} = this.props;
 		if ( ! isModelEntityOfModel( ticket, TICKET ) ) {
@@ -143,7 +142,6 @@ class EditorTicketListItem extends Component {
 							ticket={ ticket }
 							allDates={ allDates }
 							eventDateTicketMap={ eventDateTicketMap }
-							onUpdate={ onUpdate }
 							doRefresh={ doRefresh }
 						/>
 					</div>
