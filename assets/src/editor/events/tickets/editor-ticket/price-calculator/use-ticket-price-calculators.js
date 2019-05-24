@@ -1,10 +1,12 @@
 /**
  * External imports
  */
-import { find, reverse, sortBy, first, filter } from 'lodash';
+import { find, reverse, sortBy, first, filter, isEmpty } from 'lodash';
 import { priceTypeModel } from '@eventespresso/model';
 import { isModelEntityOfModel } from '@eventespresso/validators';
 import { useCallback } from '@wordpress/element';
+import { Money, SiteCurrency } from '@eventespresso/value-objects';
+import memoize from 'memize';
 
 const { BASE_PRICE_TYPES } = priceTypeModel;
 
@@ -30,6 +32,12 @@ const reverseCases = ( currentTotal, amount, isPercent ) => ( {
 	[ BASE_PRICE_TYPES.TAX ]: () => currentTotal / ( ( 100 + amount ) / 100 ),
 } );
 
+const getBasePrice = memoize(
+	( prices ) => find( prices, ( price ) => {
+		return price.prtId === BASE_PRICE_TYPES.BASE_PRICE;
+	} )
+);
+
 const accrueAmount = ( cases ) => ( defaultCase ) => ( typeId ) =>
 	cases.hasOwnProperty( typeId ) ?
 		cases[ typeId ]() :
@@ -43,13 +51,7 @@ const getPriceTypeForPrice = ( price, priceTypes ) => {
 	return first( filter( priceTypes, ( pt ) => pt.id !== 1 ) );
 };
 
-const useTicketPriceCalculators = ( priceTypes, priceTypesLoaded ) => {
-	if ( ! priceTypesLoaded ) {
-		return {
-			calculateTicketTotal: () => 0,
-			calculateTicketBasePrice: () => 0,
-		};
-	}
+const useTicketPriceCalculators = ( priceTypes ) => {
 	const calculateTicketTotal = useCallback( ( total = 0, prices ) => {
 		prices = sortBy( prices, [ 'order', 'id' ] );
 		return prices.reduce( ( newTotal, price ) => {
@@ -62,16 +64,31 @@ const useTicketPriceCalculators = ( priceTypes, priceTypesLoaded ) => {
 		}, total );
 	}, [ priceTypes ] );
 
-	const calculateTicketBasePrice = useCallback( ( total, prices ) => {
+	const calculateTicketBasePrice = useCallback( (
+		total,
+		prices,
+		updateBasePrice = false
+	) => {
+		if ( isEmpty( prices ) ) {
+			return;
+		}
 		prices = reverse( sortBy( prices, [ 'order', 'id' ] ) );
-		return prices.reduce( ( newTotal, price ) => {
+		const basePriceTotal = prices.reduce( ( newTotal, price ) => {
 			const priceType = getPriceTypeForPrice( price, priceTypes );
+			const amount = price.amount instanceof Money ?
+				price.amount.toNumber() :
+				price.amount;
 			return accrueAmount( reverseCases(
 				newTotal,
-				price.amount,
+				amount,
 				priceType.isPercent
 			) )( newTotal )( priceType.pbtId );
 		}, total );
+		if ( updateBasePrice ) {
+			const basePrice = getBasePrice( prices );
+			basePrice.amount = new Money( basePriceTotal, SiteCurrency );
+		}
+		return basePriceTotal;
 	}, [ priceTypes ] );
 
 	const calculateTicketTotals = useCallback( ( total, prices, reverseCalculate ) => {
