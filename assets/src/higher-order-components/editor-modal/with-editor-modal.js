@@ -1,7 +1,7 @@
 /**
  * External Imports
  */
-import { useCallback } from '@wordpress/element';
+import { useCallback, useEffect } from '@wordpress/element';
 import { uniqueId, flow } from 'lodash';
 import { Modal } from '@wordpress/components';
 
@@ -20,16 +20,23 @@ import './style.css';
 const withEditorModal = ( mainModalProps ) => ( WrappedComponent ) =>
 	( {
 		editorOpen,
-		toggleEditor,
+		toggleEditor = () => null,
 		doRefresh = () => null,
 		modalProps,
 		id,
 		buttonLabel,
+		onClose = () => null,
+		onOpen = () => null,
 		...passedProps
 	} ) => {
+		useEffect( () => {
+			if ( editorOpen ) {
+				onOpen();
+			}
+		}, [ editorOpen, onOpen ] );
 		const closeAction = useCallback( () => {
-			flow( [ doRefresh, toggleEditor ] )();
-		}, [ toggleEditor, doRefresh ] );
+			flow( [ doRefresh, toggleEditor, onClose ] )();
+		}, [ toggleEditor, doRefresh, onClose ] );
 		modalProps = modalProps ?
 			modalProps :
 			mainModalProps;
