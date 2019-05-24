@@ -102,6 +102,7 @@ class EditorTicketGridItem extends Component {
 			eventDateTicketMap,
 			displayTicketDate = 'start',
 			doRefresh,
+			refreshed,
 		} = this.props;
 		if ( ! isModelEntityOfModel( ticket, ticketModel.MODEL_NAME ) ) {
 			return null;
@@ -112,7 +113,10 @@ class EditorTicketGridItem extends Component {
 		return (
 			<Fragment>
 				<div className={ `ee-editor-ticket-main ${ dateStyleClass }` }>
-					<EditorTicketDetails ticket={ ticket } />
+					<EditorTicketDetails
+						ticket={ ticket }
+						refreshed={ refreshed }
+					/>
 					{ this.displayTicket( ticket, displayTicketDate ) }
 				</div>
 				<EditorTicketActionsMenu
@@ -128,8 +132,12 @@ class EditorTicketGridItem extends Component {
 
 export default compose( [
 	( WrappedComponent ) => ( props ) => {
-		const [ , doRefresh ] = useReducer( ( s ) => s + 1, 0 );
-		return <WrappedComponent { ...props } doRefresh={ doRefresh } />;
+		const [ refreshed, doRefresh ] = useReducer( ( s ) => s + 1, 0 );
+		return <WrappedComponent
+			{ ...props }
+			doRefresh={ doRefresh }
+			refreshed={ refreshed }
+		/>;
 	},
 	withEntityPaperFrame,
 ] )( EditorTicketGridItem );
