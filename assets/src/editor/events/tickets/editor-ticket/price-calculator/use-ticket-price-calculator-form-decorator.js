@@ -177,15 +177,11 @@ const getPriceModifiersFromFormData = ( ticketId, formData ) => {
  * @param {number}  delay  A delay to use for debouncing the calculated total.
  * @return {Decorator}  A react-final-form decorator.
  */
-const useTicketPriceCalculatorFormDecorator = (
-	priceTypes,
-	priceTypesLoaded,
-	delay = 250
-) => {
+const useTicketPriceCalculatorFormDecorator = ( priceTypes, delay = 250 ) => {
 	const {
 		calculateTicketTotal,
 		calculateTicketBasePrice,
-	} = useTicketPriceCalculators( priceTypes, priceTypesLoaded );
+	} = useTicketPriceCalculators( priceTypes );
 	const [ totalChangedTo, setTotalChangingTo ] = useState( null );
 	const [ mutatorCallbacks, setMutatorCallbacks ] = useState( null );
 	const debouncedTotalChangedTo = useDebounce( totalChangedTo, delay );
