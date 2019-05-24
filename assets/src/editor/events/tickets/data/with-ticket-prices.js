@@ -5,7 +5,11 @@ import { isEmpty } from 'lodash';
 import { withSelect } from '@wordpress/data';
 import { isModelEntityOfModel } from '@eventespresso/validators';
 
-const EMPTY_OBJECT = {};
+const EMPTY_OBJECT = {
+	noBasePrice: true,
+	pricesLoaded: false,
+	prices: [],
+};
 
 /**
  * withTicketPrices
@@ -18,10 +22,9 @@ const EMPTY_OBJECT = {};
  * @function
  */
 export const withTicketPrices = withSelect(
-	( select, ownProps ) => {
+	( select, { ticket } ) => {
 		const { getRelatedEntities } = select( 'eventespresso/core' );
 		const { hasFinishedResolution } = select( 'core/data' );
-		const ticket = ownProps.ticket;
 		if ( isModelEntityOfModel( ticket, 'ticket' ) ) {
 			const prices = getRelatedEntities( ticket, 'prices' );
 			const pricesLoaded = hasFinishedResolution(
