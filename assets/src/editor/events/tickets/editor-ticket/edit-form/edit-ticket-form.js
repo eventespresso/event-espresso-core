@@ -37,7 +37,6 @@ const EditTicketForm = ( {
 	ticket,
 	prices = [],
 	priceTypes = [],
-	priceTypesLoaded,
 	calculator,
 	submitButton,
 	cancelButton,
@@ -45,10 +44,7 @@ const EditTicketForm = ( {
 	initialValues = {},
 	newObject = false,
 } ) => {
-	const { calculateTicketBasePrice } = useTicketPriceCalculators(
-		priceTypes,
-		priceTypesLoaded,
-	);
+	const { calculateTicketBasePrice } = useTicketPriceCalculators( priceTypes );
 	// hooks must be at the top of the function and never change order.
 	// eslint-disable-next-line @wordpress/no-unused-vars-before-return
 	const recalculateBasePrice = useCallback( () => {
