@@ -17,7 +17,6 @@ import { isModelEntityOfModel } from '@eventespresso/validators';
 import { withDatetimeTickets } from '../../data';
 import { EditEventDateFormModal } from '../';
 import { withCopyEventDate, withTrashEventDate } from '../action-handlers';
-import { EntityActionMenuItem } from '../../../entity-action-menu-item';
 import { withTicketAssignmentsManagerModal } from '../../../ticket-assignments-manager';
 import './style.css';
 
@@ -157,7 +156,6 @@ class EditorDateActionsMenu extends Component {
 					sidebarMenuItem && sidebarMenuItem.type &&
 					(
 						sidebarMenuItem.type === DropDownMenu ||
-						sidebarMenuItem.type === EntityActionMenuItem ||
 						sidebarMenuItem.type === IconMenuItem
 					) ?
 						<Fragment key={ index }>

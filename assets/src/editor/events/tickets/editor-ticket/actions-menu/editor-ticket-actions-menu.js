@@ -19,7 +19,6 @@ import { isModelEntityOfModel } from '@eventespresso/validators';
 import { withTicketDatetimes, withTicketPrices } from '../../data';
 import withEditTicketFormModal from '../edit-form/with-edit-ticket-form-modal';
 import { withCopyTicket, withTrashTicket } from '../action-handlers';
-import { EntityActionMenuItem } from '../../../entity-action-menu-item';
 import {
 	TicketPriceCalculatorMenuItem,
 	withTicketPriceCalculatorFormModal
@@ -150,7 +149,6 @@ const EditorTicketActionsMenu = ( {
 					sidebarMenuItem && sidebarMenuItem.type &&
 					(
 						sidebarMenuItem.type === DropDownMenu ||
-						sidebarMenuItem.type === EntityActionMenuItem ||
 						sidebarMenuItem.type === IconMenuItem ||
 						isValidElement( sidebarMenuItem )
 					) ?
