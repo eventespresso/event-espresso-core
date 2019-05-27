@@ -74,7 +74,7 @@
 		"@wordpress/url": "^2.5.0",
 		"@wordpress/viewport": "^2.3.0",
 		"autoprefixer": "^9.5.1",
-		"babel-loader": "8.0.5",
+		"babel-loader": "8.0.6",
 		"babel-plugin-dev-expression": "^0.2.1",
 		"babel-runtime": "^6.26.0",
 		"clean-webpack-plugin": "^2.0.2",
