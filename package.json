@@ -63,7 +63,7 @@
 		"@wordpress/core-data": "^2.2.2",
 		"@wordpress/data": "^4.4.0",
 		"@wordpress/date": "^3.2.0",
-		"@wordpress/editor": "^9.2.4",
+		"@wordpress/editor": "^9.3.0",
 		"@wordpress/element": "^2.3.0",
 		"@wordpress/eslint-plugin": "^2.1.0",
 		"@wordpress/hooks": "^2.2.0",
