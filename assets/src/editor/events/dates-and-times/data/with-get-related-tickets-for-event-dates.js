@@ -43,7 +43,7 @@ export const withGetRelatedTicketsForEventDates = createHigherOrderComponent(
 					}
 				} );
 			}
-			return { datetimeTickets };
+			return { datetimeTickets: uniq( datetimeTickets ) };
 		}
 	),
 	'withGetRelatedTicketsForEventDates'
