@@ -81,11 +81,6 @@ const EditorTicketsList = ( {
 	);
 };
 
-/**
- * @todo need to replace things in here with the withTicketEditorFormModal
- * and also do the ticket calculator changes too.  this will allow us to get rid
- * of the `edit-ticket-form-modal` file.
- */
 export default compose( [
 	withPriceTypes,
 	createHigherOrderComponent(
