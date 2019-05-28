@@ -1,4 +1,9 @@
 /**
+ * External imports
+ */
+import classNames from 'classnames';
+
+/**
  * @param {boolean} showFooter
  * @param {Array} children
  * @param {string} htmlClass
@@ -6,9 +11,10 @@
  * @return {Object} rendered thead
  */
 const TableFooter = ( { showFooter, children, htmlClass, ...extraProps } ) => {
-	htmlClass = htmlClass ?
-		`${ htmlClass } ee-rTable-footer` :
-		`ee-rTable-footer`;
+	htmlClass = classNames(
+		htmlClass,
+		'ee-rTable-footer'
+	);
 	return showFooter ? (
 		<tfoot className={ htmlClass } { ...extraProps }>
 			{ children }

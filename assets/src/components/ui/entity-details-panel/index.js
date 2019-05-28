@@ -4,6 +4,7 @@
 import PropTypes from 'prop-types';
 import { Component, Fragment } from '@wordpress/element';
 import { isEmpty, isFunction } from 'lodash';
+import classNames from 'classnames';
 
 /**
  * Internal dependencies
@@ -93,9 +94,7 @@ class EntityDetailsPanel extends Component {
 	render() {
 		const { details } = this.props;
 		let { htmlClass } = this.props;
-		htmlClass = htmlClass ?
-			`${ htmlClass } ee-entity-details-panel-div` :
-			'ee-entity-details-panel-div';
+		htmlClass = classNames( htmlClass, 'ee-entity-details-panel-div' );
 		return (
 			<div className={ htmlClass }>
 				{

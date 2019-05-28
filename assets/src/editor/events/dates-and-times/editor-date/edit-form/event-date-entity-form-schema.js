@@ -6,7 +6,7 @@ import { isModelEntityOfModel } from '@eventespresso/validators';
 /**
  * returns an object mapping
  * Event Date Entity properties
- * to form prefixs
+ * to form prefixes
  *
  * @function
  * @param {Object} eventDate  EE Date object

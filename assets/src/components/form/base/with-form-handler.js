@@ -66,10 +66,10 @@ export const withFormHandler = ( FormComponent ) => {
 		/**
 		 * @function
 		 */
-		async componentDidMount() {
+		componentDidMount() {
 			if ( isFunction( this.props.loadHandler ) ) {
 				this.setState( { loading: true } );
-				const data = await this.props.loadHandler();
+				const data = this.props.loadHandler();
 				this.setState( { loading: false, data } );
 			}
 		}
@@ -77,19 +77,21 @@ export const withFormHandler = ( FormComponent ) => {
 		render() {
 			const {
 				loading,
-				submitHandler,
 				resetHandler,
 				errorMessage = '',
 				loadingNotice = '',
 				decorators = [],
 				mutators = {},
 				formChanges = false,
+				setMutatorCallbacks = () => null,
 				...formProps
 			} = this.props;
 			let { formData = null } = this.props;
 			formData = formData === null && ! isEmpty( this.state.data ) ?
 				this.state.data :
 				formData;
+			const showSubmit = typeof this.props.submitHandler === 'function';
+			const submitHandler = this.props.submitHandler || ( () => null );
 			return (
 				<FormErrorBoundary errorMessage={ errorMessage } >
 					<Form
@@ -105,27 +107,28 @@ export const withFormHandler = ( FormComponent ) => {
 							pristine,
 							invalid,
 						} ) => {
+							setMutatorCallbacks( form.mutators );
 							pristine = pristine && ! this.state.changes;
-							const submitButton = (
+							const submitButton = showSubmit ?
 								<FormSubmitButton
 									submitting={ submitting }
 									disabled={
 										( pristine || invalid ) && ! formChanges
 									}
-								/>
-							);
+								/> :
+								null;
 							const formReset = ( event ) => {
 								this.reset();
 								resetHandler( event );
 								form.reset( event );
 							};
-							const cancelButton = (
+							const cancelButton = resetHandler ?
 								<FormCancelButton
 									onClick={ formReset }
 									pristine={ pristine }
 									submitting={ submitting }
-								/>
-							);
+								/> :
+								null;
 							return (
 								<form onSubmit={ handleSubmit }>
 									<FormPlaceholder

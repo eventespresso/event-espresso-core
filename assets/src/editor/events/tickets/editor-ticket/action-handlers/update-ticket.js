@@ -36,7 +36,6 @@ export const updateTicket = async ( ticket ) => {
 			) );
 		}
 		ticket = await recalculateTicketBasePrice( ticket );
-		resolve( persistEntityRecord( 'ticket', ticket ) );
 	} );
 };
 
@@ -82,11 +81,11 @@ const recalculateTicketBasePrice = async ( ticket ) => {
 			return priceType.pbtId === BASE_PRICE_TYPES.BASE_PRICE;
 		}
 	);
-	if ( ! isModelEntityOfModel( ticketBasePrice, 'price' ) ) {
-		ticketBasePrice = await createEntity( 'price', { PRT_ID: 1 } );
-	}
-	ticketBasePrice.amount = new Money( newBasePrice, SiteCurrency );
-	await updatePrice( ticketBasePrice, ticket );
+	// if ( ! isModelEntityOfModel( ticketBasePrice, 'price' ) ) {
+	// 	ticketBasePrice = await createEntity( 'price', { PRT_ID: 1 } );
+	// }
+	// ticketBasePrice.amount = new Money( newBasePrice, SiteCurrency );
+	// await updatePrice( ticketBasePrice, ticket );
 	return ticket;
 };
 

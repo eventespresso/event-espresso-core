@@ -1,9 +1,8 @@
 /**
  * External Imports
  */
-import { Component } from '@wordpress/element';
-import PropTypes from 'prop-types';
-import { uniqueId } from 'lodash';
+import { useCallback, useEffect } from '@wordpress/element';
+import { uniqueId, flow } from 'lodash';
 import { Modal } from '@wordpress/components';
 
 /**
@@ -16,65 +15,55 @@ import './style.css';
  * HOC for wrapping a component with a WP Modal component
  *
  * @constructor
- * @param {Object} modalProps
+ * @param {Object} mainModalProps
  */
-const withEditorModal = ( modalProps ) => ( WrappedComponent ) => {
-	/**
-	 * EditorModal
-	 *
-	 * @constructor
-	 * @param {boolean} editorOpen
-	 * @param {string} title
-	 * @param {string} customClass
-	 * @param {string} buttonLabel
-	 * @param {Function} toggleEditor
-	 */
-	return class extends Component {
-		static propTypes = {
-			editorOpen: PropTypes.bool.isRequired,
-			toggleEditor: PropTypes.func.isRequired,
-			title: PropTypes.string,
-			customClass: PropTypes.string,
-			buttonLabel: PropTypes.string,
-		};
-
-		render() {
-			const { editorOpen, toggleEditor } = this.props;
-			modalProps = this.props.modalProps ?
-				this.props.modalProps :
-				modalProps;
-			const {
-				title,
-				customClass,
-				closeButtonLabel,
-				...extraModalProps
-			} = modalProps;
-			const { ...passedProps } = this.props;
-			delete passedProps.modalProps;
-			let {
-				id,
-				buttonLabel,
-			} = this.props;
-			id = id ? id : uniqueId( 'ee-editor-modal-' );
-			buttonLabel = buttonLabel ? buttonLabel : closeButtonLabel;
-			return editorOpen ? (
-				<Modal
-					id={ id }
-					title={ title }
-					className={ `ee-editor-modal ${ customClass }` }
-					onRequestClose={ toggleEditor }
-					closeButtonLabel={ buttonLabel }
-					{ ...extraModalProps }
-				>
-					<WrappedComponent
-						editorOpen={ editorOpen }
-						toggleEditor={ toggleEditor }
-						{ ...passedProps }
-					/>
-				</Modal>
-			) : null;
-		}
-	};
+const withEditorModal = ( mainModalProps ) => ( WrappedComponent ) =>
+	( {
+		editorOpen,
+		toggleEditor = () => null,
+		doRefresh = () => null,
+		modalProps,
+		id,
+		buttonLabel,
+		onClose = () => null,
+		onOpen = () => null,
+		...passedProps
+	} ) => {
+		useEffect( () => {
+			if ( editorOpen ) {
+				onOpen();
+			}
+		}, [ editorOpen, onOpen ] );
+		const closeAction = useCallback( () => {
+			flow( [ doRefresh, toggleEditor, onClose ] )();
+		}, [ toggleEditor, doRefresh, onClose ] );
+		modalProps = modalProps ?
+			modalProps :
+			mainModalProps;
+		const {
+			title,
+			customClass,
+			closeButtonLabel,
+			...extraModalProps
+		} = modalProps;
+		id = id ? id : uniqueId( 'ee-editor-modal-' );
+		buttonLabel = buttonLabel ? buttonLabel : closeButtonLabel;
+		return editorOpen ? (
+			<Modal
+				id={ id }
+				title={ title }
+				className={ `ee-editor-modal ${ customClass }` }
+				onRequestClose={ closeAction }
+				closeButtonLabel={ buttonLabel }
+				{ ...extraModalProps }
+			>
+				<WrappedComponent
+					editorOpen={ editorOpen }
+					toggleEditor={ toggleEditor }
+					{ ...passedProps }
+				/>
+			</Modal>
+		) : null;
 };
 
 export default withEditorModal;

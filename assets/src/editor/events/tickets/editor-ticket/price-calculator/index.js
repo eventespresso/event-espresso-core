@@ -2,12 +2,12 @@ export {
 	TICKET_PRICE_CALCULATOR_FORM_INPUT_PREFIX,
 } from './constants';
 export {
-	getPriceTypeObjects,
+	default as useTicketPriceCalculators,
+} from './use-ticket-price-calculators';
+export {
 	parseMoneyValue,
-	calculateTicketBasePrice,
-	calculateTicketPrices,
-	ticketPriceCalculator,
-} from './ticket-price-calculator';
+	default as useTicketPriceCalculatorFormDecorator,
+} from './use-ticket-price-calculator-form-decorator';
 export {
 	default as TicketPriceCalculatorForm,
 } from './ticket-price-calculator-form';
@@ -16,14 +16,9 @@ export {
 	ticketPriceCalculatorFormDataMap,
 } from './ticket-price-calculator-form-data-map';
 export {
-	default as TicketPriceCalculatorFormModal,
-} from './ticket-price-calculator-form-modal';
+	default as withTicketPriceCalculatorFormModal,
+} from './with-ticket-price-calculator-form-modal';
 export {
-	ticketPriceCalculatorMenuItem,
+	default as TicketPriceCalculatorMenuItemWithModal,
+	TicketPriceCalculatorMenuItem,
 } from './ticket-price-calculator-menu-item';
-export {
-	ticketPriceCalculatorSubmitHandler,
-} from './ticket-price-calculator-submit-handler';
-export {
-	default as withTicketPriceCalculator,
-} from './with-ticket-price-calculator';

@@ -3,6 +3,7 @@
  */
 import { __ } from '@eventespresso/i18n';
 import { isModelEntityOfModel } from '@eventespresso/validators';
+import classNames from 'classnames';
 
 /**
  * Internal dependencies
@@ -25,9 +26,7 @@ const EditorDatesListView = ( {
 	htmlClass,
 	...otherProps
 } ) => {
-	htmlClass = htmlClass ?
-		`${ htmlClass } ee-dates-list-list-view` :
-		'ee-dates-list-list-view';
+	htmlClass = classNames( htmlClass, 'ee-dates-list-list-view' );
 
 	return (
 		<div className={ htmlClass }>

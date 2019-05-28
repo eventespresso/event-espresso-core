@@ -1,7 +1,7 @@
 /**
  * External imports
  */
-import { isEmpty, filter, find, last, sortBy } from 'lodash';
+import { isEmpty, filter, find, last, sortBy, first } from 'lodash';
 import { Component, Fragment } from '@wordpress/element';
 import { Dashicon, IconButton, Tooltip } from '@wordpress/components';
 import { sprintf, __ } from '@eventespresso/i18n';
@@ -17,11 +17,9 @@ import { Money, SiteCurrency } from '@eventespresso/value-objects';
 /**
  * Internal dependencies
  */
-import {
-	parseMoneyValue,
-	shortenCuid,
-	TICKET_PRICE_CALCULATOR_FORM_INPUT_PREFIX,
-} from './';
+import { TICKET_PRICE_CALCULATOR_FORM_INPUT_PREFIX } from './constants';
+import { parseMoneyValue } from './use-ticket-price-calculator-form-decorator';
+import { shortenCuid } from './ticket-price-calculator-form-data-map';
 import './style.css';
 
 const { MODEL_NAME: TICKET } = ticketModel;
@@ -144,40 +142,6 @@ class TicketPriceCalculatorForm extends Component {
 	};
 
 	/**
-	 * waits for a few seconds then shakes the "add Price Modifier"
-	 * button and toggles aria-live labels for screen readers
-	 * to notify users that they need to click the [+] button
-	 * in order for a new Price Modifier to actually be added
-	 *
-	 * @function
-	 */
-	newModifierUpdated = () => {
-		// delete any existing timeouts first
-		// because the user may still be typing
-		// and we only want ONE timeout to fire (the last one)
-		this.clearTimeout( this.timeout );
-		this.timeout = this.setTimeout( this.addModifierUpdate, 2500 );
-	};
-
-	addModifierUpdate = () => {
-		// only update state after actual field changes
-		// and not because a price modifier was added or removed
-		if ( isEmpty( this.newModifiers ) && isEmpty( this.deletedModifiers ) ) {
-			this.setState( { newModifierUpdate: true } );
-			this.setTimeout( this.modifierUpdated, 2000 );
-			return;
-		}
-		this.clearTimeout( this.timeout );
-		this.timeout = null;
-		this.newModifiers.pop();
-		this.deletedModifiers.pop();
-	};
-
-	modifierUpdated = () => {
-		this.setState( { newModifierUpdate: false } );
-	};
-
-	/**
 	 * @function
 	 * @return {Array} form header data
 	 */
@@ -222,6 +186,15 @@ class TicketPriceCalculatorForm extends Component {
 		];
 	};
 
+	getDefaultPriceTypeId = () => {
+		return first(
+			filter(
+				this.priceTypes,
+				( priceType ) => priceType.id !== 1
+			)
+		).id;
+	};
+
 	/**
 	 * @function
 	 * @param {Object} ticket
@@ -236,7 +209,8 @@ class TicketPriceCalculatorForm extends Component {
 		ticketPrefix,
 		values,
 		price,
-		priceTypeOptions
+		priceTypeOptions,
+		lastRow,
 	) => {
 		const priceId = shortenCuid( price.id );
 		const prefix = `${ ticketPrefix }-price-${ priceId }`;
@@ -279,19 +253,15 @@ class TicketPriceCalculatorForm extends Component {
 							value={ priceTypeId }
 							options={ priceTypeOptions }
 							htmlId={ `${ prefix }-type` }
-							disabled={
-								price.prtId === BASE_PRICE_TYPES.BASE_PRICE
-							}
 							changeListener={
 								( value ) => {
-									price.prtId = parseInt( value );
-									const newPriceType = this.getPriceType(
-										value
-									);
-									price.order = newPriceType !== null ?
-										newPriceType.order :
-										priceType.order;
+									price.prtId = value ?
+										parseInt( value, 10 ) :
+										this.getDefaultPriceTypeId();
 								}
+							}
+							disabled={
+								price.prtId === BASE_PRICE_TYPES.BASE_PRICE
 							}
 						/>
 					</Fragment>
@@ -392,232 +362,77 @@ class TicketPriceCalculatorForm extends Component {
 			{
 				type: 'cell',
 				class: 'ee-ticket-price-calculator-price-actions',
-				value: price.prtId !== BASE_PRICE_TYPES.BASE_PRICE ? (
-					<Tooltip position={ 'top left' }
-						text={ __(
-							'click to delete price modifier',
-							'event_espresso'
-						) }
-					>
-						<IconButton
-							aria-label={ __(
-								'click to delete price modifier',
-								'event_espresso'
-							) }
-							icon="trash"
-							onClick={
-								() => this.trashPriceModifier( price, ticket )
-							}
-						/>
-					</Tooltip>
-				) : '',
+				value: this.getModifierActionButtons(
+					priceType,
+					price,
+					ticket,
+					prefix,
+					values,
+					lastRow
+				),
 			},
 		];
 	};
 
-	/**
-	 * @function
-	 * @param {Object} ticket
-	 * @param {string} ticketPrefix
-	 * @param {Array} values
-	 * @param {Array} priceTypeOptions
-	 * @param {boolean} newModifierUpdate
-	 * @param {boolean} required
-	 * @return {Object} rendered price modifier form row
-	 */
-	addPriceModifierRow = (
+	getModifierActionButtons = (
+		priceType,
+		price,
 		ticket,
-		ticketPrefix,
+		prefix,
 		values,
-		priceTypeOptions,
-		newModifierUpdate,
-		required
+		lastRow
 	) => {
-		const priceId = 'new';
-		const prefix = `${ ticketPrefix }-price-${ priceId }`;
-		const priceTypeId = parseInt( values[ `${ prefix }-type` ] ) || 0;
-		const priceType = this.getPriceType( priceTypeId );
-		if ( priceTypeOptions.length === 1 ) {
-			values[ `${ prefix }-type` ] = 1;
-		}
-		return [
-			{
-				type: 'row',
-				class: 'ee-ticket-price-calculator-add-price-row',
-				value: '',
-			},
-			{
-				type: 'cell',
-				class: 'ee-ticket-price-calculator-add-price-id ee-number-column',
-				value: __( 'add new', 'event_espresso' ),
-			},
-			{
-				type: 'cell',
-				class: 'ee-ticket-price-calculator-add-price-type',
-				value: (
-					<Fragment>
-						<InputLabel
-							label={ __( 'Price Type', 'event_espresso' ) }
-							htmlFor={ `${ prefix }-type` }
-							htmlClass="ee-hidden-label"
-						/>
-						<FormInput
-							key="type"
-							type="select"
-							name={ `${ prefix }-type` }
-							value={ values[ `${ prefix }-type` ] || priceTypeId }
-							options={ priceTypeOptions }
-							htmlId={ `${ prefix }-type` }
-							changeListener={ ( value, previous ) => {
-								if ( value !== previous ) {
-									this.newModifierUpdated();
-								}
-							} }
-							required={ !! required }
-						/>
-					</Fragment>
-				),
-			},
-			{
-				type: 'cell',
-				class: 'ee-ticket-price-calculator-add-price-name',
-				value: (
-					<Fragment>
-						<InputLabel
-							label={ __( 'Label', 'event_espresso' ) }
-							htmlFor={ `${ prefix }-name` }
-							htmlClass="ee-hidden-label"
-						/>
-						<FormInput
-							key="name"
-							type="text"
-							name={ `${ prefix }-name` }
-							htmlId={ `${ prefix }-name` }
-							value={ values[ `${ prefix }-name` ] || '' }
-							changeListener={ ( value, previous ) => {
-								if ( value !== previous ) {
-									this.newModifierUpdated();
-								}
-							} }
-							required={ !! required }
-						/>
-					</Fragment>
-				),
-			},
-			{
-				type: 'cell',
-				class: 'ee-ticket-price-calculator-add-price-desc',
-				value: (
-					<Fragment>
-						<InputLabel
-							label={ __( 'Description', 'event_espresso' ) }
-							htmlFor={ `${ prefix }-desc` }
-							htmlClass="ee-hidden-label"
-						/>
-						<FormInput
-							key="desc"
-							type="textarea"
-							name={ `${ prefix }-desc` }
-							htmlId={ `${ prefix }-desc` }
-							value={ values[ `${ prefix }-desc` ] || '' }
-							changeListener={ ( value, previous ) => {
-								if ( value !== previous ) {
-									this.newModifierUpdated();
-								}
-							} }
-						/>
-					</Fragment>
-				),
-			},
-			{
-				type: 'cell',
-				class: 'ee-ticket-price-calculator-add-price-amount ee-number-column',
-				value: (
-					<Fragment>
-						<InputLabel
-							label={ __( 'Amount', 'event_espresso' ) }
-							htmlFor={ `${ prefix }-amount` }
-							htmlClass="ee-hidden-label"
-						/>
-						{ this.modifierSign( priceType ) }
-						<FormInput
-							key="price"
-							type="text"
-							name={ `${ prefix }-amount` }
-							htmlId={ `${ prefix }-amount` }
-							htmlClass={ this.amountClass( priceType ) }
-							value={ values[ `${ prefix }-amount` ] || 0 }
-							format={ ( value ) => {
-								return ticket.price.formatter.formatNumber(
-									parseMoneyValue( value )
-								);
-							} }
-							formatOnBlur
-							step="0.01"
-							changeListener={ ( value, previous ) => {
-								if ( value !== previous ) {
-									this.newModifierUpdated();
-								}
-							} }
-							required={ !! required }
-						/>
-					</Fragment>
-				),
-			},
-			{
-				type: 'cell',
-				class: 'ee-ticket-price-calculator-add-price-actions',
-				value: (
-					<Fragment>
-						<p
-							className={ 'screen-reader-text' }
-							aria-live={ 'polite' }
-						>
+		const addModifier = lastRow ?
+			<Tooltip
+				position={ 'top left' }
+				text={ __(
+					'click to add price modifier',
+					'event_espresso'
+				) }
+			>
+				<IconButton
+					aria-label={ __(
+						'click to add price modifier',
+						'event_espresso'
+					) }
+					icon="plus-alt"
+					onClick={
+						() => this.addPriceModifier(
+							ticket,
 							{
-								newModifierUpdate ?
-									__(
-										'click to add price modifier',
-										'event_espresso'
-									) :
-									''
+								type: values[ `${ prefix }-type` ],
+								name: values[ `${ prefix }-name` ],
+								desc: values[ `${ prefix }-desc` ],
+								amount: values[ `${ prefix }-amount` ],
+								order: '',
 							}
-						</p>
-						<Tooltip position={ 'top left' }
-							text={ __(
-								'click to add price modifier',
-								'event_espresso'
-							) }
-						>
-							<IconButton
-								aria-label={ __(
-									'click to add price modifier',
-									'event_espresso'
-								) }
-								icon="plus-alt"
-								onClick={
-									() => this.addPriceModifier(
-										ticket,
-										{
-											type: values[ `${ prefix }-type` ],
-											name: values[ `${ prefix }-name` ],
-											desc: values[ `${ prefix }-desc` ],
-											amount: values[ `${ prefix }-amount` ],
-											order: '',
-										}
-									)
-								}
-								className={
-									newModifierUpdate ?
-										'ee-add-price-modifier-btn ' +
-										'ee-tpc-new-modifier-update' :
-										'ee-add-price-modifier-btn'
-								}
-							/>
-						</Tooltip>
-					</Fragment>
-				),
-			},
-		];
+						)
+					}
+					className={ 'ee-add-price-modifier-btn' }
+				/>
+			</Tooltip> :
+			'';
+		const deleteModifier = priceType.pbtId !== BASE_PRICE_TYPES.BASE_PRICE ?
+			<Tooltip
+				position={ 'top left' }
+				text={ __( 'click to delete price modifier', 'event_espresso' ) }
+			>
+				<IconButton
+					aria-label={ __(
+						'click to delete price modifier',
+						'event_espresso'
+					) }
+					icon="trash"
+					onClick={
+						() => this.trashPriceModifier( price, ticket )
+					}
+				/>
+			</Tooltip> :
+			'';
+		return <Fragment>
+			{ deleteModifier }
+			{ addModifier }
+		</Fragment>;
 	};
 
 	/**
@@ -625,9 +440,10 @@ class TicketPriceCalculatorForm extends Component {
 	 * @param {Object} ticket
 	 * @param {string} ticketPrefix
 	 * @param {Array} values
+	 * @param setReverseCalculate
 	 * @return {Object} rendered form footer
 	 */
-	ticketTotalRow = ( ticket, ticketPrefix, values ) => {
+	ticketTotalRow = ( ticket, ticketPrefix, values, setReverseCalculate ) => {
 		const calcDirIcon = values.reverseCalculate ? 'up' : 'down';
 		const calcDirText = values.reverseCalculate ?
 			__( 'reverse calculate base price from total', 'event_espresso' ) :
@@ -713,9 +529,7 @@ class TicketPriceCalculatorForm extends Component {
 							aria-label={ calcDirText }
 							icon={ `arrow-${ calcDirIcon }-alt2` }
 							onClick={ () => {
-								this.setState( {
-									reverseCalculate: ! values.reverseCalculate,
-								} );
+								setReverseCalculate( ! values.reverseCalculate );
 							} }
 						/>
 					</Tooltip>
@@ -738,29 +552,16 @@ class TicketPriceCalculatorForm extends Component {
 			priceTypes,
 			addPriceModifier,
 			trashPriceModifier,
-			newModifierUpdate,
-			newModifiers,
-			deletedModifiers,
-			setState,
-			setTimeout,
-			clearTimeout,
+			setReverseCalculate,
 			submitButton,
 			cancelButton,
 			initialValues = {},
 			currentValues = {},
 		} = this.props;
-		// console.log( '' );
-		// console.log( 'TicketPriceCalculatorForm.render()' );
-		// console.log( ' > this.props: ', this.props );
-		// console.log( ' > newModifiers: ', newModifiers );
-		// console.log( ' > deletedModifiers: ', deletedModifiers );
-		this.setState = setState;
 		this.setTimeout = setTimeout;
 		this.clearTimeout = clearTimeout;
 		this.addPriceModifier = addPriceModifier;
 		this.trashPriceModifier = trashPriceModifier;
-		this.newModifiers = newModifiers;
-		this.deletedModifiers = deletedModifiers;
 		if (
 			! isModelEntityOfModel( ticket, TICKET ) ||
 			isEmpty( priceTypes )
@@ -775,12 +576,6 @@ class TicketPriceCalculatorForm extends Component {
 		const allPriceTypeOptions = this.buildPriceTypeOptions(
 			this.priceTypes
 		);
-		const priceTypeOptions = filter(
-			allPriceTypeOptions,
-			( priceType ) => {
-				return priceType.value !== BASE_PRICE_TYPES.BASE_PRICE;
-			}
-		);
 		let ticketPrefix = TICKET_PRICE_CALCULATOR_FORM_INPUT_PREFIX;
 		ticketPrefix += '-ticket-' + ticket.id;
 
@@ -788,6 +583,12 @@ class TicketPriceCalculatorForm extends Component {
 		const formRows = [];
 		const priceCount = prices.length;
 		if ( priceCount > 0 ) {
+			const priceTypeOptions = filter(
+				allPriceTypeOptions,
+				( priceType ) => {
+					return priceType.value !== BASE_PRICE_TYPES.BASE_PRICE;
+				}
+			);
 			const sortedPrices = sortBy( prices, [ 'order', 'name' ] );
 			for ( let i = 0; i < priceCount; i++ ) {
 				const price = sortedPrices[ i ];
@@ -805,7 +606,8 @@ class TicketPriceCalculatorForm extends Component {
 						ticketPrefix,
 						values,
 						price,
-						options
+						options,
+						( i + 1 ) === priceCount
 					)
 				);
 			}
@@ -832,18 +634,6 @@ class TicketPriceCalculatorForm extends Component {
 				/>
 			);
 		}
-		formRows.push(
-			this.addPriceModifierRow(
-				ticket,
-				ticketPrefix,
-				values,
-				priceCount < 1 ?
-					[ allPriceTypeOptions.shift() ] :
-					priceTypeOptions,
-				newModifierUpdate,
-				priceCount < 1
-			)
-		);
 		return ticket && ticket.id ? (
 			<FormWrapper>
 				<FormSection
@@ -858,7 +648,8 @@ class TicketPriceCalculatorForm extends Component {
 							this.ticketTotalRow(
 								ticket,
 								ticketPrefix,
-								values
+								values,
+								setReverseCalculate
 							)
 						}
 						metaData={ {

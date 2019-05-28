@@ -2,8 +2,9 @@
  * External imports
  */
 // import moment from 'moment-timezone';
-import { Component, Fragment } from '@wordpress/element';
+import { Component, Fragment, useReducer } from '@wordpress/element';
 import { __ } from '@eventespresso/i18n';
+import { compose } from '@wordpress/compose';
 import {
 	BiggieCalendarDate,
 	CalendarDateRange,
@@ -16,7 +17,7 @@ import { isModelEntityOfModel } from '@eventespresso/validators';
  * Internal dependencies
  */
 import { EditorTicketDetails } from './';
-import { EditorTicketActionsMenu } from '../actions-menu';
+import EditorTicketActionsMenu from '../actions-menu/editor-ticket-actions-menu';
 
 const {
 	getBackgroundColorClass,
@@ -42,10 +43,6 @@ class EditorTicketGridItem extends Component {
 	displayTicket = ( ticket, showDate ) => {
 		let sidebarColorClass = 'ee-editor-ticket-calendar-sidebar ';
 		sidebarColorClass += getBackgroundColorClass( ticket );
-		// const startDate = moment( ticket.startDate );
-		const start = ticket.startDate.toFormat( 'h:mm a' );
-		// const endDate = moment( ticket.endDate );
-		const end = ticket.endDate.toFormat( 'h:mm a' );
 		const ticketStatusID = status( ticket );
 		let label = '';
 		if ( showDate === 'start' ) {
@@ -67,6 +64,7 @@ class EditorTicketGridItem extends Component {
 
 		switch ( showDate ) {
 			case 'end' :
+				const end = ticket.endDate.toFormat( 'h:mm a' );
 				return <BiggieCalendarDate
 					date={ ticket.endDate }
 					htmlClass={ sidebarColorClass }
@@ -86,6 +84,7 @@ class EditorTicketGridItem extends Component {
 				);
 			case 'start' :
 			default :
+				const start = ticket.startDate.toFormat( 'h:mm a' );
 				return <BiggieCalendarDate
 					date={ ticket.startDate }
 					htmlClass={ sidebarColorClass }
@@ -101,8 +100,9 @@ class EditorTicketGridItem extends Component {
 			ticket,
 			allDates,
 			eventDateTicketMap,
-			onUpdate,
 			displayTicketDate = 'start',
+			doRefresh,
+			refreshed,
 		} = this.props;
 		if ( ! isModelEntityOfModel( ticket, ticketModel.MODEL_NAME ) ) {
 			return null;
@@ -113,18 +113,31 @@ class EditorTicketGridItem extends Component {
 		return (
 			<Fragment>
 				<div className={ `ee-editor-ticket-main ${ dateStyleClass }` }>
-					<EditorTicketDetails ticket={ ticket } />
+					<EditorTicketDetails
+						ticket={ ticket }
+						refreshed={ refreshed }
+					/>
 					{ this.displayTicket( ticket, displayTicketDate ) }
 				</div>
 				<EditorTicketActionsMenu
 					ticket={ ticket }
 					allDates={ allDates }
 					eventDateTicketMap={ eventDateTicketMap }
-					onUpdate={ onUpdate }
+					doRefresh={ doRefresh }
 				/>
 			</Fragment>
 		);
 	}
 }
 
-export default withEntityPaperFrame( EditorTicketGridItem );
+export default compose( [
+	( WrappedComponent ) => ( props ) => {
+		const [ refreshed, doRefresh ] = useReducer( ( s ) => s + 1, 0 );
+		return <WrappedComponent
+			{ ...props }
+			doRefresh={ doRefresh }
+			refreshed={ refreshed }
+		/>;
+	},
+	withEntityPaperFrame,
+] )( EditorTicketGridItem );

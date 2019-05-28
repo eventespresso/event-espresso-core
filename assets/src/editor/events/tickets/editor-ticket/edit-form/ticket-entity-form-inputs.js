@@ -4,6 +4,11 @@
 import { indexOf } from 'lodash';
 import { __, sprintf } from '@eventespresso/i18n';
 import { validations } from '@eventespresso/components';
+import {
+	ServerDateTime as DateTime,
+	Money,
+	SiteCurrency,
+} from '@eventespresso/value-objects';
 
 /**
  * ticketEntityFormInputs
@@ -16,6 +21,7 @@ import { validations } from '@eventespresso/components';
  * @param {Array} exclude  Array of field names to not display inputs for
  * @param {Array} currentValues  Array of input values
  * @param {Object} FormInput Input object to use
+ * @param {function} recalculateBasePrice
  * @return {Object} rendered form
  */
 export const ticketEntityFormInputs = (
@@ -24,14 +30,11 @@ export const ticketEntityFormInputs = (
 	exclude = [],
 	currentValues = [],
 	FormInput,
+	recalculateBasePrice,
 ) => {
 	if ( ! ticket || ( ticket && ! ticket.id ) ) {
 		return null;
 	}
-	// console.log( '' );
-	// console.log( 'ticketEntityFormInputs ticket', ticket );
-	// console.log( 'ticketEntityFormInputs currentValues', currentValues );
-	// console.log( 'ticketEntityFormInputs exclude', exclude );
 	const values = currentValues;
 	const prefix = `ee-ticket-${ ticket.id }`;
 	const inputs = [];
@@ -61,6 +64,11 @@ export const ticketEntityFormInputs = (
 				label={ __( 'Ticket Label', 'event_espresso' ) }
 				htmlId={ `${ prefix }-name` }
 				minLength={ 3 }
+				changeListener={
+					( value ) => {
+						ticket.name = value;
+					}
+				}
 				required
 			/>,
 		);
@@ -73,6 +81,11 @@ export const ticketEntityFormInputs = (
 				name={ `${ prefix }-description` }
 				initialValue={ values[ `${ prefix }-description` ] || '' }
 				label={ __( 'Description', 'event_espresso' ) }
+				changeListener={
+					( value ) => {
+						ticket.description = value;
+					}
+				}
 				htmlId={ `${ prefix }-description` }
 			/>,
 		);
@@ -99,6 +112,17 @@ export const ticketEntityFormInputs = (
 				inputWidth={ 3 }
 				min={ 0 }
 				step="0.01"
+				changeListener={
+					( value, prevValue ) => {
+						if ( value !== prevValue ) {
+							ticket.price = new Money(
+								value || 0,
+								SiteCurrency
+							);
+							recalculateBasePrice();
+						}
+					}
+				}
 				afterInput={ calculator }
 			/>
 		);
@@ -121,6 +145,11 @@ export const ticketEntityFormInputs = (
 					'click to make this ticket taxable',
 					'event_espresso',
 				) }
+				changeListener={
+					( value ) => {
+						ticket.taxable = !! value;
+					}
+				}
 				inputWidth={ 2 }
 			/>,
 		);
@@ -136,6 +165,13 @@ export const ticketEntityFormInputs = (
 				htmlId={ `${ prefix }-start` }
 				validations={ validations.required }
 				inputWidth={ 6 }
+				changeListener={
+					( value, prevValue ) => {
+						if ( value !== prevValue ) {
+							ticket.startDate = new DateTime( value );
+						}
+					}
+				}
 				required
 			/>,
 		);
@@ -151,6 +187,13 @@ export const ticketEntityFormInputs = (
 				htmlId={ `${ prefix }-end` }
 				validations={ validations.required }
 				inputWidth={ 6 }
+				changeListener={
+					( value, prevValue ) => {
+						if ( value !== prevValue ) {
+							ticket.endDate = new DateTime( value );
+						}
+					}
+				}
 				required
 			/>,
 		);
@@ -170,6 +213,11 @@ export const ticketEntityFormInputs = (
 					'event_espresso',
 				) }
 				inputWidth={ 3 }
+				changeListener={
+					( value ) => {
+						ticket.qty = parseInt( value || -1, 10 );
+					}
+				}
 				min={ 0 }
 			/>,
 		);
@@ -190,6 +238,7 @@ export const ticketEntityFormInputs = (
 				) }
 				inputWidth={ 3 }
 				min={ 0 }
+				disabled
 			/>,
 		);
 	}
@@ -209,6 +258,7 @@ export const ticketEntityFormInputs = (
 				) }
 				inputWidth={ 3 }
 				min={ 0 }
+				disabled
 			/>,
 		);
 	}
@@ -234,6 +284,11 @@ export const ticketEntityFormInputs = (
 					'\n'
 				) }
 				inputWidth={ 3 }
+				changeListener={
+					( value ) => {
+						ticket.uses = parseInt( value || -1, 10 );
+					}
+				}
 				min={ 0 }
 			/>,
 		);
@@ -257,6 +312,11 @@ export const ticketEntityFormInputs = (
 					'event_espresso',
 				) }
 				inputWidth={ 3 }
+				changeListener={
+					( value ) => {
+						ticket.required = !! value;
+					}
+				}
 				min={ 0 }
 			/>,
 		);
@@ -276,6 +336,11 @@ export const ticketEntityFormInputs = (
 					' pricing. Leave blank for no minimum.',
 					'event_espresso',
 				) }
+				changeListener={
+					( value ) => {
+						ticket.min = parseInt( value || 0, 10 );
+					}
+				}
 				inputWidth={ 3 }
 				min={ 0 }
 			/>,
@@ -297,6 +362,11 @@ export const ticketEntityFormInputs = (
 					'event_espresso',
 				) }
 				inputWidth={ 3 }
+				changeListener={
+					( value ) => {
+						ticket.max = parseInt( value || -1, 10 );
+					}
+				}
 				min={ 0 }
 			/>,
 		);
@@ -311,6 +381,11 @@ export const ticketEntityFormInputs = (
 				label={ __( 'Display Order', 'event_espresso' ) }
 				htmlId={ `${ prefix }-order` }
 				inputWidth={ 2 }
+				changeListener={
+					( value ) => {
+						ticket.order = parseInt( value, 10 );
+					}
+				}
 			/>,
 		);
 	}
@@ -333,10 +408,17 @@ export const ticketEntityFormInputs = (
 					'event_espresso',
 				) }
 				inputWidth={ 2 }
+				changeListener={
+					( value ) => {
+						ticket.isDefault = !! value;
+					}
+				}
 			/>,
 		);
 	}
 	if ( indexOf( exclude, 'wpUser' ) < 0 ) {
+		// @todo this needs to read from the current event author in the loaded
+		// editor, and eventually could be a dropdown for selecting the author.
 		inputs.push(
 			<FormInput
 				key="wpUser"
@@ -350,10 +432,14 @@ export const ticketEntityFormInputs = (
 					'event_espresso',
 				) }
 				inputWidth={ 2 }
+				disabled
 			/>,
 		);
 	}
 	if ( indexOf( exclude, 'parent' ) < 0 ) {
+		// @todo this is mostly a field that was added originally as a way of
+		// tracking autosaves/revisions for tickets. Probably should never be
+		// an editable field.
 		inputs.push(
 			<FormInput
 				key="parent"
@@ -363,6 +449,7 @@ export const ticketEntityFormInputs = (
 				label={ __( 'Parent Ticket', 'event_espresso' ) }
 				htmlId={ `${ prefix }-parent` }
 				inputWidth={ 2 }
+				disabled
 			/>,
 		);
 	}
@@ -384,6 +471,7 @@ export const ticketEntityFormInputs = (
 					'event_espresso',
 				) }
 				inputWidth={ 2 }
+				disabled
 			/>,
 		);
 	}

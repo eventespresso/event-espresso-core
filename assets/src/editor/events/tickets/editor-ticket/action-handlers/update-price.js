@@ -35,12 +35,5 @@ export const updatePrice = ( price, ticket ) => {
 				)
 			) );
 		}
-		createRelation(
-			'ticket',
-			ticket.id,
-			'price',
-			price
-		);
-		resolve( persistEntityRecord( 'price', price ) );
 	} );
 };

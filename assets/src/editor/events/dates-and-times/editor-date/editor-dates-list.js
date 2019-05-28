@@ -2,7 +2,7 @@
  * External imports
  */
 import { compose } from '@wordpress/compose';
-import { dispatch } from '@wordpress/data';
+import { withDispatch } from '@wordpress/data';
 import { Component } from '@wordpress/element';
 import {
 	EntityList,
@@ -16,19 +16,15 @@ import { __ } from '@eventespresso/i18n';
  * Internal dependencies
  */
 import { EditorDatesGridView, EditorDatesListView } from './';
-import { default as PaginatedDatesListWithFilterBar } from './filter-bar';
+import PaginatedDatesListWithFilterBar from './filter-bar';
 import { EditEventDateFormModal } from '../';
-import {
-	withTicketAssignmentsManager,
-	TicketAssignmentsManagerModal,
-} from '../../ticket-assignments-manager';
+import { withTicketAssignmentsManagerModal } from '../../ticket-assignments-manager';
+import withUpdateEventDateRelation from './action-handlers/with-update-event-date-relation';
 
 const {
 	FormWrapper,
 	FormSaveCancelButtons,
 } = twoColumnAdminFormLayout;
-
-const { createEntity } = dispatch( 'eventespresso/core' );
 
 /**
  * EditorDatesList
@@ -48,31 +44,19 @@ class EditorDatesList extends Component {
 
 	/**
 	 * @function
-	 */
-	addNewEventDate = () => {
-		createEntity( 'datetime', {} ).then(
-			( newEventDate ) => {
-				this.setState( () => ( { newEventDate } ) );
-				this.props.toggleEditor();
-			}
-		);
-	};
-
-	/**
-	 * @function
 	 * @return {Object} rendered button
 	 */
 	addNewDateButton = () => {
+		const addDate = () => this.props.addNewEventDate(
+			( state ) => this.setState( state ),
+			this.props.toggleEditor
+		);
 		return (
 			<FancyButton
 				icon="calendar"
 				style="wp-default"
 				buttonText={ __( 'Add New Date', 'event_espresso' ) }
-				onClick={ ( e ) => {
-					e.preventDefault();
-					e.stopPropagation();
-					this.addNewEventDate();
-				} }
+				onClick={ addDate }
 			/>
 		);
 	};
@@ -90,11 +74,7 @@ class EditorDatesList extends Component {
 					'Ticket Assignments',
 					'event_espresso'
 				) }
-				onClick={ ( e ) => {
-					e.preventDefault();
-					e.stopPropagation();
-					this.props.toggleTicketAssignments();
-				} }
+				onClick={ this.props.toggleTicketAssignments }
 			/>
 		);
 	};
@@ -108,8 +88,6 @@ class EditorDatesList extends Component {
 			allTickets,
 			editorOpen,
 			toggleEditor,
-			showTicketAssignments,
-			toggleTicketAssignments,
 			...otherProps
 		} = this.props;
 		return (
@@ -134,19 +112,6 @@ class EditorDatesList extends Component {
 					toggleEditor={ toggleEditor }
 					editorOpen={ editorOpen }
 				/>
-				<TicketAssignmentsManagerModal
-					allDates={ allDates }
-					allTickets={ allTickets }
-					toggleEditor={ toggleTicketAssignments }
-					editorOpen={ showTicketAssignments }
-					modalProps={ {
-						title: __(
-							'Ticket Assignments for All Event Dates',
-							'event_espresso'
-						),
-						closeButtonLabel: null,
-					} }
-				/>
 			</FormWrapper>
 		);
 	}
@@ -154,6 +119,28 @@ class EditorDatesList extends Component {
 
 export default compose( [
 	withEditor,
-	withTicketAssignmentsManager,
 	PaginatedDatesListWithFilterBar,
+	withUpdateEventDateRelation,
+	withDispatch( ( dispatch, { event, updateEventDateRelation } ) => {
+		const { createEntity } = dispatch( 'eventespresso/core' );
+		const addNewEventDate = ( setState, toggleEditor ) => {
+			createEntity( 'datetime', {} ).then(
+				( newEventDate ) => {
+					setState( { newEventDate } );
+					updateEventDateRelation( event, newEventDate );
+					toggleEditor();
+				},
+			);
+		};
+		return { addNewEventDate };
+	} ),
+	withTicketAssignmentsManagerModal( () => (
+		{
+			title: __(
+				'Ticket Assignments for All Event Dates',
+				'event_espresso'
+			),
+			closeButtonLabel: null,
+		}
+	) ),
 ] )( EditorDatesList );

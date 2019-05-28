@@ -16,12 +16,8 @@ import { isModelEntityOfModel } from '@eventespresso/validators';
  */
 import { withDatetimeTickets } from '../../data';
 import { EditEventDateFormModal } from '../';
-import { copyEventDate, trashEventDate } from '../action-handlers';
-import { EntityActionMenuItem } from '../../../entity-action-menu-item';
-import {
-	withTicketAssignmentsManager,
-	TicketAssignmentsManagerModal,
-} from '../../../ticket-assignments-manager';
+import { withCopyEventDate, withTrashEventDate } from '../action-handlers';
+import { withTicketAssignmentsManagerModal } from '../../../ticket-assignments-manager';
 import './style.css';
 
 const { MODEL_NAME: DATETIME } = dateTimeModel;
@@ -38,11 +34,9 @@ class EditorDateActionsMenu extends Component {
 	/**
 	 * @function
 	 * @param {Object} eventDate    	 JSON object defining the Event Date
-	 * @param {Array} datetimeTickets    Tickets for Event Date
-	 * @param {boolean} ticketsLoaded
 	 * @return {DropDownMenu}    		 Edit Event Date DropDownMenu
 	 */
-	mainDropDownMenu = ( eventDate, datetimeTickets, ticketsLoaded ) => {
+	mainDropDownMenu = ( eventDate ) => {
 		return (
 			<DropDownMenu
 				tooltip={ __( 'event date main menu', 'event_espresso' ) }
@@ -56,16 +50,12 @@ class EditorDateActionsMenu extends Component {
 					{
 						title: __( 'copy date', 'event_espresso' ),
 						icon: 'admin-page',
-						onClick: () => copyEventDate(
-							eventDate,
-							datetimeTickets,
-							ticketsLoaded
-						),
+						onClick: this.props.copyEventDate,
 					},
 					{
 						title: __( 'trash date', 'event_espresso' ),
 						icon: 'trash',
-						onClick: () => trashEventDate( eventDate ),
+						onClick: this.props.trashEventDate,
 					},
 					{
 						title: __( 'edit venue', 'event_espresso' ),
@@ -134,7 +124,7 @@ class EditorDateActionsMenu extends Component {
 	getSidebarMenuItems = ( eventDate, datetimeTickets, ticketsLoaded ) => {
 		const sidebarMenuItems = [];
 		sidebarMenuItems.push(
-			this.mainDropDownMenu( eventDate, datetimeTickets, ticketsLoaded )
+			this.mainDropDownMenu( eventDate )
 		);
 		sidebarMenuItems.push( this.editDateMenuItem( eventDate ) );
 		sidebarMenuItems.push(
@@ -166,7 +156,6 @@ class EditorDateActionsMenu extends Component {
 					sidebarMenuItem && sidebarMenuItem.type &&
 					(
 						sidebarMenuItem.type === DropDownMenu ||
-						sidebarMenuItem.type === EntityActionMenuItem ||
 						sidebarMenuItem.type === IconMenuItem
 					) ?
 						<Fragment key={ index }>
@@ -182,11 +171,8 @@ class EditorDateActionsMenu extends Component {
 		const {
 			event,
 			eventDate,
-			allTickets,
 			editorOpen,
 			toggleEditor,
-			showTicketAssignments,
-			toggleTicketAssignments,
 			datetimeTickets = [],
 			ticketsLoaded = false,
 		} = this.props;
@@ -205,25 +191,6 @@ class EditorDateActionsMenu extends Component {
 					toggleEditor={ toggleEditor }
 					editorOpen={ editorOpen }
 				/>
-				<TicketAssignmentsManagerModal
-					date={ eventDate }
-					allTickets={ allTickets }
-					toggleEditor={ toggleTicketAssignments }
-					editorOpen={ showTicketAssignments }
-					modalProps={ {
-						title: sprintf(
-							_x(
-								'Ticket Assignments for: %1$s',
-								'Ticket Assignments for: Date & date name',
-								'event_espresso'
-							),
-							`${ eventDate.name } (${
-								eventDate.start.toFormat( 'ddd MMM DD, YYYY' )
-							})`
-						),
-						closeButtonLabel: null,
-					} }
-				/>
 			</div>
 		) : null;
 	}
@@ -231,6 +198,22 @@ class EditorDateActionsMenu extends Component {
 
 export default compose( [
 	withEditor,
-	withTicketAssignmentsManager,
+	withTicketAssignmentsManagerModal(
+		( { eventDate } ) => ( {
+			title: sprintf(
+				_x(
+					'Ticket Assignments for: %1$s',
+					'Ticket Assignments for: Date & date name',
+					'event_espresso'
+				),
+				`${ eventDate.name } (${
+					eventDate.start.toFormat( 'ddd MMM DD, YYYY' )
+				})`
+			),
+			closeButtonLabel: null,
+		} )
+	),
 	withDatetimeTickets,
+	withCopyEventDate,
+	withTrashEventDate,
 ] )( EditorDateActionsMenu );

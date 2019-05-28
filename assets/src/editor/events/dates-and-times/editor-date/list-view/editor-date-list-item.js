@@ -6,6 +6,11 @@ import { Component } from '@wordpress/element';
 import { __ } from '@eventespresso/i18n';
 import { dateTimeModel } from '@eventespresso/model';
 import { isModelEntityOfModel } from '@eventespresso/validators';
+import { routes } from '@eventespresso/eejs';
+import { addQueryArgs } from '@wordpress/url';
+import { ifCondition } from '@wordpress/compose';
+
+const { ADMIN_ROUTES, ADMIN_ROUTE_ACTION_DEFAULT, getAdminUrl } = routes;
 
 /**
  * Internal dependencies
@@ -46,11 +51,19 @@ class EditorDateListItem extends Component {
 	/**
 	 * dateSoldReservedCapacity
 	 *
-	 * @function
-	 * @param {Object} eventDate    JSON object defining the Event Date
+	 * @param {Object} event  The event object.
+	 * @param {Object} eventDate    The date object.
 	 * @return {string}    link to registrations list table for datetime
 	 */
-	getDatetimeRegistrationsLink = ( eventDate ) => {
+	getDatetimeRegistrationsLink = ( event, eventDate ) => {
+		const regListUrl = addQueryArgs(
+			getAdminUrl( ADMIN_ROUTES.REGISTRATIONS, ADMIN_ROUTE_ACTION_DEFAULT ),
+			{
+				event_id: event.id,
+				datetime_id: eventDate.id,
+				return: 'edit',
+			}
+		);
 		return (
 			<Tooltip
 				text={ __(
@@ -59,7 +72,7 @@ class EditorDateListItem extends Component {
 				) }
 			>
 				<a
-					href={ eventDate.reg_list_url }
+					href={ regListUrl }
 					className={ 'ee-editor-date-details-reg-url-link' }
 					target={ '_blank' }
 					rel={ 'noopener norefferer' }
@@ -77,9 +90,6 @@ class EditorDateListItem extends Component {
 			allTickets,
 			eventDateTicketMap,
 		} = this.props;
-		if ( ! isModelEntityOfModel( eventDate, DATETIME ) ) {
-			return null;
-		}
 		this.id = `event-date-ticket-list-modal-${ eventDate.id }`;
 		const statusClass = this.getStatusClass( eventDate );
 		const bgClass = getBackgroundColorClass( eventDate );
@@ -87,7 +97,7 @@ class EditorDateListItem extends Component {
 		eventDate.regLimit === Infinity ?
 			( <span className={ 'ee-infinity-sign' }>&infin;</span> ) :
 			eventDate.regLimit;
-		const regLink = this.getDatetimeRegistrationsLink( eventDate );
+		const regLink = this.getDatetimeRegistrationsLink( event, eventDate );
 
 		return (
 			<div id={ `ee-editor-date-list-view-div-${ eventDate.id }` }
@@ -184,4 +194,7 @@ class EditorDateListItem extends Component {
 	}
 }
 
-export default EditorDateListItem;
+export default ifCondition(
+	( { eventDate } ) => isModelEntityOfModel( eventDate, DATETIME )
+)( EditorDateListItem );
+

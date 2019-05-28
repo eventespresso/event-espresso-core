@@ -5,6 +5,7 @@ import PropTypes from 'prop-types';
 import { isFunction } from 'lodash';
 import { IconButton } from '@wordpress/components';
 import { DateTime } from '@eventespresso/value-objects';
+import classNames from 'classnames';
 
 /**
  * Internal dependencies
@@ -34,12 +35,14 @@ const BiggieCalendarDate = ( {
 	onEdit = null,
 	editButton = {},
 } ) => {
-	htmlClass = htmlClass ?
-		`${ htmlClass } biggie-calendar-date-bg` :
-		'biggie-calendar-date-bg';
-	htmlClass = position === 'left' ?
-		`${ htmlClass } bcd-pos-left` :
-		`${ htmlClass } bcd-pos-right`;
+	htmlClass = classNames(
+		'biggie-calendar-date-bg',
+		htmlClass,
+		{
+			'bcd-pos-left': position === 'left',
+			'bcd-pos-right': position !== 'left'
+		}
+	);
 	const editDateButton = isFunction( onEdit ) ? (
 		<IconButton
 			className="ee-edit-calendar-date-btn"

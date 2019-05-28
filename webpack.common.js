@@ -72,6 +72,28 @@ const config = [
 		},
 	},
 	{
+		configName: 'hooks',
+		entry: {
+			hooks: assets + 'hooks/index.js',
+		},
+		externals,
+		module: {
+			rules: [
+				{
+					test: /\.js$/,
+					exclude: /node_modules/,
+					loader: 'babel-loader',
+				},
+			],
+		},
+		output: {
+			filename: 'ee-[name].[chunkhash].dist.js',
+			path: path.resolve( __dirname, 'assets/dist' ),
+			library: [ 'eejs', '[name]' ],
+			libraryTarget: 'var',
+		},
+	},
+	{
 		configName: 'validators',
 		entry: {
 			validators: assets + 'eejs/validators/index.js',
@@ -237,6 +259,7 @@ const config = [
 			'@eventespresso/model': 'eejs.model',
 			'@eventespresso/value-objects': 'eejs.valueObjects',
 			'@eventespresso/higher-order-components': 'eejs.hocs',
+			'@eventespresso/hooks': 'eejs.hooks',
 		} ),
 		module: {
 			rules: [
@@ -292,6 +315,7 @@ const config = [
 			'@eventespresso/value-objects': 'eejs.valueObjects',
 			'@eventespresso/higher-order-components': 'eejs.hocs',
 			'@eventespresso/components': 'eejs.components',
+			'@eventespresso/hooks': 'eejs.hooks',
 		} ),
 		module: {
 			rules: [
@@ -354,6 +378,7 @@ const config = [
 			'@eventespresso/higher-order-components': 'eejs.hocs',
 			'@eventespresso/components': 'eejs.components',
 			'@eventespresso/editor-hocs': 'eejs.editorHocs',
+			'@eventespresso/hooks': 'eejs.hooks',
 		} ),
 		module: {
 			rules: [
@@ -425,6 +450,8 @@ const config = [
 			'@eventespresso/higher-order-components': 'eejs.hocs',
 			'@eventespresso/components': 'eejs.components',
 			'@eventespresso/editor-hocs': 'eejs.editorHocs',
+			'@eventespresso/editor': 'eejs.editor',
+			'@eventespresso/hooks': 'eejs.hooks',
 		} ),
 		output: {
 			filename: 'ee-[name].[chunkhash].dist.js',

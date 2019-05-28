@@ -1,7 +1,7 @@
 /**
  * External imports
  */
-import { Component } from '@wordpress/element';
+import { Component, useReducer } from '@wordpress/element';
 import { __ } from '@eventespresso/i18n';
 import { ticketModel } from '@eventespresso/model';
 import { isModelEntityOfModel } from '@eventespresso/validators';
@@ -9,7 +9,7 @@ import { isModelEntityOfModel } from '@eventespresso/validators';
 /**
  * Internal dependencies
  */
-import { EditorTicketActionsMenu } from '../actions-menu';
+import EditorTicketActionsMenu from '../actions-menu/editor-ticket-actions-menu';
 
 const { MODEL_NAME: TICKET, getBackgroundColorClass } = ticketModel;
 
@@ -46,7 +46,7 @@ class EditorTicketListItem extends Component {
 			ticket,
 			allDates,
 			eventDateTicketMap,
-			onUpdate,
+			doRefresh,
 		} = this.props;
 		if ( ! isModelEntityOfModel( ticket, TICKET ) ) {
 			return null;
@@ -142,7 +142,7 @@ class EditorTicketListItem extends Component {
 							ticket={ ticket }
 							allDates={ allDates }
 							eventDateTicketMap={ eventDateTicketMap }
-							onUpdate={ onUpdate }
+							doRefresh={ doRefresh }
 						/>
 					</div>
 				</div>
@@ -152,4 +152,12 @@ class EditorTicketListItem extends Component {
 	}
 }
 
-export default EditorTicketListItem;
+export default (
+	( WrappedComponent ) => ( props ) => {
+		const [ , doRefresh ] = useReducer( ( s ) => s + 1, 0 );
+		const refresher = () => {
+			doRefresh( {} );
+		};
+		return <WrappedComponent { ...props } doRefresh={ refresher } />;
+	}
+)( EditorTicketListItem );

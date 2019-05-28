@@ -4,17 +4,15 @@
 import { Dashicon, Tooltip } from '@wordpress/components';
 import { Component } from '@wordpress/element';
 import { EntityDetailsPanel, InlineEditInput } from '@eventespresso/components';
-import { data } from '@eventespresso/eejs';
+import { routes } from '@eventespresso/eejs';
+import { addQueryArgs } from '@wordpress/url';
 import { __ } from '@eventespresso/i18n';
 import { dateTimeModel } from '@eventespresso/model';
 import { isModelEntityOfModel } from '@eventespresso/validators';
-
-/**
- * Internal dependencies
- */
-import { updateEventDate } from '../action-handlers/update-event-date';
+import classNames from 'classnames';
 
 const { MODEL_NAME: DATETIME } = dateTimeModel;
+const { ADMIN_ROUTES, ADMIN_ROUTE_ACTION_DEFAULT, getAdminUrl } = routes;
 /**
  * EditorDateDetails
  *
@@ -27,22 +25,24 @@ class EditorDateDetails extends Component {
 	 * dateName
 	 *
 	 * @function
-	 * @param {Object} event 		model object defining the Event
 	 * @param {Object} eventDate 	model object defining the Event Date
 	 * @return {string}    date name
 	 */
-	dateName = ( event, eventDate ) => {
-		const htmlClass = eventDate.name && eventDate.name.length > 40 ?
-			'ee-editor-date-name-heading ee-long-title' :
-			'ee-editor-date-name-heading';
+	dateName = ( eventDate ) => {
+		const htmlClass = classNames(
+			'ee-editor-date-name-heading',
+			{
+				'ee-long-title': eventDate.name && eventDate.name.length > 40,
+			}
+		);
 		return (
 			<h1 className={ htmlClass }>
 				<InlineEditInput
 					htmlId={ `event-date-name-${ eventDate.id }` }
 					type="text"
 					value={ eventDate.name }
-					onChange={ async ( name ) => {
-						return await this.updateName( name, event, eventDate );
+					onChange={ ( name ) => {
+						return this.updateName( name, eventDate );
 					} }
 					label={ __( 'Date Name', 'event_espresso' ) }
 					noticeStyle={
@@ -59,27 +59,25 @@ class EditorDateDetails extends Component {
 	 * description
 	 *
 	 * @function
-	 * @param {Object} event        model object defining the Event
 	 * @param {Object} eventDate    model object defining the Event Date
 	 * @param {string} showDesc
 	 * @return {string} date description
 	 */
-	description = ( event, eventDate, showDesc ) => {
-		const htmlClass = showDesc === 'excerpt' ?
-			'ee-editor-date-desc-div ee-date-desc-excerpt' :
-			'ee-editor-date-desc-div';
+	description = ( eventDate, showDesc ) => {
+		const htmlClass = classNames(
+			'ee-editor-date-desc-div',
+			{
+				'ee-date-desc-excerpt': showDesc === 'excerpt',
+			}
+		);
 		return (
 			<div className={ htmlClass }>
 				<InlineEditInput
 					htmlId={ `event-date-desc-${ eventDate.id }` }
 					type="textarea"
 					value={ eventDate.description }
-					onChange={ async ( desc ) => {
-						return await this.updateDescription(
-							desc,
-							event,
-							eventDate
-						);
+					onChange={ ( desc ) => {
+						return this.updateDescription( desc, eventDate );
 					} }
 					label={ __( 'Date Description', 'event_espresso' ) }
 				/>
@@ -150,12 +148,8 @@ class EditorDateDetails extends Component {
 				editable: {
 					type: 'text',
 					valueType: 'number',
-					onChange: async ( capacity ) => {
-						return await this.updateCapacity(
-							capacity,
-							event,
-							eventDate
-						);
+					onChange: ( capacity ) => {
+						return this.updateCapacity( capacity, eventDate );
 					},
 				},
 			},
@@ -163,7 +157,7 @@ class EditorDateDetails extends Component {
 				id: `event-date-registrants-${ eventDate.id }`,
 				htmlClass: 'has-tooltip',
 				label: __( 'registrants', 'event_espresso' ),
-				value: this.getDatetimeRegistrationsLink( eventDate ),
+				value: this.getDatetimeRegistrationsLink( event, eventDate ),
 			},
 		];
 		return <EntityDetailsPanel
@@ -176,15 +170,19 @@ class EditorDateDetails extends Component {
 	 * dateSoldReservedCapacity
 	 *
 	 * @function
+	 * @param {Object} event        Base entity instance for event.
 	 * @param {Object} eventDate    model object defining the Event Date
 	 * @return {string}    link to registrations list table for datetime
 	 */
-	getDatetimeRegistrationsLink = ( eventDate ) => {
-		let regListUrl = data.paths.admin_url;
-		regListUrl += 'admin.php?page=espresso_registrations';
-		regListUrl += `&event_id=${ eventDate.evtId }`;
-		regListUrl += `&datetime_id=${ eventDate.id }`;
-		regListUrl += '&action=default&return=edit';
+	getDatetimeRegistrationsLink = ( event, eventDate ) => {
+		const regListUrl = addQueryArgs(
+			getAdminUrl( ADMIN_ROUTES.REGISTRATIONS, ADMIN_ROUTE_ACTION_DEFAULT ),
+			{
+				event_id: event.id,
+				datetime_id: eventDate.id,
+				return: 'edit',
+			}
+		);
 		return (
 			<Tooltip
 				text={ __(
@@ -207,52 +205,44 @@ class EditorDateDetails extends Component {
 	/**
 	 * @function
 	 * @param {string} name 		new name for event date
-	 * @param {Object} event        model object defining the Event
 	 * @param {Object} eventDate    model object defining the Event Date
-	 * @return {boolean} true if saved
 	 */
-	updateName = async ( name, event, eventDate ) => {
+	updateName = ( name, eventDate ) => {
 		if (
 			isModelEntityOfModel( eventDate, DATETIME ) &&
 			eventDate.name !== name
 		) {
 			eventDate.name = name;
-			return updateEventDate( event, eventDate );
 		}
 	};
 
 	/**
 	 * @function
 	 * @param {string} description 	new description for event date
-	 * @param {Object} event        model object defining the Event
 	 * @param {Object} eventDate    model object defining the Event Date
 	 * @return {boolean} true if saved
 	 */
-	updateDescription = async ( description, event, eventDate ) => {
+	updateDescription = async ( description, eventDate ) => {
 		if (
 			isModelEntityOfModel( eventDate, DATETIME ) &&
 			eventDate.description !== description
 		) {
 			eventDate.description = description;
-			return updateEventDate( event, eventDate );
 		}
 	};
 
 	/**
 	 * @function
 	 * @param {number|string} 		capacity new reg limit for event date
-	 * @param {Object} event        model object defining the Event
 	 * @param {Object} eventDate    model object defining the Event Date
-	 * @return {boolean} true if saved
 	 */
-	updateCapacity = async ( capacity, event, eventDate ) => {
+	updateCapacity = ( capacity, eventDate ) => {
 		capacity = parseInt( capacity );
 		if (
 			isModelEntityOfModel( eventDate, DATETIME ) &&
 			eventDate.regLimit !== capacity
 		) {
 			eventDate.regLimit = capacity;
-			return updateEventDate( event, eventDate );
 		}
 	};
 
@@ -261,8 +251,8 @@ class EditorDateDetails extends Component {
 		const { showDesc = 'excerpt', showVenue } = this.props;
 		return isModelEntityOfModel( eventDate, DATETIME ) ? (
 			<div className={ 'ee-editor-date-details-wrapper-div' }>
-				{ this.dateName( event, eventDate ) }
-				{ this.description( event, eventDate, showDesc ) }
+				{ this.dateName( eventDate ) }
+				{ this.description( eventDate, showDesc ) }
 				{ this.venueName( eventDate, showVenue ) }
 				{ this.dateSoldReservedCapacity( event, eventDate ) }
 			</div>

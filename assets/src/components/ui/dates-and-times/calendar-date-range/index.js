@@ -4,12 +4,13 @@
 import PropTypes from 'prop-types';
 import { __ } from '@eventespresso/i18n';
 import { DateTime } from '@eventespresso/value-objects';
+import classNames from 'classnames';
 
 /**
  * Internal dependencies
  */
 import './style.css';
-import { default as CalendarPageDate } from '../calendar-page-date';
+import CalendarPageDate from '../calendar-page-date';
 
 /**
  * Displays a pair of calendar dates representing a date range
@@ -31,12 +32,14 @@ const CalendarDateRange = ( {
 	htmlClass = '',
 	position = 'left',
 } ) => {
-	htmlClass = htmlClass ?
-		`${ htmlClass } ee-calendar-date-range-wrapper` :
-		'ee-calendar-date-range-wrapper';
-	htmlClass = position === 'left' ?
-		`${ htmlClass } cdr-pos-left` :
-		`${ htmlClass } cdr-pos-right`;
+	htmlClass = classNames(
+		htmlClass,
+		'ee-calendar-date-range-wrapper',
+		{
+			'cdr-pos-left': position === 'left',
+			'cdr-pos-right': position !== 'left',
+		}
+	);
 	headerText = headerText && (
 		<div className="ee-calendar-date-range-header">
 			{ headerText }

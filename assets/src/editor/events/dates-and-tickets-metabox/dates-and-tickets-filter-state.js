@@ -13,9 +13,8 @@ import {
 	withDatesListFilterState,
 	getFilteredDatesList,
 } from '../dates-and-times/editor-date/filter-bar';
-import {
-	default as withTicketsListFilterState,
-} from '../tickets/editor-ticket/filter-bar/with-tickets-list-filter-state';
+import withTicketsListFilterState from
+	'../tickets/editor-ticket/filter-bar/with-tickets-list-filter-state';
 import {
 	getFilteredTicketsList,
 } from '../tickets/editor-ticket/filter-bar/with-tickets-list-filter-bar';
@@ -93,12 +92,12 @@ DatesAndTicketsFilterState.propTypes = {
 };
 
 export default compose( [
-	withDatesListFilterState,
-	withTicketsListFilterState,
 	withEvent,
 	withEventDatetimes,
 	withTicketsForAllEventDates,
 	withGetRelatedTicketsForEventDates,
+	withDatesListFilterState,
+	withTicketsListFilterState,
 	withSelect( ( select, ownProps ) => {
 		const {
 			event,
@@ -111,7 +110,8 @@ export default compose( [
 			sortDates,
 			showTickets,
 			sortTickets,
-			getRelatedTicketsForEventDates,
+			datetimeTickets,
+			isChained,
 		} = ownProps;
 		if ( ! eventLoaded || ! eventDatesLoaded ) {
 			return {
@@ -134,8 +134,8 @@ export default compose( [
 		let tickets = EMPTY_ARRAY;
 		if ( eventDateTicketsLoaded ) {
 			// show tickets for ALL dates or for filtered subset from above?
-			tickets = ownProps.isChained ?
-				getRelatedTicketsForEventDates( datetimes ) :
+			tickets = isChained ?
+				datetimeTickets :
 				eventDateTickets;
 			// apply filter bar filters
 			tickets = getFilteredTicketsList(
