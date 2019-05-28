@@ -50,7 +50,7 @@
 		"@wordpress/api-fetch": "^3.1.2",
 		"@wordpress/autop": "^2.2.0",
 		"@wordpress/babel-plugin-makepot": "^3.0.0",
-		"@wordpress/babel-preset-default": "^4.1.0",
+		"@wordpress/babel-preset-default": "^4.2.0",
 		"@wordpress/block-library": "^2.5.0",
 		"@wordpress/blocks": "^6.3.0",
 		"@wordpress/browserslist-config": "^2.3.0",
