@@ -554,10 +554,7 @@ abstract class SequentialStepFormManager
             // form processing should either throw exceptions or return true
             $current_step->process($form_data);
         } catch (Exception $e) {
-            // something went wrong, so...
-            // if WP_DEBUG === true, display the Exception and stack trace right now
-            new ExceptionStackTraceDisplay($e);
-            // else convert the Exception to an EE_Error
+            // something went wrong, convert the Exception to an EE_Error
             EE_Error::add_error($e->getMessage(), __FILE__, __FUNCTION__, __LINE__);
             // prevent redirect to next step or other if exception was thrown
             if ($current_step->redirectTo() === SequentialStepForm::REDIRECT_TO_NEXT_STEP
