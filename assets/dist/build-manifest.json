@@ -1,13 +1,13 @@
 {
   "components.css": "ee-components.6c501eda74325c3f6e9d.dist.css",
-  "components.js": "ee-components.fc9a9dc019a348aed16b.dist.js",
+  "components.js": "ee-components.a0200bf9cb56195c49ac.dist.js",
   "core-default-theme.css": "ee-core-default-theme.6fbaedc7f6b9be341e3a.dist.css",
   "core-default-theme.js": "ee-core-default-theme.2dd1ab089f2f611ab205.dist.js",
-  "data-stores.js": "ee-data-stores.f0e50b7d3ebd25809e14.dist.js",
+  "data-stores.js": "ee-data-stores.25085f58dc3ca20a38cb.dist.js",
   "editor-hocs.js": "ee-editor-hocs.15a813aac7a51b5473cb.dist.js",
   "editor.css": "ee-editor.72cbbba07c97fdce4e40.dist.css",
-  "editor.js": "ee-editor.3dd4dbfa1f7ef531b22a.dist.js",
-  "eejs.js": "ee-eejs.39ba2867eb4b0bc1ba09.dist.js",
+  "editor.js": "ee-editor.4be7a82a43fb0a8f60ee.dist.js",
+  "eejs.js": "ee-eejs.55720452b02281910cf7.dist.js",
   "eventespresso-core-blocks-frontend.css": "ee-eventespresso-core-blocks-frontend.8884875c737446fb7cc2.dist.css",
   "eventespresso-core-blocks-frontend.js": "ee-eventespresso-core-blocks-frontend.1fa8e62b522a04ce2a94.dist.js",
   "eventespresso-core-blocks.css": "ee-eventespresso-core-blocks.8884875c737446fb7cc2.dist.css",
@@ -15,11 +15,11 @@
   "helpers.js": "ee-helpers.3b38e5a12cfc93e7e1a1.dist.js",
   "hocs.css": "ee-hocs.f1f0e4a6d62cbe908a76.dist.css",
   "hocs.js": "ee-hocs.0565df7eb56d2b66e430.dist.js",
-  "manifest.js": "ee-manifest.45b8faa573682047153a.dist.js",
-  "model.js": "ee-model.0816f68d14c7f6b32641.dist.js",
+  "manifest.js": "ee-manifest.4e01ddbee888ee3fc3a7.dist.js",
+  "model.js": "ee-model.ee8de25358cb83492447.dist.js",
   "validators.js": "ee-validators.299a9413a62fd9fadb1c.dist.js",
   "valueObjects.js": "ee-valueObjects.0bab8c7e4fbdcca83a0d.dist.js",
   "vendor.js": "ee-vendor.2cfbbe58b3567c4ced2e.dist.js",
   "wp-plugins-page.css": "ee-wp-plugins-page.8ebd5595bdcb57c4edee.dist.css",
-  "wp-plugins-page.js": "ee-wp-plugins-page.bbd3ddcc8d73935b5273.dist.js"
+  "wp-plugins-page.js": "ee-wp-plugins-page.55dc66b2e2392b1b8a4b.dist.js"
 }
