@@ -46,10 +46,6 @@
 	"devDependencies": {
 		"@babel/core": "7.4.4",
 		"@babel/plugin-proposal-class-properties": "^7.4.4",
-		"@babel/plugin-transform-react-jsx": "^7.3.0",
-		"@babel/polyfill": "^7.4.4",
-		"@babel/preset-react": "^7.0.0",
-		"@babel/runtime-corejs2": "7.4.4",
 		"@wordpress/a11y": "^2.3.0",
 		"@wordpress/api-fetch": "^3.1.2",
 		"@wordpress/autop": "^2.2.0",
@@ -74,7 +70,6 @@
 		"@wordpress/url": "^2.5.0",
 		"@wordpress/viewport": "^2.3.0",
 		"autoprefixer": "^9.5.1",
-		"babel-loader": "8.0.6",
 		"babel-plugin-dev-expression": "^0.2.1",
 		"babel-runtime": "^6.26.0",
 		"clean-webpack-plugin": "^2.0.2",
