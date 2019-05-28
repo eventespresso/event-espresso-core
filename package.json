@@ -118,7 +118,7 @@
 		"moment-duration-format": "^2.2.2",
 		"moment-timezone": "^0.5.25",
 		"npm-watch": "^0.6.0",
-		"pluralize": "^7.0.0",
+		"pluralize": "^8.0.0",
 		"prop-types": "^15.7.2",
 		"querystringify": "^2.1.1",
 		"react-redux": "^7.0.3",
