@@ -15,32 +15,32 @@
     /** padding sizes **/
     --ee-padding-micro: 0.25rem;
     --ee-padding-tiny: 0.5rem;
-    --ee-padding-smaller: 1rem;
-    --ee-padding-small: 1.5rem;
-    --ee-padding-default: 2rem;
-    --ee-padding-big: 2.5rem;
-    --ee-padding-bigger: 3rem;
-    --ee-padding-huge: 3.5rem;
+    --ee-padding-smaller: 0.75rem;
+    --ee-padding-small: 1rem;
+    --ee-padding-default: 1.5rem;
+    --ee-padding-big: 2rem;
+    --ee-padding-bigger: 2.5rem;
+    --ee-padding-huge: 3rem;
     --ee-padding-extreme: 4rem;
 
     /** margin sizes **/
     --ee-margin-micro: 0.25rem;
     --ee-margin-tiny: 0.5rem;
-    --ee-margin-smaller: 1rem;
-    --ee-margin-small: 1.5rem;
-    --ee-margin-default: 2rem;
-    --ee-margin-big: 2.5rem;
-    --ee-margin-bigger: 3rem;
-    --ee-margin-huge: 3.5rem;
+    --ee-margin-smaller: 0.75rem;
+    --ee-margin-small: 1rem;
+    --ee-margin-default: 1.5rem;
+    --ee-margin-big: 2rem;
+    --ee-margin-bigger: 2.5rem;
+    --ee-margin-huge: 3rem;
     --ee-margin-extreme: 4rem;
 
     /** border radius sizes **/
     --ee-border-radius-none: 0px;
-    --ee-border-radius-small: 4px;
-    --ee-border-radius-default: 5px;
-    --ee-border-radius-big: 8px;
-    --ee-border-radius-bigger: 16px;
-    --ee-border-radius-huge: 32px;
-    --ee-border-radius-full: 1000px;
+    --ee-border-radius-small: 3px;
+    --ee-border-radius-default: 6px;
+    --ee-border-radius-big: 12px;
+    --ee-border-radius-bigger: 24px;
+    --ee-border-radius-huge: 48px;
+    --ee-border-radius-full: 3000px;
 
 }
