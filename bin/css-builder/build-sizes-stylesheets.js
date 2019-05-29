@@ -51,6 +51,7 @@ function fontSizes( config ) {
 		config.sizes.fontSizeModifiers :
 		defaultFontSizeModifiers;
 	const fontSizeBase = config.sizes.fontSizeBase;
+	const fontUnits = config.sizes.fontUnits || 'px';
 	let sizes = [];
 	for ( const modifier in sizeModifiers ) {
 		const value = Math.round( sizeModifiers[ modifier ] * fontSizeBase );
@@ -58,7 +59,7 @@ function fontSizes( config ) {
 			sizes.push(
 				templateCompiler( {
 					modifier: `font-size-${ modifier }`,
-					value: value + config.sizes.fontUnits,
+					value: value + fontUnits,
 				} )
 			);
 		}
@@ -85,13 +86,14 @@ function marginSizes( config ) {
 		config.sizes.marginSizeModifiers :
 		defaultSizeModifiers;
 	const marginDefault = config.sizes.marginDefault;
+	const marginUnits = config.sizes.marginUnits || 'rem';
 	let sizes = [];
 	for ( const modifier in sizeModifiers ) {
 		const value = sizeModifiers[ modifier ] * marginDefault;
 		sizes.push(
 			templateCompiler( {
 				modifier: `margin-${ modifier }`,
-				value: value + config.sizes.marginUnits,
+				value: value + marginUnits,
 			} )
 		);
 	}
@@ -109,13 +111,14 @@ function paddingSizes( config ) {
 		config.sizes.paddingSizeModifiers :
 		defaultSizeModifiers;
 	const paddingDefault = config.sizes.paddingDefault;
+	const paddingUnits = config.sizes.paddingUnits || 'rem';
 	let sizes = [];
 	for ( const modifier in sizeModifiers ) {
 		const value = sizeModifiers[ modifier ] * paddingDefault;
 		sizes.push(
 			templateCompiler( {
 				modifier: `padding-${ modifier }`,
-				value: value + config.sizes.paddingUnits,
+				value: value + paddingUnits,
 			} )
 		);
 	}
@@ -133,13 +136,14 @@ function radiusSizes( config ) {
 		config.sizes.radiusSizeModifiers :
 		defaultRadiusModifiers;
 	const radiusDefault = config.sizes.radiusDefault;
+	const radiusUnits = config.sizes.radiusUnits || 'px';
 	let sizes = [];
 	for ( const modifier in sizeModifiers ) {
 		const value = sizeModifiers[ modifier ] * radiusDefault;
 		sizes.push(
 			templateCompiler( {
 				modifier: `border-radius-${ modifier }`,
-				value: Math.round( value ) + config.sizes.radiusUnits,
+				value: Math.round( value ) + radiusUnits,
 			} )
 		);
 	}
