@@ -51,7 +51,7 @@ function fontSizes( config ) {
 		config.sizes.fontSizeModifiers :
 		defaultFontSizeModifiers;
 	const fontSizeBase = config.sizes.fontSizeBase;
-	const fontUnits = config.sizes.fontUnits || 'px';
+	const fontUnits = config.sizes.fontUnits || 'rem';
 	let sizes = [];
 	for ( const modifier in sizeModifiers ) {
 		let value = sizeModifiers[ modifier ] * fontSizeBase;
