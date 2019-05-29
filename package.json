@@ -57,7 +57,7 @@
 		"@wordpress/browserslist-config": "^2.3.0",
 		"@wordpress/components": "^7.4.0",
 		"@wordpress/compose": "^3.3.0",
-		"@wordpress/core-data": "^2.2.2",
+		"@wordpress/core-data": "^2.3.0",
 		"@wordpress/data": "^4.4.0",
 		"@wordpress/date": "^3.3.0",
 		"@wordpress/editor": "^9.3.0",
@@ -118,7 +118,7 @@
 		"prop-types": "^15.7.2",
 		"querystringify": "^2.1.1",
 		"react-redux": "^7.0.3",
-		"react-select": "^2.4.3",
+		"react-select": "^3.0.3",
 		"redux": "^4.0.1",
 		"rememo": "^3.0.0",
 		"warning": "^4.0.3"

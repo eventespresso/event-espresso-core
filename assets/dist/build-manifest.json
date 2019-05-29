@@ -1,8 +1,8 @@
 {
   "components.css": "ee-components.b40e9093cc4a58f367eb.dist.css",
-  "components.js": "ee-components.1fc7840851615eda88c2.dist.js",
-  "core-default-theme.css": "ee-core-default-theme.65957435fa061ffb3c4c.dist.css",
-  "core-default-theme.js": "ee-core-default-theme.37e084cb7e31aa738792.dist.js",
+  "components.js": "ee-components.f2bfb88f36291c16c213.dist.js",
+  "core-default-theme.css": "ee-core-default-theme.9be8486e58840f5021b9.dist.css",
+  "core-default-theme.js": "ee-core-default-theme.4697310a84a99360c5c0.dist.js",
   "data-stores.js": "ee-data-stores.ea289c6b0a241f0b9323.dist.js",
   "editor-hocs.js": "ee-editor-hocs.15a813aac7a51b5473cb.dist.js",
   "eejs.js": "ee-eejs.b34ef022aeb9f516d7a8.dist.js",
