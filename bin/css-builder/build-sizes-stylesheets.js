@@ -9,15 +9,15 @@ const templateCompiler = getTemplateCompiler(
 );
 
 const defaultFontSizeModifiers = {
-	micro: 1.1,
-	tiny: 1.2,
-	smaller: 1.4,
-	small: 1.6,
-	default: 1.8,
-	big: 2.4,
-	bigger: 3.2,
-	huge: 4.5,
-	extreme: 6.0,
+	micro: .06,
+	tiny: .07,
+	smaller: .08,
+	small: .09,
+	default: .1,
+	big: .12,
+	bigger: .16,
+	huge: .2,
+	extreme: .3,
 };
 const defaultSizeModifiers = {
 	micro: .25,
@@ -54,15 +54,14 @@ function fontSizes( config ) {
 	const fontUnits = config.sizes.fontUnits || 'px';
 	let sizes = [];
 	for ( const modifier in sizeModifiers ) {
-		const value = Math.round( sizeModifiers[ modifier ] * fontSizeBase );
-		if ( value >= 8 ) {
-			sizes.push(
-				templateCompiler( {
-					modifier: `font-size-${ modifier }`,
-					value: value + fontUnits,
-				} )
-			);
-		}
+		let value = sizeModifiers[ modifier ] * fontSizeBase;
+		value = value.toFixed( 2 );
+		sizes.push(
+			templateCompiler( {
+				modifier: `font-size-${ modifier }`,
+				value: value + fontUnits,
+			} )
+		);
 	}
 	sizes.push(
 		templateCompiler( {

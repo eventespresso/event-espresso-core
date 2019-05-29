@@ -39,7 +39,7 @@ const meta = {
 const sizes = {
 	fontSizeBase: 10,
 	fontSizeModifiers: null,
-	fontUnits: 'px',
+	fontUnits: 'rem',
 	lineHeightModifier: 1.5,
 	marginDefault: 1,
 	marginSizeModifiers: null,
