@@ -5,7 +5,7 @@ import { compose, withState, createHigherOrderComponent } from '@wordpress/compo
 import { withDispatch } from '@wordpress/data';
 import { isModelEntityOfModel } from '@eventespresso/validators';
 import { __, _x, sprintf } from '@eventespresso/i18n';
-import { withEditorModal } from '@eventespresso/higher-order-components';
+import { withEditorModal } from '@eventespresso/editor-hocs';
 import { useState, useEffect, useCallback, Fragment } from '@wordpress/element';
 
 /**
