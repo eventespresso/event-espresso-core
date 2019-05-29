@@ -1,15 +1,15 @@
 :root {
 
     /** font sizes **/
-    --ee-font-size-micro: 11px;
-    --ee-font-size-tiny: 12px;
-    --ee-font-size-smaller: 14px;
-    --ee-font-size-small: 16px;
-    --ee-font-size-default: 18px;
-    --ee-font-size-big: 24px;
-    --ee-font-size-bigger: 32px;
-    --ee-font-size-huge: 45px;
-    --ee-font-size-extreme: 60px;
+    --ee-font-size-micro: 0.60rem;
+    --ee-font-size-tiny: 0.70rem;
+    --ee-font-size-smaller: 0.80rem;
+    --ee-font-size-small: 0.90rem;
+    --ee-font-size-default: 1.00rem;
+    --ee-font-size-big: 1.20rem;
+    --ee-font-size-bigger: 1.60rem;
+    --ee-font-size-huge: 2.00rem;
+    --ee-font-size-extreme: 3.00rem;
     --ee-line-height-modifier: 1.5;
 
     /** padding sizes **/
