@@ -39,13 +39,17 @@ const meta = {
 const sizes = {
 	fontSizeBase: 10,
 	fontSizeModifiers: null,
+	fontUnits: 'px',
 	lineHeightModifier: 1.5,
-	marginDefault: 2,
+	marginDefault: 1,
 	marginSizeModifiers: null,
-	paddingDefault: 2,
+	marginUnits: 'rem',
+	paddingDefault: 1,
 	paddingSizeModifiers: null,
-	radiusDefault: 4,
+	paddingUnits: 'rem',
+	radiusDefault: 3,
 	radiusSizeModifiers: null,
+	radiusUnits: 'px',
 };
 
 module.exports = {
