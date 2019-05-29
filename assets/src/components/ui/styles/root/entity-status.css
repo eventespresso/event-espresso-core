@@ -106,12 +106,12 @@
 
 /** payment cancelled **/
 .ee-status-color-PCN {
-    color: var(--ee-color-grey-5);
+    color: var(--ee-color-grey-7);
 }
 
 .ee-status-background-color-PCN {
-    background-color: var(--ee-color-grey-5);
-    color: var(--ee-text-on-grey-5);
+    background-color: var(--ee-color-grey-7);
+    color: var(--ee-text-on-grey-7);
 }
 
 
@@ -189,12 +189,12 @@
 
 /** registration cancelled **/
 .ee-status-color-RCN {
-    color: var(--ee-color-grey-5);
+    color: var(--ee-color-grey-7);
 }
 
 .ee-status-background-color-RCN {
-    background-color: var(--ee-color-grey-5);
-    color: var(--ee-text-on-grey-5);
+    background-color: var(--ee-color-grey-7);
+    color: var(--ee-text-on-grey-7);
 }
 
 
@@ -261,23 +261,23 @@
 
 /** datetime expired **/
 .ee-status-color-DTE {
-    color: var(--ee-color-grey-5);
+    color: var(--ee-color-grey-7);
 }
 
 .ee-status-background-color-DTE {
-    background-color: var(--ee-color-grey-5);
-    color: var(--ee-text-on-grey-5);
+    background-color: var(--ee-color-grey-7);
+    color: var(--ee-text-on-grey-7);
 }
 
 
 /** datetime inactive **/
 .ee-status-color-DTI {
-    color: var(--ee-color-grey-1);
+    color: var(--ee-color-grey-3);
 }
 
 .ee-status-background-color-DTI {
-    background-color: var(--ee-color-grey-1);
-    color: var(--ee-text-on-grey-1);
+    background-color: var(--ee-color-grey-3);
+    color: var(--ee-text-on-grey-3);
 }
 
 
@@ -322,21 +322,21 @@
 
 /** ticket expired **/
 .ee-status-color-TKE {
-    color: var(--ee-color-grey-5);
+    color: var(--ee-color-grey-7);
 }
 .ee-status-background-color-TKE {
-    background-color: var(--ee-color-grey-5);
-    color: var(--ee-text-on-grey-5);
+    background-color: var(--ee-color-grey-7);
+    color: var(--ee-text-on-grey-7);
 }
 
 
 /** ticket archived **/
 .ee-status-color-TKA {
-    color: var(--ee-color-grey-1);
+    color: var(--ee-color-grey-3);
 }
 .ee-status-background-color-TKA {
-    background-color: var(--ee-color-grey-1);
-    color: var(--ee-text-on-grey-1);
+    background-color: var(--ee-color-grey-3);
+    color: var(--ee-text-on-grey-3);
 }
 
 
