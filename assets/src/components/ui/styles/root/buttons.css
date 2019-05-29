@@ -1,7 +1,7 @@
-.espresso-button,
-.espresso-button:active,
-.espresso-button:focus,
-.espresso-button:visited {
+.esprs-button,
+.esprs-button:active,
+.esprs-button:focus,
+.esprs-button:visited {
     border-radius: var(--ee-border-radius-small);
     box-shadow: var(--ee-box-shadow-tiny);
     -webkit-box-sizing: content-box !important;
@@ -23,13 +23,13 @@
     vertical-align: middle;
 }
 
-.espresso-button:active { top: 0; }
+.esprs-button:active { top: 0; }
 
-.espresso-button + .espresso-button {
+.esprs-button + .esprs-button {
     margin-left: var(--ee-margin-default);
 }
 
-.espresso-button span {
+.esprs-button span {
     position: relative;
     top: 0;
     vertical-align: middle;
@@ -38,89 +38,89 @@
 
 /* BUTTON COLORS */
 
-.espresso-button-default {
+.esprs-button-default {
     background: var(--ee-color-grey-11);
     border: 1px solid var(--ee-color-grey-11);
     border-bottom: 1px solid var(--ee-color-grey-10);
     color: var(--ee-text-on-grey-10);
 }
 
-.espresso-button-default:hover {
+.esprs-button-default:hover {
     background: var(--ee-color-grey-10);
 }
 
-.espresso-button-primary {
+.esprs-button-primary {
     background: var(--ee-color-primary);
     border: 1px solid var(--ee-color-primary);
     border-bottom: 1px solid var(--ee-color-primary-high-contrast);
     color: var(--ee-text-on-primary);
 }
 
-.espresso-button-primary:hover {
+.esprs-button-primary:hover {
     background: var(--ee-color-primary-high-contrast);
     color: var(--ee-text-on-primary-high-contrast);
 }
 
-.espresso-button-secondary {
+.esprs-button-secondary {
     background: var(--ee-color-secondary);
     border: 1px solid var(--ee-color-secondary);
     border-bottom: 1px solid var(--ee-color-secondary-high-contrast);
     color: var(--ee-text-on-secondary);
 }
 
-.espresso-button-secondary:hover {
+.esprs-button-secondary:hover {
     background: var(--ee-color-secondary-high-contrast);
     color: var(--ee-text-on-secondary-high-contrast);
 }
 
-.espresso-button-accent {
+.esprs-button-accent {
     background: var(--ee-color-accent);
     border: 1px solid var(--ee-color-accent);
     border-bottom: 1px solid var(--ee-color-accent-high-contrast);
     color: var(--ee-text-on-accent);
 }
 
-.espresso-button-accent:hover {
+.esprs-button-accent:hover {
     background: var(--ee-color-accent-high-contrast);
     color: var(--ee-text-on-accent-high-contrast);
 }
 
 /* BUTTON SIZES */
 
-.tiny.espresso-button,
-.tiny.espresso-button:active,
-.tiny.espresso-button:focus,
-.tiny.espresso-button:visited {
+.tiny.esprs-button,
+.tiny.esprs-button:active,
+.tiny.esprs-button:focus,
+.tiny.esprs-button:visited {
     font-size: var(--ee-font-size-tiny);
     min-height: var(--ee-font-size-smaller);
     line-height: var(--ee-font-size-tiny);
     padding: var(--ee-padding-micro) var(--ee-padding-tiny);
 }
 
-.small.espresso-button,
-.small.espresso-button:active,
-.small.espresso-button:focus,
-.small.espresso-button:visited {
+.small.esprs-button,
+.small.esprs-button:active,
+.small.esprs-button:focus,
+.small.esprs-button:visited {
     font-size: var(--ee-font-size-smaller);
     min-height: var(--ee-font-size-small);
     line-height: var(--ee-font-size-smaller);
     padding: var(--ee-padding-micro) var(--ee-padding-smaller) var(--ee-padding-tiny);
 }
 
-.big.espresso-button,
-.big.espresso-button:active,
-.big.espresso-button:focus,
-.big.espresso-button:visited {
+.big.esprs-button,
+.big.esprs-button:active,
+.big.esprs-button:focus,
+.big.esprs-button:visited {
     font-size: var(--ee-font-size-big);
     min-height: var(--ee-font-size-bigger);
     line-height: var(--ee-font-size-big);
     padding: var(--ee-padding-smaller) var(--ee-padding-default) var(--ee-padding-small);
 }
 
-.huge.espresso-button,
-.huge.espresso-button:active,
-.huge.espresso-button:focus,
-.huge.espresso-button:visited {
+.huge.esprs-button,
+.huge.esprs-button:active,
+.huge.esprs-button:focus,
+.huge.esprs-button:visited {
     font-size: var(--ee-font-size-bigger);
     min-height: var(--ee-font-size-huge);
     line-height: var(--ee-font-size-bigger);
