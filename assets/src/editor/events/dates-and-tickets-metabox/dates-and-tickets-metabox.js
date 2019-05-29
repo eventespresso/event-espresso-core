@@ -56,7 +56,7 @@ const DatesAndTicketsMetabox = ( { eventId } ) => (
 								'loading event dates and available tickets...',
 								'event_espresso'
 							),
-							String.fromCharCode( '8230' )
+							String.fromCharCode( 8230 )
 						) }
 					/>
 					<FormContainer
@@ -78,13 +78,6 @@ const DatesAndTicketsMetabox = ( { eventId } ) => (
 									<div>
 										<EditorDatesList
 											loading={ loadingDates }
-											loadingNotice={ sprintf(
-												_x( 'loading event dates%s',
-													'loading event dates...',
-													'event_espresso'
-												),
-												String.fromCharCode( '8230' )
-											) }
 											entities={ datetimes }
 											allDates={ allDates }
 											allTickets={ allTickets }
@@ -111,13 +104,6 @@ const DatesAndTicketsMetabox = ( { eventId } ) => (
 									<div>
 										<EditorTicketsList
 											loading={ loadingTickets }
-											loadingNotice={ sprintf(
-												_x( 'loading available tickets%s',
-													'loading available tickets...',
-													'event_espresso'
-												),
-												String.fromCharCode( '8230' )
-											) }
 											entities={ tickets }
 											allDates={ allDates }
 											isChained={ isChained }
