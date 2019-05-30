@@ -49,7 +49,7 @@
 }
 
 .ee-ticket-assignments-manager .ee-tam-ticket-header-status .ee-tam-ticket-header-date {
-    color: var(--ee-white);
+    color: var(--ee-color-white);
     font-size: 10px;
     height: 10px;
     letter-spacing: 2px;
@@ -67,7 +67,7 @@
 
 .ee-ticket-assignments-manager .ee-tam-date-id,
 .ee-ticket-assignments-manager .ee-tam-ticket-id {
-    color: var(--ee-lite-grey);
+    color: var(--ee-color-grey-7);
     font-size: 10px;
     font-weight: normal;
     position: absolute;
@@ -99,7 +99,7 @@
 }
 
 .ee-ticket-assignments-manager .ee-tam-year-row .ee-tam-date-label {
-    color: var(--ee-grey);
+    color: var(--ee-default-text-color);
     font-weight: bold;
     height: 27px;
     letter-spacing: 3px;
@@ -121,7 +121,7 @@
 }
 
 .ee-ticket-assignments-manager .ee-calendar-page-date-wrapper {
-    border: 1px solid var(--ee-lite-grey);
+    border: 1px solid var(--ee-color-grey-7);
     max-width: 52px;
     min-width: 52px;
     margin: 4px 5px;
@@ -143,7 +143,7 @@
 /* BUTTON STYLE */
 .ee-ticket-assignments-manager .components-icon-button.ee-tam-ticket-relation-button {
     border-radius: 0 !important;
-    border: 1px solid var(--ee-white);
+    border: 1px solid var(--ee-color-white);
     box-shadow: none !important;
     height: 62px;
     margin: auto;
@@ -162,59 +162,59 @@
 .ee-ticket-assignments-manager .ee-tam-assignments-error:hover,
 .ee-ticket-assignments-manager .ee-tam-assignments-error:focus,
 .ee-ticket-assignments-manager .ee-tam-assignments-error:active {
-    background: var(--ee-hot-pink) !important;
+    background: var(--ee-color-hot-pink) !important;
 }
 
 /* NO TICKET RELATION */
 .ee-ticket-assignments-manager .components-icon-button.ee-tam-no-ticket-relation {
-    background: var(--ee-off-white) !important;
-    color: var(--ee-lite-grey);
+    background: var(--ee-color-grey-10) !important;
+    color: var(--ee-color-grey-7);
 }
 
 .ee-ticket-assignments-manager .components-icon-button.ee-tam-no-ticket-relation:hover,
 .ee-ticket-assignments-manager .components-icon-button.ee-tam-no-ticket-relation:focus,
 .ee-ticket-assignments-manager .components-icon-button.ee-tam-no-ticket-relation:active {
-    border: 1px solid var(--ee-off-white) !important;
-    color: var(--ee-dark-grey) !important;
+    border: 1px solid var(--ee-color-grey-10) !important;
+    color: var(--ee-color-grey-2) !important;
 }
 
 /* HAS TICKET RELATION */
 .ee-ticket-assignments-manager .components-icon-button.ee-tam-has-ticket-relation {
-    background-color: var(--ee-blue) !important;
-    border: 1px solid var(--ee-white);
-    color: var(--ee-white) !important;
+    background-color: var(--ee-color-blue) !important;
+    border: 1px solid var(--ee-color-white);
+    color: var(--ee-color-white) !important;
 }
 
 .ee-ticket-assignments-manager .components-icon-button.ee-tam-has-ticket-relation:hover,
 .ee-ticket-assignments-manager .components-icon-button.ee-tam-has-ticket-relation:focus,
 .ee-ticket-assignments-manager .components-icon-button.ee-tam-has-ticket-relation:active {
-    border: 1px solid var(--ee-blue);
+    border: 1px solid var(--ee-color-blue);
 }
 
 /* ADD TICKET RELATION */
 .ee-ticket-assignments-manager .components-icon-button.ee-tam-add-ticket-relation {
-    background: var(--ee-green) !important;
-    border: 1px solid var(--ee-white);
-    color: var(--ee-white) !important;
+    background: var(--ee-color-green) !important;
+    border: 1px solid var(--ee-color-white);
+    color: var(--ee-color-white) !important;
 }
 
 .ee-ticket-assignments-manager .components-icon-button.ee-tam-add-ticket-relation:hover,
 .ee-ticket-assignments-manager .components-icon-button.ee-tam-add-ticket-relation:focus,
 .ee-ticket-assignments-manager .components-icon-button.ee-tam-add-ticket-relation:active {
-    border: 1px solid var(--ee-green) !important;
+    border: 1px solid var(--ee-color-green) !important;
 }
 
 /* REMOVE TICKET RELATION */
 .ee-ticket-assignments-manager .components-icon-button.ee-tam-remove-ticket-relation {
-    background: var(--ee-hot-pink) !important;
-    border: 1px solid var(--ee-white);
-    color: var(--ee-white) !important;
+    background: var(--ee-color-hot-pink) !important;
+    border: 1px solid var(--ee-color-white);
+    color: var(--ee-color-white) !important;
 }
 
 .ee-ticket-assignments-manager .components-icon-button.ee-tam-remove-ticket-relation:hover,
 .ee-ticket-assignments-manager .components-icon-button.ee-tam-remove-ticket-relation:focus,
 .ee-ticket-assignments-manager .components-icon-button.ee-tam-remove-ticket-relation:active {
-    border: 1px solid var(--ee-hot-pink) !important;
+    border: 1px solid var(--ee-color-hot-pink) !important;
 }
 
 
@@ -230,7 +230,7 @@
     }
 
     .ee-rTable .ee-rTable-body .ee-tam-date-row .ee-tam-date-label {
-        background: var(--ee-off-white);
+        background: var(--ee-color-grey-10);
         margin-bottom: 1rem;
     }
 
@@ -268,7 +268,7 @@
     }
 
     .ee-rTable .ee-tam-date-row .ee-tam-date-row-ticket:nth-child(even) {
-        background: var(--ee-not-quite-white);
+        background: var(--ee-color-grey-11);
     }
 
     .ee-ticket-assignments-manager .ee-rTable-mobile-only-column-header .ee-tam-ticket-header-div {

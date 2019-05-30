@@ -8,40 +8,39 @@
 }
 
 .ee-icon-menu-item {
-    color: var(--ee-dark-grey);
-    height: 36px;
-    margin: 0 0 5px;
-    width: 36px;
+    color: var(--ee-default-text-color);
+    height: var(--ee-icon-button-size);
+    margin: 0 0 var(--ee-margin-micro);
+    width: var(--ee-icon-button-size);
 }
 
 .ee-icon-menu-item:hover {
-    color: var(--ee-blue) !important;
+    color: var(--ee-color-primary) !important;
 }
 
 .ee-icon-menu-item-count {
-    border-radius: 10em;
+    border-radius: var(--ee-border-radius-full);
     box-sizing: border-box;
-    color: var(--ee-white);
-    font-size: 11px;
+    box-shadow: var(--ee-box-shadow-tiny);
+    color: var(--ee-color-white);
+    font-size: var(--ee-font-size-tiny);
     font-weight: normal;
-    height: 18px;
-    line-height: 11px;
-    padding:3px;
+    height: calc(var(--ee-font-size-default) + 1px);
+    line-height: var(--ee-font-size-micro);
+    padding: var(--ee-padding-micro);
     position: absolute;
     right: 0;
     text-align: center;
-    text-shadow: -1px -1px rgba(0, 0, 0, .15);
+    text-shadow: var(--ee-text-shadow-inset);
     top: 0;
     vertical-align: top;
-    min-width: 18px;
+    min-width: calc(var(--ee-font-size-default) + 1px);
 }
 .ee-icon-menu-item-count.ee-has-items {
-    background: var(--ee-brite-blue);
+    background: var(--ee-color-bright-blue);
 }
 .ee-icon-menu-item-count.ee-no-items {
-    background: var(--ee-hot-pink);
-    font-size: 13px;
+    background: var(--ee-color-hot-pink);
+    font-size: var(--ee-font-size-tiny);
     font-weight: bold;
-    line-height: 13px;
-    padding: 2px;
 }

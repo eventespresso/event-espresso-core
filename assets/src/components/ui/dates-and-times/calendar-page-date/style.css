@@ -37,7 +37,7 @@
 .ee-calendar-page-date-month {
     border: 1px solid rgba(255, 255, 255, .25);
     border-bottom: none;
-    color: var(--ee-white);
+    color: var(--ee-color-white);
     font-weight: bold;
     letter-spacing: 2px;
 }
@@ -68,10 +68,10 @@
 
 
 .ee-calendar-page-date-day {
-    background: var(--ee-white);
-    border: 1px solid var(--ee-white);
+    background: var(--ee-color-white);
+    border: 1px solid var(--ee-color-white);
     border-top: none;
-    color: var(--ee-dark-grey);
+    color: var(--ee-color-grey-2);
     font-family: "Arial Black", Gadget, sans-serif;
     font-weight: bold;
 }

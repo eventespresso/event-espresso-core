@@ -5,12 +5,14 @@
 
 .biggie-calendar-date-bg {
     box-sizing: border-box;
-    color: var(--ee-white);
+    color: var(--ee-color-white);
+    font-size: var(--ee-font-size-tiny);
     height: 100%;
-    padding: 0 10px 10px 10px;
+    padding: 0 var(--ee-padding-tiny) var(--ee-padding-tiny);
     position: absolute;
     text-align: center;
-    width: 140px;
+    width: calc(var(--ee-padding-micro) * 34);
+    vertical-align: bottom;
 }
 
 .biggie-calendar-date-bg.bcd-pos-left {
@@ -23,23 +25,21 @@
 }
 
 .biggie-calendar-date-header {
-    color: rgba(255, 255, 255, .9);
-    font-size: 9px;
-    letter-spacing: 2px;
-    line-height: 27px;
+    font-size: var(--ee-font-size-micro);
+    letter-spacing: var(--ee-letter-spacing-font-size-micro);
+    line-height: var(--ee-font-size-bigger);
 }
 
 .biggie-calendar-date .weekday {
-    font-size: 12px;
     font-weight: normal;
-    line-height: 18px;
-    letter-spacing: 1px;
+    line-height: var(--ee-font-size-default);
+    letter-spacing: var(--ee-letter-spacing-font-size-tiny);
 }
 
 .biggie-calendar-date .month {
-    font-size: 20px;
+    font-size: calc(var(--ee-font-size-big) - 3px);
     font-weight: bold;
-    line-height: 20px;
+    line-height: calc(var(--ee-font-size-big) - 6px);
 }
 
 .month-day-sep {
@@ -47,26 +47,33 @@
 }
 
 .biggie-calendar-date .day {
-    color: rgba(255, 255, 255, .8);
-    font-size: 45px;
+    opacity: .8;
+    font-size: var(--ee-font-size-huge);
     font-weight: bold;
-    line-height: 36px;
-    text-shadow: -1px -1px rgba(0, 0, 0, .15);
+    line-height: calc(var(--ee-font-size-huge) - 6px);
+    text-shadow: var(--ee-text-shadow-inset);
 }
 
 .biggie-calendar-date .year {
-    font-size: 12px;
-    letter-spacing: 8px;
-    line-height: 18px;
+    letter-spacing: calc(var(--ee-letter-spacing-font-size-micro)*4);
+    line-height: var(--ee-font-size-default);
     left: 3px;
     position: relative;
 }
 
 .biggie-calendar-date-footer {
     font-weight: bold;
-    letter-spacing: 2px;
-    margin: 5px 0 0;
-    text-shadow: -1px -1px rgba(0, 0, 0, .15);
+    letter-spacing: var(--ee-letter-spacing-font-size-micro);
+    line-height: var(--ee-font-size-big);
+    margin: var(--ee-margin-micro) 0 0;
+    text-shadow: var(--ee-text-shadow-inset);
+    white-space: pre-line;
+}
+
+.biggie-calendar-date-footer span {
+    display: block;
+    letter-spacing: var(--ee-letter-spacing-font-size-micro);
+    text-transform: uppercase;
 }
 
 .biggie-calendar-date-bg .ee-edit-calendar-date-btn {
@@ -78,7 +85,7 @@
 .biggie-calendar-date-bg .ee-edit-calendar-date-btn:not(:disabled):not([aria-disabled="true"]):not(.is-default):hover,
 .biggie-calendar-date-bg .ee-edit-calendar-date-btn:not(:disabled):not([aria-disabled="true"]):not(.is-default):active {
     background-color: transparent;
-    color: var(--ee-white);
+    color: var(--ee-color-white);
     box-shadow: none;
 }
 
@@ -123,7 +130,7 @@
         clear: both;
         float: none;
         height: auto;
-        padding: 10px;
+        padding: var(--ee-padding-micro);
         position: relative;
         right: unset;
         width: 100% !important;
@@ -141,7 +148,7 @@
     .biggie-calendar-date-header,
     .biggie-calendar-date-footer,
     .month-day-sep {
-        line-height: 21px;
+        line-height: calc(var(--ee-font-size-big) - 3px);
     }
 
     .biggie-calendar-date-header,
@@ -153,13 +160,13 @@
     .biggie-calendar-date .month,
     .biggie-calendar-date .day,
     .biggie-calendar-date .year {
-        color: var(--ee-white);
+        color: var(--ee-color-white);
         display: inline-block;
-        font-size: 18px;
+        font-size: var(--ee-font-size-default);
         font-weight: normal;
-        line-height: 21px;
+        line-height: calc(var(--ee-font-size-big) - 3px);
         letter-spacing: 0;
-        margin: 0 .25rem;
+        margin: 0 var(--ee-margin-micro);
         text-shadow: none;
     }
 

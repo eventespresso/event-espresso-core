@@ -1,8 +1,20 @@
+:root {
+    /* letter-spacing */
+    --ee-letter-spacing-font-size-micro: 2px;
+    --ee-letter-spacing-font-size-tiny: 1px;
+    --ee-letter-spacing-font-size-huge: -1px;
+    --ee-letter-spacing-font-size-extreme: -2px;
+    /* word-spacing */
+    --ee-word-spacing-font-size-micro: 4px;
+    --ee-word-spacing-font-size-tiny: 2px;
+    --ee-word-spacing-font-size-smaller: 1px;
+}
+
 .ee-focus-priority-1 {
     color: var(--ee-default-text-color-super-low-contrast);
     font-size: var(--ee-font-size-extreme);
     font-weight: bolder;
-    letter-spacing: -2px;
+    letter-spacing: var(--ee-letter-spacing-font-size-extreme);
     line-height: calc(var(--ee-line-height-modifier) * .75);
 }
 
@@ -10,7 +22,7 @@
     color: var(--ee-default-text-color-low-contrast);
     font-size: var(--ee-font-size-huge );
     font-weight: bold;
-    letter-spacing: -1px;
+    letter-spacing: var(--ee-letter-spacing-font-size-huge);
     line-height: calc(var(--ee-line-height-modifier) * .875);
 }
 
@@ -39,23 +51,23 @@
     color: var(--ee-default-text-color-high-contrast);
     font-size: var(--ee-font-size-smaller );
     line-height: var(--ee-line-height-modifier);
-    word-spacing: 1px;
+    word-spacing: var(--ee-word-spacing-font-size-smaller);
 }
 
 .ee-focus-priority-8 {
     color: var(--ee-default-text-color-super-high-contrast);
     font-size: var(--ee-font-size-tiny );
-    letter-spacing: 1px;
+    letter-spacing: var(--ee-letter-spacing-font-size-tiny);
     line-height: calc(var(--ee-line-height-modifier) * 1.125);
-    word-spacing: 2px;
+    word-spacing: var(--ee-word-spacing-font-size-tiny);
 }
 
 .ee-focus-priority-9 {
     color: var(--ee-default-text-color-super-high-contrast);
     font-size: var(--ee-font-size-micro );
-    letter-spacing: 2px;
+    letter-spacing: var(--ee-letter-spacing-font-size-micro);
     line-height: calc(var(--ee-line-height-modifier) * 1.25);
-    word-spacing: 4px;
+    word-spacing: var(--ee-word-spacing-font-size-micro);
 }
 
 
