@@ -11,10 +11,12 @@ import {
 	CalendarPageDate,
 	ResponsiveTable,
 	twoColumnAdminFormLayout,
+	withFormContainerAndPlaceholder,
 } from '@eventespresso/components';
 import { __ } from '@eventespresso/i18n';
 import { dateTimeModel, ticketModel } from '@eventespresso/model';
 import { compose } from '@wordpress/compose';
+import { withEditorModal } from '@eventespresso/editor-hocs';
 import {
 	withEntityPagination,
 	withFormContainerAndPlaceholder,

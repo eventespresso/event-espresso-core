@@ -3,26 +3,35 @@
  * (c) 2018 Event Espresso
  * -------------------------------------------------------------------------*/
 
-.ee-form-row .ee-inline-edit-text:hover {
-    color: var(--ee-green) !important;
+.espresso-editor .ee-inline-edit-text:hover {
+    color: var(--ee-color-bright-green-high-contrast) !important;
 }
 
-.ee-form-row .ee-inline-edit-input {
-    border: 1px solid var(--ee-lite-grey);
+.espresso-editor .ee-inline-edit-input.form-control {
     box-shadow: none;
     display: inline-block;
+    font-size: var(--ee-font-size-smaller);
     font-weight: normal;
+    height: var(--ee-icon-button-size);
+    padding: var(--ee-padding-micro);
     width: 95%;
 }
 
-.ee-form-row .ee-inline-edit-input-number {
+.espresso-editor .ee-inline-edit-input-number {
     text-align: right;
 }
 
-.ee-form-row .ee-inline-edit-label {
-    font-size: 12px;
+.espresso-editor .ee-inline-edit-label {
+    color: var(--ee-default-text-color-high-contrast);
+    font-size: var(--ee-font-size-smaller);
     font-weight: normal;
-    line-height: 15px !important;
+    line-height: var(--ee-font-size-small) !important;
     margin: 0;
     width: 95%;
+}
+
+.espresso-editor .ee-inline-edit-text .components-tooltip {
+    font-size: var(--ee-font-size-smaller);
+    font-weight: normal;
+    line-height: var(--ee-font-size-smaller);
 }

@@ -8,3 +8,4 @@ export { InlineEditInput } from './inputs/inline-edit-input';
 export { InputLabel } from './inputs/base/input-label';
 export twoColumnAdminFormLayout from './layouts/two-column-admin';
 export validations from './validations';
+export withFormContainerAndPlaceholder from './base/with-form-container-and-placeholder';

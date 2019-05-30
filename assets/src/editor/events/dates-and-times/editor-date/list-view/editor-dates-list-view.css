@@ -14,7 +14,7 @@
 .ee-editor-date-list-items,
 .ee-editor-date-list-view-div {
     margin: 0 0 1px;
-    border: 1px solid var(--ee-white);
+    border: 1px solid var(--ee-color-white);
 }
 
 /* headers row */
@@ -25,14 +25,14 @@
 
 /* zebra striping */
 .ee-dates-list-list-view > div:nth-of-type(even) {
-    background: var(--ee-not-quite-white);
-    border: 1px solid var(--ee-not-quite-white);
+    background: var(--ee-color-grey-11);
+    border: 1px solid var(--ee-color-grey-11);
 }
 
 /* row highlighting */
 .ee-dates-list-list-view > div:hover {
-    background: var(--ee-near-white);
-    border: 1px solid var(--ee-near-white);
+    background: var(--ee-color-grey-11);
+    border: 1px solid var(--ee-color-grey-11);
 }
 
 /* table rows (inner) */
@@ -50,6 +50,7 @@
     line-height: 36px;
     height: 56px;
     padding: 10px;
+    position: relative;
     white-space: nowrap;
     text-overflow: ellipsis;
     overflow: hidden;
@@ -130,14 +131,155 @@
 }
 
 
-/* Media Queries for smaller screens
+/* Media Queries for specific screen sizes
  * -------------------------------------------------------------------------*/
 
+@media only screen and (max-width: 1920px) {
+}
+
 @media only screen and (max-width: 1600px) {
+}
+
+@media only screen and (max-width: 1366px) {
+}
+
+@media only screen and (max-width: 1280px) and (min-width: 481px) {
+
+    .ee-editor-date-list-view-div {
+        margin: 0 0 var(--ee-margin-smaller);
+    }
+
+    .ee-editor-date-list-items {
+        flex-flow: row wrap;
+    }
+
+    /* headers row */
+    .ee-dates-list-list-view > div:nth-of-type(1) {
+        display: none !important;
+    }
+
+    .ee-date-list-item {
+        height: 72px;
+        padding: 0;
+    }
+    .ee-date-list-item span {
+        box-sizing: border-box;
+        padding: 6px;
+        width: 100%;
+    }
+
+    /* row level labels */
+    .ee-date-list-item-label {
+        display: block;
+        font-size: 13px;
+        font-weight: bold;
+        height: 18px;
+        left: 0;
+        line-height: 18px;
+        position: absolute;
+        text-align: left;
+        top: 0;
+        vertical-align: top;
+    }
+
+    .ee-date-list-item-value {
+        bottom: 6px;
+        display: block;
+        height: 36px;
+        left: 0;
+        position: absolute;
+        vertical-align: bottom;
+    }
+    .ee-editor-date-list-items .ee-editor-date-actions-menu {
+        bottom: 10px;
+        left: 10px;
+        position: absolute;
+        vertical-align: top;
+    }
+
+    /*.ee-date-list-item,*/
+    .ee-editor-date-list-items > div:nth-of-type(1) {
+        height: 144px;
+        position: absolute;
+    }
+
+    /* ID */
+    .ee-editor-date-list-items > div:nth-of-type(2) {
+        border-bottom: 1px solid var(--ee-color-grey-11);
+        width: 10%;
+    }
+
+    /* Name */
+    .ee-editor-date-list-items > div:nth-of-type(3) {
+        border-bottom: 1px solid var(--ee-color-grey-11);
+        width: 40%;
+    }
+
+    /* Start Date & End Date */
+    .ee-editor-date-list-items > div:nth-of-type(4),
+    .ee-editor-date-list-items > div:nth-of-type(5) {
+        border-bottom: 1px solid var(--ee-color-grey-11);
+        width: 25%;
+    }
+
+    /* Sold, Reserved, & Capacity */
+    .ee-editor-date-list-items > div:nth-of-type(6),
+    .ee-editor-date-list-items > div:nth-of-type(7),
+    .ee-editor-date-list-items > div:nth-of-type(8),
+    /* Registrants */
+    .ee-editor-date-list-items > div:nth-of-type(9) {
+        width: 15%;
+    }
+    /* Sold, Reserved, & Capacity */
+    .ee-editor-date-list-items > div:nth-of-type(2) span:first-of-type,
+    .ee-editor-date-list-items > div:nth-of-type(6) span,
+    .ee-editor-date-list-items > div:nth-of-type(7) span,
+    .ee-editor-date-list-items > div:nth-of-type(8) span,
+    .ee-editor-date-list-items > div:nth-of-type(9) span {
+        text-align: center !important;
+    }
+
+    /* Actions */
+    .ee-editor-date-list-items > div:nth-of-type(10) {
+        width: 40%;
+    }
+    .ee-editor-date-list-items > div:nth-of-type(10) .ee-editor-date-actions-menu {
+        bottom: 6px;
+        justify-content: flex-end;
+        right: 0;
+        position: absolute;
+    }
+
+    /*.ee-editor-date-list-items > div:nth-of-type(10) .ee-date-list-item-label {*/
+    /*    display: none;*/
+    /*}*/
 
 }
 
-@media only screen and (max-width: 1279px) {
+@media only screen and (max-width: 1024px) {
+}
+
+/* WordPress Admin Media Query Breakpoint: Auto-folding of the admin menu */
+@media only screen and (max-width: 960px) {
+}
+
+/* WordPress Admin Media Query Breakpoint: one column on the post write/edit screen */
+@media only screen and (max-width: 850px) {
+}
+
+/* WordPress Admin Media Query Breakpoint: Tablet */
+@media screen and ( max-width: 782px ) {
+}
+
+/* WordPress Admin Media Query Breakpoint: Smartphone */
+@media screen and (max-width: 600px) {
+}
+
+@media only screen and (max-width: 480px) {
+
+    .ee-dates-list-list-view > div:nth-of-type(1) {
+        display: none !important;
+    }
 
     .ee-dates-list-list-view {
         display: flex;
@@ -147,13 +289,8 @@
 
     .ee-editor-date-list-view-div {
         margin: 0 0 1.5rem;
-        min-width: 230px;
-        width: 47.5%;
-    }
-
-    /* headers row */
-    .ee-dates-list-list-view > div:nth-of-type(1) {
-        display: none !important;
+        min-width: 200px;
+        width: 48%;
     }
 
     /* table rows */
@@ -167,7 +304,7 @@
     /* table rows (inner) */
     .ee-editor-date-list-items {
         flex-flow: column nowrap;
-        border: 1px solid var(--ee-grey-white);
+        border: 1px solid var(--ee-color-grey-9);
     }
 
     /* table cells */
@@ -185,12 +322,12 @@
 
     /* row level labels */
     .ee-date-list-item-label {
-        color: var(--ee-grey);
+        color: var(--ee-default-text-color);
         display: inline-block;
         font-size: 13px;
         padding: 0 10px 0 0;
         text-align: right;
-        width: 33%;
+        width: 50%;
     }
 
     .ee-date-list-item-value {
@@ -210,25 +347,25 @@
 
     /* status bar */
     .ee-editor-date-list-items > div:nth-of-type(1) {
-        color: var(--ee-white) !important;
+        color: var(--ee-color-white) !important;
         padding: 10px;
         width: auto;
     }
 
     /* Name */
     .ee-editor-date-list-items > div:nth-of-type(3),
-        /* status bar */
+    /* status bar */
     .ee-editor-date-list-items > div:nth-of-type(1) .ee-date-list-item-label {
         display: none;
     }
 
     /* Actions  menu */
-    .ee-dates-list-list-view .ee-editor-date-actions-menu {
-        left: 33%;
-        padding-left: 10px;
-        right: unset;
-        top: 2px;
-    }
+    /*.ee-dates-list-list-view .ee-editor-date-actions-menu {*/
+    /*    left: 33%;*/
+    /*    padding-left: 10px;*/
+    /*    right: unset;*/
+    /*    top: 2px;*/
+    /*}*/
 
     .ee-dates-list-list-view .ee-dropdown-menu-div {
         left: 12%;
@@ -236,51 +373,14 @@
     }
 }
 
-@media only screen and (max-width: 1024px) {
-}
-
-@media only screen and (max-width: 768px) {
-}
-
-@media only screen and (max-width: 600px) and (min-width: 481px) {
-}
-
-@media only screen and (max-width: 540px) and (min-width: 481px) {
-}
-
-@media only screen and (max-width: 480px) {
+@media only screen and (max-width: 360px) {
 
     .ee-editor-date-list-view-div {
         min-width: 240px;
         width: 100%;
     }
+
     .ee-dates-list-list-view {
         justify-content: center;
     }
-}
-
-@media only screen and (max-width: 360px) {
-}
-
-@media only screen and (max-width: 320px) {
-}
-
-
-/* WordPress Media Query breakpoints
- * -------------------------------------------------------------------------*/
-
-/* Auto-folding of the admin menu */
-@media only screen and (max-width: 960px) {
-}
-
-/* one column on the post write/edit screen */
-@media only screen and (max-width: 850px) {
-}
-
-/* Tablet */
-@media screen and ( max-width: 782px ) {
-}
-
-/* Smartphone */
-@media screen and (max-width: 600px) {
 }

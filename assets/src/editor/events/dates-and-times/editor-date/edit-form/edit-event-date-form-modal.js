@@ -4,7 +4,7 @@
 import PropTypes from 'prop-types';
 import { Component } from '@wordpress/element';
 import { __ } from '@eventespresso/i18n';
-import { withEditorModal } from '@eventespresso/higher-order-components';
+import { withEditorModal } from '@eventespresso/editor-hocs';
 import { compose } from '@wordpress/compose';
 import { withDispatch } from '@wordpress/data';
 import { dateTimeModel } from '@eventespresso/model';

@@ -4,28 +4,30 @@
  * ------------------------------------------------------------------------- */
 
 .ee-entity-paper-frame-wrapper {
-    margin: 0 .8% 25px 0;
-    max-width: 525px;
-    min-width: 435px;
+    margin: 0 1.3% var(--ee-margin-small) 0;
+    max-width: calc(var(--ee-font-size-small) * 33);
+    min-width: calc(var(--ee-font-size-small) * 27);
     position: relative;
-    width: 32.5%;
+    width: 32%;
 }
 
 .ee-entity-wrapper {
-    box-shadow: 0 0 2px rgba(0, 0, 0, .2);
-    -webkit-box-shadow: 0 0 2px rgba(0, 0, 0, .2);
-    -moz-box-shadow: 0 0 2px rgba(0, 0, 0, .2);
+    box-shadow: var(--ee-box-shadow-big-diffuse);
     box-sizing: border-box;
-    max-width: 525px;
-    min-width: 435px;
+    max-width: calc(var(--ee-font-size-small) * 33);
+    min-width: calc(var(--ee-font-size-small) * 27);
     position: relative;
+}
+
+.ee-entity-wrapper > div:first-of-type {
+    box-shadow: inset 0 0 1px var(--ee-color-black);
 }
 
 .ee-entity-paper-frame {
     bottom: 0;
     box-sizing: border-box;
-    height: 150px;
-    max-width: 525px;
+    height: calc(var(--ee-font-size-small) * 11);
+    max-width: calc(var(--ee-font-size-small) * 33);
     width: 100%;
     position: absolute;
     z-index: 0;
@@ -35,15 +37,15 @@
 .ee-entity-paper-frame:after {
     position: absolute;
     content: "";
-    bottom: 15px;
+    bottom: 14px;
     left: 10px;
     width: 50%;
     top: 70%;
     max-width: 300px;
-    background: var(--ee-black);
-    -webkit-box-shadow: 0 15px 10px rgba(0, 0, 0, .75);
-    -moz-box-shadow: 0 15px 10px rgba(0, 0, 0, .75);
-    box-shadow: 0 15px 10px rgba(0, 0, 0, .75);
+    background: var(--ee-color-black);
+    -webkit-box-shadow: 0 15px 10px rgba(0, 0, 0, .6);
+    -moz-box-shadow: 0 15px 10px rgba(0, 0, 0, .6);
+    box-shadow: 0 15px 10px rgba(0, 0, 0, .6);
     -webkit-transform: rotate(-3deg);
     -moz-transform: rotate(-3deg);
     -o-transform: rotate(-3deg);

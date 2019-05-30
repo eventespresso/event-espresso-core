@@ -1,0 +1,96 @@
+/* -------------------------------------------------------------------------
+ * Event Espresso withEditorModal Stylesheet
+ * (c) 2018 Event Espresso
+ * -------------------------------------------------------------------------*/
+
+.components-modal__frame.ee-editor-modal {
+    height: 85%;
+    max-height: 85%;
+    max-width: 85%;
+    width: 85%;
+}
+
+.ee-editor-modal .components-modal__content {
+    padding: 0;
+}
+
+.ee-editor-modal .components-modal__header {
+    margin: 0 0 -1px;
+    padding: 0 8px;
+}
+
+.ee-editor-modal .components-modal__header-heading {
+    font-size: 1.5rem;
+    margin-left: 1rem;
+}
+
+
+/* Media Queries for specific screen sizes
+ * -------------------------------------------------------------------------*/
+
+@media only screen and (max-width: 1920px) {
+}
+
+@media only screen and (max-width: 1600px) {
+    .components-modal__frame.ee-editor-modal {
+        height: 90%;
+        max-height: 90%;
+        max-width: 90%;
+        width: 90%;
+    }
+}
+
+@media only screen and (max-width: 1366px) {
+    .components-modal__frame.ee-editor-modal {
+        height: 95%;
+        max-height: 95%;
+        max-width: 95%;
+        width: 95%;
+    }
+}
+
+@media only screen and (max-width: 1280px) {
+}
+
+@media only screen and (max-width: 1024px) {
+    .components-modal__frame.ee-editor-modal {
+        height: 100%;
+        max-height: 100%;
+        max-width: 100%;
+        width: 100%;
+    }
+}
+
+/* WordPress Admin Media Query Breakpoint: Auto-folding of the admin menu */
+@media only screen and (max-width: 960px) {
+}
+
+/* WordPress Admin Media Query Breakpoint: one column on the post write/edit screen */
+@media only screen and (max-width: 850px) {
+}
+
+/* WordPress Admin Media Query Breakpoint: Tablet */
+@media screen and ( max-width: 782px ) {
+    .ee-editor-modal .components-modal__header-heading {
+        font-size: 1.25rem;
+        font-weight: bold;
+    }
+}
+
+/* WordPress Admin Media Query Breakpoint: Smartphone */
+@media screen and (max-width: 600px) {
+    .ee-editor-modal .components-modal__header-heading {
+        font-size: 1rem;
+        font-weight: bold;
+    }
+}
+
+@media only screen and (max-width: 480px) {
+}
+
+@media only screen and (max-width: 360px) {
+}
+
+
+
+/*# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbIndlYnBhY2s6Ly9lZWpzLmVkaXRvckhvY3MvLi9hc3NldHMvc3JjL2VkaXRvci9ob2NzL2VkaXRvci1tb2RhbC9zdHlsZS5jc3MiXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6IkFBQUE7QUFDQTtBQUNBO0FBQ0E7O0FBRUE7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBOztBQUVBO0FBQ0E7QUFDQTs7QUFFQTtBQUNBO0FBQ0E7QUFDQTs7QUFFQTtBQUNBO0FBQ0E7QUFDQTs7O0FBR0E7QUFDQTs7QUFFQTtBQUNBOztBQUVBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7O0FBRUE7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTs7QUFFQTtBQUNBOztBQUVBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7O0FBRUE7QUFDQTtBQUNBOztBQUVBO0FBQ0E7QUFDQTs7QUFFQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTs7QUFFQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTs7QUFFQTtBQUNBOztBQUVBO0FBQ0EiLCJmaWxlIjoiZWUtZWRpdG9yLWhvY3MuMWJlMDZlNDEzZTVjM2U3NmZlZGMuZGlzdC5jc3MiLCJzb3VyY2VzQ29udGVudCI6WyIvKiAtLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tXG4gKiBFdmVudCBFc3ByZXNzbyB3aXRoRWRpdG9yTW9kYWwgU3R5bGVzaGVldFxuICogKGMpIDIwMTggRXZlbnQgRXNwcmVzc29cbiAqIC0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0qL1xuXG4uY29tcG9uZW50cy1tb2RhbF9fZnJhbWUuZWUtZWRpdG9yLW1vZGFsIHtcbiAgICBoZWlnaHQ6IDg1JTtcbiAgICBtYXgtaGVpZ2h0OiA4NSU7XG4gICAgbWF4LXdpZHRoOiA4NSU7XG4gICAgd2lkdGg6IDg1JTtcbn1cblxuLmVlLWVkaXRvci1tb2RhbCAuY29tcG9uZW50cy1tb2RhbF9fY29udGVudCB7XG4gICAgcGFkZGluZzogMDtcbn1cblxuLmVlLWVkaXRvci1tb2RhbCAuY29tcG9uZW50cy1tb2RhbF9faGVhZGVyIHtcbiAgICBtYXJnaW46IDAgMCAtMXB4O1xuICAgIHBhZGRpbmc6IDAgOHB4O1xufVxuXG4uZWUtZWRpdG9yLW1vZGFsIC5jb21wb25lbnRzLW1vZGFsX19oZWFkZXItaGVhZGluZyB7XG4gICAgZm9udC1zaXplOiAxLjVyZW07XG4gICAgbWFyZ2luLWxlZnQ6IDFyZW07XG59XG5cblxuLyogTWVkaWEgUXVlcmllcyBmb3Igc3BlY2lmaWMgc2NyZWVuIHNpemVzXG4gKiAtLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tKi9cblxuQG1lZGlhIG9ubHkgc2NyZWVuIGFuZCAobWF4LXdpZHRoOiAxOTIwcHgpIHtcbn1cblxuQG1lZGlhIG9ubHkgc2NyZWVuIGFuZCAobWF4LXdpZHRoOiAxNjAwcHgpIHtcbiAgICAuY29tcG9uZW50cy1tb2RhbF9fZnJhbWUuZWUtZWRpdG9yLW1vZGFsIHtcbiAgICAgICAgaGVpZ2h0OiA5MCU7XG4gICAgICAgIG1heC1oZWlnaHQ6IDkwJTtcbiAgICAgICAgbWF4LXdpZHRoOiA5MCU7XG4gICAgICAgIHdpZHRoOiA5MCU7XG4gICAgfVxufVxuXG5AbWVkaWEgb25seSBzY3JlZW4gYW5kIChtYXgtd2lkdGg6IDEzNjZweCkge1xuICAgIC5jb21wb25lbnRzLW1vZGFsX19mcmFtZS5lZS1lZGl0b3ItbW9kYWwge1xuICAgICAgICBoZWlnaHQ6IDk1JTtcbiAgICAgICAgbWF4LWhlaWdodDogOTUlO1xuICAgICAgICBtYXgtd2lkdGg6IDk1JTtcbiAgICAgICAgd2lkdGg6IDk1JTtcbiAgICB9XG59XG5cbkBtZWRpYSBvbmx5IHNjcmVlbiBhbmQgKG1heC13aWR0aDogMTI4MHB4KSB7XG59XG5cbkBtZWRpYSBvbmx5IHNjcmVlbiBhbmQgKG1heC13aWR0aDogMTAyNHB4KSB7XG4gICAgLmNvbXBvbmVudHMtbW9kYWxfX2ZyYW1lLmVlLWVkaXRvci1tb2RhbCB7XG4gICAgICAgIGhlaWdodDogMTAwJTtcbiAgICAgICAgbWF4LWhlaWdodDogMTAwJTtcbiAgICAgICAgbWF4LXdpZHRoOiAxMDAlO1xuICAgICAgICB3aWR0aDogMTAwJTtcbiAgICB9XG59XG5cbi8qIFdvcmRQcmVzcyBBZG1pbiBNZWRpYSBRdWVyeSBCcmVha3BvaW50OiBBdXRvLWZvbGRpbmcgb2YgdGhlIGFkbWluIG1lbnUgKi9cbkBtZWRpYSBvbmx5IHNjcmVlbiBhbmQgKG1heC13aWR0aDogOTYwcHgpIHtcbn1cblxuLyogV29yZFByZXNzIEFkbWluIE1lZGlhIFF1ZXJ5IEJyZWFrcG9pbnQ6IG9uZSBjb2x1bW4gb24gdGhlIHBvc3Qgd3JpdGUvZWRpdCBzY3JlZW4gKi9cbkBtZWRpYSBvbmx5IHNjcmVlbiBhbmQgKG1heC13aWR0aDogODUwcHgpIHtcbn1cblxuLyogV29yZFByZXNzIEFkbWluIE1lZGlhIFF1ZXJ5IEJyZWFrcG9pbnQ6IFRhYmxldCAqL1xuQG1lZGlhIHNjcmVlbiBhbmQgKCBtYXgtd2lkdGg6IDc4MnB4ICkge1xuICAgIC5lZS1lZGl0b3ItbW9kYWwgLmNvbXBvbmVudHMtbW9kYWxfX2hlYWRlci1oZWFkaW5nIHtcbiAgICAgICAgZm9udC1zaXplOiAxLjI1cmVtO1xuICAgICAgICBmb250LXdlaWdodDogYm9sZDtcbiAgICB9XG59XG5cbi8qIFdvcmRQcmVzcyBBZG1pbiBNZWRpYSBRdWVyeSBCcmVha3BvaW50OiBTbWFydHBob25lICovXG5AbWVkaWEgc2NyZWVuIGFuZCAobWF4LXdpZHRoOiA2MDBweCkge1xuICAgIC5lZS1lZGl0b3ItbW9kYWwgLmNvbXBvbmVudHMtbW9kYWxfX2hlYWRlci1oZWFkaW5nIHtcbiAgICAgICAgZm9udC1zaXplOiAxcmVtO1xuICAgICAgICBmb250LXdlaWdodDogYm9sZDtcbiAgICB9XG59XG5cbkBtZWRpYSBvbmx5IHNjcmVlbiBhbmQgKG1heC13aWR0aDogNDgwcHgpIHtcbn1cblxuQG1lZGlhIG9ubHkgc2NyZWVuIGFuZCAobWF4LXdpZHRoOiAzNjBweCkge1xufVxuXG4iXSwic291cmNlUm9vdCI6IiJ9*/
