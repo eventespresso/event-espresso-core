@@ -23,6 +23,7 @@
     padding: var(--ee-padding-tiny) var(--ee-padding-small) var(--ee-padding-smaller);
     text-decoration: none;
     text-align: center;
+    text-shadow: var(--ee-text-shadow-inset-light);
     top: -1px;
     vertical-align: middle;
 }
