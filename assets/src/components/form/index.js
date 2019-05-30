@@ -6,5 +6,5 @@ export { FormInput } from './inputs/form-input';
 export { HiddenInput } from './inputs/hidden-input';
 export { InlineEditInput } from './inputs/inline-edit-input';
 export { InputLabel } from './inputs/base/input-label';
-export { default as twoColumnAdminFormLayout } from './layouts/two-column-admin';
-export { default as validations } from './validations';
+export twoColumnAdminFormLayout from './layouts/two-column-admin';
+export validations from './validations';
