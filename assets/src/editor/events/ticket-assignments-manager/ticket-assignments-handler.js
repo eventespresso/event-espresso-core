@@ -29,7 +29,6 @@ export const processChanges = (
 			( date ) => {
 				return date.id === dateID ||
 					date.id === parseInt( dateID );
-
 			}
 		);
 		if ( isModelEntityOfModel( dateEntity, 'datetime' ) ) {
@@ -47,7 +46,6 @@ export const processChanges = (
 			( date ) => {
 				return date.id === dateID ||
 					date.id === parseInt( dateID );
-
 			}
 		);
 		if ( isModelEntityOfModel( dateEntity, 'datetime' ) ) {
@@ -249,8 +247,6 @@ export const removedCount = ( removed, date = null, ticket = null ) => {
 /**
  * @function
  * @param {Object} prevState
- * @param {Object} date
- * @param {Object} ticket
  * @return {Object} updated state
  */
 const cleanState = ( prevState ) => {

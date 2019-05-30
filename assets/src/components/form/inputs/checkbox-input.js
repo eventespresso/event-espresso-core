@@ -74,7 +74,7 @@ export class CheckboxInput extends Component {
 		) {
 			const checked = this.state.checked;
 			checked[ event.target.id ] = event.target.checked;
-			this.setState( { checked: checked } );
+			this.setState( { checked } );
 		}
 	};
 

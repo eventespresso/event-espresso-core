@@ -186,6 +186,10 @@ class TicketPriceCalculatorForm extends Component {
 		];
 	};
 
+	/**
+	 * @function
+	 * @return {number|string} priceType ID
+	 */
 	getDefaultPriceTypeId = () => {
 		return first(
 			filter(
@@ -202,6 +206,7 @@ class TicketPriceCalculatorForm extends Component {
 	 * @param {Array} values
 	 * @param {Object} price
 	 * @param {Array} priceTypeOptions
+	 * @param {boolean} lastRow
 	 * @return {Object} rendered price modifier form row
 	 */
 	priceModifierRow = (
@@ -374,6 +379,16 @@ class TicketPriceCalculatorForm extends Component {
 		];
 	};
 
+	/**
+	 * @function
+	 * @param {Object} priceType
+	 * @param {Object} price
+	 * @param {Object} ticket
+	 * @param {string} prefix
+	 * @param {Array} values
+	 * @param {boolean} lastRow
+	 * @return {Object} rendered price modifier form row
+	 */
 	getModifierActionButtons = (
 		priceType,
 		price,
@@ -440,7 +455,7 @@ class TicketPriceCalculatorForm extends Component {
 	 * @param {Object} ticket
 	 * @param {string} ticketPrefix
 	 * @param {Array} values
-	 * @param setReverseCalculate
+	 * @param {Function} setReverseCalculate
 	 * @return {Object} rendered form footer
 	 */
 	ticketTotalRow = ( ticket, ticketPrefix, values, setReverseCalculate ) => {

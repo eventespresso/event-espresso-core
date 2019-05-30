@@ -101,13 +101,10 @@ export const ticketEntityFormInputs = (
 				htmlId={ `${ prefix }-price` }
 				helpText={ sprintf(
 					__(
-						'The amount of money charged for this ticket. Leave blank' +
-						' to make this ticket selection free.%s' +
-						'Click the button after the input to use the Ticket' +
-						' Price Calculator (warning: will close this edit form)',
-						'event_espresso',
+						'The amount of money charged for this ticket. Leave blank to make this ticket selection free.%sClick the button after the input to use the Ticket Price Calculator (warning: will close this edit form)',
+						'event_espresso'
 					),
-					'\n'
+					' \n'
 				) }
 				inputWidth={ 3 }
 				min={ 0 }
@@ -273,12 +270,7 @@ export const ticketEntityFormInputs = (
 				htmlId={ `${ prefix }-uses` }
 				helpText={ sprintf(
 					__(
-						'Controls the total number of times this ticket' +
-						' can be used, regardless of the number of' +
-						' dates it is assigned to.%sExample: A ticket might' +
-						' have access to 4 different dates, but setting this' +
-						' field to 2 would mean that the ticket could only' +
-						' be used twice. Leave blank for no limit.',
+						'Controls the total number of times this ticket can be used, regardless of the number of dates it is assigned to.%sExample: A ticket might have access to 4 different dates, but setting this field to 2 would mean that the ticket could only be used twice. Leave blank for no limit.',
 						'event_espresso',
 					),
 					'\n'
