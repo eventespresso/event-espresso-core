@@ -141,7 +141,7 @@ class EditorTicketGridItem extends Component {
 				/>
 				<EntityLock
 					entity={ ticket }
-					isLocked={ ticket.locked }
+					isLocked={ !! ticket.locked }
 					toggleEntityLock={ this.toggleLock }
 					position={ 'top right' }
 				/>

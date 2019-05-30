@@ -94,7 +94,8 @@ class EditorDateDetails extends Component {
 	 * @return {string}    venue name
 	 */
 	venueName = ( eventDate, showVenue ) => {
-		return showVenue && eventDate.venue ?
+		const link = 'http://local.wordpress.test/wp-admin/admin.php?page=espresso_venues&action=edit&post=871&edit_nonce=32f75831c2&return=edit';
+		return showVenue ?
 			(
 				<h3 className="ee-editor-date-location-div">
 					<Tooltip
@@ -104,14 +105,14 @@ class EditorDateDetails extends Component {
 						) }
 					>
 						<a
-							href={ eventDate.edit_venue_link }
+							href={ link }
 							className="ee-editor-date-edit-venue-link"
 							target="_blank"
 							rel="noopener noreferrer"
 						>
-							<Dashicon icon="location" size={ 16 } />
+							<Dashicon icon="admin-home" size={ 16 } />
 							<span className="ee-editor-date-venue-name-span">
-								{ eventDate.venue }
+								{ 'Green Water Resort' }
 							</span>
 							<Dashicon icon="external" size={ 12 } />
 						</a>
@@ -132,17 +133,17 @@ class EditorDateDetails extends Component {
 	dateSoldReservedCapacity = ( event, eventDate ) => {
 		const details = [
 			{
-				id: `event-date-sold-${ eventDate.id }`,
+				id: 'event-date-sold',
 				label: __( 'sold', 'event_espresso' ),
 				value: eventDate.sold || 0,
 			},
 			{
-				id: `event-date-reserved-${ eventDate.id }`,
+				id: 'event-date-reserved',
 				label: __( 'reserved', 'event_espresso' ),
 				value: eventDate.reserved || 0,
 			},
 			{
-				id: `event-date-capacity-${ eventDate.id }`,
+				id: 'event-date-capacity',
 				label: __( 'capacity', 'event_espresso' ),
 				value: eventDate.regLimit || Infinity,
 				editable: {
@@ -154,7 +155,7 @@ class EditorDateDetails extends Component {
 				},
 			},
 			{
-				id: `event-date-registrants-${ eventDate.id }`,
+				id: 'event-date-registrants',
 				htmlClass: 'has-tooltip',
 				label: __( 'registrants', 'event_espresso' ),
 				value: this.getDatetimeRegistrationsLink( event, eventDate ),
@@ -242,13 +243,18 @@ class EditorDateDetails extends Component {
 			isModelEntityOfModel( eventDate, DATETIME ) &&
 			eventDate.regLimit !== capacity
 		) {
+<<<<<<< HEAD
 			eventDate.regLimit = capacity;
+=======
+			eventDate.regLimit = parseInt( capacity ) ? capacity : null;
+			return updateEventDate( event, eventDate );
+>>>>>>> cd3b802... fix detail classes and venue (hardcoded name atm)
 		}
 	};
 
 	render() {
 		const { event, eventDate } = this.props;
-		const { showDesc = 'excerpt', showVenue } = this.props;
+		const { showDesc = 'excerpt', showVenue = true } = this.props;
 		return isModelEntityOfModel( eventDate, DATETIME ) ? (
 			<div className={ 'ee-editor-date-details-wrapper-div' }>
 				{ this.dateName( eventDate ) }
