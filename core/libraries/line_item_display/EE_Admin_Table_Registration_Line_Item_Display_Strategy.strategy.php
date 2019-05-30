@@ -51,10 +51,15 @@ class EE_Admin_Table_Registration_Line_Item_Display_Strategy extends EE_Admin_Ta
     private function shouldSkipLineItemRow($registration, $line_item_object, $parent_line_item_object)
     {
         return ! $registration instanceof EE_Registration
-            || ( $line_item_object instanceof EE_Ticket && $line_item_object->ID() !== $registration->ticket_ID() )
-            || (
-                $parent_line_item_object instanceof EE_Ticket
-                && $parent_line_item_object->ID() !== $registration->ticket_ID()
+               || ($line_item_object instanceof EE_Ticket && $line_item_object->ID() !== $registration->ticket_ID())
+               || ($line_item_object instanceof EE_Event && $line_item_object->ID() !== $registration->event_ID())
+               || (
+                   $parent_line_item_object instanceof EE_Ticket
+                   && $parent_line_item_object->ID() !== $registration->ticket_ID()
+               )
+               || (
+                   $parent_line_item_object instanceof EE_Event
+                   && $parent_line_item_object->ID() !== $registration->event_ID()
                );
     }
 
