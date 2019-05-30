@@ -1,8 +1,8 @@
 /**
  * External dependencies
  */
-import { Button } from '@wordpress/components';
 import classNames from 'classnames';
+import PropTypes from 'prop-types';
 
 /**
  * Internal imports
@@ -11,7 +11,7 @@ import './style.css';
 import { EspressoIcon } from '../';
 
 /**
- * FancyButton
+ * EspressoButton
  *  WP Button wrapper for adding styles
  *
  * @class
@@ -23,38 +23,28 @@ import { EspressoIcon } from '../';
  * @param {string} htmlClass
  * @param {Object} buttonProps
  */
-const FancyButton = ( {
+const EspressoButton = ( {
 	buttonText,
 	icon,
 	onClick,
-	size = 'medium',
-	style = 'wp-primary',
-	htmlClass = '',
+	size,
+	style,
+	htmlClass,
 	...buttonProps
 } ) => {
-	const isWPStyle = style === 'wp-primary' || style === 'wp-default';
-	let iconSize = 24;
-	let sizeClass = {
-		'ee-medium-button': true,
-		'ee-tiny-button': size === 'tiny',
-		'ee-small-button': size === 'small',
-		'ee-big-button': size === 'big',
-		'ee-huge-button': size === 'huge',
-		'is-small': ( size === 'tiny' || size === 'small' ) && isWPStyle,
-		'is-large': ( size === 'big' || size === 'huge' ) && isWPStyle,
-	};
 	htmlClass = classNames( {
-		'ee-fancy-button': true,
-		'ee-form-button': true,
 		[ htmlClass ] : htmlClass,
-		'ee-button-wp': isWPStyle,
-		'is-button': isWPStyle,
-		'is-default': style === 'wp-default',
-		'is-primary': style === 'wp-primary',
-		'woosh': style === 'woosh',
-		'twotone': style === 'twotone',
-		...sizeClass
+		'esprs-button': true,
+		'esprs-btn-accent': style === 'accent',
+		'esprs-btn-default': style === 'default',
+		'esprs-btn-primary': style === 'primary',
+		'esprs-btn-secondary': style === 'secondary',
+		'esprs-btn-tiny': size === 'tiny',
+		'esprs-btn-small': size === 'small',
+		'esprs-btn-big': size === 'big',
+		'esprs-btn-huge': size === 'huge',
 	} );
+	let iconSize = 24;
 	switch ( size ) {
 		case 'tiny':
 			iconSize = 18;
@@ -79,10 +69,26 @@ const FancyButton = ( {
 		htmlClass += ' ee-noIcon';
 	}
 	return (
-		<Button className={ htmlClass } onClick={ onClick } { ...buttonProps }>
+		<button { ...buttonProps } className={ htmlClass } onClick={ onClick }>
 			<span className="text-wrap">{ buttonText }</span>{ icon }
-		</Button>
+		</button>
 	);
 };
 
-export default FancyButton;
+EspressoButton.propTypes = {
+	buttonText: PropTypes.string.isRequired,
+	onClick: PropTypes.func.isRequired,
+	icon: PropTypes.string,
+	size: PropTypes.string,
+	style: PropTypes.string,
+	htmlClass: PropTypes.string,
+};
+
+EspressoButton.defaultProps = {
+	icon: '',
+	size: 'default',
+	style: 'default',
+	htmlClass: '',
+};
+
+export default EspressoButton;
