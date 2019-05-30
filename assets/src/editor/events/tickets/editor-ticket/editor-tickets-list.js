@@ -1,6 +1,7 @@
 /**
  * External dependencies
  */
+import { find } from 'lodash';
 import { compose, createHigherOrderComponent } from '@wordpress/compose';
 import { withDispatch } from '@wordpress/data';
 import { useState, useMemo, useEffect } from '@wordpress/element';
@@ -9,8 +10,7 @@ import {
 	FancyButton,
 	twoColumnAdminFormLayout,
 } from '@eventespresso/components';
-import { __ } from '@eventespresso/i18n';
-import { find } from 'lodash';
+import { __, _x, sprintf } from '@eventespresso/i18n';
 
 /**
  * Internal dependencies
@@ -63,6 +63,7 @@ const EditorTicketsList = ( {
 	return (
 		<FormWrapper>
 			<EntityList
+				{ ...otherProps }
 				entities={ entities }
 				allDates={ allDates }
 				EntityGridView={ EditorTicketsGridView }
@@ -74,7 +75,14 @@ const EditorTicketsList = ( {
 						'event_espresso'
 					)
 				}
-				{ ...otherProps }
+				loadingNotice={ sprintf(
+					_x(
+						'loading available tickets%s',
+						'loading available tickets...',
+						'event_espresso'
+					),
+					String.fromCharCode( 8230 )
+				) }
 			/>
 			<FormSaveCancelButtons submitButton={ addNewTicketButton } />
 		</FormWrapper>

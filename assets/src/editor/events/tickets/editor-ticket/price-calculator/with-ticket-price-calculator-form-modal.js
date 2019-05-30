@@ -96,7 +96,7 @@ const TicketPriceCalculatorFormModal = withEditorModal( {
 	);
 } );
 
-/**
+/*
  * Enhanced TicketPriceCalculatorForm with Modal
  * withSelectTicketPricesAndPriceTypes
  */

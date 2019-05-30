@@ -173,9 +173,8 @@ const getPriceModifiersFromFormData = ( ticketId, formData ) => {
  * ticket price calculator form.
  *
  * @param {BaseEntity[]} priceTypes  An array of price type BaseEntity objects
- * @param {boolean} priceTypesLoaded  Whether the price types are loaded.
  * @param {number}  delay  A delay to use for debouncing the calculated total.
- * @return {Decorator}  A react-final-form decorator.
+ * @return {Object}  decorator, mutators, and callbacks for react-final-form
  */
 const useTicketPriceCalculatorFormDecorator = ( priceTypes, delay = 250 ) => {
 	const {

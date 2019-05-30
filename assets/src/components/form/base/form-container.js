@@ -8,7 +8,6 @@ import './form-container.css';
  */
 import classNames from 'classnames';
 
-
 /**
  * FormContainer is a wrapper that hides the form while it is loading,
  * then fades it in once loading is complete
