@@ -1,7 +1,21 @@
 /* CONSTANTS */
 const REGEX_HEX = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i;
 const REGEX_HEX_SHORTHAND = /^#?([a-f\d])([a-f\d])([a-f\d])$/i;
-const GREYSCALE_LEVELS = 12;
+// how many shades of grey we want
+const GREYSCALE_LEVELS = 15;
+// as we approach the background color for the theme,
+// we want to reduce the amount of variation between greys
+// in order to allow for more subtle variations
+// which can have a huge affect on appearances.
+// this number determines when to reduce
+// the difference between the shades of grey
+const GREYSCALE_HALF_STEPS = 3;
+// 0.2122307574140552 is the color luminance for 7f7f7f grey
+// which is the exact middle of the hex color code spectrum
+// and although .5 is the middle of the luminance scale
+// it seemed to me that only really bright colors had values
+// above .25 or so, which is why I'm using this value
+const MID_LUMINANCE = .25;
 
 /**
  * converts RGB color code to HEX color code
@@ -117,14 +131,9 @@ const findContrastColor = ( color, bw = false, level = 'AAA' ) => {
 	const modRgb = { r: 1, g: 1, b: 1 };
 	const colorLuminance = relativeLuminance( color );
 	if ( bw ) {
-		return colorLuminance < 0.2122307574140552 ? '#FFFFFF' : '#000000';
+		return colorLuminance < MID_LUMINANCE ? '#FFFFFF' : '#000000';
 	}
-	// 0.2122307574140552 is the color luminance for 7f7f7f grey
-	// which is the exact middle of the hex color code spectrum
-	// and although .5 is the middle of the luminance scale
-	// it seemed to me that only really bright colors had values
-	// above .25 or so, which is why I'm using this value
-	const add = colorLuminance < 0.2122307574140552;
+	const add = colorLuminance < MID_LUMINANCE;
 	let color2 = modifyRgb( color, modRgb, add );
 	// keep modifying the color until score matches desired level
 	// OR we hit pure black or pure white
@@ -150,9 +159,12 @@ const calculateBwDifference = ( black, white ) => {
 	// dark colors have low rgb values like 25 (or whatever)
 	// whereas whites have higher rgb values like 255
 	// so we'll subtract black from white to get 230 (or whatever)
-	// and then divide that by 11 to get a "step" value of 23 (or whatever)
+	// and then divide that by the number of greyscale levels
+	// to get a "step" value of 23 (or whatever)
 	// which is what we will use to incrementally generate our greys
-	return Math.round( ( white - black ) / ( GREYSCALE_LEVELS + 1 ) );
+	return Math.round(
+		( white - black ) / ( GREYSCALE_LEVELS - GREYSCALE_HALF_STEPS )
+	);
 };
 
 /**
@@ -178,7 +190,14 @@ const generateGreyScale = ( black, white, darkTheme = false ) => {
 	let rgbGrey = darkTheme ? [ blackRgb ] : [ whiteRgb ];
 	// add 10 steps towards background color
 	for ( let x = 0; x < GREYSCALE_LEVELS; x++ ) {
-		rgbGrey.push( modifyRgb( rgbGrey[ x ], rgbMod, darkTheme ) );
+		rgbGrey.push(
+			modifyRgb(
+				rgbGrey[ x ],
+				rgbMod,
+				darkTheme,
+				x < GREYSCALE_HALF_STEPS + 1
+			)
+		);
 	}
 	// flip the array
 	rgbGrey = rgbGrey.reverse();
@@ -194,11 +213,17 @@ const generateGreyScale = ( black, white, darkTheme = false ) => {
  * adds or subtracts the values of one rgb object to or from the other
  *
  * @param {Object} color  	the rgb color object to be modified
- * @param {Object} modRgb  	the rgb values to add or subtract
+ * @param {Object} rgbMod  	the rgb values to add or subtract
  * @param {boolean} add 	whether to add colors or subtract them
+ * @param {boolean} halfStep 	if true, applies half of modRgb value
  * @return {Object} rgb    ex: { r: 255, g: 255, b: 255 }
  */
-const modifyRgb = ( color, modRgb, add = false ) => {
+const modifyRgb = ( color, rgbMod, add = false, halfStep = false ) => {
+	const modRgb = halfStep ? {
+		r: Math.round( rgbMod.r / GREYSCALE_HALF_STEPS ),
+		g: Math.round( rgbMod.g / GREYSCALE_HALF_STEPS ),
+		b: Math.round( rgbMod.b / GREYSCALE_HALF_STEPS ),
+	} : rgbMod;
 	color = add ? {
 		r: color.r + modRgb.r,
 		g: color.g + modRgb.g,
@@ -285,6 +310,7 @@ const difference = ( color1, color2 ) => {
 };
 
 module.exports = {
+	GREYSCALE_LEVELS,
 	generateHighContrast,
 	findContrastColor,
 	generateGreyScale,

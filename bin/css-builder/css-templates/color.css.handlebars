@@ -1,8 +1,21 @@
+{{#if isBW}}
 
     /** {{colorLabel}} **/
     --ee-color-{{colorName}}: {{colorHex}};
+    --ee-text-on-{{colorName}}: {{textContrastColorHex}};
+
+{{else}}
+
+    /** {{colorLabel}} **/
+    --ee-color-{{colorName}}: {{colorHex}};
+    --ee-color-{{colorName}}-super-high-contrast: {{superHighContrastColorHex}};
     --ee-color-{{colorName}}-high-contrast: {{highContrastColorHex}};
     --ee-color-{{colorName}}-low-contrast: {{lowContrastColorHex}};
+    --ee-color-{{colorName}}-super-low-contrast: {{superLowContrastColorHex}};
     --ee-text-on-{{colorName}}: {{textContrastColorHex}};
+    --ee-text-on-{{colorName}}-super-high-contrast: {{textSuperHighContrastColorHex}};
     --ee-text-on-{{colorName}}-high-contrast: {{textHighContrastColorHex}};
     --ee-text-on-{{colorName}}-low-contrast: {{textLowContrastColorHex}};
+    --ee-text-on-{{colorName}}-super-low-contrast: {{textSuperLowContrastColorHex}};
+
+{{/if}}
