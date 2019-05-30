@@ -7,7 +7,7 @@ import { Component, Fragment } from '@wordpress/element';
 import { applyFilters } from '@wordpress/hooks';
 import { DropDownMenu, IconMenuItem } from '@eventespresso/components';
 import { __, sprintf, _x } from '@eventespresso/i18n';
-import { withEditor } from '@eventespresso/higher-order-components';
+import { withEditor } from '@eventespresso/editor-hocs';
 import { dateTimeModel } from '@eventespresso/model';
 import { isModelEntityOfModel } from '@eventespresso/validators';
 

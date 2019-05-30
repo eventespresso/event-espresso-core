@@ -9,7 +9,7 @@ import {
 	FancyButton,
 	twoColumnAdminFormLayout,
 } from '@eventespresso/components';
-import { withEditor } from '@eventespresso/higher-order-components';
+import { withEditor } from '@eventespresso/editor-hocs';
 import { __, _x, sprintf } from '@eventespresso/i18n';
 
 /**

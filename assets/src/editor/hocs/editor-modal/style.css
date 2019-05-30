@@ -1,0 +1,93 @@
+/* -------------------------------------------------------------------------
+ * Event Espresso withEditorModal Stylesheet
+ * (c) 2018 Event Espresso
+ * -------------------------------------------------------------------------*/
+
+.components-modal__frame.ee-editor-modal {
+    height: 85%;
+    max-height: 85%;
+    max-width: 85%;
+    width: 85%;
+}
+
+.ee-editor-modal .components-modal__content {
+    padding: 0;
+}
+
+.ee-editor-modal .components-modal__header {
+    margin: 0 0 -1px;
+    padding: 0 8px;
+}
+
+.ee-editor-modal .components-modal__header-heading {
+    font-size: 1.5rem;
+    margin-left: 1rem;
+}
+
+
+/* Media Queries for specific screen sizes
+ * -------------------------------------------------------------------------*/
+
+@media only screen and (max-width: 1920px) {
+}
+
+@media only screen and (max-width: 1600px) {
+    .components-modal__frame.ee-editor-modal {
+        height: 90%;
+        max-height: 90%;
+        max-width: 90%;
+        width: 90%;
+    }
+}
+
+@media only screen and (max-width: 1366px) {
+    .components-modal__frame.ee-editor-modal {
+        height: 95%;
+        max-height: 95%;
+        max-width: 95%;
+        width: 95%;
+    }
+}
+
+@media only screen and (max-width: 1280px) {
+}
+
+@media only screen and (max-width: 1024px) {
+    .components-modal__frame.ee-editor-modal {
+        height: 100%;
+        max-height: 100%;
+        max-width: 100%;
+        width: 100%;
+    }
+}
+
+/* WordPress Admin Media Query Breakpoint: Auto-folding of the admin menu */
+@media only screen and (max-width: 960px) {
+}
+
+/* WordPress Admin Media Query Breakpoint: one column on the post write/edit screen */
+@media only screen and (max-width: 850px) {
+}
+
+/* WordPress Admin Media Query Breakpoint: Tablet */
+@media screen and ( max-width: 782px ) {
+    .ee-editor-modal .components-modal__header-heading {
+        font-size: 1.25rem;
+        font-weight: bold;
+    }
+}
+
+/* WordPress Admin Media Query Breakpoint: Smartphone */
+@media screen and (max-width: 600px) {
+    .ee-editor-modal .components-modal__header-heading {
+        font-size: 1rem;
+        font-weight: bold;
+    }
+}
+
+@media only screen and (max-width: 480px) {
+}
+
+@media only screen and (max-width: 360px) {
+}
+

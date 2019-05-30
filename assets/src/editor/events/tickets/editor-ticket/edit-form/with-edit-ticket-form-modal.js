@@ -2,7 +2,7 @@
  * External imports
  */
 import { __ } from '@eventespresso/i18n';
-import { withEditorModal } from '@eventespresso/higher-order-components';
+import { withEditorModal } from '@eventespresso/editor-hocs';
 import { useCallback, Fragment, useState } from '@wordpress/element';
 import { createHigherOrderComponent } from '@wordpress/compose';
 
