@@ -30,7 +30,7 @@ export class FormErrorBoundary extends Component {
 	 */
 	componentDidCatch( error, info ) {
 		this.setState( {
-			error: error,
+			error,
 			errorInfo: info,
 		} );
 	}

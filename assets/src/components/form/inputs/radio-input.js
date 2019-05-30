@@ -70,7 +70,7 @@ export class RadioInput extends Component {
 				false
 			);
 			checked[ event.target.id ] = event.target.checked;
-			this.setState( { checked: checked } );
+			this.setState( { checked } );
 		}
 	};
 
