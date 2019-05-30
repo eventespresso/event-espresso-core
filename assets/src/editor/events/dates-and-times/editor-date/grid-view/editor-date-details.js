@@ -243,12 +243,7 @@ class EditorDateDetails extends Component {
 			isModelEntityOfModel( eventDate, DATETIME ) &&
 			eventDate.regLimit !== capacity
 		) {
-<<<<<<< HEAD
 			eventDate.regLimit = capacity;
-=======
-			eventDate.regLimit = parseInt( capacity ) ? capacity : null;
-			return updateEventDate( event, eventDate );
->>>>>>> cd3b802... fix detail classes and venue (hardcoded name atm)
 		}
 	};
 
