@@ -21,7 +21,7 @@ import { mockStateForTests } from './fixtures';
 /**
  * External dependencies
  */
-import { select } from '@wordpress/data';
+import { registerStore, select } from '@wordpress/data';
 import { EventSchema, EventFactory } from '@test/fixtures';
 
 describe( 'testing getters', () => {
@@ -57,6 +57,8 @@ describe( 'testing getters', () => {
 } );
 describe( 'testing isRequesting and hasResolved methods', () => {
 	beforeAll( () => {
+		// we don't need original store here.
+		registerStore( 'core/data', { selectors: {}, reducer: () => {} } );
 		select( 'core/data' ).isResolving = jest.fn().mockReturnValue( false );
 		select( 'core/data' ).hasFinishedResolution = jest.fn().mockReturnValue(
 			false
