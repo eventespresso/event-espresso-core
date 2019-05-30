@@ -3,8 +3,12 @@
  * © 2018 Event Espresso
  * ------------------------------------------------------------------------- */
 
+.ee-editor-entity-list {
+    width: 101.3%;
+}
+
 .ee-entity-list-no-results {
-    background: var(--ee-not-quite-white);
+    background: var(--ee-color-grey-11);
     font-size: 1rem;
     font-weight: normal;
     padding: 4rem 2rem;

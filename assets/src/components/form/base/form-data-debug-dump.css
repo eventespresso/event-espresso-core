@@ -5,7 +5,7 @@
 
 .ee-form-data-dump-div {
     margin: 0;
-    padding: 2em;
+    padding: var(--ee-padding-default);
 }
 
 .ee-form-data-dump-div h3 {
@@ -13,11 +13,11 @@
 }
 
 .ee-form-data-dump-div pre {
-    border-radius: 3px;
-    color: var(--ee-lite-green);
-    background-color: var(--ee-indigo);
-    line-height: 1.5;
-    padding: 1.5em 2em;
+    border-radius: var(--ee-border-radius-small);
+    color: var(--ee-color-light-green);
+    background-color: var(--ee-color-indigo);
+    line-height: var(--ee-line-height-modifier);
+    padding: var(--ee-padding-small) var(--ee-padding-default);
     position: relative;
     top: -1px;
     white-space: pre-wrap;
@@ -28,13 +28,13 @@
 @media only screen and (max-width: 480px) {
     .ee-form-data-dump-div,
     .ee-form-data-dump-div pre {
-        padding: 1em;
+        padding: var(--ee-padding-smaller);
     }
 }
 
 @media only screen and (max-width: 360px) {
     .ee-form-data-dump-div,
     .ee-form-data-dump-div pre {
-        padding: 1em;
+        padding: var(--ee-padding-tiny);
     }
 }

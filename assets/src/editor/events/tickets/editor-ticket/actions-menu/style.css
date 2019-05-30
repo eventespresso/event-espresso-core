@@ -14,19 +14,19 @@
 }
 
 .ee-editor-ticket-actions-menu .components-dropdown-menu__menu {
-    background: var(--ee-white);
+    background: var(--ee-background-color);
     box-sizing: border-box;
-    padding: 18px 18px 24px;
+    padding: var(--ee-padding-smaller) var(--ee-padding-smaller) var(--ee-padding-small);
 }
 
 .ee-editor-ticket-actions-menu .components-dropdown-menu__menu .components-dropdown-menu__menu-item {
-    color: var(--ee-grey);
-    padding: 8px 32px 8px 12px;
+    color: var(--ee-default-text-color);
+    padding: var(--ee-padding-tiny) var(--ee-padding-default) var(--ee-padding-tiny) var(--ee-padding-smaller);
     white-space: nowrap;
 }
 
 .ee-editor-ticket-actions-menu .components-dropdown-menu__popover .components-popover__content {
-    box-shadow: 0 3px 5px rgba(0, 0, 0, .5), 0 0 20px 10px rgba(0, 0, 0, .1);
+    box-shadow: var(--ee-box-shadow-small);
     width: auto;
 }
 
@@ -36,21 +36,21 @@
 
 .ee-editor-ticket-actions-menu .components-dropdown-menu .components-dropdown-menu__toggle {
     border: none;
-    color: var(--ee-grey);
-    padding: 8px 4px;
+    color: var(--ee-default-text-color);
+    padding: var(--ee-padding-tiny) var(--ee-padding-micro);
 }
 .ee-editor-ticket-actions-menu .components-dropdown-menu .components-dropdown-menu__toggle:hover,
 .ee-editor-ticket-actions-menu .components-dropdown-menu .components-dropdown-menu__toggle:not(:disabled):not([aria-disabled="true"]):not(.is-default):hover {
     border: none;
-    box-shadow: inset 0 0 0 1px var(--ee-off-white), inset 0 0 0 2px var(--ee-white), 0 1px 1px rgba(25, 30, 35, 0.2);
+    box-shadow: var(--ee-box-shadow-wp-icon-btn-hover);
 }
 .ee-editor-ticket-actions-menu .components-dropdown-menu .components-dropdown-menu__toggle:hover,
 .ee-editor-ticket-actions-menu .components-dropdown-menu .components-dropdown-menu__toggle:not(:disabled):not([aria-disabled="true"]):not(.is-default):hover {
-    color: var(--ee-blue) !important;
+    color: var(--ee-color-primary) !important;
 }
 .ee-editor-ticket-actions-menu .components-dropdown-menu .components-dropdown-menu__toggle:focus {
-    color: var(--ee-black);
-    box-shadow: inset 0 0 0 1px var(--ee-grey), inset 0 0 0 2px var(--ee-white);
+    color: var(--ee-color-black);
+    box-shadow: var(--ee-box-shadow-wp-icon-btn-focus);
     outline: 2px solid transparent;
     outline-offset: -2px;
 }

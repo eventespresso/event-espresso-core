@@ -13,7 +13,7 @@
 /* table rows (div) */
 .ee-editor-ticket-list-view-div {
     margin: 0 0 1px;
-    border: 1px solid var(--ee-white);
+    border: 1px solid var(--ee-color-white);
 }
 
 /* headers row */
@@ -24,14 +24,14 @@
 
 /* zebra striping */
 .ee-tickets-list-list-view > div:nth-of-type(even) {
-    background: var(--ee-not-quite-white);
-    border: 1px solid var(--ee-not-quite-white);
+    background: var(--ee-color-grey-11);
+    border: 1px solid var(--ee-color-grey-11);
 }
 
 /* row highlighting */
 .ee-tickets-list-list-view > div:hover {
-    background: var(--ee-near-white);
-    border: 1px solid var(--ee-near-white);
+    /*background: var(--ee-color-grey-11);*/
+    border: 1px solid var(--ee-color-grey-10);
 }
 
 /* table rows (inner) */
@@ -129,14 +129,46 @@
 }
 
 
-/* Media Queries for smaller screens
+
+
+/* Media Queries for specific screen sizes
  * -------------------------------------------------------------------------*/
 
-@media only screen and (max-width: 1600px) {
-
+@media only screen and (max-width: 1920px) {
 }
 
-@media only screen and (max-width: 1279px) {
+@media only screen and (max-width: 1600px) {
+}
+
+@media only screen and (max-width: 1366px) {
+}
+
+@media only screen and (max-width: 1280px) {
+    .ee-editor-ticket-list-items {
+        flex-flow: row wrap;
+    }
+}
+
+@media only screen and (max-width: 1024px) {
+}
+
+/* WordPress Admin Media Query Breakpoint: Auto-folding of the admin menu */
+@media only screen and (max-width: 960px) {
+}
+
+/* WordPress Admin Media Query Breakpoint: one column on the post write/edit screen */
+@media only screen and (max-width: 850px) {
+}
+
+/* WordPress Admin Media Query Breakpoint: Tablet */
+@media screen and ( max-width: 782px ) {
+}
+
+/* WordPress Admin Media Query Breakpoint: Smartphone */
+@media screen and (max-width: 600px) {
+}
+
+@media only screen and (max-width: 480px) {
 
     .ee-tickets-list-list-view {
         display: flex;
@@ -165,7 +197,7 @@
     /* table rows (inner) */
     .ee-editor-ticket-list-items {
         flex-flow: column nowrap;
-        border: 1px solid var(--ee-grey-white);
+        border: 1px solid var(--ee-color-grey-10);
     }
 
     /* table cells */
@@ -183,7 +215,7 @@
 
     /* row level labels */
     .ee-ticket-list-item-label {
-        color: var(--ee-grey);
+        color: var(--ee-default-text-color);
         display: inline-block;
         font-size: 13px;
         padding: 0 10px 0 0;
@@ -202,7 +234,7 @@
 
     /* status bar */
     .ee-editor-ticket-list-items > div:nth-of-type(1) {
-        color: var(--ee-white) !important;
+        color: var(--ee-color-white) !important;
         padding: 10px;
         width: auto;
     }
@@ -229,20 +261,7 @@
 
 }
 
-@media only screen and (max-width: 1024px) {
-}
-
-@media only screen and (max-width: 768px) {
-}
-
-@media only screen and (max-width: 600px) and (min-width: 481px) {
-}
-
-@media only screen and (max-width: 540px) and (min-width: 481px) {
-}
-
-@media only screen and (max-width: 480px) {
-
+@media only screen and (max-width: 360px) {
     .ee-editor-ticket-list-view-div {
         min-width: 240px;
         width: 100%;
@@ -251,30 +270,4 @@
     .ee-tickets-list-list-view {
         justify-content: center;
     }
-}
-
-@media only screen and (max-width: 360px) {
-}
-
-@media only screen and (max-width: 320px) {
-}
-
-
-/* WordPress Media Query breakpoints
- * -------------------------------------------------------------------------*/
-
-/* Auto-folding of the admin menu */
-@media only screen and (max-width: 960px) {
-}
-
-/* one column on the post write/edit screen */
-@media only screen and (max-width: 850px) {
-}
-
-/* Tablet */
-@media screen and ( max-width: 782px ) {
-}
-
-/* Smartphone */
-@media screen and (max-width: 600px) {
 }

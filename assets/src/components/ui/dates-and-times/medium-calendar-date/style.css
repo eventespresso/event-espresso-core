@@ -8,7 +8,7 @@
     background-size: 1px 5px;
     background-repeat: repeat-y;
     box-sizing: border-box;
-    color: var(--ee-white);
+    color: var(--ee-color-white);
     height: 100%;
     padding: 0 10px 10px 10px;
     position: absolute;

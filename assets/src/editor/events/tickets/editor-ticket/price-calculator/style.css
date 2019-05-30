@@ -4,7 +4,7 @@
  * -------------------------------------------------------------------------*/
 
 .ee-ticket-price-calculator {
-    color: var(--ee-dark-grey);
+    color: var(--ee-color-grey-2);
     font-size: 1rem;
     line-height: 1.1;
     margin: 0 .5rem .25rem;
@@ -75,7 +75,7 @@ textarea {
 }
 
 .ee-ticket-price-calculator .ee-ticket-price-calculator-total-label .col-form-label {
-    color: var(--ee-lite-grey);
+    color: var(--ee-color-grey-7);
     display: block;
     font-size: 1.5rem;
     padding: 0;
@@ -185,8 +185,8 @@ textarea {
 }
 
 .ee-tpc-new-modifier-update {
-    background-color: var(--ee-white);
-    box-shadow: inset 0 0 0 2px var(--ee-brite-blue) !important;
+    background-color: var(--ee-color-white);
+    box-shadow: inset 0 0 0 2px var(--ee-color-bright-blue) !important;
     -webkit-animation: shake .25s ease infinite;
     -moz-animation: shake .25s ease infinite;
     animation: shake .25s ease infinite;
@@ -257,7 +257,7 @@ textarea {
     }
 
     .ee-rTable .ee-rTable-body .ee-ticket-price-calculator-price-row + .ee-ticket-price-calculator-price-row {
-        border-top: 2px solid var(--ee-off-white);
+        border-top: 2px solid var(--ee-color-grey-10);
         padding-top: 1.5rem;
     }
 
@@ -312,7 +312,7 @@ textarea {
     }
 
     .ee-ticket-price-calculator .ee-rTable-body .ee-ticket-price-calculator-add-price-id {
-        background: var(--ee-near-white);
+        background: var(--ee-color-grey-11);
         margin: 0 0 0.5rem;
         padding: 0.5rem;
     }
