@@ -6,7 +6,7 @@ import { withDispatch } from '@wordpress/data';
 import { Component } from '@wordpress/element';
 import {
 	EntityList,
-	FancyButton,
+	EspressoButton,
 	twoColumnAdminFormLayout,
 } from '@eventespresso/components';
 import { withEditor } from '@eventespresso/higher-order-components';
@@ -52,9 +52,8 @@ class EditorDatesList extends Component {
 			this.props.toggleEditor
 		);
 		return (
-			<FancyButton
+			<EspressoButton
 				icon="calendar"
-				style="wp-default"
 				buttonText={ __( 'Add New Date', 'event_espresso' ) }
 				onClick={ addDate }
 			/>
@@ -67,9 +66,8 @@ class EditorDatesList extends Component {
 	 */
 	ticketAssignmentsButton = () => {
 		return (
-			<FancyButton
+			<EspressoButton
 				icon="tickets-alt"
-				style="wp-default"
 				buttonText={ __(
 					'Ticket Assignments',
 					'event_espresso'

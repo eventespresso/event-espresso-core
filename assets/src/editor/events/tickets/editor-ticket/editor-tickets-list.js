@@ -7,7 +7,7 @@ import { withDispatch } from '@wordpress/data';
 import { useState, useMemo, useEffect } from '@wordpress/element';
 import {
 	EntityList,
-	FancyButton,
+	EspressoButton,
 	twoColumnAdminFormLayout,
 } from '@eventespresso/components';
 import { __, _x, sprintf } from '@eventespresso/i18n';
@@ -49,9 +49,8 @@ const EditorTicketsList = ( {
 	const addNewTicketButton = useMemo(
 		() => {
 			return (
-				<FancyButton
+				<EspressoButton
 					icon="tickets-alt"
-					style="wp-default"
 					buttonText={ __( 'Add New Ticket', 'event_espresso' ) }
 					onClick={ addNewTicket }
 				/>
