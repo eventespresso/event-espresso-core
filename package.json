@@ -83,7 +83,7 @@
 		"deep-freeze": "0.0.1",
 		"equivalent-key-map": "^0.2.2",
 		"eslint": "^5.16.0",
-		"eslint-plugin-jest": "22.5.1",
+		"eslint-plugin-jest": "22.6.4",
 		"license-checker": "^25.0.1",
 		"handlebars": "^4.1.2",
 		"lodash": "^4.17.11",
