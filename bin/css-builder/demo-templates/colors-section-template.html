@@ -10,14 +10,21 @@
     <ul>
         <li><code>--ee-color-{ color }</code> - primarily intended for setting the background color of an element</li>
         <li><code>--ee-text-on-{ color }</code> - A WCAG compliant text color for the above.</li>
-        <li><code>--ee-color-{ color }-high-contrast</code> - A higher contrast shade of the default color <span
-        class="ee-focus-priority-6">(ie: darker than the default for lighter themes or lighter for dark
-            themes)</span></li>
+        <li><span class="ee-focus-priority-6">
+            high-contrast shades ie: darker than the default for lighter themes or lighter for dark themes
+        </span></li>
+        <li><code>--ee-color-{ color }-super-high-contrast</code> - An much higher contrast shade of the default
+            color</li>
+        <li><code>--ee-text-on-{ color }-super-high-contrast</code> - A WCAG compliant text color for the above.</li>
+        <li><code>--ee-color-{ color }-high-contrast</code> - A higher contrast shade of the default color</li>
         <li><code>--ee-text-on-{ color }-high-contrast</code> - A WCAG compliant text color for the above.</li>
-        <li><code>--ee-color-{ color }-low-contrast</code> - A lower contrast shade of the default color <span
-            class="ee-focus-priority-6">(ie: lighter than the default for lighter themes or darker for dark
-            themes)</span></li>
+        <li><span class="ee-focus-priority-6">
+            low-contrast shades ie: lighter than the default for lighter themes or darker for dark themes
+        </span></li>
+        <li><code>--ee-color-{ color }-low-contrast</code> - A lower contrast shade of the default color</li>
         <li><code>--ee-text-on-{ color }-low-contrast</code> - A WCAG compliant text color for the above.</li>
+        <li><code>--ee-color-{ color }-super-low-contrast</code> - A much lower contrast shade of the default color</li>
+        <li><code>--ee-text-on-{ color }-super-low-contrast</code> - A WCAG compliant text color for the above.</li>
     </ul>
     <p>
         That said, not all colors work with each other, so be careful when applying colors to text that are not the
@@ -30,16 +37,22 @@
             {{{this}}}
         {{/each}}
     </div>
+    <p class="section-intro">The default theme style also uses the <code>--ee-background-color</code> CSS variable
+        for setting the default background color for containers, including the background for this entire page.</p>
+
     <h2 id="base-colors" class="ee-focus-priority-2">Base Colors</h2>
     <p class="section-intro">
-        Themes can also define a full spectrum of colors that will be used to dynamically generate three pairs of CSS
-        variables using the same naming schema as the theme colors above. So the defined color plus high and low
-        contrasting alternatives.
+        Themes can also define a full spectrum of colors that will be used to dynamically generate five pairs of CSS
+        variables using the same naming schema as the theme colors above. So the defined color plus super high
+        contrast, high contrast, low contrast, and super low contrast alternatives:
     </p>
     <p class="section-intro">
         On light themes the high contrast alternative will be darker in comparison to the
         theme's background color. On dark themes it will be reversed, so the high contrast alternative will now be
         lighter in shade, but still higher in contrast in comparison to the background color.
+    </p>
+    <p class="section-intro">
+
     </p>
     <div class="demo-items three-columns">
         {{#each baseColors}}
@@ -48,9 +61,9 @@
     </div>
     <h2 id="greys" class="ee-focus-priority-2">Greys</h2>
     <p class="section-intro">
-        Themes also dynamically generate 12 levels of grey scale colors using the black and white colors defined by
+        Themes also dynamically generate 15 levels of grey scale colors using the black and white colors defined by
         the theme as the two extremes. Greys only have one corresponding text color and no high or low contrast
-        alternatives. For dark themes the grey scale will be reversed, so <code>--ee-color-grey-0</code> will be the
+        alternatives. For dark themes the grey scale will be reversed, so <code>--ee-color-grey-1</code> will be the
         lightest shade, since it is intended to have the highest contrast compared to the theme's background color.
     </p>
     <div class="demo-items three-columns">
