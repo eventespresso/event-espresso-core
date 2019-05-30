@@ -2,7 +2,7 @@
  * External imports
  */
 import { EventSchema, DateTimeSchema } from '@test/fixtures';
-import { select } from '@wordpress/data';
+import { registerStore, select } from '@wordpress/data';
 import { isUndefined } from 'lodash';
 
 /**
@@ -23,6 +23,8 @@ jest.mock( '../../../model', () => ( {
 
 describe( 'createEntitySelectors', () => {
 	beforeAll( () => {
+		// we don't need original store here.
+		registerStore( 'core/data', { selectors: {}, reducer: () => {} } );
 		select( 'core/data' ).isResolving = jest.fn().mockReturnValue( false );
 	} );
 	afterAll( () => {
