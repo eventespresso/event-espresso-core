@@ -1,15 +1,14 @@
 /**
  * External imports
  */
-import { filter, without } from 'lodash';
-import { Fragment } from '@wordpress/element';
+import { without } from 'lodash';
+import { withFormContainerAndPlaceholder } from '@eventespresso/components';
 import { __ } from '@eventespresso/i18n';
 import classNames from 'classnames';
 
 /**
  * Internal dependencies
  */
-import { FormContainer, FormPlaceholder } from '../../form';
 import './style.css';
 
 /**
@@ -67,18 +66,7 @@ const EntityList = ( {
 			</div>
 		);
 	}
-	return (
-		<Fragment>
-			<FormPlaceholder
-				loading={ loading }
-				notice={ loadingNotice }
-			/>
-			<FormContainer loading={ loading } htmlClass={ htmlClass }>
-				{ entityList }
-			</FormContainer>
-		</Fragment>
-	);
-
+	return entityList;
 };
 
-export default EntityList;
+export default withFormContainerAndPlaceholder( EntityList );
