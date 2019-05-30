@@ -5,37 +5,8 @@
 <ul>
 <li>
 <strong><?php esc_html_e('Active Status', 'event_espresso'); ?></strong><br />
-<?php esc_html_e('Shows the current status for an event. A status will appear as Active, Upcoming, Postponed, Inactive, Sold Out, Expired, or Cancelled.', 'event_espresso'); ?>
-<ul>
-<li style="list-style-type: none;">
-<strong><?php esc_html_e('Active', 'event_espresso'); ?></strong><br>
-<?php esc_html_e('A status of active means that an event has started and is currently taking place.', 'event_espresso'); ?>
+<?php esc_html_e('Shows the current status for an event. The status indicator will show Expired (past), Active (present), Upcoming (future) based on the date of the event. There are also special, custom statuses that can be selected. These include Postponed, Sold Out, and Cancelled.', 'event_espresso'); ?>
 </li>
-<li style="list-style-type: none;">
-<strong><?php esc_html_e('Upcoming', 'event_espresso'); ?></strong><br>
-<?php esc_html_e('A status of upcoming means that an event is scheduled to take place in the future.', 'event_espresso'); ?>
-</li>
-<li style="list-style-type: none;">
-<strong><?php esc_html_e('Postponed', 'event_espresso'); ?></strong><br>
-<?php esc_html_e('A status of postponed means that an event is not currently scheduled but may be in the future.', 'event_espresso'); ?>
-</li>
-<li style="list-style-type: none;">
-<strong><?php esc_html_e('Inactive', 'event_espresso'); ?></strong><br>
-<?php esc_html_e('A status of inactive occurs when an event is set to draft.', 'event_espresso'); ?>
-</li>
-<li style="list-style-type: none;">
-<strong><?php esc_html_e('Sold Out', 'event_espresso'); ?></strong><br>
-<?php esc_html_e('A status of sold out means that tickets are no longer available for an event.', 'event_espresso'); ?>
-</li>
-<li style="list-style-type: none;">
-<strong><?php esc_html_e('Expired', 'event_espresso'); ?></strong><br>
-<?php esc_html_e('A status of expired means that the event has already taken place.', 'event_espresso'); ?>
-</li>
-<li style="list-style-type: none;">
-<strong><?php esc_html_e('Cancelled', 'event_espresso'); ?></strong><br>
-<?php esc_html_e('A status of cancelled means that the event will no longer take place.', 'event_espresso'); ?>
-</li>
-</ul>
 <li>
 <strong><?php esc_html_e('Maximum number of tickets allowed per order for this event', 'event_espresso'); ?></strong><br />
 <?php esc_html_e('Control how many tickets can be purchased in a single order.', 'event_espresso'); ?>
