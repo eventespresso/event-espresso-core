@@ -4,7 +4,7 @@
  * -------------------------------------------------------------------------*/
 
 .ee-form-info-row {
-    margin: 1rem 0;
+    margin: var(--ee-margin-small) 0;
 }
 
 .ee-form-info-row.is-dismissable {
@@ -19,8 +19,8 @@
 }
 
 .ee-form-info {
-    color: var(--ee-grey);
-    font-size: 1rem;
+    color: var(--ee-default-text-color-low-contrast);
+    font-size: var(--ee-font-size-default);
     font-style: italic;
     height: auto;
     line-height: 1.25rem;
@@ -32,30 +32,30 @@
 }
 
 .ee-form-info-row.is-dismissable .ee-form-info {
-    padding: 0 20px 0 0;
+    padding: 0 var(--ee-padding-small) 0 0;
 }
 
 .ee-form-info .ee-form-info-type {
-    background: var(--ee-white);
-    color: var(--ee-grey-white);
-    left: -66px;
+    background: var(--ee-background-color);
+    color: var(--ee-color-grey-10);
+    left: calc(var(--ee-padding-extreme) * -1);
     position: absolute;
     top: 2px;
 }
 
 .ee-form-info.ee-form-info-type-warning .ee-form-info-type {
-    color: var(--ee-hot-pink);
+    color: var(--ee-color-hot-pink);
 }
 
 .ee-form-info .ee-form-info-text .dashicon {
-    margin: 0 .25rem;
+    margin: 0 var(--ee-margin-micro);
     vertical-align: text-bottom;
 }
 
 .ee-form-info .ee-form-info-dismiss {
-    background: var(--ee-white);
-    color: var(--ee-lite-grey);
-    padding: 4px;
+    background: var(--ee-background-color);
+    color: var(--ee-color-grey-10);
+    padding: var(--ee-padding-micro);
     position: absolute;
     right: 0;
     top: 0;
@@ -65,41 +65,23 @@
 .ee-form-info .ee-form-info-dismiss:focus,
 .ee-form-info .ee-form-info-dismiss:active {
     box-shadow: none !important;
-    color: var(--ee-grey) !important;
+    color: var(--ee-default-text-color-low-contrast) !important;
     outline: none !important;
 }
 
 .dismissed .ee-form-info .ee-form-info-dismiss:hover {
-    -webkit-animation: spin .25s ease-in infinite;
-    -moz-animation: spin .25s ease-in infinite;
-    animation: spin .25s ease-in infinite;
+    animation: var(--ee-animation-spin-fast);
 }
 
-@-moz-keyframes spin {
-    100% {
-        -moz-transform: rotate(360deg);
-    }
-}
-
-@-webkit-keyframes spin {
-    100% {
-        -webkit-transform: rotate(360deg);
-    }
-}
-
-@keyframes spin {
-    100% {
-        transform: rotate(360deg);
-    }
-}
 
 @media screen and (max-width: 600px) {
     .ee-form-info .ee-form-info-type {
-        left: 8px;
+        left: var(--ee-padding-tiny);
     }
+
     .ee-form-info-text {
         display: inline-block;
-        padding-left: 66px;
+        padding-left: var(--ee-padding-extreme);
     }
 
 }
