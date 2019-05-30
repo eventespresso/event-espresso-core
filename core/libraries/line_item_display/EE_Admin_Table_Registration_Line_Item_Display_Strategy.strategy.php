@@ -1,4 +1,8 @@
 <?php
+
+use EventEspresso\core\exceptions\InvalidDataTypeException;
+use EventEspresso\core\exceptions\InvalidInterfaceException;
+
 /**
  *
  * Display Strategy for line item tables in the admin on the Registration Details page..
@@ -33,7 +37,26 @@ class EE_Admin_Table_Registration_Line_Item_Display_Strategy extends EE_Admin_Ta
     }
 
 
-
+    /**
+     * @param EE_Registration $registration
+     * @param EE_Base_Class   $line_item_object
+     * @param EE_Base_Class   $parent_line_item_object
+     * @return bool
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws ReflectionException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     */
+    private function shouldSkipLineItemRow($registration, $line_item_object, $parent_line_item_object)
+    {
+        return ! $registration instanceof EE_Registration
+            || ( $line_item_object instanceof EE_Ticket && $line_item_object->ID() !== $registration->ticket_ID() )
+            || (
+                $parent_line_item_object instanceof EE_Ticket
+                && $parent_line_item_object->ID() !== $registration->ticket_ID()
+               );
+    }
 
 
     /**
@@ -42,13 +65,22 @@ class EE_Admin_Table_Registration_Line_Item_Display_Strategy extends EE_Admin_Ta
      * @param EE_Line_Item $line_item
      * @param array        $options
      * @return mixed
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws ReflectionException
      */
     protected function _item_row(EE_Line_Item $line_item, $options = array())
     {
         $line_item_related_object = $line_item->get_object();
+        $registration = isset($options['EE_Registration']) ? $options['EE_Registration'] : null;
         $parent_line_item_related_object = $line_item->parent() instanceof EE_Line_Item
             ? $line_item->parent()->get_object()
             : null;
+        if ($this->shouldSkipLineItemRow($registration, $line_item_related_object, $parent_line_item_related_object)) {
+            return '';
+        }
         // start of row
         $row_class = $options['odd'] ? 'item odd' : 'item';
         $html = EEH_HTML::tr('', '', $row_class);
