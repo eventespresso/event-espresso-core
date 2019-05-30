@@ -9,8 +9,8 @@ import { __ } from '@eventespresso/i18n';
 /**
  * Internal imports
  */
-import { SubmittingNotice } from './submitting-notice';
-import { EspressoButton } from '../../ui';
+import SubmittingNotice from './submitting-notice';
+import EspressoButton from '../../ui/espresso-button';
 
 /**
  * @function

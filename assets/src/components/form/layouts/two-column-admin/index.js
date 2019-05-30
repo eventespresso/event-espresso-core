@@ -7,7 +7,7 @@ import FormRow from './form-row';
 import FormSaveCancelButtons from './form-save-cancel-buttons';
 import FormSubmitButton from '../../base/form-submit-button';
 import FormCancelButton from '../../base/form-cancel-button';
-import { SubmittingNotice } from '../../base/submitting-notice';
+import SubmittingNotice from '../../base/submitting-notice';
 import FormSection from './form-section';
 import FormWrapper from './form-wrapper';
 import './two-column-admin.css';

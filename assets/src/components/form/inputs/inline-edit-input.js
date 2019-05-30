@@ -12,7 +12,7 @@ import classNames from 'classnames';
  * Internal imports
  */
 import './inline-edit-input.css';
-import { SubmittingNotice } from '../base/submitting-notice';
+import SubmittingNotice from '../base/submitting-notice';
 
 /**
  * InlineEditInput
