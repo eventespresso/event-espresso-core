@@ -1,3 +1,7 @@
+:root {
+    --ee-icon-button-size: 36px;
+}
+
 .esprs-button,
 .esprs-button:active,
 .esprs-button:focus,
