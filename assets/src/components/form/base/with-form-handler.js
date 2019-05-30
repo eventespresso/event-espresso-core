@@ -77,7 +77,9 @@ export const withFormHandler = ( FormComponent ) => {
 		render() {
 			const {
 				loading,
+				submitButtonText = '',
 				resetHandler,
+				cancelButtonText = '',
 				errorMessage = '',
 				loadingNotice = '',
 				decorators = [],
@@ -93,7 +95,7 @@ export const withFormHandler = ( FormComponent ) => {
 			const showSubmit = typeof this.props.submitHandler === 'function';
 			const submitHandler = this.props.submitHandler || ( () => null );
 			return (
-				<FormErrorBoundary errorMessage={ errorMessage } >
+				<FormErrorBoundary errorMessage={ errorMessage }>
 					<Form
 						onSubmit={ submitHandler }
 						initialValues={ formData || {} }
@@ -111,9 +113,12 @@ export const withFormHandler = ( FormComponent ) => {
 							pristine = pristine && ! this.state.changes;
 							const submitButton = showSubmit ?
 								<FormSubmitButton
+									buttonText={ submitButtonText }
 									submitting={ submitting }
 									disabled={
-										( pristine || invalid ) && ! formChanges
+										(
+											pristine || invalid
+										) && ! formChanges
 									}
 								/> :
 								null;
@@ -124,6 +129,7 @@ export const withFormHandler = ( FormComponent ) => {
 							};
 							const cancelButton = resetHandler ?
 								<FormCancelButton
+									buttonText={ cancelButtonText }
 									onClick={ formReset }
 									pristine={ pristine }
 									submitting={ submitting }
@@ -135,7 +141,7 @@ export const withFormHandler = ( FormComponent ) => {
 										loading={ loading }
 										notice={ loadingNotice }
 									/>
-									<FormContainer loading={ loading } >
+									<FormContainer loading={ loading }>
 										<FormComponent
 											initialValues={ formData || {} }
 											currentValues={ values }
@@ -156,5 +162,6 @@ export const withFormHandler = ( FormComponent ) => {
 			);
 		}
 	}
+
 	return FormHandler;
 };

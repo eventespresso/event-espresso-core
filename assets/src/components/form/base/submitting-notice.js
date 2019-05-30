@@ -31,7 +31,6 @@ const SubmittingNotice = ( {
 	size,
 	style,
 } ) => {
-	// submitting = true;
 	submittingText = submittingText ?
 		submittingText :
 		__( 'submitting', 'event_espresso' );

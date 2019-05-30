@@ -67,7 +67,7 @@ const FormSubmitButton = ( {
 };
 
 FormSubmitButton.propTypes = {
-	onClick: PropTypes.func.isRequired,
+	onClick: PropTypes.func,
 	disabled: PropTypes.bool,
 	submitting: PropTypes.bool,
 	buttonText: PropTypes.string,
@@ -80,6 +80,7 @@ FormSubmitButton.propTypes = {
 };
 
 FormSubmitButton.defaultProps = {
+	onClick: () => null,
 	buttonText: '',
 	buttonIcon: 'save',
 	submittingText: '',
