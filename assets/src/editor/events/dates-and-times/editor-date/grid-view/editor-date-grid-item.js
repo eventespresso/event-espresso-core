@@ -19,7 +19,7 @@ import classNames from 'classnames';
 import EditorDateDetails from './editor-date-details';
 import { EditorDateActionsMenu } from '../';
 
-const { getBackgroundColorClass } = dateTimeModel;
+const { getBackgroundColorClass, getDateTimeStatusTextLabel } = dateTimeModel;
 
 /**
  * EditorDateGridItem
@@ -38,13 +38,17 @@ class EditorDateGridItem extends Component {
 	displayDate = ( eventDate, showDate ) => {
 		let sidebarColorClass = 'ee-editor-date-calendar-sidebar ';
 		sidebarColorClass += getBackgroundColorClass( eventDate );
+		const dateStatus = (
+			<span key={ 1 }>{ getDateTimeStatusTextLabel( eventDate ) }</span>
+		);
 		switch ( showDate ) {
 			case 'end' :
+				const end = eventDate.end.toFormat( 'h:mm a' );
 				return <BiggieCalendarDate
 					date={ eventDate.end }
 					htmlClass={ sidebarColorClass }
 					headerText={ __( 'ends', 'event_espresso' ) }
-					footerText={ eventDate.end.toFormat( 'h:mm a' ) }
+					footerText={ [ end, dateStatus ] }
 				/>;
 			case 'both' :
 				return (
@@ -56,11 +60,12 @@ class EditorDateGridItem extends Component {
 				);
 			case 'start' :
 			default :
+				const start = eventDate.start.toFormat( 'h:mm a' );
 				return <BiggieCalendarDate
 					date={ eventDate.start }
 					htmlClass={ sidebarColorClass }
 					headerText={ __( 'starts', 'event_espresso' ) }
-					footerText={ eventDate.start.toFormat( 'h:mm a' ) }
+					footerText={ [ start, dateStatus ] }
 				/>;
 		}
 	};
@@ -115,7 +120,7 @@ class EditorDateGridItem extends Component {
 				/>
 				<EntityLock
 					entity={ eventDate }
-					isLocked={ eventDate.locked }
+					isLocked={ !! eventDate.locked }
 					toggleEntityLock={ ( date ) => this.toggleLock(
 						event,
 						date
