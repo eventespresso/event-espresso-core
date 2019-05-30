@@ -2,7 +2,6 @@
 <p>
 <?php esc_html_e('Customize the registration for your event.', 'event_espresso'); ?>
 </p>
-<p>
 <ul>
 <li>
 <strong><?php esc_html_e('Active Status', 'event_espresso'); ?></strong><br />
@@ -93,4 +92,3 @@
 </div>
 </li>
 </ul>
-</p>

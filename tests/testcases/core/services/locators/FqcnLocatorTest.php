@@ -10,7 +10,7 @@ use PHPUnit\Framework\TestCase;
  * FqcnLocatorTest
  *
  * @author  Brent Christensen
- * @since   $VID:$
+ * @since   4.9.80.p
  * @group   locators
  */
 class FqcnLocatorTest extends TestCase
@@ -28,7 +28,7 @@ class FqcnLocatorTest extends TestCase
 
 
     /**
-     * @since $VID:$
+     * @since 4.9.80.p
      * @throws InvalidDataTypeException
      */
     public function setUp()

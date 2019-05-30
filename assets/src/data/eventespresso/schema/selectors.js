@@ -186,11 +186,11 @@ export const getRelationPrimaryKeyString = createSelector(
 	) => {
 		modelName = singularModelName( modelName );
 		relationName = pluralModelName( relationName );
-		const singularRelationName = singularModelName( relationName );
 		const relationType = getRelationType( state, modelName, relationName );
 		if ( relationType === '' ) {
 			return '';
 		}
+		const singularRelationName = singularModelName( relationName );
 		const relationPrimaryKey = getPrimaryKey( singularRelationName );
 		return relationType === 'EE_Belongs_To_Relation' ?
 			relationPrimaryKey :

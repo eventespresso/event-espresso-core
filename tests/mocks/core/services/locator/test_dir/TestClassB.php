@@ -8,7 +8,7 @@ namespace EventEspresso\tests\mocks\core\services\locator\test_dir;
  *
  * @package EventEspresso\tests\mocks\core\services\locator\test_dir
  * @author  Brent Christensen
- * @since   $VID:$
+ * @since   4.9.80.p
  */
 class TestClassB
 {

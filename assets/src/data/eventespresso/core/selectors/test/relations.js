@@ -57,25 +57,6 @@ describe( 'getRelationIdsForEntityRelation()', () => {
 			'datetime'
 		) ).toEqual( [ 52 ] );
 	} );
-	it( 'returns expected array for the given entity and relation when ' +
-		'the modelName exists in both entityMap and index but the relation ' +
-		'is in the index', () => {
-		const testState = {
-			...mockStateForTests,
-			relations: mockStateForTests.relations.setIn(
-				[ 'entityMap', 'datetime' ],
-				Map().set( 52, Map().set( 'foo', Set.of( 100, 200 ) ) )
-			).setIn(
-				[ 'index', 'datetimes', 52, 'ticket' ],
-				Set.of( 10, 20, 30 )
-			),
-		};
-		expect( getRelationIdsForEntityRelation(
-			testState,
-			DateTimeEntities.a,
-			'ticket'
-		) ).toEqual( [ 10, 20, 30 ] );
-	} );
 	it( 'returns cached copy when state has not changed for the given ' +
 		'query', () => {
 		const testResult = getRelationIdsForEntityRelation(
@@ -98,7 +79,6 @@ describe( 'getRelationIdsForEntityRelation()', () => {
 		const modifiedState = { ...mockStateForTests };
 		modifiedState.relations = modifiedState.relations.setIn(
 			[
-				'entityMap',
 				'event',
 				10,
 				'datetimes',
@@ -175,7 +155,6 @@ describe( 'getRelatedEntities()', () => {
 		const modifiedStateA = { ...mockStateForTests };
 		modifiedStateA.relations = modifiedStateA.relations.setIn(
 			[
-				'entityMap',
 				'event',
 				10,
 				'datetimes',
@@ -453,24 +432,14 @@ describe( 'countRelationModelsIndexedForEntity()', () => {
 		);
 		const modifiedState = { ...mockStateForTests };
 		modifiedState.relations = modifiedState.relations.setIn(
-			[
-				'index',
-				'datetimes',
-				52,
-				'ticket',
-			],
-			fromJS( { 44: { ticket: [ 30, 20 ] } } )
+			[ 'datetime', 44 ],
+			Map().set( 'tickets', Set.of( 30, 20 ) )
 		).setIn(
-			[
-				'entityMap',
-				'ticket',
-				fromJS(
-					{
-						30: { datetimes: [ 52 ] },
-						20: { datetimes: [ 52 ] },
-					}
-				),
-			]
+			[ 'ticket', 30 ],
+			Map().set( 'datetimes', Set.of( 44 ) )
+		).setIn(
+			[ 'ticket', 20 ],
+			Map().set( 'datetimes', Set.of( 44 ) )
 		);
 		const modifiedStateResult = countRelationModelsIndexedForEntity(
 			modifiedState,
@@ -492,8 +461,8 @@ describe( 'countRelationModelsIndexedForEntity()', () => {
 			expect( countRelationModelsIndexedForEntity(
 				modifiedState,
 				'datetime',
-				'52',
-			) ).toBe( 2 );
+				'44',
+			) ).toBe( 1 );
 		} );
 	} );
 } );
@@ -518,10 +487,10 @@ describe( 'getRelatedEntitiesForIds()', () => {
 		const testState = {
 			...mockStateForTests,
 			relations: mockStateForTests.relations.setIn(
-				[ 'index', 'datetimes', 54 ],
-				Map().set( 'event', Set.of( 10, 30 ) )
+				[ 'datetime', 54 ],
+				Map().set( 'events', Set.of( 10, 30 ) )
 			).setIn(
-				[ 'entityMap', 'event', 10 ],
+				[ 'event', 10 ],
 				Map().set( 'datetimes', Set.of( 52, 54 ) )
 			),
 		};

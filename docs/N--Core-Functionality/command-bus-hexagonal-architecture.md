@@ -201,9 +201,14 @@ For more information, plz see :
 
 ### Anatomy of a Command Handler
 
-Command Handlers are typically located in the same location as their Command objects, and are named exactly the same, except that "Handler" is appended to the class name. So in our example, the CreateThingCommand would have an accompanying CreateThingCommandHandler class located in the same folder. 
+Command Handlers should be located in the same location as their Command objects, and have exactly the same class name, except that "Handler" is appended to it. 
 
-Command Handlers need to extend the ` CommandHandler ` class and have one public method required by their interface:
+So in our example, the `CreateThingCommand` would have an accompanying `CreateThingCommandHandler` class located in the same folder. 
+
+(If you want to deviate from this standard, be sure to also override `CommandHandler::verify()`, or else an Exception will be thrown when the CommandBus
+attempts to verify that the incoming Command matches the Handler.) 
+
+Command Handlers need to extend the `CommandHandler ` class and have one public method required by their interface:
 
 ```php
 
@@ -219,33 +224,15 @@ Command Handlers need to extend the ` CommandHandler ` class and have one public
      */
     public function handle(CommandInterface $command)
     {
-        // logic for processing command      
+        // logic for processing command
+        // return result   
     }
     
 }
     
 ```
 
-It's a good idea to verify that the incoming Command is of the **correct** instance:
-
-```php
-
-    /**
-     * @param  CommandInterface $command
-     * @return mixed
-     * @throws InvalidArgumentException
-     */
-    public function handle(CommandInterface $command)
-    {
-        /** @var CreateThingCommand $command */
-        if ( ! $command instanceof CreateThingCommand) {
-            throw new InvalidArgumentException();
-        }
-    }
-    
-```
-
-from there, it's simply a matter of retrieving data from the Command DTO using it's getter methods and doing whatever needs to be done. Any data returned from the ` handle() ` method will be returned to the client code that passed the Command to the Command Bus.
+Any data returned from the ` handle() ` method will be returned to the client code that passed the Command to the Command Bus.
 
 ```php
 

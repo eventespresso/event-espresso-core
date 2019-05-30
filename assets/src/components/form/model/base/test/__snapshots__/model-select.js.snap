@@ -1,7 +1,7 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`ModelSelect Snapshot with default options (with required modelName) should render and match snapshot 1`] = `
-<React.Fragment>
+<Fragment>
   <StateManager
     defaultInputValue=""
     defaultMenuIsOpen={false}
@@ -13,5 +13,5 @@ exports[`ModelSelect Snapshot with default options (with required modelName) sho
     placeholder="Select..."
     value={null}
   />
-</React.Fragment>
+</Fragment>
 `;

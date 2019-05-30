@@ -16,11 +16,6 @@ import { select } from '@wordpress/data';
 import { Exception } from '@eventespresso/eejs';
 import { Set, OrderedMap, Map } from 'immutable';
 
-jest.mock( '@wordpress/data', () => ( {
-	...require.requireActual( '@wordpress/data' ),
-	select: jest.fn().mockReturnValue( {} ),
-} ) );
-
 describe( 'testing getters', () => {
 	const testConditions = [
 		[
@@ -178,7 +173,7 @@ describe( 'isRequesting()', () => {
 					'some_query_string=1'
 				);
 			};
-			expect( testCondition ).toThrowError( Exception );
+			expect( testCondition ).toThrow( Exception );
 		} );
 		testConditions.forEach( ( [
 			description,
@@ -201,7 +196,7 @@ describe( 'isRequesting()', () => {
 			const testCondition = () => {
 				isRequestingItems( state, 'invalid', 'some_query_string=1' );
 			};
-			expect( testCondition ).toThrowError( Exception );
+			expect( testCondition ).toThrow( Exception );
 		} );
 		testConditions.forEach( ( [
 			description,

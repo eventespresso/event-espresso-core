@@ -1,0 +1,35 @@
+<div class="demo-item colors-demo">
+    <h4 class="base-color ee-focus-priority-4">{{colorLabel}}</h4>
+    {{#if isGrey}}
+    <div class="ee-container ee-with-color-{{color}}">
+        <p>base color:<br/><code>--ee-color-{{color}}</code></p>
+        <p>WCAG compliant text color: <br/><code>--ee-text-on-{{color}}</code></p>
+    </div>
+    {{else if isBW}}
+    <div class="ee-container ee-with-color-{{color}} with-default-border">
+        <p>base color:<br/><code>--ee-color-{{color}}</code></p>
+        <p>WCAG compliant text color:<br/><code>--ee-text-on-{{color}}</code></p>
+    </div>
+    {{else}}
+    <div class="ee-container ee-with-color-{{color}}">
+        <p>base color:<br/><code>--ee-color-{{color}}</code></p>
+        <p>WCAG compliant text color:<br/><code>--ee-text-on-{{color}}</code></p>
+    </div>
+    <div class="ee-container ee-with-color-{{color}}-super-high-contrast">
+        <p>super-high-contrast:<br/><code>--ee-color-{{color}}-super-high-contrast</code></p>
+        <p>WCAG compliant text color:<br/><code>--ee-text-on-{{color}}-super-high-contrast</code></p>
+    </div>
+    <div class="ee-container ee-with-color-{{color}}-high-contrast">
+        <p>high-contrast:<br/><code>--ee-color-{{color}}-high-contrast</code></p>
+        <p>WCAG compliant text color:<br/><code>--ee-text-on-{{color}}-high-contrast</code></p>
+    </div>
+    <div class="ee-container ee-with-color-{{color}}-low-contrast">
+        <p>low-contrast:<br/><code>--ee-color-{{color}}-low-contrast</code></p>
+        <p>WCAG compliant text color:<br/><code>--ee-text-on-{{color}}-low-contrast</code></p>
+    </div>
+    <div class="ee-container ee-with-color-{{color}}-super-low-contrast">
+        <p>super-low-contrast:<br/><code>--ee-color-{{color}}-super-low-contrast</code></p>
+        <p>WCAG compliant text color:<br/><code>--ee-text-on-{{color}}-super-low-contrast</code></p>
+    </div>
+    {{/if}}
+</div>

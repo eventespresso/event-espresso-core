@@ -144,7 +144,8 @@
 
 .admin-side-mbox-dv { margin : 1em 0 2em; }
 
-.admin-side-mbox-dv p { margin : .5em 0; line-height : 1.2em; color : #333; text-shadow : 0 1px 0 #FFF; }
+.admin-side-mbox-dv p,
+.admin-side-mbox-dv > div { margin : .5em 0; line-height : 1.2em; color : #333; text-shadow : 0 1px 0 #FFF; }
 
 .admin-side-mbox-label-spn { width : 30%; padding-right : .5em; text-align : right; }
 

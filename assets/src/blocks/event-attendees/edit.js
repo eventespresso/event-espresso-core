@@ -232,7 +232,7 @@ export class EventAttendeesEditor extends Component {
 	 * @param {boolean} showGravatar
 	 */
 	toggleShowGravatar = ( showGravatar ) => {
-		this.props.setAttributes( { showGravatar: showGravatar } );
+		this.props.setAttributes( { showGravatar } );
 	};
 
 	/**
@@ -240,7 +240,7 @@ export class EventAttendeesEditor extends Component {
 	 * @param {boolean} displayOnArchives
 	 */
 	toggleDisplayOnArchives = ( displayOnArchives ) => {
-		this.props.setAttributes( { displayOnArchives: displayOnArchives } );
+		this.props.setAttributes( { displayOnArchives } );
 	};
 
 	/**
