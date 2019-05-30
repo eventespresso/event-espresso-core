@@ -4,34 +4,35 @@
  * ------------------------------------------------------------------------- */
 
 .ee-entity-details-panel-div {
+    color: var(--ee-default-text-color);
     display: flex;
     flex-flow: row nowrap;
     justify-content: space-between;
-    font-size: 21px;
-    height: 42px;
-    line-height: 21px;
-    width: 240px;
+    font-size: var(--ee-font-size-default);
+    height: var(--ee-font-size-huge);
+    line-height: var(--ee-font-size-default);
+    width: calc(var(--ee-font-size-tiny) * 19);
 }
 
 .ee-entity-details-panel-div .ee-inline-edit-text {
-    font-size: 21px;
-    line-height: 21px;
+    font-size: var(--ee-font-size-default);
+    line-height: var(--ee-font-size-default);
 }
 
 .ee-entity-details-div {
     display: flex;
     flex-direction: column-reverse;
-    max-width: 50px;
+    max-width: var(--ee-font-size-huge);
 }
 
 .ee-entity-details-div .ee-inline-edit-input {
-    max-width: 50px;
-    margin: 0 0 -3px;
+    max-width: var(--ee-font-size-huge);
+    margin: 0 0 calc(var(--ee-margin-micro) * -1);
 }
 
 .ee-entity-details-label-div {
-    color: var(--ee-grey);
-    font-size: 10px;
+    color: var(--ee-default-text-color-super-high-contrast);
+    font-size: var(--ee-font-size-micro);
     letter-spacing: 1px;
 }
 
@@ -42,12 +43,12 @@
 .ee-entity-details-separator {
     border: 0 solid rgba(0, 0, 0, 0);
     border-left: 1px solid rgba(0, 0, 0, .25);
-    height: 40px;
+    height: var(--ee-font-size-huge);
 }
 
 .ee-infinity-sign {
-    font-size: 24px;
-    margin-top: -6px;
+    font-size: var(--ee-font-size-big);
+    line-height: var(--ee-font-size-big);
     vertical-align: middle;
 }
 
@@ -57,41 +58,38 @@
     -webkit-box-sizing: border-box;
     -moz-box-sizing: border-box;
     box-sizing: border-box;
-    color: var(--ee-dark-grey);
+    color: var(--ee-default-text-color);
     display: block;
-    font-size: 24px;
-    height: 32px;
-    line-height: 21px;
-    margin: 0 auto -6px;
+    font-size: var(--ee-font-size-default);
+    height: var(--ee-icon-button-size);
+    line-height: var(--ee-font-size-default);
+    margin: 0 auto calc(var(--ee-font-size-bigger) / -4);
     outline-style: none;
     text-decoration: none !important;
-    width: 36px;
+    width: var(--ee-icon-button-size);
 }
 
-.ee-entity-details-div.has-tooltip .ee-entity-details-value-div a {
-    font-size: 13px;
-    font-weight: normal;
-}
+/*.ee-entity-details-div.has-tooltip .ee-entity-details-value-div .components-tooltip {*/
+/*    font-size: var(--ee-font-size-smaller);*/
+/*    font-weight: normal;*/
+/*}*/
 
 .ee-entity-details-value-div .dashicon {
     margin: 0;
     position: relative;
-    top: 4px !important;
+    top: var(--ee-margin-micro) !important;
 }
 
 .ee-entity-details-value-div a:hover,
-.ee-entity-details-value-div a:active {
-    color: var(--ee-blue);
-}
-
 .ee-entity-details-value-div a:focus {
-    color: var(--ee-black);
-    border-radius: 4px;
-    box-shadow: inset 0 0 0 1px rgba(0, 0, 0, .1), inset 0 0 0 2px #fff;
-    outline: 2px solid transparent;
-    outline-offset: -2px;
+    color: var(--ee-color-primary);
 }
-
+.ee-entity-details-value-div a:active {
+    color: var(--ee-color-primary-low-contrast);
+}
+.ee-entity-details-value-div a:visited {
+    color: var(--ee-color-primary-high-contrast);
+}
 
 
 /* Media Queries for specific screen sizes
@@ -127,17 +125,16 @@
 /* WordPress Admin Media Query Breakpoint: Smartphone */
 @media screen and (max-width: 600px) {
     .ee-entity-details-panel-div {
-        font-size: 20px;
-        width: 200px;
+        font-size: var(--ee-font-size-default);
+        width: calc(var(--ee-font-size-default) * 10);
     }
 }
 
 @media only screen and (max-width: 480px) {
     .ee-entity-details-panel-div {
         flex-direction: column;
-        line-height: 30px;
         height: auto;
-        padding: 1rem 0 0;
+        padding: var(--ee-padding-smaller) 0 0;
         text-align: center;
         width: 100%;
     }
@@ -150,14 +147,14 @@
     }
 
     .ee-entity-details-value-div {
-        padding-left: 10px;
+        padding-left: var(--ee-padding-tiny);
         text-align: center;
         width: 25%;
     }
 
     .ee-entity-details-label-div {
-        color: var(--ee-grey);
-        font-size: 14px;
+        color: var(--ee-default-text-color-high-contrast);
+        font-size: var(--ee-font-size-tiny);
         letter-spacing: 0;
         text-align: right;
         width: 50%;

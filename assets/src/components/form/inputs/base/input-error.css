@@ -4,16 +4,17 @@
  * -------------------------------------------------------------------------*/
 
 .espresso-input-error {
-    padding: .75em 0 0;
+    padding: var(--ee-padding-micro) 0 0;
 }
 
 .espresso-input-error span {
-    background-color: var(--ee-hot-pink);
-    border-radius: 3px;
-    color: var(--ee-white);
+    background-color: var(--ee-color-hot-pink);
+    border-radius: var(--ee-border-radius-small);
+    color: var(--ee-text-on-hot-pink-high-contrast);
+    font-size: var(--ee-font-size-tiny);
     letter-spacing: 1px;
-    line-height: 1.2;
-    padding: .15em .5em .25em;
+    line-height: var(--ee-font-size-big);
+    padding: var(--ee-padding-micro) var(--ee-padding-tiny);
     white-space: nowrap;
     word-wrap: normal;
 }

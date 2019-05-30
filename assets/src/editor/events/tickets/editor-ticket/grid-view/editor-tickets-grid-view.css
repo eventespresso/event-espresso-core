@@ -8,23 +8,23 @@
     flex-flow: row wrap;
     justify-content: flex-start;
     align-items: flex-start;
-    margin: 1rem 0 0;
+    margin: var(--ee-margin-smaller) 0 0;
 }
 
 .ee-editor-ticket-main {
-    background: var(--ee-white);
-    color: var(--ee-dark-grey);
+    background: var(--ee-background-color);
+    color: var(--ee-default-text-color);
     display: flex;
     flex-direction: row;
     justify-content: space-between;
-    min-height: 185px;
-    padding: 0 0 0 35px;
+    min-height: calc(var(--ee-font-size-small) * 11.5);
+    padding: 0 0 0 calc(var(--ee-icon-button-size) + 8px);
     position: relative;
     overflow: hidden;
 }
 
 .ee-editor-ticket-main.ee-editor-date-range {
-    min-height: 225px;
+    min-height: calc(var(--ee-font-size-default) * 12.5);
 }
 
 /* DATE DETAILS */
@@ -36,43 +36,44 @@
     box-sizing: border-box;
     display: flex;
     flex-direction: column;
-    font-size: 16px;
+    font-size: var(--ee-font-size-small);
     justify-content: flex-start;
-    min-width: 400px;
-    padding: 10px 150px 60px 5px;
+    min-width: calc(var(--ee-font-size-small) * 25);
+    /*padding: var(--ee-padding-tiny) 150px 60px var(--ee-padding-micro);*/
+    padding: var(--ee-padding-smaller) calc(var(--ee-padding-micro) * 36) var(--ee-padding-extreme) var(--ee-padding-smaller);
     text-align: center;
     width: 100%;
 }
 
 .ee-editor-ticket-name-heading,
 .ee-editor-ticket-name-heading .ee-inline-edit-text {
-    color: var(--ee-dark-grey);
-    font-size: 24px !important;
+    color: var(--ee-default-text-color);
+    font-size: var(--ee-font-size-big) !important;
     font-weight: bold !important;
-    line-height: 24px !important;
-    margin: 5px 0 0 !important;
-    min-height: 30px;
+    line-height: var(--ee-font-size-big) !important;
+    margin: var(--ee-margin-micro) 0 0 !important;
+    min-height: var(--ee-font-size-bigger);
     overflow: hidden;
-    padding: 0 0 .5rem !important;
+    padding: 0 0 var(--ee-padding-tiny) !important;
     text-overflow: ellipsis;
     width: 100%;
 }
 .ee-editor-ticket-name-heading.ee-long-title,
 .ee-editor-ticket-name-heading.ee-long-title .ee-inline-edit-text {
-    font-size: 18px !important;
-    line-height: 18px !important;
+    font-size: var(--ee-font-size-default) !important;
+    line-height: var(--ee-font-size-default) !important;
 }
 
 .ee-editor-ticket-desc-div {
-    color: var(--ee-grey);
-    font-size: 14px;
-    margin: 0 0 .5rem;
+    color: var(--ee-default-text-color-high-contrast);
+    font-size: var(--ee-font-size-smaller);
+    margin: 0 0 var(--ee-margin-tiny);
     width: 90%;
 }
 
 .ee-editor-ticket-desc-div.ee-ticket-desc-excerpt span {
     display: block;
-    max-height: 42px;
+    max-height: var(--ee-font-size-huge);
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
@@ -84,38 +85,34 @@
 
 .ee-ticket-price,
 .ee-ticket-price .ee-inline-edit-text {
-    color: var(--ee-grey) !important;
-    font-size: 21px !important;
+    color: var(--ee-default-text-color-low-contrast) !important;
+    font-size: var(--ee-font-size-big) !important;
     font-weight: bold !important;
-    line-height: 21px !important;
+    line-height: var(--ee-font-size-big) !important;
     margin: 0 !important;
-    padding: 0 0 .5rem !important;
+    padding: 0 0 var(--ee-padding-tiny) !important;
     text-align: center;
 }
 
 .ee-editor-ticket-details-sold-rsrvd-qty-div {
-    bottom: 5px;
+    bottom: var(--ee-padding-micro);
+    margin-left: calc(var(--ee-margin-tiny)*-1);
     position: absolute;
+    z-index: 10;
+}
+
+.ee-editor-ticket-details-sold-rsrvd-qty-div .ticket-registrants-label{
+    margin-left: calc(var(--ee-margin-micro)*-1);
 }
 
 
 .ee-tickets-list-grid-view .ee-editor-ticket-actions-menu {
     flex-direction: column;
     position: absolute;
-    left: 2px;
-    top: 2px;
+    left: calc(var(--ee-padding-micro));
+    top: calc(var(--ee-padding-micro));
 }
 
-
-.ee-tickets-list-grid-view .biggie-calendar-date-footer {
-    white-space: pre-line;
-}
-
-.ee-tickets-list-grid-view .biggie-calendar-date-footer span {
-    display: block;
-    margin: .5rem 0 0;
-    text-transform: uppercase;
-}
 
 
 
@@ -156,24 +153,24 @@
 /* WordPress Admin Media Query Breakpoint: Smartphone */
 @media screen and (max-width: 600px) {
     .ee-editor-ticket-details-wrapper-div {
-        font-size: 15px;
-        min-width: 380px;
+        font-size: var(--ee-font-size-smaller);
+        min-width: calc(var(--ee-font-size-default) * 21.25);
     }
 
     .ee-editor-ticket-name-heading,
     .ee-editor-ticket-name-heading .ee-inline-edit-text {
-        font-size: 21px !important;
-        line-height: 21px !important;
+        font-size: var(--ee-font-size-default) !important;
+        line-height: var(--ee-font-size-default) !important;
     }
 
     .ee-editor-ticket-name-heading.ee-long-title,
     .ee-editor-ticket-name-heading.ee-long-title .ee-inline-edit-text {
-        font-size: 16px !important;
-        line-height: 16px !important;
+        font-size: var(--ee-font-size-small) !important;
+        line-height: var(--ee-font-size-small) !important;
     }
 
     .ee-editor-ticket-desc-div {
-        font-size: 13px;
+        font-size: var(--ee-font-size-tiny);
     }
 }
 
@@ -187,7 +184,7 @@
 
     .ee-editor-ticket-details-wrapper-div {
         min-width: unset;
-        padding: 10px 10px 15px 42px;
+        padding: var(--ee-padding-tiny) var(--ee-padding-tiny) var(--ee-padding-smaller) var(--ee-padding-default);
     }
 
     .ee-editor-ticket-name-heading {
@@ -195,7 +192,7 @@
     }
 
     .ee-editor-ticket-desc-div {
-        margin-top: 1rem;
+        margin-top: var(--ee-margin-smaller);
     }
 
     .ee-editor-ticket-details-sold-rsrvd-qty-div {
