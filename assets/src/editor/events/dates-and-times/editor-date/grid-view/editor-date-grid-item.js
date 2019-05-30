@@ -2,11 +2,11 @@
  * External imports
  */
 import { Component, Fragment } from '@wordpress/element';
-import { IconButton } from '@wordpress/components';
 import { __ } from '@eventespresso/i18n';
 import {
 	BiggieCalendarDate,
 	CalendarDateRange,
+	EntityLock,
 	withEntityPaperFrame,
 } from '@eventespresso/components';
 import { dateTimeModel } from '@eventespresso/model';
@@ -19,7 +19,7 @@ import classNames from 'classnames';
 import EditorDateDetails from './editor-date-details';
 import { EditorDateActionsMenu } from '../';
 
-const { getBackgroundColorClass, MODEL_NAME } = dateTimeModel;
+const { getBackgroundColorClass } = dateTimeModel;
 
 /**
  * EditorDateGridItem
@@ -64,6 +64,20 @@ class EditorDateGridItem extends Component {
 				/>;
 		}
 	};
+
+	/**
+	 * @function
+	 * @param {Object} event        model object defining the Event
+	 * @param {Object} eventDate    model object defining the Event Date
+	 * @return {Object} eventDate
+	 */
+	toggleLock = ( event, eventDate ) => {
+		if ( isModelEntityOfModel( eventDate, 'datetime' ) ) {
+			eventDate.isPrimary = ! eventDate.isPrimary;
+		}
+		return eventDate;
+	};
+
 	render() {
 		const {
 			event,
@@ -73,20 +87,9 @@ class EditorDateGridItem extends Component {
 			showDesc = 'excerpt',
 			showVenue = true,
 		} = this.props;
-		if ( ! isModelEntityOfModel( eventDate, MODEL_NAME ) ) {
+		if ( ! isModelEntityOfModel( eventDate, 'datetime' ) ) {
 			return null;
 		}
-		const isPrimary = eventDate.isPrimary ? (
-			<IconButton
-				className="ee-primary-event-date"
-				icon="star-empty"
-				label={ __(
-					'this is the primary date for this event',
-					'event_espresso'
-				) }
-				labelPosition="top right"
-			/>
-		) : null;
 		const dateStyleClass = classNames(
 			'ee-editor-date-main',
 			{
@@ -110,7 +113,14 @@ class EditorDateGridItem extends Component {
 					eventDate={ eventDate }
 					allTickets={ allTickets }
 				/>
-				{ isPrimary }
+				<EntityLock
+					entity={ eventDate }
+					isLocked={ eventDate.locked }
+					toggleEntityLock={ ( date ) => this.toggleLock(
+						event,
+						date
+					) }
+				/>
 			</Fragment>
 		);
 	}

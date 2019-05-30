@@ -8,6 +8,7 @@ import { compose } from '@wordpress/compose';
 import {
 	BiggieCalendarDate,
 	CalendarDateRange,
+	EntityLock,
 	withEntityPaperFrame,
 } from '@eventespresso/components';
 import { ticketModel } from '@eventespresso/model';
@@ -17,7 +18,8 @@ import { isModelEntityOfModel } from '@eventespresso/validators';
  * Internal dependencies
  */
 import { EditorTicketDetails } from './';
-import EditorTicketActionsMenu from '../actions-menu/editor-ticket-actions-menu';
+import EditorTicketActionsMenu
+	from '../actions-menu/editor-ticket-actions-menu';
 
 const {
 	getBackgroundColorClass,
@@ -95,6 +97,18 @@ class EditorTicketGridItem extends Component {
 		}
 	};
 
+	/**
+	 * @function
+	 * @param {Object} ticket    model object defining the ticket
+	 * @return {Object} ticket
+	 */
+	toggleLock = async ( ticket ) => {
+		if ( isModelEntityOfModel( ticket, 'ticket' ) ) {
+			ticket.isLocked = ! ticket.isLocked;
+		}
+		return ticket;
+	};
+
 	render() {
 		const {
 			ticket,
@@ -104,7 +118,7 @@ class EditorTicketGridItem extends Component {
 			doRefresh,
 			refreshed,
 		} = this.props;
-		if ( ! isModelEntityOfModel( ticket, ticketModel.MODEL_NAME ) ) {
+		if ( ! isModelEntityOfModel( ticket, 'ticket' ) ) {
 			return null;
 		}
 		const dateStyleClass = displayTicketDate === 'both' ?
@@ -124,6 +138,12 @@ class EditorTicketGridItem extends Component {
 					allDates={ allDates }
 					eventDateTicketMap={ eventDateTicketMap }
 					doRefresh={ doRefresh }
+				/>
+				<EntityLock
+					entity={ ticket }
+					isLocked={ ticket.locked }
+					toggleEntityLock={ this.toggleLock }
+					position={ 'top right' }
 				/>
 			</Fragment>
 		);
