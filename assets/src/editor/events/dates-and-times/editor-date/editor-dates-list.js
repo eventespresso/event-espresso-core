@@ -10,7 +10,7 @@ import {
 	twoColumnAdminFormLayout,
 } from '@eventespresso/components';
 import { withEditor } from '@eventespresso/higher-order-components';
-import { __ } from '@eventespresso/i18n';
+import { __, _x, sprintf } from '@eventespresso/i18n';
 
 /**
  * Internal dependencies
@@ -93,6 +93,7 @@ class EditorDatesList extends Component {
 		return (
 			<FormWrapper>
 				<EntityList
+					{ ...otherProps }
 					entities={ entities }
 					allDates={ allDates }
 					allTickets={ allTickets }
@@ -100,7 +101,14 @@ class EditorDatesList extends Component {
 					EntityListView={ EditorDatesListView }
 					view={ view }
 					event={ event }
-					{ ...otherProps }
+					loadingNotice={ sprintf(
+						_x(
+							'loading event dates%s',
+							'loading event dates...',
+							'event_espresso'
+						),
+						String.fromCharCode( 8230 )
+					) }
 				/>
 				<FormSaveCancelButtons
 					submitButton={ this.addNewDateButton() }

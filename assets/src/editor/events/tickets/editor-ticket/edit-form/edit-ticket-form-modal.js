@@ -33,7 +33,7 @@ const EditTicketFormModal = ( { ticket, ...otherProps } ) => {
 			{ ...otherProps }
 		/>
 	);
-}
+};
 
 /**
  * Enhanced TicketEditor with Modal
