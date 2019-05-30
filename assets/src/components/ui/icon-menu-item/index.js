@@ -1,7 +1,7 @@
 /**
  * External imports
  */
-import { Component, Fragment } from '@wordpress/element';
+import classNames from 'classnames';
 import PropTypes from 'prop-types'
 import { IconButton } from '@wordpress/components';
 
@@ -21,70 +21,83 @@ import './style.css';
  * @param {string} tooltip
  * @param {string} tooltipPosition
  * @param {Function} onClick
+ * @param {number|string} itemCount
  * @param {Object} externalApp
+ * @param {Object} otherProps
  * @return {string} rendered IconMenuItem
  */
-class IconMenuItem extends Component {
-	static propTypes = {
-		index: PropTypes.number.isRequired,
-		id: PropTypes.string.isRequired,
-		htmlClass: PropTypes.string.isRequired,
-		dashicon: PropTypes.oneOfType( [
-			PropTypes.object,
-			PropTypes.string,
-		] ).isRequired,
-		tooltip: PropTypes.string.isRequired,
-		tooltipPosition: PropTypes.string,
-		onClick: PropTypes.func.isRequired,
-		externalApp: PropTypes.object,
-	};
-
-	render() {
-		const {
-			index,
-			id,
-			tooltip,
-			dashicon,
-			onClick,
-			tooltipPosition = 'top left',
-			externalApp = null,
-			...otherProps
-		} = this.props;
-		let { htmlClass, itemCount = null } = this.props;
-		delete otherProps.htmlClass;
-		delete otherProps.itemCount;
-		htmlClass = `ee-icon-menu-item-${ htmlClass }`;
-		htmlClass += ` ee-icon-menu-item-${ index }`;
-		htmlClass += ' ee-icon-menu-item clickable';
-		if ( itemCount !== null ) {
-			itemCount = parseInt( itemCount );
-			const itemCountClass = itemCount > 0 ?
-				'ee-icon-menu-item-count ee-tiny-shadow ee-has-items' :
-				'ee-icon-menu-item-count ee-tiny-shadow ee-no-items';
-			itemCount = (
-				<div className={ itemCountClass }>
-					{ itemCount > 0 ? itemCount : '?' }
-				</div>
-			);
-		}
-
-		return (
-			<div className={ 'ee-icon-menu-item-wrapper' }>
-				<IconButton
-					id={ `ee-icon-menu-item-${ id }` }
-					className={ htmlClass }
-					onClick={ ( event ) => onClick( event ) }
-					onKeyPress={ ( event ) => onClick( event ) }
-					tooltip={ tooltip }
-					labelPosition={ tooltipPosition }
-					icon={ dashicon }
-					{ ...otherProps }
-				/>
-				{ itemCount }
-				{ externalApp }
+const IconMenuItem = ( {
+	index,
+	id,
+	tooltip,
+	dashicon,
+	onClick,
+	htmlClass,
+	tooltipPosition,
+	itemCount,
+	externalApp,
+	...otherProps
+} ) => {
+	const btnClass = classNames( {
+		[ `ee-icon-menu-item-${ index }` ]: true,
+		[ `ee-icon-menu-item-${ htmlClass }` ]: htmlClass,
+		'ee-icon-menu-item': true,
+		'clickable': true,
+	} );
+	if ( itemCount !== '' ) {
+		itemCount = parseInt( itemCount );
+		const itemCountClass = classNames( {
+			'ee-icon-menu-item-count': true,
+			'ee-has-items': itemCount > 0,
+			'ee-no-items': itemCount < 1,
+		} );
+		itemCount = (
+			<div className={ itemCountClass }>
+				{ itemCount > 0 ? itemCount : '?' }
 			</div>
 		);
 	}
-}
+	return (
+		<div className={ 'ee-icon-menu-item-wrapper' }>
+			<IconButton
+				{ ...otherProps }
+				id={ `ee-icon-menu-item-${ id }` }
+				className={ btnClass }
+				onClick={ ( event ) => onClick( event ) }
+				onKeyPress={ ( event ) => onClick( event ) }
+				tooltip={ tooltip }
+				labelPosition={ tooltipPosition }
+				icon={ dashicon }
+			/>
+			{ itemCount }
+			{ externalApp }
+		</div>
+	);
+};
+
+IconMenuItem.propTypes = {
+	index: PropTypes.number.isRequired,
+	id: PropTypes.string.isRequired,
+	htmlClass: PropTypes.string.isRequired,
+	dashicon: PropTypes.oneOfType( [
+		PropTypes.object,
+		PropTypes.string,
+	] ).isRequired,
+	itemCount: PropTypes.oneOfType( [
+		PropTypes.number,
+		PropTypes.string,
+	] ),
+	tooltip: PropTypes.string.isRequired,
+	tooltipPosition: PropTypes.string,
+	onClick: PropTypes.func.isRequired,
+	externalApp: PropTypes.object,
+};
+
+IconMenuItem.defaultProps = {
+	itemCount: '',
+	externalApp: null,
+	tooltipPosition: 'top left',
+	htmlClass: '',
+};
 
 export default IconMenuItem;
