@@ -3,11 +3,31 @@
  * (c) 2018 Event Espresso
  * -------------------------------------------------------------------------*/
 
+
 .components-modal__frame.ee-editor-modal {
     height: 85%;
     max-height: 85%;
     max-width: 85%;
     width: 85%;
+}
+
+.components-modal__frame.ee-editor-modal-tiny {
+    height: auto !important;
+    max-width: 480px !important;
+}
+
+.components-modal__frame.ee-editor-modal-small {
+    height: auto !important;
+    max-width: 600px !important;
+}
+
+.components-modal__frame.ee-editor-modal .components-modal__header {
+    background: var(--ee-color-primary);
+}
+
+.components-modal__frame.ee-editor-modal .components-modal__header h1,
+.components-modal__frame.ee-editor-modal .components-modal__header .components-icon-button {
+    color: var(--ee-text-on-primary);
 }
 
 .ee-editor-modal .components-modal__content {
@@ -16,12 +36,12 @@
 
 .ee-editor-modal .components-modal__header {
     margin: 0 0 -1px;
-    padding: 0 8px;
+    padding: 0 var(--ee-padding-tiny);
 }
 
 .ee-editor-modal .components-modal__header-heading {
-    font-size: 1.5rem;
-    margin-left: 1rem;
+    font-size: var(--ee-font-size-big);
+    margin-left: var(--ee-margin-smaller);
 }
 
 
@@ -72,7 +92,7 @@
 /* WordPress Admin Media Query Breakpoint: Tablet */
 @media screen and ( max-width: 782px ) {
     .ee-editor-modal .components-modal__header-heading {
-        font-size: 1.25rem;
+        font-size: var(--ee-font-size-default);
         font-weight: bold;
     }
 }
@@ -80,7 +100,7 @@
 /* WordPress Admin Media Query Breakpoint: Smartphone */
 @media screen and (max-width: 600px) {
     .ee-editor-modal .components-modal__header-heading {
-        font-size: 1rem;
+        font-size: var(--ee-font-size-small);
         font-weight: bold;
     }
 }
