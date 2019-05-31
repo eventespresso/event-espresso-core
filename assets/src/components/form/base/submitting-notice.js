@@ -65,7 +65,7 @@ SubmittingNotice.propTypes = {
 SubmittingNotice.defaultProps = {
 	submittingText: '',
 	htmlClass: '',
-	position: '',
+	position: 'above',
 	size: 'default',
 	style: {},
 };
