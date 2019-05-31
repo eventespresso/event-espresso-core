@@ -95,7 +95,7 @@ export const withFormHandler = ( FormComponent ) => {
 			const showSubmit = typeof this.props.submitHandler === 'function';
 			const submitHandler = this.props.submitHandler || ( () => null );
 			return (
-				<FormErrorBoundary errorMessage={ errorMessage }>
+				<FormErrorBoundary errorMessage={ errorMessage } >
 					<Form
 						onSubmit={ submitHandler }
 						initialValues={ formData || {} }
@@ -136,12 +136,12 @@ export const withFormHandler = ( FormComponent ) => {
 								/> :
 								null;
 							return (
-								<form onSubmit={ handleSubmit }>
+								<form onSubmit={ handleSubmit } >
 									<FormPlaceholder
 										loading={ loading }
 										notice={ loadingNotice }
 									/>
-									<FormContainer loading={ loading }>
+									<FormContainer loading={ loading } >
 										<FormComponent
 											initialValues={ formData || {} }
 											currentValues={ values }
