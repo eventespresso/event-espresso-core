@@ -315,7 +315,6 @@ const config = [
 			'@eventespresso/model': 'eejs.model',
 			'@eventespresso/value-objects': 'eejs.valueObjects',
 			'@eventespresso/higher-order-components': 'eejs.hocs',
-			'@eventespresso/components': 'eejs.components',
 			'@eventespresso/hooks': 'eejs.hooks',
 		} ),
 		module: {
