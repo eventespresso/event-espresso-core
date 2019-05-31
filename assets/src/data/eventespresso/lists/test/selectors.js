@@ -12,7 +12,7 @@ import {
 /**
  * External dependencies
  */
-import { select } from '@wordpress/data';
+import { registerStore, select } from '@wordpress/data';
 import { Exception } from '@eventespresso/eejs';
 import { Set, OrderedMap, Map } from 'immutable';
 
@@ -132,6 +132,8 @@ describe( 'getEntitiesByIds()', () => {
 
 describe( 'isRequesting()', () => {
 	beforeAll( () => {
+		// we don't need original store here.
+		registerStore( 'core/data', { selectors: {}, reducer: () => {} } );
 		select( 'core/data' ).isResolving = jest.fn().mockReturnValue( false );
 	} );
 	afterAll( () => {
