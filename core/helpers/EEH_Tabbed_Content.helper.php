@@ -37,7 +37,7 @@ class EEH_Tabbed_Content
 
         // first check if $tabs_names is not empty then the count must match the count of $tabs_content otherwise we've got a problem houston
         if (!empty($tabs_names) && ( count((array) $tabs_names) != count((array) $tabs_content) )) {
-            throw new EE_Error(__('The count for $tabs_names and $tabs_content does not match.', 'event_espresso'));
+            throw new EE_Error(esc_html__('The count for $tabs_names and $tabs_content does not match.', 'event_espresso'));
         }
 
         // make sure we've got incoming data setup properly
@@ -91,7 +91,7 @@ class EEH_Tabbed_Content
     public static function display_admin_nav_tabs($nav_tabs = array())
     {
         if (empty($nav_tabs)) {
-            throw new EE_Error(__('Nav Tabs cannot be generated because the tab array is missing', 'event_espresso'));
+            throw new EE_Error(esc_html__('Nav Tabs cannot be generated because the tab array is missing', 'event_espresso'));
         }
 
         $all_tabs = '<nav class="nav-tab-wrapper wp-clearfix" aria-label="' . esc_attr__('Secondary menu', 'event_espresso') . '">' . "\n";
@@ -172,7 +172,7 @@ class EEH_Tabbed_Content
 
 
         $defaults = array(
-            'label' => __('Item', 'event_espresso'),
+            'label' => esc_html__('Item', 'event_espresso'),
             'class' => '',
             'href' => '',
             'title' => esc_attr__('Link for Item', 'event_espresso'),
