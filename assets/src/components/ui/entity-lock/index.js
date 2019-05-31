@@ -26,20 +26,23 @@ const lockPositions = [
 
 /**
  * EntityLock
- * Component for displaying an Event Date as a visual block in grid views
+ * Component for toggling an edit lock for entities
+ * which is intended to prevent unintentional edits
  *
- * @function
- * @param {Object} date    JSON object defining the Event Date
+ * @constructor
+ * @param {Object} toggleEntityLock   callback for updating entity
  */
 class EntityLock extends Component {
 	static propTypes = {
 		entity: PropTypes.object.isRequired,
 		isLocked: PropTypes.bool.isRequired,
 		toggleEntityLock: PropTypes.func.isRequired,
+		isUnLockable: PropTypes.bool,
 		position: PropTypes.oneOf( lockPositions ),
 	};
 
 	static defaultProps = {
+		isUnLockable: true,
 		position: 'top left',
 	};
 
@@ -56,9 +59,11 @@ class EntityLock extends Component {
 	 * @param {Object} entity model object to lock
 	 */
 	toggleLock = async ( entity ) => {
-		this.setState( { locking: entity.id } );
-		await this.toggleEntityLock( entity );
-		this.setState( { locking: null } );
+		if ( this.isUnLockable ) {
+			this.setState( { locking: entity.id } );
+			await this.toggleEntityLock( entity );
+			this.setState( { locking: null } );
+		}
 	};
 
 	/**
@@ -96,12 +101,14 @@ class EntityLock extends Component {
 		const {
 			entity,
 			isLocked,
+			isUnLockable,
 			position,
 		} = this.props;
 		warning(
 			isModelEntity( entity ),
 			'the supplied entity is invalid and can not be locked'
 		);
+		this.isUnLockable = isUnLockable;
 		const lockPosition = this.lockPosition( position );
 		let htmlClass = 'ee-entity-lock-button',
 			icon, label;
