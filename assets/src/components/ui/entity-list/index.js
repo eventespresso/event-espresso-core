@@ -2,7 +2,6 @@
  * External imports
  */
 import { without } from 'lodash';
-import { withFormContainerAndPlaceholder } from '@eventespresso/components';
 import { __ } from '@eventespresso/i18n';
 import classNames from 'classnames';
 
@@ -10,6 +9,7 @@ import classNames from 'classnames';
  * Internal dependencies
  */
 import './style.css';
+import withFormContainerAndPlaceholder from '../../form/base/with-form-container-and-placeholder';
 
 /**
  * EntityList
