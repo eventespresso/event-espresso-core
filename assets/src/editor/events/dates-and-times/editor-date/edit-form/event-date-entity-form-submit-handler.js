@@ -33,9 +33,18 @@ export const eventDateEntityFormSubmitHandler = (
 	dateEntity.description = formData[ `${ prefix }-description` ] || '';
 	dateEntity.start = new DateTime( formData[ `${ prefix }-start` ] || '' );
 	dateEntity.end = new DateTime( formData[ `${ prefix }-end` ] || '' );
-	dateEntity.regLimit = parseInt( formData[ `${ prefix }-reg-limit` ] || -1 );
+	dateEntity.regLimit = parseInt(
+		formData[ `${ prefix }-reg-limit` ] || -1,
+		10
+	);
 	dateEntity.isPrimary = !! formData[ `${ prefix }-is-primary` ] || false;
-	dateEntity.order = parseInt( formData[ `${ prefix }-order` ] || 0 );
-	dateEntity.parent = parseInt( formData[ `${ prefix }-parent` ] || 0 );
+	dateEntity.order = parseInt(
+		formData[ `${ prefix }-order` ] || 0,
+		10
+	);
+	dateEntity.parent = parseInt(
+		formData[ `${ prefix }-parent` ] || 0,
+		10
+	);
 	dateEntity.deleted = !! formData[ `${ prefix }-deleted` ] || false;
 };

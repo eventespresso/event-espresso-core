@@ -28,7 +28,7 @@ export const processChanges = (
 			dates,
 			( date ) => {
 				return date.id === dateID ||
-					date.id === parseInt( dateID );
+					date.id === parseInt( dateID, 10 );
 			}
 		);
 		if ( isModelEntityOfModel( dateEntity, 'datetime' ) ) {
@@ -45,7 +45,7 @@ export const processChanges = (
 			dates,
 			( date ) => {
 				return date.id === dateID ||
-					date.id === parseInt( dateID );
+					date.id === parseInt( dateID, 10 );
 			}
 		);
 		if ( isModelEntityOfModel( dateEntity, 'datetime' ) ) {

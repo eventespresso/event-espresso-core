@@ -33,7 +33,7 @@ export const eventDateEntityFormInputs = (
 	}
 	const values = currentValues;
 	const prefix = `ee-event-date-${ eventDate.id }`;
-	if ( parseInt( eventDate.id ) && indexOf( exclude, 'DTT_ID' ) < 0 ) {
+	if ( parseInt( eventDate.id, 10 ) && indexOf( exclude, 'DTT_ID' ) < 0 ) {
 		inputs.push(
 			<FormInput
 				key="id"

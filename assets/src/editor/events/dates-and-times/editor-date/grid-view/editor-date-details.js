@@ -238,7 +238,7 @@ class EditorDateDetails extends Component {
 	 * @param {Object} eventDate    model object defining the Event Date
 	 */
 	updateCapacity = ( capacity, eventDate ) => {
-		capacity = parseInt( capacity );
+		capacity = parseInt( capacity, 10 );
 		if (
 			isModelEntityOfModel( eventDate, DATETIME ) &&
 			eventDate.regLimit !== capacity

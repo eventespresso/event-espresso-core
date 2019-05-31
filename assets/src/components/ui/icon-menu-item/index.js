@@ -45,7 +45,7 @@ const IconMenuItem = ( {
 		'clickable': true,
 	} );
 	if ( itemCount !== '' ) {
-		itemCount = parseInt( itemCount );
+		itemCount = parseInt( itemCount, 10 );
 		const itemCountClass = classNames( {
 			'ee-icon-menu-item-count': true,
 			'ee-has-items': itemCount > 0,

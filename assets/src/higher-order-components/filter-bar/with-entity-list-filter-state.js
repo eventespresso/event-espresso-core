@@ -34,7 +34,8 @@ export default createHigherOrderComponent(
 						'entity-list',
 						'perPage',
 						perPage
-					)
+					),
+					10
 				),
 				view: store.getFilter(
 					'entity-list',
@@ -54,7 +55,7 @@ export default createHigherOrderComponent(
 				setPerPage: ( perPage ) => store.setFilter(
 					'entity-list',
 					'perPage',
-					parseInt( perPage )
+					parseInt( perPage, 10 )
 				),
 				setListView: () => store.setFilter(
 					'entity-list',

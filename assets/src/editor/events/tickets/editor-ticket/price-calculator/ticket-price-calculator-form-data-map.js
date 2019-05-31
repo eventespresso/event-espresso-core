@@ -43,7 +43,7 @@ const buildPricesDataMap = ( formData, ticket, prices ) => {
 			priceTypes.push( price.prtId );
 			const pricePrefix = `${ prefix }-${ priceId }`;
 			formData[ `${ pricePrefix }-id` ] = priceId;
-			formData[ `${ pricePrefix }-type` ] = parseInt( price.prtId );
+			formData[ `${ pricePrefix }-type` ] = parseInt( price.prtId, 10 );
 			formData[ `${ pricePrefix }-name` ] = price.name || '';
 			formData[ `${ pricePrefix }-desc` ] = price.desc || '';
 			formData[ `${ pricePrefix }-amount` ] = price.amount &&

@@ -51,7 +51,8 @@ export default createHigherOrderComponent(
 						'event-editor-dates-list',
 						'datesPerPage',
 						datesPerPage
-					)
+					),
+					10
 				),
 				datesView: store.getFilter(
 					'event-editor-dates-list',
@@ -86,7 +87,7 @@ export default createHigherOrderComponent(
 				setDatesPerPage: ( datesPerPage ) => store.setFilter(
 					'event-editor-dates-list',
 					'datesPerPage',
-					parseInt( datesPerPage )
+					parseInt( datesPerPage, 10 )
 				),
 				setDatesListView: () => store.setFilter(
 					'event-editor-dates-list',

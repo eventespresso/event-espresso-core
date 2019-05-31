@@ -100,7 +100,7 @@ export default ( paginationConfig = {} ) => createHigherOrderComponent(
 							<JwPagination
 								items={ entities }
 								onChangePage={ this.onPaginationChange }
-								pageSize={ parseInt( entitiesPerPage ) }
+								pageSize={ parseInt( entitiesPerPage, 10 ) }
 								{ ...paginationConfig }
 							/>
 						</div>
