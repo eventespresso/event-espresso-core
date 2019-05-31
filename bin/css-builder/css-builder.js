@@ -160,7 +160,6 @@ function writeCssDemoFile( theme ) {
  */
 function writeCssDemoMainFile( theme, config ) {
 	const variableStylesheets = getCssFiles( config.folder, true );
-	variableStylesheets.push( '../../../../espresso-button/style.css' );
 	const baseStylesheets = getCssFiles( 'root' );
 	const overrideStylesheets = getCssFiles( config.folder );
 	const fileData = parseCssTemplate(
