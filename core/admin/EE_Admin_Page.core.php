@@ -2025,48 +2025,50 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
     public function admin_footer_scripts_eei18n_js_strings()
     {
         EE_Registry::$i18n_js_strings['ajax_url']       = WP_AJAX_URL;
-        EE_Registry::$i18n_js_strings['confirm_delete'] = esc_html__(
-            'Are you absolutely sure you want to delete this item?\nThis action will delete ALL DATA associated with this item!!!\nThis can NOT be undone!!!',
-            'event_espresso'
+        EE_Registry::$i18n_js_strings['confirm_delete'] = wp_strip_all_tags(
+            __(
+                'Are you absolutely sure you want to delete this item?\nThis action will delete ALL DATA associated with this item!!!\nThis can NOT be undone!!!',
+                'event_espresso'
+            )
         );
-        EE_Registry::$i18n_js_strings['January']        = esc_html__('January', 'event_espresso');
-        EE_Registry::$i18n_js_strings['February']       = esc_html__('February', 'event_espresso');
-        EE_Registry::$i18n_js_strings['March']          = esc_html__('March', 'event_espresso');
-        EE_Registry::$i18n_js_strings['April']          = esc_html__('April', 'event_espresso');
-        EE_Registry::$i18n_js_strings['May']            = esc_html__('May', 'event_espresso');
-        EE_Registry::$i18n_js_strings['June']           = esc_html__('June', 'event_espresso');
-        EE_Registry::$i18n_js_strings['July']           = esc_html__('July', 'event_espresso');
-        EE_Registry::$i18n_js_strings['August']         = esc_html__('August', 'event_espresso');
-        EE_Registry::$i18n_js_strings['September']      = esc_html__('September', 'event_espresso');
-        EE_Registry::$i18n_js_strings['October']        = esc_html__('October', 'event_espresso');
-        EE_Registry::$i18n_js_strings['November']       = esc_html__('November', 'event_espresso');
-        EE_Registry::$i18n_js_strings['December']       = esc_html__('December', 'event_espresso');
-        EE_Registry::$i18n_js_strings['Jan']            = esc_html__('Jan', 'event_espresso');
-        EE_Registry::$i18n_js_strings['Feb']            = esc_html__('Feb', 'event_espresso');
-        EE_Registry::$i18n_js_strings['Mar']            = esc_html__('Mar', 'event_espresso');
-        EE_Registry::$i18n_js_strings['Apr']            = esc_html__('Apr', 'event_espresso');
-        EE_Registry::$i18n_js_strings['May']            = esc_html__('May', 'event_espresso');
-        EE_Registry::$i18n_js_strings['Jun']            = esc_html__('Jun', 'event_espresso');
-        EE_Registry::$i18n_js_strings['Jul']            = esc_html__('Jul', 'event_espresso');
-        EE_Registry::$i18n_js_strings['Aug']            = esc_html__('Aug', 'event_espresso');
-        EE_Registry::$i18n_js_strings['Sep']            = esc_html__('Sep', 'event_espresso');
-        EE_Registry::$i18n_js_strings['Oct']            = esc_html__('Oct', 'event_espresso');
-        EE_Registry::$i18n_js_strings['Nov']            = esc_html__('Nov', 'event_espresso');
-        EE_Registry::$i18n_js_strings['Dec']            = esc_html__('Dec', 'event_espresso');
-        EE_Registry::$i18n_js_strings['Sunday']         = esc_html__('Sunday', 'event_espresso');
-        EE_Registry::$i18n_js_strings['Monday']         = esc_html__('Monday', 'event_espresso');
-        EE_Registry::$i18n_js_strings['Tuesday']        = esc_html__('Tuesday', 'event_espresso');
-        EE_Registry::$i18n_js_strings['Wednesday']      = esc_html__('Wednesday', 'event_espresso');
-        EE_Registry::$i18n_js_strings['Thursday']       = esc_html__('Thursday', 'event_espresso');
-        EE_Registry::$i18n_js_strings['Friday']         = esc_html__('Friday', 'event_espresso');
-        EE_Registry::$i18n_js_strings['Saturday']       = esc_html__('Saturday', 'event_espresso');
-        EE_Registry::$i18n_js_strings['Sun']            = esc_html__('Sun', 'event_espresso');
-        EE_Registry::$i18n_js_strings['Mon']            = esc_html__('Mon', 'event_espresso');
-        EE_Registry::$i18n_js_strings['Tue']            = esc_html__('Tue', 'event_espresso');
-        EE_Registry::$i18n_js_strings['Wed']            = esc_html__('Wed', 'event_espresso');
-        EE_Registry::$i18n_js_strings['Thu']            = esc_html__('Thu', 'event_espresso');
-        EE_Registry::$i18n_js_strings['Fri']            = esc_html__('Fri', 'event_espresso');
-        EE_Registry::$i18n_js_strings['Sat']            = esc_html__('Sat', 'event_espresso');
+        EE_Registry::$i18n_js_strings['January']        = wp_strip_all_tags(__('January', 'event_espresso'));
+        EE_Registry::$i18n_js_strings['February']       = wp_strip_all_tags(__('February', 'event_espresso'));
+        EE_Registry::$i18n_js_strings['March']          = wp_strip_all_tags(__('March', 'event_espresso'));
+        EE_Registry::$i18n_js_strings['April']          = wp_strip_all_tags(__('April', 'event_espresso'));
+        EE_Registry::$i18n_js_strings['May']            = wp_strip_all_tags(__('May', 'event_espresso'));
+        EE_Registry::$i18n_js_strings['June']           = wp_strip_all_tags(__('June', 'event_espresso'));
+        EE_Registry::$i18n_js_strings['July']           = wp_strip_all_tags(__('July', 'event_espresso'));
+        EE_Registry::$i18n_js_strings['August']         = wp_strip_all_tags(__('August', 'event_espresso'));
+        EE_Registry::$i18n_js_strings['September']      = wp_strip_all_tags(__('September', 'event_espresso'));
+        EE_Registry::$i18n_js_strings['October']        = wp_strip_all_tags(__('October', 'event_espresso'));
+        EE_Registry::$i18n_js_strings['November']       = wp_strip_all_tags(__('November', 'event_espresso'));
+        EE_Registry::$i18n_js_strings['December']       = wp_strip_all_tags(__('December', 'event_espresso'));
+        EE_Registry::$i18n_js_strings['Jan']            = wp_strip_all_tags(__('Jan', 'event_espresso'));
+        EE_Registry::$i18n_js_strings['Feb']            = wp_strip_all_tags(__('Feb', 'event_espresso'));
+        EE_Registry::$i18n_js_strings['Mar']            = wp_strip_all_tags(__('Mar', 'event_espresso'));
+        EE_Registry::$i18n_js_strings['Apr']            = wp_strip_all_tags(__('Apr', 'event_espresso'));
+        EE_Registry::$i18n_js_strings['May']            = wp_strip_all_tags(__('May', 'event_espresso'));
+        EE_Registry::$i18n_js_strings['Jun']            = wp_strip_all_tags(__('Jun', 'event_espresso'));
+        EE_Registry::$i18n_js_strings['Jul']            = wp_strip_all_tags(__('Jul', 'event_espresso'));
+        EE_Registry::$i18n_js_strings['Aug']            = wp_strip_all_tags(__('Aug', 'event_espresso'));
+        EE_Registry::$i18n_js_strings['Sep']            = wp_strip_all_tags(__('Sep', 'event_espresso'));
+        EE_Registry::$i18n_js_strings['Oct']            = wp_strip_all_tags(__('Oct', 'event_espresso'));
+        EE_Registry::$i18n_js_strings['Nov']            = wp_strip_all_tags(__('Nov', 'event_espresso'));
+        EE_Registry::$i18n_js_strings['Dec']            = wp_strip_all_tags(__('Dec', 'event_espresso'));
+        EE_Registry::$i18n_js_strings['Sunday']         = wp_strip_all_tags(__('Sunday', 'event_espresso'));
+        EE_Registry::$i18n_js_strings['Monday']         = wp_strip_all_tags(__('Monday', 'event_espresso'));
+        EE_Registry::$i18n_js_strings['Tuesday']        = wp_strip_all_tags(__('Tuesday', 'event_espresso'));
+        EE_Registry::$i18n_js_strings['Wednesday']      = wp_strip_all_tags(__('Wednesday', 'event_espresso'));
+        EE_Registry::$i18n_js_strings['Thursday']       = wp_strip_all_tags(__('Thursday', 'event_espresso'));
+        EE_Registry::$i18n_js_strings['Friday']         = wp_strip_all_tags(__('Friday', 'event_espresso'));
+        EE_Registry::$i18n_js_strings['Saturday']       = wp_strip_all_tags(__('Saturday', 'event_espresso'));
+        EE_Registry::$i18n_js_strings['Sun']            = wp_strip_all_tags(__('Sun', 'event_espresso'));
+        EE_Registry::$i18n_js_strings['Mon']            = wp_strip_all_tags(__('Mon', 'event_espresso'));
+        EE_Registry::$i18n_js_strings['Tue']            = wp_strip_all_tags(__('Tue', 'event_espresso'));
+        EE_Registry::$i18n_js_strings['Wed']            = wp_strip_all_tags(__('Wed', 'event_espresso'));
+        EE_Registry::$i18n_js_strings['Thu']            = wp_strip_all_tags(__('Thu', 'event_espresso'));
+        EE_Registry::$i18n_js_strings['Fri']            = wp_strip_all_tags(__('Fri', 'event_espresso'));
+        EE_Registry::$i18n_js_strings['Sat']            = wp_strip_all_tags(__('Sat', 'event_espresso'));
     }
 
 

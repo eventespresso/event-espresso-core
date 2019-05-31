@@ -189,7 +189,9 @@ class EED_Batch extends EED_Module
             'ee_job_i18n',
             array(
                 'download_and_redirecting' => sprintf(
-                    __('File Generation complete. Downloading, and %1$sredirecting%2$s...', 'event_espresso'),
+                    wp_strip_all_tags(
+                        __('File Generation complete. Downloading, and %1$sredirecting%2$s...', 'event_espresso')
+                    ),
                     '<a href="' . $_REQUEST['return_url'] . '">',
                     '</a>'
                 ),

@@ -165,13 +165,15 @@ class Extend_Transactions_Admin_Page extends Transactions_Admin_Page
             $beginning_date = new DateTime('now' . $period, new DateTimeZone(EEH_DTT_Helper::get_timezone()));
             $ending_date = new DateTime('now', new DateTimeZone(EEH_DTT_Helper::get_timezone()));
             $subtitle = sprintf(
-                _x('For the period: %s to %s', 'Used to give date range', 'event_espresso'),
+                wp_strip_all_tags(
+                    _x('For the period: %s to %s', 'Used to give date range', 'event_espresso')
+                ),
                 $beginning_date->format('Y-m-d'),
                 $ending_date->format('Y-m-d')
             );
         }
 
-        $report_title = esc_html__('Total Revenue per Day', 'event_espresso');
+        $report_title = wp_strip_all_tags(__('Total Revenue per Day', 'event_espresso'));
 
         $report_params = array(
             'title'     => $report_title,
@@ -180,7 +182,9 @@ class Extend_Transactions_Admin_Page extends Transactions_Admin_Page
             'revenue'   => $revenue,
             'noResults' => empty($revenue) || count($revenue) === 1,
             'noTxnMsg'  => sprintf(
-                __('%sThere is no revenue to report for the last 30 days.%s', 'event_espresso'),
+                wp_strip_all_tags(
+                    __('%sThere is no revenue to report for the last 30 days.%s', 'event_espresso')
+                ),
                 '<h2>' . $report_title . '</h2><p>',
                 '</p>'
             ),
@@ -227,13 +231,15 @@ class Extend_Transactions_Admin_Page extends Transactions_Admin_Page
             $beginning_date = new DateTime('now' . $period, new DateTimeZone(EEH_DTT_Helper::get_timezone()));
             $ending_date = new DateTime('now', new DateTimeZone(EEH_DTT_Helper::get_timezone()));
             $subtitle = sprintf(
-                _x('For the period: %s to %s', 'Used to give date range', 'event_espresso'),
+                wp_strip_all_tags(
+                    _x('For the period: %s to %s', 'Used to give date range', 'event_espresso')
+                ),
                 $beginning_date->format('Y-m-d'),
                 $ending_date->format('Y-m-d')
             );
         }
 
-        $report_title = esc_html__('Total Revenue per Event', 'event_espresso');
+        $report_title = wp_strip_all_tags(__('Total Revenue per Event', 'event_espresso'));
 
         $report_params = array(
             'title'     => $report_title,
@@ -242,7 +248,9 @@ class Extend_Transactions_Admin_Page extends Transactions_Admin_Page
             'revenue'   => $revenue,
             'noResults' => empty($revenue),
             'noTxnMsg'  => sprintf(
-                __('%sThere is no revenue to report for the last 30 days.%s', 'event_espresso'),
+                wp_strip_all_tags(
+                    __('%sThere is no revenue to report for the last 30 days.%s', 'event_espresso')
+                ),
                 '<h2>' . $report_title . '</h2><p>',
                 '</p>'
             ),

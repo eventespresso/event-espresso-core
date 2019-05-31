@@ -683,12 +683,14 @@ class Extend_Registrations_Admin_Page extends Registrations_Admin_Page
             $beginning_date = new DateTime("now " . $period, $DateTimeZone);
             $ending_date = new DateTime("now", $DateTimeZone);
             $subtitle = sprintf(
-                _x('For the period: %1$s to %2$s', 'Used to give date range', 'event_espresso'),
+                wp_strip_all_tags(
+                    _x('For the period: %1$s to %2$s', 'Used to give date range', 'event_espresso')
+                ),
                 $beginning_date->format('Y-m-d'),
                 $ending_date->format('Y-m-d')
             );
         }
-        $report_title = esc_html__('Total Registrations per Day', 'event_espresso');
+        $report_title = wp_strip_all_tags(__('Total Registrations per Day', 'event_espresso'));
         $report_params = array(
             'title'     => $report_title,
             'subtitle'  => $subtitle,
@@ -696,9 +698,11 @@ class Extend_Registrations_Admin_Page extends Registrations_Admin_Page
             'regs'      => $regs,
             'noResults' => empty($regs),
             'noRegsMsg' => sprintf(
-                esc_html__(
-                    '%sThere are currently no registration records in the last month for this report.%s',
-                    'event_espresso'
+                wp_strip_all_tags(
+                    __(
+                        '%sThere are currently no registration records in the last month for this report.%s',
+                        'event_espresso'
+                    )
                 ),
                 '<h2>' . $report_title . '</h2><p>',
                 '</p>'
@@ -756,12 +760,14 @@ class Extend_Registrations_Admin_Page extends Registrations_Admin_Page
             $beginning_date = new DateTime("now " . $period, $DateTimeZone);
             $ending_date = new DateTime("now", $DateTimeZone);
             $subtitle = sprintf(
-                _x('For the period: %1$s to %2$s', 'Used to give date range', 'event_espresso'),
+                wp_strip_all_tags(
+                    _x('For the period: %1$s to %2$s', 'Used to give date range', 'event_espresso')
+                ),
                 $beginning_date->format('Y-m-d'),
                 $ending_date->format('Y-m-d')
             );
         }
-        $report_title = esc_html__('Total Registrations per Event', 'event_espresso');
+        $report_title = wp_strip_all_tags(__('Total Registrations per Event', 'event_espresso'));
         $report_params = array(
             'title'     => $report_title,
             'subtitle'  => $subtitle,
@@ -769,9 +775,11 @@ class Extend_Registrations_Admin_Page extends Registrations_Admin_Page
             'regs'      => $regs,
             'noResults' => empty($regs),
             'noRegsMsg' => sprintf(
-                esc_html__(
-                    '%sThere are currently no registration records in the last month for this report.%s',
-                    'event_espresso'
+                wp_strip_all_tags(
+                    __(
+                        '%sThere are currently no registration records in the last month for this report.%s',
+                        'event_espresso'
+                    )
                 ),
                 '<h2>' . $report_title . '</h2><p>',
                 '</p>'
