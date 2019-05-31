@@ -7,7 +7,6 @@ import PropTypes from 'prop-types';
 /**
  * Internal imports
  */
-import './style.css';
 import { EspressoIcon } from '../';
 
 /**
