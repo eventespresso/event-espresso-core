@@ -310,7 +310,7 @@ class CoreAssetManager extends AssetManager
             CoreAssetManager::JS_HANDLE_EDITOR_HOCS,
             $this->registry->getJsUrl($this->domain->assetNamespace(), 'editor-hocs'),
             array(
-                CoreAssetManager::JS_HANDLE_COMPONENTS
+                CoreAssetManager::JS_HANDLE_HOCS
             )
         )->setRequiresTranslation();
 
