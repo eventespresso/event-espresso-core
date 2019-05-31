@@ -94,11 +94,11 @@ class EEH_Tabbed_Content
             throw new EE_Error(__('Nav Tabs cannot be generated because the tab array is missing', 'event_espresso'));
         }
 
-        $all_tabs = '<h2 class="nav-tab-wrapper">' . "\n";
+        $all_tabs = '<nav class="nav-tab-wrapper wp-clearfix" aria-label="' . esc_attr__('Secondary menu', 'event_espresso') . '">' . "\n";
         foreach ($nav_tabs as $slug => $tab) {
             $all_tabs .= self::tab($slug, false, $tab['link_text'], $tab['url'], $tab['css_class']);
         }
-        $all_tabs .= '</h2>';
+        $all_tabs .= '</nav>';
         return $all_tabs;
     }
 
