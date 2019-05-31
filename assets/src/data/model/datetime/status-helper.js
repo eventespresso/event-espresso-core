@@ -86,25 +86,25 @@ export const isTrashed = ( DateTimeEntity ) => {
 	return DateTimeEntity.deleted;
 };
 
-/**
- * @function
- * @param {Object} DateTimeEntity model object
- * @return {boolean} true if date is cancelled
- */
-export const isCancelled = ( DateTimeEntity ) => {
-	assertDateTimeEntity( DateTimeEntity );
-	return DateTimeEntity.cancelled;
-};
-
-/**
- * @function
- * @param {Object} DateTimeEntity model object
- * @return {boolean} true if date has been postponed
- */
-export const isPostponed = ( DateTimeEntity ) => {
-	assertDateTimeEntity( DateTimeEntity );
-	return DateTimeEntity.postponed;
-};
+// /**
+//  * @function
+//  * @param {Object} DateTimeEntity model object
+//  * @return {boolean} true if date is cancelled
+//  */
+// export const isCancelled = ( DateTimeEntity ) => {
+// 	assertDateTimeEntity( DateTimeEntity );
+// 	return DateTimeEntity.cancelled;
+// };
+//
+// /**
+//  * @function
+//  * @param {Object} DateTimeEntity model object
+//  * @return {boolean} true if date has been postponed
+//  */
+// export const isPostponed = ( DateTimeEntity ) => {
+// 	assertDateTimeEntity( DateTimeEntity );
+// 	return DateTimeEntity.postponed;
+// };
 
 /**
  * @function
@@ -128,12 +128,12 @@ export const status = ( DateTimeEntity ) => {
 	if ( isActive( DateTimeEntity ) ) {
 		return DATETIME_STATUS_ID.ACTIVE;
 	}
-	if ( isCancelled( DateTimeEntity ) ) {
-		return DATETIME_STATUS_ID.CANCELLED;
-	}
-	if ( isPostponed( DateTimeEntity ) ) {
-		return DATETIME_STATUS_ID.POSTPONED;
-	}
+	// if ( isCancelled( DateTimeEntity ) ) {
+	// 	return DATETIME_STATUS_ID.CANCELLED;
+	// }
+	// if ( isPostponed( DateTimeEntity ) ) {
+	// 	return DATETIME_STATUS_ID.POSTPONED;
+	// }
 	return DATETIME_STATUS_ID.INACTIVE;
 };
 
