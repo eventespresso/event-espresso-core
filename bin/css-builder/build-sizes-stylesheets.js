@@ -20,6 +20,7 @@ const defaultFontSizeModifiers = {
 	extreme: .3,
 };
 const defaultSizeModifiers = {
+	nano: .125,
 	micro: .25,
 	tiny: .5,
 	smaller: .75,
