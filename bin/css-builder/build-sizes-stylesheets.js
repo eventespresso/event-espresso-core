@@ -15,7 +15,7 @@ const defaultFontSizeModifiers = {
 	small: .09,
 	default: .1,
 	big: .12,
-	bigger: .16,
+	bigger: .15,
 	huge: .2,
 	extreme: .3,
 };
