@@ -21,7 +21,7 @@ import './style.css';
  * @param {string} tooltip
  * @param {string} tooltipPosition
  * @param {Function} onClick
- * @param {number|string} itemCount
+ * @param {null|number|string} itemCount
  * @param {Object} externalApp
  * @param {Object} otherProps
  * @return {string} rendered IconMenuItem
@@ -44,7 +44,7 @@ const IconMenuItem = ( {
 		'ee-icon-menu-item': true,
 		'clickable': true,
 	} );
-	if ( itemCount !== '' ) {
+	if ( itemCount !== null ) {
 		itemCount = parseInt( itemCount, 10 );
 		const itemCountClass = classNames( {
 			'ee-icon-menu-item-count': true,
@@ -86,6 +86,7 @@ IconMenuItem.propTypes = {
 	itemCount: PropTypes.oneOfType( [
 		PropTypes.number,
 		PropTypes.string,
+		PropTypes.node,
 	] ),
 	tooltip: PropTypes.string.isRequired,
 	tooltipPosition: PropTypes.string,
@@ -94,7 +95,7 @@ IconMenuItem.propTypes = {
 };
 
 IconMenuItem.defaultProps = {
-	itemCount: '',
+	itemCount: null,
 	externalApp: null,
 	tooltipPosition: 'top left',
 	htmlClass: '',
