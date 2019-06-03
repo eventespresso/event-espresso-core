@@ -31,15 +31,16 @@
 }
 
 .biggie-calendar-date .weekday {
+    font-size: var(--ee-font-size-smaller);
     font-weight: normal;
     line-height: var(--ee-font-size-default);
     letter-spacing: var(--ee-letter-spacing-font-size-tiny);
 }
 
 .biggie-calendar-date .month {
-    font-size: calc(var(--ee-font-size-big) - 3px);
+    font-size: var(--ee-font-size-big);
     font-weight: bold;
-    line-height: calc(var(--ee-font-size-big) - 6px);
+    line-height: var(--ee-font-size-big);
 }
 
 .month-day-sep {
@@ -50,12 +51,12 @@
     opacity: .8;
     font-size: var(--ee-font-size-huge);
     font-weight: bold;
-    line-height: calc(var(--ee-font-size-huge) - 6px);
+    line-height: var(--ee-font-size-huge);
     text-shadow: var(--ee-text-shadow-inset);
 }
 
 .biggie-calendar-date .year {
-    letter-spacing: calc(var(--ee-letter-spacing-font-size-micro)*4);
+    letter-spacing: calc(var(--ee-letter-spacing-font-size-micro)*2);
     line-height: var(--ee-font-size-default);
     left: 3px;
     position: relative;
@@ -64,7 +65,7 @@
 .biggie-calendar-date-footer {
     font-weight: bold;
     letter-spacing: var(--ee-letter-spacing-font-size-micro);
-    line-height: var(--ee-font-size-big);
+    line-height: var(--ee-font-size-bigger);
     margin: var(--ee-margin-micro) 0 0;
     text-shadow: var(--ee-text-shadow-inset);
     white-space: pre-line;
