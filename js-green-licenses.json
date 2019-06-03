@@ -26,6 +26,7 @@
 		"nomnom",
 		"colors",
 		"underscore",
-		"detect-libc"
+		"detect-libc",
+		"gaxios"
 	]
 }
