@@ -65,7 +65,7 @@
 		"@wordpress/eslint-plugin": "^2.2.0",
 		"@wordpress/hooks": "^2.3.0",
 		"@wordpress/jest-preset-default": "^4.1.0",
-		"@wordpress/keycodes": "^2.2.0",
+		"@wordpress/keycodes": "^2.3.0",
 		"@wordpress/plugins": "^2.3.0",
 		"@wordpress/scripts": "^3.2.1",
 		"@wordpress/url": "^2.6.0",
