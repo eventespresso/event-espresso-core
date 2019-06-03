@@ -6,7 +6,6 @@ import { __ } from '@eventespresso/i18n';
 import {
 	BiggieCalendarDate,
 	CalendarDateRange,
-	EntityLock,
 	withEntityPaperFrame,
 } from '@eventespresso/components';
 import { dateTimeModel } from '@eventespresso/model';
@@ -70,19 +69,6 @@ class EditorDateGridItem extends Component {
 		}
 	};
 
-	/**
-	 * @function
-	 * @param {Object} event        model object defining the Event
-	 * @param {Object} eventDate    model object defining the Event Date
-	 * @return {Object} eventDate
-	 */
-	toggleLock = ( event, eventDate ) => {
-		if ( isModelEntityOfModel( eventDate, 'datetime' ) ) {
-			eventDate.isPrimary = ! eventDate.isPrimary;
-		}
-		return eventDate;
-	};
-
 	render() {
 		const {
 			event,
@@ -117,14 +103,6 @@ class EditorDateGridItem extends Component {
 					event={ event }
 					eventDate={ eventDate }
 					allTickets={ allTickets }
-				/>
-				<EntityLock
-					entity={ eventDate }
-					isLocked={ !! eventDate.locked }
-					toggleEntityLock={ ( date ) => this.toggleLock(
-						event,
-						date
-					) }
 				/>
 			</Fragment>
 		);
