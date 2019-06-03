@@ -25,6 +25,12 @@ const externals = {
 	'moment-timezone': 'eejs.vendor.moment',
 	cuid: 'eejs.vendor.cuid',
 };
+const del = require( 'del' );
+const outputPath = path.resolve( __dirname, 'assets/dist' );
+/**
+ * Clean build folder before running build
+ */
+del.sync( [ path.resolve( outputPath, '**/*' ) ] );
 
 /** see below for multiple configurations.
  /** https://webpack.js.org/configuration/configuration-types/#exporting-multiple-configurations */
