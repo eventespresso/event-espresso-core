@@ -79,10 +79,7 @@ class EspressoEditorAssetManager extends AssetManager
                 $this->domain->assetNamespace(),
                 self::ASSET_CHUNK_NAME_EDITOR
             ),
-            [
-                CoreAssetManager::CSS_HANDLE_COMPONENTS,
-                CoreAssetManager::CSS_HANDLE_EDITOR_HOCS,
-            ]
+            [ CoreAssetManager::CSS_HANDLE_COMPONENTS ]
         );
     }
 }

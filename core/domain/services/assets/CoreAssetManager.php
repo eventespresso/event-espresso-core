@@ -100,8 +100,6 @@ class CoreAssetManager extends AssetManager
 
     const CSS_HANDLE_CORE_CSS_DEFAULT = 'eventespresso-core-css-default';
 
-    const CSS_HANDLE_EDITOR_HOCS = 'eventespresso-editor-hocs';
-
     /**
      * @var EE_Currency_Config $currency_config
      */
@@ -499,14 +497,6 @@ class CoreAssetManager extends AssetManager
                 'components'
             ),
             [CoreAssetManager::CSS_HANDLE_CORE_CSS_DEFAULT, 'wp-components']
-        );
-        $this->addStylesheet(
-            CoreAssetManager::CSS_HANDLE_EDITOR_HOCS,
-            $this->registry->getCssUrl(
-                $this->domain->assetNamespace(),
-                'editor-hocs'
-            ),
-            [CoreAssetManager::CSS_HANDLE_CORE_CSS_DEFAULT]
         );
     }
 
