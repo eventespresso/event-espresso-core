@@ -3,7 +3,6 @@ const WebpackAssetsManifest = require( 'webpack-assets-manifest' );
 const path = require( 'path' );
 const webpack = require( 'webpack' );
 const common = require( './webpack.common.js' );
-const { CleanWebpackPlugin } = require( 'clean-webpack-plugin' );
 const miniExtract = require( 'mini-css-extract-plugin' );
 const assetsData = Object.create( null );
 common.forEach( ( config, index ) => {
@@ -13,9 +12,6 @@ common.forEach( ( config, index ) => {
 				name: 'manifest',
 			},
 		};
-		common[ index ].plugins = [
-			new CleanWebpackPlugin(),
-		];
 	}
 	common[ index ] = merge( config, {
 		devtool: 'inline-source-map',
