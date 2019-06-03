@@ -3063,6 +3063,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
                 );
                 $template_args['content'] =
                     EED_Ticket_Selector::instance()->display_ticket_selector($this->_reg_event);
+                $template_args['content'] .= '</div>';
                 $template_args['step_button_text'] = esc_html__(
                     'Add Tickets and Continue to Registrant Details',
                     'event_espresso'
