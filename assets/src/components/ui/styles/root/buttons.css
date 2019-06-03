@@ -2,6 +2,11 @@
  * Event Espresso EspressoButton Stylesheet
  * © 2019 Event Espresso
  * ------------------------------------------------------------------------- */
+
+:root {
+    --ee-icon-button-size: 36px;
+}
+
 .esprs-button,
 .esprs-button:active,
 .esprs-button:focus,
@@ -29,6 +34,7 @@
 }
 
 .esprs-button:active { top: 0; }
+.esprs-button:hover { cursor: pointer; }
 
 .esprs-button + .esprs-button {
     margin-left: var(--ee-margin-default);
@@ -37,19 +43,19 @@
 .esprs-button .text-wrap {
     font-weight: bold;
     position: relative;
-    top: 0;
+    top: calc(var(--ee-padding-nano) * -1.5);
     vertical-align: middle;
 }
 
 .esprs-button.ee-noIcon .text-wrap {
     position: relative;
-    top: .125rem;
+    top: var(--ee-padding-nano);
 }
 
 .esprs-button .img-wrap {
     position: relative;
-    margin: 0 0 0 1rem;
-    top: .3rem;
+    margin: 0 0 0 var(--ee-padding-small);
+    top: var(--ee-padding-nano);
     vertical-align: middle;
 }
 
@@ -60,15 +66,15 @@
 /* BUTTON COLORS */
 
 .esprs-btn-default {
-    background: var(--ee-color-grey-13);
-    border-color: var(--ee-color-grey-13) var(--ee-color-grey-13) var(--ee-color-grey-15);
+    background: var(--ee-color-grey-15);
+    border-color: var(--ee-color-grey-14) var(--ee-color-grey-14) var(--ee-color-grey-15);
     border-style: solid;
     border-width: 1px;
-    color: var(--ee-text-on-grey-13);
+    color: var(--ee-text-on-grey-14);
 }
 
 .esprs-btn-default:hover {
-    background: var(--ee-color-grey-15);
+    background: var(--ee-color-grey-14);
 }
 
 .esprs-btn-primary {
@@ -116,7 +122,7 @@
     font-size: var(--ee-font-size-tiny);
     min-height: var(--ee-font-size-smaller);
     line-height: var(--ee-font-size-tiny);
-    padding: var(--ee-padding-micro) var(--ee-padding-tiny);
+    padding: var(--ee-padding-nano) var(--ee-padding-tiny) var(--ee-padding-micro);
 }
 
 .esprs-btn-tiny.esprs-button .img-wrap span {
