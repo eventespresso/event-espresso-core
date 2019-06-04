@@ -4,13 +4,13 @@
 import PropTypes from 'prop-types';
 import { __ } from '@eventespresso/i18n';
 import { DateTime } from '@eventespresso/value-objects';
-import classNames from 'classnames';
 
 /**
  * Internal dependencies
  */
 import './style.css';
-import CalendarPageDate from '../calendar-page-date';
+import BiggieCalendarDate from '../biggie-calendar-date';
+import MediumCalendarDate from '../medium-calendar-date';
 
 /**
  * Displays a pair of calendar dates representing a date range
@@ -22,66 +22,51 @@ import CalendarPageDate from '../calendar-page-date';
  * @param {string} footerText
  * @param {string} htmlClass
  * @param {string} position
+ * @param {boolean} showTime
  * @return {Object} rendered date
  */
 const CalendarDateRange = ( {
 	startDate,
 	endDate,
-	headerText,
-	footerText,
+	headerText = '',
+	footerText = '',
 	htmlClass = '',
 	position = 'left',
+	showTime = false,
 } ) => {
-	htmlClass = classNames(
-		htmlClass,
-		'ee-calendar-date-range-wrapper',
-		{
-			'cdr-pos-left': position === 'left',
-			'cdr-pos-right': position !== 'left',
-		}
-	);
-	headerText = headerText && (
-		<div className="ee-calendar-date-range-header">
-			{ headerText }
-		</div>
-	);
-	footerText = footerText && (
-		<div className="ee-calendar-date-range-footer">
-			{ footerText }
-		</div>
-	);
+	if (
+		startDate.toFormat( 'YY-MM-DD' ) !== endDate.toFormat( 'YY-MM-DD' )
+	) {
+		return (
+			<MediumCalendarDate
+				date={ startDate }
+				htmlClass={ htmlClass }
+				position={ position }
+				showTime={ showTime }
+				addWrapper
+				footerText={
+					<MediumCalendarDate
+						key={ 'end-date' }
+						date={ endDate }
+						headerText={ __( 'to', 'event_espresso' ) }
+						showTime={ showTime }
+						footerText={ footerText }
+					/>
+				}
+			/>
+		)
+	}
+	let time = startDate.toFormat( 'h:mm a - ' );
+	time += endDate.toFormat( 'h:mm a' );
+	headerText = headerText ? headerText : <span>&nbsp;</span>;
 	return (
-		<div className={ htmlClass }>
-			{ headerText }
-			<div className="ee-cdr-start-date">
-				<div className="ee-cdr-weekday">
-					{ startDate.toFormat( 'dddd' ) }
-				</div>
-				<CalendarPageDate startDate={ startDate } />
-			</div>
-			<div className="ee-calendar-date-range-separator">
-				{ __( 'to', 'event_espresso' ) }
-			</div>
-			<div className="ee-cdr-end-date">
-				<div className="ee-cdr-weekday">
-					{ endDate.toFormat( 'dddd' ) }
-				</div>
-				<CalendarPageDate endDate={ endDate } />
-			</div>
-			<div className="ee-clear-float"></div>
-			<div className="ee-cdr-time">
-				<span className="ee-cdr-start-time">
-					{ startDate.toFormat( 'h:mm a' ) }
-				</span>
-				<span className="ee-calendar-time-separator">
-					{ __( '-', 'event_espresso' ) }
-				</span>
-				<span className="ee-cdr-time">
-					{ endDate.toFormat( 'h:mm a' ) }
-				</span>
-			</div>
-			{ footerText }
-		</div>
+		<BiggieCalendarDate
+			date={ startDate }
+			htmlClass={ htmlClass }
+			headerText={ headerText }
+			footerText={ [ time, footerText ] }
+			position={ position }
+		/>
 	);
 };
 
@@ -103,6 +88,7 @@ CalendarDateRange.propTypes = {
 	] ),
 	htmlClass: PropTypes.string,
 	position: PropTypes.string,
+	showTime: PropTypes.bool,
 };
 
 export default CalendarDateRange;
