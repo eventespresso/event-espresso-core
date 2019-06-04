@@ -1,6 +1,7 @@
 /**
  * External imports
  */
+import classNames from 'classnames';
 import PropTypes from 'prop-types';
 import { Fragment } from '@wordpress/element';
 import { DateTime } from '@eventespresso/value-objects';
@@ -20,6 +21,7 @@ import './style.css';
  * @param {string} htmlClass
  * @param {string} position
  * @param {boolean} addWrapper
+ * @param {boolean} showTime
  * @return {string} rendered date
  */
 const MediumCalendarDate = ( {
@@ -29,34 +31,51 @@ const MediumCalendarDate = ( {
 	htmlClass = '',
 	position = 'left',
 	addWrapper = false,
+	showTime = false,
 } ) => {
-	htmlClass = htmlClass ?
-		`${ htmlClass } medium-calendar-date-wrapper` :
-		'medium-calendar-date-wrapper';
-	htmlClass = position === 'left' ?
-		`${ htmlClass } mcd-pos-left` :
-		`${ htmlClass } mcd-pos-right`;
+
+	htmlClass = classNames(
+		htmlClass,
+		'ee-medium-calendar-date-wrapper',
+		{
+			'ee-mcd-pos-left': position === 'left',
+			'ee-mcd-pos-right': position !== 'left'
+		}
+	);
 	const mediumDate = (
 		<Fragment>
 			{
 				headerText && (
-					<div className="medium-calendar-date-header">
+					<div className="ee-medium-calendar-date-header">
 						{ headerText }
 					</div>
 				)
 			}
-			<div className="medium-calendar-date">
-				<div className="weekday">
+			<div className="ee-medium-calendar-date">
+				<div className="ee-mcd-weekday">
 					{ date.toFormat( 'dddd' ) }
 				</div>
-				<div className="month-day-year">
-					{ date.toFormat( 'MMM DD' ) }
-					<span>{ '/' }</span>
-					{ date.toFormat( 'YY' ) }
+				<div className="ee-mcd-month-day">
+					<span className="ee-mcd-month">
+						{ date.toFormat( 'MMM' ) }
+					</span>
+					<span className="ee-mcd-day">
+						{ date.toFormat( 'DD' ) }
+					</span>
+				</div>
+				<div className="ee-mcd-year">
+					{ date.toFormat( 'YYYY' ) }
+				{
+					showTime && (
+						<span className="ee-mcd-time">
+							&nbsp;{ date.toFormat( 'h:mm a' ) }
+						</span>
+					)
+				}
 				</div>
 				{
 					footerText && (
-						<div className="medium-calendar-date-footer">
+						<div className="ee-medium-calendar-date-footer">
 							{ footerText }
 						</div>
 					)
@@ -87,6 +106,7 @@ MediumCalendarDate.propTypes = {
 	htmlClass: PropTypes.string,
 	position: PropTypes.string,
 	addWrapper: PropTypes.bool,
+	showTime: PropTypes.bool,
 };
 
 export default MediumCalendarDate;
