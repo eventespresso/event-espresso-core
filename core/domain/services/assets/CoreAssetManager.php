@@ -58,9 +58,6 @@ class CoreAssetManager extends AssetManager
      */
     const JS_HANDLE_LODASH = 'lodash';
 
-    // EE JS assets handles
-    const JS_HANDLE_MANIFEST = 'ee-manifest';
-
     const JS_HANDLE_JS_CORE = 'eejs-core';
 
     const JS_HANDLE_VENDOR = 'eventespresso-vendor';
@@ -198,68 +195,66 @@ class CoreAssetManager extends AssetManager
         $this->registerWpAssets();
 
         $this->addJavascript(
-            CoreAssetManager::JS_HANDLE_MANIFEST,
-            $this->registry->getJsUrl($this->domain->assetNamespace(), 'manifest')
-        );
-
-        $this->addJavascript(
             CoreAssetManager::JS_HANDLE_JS_CORE,
-            $this->registry->getJsUrl($this->domain->assetNamespace(), 'eejs'),
-            array(CoreAssetManager::JS_HANDLE_MANIFEST)
+            $this->registry->getJsUrl($this->domain->assetNamespace(), CoreAssetManager::JS_HANDLE_JS_CORE),
+            $this->registry->getJsDependencies(
+                $this->domain->assetNamespace(),
+                CoreAssetManager::JS_HANDLE_JS_CORE
+            )
         )
         ->setHasInlineData();
 
         $this->addJavascript(
             CoreAssetManager::JS_HANDLE_VENDOR,
-            $this->registry->getJsUrl($this->domain->assetNamespace(), 'vendor'),
-            array(
-                CoreAssetManager::JS_HANDLE_JS_CORE,
-                CoreAssetManager::JS_HANDLE_REACT,
-                CoreAssetManager::JS_HANDLE_REACT_DOM,
-                CoreAssetManager::JS_HANDLE_LODASH,
+            $this->registry->getJsUrl($this->domain->assetNamespace(), CoreAssetManager::JS_HANDLE_VENDOR),
+            $this->registry->getJsDependencies(
+                $this->domain->assetNamespace(),
+                CoreAssetManager::JS_HANDLE_VENDOR
             )
         );
 
         $this->addJavascript(
             CoreAssetManager::JS_HANDLE_VALIDATORS,
-            $this->registry->getJsUrl($this->domain->assetNamespace(), 'validators')
-        )->setRequiresTranslation();
-
-        $this->addJavascript(
-            CoreAssetManager::JS_HANDLE_HELPERS,
-            $this->registry->getJsUrl($this->domain->assetNamespace(), 'helpers'),
-            array(
+            $this->registry->getJsUrl($this->domain->assetNamespace(), CoreAssetManager::JS_HANDLE_VALIDATORS),
+            $this->registry->getJsDependencies(
+                $this->domain->assetNamespace(),
                 CoreAssetManager::JS_HANDLE_VALIDATORS
             )
         )->setRequiresTranslation();
 
         $this->addJavascript(
+            CoreAssetManager::JS_HANDLE_HELPERS,
+            $this->registry->getJsUrl($this->domain->assetNamespace(), CoreAssetManager::JS_HANDLE_HELPERS),
+            $this->registry->getJsDependencies(
+                $this->domain->assetNamespace(),
+                CoreAssetManager::JS_HANDLE_HELPERS
+            )
+        )->setRequiresTranslation();
+
+        $this->addJavascript(
             CoreAssetManager::JS_HANDLE_MODEL,
-            $this->registry->getJsUrl($this->domain->assetNamespace(), 'model'),
-            array(
-                CoreAssetManager::JS_HANDLE_HELPERS,
-                CoreAssetManager::JS_HANDLE_VALUE_OBJECTS,
+            $this->registry->getJsUrl($this->domain->assetNamespace(), CoreAssetManager::JS_HANDLE_MODEL),
+            $this->registry->getJsDependencies(
+                $this->domain->assetNamespace(),
+                CoreAssetManager::JS_HANDLE_MODEL
             )
         )->setRequiresTranslation();
 
         $this->addJavascript(
             CoreAssetManager::JS_HANDLE_VALUE_OBJECTS,
-            $this->registry->getJsUrl($this->domain->assetNamespace(), 'valueObjects'),
-            array(
-                CoreAssetManager::JS_HANDLE_VALIDATORS,
-                CoreAssetManager::JS_HANDLE_HELPERS,
+            $this->registry->getJsUrl($this->domain->assetNamespace(), CoreAssetManager::JS_HANDLE_VALUE_OBJECTS),
+            $this->registry->getJsDependencies(
+                $this->domain->assetNamespace(),
+                CoreAssetManager::JS_HANDLE_VALUE_OBJECTS
             )
         )->setRequiresTranslation();
 
         $this->addJavascript(
             CoreAssetManager::JS_HANDLE_DATA_STORES,
-            $this->registry->getJsUrl($this->domain->assetNamespace(), 'data-stores'),
-            array(
-                CoreAssetManager::JS_HANDLE_VENDOR,
-                'wp-data',
-                'wp-api-fetch',
-                CoreAssetManager::JS_HANDLE_VALUE_OBJECTS,
-                CoreAssetManager::JS_HANDLE_MODEL,
+            $this->registry->getJsUrl($this->domain->assetNamespace(), CoreAssetManager::JS_HANDLE_DATA_STORES),
+            $this->registry->getJsDependencies(
+                $this->domain->assetNamespace(),
+                CoreAssetManager::JS_HANDLE_DATA_STORES
             )
         )
              ->setRequiresTranslation()
@@ -276,30 +271,35 @@ class CoreAssetManager extends AssetManager
 
         $this->addJavascript(
             CoreAssetManager::JS_HANDLE_HOCS,
-            $this->registry->getJsUrl($this->domain->assetNamespace(), 'hocs'),
-            array(
-                CoreAssetManager::JS_HANDLE_DATA_STORES,
-                CoreAssetManager::JS_HANDLE_VALUE_OBJECTS,
-                'wp-components',
+            $this->registry->getJsUrl($this->domain->assetNamespace(), CoreAssetManager::JS_HANDLE_HOCS),
+            array_merge(
+                $this->registry->getJsDependencies(
+                    $this->domain->assetNamespace(),
+                    CoreAssetManager::JS_HANDLE_HOCS
+                ),
+                [CoreAssetManager::JS_HANDLE_DATA_STORES]
             )
         )->setRequiresTranslation();
 
         $this->addJavascript(
             CoreAssetManager::JS_HANDLE_COMPONENTS,
-            $this->registry->getJsUrl($this->domain->assetNamespace(), 'components'),
-            array(
-                CoreAssetManager::JS_HANDLE_DATA_STORES,
-                CoreAssetManager::JS_HANDLE_VALUE_OBJECTS,
-                'wp-components',
+            $this->registry->getJsUrl($this->domain->assetNamespace(), CoreAssetManager::JS_HANDLE_COMPONENTS),
+            array_merge(
+                $this->registry->getJsDependencies(
+                    $this->domain->assetNamespace(),
+                    CoreAssetManager::JS_HANDLE_COMPONENTS
+                ),
+                [CoreAssetManager::JS_HANDLE_DATA_STORES]
             )
         )
         ->setRequiresTranslation();
 
         $this->addJavascript(
             CoreAssetManager::JS_HANDLE_EDITOR_HOCS,
-            $this->registry->getJsUrl($this->domain->assetNamespace(), 'editor-hocs'),
-            array(
-                CoreAssetManager::JS_HANDLE_COMPONENTS
+            $this->registry->getJsUrl($this->domain->assetNamespace(), CoreAssetManager::JS_HANDLE_EDITOR_HOCS),
+            $this->registry->getJsDependencies(
+                $this->domain->assetNamespace(),
+                CoreAssetManager::JS_HANDLE_EDITOR_HOCS
             )
         )->setRequiresTranslation();
 
@@ -475,7 +475,7 @@ class CoreAssetManager extends AssetManager
             CoreAssetManager::CSS_HANDLE_CORE_CSS_DEFAULT,
             $this->registry->getCssUrl(
                 $this->domain->assetNamespace(),
-                'core-default-theme'
+                CoreAssetManager::CSS_HANDLE_CORE_CSS_DEFAULT
             ),
             ['dashicons']
         );
@@ -483,9 +483,15 @@ class CoreAssetManager extends AssetManager
             CoreAssetManager::CSS_HANDLE_COMPONENTS,
             $this->registry->getCssUrl(
                 $this->domain->assetNamespace(),
-                'components'
+                CoreAssetManager::CSS_HANDLE_COMPONENTS
             ),
-            [CoreAssetManager::CSS_HANDLE_CORE_CSS_DEFAULT]
+            array_merge(
+                $this->registry->getCssDependencies(
+                    $this->domain->assetNamespace(),
+                    CoreAssetManager::CSS_HANDLE_COMPONENTS
+                ),
+                [CoreAssetManager::CSS_HANDLE_CORE_CSS_DEFAULT]
+            )
         );
     }
 
@@ -585,17 +591,21 @@ class CoreAssetManager extends AssetManager
     {
         $this->addJavascript(
             CoreAssetManager::JS_HANDLE_WP_PLUGINS_PAGE,
-            $this->registry->getJsUrl($this->domain->assetNamespace(), 'wp-plugins-page'),
-            array(
-                CoreAssetManager::JS_HANDLE_JQUERY,
-                CoreAssetManager::JS_HANDLE_VENDOR,
+            $this->registry->getJsUrl($this->domain->assetNamespace(), CoreAssetManager::JS_HANDLE_WP_PLUGINS_PAGE),
+            $this->registry->getJsDependencies(
+                $this->domain->assetNamespace(),
+                CoreAssetManager::JS_HANDLE_WP_PLUGINS_PAGE
             )
         )
         ->setRequiresTranslation();
 
         $this->addStylesheet(
             CoreAssetManager::JS_HANDLE_WP_PLUGINS_PAGE,
-            $this->registry->getCssUrl($this->domain->assetNamespace(), 'wp-plugins-page')
+            $this->registry->getCssUrl($this->domain->assetNamespace(), CoreAssetManager::JS_HANDLE_WP_PLUGINS_PAGE),
+            $this->registry->getCssDependencies(
+                $this->domain->assetNamespace(),
+                CoreAssetManager::JS_HANDLE_WP_PLUGINS_PAGE
+            )
         );
     }
 }

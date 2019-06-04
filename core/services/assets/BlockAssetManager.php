@@ -155,13 +155,19 @@ abstract class BlockAssetManager extends AssetManager implements BlockAssetManag
         if($this->assets->hasJavascriptAsset($handle)){
             return $this->assets->getJavascriptAsset($handle);
         }
-        return parent::addJavascript(
+        return $this->addJavascript(
             $handle,
             $this->registry->getJsUrl(
                 $this->domain->assetNamespace(),
                 $handle
             ),
-            $this->addDefaultBlockScriptDependencies($dependencies)
+            array_merge(
+                $this->registry->getJsDependencies(
+                    $this->domain->assetNamespace(),
+                    $handle
+                ),
+                $dependencies
+            )
         )
         ->setRequiresTranslation();
     }
@@ -181,13 +187,19 @@ abstract class BlockAssetManager extends AssetManager implements BlockAssetManag
         if ($this->assets->hasStylesheetAsset($handle)) {
             return $this->assets->getStylesheetAsset($handle);
         }
-        return parent::addStylesheet(
+        return $this->addStylesheet(
             $handle,
             $this->registry->getCssUrl(
                 $this->domain->assetNamespace(),
                 $handle
             ),
-            $this->addDefaultBlockStyleDependencies($dependencies)
+            array_merge(
+                $this->registry->getCssDependencies(
+                    $this->domain->assetNamespace(),
+                    $handle
+                ),
+                $dependencies
+            )
         );
     }
 
@@ -206,13 +218,19 @@ abstract class BlockAssetManager extends AssetManager implements BlockAssetManag
         if ($this->assets->hasJavascriptAsset($handle)) {
             return $this->assets->getJavascriptAsset($handle);
         }
-        return parent::addJavascript(
+        return $this->addJavascript(
             $handle,
             $this->registry->getJsUrl(
                 $this->domain->assetNamespace(),
                 $handle
             ),
-            $dependencies + array( CoreAssetManager::JS_HANDLE_COMPONENTS )
+            array_merge(
+                $this->registry->getJsDependencies(
+                    $this->domain->assetNamespace(),
+                    $handle
+                ),
+                $dependencies
+            )
         )
         ->setRequiresTranslation();
     }
@@ -232,45 +250,14 @@ abstract class BlockAssetManager extends AssetManager implements BlockAssetManag
         if ($this->assets->hasStylesheetAsset($handle)) {
             return $this->assets->getStylesheetAsset($handle);
         }
-        return parent::addStylesheet(
+        return $this->addStylesheet(
             $handle,
             $this->registry->getCssUrl(
                 $this->domain->assetNamespace(),
                 $handle
             ),
-            $dependencies + array( CoreAssetManager::CSS_HANDLE_COMPONENTS )
+            $dependencies
         );
-    }
-
-
-    /**
-     * @param array $dependencies
-     * @return array
-     */
-    protected function addDefaultBlockScriptDependencies(array $dependencies)
-    {
-        $dependencies += array(
-                'wp-blocks',    // Provides useful functions and components for extending the editor
-                'wp-i18n',      // Provides localization functions
-                'wp-element',   // Provides React.Component
-                'wp-components', // Provides many prebuilt components and controls
-                CoreAssetManager::JS_HANDLE_EDITOR_HOCS,
-                $this->getScriptHandle(),
-            );
-        return $dependencies;
-    }
-
-
-    /**
-     * @param array $dependencies
-     * @return array
-     */
-    protected function addDefaultBlockStyleDependencies(array $dependencies)
-    {
-        $dependencies += array(
-            $this->getStyleHandle()
-        );
-        return $dependencies;
     }
 
 
