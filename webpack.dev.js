@@ -52,7 +52,5 @@ common.forEach( ( config, index ) => {
 		plugins,
 		mode: 'development',
 	} );
-	//delete temporary named config item so no config errors
-	delete common[ index ].configName;
 } );
 module.exports = common;
