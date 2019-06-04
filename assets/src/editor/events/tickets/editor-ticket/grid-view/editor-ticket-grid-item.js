@@ -60,7 +60,9 @@ class EditorTicketGridItem extends Component {
 			}
 		}
 		const ticketStatus = (
-			<span key={ 1 }>{ getTicketStatusTextLabel( ticket ) }</span>
+			<span key={ 1 } className={ 'ee-status-tag' }>
+				{ getTicketStatusTextLabel( ticket ) }
+			</span>
 		);
 
 		switch ( showDate ) {
@@ -79,7 +81,8 @@ class EditorTicketGridItem extends Component {
 						startDate={ ticket.startDate }
 						endDate={ ticket.endDate }
 						htmlClass={ sidebarColorClass }
-						footerText={ <strong>{ ticketStatus }</strong> }
+						headerText={ __( 'Sale Date', 'event_espresso' ) }
+						footerText={ ticketStatus }
 						position="right"
 					/>
 				);

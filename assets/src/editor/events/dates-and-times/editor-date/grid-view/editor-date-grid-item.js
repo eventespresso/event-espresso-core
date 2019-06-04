@@ -38,34 +38,43 @@ class EditorDateGridItem extends Component {
 		let sidebarColorClass = 'ee-editor-date-calendar-sidebar ';
 		sidebarColorClass += getBackgroundColorClass( eventDate );
 		const dateStatus = (
-			<span key={ 1 }>{ getDateTimeStatusTextLabel( eventDate ) }</span>
+			<div key={ 1 } className={ 'ee-status-tag' }>
+				{ getDateTimeStatusTextLabel( eventDate ) }
+			</div>
 		);
 		switch ( showDate ) {
 			case 'end' :
-				const end = eventDate.end.toFormat( 'h:mm a' );
-				return <BiggieCalendarDate
-					date={ eventDate.end }
-					htmlClass={ sidebarColorClass }
-					headerText={ __( 'ends', 'event_espresso' ) }
-					footerText={ [ end, dateStatus ] }
-				/>;
+				const endTime = eventDate.end.toFormat( 'h:mm a' );
+				return (
+					<BiggieCalendarDate
+						date={ eventDate.end }
+						htmlClass={ sidebarColorClass }
+						headerText={ __( 'ends', 'event_espresso' ) }
+						footerText={ [ endTime, dateStatus ] }
+					/>
+				);
 			case 'both' :
 				return (
 					<CalendarDateRange
 						startDate={ eventDate.start }
 						endDate={ eventDate.end }
 						htmlClass={ sidebarColorClass }
+						headerText={ __( 'Event Date', 'event_espresso' ) }
+						footerText={ dateStatus }
+						showTime
 					/>
 				);
 			case 'start' :
 			default :
-				const start = eventDate.start.toFormat( 'h:mm a' );
-				return <BiggieCalendarDate
-					date={ eventDate.start }
-					htmlClass={ sidebarColorClass }
-					headerText={ __( 'starts', 'event_espresso' ) }
-					footerText={ [ start, dateStatus ] }
-				/>;
+				const startTime = eventDate.start.toFormat( 'h:mm a' );
+				return (
+					<BiggieCalendarDate
+						date={ eventDate.start }
+						htmlClass={ sidebarColorClass }
+						headerText={ __( 'starts', 'event_espresso' ) }
+						footerText={ [ startTime, dateStatus ] }
+					/>
+				);
 		}
 	};
 
