@@ -88,6 +88,25 @@ class Registry
      */
     private $domain;
 
+    /**
+     * This is a known array of possible wp css handles that correspond to what may be exposed as dependencies in our
+     * build process.  Currently the dependency export process in webpack does not consider css imports, so we derive
+     * them via the js dependencies (WP uses the same handle for both js and css). This is a list of known handles that
+     * are used for both js and css.
+     * @var array
+     */
+    private $wp_css_handle_dependencies = [
+        'wp-components',
+        'wp-block-editor',
+        'wp-block-library',
+        'wp-edit-post',
+        'wp-edit-widgets',
+        'wp-editor',
+        'wp-format-library',
+        'wp-list-reusable-blocks',
+        'wp-nux',
+    ];
+
 
     /**
      * Registry constructor.
@@ -542,17 +561,7 @@ class Registry
                 )
             );
             // add known wp chunks with css
-            $css_chunks += [
-                'wp-components',
-                'wp-block-editor',
-                'wp-block-library',
-                'wp-edit-post',
-                'wp-edit-widgets',
-                'wp-editor',
-                'wp-format-library',
-                'wp-list-reusable-blocks',
-                'wp-nux',
-            ];
+            $css_chunks = array_merge( $css_chunks, $this->wp_css_handle_dependencies);
             // flip for easier search
             $css_chunks = array_flip($css_chunks);
             // now let's filter the dependencies for the incoming chunk to actual chunks that have styles
