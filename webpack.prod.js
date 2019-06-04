@@ -49,7 +49,7 @@ const pluginsConfigWithExtraction = [
 		filename: '[name].[contenthash].dist.css',
 	} ),
 ];
-const pluginsConfigWithoutExtraction = const pluginsConfigWithExtraction = [
+const pluginsConfigWithoutExtraction = [
 	new webpack.DefinePlugin( {
 		'process.env': {
 			NODE_ENV: JSON.stringify( 'production' ),
