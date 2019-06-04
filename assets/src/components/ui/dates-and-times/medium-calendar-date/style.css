@@ -3,70 +3,73 @@
  * (c) 2018 Event Espresso
  * -------------------------------------------------------------------------*/
 
-.medium-calendar-date-wrapper {
-    background-image: linear-gradient(to bottom, rgba(0, 0, 0, .25) 50%, rgba(255, 255, 255, 0) 0%);
-    background-size: 1px 5px;
-    background-repeat: repeat-y;
+.ee-medium-calendar-date-wrapper {
     box-sizing: border-box;
     color: var(--ee-color-white);
+    font-weight: normal;
+    line-height: var(--ee-font-size-default);
     height: 100%;
-    padding: 0 10px 10px 10px;
+    padding: var(--ee-padding-tiny) var(--ee-padding-micro);
     position: absolute;
     text-align: center;
-    width: 140px;
+    width: calc(var(--ee-padding-micro) * 34);
 }
 
-.medium-calendar-date-wrapper.mcd-pos-left {
-    background-position: right;
+.ee-medium-calendar-date-wrapper.ee-mcd-pos-left {
     float: left;
     left: 0;
 }
 
-.medium-calendar-date-wrapper.mcd-pos-right {
-    background-position: left;
+.ee-medium-calendar-date-wrapper.ee-mcd-pos-right {
     float: right;
     right: 0;
 }
 
-.medium-calendar-date-header {
+.ee-medium-calendar-date-header {
     color: rgba(255, 255, 255, .9);
-    font-size: 9px;
-    letter-spacing: 2px;
-    line-height: 9px;
-    margin: .65rem 0 0;
+    font-size: var(--ee-font-size-tiny);
+    letter-spacing: var(--ee-letter-spacing-font-size-micro);
+    margin: 0 0 var(--ee-margin-micro);
 }
 
-.medium-calendar-date .weekday {
-    font-size: 10px;
-    line-height: 16px;
-    letter-spacing: 4px;
-    margin: .6rem 0 0;
+.ee-medium-calendar-date .ee-mcd-weekday {
+    font-size: var(--ee-font-size-smaller);
+    line-height: var(--ee-font-size-big);
+    letter-spacing: var(--ee-letter-spacing-font-size-tiny);
 }
 
-.medium-calendar-date .month-day-year {
-    color: rgba(255, 255, 255, .95);
-    font-size: 21px;
+.ee-medium-calendar-date .ee-mcd-month-day {
+    font-size: var(--ee-font-size-bigger);
     font-weight: bold;
-    line-height: 22px;
-    text-shadow: -1px -1px rgba(0, 0, 0, .15);
+    line-height: var(--ee-font-size-bigger);
 }
 
-.medium-calendar-date .month-day-year span {
-    color: rgba(255, 255, 255, .6);
-    font-size: 12px;
-    font-weight: normal !important;
-    line-height: 12px;
-    margin: 0 2px 0 3px;
+.ee-medium-calendar-date .ee-mcd-day {
+    margin: 0 0 0 var(--ee-margin-smaller);
+}
+.ee-medium-calendar-date .ee-mcd-year {
+    font-size: var(--ee-font-size-tiny);
+    letter-spacing: var(--ee-letter-spacing-font-size-micro);
+    line-height: var(--ee-font-size-default);
+    left: var(--ee-padding-nano);
     position: relative;
-    text-shadow: none !important;
-    top: -3px;
 }
 
-.medium-calendar-date-footer {
-    font-size: 12px;
-    font-weight: bold;
-    letter-spacing: 2px;
-    line-height: 24px;
+.ee-medium-calendar-date .ee-mcd-time {
+    font-size: var(--ee-font-size-tiny);
+    line-height: var(--ee-font-size-default);
+}
+
+.ee-medium-calendar-date > .ee-medium-calendar-date-footer {
+    font-size: var(--ee-font-size-smaller);
+    line-height: var(--ee-font-size-bigger);
     margin: 0;
-    text-shadow: none;
+    padding: var(--ee-padding-micro) 0;
+}
+
+.ee-medium-calendar-date-footer .ee-status-tag {
+    display: block;
+    font-weight: bold;
+    letter-spacing: var(--ee-letter-spacing-font-size-micro);
+    text-transform: uppercase;
 }
