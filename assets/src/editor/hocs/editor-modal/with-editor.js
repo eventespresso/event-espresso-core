@@ -13,27 +13,45 @@ const { confirm } = window;
  * wraps the component that contains the withEditorModal
  *
  * @function
+ * @param {string} closeEditorNotice 	message displayed if user attempts
+ * 										to close modal when changes are not
+ * 										yet saved. To override the appearance
+ * 										of the closeEditorNotice, simply pass
+ * 										an empty string for this prop
+ * @param {function} onOpen    			fires when modal opens
+ * @param {function} onClose 			fires when modal closes
  */
 const withEditor = createHigherOrderComponent(
 	( OriginalComponent ) => {
 		return class extends Component {
 			constructor( props ) {
 				super( props );
+				const closeEditorNotice = props.closeEditorNotice !== undefined ?
+					props.closeEditorNotice :
+					sprintf(
+						__(
+							'Are you sure you want to close the Editor?%sAll unsaved changes will be lost!',
+							'event_espresso'
+						),
+						'\n\n'
+					);
 				this.state = {
 					editorOpen: false,
 					changesSaved: true,
-					closeEditorNotice: props.closeEditorNotice ||
-						sprintf(
-							__(
-								'Are you sure you want to close the Editor?%sAll unsaved changes will be lost!',
-								'event_espresso'
-							),
-							'\n\n'
-						),
+					closeEditorNotice,
+					onOpen: typeof props.onOpen === 'function' ?
+						props.onOpen :
+						null,
+					onClose: typeof props.onClose === 'function' ?
+						props.onClose :
+						null,
 				};
 			}
 
 			/**
+			 * will mark that changes have been saved which allows the modal to
+			 * be closed without triggering the display of the closeEditorNotice
+			 *
 			 * @function
 			 * @param {boolean} changesSaved
 			 */
@@ -48,6 +66,12 @@ const withEditor = createHigherOrderComponent(
 			 */
 			toggleEditor = () => {
 				this.setState( ( prevState ) => {
+					if ( prevState.editorOpen && this.state.onClose ) {
+						this.state.onClose();
+					}
+					if ( ! prevState.editorOpen && this.state.onOpen ) {
+						this.state.onOpen();
+					}
 					if (
 						this.state.closeEditorNotice !== '' &&
 						prevState.editorOpen && ! prevState.changesSaved
