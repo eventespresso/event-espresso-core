@@ -11,47 +11,48 @@ const outputPath = path.resolve( __dirname, 'assets/dist' );
  */
 del.sync( [ path.resolve( outputPath, '**/*' ) ] );
 
-const moduleWithCssRules = {
+const rulesConfig = {
+	jsRulesConfig: {
+		test: /\.js$/,
+		exclude: /node_modules/,
+		use: 'babel-loader',
+	},
+	cssRulesConfig: {
+		test: /\.css$/,
+		use: [
+			miniExtract.loader,
+			{
+				loader: 'css-loader',
+				query: {
+					modules: true,
+					localIdentName: '[local]',
+				},
+			},
+			{
+				loader: 'postcss-loader',
+				options: {
+					// eslint-disable-next-line object-shorthand
+					plugins: function() {
+						return [
+							autoprefixer,
+							cssnano( { preset: 'default' } ),
+						];
+					},
+					sourceMap: true,
+				},
+			},
+		],
+	},
+};
+
+const moduleConfigWithJsAndCssRules = {
 	rules: [
-		{
-			test: /\.js$/,
-			exclude: /node_modules/,
-			use: 'babel-loader',
-		},
-		{
-			test: /\.css$/,
-			use: [
-				miniExtract.loader,
-				{
-					loader: 'css-loader',
-					query: {
-						modules: true,
-						localIdentName: '[local]',
-					},
-				},
-				{
-					loader: 'postcss-loader',
-					options: {
-						// eslint-disable-next-line object-shorthand
-						plugins: function() {
-							return [
-								autoprefixer,
-								cssnano( { preset: 'default' } ),
-							];
-						},
-						sourceMap: true,
-					},
-				},
-			],
-		},
+		rulesConfig.jsRulesConfig,
+		rulesConfig.cssRulesConfig,
 	],
 };
-const del = require( 'del' );
-const outputPath = path.resolve( __dirname, 'assets/dist' );
-/**
- * Clean build folder before running build
- */
-del.sync( [ path.resolve( outputPath, '**/*' ) ] );
+
+const moduleConfigWithJsRules = { rules: [ rulesConfig.jsRulesConfig ] };
 
 /** see below for multiple configurations.
  /** https://webpack.js.org/configuration/configuration-types/#exporting-multiple-configurations */
@@ -60,15 +61,7 @@ const config = [
 		entry: {
 			'eejs-core': assets + 'eejs/index.js',
 		},
-		module: {
-			rules: [
-				{
-					test: /\.js$/,
-					exclude: /node_modules/,
-					loader: 'babel-loader',
-				},
-			],
-		},
+		module: moduleConfigWithJsRules,
 		output: {
 			filename: '[name].[chunkhash].dist.js',
 			path: path.resolve( __dirname, 'assets/dist' ),
@@ -80,15 +73,7 @@ const config = [
 		entry: {
 			'eventespresso-vendor': assets + 'eejs/vendor/index.js',
 		},
-		module: {
-			rules: [
-				{
-					test: /\.js$/,
-					exclude: /node_modules/,
-					loader: 'babel-loader',
-				},
-			],
-		},
+		module: moduleConfigWithJsRules,
 		output: {
 			filename: '[name].[chunkhash].dist.js',
 			path: path.resolve( __dirname, 'assets/dist' ),
@@ -100,15 +85,7 @@ const config = [
 		entry: {
 			'eventespresso-validators': assets + 'eejs/validators/index.js',
 		},
-		module: {
-			rules: [
-				{
-					test: /\.js$/,
-					exclude: /node_modules/,
-					loader: 'babel-loader',
-				},
-			],
-		},
+		module: moduleConfigWithJsRules,
 		output: {
 			filename: '[name].[chunkhash].dist.js',
 			path: path.resolve( __dirname, 'assets/dist' ),
@@ -120,15 +97,7 @@ const config = [
 		entry: {
 			'eventespresso-helpers': assets + 'data/helpers/index.js',
 		},
-		module: {
-			rules: [
-				{
-					test: /\.js$/,
-					exclude: /node_modules/,
-					loader: 'babel-loader',
-				},
-			],
-		},
+		module: moduleConfigWithJsRules,
 		output: {
 			filename: '[name].[chunkhash].dist.js',
 			path: path.resolve( __dirname, 'assets/dist' ),
@@ -140,15 +109,7 @@ const config = [
 		entry: {
 			'eventespresso-model': assets + 'data/model/index.js',
 		},
-		module: {
-			rules: [
-				{
-					test: /\.js$/,
-					exclude: /node_modules/,
-					loader: 'babel-loader',
-				},
-			],
-		},
+		module: moduleConfigWithJsRules,
 		output: {
 			filename: '[name].[chunkhash].dist.js',
 			path: path.resolve( __dirname, 'assets/dist' ),
@@ -160,15 +121,7 @@ const config = [
 		entry: {
 			'eventespresso-value-objects': assets + 'vo/index.js',
 		},
-		module: {
-			rules: [
-				{
-					test: /\.js$/,
-					exclude: /node_modules/,
-					loader: 'babel-loader',
-				},
-			],
-		},
+		module: moduleConfigWithJsRules,
 		output: {
 			filename: '[name].[chunkhash].dist.js',
 			path: path.resolve( __dirname, 'assets/dist' ),
@@ -180,15 +133,7 @@ const config = [
 		entry: {
 			'eventespresso-hocs': assets + 'higher-order-components/index.js',
 		},
-		module: {
-			rules: [
-				{
-					test: /\.js$/,
-					exclude: /node_modules/,
-					loader: 'babel-loader',
-				},
-			],
-		},
+		module: moduleConfigWithJsRules,
 		output: {
 			filename: '[name].[chunkhash].dist.js',
 			path: path.resolve( __dirname, 'assets/dist' ),
@@ -200,7 +145,7 @@ const config = [
 		entry: {
 			'eventespresso-components': assets + 'components/index.js',
 		},
-		module: moduleWithCssRules,
+		module: moduleConfigWithJsAndCssRules,
 		output: {
 			filename: '[name].[chunkhash].dist.js',
 			path: path.resolve( __dirname, 'assets/dist' ),
@@ -212,7 +157,7 @@ const config = [
 		entry: {
 			'eventespresso-editor-hocs': assets + 'editor/hocs/index.js',
 		},
-		module: moduleWithCssRules,
+		module: moduleConfigWithJsAndCssRules,
 		output: {
 			filename: '[name].[chunkhash].dist.js',
 			path: path.resolve( __dirname, 'assets/dist' ),
@@ -230,7 +175,7 @@ const config = [
 			filename: '[name].[chunkhash].dist.js',
 			path: path.resolve( __dirname, 'assets/dist' ),
 		},
-		module: moduleWithCssRules,
+		module: moduleConfigWithJsAndCssRules,
 		watchOptions: {
 			poll: 1000,
 		},
@@ -245,7 +190,7 @@ const config = [
 			filename: '[name].[chunkhash].dist.js',
 			path: path.resolve( __dirname, 'assets/dist' ),
 		},
-		module: moduleWithCssRules,
+		module: moduleConfigWithJsAndCssRules,
 		watchOptions: {
 			poll: 1000,
 		},
@@ -260,7 +205,7 @@ const config = [
 			filename: '[name].[chunkhash].dist.js',
 			path: path.resolve( __dirname, 'assets/dist' ),
 		},
-		module: moduleWithCssRules,
+		module: moduleConfigWithJsAndCssRules,
 		watchOptions: {
 			poll: 1000,
 		},
@@ -275,7 +220,7 @@ const config = [
 			filename: '[name].[chunkhash].dist.js',
 			path: path.resolve( __dirname, 'assets/dist' ),
 		},
-		module: moduleWithCssRules,
+		module: moduleConfigWithJsAndCssRules,
 		watchOptions: {
 			poll: 1000,
 		},
@@ -290,7 +235,7 @@ const config = [
 			filename: '[name].[chunkhash].dist.js',
 			path: path.resolve( __dirname, 'assets/dist' ),
 		},
-		module: moduleWithCssRules,
+		module: moduleConfigWithJsAndCssRules,
 		watchOptions: {
 			poll: 1000,
 		},
