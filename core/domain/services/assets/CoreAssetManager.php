@@ -382,28 +382,8 @@ class CoreAssetManager extends AssetManager
                 );
             }
         }
-        $this->addStylesheet(
-            CoreAssetManager::CSS_HANDLE_CORE_CSS_DEFAULT,
-            $this->registry->getCssUrl(
-                $this->domain->assetNamespace(),
-                CoreAssetManager::CSS_HANDLE_CORE_CSS_DEFAULT
-            ),
-            ['dashicons']
-        );
-        $this->addStylesheet(
-            CoreAssetManager::CSS_HANDLE_COMPONENTS,
-            $this->registry->getCssUrl(
-                $this->domain->assetNamespace(),
-                CoreAssetManager::CSS_HANDLE_COMPONENTS
-            ),
-            array_merge(
-                $this->registry->getCssDependencies(
-                    $this->domain->assetNamespace(),
-                    CoreAssetManager::CSS_HANDLE_COMPONENTS
-                ),
-                [CoreAssetManager::CSS_HANDLE_CORE_CSS_DEFAULT]
-            )
-        );
+        $this->addCss(self::CSS_HANDLE_CORE_CSS_DEFAULT, 'dashicons');
+        $this->addCss(self::CSS_HANDLE_COMPONENTS, self::CSS_HANDLE_CORE_CSS_DEFAULT);
     }
 
 
@@ -500,23 +480,8 @@ class CoreAssetManager extends AssetManager
      */
     private function registerAdminAssets()
     {
-        $this->addJavascript(
-            CoreAssetManager::JS_HANDLE_WP_PLUGINS_PAGE,
-            $this->registry->getJsUrl($this->domain->assetNamespace(), CoreAssetManager::JS_HANDLE_WP_PLUGINS_PAGE),
-            $this->registry->getJsDependencies(
-                $this->domain->assetNamespace(),
-                CoreAssetManager::JS_HANDLE_WP_PLUGINS_PAGE
-            )
-        )
-        ->setRequiresTranslation();
-
-        $this->addStylesheet(
-            CoreAssetManager::JS_HANDLE_WP_PLUGINS_PAGE,
-            $this->registry->getCssUrl($this->domain->assetNamespace(), CoreAssetManager::JS_HANDLE_WP_PLUGINS_PAGE),
-            $this->registry->getCssDependencies(
-                $this->domain->assetNamespace(),
-                CoreAssetManager::JS_HANDLE_WP_PLUGINS_PAGE
-            )
-        );
+        $this->addJs(self::JS_HANDLE_WP_PLUGINS_PAGE)->setRequiresTranslation();
+        // note usage of the "JS_HANDLE.." constant is intentional here because css uses the same handle.
+        $this->addCss(self::JS_HANDLE_WP_PLUGINS_PAGE);
     }
 }

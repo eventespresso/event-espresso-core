@@ -152,24 +152,10 @@ abstract class BlockAssetManager extends AssetManager implements BlockAssetManag
      */
     public function addEditorScript($handle, array $dependencies = array())
     {
-        if($this->assets->hasJavascriptAsset($handle)){
+        if ($this->assets->hasJavascriptAsset($handle)){
             return $this->assets->getJavascriptAsset($handle);
         }
-        return $this->addJavascript(
-            $handle,
-            $this->registry->getJsUrl(
-                $this->domain->assetNamespace(),
-                $handle
-            ),
-            array_merge(
-                $this->registry->getJsDependencies(
-                    $this->domain->assetNamespace(),
-                    $handle
-                ),
-                $dependencies
-            )
-        )
-        ->setRequiresTranslation();
+        return $this->addJs($handle, $dependencies)->setRequiresTranslation();
     }
 
 
@@ -187,20 +173,7 @@ abstract class BlockAssetManager extends AssetManager implements BlockAssetManag
         if ($this->assets->hasStylesheetAsset($handle)) {
             return $this->assets->getStylesheetAsset($handle);
         }
-        return $this->addStylesheet(
-            $handle,
-            $this->registry->getCssUrl(
-                $this->domain->assetNamespace(),
-                $handle
-            ),
-            array_merge(
-                $this->registry->getCssDependencies(
-                    $this->domain->assetNamespace(),
-                    $handle
-                ),
-                $dependencies
-            )
-        );
+        return $this->addCss($handle, $dependencies);
     }
 
 
@@ -218,21 +191,7 @@ abstract class BlockAssetManager extends AssetManager implements BlockAssetManag
         if ($this->assets->hasJavascriptAsset($handle)) {
             return $this->assets->getJavascriptAsset($handle);
         }
-        return $this->addJavascript(
-            $handle,
-            $this->registry->getJsUrl(
-                $this->domain->assetNamespace(),
-                $handle
-            ),
-            array_merge(
-                $this->registry->getJsDependencies(
-                    $this->domain->assetNamespace(),
-                    $handle
-                ),
-                $dependencies
-            )
-        )
-        ->setRequiresTranslation();
+        return $this->addJs($handle, $dependencies)->setRequiresTranslation();
     }
 
 
@@ -250,14 +209,7 @@ abstract class BlockAssetManager extends AssetManager implements BlockAssetManag
         if ($this->assets->hasStylesheetAsset($handle)) {
             return $this->assets->getStylesheetAsset($handle);
         }
-        return $this->addStylesheet(
-            $handle,
-            $this->registry->getCssUrl(
-                $this->domain->assetNamespace(),
-                $handle
-            ),
-            $dependencies
-        );
+        return $this->addCss($handle, $dependencies);
     }
 
 
