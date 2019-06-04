@@ -17,14 +17,10 @@
     display: flex;
     flex-direction: row;
     justify-content: space-between;
-    min-height: calc(var(--ee-font-size-small) * 11.5);
+    min-height: calc(var(--ee-font-size-default) * 12.5);
     padding: 0 calc(var(--ee-icon-button-size) + 8px) 0 0;
     position: relative;
     overflow: hidden;
-}
-
-.ee-editor-date-main.ee-editor-date-range {
-    min-height: 210px;
 }
 
 /* DATE DETAILS */
