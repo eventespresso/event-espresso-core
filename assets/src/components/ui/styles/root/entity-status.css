@@ -259,6 +259,17 @@
 }
 
 
+/** datetime inactive **/
+.ee-status-color-DTI {
+    color: var(--ee-color-blue-green);
+}
+
+.ee-status-background-color-DTI {
+    background-color: var(--ee-color-blue-green);
+    color: var(--ee-text-on-blue-green);
+}
+
+
 /** datetime expired **/
 .ee-status-color-DTE {
     color: var(--ee-color-grey-7);
@@ -270,12 +281,12 @@
 }
 
 
-/** datetime inactive **/
-.ee-status-color-DTI {
+/** datetime trashed **/
+.ee-status-color-DTT {
     color: var(--ee-color-grey-3);
 }
 
-.ee-status-background-color-DTI {
+.ee-status-background-color-DTT {
     background-color: var(--ee-color-grey-3);
     color: var(--ee-text-on-grey-3);
 }
