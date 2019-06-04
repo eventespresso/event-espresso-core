@@ -3,7 +3,7 @@
  */
 import { __ } from '@eventespresso/i18n';
 import { dateTimeModel } from '@eventespresso/model';
-import { DateTime } from '@eventespresso/value-objects';
+import { ServerDateTime } from '@eventespresso/value-objects';
 import { isModelEntityOfModel } from '@eventespresso/validators';
 
 const { MODEL_NAME: DATETIME } = dateTimeModel;
@@ -29,22 +29,16 @@ export const eventDateEntityFormSubmitHandler = (
 		);
 	}
 	const prefix = `ee-event-date-${ dateEntity.id }`;
-	dateEntity.name = formData[ `${ prefix }-name` ] || '';
-	dateEntity.description = formData[ `${ prefix }-description` ] || '';
-	dateEntity.start = new DateTime( formData[ `${ prefix }-start` ] || '' );
-	dateEntity.end = new DateTime( formData[ `${ prefix }-end` ] || '' );
-	dateEntity.regLimit = parseInt(
-		formData[ `${ prefix }-reg-limit` ] || -1,
-		10
-	);
-	dateEntity.isPrimary = !! formData[ `${ prefix }-is-primary` ] || false;
-	dateEntity.order = parseInt(
-		formData[ `${ prefix }-order` ] || 0,
-		10
-	);
-	dateEntity.parent = parseInt(
-		formData[ `${ prefix }-parent` ] || 0,
-		10
-	);
-	dateEntity.deleted = !! formData[ `${ prefix }-deleted` ] || false;
+	const getValue = ( field, defaultValue = '' ) => {
+		return formData[ `${ prefix }-${ field }` ] || defaultValue;
+	};
+	dateEntity.name = getValue( 'name' );
+	dateEntity.description = getValue( 'description' );
+	dateEntity.start = new ServerDateTime( getValue( 'start' ) );
+	dateEntity.end = new ServerDateTime( getValue( 'end' ) );
+	dateEntity.regLimit = parseInt( getValue( 'reg-limit', -1 ), 10 );
+	dateEntity.isPrimary = !! getValue( 'is-primary', false );
+	dateEntity.order = parseInt( getValue( 'order', 0 ), 10 );
+	dateEntity.parent = parseInt( getValue( 'parent', 0 ), 10 );
+	dateEntity.deleted = !! getValue( 'deleted', false );
 };
