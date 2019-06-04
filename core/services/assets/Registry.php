@@ -572,6 +572,7 @@ class Registry
                 }
             );
         }
+        return [];
     }
 
 
