@@ -194,114 +194,25 @@ class CoreAssetManager extends AssetManager
         // conditionally load third-party libraries that WP core MIGHT have.
         $this->registerWpAssets();
 
-        $this->addJavascript(
-            CoreAssetManager::JS_HANDLE_JS_CORE,
-            $this->registry->getJsUrl($this->domain->assetNamespace(), CoreAssetManager::JS_HANDLE_JS_CORE),
-            $this->registry->getJsDependencies(
-                $this->domain->assetNamespace(),
-                CoreAssetManager::JS_HANDLE_JS_CORE
-            )
-        )
-        ->setHasInlineData();
-
-        $this->addJavascript(
-            CoreAssetManager::JS_HANDLE_VENDOR,
-            $this->registry->getJsUrl($this->domain->assetNamespace(), CoreAssetManager::JS_HANDLE_VENDOR),
-            $this->registry->getJsDependencies(
-                $this->domain->assetNamespace(),
-                CoreAssetManager::JS_HANDLE_VENDOR
-            )
+        $this->addJs(self::JS_HANDLE_JS_CORE)->setHasInlineData();
+        $this->addJs(self::JS_HANDLE_VENDOR);
+        $this->addJs(self::JS_HANDLE_VALIDATORS)->setRequiresTranslation();
+        $this->addJs(self::JS_HANDLE_HELPERS)->setRequiresTranslation();
+        $this->addJs(self::JS_HANDLE_MODEL)->setRequiresTranslation();
+        $this->addJs(self::JS_HANDLE_VALUE_OBJECTS)->setRequiresTranslation();
+        $this->addJs(self::JS_HANDLE_DATA_STORES)->setRequiresTranslation()->setInlineDataCallback(
+            function () {
+                wp_add_inline_script(
+                    CoreAssetManager::JS_HANDLE_DATA_STORES,
+                    is_admin()
+                        ? 'wp.apiFetch.use( eejs.middleWares.apiFetch.capsMiddleware( eejs.middleWares.apiFetch.CONTEXT_CAPS_EDIT ) )'
+                        : 'wp.apiFetch.use( eejs.middleWares.apiFetch.capsMiddleware )'
+                );
+            }
         );
-
-        $this->addJavascript(
-            CoreAssetManager::JS_HANDLE_VALIDATORS,
-            $this->registry->getJsUrl($this->domain->assetNamespace(), CoreAssetManager::JS_HANDLE_VALIDATORS),
-            $this->registry->getJsDependencies(
-                $this->domain->assetNamespace(),
-                CoreAssetManager::JS_HANDLE_VALIDATORS
-            )
-        )->setRequiresTranslation();
-
-        $this->addJavascript(
-            CoreAssetManager::JS_HANDLE_HELPERS,
-            $this->registry->getJsUrl($this->domain->assetNamespace(), CoreAssetManager::JS_HANDLE_HELPERS),
-            $this->registry->getJsDependencies(
-                $this->domain->assetNamespace(),
-                CoreAssetManager::JS_HANDLE_HELPERS
-            )
-        )->setRequiresTranslation();
-
-        $this->addJavascript(
-            CoreAssetManager::JS_HANDLE_MODEL,
-            $this->registry->getJsUrl($this->domain->assetNamespace(), CoreAssetManager::JS_HANDLE_MODEL),
-            $this->registry->getJsDependencies(
-                $this->domain->assetNamespace(),
-                CoreAssetManager::JS_HANDLE_MODEL
-            )
-        )->setRequiresTranslation();
-
-        $this->addJavascript(
-            CoreAssetManager::JS_HANDLE_VALUE_OBJECTS,
-            $this->registry->getJsUrl($this->domain->assetNamespace(), CoreAssetManager::JS_HANDLE_VALUE_OBJECTS),
-            $this->registry->getJsDependencies(
-                $this->domain->assetNamespace(),
-                CoreAssetManager::JS_HANDLE_VALUE_OBJECTS
-            )
-        )->setRequiresTranslation();
-
-        $this->addJavascript(
-            CoreAssetManager::JS_HANDLE_DATA_STORES,
-            $this->registry->getJsUrl($this->domain->assetNamespace(), CoreAssetManager::JS_HANDLE_DATA_STORES),
-            $this->registry->getJsDependencies(
-                $this->domain->assetNamespace(),
-                CoreAssetManager::JS_HANDLE_DATA_STORES
-            )
-        )
-             ->setRequiresTranslation()
-             ->setInlineDataCallback(
-                 function() {
-                     wp_add_inline_script(
-                         CoreAssetManager::JS_HANDLE_DATA_STORES,
-                         is_admin()
-                             ? 'wp.apiFetch.use( eejs.middleWares.apiFetch.capsMiddleware( eejs.middleWares.apiFetch.CONTEXT_CAPS_EDIT ) )'
-                             : 'wp.apiFetch.use( eejs.middleWares.apiFetch.capsMiddleware )'
-                     );
-                 }
-             );
-
-        $this->addJavascript(
-            CoreAssetManager::JS_HANDLE_HOCS,
-            $this->registry->getJsUrl($this->domain->assetNamespace(), CoreAssetManager::JS_HANDLE_HOCS),
-            array_merge(
-                $this->registry->getJsDependencies(
-                    $this->domain->assetNamespace(),
-                    CoreAssetManager::JS_HANDLE_HOCS
-                ),
-                [CoreAssetManager::JS_HANDLE_DATA_STORES]
-            )
-        )->setRequiresTranslation();
-
-        $this->addJavascript(
-            CoreAssetManager::JS_HANDLE_COMPONENTS,
-            $this->registry->getJsUrl($this->domain->assetNamespace(), CoreAssetManager::JS_HANDLE_COMPONENTS),
-            array_merge(
-                $this->registry->getJsDependencies(
-                    $this->domain->assetNamespace(),
-                    CoreAssetManager::JS_HANDLE_COMPONENTS
-                ),
-                [CoreAssetManager::JS_HANDLE_DATA_STORES]
-            )
-        )
-        ->setRequiresTranslation();
-
-        $this->addJavascript(
-            CoreAssetManager::JS_HANDLE_EDITOR_HOCS,
-            $this->registry->getJsUrl($this->domain->assetNamespace(), CoreAssetManager::JS_HANDLE_EDITOR_HOCS),
-            $this->registry->getJsDependencies(
-                $this->domain->assetNamespace(),
-                CoreAssetManager::JS_HANDLE_EDITOR_HOCS
-            )
-        )->setRequiresTranslation();
+        $this->addJs(self::JS_HANDLE_HOCS, self::JS_HANDLE_DATA_STORES)->setRequiresTranslation();
+        $this->addJs(self::JS_HANDLE_COMPONENTS, self::JS_HANDLE_DATA_STORES)->setRequiresTranslation();
+        $this->addJs(self::JS_HANDLE_EDITOR_HOCS)->setRequiresTranslation();
 
         $this->registry->addData('eejs_api_nonce', wp_create_nonce('wp_rest'));
         $this->registry->addData(
