@@ -22,24 +22,6 @@ class EE_Admin_Two_Column_Layout extends EE_Two_Column_Layout
 
 
     /**
-     * Lays out a row for the subsection
-     *
-     * @param EE_Form_Section_Proper $form_section
-     * @return string
-     */
-    public function layout_subsection($form_section)
-    {
-        if ($form_section instanceof EE_Form_Section_Proper
-            || $form_section instanceof EE_Form_Section_HTML
-        ) {
-            return EEH_HTML::no_row($form_section->get_html());
-        }
-        return '';
-    }
-
-
-
-    /**
      * Lays out the row for the input, including label and errors
      *
      * @param EE_Form_Input_Base $input

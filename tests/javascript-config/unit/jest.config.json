@@ -1,12 +1,12 @@
 {
 	"rootDir": "../../../",
+	"preset": "@wordpress/jest-preset-default",
 	"collectCoverageFrom": [
 		"assets/src/**/*.js",
 		"!**/node_modules/**",
 		"!**/vendor/**",
 		"!**/test/**"
 	],
-	"moduleDirectories": ["node_modules"],
 	"moduleNameMapper": {
 		"@eventespresso\\/(eejs)": "assets/src/$1",
 		"@eventespresso\/helpers": "assets/src/data/helpers",
@@ -22,19 +22,11 @@
 		"@wordpress/is-shallow-equal/objects": "<rootDir>/node_modules/@wordpress/is-shallow-equal/build/objects",
 		"@test/fixtures": "<rootDir>/tests/javascript-config/unit/fixtures"
 	},
-	"preset": "@wordpress/jest-preset-default",
 	"setupFiles": [
-		"core-js/fn/symbol/async-iterator",
 		"<rootDir>/tests/javascript-config/unit/setup-globals"
 	],
 	"testPathIgnorePatterns": [
 		"/node_modules/",
 		"/test/e2e"
-	],
-	"transform": {
-		"^.+\\.jsx?$": "<rootDir>/tests/javascript-config/unit/babel-transform"
-	},
-	"transformIgnorePatterns": [
-		"node_modules/(?!(simple-html-tokenizer)/)"
 	]
 }

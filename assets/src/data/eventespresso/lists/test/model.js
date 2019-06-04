@@ -12,7 +12,7 @@ import {
 } from '../model';
 import * as selectors from '../selectors';
 import * as resolvers from '../resolvers';
-import { select } from '@wordpress/data';
+import { select, registerStore } from '@wordpress/data';
 
 jest.mock( '../../../model', () => ( {
 	...require.requireActual( '../../../model' ),
@@ -21,6 +21,8 @@ jest.mock( '../../../model', () => ( {
 
 describe( 'createEntitySelectors()', () => {
 	beforeAll( () => {
+		// we don't need original store here.
+		registerStore( 'core/data', { selectors: {}, reducer: () => {} } );
 		select( 'core/data' ).isResolving = jest.fn().mockReturnValue( false );
 	} );
 	afterAll( () => {
