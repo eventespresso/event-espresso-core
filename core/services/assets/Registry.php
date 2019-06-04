@@ -83,10 +83,6 @@ class Registry
      */
     private $dependencies_data = [];
 
-    /**
-     * @var DomainInterface
-     */
-    private $domain;
 
     /**
      * This is a known array of possible wp css handles that correspond to what may be exposed as dependencies in our
@@ -114,18 +110,14 @@ class Registry
      *
      * @param AssetCollection      $assets
      * @param I18nRegistry         $i18n_registry
-     * @param DomainInterface|null $domain
      * @throws InvalidArgumentException
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
      */
-    public function __construct(AssetCollection $assets, I18nRegistry $i18n_registry, DomainInterface $domain = null)
+    public function __construct(AssetCollection $assets, I18nRegistry $i18n_registry)
     {
         $this->assets = $assets;
         $this->i18n_registry = $i18n_registry;
-        $this->domain = ! ( $domain instanceof DomainInterface )
-            ? LoaderFactory::getLoader()->getShared( 'EventEspresso\core\domain\Domain' )
-            : $domain;
         add_action('wp_enqueue_scripts', array($this, 'registerManifestFiles'), 1);
         add_action('admin_enqueue_scripts', array($this, 'registerManifestFiles'), 1);
         add_action('wp_enqueue_scripts', array($this, 'registerScriptsAndStyles'), 3);
@@ -508,10 +500,8 @@ class Registry
         $asset_index = $chunk_name . '.' . $asset_type;
         if (! isset( $this->dependencies_data[ $namespace ][ $asset_index ])) {
             $path = isset($this->manifest_data[ $namespace ]['path'])
-                ?
-                $this->manifest_data[ $namespace ]['path']
-                :
-                $this->domain->distributionAssetsPath();
+                ? $this->manifest_data[ $namespace ]['path']
+                : '';
             $dependencies_index = $chunk_name . '.' . Asset::TYPE_JSON;
             $file_path = isset($this->manifest_data[ $namespace ][ $dependencies_index ])
                 ? $path . $this->manifest_data[ $namespace ][ $dependencies_index ]
@@ -635,7 +625,7 @@ class Registry
      * @throws InvalidFilePathException
      * @since 4.9.59.p
      */
-    public function registerManifestFile($namespace, $url_base, $manifest_file, $manifest_file_path = '')
+    private function registerManifestFile($namespace, $url_base, $manifest_file, $manifest_file_path = '')
     {
         if (isset($this->manifest_data[ $namespace ])) {
             if (! $this->debug()) {
@@ -671,9 +661,6 @@ class Registry
             }
             return;
         }
-        $manifest_file_path = $manifest_file_path === ''
-            ? $this->domain->distributionAssetsPath()
-            : $manifest_file_path;
         $this->manifest_data[ $namespace ] = $this->decodeManifestFile($manifest_file);
         if (! isset($this->manifest_data[ $namespace ]['url_base'])) {
             $this->manifest_data[ $namespace ]['url_base'] = trailingslashit($url_base);
