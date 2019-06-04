@@ -7,7 +7,7 @@ import { __ } from '@eventespresso/i18n';
 import { withEditorModal } from '@eventespresso/editor-hocs';
 import { compose } from '@wordpress/compose';
 import { withDispatch } from '@wordpress/data';
-import { dateTimeModel } from '@eventespresso/model';
+import { isModelEntityOfModel } from '@eventespresso/validators';
 
 /**
  * Internal dependencies
@@ -18,8 +18,6 @@ import {
 	eventDateEntityFormSubmitHandler,
 } from './event-date-entity-form-submit-handler';
 import withUpdateEventDateRelation from '../action-handlers/with-update-event-date-relation';
-
-const { MODEL_NAME: DATETIME } = dateTimeModel;
 
 /**
  * @function
@@ -38,7 +36,9 @@ class EditEventDateFormModal extends Component {
 	constructor( props ) {
 		super( props );
 		this.state = {
-			eventDate: props.eventDate ? props.eventDate.clone( true ) : {},
+			eventDate: isModelEntityOfModel( props.eventDate, 'datetime' ) ?
+				props.eventDate.clone( true ) :
+				{},
 			originalEventDate: props.eventDate ? props.eventDate : {},
 		};
 	}
@@ -100,7 +100,7 @@ export default compose( [
 	withDispatch( ( dispatch, { updateEventDateRelation } ) => {
 		const { receiveAndReplaceEntityRecords } = dispatch( 'eventespresso/core' );
 		const replaceDateInStore = ( replaceDate, originalDate, eventEntity ) => {
-			receiveAndReplaceEntityRecords( DATETIME, [ replaceDate ] );
+			receiveAndReplaceEntityRecords( 'datetime', [ replaceDate ] );
 			updateEventDateRelation( eventEntity, replaceDate );
 		};
 		return { replaceDateInStore };
