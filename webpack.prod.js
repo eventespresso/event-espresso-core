@@ -19,18 +19,11 @@ const pluginsConfigWithExtraction = [
 		},
 	} ),
 	new wpi18nExtractor( {
-		aliases: {
-			'wp-plugins-page': 'ee-wp-plugins-page',
-			'data-stores': 'eventespresso-data-stores',
-			components: 'eventespresso-components',
-			helpers: 'eventespresso-helpers',
-			valueObjects: 'eventespresso-value-objects',
-			hocs: 'eventespresso-hocs',
-			model: 'eventespresso-model',
-			validators: 'eventespresso-validators',
-			'editor-hocs': 'eventespresso-editor-hocs',
-		},
-		excludes: [ 'eejs', 'vendor', 'core-default-theme' ],
+		excludes: [
+			'eejs-core',
+			'eventespresso-vendor',
+			'eventespresso-core-css-default',
+		],
 	} ),
 	new webpack.ProvidePlugin( {
 		React: 'react',
@@ -56,18 +49,11 @@ const pluginsConfigWithoutExtraction = [
 		},
 	} ),
 	new wpi18nExtractor( {
-		aliases: {
-			'wp-plugins-page': 'ee-wp-plugins-page',
-			'data-stores': 'eventespresso-data-stores',
-			components: 'eventespresso-components',
-			helpers: 'eventespresso-helpers',
-			valueObjects: 'eventespresso-value-objects',
-			hocs: 'eventespresso-hocs',
-			model: 'eventespresso-model',
-			validators: 'eventespresso-validators',
-			'editor-hocs': 'eventespresso-editor-hocs',
-		},
-		excludes: [ 'eejs', 'vendor', 'core-default-theme' ],
+		excludes: [
+			'eejs-core',
+			'eventespresso-vendor',
+			'eventespresso-core-css-default',
+		],
 	} ),
 	new webpack.ProvidePlugin( {
 		React: 'react',
