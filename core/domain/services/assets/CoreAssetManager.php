@@ -95,6 +95,10 @@ class CoreAssetManager extends AssetManager
 
     const CSS_HANDLE_COMPONENTS = 'eventespresso-components';
 
+    const CSS_HANDLE_HOCS = 'eventespresso-hocs';
+
+    const CSS_HANDLE_EDITOR_HOCS = 'eventespresso-editor-hocs';
+
     const CSS_HANDLE_CORE_CSS_DEFAULT = 'eventespresso-core-css-default';
 
     /**
@@ -215,85 +219,7 @@ class CoreAssetManager extends AssetManager
         $this->addJs(self::JS_HANDLE_HOCS, self::JS_HANDLE_DATA_STORES)->setRequiresTranslation();
         $this->addJs(self::JS_HANDLE_COMPONENTS, self::JS_HANDLE_DATA_STORES)->setRequiresTranslation();
         $this->addJs(self::JS_HANDLE_EDITOR_HOCS)->setRequiresTranslation();
-
-        $this->addJavascript(
-            CoreAssetManager::JS_HANDLE_MODEL,
-            $this->registry->getJsUrl($this->domain->assetNamespace(), 'model'),
-            array(
-                CoreAssetManager::JS_HANDLE_HELPERS,
-                CoreAssetManager::JS_HANDLE_VALUE_OBJECTS,
-            )
-        )->setRequiresTranslation();
-
-        $this->addJavascript(
-            CoreAssetManager::JS_HANDLE_VALUE_OBJECTS,
-            $this->registry->getJsUrl($this->domain->assetNamespace(), 'valueObjects'),
-            array(
-                CoreAssetManager::JS_HANDLE_VALIDATORS,
-                CoreAssetManager::JS_HANDLE_HELPERS,
-            )
-        )->setRequiresTranslation();
-
-        $this->addJavascript(
-            CoreAssetManager::JS_HANDLE_DATA_STORES,
-            $this->registry->getJsUrl($this->domain->assetNamespace(), 'data-stores'),
-            array(
-                CoreAssetManager::JS_HANDLE_VENDOR,
-                'wp-data',
-                'wp-api-fetch',
-                CoreAssetManager::JS_HANDLE_VALUE_OBJECTS,
-                CoreAssetManager::JS_HANDLE_MODEL,
-            )
-        )
-             ->setRequiresTranslation()
-             ->setInlineDataCallback(
-                 function() {
-                     wp_add_inline_script(
-                         CoreAssetManager::JS_HANDLE_DATA_STORES,
-                         is_admin()
-                             ? 'wp.apiFetch.use( eejs.middleWares.apiFetch.capsMiddleware( eejs.middleWares.apiFetch.CONTEXT_CAPS_EDIT ) )'
-                             : 'wp.apiFetch.use( eejs.middleWares.apiFetch.capsMiddleware )'
-                     );
-                 }
-             );
-        $this->addJavascript(
-            CoreAssetManager::JS_HANDLE_HOOKS,
-            $this->registry->getJsUrl( $this->domain->assetNamespace(), 'hooks' ),
-            [
-                CoreAssetManager::JS_HANDLE_CORE
-            ]
-        );
-
-        $this->addJavascript(
-            CoreAssetManager::JS_HANDLE_HOCS,
-            $this->registry->getJsUrl($this->domain->assetNamespace(), 'hocs'),
-            array(
-                CoreAssetManager::JS_HANDLE_DATA_STORES,
-                CoreAssetManager::JS_HANDLE_VALUE_OBJECTS,
-                CoreAssetManager::JS_HANDLE_HOOKS,
-                'wp-components',
-            )
-        )->setRequiresTranslation();
-
-        $this->addJavascript(
-            CoreAssetManager::JS_HANDLE_COMPONENTS,
-            $this->registry->getJsUrl($this->domain->assetNamespace(), 'components'),
-            array(
-                CoreAssetManager::JS_HANDLE_DATA_STORES,
-                CoreAssetManager::JS_HANDLE_VALUE_OBJECTS,
-                CoreAssetManager::JS_HANDLE_HOOKS,
-                'wp-components',
-            )
-        )
-        ->setRequiresTranslation();
-
-        $this->addJavascript(
-            CoreAssetManager::JS_HANDLE_EDITOR_HOCS,
-            $this->registry->getJsUrl($this->domain->assetNamespace(), 'editor-hocs'),
-            array(
-                CoreAssetManager::JS_HANDLE_HOCS
-            )
-        )->setRequiresTranslation();
+        $this->addJs(self::JS_HANDLE_HOOKS);
 
         $this->registry->addData('eejs_api_nonce', wp_create_nonce('wp_rest'));
         $this->registry->addData(
@@ -465,6 +391,8 @@ class CoreAssetManager extends AssetManager
         }
         $this->addCss(self::CSS_HANDLE_CORE_CSS_DEFAULT, 'dashicons');
         $this->addCss(self::CSS_HANDLE_COMPONENTS, self::CSS_HANDLE_CORE_CSS_DEFAULT);
+        $this->addCss(self::CSS_HANDLE_HOCS);
+        $this->addCss(self::CSS_HANDLE_EDITOR_HOCS);
     }
 
 
