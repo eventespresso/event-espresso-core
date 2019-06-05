@@ -3,7 +3,6 @@
 namespace EventEspresso\core\services\assets;
 
 use EE_Error;
-use EventEspresso\core\domain\DomainInterface;
 use EventEspresso\core\domain\services\assets\CoreAssetManager;
 use EventEspresso\core\domain\values\assets\Asset;
 use EventEspresso\core\domain\values\assets\JavascriptAsset;
@@ -12,7 +11,6 @@ use EventEspresso\core\exceptions\ExceptionStackTraceDisplay;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidFilePathException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
-use EventEspresso\core\services\loaders\LoaderFactory;
 use Exception;
 use InvalidArgumentException;
 
@@ -554,6 +552,7 @@ class Registry
             $css_chunks = array_merge( $css_chunks, $this->wp_css_handle_dependencies);
             // flip for easier search
             $css_chunks = array_flip($css_chunks);
+
             // now let's filter the dependencies for the incoming chunk to actual chunks that have styles
             return array_filter(
                 $asset_dependencies,
