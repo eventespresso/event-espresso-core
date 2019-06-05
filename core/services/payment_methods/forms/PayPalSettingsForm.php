@@ -77,9 +77,9 @@ class PayPalSettingsForm extends EE_Payment_Method_Form
         $request_params = array(
             'METHOD'    => 'GetBalance',
             'VERSION'   => '204.0',
-            'USER'      => urlencode($this->get_input_value('api_username')),
-            'PWD'       => urlencode($this->get_input_value('api_password')),
-            'SIGNATURE' => urlencode($this->get_input_value('api_signature')),
+            'USER'      => $this->get_input_value('api_username'),
+            'PWD'       => $this->get_input_value('api_password'),
+            'SIGNATURE' => $this->get_input_value('api_signature'),
         );
         $gateway_url = $this->get_input_value('PMD_debug_mode')
             ? 'https://api-3t.sandbox.paypal.com/nvp'
