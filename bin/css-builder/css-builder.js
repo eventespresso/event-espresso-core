@@ -159,13 +159,17 @@ function writeCssDemoFile( theme ) {
  * @param {Object} config
  */
 function writeCssDemoMainFile( theme, config ) {
+	const variableStylesheets = getCssFiles( config.folder, true );
+	variableStylesheets.push( '../../../../espresso-button/style.css' );
+	const baseStylesheets = getCssFiles( 'root' );
+	const overrideStylesheets = getCssFiles( config.folder );
 	const fileData = parseCssTemplate(
 		[ DEMO_TEMPLATES_PATH, 'main_template.html' ],
 		{
 			themeName: config.meta.name,
-			variableStylesheets: getCssFiles( config.folder, true ),
-			baseStylesheets: getCssFiles( 'root' ),
-			overrideStylesheets: getCssFiles( config.folder ),
+			variableStylesheets: variableStylesheets.map( fileUtils.fixSlashes ),
+			baseStylesheets: baseStylesheets.map( fileUtils.fixSlashes ),
+			overrideStylesheets: overrideStylesheets.map( fileUtils.fixSlashes ),
 			demoSections: buildSectionTemplates( config ),
 		}
 	);
