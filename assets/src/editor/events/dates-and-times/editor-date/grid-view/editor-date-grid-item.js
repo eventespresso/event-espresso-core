@@ -2,7 +2,6 @@
  * External imports
  */
 import { Component, Fragment } from '@wordpress/element';
-import { IconButton } from '@wordpress/components';
 import { __ } from '@eventespresso/i18n';
 import {
 	BiggieCalendarDate,
@@ -19,7 +18,7 @@ import classNames from 'classnames';
 import EditorDateDetails from './editor-date-details';
 import { EditorDateActionsMenu } from '../';
 
-const { getBackgroundColorClass, MODEL_NAME } = dateTimeModel;
+const { getBackgroundColorClass, getDateTimeStatusTextLabel } = dateTimeModel;
 
 /**
  * EditorDateGridItem
@@ -38,32 +37,47 @@ class EditorDateGridItem extends Component {
 	displayDate = ( eventDate, showDate ) => {
 		let sidebarColorClass = 'ee-editor-date-calendar-sidebar ';
 		sidebarColorClass += getBackgroundColorClass( eventDate );
+		const dateStatus = (
+			<div key={ 1 } className={ 'ee-status-tag' }>
+				{ getDateTimeStatusTextLabel( eventDate ) }
+			</div>
+		);
 		switch ( showDate ) {
 			case 'end' :
-				return <BiggieCalendarDate
-					date={ eventDate.end }
-					htmlClass={ sidebarColorClass }
-					headerText={ __( 'ends', 'event_espresso' ) }
-					footerText={ eventDate.end.toFormat( 'h:mm a' ) }
-				/>;
+				const endTime = eventDate.end.toFormat( 'h:mm a' );
+				return (
+					<BiggieCalendarDate
+						date={ eventDate.end }
+						htmlClass={ sidebarColorClass }
+						headerText={ __( 'ends', 'event_espresso' ) }
+						footerText={ [ endTime, dateStatus ] }
+					/>
+				);
 			case 'both' :
 				return (
 					<CalendarDateRange
 						startDate={ eventDate.start }
 						endDate={ eventDate.end }
 						htmlClass={ sidebarColorClass }
+						headerText={ __( 'Event Date', 'event_espresso' ) }
+						footerText={ dateStatus }
+						showTime
 					/>
 				);
 			case 'start' :
 			default :
-				return <BiggieCalendarDate
-					date={ eventDate.start }
-					htmlClass={ sidebarColorClass }
-					headerText={ __( 'starts', 'event_espresso' ) }
-					footerText={ eventDate.start.toFormat( 'h:mm a' ) }
-				/>;
+				const startTime = eventDate.start.toFormat( 'h:mm a' );
+				return (
+					<BiggieCalendarDate
+						date={ eventDate.start }
+						htmlClass={ sidebarColorClass }
+						headerText={ __( 'starts', 'event_espresso' ) }
+						footerText={ [ startTime, dateStatus ] }
+					/>
+				);
 		}
 	};
+
 	render() {
 		const {
 			event,
@@ -73,20 +87,9 @@ class EditorDateGridItem extends Component {
 			showDesc = 'excerpt',
 			showVenue = true,
 		} = this.props;
-		if ( ! isModelEntityOfModel( eventDate, MODEL_NAME ) ) {
+		if ( ! isModelEntityOfModel( eventDate, 'datetime' ) ) {
 			return null;
 		}
-		const isPrimary = eventDate.isPrimary ? (
-			<IconButton
-				className="ee-primary-event-date"
-				icon="star-empty"
-				label={ __(
-					'this is the primary date for this event',
-					'event_espresso'
-				) }
-				labelPosition="top right"
-			/>
-		) : null;
 		const dateStyleClass = classNames(
 			'ee-editor-date-main',
 			{
@@ -110,7 +113,6 @@ class EditorDateGridItem extends Component {
 					eventDate={ eventDate }
 					allTickets={ allTickets }
 				/>
-				{ isPrimary }
 			</Fragment>
 		);
 	}

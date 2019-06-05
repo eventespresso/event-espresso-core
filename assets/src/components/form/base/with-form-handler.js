@@ -12,8 +12,8 @@ import { FormContainer } from './form-container';
 import { FormDataDebugDump } from './form-data-debug-dump';
 import { FormErrorBoundary } from './form-error-boundary';
 import { FormPlaceholder } from './form-placeholder';
-import { FormSubmitButton } from './form-submit-button';
-import { FormCancelButton } from './form-cancel-button';
+import FormSubmitButton from './form-submit-button';
+import FormCancelButton from './form-cancel-button';
 
 /**
  * withFormHandler
@@ -77,7 +77,9 @@ export const withFormHandler = ( FormComponent ) => {
 		render() {
 			const {
 				loading,
+				submitButtonText = '',
 				resetHandler,
+				cancelButtonText = '',
 				errorMessage = '',
 				loadingNotice = '',
 				decorators = [],
@@ -111,9 +113,12 @@ export const withFormHandler = ( FormComponent ) => {
 							pristine = pristine && ! this.state.changes;
 							const submitButton = showSubmit ?
 								<FormSubmitButton
+									buttonText={ submitButtonText }
 									submitting={ submitting }
 									disabled={
-										( pristine || invalid ) && ! formChanges
+										(
+											pristine || invalid
+										) && ! formChanges
 									}
 								/> :
 								null;
@@ -124,13 +129,14 @@ export const withFormHandler = ( FormComponent ) => {
 							};
 							const cancelButton = resetHandler ?
 								<FormCancelButton
+									buttonText={ cancelButtonText }
 									onClick={ formReset }
 									pristine={ pristine }
 									submitting={ submitting }
 								/> :
 								null;
 							return (
-								<form onSubmit={ handleSubmit }>
+								<form onSubmit={ handleSubmit } >
 									<FormPlaceholder
 										loading={ loading }
 										notice={ loadingNotice }
@@ -156,5 +162,6 @@ export const withFormHandler = ( FormComponent ) => {
 			);
 		}
 	}
+
 	return FormHandler;
 };

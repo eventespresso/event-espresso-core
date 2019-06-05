@@ -1,7 +1,4 @@
-/* -------------------------------------------------------------------------
- * Event Espresso twoColumnAdminFormLayout Stylesheet
- * (c) 2018 Event Espresso
- * -------------------------------------------------------------------------*/
+
 :root {
     --ee-input-padding-bottom: calc(.375rem + 1px);
     --ee-input-padding-sides: calc(.75rem + 1px);

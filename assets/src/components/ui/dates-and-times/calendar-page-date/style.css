@@ -1,7 +1,3 @@
-/** -------------------------------------------------------------------------
- * Event Espresso CalendarPageDate Stylesheet
- * (c) 2018 Event Espresso
- * ------------------------------------------------------------------------- */
 
 .ee-calendar-page-date-wrapper {
     box-sizing: border-box;
@@ -12,26 +8,26 @@
 
 .ee-calendar-page-date-tiny .ee-calendar-page-date-wrapper-start,
 .ee-calendar-page-date-tiny .ee-calendar-page-date-wrapper-end {
-    height: 35px;
-    width: 35px;
+    height: calc(var(--ee-font-size-big) * 2);
+    width: calc(var(--ee-font-size-big) * 2);
 }
 
 .ee-calendar-page-date-small .ee-calendar-page-date-wrapper-start,
 .ee-calendar-page-date-small .ee-calendar-page-date-wrapper-end {
-    height: 50px;
-    width: 50px;
+    height: calc(var(--ee-font-size-bigger) * 2);
+    width: calc(var(--ee-font-size-bigger) * 2);
 }
 
 .ee-calendar-page-date-medium .ee-calendar-page-date-wrapper-start,
 .ee-calendar-page-date-medium .ee-calendar-page-date-wrapper-end {
-    height: 75px;
-    width: 75px;
+    height: calc(var(--ee-font-size-huge) * 2);
+    width: calc(var(--ee-font-size-huge) * 2);
 }
 
 .ee-calendar-page-date-big .ee-calendar-page-date-wrapper-start,
 .ee-calendar-page-date-big .ee-calendar-page-date-wrapper-end {
-    height: 100px;
-    width: 100px;
+    height: calc(var(--ee-font-size-extreme) * 2);
+    width: calc(var(--ee-font-size-extreme) * 2);
 }
 
 .ee-calendar-page-date-month {
@@ -39,31 +35,31 @@
     border-bottom: none;
     color: var(--ee-color-white);
     font-weight: bold;
-    letter-spacing: 2px;
+    letter-spacing: var(--ee-letter-spacing-font-size-micro);
 }
 .ee-calendar-page-date-month.ee-no-status-class {
     background: rgba(0, 0, 0, .1);
 }
 
 .ee-calendar-page-date-tiny .ee-calendar-page-date-month {
-    font-size: 10px;
-    height: 14px;
-    line-height: 13px;
+    font-size: var(--ee-font-size-micro);
+    height: var(--ee-font-size-big);
+    line-height: var(--ee-font-size-default);
 }
 .ee-calendar-page-date-small .ee-calendar-page-date-month {
-    font-size: 14px;
-    height: 20px;
-    line-height: 18px;
+    font-size: var(--ee-font-size-tiny);
+    height: var(--ee-font-size-bigger);
+    line-height: var(--ee-font-size-big);
 }
 .ee-calendar-page-date-medium .ee-calendar-page-date-month {
-    font-size: 21px;
-    height: 30px;
-    line-height: 27px;
+    font-size: var(--ee-font-size-smaller);
+    height: var(--ee-font-size-huge);
+    line-height: var(--ee-font-size-bigger);
 }
 .ee-calendar-page-date-big .ee-calendar-page-date-month {
-    font-size: 28px;
-    height: 40px;
-    line-height: 36px;
+    font-size: var(--ee-font-size-small);
+    height: var(--ee-font-size-extreme);
+    line-height: var(--ee-font-size-huge);
 }
 
 
@@ -76,32 +72,32 @@
     font-weight: bold;
 }
 .ee-calendar-page-date-tiny .ee-calendar-page-date-day {
-    font-size: 14px;
-    height: 21px;
-    line-height: 21px;
+    font-size: var(--ee-font-size-small);
+    height: var(--ee-font-size-big);
+    line-height: var(--ee-font-size-big);
 }
 .ee-calendar-page-date-small .ee-calendar-page-date-day {
-    font-size: 20px;
-    height: 30px;
-    line-height: 30px;
+    font-size: var(--ee-font-size-default);
+    height: var(--ee-font-size-bigger);
+    line-height: var(--ee-font-size-bigger);
 }
 .ee-calendar-page-date-medium .ee-calendar-page-date-day {
-    font-size: 30px;
-    height: 45px;
-    line-height: 45px;
+    font-size: var(--ee-font-size-big);
+    height: var(--ee-font-size-huge);
+    line-height: var(--ee-font-size-huge);
 }
 .ee-calendar-page-date-big .ee-calendar-page-date-day {
-    font-size: 40px;
-    height: 60px;
-    line-height: 60px;
+    font-size: var(--ee-font-size-bigger);
+    height: var(--ee-font-size-extreme);
+    line-height: var(--ee-font-size-extreme);
 }
 
 .ee-calendar-page-date-to {
     color: rgba(255, 255, 255, .75);
     position: relative;
-    top: 1px;
-    left: 25px;
-    font-size: 8px;
-    letter-spacing: 1px;
-    line-height: 12px;
+    top: var(--ee-padding-nano);
+    left: var(--ee-padding-default);
+    font-size: var(--ee-font-size-micro);
+    letter-spacing: var(--ee-letter-spacing-font-size-micro);
+    line-height: var(--ee-font-size-smaller);
 }

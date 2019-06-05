@@ -8,25 +8,25 @@
     display: flex;
     flex-flow: row nowrap;
     justify-content: space-between;
-    font-size: var(--ee-font-size-default);
-    height: var(--ee-font-size-huge);
-    line-height: var(--ee-font-size-default);
+    font-size: var(--ee-font-size-big);
+    height: var(--ee-font-size-extreme);
+    line-height: var(--ee-font-size-big);
     width: calc(var(--ee-font-size-tiny) * 19);
 }
 
 .ee-entity-details-panel-div .ee-inline-edit-text {
-    font-size: var(--ee-font-size-default);
-    line-height: var(--ee-font-size-default);
+    font-size: var(--ee-font-size-big);
+    line-height: var(--ee-font-size-big);
 }
 
 .ee-entity-details-div {
     display: flex;
     flex-direction: column-reverse;
-    max-width: var(--ee-font-size-huge);
+    max-width: var(--ee-font-size-extreme);
 }
 
 .ee-entity-details-div .ee-inline-edit-input {
-    max-width: var(--ee-font-size-huge);
+    max-width: var(--ee-font-size-extreme);
     margin: 0 0 calc(var(--ee-margin-micro) * -1);
 }
 

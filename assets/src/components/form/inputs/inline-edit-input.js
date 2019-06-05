@@ -12,7 +12,7 @@ import classNames from 'classnames';
  * Internal imports
  */
 import './inline-edit-input.css';
-import { SubmittingNotice } from '../base/submitting-notice';
+import SubmittingNotice from '../base/submitting-notice';
 
 /**
  * InlineEditInput
@@ -42,6 +42,15 @@ export class InlineEditInput extends Component {
 		noticeStyle: PropTypes.object,
 	};
 
+	static defaultProps = {
+		type: '',
+		valueType: 'string',
+		valueFormatter: null,
+		formatterSettings: {},
+		noticeStyle: {},
+		label: '',
+	};
+
 	constructor( props ) {
 		super( props );
 		this.input = createRef();
@@ -51,7 +60,7 @@ export class InlineEditInput extends Component {
 	componentDidMount() {
 		this.setState(
 			{
-				editing: this.props.value === '',
+				editing: false,
 				origValue: this.props.value,
 				value: this.props.value,
 				onChange: this.props.onChange,
@@ -66,7 +75,7 @@ export class InlineEditInput extends Component {
 	 * @param {Object} prevProps
 	 * @param {Object} prevState
 	 */
-	componentDidUpdate = ( prevProps, prevState ) => {
+	componentDidUpdate = async ( prevProps, prevState ) => {
 		if (
 			! prevProps.saving &&
 			! this.state.saving &&
@@ -85,7 +94,7 @@ export class InlineEditInput extends Component {
 				this.input.current.focus();
 			} else if ( prevProps.value !== this.props.value ) {
 				// editing is complete
-				this.done();
+				await this.done();
 			}
 		}
 	};
@@ -117,7 +126,7 @@ export class InlineEditInput extends Component {
 	 */
 	done = async () => {
 		this.setState( { saving: true } );
-		Promise.resolve(
+		return Promise.resolve(
 			await this.state.onChange( this.state.value )
 		).then( () => {
 			this.setState( {
@@ -145,11 +154,11 @@ export class InlineEditInput extends Component {
 	 * @function
 	 * @param {Object} event
 	 */
-	keyDownInput = ( event ) => {
+	keyDownInput = async ( event ) => {
 		if ( event.keyCode === ENTER ) {
 			event.preventDefault();
 			event.stopPropagation();
-			this.done();
+			await this.done();
 		} else if ( event.keyCode === ESCAPE ) {
 			event.preventDefault();
 			event.stopPropagation();
@@ -205,6 +214,7 @@ export class InlineEditInput extends Component {
 		);
 		const input = type === 'textarea' ? (
 			<textarea
+				{ ...inputProps }
 				ref={ this.input }
 				id={ htmlId }
 				className={ htmlClass }
@@ -212,10 +222,10 @@ export class InlineEditInput extends Component {
 				onInput={ this.textChange }
 				onKeyDown={ this.keyDownInput }
 				defaultValue={ inputValue }
-				{ ...inputProps }
 			/>
 		) : (
 			<input
+				{ ...inputProps }
 				ref={ this.input }
 				id={ htmlId }
 				type={ type }
@@ -224,7 +234,6 @@ export class InlineEditInput extends Component {
 				onInput={ this.textChange }
 				onKeyDown={ this.keyDownInput }
 				defaultValue={ inputValue }
-				{ ...inputProps }
 			/>
 		);
 		return label ? (
@@ -288,17 +297,17 @@ export class InlineEditInput extends Component {
 		const {
 			htmlId,
 			value,
-			type = 'text',
-			valueType = 'string',
-			valueFormatter = null,
-			formatterSettings = {},
-			noticeStyle = {},
-			label = '',
+			type,
+			valueType,
+			valueFormatter,
+			formatterSettings,
+			noticeStyle,
+			label,
 			...inputProps
 		} = this.props;
 		delete inputProps.onChange;
-		if ( this.state.editing || value === '' ) {
-			return this.editComponent(
+		return this.state.editing ?
+			this.editComponent(
 				htmlId,
 				value,
 				type,
@@ -306,12 +315,11 @@ export class InlineEditInput extends Component {
 				label,
 				inputProps,
 				noticeStyle
+			) :
+			this.displayComponent(
+				valueFormatter,
+				formatterSettings,
+				noticeStyle,
 			);
-		}
-		return this.displayComponent(
-			valueFormatter,
-			formatterSettings,
-			noticeStyle,
-		);
 	}
 }

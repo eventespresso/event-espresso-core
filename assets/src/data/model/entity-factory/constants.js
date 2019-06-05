@@ -77,6 +77,7 @@ export const MODEL_PREFIXES = ( modelName ) => {
 			question_group: [ 'QSG' ],
 			question_group_question: [ 'QGQ' ],
 			question_option: [ 'QSO' ],
+			recurrence: [ 'RCR' ],
 			registration: [ 'REG' ],
 			registration_payment: [ 'RPY' ],
 			state: [ 'STA' ],

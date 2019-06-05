@@ -219,7 +219,7 @@ class TicketPriceCalculatorForm extends Component {
 	) => {
 		const priceId = shortenCuid( price.id );
 		const prefix = `${ ticketPrefix }-price-${ priceId }`;
-		const priceTypeId = parseInt( values[ `${ prefix }-type` ] ) || 0;
+		const priceTypeId = parseInt( values[ `${ prefix }-type` ], 10 ) || 0;
 		const priceType = this.getPriceType( priceTypeId );
 		return [
 			{

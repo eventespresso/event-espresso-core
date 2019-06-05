@@ -1,11 +1,11 @@
 /**
  * External imports
  */
+import classNames from 'classnames';
 import PropTypes from 'prop-types';
 import { isFunction } from 'lodash';
 import { IconButton } from '@wordpress/components';
 import { DateTime } from '@eventespresso/value-objects';
-import classNames from 'classnames';
 
 /**
  * Internal dependencies
@@ -24,6 +24,7 @@ import { EspressoIcon } from '../../image/espresso-icon';
  * @param {string} footerText
  * @param {Function} onEdit
  * @param {Object} editButton
+ * @param {boolean} showTime
  * @return {string} rendered date
  */
 const BiggieCalendarDate = ( {
@@ -34,6 +35,7 @@ const BiggieCalendarDate = ( {
 	position = 'left',
 	onEdit = null,
 	editButton = {},
+	showTime = false,
 } ) => {
 	htmlClass = classNames(
 		'biggie-calendar-date-bg',
@@ -56,7 +58,7 @@ const BiggieCalendarDate = ( {
 	return (
 		<div className={ htmlClass }>
 			{
-				headerText &&(
+				headerText && (
 					<div className="biggie-calendar-date-header">
 						{ headerText }
 					</div>
@@ -76,6 +78,13 @@ const BiggieCalendarDate = ( {
 				<div className="year">
 					{ date.toFormat( 'YYYY' ) }
 				</div>
+				{
+					showTime && (
+						<div className="ee-mcd-time">
+							{ date.toFormat( 'h:mm a' ) }
+						</div>
+					)
+				}
 			</div>
 			{
 				footerText && (
@@ -107,6 +116,7 @@ BiggieCalendarDate.propTypes = {
 	] ),
 	onEdit: PropTypes.func,
 	editButton: PropTypes.object,
+	showTime: PropTypes.bool,
 };
 
 export default BiggieCalendarDate;

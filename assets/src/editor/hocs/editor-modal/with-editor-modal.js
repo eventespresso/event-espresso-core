@@ -1,9 +1,11 @@
 /**
  * External Imports
  */
-import { useCallback, useEffect } from '@wordpress/element';
-import { uniqueId, flow } from 'lodash';
+import classNames from 'classnames';
+import { flow } from 'lodash';
 import { Modal } from '@wordpress/components';
+import { createHigherOrderComponent } from '@wordpress/compose';
+import { useCallback, useEffect } from '@wordpress/element';
 
 /**
  * Internal Imports
@@ -17,52 +19,58 @@ import './style.css';
  * @constructor
  * @param {Object} mainModalProps
  */
-const withEditorModal = ( mainModalProps ) => ( WrappedComponent ) => ( {
-	editorOpen,
-	toggleEditor = () => null,
-	doRefresh = () => null,
-	modalProps,
-	id,
-	buttonLabel,
-	onClose = () => null,
-	onOpen = () => null,
-	...passedProps
-} ) => {
-	useEffect( () => {
-		if ( editorOpen ) {
-			onOpen();
-		}
-	}, [ editorOpen, onOpen ] );
-	const closeAction = useCallback( () => {
-		flow( [ doRefresh, toggleEditor, onClose ] )();
-	}, [ toggleEditor, doRefresh, onClose ] );
-	modalProps = modalProps ?
-		modalProps :
-		mainModalProps;
-	const {
-		title,
-		customClass,
-		closeButtonLabel,
-		...extraModalProps
-	} = modalProps;
-	id = id ? id : uniqueId( 'ee-editor-modal-' );
-	buttonLabel = buttonLabel ? buttonLabel : closeButtonLabel;
-	return editorOpen ? (
-		<Modal
-			id={ id }
-			title={ title }
-			className={ `ee-editor-modal ${ customClass }` }
-			onRequestClose={ closeAction }
-			closeButtonLabel={ buttonLabel }
-			{ ...extraModalProps }
-		>
-			<WrappedComponent
-				editorOpen={ editorOpen }
-				toggleEditor={ toggleEditor }
-				{ ...passedProps }
-			/>
-		</Modal>
-	) : null;
-};
+const withEditorModal = createHigherOrderComponent(
+	( mainModalProps ) => ( WrappedComponent ) => ( {
+		editorOpen,
+		toggleEditor = () => null,
+		doRefresh = () => null,
+		modalProps,
+		id,
+		buttonLabel,
+		onClose = () => null,
+		onOpen = () => null,
+		...passedProps
+	} ) => {
+		useEffect( () => {
+			if ( editorOpen ) {
+				onOpen();
+			}
+		}, [ editorOpen, onOpen ] );
+		const closeAction = useCallback( () => {
+			flow( [ doRefresh, toggleEditor, onClose ] )();
+		}, [ toggleEditor, doRefresh, onClose ] );
+		modalProps = modalProps ?
+			modalProps :
+			mainModalProps;
+		const {
+			title,
+			customClass,
+			closeButtonLabel,
+			...extraModalProps
+		} = modalProps;
+		buttonLabel = buttonLabel ? buttonLabel : closeButtonLabel;
+		const htmlClass = classNames( {
+			[ customClass ]: customClass,
+			'ee-editor-modal': true,
+		} );
+		return editorOpen ? (
+			<Modal
+				id={ id }
+				title={ title }
+				className={ htmlClass }
+				onRequestClose={ closeAction }
+				closeButtonLabel={ buttonLabel }
+				{ ...extraModalProps }
+			>
+				<WrappedComponent
+					editorOpen={ editorOpen }
+					toggleEditor={ toggleEditor }
+					{ ...passedProps }
+				/>
+			</Modal>
+		) : null;
+	},
+	'withEditorModal'
+);
 
 export default withEditorModal;

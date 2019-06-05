@@ -390,7 +390,7 @@ h4 code {
 /** margin sizes **/
 
 .with-margin-size-none {
-    margin: var(--ee-margin-none);
+    margin: 0;
 }
 .with-margin-size-micro {
     margin: var(--ee-margin-micro);
@@ -424,7 +424,7 @@ h4 code {
 /** padding sizes **/
 
 .with-padding-size-none {
-    padding: var(--ee-padding-none);
+    padding: 0;
 }
 .with-padding-size-micro {
     padding: var(--ee-padding-micro);

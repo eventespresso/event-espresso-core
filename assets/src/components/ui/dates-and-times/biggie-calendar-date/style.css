@@ -1,14 +1,9 @@
-/* -------------------------------------------------------------------------
- * Event Espresso BiggieCalendarDate Stylesheet
- * (c) 2018 Event Espresso
- * -------------------------------------------------------------------------*/
 
 .biggie-calendar-date-bg {
     box-sizing: border-box;
     color: var(--ee-color-white);
-    font-size: var(--ee-font-size-tiny);
     height: 100%;
-    padding: 0 var(--ee-padding-tiny) var(--ee-padding-tiny);
+    padding: var(--ee-padding-tiny) var(--ee-padding-micro);
     position: absolute;
     text-align: center;
     width: calc(var(--ee-padding-micro) * 34);
@@ -28,18 +23,20 @@
     font-size: var(--ee-font-size-micro);
     letter-spacing: var(--ee-letter-spacing-font-size-micro);
     line-height: var(--ee-font-size-bigger);
+    margin: 0 0 var(--ee-margin-micro);
 }
 
 .biggie-calendar-date .weekday {
+    font-size: var(--ee-font-size-smaller);
     font-weight: normal;
-    line-height: var(--ee-font-size-default);
+    line-height: var(--ee-font-size-big);
     letter-spacing: var(--ee-letter-spacing-font-size-tiny);
 }
 
 .biggie-calendar-date .month {
-    font-size: calc(var(--ee-font-size-big) - 3px);
+    font-size: calc(var(--ee-font-size-tiny) * 2);
     font-weight: bold;
-    line-height: calc(var(--ee-font-size-big) - 6px);
+    line-height: calc(var(--ee-font-size-tiny) * 2);
 }
 
 .month-day-sep {
@@ -48,30 +45,35 @@
 
 .biggie-calendar-date .day {
     opacity: .8;
-    font-size: var(--ee-font-size-huge);
+    font-size: calc(var(--ee-font-size-big) * 2);
     font-weight: bold;
-    line-height: calc(var(--ee-font-size-huge) - 6px);
+    line-height: calc(var(--ee-font-size-big) * 2);
     text-shadow: var(--ee-text-shadow-inset);
 }
 
 .biggie-calendar-date .year {
-    letter-spacing: calc(var(--ee-letter-spacing-font-size-micro)*4);
+    font-size: var(--ee-font-size-tiny);
+    letter-spacing: calc(var(--ee-letter-spacing-font-size-micro)*2);
     line-height: var(--ee-font-size-default);
-    left: 3px;
+    left: var(--ee-padding-nano);
     position: relative;
 }
 
+.biggie-calendar-date .ee-mcd-time {
+    font-size: var(--ee-font-size-smaller);
+}
+
 .biggie-calendar-date-footer {
-    font-weight: bold;
-    letter-spacing: var(--ee-letter-spacing-font-size-micro);
-    line-height: var(--ee-font-size-big);
-    margin: var(--ee-margin-micro) 0 0;
+    font-size: var(--ee-font-size-smaller);
+    line-height: var(--ee-font-size-bigger);
+    margin: var(--ee-margin-tiny) 0 0;
     text-shadow: var(--ee-text-shadow-inset);
     white-space: pre-line;
 }
 
-.biggie-calendar-date-footer span {
+.biggie-calendar-date-footer .ee-status-tag {
     display: block;
+    font-weight: bold;
     letter-spacing: var(--ee-letter-spacing-font-size-micro);
     text-transform: uppercase;
 }

@@ -17,7 +17,8 @@ import { isModelEntityOfModel } from '@eventespresso/validators';
  * Internal dependencies
  */
 import { EditorTicketDetails } from './';
-import EditorTicketActionsMenu from '../actions-menu/editor-ticket-actions-menu';
+import EditorTicketActionsMenu
+	from '../actions-menu/editor-ticket-actions-menu';
 
 const {
 	getBackgroundColorClass,
@@ -59,7 +60,9 @@ class EditorTicketGridItem extends Component {
 			}
 		}
 		const ticketStatus = (
-			<span key={ 1 }>{ getTicketStatusTextLabel( ticket ) }</span>
+			<span key={ 1 } className={ 'ee-status-tag' }>
+				{ getTicketStatusTextLabel( ticket ) }
+			</span>
 		);
 
 		switch ( showDate ) {
@@ -78,7 +81,8 @@ class EditorTicketGridItem extends Component {
 						startDate={ ticket.startDate }
 						endDate={ ticket.endDate }
 						htmlClass={ sidebarColorClass }
-						footerText={ <strong>{ ticketStatus }</strong> }
+						headerText={ __( 'Sale Date', 'event_espresso' ) }
+						footerText={ ticketStatus }
 						position="right"
 					/>
 				);
@@ -104,7 +108,7 @@ class EditorTicketGridItem extends Component {
 			doRefresh,
 			refreshed,
 		} = this.props;
-		if ( ! isModelEntityOfModel( ticket, ticketModel.MODEL_NAME ) ) {
+		if ( ! isModelEntityOfModel( ticket, 'ticket' ) ) {
 			return null;
 		}
 		const dateStyleClass = displayTicketDate === 'both' ?

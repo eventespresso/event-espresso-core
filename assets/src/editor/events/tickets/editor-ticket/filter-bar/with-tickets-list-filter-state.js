@@ -56,7 +56,8 @@ export default createHigherOrderComponent(
 						'event-editor-ticket-list',
 						'ticketsPerPage',
 						ticketsPerPage
-					)
+					),
+					10
 				),
 				ticketsView: store.getFilter(
 					'event-editor-ticket-list',
@@ -97,7 +98,7 @@ export default createHigherOrderComponent(
 				setTicketsPerPage: ( ticketsPerPage ) => store.setFilter(
 					'event-editor-ticket-list',
 					'ticketsPerPage',
-					parseInt( ticketsPerPage )
+					parseInt( ticketsPerPage, 10 )
 				),
 				setTicketsListView: () => store.setFilter(
 					'event-editor-ticket-list',

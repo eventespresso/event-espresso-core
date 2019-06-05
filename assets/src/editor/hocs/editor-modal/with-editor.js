@@ -3,6 +3,9 @@
  */
 import { Component } from '@wordpress/element';
 import { createHigherOrderComponent } from '@wordpress/compose';
+import { __, sprintf } from '@eventespresso/i18n';
+
+const { confirm } = window;
 
 /**
  * withEditor
@@ -10,14 +13,43 @@ import { createHigherOrderComponent } from '@wordpress/compose';
  * wraps the component that contains the withEditorModal
  *
  * @function
+ * @param {string} closeEditorNotice 	message displayed if user attempts
+ * 										to close modal when changes are not
+ * 										yet saved. To override the appearance
+ * 										of the closeEditorNotice, simply pass
+ * 										an empty string for this prop
  */
 const withEditor = createHigherOrderComponent(
 	( OriginalComponent ) => {
 		return class extends Component {
 			constructor( props ) {
 				super( props );
-				this.state = { editorOpen: false };
+				const closeEditorNotice = props.closeEditorNotice !== undefined ?
+					props.closeEditorNotice :
+					sprintf(
+						__(
+							'Are you sure you want to close the Editor?%sAll unsaved changes will be lost!',
+							'event_espresso'
+						),
+						'\n\n'
+					);
+				this.state = {
+					editorOpen: false,
+					changesSaved: true,
+					closeEditorNotice,
+				};
 			}
+
+			/**
+			 * will mark that changes have been saved which allows the modal to
+			 * be closed without triggering the display of the closeEditorNotice
+			 *
+			 * @function
+			 * @param {boolean} changesSaved
+			 */
+			changesSaved = ( changesSaved = false ) => {
+				this.setState( { changesSaved } );
+			};
 
 			/**
 			 * opens and closes withEditorModal
@@ -25,9 +57,23 @@ const withEditor = createHigherOrderComponent(
 			 * @function
 			 */
 			toggleEditor = () => {
-				this.setState( ( prevState ) => (
-					{ editorOpen: ! prevState.editorOpen }
-				) );
+				this.setState( ( prevState ) => {
+					if (
+						this.state.closeEditorNotice !== '' &&
+						prevState.editorOpen && ! prevState.changesSaved
+					) {
+						return (
+							{
+								editorOpen: ! confirm(
+									this.state.closeEditorNotice
+								),
+							}
+						);
+					}
+					return (
+						{ editorOpen: ! prevState.editorOpen }
+					);
+				} );
 			};
 
 			render() {
@@ -36,6 +82,7 @@ const withEditor = createHigherOrderComponent(
 						{ ...this.props }
 						editorOpen={ this.state.editorOpen }
 						toggleEditor={ this.toggleEditor }
+						changesSaved={ this.changesSaved }
 					/>
 				);
 			}

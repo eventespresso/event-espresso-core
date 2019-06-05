@@ -88,7 +88,7 @@ const getBasePriceFormFieldID = ( ticketId, formData ) => {
 	for ( const priceID of priceIDs ) {
 		const prefix = `${ basePrefix }-${ priceID }`;
 		const priceTypeId = typeof formData[ `${ prefix }-type` ] !== 'undefined' ?
-			parseInt( formData[ `${ prefix }-type` ] ) :
+			parseInt( formData[ `${ prefix }-type` ], 10 ) :
 			null;
 		// base prices have a type id of 1
 		if ( priceTypeId === BASE_PRICE_TYPES.BASE_PRICE ) {
@@ -147,7 +147,7 @@ const getPriceModifiersFromFormData = ( ticketId, formData ) => {
 	for ( const priceID of priceIDs ) {
 		const prefix = `${ basePrefix }-${ priceID }`;
 		const priceTypeId = typeof formData[ `${ prefix }-type` ] !== 'undefined' ?
-			parseInt( formData[ `${ prefix }-type` ] ) :
+			parseInt( formData[ `${ prefix }-type` ], 10 ) :
 			0;
 		const priceAmount = typeof formData[ `${ prefix }-amount` ] !== 'undefined' ?
 			parseMoneyValue( formData[ `${ prefix }-amount` ] ) :

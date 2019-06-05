@@ -17,14 +17,10 @@
     display: flex;
     flex-direction: row;
     justify-content: space-between;
-    min-height: calc(var(--ee-font-size-small) * 11.5);
+    min-height: calc(var(--ee-font-size-default) * 12.5);
     padding: 0 0 0 calc(var(--ee-icon-button-size) + 8px);
     position: relative;
     overflow: hidden;
-}
-
-.ee-editor-ticket-main.ee-editor-date-range {
-    min-height: calc(var(--ee-font-size-default) * 12.5);
 }
 
 /* DATE DETAILS */
@@ -39,7 +35,6 @@
     font-size: var(--ee-font-size-small);
     justify-content: flex-start;
     min-width: calc(var(--ee-font-size-small) * 25);
-    /*padding: var(--ee-padding-tiny) 150px 60px var(--ee-padding-micro);*/
     padding: var(--ee-padding-smaller) calc(var(--ee-padding-micro) * 36) var(--ee-padding-extreme) var(--ee-padding-smaller);
     text-align: center;
     width: 100%;
