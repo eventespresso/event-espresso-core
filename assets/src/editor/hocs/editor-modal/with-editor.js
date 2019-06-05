@@ -55,8 +55,13 @@ const withEditor = createHigherOrderComponent(
 			 * opens and closes withEditorModal
 			 *
 			 * @function
+			 * @param {Object} event - click event
 			 */
-			toggleEditor = () => {
+			toggleEditor = ( event ) => {
+				if ( event && event.preventDefault ) {
+					event.preventDefault();
+					event.stopPropagation();
+				}
 				this.setState( ( prevState ) => {
 					if (
 						this.state.closeEditorNotice !== '' &&

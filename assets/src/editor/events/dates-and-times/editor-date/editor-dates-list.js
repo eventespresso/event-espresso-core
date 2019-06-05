@@ -47,10 +47,16 @@ class EditorDatesList extends Component {
 	 * @return {Object} rendered button
 	 */
 	addNewDateButton = () => {
-		const addDate = () => this.props.addNewEventDate(
-			( state ) => this.setState( state ),
-			this.props.toggleEditor
-		);
+		const addDate = ( event ) => {
+			if ( event && event.preventDefault ) {
+				event.preventDefault();
+				event.stopPropagation();
+			}
+			this.props.addNewEventDate(
+				( state ) => this.setState( state ),
+				this.props.toggleEditor
+			);
+		};
 		return (
 			<EspressoButton
 				icon="calendar"

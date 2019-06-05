@@ -135,7 +135,11 @@ export default compose( [
 	withDispatch(
 		( dispatch, { setNewTicket, basePriceType } ) => {
 			const { createEntity, createRelations } = dispatch( 'eventespresso/core' );
-			const addNewTicket = async () => {
+			const addNewTicket = async ( event ) => {
+				if ( event && event.preventDefault ) {
+					event.preventDefault();
+					event.stopPropagation();
+				}
 				const newTicket = await createEntity( 'ticket', {} );
 				const newBasePrice = await createEntity(
 					'price',
