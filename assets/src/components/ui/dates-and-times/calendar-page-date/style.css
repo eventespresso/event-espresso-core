@@ -31,9 +31,6 @@
 }
 
 .ee-calendar-page-date-month {
-    border: 1px solid rgba(255, 255, 255, .25);
-    border-bottom: none;
-    color: var(--ee-color-white);
     font-weight: bold;
     letter-spacing: var(--ee-letter-spacing-font-size-micro);
 }
@@ -64,12 +61,14 @@
 
 
 .ee-calendar-page-date-day {
-    background: var(--ee-color-white);
-    border: 1px solid var(--ee-color-white);
-    border-top: none;
-    color: var(--ee-color-grey-2);
+    background: var(--ee-background-color);
+    color: var(--ee-default-text-color-super-high-contrast);
     font-family: "Arial Black", Gadget, sans-serif;
     font-weight: bold;
+    margin: 0 1px 1px;
+    position: relative;
+    top: -1px;
+    width: calc(100% - 2px);
 }
 .ee-calendar-page-date-tiny .ee-calendar-page-date-day {
     font-size: var(--ee-font-size-small);

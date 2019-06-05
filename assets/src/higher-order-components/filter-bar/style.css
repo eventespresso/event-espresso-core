@@ -4,11 +4,11 @@
  * ------------------------------------------------------------------------- */
 
 .ee-entity-list-filter-bar-wrapper {
-    background: var(--ee-color-white);
+    background: var(--ee-background-color);
     -webkit-box-sizing: border-box;
     -moz-box-sizing: border-box;
     box-sizing: border-box;
-    color: var(--ee-color-grey-2);
+    color: var(--ee-default-text-color);
     display: flex;
     flex-flow: row wrap;
     justify-content: space-between;
@@ -78,11 +78,11 @@
 }
 
 .ee-entity-list-view-bar .components-icon-button.active-list {
-    color: var(--ee-color-blue);
+    color: var(--ee-color-primary);
 }
 
 .ee-entity-list-filter-bar-wrapper .components-base-control__label {
-    color: var(--ee-color-grey-2);
+    color: var(--ee-default-text-color);
     font-weight: bold;
     margin: var(--ee-margin-micro) var(--ee-margin-tiny) var(--ee-margin-micro) var(--ee-margin-micro);
     white-space: nowrap;

@@ -121,9 +121,8 @@
 }
 
 .ee-ticket-assignments-manager .ee-calendar-page-date-wrapper {
-    border: 1px solid var(--ee-color-grey-10);
-    max-width: calc(var(--ee-padding-huge) + 2px);
-    min-width: calc(var(--ee-padding-huge) + 2px);
+    max-width: var(--ee-padding-huge);
+    min-width: var(--ee-padding-huge);
     margin: var(--ee-margin-micro);
     padding: 0;
 }

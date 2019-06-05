@@ -12,8 +12,8 @@
 }
 
 .ee-editor-date-main {
-    background: var(--ee-color-white);
-    color: var(--ee-color-grey-2);
+    background: var(--ee-background-color);
+    color: var(--ee-default-text-color);
     display: flex;
     flex-direction: row;
     justify-content: space-between;
@@ -42,7 +42,7 @@
 
 .ee-editor-date-name-heading,
 .ee-editor-date-name-heading .ee-inline-edit-text {
-    color: var(--ee-color-grey-2);
+    color: var(--ee-default-text-color);
     font-size: var(--ee-font-size-big) !important;
     font-weight: bold !important;
     line-height: var(--ee-font-size-big) !important;
