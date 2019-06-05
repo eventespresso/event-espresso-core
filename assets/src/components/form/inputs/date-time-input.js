@@ -1,17 +1,18 @@
 /**
  * External imports
  */
+import classNames from 'classnames';
 import PropTypes from 'prop-types';
-import moment from 'moment-timezone';
 import { Component } from '@wordpress/element';
 import { Field } from 'react-final-form';
-import { __experimentalGetSettings as getSettings } from '@wordpress/date';
 import { Button, DateTimePicker, Dropdown } from '@wordpress/components';
 import { ENTER, SPACE } from '@wordpress/keycodes';
+import { SERVER_LOCALE } from '@eventespresso/eejs';
+import { DATE_TIME_FORMAT_SITE, TIME_FORMAT_SITE } from '@eventespresso/helpers';
 import { __ } from '@eventespresso/i18n';
+import { ServerDateTime } from '@eventespresso/value-objects';
 
 import './date-time-input.css';
-
 /**
  * generates an HTML5 text input that opens a WP Dropdown + DateTimePicker
  * for populating the input with a date and time
@@ -45,16 +46,49 @@ class DateTimeDropdown extends Component {
 
 	constructor( props ) {
 		super( props );
+		const initialValue = new Date();
 		this.state = {
+			is12HourTime: true,
 			editorOpen: false,
-			inputValue: props.initialValue ? props.initialValue : '',
-			newValue: props.initialValue ? props.initialValue : '',
-			prevValue: props.initialValue ? props.initialValue : '',
-			onChange: props.input && props.input.onChange ?
-				props.input.onChange :
-				null,
+			inputValue: initialValue,
+			newValue: initialValue,
+			prevValue: initialValue,
+			onChange: null,
 		};
 	}
+
+	/**
+	 * opens and closes DateTimePicker Modal
+	 *
+	 * @function
+	 */
+	componentDidMount = () => {
+		const initialValue = this.props.initialValue ?
+			new Date( this.props.initialValue ) :
+			new Date();
+		// To know if the current timezone is a 12 hour time
+		// we look for "a" in the time format
+		// We also make sure this a is not escaped by a "/"
+		const is12HourTime = /a(?!\\)/i.test(
+			TIME_FORMAT_SITE
+			// Test only the lower case a
+				.toLowerCase()
+				// Replace "//" with empty strings
+				.replace( /\\\\/g, '' )
+				// Reverse the string and test for "a" not followed by a slash
+				.split( '' ).reverse().join( '' )
+		);
+		this.setState( {
+			is12HourTime,
+			editorOpen: false,
+			inputValue: initialValue,
+			newValue: initialValue,
+			prevValue: initialValue,
+			onChange: this.props.input && this.props.input.onChange ?
+				this.props.input.onChange :
+				null,
+		} );
+	};
 
 	/**
 	 * opens and closes DateTimePicker Modal
@@ -74,14 +108,13 @@ class DateTimeDropdown extends Component {
 	 * @param {string} newDate
 	 */
 	onChange = ( newDate ) => {
-		this.setState( { newValue: newDate } );
+		this.setState( { newValue: new Date( newDate ) } );
 	};
 
 	/**
 	 * opens and closes DateTimePicker Modal
 	 *
 	 * @function
-	 * @param {string} newDate
 	 */
 	cancel = () => {
 		this.setState( ( prevState ) => (
@@ -90,14 +123,15 @@ class DateTimeDropdown extends Component {
 	};
 
 	/**
-	 * opens and closes DateTimePicker Modal
+	 * submits the value from the Datepicker
 	 *
 	 * @function
-	 * @param {string} newDate
 	 */
 	update = () => {
 		this.setState( ( prevState ) => {
-			prevState.onChange( prevState.newValue );
+			if ( typeof prevState.onChange === 'function' ) {
+				prevState.onChange( prevState.newValue.toISOString() );
+			}
 			return {
 				inputValue: prevState.newValue,
 				prevValue: prevState.newValue,
@@ -109,34 +143,19 @@ class DateTimeDropdown extends Component {
 		const {
 			input,
 			htmlId,
+			htmlClass,
 			helpTextID,
 			dataSet,
 			inputWidth = '',
 			...attributes
 		} = this.props;
-		delete attributes.htmlClass;
 		delete attributes.initialValue;
-		let {
-			htmlClass,
-		} = this.props;
-		htmlClass = inputWidth ?
-			`${ htmlClass } ee-input-width-${ inputWidth }` :
-			htmlClass;
-		const settings = getSettings();
-		// To know if the current timezone is a 12 hour time
-		// we look for "a" in the time format
-		// We also make sure this a is not escaped by a "/"
-		const is12HourTime = /a(?!\\)/i.test(
-			settings.formats.time
-			// Test only the lower case a
-				.toLowerCase()
-				// Replace "//" with empty strings
-				.replace( /\\\\/g, '' )
-				// Reverse the string and test for "a" not followed by a slash
-				.split( '' ).reverse().join( '' )
-		);
-		let inputValue = moment( this.state.inputValue );
-		inputValue = inputValue.format( 'YYYY-MM-DD HH:mm A' );
+		const inputClass = classNames( {
+			[ htmlClass ]: true,
+			'form-control': true,
+			[ `ee-input-width-${ inputWidth }` ]: inputWidth,
+		} );
+		const inputValue = ServerDateTime.fromJSDate( this.state.inputValue );
 		return (
 			<Dropdown
 				position="bottom center"
@@ -145,8 +164,8 @@ class DateTimeDropdown extends Component {
 					<input
 						type="text"
 						id={ htmlId }
-						className={ `${ htmlClass } form-control` }
-						value={ inputValue }
+						className={ inputClass }
+						value={ inputValue.toFormat( DATE_TIME_FORMAT_SITE ) }
 						onChange={ input.onChange }
 						onClick={ onToggle }
 						onKeyDown={ ( event ) => {
@@ -164,20 +183,15 @@ class DateTimeDropdown extends Component {
 					/>
 				) }
 				renderContent={ ( { onToggle } ) => (
-					<div style={ { padding: '1rem 2rem 2rem' } }>
+					<div className={ 'ee-date-time-input-picker-wrapper' } >
 						<DateTimePicker
 							key="ee-date-time-picker"
 							currentDate={ this.state.newValue }
 							onChange={ this.onChange }
-							locale={ settings.l10n.locale }
-							is12Hour={ is12HourTime }
+							locale={ SERVER_LOCALE }
+							is12Hour={ this.state.is12HourTime }
 						/>
-						<div
-							style={ {
-								padding: '2rem 0 0',
-								textAlign: 'right',
-							} }
-						>
+						<div className={ 'ee-date-time-input-buttons-wrapper' } >
 							<Button isPrimary
 								onClick={ () => {
 									this.update();
