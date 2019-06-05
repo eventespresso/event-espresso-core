@@ -86,6 +86,11 @@ export const isTrashed = ( DateTimeEntity ) => {
 	return DateTimeEntity.deleted;
 };
 
+// PLZ NOTE:
+// leaving the following code in because it can be used if/when we decide
+// to fully support these datetime statuses which are currently defined
+// on the EE_Datetime model object class but not yet used
+
 // /**
 //  * @function
 //  * @param {Object} DateTimeEntity model object
@@ -128,6 +133,7 @@ export const status = ( DateTimeEntity ) => {
 	if ( isActive( DateTimeEntity ) ) {
 		return DATETIME_STATUS_ID.ACTIVE;
 	}
+	// PLZ SEE NOTE ABOVE
 	// if ( isCancelled( DateTimeEntity ) ) {
 	// 	return DATETIME_STATUS_ID.CANCELLED;
 	// }
