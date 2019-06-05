@@ -27,7 +27,6 @@ export const eventDateEntityFormSchema = ( eventDate ) => {
 		[ `${ prefix }-reg-limit` ]: stripInfinity( eventDate.regLimit ),
 		[ `${ prefix }-sold` ]: eventDate.sold || 0,
 		[ `${ prefix }-reserved` ]: eventDate.reserved || 0,
-		[ `${ prefix }-is-primary` ]: eventDate.isPrimary || false,
 		[ `${ prefix }-order` ]: eventDate.order || 0,
 		[ `${ prefix }-parent` ]: eventDate.parent || 0,
 		[ `${ prefix }-deleted` ]: eventDate.deleted || false,

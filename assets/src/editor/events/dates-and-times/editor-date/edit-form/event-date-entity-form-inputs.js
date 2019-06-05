@@ -179,27 +179,6 @@ export const eventDateEntityFormInputs = (
 			/>,
 		);
 	}
-	if ( indexOf( exclude, 'isPrimary' ) < 0 ) {
-		inputs.push(
-			<FormInput
-				key="isPrimary"
-				type="toggle"
-				name={ `${ prefix }-is-primary` }
-				initialValue={ values[ `${ prefix }-is-primary` ] || false }
-				label={ __( 'Is Primary Date', 'event_espresso' ) }
-				htmlId={ `${ prefix }-is-primary` }
-				helpTextIfChecked={ __(
-					'this is the primary date for this event',
-					'event_espresso',
-				) }
-				helpTextIfNotChecked={ __(
-					'click to make this the primary date for this event',
-					'event_espresso',
-				) }
-				inputWidth={ 2 }
-			/>,
-		);
-	}
 	if ( indexOf( exclude, 'order' ) < 0 ) {
 		inputs.push(
 			<FormInput

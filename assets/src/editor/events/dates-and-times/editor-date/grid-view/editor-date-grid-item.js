@@ -2,7 +2,6 @@
  * External imports
  */
 import { Component, Fragment } from '@wordpress/element';
-import { IconButton } from '@wordpress/components';
 import { __ } from '@eventespresso/i18n';
 import {
 	BiggieCalendarDate,
@@ -76,17 +75,6 @@ class EditorDateGridItem extends Component {
 		if ( ! isModelEntityOfModel( eventDate, MODEL_NAME ) ) {
 			return null;
 		}
-		const isPrimary = eventDate.isPrimary ? (
-			<IconButton
-				className="ee-primary-event-date"
-				icon="star-empty"
-				label={ __(
-					'this is the primary date for this event',
-					'event_espresso'
-				) }
-				labelPosition="top right"
-			/>
-		) : null;
 		const dateStyleClass = classNames(
 			'ee-editor-date-main',
 			{
@@ -110,7 +98,6 @@ class EditorDateGridItem extends Component {
 					eventDate={ eventDate }
 					allTickets={ allTickets }
 				/>
-				{ isPrimary }
 			</Fragment>
 		);
 	}
