@@ -1,11 +1,12 @@
 /**
  * External imports
  */
+import classNames from 'classnames';
 import PropTypes from 'prop-types';
 import { Tooltip } from '@wordpress/components';
 import { Component } from '@wordpress/element';
 import { __ } from '@eventespresso/i18n';
-import { DateTime } from '@eventespresso/value-objects';
+import { ServerDateTime } from '@eventespresso/value-objects';
 import { instanceOf } from '@eventespresso/validators';
 
 /**
@@ -19,8 +20,8 @@ import './style.css';
  * one of those mini calendars where each page is a day
  *
  * @function
- * @param {DateTime} startDate 	DateTime defining the start of an Event
- * @param {DateTime} endDate 	DateTime defining the end of an Event
+ * @param {ServerDateTime} startDate 	DateTime defining the start of an Event
+ * @param {ServerDateTime} endDate 	DateTime defining the end of an Event
  * @param {string} statusClass
  * @return {string} 			The date rendered to look like a calendar page
  */
@@ -28,11 +29,11 @@ class CalendarPageDate extends Component {
 	static propTypes = {
 		startDate: PropTypes.oneOfType( [
 			PropTypes.object,
-			PropTypes.instanceOf( DateTime ),
+			PropTypes.instanceOf( ServerDateTime ),
 		] ),
 		endDate: PropTypes.oneOfType( [
 			PropTypes.object,
-			PropTypes.instanceOf( DateTime ),
+			PropTypes.instanceOf( ServerDateTime ),
 		] ),
 		size: PropTypes.oneOf( [ 'tiny', 'small', 'medium', 'big' ] ),
 		statusClass: PropTypes.string,
@@ -42,12 +43,12 @@ class CalendarPageDate extends Component {
 	 * StartDate
 	 *
 	 * @function
-	 * @param {DateTime} startDate object
+	 * @param {ServerDateTime} startDate object
 	 * @param {string} statusClass
 	 * @return {string} The start date formatted to look like a calendar page
 	 */
 	getStartDate = ( startDate, statusClass ) => {
-		return instanceOf( startDate, 'DateTime' ) ? (
+		return instanceOf( startDate, 'ServerDateTime' ) ? (
 			<div className="ee-calendar-page-date-wrapper-start" >
 				{ this.renderCalendarPage( startDate, statusClass ) }
 			</div>
@@ -58,12 +59,12 @@ class CalendarPageDate extends Component {
 	 * EndDate
 	 *
 	 * @function
-	 * @param {DateTime} endDate object
+	 * @param {ServerDateTime} endDate object
 	 * @param {string} statusClass
 	 * @return {string} The end date formatted to look like a calendar page
 	 */
 	getEndDate = ( endDate, statusClass ) => {
-		return instanceOf( endDate, 'DateTime' ) ? (
+		return instanceOf( endDate, 'ServerDateTime' ) ? (
 			<div className="ee-calendar-page-date-wrapper-end" >
 				{ this.renderCalendarPage( endDate, statusClass, 'end' ) }
 			</div>
@@ -74,8 +75,8 @@ class CalendarPageDate extends Component {
 	 * getDivider
 	 *
 	 * @function
-	 * @param {DateTime} startDate object
-	 * @param {DateTime} endDate object
+	 * @param {ServerDateTime} startDate object
+	 * @param {ServerDateTime} endDate object
 	 * @return {string} a separator between the start and end date
 	 */
 	getDivider = ( startDate, endDate ) => {
@@ -90,25 +91,21 @@ class CalendarPageDate extends Component {
 	 * renderCalendarPage
 	 *
 	 * @function
-	 * @param {DateTime} date object
+	 * @param {ServerDateTime} date object
 	 * @param {string} statusClass
 	 * @param {string} startOrEnd whether date is a start date or end date
 	 * @return {string} The day formatted to look like a calendar page
 	 */
 	renderCalendarPage = ( date, statusClass, startOrEnd = 'start' ) => {
-		const htmlClass = statusClass !== '' ?
-			`ee-calendar-page-date-month ${ statusClass }` :
-			'ee-calendar-page-date-month';
+		const pageClass = classNames( {
+			'ee-calendar-page-date-page': true,
+			[ `ee-calendar-page-date-${ startOrEnd }` ]: true,
+			[ statusClass ]: statusClass !== '',
+		} );
 		return (
-			<Tooltip
-				text={ date.toFormat( 'LLLL' ) }
-			>
-				<div className={
-					'ee-calendar-page-date-' +
-					startOrEnd +
-					' ee-calendar-page-date-page'
-				}>
-					<div className={ htmlClass }>
+			<Tooltip text={ date.toFormat( 'LLLL' ) } >
+				<div className={ pageClass } >
+					<div className={ 'ee-calendar-page-date-month' }>
 						{ date.toFormat( 'MMM' ) }
 					</div>
 					<div className={ 'ee-calendar-page-date-day' }>
@@ -127,8 +124,11 @@ class CalendarPageDate extends Component {
 			statusClass = '',
 			...otherProps
 		} = this.props;
-		let htmlClass = 'ee-calendar-page-date-wrapper ';
-		htmlClass += `ee-calendar-page-date-${ size }`;
+		const htmlClass = classNames( {
+			'ee-calendar-page-date-wrapper': true,
+			[ `ee-calendar-page-date-${ size }` ]: true,
+
+		} );
 		return (
 			<div className={ htmlClass } { ...otherProps } >
 				{ this.getStartDate( startDate, statusClass ) }
