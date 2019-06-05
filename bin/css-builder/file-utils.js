@@ -4,6 +4,16 @@ const path = require( 'path' );
 const chalk = require( 'chalk' );
 
 /**
+ * converts backslashes to slashes
+ *
+ * @param {string} path
+ * @return {string} path with backslashes converted to slashes
+ */
+function fixSlashes( path ) {
+	return path.replace( /\\/g, '/' );
+}
+
+/**
  * loads and returns file contents
  *
  * @param {Array} pathParts
@@ -57,6 +67,7 @@ function writeFile( pathParts, fileData, template = '', output = '' ) {
 }
 
 module.exports = {
+	fixSlashes,
 	readFile,
 	getTemplateCompiler,
 	parseCssTemplate,
