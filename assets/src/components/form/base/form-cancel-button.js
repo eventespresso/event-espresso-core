@@ -1,12 +1,14 @@
 /**
  * External imports
  */
+import classNames from 'classnames';
+import PropTypes from 'prop-types';
 import { __ } from '@eventespresso/i18n';
 
 /**
  * Internal imports
  */
-import { FancyButton } from '../../ui';
+import { EspressoButton } from '../../ui';
 
 /**
  * @function
@@ -18,21 +20,22 @@ import { FancyButton } from '../../ui';
  * @param {string} htmlClass
  * @return {Object} rendered submit button for form
  */
-export const FormCancelButton = ( {
+const FormCancelButton = ( {
 	onClick,
 	pristine,
 	submitting,
-	buttonText = '',
-	htmlId = '',
-	htmlClass = '',
+	buttonText,
+	htmlId,
+	htmlClass,
 } ) => {
 	buttonText = buttonText ? buttonText : __( 'Cancel', 'event_espresso' );
-	htmlClass = htmlClass ?
-		`${ htmlClass } ee-form-button-cancel ee-form-button` :
-		'ee-form-button-cancel ee-form-button';
+	htmlClass = classNames( {
+		[ htmlClass ]: htmlClass,
+		'ee-form-button': true,
+		'ee-form-button-cancel': true,
+	} );
 	return (
-		<FancyButton
-			style={ 'wp-default' }
+		<EspressoButton
 			buttonText={ buttonText }
 			id={ htmlId }
 			htmlClass={ htmlClass }
@@ -41,3 +44,20 @@ export const FormCancelButton = ( {
 		/>
 	);
 };
+
+FormCancelButton.propTypes = {
+	onClick: PropTypes.func.isRequired,
+	buttonText: PropTypes.string,
+	pristine: PropTypes.bool,
+	submitting: PropTypes.bool,
+	htmlId: PropTypes.string,
+	htmlClass: PropTypes.string,
+};
+
+FormCancelButton.defaultProps = {
+	buttonText: '',
+	htmlId: '',
+	htmlClass: '',
+};
+
+export default FormCancelButton;

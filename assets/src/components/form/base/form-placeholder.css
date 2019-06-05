@@ -1,15 +1,11 @@
-/* -------------------------------------------------------------------------
- * Event Espresso FormPlaceholder Stylesheet
- * (c) 2018 Event Espresso
- * -------------------------------------------------------------------------*/
 
 .ee-form-placeholder-div {
-    border: 1px dashed var(--ee-color-grey-9);
+    border: 1px dashed var(--ee-color-grey-11);
     margin: var(--ee-margin-default) 0;
 }
 
 .ee-editor-div > .ee-form-placeholder-div {
-    border-color: var(--ee-color-grey-9);
+    border-color: var(--ee-color-grey-11);
     margin: var(--ee-margin-default) 0;
 }
 
@@ -28,7 +24,7 @@
 }
 
 .ee-loading-div {
-    color: var(--ee-color-grey-5);
+    color: var(--ee-default-text-color-super-low-contrast);
     font-size: var(--ee-font-size-smaller);
     line-height: var(--ee-font-size-big);
     margin: var(--ee-margin-extreme) auto;

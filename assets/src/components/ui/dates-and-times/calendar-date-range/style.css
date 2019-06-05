@@ -1,22 +1,15 @@
-/** -------------------------------------------------------------------------
- * Event Espresso CalendarDateRange Stylesheet
- * (c) 2018 Event Espresso
- * ------------------------------------------------------------------------- */
 
 .ee-calendar-date-range-wrapper {
-    background-image: linear-gradient(to bottom, rgba(0, 0, 0, .25) 50%, rgba(255, 255, 255, 0) 0%);
-    background-size: 1px 5px;
-    background-repeat: repeat-y;
     box-sizing: border-box;
     color: var(--ee-color-white);
-    font-size: 12px;
+    font-size: var(--ee-font-size-micro);
     font-weight: normal;
-    line-height: 18px;
+    line-height: var(--ee-font-size-default);
     height: 100%;
-    padding: 5px 10px;
+    padding: var(--ee-padding-smaller) var(--ee-padding-tiny) var(--ee-padding-tiny);
     position: absolute;
     text-align: center;
-    width: 140px;
+    width: calc(var(--ee-padding-micro) * 34);
 }
 
 .ee-calendar-date-range-wrapper.cdr-pos-left {
@@ -32,38 +25,58 @@
 }
 
 .ee-calendar-date-range-wrapper .ee-calendar-page-date-wrapper > div {
-    margin: 2px auto 0;
+    margin: var(--ee-margin-nano) auto 0;
 }
 
 .ee-cdr-weekday {
     display: inline-block;
-    letter-spacing: 1px;
+    font-size: var(--ee-font-size-smaller);
+    letter-spacing: var(--ee-letter-spacing-font-size-tiny);
     text-align: center;
 }
 
-.ee-cdr-time {
-    padding: 10px 0 3px;
-    text-align: center;
+.ee-cdr-month-and-day {
+    font-size: var(--ee-font-size-bigger);
+    font-weight: bold;
+    line-height: var(--ee-font-size-bigger);
+}
+
+.ee-cdr-month {
+}
+
+.ee-cdr-day {
+    margin: 0 0 0 var(--ee-margin-smaller);
+}
+
+.ee-cdr-year {
+    letter-spacing: calc(var(--ee-letter-spacing-font-size-micro) * 2);
+    left: var(--ee-padding-nano);
+    position: relative;
 }
 
 .ee-calendar-date-range-separator {
     box-sizing: border-box;
     clear: both;
     color: rgba(255, 255, 255, .7);
-    padding: 8px 25px 0;
-    text-align: center;
+    letter-spacing: var(--ee-letter-spacing-font-size-micro);
+    padding: var(--ee-padding-tiny) 0;
     width: 100%;
 }
 
+.ee-cdr-time {
+    font-size: var(--ee-font-size-smaller);
+    /*letter-spacing: var(--ee-letter-spacing-font-size-tiny);*/
+    /*padding: var(--ee-padding-tiny) 0 0;*/
+}
 
 .ee-calendar-time-separator {
     color: rgba(255, 255, 255, .7);
-    margin: 0 3px;
+    letter-spacing: var(--ee-letter-spacing-font-size-micro);
+    margin: 0 var(--ee-margin-nano);
 }
 
 .ee-calendar-date-range-header,
 .ee-calendar-date-range-footer {
     font-weight: bold;
-    letter-spacing: 2px;
-    text-shadow: -1px -1px rgba(0, 0, 0, .15);
+    letter-spacing: var(--ee-letter-spacing-font-size-micro);
 }

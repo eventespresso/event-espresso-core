@@ -289,7 +289,8 @@ class TicketAssignmentsManagerModal extends Component {
 					'Invalid EE Date model object!'
 				);
 				const dateYear = parseInt(
-					eventDate.start.toFormat( 'YYYY' )
+					eventDate.start.toFormat( 'YYYY' ),
+					10
 				);
 				if ( dateCount > 1 && dateYear > year ) {
 					year = dateYear;

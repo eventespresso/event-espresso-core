@@ -24,6 +24,8 @@ export const eventDateEntityFormSchema = ( eventDate ) => {
 		[ `${ prefix }-description` ]: eventDate.description || '',
 		[ `${ prefix }-start` ]: eventDate.start.toISO(),
 		[ `${ prefix }-end` ]: eventDate.end.toISO(),
+		[ `${ prefix }-start-time` ]: eventDate.start.toFormat( 'HH:mm' ),
+		[ `${ prefix }-end-time` ]: eventDate.end.toFormat( 'HH:mm' ),
 		[ `${ prefix }-reg-limit` ]: stripInfinity( eventDate.regLimit ),
 		[ `${ prefix }-sold` ]: eventDate.sold || 0,
 		[ `${ prefix }-reserved` ]: eventDate.reserved || 0,

@@ -1,7 +1,3 @@
-/* -------------------------------------------------------------------------
- * Event Espresso InlineEditInput Stylesheet
- * (c) 2018 Event Espresso
- * -------------------------------------------------------------------------*/
 
 .espresso-editor .ee-inline-edit-text:hover {
     color: var(--ee-color-bright-green-high-contrast) !important;

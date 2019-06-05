@@ -143,8 +143,8 @@ const percentSoldAtOrAbove = ( ticket, maxQuantity ) => {
 	return validSold( ticket ) &&
 		validFiniteQuantity( ticket ) &&
 		(
-			parseInt( ticket.sold ) /
-			parseInt( ticket.qty ) >= ( maxQuantity / 100 )
+			parseInt( ticket.sold, 10 ) /
+			parseInt( ticket.qty, 10 ) >= ( maxQuantity / 100 )
 		);
 };
 
@@ -160,8 +160,8 @@ const percentSoldBelow = ( ticket, maxQuantity ) => {
 		validSold( ticket ) &&
 		validFiniteQuantity( ticket ) &&
 		(
-			parseInt( ticket.sold ) /
-			parseInt( ticket.qty ) < ( maxQuantity / 100 )
+			parseInt( ticket.sold, 10 ) /
+			parseInt( ticket.qty, 10 ) < ( maxQuantity / 100 )
 		)
 	);
 };
@@ -182,7 +182,7 @@ const validFiniteQuantity = ( ticket ) => {
 	return validQuantity( ticket ) &&
 		ticket.qty !== 'INF' &&
 		ticket.qty !== Infinity &&
-		parseInt( ticket.qty ) > 0;
+		parseInt( ticket.qty, 10 ) > 0;
 };
 
 /**

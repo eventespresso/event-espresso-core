@@ -162,8 +162,8 @@ const capacityAtOrAbove = ( date, capacity ) => {
 	return validSold( date ) &&
 		validFiniteReglimit( date ) &&
 		(
-			parseInt( date.sold ) /
-			parseInt( date.regLimit ) >= ( capacity / 100 )
+			parseInt( date.sold, 10 ) /
+			parseInt( date.regLimit, 10 ) >= ( capacity / 100 )
 		);
 };
 
@@ -179,8 +179,8 @@ const capacityBelow = ( date, capacity ) => {
 		validSold( date ) &&
 		validFiniteReglimit( date ) &&
 		(
-			parseInt( date.sold ) /
-			parseInt( date.regLimit ) < ( capacity / 100 )
+			parseInt( date.sold, 10 ) /
+			parseInt( date.regLimit, 10 ) < ( capacity / 100 )
 		)
 	);
 };

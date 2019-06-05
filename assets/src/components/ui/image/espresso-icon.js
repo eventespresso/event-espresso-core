@@ -7,6 +7,7 @@ import classNames from 'classnames';
 
 export const ESPRESSO_ICON_CALCULATOR = 'calculator';
 export const ESPRESSO_ICON_CALENDAR = 'calendar';
+export const ESPRESSO_ICON_REM = 'recurring-date';
 export const ESPRESSO_ICON_SAVE = 'save';
 
 /**
@@ -39,6 +40,7 @@ export class EspressoIcon extends Component {
 		let path;
 
 		switch ( icon ) {
+
 			case ESPRESSO_ICON_CALCULATOR:
 				path = 'M 3 0 v20 h14 v-20 h-14 z ' +
 					'm 2.5 2.5 h9 v2 h-9 v-2 z ' +
@@ -55,6 +57,7 @@ export class EspressoIcon extends Component {
 					'm 3.5 0 h2 v1.75 h-2 v-1.75 z ' +
 					'm 3.5 0 h2 v1.75 h-2 v-1.75 z ';
 				break;
+
 			case ESPRESSO_ICON_CALENDAR:
 				path = 'M 0 2 v18 h20 v-18 z ' +
 					'M 2 6.5 h16 v11.5 h-16 z ' +
@@ -84,9 +87,42 @@ export class EspressoIcon extends Component {
 					'M 14 0 h2 v2 h-2 v-2 z';
 				break;
 
+			case 'image-rotate':
+				path = 'M 10.25 1.02 ' +
+					'c 5.1 0 8.75 4.04 8.75 9 ' +
+					's -3.65 9-8.75 9 ' +
+					'c -3.2 0-6.02-1.59-7.68-3.99 ' +
+					'l 2.59-1.52 ' +
+					'c 1.1 1.5 2.86 2.51 4.84 2.51 3.3 0 6-2.79 6-6 ' +
+					's-2.7-6-6-6 ' +
+					'c-1.97 0-3.72 1-4.82 2.49 ' +
+					'L 7 8.02 ' +
+					'l -6 2 ' +
+					'v -7 ' +
+					'L 2.89 4.6 ' +
+					'c 1.69-2.17 4.36-3.58 7.36-3.58z';
+				break;
+
+			case ESPRESSO_ICON_REM:
+				path = 'M 10 1.02 ' +
+					'c -5.1 0 -8.75 4.04 -8.75 9 ' +
+					's 3.65 9 8.75 9 ' +
+					'c 3.2 0 6.02 -1.59 7.68 -3.99 ' +
+					'l -2.59 -1.52 ' +
+					'c -1.1 1.5 -2.86 2.51 -4.84 2.51 -3.3 0 -6 -2.79 -6 -6 ' +
+					's 2.7 -6 6 -6 ' +
+					'c 1.97 0 3.72 1 4.82 2.49 ' +
+					'L 13.15 8.15 ' +
+					'l 6.18 1.09 ' +
+					'v -6.25 ' +
+					'L 17.4 4.6 ' +
+					'c -1.69 -2.17 -4.36 -3.58 -7.36 -3.58 z';
+				break;
+
 			case ESPRESSO_ICON_SAVE:
 				path = 'M 1 17.5 v -16 l 0.5 -0.5 h 14.5 l 3 3 v 14.5 l -0.5 0.5 h -17 l -0.5 -0.5 z M 5 7 h 9 l 0.5 -0.5 v -4.5 h -9 v 4.5 l 0.5 0.5 z M 11 6.5 v -3.5 h 2 v 3 h -2 z M 4 11.5 v 0.5 h 12 v -0.5 z m 0 2 v 0.5 h 12 v -0.5 z m 0 2 v 0.5 h 12 v -0.5 z';
 				break;
+
 			default:
 				return (
 					<Dashicon
