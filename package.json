@@ -112,7 +112,7 @@
 		"immutable": "^4.0.0-rc.12",
 		"js-green-licenses": "^1.0.0",
 		"memize": "^1.0.5",
-		"moment-duration-format": "^2.2.2",
+		"moment-duration-format": "^2.3.2",
 		"moment-timezone": "^0.5.25",
 		"npm-watch": "^0.6.0",
 		"pluralize": "^8.0.0",
