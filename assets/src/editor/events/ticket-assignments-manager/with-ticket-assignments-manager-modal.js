@@ -29,8 +29,13 @@ const WithTicketAssignmentsManagerModal = (
 			 * opens and closes TicketAssignmentsManagerModal
 			 *
 			 * @function
+			 * @param {Object} event - click event
 			 */
-			toggleManager = () => {
+			toggleManager = ( event ) => {
+				if ( typeof event.preventDefault === 'function' ) {
+					event.preventDefault();
+					event.stopPropagation();
+				}
 				this.setState( ( prevState ) => (
 					{ showManager: ! prevState.showManager }
 				) );
