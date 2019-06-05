@@ -7,12 +7,13 @@
     --ee-font-size-small: 0.90rem;
     --ee-font-size-default: 1.00rem;
     --ee-font-size-big: 1.20rem;
-    --ee-font-size-bigger: 1.60rem;
+    --ee-font-size-bigger: 1.50rem;
     --ee-font-size-huge: 2.00rem;
     --ee-font-size-extreme: 3.00rem;
     --ee-line-height-modifier: 1.5;
 
     /** padding sizes **/
+    --ee-padding-nano: 0.125rem;
     --ee-padding-micro: 0.25rem;
     --ee-padding-tiny: 0.5rem;
     --ee-padding-smaller: 0.75rem;
@@ -24,6 +25,7 @@
     --ee-padding-extreme: 4rem;
 
     /** margin sizes **/
+    --ee-margin-nano: 0.125rem;
     --ee-margin-micro: 0.25rem;
     --ee-margin-tiny: 0.5rem;
     --ee-margin-smaller: 0.75rem;
