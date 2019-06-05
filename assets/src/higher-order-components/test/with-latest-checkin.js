@@ -8,7 +8,7 @@ import withLatestCheckin from '../with-latest-checkin';
  */
 import { Component } from '@wordpress/element';
 import renderer from 'react-test-renderer';
-import { select, dispatch } from '@wordpress/data';
+import { select, dispatch, registerStore } from '@wordpress/data';
 import { RegistrationFactory } from '@test/fixtures';
 import '../../data/index';
 
@@ -29,6 +29,8 @@ describe( 'withLatestCheckin', () => {
 		return <EnhancedComponent { ...testProps } />;
 	};
 	beforeEach( () => {
+		// we don't need original store here.
+		registerStore( 'core/data', { selectors: {}, reducer: () => {} } );
 		select( 'eventespresso/core' ).getLatestCheckin = getLatestCheckin;
 		select( 'core/data' ).hasFinishedResolution = hasFinishedResolution;
 		dispatch( 'eventespresso/core' ).toggleCheckin = toggleCheckin;
