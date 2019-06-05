@@ -83,15 +83,15 @@ const config = [
 	},
 	{
 		entry: {
-			'eventespresso-hooks': assets + 'hooks/index.js'
+			'eventespresso-hooks': assets + 'hooks/index.js',
 		},
 		module: moduleConfigWithJsRules,
 		output: {
 			filename: '[name].[chunkhash].dist.js',
 			path: path.resolve( __dirname, 'assets/dist' ),
 			library: [ 'eejs', 'hooks' ],
-			libraryTarget: 'this'
-		}
+			libraryTarget: 'this',
+		},
 	},
 	{
 		entry: {
