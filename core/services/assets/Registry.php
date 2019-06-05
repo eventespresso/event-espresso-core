@@ -625,7 +625,7 @@ class Registry
      * @throws InvalidFilePathException
      * @since 4.9.59.p
      */
-    private function registerManifestFile($namespace, $url_base, $manifest_file, $manifest_file_path = '')
+    public function registerManifestFile($namespace, $url_base, $manifest_file, $manifest_file_path = '')
     {
         if (isset($this->manifest_data[ $namespace ])) {
             if (! $this->debug()) {
