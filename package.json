@@ -71,7 +71,7 @@
 		"@wordpress/scripts": "^3.2.1",
 		"@wordpress/url": "^2.6.0",
 		"@wordpress/viewport": "^2.4.0",
-		"autoprefixer": "^9.5.1",
+		"autoprefixer": "^9.6.0",
 		"babel-plugin-dev-expression": "^0.2.1",
 		"babel-runtime": "^6.26.0",
 		"codecov": "^3.5.0",
