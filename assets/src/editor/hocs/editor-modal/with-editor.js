@@ -18,8 +18,6 @@ const { confirm } = window;
  * 										yet saved. To override the appearance
  * 										of the closeEditorNotice, simply pass
  * 										an empty string for this prop
- * @param {function} onOpen    			fires when modal opens
- * @param {function} onClose 			fires when modal closes
  */
 const withEditor = createHigherOrderComponent(
 	( OriginalComponent ) => {
@@ -39,12 +37,6 @@ const withEditor = createHigherOrderComponent(
 					editorOpen: false,
 					changesSaved: true,
 					closeEditorNotice,
-					onOpen: typeof props.onOpen === 'function' ?
-						props.onOpen :
-						null,
-					onClose: typeof props.onClose === 'function' ?
-						props.onClose :
-						null,
 				};
 			}
 
@@ -66,12 +58,6 @@ const withEditor = createHigherOrderComponent(
 			 */
 			toggleEditor = () => {
 				this.setState( ( prevState ) => {
-					if ( prevState.editorOpen && this.state.onClose ) {
-						this.state.onClose();
-					}
-					if ( ! prevState.editorOpen && this.state.onOpen ) {
-						this.state.onOpen();
-					}
 					if (
 						this.state.closeEditorNotice !== '' &&
 						prevState.editorOpen && ! prevState.changesSaved
