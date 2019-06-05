@@ -32,7 +32,7 @@ const WithTicketAssignmentsManagerModal = (
 			 * @param {Object} event - click event
 			 */
 			toggleManager = ( event ) => {
-				if ( typeof event.preventDefault === 'function' ) {
+				if ( event && event.preventDefault ) {
 					event.preventDefault();
 					event.stopPropagation();
 				}
