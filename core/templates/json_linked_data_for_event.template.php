@@ -51,7 +51,8 @@ defined('EVENT_ESPRESSO_VERSION') || exit;
     "address": {
       "@type": "PostalAddress",
       "addressLocality": <?php echo wp_json_encode($venue_locality); ?>,
-      "addressRegion": <?php echo wp_json_encode($venue_region); ?>
+      "addressRegion": <?php echo wp_json_encode($venue_region); ?>,
+      "streetAddress": <?php echo wp_json_encode($venue_address); ?>
     }
   }
     <?php
