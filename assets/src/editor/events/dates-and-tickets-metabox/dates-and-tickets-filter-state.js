@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-import PropTypes from 'prop-types';
 import { compose } from '@wordpress/compose';
 import { withSelect } from '@wordpress/data';
 
@@ -31,16 +30,16 @@ const EMPTY_ARRAY = [];
  * manages state for the Event Dates and Available Tickets "metaboxes"
  *
  * @param {boolean} loading
- * @param {boolean} loadingDates
- * @param {boolean} loadingTickets
- * @param {Array} datetimes
- * @param {Array} allDates
- * @param {Array} tickets
- * @param {Array} allTickets
+ * @param {boolean} loadingEventDateEntities
+ * @param {boolean} loadingTicketEntities
+ * @param {Array} filteredEventDateEntities
+ * @param {Array} allEventDateEntities
+ * @param {Array} ticketEntities
+ * @param {Array} allTicketEntities
  * @param {string} showDates
- * @param {string} sortDates
+ * @param {string} datesSortedBy
  * @param {string} showTickets
- * @param {string} sortTickets
+ * @param {string} ticketsSortedBy
  * @param {boolean} isChained
  * @param {Function} render callback for rendering the metabox
  * @param {Object} otherProps
@@ -48,47 +47,35 @@ const EMPTY_ARRAY = [];
  */
 const DatesAndTicketsFilterState = ( {
 	loading = true,
-	loadingDates = true,
-	loadingTickets = true,
-	datetimes = EMPTY_ARRAY,
-	allDates = EMPTY_ARRAY,
-	tickets = EMPTY_ARRAY,
-	allTickets = EMPTY_ARRAY,
+	loadingEventDateEntities = true,
+	loadingTicketEntities = true,
+	filteredEventDateEntities = EMPTY_ARRAY,
+	allEventDateEntities = EMPTY_ARRAY,
+	filteredTicketEntities = EMPTY_ARRAY,
+	allTicketEntities = EMPTY_ARRAY,
 	showDates,
-	sortDates,
+	datesSortedBy,
 	showTickets,
-	sortTickets,
+	ticketsSortedBy,
 	isChained,
 	render,
 	...otherProps
 } ) => {
 	return render( {
 		loading,
-		loadingDates,
-		loadingTickets,
-		datetimes,
-		allDates,
-		tickets,
-		allTickets,
+		loadingEventDateEntities,
+		loadingTicketEntities,
+		filteredEventDateEntities,
+		allEventDateEntities,
+		filteredTicketEntities,
+		allTicketEntities,
 		showDates,
-		sortDates,
+		datesSortedBy,
 		showTickets,
-		sortTickets,
+		ticketsSortedBy,
 		isChained,
 		...otherProps,
 	} );
-};
-
-DatesAndTicketsFilterState.propTypes = {
-	eventId: PropTypes.oneOfType( [
-		PropTypes.number,
-		PropTypes.string,
-	] ).isRequired,
-	event: PropTypes.object,
-	eventDates: PropTypes.arrayOf( PropTypes.object ),
-	eventDateTickets: PropTypes.arrayOf( PropTypes.object ),
-	eventDateTicketMap: PropTypes.object,
-	render: PropTypes.func,
 };
 
 export default compose( [
@@ -100,59 +87,59 @@ export default compose( [
 	withTicketsListFilterState,
 	withSelect( ( select, ownProps ) => {
 		const {
-			event,
+			eventEntity,
 			eventLoaded,
-			eventDates,
-			eventDatesLoaded,
-			eventDateTickets,
-			eventDateTicketsLoaded,
+			eventDateEntities,
+			eventDateEntitiesLoaded,
+			eventTicketEntities,
+			eventTicketEntitiesLoaded,
 			showDates,
-			sortDates,
+			datesSortedBy,
 			showTickets,
-			sortTickets,
-			datetimeTickets,
+			ticketsSortedBy,
+			eventDateTicketEntities,
 			isChained,
 		} = ownProps;
-		if ( ! eventLoaded || ! eventDatesLoaded ) {
+		if ( ! eventLoaded || ! eventDateEntitiesLoaded ) {
 			return {
-				event,
-				datetimes: EMPTY_ARRAY,
-				allDates: EMPTY_ARRAY,
-				tickets: EMPTY_ARRAY,
-				allTickets: EMPTY_ARRAY,
+				eventEntity,
+				filteredEventDateEntities: EMPTY_ARRAY,
+				allEventDateEntities: EMPTY_ARRAY,
+				filteredTicketEntities: EMPTY_ARRAY,
+				allTicketEntities: EMPTY_ARRAY,
 				loading: ! eventLoaded,
-				loadingDates: ! eventDatesLoaded,
-				loadingTickets: true,
+				loadingEventDateEntities: ! eventDateEntitiesLoaded,
+				loadingTicketEntities: true,
 			};
 		}
 		// apply filter bar filters
-		const datetimes = getFilteredDatesList(
-			eventDates,
+		const filteredEventDateEntities = getFilteredDatesList(
+			eventDateEntities,
 			showDates,
-			sortDates
+			datesSortedBy
 		);
-		let tickets = EMPTY_ARRAY;
-		if ( eventDateTicketsLoaded ) {
-			// show tickets for ALL dates or for filtered subset from above?
-			tickets = isChained ?
-				datetimeTickets :
-				eventDateTickets;
+		let filteredTicketEntities = EMPTY_ARRAY;
+		if ( eventTicketEntitiesLoaded ) {
+			// show filteredTicketEntities for ALL dates or for filtered subset from above?
+			filteredTicketEntities = isChained ?
+				eventDateTicketEntities :
+				eventTicketEntities;
 			// apply filter bar filters
-			tickets = getFilteredTicketsList(
-				tickets,
+			filteredTicketEntities = getFilteredTicketsList(
+				filteredTicketEntities,
 				showTickets,
-				sortTickets
+				ticketsSortedBy
 			);
 		}
 		return {
-			event,
-			datetimes,
-			allDates: eventDates,
-			tickets,
-			allTickets: eventDateTickets,
+			eventEntity,
+			filteredEventDateEntities,
+			allEventDateEntities: filteredEventDateEntities,
+			filteredTicketEntities,
+			allTicketEntities: eventTicketEntities,
 			loading: ! eventLoaded,
-			loadingDates: ! eventDatesLoaded,
-			loadingTickets: ! eventDateTicketsLoaded,
+			loadingEventDateEntities: ! eventDateEntitiesLoaded,
+			loadingTicketEntities: ! eventTicketEntitiesLoaded,
 		};
 	} ),
 ] )( DatesAndTicketsFilterState );
