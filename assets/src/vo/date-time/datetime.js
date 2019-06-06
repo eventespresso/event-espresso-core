@@ -208,7 +208,8 @@ export default class DateTime {
 	 * @return {boolean} returns true if it is an instance of DateTime
 	 */
 	static validateIsDateTime( datetime ) {
-		return instanceOf( datetime, 'DateTime' );
+		return instanceOf( datetime, 'DateTime' ) ||
+			instanceOf( datetime, 'ServerDateTime' );
 	}
 
 	/**

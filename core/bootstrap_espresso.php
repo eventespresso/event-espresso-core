@@ -75,6 +75,10 @@ function bootstrap_espresso()
             EE_CORE . 'wordpress-shims.php'
         );
         espresso_load_required(
+            '',
+            EE_CORE . 'third-party-compatibility.php'
+        );
+        espresso_load_required(
             'EEH_Base',
             EE_CORE . 'helpers' . DS . 'EEH_Base.helper.php'
         );
