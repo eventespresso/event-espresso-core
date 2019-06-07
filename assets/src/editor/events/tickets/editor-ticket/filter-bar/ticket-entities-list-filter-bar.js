@@ -12,7 +12,7 @@ import { __ } from '@eventespresso/i18n';
 import './style.css';
 
 /**
- * TicketsListFilterBar
+ * TicketEntitiesListFilterBar
  * filters for controlling the display of a list of Tickets
  *
  * @param {Function} onShowFilterChange
@@ -20,7 +20,7 @@ import './style.css';
  * @param {Function} onDisplayFilterChange
  * @return {Object} EditorTicketsListView with added TicketListFilters
  */
-class TicketsListFilterBar extends Component {
+class TicketEntitiesListFilterBar extends Component {
 	static propTypes = {
 		showTickets: PropTypes.string.isRequired,
 		sortTickets: PropTypes.string.isRequired,
@@ -286,4 +286,4 @@ class TicketsListFilterBar extends Component {
 	}
 }
 
-export default TicketsListFilterBar;
+export default TicketEntitiesListFilterBar;

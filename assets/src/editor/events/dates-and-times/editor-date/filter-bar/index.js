@@ -26,7 +26,7 @@ const withPaginatedDateEntitiesListWithFilterBarAndState = (
 	compose( [
 		withDatesListFilterState,
 		withDateEntitiesListFilterBar,
-		withEntityPagination( paginationConfig )
+		withEntityPagination( paginationConfig ),
 	] ),
 	'withPaginatedDateEntitiesListWithFilterBarAndState'
 );

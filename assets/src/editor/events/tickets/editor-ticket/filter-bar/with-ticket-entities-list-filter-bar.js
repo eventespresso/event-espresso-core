@@ -11,32 +11,32 @@ import { EntityListFilterBar } from '@eventespresso/higher-order-components';
  * Internal dependencies
  */
 import {
-	filterTickets,
-	searchTickets,
-	sortTicketsList,
-} from './tickets-list-filter-utils';
-import { default as TicketListFilterBar } from './tickets-list-filter-bar';
+	filterTicketEntities,
+	searchTicketEntities,
+	sortTicketEntitiesList,
+} from './ticket-entities-list-filter-utils';
+import { default as TicketEntityListFilterBar } from './ticket-entities-list-filter-bar';
 
 /**
  * filters the tickets list based on the current filter state
  *
- * @param {Array} tickets
+ * @param {Array} ticketEntities
  * @param {string} showTickets
  * @param {string} sortTickets
  * @return {Array} filtered list of tickets
  */
-export const getFilteredTicketsList = ( tickets, showTickets, sortTickets ) => {
-	return showTickets && sortTickets && ! isEmpty( tickets ) ?
-		sortTicketsList(
-			filterTickets( tickets, showTickets ),
+export const getFilteredTicketsList = ( ticketEntities, showTickets, sortTickets ) => {
+	return showTickets && sortTickets && ! isEmpty( ticketEntities ) ?
+		sortTicketEntitiesList(
+			filterTicketEntities( ticketEntities, showTickets ),
 			sortTickets
 		) :
 		[];
 };
 /**
- * withTicketsListFilterBar
+ * withTicketEntitiesListFilterBar
  * Higher-Order-Component that wraps an "EntityList" component
- * with an EntityListFilterBar & TicketListFilterBar component
+ * with an EntityListFilterBar & TicketEntityListFilterBar component
  * that controls how entities are displayed
  *
  * @param {Object} EntityList
@@ -63,22 +63,21 @@ export default createHigherOrderComponent(
 					setTicketsListView,
 					setTicketsGridView,
 					prefiltered = false,
+					entities,
 					...otherProps
 				} = this.props;
-				let { entities } = this.props;
-				entities = searchTickets( entities, searchTicketName );
-				entities = prefiltered ?
-					entities :
+				let filteredEntities = searchTicketEntities( entities, searchTicketName );
+				filteredEntities = prefiltered ?
+					filteredEntities :
 					getFilteredTicketsList(
-						entities,
+						filteredEntities,
 						showTickets,
 						sortTickets
 					);
-				delete otherProps.entities;
 				return (
 					<Fragment>
 						<EntityListFilterBar
-							name="TicketListFilterBar"
+							name="TicketEntityListFilterBar"
 							searchText={ searchTicketName }
 							setSearchText={ setSearchTicketName }
 							perPage={ ticketsPerPage }
@@ -87,7 +86,7 @@ export default createHigherOrderComponent(
 							setListView={ setTicketsListView }
 							setGridView={ setTicketsGridView }
 							entityFilters={
-								<TicketListFilterBar
+								<TicketEntityListFilterBar
 									showTickets={ showTickets }
 									setShowTickets={ setShowTickets }
 									sortTickets={ sortTickets }
@@ -100,7 +99,7 @@ export default createHigherOrderComponent(
 							}
 						/>
 						<EntityList
-							entities={ entities }
+							entities={ filteredEntities }
 							entitiesPerPage={ ticketsPerPage }
 							view={ ticketsView }
 							noResultsText={
@@ -118,5 +117,5 @@ export default createHigherOrderComponent(
 			}
 		};
 	},
-	'withTicketsListFilterBar'
+	'withTicketEntitiesListFilterBar'
 );

@@ -5,7 +5,7 @@ import { createHigherOrderComponent, compose } from '@wordpress/compose';
 import { withSelect, withDispatch } from '@wordpress/data';
 
 /**
- * withTicketsListFilterState
+ * withTicketEntitiesListFilterState
  * Higher-Order-Component that wraps a "TicketsListFilterBar" component
  * in order to provide state management for it and its children
  *
@@ -113,5 +113,5 @@ export default createHigherOrderComponent(
 			};
 		} ),
 	] ),
-	'withTicketsListFilterState'
+	'withTicketEntitiesListFilterState'
 );

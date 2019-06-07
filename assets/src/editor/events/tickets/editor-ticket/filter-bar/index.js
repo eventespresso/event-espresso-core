@@ -2,29 +2,42 @@
  * External imports
  */
 import { withEntityPagination } from '@eventespresso/higher-order-components';
+import { compose, createHigherOrderComponent } from '@wordpress/compose';
 
 /**
  * Internal dependencies
  */
 import {
-	default as withTicketsListFilterBar,
-} from './with-tickets-list-filter-bar';
+	default as withTicketEntitiesListFilterBar,
+} from './with-ticket-entities-list-filter-bar';
 import {
-	default as withTicketsListFilterState,
-} from './with-tickets-list-filter-state';
+	default as withTicketEntitiesListFilterState,
+} from './with-ticket-entities-list-filter-state';
 
-const PaginatedTicketsListWithFilterBar = (
-	EditorTickets,
-	paginationConfig = {},
-) => withTicketsListFilterBar(
-	withEntityPagination( paginationConfig )( EditorTickets )
+const withPaginatedTicketEntitiesListWithFilterBar = (
+	paginationConfig = {}
+) => createHigherOrderComponent(
+	compose( [
+		withTicketEntitiesListFilterBar,
+		withEntityPagination( paginationConfig ),
+	] ),
+	'withPaginatedTicketEntitiesListWithFilterBar'
 );
 
-export const PaginatedTicketsListWithFilterBarAndState = (
-	EditorTickets,
-	paginationConfig = {},
-) => withTicketsListFilterState( withTicketsListFilterBar(
-	withEntityPagination( paginationConfig )( EditorTickets )
-) );
+const withPaginatedTicketEntitiesListWithFilterBarAndState = (
+	paginationConfig = {}
+) => createHigherOrderComponent(
+	compose( [
+		withTicketEntitiesListFilterState,
+		withTicketEntitiesListFilterBar,
+		withEntityPagination( paginationConfig ),
+	] ),
+	'withPaginatedTicketEntitiesListWithFilterBarAndState'
+);
 
-export default PaginatedTicketsListWithFilterBar;
+export {
+	withTicketEntitiesListFilterBar,
+	withTicketEntitiesListFilterState,
+	withPaginatedTicketEntitiesListWithFilterBar,
+	withPaginatedTicketEntitiesListWithFilterBarAndState,
+};
