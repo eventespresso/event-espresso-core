@@ -9,36 +9,36 @@ import { createHigherOrderComponent } from '@wordpress/compose';
 /**
  * Internal imports
  */
-import EditTicketForm from '../edit-form/edit-ticket-form';
+import EditTicketEntityForm from '../edit-form/edit-ticket-entity-form';
 import { ticketEntityFormSchema } from '../edit-form/ticket-entity-form-schema';
 import { TicketPriceCalculatorMenuItem } from '../price-calculator/ticket-price-calculator-menu-item';
 
-const EditTicketFormModal = withEditorModal( {
+const EditTicketEntityFormModal = withEditorModal( {
 	title: __( 'Ticket Editor', 'event_espresso' ),
 	customClass: 'ee-ticket-editor-modal',
 	closeButtonLabel: __( 'close ticket editor', 'event_espresso' ),
 } )( ( {
-	ticket,
+	ticketEntity,
 	...otherProps
 } ) => {
 	const loadHandler = useCallback(
 		() => {
-			return ticketEntityFormSchema( ticket );
+			return ticketEntityFormSchema( ticketEntity );
 		},
-		[ ticket ]
+		[ ticketEntity ]
 	);
-	return <EditTicketForm
+	return <EditTicketEntityForm
 		loadHandler={ loadHandler }
 		submitHandler={ null }
 		resetHandler={ null }
-		ticket={ ticket }
+		ticketEntity={ ticketEntity }
 		{ ...otherProps }
 	/>;
 } );
 
 export default createHigherOrderComponent(
 	( WrappedComponent ) => ( {
-		ticket,
+		ticketEntity,
 		noBasePrice,
 		doRefresh,
 		toggleCalculator,
@@ -49,9 +49,9 @@ export default createHigherOrderComponent(
 		const [ showEditor, setShowEditor ] = useState( false );
 		const toggleTicketEditor = useCallback( () => {
 			setShowEditor( ( prevShowEditor ) => ! prevShowEditor );
-		}, [ ticket ] );
+		}, [ ticketEntity ] );
 		const calculator = <TicketPriceCalculatorMenuItem
-			ticket={ ticket }
+			ticketEntity={ ticketEntity }
 			noBasePrice={ noBasePrice }
 			onOpenTicketCalculator={ toggleTicketEditor }
 			toggleCalculator={ toggleCalculator }
@@ -61,14 +61,14 @@ export default createHigherOrderComponent(
 		return <Fragment>
 			<WrappedComponent
 				{ ...otherProps }
-				ticket={ ticket }
+				ticketEntity={ ticketEntity }
 				toggleTicketEditor={ toggleTicketEditor }
 				toggleCalculator={ toggleCalculator }
 				doRefresh={ doRefresh }
 			/>
-			<EditTicketFormModal
+			<EditTicketEntityFormModal
 				{ ...otherProps }
-				ticket={ ticket }
+				ticketEntity={ ticketEntity }
 				editorOpen={ showEditor }
 				onOpen={ onOpenTicketEditor }
 				onClose={ onCloseTicketEditor }
@@ -78,5 +78,5 @@ export default createHigherOrderComponent(
 			/>
 		</Fragment>;
 	},
-	'withEditTicketFormModal'
+	'withEditTicketEntityFormModal'
 );

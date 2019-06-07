@@ -15,17 +15,17 @@ import { useCallback } from '@wordpress/element';
  */
 import { ticketEntityFormInputs } from '../';
 import { useTicketPriceCalculators } from '../price-calculator';
-import { withTicketPrices, withPriceTypes } from '../../data';
+import { withTicketPriceEntities, withPriceTypeEntities } from '../../data';
 
 const getFormRows = (
-	ticket,
+	ticketEntity,
 	calculator,
 	exclude,
 	currentValues,
 	FormInput,
 	recalculateBasePrice
 ) => ticketEntityFormInputs(
-	ticket,
+	ticketEntity,
 	calculator,
 	exclude,
 	currentValues,
@@ -33,10 +33,10 @@ const getFormRows = (
 	recalculateBasePrice,
 );
 
-const EditTicketForm = ( {
-	ticket,
-	prices = [],
-	priceTypes = [],
+const EditTicketEntityForm = ( {
+	ticketEntity,
+	priceEntities = [],
+	priceTypeEntities = [],
 	calculator,
 	submitButton,
 	cancelButton,
@@ -44,12 +44,12 @@ const EditTicketForm = ( {
 	initialValues = {},
 	newObject = false,
 } ) => {
-	const { calculateTicketBasePrice } = useTicketPriceCalculators( priceTypes );
+	const { calculateTicketBasePrice } = useTicketPriceCalculators( priceTypeEntities );
 	// hooks must be at the top of the function and never change order.
 	// eslint-disable-next-line @wordpress/no-unused-vars-before-return
 	const recalculateBasePrice = useCallback( () => {
-		calculateTicketBasePrice( ticket.price.toNumber(), prices );
-	}, [ ticket, prices, calculateTicketBasePrice ] );
+		calculateTicketBasePrice( ticketEntity.price.toNumber(), priceEntities );
+	}, [ ticketEntity, priceEntities, calculateTicketBasePrice ] );
 	// edit forms for existing objects must have initial values
 	if (
 		( ! newObject && isEmpty( initialValues ) ) ||
@@ -77,7 +77,7 @@ const EditTicketForm = ( {
 		'status',
 	];
 	const formRows = getFormRows(
-		ticket,
+		ticketEntity,
 		calculator,
 		exclude,
 		currentValues,
@@ -97,14 +97,14 @@ const EditTicketForm = ( {
 		/>
 	);
 
-	return ticket && ticket.id ? (
+	return ticketEntity && ticketEntity.id ? (
 		<FormWrapper>
 			<FormSection
-				htmlId={ `ee-ticket-editor-${ ticket.id }-form-section` }
+				htmlId={ `ee-ticket-editor-${ ticketEntity.id }-form-section` }
 				children={ formRows }
 			/>
 			<FormSaveCancelButtons
-				htmlClass={ `ee-ticket-editor-${ ticket.id }` }
+				htmlClass={ `ee-ticket-editor-${ ticketEntity.id }` }
 				submitButton={ submitButton }
 				cancelButton={ cancelButton }
 			/>
@@ -113,10 +113,10 @@ const EditTicketForm = ( {
 };
 
 /**
- * Enhanced EditTicketForm with FormHandler
+ * Enhanced EditTicketEntityForm with FormHandler
  */
 export default compose( [
-	withTicketPrices,
-	withPriceTypes,
+	withTicketPriceEntities,
+	withPriceTypeEntities,
 	withFormHandler,
-] )( EditTicketForm );
+] )( EditTicketEntityForm );

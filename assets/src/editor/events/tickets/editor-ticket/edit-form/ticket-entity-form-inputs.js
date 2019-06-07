@@ -16,7 +16,7 @@ import {
  * the properties of the Ticket Entity
  *
  * @function
- * @param {Object} ticket  EE Ticket object
+ * @param {Object} ticketEntity  EE Ticket object
  * @param {Object} calculator TicketPriceCalculatorFormModal
  * @param {Array} exclude  Array of field names to not display inputs for
  * @param {Array} currentValues  Array of input values
@@ -25,18 +25,18 @@ import {
  * @return {Object} rendered form
  */
 export const ticketEntityFormInputs = (
-	ticket,
+	ticketEntity,
 	calculator,
 	exclude = [],
 	currentValues = [],
 	FormInput,
 	recalculateBasePrice,
 ) => {
-	if ( ! ticket || ( ticket && ! ticket.id ) ) {
+	if ( ! ticketEntity || ( ticketEntity && ! ticketEntity.id ) ) {
 		return null;
 	}
 	const values = currentValues;
-	const prefix = `ee-ticket-${ ticket.id }`;
+	const prefix = `ee-ticket-${ ticketEntity.id }`;
 	const inputs = [];
 	if ( indexOf( exclude, 'TKT_ID' ) < 0 ) {
 		inputs.push(
@@ -66,7 +66,7 @@ export const ticketEntityFormInputs = (
 				minLength={ 3 }
 				changeListener={
 					( value ) => {
-						ticket.name = value;
+						ticketEntity.name = value;
 					}
 				}
 				required
@@ -83,7 +83,7 @@ export const ticketEntityFormInputs = (
 				label={ __( 'Description', 'event_espresso' ) }
 				changeListener={
 					( value ) => {
-						ticket.description = value;
+						ticketEntity.description = value;
 					}
 				}
 				htmlId={ `${ prefix }-description` }
@@ -101,7 +101,7 @@ export const ticketEntityFormInputs = (
 				htmlId={ `${ prefix }-price` }
 				helpText={ sprintf(
 					__(
-						'The amount of money charged for this ticket. Leave blank to make this ticket selection free.%sClick the button after the input to use the Ticket Price Calculator (warning: will close this edit form)',
+						'The amount of money charged for this ticketEntity. Leave blank to make this ticket selection free.%sClick the button after the input to use the Ticket Price Calculator (warning: will close this edit form)',
 						'event_espresso'
 					),
 					' \n'
@@ -112,7 +112,7 @@ export const ticketEntityFormInputs = (
 				changeListener={
 					( value, prevValue ) => {
 						if ( value !== prevValue ) {
-							ticket.price = new Money(
+							ticketEntity.price = new Money(
 								value || 0,
 								SiteCurrency
 							);
@@ -144,7 +144,7 @@ export const ticketEntityFormInputs = (
 				) }
 				changeListener={
 					( value ) => {
-						ticket.taxable = !! value;
+						ticketEntity.taxable = !! value;
 					}
 				}
 				inputWidth={ 2 }
@@ -165,7 +165,7 @@ export const ticketEntityFormInputs = (
 				changeListener={
 					( value, prevValue ) => {
 						if ( value !== prevValue ) {
-							ticket.startDate = new DateTime( value );
+							ticketEntity.startDate = new DateTime( value );
 						}
 					}
 				}
@@ -187,7 +187,7 @@ export const ticketEntityFormInputs = (
 				changeListener={
 					( value, prevValue ) => {
 						if ( value !== prevValue ) {
-							ticket.endDate = new DateTime( value );
+							ticketEntity.endDate = new DateTime( value );
 						}
 					}
 				}
@@ -212,7 +212,7 @@ export const ticketEntityFormInputs = (
 				inputWidth={ 3 }
 				changeListener={
 					( value ) => {
-						ticket.qty = parseInt( value || -1, 10 );
+						ticketEntity.qty = parseInt( value || -1, 10 );
 					}
 				}
 				min={ 0 }
@@ -278,7 +278,7 @@ export const ticketEntityFormInputs = (
 				inputWidth={ 3 }
 				changeListener={
 					( value ) => {
-						ticket.uses = parseInt( value || -1, 10 );
+						ticketEntity.uses = parseInt( value || -1, 10 );
 					}
 				}
 				min={ 0 }
@@ -306,7 +306,7 @@ export const ticketEntityFormInputs = (
 				inputWidth={ 3 }
 				changeListener={
 					( value ) => {
-						ticket.required = !! value;
+						ticketEntity.required = !! value;
 					}
 				}
 				min={ 0 }
@@ -324,13 +324,13 @@ export const ticketEntityFormInputs = (
 				htmlId={ `${ prefix }-min` }
 				helpText={ __(
 					'The minimum quantity that can be selected for this' +
-					' ticket. Use this to create ticket bundles or graduated' +
+					' ticketEntity. Use this to create ticket bundles or graduated' +
 					' pricing. Leave blank for no minimum.',
 					'event_espresso',
 				) }
 				changeListener={
 					( value ) => {
-						ticket.min = parseInt( value || 0, 10 );
+						ticketEntity.min = parseInt( value || 0, 10 );
 					}
 				}
 				inputWidth={ 3 }
@@ -349,14 +349,14 @@ export const ticketEntityFormInputs = (
 				htmlId={ `${ prefix }-max` }
 				helpText={ __(
 					'The maximum quantity that can be selected for this' +
-					' ticket. Use this to create ticket bundles or graduated' +
+					' ticketEntity. Use this to create ticket bundles or graduated' +
 					' pricing. Leave blank for no maximum.',
 					'event_espresso',
 				) }
 				inputWidth={ 3 }
 				changeListener={
 					( value ) => {
-						ticket.max = parseInt( value || -1, 10 );
+						ticketEntity.max = parseInt( value || -1, 10 );
 					}
 				}
 				min={ 0 }
@@ -375,7 +375,7 @@ export const ticketEntityFormInputs = (
 				inputWidth={ 2 }
 				changeListener={
 					( value ) => {
-						ticket.order = parseInt( value, 10 );
+						ticketEntity.order = parseInt( value, 10 );
 					}
 				}
 			/>,
@@ -402,7 +402,7 @@ export const ticketEntityFormInputs = (
 				inputWidth={ 2 }
 				changeListener={
 					( value ) => {
-						ticket.isDefault = !! value;
+						ticketEntity.isDefault = !! value;
 					}
 				}
 			/>,
@@ -420,7 +420,7 @@ export const ticketEntityFormInputs = (
 				label={ __( 'Parent Ticket', 'event_espresso' ) }
 				htmlId={ `${ prefix }-wp-user` }
 				helpText={ __(
-					'The ID of the admin that created this ticket.',
+					'The ID of the admin that created this ticketEntity.',
 					'event_espresso',
 				) }
 				inputWidth={ 2 }
