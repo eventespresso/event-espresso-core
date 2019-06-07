@@ -1,3 +1,3 @@
-export { default as EditorTicketDetails } from './editor-ticket-details';
-export { default as EditorTicketGridItem } from './editor-ticket-grid-item';
-export { default as EditorTicketsGridView } from './editor-tickets-grid-view';
+export { default as EditorTicketEntityDetails } from './editor-ticket-entity-details';
+export { default as EditorTicketEntityGridItem } from './editor-ticket-entity-grid-item';
+export { default as EditorTicketEntitiesGridView } from './editor-ticket-entities-grid-view';

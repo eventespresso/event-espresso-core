@@ -12,8 +12,8 @@ import { Money, SiteCurrency } from '@eventespresso/value-objects';
 /**
  * Internal dependencies
  */
-import { withPriceTypes } from '../../data/with-price-types';
-import { withTicketPrices } from '../../data/with-ticket-prices';
+import { withPriceTypeEntities } from '../../data/with-price-type-entities';
+import { withTicketPriceEntities } from '../../data/with-ticket-price-entities';
 import useTicketPriceCalculators from '../price-calculator/use-ticket-price-calculators';
 
 const { MODEL_NAME: TICKET } = ticketModel;
@@ -26,42 +26,42 @@ const { MODEL_NAME: TICKET } = ticketModel;
  * @return {string}    ticket details
  */
 const EditorTicketDetails = ( {
-	ticket,
+	ticketEntity,
 	showDesc = 'excerpt',
 	showPrice = true,
-	priceTypes,
-	prices,
+	priceTypeEntities,
+	priceEntities,
 	refreshed,
 } ) => {
 	// @todo I tried making prices a dependency on the updateTicketPrice hook but for
 	// some reason prices never gets updated, so for now using a ref will catch
 	// the change in the prices. For future refactor, might want to try and move
 	// prices state up.
-	const currentPrices = useRef( prices );
+	const currentPrices = useRef( priceEntities );
 	useEffect( () => {
-		currentPrices.current = prices;
-	}, [ prices ] );
-	const { calculateTicketBasePrice } = useTicketPriceCalculators( priceTypes );
+		currentPrices.current = priceEntities;
+	}, [ priceEntities ] );
+	const { calculateTicketBasePrice } = useTicketPriceCalculators( priceTypeEntities );
 	const ticketName = useMemo(
 		() => {
-			const htmlClass = ticket.name && ticket.name.length > 40 ?
+			const htmlClass = ticketEntity.name && ticketEntity.name.length > 40 ?
 				'ee-editor-ticket-name-heading ee-long-title' :
 				'ee-editor-ticket-name-heading';
 			return (
 				<h1 className={ htmlClass }>
 					<InlineEditInput
-						htmlId={ `editor-ticket-name-${ ticket.id }` }
+						htmlId={ `editor-ticket-name-${ ticketEntity.id }` }
 						type="text"
-						value={ ticket.name }
+						value={ ticketEntity.name }
 						onChange={ ( name ) => {
-							ticket.name = name;
+							ticketEntity.name = name;
 						} }
 						label={ __( 'Ticket Name', 'event_espresso' ) }
 					/>
 				</h1>
 			);
 		},
-		[ ticket, refreshed ]
+		[ ticketEntity, refreshed ]
 	);
 
 	const ticketDescription = useMemo( () => {
@@ -71,24 +71,24 @@ const EditorTicketDetails = ( {
 		return (
 			<div className={ htmlClass }>
 				<InlineEditInput
-					htmlId={ `editor-ticket-desc-${ ticket.id }` }
+					htmlId={ `editor-ticket-desc-${ ticketEntity.id }` }
 					type="textarea"
-					value={ ticket.description }
+					value={ ticketEntity.description }
 					onChange={ ( description ) => {
-						ticket.description = description;
+						ticketEntity.description = description;
 					} }
 					label={ __( 'Ticket Description', 'event_espresso' ) }
 				/>
 			</div>
 		);
-	}, [ ticket, showDesc, refreshed ] );
+	}, [ ticketEntity, showDesc, refreshed ] );
 
 	const updateTicketPrice = useCallback(
 		( price ) => {
-			ticket.price = new Money( price, SiteCurrency );
+			ticketEntity.price = new Money( price, SiteCurrency );
 			calculateTicketBasePrice( price, currentPrices.current, true );
 		},
-		[ ticket, refreshed ]
+		[ ticketEntity, refreshed ]
 	);
 
 	/**
@@ -105,28 +105,28 @@ const EditorTicketDetails = ( {
 				(
 					<h2 className="ee-ticket-price">
 						<InlineEditInput
-							htmlId={ `editor-ticket-price-${ ticket.id }` }
+							htmlId={ `editor-ticket-price-${ ticketEntity.id }` }
 							type="text"
-							value={ ticket.price.amount.toNumber() }
+							value={ ticketEntity.price.amount.toNumber() }
 							onChange={ ( price ) => {
 								updateTicketPrice( price );
 							} }
 							label={ __( 'Ticket Price', 'event_espresso' ) }
-							valueFormatter={ ticket.price.formatter.formatMoney }
-							formatterSettings={ ticket.price.formatter.settings }
+							valueFormatter={ ticketEntity.price.formatter.formatMoney }
+							formatterSettings={ ticketEntity.price.formatter.settings }
 						/>
 					</h2>
 				) :
 				'';
 		},
-		[ ticket, showPrice, updateTicketPrice ]
+		[ ticketEntity, showPrice, updateTicketPrice ]
 	);
 
 	/**
 	 * ticketSoldReservedCapacity
 	 *
 	 * @function
-	 * @param {Object} ticket    JSON object defining the ticket
+	 * @param {Object} ticketEntity    JSON object defining the ticket
 	 * @return {string}    ticket details
 	 */
 	const ticketSoldReservedCapacity = useMemo(
@@ -135,29 +135,29 @@ const EditorTicketDetails = ( {
 				{
 					id: 'ticket-sold',
 					label: __( 'sold', 'event_espresso' ),
-					value: ticket.sold,
+					value: ticketEntity.sold,
 				},
 				{
 					id: 'ticket-reserved',
 					label: __( 'reserved', 'event_espresso' ),
-					value: ticket.reserved,
+					value: ticketEntity.reserved,
 				},
 				{
 					id: 'ticket-qty',
 					label: __( 'quantity', 'event_espresso' ),
-					value: ticket.qty || Infinity,
+					value: ticketEntity.qty || Infinity,
 					editable: {
 						type: 'text',
 						valueType: 'number',
 						onChange: ( qty ) => {
-							ticket.qty = parseInt( qty, 10 );
+							ticketEntity.qty = parseInt( qty, 10 );
 						},
 					},
 				},
 				{
 					id: 'ticket-registrants',
 					label: __( 'registrants', 'event_espresso' ),
-					value: ticket.sold,
+					value: ticketEntity.sold,
 				},
 			];
 			return <EntityDetailsPanel
@@ -165,10 +165,10 @@ const EditorTicketDetails = ( {
 				htmlClass="ee-editor-ticket-details-sold-rsrvd-qty-div"
 			/>;
 		},
-		[ ticket, refreshed ]
+		[ ticketEntity, refreshed ]
 	);
 
-	return isModelEntityOfModel( ticket, TICKET ) ? (
+	return isModelEntityOfModel( ticketEntity, TICKET ) ? (
 		<div className={ 'ee-editor-ticket-details-wrapper-div' }>
 			{ ticketName }
 			{ ticketPrice }
@@ -179,6 +179,6 @@ const EditorTicketDetails = ( {
 };
 
 export default compose( [
-	withPriceTypes,
-	withTicketPrices,
+	withPriceTypeEntities,
+	withTicketPriceEntities,
 ] )( EditorTicketDetails );

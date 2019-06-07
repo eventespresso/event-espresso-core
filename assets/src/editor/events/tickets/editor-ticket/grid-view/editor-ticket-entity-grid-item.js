@@ -16,7 +16,7 @@ import { isModelEntityOfModel } from '@eventespresso/validators';
 /**
  * Internal dependencies
  */
-import { EditorTicketDetails } from './';
+import EditorTicketEntityDetails from './editor-ticket-entity-details';
 import EditorTicketActionsMenu
 	from '../actions-menu/editor-ticket-actions-menu';
 
@@ -28,23 +28,23 @@ const {
 } = ticketModel;
 
 /**
- * EditorTicketGridItem
+ * EditorTicketEntityGridItem
  *
  * @function
  * @param {Object} ticket    JSON object defining the Event Ticket
  * @return {string}        The ticket rendered as a block
  */
-class EditorTicketGridItem extends Component {
+class EditorTicketEntityGridItem extends Component {
 	/**
 	 * @function
-	 * @param {Object} ticket
+	 * @param {Object} ticketEntity
 	 * @param {string} showDate
 	 * @return {Object} rendered ticket
 	 */
-	displayTicket = ( ticket, showDate ) => {
+	displayTicket = ( ticketEntity, showDate ) => {
 		let sidebarColorClass = 'ee-editor-ticket-calendar-sidebar ';
-		sidebarColorClass += getBackgroundColorClass( ticket );
-		const ticketStatusID = status( ticket );
+		sidebarColorClass += getBackgroundColorClass( ticketEntity );
+		const ticketStatusID = status( ticketEntity );
 		let label = '';
 		if ( showDate === 'start' ) {
 			label = __( 'Sale Started', 'event_espresso' );
@@ -61,15 +61,15 @@ class EditorTicketGridItem extends Component {
 		}
 		const ticketStatus = (
 			<span key={ 1 } className={ 'ee-status-tag' }>
-				{ getTicketStatusTextLabel( ticket ) }
+				{ getTicketStatusTextLabel( ticketEntity ) }
 			</span>
 		);
 
 		switch ( showDate ) {
 			case 'end' :
-				const end = ticket.endDate.toFormat( 'h:mm a' );
+				const end = ticketEntity.endDate.toFormat( 'h:mm a' );
 				return <BiggieCalendarDate
-					date={ ticket.endDate }
+					date={ ticketEntity.endDate }
 					htmlClass={ sidebarColorClass }
 					headerText={ label }
 					footerText={ [ end, ticketStatus ] }
@@ -78,8 +78,8 @@ class EditorTicketGridItem extends Component {
 			case 'both' :
 				return (
 					<CalendarDateRange
-						startDate={ ticket.startDate }
-						endDate={ ticket.endDate }
+						startDate={ ticketEntity.startDate }
+						endDate={ ticketEntity.endDate }
 						htmlClass={ sidebarColorClass }
 						headerText={ __( 'Sale Date', 'event_espresso' ) }
 						footerText={ ticketStatus }
@@ -88,9 +88,9 @@ class EditorTicketGridItem extends Component {
 				);
 			case 'start' :
 			default :
-				const start = ticket.startDate.toFormat( 'h:mm a' );
+				const start = ticketEntity.startDate.toFormat( 'h:mm a' );
 				return <BiggieCalendarDate
-					date={ ticket.startDate }
+					date={ ticketEntity.startDate }
 					htmlClass={ sidebarColorClass }
 					headerText={ label }
 					footerText={ [ start, ticketStatus ] }
@@ -101,14 +101,14 @@ class EditorTicketGridItem extends Component {
 
 	render() {
 		const {
-			ticket,
-			allDates,
-			eventDateTicketMap,
+			ticketEntity,
+			allDateEntities,
+			dateTicketEntityMap,
 			displayTicketDate = 'start',
 			doRefresh,
 			refreshed,
 		} = this.props;
-		if ( ! isModelEntityOfModel( ticket, 'ticket' ) ) {
+		if ( ! isModelEntityOfModel( ticketEntity, 'ticket' ) ) {
 			return null;
 		}
 		const dateStyleClass = displayTicketDate === 'both' ?
@@ -117,16 +117,16 @@ class EditorTicketGridItem extends Component {
 		return (
 			<Fragment>
 				<div className={ `ee-editor-ticket-main ${ dateStyleClass }` }>
-					<EditorTicketDetails
-						ticket={ ticket }
+					<EditorTicketEntityDetails
+						ticket={ ticketEntity }
 						refreshed={ refreshed }
 					/>
-					{ this.displayTicket( ticket, displayTicketDate ) }
+					{ this.displayTicket( ticketEntity, displayTicketDate ) }
 				</div>
 				<EditorTicketActionsMenu
-					ticket={ ticket }
-					allDates={ allDates }
-					eventDateTicketMap={ eventDateTicketMap }
+					ticketEntity={ ticketEntity }
+					allDateEntities={ allDateEntities }
+					dateTicketEntityMap={ dateTicketEntityMap }
 					doRefresh={ doRefresh }
 				/>
 			</Fragment>
@@ -144,4 +144,4 @@ export default compose( [
 		/>;
 	},
 	withEntityPaperFrame,
-] )( EditorTicketGridItem );
+] )( EditorTicketEntityGridItem );

@@ -6,11 +6,11 @@ import { isModelEntityOfModel } from '@eventespresso/validators';
 /**
  * Internal dependencies
  */
-import { EditorTicketGridItem } from './';
-import './editor-tickets-grid-view.css';
+import EditorTicketEntityGridItem from './editor-ticket-entity-grid-item';
+import './editor-ticket-entities-grid-view.css';
 
 /**
- * EditorTicketsGridView
+ * EditorTicketEntitiesGridView
  * Displays tickets as mobile/finger friendly blocks
  * with the most relevant info visible
  *
@@ -20,7 +20,7 @@ import './editor-tickets-grid-view.css';
  * @param {mixed} otherProps
  * @return {Component}          list of rendered Tickets
  */
-const EditorTicketsGridView = ( {
+const EditorTicketEntitiesGridView = ( {
 	entities,
 	htmlClass,
 	...otherProps
@@ -32,11 +32,11 @@ const EditorTicketsGridView = ( {
 		<div className={ htmlClass }>
 			{
 				entities.map(
-					function( ticket ) {
-						return isModelEntityOfModel( ticket, 'ticket' ) ? (
-							<EditorTicketGridItem
-								key={ ticket.id }
-								ticket={ ticket }
+					function( ticketEntity ) {
+						return isModelEntityOfModel( ticketEntity, 'ticket' ) ? (
+							<EditorTicketEntityGridItem
+								key={ ticketEntity.id }
+								ticketEntity={ ticketEntity }
 								{ ...otherProps }
 							/>
 						) : null;
@@ -47,4 +47,4 @@ const EditorTicketsGridView = ( {
 	);
 };
 
-export default EditorTicketsGridView;
+export default EditorTicketEntitiesGridView;
