@@ -14,33 +14,33 @@ import { isModelEntityOfModel } from '@eventespresso/validators';
 /**
  * Internal dependencies
  */
-import { withDatetimeTickets } from '../../data';
+import { withDateTicketEntities } from '../../data';
 import { EditEventDateFormModal } from '../';
-import { withCopyEventDate, withTrashEventDate } from '../action-handlers';
+import { withCopyDateEntity, withTrashDateEntity } from '../action-handlers';
 import { withTicketAssignmentsManagerModal } from '../../../ticket-assignments-manager';
 import './style.css';
 
 const { MODEL_NAME: DATETIME } = dateTimeModel;
 
 /**
- * EditorDateActionsMenu
+ * EditorDateEntityActionsMenu
  * menu of IconButtons for performing actions on the supplied Event Date
  *
  * @constructor
- * @param {Object} eventDate    JSON object defining the Event Date
+ * @param {BaseEntity} dateEntity Datetime entity instance
  * @return {Object} rendered menu
  */
-class EditorDateActionsMenu extends Component {
+class EditorDateEntityActionsMenu extends Component {
 	/**
 	 * @function
-	 * @param {Object} eventDate    	 JSON object defining the Event Date
+	 * @param {BaseEntity} dateEntity    	 Datetime BaseEntity instance
 	 * @return {DropDownMenu}    		 Edit Event Date DropDownMenu
 	 */
-	mainDropDownMenu = ( eventDate ) => {
+	mainDropDownMenu = ( dateEntity ) => {
 		return (
 			<DropDownMenu
 				tooltip={ __( 'event date main menu', 'event_espresso' ) }
-				htmlClass={ `editor-date-${ eventDate.id }` }
+				htmlClass={ `editor-date-${ dateEntity.id }` }
 				menuItems={ [
 					{
 						title: __( 'edit date', 'event_espresso' ),
@@ -50,19 +50,12 @@ class EditorDateActionsMenu extends Component {
 					{
 						title: __( 'copy date', 'event_espresso' ),
 						icon: 'admin-page',
-						onClick: this.props.copyEventDate,
+						onClick: this.props.copyDateEntity,
 					},
 					{
 						title: __( 'trash date', 'event_espresso' ),
 						icon: 'trash',
-						onClick: this.props.trashEventDate,
-					},
-					{
-						title: __( 'edit venue', 'event_espresso' ),
-						icon: 'location',
-						onClick: () => window.location(
-							eventDate.edit_venue_link
-						),
+						onClick: this.props.trashDateEntity,
 					},
 				] }
 			/>
@@ -71,15 +64,15 @@ class EditorDateActionsMenu extends Component {
 
 	/**
 	 * @function
-	 * @param {Object} eventDate    JSON object defining the Event Date
+	 * @param {Object} dateEntity    JSON object defining the Event Date
 	 * @return {IconMenuItem}    Edit Event Date IconMenuItem
 	 */
-	editDateMenuItem = ( eventDate ) => {
+	editDateMenuItem = ( dateEntity ) => {
 		return (
 			<IconMenuItem
 				index={ 1 }
-				tooltip={ __( 'edit event date', 'event_espresso' ) }
-				id={ `edit-date-${ eventDate.id }` }
+				tooltip={ __( 'edit date', 'event_espresso' ) }
+				id={ `edit-date-${ dateEntity.id }` }
 				htmlClass="edit-date"
 				dashicon="edit"
 				onClick={ this.props.toggleEditor }
@@ -89,13 +82,13 @@ class EditorDateActionsMenu extends Component {
 
 	/**
 	 * @function
-	 * @param {Object} eventDate JSON object defining the Event Date
-	 * @param {Array} datetimeTickets    Tickets for Event Date
-	 * @param {boolean} ticketsLoaded
+	 * @param {Object} dateEntity JSON object defining the Event Date
+	 * @param {Array} dateTicketEntities    Tickets for Event Date
+	 * @param {boolean} dateTicketEntitiesLoaded
 	 * @return {IconMenuItem}    View Tickets for Event Date IconMenuItem
 	 */
-	viewTicketsMenuItem = ( eventDate, datetimeTickets, ticketsLoaded ) => {
-		const tooltip = ticketsLoaded && isEmpty( datetimeTickets ) ?
+	viewTicketsMenuItem = ( dateEntity, dateTicketEntities, dateTicketEntitiesLoaded ) => {
+		const tooltip = dateTicketEntitiesLoaded && isEmpty( dateTicketEntities ) ?
 			__(
 				'warning! no assigned tickets - click to fix',
 				'event_espresso'
@@ -105,50 +98,50 @@ class EditorDateActionsMenu extends Component {
 			<IconMenuItem
 				index={ 2 }
 				tooltip={ tooltip }
-				id={ `view-tickets-date-${ eventDate.id }` }
+				id={ `view-tickets-date-${ dateEntity.id }` }
 				htmlClass="view-tickets-date"
 				dashicon="tickets-alt"
 				onClick={ this.props.toggleTicketAssignments }
-				itemCount={ ticketsLoaded ? datetimeTickets.length : null }
+				itemCount={ dateTicketEntitiesLoaded ? dateTicketEntities.length : null }
 			/>
 		);
 	};
 
 	/**
 	 * @function
-	 * @param {Object} eventDate    	 JSON object defining the Event Date
-	 * @param {Array} datetimeTickets    Tickets for Event Date
-	 * @param {boolean} ticketsLoaded
+	 * @param {Object} dateEntity    	 JSON object defining the Event Date
+	 * @param {Array} dateTicketEntities    Tickets for Event Date
+	 * @param {boolean} dateTicketEntitiesLoaded
 	 * @return {Array}    				 Array of IconMenuItem objects
 	 */
-	getSidebarMenuItems = ( eventDate, datetimeTickets, ticketsLoaded ) => {
+	getSidebarMenuItems = ( dateEntity, dateTicketEntities, dateTicketEntitiesLoaded ) => {
 		const sidebarMenuItems = [];
 		sidebarMenuItems.push(
-			this.mainDropDownMenu( eventDate )
+			this.mainDropDownMenu( dateEntity )
 		);
-		sidebarMenuItems.push( this.editDateMenuItem( eventDate ) );
+		sidebarMenuItems.push( this.editDateMenuItem( dateEntity ) );
 		sidebarMenuItems.push(
-			this.viewTicketsMenuItem( eventDate, datetimeTickets, ticketsLoaded )
+			this.viewTicketsMenuItem( dateEntity, dateTicketEntities, dateTicketEntitiesLoaded )
 		);
 		return applyFilters(
-			'FHEE__EditorDateActionsMenu__SidebarMenuItems',
+			'FHEE__EditorDateEntityActionsMenu__SidebarMenuItems',
 			sidebarMenuItems,
-			eventDate
+			dateEntity
 		);
 	};
 
 	/**
 	 * @function
-	 * @param {Object} eventDate    	JSON object defining the Event Date
-	 * @param {Array} datetimeTickets 	Tickets for Event Date
-	 * @param {boolean} ticketsLoaded
+	 * @param {Object} dateEntity    	JSON object defining the Event Date
+	 * @param {Array} dateTicketEntities 	Tickets for Event Date
+	 * @param {boolean} dateTicketEntitiesLoaded
 	 * @return {Array} Array of rendered IconMenuItem list items
 	 */
-	sidebarMenu = ( eventDate, datetimeTickets, ticketsLoaded ) => {
+	sidebarMenu = ( dateEntity, dateTicketEntities, dateTicketEntitiesLoaded ) => {
 		const sidebarMenuItems = this.getSidebarMenuItems(
-			eventDate,
-			datetimeTickets,
-			ticketsLoaded
+			dateEntity,
+			dateTicketEntities,
+			dateTicketEntitiesLoaded
 		);
 		return sidebarMenuItems.map(
 			function( sidebarMenuItem, index ) {
@@ -169,25 +162,25 @@ class EditorDateActionsMenu extends Component {
 
 	render() {
 		const {
-			event,
-			eventDate,
+			eventEntity,
+			dateEntity,
 			editorOpen,
 			toggleEditor,
-			datetimeTickets = [],
-			ticketsLoaded = false,
+			dateTicketEntities = [],
+			dateTicketEntitiesLoaded = false,
 		} = this.props;
-		if ( ! isModelEntityOfModel( eventDate, DATETIME ) ) {
+		if ( ! isModelEntityOfModel( dateEntity, DATETIME ) ) {
 			return null;
 		}
-		return eventDate && eventDate.id ? (
+		return dateEntity && dateEntity.id ? (
 			<div
-				id={ `ee-editor-date-actions-menu-${ eventDate.id }` }
+				id={ `ee-editor-date-actions-menu-${ dateEntity.id }` }
 				className={ 'ee-editor-date-actions-menu' }
 			>
-				{ this.sidebarMenu( eventDate, datetimeTickets, ticketsLoaded ) }
+				{ this.sidebarMenu( dateEntity, dateTicketEntities, dateTicketEntitiesLoaded ) }
 				<EditEventDateFormModal
-					event={ event }
-					eventDate={ eventDate }
+					eventEntity={ eventEntity }
+					dateEntity={ dateEntity }
 					toggleEditor={ toggleEditor }
 					editorOpen={ editorOpen }
 				/>
@@ -199,21 +192,21 @@ class EditorDateActionsMenu extends Component {
 export default compose( [
 	withEditor,
 	withTicketAssignmentsManagerModal(
-		( { eventDate } ) => ( {
+		( { dateEntity } ) => ( {
 			title: sprintf(
 				_x(
 					'Ticket Assignments for: %1$s',
 					'Ticket Assignments for: Date & date name',
 					'event_espresso'
 				),
-				`${ eventDate.name } (${
-					eventDate.start.toFormat( 'ddd MMM DD, YYYY' )
+				`${ dateEntity.name } (${
+					dateEntity.start.toFormat( 'ddd MMM DD, YYYY' )
 				})`
 			),
 			closeButtonLabel: null,
 		} )
 	),
-	withDatetimeTickets,
-	withCopyEventDate,
-	withTrashEventDate,
-] )( EditorDateActionsMenu );
+	withDateTicketEntities,
+	withCopyDateEntity,
+	withTrashDateEntity,
+] )( EditorDateEntityActionsMenu );

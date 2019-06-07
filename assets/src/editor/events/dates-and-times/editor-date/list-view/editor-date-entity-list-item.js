@@ -15,28 +15,29 @@ const { ADMIN_ROUTES, ADMIN_ROUTE_ACTION_DEFAULT, getAdminUrl } = routes;
 /**
  * Internal dependencies
  */
-import { EditorDateActionsMenu } from '../';
+import EditorDateEntityActionsMenu
+	from '../actions-menu/editor-date-entity-actions-menu';
 
 const { MODEL_NAME: DATETIME, getBackgroundColorClass } = dateTimeModel;
 
 /**
- * EditorDateListItem
- * Displays comEvent Date as a table row similar to existing event editor UI
+ * EditorDateEntityListItem
+ * Displays Event Date as a table row similar to existing eventEntity editor UI
  *
  * @function
  * @param {Object} date    JSON object defining the Event Date
  * @return {string}        The date rendered as a block
  */
-class EditorDateListItem extends Component {
+class EditorDateEntityListItem extends Component {
 	/**
 	 * getStatusClass
 	 *
 	 * @function
-	 * @param {Object} eventDate    JSON object defining the Event Date
+	 * @param {Object} dateEntity    JSON object defining the Event Date
 	 * @return {string}    CSS class corresponding to the Date status
 	 */
-	getStatusClass = ( eventDate ) => {
-		switch ( eventDate.status ) {
+	getStatusClass = ( dateEntity ) => {
+		switch ( dateEntity.status ) {
 			case 'DTA' :
 				return 'ee-datetime-active';
 			case 'DTE' :
@@ -51,23 +52,23 @@ class EditorDateListItem extends Component {
 	/**
 	 * dateSoldReservedCapacity
 	 *
-	 * @param {Object} event  The event object.
-	 * @param {Object} eventDate    The date object.
+	 * @param {Object} eventEntity  The event object.
+	 * @param {Object} dateEntity    The date object.
 	 * @return {string}    link to registrations list table for datetime
 	 */
-	getDatetimeRegistrationsLink = ( event, eventDate ) => {
+	getDateRegistrationsLink = ( eventEntity, dateEntity ) => {
 		const regListUrl = addQueryArgs(
 			getAdminUrl( ADMIN_ROUTES.REGISTRATIONS, ADMIN_ROUTE_ACTION_DEFAULT ),
 			{
-				event_id: event.id,
-				datetime_id: eventDate.id,
+				event_id: eventEntity.id,
+				datetime_id: dateEntity.id,
 				return: 'edit',
 			}
 		);
 		return (
 			<Tooltip
 				text={ __(
-					'view registrations for this datetime.',
+					'view registrations for this date.',
 					'event_espresso'
 				) }
 			>
@@ -85,22 +86,21 @@ class EditorDateListItem extends Component {
 
 	render() {
 		const {
-			event,
-			eventDate,
-			allTickets,
-			eventDateTicketMap,
+			eventEntity,
+			dateEntity,
+			allTicketEntities,
 		} = this.props;
-		this.id = `event-date-ticket-list-modal-${ eventDate.id }`;
-		const statusClass = this.getStatusClass( eventDate );
-		const bgClass = getBackgroundColorClass( eventDate );
-		const regLimit = eventDate.regLimit === 'INF' ||
-		eventDate.regLimit === Infinity ?
+		this.id = `event-date-ticket-list-modal-${ dateEntity.id }`;
+		const statusClass = this.getStatusClass( dateEntity );
+		const bgClass = getBackgroundColorClass( dateEntity );
+		const regLimit = dateEntity.regLimit === 'INF' ||
+		dateEntity.regLimit === Infinity ?
 			( <span className={ 'ee-infinity-sign' }>&infin;</span> ) :
-			eventDate.regLimit;
-		const regLink = this.getDatetimeRegistrationsLink( event, eventDate );
+			dateEntity.regLimit;
+		const regLink = this.getDateRegistrationsLink( eventEntity, dateEntity );
 
 		return (
-			<div id={ `ee-editor-date-list-view-div-${ eventDate.id }` }
+			<div id={ `ee-editor-date-list-view-div-${ dateEntity.id }` }
 				className={ `ee-editor-date-list-view-div ${ statusClass }` }
 			>
 				<div className="ee-editor-date-list-items">
@@ -109,7 +109,7 @@ class EditorDateListItem extends Component {
 							{ __( 'Name:', 'event_espresso' ) }
 						</span>
 						<span className="ee-date-list-item-value">
-							{ eventDate.name }
+							{ dateEntity.name }
 						</span>
 					</div>
 					<div className="ee-date-list-item">
@@ -117,7 +117,7 @@ class EditorDateListItem extends Component {
 							{ __( 'ID:', 'event_espresso' ) }
 						</span>
 						<span className="ee-date-list-item-value">
-							{ eventDate.id }
+							{ dateEntity.id }
 						</span>
 					</div>
 					<div className="ee-date-list-item">
@@ -125,7 +125,7 @@ class EditorDateListItem extends Component {
 							{ __( 'Name:', 'event_espresso' ) }
 						</span>
 						<span className="ee-date-list-item-value">
-							{ eventDate.name }
+							{ dateEntity.name }
 						</span>
 					</div>
 					<div className="ee-date-list-item">
@@ -133,7 +133,7 @@ class EditorDateListItem extends Component {
 							{ __( 'Start Date:', 'event_espresso' ) }
 						</span>
 						<span className="ee-date-list-item-value">
-							{ eventDate.start.toFormat( 'ddd MMM YY h:mm a' ) }
+							{ dateEntity.start.toFormat( 'ddd MMM YY h:mm a' ) }
 						</span>
 					</div>
 					<div className="ee-date-list-item">
@@ -141,7 +141,7 @@ class EditorDateListItem extends Component {
 							{ __( 'End Date:', 'event_espresso' ) }
 						</span>
 						<span className="ee-date-list-item-value">
-							{ eventDate.end.toFormat( 'ddd MMM YY h:mm a' ) }
+							{ dateEntity.end.toFormat( 'ddd MMM YY h:mm a' ) }
 						</span>
 					</div>
 					<div className="ee-date-list-item">
@@ -149,7 +149,7 @@ class EditorDateListItem extends Component {
 							{ __( 'Sold:', 'event_espresso' ) }
 						</span>
 						<span className="ee-date-list-item-value">
-							{ eventDate.sold }
+							{ dateEntity.sold }
 						</span>
 					</div>
 					<div className="ee-date-list-item">
@@ -157,7 +157,7 @@ class EditorDateListItem extends Component {
 							{ __( 'Reserved:', 'event_espresso' ) }
 						</span>
 						<span className="ee-date-list-item-value">
-							{ eventDate.reserved }
+							{ dateEntity.reserved }
 						</span>
 					</div>
 					<div className="ee-date-list-item">
@@ -180,11 +180,10 @@ class EditorDateListItem extends Component {
 						<span className="ee-date-list-item-label">
 							{ __( 'Actions:', 'event_espresso' ) }
 						</span>
-						<EditorDateActionsMenu
-							event={ event }
-							eventDate={ eventDate }
-							allTickets={ allTickets }
-							eventDateTicketMap={ eventDateTicketMap }
+						<EditorDateEntityActionsMenu
+							event={ eventEntity }
+							dateEntity={ dateEntity }
+							allTicketEntities={ allTicketEntities }
 						/>
 					</div>
 				</div>
@@ -195,6 +194,6 @@ class EditorDateListItem extends Component {
 }
 
 export default ifCondition(
-	( { eventDate } ) => isModelEntityOfModel( eventDate, DATETIME )
-)( EditorDateListItem );
+	( { dateEntity } ) => isModelEntityOfModel( dateEntity, DATETIME )
+)( EditorDateEntityListItem );
 

@@ -19,19 +19,15 @@ import {
 	getFilteredTicketsList,
 } from '../tickets/editor-ticket/filter-bar/with-tickets-list-filter-bar';
 import { withEvent, withEventDatetimes } from '../events/data';
-import {
-	withGetRelatedTicketsForEventDates,
-	withTicketsForAllEventDates,
-} from '../dates-and-times/data';
+import { withMultipleDateTicketEntities } from '../dates-and-times/data';
 
 const EMPTY_ARRAY = [];
 
-const withEventDateAndTicketEntityFilterState = createHigherOrderComponent(
+const withDateAndTicketEntityFilterState = createHigherOrderComponent(
 	compose( [
 		withEvent,
 		withEventDatetimes,
-		withTicketsForAllEventDates,
-		withGetRelatedTicketsForEventDates,
+		withMultipleDateTicketEntities,
 		withDatesListFilterState,
 		withTicketsListFilterState,
 		withSelect( ( select, ownProps ) => {
@@ -39,43 +35,43 @@ const withEventDateAndTicketEntityFilterState = createHigherOrderComponent(
 				eventId,
 				eventEntity,
 				eventLoaded,
-				eventDateEntities,
-				eventDateEntitiesLoaded,
-				eventTicketEntities,
-				eventTicketEntitiesLoaded,
+				dateEntities,
+				dateEntitiesLoaded,
+				ticketEntities,
+				ticketEntitiesLoaded,
 				showDates,
 				datesSortedBy,
 				showTickets,
 				ticketsSortedBy,
-				eventDateTicketEntities,
+				dateTicketEntities,
 				isChained,
 			} = ownProps;
-			if ( ! eventLoaded || ! eventDateEntitiesLoaded ) {
+			if ( ! eventLoaded || ! dateEntitiesLoaded ) {
 				return {
 					eventId,
 					eventEntity,
-					filteredEventDateEntities: EMPTY_ARRAY,
-					allEventDateEntities: EMPTY_ARRAY,
+					filteredDateEntities: EMPTY_ARRAY,
+					allDateEntities: EMPTY_ARRAY,
 					filteredTicketEntities: EMPTY_ARRAY,
 					allTicketEntities: EMPTY_ARRAY,
 					loading: ! eventLoaded,
-					loadingEventDateEntities: ! eventDateEntitiesLoaded,
+					loadingDateEntities: ! dateEntitiesLoaded,
 					loadingTicketEntities: true,
 					isChained,
 				};
 			}
 			// apply filter bar filters
-			const filteredEventDateEntities = getFilteredDatesList(
-				eventDateEntities,
+			const filteredDateEntities = getFilteredDatesList(
+				dateEntities,
 				showDates,
 				datesSortedBy
 			);
 			let filteredTicketEntities = EMPTY_ARRAY;
-			if ( eventTicketEntitiesLoaded ) {
+			if ( ticketEntitiesLoaded ) {
 				// show filteredTicketEntities for ALL dates or for filtered subset from above?
 				filteredTicketEntities = isChained ?
-					eventDateTicketEntities :
-					eventTicketEntities;
+					dateTicketEntities :
+					ticketEntities;
 				// apply filter bar filters
 				filteredTicketEntities = getFilteredTicketsList(
 					filteredTicketEntities,
@@ -86,13 +82,13 @@ const withEventDateAndTicketEntityFilterState = createHigherOrderComponent(
 			return {
 				eventId,
 				eventEntity,
-				filteredEventDateEntities,
-				allEventDateEntities: filteredEventDateEntities,
+				filteredDateEntities,
+				allDateEntities: dateEntities,
 				filteredTicketEntities,
-				allTicketEntities: eventTicketEntities,
+				allTicketEntities: ticketEntities,
 				loading: ! eventLoaded,
-				loadingEventDateEntities: ! eventDateEntitiesLoaded,
-				loadingTicketEntities: ! eventTicketEntitiesLoaded,
+				loadingDateEntities: ! dateEntitiesLoaded,
+				loadingTicketEntities: ! ticketEntitiesLoaded,
 				isChained,
 			};
 		} ),
@@ -100,11 +96,11 @@ const withEventDateAndTicketEntityFilterState = createHigherOrderComponent(
 	'withDatesAndTicketsFilterState'
 );
 
-withEventDateAndTicketEntityFilterState.propTypes = {
+withDateAndTicketEntityFilterState.propTypes = {
 	eventId: PropTypes.oneOfType( [
 		PropTypes.number,
 		PropTypes.string,
 	] ).isRequired,
 };
 
-export default withEventDateAndTicketEntityFilterState;
+export default withDateAndTicketEntityFilterState;

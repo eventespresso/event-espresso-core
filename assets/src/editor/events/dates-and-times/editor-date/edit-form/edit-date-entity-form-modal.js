@@ -12,21 +12,19 @@ import { isModelEntityOfModel } from '@eventespresso/validators';
 /**
  * Internal dependencies
  */
-import EditEventDateForm from './edit-event-date-form';
-import { eventDateEntityFormSchema } from './event-date-entity-form-schema';
-import {
-	eventDateEntityFormSubmitHandler,
-} from './event-date-entity-form-submit-handler';
+import EditDateEntityForm from './edit-date-entity-form';
+import { dateEntityFormSchema } from './date-entity-form-schema';
+import { dateEntityFormSubmitHandler } from './date-entity-form-submit-handler';
 import withUpdateEventDateRelation from '../action-handlers/with-update-event-date-relation';
 
 /**
  * @function
- * @param {Object} eventDate model object defining the Event Date
+ * @param {Object} dateEntity model object defining the Event Date
  */
-class EditEventDateFormModal extends Component {
+class EditDateEntityFormModal extends Component {
 	static propTypes = {
-		event: PropTypes.object,
-		eventDate: PropTypes.object,
+		eventEntity: PropTypes.object,
+		dateEntity: PropTypes.object,
 		toggleEditor: PropTypes.func.isRequired,
 		loadHandler: PropTypes.func,
 		submitHandler: PropTypes.func,
@@ -36,10 +34,10 @@ class EditEventDateFormModal extends Component {
 	constructor( props ) {
 		super( props );
 		this.state = {
-			eventDate: isModelEntityOfModel( props.eventDate, 'datetime' ) ?
-				props.eventDate.clone( true ) :
+			dateEntity: isModelEntityOfModel( props.dateEntity, 'datetime' ) ?
+				props.dateEntity.clone( true ) :
 				{},
-			originalEventDate: props.eventDate ? props.eventDate : {},
+			originalDateEntity: props.dateEntity ? props.dateEntity : {},
 		};
 	}
 
@@ -48,7 +46,7 @@ class EditEventDateFormModal extends Component {
 	 * @return {Object} data
 	 */
 	loadHandler = () => {
-		return eventDateEntityFormSchema( this.state.eventDate );
+		return dateEntityFormSchema( this.state.dateEntity );
 	};
 
 	/**
@@ -56,15 +54,14 @@ class EditEventDateFormModal extends Component {
 	 * @param {Object} data
 	 */
 	submitHandler = ( data ) => {
-		eventDateEntityFormSubmitHandler(
-			this.props.event,
-			this.state.eventDate,
+		dateEntityFormSubmitHandler(
+			this.props.eventEntity,
+			this.state.dateEntity,
 			data
 		);
 		this.props.replaceDateInStore(
-			this.state.eventDate,
-			this.state.originalEventDate,
-			this.props.event
+			this.state.dateEntity,
+			this.props.eventEntity
 		);
 		this.props.toggleEditor();
 	};
@@ -73,18 +70,18 @@ class EditEventDateFormModal extends Component {
 	 * @function
 	 */
 	resetHandler = () => {
-		this.setState( { eventDate: this.state.originalEventDate.clone( true ) } );
+		this.setState( { dateEntity: this.state.originalDateEntity.clone( true ) } );
 		this.props.toggleEditor();
 	};
 
 	render() {
 		return (
-			<EditEventDateForm
+			<EditDateEntityForm
 				{ ...this.props }
 				loadHandler={ this.loadHandler }
 				submitHandler={ this.submitHandler }
 				resetHandler={ this.resetHandler }
-				eventDate={ this.state.eventDate }
+				dateEntity={ this.state.dateEntity }
 			/>
 		);
 	}
@@ -99,10 +96,10 @@ export default compose( [
 	withUpdateEventDateRelation,
 	withDispatch( ( dispatch, { updateEventDateRelation } ) => {
 		const { receiveAndReplaceEntityRecords } = dispatch( 'eventespresso/core' );
-		const replaceDateInStore = ( replaceDate, originalDate, eventEntity ) => {
+		const replaceDateInStore = ( replaceDate, eventEntity ) => {
 			receiveAndReplaceEntityRecords( 'datetime', [ replaceDate ] );
 			updateEventDateRelation( eventEntity, replaceDate );
 		};
 		return { replaceDateInStore };
 	} ),
-] )( EditEventDateFormModal );
+] )( EditDateEntityFormModal );

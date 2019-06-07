@@ -17,7 +17,7 @@ const { MODEL_NAME: DATETIME } = dateTimeModel;
  * @param {Object} dateEntity  EE Date object
  * @param {Object} formData
  */
-export const eventDateEntityFormSubmitHandler = (
+export const dateEntityFormSubmitHandler = (
 	eventEntity,
 	dateEntity,
 	formData,

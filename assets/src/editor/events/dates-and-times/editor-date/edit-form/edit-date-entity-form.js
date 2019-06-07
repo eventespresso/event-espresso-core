@@ -14,16 +14,16 @@ import { isModelEntityOfModel } from '@eventespresso/validators';
 /**
  * Internal dependencies
  */
-import { eventDateEntityFormInputs } from './event-date-entity-form-inputs';
+import { dateEntityFormInputs } from './date-entity-form-inputs';
 
 /**
  * @function
- * @param {Object} eventDate model object defining the Event Date
+ * @param {Object} dateEntity model object defining the Event Date
  */
-class EditEventDateForm extends Component {
+class EditDateEntityForm extends Component {
 	render() {
 		const {
-			eventDate,
+			dateEntity,
 			submitButton,
 			cancelButton,
 			currentValues = {},
@@ -54,8 +54,8 @@ class EditEventDateForm extends Component {
 			'parent',
 			'deleted',
 		];
-		const formRows = eventDateEntityFormInputs(
-			eventDate,
+		const formRows = dateEntityFormInputs(
+			dateEntity,
 			exclude,
 			currentValues,
 			FormInput
@@ -75,16 +75,16 @@ class EditEventDateForm extends Component {
 			);
 		}
 		const { MODEL_NAME: DATETIME } = dateTimeModel;
-		return isModelEntityOfModel( eventDate, DATETIME ) ? (
+		return isModelEntityOfModel( dateEntity, DATETIME ) ? (
 			<FormWrapper>
 				<FormSection
 					htmlId={
-						`ee-event-date-editor-${ eventDate.id }-form-section`
+						`ee-event-date-editor-${ dateEntity.id }-form-section`
 					}
 					children={ formRows }
 				/>
 				<FormSaveCancelButtons
-					htmlClass={ `ee-event-date-editor-${ eventDate.id }` }
+					htmlClass={ `ee-event-date-editor-${ dateEntity.id }` }
 					submitButton={ submitButton }
 					cancelButton={ cancelButton }
 				/>
@@ -94,6 +94,6 @@ class EditEventDateForm extends Component {
 }
 
 /**
- * Enhanced EditEventDateForm with FormHandler
+ * Enhanced EditDateEntityForm with FormHandler
  */
-export default withFormHandler( EditEventDateForm );
+export default withFormHandler( EditDateEntityForm );

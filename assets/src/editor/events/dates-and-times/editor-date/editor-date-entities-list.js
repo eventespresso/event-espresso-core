@@ -15,9 +15,10 @@ import { __, _x, sprintf } from '@eventespresso/i18n';
 /**
  * Internal dependencies
  */
-import { EditorDatesGridView, EditorDatesListView } from './';
-import PaginatedDatesListWithFilterBar from './filter-bar';
-import { EditEventDateFormModal } from '../';
+import { EditorDateEntitiesGridView } from './grid-view';
+import { EditorDateEntitiesListView } from './list-view';
+import { withPaginatedDateEntitiesListWithFilterBar } from './filter-bar';
+import { EditDateEntityFormModal } from './edit-form';
 import { withTicketAssignmentsManagerModal } from '../../ticket-assignments-manager';
 import withUpdateEventDateRelation from './action-handlers/with-update-event-date-relation';
 
@@ -27,7 +28,7 @@ const {
 } = twoColumnAdminFormLayout;
 
 /**
- * EditorDatesList
+ * EditorDateEntitiesList
  * EntityList component for displaying event dates in the editor
  *
  * @class
@@ -36,10 +37,10 @@ const {
  * @param {Function} retrieveDates
  * @param {mixed} otherProps
  */
-class EditorDatesList extends Component {
+class EditorDateEntitiesList extends Component {
 	constructor( props ) {
 		super( props );
-		this.state = { newEventDate: null };
+		this.state = { newDateEntity: null };
 	}
 
 	/**
@@ -47,12 +48,12 @@ class EditorDatesList extends Component {
 	 * @return {Object} rendered button
 	 */
 	addNewDateButton = () => {
-		const addDate = ( event ) => {
+		const addDateEntity = ( event ) => {
 			if ( event && event.preventDefault ) {
 				event.preventDefault();
 				event.stopPropagation();
 			}
-			this.props.addNewEventDate(
+			this.props.addNewDateEntity(
 				( state ) => this.setState( state ),
 				this.props.toggleEditor
 			);
@@ -61,7 +62,7 @@ class EditorDatesList extends Component {
 			<EspressoButton
 				icon="calendar"
 				buttonText={ __( 'Add New Date', 'event_espresso' ) }
-				onClick={ addDate }
+				onClick={ addDateEntity }
 			/>
 		);
 	};
@@ -86,10 +87,8 @@ class EditorDatesList extends Component {
 	render() {
 		const {
 			view,
-			event,
+			eventEntity,
 			entities,
-			allDates,
-			allTickets,
 			editorOpen,
 			toggleEditor,
 			...otherProps
@@ -99,16 +98,14 @@ class EditorDatesList extends Component {
 				<EntityList
 					{ ...otherProps }
 					entities={ entities }
-					allDates={ allDates }
-					allTickets={ allTickets }
-					EntityGridView={ EditorDatesGridView }
-					EntityListView={ EditorDatesListView }
+					EntityGridView={ EditorDateEntitiesGridView }
+					EntityListView={ EditorDateEntitiesListView }
 					view={ view }
-					event={ event }
+					eventEntity={ eventEntity }
 					loadingNotice={ sprintf(
 						_x(
-							'loading event dates%s',
-							'loading event dates...',
+							'loading eventEntity dates%s',
+							'loading eventEntity dates...',
 							'event_espresso'
 						),
 						String.fromCharCode( 8230 )
@@ -118,9 +115,9 @@ class EditorDatesList extends Component {
 					submitButton={ this.addNewDateButton() }
 					cancelButton={ this.ticketAssignmentsButton() }
 				/>
-				<EditEventDateFormModal
-					event={ event }
-					eventDate={ this.state.newEventDate }
+				<EditDateEntityFormModal
+					eventEntity={ eventEntity }
+					dateEntity={ this.state.newDateEntity }
 					toggleEditor={ toggleEditor }
 					editorOpen={ editorOpen }
 				/>
@@ -131,20 +128,23 @@ class EditorDatesList extends Component {
 
 export default compose( [
 	withEditor,
-	PaginatedDatesListWithFilterBar,
+	withPaginatedDateEntitiesListWithFilterBar,
 	withUpdateEventDateRelation,
-	withDispatch( ( dispatch, { event, updateEventDateRelation } ) => {
+	withDispatch( (
+		dispatch,
+		{ eventEntity, updateEventDateRelation }
+	) => {
 		const { createEntity } = dispatch( 'eventespresso/core' );
-		const addNewEventDate = ( setState, toggleEditor ) => {
+		const addNewDateEntity = ( setState, toggleEditor ) => {
 			createEntity( 'datetime', {} ).then(
-				( newEventDate ) => {
-					setState( { newEventDate } );
-					updateEventDateRelation( event, newEventDate );
+				( newDateEntity ) => {
+					setState( { newDateEntity } );
+					updateEventDateRelation( eventEntity, newDateEntity );
 					toggleEditor();
 				},
 			);
 		};
-		return { addNewEventDate };
+		return { addNewDateEntity };
 	} ),
 	withTicketAssignmentsManagerModal( () => (
 		{
@@ -155,4 +155,4 @@ export default compose( [
 			closeButtonLabel: null,
 		}
 	) ),
-] )( EditorDatesList );
+] )( EditorDateEntitiesList );

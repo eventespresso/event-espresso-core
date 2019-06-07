@@ -10,30 +10,30 @@ import { isModelEntityOfModel } from '@eventespresso/validators';
 const { MODEL_NAME: DATETIME } = dateTimeModel;
 
 /**
- * eventDateEntityFormInputs
+ * dateEntityFormInputs
  * returns an array of inputs corresponding to
  * the properties of the Event Date Entity
  *
  * @function
- * @param {Object} eventDate  EE Date object
+ * @param {Object} dateEntity  EE Date object
  * @param {Array} exclude  Array of field names to not display inputs for
  * @param {Array} currentValues  Array of input values
  * @param {Object} FormInput Input object to use
  * @return {Object} rendered form
  */
-export const eventDateEntityFormInputs = (
-	eventDate,
+export const dateEntityFormInputs = (
+	dateEntity,
 	exclude = [],
 	currentValues = [],
 	FormInput,
 ) => {
 	const inputs = [];
-	if ( ! isModelEntityOfModel( eventDate, DATETIME ) ) {
+	if ( ! isModelEntityOfModel( dateEntity, DATETIME ) ) {
 		return inputs;
 	}
 	const values = currentValues;
-	const prefix = `ee-event-date-${ eventDate.id }`;
-	if ( parseInt( eventDate.id, 10 ) && indexOf( exclude, 'DTT_ID' ) < 0 ) {
+	const prefix = `ee-event-date-${ dateEntity.id }`;
+	if ( parseInt( dateEntity.id, 10 ) && indexOf( exclude, 'DTT_ID' ) < 0 ) {
 		inputs.push(
 			<FormInput
 				key="id"

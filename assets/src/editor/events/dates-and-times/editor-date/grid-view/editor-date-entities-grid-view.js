@@ -7,11 +7,11 @@ import classNames from 'classnames';
 /**
  * Internal dependencies
  */
-import EditorDateGridItem from './editor-date-grid-item';
-import './editor-dates-grid-view.css';
+import EditorDateEntityGridItem from './editor-date-entity-grid-item';
+import './editor-dates-entities-grid-view.css';
 
 /**
- * EditorDatesGridView
+ * EditorDateEntitiesGridView
  * Displays dates as mobile/finger friendly blocks
  * with the most relevant info visible
  *
@@ -21,7 +21,7 @@ import './editor-dates-grid-view.css';
  * @param {mixed} otherProps
  * @return {Component}          list of rendered Event Dates
  */
-export const EditorDatesGridView = ( {
+const EditorDateEntitiesGridView = ( {
 	entities,
 	htmlClass,
 	...otherProps
@@ -31,17 +31,24 @@ export const EditorDatesGridView = ( {
 		<div className={ htmlClass }>
 			{
 				entities.map(
-					function( eventDate ) {
-						return isModelEntityOfModel( eventDate, 'datetime' ) ? (
-							<EditorDateGridItem
-								key={ eventDate.id }
-								eventDate={ eventDate }
-								{ ...otherProps }
-							/>
-						) : null;
+					function( dateEntity ) {
+						return isModelEntityOfModel(
+							dateEntity,
+							'datetime'
+						) ?
+							(
+								<EditorDateEntityGridItem
+									key={ dateEntity.id }
+									dateEntity={ dateEntity }
+									{ ...otherProps }
+								/>
+							) :
+							null;
 					}
 				)
 			}
 		</div>
 	);
 };
+
+export default EditorDateEntitiesGridView;

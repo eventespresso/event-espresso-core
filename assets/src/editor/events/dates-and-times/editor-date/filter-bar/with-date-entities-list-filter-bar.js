@@ -10,32 +10,32 @@ import { __ } from '@eventespresso/i18n';
 /**
  * Internal dependencies
  */
-import { default as DateListFilterBar } from './dates-list-filter-bar';
+import { default as DateListFilterBar } from './date-list-filter-bar';
 import {
-	filterDates,
-	searchDates,
-	sortDatesList,
-} from './dates-list-filter-utils';
+	filterDateEntities,
+	searchDateEntities,
+	sortDateEntitiesList,
+} from './date-entities-list-filter-utils';
 
 /**
  * filters the dates list based on the current filter state
  *
- * @param {Array} dates
+ * @param {Array} dateEntities
  * @param {string} showDates
  * @param {string} sortDates
- * @return {Array} filtered list of dates
+ * @return {Array} filtered list of dateEntities
  */
-export const getFilteredDatesList = ( dates, showDates, sortDates ) => {
-	return showDates && sortDates && ! isEmpty( dates ) ?
-		sortDatesList(
-			filterDates( dates, showDates ),
+export const getFilteredDateEntitiesList = ( dateEntities, showDates, sortDates ) => {
+	return showDates && sortDates && ! isEmpty( dateEntities ) ?
+		sortDateEntitiesList(
+			filterDateEntities( dateEntities, showDates ),
 			sortDates
 		) :
 		[];
 };
 
 /**
- * withDatesListFilterBar
+ * withDateEntitiesListFilterBar
  * Higher-Order-Component that wraps an "EntityList" component
  * with an EntityListFilterBar & DateListFilterBar component
  * that controls how entities are displayed
@@ -62,18 +62,16 @@ export default createHigherOrderComponent(
 					setDatesListView,
 					setDatesGridView,
 					prefiltered = false,
+					entities,
 					...otherProps
 				} = this.props;
-				delete otherProps.entities;
-				let { entities } = this.props;
-				entities = searchDates( entities, searchDateName );
-				entities = prefiltered ?
-					entities :
-					getFilteredDatesList(
-						entities,
+				let filteredEntities = searchDateEntities( entities, searchDateName );
+				filteredEntities = prefiltered ?
+					filteredEntities :
+					getFilteredDateEntitiesList(
+						filteredEntities,
 						showDates,
-						sortDates,
-						searchDateName
+						sortDates
 					);
 				return (
 					<Fragment>
@@ -98,7 +96,7 @@ export default createHigherOrderComponent(
 							}
 						/>
 						<EntityList
-							entities={ entities }
+							entities={ filteredEntities }
 							entitiesPerPage={ datesPerPage }
 							view={ datesView }
 							noResultsText={
@@ -115,5 +113,5 @@ export default createHigherOrderComponent(
 			}
 		};
 	},
-	'withDatesListFilterBar'
+	'withDateEntitiesListFilterBar'
 );

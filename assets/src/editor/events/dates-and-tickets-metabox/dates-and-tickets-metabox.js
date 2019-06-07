@@ -28,14 +28,14 @@ import withEventDateAndTicketEntityFilterState
 const MetaBox = ( {
 	loading,
 	eventId,
-	loadingEventDateEntities,
+	loadingDateEntities,
 	loadingTicketEntities,
-	filteredEventDateEntities,
-	allEventDateEntities,
+	filteredDateEntities,
+	allDateEntities,
 	filteredTicketEntities,
 	allTicketEntities,
 	isChained,
-	...otherProps,
+	...otherProps
 } ) => {
 	return (
 		<Fragment>
@@ -68,9 +68,9 @@ const MetaBox = ( {
 							className="ee-editor-event-dates ee-form-row">
 							<div>
 								<EditorDatesList
-									loading={ loadingEventDateEntities }
-									entities={ filteredEventDateEntities }
-									allDates={ allEventDateEntities }
+									loading={ loadingDateEntities }
+									entities={ filteredDateEntities }
+									allDates={ allDateEntities }
 									allTickets={ allTicketEntities }
 									prefiltered
 									for="event-dates-metabox"
@@ -96,7 +96,7 @@ const MetaBox = ( {
 								<EditorTicketsList
 									loading={ loadingTicketEntities }
 									entities={ filteredTicketEntities }
-									allDates={ allEventDateEntities }
+									allDates={ allDateEntities }
 									isChained={ isChained }
 									prefiltered
 									for="event-tickets-metabox"
@@ -112,9 +112,7 @@ const MetaBox = ( {
 	);
 };
 
-const DatesAndTicketsMetabox = withEventDateAndTicketEntityFilterState(
-	MetaBox
-);
+const DatesAndTicketsMetabox = withEventDateAndTicketEntityFilterState( MetaBox );
 
 DatesAndTicketsMetabox.propTypes = {
 	eventId: PropTypes.oneOfType( [

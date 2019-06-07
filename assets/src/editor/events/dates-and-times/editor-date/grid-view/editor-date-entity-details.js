@@ -14,35 +14,35 @@ import classNames from 'classnames';
 const { MODEL_NAME: DATETIME } = dateTimeModel;
 const { ADMIN_ROUTES, ADMIN_ROUTE_ACTION_DEFAULT, getAdminUrl } = routes;
 /**
- * EditorDateDetails
+ * EditorDateEntityDetails
  *
  * @function
- * @param {Object} eventDate    JSON object defining the Event Date
+ * @param {Object} dateEntity    JSON object defining the Event Date
  * @return {string}    date details
  */
-class EditorDateDetails extends Component {
+class EditorDateEntityDetails extends Component {
 	/**
 	 * dateName
 	 *
 	 * @function
-	 * @param {Object} eventDate 	model object defining the Event Date
+	 * @param {Object} dateEntity 	model object defining the Event Date
 	 * @return {string}    date name
 	 */
-	dateName = ( eventDate ) => {
+	dateName = ( dateEntity ) => {
 		const htmlClass = classNames(
 			'ee-editor-date-name-heading',
 			{
-				'ee-long-title': eventDate.name && eventDate.name.length > 40,
+				'ee-long-title': dateEntity.name && dateEntity.name.length > 40,
 			}
 		);
 		return (
 			<h1 className={ htmlClass }>
 				<InlineEditInput
-					htmlId={ `event-date-name-${ eventDate.id }` }
+					htmlId={ `event-date-name-${ dateEntity.id }` }
 					type="text"
-					value={ eventDate.name }
+					value={ dateEntity.name }
 					onChange={ ( name ) => {
-						return this.updateName( name, eventDate );
+						return this.updateName( name, dateEntity );
 					} }
 					label={ __( 'Date Name', 'event_espresso' ) }
 					noticeStyle={
@@ -59,11 +59,11 @@ class EditorDateDetails extends Component {
 	 * description
 	 *
 	 * @function
-	 * @param {Object} eventDate    model object defining the Event Date
+	 * @param {Object} dateEntity    model object defining the Event Date
 	 * @param {string} showDesc
 	 * @return {string} date description
 	 */
-	description = ( eventDate, showDesc ) => {
+	description = ( dateEntity, showDesc ) => {
 		const htmlClass = classNames(
 			'ee-editor-date-desc-div',
 			{
@@ -73,11 +73,11 @@ class EditorDateDetails extends Component {
 		return (
 			<div className={ htmlClass }>
 				<InlineEditInput
-					htmlId={ `event-date-desc-${ eventDate.id }` }
+					htmlId={ `event-date-desc-${ dateEntity.id }` }
 					type="textarea"
-					value={ eventDate.description }
+					value={ dateEntity.description }
 					onChange={ ( desc ) => {
-						return this.updateDescription( desc, eventDate );
+						return this.updateDescription( desc, dateEntity );
 					} }
 					label={ __( 'Date Description', 'event_espresso' ) }
 				/>
@@ -89,11 +89,11 @@ class EditorDateDetails extends Component {
 	 * venueName
 	 *spco-display-event-questions-lnk
 	 * @function
-	 * @param {Object} eventDate    model object defining the Event Date
+	 * @param {Object} dateEntity    model object defining the Event Date
 	 * @param {boolean} showVenue
 	 * @return {string}    venue name
 	 */
-	venueName = ( eventDate, showVenue ) => {
+	venueName = ( dateEntity, showVenue ) => {
 		const link = 'http://local.wordpress.test/wp-admin/admin.php?page=espresso_venues&action=edit&post=871&edit_nonce=32f75831c2&return=edit';
 		return showVenue ?
 			(
@@ -126,31 +126,31 @@ class EditorDateDetails extends Component {
 	 * dateSoldReservedCapacity
 	 *
 	 * @function
-	 * @param {Object} event        model object defining the Event
-	 * @param {Object} eventDate    model object defining the Event Date
+	 * @param {Object} eventEntity        model object defining the Event
+	 * @param {Object} dateEntity    model object defining the Event Date
 	 * @return {string}    date details
 	 */
-	dateSoldReservedCapacity = ( event, eventDate ) => {
+	dateSoldReservedCapacity = ( eventEntity, dateEntity ) => {
 		const details = [
 			{
 				id: 'event-date-sold',
 				label: __( 'sold', 'event_espresso' ),
-				value: eventDate.sold || 0,
+				value: dateEntity.sold || 0,
 			},
 			{
 				id: 'event-date-reserved',
 				label: __( 'reserved', 'event_espresso' ),
-				value: eventDate.reserved || 0,
+				value: dateEntity.reserved || 0,
 			},
 			{
 				id: 'event-date-capacity',
 				label: __( 'capacity', 'event_espresso' ),
-				value: eventDate.regLimit || Infinity,
+				value: dateEntity.regLimit || Infinity,
 				editable: {
 					type: 'text',
 					valueType: 'number',
 					onChange: ( capacity ) => {
-						return this.updateCapacity( capacity, eventDate );
+						return this.updateCapacity( capacity, dateEntity );
 					},
 				},
 			},
@@ -158,7 +158,7 @@ class EditorDateDetails extends Component {
 				id: 'event-date-registrants',
 				htmlClass: 'has-tooltip',
 				label: __( 'registrants', 'event_espresso' ),
-				value: this.getDatetimeRegistrationsLink( event, eventDate ),
+				value: this.getDatetimeRegistrationsLink( eventEntity, dateEntity ),
 			},
 		];
 		return <EntityDetailsPanel
@@ -171,16 +171,16 @@ class EditorDateDetails extends Component {
 	 * dateSoldReservedCapacity
 	 *
 	 * @function
-	 * @param {Object} event        Base entity instance for event.
-	 * @param {Object} eventDate    model object defining the Event Date
+	 * @param {Object} eventEntity        Base entity instance for event.
+	 * @param {Object} dateEntity    model object defining the Event Date
 	 * @return {string}    link to registrations list table for datetime
 	 */
-	getDatetimeRegistrationsLink = ( event, eventDate ) => {
+	getDatetimeRegistrationsLink = ( eventEntity, dateEntity ) => {
 		const regListUrl = addQueryArgs(
 			getAdminUrl( ADMIN_ROUTES.REGISTRATIONS, ADMIN_ROUTE_ACTION_DEFAULT ),
 			{
-				event_id: event.id,
-				datetime_id: eventDate.id,
+				event_id: eventEntity.id,
+				datetime_id: dateEntity.id,
 				return: 'edit',
 			}
 		);
@@ -206,59 +206,59 @@ class EditorDateDetails extends Component {
 	/**
 	 * @function
 	 * @param {string} name 		new name for event date
-	 * @param {Object} eventDate    model object defining the Event Date
+	 * @param {Object} dateEntity    model object defining the Event Date
 	 */
-	updateName = ( name, eventDate ) => {
+	updateName = ( name, dateEntity ) => {
 		if (
-			isModelEntityOfModel( eventDate, DATETIME ) &&
-			eventDate.name !== name
+			isModelEntityOfModel( dateEntity, DATETIME ) &&
+			dateEntity.name !== name
 		) {
-			eventDate.name = name;
+			dateEntity.name = name;
 		}
 	};
 
 	/**
 	 * @function
 	 * @param {string} description 	new description for event date
-	 * @param {Object} eventDate    model object defining the Event Date
+	 * @param {Object} dateEntity    model object defining the Event Date
 	 * @return {boolean} true if saved
 	 */
-	updateDescription = async ( description, eventDate ) => {
+	updateDescription = async ( description, dateEntity ) => {
 		if (
-			isModelEntityOfModel( eventDate, DATETIME ) &&
-			eventDate.description !== description
+			isModelEntityOfModel( dateEntity, DATETIME ) &&
+			dateEntity.description !== description
 		) {
-			eventDate.description = description;
+			dateEntity.description = description;
 		}
 	};
 
 	/**
 	 * @function
 	 * @param {number|string} 		capacity new reg limit for event date
-	 * @param {Object} eventDate    model object defining the Event Date
+	 * @param {Object} dateEntity    model object defining the Event Date
 	 */
-	updateCapacity = ( capacity, eventDate ) => {
+	updateCapacity = ( capacity, dateEntity ) => {
 		capacity = parseInt( capacity, 10 );
 		if (
-			isModelEntityOfModel( eventDate, DATETIME ) &&
-			eventDate.regLimit !== capacity
+			isModelEntityOfModel( dateEntity, DATETIME ) &&
+			dateEntity.regLimit !== capacity
 		) {
-			eventDate.regLimit = capacity;
+			dateEntity.regLimit = capacity;
 		}
 	};
 
 	render() {
-		const { event, eventDate } = this.props;
+		const { eventEntity, dateEntity } = this.props;
 		const { showDesc = 'excerpt', showVenue = true } = this.props;
-		return isModelEntityOfModel( eventDate, DATETIME ) ? (
+		return isModelEntityOfModel( dateEntity, DATETIME ) ? (
 			<div className={ 'ee-editor-date-details-wrapper-div' }>
-				{ this.dateName( eventDate ) }
-				{ this.description( eventDate, showDesc ) }
-				{ this.venueName( eventDate, showVenue ) }
-				{ this.dateSoldReservedCapacity( event, eventDate ) }
+				{ this.dateName( dateEntity ) }
+				{ this.description( dateEntity, showDesc ) }
+				{ this.venueName( dateEntity, showVenue ) }
+				{ this.dateSoldReservedCapacity( eventEntity, dateEntity ) }
 			</div>
 		) : null;
 	}
 }
 
-export default EditorDateDetails;
+export default EditorDateEntityDetails;

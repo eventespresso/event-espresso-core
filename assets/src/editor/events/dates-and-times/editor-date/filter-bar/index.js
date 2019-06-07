@@ -2,31 +2,39 @@
  * External imports
  */
 import { withEntityPagination } from '@eventespresso/higher-order-components';
+import { compose, createHigherOrderComponent } from '@wordpress/compose';
 
 /**
  * Internal dependencies
  */
-import withDatesListFilterBar from './with-dates-list-filter-bar';
+import withDateEntitiesListFilterBar from './with-date-entities-list-filter-bar';
 import withDatesListFilterState from './with-dates-list-filter-state';
 
-const PaginatedDatesListWithFilterBar = (
-	EditorDates,
-	paginationConfig = {},
-) => withDatesListFilterBar(
-	withEntityPagination( paginationConfig )( EditorDates )
+const withPaginatedDateEntitiesListWithFilterBar = (
+	paginationConfig = {}
+) => createHigherOrderComponent(
+	compose( [
+		withDateEntitiesListFilterBar,
+		withEntityPagination( paginationConfig ),
+	] ),
+	'withPaginatedDateEntitiesListWithFilterBar'
 );
 
-const PaginatedDatesListWithFilterBarAndState = (
-	EditorDates,
-	paginationConfig = {},
-) => withDatesListFilterState( withDatesListFilterBar(
-	withEntityPagination( paginationConfig )( EditorDates )
-) );
+const withPaginatedDateEntitiesListWithFilterBarAndState = (
+	paginationConfig = {}
+) => createHigherOrderComponent(
+	compose( [
+		withDatesListFilterState,
+		withDateEntitiesListFilterBar,
+		withEntityPagination( paginationConfig )
+	] ),
+	'withPaginatedDateEntitiesListWithFilterBarAndState'
+);
 
-export { getFilteredDatesList } from './with-dates-list-filter-bar';
+export { getFilteredDateEntitiesList } from './with-date-entities-list-filter-bar';
 export {
-	withDatesListFilterBar,
+	withDateEntitiesListFilterBar,
 	withDatesListFilterState,
-	PaginatedDatesListWithFilterBarAndState,
+	withPaginatedDateEntitiesListWithFilterBarAndState,
+	withPaginatedDateEntitiesListWithFilterBar,
 };
-export default PaginatedDatesListWithFilterBar;

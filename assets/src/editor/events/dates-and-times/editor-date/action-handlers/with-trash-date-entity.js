@@ -7,28 +7,28 @@ import { __ } from '@eventespresso/i18n';
 import { dateTimeModel } from '@eventespresso/model';
 import { isModelEntityOfModel } from '@eventespresso/validators';
 
-const withTrashEventDate = createHigherOrderComponent(
-	withDispatch( ( dispatch, { eventDate } ) => {
+const withTrashDateEntity = createHigherOrderComponent(
+	withDispatch( ( dispatch, { dateEntity } ) => {
 		const { MODEL_NAME: DATETIME } = dateTimeModel;
-		if ( ! isModelEntityOfModel( eventDate, DATETIME ) ) {
-			return { trashEventDate: () => null };
+		if ( ! isModelEntityOfModel( dateEntity, DATETIME ) ) {
+			return { trashDateEntity: () => null };
 		}
 		const { trashEntityById } = dispatch( 'eventespresso/core' );
-		const trashEventDate = () => {
+		const trashDateEntity = () => {
 			// eslint-disable-next-line no-alert
 			if ( ! window.confirm(
 				__(
-					'Are you sure you want to delete this Event Date?',
+					'Are you sure you want to delete this date?',
 					'event_espresso'
 				)
 			) ) {
 				return;
 			}
-			trashEntityById( DATETIME, eventDate.id );
+			trashEntityById( DATETIME, dateEntity.id );
 		};
-		return { trashEventDate };
+		return { trashDateEntity };
 	} ),
-	'withTrashEventDate'
+	'withTrashDateEntity'
 );
 
-export default withTrashEventDate;
+export default withTrashDateEntity;

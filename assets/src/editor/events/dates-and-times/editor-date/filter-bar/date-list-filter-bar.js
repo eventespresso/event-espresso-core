@@ -15,7 +15,7 @@ import { __ } from '@eventespresso/i18n';
  * @param {Function} onDisplayFilterChange
  * @return {Object} EditorDatesListView with added DateListFilters
  */
-class DatesListFilterBar extends Component {
+class DateListFilterBar extends Component {
 	static propTypes = {
 		showDates: PropTypes.string.isRequired,
 		sortDates: PropTypes.string.isRequired,
@@ -234,4 +234,4 @@ class DatesListFilterBar extends Component {
 	}
 }
 
-export default DatesListFilterBar;
+export default DateListFilterBar;

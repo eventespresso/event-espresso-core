@@ -1,3 +1,9 @@
-export { default as EditorDateDetails } from './editor-date-details';
-export { default as EditorDateGridItem } from './editor-date-grid-item';
-export { EditorDatesGridView } from './editor-dates-grid-view';
+export {
+	default as EditorDateEntityDetails,
+} from './editor-date-entity-details';
+export {
+	default as EditorDateEntityGridItem,
+} from './editor-date-entity-grid-item';
+export {
+	default as EditorDateEntitiesGridView,
+} from './editor-date-entities-grid-view';

@@ -8,8 +8,8 @@ import classNames from 'classnames';
 /**
  * Internal dependencies
  */
-import { EditorDateListItem } from './';
-import './editor-dates-list-view.css';
+import EditorDateEntityListItem from './editor-date-entity-list-item';
+import './editor-date-entities-list-view.css';
 
 /**
  * EditorDatesListView
@@ -21,7 +21,7 @@ import './editor-dates-list-view.css';
  * @param {mixed} otherProps
  * @return {Component} 			list of rendered Event Dates
  */
-const EditorDatesListView = ( {
+const EditorDateEntitiesListView = ( {
 	entities,
 	htmlClass,
 	...otherProps
@@ -62,11 +62,11 @@ const EditorDatesListView = ( {
 			</div>
 			{
 				entities.map(
-					function( eventDate ) {
-						return isModelEntityOfModel( eventDate, 'datetime' ) ? (
-							<EditorDateListItem
-								key={ eventDate.id }
-								eventDate={ eventDate }
+					function( dateEntity ) {
+						return isModelEntityOfModel( dateEntity, 'datetime' ) ? (
+							<EditorDateEntityListItem
+								key={ dateEntity.id }
+								dateEntity={ dateEntity }
 								{ ...otherProps }
 							/>
 						) : null;
@@ -77,4 +77,4 @@ const EditorDatesListView = ( {
 	);
 };
 
-export default EditorDatesListView;
+export default EditorDateEntitiesListView;
