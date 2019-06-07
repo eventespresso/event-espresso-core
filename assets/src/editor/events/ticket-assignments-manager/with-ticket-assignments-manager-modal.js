@@ -43,9 +43,9 @@ const WithTicketAssignmentsManagerModal = (
 
 			render() {
 				const {
-					eventDate,
-					allDates,
-					ticket,
+					dateEntity,
+					allDateEntities,
+					ticketEntity,
 					allTickets,
 				} = this.props;
 				return (
@@ -57,10 +57,10 @@ const WithTicketAssignmentsManagerModal = (
 						/>
 						<TicketAssignmentsManagerModal
 							modalProps={ modalPropsCallback( this.props ) }
-							date={ eventDate }
-							allDates={ allDates }
+							dateEntity={ dateEntity }
+							allDateEntities={ allDateEntities }
 							allTickets={ allTickets }
-							ticket={ ticket }
+							ticketEntity={ ticketEntity }
 							editorOpen={ this.state.showManager }
 							toggleEditor={ this.toggleManager }
 						/>

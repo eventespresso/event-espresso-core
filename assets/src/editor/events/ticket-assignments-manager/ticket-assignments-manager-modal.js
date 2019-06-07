@@ -26,7 +26,7 @@ import { isModelEntityOfModel } from '@eventespresso/validators';
  */
 import * as handler from './ticket-assignments-handler';
 import './ticket-assignments-manager.css';
-import { sortDatesList } from '../dates-and-times/editor-date/filter-bar/dates-list-filter-utils';
+import { sortDateEntitiesList } from '../dates-and-times/editor-date/filter-bar/date-entities-list-filter-utils';
 
 const noIndex = -1;
 
@@ -43,13 +43,13 @@ const { getBackgroundColorClass: getTicketBgColorClass } = ticketModel;
 class TicketAssignmentsManagerModal extends Component {
 	static propTypes = {
 		entities: PropTypes.arrayOf( PropTypes.object ).isRequired,
-		tickets: PropTypes.arrayOf( PropTypes.object ).isRequired,
-		eventDateTicketMap: PropTypes.object.isRequired,
-		addTickets: PropTypes.func.isRequired,
-		removeTickets: PropTypes.func.isRequired,
+		ticketEntities: PropTypes.arrayOf( PropTypes.object ).isRequired,
+		dateEntityTicketMap: PropTypes.object.isRequired,
+		addTicketEntities: PropTypes.func.isRequired,
+		removeTicketEntities: PropTypes.func.isRequired,
 		toggleEditor: PropTypes.func.isRequired,
-		allDates: PropTypes.arrayOf( PropTypes.object ),
-		allTickets: PropTypes.arrayOf( PropTypes.object ),
+		allDateEntities: PropTypes.arrayOf( PropTypes.object ),
+		allTicketEntities: PropTypes.arrayOf( PropTypes.object ),
 		pagination: PropTypes.object,
 		onUpdate: PropTypes.func,
 	};
@@ -93,9 +93,9 @@ class TicketAssignmentsManagerModal extends Component {
 		handler.processChanges(
 			this.props.entities,
 			this.state.assigned,
-			this.props.addTickets,
+			this.props.addTicketEntities,
 			this.state.removed,
-			this.props.removeTickets
+			this.props.removeTicketEntities
 		).then( ( updates ) => {
 			const wasUpdated = filter( updates, ( updated ) => {
 				return !! updated;
@@ -110,18 +110,18 @@ class TicketAssignmentsManagerModal extends Component {
 	 * adds ticket relation to date
 	 *
 	 * @function
-	 * @param {Object} date
-	 * @param {Object} ticket
+	 * @param {Object} dateEntity
+	 * @param {Object} ticketEntity
 	 */
-	assignTicket = ( date, ticket ) => {
+	assignTicketEntity = ( dateEntity, ticketEntity ) => {
 		if (
-			! isModelEntityOfModel( date, 'datetime' ) ||
-			! isModelEntityOfModel( ticket, 'ticket' )
+			! isModelEntityOfModel( dateEntity, 'datetime' ) ||
+			! isModelEntityOfModel( ticketEntity, 'ticket' )
 		) {
 			return;
 		}
 		this.setState( ( prevState ) => {
-			const newState = handler.assignTicket( prevState, date, ticket );
+			const newState = handler.assignTicketEntity( prevState, dateEntity, ticketEntity );
 			return { formError: '', ...newState };
 		} );
 	};
@@ -130,18 +130,18 @@ class TicketAssignmentsManagerModal extends Component {
 	 * removes ticket relation from date
 	 *
 	 * @function
-	 * @param {Object} date
-	 * @param {Object} ticket
+	 * @param {Object} dateEntity
+	 * @param {Object} ticketEntity
 	 */
-	removeTicket = ( date, ticket ) => {
+	removeTicketEntity = ( dateEntity, ticketEntity ) => {
 		if (
-			! isModelEntityOfModel( date, 'datetime' ) ||
-			! isModelEntityOfModel( ticket, 'ticket' )
+			! isModelEntityOfModel( dateEntity, 'datetime' ) ||
+			! isModelEntityOfModel( ticketEntity, 'ticket' )
 		) {
 			return;
 		}
 		this.setState( ( prevState ) => {
-			const newState = handler.removeTicket( prevState, date, ticket );
+			const newState = handler.removeTicketEntity( prevState, dateEntity, ticketEntity );
 			return { formError: '', ...newState };
 		} );
 	};
@@ -151,27 +151,27 @@ class TicketAssignmentsManagerModal extends Component {
 	 * and builds an object with those counts indexed by object ID
 	 *
 	 * @function
-	 * @param {Array} dates
-	 * @param {Array} tickets
-	 * @param {Object} eventDateTicketMap
+	 * @param {Array} dateEntities
+	 * @param {Array} ticketEntities
+	 * @param {Object} dateEntityTicketMap
 	 * @return {number} noAssignments
 	 */
-	countTicketAssignments = ( dates, tickets, eventDateTicketMap ) => {
+	countTicketAssignments = ( dateEntities, ticketEntities, dateEntityTicketMap ) => {
 		let dateTickets = [];
 		let ticketDateCount = 0;
 		let dateTicketCount = 0;
 		let noAssignments = 0;
-		dates.forEach( ( eventDate ) => {
+		dateEntities.forEach( ( eventDate ) => {
 			dateTicketCount = 0;
 			warning(
 				isModelEntityOfModel( eventDate, 'datetime' ),
 				'Invalid EE Date model object!'
 			);
-			dateTickets = eventDateTicketMap[ eventDate.id ] ?
-				eventDateTicketMap[ eventDate.id ] :
+			dateTickets = dateEntityTicketMap[ eventDate.id ] ?
+				dateEntityTicketMap[ eventDate.id ] :
 				[];
-			this.assignmentCounts.dates[ eventDate.id ] = dateTickets.length;
-			tickets.forEach( ( ticket ) => {
+			this.assignmentCounts.dateEntities[ eventDate.id ] = dateTickets.length;
+			ticketEntities.forEach( ( ticket ) => {
 				warning(
 					isModelEntityOfModel( ticket, 'ticket' ),
 					'Invalid EE' +
@@ -206,11 +206,11 @@ class TicketAssignmentsManagerModal extends Component {
 
 	/**
 	 * @function
-	 * @param {Array} tickets
+	 * @param {Array} ticketEntities
 	 * @param {number} dateCount
 	 * @return {Array} table header cell data
 	 */
-	ticketHeaders = ( tickets, dateCount ) => {
+	ticketHeaders = ( ticketEntities, dateCount ) => {
 		const headerCells = [
 			{
 				type: 'row',
@@ -227,7 +227,7 @@ class TicketAssignmentsManagerModal extends Component {
 				}
 			);
 		}
-		tickets.forEach( ( ticket ) => {
+		ticketEntities.forEach( ( ticket ) => {
 			warning(
 				isModelEntityOfModel( ticket, 'ticket' ),
 				'Invalid EE Ticket model object!'
@@ -268,21 +268,21 @@ class TicketAssignmentsManagerModal extends Component {
 
 	/**
 	 * @function
-	 * @param {Array} dates
-	 * @param {Array} tickets
-	 * @param {Object} eventDateTicketMap
+	 * @param {Array} dateEntities
+	 * @param {Array} ticketEntities
+	 * @param {Object} dateEntityTicketMap
 	 * @param {number} dateCount
 	 * @return {Array} array of row data objects
 	 */
 	dateRows = (
-		dates,
-		tickets,
-		eventDateTicketMap,
+		dateEntities,
+		ticketEntities,
+		dateEntityTicketMap,
 		dateCount,
 	) => {
 		let year = 0;
 		const dateRows = [];
-		dates.forEach(
+		dateEntities.forEach(
 			( eventDate ) => {
 				warning(
 					isModelEntityOfModel( eventDate, 'datetime' ),
@@ -294,7 +294,7 @@ class TicketAssignmentsManagerModal extends Component {
 				);
 				if ( dateCount > 1 && dateYear > year ) {
 					year = dateYear;
-					dateRows.push( this.yearRow( year, tickets ) );
+					dateRows.push( this.yearRow( year, ticketEntities ) );
 				}
 				const rowData = [
 					{
@@ -306,10 +306,10 @@ class TicketAssignmentsManagerModal extends Component {
 				if ( dateCount > 1 ) {
 					rowData.push( this.dateHeader( eventDate ) );
 				}
-				const eventDateTickets = eventDateTicketMap[ eventDate.id ] ?
-					eventDateTicketMap[ eventDate.id ] :
+				const eventDateTickets = dateEntityTicketMap[ eventDate.id ] ?
+					dateEntityTicketMap[ eventDate.id ] :
 					[];
-				tickets.forEach( ( ticket ) => {
+				ticketEntities.forEach( ( ticket ) => {
 					warning(
 						isModelEntityOfModel( ticket, 'ticket' ),
 						'Invalid EE Ticket model object!'
@@ -327,10 +327,10 @@ class TicketAssignmentsManagerModal extends Component {
 	/**
 	 * @function
 	 * @param {number} year
-	 * @param {Object} tickets
+	 * @param {Object} ticketEntities
 	 * @return {Object} rendered table row
 	 */
-	yearRow = ( year, tickets ) => {
+	yearRow = ( year, ticketEntities ) => {
 		const rowData = [
 			{
 				type: 'row',
@@ -343,7 +343,7 @@ class TicketAssignmentsManagerModal extends Component {
 				class: 'ee-tam-date-label',
 			},
 		];
-		tickets.forEach( () => {
+		ticketEntities.forEach( () => {
 			rowData.push(
 				{
 					type: 'cell',
@@ -365,24 +365,24 @@ class TicketAssignmentsManagerModal extends Component {
 
 	/**
 	 * @function
-	 * @param {Object} eventDate
+	 * @param {Object} dateEntity
 	 * @return {Object} rendered table cell
 	 */
-	dateHeader = ( eventDate ) => {
+	dateHeader = ( dateEntity ) => {
 		return {
 			type: 'cell',
 			class: 'ee-tam-date-label',
 			value: (
 				<div className="ee-tam-date-label-div">
 					<div className="ee-tam-date-id">
-						{ `#${ eventDate.id }` }
+						{ `#${ dateEntity.id }` }
 					</div>
 					<div className="ee-tam-date-label-text">
-						{ eventDate.name }
+						{ dateEntity.name }
 					</div>
 					<CalendarPageDate
-						startDate={ eventDate.start }
-						statusClass={ getDateBgColorClass( eventDate ) }
+						startDate={ dateEntity.start }
+						statusClass={ getDateBgColorClass( dateEntity ) }
 						size={ 'small' }
 					/>
 				</div>
@@ -392,20 +392,20 @@ class TicketAssignmentsManagerModal extends Component {
 
 	/**
 	 * @function
-	 * @param {Object} date
-	 * @param {Object} ticket
-	 * @param {Array} dateTickets
+	 * @param {Object} dateEntity
+	 * @param {Object} ticketEntity
+	 * @param {Array} dateTicketEntities
 	 * @return {Object} rendered table cell
 	 */
-	ticketCell = ( date, ticket, dateTickets ) => {
+	ticketCell = ( dateEntity, ticketEntity, dateTicketEntities ) => {
 		const assigned = { ...this.state.assigned };
 		const removed = { ...this.state.removed };
 		const {
 			totalTicketAssignmentsForDate,
 			totalDateAssignmentsForTicket,
 		} = this.calculateTotalAssignmentCounts(
-			date,
-			ticket,
+			dateEntity,
+			ticketEntity,
 			assigned,
 			removed
 		);
@@ -414,9 +414,9 @@ class TicketAssignmentsManagerModal extends Component {
 			isAssigned,
 			isRemoved,
 		} = this.determineCurrentAssignment(
-			date,
-			ticket,
-			dateTickets,
+			dateEntity,
+			ticketEntity,
+			dateTicketEntities,
 			assigned,
 			removed
 		);
@@ -455,13 +455,13 @@ class TicketAssignmentsManagerModal extends Component {
 					onClick={ ( event ) => {
 						event.preventDefault();
 						event.stopPropagation();
-						action( date, ticket );
+						action( dateEntity, ticketEntity );
 					} }
 					onKeyDown={ ( event ) => {
 						if ( event.keyCode === ENTER ) {
 							event.preventDefault();
 							event.stopPropagation();
-							action( date, ticket );
+							action( dateEntity, ticketEntity );
 						}
 					} }
 				/>
@@ -475,25 +475,23 @@ class TicketAssignmentsManagerModal extends Component {
 	 * as new ones queued for being added
 	 *
 	 * @function
-	 * @param {Object} date
-	 * @param {Object} ticket
+	 * @param {Object} dateEntity
+	 * @param {Object} ticketEntity
 	 * @param {Object} assigned
 	 * @param {Object} removed
 	 * @return {Object} JSON object with ticket and date assignment counts
 	 */
-	calculateTotalAssignmentCounts = ( date, ticket, assigned, removed ) => {
-		const ticketCountForDate = this.assignmentCounts.dates[ date.id ];
-		const dateCountForTicket = this.assignmentCounts.tickets[ ticket.id ];
-		const assignedTickets = handler.assignedCount( assigned, null, ticket );
-		const removedTickets = handler.removedCount( removed, null, ticket );
-		const assignedDates = handler.assignedCount( assigned, date );
-		const removedDates = handler.removedCount( removed, date );
+	calculateTotalAssignmentCounts = ( dateEntity, ticketEntity, assigned, removed ) => {
+		const ticketCountForDate = this.assignmentCounts.dates[ dateEntity.id ];
+		const dateCountForTicket = this.assignmentCounts.tickets[ ticketEntity.id ];
+		const assignedTickets = handler.assignedCount( assigned, null, ticketEntity );
+		const removedTickets = handler.removedCount( removed, null, ticketEntity );
+		const assignedDates = handler.assignedCount( assigned, dateEntity );
+		const removedDates = handler.removedCount( removed, dateEntity );
 		const totalTicketAssignmentsForDate = ticketCountForDate +
-			assignedDates -
-			removedDates;
+			assignedDates - removedDates;
 		const totalDateAssignmentsForTicket = dateCountForTicket +
-			assignedTickets -
-			removedTickets;
+			assignedTickets - removedTickets;
 		return {
 			totalTicketAssignmentsForDate,
 			totalDateAssignmentsForTicket,
@@ -504,35 +502,35 @@ class TicketAssignmentsManagerModal extends Component {
 	 *  supplied ticket, or is queued for removal, or has been assigned
 	 *
 	 * @function
-	 * @param {Object} date
-	 * @param {Object} ticket
-	 * @param {Array} dateTickets
+	 * @param {Object} dateEntity
+	 * @param {Object} ticketEntity
+	 * @param {Array} dateTicketEntities
 	 * @param {Object} assigned
 	 * @param {Object} removed
 	 * @return {Object} JSON object with hasTicket, isAssigned, isRemoved values
 	 */
 	determineCurrentAssignment = (
-		date,
-		ticket,
-		dateTickets,
+		dateEntity,
+		ticketEntity,
+		dateTicketEntities,
 		assigned,
 		removed
 	) => {
 		return {
 			hasTicket: findIndex(
-				dateTickets,
-				{ id: ticket.id }
+				dateTicketEntities,
+				{ id: ticketEntity.id }
 			) > noIndex,
 			isAssigned: handler.isAssigned(
 				assigned,
-				date,
-				ticket,
+				dateEntity,
+				ticketEntity,
 				true
 			) > noIndex,
 			isRemoved: handler.isRemoved(
 				removed,
-				date,
-				ticket,
+				dateEntity,
+				ticketEntity,
 				true
 			) > noIndex,
 		};
@@ -623,12 +621,12 @@ class TicketAssignmentsManagerModal extends Component {
 		totalDateAssignmentsForTicket
 	) => {
 		let action = currentlyAssigned && canRemoveAssignment ?
-			this.removeTicket :
-			this.assignTicket;
+			this.removeTicketEntity :
+			this.assignTicketEntity;
 		if (
 			currentlyAssigned &&
 			! canRemoveAssignment &&
-			action === this.assignTicket
+			action === this.assignTicketEntity
 		) {
 			const error = this.dateCount > 1 &&
 			totalDateAssignmentsForTicket === 1 ?
@@ -772,34 +770,34 @@ class TicketAssignmentsManagerModal extends Component {
 	render() {
 		const {
 			entities,
-			tickets,
-			allDates,
-			allTickets,
-			eventDateTicketMap,
+			ticketEntities,
+			allDateEntities,
+			allTicketEntities,
+			dateEntityTicketMap,
 			onUpdate,
 			resetRelationsMap,
 			pagination,
 		} = this.props;
-		const dates = entities;
+		const dateEntities = entities;
 		this.onUpdate = onUpdate;
 		this.resetRelationsMap = resetRelationsMap;
-		this.dateCount = dates.length;
-		this.ticketCount = tickets.length;
+		this.dateCount = dateEntities.length;
+		this.ticketCount = ticketEntities.length;
 		this.assignmentCounts = {
-			dates: {},
-			tickets: {},
+			dateEntities: {},
+			ticketEntities: {},
 		};
 		const noAssignments = this.countTicketAssignments(
-			allDates || dates,
-			allTickets || tickets,
-			eventDateTicketMap
+			allDateEntities || dateEntities,
+			allTicketEntities || ticketEntities,
+			dateEntityTicketMap
 		);
-		const dateCount = dates.length;
+		const dateCount = dateEntities.length;
 		let tableId = 'ee-ticket-assignments-manager-';
 		if ( dateCount === 1 ) {
-			tableId += dates[ 0 ].id;
+			tableId += dateEntities[ 0 ].id;
 		} else {
-			tableId += dateCount + '-' + tickets.length;
+			tableId += dateCount + '-' + ticketEntities.length;
 		}
 		return (
 			<FormWrapper>
@@ -807,13 +805,13 @@ class TicketAssignmentsManagerModal extends Component {
 					{ this.getFormError( noAssignments ) }
 					<ResponsiveTable
 						columns={
-							this.ticketHeaders( tickets, dateCount )
+							this.ticketHeaders( ticketEntities, dateCount )
 						}
 						rowData={
 							this.dateRows(
-								dates,
-								tickets,
-								eventDateTicketMap,
+								dateEntities,
+								ticketEntities,
+								dateEntityTicketMap,
 								dateCount
 							)
 						}
@@ -851,18 +849,18 @@ export default compose( [
 	withSelect( ( select, ownProps ) => {
 		const {
 			editorOpen,
-			date,
-			allDates,
-			ticket,
-			allTickets,
+			dateEntity,
+			allDateEntities,
+			ticketEntity,
+			allTicketEntities,
 			entities = [],
-			tickets = [],
+			ticketEntities = [],
 		} = ownProps;
 		let { initialized = false, loading } = ownProps;
 		let dtmProps = {
 			loading,
 			entities,
-			tickets,
+			ticketEntities,
 			notice: __(
 				'loading event date ticket assignments',
 				'event_espresso'
@@ -871,89 +869,89 @@ export default compose( [
 		if ( ! editorOpen || initialized ) {
 			return {};
 		}
-		if ( isModelEntityOfModel( date, 'datetime' ) ) {
+		if ( isModelEntityOfModel( dateEntity, 'datetime' ) ) {
 			dtmProps = {
-				entities: [ date ],
-				tickets: allTickets,
+				entities: [ dateEntity ],
+				ticketEntities: allTicketEntities,
 			};
 			initialized = true;
-		} else if ( isModelEntityOfModel( ticket, 'ticket' ) ) {
+		} else if ( isModelEntityOfModel( ticketEntity, 'ticket' ) ) {
 			dtmProps = {
-				entities: sortDatesList( allDates ),
-				tickets: [ ticket ],
+				entities: sortDateEntitiesList( allDateEntities ),
+				ticketEntities: [ ticketEntity ],
 			};
 			initialized = true;
-		} else if ( Array.isArray( allDates ) && Array.isArray( allTickets ) ) {
+		} else if ( Array.isArray( allDateEntities ) && Array.isArray( allTicketEntities ) ) {
 			dtmProps = {
-				entities: sortDatesList( allDates ),
-				tickets: allTickets,
+				entities: sortDateEntitiesList( allDateEntities ),
+				ticketEntities: allTicketEntities,
 			};
 			initialized = true;
 		}
 		const { getRelatedEntities } = select( 'eventespresso/core' );
 		const { hasFinishedResolution } = select( 'core/data' );
-		const eventDateTicketMap = {};
-		dtmProps.entities.forEach( ( dateEntity ) => {
-			if ( isModelEntityOfModel( dateEntity, 'datetime' ) ) {
-				const relatedTickets = getRelatedEntities( dateEntity, 'tickets' );
+		const dateEntityTicketMap = {};
+		dtmProps.entities.forEach( ( date ) => {
+			if ( isModelEntityOfModel( date, 'datetime' ) ) {
+				const relatedTickets = getRelatedEntities( date, 'tickets' );
 				const ticketRelationsResolved = hasFinishedResolution(
 					'eventespresso/core',
 					'getRelatedEntities',
-					[ dateEntity, 'tickets' ]
+					[ date, 'tickets' ]
 				);
 				if ( ticketRelationsResolved ) {
 					loading = false;
-					eventDateTicketMap[ dateEntity.id ] = uniq( relatedTickets );
+					dateEntityTicketMap[ date.id ] = uniq( relatedTickets );
 				}
 			}
 		} );
 		return {
 			...dtmProps,
 			loading,
-			eventDateTicketMap,
+			dateEntityTicketMap,
 			initialized,
 		};
 	} ),
 	withDispatch( ( dispatch ) => {
-		const addTickets = ( date, tickets ) => {
+		const addTicketEntities = ( dateEntity, ticketEntities ) => {
 			warning(
-				isModelEntityOfModel( date, 'datetime' ),
+				isModelEntityOfModel( dateEntity, 'datetime' ),
 				'date is not a BaseEntity of the datetime model.'
 			);
 			const { createRelations } = dispatch( 'eventespresso/core' );
 			return createRelations(
 				'datetime',
-				date.id,
-				'tickets',
-				tickets
+				dateEntity.id,
+				'ticket',
+				ticketEntities
 			);
 		};
-		const removeTickets = ( date, tickets ) => {
+		const removeTicketEntities = ( dateEntity, ticketEntities ) => {
 			warning(
-				isModelEntityOfModel( date, 'datetime' ),
+				isModelEntityOfModel( dateEntity, 'datetime' ),
 				'date is not a BaseEntity of the datetime model.'
 			);
 			const { removeRelationForEntity } = dispatch( 'eventespresso/core' );
 			const relationsRemoved = [];
-			if ( Array.isArray( tickets ) ) {
-				tickets.forEach( ( ticket ) => {
+			if ( Array.isArray( ticketEntities ) ) {
+				ticketEntities.forEach( ( ticketEntity ) => {
 					warning(
-						isModelEntityOfModel( ticket, 'ticket' ),
+						isModelEntityOfModel( ticketEntity, 'ticket' ),
 						'ticket is not a BaseEntity of the ticket model.'
 					);
 					relationsRemoved.push(
 						removeRelationForEntity(
 							'datetime',
-							date.id,
+							dateEntity.id,
 							'tickets',
-							ticket.id
+							ticketEntity.id
 						)
 					);
 				} );
 			}
 			return Promise.all( relationsRemoved );
 		};
-		return { addTickets, removeTickets };
+		return { addTicketEntities, removeTicketEntities };
 	} ),
 	withFormContainerAndPlaceholder,
 	withEntityPagination( {
