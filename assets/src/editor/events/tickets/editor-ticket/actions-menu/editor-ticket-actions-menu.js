@@ -16,9 +16,9 @@ import { isModelEntityOfModel } from '@eventespresso/validators';
 /**
  * Internal dependencies
  */
-import { withTicketDatetimes, withTicketPrices } from '../../data';
+import { withTicketDateEntities, withTicketPriceEntities } from '../../data';
 import withEditTicketFormModal from '../edit-form/with-edit-ticket-form-modal';
-import { withCopyTicket, withTrashTicket } from '../action-handlers';
+import { withCopyTicketEntity, withTrashTicketEntity } from '../action-handlers';
 import {
 	TicketPriceCalculatorMenuItem,
 	withTicketPriceCalculatorFormModal,
@@ -27,13 +27,13 @@ import { withTicketAssignmentsManagerModal } from '../../../ticket-assignments-m
 import './style.css';
 
 const EditTicketMenuItem = ( {
-	ticket,
+	ticketEntity,
 	toggleTicketEditor,
 } ) => {
 	return <IconMenuItem
 		index={ 1 }
 		tooltip={ __( 'edit ticket details', 'event_espresso' ) }
-		id={ `edit-ticket-${ ticket.id }` }
+		id={ `edit-ticket-${ ticketEntity.id }` }
 		htmlClass="edit-ticket"
 		dashicon="edit"
 		tooltipPosition="top right"
@@ -46,13 +46,13 @@ const EditTicketMenuItem = ( {
 // right now they are regenerated every time EditorTicketActionsMenu is re-rendered.
 
 const EditorTicketActionsMenu = ( {
-	ticket,
+	ticketEntity,
 	toggleTicketEditor,
-	ticketDatetimes = [],
-	datesLoaded = false,
+	dateEntities = [],
+	dateEntitiesLoaded = false,
 	noBasePrice = false,
-	copyTicket,
-	trashTicket,
+	copyTicketEntity,
+	trashTicketEntity,
 	toggleTicketAssignments,
 	toggleCalculator,
 	doRefresh,
@@ -62,27 +62,27 @@ const EditorTicketActionsMenu = ( {
 			<DropDownMenu
 				tooltip={ __( 'ticket main menu', 'event_espresso' ) }
 				tooltipPosition="top right"
-				htmlClass={ `editor-ticket-${ ticket.id }` }
+				htmlClass={ `editor-ticket-${ ticketEntity.id }` }
 				menuItems={ [
 					{
 						title: __( 'edit ticket', 'event_espresso' ),
 						icon: 'edit',
 						onClick: toggleTicketEditor,
-						ticket,
+						ticketEntity,
 					},
 					{
 						title: __( 'copy ticket', 'event_espresso' ),
 						icon: 'admin-page',
-						onClick: () => copyTicket(
-							ticket,
-							ticketDatetimes,
-							datesLoaded
+						onClick: () => copyTicketEntity(
+							ticketEntity,
+							dateEntities,
+							dateEntitiesLoaded
 						),
 					},
 					{
 						title: __( 'trash ticket', 'event_espresso' ),
 						icon: 'trash',
-						onClick: () => trashTicket( ticket ),
+						onClick: () => trashTicketEntity( ticketEntity ),
 					},
 				] }
 			/>
@@ -90,7 +90,7 @@ const EditorTicketActionsMenu = ( {
 	};
 
 	const assignDatesMenuItem = () => {
-		const tooltip = datesLoaded && isEmpty( ticketDatetimes ) ?
+		const tooltip = dateEntitiesLoaded && isEmpty( dateEntities ) ?
 			__(
 				'warning! no assigned ticket dates - click to fix',
 				'event_espresso'
@@ -100,12 +100,12 @@ const EditorTicketActionsMenu = ( {
 			<IconMenuItem
 				index={ 2 }
 				tooltip={ tooltip }
-				id={ `assign-ticket-dates-ticket-${ ticket.id }` }
+				id={ `assign-ticket-dates-ticket-${ ticketEntity.id }` }
 				htmlClass={ 'assign-ticket-dates' }
 				dashicon={ <EspressoIcon icon="calendar" /> }
 				tooltipPosition="top right"
 				onClick={ toggleTicketAssignments }
-				itemCount={ datesLoaded ? ticketDatetimes.length : null }
+				itemCount={ dateEntitiesLoaded ? dateEntities.length : null }
 			/>
 		);
 	};
@@ -117,7 +117,7 @@ const EditorTicketActionsMenu = ( {
 		);
 		sidebarMenuItems.push(
 			<EditTicketMenuItem
-				ticket={ ticket }
+				tickeEntity={ ticketEntity }
 				noBasePrice={ noBasePrice }
 				toggleTicketEditor={ toggleTicketEditor }
 				toggleCalculator={ toggleCalculator }
@@ -125,7 +125,7 @@ const EditorTicketActionsMenu = ( {
 			/>
 		);
 		sidebarMenuItems.push( <TicketPriceCalculatorMenuItem
-			ticket={ ticket }
+			ticketEntity={ ticketEntity }
 			noBasePrice={ noBasePrice }
 			doRefresh={ doRefresh }
 			toggleCalculator={ toggleCalculator }
@@ -138,7 +138,7 @@ const EditorTicketActionsMenu = ( {
 		return applyFilters(
 			'FHEE__EditorDates__EditorDateSidebar__SidebarMenuItems',
 			sidebarMenuItems,
-			ticket
+			ticketEntity
 		);
 	};
 
@@ -161,15 +161,15 @@ const EditorTicketActionsMenu = ( {
 		);
 	};
 
-	if ( ! isModelEntityOfModel( ticket, 'ticket' ) ) {
+	if ( ! isModelEntityOfModel( ticketEntity, 'ticket' ) ) {
 		return null;
 	}
 
 	const sidebarMenuItems = getSidebarMenuItems();
 
-	return ticket && ticket.id ? (
+	return ticketEntity && ticketEntity.id ? (
 		<div
-			id={ `ee-editor-ticket-actions-menu-${ ticket.id }` }
+			id={ `ee-editor-ticket-actions-menu-${ ticketEntity.id }` }
 			className={ 'ee-editor-ticket-actions-menu' }
 		>
 			{ sidebarMenu( sidebarMenuItems ) }
@@ -180,7 +180,7 @@ const EditorTicketActionsMenu = ( {
 export default compose( [
 	withTicketPriceCalculatorFormModal,
 	withEditTicketFormModal,
-	withTicketAssignmentsManagerModal( ( { ticket } ) => (
+	withTicketAssignmentsManagerModal( ( { ticketEntity } ) => (
 		{
 			title: sprintf(
 				_x(
@@ -188,13 +188,13 @@ export default compose( [
 					'Date Assignments for Ticket:  Ticket name',
 					'event_espresso'
 				),
-				ticket.name
+				ticketEntity.name
 			),
 			closeButtonLabel: null,
 		}
 	) ),
-	withTicketDatetimes,
-	withTicketPrices,
-	withCopyTicket,
-	withTrashTicket,
+	withTicketDateEntities,
+	withTicketPriceEntities,
+	withCopyTicketEntity,
+	withTrashTicketEntity,
 ] )( EditorTicketActionsMenu );
