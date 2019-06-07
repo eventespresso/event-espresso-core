@@ -9,18 +9,18 @@ import { createHigherOrderComponent } from '@wordpress/compose';
 
 const { confirm } = window;
 
-const DEFAULT_DISPATCH = { trashTicket: () => false };
+const DEFAULT_DISPATCH = { trashTicketEntity: () => false };
 
-const withTrashTicket = createHigherOrderComponent(
+const withTrashTicketEntity = createHigherOrderComponent(
 	withDispatch( (
 		dispatch,
-		{ ticket },
+		{ ticketEntity },
 	) => {
 		const { MODEL_NAME: TICKET } = ticketModel;
-		if ( ! isModelEntityOfModel( ticket, TICKET ) ) {
+		if ( ! isModelEntityOfModel( ticketEntity, TICKET ) ) {
 			return DEFAULT_DISPATCH;
 		}
-		const trashTicket = () => {
+		const trashTicketEntity = () => {
 			if ( ! confirm(
 				__(
 					'Are you sure you want to delete this ticket?',
@@ -30,11 +30,11 @@ const withTrashTicket = createHigherOrderComponent(
 				return DEFAULT_DISPATCH;
 			}
 			const { trashEntityById } = dispatch( 'eventespresso/core' );
-			trashEntityById( TICKET, ticket.id );
+			trashEntityById( TICKET, ticketEntity.id );
 		};
-		return { trashTicket };
+		return { trashTicketEntity };
 	} ),
-	'withTrashTicket'
+	'withTrashTicketEntity'
 );
 
-export default withTrashTicket;
+export default withTrashTicketEntity;

@@ -1,2 +1,2 @@
-export { default as withCopyTicket } from './with-copy-ticket';
-export { default as withTrashTicket } from './with-trash-ticket';
+export { default as withCopyTicketEntity } from './with-copy-ticket-entity';
+export { default as withTrashTicketEntity } from './with-trash-ticket-entity';

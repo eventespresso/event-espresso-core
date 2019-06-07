@@ -6,20 +6,20 @@ import { isModelEntityOfModel } from '@eventespresso/validators';
 import { createHigherOrderComponent } from '@wordpress/compose';
 import { ticketModel } from '@eventespresso/model';
 
-const DEFAULT_DISPATCH = { copyTicket: () => false };
+const DEFAULT_DISPATCH = { copyTicketEntity: () => false };
 
-const withCopyTicket = createHigherOrderComponent(
+const withCopyTicketEntity = createHigherOrderComponent(
 	withDispatch( (
 		dispatch,
 		{
-			ticket,
-			ticketDatetimes,
-			datesLoaded,
+			ticketEntity,
+			dateEntities,
+			dateEntitiesLoaded,
 		},
 		{ select }
 	) => {
 		const { MODEL_NAME: TICKET } = ticketModel;
-		if ( ! isModelEntityOfModel( ticket, TICKET ) ) {
+		if ( ! isModelEntityOfModel( ticketEntity, TICKET ) ) {
 			return DEFAULT_DISPATCH;
 		}
 		const {
@@ -27,20 +27,20 @@ const withCopyTicket = createHigherOrderComponent(
 			createRelations,
 		} = dispatch( 'eventespresso/core' );
 		const { getRelatedEntities } = select( 'eventespresso/core' );
-		const copyTicket = async () => {
-			const newTicket = await createEntity( TICKET, ticket.forClone );
-			if ( datesLoaded ) {
+		const copyTicketEntity = async () => {
+			const newTicket = await createEntity( TICKET, ticketEntity.forClone );
+			if ( dateEntitiesLoaded ) {
 				createRelations(
 					TICKET,
 					newTicket.id,
 					'datetimes',
-					ticketDatetimes
+					dateEntities
 				);
 			}
 			// @todo, this is not quite done because it needs to add the relations
 			// of the prices to the priceType.
 			// get related prices clone, and add.
-			const relatedPrices = getRelatedEntities( ticket, 'prices' );
+			const relatedPrices = getRelatedEntities( ticketEntity, 'prices' );
 			if ( relatedPrices ) {
 				const newPrices = [];
 				for ( let i = 0; i < relatedPrices.length; i++ ) {
@@ -58,9 +58,9 @@ const withCopyTicket = createHigherOrderComponent(
 				);
 			}
 		};
-		return { copyTicket };
+		return { copyTicketEntity };
 	} ),
-	'withCopyTicket'
+	'withCopyTicketEntity'
 );
 
-export default withCopyTicket;
+export default withCopyTicketEntity;
