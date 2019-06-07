@@ -8,10 +8,10 @@ import { createHigherOrderComponent } from '@wordpress/compose';
 const EMPTY_OBJECT = {};
 
 /**
- * withEventDatetimes
+ * withEventDateEntities
  * returns an object containing the following:
- *    eventDates - an array of datetime entities for the supplied event
- *    eventDatesLoaded - boolean true if loading is complete
+ *    dateEntities - an array of datetime entities for the supplied event
+ *    dateEntitiesLoaded - boolean true if loading is complete
  *
  * !!! IMPORTANT !!!
  * ONLY USE THIS AFTER THE CALL TO hasFinishedResolution() in the
@@ -19,24 +19,29 @@ const EMPTY_OBJECT = {};
  *
  * @function
  */
-export const withEventDatetimes = createHigherOrderComponent(
+const withEventDateEntities = createHigherOrderComponent(
 	withSelect(
-		( select, { event, eventLoaded } ) => {
-			if ( eventLoaded && isModelEntityOfModel( event, 'event' ) ) {
+		( select, { eventEntity, eventEntityLoaded} ) => {
+			if (
+				eventEntityLoaded &&
+				isModelEntityOfModel( eventEntity, 'event' )
+			) {
 				const { getRelatedEntities } = select( 'eventespresso/core' );
 				const { hasFinishedResolution } = select( 'core/data' );
-				const eventDates = getRelatedEntities( event, 'datetimes' );
-				const eventDatesLoaded = hasFinishedResolution(
+				const dateEntities = getRelatedEntities( eventEntity, 'datetimes' );
+				const dateEntitiesLoaded = hasFinishedResolution(
 					'eventespresso/core',
 					'getRelatedEntities',
-					[ event, 'datetimes' ]
+					[ eventEntity, 'datetimes' ]
 				);
-				if ( eventDatesLoaded ) {
-					return { eventDates, eventDatesLoaded };
+				if ( dateEntitiesLoaded ) {
+					return { dateEntities, dateEntitiesLoaded };
 				}
 			}
 			return EMPTY_OBJECT;
 		}
 	),
-	'withEventDatetimes'
+	'withEventDateEntities'
 );
+
+export default withEventDateEntities;

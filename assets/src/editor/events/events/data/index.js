@@ -1,2 +1,2 @@
-export { withEvent } from './with-event';
-export { withEventDatetimes } from './with-event-datetimes';
+export { default as withEventEntity } from './with-event-entity';
+export { default as withEventDateEntities } from './with-event-date-entities';

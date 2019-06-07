@@ -8,31 +8,36 @@ import { createHigherOrderComponent } from '@wordpress/compose';
 const EMPTY_OBJECT = {};
 
 /**
- * withEvent
+ * withEventEntity
  * returns an object containing the following:
  *    event - the event entity for the supplied eventId
  *    eventLoaded - boolean true if loading is complete
  *
  * @function
  */
-export const withEvent = createHigherOrderComponent(
+const withEventEntity = createHigherOrderComponent(
 	withSelect(
 		( select, { eventId } ) => {
 			if ( eventId ) {
 				const { getEventById } = select( 'eventespresso/core' );
 				const { hasFinishedResolution } = select( 'core/data' );
-				const event = getEventById( eventId );
-				const eventLoaded = hasFinishedResolution(
+				const eventEntity = getEventById( eventId );
+				const eventEntityLoaded = hasFinishedResolution(
 					'eventespresso/core',
 					'getEventById',
 					[ eventId ]
 				);
-				if ( eventLoaded && isModelEntityOfModel( event, 'event' ) ) {
-					return { event, eventLoaded };
+				if (
+					eventEntityLoaded &&
+					isModelEntityOfModel( eventEntity, 'event' )
+				) {
+					return { eventEntity, eventEntityLoaded };
 				}
 			}
 			return EMPTY_OBJECT;
 		}
 	),
-	'withEvent'
+	'withEventEntity'
 );
+
+export default withEventEntity;
