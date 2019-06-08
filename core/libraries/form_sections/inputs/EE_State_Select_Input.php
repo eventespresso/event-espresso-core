@@ -34,9 +34,9 @@ class EE_State_Select_Input extends EE_Select_Input
      */
     public function __construct($state_options, $input_settings = array())
     {
-        if(isset($input_settings['value_field_name'])){
+        if (isset($input_settings['value_field_name'])) {
             $this->valueFieldName = $input_settings['value_field_name'];
-            if(! EEM_State::instance()->has_field((string)$this->valueFieldName())) {
+            if (! EEM_State::instance()->has_field((string) $this->valueFieldName())) {
                 throw new InvalidArgumentException(
                     sprintf(
                         esc_html__('An invalid state field "%1$s" was specified for the state input\'s option values.', 'event_espresso'),
