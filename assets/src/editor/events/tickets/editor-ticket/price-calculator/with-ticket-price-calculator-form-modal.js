@@ -11,8 +11,8 @@ import { useState, useEffect, useCallback, Fragment } from '@wordpress/element';
 /**
  * Internal dependencies
  */
-import { withTicketPrices } from '../../data/with-ticket-prices';
-import { withPriceTypes } from '../../data/with-price-types';
+import { withTicketPriceEntities } from '../../data/with-ticket-price-entities';
+import { withPriceTypeEntities } from '../../data/with-price-type-entities';
 import useTicketPriceCalculatorFormDecorator from './use-ticket-price-calculator-form-decorator';
 import {
 	TicketPriceCalculatorForm,
@@ -31,11 +31,11 @@ const TicketPriceCalculatorFormModal = withEditorModal( {
 		'event_espresso'
 	),
 } )( ( {
-	ticket,
-	prices,
-	pricesLoaded,
-	priceTypes,
-	priceTypesLoaded,
+	ticketEntity,
+	priceEntities,
+	priceEntitiesLoaded,
+	priceTypeEntities,
+	priceTypeEntitiesLoaded,
 	...extraProps
 } ) => {
 	const {
@@ -44,30 +44,30 @@ const TicketPriceCalculatorFormModal = withEditorModal( {
 		setMutatorCallbacks,
 		mutators,
 	} = useTicketPriceCalculatorFormDecorator(
-		priceTypes,
-		priceTypesLoaded
+		priceTypeEntities,
+		priceTypeEntitiesLoaded
 	);
 	const [ formData, setFormData ] = useState( {} );
 	const [ reverseCalculate, setReverseCalculate ] = useState( false );
 
 	useEffect( () => {
 		const newFormData = ticketPriceCalculatorFormDataMap(
-			ticket,
-			prices,
+			ticketEntity,
+			priceEntities,
 			reverseCalculate
 		);
 		const totals = calculateTicketPrices( newFormData );
 		setFormData( { ...newFormData, ...totals } );
-	}, [ ticket, prices, reverseCalculate, calculateTicketPrices ] );
+	}, [ ticketEntity, priceEntities, reverseCalculate, calculateTicketPrices ] );
 
-	const loading = ! ( pricesLoaded && priceTypesLoaded );
+	const loading = ! ( priceEntitiesLoaded && priceTypeEntitiesLoaded );
 	const formProps = loading ?
 		{ loading } :
 		{
 			loading,
-			ticket,
-			prices,
-			priceTypes,
+			ticketEntity,
+			priceEntities,
+			priceTypeEntities,
 			formData,
 		};
 
@@ -101,13 +101,13 @@ const TicketPriceCalculatorFormModal = withEditorModal( {
  * withSelectTicketPricesAndPriceTypes
  */
 export default createHigherOrderComponent( compose( [
-	withPriceTypes,
-	withTicketPrices,
+	withPriceTypeEntities,
+	withTicketPriceEntities,
 	withState( { formChanges: false } ),
 	withDispatch( ( dispatch, ownProps ) => {
 		const {
 			setState,
-			prices,
+			priceEntities,
 		} = ownProps;
 		const {
 			createEntity,
@@ -115,20 +115,20 @@ export default createHigherOrderComponent( compose( [
 			removeRelationForEntity,
 			trashEntityById,
 		} = dispatch( 'eventespresso/core' );
-		const addPriceModifier = async ( ticket ) => {
-			if ( ! isModelEntityOfModel( ticket, 'ticket' ) ) {
+		const addPriceModifier = async ( ticketEntity ) => {
+			if ( ! isModelEntityOfModel( ticketEntity, 'ticket' ) ) {
 				return;
 			}
 			const priceModifier = await createEntity(
 				'price',
-				{ PRC_order: prices.length + 1 }
+				{ PRC_order: priceEntities.length + 1 }
 			);
 			if ( isModelEntityOfModel( priceModifier, 'price' ) ) {
-				createRelation( 'ticket', ticket.id, 'price', priceModifier );
+				createRelation( 'ticket', ticketEntity.id, 'price', priceModifier );
 				setState( { formChanges: true } );
 			}
 		};
-		const trashPriceModifier = async ( priceModifier, ticket ) => {
+		const trashPriceModifier = async ( priceModifier, ticketEntity ) => {
 			if ( ! isModelEntityOfModel( priceModifier, 'price' ) ) {
 				Error(
 					__(
@@ -139,7 +139,7 @@ export default createHigherOrderComponent( compose( [
 				);
 				return;
 			}
-			if ( ! isModelEntityOfModel( ticket, 'ticket' ) ) {
+			if ( ! isModelEntityOfModel( ticketEntity, 'ticket' ) ) {
 				Error(
 					__(
 						'Unable to perform deletion because an invalid Ticket' +
@@ -151,7 +151,7 @@ export default createHigherOrderComponent( compose( [
 			}
 			removeRelationForEntity(
 				'ticket',
-				ticket.id,
+				ticketEntity.id,
 				'price',
 				priceModifier.id
 			);

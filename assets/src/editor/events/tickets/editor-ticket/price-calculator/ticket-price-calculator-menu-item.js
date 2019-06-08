@@ -13,7 +13,7 @@ import { useCallback } from '@wordpress/element';
 import withTicketPriceCalculatorFormModal from './with-ticket-price-calculator-form-modal';
 
 export const TicketPriceCalculatorMenuItem = ( {
-	ticket,
+	ticketEntity,
 	toggleCalculator = () => null,
 	onOpenTicketCalculator = () => null,
 	onCloseTicketCalculator = () => null,
@@ -34,11 +34,11 @@ export const TicketPriceCalculatorMenuItem = ( {
 	const tooltip = noBasePrice ?
 		__( 'warning! no ticket price set - click to fix', 'event_espresso' ) :
 		__( 'ticket price calculator', 'event_espresso' );
-	return isModelEntityOfModel( ticket, 'ticket' ) ? (
+	return isModelEntityOfModel( ticketEntity, 'ticket' ) ? (
 		<IconMenuItem
 			index={ 2 }
 			tooltip={ tooltip }
-			id={ `calculate-ticket-price-ticket-${ ticket.id }` }
+			id={ `calculate-ticket-price-ticket-${ ticketEntity.id }` }
 			htmlClass={ 'calculate-tickets-price' }
 			dashicon={ <EspressoIcon icon="calculator" /> }
 			tooltipPosition="top right"
