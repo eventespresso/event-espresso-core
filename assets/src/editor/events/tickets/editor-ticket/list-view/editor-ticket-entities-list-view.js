@@ -6,8 +6,8 @@ import { __ } from '@eventespresso/i18n';
 /**
  * Internal dependencies
  */
-import { EditorTicketListItem } from './';
-import './editor-tickets-list-view.css';
+import EditorTicketEntityListItem from './editor-ticket-entity-list-item';
+import './editor-ticket-entities-list-view.css';
 
 /**
  * EditorTicketsListView
@@ -19,7 +19,7 @@ import './editor-tickets-list-view.css';
  * @param {mixed} otherProps
  * @return {Component} 			list of rendered Event Dates
  */
-const EditorTicketsListView = ( {
+const EditorTicketEntitiesListView = ( {
 	entities,
 	htmlClass,
 	...otherProps
@@ -62,11 +62,11 @@ const EditorTicketsListView = ( {
 			</div>
 			{
 				entities.map(
-					function( ticket ) {
+					function( ticketEntity ) {
 						return (
-							<EditorTicketListItem
-								key={ ticket.id }
-								ticket={ ticket }
+							<EditorTicketEntityListItem
+								key={ ticketEntity.id }
+								ticketEntity={ ticketEntity }
 								{ ...otherProps }
 							/>
 						);
@@ -77,4 +77,4 @@ const EditorTicketsListView = ( {
 	);
 };
 
-export default EditorTicketsListView;
+export default EditorTicketEntitiesListView;

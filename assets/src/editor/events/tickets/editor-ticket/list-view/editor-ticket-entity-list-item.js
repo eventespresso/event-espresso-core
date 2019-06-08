@@ -20,14 +20,14 @@ const { MODEL_NAME: TICKET, getBackgroundColorClass } = ticketModel;
  * @param {Object} ticket    JSON object defining the Ticket
  * @return {string}        The ticket rendered as a block
  */
-class EditorTicketListItem extends Component {
+class EditorTicketEntityListItem extends Component {
 	/**
 	 * @function
-	 * @param {Object} ticket
+	 * @param {Object} ticketEntity
 	 * @return {string} ticket status
 	 */
-	getTicketStatusClass = ( ticket ) => {
-		switch ( ticket.status ) {
+	getTicketStatusClass = ( ticketEntity ) => {
+		switch ( ticketEntity.status ) {
 			case 'TKS' :
 				return 'ee-ticket-status-sold-out';
 			case 'TKE' :
@@ -43,22 +43,22 @@ class EditorTicketListItem extends Component {
 
 	render() {
 		const {
-			ticket,
-			allDates,
-			eventDateTicketMap,
+			ticketEntity,
+			allDateEntities,
+			dateTicketEntityMap,
 			doRefresh,
 		} = this.props;
-		if ( ! isModelEntityOfModel( ticket, TICKET ) ) {
+		if ( ! isModelEntityOfModel( ticketEntity, TICKET ) ) {
 			return null;
 		}
-		const statusClass = this.getTicketStatusClass( ticket );
-		const bgClass = getBackgroundColorClass( ticket );
-		const qty = ticket.qty === 'INF' || ticket.qty === Infinity ?
+		const statusClass = this.getTicketStatusClass( ticketEntity );
+		const bgClass = getBackgroundColorClass( ticketEntity );
+		const qty = ticketEntity.qty === 'INF' || ticketEntity.qty === Infinity ?
 			( <span className={ 'ee-infinity-sign' }>&infin;</span> ) :
-			ticket.qty;
+			ticketEntity.qty;
 
 		return (
-			<div id={ `ee-editor-ticket-list-view-div-${ ticket.id }` }
+			<div id={ `ee-editor-ticket-list-view-div-${ ticketEntity.id }` }
 				className={ `ee-editor-ticket-list-view-div ${ statusClass }` }
 			>
 				<div className="ee-editor-ticket-list-items">
@@ -67,7 +67,7 @@ class EditorTicketListItem extends Component {
 							{ __( 'Name:', 'event_espresso' ) }
 						</span>
 						<span className="ee-ticket-list-item-value">
-							{ ticket.name }
+							{ ticketEntity.name }
 						</span>
 					</div>
 					<div className="ee-ticket-list-item">
@@ -75,7 +75,7 @@ class EditorTicketListItem extends Component {
 							{ __( 'ID:', 'event_espresso' ) }
 						</span>
 						<span className="ee-ticket-list-item-value">
-							{ ticket.id }
+							{ ticketEntity.id }
 						</span>
 					</div>
 					<div className="ee-ticket-list-item">
@@ -83,7 +83,7 @@ class EditorTicketListItem extends Component {
 							{ __( 'Name:', 'event_espresso' ) }
 						</span>
 						<span className="ee-ticket-list-item-value">
-							{ ticket.name }
+							{ ticketEntity.name }
 						</span>
 					</div>
 					<div className="ee-ticket-list-item">
@@ -91,7 +91,7 @@ class EditorTicketListItem extends Component {
 							{ __( 'Start Date:', 'event_espresso' ) }
 						</span>
 						<span className="ee-ticket-list-item-value">
-							{ ticket.startDate.toFormat( 'ddd MMM YY h:mm a' ) }
+							{ ticketEntity.startDate.toFormat( 'ddd MMM YY h:mm a' ) }
 						</span>
 					</div>
 					<div className="ee-ticket-list-item">
@@ -99,7 +99,7 @@ class EditorTicketListItem extends Component {
 							{ __( 'End Date:', 'event_espresso' ) }
 						</span>
 						<span className="ee-ticket-list-item-value">
-							{ ticket.endDate.toFormat( 'ddd MMM YY h:mm a' ) }
+							{ ticketEntity.endDate.toFormat( 'ddd MMM YY h:mm a' ) }
 						</span>
 					</div>
 					<div className="ee-ticket-list-item">
@@ -107,7 +107,7 @@ class EditorTicketListItem extends Component {
 							{ __( 'Sold:', 'event_espresso' ) }
 						</span>
 						<span className="ee-ticket-list-item-value">
-							{ ticket.sold }
+							{ ticketEntity.sold }
 						</span>
 					</div>
 					<div className="ee-ticket-list-item">
@@ -115,7 +115,7 @@ class EditorTicketListItem extends Component {
 							{ __( 'Reserved:', 'event_espresso' ) }
 						</span>
 						<span className="ee-ticket-list-item-value">
-							{ ticket.reserved }
+							{ ticketEntity.reserved }
 						</span>
 					</div>
 					<div className="ee-ticket-list-item">
@@ -131,7 +131,7 @@ class EditorTicketListItem extends Component {
 							{ __( 'Registrants:', 'event_espresso' ) }
 						</span>
 						<span className="ee-ticket-list-item-value">
-							{ ticket.regCount }
+							{ ticketEntity.regCount }
 						</span>
 					</div>
 					<div className="ee-ticket-list-item">
@@ -139,9 +139,9 @@ class EditorTicketListItem extends Component {
 							{ __( 'Actions:', 'event_espresso' ) }
 						</span>
 						<EditorTicketActionsMenu
-							ticket={ ticket }
-							allDates={ allDates }
-							eventDateTicketMap={ eventDateTicketMap }
+							ticketEntity={ ticketEntity }
+							allDateEntities={ allDateEntities }
+							dateTicketEntityMap={ dateTicketEntityMap }
 							doRefresh={ doRefresh }
 						/>
 					</div>
@@ -160,4 +160,4 @@ export default (
 		};
 		return <WrappedComponent { ...props } doRefresh={ refresher } />;
 	}
-)( EditorTicketListItem );
+)( EditorTicketEntityListItem );

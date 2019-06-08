@@ -1,2 +1,2 @@
-export { default as EditorTicketListItem } from './editor-ticket-list-item';
-export { default as EditorTicketsListView } from './editor-tickets-list-view';
+export { default as EditorTicketEntityListItem } from './editor-ticket-entity-list-item';
+export { default as EditorTicketEntitiesListView } from './editor-ticket-entities-list-view';
