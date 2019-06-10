@@ -152,18 +152,10 @@ abstract class BlockAssetManager extends AssetManager implements BlockAssetManag
      */
     public function addEditorScript($handle, array $dependencies = array())
     {
-        if($this->assets->hasJavascriptAsset($handle)){
+        if ($this->assets->hasJavascriptAsset($handle)){
             return $this->assets->getJavascriptAsset($handle);
         }
-        return parent::addJavascript(
-            $handle,
-            $this->registry->getJsUrl(
-                $this->domain->assetNamespace(),
-                $handle
-            ),
-            $this->addDefaultBlockScriptDependencies($dependencies)
-        )
-        ->setRequiresTranslation();
+        return $this->addJs($handle, $dependencies)->setRequiresTranslation();
     }
 
 
@@ -181,14 +173,7 @@ abstract class BlockAssetManager extends AssetManager implements BlockAssetManag
         if ($this->assets->hasStylesheetAsset($handle)) {
             return $this->assets->getStylesheetAsset($handle);
         }
-        return parent::addStylesheet(
-            $handle,
-            $this->registry->getCssUrl(
-                $this->domain->assetNamespace(),
-                $handle
-            ),
-            $this->addDefaultBlockStyleDependencies($dependencies)
-        );
+        return $this->addCss($handle, $dependencies);
     }
 
 
@@ -206,15 +191,7 @@ abstract class BlockAssetManager extends AssetManager implements BlockAssetManag
         if ($this->assets->hasJavascriptAsset($handle)) {
             return $this->assets->getJavascriptAsset($handle);
         }
-        return parent::addJavascript(
-            $handle,
-            $this->registry->getJsUrl(
-                $this->domain->assetNamespace(),
-                $handle
-            ),
-            $dependencies + array( CoreAssetManager::JS_HANDLE_COMPONENTS )
-        )
-        ->setRequiresTranslation();
+        return $this->addJs($handle, $dependencies)->setRequiresTranslation();
     }
 
 
@@ -232,45 +209,7 @@ abstract class BlockAssetManager extends AssetManager implements BlockAssetManag
         if ($this->assets->hasStylesheetAsset($handle)) {
             return $this->assets->getStylesheetAsset($handle);
         }
-        return parent::addStylesheet(
-            $handle,
-            $this->registry->getCssUrl(
-                $this->domain->assetNamespace(),
-                $handle
-            ),
-            $dependencies + array( CoreAssetManager::CSS_HANDLE_COMPONENTS )
-        );
-    }
-
-
-    /**
-     * @param array $dependencies
-     * @return array
-     */
-    protected function addDefaultBlockScriptDependencies(array $dependencies)
-    {
-        $dependencies += array(
-                'wp-blocks',    // Provides useful functions and components for extending the editor
-                'wp-i18n',      // Provides localization functions
-                'wp-element',   // Provides React.Component
-                'wp-components', // Provides many prebuilt components and controls
-                CoreAssetManager::JS_HANDLE_EDITOR_HOCS,
-                $this->getScriptHandle(),
-            );
-        return $dependencies;
-    }
-
-
-    /**
-     * @param array $dependencies
-     * @return array
-     */
-    protected function addDefaultBlockStyleDependencies(array $dependencies)
-    {
-        $dependencies += array(
-            $this->getStyleHandle()
-        );
-        return $dependencies;
+        return $this->addCss($handle, $dependencies);
     }
 
 
