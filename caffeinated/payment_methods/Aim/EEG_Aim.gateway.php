@@ -1,5 +1,6 @@
 <?php
 
+use EventEspresso\core\services\formatters\AsciiOnly;
 use EventEspresso\core\services\loaders\LoaderFactory;
 
 /**
@@ -197,7 +198,7 @@ class EEG_Aim extends EE_Onsite_Gateway
         $item_num = 1;
         $transaction = $payment->transaction();
         $gateway_formatter = $this->_get_gateway_formatter();
-        $order_description = $gateway_formatter->formatOrderDescription($payment);
+        $order_description = $this->prepareStringForAuthnet($gateway_formatter->formatOrderDescription($payment));
         $primary_registrant = $transaction->primary_registration();
         // if we're are charging for the full amount, show the normal line items
         // and the itemized total adds up properly
@@ -215,7 +216,7 @@ class EEG_Aim extends EE_Onsite_Gateway
                     $line_item->unit_price(),
                     'N'
                 );
-                $order_description .= str_replace('\'', '', $line_item->desc() . ', ');
+                $order_description .= $this->prepareStringForAuthnet($line_item->desc()) . ', ';
             }
             foreach ($total_line_item->tax_descendants() as $tax_line_item) {
                 $this->addLineItem(
@@ -329,8 +330,8 @@ class EEG_Aim extends EE_Onsite_Gateway
     {
         $args = array(
             substr($item_id, 0, 31),
-            substr(str_replace('\'', '', $item_name), 0, 31),
-            substr(str_replace('\'', '', $item_description), 0, 255),
+            substr($this->prepareStringForAuthnet($item_name), 0, 31),
+            substr($this->prepareStringForAuthnet($item_description), 0, 255),
             number_format(abs($item_quantity), 2, '.', ''),
             number_format(abs($item_unit_price), 2, '.', ''),
             $item_taxable === 'N' ? 'N' : 'Y'
@@ -445,6 +446,21 @@ class EEG_Aim extends EE_Onsite_Gateway
         $response_obj->account_number = '';
         $this->log(array('AIM Response received:' => (array) $response_obj), $payment);
         return $response_obj;
+    }
+
+    /**
+     * Removes characters Authorize.net doesn't handle well.
+     * @since $VID:$
+     * @param $text
+     * @return string
+     */
+    private function prepareStringForAuthnet($text)
+    {
+        return str_replace(
+            ['\''],
+            [''],
+            $text
+        );
     }
 }
 
