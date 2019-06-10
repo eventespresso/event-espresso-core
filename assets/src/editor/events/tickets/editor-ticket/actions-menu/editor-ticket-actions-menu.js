@@ -16,7 +16,7 @@ import { isModelEntityOfModel } from '@eventespresso/validators';
 /**
  * Internal dependencies
  */
-import { withTicketDateEntities, withTicketPriceEntities } from '../../data';
+import { withTicketDateEntities } from '../../data';
 import withEditTicketEntityFormModal from '../edit-form/with-edit-ticket-entity-form-modal';
 import { withCopyTicketEntity, withTrashTicketEntity } from '../action-handlers';
 import {
