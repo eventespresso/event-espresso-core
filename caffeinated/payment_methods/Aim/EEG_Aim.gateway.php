@@ -215,7 +215,7 @@ class EEG_Aim extends EE_Onsite_Gateway
                     $line_item->unit_price(),
                     'N'
                 );
-                $order_description .= $line_item->desc().', ';
+                $order_description .= str_replace('\'', '', $line_item->desc() . ', ');
             }
             foreach ($total_line_item->tax_descendants() as $tax_line_item) {
                 $this->addLineItem(
@@ -329,8 +329,8 @@ class EEG_Aim extends EE_Onsite_Gateway
     {
         $args = array(
             substr($item_id, 0, 31),
-            substr($item_name, 0, 31),
-            substr($item_description, 0, 255),
+            substr(str_replace('\'', '', $item_name), 0, 31),
+            substr(str_replace('\'', '', $item_description), 0, 255),
             number_format(abs($item_quantity), 2, '.', ''),
             number_format(abs($item_unit_price), 2, '.', ''),
             $item_taxable === 'N' ? 'N' : 'Y'
