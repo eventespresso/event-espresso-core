@@ -457,8 +457,8 @@ class EEG_Aim extends EE_Onsite_Gateway
     private function prepareStringForAuthnet($text)
     {
         return str_replace(
-            ['\''],
-            [''],
+            '\'',
+            '',
             $text
         );
     }
