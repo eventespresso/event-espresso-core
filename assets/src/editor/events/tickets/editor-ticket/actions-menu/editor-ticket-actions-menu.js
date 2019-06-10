@@ -17,7 +17,7 @@ import { isModelEntityOfModel } from '@eventespresso/validators';
  * Internal dependencies
  */
 import { withTicketDateEntities, withTicketPriceEntities } from '../../data';
-import withEditTicketFormModal from '../edit-form/with-edit-ticket-form-modal';
+import withEditTicketEntityFormModal from '../edit-form/with-edit-ticket-entity-form-modal';
 import { withCopyTicketEntity, withTrashTicketEntity } from '../action-handlers';
 import {
 	TicketPriceCalculatorMenuItem,
@@ -117,7 +117,7 @@ const EditorTicketActionsMenu = ( {
 		);
 		sidebarMenuItems.push(
 			<EditTicketMenuItem
-				tickeEntity={ ticketEntity }
+				ticketEntity={ ticketEntity }
 				noBasePrice={ noBasePrice }
 				toggleTicketEditor={ toggleTicketEditor }
 				toggleCalculator={ toggleCalculator }
@@ -179,7 +179,7 @@ const EditorTicketActionsMenu = ( {
 
 export default compose( [
 	withTicketPriceCalculatorFormModal,
-	withEditTicketFormModal,
+	withEditTicketEntityFormModal,
 	withTicketAssignmentsManagerModal( ( { ticketEntity } ) => (
 		{
 			title: sprintf(
@@ -194,7 +194,6 @@ export default compose( [
 		}
 	) ),
 	withTicketDateEntities,
-	withTicketPriceEntities,
 	withCopyTicketEntity,
 	withTrashTicketEntity,
 ] )( EditorTicketActionsMenu );

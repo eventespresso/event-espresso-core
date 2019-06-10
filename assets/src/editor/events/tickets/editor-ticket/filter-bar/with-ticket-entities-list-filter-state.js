@@ -17,7 +17,7 @@ export default createHigherOrderComponent(
 		withSelect( ( select, ownProps ) => {
 			const {
 				showTickets = 'on-sale-and-pending',
-				sortTickets = 'chronologically',
+				ticketsSortedBy = 'chronologically',
 				displayTicketDate = 'start',
 				isChained = true,
 				searchTicketName = '',
@@ -31,10 +31,10 @@ export default createHigherOrderComponent(
 					'showTickets',
 					showTickets
 				),
-				sortTickets: store.getFilter(
+				ticketsSortedBy: store.getFilter(
 					'event-editor-ticket-list',
-					'sortTickets',
-					sortTickets
+					'ticketsSortedBy',
+					ticketsSortedBy
 				),
 				displayTicketDate: store.getFilter(
 					'event-editor-ticket-list',
@@ -74,10 +74,10 @@ export default createHigherOrderComponent(
 					'showTickets',
 					showTickets
 				),
-				setSortTickets: ( sortTickets ) => store.setFilter(
+				setTicketsSortedBy: ( ticketsSortedBy ) => store.setFilter(
 					'event-editor-ticket-list',
-					'sortTickets',
-					sortTickets
+					'ticketsSortedBy',
+					ticketsSortedBy
 				),
 				setDisplayTicketDate: ( displayTicketDate ) => store
 					.setFilter(

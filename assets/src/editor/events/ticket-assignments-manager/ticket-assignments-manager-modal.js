@@ -177,8 +177,8 @@ class TicketAssignmentsManagerModal extends Component {
 					'Invalid EE' +
 					' Ticket model object!'
 				);
-				if ( typeof this.assignmentCounts.tickets[ ticket.id ] === 'undefined' ) {
-					this.assignmentCounts.tickets[ ticket.id ] = 0;
+				if ( typeof this.assignmentCounts.ticketEntities[ ticket.id ] === 'undefined' ) {
+					this.assignmentCounts.ticketEntities[ ticket.id ] = 0;
 				}
 				const ticketAssignedToDate = findIndex(
 					dateTickets,
@@ -187,7 +187,7 @@ class TicketAssignmentsManagerModal extends Component {
 				if ( ticketAssignedToDate ) {
 					dateTicketCount++;
 					ticketDateCount++;
-					this.assignmentCounts.tickets[ ticket.id ]++;
+					this.assignmentCounts.ticketEntities[ ticket.id ]++;
 				}
 			} );
 			if (
@@ -482,8 +482,8 @@ class TicketAssignmentsManagerModal extends Component {
 	 * @return {Object} JSON object with ticket and date assignment counts
 	 */
 	calculateTotalAssignmentCounts = ( dateEntity, ticketEntity, assigned, removed ) => {
-		const ticketCountForDate = this.assignmentCounts.dates[ dateEntity.id ];
-		const dateCountForTicket = this.assignmentCounts.tickets[ ticketEntity.id ];
+		const ticketCountForDate = this.assignmentCounts.dateEntities[ dateEntity.id ];
+		const dateCountForTicket = this.assignmentCounts.ticketEntities[ ticketEntity.id ];
 		const assignedTickets = handler.assignedCount( assigned, null, ticketEntity );
 		const removedTickets = handler.removedCount( removed, null, ticketEntity );
 		const assignedDates = handler.assignedCount( assigned, dateEntity );
@@ -867,7 +867,12 @@ export default compose( [
 			),
 		};
 		if ( ! editorOpen || initialized ) {
-			return {};
+			return {
+				notice: __(
+					'loading event date ticket assignments',
+					'event_espresso'
+				),
+			};
 		}
 		if ( isModelEntityOfModel( dateEntity, 'datetime' ) ) {
 			dtmProps = {

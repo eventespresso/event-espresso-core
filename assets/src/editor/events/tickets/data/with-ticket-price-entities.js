@@ -29,7 +29,7 @@ export const withTicketPriceEntities = withSelect(
 			const priceEntitiesLoaded = hasFinishedResolution(
 				'eventespresso/core',
 				'getRelatedEntities',
-				[ ticketEntity, 'priceEntities' ]
+				[ ticketEntity, 'prices' ]
 			);
 			if ( priceEntitiesLoaded ) {
 				return {

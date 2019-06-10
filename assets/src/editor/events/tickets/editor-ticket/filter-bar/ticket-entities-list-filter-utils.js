@@ -90,7 +90,7 @@ export const filterTicketEntities = ( ticketEntities, show = 'on-sale-and-pendin
 		case 'archived-only' :
 			return filter(
 				ticketEntities,
-				function( ticketEntity ) {ticketEntity
+				function( ticketEntity ) {
 					return ticketModel.isArchived( ticketEntity );
 				},
 			);

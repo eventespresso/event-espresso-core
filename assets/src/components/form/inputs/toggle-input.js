@@ -33,8 +33,6 @@ const Toggle = ( {
 	toggle = 'toggle', // 'toggle' or 'checkbox'
 	...attributes
 } ) => {
-	// console.log( '' );
-	// console.log( 'ToggleInput.render() checked', checked );
 	htmlClass = htmlClass ?
 		`${ htmlClass } ee-toggle-input` :
 		'ee-toggle-input';

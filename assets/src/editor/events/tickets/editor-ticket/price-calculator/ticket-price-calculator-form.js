@@ -583,13 +583,12 @@ class TicketPriceCalculatorForm extends Component {
 		) {
 			return null;
 		}
-		this.priceTypes = priceTypeEntities;
+		this.priceTypeEntities = priceTypeEntities;
 		const values = isEmpty( currentValues ) ?
 			initialValues :
 			currentValues;
-		// console.log( ' > values: ', values );
 		const allPriceTypeOptions = this.buildPriceTypeOptions(
-			this.priceTypes
+			this.priceTypeEntities
 		);
 		let ticketPrefix = TICKET_PRICE_CALCULATOR_FORM_INPUT_PREFIX;
 		ticketPrefix += '-ticket-' + ticketEntity.id;

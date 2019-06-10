@@ -96,11 +96,11 @@ export default compose( [
 			const basePriceTypeEntity = useMemo(
 				() => {
 					return find(
-						props.priceTypes,
+						props.priceTypeEntities,
 						( priceType ) => priceType.pbtId === 1
 					);
 				},
-				[ props.priceTypes ]
+				[ props.priceTypeEntities ]
 			);
 			return <WrappedComponent
 				setNewTicketEntity={ setNewTicketEntity }
@@ -156,5 +156,5 @@ export default compose( [
 			return { addNewTicketEntity };
 		}
 	),
-	withPaginatedTicketEntitiesListWithFilterBar,
+	withPaginatedTicketEntitiesListWithFilterBar(),
 ] )( EditorTicketEntitiesList );

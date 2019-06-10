@@ -12,12 +12,12 @@ import { getDateEntityIds } from './utils';
 /**
  * withTicketEntitiesRelatedToAllDateEntities
  * returns an object containing the following:
- * 	multipleDateTicketEntities - an array of ticket entities for the supplied event date
- * 	multipleDateTicketEntitiesLoaded - boolean true if loading is complete
+ * 	ticketEntities - an array of ticket entities for the supplied event date
+ * 	ticketEntitiesLoaded - boolean true if loading is complete
  *
  * @return {function}
  */
-export const withMultipleDateTicketEntities = createHigherOrderComponent(
+export const withTicketEntitiesForAllDateEntities = createHigherOrderComponent(
 	withSelect(
 		( select, { dateEntities, dateEntitiesLoaded } ) => {
 			if ( dateEntitiesLoaded ) {
@@ -41,5 +41,5 @@ export const withMultipleDateTicketEntities = createHigherOrderComponent(
 			return {};
 		}
 	),
-	'withMultipleDateTicketEntities'
+	'withTicketEntitiesForAllDateEntities'
 );

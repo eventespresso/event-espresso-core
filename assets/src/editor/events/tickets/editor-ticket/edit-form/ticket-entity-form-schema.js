@@ -15,7 +15,6 @@ export const ticketEntityFormSchema = ( ticketEntity ) => {
 		return {};
 	}
 	const prefix = `ee-ticket-${ ticketEntity.id }`;
-	// console.log( 'ticketEntityFormSchema() ticket', ticket );
 	return {
 		[ `${ prefix }-id` ]: ticketEntity.id,
 		[ `${ prefix }-name` ]: ticketEntity.name || '',

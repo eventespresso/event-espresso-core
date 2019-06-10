@@ -22,14 +22,14 @@ import { default as TicketEntityListFilterBar } from './ticket-entities-list-fil
  *
  * @param {Array} ticketEntities
  * @param {string} showTickets
- * @param {string} sortTickets
+ * @param {string} ticketsSortedBy
  * @return {Array} filtered list of tickets
  */
-export const getFilteredTicketEntitiesList = ( ticketEntities, showTickets, sortTickets ) => {
-	return showTickets && sortTickets && ! isEmpty( ticketEntities ) ?
+export const getFilteredTicketEntitiesList = ( ticketEntities, showTickets, ticketsSortedBy ) => {
+	return showTickets && ticketsSortedBy && ! isEmpty( ticketEntities ) ?
 		sortTicketEntitiesList(
 			filterTicketEntities( ticketEntities, showTickets ),
-			sortTickets
+			ticketsSortedBy
 		) :
 		[];
 };
@@ -49,8 +49,8 @@ export default createHigherOrderComponent(
 				const {
 					showTickets,
 					setShowTickets,
-					sortTickets,
-					setSortTickets,
+					ticketsSortedBy,
+					setTicketsSortedBy,
 					displayTicketDate,
 					setDisplayTicketDate,
 					isChained,
@@ -72,7 +72,7 @@ export default createHigherOrderComponent(
 					getFilteredTicketEntitiesList(
 						filteredEntities,
 						showTickets,
-						sortTickets
+						ticketsSortedBy
 					);
 				return (
 					<Fragment>
@@ -89,8 +89,8 @@ export default createHigherOrderComponent(
 								<TicketEntityListFilterBar
 									showTickets={ showTickets }
 									setShowTickets={ setShowTickets }
-									sortTickets={ sortTickets }
-									setSortTickets={ setSortTickets }
+									ticketsSortedBy={ ticketsSortedBy }
+									setTicketsSortedBy={ setTicketsSortedBy }
 									displayTicketDate={ displayTicketDate }
 									setDisplayTicketDate={ setDisplayTicketDate }
 									isChained={ isChained }

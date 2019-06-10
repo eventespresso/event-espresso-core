@@ -5,5 +5,5 @@ export * from './filter-bar';
 export * from './grid-view';
 export * from './list-view';
 export {
-	default as EditorTicketEntitiesList
+	default as EditorTicketEntitiesList,
 } from './editor-ticket-entities-list';

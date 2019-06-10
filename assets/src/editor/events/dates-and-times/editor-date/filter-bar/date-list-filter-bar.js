@@ -18,10 +18,10 @@ import { __ } from '@eventespresso/i18n';
 class DateListFilterBar extends Component {
 	static propTypes = {
 		showDates: PropTypes.string.isRequired,
-		sortDates: PropTypes.string.isRequired,
+		datesSortedBy: PropTypes.string.isRequired,
 		displayDates: PropTypes.string.isRequired,
 		setShowDates: PropTypes.func.isRequired,
-		setSortDates: PropTypes.func.isRequired,
+		setDatesSortedBy: PropTypes.func.isRequired,
 		setDisplayDates: PropTypes.func.isRequired,
 	};
 
@@ -129,16 +129,16 @@ class DateListFilterBar extends Component {
 	};
 
 	/**
-	 * @param {string} sortDates
-	 * @param {Function} setSortDates
-	 * @return {Object} rendered sortDates filter
+	 * @param {string} datesSortedBy
+	 * @param {Function} setDatesSortedBy
+	 * @return {Object} rendered datesSortedBy filter
 	 */
-	sortDates = ( sortDates, setSortDates ) => {
+	datesSortedBy = ( datesSortedBy, setDatesSortedBy ) => {
 		return (
 			<SelectControl
 				label={ __( 'sort', 'event_espresso' ) }
 				className="espresso-date-list-filter-bar-order-select"
-				value={ sortDates }
+				value={ datesSortedBy }
 				options={ [
 					{
 						value: 'chronologically',
@@ -161,7 +161,7 @@ class DateListFilterBar extends Component {
 						),
 					},
 				] }
-				onChange={ setSortDates }
+				onChange={ setDatesSortedBy }
 			/>
 		);
 	};
@@ -203,10 +203,10 @@ class DateListFilterBar extends Component {
 	render() {
 		const {
 			showDates,
-			sortDates,
+			datesSortedBy,
 			displayDates,
 			setShowDates,
-			setSortDates,
+			setDatesSortedBy,
 			setDisplayDates,
 		} = this.props;
 		const showFilter = (
@@ -216,7 +216,7 @@ class DateListFilterBar extends Component {
 		);
 		const sortFilter = (
 			<div className="ee-sort-dates-filter ee-filter-bar-filter">
-				{ this.sortDates( sortDates, setSortDates ) }
+				{ this.datesSortedBy( datesSortedBy, setDatesSortedBy ) }
 			</div>
 		);
 		const displayFilter = (

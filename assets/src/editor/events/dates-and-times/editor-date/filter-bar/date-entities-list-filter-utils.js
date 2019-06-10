@@ -119,10 +119,10 @@ export const filterDateEntities = ( dateEntities, showDates = 'active-upcoming' 
 
 /**
  * sortDateEntitiesList
- * reduces dateEntities array based on value of the "sortDates" filter
+ * reduces dateEntities array based on value of the "datesSortedBy" filter
  *
  * @param {Array} dateEntities    original dateEntities array
- * @param {string} sort   value for the "sortDates" filter
+ * @param {string} sort   value for the "datesSortedBy" filter
  * @return {Array}         filtered dateEntities array
  */
 export const sortDateEntitiesList = ( dateEntities, sort = 'chronologically' ) => {

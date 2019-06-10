@@ -128,7 +128,7 @@ class EditorDateEntitiesList extends Component {
 
 export default compose( [
 	withEditor,
-	withPaginatedDateEntitiesListWithFilterBar,
+	withPaginatedDateEntitiesListWithFilterBar(),
 	withUpdateEventDateRelation,
 	withDispatch( (
 		dispatch,

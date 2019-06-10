@@ -118,7 +118,7 @@ class EditorTicketEntityGridItem extends Component {
 			<Fragment>
 				<div className={ `ee-editor-ticket-main ${ dateStyleClass }` }>
 					<EditorTicketEntityDetails
-						ticket={ ticketEntity }
+						ticketEntity={ ticketEntity }
 						refreshed={ refreshed }
 					/>
 					{ this.displayTicket( ticketEntity, displayTicketDate ) }

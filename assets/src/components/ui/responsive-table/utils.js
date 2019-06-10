@@ -24,7 +24,6 @@ const filterChildren = ( children, predicate ) => {
 	children = isArray( children ) && ! isEmpty( children ) ?
 		children :
 		getChildren( children );
-	console.log( ' > filterChildren() ', children );
 	return isFunction( predicate ) ? filter( children, predicate ) : children;
 };
 

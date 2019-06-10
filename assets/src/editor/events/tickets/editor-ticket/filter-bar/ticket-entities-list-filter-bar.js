@@ -23,11 +23,11 @@ import './style.css';
 class TicketEntitiesListFilterBar extends Component {
 	static propTypes = {
 		showTickets: PropTypes.string.isRequired,
-		sortTickets: PropTypes.string.isRequired,
+		ticketsSortedBy: PropTypes.string.isRequired,
 		displayTicketDate: PropTypes.string.isRequired,
 		isChained: PropTypes.bool.isRequired,
 		setShowTickets: PropTypes.func.isRequired,
-		setSortTickets: PropTypes.func.isRequired,
+		setTicketsSortedBy: PropTypes.func.isRequired,
 		setDisplayTicketDate: PropTypes.func.isRequired,
 		setIsChained: PropTypes.func.isRequired,
 	};
@@ -138,16 +138,16 @@ class TicketEntitiesListFilterBar extends Component {
 	};
 
 	/**
-	 * @param {string} sortTickets
-	 * @param {Function} setSortTickets
-	 * @return {Object} rendered sortTickets filter
+	 * @param {string} ticketsSortedBy
+	 * @param {Function} setTicketsSortedBy
+	 * @return {Object} rendered ticketsSortedBy filter
 	 */
-	sortTickets = ( sortTickets, setSortTickets ) => {
+	ticketsSortedBy = ( ticketsSortedBy, setTicketsSortedBy ) => {
 		return (
 			<SelectControl
 				label={ __( 'sort', 'event_espresso' ) }
 				className="espresso-ticket-list-filter-bar-order-select"
-				value={ sortTickets }
+				value={ ticketsSortedBy }
 				options={ [
 					{
 						value: 'chronologically',
@@ -170,7 +170,7 @@ class TicketEntitiesListFilterBar extends Component {
 						),
 					},
 				] }
-				onChange={ setSortTickets }
+				onChange={ setTicketsSortedBy }
 			/>
 		);
 	};
@@ -237,8 +237,8 @@ class TicketEntitiesListFilterBar extends Component {
 		const {
 			showTickets,
 			setShowTickets,
-			sortTickets,
-			setSortTickets,
+			ticketsSortedBy,
+			setTicketsSortedBy,
 			displayTicketDate,
 			setDisplayTicketDate,
 			isChained,
@@ -251,7 +251,7 @@ class TicketEntitiesListFilterBar extends Component {
 		);
 		const sortFilter = (
 			<div className="ee-sort-tickets-filter ee-filter-bar-filter">
-				{ this.sortTickets( sortTickets, setSortTickets ) }
+				{ this.ticketsSortedBy( ticketsSortedBy, setTicketsSortedBy ) }
 			</div>
 		);
 		const displayFilter = (

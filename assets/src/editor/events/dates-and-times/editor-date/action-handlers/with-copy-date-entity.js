@@ -13,7 +13,7 @@ const withCopyDateEntity = createHigherOrderComponent(
 			eventEntity,
 			dateEntity,
 			dateTicketEntities,
-			dateTicketEntitiesLoaded
+			dateTicketEntitiesLoaded,
 		}
 	) => {
 		if ( ! isModelEntityOfModel( dateEntity, 'datetime' ) ) {

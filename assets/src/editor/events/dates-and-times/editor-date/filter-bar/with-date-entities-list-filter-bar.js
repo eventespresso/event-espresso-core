@@ -22,14 +22,14 @@ import {
  *
  * @param {Array} dateEntities
  * @param {string} showDates
- * @param {string} sortDates
+ * @param {string} datesSortedBy
  * @return {Array} filtered list of dateEntities
  */
-export const getFilteredDateEntitiesList = ( dateEntities, showDates, sortDates ) => {
-	return showDates && sortDates && ! isEmpty( dateEntities ) ?
+export const getFilteredDateEntitiesList = ( dateEntities, showDates, datesSortedBy ) => {
+	return showDates && datesSortedBy && ! isEmpty( dateEntities ) ?
 		sortDateEntitiesList(
 			filterDateEntities( dateEntities, showDates ),
-			sortDates
+			datesSortedBy
 		) :
 		[];
 };
@@ -50,10 +50,10 @@ export default createHigherOrderComponent(
 				const {
 					displayDates,
 					showDates,
-					sortDates,
+					datesSortedBy,
 					setDisplayDates,
 					setShowDates,
-					setSortDates,
+					setDatesSortedBy,
 					searchDateName,
 					datesPerPage,
 					datesView,
@@ -71,7 +71,7 @@ export default createHigherOrderComponent(
 					getFilteredDateEntitiesList(
 						filteredEntities,
 						showDates,
-						sortDates
+						datesSortedBy
 					);
 				return (
 					<Fragment>
@@ -88,10 +88,10 @@ export default createHigherOrderComponent(
 								<DateListFilterBar
 									displayDates={ displayDates }
 									showDates={ showDates }
-									sortDates={ sortDates }
+									datesSortedBy={ datesSortedBy }
 									setDisplayDates={ setDisplayDates }
 									setShowDates={ setShowDates }
-									setSortDates={ setSortDates }
+									setDatesSortedBy={ setDatesSortedBy }
 								/>
 							}
 						/>

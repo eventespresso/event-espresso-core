@@ -8,7 +8,7 @@ import classNames from 'classnames';
  * Internal dependencies
  */
 import EditorDateEntityGridItem from './editor-date-entity-grid-item';
-import './editor-dates-entities-grid-view.css';
+import './editor-date-entities-grid-view.css';
 
 /**
  * EditorDateEntitiesGridView

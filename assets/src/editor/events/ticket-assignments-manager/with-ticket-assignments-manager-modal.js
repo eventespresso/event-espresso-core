@@ -5,6 +5,8 @@ import { Component, Fragment } from '@wordpress/element';
 import { createHigherOrderComponent } from '@wordpress/compose';
 import TicketAssignmentsManagerModal from './ticket-assignments-manager-modal';
 
+const DEFAULT_EMPTY_ARRAY = [];
+
 /**
  * TicketAssignmentsManagerModal
  * controls toggling of the modal
@@ -46,7 +48,8 @@ const WithTicketAssignmentsManagerModal = (
 					dateEntity,
 					allDateEntities,
 					ticketEntity,
-					allTickets,
+					allTicketEntities,
+					ticketEntities = DEFAULT_EMPTY_ARRAY,
 				} = this.props;
 				return (
 					<Fragment>
@@ -59,8 +62,9 @@ const WithTicketAssignmentsManagerModal = (
 							modalProps={ modalPropsCallback( this.props ) }
 							dateEntity={ dateEntity }
 							allDateEntities={ allDateEntities }
-							allTickets={ allTickets }
+							allTicketEntities={ allTicketEntities }
 							ticketEntity={ ticketEntity }
+							ticketEntities={ ticketEntities }
 							editorOpen={ this.state.showManager }
 							toggleEditor={ this.toggleManager }
 						/>
