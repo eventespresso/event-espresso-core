@@ -11,25 +11,24 @@ import { withSelect } from '@wordpress/data';
 import '../../editor.css';
 import {
 	withDatesListFilterState,
-	getFilteredDatesList,
+	getFilteredDateEntitiesList,
 } from '../dates-and-times/editor-date/filter-bar';
-import withTicketsListFilterState from
-	'../tickets/editor-ticket/filter-bar/with-tickets-list-filter-state';
 import {
-	getFilteredTicketsList,
-} from '../tickets/editor-ticket/filter-bar/with-tickets-list-filter-bar';
-import { withEvent, withEventDatetimes } from '../events/data';
+	withTicketEntitiesListFilterState,
+	getFilteredTicketEntitiesList
+} from '../tickets/editor-ticket/filter-bar';
+import { withEventEntity, withEventDateEntities } from '../events/data';
 import { withMultipleDateTicketEntities } from '../dates-and-times/data';
 
 const EMPTY_ARRAY = [];
 
 const withDateAndTicketEntityFilterState = createHigherOrderComponent(
 	compose( [
-		withEvent,
-		withEventDatetimes,
+		withEventEntity,
+		withEventDateEntities,
 		withMultipleDateTicketEntities,
 		withDatesListFilterState,
-		withTicketsListFilterState,
+		withTicketEntitiesListFilterState,
 		withSelect( ( select, ownProps ) => {
 			const {
 				eventId,
@@ -61,7 +60,7 @@ const withDateAndTicketEntityFilterState = createHigherOrderComponent(
 				};
 			}
 			// apply filter bar filters
-			const filteredDateEntities = getFilteredDatesList(
+			const filteredDateEntities = getFilteredDateEntitiesList(
 				dateEntities,
 				showDates,
 				datesSortedBy
@@ -73,7 +72,7 @@ const withDateAndTicketEntityFilterState = createHigherOrderComponent(
 					dateTicketEntities :
 					ticketEntities;
 				// apply filter bar filters
-				filteredTicketEntities = getFilteredTicketsList(
+				filteredTicketEntities = getFilteredTicketEntitiesList(
 					filteredTicketEntities,
 					showTickets,
 					ticketsSortedBy

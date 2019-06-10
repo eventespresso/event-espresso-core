@@ -21,7 +21,7 @@ const EMPTY_OBJECT = {};
  */
 const withEventDateEntities = createHigherOrderComponent(
 	withSelect(
-		( select, { eventEntity, eventEntityLoaded} ) => {
+		( select, { eventEntity, eventEntityLoaded } ) => {
 			if (
 				eventEntityLoaded &&
 				isModelEntityOfModel( eventEntity, 'event' )

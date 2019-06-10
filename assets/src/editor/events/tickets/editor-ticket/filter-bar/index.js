@@ -7,12 +7,11 @@ import { compose, createHigherOrderComponent } from '@wordpress/compose';
 /**
  * Internal dependencies
  */
-import {
-	default as withTicketEntitiesListFilterBar,
+import withTicketEntitiesListFilterBar, {
+	getFilteredTicketEntitiesList,
 } from './with-ticket-entities-list-filter-bar';
-import {
-	default as withTicketEntitiesListFilterState,
-} from './with-ticket-entities-list-filter-state';
+import withTicketEntitiesListFilterState
+	from './with-ticket-entities-list-filter-state';
 
 const withPaginatedTicketEntitiesListWithFilterBar = (
 	paginationConfig = {}
@@ -40,4 +39,5 @@ export {
 	withTicketEntitiesListFilterState,
 	withPaginatedTicketEntitiesListWithFilterBar,
 	withPaginatedTicketEntitiesListWithFilterBarAndState,
+	getFilteredTicketEntitiesList,
 };

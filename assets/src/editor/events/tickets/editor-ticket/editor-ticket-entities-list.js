@@ -15,12 +15,12 @@ import { __, _x, sprintf } from '@eventespresso/i18n';
 /**
  * Internal dependencies
  */
-import { withPriceTypes } from '../data/with-price-types';
+import { withPriceTypeEntities } from '../data/with-price-type-entities';
 import { withTicketPriceCalculatorFormModal } from './price-calculator';
-import { withEditTicketFormModal } from './edit-form';
-import { EditorTicketsGridView } from './grid-view/';
-import { EditorTicketsListView } from './list-view/';
-import PaginatedTicketsListWithFilterBar from './filter-bar';
+import { withEditTicketEntityFormModal } from './edit-form';
+import { EditorTicketEntitiesGridView } from './grid-view/';
+import { EditorTicketEntitiesListView } from './list-view/';
+import { withPaginatedTicketEntitiesListWithFilterBar } from './filter-bar';
 import { withTicketAssignmentsManagerModal } from '../../ticket-assignments-manager';
 
 const {
@@ -28,35 +28,35 @@ const {
 	FormSaveCancelButtons,
 } = twoColumnAdminFormLayout;
 
-const EditorTicketsList = ( {
+const EditorTicketEntitiesList = ( {
 	entities,
-	allDates,
-	addNewTicket,
+	allDateEntities,
+	addNewTicketEntity,
 	toggleTicketEditor,
-	ticket = null,
+	ticketEntity = null,
 	view = 'grid',
 	...otherProps
 } ) => {
 	useEffect( () => {
-		if ( ticket !== null ) {
+		if ( ticketEntity !== null ) {
 			toggleTicketEditor();
 		}
-	}, [ ticket ] );
+	}, [ ticketEntity ] );
 	/**
 	 * @function
 	 * @return {Object} rendered button
 	 */
-	const addNewTicketButton = useMemo(
+	const addNewTicketEntityButton = useMemo(
 		() => {
 			return (
 				<EspressoButton
 					icon="tickets-alt"
 					buttonText={ __( 'Add New Ticket', 'event_espresso' ) }
-					onClick={ addNewTicket }
+					onClick={ addNewTicketEntity }
 				/>
 			);
 		},
-		[ addNewTicket ]
+		[ addNewTicketEntity ]
 	);
 
 	return (
@@ -64,9 +64,9 @@ const EditorTicketsList = ( {
 			<EntityList
 				{ ...otherProps }
 				entities={ entities }
-				allDates={ allDates }
-				EntityGridView={ EditorTicketsGridView }
-				EntityListView={ EditorTicketsListView }
+				allDateEntities={ allDateEntities }
+				EntityGridView={ EditorTicketEntitiesGridView }
+				EntityListView={ EditorTicketEntitiesListView }
 				view={ view }
 				noResultsText={
 					__(
@@ -83,17 +83,17 @@ const EditorTicketsList = ( {
 					String.fromCharCode( 8230 )
 				) }
 			/>
-			<FormSaveCancelButtons submitButton={ addNewTicketButton } />
+			<FormSaveCancelButtons submitButton={ addNewTicketEntityButton } />
 		</FormWrapper>
 	);
 };
 
 export default compose( [
-	withPriceTypes,
+	withPriceTypeEntities,
 	createHigherOrderComponent(
 		( WrappedComponent ) => ( props ) => {
-			const [ newTicket, setNewTicket ] = useState( null );
-			const basePriceType = useMemo(
+			const [ newTicket, setNewTicketEntity ] = useState( null );
+			const basePriceTypeEntity = useMemo(
 				() => {
 					return find(
 						props.priceTypes,
@@ -103,9 +103,9 @@ export default compose( [
 				[ props.priceTypes ]
 			);
 			return <WrappedComponent
-				setNewTicket={ setNewTicket }
-				ticket={ newTicket }
-				basePriceType={ basePriceType }
+				setNewTicketEntity={ setNewTicketEntity }
+				ticketEntity={ newTicket }
+				basePriceTypeEntity={ basePriceTypeEntity }
 				{ ...props }
 			/>;
 		},
@@ -131,11 +131,11 @@ export default compose( [
 		'withOnCloseTicketEditor'
 	),
 	withTicketPriceCalculatorFormModal,
-	withEditTicketFormModal,
+	withEditTicketEntityFormModal,
 	withDispatch(
-		( dispatch, { setNewTicket, basePriceType } ) => {
+		( dispatch, { setNewTicketEntity, basePriceTypeEntity } ) => {
 			const { createEntity, createRelations } = dispatch( 'eventespresso/core' );
-			const addNewTicket = async ( event ) => {
+			const addNewTicketEntity = async ( event ) => {
 				if ( event && event.preventDefault ) {
 					event.preventDefault();
 					event.stopPropagation();
@@ -143,7 +143,7 @@ export default compose( [
 				const newTicket = await createEntity( 'ticket', {} );
 				const newBasePrice = await createEntity(
 					'price',
-					{ prtId: basePriceType.id }
+					{ prtId: basePriceTypeEntity.id }
 				);
 				createRelations(
 					'ticket',
@@ -151,10 +151,10 @@ export default compose( [
 					'prices',
 					[ newBasePrice ]
 				);
-				setNewTicket( newTicket );
+				setNewTicketEntity( newTicket );
 			};
-			return { addNewTicket };
+			return { addNewTicketEntity };
 		}
 	),
-	PaginatedTicketsListWithFilterBar,
-] )( EditorTicketsList );
+	withPaginatedTicketEntitiesListWithFilterBar,
+] )( EditorTicketEntitiesList );

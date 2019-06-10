@@ -20,8 +20,10 @@ import {
  * Internal imports
  */
 import '../../editor.css';
-import EditorDatesList from '../dates-and-times/editor-date/editor-dates-list';
-import EditorTicketsList from '../tickets/editor-ticket/editor-tickets-list';
+import EditorDateEntitiesList
+	from '../dates-and-times/editor-date/editor-date-entities-list';
+import EditorTicketEntitiesList
+	from '../tickets/editor-ticket/editor-ticket-entities-list';
 import withEventDateAndTicketEntityFilterState
 	from './with-event-date-and-ticket-entity-filter-state';
 
@@ -67,11 +69,11 @@ const MetaBox = ( {
 						<PanelRow
 							className="ee-editor-event-dates ee-form-row">
 							<div>
-								<EditorDatesList
+								<EditorDateEntitiesList
 									loading={ loadingDateEntities }
 									entities={ filteredDateEntities }
-									allDates={ allDateEntities }
-									allTickets={ allTicketEntities }
+									allDateEntities={ allDateEntities }
+									allTicketEntities={ allTicketEntities }
 									prefiltered
 									for="event-dates-metabox"
 									{ ...otherProps }
@@ -93,10 +95,10 @@ const MetaBox = ( {
 						<PanelRow
 							className="ee-editor-event-tickets ee-form-row">
 							<div>
-								<EditorTicketsList
+								<EditorTicketEntitiesList
 									loading={ loadingTicketEntities }
 									entities={ filteredTicketEntities }
-									allDates={ allDateEntities }
+									allDateEntities={ allDateEntities }
 									isChained={ isChained }
 									prefiltered
 									for="event-tickets-metabox"

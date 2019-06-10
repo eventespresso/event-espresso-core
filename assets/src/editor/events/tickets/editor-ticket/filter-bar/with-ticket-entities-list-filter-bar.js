@@ -25,7 +25,7 @@ import { default as TicketEntityListFilterBar } from './ticket-entities-list-fil
  * @param {string} sortTickets
  * @return {Array} filtered list of tickets
  */
-export const getFilteredTicketsList = ( ticketEntities, showTickets, sortTickets ) => {
+export const getFilteredTicketEntitiesList = ( ticketEntities, showTickets, sortTickets ) => {
 	return showTickets && sortTickets && ! isEmpty( ticketEntities ) ?
 		sortTicketEntitiesList(
 			filterTicketEntities( ticketEntities, showTickets ),
@@ -69,7 +69,7 @@ export default createHigherOrderComponent(
 				let filteredEntities = searchTicketEntities( entities, searchTicketName );
 				filteredEntities = prefiltered ?
 					filteredEntities :
-					getFilteredTicketsList(
+					getFilteredTicketEntitiesList(
 						filteredEntities,
 						showTickets,
 						sortTickets
