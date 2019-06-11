@@ -20,7 +20,7 @@ import { dateEntityFormInputs } from './date-entity-form-inputs';
  * @function
  * @param {Object} dateEntity model object defining the Event Date
  */
-class EditDateEntityForm extends Component {
+class DateEntityForm extends Component {
 	render() {
 		const {
 			dateEntity,
@@ -94,6 +94,6 @@ class EditDateEntityForm extends Component {
 }
 
 /**
- * Enhanced EditDateEntityForm with FormHandler
+ * Enhanced DateEntityForm with FormHandler
  */
-export default withFormHandler( EditDateEntityForm );
+export default withFormHandler( DateEntityForm );

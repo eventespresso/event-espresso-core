@@ -12,7 +12,7 @@ import { isModelEntityOfModel } from '@eventespresso/validators';
 /**
  * Internal dependencies
  */
-import EditDateEntityForm from './edit-date-entity-form';
+import DateEntityForm from './date-entity-form';
 import { dateEntityFormSchema } from './date-entity-form-schema';
 import { dateEntityFormSubmitHandler } from './date-entity-form-submit-handler';
 import withUpdateEventDateRelation from '../action-handlers/with-update-event-date-relation';
@@ -21,7 +21,7 @@ import withUpdateEventDateRelation from '../action-handlers/with-update-event-da
  * @function
  * @param {Object} dateEntity model object defining the Event Date
  */
-class EditDateEntityFormModal extends Component {
+class DateEntityFormModal extends Component {
 	static propTypes = {
 		eventEntity: PropTypes.object,
 		dateEntity: PropTypes.object,
@@ -76,7 +76,7 @@ class EditDateEntityFormModal extends Component {
 
 	render() {
 		return (
-			<EditDateEntityForm
+			<DateEntityForm
 				{ ...this.props }
 				loadHandler={ this.loadHandler }
 				submitHandler={ this.submitHandler }
@@ -102,4 +102,4 @@ export default compose( [
 		};
 		return { replaceDateInStore };
 	} ),
-] )( EditDateEntityFormModal );
+] )( DateEntityFormModal );

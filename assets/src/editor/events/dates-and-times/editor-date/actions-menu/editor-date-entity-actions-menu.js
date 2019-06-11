@@ -15,7 +15,7 @@ import { isModelEntityOfModel } from '@eventespresso/validators';
  * Internal dependencies
  */
 import { withDateTicketEntities } from '../../data';
-import { EditDateEntityFormModal } from '../edit-form';
+import { DateEntityFormModal } from '../edit-form';
 import { withCopyDateEntity, withTrashDateEntity } from '../action-handlers';
 import { withTicketAssignmentsManagerModal } from '../../../ticket-assignments-manager';
 import './style.css';
@@ -179,7 +179,7 @@ class EditorDateEntityActionsMenu extends Component {
 				className={ 'ee-editor-date-actions-menu' }
 			>
 				{ this.sidebarMenu( dateEntity, ticketEntities, ticketEntitiesLoaded ) }
-				<EditDateEntityFormModal
+				<DateEntityFormModal
 					eventEntity={ eventEntity }
 					dateEntity={ dateEntity }
 					toggleEditor={ toggleEditor }
