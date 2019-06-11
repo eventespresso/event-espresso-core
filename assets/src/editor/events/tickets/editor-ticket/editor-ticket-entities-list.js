@@ -20,7 +20,7 @@ import { withTicketPriceCalculatorFormModal } from './price-calculator';
 import { withTicketEntityFormModal } from './edit-form';
 import { EditorTicketEntitiesGridView } from './grid-view/';
 import { EditorTicketEntitiesListView } from './list-view/';
-import { withPaginatedTicketEntitiesListWithFilterBar } from './filter-bar';
+import { withPaginatedTicketEntitiesListAndFilterBar } from './filter-bar';
 import { withTicketAssignmentsManagerModal } from '../../ticket-assignments-manager';
 
 const {
@@ -156,5 +156,5 @@ export default compose( [
 			return { addNewTicketEntity };
 		}
 	),
-	withPaginatedTicketEntitiesListWithFilterBar(),
+	withPaginatedTicketEntitiesListAndFilterBar(),
 ] )( EditorTicketEntitiesList );

@@ -17,7 +17,7 @@ import { __, _x, sprintf } from '@eventespresso/i18n';
  */
 import { EditorDateEntitiesGridView } from './grid-view';
 import { EditorDateEntitiesListView } from './list-view';
-import { withPaginatedDateEntitiesListWithFilterBar } from './filter-bar';
+import { withPaginatedDateEntitiesListAndFilterBar } from './filter-bar';
 import { DateEntityFormModal } from './edit-form';
 import { withTicketAssignmentsManagerModal } from '../../ticket-assignments-manager';
 import withUpdateEventDateRelation from './action-handlers/with-update-event-date-relation';
@@ -128,7 +128,7 @@ class EditorDateEntitiesList extends Component {
 
 export default compose( [
 	withEditor,
-	withPaginatedDateEntitiesListWithFilterBar(),
+	withPaginatedDateEntitiesListAndFilterBar(),
 	withUpdateEventDateRelation,
 	withDispatch( (
 		dispatch,

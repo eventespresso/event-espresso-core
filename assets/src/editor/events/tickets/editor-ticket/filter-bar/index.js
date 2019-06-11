@@ -13,17 +13,17 @@ import withTicketEntitiesListFilterBar, {
 import withTicketEntitiesListFilterState
 	from './with-ticket-entities-list-filter-state';
 
-const withPaginatedTicketEntitiesListWithFilterBar = (
+const withPaginatedTicketEntitiesListAndFilterBar = (
 	paginationConfig = {}
 ) => createHigherOrderComponent(
 	compose( [
 		withTicketEntitiesListFilterBar,
 		withEntityPagination( paginationConfig ),
 	] ),
-	'withPaginatedTicketEntitiesListWithFilterBar'
+	'withPaginatedTicketEntitiesListAndFilterBar'
 );
 
-const withPaginatedTicketEntitiesListWithFilterBarAndState = (
+const withPaginatedTicketEntitiesListAndFilterBarAndState = (
 	paginationConfig = {}
 ) => createHigherOrderComponent(
 	compose( [
@@ -31,13 +31,13 @@ const withPaginatedTicketEntitiesListWithFilterBarAndState = (
 		withTicketEntitiesListFilterBar,
 		withEntityPagination( paginationConfig ),
 	] ),
-	'withPaginatedTicketEntitiesListWithFilterBarAndState'
+	'withPaginatedTicketEntitiesListAndFilterBarAndState'
 );
 
 export {
 	withTicketEntitiesListFilterBar,
 	withTicketEntitiesListFilterState,
-	withPaginatedTicketEntitiesListWithFilterBar,
-	withPaginatedTicketEntitiesListWithFilterBarAndState,
+	withPaginatedTicketEntitiesListAndFilterBar,
+	withPaginatedTicketEntitiesListAndFilterBarAndState,
 	getFilteredTicketEntitiesList,
 };
