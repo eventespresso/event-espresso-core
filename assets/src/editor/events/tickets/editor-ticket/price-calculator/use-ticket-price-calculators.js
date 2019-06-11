@@ -43,58 +43,58 @@ const accrueAmount = ( cases ) => ( defaultCase ) => ( typeId ) =>
 		cases[ typeId ]() :
 		defaultCase;
 
-const getPriceTypeForPrice = ( price, priceTypes ) => {
-	const priceType = find( priceTypes, [ 'id', price.PRT_ID ] );
+const getPriceTypeForPrice = ( priceEntity, priceTypes ) => {
+	const priceType = find( priceTypes, [ 'id', priceEntity.PRT_ID ] );
 	if ( isModelEntityOfModel( priceType, 'price_type' ) ) {
 		return priceType;
 	}
 	return first( filter( priceTypes, ( pt ) => pt.id !== 1 ) );
 };
 
-const useTicketPriceCalculators = ( priceTypes ) => {
-	const calculateTicketTotal = useCallback( ( total = 0, prices ) => {
-		prices = sortBy( prices, [ 'order', 'id' ] );
-		return prices.reduce( ( newTotal, price ) => {
-			const priceType = getPriceTypeForPrice( price, priceTypes );
+const useTicketPriceCalculators = ( priceTypeEntities ) => {
+	const calculateTicketTotal = useCallback( ( total = 0, priceEntities ) => {
+		priceEntities = sortBy( priceEntities, [ 'order', 'id' ] );
+		return priceEntities.reduce( ( newTotal, priceEntity ) => {
+			const priceTypeEntity = getPriceTypeForPrice( priceEntity, priceTypeEntities );
 			return accrueAmount( normalCases(
 				newTotal,
-				price.amount,
-				priceType.isPercent
-			) )( newTotal )( priceType.pbtId );
+				priceEntity.amount,
+				priceTypeEntity.isPercent
+			) )( newTotal )( priceTypeEntity.pbtId );
 		}, total );
-	}, [ priceTypes ] );
+	}, [ priceTypeEntities ] );
 
 	const calculateTicketBasePrice = useCallback( (
 		total,
-		prices,
+		priceEntities,
 		updateBasePrice = false
 	) => {
-		if ( isEmpty( prices ) ) {
+		if ( isEmpty( priceEntities ) ) {
 			return;
 		}
-		prices = reverse( sortBy( prices, [ 'order', 'id' ] ) );
-		const basePriceTotal = prices.reduce( ( newTotal, price ) => {
-			const priceType = getPriceTypeForPrice( price, priceTypes );
-			const amount = price.amount instanceof Money ?
-				price.amount.toNumber() :
-				price.amount;
+		priceEntities = reverse( sortBy( priceEntities, [ 'order', 'id' ] ) );
+		const basePriceTotal = priceEntities.reduce( ( newTotal, priceEntity ) => {
+			const priceTypeEntity = getPriceTypeForPrice( priceEntity, priceTypeEntities );
+			const amount = priceEntity.amount instanceof Money ?
+				priceEntity.amount.toNumber() :
+				priceEntity.amount;
 			return accrueAmount( reverseCases(
 				newTotal,
 				amount,
-				priceType.isPercent
-			) )( newTotal )( priceType.pbtId );
+				priceTypeEntity.isPercent
+			) )( newTotal )( priceTypeEntity.pbtId );
 		}, total );
 		if ( updateBasePrice ) {
-			const basePrice = getBasePrice( prices );
+			const basePrice = getBasePrice( priceEntities );
 			basePrice.amount = new Money( basePriceTotal, SiteCurrency );
 		}
 		return basePriceTotal;
-	}, [ priceTypes ] );
+	}, [ priceTypeEntities ] );
 
-	const calculateTicketTotals = useCallback( ( total, prices, reverseCalculate ) => {
+	const calculateTicketTotals = useCallback( ( total, priceEntities, reverseCalculate ) => {
 		return reverseCalculate ?
-			calculateTicketBasePrice( total, prices ) :
-			calculateTicketTotal( total, prices );
+			calculateTicketBasePrice( total, priceEntities ) :
+			calculateTicketTotal( total, priceEntities );
 	} );
 
 	return {

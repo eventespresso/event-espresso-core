@@ -1,1 +1,3 @@
-export { default as EditorDateActionsMenu } from './editor-date-actions-menu';
+export {
+	default as EditorDateEntityActionsMenu,
+} from './editor-date-entity-actions-menu';

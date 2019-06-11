@@ -172,15 +172,15 @@ const getPriceModifiersFromFormData = ( ticketId, formData ) => {
  * A hook returning a form decorator used for updating total calculations in a
  * ticket price calculator form.
  *
- * @param {BaseEntity[]} priceTypes  An array of price type BaseEntity objects
+ * @param {BaseEntity[]} priceTypeEntities  An array of price type BaseEntity objects
  * @param {number}  delay  A delay to use for debouncing the calculated total.
  * @return {Object}  decorator, mutators, and callbacks for react-final-form
  */
-const useTicketPriceCalculatorFormDecorator = ( priceTypes, delay = 250 ) => {
+const useTicketPriceCalculatorFormDecorator = ( priceTypeEntities, delay = 250 ) => {
 	const {
 		calculateTicketTotal,
 		calculateTicketBasePrice,
-	} = useTicketPriceCalculators( priceTypes );
+	} = useTicketPriceCalculators( priceTypeEntities );
 	const [ totalChangedTo, setTotalChangingTo ] = useState( null );
 	const [ mutatorCallbacks, setMutatorCallbacks ] = useState( null );
 	const debouncedTotalChangedTo = useDebounce( totalChangedTo, delay );

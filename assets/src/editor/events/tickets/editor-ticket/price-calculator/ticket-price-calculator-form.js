@@ -42,17 +42,17 @@ const {
 class TicketPriceCalculatorForm extends Component {
 	/**
 	 * @function
-	 * @param {Array} priceTypes
+	 * @param {Array} priceTypeEntities
 	 * @return {Array} price type options for use in select input
 	 */
-	buildPriceTypeOptions = ( priceTypes ) => {
+	buildPriceTypeOptions = ( priceTypeEntities ) => {
 		const priceTypeOptions = [];
-		for ( let i = 0; i < priceTypes.length; i++ ) {
-			const priceType = priceTypes[ i ];
-			if ( isModelEntityOfModel( priceType, 'price_type' ) ) {
+		for ( let i = 0; i < priceTypeEntities.length; i++ ) {
+			const priceTypeEntity = priceTypeEntities[ i ];
+			if ( isModelEntityOfModel( priceTypeEntity, 'price_type' ) ) {
 				priceTypeOptions.push( {
-					value: priceType.id,
-					label: priceType.name,
+					value: priceTypeEntity.id,
+					label: priceTypeEntity.name,
 				} );
 			}
 		}
@@ -65,12 +65,12 @@ class TicketPriceCalculatorForm extends Component {
 	 * @return {Object} priceType
 	 */
 	getPriceType = ( priceTypeId ) => {
-		priceTypeId = parseInt( priceTypeId );
-		const priceType = find( this.priceTypes, [ 'id', priceTypeId ] );
-		if ( isModelEntityOfModel( priceType, 'price_type' ) ) {
-			return priceType;
+		priceTypeId = parseInt( priceTypeId, 10 );
+		const priceTypeEntity = find( this.priceTypeEntities, [ 'id', priceTypeId ] );
+		if ( isModelEntityOfModel( priceTypeEntity, 'price_type' ) ) {
+			return priceTypeEntity;
 		}
-		return last( this.priceTypes );
+		return last( this.priceTypeEntities );
 	};
 
 	/**
@@ -121,22 +121,22 @@ class TicketPriceCalculatorForm extends Component {
 
 	/**
 	 * @function
-	 * @param {Object} priceType
+	 * @param {Object} priceTypeEntity
 	 * @return {Object} % or $ sign
 	 */
-	modifierSign = ( priceType ) => {
-		return priceType && priceType.isPercent ?
+	modifierSign = ( priceTypeEntity ) => {
+		return priceTypeEntity && priceTypeEntity.isPercent ?
 			this.percentSign() :
 			this.currencySign();
 	};
 
 	/**
 	 * @function
-	 * @param {Object} priceType
+	 * @param {Object} priceTypeEntity
 	 * @return {string} input field css class
 	 */
-	amountClass = ( priceType = null ) => {
-		return priceType && priceType.isPercent ?
+	amountClass = ( priceTypeEntity = null ) => {
+		return priceTypeEntity && priceTypeEntity.isPercent ?
 			`ee-percent-field${ this.signB4() }${ this.signChars() }` :
 			`ee-money-field${ this.signB4() }${ this.signChars() }`;
 	};
@@ -193,34 +193,34 @@ class TicketPriceCalculatorForm extends Component {
 	getDefaultPriceTypeId = () => {
 		return first(
 			filter(
-				this.priceTypes,
-				( priceType ) => priceType.id !== 1
+				this.priceTypeEntities,
+				( priceTypeEntity ) => priceTypeEntity.id !== 1
 			)
 		).id;
 	};
 
 	/**
 	 * @function
-	 * @param {Object} ticket
+	 * @param {Object} ticketEntity
 	 * @param {string} ticketPrefix
 	 * @param {Array} values
-	 * @param {Object} price
+	 * @param {Object} priceEntity
 	 * @param {Array} priceTypeOptions
 	 * @param {boolean} lastRow
 	 * @return {Object} rendered price modifier form row
 	 */
 	priceModifierRow = (
-		ticket,
+		ticketEntity,
 		ticketPrefix,
 		values,
-		price,
+		priceEntity,
 		priceTypeOptions,
 		lastRow,
 	) => {
-		const priceId = shortenCuid( price.id );
+		const priceId = shortenCuid( priceEntity.id );
 		const prefix = `${ ticketPrefix }-price-${ priceId }`;
 		const priceTypeId = parseInt( values[ `${ prefix }-type` ], 10 ) || 0;
-		const priceType = this.getPriceType( priceTypeId );
+		const priceTypeEntity = this.getPriceType( priceTypeId );
 		return [
 			{
 				type: 'row',
@@ -260,13 +260,13 @@ class TicketPriceCalculatorForm extends Component {
 							htmlId={ `${ prefix }-type` }
 							changeListener={
 								( value ) => {
-									price.prtId = value ?
+									priceEntity.prtId = value ?
 										parseInt( value, 10 ) :
 										this.getDefaultPriceTypeId();
 								}
 							}
 							disabled={
-								price.prtId === BASE_PRICE_TYPES.BASE_PRICE
+								priceEntity.prtId === BASE_PRICE_TYPES.BASE_PRICE
 							}
 						/>
 					</Fragment>
@@ -288,7 +288,7 @@ class TicketPriceCalculatorForm extends Component {
 							name={ `${ prefix }-name` }
 							htmlId={ `${ prefix }-name` }
 							value={ values[ `${ prefix }-name` ] || '' }
-							changeListener={ ( value ) => price.name = value }
+							changeListener={ ( value ) => priceEntity.name = value }
 						/>
 					</Fragment>
 				),
@@ -309,7 +309,7 @@ class TicketPriceCalculatorForm extends Component {
 							name={ `${ prefix }-desc` }
 							htmlId={ `${ prefix }-desc` }
 							value={ values[ `${ prefix }-desc` ] || '' }
-							changeListener={ ( value ) => price.desc = value }
+							changeListener={ ( value ) => priceEntity.desc = value }
 						/>
 					</Fragment>
 				),
@@ -324,15 +324,15 @@ class TicketPriceCalculatorForm extends Component {
 							htmlFor={ `${ prefix }-amount` }
 							htmlClass="ee-hidden-label"
 						/>
-						{ this.modifierSign( priceType ) }
+						{ this.modifierSign( priceTypeEntity ) }
 						<FormInput
 							key="price"
 							type="text"
 							name={ `${ prefix }-amount` }
 							htmlId={ `${ prefix }-amount` }
-							htmlClass={ this.amountClass( priceType ) }
+							htmlClass={ this.amountClass( priceTypeEntity ) }
 							value={
-								price.amount.formatter.formatNumber(
+								priceEntity.amount.formatter.formatNumber(
 									parseMoneyValue(
 										values[ `${ prefix }-amount` ] || 0
 									)
@@ -343,7 +343,7 @@ class TicketPriceCalculatorForm extends Component {
 									if (
 										parseFloat( value ) !== parseFloat( previous )
 									) {
-										price.amount = new Money(
+										priceEntity.amount = new Money(
 											parseMoneyValue( value ),
 											SiteCurrency
 										);
@@ -351,11 +351,11 @@ class TicketPriceCalculatorForm extends Component {
 								}
 							}
 							disabled={
-								price.prtId === BASE_PRICE_TYPES.BASE_PRICE &&
+								priceEntity.prtId === BASE_PRICE_TYPES.BASE_PRICE &&
 								values.reverseCalculate === true
 							}
 							format={ ( value ) => {
-								return price.amount.formatter.formatNumber(
+								return priceEntity.amount.formatter.formatNumber(
 									parseMoneyValue( value )
 								);
 							} }
@@ -368,9 +368,9 @@ class TicketPriceCalculatorForm extends Component {
 				type: 'cell',
 				class: 'ee-ticket-price-calculator-price-actions',
 				value: this.getModifierActionButtons(
-					priceType,
-					price,
-					ticket,
+					priceTypeEntity,
+					priceEntity,
+					ticketEntity,
 					prefix,
 					values,
 					lastRow
@@ -381,18 +381,18 @@ class TicketPriceCalculatorForm extends Component {
 
 	/**
 	 * @function
-	 * @param {Object} priceType
-	 * @param {Object} price
-	 * @param {Object} ticket
+	 * @param {Object} priceTypeEntity
+	 * @param {Object} priceEntity
+	 * @param {Object} ticketEntity
 	 * @param {string} prefix
 	 * @param {Array} values
 	 * @param {boolean} lastRow
 	 * @return {Object} rendered price modifier form row
 	 */
 	getModifierActionButtons = (
-		priceType,
-		price,
-		ticket,
+		priceTypeEntity,
+		priceEntity,
+		ticketEntity,
 		prefix,
 		values,
 		lastRow
@@ -413,7 +413,7 @@ class TicketPriceCalculatorForm extends Component {
 					icon="plus-alt"
 					onClick={
 						() => this.addPriceModifier(
-							ticket,
+							ticketEntity,
 							{
 								type: values[ `${ prefix }-type` ],
 								name: values[ `${ prefix }-name` ],
@@ -427,7 +427,7 @@ class TicketPriceCalculatorForm extends Component {
 				/>
 			</Tooltip> :
 			'';
-		const deleteModifier = priceType.pbtId !== BASE_PRICE_TYPES.BASE_PRICE ?
+		const deleteModifier = priceTypeEntity.pbtId !== BASE_PRICE_TYPES.BASE_PRICE ?
 			<Tooltip
 				position={ 'top left' }
 				text={ __( 'click to delete price modifier', 'event_espresso' ) }
@@ -439,7 +439,7 @@ class TicketPriceCalculatorForm extends Component {
 					) }
 					icon="trash"
 					onClick={
-						() => this.trashPriceModifier( price, ticket )
+						() => this.trashPriceModifier( priceEntity, ticketEntity )
 					}
 				/>
 			</Tooltip> :
@@ -452,13 +452,13 @@ class TicketPriceCalculatorForm extends Component {
 
 	/**
 	 * @function
-	 * @param {Object} ticket
+	 * @param {Object} ticketEntity
 	 * @param {string} ticketPrefix
 	 * @param {Array} values
 	 * @param {Function} setReverseCalculate
 	 * @return {Object} rendered form footer
 	 */
-	ticketTotalRow = ( ticket, ticketPrefix, values, setReverseCalculate ) => {
+	ticketTotalRow = ( ticketEntity, ticketPrefix, values, setReverseCalculate ) => {
 		const calcDirIcon = values.reverseCalculate ? 'up' : 'down';
 		const calcDirText = values.reverseCalculate ?
 			__( 'reverse calculate base price from total', 'event_espresso' ) :
@@ -508,7 +508,7 @@ class TicketPriceCalculatorForm extends Component {
 							htmlId="ticketTotal"
 							htmlClass={ this.amountClass() }
 							value={
-								ticket.price.formatter.formatNumber(
+								ticketEntity.price.formatter.formatNumber(
 									parseMoneyValue( values.ticketTotal )
 								)
 							}
@@ -517,7 +517,7 @@ class TicketPriceCalculatorForm extends Component {
 									if (
 										parseFloat( value ) !== parseFloat( previous )
 									) {
-										ticket.price = new Money(
+										ticketEntity.price = new Money(
 											parseMoneyValue( value ),
 											SiteCurrency
 										);
@@ -526,7 +526,7 @@ class TicketPriceCalculatorForm extends Component {
 							}
 							disabled={ values.reverseCalculate === false }
 							format={ ( value ) => {
-								return ticket.price.formatter.formatNumber(
+								return ticketEntity.price.formatter.formatNumber(
 									parseMoneyValue( value )
 								);
 							} }
@@ -562,9 +562,9 @@ class TicketPriceCalculatorForm extends Component {
 
 	render() {
 		const {
-			ticket,
-			prices,
-			priceTypes,
+			ticketEntity,
+			priceEntities,
+			priceTypeEntities,
 			addPriceModifier,
 			trashPriceModifier,
 			setReverseCalculate,
@@ -578,49 +578,48 @@ class TicketPriceCalculatorForm extends Component {
 		this.addPriceModifier = addPriceModifier;
 		this.trashPriceModifier = trashPriceModifier;
 		if (
-			! isModelEntityOfModel( ticket, TICKET ) ||
-			isEmpty( priceTypes )
+			! isModelEntityOfModel( ticketEntity, TICKET ) ||
+			isEmpty( priceTypeEntities )
 		) {
 			return null;
 		}
-		this.priceTypes = priceTypes;
+		this.priceTypeEntities = priceTypeEntities;
 		const values = isEmpty( currentValues ) ?
 			initialValues :
 			currentValues;
-		// console.log( ' > values: ', values );
 		const allPriceTypeOptions = this.buildPriceTypeOptions(
-			this.priceTypes
+			this.priceTypeEntities
 		);
 		let ticketPrefix = TICKET_PRICE_CALCULATOR_FORM_INPUT_PREFIX;
-		ticketPrefix += '-ticket-' + ticket.id;
+		ticketPrefix += '-ticket-' + ticketEntity.id;
 
 		let warnings = null;
 		const formRows = [];
-		const priceCount = prices.length;
+		const priceCount = priceEntities.length;
 		if ( priceCount > 0 ) {
 			const priceTypeOptions = filter(
 				allPriceTypeOptions,
-				( priceType ) => {
-					return priceType.value !== BASE_PRICE_TYPES.BASE_PRICE;
+				( priceTypeEntity ) => {
+					return priceTypeEntity.value !== BASE_PRICE_TYPES.BASE_PRICE;
 				}
 			);
-			const sortedPrices = sortBy( prices, [ 'order', 'name' ] );
+			const sortedPrices = sortBy( priceEntities, [ 'order', 'name' ] );
 			for ( let i = 0; i < priceCount; i++ ) {
-				const price = sortedPrices[ i ];
-				if ( ! isModelEntityOfModel( price, 'price' ) ) {
+				const priceEntity = sortedPrices[ i ];
+				if ( ! isModelEntityOfModel( priceEntity, 'price' ) ) {
 					return;
 				}
 				// we don't want "Base Price" to be an option for
 				// price modifiers because THERE CAN ONLY BE ONE!!!
-				const options = price.prtId === BASE_PRICE_TYPES.BASE_PRICE ?
+				const options = priceEntity.prtId === BASE_PRICE_TYPES.BASE_PRICE ?
 					allPriceTypeOptions :
 					priceTypeOptions;
 				formRows.push(
 					this.priceModifierRow(
-						ticket,
+						ticketEntity,
 						ticketPrefix,
 						values,
-						price,
+						priceEntity,
 						options,
 						( i + 1 ) === priceCount
 					)
@@ -649,7 +648,7 @@ class TicketPriceCalculatorForm extends Component {
 				/>
 			);
 		}
-		return ticket && ticket.id ? (
+		return ticketEntity && ticketEntity.id ? (
 			<FormWrapper>
 				<FormSection
 					htmlId={ `${ ticketPrefix }-form-section` }
@@ -661,7 +660,7 @@ class TicketPriceCalculatorForm extends Component {
 						rowData={ formRows }
 						footerData={
 							this.ticketTotalRow(
-								ticket,
+								ticketEntity,
 								ticketPrefix,
 								values,
 								setReverseCalculate

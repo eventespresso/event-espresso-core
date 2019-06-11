@@ -18,7 +18,7 @@ export default createHigherOrderComponent(
 		withSelect( ( select, ownProps ) => {
 			const {
 				showDates = 'active-upcoming',
-				sortDates = 'chronologically',
+				datesSortedBy = 'chronologically',
 				displayDates = 'start',
 				searchDateName = '',
 				datesPerPage = 6,
@@ -31,10 +31,10 @@ export default createHigherOrderComponent(
 					'showDates',
 					showDates
 				),
-				sortDates: store.getFilter(
+				datesSortedBy: store.getFilter(
 					'event-editor-dates-list',
-					'sortDates',
-					sortDates
+					'datesSortedBy',
+					datesSortedBy
 				),
 				displayDates: store.getFilter(
 					'event-editor-dates-list',
@@ -69,10 +69,10 @@ export default createHigherOrderComponent(
 					'showDates',
 					showDates
 				),
-				setSortDates: ( sortDates ) => store.setFilter(
+				setDatesSortedBy: ( datesSortedBy ) => store.setFilter(
 					'event-editor-dates-list',
-					'sortDates',
-					sortDates
+					'datesSortedBy',
+					datesSortedBy
 				),
 				setDisplayDates: ( displayDates ) => store.setFilter(
 					'event-editor-dates-list',

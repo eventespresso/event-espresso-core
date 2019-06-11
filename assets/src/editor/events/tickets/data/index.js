@@ -1,3 +1,3 @@
-export { withPriceTypes } from './with-price-types';
-export { withTicketDatetimes } from './with-ticket-datetimes';
-export { withTicketPrices } from './with-ticket-prices';
+export { withPriceTypeEntities } from './with-price-type-entities';
+export { withTicketDateEntities } from './with-ticket-date-entities';
+export { withTicketPriceEntities } from './with-ticket-price-entities';

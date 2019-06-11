@@ -3,6 +3,10 @@
  */
 import { Component, Fragment } from '@wordpress/element';
 import { createHigherOrderComponent } from '@wordpress/compose';
+
+/**
+ * Internal imports
+ */
 import TicketAssignmentsManagerModal from './ticket-assignments-manager-modal';
 
 /**
@@ -43,10 +47,10 @@ const WithTicketAssignmentsManagerModal = (
 
 			render() {
 				const {
-					eventDate,
-					allDates,
-					ticket,
-					allTickets,
+					dateEntity,
+					allDateEntities,
+					ticketEntity,
+					allTicketEntities,
 				} = this.props;
 				return (
 					<Fragment>
@@ -57,10 +61,10 @@ const WithTicketAssignmentsManagerModal = (
 						/>
 						<TicketAssignmentsManagerModal
 							modalProps={ modalPropsCallback( this.props ) }
-							date={ eventDate }
-							allDates={ allDates }
-							allTickets={ allTickets }
-							ticket={ ticket }
+							dateEntity={ dateEntity }
+							allDateEntities={ allDateEntities }
+							allTicketEntities={ allTicketEntities }
+							ticketEntity={ ticketEntity }
 							editorOpen={ this.state.showManager }
 							toggleEditor={ this.toggleManager }
 						/>

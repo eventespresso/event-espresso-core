@@ -8,24 +8,41 @@ const noIndex = -1;
 
 /**
  * @function
- * @param {Array} dates
+ * @param {Object} assigned
+ * @param {Object} date
+ * @param {Object} ticket
+ * @param {boolean} returnIndex
+ * @return {number|boolean} index for date id in assigned array or
+ *                        boolean if returnIndex is false
+ */
+export const isAssigned = ( assigned, date, ticket, returnIndex = false ) => {
+	let index = noIndex;
+	if ( isArray( assigned[ date.id ] ) ) {
+		index = findIndex( assigned[ date.id ], { id: ticket.id } );
+	}
+	return returnIndex ? index : index > noIndex;
+};
+
+/**
+ * @function
+ * @param {Array} dateEntities
  * @param {Object} assigned
  * @param {Function} addTickets
  * @param {Object} removed
- * @param {Function} removeTickets
+ * @param {Function} removeTicketEntities
  * @return {Promise} resolves to true if updates occurred
  */
 export const processChanges = (
-	dates,
+	dateEntities,
 	assigned,
 	addTickets,
 	removed,
-	removeTickets
+	removeTicketEntities
 ) => {
 	const relationUpdates = [];
 	for ( const dateID in removed ) {
 		const dateEntity = find(
-			dates,
+			dateEntities,
 			( date ) => {
 				return date.id === dateID ||
 					date.id === parseInt( dateID, 10 );
@@ -35,14 +52,14 @@ export const processChanges = (
 			const ticketsToRemove = removed[ dateID ];
 			if ( isArray( ticketsToRemove ) ) {
 				relationUpdates.push(
-					removeTickets( dateEntity, ticketsToRemove )
+					removeTicketEntities( dateEntity, ticketsToRemove )
 				);
 			}
 		}
 	}
 	for ( const dateID in assigned ) {
 		const dateEntity = find(
-			dates,
+			dateEntities,
 			( date ) => {
 				return date.id === dateID ||
 					date.id === parseInt( dateID, 10 );
@@ -63,36 +80,19 @@ export const processChanges = (
 /**
  * @function
  * @param {Object} assigned
- * @param {Object} date
- * @param {Object} ticket
- * @param {boolean} returnIndex
- * @return {number|boolean} index for date id in assigned array or
- *                        boolean if returnIndex is false
- */
-export const isAssigned = ( assigned, date, ticket, returnIndex = false ) => {
-	let index = noIndex;
-	if ( isArray( assigned[ date.id ] ) ) {
-		index = findIndex( assigned[ date.id ], { id: ticket.id } );
-	}
-	return returnIndex ? index : index > noIndex;
-};
-
-/**
- * @function
- * @param {Object} assigned
- * @param {Object} date
- * @param {Object} ticket
+ * @param {Object} dateEntity
+ * @param {Object} ticketEntity
  * @param {number} index
  * @return {Object} assigned
  */
-export const unAssignTicket = ( assigned, date, ticket, index = noIndex ) => {
+export const unAssignTicketEntity = ( assigned, dateEntity, ticketEntity, index = noIndex ) => {
 	index = index === noIndex ?
-		isAssigned( assigned, date, ticket, true ) :
+		isAssigned( assigned, dateEntity, ticketEntity, true ) :
 		index;
 	if ( index > noIndex ) {
-		assigned[ date.id ].splice( index, 1 );
-		if ( isEmpty( assigned[ date.id ] ) ) {
-			delete assigned[ date.id ];
+		assigned[ dateEntity.id ].splice( index, 1 );
+		if ( isEmpty( assigned[ dateEntity.id ] ) ) {
+			delete assigned[ dateEntity.id ];
 		}
 	}
 	return omitBy( assigned, isUndefined );
@@ -101,25 +101,25 @@ export const unAssignTicket = ( assigned, date, ticket, index = noIndex ) => {
 /**
  * @function
  * @param {Object} prevState
- * @param {Object} date
- * @param {Object} ticket
+ * @param {Object} dateEntity
+ * @param {Object} ticketEntity
  * @return {Object} updated state
  */
-export const assignTicket = ( prevState, date, ticket ) => {
-	const index = isRemoved( prevState.removed, date, ticket, true );
+export const assignTicketEntity = ( prevState, dateEntity, ticketEntity ) => {
+	const index = isRemoved( prevState.removed, dateEntity, ticketEntity, true );
 	if ( index > noIndex ) {
-		prevState.removed = unRemoveTicket(
+		prevState.removed = unRemoveTicketEntity(
 			prevState.removed,
-			date,
-			ticket,
+			dateEntity,
+			ticketEntity,
 			index
 		);
 	} else {
-		if ( ! isArray( prevState.assigned[ date.id ] ) ) {
-			prevState.assigned[ date.id ] = [];
+		if ( ! isArray( prevState.assigned[ dateEntity.id ] ) ) {
+			prevState.assigned[ dateEntity.id ] = [];
 		}
-		if ( ! isAssigned( prevState.assigned, date, ticket ) ) {
-			prevState.assigned[ date.id ].push( ticket );
+		if ( ! isAssigned( prevState.assigned, dateEntity, ticketEntity ) ) {
+			prevState.assigned[ dateEntity.id ].push( ticketEntity );
 		}
 	}
 	return cleanState( prevState );
@@ -128,21 +128,21 @@ export const assignTicket = ( prevState, date, ticket ) => {
 /**
  * @function
  * @param {Object} assigned
- * @param {Object} date
- * @param {Object} ticket
- * @return {number}    		the number of date tickets in assigned
+ * @param {Object} dateEntity
+ * @param {Object} ticketEntity
+ * @return {number}    		the number of dateEntity tickets in assigned
  *              			collection matching supplied ticket
  */
-export const assignedCount = ( assigned, date = null, ticket = null ) => {
-	if ( date && date.id && isArray( assigned[ date.id ] ) ) {
-		return assigned[ date.id ].length;
+export const assignedCount = ( assigned, dateEntity = null, ticketEntity = null ) => {
+	if ( dateEntity && dateEntity.id && isArray( assigned[ dateEntity.id ] ) ) {
+		return assigned[ dateEntity.id ].length;
 	}
 	let index = 0;
 	let count = 0;
-	if ( ticket && ticket.id ) {
+	if ( ticketEntity && ticketEntity.id ) {
 		for ( const dateID in assigned ) {
 			if ( isArray( assigned[ dateID ] ) ) {
-				index = findIndex( assigned[ dateID ], { id: ticket.id } );
+				index = findIndex( assigned[ dateID ], { id: ticketEntity.id } );
 				if ( index > noIndex ) {
 					count++;
 				}
@@ -155,16 +155,16 @@ export const assignedCount = ( assigned, date = null, ticket = null ) => {
 /**
  * @function
  * @param {Object} removed
- * @param {Object} date
- * @param {Object} ticket
+ * @param {Object} dateEntity
+ * @param {Object} ticketEntity
  * @param {boolean} returnIndex
  * @return {number|boolean} index for date id in removed array or
  *                        boolean if returnIndex is false
  */
-export const isRemoved = ( removed, date, ticket, returnIndex = false ) => {
+export const isRemoved = ( removed, dateEntity, ticketEntity, returnIndex = false ) => {
 	let index = noIndex;
-	if ( isArray( removed[ date.id ] ) ) {
-		index = findIndex( removed[ date.id ], { id: ticket.id } );
+	if ( isArray( removed[ dateEntity.id ] ) ) {
+		index = findIndex( removed[ dateEntity.id ], { id: ticketEntity.id } );
 	}
 	return returnIndex ? index : index > noIndex;
 };
@@ -172,19 +172,19 @@ export const isRemoved = ( removed, date, ticket, returnIndex = false ) => {
 /**
  * @function
  * @param {Object} removed
- * @param {Object} date
- * @param {Object} ticket
+ * @param {Object} dateEntity
+ * @param {Object} ticketEntity
  * @param {number} index
  * @return {Object} removed
  */
-export const unRemoveTicket = ( removed, date, ticket, index = noIndex ) => {
+export const unRemoveTicketEntity = ( removed, dateEntity, ticketEntity, index = noIndex ) => {
 	index = index === noIndex ?
-		isRemoved( removed, date, ticket, true ) :
+		isRemoved( removed, dateEntity, ticketEntity, true ) :
 		index;
 	if ( index > noIndex ) {
-		removed[ date.id ].splice( index, 1 );
-		if ( isEmpty( removed[ date.id ] ) ) {
-			delete removed[ date.id ];
+		removed[ dateEntity.id ].splice( index, 1 );
+		if ( isEmpty( removed[ dateEntity.id ] ) ) {
+			delete removed[ dateEntity.id ];
 		}
 	}
 	return removed;
@@ -193,25 +193,25 @@ export const unRemoveTicket = ( removed, date, ticket, index = noIndex ) => {
 /**
  * @function
  * @param {Object} prevState
- * @param {Object} date
- * @param {Object} ticket
+ * @param {Object} dateEntity
+ * @param {Object} ticketEntity
  * @return {Object} updated state
  */
-export const removeTicket = ( prevState, date, ticket ) => {
-	const index = isAssigned( prevState.assigned, date, ticket, true );
+export const removeTicketEntity = ( prevState, dateEntity, ticketEntity ) => {
+	const index = isAssigned( prevState.assigned, dateEntity, ticketEntity, true );
 	if ( index > noIndex ) {
-		prevState.assigned = unAssignTicket(
+		prevState.assigned = unAssignTicketEntity(
 			prevState.assigned,
-			date,
-			ticket,
+			dateEntity,
+			ticketEntity,
 			index
 		);
 	} else {
-		if ( ! isArray( prevState.removed[ date.id ] ) ) {
-			prevState.removed[ date.id ] = [];
+		if ( ! isArray( prevState.removed[ dateEntity.id ] ) ) {
+			prevState.removed[ dateEntity.id ] = [];
 		}
-		if ( ! isRemoved( prevState.removed, date, ticket ) ) {
-			prevState.removed[ date.id ].push( ticket );
+		if ( ! isRemoved( prevState.removed, dateEntity, ticketEntity ) ) {
+			prevState.removed[ dateEntity.id ].push( ticketEntity );
 		}
 	}
 	return cleanState( prevState );
@@ -220,21 +220,21 @@ export const removeTicket = ( prevState, date, ticket ) => {
 /**
  * @function
  * @param {Object} removed
- * @param {Object} date
- * @param {Object} ticket
+ * @param {Object} dateEntity
+ * @param {Object} ticketEntity
  * @return {number}    		the number of date tickets in removed
  *              			collection matching supplied ticket
  */
-export const removedCount = ( removed, date = null, ticket = null ) => {
-	if ( date && date.id && isArray( removed[ date.id ] ) ) {
-		return removed[ date.id ].length;
+export const removedCount = ( removed, dateEntity = null, ticketEntity = null ) => {
+	if ( dateEntity && dateEntity.id && isArray( removed[ dateEntity.id ] ) ) {
+		return removed[ dateEntity.id ].length;
 	}
 	let index = 0;
 	let count = 0;
-	if ( ticket && ticket.id ) {
+	if ( ticketEntity && ticketEntity.id ) {
 		for ( const dateID in removed ) {
 			if ( isArray( removed[ dateID ] ) ) {
-				index = findIndex( removed[ dateID ], { id: ticket.id } );
+				index = findIndex( removed[ dateID ], { id: ticketEntity.id } );
 				if ( index > noIndex ) {
 					count++;
 				}

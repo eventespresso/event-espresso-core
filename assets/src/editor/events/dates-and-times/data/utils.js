@@ -20,17 +20,17 @@ export const condenseArray = ( a ) => uniq( a.filter( removeUndefined ) );
 
 /**
  * @function
- * @param {Array} datetimeEntities
- * @return {Array} array of IDs for supplied datetime entities
+ * @param {Array} dateEntities
+ * @return {Array} array of IDs for supplied date entities
  */
-export const getDatetimeEntityIds = ( datetimeEntities ) => {
-	const datetimeEntityIds = [];
-	if ( Array.isArray( datetimeEntities ) ) {
-		datetimeEntities.forEach( ( eventDate ) => {
-			if ( isModelEntityOfModel( eventDate, 'datetime' ) ) {
-				datetimeEntityIds.push( eventDate.id );
+export const getDateEntityIds = ( dateEntities ) => {
+	const dateEntityIds = [];
+	if ( Array.isArray( dateEntities ) ) {
+		dateEntities.forEach( ( dateEntity ) => {
+			if ( isModelEntityOfModel( dateEntity, 'datetime' ) ) {
+				dateEntityIds.push( dateEntity.id );
 			}
 		} );
 	}
-	return condenseArray( datetimeEntityIds );
+	return condenseArray( dateEntityIds );
 };

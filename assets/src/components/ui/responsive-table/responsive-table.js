@@ -207,8 +207,6 @@ class ResponsiveTable extends Component {
 	 */
 	dataRow = ( dataRow ) => {
 		this.rowNumber++;
-		// console.log( '' );
-		// console.log( 'rowNumber', this.rowNumber );
 		warning(
 			isArray( dataRow ),
 			`Data for row ${ this.rowNumber } is not an array.`
