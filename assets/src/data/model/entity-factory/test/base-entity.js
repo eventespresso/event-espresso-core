@@ -1,7 +1,7 @@
 /**
  * External imports
  */
-import { DateTime } from '@eventespresso/value-objects';
+import { ServerDateTime } from '@eventespresso/value-objects';
 import { PRIVATE_PROPERTIES, SAVE_STATE } from '../constants';
 import { isCuid } from 'cuid';
 import { isArray } from 'lodash';
@@ -289,7 +289,7 @@ describe( 'createEntityFactory()', () => {
 						it( 'event.' + testProperty + ' is instance of ' +
 							'DateTime', () => {
 							expect( event[ testProperty ] )
-								.toBeInstanceOf( DateTime );
+								.toBeInstanceOf( ServerDateTime );
 						} );
 					} );
 					it( 'event.visibleOnRendered is a string and has ' +
@@ -360,7 +360,7 @@ describe( 'createEntityFactory()', () => {
 			if ( isArray( canonicalProp ) ) {
 				const [ property, subProp ] = canonicalProp;
 				if ( subProp === 'date' ) {
-					expectedValue = DateTime.fromISO(
+					expectedValue = ServerDateTime.fromISO(
 						expectedEventData[ property ]
 					);
 				} else {

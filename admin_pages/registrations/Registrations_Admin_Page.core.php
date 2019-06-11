@@ -680,8 +680,9 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
         // stuff to only show up on our attendee edit details page.
         $attendee_details_translations = array(
             'att_publish_text' => sprintf(
-                esc_html__('Created on: <b>%1$s</b>', 'event_espresso'),
-                $this->_cpt_model_obj->get_datetime('ATT_created')
+                /* translators: The date and time */
+                wp_strip_all_tags(__('Created on: %s', 'event_espresso')),
+                '<b>' . $this->_cpt_model_obj->get_datetime('ATT_created') . '</b>'
             ),
         );
         wp_localize_script('espresso_reg', 'ATTENDEE_DETAILS', $attendee_details_translations);
@@ -2195,8 +2196,8 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
             : EE_Transaction::new_instance();
         $this->_session = $transaction->session_data();
         $filters = new EE_Line_Item_Filter_Collection();
-        // $filters->add( new EE_Non_Zero_Line_Item_Filter() );
         $filters->add(new EE_Single_Registration_Line_Item_Filter($this->_registration));
+        $filters->add(new EE_Non_Zero_Line_Item_Filter());
         $line_item_filter_processor = new EE_Line_Item_Filter_Processor(
             $filters,
             $transaction->total_line_item()
