@@ -30,6 +30,8 @@ import { sortDateEntitiesList } from '../dates-and-times/editor-date/filter-bar/
 
 const noIndex = -1;
 
+const DEFAULT_EMPTY_ARRAY = [];
+
 const {
 	FormInfo,
 	FormSection,
@@ -854,13 +856,12 @@ export default compose( [
 			ticketEntity,
 			allTicketEntities,
 			entities = [],
-			ticketEntities = [],
 		} = ownProps;
 		let { initialized = false, loading } = ownProps;
 		let dtmProps = {
 			loading,
 			entities,
-			ticketEntities,
+			ticketEntities: DEFAULT_EMPTY_ARRAY,
 			notice: __(
 				'loading event date ticket assignments',
 				'event_espresso'
