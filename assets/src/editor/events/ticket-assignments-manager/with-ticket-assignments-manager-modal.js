@@ -3,6 +3,10 @@
  */
 import { Component, Fragment } from '@wordpress/element';
 import { createHigherOrderComponent } from '@wordpress/compose';
+
+/**
+ * Internal imports
+ */
 import TicketAssignmentsManagerModal from './ticket-assignments-manager-modal';
 
 const DEFAULT_EMPTY_ARRAY = [];

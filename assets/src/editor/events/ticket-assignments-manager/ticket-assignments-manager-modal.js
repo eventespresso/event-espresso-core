@@ -44,7 +44,7 @@ class TicketAssignmentsManagerModal extends Component {
 	static propTypes = {
 		entities: PropTypes.arrayOf( PropTypes.object ).isRequired,
 		ticketEntities: PropTypes.arrayOf( PropTypes.object ).isRequired,
-		dateEntityTicketMap: PropTypes.object.isRequired,
+		ticketEntitiesByDateIds: PropTypes.object.isRequired,
 		addTicketEntities: PropTypes.func.isRequired,
 		removeTicketEntities: PropTypes.func.isRequired,
 		toggleEditor: PropTypes.func.isRequired,
@@ -153,10 +153,10 @@ class TicketAssignmentsManagerModal extends Component {
 	 * @function
 	 * @param {Array} dateEntities
 	 * @param {Array} ticketEntities
-	 * @param {Object} dateEntityTicketMap
+	 * @param {Object} ticketEntitiesByDateIds
 	 * @return {number} noAssignments
 	 */
-	countTicketAssignments = ( dateEntities, ticketEntities, dateEntityTicketMap ) => {
+	countTicketAssignments = ( dateEntities, ticketEntities, ticketEntitiesByDateIds ) => {
 		let dateTickets = [];
 		let ticketDateCount = 0;
 		let dateTicketCount = 0;
@@ -167,8 +167,8 @@ class TicketAssignmentsManagerModal extends Component {
 				isModelEntityOfModel( eventDate, 'datetime' ),
 				'Invalid EE Date model object!'
 			);
-			dateTickets = dateEntityTicketMap[ eventDate.id ] ?
-				dateEntityTicketMap[ eventDate.id ] :
+			dateTickets = ticketEntitiesByDateIds[ eventDate.id ] ?
+				ticketEntitiesByDateIds[ eventDate.id ] :
 				[];
 			this.assignmentCounts.dateEntities[ eventDate.id ] = dateTickets.length;
 			ticketEntities.forEach( ( ticket ) => {
@@ -270,14 +270,14 @@ class TicketAssignmentsManagerModal extends Component {
 	 * @function
 	 * @param {Array} dateEntities
 	 * @param {Array} ticketEntities
-	 * @param {Object} dateEntityTicketMap
+	 * @param {Object} ticketEntitiesByDateIds
 	 * @param {number} dateCount
 	 * @return {Array} array of row data objects
 	 */
 	dateRows = (
 		dateEntities,
 		ticketEntities,
-		dateEntityTicketMap,
+		ticketEntitiesByDateIds,
 		dateCount,
 	) => {
 		let year = 0;
@@ -306,8 +306,8 @@ class TicketAssignmentsManagerModal extends Component {
 				if ( dateCount > 1 ) {
 					rowData.push( this.dateHeader( eventDate ) );
 				}
-				const eventDateTickets = dateEntityTicketMap[ eventDate.id ] ?
-					dateEntityTicketMap[ eventDate.id ] :
+				const dateTicketEntities = ticketEntitiesByDateIds[ eventDate.id ] ?
+					ticketEntitiesByDateIds[ eventDate.id ] :
 					[];
 				ticketEntities.forEach( ( ticket ) => {
 					warning(
@@ -315,7 +315,7 @@ class TicketAssignmentsManagerModal extends Component {
 						'Invalid EE Ticket model object!'
 					);
 					rowData.push(
-						this.ticketCell( eventDate, ticket, eventDateTickets )
+						this.ticketCell( eventDate, ticket, dateTicketEntities )
 					);
 				} );
 				dateRows.push( rowData );
@@ -773,7 +773,7 @@ class TicketAssignmentsManagerModal extends Component {
 			ticketEntities,
 			allDateEntities,
 			allTicketEntities,
-			dateEntityTicketMap,
+			ticketEntitiesByDateIds,
 			onUpdate,
 			resetRelationsMap,
 			pagination,
@@ -790,7 +790,7 @@ class TicketAssignmentsManagerModal extends Component {
 		const noAssignments = this.countTicketAssignments(
 			allDateEntities || dateEntities,
 			allTicketEntities || ticketEntities,
-			dateEntityTicketMap
+			ticketEntitiesByDateIds
 		);
 		const dateCount = dateEntities.length;
 		let tableId = 'ee-ticket-assignments-manager-';
@@ -811,7 +811,7 @@ class TicketAssignmentsManagerModal extends Component {
 							this.dateRows(
 								dateEntities,
 								ticketEntities,
-								dateEntityTicketMap,
+								ticketEntitiesByDateIds,
 								dateCount
 							)
 						}
@@ -895,7 +895,7 @@ export default compose( [
 		}
 		const { getRelatedEntities } = select( 'eventespresso/core' );
 		const { hasFinishedResolution } = select( 'core/data' );
-		const dateEntityTicketMap = {};
+		const ticketEntitiesByDateIds = {};
 		dtmProps.entities.forEach( ( date ) => {
 			if ( isModelEntityOfModel( date, 'datetime' ) ) {
 				const relatedTickets = getRelatedEntities( date, 'tickets' );
@@ -906,14 +906,14 @@ export default compose( [
 				);
 				if ( ticketRelationsResolved ) {
 					loading = false;
-					dateEntityTicketMap[ date.id ] = uniq( relatedTickets );
+					ticketEntitiesByDateIds[ date.id ] = uniq( relatedTickets );
 				}
 			}
 		} );
 		return {
 			...dtmProps,
 			loading,
-			dateEntityTicketMap,
+			ticketEntitiesByDateIds,
 			initialized,
 		};
 	} ),
