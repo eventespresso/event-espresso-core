@@ -17,7 +17,7 @@ import { isModelEntityOfModel } from '@eventespresso/validators';
  * Internal dependencies
  */
 import { withTicketDateEntities } from '../../data';
-import withEditTicketEntityFormModal from '../edit-form/with-edit-ticket-entity-form-modal';
+import withTicketEntityFormModal from '../edit-form/with-ticket-entity-form-modal';
 import { withCopyTicketEntity, withTrashTicketEntity } from '../action-handlers';
 import {
 	TicketPriceCalculatorMenuItem,
@@ -179,7 +179,7 @@ const EditorTicketActionsMenu = ( {
 
 export default compose( [
 	withTicketPriceCalculatorFormModal,
-	withEditTicketEntityFormModal,
+	withTicketEntityFormModal,
 	withTicketAssignmentsManagerModal( ( { ticketEntity } ) => (
 		{
 			title: sprintf(

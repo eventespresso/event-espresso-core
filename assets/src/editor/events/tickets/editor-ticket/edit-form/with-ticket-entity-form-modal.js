@@ -9,11 +9,11 @@ import { createHigherOrderComponent } from '@wordpress/compose';
 /**
  * Internal imports
  */
-import EditTicketEntityForm from '../edit-form/edit-ticket-entity-form';
+import TicketEntityForm from '../edit-form/ticket-entity-form';
 import { ticketEntityFormSchema } from '../edit-form/ticket-entity-form-schema';
 import { TicketPriceCalculatorMenuItem } from '../price-calculator/ticket-price-calculator-menu-item';
 
-const EditTicketEntityFormModal = withEditorModal( {
+const TicketEntityFormModal = withEditorModal( {
 	title: __( 'Ticket Editor', 'event_espresso' ),
 	customClass: 'ee-ticket-editor-modal',
 	closeButtonLabel: __( 'close ticket editor', 'event_espresso' ),
@@ -27,7 +27,7 @@ const EditTicketEntityFormModal = withEditorModal( {
 		},
 		[ ticketEntity ]
 	);
-	return <EditTicketEntityForm
+	return <TicketEntityForm
 		loadHandler={ loadHandler }
 		submitHandler={ null }
 		resetHandler={ null }
@@ -66,7 +66,7 @@ export default createHigherOrderComponent(
 				toggleCalculator={ toggleCalculator }
 				doRefresh={ doRefresh }
 			/>
-			<EditTicketEntityFormModal
+			<TicketEntityFormModal
 				{ ...otherProps }
 				ticketEntity={ ticketEntity }
 				editorOpen={ showEditor }
@@ -78,5 +78,5 @@ export default createHigherOrderComponent(
 			/>
 		</Fragment>;
 	},
-	'withEditTicketEntityFormModal'
+	'withTicketEntityFormModal'
 );

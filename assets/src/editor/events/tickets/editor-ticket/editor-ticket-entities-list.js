@@ -17,7 +17,7 @@ import { __, _x, sprintf } from '@eventespresso/i18n';
  */
 import { withPriceTypeEntities } from '../data/with-price-type-entities';
 import { withTicketPriceCalculatorFormModal } from './price-calculator';
-import { withEditTicketEntityFormModal } from './edit-form';
+import { withTicketEntityFormModal } from './edit-form';
 import { EditorTicketEntitiesGridView } from './grid-view/';
 import { EditorTicketEntitiesListView } from './list-view/';
 import { withPaginatedTicketEntitiesListWithFilterBar } from './filter-bar';
@@ -131,7 +131,7 @@ export default compose( [
 		'withOnCloseTicketEditor'
 	),
 	withTicketPriceCalculatorFormModal,
-	withEditTicketEntityFormModal,
+	withTicketEntityFormModal,
 	withDispatch(
 		( dispatch, { setNewTicketEntity, basePriceTypeEntity } ) => {
 			const { createEntity, createRelations } = dispatch( 'eventespresso/core' );

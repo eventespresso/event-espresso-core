@@ -33,7 +33,7 @@ const getFormRows = (
 	recalculateBasePrice,
 );
 
-const EditTicketEntityForm = ( {
+const TicketEntityForm = ( {
 	ticketEntity,
 	priceEntities = [],
 	priceTypeEntities = [],
@@ -113,10 +113,10 @@ const EditTicketEntityForm = ( {
 };
 
 /**
- * Enhanced EditTicketEntityForm with FormHandler
+ * Enhanced TicketEntityForm with FormHandler
  */
 export default compose( [
 	withTicketPriceEntities,
 	withPriceTypeEntities,
 	withFormHandler,
-] )( EditTicketEntityForm );
+] )( TicketEntityForm );
