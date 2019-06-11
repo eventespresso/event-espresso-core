@@ -101,7 +101,7 @@ export const ticketEntityFormInputs = (
 				htmlId={ `${ prefix }-price` }
 				helpText={ sprintf(
 					__(
-						'The amount of money charged for this ticketEntity. Leave blank to make this ticket selection free.%sClick the button after the input to use the Ticket Price Calculator (warning: will close this edit form)',
+						'The amount of money charged for this ticket. Leave blank to make this ticket selection free.%sClick the button after the input to use the Ticket Price Calculator (warning: will close this edit form)',
 						'event_espresso'
 					),
 					' \n'
@@ -324,7 +324,7 @@ export const ticketEntityFormInputs = (
 				htmlId={ `${ prefix }-min` }
 				helpText={ __(
 					'The minimum quantity that can be selected for this' +
-					' ticketEntity. Use this to create ticket bundles or graduated' +
+					' ticket. Use this to create ticket bundles or graduated' +
 					' pricing. Leave blank for no minimum.',
 					'event_espresso',
 				) }
@@ -349,7 +349,7 @@ export const ticketEntityFormInputs = (
 				htmlId={ `${ prefix }-max` }
 				helpText={ __(
 					'The maximum quantity that can be selected for this' +
-					' ticketEntity. Use this to create ticket bundles or graduated' +
+					' ticket. Use this to create ticket bundles or graduated' +
 					' pricing. Leave blank for no maximum.',
 					'event_espresso',
 				) }
@@ -420,7 +420,7 @@ export const ticketEntityFormInputs = (
 				label={ __( 'Parent Ticket', 'event_espresso' ) }
 				htmlId={ `${ prefix }-wp-user` }
 				helpText={ __(
-					'The ID of the admin that created this ticketEntity.',
+					'The ID of the admin that created this ticket.',
 					'event_espresso',
 				) }
 				inputWidth={ 2 }
