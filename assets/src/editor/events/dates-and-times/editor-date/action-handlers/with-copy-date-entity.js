@@ -12,8 +12,7 @@ const withCopyDateEntity = createHigherOrderComponent(
 		{
 			eventEntity,
 			dateEntity,
-			dateTicketEntities,
-			dateTicketEntitiesLoaded,
+			ticketEntities,
 		}
 	) => {
 		if ( ! isModelEntityOfModel( dateEntity, 'datetime' ) ) {
@@ -28,12 +27,12 @@ const withCopyDateEntity = createHigherOrderComponent(
 				'datetime',
 				dateEntity.forClone
 			);
-			if ( dateTicketEntitiesLoaded && ! isEmpty( dateTicketEntities ) ) {
+			if ( ! isEmpty( ticketEntities ) ) {
 				createRelations(
 					'datetime',
 					newDateEntity.id,
 					'tickets',
-					dateTicketEntities
+					ticketEntities
 				);
 			}
 			createRelations(
