@@ -136,6 +136,13 @@ interface RequestInterface extends RequestTypeContextCheckerInterface
 
 
     /**
+     * @since $VID:$
+     * @return string
+     */
+    public function requestUriAfterSiteHomeUri();
+
+
+    /**
      * @return string
      */
     public function userAgent();

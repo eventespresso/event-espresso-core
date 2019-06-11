@@ -417,6 +417,7 @@ class Request implements InterminableInterface, RequestInterface, ReservedInstan
 
 
     /**
+     * Gets the request's literal URI. Related to `requestUriAfterSiteHomeUri`, see its description for a comparison.
      * @return string
      */
     public function requestUri()
@@ -432,6 +433,41 @@ class Request implements InterminableInterface, RequestInterface, ReservedInstan
             $request_uri = wp_sanitize_redirect($this->server['REQUEST_URI']);
         }
         return $request_uri;
+    }
+
+
+    /**
+     * Returns the REQUEST_URI after the current blog's home URI.
+     * Eg, if this is a multisite, subdirectory install, the main blog lives at "http://mysite.com", and the current
+     * blog lives at "http://mysite.com/other/", and a request comes to "http://mysite.com/other/path-relative-to-site",
+     * this will return "/path-relative-to-site" whereas `requestUri` will return "/other/path-relative-to-site".
+     * @since $VID:$
+     * @return mixed|string
+     */
+    public function requestUriAfterSiteHomeUri()
+    {
+        $request_uri = filter_input(
+            INPUT_SERVER,
+            'REQUEST_URI',
+            FILTER_SANITIZE_URL,
+            FILTER_NULL_ON_FAILURE
+        );
+        // If it's a subdomain multisite install, we're actually only interested in
+        if(is_multisite()){
+            $blog_details = get_blog_details(get_current_blog_id());
+            $request_uri = str_replace(
+                untrailingslashit($blog_details->path),
+                '',
+                $request_uri
+            );
+        }
+
+        if (empty($request_uri)) {
+            // fallback sanitization if the above fails
+            $request_uri = $this->requestUri();
+        }
+        return $request_uri;
+
     }
 
 
