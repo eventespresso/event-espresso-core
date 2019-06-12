@@ -88,29 +88,56 @@ const EditorTicketEntitiesList = ( {
 	);
 };
 
+const withNewTicketEntity = createHigherOrderComponent(
+	( WrappedComponent ) => ( props ) => {
+		const [ newTicket, setNewTicketEntity ] = useState( null );
+		const basePriceTypeEntity = useMemo(
+			() => {
+				return find(
+					props.priceTypeEntities,
+					( priceType ) => priceType.pbtId === 1
+				);
+			},
+			[ props.priceTypeEntities ]
+		);
+		return <WrappedComponent
+			setNewTicketEntity={ setNewTicketEntity }
+			ticketEntity={ newTicket }
+			basePriceTypeEntity={ basePriceTypeEntity }
+			{ ...props }
+		/>;
+	},
+	'withNewTicket'
+);
+
+const createNewTicketEntity = withDispatch(
+	( dispatch, { setNewTicketEntity, basePriceTypeEntity } ) => {
+		const { createEntity, createRelations } = dispatch( 'eventespresso/core' );
+		const addNewTicketEntity = async ( event ) => {
+			if ( event && event.preventDefault ) {
+				event.preventDefault();
+				event.stopPropagation();
+			}
+			const newTicket = await createEntity( 'ticket', {} );
+			const newBasePrice = await createEntity(
+				'price',
+				{ prtId: basePriceTypeEntity.id }
+			);
+			createRelations(
+				'ticket',
+				newTicket.id,
+				'prices',
+				[ newBasePrice ]
+			);
+			setNewTicketEntity( newTicket );
+		};
+		return { addNewTicketEntity };
+	}
+);
+
 export default compose( [
 	withPriceTypeEntities,
-	createHigherOrderComponent(
-		( WrappedComponent ) => ( props ) => {
-			const [ newTicket, setNewTicketEntity ] = useState( null );
-			const basePriceTypeEntity = useMemo(
-				() => {
-					return find(
-						props.priceTypeEntities,
-						( priceType ) => priceType.pbtId === 1
-					);
-				},
-				[ props.priceTypeEntities ]
-			);
-			return <WrappedComponent
-				setNewTicketEntity={ setNewTicketEntity }
-				ticketEntity={ newTicket }
-				basePriceTypeEntity={ basePriceTypeEntity }
-				{ ...props }
-			/>;
-		},
-		'withNewTicket'
-	),
+	withNewTicketEntity,
 	withTicketAssignmentsManagerModal( () => (
 		{
 			title: __(
@@ -132,29 +159,17 @@ export default compose( [
 	),
 	withTicketPriceCalculatorFormModal,
 	withTicketEntityFormModal,
-	withDispatch(
-		( dispatch, { setNewTicketEntity, basePriceTypeEntity } ) => {
-			const { createEntity, createRelations } = dispatch( 'eventespresso/core' );
-			const addNewTicketEntity = async ( event ) => {
-				if ( event && event.preventDefault ) {
-					event.preventDefault();
-					event.stopPropagation();
-				}
-				const newTicket = await createEntity( 'ticket', {} );
-				const newBasePrice = await createEntity(
-					'price',
-					{ prtId: basePriceTypeEntity.id }
-				);
-				createRelations(
-					'ticket',
-					newTicket.id,
-					'prices',
-					[ newBasePrice ]
-				);
-				setNewTicketEntity( newTicket );
-			};
-			return { addNewTicketEntity };
-		}
-	),
+	createNewTicketEntity,
 	withPaginatedTicketEntitiesListAndFilterBar(),
+] )( EditorTicketEntitiesList );
+
+/**
+ * a trimmed down ticket list: only includes ticket price calculator
+ */
+export const EditorTicketEntitiesOnlyList = compose( [
+	withPriceTypeEntities,
+	withNewTicketEntity,
+	withTicketPriceCalculatorFormModal,
+	withTicketEntityFormModal,
+	createNewTicketEntity,
 ] )( EditorTicketEntitiesList );

@@ -6,4 +6,5 @@ export * from './grid-view';
 export * from './list-view';
 export {
 	default as EditorTicketEntitiesList,
+	EditorTicketEntitiesOnlyList,
 } from './editor-ticket-entities-list';
