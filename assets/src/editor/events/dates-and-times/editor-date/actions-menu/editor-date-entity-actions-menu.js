@@ -5,7 +5,11 @@ import { isEmpty } from 'lodash';
 import { compose } from '@wordpress/compose';
 import { Component, Fragment } from '@wordpress/element';
 import { applyFilters } from '@wordpress/hooks';
-import { DropDownMenu, IconMenuItem } from '@eventespresso/components';
+import {
+	DropDownMenu,
+	EntityActionMenuItem,
+	IconMenuItem,
+} from '@eventespresso/components';
 import { __, sprintf, _x } from '@eventespresso/i18n';
 import { withEditor } from '@eventespresso/editor-hocs';
 import { dateTimeModel } from '@eventespresso/model';
@@ -150,6 +154,7 @@ class EditorDateEntityActionsMenu extends Component {
 					sidebarMenuItem && sidebarMenuItem.type &&
 					(
 						sidebarMenuItem.type === DropDownMenu ||
+						sidebarMenuItem.type === EntityActionMenuItem ||
 						sidebarMenuItem.type === IconMenuItem
 					) ?
 						<Fragment key={ index }>
