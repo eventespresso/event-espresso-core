@@ -2,6 +2,10 @@
 /* General Styles
  * -------------------------------------------------------------------------*/
 
+.ee-editor-div .components-panel {
+    border: none;
+}
+
 .espresso-editor-legend-div {
     padding-top: var(--ee-padding-tiny);
 }
