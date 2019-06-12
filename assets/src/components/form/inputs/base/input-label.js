@@ -1,6 +1,7 @@
 /**
  * External imports
  */
+import classNames from 'classnames';
 import PropTypes from 'prop-types';
 
 /**
@@ -12,6 +13,7 @@ import PropTypes from 'prop-types';
  * @param {string} htmlClass
  * @param {boolean} required
  * @param {boolean} strong
+ * @param {boolean} hidden
  * @param {Object} children
  * @param {Object} attributes
  * @return {string} rendered form label
@@ -22,6 +24,7 @@ export const InputLabel = ( {
 	htmlClass = '',
 	required = false,
 	strong = true,
+	hidden = false,
 	children,
 	...attributes
 } ) => {
@@ -30,8 +33,14 @@ export const InputLabel = ( {
 		( <span className="required">*</span> ) :
 		'';
 	label = strong ? ( <strong>{ label }</strong> ) : label;
-	htmlClass = htmlClass ? htmlClass : 'col-form-label';
-	htmlClass += required ? ' required' : '';
+
+	htmlClass = classNames( {
+		[ htmlClass ]: htmlClass,
+		[ required ]: required,
+		'col-form-label': ! hidden,
+		'screen-reader-text': hidden,
+	} );
+
 	return (
 		<label htmlFor={ htmlFor } className={ htmlClass } { ...attributes }>
 			{ children }
