@@ -37,6 +37,7 @@ class EEH_Schema
             'venue_url' => '',
             'venue_locality' => '',
             'venue_region' => '',
+            'venue_address' => '',
             'event_image' => '',
         );
         $template_args['event_permalink'] = $event->get_permalink();
@@ -81,6 +82,7 @@ class EEH_Schema
             $template_args['venue_url'] = get_permalink($VNU_ID);
             $template_args['venue_locality'] = $venue->city();
             $template_args['venue_region'] = $venue->state_name();
+            $template_args['venue_address'] = $venue->address();
         }
         $template_args['event_image'] = $event->feature_image_url();
         $template_args = apply_filters(
