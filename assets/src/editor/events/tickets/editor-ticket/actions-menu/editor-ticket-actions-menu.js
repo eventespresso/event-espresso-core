@@ -7,6 +7,7 @@ import { Fragment, isValidElement } from '@wordpress/element';
 import { applyFilters } from '@wordpress/hooks';
 import {
 	DropDownMenu,
+	EntityActionMenuItem,
 	EspressoIcon,
 	IconMenuItem,
 } from '@eventespresso/components';
@@ -25,21 +26,6 @@ import {
 } from '../price-calculator';
 import { withTicketAssignmentsManagerModal } from '../../../ticket-assignments-manager';
 import './style.css';
-
-const EditTicketMenuItem = ( {
-	ticketEntity,
-	toggleTicketEditor,
-} ) => {
-	return <IconMenuItem
-		index={ 1 }
-		tooltip={ __( 'edit ticket details', 'event_espresso' ) }
-		id={ `edit-ticket-${ ticketEntity.id }` }
-		htmlClass="edit-ticket"
-		dashicon="edit"
-		tooltipPosition="top right"
-		onClick={ toggleTicketEditor }
-	/>;
-};
 
 // @todo move the various render components outside of the functional component
 // or wrap them with `useCallback` and the appropriate dependencies.
@@ -116,20 +102,24 @@ const EditorTicketActionsMenu = ( {
 			mainDropDownMenu()
 		);
 		sidebarMenuItems.push(
-			<EditTicketMenuItem
-				ticketEntity={ ticketEntity }
-				noBasePrice={ noBasePrice }
-				toggleTicketEditor={ toggleTicketEditor }
-				toggleCalculator={ toggleCalculator }
-				doRefresh={ doRefresh }
+			<IconMenuItem
+				index={ 1 }
+				tooltip={ __( 'edit ticket details', 'event_espresso' ) }
+				id={ `edit-ticket-${ ticketEntity.id }` }
+				htmlClass="edit-ticket"
+				dashicon="edit"
+				tooltipPosition="top right"
+				onClick={ toggleTicketEditor }
 			/>
 		);
-		sidebarMenuItems.push( <TicketPriceCalculatorMenuItem
-			ticketEntity={ ticketEntity }
-			noBasePrice={ noBasePrice }
-			doRefresh={ doRefresh }
-			toggleCalculator={ toggleCalculator }
-		/> );
+		sidebarMenuItems.push(
+			<TicketPriceCalculatorMenuItem
+				ticketEntity={ ticketEntity }
+				noBasePrice={ noBasePrice }
+				doRefresh={ doRefresh }
+				toggleCalculator={ toggleCalculator }
+			/>
+		);
 		sidebarMenuItems.push( assignDatesMenuItem() );
 		/**
 		 * @todo, This could be fragile because of render execution
@@ -149,6 +139,7 @@ const EditorTicketActionsMenu = ( {
 					sidebarMenuItem && sidebarMenuItem.type &&
 					(
 						sidebarMenuItem.type === DropDownMenu ||
+						sidebarMenuItem.type === EntityActionMenuItem ||
 						sidebarMenuItem.type === IconMenuItem ||
 						isValidElement( sidebarMenuItem )
 					) ?
