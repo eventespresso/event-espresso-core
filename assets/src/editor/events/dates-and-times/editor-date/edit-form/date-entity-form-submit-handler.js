@@ -13,12 +13,11 @@ const { MODEL_NAME: DATETIME } = dateTimeModel;
  * given the supplied form data
  *
  * @function
- * @param {Object} eventEntity EE Event object
  * @param {Object} dateEntity  EE Date object
  * @param {Object} formData
+ * @return {Object} dateEntity
  */
 export const dateEntityFormSubmitHandler = (
-	eventEntity,
 	dateEntity,
 	formData,
 ) => {
@@ -41,4 +40,5 @@ export const dateEntityFormSubmitHandler = (
 	dateEntity.order = parseInt( getValue( 'order', 0 ), 10 );
 	dateEntity.parent = parseInt( getValue( 'parent', 0 ), 10 );
 	dateEntity.deleted = !! getValue( 'deleted', false );
+	return dateEntity;
 };
