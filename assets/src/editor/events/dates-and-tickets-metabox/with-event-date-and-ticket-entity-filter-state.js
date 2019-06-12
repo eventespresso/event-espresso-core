@@ -19,7 +19,7 @@ import {
 } from '../tickets/editor-ticket/filter-bar';
 import { withEventEntity, withEventDateEntities } from '../events/data';
 import { withTicketEntitiesForAllDateEntities } from '../dates-and-times/data';
-import withTicketEntitiesforFilteredDateEntities
+import withTicketEntitiesForFilteredDateEntities
 	from './with-ticket-entities-for-filtered-date-entities';
 
 const EMPTY_ARRAY = [];
@@ -66,7 +66,7 @@ const withDateAndTicketEntityFilterState = createHigherOrderComponent(
 				loadingDateEntities: ! dateEntitiesLoaded,
 			};
 		} ),
-		withTicketEntitiesforFilteredDateEntities,
+		withTicketEntitiesForFilteredDateEntities,
 		( WrappedComponent ) => ( {
 			allTicketEntities,
 			ticketEntitiesLoaded,
@@ -91,7 +91,7 @@ const withDateAndTicketEntityFilterState = createHigherOrderComponent(
 			}
 			return <WrappedComponent
 				allTicketEntities={ allTicketEntities }
-				ticketEntitiesLoaded={ ticketEntitiesLoaded }
+				loadingTicketEntities={ ! ticketEntitiesLoaded }
 				isChained={ isChained }
 				filteredTicketEntities={ filteredTicketEntities }
 				showTickets={ showTickets }
