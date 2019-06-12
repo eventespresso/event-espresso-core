@@ -453,7 +453,7 @@ class Request implements InterminableInterface, RequestInterface, ReservedInstan
             FILTER_NULL_ON_FAILURE
         );
         // If it's a subdomain multisite install, we're actually only interested in
-        if(is_multisite()){
+        if (is_multisite()) {
             $blog_details = get_blog_details(get_current_blog_id());
             $request_uri = str_replace(
                 untrailingslashit($blog_details->path),
@@ -467,7 +467,6 @@ class Request implements InterminableInterface, RequestInterface, ReservedInstan
             $request_uri = $this->requestUri();
         }
         return $request_uri;
-
     }
 
 
