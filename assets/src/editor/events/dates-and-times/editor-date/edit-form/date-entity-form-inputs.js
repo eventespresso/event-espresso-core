@@ -17,21 +17,20 @@ const { MODEL_NAME: DATETIME } = dateTimeModel;
  * @function
  * @param {Object} dateEntity  EE Date object
  * @param {Array} exclude  Array of field names to not display inputs for
- * @param {Array} currentValues  Array of input values
+ * @param {Object} values input values
  * @param {Object} FormInput Input object to use
  * @return {Object} rendered form
  */
 export const dateEntityFormInputs = (
 	dateEntity,
 	exclude = [],
-	currentValues = [],
+	values = {},
 	FormInput,
 ) => {
 	const inputs = [];
 	if ( ! isModelEntityOfModel( dateEntity, DATETIME ) ) {
 		return inputs;
 	}
-	const values = currentValues;
 	const prefix = `ee-event-date-${ dateEntity.id }`;
 	if ( parseInt( dateEntity.id, 10 ) && indexOf( exclude, 'DTT_ID' ) < 0 ) {
 		inputs.push(
