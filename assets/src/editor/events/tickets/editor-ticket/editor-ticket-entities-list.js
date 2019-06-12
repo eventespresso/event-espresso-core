@@ -68,12 +68,6 @@ const EditorTicketEntitiesList = ( {
 				EntityGridView={ EditorTicketEntitiesGridView }
 				EntityListView={ EditorTicketEntitiesListView }
 				view={ view }
-				noResultsText={
-					__(
-						'no results found (try changing filters)',
-						'event_espresso'
-					)
-				}
 				loadingNotice={ sprintf(
 					_x(
 						'loading available tickets%s',
