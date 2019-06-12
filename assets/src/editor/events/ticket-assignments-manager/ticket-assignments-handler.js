@@ -3,6 +3,7 @@
  */
 import { find, findIndex, isArray, isEmpty, isUndefined, omitBy } from 'lodash';
 import { isModelEntityOfModel } from '@eventespresso/validators';
+import { normalizeEntityId } from '@eventespresso/helpers';
 
 const noIndex = -1;
 
@@ -44,8 +45,7 @@ export const processChanges = (
 		const dateEntity = find(
 			dateEntities,
 			( date ) => {
-				return date.id === dateID ||
-					date.id === parseInt( dateID, 10 );
+				return normalizeEntityId( date.id ) === normalizeEntityId( dateID );
 			}
 		);
 		if ( isModelEntityOfModel( dateEntity, 'datetime' ) ) {
@@ -61,8 +61,7 @@ export const processChanges = (
 		const dateEntity = find(
 			dateEntities,
 			( date ) => {
-				return date.id === dateID ||
-					date.id === parseInt( dateID, 10 );
+				return normalizeEntityId( date.id ) === normalizeEntityId( dateID );
 			}
 		);
 		if ( isModelEntityOfModel( dateEntity, 'datetime' ) ) {
