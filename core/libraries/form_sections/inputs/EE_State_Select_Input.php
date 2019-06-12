@@ -18,7 +18,7 @@ class EE_State_Select_Input extends EE_Select_Input
     protected $valueFieldName;
 
     /**
-     * @param EE_State[]|array|null $state_options. If an flat array of string is provided,
+     * @param EE_State[]|array|null $state_options. If a flat array of string is provided,
      * $input_settings['value_field_name'] is ignored. If an array of states is passed, that field will be used for
      * the keys (which will become the option values). If null or empty is passed, all active states will be used,
      * and $input_settings['value_field_name'] will again be used.     *

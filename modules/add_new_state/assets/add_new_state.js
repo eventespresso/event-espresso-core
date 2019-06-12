@@ -208,7 +208,7 @@ jQuery(document).ready(function($) {
 					//SPCO.console_log( 'select_id', select_id, false );
 					var set_selected = $(this).attr('id') === state_select_id;
 					// set target select's value to this input's value
-					var new_state_option_value = new_state_option_value = new_state.id;;
+					var new_state_option_value = new_state.id;
 					if(value_field_name === 'STA_abbrev' ) {
 						new_state_option_value = new_state.abbrev;
 					} else if( value_field_name === 'STA_name' ){
