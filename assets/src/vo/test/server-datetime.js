@@ -71,7 +71,7 @@ describe( 'ServerDateTime', () => {
 			describe( METHOD + '() with default timezone', () => {
 				resetDefaults();
 				const testDate = ServerDateTime[ METHOD ]( getDate() );
-				it( 'returns an instance of DateTime', () => {
+				it( 'returns an instance of ServerDateTime', () => {
 					expect( testDate ).toBeInstanceOf( ServerDateTime );
 				} );
 				it( 'has set timezone string to expected value', () => {
@@ -100,6 +100,18 @@ describe( 'ServerDateTime', () => {
 				it( 'has set locale to be expected value', () => {
 					expect( testDate.locale ).toBe( 'en' );
 				} );
+			} );
+		} );
+	} );
+	describe( 'fluent setter tests', () => {
+		const testDate = ServerDateTime.fromJSDate(
+			new Date( testDateValueInMilliseconds )
+		);
+		describe( 'setTimezone', () => {
+			const newDate = testDate.setTimezone( 'America/Vancouver' );
+			it( 'returns instance of ServerDateTime', () => {
+				expect( newDate ).toBeInstanceOf( ServerDateTime );
+				expect( newDate.timezone ).toBe( 'America/Vancouver' );
 			} );
 		} );
 	} );
