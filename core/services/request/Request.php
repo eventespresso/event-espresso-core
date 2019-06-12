@@ -418,9 +418,12 @@ class Request implements InterminableInterface, RequestInterface, ReservedInstan
 
     /**
      * Gets the request's literal URI. Related to `requestUriAfterSiteHomeUri`, see its description for a comparison.
+     * @param boolean $relativeToWpRoot If home_url() is "http://mysite.com/wp/", and a request comes to
+     *                                  "http://mysite.com/wp/wp-json", setting $relativeToWpRoot=true will return
+     *                                  "/wp-json", whereas $relativeToWpRoot=false will return "/wp/wp-json/".
      * @return string
      */
-    public function requestUri()
+    public function requestUri($relativeToWpRoot = false)
     {
         $request_uri = filter_input(
             INPUT_SERVER,
@@ -432,46 +435,21 @@ class Request implements InterminableInterface, RequestInterface, ReservedInstan
             // fallback sanitization if the above fails
             $request_uri = wp_sanitize_redirect($this->server['REQUEST_URI']);
         }
-        return $request_uri;
-    }
-
-
-    /**
-     * Returns the REQUEST_URI after the current blog's home URI.
-     * Eg, if this is a multisite, subdirectory install, the main blog lives at "http://mysite.com", and the current
-     * blog lives at "http://mysite.com/other/", and a request comes to "http://mysite.com/other/path-relative-to-site",
-     * this will return "/path-relative-to-site" whereas `requestUri` will return "/other/path-relative-to-site".
-     * @since $VID:$
-     * @return mixed|string
-     */
-    public function requestUriAfterSiteHomeUri()
-    {
-        $request_uri = filter_input(
-            INPUT_SERVER,
-            'REQUEST_URI',
-            FILTER_SANITIZE_URL,
-            FILTER_NULL_ON_FAILURE
-        );
-        // If it's a subdomain multisite install, we're actually only interested in
-
-        $home_path = parse_url(
-            home_url(),
-            PHP_URL_PATH
-        );
-        $request_uri = str_replace(
-            untrailingslashit($home_path),
-            '',
-            $request_uri
-        );
-
-
-        if (empty($request_uri)) {
-            // fallback sanitization if the above fails
-            $request_uri = $this->requestUri();
+        if ($relativeToWpRoot) {
+            $home_path = untrailingslashit(
+                parse_url(
+                    home_url(),
+                    PHP_URL_PATH
+                )
+            );
+            $request_uri = str_replace(
+                $home_path,
+                '',
+                $request_uri
+            );
         }
         return $request_uri;
     }
-
 
     /**
      * @return string
