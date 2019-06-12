@@ -60,6 +60,7 @@ const withEditorModal = createHigherOrderComponent(
 				className={ htmlClass }
 				onRequestClose={ closeAction }
 				closeButtonLabel={ buttonLabel }
+				overlayClassName={ 'ee-editor-modal-overlay' }
 				{ ...extraModalProps }
 			>
 				<WrappedComponent
