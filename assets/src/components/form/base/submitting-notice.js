@@ -46,7 +46,9 @@ const SubmittingNotice = ( {
 				<span className="ee-spinner-wrapper"><Spinner /></span>
 				<span className="ee-text-wrapper">{ submittingText }</span>
 				<span className="ee-ellipsis-wrapper">
-					<span className="ee-ellipsis-span"></span>
+					<span className="ee-ellipsis-span-1">.</span>
+					<span className="ee-ellipsis-span-2">.</span>
+					<span className="ee-ellipsis-span-3">.</span>
 				</span>
 			</div>
 		</div> :
