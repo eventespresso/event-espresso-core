@@ -210,7 +210,7 @@ class RequestMock extends Request implements InterminableInterface, RequestInter
     /**
      * @return string
      */
-    public function requestUri()
+    public function requestUri($relativeToWpRoot = false)
     {
         return isset($this->server['REQUEST_URI']) ? $this->server['REQUEST_URI'] : '';
     }
