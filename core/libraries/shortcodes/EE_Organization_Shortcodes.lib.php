@@ -85,7 +85,7 @@ class EE_Organization_Shortcodes extends EE_Shortcodes
                 $state = EE_Registry::instance()->load_model('State')->get_one_by_ID(
                     EE_Registry::instance()->CFG->organization->STA_ID
                 );
-                return $state->name();
+                return ! empty($state) ? $state->name() : '';
                 break;
 
             case '[CO_ZIP]':
