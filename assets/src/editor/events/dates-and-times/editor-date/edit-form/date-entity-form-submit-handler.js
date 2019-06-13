@@ -5,6 +5,7 @@ import { __ } from '@eventespresso/i18n';
 import { dateTimeModel } from '@eventespresso/model';
 import { ServerDateTime } from '@eventespresso/value-objects';
 import { isModelEntityOfModel } from '@eventespresso/validators';
+import { normalizeEntityId } from '@eventespresso/helpers';
 
 const { MODEL_NAME: DATETIME } = dateTimeModel;
 
@@ -39,6 +40,6 @@ export const dateEntityFormSubmitHandler = (
 	dateEntity.regLimit = parseInt( getValue( 'reg-limit', -1 ), 10 );
 	dateEntity.isPrimary = !! getValue( 'is-primary', false );
 	dateEntity.order = parseInt( getValue( 'order', 0 ), 10 );
-	dateEntity.parent = parseInt( getValue( 'parent', 0 ), 10 );
+	dateEntity.parent = normalizeEntityId( getValue( 'parent', 0 ) );
 	dateEntity.deleted = !! getValue( 'deleted', false );
 };
