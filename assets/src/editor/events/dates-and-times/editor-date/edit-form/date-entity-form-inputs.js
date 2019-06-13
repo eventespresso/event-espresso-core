@@ -6,6 +6,7 @@ import { __ } from '@eventespresso/i18n';
 import { validations } from '@eventespresso/components';
 import { dateTimeModel } from '@eventespresso/model';
 import { isModelEntityOfModel } from '@eventespresso/validators';
+import { normalizeEntityId } from '@eventespresso/helpers';
 
 const { MODEL_NAME: DATETIME } = dateTimeModel;
 
@@ -32,18 +33,17 @@ export const dateEntityFormInputs = (
 		return inputs;
 	}
 	const prefix = `ee-event-date-${ dateEntity.id }`;
-	if ( parseInt( dateEntity.id, 10 ) && indexOf( exclude, 'DTT_ID' ) < 0 ) {
+	if ( normalizeEntityId( dateEntity.id ) && indexOf( exclude, 'DTT_ID' ) < 0 ) {
 		inputs.push(
 			<FormInput
 				key="id"
-				type="number"
+				type="text"
 				name={ `${ prefix }-id` }
 				initialValue={ values[ `${ prefix }-id` ] }
 				label={ __( 'Date ID', 'event_espresso' ) }
 				htmlId={ `${ prefix }-id` }
 				inputWidth={ 3 }
 				required
-				min={ 0 }
 				disabled
 			/>,
 		);
@@ -52,14 +52,13 @@ export const dateEntityFormInputs = (
 		inputs.push(
 			<FormInput
 				key="event"
-				type="number"
+				type="text"
 				name={ `${ prefix }-event-id` }
 				initialValue={ values[ `${ prefix }-event-id` ] || 0 }
 				label={ __( 'Event ID', 'event_espresso' ) }
 				htmlId={ `${ prefix }-event-id` }
 				inputWidth={ 3 }
 				required
-				min={ 0 }
 				disabled
 			/>,
 		);

@@ -13,6 +13,7 @@ import {
 import { priceTypeModel, ticketModel } from '@eventespresso/model';
 import { isModelEntityOfModel } from '@eventespresso/validators';
 import { Money, SiteCurrency } from '@eventespresso/value-objects';
+import { normalizeEntityId } from '@eventespresso/helpers';
 
 /**
  * Internal dependencies
@@ -65,7 +66,7 @@ class TicketPriceCalculatorForm extends Component {
 	 * @return {Object} priceType
 	 */
 	getPriceType = ( priceTypeId ) => {
-		priceTypeId = parseInt( priceTypeId, 10 );
+		priceTypeId = normalizeEntityId( priceTypeId );
 		const priceTypeEntity = find( this.priceTypeEntities, [ 'id', priceTypeId ] );
 		if ( isModelEntityOfModel( priceTypeEntity, 'price_type' ) ) {
 			return priceTypeEntity;
@@ -219,7 +220,7 @@ class TicketPriceCalculatorForm extends Component {
 	) => {
 		const priceId = shortenCuid( priceEntity.id );
 		const prefix = `${ ticketPrefix }-price-${ priceId }`;
-		const priceTypeId = parseInt( values[ `${ prefix }-type` ], 10 ) || 0;
+		const priceTypeId = normalizeEntityId( values[ `${ prefix }-type` ] ) || 0;
 		const priceTypeEntity = this.getPriceType( priceTypeId );
 		return [
 			{
@@ -261,7 +262,7 @@ class TicketPriceCalculatorForm extends Component {
 							changeListener={
 								( value ) => {
 									priceEntity.prtId = value ?
-										parseInt( value, 10 ) :
+										normalizeEntityId( value ) :
 										this.getDefaultPriceTypeId();
 								}
 							}
