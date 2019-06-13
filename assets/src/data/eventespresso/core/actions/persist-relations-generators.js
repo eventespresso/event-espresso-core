@@ -4,7 +4,7 @@
 import { isEmpty, keys } from 'lodash';
 import cuid from 'cuid';
 import { isModelEntityOfModel } from '@eventespresso/validators';
-import { singularModelName, pluralModelName } from '@eventespresso/model';
+import { singularModelName } from '@eventespresso/model';
 
 /**
  * Internal imports.
