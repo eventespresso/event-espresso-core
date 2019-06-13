@@ -70,7 +70,7 @@
 		"@wordpress/plugins": "^2.3.0",
 		"@wordpress/scripts": "^3.2.1",
 		"@wordpress/url": "^2.6.0",
-		"@wordpress/viewport": "^2.4.0",
+		"@wordpress/viewport": "^2.5.0",
 		"autoprefixer": "^9.6.0",
 		"babel-plugin-dev-expression": "^0.2.1",
 		"babel-runtime": "^6.26.0",
