@@ -5,7 +5,7 @@ exports[`EventAttendeesEditor Block block edit matches snapshot for no props 1`]
   <Placeholder>
     <Spinner />
   </Placeholder>
-  <IfBlockEditSelected(InspectorControlsFill)>
+  <ForwardRef>
     <ForwardRef(PanelBody)
       title="Filter By Settings"
     >
@@ -119,7 +119,7 @@ exports[`EventAttendeesEditor Block block edit matches snapshot for no props 1`]
         />
       </ForwardRef(PanelBody)>
     </WithSelect(NotWithPostTypeCheck)>
-  </IfBlockEditSelected(InspectorControlsFill)>
+  </ForwardRef>
 </Fragment>
 `;
 
@@ -146,7 +146,7 @@ exports[`EventAttendeesEditor Block block edit matches snapshot with isLoading f
     isLoading={false}
     showGravatar={true}
   />
-  <IfBlockEditSelected(InspectorControlsFill)>
+  <ForwardRef>
     <ForwardRef(PanelBody)
       title="Filter By Settings"
     >
@@ -260,7 +260,7 @@ exports[`EventAttendeesEditor Block block edit matches snapshot with isLoading f
         />
       </ForwardRef(PanelBody)>
     </WithSelect(NotWithPostTypeCheck)>
-  </IfBlockEditSelected(InspectorControlsFill)>
+  </ForwardRef>
 </Fragment>
 `;
 
@@ -269,7 +269,7 @@ exports[`EventAttendeesEditor Block block edit matches snapshot with isLoading f
   <Placeholder>
     There are no attendees for selected options.
   </Placeholder>
-  <IfBlockEditSelected(InspectorControlsFill)>
+  <ForwardRef>
     <ForwardRef(PanelBody)
       title="Filter By Settings"
     >
@@ -383,6 +383,6 @@ exports[`EventAttendeesEditor Block block edit matches snapshot with isLoading f
         />
       </ForwardRef(PanelBody)>
     </WithSelect(NotWithPostTypeCheck)>
-  </IfBlockEditSelected(InspectorControlsFill)>
+  </ForwardRef>
 </Fragment>
 `;
