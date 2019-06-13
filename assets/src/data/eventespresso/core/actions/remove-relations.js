@@ -1,6 +1,8 @@
 /**
- * Internal imports
+ * External imports
  */
+import { singularModelName } from '@eventespresso/model';
+
 /**
  * Internal imports
  */
@@ -27,6 +29,7 @@ const { relations: types } = ACTION_TYPES;
  * An action object
  */
 function removeAllRelatedEntitiesForModelEntity( modelName, entityId ) {
+	modelName = singularModelName( modelName );
 	return {
 		type: types.REMOVE_RELATED_ENTITIES_FOR_ENTITY,
 		modelName,
@@ -58,6 +61,8 @@ function removeRelatedEntities(
 	relationName,
 	relatedEntityIds,
 ) {
+	modelName = singularModelName( modelName );
+	relationName = singularModelName( relationName );
 	return {
 		type: types.REMOVE_RELATED_ENTITY_IDS,
 		modelName,
@@ -94,6 +99,8 @@ function removeDirtyRelationForType(
 	entityId,
 	addRelation = true
 ) {
+	modelName = singularModelName( modelName );
+	relationName = singularModelName( relationName );
 	const type = addRelation ? types.REMOVE_DIRTY_RELATION_ADDITION :
 		types.REMOVE_DIRTY_RELATION_DELETION;
 	return {
@@ -133,6 +140,8 @@ function removeDirtyRelationAddition(
 	modelName,
 	entityId,
 ) {
+	modelName = singularModelName( modelName );
+	relationName = singularModelName( relationName );
 	return removeDirtyRelationForType(
 		relationName,
 		relationEntityId,
@@ -166,6 +175,8 @@ function removeDirtyRelationDeletion(
 	modelName,
 	entityId,
 ) {
+	modelName = singularModelName( modelName );
+	relationName = singularModelName( relationName );
 	return removeDirtyRelationForType(
 		relationName,
 		relationEntityId,

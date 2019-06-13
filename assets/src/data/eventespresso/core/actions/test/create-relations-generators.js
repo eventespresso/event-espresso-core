@@ -47,7 +47,7 @@ describe( 'createRelation()', () => {
 					'receiveRelatedEntities',
 					'datetime',
 					40,
-					'events',
+					'event',
 					[ 20 ],
 				)
 			);
@@ -59,7 +59,7 @@ describe( 'createRelation()', () => {
 				dispatch(
 					REDUCER_KEY,
 					'receiveDirtyRelationAddition',
-					'events',
+					'event',
 					20,
 					'datetime',
 					40,
@@ -112,7 +112,7 @@ describe( 'createRelations()', () => {
 				'receiveRelatedEntities',
 				'datetime',
 				40,
-				'events',
+				'event',
 				[ 20, 30 ]
 			)
 		);
@@ -137,7 +137,7 @@ describe( 'createRelations()', () => {
 				'finishResolution',
 				REDUCER_KEY,
 				'getRelatedEntities',
-				[ DateTimeEntities.a, 'events' ]
+				[ DateTimeEntities.a, 'event' ]
 			)
 		);
 	} );
@@ -146,7 +146,7 @@ describe( 'createRelations()', () => {
 		[ EventEntities.c, EventEntities.b ].forEach( ( relationEntity ) => {
 			it( 'yields dispatch action for id:' + relationEntity.id, () => {
 				const { value } = fulfillment.next();
-				const args = [ 'events', relationEntity.id, 'datetime', 40 ];
+				const args = [ 'event', relationEntity.id, 'datetime', 40 ];
 				expect( value ).toEqual(
 					dispatch(
 						REDUCER_KEY,
@@ -164,7 +164,7 @@ describe( 'createRelations()', () => {
 						'finishResolution',
 						REDUCER_KEY,
 						'getRelatedEntities',
-						[ relationEntity, 'datetimes' ]
+						[ relationEntity, 'datetime' ]
 					)
 				);
 			} );
@@ -227,7 +227,7 @@ describe( 'resolveRelationRecordForRelation', () => {
 				'receiveRelatedEntities',
 				'event',
 				20,
-				'datetimes',
+				'datetime',
 				[ DateTimeEntities.a.id ]
 			)
 		);
@@ -252,7 +252,7 @@ describe( 'resolveRelationRecordForRelation', () => {
 				'finishResolution',
 				REDUCER_KEY,
 				'getRelatedEntities',
-				[ EventEntities.a, 'datetimes' ]
+				[ EventEntities.a, 'datetime' ]
 			)
 		);
 	} );
@@ -265,7 +265,7 @@ describe( 'resolveRelationRecordForRelation', () => {
 				'finishResolution',
 				REDUCER_KEY,
 				'getRelatedEntities',
-				[ DateTimeEntities.a, 'events' ]
+				[ DateTimeEntities.a, 'event' ]
 			)
 		);
 	} );
