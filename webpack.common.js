@@ -23,9 +23,10 @@ const rulesConfig = {
 			miniExtract.loader,
 			{
 				loader: 'css-loader',
-				query: {
-					modules: true,
-					localIdentName: '[local]',
+				options: {
+					modules: {
+						localIdentName: '[local]',
+					},
 				},
 			},
 			{
