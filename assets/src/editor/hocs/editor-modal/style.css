@@ -1,8 +1,15 @@
 
+.components-modal__screen-overlay.ee-editor-modal-overlay {
+    background: #000d;
+}
+
 .components-modal__frame.ee-editor-modal {
+    background: var(--ee-background-color);
+    color: var(--ee-default-text-color);
     height: 85%;
     max-height: 85%;
     max-width: 80%;
+    opacity: 1;
     width: 65%;
 }
 
@@ -23,6 +30,29 @@
 .components-modal__frame.ee-editor-modal .components-modal__header h1,
 .components-modal__frame.ee-editor-modal .components-modal__header .components-icon-button {
     color: var(--ee-text-on-primary);
+}
+
+.components-modal__frame.ee-editor-modal .components-modal__header .components-icon-button:hover,
+.components-modal__frame.ee-editor-modal .components-modal__header .components-icon-button:active {
+    background: var(--ee-text-on-primary);
+    box-shadow: none;
+    color: var(--ee-color-primary);
+}
+
+.components-modal__frame.ee-editor-modal .components-modal__header .components-icon-button:focus {
+    background: var(--ee-color-primary);
+    border: 1px dotted var(--ee-text-on-primary);
+    box-shadow: none;
+    color: var(--ee-text-on-primary);
+}
+
+.components-modal__frame.ee-editor-modal .components-panel__body > .components-panel__body-title {
+    color: var(--ee-default-text-color-high-contrast);
+}
+.components-modal__frame.ee-editor-modal .components-button:focus:enabled,
+.components-modal__frame.ee-editor-modal .components-panel__body > .components-panel__body-title:hover {
+    background: var(--ee-background-color);
+    color: var(--ee-default-text-color-super-high-contrast);
 }
 
 .ee-editor-modal .components-modal__content {

@@ -28,10 +28,10 @@
     padding: 6px 12px;
     margin-left: -1px;
     line-height: 1.42857143;
-    color: var(--ee-color-blue);
+    color: var(--ee-color-primary);
     text-decoration: none;
     background-color: inherit;
-    border: 1px solid var(--ee-color-grey-10);
+    border: 1px solid var(--ee-border-color);
 }
 
 .ee-entity-pagination .pagination > li:first-child > a,
@@ -53,16 +53,16 @@
 .ee-entity-pagination .pagination > .disabled > span,
 .ee-entity-pagination .pagination > .disabled > span:focus,
 .ee-entity-pagination .pagination > .disabled > span:hover {
-    color: var(--ee-color-grey-9);
+    color: var(--ee-color-grey-10);
     cursor: default;
-    border-color: var(--ee-color-grey-10);
+    border-color: var(--ee-border-color);
 }
 
 .ee-entity-pagination .pagination > li > a:focus,
 .ee-entity-pagination .pagination > li > a:hover,
 .ee-entity-pagination .pagination > li > span:focus,
 .ee-entity-pagination .pagination > li > span:hover {
-    background-color: var(--ee-color-grey-11);
+    background-color: var(--ee-color-grey-14);
     z-index: 3;
 }
 
@@ -73,7 +73,7 @@
 .ee-entity-pagination .pagination > .active > span:focus,
 .ee-entity-pagination .pagination > .active > span:hover {
     z-index: 2;
-    color: var(--ee-color-grey-11);
-    background-color: var(--ee-color-blue);
-    border-color: var(--ee-color-blue);
+    color: var(--ee-text-on-primary);
+    background-color: var(--ee-color-primary);
+    border-color: var(--ee-color-primary);
 }

@@ -5,6 +5,8 @@ import { Component } from '@wordpress/element';
 import PropTypes from 'prop-types'
 import { DropdownMenu } from '@wordpress/components';
 
+import './style.css';
+
 /**
  * DropDownMenu
  * wrapper for a WP DropdownMenu component that applies EE styles and defaults

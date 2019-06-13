@@ -1,0 +1,92 @@
+
+.ee-drop-down-menu.components-dropdown-menu {
+    padding: 0;
+}
+
+/* button for toggling dropdown */
+.ee-drop-down-menu.components-dropdown-menu .components-dropdown-menu__toggle {
+    background: none !important;
+    border: 1px solid var(--ee-background-color) !important;
+    color: var(--ee-default-text-color) !important;
+    padding: var(--ee-padding-tiny) var(--ee-padding-micro);
+}
+
+.ee-drop-down-menu.components-dropdown-menu .components-dropdown-menu__toggle:hover,
+.ee-drop-down-menu.components-dropdown-menu .components-dropdown-menu__toggle:not(:disabled):not([aria-disabled="true"]):not(.is-default):hover {
+    background: var(--ee-background-color) !important;
+    border: 1px solid var(--ee-border-color) !important;
+    box-shadow: none !important;
+    color: var(--ee-color-primary) !important;
+}
+
+.ee-drop-down-menu.components-dropdown-menu .components-dropdown-menu__toggle:hover,
+.ee-drop-down-menu.components-dropdown-menu .components-dropdown-menu__toggle:not(:disabled):not([aria-disabled="true"]):not(.is-default):hover {
+    color: var(--ee-color-primary) !important;
+}
+
+.ee-drop-down-menu.components-dropdown-menu .components-dropdown-menu__toggle:focus {
+    color: var(--ee-color-black);
+    box-shadow: var(--ee-box-shadow-wp-icon-btn-focus);
+    outline: 2px solid transparent;
+    outline-offset: -2px;
+}
+
+/* wrapper for dropdown popover */
+.ee-drop-down-menu.components-dropdown-menu .components-dropdown-menu__popover .components-popover__content {
+    background: var(--ee-background-color);
+    box-shadow: var(--ee-box-shadow-small);
+}
+
+.ee-drop-down-menu.components-dropdown-menu .components-popover:not(.is-mobile) .components-popover__content {
+    border: 1px solid var(--ee-border-color) !important;
+    min-width: calc(var(--ee-font-size-default) * 10);
+}
+
+/* dropdown popover arrow */
+.ee-drop-down-menu.components-dropdown-menu .components-popover:not(.is-without-arrow):not(.is-mobile)::before,
+.ee-drop-down-menu.components-dropdown-menu .components-popover:not(.is-without-arrow):not(.is-mobile)::after {
+    border-color: var(--ee-border-color);
+    border-left-color: #0000;
+    border-right-color: #0000;
+}
+
+.ee-drop-down-menu.components-dropdown-menu .components-popover:not(.is-without-arrow):not(.is-mobile).is-top::before,
+.ee-drop-down-menu.components-dropdown-menu .components-popover:not(.is-without-arrow):not(.is-mobile).is-top::after {
+    bottom: -7px;
+}
+.ee-drop-down-menu.components-dropdown-menu .components-popover:not(.is-without-arrow):not(.is-mobile).is-bottom::before,
+.ee-drop-down-menu.components-dropdown-menu .components-popover:not(.is-without-arrow):not(.is-mobile).is-bottom::after {
+    top: -7px;
+}
+
+.components-popover:not(.is-without-arrow):not(.is-mobile).is-top::after {
+    bottom: -6px;
+}
+
+/* the actual dropdown menu */
+.ee-drop-down-menu.components-dropdown-menu .components-dropdown-menu__menu {
+    box-sizing: border-box;
+    padding: var(--ee-padding-smaller) var(--ee-padding-smaller) var(--ee-padding-small);
+}
+
+.ee-drop-down-menu.components-dropdown-menu .components-dropdown-menu__menu .components-dropdown-menu__menu-item {
+    color: var(--ee-default-text-color);
+    font-size: var(--ee-font-size-small);
+    padding: var(--ee-padding-tiny) var(--ee-padding-default) var(--ee-padding-tiny) var(--ee-padding-smaller);
+    white-space: nowrap;
+}
+
+.ee-drop-down-menu.components-dropdown-menu .components-dropdown-menu__menu .components-dropdown-menu__menu-item:hover,
+.ee-drop-down-menu.components-dropdown-menu .components-dropdown-menu__menu .components-dropdown-menu__menu-item:active {
+    background-color: var(--ee-color-grey-14);
+    box-shadow: none;
+    color: var(--ee-default-text-color-high-contrast);
+}
+
+.ee-drop-down-menu.components-dropdown-menu .components-dropdown-menu__menu .components-dropdown-menu__menu-item:focus:not(:disabled):not([aria-disabled="true"]):not(.is-default) {
+    background-color: var(--ee-color-grey-14);
+    box-shadow: none;
+    color: var(--ee-default-text-color-high-contrast);
+    outline-offset: -2px;
+    outline: 1px dotted var(--ee-color-grey-8);
+}

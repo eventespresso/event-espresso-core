@@ -5,10 +5,11 @@
 
 .ee-submitting-notice {
     align-items: center;
-    background-color: var(--ee-background-color);
+    background-color: var(--ee-color-bright-green);
+    border-radius: var(--ee-border-radius-small);
     box-shadow: var(--ee-box-shadow-tiny);
     box-sizing: border-box;
-    color: var(--ee-default-text-color-super-high-contrast);
+    color: var(--ee-text-on-bright-green-high-contrast);
     display: flex;
     flex-flow: row nowrap;
     font-size: var(--ee-font-size-small);
@@ -66,6 +67,8 @@
 .ee-submitting-notice .ee-spinner-wrapper {
     align-items: center;
     background-color: var(--ee-color-bright-green-high-contrast);
+    border-top-left-radius: var(--ee-border-radius-small);
+    border-bottom-left-radius: var(--ee-border-radius-small);
     display: flex;
     height: 100%;
 }
@@ -111,32 +114,35 @@
     width: 1.25em;
 }
 
-.ee-submitting-notice .ee-ellipsis-span:after {
-    overflow: hidden;
-    display: inline-block;
-    vertical-align: bottom;
-    -webkit-animation: ellipsis steps(4, end) 900ms infinite;
-    animation: ellipsis steps(4, end) 900ms infinite;
-    content: "\2026"; /* ascii code for the ellipsis character */
-    width: 0;
+.ee-ellipsis-span-1 {
+    animation: ellipsis-dot 1.3s infinite;
+    animation-delay: 0.0s;
+    opacity: 0;
 }
 
-@keyframes ellipsis {
-    to {
-        width: 1.25em;
-    }
+.ee-ellipsis-span-2 {
+    animation: ellipsis-dot 1.3s infinite;
+    animation-delay: 0.2s;
+    opacity: 0;
 }
 
-@-webkit-keyframes ellipsis {
-    to {
-        width: 1.25em;
-    }
+.ee-ellipsis-span-3 {
+    animation: ellipsis-dot 1.3s infinite;
+    animation-delay: 0.3s;
+    opacity: 0;
+}
+
+@keyframes ellipsis-dot {
+    0% { opacity: 0; }
+    50% { opacity: 0; }
+    100% { opacity: 1; }
 }
 
 .ee-position-above {
     position: relative;
     top: calc(var(--ee-font-size-bigger) * -1);
 }
+
 .ee-position-below {
     position: relative;
     top: calc(var(--ee-font-size-huge) * -1);

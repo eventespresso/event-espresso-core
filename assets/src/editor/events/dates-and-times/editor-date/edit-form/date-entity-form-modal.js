@@ -55,7 +55,6 @@ class DateEntityFormModal extends Component {
 	 */
 	submitHandler = ( data ) => {
 		dateEntityFormSubmitHandler(
-			this.props.eventEntity,
 			this.state.dateEntity,
 			data
 		);

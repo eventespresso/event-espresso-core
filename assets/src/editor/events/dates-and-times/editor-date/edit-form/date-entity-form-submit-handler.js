@@ -14,12 +14,10 @@ const { MODEL_NAME: DATETIME } = dateTimeModel;
  * given the supplied form data
  *
  * @function
- * @param {Object} eventEntity EE Event object
  * @param {Object} dateEntity  EE Date object
  * @param {Object} formData
  */
 export const dateEntityFormSubmitHandler = (
-	eventEntity,
 	dateEntity,
 	formData,
 ) => {
