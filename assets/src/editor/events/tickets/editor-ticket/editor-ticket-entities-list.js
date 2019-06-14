@@ -120,7 +120,7 @@ const createNewTicketEntity = withDispatch(
 			createRelations(
 				'ticket',
 				newTicket.id,
-				'prices',
+				'price',
 				[ newBasePrice ]
 			);
 			setNewTicketEntity( newTicket );

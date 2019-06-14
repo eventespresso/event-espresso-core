@@ -949,7 +949,7 @@ export default compose( [
 						removeRelationForEntity(
 							'datetime',
 							dateEntity.id,
-							'tickets',
+							'ticket',
 							ticketEntity.id
 						)
 					);
