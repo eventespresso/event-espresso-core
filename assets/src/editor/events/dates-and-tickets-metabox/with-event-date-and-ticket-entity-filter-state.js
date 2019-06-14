@@ -24,7 +24,7 @@ import withTicketEntitiesForFilteredDateEntities
 
 const EMPTY_ARRAY = [];
 
-const withDateAndTicketEntityFilterState = createHigherOrderComponent(
+const withEventDateAndTicketEntityFilterState = createHigherOrderComponent(
 	compose( [
 		withEventEntity,
 		withEventDateEntities,
@@ -103,11 +103,11 @@ const withDateAndTicketEntityFilterState = createHigherOrderComponent(
 	'withDatesAndTicketsFilterState'
 );
 
-withDateAndTicketEntityFilterState.propTypes = {
+withEventDateAndTicketEntityFilterState.propTypes = {
 	eventId: PropTypes.oneOfType( [
 		PropTypes.number,
 		PropTypes.string,
 	] ).isRequired,
 };
 
-export default withDateAndTicketEntityFilterState;
+export default withEventDateAndTicketEntityFilterState;
