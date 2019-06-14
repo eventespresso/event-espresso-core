@@ -18,12 +18,12 @@ export const withDateTicketEntities = createHigherOrderComponent(
 			if ( isModelEntityOfModel( dateEntity, 'datetime' ) ) {
 				const ticketEntities = getRelatedEntities(
 					dateEntity,
-					'tickets'
+					'ticket'
 				);
 				const ticketEntitiesLoaded = hasFinishedResolution(
 					'eventespresso/core',
 					'getRelatedEntities',
-					[ dateEntity, 'tickets' ]
+					[ dateEntity, 'ticket' ]
 				);
 				return { ticketEntities, ticketEntitiesLoaded };
 			}

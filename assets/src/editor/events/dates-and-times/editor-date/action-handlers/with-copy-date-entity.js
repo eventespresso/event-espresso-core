@@ -31,14 +31,14 @@ const withCopyDateEntity = createHigherOrderComponent(
 				createRelations(
 					'datetime',
 					newDateEntity.id,
-					'tickets',
+					'ticket',
 					ticketEntities
 				);
 			}
 			createRelations(
 				'event',
 				eventEntity.id,
-				'datetimes',
+				'datetime',
 				[ newDateEntity ]
 			);
 			return newDateEntity;

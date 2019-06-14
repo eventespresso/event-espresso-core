@@ -28,11 +28,11 @@ const withEventDateEntities = createHigherOrderComponent(
 			) {
 				const { getRelatedEntities } = select( 'eventespresso/core' );
 				const { hasFinishedResolution } = select( 'core/data' );
-				const dateEntities = getRelatedEntities( eventEntity, 'datetimes' );
+				const dateEntities = getRelatedEntities( eventEntity, 'datetime' );
 				const dateEntitiesLoaded = hasFinishedResolution(
 					'eventespresso/core',
 					'getRelatedEntities',
-					[ eventEntity, 'datetimes' ]
+					[ eventEntity, 'datetime' ]
 				);
 				if ( dateEntitiesLoaded ) {
 					return { dateEntities, dateEntitiesLoaded };

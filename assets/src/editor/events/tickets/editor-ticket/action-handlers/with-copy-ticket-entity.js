@@ -33,7 +33,7 @@ const withCopyTicketEntity = createHigherOrderComponent(
 				createRelations(
 					TICKET,
 					newTicket.id,
-					'datetimes',
+					'datetime',
 					dateEntities
 				);
 			}
@@ -53,7 +53,7 @@ const withCopyTicketEntity = createHigherOrderComponent(
 				createRelations(
 					TICKET,
 					newTicket.id,
-					'prices',
+					'price',
 					newPrices
 				);
 			}

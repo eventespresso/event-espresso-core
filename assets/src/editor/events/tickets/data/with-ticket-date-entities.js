@@ -19,11 +19,11 @@ export const withTicketDateEntities = withSelect(
 		const { getRelatedEntities } = select( 'eventespresso/core' );
 		const { hasFinishedResolution } = select( 'core/data' );
 		if ( isModelEntityOfModel( ticketEntity, 'ticket' ) ) {
-			const dateEntities = getRelatedEntities( ticketEntity, 'datetimes' );
+			const dateEntities = getRelatedEntities( ticketEntity, 'datetime' );
 			const dateEntitiesLoaded = hasFinishedResolution(
 				'eventespresso/core',
 				'getRelatedEntities',
-				[ ticketEntity, 'datetimes' ]
+				[ ticketEntity, 'datetime' ]
 			);
 			if ( dateEntitiesLoaded ) {
 				return {
