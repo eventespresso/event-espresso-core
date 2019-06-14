@@ -15,8 +15,7 @@ const withTicketEntitiesForFilteredDateEntities = createHigherOrderComponent(
 	) => {
 		const dateIds = getDateEntityIds( filteredDateEntities );
 		const { getRelationIdsForEntityRelation } = select( 'eventespresso/core' );
-		const allTicketEntities = [ ...ticketEntities ];
-		ticketEntities = ticketEntities.filter( ( ticketEntity ) => {
+		const filteredTicketEntities = ticketEntities.filter( ( ticketEntity ) => {
 			const relatedDateEntities = getRelationIdsForEntityRelation(
 				ticketEntity,
 				'datetime'
@@ -25,8 +24,8 @@ const withTicketEntitiesForFilteredDateEntities = createHigherOrderComponent(
 				intersection( relatedDateEntities, dateIds ).length > 0;
 		} );
 		return {
-			allTicketEntities,
-			ticketEntities,
+			allTicketEntities: ticketEntities,
+			ticketEntities: filteredTicketEntities,
 		};
 	} ),
 	'withTicketEntitiesForFilteredDateEntities'
