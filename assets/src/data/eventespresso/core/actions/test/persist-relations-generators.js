@@ -96,11 +96,11 @@ describe( 'persistRelationsForModel()', () => {
 		);
 	} );
 	it( 'returns expected object on successful completion', () => {
-		const { value, done } = fulfillment.next( { datetimes: [ 10 ] } );
+		const { value, done } = fulfillment.next( { datetime: [ 10 ] } );
 		expect( value ).toEqual(
 			{
 				10: {
-					datetimes: [ 10 ],
+					datetime: [ 10 ],
 				},
 			}
 		);
@@ -214,7 +214,7 @@ describe( 'persistRelationsForEntityIdAndRelation', () => {
 		fulfillment.next();
 		const { value: relationAction } = fulfillment.next( {
 			10: {
-				datetimes: [ 10, 20 ],
+				datetime: [ 10, 20 ],
 			},
 		} );
 		expect( relationAction ).toEqual(
@@ -223,12 +223,12 @@ describe( 'persistRelationsForEntityIdAndRelation', () => {
 				'persistRelationsForEntityIdAndRelationId',
 				'event',
 				10,
-				'datetimes',
+				'datetime',
 				20,
 				true,
 				{
 					10: {
-						datetimes: [ 10, 20 ],
+						datetime: [ 10, 20 ],
 					},
 				}
 			)
@@ -240,12 +240,12 @@ describe( 'persistRelationsForEntityIdAndRelation', () => {
 				'persistRelationsForEntityIdAndRelationId',
 				'event',
 				10,
-				'datetimes',
+				'datetime',
 				10,
 				true,
 				{
 					10: {
-						datetimes: [ 10, 20 ],
+						datetime: [ 10, 20 ],
 					},
 				}
 			)
@@ -272,7 +272,7 @@ describe( 'persistRelationsForEntityIdAndRelationId()', () => {
 	const testRelationState = {
 		event: {
 			10: {
-				datetimes: [ 20 ],
+				datetime: [ 20 ],
 			},
 		},
 	};
@@ -302,7 +302,7 @@ describe( 'persistRelationsForEntityIdAndRelationId()', () => {
 		expect( value ).toEqual( resolveDispatch(
 			CORE_REDUCER_KEY,
 			'persistNewEntityAndRemoveDirtyRelations',
-			'datetimes',
+			'datetime',
 			20,
 			'event',
 			testCuid,
@@ -323,7 +323,7 @@ describe( 'persistRelationsForEntityIdAndRelationId()', () => {
 		expect( value ).toEqual( resolveDispatch(
 			CORE_REDUCER_KEY,
 			'persistNewEntityAndRemoveDirtyRelations',
-			'datetimes',
+			'datetime',
 			testCuid,
 			'event',
 			10,
@@ -348,7 +348,7 @@ describe( 'persistRelationsForEntityIdAndRelationId()', () => {
 				'getRelationEndpointForEntityId',
 				'event',
 				10,
-				'datetimes'
+				'datetime'
 			)
 		);
 	} );

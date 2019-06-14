@@ -3,11 +3,7 @@
  */
 import { combineReducers } from '@wordpress/data';
 import { normalizeEntityId } from '@eventespresso/helpers';
-import {
-	pluralModelName,
-	DEFAULT_SCHEMA_STATE,
-	singularModelName,
-} from '@eventespresso/model';
+import { DEFAULT_SCHEMA_STATE, singularModelName } from '@eventespresso/model';
 import {
 	isSchemaResponseOfModel,
 	isModelEntityFactoryOfModel,
@@ -83,7 +79,7 @@ export const receiveRelationEndpointForEntity = (
 	try {
 		const { type, entityId, endpoint } = action;
 		const modelName = singularModelName( action.modelName );
-		const relationName = pluralModelName( action.relationName );
+		const relationName = singularModelName( action.relationName );
 		if ( type === types.RECEIVE_RELATION_ENDPOINT_FOR_MODEL_ENTITY ) {
 			return state.setIn(
 				[ modelName, normalizeEntityId( entityId ), relationName ],
@@ -106,7 +102,7 @@ export const receiveRelationEndpointForEntity = (
 export const receiveRelationSchema = ( state = Map(), action ) => {
 	if ( action.type === types.RECEIVE_RELATION_SCHEMA ) {
 		const modelName = singularModelName( action.modelName );
-		const relationName = pluralModelName( action.relationName );
+		const relationName = singularModelName( action.relationName );
 		if ( isShallowEqual(
 			state.getIn( [ modelName, relationName ], {} ),
 			action.relationSchema,

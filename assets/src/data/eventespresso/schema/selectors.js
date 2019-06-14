@@ -8,7 +8,6 @@ import { REDUCER_KEY, JOIN_RELATION_TYPES } from './constants';
  * External imports
  */
 import {
-	pluralModelName,
 	singularModelName,
 	getPrimaryKey,
 	modelNameForQueryString,
@@ -124,7 +123,7 @@ export function getRelationEndpointForEntityId(
 	relationModelName
 ) {
 	modelName = singularModelName( modelName );
-	relationModelName = pluralModelName( relationModelName );
+	relationModelName = singularModelName( relationModelName );
 	entityId = normalizeEntityId( entityId );
 	return state.relationEndpoints.getIn(
 		[ modelName, entityId, relationModelName ]
@@ -148,7 +147,7 @@ export function isRequestingRelationEndpointForEntityId(
 ) {
 	modelName = singularModelName( modelName );
 	entityId = normalizeEntityId( entityId );
-	relationModelName = pluralModelName( relationModelName );
+	relationModelName = singularModelName( relationModelName );
 	return isResolving(
 		REDUCER_KEY,
 		'getRelationEndpointForEntityId',
@@ -185,20 +184,19 @@ export const getRelationPrimaryKeyString = createSelector(
 		relationName
 	) => {
 		modelName = singularModelName( modelName );
-		relationName = pluralModelName( relationName );
+		relationName = singularModelName( relationName );
 		const relationType = getRelationType( state, modelName, relationName );
 		if ( relationType === '' ) {
 			return '';
 		}
-		const singularRelationName = singularModelName( relationName );
-		const relationPrimaryKey = getPrimaryKey( singularRelationName );
+		const relationPrimaryKey = getPrimaryKey( relationName );
 		return relationType === 'EE_Belongs_To_Relation' ?
 			relationPrimaryKey :
-			`${ modelNameForQueryString( singularRelationName ) }.${ relationPrimaryKey }`;
+			`${ modelNameForQueryString( relationName ) }.${ relationPrimaryKey }`;
 	},
 	( state, modelName, relationName ) => {
 		modelName = singularModelName( modelName );
-		relationName = pluralModelName( relationName );
+		relationName = singularModelName( relationName );
 		return [
 			state.relationSchema.getIn( [ modelName, relationName ], '' ),
 		];
@@ -216,7 +214,7 @@ export const getRelationPrimaryKeyString = createSelector(
  */
 export const getRelationResponseType = ( state, modelName, relationName ) => {
 	modelName = singularModelName( modelName );
-	relationName = pluralModelName( relationName );
+	relationName = singularModelName( relationName );
 	const relationSchema = getRelationSchema( state, modelName, relationName );
 	return relationSchema !== null ?
 		relationSchema.type :
@@ -234,7 +232,7 @@ export const getRelationResponseType = ( state, modelName, relationName ) => {
  */
 export const hasJoinTableRelation = ( state, modelName, relationName ) => {
 	modelName = singularModelName( modelName );
-	relationName = pluralModelName( relationName );
+	relationName = singularModelName( relationName );
 	const relationType = getRelationType( state, modelName, relationName );
 	return JOIN_RELATION_TYPES.indexOf( relationType ) > -1;
 };
@@ -250,7 +248,7 @@ export const hasJoinTableRelation = ( state, modelName, relationName ) => {
  */
 export const getRelationType = ( state, modelName, relationName ) => {
 	modelName = singularModelName( modelName );
-	relationName = pluralModelName( relationName );
+	relationName = singularModelName( relationName );
 	const relationSchema = getRelationSchema( state, modelName, relationName );
 	return relationSchema !== null ?
 		relationSchema.relation_type :
@@ -268,6 +266,6 @@ export const getRelationType = ( state, modelName, relationName ) => {
  */
 export const getRelationSchema = ( state, modelName, relationName ) => {
 	modelName = singularModelName( modelName );
-	relationName = pluralModelName( relationName );
+	relationName = singularModelName( relationName );
 	return state.relationSchema.getIn( [ modelName, relationName ], null );
 };
