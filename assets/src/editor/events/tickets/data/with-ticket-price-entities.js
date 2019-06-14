@@ -25,11 +25,11 @@ export const withTicketPriceEntities = withSelect(
 		const { getRelatedEntities } = select( 'eventespresso/core' );
 		const { hasFinishedResolution } = select( 'core/data' );
 		if ( isModelEntityOfModel( ticketEntity, 'ticket' ) ) {
-			const priceEntities = getRelatedEntities( ticketEntity, 'prices' );
+			const priceEntities = getRelatedEntities( ticketEntity, 'price' );
 			const priceEntitiesLoaded = hasFinishedResolution(
 				'eventespresso/core',
 				'getRelatedEntities',
-				[ ticketEntity, 'prices' ]
+				[ ticketEntity, 'price' ]
 			);
 			if ( priceEntitiesLoaded ) {
 				return {

@@ -899,11 +899,11 @@ export default compose( [
 		const ticketEntitiesByDateIds = {};
 		dtmProps.entities.forEach( ( date ) => {
 			if ( isModelEntityOfModel( date, 'datetime' ) ) {
-				const relatedTickets = getRelatedEntities( date, 'tickets' );
+				const relatedTickets = getRelatedEntities( date, 'ticket' );
 				const ticketRelationsResolved = hasFinishedResolution(
 					'eventespresso/core',
 					'getRelatedEntities',
-					[ date, 'tickets' ]
+					[ date, 'ticket' ]
 				);
 				if ( ticketRelationsResolved ) {
 					loading = false;
