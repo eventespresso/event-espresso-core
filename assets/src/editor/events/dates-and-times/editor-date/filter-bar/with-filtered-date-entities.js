@@ -1,10 +1,16 @@
+/**
+ * External imports
+ */
 import { createHigherOrderComponent } from '@wordpress/compose';
 
+/**
+ * Internal imports
+ */
 import { getFilteredDateEntitiesList } from './with-date-entities-list-filter-bar';
 
 const DEFAULT_EMPTY_ARRAY = [];
 
-const withFilteredDateEntitiesList = createHigherOrderComponent(
+const withFilteredDateEntities = createHigherOrderComponent(
 	( WrappedComponent ) => ( {
 		eventEntityLoaded,
 		dateEntitiesLoaded,
@@ -30,7 +36,8 @@ const withFilteredDateEntitiesList = createHigherOrderComponent(
 			datesSortedBy={ datesSortedBy }
 			{ ...otherProps }
 		/>;
-	}
+	},
+	'withFilteredDateEntities'
 );
 
-export default withFilteredDateEntitiesList;
+export default withFilteredDateEntities;

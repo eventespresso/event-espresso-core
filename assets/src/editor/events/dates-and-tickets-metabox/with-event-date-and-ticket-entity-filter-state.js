@@ -11,8 +11,7 @@ import { withSelect } from '@wordpress/data';
 import '../../editor.css';
 import {
 	withDatesListFilterState,
-	getFilteredDateEntitiesList,
-	withFilteredDateEntitiesList,
+	withFilteredDateEntities,
 } from '../dates-and-times/editor-date/filter-bar';
 import {
 	withTicketEntitiesListFilterState,
@@ -32,7 +31,7 @@ const withEventDateAndTicketEntityFilterState = createHigherOrderComponent(
 		withTicketEntitiesForAllDateEntities,
 		withDatesListFilterState,
 		withTicketEntitiesListFilterState,
-		withFilteredDateEntitiesList,
+		withFilteredDateEntities,
 		withTicketEntitiesForFilteredDateEntities,
 		( WrappedComponent ) => ( {
 			allTicketEntities,

@@ -11,7 +11,7 @@ import withDateEntitiesListFilterBar, {
 	getFilteredDateEntitiesList,
 } from './with-date-entities-list-filter-bar';
 import withDatesListFilterState from './with-dates-list-filter-state';
-import withFilteredDateEntitiesList from './with-filtered-date-entities-list';
+import withFilteredDateEntities from './with-filtered-date-entities';
 
 const withPaginatedDateEntitiesListAndFilterBar = (
 	paginationConfig = {}
@@ -37,7 +37,7 @@ const withPaginatedDateEntitiesListAndFilterBarAndState = (
 export {
 	withDateEntitiesListFilterBar,
 	withDatesListFilterState,
-	withFilteredDateEntitiesList,
+	withFilteredDateEntities,
 	withPaginatedDateEntitiesListAndFilterBarAndState,
 	withPaginatedDateEntitiesListAndFilterBar,
 	getFilteredDateEntitiesList,
