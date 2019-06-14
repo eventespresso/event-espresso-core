@@ -3,7 +3,6 @@
  */
 import PropTypes from 'prop-types';
 import { compose, createHigherOrderComponent } from '@wordpress/compose';
-import { withSelect } from '@wordpress/data';
 
 /**
  * Internal imports
@@ -15,14 +14,12 @@ import {
 } from '../dates-and-times/editor-date/filter-bar';
 import {
 	withTicketEntitiesListFilterState,
-	getFilteredTicketEntitiesList,
+	withFilteredTicketEntities,
 } from '../tickets/editor-ticket/filter-bar';
 import { withEventEntity, withEventDateEntities } from '../events/data';
 import { withTicketEntitiesForAllDateEntities } from '../dates-and-times/data';
 import withTicketEntitiesForFilteredDateEntities
 	from './with-ticket-entities-for-filtered-date-entities';
-
-const EMPTY_ARRAY = [];
 
 const withEventDateAndTicketEntityFilterState = createHigherOrderComponent(
 	compose( [
@@ -33,38 +30,7 @@ const withEventDateAndTicketEntityFilterState = createHigherOrderComponent(
 		withTicketEntitiesListFilterState,
 		withFilteredDateEntities,
 		withTicketEntitiesForFilteredDateEntities,
-		( WrappedComponent ) => ( {
-			allTicketEntities,
-			ticketEntitiesLoaded,
-			isChained,
-			ticketEntities,
-			showTickets,
-			ticketsSortedBy,
-			...otherProps
-		} ) => {
-			let filteredTicketEntities = EMPTY_ARRAY;
-			if ( ticketEntitiesLoaded ) {
-				// show filteredTicketEntities for ALL dates or for filtered subset from above?
-				filteredTicketEntities = isChained ?
-					ticketEntities :
-					allTicketEntities;
-				// apply filter bar filters
-				filteredTicketEntities = getFilteredTicketEntitiesList(
-					filteredTicketEntities,
-					showTickets,
-					ticketsSortedBy
-				);
-			}
-			return <WrappedComponent
-				allTicketEntities={ allTicketEntities }
-				loadingTicketEntities={ ! ticketEntitiesLoaded }
-				isChained={ isChained }
-				filteredTicketEntities={ filteredTicketEntities }
-				showTickets={ showTickets }
-				ticketsSortedBy={ ticketsSortedBy }
-				{ ...otherProps }
-			/>;
-		},
+		withFilteredTicketEntities,
 	] ),
 	'withDatesAndTicketsFilterState'
 );
