@@ -23,10 +23,7 @@ const withTicketEntitiesForFilteredDateEntities = createHigherOrderComponent(
 			return relatedDateEntities.length > 0 &&
 				intersection( relatedDateEntities, dateIds ).length > 0;
 		} );
-		return {
-			allTicketEntities: ticketEntities,
-			ticketEntities: filteredTicketEntities,
-		};
+		return { filteredTicketEntities };
 	} ),
 	'withTicketEntitiesForFilteredDateEntities'
 );
