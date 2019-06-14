@@ -12,6 +12,7 @@ import '../../editor.css';
 import {
 	withDatesListFilterState,
 	getFilteredDateEntitiesList,
+	withFilteredDateEntitiesList,
 } from '../dates-and-times/editor-date/filter-bar';
 import {
 	withTicketEntitiesListFilterState,
@@ -31,41 +32,7 @@ const withEventDateAndTicketEntityFilterState = createHigherOrderComponent(
 		withTicketEntitiesForAllDateEntities,
 		withDatesListFilterState,
 		withTicketEntitiesListFilterState,
-		withSelect( ( select, ownProps ) => {
-			const {
-				eventId,
-				eventEntity,
-				eventEntityLoaded,
-				dateEntities,
-				dateEntitiesLoaded,
-				showDates,
-				datesSortedBy,
-			} = ownProps;
-			if ( ! eventEntityLoaded || ! dateEntitiesLoaded ) {
-				return {
-					eventId,
-					eventEntity,
-					filteredDateEntities: EMPTY_ARRAY,
-					allDateEntities: EMPTY_ARRAY,
-					loading: ! eventEntityLoaded,
-					loadingDateEntities: ! dateEntitiesLoaded,
-				};
-			}
-			// apply filter bar filters
-			const filteredDateEntities = getFilteredDateEntitiesList(
-				dateEntities,
-				showDates,
-				datesSortedBy
-			);
-			return {
-				eventId,
-				eventEntity,
-				filteredDateEntities,
-				allDateEntities: dateEntities,
-				loading: ! eventEntityLoaded,
-				loadingDateEntities: ! dateEntitiesLoaded,
-			};
-		} ),
+		withFilteredDateEntitiesList,
 		withTicketEntitiesForFilteredDateEntities,
 		( WrappedComponent ) => ( {
 			allTicketEntities,
