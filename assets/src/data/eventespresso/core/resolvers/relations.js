@@ -4,8 +4,8 @@
 import {
 	createAndKeyEntitiesByPrimaryKeyValue,
 	keyEntitiesByPrimaryKeyValue,
-	pluralModelName,
 	singularModelName,
+	pluralModelName,
 	stripBaseRouteFromUrl,
 	getPrimaryKeyQueryString,
 	getPrimaryKey,
@@ -67,8 +67,9 @@ export function* getRelatedEntities(
 	if ( entity.isNew ) {
 		return DEFAULT_EMPTY_ARRAY;
 	}
-	const modelName = entity.modelName.toLowerCase();
+	relationModelName = singularModelName( relationModelName );
 	const pluralRelationName = pluralModelName( relationModelName );
+	const modelName = entity.modelName.toLowerCase();
 	const relationResourceProperty = pluralRelationName + 'Resource';
 	const relationEndpoint = entity[ relationResourceProperty ] ?
 		stripBaseRouteFromUrl(
@@ -91,7 +92,7 @@ export function* getRelatedEntities(
 		'receiveRelationEndpointForModelEntity',
 		modelName,
 		entity.id,
-		pluralRelationName,
+		relationModelName,
 		relationEndpoint
 	);
 	yield dispatch(
@@ -99,7 +100,7 @@ export function* getRelatedEntities(
 		'finishResolution',
 		SCHEMA_REDUCER_KEY,
 		'receiveRelationEndpointForModelEntity',
-		[ modelName, entity.id, pluralRelationName, relationEndpoint ]
+		[ modelName, entity.id, relationModelName, relationEndpoint ]
 	);
 
 	// add calculatedFields to endpoint?
@@ -121,21 +122,20 @@ export function* getRelatedEntities(
 		return relationEntities;
 	}
 
-	const singularRelationName = singularModelName( relationModelName );
 	const factory = yield resolveSelect(
 		SCHEMA_REDUCER_KEY,
 		'getFactoryForModel',
-		singularRelationName
+		relationModelName
 	);
 	if ( ! isModelEntityFactoryOfModel(
 		factory,
-		singularRelationName
+		relationModelName
 	) ) {
 		return DEFAULT_EMPTY_ARRAY;
 	}
 
 	let fullEntities = keyEntitiesByPrimaryKeyValue(
-		singularRelationName,
+		relationModelName,
 		relationEntities
 	);
 	fullEntities = createAndKeyEntitiesByPrimaryKeyValue(
@@ -149,7 +149,7 @@ export function* getRelatedEntities(
 	const existingEntities = yield select(
 		CORE_REDUCER_KEY,
 		'getEntitiesByIds',
-		singularRelationName,
+		relationModelName,
 		entityIds
 	);
 
@@ -172,13 +172,13 @@ export function* getRelatedEntities(
 		fullEntities;
 
 	yield receiveEntityRecords(
-		singularRelationName,
+		relationModelName,
 		entityArray
 	);
 	yield receiveRelatedEntities(
 		modelName,
 		entity.id,
-		pluralRelationName,
+		relationModelName,
 		entityIds,
 	);
 	yield resolveGetRelatedEntities(
@@ -187,7 +187,7 @@ export function* getRelatedEntities(
 		entityIds,
 	);
 	yield resolveGetEntityByIdForIds(
-		singularRelationName,
+		relationModelName,
 		entityIds
 	);
 	return entityArray;
@@ -212,7 +212,7 @@ export function* getRelatedEntitiesForIds(
 	calculatedFields = []
 ) {
 	modelName = singularModelName( modelName );
-	relationName = pluralModelName( relationName );
+	relationName = singularModelName( relationName );
 	const hasJoinTable = yield resolveSelect(
 		SCHEMA_REDUCER_KEY,
 		'hasJoinTableRelation',
@@ -229,12 +229,11 @@ export function* getRelatedEntitiesForIds(
 		return DEFAULT_EMPTY_ARRAY;
 	}
 	const relationType = relationSchema.relation_type;
-	const singularRelationName = singularModelName( relationName );
 
 	const factory = yield resolveSelect(
 		SCHEMA_REDUCER_KEY,
 		'getFactoryForModel',
-		singularRelationName
+		relationName
 	);
 	const response = yield fetch( {
 		path: getRelationRequestUrl(
@@ -250,18 +249,17 @@ export function* getRelatedEntitiesForIds(
 	if ( ! response.length ) {
 		return DEFAULT_EMPTY_ARRAY;
 	}
-	const relationPrimaryKey = getPrimaryKey(
-		singularModelName( relationName )
-	);
-	const modelPrimaryKey = getPrimaryKey( singularModelName( modelName ) );
+	const relationPrimaryKey = getPrimaryKey( relationName );
+	const modelPrimaryKey = getPrimaryKey( modelName );
+	const pluralRelationName = pluralModelName( relationName );
 	let hasSetMap = ImmutableMap();
 	if ( hasJoinTable ) {
 		while ( response.length > 0 ) {
 			const record = response.pop();
-			let relationRecords = record[ relationName ] || null;
+			let relationRecords = record[ pluralRelationName ] || null;
 			relationRecords = relationRecords === null &&
-			! isUndefined( record[ singularRelationName ] ) ?
-				record[ singularRelationName ] :
+			! isUndefined( record[ relationName ] ) ?
+				record[ relationName ] :
 				relationRecords;
 			relationRecords = relationRecords !== null &&
 				! isArray( relationRecords ) ?
@@ -301,7 +299,7 @@ export function* getRelatedEntitiesForIds(
 			const relationId = record[ relationPrimaryKey ];
 			if ( ! hasSetMap.hasIn( [ modelId, relationId ] ) ) {
 				const relationEntity = factory.fromExisting(
-					record[ singularRelationName ]
+					record[ relationName ]
 				);
 				yield dispatch(
 					CORE_REDUCER_KEY,
@@ -342,6 +340,8 @@ const getRelationRequestUrl = (
 	calculatedFields,
 ) => {
 	let path;
+	modelName = singularModelName( modelName );
+	relationName = singularModelName( relationName );
 	switch ( true ) {
 		case hasJoinTable:
 			path = getEndpoint(
@@ -349,14 +349,14 @@ const getRelationRequestUrl = (
 					.toLowerCase()
 			);
 			path += '/?where' + getPrimaryKeyQueryString(
-				singularModelName( modelName ),
+				modelName,
 				entityIds
 			);
 			path += `&include=${ modelNameForQueryString( relationName ) }.*`;
 			path = appendCalculatedFieldsToPath(
 				path,
 				calculatedFields,
-				singularModelName( relationName )
+				relationName
 			);
 			break;
 		case isBelongsToRelation( relationType ):
@@ -366,7 +366,7 @@ const getRelationRequestUrl = (
 			path = appendCalculatedFieldsToPath(
 				path,
 				calculatedFields,
-				singularModelName( relationName )
+				relationName
 			);
 			break;
 		default:
@@ -384,7 +384,7 @@ const getRelationRequestUrl = (
 			// basically the goal here is to get one to one relations returned
 			// in the query for easier parsing/dispatching.
 			// @todo, currently this will NOT account for paging.
-			path = getEndpoint( singularModelName( relationName ) );
+			path = getEndpoint( relationName );
 			path += `/?where${ getPrimaryKeyQueryString( modelName, entityIds ) }`;
 			path += `&include=${ modelNameForQueryString( modelName ) }.*`;
 			path = appendCalculatedFieldsToPath(

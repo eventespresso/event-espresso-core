@@ -137,7 +137,7 @@ describe( 'getRelationEndpointForEntityId()', () => {
 			receiveRelationEndpointForModelEntity(
 				'event',
 				10,
-				'datetimes',
+				'datetime',
 				'ee/v4.8.36/events/10/datetimes'
 			)
 		);
@@ -186,7 +186,7 @@ describe( 'getRelationEndpointForEntityId()', () => {
 			receiveRelationEndpointForModelEntity(
 				'event',
 				10,
-				'datetimes',
+				'datetime',
 				'https://some_endpoint'
 			)
 		);
@@ -212,7 +212,7 @@ describe( 'hasJoinTableRelation()', () => {
 				SCHEMA_REDUCER_KEY,
 				'getRelationType',
 				'event',
-				'datetimes'
+				'datetime'
 			)
 		);
 	} );
@@ -235,7 +235,7 @@ describe( 'getRelationType()', () => {
 				SCHEMA_REDUCER_KEY,
 				'getRelationSchema',
 				'event',
-				'datetimes',
+				'datetime',
 			)
 		);
 	} );
@@ -266,7 +266,7 @@ describe( 'getRelationResponseType', () => {
 				SCHEMA_REDUCER_KEY,
 				'getRelationSchema',
 				'event',
-				'datetimes',
+				'datetime',
 			)
 		);
 	} );
@@ -323,7 +323,7 @@ describe( 'getRelationSchema()', () => {
 		expect( value ).toEqual(
 			receiveRelationSchema(
 				'event',
-				'datetimes',
+				'datetime',
 				'foo'
 			)
 		);
@@ -343,7 +343,7 @@ describe( 'getRelationPrimaryKeyString()', () => {
 				SCHEMA_REDUCER_KEY,
 				'getRelationType',
 				'event',
-				'datetimes'
+				'datetime'
 			)
 		);
 	} );

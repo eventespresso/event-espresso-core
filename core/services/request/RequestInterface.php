@@ -130,9 +130,10 @@ interface RequestInterface extends RequestTypeContextCheckerInterface
 
 
     /**
+     * @param boolean $relativeToWpRoot whether to return the uri relative to WordPress' home URL, or not.
      * @return string
      */
-    public function requestUri();
+    public function requestUri($relativeToWpRoot = false);
 
 
     /**

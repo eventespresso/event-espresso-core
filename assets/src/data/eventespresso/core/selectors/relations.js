@@ -3,10 +3,7 @@
  */
 import { isModelEntity } from '@eventespresso/validators';
 import { InvalidModelEntity } from '@eventespresso/eejs';
-import {
-	pluralModelName,
-	singularModelName,
-} from '@eventespresso/model';
+import { singularModelName } from '@eventespresso/model';
 import createSelector from 'rememo';
 import { normalizeEntityId } from '@eventespresso/helpers';
 import { Map, Set } from 'immutable';
@@ -37,7 +34,7 @@ const getRelationIdsForEntityRelation = createSelector(
 			throw new InvalidModelEntity( '', entity );
 		}
 		const modelName = singularModelName( entity.modelName );
-		relationName = pluralModelName( relationName );
+		relationName = singularModelName( relationName );
 		if ( state.relations.hasIn( [ modelName, entity.id, relationName ] ) ) {
 			return ( state.relations.getIn(
 				[
@@ -53,14 +50,14 @@ const getRelationIdsForEntityRelation = createSelector(
 		if ( ! isModelEntity( entity ) ) {
 			return [ DEFAULT_EMPTY_SET ];
 		}
-		const singularModel = singularModelName( entity.modelName ),
-			id = entity.id,
-			pluralRelationName = pluralModelName( relationName );
+		const modelName = singularModelName( entity.modelName ),
+			id = entity.id;
+		relationName = singularModelName( relationName );
 		return [
 			state.relations.getIn( [
-				singularModel,
+				modelName,
 				id,
-				pluralRelationName,
+				relationName,
 			] ),
 		];
 	}
@@ -79,9 +76,10 @@ const getRelatedEntities = createSelector(
 		if ( ! isModelEntity( entity ) ) {
 			throw new InvalidModelEntity( '', entity );
 		}
+		relationModelName = singularModelName( relationModelName );
 		return getEntitiesByIds(
 			state,
-			singularModelName( relationModelName ),
+			relationModelName,
 			getRelationIdsForEntityRelation(
 				state,
 				entity,
@@ -97,7 +95,7 @@ const getRelatedEntities = createSelector(
 		...getRelationIdsForEntityRelation.getDependants(
 			state,
 			entity,
-			relationName
+			singularModelName( relationName )
 		),
 	]
 );
@@ -124,16 +122,18 @@ const getRelatedEntities = createSelector(
 export const getRelatedEntitiesForIds = createSelector(
 	( state, modelName, entityIds, relationName ) => {
 		let relationEntities = Set();
+		modelName = singularModelName( modelName );
+		relationName = singularModelName( relationName );
 		entityIds.forEach( ( entityId ) => {
 			const entity = getEntityById(
 				state,
-				singularModelName( modelName ),
+				modelName,
 				entityId
 			);
 			const relatedEntities = getRelatedEntities(
 				state,
 				entity,
-				pluralModelName( relationName )
+				relationName
 			);
 			relationEntities = relationEntities.merge( relatedEntities );
 		} );
@@ -172,22 +172,21 @@ export const getRelatedEntitiesForIds = createSelector(
  * }
  */
 const lookupRelationsQueuedForModel = ( state, modelName, type = 'add' ) => {
-	const forIndexLookup = pluralModelName( modelName );
-	const forAddLookup = singularModelName( modelName );
+	modelName = singularModelName( modelName );
 	let relationsQueued = Map();
-	if ( state.dirty.relations.hasIn( [ type, forAddLookup ] ) ) {
+	if ( state.dirty.relations.hasIn( [ type, modelName ] ) ) {
 		relationsQueued = relationsQueued.mergeDeep(
-			state.dirty.relations.getIn( [ type, forAddLookup ] )
+			state.dirty.relations.getIn( [ type, modelName ] )
 		);
 	}
-	if ( state.dirty.relations.hasIn( [ 'index', forIndexLookup ] ) ) {
+	if ( state.dirty.relations.hasIn( [ 'index', modelName ] ) ) {
 		let relations = Map();
-		state.dirty.relations.getIn( [ 'index', forIndexLookup ] ).forEach(
+		state.dirty.relations.getIn( [ 'index', modelName ] ).forEach(
 			( relationMap, entityId ) => {
 				relationMap.forEach( ( relationRecord, model ) => {
 					if ( relationRecord.has( type ) ) {
 						relations = relations.setIn(
-							[ entityId, pluralModelName( model ) ],
+							[ entityId, singularModelName( model ) ],
 							relationRecord.get( type )
 						);
 					}
@@ -224,7 +223,7 @@ const getRelationAdditionsQueuedForModel = createSelector(
 	},
 	( state, modelName ) => [
 		state.dirty.relations.getIn( [ 'add', singularModelName( modelName ) ] ),
-		state.dirty.relations.getIn( [ 'index', pluralModelName( modelName ) ] ),
+		state.dirty.relations.getIn( [ 'index', singularModelName( modelName ) ] ),
 	]
 );
 
@@ -247,7 +246,7 @@ const getRelationDeletionsQueuedForModel = createSelector(
 		state.dirty.relations.getIn(
 			[ 'delete', singularModelName( modelName ) ]
 		),
-		state.dirty.relations.getIn( [ 'index', pluralModelName( modelName ) ] ),
+		state.dirty.relations.getIn( [ 'index', singularModelName( modelName ) ] ),
 	]
 );
 
@@ -269,19 +268,19 @@ const countRelationModelsIndexedForEntity = createSelector(
 		modelName,
 		entityId
 	) => {
-		const singleName = singularModelName( modelName );
+		modelName = singularModelName( modelName );
 		entityId = normalizeEntityId( entityId );
 		// we can just get this from the context of the model
 		return (
 			state.relations
-				.getIn( [ singleName, entityId ] ) || Map()
+				.getIn( [ modelName, entityId ] ) || Map()
 		).count();
 	},
 	( state, modelName, entityId ) => {
-		const singleName = singularModelName( modelName );
+		modelName = singularModelName( modelName );
 		entityId = normalizeEntityId( entityId );
 		return [
-			state.relations.getIn( [ singleName, entityId ] ),
+			state.relations.getIn( [ modelName, entityId ] ),
 		];
 	}
 );
