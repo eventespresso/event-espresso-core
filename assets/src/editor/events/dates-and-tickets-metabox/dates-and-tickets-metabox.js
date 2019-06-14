@@ -28,21 +28,21 @@ import withEventDateAndTicketEntityFilterState
 	from './with-event-date-and-ticket-entity-filter-state';
 
 const MetaBox = ( {
-	loading,
 	eventId,
-	loadingDateEntities,
-	loadingTicketEntities,
+	eventEntityLoaded,
+	dateEntitiesLoaded,
 	filteredDateEntities,
 	allDateEntities,
 	filteredTicketEntities,
 	allTicketEntities,
+	ticketEntitiesLoaded,
 	isChained,
 	...otherProps
 } ) => {
 	return (
 		<Fragment>
 			<FormPlaceholder
-				loading={ loading }
+				loading={ ! eventEntityLoaded }
 				notice={ sprintf(
 					_x(
 						'loading event dates and available tickets%s',
@@ -53,7 +53,7 @@ const MetaBox = ( {
 				) }
 			/>
 			<FormContainer
-				loading={ loading }
+				loading={ ! eventEntityLoaded }
 				id={ `ee-editor-event-dates-and-tickets-${ eventId }` }
 				htmlClass="ee-editor-event-dates-and-tickets"
 			>
@@ -70,7 +70,7 @@ const MetaBox = ( {
 							className="ee-editor-event-dates ee-form-row">
 							<div>
 								<EditorDateEntitiesList
-									loading={ loadingDateEntities }
+									loading={ ! dateEntitiesLoaded }
 									entities={ filteredDateEntities }
 									allDateEntities={ allDateEntities }
 									allTicketEntities={ allTicketEntities }
@@ -96,7 +96,7 @@ const MetaBox = ( {
 							className="ee-editor-event-tickets ee-form-row">
 							<div>
 								<EditorTicketEntitiesList
-									loading={ loadingTicketEntities }
+									loading={ ! ticketEntitiesLoaded }
 									entities={ filteredTicketEntities }
 									allDateEntities={ allDateEntities }
 									isChained={ isChained }

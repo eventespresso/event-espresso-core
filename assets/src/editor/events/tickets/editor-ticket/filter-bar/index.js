@@ -12,6 +12,7 @@ import withTicketEntitiesListFilterBar, {
 } from './with-ticket-entities-list-filter-bar';
 import withTicketEntitiesListFilterState
 	from './with-ticket-entities-list-filter-state';
+import withFilteredTicketEntities from './with-filtered-ticket-entities';
 
 const withPaginatedTicketEntitiesListAndFilterBar = (
 	paginationConfig = {}
@@ -37,6 +38,7 @@ const withPaginatedTicketEntitiesListAndFilterBarAndState = (
 export {
 	withTicketEntitiesListFilterBar,
 	withTicketEntitiesListFilterState,
+	withFilteredTicketEntities,
 	withPaginatedTicketEntitiesListAndFilterBar,
 	withPaginatedTicketEntitiesListAndFilterBarAndState,
 	getFilteredTicketEntitiesList,
