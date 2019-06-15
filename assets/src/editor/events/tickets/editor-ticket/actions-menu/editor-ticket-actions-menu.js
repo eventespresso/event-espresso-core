@@ -89,7 +89,7 @@ const EditorTicketActionsMenu = ( {
 				dashicon={ <EspressoIcon icon="calendar" /> }
 				tooltipPosition="top right"
 				onClick={ toggleTicketAssignments }
-				itemCount={ dateEntities.length || null }
+				itemCount={ dateEntities.length }
 			/>
 		);
 	};

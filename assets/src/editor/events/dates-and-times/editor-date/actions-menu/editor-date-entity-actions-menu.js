@@ -89,7 +89,6 @@ class EditorDateEntityActionsMenu extends Component {
 	 * @function
 	 * @param {Object} dateEntity JSON object defining the Event Date
 	 * @param {Array} ticketEntities    Tickets for Event Date
-	 * @param {boolean} ticketEntitiesLoaded
 	 * @return {IconMenuItem}    View Tickets for Event Date IconMenuItem
 	 */
 	viewTicketsMenuItem = ( dateEntity, ticketEntities ) => {
@@ -107,7 +106,7 @@ class EditorDateEntityActionsMenu extends Component {
 				htmlClass="view-tickets-date"
 				dashicon="tickets-alt"
 				onClick={ this.props.toggleTicketAssignments }
-				itemCount={ ticketEntities.length || null }
+				itemCount={ ticketEntities.length }
 			/>
 		);
 	};
