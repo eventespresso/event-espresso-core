@@ -23,7 +23,6 @@ import withUpdateEventDateRelation from '../action-handlers/with-update-event-da
  */
 class DateEntityFormModal extends Component {
 	static propTypes = {
-		eventEntity: PropTypes.object,
 		dateEntity: PropTypes.object,
 		toggleEditor: PropTypes.func.isRequired,
 		loadHandler: PropTypes.func,
@@ -58,10 +57,7 @@ class DateEntityFormModal extends Component {
 			this.state.dateEntity,
 			data
 		);
-		this.props.replaceDateInStore(
-			this.state.dateEntity,
-			this.props.eventEntity
-		);
+		this.props.replaceDateInStore( this.state.dateEntity );
 		this.props.toggleEditor();
 	};
 
@@ -95,9 +91,9 @@ export default compose( [
 	withUpdateEventDateRelation,
 	withDispatch( ( dispatch, { updateEventDateRelation } ) => {
 		const { receiveAndReplaceEntityRecords } = dispatch( 'eventespresso/core' );
-		const replaceDateInStore = ( replaceDate, eventEntity ) => {
+		const replaceDateInStore = ( replaceDate ) => {
 			receiveAndReplaceEntityRecords( 'datetime', [ replaceDate ] );
-			updateEventDateRelation( eventEntity, replaceDate );
+			updateEventDateRelation( replaceDate );
 		};
 		return { replaceDateInStore };
 	} ),

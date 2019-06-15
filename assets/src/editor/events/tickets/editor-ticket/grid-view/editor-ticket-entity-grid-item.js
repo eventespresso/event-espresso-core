@@ -1,7 +1,6 @@
 /**
  * External imports
  */
-// import moment from 'moment-timezone';
 import { Component, Fragment, useReducer } from '@wordpress/element';
 import { __ } from '@eventespresso/i18n';
 import { compose } from '@wordpress/compose';
@@ -102,8 +101,6 @@ class EditorTicketEntityGridItem extends Component {
 	render() {
 		const {
 			ticketEntity,
-			allDateEntities,
-			dateTicketEntityMap,
 			displayTicketDate = 'start',
 			doRefresh,
 			refreshed,
@@ -125,8 +122,6 @@ class EditorTicketEntityGridItem extends Component {
 				</div>
 				<EditorTicketActionsMenu
 					ticketEntity={ ticketEntity }
-					allDateEntities={ allDateEntities }
-					dateTicketEntityMap={ dateTicketEntityMap }
 					doRefresh={ doRefresh }
 				/>
 			</Fragment>

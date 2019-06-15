@@ -2,7 +2,7 @@
  * External imports
  */
 import { isEmpty } from 'lodash';
-import { Component, Fragment } from '@wordpress/element';
+import { Fragment, useMemo, useEffect } from '@wordpress/element';
 import { createHigherOrderComponent } from '@wordpress/compose';
 import { EntityListFilterBar } from '@eventespresso/higher-order-components';
 import { __ } from '@eventespresso/i18n';
@@ -16,6 +16,8 @@ import {
 	searchDateEntities,
 	sortDateEntitiesList,
 } from './date-entities-list-filter-utils';
+
+const DEFAULT_EMPTY_ARRAY = [];
 
 /**
  * filters the dates list based on the current filter state
@@ -44,74 +46,85 @@ export const getFilteredDateEntitiesList = ( dateEntities, showDates, datesSorte
  * @return {Object} EntityList with added DateListFilterBar
  */
 export default createHigherOrderComponent(
-	( EntityList ) => {
-		return class extends Component {
-			render() {
-				const {
-					displayDates,
-					showDates,
-					datesSortedBy,
-					setDisplayDates,
-					setShowDates,
-					setDatesSortedBy,
-					searchDateName,
-					datesPerPage,
-					datesView,
-					setSearchDateName,
-					setDatesPerPage,
-					setDatesListView,
-					setDatesGridView,
-					prefiltered = false,
+	( EntityList ) => ( {
+		displayDates,
+		showDates,
+		datesSortedBy,
+		setDisplayDates,
+		setShowDates,
+		setDatesSortedBy,
+		searchDateName,
+		datesPerPage,
+		datesView,
+		setSearchDateName,
+		setDatesPerPage,
+		setDatesListView,
+		setDatesGridView,
+		setFilteredDateEntities,
+		dateEntities = DEFAULT_EMPTY_ARRAY,
+		...otherProps
+	} ) => {
+		const filteredEntities = useMemo(
+			() => {
+				const entities = searchDateEntities( dateEntities, searchDateName );
+				return getFilteredDateEntitiesList(
 					entities,
-					...otherProps
-				} = this.props;
-				let filteredEntities = searchDateEntities( entities, searchDateName );
-				filteredEntities = prefiltered ?
-					filteredEntities :
-					getFilteredDateEntitiesList(
-						filteredEntities,
-						showDates,
-						datesSortedBy
-					);
-				return (
-					<Fragment>
-						<EntityListFilterBar
-							name="DateListFilterBar"
-							searchText={ searchDateName }
-							setSearchText={ setSearchDateName }
-							perPage={ datesPerPage }
-							view={ datesView }
-							setPerPage={ setDatesPerPage }
-							setListView={ setDatesListView }
-							setGridView={ setDatesGridView }
-							entityFilters={
-								<DateListFilterBar
-									displayDates={ displayDates }
-									showDates={ showDates }
-									datesSortedBy={ datesSortedBy }
-									setDisplayDates={ setDisplayDates }
-									setShowDates={ setShowDates }
-									setDatesSortedBy={ setDatesSortedBy }
-								/>
-							}
-						/>
-						<EntityList
-							entities={ filteredEntities }
-							entitiesPerPage={ datesPerPage }
-							view={ datesView }
-							noResultsText={
-								__(
-									'no results found (try changing filters)',
-									'event_espresso'
-								)
-							}
-							showDate={ displayDates }
-							{ ...otherProps }
-						/>
-					</Fragment>
+					showDates,
+					datesSortedBy
 				);
-			}
-		};
+			},
+			[
+				dateEntities,
+				searchDateName,
+				showDates,
+				datesSortedBy,
+			]
+		);
+		// whenever filtered entities changes let's update the date ids
+		// in the state.
+		useEffect( () => {
+			setFilteredDateEntities(
+				filteredEntities.map( ( dateEntity ) => dateEntity.id )
+			);
+		}, [ filteredEntities ] );
+
+		return (
+			<Fragment>
+				<EntityListFilterBar
+					name="DateListFilterBar"
+					searchText={ searchDateName }
+					setSearchText={ setSearchDateName }
+					perPage={ datesPerPage }
+					view={ datesView }
+					setPerPage={ setDatesPerPage }
+					setListView={ setDatesListView }
+					setGridView={ setDatesGridView }
+					entityFilters={
+						<DateListFilterBar
+							displayDates={ displayDates }
+							showDates={ showDates }
+							datesSortedBy={ datesSortedBy }
+							setDisplayDates={ setDisplayDates }
+							setShowDates={ setShowDates }
+							setDatesSortedBy={ setDatesSortedBy }
+						/>
+					}
+				/>
+				<EntityList
+					entities={ filteredEntities }
+					entitiesPerPage={ datesPerPage }
+					view={ datesView }
+					noResultsText={
+						__(
+							'no results found (try changing filters)',
+							'event_espresso'
+						)
+					}
+					showDate={ displayDates }
+					{ ...otherProps }
+				/>
+			</Fragment>
+		);
 	},
 	'withDateEntitiesListFilterBar'
 );

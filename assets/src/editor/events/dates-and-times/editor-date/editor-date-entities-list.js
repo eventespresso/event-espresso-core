@@ -17,10 +17,11 @@ import { __, _x, sprintf } from '@eventespresso/i18n';
  */
 import { EditorDateEntitiesGridView } from './grid-view';
 import { EditorDateEntitiesListView } from './list-view';
-import { withPaginatedDateEntitiesListAndFilterBar } from './filter-bar';
+import { withPaginatedDateEntitiesListAndFilterBarAndState } from './filter-bar';
 import { DateEntityFormModal } from './edit-form';
 import { withTicketAssignmentsManagerModal } from '../../ticket-assignments-manager';
 import withUpdateEventDateRelation from './action-handlers/with-update-event-date-relation';
+import { withEditorDateEntities, withEditorEventEntity } from '../../hocs';
 
 const {
 	FormWrapper,
@@ -87,7 +88,6 @@ class EditorDateEntitiesList extends Component {
 	render() {
 		const {
 			view,
-			eventEntity,
 			entities,
 			editorOpen,
 			toggleEditor,
@@ -101,11 +101,10 @@ class EditorDateEntitiesList extends Component {
 					EntityGridView={ EditorDateEntitiesGridView }
 					EntityListView={ EditorDateEntitiesListView }
 					view={ view }
-					eventEntity={ eventEntity }
 					loadingNotice={ sprintf(
 						_x(
-							'loading eventEntity dates%s',
-							'loading eventEntity dates...',
+							'loading event dates%s',
+							'loading event dates...',
 							'event_espresso'
 						),
 						String.fromCharCode( 8230 )
@@ -116,7 +115,6 @@ class EditorDateEntitiesList extends Component {
 					cancelButton={ this.ticketAssignmentsButton() }
 				/>
 				<DateEntityFormModal
-					eventEntity={ eventEntity }
 					dateEntity={ this.state.newDateEntity }
 					toggleEditor={ toggleEditor }
 					editorOpen={ editorOpen }
@@ -128,18 +126,20 @@ class EditorDateEntitiesList extends Component {
 
 export default compose( [
 	withEditor,
-	withPaginatedDateEntitiesListAndFilterBar(),
+	withEditorDateEntities,
+	withPaginatedDateEntitiesListAndFilterBarAndState(),
+	withEditorEventEntity,
 	withUpdateEventDateRelation,
 	withDispatch( (
 		dispatch,
-		{ eventEntity, updateEventDateRelation }
+		{ updateEventDateRelation }
 	) => {
 		const { createEntity } = dispatch( 'eventespresso/core' );
 		const addNewDateEntity = ( setState, toggleEditor ) => {
 			createEntity( 'datetime', {} ).then(
 				( newDateEntity ) => {
 					setState( { newDateEntity } );
-					updateEventDateRelation( eventEntity, newDateEntity );
+					updateEventDateRelation( newDateEntity );
 					toggleEditor();
 				},
 			);

@@ -10,7 +10,7 @@ import { compose, createHigherOrderComponent } from '@wordpress/compose';
 import withDateEntitiesListFilterBar, {
 	getFilteredDateEntitiesList,
 } from './with-date-entities-list-filter-bar';
-import withDatesListFilterState from './with-dates-list-filter-state';
+import withDateEntitiesListFilterState from './with-date-entities-list-filter-state';
 import withFilteredDateEntities from './with-filtered-date-entities';
 
 const withPaginatedDateEntitiesListAndFilterBar = (
@@ -27,7 +27,7 @@ const withPaginatedDateEntitiesListAndFilterBarAndState = (
 	paginationConfig = {}
 ) => createHigherOrderComponent(
 	compose( [
-		withDatesListFilterState,
+		withDateEntitiesListFilterState,
 		withDateEntitiesListFilterBar,
 		withEntityPagination( paginationConfig ),
 	] ),
@@ -36,7 +36,7 @@ const withPaginatedDateEntitiesListAndFilterBarAndState = (
 
 export {
 	withDateEntitiesListFilterBar,
-	withDatesListFilterState,
+	withDateEntitiesListFilterState,
 	withFilteredDateEntities,
 	withPaginatedDateEntitiesListAndFilterBarAndState,
 	withPaginatedDateEntitiesListAndFilterBar,

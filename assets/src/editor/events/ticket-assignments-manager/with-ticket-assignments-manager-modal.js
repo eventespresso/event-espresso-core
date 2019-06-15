@@ -1,7 +1,7 @@
 /**
  * External imports
  */
-import { Component, Fragment } from '@wordpress/element';
+import { Fragment, useState, useCallback } from '@wordpress/element';
 import { createHigherOrderComponent } from '@wordpress/compose';
 
 /**
@@ -19,61 +19,42 @@ import TicketAssignmentsManagerModal from './ticket-assignments-manager-modal';
  *
  * @return {function} A composed component
  */
-const WithTicketAssignmentsManagerModal = (
+const withTicketAssignmentsManagerModal = (
 	modalPropsCallback = () => null
 ) => createHigherOrderComponent(
-	( OriginalComponent ) => {
-		return class extends Component {
-			constructor( props ) {
-				super( props );
-				this.state = { showManager: false };
+	( WrappedComponent ) => ( props ) => {
+		const {
+			dateEntity,
+			ticketEntity,
+		} = props;
+		const [ showManager, setShowManager ] = useState( false );
+		const toggleManager = useCallback( ( event ) => {
+			if ( event ) {
+				event.preventDefault();
+				event.stopPropagation();
 			}
-
-			/**
-			 * opens and closes TicketAssignmentsManagerModal
-			 *
-			 * @function
-			 * @param {Object} event - click event
-			 */
-			toggleManager = ( event ) => {
-				if ( event && event.preventDefault ) {
-					event.preventDefault();
-					event.stopPropagation();
-				}
-				this.setState( ( prevState ) => (
-					{ showManager: ! prevState.showManager }
-				) );
-			};
-
-			render() {
-				const {
-					dateEntity,
-					allDateEntities,
-					ticketEntity,
-					allTicketEntities,
-				} = this.props;
-				return (
-					<Fragment>
-						<OriginalComponent
-							{ ...this.props }
-							ticketAssignmentsIsOpen={ this.state.showManager }
-							toggleTicketAssignments={ this.toggleManager }
-						/>
-						<TicketAssignmentsManagerModal
-							modalProps={ modalPropsCallback( this.props ) }
-							dateEntity={ dateEntity }
-							allDateEntities={ allDateEntities }
-							allTicketEntities={ allTicketEntities }
-							ticketEntity={ ticketEntity }
-							editorOpen={ this.state.showManager }
-							toggleEditor={ this.toggleManager }
-						/>
-					</Fragment>
-				);
-			}
-		};
+			setShowManager(
+				( prevShowManager ) => ! prevShowManager
+			);
+		}, [] );
+		return (
+			<Fragment>
+				<WrappedComponent
+					{ ...props }
+					ticketAssignmentsIsOpen={ showManager }
+					toggleTicketAssignments={ toggleManager }
+				/>
+				<TicketAssignmentsManagerModal
+					modalProps={ modalPropsCallback( props ) }
+					dateEntity={ dateEntity }
+					ticketEntity={ ticketEntity }
+					editorOpen={ showManager }
+					toggleEditor={ toggleManager }
+				/>
+			</Fragment>
+		);
 	},
 	'withTicketAssignmentsManagerModal'
 );
 
-export default WithTicketAssignmentsManagerModal;
+export default withTicketAssignmentsManagerModal;

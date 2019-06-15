@@ -19,6 +19,7 @@ import { compose, ifCondition } from '@wordpress/compose';
 import EditorDateEntityDetails from './editor-date-entity-details';
 import EditorDateEntityActionsMenu
 	from '../actions-menu/editor-date-entity-actions-menu';
+import { withEditorEventEntity } from '../../../hocs';
 
 const { getBackgroundColorClass, getDateTimeStatusTextLabel } = dateTimeModel;
 
@@ -82,9 +83,8 @@ class EditorDateEntityGridItem extends Component {
 
 	render() {
 		const {
-			eventEntity,
 			dateEntity,
-			allTicketEntities,
+			eventEntity,
 			showDate = 'start',
 			showDesc = 'excerpt',
 			showVenue = true,
@@ -110,7 +110,6 @@ class EditorDateEntityGridItem extends Component {
 				<EditorDateEntityActionsMenu
 					eventEntity={ eventEntity }
 					dateEntity={ dateEntity }
-					allTicketEntities={ allTicketEntities }
 				/>
 			</Fragment>
 		);
@@ -124,5 +123,6 @@ export default compose( [
 			'datetime'
 		)
 	),
+	withEditorEventEntity,
 	withEntityPaperFrame,
 ] )( EditorDateEntityGridItem );

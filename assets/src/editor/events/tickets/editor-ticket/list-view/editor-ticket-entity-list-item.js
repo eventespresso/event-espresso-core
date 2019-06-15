@@ -44,8 +44,6 @@ class EditorTicketEntityListItem extends Component {
 	render() {
 		const {
 			ticketEntity,
-			allDateEntities,
-			dateTicketEntityMap,
 			doRefresh,
 		} = this.props;
 		if ( ! isModelEntityOfModel( ticketEntity, TICKET ) ) {
@@ -140,8 +138,6 @@ class EditorTicketEntityListItem extends Component {
 						</span>
 						<EditorTicketActionsMenu
 							ticketEntity={ ticketEntity }
-							allDateEntities={ allDateEntities }
-							dateTicketEntityMap={ dateTicketEntityMap }
 							doRefresh={ doRefresh }
 						/>
 					</div>

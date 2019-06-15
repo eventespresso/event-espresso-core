@@ -2,10 +2,11 @@
  * External imports
  */
 import { isEmpty } from 'lodash';
-import { Component, Fragment } from '@wordpress/element';
-import { createHigherOrderComponent } from '@wordpress/compose';
+import { Fragment, useMemo, useEffect } from '@wordpress/element';
+import { createHigherOrderComponent, compose } from '@wordpress/compose';
 import { __ } from '@eventespresso/i18n';
 import { EntityListFilterBar } from '@eventespresso/higher-order-components';
+import { withFilteredDateEntities } from '../../../dates-and-times';
 
 /**
  * Internal dependencies
@@ -16,6 +17,10 @@ import {
 	sortTicketEntitiesList,
 } from './ticket-entities-list-filter-utils';
 import { default as TicketEntityListFilterBar } from './ticket-entities-list-filter-bar';
+import withTicketEntitiesForFilteredDateEntities
+	from './with-ticket-entities-for-filtered-date-entities';
+
+const DEFAULT_EMPTY_ARRAY = [];
 
 /**
  * filters the tickets list based on the current filter state
@@ -42,80 +47,98 @@ export const getFilteredTicketEntitiesList = ( ticketEntities, showTickets, tick
  * @param {Object} EntityList
  * @return {Object} EntityList with added TicketsListFilterBar
  */
-export default createHigherOrderComponent(
-	( EntityList ) => {
-		return class extends Component {
-			render() {
-				const {
-					showTickets,
-					setShowTickets,
-					ticketsSortedBy,
-					setTicketsSortedBy,
-					displayTicketDate,
-					setDisplayTicketDate,
-					isChained,
-					setIsChained,
-					searchTicketName,
-					setSearchTicketName,
-					ticketsPerPage,
-					setTicketsPerPage,
-					ticketsView,
-					setTicketsListView,
-					setTicketsGridView,
-					prefiltered = false,
+const withTicketEntitiesListFilterBar = createHigherOrderComponent(
+	( EntityList ) => ( {
+		showTickets,
+		setShowTickets,
+		ticketsSortedBy,
+		setTicketsSortedBy,
+		displayTicketDate,
+		setDisplayTicketDate,
+		isChained,
+		setIsChained,
+		searchTicketName,
+		setSearchTicketName,
+		ticketsPerPage,
+		setTicketsPerPage,
+		ticketsView,
+		setTicketsListView,
+		setTicketsGridView,
+		setFilteredTicketEntities,
+		ticketEntities = DEFAULT_EMPTY_ARRAY,
+		filteredDateEntities = DEFAULT_EMPTY_ARRAY,
+		...otherProps
+	} ) => {
+		const filteredEntities = useMemo(
+			() => {
+				const entities = searchTicketEntities( ticketEntities, searchTicketName );
+				return getFilteredTicketEntitiesList(
 					entities,
-					...otherProps
-				} = this.props;
-				let filteredEntities = searchTicketEntities( entities, searchTicketName );
-				filteredEntities = prefiltered ?
-					filteredEntities :
-					getFilteredTicketEntitiesList(
-						filteredEntities,
-						showTickets,
-						ticketsSortedBy
-					);
-				return (
-					<Fragment>
-						<EntityListFilterBar
-							name="TicketEntityListFilterBar"
-							searchText={ searchTicketName }
-							setSearchText={ setSearchTicketName }
-							perPage={ ticketsPerPage }
-							view={ ticketsView }
-							setPerPage={ setTicketsPerPage }
-							setListView={ setTicketsListView }
-							setGridView={ setTicketsGridView }
-							entityFilters={
-								<TicketEntityListFilterBar
-									showTickets={ showTickets }
-									setShowTickets={ setShowTickets }
-									ticketsSortedBy={ ticketsSortedBy }
-									setTicketsSortedBy={ setTicketsSortedBy }
-									displayTicketDate={ displayTicketDate }
-									setDisplayTicketDate={ setDisplayTicketDate }
-									isChained={ isChained }
-									setIsChained={ setIsChained }
-								/>
-							}
-						/>
-						<EntityList
-							entities={ filteredEntities }
-							entitiesPerPage={ ticketsPerPage }
-							view={ ticketsView }
-							noResultsText={
-								__(
-									'no results found (try changing filters)',
-									'event_espresso'
-								)
-							}
-							displayTicketDate={ displayTicketDate }
-							isChained={ isChained }
-							{ ...otherProps }
-						/>
-					</Fragment>
+					showTickets,
+					ticketsSortedBy
 				);
-			}
-		};
+			},
+			[
+				ticketEntities,
+				searchTicketName,
+				showTickets,
+				ticketsSortedBy,
+			]
+		);
+		// whenever filtered entities changes let's update the ticket ids
+		// in the state.
+		useEffect( () => {
+			setFilteredTicketEntities(
+				filteredEntities.map( ( ticketEntity ) => ticketEntity.id )
+			);
+		}, [ isChained, filteredDateEntities ] );
+
+		return (
+			<Fragment>
+				<EntityListFilterBar
+					name="TicketEntityListFilterBar"
+					searchText={ searchTicketName }
+					setSearchText={ setSearchTicketName }
+					perPage={ ticketsPerPage }
+					view={ ticketsView }
+					setPerPage={ setTicketsPerPage }
+					setListView={ setTicketsListView }
+					setGridView={ setTicketsGridView }
+					entityFilters={
+						<TicketEntityListFilterBar
+							showTickets={ showTickets }
+							setShowTickets={ setShowTickets }
+							ticketsSortedBy={ ticketsSortedBy }
+							setTicketsSortedBy={ setTicketsSortedBy }
+							displayTicketDate={ displayTicketDate }
+							setDisplayTicketDate={ setDisplayTicketDate }
+							isChained={ isChained }
+							setIsChained={ setIsChained }
+						/>
+					}
+				/>
+				<EntityList
+					entities={ filteredEntities }
+					entitiesPerPage={ ticketsPerPage }
+					view={ ticketsView }
+					noResultsText={
+						__(
+							'no results found (try changing filters)',
+							'event_espresso'
+						)
+					}
+					displayTicketDate={ displayTicketDate }
+					isChained={ isChained }
+					{ ...otherProps }
+				/>
+			</Fragment>
+		);
 	},
 	'withTicketEntitiesListFilterBar'
 );
+
+export default compose( [
+	withFilteredDateEntities,
+	withTicketEntitiesForFilteredDateEntities,
+	withTicketEntitiesListFilterBar,
+] );

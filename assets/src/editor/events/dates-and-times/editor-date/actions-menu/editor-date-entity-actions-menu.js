@@ -18,7 +18,7 @@ import { isModelEntityOfModel } from '@eventespresso/validators';
 /**
  * Internal dependencies
  */
-import { withDateTicketEntities } from '../../data';
+import { withEditorDateTicketEntities } from '../../../hocs';
 import { DateEntityFormModal } from '../edit-form';
 import { withCopyDateEntity, withTrashDateEntity } from '../action-handlers';
 import { withTicketAssignmentsManagerModal } from '../../../ticket-assignments-manager';
@@ -92,8 +92,8 @@ class EditorDateEntityActionsMenu extends Component {
 	 * @param {boolean} ticketEntitiesLoaded
 	 * @return {IconMenuItem}    View Tickets for Event Date IconMenuItem
 	 */
-	viewTicketsMenuItem = ( dateEntity, ticketEntities, ticketEntitiesLoaded ) => {
-		const tooltip = ticketEntitiesLoaded && isEmpty( ticketEntities ) ?
+	viewTicketsMenuItem = ( dateEntity, ticketEntities ) => {
+		const tooltip = isEmpty( ticketEntities ) ?
 			__(
 				'warning! no assigned tickets - click to fix',
 				'event_espresso'
@@ -107,7 +107,7 @@ class EditorDateEntityActionsMenu extends Component {
 				htmlClass="view-tickets-date"
 				dashicon="tickets-alt"
 				onClick={ this.props.toggleTicketAssignments }
-				itemCount={ ticketEntitiesLoaded ? ticketEntities.length : null }
+				itemCount={ ticketEntities.length || null }
 			/>
 		);
 	};
@@ -116,17 +116,16 @@ class EditorDateEntityActionsMenu extends Component {
 	 * @function
 	 * @param {Object} dateEntity    	 JSON object defining the Event Date
 	 * @param {Array} ticketEntities    Tickets for Event Date
-	 * @param {boolean} ticketEntitiesLoaded
 	 * @return {Array}    				 Array of IconMenuItem objects
 	 */
-	getSidebarMenuItems = ( dateEntity, ticketEntities, ticketEntitiesLoaded ) => {
+	getSidebarMenuItems = ( dateEntity, ticketEntities ) => {
 		const sidebarMenuItems = [];
 		sidebarMenuItems.push(
 			this.mainDropDownMenu( dateEntity )
 		);
 		sidebarMenuItems.push( this.editDateMenuItem( dateEntity ) );
 		sidebarMenuItems.push(
-			this.viewTicketsMenuItem( dateEntity, ticketEntities, ticketEntitiesLoaded )
+			this.viewTicketsMenuItem( dateEntity, ticketEntities )
 		);
 		return applyFilters(
 			'FHEE__EditorDateEntityActionsMenu__SidebarMenuItems',
@@ -139,14 +138,12 @@ class EditorDateEntityActionsMenu extends Component {
 	 * @function
 	 * @param {Object} dateEntity    	JSON object defining the Event Date
 	 * @param {Array} ticketEntities 	Tickets for Event Date
-	 * @param {boolean} ticketEntitiesLoaded
 	 * @return {Array} Array of rendered IconMenuItem list items
 	 */
-	sidebarMenu = ( dateEntity, ticketEntities, ticketEntitiesLoaded ) => {
+	sidebarMenu = ( dateEntity, ticketEntities ) => {
 		const sidebarMenuItems = this.getSidebarMenuItems(
 			dateEntity,
 			ticketEntities,
-			ticketEntitiesLoaded
 		);
 		return sidebarMenuItems.map(
 			function( sidebarMenuItem, index ) {
@@ -173,7 +170,6 @@ class EditorDateEntityActionsMenu extends Component {
 			editorOpen,
 			toggleEditor,
 			ticketEntities = DEFAULT_EMPTY_ARRAY,
-			ticketEntitiesLoaded = false,
 		} = this.props;
 		if ( ! isModelEntityOfModel( dateEntity, DATETIME ) ) {
 			return null;
@@ -183,7 +179,7 @@ class EditorDateEntityActionsMenu extends Component {
 				id={ `ee-editor-date-actions-menu-${ dateEntity.id }` }
 				className={ 'ee-editor-date-actions-menu' }
 			>
-				{ this.sidebarMenu( dateEntity, ticketEntities, ticketEntitiesLoaded ) }
+				{ this.sidebarMenu( dateEntity, ticketEntities ) }
 				<DateEntityFormModal
 					eventEntity={ eventEntity }
 					dateEntity={ dateEntity }
@@ -197,7 +193,7 @@ class EditorDateEntityActionsMenu extends Component {
 
 export default compose( [
 	withEditor,
-	withDateTicketEntities,
+	withEditorDateTicketEntities,
 	withTicketAssignmentsManagerModal(
 		( { dateEntity } ) => ( {
 			title: sprintf(

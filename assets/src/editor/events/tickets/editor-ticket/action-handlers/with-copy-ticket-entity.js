@@ -14,7 +14,6 @@ const withCopyTicketEntity = createHigherOrderComponent(
 		{
 			ticketEntity,
 			dateEntities,
-			dateEntitiesLoaded,
 		},
 		{ select }
 	) => {
@@ -29,14 +28,12 @@ const withCopyTicketEntity = createHigherOrderComponent(
 		const { getRelatedEntities } = select( 'eventespresso/core' );
 		const copyTicketEntity = async () => {
 			const newTicket = await createEntity( TICKET, ticketEntity.forClone );
-			if ( dateEntitiesLoaded ) {
-				createRelations(
-					TICKET,
-					newTicket.id,
-					'datetime',
-					dateEntities
-				);
-			}
+			createRelations(
+				TICKET,
+				newTicket.id,
+				'datetime',
+				dateEntities
+			);
 			// @todo, this is not quite done because it needs to add the relations
 			// of the prices to the priceType.
 			// get related prices clone, and add.

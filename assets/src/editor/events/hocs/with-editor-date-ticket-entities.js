@@ -5,30 +5,30 @@ import { withSelect } from '@wordpress/data';
 import { createHigherOrderComponent } from '@wordpress/compose';
 import { isModelEntityOfModel } from '@eventespresso/validators';
 
+const DEFAULT_OBJECT = {
+	ticketEntities: [],
+};
+
 /**
  * A Hoc exposing ticket entities related to the provided DateTimeEntity.
  *
  * @return {function} A higher order component.
  */
-export const withDateTicketEntities = createHigherOrderComponent(
+const withEditorDateTicketEntities = createHigherOrderComponent(
 	withSelect(
 		( select, { dateEntity } ) => {
 			const { getRelatedEntities } = select( 'eventespresso/core' );
-			const { hasFinishedResolution } = select( 'core/data' );
 			if ( isModelEntityOfModel( dateEntity, 'datetime' ) ) {
 				const ticketEntities = getRelatedEntities(
 					dateEntity,
 					'ticket'
 				);
-				const ticketEntitiesLoaded = hasFinishedResolution(
-					'eventespresso/core',
-					'getRelatedEntities',
-					[ dateEntity, 'ticket' ]
-				);
-				return { ticketEntities, ticketEntitiesLoaded };
+				return { ticketEntities };
 			}
-			return {};
+			return DEFAULT_OBJECT;
 		}
 	),
-	'withDateTicketEntities'
+	'withEditorDateTicketEntities'
 );
+
+export default withEditorDateTicketEntities;

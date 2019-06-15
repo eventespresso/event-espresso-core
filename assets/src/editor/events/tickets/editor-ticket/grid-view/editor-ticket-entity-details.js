@@ -12,8 +12,10 @@ import { Money, SiteCurrency } from '@eventespresso/value-objects';
 /**
  * Internal dependencies
  */
-import { withPriceTypeEntities } from '../../data/with-price-type-entities';
-import { withTicketPriceEntities } from '../../data/with-ticket-price-entities';
+import {
+	withPriceTypeEntities,
+	withTicketPriceEntities,
+} from '../../../hocs';
 import useTicketPriceCalculators from '../price-calculator/use-ticket-price-calculators';
 
 const { MODEL_NAME: TICKET } = ticketModel;
