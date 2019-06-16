@@ -1,5 +1,5 @@
 import { useEffect } from '@wordpress/element';
-import { compose, ifCondition } from '@wordpress/compose';
+import { compose } from '@wordpress/compose';
 
 import useEditorInitialization from './use-editor-initialization';
 import withEventEntity from './with-event-entity';
