@@ -836,22 +836,6 @@ class TicketAssignmentsManagerModal extends Component {
 	}
 }
 
-/**
- * @todo
- *  - introduce new hocs for getting all dates in the state and getting all tickets in the state
- *    These should not be dependent on anything else.
- *  - introduce a withEventInState hoc (which gets the set event in the state).  This won't be
- *    dependent on a provided eventid and is used with the below editorInitialized state.  Basically
- *    this allows for exposing the current event everywhere outside of the prop chain.
- *    What would be good is it only gets the event from the state if there's not already an
- *    eventEntity in the props (so it could be used on a hoc that MIGHT have the eventEntity provided
- *    via component tree)?
- *  - introduce a "editorInitialized" state that is set somewhere in the store
- *    this will help with being able to use hocs like the above only after the editor has been
- *    initialized and reduces the amount of prop passthroughs that have to happen!
- *
- */
-
 export default compose( [
 	withEditorModal( {
 		title: __( 'Event Date Ticket Assignments', 'event_espresso' ),
