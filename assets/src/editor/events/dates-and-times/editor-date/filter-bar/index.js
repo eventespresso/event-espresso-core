@@ -13,7 +13,6 @@ import withDateEntitiesListFilterBar, {
 import withDateEntitiesListFilterState from './with-date-entities-list-filter-state';
 import withFilteredDateEntities from './with-filtered-date-entities';
 
-
 const withPaginatedDateEntitiesListAndFilterBar = (
 	paginationConfig = {}
 ) => createHigherOrderComponent(
