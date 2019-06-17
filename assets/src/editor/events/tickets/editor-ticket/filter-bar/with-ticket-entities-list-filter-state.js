@@ -4,6 +4,8 @@
 import { createHigherOrderComponent, compose } from '@wordpress/compose';
 import { withSelect, withDispatch } from '@wordpress/data';
 
+const DEFAULT_EMPTY_ARRAY = [];
+
 /**
  * withTicketEntitiesListFilterState
  * Higher-Order-Component that wraps a "TicketsListFilterBar" component
@@ -25,6 +27,7 @@ export default createHigherOrderComponent(
 				ticketsView = 'grid',
 			} = ownProps;
 			const store = select( 'eventespresso/filter-state' );
+			const { getEntitiesByIds } = select( 'eventespresso/core' );
 			return {
 				showTickets: store.getFilter(
 					'event-editor-ticket-list',
@@ -63,6 +66,14 @@ export default createHigherOrderComponent(
 					'event-editor-ticket-list',
 					'ticketsView',
 					ticketsView
+				),
+				filteredTicketEntities: getEntitiesByIds(
+					'ticket',
+					store.getFilter(
+						'event-editor-ticket-list',
+						'filteredTicketIds',
+						DEFAULT_EMPTY_ARRAY
+					)
 				),
 			};
 		} ),
@@ -109,6 +120,11 @@ export default createHigherOrderComponent(
 					'event-editor-ticket-list',
 					'ticketsView',
 					'grid'
+				),
+				setFilteredTicketEntities: ( ticketEntityIds ) => store.setFilter(
+					'event-editor-ticket-list',
+					'filteredTicketIds',
+					ticketEntityIds
 				),
 			};
 		} ),

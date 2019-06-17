@@ -24,25 +24,14 @@ import EditorDateEntitiesList
 	from '../dates-and-times/editor-date/editor-date-entities-list';
 import EditorTicketEntitiesList
 	from '../tickets/editor-ticket/editor-ticket-entities-list';
-import withEventDateAndTicketEntityFilterState
-	from './with-event-date-and-ticket-entity-filter-state';
+import withEditorInitialization, { useEditorInitialized } from '../initialization';
 
-const MetaBox = ( {
-	eventId,
-	eventEntityLoaded,
-	dateEntitiesLoaded,
-	filteredDateEntities,
-	allDateEntities,
-	filteredTicketEntities,
-	allTicketEntities,
-	ticketEntitiesLoaded,
-	isChained,
-	...otherProps
-} ) => {
+const MetaBox = ( { eventId } ) => {
+	const initialized = useEditorInitialized();
 	return (
 		<Fragment>
 			<FormPlaceholder
-				loading={ ! eventEntityLoaded }
+				loading={ false }
 				notice={ sprintf(
 					_x(
 						'loading event dates and available tickets%s',
@@ -53,7 +42,7 @@ const MetaBox = ( {
 				) }
 			/>
 			<FormContainer
-				loading={ ! eventEntityLoaded }
+				loading={ false }
 				id={ `ee-editor-event-dates-and-tickets-${ eventId }` }
 				htmlClass="ee-editor-event-dates-and-tickets"
 			>
@@ -70,13 +59,8 @@ const MetaBox = ( {
 							className="ee-editor-event-dates ee-form-row">
 							<div>
 								<EditorDateEntitiesList
-									loading={ ! dateEntitiesLoaded }
-									entities={ filteredDateEntities }
-									allDateEntities={ allDateEntities }
-									allTicketEntities={ allTicketEntities }
-									prefiltered
+									loading={ ! initialized }
 									for="event-dates-metabox"
-									{ ...otherProps }
 								/>
 							</div>
 						</PanelRow>
@@ -96,13 +80,8 @@ const MetaBox = ( {
 							className="ee-editor-event-tickets ee-form-row">
 							<div>
 								<EditorTicketEntitiesList
-									loading={ ! ticketEntitiesLoaded }
-									entities={ filteredTicketEntities }
-									allDateEntities={ allDateEntities }
-									isChained={ isChained }
-									prefiltered
+									loading={ ! initialized }
 									for="event-tickets-metabox"
-									{ ...otherProps }
 								/>
 							</div>
 						</PanelRow>
@@ -114,9 +93,9 @@ const MetaBox = ( {
 	);
 };
 
-const DatesAndTicketsMetabox = withEventDateAndTicketEntityFilterState( MetaBox );
+const DatesAndTicketsMetabox = withEditorInitialization( MetaBox );
 
-DatesAndTicketsMetabox.propTypes = {
+MetaBox.propTypes = {
 	eventId: PropTypes.oneOfType( [
 		PropTypes.number,
 		PropTypes.string,

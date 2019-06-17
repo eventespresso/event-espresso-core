@@ -11,8 +11,7 @@ import { useState, useEffect, useCallback, Fragment } from '@wordpress/element';
 /**
  * Internal dependencies
  */
-import { withTicketPriceEntities } from '../../data/with-ticket-price-entities';
-import { withPriceTypeEntities } from '../../data/with-price-type-entities';
+import { withTicketPriceEntities, withPriceTypeEntities } from '../../../hocs';
 import useTicketPriceCalculatorFormDecorator from './use-ticket-price-calculator-form-decorator';
 import {
 	TicketPriceCalculatorForm,

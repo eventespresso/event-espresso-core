@@ -4,6 +4,8 @@
 import { createHigherOrderComponent, compose } from '@wordpress/compose';
 import { withSelect, withDispatch } from '@wordpress/data';
 
+const DEFAULT_EMPTY_ARRAY = [];
+
 /**
  * withDatesListFilterState
  * Higher-Order-Component that wraps a "DatesListFilterBar" component
@@ -25,6 +27,7 @@ export default createHigherOrderComponent(
 				datesView = 'grid',
 			} = ownProps;
 			const store = select( 'eventespresso/filter-state' );
+			const { getEntitiesByIds } = select( 'eventespresso/core' );
 			return {
 				showDates: store.getFilter(
 					'event-editor-dates-list',
@@ -58,6 +61,14 @@ export default createHigherOrderComponent(
 					'event-editor-dates-list',
 					'datesView',
 					datesView
+				),
+				filteredDateEntities: getEntitiesByIds(
+					'datetime',
+					store.getFilter(
+						'event-editor-dates-list',
+						'filteredDateIds',
+						DEFAULT_EMPTY_ARRAY
+					)
 				),
 			};
 		} ),
@@ -99,8 +110,13 @@ export default createHigherOrderComponent(
 					'datesView',
 					'grid'
 				),
+				setFilteredDateEntities: ( dateEntityIds ) => store.setFilter(
+					'event-editor-dates-list',
+					'filteredDateIds',
+					dateEntityIds
+				),
 			};
 		} ),
 	] ),
-	'withDatesListFilterState'
+	'withDateEntitiesListFilterState'
 );

@@ -15,7 +15,7 @@ import { __, _x, sprintf } from '@eventespresso/i18n';
 /**
  * Internal dependencies
  */
-import { withPriceTypeEntities } from '../data/with-price-type-entities';
+import { withPriceTypeEntities, withEditorTicketEntities } from '../../hocs';
 import { withTicketPriceCalculatorFormModal } from './price-calculator';
 import { withTicketEntityFormModal } from './edit-form';
 import { EditorTicketEntitiesGridView } from './grid-view/';
@@ -30,7 +30,6 @@ const {
 
 const EditorTicketEntitiesList = ( {
 	entities,
-	allDateEntities,
 	addNewTicketEntity,
 	toggleTicketEditor,
 	ticketEntity = null,
@@ -64,7 +63,6 @@ const EditorTicketEntitiesList = ( {
 			<EntityList
 				{ ...otherProps }
 				entities={ entities }
-				allDateEntities={ allDateEntities }
 				EntityGridView={ EditorTicketEntitiesGridView }
 				EntityListView={ EditorTicketEntitiesListView }
 				view={ view }
@@ -87,12 +85,15 @@ const withNewTicketEntity = createHigherOrderComponent(
 		const [ newTicket, setNewTicketEntity ] = useState( null );
 		const basePriceTypeEntity = useMemo(
 			() => {
+				if ( ! props.priceTypeEntitiesLoaded ) {
+					return null;
+				}
 				return find(
 					props.priceTypeEntities,
 					( priceType ) => priceType.pbtId === 1
 				);
 			},
-			[ props.priceTypeEntities ]
+			[ props.priceTypeEntities, props.priceTypeEntitiesLoaded ]
 		);
 		return <WrappedComponent
 			setNewTicketEntity={ setNewTicketEntity }
@@ -115,7 +116,7 @@ const createNewTicketEntity = withDispatch(
 			const newTicket = await createEntity( 'ticket', {} );
 			const newBasePrice = await createEntity(
 				'price',
-				{ prtId: basePriceTypeEntity.id }
+				{ PRT_ID: basePriceTypeEntity.id }
 			);
 			createRelations(
 				'ticket',
@@ -132,6 +133,9 @@ const createNewTicketEntity = withDispatch(
 export default compose( [
 	withPriceTypeEntities,
 	withNewTicketEntity,
+	withEditorTicketEntities,
+	withPaginatedTicketEntitiesListAndFilterBar(),
+	// add ticketAssignments ManagerModal onClose
 	withTicketAssignmentsManagerModal( () => (
 		{
 			title: __(
@@ -141,7 +145,6 @@ export default compose( [
 			closeButtonLabel: null,
 		}
 	) ),
-	// add ticketAssignments ManagerModal onClose
 	createHigherOrderComponent(
 		( WrappedComponent ) => ( props ) => {
 			return <WrappedComponent
@@ -154,7 +157,6 @@ export default compose( [
 	withTicketPriceCalculatorFormModal,
 	withTicketEntityFormModal,
 	createNewTicketEntity,
-	withPaginatedTicketEntitiesListAndFilterBar(),
 ] )( EditorTicketEntitiesList );
 
 /**
@@ -163,6 +165,7 @@ export default compose( [
 export const EditorTicketEntitiesOnlyList = compose( [
 	withPriceTypeEntities,
 	withNewTicketEntity,
+	withEditorTicketEntities,
 	withTicketPriceCalculatorFormModal,
 	withTicketEntityFormModal,
 	createNewTicketEntity,

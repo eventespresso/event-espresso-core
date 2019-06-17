@@ -17,8 +17,8 @@ const EMPTY_OBJECT = {};
  */
 const withEventEntity = createHigherOrderComponent(
 	withSelect(
-		( select, { eventId } ) => {
-			if ( eventId ) {
+		( select, { eventId, editorInitialized } ) => {
+			if ( eventId && ! editorInitialized ) {
 				const { getEventById } = select( 'eventespresso/core' );
 				const { hasFinishedResolution } = select( 'core/data' );
 				const eventEntity = getEventById( eventId );

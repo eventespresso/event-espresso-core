@@ -4,10 +4,10 @@
 import { withSelect } from '@wordpress/data';
 import { createHigherOrderComponent } from '@wordpress/compose';
 
-/**
- * Internal imports
- */
-import { getDateEntityIds } from './utils';
+const DEFAULT_OBJECT = {
+	ticketEntities: [],
+	ticketEntitiesLoaded: false,
+};
 
 /**
  * withTicketEntitiesRelatedToAllDateEntities
@@ -17,13 +17,15 @@ import { getDateEntityIds } from './utils';
  *
  * @return {function}
  */
-export const withTicketEntitiesForAllDateEntities = createHigherOrderComponent(
+const withTicketEntitiesForAllDateEntities = createHigherOrderComponent(
 	withSelect(
-		( select, { dateEntities, dateEntitiesLoaded } ) => {
-			if ( dateEntitiesLoaded ) {
+		( select, { dateEntities, dateEntitiesLoaded, editorInitialized } ) => {
+			if ( dateEntitiesLoaded && ! editorInitialized ) {
 				const { getRelatedEntitiesForIds } = select( 'eventespresso/core' );
 				const { hasFinishedResolution } = select( 'core/data' );
-				const dateIds = getDateEntityIds( dateEntities );
+				const dateIds = dateEntities.map(
+					( dateEntity ) => dateEntity.id
+				);
 				const ticketEntities = getRelatedEntitiesForIds(
 					'datetime',
 					dateIds,
@@ -38,8 +40,10 @@ export const withTicketEntitiesForAllDateEntities = createHigherOrderComponent(
 					return { ticketEntities, ticketEntitiesLoaded };
 				}
 			}
-			return {};
+			return DEFAULT_OBJECT;
 		}
 	),
 	'withTicketEntitiesForAllDateEntities'
 );
+
+export default withTicketEntitiesForAllDateEntities;

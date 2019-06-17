@@ -17,7 +17,7 @@ import { isModelEntityOfModel } from '@eventespresso/validators';
 /**
  * Internal dependencies
  */
-import { withTicketDateEntities } from '../../data';
+import { withEditorTicketDateEntities } from '../../../hocs';
 import withTicketEntityFormModal from '../edit-form/with-ticket-entity-form-modal';
 import { withCopyTicketEntity, withTrashTicketEntity } from '../action-handlers';
 import {
@@ -35,7 +35,6 @@ const EditorTicketActionsMenu = ( {
 	ticketEntity,
 	toggleTicketEditor,
 	dateEntities = [],
-	dateEntitiesLoaded = false,
 	noBasePrice = false,
 	copyTicketEntity,
 	trashTicketEntity,
@@ -61,8 +60,7 @@ const EditorTicketActionsMenu = ( {
 						icon: 'admin-page',
 						onClick: () => copyTicketEntity(
 							ticketEntity,
-							dateEntities,
-							dateEntitiesLoaded
+							dateEntities
 						),
 					},
 					{
@@ -76,7 +74,7 @@ const EditorTicketActionsMenu = ( {
 	};
 
 	const assignDatesMenuItem = () => {
-		const tooltip = dateEntitiesLoaded && isEmpty( dateEntities ) ?
+		const tooltip = isEmpty( dateEntities ) ?
 			__(
 				'warning! no assigned ticket dates - click to fix',
 				'event_espresso'
@@ -91,7 +89,7 @@ const EditorTicketActionsMenu = ( {
 				dashicon={ <EspressoIcon icon="calendar" /> }
 				tooltipPosition="top right"
 				onClick={ toggleTicketAssignments }
-				itemCount={ dateEntitiesLoaded ? dateEntities.length : null }
+				itemCount={ dateEntities.length }
 			/>
 		);
 	};
@@ -184,7 +182,7 @@ export default compose( [
 			closeButtonLabel: null,
 		}
 	) ),
-	withTicketDateEntities,
+	withEditorTicketDateEntities,
 	withCopyTicketEntity,
 	withTrashTicketEntity,
 ] )( EditorTicketActionsMenu );

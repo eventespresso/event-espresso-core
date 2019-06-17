@@ -15,7 +15,7 @@ import { useCallback } from '@wordpress/element';
  */
 import { ticketEntityFormInputs } from '../';
 import { useTicketPriceCalculators } from '../price-calculator';
-import { withTicketPriceEntities, withPriceTypeEntities } from '../../data';
+import { withTicketPriceEntities, withPriceTypeEntities } from '../../../hocs';
 
 const getFormRows = (
 	ticketEntity,

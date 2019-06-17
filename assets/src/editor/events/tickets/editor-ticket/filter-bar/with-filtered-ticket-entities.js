@@ -2,44 +2,27 @@
  * External imports
  */
 import { createHigherOrderComponent } from '@wordpress/compose';
+import { withSelect } from '@wordpress/data';
 
-/**
- * Internal imports
- */
-import {
-	getFilteredTicketEntitiesList,
-} from './with-ticket-entities-list-filter-bar';
+const DEFAULT_EMPTY_ARRAY = [];
 
 const withFilteredTicketEntities = createHigherOrderComponent(
-	( WrappedComponent ) => ( {
-		filteredTicketEntities,
-		ticketEntities,
-		ticketEntitiesLoaded,
-		isChained,
-		showTickets,
-		ticketsSortedBy,
-		...otherProps
-	} ) => {
-		if ( ticketEntitiesLoaded ) {
-			filteredTicketEntities = isChained ?
-				filteredTicketEntities :
-				ticketEntities;
-			filteredTicketEntities = getFilteredTicketEntitiesList(
-				filteredTicketEntities,
-				showTickets,
-				ticketsSortedBy
-			);
+	withSelect(
+		( select ) => {
+			const store = select( 'eventespresso/filter-state' );
+			const { getEntitiesByIds } = select( 'eventespresso/core' );
+			return {
+				filteredTicketEntities: getEntitiesByIds(
+					'ticket',
+					store.getFilter(
+						'event-editor-ticket-list',
+						'filteredTicketIds',
+						DEFAULT_EMPTY_ARRAY
+					)
+				),
+			};
 		}
-		return <WrappedComponent
-			allTicketEntities={ ticketEntities }
-			filteredTicketEntities={ filteredTicketEntities }
-			ticketEntitiesLoaded={ ticketEntitiesLoaded }
-			isChained={ isChained }
-			showTickets={ showTickets }
-			ticketsSortedBy={ ticketsSortedBy }
-			{ ...otherProps }
-		/>;
-	},
+	),
 	'withFilteredTicketEntities'
 );
 

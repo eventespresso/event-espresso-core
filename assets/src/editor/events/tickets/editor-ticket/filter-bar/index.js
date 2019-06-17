@@ -18,21 +18,11 @@ const withPaginatedTicketEntitiesListAndFilterBar = (
 	paginationConfig = {}
 ) => createHigherOrderComponent(
 	compose( [
-		withTicketEntitiesListFilterBar,
-		withEntityPagination( paginationConfig ),
-	] ),
-	'withPaginatedTicketEntitiesListAndFilterBar'
-);
-
-const withPaginatedTicketEntitiesListAndFilterBarAndState = (
-	paginationConfig = {}
-) => createHigherOrderComponent(
-	compose( [
 		withTicketEntitiesListFilterState,
 		withTicketEntitiesListFilterBar,
 		withEntityPagination( paginationConfig ),
 	] ),
-	'withPaginatedTicketEntitiesListAndFilterBarAndState'
+	'withPaginatedTicketEntitiesListAndFilterBar'
 );
 
 export {
@@ -40,6 +30,5 @@ export {
 	withTicketEntitiesListFilterState,
 	withFilteredTicketEntities,
 	withPaginatedTicketEntitiesListAndFilterBar,
-	withPaginatedTicketEntitiesListAndFilterBarAndState,
 	getFilteredTicketEntitiesList,
 };

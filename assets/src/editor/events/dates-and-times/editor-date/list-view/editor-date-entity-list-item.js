@@ -8,7 +8,7 @@ import { dateTimeModel } from '@eventespresso/model';
 import { isModelEntityOfModel } from '@eventespresso/validators';
 import { routes } from '@eventespresso/eejs';
 import { addQueryArgs } from '@wordpress/url';
-import { ifCondition } from '@wordpress/compose';
+import { ifCondition, compose } from '@wordpress/compose';
 
 const { ADMIN_ROUTES, ADMIN_ROUTE_ACTION_DEFAULT, getAdminUrl } = routes;
 
@@ -17,6 +17,7 @@ const { ADMIN_ROUTES, ADMIN_ROUTE_ACTION_DEFAULT, getAdminUrl } = routes;
  */
 import EditorDateEntityActionsMenu
 	from '../actions-menu/editor-date-entity-actions-menu';
+import { withEditorEventEntity } from '../../../hocs';
 
 const { MODEL_NAME: DATETIME, getBackgroundColorClass } = dateTimeModel;
 
@@ -85,11 +86,7 @@ class EditorDateEntityListItem extends Component {
 	};
 
 	render() {
-		const {
-			eventEntity,
-			dateEntity,
-			allTicketEntities,
-		} = this.props;
+		const { eventEntity, dateEntity } = this.props;
 		this.id = `event-date-ticket-list-modal-${ dateEntity.id }`;
 		const statusClass = this.getStatusClass( dateEntity );
 		const bgClass = getBackgroundColorClass( dateEntity );
@@ -181,9 +178,8 @@ class EditorDateEntityListItem extends Component {
 							{ __( 'Actions:', 'event_espresso' ) }
 						</span>
 						<EditorDateEntityActionsMenu
-							event={ eventEntity }
+							eventEntity={ eventEntity }
 							dateEntity={ dateEntity }
-							allTicketEntities={ allTicketEntities }
 						/>
 					</div>
 				</div>
@@ -193,7 +189,10 @@ class EditorDateEntityListItem extends Component {
 	}
 }
 
-export default ifCondition(
-	( { dateEntity } ) => isModelEntityOfModel( dateEntity, DATETIME )
-)( EditorDateEntityListItem );
+export default compose( [
+	ifCondition(
+		( { dateEntity } ) => isModelEntityOfModel( dateEntity, DATETIME )
+	),
+	withEditorEventEntity,
+] )( EditorDateEntityListItem );
 

@@ -15,7 +15,7 @@ import {
 } from '@eventespresso/components';
 import { __ } from '@eventespresso/i18n';
 import { dateTimeModel, ticketModel } from '@eventespresso/model';
-import { compose } from '@wordpress/compose';
+import { compose, ifCondition } from '@wordpress/compose';
 import { withEditorModal } from '@eventespresso/editor-hocs';
 import { withEntityPagination } from '@eventespresso/higher-order-components';
 import { withDispatch, withSelect } from '@wordpress/data';
@@ -27,10 +27,9 @@ import { isModelEntityOfModel } from '@eventespresso/validators';
 import * as handler from './ticket-assignments-handler';
 import './ticket-assignments-manager.css';
 import { sortDateEntitiesList } from '../dates-and-times/editor-date/filter-bar/date-entities-list-filter-utils';
+import { withEditorDateEntities, withEditorTicketEntities } from '../hocs';
 
 const noIndex = -1;
-
-const DEFAULT_EMPTY_ARRAY = [];
 
 const {
 	FormInfo,
@@ -771,16 +770,13 @@ class TicketAssignmentsManagerModal extends Component {
 
 	render() {
 		const {
-			entities,
+			entities: dateEntities,
 			ticketEntities,
-			allDateEntities,
-			allTicketEntities,
 			ticketEntitiesByDateIds,
 			onUpdate,
 			resetRelationsMap,
 			pagination,
 		} = this.props;
-		const dateEntities = entities;
 		this.onUpdate = onUpdate;
 		this.resetRelationsMap = resetRelationsMap;
 		this.dateCount = dateEntities.length;
@@ -790,8 +786,8 @@ class TicketAssignmentsManagerModal extends Component {
 			ticketEntities: {},
 		};
 		const noAssignments = this.countTicketAssignments(
-			allDateEntities || dateEntities,
-			allTicketEntities || ticketEntities,
+			dateEntities,
+			ticketEntities,
 			ticketEntitiesByDateIds
 		);
 		const dateCount = dateEntities.length;
@@ -848,74 +844,46 @@ export default compose( [
 			'event_espresso'
 		),
 	} ),
+	withEditorDateEntities,
+	withEditorTicketEntities,
+	ifCondition( ( { editorOpen } ) => editorOpen ),
 	withSelect( ( select, ownProps ) => {
 		const {
-			editorOpen,
 			dateEntity,
-			allDateEntities,
+			dateEntities,
 			ticketEntity,
-			allTicketEntities,
+			ticketEntities,
 			entities = [],
 		} = ownProps;
-		let { initialized = false, loading } = ownProps;
-		let dtmProps = {
-			loading,
+		const dtmProps = {
 			entities,
-			ticketEntities: DEFAULT_EMPTY_ARRAY,
+			ticketEntities,
+			dateEntities,
+			ticketEntitiesByDateIds: {},
 			notice: __(
 				'loading event date ticket assignments',
 				'event_espresso'
 			),
 		};
-		if ( ! editorOpen || initialized ) {
-			return {
-				notice: __(
-					'loading event date ticket assignments',
-					'event_espresso'
-				),
-			};
-		}
 		if ( isModelEntityOfModel( dateEntity, 'datetime' ) ) {
-			dtmProps = {
-				entities: [ dateEntity ],
-				ticketEntities: allTicketEntities,
-			};
-			initialized = true;
+			dtmProps.entities = [ dateEntity ];
 		} else if ( isModelEntityOfModel( ticketEntity, 'ticket' ) ) {
-			dtmProps = {
-				entities: sortDateEntitiesList( allDateEntities ),
-				ticketEntities: [ ticketEntity ],
-			};
-			initialized = true;
-		} else if ( Array.isArray( allDateEntities ) && Array.isArray( allTicketEntities ) ) {
-			dtmProps = {
-				entities: sortDateEntitiesList( allDateEntities ),
-				ticketEntities: allTicketEntities,
-			};
-			initialized = true;
+			dtmProps.entities = sortDateEntitiesList( dateEntities );
+			dtmProps.ticketEntities = [ ticketEntity ];
+		} else if ( Array.isArray( dateEntities ) && Array.isArray( ticketEntities ) ) {
+			dtmProps.entities = sortDateEntitiesList( dateEntities );
 		}
 		const { getRelatedEntities } = select( 'eventespresso/core' );
-		const { hasFinishedResolution } = select( 'core/data' );
 		const ticketEntitiesByDateIds = {};
 		dtmProps.entities.forEach( ( date ) => {
 			if ( isModelEntityOfModel( date, 'datetime' ) ) {
 				const relatedTickets = getRelatedEntities( date, 'ticket' );
-				const ticketRelationsResolved = hasFinishedResolution(
-					'eventespresso/core',
-					'getRelatedEntities',
-					[ date, 'ticket' ]
-				);
-				if ( ticketRelationsResolved ) {
-					loading = false;
-					ticketEntitiesByDateIds[ date.id ] = uniq( relatedTickets );
-				}
+				ticketEntitiesByDateIds[ date.id ] = uniq( relatedTickets );
 			}
 		} );
 		return {
 			...dtmProps,
-			loading,
 			ticketEntitiesByDateIds,
-			initialized,
 		};
 	} ),
 	withDispatch( ( dispatch ) => {

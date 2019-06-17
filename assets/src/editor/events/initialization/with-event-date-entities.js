@@ -5,7 +5,10 @@ import { withSelect } from '@wordpress/data';
 import { isModelEntityOfModel } from '@eventespresso/validators';
 import { createHigherOrderComponent } from '@wordpress/compose';
 
-const EMPTY_OBJECT = {};
+const DEFAULT_OBJECT = {
+	dateEntities: [],
+	dateEntitiesLoaded: false,
+};
 
 /**
  * withEventDateEntities
@@ -13,16 +16,13 @@ const EMPTY_OBJECT = {};
  *    dateEntities - an array of datetime entities for the supplied event
  *    dateEntitiesLoaded - boolean true if loading is complete
  *
- * !!! IMPORTANT !!!
- * ONLY USE THIS AFTER THE CALL TO hasFinishedResolution() in the
- * withEvent() DATA HOC has completed and resolved true
- *
  * @function
  */
 const withEventDateEntities = createHigherOrderComponent(
 	withSelect(
-		( select, { eventEntity, eventEntityLoaded } ) => {
+		( select, { eventEntity, eventEntityLoaded, editorInitialized } ) => {
 			if (
+				! editorInitialized &&
 				eventEntityLoaded &&
 				isModelEntityOfModel( eventEntity, 'event' )
 			) {
@@ -38,7 +38,7 @@ const withEventDateEntities = createHigherOrderComponent(
 					return { dateEntities, dateEntitiesLoaded };
 				}
 			}
-			return EMPTY_OBJECT;
+			return DEFAULT_OBJECT;
 		}
 	),
 	'withEventDateEntities'
