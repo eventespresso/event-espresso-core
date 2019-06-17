@@ -2,10 +2,7 @@
  * External imports
  */
 import { isModelEntityOfModel } from '@eventespresso/validators';
-import {
-	singularModelName,
-	pluralModelName,
-} from '@eventespresso/model';
+import { singularModelName } from '@eventespresso/model';
 import warning from 'warning';
 import { InvalidModelEntity } from '@eventespresso/eejs';
 import { getIdsFromBaseEntityArray } from '@eventespresso/helpers';
@@ -31,9 +28,9 @@ function* createRelation(
 	relationName,
 	relationEntity
 ) {
-	relationName = pluralModelName( relationName );
-	const singularRelationName = singularModelName( relationName );
-	if ( ! isModelEntityOfModel( relationEntity, singularRelationName ) ) {
+	relationName = singularModelName( relationName );
+	modelName = singularModelName( modelName );
+	if ( ! isModelEntityOfModel( relationEntity, relationName ) ) {
 		warning(
 			false,
 			'The provided relation entity (%s) is not a base entity instance' +
@@ -81,26 +78,25 @@ function* createRelations(
 	relationName,
 	relationEntities,
 ) {
-	relationName = pluralModelName( relationName );
-	const singularRelationName = singularModelName( relationName );
+	modelName = singularModelName( modelName );
+	relationName = singularModelName( relationName );
 
 	try {
-		assertArrayHasEntitiesForModel( relationEntities, singularRelationName );
+		assertArrayHasEntitiesForModel( relationEntities, relationName );
 	} catch ( exception ) {
 		warning(
 			false,
 			'Incoming relation Entities do not contain BaseEntity instances ' +
 			'for the given relation model (%s)',
-			singularRelationName,
+			relationName,
 		);
 		return;
 	}
 	const relationIds = getIdsFromBaseEntityArray( relationEntities );
-	const pluralRelationName = pluralModelName( relationName );
 	yield dispatch(
 		REDUCER_KEY,
 		'receiveEntitiesAndResolve',
-		singularRelationName,
+		relationName,
 		relationEntities
 	);
 	yield dispatch(
@@ -122,7 +118,7 @@ function* createRelations(
 		'finishResolution',
 		REDUCER_KEY,
 		'getRelatedEntities',
-		[ modelEntity, pluralRelationName ]
+		[ modelEntity, relationName ]
 	);
 	const relationsToResolve = [ ...relationEntities ];
 	while ( relationsToResolve.length > 0 ) {
@@ -140,7 +136,7 @@ function* createRelations(
 			'finishResolution',
 			REDUCER_KEY,
 			'getRelatedEntities',
-			[ relationEntity, pluralModelName( modelName ) ]
+			[ relationEntity, modelName ]
 		);
 	}
 }
@@ -164,20 +160,20 @@ function* resolveRelationRecordForRelation(
 	modelName,
 	modelId
 ) {
-	const singularRelationName = singularModelName( relationEntity.modelName );
-	const pluralRelationName = pluralModelName( relationEntity.modelName );
+	modelName = singularModelName( modelName );
+	const relationName = singularModelName( relationEntity.modelName );
 	const hasEntity = yield select(
 		'core/data',
 		'hasFinishedResolution',
 		REDUCER_KEY,
 		'getEntityById',
-		[ singularRelationName, relationEntity.id ]
+		[ relationName, relationEntity.id ]
 	);
 	relationEntity = hasEntity ?
 		yield select(
 			REDUCER_KEY,
 			'getEntityById',
-			singularRelationName,
+			relationName,
 			relationEntity.id
 		) :
 		relationEntity;
@@ -193,7 +189,7 @@ function* resolveRelationRecordForRelation(
 		'receiveRelatedEntities',
 		modelName,
 		modelId,
-		pluralRelationName,
+		relationName,
 		[ relationEntity.id ]
 	);
 	const modelEntity = yield resolveSelect(
@@ -207,14 +203,14 @@ function* resolveRelationRecordForRelation(
 		'finishResolution',
 		REDUCER_KEY,
 		'getRelatedEntities',
-		[ modelEntity, pluralRelationName ]
+		[ modelEntity, relationName ]
 	);
 	yield dispatch(
 		'core/data',
 		'finishResolution',
 		REDUCER_KEY,
 		'getRelatedEntities',
-		[ relationEntity, pluralModelName( modelName ) ]
+		[ relationEntity, modelName ]
 	);
 }
 
@@ -228,6 +224,7 @@ function* resolveRelationRecordForRelation(
  * @throws InvalidModelEntity
  */
 const assertArrayHasEntitiesForModel = ( entities, relationModelName ) => {
+	relationModelName = singularModelName( relationModelName );
 	for ( const entity of entities ) {
 		if ( ! isModelEntityOfModel( entity, relationModelName ) ) {
 			throw new InvalidModelEntity( '', entity );

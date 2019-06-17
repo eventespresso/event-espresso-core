@@ -9,6 +9,11 @@ import { ACTION_TYPES } from './action-types';
 const { relations: types } = ACTION_TYPES;
 
 /**
+ * External imports
+ */
+import { singularModelName } from '@eventespresso/model';
+
+/**
  * Action creator for adding relation indexes for entities and their relations.
  *
  * @param {string} modelName
@@ -30,6 +35,8 @@ function receiveRelatedEntities(
 	relationName,
 	relatedEntityIds
 ) {
+	modelName = singularModelName( modelName );
+	relationName = singularModelName( relationName );
 	return {
 		type: types.RECEIVE_RELATED_ENTITY_IDS,
 		modelName,
@@ -64,6 +71,8 @@ function receiveDirtyRelationAddition(
 	modelName,
 	entityId,
 ) {
+	modelName = singularModelName( modelName );
+	relationName = singularModelName( relationName );
 	return {
 		type: types.RECEIVE_DIRTY_RELATION_ADDITION,
 		relationName,
@@ -98,6 +107,8 @@ function receiveDirtyRelationDeletion(
 	modelName,
 	entityId,
 ) {
+	modelName = singularModelName( modelName );
+	relationName = singularModelName( relationName );
 	return {
 		type: types.RECEIVE_DIRTY_RELATION_DELETION,
 		relationName,
@@ -132,6 +143,7 @@ function receiveUpdatedEntityIdForRelations(
 	oldEntityId,
 	newEntityId
 ) {
+	modelName = singularModelName( modelName );
 	return {
 		type: types.RECEIVE_UPDATED_ENTITY_ID_FOR_RELATIONS,
 		modelName,

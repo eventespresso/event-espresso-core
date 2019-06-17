@@ -151,7 +151,7 @@ describe( 'receiveSchema()', () => {
 						endpoint: 'event/10/datetimes',
 					},
 					originalState.setIn(
-						[ 'event', 10, 'datetimes' ],
+						[ 'event', 10, 'datetime' ],
 						'event/10/datetimes'
 					),
 					false,
@@ -164,7 +164,7 @@ describe( 'receiveSchema()', () => {
 						endpoint: 'event/10/datetimes',
 					},
 					originalState.setIn(
-						[ 'event', 10, 'datetimes' ],
+						[ 'event', 10, 'datetime' ],
 						'event/10/datetimes'
 					),
 					true,
@@ -190,7 +190,7 @@ describe( 'receiveSchema()', () => {
 						relationSchema: { foo: 'bar' },
 					},
 					originalState
-						.setIn( [ 'event', 'datetimes' ], { foo: 'bar' } ),
+						.setIn( [ 'event', 'datetime' ], { foo: 'bar' } ),
 					false,
 				],
 				[
@@ -200,8 +200,8 @@ describe( 'receiveSchema()', () => {
 						relationSchema: { foo: 'bar' },
 					},
 					originalState
-						.setIn( [ 'event', 'datetimes' ], { foo: 'bar' } )
-						.setIn( [ 'datetime', 'events' ], { foo: 'bar' } ),
+						.setIn( [ 'event', 'datetime' ], { foo: 'bar' } )
+						.setIn( [ 'datetime', 'event' ], { foo: 'bar' } ),
 					false,
 				],
 				[
@@ -211,8 +211,8 @@ describe( 'receiveSchema()', () => {
 						relationSchema: { foo: 'bar' },
 					},
 					originalState
-						.setIn( [ 'event', 'datetimes' ], { foo: 'bar' } )
-						.setIn( [ 'datetime', 'events' ], { foo: 'bar' } ),
+						.setIn( [ 'event', 'datetime' ], { foo: 'bar' } )
+						.setIn( [ 'datetime', 'event' ], { foo: 'bar' } ),
 					true,
 				],
 			];
