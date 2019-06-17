@@ -39,10 +39,10 @@ const EditorTicketEntitiesListView = ( {
 					{ __( 'Name', 'event_espresso' ) }
 				</div>
 				<div className="ee-ticket-list-item">
-					{ __( 'Start Date', 'event_espresso' ) }
+					{ __( 'Price', 'event_espresso' ) }
 				</div>
 				<div className="ee-ticket-list-item">
-					{ __( 'End Date', 'event_espresso' ) }
+					{ __( 'Goes on Sale', 'event_espresso' ) }
 				</div>
 				<div className="ee-ticket-list-item">
 					{ __( 'Sold', 'event_espresso' ) }
