@@ -131,8 +131,7 @@ class EED_Batch extends EED_Module
                 && $_REQUEST['page'] == 'espresso_batch'
             )
         ) {
-
-            if(! isset($_REQUEST['default_nonce']) || ! wp_verify_nonce($_REQUEST['default_nonce'], 'default_nonce')) {
+            if (! isset($_REQUEST['default_nonce']) || ! wp_verify_nonce($_REQUEST['default_nonce'], 'default_nonce')) {
                 wp_die(esc_html__('The link you clicked to start the batch job has expired. Please go back and refresh the previous page.', 'event_espresso'));
             }
             switch ($this->batch_request_type()) {
