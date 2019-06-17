@@ -86,18 +86,22 @@ class EditorTicketEntityListItem extends Component {
 					</div>
 					<div className="ee-ticket-list-item">
 						<span className="ee-ticket-list-item-label">
-							{ __( 'Start Date:', 'event_espresso' ) }
+							{ __( 'Price:', 'event_espresso' ) }
 						</span>
 						<span className="ee-ticket-list-item-value">
-							{ ticketEntity.startDate.toFormat( 'ddd MMM YY h:mm a' ) }
+							{
+								ticketEntity.price.formatter.formatNumber(
+									ticketEntity.price.amount.toNumber()
+								)
+							}
 						</span>
 					</div>
 					<div className="ee-ticket-list-item">
 						<span className="ee-ticket-list-item-label">
-							{ __( 'End Date:', 'event_espresso' ) }
+							{ __( 'Start Date:', 'event_espresso' ) }
 						</span>
 						<span className="ee-ticket-list-item-value">
-							{ ticketEntity.endDate.toFormat( 'ddd MMM YY h:mm a' ) }
+							{ ticketEntity.startDate.toFormat( 'ddd MMM YY h:mm a' ) }
 						</span>
 					</div>
 					<div className="ee-ticket-list-item">
