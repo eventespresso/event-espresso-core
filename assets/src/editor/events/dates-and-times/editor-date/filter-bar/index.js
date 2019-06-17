@@ -13,17 +13,8 @@ import withDateEntitiesListFilterBar, {
 import withDateEntitiesListFilterState from './with-date-entities-list-filter-state';
 import withFilteredDateEntities from './with-filtered-date-entities';
 
-const withPaginatedDateEntitiesListAndFilterBar = (
-	paginationConfig = {}
-) => createHigherOrderComponent(
-	compose( [
-		withDateEntitiesListFilterBar,
-		withEntityPagination( paginationConfig ),
-	] ),
-	'withPaginatedDateEntitiesListAndFilterBar'
-);
 
-const withPaginatedDateEntitiesListAndFilterBarAndState = (
+const withPaginatedDateEntitiesListAndFilterBar = (
 	paginationConfig = {}
 ) => createHigherOrderComponent(
 	compose( [
@@ -31,14 +22,13 @@ const withPaginatedDateEntitiesListAndFilterBarAndState = (
 		withDateEntitiesListFilterBar,
 		withEntityPagination( paginationConfig ),
 	] ),
-	'withPaginatedDateEntitiesListAndFilterBarAndState'
+	'withPaginatedDateEntitiesListAndFilterBar'
 );
 
 export {
 	withDateEntitiesListFilterBar,
 	withDateEntitiesListFilterState,
 	withFilteredDateEntities,
-	withPaginatedDateEntitiesListAndFilterBarAndState,
 	withPaginatedDateEntitiesListAndFilterBar,
 	getFilteredDateEntitiesList,
 };
