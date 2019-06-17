@@ -47,7 +47,7 @@
 }
 
 .ee-infinity-sign {
-    font-size: var(--ee-font-size-big);
+    font-size: var(--ee-font-size-bigger);
     line-height: var(--ee-font-size-big);
     vertical-align: middle;
 }
