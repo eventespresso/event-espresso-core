@@ -5,15 +5,16 @@
 
 /* table (ul) */
 .ee-tickets-list-list-view {
-    font-size: 1rem;
+    font-size: var(--ee-font-size-default);
     font-weight: normal;
-    margin: .5rem 0 1rem;
+    margin: var(--ee-margin-tiny) 0 var(--ee-margin-small);
+    max-width: 100%;
 }
 
 /* table rows (div) */
 .ee-editor-ticket-list-view-div {
     margin: 0 0 1px;
-    border: 1px solid var(--ee-color-white);
+    border: 1px solid var(--ee-color-grey-14);
 }
 
 /* headers row */
@@ -24,14 +25,14 @@
 
 /* zebra striping */
 .ee-tickets-list-list-view > div:nth-of-type(even) {
-    background: var(--ee-color-grey-11);
-    border: 1px solid var(--ee-color-grey-11);
+    background: var(--ee-color-grey-15);
+    border: 1px solid var(--ee-color-grey-15);
 }
 
 /* row highlighting */
 .ee-tickets-list-list-view > div:hover {
-    /*background: var(--ee-color-grey-11);*/
-    border: 1px solid var(--ee-color-grey-10);
+    background: var(--ee-color-grey-14);
+    border: 1px solid var(--ee-color-grey-14);
 }
 
 /* table rows (inner) */
@@ -45,10 +46,10 @@
     -webkit-box-sizing: border-box;
     -moz-box-sizing: border-box;
     box-sizing: border-box;
-    font-size: 15px;
-    line-height: 36px;
-    height: 56px;
-    padding: 10px;
+    font-size: var(--ee-font-size-small);
+    line-height: var(--ee-font-size-bigger);
+    height: var(--ee-font-size-extreme);
+    padding: var(--ee-padding-tiny);
     white-space: nowrap;
     text-overflow: ellipsis;
     overflow: hidden;
@@ -56,17 +57,17 @@
 
 /* headers */
 .ee-tickets-list-list-view > div:nth-of-type(1) .ee-ticket-list-item {
-    font-size: 13px;
+    font-size: var(--ee-font-size-smaller);
     font-weight: bold;
-    line-height: 18px;
+    line-height: var(--ee-font-size-big);
     height: auto;
-    padding-bottom: 5px;
+    padding-bottom: var(--ee-padding-micro);
 }
 
 /* status bar */
 .ee-editor-ticket-list-items > div:nth-of-type(1) {
     padding: 0;
-    width: 5px;
+    width: var(--ee-padding-micro);
 }
 
 /* ID */
@@ -81,8 +82,13 @@
     width: 25%;
 }
 
-/* Start Date & End Date */
-.ee-editor-ticket-list-items > div:nth-of-type(4),
+/* Price */
+.ee-editor-ticket-list-items > div:nth-of-type(4) {
+    text-align: right;
+    width: 6%;
+}
+
+/* Start Date */
 .ee-editor-ticket-list-items > div:nth-of-type(5) {
     width: 15%;
 }
@@ -110,8 +116,8 @@
 }
 
 .ee-ticket-list-item .ee-infinity-sign {
-    font-size: 16px;
-    margin-top: -4px;
+    font-size: var(--ee-font-size-default);
+    margin-top: calc(var(--ee-margin-micro) * -1);
 }
 
 .ee-ticket-list-item .dashicons {
@@ -177,8 +183,8 @@
     }
 
     .ee-editor-ticket-list-view-div {
-        margin: 0 0 1.5rem;
-        min-width: 230px;
+        margin: 0 0 var(--ee-margin-default);
+        min-width: calc(var(--ee-font-size-default) * 12.5);
         width: 47.5%;
     }
 
@@ -197,15 +203,15 @@
     /* table rows (inner) */
     .ee-editor-ticket-list-items {
         flex-flow: column nowrap;
-        border: 1px solid var(--ee-color-grey-10);
+        border: 1px solid var(--ee-border-color);
     }
 
     /* table cells */
     .ee-ticket-list-item {
-        line-height: 18px;
+        line-height: var(--ee-font-size-big);
         height: auto;
         overflow: visible;
-        padding: 10px;
+        padding: var(--ee-padding-tiny);
         text-align: left !important;
         text-overflow: unset;
         white-space: normal;
@@ -217,8 +223,8 @@
     .ee-ticket-list-item-label {
         color: var(--ee-default-text-color);
         display: inline-block;
-        font-size: 13px;
-        padding: 0 10px 0 0;
+        font-size: var(--ee-font-size-smaller);
+        padding: 0 var(--ee-padding-tiny) 0 0;
         text-align: right;
         width: 33%;
     }
@@ -235,7 +241,7 @@
     /* status bar */
     .ee-editor-ticket-list-items > div:nth-of-type(1) {
         color: var(--ee-color-white) !important;
-        padding: 10px;
+        padding: var(--ee-padding-tiny);
         width: auto;
     }
 
@@ -249,9 +255,9 @@
     /* Actions  menu */
     .ee-tickets-list-list-view .ee-editor-ticket-actions-menu {
         left: 33%;
-        padding-left: 10px;
+        padding-left: var(--ee-padding-tiny);
         right: unset;
-        top: 2px;
+        top: var(--ee-padding-nano);
     }
 
     .ee-tickets-list-list-view .ee-dropdown-menu-div {
@@ -263,7 +269,7 @@
 
 @media only screen and (max-width: 360px) {
     .ee-editor-ticket-list-view-div {
-        min-width: 240px;
+        min-width: calc(var(--ee-font-size-default) * 15);
         width: 100%;
     }
 
