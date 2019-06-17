@@ -1,3 +1,12 @@
+.ee-date-time-input-text-field-wrapper {
+    display: flex;
+    flex-flow: row nowrap;
+    justify-items: flex-start;
+}
+
+.ee-date-time-input-text-field-wrapper .ee-date-time-input-text-field {
+    margin-right: var(--ee-margin-smaller);
+}
 
 .ee-date-time-input-dialog {
     margin-left: -25% !important;
