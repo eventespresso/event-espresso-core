@@ -86,12 +86,12 @@ describe( 'resetStateForModel()', () => {
 	const mockMap = {
 		eventInSelectorName: new EquivalentKeyMap( [ [ 'foo', 'bar' ] ] ),
 		argsWithModelName: new EquivalentKeyMap( [
-			[ [ 10, 'events' ], 'hello' ],
+			[ [ 10, 'event' ], 'hello' ],
 		] ),
 		shouldNotAppear: new EquivalentKeyMap(),
 		getLatestCheckin: new EquivalentKeyMap(),
 		argsWithBaseEntity: new EquivalentKeyMap( [
-			[ [ EventEntity, 'datetimes' ], false ],
+			[ [ EventEntity, 'datetime' ], false ],
 		] ),
 	};
 	const fulfillment = resetStateForModel( 'event' );
@@ -137,7 +137,7 @@ describe( 'resetStateForModel()', () => {
 				'invalidateResolution',
 				REDUCER_KEY,
 				'argsWithModelName',
-				[ 10, 'events' ],
+				[ 10, 'event' ],
 			)
 		);
 		const { value: argsWithBaseEntityDispatch } = fulfillment.next();
@@ -147,7 +147,7 @@ describe( 'resetStateForModel()', () => {
 				'invalidateResolution',
 				REDUCER_KEY,
 				'argsWithBaseEntity',
-				[ EventEntity, 'datetimes' ]
+				[ EventEntity, 'datetime' ]
 			)
 		);
 	} );

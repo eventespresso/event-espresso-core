@@ -4,7 +4,7 @@
 import { isEmpty, keys } from 'lodash';
 import cuid from 'cuid';
 import { isModelEntityOfModel } from '@eventespresso/validators';
-import { singularModelName, pluralModelName } from '@eventespresso/model';
+import { singularModelName } from '@eventespresso/model';
 
 /**
  * Internal imports.
@@ -183,7 +183,7 @@ function* persistRelationsForEntityIdAndRelation(
 	relationState = DEFAULT_EMPTY_OBJECT
 ) {
 	modelName = singularModelName( modelName );
-	relationName = pluralModelName( relationName );
+	relationName = singularModelName( relationName );
 	relationState = yield resolveDispatch(
 		CORE_REDUCER_KEY,
 		'getRelationState',
@@ -247,7 +247,7 @@ function* persistRelationsForEntityIdAndRelationId(
 	relationState = DEFAULT_EMPTY_OBJECT
 ) {
 	modelName = singularModelName( modelName );
-	relationName = pluralModelName( relationName );
+	relationName = singularModelName( relationName );
 	relationState = yield resolveDispatch(
 		CORE_REDUCER_KEY,
 		'getRelationState',
@@ -289,7 +289,7 @@ function* persistRelationsForEntityIdAndRelationId(
 			modelName,
 			entityId,
 			addRelation,
-			[ singularModelName( relationName ), relationId ],
+			[ relationName, relationId ],
 			! entityIdChanged,
 		);
 		// if relationId is 0, bail because it didn't get persisted so relations
@@ -352,7 +352,7 @@ function* persistNewEntityAndRemoveDirtyRelations(
 	persistingArguments,
 	doRelationRemoval = true,
 ) {
-	relationName = pluralModelName( relationName );
+	relationName = singularModelName( relationName );
 	modelName = singularModelName( modelName );
 	const persistedEntity = yield resolveDispatch(
 		CORE_REDUCER_KEY,
@@ -395,6 +395,7 @@ function* getRelationState(
 	addRelation = true,
 	relationState = DEFAULT_EMPTY_OBJECT
 ) {
+	modelName = singularModelName( modelName );
 	const selector = addRelation ?
 		'getRelationAdditionsQueuedForModel' :
 		'getRelationDeletionsQueuedForModel';

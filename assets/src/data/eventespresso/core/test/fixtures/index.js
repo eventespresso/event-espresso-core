@@ -33,13 +33,13 @@ export const mockStateForTests = {
 		.set(
 			'datetime',
 			Map()
-				.set( 52, Map().set( 'events', Set.of( 10 ) ) )
-				.set( 53, Map().set( 'events', Set.of( 20 ) ) )
-				.set( 54, Map().set( 'events', Set.of( 30 ) ) )
+				.set( 52, Map().set( 'event', Set.of( 10 ) ) )
+				.set( 53, Map().set( 'event', Set.of( 20 ) ) )
+				.set( 54, Map().set( 'event', Set.of( 30 ) ) )
 				.set(
 					DateTimeEntities.d.id,
 					Map().set(
-						'events',
+						'event',
 						Set.of( EventEntities.d.id )
 					)
 				)
@@ -47,13 +47,13 @@ export const mockStateForTests = {
 		.set(
 			'event',
 			Map()
-				.set( 10, Map().set( 'datetimes', Set.of( 52 ) ) )
-				.set( 20, Map().set( 'datetimes', Set.of( 53 ) ) )
-				.set( 30, Map().set( 'datetimes', Set.of( 54 ) ) )
+				.set( 10, Map().set( 'datetime', Set.of( 52 ) ) )
+				.set( 20, Map().set( 'datetime', Set.of( 53 ) ) )
+				.set( 30, Map().set( 'datetime', Set.of( 54 ) ) )
 				.set(
 					EventEntities.d.id,
 					Map().set(
-						'datetimes',
+						'datetime',
 						Set.of( DateTimeEntities.d.id )
 					)
 				)
