@@ -2,9 +2,9 @@
  * External imports
  */
 
-import moment from 'moment-timezone';
 import { filter, first, sortBy } from 'lodash';
 import { ticketModel } from '@eventespresso/model';
+import { isModelEntityOfModel } from '@eventespresso/validators';
 
 /**
  * filterTicketEntities
@@ -107,16 +107,15 @@ export const filterTicketEntities = ( ticketEntities, show = 'on-sale-and-pendin
  * @return {Array}         filtered tickets array
  */
 export const sortTicketEntitiesList = ( ticketEntities, order = 'chronologically' ) => {
-	const now = moment();
 	switch ( order ) {
 		case 'chronologically' :
 			ticketEntities = sortBy(
 				ticketEntities,
 				[
 					function( ticketEntity ) {
-						return ticketEntity && ticketEntity.startDate ?
-							now.isBefore( ticketEntity.startDate ) :
-							true;
+						return isModelEntityOfModel( ticketEntity, 'ticket' ) ?
+							ticketEntity.startDate.toMillis() :
+							0;
 					},
 				],
 			);
@@ -140,8 +139,7 @@ export const sortTicketEntitiesList = ( ticketEntities, order = 'chronologically
  * @return {boolean} true if sold/qty >= maxQuantity
  */
 const percentSoldAtOrAbove = ( ticketEntity, maxQuantity ) => {
-	return validSold( ticketEntity ) &&
-		validFiniteQuantity( ticketEntity ) &&
+	return validFiniteQuantity( ticketEntity ) &&
 		(
 			parseInt( ticketEntity.sold, 10 ) /
 			parseInt( ticketEntity.qty, 10 ) >= ( maxQuantity / 100 )
@@ -157,7 +155,6 @@ const percentSoldBelow = ( ticketEntity, maxQuantity ) => {
 	return (
 		validInfiniteQuantity( ticketEntity )
 	) || (
-		validSold( ticketEntity ) &&
 		validFiniteQuantity( ticketEntity ) &&
 		(
 			parseInt( ticketEntity.sold, 10 ) /
@@ -168,18 +165,10 @@ const percentSoldBelow = ( ticketEntity, maxQuantity ) => {
 
 /**
  * @param {Object} ticketEntity    event ticket object
- * @return {boolean} true if qty property is valid
- */
-const validQuantity = ( ticketEntity ) => {
-	return typeof ticketEntity.qty === 'string' || typeof ticketEntity.qty === 'number';
-};
-
-/**
- * @param {Object} ticketEntity    event ticket object
  * @return {boolean} true if qty property is valid and NOT infinite
  */
 const validFiniteQuantity = ( ticketEntity ) => {
-	return validQuantity( ticketEntity ) &&
+	return isModelEntityOfModel( ticketEntity, 'ticket' ) &&
 		ticketEntity.qty !== 'INF' &&
 		ticketEntity.qty !== Infinity &&
 		parseInt( ticketEntity.qty, 10 ) > 0;
@@ -190,17 +179,9 @@ const validFiniteQuantity = ( ticketEntity ) => {
  * @return {boolean} true if qty property is valid and unlimited
  */
 const validInfiniteQuantity = ( ticketEntity ) => {
-	return validQuantity( ticketEntity ) && (
+	return isModelEntityOfModel( ticketEntity, 'ticket' ) && (
 		ticketEntity.qty === 'INF' || ticketEntity.qty === Infinity
 	);
-};
-
-/**
- * @param {Object} ticketEntity    event ticket object
- * @return {boolean} true if qty property is valid
- */
-const validSold = ( ticketEntity ) => {
-	return typeof ticketEntity.sold === 'string' || typeof ticketEntity.sold === 'number';
 };
 
 /**
