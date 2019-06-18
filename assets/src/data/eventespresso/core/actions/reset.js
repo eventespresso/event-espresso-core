@@ -1,10 +1,7 @@
 /**
  * External imports
  */
-import {
-	singularModelName,
-	pluralModelName,
-} from '@eventespresso/model';
+import { singularModelName } from '@eventespresso/model';
 import { some, keys } from 'lodash';
 import { isModelEntityOfModel } from '@eventespresso/validators';
 import { select as dataSelect } from '@wordpress/data';
@@ -67,6 +64,7 @@ export function* resetAllState() {
  * @param {string} modelName
  */
 export function* resetStateForModel( modelName ) {
+	modelName = singularModelName( modelName );
 	yield {
 		type: types.RESET_STATE_FOR_MODEL,
 		modelName,
@@ -114,10 +112,8 @@ export function* resetStateForModel( modelName ) {
  */
 const modelNameInSelector = ( selectorName, modelName ) => {
 	const singularName = singularModelName( modelName );
-	const pluralName = pluralModelName( modelName );
 	selectorName = selectorName.toLowerCase();
-	return selectorName.indexOf( singularName ) > -1 ||
-		selectorName.indexOf( pluralName ) > -1;
+	return selectorName.indexOf( singularName ) > -1;
 };
 
 /**
@@ -134,9 +130,7 @@ const modelNameInSelector = ( selectorName, modelName ) => {
  */
 const modelNameInArgs = ( args, modelName ) => {
 	const singularName = singularModelName( modelName );
-	const pluralName = pluralModelName( modelName );
-	const hasModelName = args.indexOf( singularName ) > -1 ||
-		args.indexOf( pluralName ) > -1;
+	const hasModelName = args.indexOf( singularName ) > -1;
 	if ( hasModelName ) {
 		return true;
 	}
@@ -146,8 +140,7 @@ const modelNameInArgs = ( args, modelName ) => {
 	return some(
 		args,
 		( arg ) => {
-			return isModelEntityOfModel( arg, singularName ) ||
-				isModelEntityOfModel( arg, pluralName );
+			return isModelEntityOfModel( arg, singularName );
 		}
 	);
 };

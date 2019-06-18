@@ -16,26 +16,26 @@ export const mockStateForTests = {
 		'event',
 		Map().set(
 			10,
-			fromJS( { datetimes: '/ee/v4.8.36/events/10/datetimes' } )
+			fromJS( { datetime: '/ee/v4.8.36/events/10/datetimes' } )
 		)
 	).set(
 		'datetime',
 		Map().set(
 			52,
-			fromJS( { events: '/ee/v4.8.36/datetimes/52/event' } )
+			fromJS( { event: '/ee/v4.8.36/datetimes/52/event' } )
 		)
 	),
 	relationSchema: Map()
 		.setIn(
-			[ 'event', 'datetimes' ],
+			[ 'event', 'datetime' ],
 			EventSchema.schema.properties.datetimes
 		)
 		.setIn(
-			[ 'datetime', 'events' ],
+			[ 'datetime', 'event' ],
 			DateTimeSchema.schema.properties.event
 		)
 		.setIn(
-			[ 'event', 'venues' ],
+			[ 'event', 'venue' ],
 			EventSchema.schema.properties.venues
 		),
 };

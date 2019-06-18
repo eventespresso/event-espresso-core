@@ -27,6 +27,7 @@
 		"colors",
 		"underscore",
 		"detect-libc",
-		"gaxios"
+		"gaxios",
+		"preact-context"
 	]
 }

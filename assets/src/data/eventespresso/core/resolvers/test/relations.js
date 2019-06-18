@@ -72,7 +72,7 @@ describe( getRelatedEntities.name + '()', () => {
 			'receiveRelationEndpointForModelEntity',
 			'event',
 			EventEntities.a.id,
-			'datetimes',
+			'datetime',
 			'ee/v4.8.36/events/10/datetimes'
 		) );
 	} );
@@ -87,7 +87,7 @@ describe( getRelatedEntities.name + '()', () => {
 			[
 				'event',
 				EventEntities.a.id,
-				'datetimes',
+				'datetime',
 				'ee/v4.8.36/events/10/datetimes',
 			]
 		) );
@@ -239,7 +239,7 @@ describe( 'getRelatedEntitiesForIds()', () => {
 				SCHEMA_REDUCER_KEY,
 				'hasJoinTableRelation',
 				'ticket',
-				'datetimes'
+				'datetime'
 			)
 		);
 	} );
@@ -250,7 +250,7 @@ describe( 'getRelatedEntitiesForIds()', () => {
 				SCHEMA_REDUCER_KEY,
 				'getRelationSchema',
 				'ticket',
-				'datetimes'
+				'datetime'
 			)
 		);
 	} );
