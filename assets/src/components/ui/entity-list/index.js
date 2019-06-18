@@ -17,8 +17,6 @@ import withFormContainerAndPlaceholder from '../../form/base/with-form-container
  * as either a list table or grid of entity blocks
  *
  * @function
- * @param {boolean} loading
- * @param {string} loadingNotice
  * @param {Array} entities
  * @param {mixed} otherProps
  * @param {Component} EntityGridView
@@ -29,8 +27,6 @@ import withFormContainerAndPlaceholder from '../../form/base/with-form-container
  * @return {Component} list of rendered entities
  */
 const EntityList = ( {
-	loading,
-	loadingNotice,
 	entities,
 	EntityGridView,
 	EntityListView,
