@@ -872,10 +872,10 @@ class EE_Event extends EE_CPT_Base implements EEI_Line_Item_Object, EEI_Admin_Li
      */
     public function perform_sold_out_status_check()
     {
-        // get all unexpired untrashed tickets
+        // get all tickets
         $tickets = $this->tickets(
             array(
-                array('TKT_deleted' => false),
+                'default_where_conditions' => 'none',
                 'order_by' => array('TKT_qty' => 'ASC'),
             )
         );
