@@ -5,8 +5,14 @@ import classNames from 'classnames';
 import PropTypes from 'prop-types';
 import { Component } from '@wordpress/element';
 import { Field } from 'react-final-form';
-import { Button, DateTimePicker, Dropdown } from '@wordpress/components';
+import {
+	Button,
+	DateTimePicker,
+	Dropdown,
+	IconButton,
+} from '@wordpress/components';
 import { ENTER, SPACE } from '@wordpress/keycodes';
+import { EspressoIcon, ESPRESSO_ICON_CALENDAR } from '../../ui/image/espresso-icon';
 import { SERVER_LOCALE } from '@eventespresso/eejs';
 import { DATE_TIME_FORMAT_SITE, TIME_FORMAT_SITE } from '@eventespresso/helpers';
 import { __ } from '@eventespresso/i18n';
@@ -152,6 +158,7 @@ class DateTimeDropdown extends Component {
 		delete attributes.initialValue;
 		const inputClass = classNames( {
 			[ htmlClass ]: true,
+			'ee-date-time-input-text-field': true,
 			'form-control': true,
 			[ `ee-input-width-${ inputWidth }` ]: inputWidth,
 		} );
@@ -161,26 +168,40 @@ class DateTimeDropdown extends Component {
 				position="bottom center"
 				contentClassName="ee-date-time-input-dialog"
 				renderToggle={ ( { onToggle } ) => (
-					<input
-						type="text"
-						id={ htmlId }
-						className={ inputClass }
-						value={ inputValue.toFormat( DATE_TIME_FORMAT_SITE ) }
-						onChange={ input.onChange }
-						onClick={ onToggle }
-						onKeyDown={ ( event ) => {
-							if (
-								event.keyCode === ENTER ||
-								event.keyCode === SPACE
-							) {
-								onToggle( event );
+					<div className={ 'ee-date-time-input-text-field-wrapper' }>
+						<input
+							type="text"
+							id={ htmlId }
+							className={ inputClass }
+							value={ inputValue.toFormat( DATE_TIME_FORMAT_SITE ) }
+							onClick={ onToggle }
+							onChange={ input.onChange }
+							onKeyDown={ ( event ) => {
+								if (
+									event.keyCode === ENTER ||
+									event.keyCode === SPACE
+								) {
+									onToggle( event );
+								}
+							} }
+							aria-describedby={ helpTextID }
+							aria-live="polite"
+							{ ...dataSet }
+							{ ...attributes }
+						/>
+						<IconButton
+							icon={
+								<EspressoIcon
+									icon={ ESPRESSO_ICON_CALENDAR }
+									onClick={ onToggle }
+								/>
 							}
-						} }
-						aria-describedby={ helpTextID }
-						aria-live="polite"
-						{ ...dataSet }
-						{ ...attributes }
-					/>
+							label={ __(
+								'Click to choose date and time',
+								'event_espresso'
+							) }
+						/>
+					</div>
 				) }
 				renderContent={ ( { onToggle } ) => (
 					<div className={ 'ee-date-time-input-picker-wrapper' } >

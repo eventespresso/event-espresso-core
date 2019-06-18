@@ -443,6 +443,11 @@
     box-sizing: border-box;
 }
 
+.ee-two-column-admin .ee-toggle-input .components-toggle-control__label {
+    font-size: var(--ee-font-size-default);
+    width: calc( 100% - 40px );
+}
+
 .ee-two-column-admin .ee-checkbox-toggle input[type="checkbox"] {
     border: 1px solid var(--ee-border-color);
     border-radius: var(--ee-border-radius-small);
