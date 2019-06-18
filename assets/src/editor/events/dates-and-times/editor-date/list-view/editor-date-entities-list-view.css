@@ -5,9 +5,10 @@
 
 /* table (ul) */
 .ee-dates-list-list-view {
-    font-size: 1rem;
+    font-size: var(--ee-font-size-default);
     font-weight: normal;
-    margin: .5rem 0 1rem;
+    margin: var(--ee-margin-tiny) 0 var(--ee-margin-small);
+    max-width: 100%;
 }
 
 /* table rows (div) */
@@ -46,10 +47,10 @@
     -webkit-box-sizing: border-box;
     -moz-box-sizing: border-box;
     box-sizing: border-box;
-    font-size: 15px;
-    line-height: 36px;
-    height: 56px;
-    padding: 10px;
+    font-size: var(--ee-font-size-small);
+    line-height: var(--ee-font-size-bigger);
+    height: var(--ee-font-size-extreme);
+    padding: var(--ee-padding-tiny);
     position: relative;
     white-space: nowrap;
     text-overflow: ellipsis;
@@ -58,17 +59,17 @@
 
 /* headers */
 .ee-dates-list-list-view > div:nth-of-type(1) .ee-date-list-item {
-    font-size: 13px;
+    font-size: var(--ee-font-size-smaller);
     font-weight: bold;
-    line-height: 18px;
+    line-height: var(--ee-font-size-big);
     height: auto;
-    padding-bottom: 5px;
+    padding-bottom: var(--ee-padding-micro);
 }
 
 /* status bar */
 .ee-editor-date-list-items > div:nth-of-type(1) {
     padding: 0;
-    width: 5px;
+    width: var(--ee-padding-micro);
 }
 
 /* ID */
@@ -112,8 +113,8 @@
 }
 
 .ee-date-list-item .ee-infinity-sign {
-    font-size: 16px;
-    margin-top: -4px;
+    font-size: var(--ee-font-size-default);
+    margin-top: calc(var(--ee-margin-micro) * -1);
 }
 
 .ee-date-list-item .dashicons {
@@ -159,23 +160,23 @@
     }
 
     .ee-date-list-item {
-        height: 72px;
+        height: calc(var(--ee-font-size-bigger) * 3);
         padding: 0;
     }
     .ee-date-list-item span {
         box-sizing: border-box;
-        padding: 6px;
+        padding: var(--ee-padding-micro);
         width: 100%;
     }
 
     /* row level labels */
     .ee-date-list-item-label {
         display: block;
-        font-size: 13px;
+        font-size: var(--ee-font-size-smaller);
         font-weight: bold;
-        height: 18px;
+        height: var(--ee-font-size-big);
         left: 0;
-        line-height: 18px;
+        line-height: var(--ee-font-size-big);
         position: absolute;
         text-align: left;
         top: 0;
@@ -183,42 +184,42 @@
     }
 
     .ee-date-list-item-value {
-        bottom: 6px;
+        bottom: var(--ee-padding-micro);
         display: block;
-        height: 36px;
+        height: var(--ee-font-size-huge);
         left: 0;
         position: absolute;
         vertical-align: bottom;
     }
     .ee-editor-date-list-items .ee-editor-date-actions-menu {
-        bottom: 10px;
-        left: 10px;
+        bottom: var(--ee-padding-tiny);
+        left: var(--ee-padding-tiny);
         position: absolute;
         vertical-align: top;
     }
 
     /*.ee-date-list-item,*/
     .ee-editor-date-list-items > div:nth-of-type(1) {
-        height: 144px;
+        height: calc(var(--ee-font-size-bigger) * 6);
         position: absolute;
     }
 
     /* ID */
     .ee-editor-date-list-items > div:nth-of-type(2) {
-        border-bottom: 1px solid var(--ee-color-grey-11);
+        border-bottom: 1px solid var(--ee-color-grey-14);
         width: 10%;
     }
 
     /* Name */
     .ee-editor-date-list-items > div:nth-of-type(3) {
-        border-bottom: 1px solid var(--ee-color-grey-11);
+        border-bottom: 1px solid var(--ee-color-grey-14);
         width: 40%;
     }
 
     /* Start Date & End Date */
     .ee-editor-date-list-items > div:nth-of-type(4),
     .ee-editor-date-list-items > div:nth-of-type(5) {
-        border-bottom: 1px solid var(--ee-color-grey-11);
+        border-bottom: 1px solid var(--ee-color-grey-14);
         width: 25%;
     }
 
@@ -244,7 +245,7 @@
         width: 40%;
     }
     .ee-editor-date-list-items > div:nth-of-type(10) .ee-editor-date-actions-menu {
-        bottom: 6px;
+        bottom: var(--ee-padding-micro);
         justify-content: flex-end;
         right: 0;
         position: absolute;
@@ -288,9 +289,9 @@
     }
 
     .ee-editor-date-list-view-div {
-        margin: 0 0 1.5rem;
-        min-width: 200px;
-        width: 48%;
+        margin: 0 0 var(--ee-margin-default);
+        min-width: calc(var(--ee-font-size-default) * 12.5);
+        width: 47.5%;
     }
 
     /* table rows */
@@ -304,15 +305,15 @@
     /* table rows (inner) */
     .ee-editor-date-list-items {
         flex-flow: column nowrap;
-        border: 1px solid var(--ee-color-grey-9);
+        border: 1px solid var(--ee-border-color);
     }
 
     /* table cells */
     .ee-date-list-item {
-        line-height: 18px;
+        line-height: var(--ee-font-size-big);
         height: auto;
         overflow: visible;
-        padding: 10px;
+        padding: var(--ee-padding-tiny);
         text-align: left !important;
         text-overflow: unset;
         white-space: normal;
@@ -324,8 +325,8 @@
     .ee-date-list-item-label {
         color: var(--ee-default-text-color);
         display: inline-block;
-        font-size: 13px;
-        padding: 0 10px 0 0;
+        font-size: var(--ee-font-size-smaller);
+        padding: 0 var(--ee-padding-tiny) 0 0;
         text-align: right;
         width: 50%;
     }
@@ -335,9 +336,9 @@
     }
 
     .ee-date-list-item-value .ee-editor-date-details-reg-url-link {
-        left: 8px;
+        left: var(--ee-padding-tiny);
         position: relative;
-        top: 8px;
+        top: var(--ee-padding-tiny);
     }
 
     /* Date Name in status bar value */
@@ -348,7 +349,7 @@
     /* status bar */
     .ee-editor-date-list-items > div:nth-of-type(1) {
         color: var(--ee-color-white) !important;
-        padding: 10px;
+        padding: var(--ee-padding-tiny);
         width: auto;
     }
 
@@ -359,14 +360,6 @@
         display: none;
     }
 
-    /* Actions  menu */
-    /*.ee-dates-list-list-view .ee-editor-date-actions-menu {*/
-    /*    left: 33%;*/
-    /*    padding-left: 10px;*/
-    /*    right: unset;*/
-    /*    top: 2px;*/
-    /*}*/
-
     .ee-dates-list-list-view .ee-dropdown-menu-div {
         left: 12%;
         right: unset;
@@ -376,7 +369,7 @@
 @media only screen and (max-width: 360px) {
 
     .ee-editor-date-list-view-div {
-        min-width: 240px;
+        min-width: calc(var(--ee-font-size-default) * 15);
         width: 100%;
     }
 
