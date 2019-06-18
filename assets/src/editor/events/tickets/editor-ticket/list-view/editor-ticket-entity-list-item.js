@@ -89,11 +89,7 @@ class EditorTicketEntityListItem extends Component {
 							{ __( 'Price:', 'event_espresso' ) }
 						</span>
 						<span className="ee-ticket-list-item-value">
-							{
-								ticketEntity.price.formatter.formatNumber(
-									ticketEntity.price.amount.toNumber()
-								)
-							}
+							{ ticketEntity.price.amount.toString() }
 						</span>
 					</div>
 					<div className="ee-ticket-list-item">
@@ -101,7 +97,10 @@ class EditorTicketEntityListItem extends Component {
 							{ __( 'Start Date:', 'event_espresso' ) }
 						</span>
 						<span className="ee-ticket-list-item-value">
-							{ ticketEntity.startDate.toFormat( 'ddd MMM YY h:mm a' ) }
+							{
+								ticketEntity.startDate
+									.toFormat( 'ddd MMM YY h:mm a' )
+							}
 						</span>
 					</div>
 					<div className="ee-ticket-list-item">
