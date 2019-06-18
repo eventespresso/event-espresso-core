@@ -3,7 +3,7 @@
  */
 import classNames from 'classnames';
 import PropTypes from 'prop-types';
-import { Component, Fragment } from '@wordpress/element';
+import { Component } from '@wordpress/element';
 import { Field } from 'react-final-form';
 import {
 	Button,
