@@ -20,6 +20,9 @@ import {
 	EventEntities,
 	DateTimeEntities,
 } from '../../../test/fixtures/base';
+import { removeEntityById } from '../../reducers/entities';
+import { removeRelatedEntitiesForEntity } from '../../reducers/relations';
+import { trashEntity } from '../../reducers/dirty-entities';
 
 describe( 'getRelationIdsForEntityRelation()', () => {
 	beforeEach( () => getRelationIdsForEntityRelation.clear() );
@@ -506,4 +509,42 @@ describe( 'getRelatedEntitiesForIds()', () => {
 			]
 		);
 	} );
+	it(
+		'does not trigger error after entity has been trashed',
+		() => {
+			let modifiedState = { ...mockStateForTests };
+			modifiedState.relations = modifiedState.relations.setIn(
+				[ 'event', 10, 'datetime' ],
+				Set.of( 52, 53 )
+			).setIn(
+				[ 'datetime', 53, 'event' ],
+				Set.of( 10, 20 )
+			);
+			expect( getRelatedEntitiesForIds(
+				modifiedState,
+				'datetime',
+				[ 52, 53 ],
+				'event'
+			) ).toEqual( [ EventEntities.a, EventEntities.b ] );
+			const trashAction = {
+				modelName: 'event',
+				entityId: EventEntities.a.id,
+			};
+			modifiedState = fromJS( modifiedState );
+			modifiedState = removeEntityById( modifiedState, trashAction );
+			modifiedState = removeRelatedEntitiesForEntity(
+				modifiedState,
+				trashAction
+			);
+			modifiedState = trashEntity( modifiedState, trashAction );
+			const modifiedResultB = getRelatedEntities(
+				modifiedState,
+				DateTimeEntities.b,
+				'event',
+			);
+			expect( modifiedResultB ).toEqual( [
+				EventEntities.b,
+			] );
+		}
+	);
 } );
