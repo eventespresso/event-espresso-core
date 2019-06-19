@@ -512,7 +512,7 @@ describe( 'getRelatedEntitiesForIds()', () => {
 	it(
 		'does not trigger error after entity has been trashed',
 		() => {
-			let modifiedState = { ...mockStateForTests };
+			const modifiedState = { ...mockStateForTests };
 			modifiedState.relations = modifiedState.relations.setIn(
 				[ 'event', 10, 'datetime' ],
 				Set.of( 52, 53 )
