@@ -491,7 +491,7 @@ class Registry
      * @param string $chunk_name
      * @param string $asset_type
      * @return array
-     * @since $VID:$
+     * @since 4.9.82.p
      */
     private function getDependenciesForAsset($namespace, $chunk_name, $asset_type)
     {
@@ -523,7 +523,7 @@ class Registry
      * @param string $file_path
      * @param string $chunk_name
      * @return array
-     * @since $VID:$
+     * @since 4.9.82.p
      */
     private function getDependenciesForAssetType($namespace, $asset_type, $file_path, $chunk_name)
     {
@@ -571,7 +571,7 @@ class Registry
      * @param string $namespace
      * @param string $chunk_name
      * @return array
-     * @since $VID:$
+     * @since 4.9.82.p
      */
     public function getJsDependencies($namespace, $chunk_name)
     {
@@ -585,7 +585,7 @@ class Registry
      * @param string $namespace
      * @param string $chunk_name
      * @return array
-     * @since $VID:$
+     * @since 4.9.82.p
      */
     public function getCssDependencies($namespace, $chunk_name)
     {

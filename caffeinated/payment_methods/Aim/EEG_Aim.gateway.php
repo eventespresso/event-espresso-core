@@ -450,7 +450,7 @@ class EEG_Aim extends EE_Onsite_Gateway
 
     /**
      * Removes characters Authorize.net doesn't handle well.
-     * @since $VID:$
+     * @since 4.9.82.p
      * @param $text
      * @return string
      */

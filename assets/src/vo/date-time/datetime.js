@@ -294,7 +294,7 @@ export default class DateTime {
 	 * Given an indefinite number of DateTimes as arguments, this will return a
 	 * new DateTime that represents the latest point in time.
 	 * @param {...DateTime} datetimes
-	 * @return {DateTime} A new DateTime representing the latest point of time.
+	 * @return {DateTime|ServerDateTime} A new DateTime representing the latest point of time.
 	 */
 	static max( ...datetimes ) {
 		return this.fromMoment(
@@ -310,7 +310,7 @@ export default class DateTime {
 	 * Given an indefinite number of DateTimes as arguments, this will return a
 	 * new DateTime that represents the earliest point in time.
 	 * @param {...DateTime} datetimes
-	 * @return {DateTime} A new DateTime representing the earliest point in
+	 * @return {DateTime|ServerDateTime} A new DateTime representing the earliest point in
 	 * time.
 	 */
 	static min( ...datetimes ) {
@@ -327,7 +327,7 @@ export default class DateTime {
 	 * Constructs a DateTime from an instance of moment.
 	 *
 	 * @param {moment} momentInstance
-	 * @return {DateTime} An instance of DateTime
+	 * @return {DateTime|ServerDateTime} An instance of DateTime
 	 */
 	static fromMoment( momentInstance ) {
 		if ( ! moment.isMoment( momentInstance ) ) {
@@ -361,7 +361,7 @@ export default class DateTime {
 	 * @param {string} ISOString
 	 * @param {string} timezone
 	 * @param {string} locale
-	 * @return {DateTime} An instance of DateTime
+	 * @return {DateTime|ServerDateTime} An instance of DateTime
 	 */
 	static fromISO(
 		ISOString,
@@ -389,7 +389,7 @@ export default class DateTime {
 	 * @param {number} offset  In minutes unless > -16 or < -16 in which case it
 	 * is treated as hours.
 	 * @param {string} locale
-	 * @return {DateTime}  An instance of DateTime
+	 * @return {DateTime|ServerDateTime}  An instance of DateTime
 	 */
 	static fromISOWithOffset(
 		ISOString,
@@ -411,7 +411,7 @@ export default class DateTime {
 	 * @param {Date} date
 	 * @param {string} timezone
 	 * @param {string} locale
-	 * @return {DateTime} Returns an instance of DateTime
+	 * @return {DateTime|ServerDateTime} Returns an instance of DateTime
 	 */
 	static fromJSDate(
 		date,
@@ -435,7 +435,7 @@ export default class DateTime {
 	 * @param {Date} date
 	 * @param {number} offset
 	 * @param {string} locale
-	 * @return {DateTime} Returns an instance of DateTime
+	 * @return {DateTime|ServerDateTime} Returns an instance of DateTime
 	 */
 	static fromJSDateWithOffset(
 		date,
@@ -455,7 +455,7 @@ export default class DateTime {
 	 *
 	 * @param {number} milliseconds
 	 * @param {string} locale
-	 * @return {DateTime} Returns an instance of DateTime
+	 * @return {DateTime|ServerDateTime} Returns an instance of DateTime
 	 * @throws TypeError
 	 */
 	static fromMilliseconds( milliseconds, locale = DEFAULT_VALID_LOCALE ) {
@@ -474,7 +474,7 @@ export default class DateTime {
 	 *
 	 * @param {number} seconds
 	 * @param {string} locale
-	 * @return {DateTime} An instance of DateTime
+	 * @return {DateTime|ServerDateTime} An instance of DateTime
 	 * @throws TypeError
 	 */
 	static fromUnix( seconds, locale = DEFAULT_VALID_LOCALE ) {
@@ -501,7 +501,7 @@ export default class DateTime {
 	 *
 	 * @param {Object} values
 	 * @param {string} locale
-	 * @return {DateTime} An instance of DateTime
+	 * @return {DateTime|ServerDateTime} An instance of DateTime
 	 * @throws InvalidArgument
 	 */
 	static fromLocal( values, locale = DEFAULT_VALID_LOCALE ) {
@@ -534,7 +534,7 @@ export default class DateTime {
 	 *
 	 * @param {Object} values
 	 * @param {string} locale
-	 * @return {DateTime} An instance of DateTime
+	 * @return {DateTime|ServerDateTime} An instance of DateTime
 	 * @throws InvalidArgument
 	 */
 	static utc( values, locale = DEFAULT_VALID_LOCALE ) {
@@ -563,7 +563,7 @@ export default class DateTime {
 	 * time represents.
 	 *
 	 * @param {Object} values
-	 * @return {DateTime} An instance of DateTime
+	 * @return {DateTime|ServerDateTime} An instance of DateTime
 	 */
 	static fromObject( values ) {
 		const locale = values.locale || DEFAULT_VALID_LOCALE;
@@ -736,7 +736,7 @@ export default class DateTime {
 	 * `isValid()` to determine whether the instance is a valid DateTime or not.
 	 *
 	 * @param {{}} setObject An object where keys are the units.
-	 * @return {DateTime} A new instance of DateTime.
+	 * @return {DateTime|ServerDateTime} A new instance of DateTime.
 	 */
 	set( setObject = {} ) {
 		setObject = this.constructor[ privateMethods.normalizeUnitObject ]( setObject );
@@ -763,7 +763,7 @@ export default class DateTime {
 	 * Fluent setter for the timezone property.
 	 *
 	 * @param {string} timezone
-	 * @return {DateTime} Returns a new instance of DateTime
+	 * @return {DateTime|ServerDateTime} Returns a new instance of DateTime
 	 */
 	setTimezone( timezone ) {
 		this.constructor.assertTimezoneIsValid( timezone );
@@ -819,7 +819,7 @@ export default class DateTime {
 	 * as hours instead.
 	 *
 	 * @param {number} offset
-	 * @return {DateTime} returns a new instance of DateTime
+	 * @return {DateTime|ServerDateTime} returns a new instance of DateTime
 	 */
 	setOffset( offset ) {
 		this.constructor.assertIsOffset( offset );
@@ -899,7 +899,7 @@ export default class DateTime {
 	 * A fluent setter for setting the locale.
 	 *
 	 * @param {string} locale
-	 * @return {DateTime} a new instance of DateTime equivalent to this one but
+	 * @return {DateTime|ServerDateTime} a new instance of DateTime equivalent to this one but
 	 * with different locale.
 	 */
 	setLocale( locale ) {
@@ -964,7 +964,7 @@ export default class DateTime {
 	 * Set the value of this DateTime to the end (i.e. the last millisecond) of
 	 * a unit of time.
 	 * @param {string} unit
-	 * @return {DateTime} Returns a new DateTime instance.
+	 * @return {DateTime|ServerDateTime} Returns a new DateTime instance.
 	 */
 	endOf( unit ) {
 		return this.constructor.fromMoment(
@@ -1016,7 +1016,7 @@ export default class DateTime {
 	 * and return the resulting DateTime.
 	 *
 	 * @param {Duration} duration
-	 * @return {DateTime} A new instance of DateTime for the new date and time.
+	 * @return {DateTime|ServerDateTime} A new instance of DateTime for the new date and time.
 	 */
 	minus( duration ) {
 		Duration.assertIsValidDuration( duration );
@@ -1031,7 +1031,7 @@ export default class DateTime {
 	 * Add a period of time (represented by a Duration) to this DateTime and
 	 * return the resulting DateTime
 	 * @param {Duration} duration
-	 * @return {DateTime} A new instance of DateTime for the new date and time.
+	 * @return {DateTime|ServerDateTime} A new instance of DateTime for the new date and time.
 	 */
 	plus( duration ) {
 		Duration.assertIsValidDuration( duration );
@@ -1052,7 +1052,7 @@ export default class DateTime {
 	 * startOf( DateTime.UNIT_MONTH ) //sets to the first of this month, 12:00am
 	 *
 	 * @param {string} unit
-	 * @return {DateTime} A new instance of DateTime
+	 * @return {DateTime|ServerDateTime} A new instance of DateTime
 	 */
 	startOf( unit ) {
 		return this.constructor.fromMoment(
@@ -1120,7 +1120,7 @@ export default class DateTime {
 	/**
 	 * Converts a DateTime to whatever the "local" time is.
 	 *
-	 * @return {DateTime} a new instance of the DateTime
+	 * @return {DateTime|ServerDateTime} a new instance of the DateTime
 	 */
 	toLocal() {
 		return this.constructor.fromMoment(
@@ -1159,7 +1159,7 @@ export default class DateTime {
 	/**
 	 * Converts the DateTime's timezone to UTC.
 	 *
-	 * @return {DateTime} A new instance of DateTime
+	 * @return {DateTime|ServerDateTime} A new instance of DateTime
 	 */
 	toUTC() {
 		return this.constructor.fromMoment(
