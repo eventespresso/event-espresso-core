@@ -530,13 +530,12 @@ describe( 'getRelatedEntitiesForIds()', () => {
 				modelName: 'event',
 				entityId: EventEntities.a.id,
 			};
-			modifiedState = fromJS( modifiedState );
-			modifiedState = removeEntityById( modifiedState, trashAction );
-			modifiedState = removeRelatedEntitiesForEntity(
-				modifiedState,
+			modifiedState.entities = removeEntityById( modifiedState.entities, trashAction );
+			modifiedState.dirty.relations = removeRelatedEntitiesForEntity(
+				modifiedState.dirty.relations,
 				trashAction
 			);
-			modifiedState = trashEntity( modifiedState, trashAction );
+			modifiedState.dirty.trash = trashEntity( modifiedState.dirty.trash, trashAction );
 			const modifiedResultB = getRelatedEntities(
 				modifiedState,
 				DateTimeEntities.b,
