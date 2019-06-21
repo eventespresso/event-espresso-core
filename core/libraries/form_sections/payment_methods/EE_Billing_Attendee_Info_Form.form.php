@@ -80,7 +80,7 @@ class EE_Billing_Attendee_Info_Form extends EE_Billing_Info_Form
     protected function getAttendeeStateValueForForm(EE_Attendee $attendee)
     {
         $state_input =  $this->get_input('state', false);
-        if( $state_input instanceof EE_State_Select_Input){
+        if ($state_input instanceof EE_State_Select_Input) {
             $state_field_to_use =  $state_input->valueFieldName();
         } else {
             $state_field_to_use = 'STA_ID';
