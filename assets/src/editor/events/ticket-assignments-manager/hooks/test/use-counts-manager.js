@@ -62,7 +62,7 @@ describe( 'useCountsManager', () => {
 		assignedCounts,
 		assignedState,
 	} ) => {
-		const [ hasNoAssignments, noAssignmentsMessage ] = useCountsManager(
+		const [ hasNoAssignments, noAssignmentsMessage, updatedAssignmentCounts ] = useCountsManager(
 			dateEntities,
 			ticketEntities,
 			assignedCounts,
@@ -72,6 +72,7 @@ describe( 'useCountsManager', () => {
 			key={ 'testDiv' }
 			hasNoAssignments={ hasNoAssignments }
 			noAssignmentsMessage={ noAssignmentsMessage }
+			assignmentCounts={ updatedAssignmentCounts }
 		/>;
 	};
 	const getTestComponent = ( props ) => ( updatedProps = {} ) =>
@@ -111,6 +112,7 @@ describe( 'useCountsManager', () => {
 			expect( testInstance.props.hasNoAssignments ).toBe( false );
 			expect( testInstance.props.noAssignmentsMessage )
 				.toEqual( '' );
+			expect( testInstance.props.assignmentCounts ).toEqual( testedAssignedCounts )
 		} );
 		it( 'returns expected values when incoming state for ticket has no ' +
 			'dates assigned and then has dates assigned', () => {
@@ -133,6 +135,7 @@ describe( 'useCountsManager', () => {
 			expect( div.props.hasNoAssignments ).toBe( true );
 			expect( div.props.noAssignmentsMessage )
 				.toEqual( expectedMessages.singleTicket );
+			expect( div.props.assignmentCounts ).toEqual( testedAssignedCounts );
 
 			// should update when ticket is assigned a date
 			const updatedAssignedState = {
@@ -147,6 +150,18 @@ describe( 'useCountsManager', () => {
 			div = getDiv();
 			expect( div.props.hasNoAssignments ).toBe( false );
 			expect( div.props.noAssignmentsMessage ).toEqual( '' );
+			expect( div.props.assignmentCounts ).toEqual(
+				{ ...testedAssignedCounts,
+					dates: {
+						...testedAssignedCounts.dates,
+						40: 2,
+					},
+					tickets: {
+						...testedAssignedCounts.tickets,
+						30: 1,
+					},
+				},
+			);
 		} );
 		it( 'returns expected values when incoming state for ticket has ' +
 			'dates assigned and then a date is unassigned leaving the date ' +
@@ -178,7 +193,18 @@ describe( 'useCountsManager', () => {
 			const div = getDiv();
 			expect( div.props.hasNoAssignments ).toBe( true );
 			expect( div.props.noAssignmentsMessage )
-				.toEqual( expectedMessages.singleTicket );
+				.toEqual( expectedMessages.singleDate );
+			expect( div.props.assignmentCounts ).toEqual( {
+				...testedAssignedCounts,
+				dates: {
+					...testedAssignedCounts.dates,
+					40: 0,
+				},
+				tickets: {
+					...testedAssignedCounts.tickets,
+					10: 2,
+				},
+			} );
 		} );
 		it( 'returns expected values when incoming state for ticket has ' +
 			'dates assigned and then a date is unassigned leaving the ticket' +
@@ -213,6 +239,17 @@ describe( 'useCountsManager', () => {
 			expect( div.props.hasNoAssignments ).toBe( true );
 			expect( div.props.noAssignmentsMessage )
 				.toEqual( expectedMessages.singleTicket );
+			expect( div.props.assignmentCounts ).toEqual( {
+				...testedAssignedCounts,
+				dates: {
+					...testedAssignedCounts.dates,
+					60: 1,
+				},
+				tickets: {
+					...testedAssignedCounts.tickets,
+					20: 0,
+				},
+			} );
 		} );
 	} );
 	describe( 'returns expected values when processing one date with many ' +
@@ -249,10 +286,12 @@ describe( 'useCountsManager', () => {
 			const testInstance = renderer.root.findByType( 'div' );
 			expect( testInstance.props.hasNoAssignments ).toBe( false );
 			expect( testInstance.props.noAssignmentsMessage ).toEqual( '' );
+			expect( testInstance.props.assignmentCounts ).toEqual( testedAssignedCounts );
 		} );
 		it( 'returns expected values when incoming state for date has no ' +
 			'tickets assigned and then has a ticket assigned', () => {
 			testedAssignedCounts.dates[ 40 ] = 0;
+			testedAssignedCounts.tickets[ 10 ] = 2;
 			const Test = getTestComponent(
 				{
 					dateEntities: testedDateEntities,
@@ -271,6 +310,7 @@ describe( 'useCountsManager', () => {
 			expect( div.props.noAssignmentsMessage ).toEqual(
 				expectedMessages.singleDate
 			);
+			expect( div.props.assignmentCounts ).toEqual( testedAssignedCounts );
 
 			// should update when date is assigned a ticket
 			const updatedAssignedState = {
@@ -285,6 +325,17 @@ describe( 'useCountsManager', () => {
 			div = getDiv();
 			expect( div.props.hasNoAssignments ).toBe( false );
 			expect( div.props.noAssignmentsMessage ).toEqual( '' );
+			expect( div.props.assignmentCounts ).toEqual( {
+				...testedAssignedCounts,
+				dates: {
+					...testedAssignedCounts.dates,
+					40: 1,
+				},
+				tickets: {
+					...testedAssignedCounts.tickets,
+					10: 3,
+				},
+			} );
 		} );
 		it( 'returns expected values when incoming state for date has ' +
 			'tickets assigned and then a ticket is unassigned leaving the date ' +
@@ -318,6 +369,17 @@ describe( 'useCountsManager', () => {
 			expect( div.props.hasNoAssignments ).toBe( true );
 			expect( div.props.noAssignmentsMessage )
 				.toEqual( expectedMessages.singleDate );
+			expect( div.props.assignmentCounts ).toEqual( {
+				...testedAssignedCounts,
+				dates: {
+					...testedAssignedCounts.dates,
+					60: 2,
+				},
+				tickets: {
+					...testedAssignedCounts.tickets,
+					30: 0,
+				},
+			} );
 		} );
 		it( 'returns expected values when incoming state for date has ' +
 			'tickets assigned and then a ticket is unassigned leaving the date' +
@@ -350,6 +412,17 @@ describe( 'useCountsManager', () => {
 			const div = getDiv();
 			expect( div.props.hasNoAssignments ).toBe( true );
 			expect( div.props.noAssignmentsMessage ).toEqual( expectedMessages.singleDate );
+			expect( div.props.assignmentCounts ).toEqual( {
+				...testedAssignedCounts,
+				dates: {
+					...testedAssignedCounts.dates,
+					40: 0,
+				},
+				tickets: {
+					...testedAssignedCounts.tickets,
+					10: 2,
+				},
+			} );
 		} );
 	} );
 	describe( 'returns expected values when processing many dates with many ' +
@@ -387,10 +460,12 @@ describe( 'useCountsManager', () => {
 			const testInstance = renderer.root.findByType( 'div' );
 			expect( testInstance.props.hasNoAssignments ).toBe( false );
 			expect( testInstance.props.noAssignmentsMessage ).toEqual( '' );
+			expect( testInstance.props.assignmentCounts ).toEqual( testedAssignedCounts );
 		} );
 		it( 'returns expected values when incoming state for a date has no ' +
 			'tickets assigned and then has a ticket assigned', () => {
 			testedAssignedCounts.dates[ 40 ] = 0;
+			testedAssignedCounts.tickets[ 10 ] = 2;
 			const Test = getTestComponent(
 				{
 					dateEntities: testedDateEntities,
@@ -423,6 +498,17 @@ describe( 'useCountsManager', () => {
 			div = getDiv();
 			expect( div.props.hasNoAssignments ).toBe( false );
 			expect( div.props.noAssignmentsMessage ).toEqual( '' );
+			expect( div.props.assignmentCounts ).toEqual( {
+				...testedAssignedCounts,
+				dates: {
+					...testedAssignedCounts.dates,
+					40: 1,
+				},
+				tickets: {
+					...testedAssignedCounts.tickets,
+					10: 3,
+				},
+			} );
 		} );
 		it( 'returns expected values when incoming state for a date has ' +
 			'tickets assigned and then a ticket is unassigned leaving the date ' +
@@ -455,6 +541,17 @@ describe( 'useCountsManager', () => {
 			expect( div.props.hasNoAssignments ).toBe( true );
 			expect( div.props.noAssignmentsMessage )
 				.toEqual( expectedMessages.multiple );
+			expect( div.props.assignmentCounts ).toEqual( {
+				...testedAssignedCounts,
+				dates: {
+					...testedAssignedCounts.dates,
+					60: 2,
+				},
+				tickets: {
+					...testedAssignedCounts.tickets,
+					30: 0,
+				},
+			} );
 		} );
 		it( 'returns expected values when incoming state for a date has ' +
 			'tickets assigned and then a ticket is unassigned leaving the date' +
@@ -487,6 +584,17 @@ describe( 'useCountsManager', () => {
 			const div = getDiv();
 			expect( div.props.hasNoAssignments ).toBe( true );
 			expect( div.props.noAssignmentsMessage ).toEqual( expectedMessages.multiple );
+			expect( div.props.assignmentCounts ).toEqual( {
+				...testedAssignedCounts,
+				dates: {
+					...testedAssignedCounts.dates,
+					40: 0,
+				},
+				tickets: {
+					...testedAssignedCounts.tickets,
+					10: 2,
+				},
+			} );
 		} );
 	} );
 } );

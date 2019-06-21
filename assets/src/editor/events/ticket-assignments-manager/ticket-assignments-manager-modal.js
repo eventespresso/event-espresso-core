@@ -53,10 +53,16 @@ const TicketAssignmentsManagerModal = ( {
 	noAssignmentsMessage,
 	assignedState,
 	setAssignedState,
+	assignmentCounts,
 } ) => {
 	const [ submitting, setSubmitting ] = useState( false );
 	const [ formError, setFormError ] = useState( '' );
 	const processChanges = useCallback( () => {
+		if ( hasNoAssignments ) {
+			// brings up confirm modal because the editor won't close
+			toggleEditor();
+			return;
+		}
 		setSubmitting( true );
 		handler.processChanges(
 			dateEntities,
@@ -72,7 +78,13 @@ const TicketAssignmentsManagerModal = ( {
 		} ).catch( ( error ) => {
 			warning( false, error );
 		} );
-	}, [ dateEntities, assignedState, addTicketEntities, removeTicketEntities ] );
+	}, [
+		dateEntities,
+		assignedState,
+		addTicketEntities,
+		removeTicketEntities,
+		hasNoAssignments
+	] );
 	const assignTicketEntity = useCallback(
 		( dateEntity, ticketEntity ) => {
 			if (
@@ -300,8 +312,14 @@ const TicketAssignmentsManagerModal = ( {
 	 * @return {string} css class
 	 */
 	const getAssignmentsErrorClass = useCallback(
-		() => {
-			return hasNoAssignments ? ' ee-tam-assignments-error' : '';
+		( dateEntity, ticketEntity ) => {
+			const entitiesHaveEmptyAssignments = () => {
+				return assignmentCounts.dates[ dateEntity.id ] === 0 ||
+					assignmentCounts.dates[ ticketEntity.id ] === 0;
+			};
+			return hasNoAssignments && entitiesHaveEmptyAssignments() ?
+				' ee-tam-assignments-error' :
+				'';
 		},
 		[ hasNoAssignments ]
 	);
@@ -348,13 +366,6 @@ const TicketAssignmentsManagerModal = ( {
 	 */
 	const ticketCell = useCallback(
 		( dateEntity, ticketEntity, dateTicketEntities ) => {
-			// const {
-			// 	totalTicketAssignmentsForDate,
-			// 	totalDateAssignmentsForTicket,
-			// } = calculateTotalAssignmentCounts(
-			// 	dateEntity,
-			// 	ticketEntity,
-			// );
 			const {
 				hasTicket,
 				isAssigned,
@@ -370,7 +381,7 @@ const TicketAssignmentsManagerModal = ( {
 				isRemoved,
 			);
 			const action = getAction( currentlyAssigned );
-			const assignmentsErrorClass = getAssignmentsErrorClass();
+			const assignmentsErrorClass = getAssignmentsErrorClass( dateEntity, ticketEntity );
 			const { icon, bgColor } = getIconAndBgColor(
 				hasTicket,
 				isAssigned,
@@ -493,7 +504,7 @@ const TicketAssignmentsManagerModal = ( {
 			);
 			return rows;
 		},
-		[ dateEntities, ticketEntities, ticketEntitiesByDateIds ]
+		[ dateEntities, ticketEntities, ticketEntitiesByDateIds, ticketCell ]
 	);
 
 	/**
@@ -652,8 +663,8 @@ export default compose( [
 	} ),
 	( WrappedComponent ) => ( props ) => {
 		// adds a ref for handling count updates.
-		const counts = useRef( { dates: {}, tickets: {} } );
-		return <WrappedComponent counts={ counts } { ...props } />;
+		const assignmentCounts = useRef( { dates: {}, tickets: {} } );
+		return <WrappedComponent assignmentCounts={ assignmentCounts } { ...props } />;
 	},
 	withSelect( ( select, ownProps ) => {
 		const {
@@ -662,7 +673,7 @@ export default compose( [
 			ticketEntity,
 			ticketEntities,
 			entities = [],
-			counts,
+			assignmentCounts,
 		} = ownProps;
 		const dtmProps = {
 			entities,
@@ -679,15 +690,15 @@ export default compose( [
 		// initial setup based on incoming entity
 		if ( isModelEntityOfModel( dateEntity, 'datetime' ) ) {
 			dtmProps.entities = [ dateEntity ];
-			// let's update the counts for this dateEntity and all it's related
+			// let's update the assignmentCounts for this dateEntity and all it's related
 			// ticket Entities (if necessary)
-			if ( typeof counts.current.dates[ dateEntity.id ] === 'undefined' ) {
+			if ( typeof assignmentCounts.current.dates[ dateEntity.id ] === 'undefined' ) {
 				const relatedTickets = getRelatedEntities( dateEntity, 'ticket' );
 				dtmProps.ticketEntitiesByDateIds[ dateEntity.id ] = relatedTickets;
-				counts.current.dates[ dateEntity.id ] = relatedTickets.length;
+				assignmentCounts.current.dates[ dateEntity.id ] = relatedTickets.length;
 				if ( relatedTickets.length ) {
 					relatedTickets.forEach( ( ticket ) => {
-						counts.current.tickets[ ticket.id ] = getRelatedEntities(
+						assignmentCounts.current.tickets[ ticket.id ] = getRelatedEntities(
 							ticket,
 							'datetime'
 						).length;
@@ -698,32 +709,32 @@ export default compose( [
 			dtmProps.entities = sortDateEntitiesList( dateEntities );
 			dtmProps.ticketEntities = [ ticketEntity ];
 
-			// let's update the counts for this ticketEntity and all it's related
+			// let's update the assignmentCounts for this ticketEntity and all it's related
 			// date entities ( if necessary )
-			if ( typeof counts.current.tickets[ ticketEntity.id ] === 'undefined' ) {
+			if ( typeof assignmentCounts.current.tickets[ ticketEntity.id ] === 'undefined' ) {
 				const relatedDates = getRelatedEntities( ticketEntity, 'datetime' );
-				counts.current.tickets[ ticketEntity.id ] = relatedDates.length;
+				assignmentCounts.current.tickets[ ticketEntity.id ] = relatedDates.length;
 				if ( relatedDates.length ) {
 					relatedDates.forEach( ( date ) => {
 						const relatedTickets = getRelatedEntities( date, 'ticket' );
 						dtmProps.ticketEntitiesByDateIds[ date.id ] = relatedTickets;
-						counts.current.dates[ date.id ] = relatedTickets.length;
+						assignmentCounts.current.dates[ date.id ] = relatedTickets.length;
 					} );
 				}
 			}
 		} else if ( Array.isArray( dateEntities ) && Array.isArray( ticketEntities ) ) {
 			dtmProps.entities = sortDateEntitiesList( dateEntities );
-			// need to setup the counts for all the tickets and all the dates!
+			// need to setup the assignmentCounts for all the tickets and all the dates!
 			dateEntities.forEach( ( date ) => {
-				if ( typeof counts.current.dates[ date.id ] === 'undefined' ) {
+				if ( typeof assignmentCounts.current.dates[ date.id ] === 'undefined' ) {
 					const relatedTickets = getRelatedEntities( date, 'ticket' );
 					dtmProps.ticketEntitiesByDateIds[ date.id ] = relatedTickets;
-					counts.current.dates[ date.id ] = relatedTickets.length;
+					assignmentCounts.current.dates[ date.id ] = relatedTickets.length;
 				}
 			} );
 			ticketEntities.forEach( ( ticket ) => {
-				if ( typeof counts.current.tickets[ ticket.id ] === 'undefined' ) {
-					counts.current.tickets[ ticket.id ] = getRelatedEntities(
+				if ( typeof assignmentCounts.current.tickets[ ticket.id ] === 'undefined' ) {
+					assignmentCounts.current.tickets[ ticket.id ] = getRelatedEntities(
 						ticket,
 						'datetime'
 					).length;
@@ -734,26 +745,30 @@ export default compose( [
 		}
 		return dtmProps;
 	} ),
-	( WrappedComponent ) => ( { counts, entities: dateEntities, ticketEntities, ...otherProps } ) => {
+	( WrappedComponent ) => ( { assignmentCounts, entities: dateEntities, ticketEntities, ...otherProps } ) => {
 		const [ assignedState, setAssignedState ] = useState(
 			{ assigned: {}, removed: {} }
 		);
-		const [ hasNoAssignments, noAssignmentsMessage ] = useCountsManager(
+		const [
+			hasNoAssignments,
+			noAssignmentsMessage,
+			updatedAssignmentCounts,
+		] = useCountsManager(
 			dateEntities,
 			ticketEntities,
-			counts.current,
+			assignmentCounts.current,
 			assignedState
 		);
 
 		return <WrappedComponent
-			counts={ counts }
+			{ ...otherProps }
+			assignmentCounts={ updatedAssignmentCounts }
 			entities={ dateEntities }
 			ticketEntities={ ticketEntities }
 			assignedState={ assignedState }
 			setAssignedState={ setAssignedState }
 			hasNoAssignments={ hasNoAssignments }
 			noAssignmentsMessage={ noAssignmentsMessage }
-			{ ...otherProps }
 		/>;
 	},
 	( WrappedComponent ) => ( {
