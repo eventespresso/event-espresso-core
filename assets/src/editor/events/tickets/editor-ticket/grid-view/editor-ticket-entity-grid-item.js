@@ -59,7 +59,7 @@ class EditorTicketEntityGridItem extends Component {
 			}
 		}
 		const ticketStatus = (
-			<span key={ 1 } className={ 'ee-status-tag' }>
+			<span key={ ticketEntity.id + '-status' } className={ 'ee-status-tag' }>
 				{ getTicketStatusTextLabel( ticketEntity ) }
 			</span>
 		);
@@ -68,6 +68,7 @@ class EditorTicketEntityGridItem extends Component {
 			case 'end' :
 				const end = ticketEntity.endDate.toFormat( 'h:mm a' );
 				return <BiggieCalendarDate
+					key={ ticketEntity.id + '-end' }
 					date={ ticketEntity.endDate }
 					htmlClass={ sidebarColorClass }
 					headerText={ label }
@@ -77,6 +78,7 @@ class EditorTicketEntityGridItem extends Component {
 			case 'both' :
 				return (
 					<CalendarDateRange
+						key={ ticketEntity.id + '-both' }
 						startDate={ ticketEntity.startDate }
 						endDate={ ticketEntity.endDate }
 						htmlClass={ sidebarColorClass }
@@ -89,6 +91,7 @@ class EditorTicketEntityGridItem extends Component {
 			default :
 				const start = ticketEntity.startDate.toFormat( 'h:mm a' );
 				return <BiggieCalendarDate
+					key={ ticketEntity.id + '-start' }
 					date={ ticketEntity.startDate }
 					htmlClass={ sidebarColorClass }
 					headerText={ label }
@@ -115,12 +118,14 @@ class EditorTicketEntityGridItem extends Component {
 			<Fragment>
 				<div className={ `ee-editor-ticket-main ${ dateStyleClass }` }>
 					<EditorTicketEntityDetails
+						key={ ticketEntity.id + '-details' }
 						ticketEntity={ ticketEntity }
 						refreshed={ refreshed }
 					/>
 					{ this.displayTicket( ticketEntity, displayTicketDate ) }
 				</div>
 				<EditorTicketActionsMenu
+					key={ ticketEntity.id + '-menu' }
 					ticketEntity={ ticketEntity }
 					doRefresh={ doRefresh }
 				/>

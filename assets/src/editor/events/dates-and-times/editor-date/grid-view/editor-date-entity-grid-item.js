@@ -41,7 +41,7 @@ class EditorDateEntityGridItem extends Component {
 		let sidebarColorClass = 'ee-editor-date-calendar-sidebar ';
 		sidebarColorClass += getBackgroundColorClass( dateEntity );
 		const dateStatus = (
-			<div key={ 1 } className={ 'ee-status-tag' }>
+			<div key={ dateEntity.id + '-status' } className={ 'ee-status-tag' }>
 				{ getDateTimeStatusTextLabel( dateEntity ) }
 			</div>
 		);
@@ -50,6 +50,7 @@ class EditorDateEntityGridItem extends Component {
 				const endTime = dateEntity.end.toFormat( 'h:mm a' );
 				return (
 					<BiggieCalendarDate
+						key={ dateEntity.id + '-end' }
 						date={ dateEntity.end }
 						htmlClass={ sidebarColorClass }
 						headerText={ __( 'ends', 'event_espresso' ) }
@@ -59,6 +60,7 @@ class EditorDateEntityGridItem extends Component {
 			case 'both' :
 				return (
 					<CalendarDateRange
+						key={ dateEntity.id + '-both' }
 						startDate={ dateEntity.start }
 						endDate={ dateEntity.end }
 						htmlClass={ sidebarColorClass }
@@ -72,6 +74,7 @@ class EditorDateEntityGridItem extends Component {
 				const startTime = dateEntity.start.toFormat( 'h:mm a' );
 				return (
 					<BiggieCalendarDate
+						key={ dateEntity.id + '-start' }
 						date={ dateEntity.start }
 						htmlClass={ sidebarColorClass }
 						headerText={ __( 'starts', 'event_espresso' ) }
@@ -101,6 +104,7 @@ class EditorDateEntityGridItem extends Component {
 				<div className={ dateStyleClass }>
 					{ this.displayDate( dateEntity, showDate ) }
 					<EditorDateEntityDetails
+						key={ dateEntity.id + '-details' }
 						eventEntity={ eventEntity }
 						dateEntity={ dateEntity }
 						showDesc={ showDesc }
@@ -108,6 +112,7 @@ class EditorDateEntityGridItem extends Component {
 					/>
 				</div>
 				<EditorDateEntityActionsMenu
+					key={ dateEntity.id + '-menu' }
 					eventEntity={ eventEntity }
 					dateEntity={ dateEntity }
 				/>

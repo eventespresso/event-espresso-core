@@ -35,7 +35,7 @@ const EditorTicketEntitiesGridView = ( {
 					function( ticketEntity ) {
 						return isModelEntityOfModel( ticketEntity, 'ticket' ) ? (
 							<EditorTicketEntityGridItem
-								key={ ticketEntity.id }
+								key={ ticketEntity.id + 'grid-item' }
 								ticketEntity={ ticketEntity }
 								{ ...otherProps }
 							/>

@@ -38,7 +38,7 @@ const EditorDateEntitiesGridView = ( {
 						) ?
 							(
 								<EditorDateEntityGridItem
-									key={ dateEntity.id }
+									key={ dateEntity.id + '-grid-item' }
 									dateEntity={ dateEntity }
 									{ ...otherProps }
 								/>

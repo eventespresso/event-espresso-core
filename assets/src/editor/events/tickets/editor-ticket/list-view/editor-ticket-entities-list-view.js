@@ -29,8 +29,8 @@ const EditorTicketEntitiesListView = ( {
 		'ee-tickets-list-list-view';
 
 	return (
-		<div className={ htmlClass }>
-			<div key={ 0 } className="ee-editor-ticket-list-items">
+		<div key={ 'ticket-list-items' } className={ htmlClass }>
+			<div className="ee-editor-ticket-list-items">
 				<div className="ee-ticket-list-item"></div>
 				<div className="ee-ticket-list-item">
 					{ __( 'ID', 'event_espresso' ) }
@@ -65,7 +65,7 @@ const EditorTicketEntitiesListView = ( {
 					function( ticketEntity ) {
 						return (
 							<EditorTicketEntityListItem
-								key={ ticketEntity.id }
+								key={ ticketEntity.id + 'list-item' }
 								ticketEntity={ ticketEntity }
 								{ ...otherProps }
 							/>

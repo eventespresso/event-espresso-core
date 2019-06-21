@@ -29,8 +29,8 @@ const EditorDateEntitiesListView = ( {
 	htmlClass = classNames( htmlClass, 'ee-dates-list-list-view' );
 
 	return (
-		<div className={ htmlClass }>
-			<div key={ 0 } className="ee-editor-date-list-items">
+		<div key={ 'date-list-items' } className={ htmlClass }>
+			<div className="ee-editor-date-list-items">
 				<div className="ee-date-list-item"></div>
 				<div className="ee-date-list-item">
 					{ __( 'ID', 'event_espresso' ) }
@@ -65,7 +65,7 @@ const EditorDateEntitiesListView = ( {
 					function( dateEntity ) {
 						return isModelEntityOfModel( dateEntity, 'datetime' ) ? (
 							<EditorDateEntityListItem
-								key={ dateEntity.id }
+								key={ dateEntity.id + '-list-item' }
 								dateEntity={ dateEntity }
 								{ ...otherProps }
 							/>
