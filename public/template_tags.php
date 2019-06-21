@@ -277,6 +277,10 @@ if ( ! function_exists( 'espresso_event_reg_button' )) {
 				$btn_text = __('Event Not Active', 'event_espresso');
 				$class = 'ee-grey';
 				break;
+			case EE_Datetime::cancelled :
+				$btn_text = __('Event was Cancelled', 'event_espresso');
+				$class = 'ee-red';
+				break;
 			case EE_Datetime::upcoming :
 			case EE_Datetime::active :
 			default :
