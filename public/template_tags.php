@@ -259,7 +259,11 @@ if ( ! function_exists( 'espresso_event_reg_button' )) {
 	 * @return string
 	 */
 	function espresso_event_reg_button( $btn_text_if_active = NULL, $btn_text_if_inactive = FALSE, $EVT_ID = FALSE ) {
-		$event_status = EEH_Event_View::event_active_status( $EVT_ID );
+		$event = EEH_Event_View::get_event( $EVT_ID );
+		if ( ! $event instanceof EE_Event ) {
+			return;
+		}
+		$event_status = $event->get_active_status();
 		switch ( $event_status ) {
 			case EE_Datetime::sold_out :
 				$btn_text = __('Sold Out', 'event_espresso');
