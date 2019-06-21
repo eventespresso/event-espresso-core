@@ -550,6 +550,7 @@ if ( ! function_exists( 'espresso_event_date_range' )) {
 			$time_format = ! empty( $time_format ) ? $time_format : get_option( 'time_format' );
 			$time_format = apply_filters( 'FHEE__espresso_event_date_range__time_format', $time_format );
 			$html = sprintf(
+				/* translators: 1: first event date, 2: last event date */
 				esc_html__( '%1$s - %2$s', 'event_espresso' ),
 				EEH_Event_View::the_earliest_event_date( $date_format, $time_format, $EVT_ID ),
 				EEH_Event_View::the_latest_event_date( $date_format, $time_format, $EVT_ID )
