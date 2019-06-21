@@ -93,10 +93,12 @@ class EditorDateEntitiesList extends Component {
 			toggleEditor,
 			...otherProps
 		} = this.props;
+		const entityIds = entities.map( ( entity ) => entity.id ).join( '-' );
 		return (
 			<FormWrapper>
 				<EntityList
 					{ ...otherProps }
+					key={ entityIds }
 					entities={ entities }
 					EntityGridView={ EditorDateEntitiesGridView }
 					EntityListView={ EditorDateEntitiesListView }

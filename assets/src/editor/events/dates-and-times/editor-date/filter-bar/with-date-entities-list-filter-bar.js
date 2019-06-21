@@ -87,7 +87,7 @@ export default createHigherOrderComponent(
 				filteredEntities.map( ( dateEntity ) => dateEntity.id )
 			);
 		}, [ filteredEntities ] );
-
+		const entityIds = filteredEntities.map( ( entity ) => entity.id ).join( '-' );
 		return (
 			<Fragment>
 				<EntityListFilterBar
@@ -111,6 +111,7 @@ export default createHigherOrderComponent(
 					}
 				/>
 				<EntityList
+					key={ entityIds + '-filtered-entities' }
 					entities={ filteredEntities }
 					entitiesPerPage={ datesPerPage }
 					view={ datesView }

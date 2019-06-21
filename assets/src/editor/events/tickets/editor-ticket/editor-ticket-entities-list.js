@@ -41,6 +41,7 @@ const EditorTicketEntitiesList = ( {
 			toggleTicketEditor();
 		}
 	}, [ ticketEntity ] );
+	const entityIds = entities.map( ( entity ) => entity.id ).join( '-' );
 	/**
 	 * @function
 	 * @return {Object} rendered button
@@ -62,6 +63,7 @@ const EditorTicketEntitiesList = ( {
 		<FormWrapper>
 			<EntityList
 				{ ...otherProps }
+				key={ entityIds }
 				entities={ entities }
 				EntityGridView={ EditorTicketEntitiesGridView }
 				EntityListView={ EditorTicketEntitiesListView }
