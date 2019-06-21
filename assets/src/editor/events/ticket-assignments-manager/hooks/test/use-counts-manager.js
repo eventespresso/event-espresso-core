@@ -112,7 +112,7 @@ describe( 'useCountsManager', () => {
 			expect( testInstance.props.hasNoAssignments ).toBe( false );
 			expect( testInstance.props.noAssignmentsMessage )
 				.toEqual( '' );
-			expect( testInstance.props.assignmentCounts ).toEqual( testedAssignedCounts )
+			expect( testInstance.props.assignmentCounts ).toEqual( testedAssignedCounts );
 		} );
 		it( 'returns expected values when incoming state for ticket has no ' +
 			'dates assigned and then has dates assigned', () => {

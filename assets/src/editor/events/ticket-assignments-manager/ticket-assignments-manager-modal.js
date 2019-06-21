@@ -83,7 +83,7 @@ const TicketAssignmentsManagerModal = ( {
 		assignedState,
 		addTicketEntities,
 		removeTicketEntities,
-		hasNoAssignments
+		hasNoAssignments,
 	] );
 	const assignTicketEntity = useCallback(
 		( dateEntity, ticketEntity ) => {
