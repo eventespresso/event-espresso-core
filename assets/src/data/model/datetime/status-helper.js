@@ -28,8 +28,8 @@ const assertDateTimeEntity = ( DateTimeEntity ) => {
  * @return {boolean} true if event date is occurring NOW
  */
 export const isActive = ( DateTimeEntity ) => {
-	assertDateTimeEntity( DateTimeEntity );
-	return DateTimeEntity.start.diffNow().asSeconds() < 0 &&
+	return ! isTrashed( DateTimeEntity ) &&
+		DateTimeEntity.start.diffNow().asSeconds() < 0 &&
 		DateTimeEntity.end.diffNow().asSeconds() > 0;
 };
 
@@ -39,8 +39,8 @@ export const isActive = ( DateTimeEntity ) => {
  * @return {boolean} true if end date is in the past
  */
 export const isExpired = ( DateTimeEntity ) => {
-	assertDateTimeEntity( DateTimeEntity );
-	return DateTimeEntity.end.diffNow().asSeconds() < 0;
+	return ! isTrashed( DateTimeEntity ) &&
+		DateTimeEntity.end.diffNow().asSeconds() < 0;
 };
 
 /**
@@ -49,8 +49,8 @@ export const isExpired = ( DateTimeEntity ) => {
  * @return {boolean} true if end date is in the past
  */
 export const isRecentlyExpired = ( DateTimeEntity ) => {
-	assertDateTimeEntity( DateTimeEntity );
-	return DateTimeEntity.end.diffNow().asSeconds() < 0 &&
+	return ! isTrashed( DateTimeEntity ) &&
+		DateTimeEntity.end.diffNow().asSeconds() < 0 &&
 		DateTimeEntity.end.diffNow().asSeconds() > ( MONTH_IN_SECONDS * -1 );
 };
 
@@ -60,7 +60,9 @@ export const isRecentlyExpired = ( DateTimeEntity ) => {
  * @return {boolean} true if tickets sold meets or exceeds registration limit
  */
 export const isSoldOut = ( DateTimeEntity ) => {
-	assertDateTimeEntity( DateTimeEntity );
+	if ( isTrashed( DateTimeEntity ) ) {
+		return false;
+	}
 	const cap = DateTimeEntity.regLimit;
 	return ( cap !== null && cap !== 'INF' && cap !== Infinity && cap !== -1 ) &&
 		DateTimeEntity.sold >= cap;
@@ -72,8 +74,8 @@ export const isSoldOut = ( DateTimeEntity ) => {
  * @return {boolean} true if start date is in the future
  */
 export const isUpcoming = ( DateTimeEntity ) => {
-	assertDateTimeEntity( DateTimeEntity );
-	return DateTimeEntity.start.diffNow().asSeconds() > 0;
+	return ! isTrashed( DateTimeEntity ) &&
+		DateTimeEntity.start.diffNow().asSeconds() > 0;
 };
 
 /**
@@ -117,7 +119,6 @@ export const isTrashed = ( DateTimeEntity ) => {
  * @return {string} status ID
  */
 export const status = ( DateTimeEntity ) => {
-	assertDateTimeEntity( DateTimeEntity );
 	if ( isTrashed( DateTimeEntity ) ) {
 		return DATETIME_STATUS_ID.TRASHED;
 	}

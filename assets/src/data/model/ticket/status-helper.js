@@ -28,7 +28,6 @@ const assertTicketEntity = ( TicketEntity ) => {
  * @return {boolean} true if ticket is currently available for purchase
  */
 export const isOnSale = ( TicketEntity ) => {
-	assertTicketEntity( TicketEntity );
 	return ! isArchived( TicketEntity ) &&
 		TicketEntity.startDate.diffNow() < 0 &&
 		TicketEntity.endDate.diffNow() > 0;
@@ -40,8 +39,8 @@ export const isOnSale = ( TicketEntity ) => {
  * @return {boolean} true if ticket can no longer be purchased
  */
 export const isExpired = ( TicketEntity ) => {
-	assertTicketEntity( TicketEntity );
-	return TicketEntity.endDate.diffNow() < 0;
+	return ! isArchived( TicketEntity ) &&
+		TicketEntity.endDate.diffNow() < 0;
 };
 
 /**
@@ -50,9 +49,11 @@ export const isExpired = ( TicketEntity ) => {
  * @return {boolean} true if tickets sold meets or exceeds available quantity
  */
 export const isSoldOut = ( TicketEntity ) => {
-	assertTicketEntity( TicketEntity );
+	if ( isArchived( TicketEntity ) ) {
+		return false;
+	}
 	const qty = TicketEntity.qty;
-	return ( qty !== null && qty !== 'INF' && qty !== Infinity ) &&
+	return ( qty !== null && qty !== 'INF' && qty !== Infinity && qty !== -1 ) &&
 		TicketEntity.sold >= qty;
 };
 
@@ -63,7 +64,6 @@ export const isSoldOut = ( TicketEntity ) => {
  * 						but will be at some date in the future
  */
 export const isPending = ( TicketEntity ) => {
-	assertTicketEntity( TicketEntity );
 	return ! isArchived( TicketEntity ) &&
 		TicketEntity.startDate.diffNow() > 0;
 };
@@ -84,7 +84,6 @@ export const isArchived = ( TicketEntity ) => {
  * @return {string} status ID
  */
 export const status = ( TicketEntity ) => {
-	assertTicketEntity( TicketEntity );
 	if ( isArchived( TicketEntity ) ) {
 		return TICKET_STATUS_ID.ARCHIVED;
 	}
