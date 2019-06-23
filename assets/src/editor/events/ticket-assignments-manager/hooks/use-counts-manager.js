@@ -54,10 +54,9 @@ const useCountsManager = (
 		let howManyEmpty = 0;
 		const whichAreEmpty = { dates: 0, tickets: 0 };
 		const updatedCounts = cloneDeep( assignedCounts );
-		// first let's see if any of the current counts are 0 (but only not
-		// already toggled as empty)!
-		// instead of using whichAreEmpty as a ref, use assignedState (whether its empty or not) to decide whether we
-		// do this here or not. If assigned state is empty then we can do it.
+		// using assignedState (whether its empty or not) to decide whether
+		// an initial check can be done to short circuit the more extensive
+		// calculations.
 		if ( isEmptyAssignedState() ) {
 			const countCallback = ( accumulator, count ) => {
 				if ( count === 0 ) {
