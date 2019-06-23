@@ -1,8 +1,8 @@
 /**
  * External imports
  */
-import { useRef, useMemo, useCallback } from '@wordpress/element';
-import { reduce } from 'lodash';
+import { useMemo, useCallback } from '@wordpress/element';
+import { reduce, cloneDeep, isEmpty } from 'lodash';
 import { __ } from '@eventespresso/i18n';
 
 // @todo, when the wp.data.useSelect hook is available, we can utilize that in
@@ -15,17 +15,14 @@ const useCountsManager = (
 	assignedCounts,
 	assignedState,
 ) => {
-	const whichAreEmpty = useRef( { dates: 0, tickets: 0 } );
-	const updatedAssignmentCounts = useRef( { dates: {}, tickets: {} } );
-
-	const getMessage = useCallback( () => {
+	const getMessage = useCallback( ( whichAreEmpty ) => {
 		let message;
-		const onlyTicketsAreEmpty = whichAreEmpty.current.dates === 0 && whichAreEmpty.current.tickets > 0;
-		const onlyDatesAreEmpty = whichAreEmpty.current.dates > 0 && whichAreEmpty.current.tickets === 0;
-		const anyAreEmpty = whichAreEmpty.current.dates > 0 || whichAreEmpty.current.tickets > 0;
+		const onlyTicketsAreEmpty = whichAreEmpty.dates === 0 && whichAreEmpty.tickets > 0;
+		const onlyDatesAreEmpty = whichAreEmpty.dates > 0 && whichAreEmpty.tickets === 0;
+		const anyAreEmpty = whichAreEmpty.dates > 0 || whichAreEmpty.tickets > 0;
 
 		switch ( true ) {
-			case ( dateEntities.length === 1 && anyAreEmpty ) ||
+			case ( dateEntities.length === 1 && onlyDatesAreEmpty ) ||
 			( ticketEntities.length === 1 && onlyDatesAreEmpty ) :
 				message = __(
 					'Event Dates must always have at least one Ticket assigned to them. If the current assignment is not correct, assign the correct Ticket first, then remove others as required.',
@@ -48,70 +45,96 @@ const useCountsManager = (
 		return message;
 	}, [ dateEntities, ticketEntities ] );
 
-	const [ hasNoAssignments, noAssignmentsMessage ] = useMemo( () => {
+	const isEmptyAssignedState = useCallback(
+		() => isEmpty( assignedState.assigned ) && isEmpty( assignedState.removed ),
+		[ assignedState ]
+	);
+
+	const [ hasNoAssignments, noAssignmentsMessage, updatedAssignmentsCounts ] = useMemo( () => {
 		let howManyEmpty = 0;
-		updatedAssignmentCounts.current = { ...assignedCounts };
+		const whichAreEmpty = { dates: 0, tickets: 0 };
+		const updatedCounts = cloneDeep( assignedCounts );
 		// first let's see if any of the current counts are 0 (but only not
 		// already toggled as empty)!
-		if ( ( whichAreEmpty.current.dates + whichAreEmpty.current.tickets ) === 0 ) {
+		// instead of using whichAreEmpty as a ref, use assignedState (whether its empty or not) to decide whether we
+		// do this here or not. If assigned state is empty then we can do it.
+		if ( isEmptyAssignedState() ) {
 			const countCallback = ( accumulator, count ) => {
 				if ( count === 0 ) {
 					accumulator++;
 				}
 				return accumulator;
 			};
-			whichAreEmpty.current.dates = reduce( assignedCounts.dates, countCallback, 0 );
-			whichAreEmpty.current.tickets =	reduce( assignedCounts.tickets, countCallback, 0 );
-			howManyEmpty = whichAreEmpty.current.dates + whichAreEmpty.current.tickets;
+			whichAreEmpty.dates = reduce( assignedCounts.dates, countCallback, 0 );
+			whichAreEmpty.tickets =	reduce( assignedCounts.tickets, countCallback, 0 );
+			howManyEmpty = whichAreEmpty.dates + whichAreEmpty.tickets;
 		}
 
 		if ( howManyEmpty > 0 ) {
-			return [ true, getMessage() ];
+			return [ true, getMessage( whichAreEmpty ), updatedCounts ];
 		}
 
 		// still here?  Let's check whether the assignment being added or removed changes things.
 		const countCallback = ( assigning ) => ( emptyCount, ticketIds, dateId ) => {
 			if ( assigning ) {
 				ticketIds.forEach( ( ticketId ) => {
-					if ( assignedCounts.tickets[ ticketId ] === 0 ) {
-						whichAreEmpty.current.tickets--;
+					if ( ! assignedCounts.tickets[ ticketId ] ) {
+						whichAreEmpty.tickets--;
 						emptyCount--;
 					}
-					updatedAssignmentCounts.current.tickets[ ticketId ]++;
+					if ( typeof updatedCounts.tickets[ ticketId ] === 'undefined' ) {
+						updatedCounts.tickets[ ticketId ] = 0;
+					}
+					updatedCounts.tickets[ ticketId ]++;
 				} );
-				if ( assignedCounts.dates[ dateId ] === 0 ) {
-					whichAreEmpty.current.dates--;
+				if ( ! assignedCounts.dates[ dateId ] ) {
+					whichAreEmpty.dates--;
 					emptyCount--;
 				}
-				updatedAssignmentCounts.current.dates[ dateId ]++;
+				if ( typeof updatedCounts.dates[ dateId ] === 'undefined' ) {
+					updatedCounts.dates[ dateId ] = 0;
+				}
+				updatedCounts.dates[ dateId ]++;
 			} else {
 				ticketIds.forEach( ( ticketId ) => {
-					if ( assignedCounts.tickets[ ticketId ] - 1 === 0 ) {
-						whichAreEmpty.current.tickets++;
+					if ( ! assignedCounts.tickets[ ticketId ] || assignedCounts.tickets[ ticketId ] - 1 === 0 ) {
+						whichAreEmpty.tickets++;
 						emptyCount++;
 					}
-					updatedAssignmentCounts.current.tickets[ ticketId ]--;
+					if ( typeof updatedCounts.tickets[ ticketId ] === 'undefined' ) {
+						updatedCounts.tickets[ ticketId ] = 0;
+					} else {
+						updatedCounts.tickets[ ticketId ]--;
+					}
 				} );
-				if ( assignedCounts.dates[ dateId ] - 1 === 0 ) {
-					whichAreEmpty.current.dates++;
+				if ( ! assignedCounts.dates[ dateId ] || assignedCounts.dates[ dateId ] - 1 === 0 ) {
+					whichAreEmpty.dates++;
 					emptyCount++;
 				}
-				updatedAssignmentCounts.current.dates[ dateId ]--;
+				if ( typeof updatedCounts.dates[ dateId ] === 'undefined' ) {
+					updatedCounts.dates[ dateId ] = 0;
+				} else {
+					updatedCounts.dates[ dateId ]--;
+				}
 			}
 			return emptyCount;
 		};
 		howManyEmpty = reduce( assignedState.assigned, countCallback( true ), howManyEmpty );
 		howManyEmpty = reduce( assignedState.removed, countCallback( false ), howManyEmpty );
 
+		// ensure whichAreEmpty don't go lower than zero
+		whichAreEmpty.dates = Math.max( 0, whichAreEmpty.dates );
+		whichAreEmpty.tickets = Math.max( 0, whichAreEmpty.tickets );
+
 		if ( howManyEmpty > 0 ) {
-			return [ true, getMessage() ];
+			return [ true, getMessage( whichAreEmpty ), updatedCounts ];
 		}
-		return [ false, '' ];
-	}, [ assignedState, assignedCounts.dates, assignedCounts.tickets ] );
+		return [ false, '', updatedCounts ];
+	}, [ isEmptyAssignedState, assignedCounts ] );
 	return [
 		hasNoAssignments,
 		noAssignmentsMessage,
-		updatedAssignmentCounts.current,
+		updatedAssignmentsCounts,
 	];
 };
 

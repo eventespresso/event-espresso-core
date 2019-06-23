@@ -162,6 +162,9 @@ describe( 'useCountsManager', () => {
 					},
 				},
 			);
+			// original assigned counts should not have changed
+			expect( testedAssignedCounts.dates[ 40 ] ).toBe( 1 );
+			expect( testedAssignedCounts.tickets[ 30 ] ).toBe( 0 );
 		} );
 		it( 'returns expected values when incoming state for ticket has ' +
 			'dates assigned and then a date is unassigned leaving the date ' +
@@ -205,6 +208,9 @@ describe( 'useCountsManager', () => {
 					10: 2,
 				},
 			} );
+			// original assigned counts should not have changed
+			expect( testedAssignedCounts.dates[ 40 ] ).toBe( 1 );
+			expect( testedAssignedCounts.tickets[ 10 ] ).toBe( 3 );
 		} );
 		it( 'returns expected values when incoming state for ticket has ' +
 			'dates assigned and then a date is unassigned leaving the ticket' +
@@ -250,6 +256,9 @@ describe( 'useCountsManager', () => {
 					20: 0,
 				},
 			} );
+			// original assigned counts should not have changed
+			expect( testedAssignedCounts.dates[ 60 ] ).toBe( 2 );
+			expect( testedAssignedCounts.tickets[ 20 ] ).toBe( 1 );
 		} );
 	} );
 	describe( 'returns expected values when processing one date with many ' +
@@ -336,6 +345,9 @@ describe( 'useCountsManager', () => {
 					10: 3,
 				},
 			} );
+			// original assigned counts should not have changed
+			expect( testedAssignedCounts.dates[ 40 ] ).toBe( 0 );
+			expect( testedAssignedCounts.tickets[ 10 ] ).toBe( 2 );
 		} );
 		it( 'returns expected values when incoming state for date has ' +
 			'tickets assigned and then a ticket is unassigned leaving the date ' +
@@ -368,7 +380,7 @@ describe( 'useCountsManager', () => {
 			const div = getDiv();
 			expect( div.props.hasNoAssignments ).toBe( true );
 			expect( div.props.noAssignmentsMessage )
-				.toEqual( expectedMessages.singleDate );
+				.toEqual( expectedMessages.singleTicket );
 			expect( div.props.assignmentCounts ).toEqual( {
 				...testedAssignedCounts,
 				dates: {
@@ -380,6 +392,9 @@ describe( 'useCountsManager', () => {
 					30: 0,
 				},
 			} );
+			// original assigned counts should not have changed
+			expect( testedAssignedCounts.dates[ 60 ] ).toBe( 3 );
+			expect( testedAssignedCounts.tickets[ 30 ] ).toBe( 1 );
 		} );
 		it( 'returns expected values when incoming state for date has ' +
 			'tickets assigned and then a ticket is unassigned leaving the date' +
@@ -423,6 +438,9 @@ describe( 'useCountsManager', () => {
 					10: 2,
 				},
 			} );
+			// original assigned counts should not have changed
+			expect( testedAssignedCounts.dates[ 40 ] ).toBe( 1 );
+			expect( testedAssignedCounts.tickets[ 10 ] ).toBe( 3 );
 		} );
 	} );
 	describe( 'returns expected values when processing many dates with many ' +
@@ -509,6 +527,9 @@ describe( 'useCountsManager', () => {
 					10: 3,
 				},
 			} );
+			// original assigned counts should not have changed
+			expect( testedAssignedCounts.dates[ 40 ] ).toBe( 0 );
+			expect( testedAssignedCounts.tickets[ 10 ] ).toBe( 2 );
 		} );
 		it( 'returns expected values when incoming state for a date has ' +
 			'tickets assigned and then a ticket is unassigned leaving the date ' +
@@ -552,6 +573,9 @@ describe( 'useCountsManager', () => {
 					30: 0,
 				},
 			} );
+			// original assigned counts should not have changed
+			expect( testedAssignedCounts.dates[ 60 ] ).toBe( 3 );
+			expect( testedAssignedCounts.tickets[ 30 ] ).toBe( 1 );
 		} );
 		it( 'returns expected values when incoming state for a date has ' +
 			'tickets assigned and then a ticket is unassigned leaving the date' +
@@ -595,6 +619,9 @@ describe( 'useCountsManager', () => {
 					10: 2,
 				},
 			} );
+			// original assigned counts should not have changed
+			expect( testedAssignedCounts.dates[ 40 ] ).toBe( 1 );
+			expect( testedAssignedCounts.tickets[ 10 ] ).toBe( 3 );
 		} );
 	} );
 } );
