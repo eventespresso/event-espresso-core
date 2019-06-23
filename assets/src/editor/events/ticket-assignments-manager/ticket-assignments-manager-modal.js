@@ -1,7 +1,7 @@
 /**
  * External imports
  */
-import { filter, findIndex } from 'lodash';
+import { filter, findIndex, cloneDeep } from 'lodash';
 import warning from 'warning';
 import { IconButton } from '@wordpress/components';
 import { useState, useCallback, useRef } from '@wordpress/element';
@@ -65,7 +65,6 @@ const TicketAssignmentsManagerModal = ( {
 		}
 		setSubmitting( true );
 		handler.processChanges(
-			dateEntities,
 			assignedState.assigned,
 			addTicketEntities,
 			assignedState.removed,
@@ -79,44 +78,31 @@ const TicketAssignmentsManagerModal = ( {
 			warning( false, error );
 		} );
 	}, [
-		dateEntities,
 		assignedState,
 		addTicketEntities,
 		removeTicketEntities,
 		hasNoAssignments,
 	] );
 	const assignTicketEntity = useCallback(
-		( dateEntity, ticketEntity ) => {
-			if (
-				! isModelEntityOfModel( dateEntity, 'datetime' ) ||
-				! isModelEntityOfModel( ticketEntity, 'ticket' )
-			) {
-				return;
-			}
+		( dateId, ticketId ) => {
 			setAssignedState( ( prevState ) => {
 				return handler.assignTicketEntity(
-					prevState,
-					dateEntity,
-					ticketEntity
+					cloneDeep( prevState ),
+					dateId,
+					ticketId
 				);
 			} );
 			setFormError( '' );
 		},
-		[]
+		[ setFormError ]
 	);
 	const removeTicketEntity = useCallback(
-		( dateEntity, ticketEntity ) => {
-			if (
-				! isModelEntityOfModel( dateEntity, 'datetime' ) ||
-				! isModelEntityOfModel( ticketEntity, 'ticket' )
-			) {
-				return;
-			}
+		( dateId, ticketId ) => {
 			setAssignedState( ( prevState ) => {
 				return handler.removeTicketEntity(
-					prevState,
-					dateEntity,
-					ticketEntity
+					cloneDeep( prevState ),
+					dateId,
+					ticketId
 				);
 			} );
 		},
@@ -185,7 +171,7 @@ const TicketAssignmentsManagerModal = ( {
 			} );
 			return headerCells;
 		},
-		[ ticketEntities, dateEntities.length ]
+		[ ticketEntities, dateEntities, getTicketBgColorClass ]
 	);
 
 	/**
@@ -250,14 +236,14 @@ const TicketAssignmentsManagerModal = ( {
 				) > noIndex,
 				isAssigned: handler.isAssigned(
 					assignedState.assigned,
-					dateEntity,
-					ticketEntity,
+					dateEntity.id,
+					ticketEntity.id,
 					true
 				) > noIndex,
 				isRemoved: handler.isRemoved(
 					assignedState.removed,
-					dateEntity,
-					ticketEntity,
+					dateEntity.id,
+					ticketEntity.id,
 					true
 				) > noIndex,
 			};
@@ -315,13 +301,13 @@ const TicketAssignmentsManagerModal = ( {
 		( dateEntity, ticketEntity ) => {
 			const entitiesHaveEmptyAssignments = () => {
 				return assignmentCounts.dates[ dateEntity.id ] === 0 ||
-					assignmentCounts.dates[ ticketEntity.id ] === 0;
+					assignmentCounts.tickets[ ticketEntity.id ] === 0;
 			};
 			return hasNoAssignments && entitiesHaveEmptyAssignments() ?
 				' ee-tam-assignments-error' :
 				'';
 		},
-		[ hasNoAssignments ]
+		[ hasNoAssignments, assignmentCounts ]
 	);
 
 	/**
@@ -398,13 +384,13 @@ const TicketAssignmentsManagerModal = ( {
 						onClick={ ( event ) => {
 							event.preventDefault();
 							event.stopPropagation();
-							action( dateEntity, ticketEntity );
+							action( dateEntity.id, ticketEntity.id );
 						} }
 						onKeyDown={ ( event ) => {
 							if ( event.keyCode === ENTER ) {
 								event.preventDefault();
 								event.stopPropagation();
-								action( dateEntity, ticketEntity );
+								action( dateEntity.id, ticketEntity.id );
 							}
 						} }
 					/>
@@ -417,6 +403,7 @@ const TicketAssignmentsManagerModal = ( {
 			getAction,
 			getAssignmentsErrorClass,
 			getIconAndBgColor,
+			determineCurrentAssignment,
 		]
 	);
 
@@ -620,39 +607,28 @@ export default compose( [
 	ifCondition( ( { editorOpen } ) => editorOpen ),
 	withEditorDateEntities,
 	withEditorTicketEntities,
-	withDispatch( ( dispatch ) => {
-		const addTicketEntities = ( dateEntity, ticketEntities ) => {
-			warning(
-				isModelEntityOfModel( dateEntity, 'datetime' ),
-				'date is not a BaseEntity of the datetime model.'
-			);
+	withDispatch( ( dispatch, ownProps, registry ) => {
+		const { getEntitiesByIds } = registry.select( 'eventespresso/core' );
+		const addTicketEntities = ( dateId, ticketIds ) => {
 			const { createRelations } = dispatch( 'eventespresso/core' );
 			return createRelations(
 				'datetime',
-				dateEntity.id,
+				dateId,
 				'ticket',
-				ticketEntities
+				getEntitiesByIds( 'ticket', ticketIds )
 			);
 		};
-		const removeTicketEntities = ( dateEntity, ticketEntities ) => {
-			warning(
-				isModelEntityOfModel( dateEntity, 'datetime' ),
-				'date is not a BaseEntity of the datetime model.'
-			);
+		const removeTicketEntities = ( dateId, ticketIds ) => {
 			const { removeRelationForEntity } = dispatch( 'eventespresso/core' );
 			const relationsRemoved = [];
-			if ( Array.isArray( ticketEntities ) ) {
-				ticketEntities.forEach( ( ticketEntity ) => {
-					warning(
-						isModelEntityOfModel( ticketEntity, 'ticket' ),
-						'ticket is not a BaseEntity of the ticket model.'
-					);
+			if ( Array.isArray( ticketIds ) ) {
+				ticketIds.forEach( ( ticketId ) => {
 					relationsRemoved.push(
 						removeRelationForEntity(
 							'datetime',
-							dateEntity.id,
+							dateId,
 							'ticket',
-							ticketEntity.id
+							ticketId
 						)
 					);
 				} );
@@ -695,7 +671,7 @@ export default compose( [
 			if ( typeof assignmentCounts.current.dates[ dateEntity.id ] === 'undefined' ) {
 				const relatedTickets = getRelatedEntities( dateEntity, 'ticket' );
 				dtmProps.ticketEntitiesByDateIds[ dateEntity.id ] = relatedTickets;
-				assignmentCounts.current.dates[ dateEntity.id ] = relatedTickets.length;
+				assignmentCounts.current.dates[ dateEntity.id ] = relatedTickets.length || 0;
 				if ( relatedTickets.length ) {
 					relatedTickets.forEach( ( ticket ) => {
 						assignmentCounts.current.tickets[ ticket.id ] = getRelatedEntities(
@@ -703,6 +679,8 @@ export default compose( [
 							'datetime'
 						).length;
 					} );
+				} else {
+					assignmentCounts.current.dates[ dateEntity.id ] = 0;
 				}
 			}
 		} else if ( isModelEntityOfModel( ticketEntity, 'ticket' ) ) {
@@ -713,7 +691,7 @@ export default compose( [
 			// date entities ( if necessary )
 			if ( typeof assignmentCounts.current.tickets[ ticketEntity.id ] === 'undefined' ) {
 				const relatedDates = getRelatedEntities( ticketEntity, 'datetime' );
-				assignmentCounts.current.tickets[ ticketEntity.id ] = relatedDates.length;
+				assignmentCounts.current.tickets[ ticketEntity.id ] = relatedDates.length || 0;
 				if ( relatedDates.length ) {
 					relatedDates.forEach( ( date ) => {
 						const relatedTickets = getRelatedEntities( date, 'ticket' );
@@ -729,7 +707,7 @@ export default compose( [
 				if ( typeof assignmentCounts.current.dates[ date.id ] === 'undefined' ) {
 					const relatedTickets = getRelatedEntities( date, 'ticket' );
 					dtmProps.ticketEntitiesByDateIds[ date.id ] = relatedTickets;
-					assignmentCounts.current.dates[ date.id ] = relatedTickets.length;
+					assignmentCounts.current.dates[ date.id ] = relatedTickets.length || 0;
 				}
 			} );
 			ticketEntities.forEach( ( ticket ) => {
@@ -737,7 +715,7 @@ export default compose( [
 					assignmentCounts.current.tickets[ ticket.id ] = getRelatedEntities(
 						ticket,
 						'datetime'
-					).length;
+					).length || 0;
 					// no need to set dtmProps.ticketEntitiesByDateIds here as
 					// those will already have been setup for all dates.
 				}
