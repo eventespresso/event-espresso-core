@@ -75,55 +75,39 @@ const useCountsManager = (
 
 		// still here?  Let's check whether the assignment being added or removed changes things.
 		const countCallback = ( assigning ) => ( emptyCount, ticketIds, dateId ) => {
+			if ( typeof updatedCounts.dates[ dateId ] === 'undefined' ) {
+				updatedCounts.dates[ dateId ] = 0;
+			}
 			if ( assigning ) {
 				ticketIds.forEach( ( ticketId ) => {
-					if ( ! assignedCounts.tickets[ ticketId ] ) {
-						whichAreEmpty.tickets--;
-						emptyCount--;
-					}
 					if ( typeof updatedCounts.tickets[ ticketId ] === 'undefined' ) {
 						updatedCounts.tickets[ ticketId ] = 0;
 					}
 					updatedCounts.tickets[ ticketId ]++;
+					updatedCounts.dates[ dateId ]++;
 				} );
-				if ( ! assignedCounts.dates[ dateId ] ) {
-					whichAreEmpty.dates--;
-					emptyCount--;
-				}
-				if ( typeof updatedCounts.dates[ dateId ] === 'undefined' ) {
-					updatedCounts.dates[ dateId ] = 0;
-				}
-				updatedCounts.dates[ dateId ]++;
 			} else {
 				ticketIds.forEach( ( ticketId ) => {
-					if ( ! assignedCounts.tickets[ ticketId ] || assignedCounts.tickets[ ticketId ] - 1 === 0 ) {
-						whichAreEmpty.tickets++;
-						emptyCount++;
-					}
 					if ( typeof updatedCounts.tickets[ ticketId ] === 'undefined' ) {
 						updatedCounts.tickets[ ticketId ] = 0;
 					} else {
 						updatedCounts.tickets[ ticketId ]--;
 					}
+					if ( updatedCounts.tickets[ ticketId ] === 0 ) {
+						whichAreEmpty.tickets++;
+						emptyCount++;
+					}
+					updatedCounts.dates[ dateId ]--;
 				} );
-				if ( ! assignedCounts.dates[ dateId ] || assignedCounts.dates[ dateId ] - 1 === 0 ) {
+				if ( updatedCounts.dates[ dateId ] === 0 ) {
 					whichAreEmpty.dates++;
 					emptyCount++;
-				}
-				if ( typeof updatedCounts.dates[ dateId ] === 'undefined' ) {
-					updatedCounts.dates[ dateId ] = 0;
-				} else {
-					updatedCounts.dates[ dateId ]--;
 				}
 			}
 			return emptyCount;
 		};
 		howManyEmpty = reduce( assignedState.assigned, countCallback( true ), howManyEmpty );
 		howManyEmpty = reduce( assignedState.removed, countCallback( false ), howManyEmpty );
-
-		// ensure whichAreEmpty don't go lower than zero
-		whichAreEmpty.dates = Math.max( 0, whichAreEmpty.dates );
-		whichAreEmpty.tickets = Math.max( 0, whichAreEmpty.tickets );
 
 		if ( howManyEmpty > 0 ) {
 			return [ true, getMessage( whichAreEmpty ), updatedCounts ];
