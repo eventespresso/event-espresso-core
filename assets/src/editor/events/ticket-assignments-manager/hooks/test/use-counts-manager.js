@@ -729,4 +729,65 @@ describe( 'useCountsManager', () => {
 			} );
 		} );
 	} );
+	describe( 'assigning ticket when multiple dates missing assignments', () => {
+		beforeEach( () => {
+			testedAssignedCounts = {
+				dates: {
+					40: 2,
+					50: 0,
+					60: 0,
+				},
+				tickets: {
+					10: 1,
+					20: 1,
+				},
+			};
+			testedDateEntities = [ allDates[ 0 ], allDates[ 1 ], allDates[ 2 ] ];
+			testedTicketEntities = [ allTickets[ 0 ], allTickets[ 1 ] ];
+		} );
+		it( 'should still trigger error notification after assigning ticket ' +
+			'to a date because other date is still missing assignments', () => {
+			const Test = getTestComponent(
+				{
+					dateEntities: testedDateEntities,
+					ticketEntities: testedTicketEntities,
+					assignedCounts: testedAssignedCounts,
+					assignedState: testedAssignedState,
+				}
+			);
+			act( () => {
+				renderer = TestRenderer.create( <Test /> );
+			} );
+			const testInstance = renderer.root;
+			const getDiv = () => testInstance.findByType( 'div' );
+
+			// update assigned state to add ticket to one of the dates with none
+			const updatedAssignedState = {
+				assigned: { 50: [ 20 ] },
+				removed: {},
+			};
+
+			act( () => {
+				renderer.update( <Test assignedState={ updatedAssignedState } /> );
+			} );
+
+			const div = getDiv();
+			expect( div.props.hasNoAssignments ).toBe( true );
+			expect( div.props.noAssignmentsMessage ).toEqual(
+				expectedMessages.multiple
+			);
+			expect( div.props.assignmentCounts ).toEqual( {
+				...testedAssignedCounts,
+				dates: {
+					40: 2,
+					50: 1,
+					60: 0,
+				},
+				tickets: {
+					10: 1,
+					20: 2,
+				},
+			} );
+		} );
+	} );
 } );
