@@ -36,6 +36,12 @@ const useCountsManager = (
 					'event_espresso'
 				);
 				break;
+			case ( onlyTicketsAreEmpty ):
+				message = __(
+					'Tickets must always have at least one date assigned to them but one or more of the tickets below does not have any. Please correct the assignments for the highlighted cells.',
+					'event_espresso'
+				);
+				break;
 			default:
 				message = __(
 					'Event Dates must always have at least one Ticket assigned to them but one or more of the Event Dates below does not have any. Please correct the assignments for the highlighted cells.',

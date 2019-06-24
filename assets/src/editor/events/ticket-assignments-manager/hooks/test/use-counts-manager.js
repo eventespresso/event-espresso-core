@@ -17,6 +17,7 @@ import useCountsManager from '../use-counts-manager';
 const expectedMessages = {
 	singleDate: 'Event Dates must always have at least one Ticket assigned to them. If the current assignment is not correct, assign the correct Ticket first, then remove others as required.',
 	singleTicket: 'Tickets must always have at least one Event Date assigned to them. If the current assignment is not correct, assign the correct Event Date first, then remove others as required.',
+	multipleOnlyTicket: 'Tickets must always have at least one date assigned to them but one or more of the tickets below does not have any. Please correct the assignments for the highlighted cells.',
 	multiple: 'Event Dates must always have at least one Ticket assigned to them but one or more of the Event Dates below does not have any. Please correct the assignments for the highlighted cells.',
 };
 
@@ -561,7 +562,7 @@ describe( 'useCountsManager', () => {
 			const div = getDiv();
 			expect( div.props.hasNoAssignments ).toBe( true );
 			expect( div.props.noAssignmentsMessage )
-				.toEqual( expectedMessages.multiple );
+				.toEqual( expectedMessages.multipleOnlyTicket );
 			expect( div.props.assignmentCounts ).toEqual( {
 				...testedAssignedCounts,
 				dates: {
