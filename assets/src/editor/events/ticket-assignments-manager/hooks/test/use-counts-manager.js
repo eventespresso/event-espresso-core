@@ -624,4 +624,108 @@ describe( 'useCountsManager', () => {
 			expect( testedAssignedCounts.tickets[ 10 ] ).toBe( 3 );
 		} );
 	} );
+	describe( 'complex ticket and date assignments', () => {
+		beforeEach( () => {
+			testedAssignedCounts = {
+				dates: {
+					40: 2,
+					50: 1,
+				},
+				tickets: {
+					10: 2,
+					20: 1,
+				},
+			};
+			testedDateEntities = [ allDates[ 0 ], allDates[ 1 ] ];
+			testedTicketEntities = [ allTickets[ 0 ], allTickets[ 1 ] ];
+		} );
+		it( 'should not trigger error notification when assigning date to a ' +
+			'ticket so that ticket now has two dates and removing other date' +
+			'assignment on that ticket', () => {
+			const Test = getTestComponent(
+				{
+					dateEntities: testedDateEntities,
+					ticketEntities: testedTicketEntities,
+					assignedCounts: testedAssignedCounts,
+					assignedState: testedAssignedState,
+				}
+			);
+			act( () => {
+				renderer = TestRenderer.create( <Test /> );
+			} );
+			const testInstance = renderer.root;
+			const getDiv = () => testInstance.findByType( 'div' );
+
+			// update assigned state to get ticket assigned to two dates.
+			let updatedAssignedState = {
+				assigned: { 50: [ 20 ] },
+				removed: {},
+			};
+
+			act( () => {
+				renderer.update( <Test assignedState={ updatedAssignedState } /> );
+			} );
+
+			let div = getDiv();
+			expect( div.props.hasNoAssignments ).toBe( false );
+			expect( div.props.assignmentCounts ).toEqual( {
+				...testedAssignedCounts,
+				dates: {
+					40: 2,
+					50: 2,
+				},
+				tickets: {
+					10: 2,
+					20: 2,
+				},
+			} );
+
+			// update assigned state to remove ticket from first date.
+			updatedAssignedState = {
+				assigned: { 50: [ 20 ] },
+				removed: { 40: [ 10 ] },
+			};
+
+			act( () => {
+				renderer.update( <Test assignedState={ updatedAssignedState } /> );
+			} );
+
+			div = getDiv();
+			expect( div.props.hasNoAssignments ).toBe( false );
+			expect( div.props.assignmentCounts ).toEqual( {
+				dates: {
+					40: 1,
+					50: 2,
+				},
+				tickets: {
+					10: 1,
+					20: 2,
+				},
+			} );
+
+			// update assigned state to remove all tickets from first date
+			updatedAssignedState = {
+				assigned: { 50: [ 20 ] },
+				removed: { 40: [ 10, 20 ] },
+			};
+
+			act( () => {
+				renderer.update( <Test assignedState={ updatedAssignedState } /> );
+			} );
+
+			div = getDiv();
+			expect( div.props.hasNoAssignments ).toBe( true );
+			expect( div.props.noAssignmentsMessage ).toEqual( expectedMessages.multiple );
+			expect( div.props.assignmentCounts ).toEqual( {
+				dates: {
+					40: 0,
+					50: 2,
+				},
+				tickets: {
+					10: 1,
+					20: 1,
+				},
+			} );
+		} );
+	} );
 } );
