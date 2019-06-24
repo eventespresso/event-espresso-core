@@ -99,6 +99,7 @@ export const ADMIN_ROUTE_ACTIONS = {
 	VENUES: {
 		OVERVIEW: ADMIN_ROUTE_ACTION_DEFAULT,
 		CATEGORIES: 'category_list',
+		EDIT: 'edit',
 		GOOGLE_MAPS: 'google_map_settings',
 	},
 	SETTINGS: {
