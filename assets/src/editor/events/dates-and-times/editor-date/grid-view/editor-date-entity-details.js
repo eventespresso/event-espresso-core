@@ -7,18 +7,14 @@ import { compose } from '@wordpress/compose';
 import { Component } from '@wordpress/element';
 import { addQueryArgs } from '@wordpress/url';
 import { EntityDetailsPanel, InlineEditInput } from '@eventespresso/components';
+import {
+	ifValidDateEntity,
+	withEventVenueEntity,
+} from '@eventespresso/editor-hocs';
 import { routes } from '@eventespresso/eejs';
 import { __ } from '@eventespresso/i18n';
 import { dateTimeModel } from '@eventespresso/model';
 import { isModelEntityOfModel } from '@eventespresso/validators';
-
-/**
- * Internal dependencies
- */
-import {
-	ifValidDateEntity,
-	withEditorEventVenueEntity,
-} from '../../../hocs';
 
 const { MODEL_NAME: DATETIME } = dateTimeModel;
 const {
@@ -287,5 +283,5 @@ class EditorDateEntityDetails extends Component {
 
 export default compose( [
 	ifValidDateEntity,
-	withEditorEventVenueEntity,
+	withEventVenueEntity,
 ] )( EditorDateEntityDetails );

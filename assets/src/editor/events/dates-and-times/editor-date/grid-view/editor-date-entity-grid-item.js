@@ -10,6 +10,10 @@ import {
 	CalendarDateRange,
 	withEntityPaperFrame,
 } from '@eventespresso/components';
+import {
+	ifValidDateEntity,
+	withEventVenueEntity,
+} from '@eventespresso/editor-hocs';
 import { dateTimeModel } from '@eventespresso/model';
 
 /**
@@ -18,7 +22,6 @@ import { dateTimeModel } from '@eventespresso/model';
 import EditorDateEntityDetails from './editor-date-entity-details';
 import EditorDateEntityActionsMenu
 	from '../actions-menu/editor-date-entity-actions-menu';
-import { ifValidDateEntity, withEditorEventEntity } from '../../../hocs';
 
 const { getBackgroundColorClass, getDateTimeStatusTextLabel } = dateTimeModel;
 
@@ -117,6 +120,6 @@ class EditorDateEntityGridItem extends Component {
 
 export default compose( [
 	ifValidDateEntity,
-	withEditorEventEntity,
+	withEventVenueEntity,
 	withEntityPaperFrame,
 ] )( EditorDateEntityGridItem );

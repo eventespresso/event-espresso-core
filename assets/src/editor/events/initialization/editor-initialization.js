@@ -1,5 +1,6 @@
 import { useEffect } from '@wordpress/element';
 import { compose } from '@wordpress/compose';
+import { withEventVenueEntity } from '@eventespresso/editor-hocs';
 
 import useEditorInitialization from './use-editor-initialization';
 import withEventEntity from './with-event-entity';
@@ -35,6 +36,7 @@ export default compose( [
 		/>;
 	},
 	withEventEntity,
+	withEventVenueEntity,
 	withEventDateEntities,
 	withTicketEntitiesForAllDateEntities,
 ] )( EditorInitialization );
