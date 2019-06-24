@@ -641,7 +641,7 @@ describe( 'useCountsManager', () => {
 			testedTicketEntities = [ allTickets[ 0 ], allTickets[ 1 ] ];
 		} );
 		it( 'should not trigger error notification when assigning date to a ' +
-			'ticket so that ticket now has two dates and removing other date' +
+			'ticket so that ticket now has two dates and removing other date ' +
 			'assignment on that ticket', () => {
 			const Test = getTestComponent(
 				{
