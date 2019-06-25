@@ -93,7 +93,6 @@ const useAssignmentsCalculator = (
 
 		// callback for counting assignments being added or removed
 		const countAssignmentChangesForDates = ( emptyCount, count, dateId ) => {
-
 			// first consider any assignedState.
 			const assignedStateForDate = assignedState.assigned[ dateId ];
 
@@ -129,8 +128,16 @@ const useAssignmentsCalculator = (
 			}
 			return emptyCount;
 		};
-		totalMissingAssignments = reduce( updatedCounts.dates, countAssignmentChangesForDates, totalMissingAssignments );
-		totalMissingAssignments = reduce( updatedCounts.tickets, countAssignmentChangesForTickets, totalMissingAssignments );
+		totalMissingAssignments = reduce(
+			updatedCounts.dates,
+			countAssignmentChangesForDates,
+			totalMissingAssignments
+		);
+		totalMissingAssignments = reduce(
+			updatedCounts.tickets,
+			countAssignmentChangesForTickets,
+			totalMissingAssignments
+		);
 
 		if ( totalMissingAssignments > 0 ) {
 			return [ true, getMessage( missingAssignmentCounts ), updatedCounts ];
