@@ -474,8 +474,8 @@ const TicketAssignmentsManagerModal = ( {
 					if ( dateCount > 1 ) {
 						rowData.push( dateHeader( eventDate ) );
 					}
-					const dateTicketEntities = ticketEntitiesByDateIds[ eventDate.id ] ?
-						ticketEntitiesByDateIds[ eventDate.id ] :
+					const dateTicketEntities = ticketEntitiesByDateIds.current[ eventDate.id ] ?
+						ticketEntitiesByDateIds.current[ eventDate.id ] :
 						[];
 					ticketEntities.forEach( ( ticket ) => {
 						warning(
@@ -640,7 +640,12 @@ export default compose( [
 	( WrappedComponent ) => ( props ) => {
 		// adds a ref for handling count updates.
 		const assignmentCounts = useRef( { dates: {}, tickets: {} } );
-		return <WrappedComponent assignmentCounts={ assignmentCounts } { ...props } />;
+		const ticketEntitiesByDateIds = useRef( {} );
+		return <WrappedComponent
+			assignmentCounts={ assignmentCounts }
+			ticketEntitiesByDateIds={ ticketEntitiesByDateIds }
+			{ ...props }
+		/>;
 	},
 	withSelect( ( select, ownProps ) => {
 		const {
@@ -650,12 +655,12 @@ export default compose( [
 			ticketEntities,
 			entities = [],
 			assignmentCounts,
+			ticketEntitiesByDateIds,
 		} = ownProps;
 		const dtmProps = {
 			entities,
 			ticketEntities,
 			dateEntities,
-			ticketEntitiesByDateIds: {},
 			notice: __(
 				'loading event date ticket assignments',
 				'event_espresso'
@@ -677,7 +682,7 @@ export default compose( [
 		dtmProps.entities.forEach( ( date ) => {
 			if ( typeof assignmentCounts.current.dates[ date.id ] === 'undefined' ) {
 				const relatedTickets = getRelatedEntities( date, 'ticket' );
-				dtmProps.ticketEntitiesByDateIds[ date.id ] = relatedTickets;
+				ticketEntitiesByDateIds.current[ date.id ] = relatedTickets;
 				assignmentCounts.current.dates[ date.id ] = relatedTickets.length || 0;
 			}
 		} );
