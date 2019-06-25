@@ -1,1 +1,1 @@
-export { default as useCountsManager } from './use-counts-manager';
+export { default as useAssignmentsCalculator } from './use-assignments-calculator';
