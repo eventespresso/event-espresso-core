@@ -95,29 +95,43 @@ describe( 'TicketEntity Status "is" Conditionals', () => {
 	} );
 	describe( 'isOnSale()', () => {
 		it( 'returns false if Ticket Entity sale dates are in future',
-			() => expect( isOnSale( pendingTicketEntity() ) ).toBe( false )
+			() => {
+				expect( isOnSale( pendingTicketEntity() ) ).toBe( false );
+			}
 		);
 		it( 'returns false if Ticket Entity sale dates are in past',
-			() => expect( isOnSale( expiredTicketEntity() ) ).toBe( false )
+			() => {
+				expect( isOnSale( expiredTicketEntity() ) ).toBe( false );
+			}
 		);
 		it( 'returns true if Ticket Entity sale dates "straddle" current time',
-			() => expect( isOnSale( onSaleTicketEntity() ) ).toBe( true )
+			() => {
+				expect( isOnSale( onSaleTicketEntity() ) ).toBe( true );
+			}
 		);
 	} );
 	describe( 'isExpired()', () => {
 		it( 'returns false if Ticket Entity sale dates are in future',
-			() => expect( isExpired( pendingTicketEntity() ) ).toBe( false )
+			() => {
+				expect( isExpired( pendingTicketEntity() ) ).toBe( false );
+			}
 		);
 		it( 'returns false if Ticket Entity sale dates "straddle" current time',
-			() => expect( isExpired( onSaleTicketEntity() ) ).toBe( false )
+			() => {
+				expect( isExpired( onSaleTicketEntity() ) ).toBe( false );
+			}
 		);
 		it( 'returns true if Ticket Entity sale dates are in past',
-			() => expect( isExpired( expiredTicketEntity() ) ).toBe( true )
+			() => {
+				expect( isExpired( expiredTicketEntity() ) ).toBe( true );
+			}
 		);
 	} );
 	describe( 'isPending()', () => {
 		it( 'returns false if Ticket Entity sale dates are in past',
-			() => expect( isPending( expiredTicketEntity() ) ).toBe( false )
+			() => {
+				expect( isPending( expiredTicketEntity() ) ).toBe( false );
+			}
 		);
 		it( 'returns false if Ticket Entity sale dates "straddle" current time',
 			() => {
@@ -125,10 +139,14 @@ describe( 'TicketEntity Status "is" Conditionals', () => {
 			}
 		);
 		it( 'returns true if Ticket Entity sale dates are in future',
-			() => expect( isPending( pendingTicketEntity() ) ).toBe( true )
+			() => {
+				expect( isPending( pendingTicketEntity() ) ).toBe( true );
+			}
 		);
 		it( 'returns true if Ticket Entity sale dates are far in future',
-			() => expect( isPending( pendingTicketEntity() ) ).toBe( true )
+			() => {
+				expect( isPending( pendingTicketEntity() ) ).toBe( true );
+			}
 		);
 	} );
 	describe( 'isSoldOut()', () => {
@@ -164,10 +182,14 @@ describe( 'TicketEntity Status "is" Conditionals', () => {
 	} );
 	describe( 'isArchived()', () => {
 		it( 'returns false if Ticket Entity is not archived',
-			() => expect( isArchived( pendingTicketEntity() ) ).toBe( false )
+			() => {
+				expect( isArchived( pendingTicketEntity() ) ).toBe( false );
+			}
 		);
 		it( 'returns true if Ticket Entity quantity is archived',
-			() => expect( isArchived( archivedTicketEntity() ) ).toBe( true )
+			() => {
+				expect( isArchived( archivedTicketEntity() ) ).toBe( true );
+			}
 		);
 	} );
 } );

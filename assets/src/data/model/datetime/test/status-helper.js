@@ -104,29 +104,43 @@ describe( 'DateEntity Status "is" Conditionals', () => {
 	} );
 	describe( 'isActive()', () => {
 		it( 'returns false if Date Entity start and end dates are in future',
-			() => expect( isActive( upcomingDateEntity() ) ).toBe( false )
+			() => {
+				expect( isActive( upcomingDateEntity() ) ).toBe( false );
+			}
 		);
 		it( 'returns false if Date Entity start and end dates are in past',
-			() => expect( isActive( expiredDateEntity() ) ).toBe( false )
+			() => {
+				expect( isActive( expiredDateEntity() ) ).toBe( false );
+			}
 		);
 		it( 'returns true if Date Entity start and end dates "straddle" current time',
-			() => expect( isActive( activeDateEntity() ) ).toBe( true )
+			() => {
+				expect( isActive( activeDateEntity() ) ).toBe( true );
+			}
 		);
 	} );
 	describe( 'isExpired()', () => {
 		it( 'returns false if Date Entity start and end dates are in future',
-			() => expect( isExpired( upcomingDateEntity() ) ).toBe( false )
+			() => {
+				expect( isExpired( upcomingDateEntity() ) ).toBe( false );
+			}
 		);
 		it( 'returns false if Date Entity start and end dates "straddle" current time',
-			() => expect( isExpired( activeDateEntity() ) ).toBe( false )
+			() => {
+				expect( isExpired( activeDateEntity() ) ).toBe( false );
+			}
 		);
 		it( 'returns true if Date Entity start and end dates are in past',
-			() => expect( isExpired( expiredDateEntity() ) ).toBe( true )
+			() => {
+				expect( isExpired( expiredDateEntity() ) ).toBe( true );
+			}
 		);
 	} );
 	describe( 'isRecentlyExpired()', () => {
 		it( 'returns false if Date Entity start and end dates are in future',
-			() => expect( isRecentlyExpired( upcomingDateEntity() ) ).toBe( false )
+			() => {
+				expect( isRecentlyExpired( upcomingDateEntity() ) ).toBe( false );
+			}
 		);
 		it( 'returns false if Date Entity start and end dates "straddle" current time',
 			() => {
@@ -134,15 +148,21 @@ describe( 'DateEntity Status "is" Conditionals', () => {
 			}
 		);
 		it( 'returns false if Date Entity start and end dates are too far in past',
-			() => expect( isRecentlyExpired( reallyOldDateEntity() ) ).toBe( false )
+			() => {
+				expect( isRecentlyExpired( reallyOldDateEntity() ) ).toBe( false );
+			}
 		);
 		it( 'returns true if Date Entity start and end dates are in past',
-			() => expect( isRecentlyExpired( expiredDateEntity() ) ).toBe( true )
+			() => {
+				expect( isRecentlyExpired( expiredDateEntity() ) ).toBe( true );
+			}
 		);
 	} );
 	describe( 'isUpcoming()', () => {
 		it( 'returns false if Date Entity start and end dates are in past',
-			() => expect( isUpcoming( expiredDateEntity() ) ).toBe( false )
+			() => {
+				expect( isUpcoming( expiredDateEntity() ) ).toBe( false );
+			}
 		);
 		it( 'returns false if Date Entity start and end dates "straddle" current time',
 			() => {
@@ -150,10 +170,14 @@ describe( 'DateEntity Status "is" Conditionals', () => {
 			}
 		);
 		it( 'returns true if Date Entity start and end dates are in future',
-			() => expect( isUpcoming( upcomingDateEntity() ) ).toBe( true )
+			() => {
+				expect( isUpcoming( upcomingDateEntity() ) ).toBe( true );
+			}
 		);
 		it( 'returns true if Date Entity start and end dates are far in future',
-			() => expect( isUpcoming( upcomingDateEntity() ) ).toBe( true )
+			() => {
+				expect( isUpcoming( upcomingDateEntity() ) ).toBe( true );
+			}
 		);
 	} );
 	describe( 'isSoldOut()', () => {
@@ -189,10 +213,14 @@ describe( 'DateEntity Status "is" Conditionals', () => {
 	} );
 	describe( 'isTrashed()', () => {
 		it( 'returns false if Date Entity is not deleted',
-			() => expect( isTrashed( upcomingDateEntity() ) ).toBe( false )
+			() => {
+				expect( isTrashed( upcomingDateEntity() ) ).toBe( false );
+			}
 		);
 		it( 'returns true if Date Entity capacity is deleted',
-			() => expect( isTrashed( trashedDateEntity() ) ).toBe( true )
+			() => {
+				expect( isTrashed( trashedDateEntity() ) ).toBe( true );
+			}
 		);
 	} );
 } );
