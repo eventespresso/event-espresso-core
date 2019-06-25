@@ -1,6 +1,8 @@
 /**
  * External imports
  */
+import classNames from 'classnames';
+import { compose } from '@wordpress/compose';
 import { Component, Fragment } from '@wordpress/element';
 import { __ } from '@eventespresso/i18n';
 import {
@@ -8,10 +10,11 @@ import {
 	CalendarDateRange,
 	withEntityPaperFrame,
 } from '@eventespresso/components';
+import {
+	ifValidDateEntity,
+	withEventVenueEntity,
+} from '@eventespresso/editor-hocs';
 import { dateTimeModel } from '@eventespresso/model';
-import { isModelEntityOfModel } from '@eventespresso/validators';
-import classNames from 'classnames';
-import { compose, ifCondition } from '@wordpress/compose';
 
 /**
  * Internal dependencies
@@ -19,7 +22,6 @@ import { compose, ifCondition } from '@wordpress/compose';
 import EditorDateEntityDetails from './editor-date-entity-details';
 import EditorDateEntityActionsMenu
 	from '../actions-menu/editor-date-entity-actions-menu';
-import { withEditorEventEntity } from '../../../hocs';
 
 const { getBackgroundColorClass, getDateTimeStatusTextLabel } = dateTimeModel;
 
@@ -117,12 +119,7 @@ class EditorDateEntityGridItem extends Component {
 }
 
 export default compose( [
-	ifCondition(
-		( { dateEntity } ) => isModelEntityOfModel(
-			dateEntity,
-			'datetime'
-		)
-	),
-	withEditorEventEntity,
+	ifValidDateEntity,
+	withEventVenueEntity,
 	withEntityPaperFrame,
 ] )( EditorDateEntityGridItem );

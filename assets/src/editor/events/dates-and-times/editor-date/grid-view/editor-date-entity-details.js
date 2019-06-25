@@ -1,18 +1,28 @@
 /**
  * External imports
  */
+import classNames from 'classnames';
 import { Dashicon, Tooltip } from '@wordpress/components';
+import { compose } from '@wordpress/compose';
 import { Component } from '@wordpress/element';
-import { EntityDetailsPanel, InlineEditInput } from '@eventespresso/components';
-import { routes } from '@eventespresso/eejs';
 import { addQueryArgs } from '@wordpress/url';
+import { EntityDetailsPanel, InlineEditInput } from '@eventespresso/components';
+import {
+	ifValidDateEntity,
+	withEventVenueEntity,
+} from '@eventespresso/editor-hocs';
+import { routes } from '@eventespresso/eejs';
 import { __ } from '@eventespresso/i18n';
 import { dateTimeModel } from '@eventespresso/model';
 import { isModelEntityOfModel } from '@eventespresso/validators';
-import classNames from 'classnames';
 
 const { MODEL_NAME: DATETIME } = dateTimeModel;
-const { ADMIN_ROUTES, ADMIN_ROUTE_ACTION_DEFAULT, getAdminUrl } = routes;
+const {
+	ADMIN_ROUTES,
+	ADMIN_ROUTE_ACTIONS,
+	ADMIN_ROUTE_ACTION_DEFAULT,
+	getAdminUrl,
+} = routes;
 /**
  * EditorDateEntityDetails
  *
@@ -89,37 +99,47 @@ class EditorDateEntityDetails extends Component {
 	 * venueName
 	 *spco-display-event-questions-lnk
 	 * @function
-	 * @param {Object} dateEntity    model object defining the Event Date
+	 * @param {Object} venueEntity model object defining the Event Date Venue
 	 * @param {boolean} showVenue
-	 * @return {string}    venue name
+	 * @return {string} edit venue link
 	 */
-	venueName = ( dateEntity, showVenue ) => {
-		const link = 'http://local.wordpress.test/wp-admin/admin.php?page=espresso_venues&action=edit&post=871&edit_nonce=32f75831c2&return=edit';
-		return showVenue ?
-			(
-				<h3 className="ee-editor-date-location-div">
-					<Tooltip
-						text={ __(
-							'venue editor opens in a new window',
-							'event_espresso',
-						) }
+	venueName = ( venueEntity, showVenue ) => {
+		if ( ! venueEntity || ! showVenue ) {
+			return '';
+		}
+		const editVenueUrl = addQueryArgs(
+			getAdminUrl(
+				ADMIN_ROUTES.VENUES,
+				ADMIN_ROUTE_ACTIONS.VENUES.EDIT
+			),
+			{
+				post: venueEntity.id,
+				return: 'edit',
+			}
+		);
+		return (
+			<h3 className="ee-editor-date-location-div">
+				<Tooltip
+					text={ __(
+						'venue editor opens in a new window',
+						'event_espresso',
+					) }
+				>
+					<a
+						href={ editVenueUrl }
+						className="ee-editor-date-edit-venue-link"
+						target="_blank"
+						rel="noopener noreferrer"
 					>
-						<a
-							href={ link }
-							className="ee-editor-date-edit-venue-link"
-							target="_blank"
-							rel="noopener noreferrer"
-						>
-							<Dashicon icon="admin-home" size={ 16 } />
-							<span className="ee-editor-date-venue-name-span">
-								{ 'Green Water Resort' }
-							</span>
-							<Dashicon icon="external" size={ 12 } />
-						</a>
-					</Tooltip>
-				</h3>
-			) :
-			'';
+						<Dashicon icon="admin-home" size={ 16 } />
+						<span className="ee-editor-date-venue-name-span">
+							{ venueEntity.name }
+						</span>
+						<Dashicon icon="external" size={ 12 } />
+					</a>
+				</Tooltip>
+			</h3>
+		);
 	};
 
 	/**
@@ -248,17 +268,20 @@ class EditorDateEntityDetails extends Component {
 	};
 
 	render() {
-		const { eventEntity, dateEntity } = this.props;
+		const { eventEntity, dateEntity, venueEntity } = this.props;
 		const { showDesc = 'excerpt', showVenue = true } = this.props;
-		return isModelEntityOfModel( dateEntity, DATETIME ) ? (
+		return (
 			<div className={ 'ee-editor-date-details-wrapper-div' }>
 				{ this.dateName( dateEntity ) }
 				{ this.description( dateEntity, showDesc ) }
-				{ this.venueName( dateEntity, showVenue ) }
+				{ this.venueName( venueEntity, showVenue ) }
 				{ this.dateSoldReservedCapacity( eventEntity, dateEntity ) }
 			</div>
-		) : null;
+		);
 	}
 }
 
-export default EditorDateEntityDetails;
+export default compose( [
+	ifValidDateEntity,
+	withEventVenueEntity,
+] )( EditorDateEntityDetails );
