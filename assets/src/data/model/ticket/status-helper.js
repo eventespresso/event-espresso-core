@@ -30,7 +30,8 @@ const assertTicketEntity = ( TicketEntity ) => {
  */
 export const isOnSale = ( TicketEntity, includeArchived = false ) => {
 	return (
-		includeArchived || ( ! includeArchived && ! isArchived( TicketEntity ) )
+		( includeArchived && assertTicketEntity( TicketEntity ) ) ||
+		( ! includeArchived && ! isArchived( TicketEntity ) )
 	) &&
 	TicketEntity.startDate.diffNow() < 0 &&
 	TicketEntity.endDate.diffNow() > 0;
@@ -44,7 +45,8 @@ export const isOnSale = ( TicketEntity, includeArchived = false ) => {
  */
 export const isExpired = ( TicketEntity, includeArchived = false ) => {
 	return (
-		includeArchived || ( ! includeArchived && ! isArchived( TicketEntity ) )
+		( includeArchived && ! assertTicketEntity( TicketEntity ) ) ||
+		( ! includeArchived && isArchived( TicketEntity ) )
 	) &&
 	TicketEntity.endDate.diffNow() < 0;
 };
@@ -57,7 +59,8 @@ export const isExpired = ( TicketEntity, includeArchived = false ) => {
  */
 export const isSoldOut = ( TicketEntity, includeArchived = false ) => {
 	if (
-		includeArchived || ( ! includeArchived && ! isArchived( TicketEntity ) )
+		( includeArchived && ! assertTicketEntity( TicketEntity ) ) ||
+		( ! includeArchived && isArchived( TicketEntity ) )
 	) {
 		return false;
 	}
@@ -75,7 +78,8 @@ export const isSoldOut = ( TicketEntity, includeArchived = false ) => {
  */
 export const isPending = ( TicketEntity, includeArchived = false ) => {
 	return (
-		includeArchived || ( ! includeArchived && ! isArchived( TicketEntity ) )
+		( includeArchived && assertTicketEntity( TicketEntity ) ) ||
+		( ! includeArchived && ! isArchived( TicketEntity ) )
 	) &&
 	TicketEntity.startDate.diffNow() > 0;
 };

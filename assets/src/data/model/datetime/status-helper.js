@@ -30,7 +30,8 @@ const assertDateTimeEntity = ( DateTimeEntity ) => {
  */
 export const isActive = ( DateTimeEntity, includeTrashed = false ) => {
 	return (
-		includeTrashed || ( ! includeTrashed && ! isTrashed( DateTimeEntity ) )
+		( includeTrashed && assertDateTimeEntity( DateTimeEntity ) ) ||
+		( ! includeTrashed && ! isTrashed( DateTimeEntity ) )
 	) &&
 	DateTimeEntity.start.diffNow().asSeconds() < 0 &&
 	DateTimeEntity.end.diffNow().asSeconds() > 0;
@@ -44,7 +45,8 @@ export const isActive = ( DateTimeEntity, includeTrashed = false ) => {
  */
 export const isExpired = ( DateTimeEntity, includeTrashed = false ) => {
 	return (
-		includeTrashed || ( ! includeTrashed && ! isTrashed( DateTimeEntity ) )
+		( includeTrashed && assertDateTimeEntity( DateTimeEntity ) ) ||
+		( ! includeTrashed && ! isTrashed( DateTimeEntity ) )
 	) &&
 	DateTimeEntity.end.diffNow().asSeconds() < 0;
 };
@@ -57,7 +59,8 @@ export const isExpired = ( DateTimeEntity, includeTrashed = false ) => {
  */
 export const isRecentlyExpired = ( DateTimeEntity, includeTrashed = false ) => {
 	return (
-		includeTrashed || ( ! includeTrashed && ! isTrashed( DateTimeEntity ) )
+		( includeTrashed && assertDateTimeEntity( DateTimeEntity ) ) ||
+		( ! includeTrashed && ! isTrashed( DateTimeEntity ) )
 	) &&
 	DateTimeEntity.end.diffNow().asSeconds() < 0 &&
 	DateTimeEntity.end.diffNow().asSeconds() > ( MONTH_IN_SECONDS * -1 );
@@ -71,7 +74,8 @@ export const isRecentlyExpired = ( DateTimeEntity, includeTrashed = false ) => {
  */
 export const isSoldOut = ( DateTimeEntity, includeTrashed = false ) => {
 	if (
-		includeTrashed || ( ! includeTrashed && ! isTrashed( DateTimeEntity ) )
+		( includeTrashed && ! assertDateTimeEntity( DateTimeEntity ) ) ||
+		( ! includeTrashed && isTrashed( DateTimeEntity ) )
 	) {
 		return false;
 	}
@@ -88,7 +92,8 @@ export const isSoldOut = ( DateTimeEntity, includeTrashed = false ) => {
  */
 export const isUpcoming = ( DateTimeEntity, includeTrashed = false ) => {
 	return (
-		includeTrashed || ( ! includeTrashed && ! isTrashed( DateTimeEntity ) )
+		( includeTrashed && assertDateTimeEntity( DateTimeEntity ) ) ||
+		( ! includeTrashed && ! isTrashed( DateTimeEntity ) )
 	) &&
 	DateTimeEntity.start.diffNow().asSeconds() > 0;
 };
