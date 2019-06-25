@@ -161,6 +161,7 @@ export const status = ( DateTimeEntity ) => {
 	// if ( isPostponed( DateTimeEntity ) ) {
 	// 	return DATETIME_STATUS_ID.POSTPONED;
 	// }
+	assertDateTimeEntity( DateTimeEntity );
 	return DATETIME_STATUS_ID.INACTIVE;
 };
 
