@@ -474,8 +474,8 @@ const TicketAssignmentsManagerModal = ( {
 					if ( dateCount > 1 ) {
 						rowData.push( dateHeader( eventDate ) );
 					}
-					const dateTicketEntities = ticketEntitiesByDateIds.current[ eventDate.id ] ?
-						ticketEntitiesByDateIds.current[ eventDate.id ] :
+					const dateTicketEntities = ticketEntitiesByDateIds[ eventDate.id ] ?
+						ticketEntitiesByDateIds[ eventDate.id ] :
 						[];
 					ticketEntities.forEach( ( ticket ) => {
 						warning(
@@ -692,13 +692,19 @@ export default compose( [
 					ticket,
 					'datetime'
 				).length || 0;
-				// no need to set dtmProps.ticketEntitiesByDateIds here as
+				// no need to set ticketEntitiesByDateIds here as
 				// those will already have been setup for all dates.
 			}
 		} );
 		return dtmProps;
 	} ),
-	( WrappedComponent ) => ( { assignmentCounts, entities: dateEntities, ticketEntities, ...otherProps } ) => {
+	( WrappedComponent ) => ( {
+		assignmentCounts,
+		entities: dateEntities,
+		ticketEntities,
+		ticketEntitiesByDateIds,
+		...otherProps
+	} ) => {
 		const [ assignedState, setAssignedState ] = useState(
 			{ assigned: {}, removed: {} }
 		);
@@ -718,6 +724,7 @@ export default compose( [
 			assignmentCounts={ updatedAssignmentCounts }
 			entities={ dateEntities }
 			ticketEntities={ ticketEntities }
+			ticketEntitiesByDateIds={ ticketEntitiesByDateIds.current }
 			assignedState={ assignedState }
 			setAssignedState={ setAssignedState }
 			hasNoAssignments={ hasNoAssignments }
