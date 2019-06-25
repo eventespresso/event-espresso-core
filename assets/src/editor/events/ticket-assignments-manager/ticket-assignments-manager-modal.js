@@ -27,7 +27,7 @@ import * as handler from './ticket-assignments-handler';
 import './ticket-assignments-manager.css';
 import { sortDateEntitiesList } from '../dates-and-times/editor-date/filter-bar/date-entities-list-filter-utils';
 import { withEditorDateEntities, withEditorTicketEntities } from '../hocs';
-import { useCountsManager } from './hooks';
+import { useAssignmentsCalculator } from './hooks';
 
 const noIndex = -1;
 
@@ -666,61 +666,31 @@ export default compose( [
 		// initial setup based on incoming entity
 		if ( isModelEntityOfModel( dateEntity, 'datetime' ) ) {
 			dtmProps.entities = [ dateEntity ];
-			// let's update the assignmentCounts for this dateEntity and all it's related
-			// ticket Entities (if necessary)
-			if ( typeof assignmentCounts.current.dates[ dateEntity.id ] === 'undefined' ) {
-				const relatedTickets = getRelatedEntities( dateEntity, 'ticket' );
-				dtmProps.ticketEntitiesByDateIds[ dateEntity.id ] = relatedTickets;
-				assignmentCounts.current.dates[ dateEntity.id ] = relatedTickets.length || 0;
-				if ( relatedTickets.length ) {
-					relatedTickets.forEach( ( ticket ) => {
-						assignmentCounts.current.tickets[ ticket.id ] = getRelatedEntities(
-							ticket,
-							'datetime'
-						).length;
-					} );
-				} else {
-					assignmentCounts.current.dates[ dateEntity.id ] = 0;
-				}
-			}
 		} else if ( isModelEntityOfModel( ticketEntity, 'ticket' ) ) {
 			dtmProps.entities = sortDateEntitiesList( dateEntities );
 			dtmProps.ticketEntities = [ ticketEntity ];
-
-			// let's update the assignmentCounts for this ticketEntity and all it's related
-			// date entities ( if necessary )
-			if ( typeof assignmentCounts.current.tickets[ ticketEntity.id ] === 'undefined' ) {
-				const relatedDates = getRelatedEntities( ticketEntity, 'datetime' );
-				assignmentCounts.current.tickets[ ticketEntity.id ] = relatedDates.length || 0;
-				if ( relatedDates.length ) {
-					relatedDates.forEach( ( date ) => {
-						const relatedTickets = getRelatedEntities( date, 'ticket' );
-						dtmProps.ticketEntitiesByDateIds[ date.id ] = relatedTickets;
-						assignmentCounts.current.dates[ date.id ] = relatedTickets.length;
-					} );
-				}
-			}
-		} else if ( Array.isArray( dateEntities ) && Array.isArray( ticketEntities ) ) {
+		} else {
 			dtmProps.entities = sortDateEntitiesList( dateEntities );
-			// need to setup the assignmentCounts for all the tickets and all the dates!
-			dateEntities.forEach( ( date ) => {
-				if ( typeof assignmentCounts.current.dates[ date.id ] === 'undefined' ) {
-					const relatedTickets = getRelatedEntities( date, 'ticket' );
-					dtmProps.ticketEntitiesByDateIds[ date.id ] = relatedTickets;
-					assignmentCounts.current.dates[ date.id ] = relatedTickets.length || 0;
-				}
-			} );
-			ticketEntities.forEach( ( ticket ) => {
-				if ( typeof assignmentCounts.current.tickets[ ticket.id ] === 'undefined' ) {
-					assignmentCounts.current.tickets[ ticket.id ] = getRelatedEntities(
-						ticket,
-						'datetime'
-					).length || 0;
-					// no need to set dtmProps.ticketEntitiesByDateIds here as
-					// those will already have been setup for all dates.
-				}
-			} );
 		}
+
+		// need to setup the assignmentCounts for all the tickets and all the dates!
+		dtmProps.entities.forEach( ( date ) => {
+			if ( typeof assignmentCounts.current.dates[ date.id ] === 'undefined' ) {
+				const relatedTickets = getRelatedEntities( date, 'ticket' );
+				dtmProps.ticketEntitiesByDateIds[ date.id ] = relatedTickets;
+				assignmentCounts.current.dates[ date.id ] = relatedTickets.length || 0;
+			}
+		} );
+		dtmProps.ticketEntities.forEach( ( ticket ) => {
+			if ( typeof assignmentCounts.current.tickets[ ticket.id ] === 'undefined' ) {
+				assignmentCounts.current.tickets[ ticket.id ] = getRelatedEntities(
+					ticket,
+					'datetime'
+				).length || 0;
+				// no need to set dtmProps.ticketEntitiesByDateIds here as
+				// those will already have been setup for all dates.
+			}
+		} );
 		return dtmProps;
 	} ),
 	( WrappedComponent ) => ( { assignmentCounts, entities: dateEntities, ticketEntities, ...otherProps } ) => {
@@ -731,7 +701,7 @@ export default compose( [
 			hasNoAssignments,
 			noAssignmentsMessage,
 			updatedAssignmentCounts,
-		] = useCountsManager(
+		] = useAssignmentsCalculator(
 			dateEntities,
 			ticketEntities,
 			assignmentCounts.current,
