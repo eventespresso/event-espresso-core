@@ -2,6 +2,7 @@
  * Internal imports
  */
 import { ACTION_TYPES } from './action-types';
+
 const { entities: types } = ACTION_TYPES;
 
 /**
