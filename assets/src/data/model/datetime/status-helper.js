@@ -25,42 +25,54 @@ const assertDateTimeEntity = ( DateTimeEntity ) => {
 /**
  * @function
  * @param {Object} DateTimeEntity model object
+ * @param {boolean} includeTrashed if true will not filter out trashed entities
  * @return {boolean} true if event date is occurring NOW
  */
-export const isActive = ( DateTimeEntity ) => {
-	return ! isTrashed( DateTimeEntity ) &&
-		DateTimeEntity.start.diffNow().asSeconds() < 0 &&
-		DateTimeEntity.end.diffNow().asSeconds() > 0;
+export const isActive = ( DateTimeEntity, includeTrashed = false ) => {
+	return (
+		includeTrashed || ( ! includeTrashed && ! isTrashed( DateTimeEntity ) )
+	) &&
+	DateTimeEntity.start.diffNow().asSeconds() < 0 &&
+	DateTimeEntity.end.diffNow().asSeconds() > 0;
 };
 
 /**
  * @function
  * @param {Object} DateTimeEntity model object
+ * @param {boolean} includeTrashed if true will not filter out trashed entities
  * @return {boolean} true if end date is in the past
  */
-export const isExpired = ( DateTimeEntity ) => {
-	return ! isTrashed( DateTimeEntity ) &&
-		DateTimeEntity.end.diffNow().asSeconds() < 0;
+export const isExpired = ( DateTimeEntity, includeTrashed = false ) => {
+	return (
+		includeTrashed || ( ! includeTrashed && ! isTrashed( DateTimeEntity ) )
+	) &&
+	DateTimeEntity.end.diffNow().asSeconds() < 0;
 };
 
 /**
  * @function
  * @param {Object} DateTimeEntity model object
+ * @param {boolean} includeTrashed if true will not filter out trashed entities
  * @return {boolean} true if end date is in the past
  */
-export const isRecentlyExpired = ( DateTimeEntity ) => {
-	return ! isTrashed( DateTimeEntity ) &&
-		DateTimeEntity.end.diffNow().asSeconds() < 0 &&
-		DateTimeEntity.end.diffNow().asSeconds() > ( MONTH_IN_SECONDS * -1 );
+export const isRecentlyExpired = ( DateTimeEntity, includeTrashed = false ) => {
+	return (
+		includeTrashed || ( ! includeTrashed && ! isTrashed( DateTimeEntity ) )
+	) &&
+	DateTimeEntity.end.diffNow().asSeconds() < 0 &&
+	DateTimeEntity.end.diffNow().asSeconds() > ( MONTH_IN_SECONDS * -1 );
 };
 
 /**
  * @function
  * @param {Object} DateTimeEntity model object
+ * @param {boolean} includeTrashed if true will not filter out trashed entities
  * @return {boolean} true if tickets sold meets or exceeds registration limit
  */
-export const isSoldOut = ( DateTimeEntity ) => {
-	if ( isTrashed( DateTimeEntity ) ) {
+export const isSoldOut = ( DateTimeEntity, includeTrashed = false ) => {
+	if (
+		includeTrashed || ( ! includeTrashed && ! isTrashed( DateTimeEntity ) )
+	) {
 		return false;
 	}
 	const cap = DateTimeEntity.regLimit;
@@ -71,11 +83,14 @@ export const isSoldOut = ( DateTimeEntity ) => {
 /**
  * @function
  * @param {Object} DateTimeEntity model object
+ * @param {boolean} includeTrashed if true will not filter out trashed entities
  * @return {boolean} true if start date is in the future
  */
-export const isUpcoming = ( DateTimeEntity ) => {
-	return ! isTrashed( DateTimeEntity ) &&
-		DateTimeEntity.start.diffNow().asSeconds() > 0;
+export const isUpcoming = ( DateTimeEntity, includeTrashed = false ) => {
+	return (
+		includeTrashed || ( ! includeTrashed && ! isTrashed( DateTimeEntity ) )
+	) &&
+	DateTimeEntity.start.diffNow().asSeconds() > 0;
 };
 
 /**

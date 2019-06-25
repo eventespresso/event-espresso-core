@@ -25,31 +25,40 @@ const assertTicketEntity = ( TicketEntity ) => {
 /**
  * @function
  * @param {Object} TicketEntity model object
+ * @param {boolean} includeArchived if true will not filter out archived entities
  * @return {boolean} true if ticket is currently available for purchase
  */
-export const isOnSale = ( TicketEntity ) => {
-	return ! isArchived( TicketEntity ) &&
-		TicketEntity.startDate.diffNow() < 0 &&
-		TicketEntity.endDate.diffNow() > 0;
+export const isOnSale = ( TicketEntity, includeArchived = false ) => {
+	return (
+		includeArchived || ( ! includeArchived && ! isArchived( TicketEntity ) )
+	) &&
+	TicketEntity.startDate.diffNow() < 0 &&
+	TicketEntity.endDate.diffNow() > 0;
 };
 
 /**
  * @function
  * @param {Object} TicketEntity model object
+ * @param {boolean} includeArchived if true will not filter out archived entities
  * @return {boolean} true if ticket can no longer be purchased
  */
-export const isExpired = ( TicketEntity ) => {
-	return ! isArchived( TicketEntity ) &&
-		TicketEntity.endDate.diffNow() < 0;
+export const isExpired = ( TicketEntity, includeArchived = false ) => {
+	return (
+		includeArchived || ( ! includeArchived && ! isArchived( TicketEntity ) )
+	) &&
+	TicketEntity.endDate.diffNow() < 0;
 };
 
 /**
  * @function
  * @param {Object} TicketEntity model object
+ * @param {boolean} includeArchived if true will not filter out archived entities
  * @return {boolean} true if tickets sold meets or exceeds available quantity
  */
-export const isSoldOut = ( TicketEntity ) => {
-	if ( isArchived( TicketEntity ) ) {
+export const isSoldOut = ( TicketEntity, includeArchived = false ) => {
+	if (
+		includeArchived || ( ! includeArchived && ! isArchived( TicketEntity ) )
+	) {
 		return false;
 	}
 	const qty = TicketEntity.qty;
@@ -60,12 +69,15 @@ export const isSoldOut = ( TicketEntity ) => {
 /**
  * @function
  * @param {Object} TicketEntity model object
+ * @param {boolean} includeArchived if true will not filter out archived entities
  * @return {boolean} 	true if ticket is not yet available for purchase,
  * 						but will be at some date in the future
  */
-export const isPending = ( TicketEntity ) => {
-	return ! isArchived( TicketEntity ) &&
-		TicketEntity.startDate.diffNow() > 0;
+export const isPending = ( TicketEntity, includeArchived = false ) => {
+	return (
+		includeArchived || ( ! includeArchived && ! isArchived( TicketEntity ) )
+	) &&
+	TicketEntity.startDate.diffNow() > 0;
 };
 
 /**
