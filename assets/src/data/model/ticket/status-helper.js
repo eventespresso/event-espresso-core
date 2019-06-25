@@ -45,8 +45,8 @@ export const isOnSale = ( TicketEntity, includeArchived = false ) => {
  */
 export const isExpired = ( TicketEntity, includeArchived = false ) => {
 	return (
-		( includeArchived && ! assertTicketEntity( TicketEntity ) ) ||
-		( ! includeArchived && isArchived( TicketEntity ) )
+		( includeArchived && assertTicketEntity( TicketEntity ) ) ||
+		( ! includeArchived && ! isArchived( TicketEntity ) )
 	) &&
 	TicketEntity.endDate.diffNow() < 0;
 };
