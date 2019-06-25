@@ -1,7 +1,7 @@
 /**
  * External imports
  */
-import { DateTime } from '@eventespresso/value-objects';
+import { ServerDateTime } from '@eventespresso/value-objects';
 import { PRIVATE_PROPERTIES, SAVE_STATE } from '../constants';
 import { isCuid } from 'cuid';
 import { isArray } from 'lodash';
@@ -289,7 +289,7 @@ describe( 'createEntityFactory()', () => {
 						it( 'event.' + testProperty + ' is instance of ' +
 							'DateTime', () => {
 							expect( event[ testProperty ] )
-								.toBeInstanceOf( DateTime );
+								.toBeInstanceOf( ServerDateTime );
 						} );
 					} );
 					it( 'event.visibleOnRendered is a string and has ' +
@@ -360,7 +360,7 @@ describe( 'createEntityFactory()', () => {
 			if ( isArray( canonicalProp ) ) {
 				const [ property, subProp ] = canonicalProp;
 				if ( subProp === 'date' ) {
-					expectedValue = DateTime.fromISO(
+					expectedValue = ServerDateTime.fromISO(
 						expectedEventData[ property ]
 					);
 				} else {
@@ -649,17 +649,75 @@ describe( 'createEntityFactory()', () => {
 		const factory = createEntityFactory(
 			'event',
 			EventSchema.schema,
-			[ 'EVT_ID' ]
+			[ 'EVT' ]
 		);
-		it( 'returns a new instance of BaseEntity', () => {
-			const entity = factory.fromExisting( EventResponse );
-			const newEntity = entity.clone;
-			expect( newEntity ).not.toBe( entity );
+		let entity;
+		beforeEach( () => {
+			entity = factory.fromExisting( EventResponse );
 		} );
-		it( 'returns a new instance that differs only in id', () => {
-			const entity = factory.fromExisting( EventResponse );
-			const newEntity = entity.clone;
-			expect( newEntity.forUpdate ).toEqual( entity.forUpdate );
+		afterEach( () => {
+			entity = null;
+		} );
+		describe( 'not keeping id of original', () => {
+			it( 'returns a new instance of BaseEntity', () => {
+				const newEntity = entity.clone();
+				expect( newEntity ).not.toBe( entity );
+			} );
+			it( 'returns a new instance that differs only in id', () => {
+				const newEntity = entity.clone();
+				expect( newEntity.forUpdate ).toEqual( entity.forUpdate );
+			} );
+			it( 'has state of new', () => {
+				const newEntity = entity.clone();
+				expect( newEntity.isNew ).toBe( true );
+			} );
+			it( 'primary key can be modified', () => {
+				const newEntity = entity.clone();
+				newEntity.id = 999;
+				expect( newEntity.id ).toEqual( 999 );
+				expect( newEntity.isNew ).toBe( true );
+			} );
+		} );
+		describe( 'keeping id of original', () => {
+			it( 'returns a new instance of BaseEntity', () => {
+				const newEntity = entity.clone( true );
+				expect( newEntity ).not.toBe( entity );
+			} );
+			it( 'returns a new instance that shares the same id as ' +
+				'original', () => {
+				const newEntity = entity.clone( true );
+				expect( newEntity.id ).toEqual( entity.id );
+			} );
+			it( 'has same state as original', () => {
+				const newEntity = entity.clone( true );
+				expect( newEntity.saveState ).toEqual( entity.saveState );
+				expect( newEntity.isClean ).toBe( true );
+			} );
+			it( 'primary key can not be modified (when save state is not ' +
+				'new)', () => {
+				const newEntity = entity.clone( true );
+				newEntity.id = 999;
+				expect( newEntity.id ).toEqual( entity.id );
+			} );
+		} );
+		describe( 'memized factory behaviour on clone', () => {
+			const dttFactory = createEntityFactory(
+				'datetime',
+				DateTimeSchema.schema,
+				[ 'DTT_EVT', 'DTT' ]
+			);
+			const dttEntity = dttFactory.fromExisting( AuthedDateTimeResponse );
+			it( 'keeps different entity factories separate', () => {
+				// first clone event entity to set the memized factory value.
+				entity.clone();
+				// next clone datetime entity
+				const dateClone = dttEntity.clone( true );
+				expect( dateClone.id ).toEqual( dttEntity.id );
+
+				//clone event again
+				const eventClone = entity.clone( true );
+				expect( eventClone.id ).toEqual( entity.id );
+			} );
 		} );
 	} );
 } );

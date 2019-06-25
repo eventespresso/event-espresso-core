@@ -20,16 +20,53 @@ import { ACTION_TYPES } from '../../actions/action-types';
 
 const { relations: types, resets: resetTypes } = ACTION_TYPES;
 const testCuid = cuid();
+
+/**
+ * Fixture is in this shape (js representation)
+ *
+ * {
+ *   datetime: {
+ *   	55: { event: [ 10, testCuid ] },
+ *   	52: { event: [ 10 ] },
+ *   	53: { event: [ 20 ] },
+ *   	54: { event: [ 30 ] },
+ *   	cuidD: { event: [ cuidE ] },
+ *   },
+ *   event: {
+ *     10: { datetime: [ 55, 52 ] },
+ *     testCuid: { datetime: [ 55 ] },
+ *     20: { datetime: [ 53 ] },
+ *     30: { datetime: [ 54 ] },
+ *     cuidE: { datetime: [ cuidD ] },
+ *   },
+ *   price: {
+ *   	200: { priceType: [ 10 ] },
+ *   },
+ *   priceType: {
+ *     10: { price: [ 200 ] }
+ *   }
+ * }
+ * @type {Map}
+ */
 const originalState = mockStateForTests.relations
 	.setIn(
-		[ 'index', 'datetimes', 55 ],
+		[ 'datetime', 55 ],
 		Map().set( 'event', Set.of( 10, testCuid ) )
 	).setIn(
-		[ 'entityMap', 'event', 10, 'datetimes' ],
+		[ 'event', 10, 'datetime' ],
 		Set.of( 52, 55 )
 	).setIn(
-		[ 'entityMap', 'event', testCuid, 'datetimes' ],
+		[ 'datetime', 52 ],
+		Map().set( 'event', Set.of( 10 ) ),
+	).setIn(
+		[ 'event', testCuid, 'datetime' ],
 		Set.of( 55 )
+	).setIn(
+		[ 'price', 200 ],
+		Map().set( 'priceType', Set.of( 10 ) )
+	).setIn(
+		[ 'priceType', 10, 'price' ],
+		Set.of( 200 )
 	);
 
 describe( normalizedReceiveAndRemoveRelations.name + '()', () => {
@@ -53,33 +90,36 @@ describe( normalizedReceiveAndRemoveRelations.name + '()', () => {
 			describe( type + ' action type', () => {
 				[
 					[
-						'correctly normalize incoming relation and return expected state',
+						'original state remains on adding same relation and ' +
+						'correctly removes existing relation',
 						'datetime',
 						'event',
 						52,
 						[ 10 ],
 						originalState,
 						originalState
-							.deleteIn( [ 'index', 'datetimes', 52 ] )
+							.deleteIn( [ 'datetime', 52 ] )
 							.setIn(
-								[ 'entityMap', 'event', 10, 'datetimes' ],
+								[ 'event', 10, 'datetime' ],
 								Set.of( 55 )
 							),
 					],
 					[
-						'correctly normalize incoming relation and return expected state' +
-						'for datetime for when index has multiple relation ids and ' +
-						'entity map does not',
-						'datetime',
-						'event',
-						55,
+						'update state correctly for new relation where one of ' +
+						'the models already exists in the state',
+						'price',
+						'ticket',
+						200,
 						[ testCuid ],
-						originalState,
 						originalState
 							.setIn(
-								[ 'index', 'datetimes', 55, 'event' ],
-								Set.of( 10 ),
-							).deleteIn( [ 'entityMap', 'event', testCuid ] ),
+								[ 'price', 200, 'ticket' ],
+								Set.of( testCuid ),
+							).setIn(
+								[ 'ticket', testCuid, 'price' ],
+								Set.of( 200 )
+							),
+						originalState,
 					],
 					[
 						'expected state for existing entities relations in state',
@@ -89,9 +129,9 @@ describe( normalizedReceiveAndRemoveRelations.name + '()', () => {
 						[ 52 ],
 						originalState,
 						originalState
-							.deleteIn( [ 'index', 'datetimes', 52 ] )
+							.deleteIn( [ 'datetime', 52 ] )
 							.setIn(
-								[ 'entityMap', 'event', 10, 'datetimes' ],
+								[ 'event', 10, 'datetime' ],
 								Set.of( 55 )
 							),
 					],
@@ -103,17 +143,17 @@ describe( normalizedReceiveAndRemoveRelations.name + '()', () => {
 						[ 60, 52 ],
 						originalState
 							.setIn(
-								[ 'index', 'datetimes', 60, 'event' ],
+								[ 'datetime', 60, 'event' ],
 								Set.of( 10 )
 							)
 							.setIn(
-								[ 'entityMap', 'event', 10, 'datetimes' ],
+								[ 'event', 10, 'datetime' ],
 								Set.of( 52, 60, 55 )
 							),
 						originalState
-							.deleteIn( [ 'index', 'datetimes', 52 ] )
+							.deleteIn( [ 'datetime', 52 ] )
 							.setIn(
-								[ 'entityMap', 'event', 10, 'datetimes' ],
+								[ 'event', 10, 'datetime' ],
 								Set.of( 55 )
 							),
 					],
@@ -168,32 +208,32 @@ describe( updateEntityIdForRelations.name + '()', () => {
 		],
 		[
 			'replaces old Id with new id',
-			[ 'events', EventEntities.d.id, 90 ],
+			[ 'event', EventEntities.d.id, 90 ],
 			originalState
-				.deleteIn( [ 'index', 'datetimes', DateTimeEntities.d.id ] )
+				.deleteIn( [ 'datetime', DateTimeEntities.d.id ] )
 				.setIn(
-					[ 'index', 'datetimes', DateTimeEntities.d.id ],
+					[ 'datetime', DateTimeEntities.d.id ],
 					Map().set( 'event', Set.of( 90 ) )
 				)
-				.deleteIn( [ 'entityMap', 'event', EventEntities.d.id ] )
+				.deleteIn( [ 'event', EventEntities.d.id ] )
 				.setIn(
-					[ 'entityMap', 'event', 90 ],
-					Map().set( 'datetimes', Set.of( DateTimeEntities.d.id ) )
+					[ 'event', 90 ],
+					Map().set( 'datetime', Set.of( DateTimeEntities.d.id ) )
 				),
 		],
 		[
 			'replaces old id with new id with normalized id',
-			[ 'events', EventEntities.d.id, '90' ],
+			[ 'event', EventEntities.d.id, '90' ],
 			originalState
-				.deleteIn( [ 'index', 'datetimes', DateTimeEntities.d.id ] )
+				.deleteIn( [ 'datetime', DateTimeEntities.d.id ] )
 				.setIn(
-					[ 'index', 'datetimes', DateTimeEntities.d.id ],
+					[ 'datetime', DateTimeEntities.d.id ],
 					Map().set( 'event', Set.of( 90 ) )
 				)
-				.deleteIn( [ 'entityMap', 'event', EventEntities.d.id ] )
+				.deleteIn( [ 'event', EventEntities.d.id ] )
 				.setIn(
-					[ 'entityMap', 'event', 90 ],
-					Map().set( 'datetimes', Set.of( DateTimeEntities.d.id ) )
+					[ 'event', 90 ],
+					Map().set( 'datetime', Set.of( DateTimeEntities.d.id ) )
 				),
 		],
 
@@ -230,19 +270,19 @@ describe( removeRelatedEntitiesForEntity.name + '()', () => {
 			'removes requested cuid',
 			[ 'events', EventEntities.d.id ],
 			originalState
-				.deleteIn( [ 'index', 'datetimes', DateTimeEntities.d.id ] )
-				.deleteIn( [ 'entityMap', 'event', EventEntities.d.id ] ),
+				.deleteIn( [ 'datetime', DateTimeEntities.d.id ] )
+				.deleteIn( [ 'event', EventEntities.d.id ] ),
 		],
 		[
 			'removes requested normalized id',
 			[ 'events', '10' ],
 			originalState
-				.deleteIn( [ 'index', 'datetimes', 52 ] )
+				.deleteIn( [ 'datetime', 52 ] )
 				.setIn(
-					[ 'index', 'datetimes', 55, 'event' ],
+					[ 'datetime', 55, 'event' ],
 					Set.of( testCuid )
 				)
-				.deleteIn( [ 'entityMap', 'event', 10 ] ),
+				.deleteIn( [ 'event', 10 ] ),
 		],
 	].forEach( ( [
 		description,
@@ -285,36 +325,43 @@ describe( 'RESET_STATE_FOR_MODEL', () => {
 	} );
 	it( 'returns expected state for model existing in state (when it would ' +
 		'clear the entire state)', () => {
-		const newState = reducer(
+		const firstClear = reducer(
 			originalState,
 			{
 				type: resetTypes.RESET_STATE_FOR_MODEL,
 				modelName: 'event',
 			}
 		);
-		expect( newState.toJS() ).toEqual( DEFAULT_CORE_STATE.relations );
+		const secondClear = reducer(
+			firstClear,
+			{
+				type: resetTypes.RESET_STATE_FOR_MODEL,
+				modelName: 'price',
+			}
+		);
+		expect( secondClear.toJS() ).toEqual( DEFAULT_CORE_STATE.relations );
 	} );
 	it( 'returns expected state for model existing in state (when there are ' +
 		'other relations in the state', () => {
 		const testState = originalState.setIn(
-			[ 'index', 'datetimes', 55 ],
+			[ 'datetime', 55 ],
 			Map().set( 'ticket', Set.of( 20, testCuid ) )
 		).setIn(
-			[ 'entityMap', 'ticket', testCuid, 'datetimes' ],
+			[ 'ticket', testCuid, 'datetime' ],
 			Set.of( 55 )
 		);
 		const expectedState = testState.deleteIn(
-			[ 'index', 'datetimes', 55, 'event' ]
+			[ 'datetime', 55, 'event' ]
 		).deleteIn(
-			[ 'index', 'datetimes', 52 ]
+			[ 'datetime', 52 ]
 		).deleteIn(
-			[ 'index', 'datetimes', 53 ]
+			[ 'datetime', 53 ]
 		).deleteIn(
-			[ 'index', 'datetimes', 54 ]
+			[ 'datetime', 54 ]
 		).deleteIn(
-			[ 'index', 'datetimes', DateTimeEntities.d.id ]
+			[ 'datetime', DateTimeEntities.d.id ]
 		).deleteIn(
-			[ 'entityMap', 'event' ]
+			[ 'event' ]
 		);
 		const newState = reducer(
 			testState,

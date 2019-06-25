@@ -116,12 +116,39 @@ abstract class AssetManager implements AssetManagerInterface
         $asset = new JavascriptAsset(
             $handle,
             $source,
-            $dependencies,
+            array_unique($dependencies),
             $load_in_footer,
             $this->domain
         );
         $this->assets->add($asset, $handle);
         return $asset;
+    }
+
+
+    /**
+     * Used to register a javascript asset where everything is dynamically derived from the given handle.
+     *
+     * @param string $handle
+     * @param string|array  $extra_dependencies
+     * @return JavascriptAsset
+     * @throws DuplicateCollectionIdentifierException
+     * @throws InvalidDataTypeException
+     * @throws InvalidEntityException
+     */
+    public function addJs($handle, $extra_dependencies = [])
+    {
+        $dependencies = $this->registry->getJsDependencies(
+            $this->domain->assetNamespace(),
+            $handle
+        );
+        $dependencies = ! empty( $extra_dependencies )
+            ? array_merge(( array ) $extra_dependencies, $dependencies)
+            : $dependencies;
+        return $this->addJavascript(
+            $handle,
+            $this->registry->getJsUrl($this->domain->assetNamespace(), $handle),
+            $dependencies
+        );
     }
 
 
@@ -173,12 +200,39 @@ abstract class AssetManager implements AssetManagerInterface
         $asset = new StylesheetAsset(
             $handle,
             $source,
-            $dependencies,
+            array_unique($dependencies),
             $this->domain,
             $media
         );
         $this->assets->add($asset, $handle);
         return $asset;
+    }
+
+
+    /**
+     * Used to register a css asset where everything is dynamically derived from the given handle.
+     *
+     * @param string $handle
+     * @param string|array  $extra_dependencies
+     * @return StylesheetAsset
+     * @throws DuplicateCollectionIdentifierException
+     * @throws InvalidDataTypeException
+     * @throws InvalidEntityException
+     */
+    public function addCss($handle, $extra_dependencies = [])
+    {
+        $dependencies = $this->registry->getCssDependencies(
+            $this->domain->assetNamespace(),
+            $handle
+        );
+        $dependencies = ! empty( $extra_dependencies )
+            ? array_merge(( array ) $extra_dependencies, $dependencies)
+            : $dependencies;
+        return $this->addStylesheet(
+            $handle,
+            $this->registry->getCssUrl($this->domain->assetNamespace(), $handle),
+            $dependencies
+        );
     }
 
 

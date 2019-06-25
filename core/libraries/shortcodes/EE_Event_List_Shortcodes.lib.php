@@ -87,6 +87,7 @@ class EE_Event_List_Shortcodes extends EE_Shortcodes
             'primary_registration_list',
             'primary_registration_details',
             'event_author',
+            'organization',
         );
         $template = $this->_data['template'];
         $data = $this->_data['data'];
@@ -121,6 +122,7 @@ class EE_Event_List_Shortcodes extends EE_Shortcodes
             'recipient_details',
             'recipient_list',
             'venue',
+            'organization',
         );
         $template = is_array($this->_data['template']) && isset($this->_data['template']['event_list'])
             ? $this->_data['template']['event_list'] : $this->_extra_data['template']['event_list'];

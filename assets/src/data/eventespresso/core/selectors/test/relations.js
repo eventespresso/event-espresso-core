@@ -57,25 +57,6 @@ describe( 'getRelationIdsForEntityRelation()', () => {
 			'datetime'
 		) ).toEqual( [ 52 ] );
 	} );
-	it( 'returns expected array for the given entity and relation when ' +
-		'the modelName exists in both entityMap and index but the relation ' +
-		'is in the index', () => {
-		const testState = {
-			...mockStateForTests,
-			relations: mockStateForTests.relations.setIn(
-				[ 'entityMap', 'datetime' ],
-				Map().set( 52, Map().set( 'foo', Set.of( 100, 200 ) ) )
-			).setIn(
-				[ 'index', 'datetimes', 52, 'ticket' ],
-				Set.of( 10, 20, 30 )
-			),
-		};
-		expect( getRelationIdsForEntityRelation(
-			testState,
-			DateTimeEntities.a,
-			'ticket'
-		) ).toEqual( [ 10, 20, 30 ] );
-	} );
 	it( 'returns cached copy when state has not changed for the given ' +
 		'query', () => {
 		const testResult = getRelationIdsForEntityRelation(
@@ -98,10 +79,9 @@ describe( 'getRelationIdsForEntityRelation()', () => {
 		const modifiedState = { ...mockStateForTests };
 		modifiedState.relations = modifiedState.relations.setIn(
 			[
-				'entityMap',
 				'event',
 				10,
-				'datetimes',
+				'datetime',
 			],
 			Set.of( 52, 88 )
 		);
@@ -175,10 +155,9 @@ describe( 'getRelatedEntities()', () => {
 		const modifiedStateA = { ...mockStateForTests };
 		modifiedStateA.relations = modifiedStateA.relations.setIn(
 			[
-				'entityMap',
 				'event',
 				10,
-				'datetimes',
+				'datetime',
 			],
 			Set.of( 52, 88 )
 		);
@@ -219,7 +198,7 @@ describe( 'Dirty relations tests', () => {
 				subState.set(
 					'index',
 					Map().setIn(
-						[ 'datetimes', 20 ],
+						[ 'datetime', 20 ],
 						fromJS( {
 							event: { delete: Set( [ 10 ] ) },
 							ticket: {
@@ -235,7 +214,7 @@ describe( 'Dirty relations tests', () => {
 						'event',
 						Map().set(
 							10,
-							fromJS( { datetimes: Set( [ 20 ] ) } ),
+							fromJS( { datetime: Set( [ 20 ] ) } ),
 						)
 					)
 				);
@@ -243,7 +222,7 @@ describe( 'Dirty relations tests', () => {
 					[ 'delete', 'ticket' ],
 					Map().set(
 						50,
-						fromJS( { datetimes: Set( [ 20 ] ) } )
+						fromJS( { datetime: Set( [ 20 ] ) } )
 					)
 				);
 				subState.set(
@@ -252,7 +231,7 @@ describe( 'Dirty relations tests', () => {
 						'ticket',
 						Map().set(
 							60,
-							fromJS( { datetimes: Set( [ 20 ] ) } )
+							fromJS( { datetime: Set( [ 20 ] ) } )
 						)
 					)
 				);
@@ -275,7 +254,7 @@ describe( 'Dirty relations tests', () => {
 				originalState,
 				'ticket',
 			) ).toEqual( {
-				60: { datetimes: [ 20 ] },
+				60: { datetime: [ 20 ] },
 			} );
 		} );
 		it( 'returns expected object when there are records for the given ' +
@@ -284,7 +263,7 @@ describe( 'Dirty relations tests', () => {
 				originalState,
 				'datetime'
 			) ).toEqual( {
-				20: { tickets: [ 60 ] },
+				20: { ticket: [ 60 ] },
 			} );
 		} );
 		it( 'returns cached copy when state has not changed', () => {
@@ -311,7 +290,7 @@ describe( 'Dirty relations tests', () => {
 					[
 						'ticket',
 						60,
-						'datetimes',
+						'datetime',
 					],
 					Set.of( 20, 80 )
 				)
@@ -322,7 +301,7 @@ describe( 'Dirty relations tests', () => {
 			);
 			expect( modifiedResult ).not.toBe( testResult );
 			expect( modifiedResult ).toEqual( {
-				60: { datetimes: [ 20, 80 ] },
+				60: { datetime: [ 20, 80 ] },
 			} );
 		} );
 	} );
@@ -341,7 +320,7 @@ describe( 'Dirty relations tests', () => {
 				originalState,
 				'event',
 			) ).toEqual( {
-				10: { datetimes: [ 20 ] },
+				10: { datetime: [ 20 ] },
 			} );
 		} );
 		it( 'returns expected object when there are records for the given ' +
@@ -350,7 +329,7 @@ describe( 'Dirty relations tests', () => {
 				originalState,
 				'datetime'
 			) ).toEqual( {
-				20: { events: [ 10 ], tickets: [ 50 ] },
+				20: { event: [ 10 ], ticket: [ 50 ] },
 			} );
 		} );
 		it( 'returns cached copy when state has not changed', () => {
@@ -377,7 +356,7 @@ describe( 'Dirty relations tests', () => {
 					[
 						'event',
 						10,
-						'datetimes',
+						'datetime',
 					],
 					Set.of( 20, 80 )
 				)
@@ -388,7 +367,7 @@ describe( 'Dirty relations tests', () => {
 			);
 			expect( modifiedResult ).not.toBe( testResult );
 			expect( modifiedResult ).toEqual( {
-				10: { datetimes: [ 20, 80 ] },
+				10: { datetime: [ 20, 80 ] },
 			} );
 		} );
 	} );
@@ -453,24 +432,14 @@ describe( 'countRelationModelsIndexedForEntity()', () => {
 		);
 		const modifiedState = { ...mockStateForTests };
 		modifiedState.relations = modifiedState.relations.setIn(
-			[
-				'index',
-				'datetimes',
-				52,
-				'ticket',
-			],
-			fromJS( { 44: { ticket: [ 30, 20 ] } } )
+			[ 'datetime', 44 ],
+			Map().set( 'ticket', Set.of( 30, 20 ) )
 		).setIn(
-			[
-				'entityMap',
-				'ticket',
-				fromJS(
-					{
-						30: { datetimes: [ 52 ] },
-						20: { datetimes: [ 52 ] },
-					}
-				),
-			]
+			[ 'ticket', 30 ],
+			Map().set( 'datetime', Set.of( 44 ) )
+		).setIn(
+			[ 'ticket', 20 ],
+			Map().set( 'datetime', Set.of( 44 ) )
 		);
 		const modifiedStateResult = countRelationModelsIndexedForEntity(
 			modifiedState,
@@ -492,8 +461,8 @@ describe( 'countRelationModelsIndexedForEntity()', () => {
 			expect( countRelationModelsIndexedForEntity(
 				modifiedState,
 				'datetime',
-				'52',
-			) ).toBe( 2 );
+				'44',
+			) ).toBe( 1 );
 		} );
 	} );
 } );
@@ -518,11 +487,11 @@ describe( 'getRelatedEntitiesForIds()', () => {
 		const testState = {
 			...mockStateForTests,
 			relations: mockStateForTests.relations.setIn(
-				[ 'index', 'datetimes', 54 ],
+				[ 'datetime', 54 ],
 				Map().set( 'event', Set.of( 10, 30 ) )
 			).setIn(
-				[ 'entityMap', 'event', 10 ],
-				Map().set( 'datetimes', Set.of( 52, 54 ) )
+				[ 'event', 10 ],
+				Map().set( 'datetime', Set.of( 52, 54 ) )
 			),
 		};
 		expect( getRelatedEntitiesForIds(

@@ -65,21 +65,21 @@ class EE_Two_Column_Layout extends EE_Form_Section_Layout_Base
 
 
     /**
-     * Lays out a row for the subsection
+     * Lays out a row for the subsection. Please note that if you have a subsection which you don't want wrapped in
+     * a tr and td with a colspan=2, you should use a different layout strategy, like EE_No_Layout, EE_Template_Layout,
+     * or EE_Div_Per_Section_Layout, and create subsections using EE_Two_Column_Layout for everywhere you want the
+     * two-column layout, and then other sub-sections can be outside the EE_Two_Column_Layout table.
      *
      * @param EE_Form_Section_Proper $form_section
      * @return string
-     */
+    */
     public function layout_subsection($form_section)
     {
-        $html = '';
-        if ($form_section instanceof EE_Form_Section_HTML) {
-            $html .= $form_section->get_html();
-        } else {
-            $html .= EEH_HTML::tr(
-                EEH_HTML::td($form_section->get_html(), '', '', '', 'colspan="2"')
-            );
+        if ($form_section instanceof EE_Form_Section_Proper
+            || $form_section instanceof EE_Form_Section_HTML
+        ) {
+            return EEH_HTML::no_row($form_section->get_html());
         }
-        return $html;
+        return '';
     }
 }
