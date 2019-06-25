@@ -1,32 +1,29 @@
 /**
  * External imports
  */
-import { find, findIndex, isArray, isEmpty, isUndefined, omitBy } from 'lodash';
-import { isModelEntityOfModel } from '@eventespresso/validators';
-import { normalizeEntityId } from '@eventespresso/helpers';
+import { isArray, isEmpty, isUndefined, omitBy } from 'lodash';
 
 const noIndex = -1;
 
 /**
  * @function
  * @param {Object} assigned
- * @param {Object} date
- * @param {Object} ticket
+ * @param {number} dateId
+ * @param {number} ticketId
  * @param {boolean} returnIndex
  * @return {number|boolean} index for date id in assigned array or
  *                        boolean if returnIndex is false
  */
-export const isAssigned = ( assigned, date, ticket, returnIndex = false ) => {
+export const isAssigned = ( assigned, dateId, ticketId, returnIndex = false ) => {
 	let index = noIndex;
-	if ( isArray( assigned[ date.id ] ) ) {
-		index = findIndex( assigned[ date.id ], { id: ticket.id } );
+	if ( isArray( assigned[ dateId ] ) ) {
+		index = assigned[ dateId ].indexOf( ticketId );
 	}
 	return returnIndex ? index : index > noIndex;
 };
 
 /**
  * @function
- * @param {Array} dateEntities
  * @param {Object} assigned
  * @param {Function} addTickets
  * @param {Object} removed
@@ -34,43 +31,26 @@ export const isAssigned = ( assigned, date, ticket, returnIndex = false ) => {
  * @return {Promise} resolves to true if updates occurred
  */
 export const processChanges = (
-	dateEntities,
 	assigned,
 	addTickets,
 	removed,
 	removeTicketEntities
 ) => {
 	const relationUpdates = [];
-	for ( const dateID in removed ) {
-		const dateEntity = find(
-			dateEntities,
-			( date ) => {
-				return normalizeEntityId( date.id ) === normalizeEntityId( dateID );
-			}
-		);
-		if ( isModelEntityOfModel( dateEntity, 'datetime' ) ) {
-			const ticketsToRemove = removed[ dateID ];
-			if ( isArray( ticketsToRemove ) ) {
-				relationUpdates.push(
-					removeTicketEntities( dateEntity, ticketsToRemove )
-				);
-			}
+	for ( const dateId in removed ) {
+		const ticketIdsToRemove = removed[ dateId ];
+		if ( isArray( ticketIdsToRemove ) ) {
+			relationUpdates.push(
+				removeTicketEntities( dateId, ticketIdsToRemove )
+			);
 		}
 	}
-	for ( const dateID in assigned ) {
-		const dateEntity = find(
-			dateEntities,
-			( date ) => {
-				return normalizeEntityId( date.id ) === normalizeEntityId( dateID );
-			}
-		);
-		if ( isModelEntityOfModel( dateEntity, 'datetime' ) ) {
-			const ticketsToAssign = assigned[ dateID ];
-			if ( isArray( ticketsToAssign ) ) {
-				relationUpdates.push(
-					addTickets( dateEntity, ticketsToAssign )
-				);
-			}
+	for ( const dateId in assigned ) {
+		const ticketIdsToAssign = assigned[ dateId ];
+		if ( isArray( ticketIdsToAssign ) ) {
+			relationUpdates.push(
+				addTickets( dateId, ticketIdsToAssign )
+			);
 		}
 	}
 	return Promise.all( relationUpdates );
@@ -79,19 +59,19 @@ export const processChanges = (
 /**
  * @function
  * @param {Object} assigned
- * @param {Object} dateEntity
- * @param {Object} ticketEntity
+ * @param {number} dateId
+ * @param {number} ticketId
  * @param {number} index
  * @return {Object} assigned
  */
-export const unAssignTicketEntity = ( assigned, dateEntity, ticketEntity, index = noIndex ) => {
+export const unAssignTicketEntity = ( assigned, dateId, ticketId, index = noIndex ) => {
 	index = index === noIndex ?
-		isAssigned( assigned, dateEntity, ticketEntity, true ) :
+		isAssigned( assigned, dateId, ticketId, true ) :
 		index;
 	if ( index > noIndex ) {
-		assigned[ dateEntity.id ].splice( index, 1 );
-		if ( isEmpty( assigned[ dateEntity.id ] ) ) {
-			delete assigned[ dateEntity.id ];
+		assigned[ dateId ].splice( index, 1 );
+		if ( isEmpty( assigned[ dateId ] ) ) {
+			delete assigned[ dateId ];
 		}
 	}
 	return omitBy( assigned, isUndefined );
@@ -100,25 +80,25 @@ export const unAssignTicketEntity = ( assigned, dateEntity, ticketEntity, index 
 /**
  * @function
  * @param {Object} prevState
- * @param {Object} dateEntity
- * @param {Object} ticketEntity
+ * @param {number} dateId
+ * @param {number} ticketId
  * @return {Object} updated state
  */
-export const assignTicketEntity = ( prevState, dateEntity, ticketEntity ) => {
-	const index = isRemoved( prevState.removed, dateEntity, ticketEntity, true );
+export const assignTicketEntity = ( prevState, dateId, ticketId ) => {
+	const index = isRemoved( prevState.removed, dateId, ticketId, true );
 	if ( index > noIndex ) {
 		prevState.removed = unRemoveTicketEntity(
 			prevState.removed,
-			dateEntity,
-			ticketEntity,
+			dateId,
+			ticketId,
 			index
 		);
 	} else {
-		if ( ! isArray( prevState.assigned[ dateEntity.id ] ) ) {
-			prevState.assigned[ dateEntity.id ] = [];
+		if ( ! isArray( prevState.assigned[ dateId ] ) ) {
+			prevState.assigned[ dateId ] = [];
 		}
-		if ( ! isAssigned( prevState.assigned, dateEntity, ticketEntity ) ) {
-			prevState.assigned[ dateEntity.id ].push( ticketEntity );
+		if ( ! isAssigned( prevState.assigned, dateId, ticketId ) ) {
+			prevState.assigned[ dateId ].push( ticketId );
 		}
 	}
 	return cleanState( prevState );
@@ -127,21 +107,21 @@ export const assignTicketEntity = ( prevState, dateEntity, ticketEntity ) => {
 /**
  * @function
  * @param {Object} assigned
- * @param {Object} dateEntity
- * @param {Object} ticketEntity
+ * @param {number} dateId
+ * @param {number} ticketId
  * @return {number}    		the number of dateEntity tickets in assigned
  *              			collection matching supplied ticket
  */
-export const assignedCount = ( assigned, dateEntity = null, ticketEntity = null ) => {
-	if ( dateEntity && dateEntity.id && isArray( assigned[ dateEntity.id ] ) ) {
-		return assigned[ dateEntity.id ].length;
+export const assignedCount = ( assigned, dateId = 0, ticketId = 0 ) => {
+	if ( dateId && isArray( assigned[ dateId ] ) ) {
+		return assigned[ dateId ].length;
 	}
 	let index = 0;
 	let count = 0;
-	if ( ticketEntity && ticketEntity.id ) {
+	if ( ticketId ) {
 		for ( const dateID in assigned ) {
 			if ( isArray( assigned[ dateID ] ) ) {
-				index = findIndex( assigned[ dateID ], { id: ticketEntity.id } );
+				index = assigned[ dateID ].indexOf( ticketId );
 				if ( index > noIndex ) {
 					count++;
 				}
@@ -154,16 +134,16 @@ export const assignedCount = ( assigned, dateEntity = null, ticketEntity = null 
 /**
  * @function
  * @param {Object} removed
- * @param {Object} dateEntity
- * @param {Object} ticketEntity
+ * @param {number} dateId
+ * @param {number} ticketId
  * @param {boolean} returnIndex
  * @return {number|boolean} index for date id in removed array or
  *                        boolean if returnIndex is false
  */
-export const isRemoved = ( removed, dateEntity, ticketEntity, returnIndex = false ) => {
+export const isRemoved = ( removed, dateId, ticketId, returnIndex = false ) => {
 	let index = noIndex;
-	if ( isArray( removed[ dateEntity.id ] ) ) {
-		index = findIndex( removed[ dateEntity.id ], { id: ticketEntity.id } );
+	if ( isArray( removed[ dateId ] ) ) {
+		index = removed[ dateId ].indexOf( ticketId );
 	}
 	return returnIndex ? index : index > noIndex;
 };
@@ -171,19 +151,19 @@ export const isRemoved = ( removed, dateEntity, ticketEntity, returnIndex = fals
 /**
  * @function
  * @param {Object} removed
- * @param {Object} dateEntity
- * @param {Object} ticketEntity
+ * @param {number} dateId
+ * @param {number} ticketId
  * @param {number} index
  * @return {Object} removed
  */
-export const unRemoveTicketEntity = ( removed, dateEntity, ticketEntity, index = noIndex ) => {
+export const unRemoveTicketEntity = ( removed, dateId, ticketId, index = noIndex ) => {
 	index = index === noIndex ?
-		isRemoved( removed, dateEntity, ticketEntity, true ) :
+		isRemoved( removed, dateId, ticketId, true ) :
 		index;
 	if ( index > noIndex ) {
-		removed[ dateEntity.id ].splice( index, 1 );
-		if ( isEmpty( removed[ dateEntity.id ] ) ) {
-			delete removed[ dateEntity.id ];
+		removed[ dateId ].splice( index, 1 );
+		if ( isEmpty( removed[ dateId ] ) ) {
+			delete removed[ dateId ];
 		}
 	}
 	return removed;
@@ -192,25 +172,25 @@ export const unRemoveTicketEntity = ( removed, dateEntity, ticketEntity, index =
 /**
  * @function
  * @param {Object} prevState
- * @param {Object} dateEntity
- * @param {Object} ticketEntity
+ * @param {number} dateId
+ * @param {number} ticketId
  * @return {Object} updated state
  */
-export const removeTicketEntity = ( prevState, dateEntity, ticketEntity ) => {
-	const index = isAssigned( prevState.assigned, dateEntity, ticketEntity, true );
+export const removeTicketEntity = ( prevState, dateId, ticketId ) => {
+	const index = isAssigned( prevState.assigned, dateId, ticketId, true );
 	if ( index > noIndex ) {
 		prevState.assigned = unAssignTicketEntity(
 			prevState.assigned,
-			dateEntity,
-			ticketEntity,
+			dateId,
+			ticketId,
 			index
 		);
 	} else {
-		if ( ! isArray( prevState.removed[ dateEntity.id ] ) ) {
-			prevState.removed[ dateEntity.id ] = [];
+		if ( ! isArray( prevState.removed[ dateId ] ) ) {
+			prevState.removed[ dateId ] = [];
 		}
-		if ( ! isRemoved( prevState.removed, dateEntity, ticketEntity ) ) {
-			prevState.removed[ dateEntity.id ].push( ticketEntity );
+		if ( ! isRemoved( prevState.removed, dateId, ticketId ) ) {
+			prevState.removed[ dateId ].push( ticketId );
 		}
 	}
 	return cleanState( prevState );
@@ -219,21 +199,21 @@ export const removeTicketEntity = ( prevState, dateEntity, ticketEntity ) => {
 /**
  * @function
  * @param {Object} removed
- * @param {Object} dateEntity
- * @param {Object} ticketEntity
+ * @param {number} dateId
+ * @param {number} ticketId
  * @return {number}    		the number of date tickets in removed
  *              			collection matching supplied ticket
  */
-export const removedCount = ( removed, dateEntity = null, ticketEntity = null ) => {
-	if ( dateEntity && dateEntity.id && isArray( removed[ dateEntity.id ] ) ) {
-		return removed[ dateEntity.id ].length;
+export const removedCount = ( removed, dateId = 0, ticketId = 0 ) => {
+	if ( dateId && isArray( removed[ dateId ] ) ) {
+		return removed[ dateId ].length;
 	}
 	let index = 0;
 	let count = 0;
-	if ( ticketEntity && ticketEntity.id ) {
+	if ( ticketId ) {
 		for ( const dateID in removed ) {
 			if ( isArray( removed[ dateID ] ) ) {
-				index = findIndex( removed[ dateID ], { id: ticketEntity.id } );
+				index = removed[ dateID ].indexOf( ticketId );
 				if ( index > noIndex ) {
 					count++;
 				}
