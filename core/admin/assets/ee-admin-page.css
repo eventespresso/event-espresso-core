@@ -1129,3 +1129,83 @@ input.ee-register-button {
     color: #FE2a00;
     vertical-align: middle;
 }
+
+
+.ee-new-flag-shadow {
+    background: rgba(71, 99, 137, .25);
+    display: block;
+    height: 42px;
+    left: -1px;
+    padding: 0;
+    position: relative;
+    width: 168px;
+    z-index: -1;
+}
+
+.ee-new-flag-shadow:after {
+    border-color: rgba(71, 99, 137, .25) rgba(71, 99, 137, .25) transparent rgba(71, 99, 137, .25);
+    border-style: solid;
+    border-width: 10px 84px;
+    content: "";
+    display: block;
+    height: 0;
+    position: relative;
+    width: 0;
+    z-index: -1;
+}
+
+.ee-new-flag-wrap {
+    background: #fff;
+    display: block;
+    height: 42px;
+    left: 1px;
+    padding:0;
+    position: relative;
+    top: -1px;
+    width: 168px;
+    z-index: 1;
+}
+
+.ee-new-flag-wrap:after {
+    border-color: #fff #fff transparent #fff;
+    border-style: solid;
+    border-width: 10px 84px;
+    content: "";
+    display: block;
+    height: 0;
+    position: relative;
+    top: -17px;
+    width: 0;
+    z-index: 1;
+}
+
+.ee-admin-settings-hdr.ee-new-flag {
+    background: #5abddb;
+    color: #ffffff;
+    display: block;
+    font-weight: bold;
+    height: 20px;
+    left: 4px;
+    letter-spacing: 1px;
+    padding: 10px 0;
+    position: relative;
+    text-align: center;
+    text-shadow: 1px -1px 0 rgba(0, 0, 0, .25);
+    text-transform: uppercase;
+    top: 4px;
+    width: 160px;
+    z-index: 2;
+}
+
+.ee-new-flag:after {
+    border-color: #5abddb #5abddb transparent #5abddb;
+    border-style: solid;
+    border-width: 9px 80px;
+    content: "";
+    display: block;
+    height: 0;
+    position: relative;
+    top: 0;
+    width: 0;
+    z-index: 2;
+}
