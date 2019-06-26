@@ -1,5 +1,8 @@
 <?php
 
+use EventEspresso\core\exceptions\InvalidDataTypeException;
+use EventEspresso\core\exceptions\InvalidInterfaceException;
+
 /**
  * Events_Admin_Page
  * This contains the logic for setting up the Events related pages.
@@ -564,18 +567,6 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
             array('ee_admin_js', 'jquery-ui-slider', 'jquery-ui-timepicker-addon'),
             EVENT_ESPRESSO_VERSION,
             true
-        );
-        add_action(
-            'admin_footer',
-            function () {
-                $eventId = isset($_REQUEST['post']) ? absint($_REQUEST['post']) : 0;
-                if ($eventId) {
-                    echo '
-        <script type="text/javascript">
-            /* <![CDATA[ */ var eeEditorEventId = ' . $eventId . ' /* ]]> */
-        </script>';
-                }
-            }
         );
     }
 
@@ -2350,19 +2341,19 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
 
 
     /**
-     * _update_default_event_settings
-     *
-     * @access protected
      * @return void
      * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
      */
     protected function _update_default_event_settings()
     {
-        $registration_config = EE_Registry::instance()->CFG->registration;
         $form = $this->_default_event_settings_form();
         if ($form->was_submitted()) {
             $form->receive_form_submission();
             if ($form->is_valid()) {
+                $registration_config = EE_Registry::instance()->CFG->registration;
                 $valid_data = $form->valid_data();
                 if (isset($valid_data['default_reg_status'])) {
                     $registration_config->default_STS_ID = $valid_data['default_reg_status'];
@@ -2370,6 +2361,12 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
                 if (isset($valid_data['default_max_tickets'])) {
                     $registration_config->default_maximum_number_of_tickets = $valid_data['default_max_tickets'];
                 }
+                do_action(
+                    'AHEE__Events_Admin_Page___update_default_event_settings',
+                    $valid_data,
+                    EE_Registry::instance()->CFG,
+                    $this
+                );
                 // update because data was valid!
                 EE_Registry::instance()->CFG->update_espresso_config();
                 EE_Error::overwrite_success();
