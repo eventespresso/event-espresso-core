@@ -13,7 +13,7 @@ import { useCallback } from '@wordpress/element';
 /**
  * Internal dependencies
  */
-import { ticketEntityFormInputs } from '../';
+import { ticketEntityFormInputs } from './ticket-entity-form-inputs';
 import { useTicketPriceCalculators } from '../price-calculator';
 import { withTicketPriceEntities, withPriceTypeEntities } from '../../../hocs';
 
