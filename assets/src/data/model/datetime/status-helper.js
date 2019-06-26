@@ -25,42 +25,62 @@ const assertDateTimeEntity = ( DateTimeEntity ) => {
 /**
  * @function
  * @param {Object} DateTimeEntity model object
+ * @param {boolean} includeTrashed if true will not filter out trashed entities
+ * @return {boolean} true if event date is valid entity or archive
+ */
+const isValidEntityOrArchive = ( DateTimeEntity, includeTrashed ) => {
+	return ( includeTrashed && assertDateTimeEntity( DateTimeEntity ) ) ||
+        ( ! includeTrashed && ! isTrashed( DateTimeEntity ) );
+};
+
+/**
+ * @function
+ * @param {Object} DateTimeEntity model object
+ * @param {boolean} includeTrashed if true will not filter out trashed entities
  * @return {boolean} true if event date is occurring NOW
  */
-export const isActive = ( DateTimeEntity ) => {
-	assertDateTimeEntity( DateTimeEntity );
-	return DateTimeEntity.start.diffNow().asSeconds() < 0 &&
-		DateTimeEntity.end.diffNow().asSeconds() > 0;
+export const isActive = ( DateTimeEntity, includeTrashed = false ) => {
+	return isValidEntityOrArchive( DateTimeEntity, includeTrashed ) &&
+	DateTimeEntity.start.diffNow().asSeconds() < 0 &&
+	DateTimeEntity.end.diffNow().asSeconds() > 0;
 };
 
 /**
  * @function
  * @param {Object} DateTimeEntity model object
+ * @param {boolean} includeTrashed if true will not filter out trashed entities
  * @return {boolean} true if end date is in the past
  */
-export const isExpired = ( DateTimeEntity ) => {
-	assertDateTimeEntity( DateTimeEntity );
-	return DateTimeEntity.end.diffNow().asSeconds() < 0;
+export const isExpired = ( DateTimeEntity, includeTrashed = false ) => {
+	return isValidEntityOrArchive( DateTimeEntity, includeTrashed ) &&
+	DateTimeEntity.end.diffNow().asSeconds() < 0;
 };
 
 /**
  * @function
  * @param {Object} DateTimeEntity model object
+ * @param {boolean} includeTrashed if true will not filter out trashed entities
  * @return {boolean} true if end date is in the past
  */
-export const isRecentlyExpired = ( DateTimeEntity ) => {
-	assertDateTimeEntity( DateTimeEntity );
-	return DateTimeEntity.end.diffNow().asSeconds() < 0 &&
-		DateTimeEntity.end.diffNow().asSeconds() > ( MONTH_IN_SECONDS * -1 );
+export const isRecentlyExpired = ( DateTimeEntity, includeTrashed = false ) => {
+	return isValidEntityOrArchive( DateTimeEntity, includeTrashed ) &&
+	DateTimeEntity.end.diffNow().asSeconds() < 0 &&
+	DateTimeEntity.end.diffNow().asSeconds() > ( MONTH_IN_SECONDS * -1 );
 };
 
 /**
  * @function
  * @param {Object} DateTimeEntity model object
+ * @param {boolean} includeTrashed if true will not filter out trashed entities
  * @return {boolean} true if tickets sold meets or exceeds registration limit
  */
-export const isSoldOut = ( DateTimeEntity ) => {
-	assertDateTimeEntity( DateTimeEntity );
+export const isSoldOut = ( DateTimeEntity, includeTrashed = false ) => {
+	if (
+		( includeTrashed && ! assertDateTimeEntity( DateTimeEntity ) ) ||
+		( ! includeTrashed && isTrashed( DateTimeEntity ) )
+	) {
+		return false;
+	}
 	const cap = DateTimeEntity.regLimit;
 	return ( cap !== null && cap !== 'INF' && cap !== Infinity && cap !== -1 ) &&
 		DateTimeEntity.sold >= cap;
@@ -69,11 +89,12 @@ export const isSoldOut = ( DateTimeEntity ) => {
 /**
  * @function
  * @param {Object} DateTimeEntity model object
+ * @param {boolean} includeTrashed if true will not filter out trashed entities
  * @return {boolean} true if start date is in the future
  */
-export const isUpcoming = ( DateTimeEntity ) => {
-	assertDateTimeEntity( DateTimeEntity );
-	return DateTimeEntity.start.diffNow().asSeconds() > 0;
+export const isUpcoming = ( DateTimeEntity, includeTrashed = false ) => {
+	return isValidEntityOrArchive( DateTimeEntity, includeTrashed ) &&
+	DateTimeEntity.start.diffNow().asSeconds() > 0;
 };
 
 /**
@@ -117,7 +138,6 @@ export const isTrashed = ( DateTimeEntity ) => {
  * @return {string} status ID
  */
 export const status = ( DateTimeEntity ) => {
-	assertDateTimeEntity( DateTimeEntity );
 	if ( isTrashed( DateTimeEntity ) ) {
 		return DATETIME_STATUS_ID.TRASHED;
 	}
@@ -140,6 +160,7 @@ export const status = ( DateTimeEntity ) => {
 	// if ( isPostponed( DateTimeEntity ) ) {
 	// 	return DATETIME_STATUS_ID.POSTPONED;
 	// }
+	assertDateTimeEntity( DateTimeEntity );
 	return DATETIME_STATUS_ID.INACTIVE;
 };
 

@@ -25,47 +25,65 @@ const assertTicketEntity = ( TicketEntity ) => {
 /**
  * @function
  * @param {Object} TicketEntity model object
+ * @param {boolean} includeArchived if true will not filter out trashed entities
+ * @return {boolean} true if event date is valid entity or archive
+ */
+const isValidEntityOrArchive = ( TicketEntity, includeArchived ) => {
+	return ( includeArchived && assertTicketEntity( TicketEntity ) ) ||
+        ( ! includeArchived && ! isArchived( TicketEntity ) );
+};
+
+/**
+ * @function
+ * @param {Object} TicketEntity model object
+ * @param {boolean} includeArchived if true will not filter out archived entities
  * @return {boolean} true if ticket is currently available for purchase
  */
-export const isOnSale = ( TicketEntity ) => {
-	assertTicketEntity( TicketEntity );
-	return ! isArchived( TicketEntity ) &&
-		TicketEntity.startDate.diffNow() < 0 &&
-		TicketEntity.endDate.diffNow() > 0;
+export const isOnSale = ( TicketEntity, includeArchived = false ) => {
+	return isValidEntityOrArchive( TicketEntity, includeArchived ) &&
+	TicketEntity.startDate.diffNow() < 0 &&
+	TicketEntity.endDate.diffNow() > 0;
 };
 
 /**
  * @function
  * @param {Object} TicketEntity model object
+ * @param {boolean} includeArchived if true will not filter out archived entities
  * @return {boolean} true if ticket can no longer be purchased
  */
-export const isExpired = ( TicketEntity ) => {
-	assertTicketEntity( TicketEntity );
-	return TicketEntity.endDate.diffNow() < 0;
+export const isExpired = ( TicketEntity, includeArchived = false ) => {
+	return isValidEntityOrArchive( TicketEntity, includeArchived ) &&
+	TicketEntity.endDate.diffNow() < 0;
 };
 
 /**
  * @function
  * @param {Object} TicketEntity model object
+ * @param {boolean} includeArchived if true will not filter out archived entities
  * @return {boolean} true if tickets sold meets or exceeds available quantity
  */
-export const isSoldOut = ( TicketEntity ) => {
-	assertTicketEntity( TicketEntity );
+export const isSoldOut = ( TicketEntity, includeArchived = false ) => {
+	if (
+		( includeArchived && ! assertTicketEntity( TicketEntity ) ) ||
+		( ! includeArchived && isArchived( TicketEntity ) )
+	) {
+		return false;
+	}
 	const qty = TicketEntity.qty;
-	return ( qty !== null && qty !== 'INF' && qty !== Infinity ) &&
+	return ( qty !== null && qty !== 'INF' && qty !== Infinity && qty !== -1 ) &&
 		TicketEntity.sold >= qty;
 };
 
 /**
  * @function
  * @param {Object} TicketEntity model object
+ * @param {boolean} includeArchived if true will not filter out archived entities
  * @return {boolean} 	true if ticket is not yet available for purchase,
  * 						but will be at some date in the future
  */
-export const isPending = ( TicketEntity ) => {
-	assertTicketEntity( TicketEntity );
-	return ! isArchived( TicketEntity ) &&
-		TicketEntity.startDate.diffNow() > 0;
+export const isPending = ( TicketEntity, includeArchived = false ) => {
+	return isValidEntityOrArchive( TicketEntity, includeArchived ) &&
+	TicketEntity.startDate.diffNow() > 0;
 };
 
 /**
@@ -84,7 +102,6 @@ export const isArchived = ( TicketEntity ) => {
  * @return {string} status ID
  */
 export const status = ( TicketEntity ) => {
-	assertTicketEntity( TicketEntity );
 	if ( isArchived( TicketEntity ) ) {
 		return TICKET_STATUS_ID.ARCHIVED;
 	}
