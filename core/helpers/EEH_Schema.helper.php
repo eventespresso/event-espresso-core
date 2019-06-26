@@ -59,7 +59,7 @@ class EEH_Schema
                 $ticket->price(),
                 EE_Registry::instance()->CFG->currency->dec_plc,
                 EE_Registry::instance()->CFG->currency->dec_mrk,
-                EE_Registry::instance()->CFG->currency->thsnds
+                ''
             );
             switch ($ticket->ticket_status()) {
                 case 'TKO':
