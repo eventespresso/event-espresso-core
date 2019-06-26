@@ -5,7 +5,7 @@ import { withEntityPagination } from '@eventespresso/higher-order-components';
 import { compose, createHigherOrderComponent } from '@wordpress/compose';
 
 /**
- * Internal dependencies
+ * Internal imports
  */
 import withDateEntitiesListFilterBar, {
 	getFilteredDateEntitiesList,

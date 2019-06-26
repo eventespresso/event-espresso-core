@@ -13,10 +13,8 @@ import { useState, useEffect, useCallback, Fragment } from '@wordpress/element';
  */
 import { withTicketPriceEntities, withPriceTypeEntities } from '../../../hocs';
 import useTicketPriceCalculatorFormDecorator from './use-ticket-price-calculator-form-decorator';
-import {
-	TicketPriceCalculatorForm,
-	ticketPriceCalculatorFormDataMap,
-} from './';
+import TicketPriceCalculatorForm from './ticket-price-calculator-form';
+import { ticketPriceCalculatorFormDataMap } from './ticket-price-calculator-form-data-map';
 
 /**
  * TicketPriceCalculatorFormModal

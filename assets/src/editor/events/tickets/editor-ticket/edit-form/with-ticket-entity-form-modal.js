@@ -9,8 +9,8 @@ import { createHigherOrderComponent } from '@wordpress/compose';
 /**
  * Internal imports
  */
-import TicketEntityForm from '../edit-form/ticket-entity-form';
-import { ticketEntityFormSchema } from '../edit-form/ticket-entity-form-schema';
+import TicketEntityForm from './ticket-entity-form';
+import { ticketEntityFormSchema } from './ticket-entity-form-schema';
 import { TicketPriceCalculatorMenuItem } from '../price-calculator/ticket-price-calculator-menu-item';
 
 const TicketEntityFormModal = withEditorModal( {
