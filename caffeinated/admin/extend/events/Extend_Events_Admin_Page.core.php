@@ -1312,78 +1312,78 @@ class Extend_Events_Admin_Page extends Events_Admin_Page
     {
         return [
             'advanced_editor_header' => new EE_Form_Section_HTML(
-               EEH_HTML::div(
-                   EEH_HTML::div(
-                       EEH_HTML::h2(
-                           esc_html__('New Feature', 'event_espresso'),
-                           '',
-                           'ee-admin-settings-hdr ee-new-flag'
-                       ),
-                       '',
-                       'ee-new-flag-wrap'
-                   ),
-                   '',
-                   'ee-new-flag-shadow',
-                   'margin: -25px 0 10px;'
-               )
+                EEH_HTML::div(
+                    EEH_HTML::div(
+                        EEH_HTML::h2(
+                            esc_html__('New Feature', 'event_espresso'),
+                            '',
+                            'ee-admin-settings-hdr ee-new-flag'
+                        ),
+                        '',
+                        'ee-new-flag-wrap'
+                    ),
+                    '',
+                    'ee-new-flag-shadow',
+                    'margin: -25px 0 10px;'
+                )
             ),
             'use_advanced_editor'         => new EE_Select_Input(
-               apply_filters(
-                   'FHEE__Events_Admin_Page___default_event_settings_form__advanced_editor_input_options',
-                   [
-                       esc_html__('Legacy Editor', 'event_espresso'),
-                       esc_html__('Advanced Editor', 'event_espresso'),
-                   ]
-               ),
-               array(
-                   'default'         => $this->admin_config->useAdvancedEditor(),
-                   'html_label_text' => esc_html__('Activate Advanced Editor?', 'event_espresso'),
-                   'html_help_text'  => sprintf(
-                       esc_html__(
-                           'Controls whether the Event Espresso Event Editor continues to use the existing legacy editor that functions like the typical older WordPress admin you are used to,%1$sor uses the new Advanced Editor with a more powerful and easier to use interface. This may be automatically turned on in order to utilize advanced features from new addons.',
-                           'event_espresso'
-                       ),
-                       '<br />'
-                   ),
-               )
+                apply_filters(
+                    'FHEE__Events_Admin_Page___default_event_settings_form__advanced_editor_input_options',
+                    [
+                        esc_html__('Legacy Editor', 'event_espresso'),
+                        esc_html__('Advanced Editor', 'event_espresso'),
+                    ]
+                ),
+                [
+                    'default'         => $this->admin_config->useAdvancedEditor(),
+                    'html_label_text' => esc_html__('Activate Advanced Editor?', 'event_espresso'),
+                    'html_help_text'  => sprintf(
+                        esc_html__(
+                            'Controls whether the Event Espresso Event Editor continues to use the existing legacy editor that functions like the typical older WordPress admin you are used to,%1$sor uses the new Advanced Editor with a more powerful and easier to use interface. This may be automatically turned on in order to utilize advanced features from new addons.',
+                            'event_espresso'
+                        ),
+                        '<br />'
+                    ),
+                ]
             ),
             'advanced_editor_view' => new EE_Select_Input(
                 [
                     'list' => esc_html__('List View', 'event_espresso'),
                     'grid' => esc_html__('Grid View', 'event_espresso'),
                 ],
-               array(
-                   'default'         => $this->admin_config->advancedEditorView(),
-                   'html_label_text' => esc_html__('Default Editor View', 'event_espresso'),
-                   'html_help_text'  => sprintf(
-                       esc_html__(
-                           'Controls how the new Advanced Editor displays Event Dates and Available Tickets.%1$s"List View" is a traditional table like view with data organized in rows and columns.%1$s"Grid View" displays the data in stylized blocks with with data organized in logical groupings that make it easier to understand at a glance.',
-                           'event_espresso'
-                       ),
-                       '<br />'
-                   ),
-               )
+                [
+                    'default'         => $this->admin_config->advancedEditorView(),
+                    'html_label_text' => esc_html__('Default Editor View', 'event_espresso'),
+                    'html_help_text'  => sprintf(
+                        esc_html__(
+                            'Controls how the new Advanced Editor displays Event Dates and Available Tickets.%1$s"List View" is a traditional table like view with data organized in rows and columns.%1$s"Grid View" displays the data in stylized blocks with with data organized in logical groupings that make it easier to understand at a glance.',
+                            'event_espresso'
+                        ),
+                        '<br />'
+                    ),
+                ]
             ),
             'advanced_editor_per_page' => new EE_Select_Input(
                 [ 2 => 2, 6 => 6, 12 => 12, 24 => 24, 48 => 48 ],
-               array(
-                   'default'         => $this->admin_config->advancedEditorPerPage(),
-                   'html_label_text' => esc_html__('Default Items Per Page', 'event_espresso'),
-                   'html_help_text'  => sprintf(
-                       esc_html__(
-                           'The new Advanced Editor has filters that allow you to control the display of Event Dates and Available Tickets and includes pagination for long lists of data.%1$sThis option sets the default number of items to appear in paginated lists.',
-                           'event_espresso'
-                       ),
-                       '<br />'
-                   ),
-               )
+                [
+                    'default'         => $this->admin_config->advancedEditorPerPage(),
+                    'html_label_text' => esc_html__('Default Items Per Page', 'event_espresso'),
+                    'html_help_text'  => sprintf(
+                        esc_html__(
+                            'The new Advanced Editor has filters that allow you to control the display of Event Dates and Available Tickets and includes pagination for long lists of data.%1$sThis option sets the default number of items to appear in paginated lists.',
+                            'event_espresso'
+                        ),
+                        '<br />'
+                    ),
+                ]
             ),
             'defaults_section_header' => new EE_Form_Section_HTML(
-               EEH_HTML::h2(
-                   esc_html__('Default Settings', 'event_espresso'),
-                   '',
-                   'ee-admin-settings-hdr'
-               )
+                EEH_HTML::h2(
+                    esc_html__('Default Settings', 'event_espresso'),
+                    '',
+                    'ee-admin-settings-hdr'
+                )
             ),
         ] + $default_event_settings_form_subsections;
     }

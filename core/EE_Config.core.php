@@ -2753,7 +2753,6 @@ class EE_Admin_Config extends EE_Config_Base
         $perPage = absint($perPage);
         $this->advancedEditorPerPage = in_array($perPage, [2, 6, 12, 24, 48], true) ? $perPage : 6;
     }
-
 }
 
 /**
