@@ -24,7 +24,7 @@ import { EditorDateEntitiesList } from '../dates-and-times';
 import { EditorTicketEntitiesList } from '../tickets';
 import withEditorInitialization, { useEditorInitialized } from '../initialization';
 
-const MetaBox = ( { eventId } ) => {
+const MetaBox = ( { eventId, entityListView, entityListPerPage } ) => {
 	const initialized = useEditorInitialized();
 	return (
 		<Fragment>
@@ -59,6 +59,8 @@ const MetaBox = ( { eventId } ) => {
 								<EditorDateEntitiesList
 									loading={ ! initialized }
 									for="event-dates-metabox"
+									datesView={ entityListView }
+									datesPerPage={ entityListPerPage }
 								/>
 							</div>
 						</PanelRow>
@@ -80,6 +82,8 @@ const MetaBox = ( { eventId } ) => {
 								<EditorTicketEntitiesList
 									loading={ ! initialized }
 									for="event-tickets-metabox"
+									ticketsView={ entityListView }
+									ticketsPerPage={ entityListPerPage }
 								/>
 							</div>
 						</PanelRow>
