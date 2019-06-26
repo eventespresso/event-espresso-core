@@ -2526,6 +2526,21 @@ class EE_Admin_Config extends EE_Config_Base
 {
 
     /**
+     * @var boolean $useAdvancedEditor
+     */
+    private $useAdvancedEditor;
+
+    /**
+     * @var string $advancedEditorView
+     */
+    private $advancedEditorView;
+
+    /**
+     * @var integer $advancedEditorPerPage
+     */
+    private $advancedEditorPerPage;
+
+    /**
      * @var boolean $use_personnel_manager
      */
     public $use_personnel_manager;
@@ -2606,6 +2621,9 @@ class EE_Admin_Config extends EE_Config_Base
     public function __construct()
     {
         // set default general admin settings
+        $this->useAdvancedEditor = false;
+        $this->advancedEditorView = 'grid';
+        $this->advancedEditorPerPage = 6;
         $this->use_personnel_manager = true;
         $this->use_dashboard_widget = true;
         $this->events_in_dashboard = 30;
@@ -2676,6 +2694,66 @@ class EE_Admin_Config extends EE_Config_Base
     {
         $this->encode_session_data = filter_var($encode_session_data, FILTER_VALIDATE_BOOLEAN);
     }
+
+    /**
+     * @return boolean
+     */
+    public function useAdvancedEditor()
+    {
+        return $this->useAdvancedEditor;
+    }
+
+    /**
+     * @param boolean $use_advanced_editor
+     */
+    public function setUseAdvancedEditor($use_advanced_editor = true)
+    {
+        $this->useAdvancedEditor = filter_var(
+            apply_filters(
+                'FHEE__EE_Admin_Config__setUseAdvancedEditor__use_advanced_editor',
+                $use_advanced_editor
+            ),
+            FILTER_VALIDATE_BOOLEAN
+        );
+    }
+
+
+    /**
+     * @return string
+     */
+    public function advancedEditorView()
+    {
+        return $this->advancedEditorView;
+    }
+
+
+    /**
+     * @param string $view
+     */
+    public function setAdvancedEditorView($view)
+    {
+        $this->advancedEditorView = $view === 'list' ? 'list' : 'grid';
+    }
+
+
+    /**
+     * @return int
+     */
+    public function advancedEditorPerPage()
+    {
+        return $this->advancedEditorPerPage;
+    }
+
+
+    /**
+     * @param int $perPage
+     */
+    public function setAdvancedEditorPerPage($perPage)
+    {
+        $perPage = absint($perPage);
+        $this->advancedEditorPerPage = in_array($perPage, [2, 6, 12, 24, 48], true) ? $perPage : 6;
+    }
+
 }
 
 /**
