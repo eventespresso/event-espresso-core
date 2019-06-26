@@ -20,10 +20,8 @@ import {
  * Internal imports
  */
 import '../../editor.css';
-import EditorDateEntitiesList
-	from '../dates-and-times/editor-date/editor-date-entities-list';
-import EditorTicketEntitiesList
-	from '../tickets/editor-ticket/editor-ticket-entities-list';
+import { EditorDateEntitiesList } from '../dates-and-times';
+import { EditorTicketEntitiesList } from '../tickets';
 import withEditorInitialization, { useEditorInitialized } from '../initialization';
 
 const MetaBox = ( { eventId } ) => {
