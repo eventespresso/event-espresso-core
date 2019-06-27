@@ -22,9 +22,9 @@ const withDefaultTicketsListSettings = createHigherOrderComponent(
 		return (
 			<EntityListWithFilterBar
 				{ ...otherProps }
-				defaultTicketsListView={ defaultTicketsListView || 'list' }
+				defaultTicketsListView={ defaultTicketsListView || 'grid' }
 				setDefaultTicketsListView={ setDefaultTicketsListView }
-				defaultTicketsListPerPage={ defaultTicketsListPerPage || 12 }
+				defaultTicketsListPerPage={ defaultTicketsListPerPage || 6 }
 				setDefaultTicketsListPerPage={ setDefaultTicketsListPerPage }
 			/>
 		);

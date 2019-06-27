@@ -22,9 +22,9 @@ const withDefaultDatesListSettings = createHigherOrderComponent(
 		return (
 			<EntityListWithFilterBar
 				{ ...otherProps }
-				defaultDatesListView={ defaultDatesListView || 'list' }
+				defaultDatesListView={ defaultDatesListView || 'grid' }
 				setDefaultDatesListView={ setDefaultDatesListView }
-				defaultDatesListPerPage={ defaultDatesListPerPage || 24 }
+				defaultDatesListPerPage={ defaultDatesListPerPage || 6 }
 				setDefaultDatesListPerPage={ setDefaultDatesListPerPage }
 			/>
 		);
