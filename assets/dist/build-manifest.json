@@ -4,9 +4,15 @@
   "ee-wp-plugins-page.json": "ee-wp-plugins-page.b2eade19779a4dabfee9.dist.deps.json",
   "eejs-core.js": "eejs-core.7850a6d9398c50d79ab8.dist.js",
   "eejs-core.json": "eejs-core.7850a6d9398c50d79ab8.dist.deps.json",
+<<<<<<< FET/editor-dates-tickets-refactor
   "eventespresso-components.css": "eventespresso-components.bb1c34839b03c14642fe.dist.css",
   "eventespresso-components.js": "eventespresso-components.05323e01f2814e5825bc.dist.js",
   "eventespresso-components.json": "eventespresso-components.05323e01f2814e5825bc.dist.deps.json",
+=======
+  "eventespresso-components.css": "eventespresso-components.be75a02ec226cc74d0c0.dist.css",
+  "eventespresso-components.js": "eventespresso-components.50aa4e6b0e1a1d50d3e1.dist.js",
+  "eventespresso-components.json": "eventespresso-components.50aa4e6b0e1a1d50d3e1.dist.deps.json",
+>>>>>>> rebuild assets
   "eventespresso-core-blocks-frontend.css": "eventespresso-core-blocks-frontend.30e4ea23d2adb992ff77.dist.css",
   "eventespresso-core-blocks-frontend.js": "eventespresso-core-blocks-frontend.c3b86736850a862ef904.dist.js",
   "eventespresso-core-blocks-frontend.json": "eventespresso-core-blocks-frontend.c3b86736850a862ef904.dist.deps.json",
@@ -29,6 +35,7 @@
   "eventespresso-editor-hocs.js": "eventespresso-editor-hocs.84418759c6dc24b4871c.dist.js",
   "eventespresso-editor-hocs.json": "eventespresso-editor-hocs.84418759c6dc24b4871c.dist.deps.json",
 <<<<<<< FET/editor-dates-tickets-refactor
+<<<<<<< FET/editor-dates-tickets-refactor
   "eventespresso-editor.css": "eventespresso-editor.e06239210af7b594c973.dist.css",
   "eventespresso-editor.js": "eventespresso-editor.9a5b68b28264727b8c89.dist.js",
   "eventespresso-editor.json": "eventespresso-editor.9a5b68b28264727b8c89.dist.deps.json",
@@ -38,11 +45,17 @@
   "eventespresso-editor.js": "eventespresso-editor.e4cb37d8864898bbe6f7.dist.js",
   "eventespresso-editor.json": "eventespresso-editor.e4cb37d8864898bbe6f7.dist.deps.json",
 >>>>>>> rebuild assets js_only
+=======
+  "eventespresso-editor.css": "eventespresso-editor.ac44fb7dd7004be16905.dist.css",
+  "eventespresso-editor.js": "eventespresso-editor.45599ffb6b6981fffe77.dist.js",
+  "eventespresso-editor.json": "eventespresso-editor.45599ffb6b6981fffe77.dist.deps.json",
+>>>>>>> rebuild assets
+>>>>>>> rebuild assets
   "eventespresso-helpers.js": "eventespresso-helpers.b86e4ee65beead3a561e.dist.js",
   "eventespresso-helpers.json": "eventespresso-helpers.b86e4ee65beead3a561e.dist.deps.json",
-  "eventespresso-hocs.css": "eventespresso-hocs.0920a94a8a19d35a9f4e.dist.css",
-  "eventespresso-hocs.js": "eventespresso-hocs.27ddcb22082639d95dfd.dist.js",
-  "eventespresso-hocs.json": "eventespresso-hocs.27ddcb22082639d95dfd.dist.deps.json",
+  "eventespresso-hocs.css": "eventespresso-hocs.ddcc2c093824ae306db6.dist.css",
+  "eventespresso-hocs.js": "eventespresso-hocs.2b15c75c61c6f4e73abc.dist.js",
+  "eventespresso-hocs.json": "eventespresso-hocs.2b15c75c61c6f4e73abc.dist.deps.json",
   "eventespresso-hooks.js": "eventespresso-hooks.6adae945fca3551b3e03.dist.js",
   "eventespresso-hooks.json": "eventespresso-hooks.6adae945fca3551b3e03.dist.deps.json",
   "eventespresso-model.js": "eventespresso-model.805714d693ee7340e4b0.dist.js",
