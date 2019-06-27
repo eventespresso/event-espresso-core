@@ -65,6 +65,8 @@ const TicketAssignmentsManagerModal = ( {
 	assignedState,
 	setAssignedState,
 	assignmentCounts,
+	showDateFilters,
+	showTicketFilters,
 	showArchivedDates,
 	setShowArchivedDates,
 	showExpiredDates,
@@ -595,8 +597,20 @@ const TicketAssignmentsManagerModal = ( {
 	} else {
 		tableId += dateEntities.length + '-' + ticketEntities.length;
 	}
-	const showDateFilters = dateEntities.length > 1;
-	const showTicketFilters = ticketEntities.length > 1;
+	// make sure filters are shown when needed
+	if (
+		dateEntities.length === 1 &&
+		! ( showArchivedDates || showExpiredDates )
+	) {
+		showDateFilters = false;
+	}
+	if (
+		ticketEntities.length === 1 &&
+		! ( showArchivedTickets || showExpiredTickets )
+	) {
+		showTicketFilters = false;
+	}
+
 	const dateFiltersOffset = showDateFilters && showTicketFilters ? 2 : 7;
 	const ticketFiltersOffset = showDateFilters && showTicketFilters ? 0 : 7;
 	const dateFilters = showDateFilters ? (
@@ -745,6 +759,8 @@ export default compose( [
 		ticketEntities,
 		...otherProps
 	} ) => {
+		const unfilteredDates = dateEntities;
+		const unfilteredTickets = ticketEntities;
 		const [ showArchivedDates, setShowArchivedDates ] = useState( false );
 		const [ showExpiredDates, setShowExpiredDates ] = useState( false );
 		const [ showArchivedTickets, setShowArchivedTickets ] = useState( false );
@@ -769,10 +785,25 @@ export default compose( [
 				return ! isExpiredTicket( ticketEntity );
 			} ) :
 			ticketEntities;
+		// make sure filters are shown when needed
+		const showDateFilters = dateEntities.length !== unfilteredDates.length ||
+			(
+				dateEntities.length === unfilteredDates.length &&
+				( showArchivedDates || showExpiredDates )
+			);
+		const showTicketFilters = ticketEntities.length !== unfilteredTickets.length ||
+			(
+				ticketEntities.length === unfilteredTickets.length &&
+				(
+					showArchivedTickets || showExpiredTickets
+				)
+			);
 		return <WrappedComponent
 			{ ...otherProps }
 			dateEntities={ dateEntities }
 			ticketEntities={ ticketEntities }
+			showDateFilters={ showDateFilters }
+			showTicketFilters={ showTicketFilters }
 			showArchivedDates={ showArchivedDates }
 			setShowArchivedDates={ setShowArchivedDates }
 			showExpiredDates={ showExpiredDates }
