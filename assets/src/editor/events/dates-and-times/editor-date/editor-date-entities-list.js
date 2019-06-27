@@ -25,7 +25,8 @@ import { EditorDateEntitiesListView } from './list-view';
 import { withPaginatedDateEntitiesListAndFilterBar } from './filter-bar';
 import { withDateEntityFormModal } from './edit-form';
 import { withTicketAssignmentsManagerModal } from '../../ticket-assignments-manager';
-import withUpdateEventDateRelation from './action-handlers/with-update-event-date-relation';
+import withUpdateEventDateRelation
+	from './action-handlers/with-update-event-date-relation';
 import { withEditorDateEntities, withEditorEventEntity } from '../../hocs';
 
 const {
@@ -34,7 +35,6 @@ const {
 } = twoColumnAdminFormLayout;
 
 const EditorDateEntitiesList = ( {
-	view = 'grid',
 	entities,
 	toggleDateEditor,
 	addNewDateEntity,
@@ -77,7 +77,6 @@ const EditorDateEntitiesList = ( {
 				entities={ entities }
 				EntityGridView={ EditorDateEntitiesGridView }
 				EntityListView={ EditorDateEntitiesListView }
-				view={ view }
 				loadingNotice={ sprintf(
 					_x(
 						'loading event dates%s',
