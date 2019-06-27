@@ -1347,37 +1347,6 @@ class Extend_Events_Admin_Page extends Events_Admin_Page
                     ),
                 ]
             ),
-            'advanced_editor_view' => new EE_Select_Input(
-                [
-                    'list' => esc_html__('List View', 'event_espresso'),
-                    'grid' => esc_html__('Grid View', 'event_espresso'),
-                ],
-                [
-                    'default'         => $this->admin_config->advancedEditorView(),
-                    'html_label_text' => esc_html__('Default Editor View', 'event_espresso'),
-                    'html_help_text'  => sprintf(
-                        esc_html__(
-                            'Controls how the new Advanced Editor displays Event Dates and Available Tickets.%1$s"List View" is a traditional table like view with data organized in rows and columns.%1$s"Grid View" displays the data in stylized blocks with with data organized in logical groupings that make it easier to understand at a glance.',
-                            'event_espresso'
-                        ),
-                        '<br />'
-                    ),
-                ]
-            ),
-            'advanced_editor_per_page' => new EE_Select_Input(
-                [ 2 => 2, 6 => 6, 12 => 12, 24 => 24, 48 => 48 ],
-                [
-                    'default'         => $this->admin_config->advancedEditorPerPage(),
-                    'html_label_text' => esc_html__('Default Items Per Page', 'event_espresso'),
-                    'html_help_text'  => sprintf(
-                        esc_html__(
-                            'The new Advanced Editor has filters that allow you to control the display of Event Dates and Available Tickets and includes pagination for long lists of data.%1$sThis option sets the default number of items to appear in paginated lists.',
-                            'event_espresso'
-                        ),
-                        '<br />'
-                    ),
-                ]
-            ),
             'defaults_section_header' => new EE_Form_Section_HTML(
                 EEH_HTML::h2(
                     esc_html__('Default Settings', 'event_espresso'),
@@ -1400,16 +1369,6 @@ class Extend_Events_Admin_Page extends Events_Admin_Page
             isset($valid_data['use_advanced_editor'])
                 ? $valid_data['use_advanced_editor']
                 : false
-        );
-        $config->admin->setAdvancedEditorView(
-            isset($valid_data['advanced_editor_view'])
-                ? $valid_data['advanced_editor_view']
-                : 'grid'
-        );
-        $config->admin->setAdvancedEditorPerPage(
-            isset($valid_data['advanced_editor_per_page'])
-                ? $valid_data['advanced_editor_per_page']
-                : 6
         );
     }
 }
