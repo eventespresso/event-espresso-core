@@ -13,14 +13,10 @@ import EditorInitialization from './editor-initialization';
 
 const withEditorInitialization = createHigherOrderComponent(
 	( WrappedComponent ) => (
-		{ eventId, entityListView, entityListPerPage }
+		{ eventId }
 	) => {
 		return <EditorInitialization eventId={ eventId }>
-			<WrappedComponent
-				eventId={ eventId }
-				entityListView={ entityListView }
-				entityListPerPage={ entityListPerPage }
-			/>
+			<WrappedComponent eventId={ eventId } />
 		</EditorInitialization>;
 	},
 	'withEditorInitialization'
