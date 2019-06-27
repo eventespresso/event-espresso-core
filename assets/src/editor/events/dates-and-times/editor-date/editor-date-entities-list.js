@@ -7,7 +7,8 @@ import {
 	useEffect,
 	useMemo,
 	useState,
-	useCallback, useReducer,
+	useCallback,
+	useReducer,
 } from '@wordpress/element';
 import {
 	EntityList,
