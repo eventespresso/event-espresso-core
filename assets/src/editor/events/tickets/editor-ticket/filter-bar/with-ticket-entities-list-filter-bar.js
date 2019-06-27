@@ -65,10 +65,18 @@ const withTicketEntitiesListFilterBar = createHigherOrderComponent(
 		setTicketsListView,
 		setTicketsGridView,
 		setFilteredTicketEntities,
+		defaultTicketsListView,
+		defaultTicketsListPerPage,
+		setDefaultTicketsListView,
+		setDefaultTicketsListPerPage,
 		ticketEntities = DEFAULT_EMPTY_ARRAY,
 		filteredDateEntities = DEFAULT_EMPTY_ARRAY,
 		...otherProps
 	} ) => {
+		console.log( '' );
+		console.log( 'withTicketEntitiesListFilterBar()' );
+		console.log( ' > defaultTicketsListView:', defaultTicketsListView );
+		console.log( ' > defaultTicketsListPerPage:', defaultTicketsListPerPage );
 		const filteredEntities = useMemo(
 			() => {
 				const entities = searchTicketEntities( ticketEntities, searchTicketName );
@@ -100,10 +108,14 @@ const withTicketEntitiesListFilterBar = createHigherOrderComponent(
 					searchText={ searchTicketName }
 					setSearchText={ setSearchTicketName }
 					perPage={ ticketsPerPage }
-					view={ ticketsView }
+					view={ ticketsView || defaultTicketsListView }
 					setPerPage={ setTicketsPerPage }
 					setListView={ setTicketsListView }
 					setGridView={ setTicketsGridView }
+					defaultView={ defaultTicketsListView }
+					defaultPerPage={ defaultTicketsListPerPage }
+					setDefaultView={ setDefaultTicketsListView }
+					setDefaultPerPage={ setDefaultTicketsListPerPage }
 					entityFilters={
 						<TicketEntityListFilterBar
 							showTickets={ showTickets }

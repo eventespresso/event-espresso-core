@@ -33,7 +33,6 @@ const EditorTicketEntitiesList = ( {
 	addNewTicketEntity,
 	toggleTicketEditor,
 	ticketEntity = null,
-	view = 'grid',
 	...otherProps
 } ) => {
 	useEffect( () => {
@@ -65,7 +64,6 @@ const EditorTicketEntitiesList = ( {
 				entities={ entities }
 				EntityGridView={ EditorTicketEntitiesGridView }
 				EntityListView={ EditorTicketEntitiesListView }
-				view={ view }
 				loadingNotice={ sprintf(
 					_x(
 						'loading available tickets%s',

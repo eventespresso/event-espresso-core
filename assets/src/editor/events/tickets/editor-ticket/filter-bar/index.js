@@ -1,7 +1,10 @@
 /**
  * External imports
  */
-import { withEntityPagination } from '@eventespresso/higher-order-components';
+import {
+	withDefaultTicketsListSettings,
+	withEntityPagination,
+} from '@eventespresso/higher-order-components';
 import { compose, createHigherOrderComponent } from '@wordpress/compose';
 
 /**
@@ -18,6 +21,7 @@ const withPaginatedTicketEntitiesListAndFilterBar = (
 	paginationConfig = {}
 ) => createHigherOrderComponent(
 	compose( [
+		withDefaultTicketsListSettings,
 		withTicketEntitiesListFilterState,
 		withTicketEntitiesListFilterBar,
 		withEntityPagination( paginationConfig ),
