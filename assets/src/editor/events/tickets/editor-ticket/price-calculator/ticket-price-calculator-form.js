@@ -20,7 +20,7 @@ import { normalizeEntityId } from '@eventespresso/helpers';
  */
 import { TICKET_PRICE_CALCULATOR_FORM_INPUT_PREFIX } from './constants';
 import { parseMoneyValue } from './use-ticket-price-calculator-form-decorator';
-import { shortenCuid } from './ticket-price-calculator-form-data-map';
+import { shortenCuid } from '../../../../utils';
 import './style.css';
 
 const { MODEL_NAME: TICKET } = ticketModel;

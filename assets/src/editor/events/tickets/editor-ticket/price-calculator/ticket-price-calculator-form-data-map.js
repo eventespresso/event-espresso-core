@@ -5,6 +5,7 @@ import { isArray, isEmpty, uniq } from 'lodash';
 import { isModelEntityOfModel } from '@eventespresso/validators';
 
 import { TICKET_PRICE_CALCULATOR_FORM_INPUT_PREFIX } from './constants';
+import { shortenCuid } from '../../../../utils';
 
 /**
  * @function
@@ -61,19 +62,6 @@ const buildPricesDataMap = ( formData, ticketEntity, priceEntities ) => {
 		uniq( priceTypes ).join() :
 		'';
 	return formData;
-};
-
-/**
- * @function
- * @param {string} cuid
- * @return {string} cuid snippet
- */
-export const shortenCuid = ( cuid ) => {
-	if ( cuid.hasOwnProperty( 'length' ) && cuid.length > 18 ) {
-		// use a smaller more unique portion of the CUID
-		return cuid.substring( 12, 18 );
-	}
-	return cuid;
 };
 
 /**

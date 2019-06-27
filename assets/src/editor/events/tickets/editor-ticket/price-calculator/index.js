@@ -12,7 +12,6 @@ export {
 	default as TicketPriceCalculatorForm,
 } from './ticket-price-calculator-form';
 export {
-	shortenCuid,
 	ticketPriceCalculatorFormDataMap,
 } from './ticket-price-calculator-form-data-map';
 export {
