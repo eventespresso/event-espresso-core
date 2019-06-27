@@ -45,7 +45,7 @@ export const getFilteredDateEntitiesList = ( dateEntities, showDates, datesSorte
  * @param {Object} EntityList
  * @return {Object} EntityList with added DateListFilterBar
  */
-export default createHigherOrderComponent(
+const withDateEntitiesListFilterBar = createHigherOrderComponent(
 	( EntityList ) => ( {
 		displayDates,
 		showDates,
@@ -61,6 +61,10 @@ export default createHigherOrderComponent(
 		setDatesListView,
 		setDatesGridView,
 		setFilteredDateEntities,
+		defaultDatesListView,
+		defaultDatesListPerPage,
+		setDefaultDatesListView,
+		setDefaultDatesListPerPage,
 		dateEntities = DEFAULT_EMPTY_ARRAY,
 		...otherProps
 	} ) => {
@@ -99,6 +103,10 @@ export default createHigherOrderComponent(
 					setPerPage={ setDatesPerPage }
 					setListView={ setDatesListView }
 					setGridView={ setDatesGridView }
+					defaultView={ defaultDatesListView }
+					defaultPerPage={ defaultDatesListPerPage }
+					setDefaultView={ setDefaultDatesListView }
+					setDefaultPerPage={ setDefaultDatesListPerPage }
 					entityFilters={
 						<DateListFilterBar
 							displayDates={ displayDates }
@@ -128,3 +136,5 @@ export default createHigherOrderComponent(
 	},
 	'withDateEntitiesListFilterBar'
 );
+
+export default withDateEntitiesListFilterBar;
