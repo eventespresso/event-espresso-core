@@ -73,10 +73,6 @@ const withTicketEntitiesListFilterBar = createHigherOrderComponent(
 		filteredDateEntities = DEFAULT_EMPTY_ARRAY,
 		...otherProps
 	} ) => {
-		console.log( '' );
-		console.log( 'withTicketEntitiesListFilterBar()' );
-		console.log( ' > defaultTicketsListView:', defaultTicketsListView );
-		console.log( ' > defaultTicketsListPerPage:', defaultTicketsListPerPage );
 		const filteredEntities = useMemo(
 			() => {
 				const entities = searchTicketEntities( ticketEntities, searchTicketName );

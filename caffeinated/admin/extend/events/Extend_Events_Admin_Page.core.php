@@ -331,11 +331,9 @@ class Extend_Events_Admin_Page extends Events_Admin_Page
                 function () {
                     $eventId = isset($_REQUEST['post']) ? absint($_REQUEST['post']) : 0;
                     if ($eventId) {
-                        $view = $this->admin_config->advancedEditorView();
-                        $perPage = $this->admin_config->advancedEditorPerPage();
                         echo '
         <script type="text/javascript">
-            /* <![CDATA[ */ var eeEditorEventId = ' . $eventId . '; var eeEditorListView = "' . $view . '"; var eeEditorPerPage = ' . $perPage . '; /* ]]> */
+            /* <![CDATA[ */ var eeEditorEventId = ' . $eventId . '; /* ]]> */
         </script>';
                     }
                 }
