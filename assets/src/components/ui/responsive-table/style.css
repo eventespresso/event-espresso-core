@@ -19,8 +19,13 @@
     box-sizing: border-box;
 }
 
+<<<<<<< FET/editor-dates-tickets-refactor
 .ee-rspnsv-table .ee-rspnsv-table-body .ee-rspnsv-table-body-row:nth-child(even) {
     background: var(--ee-color-grey-11);
+=======
+.ee-rTable .ee-rTable-body .ee-rTable-body-row:nth-child(even) {
+    background: var(--ee-color-grey-15);
+>>>>>>> fix display issues with responsive table
 }
 
 .ee-rspnsv-table .ee-rspnsv-table-header .ee-rspnsv-table-header-th,
