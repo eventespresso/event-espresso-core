@@ -4,6 +4,7 @@
 import { first, isArray, isEmpty, isFunction } from 'lodash';
 import warning from 'warning';
 import PropTypes from 'prop-types';
+import { withInstanceId } from '@wordpress/compose';
 import { Component } from '@wordpress/element';
 import classNames from 'classnames';
 
@@ -32,6 +33,7 @@ import './style.css';
  */
 class ResponsiveTable extends Component {
 	static propTypes = {
+		instanceId: PropTypes.number,
 		columns: PropTypes.arrayOf(
 			PropTypes.shape( {
 				type: PropTypes.string.isRequired,
@@ -83,11 +85,11 @@ class ResponsiveTable extends Component {
 
 	/**
 	 * @function
+	 * @param {number} instanceId
 	 * @param {Object} metaData
 	 */
-	setMetaData = ( metaData = {} ) => {
-		this.tableId = 'ee-rTable-' +
-			Math.random().toString( 36 ).substr( 2, 9 );
+	setMetaData = ( instanceId, metaData = {} ) => {
+		this.tableId = `ee-rTable-${ instanceId }`;
 		this.tableCaption = metaData.tableCaption || '';
 		this.captionID = `${ this.tableId }-caption`;
 		this.showTableFooter = typeof metaData.showTableFooter === 'undefined' ?
@@ -283,6 +285,7 @@ class ResponsiveTable extends Component {
 
 	render() {
 		const {
+			instanceId,
 			columns = [],
 			rowData = [],
 			footerData = [],
@@ -292,7 +295,7 @@ class ResponsiveTable extends Component {
 		if ( isEmpty( columns ) ) {
 			return null;
 		}
-		this.setMetaData( metaData );
+		this.setMetaData( instanceId, metaData );
 		this.setCssClasses( classes || {} );
 		this.columns = [];
 		this.rowNumber = -1;
@@ -328,4 +331,4 @@ class ResponsiveTable extends Component {
 	}
 }
 
-export default ResponsiveTable;
+export default withInstanceId( ResponsiveTable );
