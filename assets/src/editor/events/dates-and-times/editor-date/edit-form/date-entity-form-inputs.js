@@ -7,6 +7,7 @@ import { validations } from '@eventespresso/components';
 import { dateTimeModel } from '@eventespresso/model';
 import { isModelEntityOfModel } from '@eventespresso/validators';
 import { normalizeEntityId } from '@eventespresso/helpers';
+import { ServerDateTime as DateTime } from '@eventespresso/value-objects';
 
 const { MODEL_NAME: DATETIME } = dateTimeModel;
 
@@ -73,6 +74,11 @@ export const dateEntityFormInputs = (
 				label={ __( 'Date Label', 'event_espresso' ) }
 				htmlId={ `${ prefix }-name` }
 				minLength={ 3 }
+				changeListener={
+					( value ) => {
+						dateEntity.name = value;
+					}
+				}
 				required
 			/>,
 		);
@@ -86,6 +92,11 @@ export const dateEntityFormInputs = (
 				initialValue={ values[ `${ prefix }-description` ] || '' }
 				label={ __( 'Description', 'event_espresso' ) }
 				htmlId={ `${ prefix }-description` }
+				changeListener={
+					( value ) => {
+						dateEntity.description = value;
+					}
+				}
 			/>,
 		);
 	}
@@ -99,6 +110,13 @@ export const dateEntityFormInputs = (
 				label={ __( 'Start Time', 'event_espresso' ) }
 				htmlId={ `${ prefix }-start` }
 				validations={ validations.required }
+				changeListener={
+					( value, prevValue ) => {
+						if ( value !== prevValue ) {
+							dateEntity.start = new DateTime( value );
+						}
+					}
+				}
 				inputWidth={ 6 }
 				required
 			/>,
@@ -114,6 +132,13 @@ export const dateEntityFormInputs = (
 				label={ __( 'End Time', 'event_espresso' ) }
 				htmlId={ `${ prefix }-end` }
 				validations={ validations.required }
+				changeListener={
+					( value, prevValue ) => {
+						if ( value !== prevValue ) {
+							dateEntity.end = new DateTime( value );
+						}
+					}
+				}
 				inputWidth={ 6 }
 				required
 			/>,
@@ -135,6 +160,11 @@ export const dateEntityFormInputs = (
 					'event_espresso',
 				) }
 				inputWidth={ 3 }
+				changeListener={
+					( value ) => {
+						dateEntity.regLimit = parseInt( value || -1, 10 );
+					}
+				}
 				min={ 0 }
 			/>,
 		);
@@ -154,6 +184,11 @@ export const dateEntityFormInputs = (
 					'event_espresso',
 				) }
 				inputWidth={ 3 }
+				changeListener={
+					( value ) => {
+						dateEntity.sold = parseInt( value || 0, 10 );
+					}
+				}
 				min={ 0 }
 			/>,
 		);

@@ -5,10 +5,10 @@ import { Dashicon, Tooltip } from '@wordpress/components';
 import { Component } from '@wordpress/element';
 import { __ } from '@eventespresso/i18n';
 import { dateTimeModel } from '@eventespresso/model';
-import { isModelEntityOfModel } from '@eventespresso/validators';
 import { routes } from '@eventespresso/eejs';
 import { addQueryArgs } from '@wordpress/url';
-import { ifCondition, compose } from '@wordpress/compose';
+import { compose } from '@wordpress/compose';
+import { ifValidDateEntity } from '@eventespresso/editor-hocs';
 
 const { ADMIN_ROUTES, ADMIN_ROUTE_ACTION_DEFAULT, getAdminUrl } = routes;
 
@@ -19,7 +19,7 @@ import EditorDateEntityActionsMenu
 	from '../actions-menu/editor-date-entity-actions-menu';
 import { withEditorEventEntity } from '../../../hocs';
 
-const { MODEL_NAME: DATETIME, getBackgroundColorClass } = dateTimeModel;
+const { getBackgroundColorClass } = dateTimeModel;
 
 /**
  * EditorDateEntityListItem
@@ -86,7 +86,7 @@ class EditorDateEntityListItem extends Component {
 	};
 
 	render() {
-		const { eventEntity, dateEntity } = this.props;
+		const { eventEntity, dateEntity, doRefresh } = this.props;
 		this.id = `event-date-ticket-list-modal-${ dateEntity.id }`;
 		const statusClass = this.getStatusClass( dateEntity );
 		const bgClass = getBackgroundColorClass( dateEntity );
@@ -180,6 +180,7 @@ class EditorDateEntityListItem extends Component {
 						<EditorDateEntityActionsMenu
 							eventEntity={ eventEntity }
 							dateEntity={ dateEntity }
+							doRefresh={ doRefresh }
 						/>
 					</div>
 				</div>
@@ -190,9 +191,7 @@ class EditorDateEntityListItem extends Component {
 }
 
 export default compose( [
-	ifCondition(
-		( { dateEntity } ) => isModelEntityOfModel( dateEntity, DATETIME )
-	),
+	ifValidDateEntity,
 	withEditorEventEntity,
 ] )( EditorDateEntityListItem );
 

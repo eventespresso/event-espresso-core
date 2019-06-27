@@ -90,6 +90,8 @@ class EditorDateEntityGridItem extends Component {
 			showDate = 'start',
 			showDesc = 'excerpt',
 			showVenue = true,
+			doRefresh,
+			refreshed,
 		} = this.props;
 		const dateStyleClass = classNames(
 			'ee-editor-date-main',
@@ -107,11 +109,13 @@ class EditorDateEntityGridItem extends Component {
 						dateEntity={ dateEntity }
 						showDesc={ showDesc }
 						showVenue={ showVenue }
+						refreshed={ refreshed }
 					/>
 				</div>
 				<EditorDateEntityActionsMenu
 					eventEntity={ eventEntity }
 					dateEntity={ dateEntity }
+					doRefresh={ doRefresh }
 				/>
 			</Fragment>
 		);

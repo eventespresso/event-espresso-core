@@ -1,15 +1,19 @@
 /**
  * External imports
  */
-import { compose } from '@wordpress/compose';
-import { withDispatch } from '@wordpress/data';
-import { Component } from '@wordpress/element';
+import { compose, createHigherOrderComponent } from '@wordpress/compose';
+import { useDispatch } from '@wordpress/data';
+import {
+	useEffect,
+	useMemo,
+	useState,
+	useCallback, useReducer,
+} from '@wordpress/element';
 import {
 	EntityList,
 	EspressoButton,
 	twoColumnAdminFormLayout,
 } from '@eventespresso/components';
-import { withEditor } from '@eventespresso/editor-hocs';
 import { __, _x, sprintf } from '@eventespresso/i18n';
 
 /**
@@ -18,7 +22,7 @@ import { __, _x, sprintf } from '@eventespresso/i18n';
 import { EditorDateEntitiesGridView } from './grid-view';
 import { EditorDateEntitiesListView } from './list-view';
 import { withPaginatedDateEntitiesListAndFilterBar } from './filter-bar';
-import { DateEntityFormModal } from './edit-form';
+import { withDateEntityFormModal } from './edit-form';
 import { withTicketAssignmentsManagerModal } from '../../ticket-assignments-manager';
 import withUpdateEventDateRelation from './action-handlers/with-update-event-date-relation';
 import { withEditorDateEntities, withEditorEventEntity } from '../../hocs';
@@ -28,124 +32,113 @@ const {
 	FormSaveCancelButtons,
 } = twoColumnAdminFormLayout;
 
-/**
- * EditorDateEntitiesList
- * EntityList component for displaying event dates in the editor
- *
- * @class
- * @param {Array} entities 	array of JSON objects defining the Event Dates
- * @param {string} view
- * @param {Function} retrieveDates
- * @param {mixed} otherProps
- */
-class EditorDateEntitiesList extends Component {
-	constructor( props ) {
-		super( props );
-		this.state = { newDateEntity: null };
-	}
-
-	/**
-	 * @function
-	 * @return {Object} rendered button
-	 */
-	addNewDateButton = () => {
-		const addDateEntity = ( event ) => {
-			if ( event && event.preventDefault ) {
-				event.preventDefault();
-				event.stopPropagation();
-			}
-			this.props.addNewDateEntity(
-				( state ) => this.setState( state ),
-				this.props.toggleEditor
-			);
-		};
-		return (
+const EditorDateEntitiesList = ( {
+	view = 'grid',
+	entities,
+	toggleDateEditor,
+	addNewDateEntity,
+	toggleTicketAssignments,
+	dateEntity = null,
+	...otherProps
+} ) => {
+	useEffect( () => {
+		if ( dateEntity !== null ) {
+			toggleDateEditor();
+		}
+	}, [ dateEntity, toggleDateEditor ] );
+	const addNewDateEntityButton = useMemo(
+		() => (
 			<EspressoButton
-				icon="calendar"
+				icon={ 'calendar' }
 				buttonText={ __( 'Add New Date', 'event_espresso' ) }
-				onClick={ addDateEntity }
+				onClick={ addNewDateEntity }
 			/>
-		);
-	};
-
-	/**
-	 * @function
-	 * @return {Object} rendered button
-	 */
-	ticketAssignmentsButton = () => {
-		return (
+		),
+		[ addNewDateEntity ]
+	);
+	const ticketAssignmentsButton = useMemo(
+		() => (
 			<EspressoButton
-				icon="tickets-alt"
+				icon={ 'tickets-alt' }
 				buttonText={ __(
 					'Ticket Assignments',
 					'event_espresso'
 				) }
-				onClick={ this.props.toggleTicketAssignments }
+				onClick={ toggleTicketAssignments }
 			/>
-		);
-	};
+		),
+		[ toggleTicketAssignments ]
+	);
+	return (
+		<FormWrapper>
+			<EntityList
+				{ ...otherProps }
+				entities={ entities }
+				EntityGridView={ EditorDateEntitiesGridView }
+				EntityListView={ EditorDateEntitiesListView }
+				view={ view }
+				loadingNotice={ sprintf(
+					_x(
+						'loading event dates%s',
+						'loading event dates...',
+						'event_espresso'
+					),
+					String.fromCharCode( 8230 )
+				) }
+			/>
+			<FormSaveCancelButtons
+				submitButton={ addNewDateEntityButton }
+				cancelButton={ ticketAssignmentsButton }
+			/>
+		</FormWrapper>
+	);
+};
 
-	render() {
-		const {
-			view,
-			entities,
-			editorOpen,
-			toggleEditor,
-			...otherProps
-		} = this.props;
-		return (
-			<FormWrapper>
-				<EntityList
-					{ ...otherProps }
-					entities={ entities }
-					EntityGridView={ EditorDateEntitiesGridView }
-					EntityListView={ EditorDateEntitiesListView }
-					view={ view }
-					loadingNotice={ sprintf(
-						_x(
-							'loading event dates%s',
-							'loading event dates...',
-							'event_espresso'
-						),
-						String.fromCharCode( 8230 )
-					) }
-				/>
-				<FormSaveCancelButtons
-					submitButton={ this.addNewDateButton() }
-					cancelButton={ this.ticketAssignmentsButton() }
-				/>
-				<DateEntityFormModal
-					dateEntity={ this.state.newDateEntity }
-					toggleEditor={ toggleEditor }
-					editorOpen={ editorOpen }
-				/>
-			</FormWrapper>
+const withNewDateEntity = createHigherOrderComponent(
+	( WrappedComponent ) => ( {
+		updateEventDateRelation,
+		...otherProps
+	} ) => {
+		const [ newDateEntity, setNewDateEntity ] = useState( null );
+		const { createEntity } = useDispatch( 'eventespresso/core' );
+		const addNewDateEntity = useCallback(
+			async ( event ) => {
+				if ( event && event.preventDefault ) {
+					event.preventDefault();
+					event.stopPropagation();
+				}
+				const newDate = await createEntity( 'datetime', {} );
+				setNewDateEntity( newDate );
+				updateEventDateRelation( newDate );
+			},
+			[ createEntity, updateEventDateRelation ]
 		);
-	}
-}
+		return <WrappedComponent
+			dateEntity={ newDateEntity }
+			addNewDateEntity={ addNewDateEntity }
+			{ ...otherProps }
+		/>;
+	},
+	'withNewDateEntity'
+);
 
 export default compose( [
-	withEditor,
-	withEditorDateEntities,
-	withPaginatedDateEntitiesListAndFilterBar(),
 	withEditorEventEntity,
 	withUpdateEventDateRelation,
-	withDispatch( (
-		dispatch,
-		{ updateEventDateRelation }
-	) => {
-		const { createEntity } = dispatch( 'eventespresso/core' );
-		const addNewDateEntity = ( setState, toggleEditor ) => {
-			createEntity( 'datetime', {} ).then(
-				( newDateEntity ) => {
-					setState( { newDateEntity } );
-					updateEventDateRelation( newDateEntity );
-					toggleEditor();
-				},
-			);
+	( WrappedComponent ) => ( props ) => {
+		const [ refreshed, doRefresh ] = useReducer( ( s ) => s + 1, 0 );
+		const refresher = () => {
+			doRefresh( {} );
 		};
-		return { addNewDateEntity };
-	} ),
+		return <WrappedComponent
+			{ ...props }
+			doRefresh={ refresher }
+			refreshed={ refreshed }
+		/>;
+	},
+	withNewDateEntity,
+	withEditorDateEntities,
+	withPaginatedDateEntitiesListAndFilterBar(),
 	withTicketAssignmentsManagerModal( () => (
 		{
 			title: __(
@@ -155,4 +148,13 @@ export default compose( [
 			closeButtonLabel: null,
 		}
 	) ),
+	createHigherOrderComponent(
+		( WrappedComponent ) => ( props ) => {
+			return <WrappedComponent
+				{ ...props }
+				onCloseDateEditor={ props.toggleTicketAssignments }
+			/>;
+		}
+	),
+	withDateEntityFormModal,
 ] )( EditorDateEntitiesList );
