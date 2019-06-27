@@ -49,11 +49,20 @@
 =======
   "eventespresso-editor-hocs.js": "eventespresso-editor-hocs.84418759c6dc24b4871c.dist.js",
   "eventespresso-editor-hocs.json": "eventespresso-editor-hocs.84418759c6dc24b4871c.dist.deps.json",
+<<<<<<< FET/editor-dates-tickets-refactor
   "eventespresso-editor.css": "eventespresso-editor.382fc5aad1076260f1e7.dist.css",
   "eventespresso-editor.js": "eventespresso-editor.6f5d6ff5b61344d8541f.dist.js",
   "eventespresso-editor.json": "eventespresso-editor.6f5d6ff5b61344d8541f.dist.deps.json",
 >>>>>>> fix display issues with responsive table
+<<<<<<< FET/editor-dates-tickets-refactor
 >>>>>>> fix display issues with responsive table
+=======
+=======
+  "eventespresso-editor.css": "eventespresso-editor.a1d3481b73602bcf4038.dist.css",
+  "eventespresso-editor.js": "eventespresso-editor.13d27951d1428436b96f.dist.js",
+  "eventespresso-editor.json": "eventespresso-editor.13d27951d1428436b96f.dist.deps.json",
+>>>>>>> rebuild assets
+>>>>>>> rebuild assets
   "eventespresso-helpers.js": "eventespresso-helpers.b86e4ee65beead3a561e.dist.js",
   "eventespresso-helpers.json": "eventespresso-helpers.b86e4ee65beead3a561e.dist.deps.json",
   "eventespresso-hocs.css": "eventespresso-hocs.ddcc2c093824ae306db6.dist.css",
