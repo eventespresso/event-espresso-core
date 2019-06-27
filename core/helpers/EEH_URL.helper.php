@@ -24,21 +24,6 @@ class EEH_URL
      */
     public static function add_query_args_and_nonce($args = array(), $url = '', $exclude_nonce = false)
     {
-        if (empty($url)) {
-            $user_msg = esc_html__(
-                'An error occurred. A URL is a required parameter for the add_query_args_and_nonce method.',
-                'event_espresso'
-            );
-            $dev_msg  = $user_msg . "\n"
-                . sprintf(
-                    esc_html__(
-                        'In order to dynamically generate nonces for your actions, you need to supply a valid URL as a second parameter for the %s method.',
-                        'event_espresso'
-                    ),
-                    __CLASS__ . '::add_query_args_and_nonce'
-                );
-            EE_Error::add_error($user_msg . '||' . $dev_msg, __FILE__, __FUNCTION__, __LINE__);
-        }
         // check that an action exists and add nonce
         if (! $exclude_nonce) {
             if (isset($args['action']) && ! empty($args['action'])) {

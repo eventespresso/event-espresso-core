@@ -20,6 +20,9 @@ import {
 	EventEntities,
 	DateTimeEntities,
 } from '../../../test/fixtures/base';
+import { removeEntityById } from '../../reducers/entities';
+import { removeRelatedEntitiesForEntity } from '../../reducers/relations';
+import { trashEntity } from '../../reducers/dirty-entities';
 
 describe( 'getRelationIdsForEntityRelation()', () => {
 	beforeEach( () => getRelationIdsForEntityRelation.clear() );
@@ -506,4 +509,50 @@ describe( 'getRelatedEntitiesForIds()', () => {
 			]
 		);
 	} );
+	it(
+		'does not return cached results after entity has been trashed',
+		() => {
+			const modifiedState = { ...mockStateForTests };
+			// add date b to event a
+			modifiedState.relations = modifiedState.relations.setIn(
+				[ 'event', EventEntities.a.id, 'datetime' ],
+				Set.of( DateTimeEntities.a.id, DateTimeEntities.b.id )
+			).setIn(
+				[ 'datetime', DateTimeEntities.b.id, 'event' ],
+				Set.of( EventEntities.a.id, EventEntities.b.id )
+			);
+			// get date entities using IDs for event a & b
+			expect( getRelatedEntitiesForIds(
+				modifiedState,
+				'event',
+				[ EventEntities.a.id, EventEntities.b.id ],
+				'datetime'
+			) ).toEqual( [ DateTimeEntities.a, DateTimeEntities.b ] );
+			// trash date a
+			const trashAction = {
+				modelName: 'datetime',
+				entityId: DateTimeEntities.a.id,
+			};
+			modifiedState.entities = removeEntityById(
+				modifiedState.entities,
+				trashAction
+			);
+			modifiedState.dirty.relations = removeRelatedEntitiesForEntity(
+				modifiedState.dirty.relations,
+				trashAction
+			);
+			modifiedState.dirty.trash = trashEntity(
+				modifiedState.dirty.trash,
+				trashAction
+			);
+			// now get date entities again using same IDs for event a & b
+			// results should only be date b since a was trashed
+			expect( getRelatedEntitiesForIds(
+				modifiedState,
+				'event',
+				[ EventEntities.a.id, EventEntities.b.id ],
+				'datetime'
+			) ).toEqual( [ DateTimeEntities.b ] );
+		}
+	);
 } );
