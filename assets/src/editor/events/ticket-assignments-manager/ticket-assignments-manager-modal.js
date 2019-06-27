@@ -3,8 +3,8 @@
  */
 import { filter, findIndex, cloneDeep } from 'lodash';
 import warning from 'warning';
-import { IconButton } from '@wordpress/components';
-import { useState, useCallback, useRef } from '@wordpress/element';
+import { IconButton, ToggleControl } from '@wordpress/components';
+import { Fragment, useState, useCallback, useRef } from '@wordpress/element';
 import { ENTER } from '@wordpress/keycodes';
 import {
 	CalendarPageDate,
@@ -28,18 +28,29 @@ import './ticket-assignments-manager.css';
 import { sortDateEntitiesList } from '../dates-and-times/editor-date/filter-bar/date-entities-list-filter-utils';
 import { withEditorDateEntities, withEditorTicketEntities } from '../hocs';
 import { useAssignmentsCalculator } from './hooks';
+import { shortenCuid } from '../../utils';
 
 const noIndex = -1;
 
 const {
+	FormColumn,
+	FormRow,
 	FormInfo,
 	FormSection,
 	FormWrapper,
 	FormSaveCancelButtons,
 } = twoColumnAdminFormLayout;
 
-const { getBackgroundColorClass: getDateBgColorClass } = dateTimeModel;
-const { getBackgroundColorClass: getTicketBgColorClass } = ticketModel;
+const {
+	isTrashed,
+	isExpired: isExpiredDate,
+	getBackgroundColorClass: getDateBgColorClass,
+} = dateTimeModel;
+const {
+	isArchived,
+	isExpired: isExpiredTicket,
+	getBackgroundColorClass: getTicketBgColorClass,
+} = ticketModel;
 
 const TicketAssignmentsManagerModal = ( {
 	entities: dateEntities,
@@ -54,6 +65,14 @@ const TicketAssignmentsManagerModal = ( {
 	assignedState,
 	setAssignedState,
 	assignmentCounts,
+	showArchivedDates,
+	setShowArchivedDates,
+	showExpiredDates,
+	setShowExpiredDates,
+	showArchivedTickets,
+	setShowArchivedTickets,
+	showExpiredTickets,
+	setShowExpiredTickets,
 } ) => {
 	const [ submitting, setSubmitting ] = useState( false );
 	const [ formError, setFormError ] = useState( '' );
@@ -153,7 +172,7 @@ const TicketAssignmentsManagerModal = ( {
 									</span>
 								</div>
 								<div className="ee-tam-ticket-id">
-									{ `#${ ticket.id }` }
+									{ `#${ shortenCuid( ticket.id ) }` }
 								</div>
 								<div className="ee-tam-ticket-header-title">
 									{ ticket.name }
@@ -419,11 +438,13 @@ const TicketAssignmentsManagerModal = ( {
 				class: 'ee-tam-date-label',
 				value: (
 					<div className="ee-tam-date-label-div">
-						<div className="ee-tam-date-id">
-							{ `#${ dateEntity.id }` }
-						</div>
-						<div className="ee-tam-date-label-text">
-							{ dateEntity.name }
+						<div className="ee-tam-date-label-inner">
+							<div className="ee-tam-date-id">
+								{ `#${ shortenCuid( dateEntity.id ) }` }
+							</div>
+							<div className="ee-tam-date-label-text">
+								{ dateEntity.name }
+							</div>
 						</div>
 						<CalendarPageDate
 							startDate={ dateEntity.start }
@@ -574,26 +595,108 @@ const TicketAssignmentsManagerModal = ( {
 	} else {
 		tableId += dateEntities.length + '-' + ticketEntities.length;
 	}
+	const showDateFilters = dateEntities.length > 1;
+	const showTicketFilters = ticketEntities.length > 1;
+	const dateFiltersOffset = showDateFilters && showTicketFilters ? 2 : 7;
+	const ticketFiltersOffset = showDateFilters && showTicketFilters ? 0 : 7;
+	const dateFilters = showDateFilters ? (
+		<Fragment>
+			<FormColumn colSize={ '2h' } offset={ dateFiltersOffset }>
+				<ToggleControl
+					checked={ showArchivedDates }
+					instanceId={ 'showArchivedDates' }
+					label={ showArchivedDates ?
+						__(
+							'archived dates shown',
+							'event_espresso'
+						) : __(
+							'show archived dates?',
+							'event_espresso'
+						) }
+					onChange={ setShowArchivedDates }
+				/>
+			</FormColumn>
+			<FormColumn colSize={ '2h' }>
+				<ToggleControl
+					checked={ showExpiredDates }
+					instanceId={ 'showExpiredDates' }
+					label={
+						showExpiredDates ?
+							__(
+								'expired dates shown',
+								'event_espresso'
+							) : __(
+								'show expired dates?',
+								'event_espresso'
+							)
+					}
+					onChange={ setShowExpiredDates }
+				/>
+			</FormColumn>
+		</Fragment>
+	) : null;
+
+	const ticketFilters = showTicketFilters ? (
+		<Fragment>
+			<FormColumn colSize={ '2h' } offset={ ticketFiltersOffset }>
+				<ToggleControl
+					checked={ showArchivedTickets }
+					instanceId={ 'showArchivedTickets' }
+					label={ showArchivedTickets ?
+						__(
+							'archived tickets shown',
+							'event_espresso'
+						) : __(
+							'show archived tickets?',
+							'event_espresso'
+						) }
+					onChange={ setShowArchivedTickets }
+				/>
+			</FormColumn>
+			<FormColumn colSize={ '2h' }>
+				<ToggleControl
+					checked={ showExpiredTickets }
+					instanceId={ 'showExpiredTickets' }
+					label={ showExpiredTickets ?
+						__(
+							'expired tickets shown',
+							'event_espresso'
+						) : __(
+							'show expired tickets?',
+							'event_espresso'
+						) }
+					onChange={ setShowExpiredTickets }
+				/>
+			</FormColumn>
+		</Fragment>
+	) : null;
+
 	return (
 		<FormWrapper>
-			<FormSection>
-				{ getFormError() }
-				<ResponsiveTable
-					columns={ ticketHeaders() }
-					rowData={ dateRows() }
-					metaData={ {
-						tableId,
-						tableCaption: __(
-							'Ticket Assignments',
-							'event_espresso'
-						),
-						hasRowHeaders: dateEntities.length > 1,
-					} }
-					classes={ {
-						tableClass: 'ee-ticket-assignments-manager',
-					} }
-				/>
-				{ pagination }
+			<FormSection htmlClass={ 'ee-ticket-assignments-manager-form' } >
+				<div className={ 'ee-ticket-assignments-manager-filters' }>
+					<FormRow>
+						{ dateFilters }
+						{ ticketFilters }
+					</FormRow>
+					{ pagination }
+					{ getFormError() }
+					<ResponsiveTable
+						columns={ ticketHeaders() }
+						rowData={ dateRows() }
+						metaData={ {
+							tableId,
+							tableCaption: __(
+								'Ticket Assignments',
+								'event_espresso'
+							),
+							hasRowHeaders: dateEntities.length > 1,
+						} }
+						classes={ {
+							tableClass: 'ee-ticket-assignments-manager',
+						} }
+					/>
+				</div>
 			</FormSection>
 			<FormSaveCancelButtons
 				submitButton={ submitButton() }
@@ -637,6 +740,49 @@ export default compose( [
 		};
 		return { addTicketEntities, removeTicketEntities };
 	} ),
+	( WrappedComponent ) => ( {
+		dateEntities,
+		ticketEntities,
+		...otherProps
+	} ) => {
+		const [ showArchivedDates, setShowArchivedDates ] = useState( false );
+		const [ showExpiredDates, setShowExpiredDates ] = useState( false );
+		const [ showArchivedTickets, setShowArchivedTickets ] = useState( false );
+		const [ showExpiredTickets, setShowExpiredTickets ] = useState( false );
+		dateEntities = ! showArchivedDates ?
+			filter( dateEntities, ( dateEntity ) => {
+				return ! isTrashed( dateEntity );
+			} ) :
+			dateEntities;
+		dateEntities = ! showExpiredDates ?
+			filter( dateEntities, ( dateEntity ) => {
+				return ! isExpiredDate( dateEntity );
+			} ) :
+			dateEntities;
+		ticketEntities = ! showArchivedTickets ?
+			filter( ticketEntities, ( ticketEntity ) => {
+				return ! isArchived( ticketEntity );
+			} ) :
+			ticketEntities;
+		ticketEntities = ! showExpiredTickets ?
+			filter( ticketEntities, ( ticketEntity ) => {
+				return ! isExpiredTicket( ticketEntity );
+			} ) :
+			ticketEntities;
+		return <WrappedComponent
+			{ ...otherProps }
+			dateEntities={ dateEntities }
+			ticketEntities={ ticketEntities }
+			showArchivedDates={ showArchivedDates }
+			setShowArchivedDates={ setShowArchivedDates }
+			showExpiredDates={ showExpiredDates }
+			setShowExpiredDates={ setShowExpiredDates }
+			showArchivedTickets={ showArchivedTickets }
+			setShowArchivedTickets={ setShowArchivedTickets }
+			showExpiredTickets={ showExpiredTickets }
+			setShowExpiredTickets={ setShowExpiredTickets }
+		/>;
+	},
 	( WrappedComponent ) => ( props ) => {
 		// adds a ref for handling count updates.
 		const assignmentCounts = useRef( { dates: {}, tickets: {} } );
