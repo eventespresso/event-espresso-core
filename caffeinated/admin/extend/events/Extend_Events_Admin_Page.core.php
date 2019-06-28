@@ -1309,22 +1309,6 @@ class Extend_Events_Admin_Page extends Events_Admin_Page
     public function advancedEditorAdminFormSection(array $default_event_settings_form_subsections)
     {
         return [
-            'advanced_editor_header' => new EE_Form_Section_HTML(
-                EEH_HTML::div(
-                    EEH_HTML::div(
-                        EEH_HTML::h2(
-                            esc_html__('New Feature', 'event_espresso'),
-                            '',
-                            'ee-admin-settings-hdr ee-new-flag'
-                        ),
-                        '',
-                        'ee-new-flag-wrap'
-                    ),
-                    '',
-                    'ee-new-flag-shadow',
-                    'margin: -25px 0 10px;'
-                )
-            ),
             'use_advanced_editor'         => new EE_Select_Input(
                 apply_filters(
                     'FHEE__Events_Admin_Page___default_event_settings_form__advanced_editor_input_options',
