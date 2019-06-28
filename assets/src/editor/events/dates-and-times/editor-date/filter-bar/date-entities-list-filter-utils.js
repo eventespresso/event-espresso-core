@@ -137,6 +137,8 @@ export const sortDateEntitiesList = ( dateEntities, sort = 'chronologically' ) =
 							dateEntity.start.toMillis() :
 							0;
 					},
+					'name',
+					'id',
 				]
 			);
 			break;
