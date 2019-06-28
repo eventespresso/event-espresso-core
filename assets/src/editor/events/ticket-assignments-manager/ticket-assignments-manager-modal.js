@@ -25,7 +25,12 @@ import { isModelEntityOfModel } from '@eventespresso/validators';
  */
 import * as handler from './ticket-assignments-handler';
 import './ticket-assignments-manager.css';
-import { sortDateEntitiesList } from '../dates-and-times/editor-date/filter-bar/date-entities-list-filter-utils';
+import {
+	sortDateEntitiesList,
+} from '../dates-and-times/editor-date/filter-bar/date-entities-list-filter-utils';
+import {
+	sortTicketEntitiesList,
+} from '../tickets/editor-ticket/filter-bar/ticket-entities-list-filter-utils';
 import { withEditorDateEntities, withEditorTicketEntities } from '../hocs';
 import { useAssignmentsCalculator } from './hooks';
 import { shortenCuid } from '../../utils';
@@ -77,7 +82,6 @@ const TicketAssignmentsManagerModal = ( {
 	setShowExpiredTickets,
 } ) => {
 	const [ submitting, setSubmitting ] = useState( false );
-	const [ formError, setFormError ] = useState( '' );
 	const processChanges = useCallback( () => {
 		if ( hasNoAssignments ) {
 			// brings up confirm modal because the editor won't close
@@ -113,9 +117,8 @@ const TicketAssignmentsManagerModal = ( {
 					ticketId
 				);
 			} );
-			setFormError( '' );
 		},
-		[ setFormError ]
+		[]
 	);
 	const removeTicketEntity = useCallback(
 		( dateId, ticketId ) => {
@@ -519,24 +522,20 @@ const TicketAssignmentsManagerModal = ( {
 
 	/**
 	 * @function
-	 * @return {Object} rendered cancel button
+	 * @return {Function} callback for displaying FormInfo
 	 */
 	const getFormError = useCallback(
-		() => {
-			let errorMessage = formError;
-			if ( hasNoAssignments ) {
-				errorMessage = noAssignmentsMessage;
-			}
+		( errorMessage, dismissable = true, colSize = 10, offset = 1 ) => {
 			return errorMessage ?
 				<FormInfo
 					formInfo={ errorMessage }
 					dashicon={ 'warning' }
-					dismissable={ true }
-					colSize={ 10 }
-					offset={ 1 }
+					dismissable={ dismissable }
+					colSize={ colSize }
+					offset={ offset }
 				/> : null;
 		},
-		[ hasNoAssignments, formError ]
+		[]
 	);
 
 	/**
@@ -554,7 +553,6 @@ const TicketAssignmentsManagerModal = ( {
 							event.preventDefault();
 							event.stopPropagation();
 							processChanges();
-							setFormError( '' );
 						}
 					}
 					buttonText={ __(
@@ -565,7 +563,7 @@ const TicketAssignmentsManagerModal = ( {
 				/>
 			);
 		},
-		[ processChanges, submitting, setFormError ]
+		[ processChanges, submitting ]
 	);
 
 	/**
@@ -581,14 +579,13 @@ const TicketAssignmentsManagerModal = ( {
 						( event ) => {
 							event.preventDefault();
 							event.stopPropagation();
-							setFormError( '' );
 							toggleEditor();
 						}
 					}
 				/>
 			);
 		},
-		[ setFormError, toggleEditor ]
+		[ toggleEditor ]
 	);
 
 	let tableId = 'ee-ticket-assignments-manager-';
@@ -610,7 +607,6 @@ const TicketAssignmentsManagerModal = ( {
 	) {
 		showTicketFilters = false;
 	}
-
 	const dateFiltersOffset = showDateFilters && showTicketFilters ? 2 : 7;
 	const ticketFiltersOffset = showDateFilters && showTicketFilters ? 0 : 7;
 	const dateFilters = showDateFilters ? (
@@ -685,6 +681,18 @@ const TicketAssignmentsManagerModal = ( {
 		</Fragment>
 	) : null;
 
+	const filterNotice = dateEntities.length < 1 || ticketEntities.length < 1 ?
+		getFormError(
+			__(
+				'Not seeing any dates or tickets? Try changing the filters above.',
+				'event_espresso'
+			),
+			false,
+			6,
+			dateFiltersOffset
+		) :
+		null;
+
 	return (
 		<FormWrapper>
 			<FormSection htmlClass={ 'ee-ticket-assignments-manager-form' } >
@@ -693,8 +701,9 @@ const TicketAssignmentsManagerModal = ( {
 						{ dateFilters }
 						{ ticketFilters }
 					</FormRow>
+					{ filterNotice }
 					{ pagination }
-					{ getFormError() }
+					{ getFormError( noAssignmentsMessage ) }
 					<ResponsiveTable
 						columns={ ticketHeaders() }
 						rowData={ dateRows() }
@@ -848,11 +857,13 @@ export default compose( [
 		// initial setup based on incoming entity
 		if ( isModelEntityOfModel( dateEntity, 'datetime' ) ) {
 			dtmProps.entities = [ dateEntity ];
+			dtmProps.ticketEntities = sortTicketEntitiesList( ticketEntities );
 		} else if ( isModelEntityOfModel( ticketEntity, 'ticket' ) ) {
 			dtmProps.entities = sortDateEntitiesList( dateEntities );
 			dtmProps.ticketEntities = [ ticketEntity ];
 		} else {
 			dtmProps.entities = sortDateEntitiesList( dateEntities );
+			dtmProps.ticketEntities = sortTicketEntitiesList( ticketEntities );
 		}
 
 		// need to setup the assignmentCounts for all the tickets and all the dates!

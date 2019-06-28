@@ -41,9 +41,12 @@
   "eventespresso-editor.css": "eventespresso-editor.c8d3b87abc354582f297.dist.css",
 <<<<<<< FET/editor-dates-tickets-refactor
 <<<<<<< FET/editor-dates-tickets-refactor
+<<<<<<< FET/editor-dates-tickets-refactor
   "eventespresso-editor.js": "eventespresso-editor.b766041935ea48afe1e1.dist.js",
   "eventespresso-editor.json": "eventespresso-editor.b766041935ea48afe1e1.dist.deps.json",
 =======
+=======
+>>>>>>> display notice if no dates or tickets shown
 <<<<<<< FET/editor-dates-tickets-refactor
   "eventespresso-editor.css": "eventespresso-editor.e06239210af7b594c973.dist.css",
   "eventespresso-editor.js": "eventespresso-editor.9a5b68b28264727b8c89.dist.js",
@@ -83,7 +86,15 @@
   "eventespresso-editor.json": "eventespresso-editor.ab38f47666e3a7e2f2c4.dist.deps.json",
 >>>>>>> rebuild assets js_only
 >>>>>>> rebuild assets js_only
+<<<<<<< FET/editor-dates-tickets-refactor
 >>>>>>> rebuild assets js_only
+=======
+=======
+  "eventespresso-editor.css": "eventespresso-editor.516782d1395cb10a0ddf.dist.css",
+  "eventespresso-editor.js": "eventespresso-editor.ebeaf388166ba418e964.dist.js",
+  "eventespresso-editor.json": "eventespresso-editor.ebeaf388166ba418e964.dist.deps.json",
+>>>>>>> display notice if no dates or tickets shown
+>>>>>>> display notice if no dates or tickets shown
   "eventespresso-helpers.js": "eventespresso-helpers.b86e4ee65beead3a561e.dist.js",
   "eventespresso-helpers.json": "eventespresso-helpers.b86e4ee65beead3a561e.dist.deps.json",
   "eventespresso-hocs.css": "eventespresso-hocs.ddcc2c093824ae306db6.dist.css",
