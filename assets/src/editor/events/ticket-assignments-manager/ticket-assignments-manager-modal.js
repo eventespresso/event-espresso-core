@@ -81,6 +81,9 @@ const TicketAssignmentsManagerModal = ( {
 	showExpiredTickets,
 	setShowExpiredTickets,
 } ) => {
+	const dateCount = dateEntities.length;
+	const ticketCount = ticketEntities.length;
+
 	const [ submitting, setSubmitting ] = useState( false );
 	const processChanges = useCallback( () => {
 		if ( hasNoAssignments ) {
@@ -140,7 +143,6 @@ const TicketAssignmentsManagerModal = ( {
 	 */
 	const ticketHeaders = useCallback(
 		() => {
-			const dateCount = dateEntities.length;
 			const headerCells = [
 				{
 					type: 'row',
@@ -474,7 +476,6 @@ const TicketAssignmentsManagerModal = ( {
 	const dateRows = useCallback(
 		() => {
 			let year = 0;
-			const dateCount = dateEntities.length;
 			const rows = [];
 			dateEntities.forEach(
 				( eventDate ) => {
@@ -560,6 +561,7 @@ const TicketAssignmentsManagerModal = ( {
 						'event_espresso'
 					) }
 					submitting={ submitting }
+					disabled={ dateCount < 1 || ticketCount < 1 }
 				/>
 			);
 		},
@@ -589,20 +591,20 @@ const TicketAssignmentsManagerModal = ( {
 	);
 
 	let tableId = 'ee-ticket-assignments-manager-';
-	if ( dateEntities.length === 1 ) {
+	if ( dateCount === 1 ) {
 		tableId += dateEntities[ 0 ].id;
 	} else {
-		tableId += dateEntities.length + '-' + ticketEntities.length;
+		tableId += dateCount + '-' + ticketCount;
 	}
 	// make sure filters are shown when needed
 	if (
-		dateEntities.length === 1 &&
+		dateCount === 1 &&
 		! ( showArchivedDates || showExpiredDates )
 	) {
 		showDateFilters = false;
 	}
 	if (
-		ticketEntities.length === 1 &&
+		ticketCount === 1 &&
 		! ( showArchivedTickets || showExpiredTickets )
 	) {
 		showTicketFilters = false;
@@ -681,17 +683,35 @@ const TicketAssignmentsManagerModal = ( {
 		</Fragment>
 	) : null;
 
-	const filterNotice = dateEntities.length < 1 || ticketEntities.length < 1 ?
+	const filterNotice = dateCount < 1 || ticketCount < 1 ?
 		getFormError(
 			__(
 				'Not seeing any dates or tickets? Try changing the filters above.',
 				'event_espresso'
 			),
 			false,
-			6,
+			12 - dateFiltersOffset,
 			dateFiltersOffset
 		) :
 		null;
+
+	const ticketAssignments = dateCount > 0 && ticketCount > 0 ? (
+		<ResponsiveTable
+			columns={ ticketHeaders() }
+			rowData={ dateRows() }
+			metaData={ {
+				tableId,
+				tableCaption: __(
+					'Ticket Assignments',
+					'event_espresso'
+				),
+				hasRowHeaders: dateCount > 1,
+			} }
+			classes={ {
+				tableClass: 'ee-ticket-assignments-manager',
+			} }
+		/>
+	) : null;
 
 	return (
 		<FormWrapper>
@@ -704,21 +724,7 @@ const TicketAssignmentsManagerModal = ( {
 					{ filterNotice }
 					{ pagination }
 					{ getFormError( noAssignmentsMessage ) }
-					<ResponsiveTable
-						columns={ ticketHeaders() }
-						rowData={ dateRows() }
-						metaData={ {
-							tableId,
-							tableCaption: __(
-								'Ticket Assignments',
-								'event_espresso'
-							),
-							hasRowHeaders: dateEntities.length > 1,
-						} }
-						classes={ {
-							tableClass: 'ee-ticket-assignments-manager',
-						} }
-					/>
+					{ ticketAssignments }
 				</div>
 			</FormSection>
 			<FormSaveCancelButtons
