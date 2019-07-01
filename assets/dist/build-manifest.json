@@ -6,12 +6,15 @@
   "eejs-core.json": "eejs-core.7850a6d9398c50d79ab8.dist.deps.json",
 <<<<<<< FET/editor-dates-tickets-refactor
 <<<<<<< FET/editor-dates-tickets-refactor
+<<<<<<< FET/editor-dates-tickets-refactor
   "eventespresso-components.css": "eventespresso-components.7ad2c2ecf6136aed7c0b.dist.css",
   "eventespresso-components.js": "eventespresso-components.cbf9ed751c7587d176e0.dist.js",
   "eventespresso-components.json": "eventespresso-components.cbf9ed751c7587d176e0.dist.deps.json",
 =======
 =======
 >>>>>>> rebuild assets js_only
+=======
+>>>>>>> tweak bg color and make sure text is a11y js_only
 <<<<<<< FET/editor-dates-tickets-refactor
   "eventespresso-components.css": "eventespresso-components.bb1c34839b03c14642fe.dist.css",
   "eventespresso-components.js": "eventespresso-components.05323e01f2814e5825bc.dist.js",
@@ -29,7 +32,15 @@
   "eventespresso-components.js": "eventespresso-components.91247b2a43ee7f8954cb.dist.js",
   "eventespresso-components.json": "eventespresso-components.91247b2a43ee7f8954cb.dist.deps.json",
 >>>>>>> rebuild assets js_only
+<<<<<<< FET/editor-dates-tickets-refactor
 >>>>>>> rebuild assets js_only
+=======
+=======
+  "eventespresso-components.css": "eventespresso-components.aa038485156aa1297140.dist.css",
+  "eventespresso-components.js": "eventespresso-components.27d0d1ffe6a37fa8400a.dist.js",
+  "eventespresso-components.json": "eventespresso-components.27d0d1ffe6a37fa8400a.dist.deps.json",
+>>>>>>> tweak bg color and make sure text is a11y js_only
+>>>>>>> tweak bg color and make sure text is a11y js_only
   "eventespresso-core-blocks-frontend.css": "eventespresso-core-blocks-frontend.30e4ea23d2adb992ff77.dist.css",
   "eventespresso-core-blocks-frontend.js": "eventespresso-core-blocks-frontend.c3b86736850a862ef904.dist.js",
   "eventespresso-core-blocks-frontend.json": "eventespresso-core-blocks-frontend.c3b86736850a862ef904.dist.deps.json",
@@ -102,10 +113,18 @@
 =======
 =======
   "eventespresso-editor.css": "eventespresso-editor.516782d1395cb10a0ddf.dist.css",
+<<<<<<< FET/editor-dates-tickets-refactor
   "eventespresso-editor.js": "eventespresso-editor.ebeaf388166ba418e964.dist.js",
   "eventespresso-editor.json": "eventespresso-editor.ebeaf388166ba418e964.dist.deps.json",
 >>>>>>> display notice if no dates or tickets shown
+<<<<<<< FET/editor-dates-tickets-refactor
 >>>>>>> display notice if no dates or tickets shown
+=======
+=======
+  "eventespresso-editor.js": "eventespresso-editor.f86ef185f38326123516.dist.js",
+  "eventespresso-editor.json": "eventespresso-editor.f86ef185f38326123516.dist.deps.json",
+>>>>>>> tweak bg color and make sure text is a11y js_only
+>>>>>>> tweak bg color and make sure text is a11y js_only
   "eventespresso-helpers.js": "eventespresso-helpers.b86e4ee65beead3a561e.dist.js",
   "eventespresso-helpers.json": "eventespresso-helpers.b86e4ee65beead3a561e.dist.deps.json",
   "eventespresso-hocs.css": "eventespresso-hocs.ddcc2c093824ae306db6.dist.css",
