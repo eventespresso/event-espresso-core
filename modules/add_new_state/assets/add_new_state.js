@@ -122,10 +122,11 @@ jQuery(document).ready(function($) {
 			//var  new_state_country_name = new_state_country.children(':selected').text();
 			var new_state_name = $('#'+new_state_name_id).val();
 			var new_state_abbrv = $('#'+new_state_abbrv_id).val();
+			var value_field_name = new_state_submit_button.data('value-field-name');
 
 			if ( EE_ANS.validate_new_state_data( new_state_country_iso, new_state_name, new_state_abbrv )) {
 				// submit data via AJAX for db insertion
-				EE_ANS.save_new_state_to_db( new_state_country_iso, new_state_name, new_state_abbrv, new_state_target );
+				EE_ANS.save_new_state_to_db( new_state_country_iso, new_state_name, new_state_abbrv, new_state_target, value_field_name );
 			}
 		},
 
@@ -162,8 +163,9 @@ jQuery(document).ready(function($) {
 		 * @function process_new_state
 		 * @param  {object} new_state
 		 * @param  {string} new_state_target
+		 * @param  {string} value_field_name name of the field on PHP EE_State to use for new HTML option tag's value
 		 */
-		process_new_state : function( new_state, new_state_target ) {
+		process_new_state : function( new_state, new_state_target, value_field_name ) {
 			if ( typeof new_state.success !== 'undefined' && new_state.success === true ) {
 				//SPCO.console_log( 'PROCESS_NEW_STATE', '', true );
 				//SPCO.console_log_object( 'new_state', new_state, false );
@@ -206,7 +208,13 @@ jQuery(document).ready(function($) {
 					//SPCO.console_log( 'select_id', select_id, false );
 					var set_selected = $(this).attr('id') === state_select_id;
 					// set target select's value to this input's value
-					EE_ANS.add_option_to_dropdown( select_id, new_state.id, new_state.name, set_selected, new_state.country_name );
+					var new_state_option_value = new_state.id;
+					if(value_field_name === 'STA_abbrev' ) {
+						new_state_option_value = new_state.abbrev;
+					} else if( value_field_name === 'STA_name' ){
+						new_state_option_value = new_state.name;
+					}
+					EE_ANS.add_option_to_dropdown( select_id, new_state_option_value, new_state.name, set_selected, new_state.country_name );
 				});
 				var add_new_state = new_state_target.replace('new_state', 'add_new_state');
 				$('#'+add_new_state).val('1');
@@ -277,8 +285,9 @@ jQuery(document).ready(function($) {
 		 * @param  {string} state_name
 		 * @param  {string} state_abbrv
 		 * @param  {string} new_state_target
+		 * @param  {string} value_field_name name of the field on PHP EE_State to use for new HTML option tag's value
 		 */
-		save_new_state_to_db : function( state_country_iso, state_name, state_abbrv, new_state_target ) {
+		save_new_state_to_db : function( state_country_iso, state_name, state_abbrv, new_state_target, value_field_name ) {
 
 			if ( ! EE_ANS.validate_new_state_data( state_country_iso, state_name, state_abbrv )) {
 				return false;
@@ -308,7 +317,7 @@ jQuery(document).ready(function($) {
 					if ( typeof response.success !== 'undefined' && response.success === true ) {
 						EE_ANS.message = SPCO.generate_message_object( SPCO.tag_message_for_debugging( 'Add New State: save_new_state_to_db', eei18n.ans_save_success ), '', '' );
 						SPCO.scroll_to_top_and_display_messages( SPCO.main_container, EE_ANS.message, true );
-						EE_ANS.process_new_state( response, new_state_target );
+						EE_ANS.process_new_state( response, new_state_target, value_field_name );
 					} else if ( typeof response.error !== 'undefined' && response.error !== '' ) {
 						EE_ANS.message = SPCO.generate_message_object( '', SPCO.tag_message_for_debugging( 'Add New State: save_new_state_to_db', response.error ), '' );
 						SPCO.scroll_to_top_and_display_messages( SPCO.main_container, EE_ANS.message, true );
