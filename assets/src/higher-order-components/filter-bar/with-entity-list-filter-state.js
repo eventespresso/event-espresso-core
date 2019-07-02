@@ -19,8 +19,8 @@ export default createHigherOrderComponent(
 		withSelect( ( select, ownProps ) => {
 			const {
 				searchText = '',
-				perPage,
-				view,
+				perPage = 6,
+				view = 'grid',
 			} = ownProps;
 			const store = select( 'eventespresso/filter-state' );
 			return {

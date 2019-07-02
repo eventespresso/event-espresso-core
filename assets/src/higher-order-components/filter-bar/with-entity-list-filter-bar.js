@@ -41,10 +41,6 @@ export default createHigherOrderComponent(
 					setPerPage,
 					setListView,
 					setGridView,
-					defaultView,
-					setDefaultView,
-					defaultPerPage,
-					setDefaultPerPage,
 					...otherProps
 				} = this.props;
 				entities = isFunction( setSearchText ) ?
@@ -55,18 +51,16 @@ export default createHigherOrderComponent(
 						<EntityListFilterBar
 							searchText={ searchText }
 							setSearchText={ setSearchText }
-							perPage={ perPage || defaultPerPage }
-							view={ view || defaultView }
+							perPage={ perPage }
+							view={ view }
 							setPerPage={ setPerPage }
 							setListView={ setListView }
 							setGridView={ setGridView }
-							setDefaultView={ setDefaultView }
-							setDefaultPerPage={ setDefaultPerPage }
 						/>
 						<EntityList
 							entities={ entities }
-							entitiesPerPage={ perPage || defaultPerPage }
-							view={ view || defaultView }
+							entitiesPerPage={ perPage }
+							view={ view }
 							noResultsText={
 								__(
 									'no results found (try changing filters)',

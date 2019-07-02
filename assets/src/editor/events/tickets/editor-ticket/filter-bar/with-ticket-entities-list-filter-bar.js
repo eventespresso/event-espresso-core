@@ -65,10 +65,6 @@ const withTicketEntitiesListFilterBar = createHigherOrderComponent(
 		setTicketsListView,
 		setTicketsGridView,
 		setFilteredTicketEntities,
-		defaultTicketsListView,
-		defaultTicketsListPerPage,
-		setDefaultTicketsListView,
-		setDefaultTicketsListPerPage,
 		ticketEntities = DEFAULT_EMPTY_ARRAY,
 		filteredDateEntities = DEFAULT_EMPTY_ARRAY,
 		...otherProps
@@ -104,14 +100,10 @@ const withTicketEntitiesListFilterBar = createHigherOrderComponent(
 					searchText={ searchTicketName }
 					setSearchText={ setSearchTicketName }
 					perPage={ ticketsPerPage }
-					view={ ticketsView || defaultTicketsListView }
+					view={ ticketsView }
 					setPerPage={ setTicketsPerPage }
 					setListView={ setTicketsListView }
 					setGridView={ setTicketsGridView }
-					defaultView={ defaultTicketsListView }
-					defaultPerPage={ defaultTicketsListPerPage }
-					setDefaultView={ setDefaultTicketsListView }
-					setDefaultPerPage={ setDefaultTicketsListPerPage }
 					entityFilters={
 						<TicketEntityListFilterBar
 							showTickets={ showTickets }

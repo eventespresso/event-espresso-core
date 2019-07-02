@@ -61,10 +61,6 @@ const withDateEntitiesListFilterBar = createHigherOrderComponent(
 		setDatesListView,
 		setDatesGridView,
 		setFilteredDateEntities,
-		defaultDatesListView,
-		defaultDatesListPerPage,
-		setDefaultDatesListView,
-		setDefaultDatesListPerPage,
 		dateEntities = DEFAULT_EMPTY_ARRAY,
 		...otherProps
 	} ) => {
@@ -103,10 +99,6 @@ const withDateEntitiesListFilterBar = createHigherOrderComponent(
 					setPerPage={ setDatesPerPage }
 					setListView={ setDatesListView }
 					setGridView={ setDatesGridView }
-					defaultView={ defaultDatesListView }
-					defaultPerPage={ defaultDatesListPerPage }
-					setDefaultView={ setDefaultDatesListView }
-					setDefaultPerPage={ setDefaultDatesListPerPage }
 					entityFilters={
 						<DateListFilterBar
 							displayDates={ displayDates }

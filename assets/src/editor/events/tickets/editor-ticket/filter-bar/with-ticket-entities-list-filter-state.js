@@ -23,10 +23,8 @@ export default createHigherOrderComponent(
 				displayTicketDate = 'start',
 				isChained = true,
 				searchTicketName = '',
-				ticketsPerPage,
-				ticketsView,
-				defaultTicketsListView,
-				defaultTicketsListPerPage,
+				ticketsPerPage = 6,
+				ticketsView = 'grid',
 			} = ownProps;
 			const store = select( 'eventespresso/filter-state' );
 			const { getEntitiesByIds } = select( 'eventespresso/core' );
@@ -60,14 +58,14 @@ export default createHigherOrderComponent(
 					store.getFilter(
 						'event-editor-ticket-list',
 						'ticketsPerPage',
-						ticketsPerPage || defaultTicketsListPerPage
+						ticketsPerPage
 					),
 					10
 				),
 				ticketsView: store.getFilter(
 					'event-editor-ticket-list',
 					'ticketsView',
-					ticketsView || defaultTicketsListView
+					ticketsView
 				),
 				filteredTicketEntities: getEntitiesByIds(
 					'ticket',

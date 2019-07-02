@@ -23,10 +23,8 @@ export default createHigherOrderComponent(
 				datesSortedBy = 'chronologically',
 				displayDates = 'start',
 				searchDateName = '',
-				datesPerPage,
-				datesView,
-				defaultDatesListView,
-				defaultDatesListPerPage,
+				datesPerPage = 6,
+				datesView = 'grid',
 			} = ownProps;
 			const store = select( 'eventespresso/filter-state' );
 			const { getEntitiesByIds } = select( 'eventespresso/core' );
@@ -55,14 +53,14 @@ export default createHigherOrderComponent(
 					store.getFilter(
 						'event-editor-dates-list',
 						'datesPerPage',
-						datesPerPage || defaultDatesListPerPage
+						datesPerPage
 					),
 					10
 				),
 				datesView: store.getFilter(
 					'event-editor-dates-list',
 					'datesView',
-					datesView || defaultDatesListView
+					datesView
 				),
 				filteredDateEntities: getEntitiesByIds(
 					'datetime',
