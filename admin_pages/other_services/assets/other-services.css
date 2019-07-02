@@ -38,6 +38,10 @@
 	margin-bottom: 1em;
 	text-align: right;
 }
+.plugin-action-buttons-custom a.button
+{
+    vertical-align: top;
+}
 .service-div-settings {
     -moz-border-bottom-colors: none;
     -moz-border-left-colors: none;
