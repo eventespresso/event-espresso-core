@@ -1,10 +1,7 @@
 /**
  * External imports
  */
-import {
-	withDefaultDatesListSettings,
-	withEntityPagination,
-} from '@eventespresso/higher-order-components';
+import { withEntityPagination } from '@eventespresso/higher-order-components';
 import { compose, createHigherOrderComponent } from '@wordpress/compose';
 
 /**
@@ -20,7 +17,6 @@ const withPaginatedDateEntitiesListAndFilterBar = (
 	paginationConfig = {}
 ) => createHigherOrderComponent(
 	compose( [
-		withDefaultDatesListSettings,
 		withDateEntitiesListFilterState,
 		withDateEntitiesListFilterBar,
 		withEntityPagination( paginationConfig ),
