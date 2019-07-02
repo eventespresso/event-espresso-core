@@ -52,7 +52,7 @@ const EditorTicketDetails = ( {
 			return (
 				<h1 className={ htmlClass }>
 					<InlineEditInput
-						htmlId={ `editor-ticket-name-${ ticketEntity.id }` }
+						htmlId={ `ee-editor-ticket-name-${ ticketEntity.id }` }
 						type="text"
 						value={ ticketEntity.name }
 						onChange={ ( name ) => {
@@ -73,7 +73,7 @@ const EditorTicketDetails = ( {
 		return (
 			<div className={ htmlClass }>
 				<InlineEditInput
-					htmlId={ `editor-ticket-desc-${ ticketEntity.id }` }
+					htmlId={ `ee-editor-ticket-desc-${ ticketEntity.id }` }
 					type="textarea"
 					value={ ticketEntity.description }
 					onChange={ ( description ) => {
@@ -107,7 +107,7 @@ const EditorTicketDetails = ( {
 				(
 					<h2 className="ee-ticket-price">
 						<InlineEditInput
-							htmlId={ `editor-ticket-price-${ ticketEntity.id }` }
+							htmlId={ `ee-editor-ticket-price-${ ticketEntity.id }` }
 							type="text"
 							value={ ticketEntity.price.amount.toNumber() }
 							onChange={ ( price ) => {
@@ -135,17 +135,17 @@ const EditorTicketDetails = ( {
 		() => {
 			const details = [
 				{
-					id: 'ticket-sold',
+					id: 'ee-ticket-sold',
 					label: __( 'sold', 'event_espresso' ),
 					value: ticketEntity.sold,
 				},
 				{
-					id: 'ticket-reserved',
+					id: 'ee-ticket-reserved',
 					label: __( 'reserved', 'event_espresso' ),
 					value: ticketEntity.reserved,
 				},
 				{
-					id: 'ticket-qty',
+					id: 'ee-ticket-qty',
 					label: __( 'quantity', 'event_espresso' ),
 					value: ticketEntity.qty || Infinity,
 					editable: {
@@ -157,8 +157,9 @@ const EditorTicketDetails = ( {
 					},
 				},
 				{
-					id: 'ticket-registrants',
+					id: 'ee-ticket-registrants',
 					label: __( 'registrants', 'event_espresso' ),
+					// should be count of related registrations
 					value: ticketEntity.sold,
 				},
 			];

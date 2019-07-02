@@ -38,11 +38,11 @@ const BiggieCalendarDate = ( {
 	showTime = false,
 } ) => {
 	htmlClass = classNames(
-		'biggie-calendar-date-bg',
+		'ee-biggie-calendar-date-bg',
 		htmlClass,
 		{
-			'bcd-pos-left': position === 'left',
-			'bcd-pos-right': position !== 'left'
+			'ee-bcd-pos-left': position === 'left',
+			'ee-bcd-pos-right': position !== 'left'
 		}
 	);
 	const editDateButton = isFunction( onEdit ) ? (
@@ -59,28 +59,28 @@ const BiggieCalendarDate = ( {
 		<div className={ htmlClass }>
 			{
 				headerText && (
-					<div className="biggie-calendar-date-header">
+					<div className="ee-biggie-calendar-date-header">
 						{ headerText }
 					</div>
 				)
 			}
-			<div className="biggie-calendar-date">
-				<div className="weekday">
+			<div className="ee-biggie-calendar-date">
+				<div className="ee-bcd-weekday">
 					{ date.toFormat( 'dddd' ) }
 				</div>
-				<div className="month">
+				<div className="ee-bcd-month">
 					{ date.toFormat( 'MMMM' ) }
 				</div>
-				<div className="month-day-sep"></div>
-				<div className="day">
+				<div className="ee-bcd-month-day-sep"></div>
+				<div className="ee-bcd-day">
 					{ date.toFormat( 'DD' ) }
 				</div>
-				<div className="year">
+				<div className="ee-bcd-year">
 					{ date.toFormat( 'YYYY' ) }
 				</div>
 				{
 					showTime && (
-						<div className="ee-mcd-time">
+						<div className="ee-bcd-time">
 							{ date.toFormat( 'h:mm a' ) }
 						</div>
 					)
@@ -88,7 +88,7 @@ const BiggieCalendarDate = ( {
 			</div>
 			{
 				footerText && (
-					<div className="biggie-calendar-date-footer">
+					<div className="ee-biggie-calendar-date-footer">
 						{ footerText }
 					</div>
 				)

@@ -680,28 +680,28 @@ class TicketPriceCalculatorForm extends Component {
 						type="hidden"
 						key="ticketID"
 						name="ticketID"
-						htmlId="ticketID"
+						htmlId="ee-ticketID"
 						value={ values.ticketID }
 					/>
 					<FormInput
 						type="hidden"
 						key="priceIDs"
 						name="priceIDs"
-						htmlId="priceIDs"
+						htmlId="ee-priceIDs"
 						value={ values.priceIDs }
 					/>
 					<FormInput
 						type="hidden"
 						key="priceTypes"
 						name="priceTypes"
-						htmlId="priceTypes"
+						htmlId="ee-priceTypes"
 						value={ values.priceTypes }
 					/>
 					<FormInput
 						type="hidden"
 						key="reverseCalculate"
 						name="reverseCalculate"
-						htmlId="reverseCalculate"
+						htmlId="ee-reverseCalculate"
 						value={ values.reverseCalculate }
 					/>
 				</FormSection>

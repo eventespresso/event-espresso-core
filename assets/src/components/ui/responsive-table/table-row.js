@@ -30,7 +30,7 @@ const TableRow = ( {
 	htmlClass = classNames(
 		htmlClass,
 		`ee-rTable-${ rowType }-row`,
-		`row-${ rowNumber }`,
+		`ee-row-${ rowNumber }`,
 		classes[ rowType ],
 	);
 	return (

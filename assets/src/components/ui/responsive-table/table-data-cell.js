@@ -29,7 +29,7 @@ const TableDataCell = ( {
 	htmlClass = classNames(
 		htmlClass,
 		'ee-rTable-body-td',
-		`col-${ colNumber }`,
+		`ee-col-${ colNumber }`,
 		classes.bodyTdClass
 	);
 	return (

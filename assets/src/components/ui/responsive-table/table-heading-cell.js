@@ -23,8 +23,8 @@ const TableHeadingCell = ( {
 		`${ htmlId }-${ rowType }-row-${ rowNumber }-col-${ colNumber }` :
 		`ee-rTable-${ rowType }-row-${ rowNumber }-col-${ colNumber }`;
 	htmlClass = htmlClass ?
-		`${ htmlClass } ee-rTable-${ rowType }-th col-${ colNumber }` :
-		`ee-rTable-${ rowType }-th col-${ colNumber }`;
+		`${ htmlClass } ee-rTable-${ rowType }-th ee-col-${ colNumber }` :
+		`ee-rTable-${ rowType }-th ee-col-${ colNumber }`;
 	const rowTypeClass = rowType + 'ThClass';
 	htmlClass = classes[ rowTypeClass ] ?
 		`${ htmlClass } ${ classes[ rowTypeClass ] }` :
