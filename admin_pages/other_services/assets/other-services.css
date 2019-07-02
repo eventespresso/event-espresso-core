@@ -81,15 +81,19 @@
     margin-top: 0;
     min-height: 300px;
     vertical-align: top;
-    width: calc(50% - 8px);
 }
-.service-div-settings:nth-child(2n+1) {
-    clear: both;
-    margin-left: 0;
-}
-.service-div-settings:nth-child(2n) {
-    margin-left: 8px;
-    margin-right: 0;
+@media only screen and (min-width: 768px) {
+    .service-div-settings {
+        width: calc(50% - 8px);
+    }
+    .service-div-settings:nth-child(2n+1) {
+        clear: both;
+        margin-left: 0;
+    }
+    .service-div-settings:nth-child(2n) {
+        margin-left: 8px;
+        margin-right: 0;
+    }
 }
 .service-div-settings .desc, .service-div-settings .name {
 }
