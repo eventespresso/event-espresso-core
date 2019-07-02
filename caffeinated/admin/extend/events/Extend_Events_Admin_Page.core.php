@@ -1311,23 +1311,26 @@ class Extend_Events_Admin_Page extends Events_Admin_Page
         return [
             'use_advanced_editor'         => new EE_Select_Input(
                 apply_filters(
-                    'FHEE__Events_Admin_Page___default_event_settings_form__advanced_editor_input_options',
+                    'FHEE__Events_Admin_Page___default_event_settings_form__advanced_editor_input_answer_options',
                     [
                         esc_html__('Legacy Editor', 'event_espresso'),
                         esc_html__('Advanced Editor', 'event_espresso'),
                     ]
                 ),
-                [
-                    'default'         => $this->admin_config->useAdvancedEditor(),
-                    'html_label_text' => esc_html__('Activate Advanced Editor?', 'event_espresso'),
-                    'html_help_text'  => sprintf(
-                        esc_html__(
-                            'Controls whether the Event Espresso Event Editor continues to use the existing legacy editor that functions like the typical older WordPress admin you are used to,%1$sor uses the new Advanced Editor with a more powerful and easier to use interface. This may be automatically turned on in order to utilize advanced features from new addons.',
-                            'event_espresso'
+                apply_filters(
+                    'FHEE__Events_Admin_Page___default_event_settings_form__advanced_editor_input_settings',
+                    [
+                        'default'         => $this->admin_config->useAdvancedEditor(),
+                        'html_label_text' => esc_html__('Activate Advanced Editor?', 'event_espresso'),
+                        'html_help_text'  => sprintf(
+                            esc_html__(
+                                'Controls whether the Event Espresso Event Editor continues to use the existing legacy editor that functions like the typical older WordPress admin you are used to,%1$sor uses the new Advanced Editor with a more powerful and easier to use interface. This may be automatically turned on in order to utilize advanced features from new addons.',
+                                'event_espresso'
+                            ),
+                            '<br />'
                         ),
-                        '<br />'
-                    ),
-                ]
+                    ]
+                )
             ),
             'defaults_section_header' => new EE_Form_Section_HTML(
                 EEH_HTML::h2(
