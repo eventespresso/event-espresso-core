@@ -40,6 +40,7 @@ const EditorDateEntitiesList = ( {
 	addNewDateEntity,
 	toggleTicketAssignments,
 	dateEntity = null,
+	view = 'grid',
 	...otherProps
 } ) => {
 	useEffect( () => {
@@ -77,6 +78,7 @@ const EditorDateEntitiesList = ( {
 				entities={ entities }
 				EntityGridView={ EditorDateEntitiesGridView }
 				EntityListView={ EditorDateEntitiesListView }
+				view={ view }
 				loadingNotice={ sprintf(
 					_x(
 						'loading event dates%s',
@@ -148,13 +150,11 @@ export default compose( [
 			closeButtonLabel: null,
 		}
 	) ),
-	createHigherOrderComponent(
-		( WrappedComponent ) => ( props ) => {
-			return <WrappedComponent
-				{ ...props }
-				onCloseDateEditor={ props.toggleTicketAssignments }
-			/>;
-		}
-	),
+	( WrappedComponent ) => ( props ) => {
+		return <WrappedComponent
+			{ ...props }
+			onCloseDateEditor={ props.toggleTicketAssignments }
+		/>;
+	},
 	withDateEntityFormModal,
 ] )( EditorDateEntitiesList );
