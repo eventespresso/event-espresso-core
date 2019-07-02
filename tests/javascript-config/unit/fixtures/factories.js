@@ -7,6 +7,7 @@ import { DateTimeSchema } from './datetime-schema';
 import { CheckinSchema } from './checkin-schema';
 import { RegistrationSchema } from './registration-schema';
 import { TicketSchema } from './ticket-schema';
+import { VenueSchema } from './venue-schema';
 
 export const EventFactory = createEntityFactory(
 	'event',
@@ -36,4 +37,10 @@ export const TicketFactory = createEntityFactory(
 	'ticket',
 	TicketSchema.schema,
 	MODEL_PREFIXES( 'ticket' )
+);
+
+export const VenueFactory = createEntityFactory(
+	'venue',
+	VenueSchema.schema,
+	MODEL_PREFIXES( 'venue' )
 );
