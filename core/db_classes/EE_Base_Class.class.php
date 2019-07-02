@@ -1581,15 +1581,18 @@ abstract class EE_Base_Class
                     $datetime_value,
                     $this->_fields[ $fieldname ]
                 );
+                $this->_has_changes = true;
                 break;
             case 'D':
                 $this->_fields[ $fieldname ] = $field->prepare_for_set_with_new_date(
                     $datetime_value,
                     $this->_fields[ $fieldname ]
                 );
+                $this->_has_changes = true;
                 break;
             case 'B':
                 $this->_fields[ $fieldname ] = $field->prepare_for_set($datetime_value);
+                $this->_has_changes = true;
                 break;
         }
         $this->_clear_cached_property($fieldname);

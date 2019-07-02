@@ -409,7 +409,7 @@ class EED_Add_New_State extends EED_Module
                                     'submit-' . $new_state_submit_id,
                                     'ee-form-add-new-state-submit button button-secondary',
                                     '',
-                                    'data-target="' . $new_state_submit_id . '"'
+                                    'data-target="' . $new_state_submit_id . '" data-value-field-name="' . $input->valueFieldName(). '"'
                                 )
                             )
                         ),
