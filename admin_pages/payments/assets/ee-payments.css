@@ -27,9 +27,10 @@
 	width: 100%;
 }
 
-.form-table th {
-	width: 10%;
-
+@media screen and (min-width: 783px) and (max-width: 1279px) {
+	.espresso-admin .form-table th {
+		width: 10%;
+	}
 }
 
 .form-table textarea  {
