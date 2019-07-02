@@ -677,7 +677,7 @@ export const VenueSchema = {
 		type: 'object',
 		$schema: 'http:\/\/json-schema.org\/draft-04\/schema#',
 	},
-}
+};
 
 /**
  * Exports the properties property from the Venues schema.
