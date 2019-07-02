@@ -118,43 +118,16 @@ class EntityListFilterBar extends Component {
 		</Fragment>
 	);
 
-	/**
-	 * @param {string} view
-	 * @param {string} perPage
-	 * @param {Function} setDefaultView
-	 * @param {Function} setDefaultPerPage
-	 * @return {Object} rendered grid view icon button
-	 */
-	saveSettings = ( view, perPage, setDefaultView, setDefaultPerPage ) => (
-		<IconButton
-			className={ 'ee-save-filter-settings' }
-			icon={ 'admin-generic' }
-			tooltip={ __(
-				'click to save current "per page" and "view" settings',
-				'event_espresso'
-			) }
-			onClick={ () => {
-				setDefaultView( view );
-				setDefaultPerPage( perPage );
-			} }
-		/>
-	);
-
 	render() {
 		const {
+			perPage,
+			view,
 			searchText = '',
 			setSearchText,
 			setPerPage,
 			setListView,
 			setGridView,
-			defaultView,
-			setDefaultView,
-			defaultPerPage,
-			setDefaultPerPage,
 		} = this.props;
-		let { perPage, view } = this.props;
-		perPage = perPage || defaultPerPage;
-		view = view || defaultView;
 		const entityFilters = this.props.entityFilters ?
 			this.props.entityFilters :
 			null;
@@ -173,12 +146,6 @@ class EntityListFilterBar extends Component {
 					<div className="ee-view-filter ee-filter-bar-filter">
 						{ this.listView( view, setListView ) }
 						{ this.gridView( view, setGridView ) }
-						{ this.saveSettings(
-							view,
-							perPage,
-							setDefaultView,
-							setDefaultPerPage
-						) }
 					</div>
 				</div>
 			</div>
