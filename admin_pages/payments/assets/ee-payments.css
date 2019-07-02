@@ -40,6 +40,13 @@
 	/*width: 100%;*/
 }
 
+.ee-checkbox-label-after.medium-lbl {
+	display: block;
+	width: auto;
+	min-width: auto;
+	max-width: auto;
+}
+
 #espresso_Invoice_payment_settings table.form-table {
 	border: 1px #f1f1f1 solid;
 }
