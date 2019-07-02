@@ -48,7 +48,9 @@
     letter-spacing: var(--ee-letter-spacing-font-size-micro);
     line-height: var(--ee-font-size-default);
     left: var(--ee-padding-nano);
+    margin: var(--ee-margin-nano) 0 0;
     position: relative;
+    top: var(--ee-padding-micro);
 }
 
 .ee-medium-calendar-date .ee-mcd-time {
@@ -56,10 +58,10 @@
     line-height: var(--ee-font-size-default);
 }
 
-.ee-medium-calendar-date > .ee-medium-calendar-date-footer {
+.ee-medium-calendar-date-footer {
     font-size: var(--ee-font-size-smaller);
     line-height: var(--ee-font-size-bigger);
-    margin: 0;
+    margin: var(--ee-margin-nano) 0 0;
     padding: var(--ee-padding-micro) 0;
 }
 
@@ -68,4 +70,8 @@
     font-weight: bold;
     letter-spacing: var(--ee-letter-spacing-font-size-micro);
     text-transform: uppercase;
+}
+
+.ee-medium-calendar-date-footer .ee-medium-calendar-date-header {
+    margin: 0;
 }
