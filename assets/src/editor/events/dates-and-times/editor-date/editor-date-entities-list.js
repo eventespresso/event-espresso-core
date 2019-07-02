@@ -25,9 +25,9 @@ import { EditorDateEntitiesListView } from './list-view';
 import { withPaginatedDateEntitiesListAndFilterBar } from './filter-bar';
 import { withDateEntityFormModal } from './edit-form';
 import { withTicketAssignmentsManagerModal } from '../../ticket-assignments-manager';
-import withUpdateEventDateRelation
-	from './action-handlers/with-update-event-date-relation';
-import { withEditorDateEntities, withEditorEventEntity } from '../../hocs';
+import { withEditorDateEntities } from '../../hocs';
+
+import { useEditorUpdateEventDateRelation } from '../../hooks';
 
 const {
 	FormWrapper,
@@ -97,12 +97,10 @@ const EditorDateEntitiesList = ( {
 };
 
 const withNewDateEntity = createHigherOrderComponent(
-	( WrappedComponent ) => ( {
-		updateEventDateRelation,
-		...otherProps
-	} ) => {
+	( WrappedComponent ) => ( props ) => {
 		const [ newDateEntity, setNewDateEntity ] = useState( null );
 		const { createEntity } = useDispatch( 'eventespresso/core' );
+		const updateEventDateRelation = useEditorUpdateEventDateRelation();
 		const addNewDateEntity = useCallback(
 			async ( event ) => {
 				if ( event && event.preventDefault ) {
@@ -118,15 +116,13 @@ const withNewDateEntity = createHigherOrderComponent(
 		return <WrappedComponent
 			dateEntity={ newDateEntity }
 			addNewDateEntity={ addNewDateEntity }
-			{ ...otherProps }
+			{ ...props }
 		/>;
 	},
 	'withNewDateEntity'
 );
 
 export default compose( [
-	withEditorEventEntity,
-	withUpdateEventDateRelation,
 	( WrappedComponent ) => ( props ) => {
 		const [ refreshed, doRefresh ] = useReducer( ( s ) => s + 1, 0 );
 		const refresher = () => {
