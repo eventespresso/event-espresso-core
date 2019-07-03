@@ -25,7 +25,6 @@ const withEditorModal = createHigherOrderComponent(
 		toggleEditor = () => null,
 		doRefresh = () => null,
 		modalProps,
-		id,
 		buttonLabel,
 		onClose = () => null,
 		onOpen = () => null,
@@ -55,7 +54,6 @@ const withEditorModal = createHigherOrderComponent(
 		} );
 		return editorOpen ? (
 			<Modal
-				id={ id }
 				title={ title }
 				className={ htmlClass }
 				onRequestClose={ closeAction }
