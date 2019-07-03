@@ -3,8 +3,12 @@
  */
 import { filter, findIndex, cloneDeep } from 'lodash';
 import warning from 'warning';
-import { IconButton, ToggleControl } from '@wordpress/components';
-import { Fragment, useState, useCallback, useRef } from '@wordpress/element';
+import { IconButton } from '@wordpress/components';
+import {
+	useCallback,
+	useState,
+	useRef,
+} from '@wordpress/element';
 import { ENTER } from '@wordpress/keycodes';
 import {
 	CalendarPageDate,
@@ -23,39 +27,28 @@ import { isModelEntityOfModel } from '@eventespresso/validators';
 /**
  * Internal imports
  */
-import * as handler from './ticket-assignments-handler';
 import './ticket-assignments-manager.css';
-import {
-	sortDateEntitiesList,
-} from '../dates-and-times/editor-date/filter-bar/date-entities-list-filter-utils';
-import {
-	sortTicketEntitiesList,
-} from '../tickets/editor-ticket/filter-bar/ticket-entities-list-filter-utils';
+import * as handler from './ticket-assignments-handler';
+import { sortDateEntitiesList } from
+	'../dates-and-times/editor-date/filter-bar/date-entities-list-filter-utils';
+import { sortTicketEntitiesList } from
+	'../tickets/editor-ticket/filter-bar/ticket-entities-list-filter-utils';
 import { withEditorDateEntities, withEditorTicketEntities } from '../hocs';
 import { useAssignmentsCalculator } from './hooks';
 import { shortenCuid } from '../../utils';
+import withTicketAssignmentsFilters from './filters/with-ticket-assignments-filters';
 
 const noIndex = -1;
 
 const {
-	FormColumn,
-	FormRow,
 	FormInfo,
 	FormSection,
 	FormWrapper,
 	FormSaveCancelButtons,
 } = twoColumnAdminFormLayout;
 
-const {
-	isTrashed,
-	isExpired: isExpiredDate,
-	getBackgroundColorClass: getDateBgColorClass,
-} = dateTimeModel;
-const {
-	isArchived,
-	isExpired: isExpiredTicket,
-	getBackgroundColorClass: getTicketBgColorClass,
-} = ticketModel;
+const { getBackgroundColorClass: getDateBgColorClass } = dateTimeModel;
+const { getBackgroundColorClass: getTicketBgColorClass } = ticketModel;
 
 const TicketAssignmentsManagerModal = ( {
 	entities: dateEntities,
@@ -70,20 +63,10 @@ const TicketAssignmentsManagerModal = ( {
 	assignedState,
 	setAssignedState,
 	assignmentCounts,
-	showDateFilters,
-	showTicketFilters,
-	showArchivedDates,
-	setShowArchivedDates,
-	showExpiredDates,
-	setShowExpiredDates,
-	showArchivedTickets,
-	setShowArchivedTickets,
-	showExpiredTickets,
-	setShowExpiredTickets,
+	ticketAssignmentsFilters,
 } ) => {
 	const dateCount = dateEntities.length;
 	const ticketCount = ticketEntities.length;
-
 	const [ submitting, setSubmitting ] = useState( false );
 	const processChanges = useCallback( () => {
 		if ( hasNoAssignments ) {
@@ -197,7 +180,7 @@ const TicketAssignmentsManagerModal = ( {
 			} );
 			return headerCells;
 		},
-		[ ticketEntities, dateEntities, getTicketBgColorClass ]
+		[ ticketEntities, dateCount, getTicketBgColorClass ]
 	);
 
 	/**
@@ -518,7 +501,13 @@ const TicketAssignmentsManagerModal = ( {
 			);
 			return rows;
 		},
-		[ dateEntities, ticketEntities, ticketEntitiesByDateIds, ticketCell ]
+		[
+			dateCount,
+			dateEntities,
+			ticketEntities,
+			ticketEntitiesByDateIds,
+			ticketCell,
+		]
 	);
 
 	/**
@@ -565,7 +554,7 @@ const TicketAssignmentsManagerModal = ( {
 				/>
 			);
 		},
-		[ processChanges, submitting ]
+		[ processChanges, submitting, dateCount, ticketCount ]
 	);
 
 	/**
@@ -590,141 +579,40 @@ const TicketAssignmentsManagerModal = ( {
 		[ toggleEditor ]
 	);
 
-	let tableId = 'ee-ticket-assignments-manager-';
-	if ( dateCount === 1 ) {
-		tableId += dateEntities[ 0 ].id;
-	} else {
-		tableId += dateCount + '-' + ticketCount;
-	}
-	// make sure filters are shown when needed
-	if (
-		dateCount === 1 &&
-		! ( showArchivedDates || showExpiredDates )
-	) {
-		showDateFilters = false;
-	}
-	if (
-		ticketCount === 1 &&
-		! ( showArchivedTickets || showExpiredTickets )
-	) {
-		showTicketFilters = false;
-	}
-	const dateFiltersOffset = showDateFilters && showTicketFilters ? 2 : 7;
-	const ticketFiltersOffset = showDateFilters && showTicketFilters ? 0 : 7;
-	const dateFilters = showDateFilters ? (
-		<Fragment>
-			<FormColumn colSize={ '2h' } offset={ dateFiltersOffset }>
-				<ToggleControl
-					checked={ showArchivedDates }
-					instanceId={ 'showArchivedDates' }
-					label={ showArchivedDates ?
-						__(
-							'archived dates shown',
+	/**
+	 * @function
+	 * @return {Object} rendered ticket assignments table
+	 */
+	const ticketAssignments = useCallback(
+		() => {
+			return dateCount > 0 && ticketCount > 0 ? (
+				<ResponsiveTable
+					columns={ ticketHeaders() }
+					rowData={ dateRows() }
+					metaData={ {
+						tableCaption: __(
+							'Ticket Assignments',
 							'event_espresso'
-						) : __(
-							'show archived dates?',
-							'event_espresso'
-						) }
-					onChange={ setShowArchivedDates }
+						),
+						hasRowHeaders: dateCount > 1,
+					} }
+					classes={ {
+						tableClass: 'ee-ticket-assignments-manager',
+					} }
 				/>
-			</FormColumn>
-			<FormColumn colSize={ '2h' }>
-				<ToggleControl
-					checked={ showExpiredDates }
-					instanceId={ 'showExpiredDates' }
-					label={
-						showExpiredDates ?
-							__(
-								'expired dates shown',
-								'event_espresso'
-							) : __(
-								'show expired dates?',
-								'event_espresso'
-							)
-					}
-					onChange={ setShowExpiredDates }
-				/>
-			</FormColumn>
-		</Fragment>
-	) : null;
-
-	const ticketFilters = showTicketFilters ? (
-		<Fragment>
-			<FormColumn colSize={ '2h' } offset={ ticketFiltersOffset }>
-				<ToggleControl
-					checked={ showArchivedTickets }
-					instanceId={ 'showArchivedTickets' }
-					label={ showArchivedTickets ?
-						__(
-							'archived tickets shown',
-							'event_espresso'
-						) : __(
-							'show archived tickets?',
-							'event_espresso'
-						) }
-					onChange={ setShowArchivedTickets }
-				/>
-			</FormColumn>
-			<FormColumn colSize={ '2h' }>
-				<ToggleControl
-					checked={ showExpiredTickets }
-					instanceId={ 'showExpiredTickets' }
-					label={ showExpiredTickets ?
-						__(
-							'expired tickets shown',
-							'event_espresso'
-						) : __(
-							'show expired tickets?',
-							'event_espresso'
-						) }
-					onChange={ setShowExpiredTickets }
-				/>
-			</FormColumn>
-		</Fragment>
-	) : null;
-
-	const filterNotice = dateCount < 1 || ticketCount < 1 ?
-		getFormError(
-			__(
-				'Not seeing any dates or tickets? Try changing the filters above.',
-				'event_espresso'
-			),
-			false,
-			12 - dateFiltersOffset,
-			dateFiltersOffset
-		) :
-		null;
-
-	const ticketAssignments = dateCount > 0 && ticketCount > 0 ? (
-		<ResponsiveTable
-			columns={ ticketHeaders() }
-			rowData={ dateRows() }
-			metaData={ {
-				tableId,
-				tableCaption: __(
-					'Ticket Assignments',
-					'event_espresso'
-				),
-				hasRowHeaders: dateCount > 1,
-			} }
-			classes={ {
-				tableClass: 'ee-ticket-assignments-manager',
-			} }
-		/>
-	) : null;
+			) : null;
+		},
+		[ dateEntities, ticketEntities, ticketHeaders, dateRows ]
+	);
 
 	return (
 		<FormWrapper>
 			<FormSection htmlClass={ 'ee-ticket-assignments-manager-form' } >
 				<div className={ 'ee-ticket-assignments-manager-filters' }>
-					<FormRow>
-						{ dateFilters }
-						{ ticketFilters }
-					</FormRow>
-					{ filterNotice }
+					{ ticketAssignmentsFilters }
 					{ pagination }
 					{ getFormError( noAssignmentsMessage ) }
-					{ ticketAssignments }
+					{ ticketAssignments() }
 				</div>
 			</FormSection>
 			<FormSaveCancelButtons
@@ -769,66 +657,7 @@ export default compose( [
 		};
 		return { addTicketEntities, removeTicketEntities };
 	} ),
-	( WrappedComponent ) => ( {
-		dateEntities,
-		ticketEntities,
-		...otherProps
-	} ) => {
-		const unfilteredDates = dateEntities;
-		const unfilteredTickets = ticketEntities;
-		const [ showArchivedDates, setShowArchivedDates ] = useState( false );
-		const [ showExpiredDates, setShowExpiredDates ] = useState( false );
-		const [ showArchivedTickets, setShowArchivedTickets ] = useState( false );
-		const [ showExpiredTickets, setShowExpiredTickets ] = useState( false );
-		dateEntities = ! showArchivedDates ?
-			filter( dateEntities, ( dateEntity ) => {
-				return ! isTrashed( dateEntity );
-			} ) :
-			dateEntities;
-		dateEntities = ! showExpiredDates ?
-			filter( dateEntities, ( dateEntity ) => {
-				return ! isExpiredDate( dateEntity );
-			} ) :
-			dateEntities;
-		ticketEntities = ! showArchivedTickets ?
-			filter( ticketEntities, ( ticketEntity ) => {
-				return ! isArchived( ticketEntity );
-			} ) :
-			ticketEntities;
-		ticketEntities = ! showExpiredTickets ?
-			filter( ticketEntities, ( ticketEntity ) => {
-				return ! isExpiredTicket( ticketEntity );
-			} ) :
-			ticketEntities;
-		// make sure filters are shown when needed
-		const showDateFilters = dateEntities.length !== unfilteredDates.length ||
-			(
-				dateEntities.length === unfilteredDates.length &&
-				( showArchivedDates || showExpiredDates )
-			);
-		const showTicketFilters = ticketEntities.length !== unfilteredTickets.length ||
-			(
-				ticketEntities.length === unfilteredTickets.length &&
-				(
-					showArchivedTickets || showExpiredTickets
-				)
-			);
-		return <WrappedComponent
-			{ ...otherProps }
-			dateEntities={ dateEntities }
-			ticketEntities={ ticketEntities }
-			showDateFilters={ showDateFilters }
-			showTicketFilters={ showTicketFilters }
-			showArchivedDates={ showArchivedDates }
-			setShowArchivedDates={ setShowArchivedDates }
-			showExpiredDates={ showExpiredDates }
-			setShowExpiredDates={ setShowExpiredDates }
-			showArchivedTickets={ showArchivedTickets }
-			setShowArchivedTickets={ setShowArchivedTickets }
-			showExpiredTickets={ showExpiredTickets }
-			setShowExpiredTickets={ setShowExpiredTickets }
-		/>;
-	},
+	withTicketAssignmentsFilters,
 	( WrappedComponent ) => ( props ) => {
 		// adds a ref for handling count updates.
 		const assignmentCounts = useRef( { dates: {}, tickets: {} } );
