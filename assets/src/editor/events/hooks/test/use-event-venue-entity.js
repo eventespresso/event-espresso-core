@@ -39,7 +39,7 @@ describe( 'useEventVenueEntity', () => {
 		const TestComponent = getTestComponent();
 		let renderer;
 		act( () => {
-			renderer = TestRenderer.create( <TestComponent eventEntity={ null }/> );
+			renderer = TestRenderer.create( <TestComponent eventEntity={ null } /> );
 		} );
 		const testInstance = renderer.root;
 		const props = testInstance.findByType( 'div' ).props;

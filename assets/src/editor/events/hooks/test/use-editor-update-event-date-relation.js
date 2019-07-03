@@ -51,7 +51,7 @@ describe( 'useEditorUpdateEventDateRelation', () => {
 			renderer = TestRenderer.create( <TestComponent /> );
 		} );
 		const props = renderer.root.findByType( 'div' ).props;
-		expect( () => props.updater() ).toThrowError( 'invalid Event' );
+		expect( () => props.updater() ).toThrow( 'invalid Event' );
 		expect( updaterSpy ).toHaveBeenCalledTimes( 1 );
 		expect( createRelationSpy ).not.toHaveBeenCalled();
 	} );
@@ -74,7 +74,7 @@ describe( 'useEditorUpdateEventDateRelation', () => {
 				.create( <TestComponent eventEntity={ AuthedEventEntity } /> );
 		} );
 		const props = renderer.root.findByType( 'div' ).props;
-		expect( () => props.updater() ).toThrowError( 'invalid Date' );
+		expect( () => props.updater() ).toThrow( 'invalid Date' );
 		expect( updaterSpy ).toHaveBeenCalledTimes( 1 );
 		expect( createRelationSpy ).not.toHaveBeenCalled();
 	} );
