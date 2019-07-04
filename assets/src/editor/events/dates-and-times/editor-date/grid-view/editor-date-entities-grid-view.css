@@ -122,7 +122,7 @@
 }
 
 
-.ee-editor-date-details-sold-rsrvd-cap-div .event-date-registrants-label {
+.ee-editor-date-details-sold-rsrvd-cap-div .ee-event-date-registrants-label {
     margin-left: calc(var(--ee-margin-micro) * -1);
 }
 

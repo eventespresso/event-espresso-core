@@ -1,5 +1,5 @@
 
-.biggie-calendar-date-bg {
+.ee-biggie-calendar-date-bg {
     box-sizing: border-box;
     color: var(--ee-color-white);
     height: 100%;
@@ -10,40 +10,40 @@
     vertical-align: bottom;
 }
 
-.biggie-calendar-date-bg.bcd-pos-left {
+.ee-biggie-calendar-date-bg.ee-bcd-pos-left {
     float: left;
     left: 0;
 }
-.biggie-calendar-date-bg.bcd-pos-right {
+.ee-biggie-calendar-date-bg.ee-bcd-pos-right {
     float: right;
     right: 0;
 }
 
-.biggie-calendar-date-header {
+.ee-biggie-calendar-date-header {
     font-size: var(--ee-font-size-micro);
     letter-spacing: var(--ee-letter-spacing-font-size-micro);
     line-height: var(--ee-font-size-bigger);
     margin: 0 0 var(--ee-margin-micro);
 }
 
-.biggie-calendar-date .weekday {
+.ee-biggie-calendar-date .ee-bcd-weekday {
     font-size: var(--ee-font-size-smaller);
     font-weight: normal;
     line-height: var(--ee-font-size-big);
     letter-spacing: var(--ee-letter-spacing-font-size-tiny);
 }
 
-.biggie-calendar-date .month {
+.ee-biggie-calendar-date .ee-bcd-month {
     font-size: calc(var(--ee-font-size-tiny) * 2);
     font-weight: bold;
     line-height: calc(var(--ee-font-size-tiny) * 2);
 }
 
-.month-day-sep {
+.ee-bcd-month-day-sep {
     display: none;
 }
 
-.biggie-calendar-date .day {
+.ee-biggie-calendar-date .ee-bcd-day {
     opacity: .8;
     font-size: calc(var(--ee-font-size-big) * 2);
     font-weight: bold;
@@ -51,7 +51,7 @@
     text-shadow: var(--ee-text-shadow-inset);
 }
 
-.biggie-calendar-date .year {
+.ee-biggie-calendar-date .ee-bcd-year {
     font-size: var(--ee-font-size-tiny);
     letter-spacing: calc(var(--ee-letter-spacing-font-size-micro)*2);
     line-height: var(--ee-font-size-default);
@@ -59,33 +59,33 @@
     position: relative;
 }
 
-.biggie-calendar-date .ee-mcd-time {
+.ee-biggie-calendar-date .ee-bcd-time {
     font-size: var(--ee-font-size-smaller);
 }
 
-.biggie-calendar-date-footer {
+.ee-biggie-calendar-date-footer {
     font-size: var(--ee-font-size-smaller);
     line-height: var(--ee-font-size-bigger);
-    margin: var(--ee-margin-tiny) 0 0;
+    margin: var(--ee-margin-micro) 0 0;
     text-shadow: var(--ee-text-shadow-inset);
     white-space: pre-line;
 }
 
-.biggie-calendar-date-footer .ee-status-tag {
+.ee-biggie-calendar-date-footer .ee-status-tag {
     display: block;
     font-weight: bold;
     letter-spacing: var(--ee-letter-spacing-font-size-micro);
     text-transform: uppercase;
 }
 
-.biggie-calendar-date-bg .ee-edit-calendar-date-btn {
+.ee-biggie-calendar-date-bg .ee-edit-calendar-date-btn {
     color: rgba(255, 255, 255, .5);
     display: inline-block;
 }
 
-.biggie-calendar-date-bg .ee-edit-calendar-date-btn:focus:enabled,
-.biggie-calendar-date-bg .ee-edit-calendar-date-btn:not(:disabled):not([aria-disabled="true"]):not(.is-default):hover,
-.biggie-calendar-date-bg .ee-edit-calendar-date-btn:not(:disabled):not([aria-disabled="true"]):not(.is-default):active {
+.ee-biggie-calendar-date-bg .ee-edit-calendar-date-btn:focus:enabled,
+.ee-biggie-calendar-date-bg .ee-edit-calendar-date-btn:not(:disabled):not([aria-disabled="true"]):not(.is-default):hover,
+.ee-biggie-calendar-date-bg .ee-edit-calendar-date-btn:not(:disabled):not([aria-disabled="true"]):not(.is-default):active {
     background-color: transparent;
     color: var(--ee-color-white);
     box-shadow: none;
@@ -128,7 +128,7 @@
 
 @media only screen and (max-width: 480px) {
 
-    .biggie-calendar-date-bg {
+    .ee-biggie-calendar-date-bg {
         clear: both;
         float: none;
         height: auto;
@@ -138,30 +138,30 @@
         width: 100% !important;
     }
 
-    .biggie-calendar-date-bg.bcd-pos-left {
+    .ee-biggie-calendar-date-bg.ee-bcd-pos-left {
         float: none;
     }
 
-    .biggie-calendar-date-bg.bcd-pos-right {
+    .ee-biggie-calendar-date-bg.ee-bcd-pos-right {
         float: none;
     }
 
-    .biggie-calendar-date,
-    .biggie-calendar-date-header,
-    .biggie-calendar-date-footer,
-    .month-day-sep {
+    .ee-biggie-calendar-date,
+    .ee-biggie-calendar-date-header,
+    .ee-biggie-calendar-date-footer,
+    .ee-bcd-month-day-sep {
         line-height: calc(var(--ee-font-size-big) - 3px);
     }
 
-    .biggie-calendar-date-header,
-    .biggie-calendar-date-footer {
+    .ee-biggie-calendar-date-header,
+    .ee-biggie-calendar-date-footer {
         margin: 0;
     }
 
-    .biggie-calendar-date .weekday,
-    .biggie-calendar-date .month,
-    .biggie-calendar-date .day,
-    .biggie-calendar-date .year {
+    .ee-biggie-calendar-date .ee-bcd-weekday,
+    .ee-biggie-calendar-date .ee-bcd-month,
+    .ee-biggie-calendar-date .ee-bcd-day,
+    .ee-biggie-calendar-date .ee-bcd-year {
         color: var(--ee-color-white);
         display: inline-block;
         font-size: var(--ee-font-size-default);
@@ -172,7 +172,7 @@
         text-shadow: none;
     }
 
-    .biggie-calendar-date .year {
+    .ee-biggie-calendar-date .ee-bcd-year {
         left: unset;
     }
 }

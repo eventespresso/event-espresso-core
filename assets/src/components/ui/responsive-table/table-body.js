@@ -12,7 +12,7 @@ import classNames from 'classnames';
 const TableBody = ( { children, htmlClass, ...extraProps } ) => {
 	htmlClass = classNames(
 		htmlClass,
-		'ee-rTable-body'
+		'ee-rspnsv-table-body'
 	);
 	return (
 		<tbody className={ htmlClass } { ...extraProps }>

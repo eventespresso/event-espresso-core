@@ -251,10 +251,6 @@
         position: absolute;
     }
 
-    /*.ee-editor-date-list-items > div:nth-of-type(10) .ee-date-list-item-label {*/
-    /*    display: none;*/
-    /*}*/
-
 }
 
 @media only screen and (max-width: 1024px) {

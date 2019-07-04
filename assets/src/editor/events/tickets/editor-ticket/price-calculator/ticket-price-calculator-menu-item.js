@@ -38,8 +38,8 @@ export const TicketPriceCalculatorMenuItem = ( {
 		<IconMenuItem
 			index={ 2 }
 			tooltip={ tooltip }
-			id={ `calculate-ticket-price-ticket-${ ticketEntity.id }` }
-			htmlClass={ 'calculate-tickets-price' }
+			id={ `ee-calculate-ticket-price-ticket-${ ticketEntity.id }` }
+			htmlClass={ 'ee-calculate-tickets-price' }
 			dashicon={ <EspressoIcon icon="calculator" /> }
 			tooltipPosition="top right"
 			onClick={ toggle }

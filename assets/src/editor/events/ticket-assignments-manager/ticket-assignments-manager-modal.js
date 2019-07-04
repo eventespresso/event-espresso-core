@@ -203,7 +203,7 @@ const TicketAssignmentsManagerModal = ( {
 							<td
 								key={ `row-${ rowNumber }-col-${ colNumber }` }
 								className={
-									'ee-tam-date-row-ticket ee-rTable-body-td'
+									'ee-tam-date-row-ticket ee-rspnsv-table-body-td'
 								}
 							>
 							</td>

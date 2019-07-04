@@ -89,7 +89,7 @@ class ResponsiveTable extends Component {
 	 * @param {Object} metaData
 	 */
 	setMetaData = ( instanceId, metaData = {} ) => {
-		this.tableId = `ee-rTable-${ instanceId }`;
+		this.tableId = `ee-rspnsv-table-${ instanceId }`;
 		this.tableCaption = metaData.tableCaption || '';
 		this.captionID = `${ this.tableId }-caption`;
 		this.showTableFooter = typeof metaData.showTableFooter === 'undefined' ?
@@ -118,7 +118,7 @@ class ResponsiveTable extends Component {
 		this.classes.tableClass = classNames(
 			this.classes.tableClass,
 			{
-				'ee-rTable-has-row-headers': this.hasRowHeaders
+				'ee-rspnsv-table-has-row-headers': this.hasRowHeaders
 			}
 		);
 	};
@@ -302,7 +302,7 @@ class ResponsiveTable extends Component {
 		const tableHeader = this.tableHeader( columns );
 		this.classes.tableClass = classNames(
 			this.classes.tableClass,
-			`ee-rTable-column-count-${ this.columns.length }`
+			`ee-rspnsv-table-column-count-${ this.columns.length }`
 		);
 		this.showTableFooter = this.showTableFooter && ! isEmpty( footerData );
 		return (

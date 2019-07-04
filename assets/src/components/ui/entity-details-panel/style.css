@@ -69,11 +69,6 @@
     width: var(--ee-icon-button-size);
 }
 
-/*.ee-entity-details-div.has-tooltip .ee-entity-details-value-div .components-tooltip {*/
-/*    font-size: var(--ee-font-size-smaller);*/
-/*    font-weight: normal;*/
-/*}*/
-
 .ee-entity-details-value-div .dashicon {
     margin: 0;
     position: relative;

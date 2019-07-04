@@ -1,9 +1,9 @@
 
-.espresso-input-error {
+.ee-form-input-error {
     padding: var(--ee-padding-micro) 0 0;
 }
 
-.espresso-input-error span {
+.ee-form-input-error span {
     background-color: var(--ee-color-hot-pink);
     border-radius: var(--ee-border-radius-small);
     color: var(--ee-text-on-hot-pink-high-contrast);

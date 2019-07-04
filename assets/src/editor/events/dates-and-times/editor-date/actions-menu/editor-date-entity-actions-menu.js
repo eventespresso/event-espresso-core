@@ -41,7 +41,7 @@ const EditorDateEntityActionsMenu = ( {
 			return (
 				<DropDownMenu
 					tooltip={ __( 'event date main menu', 'event_espresso' ) }
-					htmlClass={ `editor-date-${ dateEntity.id }` }
+					htmlClass={ `ee-editor-date-${ dateEntity.id }` }
 					menuItems={ [
 						{
 							title: __( 'edit date', 'event_espresso' ),

@@ -8,7 +8,6 @@ import { DateTime } from '@eventespresso/value-objects';
 /**
  * Internal dependencies
  */
-import './style.css';
 import BiggieCalendarDate from '../biggie-calendar-date';
 import MediumCalendarDate from '../medium-calendar-date';
 

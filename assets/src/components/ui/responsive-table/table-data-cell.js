@@ -25,11 +25,11 @@ const TableDataCell = ( {
 } ) => {
 	htmlId = htmlId ?
 		`${ htmlId }-row-${ rowNumber }-col-${ colNumber }` :
-		`ee-rTable-row-${ rowNumber }-col-${ colNumber }`;
+		`ee-rspnsv-table-row-${ rowNumber }-col-${ colNumber }`;
 	htmlClass = classNames(
 		htmlClass,
-		'ee-rTable-body-td',
-		`col-${ colNumber }`,
+		'ee-rspnsv-table-body-td',
+		`ee-col-${ colNumber }`,
 		classes.bodyTdClass
 	);
 	return (

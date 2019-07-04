@@ -17,8 +17,8 @@ const Table = ( {
 	...extraProps,
 } ) => {
 	tableClass = tableClass ?
-		`${ tableClass } ee-rTable` :
-		'ee-rTable';
+		`${ tableClass } ee-rspnsv-table` :
+		'ee-rspnsv-table';
 	return (
 		<div
 			role={ 'region' }

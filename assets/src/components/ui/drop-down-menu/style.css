@@ -8,7 +8,7 @@
     background: none !important;
     border: 1px solid var(--ee-background-color) !important;
     color: var(--ee-default-text-color) !important;
-    padding: var(--ee-padding-tiny) var(--ee-padding-micro);
+    padding: var(--ee-padding-tiny);
 }
 
 .ee-drop-down-menu.components-dropdown-menu .components-dropdown-menu__toggle:hover,

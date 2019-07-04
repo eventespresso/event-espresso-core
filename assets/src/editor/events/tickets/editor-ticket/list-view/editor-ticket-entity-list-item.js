@@ -54,7 +54,6 @@ class EditorTicketEntityListItem extends Component {
 		const qty = ticketEntity.qty === 'INF' || ticketEntity.qty === Infinity ?
 			( <span className={ 'ee-infinity-sign' }>&infin;</span> ) :
 			ticketEntity.qty;
-
 		return (
 			<div id={ `ee-editor-ticket-list-view-div-${ ticketEntity.id }` }
 				className={ `ee-editor-ticket-list-view-div ${ statusClass }` }
@@ -132,7 +131,8 @@ class EditorTicketEntityListItem extends Component {
 							{ __( 'Registrants:', 'event_espresso' ) }
 						</span>
 						<span className="ee-ticket-list-item-value">
-							{ ticketEntity.regCount }
+							{ /* should be count of related registrations  */ }
+							{ ticketEntity.sold }
 						</span>
 					</div>
 					<div className="ee-ticket-list-item">

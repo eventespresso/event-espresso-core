@@ -42,7 +42,7 @@ class TicketEntitiesListFilterBar extends Component {
 		return (
 			<SelectControl
 				label={ __( 'show', 'event_espresso' ) }
-				className="espresso-ticket-list-filter-bar-show-select"
+				className="ee-ticket-list-filter-bar-show-select"
 				value={ showTickets }
 				options={ [
 					{
@@ -146,7 +146,7 @@ class TicketEntitiesListFilterBar extends Component {
 		return (
 			<SelectControl
 				label={ __( 'sort', 'event_espresso' ) }
-				className="espresso-ticket-list-filter-bar-order-select"
+				className="ee-ticket-list-filter-bar-order-select"
 				value={ ticketsSortedBy }
 				options={ [
 					{
@@ -184,7 +184,7 @@ class TicketEntitiesListFilterBar extends Component {
 		return (
 			<SelectControl
 				label={ __( 'display', 'event_espresso' ) }
-				className="espresso-ticket-list-filter-bar-display-select"
+				className="ee-ticket-list-filter-bar-display-select"
 				value={ displayTickets }
 				options={ [
 					{

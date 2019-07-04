@@ -12,7 +12,7 @@ import classNames from 'classnames';
 const TableHeader = ( { children, htmlClass, ...extraProps } ) => {
 	htmlClass = classNames(
 		htmlClass,
-		'ee-rTable-header'
+		'ee-rspnsv-table-header'
 	);
 	return (
 		<thead className={ htmlClass } { ...extraProps }>

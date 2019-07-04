@@ -1,7 +1,7 @@
 /**
  * External imports
  */
-import { Component } from '@wordpress/element';
+import classNames from 'classnames';
 import PropTypes from 'prop-types'
 import { DropdownMenu } from '@wordpress/components';
 
@@ -15,38 +15,37 @@ import './style.css';
  * @param {Object} eventDate  data representing an EE_Datetime object
  * @return {string}    menu
  */
-class DropDownMenu extends Component {
-	static propTypes = {
-		menuItems: PropTypes.arrayOf( PropTypes.object ).isRequired,
-		htmlClass: PropTypes.string.isRequired,
-		tooltip: PropTypes.string.isRequired,
-		index: PropTypes.number,
-		dashicon: PropTypes.string,
-		tooltipPosition: PropTypes.string,
-	};
+const DropDownMenu = ( {
+	menuItems,
+	htmlClass,
+	tooltipPosition = 'top left',
+	index = 0,
+	...otherProps
+} ) => {
+	htmlClass = classNames(
+		htmlClass,
+		`ee-drop-down-menu-${ index }`,
+		'ee-drop-down-menu',
+		'clickable',
+	);
+	return (
+		<DropdownMenu
+			tabIndex={ index }
+			className={ htmlClass }
+			labelPosition={ tooltipPosition }
+			controls={ menuItems }
+			{ ...otherProps }
+		/>
+	);
+};
 
-	render() {
-		const {
-			menuItems,
-			tooltipPosition = 'top left',
-			index = 0,
-			...otherProps
-		} = this.props;
-		let { htmlClass } = this.props;
-		delete otherProps.htmlClass;
-		htmlClass = htmlClass ? `${ htmlClass } ` : '';
-		htmlClass += `ee-drop-down-menu-${ index }`;
-		htmlClass += ' ee-drop-down-menu clickable';
-		return (
-			<DropdownMenu
-				tabIndex={ index }
-				className={ htmlClass }
-				labelPosition={ tooltipPosition }
-				controls={ menuItems }
-				{ ...otherProps }
-			/>
-		);
-	}
-}
+DropDownMenu.propTypes = {
+	menuItems: PropTypes.arrayOf( PropTypes.object ).isRequired,
+	htmlClass: PropTypes.string.isRequired,
+	tooltip: PropTypes.string.isRequired,
+	index: PropTypes.number,
+	dashicon: PropTypes.string,
+	tooltipPosition: PropTypes.string,
+};
 
 export default DropDownMenu;

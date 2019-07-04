@@ -140,7 +140,7 @@ const EditorDateEntityDetails = ( {
 							<span className="ee-editor-date-venue-name-span">
 								{ venueEntity.name }
 							</span>
-							<Dashicon icon="external" size={ 12 } />
+							<Dashicon icon="external" size={ 14 } />
 						</a>
 					</Tooltip>
 				</h3>
@@ -200,17 +200,17 @@ const EditorDateEntityDetails = ( {
 		() => {
 			const details = [
 				{
-					id: 'event-date-sold',
+					id: 'ee-event-date-sold',
 					label: __( 'sold', 'event_espresso' ),
 					value: dateEntity.sold || 0,
 				},
 				{
-					id: 'event-date-reserved',
+					id: 'ee-event-date-reserved',
 					label: __( 'reserved', 'event_espresso' ),
 					value: dateEntity.reserved || 0,
 				},
 				{
-					id: 'event-date-capacity',
+					id: 'ee-event-date-capacity',
 					label: __( 'capacity', 'event_espresso' ),
 					value: dateEntity.regLimit || Infinity,
 					editable: {
@@ -222,8 +222,8 @@ const EditorDateEntityDetails = ( {
 					},
 				},
 				{
-					id: 'event-date-registrants',
-					htmlClass: 'has-tooltip',
+					id: 'ee-event-date-registrants',
+					htmlClass: 'ee-has-tooltip',
 					label: __( 'registrants', 'event_espresso' ),
 					value: getDatetimeRegistrationsLink,
 				},

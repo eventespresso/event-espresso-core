@@ -47,7 +47,7 @@ const EditorTicketActionsMenu = ( {
 			<DropDownMenu
 				tooltip={ __( 'ticket main menu', 'event_espresso' ) }
 				tooltipPosition="top right"
-				htmlClass={ `editor-ticket-${ ticketEntity.id }` }
+				htmlClass={ `ee-editor-ticket-${ ticketEntity.id }` }
 				menuItems={ [
 					{
 						title: __( 'edit ticket', 'event_espresso' ),
@@ -82,7 +82,7 @@ const EditorTicketActionsMenu = ( {
 			__( 'assign ticket to event dates', 'event_espresso' );
 		return (
 			<IconMenuItem
-				index={ 2 }
+				index={ 3 }
 				tooltip={ tooltip }
 				id={ `assign-ticket-dates-ticket-${ ticketEntity.id }` }
 				htmlClass={ 'assign-ticket-dates' }

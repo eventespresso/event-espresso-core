@@ -19,7 +19,7 @@ export const InputError = ( { inputName } ) => (
 			touched && error ?
 				<div
 					id={ `${ inputName }-input-error` }
-					className="espresso-input-error"
+					className="ee-form-input-error"
 				>
 					<span>{ error }</span>
 				</div> :
