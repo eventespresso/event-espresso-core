@@ -28,15 +28,9 @@ const TableRow = ( {
 		`ee-rspnsv-table-row-${ rowNumber }`;
 	htmlClass = classNames(
 		htmlClass,
-<<<<<<< FET/editor-dates-tickets-refactor
 		`ee-rspnsv-table-${ rowType }-row`,
 		`ee-row-${ rowNumber }`,
-		classes[ rowType ],
-=======
-		`ee-rTable-${ rowType }-row`,
-		`row-${ rowNumber }`,
 		classes[ `${ rowType }RowClass` ],
->>>>>>> fix display issues with responsive table
 	);
 	return (
 		<tr id={ htmlId } className={ htmlClass } { ...extraProps } >
