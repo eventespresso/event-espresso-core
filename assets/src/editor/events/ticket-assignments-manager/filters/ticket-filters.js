@@ -34,11 +34,11 @@ const TicketFilters = ( {
 } ) => {
 	const toggleArchivedTickets = useCallback(
 		() => setFilter( showArchivedTicketsAction ),
-		[]
+		[ setFilter, showArchivedTicketsAction ]
 	);
 	const toggleExpiredTickets = useCallback(
 		() => setFilter( showExpiredTicketsAction ),
-		[]
+		[ setFilter, showExpiredTicketsAction ]
 	);
 	return (
 		<Fragment>

@@ -34,11 +34,11 @@ const DateFilters = ( {
 } ) => {
 	const toggleArchivedDates = useCallback(
 		() => setFilter( showArchivedDatesAction ),
-		[]
+		[ setFilter, showArchivedDatesAction ]
 	);
 	const toggleExpiredDates = useCallback(
 		() => setFilter( showExpiredDatesAction ),
-		[]
+		[ setFilter, showExpiredDatesAction ]
 	);
 	return (
 		<Fragment>
