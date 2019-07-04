@@ -16,8 +16,7 @@ const { FormColumn } = twoColumnAdminFormLayout;
  * @param {boolean} showExpiredDates
  * @param {Function} toggleArchivedDates
  * @param {Function} toggleExpiredDates
- * @param {boolean} showDateFilters
- * @param {boolean} showTicketFilters
+ * @param {number} dateFiltersOffset
  * @return {Object} rendered date filter toggles
  */
 const DateFilters = ( {
@@ -25,11 +24,9 @@ const DateFilters = ( {
 	showExpiredDates,
 	toggleArchivedDates,
 	toggleExpiredDates,
-	showDateFilters,
-	showTicketFilters,
+	dateFiltersOffset,
 } ) => {
-	const dateFiltersOffset = showDateFilters && showTicketFilters ? 2 : 7;
-	return showDateFilters ? (
+	return (
 		<Fragment>
 			<FormColumn colSize={ '2h' } offset={ dateFiltersOffset }>
 				<ToggleControl
@@ -64,7 +61,7 @@ const DateFilters = ( {
 				/>
 			</FormColumn>
 		</Fragment>
-	) : null;
+	);
 };
 
 export default DateFilters;

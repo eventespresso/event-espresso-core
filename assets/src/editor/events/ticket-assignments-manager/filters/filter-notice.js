@@ -10,20 +10,12 @@ const { FormInfo } = twoColumnAdminFormLayout;
  * FormInfo component about ticket filters
  *
  * @function
- * @param {number} dateCount
- * @param {number} ticketCount
- * @param {boolean} showDateFilters
- * @param {boolean} showTicketFilters
+ * @param {boolean} showFilterNotice
+ * @param {number} dateFiltersOffset
  * @return {Object} rendered filter notice
  */
-const FilterNotice = ( {
-	dateCount,
-	ticketCount,
-	showDateFilters,
-	showTicketFilters,
-} ) => {
-	const dateFiltersOffset = showDateFilters && showTicketFilters ? 2 : 7;
-	return dateCount < 1 || ticketCount < 1 ?
+const FilterNotice = ( { dateFiltersOffset } ) => {
+	return (
 		<FormInfo
 			formInfo={ __(
 				'Not seeing any dates or tickets? Try changing the filters above.',
@@ -33,8 +25,8 @@ const FilterNotice = ( {
 			dismissable={ false }
 			colSize={ 12 - dateFiltersOffset }
 			offset={ dateFiltersOffset }
-		/> :
-		null;
+		/>
+	);
 };
 
 export default FilterNotice;
