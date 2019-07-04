@@ -2,8 +2,7 @@
  * External imports
  */
 import { createHigherOrderComponent } from '@wordpress/compose';
-import { Fragment, useCallback, useReducer } from '@wordpress/element';
-import { twoColumnAdminFormLayout } from '@eventespresso/components';
+import { useCallback, useMemo, useReducer } from '@wordpress/element';
 
 /**
  * Internal imports
@@ -17,16 +16,13 @@ import {
 import { DEFAULT_FILTER_STATE } from './constants';
 import { filterDates, filterTickets } from './filters';
 import { getShowDateFilters, getShowTicketFilters } from './helpers';
-import DateFilters from './date-filters';
-import FilterNotice from './filter-notice';
-import TicketFilters from './ticket-filters';
+import TicketAssignmentsFilters from './ticket-assignments-filters';
 import filterReducer from './reducer';
-
-const { FormRow } = twoColumnAdminFormLayout;
 
 /*
  * Enhanced TicketAssignments with filters for
  * toggling display of archived and expired entities
+ * with state management
  */
 const withTicketAssignmentsFilters = createHigherOrderComponent(
 	( WrappedComponent ) => ( {
@@ -46,9 +42,25 @@ const withTicketAssignmentsFilters = createHigherOrderComponent(
 			showArchivedTickets,
 			showExpiredTickets,
 		} = filterState;
+		const toggleArchivedDates = useCallback(
+			() => setFilter( showArchivedDatesAction ),
+			[]
+		);
+		const toggleExpiredDates = useCallback(
+			() => setFilter( showExpiredDatesAction ),
+			[]
+		);
+		const toggleArchivedTickets = useCallback(
+			() => setFilter( showArchivedTicketsAction ),
+			[]
+		);
+		const toggleExpiredTickets = useCallback(
+			() => setFilter( showExpiredTicketsAction ),
+			[]
+		);
 		const unfilteredDatesCount = dateEntities.length;
 		const unfilteredTicketCount = ticketEntities.length;
-		const filterDateEntities = useCallback(
+		const filteredDateEntities = useMemo(
 			() => dateEntity ?
 				[ dateEntity ] :
 				filterDates(
@@ -58,7 +70,7 @@ const withTicketAssignmentsFilters = createHigherOrderComponent(
 				),
 			[ dateEntity, dateEntities, showArchivedDates, showExpiredDates ]
 		);
-		const filterTicketEntities = useCallback(
+		const filteredTicketEntities = useMemo(
 			() => ticketEntity ?
 				[ ticketEntity ] :
 				filterTickets(
@@ -73,75 +85,67 @@ const withTicketAssignmentsFilters = createHigherOrderComponent(
 				showExpiredTickets,
 			]
 		);
-		const filteredDateEntities = filterDateEntities();
-		const filteredTicketEntities = filterTicketEntities();
-		const showDateFilters = useCallback(
+		const datesCount = filteredDateEntities.length;
+		const ticketCount = filteredTicketEntities.length;
+
+		const showDateFilters = useMemo(
 			() => getShowDateFilters(
 				dateEntity,
-				filteredDateEntities.length,
+				datesCount,
 				unfilteredDatesCount,
 				showArchivedDates,
 				showExpiredDates
 			),
 			[
 				dateEntity,
-				filteredDateEntities,
+				datesCount,
 				unfilteredDatesCount,
 				showArchivedDates,
 				showExpiredDates,
 			]
 		);
-		const showTicketFilters = useCallback(
+		const showTicketFilters = useMemo(
 			() => getShowTicketFilters(
 				ticketEntity,
-				filteredTicketEntities.length,
+				ticketCount,
 				unfilteredTicketCount,
 				showArchivedTickets,
 				showExpiredTickets
 			),
 			[
 				ticketEntity,
-				filteredTicketEntities,
+				ticketCount,
 				unfilteredTicketCount,
 				showArchivedTickets,
 				showExpiredTickets,
 			]
 		);
-		const ticketAssignmentsFilters = (
-			<Fragment>
-				<FormRow>
-					<DateFilters
-						showArchivedDates={ showArchivedDates }
-						showExpiredDates={ showExpiredDates }
-						toggleArchivedDates={
-							() => setFilter( showArchivedDatesAction )
-						}
-						toggleExpiredDates={
-							() => setFilter( showExpiredDatesAction )
-						}
-						showDateFilters={ showDateFilters() }
-						showTicketFilters={ showTicketFilters() }
-					/>
-					<TicketFilters
-						showArchivedTickets={ showArchivedTickets }
-						showExpiredTickets={ showExpiredTickets }
-						toggleArchivedTickets={
-							() => setFilter( showArchivedTicketsAction )
-						}
-						toggleExpiredTickets={
-							() => setFilter( showExpiredTicketsAction )
-						}
-						showDateFilters={ showDateFilters() }
-						showTicketFilters={ showTicketFilters() }
-					/>
-				</FormRow>
-				<FilterNotice
-					dateCount={ filteredDateEntities.length }
-					ticketCount={ filteredTicketEntities.length }
-					showDateFilters={ showDateFilters() }
-					showTicketFilters={ showTicketFilters() }
+		const ticketAssignmentsFilters = useMemo(
+			() => (
+				<TicketAssignmentsFilters
+					showDateFilters={ showDateFilters }
+					showArchivedDates={ showArchivedDates }
+					showExpiredDates={ showExpiredDates }
+					toggleArchivedDates={ toggleArchivedDates }
+					toggleExpiredDates={ toggleExpiredDates }
+					showTicketFilters={ showTicketFilters }
+					showArchivedTickets={ showArchivedTickets }
+					showExpiredTickets={ showExpiredTickets }
+					toggleArchivedTickets={ toggleArchivedTickets }
+					toggleExpiredTickets={ toggleExpiredTickets }
+					showFilterNotice={ datesCount < 1 || ticketCount < 1 }
 				/>
-			</Fragment>
+			),
+			[
+				showDateFilters,
+				showArchivedDates,
+				showExpiredDates,
+				showTicketFilters,
+				showArchivedTickets,
+				showExpiredTickets,
+				datesCount,
+				ticketCount,
+			]
 		);
 		return <WrappedComponent
 			{ ...otherProps }
