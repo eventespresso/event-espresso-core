@@ -26,10 +26,10 @@ const TableRow = ( {
 	rowType += 'RowClass';
 	htmlId = htmlId ?
 		`${ htmlId }-row-${ rowNumber }` :
-		`ee-rTable-row-${ rowNumber }`;
+		`ee-rspnsv-table-row-${ rowNumber }`;
 	htmlClass = classNames(
 		htmlClass,
-		`ee-rTable-${ rowType }-row`,
+		`ee-rspnsv-table-${ rowType }-row`,
 		`ee-row-${ rowNumber }`,
 		classes[ rowType ],
 	);

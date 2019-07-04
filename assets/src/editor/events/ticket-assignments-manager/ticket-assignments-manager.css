@@ -9,7 +9,7 @@
 }
 
 /* header */
-.ee-ticket-assignments-manager .ee-rTable-header {
+.ee-ticket-assignments-manager .ee-rspnsv-table-header {
 }
 
 .ee-ticket-assignments-manager .ee-tam-dates-header {
@@ -220,24 +220,24 @@
 /* WordPress Admin Media Query Breakpoint: Tablet */
 @media screen and ( max-width: 782px ) {
 
-    .ee-rTable .ee-rTable-body .ee-rTable-body-row:nth-child(even) {
+    .ee-rspnsv-table .ee-rspnsv-table-body .ee-rspnsv-table-body-row:nth-child(even) {
         background: none;
     }
 
-    .ee-rTable .ee-rTable-body .ee-tam-date-row {
+    .ee-rspnsv-table .ee-rspnsv-table-body .ee-tam-date-row {
         margin-bottom: var(--ee-margin-small);
     }
 
-    .ee-rTable .ee-rTable-body .ee-tam-date-row .ee-tam-date-label {
+    .ee-rspnsv-table .ee-rspnsv-table-body .ee-tam-date-row .ee-tam-date-label {
         background: var(--ee-color-grey-12);
         margin-bottom: var(--ee-margin-small);
     }
 
-    .ee-rTable .ee-rTable-body .ee-rTable-body-row.ee-tam-year-row {
+    .ee-rspnsv-table .ee-rspnsv-table-body .ee-rspnsv-table-body-row.ee-tam-year-row {
         padding: 0;
     }
 
-    .ee-rTable .ee-rTable-body .ee-tam-year-row .ee-rTable-body-td {
+    .ee-rspnsv-table .ee-rspnsv-table-body .ee-tam-year-row .ee-rspnsv-table-body-td {
         display: none !important;
         height: 0 !important;
         padding: var(--ee-padding-small) 0 0 !important;
@@ -260,17 +260,17 @@
         width: 50%;
     }
 
-    .ee-rTable .ee-tam-date-row .ee-tam-date-row-ticket {
+    .ee-rspnsv-table .ee-tam-date-row .ee-tam-date-row-ticket {
         flex: unset;
         max-width: 100%;
         text-align: left;
     }
 
-    .ee-rTable .ee-tam-date-row .ee-tam-date-row-ticket:nth-child(even) {
+    .ee-rspnsv-table .ee-tam-date-row .ee-tam-date-row-ticket:nth-child(even) {
         background: var(--ee-color-grey-14);
     }
 
-    .ee-ticket-assignments-manager .ee-rTable-mobile-only-column-header .ee-tam-ticket-header-div {
+    .ee-ticket-assignments-manager .ee-rspnsv-table-mobile-only-column-header .ee-tam-ticket-header-div {
         flex-flow: column nowrap;
         justify-content: center;
         font-size: var(--ee-font-size-small);
@@ -297,7 +297,7 @@
         visibility: hidden;
     }
 
-    .ee-ticket-assignments-manager .ee-rTable-body .ee-tam-ticket-header-price .ee-tam-ticket-header-date {
+    .ee-ticket-assignments-manager .ee-rspnsv-table-body .ee-tam-ticket-header-price .ee-tam-ticket-header-date {
         color: inherit;
         display: block;
         font-size: inherit;
@@ -306,11 +306,11 @@
         visibility: visible;
     }
 
-    .ee-ticket-assignments-manager .ee-rTable-mobile-only-column-header {
+    .ee-ticket-assignments-manager .ee-rspnsv-table-mobile-only-column-header {
         padding-left: 15%;
     }
 
-    .ee-ticket-assignments-manager .ee-rTable-body-td .ee-rTable-mobile-only-column-value {
+    .ee-ticket-assignments-manager .ee-rspnsv-table-body-td .ee-rspnsv-table-mobile-only-column-value {
         min-width: calc(var(--ee-padding-extreme) * 2);
     }
 
@@ -324,7 +324,7 @@
 
 /* WordPress Admin Media Query Breakpoint: Smartphone */
 @media screen and (max-width: 600px) {
-    .ee-ticket-assignments-manager .ee-rTable-mobile-only-column-header .ee-tam-ticket-header-div {
+    .ee-ticket-assignments-manager .ee-rspnsv-table-mobile-only-column-header .ee-tam-ticket-header-div {
         font-size: var(--ee-font-size-smaller);
         width: 100%;
     }
@@ -333,19 +333,19 @@
         width: calc(75% - var(--ee-padding-extreme));
     }
 
-    .ee-ticket-assignments-manager .ee-rTable-mobile-only-column-header {
+    .ee-ticket-assignments-manager .ee-rspnsv-table-mobile-only-column-header {
         padding-left: 10%;
         width: 55%;
     }
 
-    .ee-ticket-assignments-manager .ee-rTable-body-td .ee-rTable-mobile-only-column-value {
+    .ee-ticket-assignments-manager .ee-rspnsv-table-body-td .ee-rspnsv-table-mobile-only-column-value {
         min-width: calc(var(--ee-padding-huge) * 3);
         width: 45%;
     }
 }
 
 @media only screen and (max-width: 480px) {
-    .ee-ticket-assignments-manager .ee-rTable-mobile-only-column-header .ee-tam-ticket-header-div {
+    .ee-ticket-assignments-manager .ee-rspnsv-table-mobile-only-column-header .ee-tam-ticket-header-div {
         font-size: var(--ee-font-size-tiny);
         letter-spacing: var(--ee-letter-spacing-font-size-tiny);
         width: 100%;
@@ -357,12 +357,12 @@
         width: calc(100% - var(--ee-padding-extreme));
     }
 
-    .ee-ticket-assignments-manager .ee-rTable-body-td .ee-rTable-mobile-only-column-value {
+    .ee-ticket-assignments-manager .ee-rspnsv-table-body-td .ee-rspnsv-table-mobile-only-column-value {
         min-width: var(--ee-padding-extreme);
         width: 40%;
     }
 
-    .ee-ticket-assignments-manager .ee-rTable-mobile-only-column-header {
+    .ee-ticket-assignments-manager .ee-rspnsv-table-mobile-only-column-header {
         padding-left: 0;
         width: 60%;
         max-width: calc(100% - var(--ee-padding-extreme));

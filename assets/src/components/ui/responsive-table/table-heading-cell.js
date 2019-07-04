@@ -21,10 +21,10 @@ const TableHeadingCell = ( {
 } ) => {
 	htmlId = htmlId ?
 		`${ htmlId }-${ rowType }-row-${ rowNumber }-col-${ colNumber }` :
-		`ee-rTable-${ rowType }-row-${ rowNumber }-col-${ colNumber }`;
+		`ee-rspnsv-table-${ rowType }-row-${ rowNumber }-col-${ colNumber }`;
 	htmlClass = htmlClass ?
-		`${ htmlClass } ee-rTable-${ rowType }-th ee-col-${ colNumber }` :
-		`ee-rTable-${ rowType }-th ee-col-${ colNumber }`;
+		`${ htmlClass } ee-rspnsv-table-${ rowType }-th ee-col-${ colNumber }` :
+		`ee-rspnsv-table-${ rowType }-th ee-col-${ colNumber }`;
 	const rowTypeClass = rowType + 'ThClass';
 	htmlClass = classes[ rowTypeClass ] ?
 		`${ htmlClass } ${ classes[ rowTypeClass ] }` :

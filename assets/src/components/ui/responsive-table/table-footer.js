@@ -13,7 +13,7 @@ import classNames from 'classnames';
 const TableFooter = ( { showFooter, children, htmlClass, ...extraProps } ) => {
 	htmlClass = classNames(
 		htmlClass,
-		'ee-rTable-footer'
+		'ee-rspnsv-table-footer'
 	);
 	return showFooter ? (
 		<tfoot className={ htmlClass } { ...extraProps }>

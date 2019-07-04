@@ -25,7 +25,7 @@
     width: 5%;
 }
 
-.ee-ticket-price-calculator .ee-rTable-body-td.ee-ticket-price-calculator-price-actions .components-icon-button {
+.ee-ticket-price-calculator .ee-rspnsv-table-body-td.ee-ticket-price-calculator-price-actions .components-icon-button {
     display: inline flex;
 }
 
@@ -89,14 +89,14 @@ textarea {
     width: 100%;
 }
 
-.ee-ticket-price-calculator .ee-rTable-footer .ee-ticket-price-calculator-total-row .ee-ticket-price-calculator-total-label {
+.ee-ticket-price-calculator .ee-rspnsv-table-footer .ee-ticket-price-calculator-total-row .ee-ticket-price-calculator-total-label {
     padding: 0.2rem 0.375rem 0;
 }
 
-.ee-ticket-price-calculator .ee-rTable-footer .ee-ticket-price-calculator-total-row .ee-ticket-price-calculator-total {
+.ee-ticket-price-calculator .ee-rspnsv-table-footer .ee-ticket-price-calculator-total-row .ee-ticket-price-calculator-total {
     padding: 0.25rem 0.375rem 0;
 }
-.ee-ticket-price-calculator .ee-rTable-footer .ee-ticket-price-calculator-total-row .ee-ticket-price-calculator-total .ee-currency-sign {
+.ee-ticket-price-calculator .ee-rspnsv-table-footer .ee-ticket-price-calculator-total-row .ee-ticket-price-calculator-total .ee-currency-sign {
     font-weight: normal;
 }
 
@@ -247,46 +247,46 @@ textarea {
         width: 100%;
     }
 
-    .ee-rTable .ee-rTable-body .ee-ticket-price-calculator-price-row {
+    .ee-rspnsv-table .ee-rspnsv-table-body .ee-ticket-price-calculator-price-row {
         padding-bottom: 1.5rem;
     }
 
-    .ee-rTable .ee-rTable-body .ee-ticket-price-calculator-price-row + .ee-ticket-price-calculator-price-row {
+    .ee-rspnsv-table .ee-rspnsv-table-body .ee-ticket-price-calculator-price-row + .ee-ticket-price-calculator-price-row {
         border-top: 2px solid var(--ee-color-grey-10);
         padding-top: 1.5rem;
     }
 
-    .ee-ticket-price-calculator .ee-rTable-mobile-only-column-header {
+    .ee-ticket-price-calculator .ee-rspnsv-table-mobile-only-column-header {
         font-weight: bold;
         padding-top: 0.5rem;
         width: 25%;
     }
 
-    .ee-ticket-price-calculator .ee-rTable-body-td .ee-rTable-mobile-only-column-value {
+    .ee-ticket-price-calculator .ee-rspnsv-table-body-td .ee-rspnsv-table-mobile-only-column-value {
         width: 75%;
     }
 
-    .ee-ticket-price-calculator .ee-rTable-body-td.ee-col-0 .ee-rTable-mobile-only-column-value {
+    .ee-ticket-price-calculator .ee-rspnsv-table-body-td.ee-col-0 .ee-rspnsv-table-mobile-only-column-value {
         width: 25%;
     }
 
-    .ee-ticket-price-calculator .ee-rTable-body-td.ee-col-2 .ee-rTable-mobile-only-column-value {
+    .ee-ticket-price-calculator .ee-rspnsv-table-body-td.ee-col-2 .ee-rspnsv-table-mobile-only-column-value {
         width: 50%;
     }
 
-    .ee-ticket-price-calculator .ee-rTable-body-td.ee-col-4 .ee-rTable-mobile-only-column-value {
+    .ee-ticket-price-calculator .ee-rspnsv-table-body-td.ee-col-4 .ee-rspnsv-table-mobile-only-column-value {
         width: 33%;
     }
 
-    .ee-rTable .ee-rTable-body .ee-rTable-body-td.ee-number-column,
+    .ee-rspnsv-table .ee-rspnsv-table-body .ee-rspnsv-table-body-td.ee-number-column,
     .ee-ticket-price-calculator .ee-ticket-price-calculator-add-price-id {
         text-align: left !important;
     }
 
-    .ee-ticket-price-calculator .ee-ticket-price-calculator-add-price-id .ee-rTable-mobile-only-column-header {
+    .ee-ticket-price-calculator .ee-ticket-price-calculator-add-price-id .ee-rspnsv-table-mobile-only-column-header {
         display: none;
     }
-    .ee-ticket-price-calculator .ee-ticket-price-calculator-add-price-id .ee-rTable-mobile-only-column-value {
+    .ee-ticket-price-calculator .ee-ticket-price-calculator-add-price-id .ee-rspnsv-table-mobile-only-column-value {
         font-weight: bold;
         margin-left: 25%;
         text-transform: capitalize;
@@ -297,22 +297,22 @@ textarea {
         top: .375rem;
     }
 
-    .ee-ticket-price-calculator .ee-ticket-price-calculator-add-price-row.ee-rTable-body-row {
+    .ee-ticket-price-calculator .ee-ticket-price-calculator-add-price-row.ee-rspnsv-table-body-row {
         padding-top: 1rem;
     }
 
-    .ee-ticket-price-calculator .ee-ticket-price-calculator-price-actions.ee-rTable-body-td .ee-rTable-mobile-only-column-header,
-    .ee-ticket-price-calculator .ee-ticket-price-calculator-add-price-actions.ee-rTable-body-td .ee-rTable-mobile-only-column-header {
+    .ee-ticket-price-calculator .ee-ticket-price-calculator-price-actions.ee-rspnsv-table-body-td .ee-rspnsv-table-mobile-only-column-header,
+    .ee-ticket-price-calculator .ee-ticket-price-calculator-add-price-actions.ee-rspnsv-table-body-td .ee-rspnsv-table-mobile-only-column-header {
         padding-top: 1.25rem;
     }
 
-    .ee-ticket-price-calculator .ee-rTable-body .ee-ticket-price-calculator-add-price-id {
+    .ee-ticket-price-calculator .ee-rspnsv-table-body .ee-ticket-price-calculator-add-price-id {
         background: var(--ee-color-grey-11);
         margin: 0 0 0.5rem;
         padding: 0.5rem;
     }
 
-    .ee-ticket-price-calculator .ee-rTable-footer .ee-rTable-footer-row {
+    .ee-ticket-price-calculator .ee-rspnsv-table-footer .ee-rspnsv-table-footer-row {
         display: flex;
         flex-flow: row nowrap;
         padding: 0.5rem 0 0;
@@ -331,14 +331,14 @@ textarea {
         width: 25%;
     }
 
-    .ee-ticket-price-calculator .ee-rTable-footer .ee-ticket-price-calculator-total-row .ee-ticket-price-calculator-total {
+    .ee-ticket-price-calculator .ee-rspnsv-table-footer .ee-ticket-price-calculator-total-row .ee-ticket-price-calculator-total {
         display: inline-block;
         float: left;
         padding: 0.25rem 0.5rem 0;
         width: calc(66% - 40px - 0.5rem);
     }
 
-    .ee-ticket-price-calculator .ee-rTable-footer .ee-ticket-price-calculator-total-row .ee-ticket-price-calculator-total-actions {
+    .ee-ticket-price-calculator .ee-rspnsv-table-footer .ee-ticket-price-calculator-total-row .ee-ticket-price-calculator-total-actions {
         display: inline-block;
         min-width: 40px;
         width: 40px;
@@ -426,15 +426,15 @@ textarea {
 @media screen and (max-width: 600px) {
 
 
-    .ee-ticket-price-calculator .ee-rTable-body-td.ee-col-0 .ee-rTable-mobile-only-column-value {
+    .ee-ticket-price-calculator .ee-rspnsv-table-body-td.ee-col-0 .ee-rspnsv-table-mobile-only-column-value {
         width: 25%;
     }
 
-    .ee-ticket-price-calculator .ee-rTable-body-td.ee-col-2 .ee-rTable-mobile-only-column-value {
+    .ee-ticket-price-calculator .ee-rspnsv-table-body-td.ee-col-2 .ee-rspnsv-table-mobile-only-column-value {
         width: 75%;
     }
 
-    .ee-ticket-price-calculator .ee-rTable-body-td.ee-col-4 .ee-rTable-mobile-only-column-value {
+    .ee-ticket-price-calculator .ee-rspnsv-table-body-td.ee-col-4 .ee-rspnsv-table-mobile-only-column-value {
         width: 50%;
     }
 }
@@ -445,7 +445,7 @@ textarea {
         margin: 0;
     }
 
-    .ee-ticket-price-calculator .ee-rTable-mobile-only-column-header {
+    .ee-ticket-price-calculator .ee-rspnsv-table-mobile-only-column-header {
         font-size: .9rem;
     }
 
@@ -455,43 +455,43 @@ textarea {
     }
 
     .ee-ticket-price-calculator .ee-ticket-price-calculator-total-label,
-    .ee-ticket-price-calculator .ee-rTable-body-td .ee-rTable-mobile-only-column-header,
-    .ee-ticket-price-calculator .ee-rTable-body-td .ee-rTable-mobile-only-column-header {
+    .ee-ticket-price-calculator .ee-rspnsv-table-body-td .ee-rspnsv-table-mobile-only-column-header,
+    .ee-ticket-price-calculator .ee-rspnsv-table-body-td .ee-rspnsv-table-mobile-only-column-header {
         margin: 0;
         padding: 0.25rem 0 0.25rem 0.375rem;
         text-align: left;
         width: 100%;
     }
 
-    .ee-ticket-price-calculator .ee-rTable-body-td,
+    .ee-ticket-price-calculator .ee-rspnsv-table-body-td,
     .ee-ticket-price-calculator .ee-ticket-price-calculator-total,
-    .ee-ticket-price-calculator .ee-rTable-body-td .ee-rTable-mobile-only-column-value,
-    .ee-ticket-price-calculator .ee-rTable-body-td.ee-col-0 .ee-rTable-mobile-only-column-value,
-    .ee-ticket-price-calculator .ee-rTable-body-td.ee-col-4 .ee-rTable-mobile-only-column-value,
-    .ee-ticket-price-calculator .ee-rTable-body-td.ee-col-2 .ee-rTable-mobile-only-column-value {
+    .ee-ticket-price-calculator .ee-rspnsv-table-body-td .ee-rspnsv-table-mobile-only-column-value,
+    .ee-ticket-price-calculator .ee-rspnsv-table-body-td.ee-col-0 .ee-rspnsv-table-mobile-only-column-value,
+    .ee-ticket-price-calculator .ee-rspnsv-table-body-td.ee-col-4 .ee-rspnsv-table-mobile-only-column-value,
+    .ee-ticket-price-calculator .ee-rspnsv-table-body-td.ee-col-2 .ee-rspnsv-table-mobile-only-column-value {
         margin: 0;
         width: 100%;
     }
 
-    .ee-ticket-price-calculator .ee-rTable-body-td.ee-col-0 .ee-rTable-mobile-only-column-value {
+    .ee-ticket-price-calculator .ee-rspnsv-table-body-td.ee-col-0 .ee-rspnsv-table-mobile-only-column-value {
         width: 37.5%;
     }
 
-    .ee-ticket-price-calculator .ee-ticket-price-calculator-price-actions.ee-rTable-body-td .ee-rTable-mobile-only-column-header,
-    .ee-ticket-price-calculator .ee-ticket-price-calculator-add-price-actions.ee-rTable-body-td .ee-rTable-mobile-only-column-header {
+    .ee-ticket-price-calculator .ee-ticket-price-calculator-price-actions.ee-rspnsv-table-body-td .ee-rspnsv-table-mobile-only-column-header,
+    .ee-ticket-price-calculator .ee-ticket-price-calculator-add-price-actions.ee-rspnsv-table-body-td .ee-rspnsv-table-mobile-only-column-header {
         width: 25% !important;
     }
 
-    .ee-ticket-price-calculator .ee-rTable-body-td.ee-ticket-price-calculator-price-actions .ee-rTable-mobile-only-column-value,
-    .ee-ticket-price-calculator .ee-rTable-body-td.ee-ticket-price-calculator-add-price-actions .ee-rTable-mobile-only-column-value {
+    .ee-ticket-price-calculator .ee-rspnsv-table-body-td.ee-ticket-price-calculator-price-actions .ee-rspnsv-table-mobile-only-column-value,
+    .ee-ticket-price-calculator .ee-rspnsv-table-body-td.ee-ticket-price-calculator-add-price-actions .ee-rspnsv-table-mobile-only-column-value {
         width: 75% !important;
     }
 
-    .ee-ticket-price-calculator .ee-rTable-footer .ee-rTable-footer-row {
+    .ee-ticket-price-calculator .ee-rspnsv-table-footer .ee-rspnsv-table-footer-row {
         flex-flow: row wrap;
     }
 
-    .ee-ticket-price-calculator .ee-rTable-footer .ee-ticket-price-calculator-total-row .ee-ticket-price-calculator-total-label {
+    .ee-ticket-price-calculator .ee-rspnsv-table-footer .ee-ticket-price-calculator-total-row .ee-ticket-price-calculator-total-label {
         padding: 0.75rem 0.5rem 0;
     }
 
@@ -500,7 +500,7 @@ textarea {
     }
 
 
-    .ee-ticket-price-calculator .ee-rTable-footer .ee-ticket-price-calculator-total-row .ee-ticket-price-calculator-total {
+    .ee-ticket-price-calculator .ee-rspnsv-table-footer .ee-ticket-price-calculator-total-row .ee-ticket-price-calculator-total {
         width: calc(100% - 40px - 0.5rem);
     }
 

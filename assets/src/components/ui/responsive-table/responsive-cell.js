@@ -13,11 +13,11 @@ const ResponsiveCell = ( { heading = '', value = '' } ) => {
 	return (
 		<Fragment>
 			<div aria-hidden
-				className={ 'ee-rTable-mobile-only-column-header' }
+				className={ 'ee-rspnsv-table-mobile-only-column-header' }
 			>
 				{ heading }
 			</div>
-			<div className={ 'ee-rTable-mobile-only-column-value' } >
+			<div className={ 'ee-rspnsv-table-mobile-only-column-value' } >
 				{ value }
 			</div>
 		</Fragment>
