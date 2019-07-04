@@ -45,7 +45,7 @@ export const getFilteredDateEntitiesList = ( dateEntities, showDates, datesSorte
  * @param {Object} EntityList
  * @return {Object} EntityList with added DateListFilterBar
  */
-export default createHigherOrderComponent(
+const withDateEntitiesListFilterBar = createHigherOrderComponent(
 	( EntityList ) => ( {
 		displayDates,
 		showDates,
@@ -128,3 +128,5 @@ export default createHigherOrderComponent(
 	},
 	'withDateEntitiesListFilterBar'
 );
+
+export default withDateEntitiesListFilterBar;

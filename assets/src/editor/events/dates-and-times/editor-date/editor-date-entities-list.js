@@ -25,7 +25,8 @@ import { EditorDateEntitiesListView } from './list-view';
 import { withPaginatedDateEntitiesListAndFilterBar } from './filter-bar';
 import { withDateEntityFormModal } from './edit-form';
 import { withTicketAssignmentsManagerModal } from '../../ticket-assignments-manager';
-import withUpdateEventDateRelation from './action-handlers/with-update-event-date-relation';
+import withUpdateEventDateRelation
+	from './action-handlers/with-update-event-date-relation';
 import { withEditorDateEntities, withEditorEventEntity } from '../../hocs';
 
 const {
@@ -34,12 +35,12 @@ const {
 } = twoColumnAdminFormLayout;
 
 const EditorDateEntitiesList = ( {
-	view = 'grid',
 	entities,
 	toggleDateEditor,
 	addNewDateEntity,
 	toggleTicketAssignments,
 	dateEntity = null,
+	view = 'grid',
 	...otherProps
 } ) => {
 	useEffect( () => {
@@ -149,13 +150,11 @@ export default compose( [
 			closeButtonLabel: null,
 		}
 	) ),
-	createHigherOrderComponent(
-		( WrappedComponent ) => ( props ) => {
-			return <WrappedComponent
-				{ ...props }
-				onCloseDateEditor={ props.toggleTicketAssignments }
-			/>;
-		}
-	),
+	( WrappedComponent ) => ( props ) => {
+		return <WrappedComponent
+			{ ...props }
+			onCloseDateEditor={ props.toggleTicketAssignments }
+		/>;
+	},
 	withDateEntityFormModal,
 ] )( EditorDateEntitiesList );

@@ -5,6 +5,7 @@ import PropTypes from 'prop-types';
 import { isFunction } from 'lodash';
 import { Component, Fragment } from '@wordpress/element';
 import { IconButton, SelectControl, TextControl } from '@wordpress/components';
+import { withInstanceId } from '@wordpress/compose';
 import { __ } from '@eventespresso/i18n';
 
 /**
@@ -79,12 +80,20 @@ class EntityListFilterBar extends Component {
 	 * @return {Object} rendered list view icon button
 	 */
 	listView = ( view, setListView ) => (
-		<IconButton
-			className={ view === 'list' ? 'active-list' : '' }
-			icon="editor-justify"
-			tooltip={ __( 'list view', 'event_espresso' ) }
-			onClick={ setListView }
-		/>
+		<Fragment>
+			<label
+				className="screen-reader-text"
+				htmlFor={ `ee-list-view-btn-${ this.props.instanceId }` }>
+				{ __( 'list view', 'event_espresso' ) }
+			</label>
+			<IconButton
+				id={ `ee-list-view-btn-${ this.props.instanceId }` }
+				className={ view === 'list' ? 'active-list' : '' }
+				icon="editor-justify"
+				tooltip={ __( 'list view', 'event_espresso' ) }
+				onClick={ setListView }
+			/>
+		</Fragment>
 	);
 
 	/**
@@ -93,43 +102,48 @@ class EntityListFilterBar extends Component {
 	 * @return {Object} rendered grid view icon button
 	 */
 	gridView = ( view, setGridView ) => (
-		<IconButton
-			className={ view === 'grid' ? 'active-list' : '' }
-			icon="screenoptions"
-			tooltip={ __( 'grid view', 'event_espresso' ) }
-			onClick={ setGridView }
-		/>
+		<Fragment>
+			<label
+				className="screen-reader-text"
+				htmlFor={ `ee-grid-view-btn-${ this.props.instanceId }` }>
+				{ __( 'list view', 'event_espresso' ) }
+			</label>
+			<IconButton
+				id={ `ee-grid-view-btn-${ this.props.instanceId }` }
+				className={ view === 'grid' ? 'active-list' : '' }
+				icon="screenoptions"
+				tooltip={ __( 'grid view', 'event_espresso' ) }
+				onClick={ setGridView }
+			/>
+		</Fragment>
 	);
 
 	render() {
 		const {
-			searchText = '',
-			setSearchText,
 			perPage,
 			view,
+			searchText = '',
+			setSearchText,
 			setPerPage,
 			setListView,
 			setGridView,
 		} = this.props;
 		const entityFilters = this.props.entityFilters ?
-			<div className="ee-entity-list-filter-bar">
-				{ this.props.entityFilters }
-			</div> :
+			this.props.entityFilters :
 			null;
 		return (
 			<div className="ee-entity-list-filter-bar-wrapper">
-				{ entityFilters }
-				<div className="ee-entity-list-view-bar">
-					<div
-						className="ee-search-filter ee-filter-bar-filter">
+				<div className="ee-entity-list-filter-bar">
+					{ entityFilters }
+					<div className="ee-search-filter ee-filter-bar-filter">
 						{ this.search( searchText, setSearchText ) }
 					</div>
-					<div
-						className="ee-per-page-filter ee-filter-bar-filter">
+				</div>
+				<div className="ee-entity-list-view-bar">
+					<div className="ee-per-page-filter ee-filter-bar-filter">
 						{ this.perPage( perPage, setPerPage ) }
 					</div>
-					<div
-						className="ee-view-filter ee-filter-bar-filter">
+					<div className="ee-view-filter ee-filter-bar-filter">
 						{ this.listView( view, setListView ) }
 						{ this.gridView( view, setGridView ) }
 					</div>
@@ -139,4 +153,4 @@ class EntityListFilterBar extends Component {
 	}
 }
 
-export default EntityListFilterBar;
+export default withInstanceId( EntityListFilterBar );

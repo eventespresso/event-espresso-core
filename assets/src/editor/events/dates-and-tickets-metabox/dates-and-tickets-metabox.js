@@ -2,19 +2,19 @@
  * External dependencies
  */
 import PropTypes from 'prop-types';
-import { Fragment } from '@wordpress/element';
 import {
 	Dashicon,
 	Panel,
 	PanelBody,
 	PanelRow,
 } from '@wordpress/components';
-import { __, _x, sprintf } from '@eventespresso/i18n';
+import { Fragment } from '@wordpress/element';
 import {
 	EspressoIcon,
 	FormContainer,
 	FormPlaceholder,
 } from '@eventespresso/components';
+import { __, _x, sprintf } from '@eventespresso/i18n';
 
 /**
  * Internal imports
@@ -22,9 +22,10 @@ import {
 import '../../editor.css';
 import { EditorDateEntitiesList } from '../dates-and-times';
 import { EditorTicketEntitiesList } from '../tickets';
-import withEditorInitialization, { useEditorInitialized } from '../initialization';
+import withEditorInitialization,
+{ useEditorInitialized } from '../initialization';
 
-const MetaBox = ( { eventId } ) => {
+const DatesAndTicketsMetabox = ( { eventId } ) => {
 	const initialized = useEditorInitialized();
 	return (
 		<Fragment>
@@ -91,13 +92,11 @@ const MetaBox = ( { eventId } ) => {
 	);
 };
 
-const DatesAndTicketsMetabox = withEditorInitialization( MetaBox );
-
-MetaBox.propTypes = {
+DatesAndTicketsMetabox.propTypes = {
 	eventId: PropTypes.oneOfType( [
 		PropTypes.number,
 		PropTypes.string,
 	] ).isRequired,
 };
 
-export default DatesAndTicketsMetabox;
+export default withEditorInitialization( DatesAndTicketsMetabox );
