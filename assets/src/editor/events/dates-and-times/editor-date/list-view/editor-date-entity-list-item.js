@@ -53,7 +53,7 @@ const EditorDateEntityListItem = ( {
 					return 'ee-datetime-upcoming';
 			}
 		},
-		[ dateEntity ]
+		[ dateEntity.status ]
 	);
 
 	/**
