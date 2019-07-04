@@ -1,5 +1,6 @@
 import { useSelect } from '@wordpress/data';
 import { isModelEntityOfModel } from '@eventespresso/validators';
+import warning from 'warning';
 
 const DEFAULT_OBJECT = {
 	venueEntity: null,
@@ -47,6 +48,10 @@ const useEventVenueEntity = ( eventEntity ) => {
 				};
 			}
 		}
+		warning(
+			false,
+			'There was no valid event entity provided to useEventVenueEntity'
+		);
 		return DEFAULT_OBJECT;
 	}, [ eventEntity ] );
 	return { venueEntity, venueEntityLoaded };
