@@ -29,7 +29,7 @@ const useEditorUpdateEventDateRelation = ( eventEntity = null ) => {
 		if ( ! isModelEntityOfModel( eventEntity, EVENT ) ) {
 			throw new Error(
 				__(
-					'Unable to process the Event Date Entity form because an invalid Event Entity was supplied. ',
+					'Unable to process the Event Date Entity form because an invalid Event Entity was supplied.',
 					'event_espresso'
 				)
 			);
@@ -37,7 +37,7 @@ const useEditorUpdateEventDateRelation = ( eventEntity = null ) => {
 		if ( ! isModelEntityOfModel( dateEntity, DATETIME ) ) {
 			throw new Error(
 				__(
-					'Unable to process the Event Date Entity form because an invalid Date Entity was supplied. ',
+					'Unable to process the Event Date Entity form because an invalid Date Entity was supplied.',
 					'event_espresso'
 				)
 			);
