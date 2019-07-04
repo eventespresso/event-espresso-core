@@ -20,6 +20,7 @@
     font-style: italic;
     height: auto;
     line-height: 1.25rem;
+    min-height: var(--ee-icon-button-size);
     position: relative;
 }
 
@@ -36,7 +37,7 @@
     color: var(--ee-color-grey-10);
     left: calc(var(--ee-padding-extreme) * -1);
     position: absolute;
-    top: 2px;
+    top: 0;
 }
 
 .ee-form-info.ee-form-info-type-warning .ee-form-info-type {

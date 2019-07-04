@@ -23,7 +23,6 @@ const TableRow = ( {
 	rowType = 'body',
 	...extraProps
 } ) => {
-	rowType += 'RowClass';
 	htmlId = htmlId ?
 		`${ htmlId }-row-${ rowNumber }` :
 		`ee-rspnsv-table-row-${ rowNumber }`;
@@ -31,7 +30,7 @@ const TableRow = ( {
 		htmlClass,
 		`ee-rspnsv-table-${ rowType }-row`,
 		`ee-row-${ rowNumber }`,
-		classes[ rowType ],
+		classes[ `${ rowType }RowClass` ],
 	);
 	return (
 		<tr id={ htmlId } className={ htmlClass } { ...extraProps } >

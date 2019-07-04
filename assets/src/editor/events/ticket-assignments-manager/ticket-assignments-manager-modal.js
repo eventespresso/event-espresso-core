@@ -4,7 +4,11 @@
 import { filter, findIndex, cloneDeep } from 'lodash';
 import warning from 'warning';
 import { IconButton } from '@wordpress/components';
-import { useState, useCallback, useRef } from '@wordpress/element';
+import {
+	useCallback,
+	useState,
+	useRef,
+} from '@wordpress/element';
 import { ENTER } from '@wordpress/keycodes';
 import {
 	CalendarPageDate,
@@ -23,11 +27,16 @@ import { isModelEntityOfModel } from '@eventespresso/validators';
 /**
  * Internal imports
  */
-import * as handler from './ticket-assignments-handler';
 import './ticket-assignments-manager.css';
-import { sortDateEntitiesList } from '../dates-and-times/editor-date/filter-bar/date-entities-list-filter-utils';
+import * as handler from './ticket-assignments-handler';
+import { sortDateEntitiesList } from
+	'../dates-and-times/editor-date/filter-bar/date-entities-list-filter-utils';
+import { sortTicketEntitiesList } from
+	'../tickets/editor-ticket/filter-bar/ticket-entities-list-filter-utils';
 import { withEditorDateEntities, withEditorTicketEntities } from '../hocs';
 import { useAssignmentsCalculator } from './hooks';
+import { shortenCuid } from '../../utils';
+import withTicketAssignmentsFilters from './filters/with-ticket-assignments-filters';
 
 const noIndex = -1;
 
@@ -54,9 +63,11 @@ const TicketAssignmentsManagerModal = ( {
 	assignedState,
 	setAssignedState,
 	assignmentCounts,
+	ticketAssignmentsFilters,
 } ) => {
+	const dateCount = dateEntities.length;
+	const ticketCount = ticketEntities.length;
 	const [ submitting, setSubmitting ] = useState( false );
-	const [ formError, setFormError ] = useState( '' );
 	const processChanges = useCallback( () => {
 		if ( hasNoAssignments ) {
 			// brings up confirm modal because the editor won't close
@@ -92,9 +103,8 @@ const TicketAssignmentsManagerModal = ( {
 					ticketId
 				);
 			} );
-			setFormError( '' );
 		},
-		[ setFormError ]
+		[]
 	);
 	const removeTicketEntity = useCallback(
 		( dateId, ticketId ) => {
@@ -116,7 +126,6 @@ const TicketAssignmentsManagerModal = ( {
 	 */
 	const ticketHeaders = useCallback(
 		() => {
-			const dateCount = dateEntities.length;
 			const headerCells = [
 				{
 					type: 'row',
@@ -153,7 +162,7 @@ const TicketAssignmentsManagerModal = ( {
 									</span>
 								</div>
 								<div className="ee-tam-ticket-id">
-									{ `#${ ticket.id }` }
+									{ `#${ shortenCuid( ticket.id ) }` }
 								</div>
 								<div className="ee-tam-ticket-header-title">
 									{ ticket.name }
@@ -171,7 +180,7 @@ const TicketAssignmentsManagerModal = ( {
 			} );
 			return headerCells;
 		},
-		[ ticketEntities, dateEntities, getTicketBgColorClass ]
+		[ ticketEntities, dateCount, getTicketBgColorClass ]
 	);
 
 	/**
@@ -419,11 +428,13 @@ const TicketAssignmentsManagerModal = ( {
 				class: 'ee-tam-date-label',
 				value: (
 					<div className="ee-tam-date-label-div">
-						<div className="ee-tam-date-id">
-							{ `#${ dateEntity.id }` }
-						</div>
-						<div className="ee-tam-date-label-text">
-							{ dateEntity.name }
+						<div className="ee-tam-date-label-inner">
+							<div className="ee-tam-date-id">
+								{ `#${ shortenCuid( dateEntity.id ) }` }
+							</div>
+							<div className="ee-tam-date-label-text">
+								{ dateEntity.name }
+							</div>
 						</div>
 						<CalendarPageDate
 							startDate={ dateEntity.start }
@@ -448,7 +459,6 @@ const TicketAssignmentsManagerModal = ( {
 	const dateRows = useCallback(
 		() => {
 			let year = 0;
-			const dateCount = dateEntities.length;
 			const rows = [];
 			dateEntities.forEach(
 				( eventDate ) => {
@@ -491,29 +501,31 @@ const TicketAssignmentsManagerModal = ( {
 			);
 			return rows;
 		},
-		[ dateEntities, ticketEntities, ticketEntitiesByDateIds, ticketCell ]
+		[
+			dateCount,
+			dateEntities,
+			ticketEntities,
+			ticketEntitiesByDateIds,
+			ticketCell,
+		]
 	);
 
 	/**
 	 * @function
-	 * @return {Object} rendered cancel button
+	 * @return {Function} callback for displaying FormInfo
 	 */
 	const getFormError = useCallback(
-		() => {
-			let errorMessage = formError;
-			if ( hasNoAssignments ) {
-				errorMessage = noAssignmentsMessage;
-			}
+		( errorMessage, dismissable = true, colSize = 10, offset = 1 ) => {
 			return errorMessage ?
 				<FormInfo
 					formInfo={ errorMessage }
 					dashicon={ 'warning' }
-					dismissable={ true }
-					colSize={ 10 }
-					offset={ 1 }
+					dismissable={ dismissable }
+					colSize={ colSize }
+					offset={ offset }
 				/> : null;
 		},
-		[ hasNoAssignments, formError ]
+		[]
 	);
 
 	/**
@@ -531,7 +543,6 @@ const TicketAssignmentsManagerModal = ( {
 							event.preventDefault();
 							event.stopPropagation();
 							processChanges();
-							setFormError( '' );
 						}
 					}
 					buttonText={ __(
@@ -539,10 +550,11 @@ const TicketAssignmentsManagerModal = ( {
 						'event_espresso'
 					) }
 					submitting={ submitting }
+					disabled={ dateCount < 1 || ticketCount < 1 }
 				/>
 			);
 		},
-		[ processChanges, submitting, setFormError ]
+		[ processChanges, submitting, dateCount, ticketCount ]
 	);
 
 	/**
@@ -558,42 +570,50 @@ const TicketAssignmentsManagerModal = ( {
 						( event ) => {
 							event.preventDefault();
 							event.stopPropagation();
-							setFormError( '' );
 							toggleEditor();
 						}
 					}
 				/>
 			);
 		},
-		[ setFormError, toggleEditor ]
+		[ toggleEditor ]
 	);
 
-	let tableId = 'ee-ticket-assignments-manager-';
-	if ( dateEntities.length === 1 ) {
-		tableId += dateEntities[ 0 ].id;
-	} else {
-		tableId += dateEntities.length + '-' + ticketEntities.length;
-	}
-	return (
-		<FormWrapper>
-			<FormSection>
-				{ getFormError() }
+	/**
+	 * @function
+	 * @return {Object} rendered ticket assignments table
+	 */
+	const ticketAssignments = useCallback(
+		() => {
+			return dateCount > 0 && ticketCount > 0 ? (
 				<ResponsiveTable
 					columns={ ticketHeaders() }
 					rowData={ dateRows() }
 					metaData={ {
-						tableId,
 						tableCaption: __(
 							'Ticket Assignments',
 							'event_espresso'
 						),
-						hasRowHeaders: dateEntities.length > 1,
+						hasRowHeaders: dateCount > 1,
 					} }
 					classes={ {
 						tableClass: 'ee-ticket-assignments-manager',
 					} }
 				/>
-				{ pagination }
+			) : null;
+		},
+		[ dateEntities, ticketEntities, ticketHeaders, dateRows ]
+	);
+
+	return (
+		<FormWrapper>
+			<FormSection htmlClass={ 'ee-ticket-assignments-manager-form' } >
+				<div className={ 'ee-ticket-assignments-manager-filters' }>
+					{ ticketAssignmentsFilters }
+					{ pagination }
+					{ getFormError( noAssignmentsMessage ) }
+					{ ticketAssignments() }
+				</div>
 			</FormSection>
 			<FormSaveCancelButtons
 				submitButton={ submitButton() }
@@ -637,6 +657,7 @@ export default compose( [
 		};
 		return { addTicketEntities, removeTicketEntities };
 	} ),
+	withTicketAssignmentsFilters,
 	( WrappedComponent ) => ( props ) => {
 		// adds a ref for handling count updates.
 		const assignmentCounts = useRef( { dates: {}, tickets: {} } );
@@ -671,11 +692,13 @@ export default compose( [
 		// initial setup based on incoming entity
 		if ( isModelEntityOfModel( dateEntity, 'datetime' ) ) {
 			dtmProps.entities = [ dateEntity ];
+			dtmProps.ticketEntities = sortTicketEntitiesList( ticketEntities );
 		} else if ( isModelEntityOfModel( ticketEntity, 'ticket' ) ) {
 			dtmProps.entities = sortDateEntitiesList( dateEntities );
 			dtmProps.ticketEntities = [ ticketEntity ];
 		} else {
 			dtmProps.entities = sortDateEntitiesList( dateEntities );
+			dtmProps.ticketEntities = sortTicketEntitiesList( ticketEntities );
 		}
 
 		// need to setup the assignmentCounts for all the tickets and all the dates!

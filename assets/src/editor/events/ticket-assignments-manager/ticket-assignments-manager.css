@@ -70,25 +70,20 @@
     color: var(--ee-color-grey-7);
     font-size: var(--ee-font-size-micro);
     font-weight: normal;
-    position: absolute;
 }
 
 .ee-ticket-assignments-manager .ee-tam-date-id {
-    left: var(--ee-padding-micro);
     line-height: var(--ee-font-size-tiny);
-    top: 0;
-    width: 1px;
-    word-wrap: break-word;
-    white-space: pre-wrap;
+    margin: var(--ee-margin-micro) 0 0;
 }
 
 .ee-ticket-assignments-manager .ee-tam-ticket-id {
-    left: 50%;
     letter-spacing: var(--ee-letter-spacing-font-size-tiny);
-    margin-left: calc(var(--ee-padding-default) * -2);
+    max-width: 100%;
+    position: relative;
     text-align: center;
     top: -1rem;
-    width: var(--ee-padding-extreme);
+    width: 100%;
 }
 
 /* body */
@@ -108,7 +103,7 @@
 }
 
 .ee-ticket-assignments-manager .ee-tam-date-row .ee-tam-date-label-div {
-    align-items: center;
+    align-items: flex-start;
     display: flex;
     flex-flow: row nowrap;
     justify-content: flex-end;
@@ -118,6 +113,13 @@
     text-align: right;
     text-overflow: ellipsis;
     width: 100%;
+}
+
+.ee-ticket-assignments-manager .ee-tam-date-row .ee-tam-date-label-inner {
+    align-content: flex-start;
+    display: flex;
+    flex-flow: column nowrap;
+    justify-content: flex-end;
 }
 
 .ee-ticket-assignments-manager .ee-calendar-page-date-wrapper {
@@ -130,7 +132,7 @@
 .ee-ticket-assignments-manager .ee-tam-date-label-text {
     font-size: var(--ee-font-size-small);
     line-height: var(--ee-font-size-default);
-    margin: var(--ee-margin-smaller) 0;
+    margin: 0;
 }
 
 .ee-ticket-assignments-manager .ee-tam-date-row-ticket {
@@ -142,7 +144,7 @@
 /* BUTTON STYLE */
 .ee-ticket-assignments-manager .components-icon-button.ee-tam-ticket-relation-button {
     border-radius: 0 !important;
-    border: 1px solid var(--ee-color-white);
+    border: 2px solid var(--ee-color-white);
     box-shadow: none !important;
     height: var(--ee-padding-extreme);
     margin: auto;
@@ -161,59 +163,64 @@
 .ee-ticket-assignments-manager .ee-tam-assignments-error:hover,
 .ee-ticket-assignments-manager .ee-tam-assignments-error:focus,
 .ee-ticket-assignments-manager .ee-tam-assignments-error:active {
-    background: var(--ee-color-hot-pink) !important;
+    border: 2px solid var(--ee-color-hot-pink) !important;
 }
 
 /* NO TICKET RELATION */
 .ee-ticket-assignments-manager .components-icon-button.ee-tam-no-ticket-relation {
-    background: var(--ee-color-grey-14) !important;
-    color: var(--ee-text-on-grey-14);
+    background: var(--ee-color-grey-13) !important;
+    color: var(--ee-text-on-grey-13);
 }
 
 .ee-ticket-assignments-manager .components-icon-button.ee-tam-no-ticket-relation:hover,
 .ee-ticket-assignments-manager .components-icon-button.ee-tam-no-ticket-relation:focus,
 .ee-ticket-assignments-manager .components-icon-button.ee-tam-no-ticket-relation:active {
-    border: 1px solid var(--ee-color-grey-10) !important;
+    border: 2px solid var(--ee-color-grey-10) !important;
     color: var(--ee-text-on-grey-10) !important;
 }
 
 /* HAS TICKET RELATION */
 .ee-ticket-assignments-manager .components-icon-button.ee-tam-has-ticket-relation {
     background-color: var(--ee-color-blue) !important;
-    border: 1px solid var(--ee-color-white);
+    border: 2px solid var(--ee-color-white);
     color: var(--ee-text-on-blue) !important;
 }
 
 .ee-ticket-assignments-manager .components-icon-button.ee-tam-has-ticket-relation:hover,
 .ee-ticket-assignments-manager .components-icon-button.ee-tam-has-ticket-relation:focus,
 .ee-ticket-assignments-manager .components-icon-button.ee-tam-has-ticket-relation:active {
-    border: 1px solid var(--ee-color-blue);
+    border: 2px solid var(--ee-color-blue);
 }
 
 /* ADD TICKET RELATION */
 .ee-ticket-assignments-manager .components-icon-button.ee-tam-add-ticket-relation {
     background: var(--ee-color-green) !important;
-    border: 1px solid var(--ee-color-white);
+    border: 2px solid var(--ee-color-white);
     color: var(--ee-text-on-green-high-contrast) !important;
 }
 
 .ee-ticket-assignments-manager .components-icon-button.ee-tam-add-ticket-relation:hover,
 .ee-ticket-assignments-manager .components-icon-button.ee-tam-add-ticket-relation:focus,
 .ee-ticket-assignments-manager .components-icon-button.ee-tam-add-ticket-relation:active {
-    border: 1px solid var(--ee-color-green) !important;
+    border: 2px solid var(--ee-color-green) !important;
 }
 
 /* REMOVE TICKET RELATION */
 .ee-ticket-assignments-manager .components-icon-button.ee-tam-remove-ticket-relation {
     background: var(--ee-color-hot-pink) !important;
-    border: 1px solid var(--ee-color-white);
+    border: 2px solid var(--ee-color-white);
     color: var(--ee-text-on-hot-pink) !important;
 }
 
 .ee-ticket-assignments-manager .components-icon-button.ee-tam-remove-ticket-relation:hover,
 .ee-ticket-assignments-manager .components-icon-button.ee-tam-remove-ticket-relation:focus,
 .ee-ticket-assignments-manager .components-icon-button.ee-tam-remove-ticket-relation:active {
-    border: 1px solid var(--ee-color-hot-pink) !important;
+    border: 2px solid var(--ee-color-hot-pink) !important;
+}
+
+
+.ee-ticket-assignments-manager-filters .ee-entity-pagination {
+    margin: calc(var(--ee-margin-small) * -1) 0 var(--ee-margin-big);
 }
 
 
@@ -253,10 +260,14 @@
         text-align: left;
     }
 
+    .ee-ticket-assignments-manager .ee-tam-date-row .ee-tam-date-label-inner {
+        margin: 0 var(--ee-margin-micro);
+    }
+
+
     .ee-ticket-assignments-manager .ee-tam-date-label-text {
         font-size: var(--ee-font-size-default);
         line-height: var(--ee-font-size-big);
-        margin: 0 var(--ee-margin-micro);
         width: 50%;
     }
 
@@ -267,21 +278,26 @@
     }
 
     .ee-rspnsv-table .ee-tam-date-row .ee-tam-date-row-ticket:nth-child(even) {
-        background: var(--ee-color-grey-14);
+        background: var(--ee-color-grey-15);
     }
 
     .ee-ticket-assignments-manager .ee-rspnsv-table-mobile-only-column-header .ee-tam-ticket-header-div {
         flex-flow: column nowrap;
         justify-content: center;
         font-size: var(--ee-font-size-small);
-        line-height: var(--ee-font-size-default);
+        line-height: var(--ee-font-size-small);
         padding: var(--ee-padding-nano) var(--ee-padding-small) 0 0;
         text-align: right;
         width: 100%;
     }
 
+    .ee-ticket-assignments-manager .ee-tam-ticket-id {
+        text-align: right;
+        top: unset;
+    }
+
     .ee-ticket-assignments-manager .ee-tam-ticket-header-title {
-        height: var(--ee-padding-big);
+        height: unset;
     }
 
     .ee-ticket-assignments-manager .ee-tam-ticket-header-status {
@@ -330,7 +346,7 @@
     }
 
     .ee-ticket-assignments-manager .ee-tam-date-label-text {
-        width: calc(75% - var(--ee-padding-extreme));
+        width: auto;
     }
 
     .ee-ticket-assignments-manager .ee-rspnsv-table-mobile-only-column-header {

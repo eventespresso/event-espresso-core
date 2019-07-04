@@ -20,7 +20,7 @@
 }
 
 .ee-rspnsv-table .ee-rspnsv-table-body .ee-rspnsv-table-body-row:nth-child(even) {
-    background: var(--ee-color-grey-11);
+    background: var(--ee-color-grey-15);
 }
 
 .ee-rspnsv-table .ee-rspnsv-table-header .ee-rspnsv-table-header-th,

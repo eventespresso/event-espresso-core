@@ -117,6 +117,8 @@ export const sortTicketEntitiesList = ( ticketEntities, order = 'chronologically
 							ticketEntity.startDate.toMillis() :
 							0;
 					},
+					'name',
+					'id',
 				],
 			);
 			break;
