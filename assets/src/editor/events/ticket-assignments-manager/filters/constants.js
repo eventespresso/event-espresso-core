@@ -1,3 +1,6 @@
+/**
+ * default state object
+ */
 export const DEFAULT_FILTER_STATE = {
 	showArchivedDates: false,
 	showExpiredDates: false,
