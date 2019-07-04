@@ -1,10 +1,18 @@
 /**
  * External imports
  */
-import { Fragment } from '@wordpress/element';
+import { Fragment, useCallback } from '@wordpress/element';
 import { ToggleControl } from '@wordpress/components';
 import { twoColumnAdminFormLayout } from '@eventespresso/components';
 import { __ } from '@eventespresso/i18n';
+
+/**
+ * Internal imports
+ */
+import {
+	showArchivedDatesAction,
+	showExpiredDatesAction,
+} from './actions';
 
 const { FormColumn } = twoColumnAdminFormLayout;
 
@@ -14,18 +22,24 @@ const { FormColumn } = twoColumnAdminFormLayout;
  * @function
  * @param {boolean} showArchivedDates
  * @param {boolean} showExpiredDates
- * @param {Function} toggleArchivedDates
- * @param {Function} toggleExpiredDates
  * @param {number} dateFiltersOffset
+ * @param {Function} setFilter
  * @return {Object} rendered date filter toggles
  */
 const DateFilters = ( {
 	showArchivedDates,
 	showExpiredDates,
-	toggleArchivedDates,
-	toggleExpiredDates,
 	dateFiltersOffset,
+	setFilter,
 } ) => {
+	const toggleArchivedDates = useCallback(
+		() => setFilter( showArchivedDatesAction ),
+		[]
+	);
+	const toggleExpiredDates = useCallback(
+		() => setFilter( showExpiredDatesAction ),
+		[]
+	);
 	return (
 		<Fragment>
 			<FormColumn colSize={ '2h' } offset={ dateFiltersOffset }>

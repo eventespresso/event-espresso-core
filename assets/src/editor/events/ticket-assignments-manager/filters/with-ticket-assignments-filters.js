@@ -2,17 +2,11 @@
  * External imports
  */
 import { createHigherOrderComponent } from '@wordpress/compose';
-import { useCallback, useMemo, useReducer } from '@wordpress/element';
+import { useMemo, useReducer } from '@wordpress/element';
 
 /**
  * Internal imports
  */
-import {
-	showArchivedDatesAction,
-	showExpiredDatesAction,
-	showArchivedTicketsAction,
-	showExpiredTicketsAction,
-} from './actions';
 import { DEFAULT_FILTER_STATE } from './constants';
 import { filterDates, filterTickets } from './filters';
 import { getShowDateFilters, getShowTicketFilters } from './helpers';
@@ -42,22 +36,6 @@ const withTicketAssignmentsFilters = createHigherOrderComponent(
 			showArchivedTickets,
 			showExpiredTickets,
 		} = filterState;
-		const toggleArchivedDates = useCallback(
-			() => setFilter( showArchivedDatesAction ),
-			[]
-		);
-		const toggleExpiredDates = useCallback(
-			() => setFilter( showExpiredDatesAction ),
-			[]
-		);
-		const toggleArchivedTickets = useCallback(
-			() => setFilter( showArchivedTicketsAction ),
-			[]
-		);
-		const toggleExpiredTickets = useCallback(
-			() => setFilter( showExpiredTicketsAction ),
-			[]
-		);
 		const unfilteredDatesCount = dateEntities.length;
 		const unfilteredTicketCount = ticketEntities.length;
 		const filteredDateEntities = useMemo(
@@ -126,14 +104,11 @@ const withTicketAssignmentsFilters = createHigherOrderComponent(
 					showDateFilters={ showDateFilters }
 					showArchivedDates={ showArchivedDates }
 					showExpiredDates={ showExpiredDates }
-					toggleArchivedDates={ toggleArchivedDates }
-					toggleExpiredDates={ toggleExpiredDates }
 					showTicketFilters={ showTicketFilters }
 					showArchivedTickets={ showArchivedTickets }
 					showExpiredTickets={ showExpiredTickets }
-					toggleArchivedTickets={ toggleArchivedTickets }
-					toggleExpiredTickets={ toggleExpiredTickets }
 					showFilterNotice={ datesCount < 1 || ticketCount < 1 }
+					setFilter={ setFilter }
 				/>
 			),
 			[

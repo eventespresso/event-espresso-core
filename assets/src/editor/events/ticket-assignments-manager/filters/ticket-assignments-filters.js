@@ -34,14 +34,11 @@ const TicketAssignmentsFilters = ( {
 	showDateFilters,
 	showArchivedDates,
 	showExpiredDates,
-	toggleArchivedDates,
-	toggleExpiredDates,
 	showTicketFilters,
 	showArchivedTickets,
 	showExpiredTickets,
-	toggleArchivedTickets,
-	toggleExpiredTickets,
 	showFilterNotice,
+	setFilter,
 } ) => {
 	const dateFiltersOffset = showDateFilters && showTicketFilters ? 2 : 7;
 	const ticketFiltersOffset = showDateFilters && showTicketFilters ? 0 : 7;
@@ -50,18 +47,16 @@ const TicketAssignmentsFilters = ( {
 			<DateFilters
 				showArchivedDates={ showArchivedDates }
 				showExpiredDates={ showExpiredDates }
-				toggleArchivedDates={ toggleArchivedDates }
-				toggleExpiredDates={ toggleExpiredDates }
 				dateFiltersOffset={ dateFiltersOffset }
+				setFilter={ setFilter }
 			/>
 		) : null,
 		[
 			showDateFilters,
 			showArchivedDates,
 			showExpiredDates,
-			toggleArchivedDates,
-			toggleExpiredDates,
 			dateFiltersOffset,
+			setFilter,
 		]
 	);
 	const ticketFilters = useMemo(
@@ -69,17 +64,16 @@ const TicketAssignmentsFilters = ( {
 			<TicketFilters
 				showArchivedTickets={ showArchivedTickets }
 				showExpiredTickets={ showExpiredTickets }
-				toggleArchivedTickets={ toggleArchivedTickets }
-				toggleExpiredTickets={ toggleExpiredTickets }
 				ticketFiltersOffset={ ticketFiltersOffset }
+				setFilter={ setFilter }
 			/>
 		) : null,
 		[
+			showTicketFilters,
 			showArchivedTickets,
 			showExpiredTickets,
-			toggleArchivedTickets,
-			toggleExpiredTickets,
 			ticketFiltersOffset,
+			setFilter,
 		]
 	);
 	const filterNotice = useMemo(

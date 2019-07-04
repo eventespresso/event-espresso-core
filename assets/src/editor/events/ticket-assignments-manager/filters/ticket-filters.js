@@ -1,10 +1,18 @@
 /**
  * External imports
  */
-import { Fragment } from '@wordpress/element';
+import { Fragment, useCallback } from '@wordpress/element';
 import { ToggleControl } from '@wordpress/components';
 import { twoColumnAdminFormLayout } from '@eventespresso/components';
 import { __ } from '@eventespresso/i18n';
+
+/**
+ * Internal imports
+ */
+import {
+	showArchivedTicketsAction,
+	showExpiredTicketsAction,
+} from './actions';
 
 const { FormColumn } = twoColumnAdminFormLayout;
 
@@ -14,18 +22,24 @@ const { FormColumn } = twoColumnAdminFormLayout;
  * @function
  * @param {boolean} showArchivedTickets
  * @param {boolean} showExpiredTickets
- * @param {Function} toggleArchivedTickets
- * @param {Function} toggleExpiredTickets
  * @param {number} ticketFiltersOffset
+ * @param {Function} setFilter
  * @return {Object} rendered ticket filter toggles
  */
 const TicketFilters = ( {
 	showArchivedTickets,
 	showExpiredTickets,
-	toggleArchivedTickets,
-	toggleExpiredTickets,
 	ticketFiltersOffset,
+	setFilter,
 } ) => {
+	const toggleArchivedTickets = useCallback(
+		() => setFilter( showArchivedTicketsAction ),
+		[]
+	);
+	const toggleExpiredTickets = useCallback(
+		() => setFilter( showExpiredTicketsAction ),
+		[]
+	);
 	return (
 		<Fragment>
 			<FormColumn colSize={ '2h' } offset={ ticketFiltersOffset }>
