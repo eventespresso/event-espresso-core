@@ -7,12 +7,11 @@ import { compose } from '@wordpress/compose';
 import { useMemo } from '@wordpress/element';
 import { addQueryArgs } from '@wordpress/url';
 import { EntityDetailsPanel, InlineEditInput } from '@eventespresso/components';
-import {
-	ifValidDateEntity,
-	withEventVenueEntity,
-} from '@eventespresso/editor-hocs';
+import { ifValidDateEntity } from '@eventespresso/editor-hocs';
 import { routes } from '@eventespresso/eejs';
 import { __ } from '@eventespresso/i18n';
+
+import { useEditorEventEntity, useEventVenueEntity } from '../../../hooks';
 
 const {
 	ADMIN_ROUTES,
@@ -22,13 +21,13 @@ const {
 } = routes;
 
 const EditorDateEntityDetails = ( {
-	eventEntity,
 	dateEntity,
-	venueEntity,
 	refreshed,
 	showDesc = 'excerpt',
 	showVenue = true,
 } ) => {
+	const eventEntity = useEditorEventEntity();
+	const { venueEntity } = useEventVenueEntity( eventEntity );
 	/**
 	 * dateName
 	 *
@@ -247,5 +246,4 @@ const EditorDateEntityDetails = ( {
 
 export default compose( [
 	ifValidDateEntity,
-	withEventVenueEntity,
 ] )( EditorDateEntityDetails );
