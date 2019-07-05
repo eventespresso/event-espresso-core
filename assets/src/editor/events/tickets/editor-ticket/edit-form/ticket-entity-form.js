@@ -8,30 +8,25 @@ import {
 import { __ } from '@eventespresso/i18n';
 import { compose } from '@wordpress/compose';
 import { isEmpty } from 'lodash';
-import { useCallback } from '@wordpress/element';
+import { useCallback, useMemo } from '@wordpress/element';
+import { isModelEntityOfModel } from '@eventespresso/validators';
 
 /**
  * Internal dependencies
  */
-import { ticketEntityFormInputs } from './ticket-entity-form-inputs';
 import { useTicketPriceCalculators } from '../price-calculator';
 import { withTicketPriceEntities, withPriceTypeEntities } from '../../../hocs';
+import {
+	editEntityFormInputs,
+} from '../../../../helpers/forms/edit-entity-form-inputs';
+import { ticketEntityInputConfig } from './ticket-entity-input-config';
 
-const getFormRows = (
-	ticketEntity,
-	calculator,
-	exclude,
-	currentValues,
-	FormInput,
-	recalculateBasePrice
-) => ticketEntityFormInputs(
-	ticketEntity,
-	calculator,
-	exclude,
-	currentValues,
-	FormInput,
-	recalculateBasePrice,
-);
+const {
+	FormSection,
+	FormWrapper,
+	FormSaveCancelButtons,
+	FormInfo,
+} = twoColumnAdminFormLayout;
 
 const TicketEntityForm = ( {
 	ticketEntity,
@@ -44,27 +39,15 @@ const TicketEntityForm = ( {
 	initialValues = {},
 	newObject = false,
 } ) => {
-	const { calculateTicketBasePrice } = useTicketPriceCalculators( priceTypeEntities );
-	// hooks must be at the top of the function and never change order.
-	// eslint-disable-next-line @wordpress/no-unused-vars-before-return
+	const { calculateTicketBasePrice } = useTicketPriceCalculators(
+		priceTypeEntities
+	);
 	const recalculateBasePrice = useCallback( () => {
-		calculateTicketBasePrice( ticketEntity.price.toNumber(), priceEntities );
+		calculateTicketBasePrice(
+			ticketEntity.price.toNumber(),
+			priceEntities
+		);
 	}, [ ticketEntity, priceEntities, calculateTicketBasePrice ] );
-	// edit forms for existing objects must have initial values
-	if (
-		( ! newObject && isEmpty( initialValues ) ) ||
-		isEmpty( currentValues )
-	) {
-		return null;
-	}
-	const {
-		FormInput,
-		FormSection,
-		FormWrapper,
-		FormSaveCancelButtons,
-		FormInfo,
-	} = twoColumnAdminFormLayout;
-
 	// entity properties we don't want to be editable
 	const exclude = [
 		'TKT_ID',
@@ -76,40 +59,82 @@ const TicketEntityForm = ( {
 		'wpUser',
 		'status',
 	];
-	const formRows = getFormRows(
-		ticketEntity,
-		calculator,
-		exclude,
-		currentValues,
-		FormInput,
-		recalculateBasePrice,
+	const inputConfig = useMemo(
+		() => ticketEntityInputConfig(
+			ticketEntity,
+			calculator,
+			recalculateBasePrice
+		),
+		[
+			ticketEntityInputConfig,
+			ticketEntity,
+			calculator,
+			recalculateBasePrice,
+		]
 	);
-	formRows.unshift(
-		<FormInfo
-			key="formInfo"
-			formInfo={
-				__(
-					'all fields marked with an asterisk are required',
-					'event_espresso'
-				)
-			}
-			dismissable={ false }
-		/>
+	const formRows = useMemo(
+		() => editEntityFormInputs(
+			ticketEntity,
+			inputConfig,
+			`ee-ticket-${ ticketEntity.id }`,
+			isEmpty( currentValues ) ? initialValues : currentValues,
+			exclude
+		),
+		[
+			editEntityFormInputs,
+			ticketEntity,
+			inputConfig,
+			currentValues,
+			initialValues,
+			exclude,
+		]
 	);
-
-	return ticketEntity && ticketEntity.id ? (
-		<FormWrapper>
-			<FormSection
-				htmlId={ `ee-ticket-editor-${ ticketEntity.id }-form-section` }
-				children={ formRows }
+	const formInfo = useMemo(
+		() => (
+			<FormInfo
+				key="formInfo"
+				formInfo={
+					__(
+						'all fields marked with an asterisk are required',
+						'event_espresso'
+					)
+				}
+				dismissable={ false }
 			/>
-			<FormSaveCancelButtons
-				htmlClass={ `ee-ticket-editor-${ ticketEntity.id }` }
-				submitButton={ submitButton }
-				cancelButton={ cancelButton }
-			/>
-		</FormWrapper>
-	) : null;
+		),
+		[]
+	);
+	if ( Array.isArray( formRows ) ) {
+		formRows.unshift( formInfo );
+	}
+	return useMemo(
+		() => {
+			// edit forms for existing objects must have initial values
+			return ! ( ! newObject && isEmpty( initialValues ) ) &&
+			isModelEntityOfModel( ticketEntity, 'ticket' ) ?
+				(
+					<FormWrapper>
+						<FormSection
+							htmlId={ `ee-ticket-editor-${ ticketEntity.id }-form-section` }
+							children={ formRows }
+						/>
+						<FormSaveCancelButtons
+							htmlClass={ `ee-ticket-editor-${ ticketEntity.id }` }
+							submitButton={ submitButton }
+							cancelButton={ cancelButton }
+						/>
+					</FormWrapper>
+				) : null;
+		},
+		[
+			newObject,
+			initialValues,
+			ticketEntity,
+			formRows,
+			submitButton,
+			cancelButton,
+		]
+	);
 };
 
 /**

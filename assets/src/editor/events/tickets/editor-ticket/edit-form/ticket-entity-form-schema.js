@@ -29,12 +29,12 @@ export const ticketEntityFormSchema = ( ticketEntity ) => {
 		[ `${ prefix }-price` ]: ticketEntity.price && ticketEntity.price.amount ?
 			ticketEntity.price.amount.toNumber() :
 			null,
-		[ `${ prefix }-start` ]: ticketEntity.startDate.toISO(),
-		[ `${ prefix }-end` ]: ticketEntity.endDate.toISO(),
+		[ `${ prefix }-startDate` ]: ticketEntity.startDate.toISO(),
+		[ `${ prefix }-endDate` ]: ticketEntity.endDate.toISO(),
 		[ `${ prefix }-taxable` ]: ticketEntity.taxable || false,
 		[ `${ prefix }-order` ]: ticketEntity.order || 0,
-		[ `${ prefix }-is-default` ]: ticketEntity.isDefault || false,
-		[ `${ prefix }-wp-user` ]: ticketEntity.wpUser || 0,
+		[ `${ prefix }-isDefault` ]: ticketEntity.isDefault || false,
+		[ `${ prefix }-wpUser` ]: ticketEntity.wpUser || 0,
 		[ `${ prefix }-parent` ]: ticketEntity.parent || 0,
 		[ `${ prefix }-deleted` ]: ticketEntity.deleted || false,
 	};
