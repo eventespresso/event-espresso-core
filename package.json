@@ -45,7 +45,7 @@
 	],
 	"devDependencies": {
 		"@babel/core": "7.4.5",
-		"@babel/plugin-proposal-class-properties": "^7.4.4",
+		"@babel/plugin-proposal-class-properties": "^7.5.0",
 		"@babel/runtime-corejs3": "^7.5.0",
 		"@wordpress/a11y": "^2.4.0",
 		"@wordpress/api-fetch": "^3.3.0",
