@@ -43,6 +43,7 @@ describe( 'useEventVenueEntity', () => {
 		} );
 		const testInstance = renderer.root;
 		const props = testInstance.findByType( 'div' ).props;
+		expect( console ).toHaveErrored();
 		expect( props.id ).toBeNull();
 		expect( props.loaded ).toBe( false );
 	} );
@@ -82,6 +83,7 @@ describe( 'useEventVenueEntity', () => {
 		} );
 		const testInstance = renderer.root;
 		const props = testInstance.findByType( 'div' ).props;
+		expect( console ).toHaveErrored();
 		expect( props.id ).toBeNull();
 		expect( props.loaded ).toBe( false );
 	} );
