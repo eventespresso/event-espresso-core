@@ -21,13 +21,11 @@ const { FormRow } = twoColumnAdminFormLayout;
  * @param {boolean} showArchivedDates
  * @param {boolean} showExpiredDates
  * @param {Function} toggleArchivedDates
- * @param {Function} toggleExpiredDates
  * @param {boolean} showTicketFilters
  * @param {boolean} showArchivedTickets
  * @param {boolean} showExpiredTickets
- * @param {Function} toggleArchivedTickets
- * @param {Function} toggleExpiredTickets
  * @param {boolean} showFilterNotice
+ * @param {Function} setFilter
  * @return {Object} rendered date filter toggles
  */
 const TicketAssignmentsFilters = ( {
@@ -80,7 +78,7 @@ const TicketAssignmentsFilters = ( {
 		() => showFilterNotice ? (
 			<FilterNotice dateFiltersOffset={ dateFiltersOffset } />
 		) : null,
-		[ dateFiltersOffset ]
+		[ showFilterNotice, dateFiltersOffset ]
 	);
 	return useMemo(
 		() => (
