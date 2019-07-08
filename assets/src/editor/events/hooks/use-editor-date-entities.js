@@ -1,3 +1,6 @@
+/**
+ * External imports
+ */
 import { useSelect } from '@wordpress/data';
 
 /**
