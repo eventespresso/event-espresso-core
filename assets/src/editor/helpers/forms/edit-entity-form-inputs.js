@@ -42,7 +42,7 @@ export const editEntityFormInputs = (
 				// and input is either for a property other than the entity ID
 				// OR it IS for the entity ID and the ID checks out okay
 				config.id !== 'id' ||
-				( config.id !== 'id' && normalizeEntityId( entity.id ) )
+				( config.id === 'id' && normalizeEntityId( entity.id ) )
 			)
 		) {
 			const input = generateFormInputFromConfig(
