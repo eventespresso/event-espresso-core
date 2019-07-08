@@ -7,6 +7,7 @@ import isShallowEqual from '@wordpress/is-shallow-equal';
 import { Exception } from '@eventespresso/eejs';
 import { isEmpty } from 'lodash';
 import { instanceOf } from '@eventespresso/validators';
+import { sprintf } from '@eventespresso/i18n';
 
 /**
  * Asserts if incoming value is an instance of Money
@@ -514,5 +515,46 @@ export default class Money {
 	 */
 	static assertSameCurrency = ( currencyA, currencyB ) => {
 		assertSameCurrency( currencyA, currencyB );
+	}
+
+	/**
+	 * Receives an incoming value that could be a money formatted
+	 * string and returns a Money value object with the correct value
+	 * considering the provided currency.
+	 *
+	 * @param {string|number} moneyValue
+	 * @param {Currency} currency
+	 *
+	 * @return {Money} An instance of a money value object
+	 */
+	static fromMoneyValue = ( moneyValue, currency ) => {
+		assertCurrency( currency );
+		// detect if incoming value has a currency sign not matching provided
+		// currency.  This doesn't provide full protection from improper
+		// values sent in but is an initial safeguard.
+		if ( typeof moneyValue === 'string' ) {
+			const match = moneyValue.match( /[^\d\.\,\s]+/ );
+			if ( match && match[ 0 ] !== currency.sign ) {
+				// The first error message is used if we have just one character
+				// returned which is likely the currency symbol.  Otherwise,
+				// give a more generic message.
+				const message = match[ 0 ].length === 1 ?
+					sprintf(
+						'The provided money value has a %1$s sign in it, but the provided currency value object defines %2$s as the currency sign.',
+						match[ 0 ],
+						currency.sign
+					) :
+					sprintf(
+						'The provided money value has non numeric strings in it (%1$s), please double-check the value.',
+						match[ 0 ]
+					);
+
+				throw new Error( message );
+			}
+		}
+		// set the initial value object using the currency
+		const money = new Money( 0, currency );
+		// set a new value using the parse on the formatter.
+		return money.setAmount( money.formatter.parse( moneyValue ) );
 	}
 }
