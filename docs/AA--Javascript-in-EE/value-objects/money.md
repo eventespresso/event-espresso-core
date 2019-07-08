@@ -57,6 +57,14 @@ Money.assertSameCurrency( currencyA, currencyB );
 ```
 This method throws a `TypeError` if either of the provided arguments is not an instance of `Currency` and throws an `eejs.Exception` if the provided currencies are not equal.  The equivalence test is done via a shallow comparison of the properties on each currency.
 
+#### `Money.fromMoneyValue`
+
+```js
+const money = Money.fromMoneyValue( moneyValue, currency );
+```
+
+This constructs an instance of Money value object from a given string or numeric value as the first argument and a Currency value object as the second argument.
+
 ### _Properties_
 #### `Money.ROUND_UP`
 This is used for indicating rounding that should round to away from zero.
