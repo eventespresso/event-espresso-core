@@ -66,7 +66,6 @@ const TicketEntityForm = ( {
 			recalculateBasePrice
 		),
 		[
-			ticketEntityInputConfig,
 			ticketEntity,
 			calculator,
 			recalculateBasePrice,
@@ -81,7 +80,6 @@ const TicketEntityForm = ( {
 			exclude
 		),
 		[
-			editEntityFormInputs,
 			ticketEntity,
 			inputConfig,
 			currentValues,

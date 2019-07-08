@@ -56,7 +56,7 @@ const DateEntityForm = ( {
 	];
 	const inputConfig = useMemo(
 		() => dateEntityInputConfig( dateEntity ),
-		[ dateEntityInputConfig, dateEntity ]
+		[ dateEntity ]
 	);
 	const formRows = useMemo(
 		() => editEntityFormInputs(
@@ -67,7 +67,6 @@ const DateEntityForm = ( {
 			exclude
 		),
 		[
-			editEntityFormInputs,
 			dateEntity,
 			inputConfig,
 			currentValues,
