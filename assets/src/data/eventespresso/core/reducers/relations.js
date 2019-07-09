@@ -3,7 +3,6 @@
  */
 import {
 	DEFAULT_CORE_STATE,
-	pluralModelName,
 	singularModelName,
 } from '@eventespresso/model';
 import {
@@ -31,7 +30,7 @@ const normalizedReceiveAndRemoveRelations = ( state, action ) => {
 	action = {
 		...action,
 		modelName: singularModelName( action.modelName ),
-		relationName: pluralModelName( action.relationName ),
+		relationName: singularModelName( action.relationName ),
 		entityId: normalizeEntityId( action.entityId ),
 	};
 	const {
@@ -48,7 +47,7 @@ const normalizedReceiveAndRemoveRelations = ( state, action ) => {
 	const newAction = {
 		...action,
 		modelName: singularModelName( relationName ),
-		relationName: pluralModelName( modelName ),
+		relationName: singularModelName( modelName ),
 		relatedEntityIds: [ entityId ],
 	};
 
@@ -190,7 +189,7 @@ const replaceRelationRecords = (
 				const relationPath = [
 					singularModelName( relationName ),
 					relationIds.pop(),
-					pluralModelName( modelName ),
+					singularModelName( modelName ),
 				];
 				let relationRecord = subState.getIn( relationPath, Set() );
 				relationRecord = relationRecord.delete( oldEntityId );
@@ -281,7 +280,7 @@ const resetStateForModel = ( state, action ) => {
 								relationPath,
 								Map()
 							);
-							relationRecord = relationRecord.delete( pluralModelName( modelName ) );
+							relationRecord = relationRecord.delete( modelName );
 							if ( relationRecord.isEmpty() ) {
 								removeEmptyFromState(
 									subState,

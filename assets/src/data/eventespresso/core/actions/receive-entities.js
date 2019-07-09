@@ -5,6 +5,11 @@ import { ACTION_TYPES } from './action-types';
 const { entities: types } = ACTION_TYPES;
 
 /**
+ * External imports
+ */
+import { singularModelName } from '@eventespresso/model';
+
+/**
  * Action for receiving entity records.
  * Entity records received will NOT replace any existing entities in the state
  * (matching ids).
@@ -21,6 +26,7 @@ const { entities: types } = ACTION_TYPES;
  * }  An action object.
  */
 function receiveEntityRecords( modelName, entities = [] ) {
+	modelName = singularModelName( modelName );
 	return {
 		type: types.RECEIVE_ENTITY_RECORDS,
 		modelName,
@@ -42,6 +48,7 @@ function receiveEntityRecords( modelName, entities = [] ) {
  * }  An action object.
  */
 function receiveAndReplaceEntityRecords( modelName, entities = [] ) {
+	modelName = singularModelName( modelName );
 	return {
 		type: types.RECEIVE_AND_REPLACE_ENTITY_RECORDS,
 		modelName,
@@ -73,6 +80,7 @@ function receiveEntity( entity ) {
  * object.
  */
 function receiveTrashEntityId( modelName, entityId ) {
+	modelName = singularModelName( modelName );
 	return {
 		type: types.RECEIVE_TRASH_ENTITY_ID,
 		modelName,
@@ -89,6 +97,7 @@ function receiveTrashEntityId( modelName, entityId ) {
  * object.
  */
 function receiveDeleteEntityId( modelName, entityId ) {
+	modelName = singularModelName( modelName );
 	return {
 		type: types.RECEIVE_DELETE_ENTITY_ID,
 		modelName,

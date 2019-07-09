@@ -26,24 +26,24 @@ const testCuid = cuid();
  *
  * {
  *   datetime: {
- *   	55: { events: [ 10, testCuid ] },
- *   	52: { events: [ 10 ] },
- *   	53: { events: [ 20 ] },
- *   	54: { events: [ 30 ] },
- *   	cuidD: { events: [ cuidE ] },
+ *   	55: { event: [ 10, testCuid ] },
+ *   	52: { event: [ 10 ] },
+ *   	53: { event: [ 20 ] },
+ *   	54: { event: [ 30 ] },
+ *   	cuidD: { event: [ cuidE ] },
  *   },
  *   event: {
- *     10: { datetimes: [ 55, 52 ] },
- *     testCuid: { datetimes: [ 55 ] },
- *     20: { datetimes: [ 53 ] },
- *     30: { datetimes: [ 54 ] },
- *     cuidE: { datetimes: [ cuidD ] },
+ *     10: { datetime: [ 55, 52 ] },
+ *     testCuid: { datetime: [ 55 ] },
+ *     20: { datetime: [ 53 ] },
+ *     30: { datetime: [ 54 ] },
+ *     cuidE: { datetime: [ cuidD ] },
  *   },
  *   price: {
- *   	200: { priceTypes: [ 10 ] },
+ *   	200: { priceType: [ 10 ] },
  *   },
  *   priceType: {
- *     10: { prices: [ 200 ] }
+ *     10: { price: [ 200 ] }
  *   }
  * }
  * @type {Map}
@@ -51,21 +51,21 @@ const testCuid = cuid();
 const originalState = mockStateForTests.relations
 	.setIn(
 		[ 'datetime', 55 ],
-		Map().set( 'events', Set.of( 10, testCuid ) )
+		Map().set( 'event', Set.of( 10, testCuid ) )
 	).setIn(
-		[ 'event', 10, 'datetimes' ],
+		[ 'event', 10, 'datetime' ],
 		Set.of( 52, 55 )
 	).setIn(
 		[ 'datetime', 52 ],
-		Map().set( 'events', Set.of( 10 ) ),
+		Map().set( 'event', Set.of( 10 ) ),
 	).setIn(
-		[ 'event', testCuid, 'datetimes' ],
+		[ 'event', testCuid, 'datetime' ],
 		Set.of( 55 )
 	).setIn(
 		[ 'price', 200 ],
-		Map().set( 'priceTypes', Set.of( 10 ) )
+		Map().set( 'priceType', Set.of( 10 ) )
 	).setIn(
-		[ 'priceType', 10, 'prices' ],
+		[ 'priceType', 10, 'price' ],
 		Set.of( 200 )
 	);
 
@@ -100,7 +100,7 @@ describe( normalizedReceiveAndRemoveRelations.name + '()', () => {
 						originalState
 							.deleteIn( [ 'datetime', 52 ] )
 							.setIn(
-								[ 'event', 10, 'datetimes' ],
+								[ 'event', 10, 'datetime' ],
 								Set.of( 55 )
 							),
 					],
@@ -113,10 +113,10 @@ describe( normalizedReceiveAndRemoveRelations.name + '()', () => {
 						[ testCuid ],
 						originalState
 							.setIn(
-								[ 'price', 200, 'tickets' ],
+								[ 'price', 200, 'ticket' ],
 								Set.of( testCuid ),
 							).setIn(
-								[ 'ticket', testCuid, 'prices' ],
+								[ 'ticket', testCuid, 'price' ],
 								Set.of( 200 )
 							),
 						originalState,
@@ -131,7 +131,7 @@ describe( normalizedReceiveAndRemoveRelations.name + '()', () => {
 						originalState
 							.deleteIn( [ 'datetime', 52 ] )
 							.setIn(
-								[ 'event', 10, 'datetimes' ],
+								[ 'event', 10, 'datetime' ],
 								Set.of( 55 )
 							),
 					],
@@ -143,17 +143,17 @@ describe( normalizedReceiveAndRemoveRelations.name + '()', () => {
 						[ 60, 52 ],
 						originalState
 							.setIn(
-								[ 'datetime', 60, 'events' ],
+								[ 'datetime', 60, 'event' ],
 								Set.of( 10 )
 							)
 							.setIn(
-								[ 'event', 10, 'datetimes' ],
+								[ 'event', 10, 'datetime' ],
 								Set.of( 52, 60, 55 )
 							),
 						originalState
 							.deleteIn( [ 'datetime', 52 ] )
 							.setIn(
-								[ 'event', 10, 'datetimes' ],
+								[ 'event', 10, 'datetime' ],
 								Set.of( 55 )
 							),
 					],
@@ -213,12 +213,12 @@ describe( updateEntityIdForRelations.name + '()', () => {
 				.deleteIn( [ 'datetime', DateTimeEntities.d.id ] )
 				.setIn(
 					[ 'datetime', DateTimeEntities.d.id ],
-					Map().set( 'events', Set.of( 90 ) )
+					Map().set( 'event', Set.of( 90 ) )
 				)
 				.deleteIn( [ 'event', EventEntities.d.id ] )
 				.setIn(
 					[ 'event', 90 ],
-					Map().set( 'datetimes', Set.of( DateTimeEntities.d.id ) )
+					Map().set( 'datetime', Set.of( DateTimeEntities.d.id ) )
 				),
 		],
 		[
@@ -228,12 +228,12 @@ describe( updateEntityIdForRelations.name + '()', () => {
 				.deleteIn( [ 'datetime', DateTimeEntities.d.id ] )
 				.setIn(
 					[ 'datetime', DateTimeEntities.d.id ],
-					Map().set( 'events', Set.of( 90 ) )
+					Map().set( 'event', Set.of( 90 ) )
 				)
 				.deleteIn( [ 'event', EventEntities.d.id ] )
 				.setIn(
 					[ 'event', 90 ],
-					Map().set( 'datetimes', Set.of( DateTimeEntities.d.id ) )
+					Map().set( 'datetime', Set.of( DateTimeEntities.d.id ) )
 				),
 		],
 
@@ -279,7 +279,7 @@ describe( removeRelatedEntitiesForEntity.name + '()', () => {
 			originalState
 				.deleteIn( [ 'datetime', 52 ] )
 				.setIn(
-					[ 'datetime', 55, 'events' ],
+					[ 'datetime', 55, 'event' ],
 					Set.of( testCuid )
 				)
 				.deleteIn( [ 'event', 10 ] ),
@@ -345,13 +345,13 @@ describe( 'RESET_STATE_FOR_MODEL', () => {
 		'other relations in the state', () => {
 		const testState = originalState.setIn(
 			[ 'datetime', 55 ],
-			Map().set( 'tickets', Set.of( 20, testCuid ) )
+			Map().set( 'ticket', Set.of( 20, testCuid ) )
 		).setIn(
-			[ 'ticket', testCuid, 'datetimes' ],
+			[ 'ticket', testCuid, 'datetime' ],
 			Set.of( 55 )
 		);
 		const expectedState = testState.deleteIn(
-			[ 'datetime', 55, 'events' ]
+			[ 'datetime', 55, 'event' ]
 		).deleteIn(
 			[ 'datetime', 52 ]
 		).deleteIn(

@@ -6,6 +6,7 @@ import {
 	isModelEntity,
 } from '@eventespresso/validators';
 import { InvalidModelEntity } from '@eventespresso/eejs';
+import { singularModelName } from '@eventespresso/model';
 
 /**
  * Internal imports
@@ -25,6 +26,7 @@ import { REDUCER_KEY as CORE_REDUCER_KEY } from '../constants';
  * instance is returned, otherwise null.
  */
 export function* createEntity( modelName, entity ) {
+	modelName = singularModelName( modelName );
 	const factory = yield resolveSelect(
 		SCHEMA_REDUCER_KEY,
 		'getFactoryForModel',
@@ -71,6 +73,7 @@ export function* receiveEntityAndResolve( entity ) {
  * @param {Array<BaseEntity>}entities
  */
 export function* receiveEntitiesAndResolve( modelName, entities ) {
+	modelName = singularModelName( modelName );
 	const entityIds = entities.map(
 		( entity ) => {
 			assertIsModelEntity( entity );

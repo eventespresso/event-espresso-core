@@ -20,6 +20,9 @@ import {
 	EventEntities,
 	DateTimeEntities,
 } from '../../../test/fixtures/base';
+import { removeEntityById } from '../../reducers/entities';
+import { removeRelatedEntitiesForEntity } from '../../reducers/relations';
+import { trashEntity } from '../../reducers/dirty-entities';
 
 describe( 'getRelationIdsForEntityRelation()', () => {
 	beforeEach( () => getRelationIdsForEntityRelation.clear() );
@@ -81,7 +84,7 @@ describe( 'getRelationIdsForEntityRelation()', () => {
 			[
 				'event',
 				10,
-				'datetimes',
+				'datetime',
 			],
 			Set.of( 52, 88 )
 		);
@@ -157,7 +160,7 @@ describe( 'getRelatedEntities()', () => {
 			[
 				'event',
 				10,
-				'datetimes',
+				'datetime',
 			],
 			Set.of( 52, 88 )
 		);
@@ -198,7 +201,7 @@ describe( 'Dirty relations tests', () => {
 				subState.set(
 					'index',
 					Map().setIn(
-						[ 'datetimes', 20 ],
+						[ 'datetime', 20 ],
 						fromJS( {
 							event: { delete: Set( [ 10 ] ) },
 							ticket: {
@@ -214,7 +217,7 @@ describe( 'Dirty relations tests', () => {
 						'event',
 						Map().set(
 							10,
-							fromJS( { datetimes: Set( [ 20 ] ) } ),
+							fromJS( { datetime: Set( [ 20 ] ) } ),
 						)
 					)
 				);
@@ -222,7 +225,7 @@ describe( 'Dirty relations tests', () => {
 					[ 'delete', 'ticket' ],
 					Map().set(
 						50,
-						fromJS( { datetimes: Set( [ 20 ] ) } )
+						fromJS( { datetime: Set( [ 20 ] ) } )
 					)
 				);
 				subState.set(
@@ -231,7 +234,7 @@ describe( 'Dirty relations tests', () => {
 						'ticket',
 						Map().set(
 							60,
-							fromJS( { datetimes: Set( [ 20 ] ) } )
+							fromJS( { datetime: Set( [ 20 ] ) } )
 						)
 					)
 				);
@@ -254,7 +257,7 @@ describe( 'Dirty relations tests', () => {
 				originalState,
 				'ticket',
 			) ).toEqual( {
-				60: { datetimes: [ 20 ] },
+				60: { datetime: [ 20 ] },
 			} );
 		} );
 		it( 'returns expected object when there are records for the given ' +
@@ -263,7 +266,7 @@ describe( 'Dirty relations tests', () => {
 				originalState,
 				'datetime'
 			) ).toEqual( {
-				20: { tickets: [ 60 ] },
+				20: { ticket: [ 60 ] },
 			} );
 		} );
 		it( 'returns cached copy when state has not changed', () => {
@@ -290,7 +293,7 @@ describe( 'Dirty relations tests', () => {
 					[
 						'ticket',
 						60,
-						'datetimes',
+						'datetime',
 					],
 					Set.of( 20, 80 )
 				)
@@ -301,7 +304,7 @@ describe( 'Dirty relations tests', () => {
 			);
 			expect( modifiedResult ).not.toBe( testResult );
 			expect( modifiedResult ).toEqual( {
-				60: { datetimes: [ 20, 80 ] },
+				60: { datetime: [ 20, 80 ] },
 			} );
 		} );
 	} );
@@ -320,7 +323,7 @@ describe( 'Dirty relations tests', () => {
 				originalState,
 				'event',
 			) ).toEqual( {
-				10: { datetimes: [ 20 ] },
+				10: { datetime: [ 20 ] },
 			} );
 		} );
 		it( 'returns expected object when there are records for the given ' +
@@ -329,7 +332,7 @@ describe( 'Dirty relations tests', () => {
 				originalState,
 				'datetime'
 			) ).toEqual( {
-				20: { events: [ 10 ], tickets: [ 50 ] },
+				20: { event: [ 10 ], ticket: [ 50 ] },
 			} );
 		} );
 		it( 'returns cached copy when state has not changed', () => {
@@ -356,7 +359,7 @@ describe( 'Dirty relations tests', () => {
 					[
 						'event',
 						10,
-						'datetimes',
+						'datetime',
 					],
 					Set.of( 20, 80 )
 				)
@@ -367,7 +370,7 @@ describe( 'Dirty relations tests', () => {
 			);
 			expect( modifiedResult ).not.toBe( testResult );
 			expect( modifiedResult ).toEqual( {
-				10: { datetimes: [ 20, 80 ] },
+				10: { datetime: [ 20, 80 ] },
 			} );
 		} );
 	} );
@@ -433,13 +436,13 @@ describe( 'countRelationModelsIndexedForEntity()', () => {
 		const modifiedState = { ...mockStateForTests };
 		modifiedState.relations = modifiedState.relations.setIn(
 			[ 'datetime', 44 ],
-			Map().set( 'tickets', Set.of( 30, 20 ) )
+			Map().set( 'ticket', Set.of( 30, 20 ) )
 		).setIn(
 			[ 'ticket', 30 ],
-			Map().set( 'datetimes', Set.of( 44 ) )
+			Map().set( 'datetime', Set.of( 44 ) )
 		).setIn(
 			[ 'ticket', 20 ],
-			Map().set( 'datetimes', Set.of( 44 ) )
+			Map().set( 'datetime', Set.of( 44 ) )
 		);
 		const modifiedStateResult = countRelationModelsIndexedForEntity(
 			modifiedState,
@@ -488,10 +491,10 @@ describe( 'getRelatedEntitiesForIds()', () => {
 			...mockStateForTests,
 			relations: mockStateForTests.relations.setIn(
 				[ 'datetime', 54 ],
-				Map().set( 'events', Set.of( 10, 30 ) )
+				Map().set( 'event', Set.of( 10, 30 ) )
 			).setIn(
 				[ 'event', 10 ],
-				Map().set( 'datetimes', Set.of( 52, 54 ) )
+				Map().set( 'datetime', Set.of( 52, 54 ) )
 			),
 		};
 		expect( getRelatedEntitiesForIds(
@@ -506,4 +509,50 @@ describe( 'getRelatedEntitiesForIds()', () => {
 			]
 		);
 	} );
+	it(
+		'does not return cached results after entity has been trashed',
+		() => {
+			const modifiedState = { ...mockStateForTests };
+			// add date b to event a
+			modifiedState.relations = modifiedState.relations.setIn(
+				[ 'event', EventEntities.a.id, 'datetime' ],
+				Set.of( DateTimeEntities.a.id, DateTimeEntities.b.id )
+			).setIn(
+				[ 'datetime', DateTimeEntities.b.id, 'event' ],
+				Set.of( EventEntities.a.id, EventEntities.b.id )
+			);
+			// get date entities using IDs for event a & b
+			expect( getRelatedEntitiesForIds(
+				modifiedState,
+				'event',
+				[ EventEntities.a.id, EventEntities.b.id ],
+				'datetime'
+			) ).toEqual( [ DateTimeEntities.a, DateTimeEntities.b ] );
+			// trash date a
+			const trashAction = {
+				modelName: 'datetime',
+				entityId: DateTimeEntities.a.id,
+			};
+			modifiedState.entities = removeEntityById(
+				modifiedState.entities,
+				trashAction
+			);
+			modifiedState.dirty.relations = removeRelatedEntitiesForEntity(
+				modifiedState.dirty.relations,
+				trashAction
+			);
+			modifiedState.dirty.trash = trashEntity(
+				modifiedState.dirty.trash,
+				trashAction
+			);
+			// now get date entities again using same IDs for event a & b
+			// results should only be date b since a was trashed
+			expect( getRelatedEntitiesForIds(
+				modifiedState,
+				'event',
+				[ EventEntities.a.id, EventEntities.b.id ],
+				'datetime'
+			) ).toEqual( [ DateTimeEntities.b ] );
+		}
+	);
 } );

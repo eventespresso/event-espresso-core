@@ -8,6 +8,7 @@ import {
 import {
 	applyQueryString,
 	keyEntitiesByPrimaryKeyValue,
+	singularModelName,
 } from '@eventespresso/model';
 import { isEmpty, isArray } from 'lodash';
 import warning from 'warning';
@@ -45,6 +46,7 @@ const DEFAULT_EMPTY_ARRAY = [];
  * returned.  Otherwise null.
  */
 function* persistEntityRecord( modelName, entity ) {
+	modelName = singularModelName( modelName );
 	// check if is an instance of BaseEntity
 	if ( ! isModelEntityOfModel( entity, modelName ) ) {
 		warning(
@@ -108,6 +110,7 @@ function* persistEntityRecord( modelName, entity ) {
  * returned (may have a new id!), otherwise null is returned.
  */
 function* persistForEntityId( modelName, entityId ) {
+	modelName = singularModelName( modelName );
 	const entity = yield resolveSelect(
 		CORE_REDUCER_KEY,
 		'getEntityById',
@@ -136,6 +139,7 @@ function* persistForEntityId( modelName, entityId ) {
  * @return {Object} Entities persisted indexed by ID.
  */
 function* persistForEntityIds( modelName, entityIds = [] ) {
+	modelName = singularModelName( modelName );
 	const entities = yield select(
 		CORE_REDUCER_KEY,
 		'getEntitiesByIds',
@@ -171,6 +175,7 @@ function* persistForEntityIds( modelName, entityIds = [] ) {
  * @return {Array} An array of entity ids for entities successfully deleted.
  */
 function* persistDeletesForModel( modelName ) {
+	modelName = singularModelName( modelName );
 	const entityIds = yield select(
 		CORE_REDUCER_KEY,
 		'getEntityIdsQueuedForDelete',
@@ -202,6 +207,7 @@ function* persistDeletesForModel( modelName ) {
  * @return {Array} An array of entity ids for entities successfully trashed.
  */
 function* persistTrashesForModel( modelName ) {
+	modelName = singularModelName( modelName );
 	const entityIds = yield select(
 		CORE_REDUCER_KEY,
 		'getEntityIdsQueuedForTrash',

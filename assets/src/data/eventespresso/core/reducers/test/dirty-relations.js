@@ -28,7 +28,7 @@ describe( 'dirty relations tests', () => {
 				subState.set(
 					'index',
 					Map().setIn(
-						[ 'datetimes', 20 ],
+						[ 'datetime', 20 ],
 						fromJS( {
 							event: { delete: Set( [ 10 ] ) },
 							ticket: {
@@ -44,7 +44,7 @@ describe( 'dirty relations tests', () => {
 						'event',
 						Map().set(
 							10,
-							fromJS( { datetimes: Set( [ 20 ] ) } ),
+							fromJS( { datetime: Set( [ 20 ] ) } ),
 						)
 					)
 				);
@@ -52,7 +52,7 @@ describe( 'dirty relations tests', () => {
 					[ 'delete', 'ticket' ],
 					Map().set(
 						50,
-						fromJS( { datetimes: Set( [ 20 ] ) } )
+						fromJS( { datetime: Set( [ 20 ] ) } )
 					)
 				);
 				subState.set(
@@ -61,7 +61,7 @@ describe( 'dirty relations tests', () => {
 						'ticket',
 						Map().set(
 							60,
-							fromJS( { datetimes: Set( [ 20 ] ) } )
+							fromJS( { datetime: Set( [ 20 ] ) } )
 						)
 					)
 				);
@@ -111,7 +111,7 @@ describe( 'dirty relations tests', () => {
 			expect( newState.toJS() ).toEqual( {
 				...originalState.toJS(),
 				index: {
-					datetimes: {
+					datetime: {
 						44: {
 							event: { delete: [ 10 ] },
 							ticket: {
@@ -124,19 +124,19 @@ describe( 'dirty relations tests', () => {
 				delete: {
 					event: {
 						10: {
-							datetimes: [ 44 ],
+							datetime: [ 44 ],
 						},
 					},
 					ticket: {
 						50: {
-							datetimes: [ 44 ],
+							datetime: [ 44 ],
 						},
 					},
 				},
 				add: {
 					ticket: {
 						60: {
-							datetimes: [ 44 ],
+							datetime: [ 44 ],
 						},
 					},
 				},
@@ -156,7 +156,7 @@ describe( 'dirty relations tests', () => {
 			expect( newState.toJS() ).toEqual( {
 				...originalState.toJS(),
 				index: {
-					datetimes: {
+					datetime: {
 						20: {
 							event: { delete: [ 10 ] },
 							ticket: {
@@ -169,19 +169,19 @@ describe( 'dirty relations tests', () => {
 				delete: {
 					event: {
 						10: {
-							datetimes: [ 20 ],
+							datetime: [ 20 ],
 						},
 					},
 					ticket: {
 						50: {
-							datetimes: [ 20 ],
+							datetime: [ 20 ],
 						},
 					},
 				},
 				add: {
 					ticket: {
 						44: {
-							datetimes: [ 20 ],
+							datetime: [ 20 ],
 						},
 					},
 				},
@@ -220,7 +220,7 @@ describe( 'dirty relations tests', () => {
 			expect( result.toJS() ).toEqual( {
 				...originalState.toJS(),
 				index: {
-					datetimes: {
+					datetime: {
 						20: {
 							ticket: {
 								delete: [ 50 ],
@@ -232,14 +232,14 @@ describe( 'dirty relations tests', () => {
 				delete: {
 					ticket: {
 						50: {
-							datetimes: [ 20 ],
+							datetime: [ 20 ],
 						},
 					},
 				},
 				add: {
 					ticket: {
 						60: {
-							datetimes: [ 20 ],
+							datetime: [ 20 ],
 						},
 					},
 				},
@@ -298,10 +298,10 @@ describe( 'dirty relations tests', () => {
 						...originalState.toJS(),
 						index: {
 							...originalState.get( 'index' ).toJS(),
-							datetimes: {
+							datetime: {
 								20: {
 									...originalState.getIn(
-										[ 'index', 'datetimes', 20 ]
+										[ 'index', 'datetime', 20 ]
 									).toJS(),
 									ticket: {
 										delete: [ 50 ],
@@ -314,10 +314,10 @@ describe( 'dirty relations tests', () => {
 							...originalState.get( 'add' ).toJS(),
 							ticket: {
 								60: {
-									datetimes: [ 20 ],
+									datetime: [ 20 ],
 								},
 								400: {
-									datetimes: [ 20 ],
+									datetime: [ 20 ],
 								},
 							},
 						},
@@ -331,10 +331,10 @@ describe( 'dirty relations tests', () => {
 						...originalState.toJS(),
 						index: {
 							...originalState.get( 'index' ).toJS(),
-							datetimes: {
+							datetime: {
 								20: {
 									...originalState.getIn(
-										[ 'index', 'datetimes', 20 ]
+										[ 'index', 'datetime', 20 ]
 									).toJS(),
 									ticket: {
 										delete: [ 50, 400 ],
@@ -347,10 +347,10 @@ describe( 'dirty relations tests', () => {
 							...originalState.get( 'delete' ).toJS(),
 							ticket: {
 								50: {
-									datetimes: [ 20 ],
+									datetime: [ 20 ],
 								},
 								400: {
-									datetimes: [ 20 ],
+									datetime: [ 20 ],
 								},
 							},
 						},
@@ -391,7 +391,7 @@ describe( 'dirty relations tests', () => {
 						...originalState.toJS(),
 						index: {
 							...originalState.get( 'index' ).toJS(),
-							datetimes: {
+							datetime: {
 								20: {
 									event: {
 										delete: [ 10 ],
@@ -413,7 +413,7 @@ describe( 'dirty relations tests', () => {
 						...originalState.toJS(),
 						index: {
 							...originalState.get( 'index' ).toJS(),
-							datetimes: {
+							datetime: {
 								20: {
 									event: {
 										delete: [ 10 ],
@@ -510,7 +510,7 @@ describe( 'dirty relations tests', () => {
 		let expectedState;
 		beforeEach( () => {
 			expectedState = originalState
-				.deleteIn( [ 'index', 'datetimes', 20, 'event' ] )
+				.deleteIn( [ 'index', 'datetime', 20, 'event' ] )
 				.deleteIn( [ 'delete', 'event' ] );
 		} );
 		it( 'only resets the state for the given model name', () => {

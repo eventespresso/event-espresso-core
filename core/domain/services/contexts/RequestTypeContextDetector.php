@@ -174,7 +174,7 @@ class RequestTypeContextDetector
      */
     private function uriPathMatches($component)
     {
-        $request_uri = $this->request->requestUri();
+        $request_uri = $this->request->requestUri(true);
         $parts = explode('?', $request_uri);
         $path = trim(reset($parts), '/');
         return strpos($path, $component) === 0;

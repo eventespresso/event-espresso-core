@@ -14,10 +14,10 @@ use EventEspresso\core\services\assets\BlockAssetManager;
  */
 class CoreBlocksAssetManager extends BlockAssetManager
 {
-    const JS_HANDLE_CORE_BLOCKS_EDITOR = 'core-blocks';
-    const CSS_HANDLE_CORE_BLOCKS_EDITOR = 'core-blocks';
-    const JS_HANDLE_CORE_BLOCKS = 'core-blocks-frontend';
-    const CSS_HANDLE_CORE_BLOCKS = 'core-blocks-frontend';
+    const JS_HANDLE_CORE_BLOCKS_EDITOR = 'eventespresso-core-blocks';
+    const CSS_HANDLE_CORE_BLOCKS_EDITOR = 'eventespresso-core-blocks';
+    const JS_HANDLE_CORE_BLOCKS = 'eventespresso-core-blocks-frontend';
+    const CSS_HANDLE_CORE_BLOCKS = 'eventespresso-core-blocks-frontend';
 
 
     /**

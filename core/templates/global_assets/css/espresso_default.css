@@ -727,7 +727,16 @@ input.ee-register-button {
 	margin:0 !important;
 }
 
-
+.espresso-admin .espresso-notices {
+	width: auto;
+	max-width: 100%;
+	text-align: left;
+	border-top: 0;
+	border-right: 0;
+	border-bottom: 0;
+	font-weight: normal;
+	color: #444;
+}
 
 /************* DIALOG HELPER ***************/
 .ee-admin-dialog-container {
