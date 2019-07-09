@@ -18,3 +18,4 @@ This folder has various documentation surrounding javascript in Event Espresso
 | [Higher Order Components](./higher-order-components/README.md) | Various higher order components available in EE core. |
 |[Editor Higher Order Components](./editor-higher-order-components/README.md)     | Higher order components that are specific to the WordPress editor context.             |
 | [Value Objects](./value-objects/README.md) | Various value objects available in EE core. |
+| [Third Party Services](./third-party-services/README.md)     | Various docs regarding usage of dependabot             |
