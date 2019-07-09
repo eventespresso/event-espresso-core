@@ -19,14 +19,14 @@ export const dateEntityFormSchema = ( dateEntity ) => {
 	const prefix = `ee-event-date-${ dateEntity.id }`;
 	return {
 		[ `${ prefix }-id` ]: dateEntity.id,
-		[ `${ prefix }-event-id` ]: dateEntity.EVT_ID,
+		[ `${ prefix }-eventId` ]: dateEntity.EVT_ID,
 		[ `${ prefix }-name` ]: dateEntity.name || '',
 		[ `${ prefix }-description` ]: dateEntity.description || '',
 		[ `${ prefix }-start` ]: dateEntity.start.toISO(),
 		[ `${ prefix }-end` ]: dateEntity.end.toISO(),
-		[ `${ prefix }-start-time` ]: dateEntity.start.toFormat( 'HH:mm' ),
-		[ `${ prefix }-end-time` ]: dateEntity.end.toFormat( 'HH:mm' ),
-		[ `${ prefix }-reg-limit` ]: stripInfinity( dateEntity.regLimit ),
+		[ `${ prefix }-startTime` ]: dateEntity.start.toFormat( 'HH:mm' ),
+		[ `${ prefix }-endTime` ]: dateEntity.end.toFormat( 'HH:mm' ),
+		[ `${ prefix }-regLimit` ]: stripInfinity( dateEntity.regLimit ),
 		[ `${ prefix }-sold` ]: dateEntity.sold || 0,
 		[ `${ prefix }-reserved` ]: dateEntity.reserved || 0,
 		[ `${ prefix }-order` ]: dateEntity.order || 0,
