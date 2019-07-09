@@ -190,7 +190,11 @@ function extraColors( config ) {
 	);
 	const templateVars = {
 		bgColorHex: background,
-		borderColorHex: findContrastColor( background, false, 'AA' ),
+		borderColorHex: generateLowContrast(
+			findContrastColor( background, false, 'AA' ),
+			config.meta.rgbModifier,
+			config.meta.darkTheme
+		),
 	};
 	for ( let x = 0; x < greys.length; x++ ) {
 		const y = x + 1;

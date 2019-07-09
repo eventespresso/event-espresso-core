@@ -497,4 +497,31 @@ describe( 'Money Value Object', () => {
 			) ).toThrow();
 		} );
 	} );
+	describe( 'Money.fromMoneyValue', () => {
+		it( 'throws a TypeError if provided currency is not a Currency ' +
+			'vo', () => {
+			expect( () => Money.fromMoneyValue( '10.10' ) )
+				.toThrow( TypeError );
+		} );
+		it( 'converts a number as expected', () => {
+			expect( Money.fromMoneyValue( 10, DefaultCurrency ).toNumber() )
+				.toBe( 10 );
+			expect( Money.fromMoneyValue( 10.10, DefaultCurrency ).toNumber() )
+				.toBe( 10.1 );
+		} );
+		it( 'converts a money value for the currency passed in as ' +
+			'expected', () => {
+			expect( Money.fromMoneyValue( '$10.10', DefaultCurrency ).toNumber() )
+				.toBe( 10.1 );
+		} );
+		it( 'throws an error with an invalid money value string', () => {
+			expect( () => Money.fromMoneyValue( 'fail fail', DefaultCurrency ) )
+				.toThrow();
+		} );
+		it( 'throws an error with a money value having a different currency ' +
+			'sign than the provided currency value object.', () => {
+			expect( () => Money.fromMoneyValue( '10,10€', DefaultCurrency ) )
+				.toThrow();
+		} );
+	} );
 } );

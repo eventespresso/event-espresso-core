@@ -713,7 +713,7 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step
      */
     private function _registrations_requiring_pre_approval($registrations_requiring_pre_approval = array())
     {
-        $events_requiring_pre_approval = '';
+        $events_requiring_pre_approval = array();
         foreach ($registrations_requiring_pre_approval as $registration) {
             if ($registration instanceof EE_Registration && $registration->event() instanceof EE_Event) {
                 $events_requiring_pre_approval[ $registration->event()->ID() ] = EEH_HTML::li(

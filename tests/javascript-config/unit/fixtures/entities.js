@@ -6,12 +6,14 @@ import {
 	DateTimeFactory,
 	CheckinFactory,
 	TicketFactory,
+	VenueFactory,
 } from './factories';
 import { EventResponse } from './event-response-non-authed';
 import { AuthedEventResponse } from './event-response-authed';
 import { AuthedDateTimeResponse } from './datetime-response-authed';
 import { AuthedCheckinResponse } from './checkin-response-authed'
 import { AuthedTicketResponse } from './ticket-response-authed';
+import { AuthedVenueResponse } from './venue-response-authed';
 
 export const EventEntity = EventFactory.fromExisting( EventResponse );
 export const AuthedEventEntity = EventFactory
@@ -22,3 +24,5 @@ export const AuthedCheckinEntity = CheckinFactory
 	.fromExisting( AuthedCheckinResponse );
 export const AuthedTicketEntity = TicketFactory
 	.fromExisting( AuthedTicketResponse );
+export const AuthedVenueEntity = VenueFactory
+	.fromExisting( AuthedVenueResponse );
