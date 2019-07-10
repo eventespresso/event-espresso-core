@@ -2,41 +2,102 @@
  * External imports
  */
 import { isFunction } from 'lodash';
+import { sprintf } from '@eventespresso/i18n';
+import { normalizeEntityId } from '@eventespresso/helpers';
+import { isModelEntity } from '@eventespresso/validators';
 
 const menuItemCallbacks = {};
+const reallyBigNumber = 999999999999;
 
 /**
+ * returns the modelName property if entity is indeed an entity
+ * or just returns entity if it is already a string (like 'ticket')
+ *
  * @function
- * @param {string} entityName
+ * @param {Object} entity
+ * @return {string} model name
+ */
+const getEntityModelName = ( entity ) => {
+	if ( typeof entity === 'string' ) {
+		return entity;
+	}
+	if ( isModelEntity( entity ) ) {
+		return entity.modelName;
+	}
+	throw new TypeError(
+		sprintf(
+			'Can not retrieve the model name because an invalid entity was supplied: %s',
+			JSON.stringify( entity )
+		)
+	);
+};
+
+/**
+ * adds getMenuItem() to the multidimensional menuItemCallbacks object
+ * using the supplied entity and key.
+ * example:
+ *  	{
+ * 			'datetime': {
+ *     			'10': {
+ * 	    	  		'main-menu': DateEntityMainMenuItem,
+ * 		      		'edit-details': EditDateDetailsMenuItem,
+ *       			'assign-tickets': AssignTicketsMenuItem,
+ *     			}
+ *     			'999999999999': {
+ *      	 		'rem': RecurringEventsManagerApp,
+ *				}
+ *   		}
+ * 		}
+ * callbacks registered using 999999999999 (reallyBigNumber)
+ * will be returned as menu items for ALL entities of the same model
+ * with the assumption that the provided callback receives the entity as a prop
+ *
+ * @function
+ * @param {Object} entity
+ * @param {string} key
  * @param {Function} getMenuItem
  * @return {Array} array of entity actions menu items
  */
-export const registerEntityActionsMenuItem = ( entityName, getMenuItem ) => {
-	if ( ! menuItemCallbacks.hasOwnProperty( entityName ) ) {
-		menuItemCallbacks[ entityName ] = [];
+export const registerEntityActionsMenuItem = ( entity, key, getMenuItem ) => {
+	const modelName = getEntityModelName( entity );
+	const entityId = entity !== modelName ? entity.id : reallyBigNumber;
+	if ( ! menuItemCallbacks.hasOwnProperty( modelName ) ) {
+		menuItemCallbacks[ modelName ] = {};
+	}
+	if ( ! menuItemCallbacks[ modelName ].hasOwnProperty( entityId ) ) {
+		menuItemCallbacks[ modelName ][ entityId ] = {};
 	}
 	if ( isFunction( getMenuItem ) ) {
-		menuItemCallbacks[ entityName ].push( getMenuItem );
+		menuItemCallbacks[ modelName ][ entityId ][ key ] = getMenuItem;
 	}
 };
 
 /**
+ * returns an array of menu items for the provided entity
+ *
  * @function
- * @param {string} entityName
  * @param {Object} entity
- * @param {number} indexOffset 	count of how many items already exist in menu
- * 								added to index for new items
  * @return {Array} array of entity actions menu items
  */
-export const entityActionsMenu = ( entityName, entity, indexOffset = 0 ) => {
-	if ( menuItemCallbacks.hasOwnProperty( entityName ) ) {
-		return menuItemCallbacks[ entityName ].map(
-			( getMenuItem, index ) => isFunction( getMenuItem ) ?
-				getMenuItem( entity, index + indexOffset ) :
-				null
-		);
+export const getActionsMenuForEntity = ( entity ) => {
+	const menuItems = [];
+	const modelName = getEntityModelName( entity );
+	let index = 0;
+	if ( menuItemCallbacks.hasOwnProperty( modelName ) ) {
+		for ( let entityId in menuItemCallbacks[ modelName ] ) {
+			entityId = normalizeEntityId( entityId );
+			if ( entityId === reallyBigNumber || entityId === entity.id ) {
+				for ( const key in menuItemCallbacks[ modelName ][ entityId ] ) {
+					const getMenuItem = menuItemCallbacks[ modelName ][ entityId ][ key ];
+					if ( isFunction( getMenuItem ) ) {
+						menuItems.push( getMenuItem( entity, index ) );
+						index++;
+					}
+				}
+			}
+		}
 	}
-	return [];
+	return menuItems;
 };
 
 /**

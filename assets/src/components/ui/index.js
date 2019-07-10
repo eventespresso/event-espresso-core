@@ -4,8 +4,8 @@ export { default as CalendarPageDate } from './dates-and-times/calendar-page-dat
 export { default as MediumCalendarDate } from './dates-and-times/medium-calendar-date';
 export { default as DropDownMenu } from './drop-down-menu';
 export {
-	entityActionsMenu,
 	EntityActionMenuItem,
+	getActionsMenuForEntity,
 	registerEntityActionsMenuItem,
 } from './entity-actions-menu';
 export { default as EntityDetailsPanel } from './entity-details-panel';
