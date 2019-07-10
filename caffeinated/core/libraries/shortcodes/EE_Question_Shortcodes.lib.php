@@ -85,12 +85,7 @@ class EE_Question_Shortcodes extends EE_Shortcodes
                         break;
 
                     default:
-                        $answer = apply_filters(
-                            'FHEE__EE_Question_Shortcodes___parser__answer',
-                            $this->_data->get_pretty('ANS_value', 'no_wpautop'),
-                            $question,
-                            $this->_data
-                        );
+                        $answer = $this->_data->get_pretty('ANS_value', 'no_wpautop');
                         break;
                 }
 
