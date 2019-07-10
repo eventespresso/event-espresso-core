@@ -89,7 +89,12 @@ class EE_Question_Shortcodes extends EE_Shortcodes
                         break;
                 }
 
-                return $answer;
+                return apply_filters(
+                    'FHEE__EE_Question_Shortcodes___parser__answer',
+                    $answer,
+                    $question,
+                    $this->_data
+                );
                 break;
         }
 
