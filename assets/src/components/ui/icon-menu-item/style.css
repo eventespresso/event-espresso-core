@@ -11,9 +11,9 @@
     background: none;
     border: 1px solid var(--ee-background-color);
     color: var(--ee-default-text-color);
-    height: var(--ee-icon-button-size);
+    height: calc(var(--ee-icon-button-size) + 2px);
     margin: 0 0 var(--ee-margin-micro);
-    width: var(--ee-icon-button-size);
+    width: calc(var(--ee-icon-button-size) + 2px);
 }
 
 .ee-icon-menu-item:hover {
