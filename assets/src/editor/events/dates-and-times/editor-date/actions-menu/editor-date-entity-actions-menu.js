@@ -3,7 +3,10 @@
  */
 import { compose } from '@wordpress/compose';
 import { useMemo } from '@wordpress/element';
-import { entityActionsMenu } from '@eventespresso/components';
+import {
+	getActionsMenuForEntity,
+	registerEntityActionsMenuItem,
+} from '@eventespresso/components';
 import { ifValidDateEntity } from '@eventespresso/editor-hocs';
 import { sprintf, _x } from '@eventespresso/i18n';
 
@@ -26,43 +29,59 @@ const EditorDateEntityActionsMenu = ( {
 	toggleTicketAssignments,
 	ticketEntities = DEFAULT_EMPTY_ARRAY,
 } ) => {
-	const mainDropDownMenu = useMemo(
-		() => (
-			<DateEntityMainMenuItem
-				dateEntity={ dateEntity }
-				toggleDateEditor={ toggleDateEditor }
-			/>
+	const mainMenu = useMemo(
+		() => registerEntityActionsMenuItem(
+			dateEntity,
+			'main-menu',
+			() => (
+				<DateEntityMainMenuItem
+					key={ `main-menu-${ dateEntity.id }` }
+					dateEntity={ dateEntity }
+					toggleDateEditor={ toggleDateEditor }
+				/>
+			)
 		),
 		[ dateEntity, toggleDateEditor ]
 	);
-	const editDateMenuItem = useMemo(
-		() => (
-			<EditDateDetailsMenuItem
-				dateEntity={ dateEntity }
-				toggleDateEditor={ toggleDateEditor }
-			/>
+	const editDetails = useMemo(
+		() => registerEntityActionsMenuItem(
+			dateEntity,
+			'edit-details',
+			() => (
+				<EditDateDetailsMenuItem
+					key={ `edit-details-${ dateEntity.id }` }
+					dateEntity={ dateEntity }
+					toggleDateEditor={ toggleDateEditor }
+				/>
+			)
 		),
 		[ dateEntity, toggleDateEditor ]
 	);
-	const assignTicketsMenuItem = useMemo(
-		() => (
-			<AssignTicketsMenuItem
-				dateEntity={ dateEntity }
-				toggleTicketAssignments={ toggleTicketAssignments }
-				ticketEntities={ ticketEntities }
-			/>
+	const assignTickets = useMemo(
+		() => registerEntityActionsMenuItem(
+			dateEntity,
+			'assign-tickets',
+			() => (
+				<AssignTicketsMenuItem
+					key={ `assign-tickets-${ dateEntity.id }` }
+					dateEntity={ dateEntity }
+					toggleTicketAssignments={ toggleTicketAssignments }
+					ticketEntities={ ticketEntities }
+				/>
+			)
 		),
-		[ dateEntity, ticketEntities, toggleTicketAssignments ]
+		[ dateEntity, toggleTicketAssignments, ticketEntities ]
+	);
+	const menuItems = useMemo(
+		() => getActionsMenuForEntity( dateEntity ),
+		[ dateEntity, mainMenu, editDetails, assignTickets ]
 	);
 	return (
 		<div
 			id={ `ee-editor-date-actions-menu-${ dateEntity.id }` }
 			className={ 'ee-editor-date-actions-menu' }
 		>
-			{ mainDropDownMenu }
-			{ editDateMenuItem }
-			{ assignTicketsMenuItem }
-			{ entityActionsMenu( 'datetime', dateEntity, 3 ) }
+			{ menuItems }
 		</div>
 	);
 };

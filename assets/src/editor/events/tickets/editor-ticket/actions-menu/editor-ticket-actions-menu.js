@@ -3,7 +3,10 @@
  */
 import { compose } from '@wordpress/compose';
 import { useMemo } from '@wordpress/element';
-import { entityActionsMenu } from '@eventespresso/components';
+import {
+	getActionsMenuForEntity,
+	registerEntityActionsMenuItem,
+} from '@eventespresso/components';
 import { ifValidTicketEntity } from '@eventespresso/editor-hocs';
 import { sprintf, _x } from '@eventespresso/i18n';
 
@@ -33,53 +36,73 @@ const EditorTicketActionsMenu = ( {
 	toggleCalculator,
 	doRefresh,
 } ) => {
-	const ticketEntityMainMenuItem = useMemo(
-		() => (
-			<TicketEntityMainMenuItem
-				ticketEntity={ ticketEntity }
-				toggleTicketEditor={ toggleTicketEditor }
-				dateEntities={ dateEntities }
-			/>
+	const mainMenu = useMemo(
+		() => registerEntityActionsMenuItem(
+			ticketEntity,
+			'main-menu',
+			() => (
+				<TicketEntityMainMenuItem
+					key={ `main-menu-${ ticketEntity.id }` }
+					ticketEntity={ ticketEntity }
+					toggleTicketEditor={ toggleTicketEditor }
+					dateEntities={ dateEntities }
+				/>
+			)
 		),
 		[ ticketEntity, toggleTicketEditor ]
 	);
-	const editTicketDetailsMenuItem = useMemo(
-		() => (
-			<EditTicketDetailsMenuItem
-				ticketEntity={ ticketEntity }
-				toggleTicketEditor={ toggleTicketEditor }
-			/>
+	const editDetails = useMemo(
+		() => registerEntityActionsMenuItem(
+			ticketEntity,
+			'edit-details',
+			() => (
+				<EditTicketDetailsMenuItem
+					key={ `edit-details-${ ticketEntity.id }` }
+					ticketEntity={ ticketEntity }
+					toggleTicketEditor={ toggleTicketEditor }
+				/>
+			)
 		),
 		[ ticketEntity, toggleTicketEditor ]
 	);
-	const assignDatesMenuItem = useMemo(
-		() => (
-			<AssignDatesMenuItem
-				ticketEntity={ ticketEntity }
-				toggleTicketAssignments={ toggleTicketAssignments }
-				dateEntities={ dateEntities }
-			/>
+	const assignDates = useMemo(
+		() => registerEntityActionsMenuItem(
+			ticketEntity,
+			'assign-dates',
+			() => (
+				<AssignDatesMenuItem
+					key={ `assign-dates-${ ticketEntity.id }` }
+					ticketEntity={ ticketEntity }
+					toggleTicketAssignments={ toggleTicketAssignments }
+					dateEntities={ dateEntities }
+				/>
+			)
 		),
 		[ ticketEntity, dateEntities, toggleTicketAssignments ]
 	);
-	const ticketPriceCalculatorMenuItem = useMemo(
-		() => (
-			<TicketPriceCalculatorMenuItem
-				ticketEntity={ ticketEntity }
-				noBasePrice={ noBasePrice }
-				doRefresh={ doRefresh }
-				toggleCalculator={ toggleCalculator }
-			/>
+	const priceCalculator = useMemo(
+		() => registerEntityActionsMenuItem(
+			ticketEntity,
+			'price-calculator',
+			() => (
+				<TicketPriceCalculatorMenuItem
+					key={ `price-calculator-${ ticketEntity.id }` }
+					ticketEntity={ ticketEntity }
+					noBasePrice={ noBasePrice }
+					doRefresh={ doRefresh }
+					toggleCalculator={ toggleCalculator }
+				/>
+			)
 		),
 		[ ticketEntity, noBasePrice, doRefresh, toggleCalculator ]
 	);
+	const menuItems = useMemo(
+		() => getActionsMenuForEntity( ticketEntity ),
+		[ ticketEntity, mainMenu, editDetails, assignDates, priceCalculator ]
+	);
 	return (
 		<div className={ 'ee-editor-ticket-actions-menu' }>
-			{ ticketEntityMainMenuItem }
-			{ editTicketDetailsMenuItem }
-			{ assignDatesMenuItem }
-			{ ticketPriceCalculatorMenuItem }
-			{ entityActionsMenu( 'ticket', ticketEntity, 4 ) }
+			{ menuItems }
 		</div>
 	);
 };
