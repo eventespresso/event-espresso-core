@@ -1,11 +1,12 @@
 /**
  * External imports
  */
+import { compose } from '@wordpress/compose';
+import { useCallback } from '@wordpress/element';
 import { EspressoIcon, IconMenuItem } from '@eventespresso/components';
+import { ifValidTicketEntity } from '@eventespresso/editor-hocs';
 import { __ } from '@eventespresso/i18n';
 import { flow } from 'lodash';
-import { isModelEntityOfModel } from '@eventespresso/validators';
-import { useCallback } from '@wordpress/element';
 
 /**
  * Internal imports
@@ -34,7 +35,7 @@ export const TicketPriceCalculatorMenuItem = ( {
 	const tooltip = noBasePrice ?
 		__( 'warning! no ticket price set - click to fix', 'event_espresso' ) :
 		__( 'ticket price calculator', 'event_espresso' );
-	return isModelEntityOfModel( ticketEntity, 'ticket' ) ? (
+	return (
 		<IconMenuItem
 			index={ 2 }
 			tooltip={ tooltip }
@@ -45,7 +46,10 @@ export const TicketPriceCalculatorMenuItem = ( {
 			onClick={ toggle }
 			itemCount={ noBasePrice ? 0 : null }
 		/>
-	) : null;
+	);
 };
 
-export default withTicketPriceCalculatorFormModal( TicketPriceCalculatorMenuItem );
+export default compose( [
+	ifValidTicketEntity,
+	withTicketPriceCalculatorFormModal,
+] )( TicketPriceCalculatorMenuItem );

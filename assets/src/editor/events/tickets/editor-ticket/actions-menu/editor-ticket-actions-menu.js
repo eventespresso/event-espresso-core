@@ -1,172 +1,115 @@
 /**
  * External imports
  */
-import { isEmpty } from 'lodash';
 import { compose } from '@wordpress/compose';
-import { Fragment, isValidElement } from '@wordpress/element';
-import { applyFilters } from '@wordpress/hooks';
+import { useMemo } from '@wordpress/element';
 import {
-	DropDownMenu,
-	EntityActionMenuItem,
-	EspressoIcon,
-	IconMenuItem,
+	getActionsMenuForEntity,
+	registerEntityActionsMenuItem,
 } from '@eventespresso/components';
-import { __, sprintf, _x } from '@eventespresso/i18n';
-import { isModelEntityOfModel } from '@eventespresso/validators';
+import { ifValidTicketEntity } from '@eventespresso/editor-hocs';
+import { sprintf, _x } from '@eventespresso/i18n';
 
 /**
  * Internal dependencies
  */
 import { withEditorTicketDateEntities } from '../../../hocs';
 import withTicketEntityFormModal from '../edit-form/with-ticket-entity-form-modal';
-import { withCopyTicketEntity, withTrashTicketEntity } from '../action-handlers';
 import {
 	TicketPriceCalculatorMenuItem,
 	withTicketPriceCalculatorFormModal,
 } from '../price-calculator';
-import { withTicketAssignmentsManagerModal } from '../../../ticket-assignments-manager';
+import {
+	withTicketAssignmentsManagerModal,
+} from '../../../ticket-assignments-manager';
+import AssignDatesMenuItem from './menu-items/assign-dates-menu-item';
+import EditTicketDetailsMenuItem from './menu-items/edit-ticket-details-menu-item';
+import TicketEntityMainMenuItem from './menu-items/ticket-entity-main-menu-item';
 import './style.css';
-
-// @todo move the various render components outside of the functional component
-// or wrap them with `useCallback` and the appropriate dependencies.
-// right now they are regenerated every time EditorTicketActionsMenu is re-rendered.
 
 const EditorTicketActionsMenu = ( {
 	ticketEntity,
 	toggleTicketEditor,
 	dateEntities = [],
 	noBasePrice = false,
-	copyTicketEntity,
-	trashTicketEntity,
 	toggleTicketAssignments,
 	toggleCalculator,
 	doRefresh,
 } ) => {
-	const mainDropDownMenu = () => {
-		return (
-			<DropDownMenu
-				tooltip={ __( 'ticket main menu', 'event_espresso' ) }
-				tooltipPosition="top right"
-				htmlClass={ `ee-editor-ticket-${ ticketEntity.id }` }
-				menuItems={ [
-					{
-						title: __( 'edit ticket', 'event_espresso' ),
-						icon: 'edit',
-						onClick: toggleTicketEditor,
-						ticketEntity,
-					},
-					{
-						title: __( 'copy ticket', 'event_espresso' ),
-						icon: 'admin-page',
-						onClick: () => copyTicketEntity(
-							ticketEntity,
-							dateEntities
-						),
-					},
-					{
-						title: __( 'trash ticket', 'event_espresso' ),
-						icon: 'trash',
-						onClick: () => trashTicketEntity( ticketEntity ),
-					},
-				] }
-			/>
-		);
-	};
-
-	const assignDatesMenuItem = () => {
-		const tooltip = isEmpty( dateEntities ) ?
-			__(
-				'warning! no assigned ticket dates - click to fix',
-				'event_espresso'
-			) :
-			__( 'assign ticket to event dates', 'event_espresso' );
-		return (
-			<IconMenuItem
-				index={ 3 }
-				tooltip={ tooltip }
-				id={ `assign-ticket-dates-ticket-${ ticketEntity.id }` }
-				htmlClass={ 'assign-ticket-dates' }
-				dashicon={ <EspressoIcon icon="calendar" /> }
-				tooltipPosition="top right"
-				onClick={ toggleTicketAssignments }
-				itemCount={ dateEntities.length }
-			/>
-		);
-	};
-
-	const getSidebarMenuItems = () => {
-		const sidebarMenuItems = [];
-		sidebarMenuItems.push(
-			mainDropDownMenu()
-		);
-		sidebarMenuItems.push(
-			<IconMenuItem
-				index={ 1 }
-				tooltip={ __( 'edit ticket details', 'event_espresso' ) }
-				id={ `edit-ticket-${ ticketEntity.id }` }
-				htmlClass="edit-ticket"
-				dashicon="edit"
-				tooltipPosition="top right"
-				onClick={ toggleTicketEditor }
-			/>
-		);
-		sidebarMenuItems.push(
-			<TicketPriceCalculatorMenuItem
-				ticketEntity={ ticketEntity }
-				noBasePrice={ noBasePrice }
-				doRefresh={ doRefresh }
-				toggleCalculator={ toggleCalculator }
-			/>
-		);
-		sidebarMenuItems.push( assignDatesMenuItem() );
-		/**
-		 * @todo, This could be fragile because of render execution
-		 * We should explore implementing a slot/fill pattern here.
-		 */
-		return applyFilters(
-			'FHEE__EditorDates__EditorDateSidebar__SidebarMenuItems',
-			sidebarMenuItems,
-			ticketEntity
-		);
-	};
-
-	const sidebarMenu = ( sidebarMenuItems ) => {
-		return sidebarMenuItems.map(
-			( sidebarMenuItem, index ) => {
-				return (
-					sidebarMenuItem && sidebarMenuItem.type &&
-					(
-						sidebarMenuItem.type === DropDownMenu ||
-						sidebarMenuItem.type === EntityActionMenuItem ||
-						sidebarMenuItem.type === IconMenuItem ||
-						isValidElement( sidebarMenuItem )
-					) ?
-						<Fragment key={ index }>
-							{ sidebarMenuItem }
-						</Fragment> :
-						null
-				);
-			},
-		);
-	};
-
-	if ( ! isModelEntityOfModel( ticketEntity, 'ticket' ) ) {
-		return null;
-	}
-
-	const sidebarMenuItems = getSidebarMenuItems();
-
-	return ticketEntity && ticketEntity.id ? (
-		<div
-			id={ `ee-editor-ticket-actions-menu-${ ticketEntity.id }` }
-			className={ 'ee-editor-ticket-actions-menu' }
-		>
-			{ sidebarMenu( sidebarMenuItems ) }
+	const mainMenu = useMemo(
+		() => registerEntityActionsMenuItem(
+			ticketEntity,
+			'main-menu',
+			() => (
+				<TicketEntityMainMenuItem
+					key={ `main-menu-${ ticketEntity.id }` }
+					ticketEntity={ ticketEntity }
+					toggleTicketEditor={ toggleTicketEditor }
+					dateEntities={ dateEntities }
+				/>
+			)
+		),
+		[ ticketEntity, toggleTicketEditor ]
+	);
+	const editDetails = useMemo(
+		() => registerEntityActionsMenuItem(
+			ticketEntity,
+			'edit-details',
+			() => (
+				<EditTicketDetailsMenuItem
+					key={ `edit-details-${ ticketEntity.id }` }
+					ticketEntity={ ticketEntity }
+					toggleTicketEditor={ toggleTicketEditor }
+				/>
+			)
+		),
+		[ ticketEntity, toggleTicketEditor ]
+	);
+	const assignDates = useMemo(
+		() => registerEntityActionsMenuItem(
+			ticketEntity,
+			'assign-dates',
+			() => (
+				<AssignDatesMenuItem
+					key={ `assign-dates-${ ticketEntity.id }` }
+					ticketEntity={ ticketEntity }
+					toggleTicketAssignments={ toggleTicketAssignments }
+					dateEntities={ dateEntities }
+				/>
+			)
+		),
+		[ ticketEntity, dateEntities, toggleTicketAssignments ]
+	);
+	const priceCalculator = useMemo(
+		() => registerEntityActionsMenuItem(
+			ticketEntity,
+			'price-calculator',
+			() => (
+				<TicketPriceCalculatorMenuItem
+					key={ `price-calculator-${ ticketEntity.id }` }
+					ticketEntity={ ticketEntity }
+					noBasePrice={ noBasePrice }
+					doRefresh={ doRefresh }
+					toggleCalculator={ toggleCalculator }
+				/>
+			)
+		),
+		[ ticketEntity, noBasePrice, doRefresh, toggleCalculator ]
+	);
+	const menuItems = useMemo(
+		() => getActionsMenuForEntity( ticketEntity ),
+		[ ticketEntity, mainMenu, editDetails, assignDates, priceCalculator ]
+	);
+	return (
+		<div className={ 'ee-editor-ticket-actions-menu' }>
+			{ menuItems }
 		</div>
-	) : null;
+	);
 };
 
 export default compose( [
+	ifValidTicketEntity,
+	withEditorTicketDateEntities,
 	withTicketPriceCalculatorFormModal,
 	withTicketEntityFormModal,
 	withTicketAssignmentsManagerModal( ( { ticketEntity } ) => (
@@ -182,7 +125,4 @@ export default compose( [
 			closeButtonLabel: null,
 		}
 	) ),
-	withEditorTicketDateEntities,
-	withCopyTicketEntity,
-	withTrashTicketEntity,
 ] )( EditorTicketActionsMenu );

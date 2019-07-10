@@ -15,7 +15,10 @@ const withCopyDateEntity = createHigherOrderComponent(
 			ticketEntities,
 		}
 	) => {
-		if ( ! isModelEntityOfModel( dateEntity, 'datetime' ) ) {
+		if (
+			! isModelEntityOfModel( eventEntity, 'event' ) ||
+			! isModelEntityOfModel( dateEntity, 'datetime' )
+		) {
 			return { copyDateEntity: () => null };
 		}
 		const {
