@@ -27,11 +27,11 @@ class EE_Question_Shortcodes extends EE_Shortcodes
      */
     protected function _init_props()
     {
-        $this->label = __('Attendee Shortcodes', 'event_espresso');
-        $this->description = __('All shortcodes specific to attendee related data', 'event_espresso');
+        $this->label = esc_html__('Attendee Shortcodes', 'event_espresso');
+        $this->description = esc_html__('All shortcodes specific to attendee related data', 'event_espresso');
         $this->_shortcodes = array(
-            '[QUESTION]' => __('Will parse to a question.', 'event_espresso'),
-            '[ANSWER]'   => __('Will parse to the answer for a question', 'event_espresso'),
+            '[QUESTION]' => esc_html__('Will parse to a question.', 'event_espresso'),
+            '[ANSWER]'   => esc_html__('Will parse to the answer for a question', 'event_espresso'),
         );
     }
 
