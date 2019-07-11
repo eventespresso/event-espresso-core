@@ -1,7 +1,7 @@
 /**
  * External imports
  */
-import { first, isArray, isEmpty, isFunction } from 'lodash';
+import { isArray, isEmpty, isFunction } from 'lodash';
 import warning from 'warning';
 import PropTypes from 'prop-types';
 import { withInstanceId } from '@wordpress/compose';
