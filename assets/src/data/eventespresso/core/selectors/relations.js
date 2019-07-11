@@ -228,6 +228,44 @@ const getRelationAdditionsQueuedForModel = createSelector(
 );
 
 /**
+ * This returns the names of all the models queued for relation additions
+ * as an array.
+ *
+ * @param {Object} state
+ *
+ * @return {String[]}  An array of model names that have relation additions
+ *                     queued.
+ */
+const getRelationModelsQueuedForAddition = createSelector(
+	( state ) => {
+		return Array.from( state.dirty.relations.get( 'add', {} ).keys() );
+	},
+	( state ) => [
+		state.dirty.relations.get( 'add' ),
+		state.dirty.relations.get( 'index' ),
+	]
+);
+
+/**
+ * This returns the names of all the models queued for relation deletions
+ * as an array.
+ *
+ * @param {Object} state
+ *
+ * @return {String[]} An array of model names that have relation deletions
+ *                    queued
+ */
+const getRelationModelsQueuedForDeletion = createSelector(
+	( state ) => {
+		return Array.from( state.dirty.relations.get( 'delete', {} ).keys() );
+	},
+	( state ) => [
+		state.dirty.relations.get( 'delete' ),
+		state.dirty.relations.get( 'index' ),
+	]
+);
+
+/**
  * Retrieves all the queued relation deletions for the given model
  * Similar to `getRelationAdditionsQueuedForModel` except this is relations
  * queued for deletion.
@@ -300,5 +338,7 @@ export {
 	getRelationAdditionsQueuedForModel,
 	getRelationDeletionsQueuedForModel,
 	countRelationModelsIndexedForEntity,
+	getRelationModelsQueuedForAddition,
+	getRelationModelsQueuedForDeletion,
 	getAllRelationsInState,
 };
