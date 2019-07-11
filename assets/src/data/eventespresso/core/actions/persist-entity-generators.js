@@ -280,6 +280,34 @@ function* persistAllDeletes() {
 	return { deleted: deletedIds, trashed: trashedIds };
 }
 
+function* persistAllEntities() {
+	const entitiesInState = yield select(
+		CORE_REDUCER_KEY,
+		'getAllEntitiesInState'
+	);
+	// first let's get a map of dirty entities to their models in a simple array.
+	// loop through the immutable Map and dispatch actions for dirty entities
+	const entitiesByModel = [];
+	entitiesInState.forEach( ( entityMap, modelName ) => {
+		const dirtyEntities = entityMap.filter( ( entity ) => entity.isDirty );
+		if ( dirtyEntities.length > 0 ) {
+			entitiesByModel.push( [ modelName, dirtyEntities ] );
+		}
+	} );
+	while ( entitiesByModel.length > 0 ) {
+		const [ modelName, entities ] = entitiesByModel.pop();
+		while ( entities.length > 0 ) {
+			const entity = entities.pop();
+			yield dispatch(
+				CORE_REDUCER_KEY,
+				'persistEntityRecord',
+				modelName,
+				entity
+			);
+		}
+	}
+}
+
 export {
 	persistEntityRecord,
 	persistForEntityId,
@@ -287,4 +315,5 @@ export {
 	persistDeletesForModel,
 	persistTrashesForModel,
 	persistAllDeletes,
+	persistAllEntities,
 };
