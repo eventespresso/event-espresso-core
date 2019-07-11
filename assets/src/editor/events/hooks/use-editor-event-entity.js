@@ -16,7 +16,7 @@ import { isModelEntityOfModel } from '@eventespresso/validators';
  * @return {BaseEntity|null}  An instance of the Event or null if not available
  */
 const useEditorEventEntity = ( existingEventEntity = null ) => {
-	const eventEntity = useSelect( ( select ) => {
+	return useSelect( ( select ) => {
 		// if already have an event entity, then return it.
 		if ( isModelEntityOfModel( existingEventEntity, 'event' ) ) {
 			return existingEventEntity;
@@ -25,8 +25,9 @@ const useEditorEventEntity = ( existingEventEntity = null ) => {
 		return events.length > 0 ?
 			events.slice( -1 ).pop() :
 			null;
-	}, [ existingEventEntity ] );
-	return eventEntity;
+	},
+	[ existingEventEntity ]
+	);
 };
 
 export default useEditorEventEntity;

@@ -1,7 +1,7 @@
 
 .ee-form-placeholder-div {
     border: 1px dashed var(--ee-color-grey-11);
-    margin: var(--ee-margin-default) 0;
+    margin: var(--ee-margin-default) var(--ee-margin-tiny);
 }
 
 .ee-editor-div > .ee-form-placeholder-div {

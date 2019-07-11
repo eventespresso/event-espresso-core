@@ -1,11 +1,10 @@
-import { default as ResponsiveTable } from './responsive-table';
-import { default as Table } from './table';
-import { default as TableHeader } from './table-header';
-import { default as TableBody } from './table-body';
-import { default as TableFooter } from './table-footer';
-import { default as TableRow } from './table-row';
-import { default as TableHeadingCell } from './table-heading-cell';
-import { default as TableDataCell } from './table-data-cell';
+import Table from './table';
+import TableHeader from './table-header';
+import TableBody from './table-body';
+import TableFooter from './table-footer';
+import TableRow from './table-row';
+import TableHeadingCell from './table-heading-cell';
+import TableDataCell from './table-data-cell';
 
 export const EspressoTable = {
 	Table,
@@ -17,4 +16,5 @@ export const EspressoTable = {
 	TableDataCell,
 };
 
-export default ResponsiveTable;
+export { default as ResponsiveTable } from './responsive-table';
+export * from './utils';

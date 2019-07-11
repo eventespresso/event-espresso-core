@@ -12,11 +12,11 @@ import { routes } from '@eventespresso/eejs';
 import { __ } from '@eventespresso/i18n';
 
 import { useEditorEventEntity, useEventVenueEntity } from '../../../hooks';
+import DateEntityRegistrationsLink from '../date-entity-registrations-link';
 
 const {
 	ADMIN_ROUTES,
 	ADMIN_ROUTE_ACTIONS,
-	ADMIN_ROUTE_ACTION_DEFAULT,
 	getAdminUrl,
 } = routes;
 
@@ -157,34 +157,8 @@ const EditorDateEntityDetails = ( {
 	 * @return {string}    link to registrations list table for datetime
 	 */
 	const getDatetimeRegistrationsLink = useMemo(
-		() => {
-			const regListUrl = addQueryArgs(
-				getAdminUrl( ADMIN_ROUTES.REGISTRATIONS, ADMIN_ROUTE_ACTION_DEFAULT ),
-				{
-					event_id: eventEntity.id,
-					datetime_id: dateEntity.id,
-					return: 'edit',
-				}
-			);
-			return (
-				<Tooltip
-					text={ __(
-						'view registrations for this datetime.',
-						'event_espresso'
-					) }
-				>
-					<a
-						href={ regListUrl }
-						className={ 'ee-editor-date-details-reg-url-link' }
-						target={ '_blank' }
-						rel={ 'noopener norefferer' }
-					>
-						<Dashicon icon="groups" size={ 24 } />
-					</a>
-				</Tooltip>
-			);
-		},
-		[ eventEntity, dateEntity ]
+		() => <DateEntityRegistrationsLink dateEntity={ dateEntity } />,
+		[ dateEntity ]
 	);
 
 	/**

@@ -25,8 +25,9 @@
 
 .ee-two-column-admin .ee-form-section table {
 	box-sizing: border-box !important;
-	border-collapse: collapse;
-	max-width: 100%;
+    border-collapse: separate;
+    border-spacing: 0 var(--ee-padding-nano);
+    max-width: 100%;
 }
 
 .ee-two-column-admin div,
@@ -167,7 +168,7 @@
 .ee-two-column-admin input:disabled,
 .ee-two-column-admin select:disabled,
 .ee-two-column-admin textarea:disabled {
-    background: var(--ee-color-grey-13);
+    background: var(--ee-color-grey-14);
     color: var(--ee-color-grey-8);
 }
 

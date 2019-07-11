@@ -25,10 +25,11 @@
     width: 100%;
 }
 
-.espresso-editor.components-panel__body {
+.espresso-editor.components-panel__body.is-opened {
     background: var(--ee-background-color);
     border-top: none;
     color: var(--ee-default-text-color);
+    padding: var(--ee-padding-smaller);
 }
 
 .ee-editor-event-dates-and-tickets .ee-metabox-heading {
@@ -213,6 +214,10 @@
         transform: translate(-50%, -5%);
         top: 10%;
         width: 90%;
+    }
+
+    .espresso-editor.components-panel__body.is-opened {
+        padding: var(--ee-padding-tiny);
     }
 }
 
