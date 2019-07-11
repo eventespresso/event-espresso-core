@@ -7,6 +7,8 @@ import cuid from 'cuid';
  * Internal imports
  */
 import {
+	persistAllAddRelations,
+	persistAllDeleteRelations,
 	persistAddRelationsForModel,
 	persistDeleteRelationsForModel,
 	persistRelationsForModel,
@@ -19,6 +21,7 @@ import {
 import {
 	fetch,
 	select,
+	dispatch,
 	resolveDispatch,
 	resolveSelect,
 } from '../../../base-controls';
@@ -26,6 +29,72 @@ import { removeDirtyRelationForType } from '../remove-relations';
 import { EventEntities } from '../../../test/fixtures/base';
 import { REDUCER_KEY as CORE_REDUCER_KEY } from '../../constants';
 import { REDUCER_KEY as SCHEMA_REDUCER_KEY } from '../../../schema/constants';
+
+describe( 'persistAllDeleteRelations()', () => {
+	const fulfillment = persistAllDeleteRelations();
+	it( 'yields select action for getting the model names for relations ' +
+		'queued for deleting', () => {
+		const { value } = fulfillment.next();
+		expect( value ).toEqual(
+			select(
+				CORE_REDUCER_KEY,
+				'getRelationModelsQueuedForDeletion'
+			)
+		);
+	} );
+	it( 'yields dispatch action to persist delete relations for each model ' +
+		'returned by previous yield', () => {
+		const { value } = fulfillment.next( [ 'ticket', 'event' ] );
+		expect( value ).toEqual(
+			dispatch(
+				CORE_REDUCER_KEY,
+				'persistDeleteRelationsForModel',
+				'event'
+			)
+		);
+		const { value: nextValue } = fulfillment.next();
+		expect( nextValue ).toEqual(
+			dispatch(
+				CORE_REDUCER_KEY,
+				'persistDeleteRelationsForModel',
+				'ticket'
+			)
+		);
+	} );
+} );
+
+describe( 'persistAllAddRelations()', () => {
+	const fulfillment = persistAllAddRelations();
+	it( 'yields select action for getting the model names for relations ' +
+		'queued for adding', () => {
+		const { value } = fulfillment.next();
+		expect( value ).toEqual(
+			select(
+				CORE_REDUCER_KEY,
+				'getRelationModelsQueuedForAddition'
+			)
+		);
+	} );
+	it( 'yields dispatch action to persist add relations for each model ' +
+		'returned by previous yield', () => {
+		const { value } = fulfillment.next( [ 'ticket', 'event' ] );
+		expect( value ).toEqual(
+			dispatch(
+				CORE_REDUCER_KEY,
+				'persistAddRelationsForModel',
+				'event'
+			)
+		);
+		const { value: nextValue } = fulfillment.next();
+		expect( nextValue ).toEqual(
+			dispatch(
+				CORE_REDUCER_KEY,
+				'persistAddRelationsForModel',
+				'ticket'
+			)
+		);
+	} );
+} );
 
 describe( 'persistAddRelationsForModel()', () => {
 	const fulfillment = persistAddRelationsForModel( 'events' );

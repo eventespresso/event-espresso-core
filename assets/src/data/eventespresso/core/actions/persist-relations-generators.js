@@ -12,6 +12,7 @@ import { singularModelName } from '@eventespresso/model';
 import {
 	fetch,
 	select,
+	dispatch,
 	resolveDispatch,
 	resolveSelect,
 } from '../../base-controls';
@@ -21,6 +22,56 @@ import { REDUCER_KEY as SCHEMA_REDUCER_KEY } from '../../schema/constants';
 
 const DEFAULT_EMPTY_OBJECT = {};
 const DEFAULT_EMPTY_ARRAY = [];
+
+/**
+ * Persist all the relations queued for addition (new relations being assigned
+ * between models)
+ *
+ * @yield {function}  select control to get the relation models queued for
+ *                    addition
+ * @yield {function}  dispatch control to `persistAddRelationsForModel` action
+ *                    for each relation model queued for relation additions.
+ */
+function* persistAllAddRelations() {
+	let addRelationModels = yield select(
+		CORE_REDUCER_KEY,
+		'getRelationModelsQueuedForAddition'
+	);
+	// to avoid mutating cached selector result
+	addRelationModels = [ ...addRelationModels ];
+	while ( addRelationModels.length > 0 ) {
+		yield dispatch(
+			CORE_REDUCER_KEY,
+			'persistAddRelationsForModel',
+			addRelationModels.pop()
+		);
+	}
+}
+
+/**
+ * Persist all the relations queued for deletion (existing model relations to
+ * unassign)
+ *
+ * @yield {function} select control to get the relation models queued for
+ *                   deletion
+ * @yield {function} dispatch control to `persistDeleteRelationsForModel` action
+ *                   for each relation model queued for relation deletions.
+ */
+function* persistAllDeleteRelations() {
+	let deleteRelationModels = yield select(
+		CORE_REDUCER_KEY,
+		'getRelationModelsQueuedForDeletion'
+	);
+	// to avoid mutating cached selector result
+	deleteRelationModels = [ ...deleteRelationModels ];
+	while ( deleteRelationModels.length > 0 ) {
+		yield dispatch(
+			CORE_REDUCER_KEY,
+			'persistDeleteRelationsForModel',
+			deleteRelationModels.pop()
+		);
+	}
+}
 
 /**
  * Action generator for persisting any queued add relations to the server
@@ -410,6 +461,8 @@ function* getRelationState(
 }
 
 export {
+	persistAllAddRelations,
+	persistAllDeleteRelations,
 	persistAddRelationsForModel,
 	persistDeleteRelationsForModel,
 	persistRelationsForModel,
