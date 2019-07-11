@@ -9,6 +9,7 @@ import {
 	isEmpty,
 	isFunction,
 	last,
+	reject,
 } from 'lodash';
 import { Children } from '@wordpress/element';
 
@@ -17,7 +18,6 @@ export const getChildren = ( props ) => {
 	Children.count( props.children ) ?
 		Children.toArray( props.children ) :
 		[];
-	;
 };
 
 const filterChildren = ( children, predicate ) => {
@@ -99,4 +99,52 @@ export const isTableHeadingCell = ( element ) => {
 
 export const isTableDataCell = ( element ) => {
 	return isElement( element, 'TableDataCell' );
+};
+
+/**
+ * adds 'ee-zebra-stripe-on-mobile' css class to every other table cell
+ * except those whose table row cell "key" is in the exclude array
+ *
+ * @function
+ * @param {Array} formRows
+ * @param {Array} exclude
+ * @return {Array} columns
+ */
+export const addZebraStripesOnMobile = (
+	formRows,
+	exclude
+) => formRows.map(
+	( formRow ) => {
+		let x = 0;
+		return formRow.map(
+			( cell ) => {
+				if ( ! cell.key || exclude.indexOf( cell.key ) > -1 ) {
+					return cell;
+				}
+				x++;
+				if ( x % 2 === 0 ) {
+					cell.class = cell.class ?
+						cell.class + ' ee-zebra-stripe-on-mobile' :
+						'ee-zebra-stripe-on-mobile';
+				}
+				return cell;
+			}
+		);
+	}
+);
+
+/**
+ * toggles display of start and end date columns
+ * based on incoming value of showDate
+ *
+ * @function
+ * @param {Array} columns
+ * @param {string} exclude table row cell "key"
+ * @return {Array} columns
+ */
+export const filterColumnsByKey = ( columns, exclude ) => {
+	if ( ! Array.isArray( columns ) ) {
+		return columns;
+	}
+	return exclude ? reject( columns, [ 'key', exclude ] ) : columns;
 };
