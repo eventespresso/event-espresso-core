@@ -14,7 +14,8 @@ import { sprintf, _x } from '@eventespresso/i18n';
  * Internal dependencies
  */
 import { withEditorTicketDateEntities } from '../../../hocs';
-import withTicketEntityFormModal from '../edit-form/with-ticket-entity-form-modal';
+import withTicketEntityFormModal
+	from '../edit-form/with-ticket-entity-form-modal';
 import {
 	TicketPriceCalculatorMenuItem,
 	withTicketPriceCalculatorFormModal,
@@ -23,8 +24,10 @@ import {
 	withTicketAssignmentsManagerModal,
 } from '../../../ticket-assignments-manager';
 import AssignDatesMenuItem from './menu-items/assign-dates-menu-item';
-import EditTicketDetailsMenuItem from './menu-items/edit-ticket-details-menu-item';
-import TicketEntityMainMenuItem from './menu-items/ticket-entity-main-menu-item';
+import EditTicketDetailsMenuItem
+	from './menu-items/edit-ticket-details-menu-item';
+import TicketEntityMainMenuItem
+	from './menu-items/ticket-entity-main-menu-item';
 import './style.css';
 
 const EditorTicketActionsMenu = ( {
@@ -36,69 +39,65 @@ const EditorTicketActionsMenu = ( {
 	toggleCalculator,
 	doRefresh,
 } ) => {
-	const mainMenu = useMemo(
-		() => registerEntityActionsMenuItem(
-			ticketEntity,
-			'main-menu',
-			() => (
-				<TicketEntityMainMenuItem
-					key={ `main-menu-${ ticketEntity.id }` }
-					ticketEntity={ ticketEntity }
-					toggleTicketEditor={ toggleTicketEditor }
-					dateEntities={ dateEntities }
-				/>
-			)
+	registerEntityActionsMenuItem(
+		ticketEntity,
+		'main-menu',
+		() => (
+			<TicketEntityMainMenuItem
+				key={ `main-menu-${ ticketEntity.id }` }
+				ticketEntity={ ticketEntity }
+				toggleTicketEditor={ toggleTicketEditor }
+				dateEntities={ dateEntities }
+			/>
 		),
-		[ ticketEntity, toggleTicketEditor ]
 	);
-	const editDetails = useMemo(
-		() => registerEntityActionsMenuItem(
-			ticketEntity,
-			'edit-details',
-			() => (
-				<EditTicketDetailsMenuItem
-					key={ `edit-details-${ ticketEntity.id }` }
-					ticketEntity={ ticketEntity }
-					toggleTicketEditor={ toggleTicketEditor }
-				/>
-			)
+	registerEntityActionsMenuItem(
+		ticketEntity,
+		'edit-details',
+		() => (
+			<EditTicketDetailsMenuItem
+				key={ `edit-details-${ ticketEntity.id }` }
+				ticketEntity={ ticketEntity }
+				toggleTicketEditor={ toggleTicketEditor }
+			/>
 		),
-		[ ticketEntity, toggleTicketEditor ]
 	);
-	const assignDates = useMemo(
-		() => registerEntityActionsMenuItem(
-			ticketEntity,
-			'assign-dates',
-			() => (
-				<AssignDatesMenuItem
-					key={ `assign-dates-${ ticketEntity.id }` }
-					ticketEntity={ ticketEntity }
-					toggleTicketAssignments={ toggleTicketAssignments }
-					dateEntities={ dateEntities }
-				/>
-			)
+	registerEntityActionsMenuItem(
+		ticketEntity,
+		'assign-dates',
+		() => (
+			<AssignDatesMenuItem
+				key={ `assign-dates-${ ticketEntity.id }` }
+				ticketEntity={ ticketEntity }
+				toggleTicketAssignments={ toggleTicketAssignments }
+				dateEntities={ dateEntities }
+			/>
 		),
-		[ ticketEntity, dateEntities, toggleTicketAssignments ]
 	);
-	const priceCalculator = useMemo(
-		() => registerEntityActionsMenuItem(
-			ticketEntity,
-			'price-calculator',
-			() => (
-				<TicketPriceCalculatorMenuItem
-					key={ `price-calculator-${ ticketEntity.id }` }
-					ticketEntity={ ticketEntity }
-					noBasePrice={ noBasePrice }
-					doRefresh={ doRefresh }
-					toggleCalculator={ toggleCalculator }
-				/>
-			)
+	registerEntityActionsMenuItem(
+		ticketEntity,
+		'price-calculator',
+		() => (
+			<TicketPriceCalculatorMenuItem
+				key={ `price-calculator-${ ticketEntity.id }` }
+				ticketEntity={ ticketEntity }
+				noBasePrice={ noBasePrice }
+				doRefresh={ doRefresh }
+				toggleCalculator={ toggleCalculator }
+			/>
 		),
-		[ ticketEntity, noBasePrice, doRefresh, toggleCalculator ]
 	);
 	const menuItems = useMemo(
 		() => getActionsMenuForEntity( ticketEntity ),
-		[ ticketEntity, mainMenu, editDetails, assignDates, priceCalculator ]
+		[
+			ticketEntity,
+			toggleTicketEditor,
+			dateEntities,
+			noBasePrice,
+			toggleTicketAssignments,
+			toggleCalculator,
+			doRefresh,
+		],
 	);
 	return (
 		<div className={ 'ee-editor-ticket-actions-menu' }>
