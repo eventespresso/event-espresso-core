@@ -117,9 +117,9 @@ export default compose( [
 				_x(
 					'Date Assignments for Ticket:  %1$s',
 					'Date Assignments for Ticket:  Ticket name',
-					'event_espresso',
+					'event_espresso'
 				),
-				ticketEntity.name,
+				ticketEntity.name
 			),
 			closeButtonLabel: null,
 		}
