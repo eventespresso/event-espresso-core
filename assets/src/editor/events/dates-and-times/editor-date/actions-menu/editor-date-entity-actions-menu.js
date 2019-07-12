@@ -29,59 +29,56 @@ const EditorDateEntityActionsMenu = ( {
 	toggleTicketAssignments,
 	ticketEntities = DEFAULT_EMPTY_ARRAY,
 } ) => {
-	const mainMenu = useMemo(
-		() => registerEntityActionsMenuItem(
-			dateEntity,
-			'main-menu',
-			() => (
-				<DateEntityMainMenuItem
-					key={ `main-menu-${ dateEntity.id }` }
-					dateEntity={ dateEntity }
-					toggleDateEditor={ toggleDateEditor }
-				/>
-			)
-		),
-		[ dateEntity, toggleDateEditor ]
+	registerEntityActionsMenuItem(
+		dateEntity,
+		'main-menu',
+		() => (
+			<DateEntityMainMenuItem
+				key={ `main-menu-${ dateEntity.id }` }
+				dateEntity={ dateEntity }
+				toggleDateEditor={ toggleDateEditor }
+			/>
+		)
 	);
-	const editDetails = useMemo(
-		() => registerEntityActionsMenuItem(
-			dateEntity,
-			'edit-details',
-			() => (
-				<EditDateDetailsMenuItem
-					key={ `edit-details-${ dateEntity.id }` }
-					dateEntity={ dateEntity }
-					toggleDateEditor={ toggleDateEditor }
-				/>
-			)
-		),
-		[ dateEntity, toggleDateEditor ]
+	registerEntityActionsMenuItem(
+		dateEntity,
+		'edit-details',
+		() => (
+			<EditDateDetailsMenuItem
+				key={ `edit-details-${ dateEntity.id }` }
+				dateEntity={ dateEntity }
+				toggleDateEditor={ toggleDateEditor }
+			/>
+		)
 	);
-	const assignTickets = useMemo(
-		() => registerEntityActionsMenuItem(
-			dateEntity,
-			'assign-tickets',
-			() => (
-				<AssignTicketsMenuItem
-					key={ `assign-tickets-${ dateEntity.id }` }
-					dateEntity={ dateEntity }
-					toggleTicketAssignments={ toggleTicketAssignments }
-					ticketEntities={ ticketEntities }
-				/>
-			)
-		),
-		[ dateEntity, toggleTicketAssignments, ticketEntities ]
+	registerEntityActionsMenuItem(
+		dateEntity,
+		'assign-tickets',
+		() => (
+			<AssignTicketsMenuItem
+				key={ `assign-tickets-${ dateEntity.id }` }
+				dateEntity={ dateEntity }
+				toggleTicketAssignments={ toggleTicketAssignments }
+				ticketEntities={ ticketEntities }
+			/>
+		)
 	);
-	const menuItems = useMemo(
+	const actionMenuItems = useMemo(
 		() => getActionsMenuForEntity( dateEntity ),
-		[ dateEntity, mainMenu, editDetails, assignTickets ]
+		[
+			dateEntity,
+			toggleDateEditor,
+			toggleTicketAssignments,
+			ticketEntities,
+		]
 	);
+
 	return (
 		<div
 			id={ `ee-editor-date-actions-menu-${ dateEntity.id }` }
 			className={ 'ee-editor-date-actions-menu' }
 		>
-			{ menuItems }
+			{ actionMenuItems }
 		</div>
 	);
 };
