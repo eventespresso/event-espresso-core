@@ -3,6 +3,8 @@
  */
 import { withEntityPagination } from '@eventespresso/higher-order-components';
 import { compose, createHigherOrderComponent } from '@wordpress/compose';
+import { useCallback } from '@wordpress/element';
+import { useDispatch } from '@wordpress/data';
 
 /**
  * Internal imports
@@ -19,6 +21,25 @@ const withPaginatedDateEntitiesListAndFilterBar = (
 	compose( [
 		withDateEntitiesListFilterState,
 		withDateEntitiesListFilterBar,
+		( WrappedComponent ) => ( props ) => {
+			const { setFilter } = useDispatch(
+				'eventespresso/filter-state'
+			);
+			const onPageChange = useCallback(
+				( updatedPagedDateEntities ) => {
+					setFilter(
+						'event-editor-dates-list',
+						'filteredPagedDateIds',
+						updatedPagedDateEntities.map( ( entity ) => entity.id )
+					);
+				},
+				[ setFilter ]
+			);
+			return <WrappedComponent
+				onPageChange={ onPageChange }
+				{ ...props }
+			/>;
+		},
 		withEntityPagination( paginationConfig ),
 	] ),
 	'withPaginatedDateEntitiesListAndFilterBar'
