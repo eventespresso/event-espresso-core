@@ -32,7 +32,8 @@
 	},
 	"require": {
 		"composer/installers": "~1.0",
-		"php": ">=5.5"
+		"php": ">=5.5",
+		"lcobucci/jwt": "^3.3"
 	},
 	"scripts": {
 		"config-eventespressocs": [
