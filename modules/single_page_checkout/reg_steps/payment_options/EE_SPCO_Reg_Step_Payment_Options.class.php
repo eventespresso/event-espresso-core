@@ -713,7 +713,7 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step
      */
     private function _registrations_requiring_pre_approval($registrations_requiring_pre_approval = array())
     {
-        $events_requiring_pre_approval = '';
+        $events_requiring_pre_approval = array();
         foreach ($registrations_requiring_pre_approval as $registration) {
             if ($registration instanceof EE_Registration && $registration->event() instanceof EE_Event) {
                 $events_requiring_pre_approval[ $registration->event()->ID() ] = EEH_HTML::li(
@@ -999,7 +999,11 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step
         $available_payment_methods = array(
             // display the "Payment Method" header
             'payment_method_header' => new EE_Form_Section_HTML(
-                EEH_HTML::h4($payment_method_header, 'method-of-payment-hdr')
+                apply_filters(
+                    'FHEE__EE_SPCO_Reg_Step_Payment_Options___setup_payment_options__payment_method_header',
+                    EEH_HTML::h4($payment_method_header, 'method-of-payment-hdr'),
+                    $payment_method_header
+                )
             ),
         );
         // the list of actual payment methods ( invoice, paypal, etc ) in a  ( slug => HTML )  format

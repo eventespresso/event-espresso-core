@@ -1,6 +1,8 @@
 <?php
 
 use EventEspresso\core\domain\services\event\EventSpacesCalculator;
+use EventEspresso\core\exceptions\InvalidDataTypeException;
+use EventEspresso\core\exceptions\InvalidInterfaceException;
 use EventEspresso\core\exceptions\UnexpectedEntityException;
 
 /**
@@ -872,10 +874,10 @@ class EE_Event extends EE_CPT_Base implements EEI_Line_Item_Object, EEI_Admin_Li
      */
     public function perform_sold_out_status_check()
     {
-        // get all unexpired untrashed tickets
+        // get all tickets
         $tickets = $this->tickets(
             array(
-                array('TKT_deleted' => false),
+                'default_where_conditions' => 'none',
                 'order_by' => array('TKT_qty' => 'ASC'),
             )
         );
@@ -1241,17 +1243,26 @@ class EE_Event extends EE_CPT_Base implements EEI_Line_Item_Object, EEI_Admin_Li
      * Adds a question group to this event
      *
      * @param EE_Question_Group|int $question_group_id_or_obj
-     * @param bool                  $for_primary if true, the question group will be added for the primary
+     * @param bool $for_primary if true, the question group will be added for the primary
      *                                           registrant, if false will be added for others. default: false
      * @return EE_Base_Class|EE_Question_Group
      * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws ReflectionException
      */
     public function add_question_group($question_group_id_or_obj, $for_primary = false)
     {
-        $extra = $for_primary
-            ? array('EQG_primary' => 1)
-            : array();
-        return $this->_add_relation_to($question_group_id_or_obj, 'Question_Group', $extra);
+        // If the row already exists, it will be updated. If it doesn't, it will be inserted.
+        // That's in EE_HABTM_Relation::add_relation_to().
+        return $this->_add_relation_to(
+            $question_group_id_or_obj,
+            'Question_Group',
+            [
+                EEM_Event_Question_Group::instance()->fieldNameForContext($for_primary) => true
+            ]
+        );
     }
 
 
@@ -1259,17 +1270,39 @@ class EE_Event extends EE_CPT_Base implements EEI_Line_Item_Object, EEI_Admin_Li
      * Removes a question group from the event
      *
      * @param EE_Question_Group|int $question_group_id_or_obj
-     * @param bool                  $for_primary if true, the question group will be removed from the primary
+     * @param bool $for_primary if true, the question group will be removed from the primary
      *                                           registrant, if false will be removed from others. default: false
      * @return EE_Base_Class|EE_Question_Group
      * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws ReflectionException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
      */
     public function remove_question_group($question_group_id_or_obj, $for_primary = false)
     {
-        $where = $for_primary
-            ? array('EQG_primary' => 1)
-            : array();
-        return $this->_remove_relation_to($question_group_id_or_obj, 'Question_Group', $where);
+        // If the question group is used for the other type (primary or additional)
+        // then just update it. If not, delete it outright.
+        $existing_relation = $this->get_first_related(
+            'Event_Question_Group',
+            [
+                [
+                    'QSG_ID' => EEM_Question_Group::instance()->ensure_is_ID($question_group_id_or_obj)
+                ]
+            ]
+        );
+        $field_to_update = EEM_Event_Question_Group::instance()->fieldNameForContext($for_primary);
+        $other_field = EEM_Event_Question_Group::instance()->fieldNameForContext(! $for_primary);
+        if ($existing_relation->get($other_field) === false) {
+            // Delete it. It's now no longer for primary or additional question groups.
+            return $this->_remove_relation_to($question_group_id_or_obj, 'Question_Group');
+        }
+        // Just update it. They'll still use this question group for the other category
+        $existing_relation->save(
+            [
+                $field_to_update => false
+            ]
+        );
     }
 
 

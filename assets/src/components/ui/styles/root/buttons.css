@@ -1,103 +1,213 @@
-.ee-button,
-.ee-button:active,
-.ee-button:focus,
-.ee-button:visited {
-    border-radius: calc(var(--ee-border-radius-small) * 1px);
-    /*box-shadow: var(--ee-box-shadow-small);*/
-    box-sizing: border-box !important;
-    cursor: pointer;
-    display: inline-block;
-    font-size: calc(var(--ee-font-size-small) * 1px);
-    font-weight: normal;
-    line-height: calc(var(--ee-line-height-modifier) * 1rem);
-    margin: 0 0 calc(var(--ee-margin-smaller) * 1rem);
-    outline: none !important;
-    position: relative;
-    padding: calc(var(--ee-padding-tiny) * 1rem) calc(var(--ee-padding-smaller) * 1rem);
-    text-decoration: none;
-    text-align: center;
-    top: -1px;
+/** -------------------------------------------------------------------------
+ * Event Espresso EspressoButton Stylesheet
+ * © 2019 Event Espresso
+ * ------------------------------------------------------------------------- */
+
+:root {
+    --ee-icon-button-size: 36px;
 }
 
-.ee-button:active { top: 0; }
+.esprs-button,
+.esprs-button:active,
+.esprs-button:focus,
+.esprs-button:visited {
+    border-radius: var(--ee-border-radius-small);
+    border-style: solid;
+    border-width: 1px;
+    box-shadow: var(--ee-box-shadow-tiny);
+    -webkit-box-sizing: content-box !important;
+    -moz-box-sizing: content-box !important;
+    box-sizing: content-box !important;
+    cursor: pointer;
+    display: inline-block;
+    font-size: var(--ee-font-size-default);
+    font-weight: normal;
+    min-height: var(--ee-font-size-big);
+    line-height: var(--ee-font-size-default);
+    margin: 0 0 var(--ee-margin-smaller);
+    outline: none !important;
+    position: relative;
+    padding: var(--ee-padding-tiny) var(--ee-padding-small) var(--ee-padding-smaller);
+    text-decoration: none;
+    text-align: center;
+    text-shadow: var(--ee-text-shadow-inset-light);
+    top: -1px;
+    vertical-align: middle;
+}
 
+.esprs-button:active:not([disabled]) { top: 0; }
+.esprs-button:hover { cursor: pointer; }
+
+.esprs-button + .esprs-button {
+    margin-left: var(--ee-margin-default);
+}
+
+.esprs-button .text-wrap {
+    font-weight: bold;
+    position: relative;
+    top: calc(var(--ee-padding-nano) * -1.5);
+    vertical-align: middle;
+}
+
+.esprs-button.ee-noIcon .text-wrap {
+    position: relative;
+    top: var(--ee-padding-nano);
+}
+
+.esprs-button .img-wrap {
+    position: relative;
+    margin: 0 0 0 var(--ee-padding-small);
+    top: var(--ee-padding-nano);
+    vertical-align: middle;
+}
+
+.esprs-button .img-wrap span {
+    line-height: 24px;
+}
 
 /* BUTTON COLORS */
 
-.ee-button-default {
-    background: var(--ee-color-grey-9);
-    border: 1px solid var(--ee-color-grey-9);
-    border-bottom: 1px solid var(--ee-color-grey-8);
-    color: var(--ee-default-text-color-high-contrast);
+.esprs-btn-default:not([disabled]) {
+    background: var(--ee-color-grey-15);
+    border-color: var(--ee-color-grey-14) var(--ee-color-grey-14) var(--ee-color-grey-15);
+    color: var(--ee-text-on-grey-14);
 }
 
-.ee-button-default:hover {
-    background: var(--ee-background-color);
+.esprs-btn-default:hover:not([disabled]) {
+    background: var(--ee-color-grey-14);
 }
 
-.ee-button-primary {
+.esprs-btn-primary:not([disabled]) {
     background: var(--ee-color-primary);
-    border: 1px solid var(--ee-color-primary);
-    border-bottom: 1px solid var(--ee-color-primary-high-contrast);
+    border-color: var(--ee-color-primary) var(--ee-color-primary) var(--ee-color-primary-low-contrast);
     color: var(--ee-text-on-primary);
 }
 
-.ee-button-primary:hover {
+.esprs-btn-primary:hover:not([disabled]) {
     background: var(--ee-color-primary-low-contrast);
 }
-
-.ee-button-secondary {
+.esprs-btn-secondary:not([disabled]) {
     background: var(--ee-color-secondary);
-    border: 1px solid var(--ee-color-secondary);
-    border-bottom: 1px solid var(--ee-color-secondary-high-contrast);
+    border-color: var(--ee-color-secondary) var(--ee-color-secondary) var(--ee-color-secondary-low-contrast);
     color: var(--ee-text-on-secondary);
 }
 
-.ee-button-secondary:hover {
+.esprs-btn-secondary:hover:not([disabled]) {
     background: var(--ee-color-secondary-low-contrast);
 }
 
-.ee-button-accent {
+.esprs-btn-accent:not([disabled]) {
     background: var(--ee-color-accent);
-    border: 1px solid var(--ee-color-accent);
-    border-bottom: 1px solid var(--ee-color-accent-high-contrast);
+    border-color: var(--ee-color-accent) var(--ee-color-accent) var(--ee-color-accent-low-contrast);
     color: var(--ee-text-on-accent);
 }
 
-.ee-button-accent:hover {
+.esprs-btn-accent:hover:not([disabled]) {
     background: var(--ee-color-accent-low-contrast);
+}
+
+.esprs-button.esprs-btn-default:disabled,
+.esprs-button.esprs-btn-primary:disabled,
+.esprs-button.esprs-btn-secondary:disabled,
+.esprs-button.esprs-btn-accent:disabled {
+    background: var(--ee-color-grey-11);
+    border-color: var(--ee-color-grey-11) var(--ee-color-grey-11) var(--ee-color-grey-12);
+    color: var(--ee-text-on-grey-11);
+    cursor: unset;
 }
 
 /* BUTTON SIZES */
 
-.tiny.ee-button,
-.tiny.ee-button:active,
-.tiny.ee-button:focus,
-.tiny.ee-button:visited {
-    font-size: calc(var(--ee-font-size-tiny) * 1px);
-    padding: calc(var(--ee-padding-micro) * .5rem) calc(var(--ee-padding-tiny) * 1rem);
+.esprs-btn-tiny.esprs-button,
+.esprs-btn-tiny.esprs-button:active,
+.esprs-btn-tiny.esprs-button:focus,
+.esprs-btn-tiny.esprs-button:visited {
+    font-size: var(--ee-font-size-tiny);
+    min-height: var(--ee-font-size-smaller);
+    line-height: var(--ee-font-size-tiny);
+    padding: var(--ee-padding-nano) var(--ee-padding-tiny) var(--ee-padding-micro);
 }
 
-.small.ee-button,
-.small.ee-button:active,
-.small.ee-button:focus,
-.small.ee-button:visited {
-    font-size: calc(var(--ee-font-size-smaller) * 1px);
-    padding: calc(var(--ee-padding-micro) * 1rem) calc(var(--ee-padding-tiny) * 1rem);
+.esprs-btn-tiny.esprs-button .img-wrap span {
+    line-height: var(--ee-font-size-tiny);
 }
 
-.big.ee-button,
-.big.ee-button:active,
-.big.ee-button:focus,
-.big.ee-button:visited {
-    font-size: calc(var(--ee-font-size-default) * 1px);
-    padding: calc(var(--ee-padding-smaller) * 1rem) calc(var(--ee-padding-small) * 1rem);
+.esprs-btn-small.esprs-button,
+.esprs-btn-small.esprs-button:active,
+.esprs-btn-small.esprs-button:focus,
+.esprs-btn-small.esprs-button:visited {
+    font-size: var(--ee-font-size-smaller);
+    min-height: var(--ee-font-size-small);
+    line-height: var(--ee-font-size-smaller);
+    padding: var(--ee-padding-micro) var(--ee-padding-smaller) var(--ee-padding-tiny);
 }
 
-.huge.ee-button,
-.huge.ee-button:active,
-.huge.ee-button:focus,
-.huge.ee-button:visited {
-    font-size: calc(var(--ee-font-size-big) * 1px);
-    padding: calc(var(--ee-padding-smaller) * 1rem) calc(var(--ee-padding-small) * 1rem);
+.esprs-btn-small.esprs-button:not(.ee-noIcon) .text-wrap {
+    top: -0.1rem;
+}
+
+.esprs-btn-small.esprs-button .img-wrap {
+    top: .2rem;
+}
+
+.esprs-btn-small.esprs-button .img-wrap span {
+    line-height: var(--ee-font-size-smaller);
+}
+
+
+.esprs-btn-big.esprs-button,
+.esprs-btn-big.esprs-button:active,
+.esprs-btn-big.esprs-button:focus,
+.esprs-btn-big.esprs-button:visited {
+    font-size: var(--ee-font-size-big);
+    min-height: var(--ee-font-size-bigger);
+    line-height: var(--ee-font-size-big);
+    padding: var(--ee-padding-smaller) var(--ee-padding-default) var(--ee-padding-small);
+}
+
+.esprs-btn-big.esprs-button .img-wrap span {
+    line-height: var(--ee-font-size-big);
+}
+
+.esprs-btn-huge.esprs-button,
+.esprs-btn-huge.esprs-button:active,
+.esprs-btn-huge.esprs-button:focus,
+.esprs-btn-huge.esprs-button:visited {
+    font-size: var(--ee-font-size-bigger);
+    min-height: var(--ee-font-size-huge);
+    line-height: var(--ee-font-size-bigger);
+    padding: var(--ee-padding-smaller) var(--ee-padding-default) var(--ee-padding-small);
+}
+
+.esprs-btn-huge.esprs-button .img-wrap span {
+    line-height: var(--ee-font-size-bigger);
+}
+
+
+/* Media Queries for specific screen sizes
+ * -------------------------------------------------------------------------*/
+
+/* WordPress Admin Media Query Breakpoint: Smartphone */
+@media screen and (max-width: 600px) {
+    .esprs-button + .esprs-button {
+        margin-left: var(--ee-margin-smaller);
+    }
+}
+
+@media only screen and (max-width: 480px) {
+    .esprs-button + .esprs-button {
+        margin-left: var(--ee-margin-micro);
+    }
+}
+
+@media only screen and (max-width: 360px) {
+    .esprs-button {
+        box-sizing: border-box !important;
+        margin: var(--ee-margin-tiny) auto;
+        width: 100%;
+    }
+
+    .esprs-button + .esprs-button {
+        margin-left: auto;
+    }
 }

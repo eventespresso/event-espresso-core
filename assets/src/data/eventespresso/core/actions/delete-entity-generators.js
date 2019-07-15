@@ -9,6 +9,11 @@ import {
 import { removeAllRelatedEntitiesForModelEntity } from './remove-relations';
 
 /**
+ * External imports
+ */
+import { singularModelName } from '@eventespresso/model';
+
+/**
  * Action generator yielding actions for queuing an entity delete record
  * in the state.
  *
@@ -16,6 +21,7 @@ import { removeAllRelatedEntitiesForModelEntity } from './remove-relations';
  * @param {number} entityId
  */
 export function* deleteEntityById( modelName, entityId ) {
+	modelName = singularModelName( modelName );
 	yield removeEntityById( modelName, entityId );
 	// remove any relation records for this entity
 	yield removeAllRelatedEntitiesForModelEntity( modelName, entityId );
@@ -30,6 +36,7 @@ export function* deleteEntityById( modelName, entityId ) {
  * @param {number} entityId
  */
 export function* trashEntityById( modelName, entityId ) {
+	modelName = singularModelName( modelName );
 	yield removeEntityById( modelName, entityId );
 	yield removeAllRelatedEntitiesForModelEntity( modelName, entityId );
 	yield receiveTrashEntityId( modelName, entityId );

@@ -9,33 +9,36 @@ const templateCompiler = getTemplateCompiler(
 );
 
 const defaultFontSizeModifiers = {
-	micro: 1.1,
-	tiny: 1.2,
-	smaller: 1.4,
-	small: 1.6,
-	default: 1.8,
-	big: 2.4,
-	bigger: 3.2,
-	huge: 4.5,
-	extreme: 6.0,
+	micro: .06,
+	tiny: .07,
+	smaller: .08,
+	small: .09,
+	default: .1,
+	big: .12,
+	bigger: .15,
+	huge: .2,
+	extreme: .3,
 };
 const defaultSizeModifiers = {
-	micro: .125,
-	tiny: .25,
-	smaller: .5,
-	small: .75,
-	default: 1,
-	big: 1.25,
-	bigger: 1.5,
-	huge: 1.75,
-	extreme: 2,
+	nano: .125,
+	micro: .25,
+	tiny: .5,
+	smaller: .75,
+	small: 1,
+	default: 1.5,
+	big: 2,
+	bigger: 2.5,
+	huge: 3,
+	extreme: 4,
 };
 const defaultRadiusModifiers = {
+	none: 0,
 	small: 1,
-	default: 1.333,
-	big: 2,
-	bigger: 4,
-	huge: 8,
+	default: 2,
+	big: 4,
+	bigger: 8,
+	huge: 16,
+	full: 1000,
 };
 
 /**
@@ -49,17 +52,17 @@ function fontSizes( config ) {
 		config.sizes.fontSizeModifiers :
 		defaultFontSizeModifiers;
 	const fontSizeBase = config.sizes.fontSizeBase;
+	const fontUnits = config.sizes.fontUnits || 'rem';
 	let sizes = [];
 	for ( const modifier in sizeModifiers ) {
-		const value = Math.round( sizeModifiers[ modifier ] * fontSizeBase );
-		if ( value >= 8 ) {
-			sizes.push(
-				templateCompiler( {
-					modifier: `font-size-${ modifier }`,
-					value,
-				} )
-			);
-		}
+		let value = sizeModifiers[ modifier ] * fontSizeBase;
+		value = value.toFixed( 2 );
+		sizes.push(
+			templateCompiler( {
+				modifier: `font-size-${ modifier }`,
+				value: value + fontUnits,
+			} )
+		);
 	}
 	sizes.push(
 		templateCompiler( {
@@ -83,13 +86,14 @@ function marginSizes( config ) {
 		config.sizes.marginSizeModifiers :
 		defaultSizeModifiers;
 	const marginDefault = config.sizes.marginDefault;
+	const marginUnits = config.sizes.marginUnits || 'rem';
 	let sizes = [];
 	for ( const modifier in sizeModifiers ) {
 		const value = sizeModifiers[ modifier ] * marginDefault;
 		sizes.push(
 			templateCompiler( {
 				modifier: `margin-${ modifier }`,
-				value,
+				value: value + marginUnits,
 			} )
 		);
 	}
@@ -107,13 +111,14 @@ function paddingSizes( config ) {
 		config.sizes.paddingSizeModifiers :
 		defaultSizeModifiers;
 	const paddingDefault = config.sizes.paddingDefault;
+	const paddingUnits = config.sizes.paddingUnits || 'rem';
 	let sizes = [];
 	for ( const modifier in sizeModifiers ) {
 		const value = sizeModifiers[ modifier ] * paddingDefault;
 		sizes.push(
 			templateCompiler( {
 				modifier: `padding-${ modifier }`,
-				value,
+				value: value + paddingUnits,
 			} )
 		);
 	}
@@ -131,13 +136,14 @@ function radiusSizes( config ) {
 		config.sizes.radiusSizeModifiers :
 		defaultRadiusModifiers;
 	const radiusDefault = config.sizes.radiusDefault;
+	const radiusUnits = config.sizes.radiusUnits || 'px';
 	let sizes = [];
 	for ( const modifier in sizeModifiers ) {
 		const value = sizeModifiers[ modifier ] * radiusDefault;
 		sizes.push(
 			templateCompiler( {
 				modifier: `border-radius-${ modifier }`,
-				value: Math.round( value ),
+				value: Math.round( value ) + radiusUnits,
 			} )
 		);
 	}

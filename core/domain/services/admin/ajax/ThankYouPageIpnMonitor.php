@@ -9,6 +9,7 @@ use EEM_Transaction;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
 use InvalidArgumentException;
+use ReflectionException;
 
 /**
  * Class ThankYouPageIpnMonitor
@@ -20,6 +21,11 @@ use InvalidArgumentException;
  */
 class ThankYouPageIpnMonitor
 {
+
+    /**
+     * @var string $heartbeat
+     */
+    private $heartbeat;
 
     /**
      * @var EED_Thank_You_Page $thank_you_page
@@ -37,6 +43,7 @@ class ThankYouPageIpnMonitor
      */
     public function __construct()
     {
+        $this->heartbeat = WordpressHeartbeat::RESPONSE_KEY_THANK_YOU_PAGE;
         add_filter('heartbeat_received', array($this, 'heartbeatResponse'), 10, 3);
         add_filter('heartbeat_nopriv_received', array($this, 'heartbeatResponse'), 10, 3);
     }
@@ -52,19 +59,20 @@ class ThankYouPageIpnMonitor
      * @param array $data
      * @return array
      * @throws EE_Error
+     * @throws InvalidArgumentException
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
-     * @throws InvalidArgumentException
+     * @throws ReflectionException
      */
     public function heartbeatResponse($response = array(), $data = array())
     {
         // does this heartbeat contain our data ?
-        if (! isset($data['espresso_thank_you_page'])) {
+        if (! isset($data[ $this->heartbeat ])) {
             return $response;
         }
         // check for reg_url_link in the incoming heartbeat data
-        if (! isset($data['espresso_thank_you_page']['e_reg_url_link'])) {
-            $response['espresso_thank_you_page'] = array(
+        if (! isset($data[ $this->heartbeat ]['e_reg_url_link'])) {
+            $response[ $this->heartbeat ] = array(
                 'errors' => ! empty($notices['errors'])
                     ? $notices['errors']
                     : __(
@@ -77,24 +85,24 @@ class ThankYouPageIpnMonitor
         // kk heartbeat has our data
         $response = $this->initializeThankYouPageAndTransaction($response, $data);
         // if something went wrong...
-        if (isset($response['espresso_thank_you_page']['errors'])) {
+        if (isset($response[ $this->heartbeat ]['errors'])) {
             return $response;
         }
         // grab transient of Transaction's status
-        $txn_status = isset($data['espresso_thank_you_page']['txn_status'])
-            ? $data['espresso_thank_you_page']['txn_status']
+        $txn_status = isset($data[ $this->heartbeat ]['txn_status'])
+            ? $data[ $this->heartbeat ]['txn_status']
             : null;
         $response = $this->getTransactionDetails($txn_status, $response, $data);
         // no payment data yet?
-        if (isset($response['espresso_thank_you_page']['still_waiting'])) {
+        if (isset($response[ $this->heartbeat ]['still_waiting'])) {
             return $response;
         }
         // TXN is happening so let's get the payments now
         // if we've already gotten payments then the heartbeat data will contain the timestamp of the last time we checked
-        $since = isset($data['espresso_thank_you_page']['get_payments_since'])
-            ? $data['espresso_thank_you_page']['get_payments_since']
+        $since = isset($data[ $this->heartbeat ]['get_payments_since'])
+            ? $data[ $this->heartbeat ]['get_payments_since']
             : 0;
-        return $this->paymentDetails($since);
+        return $this->paymentDetails($response, $since);
     }
 
 
@@ -113,15 +121,14 @@ class ThankYouPageIpnMonitor
         // set_definitions, instantiate the thank you page class, and get the ball rolling
         EED_Thank_You_Page::set_definitions();
         $this->thank_you_page = EED_Thank_You_Page::instance();
-        $this->thank_you_page->set_reg_url_link($data['espresso_thank_you_page']['e_reg_url_link']);
+        $this->thank_you_page->set_reg_url_link($data[ $this->heartbeat ]['e_reg_url_link']);
         $this->thank_you_page->init();
-        $response['espresso_thank_you_page'] = array();
         // get TXN
         $transaction = $this->thank_you_page->get_txn();
         // no TXN? then get out
         if (! $transaction instanceof EE_Transaction) {
             $notices = EE_Error::get_notices();
-            $response['espresso_thank_you_page'] = array(
+            $response[ $this->heartbeat ] = array(
                 'errors' => ! empty($notices['errors'])
                     ? $notices['errors']
                     : sprintf(
@@ -145,6 +152,10 @@ class ThankYouPageIpnMonitor
      * @param array  $data
      * @return array
      * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws ReflectionException
      */
     private function getTransactionDetails($txn_status, $response, $data)
     {
@@ -157,51 +168,72 @@ class ThankYouPageIpnMonitor
                 case EEM_Transaction::complete_status_code:
                 case EEM_Transaction::incomplete_status_code:
                     // send updated TXN results back to client,
-                    $response['espresso_thank_you_page'] = array(
-                        'transaction_details' => $this->thank_you_page->get_transaction_details(),
-                        'txn_status'          => $this->transaction->status_ID(),
-                    );
-                    return $response;
+                    return $this->setTransactionDetails($response);
                 // or we have a bad TXN, or really slow IPN, so calculate the wait time and send that back...
                 case EEM_Transaction::failed_status_code:
                 default:
                     // keep on waiting...
-                    return $this->updateServerWaitTime($data['espresso_thank_you_page']);
+                    return $this->updateServerWaitTime($data[ $this->heartbeat ]);
             }
             // or is the TXN still failed (never been updated) ???
         } elseif ($this->transaction->failed()) {
             // keep on waiting...
-            return $this->updateServerWaitTime($data['espresso_thank_you_page']);
+            return $this->updateServerWaitTime($data[ $this->heartbeat ]);
         }
+        return $response;
     }
 
 
     /**
+     * @param array $response
+     * @param boolean $status_only
+     * @return array
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws ReflectionException
+     */
+    private function setTransactionDetails($response, $status_only = false)
+    {
+        if (! $status_only && ! isset($response[ $this->heartbeat ]['transaction_details'])) {
+            $response[ $this->heartbeat ]['transaction_details'] = $this->thank_you_page->get_transaction_details();
+        }
+        if (! isset($response[ $this->heartbeat ]['txn_status'])) {
+            $response[ $this->heartbeat ]['txn_status'] = $this->transaction->status_ID();
+        }
+        return $response;
+    }
+
+
+    /**
+     * @param array $response
      * @param int $since
      * @return array
      * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws ReflectionException
      */
-    private function paymentDetails($since)
+    private function paymentDetails($response, $since)
     {
         // then check for payments
         $payments = $this->thank_you_page->get_txn_payments($since);
         // has a payment been processed ?
         if (! empty($payments) || $this->thank_you_page->isOfflinePaymentMethod()) {
             if ($since) {
-                $response['espresso_thank_you_page'] = array(
-                    'new_payments'        => $this->thank_you_page->get_new_payments($payments),
-                    'transaction_details' => $this->thank_you_page->get_transaction_details(),
-                    'txn_status'          => $this->transaction->status_ID(),
-                );
+                $response[ $this->heartbeat ]['new_payments'] = $this->thank_you_page->get_new_payments($payments);
+                $response = $this->setTransactionDetails($response);
             } else {
-                $response['espresso_thank_you_page']['payment_details'] = $this->thank_you_page->get_payment_details(
+                $response[ $this->heartbeat ]['payment_details'] = $this->thank_you_page->get_payment_details(
                     $payments
                 );
             }
             // reset time to check for payments
-            $response['espresso_thank_you_page']['get_payments_since'] = time();
+            $response[ $this->heartbeat ]['get_payments_since'] = time();
         } else {
-            $response['espresso_thank_you_page']['get_payments_since'] = $since;
+            $response[ $this->heartbeat ]['get_payments_since'] = $since;
         }
         return $response;
     }
@@ -212,15 +244,17 @@ class ThankYouPageIpnMonitor
      *                                      from the WP heartbeat data
      * @return array
      * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws ReflectionException
      */
     private function updateServerWaitTime($thank_you_page_data)
     {
-        $response['espresso_thank_you_page'] = array(
-            'still_waiting' => isset($thank_you_page_data['initial_access'])
-                ? time() - $thank_you_page_data['initial_access']
-                : 0,
-            'txn_status'    => $this->transaction->status_ID(),
-        );
+        $response[ $this->heartbeat ]['still_waiting'] = isset($thank_you_page_data['initial_access'])
+            ? time() - $thank_you_page_data['initial_access']
+            : 0;
+        $response = $this->setTransactionDetails($response, true);
         return $response;
     }
 }

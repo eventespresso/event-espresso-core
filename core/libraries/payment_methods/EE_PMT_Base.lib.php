@@ -171,7 +171,7 @@ abstract class EE_PMT_Base
         $plugins_dir_fixed = str_replace('\\', DS, WP_PLUGIN_DIR);
         $file_folder_fixed = str_replace('\\', DS, $this->file_folder());
         $file_path = str_replace($plugins_dir_fixed, WP_PLUGIN_URL, $file_folder_fixed);
-        $this->_file_url = $file_path;
+        $this->_file_url = set_url_scheme($file_path);
     }
 
     /**

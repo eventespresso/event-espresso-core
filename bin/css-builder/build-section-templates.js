@@ -2,6 +2,7 @@ const fs = require( 'fs' );
 const path = require( 'path' );
 const { compile } = require( 'handlebars' );
 const { startCase } = require( 'lodash' );
+const { GREYSCALE_LEVELS } = require( './color-utils' );
 const {
 	themeColors,
 	themeColorDesc,
@@ -26,9 +27,18 @@ const TEMPLATES_PATH = path.resolve( __dirname, 'demo-templates' );
  * @return {string}  Colors section html.
  */
 function buildColorsSection( themeConfig ) {
-	const colorsSectionTemplate = fs.readFileSync( path.resolve( TEMPLATES_PATH, 'colors-section-template.html' ), 'utf8' );
-	const baseColorsTemplate = fs.readFileSync( path.resolve( TEMPLATES_PATH, 'base-color-template.html' ), 'utf8' );
-	const themeColorsTemplate = fs.readFileSync( path.resolve( TEMPLATES_PATH, 'theme-color-template.html' ), 'utf8' );
+	const colorsSectionTemplate = fs.readFileSync(
+		path.resolve( TEMPLATES_PATH, 'colors-section-template.html' ),
+		'utf8'
+	);
+	const baseColorsTemplate = fs.readFileSync(
+		path.resolve( TEMPLATES_PATH, 'base-color-template.html' ),
+		'utf8'
+	);
+	const themeColorsTemplate = fs.readFileSync(
+		path.resolve( TEMPLATES_PATH, 'theme-color-template.html' ),
+		'utf8'
+	);
 	const baseTemplate = compile( baseColorsTemplate );
 	const themeTemplate = compile( themeColorsTemplate );
 	const colorDemoItems = [];
@@ -49,12 +59,13 @@ function buildColorsSection( themeConfig ) {
 				colorLabel: startCase( color ),
 				color,
 				isGrey: false,
+				isBW: color === 'black' || color === 'white',
 			} )
 		);
-	};
+	}
 	/// now add grey scale levels
 	const greys = [];
-	for ( let x = 0; x < 12; x++ ) {
+	for ( let x = 1; x <= GREYSCALE_LEVELS; x++ ) {
 		const color = `grey-${ x }`;
 		greys.push(
 			baseTemplate( {
@@ -116,7 +127,7 @@ function buildEntityStatusSection() {
 
 /**
  * A function that builds the button section for the css demo html.
- * @param {Array} colors  Array of color configuration objects
+ *
  * @return {string} The section html.
  */
 function buildButtonSection() {

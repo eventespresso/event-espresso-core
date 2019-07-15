@@ -58,37 +58,69 @@ function themeColors( config ) {
  * @return {string} color content
  */
 function compileColorTemplate( config, colorHex, colorName ) {
-	const highContrast = generateHighContrast(
+	const highContrastColorHex = generateHighContrast(
 		colorHex,
 		config.meta.rgbModifier,
 		config.meta.darkTheme
 	);
-	const lowContrast = generateLowContrast(
+	const superHighContrastColorHex = generateHighContrast(
+		highContrastColorHex,
+		config.meta.rgbModifier,
+		config.meta.darkTheme
+	);
+	const lowContrastColorHex = generateLowContrast(
 		colorHex,
 		config.meta.rgbModifier,
 		config.meta.darkTheme
 	);
-	return colorTemplateCompiler(
-		{
+	const superLowContrastColorHex = generateLowContrast(
+		lowContrastColorHex,
+		config.meta.rgbModifier,
+		config.meta.darkTheme
+	);
+	const textContrastColorHex = findContrastColor(
+		colorHex,
+		config.meta.blackAndWhiteContrast
+	);
+	const textHighContrastColorHex = findContrastColor(
+		highContrastColorHex,
+		config.meta.blackAndWhiteContrast
+	);
+	const textLowContrastColorHex = findContrastColor(
+		lowContrastColorHex,
+		config.meta.blackAndWhiteContrast
+	);
+	const textSuperHighContrastColorHex = findContrastColor(
+		superHighContrastColorHex,
+		config.meta.blackAndWhiteContrast
+	);
+	const textSuperLowContrastColorHex = findContrastColor(
+		superLowContrastColorHex,
+		config.meta.blackAndWhiteContrast
+	);
+	return colorName === 'black' || colorName === 'white' ?
+		colorTemplateCompiler( {
+			isBW: true,
 			colorLabel: startCase( colorName ),
 			colorName,
 			colorHex,
-			highContrastColorHex: highContrast,
-			lowContrastColorHex: lowContrast,
-			textContrastColorHex: findContrastColor(
-				colorHex,
-				config.meta.blackAndWhiteContrast
-			),
-			textHighContrastColorHex: findContrastColor(
-				highContrast,
-				config.meta.blackAndWhiteContrast
-			),
-			textLowContrastColorHex: findContrastColor(
-				lowContrast,
-				config.meta.blackAndWhiteContrast
-			),
-		}
-	)
+			textContrastColorHex,
+		} ) :
+		colorTemplateCompiler( {
+			isBW: false,
+			colorLabel: startCase( colorName ),
+			colorName,
+			colorHex,
+			highContrastColorHex,
+			lowContrastColorHex,
+			superHighContrastColorHex,
+			superLowContrastColorHex,
+			textContrastColorHex,
+			textHighContrastColorHex,
+			textLowContrastColorHex,
+			textSuperHighContrastColorHex,
+			textSuperLowContrastColorHex,
+		} )
 }
 
 /**
@@ -158,11 +190,16 @@ function extraColors( config ) {
 	);
 	const templateVars = {
 		bgColorHex: background,
-		borderColorHex: findContrastColor( background, false, 'AA' ),
+		borderColorHex: generateLowContrast(
+			findContrastColor( background, false, 'AA' ),
+			config.meta.rgbModifier,
+			config.meta.darkTheme
+		),
 	};
 	for ( let x = 0; x < greys.length; x++ ) {
-		templateVars[ `grey${ x }ColorHex` ] = greys[ x ];
-		templateVars[ `textOnGrey${ x }ColorHex` ] = findContrastColor(
+		const y = x + 1;
+		templateVars[ `grey${ y }ColorHex` ] = greys[ x ];
+		templateVars[ `textOnGrey${ y }ColorHex` ] = findContrastColor(
 			greys[ x ],
 			config.meta.blackAndWhiteContrast
 		);

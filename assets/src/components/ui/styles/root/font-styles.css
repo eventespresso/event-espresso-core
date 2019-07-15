@@ -8,38 +8,43 @@
 
 .ee-focus-priority-2 {
     color: var(--ee-default-text-color-low-contrast);
-    font-size: var(--ee-font-size-huge);
+    font-size: var(--ee-font-size-huge );
     font-weight: bold;
     letter-spacing: -1px;
     line-height: calc(var(--ee-line-height-modifier) * .875);
 }
 
 .ee-focus-priority-3 {
-    font-size: var(--ee-font-size-bigger);
+    font-size: var(--ee-font-size-bigger );
+    line-height: var(--ee-line-height-modifier);
 }
 
 .ee-focus-priority-4 {
-    font-size: var(--ee-font-size-big);
+    font-size: var(--ee-font-size-big );
+    line-height: var(--ee-line-height-modifier);
 }
 
 .ee-focus-priority-5 {
-    font-size: var(--ee-font-size-default);
+    font-size: var(--ee-font-size-default );
+    line-height: var(--ee-line-height-modifier);
 }
 
 .ee-focus-priority-6 {
     color: var(--ee-default-text-color-high-contrast);
-    font-size: var(--ee-font-size-small);
+    font-size: var(--ee-font-size-small );
+    line-height: var(--ee-line-height-modifier);
 }
 
 .ee-focus-priority-7 {
     color: var(--ee-default-text-color-high-contrast);
-    font-size: var(--ee-font-size-smaller);
+    font-size: var(--ee-font-size-smaller );
+    line-height: var(--ee-line-height-modifier);
     word-spacing: 1px;
 }
 
 .ee-focus-priority-8 {
     color: var(--ee-default-text-color-super-high-contrast);
-    font-size: var(--ee-font-size-tiny);
+    font-size: var(--ee-font-size-tiny );
     letter-spacing: 1px;
     line-height: calc(var(--ee-line-height-modifier) * 1.125);
     word-spacing: 2px;
@@ -47,7 +52,7 @@
 
 .ee-focus-priority-9 {
     color: var(--ee-default-text-color-super-high-contrast);
-    font-size: var(--ee-font-size-micro);
+    font-size: var(--ee-font-size-micro );
     letter-spacing: 2px;
     line-height: calc(var(--ee-line-height-modifier) * 1.25);
     word-spacing: 4px;
@@ -82,13 +87,6 @@
 
 /* WordPress Admin Media Query Breakpoint: Tablet */
 @media screen and ( max-width: 782px ) {
-}
-
-/* WordPress Admin Media Query Breakpoint: Smartphone */
-@media screen and (max-width: 600px) {
-}
-
-@media only screen and (max-width: 480px) {
     .ee-focus-priority-1 {
         font-size: var(--ee-font-size-huge);
     }
@@ -118,8 +116,46 @@
     }
 
     .ee-focus-priority-8 {
+        font-size: var(--ee-font-size-tiny)
+    }
+}
+
+/* WordPress Admin Media Query Breakpoint: Smartphone */
+@media screen and (max-width: 600px) {
+    .ee-focus-priority-1 {
+        font-size: var(--ee-font-size-bigger);
+    }
+
+    .ee-focus-priority-2 {
+        font-size: var(--ee-font-size-big);
+    }
+
+    .ee-focus-priority-3 {
+        font-size: var(--ee-font-size-default);
+    }
+
+    .ee-focus-priority-4 {
+        font-size: var(--ee-font-size-small);
+    }
+
+    .ee-focus-priority-5 {
+        font-size: var(--ee-font-size-smaller);
+    }
+
+    .ee-focus-priority-6 {
         font-size: var(--ee-font-size-tiny);
     }
+
+    .ee-focus-priority-7 {
+        font-size: var(--ee-font-size-tiny);
+    }
+
+    .ee-focus-priority-8 {
+        font-size: var(--ee-font-size-tiny)
+    }
+}
+
+@media only screen and (max-width: 480px) {
 }
 
 @media only screen and (max-width: 360px) {

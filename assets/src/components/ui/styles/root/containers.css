@@ -3,14 +3,14 @@
 .ee-container-primary,
 .ee-container-secondary,
 .ee-container-accent {
-    border-radius: calc(var(--ee-border-radius-default) * 1px);
-    -moz-border-radius: calc(var(--ee-border-radius-default) * 1px);
-    -webkit-border-radius: calc(var(--ee-border-radius-default) * 1px);
+    border-radius: var(--ee-border-radius-default);
+    -moz-border-radius: var(--ee-border-radius-default);
+    -webkit-border-radius: var(--ee-border-radius-default);
     box-sizing: border-box !important;
-    font-size: calc(var(--ee-font-size-default) * 1px);
-    line-height: calc(var(--ee-line-height-modifier));
-    margin: calc(var(--ee-margin-smaller) * 1rem) 0 calc(var(--ee-margin-default) * 1rem);
-    padding: calc(var(--ee-padding-default) * 1rem);
+    font-size: var(--ee-font-size-default);
+    line-height: var(--ee-line-height-modifier);
+    margin: var(--ee-margin-smaller) 0 var(--ee-margin-default);
+    padding: var(--ee-padding-default);
 }
 
 .ee-container-default {

@@ -417,9 +417,13 @@ class Request implements InterminableInterface, RequestInterface, ReservedInstan
 
 
     /**
+     * Gets the request's literal URI. Related to `requestUriAfterSiteHomeUri`, see its description for a comparison.
+     * @param boolean $relativeToWpRoot If home_url() is "http://mysite.com/wp/", and a request comes to
+     *                                  "http://mysite.com/wp/wp-json", setting $relativeToWpRoot=true will return
+     *                                  "/wp-json", whereas $relativeToWpRoot=false will return "/wp/wp-json/".
      * @return string
      */
-    public function requestUri()
+    public function requestUri($relativeToWpRoot = false)
     {
         $request_uri = filter_input(
             INPUT_SERVER,
@@ -431,9 +435,21 @@ class Request implements InterminableInterface, RequestInterface, ReservedInstan
             // fallback sanitization if the above fails
             $request_uri = wp_sanitize_redirect($this->server['REQUEST_URI']);
         }
+        if ($relativeToWpRoot) {
+            $home_path = untrailingslashit(
+                parse_url(
+                    home_url(),
+                    PHP_URL_PATH
+                )
+            );
+            $request_uri = str_replace(
+                $home_path,
+                '',
+                $request_uri
+            );
+        }
         return $request_uri;
     }
-
 
     /**
      * @return string
