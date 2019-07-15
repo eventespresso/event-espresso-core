@@ -7,6 +7,9 @@
  * @subpackage 	tests
  */
 
+use EventEspresso\core\exceptions\InvalidDataTypeException;
+use EventEspresso\core\exceptions\InvalidInterfaceException;
+
 /**
  * All tests for the EEM_Event class.
  *
@@ -151,6 +154,39 @@ class EEM_Event_Test extends EE_UnitTestCase {
 		$event = EEM_Event::instance()->create_default_object();
 		$this->assertEquals( EEM_Registration::status_id_approved, $event->default_registration_status() );
 	}
+
+    /**
+     * @since $VID:$
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws ReflectionException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     */
+	public function testGetQuestionGroupsForEvent()
+    {
+        $r = $this->new_model_obj_with_dependencies(
+            'Registration',
+            [
+                'REG_count' => 1
+            ]
+        );
+        $r->event_obj()->add_question_group(EEM_Question_Group::system_personal, true);
+        $r->event_obj()->add_question_group(EEM_Question_Group::system_address, true);
+        // Just add another question group, but it will only be for additional attendees.
+        $additional_qg = $this->new_model_obj_with_dependencies('Question_Group');
+        $r->event_obj()->add_question_group($additional_qg, false);
+        $qgs = EEM_Event::instance()->get_question_groups_for_event($r->event_ID(), $r);
+        $this->assertEquals(2, count($qgs));
+        $this->assertArrayContains(
+            EEM_Question_Group::instance()->get_one_by_ID(EEM_Question_Group::system_personal),
+            $qgs
+        );
+        $this->assertArrayContains(
+            EEM_Question_Group::instance()->get_one_by_ID(EEM_Question_Group::system_address),
+            $qgs
+        );
+    }
 
 }
 // Location: testcases/core/db_models/EEM_Event_Test.php
