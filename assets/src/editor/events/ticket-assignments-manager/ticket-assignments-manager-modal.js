@@ -786,10 +786,10 @@ export default compose( [
 			'event_espresso'
 		),
 	} ),
-	withFormContainerAndPlaceholder,
 	withEntityPagination( {
 		returnAsProp: true,
 		entitiesPerPage: 6,
 		position: 'bottom',
 	} ),
+	withFormContainerAndPlaceholder,
 ] )( TicketAssignmentsManagerModal );

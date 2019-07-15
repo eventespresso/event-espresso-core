@@ -138,7 +138,7 @@ const withTicketEntitiesListFilterBar = createHigherOrderComponent(
 );
 
 export default compose( [
-	withFilteredDateEntities,
+	withFilteredDateEntities( true ),
 	withTicketEntitiesForFilteredDateEntities,
 	withTicketEntitiesListFilterBar,
 ] );
