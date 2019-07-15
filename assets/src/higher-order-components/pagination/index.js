@@ -2,6 +2,7 @@
  * External imports
  */
 import JwPagination from 'jw-react-pagination';
+import PropTypes from 'prop-types';
 import {
 	compose,
 	createHigherOrderComponent,
@@ -15,7 +16,21 @@ import { __ } from '@eventespresso/i18n';
  */
 import './style.css';
 
-const EntityPaginationComponent = ( {
+/**
+ * adds pagination to an "EntityList" component
+ * and controls what entities are displayed
+ *
+ * @param {Object} paginationConfig
+ * @param {Array} entities
+ * @param {number} instanceId
+ * @param {number|string} entitiesPerPage
+ * @param {string} position
+ * @param {Function} onPageChange
+ * @param {Object} EntityList
+ * @param {Object} otherProps
+ * @return {Object} EntityList with added EntityPagination
+ */
+const EntityPagination = ( {
 	paginationConfig = {},
 	entities,
 	instanceId,
@@ -111,16 +126,25 @@ const EntityPaginationComponent = ( {
 	);
 };
 
-const EntityPagination = ( paginationConfig ) => createHigherOrderComponent(
-	( WrappedComponent ) => ( props ) => {
-		return <EntityPaginationComponent
-			{ ...props }
-			paginationConfig={ paginationConfig }
-			EntityList={ WrappedComponent }
-		/>;
-	},
-	'EntityPagination'
-);
+EntityPagination.propTypes = {
+	paginationConfig: PropTypes.shape( {
+		returnAsProp: PropTypes.bool,
+		noResultsText: PropTypes.string,
+		labels: PropTypes.shape( {
+			first: PropTypes.string,
+			last: PropTypes.string,
+			previous: PropTypes.string,
+			next: PropTypes.string,
+		} ),
+	} ),
+	entities: PropTypes.array.isRequired,
+	instanceId: PropTypes.number.isRequired,
+	entitiesPerPage: PropTypes.oneOfType( [
+		PropTypes.string,
+		PropTypes.number,
+	] ),
+	position: PropTypes.string,
+};
 
 /**
  * withEntityPagination
@@ -134,7 +158,13 @@ const EntityPagination = ( paginationConfig ) => createHigherOrderComponent(
 export default ( paginationConfig = {} ) => createHigherOrderComponent(
 	compose( [
 		withInstanceId,
-		EntityPagination( paginationConfig ),
+		( EntityList ) => ( props ) => {
+			return <EntityPagination
+				{ ...props }
+				paginationConfig={ paginationConfig }
+				EntityList={ EntityList }
+			/>;
+		},
 	] ),
 	'withEntityPagination'
 );
