@@ -73,6 +73,11 @@ abstract class EE_Data_Migration_Script_Base extends EE_Data_Migration_Class_Bas
      */
     protected $_mappings = array();
 
+    /**
+     * @var EE_Data_Migration_Script_Base
+     */
+    protected $previous_dms;
+
 
     /**
      * Returns whether or not this data migration script can operate on the given version of the database.
@@ -759,6 +764,7 @@ abstract class EE_Data_Migration_Script_Base extends EE_Data_Migration_Class_Bas
             );
         }
         unset($properties['_mappings']);
+        unset($properties['previous_dms']);
 
         foreach ($this->_mappings as $old_table_name => $mapping_to_new_table) {
             foreach ($mapping_to_new_table as $new_table_name => $mapping) {
