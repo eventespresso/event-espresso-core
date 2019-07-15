@@ -536,24 +536,24 @@ class Extend_Events_Admin_Page extends Events_Admin_Page
         // first primary question groups
         $orig_primary_qgs = $orig_event->get_many_related(
             'Question_Group',
-            array(array('Event_Question_Group.EQG_primary' => 1))
+            [['Event_Question_Group.EQG_primary' => true]]
         );
         if (! empty($orig_primary_qgs)) {
             foreach ($orig_primary_qgs as $id => $obj) {
                 if ($obj instanceof EE_Question_Group) {
-                    $new_event->_add_relation_to($obj, 'Question_Group', array('EQG_primary' => 1));
+                    $new_event->_add_relation_to($obj, 'Question_Group', ['EQG_primary' => true]);
                 }
             }
         }
         // next additional attendee question groups
         $orig_additional_qgs = $orig_event->get_many_related(
             'Question_Group',
-            array(array('Event_Question_Group.EQG_primary' => 0))
+            [['Event_Question_Group.EQG_additional' => true]]
         );
         if (! empty($orig_additional_qgs)) {
             foreach ($orig_additional_qgs as $id => $obj) {
                 if ($obj instanceof EE_Question_Group) {
-                    $new_event->_add_relation_to($obj, 'Question_Group', array('EQG_primary' => 0));
+                    $new_event->_add_relation_to($obj, 'Question_Group', ['EQG_additional' => true]);
                 }
             }
         }

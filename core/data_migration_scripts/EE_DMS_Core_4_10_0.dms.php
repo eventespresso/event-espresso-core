@@ -12,43 +12,44 @@ use EventEspresso\core\services\database\TableManager;
 // unfortunately, this needs to be done upon INCLUSION of this file,
 // instead of construction, because it only gets constructed on first page load
 // (all other times it gets resurrected from a wordpress option)
-$stages = glob(EE_CORE . 'data_migration_scripts/4_9_0_stages/*');
-$class_to_filepath = array();
+$stages = glob(EE_CORE . 'data_migration_scripts/4_10_0_stages/*');
+$class_to_filepath = [];
 foreach ($stages as $filepath) {
-    $matches = array();
-    preg_match('~4_9_0_stages/(.*).dmsstage.php~', $filepath, $matches);
+    $matches = [];
+    preg_match('~4_10_0_stages/(.*).dmsstage.php~', $filepath, $matches);
     $class_to_filepath[ $matches[1] ] = $filepath;
 }
 // give addons a chance to autoload their stages too
-$class_to_filepath = apply_filters('FHEE__EE_DMS_4_9_0__autoloaded_stages', $class_to_filepath);
+$class_to_filepath = apply_filters('FHEE__EE_DMS_4_10_0__autoloaded_stages', $class_to_filepath);
 EEH_Autoloader::register_autoloader($class_to_filepath);
 
 
 
 /**
- * Class EE_DMS_Core_4_9_0
+ * Class EE_DMS_Core_4_10_0
  *
  * @package               Event Espresso
  * @subpackage            core
  * @author                Mike Nelson
- * @since                 4.6.0
+ * @since                 $VID:$
  */
-class EE_DMS_Core_4_9_0 extends EE_Data_Migration_Script_Base
+class EE_DMS_Core_4_10_0 extends EE_Data_Migration_Script_Base
 {
-
     /**
-     * return EE_DMS_Core_4_9_0
      *
      * @param TableManager  $table_manager
      * @param TableAnalysis $table_analysis
      */
-    public function __construct(TableManager $table_manager = null, TableAnalysis $table_analysis = null)
-    {
-        $this->_pretty_name = esc_html__("Data Update to Event Espresso 4.9.0", "event_espresso");
+    public function __construct(
+        TableManager $table_manager = null,
+        TableAnalysis $table_analysis = null,
+        EE_DMS_Core_4_9_0 $dms_4_9
+    ) {
+        $this->previous_dms = $dms_4_9;
+        $this->_pretty_name = esc_html__("Data Update to Event Espresso 4.10.0", "event_espresso");
         $this->_priority = 10;
         $this->_migration_stages = array(
-            new EE_DMS_4_9_0_Email_System_Question(),
-            new EE_DMS_4_9_0_Answers_With_No_Registration(),
+            new EE_DMS_4_10_0_Event_Question_Group(),
         );
         parent::__construct($table_manager, $table_analysis);
     }
@@ -64,17 +65,15 @@ class EE_DMS_Core_4_9_0 extends EE_Data_Migration_Script_Base
     public function can_migrate_from_version($version_array)
     {
         $version_string = $version_array['Core'];
-        if (version_compare($version_string, '4.9.0', '<=') && version_compare($version_string, '4.8.0', '>=')) {
+        if (version_compare($version_string, '4.10.0.rc.000', '<') && version_compare($version_string, '4.9.0', '>=')) {
             //          echo "$version_string can be migrated from";
             return true;
         } elseif (! $version_string) {
             //          echo "no version string provided: $version_string";
             // no version string provided... this must be pre 4.3
             return false;// changed mind. dont want people thinking they should migrate yet because they cant
-        } else {
-            //          echo "$version_string doesnt apply";
-            return false;
         }
+        return false;
     }
 
 
@@ -96,7 +95,6 @@ class EE_DMS_Core_4_9_0 extends EE_Data_Migration_Script_Base
 					KEY QST_ID (QST_ID)";
         $this->_table_has_not_changed_since_previous($table_name, $sql, 'ENGINE=InnoDB');
         $table_name = 'esp_attendee_meta';
-        $this->_get_table_manager()->dropIndexIfSizeNot($table_name, 'ATT_email');
         $sql = "ATTM_ID int(10) unsigned NOT NULL AUTO_INCREMENT,
 				ATT_ID bigint(20) unsigned NOT NULL,
 				ATT_fname varchar(45) NOT NULL,
@@ -114,7 +112,7 @@ class EE_DMS_Core_4_9_0 extends EE_Data_Migration_Script_Base
 				KEY ATT_email (ATT_email(191)),
 				KEY ATT_lname (ATT_lname),
 				KEY ATT_fname (ATT_fname)";
-        $this->_table_is_changed_in_this_version($table_name, $sql, 'ENGINE=InnoDB ');
+        $this->_table_has_not_changed_since_previous($table_name, $sql, 'ENGINE=InnoDB ');
         $table_name = 'esp_checkin';
         $sql = "CHK_ID int(10) unsigned NOT NULL AUTO_INCREMENT,
 				REG_ID int(10) unsigned NOT NULL,
@@ -181,7 +179,7 @@ class EE_DMS_Core_4_9_0 extends EE_Data_Migration_Script_Base
 				KEY DTT_EVT_start (DTT_EVT_start),
 				KEY EVT_ID (EVT_ID),
 				KEY DTT_is_primary (DTT_is_primary)";
-        $this->_table_is_changed_in_this_version($table_name, $sql, 'ENGINE=InnoDB');
+        $this->_table_has_not_changed_since_previous($table_name, $sql, 'ENGINE=InnoDB');
         $table_name = "esp_datetime_ticket";
         $sql = "DTK_ID int(10) unsigned NOT NULL AUTO_INCREMENT,
 				DTT_ID int(10) unsigned NOT NULL,
@@ -220,6 +218,7 @@ class EE_DMS_Core_4_9_0 extends EE_Data_Migration_Script_Base
 				EVT_ID bigint(20) unsigned NOT NULL,
 				QSG_ID int(10) unsigned NOT NULL,
 				EQG_primary tinyint(1) unsigned NOT NULL DEFAULT 0,
+				EQG_additional tinyint(1) unsigned NOT NULL DEFAULT 0,
 				PRIMARY KEY  (EQG_ID),
 				KEY EVT_ID (EVT_ID),
 				KEY QSG_ID (QSG_ID)";
@@ -272,9 +271,7 @@ class EE_DMS_Core_4_9_0 extends EE_Data_Migration_Script_Base
 				KEY txn_type_timestamp (TXN_ID,LIN_type,LIN_timestamp),
 				KEY txn_obj_id_obj_type (TXN_ID,OBJ_ID,OBJ_type),
 				KEY obj_id_obj_type (OBJ_ID,OBJ_type)";
-        $this->_get_table_manager()->dropIndex('esp_line_item', 'TXN_ID');
-        $this->_get_table_manager()->dropIndex('esp_line_item', 'LIN_code');
-        $this->_table_is_changed_in_this_version($table_name, $sql, 'ENGINE=InnoDB');
+        $this->_table_has_not_changed_since_previous($table_name, $sql, 'ENGINE=InnoDB');
         $table_name = 'esp_log';
         $sql = "LOG_ID int(11) NOT NULL AUTO_INCREMENT,
 				LOG_time datetime DEFAULT NULL,
@@ -289,9 +286,6 @@ class EE_DMS_Core_4_9_0 extends EE_Data_Migration_Script_Base
 				KEY LOG_type (LOG_type)";
         $this->_table_has_not_changed_since_previous($table_name, $sql, 'ENGINE=InnoDB');
         $table_name = 'esp_message';
-        $this->_get_table_manager()->dropIndexIfSizeNot($table_name, 'MSG_to');
-        $this->_get_table_manager()->dropIndexIfSizeNot($table_name, 'MSG_from');
-        $this->_get_table_manager()->dropIndexIfSizeNot($table_name, 'MSG_subject');
         $sql = "MSG_ID bigint(20) unsigned NOT NULL AUTO_INCREMENT,
 				GRP_ID int(10) unsigned NULL,
 				MSG_token varchar(255) NULL,
@@ -366,7 +360,7 @@ class EE_DMS_Core_4_9_0 extends EE_Data_Migration_Script_Base
 				PRIMARY KEY  (PAY_ID),
 				KEY PAY_timestamp (PAY_timestamp),
 				KEY TXN_ID (TXN_ID)";
-        $this->_table_is_changed_in_this_version($table_name, $sql, 'ENGINE=InnoDB ');
+        $this->_table_has_not_changed_since_previous($table_name, $sql, 'ENGINE=InnoDB ');
         $table_name = 'esp_payment_method';
         $sql = "PMD_ID int(11) NOT NULL AUTO_INCREMENT,
 				PMD_type varchar(124) DEFAULT NULL,
@@ -415,7 +409,7 @@ class EE_DMS_Core_4_9_0 extends EE_Data_Migration_Script_Base
 				QST_deleted tinyint(2) unsigned NOT NULL DEFAULT 0,
 				PRIMARY KEY  (QST_ID),
 				KEY QST_order (QST_order)';
-        $this->_table_is_changed_in_this_version($table_name, $sql, 'ENGINE=InnoDB');
+        $this->_table_has_not_changed_since_previous($table_name, $sql, 'ENGINE=InnoDB');
         $table_name = 'esp_question_group_question';
         $sql = "QGQ_ID int(10) unsigned NOT NULL AUTO_INCREMENT,
 				QSG_ID int(10) unsigned NOT NULL,
@@ -462,7 +456,7 @@ class EE_DMS_Core_4_9_0 extends EE_Data_Migration_Script_Base
 				KEY TKT_ID (TKT_ID),
 				KEY EVT_ID (EVT_ID),
 				KEY STS_ID (STS_ID)";
-        $this->_table_is_changed_in_this_version($table_name, $sql, 'ENGINE=InnoDB ');
+        $this->_table_has_not_changed_since_previous($table_name, $sql, 'ENGINE=InnoDB ');
         $table_name = 'esp_registration_payment';
         $sql = "RPY_ID int(10) unsigned NOT NULL AUTO_INCREMENT,
 					  REG_ID int(10) unsigned NOT NULL,
@@ -471,7 +465,7 @@ class EE_DMS_Core_4_9_0 extends EE_Data_Migration_Script_Base
 					  PRIMARY KEY  (RPY_ID),
 					  KEY REG_ID (REG_ID),
 					  KEY PAY_ID (PAY_ID)";
-        $this->_table_is_changed_in_this_version($table_name, $sql, 'ENGINE=InnoDB ');
+        $this->_table_has_not_changed_since_previous($table_name, $sql, 'ENGINE=InnoDB ');
         $table_name = 'esp_state';
         $sql = "STA_ID smallint(5) unsigned NOT NULL AUTO_INCREMENT,
 				CNT_ISO varchar(2) NOT NULL,
@@ -505,7 +499,7 @@ class EE_DMS_Core_4_9_0 extends EE_Data_Migration_Script_Base
 				PRIMARY KEY  (TXN_ID),
 				KEY TXN_timestamp (TXN_timestamp),
 				KEY STS_ID (STS_ID)";
-        $this->_table_is_changed_in_this_version($table_name, $sql, 'ENGINE=InnoDB');
+        $this->_table_has_not_changed_since_previous($table_name, $sql, 'ENGINE=InnoDB');
         $table_name = 'esp_venue_meta';
         $sql = "VNUM_ID int(11) NOT NULL AUTO_INCREMENT,
 			VNU_ID bigint(20) unsigned NOT NULL DEFAULT 0,
@@ -542,7 +536,7 @@ class EE_DMS_Core_4_9_0 extends EE_Data_Migration_Script_Base
 				PRC_parent int(10) unsigned DEFAULT 0,
 				PRIMARY KEY  (PRC_ID),
 				KEY PRT_ID (PRT_ID)";
-        $this->_table_is_changed_in_this_version($table_name, $sql, 'ENGINE=InnoDB');
+        $this->_table_has_not_changed_since_previous($table_name, $sql, 'ENGINE=InnoDB');
         $table_name = "esp_price_type";
         $sql = "PRT_ID tinyint(3) unsigned NOT NULL AUTO_INCREMENT,
 				PRT_name varchar(45) NOT NULL,
@@ -578,7 +572,7 @@ class EE_DMS_Core_4_9_0 extends EE_Data_Migration_Script_Base
 				TKT_deleted tinyint(1) NOT NULL DEFAULT '0',
 				PRIMARY KEY  (TKT_ID),
 				KEY TKT_start_date (TKT_start_date)";
-        $this->_table_is_changed_in_this_version($table_name, $sql, 'ENGINE=InnoDB');
+        $this->_table_has_not_changed_since_previous($table_name, $sql, 'ENGINE=InnoDB');
         $table_name = 'esp_question_group';
         $sql = 'QSG_ID int(10) unsigned NOT NULL AUTO_INCREMENT,
 				QSG_name varchar(255) NOT NULL,
@@ -599,7 +593,7 @@ class EE_DMS_Core_4_9_0 extends EE_Data_Migration_Script_Base
     }
 
     /**
-     * Inserts default data after parent was called.
+     * Inserts default data on new installs
      * @since $VID:$
      * @throws EE_Error
      * @throws InvalidArgumentException
@@ -609,26 +603,7 @@ class EE_DMS_Core_4_9_0 extends EE_Data_Migration_Script_Base
      */
     public function insert_default_data()
     {
-        /** @var EE_DMS_Core_4_1_0 $script_4_1_defaults */
-        $script_4_1_defaults = EE_Registry::instance()->load_dms('Core_4_1_0');
-        // (because many need to convert old string states to foreign keys into the states table)
-        $script_4_1_defaults->insert_default_states();
-        $script_4_1_defaults->insert_default_countries();
-        /** @var EE_DMS_Core_4_5_0 $script_4_5_defaults */
-        $script_4_5_defaults = EE_Registry::instance()->load_dms('Core_4_5_0');
-        $script_4_5_defaults->insert_default_price_types();
-        $script_4_5_defaults->insert_default_prices();
-        $script_4_5_defaults->insert_default_tickets();
-        /** @var EE_DMS_Core_4_6_0 $script_4_6_defaults */
-        $script_4_6_defaults = EE_Registry::instance()->load_dms('Core_4_6_0');
-        $script_4_6_defaults->add_default_admin_only_payments();
-        $script_4_6_defaults->insert_default_currencies();
-        /** @var EE_DMS_Core_4_8_0 $script_4_8_defaults */
-        $script_4_8_defaults = EE_Registry::instance()->load_dms('Core_4_8_0');
-        $script_4_8_defaults->verify_new_countries();
-        $script_4_8_defaults->verify_new_currencies();
-        $this->verify_db_collations();
-        $this->verify_db_collations_again();
+        $this->previous_dms->insert_default_data();
     }
 
 
@@ -645,107 +620,5 @@ class EE_DMS_Core_4_9_0 extends EE_Data_Migration_Script_Base
 
     public function migration_page_hooks()
     {
-    }
-
-
-
-    /**
-     * Verify all EE4 models' tables use utf8mb4 collation
-     *
-     * @return void
-     */
-    public function verify_db_collations()
-    {
-        global $wpdb;
-        // double-check we haven't already done it or that that the DB doesn't support utf8mb4
-        if ('utf8mb4' !== $wpdb->charset
-            || get_option('ee_verified_db_collations', false)) {
-            return;
-        }
-        // grab tables from each model
-        $tables_to_check = array();
-        foreach (EE_Registry::instance()->non_abstract_db_models as $model_name) {
-            if (method_exists($model_name, 'instance')) {
-                $model_obj = call_user_func(array($model_name, 'instance'));
-                if ($model_obj instanceof EEM_Base) {
-                    foreach ($model_obj->get_tables() as $table) {
-                        if (strpos($table->get_table_name(), 'esp_')
-                            && (is_main_site()// for main tables, verify global tables
-                                || ! $table->is_global()// if not the main site, then only verify non-global tables (avoid doubling up)
-                            )
-                            && function_exists('maybe_convert_table_to_utf8mb4')
-                        ) {
-                            $tables_to_check[] = $table->get_table_name();
-                        }
-                    }
-                }
-            }
-        }
-        // and let's just be sure these addons' tables get migrated too. They already get handled if their addons are active
-        // when this code is run, but not otherwise. Once we record what tables EE added, we'll be able to use that instead
-        // of hard-coding this
-        $addon_tables = array(
-            // mailchimp
-            'esp_event_mailchimp_list_group',
-            'esp_event_question_mailchimp_field',
-            // multisite
-            'esp_blog_meta',
-            // people
-            'esp_people_to_post',
-            // promotions
-            'esp_promotion',
-            'esp_promotion_object',
-        );
-        foreach ($addon_tables as $table_name) {
-                $tables_to_check[] = $table_name;
-        }
-        $this->_verify_db_collations_for_tables(array_unique($tables_to_check));
-        // ok and now let's remember this was done (without needing to check the db schemas all over again)
-        add_option('ee_verified_db_collations', true, null, 'no');
-        // seeing how this ran with the fix from 10435, no need to check again
-        add_option('ee_verified_db_collations_again', true, null, 'no');
-    }
-
-
-
-    /**
-     * Verifies DB collations because a bug was discovered on https://events.codebasehq.com/projects/event-espresso/tickets/10435
-     * which meant some DB collations might not have been updated
-     * @return void
-     */
-    public function verify_db_collations_again()
-    {
-        global $wpdb;
-        // double-check we haven't already done this or that the DB doesn't support it
-        // compare to how WordPress' upgrade_430() function does this check
-        if ('utf8mb4' !== $wpdb->charset
-            || get_option('ee_verified_db_collations_again', false)) {
-            return;
-        }
-        $tables_to_check = array(
-            'esp_attendee_meta',
-            'esp_message'
-        );
-        $this->_verify_db_collations_for_tables(array_unique($tables_to_check));
-        add_option('ee_verified_db_collations_again', true, null, 'no');
-    }
-
-
-
-    /**
-     * Runs maybe_convert_table_to_utf8mb4 on the specified tables
-     * @param $tables_to_check
-     * @return boolean true if logic ran, false if it didn't
-     */
-    protected function _verify_db_collations_for_tables($tables_to_check)
-    {
-        foreach ($tables_to_check as $table_name) {
-            $table_name = $this->_table_analysis->ensureTableNameHasPrefix($table_name);
-            if (! apply_filters('FHEE__EE_DMS_Core_4_9_0__verify_db_collations__check_overridden', false, $table_name)
-                && $this->_get_table_analysis()->tableExists($table_name)
-            ) {
-                maybe_convert_table_to_utf8mb4($table_name);
-            }
-        }
     }
 }

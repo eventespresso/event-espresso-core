@@ -82,10 +82,10 @@ class espresso_events_Registration_Form_Hooks_Extend extends espresso_events_Reg
         // restore revision for additional questions
         $post_evt->restore_revision(
             $revision_id,
-            array('Question_Group'),
-            array(
-                'Question_Group' => array('Event_Question_Group.EQG_primary' => 0),
-            )
+            ['Question_Group'],
+            [
+                'Question_Group' => ['Event_Question_Group.EQG_additional' => true],
+            ]
         );
     }
 
@@ -129,9 +129,9 @@ class espresso_events_Registration_Form_Hooks_Extend extends espresso_events_Reg
             $EQGs = ! empty($event_id)
                 ? $this->_event->get_many_related(
                     'Question_Group',
-                    array(array('Event_Question_Group.EQG_primary' => 0))
+                    [['Event_Question_Group.EQG_additional' => true]]
                 )
-                : array();
+                : [];
             $EQGids = array_keys($EQGs);
 
             if (! empty($QSGs)) {
@@ -187,23 +187,23 @@ class espresso_events_Registration_Form_Hooks_Extend extends espresso_events_Reg
     {
         $question_groups = ! empty($data['add_attendee_question_groups'])
             ? (array) $data['add_attendee_question_groups']
-            : array();
+            : [];
         $added_qgs = array_keys($question_groups);
-        $success = array();
+        $success = [];
 
         // let's get all current question groups associated with this event.
         $current_qgs = $evtobj->get_many_related(
             'Question_Group',
-            array(array('Event_Question_Group.EQG_primary' => 0))
+            [['Event_Question_Group.EQG_additional' => true]]
         );
         $current_qgs = array_keys($current_qgs); // we just want the ids
 
         // now let's get the groups selected in the editor and update (IF we have data)
         if (! empty($question_groups)) {
-            foreach ($question_groups as $id => $val) {
+            foreach ($question_groups as $qgid) {
                 // add to event
-                if ($val) {
-                    $qg = $evtobj->_add_relation_to($id, 'Question_Group', array('EQG_primary' => 0));
+                if ($qgid) {
+                    $qg = $evtobj->add_question_group($qgid, false);
                 }
                 $success[] = ! empty($qg) ? 1 : 0;
             }
@@ -213,7 +213,7 @@ class espresso_events_Registration_Form_Hooks_Extend extends espresso_events_Reg
         $removed_qgs = array_diff($current_qgs, $added_qgs);
 
         foreach ($removed_qgs as $qgid) {
-            $qg = $evtobj->_remove_relation_to($qgid, 'Question_Group', array('EQG_primary' => 0));
+            $qg = $evtobj->remove_question_group($qgid, false);
             $success[] = ! empty($qg) ? 1 : 0;
         }
 
