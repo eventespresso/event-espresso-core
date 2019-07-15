@@ -133,6 +133,68 @@ class EE_Registration_Test extends EE_UnitTestCase{
 		$this->assertFalse( $r->can_checkin( $invalid_DTT_ID ) );
 	}
 
+    /**
+     * @since $VID:$
+     * @throws EE_Error
+     */
+	public function testQuestionGroupsPrimaryReg()
+    {
+        $r = $this->new_model_obj_with_dependencies(
+            'Registration',
+            [
+                'REG_count' => 1,
+            ]
+        );
+        // Associate both question groups for primary registrants, but only personal for additional registrants
+        $r->event_obj()->add_question_group(EEM_Question_Group::system_personal, true);
+        $r->event_obj()->add_question_group(EEM_Question_Group::system_personal, false);
+        $r->event_obj()->add_question_group(EEM_Question_Group::system_address, true);
+        $qgs = $r->question_groups();
+        $this->assertEquals(2, count($qgs));
+    }
+
+    /**
+     * @since $VID:$
+     * @throws EE_Error
+     */
+    public function testQuestionGroupsAdditionalReg()
+    {
+        $r = $this->new_model_obj_with_dependencies(
+            'Registration',
+            [
+                'REG_count' => 2,
+                'REG_group_size' => 2,
+            ]
+        );
+        // Associate both question groups for primary registrants, but only personal for additional registrants
+        $r->event_obj()->add_question_group(EEM_Question_Group::system_personal, true);
+        $r->event_obj()->add_question_group(EEM_Question_Group::system_personal, false);
+        $r->event_obj()->add_question_group(EEM_Question_Group::system_address, true);
+        $qgs = $r->question_groups();
+        $this->assertEquals(1, count($qgs));
+        $qg = reset($qgs);
+        $this->assertEquals(1, $qg->ID());
+    }
+
+    /**
+     * @since $VID:$
+     * @throws EE_Error
+     */
+    public function testCountQuestionGroups()
+    {
+        $r = $this->new_model_obj_with_dependencies(
+            'Registration',
+            [
+                'REG_count' => 2,
+                'REG_group_size' => 2,
+            ]
+        );
+        // Associate both question groups for primary registrants, but only personal for additional registrants
+        $r->event_obj()->add_question_group(EEM_Question_Group::system_personal, true);
+        $r->event_obj()->add_question_group(EEM_Question_Group::system_personal, false);
+        $r->event_obj()->add_question_group(EEM_Question_Group::system_address, true);
+        $this->assertEquals(1, $r->count_question_groups());
+    }
 }
 
 // End of file EE_Registration_Test.php
