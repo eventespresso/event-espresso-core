@@ -65,7 +65,6 @@ class Checkin_Test extends \EE_UnitTestCase
 
 
 
-
     public function test_handle_checkin__success()
     {
         $checkins_before = \EEM_Checkin::instance()->count();
@@ -76,7 +75,6 @@ class Checkin_Test extends \EE_UnitTestCase
         $dtt->_add_relation_to($reg->get('TKT_ID'), 'Ticket');
         $response = rest_do_request($this->_create_checkin_request($reg->ID(), $dtt->ID()));
         $data = $response->get_data();
-        -
         $this->assertEquals($checkins_before + 1, \EEM_Checkin::instance()->count());
 
         $this->assertTrue(isset($data['CHK_ID']));
