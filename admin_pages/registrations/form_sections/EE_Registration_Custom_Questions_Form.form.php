@@ -1,5 +1,8 @@
 <?php
 
+use EventEspresso\core\exceptions\InvalidDataTypeException;
+use EventEspresso\core\exceptions\InvalidInterfaceException;
+
 /**
  *
  * Class EE_Registration_Form
@@ -49,6 +52,14 @@ class EE_Registration_Custom_Questions_Form extends EE_Form_Section_Proper
         return $this->_registration;
     }
 
+    /**
+     * @since $VID:$
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws ReflectionException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     */
     public function build_form_from_registration()
     {
         $reg = $this->get_registration();
@@ -57,17 +68,20 @@ class EE_Registration_Custom_Questions_Form extends EE_Form_Section_Proper
         }
         // we want to get all their question groups
         $question_groups = EEM_Question_Group::instance()->get_all(
-            array(
-                array(
+            [
+                [
                     'Event_Question_Group.EVT_ID' => $reg->event_ID(),
-                    'Event_Question_Group.EQG_primary' => $reg->count() == 1 ? true : false,
-                    'OR' => array(
+                    'OR' => [
                         'Question.QST_system*blank' =>  '',
-                        'Question.QST_system*null' => array( 'IS_NULL' )
-                    )
-                ),
-                'order_by' => array( 'QSG_order' => 'ASC' )
-            )
+                        'Question.QST_system*null' => ['IS_NULL']
+                    ],
+                    'Event_Question_Group.'
+                    . EEM_Event_Question_Group::instance()->fieldNameForContext(
+                        $reg->is_primary_registrant()
+                    ) => true
+                ],
+                'order_by' => ['QSG_order' => 'ASC']
+            ]
         );
         // get each question groups questions
         foreach ($question_groups as $question_group) {
