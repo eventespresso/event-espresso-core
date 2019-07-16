@@ -10,7 +10,7 @@ import { createHigherOrderComponent } from '@wordpress/compose';
  * Internal dependencies
  */
 import DateEntityForm from './date-entity-form';
-import { dateEntityFormSchema } from './date-entity-form-schema';
+import dateEntityFormSchema from './date-entity-form-schema';
 
 const DateEntityFormModal = withEditorModal( {
 	title: __( 'Event Date Editor', 'event_espresso' ),

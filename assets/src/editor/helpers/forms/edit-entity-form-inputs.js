@@ -8,7 +8,7 @@ import { normalizeEntityId } from '@eventespresso/helpers';
 /**
  * External imports
  */
-import { generateFormInputFromConfig } from './generate-form-input-from-config';
+import generateFormInputFromConfig from './generate-form-input-from-config';
 
 /**
  * returns an array of inputs corresponding to
@@ -22,7 +22,7 @@ import { generateFormInputFromConfig } from './generate-form-input-from-config';
  * @param {Array} exclude  Array of field ids to not display inputs for
  * @return {Array} form inputs
  */
-export const editEntityFormInputs = (
+const editEntityFormInputs = (
 	entity,
 	inputConfig,
 	formDataKeyPrefix,
@@ -57,3 +57,5 @@ export const editEntityFormInputs = (
 	} );
 	return inputs;
 };
+
+export default editEntityFormInputs;

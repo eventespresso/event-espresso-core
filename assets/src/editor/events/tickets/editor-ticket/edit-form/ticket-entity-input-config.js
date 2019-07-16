@@ -11,7 +11,7 @@ import {
 	SiteCurrency,
 } from '@eventespresso/value-objects';
 
-export const ticketEntityInputConfig = (
+const ticketEntityInputConfig = (
 	ticketEntity,
 	calculator,
 	recalculateBasePrice
@@ -334,3 +334,5 @@ export const ticketEntityInputConfig = (
 		},
 	];
 };
+
+export default ticketEntityInputConfig;

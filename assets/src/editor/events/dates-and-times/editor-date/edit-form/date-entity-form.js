@@ -15,10 +15,8 @@ import { isModelEntityOfModel } from '@eventespresso/validators';
 /**
  * Internal dependencies
  */
-import {
-	editEntityFormInputs,
-} from '../../../../helpers/forms/edit-entity-form-inputs';
-import { dateEntityInputConfig } from './date-entity-input-config';
+import editEntityFormInputs from '../../../../helpers/forms/edit-entity-form-inputs';
+import dateEntityInputConfig from './date-entity-input-config';
 
 const {
 	FormSection,
@@ -92,6 +90,7 @@ const DateEntityForm = ( {
 	if ( Array.isArray( formRows ) ) {
 		formRows.unshift( formInfo );
 	}
+	const prefix = `ee-event-date-editor-${ dateEntity.id }`;
 	return useMemo(
 		() => {
 			// edit forms for existing objects must have initial values
@@ -99,14 +98,11 @@ const DateEntityForm = ( {
 			isModelEntityOfModel( dateEntity, 'datetime' ) ?
 				(
 					<FormWrapper>
-						<FormSection
-							htmlId={
-								`ee-event-date-editor-${ dateEntity.id }-form-section`
-							}
-							children={ formRows }
-						/>
+						<FormSection htmlId={ `${ prefix }-form-section` } >
+							{ formRows }
+						</FormSection>
 						<FormSaveCancelButtons
-							htmlClass={ `ee-event-date-editor-${ dateEntity.id }` }
+							htmlClass={ prefix }
 							submitButton={ submitButton }
 							cancelButton={ cancelButton }
 						/>

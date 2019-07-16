@@ -33,7 +33,7 @@ const defaultInputConfig = {
  * @param {Object} inputConfig input generation details
  * @return {Array} form inputs
  */
-export const generateFormInputFromConfig = (
+const generateFormInputFromConfig = (
 	formDataKeyPrefix,
 	formDataValues,
 	inputConfig
@@ -83,3 +83,5 @@ export const generateFormInputFromConfig = (
 		/>
 	);
 };
+
+export default generateFormInputFromConfig;
