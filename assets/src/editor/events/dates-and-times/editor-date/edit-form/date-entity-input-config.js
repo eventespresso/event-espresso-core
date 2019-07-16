@@ -7,7 +7,7 @@ import { validations } from '@eventespresso/components';
 import { isModelEntityOfModel } from '@eventespresso/validators';
 import { ServerDateTime as DateTime } from '@eventespresso/value-objects';
 
-export const dateEntityInputConfig = ( dateEntity ) => {
+const dateEntityInputConfig = ( dateEntity ) => {
 	warning(
 		isModelEntityOfModel( dateEntity, 'datetime' ),
 		'Can not generate input config data because an invalid date entity was supplied.'
@@ -173,3 +173,5 @@ export const dateEntityInputConfig = ( dateEntity ) => {
 		},
 	];
 };
+
+export default dateEntityInputConfig;
