@@ -4,13 +4,18 @@
 import { isModelEntityOfModel } from '@eventespresso/validators';
 
 /**
- * returns an object mapping Ticket Entity properties to form prefixs
+ * Internal imports
+ */
+import { parseInfinity } from '../../../../helpers';
+
+/**
+ * returns an object mapping Ticket Entity properties to form prefixes
  *
  * @function
  * @param {Object} ticketEntity
  * @return {Object} rendered form
  */
-export const ticketEntityFormSchema = ( ticketEntity ) => {
+const ticketEntityFormSchema = ( ticketEntity ) => {
 	if ( ! isModelEntityOfModel( ticketEntity, 'ticket' ) ) {
 		return {};
 	}
@@ -19,13 +24,13 @@ export const ticketEntityFormSchema = ( ticketEntity ) => {
 		[ `${ prefix }-id` ]: ticketEntity.id,
 		[ `${ prefix }-name` ]: ticketEntity.name || '',
 		[ `${ prefix }-description` ]: ticketEntity.description || '',
-		[ `${ prefix }-qty` ]: stripInfinity( ticketEntity.qty ),
+		[ `${ prefix }-qty` ]: parseInfinity( ticketEntity.qty ),
 		[ `${ prefix }-sold` ]: ticketEntity.sold || 0,
 		[ `${ prefix }-reserved` ]: ticketEntity.reserved || 0,
-		[ `${ prefix }-uses` ]: stripInfinity( ticketEntity.uses ),
+		[ `${ prefix }-uses` ]: parseInfinity( ticketEntity.uses ),
 		[ `${ prefix }-required` ]: ticketEntity.required || false,
 		[ `${ prefix }-min` ]: ticketEntity.min || null,
-		[ `${ prefix }-max` ]: stripInfinity( ticketEntity.max ),
+		[ `${ prefix }-max` ]: parseInfinity( ticketEntity.max ),
 		[ `${ prefix }-price` ]: ticketEntity.price && ticketEntity.price.amount ?
 			ticketEntity.price.amount.toNumber() :
 			null,
@@ -40,6 +45,4 @@ export const ticketEntityFormSchema = ( ticketEntity ) => {
 	};
 };
 
-const stripInfinity = ( number ) => number !== 'INF' || number !== Infinity ?
-	number :
-	null;
+export default ticketEntityFormSchema;

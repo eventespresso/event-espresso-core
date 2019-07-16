@@ -4,6 +4,11 @@
 import { isModelEntityOfModel } from '@eventespresso/validators';
 
 /**
+ * Internal imports
+ */
+import { parseInfinity } from '../../../../helpers';
+
+/**
  * returns an object mapping
  * Event Date Entity properties
  * to form prefixes
@@ -12,7 +17,7 @@ import { isModelEntityOfModel } from '@eventespresso/validators';
  * @param {Object} dateEntity  EE Date object
  * @return {Object} rendered form
  */
-export const dateEntityFormSchema = ( dateEntity ) => {
+const dateEntityFormSchema = ( dateEntity ) => {
 	if ( ! isModelEntityOfModel( dateEntity, 'datetime' ) ) {
 		return {};
 	}
@@ -26,7 +31,7 @@ export const dateEntityFormSchema = ( dateEntity ) => {
 		[ `${ prefix }-end` ]: dateEntity.end.toISO(),
 		[ `${ prefix }-startTime` ]: dateEntity.start.toFormat( 'HH:mm' ),
 		[ `${ prefix }-endTime` ]: dateEntity.end.toFormat( 'HH:mm' ),
-		[ `${ prefix }-regLimit` ]: stripInfinity( dateEntity.regLimit ),
+		[ `${ prefix }-regLimit` ]: parseInfinity( dateEntity.regLimit ),
 		[ `${ prefix }-sold` ]: dateEntity.sold || 0,
 		[ `${ prefix }-reserved` ]: dateEntity.reserved || 0,
 		[ `${ prefix }-order` ]: dateEntity.order || 0,
@@ -35,8 +40,4 @@ export const dateEntityFormSchema = ( dateEntity ) => {
 	};
 };
 
-const stripInfinity = ( number ) => {
-	return number !== 'INF' && number !== Infinity && number > 0 ?
-		number :
-		null;
-};
+export default dateEntityFormSchema;
