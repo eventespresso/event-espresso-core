@@ -16,10 +16,8 @@ import { isModelEntityOfModel } from '@eventespresso/validators';
  */
 import { useTicketPriceCalculators } from '../price-calculator';
 import { withTicketPriceEntities, withPriceTypeEntities } from '../../../hocs';
-import {
-	editEntityFormInputs,
-} from '../../../../helpers/forms/edit-entity-form-inputs';
-import { ticketEntityInputConfig } from './ticket-entity-input-config';
+import editEntityFormInputs from '../../../../helpers/forms/edit-entity-form-inputs';
+import ticketEntityInputConfig from './ticket-entity-input-config';
 
 const {
 	FormSection,
