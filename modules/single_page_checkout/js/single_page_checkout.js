@@ -463,7 +463,7 @@ jQuery(document).ready( function($) {
 		        if ( this.type !== 'file' && this.type !== 'select-multiple' ) {
                     input.val( $.trim( input.val() ) );
 		        }
-		        // Datepicker validation would get triggered before it's auto-filled by JS, which erroneously reports an
+gi		        // Datepicker validation would get triggered before it's auto-filled by JS, which erroneously reports an
 				// error, so don't trigger its validation on focusout.
 		        if ( ! input.hasClass('datepicker') ) {
 					input.valid();
