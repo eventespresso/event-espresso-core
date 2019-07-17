@@ -308,12 +308,11 @@ function* persistAllEntities() {
 	while ( entitiesByModel.length > 0 ) {
 		const [ modelName, entities ] = entitiesByModel.pop();
 		while ( entities.length > 0 ) {
-			const entity = entities.pop();
 			yield resolveDispatch(
 				CORE_REDUCER_KEY,
 				'persistEntityRecord',
 				modelName,
-				entity
+				entities.pop()
 			);
 		}
 	}
