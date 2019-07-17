@@ -10,11 +10,13 @@ export {
 
 import { createHigherOrderComponent } from '@wordpress/compose';
 import EditorInitialization from './editor-initialization';
+import useEditorPersistence from './use-editor-persistence';
 
 const withEditorInitialization = createHigherOrderComponent(
 	( WrappedComponent ) => (
 		{ eventId }
 	) => {
+		useEditorPersistence( eventId );
 		return <EditorInitialization eventId={ eventId }>
 			<WrappedComponent eventId={ eventId } />
 		</EditorInitialization>;

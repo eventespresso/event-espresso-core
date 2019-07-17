@@ -14,6 +14,8 @@ import {
 	getRelationAdditionsQueuedForModel,
 	getRelationDeletionsQueuedForModel,
 	countRelationModelsIndexedForEntity,
+	getRelationModelsQueuedForAddition,
+	getRelationModelsQueuedForDeletion,
 } from '../relations';
 import { mockStateForTests } from '../../test/fixtures';
 import {
@@ -196,6 +198,16 @@ describe( 'getRelatedEntities()', () => {
 describe( 'Dirty relations tests', () => {
 	const originalState = { ...mockStateForTests };
 	beforeEach( () => {
+		// make sure we have new objects on the new state.
+		originalState.dirty = {
+			delete: Map(),
+			trash: Map(),
+			relations: fromJS( {
+				index: {},
+				delete: {},
+				add: {},
+			} ),
+		};
 		const getState = ( incomingState = Map() ) => {
 			return incomingState.withMutations( ( subState ) => {
 				subState.set(
@@ -372,6 +384,100 @@ describe( 'Dirty relations tests', () => {
 			expect( modifiedResult ).toEqual( {
 				10: { datetime: [ 20, 80 ] },
 			} );
+		} );
+	} );
+	describe( 'getRelationModelsQueuedForAddition()', () => {
+		beforeEach( () => getRelationModelsQueuedForAddition.clear() );
+		it( 'returns an empty array when there are no addition relations ' +
+			'queued.', () => {
+			expect( getRelationModelsQueuedForAddition(
+				mockStateForTests,
+			) ).toEqual( [] );
+		} );
+		it( 'returns expected array when there models with records queued ' +
+			'for adding relations', () => {
+			expect( getRelationModelsQueuedForAddition(
+				originalState,
+			) ).toEqual( [ 'ticket' ] );
+		} );
+		it( 'returns cached copy when state has not changed', () => {
+			const testResult = getRelationModelsQueuedForAddition(
+				originalState,
+			);
+			expect( getRelationModelsQueuedForAddition(
+				originalState,
+			) ).toBe( testResult );
+		} );
+		it( 'breaks cache when state changes', () => {
+			const testResult = getRelationModelsQueuedForAddition(
+				originalState,
+			);
+			// This mimics how the dirty-relations reducer updates the map
+			// because it updates the entire "add" branch in the state.
+			const modifiedState = { ...originalState };
+			modifiedState.dirty.relations = modifiedState.dirty.relations.set(
+				'add',
+				modifiedState.dirty.relations.get( 'add' ).setIn(
+					[
+						'event',
+						10,
+						'datetime',
+					],
+					Set.of( 20, 80 )
+				)
+			);
+			const modifiedResult = getRelationModelsQueuedForAddition(
+				modifiedState,
+			);
+			expect( modifiedResult ).not.toBe( testResult );
+			expect( modifiedResult ).toEqual( [ 'ticket', 'event' ] );
+		} );
+	} );
+	describe( 'getRelationModelsQueuedForDeletion()', () => {
+		beforeEach( () => getRelationModelsQueuedForDeletion.clear() );
+		it( 'returns an empty array when there are no deletion relations ' +
+			'queued.', () => {
+			expect( getRelationModelsQueuedForDeletion(
+				mockStateForTests,
+			) ).toEqual( [] );
+		} );
+		it( 'returns expected array when there models with records queued ' +
+			'for deleting relations', () => {
+			expect( getRelationModelsQueuedForDeletion(
+				originalState,
+			) ).toEqual( [ 'event', 'ticket' ] );
+		} );
+		it( 'returns cached copy when state has not changed', () => {
+			const testResult = getRelationModelsQueuedForDeletion(
+				originalState,
+			);
+			expect( getRelationModelsQueuedForDeletion(
+				originalState,
+			) ).toBe( testResult );
+		} );
+		it( 'breaks cache when state changes', () => {
+			const testResult = getRelationModelsQueuedForDeletion(
+				originalState,
+			);
+			// This mimics how the dirty-relations reducer updates the map
+			// because it updates the entire "add" branch in the state.
+			const modifiedState = { ...originalState };
+			modifiedState.dirty.relations = modifiedState.dirty.relations.set(
+				'delete',
+				modifiedState.dirty.relations.get( 'delete' ).setIn(
+					[
+						'event',
+						10,
+						'datetime',
+					],
+					Set.of( 20, 80 )
+				)
+			);
+			const modifiedResult = getRelationModelsQueuedForDeletion(
+				modifiedState,
+			);
+			expect( modifiedResult ).not.toBe( testResult );
+			expect( modifiedResult ).toEqual( [ 'event', 'ticket' ] );
 		} );
 	} );
 } );

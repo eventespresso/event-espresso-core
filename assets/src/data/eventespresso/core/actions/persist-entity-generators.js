@@ -280,6 +280,44 @@ function* persistAllDeletes() {
 	return { deleted: deletedIds, trashed: trashedIds };
 }
 
+/**
+ * Action generator for persisting all dirty/new entities in the state.
+ *
+ * @yield {function} select control to get all entities currently in the state.
+ * @yield {function} resolveDispatch control persisting each dirty/new entity
+ *                   to the server.
+ */
+function* persistAllEntities() {
+	const entitiesInState = yield select(
+		CORE_REDUCER_KEY,
+		'getAllEntitiesInState'
+	);
+	// first let's get a map of dirty entities to their models in a simple array.
+	// loop through the immutable Map and dispatch actions for dirty entities
+	const entitiesByModel = [];
+	entitiesInState.forEach( ( entityMap, modelName ) => {
+		const dirtyEntities = Array.from( entityMap.filter(
+			( entity ) => {
+				return entity.isDirty || entity.isNew;
+			}
+		).values() );
+		if ( dirtyEntities.length > 0 ) {
+			entitiesByModel.push( [ modelName, dirtyEntities ] );
+		}
+	} );
+	while ( entitiesByModel.length > 0 ) {
+		const [ modelName, entities ] = entitiesByModel.pop();
+		while ( entities.length > 0 ) {
+			yield resolveDispatch(
+				CORE_REDUCER_KEY,
+				'persistEntityRecord',
+				modelName,
+				entities.pop()
+			);
+		}
+	}
+}
+
 export {
 	persistEntityRecord,
 	persistForEntityId,
@@ -287,4 +325,5 @@ export {
 	persistDeletesForModel,
 	persistTrashesForModel,
 	persistAllDeletes,
+	persistAllEntities,
 };
