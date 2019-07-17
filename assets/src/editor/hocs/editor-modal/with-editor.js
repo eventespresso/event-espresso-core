@@ -1,7 +1,7 @@
 /**
  * External imports
  */
-import { Component } from '@wordpress/element';
+import { useCallback, useMemo, useState } from '@wordpress/element';
 import { createHigherOrderComponent } from '@wordpress/compose';
 import { __, sprintf } from '@eventespresso/i18n';
 
@@ -20,36 +20,23 @@ const { confirm } = window;
  * 										an empty string for this prop
  */
 const withEditor = createHigherOrderComponent(
-	( OriginalComponent ) => {
-		return class extends Component {
-			constructor( props ) {
-				super( props );
-				const closeEditorNotice = props.closeEditorNotice !== undefined ?
-					props.closeEditorNotice :
+	( WrappedComponent ) =>
+		( { closeEditorNotice, ...otherProps } ) => {
+			const [ editorOpen, setEditorOpen ] = useState( false );
+			const [ changesSaved, setChangesSaved ] = useState( true );
+
+			closeEditorNotice = useMemo(
+				() => closeEditorNotice !== undefined ?
+					closeEditorNotice :
 					sprintf(
 						__(
 							'Are you sure you want to close the Editor?%sAll unsaved changes will be lost!',
 							'event_espresso'
 						),
 						'\n\n'
-					);
-				this.state = {
-					editorOpen: false,
-					changesSaved: true,
-					closeEditorNotice,
-				};
-			}
-
-			/**
-			 * will mark that changes have been saved which allows the modal to
-			 * be closed without triggering the display of the closeEditorNotice
-			 *
-			 * @function
-			 * @param {boolean} changesSaved
-			 */
-			changesSaved = ( changesSaved = false ) => {
-				this.setState( { changesSaved } );
-			};
+					),
+				[ closeEditorNotice ]
+			);
 
 			/**
 			 * opens and closes withEditorModal
@@ -57,42 +44,33 @@ const withEditor = createHigherOrderComponent(
 			 * @function
 			 * @param {Object} event - click event
 			 */
-			toggleEditor = ( event ) => {
-				if ( event && event.preventDefault ) {
-					event.preventDefault();
-					event.stopPropagation();
-				}
-				this.setState( ( prevState ) => {
-					if (
-						this.state.closeEditorNotice !== '' &&
-						prevState.editorOpen && ! prevState.changesSaved
-					) {
-						return (
-							{
-								editorOpen: ! confirm(
-									this.state.closeEditorNotice
-								),
-							}
-						);
+			const toggleEditor = useCallback(
+				( event ) => {
+					if ( event && event.preventDefault ) {
+						event.preventDefault();
+						event.stopPropagation();
 					}
-					return (
-						{ editorOpen: ! prevState.editorOpen }
-					);
-				} );
-			};
+					if (
+						closeEditorNotice !== '' &&
+						editorOpen && ! changesSaved
+					) {
+						setEditorOpen( ! confirm( closeEditorNotice ) );
+					} else {
+						setEditorOpen( ! editorOpen );
+					}
+				},
+				[ editorOpen, setEditorOpen, changesSaved, closeEditorNotice ]
+			);
 
-			render() {
-				return (
-					<OriginalComponent
-						{ ...this.props }
-						editorOpen={ this.state.editorOpen }
-						toggleEditor={ this.toggleEditor }
-						changesSaved={ this.changesSaved }
-					/>
-				);
-			}
-		};
-	},
+			return (
+				<WrappedComponent
+					{ ...otherProps }
+					editorOpen={ editorOpen }
+					toggleEditor={ toggleEditor }
+					changesSaved={ setChangesSaved }
+				/>
+			);
+		},
 	'withEditor'
 );
 
