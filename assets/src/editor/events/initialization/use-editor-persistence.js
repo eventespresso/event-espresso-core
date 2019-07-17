@@ -26,9 +26,9 @@ const useEditorPersistence = ( eventId ) => {
 		if ( eventProcessed.current === false ) {
 			event.preventDefault();
 			await persistAllDeletes();
+			await persistAllEntities();
 			await persistAllAddRelations();
 			await persistAllDeleteRelations();
-			await persistAllEntities();
 			eventProcessed.current = true;
 			jquery( 'form#post' ).trigger( 'submit.edit-post' );
 		}
