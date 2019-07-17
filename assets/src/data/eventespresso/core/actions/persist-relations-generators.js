@@ -12,7 +12,6 @@ import { singularModelName } from '@eventespresso/model';
 import {
 	fetch,
 	select,
-	dispatch,
 	resolveDispatch,
 	resolveSelect,
 } from '../../base-controls';
