@@ -46,7 +46,7 @@ describe( 'persistAllDeleteRelations()', () => {
 		'returned by previous yield', () => {
 		const { value } = fulfillment.next( [ 'ticket', 'event' ] );
 		expect( value ).toEqual(
-			dispatch(
+			resolveDispatch(
 				CORE_REDUCER_KEY,
 				'persistDeleteRelationsForModel',
 				'event'
@@ -54,7 +54,7 @@ describe( 'persistAllDeleteRelations()', () => {
 		);
 		const { value: nextValue } = fulfillment.next();
 		expect( nextValue ).toEqual(
-			dispatch(
+			resolveDispatch(
 				CORE_REDUCER_KEY,
 				'persistDeleteRelationsForModel',
 				'ticket'
@@ -79,7 +79,7 @@ describe( 'persistAllAddRelations()', () => {
 		'returned by previous yield', () => {
 		const { value } = fulfillment.next( [ 'ticket', 'event' ] );
 		expect( value ).toEqual(
-			dispatch(
+			resolveDispatch(
 				CORE_REDUCER_KEY,
 				'persistAddRelationsForModel',
 				'event'
@@ -87,7 +87,7 @@ describe( 'persistAllAddRelations()', () => {
 		);
 		const { value: nextValue } = fulfillment.next();
 		expect( nextValue ).toEqual(
-			dispatch(
+			resolveDispatch(
 				CORE_REDUCER_KEY,
 				'persistAddRelationsForModel',
 				'ticket'
