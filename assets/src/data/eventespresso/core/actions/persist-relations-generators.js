@@ -40,7 +40,7 @@ function* persistAllAddRelations() {
 	// to avoid mutating cached selector result
 	addRelationModels = [ ...addRelationModels ];
 	while ( addRelationModels.length > 0 ) {
-		yield dispatch(
+		yield resolveDispatch(
 			CORE_REDUCER_KEY,
 			'persistAddRelationsForModel',
 			addRelationModels.pop()
@@ -65,7 +65,7 @@ function* persistAllDeleteRelations() {
 	// to avoid mutating cached selector result
 	deleteRelationModels = [ ...deleteRelationModels ];
 	while ( deleteRelationModels.length > 0 ) {
-		yield dispatch(
+		yield resolveDispatch(
 			CORE_REDUCER_KEY,
 			'persistDeleteRelationsForModel',
 			deleteRelationModels.pop()
