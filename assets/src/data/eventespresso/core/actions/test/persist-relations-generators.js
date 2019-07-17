@@ -21,7 +21,6 @@ import {
 import {
 	fetch,
 	select,
-	dispatch,
 	resolveDispatch,
 	resolveSelect,
 } from '../../../base-controls';
