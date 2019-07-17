@@ -1,7 +1,7 @@
 export * from './model';
 export { FormContainer } from './base/form-container';
 export { FormPlaceholder } from './base/form-placeholder';
-export { withFormHandler } from './base/with-form-handler';
+export { default as withFormHandler } from './base/with-form-handler';
 export { FormInput } from './inputs/form-input';
 export { HiddenInput } from './inputs/hidden-input';
 export { InlineEditInput } from './inputs/inline-edit-input';

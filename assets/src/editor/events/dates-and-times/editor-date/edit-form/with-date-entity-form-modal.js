@@ -24,8 +24,6 @@ const DateEntityFormModal = withEditorModal( {
 		);
 		return <DateEntityForm
 			loadHandler={ loadHandler }
-			submitHandler={ null }
-			resetHandler={ null }
 			dateEntity={ dateEntity }
 			{ ...otherProps }
 		/>;
@@ -33,19 +31,19 @@ const DateEntityFormModal = withEditorModal( {
 );
 
 export default createHigherOrderComponent(
-	createHigherOrderComponent(
-		( WrappedComponent ) => ( {
-			dateEntity,
-			doRefresh = () => null,
-			onCloseDateEditor = () => null,
-			onOpenDateEditor = () => null,
-			...otherProps
-		} ) => {
-			const [ showEditor, setShowEditor ] = useState( false );
-			const toggleDateEditor = useCallback( () => {
-				setShowEditor( ( prevShowEditor ) => ! prevShowEditor );
-			}, [ dateEntity ] );
-			return <Fragment>
+	( WrappedComponent ) => ( {
+		dateEntity,
+		doRefresh = () => null,
+		onCloseDateEditor = () => null,
+		onOpenDateEditor = () => null,
+		...otherProps
+	} ) => {
+		const [ showEditor, setShowEditor ] = useState( false );
+		const toggleDateEditor = useCallback( () => {
+			setShowEditor( ( prevShowEditor ) => ! prevShowEditor );
+		}, [ dateEntity ] );
+		return (
+			<Fragment>
 				<WrappedComponent
 					{ ...otherProps }
 					dateEntity={ dateEntity }
@@ -61,8 +59,8 @@ export default createHigherOrderComponent(
 					toggleEditor={ toggleDateEditor }
 					doRefresh={ doRefresh }
 				/>
-			</Fragment>;
-		},
-		'withDateEntityFormModal'
-	)
+			</Fragment>
+		);
+	},
+	'withDateEntityFormModal'
 );
