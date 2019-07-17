@@ -25,6 +25,10 @@ const useEditorPersistence = ( eventId ) => {
 	const persistAll = useCallback( async ( event ) => {
 		if ( eventProcessed.current === false ) {
 			event.preventDefault();
+			jquery( '#submitpost' ).find(
+				'#major-publishing-actions .spinner',
+				'#minor-publishing-actions .spinner'
+			).addClass( 'is-active' );
 			await persistAllDeletes();
 			await persistAllEntities();
 			await persistAllAddRelations();
