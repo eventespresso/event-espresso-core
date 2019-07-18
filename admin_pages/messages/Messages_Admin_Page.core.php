@@ -2172,12 +2172,49 @@ class Messages_Admin_Page extends EE_Admin_Page
             $active_messenger_label,
             ucwords($message_types[ $this->_req_data['message_type'] ]->label['singular'])
         );
+        if ( empty( $preview ) ) {
+            $this->noEventsErrorMessage();
+        }
         // setup display of preview.
         $this->_admin_page_title = $preview_title;
+        $this->_template_args['admin_page_title'] = $preview_title;
         $this->_template_args['admin_page_content'] = $preview_button . '<br />' . $preview;
         $this->_template_args['data']['force_json'] = true;
 
         return '';
+    }
+
+
+    /**
+     * Used to set an error if there are no events available for generating a preview/test send.
+     *
+     * @param bool $test_send  Whether the error should be generated for the context of a test send.
+     */
+    protected function noEventsErrorMessage($test_send = false) {
+        $events_url = parent::add_query_args_and_nonce(
+            array(
+                'action' => 'default',
+                'page' => 'espresso_events',
+            ),
+            admin_url( 'admin.php' )
+        );
+        $message = $test_send
+            ? __(
+                'A test message could not be sent for this message template because there are no events created yet. The preview system uses actual events for generating the test message. %1$sGo see your events%2$s!',
+                'event_espresso'
+            )
+            : __(
+                'There is no preview for this message template available because there are no events created yet. The preview system uses actual events for generating the preview. %1$sGo see your events%2$s!',
+                'event_espresso'
+            );
+
+        EE_Error::add_attention(
+            sprintf(
+                $message,
+                "<a href='{$events_url}'>",
+                '</a>'
+            )
+        );
     }
 
 
@@ -2995,16 +3032,20 @@ class Messages_Admin_Page extends EE_Admin_Page
             $messenger,
             $message_type
         )) {
-            $success = $this->_preview_message(true);
-            if ($success) {
-                EE_Error::add_success(__('Test message sent', 'event_espresso'));
+            if ( EEM_Event::instance()->count() > 0 ) {
+                $success = $this->_preview_message(true);
+                if ($success) {
+                    EE_Error::add_success(__('Test message sent', 'event_espresso'));
+                } else {
+                    EE_Error::add_error(
+                        esc_html__('The test message was not sent', 'event_espresso'),
+                        __FILE__,
+                        __FUNCTION__,
+                        __LINE__
+                    );
+                }
             } else {
-                EE_Error::add_error(
-                    esc_html__('The test message was not sent', 'event_espresso'),
-                    __FILE__,
-                    __FUNCTION__,
-                    __LINE__
-                );
+                $this->noEventsErrorMessage(true);
             }
         }
     }
