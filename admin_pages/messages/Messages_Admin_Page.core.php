@@ -2172,7 +2172,7 @@ class Messages_Admin_Page extends EE_Admin_Page
             $active_messenger_label,
             ucwords($message_types[ $this->_req_data['message_type'] ]->label['singular'])
         );
-        if ( empty( $preview ) ) {
+        if (empty($preview)) {
             $this->noEventsErrorMessage();
         }
         // setup display of preview.
@@ -2190,13 +2190,14 @@ class Messages_Admin_Page extends EE_Admin_Page
      *
      * @param bool $test_send  Whether the error should be generated for the context of a test send.
      */
-    protected function noEventsErrorMessage($test_send = false) {
+    protected function noEventsErrorMessage($test_send = false)
+    {
         $events_url = parent::add_query_args_and_nonce(
             array(
                 'action' => 'default',
-                'page' => 'espresso_events',
+                'page'   => 'espresso_events',
             ),
-            admin_url( 'admin.php' )
+            admin_url('admin.php')
         );
         $message = $test_send
             ? __(
@@ -3032,7 +3033,7 @@ class Messages_Admin_Page extends EE_Admin_Page
             $messenger,
             $message_type
         )) {
-            if ( EEM_Event::instance()->count() > 0 ) {
+            if (EEM_Event::instance()->count() > 0) {
                 $success = $this->_preview_message(true);
                 if ($success) {
                     EE_Error::add_success(__('Test message sent', 'event_espresso'));
