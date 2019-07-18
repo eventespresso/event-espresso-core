@@ -7,7 +7,6 @@ module.exports = function( api ) {
 		],
 		plugins: [
 			/** this is needed because plugin exit modal uses react not wp.element */
-			'@babel/transform-react-jsx',
 			'@babel/plugin-proposal-class-properties',
 		],
 		env: {
