@@ -1,0 +1,9 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`TextBubble renders provided string content as expected 1`] = `
+<span
+  className="ee-text-bubble"
+>
+  Test Content
+</span>
+`;
