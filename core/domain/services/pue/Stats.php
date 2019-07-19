@@ -3,13 +3,9 @@
 namespace EventEspresso\core\domain\services\pue;
 
 use Closure;
-use EE_Admin_Page;
-use EE_Error;
 use EEH_URL;
 use EE_Maintenance_Mode;
 use EEH_Template;
-use EEM_Payment_Method;
-use Exception;
 
 /**
  * Stats
