@@ -12,6 +12,8 @@ import { useCallback, useEffect } from '@wordpress/element';
  */
 import './style.css';
 
+const nullFunc = () => null;
+
 /**
  * withEditorModal
  * HOC for wrapping a component with a WP Modal component
@@ -22,12 +24,12 @@ import './style.css';
 const withEditorModal = createHigherOrderComponent(
 	( mainModalProps ) => ( WrappedComponent ) => ( {
 		editorOpen,
-		toggleEditor = () => null,
-		doRefresh = () => null,
 		modalProps,
 		buttonLabel,
-		onClose = () => null,
-		onOpen = () => null,
+		onOpen = nullFunc,
+		onClose = nullFunc,
+		doRefresh = nullFunc,
+		toggleEditor = nullFunc,
 		...passedProps
 	} ) => {
 		useEffect( () => {
