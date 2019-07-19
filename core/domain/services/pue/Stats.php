@@ -5,6 +5,7 @@ namespace EventEspresso\core\domain\services\pue;
 use Closure;
 use EE_Admin_Page;
 use EE_Error;
+use EEH_URL;
 use EE_Maintenance_Mode;
 use EEH_Template;
 use EEM_Payment_Method;
@@ -145,7 +146,7 @@ class Stats
                 '</a>'
             );
         } else {
-            $settings_url = EE_Admin_Page::add_query_args_and_nonce(
+            $settings_url = EEH_URL::add_query_args_and_nonce(
                 array('action' => 'default'),
                 admin_url('admin.php?page=espresso_general_settings')
             );
