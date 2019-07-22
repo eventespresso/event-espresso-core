@@ -159,7 +159,7 @@ abstract class EE_PMT_Base
     {
         $reflector = new ReflectionClass(get_class($this));
         $fn = $reflector->getFileName();
-        $this->_file_folder = dirname($fn) . '/'
+        $this->_file_folder = dirname($fn) . '/';
     }
 
 
