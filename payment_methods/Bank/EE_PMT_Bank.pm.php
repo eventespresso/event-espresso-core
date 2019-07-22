@@ -23,7 +23,7 @@ class EE_PMT_Bank extends EE_PMT_Base
     {
         $this->_pretty_name = __("Bank", 'event_espresso');
         parent::__construct($pm_instance);
-        $this->_default_button_url = $this->file_url().'lib'.DS.'bank-logo.png';
+        $this->_default_button_url = $this->file_url().'lib/bank-logo.png';
         $this->_default_description = __('Make payment using an electronic funds transfer from your bank.', 'event_espresso');
     }
 
@@ -105,7 +105,7 @@ class EE_PMT_Bank extends EE_PMT_Base
             $extra_meta_for_payment_method
         );
         return EEH_Template::locate_template(
-            'payment_methods' . DS . 'Bank'. DS . 'templates' . DS . 'bank_payment_details_content.template.php',
+            'payment_methods/Bank/templates/bank_payment_details_content.template.php',
             $template_vars
         );
     }

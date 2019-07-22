@@ -159,14 +159,14 @@ class EED_Add_New_State extends EED_Module
      */
     public static function set_definitions()
     {
-        define('ANS_ASSETS_URL', plugin_dir_url(__FILE__) . 'assets' . DS);
+        define('ANS_ASSETS_URL', plugin_dir_url(__FILE__) . 'assets/');
         define(
             'ANS_TEMPLATES_PATH',
             str_replace(
                 '\\',
-                DS,
+                '/',
                 plugin_dir_path(__FILE__)
-            ) . 'templates' . DS
+            ) . 'templates/'
         );
     }
 

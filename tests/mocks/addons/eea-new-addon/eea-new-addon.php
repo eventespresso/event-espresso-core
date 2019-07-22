@@ -51,7 +51,7 @@ function espresso_new_addon_plugin_activation_errors() {
 
 	if ( WP_DEBUG ) {
 		$activation_errors = ob_get_contents();
-		file_put_contents( EVENT_ESPRESSO_UPLOAD_DIR . 'logs' . DS . 'espresso_new_addon_plugin_activation_errors.html', $activation_errors );
+		file_put_contents( EVENT_ESPRESSO_UPLOAD_DIR . 'logs/espresso_new_addon_plugin_activation_errors.html', $activation_errors );
 	}
 }
 add_action( 'activated_plugin', 'espresso_new_addon_plugin_activation_errors' );

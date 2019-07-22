@@ -153,7 +153,7 @@ class EE_Payment_Method_Manager implements ResettableInterface
         do_action('AHEE__EE_Payment_Method_Manager__register_payment_method__begin', $payment_method_path);
         $module_ext = '.pm.php';
         // make all separators match
-        $payment_method_path = rtrim(str_replace('/\\', DS, $payment_method_path), DS);
+        $payment_method_path = rtrim(str_replace('/\\', '/', $payment_method_path), '/');
         // grab and sanitize module name
         $module_dir = basename($payment_method_path);
         // create class name from module directory name
@@ -161,7 +161,7 @@ class EE_Payment_Method_Manager implements ResettableInterface
         // add class prefix
         $module_class = 'EE_PMT_' . $module;
         // does the module exist ?
-        if (! is_readable($payment_method_path . DS . $module_class . $module_ext)) {
+        if (! is_readable($payment_method_path . '/' . $module_class . $module_ext)) {
             $msg = sprintf(
                 esc_html__(
                     'The requested %s payment method file could not be found or is not readable due to file permissions.',
@@ -173,7 +173,7 @@ class EE_Payment_Method_Manager implements ResettableInterface
             return false;
         }
         // load the module class file
-        require_once($payment_method_path . DS . $module_class . $module_ext);
+        require_once($payment_method_path . '/' . $module_class . $module_ext);
         // verify that class exists
         if (! class_exists($module_class)) {
             $msg = sprintf(
@@ -184,7 +184,7 @@ class EE_Payment_Method_Manager implements ResettableInterface
             return false;
         }
         // add to array of registered modules
-        $this->_payment_method_types[ $module ] = $payment_method_path . DS . $module_class . $module_ext;
+        $this->_payment_method_types[ $module ] = $payment_method_path . '/' . $module_class . $module_ext;
         ksort($this->_payment_method_types);
         return true;
     }

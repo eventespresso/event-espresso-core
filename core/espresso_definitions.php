@@ -20,57 +20,57 @@ if (! defined('EENL')) {
 }
 // define the plugin directory and URL
 define('EE_PLUGIN_BASENAME', plugin_basename(EVENT_ESPRESSO_MAIN_FILE));
-define('EE_PLUGIN_DIR_PATH', dirname(EVENT_ESPRESSO_MAIN_FILE) . DS);
+define('EE_PLUGIN_DIR_PATH', dirname(EVENT_ESPRESSO_MAIN_FILE) . '/');
 define('EE_PLUGIN_DIR_URL', plugin_dir_url(EVENT_ESPRESSO_MAIN_FILE));
 // main root folder paths
-define('EE_ADMIN_PAGES', EE_PLUGIN_DIR_PATH . 'admin_pages' . DS);
-define('EE_CORE', EE_PLUGIN_DIR_PATH . 'core' . DS);
-define('EE_MODULES', EE_PLUGIN_DIR_PATH . 'modules' . DS);
-define('EE_PUBLIC', EE_PLUGIN_DIR_PATH . 'public' . DS);
-define('EE_SHORTCODES', EE_PLUGIN_DIR_PATH . 'shortcodes' . DS);
-define('EE_WIDGETS', EE_PLUGIN_DIR_PATH . 'widgets' . DS);
-define('EE_PAYMENT_METHODS', EE_PLUGIN_DIR_PATH . 'payment_methods' . DS);
-define('EE_CAFF_PATH', EE_PLUGIN_DIR_PATH . 'caffeinated' . DS);
+define('EE_ADMIN_PAGES', EE_PLUGIN_DIR_PATH . 'admin_pages/');
+define('EE_CORE', EE_PLUGIN_DIR_PATH . 'core/');
+define('EE_MODULES', EE_PLUGIN_DIR_PATH . 'modules/');
+define('EE_PUBLIC', EE_PLUGIN_DIR_PATH . 'public/');
+define('EE_SHORTCODES', EE_PLUGIN_DIR_PATH . 'shortcodes/');
+define('EE_WIDGETS', EE_PLUGIN_DIR_PATH . 'widgets/');
+define('EE_PAYMENT_METHODS', EE_PLUGIN_DIR_PATH . 'payment_methods/');
+define('EE_CAFF_PATH', EE_PLUGIN_DIR_PATH . 'caffeinated/');
 // core system paths
-define('EE_ADMIN', EE_CORE . 'admin' . DS);
-define('EE_CPTS', EE_CORE . 'CPTs' . DS);
-define('EE_CLASSES', EE_CORE . 'db_classes' . DS);
-define('EE_INTERFACES', EE_CORE . 'interfaces' . DS);
-define('EE_BUSINESS', EE_CORE . 'business' . DS);
-define('EE_MODELS', EE_CORE . 'db_models' . DS);
-define('EE_HELPERS', EE_CORE . 'helpers' . DS);
-define('EE_LIBRARIES', EE_CORE . 'libraries' . DS);
-define('EE_TEMPLATES', EE_CORE . 'templates' . DS);
-define('EE_THIRD_PARTY', EE_CORE . 'third_party_libs' . DS);
-define('EE_GLOBAL_ASSETS', EE_TEMPLATES . 'global_assets' . DS);
-define('EE_FORM_SECTIONS', EE_LIBRARIES . 'form_sections' . DS);
+define('EE_ADMIN', EE_CORE . 'admin/');
+define('EE_CPTS', EE_CORE . 'CPTs/');
+define('EE_CLASSES', EE_CORE . 'db_classes/');
+define('EE_INTERFACES', EE_CORE . 'interfaces/');
+define('EE_BUSINESS', EE_CORE . 'business/');
+define('EE_MODELS', EE_CORE . 'db_models/');
+define('EE_HELPERS', EE_CORE . 'helpers/');
+define('EE_LIBRARIES', EE_CORE . 'libraries/');
+define('EE_TEMPLATES', EE_CORE . 'templates/');
+define('EE_THIRD_PARTY', EE_CORE . 'third_party_libs/');
+define('EE_GLOBAL_ASSETS', EE_TEMPLATES . 'global_assets/');
+define('EE_FORM_SECTIONS', EE_LIBRARIES . 'form_sections/');
 // gateways
-define('EE_GATEWAYS', EE_MODULES . 'gateways' . DS);
-define('EE_GATEWAYS_URL', EE_PLUGIN_DIR_URL . 'modules' . DS . 'gateways' . DS);
+define('EE_GATEWAYS', EE_MODULES . 'gateways/');
+define('EE_GATEWAYS_URL', EE_PLUGIN_DIR_URL . 'modules/gateways/');
 // asset URL paths
-define('EE_TEMPLATES_URL', EE_PLUGIN_DIR_URL . 'core' . DS . 'templates' . DS);
-define('EE_GLOBAL_ASSETS_URL', EE_TEMPLATES_URL . 'global_assets' . DS);
-define('EE_IMAGES_URL', EE_GLOBAL_ASSETS_URL . 'images' . DS);
-define('EE_THIRD_PARTY_URL', EE_PLUGIN_DIR_URL . 'core' . DS . 'third_party_libs' . DS);
+define('EE_TEMPLATES_URL', EE_PLUGIN_DIR_URL . 'core/templates/');
+define('EE_GLOBAL_ASSETS_URL', EE_TEMPLATES_URL . 'global_assets/');
+define('EE_IMAGES_URL', EE_GLOBAL_ASSETS_URL . 'images/');
+define('EE_THIRD_PARTY_URL', EE_PLUGIN_DIR_URL . 'core/third_party_libs/');
 define('EE_HELPERS_ASSETS', EE_PLUGIN_DIR_URL . 'core/helpers/assets/');
 define('EE_LIBRARIES_URL', EE_PLUGIN_DIR_URL . 'core/libraries/');
 // define upload paths
 $uploads = wp_upload_dir();
 // define the uploads directory and URL
-define('EVENT_ESPRESSO_UPLOAD_DIR', $uploads['basedir'] . DS . 'espresso' . DS);
-define('EVENT_ESPRESSO_UPLOAD_URL', $uploads['baseurl'] . DS . 'espresso' . DS);
+define('EVENT_ESPRESSO_UPLOAD_DIR', $uploads['basedir'] . '/espresso/');
+define('EVENT_ESPRESSO_UPLOAD_URL', $uploads['baseurl'] . '/espresso/');
 // define the templates directory and URL
-define('EVENT_ESPRESSO_TEMPLATE_DIR', $uploads['basedir'] . DS . 'espresso' . DS . 'templates' . DS);
-define('EVENT_ESPRESSO_TEMPLATE_URL', $uploads['baseurl'] . DS . 'espresso' . DS . 'templates' . DS);
+define('EVENT_ESPRESSO_TEMPLATE_DIR', $uploads['basedir'] . '/espresso/templates/');
+define('EVENT_ESPRESSO_TEMPLATE_URL', $uploads['baseurl'] . '/espresso/templates/');
 // define the gateway directory and URL
-define('EVENT_ESPRESSO_GATEWAY_DIR', $uploads['basedir'] . DS . 'espresso' . DS . 'gateways' . DS);
-define('EVENT_ESPRESSO_GATEWAY_URL', $uploads['baseurl'] . DS . 'espresso' . DS . 'gateways' . DS);
+define('EVENT_ESPRESSO_GATEWAY_DIR', $uploads['basedir'] . '/espresso/gateways/');
+define('EVENT_ESPRESSO_GATEWAY_URL', $uploads['baseurl'] . '/espresso/gateways/');
 // languages folder/path
-define('EE_LANGUAGES_SAFE_LOC', '..' . DS . 'uploads' . DS . 'espresso' . DS . 'languages' . DS);
-define('EE_LANGUAGES_SAFE_DIR', EVENT_ESPRESSO_UPLOAD_DIR . 'languages' . DS);
+define('EE_LANGUAGES_SAFE_LOC', '../' . 'uploads/' . 'espresso/languages/');
+define('EE_LANGUAGES_SAFE_DIR', EVENT_ESPRESSO_UPLOAD_DIR . 'languages/');
 // check for DOMPDF fonts in uploads
-if (file_exists(EVENT_ESPRESSO_UPLOAD_DIR . 'fonts' . DS)) {
-    define('DOMPDF_FONT_DIR', EVENT_ESPRESSO_UPLOAD_DIR . 'fonts' . DS);
+if (file_exists(EVENT_ESPRESSO_UPLOAD_DIR . 'fonts/')) {
+    define('DOMPDF_FONT_DIR', EVENT_ESPRESSO_UPLOAD_DIR . 'fonts/');
 }
 // ajax constants
 define(

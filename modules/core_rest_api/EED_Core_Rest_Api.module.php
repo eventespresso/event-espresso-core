@@ -123,7 +123,7 @@ class EED_Core_Rest_Api extends \EED_Module
      */
     protected static function _set_hooks_for_changes()
     {
-        $folder_contents = EEH_File::get_contents_of_folders(array(EE_LIBRARIES . 'rest_api' . DS . 'changes'), false);
+        $folder_contents = EEH_File::get_contents_of_folders(array(EE_LIBRARIES . 'rest_api/changes'), false);
         foreach ($folder_contents as $classname_in_namespace => $filepath) {
             // ignore the base parent class
             // and legacy named classes

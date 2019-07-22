@@ -2513,7 +2513,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
     protected function _get_reg_custom_questions_form($REG_ID)
     {
         if (! $this->_reg_custom_questions_form) {
-            require_once(REG_ADMIN . 'form_sections' . DS . 'EE_Registration_Custom_Questions_Form.form.php');
+            require_once(REG_ADMIN . 'form_sections/EE_Registration_Custom_Questions_Form.form.php');
             $this->_reg_custom_questions_form = new EE_Registration_Custom_Questions_Form(
                 EEM_Registration::instance()->get_one_by_ID($REG_ID)
             );

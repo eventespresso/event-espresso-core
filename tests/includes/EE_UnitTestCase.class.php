@@ -112,7 +112,7 @@ class EE_UnitTestCase extends WP_UnitTestCase
         add_filter('FHEE__EEH_Activation__drop_index__short_circuit', '__return_true');
 
         // load factories
-        EEH_Autoloader::register_autoloaders_for_each_file_in_folder(EE_TESTS_DIR . 'includes' . DS . 'factories');
+        EEH_Autoloader::register_autoloaders_for_each_file_in_folder(EE_TESTS_DIR . 'includes/factories');
         $this->factory = new EE_UnitTest_Factory();
 
         //IF we detect we're running tests on WP4.1, then we need to make sure current_user_can tests pass by implementing
