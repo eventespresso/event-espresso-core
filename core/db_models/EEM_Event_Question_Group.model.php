@@ -54,7 +54,7 @@ class EEM_Event_Question_Group extends EEM_Base
      * this is concerning primary attendees or additional attendees.
      * If 1, true, or "primary" is passed in, returns EQG_primary. If 0, false, or "additional" is passed in, returns
      * EQG_additional.
-     * @since $VID:$
+     * @since 4.10.0.p
      * @param string|boolean|int $context
      * @return string
      */
