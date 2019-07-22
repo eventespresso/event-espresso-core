@@ -156,7 +156,7 @@ class EEM_Event_Test extends EE_UnitTestCase {
 	}
 
     /**
-     * @since $VID:$
+     * @since 4.10.0.p
      * @throws EE_Error
      * @throws InvalidArgumentException
      * @throws ReflectionException
