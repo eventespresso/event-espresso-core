@@ -126,8 +126,8 @@ class EED_Thank_You_Page extends EED_Module
      */
     public static function set_definitions()
     {
-        define('THANK_YOU_ASSETS_URL', plugin_dir_url(__FILE__) . 'assets' . DS);
-        define('THANK_YOU_TEMPLATES_PATH', str_replace('\\', DS, plugin_dir_path(__FILE__)) . 'templates' . DS);
+        define('THANK_YOU_ASSETS_URL', plugin_dir_url(__FILE__) . 'assets/');
+        define('THANK_YOU_TEMPLATES_PATH', str_replace('\\', '/', plugin_dir_path(__FILE__)) . 'templates/');
     }
 
 

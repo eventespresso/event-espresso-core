@@ -206,14 +206,14 @@ class EED_Single_Page_Checkout extends EED_Module
         }
         define(
             'SPCO_BASE_PATH',
-            rtrim(str_replace(array('\\', '/'), DS, plugin_dir_path(__FILE__)), DS) . DS
+            rtrim(str_replace(array('\\', '/'), '/', plugin_dir_path(__FILE__)), '/') . '/'
         );
-        define('SPCO_CSS_URL', plugin_dir_url(__FILE__) . 'css' . DS);
-        define('SPCO_IMG_URL', plugin_dir_url(__FILE__) . 'img' . DS);
-        define('SPCO_JS_URL', plugin_dir_url(__FILE__) . 'js' . DS);
-        define('SPCO_INC_PATH', SPCO_BASE_PATH . 'inc' . DS);
-        define('SPCO_REG_STEPS_PATH', SPCO_BASE_PATH . 'reg_steps' . DS);
-        define('SPCO_TEMPLATES_PATH', SPCO_BASE_PATH . 'templates' . DS);
+        define('SPCO_CSS_URL', plugin_dir_url(__FILE__) . 'css/');
+        define('SPCO_IMG_URL', plugin_dir_url(__FILE__) . 'img/');
+        define('SPCO_JS_URL', plugin_dir_url(__FILE__) . 'js/');
+        define('SPCO_INC_PATH', SPCO_BASE_PATH . 'inc/');
+        define('SPCO_REG_STEPS_PATH', SPCO_BASE_PATH . 'reg_steps/');
+        define('SPCO_TEMPLATES_PATH', SPCO_BASE_PATH . 'templates/');
         EEH_Autoloader::register_autoloaders_for_each_file_in_folder(SPCO_BASE_PATH, true);
         EE_Registry::$i18n_js_strings['registration_expiration_notice'] = EED_Single_Page_Checkout::getRegistrationExpirationNotice(
         );

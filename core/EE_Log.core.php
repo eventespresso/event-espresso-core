@@ -83,7 +83,7 @@ class EE_Log
             return;
         }
 
-        $this->_logs_folder = EVENT_ESPRESSO_UPLOAD_DIR . 'logs' . DS;
+        $this->_logs_folder = EVENT_ESPRESSO_UPLOAD_DIR . 'logs/';
         $this->_log_file = EE_Registry::instance()->CFG->admin->log_file_name();
         $this->_log = '';
         $this->_debug_file = EE_Registry::instance()->CFG->admin->debug_file_name();

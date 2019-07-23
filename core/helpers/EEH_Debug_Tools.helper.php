@@ -48,13 +48,13 @@ class EEH_Debug_Tools
     private function __construct()
     {
         // load Kint PHP debugging library
-        if (! class_exists('Kint') && file_exists(EE_PLUGIN_DIR_PATH . 'tests' . DS . 'kint' . DS . 'Kint.class.php')) {
+        if (! class_exists('Kint') && file_exists(EE_PLUGIN_DIR_PATH . 'tests/kint/Kint.class.php')) {
             // despite EE4 having a check for an existing copy of the Kint debugging class,
             // if another plugin was loaded AFTER EE4 and they did NOT perform a similar check,
             // then hilarity would ensue as PHP throws a "Cannot redeclare class Kint" error
             // so we've moved it to our test folder so that it is not included with production releases
             // plz use https://wordpress.org/plugins/kint-debugger/  if testing production versions of EE
-            require_once(EE_PLUGIN_DIR_PATH . 'tests' . DS . 'kint' . DS . 'Kint.class.php');
+            require_once(EE_PLUGIN_DIR_PATH . 'tests/kint/Kint.class.php');
         }
         // if ( ! defined('DOING_AJAX') || $_REQUEST['noheader'] !== 'true' || ! isset( $_REQUEST['noheader'], $_REQUEST['TB_iframe'] ) ) {
         // add_action( 'shutdown', array($this,'espresso_session_footer_dump') );
@@ -188,10 +188,10 @@ class EEH_Debug_Tools
             if (class_exists('EEH_File')) {
                 try {
                     EEH_File::ensure_file_exists_and_is_writable(
-                        EVENT_ESPRESSO_UPLOAD_DIR . 'logs' . DS . 'espresso_plugin_activation_errors.html'
+                        EVENT_ESPRESSO_UPLOAD_DIR . 'logs/espresso_plugin_activation_errors.html'
                     );
                     EEH_File::write_to_file(
-                        EVENT_ESPRESSO_UPLOAD_DIR . 'logs' . DS . 'espresso_plugin_activation_errors.html',
+                        EVENT_ESPRESSO_UPLOAD_DIR . 'logs/espresso_plugin_activation_errors.html',
                         $activation_errors
                     );
                 } catch (EE_Error $e) {
@@ -211,7 +211,7 @@ class EEH_Debug_Tools
             } else {
                 // old school attempt
                 file_put_contents(
-                    EVENT_ESPRESSO_UPLOAD_DIR . 'logs' . DS . 'espresso_plugin_activation_errors.html',
+                    EVENT_ESPRESSO_UPLOAD_DIR . 'logs/espresso_plugin_activation_errors.html',
                     $activation_errors
                 );
             }

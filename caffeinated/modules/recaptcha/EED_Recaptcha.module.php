@@ -131,7 +131,7 @@ class EED_Recaptcha extends EED_Module
         }
         define(
             'RECAPTCHA_BASE_PATH',
-            rtrim(str_replace(array('\\', '/'), DS, plugin_dir_path(__FILE__)), DS) . DS
+            rtrim(str_replace(array('\\', '/'), '/', plugin_dir_path(__FILE__)), '/') . '/'
         );
         define('RECAPTCHA_BASE_URL', plugin_dir_url(__FILE__));
     }
@@ -184,7 +184,7 @@ class EED_Recaptcha extends EED_Module
     {
         wp_register_script(
             'espresso_recaptcha',
-            RECAPTCHA_BASE_URL . 'scripts' . DS . 'espresso_recaptcha.js',
+            RECAPTCHA_BASE_URL . 'scripts/espresso_recaptcha.js',
             array('single_page_checkout'),
             EVENT_ESPRESSO_VERSION,
             true
@@ -251,7 +251,7 @@ class EED_Recaptcha extends EED_Module
         if (EED_Recaptcha::useRecaptcha() && ! EED_Recaptcha::$_not_a_robot) {
             // only display if they have NOT passed the test yet
             EEH_Template::display_template(
-                RECAPTCHA_BASE_PATH . DS . 'templates' . DS . 'recaptcha.template.php',
+                RECAPTCHA_BASE_PATH . '/templates/recaptcha.template.php',
                 array(
                     'recaptcha_publickey' => EED_Recaptcha::$config->recaptcha_publickey,
                     'recaptcha_theme'     => EED_Recaptcha::$config->recaptcha_theme,
@@ -374,7 +374,7 @@ class EED_Recaptcha extends EED_Module
     {
         // verify library is loaded
         if (! class_exists('\ReCaptcha\ReCaptcha')) {
-            require_once RECAPTCHA_BASE_PATH . DS . 'autoload.php';
+            require_once RECAPTCHA_BASE_PATH . '/autoload.php';
         }
         // The response from reCAPTCHA
         EED_Recaptcha::_get_recaptcha_response();

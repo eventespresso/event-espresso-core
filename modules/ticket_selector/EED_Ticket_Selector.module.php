@@ -120,10 +120,10 @@ class EED_Ticket_Selector extends EED_Module
         if (defined('TICKET_SELECTOR_ASSETS_URL')) {
             return;
         }
-        define('TICKET_SELECTOR_ASSETS_URL', plugin_dir_url(__FILE__) . 'assets' . DS);
+        define('TICKET_SELECTOR_ASSETS_URL', plugin_dir_url(__FILE__) . 'assets/');
         define(
             'TICKET_SELECTOR_TEMPLATES_PATH',
-            str_replace('\\', DS, plugin_dir_path(__FILE__)) . 'templates' . DS
+            str_replace('\\', '/', plugin_dir_path(__FILE__)) . 'templates/'
         );
         // if config is not set, initialize
         if (! EE_Registry::instance()->CFG->template_settings->EED_Ticket_Selector instanceof EE_Ticket_Selector_Config

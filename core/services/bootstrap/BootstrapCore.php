@@ -199,7 +199,7 @@ class BootstrapCore
         // load interfaces
         espresso_load_required(
             'EEH_Autoloader',
-            EE_CORE . 'helpers' . DS . 'EEH_Autoloader.helper.php'
+            EE_CORE . 'helpers/EEH_Autoloader.helper.php'
         );
         EEH_Autoloader::instance();
     }
@@ -217,9 +217,9 @@ class BootstrapCore
         // load helpers
         EEH_Autoloader::register_autoloaders_for_each_file_in_folder(EE_HELPERS);
         // register legacy request stack classes just in case
-        EEH_Autoloader::register_autoloaders_for_each_file_in_folder(EE_CORE . 'request_stack' . DS);
+        EEH_Autoloader::register_autoloaders_for_each_file_in_folder(EE_CORE . 'request_stack/');
         // register legacy middleware classes just in case
-        EEH_Autoloader::register_autoloaders_for_each_file_in_folder(EE_CORE . 'middleware' . DS);
+        EEH_Autoloader::register_autoloaders_for_each_file_in_folder(EE_CORE . 'middleware/');
     }
 
 

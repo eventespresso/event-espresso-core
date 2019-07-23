@@ -396,7 +396,7 @@ final class EE_System implements ResettableInterface
                 true
             )
         ) {
-            include_once EE_THIRD_PARTY . 'wp-api-basic-auth' . DS . 'basic-auth.php';
+            include_once EE_THIRD_PARTY . 'wp-api-basic-auth/basic-auth.php';
         }
         do_action('AHEE__EE_System__load_espresso_addons__complete');
     }

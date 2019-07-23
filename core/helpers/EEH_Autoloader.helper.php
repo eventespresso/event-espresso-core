@@ -123,7 +123,7 @@ class EEH_Autoloader extends EEH_Base
                 throw new EE_Error(sprintf(__('The file for the %s class could not be found or is not readable due to file permissions. Please ensure the following path is correct: %s', 'event_espresso'), $class, $path));
             }
             if (! isset(self::$_autoloaders[ $class ])) {
-                self::$_autoloaders[ $class ] = str_replace(array( '/', '\\' ), DS, $path);
+                self::$_autoloaders[ $class ] = str_replace(array( '/', '\\' ), '/', $path);
                 if (EE_DEBUG && ( EEH_Autoloader::$debug === 'paths' || EEH_Autoloader::$debug === 'all' || $debug )) {
                     EEH_Debug_Tools::printr(self::$_autoloaders[ $class ], $class, __FILE__, __LINE__);
                 }
@@ -264,7 +264,7 @@ class EEH_Autoloader extends EEH_Base
             EEH_Debug_Tools::instance()->start_timer(basename($folder));
         }
         // make sure last char is a /
-        $folder .= $folder[ strlen($folder)-1 ] !== DS ? DS : '';
+        $folder .= $folder[ strlen($folder)-1 ] !== '/' ? '/' : '';
         $class_to_filepath_map = array();
         $exclude = array( 'index' );
         // get all the files in that folder that end in php

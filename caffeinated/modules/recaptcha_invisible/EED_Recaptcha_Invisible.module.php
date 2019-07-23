@@ -171,7 +171,7 @@ class EED_Recaptcha_Invisible extends EED_Module
      */
     public static function assetsUrl()
     {
-        return plugin_dir_url(__FILE__) . 'assets' . DS;
+        return plugin_dir_url(__FILE__) . 'assets/';
     }
 
 

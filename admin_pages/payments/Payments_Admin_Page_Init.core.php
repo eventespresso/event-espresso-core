@@ -29,8 +29,8 @@ class Payments_Admin_Page_Init extends EE_Admin_Page_Init
         // define some page related constants
         define('EE_PAYMENTS_PG_SLUG', 'espresso_payment_settings');
         define('EE_PAYMENTS_ADMIN_URL', admin_url('admin.php?page=' . EE_PAYMENTS_PG_SLUG));
-        define('EE_PAYMENTS_ADMIN', EE_ADMIN_PAGES . 'payments' . DS);
-        define('EE_PAYMENTS_TEMPLATE_PATH', EE_PAYMENTS_ADMIN . 'templates' . DS);
+        define('EE_PAYMENTS_ADMIN', EE_ADMIN_PAGES . 'payments/');
+        define('EE_PAYMENTS_TEMPLATE_PATH', EE_PAYMENTS_ADMIN . 'templates/');
         define('EE_PAYMENTS_ASSETS_URL', EE_ADMIN_PAGES_URL . 'payments/assets/');
         $this->_table_analysis = EE_Registry::instance()->create('TableAnalysis', array(), true);
         // check that there are active gateways on all admin page loads. but dont do it just yet

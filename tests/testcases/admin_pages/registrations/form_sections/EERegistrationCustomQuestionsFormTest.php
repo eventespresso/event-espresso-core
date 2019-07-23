@@ -27,7 +27,7 @@ class EERegistrationCustomQuestionsFormTest extends EE_UnitTestCase
     protected function loadRequirements()
     {
         $this->_admin_page = new Registrations_Admin_Page_Mock();
-        require_once(REG_ADMIN . 'form_sections' . DS . 'EE_Registration_Custom_Questions_Form.form.php');
+        require_once(REG_ADMIN . 'form_sections/EE_Registration_Custom_Questions_Form.form.php');
     }
 
     /**
