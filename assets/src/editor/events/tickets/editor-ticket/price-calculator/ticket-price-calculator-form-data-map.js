@@ -19,6 +19,7 @@ const buildTicketDataMap = ( formData, ticketEntity ) => {
 	formData.ticketTotal = ticketEntity.price && ticketEntity.price.amount ?
 		ticketEntity.price.formatter.formatNumber( ticketEntity.price.amount.toNumber() ) :
 		null;
+	formData.reverseCalculate = !! ticketEntity.reverseCalculate;
 	return formData;
 };
 
@@ -68,13 +69,11 @@ const buildPricesDataMap = ( formData, ticketEntity, priceEntities ) => {
  * @function
  * @param {Object} ticketEntity
  * @param {Array} priceEntities
- * @param {boolean} reverseCalculate
  * @return {Object} form data
  */
-export const ticketPriceCalculatorFormDataMap = (
+const ticketPriceCalculatorFormDataMap = (
 	ticketEntity,
-	priceEntities,
-	reverseCalculate
+	priceEntities
 ) => {
 	if ( ! isModelEntityOfModel( ticketEntity, 'ticket' ) ) {
 		return {};
@@ -82,6 +81,7 @@ export const ticketPriceCalculatorFormDataMap = (
 	let formData = {};
 	formData = buildTicketDataMap( formData, ticketEntity );
 	formData = buildPricesDataMap( formData, ticketEntity, priceEntities );
-	formData.reverseCalculate = !! reverseCalculate;
 	return formData;
 };
+
+export default ticketPriceCalculatorFormDataMap;
