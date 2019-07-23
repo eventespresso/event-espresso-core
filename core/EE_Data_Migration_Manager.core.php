@@ -6,6 +6,7 @@ use EventEspresso\core\interfaces\ResettableInterface;
 
 use EventEspresso\core\services\database\TableManager;
 use EventEspresso\core\services\database\TableAnalysis;
+use EventEspresso\core\services\loaders\LoaderFactory;
 
 /**
  *
@@ -256,7 +257,7 @@ class EE_Data_Migration_Manager implements ResettableInterface
     {
         $data_migration_data = maybe_unserialize($dms_option_value);
         if (isset($data_migration_data['class']) && class_exists($data_migration_data['class'])) {
-            $class = new $data_migration_data['class'];
+            $class = LoaderFactory::getLoader()->getShared($data_migration_data['class']);
             if ($class instanceof EE_Data_Migration_Script_Base) {
                 $class->instantiate_from_array_of_properties($data_migration_data);
                 return $class;
@@ -502,7 +503,7 @@ class EE_Data_Migration_Manager implements ResettableInterface
                     ! isset($scripts_ran[ $script_converts_plugin_slug ][ $script_converts_to_version ])) {
                     // we haven't ran this conversion script before
                     // now check if it applies... note that we've added an autoloader for it on get_all_data_migration_scripts_available
-                    $script = new $classname($this->_get_table_manager(), $this->_get_table_analysis());
+                    $script = LoaderFactory::getLoader()->load($classname);
                     /* @var $script EE_Data_Migration_Script_Base */
                     $can_migrate = $script->can_migrate_from_version($theoretical_database_state);
                     if ($can_migrate) {
@@ -876,7 +877,7 @@ class EE_Data_Migration_Manager implements ResettableInterface
                     continue;
                 }
                 foreach ($files as $file) {
-                    $pos_of_last_slash = strrpos($file, DS);
+                    $pos_of_last_slash = strrpos($file, '/');
                     $classname = str_replace('.dms.php', '', substr($file, $pos_of_last_slash + 1));
                     $migrates_to = $this->script_migrates_to_version($classname, $eeAddonClass);
                     $slug = $migrates_to['slug'];

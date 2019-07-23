@@ -596,7 +596,7 @@ class EE_Admin_Page_Loader
     {
 
         // first let's check if there IS a caffeinated folder. If there is not then lets get out.
-        if (! is_dir(EE_PLUGIN_DIR_PATH . 'caffeinated' . DS . 'admin') || (defined('EE_DECAF') && EE_DECAF)) {
+        if (! is_dir(EE_PLUGIN_DIR_PATH . 'caffeinated/admin') || (defined('EE_DECAF') && EE_DECAF)) {
             return $installed_refs;
         }
         $this->_define_caffeinated_constants();
@@ -635,12 +635,11 @@ class EE_Admin_Page_Loader
                     $filename = 'Extend_' . $filename . '_Admin_Page';
                     $this->_caffeinated_extends[ $extend_ref ]['path'] = str_replace(
                         array('\\', '/'),
-                        DS,
+                        '/',
                         EE_CORE_CAF_ADMIN
-                        . 'extend'
-                        . DS
+                        . 'extend/'
                         . $extend_ref
-                        . DS
+                        . '/'
                         . $filename
                         . '.core.php'
                     );

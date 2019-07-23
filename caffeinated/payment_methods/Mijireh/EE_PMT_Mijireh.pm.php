@@ -26,7 +26,7 @@ class EE_PMT_Mijireh extends EE_PMT_Base
         $this->_pretty_name = __("Mijireh", 'event_espresso');
         $this->_default_description = __('After clicking "Finalize Registration", you will be able to enter your billing information and complete your payment.', 'event_espresso');
         parent::__construct($pm_instance);
-        $this->_default_button_url = $this->file_url() . 'lib' . DS . 'mijireh-checkout-logo.png';
+        $this->_default_button_url = $this->file_url() . 'lib/mijireh-checkout-logo.png';
     }
 
 
@@ -73,7 +73,7 @@ class EE_PMT_Mijireh extends EE_PMT_Base
         $form->add_subsections(
             array(
                 'slurper_area' => new EE_Form_Section_HTML_From_Template(
-                    $this->file_folder() . DS . 'templates' . DS . 'mijireh_settings_after_form.template.php'
+                    $this->file_folder() . '/templates/mijireh_settings_after_form.template.php'
                 )
             ),
             null, // no specific subsection targeted

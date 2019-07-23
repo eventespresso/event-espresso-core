@@ -157,7 +157,7 @@ class OpenCoffeeShop
                     EE_CORE . '*.core.php',
                     EE_ADMIN . '*.core.php',
                     EE_CPTS . '*.core.php',
-                    EE_CORE . 'data_migration_scripts' . DS . '*.core.php',
+                    EE_CORE . 'data_migration_scripts/*.core.php',
                 )
             )
         );
@@ -181,7 +181,7 @@ class OpenCoffeeShop
         //         array(),
         //         CoffeeMaker::BREW_SHARED,
         //         array(
-        //             EE_ADMIN_PAGES . 'transactions' . DS . '*.core.php',
+        //             EE_ADMIN_PAGES . 'transactions/*.core.php',
         //         )
         //     )
         // );

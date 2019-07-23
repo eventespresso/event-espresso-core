@@ -87,7 +87,7 @@ class LicenseService
         $update = false;
 
         // should take "event-espresso-core/espresso.php" and change to "/event-espresso-core"
-        $folder = DS . dirname($basename);
+        $folder = '/' . dirname($basename);
 
         $plugins = get_plugins($folder);
         $current = get_site_transient('update_plugins');

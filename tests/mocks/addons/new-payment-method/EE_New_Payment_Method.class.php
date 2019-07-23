@@ -42,8 +42,8 @@ Class  EE_New_Payment_Method extends EE_Addon {
 					'use_wp_update' => FALSE,
 					),
 				'payment_method_paths' => array(
-					EE_NEW_PAYMENT_METHOD_PATH . 'payment_methods' . DS . 'New_Payment_Method_Onsite',
-					EE_NEW_PAYMENT_METHOD_PATH . 'payment_methods' . DS . 'New_Payment_Method_Offsite',
+					EE_NEW_PAYMENT_METHOD_PATH . 'payment_methods/New_Payment_Method_Onsite',
+					EE_NEW_PAYMENT_METHOD_PATH . 'payment_methods/New_Payment_Method_Offsite',
 					),
 		));
 	}

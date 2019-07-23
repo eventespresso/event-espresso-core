@@ -563,9 +563,9 @@ class EEG_Paypal_Express extends EE_Offsite_Gateway
     {
         $request_dtls = array(
             'VERSION' => '204.0',
-            'USER' => urlencode($this->_api_username),
-            'PWD' => urlencode($this->_api_password),
-            'SIGNATURE' => urlencode($this->_api_signature),
+            'USER' => $this->_api_username,
+            'PWD' => $this->_api_password,
+            'SIGNATURE' => $this->_api_signature,
             // EE will blow up if you change this
             'BUTTONSOURCE' => 'EventEspresso_SP',
         );

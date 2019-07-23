@@ -66,8 +66,8 @@ class EE_Messenger_Collection_Loader
     {
         // make sure autoloaders are set (fail-safe)
         EED_Messages::set_autoloaders();
-        $folder = ! empty($folder) ? $folder : EE_LIBRARIES . 'messages' . DS . 'messenger';
-        $folder .= $folder[ strlen($folder) - 1 ] != DS ? DS : '';
+        $folder = ! empty($folder) ? $folder : EE_LIBRARIES . 'messages/messenger';
+        $folder .= $folder[ strlen($folder) - 1 ] != '/' ? '/' : '';
         // get all the files in that folder that end in ".class.php
         $filepaths = apply_filters(
             'FHEE__EE_messages__get_installed__messenger_files',

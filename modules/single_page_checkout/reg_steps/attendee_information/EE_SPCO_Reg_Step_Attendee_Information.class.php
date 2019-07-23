@@ -49,7 +49,7 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step
     {
         $this->_slug = 'attendee_information';
         $this->_name = esc_html__('Attendee Information', 'event_espresso');
-        $this->_template = SPCO_REG_STEPS_PATH . $this->_slug . DS . 'attendee_info_main.template.php';
+        $this->_template = SPCO_REG_STEPS_PATH . $this->_slug . '/attendee_info_main.template.php';
         $this->checkout = $checkout;
         $this->_reset_success_message();
         $this->set_instructions(
@@ -150,7 +150,7 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step
                             'layout_strategy' =>
                                 new EE_Template_Layout(
                                     array(
-                                        'input_template_file' => SPCO_REG_STEPS_PATH . $this->_slug . DS . 'privacy_consent.template.php',
+                                        'input_template_file' => SPCO_REG_STEPS_PATH . $this->_slug . '/privacy_consent.template.php',
                                     )
                                 ),
                             'subsections'     => array(
@@ -267,16 +267,22 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step
         $form_args = array();
         // verify that registration has valid event
         if ($registration->event() instanceof EE_Event) {
+            $field_name = 'Event_Question_Group.'
+                . EEM_Event_Question_Group::instance()->fieldNameForContext(
+                    $registration->is_primary_registrant()
+                );
             $question_groups = $registration->event()->question_groups(
                 apply_filters(
+                    // @codingStandardsIgnoreStart
                     'FHEE__EE_SPCO_Reg_Step_Attendee_Information___registrations_reg_form__question_groups_query_parameters',
-                    array(
-                        array(
+                    // @codingStandardsIgnoreEnd
+                    [
+                        [
                             'Event.EVT_ID'                     => $registration->event()->ID(),
-                            'Event_Question_Group.EQG_primary' => $registration->count() === 1,
-                        ),
-                        'order_by' => array('QSG_order' => 'ASC'),
-                    ),
+                            $field_name => true,
+                        ],
+                        'order_by' => ['QSG_order' => 'ASC'],
+                    ],
                     $registration,
                     $this
                 )
@@ -506,8 +512,7 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step
                     array(
                         'layout_template_file'     => SPCO_REG_STEPS_PATH
                                                       . $this->_slug
-                                                      . DS
-                                                      . 'copy_attendee_info.template.php',
+                                                      . '/copy_attendee_info.template.php',
                         'begin_template_file'      => null,
                         'input_template_file'      => null,
                         'subsection_template_file' => null,
@@ -530,7 +535,7 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step
     {
         return new EE_Form_Section_HTML(
             EEH_Template::locate_template(
-                SPCO_REG_STEPS_PATH . $this->_slug . DS . '_auto_copy_attendee_info.template.php',
+                SPCO_REG_STEPS_PATH . $this->_slug . '/_auto_copy_attendee_info.template.php',
                 apply_filters(
                     'FHEE__EE_SPCO_Reg_Step_Attendee_Information__auto_copy_attendee_info__template_args',
                     array()

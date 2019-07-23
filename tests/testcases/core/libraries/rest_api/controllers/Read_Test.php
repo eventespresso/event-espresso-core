@@ -608,6 +608,18 @@ class Read_Test extends EE_REST_TestCase
                                     'single' => false,
                                 ),
                         ),
+                    'https://api.eventespresso.com/event_question_groups'   =>
+                        array(
+                            0 =>
+                                array(
+                                    'href'   => rest_url(
+                                        '/ee/v4.8.29/events/'
+                                        . $event_id
+                                        . '/event_question_groups'
+                                    ),
+                                    'single' => false,
+                                ),
+                        ),
                 ),
                 '_protected' => array()
             ),
@@ -1211,6 +1223,7 @@ class Read_Test extends EE_REST_TestCase
                 'https://api.eventespresso.com/registration',
                 'https://api.eventespresso.com/datetime',
                 'https://api.eventespresso.com/question_group',
+                'https://api.eventespresso.com/event_question_group',
                 'https://api.eventespresso.com/venue',
                 'https://api.eventespresso.com/term_relationship',
                 'https://api.eventespresso.com/term_taxonomy',

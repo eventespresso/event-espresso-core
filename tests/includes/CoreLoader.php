@@ -102,7 +102,7 @@ class CoreLoader
         tests_add_filter(
             'FHEE__EE_Registry__load_core__core_paths',
             function ($core_paths = array()) {
-                $core_paths[] = EE_TESTS_DIR . 'mocks' . DS . 'core' . DS;
+                $core_paths[] = EE_TESTS_DIR . 'mocks/core/';
                 return $core_paths;
             }
         );

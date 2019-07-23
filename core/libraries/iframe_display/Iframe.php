@@ -92,8 +92,8 @@ class Iframe
             apply_filters(
                 'FHEE___EventEspresso_core_libraries_iframe_display_Iframe__construct__default_css',
                 array(
-                    'site_theme'       => get_stylesheet_directory_uri() . DS
-                                          . 'style.css?ver=' . EVENT_ESPRESSO_VERSION,
+                    'site_theme'       => get_stylesheet_directory_uri()
+                                          . '/style.css?ver=' . EVENT_ESPRESSO_VERSION,
                     'dashicons'        => includes_url('css/dashicons.min.css?ver=' . $wp_version),
                     'espresso_default' => EE_GLOBAL_ASSETS_URL
                                           . 'css/espresso_default.css?ver=' . EVENT_ESPRESSO_VERSION,
