@@ -3,10 +3,10 @@
  */
 import { compose, withState, createHigherOrderComponent } from '@wordpress/compose';
 import { withDispatch } from '@wordpress/data';
-import { isModelEntityOfModel } from '@eventespresso/validators';
+import { Fragment, useCallback, useState } from '@wordpress/element';
 import { __, _x, sprintf } from '@eventespresso/i18n';
 import { withEditorModal } from '@eventespresso/editor-hocs';
-import { useState, useEffect, useCallback, Fragment } from '@wordpress/element';
+import { isModelEntityOfModel } from '@eventespresso/validators';
 
 /**
  * Internal dependencies
@@ -14,7 +14,7 @@ import { useState, useEffect, useCallback, Fragment } from '@wordpress/element';
 import { withTicketPriceEntities, withPriceTypeEntities } from '../../../hocs';
 import useTicketPriceCalculatorFormDecorator from './use-ticket-price-calculator-form-decorator';
 import TicketPriceCalculatorForm from './ticket-price-calculator-form';
-import { ticketPriceCalculatorFormDataMap } from './ticket-price-calculator-form-data-map';
+import ticketPriceCalculatorFormDataMap from './ticket-price-calculator-form-data-map';
 
 /**
  * TicketPriceCalculatorFormModal
@@ -44,19 +44,17 @@ const TicketPriceCalculatorFormModal = withEditorModal( {
 		priceTypeEntities,
 		priceTypeEntitiesLoaded
 	);
-	const [ formData, setFormData ] = useState( {} );
-	const [ reverseCalculate, setReverseCalculate ] = useState( false );
-
-	useEffect( () => {
-		const newFormData = ticketPriceCalculatorFormDataMap(
-			ticketEntity,
-			priceEntities,
-			reverseCalculate
-		);
-		const totals = calculateTicketPrices( newFormData );
-		setFormData( { ...newFormData, ...totals } );
-	}, [ ticketEntity, priceEntities, reverseCalculate, calculateTicketPrices ] );
-
+	const loadHandler = useCallback(
+		() => {
+			const formData = ticketPriceCalculatorFormDataMap(
+				ticketEntity,
+				priceEntities
+			);
+			calculateTicketPrices( formData );
+			return formData;
+		},
+		[ ticketEntity, priceEntities, calculateTicketPrices ]
+	);
 	const loading = ! ( priceEntitiesLoaded && priceTypeEntitiesLoaded );
 	const formProps = loading ?
 		{ loading } :
@@ -65,19 +63,14 @@ const TicketPriceCalculatorFormModal = withEditorModal( {
 			ticketEntity,
 			priceEntities,
 			priceTypeEntities,
-			formData,
+			loadHandler,
 		};
-
 	return (
 		<TicketPriceCalculatorForm
 			{ ...formProps }
 			decorators={ decorator }
 			mutators={ mutators }
 			setMutatorCallbacks={ setMutatorCallbacks }
-			setReverseCalculate={ setReverseCalculate }
-			loadHandler={ null }
-			submitHandler={ null }
-			resetHandler={ null }
 			loadingNotice={
 				sprintf(
 					_x(
@@ -85,7 +78,7 @@ const TicketPriceCalculatorFormModal = withEditorModal( {
 						'loading ticket prices...',
 						'event_espresso'
 					),
-					String.fromCharCode( '8230' )
+					String.fromCharCode( 8230 )
 				)
 			}
 			{ ...extraProps }
@@ -164,17 +157,19 @@ export default createHigherOrderComponent( compose( [
 				return ! prevShowCalculator;
 			} );
 		} );
-		return <Fragment>
-			<WrappedComponent
-				{ ...props }
-				toggleCalculator={ toggleCalculator }
-			/>
-			<TicketPriceCalculatorFormModal
-				{ ...props }
-				editorOpen={ showCalculator }
-				toggleEditor={ toggleCalculator }
-			/>
-		</Fragment>;
+		return (
+			<Fragment>
+				<WrappedComponent
+					{ ...props }
+					toggleCalculator={ toggleCalculator }
+				/>
+				<TicketPriceCalculatorFormModal
+					{ ...props }
+					editorOpen={ showCalculator }
+					toggleEditor={ toggleCalculator }
+				/>
+			</Fragment>
+		);
 	},
 ] ), 'withTicketPriceCalculatorFormModal' );
 
