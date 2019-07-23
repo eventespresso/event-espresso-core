@@ -32,7 +32,6 @@ const {
 	InputLabel,
 	FormSection,
 	FormWrapper,
-	FormSaveCancelButtons,
 } = twoColumnAdminFormLayout;
 
 /**
@@ -353,7 +352,7 @@ class TicketPriceCalculatorForm extends Component {
 							}
 							disabled={
 								priceEntity.prtId === BASE_PRICE_TYPES.BASE_PRICE &&
-								values.reverseCalculate === true
+								ticketEntity.reverseCalculate === true
 							}
 							format={ ( value ) => {
 								return priceEntity.amount.formatter.formatNumber(
@@ -456,12 +455,12 @@ class TicketPriceCalculatorForm extends Component {
 	 * @param {Object} ticketEntity
 	 * @param {string} ticketPrefix
 	 * @param {Array} values
-	 * @param {Function} setReverseCalculate
+	 * @param {Function} updateField
 	 * @return {Object} rendered form footer
 	 */
-	ticketTotalRow = ( ticketEntity, ticketPrefix, values, setReverseCalculate ) => {
-		const calcDirIcon = values.reverseCalculate ? 'up' : 'down';
-		const calcDirText = values.reverseCalculate ?
+	ticketTotalRow = ( ticketEntity, ticketPrefix, values, updateField ) => {
+		const calcDirIcon = ticketEntity.reverseCalculate ? 'up' : 'down';
+		const calcDirText = ticketEntity.reverseCalculate ?
 			__( 'reverse calculate base price from total', 'event_espresso' ) :
 			__( 'calculate total from base price', 'event_espresso' );
 		return [
@@ -525,7 +524,7 @@ class TicketPriceCalculatorForm extends Component {
 									}
 								}
 							}
-							disabled={ values.reverseCalculate === false }
+							disabled={ ticketEntity.reverseCalculate === false }
 							format={ ( value ) => {
 								return ticketEntity.price.formatter.formatNumber(
 									parseMoneyValue( value )
@@ -541,12 +540,20 @@ class TicketPriceCalculatorForm extends Component {
 				class: 'ee-ticket-price-calculator-total-actions',
 				value: (
 					<Tooltip text={ calcDirText } position={ 'top left' } >
-						<IconButton
-							aria-label={ calcDirText }
+						<FormInput
+							type="iconButton"
+							name="reverseCalculate"
+							htmlId="reverseCalculate"
+							value={ !! ticketEntity.reverseCalculate }
 							icon={ `arrow-${ calcDirIcon }-alt2` }
-							onClick={ () => {
-								setReverseCalculate( ! values.reverseCalculate );
-							} }
+							helpText={ calcDirText }
+							onClick={
+								() => {
+									const value = ! ticketEntity.reverseCalculate;
+									ticketEntity.reverseCalculate = value;
+									updateField( 'reverseCalculate', value );
+								}
+							}
 						/>
 					</Tooltip>
 				),
@@ -568,9 +575,7 @@ class TicketPriceCalculatorForm extends Component {
 			priceTypeEntities,
 			addPriceModifier,
 			trashPriceModifier,
-			setReverseCalculate,
-			submitButton,
-			cancelButton,
+			updateField,
 			initialValues = {},
 			currentValues = {},
 		} = this.props;
@@ -664,7 +669,7 @@ class TicketPriceCalculatorForm extends Component {
 								ticketEntity,
 								ticketPrefix,
 								values,
-								setReverseCalculate
+								updateField
 							)
 						}
 						metaData={ {
@@ -697,23 +702,11 @@ class TicketPriceCalculatorForm extends Component {
 						htmlId="ee-priceTypes"
 						value={ values.priceTypes }
 					/>
-					<FormInput
-						type="hidden"
-						key="reverseCalculate"
-						name="reverseCalculate"
-						htmlId="ee-reverseCalculate"
-						value={ values.reverseCalculate }
-					/>
 				</FormSection>
-				<FormSaveCancelButtons
-					htmlClass={ 'ee-ticket-price-calculator-buttons' }
-					submitButton={ submitButton }
-					cancelButton={ cancelButton }
-				/>
 				<FormSection htmlClass="ee-ticket-price-calculator-form-info" >
 					<FormInfo
 						formInfo={
-							values.reverseCalculate ?
+							ticketEntity.reverseCalculate ?
 								__(
 									'ticket base price is being calculated' +
 									' by reversing the price modifiers' +
