@@ -439,7 +439,15 @@ class EEM_Datetime extends EEM_Soft_Delete_Base
         $EVT_ID         = absint($EVT_ID);
         $old_assumption = $this->get_assumption_concerning_values_already_prepared_by_model_object();
         $this->assume_values_already_prepared_by_model_object(EEM_Base::prepared_for_use_in_db);
-        $query_params = array(array('Event.EVT_ID' => $EVT_ID), 'order_by' => array('DTT_EVT_start' => 'asc'));
+        $query_params = array(
+            array(
+                'Event.EVT_ID' => $EVT_ID
+            ),
+            'order_by' => array(
+                'DTT_EVT_start' => 'asc'
+            ),
+            'default_where_conditions' => EEM_Base::default_where_conditions_this_only
+        );
         if (! $include_expired) {
             $query_params[0]['DTT_EVT_end'] = array('>=', current_time('mysql', true));
         }

@@ -72,7 +72,7 @@ class EE_Billing_Attendee_Info_Form extends EE_Billing_Info_Form
 
     /**
      * Gets the default value to use for the billing form's state value.
-     * @since $VID:$
+     * @since 4.10.0.p
      * @param EE_Attendee $attendee
      * @return string
      * @throws EE_Error2

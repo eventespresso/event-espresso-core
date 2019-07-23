@@ -600,7 +600,7 @@ class EE_DMS_Core_4_9_0 extends EE_Data_Migration_Script_Base
 
     /**
      * Inserts default data after parent was called.
-     * @since $VID:$
+     * @since 4.10.0.p
      * @throws EE_Error
      * @throws InvalidArgumentException
      * @throws ReflectionException
