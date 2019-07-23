@@ -53,7 +53,7 @@ class EE_Registration_Custom_Questions_Form extends EE_Form_Section_Proper
     }
 
     /**
-     * @since $VID:$
+     * @since 4.10.0.p
      * @throws EE_Error
      * @throws InvalidArgumentException
      * @throws ReflectionException

@@ -31,7 +31,7 @@ EEH_Autoloader::register_autoloader($class_to_filepath);
  * @package               Event Espresso
  * @subpackage            core
  * @author                Mike Nelson
- * @since                 $VID:$
+ * @since                 4.10.0.p
  */
 class EE_DMS_Core_4_10_0 extends EE_Data_Migration_Script_Base
 {
@@ -594,7 +594,7 @@ class EE_DMS_Core_4_10_0 extends EE_Data_Migration_Script_Base
 
     /**
      * Inserts default data on new installs
-     * @since $VID:$
+     * @since 4.10.0.p
      * @throws EE_Error
      * @throws InvalidArgumentException
      * @throws ReflectionException
