@@ -182,77 +182,85 @@ const useTicketPriceCalculatorFormDecorator = ( priceTypeEntities, delay = 250 )
 		calculateTicketTotal,
 		calculateTicketBasePrice,
 	} = useTicketPriceCalculators( priceTypeEntities );
-	const [ totalChangedTo, setTotalChangingTo ] = useState( null );
+	const [ ticketTotal, setTicketTotal ] = useState( null );
 	const [ mutatorCallbacks, setMutatorCallbacks ] = useState( null );
-	const debouncedTotalChangedTo = useDebounce( totalChangedTo, delay );
+	const debouncedTotalChangedTo = useDebounce( ticketTotal, delay );
 
-	useEffect( () => {
-		if ( debouncedTotalChangedTo ) {
-			if ( mutatorCallbacks.totalMutator ) {
-				mutatorCallbacks.totalMutator( debouncedTotalChangedTo );
+	useEffect(
+		() => {
+			if ( debouncedTotalChangedTo ) {
+				if ( mutatorCallbacks.totalMutator ) {
+					mutatorCallbacks.totalMutator( debouncedTotalChangedTo );
+				}
 			}
-		}
-	}, [ debouncedTotalChangedTo ] );
+		},
+		[ debouncedTotalChangedTo ]
+	);
 
-	const totalMutator = useCallback( (
-		[ newTotal ],
-		state,
-		{ changeValue }
-	) => {
-		if ( newTotal ) {
-			forEach( newTotal, ( value, field ) => {
-				changeValue( state, field, () => value );
-			} );
-		}
-	}, [] );
+	const totalMutator = useCallback(
+		( [ newTotal ], state, { changeValue } ) => {
+			if ( newTotal ) {
+				forEach( newTotal, ( value, field ) => {
+					changeValue( state, field, () => value );
+				} );
+			}
+		},
+		[]
+	);
 
-	const decorator = useMemo( () => {
-		return createDecorator(
-			{
-				field: /^(.*?(\b-amount\b))$/,
-				updates: ( value, name, formData, prevData ) => {
-					if ( parseFloat( formData[ name ] ) === parseFloat( prevData[ name ] ) ) {
+	const decorator = useMemo(
+		() => {
+			return createDecorator(
+				{
+					field: /^(.*?(\b-amount\b))$/,
+					updates: ( value, name, formData, prevData ) => {
+						if ( parseFloat( formData[ name ] ) === parseFloat( prevData[ name ] ) ) {
+							return DEFAULT_OBJECT;
+						}
+						calculateTicketPrices( formData );
 						return DEFAULT_OBJECT;
-					}
-					calculateTicketPrices( formData );
-					return DEFAULT_OBJECT;
+					},
 				},
-			},
-			{
-				field: /^(.*?(\b-type\b))$/,
-				updates: ( value, name, formData, prevData ) => {
-					if ( formData[ name ] === prevData[ name ] ) {
+				{
+					field: /^(.*?(\b-type\b))$/,
+					updates: ( value, name, formData, prevData ) => {
+						if ( formData[ name ] === prevData[ name ] ) {
+							return DEFAULT_OBJECT;
+						}
+						calculateTicketPrices( formData );
 						return DEFAULT_OBJECT;
-					}
-					calculateTicketPrices( formData );
-					return DEFAULT_OBJECT;
+					},
 				},
-			},
-			{
-				field: 'ticketTotal',
-				updates: ( value, name, formData, prevData ) => {
-					if ( parseFloat( formData[ name ] ) === parseFloat( prevData[ name ] ) ) {
+				{
+					field: 'ticketTotal',
+					updates: ( value, name, formData, prevData ) => {
+						if ( parseFloat( formData[ name ] ) === parseFloat( prevData[ name ] ) ) {
+							return DEFAULT_OBJECT;
+						}
+						calculateTicketPrices( formData );
 						return DEFAULT_OBJECT;
-					}
-					calculateTicketPrices( formData );
-					return DEFAULT_OBJECT;
+					},
 				},
-			},
-		);
-	}, [] );
-
-	const calculateTicketPrices = useCallback( ( formData ) => {
-		const formTotal = formData.reverseCalculate ?
-			calculateTicketBasePriceFromTotal(
-				formData,
-				calculateTicketBasePrice
-			) :
-			calculateTicketTotalFromModifiers(
-				formData,
-				calculateTicketTotal
 			);
-		setTotalChangingTo( formTotal );
-	}, [ calculateTicketBasePrice, calculateTicketTotal ] );
+		},
+		[]
+	);
+
+	const calculateTicketPrices = useCallback(
+		( formData ) => {
+			const formTotal = formData.reverseCalculate ?
+				calculateTicketBasePriceFromTotal(
+					formData,
+					calculateTicketBasePrice
+				) :
+				calculateTicketTotalFromModifiers(
+					formData,
+					calculateTicketTotal
+				);
+			setTicketTotal( formTotal );
+		},
+		[ calculateTicketBasePrice, calculateTicketTotal ]
+	);
 
 	return {
 		decorator,
