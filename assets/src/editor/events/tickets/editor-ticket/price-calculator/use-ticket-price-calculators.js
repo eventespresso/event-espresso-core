@@ -57,7 +57,7 @@ const getPriceTypeForPrice = ( priceEntity, priceTypeEntities ) => {
 
 const useTicketPriceCalculators = ( priceTypeEntities ) => {
 	const calculateTicketTotal = useCallback(
-		( total = 0, priceEntities ) => {
+		( initial = 0, priceEntities ) => {
 			priceEntities = sortBy( priceEntities, [ 'order', 'id' ] );
 			return priceEntities.reduce(
 				( newTotal, priceEntity ) => {
@@ -73,7 +73,7 @@ const useTicketPriceCalculators = ( priceTypeEntities ) => {
 						)
 					)( newTotal )( priceTypeEntity.pbtId );
 				},
-				total
+				initial
 			);
 		},
 		[ priceTypeEntities ]
@@ -83,7 +83,7 @@ const useTicketPriceCalculators = ( priceTypeEntities ) => {
 		(
 			total,
 			priceEntities,
-			updateBasePrice = false
+			updateBasePrice = true
 		) => {
 			if ( isEmpty( priceEntities ) ) {
 				return;
@@ -107,7 +107,14 @@ const useTicketPriceCalculators = ( priceTypeEntities ) => {
 			);
 			if ( updateBasePrice ) {
 				const basePrice = getBasePrice( priceEntities );
-				basePrice.amount = new Money( basePriceTotal, SiteCurrency );
+				if ( isModelEntityOfModel( basePrice, 'price' ) ) {
+					basePrice.amount = new Money(
+						basePriceTotal,
+						SiteCurrency
+					);
+				} else {
+					new Error( 'NO BASE PRICE!' );
+				}
 			}
 			return basePriceTotal;
 		},
@@ -115,10 +122,10 @@ const useTicketPriceCalculators = ( priceTypeEntities ) => {
 	);
 
 	const calculateTicketTotals = useCallback(
-		( total, priceEntities, reverseCalculate ) => {
+		( amount, priceEntities, reverseCalculate ) => {
 			return reverseCalculate ?
-				calculateTicketBasePrice( total, priceEntities ) :
-				calculateTicketTotal( total, priceEntities );
+				calculateTicketBasePrice( amount, priceEntities ) :
+				calculateTicketTotal( 0, priceEntities );
 		},
 		[ calculateTicketBasePrice, calculateTicketTotal ]
 	);
