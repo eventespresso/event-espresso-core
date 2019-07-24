@@ -115,23 +115,15 @@
     ); ?>
 </p>
 <p class="wp-credits-list">
-    <a href="http://josscrowcroft.github.io/accounting.js/"><?php _e('accounting.js', 'event_espresso'); ?></a>,
-    <a href="http://dompdf.github.io/"><?php _e('dompdf', 'event_espresso'); ?></a>,
-    <a href="http://zurb.com/playground/jquery-joyride-feature-tour-plugin">
-        <?php _e(
-            'joyride2',
-            'event_espresso'
-        ); ?></a>,
-    <a href="http://raveren.github.io/kint/"><?php _e('Kint', 'event_espresso'); ?></a>,
-    <a href="http://momentjs.com/"><?php _e('Moment.js', 'event_espresso'); ?></a>,
-    <a href="http://qtip2.com/"><?php _e('qTip2', 'event_espresso'); ?></a>,
-    <a href="http://trentrichardson.com/examples/timepicker/"><?php _e('jQuery UI Timepicker', 'event_espresso'); ?></a>,
-    <a href="https://github.com/jhogendorn/jQuery-serializeFullArray">
-        <?php _e(
-            'SerializeFullArray',
-            'event_espresso'
-        ); ?></a>
-    <a href="https://github.com/jzaefferer/jquery-validation"><?php _e('jQuery Validation', 'event_espresso'); ?></a>
+    <a href="http://josscrowcroft.github.io/accounting.js/">accounting.js</a>,
+    <a href="http://dompdf.github.io/">dompdf</a>,
+    <a href="http://zurb.com/playground/jquery-joyride-feature-tour-plugin">joyride2</a>,
+    <a href="http://raveren.github.io/kint/">Kint</a>,
+    <a href="http://momentjs.com/">Moment.js</a>,
+    <a href="http://qtip2.com/">qTip2</a>,
+    <a href="http://trentrichardson.com/examples/timepicker/">jQuery UI Timepicker</a>,
+    <a href="https://github.com/jhogendorn/jQuery-serializeFullArray">SerializeFullArray</a>,
+    <a href="https://github.com/jzaefferer/jquery-validation">jQuery Validation</a>
 </p>
 
 <?php
