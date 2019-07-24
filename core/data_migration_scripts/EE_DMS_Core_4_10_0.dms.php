@@ -566,6 +566,7 @@ class EE_DMS_Core_4_10_0 extends EE_Data_Migration_Script_Base
 				TKT_order tinyint(3) unsigned NOT NULL DEFAULT '0',
 				TKT_row tinyint(3) unsigned NOT NULL DEFAULT '0',
 				TKT_is_default tinyint(1) unsigned NOT NULL DEFAULT '0',
+				TKT_reverse_calculate tinyint(1) unsigned NOT NULL DEFAULT '0',
 				TKT_wp_user bigint(20) unsigned NULL,
 				TKT_parent int(10) unsigned DEFAULT '0',
 				TKT_deleted tinyint(1) NOT NULL DEFAULT '0',
