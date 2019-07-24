@@ -116,12 +116,12 @@
 </p>
 <p class="wp-credits-list">
     <a href="https://openexchangerates.github.io/accounting.js/">accounting.js</a>,
-    <a href="http://dompdf.github.io/">dompdf</a>,
-    <a href="http://zurb.com/playground/jquery-joyride-feature-tour-plugin">joyride2</a>,
+    <a href="https://dompdf.github.io/">dompdf</a>,
+    <a href="https://zurb.com/playground/jquery-joyride-feature-tour-plugin">joyride2</a>,
     <a href="https://kint-php.github.io/kint/">Kint</a>,
-    <a href="http://momentjs.com/">Moment.js</a>,
+    <a href="https://momentjs.com/">Moment.js</a>,
     <a href="http://qtip2.com/">qTip2</a>,
-    <a href="http://trentrichardson.com/examples/timepicker/">jQuery UI Timepicker</a>,
+    <a href="https://trentrichardson.com/examples/timepicker/">jQuery UI Timepicker</a>,
     <a href="https://github.com/jhogendorn/jQuery-serializeFullArray">SerializeFullArray</a>,
     <a href="https://github.com/jzaefferer/jquery-validation">jQuery Validation</a>
 </p>
@@ -129,12 +129,12 @@
 <?php
 function esp_gravatar_profile($email)
 {
-    echo 'http://www.gravatar.com/' . md5($email);
+    echo 'https://www.gravatar.com/' . md5($email);
 }
 
 function esp_gravatar_image($email, $name)
 {
-    echo '<img src="http://0.gravatar.com/avatar/' . md5($email) . '?s=60" class="gravatar" alt="' . $name . '"/>';
+    echo '<img src="https://0.gravatar.com/avatar/' . md5($email) . '?s=60" class="gravatar" alt="' . $name . '"/>';
 }
 
 ?>
