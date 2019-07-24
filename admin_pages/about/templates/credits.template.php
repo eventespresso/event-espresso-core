@@ -115,10 +115,10 @@
     ); ?>
 </p>
 <p class="wp-credits-list">
-    <a href="http://josscrowcroft.github.io/accounting.js/">accounting.js</a>,
+    <a href="https://openexchangerates.github.io/accounting.js/">accounting.js</a>,
     <a href="http://dompdf.github.io/">dompdf</a>,
     <a href="http://zurb.com/playground/jquery-joyride-feature-tour-plugin">joyride2</a>,
-    <a href="http://raveren.github.io/kint/">Kint</a>,
+    <a href="https://kint-php.github.io/kint/">Kint</a>,
     <a href="http://momentjs.com/">Moment.js</a>,
     <a href="http://qtip2.com/">qTip2</a>,
     <a href="http://trentrichardson.com/examples/timepicker/">jQuery UI Timepicker</a>,
