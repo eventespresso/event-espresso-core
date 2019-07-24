@@ -1373,6 +1373,34 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class implements EEI_Line_Item_Objec
 
 
     /**
+     * @return boolean
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws ReflectionException
+     */
+    public function reverse_calculate()
+    {
+        return $this->get('TKT_reverse_calculate');
+    }
+
+
+    /**
+     * @param boolean $reverse_calculate
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws ReflectionException
+     */
+    public function set_reverse_calculate($reverse_calculate)
+    {
+        $this->set('TKT_reverse_calculate', $reverse_calculate);
+    }
+
+
+    /**
      * Gets a string which is handy for showing in gateways etc that describes the ticket.
      *
      * @return string
