@@ -12,7 +12,7 @@ export {
 	default as TicketPriceCalculatorForm,
 } from './ticket-price-calculator-form';
 export {
-	ticketPriceCalculatorFormDataMap,
+	default as ticketPriceCalculatorFormDataMap,
 } from './ticket-price-calculator-form-data-map';
 export {
 	default as withTicketPriceCalculatorFormModal,
