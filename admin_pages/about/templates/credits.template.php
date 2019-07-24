@@ -35,15 +35,6 @@
         </a>
         <span class="title"><?php _e('Lead Developer', 'event_espresso'); ?></span>
     </li>
-    <li class="wp-person" id="ee-person-dethier">
-        <a href="<?php esp_gravatar_profile('darren@roughsmootheng.in'); ?>">
-            <?php echo esp_gravatar_image('darren@roughsmootheng.in', 'Darren Ethier'); ?>
-        </a>
-        <a class="web" href="<?php esp_gravatar_profile('darren@roughsmootheng.in'); ?>">
-            Darren Ethier
-        </a>
-        <span class="title"><?php _e('Core Developer', 'event_espresso'); ?></span>
-    </li>
     <li class="wp-person" id="ee-person-mnelson">
         <a href="<?php esp_gravatar_profile('michael@eventespresso.com'); ?>">
             <?php echo esp_gravatar_image('michael@eventespresso.com', 'Michael Nelson'); ?>
