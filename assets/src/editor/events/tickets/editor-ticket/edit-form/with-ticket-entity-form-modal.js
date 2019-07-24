@@ -29,8 +29,6 @@ const TicketEntityFormModal = withEditorModal( {
 	);
 	return <TicketEntityForm
 		loadHandler={ loadHandler }
-		submitHandler={ null }
-		resetHandler={ null }
 		ticketEntity={ ticketEntity }
 		{ ...otherProps }
 	/>;
