@@ -53,8 +53,7 @@ class EE_PMT_Aim extends EE_PMT_Base
             'name'=>'AIM_Form',
             'subsections'=>array(
                 'credit_card'=>new EE_Credit_Card_Input(array(
-                    'required'=>true,
-                    'html_label_text' => __('Card Number', 'event_espresso')
+                    'required'=>true
                 )),
                 'exp_month'=>new EE_Credit_Card_Month_Input(true, array(
                     'required'=>true,
