@@ -25,7 +25,7 @@ class EE_Billing_Attendee_Info_Form extends EE_Billing_Info_Form
             array(
                 'first_name'    => new EE_Text_Input(array( 'required'=>true, 'html_class' => 'ee-billing-qstn ee-billing-qstn-fname', 'html_label_text' => __('First Name', 'event_espresso') )),
                 'last_name'     => new EE_Text_Input(array( 'required'=>true, 'html_class' => 'ee-billing-qstn ee-billing-qstn-lname', 'html_label_text' => __('Last Name', 'event_espresso') )),
-                'email'             => new EE_Email_Input(array( 'required'=>true, 'html_class' => 'ee-billing-qstn ee-billing-qstn-email', 'html_label_text' => __('Email', 'event_espresso') )),
+                'email'             => new EE_Email_Input(array( 'required'=>true, 'html_class' => 'ee-billing-qstn ee-billing-qstn-email', 'html_label_text' => __('Email Address', 'event_espresso') )),
                 'address'           => new EE_Text_Input(array( 'html_label_text'=>  __('Address', 'event_espresso'), 'required'=>true, 'html_class' => 'ee-billing-qstn ee-billing-qstn-address' )),
                 'address2'      => new EE_Text_Input(array( 'html_label_text'=> __('Address 2', 'event_espresso'), 'html_class' => 'ee-billing-qstn ee-billing-qstn-address2' )),
                 'city'                  => new EE_Text_Input(array( 'required'=>true, 'html_class' => 'ee-billing-qstn ee-billing-qstn-city', 'html_label_text' => __('City', 'event_espresso') )),
