@@ -39,11 +39,10 @@ class EE_CVV_Input extends EE_Text_Input
         ) {
             $this->_html_label_text = sprintf(
                 esc_html_x(
-                    '%1$s %2$s(What\'s this?)%3$s',
+                    'Card Security Code %1$s(What\'s this?)%2$s',
                     'CVV (What\'s this?)',
                     'event_espresso'
                 ),
-                $this->_html_label_text,
                 '<a href="https://www.cvvnumber.com/" target="_blank" rel="noopener noreferrer">',
                 '</a>'
             );
