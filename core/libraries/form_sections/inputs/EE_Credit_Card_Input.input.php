@@ -21,5 +21,11 @@ class EE_Credit_Card_Input extends EE_Form_Input_Base
         $this->_add_validation_strategy(new EE_Credit_Card_Validation_Strategy(isset($input_settings['validation_error_message']) ? $input_settings['validation_error_message'] : null));
         $this->set_sensitive_data_removal_strategy(new EE_Credit_Card_Sensitive_Data_Removal());
         parent::__construct($input_settings);
+        // Don't allow the label text to be overridden. This is the text you want because it works for
+        // credit cards, debit cards, and bank cards.
+        $this->_html_label_text = esc_html__(
+            'Card Number',
+            'event_espresso'
+        );
     }
 }
