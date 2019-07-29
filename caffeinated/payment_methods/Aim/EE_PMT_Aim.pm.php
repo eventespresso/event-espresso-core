@@ -64,7 +64,8 @@ class EE_PMT_Aim extends EE_PMT_Base
                     'html_label_text' => __('Expiry Year', 'event_espresso')
                 )),
                 'cvv'=>new EE_CVV_Input(array(
-                    'required'=>true,
+                    'required'=>true
+                )),
             )
         ));
         $billing_form->add_subsections(array(
