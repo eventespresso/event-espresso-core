@@ -74,7 +74,6 @@ class EE_PMT_New_Payment_Method_Onsite extends EE_PMT_Base{
 				) ),
 				'cvv'         => new EE_CVV_Input( array(
 					'required'        => false,
-					'html_label_text' => __( 'CVV', 'event_espresso' )
 				) ),
 			)
 		) );

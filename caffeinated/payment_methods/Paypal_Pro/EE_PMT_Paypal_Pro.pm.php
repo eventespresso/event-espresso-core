@@ -78,7 +78,7 @@ class EE_PMT_Paypal_Pro extends EE_PMT_Base
                         array( 'required'=>true, 'html_class' => 'ee-billing-qstn', 'html_label_text' => __('Expiry Year', 'event_espresso')  )
                     ),
                     'cvv'=>new EE_CVV_Input(
-                        array( 'required'=>true, 'html_class' => 'ee-billing-qstn', 'html_label_text' => __('CVV', 'event_espresso') )
+                        array( 'required'=>true, 'html_class' => 'ee-billing-qstn' )
                     ),
                 )
             )
