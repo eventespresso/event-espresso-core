@@ -171,10 +171,20 @@ class EE_Default_Line_Item_Display_Strategy implements EEI_Line_Item_Display
             ? 1 + ( $this->_tax_rate / 100 )
             : 1;
         // price td
-        $unit_price = EEH_Template::format_currency($line_item->unit_price() * $tax_rate, false, false);
+        $unit_price = apply_filters(
+            'FHEE__EE_Default_Line_Item_Display_Strategy___item_row__unit_price',
+            EEH_Template::format_currency($line_item->unit_price() * $tax_rate, false, false),
+            $line_item,
+            $tax_rate
+        );
         $html .= EEH_HTML::td($unit_price, '', 'item_c jst-rght');
         // total td
-        $total = EEH_Template::format_currency($line_item->unit_price() * $line_item->quantity() * $tax_rate, false, false);
+        $total = apply_filters(
+            'FHEE__EE_Default_Line_Item_Display_Strategy___item_row__total',
+            EEH_Template::format_currency($line_item->unit_price() * $line_item->quantity() * $tax_rate, false, false),
+            $line_item,
+            $tax_rate
+        );
         $html .= EEH_HTML::td($total, '', 'item_r jst-rght');
         // end of row
         $html .= EEH_HTML::trx();
