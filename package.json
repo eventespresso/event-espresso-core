@@ -85,7 +85,7 @@
 		"del": "git+https://github.com/sindresorhus/del.git",
 		"equivalent-key-map": "^0.2.2",
 		"eslint": "^6.1.0",
-		"eslint-plugin-jest": "22.14.0",
+		"eslint-plugin-jest": "22.14.1",
 		"handlebars": "^4.1.2",
 		"license-checker": "^25.0.1",
 		"lodash": "^4.17.15",
