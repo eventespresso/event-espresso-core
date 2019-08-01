@@ -155,8 +155,8 @@ class EE_Default_Line_Item_Display_Strategy implements EEI_Line_Item_Display
         );
         if ($line_item->is_taxable()) {
             $ticket_price_includes_taxes = EE_Registry::instance()->CFG->tax_settings->prices_displayed_including_taxes
-                ? __('* price includes taxes', 'event_espresso')
-                : __('* price does not include taxes', 'event_espresso');
+                ? esc_html__('* price includes taxes', 'event_espresso')
+                : esc_html__('* price does not include taxes', 'event_espresso');
             $name_and_desc .= '<span class="smaller-text lt-grey-text" style="margin:0 0 0 2em;">'
                   . $ticket_price_includes_taxes
                   . '</span>';
