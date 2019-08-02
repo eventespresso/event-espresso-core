@@ -82,9 +82,9 @@ class EED_Events_Archive_Caff extends EED_Events_Archive
         if (! defined('EVENTS_ARCHIVE_CAFF_TEMPLATES_PATH')) {
             define(
                 'EVENTS_ARCHIVE_CAFF_TEMPLATES_PATH',
-                str_replace('\\', DS, plugin_dir_path(__FILE__)) . 'templates' . DS
+                str_replace('\\', DS, plugin_dir_path(__FILE__)) . 'templates/'
             );
-            define('EVENT_ARCHIVE_CAFF_ASSETS_URL', plugin_dir_url(__FILE__) . 'assets' . DS);
+            define('EVENT_ARCHIVE_CAFF_ASSETS_URL', plugin_dir_url(__FILE__) . 'assets/');
         }
     }
 

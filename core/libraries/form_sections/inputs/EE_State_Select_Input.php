@@ -60,7 +60,7 @@ class EE_State_Select_Input extends EE_Select_Input
 
     /**
      * Returns the name of the state field used for the HTML option values.
-     * @since $VID:$
+     * @since 4.10.0.p
      * @return string
      */
     public function valueFieldName()

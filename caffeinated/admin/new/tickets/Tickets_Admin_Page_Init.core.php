@@ -42,15 +42,15 @@ class Tickets_Admin_Page_Init extends EE_Admin_Page_Init
 
         define('TICKETS_PG_SLUG', 'tickets');
         define('TICKETS_LABEL', __('Default Tickets', 'event_espresso'));
-        define('TICKETS_ADMIN', EE_CORE_CAF_ADMIN . 'new' . DS . TICKETS_PG_SLUG . DS);
+        define('TICKETS_ADMIN', EE_CORE_CAF_ADMIN . 'new/'. TICKETS_PG_SLUG . '/');
         define('TICKETS_ADMIN_URL', admin_url('admin.php?page=' . TICKETS_PG_SLUG));
-        define('TICKETS_ASSETS_PATH', TICKETS_ADMIN . 'assets' . DS);
-        define('TICKETS_ASSETS_URL', EE_CORE_CAF_ADMIN_URL . 'new' . DS . TICKETS_PG_SLUG . '/assets/');
-        define('TICKETS_TEMPLATE_PATH', TICKETS_ADMIN . 'templates' . DS);
-        define('TICKETS_TEMPLATE_URL', EE_CORE_CAF_ADMIN_URL . 'new' . DS . TICKETS_PG_SLUG . DS . 'templates/');
+        define('TICKETS_ASSETS_PATH', TICKETS_ADMIN . 'assets/');
+        define('TICKETS_ASSETS_URL', EE_CORE_CAF_ADMIN_URL . 'new/'. TICKETS_PG_SLUG . '/assets/');
+        define('TICKETS_TEMPLATE_PATH', TICKETS_ADMIN . 'templates/');
+        define('TICKETS_TEMPLATE_URL', EE_CORE_CAF_ADMIN_URL . 'new/'. TICKETS_PG_SLUG . '/templates/');
 
         parent::__construct();
-        $this->_folder_path = EE_CORE_CAF_ADMIN . 'new' . DS . $this->_folder_name . DS;
+        $this->_folder_path = EE_CORE_CAF_ADMIN . 'new/'. $this->_folder_name . DS;
     }
 
 

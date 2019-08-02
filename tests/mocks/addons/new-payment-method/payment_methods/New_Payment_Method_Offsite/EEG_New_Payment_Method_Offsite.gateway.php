@@ -104,7 +104,7 @@ class EEG_New_Payment_Method_Offsite extends EE_Offsite_Gateway{
 		}
 		$payment->set_txn_id_chq_nmbr( $auto_made_thing_seed++ );
 		
-		$payment->set_redirect_url( EE_NEW_PAYMENT_METHOD_URL . DS . 'payment_methods' . DS . 'New_Payment_Method_Offsite' . DS . 'pretend_offsite_page.php' );
+		$payment->set_redirect_url( EE_NEW_PAYMENT_METHOD_URL . '/payment_methods/New_Payment_Method_Offsite/pretend_offsite_page.php' );
 		$payment->set_redirect_args( array(
 			'amount' => $payment->amount(),
 			'gateway_txn_id' => $payment->txn_id_chq_nmbr(),

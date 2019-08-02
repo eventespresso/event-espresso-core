@@ -25,11 +25,11 @@ class Messages_Admin_Page_Mock extends Messages_Admin_Page {
 		if ( ! defined( 'EE_MSG_PG_SLUG' ) ) {
 			define( 'EE_MSG_PG_SLUG', 'espresso_messages' );
 			define( 'EE_MSG_PG_NAME', ucwords( str_replace( '_', '', EE_MSG_PG_SLUG ) ) );
-			define( 'EE_MSG_ADMIN', EE_ADMIN_PAGES . 'messages' . DS );
+			define( 'EE_MSG_ADMIN', EE_ADMIN_PAGES . 'messages/' );
 			define( 'EE_MSG_ADMIN_URL', admin_url( 'admin.php?page=' . EE_MSG_PG_SLUG ) );
-			define( 'EE_MSG_ASSETS_PATH', EE_MSG_ADMIN . 'assets' . DS );
+			define( 'EE_MSG_ASSETS_PATH', EE_MSG_ADMIN . 'assets/' );
 			define( 'EE_MSG_ASSETS_URL', EE_PLUGIN_DIR_URL . 'admin_pages/messages/assets/' );
-			define( 'EE_MSG_TEMPLATE_PATH', EE_MSG_ADMIN . 'templates' . DS );
+			define( 'EE_MSG_TEMPLATE_PATH', EE_MSG_ADMIN . 'templates/' );
 			define( 'EE_MSG_TEMPLATE_URL', EE_PLUGIN_DIR_URL . 'admin_pages/messages/templates/' );
 		}
 

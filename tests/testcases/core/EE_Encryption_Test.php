@@ -27,7 +27,7 @@ class EE_Encryption_Test extends EE_UnitTestCase
     public function setUp()
     {
         parent::setUp();
-        require_once EE_TESTS_DIR . 'mocks' . DS . 'core' . DS . 'EE_Encryption_Mock.php';
+        require_once EE_TESTS_DIR . 'mocks/core/EE_Encryption_Mock.php';
         $this->encryption = EE_Encryption_Mock::instance();
     }
 

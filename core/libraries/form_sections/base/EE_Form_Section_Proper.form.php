@@ -710,7 +710,7 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable
     {
         wp_register_script(
             'ee_form_section_validation',
-            EE_GLOBAL_ASSETS_URL . 'scripts' . DS . 'form_section_validation.js',
+            EE_GLOBAL_ASSETS_URL . 'scripts' . '/form_section_validation.js',
             array('jquery-validate', 'jquery-ui-datepicker', 'jquery-validate-extra-methods'),
             EVENT_ESPRESSO_VERSION,
             true

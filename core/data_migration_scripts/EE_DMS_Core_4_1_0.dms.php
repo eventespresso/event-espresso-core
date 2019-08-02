@@ -1524,7 +1524,7 @@ class EE_DMS_Core_4_1_0 extends EE_Data_Migration_Script_Base
                 ), $guid));
                 return false;
             }
-            $local_filepath = $wp_upload_dir['path'] . DS . basename($guid);
+            $local_filepath = $wp_upload_dir['path'] . '/' . basename($guid);
             $savefile = fopen($local_filepath, 'w');
             fwrite($savefile, $contents);
             fclose($savefile);

@@ -253,7 +253,7 @@ class EED_Batch extends EED_Module
     public function override_template($template)
     {
         if (isset($_REQUEST['espresso_batch']) && isset($_REQUEST['batch'])) {
-            return EE_MODULES . 'batch' . DS . 'templates' . DS . 'batch_frontend_wrapper.template.html';
+            return EE_MODULES . 'batch/templates/batch_frontend_wrapper.template.html';
         }
         return $template;
     }
@@ -280,7 +280,7 @@ class EED_Batch extends EED_Module
     public function show_admin_page()
     {
         echo EEH_Template::locate_template(
-            EE_MODULES . 'batch' . DS . 'templates' . DS . 'batch_wrapper.template.html',
+            EE_MODULES . 'batch/templates/batch_wrapper.template.html',
             array('batch_request_type' => $this->batch_request_type())
         );
     }

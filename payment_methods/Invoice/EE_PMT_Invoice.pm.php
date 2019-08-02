@@ -40,7 +40,7 @@ class EE_PMT_Invoice extends EE_PMT_Base
             '<br />'
         );
         parent::__construct($pm_instance);
-        $this->_default_button_url = $this->file_url().'lib'.DS.'invoice-logo.png';
+        $this->_default_button_url = $this->file_url().'lib/invoice-logo.png';
     }
 
 
@@ -146,7 +146,7 @@ class EE_PMT_Invoice extends EE_PMT_Base
     public function payment_overview_content(EE_Payment $payment)
     {
         return EEH_Template::locate_template(
-            'payment_methods' . DS . 'Invoice'. DS . 'templates'.DS.'invoice_payment_details_content.template.php',
+            'payment_methods/Invoice/templates/invoice_payment_details_content.template.php',
             array_merge(
                 array(
                     'payment_method'            => $this->_pm_instance,

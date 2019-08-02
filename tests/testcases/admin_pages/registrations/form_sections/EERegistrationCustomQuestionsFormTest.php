@@ -7,7 +7,7 @@
  *
  * @package     Event Espresso
  * @author         Mike Nelson
- * @since         $VID:$
+ * @since         4.10.0.p
  *
  */
 class EERegistrationCustomQuestionsFormTest extends EE_UnitTestCase
@@ -27,13 +27,13 @@ class EERegistrationCustomQuestionsFormTest extends EE_UnitTestCase
     protected function loadRequirements()
     {
         $this->_admin_page = new Registrations_Admin_Page_Mock();
-        require_once(REG_ADMIN . 'form_sections' . DS . 'EE_Registration_Custom_Questions_Form.form.php');
+        require_once(REG_ADMIN . 'form_sections/EE_Registration_Custom_Questions_Form.form.php');
     }
 
     /**
      * Tests build_form_from_registration. We have a primary reg, and primary regs should answer the personal info
      * question group, but no custom questions for that question group.
-     * @since $VID:$
+     * @since 4.10.0.p
      * @throws EE_Error
      * @throws InvalidArgumentException
      * @throws ReflectionException
@@ -61,7 +61,7 @@ class EERegistrationCustomQuestionsFormTest extends EE_UnitTestCase
     /**
      * Tests build_form_from_registration. We have a primary reg, who should answer the personal info question group
      * and it has a custom question in it.
-     * @since $VID:$
+     * @since 4.10.0.p
      * @throws EE_Error
      * @throws InvalidArgumentException
      * @throws ReflectionException
@@ -93,7 +93,7 @@ class EERegistrationCustomQuestionsFormTest extends EE_UnitTestCase
     /**
      * Tests build_form_from_registration. We have an additional reg, but only primary attendees should answer
      * the personal info question group (which has a custom question in it).
-     * @since $VID:$
+     * @since 4.10.0.p
      * @throws EE_Error
      * @throws InvalidArgumentException
      * @throws ReflectionException
@@ -126,7 +126,7 @@ class EERegistrationCustomQuestionsFormTest extends EE_UnitTestCase
     /**
      * Tests build_form_from_registration. We have an additional reg, but only primary attendees should answer
      * the personal info question group (which has a custom question in it).
-     * @since $VID:$
+     * @since 4.10.0.p
      * @throws EE_Error
      * @throws InvalidArgumentException
      * @throws ReflectionException
@@ -156,7 +156,7 @@ class EERegistrationCustomQuestionsFormTest extends EE_UnitTestCase
     /**
      * Tests build_form_from_registration. We have an additional reg, who should answer the personal info question group
      * and it has a custom question in it.
-     * @since $VID:$
+     * @since 4.10.0.p
      * @throws EE_Error
      * @throws InvalidArgumentException
      * @throws ReflectionException

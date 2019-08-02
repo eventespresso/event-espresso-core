@@ -113,12 +113,12 @@ class FqcnLocator extends Locator
         }
         foreach ($iterator as $file) {
             if ($file->isFile() && $file->getExtension() === 'php') {
-                $file = $file->getPath() . DS . $file->getBasename('.php');
+                $file = $file->getPath() . '/' . $file->getBasename('.php');
                 foreach ($this->namespaces as $namespace => $base_dir) {
                     $namespace .= Psr4Autoloader::NS;
                     if (strpos($file, $base_dir) === 0) {
                         $this->FQCNs[] = Psr4Autoloader::NS . str_replace(
-                            array($base_dir, DS),
+                            array($base_dir, '/'),
                             array($namespace, Psr4Autoloader::NS),
                             $file
                         );
@@ -168,6 +168,6 @@ class FqcnLocator extends Locator
         }
         $this->setNamespace($namespace, $prefix[0]);
         // but if it's good, add that base directory to the rest of the path, and return it
-        return $prefix[0] . implode(DS, array_diff($namespace_segments, $vendor_base)) . DS;
+        return $prefix[0] . implode('/', array_diff($namespace_segments, $vendor_base)) . '/';
     }
 }

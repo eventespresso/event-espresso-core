@@ -25,12 +25,12 @@ class Transactions_Admin_Page_Mock extends Transactions_Admin_Page {
 		if ( ! defined( 'TXN_PG_SLUG' ) ) {
 			define( 'TXN_PG_SLUG', 'espresso_transactions' );
 			define( 'TXN_PG_NAME', ucwords( str_replace( '_', '', TXN_PG_SLUG ) ) );
-			define( 'TXN_ADMIN', EE_ADMIN_PAGES . 'transactions' . DS );
+			define( 'TXN_ADMIN', EE_ADMIN_PAGES . 'transactions/' );
 			define( 'TXN_ADMIN_URL', admin_url( 'admin.php?page=' . TXN_PG_SLUG ) );
-			define( 'TXN_ASSETS_PATH', TXN_ADMIN . 'assets' . DS );
-			define( 'TXN_TEMPLATE_PATH', TXN_ADMIN . 'templates' . DS );
-			define( 'TXN_ASSETS_URL', str_replace( '\\', '/', EE_PLUGIN_DIR_URL . 'admin_pages/transactions/assets' . DS ) );
-			define( 'TXN_TEMPLATE_URL', str_replace( '\\', '/', EE_PLUGIN_DIR_URL . 'admin_pages/transactions/templates' . DS ) );
+			define( 'TXN_ASSETS_PATH', TXN_ADMIN . 'assets/' );
+			define( 'TXN_TEMPLATE_PATH', TXN_ADMIN . 'templates/' );
+			define( 'TXN_ASSETS_URL', str_replace( '\\', '/', EE_PLUGIN_DIR_URL . 'admin_pages/transactions/assets/') );
+			define( 'TXN_TEMPLATE_URL', str_replace( '\\', '/', EE_PLUGIN_DIR_URL . 'admin_pages/transactions/templates/') );
 		}
 		parent::__construct( false );
 	}

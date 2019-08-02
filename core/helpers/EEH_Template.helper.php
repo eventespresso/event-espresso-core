@@ -70,8 +70,8 @@ class EEH_Template
     public static function load_espresso_theme_functions()
     {
         if (! defined('EE_THEME_FUNCTIONS_LOADED')) {
-            if (is_readable(EE_PUBLIC . EE_Config::get_current_theme() . DS . 'functions.php')) {
-                require_once(EE_PUBLIC . EE_Config::get_current_theme() . DS . 'functions.php');
+            if (is_readable(EE_PUBLIC . EE_Config::get_current_theme() . '/functions.php')) {
+                require_once(EE_PUBLIC . EE_Config::get_current_theme() . '/functions.php');
             }
         }
     }
@@ -272,7 +272,7 @@ class EEH_Template
                 // if $template is an absolute path, then we'll tack it onto the start of our array so that it gets searched first
                 array_unshift($full_template_paths, $template);
                 // path to the directory of the current theme: /wp-content/themes/(current WP theme)/
-                array_unshift($full_template_paths, get_stylesheet_directory() . DS . $file_name);
+                array_unshift($full_template_paths, get_stylesheet_directory() . '/' . $file_name);
             }
             // filter final array of full template paths
             $full_template_paths = apply_filters(
@@ -315,7 +315,7 @@ class EEH_Template
     {
         $last_offset      = 0;
         $common_base_path = '';
-        while (($index = strpos($paths[0], DS, $last_offset)) !== false) {
+        while (($index = strpos($paths[0], '/', $last_offset)) !== false) {
             $dir_length = $index - $last_offset + 1;
             $directory  = substr($paths[0], $last_offset, $dir_length);
             foreach ($paths as $path) {

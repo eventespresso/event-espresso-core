@@ -113,8 +113,8 @@ class EED_Event_Single_Caff extends EED_Event_Single
     public static function setDefinitions()
     {
         if (! defined('EVENT_SINGLE_CAFF_TEMPLATES_PATH')) {
-            define('EVENT_SINGLE_CAFF_TEMPLATES_PATH', plugin_dir_path(__FILE__) . 'templates' . DS);
-            define('EVENT_SINGLE_CAFF_ASSETS_URL', plugin_dir_url(__FILE__) . 'assets' . DS);
+            define('EVENT_SINGLE_CAFF_TEMPLATES_PATH', plugin_dir_path(__FILE__) . 'templates/');
+            define('EVENT_SINGLE_CAFF_ASSETS_URL', plugin_dir_url(__FILE__) . 'assets/');
         }
     }
 

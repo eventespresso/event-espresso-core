@@ -5,7 +5,7 @@
 define( 'EE_NEW_ADDON_BASENAME', plugin_basename( EE_NEW_ADDON_PLUGIN_FILE ) );
 define( 'EE_NEW_ADDON_PATH', plugin_dir_path( __FILE__ ) );
 define( 'EE_NEW_ADDON_URL', plugin_dir_url( __FILE__ ) );
-define( 'EE_NEW_ADDON_ADMIN', EE_NEW_ADDON_PATH . 'admin' . DS . 'new_addon' . DS );
+define( 'EE_NEW_ADDON_ADMIN', EE_NEW_ADDON_PATH . 'admin/new_addon/');
 
 /**
  * Class  EE_New_Addon
@@ -75,7 +75,7 @@ Class  EE_New_Addon extends EE_Addon {
 					'New_Addon_Admin_Page'      => EE_NEW_ADDON_ADMIN . 'New_Addon_Admin_Page.core.php',
 					'New_Addon_Admin_Page_Init' => EE_NEW_ADDON_ADMIN . 'New_Addon_Admin_Page_Init.core.php',
 				),
-				'dms_paths'             => array( EE_NEW_ADDON_PATH . 'core' . DS . 'data_migration_scripts' . DS ),
+				'dms_paths'             => array( EE_NEW_ADDON_PATH . 'core/data_migration_scripts/'),
 				'module_paths'          => array( EE_NEW_ADDON_PATH . 'EED_New_Addon.module.php' ),
 				'shortcode_paths'       => array( EE_NEW_ADDON_PATH . 'EES_New_Addon.shortcode.php' ),
 				'widget_paths'          => array( EE_NEW_ADDON_PATH . 'EEW_New_Addon.widget.php' ),
@@ -100,10 +100,10 @@ Class  EE_New_Addon extends EE_Addon {
 						array( 'New_Addon_Thing', 'edit_things', 'edit_others_things', 'edit_private_things' ),
 					),
 				),
-				'class_paths'           => EE_NEW_ADDON_PATH . 'core' . DS . 'db_classes',
-				'model_paths'           => EE_NEW_ADDON_PATH . 'core' . DS . 'db_models',
-				'class_extension_paths' => EE_NEW_ADDON_PATH . 'core' . DS . 'db_class_extensions',
-				'model_extension_paths' => EE_NEW_ADDON_PATH . 'core' . DS . 'db_model_extensions',
+				'class_paths'           => EE_NEW_ADDON_PATH . 'core/db_classes',
+				'model_paths'           => EE_NEW_ADDON_PATH . 'core/db_models',
+				'class_extension_paths' => EE_NEW_ADDON_PATH . 'core/db_class_extensions',
+				'model_extension_paths' => EE_NEW_ADDON_PATH . 'core/db_model_extensions',
 				//note for the mock we're not actually adding any custom cpt stuff yet.
 				'custom_post_types'     => array(),
 				'custom_taxonomies'     => array(),

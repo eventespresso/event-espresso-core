@@ -265,7 +265,7 @@ abstract class EE_Admin_Page_Init extends EE_Base
                 }
             }
         }
-        $this->_folder_path = EE_ADMIN_PAGES . $this->_folder_name . DS;
+        $this->_folder_path = EE_ADMIN_PAGES . $this->_folder_name . '/';
         $this->_file_name = preg_replace('/^ee/', 'EE', $this->_folder_name);
         $this->_file_name = ucwords(str_replace('_', ' ', $this->_file_name));
         $this->_file_name = str_replace(' ', '_', $this->_file_name);
@@ -292,8 +292,7 @@ abstract class EE_Admin_Page_Init extends EE_Base
                 'FHEE__EE_Admin_Page_Init__register_hooks__hook_files_glob_path__extend',
                 EE_CORE_CAF_ADMIN_EXTEND
                 . $this->_folder_name
-                . DS
-                . '*'
+                . '/*'
                 . $this->_file_name
                 . '_Hooks_Extend.class.php'
             );
@@ -321,7 +320,7 @@ abstract class EE_Admin_Page_Init extends EE_Base
             }
             foreach ($hook_files as $file) {
                 // lets get the linked admin.
-                $hook_file = $extend ? str_replace(EE_CORE_CAF_ADMIN_EXTEND . $this->_folder_name . DS, '', $file)
+                $hook_file = $extend ? str_replace(EE_CORE_CAF_ADMIN_EXTEND . $this->_folder_name . '/', '', $file)
                     : str_replace($this->_folder_path, '', $file);
                 $replace = $extend
                     ? '_' . $this->_file_name . '_Hooks_Extend.class.php'
@@ -375,7 +374,7 @@ abstract class EE_Admin_Page_Init extends EE_Base
             $admin_page
         );
         // define requested admin page class name then load the file and instantiate
-        $path_to_file = str_replace(array('\\', '/'), DS, $this->_folder_path . $admin_page . '.core.php');
+        $path_to_file = str_replace(array('\\', '/'), '/', $this->_folder_path . $admin_page . '.core.php');
         $path_to_file = apply_filters(
             "FHEE__EE_Admin_Page_Init___initialize_admin_page__path_to_file__{$hook_suffix}",
             $path_to_file
