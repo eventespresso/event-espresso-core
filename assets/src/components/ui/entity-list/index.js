@@ -9,7 +9,8 @@ import classNames from 'classnames';
  * Internal dependencies
  */
 import './style.css';
-import withFormContainerAndPlaceholder from '../../form/base/with-form-container-and-placeholder';
+import withFormContainerAndPlaceholder
+	from '../../form/base/with-form-container-and-placeholder';
 
 /**
  * EntityList
@@ -35,11 +36,22 @@ const EntityList = ( {
 	noResultsText = '',
 	...otherProps
 } ) => {
-	entities = Array.isArray( entities ) ? entities : [];
-	// Remove undefined from the array
-	entities = without( entities, undefined );
+	// verify array and remove undefined
+	entities = Array.isArray( entities ) ?
+		without( entities, undefined ) :
+		[];
+	if ( entities.length === 0 ) {
+		noResultsText = noResultsText !== '' ?
+			noResultsText :
+			__( 'no results found', 'event_espresso' );
+		return (
+			<div className="ee-entity-list-no-results">
+				{ noResultsText }
+			</div>
+		);
+	}
 	htmlClass = classNames( 'ee-editor-entity-list', htmlClass );
-	let entityList = view === 'grid' ? (
+	return view === 'grid' ? (
 		<EntityGridView
 			entities={ entities }
 			htmlClass={ htmlClass }
@@ -52,17 +64,6 @@ const EntityList = ( {
 			{ ...otherProps }
 		/>
 	);
-	if ( entities.length === 0 ) {
-		noResultsText = noResultsText !== '' ?
-			noResultsText :
-			__( 'no results found', 'event_espresso' );
-		entityList = (
-			<div className="ee-entity-list-no-results">
-				{ noResultsText }
-			</div>
-		);
-	}
-	return entityList;
 };
 
 export default withFormContainerAndPlaceholder( EntityList );
