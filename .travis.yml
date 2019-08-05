@@ -2,11 +2,6 @@ sudo: required
 
 language: php
 
-matrix:
-  include:
-      - php: 5.5
-        dist: trusty
-
 services:
   - mysql
 
@@ -145,6 +140,7 @@ jobs:
       if: NOT commit_message =~ js_only AND NOT commit_message =~ dependabot AND NOT sender =~ dependabot
     # wp 4.5 builds
     - php: 5.5
+      dist: trusty
       env: WP_VERSION=4.5
       if: NOT commit_message =~ js_only AND NOT commit_message =~ dependabot AND NOT sender =~ dependabot
     - php: nightly
