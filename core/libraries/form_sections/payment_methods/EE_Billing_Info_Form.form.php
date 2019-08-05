@@ -83,5 +83,39 @@ class EE_Billing_Info_Form extends EE_Form_Section_Proper
     {
         return ! empty($this->_html_class) ? $this->_html_class . ' ee-billing-form' : 'ee-billing-form';
     }
+
+
+
+    public function enqueue_js()
+    {
+        parent::enqueue_js();
+        // In the future this feature may be available to other payment methods, but for now it's only PayPal Pro.
+        if ($this->_pm_instance->type() === 'Paypal_Pro') {
+            $this->enqueueCardinalCommerceJs();
+        }
+    }
+
+    /**
+     * Enqueues JS for Cardinal Commerce to do 3D Secure Authorization.
+     * @since $VID:$
+     */
+    protected function enqueueCardinalCommerceJs()
+    {
+        $on_staging = $this->_pm_instance->debug_mode();
+        if ($on_staging) {
+            $songbird_domain = 'songbirdstag.cardinalcommerce.com';
+        } else {
+            $songbird_domain = 'songbird.cardinalcommerce.com';
+        }
+        wp_enqueue_script(
+            'ee-cardinalcommerce-songbird',
+            "https://{$songbird_domain}/edge/v1/songbird.js");
+//        wp_register_script(
+//            'ee-cardinalcommerce',
+//            plugins_url('cardinalcommerce-oneconnect.js',
+//                CARDINAL_ONECONNECT_PLUGIN_FILE),
+//            array('jquery', 'cardinalcommerce-oneconnect-songbird'),
+//            CARDINAL_ONECONNECT_VERSION, true);
+    }
 }
 // End of file EE_Billing_Info_Form.form.php
