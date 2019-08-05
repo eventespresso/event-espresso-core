@@ -74,12 +74,15 @@ const FormHandlerForm = ( {
 			/>
 			<FormContainer loading={ loading }>
 				<FormComponent
+					updateField={ form.change }
 					initialValues={ initialValues }
 					currentValues={ currentValues }
 					submitButton={ submitButton }
 					cancelButton={ cancelButton }
 					formReset={ formReset }
-					markChanges={ ( yeah = true ) => setHasChanges( yeah ) }
+					markChanges={
+						( changes = true ) => setHasChanges( changes )
+					}
 					pristine={ pristine }
 					{ ...formProps }
 				/>
