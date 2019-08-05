@@ -1,9 +1,9 @@
 /**
  * External imports
  */
-import { castArray, isEqual } from 'lodash';
-import { createHigherOrderComponent } from '@wordpress/compose';
 import { Form } from 'react-final-form';
+import { castArray, isEqual } from 'lodash';
+import { useEffect, useState } from '@wordpress/element';
 
 /**
  * Internal imports
@@ -14,7 +14,7 @@ import FormHandlerForm from './form-handler-form';
 const nullFunc = () => null;
 
 /**
- * withFormHandler
+ * FormHandler
  * Higher-Order-Component that wraps the supplied form component
  * with a React-Final-Form Form component and connects it to the
  * supplied load, Submit, and Reset handlers, which are
@@ -23,24 +23,29 @@ const nullFunc = () => null;
  * @param {Function} FormComponent
  * @return {Object} FormComponent with added form handling
  */
-const withFormHandler = createHigherOrderComponent(
-	( FormComponent ) => ( {
-		loadHandler = nullFunc,
-		submitHandler = nullFunc,
-		setMutatorCallbacks = nullFunc,
-		submitButtonText = '',
-		cancelButtonText = '',
-		errorMessage = '',
-		loadingNotice = '',
-		decorators = [],
-		mutators = {},
-		...otherProps
-	} ) => (
+const FormHandler = ( {
+	loadHandler = nullFunc,
+	submitHandler = nullFunc,
+	setMutatorCallbacks = nullFunc,
+	submitButtonText = '',
+	cancelButtonText = '',
+	errorMessage = '',
+	loadingNotice = '',
+	decorators = [],
+	mutators = {},
+	...otherProps
+} ) => {
+	const [ formData, setFormData ] = useState( {} );
+	useEffect(
+		() => setFormData( loadHandler() ),
+		[ loadHandler ]
+	);
+	return (
 		<FormErrorBoundary errorMessage={ errorMessage } >
 			<Form
 				{ ...otherProps }
-				onSubmit={ submitHandler }
-				initialValues={ loadHandler() || {} }
+				onSubmit={ submitHandler || nullFunc }
+				initialValues={ formData }
 				decorators={ castArray( decorators ) }
 				mutators={ mutators }
 				render={ ( {
@@ -53,7 +58,6 @@ const withFormHandler = createHigherOrderComponent(
 					return (
 						<FormHandlerForm
 							{ ...formProps }
-							FormComponent={ FormComponent }
 							form={ form }
 							initialValues={ initialValues }
 							currentValues={ values }
@@ -67,8 +71,7 @@ const withFormHandler = createHigherOrderComponent(
 				} }
 			/>
 		</FormErrorBoundary>
-	),
-	'withFormHandler'
-);
+	);
+};
 
-export default withFormHandler;
+export default FormHandler;
