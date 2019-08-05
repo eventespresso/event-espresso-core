@@ -13,6 +13,7 @@ export { default as EntityList } from './entity-list';
 export { default as EntityPaperFrame } from './entity-paper-frame';
 export { default as EspressoButton } from './espresso-button';
 export { default as IconMenuItem } from './icon-menu-item/icon-menu-item';
-export * from './responsive-table';
 export * from './image';
 export * from './menu';
+export * from './price-type-sign';
+export * from './responsive-table';
