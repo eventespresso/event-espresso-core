@@ -2,6 +2,11 @@ sudo: required
 
 language: php
 
+matrix:
+  include:
+      - php: 5.5
+        dist: trusty
+
 services:
   - mysql
 
