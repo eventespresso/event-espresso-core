@@ -15,14 +15,18 @@ const reallyBigNumber = 999999999999;
  *
  * @function
  * @param {Object} entity
+ * @param {boolean} throwError
  * @return {string} model name
  */
-const getEntityModelName = ( entity ) => {
+const getEntityModelName = ( entity, throwError = false ) => {
 	if ( typeof entity === 'string' ) {
 		return entity;
 	}
 	if ( isModelEntity( entity ) ) {
 		return entity.modelName;
+	}
+	if ( ! throwError ) {
+		return '';
 	}
 	throw new TypeError(
 		sprintf(
@@ -56,10 +60,12 @@ const getEntityModelName = ( entity ) => {
  * @param {Object} entity
  * @param {string} key
  * @param {Function} getMenuItem
- * @return {Array} array of entity actions menu items
  */
 export const registerEntityActionsMenuItem = ( entity, key, getMenuItem ) => {
 	const modelName = getEntityModelName( entity );
+	if ( modelName === '' ) {
+		return;
+	}
 	const entityId = entity !== modelName ? entity.id : reallyBigNumber;
 	if ( ! menuItemCallbacks.hasOwnProperty( modelName ) ) {
 		menuItemCallbacks[ modelName ] = {};
@@ -82,6 +88,9 @@ export const registerEntityActionsMenuItem = ( entity, key, getMenuItem ) => {
 export const getActionsMenuForEntity = ( entity ) => {
 	const menuItems = [];
 	const modelName = getEntityModelName( entity );
+	if ( modelName === '' ) {
+		return [];
+	}
 	let index = 0;
 	if ( menuItemCallbacks.hasOwnProperty( modelName ) ) {
 		for ( let entityId in menuItemCallbacks[ modelName ] ) {
