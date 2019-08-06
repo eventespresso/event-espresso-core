@@ -20,7 +20,7 @@ Like the following
 ...
 {
 		entry: {
-			'eventespresso-core-star-destroyer' /* <!-- entry slug/chunk name! */: [
+			'eventespresso-core-star-destroyer-chunkname' /* <!-- entry slug/chunk name! */: [
 				assets + 'empire/stardestroyer.js',
 			],
 		},
@@ -69,13 +69,13 @@ Our php based [asset registry](https://github.com/eventespresso/event-espresso-c
  
   ```php
   $css_url = EventEspresso\core\services\assets\Registry::getCssUrl($namespace, $chunk_name);
-  ```
-  
-  
+  ```  
  
+Thse utilize the constants `EventEspresso\core\domain\values\assets\Asset::TYPE_JS` and `EventEspresso\core\domain\values\assets\Asset::TYPE_CSS` for you.
+ 
+The namespace for your assets can be obtained from the plugin's `Domain` class's `assetNamespace()`.
   
- There are also three constants available to use for asset type:  `EventEspresso\core\services\assets\Registry::ASSET_TYPE_JS`, `EventEspresso\core\services\assets\Registry::ASSET_NAMESPACE`, and `EventEspresso\core\services\assets\Registry::ASSET_TYPE_CSS`.  So for example, you could register the above assets by doing something like:
-
+ So for example, you could register the above assets by doing something like:
 
 ```
 use EventEspresso\core\services\assets\Registry;
@@ -86,15 +86,20 @@ use EventEspresso\core\services\loaders\LoaderFactory;
  * EE loader factory to make sure we're getting the already constructed Registry instance.
  **/
 $registry = LoaderFactory::getLoader()->getShared('EventEspresso\core\services\assets\Registry');
+$domain = LoaderFactory::getLoader()->getShared('EventEspresso\core\domain\Domain');
 
 wp_register_script(
-    'ee-vendor-react',
-    $registry->getAssetUrl(Registry::ASSET_NAMESPACE, 'vendorReact', Registry::ASSET_TYPE_JS),
+    'ee-star-destroyer-script-handle',
+    $registry->getJsUrl($domain->assetNamespace(), 'eventespresso-core-star-destroyer-chunkname'),
     array('eejs-core'),
     null,
     true
 );
 ```
+
+Important: make sure your call to `$registry->getJsUrl()` occurs *after* `wp_enqueue_scripts` priority 1 (when the asset's manifest file is parsed).
+
+The script should now be enqueued on the pages you requested.
 
 ### Registering additional manifest files.
 
