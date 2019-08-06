@@ -274,7 +274,12 @@ class EE_SPCO_Line_Item_Display_Strategy implements EEI_Line_Item_Display
             'item_l'
         );
         // price td
-        $html .= EEH_HTML::td($line_item->unit_price_no_code(), '', 'item_c jst-rght');
+        $price = apply_filters(
+            'FHEE__EE_SPCO_Line_Item_Display_Strategy___ticket_row__price',
+            $line_item->unit_price_no_code(),
+            $line_item
+        );
+        $html .= EEH_HTML::td($price, '', 'item_c jst-rght');
         // quantity td
         $html .= EEH_HTML::td($line_item->quantity(), '', 'item_l jst-rght');
         $this->_total_items += $line_item->quantity();
@@ -282,6 +287,11 @@ class EE_SPCO_Line_Item_Display_Strategy implements EEI_Line_Item_Display
         $total = $line_item->total();
         $this->_events[ $options['event_id'] ] += $total;
         // total td
+        $total = apply_filters(
+            'FHEE__EE_SPCO_Line_Item_Display_Strategy___ticket_row__total',
+            $total,
+            $line_item
+        );
         $html .= EEH_HTML::td(
             EEH_Template::format_currency($total, false, false),
             '',
