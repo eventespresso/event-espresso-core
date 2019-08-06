@@ -241,5 +241,20 @@ const config = [
 			poll: 1000,
 		},
 	},
+	{
+		entry: {
+			'eventespresso-payment-methods-cardinal-commerce': [
+				assets + 'payment-methods/cardinal-commerce/index.js',
+			],
+		},
+		output: {
+			filename: '[name].[chunkhash].dist.js',
+			path: path.resolve( __dirname, 'assets/dist' ),
+		},
+		module: moduleConfigWithJsAndCssRules,
+		watchOptions: {
+			poll: 1000,
+		},
+	},
 ];
 module.exports = config;

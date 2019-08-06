@@ -1,4 +1,9 @@
 <?php
+
+use EventEspresso\core\domain\Domain;
+use EventEspresso\core\services\assets\Registry;
+use EventEspresso\core\services\loaders\LoaderFactory;
+
 /**
  *
  * EE_Billing_Info_Form
@@ -107,15 +112,24 @@ class EE_Billing_Info_Form extends EE_Form_Section_Proper
         } else {
             $songbird_domain = 'songbird.cardinalcommerce.com';
         }
-        wp_enqueue_script(
-            'ee-cardinalcommerce-songbird',
+        wp_register_script(
+            'ee-cardinal-commerce-songbird',
             "https://{$songbird_domain}/edge/v1/songbird.js");
-//        wp_register_script(
-//            'ee-cardinalcommerce',
-//            plugins_url('cardinalcommerce-oneconnect.js',
-//                CARDINAL_ONECONNECT_PLUGIN_FILE),
-//            array('jquery', 'cardinalcommerce-oneconnect-songbird'),
-//            CARDINAL_ONECONNECT_VERSION, true);
+        if( ! did_action('wp_enqueue_scripts')){
+            // This was called too early.
+            return;
+        }
+        $registry = LoaderFactory::getLoader()->getShared('EventEspresso\core\services\assets\Registry');
+        $domain = LoaderFactory::getLoader()->getShared('EventEspresso\core\domain\Domain');
+        $url = $registry->getJsUrl(
+            $domain->assetNamespace(),
+            'eventespresso-payment-methods-cardinal-commerce'
+        );
+        wp_enqueue_script(
+            'eventespresso-payment-methods-cardinal-commerce',
+            $url,
+            ['ee-cardinal-commerce-songbird']
+        );
     }
 }
 // End of file EE_Billing_Info_Form.form.php
