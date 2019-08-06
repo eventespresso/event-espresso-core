@@ -397,8 +397,8 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page
         // This is for any plugins that are doing things properly
         // and hooking into the load page hook for core wp cpt routes.
         global $pagenow;
+        add_action('load-' . $pagenow, array($this, 'modify_current_screen'), 20);
         do_action('load-' . $pagenow);
-        $this->modify_current_screen();
         add_action('admin_enqueue_scripts', array($this, 'setup_autosave_hooks'), 30);
         // we route REALLY early.
         try {
