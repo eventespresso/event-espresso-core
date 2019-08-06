@@ -6,27 +6,73 @@ We also briefly considered using `filemtime` as the "version" generator for our 
 
 So we've decided to [switch to filenames containing a hash](https://github.com/eventespresso/event-espresso-core/pull/287) generated from the content of the files.  This means if the content of a built file does not change, then the filename remains the same, if the content of a built bundle file changes, then the filename will as well.
 
-Switching to this new process requires some tweaks to how our assets are registered with `wp_register_script` however.
+Switching to this new process requires some tweaks to where assets are located, and how they are registered with `wp_register_script`.
+
+## Where Javascript and CSS Assets Should be Located
+
+In Event Espresso core, new Javascript and CSS files should be located somewhere under `assets/src` (previously they were placed in `core/templates/global_assets`, or beside the PHP files they corresponded to.)
+Put the files in whatever folder/subfolder is logical, like `assets/src/empire/stardestroyer.js'.
+`
+Then add an new entry to `webpack.common.js`' `config` const. Use whatever string you like for the entry slug/chunk name.
+Like the following
+
+```javascript
+...
+{
+		entry: {
+			'eventespresso-core-star-destroyer' /* <!-- entry slug/chunk name! */: [
+				assets + 'empire/stardestroyer.js',
+			],
+		},
+		output: {
+			filename: '[name].[chunkhash].dist.js',
+			path: path.resolve( __dirname, 'assets/dist' ),
+		},
+		module: moduleConfigWithJsAndCssRules,
+		watchOptions: {
+			poll: 1000,
+		},
+	},
+...
+```
+You've now informed webpack where the new assets are located, and what their chunk name is.
+
+Don't forget to run the build process with `npm run watch` to build the files. 
+
+After that, the server-side PHP Registry code will know how to find them given the chunk name. 
 
 ## Registering a Event Espresso Core asset with a hash in its name.
 
-As a part of our build process, all bundles will be registered within a json file named `build-manifest.json`. This file is a map of chunk names (chunk names are just the slugs given to represent the name for a built bundle) to built files for that chunk indexed by asset type.  So for example, if a bundle is being created containing react libraries and its chunk name is `reactVendor` then the `build-manifest.json` will have this in it.
+As a part of our build process, all bundles will be registered within a json file named `build-manifest.json`. This file is a map of chunk names (chunk names are just the slugs given to represent the name for a built bundle) to built files for that chunk. For example, there will now be an entry for "star-destroyer" like this:
 
 
 ```json
-{
-    "reactVendor": {
-        "js": "ee-reactVendor.83c902271dfaf7c14e74.dist.js",
-        "css": "ee-reactVendor.83c902271dfaf7d54e74.dist.css"
-    }
+...
+    "eventespresso-core-star-destroyer.js": "eventespresso-core-star-destroyer.83c902271dfaf7c14e74.dist.js",
+...
 }
 ```
 
-Our php based [asset registry](https://github.com/eventespresso/event-espresso-core/blob/master/core/services/assets/Registry.php) then provides a helper method for using to get the correct url when registering a built asset:
+Our php based [asset registry](https://github.com/eventespresso/event-espresso-core/blob/master/core/services/assets/Registry.php) then provides a helper methods for using to get the correct url when registering a built asset:
  
  ```php
- $asset_url = EventEspresso\core\services\assets\Registry::getAssetUrl($namespace, $chunk_name, $asset_type)
+ $asset_url = EventEspresso\core\services\assets\Registry::getAssetUrl($namespace, $chunk_name, $asset_type);
  ```
+ 
+ Also, there are two simplified methods: one just for Javascript files...
+ 
+ ```php
+ $js_url = EventEspresso\core\services\assets\Registry::getJsUrl($namespace, $chunk_name);
+ ```
+ 
+ ...and one for CSS files:
+ 
+  ```php
+  $css_url = EventEspresso\core\services\assets\Registry::getCssUrl($namespace, $chunk_name);
+  ```
+  
+  
+ 
   
  There are also three constants available to use for asset type:  `EventEspresso\core\services\assets\Registry::ASSET_TYPE_JS`, `EventEspresso\core\services\assets\Registry::ASSET_NAMESPACE`, and `EventEspresso\core\services\assets\Registry::ASSET_TYPE_CSS`.  So for example, you could register the above assets by doing something like:
 
