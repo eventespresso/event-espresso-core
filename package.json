@@ -69,7 +69,7 @@
 		"@wordpress/keycodes": "^2.5.0",
 		"@wordpress/plugins": "^2.5.0",
 		"@wordpress/scripts": "^3.3.0",
-		"@wordpress/server-side-render": "^1.0.0",
+		"@wordpress/server-side-render": "^1.1.0",
 		"@wordpress/url": "^2.7.0",
 		"@wordpress/viewport": "^2.5.0",
 		"autoprefixer": "^9.6.1",
