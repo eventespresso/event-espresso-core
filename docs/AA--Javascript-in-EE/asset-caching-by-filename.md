@@ -42,12 +42,12 @@ After that, the server-side PHP Registry code will know how to find them given t
 
 ## Registering an Event Espresso Core asset with a hash in its name.
 
-As a part of our build process, all bundles will be registered within a json file named `build-manifest.json`. This file is a map of chunk names (chunk names are just the slugs given to represent the name for a built bundle) to built files for that chunk. For example, there will now be an entry for "star-destroyer" like this:
+As a part of our build process, all bundles will be registered within a json file named `build-manifest.json`. This file is a map of chunk names (chunk names are just the slugs given to represent the name for a built bundle) to built files for that chunk. For example, there will now be an entry for "star destroyer" like this:
 
 
 ```json
 ...
-    "eventespresso-core-star-destroyer.js": "eventespresso-core-star-destroyer.83c902271dfaf7c14e74.dist.js",
+    "eventespresso-core-star-destroyer-chunkname.js": "eventespresso-core-star-destroyer-chunkname.83c902271dfaf7c14e74.dist.js",
 ...
 }
 ```
@@ -72,7 +72,7 @@ Our php based [asset registry](https://github.com/eventespresso/event-espresso-c
  
 These utilize the constants `EventEspresso\core\domain\values\assets\Asset::TYPE_JS` and `EventEspresso\core\domain\values\assets\Asset::TYPE_CSS` for you.
  
-The namespace for your assets can be obtained from the plugin's `\domain\Domain` class `assetNamespace()` method.
+The namespace (a fairly arbitrary, but unique, string) for your assets can be obtained from the plugin's `\domain\Domain` class `assetNamespace()` method.
   
 So for example, you could register the above assets by doing something like:
 
