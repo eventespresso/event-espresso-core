@@ -2332,6 +2332,14 @@ class EE_Registration_Config extends EE_Config_Base
      */
     public $gateway_log_lifespan = '1 week';
 
+    /**
+     * Cardinal Commerce 3D secure integration API credentials
+     * @var string
+     */
+    public $cardinal_commerce_api_identifier = '';
+    public $cardinal_commerce_api_org_unit_id = '';
+    public $cardinal_commerce_api_key = '';
+
 
     /**
      *    class constructor
@@ -2362,6 +2370,9 @@ class EE_Registration_Config extends EE_Config_Base
         $this->consent_checkbox_enabled = false;
         $this->consent_checkbox_label_text = '';
         $this->gateway_log_lifespan = '7 days';
+        $this->cardinal_commerce_api_identifier = '';
+        $this->cardinal_commerce_api_org_unit_id = '';
+        $this->cardinal_commerce_api_key = '';
     }
 
 

@@ -157,6 +157,15 @@ class Payments_Admin_Page extends EE_Admin_Page
             'payment_log'      => array(
                 'nav'           => array(
                     'label' => __("Logs", 'event_espresso'),
+                    'order' => 40,
+                ),
+                'list_table'    => 'Payment_Log_Admin_List_Table',
+                'metaboxes'     => $this->_default_espresso_metaboxes,
+                'require_nonce' => false,
+            ),
+            'cardinal_commerce'      => array(
+                'nav'           => array(
+                    'label' => __("Cardinal Commerce 3D Secure Settings", 'event_espresso'),
                     'order' => 30,
                 ),
                 'list_table'    => 'Payment_Log_Admin_List_Table',
@@ -927,6 +936,9 @@ class Payments_Admin_Page extends EE_Admin_Page
                 $valid_data = $form->valid_data();
                 $reg_config->show_pending_payment_options = $valid_data['show_pending_payment_options'];
                 $reg_config->gateway_log_lifespan = $valid_data['gateway_log_lifespan'];
+                $reg_config->cardinal_commerce_api_identifier = $valid_data['cardinal_commerce_api_identifier'];
+                $reg_config->cardinal_commerce_api_org_unit_id = $valid_data['cardinal_commerce_api_org_unit_id'];
+                $reg_config->cardinal_commerce_api_key = $valid_data['cardinal_commerce_api_key'];
             }
         }
         EE_Registry::instance()->CFG = apply_filters(
@@ -990,6 +1002,25 @@ class Payments_Admin_Page extends EE_Admin_Page
                             'html_help_text' => esc_html__('If issues arise with payments being made through a payment gateway, it\'s helpful to log non-sensitive communications with the payment gateway. But it\'s a security responsibility, so it\'s a good idea to not keep them for any longer than necessary.', 'event_espresso'),
                             'default' => $reg_config->gateway_log_lifespan,
                         )
+                    ),
+                    // Cardinal Commerce Settings
+                    'cardinal_commerce_api_identifier' => new EE_Text_Input(
+                        [
+                            'html_label_text' => esc_html__('Cardinal Commerce API Identifier', 'event_espresso'),
+                            'default' => $reg_config->cardinal_commerce_api_identifier
+                        ]
+                    ),
+                    'cardinal_commerce_api_org_unit_id' => new EE_Text_Input(
+                        [
+                            'html_label_text' => esc_html__('Cardinal Commerce API OrgUnitId', 'event_espresso'),
+                            'default' => $reg_config->cardinal_commerce_api_org_unit_id
+                        ]
+                    ),
+                    'cardinal_commerce_api_key' => new EE_Text_Input(
+                        [
+                            'html_label_text' => esc_html__('Cardinal Commerce API Key', 'event_espresso'),
+                            'default' => $reg_config->cardinal_commerce_api_key
+                        ]
                     )
                 )
             )
