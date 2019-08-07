@@ -67,7 +67,7 @@
 		"@wordpress/hooks": "^2.4.0",
 		"@wordpress/jest-preset-default": "^4.3.0",
 		"@wordpress/keycodes": "^2.4.0",
-		"@wordpress/plugins": "^2.4.0",
+		"@wordpress/plugins": "^2.5.0",
 		"@wordpress/scripts": "^3.3.0",
 		"@wordpress/server-side-render": "^1.0.0",
 		"@wordpress/url": "^2.6.0",
