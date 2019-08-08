@@ -863,6 +863,10 @@ class EE_Dependency_Map
             ),
             'EventEspressoBatchRequest\BatchRequestProcessor' => [
                 'EventEspresso\core\services\loaders\Loader'  => EE_Dependency_Map::load_from_cache,
+            ],
+            'EventEspresso\core\services\payment_methods\cardinal_cruise\CardinalCruiseJwtFactory' => [
+                'EE_Registration_Config' => EE_Dependency_Map::load_from_cache,
+                'EE_Currency_Config' => EE_Dependency_Map::load_from_cache
             ]
         );
     }

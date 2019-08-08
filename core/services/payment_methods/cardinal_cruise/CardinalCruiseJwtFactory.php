@@ -17,7 +17,7 @@ use EE_Transaction;
  * @since         $VID:$
  *
  */
-class CardinalCruiseJwt
+class CardinalCruiseJwtFactory
 {
     /**
      * @var EE_Registration_Config
@@ -27,27 +27,20 @@ class CardinalCruiseJwt
      * @var EE_Currency_Config
      */
     private $currency_config;
-    /**
-     * @var EE_Transaction
-     */
-    private $transaction;
 
     /**
      * CardinalCruiseJwt constructor.
      * @param EE_Registration_Config $reg_config
      * @param EE_Currency_Config $currency_config
-     * @param EE_Transaction $transaction
      */
     public function __construct(
         EE_Registration_Config $reg_config,
-        EE_Currency_Config $currency_config,
-        EE_Transaction $transaction
+        EE_Currency_Config $currency_config
     )
     {
 
         $this->reg_config = $reg_config;
         $this->currency_config = $currency_config;
-        $this->transaction = $transaction;
     }
 
     /**
