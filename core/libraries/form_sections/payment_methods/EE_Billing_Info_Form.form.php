@@ -25,6 +25,13 @@ class EE_Billing_Info_Form extends EE_Form_Section_Proper
      */
     protected $_pm_instance;
 
+    /*
+     * Please note that there is no guarantee there's a transaction on the billing form (eg if the form were
+     * initialized in the admin to just display previous answers.) So this will often be `null`.
+     * @var EE_Transaction|null
+     */
+    protected $transaction;
+
 
 
     /**
@@ -36,6 +43,9 @@ class EE_Billing_Info_Form extends EE_Form_Section_Proper
     {
         $this->_pm_instance = $payment_method;
         $this->_layout_strategy = new EE_Div_Per_Section_Layout();
+        if(isset($options_array['transaction']) && $options_array['transaction'] instanceof EE_Transaction){
+            $this->transaction = $options_array['transaction'];
+        }
         parent::__construct($options_array);
     }
 
@@ -129,6 +139,14 @@ class EE_Billing_Info_Form extends EE_Form_Section_Proper
             'eventespresso-payment-methods-cardinal-commerce',
             $url,
             ['ee-cardinal-commerce-songbird']
+        );
+        $cruise_jwt_factory = LoaderFactory::getLoader()->getShared('\EventEspresso\core\services\payment_methods\cardinal_cruise\CardinalCruiseJwtFactory');
+        wp_localize_script(
+            'eventespresso-payment-methods-cardinal-commerce',
+            'eventespresso_cardinal_commerce',
+            [
+                'jwt' => $cruise_jwt_factory->generateCruiseJwt($this->transaction)
+            ]
         );
     }
 }
