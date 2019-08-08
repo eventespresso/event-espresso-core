@@ -162,16 +162,7 @@ class Payments_Admin_Page extends EE_Admin_Page
                 'list_table'    => 'Payment_Log_Admin_List_Table',
                 'metaboxes'     => $this->_default_espresso_metaboxes,
                 'require_nonce' => false,
-            ),
-            'cardinal_commerce'      => array(
-                'nav'           => array(
-                    'label' => __("Cardinal Commerce 3D Secure Settings", 'event_espresso'),
-                    'order' => 30,
-                ),
-                'list_table'    => 'Payment_Log_Admin_List_Table',
-                'metaboxes'     => $this->_default_espresso_metaboxes,
-                'require_nonce' => false,
-            ),
+            )
         );
     }
 
