@@ -5,9 +5,9 @@ import {
 } from '@wordpress/data';
 import { AuthedDateTimeEntity } from '@test/fixtures';
 
-import useEditorDateEntities from '../use-editor-date-entities';
+import useEventEditorEventDates from '../use-event-editor-event-dates';
 
-describe( 'useEditorDateEntities', () => {
+describe( 'useEventEditorEventDates', () => {
 	let registry;
 	beforeEach( () => {
 		registry = createRegistry();
@@ -20,7 +20,7 @@ describe( 'useEditorDateEntities', () => {
 			</RegistryProvider>;
 		} )(
 			() => {
-				const dateEntities = useEditorDateEntities();
+				const dateEntities = useEventEditorEventDates();
 				return <div dateEntities={ dateEntities } />;
 			}
 		);

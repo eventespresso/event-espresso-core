@@ -5,9 +5,9 @@ import {
 } from '@wordpress/data';
 import { AuthedEventEntity } from '@test/fixtures';
 
-import useEditorEventEntity from '../use-editor-event-entity';
+import useEventEditorEvent from '../use-event-editor-event';
 
-describe( 'useEditorEventEntity', () => {
+describe( 'useEventEditorEvent', () => {
 	let registry;
 	beforeEach( () => {
 		registry = createRegistry();
@@ -19,9 +19,9 @@ describe( 'useEditorEventEntity', () => {
 				<WrappedComponent { ...props } />
 			</RegistryProvider>;
 		} )(
-			( props ) => {
-				const eventEntity = useEditorEventEntity( props.eventEntity );
-				const id = eventEntity === null ? null : eventEntity.id;
+			() => {
+				const eventEntity = useEventEditorEvent();
+				const id = eventEntity ? eventEntity.id : null;
 				return <div id={ id } />;
 			}
 		);
