@@ -4,25 +4,20 @@
 import { Dashicon, Tooltip } from '@wordpress/components';
 import { useMemo } from '@wordpress/element';
 import { addQueryArgs } from '@wordpress/url';
+import { ifValidDateEntity } from '@eventespresso/editor-hocs';
 import { routes } from '@eventespresso/eejs';
 import { __ } from '@eventespresso/i18n';
-
-/**
- * Internal dependencies
- */
-import { useEditorEventEntity } from '../../hooks';
 
 const { ADMIN_ROUTES, ADMIN_ROUTE_ACTION_DEFAULT, getAdminUrl } = routes;
 
 /**
  * returns a rendered Dashicon wrapped in an HTML <a> tag that links to
- * the registrations admin list table filtered for the provided dateEntity
+ * the registrations admin list table filtered for the provided eventDate
  *
- * @param {Object} dateEntity    The date object.
+ * @param {BaseEntity} dateEntity    The date object.
  * @return {Object} rendered link to registrations list table for datetime
  */
-const DateEntityRegistrationsLink = ( { dateEntity } ) => {
-	const eventEntity = useEditorEventEntity();
+const EventDateRegistrationsLink = ( { dateEntity } ) => {
 	return useMemo(
 		() => {
 			const regListUrl = addQueryArgs(
@@ -31,7 +26,7 @@ const DateEntityRegistrationsLink = ( { dateEntity } ) => {
 					ADMIN_ROUTE_ACTION_DEFAULT
 				),
 				{
-					event_id: eventEntity.id,
+					event_id: dateEntity.evtId,
 					datetime_id: dateEntity.id,
 					return: 'edit',
 				}
@@ -54,8 +49,8 @@ const DateEntityRegistrationsLink = ( { dateEntity } ) => {
 				</Tooltip>
 			);
 		},
-		[ dateEntity, eventEntity ]
+		[ dateEntity.evtId, dateEntity.id ]
 	);
 };
 
-export default DateEntityRegistrationsLink;
+export default ifValidDateEntity( EventDateRegistrationsLink );

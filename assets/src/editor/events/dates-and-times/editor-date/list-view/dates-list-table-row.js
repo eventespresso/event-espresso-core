@@ -1,9 +1,14 @@
 /**
+ * External imports
+ */
+import { ifValidDateEntity } from '@eventespresso/editor-hocs';
+
+/**
  * Internal dependencies
  */
 import EditorDateEntityActionsMenu
 	from '../actions-menu/editor-date-entity-actions-menu';
-import DateEntityRegistrationsLink from '../date-entity-registrations-link';
+import EventDateRegistrationsLink from '../event-date-registrations-link';
 import { shortenCuid } from '../../../../utils';
 
 const DATE_TIME_FORMAT = 'ddd MMM YY h:mm a';
@@ -94,7 +99,7 @@ const datesListTableRow = (
 			type: 'cell',
 			class: 'ee-date-list-cell ee-date-list-col-registrants ee-rspnsv-table-column-smaller ee-centered-column',
 			value: (
-				<DateEntityRegistrationsLink dateEntity={ dateEntity } />
+				<EventDateRegistrationsLink dateEntity={ dateEntity } />
 			),
 		},
 		{
@@ -112,4 +117,4 @@ const datesListTableRow = (
 	];
 };
 
-export default datesListTableRow;
+export default ifValidDateEntity( datesListTableRow );
