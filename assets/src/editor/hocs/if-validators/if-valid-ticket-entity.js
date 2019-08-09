@@ -1,12 +1,6 @@
-import { createHigherOrderComponent, ifCondition } from '@wordpress/compose';
+import { ifCondition } from '@wordpress/compose';
 import { isModelEntityOfModel } from '@eventespresso/validators';
 
-export default createHigherOrderComponent(
-	ifCondition(
-		( { ticketEntity } ) => isModelEntityOfModel(
-			ticketEntity,
-			'ticket'
-		)
-	),
-	'ifValidTicketEntity'
+export default ifCondition( ( { ticketEntity } ) =>
+	isModelEntityOfModel( ticketEntity, 'ticket' )
 );
