@@ -3,7 +3,6 @@
  */
 import { Form } from 'react-final-form';
 import { castArray, isEqual } from 'lodash';
-import { useEffect, useState } from '@wordpress/element';
 
 /**
  * Internal imports
@@ -24,6 +23,7 @@ const nullFunc = () => null;
  * @return {Object} FormComponent with added form handling
  */
 const FormHandler = ( {
+	formData,
 	loadHandler = nullFunc,
 	submitHandler = nullFunc,
 	setMutatorCallbacks = nullFunc,
@@ -35,17 +35,12 @@ const FormHandler = ( {
 	mutators = {},
 	...otherProps
 } ) => {
-	const [ formData, setFormData ] = useState( {} );
-	useEffect(
-		() => setFormData( loadHandler() ),
-		[ loadHandler ]
-	);
 	return (
 		<FormErrorBoundary errorMessage={ errorMessage } >
 			<Form
 				{ ...otherProps }
 				onSubmit={ submitHandler || nullFunc }
-				initialValues={ formData }
+				initialValues={ formData || loadHandler() }
 				decorators={ castArray( decorators ) }
 				mutators={ mutators }
 				render={ ( {

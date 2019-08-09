@@ -1,7 +1,8 @@
 /**
  * External imports
  */
-import { useCallback, useMemo, useState } from '@wordpress/element';
+import { isEmpty } from 'lodash';
+import { useCallback, useMemo } from '@wordpress/element';
 
 /**
  * Internal imports
@@ -33,15 +34,14 @@ const FormHandlerForm = ( {
 	resetHandler = nullFunc,
 	...formProps
 } ) => {
-	const [ hasChanges, setHasChanges ] = useState( false );
-	pristine = pristine && ! hasChanges && ! formChanges;
+	pristine = pristine && ! formChanges;
+	currentValues = isEmpty( currentValues ) ? initialValues : currentValues;
 	const formReset = useCallback(
 		( event ) => {
 			if ( resetHandler !== nullFunc ) {
 				resetHandler( event );
 			}
 			form.reset( event );
-			setHasChanges( false );
 		},
 		[ resetHandler, form.reset ]
 	);
@@ -80,14 +80,11 @@ const FormHandlerForm = ( {
 					submitButton={ submitButton }
 					cancelButton={ cancelButton }
 					formReset={ formReset }
-					markChanges={
-						( changes = true ) => setHasChanges( changes )
-					}
 					pristine={ pristine }
 					{ ...formProps }
 				/>
 			</FormContainer>
-			<FormDataDebugDump values={ currentValues || initialValues } />
+			<FormDataDebugDump values={ currentValues } />
 		</form>
 	);
 };
