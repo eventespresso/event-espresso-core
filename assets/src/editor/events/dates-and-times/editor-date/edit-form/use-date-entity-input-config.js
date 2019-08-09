@@ -2,16 +2,18 @@
  * External imports
  */
 import warning from 'warning';
+import { useMemo } from '@wordpress/element';
 import { __, sprintf } from '@eventespresso/i18n';
 import { validations } from '@eventespresso/components';
 import { isModelEntityOfModel } from '@eventespresso/validators';
-import { ServerDateTime as DateTime } from '@eventespresso/value-objects';
+import { ServerDateTime as DateTime, Duration } from '@eventespresso/value-objects';
 
-const dateEntityInputConfig = ( dateEntity ) => {
+const useDateEntityInputConfig = ( dateEntity ) => useMemo( () => {
 	warning(
 		isModelEntityOfModel( dateEntity, 'datetime' ),
 		'Can not generate input config data because an invalid date entity was supplied.'
 	);
+	const now = new DateTime();
 	return [
 		{
 			id: 'id',
@@ -36,7 +38,6 @@ const dateEntityInputConfig = ( dateEntity ) => {
 			changeListener: ( value ) => {
 				dateEntity.name = value;
 			},
-			required: true,
 			minLength: 3,
 		},
 		{
@@ -49,9 +50,10 @@ const dateEntityInputConfig = ( dateEntity ) => {
 			},
 		},
 		{
-			id: 'start',
+			id: 'evtStart',
 			type: 'datetime-local',
 			label: __( 'Start Date & Time', 'event_espresso' ),
+			default: now.plus( Duration.fromObject( { days: 30 } ) ),
 			changeListener: ( value, prevValue ) => {
 				if ( value !== prevValue ) {
 					dateEntity.start = new DateTime( value );
@@ -62,9 +64,10 @@ const dateEntityInputConfig = ( dateEntity ) => {
 			inputWidth: 6,
 		},
 		{
-			id: 'end',
+			id: 'evtEnd',
 			type: 'datetime-local',
 			label: __( 'End Date & Time', 'event_espresso' ),
+			default: now.plus( Duration.fromObject( { days: 60 } ) ),
 			changeListener: ( value, prevValue ) => {
 				if ( value !== prevValue ) {
 					dateEntity.end = new DateTime( value );
@@ -172,6 +175,19 @@ const dateEntityInputConfig = ( dateEntity ) => {
 			},
 		},
 	];
-};
+}, [
+	dateEntity.id,
+	dateEntity.EVT_ID,
+	dateEntity.name,
+	dateEntity.description,
+	dateEntity.start.toISO(),
+	dateEntity.end.toISO(),
+	dateEntity.regLimit,
+	dateEntity.sold,
+	dateEntity.reserved,
+	dateEntity.order,
+	dateEntity.parent,
+	dateEntity.deleted,
+] );
 
-export default dateEntityInputConfig;
+export default useDateEntityInputConfig;

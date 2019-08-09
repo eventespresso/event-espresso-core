@@ -6,6 +6,7 @@ import { isModelEntityOfModel } from '@eventespresso/validators';
 /**
  * Internal imports
  */
+import useDateEntityFormInputPrefix from './use-date-entity-form-input-prefix';
 import { parseInfinity } from '../../../../helpers';
 
 /**
@@ -17,11 +18,11 @@ import { parseInfinity } from '../../../../helpers';
  * @param {Object} dateEntity  EE Date object
  * @return {Object} rendered form
  */
-const dateEntityFormSchema = ( dateEntity ) => {
+const useDateEntityFormSchema = ( dateEntity ) => {
+	const prefix = useDateEntityFormInputPrefix( dateEntity );
 	if ( ! isModelEntityOfModel( dateEntity, 'datetime' ) ) {
 		return {};
 	}
-	const prefix = `ee-event-date-${ dateEntity.id }`;
 	return {
 		[ `${ prefix }-id` ]: dateEntity.id,
 		[ `${ prefix }-eventId` ]: dateEntity.EVT_ID,
@@ -40,4 +41,4 @@ const dateEntityFormSchema = ( dateEntity ) => {
 	};
 };
 
-export default dateEntityFormSchema;
+export default useDateEntityFormSchema;
