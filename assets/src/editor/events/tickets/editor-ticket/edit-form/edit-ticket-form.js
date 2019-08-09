@@ -5,7 +5,6 @@ import { isEmpty } from 'lodash';
 import { useMemo } from '@wordpress/element';
 import { twoColumnAdminFormLayout } from '@eventespresso/components';
 import { ifValidTicketEntity } from '@eventespresso/editor-hocs';
-import { __ } from '@eventespresso/i18n';
 
 /**
  * Internal dependencies
@@ -20,7 +19,6 @@ const {
 	FormSection,
 	FormWrapper,
 	FormSaveCancelButtons,
-	FormInfo,
 } = twoColumnAdminFormLayout;
 
 const EditTicketForm = ( {
@@ -51,24 +49,6 @@ const EditTicketForm = ( {
 		currentValues,
 		exclude
 	);
-	const formInfo = useMemo(
-		() => (
-			<FormInfo
-				key="formInfo"
-				formInfo={
-					__(
-						'all fields marked with an asterisk are required',
-						'event_espresso'
-					)
-				}
-				dismissable={ false }
-			/>
-		),
-		[]
-	);
-	if ( Array.isArray( formRows ) ) {
-		formRows.unshift( formInfo );
-	}
 	return useMemo(
 		() => {
 			// edit forms for existing objects must have initial values
@@ -78,6 +58,7 @@ const EditTicketForm = ( {
 						<FormSection
 							htmlId={ `ee-ticket-editor-${ ticketEntity.id }-form-section` }
 							children={ formRows }
+							showRequiredNotice={ true }
 						/>
 						<FormSaveCancelButtons
 							htmlClass={ `ee-ticket-editor-${ ticketEntity.id }` }
