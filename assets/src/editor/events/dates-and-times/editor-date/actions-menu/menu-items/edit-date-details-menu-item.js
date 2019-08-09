@@ -1,15 +1,17 @@
 /**
- * External imports
+ * External dependencies
  */
-import { compose } from '@wordpress/compose';
 import { IconMenuItem } from '@eventespresso/components';
-import { ifValidDateEntity } from '@eventespresso/editor-hocs';
+import { ifValidDateEntity, useOpenEditor } from '@eventespresso/editor-hocs';
 import { __ } from '@eventespresso/i18n';
 
-const EditDateDetailsMenuItem = ( {
-	dateEntity,
-	toggleDateEditor,
-} ) => {
+/**
+ * Internal dependencies
+ */
+import useEventDateEditorId from '../../edit-form/use-event-date-editor-id';
+
+const EditDateDetailsMenuItem = ( { dateEntity } ) => {
+	const editorId = useEventDateEditorId( dateEntity );
 	return (
 		<IconMenuItem
 			index={ 1 }
@@ -17,11 +19,9 @@ const EditDateDetailsMenuItem = ( {
 			id={ `edit-date-${ dateEntity.id }` }
 			htmlClass="edit-date"
 			dashicon="edit"
-			onClick={ toggleDateEditor }
+			onClick={ useOpenEditor( editorId ) }
 		/>
 	);
 };
 
-export default compose( [
-	ifValidDateEntity,
-] )( EditDateDetailsMenuItem );
+export default ifValidDateEntity( EditDateDetailsMenuItem );
