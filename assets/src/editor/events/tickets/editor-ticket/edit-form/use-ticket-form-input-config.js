@@ -2,6 +2,7 @@
  * External imports
  */
 import warning from 'warning';
+import { useCallback, useMemo } from '@wordpress/element';
 import { __, sprintf } from '@eventespresso/i18n';
 import { validations } from '@eventespresso/components';
 import { isModelEntityOfModel } from '@eventespresso/validators';
@@ -11,16 +12,32 @@ import {
 	SiteCurrency,
 } from '@eventespresso/value-objects';
 
-const ticketEntityInputConfig = (
-	ticketEntity,
-	calculator,
-	recalculateBasePrice
-) => {
+/**
+ * Internal dependencies
+ */
+import {
+	TicketPriceCalculatorMenuItem,
+	useTicketPriceCalculators,
+} from '../price-calculator';
+import useTicketPrices from '../../../hooks/use-ticket-prices';
+
+const useTicketFormInputConfig = ( ticket ) => {
 	warning(
-		isModelEntityOfModel( ticketEntity, 'ticket' ),
+		isModelEntityOfModel( ticket, 'ticket' ),
 		'Can not generate input config data because an invalid ticket entity was supplied.'
 	);
-	return [
+	const ticketPriceAmount = ticket.price.amount.toNumber();
+	const prices = useTicketPrices( ticket );
+	const { calculateTicketBasePrice } = useTicketPriceCalculators();
+	const recalculateBasePrice = useCallback( () => {
+		calculateTicketBasePrice( ticketPriceAmount, prices );
+	}, [ ticket, prices, calculateTicketBasePrice ] );
+
+	const calculator = (
+		<TicketPriceCalculatorMenuItem ticketEntity={ ticket } />
+	);
+
+	return useMemo( () => [
 		{
 			id: 'id',
 			label: __( 'Ticket ID', 'event_espresso' ),
@@ -34,7 +51,7 @@ const ticketEntityInputConfig = (
 			label: __( 'Ticket Label', 'event_espresso' ),
 			default: '',
 			changeListener: ( value ) => {
-				ticketEntity.name = value;
+				ticket.name = value;
 			},
 			required: true,
 			minLength: 3,
@@ -45,7 +62,7 @@ const ticketEntityInputConfig = (
 			label: __( 'Description', 'event_espresso' ),
 			default: '',
 			changeListener: ( value ) => {
-				ticketEntity.description = value;
+				ticket.description = value;
 			},
 		},
 		{
@@ -57,7 +74,7 @@ const ticketEntityInputConfig = (
 			step: 0.01,
 			changeListener: ( value, prevValue ) => {
 				if ( value !== prevValue ) {
-					ticketEntity.price = new Money(
+					ticket.price = new Money(
 						value || 0,
 						SiteCurrency
 					);
@@ -82,7 +99,7 @@ const ticketEntityInputConfig = (
 			label: __( 'Ticket is Taxable?', 'event_espresso' ),
 			default: false,
 			changeListener: ( value ) => {
-				ticketEntity.taxable = !! value;
+				ticket.taxable = !! value;
 			},
 			inputWidth: 2,
 			helpText: {
@@ -102,7 +119,7 @@ const ticketEntityInputConfig = (
 			label: __( 'Ticket Sales Start', 'event_espresso' ),
 			changeListener: ( value, prevValue ) => {
 				if ( value !== prevValue ) {
-					ticketEntity.startDate = new DateTime( value );
+					ticket.startDate = new DateTime( value );
 				}
 			},
 			validations: validations.required,
@@ -115,7 +132,7 @@ const ticketEntityInputConfig = (
 			label: __( 'Ticket Sales End', 'event_espresso' ),
 			changeListener: ( value, prevValue ) => {
 				if ( value !== prevValue ) {
-					ticketEntity.endDate = new DateTime( value );
+					ticket.endDate = new DateTime( value );
 				}
 			},
 			validations: validations.required,
@@ -128,7 +145,7 @@ const ticketEntityInputConfig = (
 			label: __( 'Quantity', 'event_espresso' ),
 			default: -1,
 			changeListener: ( value ) => {
-				ticketEntity.qty = parseInt( value || -1, 10 );
+				ticket.qty = parseInt( value || -1, 10 );
 			},
 			min: -1,
 			inputWidth: 3,
@@ -149,7 +166,7 @@ const ticketEntityInputConfig = (
 			default: null,
 			min: 0,
 			changeListener: ( value ) => {
-				ticketEntity.min = parseInt( value || 0, 10 );
+				ticket.min = parseInt( value || 0, 10 );
 			},
 			inputWidth: 3,
 			helpText: {
@@ -169,7 +186,7 @@ const ticketEntityInputConfig = (
 			default: -1,
 			min: -1,
 			changeListener: ( value ) => {
-				ticketEntity.max = parseInt( value || 0, 10 );
+				ticket.max = parseInt( value || 0, 10 );
 			},
 			inputWidth: 3,
 			helpText: {
@@ -189,7 +206,7 @@ const ticketEntityInputConfig = (
 			default: -1,
 			min: 0,
 			changeListener: ( value ) => {
-				ticketEntity.uses = parseInt( value || 0, 10 );
+				ticket.uses = parseInt( value || 0, 10 );
 			},
 			inputWidth: 3,
 			helpText: {
@@ -208,7 +225,7 @@ const ticketEntityInputConfig = (
 			label: __( 'Required Ticket?', 'event_espresso' ),
 			default: false,
 			changeListener: ( value ) => {
-				ticketEntity.required = !! value;
+				ticket.required = !! value;
 			},
 			inputWidth: 2,
 			helpText: {
@@ -229,7 +246,7 @@ const ticketEntityInputConfig = (
 			disabled: true,
 			default: 0,
 			changeListener: ( value ) => {
-				ticketEntity.sold = parseInt( value || 0, 10 );
+				ticket.sold = parseInt( value || 0, 10 );
 			},
 			min: 0,
 			inputWidth: 3,
@@ -247,7 +264,7 @@ const ticketEntityInputConfig = (
 			disabled: true,
 			default: 0,
 			changeListener: ( value ) => {
-				ticketEntity.reserved = parseInt( value || 0, 10 );
+				ticket.reserved = parseInt( value || 0, 10 );
 			},
 			min: 0,
 			inputWidth: 3,
@@ -264,7 +281,7 @@ const ticketEntityInputConfig = (
 			label: __( 'Display Order', 'event_espresso' ),
 			default: 0,
 			changeListener: ( value ) => {
-				ticketEntity.order = parseInt( value || 0, 10 );
+				ticket.order = parseInt( value || 0, 10 );
 			},
 			inputWidth: 2,
 		},
@@ -274,7 +291,7 @@ const ticketEntityInputConfig = (
 			label: __( 'Default Ticket?', 'event_espresso' ),
 			default: false,
 			changeListener: ( value ) => {
-				ticketEntity.isDefault = !! value;
+				ticket.isDefault = !! value;
 			},
 			inputWidth: 2,
 			helpText: {
@@ -289,13 +306,33 @@ const ticketEntityInputConfig = (
 			},
 		},
 		{
+			id: 'reverseCalculate',
+			type: 'toggle',
+			label: __( 'Reverse Calculate?', 'event_espresso' ),
+			default: false,
+			changeListener: ( value ) => {
+				ticket.reverse_calculate = !! value;
+			},
+			inputWidth: 2,
+			helpText: {
+				ifChecked: __(
+					'the ticket base price will be reverse engineered from the provided ticket total and price modifiers.',
+					'event_espresso',
+				),
+				ifNotChecked: __(
+					'the ticket total will be calculated normally from the provided ticket base price and price modifiers. click to reverse calculate the ticket base price from the total instead.',
+					'event_espresso',
+				),
+			},
+		},
+		{
 			id: 'wpUser',
 			type: 'number',
 			label: __( 'Created By', 'event_espresso' ),
 			default: 0,
 			disabled: true,
 			changeListener: ( value ) => {
-				ticketEntity.wpUser = parseInt( value || 0, 10 );
+				ticket.wpUser = parseInt( value || 0, 10 );
 			},
 			inputWidth: 2,
 			helpText: {
@@ -311,7 +348,7 @@ const ticketEntityInputConfig = (
 			default: 0,
 			disabled: true,
 			changeListener: ( value ) => {
-				ticketEntity.parent = parseInt( value || 0, 10 );
+				ticket.parent = parseInt( value || 0, 10 );
 			},
 			inputWidth: 2,
 		},
@@ -321,7 +358,7 @@ const ticketEntityInputConfig = (
 			label: __( 'Archived', 'event_espresso' ),
 			default: false,
 			changeListener: ( value ) => {
-				ticketEntity.deleted = parseInt( value || 0, 10 ) === 1;
+				ticket.deleted = parseInt( value || 0, 10 ) === 1;
 			},
 			inputWidth: 2,
 			helpText: {
@@ -332,7 +369,28 @@ const ticketEntityInputConfig = (
 				),
 			},
 		},
-	];
+	], [
+		ticket.id,
+		ticket.name,
+		ticket.description,
+		ticket.startDate.toISO(),
+		ticket.endDate.toISO(),
+		ticket.qty,
+		ticket.sold,
+		ticket.reserved,
+		ticket.uses,
+		ticket.required,
+		ticket.min,
+		ticket.max,
+		ticketPriceAmount,
+		ticket.taxable,
+		ticket.isDefault,
+		ticket.reverse_calculate,
+		ticket.wpUser,
+		ticket.order,
+		ticket.parent,
+		ticket.deleted,
+	] );
 };
 
-export default ticketEntityInputConfig;
+export default useTicketFormInputConfig;
