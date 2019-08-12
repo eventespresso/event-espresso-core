@@ -384,11 +384,14 @@ class EEM_Transaction extends EEM_Base
             // Why no wpdb->prepare?  Because the data is trusted.
             // We got the ids from the original query to get them FROM
             // the db (which is sanitized) so no need to prepare them again.
-            $query   = '
+            $query   = $wpdb->prepare('
 				DELETE
-				FROM ' . $this->table() . '
+				FROM %s
 				WHERE
-					TXN_ID IN ( ' . implode(",", $txn_ids) . ')';
+                    TXN_ID IN ( %s )',
+                $this->table(),
+                implode(",", $txn_ids)
+            );
             $deleted = $wpdb->query($query);
         }
         if ($deleted) {
