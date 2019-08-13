@@ -5,9 +5,6 @@
 ## Problem this Pull Request solves
 <!-- Please describe your changes in the context of the problem they solve -->
 
-## Why do you think these changes are needed in Event Espresso core instead of being put in an add-on?
-<!--  Additions to EE core should benefit 80% of its users, otherwise the work is probably best put in an add-on -->
-
 ## How has this been tested
 <!-- Please describe in detail how you tested your changes and how testing can be reproduced -->
 <!-- Include details of your testing environment, and tests ran to see how your changes affect other areas of code -->
