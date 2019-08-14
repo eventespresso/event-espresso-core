@@ -380,17 +380,20 @@ class EEM_Transaction extends EEM_Base
         if (! empty($txn_ids) && is_array($txn_ids)) {
             // first, make sure these TXN's are removed the "ee_locked_transactions" array
             EEM_Transaction::unset_locked_transactions($txn_ids);
+
+            // create an array of number placeholders the same length as the number of IDs returned
+            $safe_txn_ids = array_fill(0, count( $txn_ids ), '%d');
+
             // let's get deletin'...
-            // Why no wpdb->prepare?  Because the data is trusted.
             // We got the ids from the original query to get them FROM
             // the db (which is sanitized) so no need to prepare them again.
-            $query   = $wpdb->prepare('
-				DELETE
+            $query   = $wpdb->prepare(
+				`DELETE
 				FROM %s
 				WHERE
-                    TXN_ID IN ( %s )',
+                    TXN_ID IN ( %s )`,
                 $this->table(),
-                implode(",", $txn_ids)
+                implode(',', $safe_txn_ids)
             );
             $deleted = $wpdb->query($query);
         }
