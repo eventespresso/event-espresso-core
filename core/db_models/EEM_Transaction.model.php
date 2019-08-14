@@ -384,21 +384,14 @@ class EEM_Transaction extends EEM_Base
             // Create an array of sanitized numbers.
             $safe_txn_ids = array();
             
-            foreach( $txn_ids as $id ) {
-                $safe_txn_ids[] = intval( $id );
+            foreach ($txn_ids as $id) {
+                $safe_txn_ids[] = intval($id);
             }
 
             // let's get deletin'...
             // We got the ids from the original query to get them FROM
             // the db (which is sanitized) so no need to prepare them again.
-            $query   = $wpdb->prepare(
-				`DELETE
-				FROM %s
-				WHERE
-                    TXN_ID IN ( %s )`,
-                $this->table(),
-                implode(',', $safe_txn_ids)
-            );
+            $query   = $wpdb->prepare('DELETE FROM %s WHERE TXN_ID IN ( %s )', $this->table(), implode(',', $safe_txn_ids));
             $deleted = $wpdb->query($query);
         }
         if ($deleted) {
