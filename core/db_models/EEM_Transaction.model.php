@@ -381,8 +381,12 @@ class EEM_Transaction extends EEM_Base
             // first, make sure these TXN's are removed the "ee_locked_transactions" array
             EEM_Transaction::unset_locked_transactions($txn_ids);
 
-            // create an array of number placeholders the same length as the number of IDs returned
-            $safe_txn_ids = array_fill(0, count( $txn_ids ), '%d');
+            // Create an array of sanitized numbers.
+            $safe_txn_ids = array();
+            
+            foreach( $txn_ids as $id ) {
+                $safe_txn_ids[] = intval( $id );
+            }
 
             // let's get deletin'...
             // We got the ids from the original query to get them FROM
