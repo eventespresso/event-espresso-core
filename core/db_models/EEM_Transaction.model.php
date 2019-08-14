@@ -381,17 +381,16 @@ class EEM_Transaction extends EEM_Base
             // first, make sure these TXN's are removed the "ee_locked_transactions" array
             EEM_Transaction::unset_locked_transactions($txn_ids);
 
-            // Create an array of sanitized numbers.
-            $safe_txn_ids = array();
+            // Create IDs placeholder.
+            $placeholders = array_fill(0, count($txn_ids), '%d');
             
-            foreach ($txn_ids as $id) {
-                $safe_txn_ids[] = intval($id);
-            }
+            // Glue it together to use inside $wpdb->prepare.
+            $format = implode(', ', $placeholders);
 
             // let's get deletin'...
             // We got the ids from the original query to get them FROM
             // the db (which is sanitized) so no need to prepare them again.
-            $query   = $wpdb->prepare('DELETE FROM %s WHERE TXN_ID IN ( %s )', $this->table(), implode(',', $safe_txn_ids));
+            $query   = $wpdb->prepare("DELETE FROM " . $this->table() . " WHERE TXN_ID IN ( $format )", $txn_ids);
             $deleted = $wpdb->query($query);
         }
         if ($deleted) {
