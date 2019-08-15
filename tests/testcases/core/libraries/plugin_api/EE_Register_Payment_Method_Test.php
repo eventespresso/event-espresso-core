@@ -26,7 +26,7 @@ class EE_Register_Payment_Method_Test extends EE_UnitTestCase
         $this->_pmt_args = array(
             'payment_method_paths' =>
                 array(
-                    EE_TESTS_DIR . 'mocks' . DS . 'payment_methods' . DS . 'Mock_Onsite',
+                    EE_TESTS_DIR . 'mocks/payment_methods/Mock_Onsite',
                 ),
         );
         $this->_pmt_name = 'Mock_Onsite';

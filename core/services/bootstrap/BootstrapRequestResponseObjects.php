@@ -90,7 +90,7 @@ class BootstrapRequestResponseObjects
     {
         espresso_load_required(
             'EE_Request',
-            EE_CORE . 'request_stack' . DS . 'EE_Request.core.php'
+            EE_CORE . 'request_stack/EE_Request.core.php'
         );
         $this->legacy_request = new EE_Request($_GET, $_POST, $_COOKIE, $_SERVER);
         $this->legacy_request->setRequest($this->request);

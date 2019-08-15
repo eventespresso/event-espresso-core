@@ -123,8 +123,8 @@ class EED_Events_Archive extends EED_Module
      */
     public static function set_definitions()
     {
-        define('EVENTS_ARCHIVE_ASSETS_URL', plugin_dir_url(__FILE__) . 'assets' . DS);
-        define('EVENTS_ARCHIVE_TEMPLATES_PATH', str_replace('\\', DS, plugin_dir_path(__FILE__)) . 'templates' . DS);
+        define('EVENTS_ARCHIVE_ASSETS_URL', plugin_dir_url(__FILE__) . 'assets/');
+        define('EVENTS_ARCHIVE_TEMPLATES_PATH', str_replace('\\', '/', plugin_dir_path(__FILE__)) . 'templates/');
     }
 
 
@@ -773,10 +773,10 @@ class EED_Events_Archive extends EED_Module
         // get some style
         if (apply_filters('FHEE_enable_default_espresso_css', false)) {
             // first check uploads folder
-            if (EEH_File::is_readable(get_stylesheet_directory() . $this->theme . DS . 'style.css')) {
+            if (EEH_File::is_readable(get_stylesheet_directory() . $this->theme . '/style.css')) {
                 wp_register_style(
                     $this->theme,
-                    get_stylesheet_directory_uri() . $this->theme . DS . 'style.css',
+                    get_stylesheet_directory_uri() . $this->theme . '/style.css',
                     array('dashicons', 'espresso_default')
                 );
             } else {

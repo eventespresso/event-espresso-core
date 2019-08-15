@@ -12,9 +12,9 @@ use EventEspresso\core\services\database\TableAnalysis;
  */
 // defined some new constants related to caffeinated folder
 define('EE_CAF_URL', EE_PLUGIN_DIR_URL . 'caffeinated/');
-define('EE_CAF_CORE', EE_CAFF_PATH . 'core' . DS);
-define('EE_CAF_LIBRARIES', EE_CAF_CORE . 'libraries' . DS);
-define('EE_CAF_PAYMENT_METHODS', EE_CAFF_PATH . 'payment_methods' . DS);
+define('EE_CAF_CORE', EE_CAFF_PATH . 'core/');
+define('EE_CAF_LIBRARIES', EE_CAF_CORE . 'libraries/');
+define('EE_CAF_PAYMENT_METHODS', EE_CAFF_PATH . 'payment_methods/');
 
 
 /**
@@ -123,7 +123,7 @@ class EE_Brewing_Regular extends EE_BASE implements InterminableInterface
      */
     public function caf_helper_paths($paths)
     {
-        $paths[] = EE_CAF_CORE . 'helpers' . DS;
+        $paths[] = EE_CAF_CORE . 'helpers/';
         return $paths;
     }
 
@@ -233,7 +233,7 @@ class EE_Brewing_Regular extends EE_BASE implements InterminableInterface
     public function caffeinated_modules_to_register($modules_to_register = array())
     {
         if (is_readable(EE_CAFF_PATH . 'modules')) {
-            $caffeinated_modules_to_register = glob(EE_CAFF_PATH . 'modules' . DS . '*', GLOB_ONLYDIR);
+            $caffeinated_modules_to_register = glob(EE_CAFF_PATH . 'modules/*', GLOB_ONLYDIR);
             if (is_array($caffeinated_modules_to_register) && ! empty($caffeinated_modules_to_register)) {
                 $modules_to_register = array_merge($modules_to_register, $caffeinated_modules_to_register);
             }

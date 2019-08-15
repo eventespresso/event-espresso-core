@@ -40,7 +40,7 @@ class EED_Mijireh_Slurper extends EED_Module
      */
     public static function set_hooks_admin()
     {
-        define('EED_MIJIREH_SLURPER_PATH', EE_CAFF_PATH . 'modules' . DS . 'mijireh_slurper' . DS);
+        define('EED_MIJIREH_SLURPER_PATH', EE_CAFF_PATH . 'modules/' . 'mijireh_slurper/');
         add_action('load-post.php', array('EED_Mijireh_Slurper', 'set_edit_post_page_hooks'));
         add_action('load-admin.php', array('EED_Mijireh_Slurper', 'check_for_edit_slurp_page'));
         add_action('AHEE__EE_Mijireh__settings_end', array('EED_Mijireh_Slurper', 'add_slurp_link_to_gateway'));

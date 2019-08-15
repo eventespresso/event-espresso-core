@@ -185,16 +185,16 @@ class EED_Venues_Archive extends EED_Module
         // get some style
         if (apply_filters('FHEE_enable_default_espresso_css', true) && is_archive()) {
             // first check theme folder
-            if (is_readable(get_stylesheet_directory() . $this->theme . DS . 'style.css')) {
+            if (is_readable(get_stylesheet_directory() . $this->theme . '/style.css')) {
                 wp_register_style(
                     $this->theme,
-                    get_stylesheet_directory_uri() . $this->theme . DS . 'style.css',
+                    get_stylesheet_directory_uri() . $this->theme . '/style.css',
                     array('dashicons', 'espresso_default')
                 );
-            } elseif (is_readable(EE_TEMPLATES . $this->theme . DS . 'style.css')) {
+            } elseif (is_readable(EE_TEMPLATES . $this->theme . '/style.css')) {
                 wp_register_style(
                     $this->theme,
-                    EE_TEMPLATES_URL . $this->theme . DS . 'style.css',
+                    EE_TEMPLATES_URL . $this->theme . '/style.css',
                     array('dashicons', 'espresso_default')
                 );
             }

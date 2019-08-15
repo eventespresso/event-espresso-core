@@ -398,13 +398,13 @@ abstract class EE_Admin_Hooks extends EE_Base
         $ref = str_replace('_', ' ', $this->_name); // take the_message -> the message
         $ref = str_replace(' ', '_', ucwords($ref)) . '_Admin_Page'; // take the message -> The_Message
         // first default file (if exists)
-        $decaf_file = EE_ADMIN_PAGES . $this->_name . DS . $ref . '.core.php';
+        $decaf_file = EE_ADMIN_PAGES . $this->_name . '/' . $ref . '.core.php';
         if (is_readable($decaf_file)) {
             require_once($decaf_file);
         }
         // now we have to do require for extended file (if needed)
         if ($this->_extend) {
-            require_once(EE_CORE_CAF_ADMIN_EXTEND . $this->_name . DS . 'Extend_' . $ref . '.core.php');
+            require_once(EE_CORE_CAF_ADMIN_EXTEND . $this->_name . '/Extend_' . $ref . '.core.php');
         }
         // if we've got an extended class we use that!
         $ref = $this->_extend ? 'Extend_' . $ref : $ref;

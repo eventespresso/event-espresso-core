@@ -31,7 +31,7 @@ class EE_Cart_Test extends EE_UnitTestCase{
      */
     public function setUp(){
 		parent::setUp();
-		require_once EE_TESTS_DIR . 'mocks' . DS . 'core' . DS . 'EE_Session_Mock.core.php';
+		require_once EE_TESTS_DIR . 'mocks/core/EE_Session_Mock.core.php';
 		$this->_session = LoaderFactory::getLoader()->getShared('EE_Session_Mock');
         EE_Cart::reset( null, $this->_session );
 	}

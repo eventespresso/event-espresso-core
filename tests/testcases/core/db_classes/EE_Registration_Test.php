@@ -134,7 +134,7 @@ class EE_Registration_Test extends EE_UnitTestCase{
 	}
 
     /**
-     * @since $VID:$
+     * @since 4.10.0.p
      * @throws EE_Error
      */
 	public function testQuestionGroupsPrimaryReg()
@@ -154,7 +154,7 @@ class EE_Registration_Test extends EE_UnitTestCase{
     }
 
     /**
-     * @since $VID:$
+     * @since 4.10.0.p
      * @throws EE_Error
      */
     public function testQuestionGroupsAdditionalReg()
@@ -177,7 +177,7 @@ class EE_Registration_Test extends EE_UnitTestCase{
     }
 
     /**
-     * @since $VID:$
+     * @since 4.10.0.p
      * @throws EE_Error
      */
     public function testCountQuestionGroups()

@@ -133,7 +133,7 @@ class EE_PMT_Aim extends EE_PMT_Base
             $billing_form->add_subsections(
                 array(
                     'debug_content' => new EE_Form_Section_HTML_From_Template(
-                        __DIR__.DS.'templates'.DS.'authorize_net_aim_debug_info.template.php'
+                        __DIR__.'/templates/authorize_net_aim_debug_info.template.php'
                     )
                 ),
                 'first_name'

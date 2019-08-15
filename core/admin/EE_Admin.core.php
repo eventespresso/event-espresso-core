@@ -108,7 +108,7 @@ final class EE_Admin implements InterminableInterface
         if (! defined('EE_ADMIN_URL')) {
             define('EE_ADMIN_URL', EE_PLUGIN_DIR_URL . 'core/admin/');
             define('EE_ADMIN_PAGES_URL', EE_PLUGIN_DIR_URL . 'admin_pages/');
-            define('EE_ADMIN_TEMPLATE', EE_ADMIN . 'templates' . DS);
+            define('EE_ADMIN_TEMPLATE', EE_ADMIN . 'templates/');
             define('WP_ADMIN_PATH', ABSPATH . 'wp-admin/');
             define('WP_AJAX_URL', admin_url('admin-ajax.php'));
         }
@@ -178,9 +178,9 @@ final class EE_Admin implements InterminableInterface
     public function hide_admin_pages_except_maintenance_mode($admin_page_folder_names = array())
     {
         return array(
-            'maintenance' => EE_ADMIN_PAGES . 'maintenance' . DS,
-            'about'       => EE_ADMIN_PAGES . 'about' . DS,
-            'support'     => EE_ADMIN_PAGES . 'support' . DS,
+            'maintenance' => EE_ADMIN_PAGES . 'maintenance/',
+            'about'       => EE_ADMIN_PAGES . 'about/',
+            'support'     => EE_ADMIN_PAGES . 'support/',
         );
     }
 

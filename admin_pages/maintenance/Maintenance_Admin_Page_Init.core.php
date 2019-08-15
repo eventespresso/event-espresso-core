@@ -30,8 +30,8 @@ class Maintenance_Admin_Page_Init extends EE_Admin_Page_Init
         define('EE_MAINTENANCE_LABEL', __('Maintenance', 'event_espresso'));
         define('EE_MAINTENANCE_PG_SLUG', 'espresso_maintenance_settings');
         define('EE_MAINTENANCE_ADMIN_URL', admin_url('admin.php?page=' . EE_MAINTENANCE_PG_SLUG));
-        define('EE_MAINTENANCE_ADMIN', EE_ADMIN_PAGES . 'maintenance' . DS);
-        define('EE_MAINTENANCE_TEMPLATE_PATH', EE_MAINTENANCE_ADMIN . 'templates' . DS);
+        define('EE_MAINTENANCE_ADMIN', EE_ADMIN_PAGES . 'maintenance/');
+        define('EE_MAINTENANCE_TEMPLATE_PATH', EE_MAINTENANCE_ADMIN . 'templates/');
         define('EE_MAINTENANCE_ASSETS_URL', EE_ADMIN_PAGES_URL . 'maintenance/assets/');
         // check that if we're in maintenance mode that we tell the admin that
         add_action('admin_notices', array($this, 'check_maintenance_mode'));

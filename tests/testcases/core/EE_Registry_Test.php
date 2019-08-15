@@ -46,7 +46,7 @@ class EE_Registry_Test extends EE_UnitTestCase{
 		);
 		EE_Dependency_Map::register_class_loader( 'EE_Session_Mock' );
 		EE_Dependency_Map::register_class_loader( 'EE_Injector_Tester_With_Array_Session_Int_Constructor_Params' );
-		require_once EE_TESTS_DIR . 'mocks' . DS . 'core' . DS . 'EE_Registry_Mock.core.php';
+		require_once EE_TESTS_DIR . 'mocks/core/EE_Registry_Mock.core.php';
 		$loader = LoaderFactory::getLoader();
 		EE_Registry_Mock::instance(
 		    EE_Dependency_Map::instance(),
@@ -76,7 +76,7 @@ class EE_Registry_Test extends EE_UnitTestCase{
 	 * @return array
 	 */
 	public function unit_test_registry_core_paths( $core_paths = array() ) {
-		$core_paths[] = EE_TESTS_DIR . 'mocks' . DS . 'core' . DS;
+		$core_paths[] = EE_TESTS_DIR . 'mocks/core/';
 		return $core_paths;
 	}
 
@@ -236,7 +236,7 @@ class EE_Registry_Test extends EE_UnitTestCase{
 		// try to find the path to the EE_Session class
 		$this->assertEquals(
 			// expected
-			str_replace( array( '\\', '/' ), DS, EE_CORE . 'EE_Session.core.php' ),
+			str_replace( array( '\\', '/' ), '/', EE_CORE . 'EE_Session.core.php' ),
 			// actual
 			EE_Registry_Mock::instance()->resolve_path(
 				'EE_Session',
@@ -245,7 +245,7 @@ class EE_Registry_Test extends EE_UnitTestCase{
 					EE_CORE,
 					EE_ADMIN,
 					EE_CPTS,
-					EE_CORE . 'data_migration_scripts' . DS
+					EE_CORE . 'data_migration_scripts/'
 				)
 			)
 		);
@@ -266,15 +266,15 @@ class EE_Registry_Test extends EE_UnitTestCase{
 		$this->assertEquals( false, class_exists( 'EE_Class_For_Testing_Loading', false ) );
 		// let's attempt to load the EE_Cart
 		EE_Registry_Mock::instance()->require_file(
-			EE_MOCKS_DIR . 'core' . DS . 'EE_Class_For_Testing_Loading.core.php',
+			EE_MOCKS_DIR . 'core/EE_Class_For_Testing_Loading.core.php',
 			'EE_Class_For_Testing_Loading',
 			'core',
 			array(
 				EE_CORE,
 				EE_ADMIN,
-				EE_CORE . 'data_migration_scripts' . DS,
+				EE_CORE . 'data_migration_scripts/',
 				EE_MOCKS_DIR,
-				EE_MOCKS_DIR . 'core' . DS,
+				EE_MOCKS_DIR . 'core/',
 			)
 		);
 		$this->assertEquals( true, class_exists( 'EE_Class_For_Testing_Loading', false ) );
@@ -598,7 +598,7 @@ class EE_Registry_Test extends EE_UnitTestCase{
 			'FHEE__EE_Registry__load_service__service_paths',
 			function() {
 				return array(
-					EE_TESTS_DIR . 'mocks' . DS . 'core' . DS . 'services' . DS
+					EE_TESTS_DIR . 'mocks/core/services/'
 				);
 			}
 		);

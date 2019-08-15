@@ -195,7 +195,7 @@ class Payments_Admin_Page extends EE_Admin_Page
                 $all_pmt_help_tabs_config[ $help_tab_name ] = array(
                     'title'   => $config['title'],
                     'content' => EEH_Template::display_template(
-                        $payment_method_type->file_folder() . 'help_tabs' . DS . $config['filename'] . '.help_tab.php',
+                        $payment_method_type->file_folder() . 'help_tabs/' . $config['filename'] . '.help_tab.php',
                         $template_args,
                         true
                     ),
