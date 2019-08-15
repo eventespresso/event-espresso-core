@@ -15,7 +15,7 @@ We established coding standards because code isn’t only supposed to do things,
 | [PHPDoc Formatting](php-doc-formatting.md) | Standards related to formatting phpdoc blocks
 | [PHP Standards for EE](php-standards.md) | PHP code style standards
 | [EE Actions and Filters](ee-actions-and-filters.md) | Standards related to WordPress actions and filters in EE 
-| [Code Reviews](https://github.com/eventespresso/event-espresso-core/blob/master/docs/A--Best-Practices/development/code-review-and-testing.md) | Code Review Best Practices in EE
+| [Code Reviews and Testing](https://github.com/eventespresso/event-espresso-core/blob/master/docs/A--Best-Practices/development/code-review-and-testing.md) | Code Review Best Practices in EE
 | [Javascript Best Practices](../AA--Javascript-in-EE) | Various best practices and tools related to EE javascript
 | [Code Style Tools and Resources](code-style-tools-resources.md) | Tools and Resources for EE code styles and best practices (including IDE instructions, linting etc)
 
