@@ -225,8 +225,6 @@ jQuery(document).ready( function($) {
 					if ( ! $(element ).hasClass('spco-next-step-btn') ) {
 						if ( $( element ).attr( 'value' ) ) {
 							$( element ).removeClass( 'ee-needs-value' ).addClass( 'ee-has-value' );
-						} else if ( $( element ).hasClass( 'ee-required' ) ) {
-							$( element ).removeClass( 'ee-needs-value' ).addClass( 'ee-needs-value' );
 						}
 					}
 				},
