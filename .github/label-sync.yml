@@ -83,9 +83,10 @@
       color: e47e33
     - name: "status:add-sales-page"
       color: 9ddde4
-    - name: "status:duplicate"
-      color: a0a5a5
+    - name: "status: duplicate?"
+      color: e5ff00
       previousNames:
+        - status:duplicate
         - duplicate
     - name: "status:stale"
       color: a08e58
@@ -199,14 +200,19 @@
       previousNames:
         - build-process
         - "type:build-process"
+    - name: "type:code-quality 👾"
+      color: efefef
+    - name: "type:edge-case ⚠"
+      color: efefef
     - name: "type:enhancement 🎉"
       color: efefef
       previousNames:
         - enhancement
         - "type:enhancement"
-    - name: "type:task ✅"
+    - name: "type:task 🧹"
       color: efefef
       previousNames:
+        - "type:task ✅"
         - "type:task"
     - name: "type:feature-request 🙏"
       color: efefef
@@ -241,8 +247,10 @@
         - invalid
         - "type:invalid"
         - "type-invalid 🦄"
-    - name: "type:impacts-eventsmart"
+    - name: "type:impacts-eventsmart 🎫"
       color: 00f2ff
+      previousNames:
+        - "type:impacts-eventsmart"
     - name: "requires:WP5.0+ 🧩"
       color: 2a1f78
     ## depends-on-labels
@@ -252,6 +260,8 @@
         - requires:WP5.0+ 🧩
     - name: "requires:WP5.2 🧩"
       color: 2a1f78
+    - name: "EZ"
+      color: 91ff50
   options:
     ignoreMilestones:
       - eventespresso/event-espresso-core
