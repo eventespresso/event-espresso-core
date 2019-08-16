@@ -4,6 +4,7 @@ namespace EventEspresso\core\domain\services\pue;
 
 use EE_Config;
 use EE_Currency_Config;
+use EE_Registry;
 use EEM_Datetime;
 use EEM_Event;
 use EEM_Payment_Method;
@@ -144,6 +145,7 @@ class StatsGatherer
                 array(PHP_MAJOR_VERSION, PHP_MINOR_VERSION, PHP_RELEASE_VERSION)
             ),
             'wpversion'                       => $wp_version,
+            'active_addons'                   => $this->getActiveAddons(),
         ));
         // remove any values that equal null.  This ensures any stats that weren't retrieved successfully are excluded.
         return array_filter($stats, function ($value) {
@@ -305,5 +307,23 @@ class StatsGatherer
             // do nothing just prevents fatals.
         }
         return $payment_method_stats;
+    }
+
+
+    /**
+     * Return a list of active EE add-ons and their versions.
+     *
+     * @return string
+     */
+    private function getActiveAddons()
+    {
+        $activeAddons = [];
+        $addOns = EE_Registry::instance()->addons;
+        if (! empty($addOns)) {
+            foreach ($addOns as $addon) {
+                $activeAddons[] = $addon->name() . '@' . $addon->version();
+            }
+        }
+        return implode(',', $activeAddons);
     }
 }
