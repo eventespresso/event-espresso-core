@@ -1,7 +1,10 @@
 <?php
 
-use EventEspresso\core\domain\Domain;
-use EventEspresso\core\services\assets\Registry;
+use EventEspresso\core\domain\services\assets\CoreAssetManager;
+use EventEspresso\core\domain\values\assets\JavascriptAsset;
+use EventEspresso\core\exceptions\InvalidDataTypeException;
+use EventEspresso\core\exceptions\InvalidInterfaceException;
+use EventEspresso\core\services\collections\DuplicateCollectionIdentifierException;
 use EventEspresso\core\services\loaders\LoaderFactory;
 
 /**
@@ -32,12 +35,29 @@ class EE_Billing_Info_Form extends EE_Form_Section_Proper
      */
     protected $transaction;
 
+    /**
+     * @var EventEspresso\core\services\assets\AssetCollection $assets
+     */
+    protected $assets;
+
+    /**
+     * @var EventEspresso\core\domain\Domain $domain
+     */
+    protected $domain;
+
+    /**
+     * @var EventEspresso\core\services\assets\Registry $registry
+     */
+    protected $registry;
 
 
     /**
-     *
      * @param EE_Payment_Method $payment_method
-     * @param array $options_array @see EE_Form_Section_Proper::__construct()
+     * @param array             $options_array @see EE_Form_Section_Proper::__construct()
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
      */
     public function __construct(EE_Payment_Method $payment_method, $options_array = array())
     {
@@ -47,6 +67,11 @@ class EE_Billing_Info_Form extends EE_Form_Section_Proper
             $this->transaction = $options_array['transaction'];
         }
         parent::__construct($options_array);
+        // In the future this feature may be available to other payment methods, but for now it's only PayPal Pro.
+        if ($this->_pm_instance->type() === 'Paypal_Pro') {
+            add_action('wp_enqueue_scripts', array($this, 'registerCardinalCommerceJs'), 2);
+            add_action('wp_enqueue_scripts', array($this, 'enqueueCardinalCommerceJs'), 10);
+        }
     }
 
 
@@ -99,52 +124,76 @@ class EE_Billing_Info_Form extends EE_Form_Section_Proper
         return ! empty($this->_html_class) ? $this->_html_class . ' ee-billing-form' : 'ee-billing-form';
     }
 
-
-
-    public function enqueue_js()
-    {
-        parent::enqueue_js();
-        // In the future this feature may be available to other payment methods, but for now it's only PayPal Pro.
-        if ($this->_pm_instance->type() === 'Paypal_Pro') {
-            $this->enqueueCardinalCommerceJs();
-        }
-    }
-
     /**
-     * Enqueues JS for Cardinal Commerce to do 3D Secure Authorization.
+     * registers JS for Cardinal Commerce to do 3D Secure Authorization.
+     *
+     * @return void
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws DuplicateCollectionIdentifierException
      * @since $VID:$
      */
-    protected function enqueueCardinalCommerceJs()
+    public function registerCardinalCommerceJs()
     {
-        $on_staging = $this->_pm_instance->debug_mode();
-        if ($on_staging) {
-            $songbird_domain = 'songbirdstag.cardinalcommerce.com';
-        } else {
-            $songbird_domain = 'songbird.cardinalcommerce.com';
-        }
-        wp_register_script(
-            'ee-cardinal-commerce-songbird',
-            "https://{$songbird_domain}/edge/v1/songbird.js");
-        if( ! did_action('wp_enqueue_scripts')){
-            // This was called too early.
-            return;
-        }
-        $registry = LoaderFactory::getLoader()->getShared('EventEspresso\core\services\assets\Registry');
-        $domain = LoaderFactory::getLoader()->getShared('EventEspresso\core\domain\Domain');
-        $url = $registry->getJsUrl(
-            $domain->assetNamespace(),
-            'eventespresso-payment-methods-cardinal-commerce'
+        /** @var EventEspresso\core\services\assets\AssetCollection $assets */
+        $this->assets = LoaderFactory::getLoader()->getShared('EventEspresso\core\services\assets\AssetCollection');
+        /** @var EventEspresso\core\services\assets\Registry $registry */
+        $this->registry = LoaderFactory::getLoader()->getShared('EventEspresso\core\services\assets\Registry');
+        /** @var EventEspresso\core\domain\Domain $domain */
+        $this->domain = LoaderFactory::getLoader()->getShared('EventEspresso\core\domain\Domain');
+
+        $asset_namespace = $this->domain->assetNamespace();
+
+        $songbird_domain = $this->_pm_instance->debug_mode()
+            ? 'songbirdstag.cardinalcommerce.com'
+            : 'songbird.cardinalcommerce.com';
+
+        $cardinal_commerce_songbird = 'ee-cardinal-commerce-songbird';
+        $this->assets->add(
+            new JavascriptAsset(
+                $cardinal_commerce_songbird,
+                "https://{$songbird_domain}/edge/v1/songbird.js",
+                $this->registry->getJsDependencies(
+                    $asset_namespace,
+                    $cardinal_commerce_songbird
+                ),
+                true,
+                $this->domain
+            ),
+            $cardinal_commerce_songbird
         );
-        wp_enqueue_script(
-            'eventespresso-payment-methods-cardinal-commerce',
-            $url,
-            ['ee-cardinal-commerce-songbird', 'espresso_core', 'jquery', 'single_page_checkout', 'eejs-core'],
-            1,
-            true
+
+        $ee_pm_cardinal_commerce = 'eventespresso-payment-methods-cardinal-commerce';
+        $this->assets->add(
+            new JavascriptAsset(
+                $ee_pm_cardinal_commerce,
+                $this->registry->getJsUrl(
+                    $asset_namespace,
+                    $ee_pm_cardinal_commerce
+                ),
+                array_merge(
+                    $this->registry->getJsDependencies(
+                    $asset_namespace,
+                        $ee_pm_cardinal_commerce
+                    ),
+                    [
+                        $cardinal_commerce_songbird,
+                        CoreAssetManager::JS_HANDLE_CORE,
+                        CoreAssetManager::JS_HANDLE_JQUERY,
+                        'single_page_checkout',
+                        CoreAssetManager::JS_HANDLE_JS_CORE,
+                    ]
+                ),
+                true,
+                $this->domain
+            ),
+            $ee_pm_cardinal_commerce
         );
+
         $cruise_jwt_factory = LoaderFactory::getLoader()->getShared('EventEspresso\core\services\payment_methods\cardinal_cruise\CardinalCruiseJwtFactory');
 
-        $registry->addData(
+        $this->registry->addData(
             'cardinalCommerce',
             [
                 'data' => [
@@ -159,5 +208,12 @@ class EE_Billing_Info_Form extends EE_Form_Section_Proper
             ]
         );
     }
+
+    public function enqueueCardinalCommerceJs()
+    {
+        wp_enqueue_script('ee-cardinal-commerce-songbird');
+        wp_enqueue_script('eventespresso-payment-methods-cardinal-commerce');
+    }
 }
+
 // End of file EE_Billing_Info_Form.form.php
