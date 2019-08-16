@@ -7,30 +7,30 @@ import Pagination from "react-js-pagination";
 /**
  * Internal dependencies
  */
-import './style.css';
-import useEntityPagination from './use-entity-pagination';
 import usePaginationConfig from './use-pagination-config';
-
-const nullFunc = () => null;
+import './style.css';
 
 /**
  * for adding pagination to an "EntityList" component
  *
- * @param {string} listId
- * @param {number} totalCount
- * @param {number} entitiesPerPage
- * @param {number} pageRangeDisplayed
- * @param {Object} paginationConfig
+ * @param {string} listId - unique identifier for paginated list
+ * @param {number} totalCount - total number of entities in full list
+ * @param {number} currentPage - page number of currently viewed page
+ * @param {number} entitiesPerPage - how many entities on each page
+ * @param {Function} setCurrentPage - callback for changing page number
+ * @param {number} pageRangeDisplayed - how many pagination links to show
+ * @param {Object} paginationConfig - labels for now
  * @return {Object} EntityList with added EntityPagination
  */
 const EntityPagination = ( {
 	listId,
-	totalCount = 0,
+	totalCount,
+	currentPage,
+	setCurrentPage,
 	entitiesPerPage = 10,
 	pageRangeDisplayed = 10,
 	paginationConfig = {},
 } ) => {
-	const { currentPage, setCurrentPage } = useEntityPagination( listId );
 	paginationConfig = usePaginationConfig( paginationConfig );
 	return totalCount > entitiesPerPage && (
 			<div id={ `ee-entity-pagination-${ listId }` }
@@ -55,6 +55,8 @@ const EntityPagination = ( {
 EntityPagination.propTypes = {
 	listId: PropTypes.string.isRequired,
 	totalCount: PropTypes.number.isRequired,
+	currentPage: PropTypes.number.isRequired,
+	setCurrentPage: PropTypes.func.isRequired,
 	entitiesPerPage: PropTypes.number,
 	pageRangeDisplayed: PropTypes.number,
 	paginationConfig: PropTypes.shape( {

@@ -1,34 +1,30 @@
 /**
  * External imports
  */
-import { useCallback, useState } from '@wordpress/element';
+import { useState } from '@wordpress/element';
 
 const EMPTY_ARRAY = [];
 
 /**
  * tracks current page for any paginated list
  *
- * @param {string} listId
+ * @param {number} perPage
+ * @param {BaseEntity[]} entities
  * @return {Object} - currentPage
  *                  - setCurrentPage - callback for changing currentPage
+ *                  - paginatedEntities - array of entities for current page
  */
-const useEntityPagination = ( listId ) => {
-	const [ pageNumber, setPageNumber ] = useState( { [ listId ]: 1 } );
-	const setCurrentPage = useCallback( ( currentPage ) => setPageNumber(
-		{ [ listId ]: parseInt( currentPage, 10 ) }
-	), [] );
-	const getPaginatedEntities = useCallback( ( entities, perPage ) => {
-		const currentPage = pageNumber[ listId ];
-		return Array.isArray( entities ) ?
-			entities.slice(
-				( currentPage - 1 ) * perPage,
-				currentPage * perPage
-		) : EMPTY_ARRAY
-	}, [ pageNumber ] );
+const useEntityPagination = ( perPage, entities ) => {
+	const [ currentPage, setCurrentPage ] = useState( 1 );
+	const pageNumber = parseInt( currentPage, 10 );
 	return {
-		currentPage: pageNumber[ listId ],
+		currentPage: pageNumber,
 		setCurrentPage,
-		getPaginatedEntities
+		paginatedEntities: Array.isArray( entities ) ?
+			entities.slice(
+				( pageNumber - 1 ) * perPage,
+				pageNumber * perPage
+			) : EMPTY_ARRAY
 	};
 };
 
