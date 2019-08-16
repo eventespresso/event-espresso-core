@@ -1,23 +1,32 @@
 /**
  * External imports
  */
-import { useCallback } from '@wordpress/element';
+import { useMemo } from '@wordpress/element';
 
-const useFilterEntitiesBySearchText = () => useCallback(
-	( entities, searchText ) => {
-		// console.log( 'useFilterEntitiesBySearchText > entities', entities );
-		return searchText && Array.isArray( entities ) ?
-			entities.filter( ( entity ) => {
-				const field = entity.hasOwnProperty( 'name' ) && entity.name ?
-					entity.name :
-					null;
-				console.log( ' > > field', field );
-				return field ?
-					field.toLowerCase().search( searchText.toLowerCase() ) !== -1 :
-					false;
-			} ) : entities
-	},
-	[]
+/**
+ * searches through provided list of entities and returns an array
+ * of entities where the set field (defaults to entity name)
+ * matches the current search text (fully or partially)
+ *
+ * @param {BaseEntity[]} entities
+ * @param {string} searchText
+ * @param {string} field
+ * @return {BaseEntity[]} entities matching search criteria
+ */
+const useFilterEntitiesBySearchText = (
+	entities,
+	searchText,
+	field = 'name'
+) => useMemo(
+	() => searchText && Array.isArray( entities ) ?
+		entities.filter( ( entity ) => {
+			const value = entity.hasOwnProperty( field ) && entity[ field ] ?
+				entity[ field ] :
+				null;
+			return value &&
+				value.toLowerCase().search( searchText.toLowerCase() ) !== -1;
+		} ) : entities,
+	[ entities, searchText, field ]
 );
 
 export default useFilterEntitiesBySearchText;

@@ -49,7 +49,7 @@ const EntityListFilterBar = ( {
 				onChange={ setSearchText }
 			/>
 		) : null;
-	}, [ listId, searchText ] );
+	}, [ listId, searchText, setSearchText ] );
 
 	const perPageControl = useMemo( () => (
 		<SelectControl
@@ -66,7 +66,7 @@ const EntityListFilterBar = ( {
 			] }
 			onChange={ setPerPage }
 		/>
-	), [ listId, perPage ] );
+	), [ listId, perPage, setPerPage ] );
 
 	const listViewButton = useMemo( () => (
 		<Fragment>
@@ -83,7 +83,7 @@ const EntityListFilterBar = ( {
 				onClick={ setListView }
 			/>
 		</Fragment>
-	), [ listId, view ] );
+	), [ listId, view, setListView ] );
 
 	const gridViewButton = useMemo( () => (
 		<Fragment>
@@ -100,7 +100,7 @@ const EntityListFilterBar = ( {
 				onClick={ setGridView }
 			/>
 		</Fragment>
-	), [ listId, view ] );
+	), [ listId, view, setGridView ] );
 
 	return (
 		<div className="ee-entity-list-filter-bar-wrapper">
