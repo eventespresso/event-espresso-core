@@ -2,6 +2,7 @@
 
 namespace EventEspresso\core\services\assets;
 
+use DomainException;
 use EE_Error;
 use EventEspresso\core\domain\DomainInterface;
 use EventEspresso\core\domain\services\assets\CoreAssetManager;
@@ -161,10 +162,11 @@ class Registry
     /**
      * Registers JS assets with WP core
      *
-     * @since 4.9.62.p
      * @param JavascriptAsset[] $scripts
      * @throws AssetRegistrationException
      * @throws InvalidDataTypeException
+     * @throws DomainException
+     * @since 4.9.62.p
      */
     public function registerScripts(array $scripts)
     {
@@ -202,9 +204,10 @@ class Registry
     /**
      * Registers CSS assets with WP core
      *
-     * @since 4.9.62.p
      * @param StylesheetAsset[] $styles
-     * @throws InvalidDataTypeException
+     * @throws InvalidDataTypeException*@throws \DomainException
+     * @throws DomainException
+     * @since 4.9.62.p
      */
     public function registerStyles(array $styles)
     {
