@@ -138,14 +138,24 @@ class EE_Billing_Info_Form extends EE_Form_Section_Proper
         wp_enqueue_script(
             'eventespresso-payment-methods-cardinal-commerce',
             $url,
-            ['ee-cardinal-commerce-songbird']
+            ['ee-cardinal-commerce-songbird', 'espresso_core', 'jquery', 'single_page_checkout', 'eejs-core'],
+            1,
+            true
         );
-        $cruise_jwt_factory = LoaderFactory::getLoader()->getShared('\EventEspresso\core\services\payment_methods\cardinal_cruise\CardinalCruiseJwtFactory');
-        wp_localize_script(
-            'eventespresso-payment-methods-cardinal-commerce',
-            'eventespresso_cardinal_commerce',
+        $cruise_jwt_factory = LoaderFactory::getLoader()->getShared('EventEspresso\core\services\payment_methods\cardinal_cruise\CardinalCruiseJwtFactory');
+
+        $registry->addData(
+            'cardinalCommerce',
             [
-                'jwt' => $cruise_jwt_factory->generateCruiseJwt($this->transaction)
+                'data' => [
+
+                    'jwt' => $cruise_jwt_factory->generateCruiseJwt($this->transaction)
+                ],
+                'translations' => [
+                    'no_SPCO_error' => esc_html__('It appears the Single Page Checkout javascript was not loaded properly! Please refresh the page and try again or contact support.', 'event_espresso'),
+                    'no_cardinal_error' => esc_html__('It appears the Cardinal Commerce Songbird.js was not loaded properly! Please refresh the page and try again or contact support.', 'event_espresso'),
+                    'invalid_response_from_cardinal' => esc_html__('Cardinal Commerce did not send a valid response. Please retry or contact the site admin.', 'event_espresso')
+                ]
             ]
         );
     }

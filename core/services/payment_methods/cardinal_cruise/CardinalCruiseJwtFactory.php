@@ -74,30 +74,31 @@ class CardinalCruiseJwtFactory
         $raw_amount = $this->prepareAmountForCardinalCommerce($transaction->remaining(), $currency_alpha);
 
         $request_order_object = array(
-//        "Consumer" => array(
-////            "BillingAddress" => array(
-////                "FirstName" => $order->get_billing_first_name(),
-////                "LastName" => $order->get_billing_last_name(),
-////                "Address1" => $order->get_billing_address_1(),
-////                "Address2" => $order->get_billing_address_2(),
-////                "City" => $order->get_billing_city(),
-////                "State" => $order->get_billing_state(),
-////                "PostalCode" => $order->get_billing_postcode(),
-////                "CountryCode" => $order->get_billing_country(),
-////                "Phone1" => $order->get_billing_phone(),
-////            ),
-////            "ShippingAddress" => array(
-////                "FirstName" => $order->get_shipping_first_name(),
-////                "LastName" => $order->get_shipping_last_name(),
-////                "Address1" => $order->get_shipping_address_1(),
-////                "Address2" => $order->get_shipping_address_2(),
-////                "City" => $order->get_shipping_city(),
-////                "State" => $order->get_shipping_state(),
-////                "PostalCode" => $order->get_shipping_postcode(),
-////                "CountryCode" => $order->get_shipping_country(),
-////            ),
-////            "Email1" => $order->get_billing_email(),
-////        ),
+        "Consumer" => array(
+            "BillingAddress" => array(
+                "FirstName" => 'fname',
+                "LastName" => 'fname',
+                "Address1" => 'fname',
+                "Address2" => 'fname',
+                "City" => 'fname',
+                "State" => 'UT',
+                "PostalCode" => 'fname',
+                "CountryCode" => 'US',
+                "Phone1" => '1231231231',
+            ),
+            "ShippingAddress" => array(
+                "FirstName" => 'fname',
+                "LastName" => 'fname',
+                "Address1" => 'fname',
+                "Address2" => 'fname',
+                "City" => 'fname',
+                "State" => 'UT',
+                "PostalCode" => 'fname',
+                "CountryCode" => 'US',
+                "Phone1" => '1231231231',
+            ),
+            "Email1" => 'few@few.fgew',
+        ),
             "OrderDetails" => array(
                 "OrderNumber" => $transaction->ID(),
                 "Amount" => $raw_amount,
