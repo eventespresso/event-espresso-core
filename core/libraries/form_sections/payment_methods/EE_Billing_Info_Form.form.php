@@ -197,7 +197,7 @@ class EE_Billing_Info_Form extends EE_Form_Section_Proper
             'cardinalCommerce',
             [
                 'data' => [
-
+                    'slug' => $this->_pm_instance->slug(),
                     'jwt' => $cruise_jwt_factory->generateCruiseJwt($this->transaction)
                 ],
                 'translations' => [
