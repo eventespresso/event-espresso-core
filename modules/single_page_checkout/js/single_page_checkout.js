@@ -223,7 +223,9 @@ jQuery(document).ready( function($) {
 
 				unhighlight: function( element ) {
 					if ( ! $(element ).hasClass('spco-next-step-btn') ) {
-						$(element).removeClass('ee-needs-value').addClass('ee-has-value');
+						if ( $( element ).attr( 'value' ) ) {
+							$( element ).removeClass( 'ee-needs-value' ).addClass( 'ee-has-value' );
+						}
 					}
 				},
 
