@@ -34,7 +34,7 @@
             <input name="remote_logging_url" id="remote_logging_url" size="20" class="regular-text" type="text"
                    value="<?php echo $remote_logging_url; ?>"/>
             <p class="description">
-                <?php _e('Example: http://requestb.in/MY_UNIQUE_ID', 'event_espresso'); ?>
+                <?php _e('Example: https://requestbin.com/MY_UNIQUE_ID', 'event_espresso'); ?>
 
             </p>
         </td>
