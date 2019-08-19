@@ -1,5 +1,4 @@
 <?php
-/** @var string $use_full_logging */
 /** @var string $use_remote_logging */
 /** @var string $remote_logging_url */
 ?>
@@ -9,33 +8,6 @@
 
 <table class="form-table">
     <tbody>
-
-    <tr>
-        <th>
-            <label for="use_full_logging">
-                <?php _e('Enable Full Logging', 'event_espresso'); ?>
-                <?php echo EEH_Template::get_help_tab_link('full_logging_info'); ?>
-            </label>
-        </th>
-        <td>
-            <?php echo EEH_Form_Fields::select_input('use_full_logging', $values, $use_full_logging); ?>
-            <p class="description">
-                    <span class="reminder-spn">
-                        <?php _e(
-                            'Please use caution when using this feature. These files may be publicly available.',
-                            'event_espresso'
-                        ); ?>
-                    </span><br/>
-                <?php echo sprintf(
-                    __('Once saved, this file will be available at: %s', 'event_espresso'),
-                    '<br /><b>/wp-content/uploads/espresso/logs/' . EE_Registry::instance()->CFG->admin->log_file_name(
-                    ) . '</b>'
-                ); ?>
-            </p>
-
-        </td>
-    </tr>
-
     <tr>
         <th>
             <label for="use_remote_logging">

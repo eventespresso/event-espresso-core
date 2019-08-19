@@ -854,11 +854,6 @@ final class EE_System implements ResettableInterface
         // load and setup EE_Config and EE_Network_Config
         $config = $this->loader->getShared('EE_Config');
         $this->loader->getShared('EE_Network_Config');
-        // setup autoloaders
-        // enable logging?
-        if ($config->admin->use_full_logging) {
-            $this->loader->getShared('EE_Log');
-        }
         // check for activation errors
         $activation_errors = get_option('ee_plugin_activation_errors', false);
         if ($activation_errors) {
