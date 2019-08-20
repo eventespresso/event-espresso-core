@@ -79,7 +79,7 @@ class EE_Log
     public function verify_filesystem()
     {
         $msg = esc_html__(
-            'The Local File Logging functionality was removed permanentely. Remote Logging is recommended instead.',
+            'The Local File Logging functionality was removed permanently. Remote Logging is recommended instead.',
             'event_espresso'
         );
         EE_Error::doing_it_wrong(
@@ -137,7 +137,7 @@ class EE_Log
     public function write_log()
     {
         $msg = esc_html__(
-            'The Local File Logging functionality was removed permanentely. Remote Logging is recommended instead.',
+            'The Local File Logging functionality was removed permanently. Remote Logging is recommended instead.',
             'event_espresso'
         );
         EE_Error::doing_it_wrong(
@@ -191,7 +191,7 @@ class EE_Log
     public function write_debug()
     {
         $msg = esc_html__(
-            'The Local File Logging functionality was removed permanentely. Remote Logging is recommended instead.',
+            'The Local File Logging functionality was removed permanently. Remote Logging is recommended instead.',
             'event_espresso'
         );
         EE_Error::doing_it_wrong(
