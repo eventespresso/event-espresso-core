@@ -53,7 +53,6 @@ class Extend_General_Settings_Admin_Page extends General_Settings_Admin_Page
      */
     public function debug_logging_options($template_args = array())
     {
-        $template_args['use_full_logging'] = EE_Registry::instance()->CFG->admin->use_full_logging;
         $template_args['use_remote_logging'] = isset(EE_Registry::instance()->CFG->admin->use_remote_logging) ? absint(
             EE_Registry::instance()->CFG->admin->use_remote_logging
         ) : false;
@@ -74,10 +73,6 @@ class Extend_General_Settings_Admin_Page extends General_Settings_Admin_Page
      */
     public function update_debug_logging_options($admin_options = array())
     {
-        $use_full_logging = isset($this->_req_data['use_full_logging']) ? (bool) absint(
-            $this->_req_data['use_full_logging']
-        ) : $admin_options->use_full_logging;
-        $admin_options->use_full_logging = $use_full_logging;
         $admin_options->use_remote_logging = isset($this->_req_data['use_remote_logging']) ? absint(
             $this->_req_data['use_remote_logging']
         ) : $admin_options->use_remote_logging;

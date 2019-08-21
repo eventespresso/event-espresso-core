@@ -20,27 +20,7 @@ class EE_Log
     /**
      * @var string
      */
-    private $_logs_folder = '';
-
-    /**
-     * @var string
-     */
-    private $_log_file = '';
-
-    /**
-     * @var string
-     */
     private $_log = '';
-
-    /**
-     * @var string
-     */
-    private $_debug_file = '';
-
-    /**
-     * @var string
-     */
-    private $_debug_log = '';
 
     /**
      * Used for remote logging
@@ -78,26 +58,13 @@ class EE_Log
     private function __construct()
     {
 
-        if (! EE_Registry::instance()->CFG->admin->use_full_logging
-            && ! EE_Registry::instance()->CFG->admin->use_remote_logging) {
+        if (! EE_Registry::instance()->CFG->admin->use_remote_logging) {
             return;
         }
 
-        $this->_logs_folder = EVENT_ESPRESSO_UPLOAD_DIR . 'logs/';
-        $this->_log_file = EE_Registry::instance()->CFG->admin->log_file_name();
-        $this->_log = '';
-        $this->_debug_file = EE_Registry::instance()->CFG->admin->debug_file_name();
-        $this->_debug_log = '';
         $this->_remote_logging_url = EE_Registry::instance()->CFG->admin->remote_logging_url;
         $this->_remote_log = '';
 
-        add_action('admin_init', array($this, 'verify_filesystem'), -10);
-        add_action('AHEE_log', array($this, 'log'), 10, 4);
-        if (EE_Registry::instance()->CFG->admin->use_full_logging) {
-            add_action('shutdown', array($this, 'write_log'), 9999);
-            // if WP_DEBUG
-            add_action('shutdown', array($this, 'write_debug'), 9999);
-        }
         if (EE_Registry::instance()->CFG->admin->use_remote_logging) {
             add_action('shutdown', array($this, 'send_log'), 9999);
         }
@@ -111,22 +78,15 @@ class EE_Log
      */
     public function verify_filesystem()
     {
-        try {
-            EEH_File::ensure_file_exists_and_is_writable($this->_logs_folder . $this->_log_file);
-            EEH_File::ensure_file_exists_and_is_writable($this->_logs_folder . $this->_debug_file);
-            EEH_File::add_htaccess_deny_from_all($this->_logs_folder);
-        } catch (EE_Error $e) {
-            EE_Error::add_error(
-                sprintf(
-                    __('Event Espresso logging could not be setup because: %s', 'event_espresso'),
-                    ' &nbsp; &nbsp; ' . $e->getMessage()
-                ),
-                __FILE__,
-                __FUNCTION__,
-                __LINE__
-            );
-            return;
-        }
+        $msg = esc_html__(
+            'The Local File Logging functionality was removed permanently. Remote Logging is recommended instead.',
+            'event_espresso'
+        );
+        EE_Error::doing_it_wrong(
+            __METHOD__,
+            $msg,
+            '$VID:$'
+        );
     }
 
 
@@ -176,22 +136,15 @@ class EE_Log
      */
     public function write_log()
     {
-        try {
-            // get existing log file and append new log info
-            $this->_log = EEH_File::get_file_contents($this->_logs_folder . $this->_log_file) . $this->_log;
-            EEH_File::write_to_file($this->_logs_folder . $this->_log_file, $this->_log, 'Event Espresso Log');
-        } catch (EE_Error $e) {
-            EE_Error::add_error(
-                sprintf(
-                    __('Could not write to the Event Espresso log file because: %s', 'event_espresso'),
-                    ' &nbsp; &nbsp; ' . $e->getMessage()
-                ),
-                __FILE__,
-                __FUNCTION__,
-                __LINE__
-            );
-            return;
-        }
+        $msg = esc_html__(
+            'The Local File Logging functionality was removed permanently. Remote Logging is recommended instead.',
+            'event_espresso'
+        );
+        EE_Error::doing_it_wrong(
+            __METHOD__,
+            $msg,
+            '$VID:$'
+        );
     }
 
 
@@ -237,33 +190,15 @@ class EE_Log
      */
     public function write_debug()
     {
-        if (defined('WP_DEBUG') && WP_DEBUG) {
-            $this->_debug_log = '';
-            foreach ($_GET as $key => $value) {
-                $this->_debug_log .= '$_GET["' . $key . '"] = "' . serialize($value) . '"' . PHP_EOL;
-            }
-            foreach ($_POST as $key => $value) {
-                $this->_debug_log .= '$_POST["' . $key . '"] = "' . serialize($value) . '"' . PHP_EOL;
-            }
-            try {
-                EEH_File::write_to_file(
-                    $this->_logs_folder . $this->_debug_file,
-                    $this->_debug_log,
-                    'Event Espresso Debug Log'
-                );
-            } catch (EE_Error $e) {
-                EE_Error::add_error(
-                    sprintf(
-                        __('Could not write to the Event Espresso debug log file because: %s', 'event_espresso'),
-                        ' &nbsp; &nbsp; ' . $e->getMessage()
-                    ),
-                    __FILE__,
-                    __FUNCTION__,
-                    __LINE__
-                );
-                return;
-            }
-        }
+        $msg = esc_html__(
+            'The Local File Logging functionality was removed permanently. Remote Logging is recommended instead.',
+            'event_espresso'
+        );
+        EE_Error::doing_it_wrong(
+            __METHOD__,
+            $msg,
+            '$VID:$'
+        );
     }
 
 

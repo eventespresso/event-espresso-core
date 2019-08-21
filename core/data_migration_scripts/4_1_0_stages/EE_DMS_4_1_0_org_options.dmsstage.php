@@ -256,9 +256,6 @@ class EE_DMS_4_1_0_org_options extends EE_Data_Migration_Script_Stage
             case 'use_event_timezones':
                 $c->admin->use_event_timezones = ($value == 'Y');
                 break;
-            case 'full_logging':
-                $c->admin->use_full_logging = ($value == 'Y');
-                break;
             case 'affiliate_id':
                 $c->admin->affiliate_id = $value;
                 break;
