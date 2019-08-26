@@ -27,15 +27,6 @@ class Admin_Options_Help_Tour extends EE_Help_Tour
             10 => array(
                 'content' => $this->_start(),
             ),
-            20 => array(
-                'id'      => 'use_full_logging',
-                'content' => $this->_use_full_logging_stop(),
-                'options' => array(
-                    'tipLocation'    => 'right',
-                    'tipAdjustmentY' => -50,
-                    'tipAdjustmentX' => 15,
-                ),
-            ),
             30 => array(
                 'id'      => 'use_remote_logging',
                 'content' => $this->_use_remote_logging_stop(),
@@ -77,15 +68,6 @@ class Admin_Options_Help_Tour extends EE_Help_Tour
                         'event_espresso'
                     ) . '</p>';
         return $content;
-    }
-
-    protected function _use_full_logging_stop()
-    {
-        return '<p>'
-               . __(
-                   'When enabled, a log file is created which can be useful for debugging. Please disable this option when you are finished debugging.',
-                   'event_espresso'
-               ) . '</p>';
     }
 
     protected function _use_remote_logging_stop()
