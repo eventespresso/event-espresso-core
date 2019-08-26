@@ -203,7 +203,7 @@ abstract class TicketSelectorRow
         } elseif ($this->ticket_status_id === EE_Ticket::sold_out || $remaining === 0) {
             // SOLD OUT - no tickets remaining
             $this->ticket_status_display = $this->ticketsSoldOut();
-        } elseif ($this->ticket_status_id === EE_Ticket::expired || $this->ticket_status_id === EE_Ticket::archived) {
+        } elseif (! is_admin() && ($this->ticket_status_id === EE_Ticket::expired || $this->ticket_status_id === EE_Ticket::archived)) {
             // expired or archived ticket
             $this->ticket_status_display = $this->ticket_status_html;
         } elseif ($this->ticket_status_id === EE_Ticket::pending) {
