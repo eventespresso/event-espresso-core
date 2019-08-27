@@ -1732,14 +1732,14 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step
                     $this->_redirect_because_event_sold_out();
                     return false;
                 }
-                $payment_successful = $this->_process_payment();
-                if ($payment_successful) {
+                $payment = $this->_process_payment();
+                if ($payment instanceof EE_Payment) {
                     $this->checkout->continue_reg = true;
-                    $this->_maybe_set_completed($this->checkout->payment_method);
+                    $this->_maybe_set_completed($payment);
                 } else {
                     $this->checkout->continue_reg = false;
                 }
-                return $payment_successful;
+                return $payment instanceof EE_Payment;
         }
     }
 
@@ -1770,16 +1770,11 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step
      * @return void
      * @throws \EE_Error
      */
-    protected function _maybe_set_completed(EE_Payment_Method $payment_method)
+    protected function _maybe_set_completed(EE_Payment $payment)
     {
-        switch ($payment_method->type_obj()->payment_occurs()) {
-            case EE_PMT_Base::offsite:
-                break;
-            case EE_PMT_Base::onsite:
-            case EE_PMT_Base::offline:
-                // mark this reg step as completed
-                $this->set_completed();
-                break;
+        // Do we need to redirect them? If so, there's more work to be done.
+        if (! $payment->redirect_url()){
+            $this->set_completed();
         }
     }
 
@@ -1827,7 +1822,7 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step
      *    _process_payment
      *
      * @access private
-     * @return bool
+     * @return EE_Payment|null
      * @throws EE_Error
      * @throws InvalidArgumentException
      * @throws ReflectionException
@@ -1839,32 +1834,32 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step
     {
         // basically confirm that the event hasn't sold out since they hit the page
         if (! $this->_last_second_ticket_verifications()) {
-            return false;
+            return null;
         }
         // ya gotta make a choice man
         if (empty($this->checkout->selected_method_of_payment)) {
             $this->checkout->json_response->set_plz_select_method_of_payment(
                 esc_html__('Please select a method of payment before proceeding.', 'event_espresso')
             );
-            return false;
+            return null;
         }
         // get EE_Payment_Method object
         if (! $this->checkout->payment_method = $this->_get_payment_method_for_selected_method_of_payment()) {
-            return false;
+            return null;
         }
         // setup billing form
-        if ($this->checkout->payment_method->is_on_site()) {
+        if ($this->checkout->payment_method->type_obj()->has_billing_form()) {
             $this->checkout->billing_form = $this->_get_billing_form_for_payment_method(
                 $this->checkout->payment_method
             );
             // bad billing form ?
             if (! $this->_billing_form_is_valid()) {
-                return false;
+                return null;
             }
         }
         // ensure primary registrant has been fully processed
         if (! $this->_setup_primary_registrant_prior_to_payment()) {
-            return false;
+            return null;
         }
         // if session is close to expiring (under 10 minutes by default)
         if ((time() - EE_Registry::instance()->SSN->expiration()) < EE_Registry::instance()->SSN->extension()) {
@@ -1893,18 +1888,18 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step
             if ($payment_status === EEM_Payment::status_id_approved
                 || $payment_status === EEM_Payment::status_id_pending
             ) {
-                return true;
+                return $payment;
             } else {
-                return false;
+                return null;
             }
         } elseif ($payment === true) {
             // please note that offline payment methods will NOT make a payment,
             // but instead just mark themselves as the PMD_ID on the transaction, and return true
             $this->checkout->payment = $payment;
-            return true;
+            return $payment;
         }
         // where's my money?
-        return false;
+        return null;
     }
 
 
@@ -2388,18 +2383,10 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step
     {
         // Off-Line payment?
         if ($payment === true) {
-            // $this->_setup_redirect_for_next_step();
             return true;
-            // On-Site payment?
-        } elseif ($this->checkout->payment_method->is_on_site()) {
-            if (! $this->_process_payment_status($payment, EE_PMT_Base::onsite)) {
-                // $this->_setup_redirect_for_next_step();
-                $this->checkout->continue_reg = false;
-            }
-            // Off-Site payment?
-        } elseif ($this->checkout->payment_method->is_off_site()) {
-            // if a payment object was made and it specifies a redirect url, then we'll setup that redirect info
-            if ($payment instanceof EE_Payment && $payment->redirect_url()) {
+        } elseif ($payment instanceof EE_Payment){
+            // Should the user be redirected?
+            if($payment->redirect_url()) {
                 do_action('AHEE_log', __CLASS__, __FUNCTION__, $payment->redirect_url(), '$payment->redirect_url()');
                 $this->checkout->redirect = true;
                 $this->checkout->redirect_form = $payment->redirect_form();
@@ -2409,22 +2396,11 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step
                 // and lastly, let's bump the payment status to pending
                 $payment->set_status(EEM_Payment::status_id_pending);
                 $payment->save();
-            } else {
-                // not a payment
+            } else
+                // User shouldn't be redirected. So let's process it here.
+                if (! $this->_process_payment_status($payment, EE_PMT_Base::onsite)) {
+                // $this->_setup_redirect_for_next_step();
                 $this->checkout->continue_reg = false;
-                EE_Error::add_error(
-                    sprintf(
-                        esc_html__(
-                            'It appears the Off Site Payment Method was not configured properly.%sPlease try again or contact %s for assistance.',
-                            'event_espresso'
-                        ),
-                        '<br/>',
-                        EE_Registry::instance()->CFG->organization->get_pretty('email')
-                    ),
-                    __FILE__,
-                    __FUNCTION__,
-                    __LINE__
-                );
             }
         } else {
             // ummm ya... not Off-Line, not On-Site, not off-Site ????
