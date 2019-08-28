@@ -1,10 +1,15 @@
 /**
  * External dependencies
  */
-import { compose, createHigherOrderComponent } from '@wordpress/compose';
 import { useEffect } from '@wordpress/element';
-import { EntityList, twoColumnAdminFormLayout } from '@eventespresso/components';
-import { _x, sprintf } from '@eventespresso/i18n';
+import {
+	EntityList,
+	EntityPagination,
+	useEntityListFilterState,
+	useEntityPagination,
+	twoColumnAdminFormLayout,
+} from '@eventespresso/components';
+import { __, _x, sprintf } from '@eventespresso/i18n';
 
 /**
  * Internal dependencies
@@ -12,35 +17,96 @@ import { _x, sprintf } from '@eventespresso/i18n';
 import AddNewTicketButton from './add-new-ticket-button';
 import { EditorTicketEntitiesGridView } from './grid-view/';
 import { EditorTicketEntitiesListView } from './list-view/';
-import { withPaginatedTicketEntitiesListAndFilterBar } from './filter-bar';
-import { withTicketAssignmentsManagerModal } from '../../ticket-assignments-manager';
+import {
+	TicketsListFilterBar,
+	useTicketsListFilterState,
+	useTicketsListFilterStateSetters,
+	useFilteredTicketsList,
+} from './filter-bar';
+import useTicketsForEventEditorTicketList
+	from '../../hooks/use-tickets-for-event-editor-ticket-list';
 
 const {
 	FormWrapper,
 	FormSaveCancelButtons,
 } = twoColumnAdminFormLayout;
 
-const EditorTicketEntitiesList = ( {
-	entities,
-	toggleTicketEditor,
-	ticketEntity = null,
-	view = 'grid',
-	...otherProps
-} ) => {
+const EditorTicketEntitiesList = ( { ...otherProps } ) => {
+	const listId = 'event-editor-ticket-list';
+	const {
+		isChained,
+		showTickets,
+		ticketsSortedBy,
+		displayTicketDate,
+		...ticketListFilters
+	} = useTicketsListFilterState( { listId } );
+	const {
+		tickets,
+		ticketsLoaded,
+	} = useTicketsForEventEditorTicketList( isChained );
+	const {
+		view,
+		perPage,
+		...entityListFilters
+	} = useEntityListFilterState( { listId } );
+	const filteredTickets = useFilteredTicketsList( {
+		ticketEntities: tickets,
+		isChained,
+		showTickets,
+		ticketsSortedBy,
+		displayTicketDate,
+		...entityListFilters,
+		...ticketListFilters,
+	} );
+	const {
+		currentPage,
+		setCurrentPage,
+		paginatedEntities,
+	} = useEntityPagination( perPage, filteredTickets );
+	// update the ticket ids in state whenever the filters change
+	const { setFilteredTickets } = useTicketsListFilterStateSetters( listId );
 	useEffect( () => {
-		if ( ticketEntity !== null ) {
-			toggleTicketEditor();
+		if ( Array.isArray( paginatedEntities ) ) {
+			setFilteredTickets(
+				paginatedEntities.map( ( ticket ) => ticket.id )
+			);
 		}
-	}, [ ticketEntity ] );
-
+	}, [
+		currentPage,
+		perPage,
+		isChained,
+		showTickets,
+		ticketsSortedBy,
+		tickets.length,
+	] );
 	return (
 		<FormWrapper>
+			<TicketsListFilterBar
+				listId={ listId }
+				view={ view }
+				perPage={ perPage }
+				isChained={ isChained }
+				showTickets={ showTickets }
+				ticketsSortedBy={ ticketsSortedBy }
+				displayTicketDate={ displayTicketDate }
+				{ ...ticketListFilters }
+				{ ...entityListFilters }
+			/>
+			<EntityPagination
+				listId={ listId }
+				currentPage={ currentPage }
+				entitiesPerPage={ perPage }
+				setCurrentPage={ setCurrentPage }
+				totalCount={ filteredTickets.length }
+			/>
 			<EntityList
 				{ ...otherProps }
-				entities={ entities }
+				entities={ paginatedEntities }
 				EntityGridView={ EditorTicketEntitiesGridView }
 				EntityListView={ EditorTicketEntitiesListView }
 				view={ view }
+				displayTicketDate={ displayTicketDate }
+				loading={ ! ticketsLoaded }
 				loadingNotice={ sprintf(
 					_x(
 						'loading available tickets%s',
@@ -49,44 +115,14 @@ const EditorTicketEntitiesList = ( {
 					),
 					String.fromCharCode( 8230 )
 				) }
+				noResultsText={ __(
+					'no results found (try changing filters)',
+					'event_espresso'
+				) }
 			/>
 			<FormSaveCancelButtons submitButton={ <AddNewTicketButton /> } />
 		</FormWrapper>
 	);
 };
 
-export default compose( [
-	withPaginatedTicketEntitiesListAndFilterBar(),
-	// add ticketAssignments ManagerModal onClose
-	withTicketAssignmentsManagerModal,
-	createHigherOrderComponent(
-		( WrappedComponent ) => ( props ) => {
-			return <WrappedComponent
-				{ ...props }
-				onCloseTicketEditor={ props.toggleTicketAssignments }
-			/>;
-		},
-		'withOnCloseTicketEditor'
-	),
-	// withTicketPriceCalculatorFormModal,
-] )( EditorTicketEntitiesList );
-
-/**
- * a trimmed down ticket list: only includes ticket price calculator
- */
-export const EditorTicketEntitiesOnlyList = compose( [
-	// withEditorTicketEntities,
-	// withTicketPriceCalculatorFormModal,
-] )( EditorTicketEntitiesList );
-
-/*
-( () => (
-		{
-			title: __(
-				'Ticket Assignments for All Event Dates',
-				'event_espresso'
-			),
-			closeButtonLabel: null,
-		}
-	) )
-*/
+export default EditorTicketEntitiesList;
