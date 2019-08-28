@@ -38,7 +38,6 @@ const EditTicketForm = ( {
 		'reserved',
 		'order',
 		'parent',
-		'deleted',
 		'wpUser',
 		'status',
 	];
