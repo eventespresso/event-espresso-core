@@ -185,20 +185,3 @@ const validInfiniteQuantity = ( ticketEntity ) => {
 		ticketEntity.qty === 'INF' || ticketEntity.qty === Infinity
 	);
 };
-
-/**
- * searchTicketEntities
- * reduces tickets array based on value of the "searchDateName" filter
- *
- * @param {Array} ticketEntities 		original tickets array
- * @param {string} searchText 	value for the "searchTicketName" filter
- * @return {Array} 				filtered tickets array
- */
-export const searchTicketEntities = ( ticketEntities, searchText = '' ) => {
-	return searchText !== '' ?
-		ticketEntities.filter( ( ticketEntity ) => {
-			return ticketEntity.name.toLowerCase()
-				.search( searchText.toLowerCase() ) !== -1;
-		} ) :
-		ticketEntities;
-};
