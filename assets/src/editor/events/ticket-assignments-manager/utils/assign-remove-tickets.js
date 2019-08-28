@@ -25,40 +25,6 @@ export const isAssigned = ( assigned, dateId, ticketId, returnIndex = false ) =>
 /**
  * @function
  * @param {Object} assigned
- * @param {Function} addTickets
- * @param {Object} removed
- * @param {Function} removeTicketEntities
- * @return {Promise} resolves to true if updates occurred
- */
-export const processChanges = (
-	assigned,
-	addTickets,
-	removed,
-	removeTicketEntities
-) => {
-	const relationUpdates = [];
-	for ( const dateId in removed ) {
-		const ticketIdsToRemove = removed[ dateId ];
-		if ( isArray( ticketIdsToRemove ) ) {
-			relationUpdates.push(
-				removeTicketEntities( dateId, ticketIdsToRemove )
-			);
-		}
-	}
-	for ( const dateId in assigned ) {
-		const ticketIdsToAssign = assigned[ dateId ];
-		if ( isArray( ticketIdsToAssign ) ) {
-			relationUpdates.push(
-				addTickets( dateId, ticketIdsToAssign )
-			);
-		}
-	}
-	return Promise.all( relationUpdates );
-};
-
-/**
- * @function
- * @param {Object} assigned
  * @param {number} dateId
  * @param {number} ticketId
  * @param {number} index
