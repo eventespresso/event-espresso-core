@@ -1,7 +1,6 @@
 /**
  * External imports
  */
-import { compose } from '@wordpress/compose';
 import { useEffect } from '@wordpress/element';
 import { useEntityActionMenuItems } from '@eventespresso/components';
 import { ifValidTicketEntity } from '@eventespresso/editor-hocs';
@@ -9,6 +8,7 @@ import { ifValidTicketEntity } from '@eventespresso/editor-hocs';
 /**
  * Internal dependencies
  */
+import './style.css';
 import AssignDatesMenuItem from './menu-items/assign-dates-menu-item';
 import EditTicketDetailsMenuItem
 	from './menu-items/edit-ticket-details-menu-item';
@@ -17,10 +17,6 @@ import TicketEntityMainMenuItem
 import EditTicketFormModal from '../edit-form/edit-ticket-form-modal';
 import TicketPriceCalculatorMenuItem
 	from '../price-calculator/ticket-price-calculator-menu-item';
-import {
-	withTicketAssignmentsManagerModal,
-} from '../../../ticket-assignments-manager';
-import './style.css';
 
 const EditorTicketActionsMenu = ( {
 	ticketEntity,
@@ -87,7 +83,4 @@ const EditorTicketActionsMenu = ( {
 	);
 };
 
-export default compose( [
-	ifValidTicketEntity,
-	withTicketAssignmentsManagerModal,
-] )( EditorTicketActionsMenu );
+export default ifValidTicketEntity( EditorTicketActionsMenu );
