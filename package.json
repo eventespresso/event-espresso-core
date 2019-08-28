@@ -100,7 +100,7 @@
 		"webpack": "^4.39.2",
 		"webpack-assets-manifest": "^3.1.1",
 		"webpack-cli": "^3.3.7",
-		"webpack-merge": "^4.2.1"
+		"webpack-merge": "^4.2.2"
 	},
 	"dependencies": {
 		"@eventespresso/react-exit-modal-typeform": "^1.0.4",
