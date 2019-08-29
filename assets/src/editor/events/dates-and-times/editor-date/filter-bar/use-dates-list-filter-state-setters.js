@@ -21,10 +21,10 @@ const useDatesListFilterStateSetters = ( listId ) => {
 			'displayDates',
 			displayDates
 		),
-		setFilteredDateEntities: ( dateEntityIds ) => store.setFilter(
+		setFilteredDates: ( eventDateIds ) => store.setFilter(
 			listId,
 			'filteredDateIds',
-			dateEntityIds
+			eventDateIds
 		),
 	};
 };

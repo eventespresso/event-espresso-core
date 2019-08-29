@@ -20,7 +20,7 @@ import DatesListEntityFilters from './dates-list-entity-filters';
 
  * @return {Object} EditorDatesListView with added DateListFilters
  */
-const DateListFilterBar = ( {
+const DatesListFilterBar = ( {
 	listId,
 	showDates,
 	datesSortedBy,
@@ -47,7 +47,7 @@ const DateListFilterBar = ( {
 	);
 };
 
-DateListFilterBar.propTypes = {
+DatesListFilterBar.propTypes = {
 	listId: PropTypes.string.isRequired,
 	showDates: PropTypes.string,
 	datesSortedBy: PropTypes.string,
@@ -60,4 +60,4 @@ DateListFilterBar.propTypes = {
 	view: PropTypes.string,
 };
 
-export default DateListFilterBar;
+export default DatesListFilterBar;

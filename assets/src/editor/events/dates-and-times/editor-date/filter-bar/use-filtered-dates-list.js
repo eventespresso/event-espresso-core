@@ -1,46 +1,46 @@
 /**
  * External imports
  */
-import { isEmpty } from 'lodash';
-import { useEffect, useMemo } from '@wordpress/element';
+import PropTypes from 'prop-types';
+import { useMemo } from '@wordpress/element';
 import { useFilterEntitiesBySearchText } from '@eventespresso/components';
 
 import {
 	filterDateEntities,
 	sortDateEntitiesList,
 } from './date-entities-list-filter-utils';
-import useDatesListFilterStateSetters from './use-dates-list-filter-state-setters';
 
+const EMPTY_ARRAY = [];
+
+// useFilteredEventDates use-filtered-event-dates
 const useFilteredDatesList = ( {
-	listId,
 	dateEntities,
-	searchText,
 	showDates,
 	datesSortedBy,
+	searchText = '',
 } ) => {
-	const searchEntities = useFilterEntitiesBySearchText();
-	const { setFilteredDateEntities } = useDatesListFilterStateSetters( listId );
-	const entities = useMemo( () => {
-		dateEntities = searchEntities( dateEntities, searchText );
-		return showDates && datesSortedBy && ! isEmpty( dateEntities ) ?
-			sortDateEntitiesList(
-				filterDateEntities( dateEntities, showDates ),
-				datesSortedBy
-			) : [];
-	},
-	[
-		dateEntities,
-		searchText,
-		showDates,
-		datesSortedBy,
-	] );
-	// update the date ids in state whenever the filters change
-	useEffect( () => {
-		setFilteredDateEntities(
-			entities.map( ( dateEntity ) => dateEntity.id )
-		);
-	}, [ entities ] );
-	return entities;
+	const dates = Array.isArray( dateEntities ) ? dateEntities : EMPTY_ARRAY;
+	const searchedDates = useFilterEntitiesBySearchText( dates, searchText );
+	const filteredDates = useMemo( () => {
+		return showDates && searchedDates !== EMPTY_ARRAY ?
+			filterDateEntities( searchedDates, showDates ) :
+			EMPTY_ARRAY;
+	}, [ searchedDates, showDates ] );
+	return useMemo( () => {
+		return datesSortedBy && filteredDates !== EMPTY_ARRAY ?
+			sortDateEntitiesList( filteredDates, datesSortedBy ) :
+			EMPTY_ARRAY;
+	}, [ filteredDates, datesSortedBy ] );
+};
+
+useFilteredDatesList.propTypes = {
+	dateEntities: PropTypes.arrayOf( PropTypes.object ),
+	showDates: PropTypes.string,
+	datesSortedBy: PropTypes.string,
+	searchText: PropTypes.oneOfType( [
+		PropTypes.string,
+		PropTypes.number,
+	] ),
 };
 
 export default useFilteredDatesList;
