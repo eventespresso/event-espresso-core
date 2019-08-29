@@ -27,10 +27,8 @@ const useEventDateEvent = ( eventDate ) => {
 			);
 			return DEFAULT;
 		}
-		const {
-			getRelatedEntities,
-			hasFinishedResolution,
-		} = select( 'eventespresso/core' );
+		const { getRelatedEntities } = select( 'eventespresso/core' );
+		const { hasFinishedResolution } = select( 'core/data' );
 		let event = getRelatedEntities( eventDate, 'event' );
 		const eventLoaded = hasFinishedResolution(
 			'getRelatedEntities',

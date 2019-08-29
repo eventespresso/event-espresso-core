@@ -24,12 +24,8 @@ const useTicketPrices = ( ticketEntity ) => {
 	return useSelect(
 		( select ) => {
 			if ( isModelEntityOfModel( ticketEntity, 'ticket' ) ) {
-				// console.log( '' );
-				// console.log( '%c useTicketPrices', 'color:red;' );
-				const {
-					getRelatedEntities,
-					hasFinishedResolution,
-				} = select( 'eventespresso/core' );
+				const { getRelatedEntities } = select( 'eventespresso/core' );
+				const { hasFinishedResolution } = select( 'core/data' );
 				const prices = getRelatedEntities(
 					ticketEntity,
 					'price'
@@ -39,17 +35,6 @@ const useTicketPrices = ( ticketEntity ) => {
 					'getRelatedEntities',
 					[ ticketEntity, 'price' ]
 				);
-				// console.log(
-				// 	'%c > getRelatedEntities:', 'color:cyan;',
-				// 	getRelatedEntities
-				// );
-				// console.log(
-				// 	'%c > hasFinishedResolution:', 'color:cyan;',
-				// 	hasFinishedResolution
-				// );
-				// console.log( '%c > ticketEntity:', 'color:red;', ticketEntity );
-				// console.log( '%c > prices:', 'color:red;', prices );
-				// console.log( '%c > pricesLoaded:', 'color:red;', pricesLoaded );
 				return {
 					prices,
 					pricesLoaded,

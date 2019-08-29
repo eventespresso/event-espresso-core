@@ -27,10 +27,8 @@ const useTicketEventDates = ( ticketEntity ) => {
 			);
 			return DEFAULT;
 		}
-		const {
-			getRelatedEntities,
-			hasFinishedResolution,
-		} = select( 'eventespresso/core' );
+		const { getRelatedEntities } = select( 'eventespresso/core' );
+		const { hasFinishedResolution } = select( 'core/data' );
 		const eventDates = getRelatedEntities( ticketEntity, 'datetime' );
 		const eventDatesLoaded = hasFinishedResolution(
 			'eventespresso/core',

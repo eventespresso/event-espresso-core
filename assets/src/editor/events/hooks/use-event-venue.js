@@ -21,10 +21,8 @@ const useEventVenue = ( eventEntity ) => {
 		if ( ! isModelEntityOfModel( eventEntity, 'event' ) ) {
 			return DEFAULT;
 		}
-		const {
-			getRelatedEntities,
-			hasFinishedResolution,
-		} = select( 'eventespresso/core' );
+		const { getRelatedEntities } = select( 'eventespresso/core' );
+		const { hasFinishedResolution } = select( 'core/data' );
 		let entity = getRelatedEntities( eventEntity, 'venue' );
 		const loaded = hasFinishedResolution(
 			'getRelatedEntities',
