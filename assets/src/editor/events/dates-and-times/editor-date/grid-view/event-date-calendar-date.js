@@ -54,6 +54,7 @@ const EventDateCalendarDate = ( { eventDate, showDate } ) => useMemo( () => {
 			);
 	}
 }, [
+	showDate,
 	eventDate.start.toISO(),
 	eventDate.end.toISO(),
 	eventDate.regLimit,

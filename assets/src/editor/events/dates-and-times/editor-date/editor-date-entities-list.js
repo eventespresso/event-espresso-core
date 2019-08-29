@@ -1,65 +1,103 @@
 /**
  * External imports
  */
+import { useEffect } from '@wordpress/element';
 import {
 	EntityList,
 	EntityPagination,
-	useEntityListFilterState,
-	usePaginatedEntities,
 	twoColumnAdminFormLayout,
+	useEntityListFilterState,
+	useEntityPagination,
 } from '@eventespresso/components';
 import { __, _x, sprintf } from '@eventespresso/i18n';
 
 /**
  * Internal dependencies
  */
-import EditorDateEntitiesGridView from './grid-view/editor-date-entities-grid-view';
-import EditorDateEntitiesListView from './list-view/editor-date-entities-list-view';
-import DateListFilterBar from './filter-bar/date-list-filter-bar';
-import useDatesListFilterState from './filter-bar/use-dates-list-filter-state';
-import useFilteredDatesList from './filter-bar/use-filtered-dates-list';
 import AddNewDateEntityButton from './add-new-date-entity-button';
-import TicketAssignmentsButton from './ticket-assignments-button';
+import {
+	DatesListFilterBar,
+	useDatesListFilterState,
+	useDatesListFilterStateSetters,
+	useFilteredDatesList,
+} from './filter-bar';
+import { EditorDateEntitiesGridView } from './grid-view';
+import { EditorDateEntitiesListView } from './list-view';
+import useEventEditorEventDates
+	from '../../hooks/use-event-editor-event-dates';
+import EditAllTicketAssignmentsButton
+	from '../../ticket-assignments-manager/edit-all-ticket-assignments-button';
 
 const {
 	FormWrapper,
 	FormSaveCancelButtons,
 } = twoColumnAdminFormLayout;
 
-const EditorDateEntitiesList = ( {
-	dateEntities = [],
-	...otherProps
-} ) => {
+/**
+ * EditorDateEntitiesList
+ *
+ * displays a paginated list of event dates with a filter bar
+ * for controlling how and what event dates are displayed
+ *
+ * @param {Object} otherProps
+ * @return {Object} rendered event dates list
+ */
+const EditorDateEntitiesList = ( { ...otherProps } ) => {
 	const listId = 'event-editor-dates-list';
-	const datesListFilters = useDatesListFilterState( { listId } );
+	const { eventDates } = useEventEditorEventDates();
+	const eventDatesLoaded = Array.isArray( eventDates ) &&
+		eventDates.length >
+		0;
+	const {
+		showDates,
+		datesSortedBy,
+		displayDates,
+	} = useDatesListFilterState( { listId } );
 	const {
 		view,
 		perPage,
 		...entityListFilters
 	} = useEntityListFilterState( { listId } );
-	const entities = useFilteredDatesList( {
-		dateEntities,
+	const filteredDates = useFilteredDatesList( {
+		listId,
+		showDates,
+		datesSortedBy,
+		displayDates,
+		dateEntities: eventDates,
 		...entityListFilters,
-		...datesListFilters,
 	} );
 	const {
-		allEntities,
+		currentPage,
+		setCurrentPage,
 		paginatedEntities,
-		onPaginationChange,
-	} = usePaginatedEntities( entities, perPage );
+	} = useEntityPagination( perPage, filteredDates );
+	// update the date ids in state whenever the filters change
+	const { setFilteredDates } = useDatesListFilterStateSetters( listId );
+	useEffect( () => {
+		if ( Array.isArray( paginatedEntities ) ) {
+			const eventDateIds = paginatedEntities.map(
+				( dateEntity ) => dateEntity.id
+			);
+			setFilteredDates( eventDateIds );
+		}
+	}, [ currentPage, perPage, showDates, datesSortedBy, eventDates.length ] );
 	return (
 		<FormWrapper>
-			<DateListFilterBar
+			<DatesListFilterBar
 				listId={ listId }
 				view={ view }
 				perPage={ perPage }
-				{ ...datesListFilters }
+				showDates={ showDates }
+				datesSortedBy={ datesSortedBy }
+				displayDates={ displayDates }
 				{ ...entityListFilters }
 			/>
 			<EntityPagination
-				allEntities={ allEntities }
+				listId={ listId }
+				currentPage={ currentPage }
 				entitiesPerPage={ perPage }
-				onPaginationChange={ onPaginationChange }
+				totalCount={ filteredDates.length }
+				setCurrentPage={ setCurrentPage }
 			/>
 			<EntityList
 				{ ...otherProps }
@@ -67,6 +105,8 @@ const EditorDateEntitiesList = ( {
 				EntityGridView={ EditorDateEntitiesGridView }
 				EntityListView={ EditorDateEntitiesListView }
 				view={ view }
+				showDate={ displayDates }
+				loading={ ! eventDatesLoaded }
 				loadingNotice={ sprintf(
 					_x(
 						'loading event dates%s',
@@ -82,7 +122,11 @@ const EditorDateEntitiesList = ( {
 			/>
 			<FormSaveCancelButtons
 				submitButton={ <AddNewDateEntityButton /> }
-				cancelButton={ <TicketAssignmentsButton /> }
+				cancelButton={
+					<EditAllTicketAssignmentsButton
+						eventDates={ paginatedEntities }
+					/>
+				}
 			/>
 		</FormWrapper>
 	);

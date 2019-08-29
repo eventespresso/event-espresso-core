@@ -41,6 +41,11 @@
     margin : 0 var(--ee-margin-tiny) 0 var(--ee-margin-micro);
 }
 
+.ee-editor-date-details-reg-url-link {
+    position: relative;
+    top: .25rem;
+}
+
 /* Modal Styles
 * -------------------------------------------------------------------------*/
 
