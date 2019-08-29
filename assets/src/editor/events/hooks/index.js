@@ -2,6 +2,10 @@ export { default as useCreateDateEntity } from './use-create-date-entity';
 export { default as useCreateTicketEntity } from './use-create-ticket-entity';
 export { default as useCreateRelationForEventToEventDate }
 	from './use-create-relation-for-event-to-event-date';
+export { default as useCreateRelationsForEventDateToTickets }
+	from './use-create-relations-for-event-date-to-tickets';
+export { default as useCreateRelationsForEventDateIdToTicketIds }
+	from './use-create-relations-for-event-date-id-to-ticket-ids';
 export { default as useCreateRelationsForTicketToPrices }
 	from './use-create-relations-for-ticket-to-prices';
 export { default as useEventDateEvent } from './use-event-date-event';

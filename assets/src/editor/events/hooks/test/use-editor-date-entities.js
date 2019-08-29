@@ -20,7 +20,7 @@ describe( 'useEventEditorEventDates', () => {
 			</RegistryProvider>;
 		} )(
 			() => {
-				const dateEntities = useEventEditorEventDates();
+				const { dateEntities } = useEventEditorEventDates();
 				return <div dateEntities={ dateEntities } />;
 			}
 		);

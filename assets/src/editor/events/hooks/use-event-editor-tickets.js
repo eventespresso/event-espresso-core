@@ -12,20 +12,9 @@ import { useSelect } from '@wordpress/data';
  */
 const useEventEditorTickets = () => {
 	return useSelect( ( select ) => {
-		const {
-			getEntitiesForModel,
-			hasFinishedResolution,
-		} = select( 'eventespresso/core' );
+		const { getEntitiesForModel } = select( 'eventespresso/core' );
 		const tickets = getEntitiesForModel( 'ticket' );
-		const ticketsLoaded = hasFinishedResolution(
-			'eventespresso/core',
-			'getEntitiesForModel',
-			[ 'ticket' ]
-		);
-		return {
-			tickets,
-			ticketsLoaded,
-		};
+		return { tickets };
 	}, [] );
 };
 

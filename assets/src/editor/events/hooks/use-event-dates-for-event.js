@@ -27,6 +27,14 @@ const useEventDatesForEvent = ( event ) => {
 			'getRelatedEntities',
 			[ event, 'datetime' ]
 		);
+		// console.log( '' );
+		// console.log(
+		// 	'%c useEventDatesForEvent: ',
+		// 	'color: orange;',
+		// 	event.id
+		// );
+		// console.log( ' > dateEntities: ', entities );
+		// console.log( '%c > loaded: ', 'color: yellowgreen;', loaded );
 		return {
 			dateEntities: entities,
 			dateEntitiesLoaded: loaded,

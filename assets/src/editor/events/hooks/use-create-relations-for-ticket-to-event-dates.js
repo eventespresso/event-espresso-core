@@ -41,7 +41,7 @@ const useCreateRelationsForTicketToEventDates = () => {
 		await createRelations(
 			'ticket',
 			ticket.id,
-			'price',
+			'datetime',
 			eventDates
 		);
 	} );

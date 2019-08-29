@@ -21,20 +21,9 @@ const useEventEditorEventDates = ( eventLoaded = true ) => {
 		if ( ! eventLoaded ) {
 			return DEFAULT;
 		}
-		const {
-			getEntitiesForModel,
-			hasFinishedResolution,
-		} = select( 'eventespresso/core' );
+		const { getEntitiesForModel } = select( 'eventespresso/core' );
 		const eventDates = getEntitiesForModel( 'datetime' );
-		const eventDatesLoaded = hasFinishedResolution(
-			'eventespresso/core',
-			'getEntitiesForModel',
-			[ 'datetime' ]
-		);
-		return {
-			eventDates,
-			eventDatesLoaded,
-		};
+		return { eventDates };
 	}, [ eventLoaded ] );
 };
 

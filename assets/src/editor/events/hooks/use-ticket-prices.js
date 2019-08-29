@@ -8,7 +8,7 @@ import { isModelEntityOfModel } from '@eventespresso/validators';
 const DEFAULT = {
 	prices: [],
 	pricesLoaded: false,
-	noBasePrice: false,
+	noBasePrice: null,
 };
 
 /**
@@ -18,12 +18,14 @@ const DEFAULT = {
  * @param {BaseEntity}  ticketEntity
  * @return {Object}     - an array of prices belonging to the given ticket
  *                      - boolean indicating if loading is completed
- *                      - boolean absence of base price
+ *                      - boolean indicating absence of base price
  */
 const useTicketPrices = ( ticketEntity ) => {
 	return useSelect(
 		( select ) => {
 			if ( isModelEntityOfModel( ticketEntity, 'ticket' ) ) {
+				// console.log( '' );
+				// console.log( '%c useTicketPrices', 'color:red;' );
 				const {
 					getRelatedEntities,
 					hasFinishedResolution,
@@ -37,6 +39,17 @@ const useTicketPrices = ( ticketEntity ) => {
 					'getRelatedEntities',
 					[ ticketEntity, 'price' ]
 				);
+				// console.log(
+				// 	'%c > getRelatedEntities:', 'color:cyan;',
+				// 	getRelatedEntities
+				// );
+				// console.log(
+				// 	'%c > hasFinishedResolution:', 'color:cyan;',
+				// 	hasFinishedResolution
+				// );
+				// console.log( '%c > ticketEntity:', 'color:red;', ticketEntity );
+				// console.log( '%c > prices:', 'color:red;', prices );
+				// console.log( '%c > pricesLoaded:', 'color:red;', pricesLoaded );
 				return {
 					prices,
 					pricesLoaded,
