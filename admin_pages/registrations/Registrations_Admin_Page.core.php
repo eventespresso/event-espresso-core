@@ -3064,7 +3064,11 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
                 );
                 $template_args['content'] =
                     EED_Ticket_Selector::instance()->display_ticket_selector($this->_reg_event);
-                $template_args['content'] .= '</div>';
+                // the ticket selector html needs a closing div tag here
+                // and the closing div tag should be added only if there is a ticket selector present
+                if (! $this->_reg_event->is_expired()) {
+                    $template_args['content'] .= '</div>';
+                }
                 $template_args['step_button_text'] = esc_html__(
                     'Add Tickets and Continue to Registrant Details',
                     'event_espresso'
