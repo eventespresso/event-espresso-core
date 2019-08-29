@@ -16,7 +16,7 @@ import useTicketAssignmentsEditorId
 
 const AssignDatesMenuItem = ( { ticketEntity } ) => {
 	const {
-		eventDates: dateEntities,
+		eventDates,
 		eventDatesLoaded,
 	} = useTicketEventDates( ticketEntity );
 	const { eventDates: allEventDates } = useEventEditorEventDates();
@@ -31,7 +31,7 @@ const AssignDatesMenuItem = ( { ticketEntity } ) => {
 			<IconMenuItem
 				index={ 3 }
 				tooltip={
-					eventDatesLoaded && ! dateEntities.length ?
+					eventDatesLoaded && ! eventDates.length ?
 						__(
 							'warning! no assigned ticket dates - click to fix',
 							'event_espresso'
@@ -43,7 +43,7 @@ const AssignDatesMenuItem = ( { ticketEntity } ) => {
 				dashicon={ <EspressoIcon icon="calendar" /> }
 				tooltipPosition="top right"
 				onClick={ useOpenEditor( editorId ) }
-				itemCount={ eventDatesLoaded ? dateEntities.length : null }
+				itemCount={ eventDatesLoaded ? eventDates.length : null }
 			/>
 			<TicketAssignmentsManagerModal
 				editorId={ editorId }

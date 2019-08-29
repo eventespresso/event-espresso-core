@@ -48,14 +48,6 @@ const useTicketsForEventDates = (
 			'getRelatedEntitiesForIds',
 			[ 'datetime', dateEntityIds, 'ticket' ]
 		);
-		// console.log( '' );
-		// console.log(
-		// 	'%c useTicketsForEventDates: ',
-		// 	'color: gold;',
-		// 	dateEntityIds
-		// );
-		// console.log( ' > ticketEntities: ', entities );
-		// console.log( '%c > loaded: ', 'color: yellowgreen;', loaded );
 		return {
 			ticketEntities: entities,
 			ticketEntitiesLoaded: loaded,

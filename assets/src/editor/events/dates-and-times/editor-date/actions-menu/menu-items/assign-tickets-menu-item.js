@@ -8,7 +8,7 @@ import { __, _x, sprintf } from '@eventespresso/i18n';
 /**
  * Internal imports
  */
-import { useEventEditorTickets, useTicketsForEventDates } from '../../../../hooks';
+import { useEventEditorTickets, useEventDateTickets } from '../../../../hooks';
 import TicketAssignmentsManagerModal
 	from '../../../../ticket-assignments-manager/ticket-assignments-manager-modal';
 import useTicketAssignmentsEditorId
@@ -22,9 +22,9 @@ import useTicketAssignmentsEditorId
 const AssignTicketsMenuItem = ( { dateEntity } ) => {
 	// get tickets that are assigned to this event date
 	const {
-		ticketEntities: eventDateTickets,
-		ticketEntitiesLoaded: ticketsLoaded,
-	} = useTicketsForEventDates( [ dateEntity ] );
+		tickets,
+		ticketsLoaded,
+	} = useEventDateTickets( dateEntity );
 	const { tickets: allTickets } = useEventEditorTickets();
 	const editorId = useTicketAssignmentsEditorId(
 		dateEntity,
@@ -32,7 +32,7 @@ const AssignTicketsMenuItem = ( { dateEntity } ) => {
 		[],
 		allTickets,
 	);
-	const tooltip = eventDateTickets.length < 1 ?
+	const tooltip = tickets.length < 1 ?
 		__(
 			'warning! no assigned tickets - click to fix',
 			'event_espresso'
@@ -47,7 +47,7 @@ const AssignTicketsMenuItem = ( { dateEntity } ) => {
 				htmlClass="view-tickets-date"
 				dashicon="tickets-alt"
 				onClick={ useOpenEditor( editorId ) }
-				itemCount={ ticketsLoaded ? eventDateTickets.length : null }
+				itemCount={ ticketsLoaded ? tickets.length : null }
 				disabled={ ! ticketsLoaded }
 			/>
 			<TicketAssignmentsManagerModal
