@@ -5,12 +5,12 @@ import PropTypes from 'prop-types';
 import { IconButton } from '@wordpress/components';
 import { ENTER } from '@wordpress/keycodes';
 
+import { useAssignmentAction } from './hooks';
 import {
-	useAssignmentAction,
 	determineCurrentAssignment,
 	getIconAndBgColor,
-} from './hooks';
-import isCurrentlyAssigned from './utils/is-currently-assigned';
+	isCurrentlyAssigned,
+} from './utils';
 import cancelClickEvent from '../../helpers/cancel-click-event';
 
 /**
