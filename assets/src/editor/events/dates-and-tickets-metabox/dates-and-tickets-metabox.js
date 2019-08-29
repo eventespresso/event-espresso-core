@@ -22,15 +22,18 @@ import { __, _x, sprintf } from '@eventespresso/i18n';
 import '../../editor.css';
 import { EditorDateEntitiesList } from '../dates-and-times';
 import { EditorTicketEntitiesList } from '../tickets';
-import withEditorInitialization,
-{ useEditorInitialized } from '../initialization';
+import useEditorInitialization
+	from '../initialization/use-editor-initialization.js';
+import useEditorPersistence
+	from '../initialization/use-editor-persistence';
 
 const DatesAndTicketsMetabox = ( { eventId } ) => {
-	const initialized = useEditorInitialized();
+	useEditorPersistence( eventId );
+	const { eventEntityLoaded } = useEditorInitialization( eventId );
 	return (
 		<Fragment>
 			<FormPlaceholder
-				loading={ false }
+				loading={ ! eventEntityLoaded }
 				notice={ sprintf(
 					_x(
 						'loading event dates and available tickets%s',
@@ -41,7 +44,7 @@ const DatesAndTicketsMetabox = ( { eventId } ) => {
 				) }
 			/>
 			<FormContainer
-				loading={ false }
+				loading={ ! eventEntityLoaded }
 				id={ `ee-editor-event-dates-and-tickets-${ eventId }` }
 				htmlClass="ee-editor-event-dates-and-tickets"
 			>
@@ -58,8 +61,7 @@ const DatesAndTicketsMetabox = ( { eventId } ) => {
 							className="ee-editor-event-dates ee-form-row">
 							<div>
 								<EditorDateEntitiesList
-									loading={ ! initialized }
-									for="event-dates-metabox"
+									for={ 'event-dates-metabox' }
 								/>
 							</div>
 						</PanelRow>
@@ -79,8 +81,7 @@ const DatesAndTicketsMetabox = ( { eventId } ) => {
 							className="ee-editor-event-tickets ee-form-row">
 							<div>
 								<EditorTicketEntitiesList
-									loading={ ! initialized }
-									for="event-tickets-metabox"
+									for={ 'event-tickets-metabox' }
 								/>
 							</div>
 						</PanelRow>
@@ -99,4 +100,4 @@ DatesAndTicketsMetabox.propTypes = {
 	] ).isRequired,
 };
 
-export default withEditorInitialization( DatesAndTicketsMetabox );
+export default DatesAndTicketsMetabox;
