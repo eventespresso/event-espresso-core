@@ -11,7 +11,7 @@
     font-size: var(--ee-font-size-big);
     height: var(--ee-font-size-extreme);
     line-height: var(--ee-font-size-big);
-    width: calc(var(--ee-font-size-tiny) * 19);
+    width: calc(var(--ee-font-size-tiny) * 21);
 }
 
 .ee-entity-details-panel-div .ee-inline-edit-text {
@@ -22,7 +22,7 @@
 .ee-entity-details-div {
     display: flex;
     flex-direction: column-reverse;
-    max-width: var(--ee-font-size-extreme);
+    max-width: calc(var(--ee-font-size-tiny) * 5);
 }
 
 .ee-entity-details-div .ee-inline-edit-input {

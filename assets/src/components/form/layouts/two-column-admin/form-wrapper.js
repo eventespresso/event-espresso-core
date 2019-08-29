@@ -1,3 +1,6 @@
+/**
+ * External imports
+ */
 import PropTypes from 'prop-types';
 
 /**
@@ -12,7 +15,11 @@ import PropTypes from 'prop-types';
  * @param {string} htmlClass
  * @return {Object} rendered form section
  */
-const FormWrapper = ( { children, htmlId = '', htmlClass = '' } ) => {
+const FormWrapper = ( {
+	children,
+	htmlId = '',
+	htmlClass = '',
+} ) => {
 	htmlClass = htmlClass ?
 		`${ htmlClass } ee-two-column-admin` :
 		'ee-two-column-admin';

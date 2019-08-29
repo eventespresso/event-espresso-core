@@ -3,13 +3,11 @@
  */
 import PropTypes from 'prop-types';
 import { useSelect } from '@wordpress/data';
-import { __ } from '@eventespresso/i18n';
 
 const useEntityListFilterState = ( {
 	listId,
 	defaultView = 'grid',
 	defaultPerPage = 6,
-	defaultNoResultsText = '',
 } ) => useSelect( ( select ) => {
 		const store = select( 'eventespresso/filter-state' );
 		return {
