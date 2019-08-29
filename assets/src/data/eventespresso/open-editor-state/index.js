@@ -21,7 +21,7 @@ const INVALID_EDITOR_ID = 'INVALID_EDITOR_ID';
  */
 const openEditorStateReducer = ( state = DEFAULT_STACK, action ) => {
 	const { type, editorId } = action;
-	let newState = state;
+	let newState;
 	switch ( type ) {
 		case OPEN_EDITOR:
 			if ( editorId && ! state.includes( editorId ) ) {
@@ -39,7 +39,7 @@ const openEditorStateReducer = ( state = DEFAULT_STACK, action ) => {
 		case INVALID_EDITOR_ID:
 			break;
 	}
-	return newState;
+	return newState ? newState : state;
 };
 
 /**
