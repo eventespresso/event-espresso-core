@@ -23,13 +23,25 @@ export const createSelectors = ( selector ) => MODEL_NAMES.reduce(
 		) ] = (
 			state
 		) => selector.getEntityRecordsForModel( state, modelName );
-		selectors[ getMethodName( modelName, '', 'get', true ) ] = (
+
+		selectors[ getMethodName(
+			modelName,
+			'',
+			'get',
+			true
+		) ] = (
 			state
 		) => selector.getEntitiesForModel( state, modelName );
-		selectors[ getMethodName( modelName, 'byId', 'get' ) ] = (
+
+		selectors[ getMethodName(
+			modelName,
+			'byId',
+			'get'
+		) ] = (
 			state,
 			entityId
 		) => selector.getEntityById( state, modelName, entityId );
+
 		selectors[ getMethodName(
 			modelName,
 			'byIds',
@@ -39,6 +51,7 @@ export const createSelectors = ( selector ) => MODEL_NAMES.reduce(
 			state,
 			entityIds,
 		) => selector.getEntitiesByIds( state, modelName, entityIds );
+
 		selectors[ getMethodName(
 			modelName,
 			'idsQueuedForTrash',
@@ -47,6 +60,7 @@ export const createSelectors = ( selector ) => MODEL_NAMES.reduce(
 			state,
 			modelName
 		);
+
 		selectors[ getMethodName(
 			modelName,
 			'idsQueuedForDelete',
@@ -55,6 +69,7 @@ export const createSelectors = ( selector ) => MODEL_NAMES.reduce(
 			state,
 			modelName
 		);
+
 		return selectors;
 	},
 	{}

@@ -1,7 +1,7 @@
 /**
  * External imports
  */
-import { isModelEntity } from '@eventespresso/validators';
+import { isModelEntity, isModelEntityOfModel } from '@eventespresso/validators';
 import { InvalidModelEntity } from '@eventespresso/eejs';
 import { singularModelName } from '@eventespresso/model';
 import createSelector from 'rememo';
@@ -29,11 +29,16 @@ const DEFAULT_EMPTY_SET = Set();
  * @return {Array} An empty array if there are no ids for the given relation.
  */
 const getRelationIdsForEntityRelation = createSelector(
-	( state, entity, relationName ) => {
+	( state, entity, relationName, modelName = '' ) => {
 		if ( ! isModelEntity( entity ) ) {
-			throw new InvalidModelEntity( '', entity );
+			throw new InvalidModelEntity(
+				modelName ? `Expected entity of type ${ modelName }` : '',
+				entity
+			);
 		}
-		const modelName = singularModelName( entity.modelName );
+		modelName = modelName ?
+			modelName :
+			singularModelName( entity.modelName );
 		relationName = singularModelName( relationName );
 		if ( state.relations.hasIn( [ modelName, entity.id, relationName ] ) ) {
 			return ( state.relations.getIn(
@@ -72,9 +77,12 @@ const getRelationIdsForEntityRelation = createSelector(
  * @return {Array<BaseEntity>} An array of entities for the relation.
  */
 const getRelatedEntities = createSelector(
-	( state, entity, relationModelName ) => {
+	( state, entity, relationModelName, modelName = '' ) => {
 		if ( ! isModelEntity( entity ) ) {
-			throw new InvalidModelEntity( '', entity );
+			throw new InvalidModelEntity(
+				modelName ? `Expected entity of type ${ modelName }` : '',
+				entity
+			);
 		}
 		relationModelName = singularModelName( relationModelName );
 		return getEntitiesByIds(
@@ -83,11 +91,12 @@ const getRelatedEntities = createSelector(
 			getRelationIdsForEntityRelation(
 				state,
 				entity,
-				relationModelName
+				relationModelName,
+				modelName
 			)
 		);
 	},
-	( state, entity, relationName ) => [
+	( state, entity, relationName, modelName = '' ) => [
 		...getEntitiesByIds.getDependants(
 			state,
 			singularModelName( relationName )
@@ -95,7 +104,8 @@ const getRelatedEntities = createSelector(
 		...getRelationIdsForEntityRelation.getDependants(
 			state,
 			entity,
-			singularModelName( relationName )
+			singularModelName( relationName ),
+			modelName
 		),
 	]
 );
@@ -130,12 +140,15 @@ export const getRelatedEntitiesForIds = createSelector(
 				modelName,
 				entityId
 			);
-			const relatedEntities = getRelatedEntities(
-				state,
-				entity,
-				relationName
-			);
-			relationEntities = relationEntities.merge( relatedEntities );
+			if ( isModelEntityOfModel( entity, modelName ) ) {
+				const relatedEntities = getRelatedEntities(
+					state,
+					entity,
+					relationName,
+					modelName
+				);
+				relationEntities = relationEntities.merge( relatedEntities );
+			}
 		} );
 		return relationEntities.toJS();
 	},
