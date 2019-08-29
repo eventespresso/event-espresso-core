@@ -1,7 +1,7 @@
 /**
  * External imports
  */
-import { useState } from '@wordpress/element';
+import { useEffect, useState } from '@wordpress/element';
 
 const EMPTY_ARRAY = [];
 
@@ -17,13 +17,20 @@ const EMPTY_ARRAY = [];
 const useEntityPagination = ( perPage, entities ) => {
 	const [ currentPage, setCurrentPage ] = useState( 1 );
 	const pageNumber = parseInt( currentPage, 10 );
+	const lastPage = Math.ceil( entities.length / perPage );
+	const actualPageNumber = pageNumber <= lastPage ? pageNumber : lastPage;
+	useEffect( () => {
+		if ( pageNumber > 1 && pageNumber > lastPage ) {
+			setCurrentPage( lastPage );
+		}
+	}, [ perPage, currentPage, entities.length ] );
 	return {
-		currentPage: pageNumber,
+		currentPage: actualPageNumber,
 		setCurrentPage,
 		paginatedEntities: Array.isArray( entities ) ?
 			entities.slice(
-				( pageNumber - 1 ) * perPage,
-				pageNumber * perPage
+				( actualPageNumber - 1 ) * perPage,
+				actualPageNumber * perPage
 			) : EMPTY_ARRAY
 	};
 };
