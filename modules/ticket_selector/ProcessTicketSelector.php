@@ -206,7 +206,7 @@ class ProcessTicketSelector
             $this->validatePostData($id)
         );
         // check total tickets ordered vs max number of attendees that can register
-        if ($valid['total_tickets'] > $valid['max_atndz']) {
+        if (! empty($valid) && $valid['total_tickets'] > $valid['max_atndz']) {
             $this->maxAttendeesViolation($valid);
         } else {
             // all data appears to be valid
