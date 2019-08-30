@@ -1187,7 +1187,7 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page
                         'copy_attendee_info' => new EE_Yes_No_Input(
                             array(
                                 'html_label_text' => esc_html__(
-                                    'Allow copy #1 attendee info to extra attendees?', 
+                                    'Allow copy #1 attendee info to extra attendees?',
                                     'event_espresso'
                                 ),
                                 'html_help_text'  => esc_html__(
