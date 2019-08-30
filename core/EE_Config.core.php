@@ -2332,6 +2332,13 @@ class EE_Registration_Config extends EE_Config_Base
      */
     public $gateway_log_lifespan = '1 week';
 
+    /**
+     * Enable copy attendee info at form
+     *
+     * @var boolean $enable_copy_attendee
+     */
+    public $copy_attendee_info;
+
 
     /**
      *    class constructor
@@ -2362,6 +2369,7 @@ class EE_Registration_Config extends EE_Config_Base
         $this->consent_checkbox_enabled = false;
         $this->consent_checkbox_label_text = '';
         $this->gateway_log_lifespan = '7 days';
+        $this->copy_attendee_info = true;
     }
 
 
