@@ -812,7 +812,7 @@ class EE_Event extends EE_CPT_Base implements EEI_Line_Item_Object, EEI_Admin_Li
         foreach ($datetimes as $datetime) {
             if ($datetime instanceof EE_Datetime) {
                 // if this dtt is upcoming or active then we return false.
-                if (is_admin() || $datetime->is_upcoming() || $datetime->is_active()) {
+                if ($datetime->is_upcoming() || $datetime->is_active()) {
                     return false;
                 }
                 // otherwise let's check active status

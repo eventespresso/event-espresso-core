@@ -218,7 +218,7 @@ class DisplayTicketSelector
             return $this->ticketSalesClosedMessage();
         }
         // is the event expired ?
-        $template_args['event_is_expired'] = $this->event->is_expired();
+        $template_args['event_is_expired'] = is_admin() ? false : $this->event->is_expired();
         if ($template_args['event_is_expired']) {
             return $this->expiredEventMessage();
         }
@@ -363,6 +363,11 @@ class DisplayTicketSelector
      */
     protected function getTickets()
     {
+        $show_expired_tickets = is_admin() || (
+            EE_Registry::instance()->CFG->template_settings->EED_Ticket_Selector instanceof EE_Ticket_Selector_Config
+            && EE_Registry::instance()->CFG->template_settings->EED_Ticket_Selector->show_expired_tickets
+        ) ? true : false;
+
         $ticket_query_args = array(
             array('Datetime.EVT_ID' => $this->event->ID()),
             'order_by' => array(
@@ -373,10 +378,7 @@ class DisplayTicketSelector
                 'Datetime.DTT_EVT_start' => 'DESC',
             ),
         );
-        if (! (
-            EE_Registry::instance()->CFG->template_settings->EED_Ticket_Selector instanceof EE_Ticket_Selector_Config
-            && EE_Registry::instance()->CFG->template_settings->EED_Ticket_Selector->show_expired_tickets
-        )) {
+        if (! $show_expired_tickets) {
             // use the correct applicable time query depending on what version of core is being run.
             $current_time = method_exists('EEM_Datetime', 'current_time_for_query')
                 ? time()
