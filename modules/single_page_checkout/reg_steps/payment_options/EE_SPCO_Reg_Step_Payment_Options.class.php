@@ -2419,7 +2419,7 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step
                     '<br/>',
                     EE_Registry::instance()->CFG->organization->get_pretty('email')
                 );
-                if($payment instanceof EE_Payment && $payment->gateway_response()){
+                if ($payment instanceof EE_Payment && $payment->gateway_response()) {
                     $error_message = $error_message . '<br/>' . $payment->gateway_response();
                 }
                 $this->checkout->continue_reg = false;
