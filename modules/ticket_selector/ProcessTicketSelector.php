@@ -206,7 +206,7 @@ class ProcessTicketSelector
             $this->validatePostData($id)
         );
         // check total tickets ordered vs max number of attendees that can register
-        if ($valid['total_tickets'] > $valid['max_atndz']) {
+        if (! empty($valid) && $valid['total_tickets'] > $valid['max_atndz']) {
             $this->maxAttendeesViolation($valid);
         } else {
             // all data appears to be valid
@@ -260,7 +260,7 @@ class ProcessTicketSelector
      * validate_post_data
      *
      * @param int $id
-     * @return array|FALSE
+     * @return array
      */
     private function validatePostData($id = 0)
     {
@@ -271,7 +271,7 @@ class ProcessTicketSelector
                 __FUNCTION__,
                 __LINE__
             );
-            return false;
+            return array();
         }
         // start with an empty array()
         $valid_data = array();
@@ -394,7 +394,7 @@ class ProcessTicketSelector
 
     /**
      * @param array $valid
-     * @return int|TRUE
+     * @return int
      * @throws EE_Error
      * @throws InvalidArgumentException
      * @throws InvalidDataTypeException
@@ -404,7 +404,7 @@ class ProcessTicketSelector
     {
         $tickets_added = 0;
         $tickets_selected = false;
-        if ($valid['total_tickets'] > 0) {
+        if (! empty($valid) && $valid['total_tickets'] > 0) {
             // load cart using factory because we don't want to do so until actually needed
             $this->cart = CartFactory::getCart();
             // cycle thru the number of data rows sent from the event listing
