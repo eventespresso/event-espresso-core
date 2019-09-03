@@ -15,22 +15,30 @@ import {
 /**
  * Internal dependencies
  */
-import {
-	TicketPriceCalculatorMenuItem,
-	useTicketPriceCalculators,
-} from '../price-calculator';
-import useTicketPrices from '../../../hooks/use-ticket-prices';
+import { TicketPriceCalculatorMenuItem } from '../price-calculator';
+import { useTicketBasePriceCalculator } from '../price-calculator/hooks';
+import { amountsMatch } from '../price-calculator/utils/';
+import { usePriceTypes, useTicketPrices } from '../../../hooks/';
 
+/**
+ * @function
+ * @param {BaseEntity} ticket
+ * @return {Array} array of ticket form input config objects
+ */
 const useTicketFormInputConfig = ( ticket ) => {
 	warning(
 		isModelEntityOfModel( ticket, 'ticket' ),
 		'Can not generate input config data because an invalid ticket entity was supplied.'
 	);
-	const ticketPriceAmount = ticket.price.amount.toNumber();
-	const prices = useTicketPrices( ticket );
-	const { calculateTicketBasePrice } = useTicketPriceCalculators();
-	const recalculateBasePrice = useCallback( () => {
-		calculateTicketBasePrice( ticketPriceAmount, prices );
+	const { prices } = useTicketPrices( ticket );
+	const { priceTypes } = usePriceTypes();
+	const calculateTicketBasePrice = useTicketBasePriceCalculator(
+		prices,
+		priceTypes
+	);
+	const recalculateBasePrice = useCallback( ( t ) => {
+		const ticketPriceAmount = t.price.amount.toNumber();
+		calculateTicketBasePrice( ticketPriceAmount );
 	}, [ ticket, prices, calculateTicketBasePrice ] );
 
 	const calculator = (
@@ -73,7 +81,7 @@ const useTicketFormInputConfig = ( ticket ) => {
 			min: 0,
 			step: 0.01,
 			changeListener: ( value, prevValue ) => {
-				if ( value !== prevValue ) {
+				if ( ! amountsMatch( value, prevValue ) ) {
 					ticket.price = new Money(
 						value || 0,
 						SiteCurrency
@@ -382,7 +390,7 @@ const useTicketFormInputConfig = ( ticket ) => {
 		ticket.required,
 		ticket.min,
 		ticket.max,
-		ticketPriceAmount,
+		ticket.price.amount.toNumber(),
 		ticket.taxable,
 		ticket.isDefault,
 		ticket.reverse_calculate,

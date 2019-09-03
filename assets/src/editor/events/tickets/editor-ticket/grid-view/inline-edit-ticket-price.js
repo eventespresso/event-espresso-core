@@ -9,9 +9,9 @@ import { Money, SiteCurrency } from '@eventespresso/value-objects';
 /**
  * Internal dependencies
  */
-import useTicketPriceCalculators from
-	'../price-calculator/use-ticket-price-calculators';
-import { useTicketPrices } from '../../../hooks';
+import useTicketBasePriceCalculator from
+		'../price-calculator/hooks/use-ticket-base-price-calculator';
+import { usePriceTypes, useTicketPrices } from '../../../hooks';
 
 /**
  * InlineEditTicketPrice inline-edit-ticket-price
@@ -27,16 +27,20 @@ const InlineEditTicketPrice = ( {
 	showPrice,
 	wrapperElement,
 } ) => {
-	const priceEntities = useTicketPrices( ticket );
-	const { calculateTicketBasePrice } = useTicketPriceCalculators();
+	const { prices } = useTicketPrices( ticket );
+	const { priceTypes } = usePriceTypes();
+	const calculateTicketBasePrice = useTicketBasePriceCalculator(
+		prices,
+		priceTypes
+	);
 	const ticketPriceAmount = ticket.price.amount.toNumber();
 
 	const updateTicketPrice = useCallback(
 		( amount ) => {
 			ticket.price = new Money( amount, SiteCurrency );
-			calculateTicketBasePrice( amount, priceEntities );
+			calculateTicketBasePrice( amount );
 		},
-		[ ticketPriceAmount, calculateTicketBasePrice, priceEntities ]
+		[ ticketPriceAmount, calculateTicketBasePrice, prices ]
 	);
 	const WrapperElement = wrapperElement ? wrapperElement : 'h2';
 	return useMemo( () => showPrice ? (
