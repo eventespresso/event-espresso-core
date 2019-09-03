@@ -1,9 +1,4 @@
 /**
- * External imports
- */
-import { ifValidDateEntity } from '@eventespresso/editor-hocs';
-
-/**
  * Internal dependencies
  */
 import EditorDateEntityActionsMenu
@@ -117,4 +112,4 @@ const datesListTableRow = (
 	];
 };
 
-export default ifValidDateEntity( datesListTableRow );
+export default datesListTableRow;

@@ -63,14 +63,21 @@ const EditorDateEntitiesListView = ( {
 	 * based on incoming value of showDate
 	 *
 	 * @function
-	 * @param {Array} columns
-	 * @return {Array} columns
+	 * @return {Function} cached callback
 	 */
-	const filterColumns = ( columns ) => {
-		const colSwap = { start: 'end', end: 'start' };
-		const exclude = colSwap[ showDate ] ? colSwap[ showDate ] : '';
-		return filterColumnsByKey( columns, exclude );
-	};
+	const filterColumns = useCallback(
+		/**
+		 * @function
+		 * @param {Array} columns
+		 * @return {Array} columns
+		 */
+		( columns ) => {
+			const colSwap = { start: 'end', end: 'start' };
+			const exclude = colSwap[ showDate ] ? colSwap[ showDate ] : '';
+			return filterColumnsByKey( columns, exclude );
+		},
+		[]
+	);
 
 	const formRows = entities.map(
 		/**
@@ -91,6 +98,7 @@ const EditorDateEntitiesListView = ( {
 			return filterColumns( columns );
 		}
 	);
+
 	return (
 		<ResponsiveTable
 			columns={ filterColumns( datesListTableHeader() ) }
