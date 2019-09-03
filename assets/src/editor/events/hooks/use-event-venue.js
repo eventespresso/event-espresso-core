@@ -12,21 +12,27 @@ const DEFAULT = {
 /**
  * A custom hook for retrieving the venue related to the given event
  *
- * @param {BaseEntity} eventEntity  An instance of an event entity.
+ * @param {BaseEntity} event  An instance of an event entity.
+ * @param {boolean} eventLoaded
  * @return {Object} - the venue entity for the provided event
  *                  - boolean indicating if loading is completed
  */
-const useEventVenue = ( eventEntity ) => {
+const useEventVenue = ( event, eventLoaded = true ) => {
 	return useSelect( ( select ) => {
-		if ( ! isModelEntityOfModel( eventEntity, 'event' ) ) {
+		if ( ! (
+			eventLoaded &&
+			isModelEntityOfModel( event, 'event' )
+		) ) {
 			return DEFAULT;
 		}
-		const { getRelatedEntities } = select( 'eventespresso/core' );
-		const { hasFinishedResolution } = select( 'core/data' );
-		let entity = getRelatedEntities( eventEntity, 'venue' );
+		const {
+			getRelatedEntities,
+			hasFinishedResolution,
+		} = select( 'eventespresso/core' );
+		let entity = getRelatedEntities( event, 'venue' );
 		const loaded = hasFinishedResolution(
 			'getRelatedEntities',
-			[ eventEntity, 'venue' ]
+			[ event, 'venue' ]
 		);
 		entity = Array.isArray( entity ) && entity[ 0 ] &&
 		isModelEntityOfModel( entity[ 0 ], 'venue' ) ?
@@ -36,7 +42,7 @@ const useEventVenue = ( eventEntity ) => {
 			venueEntity: entity,
 			venueEntityLoaded: loaded,
 		};
-	}, [ eventEntity ] );
+	}, [ event, eventLoaded ] );
 };
 
 export default useEventVenue;

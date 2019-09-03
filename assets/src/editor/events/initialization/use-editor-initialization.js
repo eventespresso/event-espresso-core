@@ -7,14 +7,18 @@ import {
 
 const useEditorInitialization = ( eventId ) => {
 	const { eventEntity, eventEntityLoaded } = useEventEditorEvent( eventId );
-	const { dateEntities, dateEntitiesLoaded } = useEventDatesForEvent(
-		eventEntity
-	);
-	const { ticketEntities, ticketEntitiesLoaded } = useTicketsForEventDates(
+	const {
 		dateEntities,
-		dateEntitiesLoaded
-	);
-	const { venueEntity, venueEntityLoaded } = useEventVenue( eventEntity );
+		dateEntitiesLoaded,
+	} = useEventDatesForEvent( eventEntity, eventEntityLoaded );
+	const {
+		ticketEntities,
+		ticketEntitiesLoaded,
+	} = useTicketsForEventDates( dateEntities, dateEntitiesLoaded );
+	const {
+		venueEntity,
+		venueEntityLoaded,
+	} = useEventVenue( eventEntity, eventEntityLoaded );
 	return {
 		eventEntity,
 		eventEntityLoaded,

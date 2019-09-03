@@ -28,8 +28,8 @@ import useEditorPersistence
 	from '../initialization/use-editor-persistence';
 
 const DatesAndTicketsMetabox = ( { eventId } ) => {
-	useEditorPersistence( eventId );
 	const { eventEntityLoaded } = useEditorInitialization( eventId );
+	useEditorPersistence( eventId );
 	return (
 		<Fragment>
 			<FormPlaceholder

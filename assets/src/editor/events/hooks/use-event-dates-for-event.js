@@ -10,13 +10,17 @@ const DEFAULT = { dateEntities: [], dateEntitiesLoaded: false };
  * A custom react hook for retrieving the related ticket entities
  * for the given event date entities from the eventespresso/core store state.
  *
- * @param {BaseEntity[]} event  an event entity
+ * @param {BaseEntity} event
+ * @param {boolean} eventLoaded
  * @return {Object} - an array of event dates
  *                  - boolean indicating if loading is completed
  */
-const useEventDatesForEvent = ( event ) => {
+const useEventDatesForEvent = ( event, eventLoaded = true ) => {
 	return useSelect( ( select ) => {
-		if ( ! isModelEntityOfModel( event, 'event' ) ) {
+		if ( ! (
+			eventLoaded &&
+			isModelEntityOfModel( event, 'event' )
+		) ) {
 			return DEFAULT;
 		}
 		const { getRelatedEntities } = select( 'eventespresso/core' );
@@ -27,14 +31,6 @@ const useEventDatesForEvent = ( event ) => {
 			'getRelatedEntities',
 			[ event, 'datetime' ]
 		);
-		// console.log( '' );
-		// console.log(
-		// 	'%c useEventDatesForEvent: ',
-		// 	'color: orange;',
-		// 	event.id
-		// );
-		// console.log( ' > dateEntities: ', entities );
-		// console.log( '%c > loaded: ', 'color: yellowgreen;', loaded );
 		return {
 			dateEntities: entities,
 			dateEntitiesLoaded: loaded,
