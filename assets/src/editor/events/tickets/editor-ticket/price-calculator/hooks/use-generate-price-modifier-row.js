@@ -1,0 +1,124 @@
+/**
+ * External imports
+ */
+import { Fragment, useCallback } from '@wordpress/element';
+import { normalizeEntityId } from '@eventespresso/helpers';
+
+/**
+ * Internal dependencies
+ */
+import {
+	AddPriceModifierActionButton,
+	DeletePriceModifierActionButton,
+	PriceAmountInput,
+	PriceDescriptionInput,
+	PriceIdInput,
+	PriceNameInput,
+	PriceTypeInput,
+} from '../price-modifier-row/';
+import { getPriceType } from '../utils/';
+import { shortenCuid } from '../../../../../utils';
+import usePriceTypes from '../../../../hooks/use-price-types';
+
+/**
+ * @param {string} ticketPrefix
+ * @param {Object} values
+ * @return {Object} rendered price modifier form row
+ */
+const useGeneratePriceModifierRow = ( ticketPrefix, values ) => {
+	const { priceTypes } = usePriceTypes();
+	return useCallback( ( ticket, price, priceTypeOptions, lastRow ) => {
+		const priceId = shortenCuid( price.id );
+		const prefix = `${ ticketPrefix }-price-${ priceId }`;
+		const priceTypeId = normalizeEntityId( values[ `${ prefix }-type` ] ) || 0;
+		const priceType = getPriceType( priceTypeId, priceTypes );
+		return [
+			{
+				type: 'row',
+				class: 'ee-ticket-price-calculator-price-row',
+				value: '',
+			},
+			{
+				type: 'cell',
+				class: 'ee-ticket-price-calculator-price-id ee-number-column',
+				value: (
+					<PriceIdInput
+						prefix={ prefix }
+						values={ values }
+					/>
+				),
+			},
+			{
+				type: 'cell',
+				class: 'ee-ticket-price-calculator-price-type',
+				value: (
+					<PriceTypeInput
+						price={ price }
+						prefix={ prefix }
+						values={ values }
+						priceTypeId={ priceType.id }
+						priceTypeOptions={ priceTypeOptions }
+						basePriceType={ priceType.pbtId }
+					/>
+				),
+			},
+			{
+				type: 'cell',
+				class: 'ee-ticket-price-calculator-price-name',
+				value: (
+					<PriceNameInput
+						prefix={ prefix }
+						values={ values }
+						priceEntity={ price }
+					/>
+				),
+			},
+			{
+				type: 'cell',
+				class: 'ee-ticket-price-calculator-price-desc',
+				value: (
+					<PriceDescriptionInput
+						prefix={ prefix }
+						values={ values }
+						priceEntity={ price }
+					/>
+				),
+			},
+			{
+				type: 'cell',
+				class: 'ee-ticket-price-calculator-price-amount ee-number-column',
+				value: (
+					<PriceAmountInput
+						prefix={ prefix }
+						values={ values }
+						priceEntity={ price }
+						ticketEntity={ ticket }
+						priceTypeEntity={ priceType }
+					/>
+				),
+			},
+			{
+				type: 'cell',
+				class: 'ee-ticket-price-calculator-price-actions',
+				value: (
+					<Fragment>
+						<DeletePriceModifierActionButton
+							price={ price }
+							ticket={ ticket }
+							priceType={ priceType }
+						/>
+						<AddPriceModifierActionButton
+							ticket={ ticket }
+							lastRow={ lastRow }
+						/>
+					</Fragment>
+				),
+			},
+		];
+	}, [
+		values,
+		ticketPrefix,
+	] );
+};
+
+export default useGeneratePriceModifierRow;
