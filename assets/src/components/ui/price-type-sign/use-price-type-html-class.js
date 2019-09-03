@@ -9,7 +9,7 @@ import {
  * @param {BaseEntity} priceType
  * @return {string} css class for % or $ sign
  */
-const priceTypeHtmlClass = ( priceType = null ) => {
+const usePriceTypeHtmlClass = ( priceType = null ) => {
 	const isPercent = isModelEntityOfModel( priceType, 'price_type' ) ?
 		priceType.isPercent :
 		false;
@@ -22,4 +22,4 @@ const priceTypeHtmlClass = ( priceType = null ) => {
 	}, [ isPercent ] );
 };
 
-export default priceTypeHtmlClass;
+export default usePriceTypeHtmlClass;
