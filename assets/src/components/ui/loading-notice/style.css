@@ -1,0 +1,36 @@
+
+.ee-loading-notice-div {
+    color: var(--ee-default-text-color-super-low-contrast);
+    font-size: var(--ee-font-size-smaller);
+    line-height: var(--ee-font-size-big);
+    text-align: center !important;
+}
+.ee-loading-notice-div.ee-loading-notice-extreme {
+    margin: var(--ee-margin-extreme) auto;
+}
+.ee-loading-notice-div.ee-loading-notice-huge {
+    margin: var(--ee-margin-huge) auto;
+}
+.ee-loading-notice-div.ee-loading-notice-big {
+    margin: var(--ee-margin-big) auto;
+}
+.ee-loading-notice-div.ee-loading-notice-default {
+    margin: var(--ee-margin-default) auto;
+}
+.ee-loading-notice-div.ee-loading-notice-small {
+    margin: var(--ee-margin-small) auto;
+}
+.ee-loading-notice-div.ee-loading-notice-tiny {
+    margin: var(--ee-margin-tiny) auto;
+}
+
+.ee-loading-notice-div .components-spinner {
+    float: unset !important;
+    margin: 0 var(--ee-margin-smaller) 0 0;
+    vertical-align: middle;
+}
+
+.ee-loading-notice {
+    vertical-align: middle;
+}
+

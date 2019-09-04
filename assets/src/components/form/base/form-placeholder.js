@@ -1,14 +1,13 @@
 /**
  * External imports
  */
-import { Spinner } from '@wordpress/components';
-import { _x, sprintf } from '@eventespresso/i18n';
 import classNames from 'classnames';
 
 /**
  * Internal imports
  */
 import './form-placeholder.css';
+import LoadingNotice from '../../ui/loading-notice/';
 
 /**
  * Displays a notice while the form is loading
@@ -20,11 +19,6 @@ import './form-placeholder.css';
  * @return {Object} spinner
  */
 export const FormPlaceholder = ( { loading, notice = '' } ) => {
-	notice = notice ||
-		sprintf(
-			_x( 'loading%s', 'loading...', 'event_espresso' ),
-			String.fromCharCode( '8230' )
-		);
 	return (
 		<div
 			className={
@@ -34,12 +28,11 @@ export const FormPlaceholder = ( { loading, notice = '' } ) => {
 				} )
 			}
 		>
-			<div className="ee-loading-div">
-				<Spinner />
-				<span className="ee-form-placeholder-notice">
-					{ notice }
-				</span>
-			</div>
+			<LoadingNotice
+				loading={ loading }
+				notice={ notice }
+				size={ 'extreme' }
+			/>
 		</div>
 	);
 };
