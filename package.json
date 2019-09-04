@@ -49,7 +49,7 @@
 		"@babel/runtime-corejs3": "^7.5.5",
 		"@wordpress/a11y": "^2.5.0",
 		"@wordpress/api-fetch": "^3.4.0",
-		"@wordpress/autop": "^2.4.0",
+		"@wordpress/autop": "^2.5.0",
 		"@wordpress/babel-plugin-makepot": "^3.2.0",
 		"@wordpress/babel-preset-default": "^4.4.0",
 		"@wordpress/block-library": "^2.7.0",
