@@ -515,7 +515,7 @@ export default class Money {
 	 */
 	static assertSameCurrency = ( currencyA, currencyB ) => {
 		assertSameCurrency( currencyA, currencyB );
-	}
+	};
 
 	/**
 	 * Receives an incoming value that could be a money formatted
