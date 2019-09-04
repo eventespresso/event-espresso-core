@@ -2,6 +2,7 @@
  * External imports
  */
 import { isEmpty } from 'lodash';
+import { useEffect } from '@wordpress/element';
 import { __ } from '@eventespresso/i18n';
 import {
 	ResponsiveTable,
@@ -18,6 +19,7 @@ import {
 	FormInfoWarningNoTicketPrices,
 } from './';
 import {
+	useAddTicketBasePrice,
 	useTicketPriceCalculatorFormHeader,
 	useTicketPriceCalculatorFormRows,
 	useTicketPriceCalculatorFormTotalRow,
@@ -45,6 +47,15 @@ const TicketPriceCalculatorForm = ( {
 	initialValues = {},
 	currentValues = {},
 } ) => {
+	const {
+		addTicketBasePrice,
+		inProgress,
+	} = useAddTicketBasePrice( ticketEntity );
+	useEffect( () => {
+		if ( isEmpty( priceEntities ) && ! inProgress ) {
+			addTicketBasePrice();
+		}
+	}, [ priceEntities ] );
 	let ticketPrefix = TICKET_PRICE_CALCULATOR_FORM_INPUT_PREFIX;
 	ticketPrefix += '-ticket-' + ticketEntity.id;
 	const values = isEmpty( currentValues ) ? initialValues : currentValues;
@@ -69,6 +80,7 @@ const TicketPriceCalculatorForm = ( {
 			>
 				<FormInfoWarningNoTicketPrices
 					priceCount={ priceEntities.length }
+					inProgress={ inProgress }
 				/>
 				<ResponsiveTable
 					columns={ columnHeaders }
