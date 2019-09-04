@@ -59,7 +59,7 @@
 		"@wordpress/compose": "^3.6.0",
 		"@wordpress/core-data": "^2.6.0",
 		"@wordpress/data": "^4.8.0",
-		"@wordpress/date": "^3.4.0",
+		"@wordpress/date": "^3.5.0",
 		"@wordpress/dependency-extraction-webpack-plugin": "^1.2.0",
 		"@wordpress/editor": "^9.6.0",
 		"@wordpress/element": "^2.7.0",
