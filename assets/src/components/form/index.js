@@ -1,6 +1,6 @@
 export * from './model';
 export { FormContainer } from './base/form-container';
-export { FormPlaceholder } from './base/form-placeholder';
+export { default as FormPlaceholder } from './base/form-placeholder';
 export { default as FormHandler } from './base/form-handler';
 export { FormInput } from './inputs/form-input';
 export { HiddenInput } from './inputs/hidden-input';

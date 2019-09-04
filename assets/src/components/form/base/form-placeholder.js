@@ -2,6 +2,7 @@
  * External imports
  */
 import classNames from 'classnames';
+import PropTypes from 'prop-types';
 
 /**
  * Internal imports
@@ -16,9 +17,10 @@ import LoadingNotice from '../../ui/loading-notice/';
  * @function
  * @param {boolean} loading
  * @param {string} notice
- * @return {Object} spinner
+ * @param {string} size one of: extreme, huge, big, default, small, tiny
+ * @return {Object} rendered form placeholder with loading notice & spinner
  */
-export const FormPlaceholder = ( { loading, notice = '' } ) => {
+const FormPlaceholder = ( { loading, notice, size } ) => {
 	return (
 		<div
 			className={
@@ -31,8 +33,29 @@ export const FormPlaceholder = ( { loading, notice = '' } ) => {
 			<LoadingNotice
 				loading={ loading }
 				notice={ notice }
-				size={ 'extreme' }
+				size={ size }
 			/>
 		</div>
 	);
 };
+
+FormPlaceholder.propTypes = {
+	loading: PropTypes.bool.isRequired,
+	notice: PropTypes.string,
+	size: PropTypes.oneOf( [
+		'extreme',
+		'huge',
+		'big',
+		'default',
+		'small',
+		'tiny',
+	] ),
+};
+
+FormPlaceholder.defaultProps = {
+	notice: '',
+	size: 'extreme',
+};
+
+export default FormPlaceholder;
+

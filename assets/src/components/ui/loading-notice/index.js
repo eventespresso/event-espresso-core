@@ -17,7 +17,7 @@ import './style.css';
  * @param {boolean} loading
  * @param {string} notice
  * @param {string} size one of: extreme, huge, big, default, small, tiny
- * @return {Object} spinner
+ * @return {Object} rendered loading notice & spinner
  */
 const LoadingNotice = ( { loading, notice, size } ) => {
 	notice = notice ||
