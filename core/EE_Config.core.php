@@ -2551,11 +2551,6 @@ class EE_Admin_Config extends EE_Config_Base
     public $use_event_timezones;
 
     /**
-     * @var boolean $use_full_logging
-     */
-    public $use_full_logging;
-
-    /**
      * @var string $log_file_name
      */
     public $log_file_name;
@@ -2616,7 +2611,6 @@ class EE_Admin_Config extends EE_Config_Base
         $this->use_dashboard_widget = true;
         $this->events_in_dashboard = 30;
         $this->use_event_timezones = false;
-        $this->use_full_logging = false;
         $this->use_remote_logging = false;
         $this->remote_logging_url = null;
         $this->show_reg_footer = apply_filters(
