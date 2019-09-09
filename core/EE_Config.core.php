@@ -2337,7 +2337,7 @@ class EE_Registration_Config extends EE_Config_Base
      *
      * @var boolean $enable_copy_attendee
      */
-    public $copy_attendee_info;
+    protected $copy_attendee_info = true;
 
 
     /**
@@ -2464,6 +2464,26 @@ class EE_Registration_Config extends EE_Config_Base
     {
         $this->track_invalid_checkout_access = filter_var(
             $track_invalid_checkout_access,
+            FILTER_VALIDATE_BOOLEAN
+        );
+    }
+
+    /**
+     * @return boolean
+     */
+    public function copyAttendeeInfo()
+    {
+        return $this->copy_attendee_info;
+    }
+
+
+    /**
+     * @param boolean $copy_attendee_info
+     */
+    public function setCopyAttendeeInfo($copy_attendee_info)
+    {
+        $this->copy_attendee_info = filter_var(
+            $copy_attendee_info,
             FILTER_VALIDATE_BOOLEAN
         );
     }

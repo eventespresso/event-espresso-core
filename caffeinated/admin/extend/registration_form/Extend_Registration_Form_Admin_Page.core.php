@@ -1194,11 +1194,7 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page
                                     'Set to yes if you want to enable the copy of #1 attendee info to extra attendees at Registration Form.',
                                     'event_espresso'
                                 ),
-                                'default'         => isset(
-                                    EE_Registry::instance()->CFG->registration->copy_attendee_info
-                                )
-                                    ? EE_Registry::instance()->CFG->registration->copy_attendee_info
-                                    : true,
+                                'default'         => EE_Registry::instance()->CFG->registration->copyAttendeeInfo(),
                                 'required'        => false,
                                 'display_html_label_text' => false,
                             )
@@ -1220,7 +1216,7 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page
      */
     public function update_copy_attendee_info_settings_form(EE_Registration_Config $EE_Registration_Config)
     {
-        $prev_copy_attendee_info = $EE_Registration_Config->copy_attendee_info;
+        $prev_copy_attendee_info = $EE_Registration_Config->copyAttendeeInfo();
         try {
             $copy_attendee_info_settings_form = $this->_copy_attendee_info_settings_form();
             // if not displaying a form, then check for form submission
@@ -1232,9 +1228,7 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page
                     // grab validated data from form
                     $valid_data = $copy_attendee_info_settings_form->valid_data();
                     if (isset($valid_data['copy_attendee_info'])) {
-                        $copy_attendee_info = $valid_data['copy_attendee_info'];
-
-                        $EE_Registration_Config->copy_attendee_info = $copy_attendee_info;
+                        $EE_Registration_Config->setCopyAttendeeInfo($valid_data['copy_attendee_info']);
                     } else {
                         EE_Error::add_error(
                             esc_html__(

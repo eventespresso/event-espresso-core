@@ -126,7 +126,7 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step
          */
         $reg_config = LoaderFactory::getLoader()->getShared('EE_Registration_Config');
     
-        $this->_print_copy_info = $reg_config->copy_attendee_info;
+        $this->_print_copy_info = $reg_config->copyAttendeeInfo();
         $primary_registrant = null;
         // autoload Line_Item_Display classes
         EEH_Autoloader::register_line_item_display_autoloaders();
@@ -327,7 +327,7 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step
                 $reg_config = LoaderFactory::getLoader()->getShared('EE_Registration_Config');
 
                 // if we have question groups for additional attendees, then display the copy options
-                $this->_print_copy_info = $attendee_nmbr > 1 ? $reg_config->copy_attendee_info : false;
+                $this->_print_copy_info = $attendee_nmbr > 1 ? $reg_config->copyAttendeeInfo() : false;
                 if ($registration->is_primary_registrant()) {
                     // generate hidden input
                     $form_args['subsections']['primary_registrant'] = $this->_additional_primary_registrant_inputs(
