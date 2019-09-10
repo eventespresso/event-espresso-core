@@ -99,7 +99,7 @@
 		"recast": "^0.18.2",
 		"webpack": "^4.39.3",
 		"webpack-assets-manifest": "^3.1.1",
-		"webpack-cli": "^3.3.7",
+		"webpack-cli": "^3.3.8",
 		"webpack-merge": "^4.2.2"
 	},
 	"dependencies": {
