@@ -967,6 +967,9 @@ class Extend_Events_Admin_Page extends Events_Admin_Page
             $filters[] = $this->active_status_dropdown(
                 isset($this->_req_data['active_status']) ? $this->_req_data['active_status'] : ''
             );
+            $filters[] = $this->venuesDropdown(
+                isset($this->_req_data['venue']) ? $this->_req_data['venue'] : ''
+            );
         }
         // category filter
         $filters[] = $this->category_dropdown();
@@ -1013,6 +1016,31 @@ class Extend_Events_Admin_Page extends Events_Admin_Page
             'inactive' => esc_html__('Inactive', 'event_espresso'),
         );
         $id = 'id="espresso-active-status-dropdown-filter"';
+        $class = 'wide';
+        return EEH_Form_Fields::select_input($select_name, $values, $current_value, $id, $class);
+    }
+
+    /**
+     * returns a list of "venues"
+     *
+     * @param  string $current_value whatever the current active status is
+     * @return string
+     */
+    protected function venuesDropdown($current_value = '')
+    {
+        $select_name = 'venue';
+        $values = array(
+            '' => esc_html__('All Venues', 'event_espresso'),
+        );
+        // populate the list of venues.
+        $vnumdl = EE_Registry::instance()->load_model('Venue');
+        $venues = $vnumdl->get_all(array('order_by' => array('VNU_name' => 'ASC')));
+
+        foreach ($venues as $venue) {
+            $values[ $venue->ID() ] = $venue->name();
+        }
+
+        $id = 'id="espresso-venues-dropdown-filter"';
         $class = 'wide';
         return EEH_Form_Fields::select_input($select_name, $values, $current_value, $id, $class);
     }
