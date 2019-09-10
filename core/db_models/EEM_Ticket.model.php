@@ -183,6 +183,15 @@ class EEM_Ticket extends EEM_Soft_Delete_Base
                     true,
                     0
                 ),
+                'TKT_reverse_calculate' => new EE_Boolean_Field(
+                    'TKT_reverse_calculate',
+                    esc_html__(
+                        'Flag indicating whether ticket calculations should run in reverse and calculate the base ticket price from the provided ticket total.',
+                        'event_espresso'
+                    ),
+                    false,
+                    false
+                ),
             ),
         );
         $this->_model_relations = array(
