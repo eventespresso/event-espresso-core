@@ -31,7 +31,7 @@ EEH_Autoloader::register_autoloader($class_to_filepath);
  * @package               Event Espresso
  * @subpackage            core
  * @author                Mike Nelson
- * @since                 $VID:$
+ * @since                 4.10.0.p
  */
 class EE_DMS_Core_4_10_0 extends EE_Data_Migration_Script_Base
 {
@@ -65,8 +65,7 @@ class EE_DMS_Core_4_10_0 extends EE_Data_Migration_Script_Base
     public function can_migrate_from_version($version_array)
     {
         $version_string = $version_array['Core'];
-        if (version_compare($version_string, '4.10.0.rc.000', '<') && version_compare($version_string, '4.9.0', '>=')) {
-            //          echo "$version_string can be migrated from";
+        if (version_compare($version_string, '4.10.0.decaf', '<') && version_compare($version_string, '4.9.0.decaf', '>=')) {
             return true;
         } elseif (! $version_string) {
             //          echo "no version string provided: $version_string";
@@ -567,6 +566,7 @@ class EE_DMS_Core_4_10_0 extends EE_Data_Migration_Script_Base
 				TKT_order tinyint(3) unsigned NOT NULL DEFAULT '0',
 				TKT_row tinyint(3) unsigned NOT NULL DEFAULT '0',
 				TKT_is_default tinyint(1) unsigned NOT NULL DEFAULT '0',
+				TKT_reverse_calculate tinyint(1) unsigned NOT NULL DEFAULT '0',
 				TKT_wp_user bigint(20) unsigned NULL,
 				TKT_parent int(10) unsigned DEFAULT '0',
 				TKT_deleted tinyint(1) NOT NULL DEFAULT '0',
@@ -594,7 +594,7 @@ class EE_DMS_Core_4_10_0 extends EE_Data_Migration_Script_Base
 
     /**
      * Inserts default data on new installs
-     * @since $VID:$
+     * @since 4.10.0.p
      * @throws EE_Error
      * @throws InvalidArgumentException
      * @throws ReflectionException

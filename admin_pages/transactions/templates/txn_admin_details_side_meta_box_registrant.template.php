@@ -36,7 +36,7 @@
             ); ?>
     </span>
     <?php if (! empty($prime_reg_phone)) : ?>
-        <a href="tel:<?php echo $phone; ?>">
+        <a href="tel:<?php echo $prime_reg_phone; ?>">
             <?php echo $prime_reg_phone; ?>
         </a>
     <?php endif; ?>

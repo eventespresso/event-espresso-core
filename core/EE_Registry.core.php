@@ -371,10 +371,10 @@ class EE_Registry implements ResettableInterface
                 EE_CORE,
                 EE_ADMIN,
                 EE_CPTS,
-                EE_CORE . 'data_migration_scripts' . DS,
-                EE_CORE . 'capabilities' . DS,
-                EE_CORE . 'request_stack' . DS,
-                EE_CORE . 'middleware' . DS,
+                EE_CORE . 'data_migration_scripts/',
+                EE_CORE . 'capabilities/',
+                EE_CORE . 'request_stack/',
+                EE_CORE . 'middleware/',
             )
         );
         // retrieve instantiated class
@@ -409,7 +409,7 @@ class EE_Registry implements ResettableInterface
         $service_paths = apply_filters(
             'FHEE__EE_Registry__load_service__service_paths',
             array(
-                EE_CORE . 'services' . DS,
+                EE_CORE . 'services/',
             )
         );
         // retrieve instantiated class
@@ -544,10 +544,10 @@ class EE_Registry implements ResettableInterface
     {
         $paths = array(
             EE_LIBRARIES,
-            EE_LIBRARIES . 'messages' . DS,
-            EE_LIBRARIES . 'shortcodes' . DS,
-            EE_LIBRARIES . 'qtips' . DS,
-            EE_LIBRARIES . 'payment_methods' . DS,
+            EE_LIBRARIES . 'messages/',
+            EE_LIBRARIES . 'shortcodes/',
+            EE_LIBRARIES . 'qtips/',
+            EE_LIBRARIES . 'payment_methods/',
         );
         // retrieve instantiated class
         return $this->_load(
@@ -615,10 +615,10 @@ class EE_Registry implements ResettableInterface
     public function load_model_class($class_name, $arguments = array(), $load_only = true)
     {
         $paths = array(
-            EE_MODELS . 'fields' . DS,
-            EE_MODELS . 'helpers' . DS,
-            EE_MODELS . 'relations' . DS,
-            EE_MODELS . 'strategies' . DS,
+            EE_MODELS . 'fields/',
+            EE_MODELS . 'helpers/',
+            EE_MODELS . 'relations/',
+            EE_MODELS . 'strategies/',
         );
         // retrieve instantiated class
         return $this->_load(
@@ -1081,16 +1081,16 @@ class EE_Registry implements ResettableInterface
             : array($file_paths);
         // cycle thru paths
         foreach ($file_paths as $key => $file_path) {
-            // convert all separators to proper DS, if no filepath, then use EE_CLASSES
+            // convert all separators to proper /, if no filepath, then use EE_CLASSES
             $file_path = $file_path
-                ? str_replace(array('/', '\\'), DS, $file_path)
+                ? str_replace(array('/', '\\'), '/', $file_path)
                 : EE_CLASSES;
             // prep file type
             $type = ! empty($type)
                 ? trim($type, '.') . '.'
                 : '';
             // build full file path
-            $file_paths[ $key ] = rtrim($file_path, DS) . DS . $class_name . '.' . $type . 'php';
+            $file_paths[ $key ] = rtrim($file_path, '/') . '/' . $class_name . '.' . $type . 'php';
             // does the file exist and can be read ?
             if (is_readable($file_paths[ $key ])) {
                 return $file_paths[ $key ];

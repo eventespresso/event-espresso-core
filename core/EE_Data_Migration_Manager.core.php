@@ -877,7 +877,7 @@ class EE_Data_Migration_Manager implements ResettableInterface
                     continue;
                 }
                 foreach ($files as $file) {
-                    $pos_of_last_slash = strrpos($file, DS);
+                    $pos_of_last_slash = strrpos($file, '/');
                     $classname = str_replace('.dms.php', '', substr($file, $pos_of_last_slash + 1));
                     $migrates_to = $this->script_migrates_to_version($classname, $eeAddonClass);
                     $slug = $migrates_to['slug'];

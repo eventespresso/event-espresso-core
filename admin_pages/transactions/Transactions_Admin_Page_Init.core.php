@@ -25,12 +25,12 @@ class Transactions_Admin_Page_Init extends EE_Admin_Page_Init
         if (! defined('TXN_PG_SLUG')) {
             define('TXN_PG_SLUG', 'espresso_transactions');
             define('TXN_PG_NAME', ucwords(str_replace('_', '', TXN_PG_SLUG)));
-            define('TXN_ADMIN', EE_ADMIN_PAGES . 'transactions' . DS);
+            define('TXN_ADMIN', EE_ADMIN_PAGES . 'transactions/');
             define('TXN_ADMIN_URL', admin_url('admin.php?page=' . TXN_PG_SLUG));
-            define('TXN_ASSETS_PATH', TXN_ADMIN . 'assets' . DS);
-            define('TXN_ASSETS_URL', str_replace('\\', '/', EE_ADMIN_PAGES_URL . 'transactions/assets' . DS));
-            define('TXN_TEMPLATE_PATH', TXN_ADMIN . 'templates' . DS);
-            define('TXN_TEMPLATE_URL', str_replace('\\', '/', EE_ADMIN_PAGES_URL . 'transactions/templates' . DS));
+            define('TXN_ASSETS_PATH', TXN_ADMIN . 'assets/');
+            define('TXN_ASSETS_URL', str_replace('\\', '/', EE_ADMIN_PAGES_URL . 'transactions/assets/'));
+            define('TXN_TEMPLATE_PATH', TXN_ADMIN . 'templates/');
+            define('TXN_TEMPLATE_URL', str_replace('\\', '/', EE_ADMIN_PAGES_URL . 'transactions/templates/'));
         }
         parent::__construct();
     }

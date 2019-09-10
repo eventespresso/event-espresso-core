@@ -103,7 +103,7 @@ class EE_PMT_Paypal_Pro extends EE_PMT_Base
                 'credit_card'
             );
             $billing_form->add_subsections(
-                array( 'debug_content' => new EE_Form_Section_HTML_From_Template(dirname(__FILE__).DS.'templates'.DS.'paypal_pro_debug_info.template.php')),
+                array( 'debug_content' => new EE_Form_Section_HTML_From_Template(dirname(__FILE__).'/templates/paypal_pro_debug_info.template.php')),
                 'first_name'
             );
             $billing_form->get_input('credit_card_type')->set_default('Visa');

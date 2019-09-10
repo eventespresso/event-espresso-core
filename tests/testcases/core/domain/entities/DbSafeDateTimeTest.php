@@ -47,7 +47,7 @@ class DbSafeDateTimeTest extends EE_UnitTestCase
         $db_safe_datetime = new DbSafeDateTime($empty_datetime->format('Y-m-d H:i:s.u'), $utc);
         // serializing the above will write to the PHP error log,
         // so we are going to set that path to something else, so that we can grab that error
-        $log_file = EVENT_ESPRESSO_UPLOAD_DIR . 'logs' . DS . 'espresso_unit_tests_errors.log';
+        $log_file = EVENT_ESPRESSO_UPLOAD_DIR . 'logs/espresso_unit_tests_errors.log';
         EEH_File::ensure_file_exists_and_is_writable($log_file);
         $db_safe_datetime->setErrorLogDir($log_file);
         // now perform the serialization

@@ -1062,7 +1062,7 @@ final class EE_Config implements ResettableInterface
             // sanitize shortcode directory name
             $widget = sanitize_key($widget);
             // now we need to rebuild the shortcode path
-            $widget_path = explode(DS, $widget_path);
+            $widget_path = explode('/', $widget_path);
             // remove last segment
             array_pop($widget_path);
             // glue it back together
@@ -1076,20 +1076,20 @@ final class EE_Config implements ResettableInterface
         // add class prefix
         $widget_class = 'EEW_' . $widget;
         // does the widget exist ?
-        if (! is_readable($widget_path . DS . $widget_class . $widget_ext)) {
+        if (! is_readable($widget_path . '/' . $widget_class . $widget_ext)) {
             $msg = sprintf(
                 __(
                     'The requested %s widget file could not be found or is not readable due to file permissions. Please ensure the following path is correct: %s',
                     'event_espresso'
                 ),
                 $widget_class,
-                $widget_path . DS . $widget_class . $widget_ext
+                $widget_path . '/' . $widget_class . $widget_ext
             );
             EE_Error::add_error($msg . '||' . $msg, __FILE__, __FUNCTION__, __LINE__);
             return;
         }
         // load the widget class file
-        require_once($widget_path . DS . $widget_class . $widget_ext);
+        require_once($widget_path . '/' . $widget_class . $widget_ext);
         // verify that class exists
         if (! class_exists($widget_class)) {
             $msg = sprintf(__('The requested %s widget class does not exist.', 'event_espresso'), $widget_class);
@@ -1098,7 +1098,7 @@ final class EE_Config implements ResettableInterface
         }
         register_widget($widget_class);
         // add to array of registered widgets
-        EE_Registry::instance()->widgets->{$widget_class} = $widget_path . DS . $widget_class . $widget_ext;
+        EE_Registry::instance()->widgets->{$widget_class} = $widget_path . '/' . $widget_class . $widget_ext;
     }
 
 
@@ -1149,17 +1149,17 @@ final class EE_Config implements ResettableInterface
         do_action('AHEE__EE_Config__register_module__begin', $module_path);
         $module_ext = '.module.php';
         // make all separators match
-        $module_path = str_replace(array('\\', '/'), DS, $module_path);
+        $module_path = str_replace(array('\\', '/'), '/', $module_path);
         // does the file path INCLUDE the actual file name as part of the path ?
         if (strpos($module_path, $module_ext) !== false) {
             // grab and shortcode file name from directory name and break apart at dots
             $module_file = explode('.', basename($module_path));
             // now we need to rebuild the shortcode path
-            $module_path = explode(DS, $module_path);
+            $module_path = explode('/', $module_path);
             // remove last segment
             array_pop($module_path);
             // glue it back together
-            $module_path = implode(DS, $module_path) . DS;
+            $module_path = implode('/', $module_path) . '/';
             // take first segment from file name pieces and sanitize it
             $module = preg_replace('/[^a-zA-Z0-9_\-]/', '', $module_file[0]);
             // ensure class prefix is added
@@ -1170,14 +1170,14 @@ final class EE_Config implements ResettableInterface
             $module = strtolower(basename($module_path));
             $module = preg_replace('/[^a-z0-9_\-]/', '', $module);
             // like trailingslashit()
-            $module_path = rtrim($module_path, DS) . DS;
+            $module_path = rtrim($module_path, '/') . '/';
             // create classname from module directory name
             $module = str_replace(' ', '_', ucwords(str_replace('_', ' ', $module)));
             // add class prefix
             $module_class = 'EED_' . $module;
         }
         // does the module exist ?
-        if (! is_readable($module_path . DS . $module_class . $module_ext)) {
+        if (! is_readable($module_path . '/' . $module_class . $module_ext)) {
             $msg = sprintf(
                 __(
                     'The requested %s module file could not be found or is not readable due to file permissions.',
@@ -2551,11 +2551,6 @@ class EE_Admin_Config extends EE_Config_Base
     public $use_event_timezones;
 
     /**
-     * @var boolean $use_full_logging
-     */
-    public $use_full_logging;
-
-    /**
      * @var string $log_file_name
      */
     public $log_file_name;
@@ -2616,7 +2611,6 @@ class EE_Admin_Config extends EE_Config_Base
         $this->use_dashboard_widget = true;
         $this->events_in_dashboard = 30;
         $this->use_event_timezones = false;
-        $this->use_full_logging = false;
         $this->use_remote_logging = false;
         $this->remote_logging_url = null;
         $this->show_reg_footer = apply_filters(

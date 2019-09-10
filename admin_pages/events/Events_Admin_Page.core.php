@@ -2385,9 +2385,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
         $this->_admin_page_title = esc_html__('Template Settings (Preview)', 'event_espresso');
         $this->_template_args['preview_img'] = '<img src="'
                                                . EVENTS_ASSETS_URL
-                                               . DS
-                                               . 'images'
-                                               . DS
+                                               . '/images/'
                                                . 'caffeinated_template_features.jpg" alt="'
                                                . esc_attr__('Template Settings Preview screenshot', 'event_espresso')
                                                . '" />';

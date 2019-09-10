@@ -22,7 +22,7 @@ class EE_DMS_4_10_0_Tests extends EE_UnitTestCase{
 
     /**
      * An event with only the personal question group for primary attendees.
-     * @since $VID:$
+     * @since 4.10.0.p
      */
 	public function testMigratePersonalForPrimary()
     {
@@ -36,7 +36,7 @@ class EE_DMS_4_10_0_Tests extends EE_UnitTestCase{
 
     /**
      * An event with personal and address question group for primary attendees.
-     * @since $VID:$
+     * @since 4.10.0.p
      */
     public function testMigratePersonalAndAdditionalForPrimary()
     {
@@ -54,7 +54,7 @@ class EE_DMS_4_10_0_Tests extends EE_UnitTestCase{
 
     /**
      * An event with personal question group for primary and additional attendees.
-     * @since $VID:$
+     * @since 4.10.0.p
      */
     public function testMigratePersonalForPrimaryAndAdditional()
     {
@@ -84,7 +84,7 @@ class EE_DMS_4_10_0_Tests extends EE_UnitTestCase{
      * Tests what happens when we need to do the migrations across multiple requests.
      * In the first iteration of this script, this cause problems because we were modifying the original set,
      * which made the limit part of our queries off.
-     * @since $VID:$
+     * @since 4.10.0.p
      */
     public function testMigrateMultipleSteps()
     {
@@ -113,7 +113,7 @@ class EE_DMS_4_10_0_Tests extends EE_UnitTestCase{
 
     /**
      * An event with personal question group for primary and additional attendees.
-     * @since $VID:$
+     * @since 4.10.0.p
      */
     public function testMigrateManyQuestionGroupslForPrimaryAndAdditional()
     {
@@ -164,7 +164,7 @@ class EE_DMS_4_10_0_Tests extends EE_UnitTestCase{
 
     /**
      * An event with personal question groups additional attendees only.
-     * @since $VID:$
+     * @since 4.10.0.p
      */
     public function testMigrateManyQuestionGroupslForAdditionalAttendeesOnly()
     {

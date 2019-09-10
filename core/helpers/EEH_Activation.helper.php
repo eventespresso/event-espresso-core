@@ -329,7 +329,7 @@ class EEH_Activation implements ResettableInterface
     public static function load_calendar_config()
     {
         // grab array of all plugin folders and loop thru it
-        $plugins = glob(WP_PLUGIN_DIR . DS . '*', GLOB_ONLYDIR);
+        $plugins = glob(WP_PLUGIN_DIR . '/*', GLOB_ONLYDIR);
         if (empty($plugins)) {
             return;
         }
@@ -345,7 +345,7 @@ class EEH_Activation implements ResettableInterface
                 || strpos($plugin, 'calendar') !== false
             ) {
                 // this is what we are looking for
-                $calendar_config = $plugin_path . DS . 'EE_Calendar_Config.php';
+                $calendar_config = $plugin_path . '/EE_Calendar_Config.php';
                 // does it exist in this folder ?
                 if (is_readable($calendar_config)) {
                     // YEAH! let's load it

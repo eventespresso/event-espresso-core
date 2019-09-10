@@ -52,7 +52,7 @@ class EED_Ticket_Selector_Caff extends EED_Ticket_Selector
     {
         define(
             'TICKET_SELECTOR_CAFF_TEMPLATES_PATH',
-            str_replace('\\', DS, plugin_dir_path(__FILE__)) . 'templates' . DS
+            str_replace('\\', '/', plugin_dir_path(__FILE__)) . 'templates/'
         );
         add_action(
             'AHEE__template_settings__template__before_settings_form',
@@ -328,7 +328,7 @@ class EED_Ticket_Selector_Caff extends EED_Ticket_Selector
      */
     public static function ticket_price_details(EE_Ticket $ticket, $ticket_price = 0, $display_ticket_price = false)
     {
-        require str_replace('\\', DS, plugin_dir_path(__FILE__))
-                . 'templates' . DS . 'ticket_selector_price_details.template.php';
+        require str_replace('\\', '/', plugin_dir_path(__FILE__))
+                . 'templates/ticket_selector_price_details.template.php';
     }
 }

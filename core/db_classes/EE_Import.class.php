@@ -189,8 +189,8 @@ class EE_Import implements ResettableInterface
                     if ($file_ext == 'csv') {
                         $max_upload = $this->EE_CSV->get_max_upload_size();// max upload size in KB
                         if ($filesize < $max_upload || true) {
-                            $wp_upload_dir = str_replace(array('\\', '/'), DS, wp_upload_dir());
-                            $path_to_file = $wp_upload_dir['basedir'] . DS . 'espresso' . DS . $filename;
+                            $wp_upload_dir = str_replace(array('\\', '/'), '/', wp_upload_dir());
+                            $path_to_file = $wp_upload_dir['basedir'] . '/espresso/' . $filename;
 
                             if (move_uploaded_file($temp_file, $path_to_file)) {
                                 // convert csv to array

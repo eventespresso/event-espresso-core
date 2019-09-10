@@ -396,7 +396,7 @@ final class EE_System implements ResettableInterface
                 true
             )
         ) {
-            include_once EE_THIRD_PARTY . 'wp-api-basic-auth' . DS . 'basic-auth.php';
+            include_once EE_THIRD_PARTY . 'wp-api-basic-auth/basic-auth.php';
         }
         do_action('AHEE__EE_System__load_espresso_addons__complete');
     }
@@ -856,7 +856,7 @@ final class EE_System implements ResettableInterface
         $this->loader->getShared('EE_Network_Config');
         // setup autoloaders
         // enable logging?
-        if ($config->admin->use_full_logging) {
+        if ($config->admin->use_remote_logging) {
             $this->loader->getShared('EE_Log');
         }
         // check for activation errors
