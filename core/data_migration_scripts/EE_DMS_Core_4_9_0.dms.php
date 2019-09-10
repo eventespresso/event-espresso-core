@@ -64,7 +64,7 @@ class EE_DMS_Core_4_9_0 extends EE_Data_Migration_Script_Base
     public function can_migrate_from_version($version_array)
     {
         $version_string = $version_array['Core'];
-        if (version_compare($version_string, '4.9.0', '<=') && version_compare($version_string, '4.8.0', '>=')) {
+        if (version_compare($version_string, '4.9.0.decaf', '<') && version_compare($version_string, '4.8.0.decaf', '>=')) {
             //          echo "$version_string can be migrated from";
             return true;
         } elseif (! $version_string) {

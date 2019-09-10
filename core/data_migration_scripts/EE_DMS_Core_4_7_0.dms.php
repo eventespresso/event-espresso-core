@@ -66,11 +66,11 @@ class EE_DMS_Core_4_7_0 extends EE_Data_Migration_Script_Base
     {
         $version_string = $version_array['Core'];
         if ((
-                version_compare($version_string, '4.7.0', '<=')
-                && version_compare($version_string, '4.6.0', '>=')
+                version_compare($version_string, '4.7.0.decaf', '<')
+                && version_compare($version_string, '4.6.0.decaf', '>=')
             )
             || (
-                version_compare($version_string, '4.7.0', '>=')
+                version_compare($version_string, '4.7.0.decaf', '>=')
                 && ! $this->_get_table_analysis()->tableExists('esp_registration_payment')
                 && $this->_get_table_analysis()->tableExists('esp_registration')
             )
