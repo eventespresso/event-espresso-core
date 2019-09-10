@@ -2410,17 +2410,21 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step
                 $payment->set_status(EEM_Payment::status_id_pending);
                 $payment->save();
             } else {
-                // not a payment
+                // we couldn't redirect the user. Let's tell them why.
+                $error_message = sprintf(
+                    esc_html__(
+                        'It appears the Off Site Payment Method was not configured properly.%sPlease try again or contact %s for assistance.',
+                        'event_espresso'
+                    ),
+                    '<br/>',
+                    EE_Registry::instance()->CFG->organization->get_pretty('email')
+                );
+                if ($payment instanceof EE_Payment && $payment->gateway_response()) {
+                    $error_message = $error_message . '<br/>' . $payment->gateway_response();
+                }
                 $this->checkout->continue_reg = false;
                 EE_Error::add_error(
-                    sprintf(
-                        esc_html__(
-                            'It appears the Off Site Payment Method was not configured properly.%sPlease try again or contact %s for assistance.',
-                            'event_espresso'
-                        ),
-                        '<br/>',
-                        EE_Registry::instance()->CFG->organization->get_pretty('email')
-                    ),
+                    $error_message,
                     __FILE__,
                     __FUNCTION__,
                     __LINE__
