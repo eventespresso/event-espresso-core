@@ -1,5 +1,14 @@
 ## The `eejs-core` dependency.
 
+> Update from Mike, September 11 2019:
+>
+> The information in this doc seems to be incorrect or out-of-date. 
+> 
+> I've used the build process successfully (on PayPal Smart Buttons and Stripe Elements) without depending on `eejs-core`. 
+> In fact, adding that dependency may be a bad idea because it doesn't work on WP 4.9 or lower unless the Gutenberg plugin is active.
+>
+> So if your code requires WP 5.0 or Gutenberg anyway, it's fine. Otherwise, avoid adding `eejs-core` as a dependency!   
+
 Every js bundle built using the event-espresso core [build process](build-process.md) _must_ declare as a dependency the `eejs-core` registered script (or indirectly through another dependency).  For example: say we have a built file that ends up as something like `ee-blocks-07a088b9a2f510393f8f.dist.js` after building.  It would need to be registered like so (see [Asset Caching by Filename](asset-caching-by-filename.md) for information about the `$assets_registry->getAssetUrl()` call made in this example):
 
 ```js
