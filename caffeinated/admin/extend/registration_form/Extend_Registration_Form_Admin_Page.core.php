@@ -1096,6 +1096,11 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page
             array($this, 'email_validation_settings_form'),
             2
         );
+        add_action(
+            'AHEE__Extend_Registration_Form_Admin_Page___reg_form_settings_template',
+            array($this, 'copy_attendee_info_settings_form'),
+            4
+        );
         $this->_template_args = (array) apply_filters(
             'FHEE__Extend_Registration_Form_Admin_Page___reg_form_settings___template_args',
             $this->_template_args
@@ -1124,6 +1129,9 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page
         EE_Registry::instance()->CFG->registration = $this->update_email_validation_settings_form(
             EE_Registry::instance()->CFG->registration
         );
+        EE_Registry::instance()->CFG->registration = $this->update_copy_attendee_info_settings_form(
+            EE_Registry::instance()->CFG->registration
+        );
         EE_Registry::instance()->CFG->registration = apply_filters(
             'FHEE__Extend_Registration_Form_Admin_Page___update_reg_form_settings__CFG_registration',
             EE_Registry::instance()->CFG->registration
@@ -1141,6 +1149,112 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page
             'updated',
             array('action' => 'view_reg_form_settings')
         );
+    }
+
+
+    /**
+     * @return void
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     */
+    public function copy_attendee_info_settings_form()
+    {
+        echo $this->_copy_attendee_info_settings_form()->get_html();
+    }
+
+    /**
+     * _copy_attendee_info_settings_form
+     *
+     * @access protected
+     * @return EE_Form_Section_Proper
+     * @throws \EE_Error
+     */
+    protected function _copy_attendee_info_settings_form()
+    {
+        return new EE_Form_Section_Proper(
+            array(
+                'name'            => 'copy_attendee_info_settings',
+                'html_id'         => 'copy_attendee_info_settings',
+                'layout_strategy' => new EE_Admin_Two_Column_Layout(),
+                'subsections'     => apply_filters(
+                    'FHEE__Extend_Registration_Form_Admin_Page___copy_attendee_info_settings_form__form_subsections',
+                    array(
+                        'copy_attendee_info_hdr'   => new EE_Form_Section_HTML(
+                            EEH_HTML::h2(esc_html__('Copy Attendee Info Settings', 'event_espresso'))
+                        ),
+                        'copy_attendee_info' => new EE_Yes_No_Input(
+                            array(
+                                'html_label_text' => esc_html__(
+                                    'Allow copy #1 attendee info to extra attendees?',
+                                    'event_espresso'
+                                ),
+                                'html_help_text'  => esc_html__(
+                                    'Set to yes if you want to enable the copy of #1 attendee info to extra attendees at Registration Form.',
+                                    'event_espresso'
+                                ),
+                                'default'         => EE_Registry::instance()->CFG->registration->copyAttendeeInfo(),
+                                'required'        => false,
+                                'display_html_label_text' => false,
+                            )
+                        ),
+                    )
+                ),
+            )
+        );
+    }
+
+    /**
+     * @param EE_Registration_Config $EE_Registration_Config
+     * @return EE_Registration_Config
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws ReflectionException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     */
+    public function update_copy_attendee_info_settings_form(EE_Registration_Config $EE_Registration_Config)
+    {
+        $prev_copy_attendee_info = $EE_Registration_Config->copyAttendeeInfo();
+        try {
+            $copy_attendee_info_settings_form = $this->_copy_attendee_info_settings_form();
+            // if not displaying a form, then check for form submission
+            if ($copy_attendee_info_settings_form->was_submitted()) {
+                // capture form data
+                $copy_attendee_info_settings_form->receive_form_submission();
+                // validate form data
+                if ($copy_attendee_info_settings_form->is_valid()) {
+                    // grab validated data from form
+                    $valid_data = $copy_attendee_info_settings_form->valid_data();
+                    if (isset($valid_data['copy_attendee_info'])) {
+                        $EE_Registration_Config->setCopyAttendeeInfo($valid_data['copy_attendee_info']);
+                    } else {
+                        EE_Error::add_error(
+                            esc_html__(
+                                'Invalid or missing Copy Attendee Info settings. Please refresh the form and try again.',
+                                'event_espresso'
+                            ),
+                            __FILE__,
+                            __FUNCTION__,
+                            __LINE__
+                        );
+                    }
+                } else {
+                    if ($copy_attendee_info_settings_form->submission_error_message() !== '') {
+                        EE_Error::add_error(
+                            $copy_attendee_info_settings_form->submission_error_message(),
+                            __FILE__,
+                            __FUNCTION__,
+                            __LINE__
+                        );
+                    }
+                }
+            }
+        } catch (EE_Error $e) {
+            $e->get_error();
+        }
+        return $EE_Registration_Config;
     }
 
 
