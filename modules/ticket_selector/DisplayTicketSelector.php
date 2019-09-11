@@ -218,7 +218,7 @@ class DisplayTicketSelector
             return $this->ticketSalesClosedMessage();
         }
         // is the event expired ?
-        $template_args['event_is_expired'] = is_admin() ? false : $this->event->is_expired();
+        $template_args['event_is_expired'] = ! is_admin() ? $this->event->is_expired() : false;
         if ($template_args['event_is_expired']) {
             return $this->expiredEventMessage();
         }
@@ -366,7 +366,7 @@ class DisplayTicketSelector
         $show_expired_tickets = is_admin() || (
             EE_Registry::instance()->CFG->template_settings->EED_Ticket_Selector instanceof EE_Ticket_Selector_Config
             && EE_Registry::instance()->CFG->template_settings->EED_Ticket_Selector->show_expired_tickets
-        ) ? true : false;
+        );
 
         $ticket_query_args = array(
             array('Datetime.EVT_ID' => $this->event->ID()),
