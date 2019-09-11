@@ -1015,9 +1015,8 @@ class Extend_Events_Admin_Page extends Events_Admin_Page
             'expired'  => esc_html__('Expired', 'event_espresso'),
             'inactive' => esc_html__('Inactive', 'event_espresso'),
         );
-        $id = 'id="espresso-active-status-dropdown-filter"';
-        $class = 'wide';
-        return EEH_Form_Fields::select_input($select_name, $values, $current_value, $id, $class);
+
+        return EEH_Form_Fields::select_input($select_name, $values, $current_value, '', 'wide');
     }
 
     /**
@@ -1033,16 +1032,14 @@ class Extend_Events_Admin_Page extends Events_Admin_Page
             '' => esc_html__('All Venues', 'event_espresso'),
         );
         // populate the list of venues.
-        $vnumdl = EE_Registry::instance()->load_model('Venue');
-        $venues = $vnumdl->get_all(array('order_by' => array('VNU_name' => 'ASC')));
+        $venue_model = EE_Registry::instance()->load_model('Venue');
+        $venues = $venue_model->get_all(array('order_by' => array('VNU_name' => 'ASC')));
 
         foreach ($venues as $venue) {
             $values[ $venue->ID() ] = $venue->name();
         }
 
-        $id = 'id="espresso-venues-dropdown-filter"';
-        $class = 'wide';
-        return EEH_Form_Fields::select_input($select_name, $values, $current_value, $id, $class);
+        return EEH_Form_Fields::select_input($select_name, $values, $current_value, '', 'wide');
     }
 
 
