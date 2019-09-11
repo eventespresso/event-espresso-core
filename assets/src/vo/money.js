@@ -1,6 +1,7 @@
 /**
  * External imports
  */
+import { Currency } from './currency';
 import { Decimal } from 'decimal.js-light';
 import * as Accounting from 'accounting-js';
 import isShallowEqual from '@wordpress/is-shallow-equal';
@@ -11,28 +12,35 @@ import { sprintf } from '@eventespresso/i18n';
 
 /**
  * Asserts if incoming value is an instance of Money
+ *
  * @param {Money} money
  * @throws {TypeError}
  */
 const assertMoney = ( money ) => {
-	if ( ! ( instanceOf( money, 'Money' ) ) ) {
+	if ( ! (
+		instanceOf( money, 'Money' )
+	) ) {
 		throw new TypeError( 'Instance of Money required' );
 	}
 };
 
 /**
  * Asserts if incoming value is an instance of Currency
+ *
  * @param {Currency} currency
  * @throws {TypeError}
  */
 const assertCurrency = ( currency ) => {
-	if ( ! ( instanceOf( currency, 'Currency' ) ) ) {
+	if ( ! (
+		instanceOf( currency, 'Currency' )
+	) ) {
 		throw new TypeError( 'Instance of Currency required' );
 	}
 };
 
 /**
  * Asserts if two currencies are shallow equal.
+ *
  * @param {Currency} currencyA
  * @param {Currency} currencyB
  * @throws {Exception}
@@ -51,67 +59,78 @@ const assertSameCurrency = ( currencyA, currencyB ) => {
 export default class Money {
 	/**
 	 * Internally the amount is stored as a Decimal instance.
+	 *
 	 * @type {Decimal}
 	 */
-	amount = {};
+	amount;
 
 	/**
 	 * Internally the amount is stored as a Currency instance.
+	 *
 	 * @type {Currency}
 	 */
-	currency = {};
+	currency;
 
 	/**
 	 * Formatter object for money values.
-	 * @type {{}}
+	 *
+	 * @type { {} }
 	 */
 	formatter = {};
 
 	/**
 	 * Rounds away from zero
+	 *
 	 * @type {number}
 	 */
 	static ROUND_UP = Decimal.ROUND_UP;
 
 	/**
 	 * Rounds towards zero
+	 *
 	 * @type {number}
 	 */
 	static ROUND_DOWN = Decimal.ROUND_DOWN;
 
 	/**
 	 * Rounds towards infinity
+	 *
 	 * @type {number}
 	 */
 	static ROUND_CEIL = Decimal.ROUND_CEIL;
 
 	/**
 	 * Rounds towards -Infinity
+	 *
 	 * @type {number}
 	 */
 	static ROUND_FLOOR = Decimal.ROUND_FLOOR;
 
 	/**
 	 * Rounds towards nearest neighbour. If equidistant, rounds away from zero.
+	 *
 	 * @type {number}
 	 */
 	static ROUND_HALF_UP = Decimal.ROUND_HALF_UP;
 
 	/**
 	 * Rounds towards nearest neighbour. If equidistant rounds towards zero.
+	 *
 	 * @type {number}
 	 */
 	static ROUND_HALF_DOWN = Decimal.ROUND_HALF_DOWN;
 
 	/**
-	 * Rounds towards nearest neighbour. If equidistant, rounds towards even
-	 * neighbour.
+	 * Rounds towards nearest neighbour.
+	 * If equidistant, rounds towards even neighbour.
+	 *
 	 * @type {number}
 	 */
 	static ROUND_HALF_EVEN = Decimal.ROUND_HALF_EVEN;
 
 	/**
 	 * Class constructor
+	 *
 	 * @param {number|string|Decimal} amount
 	 * @param {Currency} currency
 	 */
@@ -177,6 +196,7 @@ export default class Money {
 
 	/**
 	 * Returns the value of this Money as its subunits.
+	 *
 	 * @return {number} If the subunits is 100 and the value is .45,
 	 * this returns 450
 	 */
@@ -212,12 +232,13 @@ export default class Money {
 		Money.assertMoney( other );
 		return isShallowEqual(
 			this.currency.toJSON(),
-			other.currency.toJSON()
+			other.currency.toJSON(),
 		);
 	}
 
 	/**
 	 * Add one Money object to this Money object
+	 *
 	 * @param {Money} other
 	 * @return {Money} Returns a new instance of Money.
 	 */
@@ -228,6 +249,7 @@ export default class Money {
 
 	/**
 	 * Subtract one Money object from this Money object
+	 *
 	 * @param {Money} other
 	 * @return {Money} Returns a new instance of Money
 	 */
@@ -289,30 +311,32 @@ export default class Money {
 		// convert ratios to decimal and generate total.
 		ratios.forEach( ( ratio ) => {
 			convertedRatios.push(
-				instanceOf( ratio, 'Decimal' ) ? ratio : new Decimal( ratio )
+				instanceOf( ratio, 'Decimal' ) ? ratio : new Decimal( ratio ),
 			);
 			total = total.plus( ratio );
 		} );
 		convertedRatios.forEach( ( ratio ) => {
 			const share = new Decimal(
 				Math.floor(
-					self.toSubunits() * ratio.toNumber() / total.toNumber()
-				)
+					self.toSubunits() * ratio.toNumber() / total.toNumber(),
+				),
 			);
 			results.push(
 				new Money(
 					share.dividedBy( this.currency.subunits ),
-					this.currency
-				)
+					this.currency,
+				),
 			);
 			remainder = remainder.minus( share );
 		} );
 		for ( let i = 0; remainder.greaterThan( 0 ); i++ ) {
 			results[ i ] = new Money(
-				( new Decimal( results[ i ].toSubunits() ) )
+				(
+					new Decimal( results[ i ].toSubunits() )
+				)
 					.plus( 1 )
 					.dividedBy( this.currency.subunits ),
-				this.currency
+				this.currency,
 			);
 			remainder = remainder.minus( 1 );
 		}
@@ -339,7 +363,9 @@ export default class Money {
 	}
 
 	/**
-	 * Compares whether this Money object is greater than the other Money object.
+	 * Compares whether this Money object is greater than the other Money
+	 * object.
+	 *
 	 * @param {Money} other
 	 * @return {boolean} If true then this is greater than other.
 	 */
@@ -353,7 +379,8 @@ export default class Money {
 	 * Money object.
 	 *
 	 * @param {Money} other
-	 * @return {boolean} If true then this is greater than or equal to the other.
+	 * @return {boolean} If true then this is greater than or equal to the
+	 *     other.
 	 */
 	greaterThanOrEqualTo( other ) {
 		Money.assertUsingSameCurrency( this, other );
@@ -362,6 +389,7 @@ export default class Money {
 
 	/**
 	 * Compares whether this Money object is less than the other Money object.
+	 *
 	 * @param {Money} other
 	 * @return {boolean} If true then this is less than other
 	 */
@@ -411,6 +439,7 @@ export default class Money {
 
 	/**
 	 * Returns the value of this Money object as a number primitive.
+	 *
 	 * @return {number} Returns a number.
 	 */
 	toNumber() {
@@ -427,8 +456,8 @@ export default class Money {
 	 *
 	 * @param {number} decimalPlaces The number of decimal places to round to.
 	 * If not provided uses the internal decimal place value.
-	 * @param {number} rounding What rounding type to use (0-8).  Use Money ROUND
-	 * constants.  Defaults to Money.ROUND_HALF_UP
+	 * @param {number} rounding What rounding type to use (0-8).  Use Money
+	 *     ROUND constants.  Defaults to Money.ROUND_HALF_UP
 	 * @return {string} Returns a string representing the value of this Money
 	 * in normal (fixed-point) notation rounded to decimal places using
 	 * rounding mode.
@@ -448,19 +477,20 @@ export default class Money {
 	toIntegerMoney() {
 		return new Money(
 			this.amount.toInteger(),
-			this.currency
+			this.currency,
 		);
 	}
 
 	/**
 	 * Returns the value of this Money object as a formatted string according
 	 * to the currency configuration.
+	 *
 	 * @return {string} Returns a formatted string according to Currency.
 	 */
 	toString() {
 		return this.formatter.format(
 			this.amount.toNumber(),
-			this.formatter.settings
+			this.formatter.settings,
 		);
 	}
 
@@ -477,6 +507,7 @@ export default class Money {
 
 	/**
 	 * Asserts if the provided value is an instance of Money.
+	 *
 	 * @param {Money} money
 	 * @throws {TypeError}
 	 */
@@ -486,6 +517,7 @@ export default class Money {
 
 	/**
 	 * Asserts if the provided value is an instance of Currency.
+	 *
 	 * @param {Currency} currency
 	 * @throws {TypeError}
 	 */
@@ -509,6 +541,7 @@ export default class Money {
 
 	/**
 	 * Asserts if two currencies are shallow equal.
+	 *
 	 * @param {Currency} currencyA
 	 * @param {Currency} currencyB
 	 * @throws {Exception}
@@ -542,11 +575,11 @@ export default class Money {
 					sprintf(
 						'The provided money value has a %1$s sign in it, but the provided currency value object defines %2$s as the currency sign.',
 						match[ 0 ],
-						currency.sign
+						currency.sign,
 					) :
 					sprintf(
 						'The provided money value has non numeric strings in it (%1$s), please double-check the value.',
-						match[ 0 ]
+						match[ 0 ],
 					);
 
 				throw new Error( message );
@@ -556,5 +589,5 @@ export default class Money {
 		const money = new Money( 0, currency );
 		// set a new value using the parse on the formatter.
 		return money.setAmount( money.formatter.parse( moneyValue ) );
-	}
+	};
 }

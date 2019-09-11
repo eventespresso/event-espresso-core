@@ -1,7 +1,6 @@
 /**
  * External imports
  */
-import moment from 'moment-timezone';
 import {
 	capitalize,
 	omit,
@@ -12,16 +11,17 @@ import {
 	isUndefined,
 	isFunction,
 } from 'lodash';
-import { instanceOf } from '@eventespresso/validators';
-
-/**
- * Internal imports
- */
+import moment from 'moment-timezone';
 import {
 	InvalidDateTime,
 	InvalidArgument,
 	InvalidISO8601String,
 } from '@eventespresso/eejs';
+import { instanceOf } from '@eventespresso/validators';
+
+/**
+ * Internal imports
+ */
 import * as assertions from './assertions';
 import Duration from './duration';
 import {
@@ -34,11 +34,10 @@ import {
 /**
  * A collection of symbols used for "private" properties in the DateTime object.
  *
- * @type {
+ * @type {Object}
  * 	{
  * 		datetime: Symbol
  * 	}
- * }
  */
 const privateProperties = {
 	datetime: Symbol( 'DateTimePropertyDateTime' ),
@@ -47,8 +46,7 @@ const privateProperties = {
 /**
  * A collection of symbols used for "private" methods in the DateTime object.
  *
- * @type {
- * {
+ * @type {Object}
  * 	getUnitNames: Symbol,
  * 	createGettersAndSetters: Symbol,
  * 	extractMomentsFromDateTimes: Symbol,
@@ -56,7 +54,6 @@ const privateProperties = {
  * 	normalizeUnitObject: Symbol,
  * 	normalizeUnitValue: Symbol,
  * 	}
- * }
  */
 const privateMethods = {
 	getUnitNames: Symbol( 'DateTimeMethodGetUnitNames' ),
@@ -128,6 +125,7 @@ export default class DateTime {
 
 	/**
 	 * Indicates if the given locale is a valid locale.
+	 *
 	 * @param {string} locale
 	 * @return {boolean} true means it is valid
 	 */
@@ -137,6 +135,7 @@ export default class DateTime {
 
 	/**
 	 * Asserts if the given locale is valid and throws an error if not.
+	 *
 	 * @param {string} locale
 	 * @throws InvalidLocale
 	 */
@@ -146,6 +145,7 @@ export default class DateTime {
 
 	/**
 	 * Indicates if the given ISO8601 string is valid.
+	 *
 	 * @param {string} dateTimeString
 	 * @return {boolean} true means it is valid.
 	 */
@@ -155,6 +155,7 @@ export default class DateTime {
 
 	/**
 	 * Asserts if the given string is a valid ISO 8601 string.
+	 *
 	 * @param {string} dateTimeString
 	 * @throws InvalidISO8601String
 	 */
@@ -164,6 +165,7 @@ export default class DateTime {
 
 	/**
 	 * Indicates if the given string is a valid timezone
+	 *
 	 * @param {string} timezone
 	 * @return {boolean} true means it is valid.
 	 */
@@ -173,6 +175,7 @@ export default class DateTime {
 
 	/**
 	 * Asserts whether the given string is a valid timezone string.
+	 *
 	 * @param {string} timezone
 	 * @throws InvalidTimezone
 	 */
@@ -205,6 +208,7 @@ export default class DateTime {
 
 	/**
 	 * Indicates whether the provided value is an instance of DateTime
+	 *
 	 * @param {DateTime} datetime
 	 * @return {boolean} returns true if it is an instance of DateTime
 	 */
@@ -215,6 +219,7 @@ export default class DateTime {
 
 	/**
 	 * Asserts whether the provided value is an instance of DateTime
+	 *
 	 * @param {DateTime} datetime
 	 * @throws TypeError
 	 */
@@ -239,6 +244,7 @@ export default class DateTime {
 
 	/**
 	 * Asserts whether the given value is an instance of Date.
+	 *
 	 * @param {Date} date
 	 * @throws TypeError
 	 */
@@ -250,6 +256,7 @@ export default class DateTime {
 	 * Indicates whether the provided value is an instance of DateTime and is
 	 * a "valid" datetime (meaning the instance was constructed with valid
 	 * arguments).
+	 *
 	 * @param {DateTime} datetime
 	 * @return {boolean} true means it is valid.
 	 */
@@ -261,6 +268,7 @@ export default class DateTime {
 	 * Asserts whether the provided value is an instance of DateTime and is
 	 * a "valid" datetime (meaning the instance was constructed with valid
 	 * arguments)
+	 *
 	 * @param {DateTime} datetime
 	 * @throws InvalidDateTime
 	 */
@@ -279,8 +287,9 @@ export default class DateTime {
 	/**
 	 * A private internal helper method that is used to extract all moment
 	 * instances from the provided DateTimes (passed in as arguments).
+	 *
 	 * @param {...DateTime} datetimes
-	 * @return {Moment[]} An array of moment instances extracted from the
+	 * @return {moment[]} An array of moment instances extracted from the
 	 * DateTimes
 	 */
 	static [ privateMethods.extractMomentsFromDateTimes ]( ...datetimes ) {
@@ -293,6 +302,7 @@ export default class DateTime {
 	/**
 	 * Given an indefinite number of DateTimes as arguments, this will return a
 	 * new DateTime that represents the latest point in time.
+	 *
 	 * @param {...DateTime} datetimes
 	 * @return {DateTime|ServerDateTime} A new DateTime representing the latest point of time.
 	 */
@@ -309,6 +319,7 @@ export default class DateTime {
 	/**
 	 * Given an indefinite number of DateTimes as arguments, this will return a
 	 * new DateTime that represents the earliest point in time.
+	 *
 	 * @param {...DateTime} datetimes
 	 * @return {DateTime|ServerDateTime} A new DateTime representing the earliest point in
 	 * time.
@@ -690,6 +701,7 @@ export default class DateTime {
 
 	/**
 	 * Returns the date and time unit names
+	 *
 	 * @return {string[]} An array of unit names
 	 */
 	[ privateMethods.getUnitNames ]() {
@@ -805,6 +817,7 @@ export default class DateTime {
 
 	/**
 	 * Returns the offset from UTC for the current instance in time (in minutes).
+	 *
 	 * @return {number}  The offset is in minutes
 	 */
 	get offset() {
@@ -850,6 +863,7 @@ export default class DateTime {
 
 	/**
 	 * Exposes the ISO number of the week for the date and time in the object.
+	 *
 	 * @link https://en.wikipedia.org/wiki/ISO_week_date
 	 * @return {number} Will be a number between 1 and 52ish
 	 */
@@ -860,6 +874,7 @@ export default class DateTime {
 	/**
 	 * Exposes the ISO number for the week year for the date and time in the
 	 * object.
+	 *
 	 * @link https://en.wikipedia.org/wiki/ISO_week_date
 	 * @return {number}  Will be a number representing a year.
 	 */
@@ -870,6 +885,7 @@ export default class DateTime {
 	/**
 	 * Exposes the ISO number for the day of the week for the date and time in
 	 * the object.
+	 *
 	 * @link https://en.wikipedia.org/wiki/ISO_week_date
 	 * @return {number} A number between 1 and 7 (Monday is 1 and Sunday is 7)
 	 */
@@ -879,8 +895,8 @@ export default class DateTime {
 
 	/**
 	 * Exposes the number of weeks in this DateTime's year.
-	 * @link https://en.wikipedia.org/wiki/ISO_week_date
 	 *
+	 * @link https://en.wikipedia.org/wiki/ISO_week_date
 	 * @return {number} The number of weeks in the ISO year.
 	 */
 	get isoWeeksInWeekYear() {
@@ -889,6 +905,7 @@ export default class DateTime {
 
 	/**
 	 * Returns what the set locale is for this DateTime
+	 *
 	 * @return {string} A locale string
 	 */
 	get locale() {
@@ -948,6 +965,7 @@ export default class DateTime {
 
 	/**
 	 * Returns the difference between this DateTime and "now" as a Duration.
+	 *
 	 * @return {Duration} An instance of Duration representing the difference
 	 * between this DateTime and "now"
 	 */
@@ -963,6 +981,7 @@ export default class DateTime {
 	/**
 	 * Set the value of this DateTime to the end (i.e. the last millisecond) of
 	 * a unit of time.
+	 *
 	 * @param {string} unit
 	 * @return {DateTime|ServerDateTime} Returns a new DateTime instance.
 	 */
@@ -1030,6 +1049,7 @@ export default class DateTime {
 	/**
 	 * Add a period of time (represented by a Duration) to this DateTime and
 	 * return the resulting DateTime
+	 *
 	 * @param {Duration} duration
 	 * @return {DateTime|ServerDateTime} A new instance of DateTime for the new date and time.
 	 */
@@ -1131,6 +1151,7 @@ export default class DateTime {
 	/**
 	 * Returns the milliseconds since the Unix Epoch for the current DateTime
 	 * instance.
+	 *
 	 * @return {number} Number of milliseconds since Unix Epoch
 	 */
 	toMillis() {
@@ -1140,6 +1161,7 @@ export default class DateTime {
 	/**
 	 * Returns a simple object containing year, month, day, hour,
 	 * minute, second, and millisecond.
+	 *
 	 * @return {Object} An object with year, month, day, hour, minute, second,
 	 * and millisecond.
 	 */

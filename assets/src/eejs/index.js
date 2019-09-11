@@ -1,6 +1,6 @@
 /**
-* things that shall never change
-*/
+ * things that shall never change
+ */
 export * from './constants';
 
 /**

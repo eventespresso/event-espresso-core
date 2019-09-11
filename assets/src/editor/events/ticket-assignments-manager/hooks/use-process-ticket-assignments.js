@@ -60,18 +60,14 @@ const useProcessTicketAssignments = ( {
 			}
 		}
 		// wait for relations to finish updating
-		Promise.all( relationUpdates )
-			.then( ( updates ) => {
-				const wasUpdated = filter(
-					updates,
-					( updated ) => !! updated
-				);
-				beforeEditorClose( wasUpdated.length > 0 );
-				setSubmitting( false );
-				return closeEditor( click );
-			} ).catch( ( error ) => {
-				warning( false, error );
-			} );
+		Promise.all( relationUpdates ).then( ( updates ) => {
+			const wasUpdated = filter( updates, ( updated ) => !! updated );
+			beforeEditorClose( wasUpdated.length > 0 );
+			setSubmitting( false );
+			return closeEditor( click );
+		} ).catch( ( error ) => {
+			warning( false, error );
+		} );
 	}, [
 		assignedState,
 		hasNoAssignments,

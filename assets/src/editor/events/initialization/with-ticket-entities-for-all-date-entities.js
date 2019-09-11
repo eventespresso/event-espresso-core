@@ -15,7 +15,7 @@ const DEFAULT_OBJECT = {
  * 	ticketEntities - an array of ticket entities for the supplied event date
  * 	ticketEntitiesLoaded - boolean true if loading is complete
  *
- * @return {function}
+ * @return {Function}
  */
 const withTicketEntitiesForAllDateEntities = createHigherOrderComponent(
 	withSelect(
