@@ -12,6 +12,7 @@ import {
 	useRef,
 	useState,
 } from '@wordpress/element';
+import { cancelClickEvent } from '@eventespresso/eejs';
 import { __, sprintf } from '@eventespresso/i18n';
 
 /**
@@ -52,8 +53,10 @@ const EditorModal = ( {
 	children,
 	...passedProps
 } ) => {
-	const [ changesSaved, setChangesSaved ] = useState( true );
+	// ref used for determining when modal has JUST been opened or closed
+	// so that we know when to fire onEditorOpen() and onEditorClose()
 	const editorOpened = useRef( false );
+	const [ changesSaved, setChangesSaved ] = useState( true );
 	const isEditorOpen = useIsEditorOpen( editorId );
 	const closeEditor = useCloseEditor( editorId );
 
@@ -63,19 +66,20 @@ const EditorModal = ( {
 		// but editorOpened has not been toggled yet and is still "false"
 		// then we know the editor was JUST opened, so call onEditorOpen()
 		if ( isEditorOpen && ! editorOpened.current ) {
-			if ( onEditorOpen !== nullFunc ) {
+			if ( typeof onEditorOpen === 'function' ) {
 				onEditorOpen();
 			}
 			editorOpened.current = true;
 		}
 	}, [ editorId, isEditorOpen, editorOpened.current, onEditorOpen ] );
 
+	// trigger onEditorClose event
 	useEffect( () => {
 		// then on first render after close,
 		// we trigger the onEditorClose() event
 		// and then set editorOpened state to false
 		if ( ! isEditorOpen && editorOpened.current ) {
-			if ( onEditorClose !== nullFunc ) {
+			if ( typeof onEditorClose === 'function' ) {
 				onEditorClose();
 			}
 			editorOpened.current = false;
@@ -96,29 +100,15 @@ const EditorModal = ( {
 	);
 
 	const onRequestClose = useCallback( ( click ) => {
-		if (
-			! click || typeof click.type === 'undefined' ||
-			! (
-				! click.nativeEvent ||
-				(
-					click.type &&
-					click.type === 'keydown' &&
-					click.key === 'Escape'
-				)
-			)
-		) {
-			return;
-		}
+		cancelClickEvent( click, 'EditorModal.onRequestClose()' );
 		if ( ! changesSaved && closeEditorNotice !== '' ) {
 			if ( confirm( closeEditorNotice ) ) {
-				closeEditor( click );
+				closeEditor();
 			}
 		} else {
-			closeEditor( click );
+			closeEditor();
 		}
 	}, [
-		editorId,
-		isEditorOpen,
 		changesSaved,
 		closeEditor,
 		closeEditorNotice,
@@ -136,6 +126,8 @@ const EditorModal = ( {
 			onRequestClose={ onRequestClose }
 			closeButtonLabel={ editorCloseButtonLabel }
 			overlayClassName={ 'ee-editor-modal-overlay' }
+			shouldCloseOnEsc={ false }
+			shouldCloseOnClickOutside={ false }
 			{ ...extraModalProps }
 		>
 			{
