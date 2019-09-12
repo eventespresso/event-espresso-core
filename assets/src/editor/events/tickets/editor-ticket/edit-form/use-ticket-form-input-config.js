@@ -8,6 +8,7 @@ import { validations } from '@eventespresso/components';
 import { isModelEntityOfModel } from '@eventespresso/validators';
 import {
 	ServerDateTime as DateTime,
+	Duration,
 	Money,
 	SiteCurrency,
 } from '@eventespresso/value-objects';
@@ -22,7 +23,7 @@ import { usePriceTypes, useTicketPrices } from '../../../hooks/';
 
 /**
  * @function
- * @param {BaseEntity} ticket
+ * @param {Object|BaseEntity} ticket
  * @return {Array} array of ticket form input config objects
  */
 const useTicketFormInputConfig = ( ticket ) => {
@@ -37,22 +38,24 @@ const useTicketFormInputConfig = ( ticket ) => {
 		priceTypes
 	);
 	const recalculateBasePrice = useCallback( ( t ) => {
-		const ticketPriceAmount = t.price.amount.toNumber();
-		calculateTicketBasePrice( ticketPriceAmount );
-	}, [ ticket, prices, calculateTicketBasePrice ] );
+		if ( isModelEntityOfModel( t, 'ticket' ) ) {
+			calculateTicketBasePrice( t.price.amount.toNumber() );
+		}
+	}, [ calculateTicketBasePrice ] );
 
 	const calculator = (
 		<TicketPriceCalculatorMenuItem ticketEntity={ ticket } />
 	);
-
+	const now = new DateTime();
 	return useMemo( () => [
 		{
 			id: 'id',
 			label: __( 'Ticket ID', 'event_espresso' ),
 			default: false,
-			required: true,
 			disabled: true,
 			inputWidth: 3,
+			required: true,
+			validations: validations.required,
 		},
 		{
 			id: 'name',
@@ -61,6 +64,7 @@ const useTicketFormInputConfig = ( ticket ) => {
 			changeListener: ( value ) => {
 				ticket.name = value;
 			},
+			validations: validations.required,
 			required: true,
 			minLength: 3,
 		},
@@ -86,7 +90,7 @@ const useTicketFormInputConfig = ( ticket ) => {
 						value || 0,
 						SiteCurrency
 					);
-					recalculateBasePrice();
+					recalculateBasePrice( ticket );
 				}
 			},
 			helpText: {
@@ -125,9 +129,16 @@ const useTicketFormInputConfig = ( ticket ) => {
 			id: 'startDate',
 			type: 'datetime-local',
 			label: __( 'Ticket Sales Start', 'event_espresso' ),
+			default: now,
 			changeListener: ( value, prevValue ) => {
-				if ( value !== prevValue ) {
-					ticket.startDate = new DateTime( value );
+				if ( value && value !== prevValue ) {
+					const newDate = new Date( value );
+					if (
+						newDate instanceof Date &&
+						! isNaN( newDate.getTime() )
+					) {
+						ticket.startDate = DateTime.fromJSDate( newDate );
+					}
 				}
 			},
 			validations: validations.required,
@@ -138,9 +149,16 @@ const useTicketFormInputConfig = ( ticket ) => {
 			id: 'endDate',
 			type: 'datetime-local',
 			label: __( 'Ticket Sales End', 'event_espresso' ),
+			default: now.plus( Duration.fromObject( { days: 30 } ) ),
 			changeListener: ( value, prevValue ) => {
-				if ( value !== prevValue ) {
-					ticket.endDate = new DateTime( value );
+				if ( value && value !== prevValue ) {
+					const newDate = new Date( value );
+					if (
+						newDate instanceof Date &&
+						! isNaN( newDate.getTime() )
+					) {
+						ticket.endDate = DateTime.fromJSDate( newDate );
+					}
 				}
 			},
 			validations: validations.required,

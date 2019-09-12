@@ -19,17 +19,19 @@ const useDateEntityInputConfig = ( dateEntity ) => useMemo( () => {
 			id: 'id',
 			label: __( 'Date ID', 'event_espresso' ),
 			default: false,
-			required: true,
 			disabled: true,
 			inputWidth: 3,
+			required: true,
+			validations: validations.required,
 		},
 		{
 			id: 'eventId',
 			label: __( 'Event ID', 'event_espresso' ),
 			default: false,
-			required: true,
 			disabled: true,
 			inputWidth: 3,
+			required: true,
+			validations: validations.required,
 		},
 		{
 			id: 'name',
@@ -56,7 +58,13 @@ const useDateEntityInputConfig = ( dateEntity ) => useMemo( () => {
 			default: now.plus( Duration.fromObject( { days: 30 } ) ),
 			changeListener: ( value, prevValue ) => {
 				if ( value !== prevValue ) {
-					dateEntity.start = new DateTime( value );
+					const newDate = new Date( value );
+					if (
+						newDate instanceof Date &&
+						! isNaN( newDate.getTime() )
+					) {
+						dateEntity.start = DateTime.fromJSDate( newDate );
+					}
 				}
 			},
 			validations: validations.required,
@@ -70,7 +78,13 @@ const useDateEntityInputConfig = ( dateEntity ) => useMemo( () => {
 			default: now.plus( Duration.fromObject( { days: 60 } ) ),
 			changeListener: ( value, prevValue ) => {
 				if ( value !== prevValue ) {
-					dateEntity.end = new DateTime( value );
+					const newDate = new Date( value );
+					if (
+						newDate instanceof Date &&
+						! isNaN( newDate.getTime() )
+					) {
+						dateEntity.end = DateTime.fromJSDate( newDate );
+					}
 				}
 			},
 			validations: validations.required,

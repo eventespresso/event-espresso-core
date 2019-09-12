@@ -39,7 +39,7 @@ class DateTimeDropdown extends Component {
 		initialValue: PropTypes.oneOfType( [
 			PropTypes.object,
 			PropTypes.string,
-		] ).isRequired,
+		] ),
 		htmlId: PropTypes.string.isRequired,
 		htmlClass: PropTypes.string,
 		helpTextID: PropTypes.string,
@@ -162,7 +162,9 @@ class DateTimeDropdown extends Component {
 			'form-control': true,
 			[ `ee-input-width-${ inputWidth }` ]: inputWidth,
 		} );
-		const inputValue = ServerDateTime.fromJSDate( this.state.inputValue );
+		const inputValue = this.state.inputValue instanceof Date ?
+			ServerDateTime.fromJSDate( this.state.inputValue ) :
+			ServerDateTime.fromJSDate( new Date() );
 		return (
 			<Dropdown
 				position="bottom center"
