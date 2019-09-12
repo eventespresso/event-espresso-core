@@ -13,8 +13,10 @@ import AssignTicketsMenuItem from './menu-items/assign-tickets-menu-item';
 import DateEntityMainMenuItem from './menu-items/date-entity-main-menu-item';
 import EditDateDetailsMenuItem from './menu-items/edit-date-details-menu-item';
 import DateEntityFormModal from '../edit-form/date-entity-form-modal';
+import useEventDateEditorId from '../edit-form/use-event-date-editor-id';
 
 const EditorDateEntityActionsMenu = ( { dateEntity } ) => {
+	const editorId = useEventDateEditorId( dateEntity );
 	const {
 		getActionsMenuForEntity,
 		registerEntityActionsMenuItem,
@@ -61,7 +63,10 @@ const EditorDateEntityActionsMenu = ( { dateEntity } ) => {
 			>
 				{ getActionsMenuForEntity( dateEntity ) }
 			</div>
-			<DateEntityFormModal dateEntity={ dateEntity } />
+			<DateEntityFormModal
+				editorId={ editorId }
+				dateEntity={ dateEntity }
+			/>
 		</>
 	);
 };
