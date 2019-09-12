@@ -43,12 +43,12 @@
 .ee-entity-details-separator {
     border: 0 solid rgba(0, 0, 0, 0);
     border-left: 1px solid rgba(0, 0, 0, .25);
-    height: var(--ee-font-size-huge);
+    height: calc(var(--ee-font-size-big) + var(--ee-font-size-bigger));
 }
 
 .ee-infinity-sign {
     font-size: var(--ee-font-size-bigger);
-    line-height: var(--ee-font-size-big);
+    line-height: .9;
     vertical-align: middle;
 }
 

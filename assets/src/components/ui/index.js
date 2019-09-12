@@ -7,7 +7,8 @@ export {
 	EntityActionMenuItem,
 	useEntityActionMenuItems,
 } from './entity-actions-menu';
-export { default as EntityDetailsPanel } from './entity-details-panel';
+export { default as EntityDetailsPanel }
+	from './entity-details-panel/entity-details-panel';
 export { default as EntityList } from './entity-list';
 export { default as EntityPaperFrame } from './entity-paper-frame';
 export { default as EspressoButton } from './espresso-button';
