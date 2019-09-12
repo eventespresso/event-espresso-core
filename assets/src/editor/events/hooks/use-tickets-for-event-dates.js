@@ -3,6 +3,7 @@
  */
 import { isEmpty } from 'lodash';
 import { useSelect } from '@wordpress/data';
+import { BaseEntity } from '@eventespresso/model';
 import { isModelEntityOfModel } from '@eventespresso/validators';
 
 const DEFAULT = {
