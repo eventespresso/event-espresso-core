@@ -11,6 +11,7 @@ import { isModelEntityOfModel } from '@eventespresso/validators';
  * @param {BaseEntity} ticket
  * @param {BaseEntity[]} allDates
  * @param {BaseEntity[]} allTickets
+ * @param {string} prefix
  * @return {string} editor id for ticket
  */
 const useTicketAssignmentsEditorId = (
@@ -18,6 +19,7 @@ const useTicketAssignmentsEditorId = (
 	ticket = null,
 	allDates = [],
 	allTickets = [],
+	prefix = ''
 ) => {
 	let editorId = 'ticket-assignments-manager';
 	editorId += isModelEntityOfModel( eventDate, 'datetime' ) ?
@@ -28,9 +30,12 @@ const useTicketAssignmentsEditorId = (
 		'-0';
 	editorId += '-' + allDates.length;
 	editorId += '-' + allTickets.length;
-	return editorId !== 'ticket-assignments-manager-0-0-0-0' ?
+	editorId = editorId !== 'ticket-assignments-manager-0-0-0-0' ?
 		editorId :
 		'';
+	return prefix !== '' && editorId !== '' ?
+		`${ prefix }-${ editorId }` :
+		editorId;
 };
 
 export default useTicketAssignmentsEditorId;
