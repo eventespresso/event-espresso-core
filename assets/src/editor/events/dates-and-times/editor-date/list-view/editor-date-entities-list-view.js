@@ -11,6 +11,7 @@ import {
 } from '@eventespresso/components';
 import { dateTimeModel } from '@eventespresso/model';
 import { isModelEntityOfModel } from '@eventespresso/validators';
+import { InfinitySign } from '@eventespresso/value-objects';
 
 /**
  * Internal dependencies

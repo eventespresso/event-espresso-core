@@ -21,6 +21,7 @@ const InlineEditEventDateName = ( { eventDate, wrapperElement } ) => useMemo(
 					value={ eventDate.name }
 					onChange={ ( name ) => {
 						eventDate.name = name;
+						return name;
 					} }
 					label={ __( 'Date Name', 'event_espresso' ) }
 					noticeStyle={

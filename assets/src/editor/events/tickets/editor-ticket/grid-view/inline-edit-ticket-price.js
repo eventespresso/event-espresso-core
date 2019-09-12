@@ -10,7 +10,7 @@ import { Money, SiteCurrency } from '@eventespresso/value-objects';
  * Internal dependencies
  */
 import useTicketBasePriceCalculator from
-		'../price-calculator/hooks/use-ticket-base-price-calculator';
+	'../price-calculator/hooks/use-ticket-base-price-calculator';
 import { usePriceTypes, useTicketPrices } from '../../../hooks';
 
 /**
@@ -53,6 +53,7 @@ const InlineEditTicketPrice = ( {
 				value={ ticketPriceAmount }
 				onChange={ ( amount ) => {
 					updateTicketPrice( amount );
+					return amount;
 				} }
 				label={ __( 'Ticket Price', 'event_espresso' ) }
 				valueFormatter={

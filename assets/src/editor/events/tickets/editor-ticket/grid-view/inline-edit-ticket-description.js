@@ -25,6 +25,7 @@ const InlineEditTicketDescription = ( {
 					value={ ticket.description }
 					onChange={ ( description ) => {
 						ticket.description = description;
+						return description;
 					} }
 					label={ __( 'Ticket Description', 'event_espresso' ) }
 				/>

@@ -2,13 +2,13 @@
  * External imports
  */
 import { useMemo } from '@wordpress/element';
+import { parseInfinity } from '@eventespresso/eejs';
 import { isModelEntityOfModel } from '@eventespresso/validators';
 
 /**
  * Internal imports
  */
 import useTicketFormInputPrefix from './use-ticket-form-input-prefix';
-import { parseInfinity } from '../../../../helpers';
 
 /**
  * returns an object mapping Ticket Entity properties to form prefixes

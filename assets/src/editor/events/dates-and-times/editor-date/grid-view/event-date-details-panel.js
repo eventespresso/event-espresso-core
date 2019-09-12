@@ -3,35 +3,39 @@
  */
 import { useMemo } from '@wordpress/element';
 import { EntityDetailsPanel } from '@eventespresso/components';
+import { parseInfinity } from '@eventespresso/eejs';
 import { __ } from '@eventespresso/i18n';
+import { InfinitySymbol } from '@eventespresso/value-objects';
 
 /**
  * Internal dependencies
  */
 import EventDateRegistrationsLink from '../event-date-registrations-link';
 
-const EventDateDetailsPanel = ( { dateEntity } ) => useMemo(
+const EventDateDetailsPanel = ( { eventDate } ) => useMemo(
 	() => {
 		const details = [
 			{
 				id: 'ee-event-date-sold',
 				label: __( 'sold', 'event_espresso' ),
-				value: dateEntity.sold || 0,
+				value: eventDate.sold || 0,
 			},
 			{
 				id: 'ee-event-date-reserved',
 				label: __( 'reserved', 'event_espresso' ),
-				value: dateEntity.reserved || 0,
+				value: eventDate.reserved || 0,
 			},
 			{
 				id: 'ee-event-date-capacity',
 				label: __( 'capacity', 'event_espresso' ),
-				value: dateEntity.regLimit || Infinity,
+				value: <InfinitySymbol value={ eventDate.regLimit } asInt />,
 				editable: {
 					type: 'text',
-					valueType: 'number',
-					onChange: ( capacity ) => {
-						dateEntity.regLimit = parseInt( capacity || 0, 10 );
+					valueType: 'infinite',
+					onChange: ( cap ) => {
+						cap = parseInfinity( cap, true, true );
+						eventDate.regLimit = cap;
+						return <InfinitySymbol value={ cap } asInt />;
 					},
 				},
 			},
@@ -40,7 +44,7 @@ const EventDateDetailsPanel = ( { dateEntity } ) => useMemo(
 				htmlClass: 'ee-has-tooltip',
 				label: __( 'registrants', 'event_espresso' ),
 				value: (
-					<EventDateRegistrationsLink dateEntity={ dateEntity } />
+					<EventDateRegistrationsLink dateEntity={ eventDate } />
 				),
 			},
 		];
@@ -50,11 +54,11 @@ const EventDateDetailsPanel = ( { dateEntity } ) => useMemo(
 		/>;
 	},
 	[
-		dateEntity.evtId,
-		dateEntity.id,
-		dateEntity.sold,
-		dateEntity.reserved,
-		dateEntity.regLimit,
+		eventDate.evtId,
+		eventDate.id,
+		eventDate.sold,
+		eventDate.reserved,
+		eventDate.regLimit,
 	]
 );
 

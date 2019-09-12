@@ -2,6 +2,7 @@
  * External imports
  */
 import { __ } from '@eventespresso/i18n';
+import { parseInfinity } from '@eventespresso/eejs';
 import { isModelEntityOfModel } from '@eventespresso/validators';
 
 /**
@@ -81,9 +82,9 @@ export const isSoldOut = ( DateTimeEntity, includeTrashed = false ) => {
 	) {
 		return false;
 	}
-	const cap = DateTimeEntity.regLimit;
-	return ( cap !== null && cap !== 'INF' && cap !== Infinity && cap !== -1 ) &&
-		DateTimeEntity.sold >= cap;
+	let cap = DateTimeEntity.regLimit;
+	cap = parseInfinity( cap, true );
+	return cap !== Infinity && DateTimeEntity.sold >= cap;
 };
 
 /**

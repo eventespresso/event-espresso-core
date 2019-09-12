@@ -3,7 +3,9 @@
  */
 import { useMemo } from '@wordpress/element';
 import { EntityDetailsPanel } from '@eventespresso/components';
+import { parseInfinity } from '@eventespresso/eejs';
 import { __ } from '@eventespresso/i18n';
+import { InfinitySymbol } from '@eventespresso/value-objects';
 
 /**
  * Internal dependencies
@@ -33,12 +35,14 @@ const TicketDetailsPanel = ( { ticket } ) => useMemo(
 			{
 				id: 'ee-ticket-qty',
 				label: __( 'quantity', 'event_espresso' ),
-				value: ticket.qty || Infinity,
+				value: <InfinitySymbol value={ ticket.qty } asInt />,
 				editable: {
 					type: 'text',
-					valueType: 'number',
+					valueType: 'infinite',
 					onChange: ( qty ) => {
-						ticket.qty = parseInt( qty, 10 );
+						qty = parseInfinity( qty, true, true );
+						ticket.qty = qty;
+						return <InfinitySymbol value={ qty } asInt />;
 					},
 				},
 			},
@@ -56,6 +60,7 @@ const TicketDetailsPanel = ( { ticket } ) => useMemo(
 		/>;
 	},
 	[
+		ticket.id,
 		ticket.qty,
 		ticket.reserved,
 		ticket.sold,

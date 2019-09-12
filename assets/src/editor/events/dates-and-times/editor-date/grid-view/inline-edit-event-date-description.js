@@ -25,6 +25,7 @@ const InlineEditEventDateDescription = ( {
 					value={ eventDate.description }
 					onChange={ ( desc ) => {
 						eventDate.description = desc;
+						return desc;
 					} }
 					label={ __( 'Date Description', 'event_espresso' ) }
 				/>

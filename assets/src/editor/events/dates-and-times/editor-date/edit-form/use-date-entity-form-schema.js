@@ -1,13 +1,13 @@
 /**
  * External imports
  */
+import { parseInfinity } from '@eventespresso/eejs';
 import { isModelEntityOfModel } from '@eventespresso/validators';
 
 /**
  * Internal imports
  */
 import useDateEntityFormInputPrefix from './use-date-entity-form-input-prefix';
-import { parseInfinity } from '../../../../helpers';
 
 /**
  * returns an object mapping

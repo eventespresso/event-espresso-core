@@ -21,6 +21,7 @@ const InlineEditTicketName = ( { ticket, wrapperElement } ) => useMemo(
 					value={ ticket.name }
 					onChange={ ( name ) => {
 						ticket.name = name;
+						return name;
 					} }
 					label={ __( 'Ticket Name', 'event_espresso' ) }
 				/>
