@@ -51,10 +51,6 @@ const EditAllTicketAssignmentsButton = ( { eventDates } ) => {
 					'Ticket Assignments for All Event Dates',
 					' event_espresso'
 				) }
-				editorCloseButtonLabel={ __(
-					'close ticket assignments manager',
-					'event_espresso'
-				) }
 			/>
 		</>
 	), [ editorId, eventDates, tickets ] );

@@ -19,6 +19,8 @@ import TicketAssignmentsManager from './ticket-assignments-manager';
  * @param {string} editorTitle
  * @param {string} editorHtmlClass
  * @param {string} editorCloseButtonLabel
+ * @param {Function} onEditorOpen
+ * @param {Function} onEditorClose
  * @param {Object} otherProps
  * @return {Object} rendered Ticket Assignments Manager with EditorModal
  */
@@ -27,6 +29,8 @@ const TicketAssignmentsManagerModal = ( {
 	editorTitle,
 	editorHtmlClass,
 	editorCloseButtonLabel,
+	onEditorOpen,
+	onEditorClose,
 	...otherProps
 } ) => {
 	return (
@@ -42,6 +46,8 @@ const TicketAssignmentsManagerModal = ( {
 					'event_espresso'
 				)
 			}
+			onEditorOpen={ onEditorOpen }
+			onEditorClose={ onEditorClose }
 		>
 			<TicketAssignmentsManager
 				editorId={ editorId }

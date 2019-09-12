@@ -30,7 +30,7 @@ const AssignTicketsMenuItem = ( { dateEntity } ) => {
 		dateEntity,
 		null,
 		[],
-		allTickets,
+		allTickets
 	);
 	const tooltip = tickets.length < 1 ?
 		__(
@@ -63,10 +63,6 @@ const AssignTicketsMenuItem = ( { dateEntity } ) => {
 					`${ dateEntity.name } (${
 						dateEntity.start.toFormat( 'ddd MMM DD, YYYY' )
 					})`
-				) }
-				editorCloseButtonLabel={ __(
-					'close ticket assignments manager',
-					'event_espresso'
 				) }
 			/>
 		</>

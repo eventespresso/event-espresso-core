@@ -57,10 +57,6 @@ const AssignDatesMenuItem = ( { ticketEntity } ) => {
 					),
 					ticketEntity.name
 				) }
-				editorCloseButtonLabel={ __(
-					'close ticket assignments manager',
-					'event_espresso'
-				) }
 			/>
 		</>
 	);
