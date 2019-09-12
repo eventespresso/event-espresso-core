@@ -10,7 +10,7 @@ import { fromJS, Map, Set } from 'immutable';
 import {
 	getRelatedEntities,
 	getRelatedEntitiesForIds,
-	getRelationIdsForEntityRelation,
+	getIdsForRelatedEntities,
 	getRelationAdditionsQueuedForModel,
 	getRelationDeletionsQueuedForModel,
 	countRelationModelsIndexedForEntity,
@@ -26,11 +26,11 @@ import { removeEntityById } from '../../reducers/entities';
 import { removeRelatedEntitiesForEntity } from '../../reducers/relations';
 import { trashEntity } from '../../reducers/dirty-entities';
 
-describe( 'getRelationIdsForEntityRelation()', () => {
-	beforeEach( () => getRelationIdsForEntityRelation.clear() );
+describe( 'getIdsForRelatedEntities()', () => {
+	beforeEach( () => getIdsForRelatedEntities.clear() );
 	it( 'throws InvalidModelEntity when the provided entity is not a model ' +
 		'entity', () => {
-		const test = () => getRelationIdsForEntityRelation(
+		const test = () => getIdsForRelatedEntities(
 			mockStateForTests,
 			{},
 			'cheese'
@@ -41,7 +41,7 @@ describe( 'getRelationIdsForEntityRelation()', () => {
 		const testEvent = EventFactory.createNew( {
 			EVT_name: 'Test Event',
 		} );
-		expect( getRelationIdsForEntityRelation(
+		expect( getIdsForRelatedEntities(
 			mockStateForTests,
 			testEvent,
 			'datetime'
@@ -49,14 +49,14 @@ describe( 'getRelationIdsForEntityRelation()', () => {
 	} );
 	it( 'returns empty array when the given entity exists but the relation is' +
 		'not in state', () => {
-		expect( getRelationIdsForEntityRelation(
+		expect( getIdsForRelatedEntities(
 			mockStateForTests,
 			EventEntities.a,
 			'cheese'
 		) ).toEqual( [] );
 	} );
 	it( 'returns expected array for the given entity and relation', () => {
-		expect( getRelationIdsForEntityRelation(
+		expect( getIdsForRelatedEntities(
 			mockStateForTests,
 			EventEntities.a,
 			'datetime'
@@ -64,19 +64,19 @@ describe( 'getRelationIdsForEntityRelation()', () => {
 	} );
 	it( 'returns cached copy when state has not changed for the given ' +
 		'query', () => {
-		const testResult = getRelationIdsForEntityRelation(
+		const testResult = getIdsForRelatedEntities(
 			mockStateForTests,
 			EventEntities.a,
 			'datetime'
 		);
-		expect( getRelationIdsForEntityRelation(
+		expect( getIdsForRelatedEntities(
 			mockStateForTests,
 			EventEntities.a,
 			'datetime'
 		) ).toBe( testResult );
 	} );
 	it( 'breaks cache when state has changed', () => {
-		const testResult = getRelationIdsForEntityRelation(
+		const testResult = getIdsForRelatedEntities(
 			mockStateForTests,
 			EventEntities.a,
 			'datetime',
@@ -90,7 +90,7 @@ describe( 'getRelationIdsForEntityRelation()', () => {
 			],
 			Set.of( 52, 88 )
 		);
-		const modifiedResult = getRelationIdsForEntityRelation(
+		const modifiedResult = getIdsForRelatedEntities(
 			modifiedState,
 			EventEntities.a,
 			'datetime',

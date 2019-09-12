@@ -12,7 +12,7 @@ A `*` next to the selector means that this has a corresponding resolver.
 * [ ] getEntityIdsQueuedForDelete( modelName ) - returns array of ids
 * [ ] getModelsQueuedForTrash( modelName ) - returns array of model names
 * [ ] getModelsQueuedForDelete( modelName ) - returns array of model names
-* [ ] getRelationIdsForEntityRelation( entity, relationName ) - returns array of ids
+* [ ] getIdsForRelatedEntities( entity, relationName ) - returns array of ids
 * [ ] getRelatedEntities( entity, relationName ) * - returns array of entities
 * [ ] getRelationAdditionsQueuedForModel( modelName ) - returns object keyed by entity ids indexing an object keyed by relation name sand values being array of ids for relation
 * [ ] getRelationDeletionsQueuedForModel( modelName ) - same as previous
