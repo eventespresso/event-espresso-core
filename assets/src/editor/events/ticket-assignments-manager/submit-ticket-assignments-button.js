@@ -47,6 +47,10 @@ const SubmitTicketAssignmentsButton = ( {
 				'event_espresso'
 			) }
 			submitting={ submitting }
+			submittingText={ __(
+				'Updating Ticket Assignments',
+				'event_espresso'
+			) }
 			disabled={ disabled }
 		/>
 	), [ assignedState, processChanges, submitting, disabled ] );

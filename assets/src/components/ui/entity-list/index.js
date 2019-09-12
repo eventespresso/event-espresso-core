@@ -19,12 +19,12 @@ import withFormContainerAndPlaceholder
  *
  * @function
  * @param {Array} entities
- * @param {mixed} otherProps
  * @param {Component} EntityGridView
  * @param {Component} EntityListView
  * @param {string} htmlClass
  * @param {string} view
  * @param {string} noResultsText
+ * @param {mixed} otherProps
  * @return {Component} list of rendered entities
  */
 const EntityList = ( {

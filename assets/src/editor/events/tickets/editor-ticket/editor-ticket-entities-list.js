@@ -77,7 +77,7 @@ const EditorTicketEntitiesList = ( { ...otherProps } ) => {
 		isChained,
 		showTickets,
 		ticketsSortedBy,
-		tickets.length,
+		Array.isArray( tickets ) ? tickets.length : 0,
 	] );
 	return (
 		<FormWrapper>

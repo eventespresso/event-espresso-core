@@ -40,6 +40,7 @@ const EditTicketFormModal = ( {
 				FormComponent={ EditTicketForm }
 				ticketEntity={ ticketEntity }
 				formData={ formData }
+				loading={ false }
 				{ ...otherProps }
 			/>
 		</EditorModal>

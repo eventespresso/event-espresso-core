@@ -27,7 +27,7 @@ const EditorDateEntityDetails = ( {
 				eventDate={ dateEntity }
 				showVenue={ showVenue }
 			/>
-			<EventDateDetailsPanel dateEntity={ dateEntity } />
+			<EventDateDetailsPanel eventDate={ dateEntity } />
 		</div>
 	);
 };
