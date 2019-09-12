@@ -1,7 +1,7 @@
 /**
  * External imports
  */
-import { __DEV__ } from '@eventespresso/eejs';
+import { __DEV__ } from '../constants';
 
 const { console } = window;
 
@@ -14,17 +14,17 @@ const { console } = window;
  * @param {string} source - where click originated
  */
 const cancelClickEvent = ( click, source = '' ) => {
-	if ( __DEV__ && source !== '' ) {
-		console.log(
-			'%c >> CLICK <<',
-			'font-size: 13px; color: yellow;',
-			source,
-			click
-		);
-	}
 	if ( click && typeof click.preventDefault === 'function' ) {
 		click.preventDefault();
 		click.stopPropagation();
+		if ( __DEV__ && source !== '' ) {
+			console.log(
+				'%c >> CLICK <<',
+				'font-size: 13px; color: yellow;',
+				source,
+				click
+			);
+		}
 	}
 };
 

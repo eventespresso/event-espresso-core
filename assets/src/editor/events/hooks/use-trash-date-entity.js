@@ -3,10 +3,9 @@
  */
 import { useDispatch } from '@wordpress/data';
 import { useCallback } from '@wordpress/element';
+import { cancelClickEvent } from '@eventespresso/eejs';
 import { __ } from '@eventespresso/i18n';
 import { isModelEntityOfModel } from '@eventespresso/validators';
-
-import cancelClickEvent from '../../helpers/cancel-click-event';
 
 const { confirm } = window;
 

@@ -4,14 +4,17 @@
 import PropTypes from 'prop-types';
 import { IconButton } from '@wordpress/components';
 import { ENTER } from '@wordpress/keycodes';
+import { cancelClickEvent } from '@eventespresso/eejs';
 
+/**
+ * Internal imports
+ */
 import { useAssignmentAction } from './hooks';
 import {
 	determineCurrentAssignment,
 	getIconAndBgColor,
 	isCurrentlyAssigned,
 } from './utils';
-import cancelClickEvent from '../../helpers/cancel-click-event';
 
 /**
  * @function

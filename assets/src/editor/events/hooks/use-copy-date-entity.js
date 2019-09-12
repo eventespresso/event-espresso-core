@@ -4,6 +4,7 @@
 import { isEmpty } from 'lodash';
 import { useDispatch } from '@wordpress/data';
 import { useCallback } from '@wordpress/element';
+import { cancelClickEvent } from '@eventespresso/eejs';
 import { _x, sprintf } from '@eventespresso/i18n';
 import { isModelEntityOfModel } from '@eventespresso/validators';
 
@@ -11,7 +12,6 @@ import { isModelEntityOfModel } from '@eventespresso/validators';
  * Internal imports
  */
 import { useEventEditorEvent, useTicketsForEventDates } from './index';
-import cancelClickEvent from '../../helpers/cancel-click-event';
 
 /**
  * @function

@@ -3,7 +3,7 @@
  */
 import { useDispatch } from '@wordpress/data';
 import { useCallback } from '@wordpress/element';
-import cancelClickEvent from '../../helpers/cancel-click-event';
+import { cancelClickEvent } from '@eventespresso/eejs';
 
 /**
  * @function
