@@ -16,10 +16,10 @@ const useCreateDateEntity = ( event, cacheNewDate ) => {
 	return useCallback(
 		async () => {
 			const newDate = await createEntity( 'datetime', {} );
-			updateEventDateRelation( event, newDate );
+			await updateEventDateRelation( event, newDate );
 			cacheNewDate( newDate );
 		},
-		[ createEntity, updateEventDateRelation ]
+		[ event, cacheNewDate ]
 	);
 };
 

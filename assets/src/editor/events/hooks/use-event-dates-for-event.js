@@ -25,7 +25,7 @@ const useEventDatesForEvent = ( event, eventLoaded = true ) => {
 		}
 		const { getRelatedEntities } = select( 'eventespresso/core' );
 		const { hasFinishedResolution } = select( 'core/data' );
-		const entities = getRelatedEntities( event, 'datetime' );
+		const entities = getRelatedEntities( event, 'datetime', 'event' );
 		const loaded = hasFinishedResolution(
 			'eventespresso/core',
 			'getRelatedEntities',

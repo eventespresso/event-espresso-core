@@ -35,7 +35,7 @@ const useCreateRelationForEventToEventDate = () => {
 				)
 			);
 		}
-		createRelation(
+		return createRelation(
 			'event',
 			eventEntity.id,
 			'datetime',

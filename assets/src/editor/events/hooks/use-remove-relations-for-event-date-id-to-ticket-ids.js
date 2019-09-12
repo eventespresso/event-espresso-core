@@ -16,7 +16,7 @@ import { useCallback } from '@wordpress/element';
  */
 const useRemoveRelationsForEventDateIdToTicketIds = () => {
 	const { removeRelationForEntity } = useDispatch( 'eventespresso/core' );
-	return useCallback( async ( eventDateId, ticketIds ) => {
+	return useCallback( ( eventDateId, ticketIds ) => {
 		const relationsRemoved = [];
 		ticketIds = Array.isArray( ticketIds ) ? ticketIds : [ ticketIds ];
 		ticketIds.forEach( ( ticketId ) => {

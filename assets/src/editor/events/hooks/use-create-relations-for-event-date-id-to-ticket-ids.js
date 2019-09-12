@@ -41,6 +41,7 @@ const useCreateRelationsForEventDateIdToTicketIds = () => {
 			'ticket',
 			tickets,
 		);
+		return new Promise( ( resolve ) => resolve( true ) );
 	} );
 };
 
