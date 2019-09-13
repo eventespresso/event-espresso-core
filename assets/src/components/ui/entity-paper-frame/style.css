@@ -4,7 +4,7 @@
  * ------------------------------------------------------------------------- */
 
 .ee-entity-paper-frame-wrapper {
-    margin: 0 1.3% var(--ee-margin-small) 0;
+    margin: 0 1.3% var(--ee-margin-default) 0;
     max-width: calc(var(--ee-font-size-small) * 33);
     min-width: calc(var(--ee-font-size-small) * 27);
     position: relative;

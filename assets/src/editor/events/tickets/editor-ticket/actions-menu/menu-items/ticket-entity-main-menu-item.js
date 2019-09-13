@@ -1,35 +1,20 @@
 /**
  * External imports
  */
-import { compose } from '@wordpress/compose';
-import { useCallback } from '@wordpress/element';
 import { DropDownMenu } from '@eventespresso/components';
-import { ifValidTicketEntity } from '@eventespresso/editor-hocs';
+import { ifValidTicketEntity, useOpenEditor } from '@eventespresso/editor-hocs';
 import { __ } from '@eventespresso/i18n';
 
 /**
  * Internal dependencies
  */
-import {
-	withCopyTicketEntity,
-	withTrashTicketEntity,
-} from '../../action-handlers';
+import useTicketEditorId from '../../edit-form/use-ticket-editor-id';
+import useCopyTicket from '../../../../hooks/use-copy-ticket';
+import useTicketEventDates from '../../../../hooks/use-ticket-event-dates';
+import useTrashTicket from '../../../../hooks/use-trash-ticket';
 
-const TicketEntityMainMenuItem = ( {
-	ticketEntity,
-	toggleTicketEditor,
-	copyTicketEntity,
-	trashTicketEntity,
-	dateEntities = [],
-} ) => {
-	const copyTicket = useCallback(
-		() => copyTicketEntity( ticketEntity, dateEntities ),
-		[ copyTicketEntity, ticketEntity, dateEntities ]
-	);
-	const trashTicket = useCallback(
-		() => trashTicketEntity( ticketEntity ),
-		[ trashTicketEntity, ticketEntity ]
-	);
+const TicketEntityMainMenuItem = ( { ticketEntity } ) => {
+	const { eventDates } = useTicketEventDates( ticketEntity );
 	return (
 		<DropDownMenu
 			tooltip={ __( 'ticket main menu', 'event_espresso' ) }
@@ -39,26 +24,22 @@ const TicketEntityMainMenuItem = ( {
 				{
 					title: __( 'edit ticket', 'event_espresso' ),
 					icon: 'edit',
-					onClick: toggleTicketEditor,
+					onClick: useOpenEditor( useTicketEditorId( ticketEntity ) ),
 					ticketEntity,
 				},
 				{
 					title: __( 'copy ticket', 'event_espresso' ),
 					icon: 'admin-page',
-					onClick: copyTicket,
+					onClick: useCopyTicket( ticketEntity, eventDates ),
 				},
 				{
 					title: __( 'trash ticket', 'event_espresso' ),
 					icon: 'trash',
-					onClick: trashTicket,
+					onClick: useTrashTicket( ticketEntity ),
 				},
 			] }
 		/>
 	);
 };
 
-export default compose( [
-	withCopyTicketEntity,
-	withTrashTicketEntity,
-	ifValidTicketEntity,
-] )( TicketEntityMainMenuItem );
+export default ifValidTicketEntity( TicketEntityMainMenuItem );

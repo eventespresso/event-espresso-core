@@ -1,0 +1,236 @@
+/** -------------------------------------------------------------------------
+ * Event Espresso EntityListFilterBar Stylesheet
+ * © 2018 Event Espresso
+ * ------------------------------------------------------------------------- */
+
+.ee-entity-list-filter-bar-wrapper {
+    background: var(--ee-background-color);
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+    color: var(--ee-default-text-color);
+    display: flex;
+    flex-flow: row wrap;
+    justify-content: space-between;
+    padding: 0 var(--ee-padding-tiny) var(--ee-padding-tiny);
+    border-bottom-color: var(--ee-color-grey-12);
+    border-bottom-style: solid;
+    border-bottom-width: 1px;
+    margin: 0 0 var(--ee-margin-small);
+}
+
+.ee-entity-list-filter-bar,
+.ee-entity-list-view-bar {
+    display: flex;
+    flex-flow: row wrap;
+    /*align-items: flex-end;*/
+    align-items: flex-start;
+}
+
+.ee-entity-list-filter-bar {
+    justify-content: flex-start;
+    margin-right: var(--ee-margin-small);
+}
+
+.ee-entity-list-view-bar {
+    /*max-height: var(--ee-icon-button-size);*/
+    justify-content: flex-end;
+    /*margin: -1px calc(var(--ee-margin-micro) * -1) var(--ee-margin-smaller) 0;*/
+}
+.ee-entity-list-filter-bar-perPage-select {
+    text-align: right;
+}
+
+.ee-entity-list-filter-bar .ee-filter-bar-filter {
+    margin: 0 var(--ee-margin-small) var(--ee-margin-smaller) 0;
+    max-width: 100%;
+    white-space: pre;
+}
+
+.ee-entity-list-view-bar .ee-filter-bar-filter {
+    display: flex;
+    flex-flow: row nowrap;
+    /*height: var(--ee-icon-button-size);*/
+    justify-content: flex-end;
+    align-items: flex-start;
+    margin: 0 0 0 var(--ee-margin-small);
+    max-width: 100%;
+}
+.ee-entity-list-view-bar .ee-search-filter {
+    margin: 0;
+}
+
+.ee-entity-list-view-bar .ee-per-page-filter {
+    margin: 0 var(--ee-margin-micro) 0 0;
+    /*max-height: var(--ee-icon-button-size);*/
+}
+
+.ee-entity-list-view-bar .ee-grid-view-filter {
+    margin: 0 calc(var(--ee-margin-micro) * -1) 0 0;
+}
+
+.ee-entity-list-view-bar .ee-grid-view-filter,
+.ee-entity-list-view-bar .ee-list-view-filter {
+    height: var(--ee-icon-button-size);
+    width: var(--ee-icon-button-size);
+}
+
+.ee-entity-list-view-options {
+    display: flex;
+    flex-flow: row nowrap;
+    justify-content: flex-end;
+    align-items: flex-start;
+}
+
+.ee-entity-list-filter-bar-wrapper .components-icon-button {
+    margin-top: calc(var(--ee-margin-micro) + 19px);
+}
+
+.ee-entity-list-view-bar .components-icon-button {
+    color: var(--ee-default-text-color);
+}
+
+.ee-entity-list-view-bar .components-icon-button.active-list {
+    color: var(--ee-color-primary);
+}
+
+.ee-entity-list-filter-bar-wrapper .components-base-control__label {
+    color: var(--ee-default-text-color);
+    display: block;
+    font-weight: bold;
+    margin: var(--ee-margin-micro) var(--ee-margin-micro) 0;
+    white-space: nowrap;
+    width: 100%;
+}
+
+.ee-entity-list-filter-bar-wrapper .ee-entity-list-filter-bar-perPage-select .components-base-control__label {
+    margin-left: 2px;
+}
+
+.ee-entity-list-filter-bar-wrapper .components-text-control__input,
+.ee-entity-list-filter-bar-wrapper .components-select-control__input {
+    display: block;
+    width: auto;
+    max-width: 100%;
+}
+
+.ee-entity-list-filter-bar-wrapper input,
+.ee-entity-list-filter-bar-wrapper select {
+    background-color: var(--ee-background-color);
+    background-clip: padding-box;
+    border: 1px solid var(--ee-border-color);
+    border-radius: var(--ee-border-radius-small);
+    box-shadow: none;
+    box-sizing: border-box !important;
+    color: var(--ee-default-text-color);
+    display: inline-block;
+    font-size: var(--ee-font-size-default);
+    line-height: 1;
+    height: var(--ee-icon-button-size) !important;
+    padding: var(--ee-padding-micro) var(--ee-padding-tiny);
+    transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+    vertical-align: middle;
+    width: 100%;
+}
+
+
+.ee-entity-list-filter-bar-wrapper select option {
+    line-height: 20 !important;
+    min-height: calc(var(--ee-padding-small) * 30) !important;
+    padding: calc(var(--ee-padding-small) * 10) var(--ee-padding-tiny) !important;
+}
+
+
+/* Media Queries for specific screen sizes
+ * -------------------------------------------------------------------------*/
+
+@media only screen and (max-width: 1920px) {
+}
+
+@media only screen and (max-width: 1600px) {
+}
+
+@media only screen and (max-width: 1366px) {
+}
+
+@media only screen and (max-width: 1280px) {
+
+    .ee-entity-list-filter-bar-wrapper .components-base-control__label,
+    .ee-entity-list-filter-bar-wrapper .components-select-control__input {
+        display: block;
+    }
+
+    .ee-entity-list-filter-bar {
+        margin: 0 0 var(--ee-margin-default);
+    }
+
+    .ee-entity-list-view-bar {
+        max-height: 118px;
+    }
+}
+
+@media only screen and (max-width: 1024px) {
+}
+
+/* WordPress Admin Media Query Breakpoint: Auto-folding of the admin menu */
+@media only screen and (max-width: 960px) {
+}
+
+/* WordPress Admin Media Query Breakpoint: one column on the post write/edit screen */
+@media only screen and (max-width: 850px) {
+}
+
+/* WordPress Admin Media Query Breakpoint: Tablet */
+@media screen and ( max-width: 782px ) {
+}
+
+/* WordPress Admin Media Query Breakpoint: Smartphone */
+@media screen and (max-width: 600px) {
+
+    .ee-entity-list-filter-bar-wrapper {
+        flex-flow: column nowrap;
+        padding-bottom: var(--ee-padding-small);
+    }
+
+    .ee-entity-list-filter-bar,
+    .ee-entity-list-view-bar {
+        width: 100%;
+    }
+
+    .ee-entity-list-view-bar {
+        flex-flow: row nowrap;
+        justify-content: flex-start;
+        height: calc(var(--ee-icon-button-size) * 1.5);
+        margin: 0;
+        text-align: left;
+    }
+
+    .ee-entity-list-view-bar .ee-filter-bar-filter {
+        height: auto;
+        margin: 0 var(--ee-margin-small) 0 0;
+    }
+}
+
+@media only screen and (max-width: 480px) {
+
+    .ee-entity-list-filter-bar .ee-filter-bar-filter {
+        margin: 0 var(--ee-margin-small) var(--ee-margin-smaller) 0;
+    }
+
+    .ee-entity-list-view-bar {
+        flex-flow: row wrap;
+        height: auto;
+        max-height: unset;
+    }
+
+    .ee-entity-list-view-bar .ee-filter-bar-filter {
+        height: auto;
+        justify-content: flex-start;
+        margin: 0 var(--ee-margin-small) var(--ee-margin-smaller) 0;
+        max-height: unset;
+    }
+}
+
+@media only screen and (max-width: 360px) {
+}
+

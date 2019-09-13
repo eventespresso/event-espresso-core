@@ -1,7 +1,8 @@
 /**
  * Register stores
  */
-import './eventespresso/schema';
 import './eventespresso/core';
-import './eventespresso/lists';
+import './eventespresso/open-editor-state';
 import './eventespresso/filter-state';
+import './eventespresso/lists';
+import './eventespresso/schema';

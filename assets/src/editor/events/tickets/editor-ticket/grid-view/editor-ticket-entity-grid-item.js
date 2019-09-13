@@ -1,16 +1,14 @@
 /**
  * External imports
  */
-import { Component, Fragment, useReducer } from '@wordpress/element';
-import { __ } from '@eventespresso/i18n';
-import { compose } from '@wordpress/compose';
+import { useMemo } from '@wordpress/element';
 import {
 	BiggieCalendarDate,
 	CalendarDateRange,
-	withEntityPaperFrame,
+	EntityPaperFrame,
 } from '@eventespresso/components';
+import { __ } from '@eventespresso/i18n';
 import { ticketModel } from '@eventespresso/model';
-import { isModelEntityOfModel } from '@eventespresso/validators';
 
 /**
  * Internal dependencies
@@ -18,6 +16,7 @@ import { isModelEntityOfModel } from '@eventespresso/validators';
 import EditorTicketEntityDetails from './editor-ticket-entity-details';
 import EditorTicketActionsMenu
 	from '../actions-menu/editor-ticket-actions-menu';
+import { ifValidTicketEntity } from '../../../../hocs/if-validators';
 
 const {
 	getBackgroundColorClass,
@@ -30,113 +29,126 @@ const {
  * EditorTicketEntityGridItem
  *
  * @function
- * @param {Object} ticket    JSON object defining the Event Ticket
- * @return {string}        The ticket rendered as a block
+
+ * @param {Object} ticketEntity
+ * @param {string} showDate
+ * @return {Object} rendered ticket
  */
-class EditorTicketEntityGridItem extends Component {
-	/**
-	 * @function
-	 * @param {Object} ticketEntity
-	 * @param {string} showDate
-	 * @return {Object} rendered ticket
-	 */
-	displayTicket = ( ticketEntity, showDate ) => {
-		let sidebarColorClass = 'ee-editor-ticket-calendar-sidebar ';
-		sidebarColorClass += getBackgroundColorClass( ticketEntity );
-		const ticketStatusID = status( ticketEntity );
-		let label = '';
-		if ( showDate === 'start' ) {
-			label = __( 'Sale Started', 'event_espresso' );
-			if ( ticketStatusID === TICKET_STATUS_ID.EXPIRED ) {
-				label = __( 'Sale Ended', 'event_espresso' );
-			} else if ( ticketStatusID === TICKET_STATUS_ID.PENDING ) {
-				label = __( 'Goes On Sale', 'event_espresso' );
+const EditorTicketEntityGridItem = ( {
+	ticketEntity,
+	displayTicketDate = 'start',
+} ) => {
+	const ticketStart = ticketEntity.startDate.toISO();
+	const ticketEnd = ticketEntity.endDate.toISO();
+	const ticketStatusID = useMemo(
+		() => status( ticketEntity ),
+		[
+			ticketEntity.deleted,
+			ticketEntity.sold,
+			ticketEntity.qty,
+			ticketStart,
+			ticketEnd,
+		]
+	);
+	const label = useMemo(
+		() => {
+			if ( displayTicketDate === 'start' ) {
+				if ( ticketStatusID === TICKET_STATUS_ID.EXPIRED ) {
+					return __( 'Sale Ended', 'event_espresso' );
+				}
+				if ( ticketStatusID === TICKET_STATUS_ID.PENDING ) {
+					return __( 'Goes On Sale', 'event_espresso' );
+				}
+				return __( 'Sale Started', 'event_espresso' );
 			}
-		} else if ( showDate === 'end' ) {
-			label = __( 'Sale Ends', 'event_espresso' );
-			if ( ticketStatusID === TICKET_STATUS_ID.EXPIRED ) {
-				label = __( 'Sale Ended', 'event_espresso' );
+			if ( displayTicketDate === 'end' ) {
+				if ( ticketStatusID === TICKET_STATUS_ID.EXPIRED ) {
+					return __( 'Sale Ended', 'event_espresso' );
+				}
+				return __( 'Sale Ends', 'event_espresso' );
 			}
-		}
-		const ticketStatus = (
+		},
+		[ ticketStatusID, displayTicketDate ]
+	);
+
+	const ticketStatus = useMemo(
+		() => (
 			<span key={ 1 } className={ 'ee-status-tag' }>
 				{ getTicketStatusTextLabel( ticketEntity ) }
 			</span>
-		);
+		),
+		// getTicketStatusTextLabel() relies solely on status()
+		// which is same as ticketStatusID, so we can use that as a dependency
+		[ ticketStatusID ]
+	);
 
-		switch ( showDate ) {
-			case 'end' :
-				const end = ticketEntity.endDate.toFormat( 'h:mm a' );
-				return <BiggieCalendarDate
-					date={ ticketEntity.endDate }
-					htmlClass={ sidebarColorClass }
-					headerText={ label }
-					footerText={ [ end, ticketStatus ] }
-					position="right"
-				/>;
-			case 'both' :
-				return (
-					<CalendarDateRange
-						startDate={ ticketEntity.startDate }
-						endDate={ ticketEntity.endDate }
+	const sidebarColorClass = useMemo(
+		() => {
+			const bgClass = getBackgroundColorClass( ticketEntity );
+			return `ee-editor-ticket-calendar-sidebar ${ bgClass }`;
+		},
+		// getBackgroundColorClass() also relies solely on status()
+		// which is same as ticketStatusID, so we can use that as a dependency
+		[ ticketStatusID ]
+	);
+
+	const ticketDate = useMemo(
+		() => {
+			switch ( displayTicketDate ) {
+				case 'end' :
+					const end = ticketEntity.endDate.toFormat( 'h:mm a' );
+					return <BiggieCalendarDate
+						date={ ticketEntity.endDate }
 						htmlClass={ sidebarColorClass }
-						headerText={ __( 'Sale Date', 'event_espresso' ) }
-						footerText={ ticketStatus }
+						headerText={ label }
+						footerText={ [ end, ticketStatus ] }
 						position="right"
-					/>
-				);
-			case 'start' :
-			default :
-				const start = ticketEntity.startDate.toFormat( 'h:mm a' );
-				return <BiggieCalendarDate
-					date={ ticketEntity.startDate }
-					htmlClass={ sidebarColorClass }
-					headerText={ label }
-					footerText={ [ start, ticketStatus ] }
-					position="right"
-				/>;
-		}
-	};
+					/>;
+				case 'both' :
+					return (
+						<CalendarDateRange
+							startDate={ ticketEntity.startDate }
+							endDate={ ticketEntity.endDate }
+							htmlClass={ sidebarColorClass }
+							headerText={ __( 'Sale Date', 'event_espresso' ) }
+							footerText={ ticketStatus }
+							position="right"
+						/>
+					);
+				case 'start' :
+				default :
+					const start = ticketEntity.startDate.toFormat( 'h:mm a' );
+					return <BiggieCalendarDate
+						date={ ticketEntity.startDate }
+						htmlClass={ sidebarColorClass }
+						headerText={ label }
+						footerText={ [ start, ticketStatus ] }
+						position="right"
+					/>;
+			}
+		},
+		[
+			// using ticketStatusID as a dependency here as well
+			// and not using label since it shares same dependencies already
+			ticketStatusID,
+			displayTicketDate,
+			ticketStart,
+			ticketEnd,
+		]
+	);
 
-	render() {
-		const {
-			ticketEntity,
-			displayTicketDate = 'start',
-			doRefresh,
-			refreshed,
-		} = this.props;
-		if ( ! isModelEntityOfModel( ticketEntity, 'ticket' ) ) {
-			return null;
-		}
-		const dateStyleClass = displayTicketDate === 'both' ?
-			'ee-editor-date-range' :
-			'ee-editor-date-single';
-		return (
-			<Fragment>
-				<div className={ `ee-editor-ticket-main ${ dateStyleClass }` }>
-					<EditorTicketEntityDetails
-						ticketEntity={ ticketEntity }
-						refreshed={ refreshed }
-					/>
-					{ this.displayTicket( ticketEntity, displayTicketDate ) }
-				</div>
-				<EditorTicketActionsMenu
-					ticketEntity={ ticketEntity }
-					doRefresh={ doRefresh }
-				/>
-			</Fragment>
-		);
-	}
-}
+	const dateStyleClass = displayTicketDate === 'both' ?
+		'ee-editor-date-range' :
+		'ee-editor-date-single';
+	return (
+		<EntityPaperFrame>
+			<div className={ `ee-editor-ticket-main ${ dateStyleClass }` }>
+				<EditorTicketEntityDetails ticketEntity={ ticketEntity } />
+				{ ticketDate }
+			</div>
+			<EditorTicketActionsMenu ticketEntity={ ticketEntity } />
+		</EntityPaperFrame>
+	);
+};
 
-export default compose( [
-	( WrappedComponent ) => ( props ) => {
-		const [ refreshed, doRefresh ] = useReducer( ( s ) => s + 1, 0 );
-		return <WrappedComponent
-			{ ...props }
-			doRefresh={ doRefresh }
-			refreshed={ refreshed }
-		/>;
-	},
-	withEntityPaperFrame,
-] )( EditorTicketEntityGridItem );
+export default ifValidTicketEntity( EditorTicketEntityGridItem );

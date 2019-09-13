@@ -109,6 +109,7 @@
 
 .ee-editor-date-details-sold-rsrvd-cap-div {
     bottom: var(--ee-margin-micro);
+    margin-left: var(--ee-margin-nano);
     position: absolute;
     z-index: 10;
 }
@@ -119,11 +120,6 @@
     position: absolute;
     right: var(--ee-padding-micro);
     top: var(--ee-padding-micro);
-}
-
-
-.ee-editor-date-details-sold-rsrvd-cap-div .ee-event-date-registrants-label {
-    margin-left: calc(var(--ee-margin-micro) * -1);
 }
 
 

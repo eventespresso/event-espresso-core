@@ -1,10 +1,16 @@
 
+.ee-rspnsv-table-wrapper {
+    margin: 0 auto var(--ee-margin-smaller);
+    max-width: 100%;
+    overflow-x: auto;
+    overflow-y: visible;
+}
+
 .ee-rspnsv-table {
     border-collapse: separate !important;
     border-spacing: 0 var(--ee-padding-nano) !important;
     box-sizing: border-box;
     display: table;
-    margin: 0 auto var(--ee-margin-smaller);
     table-layout: fixed;
     text-align: left;
 }
@@ -181,10 +187,12 @@
 .ee-rspnsv-table .ee-rspnsv-table-header-th,
 .ee-rspnsv-table .ee-rspnsv-table-body-td,
 .ee-rspnsv-table .ee-rspnsv-table-footer-th {
+    min-width: 90px;
     width: 1.0000%
 }
 
 .ee-rspnsv-table .ee-rspnsv-table-body-th {
+    min-width: 180px;
     width: 2.0000%
 }
 

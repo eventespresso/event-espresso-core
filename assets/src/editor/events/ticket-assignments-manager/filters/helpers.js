@@ -1,11 +1,6 @@
 /**
- * External imports
- */
-import { isModelEntityOfModel } from '@eventespresso/validators';
-
-/**
  * @function
- * @param {Object} dateEntity
+ * @param {boolean} forSingleDate
  * @param {number} dateCount
  * @param {number} unfilteredDatesCount
  * @param {boolean} showArchivedDates
@@ -13,13 +8,13 @@ import { isModelEntityOfModel } from '@eventespresso/validators';
  * @return {boolean} true if filters should be shown
  */
 export const getShowDateFilters = (
-	dateEntity,
+	forSingleDate,
 	dateCount,
 	unfilteredDatesCount,
 	showArchivedDates,
 	showExpiredDates
 ) => {
-	if ( isModelEntityOfModel( dateEntity, 'datetime' ) ) {
+	if ( forSingleDate ) {
 		return false;
 	}
 	let showDateFilters = dateCount !== unfilteredDatesCount ||
@@ -42,7 +37,7 @@ export const getShowDateFilters = (
 
 /**
  * @function
- * @param {Object} ticketEntity
+ * @param {boolean} forSingleTicket
  * @param {number} ticketCount
  * @param {number} unfilteredTicketCount
  * @param {boolean} showArchivedTickets
@@ -50,13 +45,13 @@ export const getShowDateFilters = (
  * @return {boolean} true if filters should be shown
  */
 export const getShowTicketFilters = (
-	ticketEntity,
+	forSingleTicket,
 	ticketCount,
 	unfilteredTicketCount,
 	showArchivedTickets,
 	showExpiredTickets
 ) => {
-	if ( isModelEntityOfModel( ticketEntity, 'ticket' ) ) {
+	if ( forSingleTicket ) {
 		return false;
 	}
 	let showTicketFilters = ticketCount !== unfilteredTicketCount || (

@@ -16,3 +16,4 @@ export {
 	statusModel,
 	ticketModel,
 };
+export * from './entity-factory';

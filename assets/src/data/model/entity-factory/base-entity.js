@@ -24,12 +24,13 @@ import {
  * an instance of this and all the getters/setters for fields etc are
  * dynamically created via the constructor.
  */
-class BaseEntity {
+export class BaseEntity {
 	[ PRIVATE_PROPERTIES.SAVE_STATE ] = SAVE_STATE.CLEAN;
 	[ PRIVATE_PROPERTIES.VALIDATE_TYPES ] = {};
 
 	/**
 	 * Constructor for Base Entity
+	 *
 	 * @param {string} modelName
 	 * @param {Object} entityFieldsAndValues
 	 * @param {Object} schema
@@ -73,7 +74,7 @@ class BaseEntity {
 	 * - SAVE_STATE.DIRTY: The entity is mutated and changes have not been
 	 * persisted to storage.
 	 *
-	 * @return {Symbol}  Returns the current save state for the entity.
+	 * @return {symbol}  Returns the current save state for the entity.
 	 */
 	get saveState() {
 		return this[ PRIVATE_PROPERTIES.SAVE_STATE ];
@@ -81,6 +82,7 @@ class BaseEntity {
 
 	/**
 	 * Whether the current save state is SAVE_STATE.NEW
+	 *
 	 * @return {boolean}  True means SAVE_STATE.NEW is the save state.
 	 */
 	get isNew() {
@@ -89,6 +91,7 @@ class BaseEntity {
 
 	/**
 	 * Whether the current save state is SAVE_STATE.DIRTY
+	 *
 	 * @return {boolean}  True means SAVE_STATE.DIRTY is the save state.
 	 */
 	get isDirty() {
@@ -97,6 +100,7 @@ class BaseEntity {
 
 	/**
 	 * Whether the current save state is SAVE_STATE.CLEAN
+	 *
 	 * @return {boolean}  True means SAVE_STATE.CLEAN is the save state.
 	 */
 	get isClean() {
@@ -105,6 +109,7 @@ class BaseEntity {
 
 	/**
 	 * Whether the entity has any password protected fields.
+	 *
 	 * @return {boolean} True means it does, false means it doesn't.
 	 */
 	get isPasswordProtected() {
@@ -113,6 +118,7 @@ class BaseEntity {
 
 	/**
 	 * Whether the given fieldName is a password protected field.
+	 *
 	 * @return {function(string): boolean}  Returns a function that can be used
 	 * to check if the given field name is a protected field in this entity.
 	 */
@@ -125,9 +131,13 @@ class BaseEntity {
 	 * BaseEntity that is equivalent as this current instance (except it will
 	 * have a new generated id).
 	 *
-	 * @return {BaseEntity} A new instance of BaseEntity
+	 * @return {Function} callback that returns a new instance of BaseEntity
 	 */
 	get clone() {
+		/**
+		 * @param {boolean} keepId
+		 * @return {BaseEntity} A new instance of BaseEntity
+		 */
 		return ( keepId = false ) => {
 			const createFactory = memoize( () => createEntityFactory(
 				this.modelName,
@@ -150,6 +160,7 @@ class BaseEntity {
 /**
  * A function that gives a class the provided name
  * (and optionally extends the provided object).
+ *
  * @param {string} name
  * @param {Object} extendedClass
  * @return {Function} A function
@@ -189,7 +200,8 @@ const createEntityFactory = ( modelName, schema, fieldPrefixes = [] ) => {
 		/**
 		 * Exposes modelName so client code can derive what model this factory
 		 * is for from any given factory.
-		 * @type string
+		 *
+		 * @type {string}
 		 */
 		modelName,
 		/**
@@ -216,7 +228,7 @@ const createEntityFactory = ( modelName, schema, fieldPrefixes = [] ) => {
 		 *   to be the corresponding value object.
 		 *
 		 * @param {Object} fieldsAndValues
-		 * @return {Entity} an instance of Entity
+		 * @return {Object} an instance of Entity
 		 */
 		createNew: ( fieldsAndValues ) => new Entity(
 			modelName,
@@ -237,7 +249,7 @@ const createEntityFactory = ( modelName, schema, fieldPrefixes = [] ) => {
 		 *   described by the schema for the entity model.
 		 *
 		 * @param {Object} fieldsAndValues
-		 * @return {Entity} an instance of Entity
+		 * @return {Object} an instance of Entity
 		 */
 		fromExisting: ( fieldsAndValues ) => new Entity(
 			modelName,

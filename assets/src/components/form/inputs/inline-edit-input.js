@@ -1,12 +1,14 @@
 /**
  * External imports
  */
+import classNames from 'classnames';
 import { isFunction } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component, createRef, Fragment } from '@wordpress/element';
 import { ENTER, ESCAPE, SPACE } from '@wordpress/keycodes';
+import { parseInfinity } from '@eventespresso/eejs';
 import { __ } from '@eventespresso/i18n';
-import classNames from 'classnames';
+import { InfinitySymbol } from '@eventespresso/value-objects';
 
 /**
  * Internal imports
@@ -38,7 +40,6 @@ export class InlineEditInput extends Component {
 		label: PropTypes.string,
 		valueType: PropTypes.string,
 		valueFormatter: PropTypes.func,
-		formatterSettings: PropTypes.object,
 		noticeStyle: PropTypes.object,
 	};
 
@@ -71,6 +72,7 @@ export class InlineEditInput extends Component {
 
 	/**
 	 * used to detect changes and whether to focus the input or end editing
+	 *
 	 * @function
 	 * @param {Object} prevProps
 	 * @param {Object} prevState
@@ -101,6 +103,7 @@ export class InlineEditInput extends Component {
 
 	/**
 	 * sets editing mode to true
+	 *
 	 * @function
 	 */
 	edit = () => {
@@ -109,6 +112,7 @@ export class InlineEditInput extends Component {
 
 	/**
 	 * sets editing mode to false and reverts changes made to input value
+	 *
 	 * @function
 	 */
 	cancel = () => {
@@ -122,22 +126,26 @@ export class InlineEditInput extends Component {
 
 	/**
 	 * sets editing mode to false
+	 *
 	 * @function
 	 */
 	done = async () => {
 		this.setState( { saving: true } );
+		let value;
 		return Promise.resolve(
-			await this.state.onChange( this.state.value )
+			value = await this.state.onChange( this.state.value )
 		).then( () => {
 			this.setState( {
-				editing: this.state.value === '',
+				editing: false,
 				saving: false,
+				value,
 			} );
 		} );
 	};
 
 	/**
 	 * detects keyboard commands to enter editing
+	 *
 	 * @function
 	 * @param {Object} event
 	 */
@@ -151,6 +159,7 @@ export class InlineEditInput extends Component {
 
 	/**
 	 * detects keyboard commands to exit editing
+	 *
 	 * @function
 	 * @param {Object} event
 	 */
@@ -168,6 +177,7 @@ export class InlineEditInput extends Component {
 
 	/**
 	 * detects text changes and updates input value
+	 *
 	 * @function
 	 * @param {Object} event
 	 */
@@ -183,6 +193,7 @@ export class InlineEditInput extends Component {
 
 	/**
 	 * renders the input in edit mode
+	 *
 	 * @param {string} htmlId 			input identifier
 	 * @param {string|number} value 	current value for input
 	 * @param {string} type 			text input or textarea
@@ -201,15 +212,27 @@ export class InlineEditInput extends Component {
 		inputProps,
 		noticeStyle
 	) => {
-		const inputValue = typeof this.state.value === 'string' ||
-		typeof this.state.value === 'number' ?
-			this.state.value :
-			'';
+		let inputValue;
+		if (
+			typeof this.state.value === 'string' ||
+			typeof this.state.value === 'number'
+		) {
+			inputValue = this.state.value;
+		} else if (
+			valueType === 'infinite' &&
+			this.state.value.type === InfinitySymbol
+		) {
+			inputValue = parseInfinity( this.state.value.props.value );
+		} else {
+			inputValue = '';
+		}
+		inputValue = inputValue !== Infinity ? inputValue : '';
 		const htmlClass = classNames(
 			'ee-inline-input',
 			'form-control',
 			{
-				'ee-inline-edit-input-number': valueType === 'number',
+				'ee-inline-edit-input-number': valueType === 'number' ||
+					valueType === 'infinite',
 			},
 		);
 		const input = type === 'textarea' ? (
@@ -252,15 +275,25 @@ export class InlineEditInput extends Component {
 
 	/**
 	 * renders the text in display mode
+	 *
+	 * @param {string} valueType 		data type for value
 	 * @param {Function} valueFormatter formatting callback
 	 * @param {Object} formatterSettings
 	 * @return {Object} rendered span tag
 	 * @param {Object} noticeStyle
 	 */
-	displayComponent = ( valueFormatter, formatterSettings, noticeStyle ) => {
-		const value = isFunction( valueFormatter ) ?
-			valueFormatter( this.state.value, formatterSettings ) :
+	displayComponent = (
+		valueType,
+		valueFormatter,
+		formatterSettings,
+		noticeStyle
+	) => {
+		let value = valueType === 'infinite' ?
+			<InfinitySymbol value={ this.state.value } /> :
 			this.state.value;
+		value = isFunction( valueFormatter ) ?
+			valueFormatter( value, formatterSettings ) :
+			value;
 		return (
 			<Fragment>
 				{ this.spinner( noticeStyle ) }
@@ -317,6 +350,7 @@ export class InlineEditInput extends Component {
 				noticeStyle
 			) :
 			this.displayComponent(
+				valueType,
 				valueFormatter,
 				formatterSettings,
 				noticeStyle,

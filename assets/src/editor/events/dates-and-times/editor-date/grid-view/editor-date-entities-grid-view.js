@@ -32,15 +32,12 @@ const EditorDateEntitiesGridView = ( {
 			{
 				entities.map(
 					function( dateEntity ) {
-						return isModelEntityOfModel(
-							dateEntity,
-							'datetime'
-						) ?
+						return isModelEntityOfModel( dateEntity, 'datetime' ) ?
 							(
 								<EditorDateEntityGridItem
+									{ ...otherProps }
 									key={ dateEntity.id }
 									dateEntity={ dateEntity }
-									{ ...otherProps }
 								/>
 							) :
 							null;

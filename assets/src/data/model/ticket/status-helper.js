@@ -11,11 +11,11 @@ import { MODEL_NAME, TICKET_STATUS_ID } from './constants';
 
 /**
  * @function
- * @param {Object} TicketEntity model object
+ * @param {Object} ticketEntity model object
  * @throws {TypeError}
  */
-const assertTicketEntity = ( TicketEntity ) => {
-	if ( ! isModelEntityOfModel( TicketEntity, MODEL_NAME ) ) {
+const assertTicketEntity = ( ticketEntity ) => {
+	if ( ! isModelEntityOfModel( ticketEntity, MODEL_NAME ) ) {
 		throw new TypeError(
 			'The provided entity is not a ticket instance'
 		);
@@ -24,97 +24,97 @@ const assertTicketEntity = ( TicketEntity ) => {
 
 /**
  * @function
- * @param {Object} TicketEntity model object
+ * @param {Object} ticketEntity model object
  * @param {boolean} includeArchived if true will not filter out trashed entities
  * @return {boolean} true if event date is valid entity or archive
  */
-const isValidEntityOrArchive = ( TicketEntity, includeArchived ) => {
-	return ( includeArchived && assertTicketEntity( TicketEntity ) ) ||
-        ( ! includeArchived && ! isArchived( TicketEntity ) );
+const isValidEntityOrArchive = ( ticketEntity, includeArchived ) => {
+	return ( includeArchived && assertTicketEntity( ticketEntity ) ) ||
+        ( ! includeArchived && ! isArchived( ticketEntity ) );
 };
 
 /**
  * @function
- * @param {Object} TicketEntity model object
+ * @param {Object} ticketEntity model object
  * @param {boolean} includeArchived if true will not filter out archived entities
  * @return {boolean} true if ticket is currently available for purchase
  */
-export const isOnSale = ( TicketEntity, includeArchived = false ) => {
-	return isValidEntityOrArchive( TicketEntity, includeArchived ) &&
-	TicketEntity.startDate.diffNow() < 0 &&
-	TicketEntity.endDate.diffNow() > 0;
+export const isOnSale = ( ticketEntity, includeArchived = false ) => {
+	return isValidEntityOrArchive( ticketEntity, includeArchived ) &&
+	ticketEntity.startDate.diffNow() < 0 &&
+	ticketEntity.endDate.diffNow() > 0;
 };
 
 /**
  * @function
- * @param {Object} TicketEntity model object
+ * @param {Object} ticketEntity model object
  * @param {boolean} includeArchived if true will not filter out archived entities
  * @return {boolean} true if ticket can no longer be purchased
  */
-export const isExpired = ( TicketEntity, includeArchived = false ) => {
-	return isValidEntityOrArchive( TicketEntity, includeArchived ) &&
-	TicketEntity.endDate.diffNow() < 0;
+export const isExpired = ( ticketEntity, includeArchived = false ) => {
+	return isValidEntityOrArchive( ticketEntity, includeArchived ) &&
+	ticketEntity.endDate.diffNow() < 0;
 };
 
 /**
  * @function
- * @param {Object} TicketEntity model object
+ * @param {Object} ticketEntity model object
  * @param {boolean} includeArchived if true will not filter out archived entities
  * @return {boolean} true if tickets sold meets or exceeds available quantity
  */
-export const isSoldOut = ( TicketEntity, includeArchived = false ) => {
+export const isSoldOut = ( ticketEntity, includeArchived = false ) => {
 	if (
-		( includeArchived && ! assertTicketEntity( TicketEntity ) ) ||
-		( ! includeArchived && isArchived( TicketEntity ) )
+		( includeArchived && ! assertTicketEntity( ticketEntity ) ) ||
+		( ! includeArchived && isArchived( ticketEntity ) )
 	) {
 		return false;
 	}
-	const qty = TicketEntity.qty;
+	const qty = ticketEntity.qty;
 	return ( qty !== null && qty !== 'INF' && qty !== Infinity && qty !== -1 ) &&
-		TicketEntity.sold >= qty;
+		ticketEntity.sold >= qty;
 };
 
 /**
  * @function
- * @param {Object} TicketEntity model object
+ * @param {Object} ticketEntity model object
  * @param {boolean} includeArchived if true will not filter out archived entities
  * @return {boolean} 	true if ticket is not yet available for purchase,
  * 						but will be at some date in the future
  */
-export const isPending = ( TicketEntity, includeArchived = false ) => {
-	return isValidEntityOrArchive( TicketEntity, includeArchived ) &&
-	TicketEntity.startDate.diffNow() > 0;
+export const isPending = ( ticketEntity, includeArchived = false ) => {
+	return isValidEntityOrArchive( ticketEntity, includeArchived ) &&
+	ticketEntity.startDate.diffNow() > 0;
 };
 
 /**
  * @function
- * @param {Object} TicketEntity model object
+ * @param {Object} ticketEntity model object
  * @return {boolean} true if ticket is archived
  */
-export const isArchived = ( TicketEntity ) => {
-	assertTicketEntity( TicketEntity );
-	return TicketEntity.deleted;
+export const isArchived = ( ticketEntity ) => {
+	assertTicketEntity( ticketEntity );
+	return ticketEntity.deleted;
 };
 
 /**
  * @function
- * @param {Object} TicketEntity model object
+ * @param {Object} ticketEntity model object
  * @return {string} status ID
  */
-export const status = ( TicketEntity ) => {
-	if ( isArchived( TicketEntity ) ) {
+export const status = ( ticketEntity ) => {
+	if ( isArchived( ticketEntity ) ) {
 		return TICKET_STATUS_ID.ARCHIVED;
 	}
-	if ( isSoldOut( TicketEntity ) ) {
+	if ( isSoldOut( ticketEntity ) ) {
 		return TICKET_STATUS_ID.SOLD_OUT;
 	}
-	if ( isExpired( TicketEntity ) ) {
+	if ( isExpired( ticketEntity ) ) {
 		return TICKET_STATUS_ID.EXPIRED;
 	}
-	if ( isPending( TicketEntity ) ) {
+	if ( isPending( ticketEntity ) ) {
 		return TICKET_STATUS_ID.PENDING;
 	}
-	if ( isOnSale( TicketEntity ) ) {
+	if ( isOnSale( ticketEntity ) ) {
 		return TICKET_STATUS_ID.ONSALE;
 	}
 	return '';
@@ -122,12 +122,12 @@ export const status = ( TicketEntity ) => {
 
 /**
  * @function
- * @param {Object} TicketEntity model object
+ * @param {Object} ticketEntity model object
  * @return {string} ticket status
  */
-export const getTicketStatusTextLabel = ( TicketEntity ) => {
+export const getTicketStatusTextLabel = ( ticketEntity ) => {
 	let ticketStatus = '';
-	switch ( status( TicketEntity ) ) {
+	switch ( status( ticketEntity ) ) {
 		case TICKET_STATUS_ID.SOLD_OUT :
 			ticketStatus = __( 'sold out', 'event_espresso' );
 			break;
@@ -149,9 +149,9 @@ export const getTicketStatusTextLabel = ( TicketEntity ) => {
 
 /**
  * @function
- * @param {Object} TicketEntity model object
+ * @param {Object} ticketEntity model object
  * @return {string}    CSS class for the background color
  */
-export const getBackgroundColorClass = ( TicketEntity ) => {
-	return `ee-status-background-color-${ status( TicketEntity ) }`;
+export const getBackgroundColorClass = ( ticketEntity ) => {
+	return `ee-status-background-color-${ status( ticketEntity ) }`;
 };
