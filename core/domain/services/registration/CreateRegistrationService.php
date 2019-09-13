@@ -65,7 +65,7 @@ class CreateRegistrationService extends DomainService
                 'REG_final_price' => $this->resolveFinalPrice($transaction, $ticket, $ticket_line_item),
                 'REG_session'     => EE_Registry::instance()->SSN->id(),
                 'REG_count'       => $reg_count,
-                'REG_group_size'  => $reg_group_size ? $reg_group_size : $this->incrementRegCount($registrations),
+                'REG_group_size'  => $reg_group_size ? $reg_group_size : $this->incrementRegGroupSize($registrations),
                 'REG_url_link'    => $reg_url_link,
                 'REG_code'        => $reg_code,
             )
@@ -114,17 +114,17 @@ class CreateRegistrationService extends DomainService
      * @return int
      * @throws EE_Error
      */
-    protected function incrementRegCount(array $registrations, $update_existing_registrations = true)
+    protected function incrementRegGroupSize(array $registrations, $update_existing_registrations = true)
     {
-        $new_reg_count = count($registrations) + 1;
+        $new_reg_group_size = count($registrations) + 1;
         if ($update_existing_registrations) {
             foreach ($registrations as $registration) {
                 if ($registration instanceof EE_Registration) {
-                    $registration->set_count($new_reg_count);
+                    $registration->set_group_size($new_reg_group_size);
                     $registration->save();
                 }
             }
         }
-        return $new_reg_count;
+        return $new_reg_group_size;
     }
 }
