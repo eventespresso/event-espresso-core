@@ -2332,6 +2332,13 @@ class EE_Registration_Config extends EE_Config_Base
      */
     public $gateway_log_lifespan = '1 week';
 
+    /**
+     * Enable copy attendee info at form
+     *
+     * @var boolean $enable_copy_attendee
+     */
+    protected $copy_attendee_info = true;
+
 
     /**
      *    class constructor
@@ -2362,6 +2369,7 @@ class EE_Registration_Config extends EE_Config_Base
         $this->consent_checkbox_enabled = false;
         $this->consent_checkbox_label_text = '';
         $this->gateway_log_lifespan = '7 days';
+        $this->copy_attendee_info = true;
     }
 
 
@@ -2460,6 +2468,26 @@ class EE_Registration_Config extends EE_Config_Base
         );
     }
 
+    /**
+     * @return boolean
+     */
+    public function copyAttendeeInfo()
+    {
+        return $this->copy_attendee_info;
+    }
+
+
+    /**
+     * @param boolean $copy_attendee_info
+     */
+    public function setCopyAttendeeInfo($copy_attendee_info)
+    {
+        $this->copy_attendee_info = filter_var(
+            $copy_attendee_info,
+            FILTER_VALIDATE_BOOLEAN
+        );
+    }
+
 
     /**
      * Gets the options to make availalbe for the gateway log lifespan
@@ -2546,11 +2574,6 @@ class EE_Admin_Config extends EE_Config_Base
     public $use_event_timezones;
 
     /**
-     * @var boolean $use_full_logging
-     */
-    public $use_full_logging;
-
-    /**
      * @var string $log_file_name
      */
     public $log_file_name;
@@ -2610,7 +2633,6 @@ class EE_Admin_Config extends EE_Config_Base
         $this->use_dashboard_widget = true;
         $this->events_in_dashboard = 30;
         $this->use_event_timezones = false;
-        $this->use_full_logging = false;
         $this->use_remote_logging = false;
         $this->remote_logging_url = null;
         $this->show_reg_footer = apply_filters(

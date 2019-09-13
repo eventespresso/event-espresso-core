@@ -121,7 +121,12 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step
      */
     public function generate_reg_form()
     {
-        $this->_print_copy_info = false;
+        /**
+         * @var $reg_config EE_Registration_Config
+         */
+        $reg_config = LoaderFactory::getLoader()->getShared('EE_Registration_Config');
+    
+        $this->_print_copy_info = $reg_config->copyAttendeeInfo();
         $primary_registrant = null;
         // autoload Line_Item_Display classes
         EEH_Autoloader::register_line_item_display_autoloaders();
@@ -137,10 +142,6 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step
             'default_hidden_inputs' => $extra_inputs_section,
         );
 
-        /**
-         * @var $reg_config EE_Registration_Config
-         */
-        $reg_config = LoaderFactory::getLoader()->getShared('EE_Registration_Config');
         // if this isn't a revisit, and they have the privacy consent box enalbed, add it
         if (! $this->checkout->revisit && $reg_config->isConsentCheckboxEnabled()) {
             $extra_inputs_section->add_subsections(
@@ -212,10 +213,7 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step
                     }
                 }
             }
-            // print_copy_info ?
             if ($primary_registrant && ! $this->checkout->admin_request && count($registrations) > 1) {
-                // TODO: add admin option for toggling copy attendee info,
-                // then use that value to change $this->_print_copy_info
                 $copy_options['spco_copy_attendee_chk'] = $this->_print_copy_info
                     ? $this->_copy_attendee_info_form()
                     : $this->_auto_copy_attendee_info();
@@ -322,8 +320,14 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step
                 $form_args['subsections']['additional_attendee_reg_info'] = $this->_additional_attendee_reg_info_input(
                     $registration
                 );
+
+                /**
+                 * @var $reg_config EE_Registration_Config
+                 */
+                $reg_config = LoaderFactory::getLoader()->getShared('EE_Registration_Config');
+
                 // if we have question groups for additional attendees, then display the copy options
-                $this->_print_copy_info = $attendee_nmbr > 1 ? true : $this->_print_copy_info;
+                $this->_print_copy_info = $attendee_nmbr > 1 ? $reg_config->copyAttendeeInfo() : false;
                 if ($registration->is_primary_registrant()) {
                     // generate hidden input
                     $form_args['subsections']['primary_registrant'] = $this->_additional_primary_registrant_inputs(
