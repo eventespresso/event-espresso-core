@@ -17,30 +17,35 @@ import warning from 'warning';
 export class Currency {
 	/**
 	 * The ISO 4217 code identifying the currency (eg. 'USD')
+	 *
 	 * @type {string}
 	 */
 	code = '';
 
 	/**
 	 * The singular label for the currency (eg. 'Dollar');
+	 *
 	 * @type {string}
 	 */
 	singularLabel = '';
 
 	/**
 	 * The plural label for the currency (eg. 'Dollars');
+	 *
 	 * @type {string}
 	 */
 	pluralLabel = '';
 
 	/**
 	 * The currency symbol (eg. '$');
+	 *
 	 * @type {string}
 	 */
 	sign = '';
 
 	/**
 	 * Whether the currency symbol is displayed before or after the value.
+	 *
 	 * @type {boolean}
 	 */
 	signB4 = true;
@@ -49,18 +54,21 @@ export class Currency {
 	 * The precision for the value (eg. 10.02 is 2, 10.123 is 3). The number of
 	 * decimal places can be used to calculate the number of subunits for the
 	 * currency - subunits = pow( 10, decimalPlaces).
+	 *
 	 * @type {number}
 	 */
 	decimalPlaces = 2;
 
 	/**
 	 * The symbol used for the decimal mark (eg. '.')
+	 *
 	 * @type {string}
 	 */
 	decimalMark = '.';
 
 	/**
 	 * The symbol used to split up thousands in the value (eg. ',')
+	 *
 	 * @type {string}
 	 */
 	thousandsSeparator = ',';
@@ -69,12 +77,14 @@ export class Currency {
 	 * The number of fractional divisions of a currency's main unit.  If not
 	 * provided, then it is automatically calculated from the decimalPlaces
 	 * value.
+	 *
 	 * @type {number}
 	 */
 	subunits = 100;
 
 	/**
 	 * Constructor
+	 *
 	 * @param {{}} currencyConfig An object containing the configuration for
 	 * this currency value object.  On construction, the Currency object is
 	 * frozen so that it becomes immutable.
@@ -101,6 +111,7 @@ export class Currency {
 	/**
 	 * Returns the currency properties as an object formatted for the
 	 * accounting-js library configuration.
+	 *
 	 * @return {{}}  An object shaped for what the accounting-js library expects
 	 */
 	toAccountingSettings() {
@@ -125,6 +136,7 @@ export class Currency {
 
 	/**
 	 * Returns JSON representation of this object.
+	 *
 	 * @return {Object} Function returning the object to be serialized by
 	 * JSON.stringify
 	 */

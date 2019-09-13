@@ -13,6 +13,7 @@ import { HTML5_INPUT_TYPES } from './base/constants';
 import { CheckboxInput } from './checkbox-input';
 import { DateTimeInput } from './date-time-input';
 import { HiddenInput } from './hidden-input';
+import { IconButtonInput } from './icon-button-input';
 import { RadioInput } from './radio-input';
 import { SelectInput } from './select-input';
 import { Textarea } from './textarea';
@@ -28,6 +29,7 @@ import {
 
 // add some extra input types
 HTML5_INPUT_TYPES.push( 'toggle' );
+HTML5_INPUT_TYPES.push( 'iconButton' );
 
 /**
  * FormInput
@@ -189,6 +191,20 @@ export class FormInput extends Component {
 						{ ...dataSet }
 						{ ...attributes }
 						{ ...validations }
+					/>
+				);
+				helpText = '';
+				break;
+			case 'iconButton' :
+				delete attributes.initialValue;
+				delete attributes.inputWidth;
+				formInput = (
+					<IconButtonInput
+						name={ name }
+						htmlId={ htmlId }
+						htmlClass={ htmlClass }
+						aria-describedby={ helpTextID }
+						{ ...attributes }
 					/>
 				);
 				helpText = '';

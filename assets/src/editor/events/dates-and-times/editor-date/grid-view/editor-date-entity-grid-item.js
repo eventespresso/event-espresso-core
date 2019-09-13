@@ -2,128 +2,63 @@
  * External imports
  */
 import classNames from 'classnames';
-import { compose } from '@wordpress/compose';
-import { Component, Fragment } from '@wordpress/element';
-import { __ } from '@eventespresso/i18n';
-import {
-	BiggieCalendarDate,
-	CalendarDateRange,
-	withEntityPaperFrame,
-} from '@eventespresso/components';
-import {
-	ifValidDateEntity,
-	withEventVenueEntity,
-} from '@eventespresso/editor-hocs';
-import { dateTimeModel } from '@eventespresso/model';
+import { EntityPaperFrame } from '@eventespresso/components';
+import { ifValidDateEntity } from '@eventespresso/editor-hocs';
 
 /**
  * Internal dependencies
  */
 import EditorDateEntityDetails from './editor-date-entity-details';
+import EventDateCalendarDate from './event-date-calendar-date';
 import EditorDateEntityActionsMenu
 	from '../actions-menu/editor-date-entity-actions-menu';
-
-const { getBackgroundColorClass, getDateTimeStatusTextLabel } = dateTimeModel;
 
 /**
  * EditorDateGridItem
  * Component for displaying an Event Date as a visual block in grid views
  *
  * @function
- * @param {Object} date    JSON object defining the Event Date
+ * @param {Object} dateEntity   the Event Date
+ * @param {Object} eventEntity   the Event
+ * @param {string} showDate
+ * @param {string} showDesc
+ * @param {boolean} showVenue
+ * @return {Object} rendered date grid item
  */
-class EditorDateEntityGridItem extends Component {
-	/**
-	 * @function
-	 * @param {Object} dateEntity
-	 * @param {string} showDate
-	 * @return {Object} rendered date
-	 */
-	displayDate = ( dateEntity, showDate ) => {
-		let sidebarColorClass = 'ee-editor-date-calendar-sidebar ';
-		sidebarColorClass += getBackgroundColorClass( dateEntity );
-		const dateStatus = (
-			<div key={ 1 } className={ 'ee-status-tag' }>
-				{ getDateTimeStatusTextLabel( dateEntity ) }
-			</div>
-		);
-		switch ( showDate ) {
-			case 'end' :
-				const endTime = dateEntity.end.toFormat( 'h:mm a' );
-				return (
-					<BiggieCalendarDate
-						date={ dateEntity.end }
-						htmlClass={ sidebarColorClass }
-						headerText={ __( 'ends', 'event_espresso' ) }
-						footerText={ [ endTime, dateStatus ] }
-					/>
-				);
-			case 'both' :
-				return (
-					<CalendarDateRange
-						startDate={ dateEntity.start }
-						endDate={ dateEntity.end }
-						htmlClass={ sidebarColorClass }
-						headerText={ __( 'Event Date', 'event_espresso' ) }
-						footerText={ dateStatus }
-						showTime
-					/>
-				);
-			case 'start' :
-			default :
-				const startTime = dateEntity.start.toFormat( 'h:mm a' );
-				return (
-					<BiggieCalendarDate
-						date={ dateEntity.start }
-						htmlClass={ sidebarColorClass }
-						headerText={ __( 'starts', 'event_espresso' ) }
-						footerText={ [ startTime, dateStatus ] }
-					/>
-				);
+const EditorDateEntityGridItem = ( {
+	dateEntity,
+	eventEntity,
+	showDate = 'start',
+	showDesc = 'excerpt',
+	showVenue = true,
+} ) => {
+	const dateStyleClass = classNames(
+		'ee-editor-date-main',
+		{
+			'ee-editor-date-range': showDate === 'both',
+			'ee-editor-date-single': showDate !== 'both',
 		}
-	};
-
-	render() {
-		const {
-			dateEntity,
-			eventEntity,
-			showDate = 'start',
-			showDesc = 'excerpt',
-			showVenue = true,
-			doRefresh,
-			refreshed,
-		} = this.props;
-		const dateStyleClass = classNames(
-			'ee-editor-date-main',
-			{
-				'ee-editor-date-range': showDate === 'both',
-				'ee-editor-date-single': showDate !== 'both',
-			}
-		);
-		return (
-			<Fragment>
-				<div className={ dateStyleClass }>
-					{ this.displayDate( dateEntity, showDate ) }
-					<EditorDateEntityDetails
-						eventEntity={ eventEntity }
-						dateEntity={ dateEntity }
-						showDesc={ showDesc }
-						showVenue={ showVenue }
-						refreshed={ refreshed }
-					/>
-				</div>
-				<EditorDateEntityActionsMenu
+	);
+	return (
+		<EntityPaperFrame>
+			<div className={ dateStyleClass }>
+				<EventDateCalendarDate
+					eventDate={ dateEntity }
+					showDate={ showDate }
+				/>
+				<EditorDateEntityDetails
 					eventEntity={ eventEntity }
 					dateEntity={ dateEntity }
-					doRefresh={ doRefresh }
+					showDesc={ showDesc }
+					showVenue={ showVenue }
 				/>
-			</Fragment>
-		);
-	}
-}
+			</div>
+			<EditorDateEntityActionsMenu
+				eventEntity={ eventEntity }
+				dateEntity={ dateEntity }
+			/>
+		</EntityPaperFrame>
+	);
+};
 
-export default compose( [
-	ifValidDateEntity,
-	withEventVenueEntity,
-	withEntityPaperFrame,
-] )( EditorDateEntityGridItem );
+export default ifValidDateEntity( EditorDateEntityGridItem );

@@ -1,14 +1,16 @@
 /**
- * External imports
+ * External dependencies
  */
 import { IconMenuItem } from '@eventespresso/components';
-import { ifValidTicketEntity } from '@eventespresso/editor-hocs';
+import { ifValidTicketEntity, useOpenEditor } from '@eventespresso/editor-hocs';
 import { __ } from '@eventespresso/i18n';
 
-const EditTicketDetailsMenuItem = ( {
-	ticketEntity,
-	toggleTicketEditor,
-} ) => {
+/**
+ * Internal dependencies
+ */
+import useTicketEditorId from '../../edit-form/use-ticket-editor-id';
+
+const EditTicketDetailsMenuItem = ( { ticketEntity } ) => {
 	return (
 		<IconMenuItem
 			index={ 1 }
@@ -17,7 +19,7 @@ const EditTicketDetailsMenuItem = ( {
 			htmlClass="edit-ticket"
 			dashicon="edit"
 			tooltipPosition="top right"
-			onClick={ toggleTicketEditor }
+			onClick={ useOpenEditor( useTicketEditorId( ticketEntity ) ) }
 		/>
 	);
 };

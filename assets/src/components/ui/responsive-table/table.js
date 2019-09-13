@@ -23,6 +23,7 @@ const Table = ( {
 		<div
 			role={ 'region' }
 			aria-labelledby={ captionID }
+			className={ 'ee-rspnsv-table-wrapper' }
 			tabIndex="0"
 		>
 			<table id={ tableId } className={ tableClass } { ...extraProps }>

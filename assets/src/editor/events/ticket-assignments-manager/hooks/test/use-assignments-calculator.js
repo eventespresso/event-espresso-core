@@ -12,7 +12,7 @@ import {
 /**
  * Internal imports
  */
-import useAssignmentsCalculator from '../use-assignments-calculator';
+import withAssignmentsCalculator from '../use-assignments-calculator';
 
 const expectedMessages = {
 	singleDate: 'Event Dates must always have at least one Ticket assigned to them. If the current assignment is not correct, assign the correct Ticket first, then remove others as required.',
@@ -63,7 +63,7 @@ describe( 'useAssignmentsCalculator', () => {
 		assignedCounts,
 		assignedState,
 	} ) => {
-		const [ hasNoAssignments, noAssignmentsMessage, updatedAssignmentCounts ] = useAssignmentsCalculator(
+		const [ hasNoAssignments, noAssignmentsMessage, updatedAssignmentCounts ] = withAssignmentsCalculator(
 			dateEntities,
 			ticketEntities,
 			assignedCounts,

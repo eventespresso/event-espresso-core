@@ -22,6 +22,9 @@ export const FormDataDebugDump = ( { values } ) => {
 			<pre id="form-data">
 				{ JSON.stringify( values, 0, 2 ) }
 			</pre>
+			<p>
+				form data is only displayed in development environments when <code>WP_DEBUG</code> is set to <code>true</code>
+			</p>
 		</div>
 	) : null;
 };

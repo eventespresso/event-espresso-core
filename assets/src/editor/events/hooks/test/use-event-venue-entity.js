@@ -8,9 +8,9 @@ import {
 	AuthedEventEntity,
 } from '@test/fixtures';
 
-import useEventVenueEntity from '../use-event-venue-entity';
+import useEventVenue from '../use-event-venue';
 
-describe( 'useEventVenueEntity', () => {
+describe( 'useEventVenue', () => {
 	let registry;
 	beforeEach( () => {
 		registry = createRegistry();
@@ -23,7 +23,7 @@ describe( 'useEventVenueEntity', () => {
 			</RegistryProvider>;
 		} )(
 			( props ) => {
-				const { venueEntity, venueEntityLoaded } = useEventVenueEntity( props.eventEntity );
+				const { venueEntity, venueEntityLoaded } = useEventVenue( props.eventEntity );
 				const id = venueEntity === null ? null : venueEntity.id;
 				return <div id={ id } loaded={ venueEntityLoaded } />;
 			}

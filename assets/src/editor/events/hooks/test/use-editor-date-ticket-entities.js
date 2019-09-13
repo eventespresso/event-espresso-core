@@ -5,9 +5,9 @@ import {
 } from '@wordpress/data';
 import { AuthedTicketEntity, AuthedDateTimeEntity } from '@test/fixtures';
 
-import useEditorDateTicketEntities from '../use-editor-date-ticket-entities';
+import useEventDateTickets from '../use-event-date-tickets';
 
-describe( 'useEditorDateTicketEntities', () => {
+describe( 'useEventDateTickets', () => {
 	let registry;
 	beforeEach( () => {
 		registry = createRegistry();
@@ -20,7 +20,7 @@ describe( 'useEditorDateTicketEntities', () => {
 			</RegistryProvider>;
 		} )(
 			( props ) => {
-				const ticketEntities = useEditorDateTicketEntities( props.dateEntity );
+				const ticketEntities = useEventDateTickets( props.dateEntity );
 				return <div ticketEntities={ ticketEntities } />;
 			}
 		);

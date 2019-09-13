@@ -106,32 +106,34 @@ export const isTableDataCell = ( element ) => {
  * except those whose table row cell "key" is in the exclude array
  *
  * @function
- * @param {Array} formRows
+ * @param {[][]} formRows
  * @param {Array} exclude
  * @return {Array} columns
  */
 export const addZebraStripesOnMobile = (
 	formRows,
 	exclude
-) => formRows.map(
-	( formRow ) => {
-		let x = 0;
-		return formRow.map(
-			( cell ) => {
-				if ( ! cell.key || exclude.indexOf( cell.key ) > -1 ) {
+) => {
+	return Array.isArray( formRows ) ? formRows.map(
+		( formRow ) => {
+			let x = 0;
+			return Array.isArray( formRow ) ? formRow.map(
+				( cell ) => {
+					if ( ! cell.key || exclude.indexOf( cell.key ) > -1 ) {
+						return cell;
+					}
+					x++;
+					if ( x % 2 === 0 ) {
+						cell.class = cell.class ?
+							cell.class + ' ee-zebra-stripe-on-mobile' :
+							'ee-zebra-stripe-on-mobile';
+					}
 					return cell;
 				}
-				x++;
-				if ( x % 2 === 0 ) {
-					cell.class = cell.class ?
-						cell.class + ' ee-zebra-stripe-on-mobile' :
-						'ee-zebra-stripe-on-mobile';
-				}
-				return cell;
-			}
-		);
-	}
-);
+			) : [];
+		}
+	) : [];
+};
 
 /**
  * toggles display of start and end date columns

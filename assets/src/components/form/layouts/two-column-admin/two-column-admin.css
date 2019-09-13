@@ -161,8 +161,8 @@
 .ee-two-column-admin textarea {
     margin: 0;
     font-family: inherit;
-    font-size: inherit;
-    line-height: inherit;
+    font-size: var(--ee-font-size-default);
+    line-height: var(--ee-line-height-modifier);
 }
 
 .ee-two-column-admin input:disabled,

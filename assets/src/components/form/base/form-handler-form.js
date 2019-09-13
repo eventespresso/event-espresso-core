@@ -1,14 +1,15 @@
 /**
  * External imports
  */
-import { useCallback, useMemo, useState } from '@wordpress/element';
+import { isEmpty } from 'lodash';
+import { useCallback, useMemo } from '@wordpress/element';
 
 /**
  * Internal imports
  */
 import { FormContainer } from './form-container';
 import { FormDataDebugDump } from './form-data-debug-dump';
-import { FormPlaceholder } from './form-placeholder';
+import FormPlaceholder from './form-placeholder';
 import FormSubmitButton from './form-submit-button';
 import FormCancelButton from './form-cancel-button';
 
@@ -33,15 +34,14 @@ const FormHandlerForm = ( {
 	resetHandler = nullFunc,
 	...formProps
 } ) => {
-	const [ hasChanges, setHasChanges ] = useState( false );
-	pristine = pristine && ! hasChanges && ! formChanges;
+	pristine = pristine && ! formChanges;
+	currentValues = isEmpty( currentValues ) ? initialValues : currentValues;
 	const formReset = useCallback(
 		( event ) => {
 			if ( resetHandler !== nullFunc ) {
 				resetHandler( event );
 			}
 			form.reset( event );
-			setHasChanges( false );
 		},
 		[ resetHandler, form.reset ]
 	);
@@ -74,17 +74,17 @@ const FormHandlerForm = ( {
 			/>
 			<FormContainer loading={ loading }>
 				<FormComponent
+					updateField={ form.change }
 					initialValues={ initialValues }
 					currentValues={ currentValues }
 					submitButton={ submitButton }
 					cancelButton={ cancelButton }
 					formReset={ formReset }
-					markChanges={ ( yeah = true ) => setHasChanges( yeah ) }
 					pristine={ pristine }
 					{ ...formProps }
 				/>
 			</FormContainer>
-			<FormDataDebugDump values={ currentValues || initialValues } />
+			<FormDataDebugDump values={ currentValues } />
 		</form>
 	);
 };

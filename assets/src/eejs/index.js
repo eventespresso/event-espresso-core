@@ -1,6 +1,6 @@
 /**
-* things that shall never change
-*/
+ * things that shall never change
+ */
 export * from './constants';
 
 /**
@@ -51,3 +51,8 @@ export * from './exceptions';
  */
 import * as mw from './middlewares';
 export const middleWares = mw;
+
+/**
+ * utilities
+ */
+export * from './utils';

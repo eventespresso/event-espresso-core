@@ -5,9 +5,9 @@ import {
 } from '@wordpress/data';
 import { AuthedEventEntity, AuthedDateTimeEntity } from '@test/fixtures';
 
-import useEditorUpdateEventDateRelation from '../use-editor-update-event-date-relation';
+import useCreateRelationForEventToEventDate from '../use-create-relation-for-event-to-event-date';
 
-describe( 'useEditorUpdateEventDateRelation', () => {
+describe( 'useCreateRelationForEventToEventDate', () => {
 	let registry;
 	beforeEach( () => {
 		registry = createRegistry();
@@ -21,7 +21,7 @@ describe( 'useEditorUpdateEventDateRelation', () => {
 		} )(
 			( props ) => {
 				const eventEntity = props.eventEntity || null;
-				const updater = useEditorUpdateEventDateRelation( eventEntity );
+				const updater = useCreateRelationForEventToEventDate( eventEntity );
 				const enhancedUpdater = ( dateEntity ) => {
 					updaterSpy();
 					updater( dateEntity );

@@ -1,14 +1,14 @@
 /**
  * External imports
  */
-import { Spinner } from '@wordpress/components';
-import { _x, sprintf } from '@eventespresso/i18n';
 import classNames from 'classnames';
+import PropTypes from 'prop-types';
 
 /**
  * Internal imports
  */
 import './form-placeholder.css';
+import LoadingNotice from '../../ui/loading-notice/';
 
 /**
  * Displays a notice while the form is loading
@@ -17,14 +17,10 @@ import './form-placeholder.css';
  * @function
  * @param {boolean} loading
  * @param {string} notice
- * @return {Object} spinner
+ * @param {string} size one of: extreme, huge, big, default, small, tiny
+ * @return {Object} rendered form placeholder with loading notice & spinner
  */
-export const FormPlaceholder = ( { loading, notice = '' } ) => {
-	notice = notice ||
-		sprintf(
-			_x( 'loading%s', 'loading...', 'event_espresso' ),
-			String.fromCharCode( '8230' )
-		);
+const FormPlaceholder = ( { loading, notice, size } ) => {
 	return (
 		<div
 			className={
@@ -34,12 +30,32 @@ export const FormPlaceholder = ( { loading, notice = '' } ) => {
 				} )
 			}
 		>
-			<div className="ee-loading-div">
-				<Spinner />
-				<span className="ee-form-placeholder-notice">
-					{ notice }
-				</span>
-			</div>
+			<LoadingNotice
+				loading={ loading }
+				notice={ notice }
+				size={ size }
+			/>
 		</div>
 	);
 };
+
+FormPlaceholder.propTypes = {
+	loading: PropTypes.bool.isRequired,
+	notice: PropTypes.string,
+	size: PropTypes.oneOf( [
+		'extreme',
+		'huge',
+		'big',
+		'default',
+		'small',
+		'tiny',
+	] ),
+};
+
+FormPlaceholder.defaultProps = {
+	notice: '',
+	size: 'extreme',
+};
+
+export default FormPlaceholder;
+

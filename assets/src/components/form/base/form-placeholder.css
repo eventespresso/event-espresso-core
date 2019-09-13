@@ -23,31 +23,11 @@
     transition: height 0ms 250ms, margin 0ms 250ms, opacity 250ms 0ms;
 }
 
-.ee-loading-div {
-    color: var(--ee-default-text-color-super-low-contrast);
-    font-size: var(--ee-font-size-smaller);
-    line-height: var(--ee-font-size-big);
-    margin: var(--ee-margin-extreme) auto;
-    text-align: center !important;
-}
-
-.ee-form-fade-out .ee-loading-div {
+.ee-form-fade-out .ee-loading-notice-div {
     line-height: 0;
     height: 0;
     margin: 0;
 }
-
-.ee-form-placeholder-div .components-spinner {
-    float: unset !important;
-    margin: 0 var(--ee-margin-smaller) 0 0;
-    vertical-align: middle;
-}
-
-
-.ee-form-placeholder-div .ee-form-placeholder-notice {
-    vertical-align: middle;
-}
-
 
 /* WordPress Admin Media Query Breakpoint: Smartphone */
 @media screen and (max-width: 600px) {

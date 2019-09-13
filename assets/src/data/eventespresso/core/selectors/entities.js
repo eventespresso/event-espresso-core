@@ -5,9 +5,12 @@ import createSelector from 'rememo';
 import { normalizeEntityId } from '@eventespresso/helpers';
 import { singularModelName } from '@eventespresso/model';
 
+import BaseEntity from '../../../model/entity-factory/base-entity';
+
 /**
  * Returns all entity records for the given modelName in the current state.
  * An entity record is the Map of entities (entityId => entity).
+ *
  * @param {Object} state
  * @param {string} modelName
  * @return {Object<number|string, BaseEntity>}|null} A collection of entity
@@ -52,13 +55,13 @@ const getEntitiesForModel = createSelector(
  * @param {number|string} entityId
  * @return {BaseEntity|null} Returns the model entity or null.
  */
-function getEntityById( state, modelName, entityId ) {
+const getEntityById = ( state, modelName, entityId ) => {
 	modelName = singularModelName( modelName );
 	return state.entities.getIn( [
 		modelName,
 		normalizeEntityId( entityId ),
 	] ) || null;
-}
+};
 
 /**
  * Retrieves an array of model entities for the provided array of ids and model.
@@ -74,8 +77,11 @@ const getEntitiesByIds = ( state, modelName, entityIds ) => {
 };
 
 getEntitiesByIds.clear = () => retrieveEntitiesByIds.clear();
-getEntitiesByIds.getDependants = ( state, modelName ) => retrieveEntitiesByIds
-	.getDependants( state, modelName );
+getEntitiesByIds.getDependants = (
+	state,
+	modelName,
+	entityIds
+) => retrieveEntitiesByIds.getDependants( state, modelName, entityIds.join() );
 
 /**
  * Retrieves an array of model entities for the provided array of ids and model.
@@ -102,7 +108,10 @@ const retrieveEntitiesByIds = createSelector(
 		}
 		return entities;
 	},
-	( state, modelName ) => [ state.entities.get( modelName ) ]
+	( state, modelName, entityIds ) => [
+		state.entities.get( modelName ),
+		entityIds,
+	]
 );
 
 /**

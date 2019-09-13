@@ -1,7 +1,7 @@
 /**
  * External imports
  */
-import { isModelEntity } from '@eventespresso/validators';
+import { isModelEntity, isModelEntityOfModel } from '@eventespresso/validators';
 import { InvalidModelEntity } from '@eventespresso/eejs';
 import { singularModelName } from '@eventespresso/model';
 import createSelector from 'rememo';
@@ -15,6 +15,7 @@ import {
 	getEntitiesByIds,
 	getEntityById,
 } from './entities';
+import BaseEntity from '../../../model/entity-factory/base-entity';
 
 const DEFAULT_EMPTY_SET = Set();
 
@@ -28,12 +29,17 @@ const DEFAULT_EMPTY_SET = Set();
  * @param {string} relationName
  * @return {Array} An empty array if there are no ids for the given relation.
  */
-const getRelationIdsForEntityRelation = createSelector(
-	( state, entity, relationName ) => {
+const getIdsForRelatedEntities = createSelector(
+	( state, entity, relationName, modelName = '' ) => {
 		if ( ! isModelEntity( entity ) ) {
-			throw new InvalidModelEntity( '', entity );
+			throw new InvalidModelEntity(
+				modelName ? `Expected entity of type ${ modelName }` : '',
+				entity
+			);
 		}
-		const modelName = singularModelName( entity.modelName );
+		modelName = modelName ?
+			modelName :
+			singularModelName( entity.modelName );
 		relationName = singularModelName( relationName );
 		if ( state.relations.hasIn( [ modelName, entity.id, relationName ] ) ) {
 			return ( state.relations.getIn(
@@ -72,32 +78,41 @@ const getRelationIdsForEntityRelation = createSelector(
  * @return {Array<BaseEntity>} An array of entities for the relation.
  */
 const getRelatedEntities = createSelector(
-	( state, entity, relationModelName ) => {
+	( state, entity, relationModelName, modelName = '' ) => {
 		if ( ! isModelEntity( entity ) ) {
-			throw new InvalidModelEntity( '', entity );
+			throw new InvalidModelEntity(
+				modelName ? `Expected entity of type ${ modelName }` : '',
+				entity
+			);
 		}
 		relationModelName = singularModelName( relationModelName );
-		return getEntitiesByIds(
+		const relationIds = getIdsForRelatedEntities(
 			state,
+			entity,
 			relationModelName,
-			getRelationIdsForEntityRelation(
-				state,
-				entity,
-				relationModelName
-			)
+			modelName
 		);
+		return getEntitiesByIds( state, relationModelName, relationIds );
 	},
-	( state, entity, relationName ) => [
-		...getEntitiesByIds.getDependants(
-			state,
-			singularModelName( relationName )
-		),
-		...getRelationIdsForEntityRelation.getDependants(
+	( state, entity, relationName ) => {
+		let relationIdDependants = getIdsForRelatedEntities.getDependants(
 			state,
 			entity,
 			singularModelName( relationName )
-		),
-	]
+		);
+		relationIdDependants = relationIdDependants[ 0 ];
+		relationIdDependants = relationIdDependants ?
+			relationIdDependants.toJS() :
+			null;
+		return relationIdDependants ? [
+			...getEntitiesByIds.getDependants(
+				state,
+				singularModelName( relationName ),
+				relationIdDependants
+			),
+			relationIdDependants,
+		] : [];
+	}
 );
 
 /**
@@ -119,41 +134,38 @@ const getRelatedEntities = createSelector(
  * @return {Array<BaseEntity>} An array of BaseEntity instances for the
  * relations.
  */
-export const getRelatedEntitiesForIds = createSelector(
-	( state, modelName, entityIds, relationName ) => {
-		let relationEntities = Set();
-		modelName = singularModelName( modelName );
-		relationName = singularModelName( relationName );
-		entityIds.forEach( ( entityId ) => {
-			const entity = getEntityById(
-				state,
-				modelName,
-				entityId
-			);
+const getRelatedEntitiesForIds = (
+	state,
+	modelName,
+	entityIds,
+	relationName
+) => {
+	let relationEntities = Set();
+	modelName = singularModelName( modelName );
+	relationName = singularModelName( relationName );
+	entityIds.forEach( ( entityId ) => {
+		const entity = getEntityById(
+			state,
+			modelName,
+			entityId
+		);
+		if ( isModelEntityOfModel( entity, modelName ) ) {
 			const relatedEntities = getRelatedEntities(
 				state,
 				entity,
-				relationName
+				relationName,
+				modelName
 			);
 			relationEntities = relationEntities.merge( relatedEntities );
-		} );
-		return relationEntities.toJS();
-	},
-	( state, modelName, entityIds, relationName ) => [
-		...getEntitiesByIds.getDependants(
-			state,
-			singularModelName( modelName ),
-		),
-		...getEntitiesByIds.getDependants(
-			state,
-			singularModelName( relationName )
-		),
-	]
-);
+		}
+	} );
+	return relationEntities.toJS();
+};
 
 /**
- * Looks up the relations queued for a given model first from the actual relation
- * type in the state, and then a reverse lookup in the index if not there.
+ * Looks up the relations queued for a given model first from the actual
+ * relation type in the state, and then a reverse lookup in the index if not
+ * there.
  *
  * @param {Object} state
  * @param {string} modelName
@@ -215,7 +227,6 @@ const lookupRelationsQueuedForModel = ( state, modelName, type = 'add' ) => {
  *     datetimes: [ 24, 25 ],
  *   },
  * }
- *
  */
 const getRelationAdditionsQueuedForModel = createSelector(
 	( state, modelName ) => {
@@ -233,7 +244,7 @@ const getRelationAdditionsQueuedForModel = createSelector(
  *
  * @param {Object} state
  *
- * @return {String[]}  An array of model names that have relation additions
+ * @return {Array}  An array of model names that have relation additions
  *                     queued.
  */
 const getRelationModelsQueuedForAddition = createSelector(
@@ -252,7 +263,7 @@ const getRelationModelsQueuedForAddition = createSelector(
  *
  * @param {Object} state
  *
- * @return {String[]} An array of model names that have relation deletions
+ * @return {Array} An array of model names that have relation deletions
  *                    queued
  */
 const getRelationModelsQueuedForDeletion = createSelector(
@@ -310,8 +321,7 @@ const countRelationModelsIndexedForEntity = createSelector(
 		entityId = normalizeEntityId( entityId );
 		// we can just get this from the context of the model
 		return (
-			state.relations
-				.getIn( [ modelName, entityId ] ) || Map()
+			state.relations.getIn( [ modelName, entityId ] ) || Map()
 		).count();
 	},
 	( state, modelName, entityId ) => {
@@ -334,7 +344,8 @@ const getAllRelationsInState = ( state ) => state.relations;
 
 export {
 	getRelatedEntities,
-	getRelationIdsForEntityRelation,
+	getRelatedEntitiesForIds,
+	getIdsForRelatedEntities,
 	getRelationAdditionsQueuedForModel,
 	getRelationDeletionsQueuedForModel,
 	countRelationModelsIndexedForEntity,
