@@ -577,7 +577,6 @@ describe( 'countRelationModelsIndexedForEntity()', () => {
 } );
 
 describe( 'getRelatedEntitiesForIds()', () => {
-	beforeEach( () => getRelatedEntitiesForIds.clear() );
 	it( 'returns expected entities for given arguments', () => {
 		expect( getRelatedEntitiesForIds(
 			mockStateForTests,

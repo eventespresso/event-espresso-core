@@ -19,12 +19,11 @@ describe( 'useCreateRelationForEventToEventDate', () => {
 				<WrappedComponent { ...props } />
 			</RegistryProvider>;
 		} )(
-			( props ) => {
-				const eventEntity = props.eventEntity || null;
-				const updater = useCreateRelationForEventToEventDate( eventEntity );
-				const enhancedUpdater = ( dateEntity ) => {
+			() => {
+				const updater = useCreateRelationForEventToEventDate();
+				const enhancedUpdater = ( eventEntity, dateEntity ) => {
 					updaterSpy();
-					updater( dateEntity );
+					updater( eventEntity, dateEntity );
 				};
 				return <div updater={ enhancedUpdater } />;
 			}
@@ -51,7 +50,9 @@ describe( 'useCreateRelationForEventToEventDate', () => {
 			renderer = TestRenderer.create( <TestComponent /> );
 		} );
 		const props = renderer.root.findByType( 'div' ).props;
-		expect( () => props.updater() ).toThrow( 'invalid Event' );
+		expect( () => props.updater() ).toThrow(
+			'Unable to create relation because an invalid Event Entity was supplied.'
+		);
 		expect( updaterSpy ).toHaveBeenCalledTimes( 1 );
 		expect( createRelationSpy ).not.toHaveBeenCalled();
 	} );
@@ -70,11 +71,12 @@ describe( 'useCreateRelationForEventToEventDate', () => {
 		const TestComponent = getTestComponent( updaterSpy );
 		let renderer;
 		act( () => {
-			renderer = TestRenderer
-				.create( <TestComponent eventEntity={ AuthedEventEntity } /> );
+			renderer = TestRenderer.create( <TestComponent /> );
 		} );
 		const props = renderer.root.findByType( 'div' ).props;
-		expect( () => props.updater() ).toThrow( 'invalid Date' );
+		expect( () => props.updater( AuthedEventEntity ) ).toThrow(
+			'Unable to create relation because an invalid Date Entity was supplied.'
+		);
 		expect( updaterSpy ).toHaveBeenCalledTimes( 1 );
 		expect( createRelationSpy ).not.toHaveBeenCalled();
 	} );
@@ -94,10 +96,10 @@ describe( 'useCreateRelationForEventToEventDate', () => {
 		let renderer;
 		act( () => {
 			renderer = TestRenderer
-				.create( <TestComponent eventEntity={ AuthedEventEntity } /> );
+				.create( <TestComponent /> );
 		} );
 		const props = renderer.root.findByType( 'div' ).props;
-		props.updater( AuthedDateTimeEntity );
+		props.updater( AuthedEventEntity, AuthedDateTimeEntity );
 		expect( updaterSpy ).toHaveBeenCalledTimes( 1 );
 		expect( createRelationSpy ).toHaveBeenCalledTimes( 1 );
 		expect( createRelationSpy ).toHaveBeenCalledWith(

@@ -71,7 +71,7 @@ describe( 'Testing extractor functions for model-entity factory.', () => {
 				'EVT_visible_on',
 				'invalid date',
 				EventSchemaProperties
-			) ).toThrow( InvalidDateTime );
+			) ).toThrow( TypeError );
 		} );
 		it( 'Throws an exception when the provided value is not a Money ' +
 			'value object for a money field.', () => {

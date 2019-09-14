@@ -20,7 +20,7 @@ describe( 'useEventEditorEvent', () => {
 			</RegistryProvider>;
 		} )(
 			() => {
-				const eventEntity = useEventEditorEvent();
+				const { eventEntity } = useEventEditorEvent();
 				const id = eventEntity ? eventEntity.id : null;
 				return <div id={ id } />;
 			}

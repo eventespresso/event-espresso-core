@@ -467,7 +467,7 @@ describe( 'DateTime Value Object', () => {
 			);
 			it( 'throws an error when a DateTime is not provided', () => {
 				const newDate = () => baseTestDate.diff( null );
-				expect( newDate ).toThrow( InvalidDateTime );
+				expect( newDate ).toThrow( TypeError );
 			} );
 			it( 'returns an instance of Duration', () => {
 				expect( duration ).toBeInstanceOf( Duration );
@@ -530,7 +530,7 @@ describe( 'DateTime Value Object', () => {
 			it( 'throws an error if otherDateTime is not an instance of ' +
 				'DateTime', () => {
 				expect( () => baseTestDate.equals( null ) )
-					.toThrow( InvalidDateTime );
+					.toThrow( TypeError );
 			} );
 			it( 'returns true for equal dates', () => {
 				expect( baseTestDate.equals( equalsDate ) ).toBe( true );
@@ -547,7 +547,7 @@ describe( 'DateTime Value Object', () => {
 			it( 'throws an error if otherDateTime is not an instance of ' +
 				'DateTime', () => {
 				expect( () => baseTestDate.hasSame( null ) )
-					.toThrow( InvalidDateTime );
+					.toThrow( TypeError );
 			} );
 			it( 'returns true when dates have same unit', () => {
 				expect(

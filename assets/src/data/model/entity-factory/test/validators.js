@@ -236,7 +236,7 @@ describe( 'Testing validator functions for model-entity factory', () => {
 				EventSchemaProperties,
 				true,
 				false,
-				InvalidDateTime,
+				TypeError,
 			],
 			[
 				'it returns expected response for valid field value when ' +

@@ -40,12 +40,11 @@ describe( 'Testing assertions for model-entity factory.', () => {
 				null,
 			],
 			[
-				'Throws InvalidDateTime error for datetime field with ' +
-				'invalid value.',
+				'Throws TypeError error for datetime field with invalid value.',
 				'EVT_visible_on',
 				'invalidDate',
 				EventSchemaProperties,
-				InvalidDateTime,
+				TypeError,
 			],
 			[
 				'Throws TypeError error for money field with invalid value',
@@ -215,7 +214,7 @@ describe( 'Testing assertions for model-entity factory.', () => {
 				'EVT_visible_on',
 				'invalid datetime',
 				EventSchemaProperties,
-				InvalidDateTime,
+				TypeError,
 			],
 			[
 				'Throws a TypeError when the provided value for a Money ' +
@@ -319,7 +318,7 @@ describe( 'Testing assertions for model-entity factory.', () => {
 				'EVT_visible_on',
 				10,
 				EventSchemaProperties,
-				InvalidDateTime,
+				TypeError,
 			],
 			[
 				'Throws a TypeError when the provided value for a Money ' +

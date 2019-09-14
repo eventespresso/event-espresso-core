@@ -20,8 +20,8 @@ describe( 'useEventEditorEventDates', () => {
 			</RegistryProvider>;
 		} )(
 			() => {
-				const { dateEntities } = useEventEditorEventDates();
-				return <div dateEntities={ dateEntities } />;
+				const { eventDates } = useEventEditorEventDates();
+				return <div dateEntities={ eventDates } />;
 			}
 		);
 
@@ -39,7 +39,10 @@ describe( 'useEventEditorEventDates', () => {
 		} );
 		const testInstance = renderer.root;
 		expect( testInstance.findByType( 'div' ).props.dateEntities )
-			.toEqual( [] );
+			.toEqual( {
+				eventDates: [],
+				eventDatesLoaded: false,
+			} );
 	} );
 	it( 'returns date entities available in the state', () => {
 		registry.registerStore( 'eventespresso/core', {

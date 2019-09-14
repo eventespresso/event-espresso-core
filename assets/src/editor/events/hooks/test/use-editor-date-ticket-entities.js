@@ -40,10 +40,10 @@ describe( 'useEventDateTickets', () => {
 		} );
 		const testInstance = renderer.root;
 		expect( testInstance.findByType( 'div' ).props.ticketEntities )
-			.toEqual( [] );
-		expect( console ).toHaveErroredWith(
-			'Warning: The provided value is not a valid datetime entity.'
-		);
+			.toEqual( {
+				tickets: [],
+				ticketsLoaded: false,
+			} );
 	} );
 	it( 'returns the expected array of ticket entities for the given date ' +
 		'entity', () => {
@@ -62,6 +62,9 @@ describe( 'useEventDateTickets', () => {
 		} );
 		const testInstance = renderer.root;
 		const props = testInstance.findByType( 'div' ).props;
-		expect( props.ticketEntities ).toEqual( [ AuthedTicketEntity ] );
+		expect( props.ticketEntities ).toEqual( {
+			tickets: [ AuthedTicketEntity ],
+			ticketsLoaded: false,
+		} );
 	} );
 } );
