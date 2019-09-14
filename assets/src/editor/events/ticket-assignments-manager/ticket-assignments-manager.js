@@ -103,11 +103,7 @@ const TicketAssignmentsManager = ( {
 		missingAssignmentCounts,
 		assignmentCounts,
 		setAssignedState,
-	} = useAssignmentsCalculator( {
-		dateEntities,
-		ticketEntities,
-		currentAssignmentCounts,
-	} );
+	} = useAssignmentsCalculator( currentAssignmentCounts );
 
 	const noAssignmentsMessage = useAssignmentsErrorMessage( {
 		dateCount,

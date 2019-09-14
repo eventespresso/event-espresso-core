@@ -31,7 +31,7 @@ const INITIAL_STATE = { assigned: {}, removed: {} };
  *      - setAssignedState {Function} callback for updating assignments
  * -
  */
-const useAssignmentsCalculator = ( { currentAssignmentCounts } ) => {
+const useAssignmentsCalculator = ( currentAssignmentCounts ) => {
 	const [ assignedState, setAssignedState ] = useState( INITIAL_STATE );
 	return useMemo( () => {
 		let totalMissingAssignments = 0;
@@ -93,8 +93,8 @@ const useAssignmentsCalculator = ( { currentAssignmentCounts } ) => {
 
 useAssignmentsCalculator.propTypes = {
 	currentAssignmentCounts: PropTypes.shape( {
-		assigned: PropTypes.number.isRequired,
-		removed: PropTypes.number.isRequired,
+		dates: PropTypes.number.isRequired,
+		tickets: PropTypes.number.isRequired,
 	} ).isRequired,
 };
 
