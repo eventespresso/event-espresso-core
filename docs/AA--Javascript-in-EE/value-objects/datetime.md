@@ -89,11 +89,11 @@ If the provided value is not a valid offset, this will throw a `TypeError` error
 
 #### `DateTime.validateIsDateTime( datetime )`
 
-Returns `boolean` to indicate whether the provided value is an instance of `DateTime`.
+Returns `boolean` to indicate whether the provided value is an instance of `DateTime` or `ServerDateTime`.
 
-#### `DateTime.assertIsDatetime( datetime )`
+#### `DateTime.assertIsDateTime( datetime )`
 
-If the provided value is not an instance of `DateTime`, this will throw an `InvalidDateTime` error.
+If the provided value is not an instance of `DateTime` or `ServerDateTime`, this will throw a `TypeError` error.
 
 #### `DateTime.validateIsDate( date )`
 
@@ -105,11 +105,11 @@ If the provided value is not an instance of `Date`, this will throw a `TypeError
 
 #### `DateTime.isValid( datetime )`
 
-Returns `boolean` to indicate whether the provided value is a _valid_ instance of `DateTime`.
+Returns `boolean` to indicate whether the provided value is a _valid_ instance of `DateTime` or `ServerDateTime`.
 
 #### `DateTime.assertIsValid( datetime )`
 
-If the provided value is not an instance of `DateTime` or is not a _valid_ `DateTime`, this will throw an `InvalidDateTime` error.
+If the provided value is not an instance of `DateTime` or `ServerDateTime` or is not a _valid_ `DateTime` or `ServerDateTime`, this will throw an `InvalidDateTime` error.
 
 #### `DateTime.max( ...datetimes )`
 
