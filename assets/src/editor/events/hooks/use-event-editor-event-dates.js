@@ -23,7 +23,7 @@ const useEventEditorEventDates = ( eventLoaded = true ) => {
 		}
 		const { getEntitiesForModel } = select( 'eventespresso/core' );
 		const eventDates = getEntitiesForModel( 'datetime' );
-		return { eventDates };
+		return eventDates ? { eventDates } : DEFAULT;
 	}, [ eventLoaded ] );
 };
 
