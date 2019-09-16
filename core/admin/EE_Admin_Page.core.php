@@ -1403,18 +1403,18 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
             }
         }
 
-        /**
-         * Allow extending the help tours variable.
-         *
-         * @param Array $tours The array containing all tour items to be displayed.
-         */
-        $tours = apply_filters('FHEE__EE_Admin_Page___add_help_tour__tours', $tours);
-
         if (! empty($tours)) {
             $this->_help_tour['tours'] = $tours;
         }
         // that's it!  Now that the $_help_tours property is set (or not)
         // the scripts and html should be taken care of automatically.
+
+        /**
+         * Allow extending the help tours variable.
+         *
+         * @param Array $_help_tour The array containing all help tour information to be displayed.
+         */
+        $this->_help_tour = apply_filters('FHEE__EE_Admin_Page___add_help_tour___help_tour', $this->_help_tour);
     }
 
 
