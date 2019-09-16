@@ -1402,6 +1402,14 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
                 $this->_help_tour[ $route ][] = EEH_Template::help_tour_stops_generator($end_stop_tour);
             }
         }
+
+        /**
+         * Allow extending the help tours variable.
+         *
+         * @param Array $tours The array containing all tour items to be displayed.
+         */
+        $tours = apply_filters('FHEE__EE_Admin_Page___add_help_tour__tours', $tours);
+
         if (! empty($tours)) {
             $this->_help_tour['tours'] = $tours;
         }
