@@ -9,6 +9,7 @@ const aliases = {
 	'@eventespresso/helpers': path.resolve( __dirname, assets + 'data/helpers' ),
 	'@eventespresso/model': path.resolve( __dirname, assets + 'data/model' ),
 	'@eventespresso/value-objects': path.resolve( __dirname, assets + 'vo' ),
+	'@eventespresso/utils': path.resolve( __dirname, assets + 'utils' ),
 	'@eventespresso/higher-order-components': path.resolve( __dirname, assets + 'higher-order-components' ),
 	'@eventespresso/components': path.resolve( __dirname, assets + 'components' ),
 	'@eventespresso/editor': path.resolve( __dirname, assets + 'editor' ),
