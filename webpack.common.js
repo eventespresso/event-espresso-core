@@ -180,7 +180,7 @@ const config = [
 	},
 	{
 		entry: {
-			'eventespresso-editor-hocs': assets + 'editor/hocs/index.js',
+			'eventespresso-editor-hocs': assets + 'editor-hocs/index.js',
 		},
 		module: moduleConfigWithJsAndCssRules,
 		output: {
@@ -192,9 +192,7 @@ const config = [
 	},
 	{
 		entry: {
-			'eventespresso-editor': [
-				assets + 'editor/index.js',
-			],
+			'eventespresso-editor': assets + 'editor/index.js',
 		},
 		module: moduleConfigWithJsAndCssRules,
 		output: {
@@ -206,9 +204,7 @@ const config = [
 	},
 	{
 		entry: {
-			'ee-wp-plugins-page': [
-				assets + 'wp-plugins-page/index.js',
-			],
+			'ee-wp-plugins-page': assets + 'wp-plugins-page/index.js',
 		},
 		output: {
 			filename: '[name].[chunkhash].dist.js',
@@ -221,9 +217,7 @@ const config = [
 	},
 	{
 		entry: {
-			'eventespresso-data-stores': [
-				assets + 'data/index.js',
-			],
+			'eventespresso-data-stores': assets + 'data/index.js',
 		},
 		output: {
 			filename: '[name].[chunkhash].dist.js',
@@ -236,9 +230,7 @@ const config = [
 	},
 	{
 		entry: {
-			'eventespresso-core-blocks': [
-				assets + 'blocks/index.js',
-			],
+			'eventespresso-core-blocks': assets + 'blocks/index.js',
 		},
 		output: {
 			filename: '[name].[chunkhash].dist.js',
@@ -251,9 +243,8 @@ const config = [
 	},
 	{
 		entry: {
-			'eventespresso-core-blocks-frontend': [
-				assets + 'blocks/index-frontend.js',
-			],
+			'eventespresso-core-blocks-frontend': assets +
+				'blocks/index-frontend.js',
 		},
 		output: {
 			filename: '[name].[chunkhash].dist.js',
@@ -266,9 +257,8 @@ const config = [
 	},
 	{
 		entry: {
-			'eventespresso-core-css-default': [
-				assets + 'components/ui/styles/themes/default/index.js',
-			],
+			'eventespresso-core-css-default': assets +
+				'components/ui/styles/themes/default/index.js',
 		},
 		output: {
 			filename: '[name].[chunkhash].dist.js',
