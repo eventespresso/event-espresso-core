@@ -4,6 +4,7 @@
 import { IconMenuItem } from '@eventespresso/components';
 import { ifValidTicketEntity, useOpenEditor } from '@eventespresso/editor-hocs';
 import { __ } from '@eventespresso/i18n';
+import PropTypes from 'prop-types';
 
 /**
  * Internal dependencies
@@ -22,6 +23,10 @@ const EditTicketDetailsMenuItem = ( { ticketEntity } ) => {
 			onClick={ useOpenEditor( useTicketEditorId( ticketEntity ) ) }
 		/>
 	);
+};
+
+EditTicketDetailsMenuItem.propTypes = {
+	ticketEntity: PropTypes.object.isRequired,
 };
 
 export default ifValidTicketEntity( EditTicketDetailsMenuItem );

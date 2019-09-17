@@ -10,6 +10,7 @@ import {
 import { ifValidTicketEntity } from '@eventespresso/editor-hocs';
 import { __ } from '@eventespresso/i18n';
 import { ticketModel } from '@eventespresso/model';
+import PropTypes from 'prop-types';
 
 /**
  * Internal dependencies
@@ -36,7 +37,7 @@ const {
  */
 const EditorTicketEntityGridItem = ( {
 	ticketEntity,
-	displayTicketDate = 'start',
+	displayTicketDate,
 } ) => {
 	const ticketStart = ticketEntity.startDate.toISO();
 	const ticketEnd = ticketEntity.endDate.toISO();
@@ -149,6 +150,15 @@ const EditorTicketEntityGridItem = ( {
 			<EditorTicketActionsMenu ticketEntity={ ticketEntity } />
 		</EntityPaperFrame>
 	);
+};
+
+EditorTicketEntityGridItem.propTypes = {
+	ticketEntity: PropTypes.object.isRequired,
+	displayTicketDate: PropTypes.string,
+};
+
+EditorTicketEntityGridItem.defaultProps = {
+	displayTicketDate: 'start',
 };
 
 export default ifValidTicketEntity( EditorTicketEntityGridItem );

@@ -2,6 +2,7 @@
  * External imports
  */
 import { isModelEntityOfModel } from '@eventespresso/validators';
+import PropTypes from 'prop-types';
 
 /**
  * Internal dependencies
@@ -45,6 +46,16 @@ const EditorTicketEntitiesGridView = ( {
 			}
 		</div>
 	);
+};
+
+EditorTicketEntitiesGridView.propTypes = {
+	entities: PropTypes.array.isRequired,
+	htmlClass: PropTypes.string,
+};
+
+EditorTicketEntitiesGridView.defaultProps = {
+	entities: [],
+	htmlClass: '',
 };
 
 export default EditorTicketEntitiesGridView;

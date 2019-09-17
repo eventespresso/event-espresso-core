@@ -5,6 +5,7 @@ import { isEmpty } from 'lodash';
 import { useMemo } from '@wordpress/element';
 import { twoColumnAdminFormLayout } from '@eventespresso/components';
 import { ifValidTicketEntity } from '@eventespresso/editor-hocs';
+import PropTypes from 'prop-types';
 
 /**
  * Internal dependencies
@@ -25,9 +26,9 @@ const EditTicketForm = ( {
 	ticketEntity,
 	submitButton,
 	cancelButton,
-	currentValues = {},
-	initialValues = {},
-	newObject = false,
+	currentValues,
+	initialValues,
+	newObject,
 } ) => {
 	const formDataKeyPrefix = useTicketFormInputPrefix( ticketEntity );
 	const inputConfig = useTicketFormInputConfig( ticketEntity );
@@ -76,6 +77,21 @@ const EditTicketForm = ( {
 			cancelButton,
 		]
 	);
+};
+
+EditTicketForm.propTypes = {
+	ticketEntity: PropTypes.object.isRequired,
+	submitButton: PropTypes.element.isRequired,
+	cancelButton: PropTypes.element.isRequired,
+	currentValues: PropTypes.object,
+	initialValues: PropTypes.object,
+	newObject: PropTypes.bool,
+};
+
+EditTicketForm.defaultProps = {
+	currentValues: {},
+	initialValues: {},
+	newObject: false,
 };
 
 /**

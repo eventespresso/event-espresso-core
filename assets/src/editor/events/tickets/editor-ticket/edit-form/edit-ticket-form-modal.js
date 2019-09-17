@@ -6,6 +6,7 @@ import { useMemo } from '@wordpress/element';
 import { FormHandler } from '@eventespresso/components';
 import { EditorModal, ifValidTicketEntity } from '@eventespresso/editor-hocs';
 import { __ } from '@eventespresso/i18n';
+import PropTypes from 'prop-types';
 
 /**
  * Internal dependencies
@@ -50,6 +51,10 @@ const EditTicketFormModal = ( {
 		formData,
 		otherProps,
 	] );
+};
+
+EditTicketFormModal.propTypes = {
+	ticketEntity: PropTypes.object.isRequired,
 };
 
 export default ifValidTicketEntity( EditTicketFormModal );
