@@ -2,6 +2,7 @@
  * External imports
  */
 import classNames from 'classnames';
+import PropTypes from 'prop-types';
 
 /**
  * @param {Array} children
@@ -20,5 +21,15 @@ const TableHeader = ( { children, htmlClass, ...extraProps } ) => {
 		</thead>
 	);
 };
+
+TableHeader.propTypes = {
+	children: PropTypes.element,
+	htmlClass: PropTypes.string,
+};
+
+TableHeader.defaultProps = {
+	htmlClass: '',
+};
+
 
 export default TableHeader;

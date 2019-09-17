@@ -1,4 +1,9 @@
 /**
+ * External imports
+ */
+import PropTypes from 'prop-types';
+
+/**
  * @param {Array} children
  * @param {string} tableId
  * @param {string} tableClass
@@ -37,6 +42,21 @@ const Table = ( {
 			</table>
 		</div>
 	);
+};
+
+Table.propTypes = {
+	children: PropTypes.element.isRequired,
+	tableId: PropTypes.string,
+	tableClass: PropTypes.string,
+	captionID: PropTypes.string,
+	captionText: PropTypes.string,
+};
+
+Table.defaultProps = {
+	tableId: '',
+	tableClass: '',
+	captionID: '',
+	captionText: '',
 };
 
 export default Table;

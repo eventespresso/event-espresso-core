@@ -2,6 +2,7 @@
  * External imports
  */
 import classNames from 'classnames';
+import PropTypes from 'prop-types';
 
 /**
  * @param {Array} children
@@ -17,10 +18,10 @@ import classNames from 'classnames';
 const TableRow = ( {
 	children,
 	rowNumber,
-	htmlId = '',
-	htmlClass = '',
-	classes = {},
-	rowType = 'body',
+	htmlId,
+	htmlClass,
+	classes,
+	rowType,
 	...extraProps
 } ) => {
 	htmlId = htmlId ?
@@ -37,6 +38,22 @@ const TableRow = ( {
 			{ children }
 		</tr>
 	);
+};
+
+TableRow.propTypes = {
+	children: PropTypes.element.isRequired,
+	rowNumber: PropTypes.number.isRequired,
+	rowType: PropTypes.string,
+	htmlId: PropTypes.string,
+	htmlClass: PropTypes.string,
+	classes: PropTypes.object,
+};
+
+TableRow.defaultProps = {
+	rowType: 'body',
+	htmlId: '',
+	htmlClass: '',
+	classes: {},
 };
 
 export default TableRow;

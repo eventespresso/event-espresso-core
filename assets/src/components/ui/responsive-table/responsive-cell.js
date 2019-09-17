@@ -2,6 +2,7 @@
  * External imports
  */
 import { Fragment } from '@wordpress/element';
+import PropTypes from 'prop-types';
 
 /**
  * @function
@@ -9,7 +10,7 @@ import { Fragment } from '@wordpress/element';
  * @param {string} value
  * @return {Object} rendered headings row
  */
-const ResponsiveCell = ( { heading = '', value = '' } ) => {
+const ResponsiveCell = ( { heading, value } ) => {
 	return (
 		<Fragment>
 			<div aria-hidden
@@ -22,6 +23,16 @@ const ResponsiveCell = ( { heading = '', value = '' } ) => {
 			</div>
 		</Fragment>
 	);
+};
+
+ResponsiveCell.propTypes = {
+	heading: PropTypes.string,
+	value: PropTypes.string,
+};
+
+ResponsiveCell.defaultProps = {
+	heading: '',
+	value: '',
 };
 
 export default ResponsiveCell;
