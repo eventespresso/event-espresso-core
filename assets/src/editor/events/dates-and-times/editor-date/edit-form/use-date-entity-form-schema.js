@@ -1,7 +1,7 @@
 /**
  * External imports
  */
-import { parseInfinity } from '@eventespresso/eejs';
+import { parseInfinity } from '@eventespresso/utils';
 import { isModelEntityOfModel } from '@eventespresso/validators';
 
 /**

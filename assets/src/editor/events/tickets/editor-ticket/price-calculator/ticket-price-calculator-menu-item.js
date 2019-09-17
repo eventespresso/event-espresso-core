@@ -3,6 +3,7 @@
  */
 import { EspressoIcon, IconMenuItem } from '@eventespresso/components';
 import { ifValidTicketEntity, useOpenEditor } from '@eventespresso/editor-hocs';
+import { useTicketPrices } from '@eventespresso/hooks';
 import { __ } from '@eventespresso/i18n';
 
 /**
@@ -10,7 +11,6 @@ import { __ } from '@eventespresso/i18n';
  */
 import { TicketPriceCalculatorFormModal } from './';
 import { useTicketPriceCalculatorEditorId } from './hooks';
-import useTicketPrices from '../../../hooks/use-ticket-prices';
 
 const TicketPriceCalculatorMenuItem = ( { ticketEntity } ) => {
 	const editorId = useTicketPriceCalculatorEditorId( ticketEntity );

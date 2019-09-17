@@ -23,8 +23,7 @@ import {
 } from './filter-bar';
 import { EditorDateEntitiesGridView } from './grid-view';
 import { EditorDateEntitiesListView } from './list-view';
-import useEventEditorEventDates
-	from '../../hooks/use-event-editor-event-dates';
+import { useEventEditorEventDates } from '@eventespresso/hooks';
 import EditAllTicketAssignmentsButton
 	from '../../ticket-assignments-manager/edit-all-ticket-assignments-button';
 

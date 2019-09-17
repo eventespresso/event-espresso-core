@@ -3,11 +3,7 @@
  */
 import createDecorator from 'final-form-calculate';
 import { useCallback } from '@wordpress/element';
-
-/**
- * Internal imports
- */
-import { amountsMatch } from '../utils/';
+import { amountsMatch } from '@eventespresso/utils';
 
 const DEFAULT_OBJECT = {};
 

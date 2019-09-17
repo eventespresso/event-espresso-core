@@ -2,7 +2,7 @@
  * External imports
  */
 import { useMemo } from '@wordpress/element';
-import { parseInfinity } from '@eventespresso/eejs';
+import { parseInfinity } from '@eventespresso/utils';
 import { isModelEntityOfModel } from '@eventespresso/validators';
 
 /**

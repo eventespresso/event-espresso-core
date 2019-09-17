@@ -5,11 +5,7 @@ import PropTypes from 'prop-types';
 import { useMemo } from '@wordpress/element';
 import { ticketModel } from '@eventespresso/model';
 import { ifValidTicketEntity } from '@eventespresso/editor-hocs';
-
-/**
- * Internal imports
- */
-import { shortenCuid } from '../../../utils';
+import { shortenCuid } from '@eventespresso/utils';
 
 const { getBackgroundColorClass } = ticketModel;
 

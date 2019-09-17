@@ -3,7 +3,7 @@
  */
 import { useMemo } from '@wordpress/element';
 import { EntityDetailsPanel } from '@eventespresso/components';
-import { parseInfinity } from '@eventespresso/eejs';
+import { parseInfinity } from '@eventespresso/utils';
 import { __ } from '@eventespresso/i18n';
 import { InfinitySymbol } from '@eventespresso/value-objects';
 

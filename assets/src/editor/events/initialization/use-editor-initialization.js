@@ -3,7 +3,7 @@ import {
 	useEventDatesForEvent,
 	useEventVenue,
 	useTicketsForEventDates,
-} from '../hooks';
+} from '@eventespresso/hooks';
 
 const useEditorInitialization = ( eventId ) => {
 	const { eventEntity, eventEntityLoaded } = useEventEditorEvent( eventId );

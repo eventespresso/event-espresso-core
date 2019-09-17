@@ -4,7 +4,7 @@
 import PropTypes from 'prop-types';
 import { IconButton } from '@wordpress/components';
 import { ENTER } from '@wordpress/keycodes';
-import { cancelClickEvent } from '@eventespresso/eejs';
+import { cancelClickEvent } from '@eventespresso/utils';
 
 /**
  * Internal imports

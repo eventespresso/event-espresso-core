@@ -3,13 +3,11 @@
  */
 import { DropDownMenu } from '@eventespresso/components';
 import { ifValidDateEntity, useOpenEditor } from '@eventespresso/editor-hocs';
+import {
+	useCopyDateEntity,
+	useTrashDateEntity,
+} from '@eventespresso/hooks';
 import { __ } from '@eventespresso/i18n';
-
-/**
- * Internal dependencies
- */
-import useCopyDateEntity from '../../../../hooks/use-copy-date-entity';
-import useTrashDateEntity from '../../../../hooks/use-trash-date-entity';
 
 import useEventDateEditorId from '../../edit-form/use-event-date-editor-id';
 

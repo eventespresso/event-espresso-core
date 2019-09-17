@@ -5,14 +5,10 @@ import { filter } from 'lodash';
 import PropTypes from 'prop-types';
 import warning from 'warning';
 import { useCallback } from '@wordpress/element';
-
-/**
- * Internal imports
- */
-import useCreateRelationsForEventDateIdToTicketIds
-	from '../../hooks/use-create-relations-for-event-date-id-to-ticket-ids';
-import useRemoveRelationsForEventDateIdToTicketIds
-	from '../../hooks/use-remove-relations-for-event-date-id-to-ticket-ids';
+import {
+	useCreateRelationsForEventDateIdToTicketIds,
+	useRemoveRelationsForEventDateIdToTicketIds,
+} from '@eventespresso/hooks';
 
 const nullFunc = () => {};
 

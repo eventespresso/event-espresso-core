@@ -3,6 +3,7 @@
  */
 import { useMemo, useCallback } from '@wordpress/element';
 import { InlineEditInput } from '@eventespresso/components';
+import { usePriceTypes, useTicketPrices } from '@eventespresso/hooks';
 import { __ } from '@eventespresso/i18n';
 import { Money, SiteCurrency } from '@eventespresso/value-objects';
 
@@ -11,7 +12,6 @@ import { Money, SiteCurrency } from '@eventespresso/value-objects';
  */
 import useTicketBasePriceCalculator from
 	'../price-calculator/hooks/use-ticket-base-price-calculator';
-import { usePriceTypes, useTicketPrices } from '../../../hooks';
 
 /**
  * InlineEditTicketPrice inline-edit-ticket-price

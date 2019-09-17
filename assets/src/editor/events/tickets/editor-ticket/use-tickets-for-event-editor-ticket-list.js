@@ -4,7 +4,7 @@
 import { useSelect } from '@wordpress/data';
 
 import useDatesListFilterState
-	from '../dates-and-times/editor-date/filter-bar/use-dates-list-filter-state';
+	from '../../dates-and-times/editor-date/filter-bar/use-dates-list-filter-state';
 
 const EMPTY_ARRAY = [];
 

@@ -1,9 +1,13 @@
 /**
+ * External imports
+ */
+import { shortenCuid } from '@eventespresso/utils';
+
+/**
  * Internal dependencies
  */
 import EditorTicketActionsMenu
 	from '../../../tickets/editor-ticket/actions-menu/editor-ticket-actions-menu';
-import { shortenCuid } from '../../../../utils';
 
 const DATE_TIME_FORMAT = 'ddd MMM YY h:mm a';
 

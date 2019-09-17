@@ -12,7 +12,7 @@ import {
 	useRef,
 	useState,
 } from '@wordpress/element';
-import { cancelClickEvent } from '@eventespresso/eejs';
+import { cancelClickEvent } from '@eventespresso/utils';
 import { __, sprintf } from '@eventespresso/i18n';
 
 /**

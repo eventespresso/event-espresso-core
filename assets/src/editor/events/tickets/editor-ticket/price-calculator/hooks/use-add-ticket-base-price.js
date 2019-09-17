@@ -2,13 +2,9 @@
  * External imports
  */
 import { useCallback, useState } from '@wordpress/element';
+import { useAddPriceModifier } from '@eventespresso/hooks';
+import { parseMoneyValue } from '@eventespresso/utils';
 import { Money, SiteCurrency } from '@eventespresso/value-objects';
-
-/**
- * Internal dependencies
- */
-import parseMoneyValue from '../utils/parse-money-value';
-import useAddPriceModifier from '../../../../hooks/use-add-price-modifier';
 
 /**
  * creates a  base price type price entity in the data store

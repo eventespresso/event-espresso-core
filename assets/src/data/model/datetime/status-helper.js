@@ -2,13 +2,13 @@
  * External imports
  */
 import { __ } from '@eventespresso/i18n';
-import { parseInfinity } from '@eventespresso/eejs';
 import { isModelEntityOfModel } from '@eventespresso/validators';
 
 /**
  * Internal imports
  */
 import { DATETIME_STATUS_ID, MODEL_NAME, MONTH_IN_SECONDS } from './constants';
+import parseInfinity from '../../../utils/parse-infinity';
 
 /**
  * @function

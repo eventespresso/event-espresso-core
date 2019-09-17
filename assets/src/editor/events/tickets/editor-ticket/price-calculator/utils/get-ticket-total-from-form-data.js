@@ -1,7 +1,7 @@
 /**
  * Internal imports
  */
-import parseMoneyValue from './parse-money-value';
+import { parseMoneyValue } from '@eventespresso/utils';
 
 /**
  * @function getTicketTotalFromFormData

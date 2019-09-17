@@ -3,6 +3,8 @@
  */
 import { Fragment, useCallback } from '@wordpress/element';
 import { normalizeEntityId } from '@eventespresso/helpers';
+import { usePriceTypes } from '@eventespresso/hooks';
+import { shortenCuid } from '@eventespresso/utils';
 
 /**
  * Internal dependencies
@@ -17,8 +19,6 @@ import {
 	PriceTypeInput,
 } from '../price-modifier-row/';
 import { getPriceType } from '../utils/';
-import { shortenCuid } from '../../../../../utils';
-import usePriceTypes from '../../../../hooks/use-price-types';
 
 /**
  * @param {string} ticketPrefix

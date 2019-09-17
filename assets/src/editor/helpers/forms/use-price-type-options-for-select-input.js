@@ -2,9 +2,8 @@
  * External imports
  */
 import { useMemo } from '@wordpress/element';
+import { usePriceTypes } from '@eventespresso/hooks';
 import { isModelEntityOfModel } from '@eventespresso/validators';
-
-import usePriceTypes from '../../events/hooks/use-price-types';
 
 const EMPTY_ARRAY = [];
 /**

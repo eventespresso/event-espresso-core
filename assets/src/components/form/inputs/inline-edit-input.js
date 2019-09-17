@@ -6,7 +6,7 @@ import { isFunction } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component, createRef, Fragment } from '@wordpress/element';
 import { ENTER, ESCAPE, SPACE } from '@wordpress/keycodes';
-import { parseInfinity } from '@eventespresso/eejs';
+import { parseInfinity } from '@eventespresso/utils';
 import { __ } from '@eventespresso/i18n';
 import { InfinitySymbol } from '@eventespresso/value-objects';
 

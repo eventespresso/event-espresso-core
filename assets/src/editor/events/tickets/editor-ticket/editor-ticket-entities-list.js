@@ -15,6 +15,8 @@ import { __, _x, sprintf } from '@eventespresso/i18n';
  * Internal dependencies
  */
 import AddNewTicketButton from './add-new-ticket-button';
+import useTicketsForEventEditorTicketList
+	from './use-tickets-for-event-editor-ticket-list';
 import { EditorTicketEntitiesGridView } from './grid-view/';
 import { EditorTicketEntitiesListView } from './list-view/';
 import {
@@ -23,8 +25,6 @@ import {
 	useTicketsListFilterStateSetters,
 	useFilteredTicketsList,
 } from './filter-bar';
-import useTicketsForEventEditorTicketList
-	from '../../hooks/use-tickets-for-event-editor-ticket-list';
 
 const {
 	FormWrapper,

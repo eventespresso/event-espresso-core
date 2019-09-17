@@ -3,10 +3,9 @@
  */
 import { IconButton, Tooltip } from '@wordpress/components';
 import { useMemo } from '@wordpress/element';
+import { useTrashPriceModifier } from '@eventespresso/hooks';
 import { __ } from '@eventespresso/i18n';
 import { priceTypeModel } from '@eventespresso/model';
-
-import useTrashPriceModifier from '../../../../hooks/use-trash-price-modifier';
 
 const { BASE_PRICE_TYPES } = priceTypeModel;
 

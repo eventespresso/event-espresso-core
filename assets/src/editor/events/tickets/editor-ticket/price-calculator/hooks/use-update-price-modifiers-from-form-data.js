@@ -2,13 +2,13 @@
  * External imports
  */
 import { useCallback } from '@wordpress/element';
+import { parseMoneyValue } from '@eventespresso/utils';
 import { isModelEntityOfModel } from '@eventespresso/validators';
 import { Money, SiteCurrency } from '@eventespresso/value-objects';
 
 /**
  * Internal imports
  */
-import parseMoneyValue from '../utils/parse-money-value';
 import { TICKET_PRICE_CALCULATOR_FORM_INPUT_PREFIX } from '../constants';
 
 /**
