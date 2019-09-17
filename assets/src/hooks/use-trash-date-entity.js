@@ -3,7 +3,7 @@
  */
 import { useDispatch } from '@wordpress/data';
 import { useCallback } from '@wordpress/element';
-import { cancelClickEvent } from '@eventespresso/eejs';
+import { cancelClickEvent } from '@eventespresso/utils';
 import { __ } from '@eventespresso/i18n';
 import { isModelEntityOfModel } from '@eventespresso/validators';
 

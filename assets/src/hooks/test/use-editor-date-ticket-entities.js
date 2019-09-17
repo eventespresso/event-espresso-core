@@ -39,7 +39,9 @@ describe( 'useEventDateTickets', () => {
 			renderer = TestRenderer.create( <TestComponent /> );
 		} );
 		const testInstance = renderer.root;
-		expect( testInstance.findByType( 'div' ).props.ticketEntities )
+		const props = testInstance.findByType( 'div' ).props;
+		expect( console ).toHaveErrored();
+		expect( props.ticketEntities )
 			.toEqual( {
 				tickets: [],
 				ticketsLoaded: false,

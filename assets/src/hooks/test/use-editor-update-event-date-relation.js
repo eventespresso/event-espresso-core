@@ -5,7 +5,8 @@ import {
 } from '@wordpress/data';
 import { AuthedEventEntity, AuthedDateTimeEntity } from '@test/fixtures';
 
-import useCreateRelationForEventToEventDate from '../use-create-relation-for-event-to-event-date';
+import useCreateRelationForEventToEventDate
+	from '../use-create-relation-for-event-to-event-date';
 
 describe( 'useCreateRelationForEventToEventDate', () => {
 	let registry;
