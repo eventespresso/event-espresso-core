@@ -51,8 +51,3 @@ export * from './exceptions';
  */
 import * as mw from './middlewares';
 export const middleWares = mw;
-
-/**
- * utilities
- */
-export * from './utils';
