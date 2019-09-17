@@ -1,8 +1,8 @@
 /**
  * External dependencies
  */
-import { InspectorControls } from '@wordpress/editor';
-import { Component, Fragment } from '@wordpress/element';
+import PropTypes from 'prop-types';
+import { isEmpty } from 'lodash';
 import {
 	PanelBody,
 	Placeholder,
@@ -12,7 +12,8 @@ import {
 	SelectControl,
 } from '@wordpress/components';
 import { withSelect } from '@wordpress/data';
-import { sprintf, _n, __ } from '@eventespresso/i18n';
+import { InspectorControls } from '@wordpress/editor';
+import { Component, Fragment } from '@wordpress/element';
 import {
 	EditorDatetimeSelect,
 	EditorEventSelect,
@@ -22,6 +23,7 @@ import {
 	EventAttendeeList,
 } from '@eventespresso/components';
 import { NotWithPostTypeCheck } from '@eventespresso/editor-hocs';
+import { sprintf, _n, __ } from '@eventespresso/i18n';
 import {
 	statusModel,
 	attendeeModel,
@@ -29,8 +31,6 @@ import {
 	QUERY_ORDER_DESC,
 	ALLOWED_ORDER_VALUES,
 } from '@eventespresso/model';
-import PropTypes from 'prop-types';
-import { isEmpty } from 'lodash';
 
 /**
  * Internal dependencies

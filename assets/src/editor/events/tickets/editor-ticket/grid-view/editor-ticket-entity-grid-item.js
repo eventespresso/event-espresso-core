@@ -7,6 +7,7 @@ import {
 	CalendarDateRange,
 	EntityPaperFrame,
 } from '@eventespresso/components';
+import { ifValidTicketEntity } from '@eventespresso/editor-hocs';
 import { __ } from '@eventespresso/i18n';
 import { ticketModel } from '@eventespresso/model';
 
@@ -16,7 +17,6 @@ import { ticketModel } from '@eventespresso/model';
 import EditorTicketEntityDetails from './editor-ticket-entity-details';
 import EditorTicketActionsMenu
 	from '../actions-menu/editor-ticket-actions-menu';
-import { ifValidTicketEntity } from '../../../../hocs/if-validators';
 
 const {
 	getBackgroundColorClass,
