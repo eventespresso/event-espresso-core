@@ -12,7 +12,6 @@ import {
 	InvalidLocale,
 	InvalidTimezone,
 	InvalidArgument,
-	InvalidDateTime,
 } from '@eventespresso/eejs';
 import { capitalize } from 'lodash';
 
