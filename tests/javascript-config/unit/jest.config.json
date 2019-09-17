@@ -7,20 +7,29 @@
 		"!**/vendor/**",
 		"!**/test/**"
 	],
+	"modulePaths": [
+		"<rootDir>"
+	],
 	"moduleNameMapper": {
 		"@eventespresso\\/(eejs)": "assets/src/$1",
-		"@eventespresso\/helpers": "assets/src/data/helpers",
-		"@eventespresso\/validators": "assets/src/eejs/validators",
-		"@eventespresso\/model": "assets/src/data/model",
-		"@eventespresso\/value-objects": "assets/src/vo",
+		"@eventespresso\/core-blocks": "assets/src/blocks",
 		"@eventespresso\/components": "assets/src/components",
-		"@eventespresso\/editor-hocs": "assets/src/editor/hocs",
-		"tinymce": "<rootDir>/tests/javascript-config/unit/mocks/tinymce",
-		"@wordpress/i18n": "<rootDir>/tests/javascript-config/unit/mocks/i18n",
+		"@eventespresso\/data": "assets/src/data",
+		"@eventespresso\/helpers": "assets/src/data/helpers",
+		"@eventespresso\/model": "assets/src/data/model",
+		"@eventespresso\/validators": "assets/src/eejs/validators",
+		"@eventespresso\/editor-hocs": "assets/src/editor-hocs",
+		"@eventespresso\/editor": "assets/src/editor",
+		"@eventespresso\/hocs": "assets/src/higher-order-components",
+		"@eventespresso\/hooks": "assets/src/hooks",
+		"@eventespresso\/value-objects": "assets/src/vo",
+		"@eventespresso\/utils": "assets/src/utils",
 		"@eventespresso/i18n": "<rootDir>/tests/javascript-config/unit/mocks/i18n",
+		"@test/fixtures": "<rootDir>/tests/javascript-config/unit/fixtures",
+		"@wordpress/i18n": "<rootDir>/tests/javascript-config/unit/mocks/i18n",
 		"@wordpress/element": "react",
 		"@wordpress/is-shallow-equal/objects": "<rootDir>/node_modules/@wordpress/is-shallow-equal/build/objects",
-		"@test/fixtures": "<rootDir>/tests/javascript-config/unit/fixtures"
+		"tinymce": "<rootDir>/tests/javascript-config/unit/mocks/tinymce"
 	},
 	"setupFiles": [
 		"<rootDir>/tests/javascript-config/unit/setup-globals"
