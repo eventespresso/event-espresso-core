@@ -1,7 +1,7 @@
 /**
  * External imports
  */
-import { __DEV__ } from '../constants';
+import { __DEV__ } from '@eventespresso/eejs';
 
 const { console } = window;
 

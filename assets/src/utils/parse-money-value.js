@@ -1,7 +1,7 @@
 /**
  * External imports
  */
-import { SiteCurrency } from '@eventespresso/value-objects';
+import SiteCurrency from '../vo/currency';
 
 /**
  * @function
