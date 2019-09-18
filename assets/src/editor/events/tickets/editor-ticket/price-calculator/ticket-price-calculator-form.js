@@ -9,6 +9,7 @@ import {
 	twoColumnAdminFormLayout,
 } from '@eventespresso/components';
 import { ifValidTicketEntity } from '@eventespresso/editor-hocs';
+import PropTypes from 'prop-types';
 
 /**
  * Internal dependencies
@@ -44,8 +45,8 @@ const TicketPriceCalculatorForm = ( {
 	ticketEntity,
 	priceEntities,
 	updateField,
-	initialValues = {},
-	currentValues = {},
+	initialValues,
+	currentValues,
 } ) => {
 	const {
 		addTicketBasePrice,
@@ -104,6 +105,19 @@ const TicketPriceCalculatorForm = ( {
 			</FormSection>
 		</FormWrapper>
 	);
+};
+
+TicketPriceCalculatorForm.propTypes = {
+	ticketEntity: PropTypes.object.isRequired,
+	priceEntities: PropTypes.array.isRequired,
+	updateField: PropTypes.func.isRequired,
+	initialValues: PropTypes.object,
+	currentValues: PropTypes.object,
+};
+
+TicketPriceCalculatorForm.defaultProps = {
+	initialValues: {},
+	currentValues: {},
 };
 
 export default ifValidTicketEntity( TicketPriceCalculatorForm );

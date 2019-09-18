@@ -6,6 +6,7 @@ import { EntityDetailsPanel } from '@eventespresso/components';
 import { parseInfinity } from '@eventespresso/utils';
 import { __ } from '@eventespresso/i18n';
 import { InfinitySymbol } from '@eventespresso/value-objects';
+import PropTypes from 'prop-types';
 
 /**
  * Internal dependencies
@@ -61,5 +62,9 @@ const TicketDetailsPanel = ( { ticket } ) => useMemo( () => {
 	ticket.reserved,
 	ticket.sold,
 ] );
+
+TicketDetailsPanel.propTypes = {
+	ticket: PropTypes.object.isRequired,
+};
 
 export default TicketDetailsPanel;

@@ -11,6 +11,7 @@ import {
 import { __ } from '@eventespresso/i18n';
 import { ticketModel } from '@eventespresso/model';
 import { isModelEntityOfModel } from '@eventespresso/validators';
+import PropTypes from 'prop-types';
 
 /**
  * Internal dependencies
@@ -103,6 +104,17 @@ const EditorTicketEntitiesListView = ( {
 			classes={ { tableClass: htmlClass } }
 		/>
 	);
+};
+
+EditorTicketEntitiesListView.propTypes = {
+	entities: PropTypes.array.isRequired,
+	displayTicketDate: PropTypes.string,
+	htmlClass: PropTypes.string,
+	doRefresh: PropTypes.func,
+};
+
+EditorTicketEntitiesListView.defaultProps = {
+	showDesc: false,
 };
 
 export default EditorTicketEntitiesListView;

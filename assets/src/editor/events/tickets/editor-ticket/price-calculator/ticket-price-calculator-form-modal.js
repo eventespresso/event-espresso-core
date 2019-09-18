@@ -5,6 +5,7 @@ import { useEffect } from '@wordpress/element';
 import { EditorModal, ifValidTicketEntity } from '@eventespresso/editor-hocs';
 import { __, _x, sprintf } from '@eventespresso/i18n';
 import { FormHandler } from '@eventespresso/components';
+import PropTypes from 'prop-types';
 
 /**
  * Internal dependencies
@@ -77,6 +78,12 @@ const TicketPriceCalculatorFormModal = ( {
 			/>
 		</EditorModal>
 	) : null;
+};
+
+TicketPriceCalculatorFormModal.propTypes = {
+	ticketEntity: PropTypes.object.isRequired,
+	prices: PropTypes.array.isRequired,
+	pricesLoaded: PropTypes.bool.isRequired
 };
 
 export default ifValidTicketEntity( TicketPriceCalculatorFormModal );

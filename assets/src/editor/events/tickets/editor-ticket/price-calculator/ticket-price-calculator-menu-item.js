@@ -5,6 +5,7 @@ import { EspressoIcon, IconMenuItem } from '@eventespresso/components';
 import { ifValidTicketEntity, useOpenEditor } from '@eventespresso/editor-hocs';
 import { useTicketPrices } from '@eventespresso/hooks';
 import { __ } from '@eventespresso/i18n';
+import PropTypes from 'prop-types';
 
 /**
  * Internal imports
@@ -41,6 +42,10 @@ const TicketPriceCalculatorMenuItem = ( { ticketEntity } ) => {
 			{ calculator }
 		</>
 	);
+};
+
+TicketPriceCalculatorMenuItem.propTypes = {
+	ticketEntity: PropTypes.object.isRequired,
 };
 
 export default ifValidTicketEntity( TicketPriceCalculatorMenuItem );

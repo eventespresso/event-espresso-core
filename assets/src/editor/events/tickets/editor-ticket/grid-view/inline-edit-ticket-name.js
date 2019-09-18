@@ -5,6 +5,7 @@ import classNames from 'classnames';
 import { useMemo } from '@wordpress/element';
 import { InlineEditInput } from '@eventespresso/components';
 import { __ } from '@eventespresso/i18n';
+import PropTypes from 'prop-types';
 
 const InlineEditTicketName = ( { ticket, wrapperElement } ) => useMemo(
 	() => {
@@ -30,5 +31,10 @@ const InlineEditTicketName = ( { ticket, wrapperElement } ) => useMemo(
 	},
 	[ ticket.id, ticket.name ]
 );
+
+InlineEditTicketName.propTypes = {
+	ticket: PropTypes.object.isRequired,
+	wrapperElement: PropTypes.element,
+};
 
 export default InlineEditTicketName;

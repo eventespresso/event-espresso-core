@@ -6,6 +6,7 @@ import { twoColumnAdminFormLayout } from '@eventespresso/components';
 import { normalizeEntityId } from '@eventespresso/helpers';
 import { __ } from '@eventespresso/i18n';
 import { priceTypeModel } from '@eventespresso/model';
+import PropTypes from 'prop-types';
 
 import useDefaultPriceType from '../hooks/use-default-price-type';
 
@@ -69,6 +70,18 @@ const PriceTypeInput = ( {
 			values[ key ],
 		]
 	);
+};
+
+PriceTypeInput.propTypes = {
+	prefix: PropTypes.string.isRequired,
+	values: PropTypes.object.isRequired,
+	priceTypeId: PropTypes.number.isRequired,
+	priceTypeOptions: PropTypes.array.isRequired,
+	basePriceType: PropTypes.number.isRequired,
+};
+
+PriceTypeInput.defaultProps = {
+	priceTypeOptions: [],
 };
 
 export default PriceTypeInput;

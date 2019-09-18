@@ -4,6 +4,7 @@
 import { Fragment, useMemo } from '@wordpress/element';
 import { __ } from '@eventespresso/i18n';
 import { twoColumnAdminFormLayout } from '@eventespresso/components';
+import PropTypes from 'prop-types';
 
 const { FormInput, InputLabel } = twoColumnAdminFormLayout;
 
@@ -29,5 +30,10 @@ const PriceIdInput = ( { prefix, values } ) => useMemo( () => (
 		/>
 	</Fragment>
 ), [ prefix, values[ `${ prefix }-id` ] ] );
+
+PriceIdInput.propTypes = {
+	prefix: PropTypes.string.isRequired,
+	values: PropTypes.object.isRequired,
+};
 
 export default PriceIdInput;

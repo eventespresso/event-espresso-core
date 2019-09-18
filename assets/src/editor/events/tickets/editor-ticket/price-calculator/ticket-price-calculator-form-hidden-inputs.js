@@ -3,6 +3,7 @@
  */
 import { useMemo } from '@wordpress/element';
 import { twoColumnAdminFormLayout } from '@eventespresso/components';
+import PropTypes from 'prop-types';
 
 const { FormInput } = twoColumnAdminFormLayout;
 
@@ -38,5 +39,9 @@ const TicketPriceCalculatorFormHiddenInputs = ( { values } ) => useMemo( () => {
 		</>
 	);
 }, [ values.ticketID, values.priceIDs, values.priceTypes ] );
+
+TicketPriceCalculatorFormHiddenInputs.propTypes = {
+	values: PropTypes.object.isRequired,
+};
 
 export default TicketPriceCalculatorFormHiddenInputs;

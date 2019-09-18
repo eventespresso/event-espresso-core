@@ -6,6 +6,7 @@ import { InlineEditInput } from '@eventespresso/components';
 import { usePriceTypes, useTicketPrices } from '@eventespresso/hooks';
 import { __ } from '@eventespresso/i18n';
 import { Money, SiteCurrency } from '@eventespresso/value-objects';
+import PropTypes from 'prop-types';
 
 /**
  * Internal dependencies
@@ -72,6 +73,16 @@ const InlineEditTicketPrice = ( {
 		showPrice,
 		WrapperElement,
 	] );
+};
+
+InlineEditTicketPrice.propTypes = {
+	ticket: PropTypes.object.isRequired,
+	showDesc: PropTypes.bool,
+	wrapperElement: PropTypes.element,
+};
+
+InlineEditTicketPrice.defaultProps = {
+	showDesc: false,
 };
 
 export default InlineEditTicketPrice;

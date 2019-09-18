@@ -8,12 +8,13 @@ import {
 	LoadingNotice,
 	twoColumnAdminFormLayout,
 } from '@eventespresso/components';
+import PropTypes from 'prop-types';
 
 const { FormInfo } = twoColumnAdminFormLayout;
 
 const FormInfoWarningNoTicketPrices = ( {
 	priceCount,
-	inProgress = false,
+	inProgress,
 } ) => useMemo( () => priceCount < 1 ? (
 	<>
 		<FormInfo
@@ -34,5 +35,14 @@ const FormInfoWarningNoTicketPrices = ( {
 		<LoadingNotice loading={ inProgress } />
 	</>
 ) : null, [ priceCount, inProgress ] );
+
+FormInfoWarningNoTicketPrices.propTypes = {
+	priceCount: PropTypes.number.isRequired,
+	inProgress: PropTypes.bool,
+};
+
+FormInfoWarningNoTicketPrices.defaultProps = {
+	inProgress: false,
+};
 
 export default FormInfoWarningNoTicketPrices;
