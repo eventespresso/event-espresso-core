@@ -23,25 +23,27 @@ const useCreateRelationsForEventDateIdToTicketIds = () => {
 		[]
 	);
 	return useCallback( async ( eventDateId, ticketIds ) => {
-		let tickets = await getEntitiesByIds( 'ticket', ticketIds );
-		tickets = Array.isArray( tickets ) ? tickets : [ tickets ];
-		tickets.forEach( ( ticket ) => {
-			if ( ! isModelEntityOfModel( ticket, 'ticket' ) ) {
-				throw new Error(
-					__(
-						'Unable to create relation because an invalid Ticket Entity was supplied.',
-						'event_espresso'
-					)
-				);
-			}
+		return new Promise( async ( resolve ) => {
+			let tickets = await getEntitiesByIds( 'ticket', ticketIds );
+			tickets = Array.isArray( tickets ) ? tickets : [ tickets ];
+			tickets.forEach( ( ticket ) => {
+				if ( ! isModelEntityOfModel( ticket, 'ticket' ) ) {
+					throw new Error(
+						__(
+							'Unable to create relation because an invalid Ticket Entity was supplied.',
+							'event_espresso'
+						)
+					);
+				}
+			} );
+			await createRelations(
+				'datetime',
+				eventDateId,
+				'ticket',
+				tickets,
+			);
+			resolve( true );
 		} );
-		await createRelations(
-			'datetime',
-			eventDateId,
-			'ticket',
-			tickets,
-		);
-		return new Promise( ( resolve ) => resolve( true ) );
 	} );
 };
 

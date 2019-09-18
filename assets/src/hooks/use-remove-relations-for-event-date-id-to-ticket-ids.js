@@ -12,24 +12,22 @@ import { useCallback } from '@wordpress/element';
  *  -  eventDateId ID for event date entity
  *  -  ticketIds array of ticket entity IDs
  *
- * @return {function}  A function for updating the ticket relation.
+ * @return {Function}  A function for updating the ticket relation.
  */
 const useRemoveRelationsForEventDateIdToTicketIds = () => {
 	const { removeRelationForEntity } = useDispatch( 'eventespresso/core' );
 	return useCallback( ( eventDateId, ticketIds ) => {
-		const relationsRemoved = [];
-		ticketIds = Array.isArray( ticketIds ) ? ticketIds : [ ticketIds ];
-		ticketIds.forEach( ( ticketId ) => {
-			relationsRemoved.push(
-				removeRelationForEntity(
+		return new Promise( ( resolve ) => {
+			ticketIds.forEach( async ( ticketId ) => {
+				await removeRelationForEntity(
 					'datetime',
 					eventDateId,
 					'ticket',
 					ticketId,
-				)
-			);
+				);
+			} );
+			resolve( true );
 		} );
-		return Promise.all( relationsRemoved );
 	} );
 };
 
