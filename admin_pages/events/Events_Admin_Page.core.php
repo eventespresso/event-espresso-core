@@ -1839,6 +1839,10 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
                 'EVT_short_desc' => array('LIKE', $search_string),
             );
         }
+        // filter events by venue.
+        if (isset($this->_req_data['venue']) && ! empty($this->_req_data['venue'])) {
+            $where['Venue.VNU_ID'] = absint($this->_req_data['venue']);
+        }
         $where = apply_filters('FHEE__Events_Admin_Page__get_events__where', $where, $this->_req_data);
         $query_params = apply_filters(
             'FHEE__Events_Admin_Page__get_events__query_params',
@@ -1868,6 +1872,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
                     break;
             }
         }
+
         $events = $count ? $EEME->count(array($where), 'EVT_ID', true) : $EEME->get_all($query_params);
         return $events;
     }
