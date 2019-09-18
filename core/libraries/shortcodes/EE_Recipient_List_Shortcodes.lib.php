@@ -170,9 +170,9 @@ class EE_Recipient_List_Shortcodes extends EE_Shortcodes
     {
         // first get registrations just for this attendee.
         $att = $data->att_obj;
-        $registrations_on_attendee = $att instanceof EE_Attendee ? $data->attendees[ $att->ID() ]['reg_objs'] : null;
+        $registrations_on_attendee = $att instanceof EE_Attendee ? $data->attendees[ $att->ID() ]['reg_objs'] : array();
         $registrations_on_attendee = empty($registrations_on_attendee) && $data->reg_obj instanceof EE_Registration
-            ? array($data->reg_obj) : array();
+            ? array($data->reg_obj) : $registrations_on_attendee;
         $valid_shortcodes = array('datetime', 'attendee', 'recipient_details');
         $template = '';
         $dtts = array();
