@@ -5,11 +5,11 @@ const autoprefixer = require( 'autoprefixer' );
 const cssnano = require( 'cssnano' );
 const del = require( 'del' );
 
-const outputPath = path.resolve( __dirname, 'assets/dist' );
+const pathToDistFolder = path.resolve( __dirname, 'assets/dist' );
 /**
  * Clean build folder before running build
  */
-del.sync( [ path.resolve( outputPath, '**/*' ) ] );
+del.sync( [ path.resolve( pathToDistFolder, '**/*' ) ] );
 
 const rulesConfig = {
 	jsRulesConfig: {
@@ -65,7 +65,7 @@ const config = [
 		module: moduleConfigWithJsRules,
 		output: {
 			filename: '[name].[chunkhash].dist.js',
-			path: path.resolve( __dirname, 'assets/dist' ),
+			path: pathToDistFolder,
 			library: [ 'eejs' ],
 			libraryTarget: 'this',
 		},
@@ -77,8 +77,20 @@ const config = [
 		module: moduleConfigWithJsRules,
 		output: {
 			filename: '[name].[chunkhash].dist.js',
-			path: path.resolve( __dirname, 'assets/dist' ),
+			path: pathToDistFolder,
 			library: [ 'eejs', 'vendor' ],
+			libraryTarget: 'this',
+		},
+	},
+	{
+		entry: {
+			'eventespresso-utils': assets + 'utils/index.js',
+		},
+		module: moduleConfigWithJsRules,
+		output: {
+			filename: '[name].[chunkhash].dist.js',
+			path: pathToDistFolder,
+			library: [ 'eejs', 'utils' ],
 			libraryTarget: 'this',
 		},
 	},
@@ -89,7 +101,7 @@ const config = [
 		module: moduleConfigWithJsRules,
 		output: {
 			filename: '[name].[chunkhash].dist.js',
-			path: path.resolve( __dirname, 'assets/dist' ),
+			path: pathToDistFolder,
 			library: [ 'eejs', 'hooks' ],
 			libraryTarget: 'this',
 		},
@@ -101,7 +113,7 @@ const config = [
 		module: moduleConfigWithJsRules,
 		output: {
 			filename: '[name].[chunkhash].dist.js',
-			path: path.resolve( __dirname, 'assets/dist' ),
+			path: pathToDistFolder,
 			library: [ 'eejs', 'validators' ],
 			libraryTarget: 'this',
 		},
@@ -113,7 +125,7 @@ const config = [
 		module: moduleConfigWithJsRules,
 		output: {
 			filename: '[name].[chunkhash].dist.js',
-			path: path.resolve( __dirname, 'assets/dist' ),
+			path: pathToDistFolder,
 			library: [ 'eejs', 'helpers' ],
 			libraryTarget: 'this',
 		},
@@ -125,7 +137,7 @@ const config = [
 		module: moduleConfigWithJsRules,
 		output: {
 			filename: '[name].[chunkhash].dist.js',
-			path: path.resolve( __dirname, 'assets/dist' ),
+			path: pathToDistFolder,
 			library: [ 'eejs', 'model' ],
 			libraryTarget: 'this',
 		},
@@ -137,7 +149,7 @@ const config = [
 		module: moduleConfigWithJsRules,
 		output: {
 			filename: '[name].[chunkhash].dist.js',
-			path: path.resolve( __dirname, 'assets/dist' ),
+			path: pathToDistFolder,
 			library: [ 'eejs', 'valueObjects' ],
 			libraryTarget: 'this',
 		},
@@ -149,7 +161,7 @@ const config = [
 		module: moduleConfigWithJsAndCssRules,
 		output: {
 			filename: '[name].[chunkhash].dist.js',
-			path: path.resolve( __dirname, 'assets/dist' ),
+			path: pathToDistFolder,
 			library: [ 'eejs', 'hocs' ],
 			libraryTarget: 'this',
 		},
@@ -161,46 +173,42 @@ const config = [
 		module: moduleConfigWithJsAndCssRules,
 		output: {
 			filename: '[name].[chunkhash].dist.js',
-			path: path.resolve( __dirname, 'assets/dist' ),
+			path: pathToDistFolder,
 			library: [ 'eejs', 'components' ],
 			libraryTarget: 'this',
 		},
 	},
 	{
 		entry: {
-			'eventespresso-editor-hocs': assets + 'editor/hocs/index.js',
+			'eventespresso-editor-hocs': assets + 'editor-hocs/index.js',
 		},
 		module: moduleConfigWithJsAndCssRules,
 		output: {
 			filename: '[name].[chunkhash].dist.js',
-			path: path.resolve( __dirname, 'assets/dist' ),
+			path: pathToDistFolder,
 			library: [ 'eejs', 'editorHocs' ],
 			libraryTarget: 'this',
 		},
 	},
 	{
 		entry: {
-			'eventespresso-editor': [
-				assets + 'editor/index.js',
-			],
+			'eventespresso-editor': assets + 'editor/index.js',
 		},
 		module: moduleConfigWithJsAndCssRules,
 		output: {
 			filename: '[name].[chunkhash].dist.js',
-			path: path.resolve( __dirname, 'assets/dist' ),
+			path: pathToDistFolder,
 			library: [ 'eejs', 'editor' ],
 			libraryTarget: 'this',
 		},
 	},
 	{
 		entry: {
-			'ee-wp-plugins-page': [
-				assets + 'wp-plugins-page/index.js',
-			],
+			'ee-wp-plugins-page': assets + 'wp-plugins-page/index.js',
 		},
 		output: {
 			filename: '[name].[chunkhash].dist.js',
-			path: path.resolve( __dirname, 'assets/dist' ),
+			path: pathToDistFolder,
 		},
 		module: moduleConfigWithJsAndCssRules,
 		watchOptions: {
@@ -209,13 +217,11 @@ const config = [
 	},
 	{
 		entry: {
-			'eventespresso-data-stores': [
-				assets + 'data/index.js',
-			],
+			'eventespresso-data-stores': assets + 'data/index.js',
 		},
 		output: {
 			filename: '[name].[chunkhash].dist.js',
-			path: path.resolve( __dirname, 'assets/dist' ),
+			path: pathToDistFolder,
 		},
 		module: moduleConfigWithJsAndCssRules,
 		watchOptions: {
@@ -224,13 +230,11 @@ const config = [
 	},
 	{
 		entry: {
-			'eventespresso-core-blocks': [
-				assets + 'blocks/index.js',
-			],
+			'eventespresso-core-blocks': assets + 'blocks/index.js',
 		},
 		output: {
 			filename: '[name].[chunkhash].dist.js',
-			path: path.resolve( __dirname, 'assets/dist' ),
+			path: pathToDistFolder,
 		},
 		module: moduleConfigWithJsAndCssRules,
 		watchOptions: {
@@ -239,13 +243,12 @@ const config = [
 	},
 	{
 		entry: {
-			'eventespresso-core-blocks-frontend': [
-				assets + 'blocks/index-frontend.js',
-			],
+			'eventespresso-core-blocks-frontend': assets +
+				'blocks/index-frontend.js',
 		},
 		output: {
 			filename: '[name].[chunkhash].dist.js',
-			path: path.resolve( __dirname, 'assets/dist' ),
+			path: pathToDistFolder,
 		},
 		module: moduleConfigWithJsAndCssRules,
 		watchOptions: {
@@ -254,13 +257,12 @@ const config = [
 	},
 	{
 		entry: {
-			'eventespresso-core-css-default': [
-				assets + 'components/ui/styles/themes/default/index.js',
-			],
+			'eventespresso-core-css-default': assets +
+				'components/ui/styles/themes/default/index.js',
 		},
 		output: {
 			filename: '[name].[chunkhash].dist.js',
-			path: path.resolve( __dirname, 'assets/dist' ),
+			path: pathToDistFolder,
 		},
 		module: moduleConfigWithJsAndCssRules,
 		watchOptions: {

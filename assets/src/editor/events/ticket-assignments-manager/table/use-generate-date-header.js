@@ -5,12 +5,7 @@ import PropTypes from 'prop-types';
 import { useCallback } from '@wordpress/element';
 import { CalendarPageDate } from '@eventespresso/components';
 import { dateTimeModel } from '@eventespresso/model';
-// import { ifValidDateEntity } from '@eventespresso/editor-hocs';
-
-/**
- * Internal imports
- */
-import { shortenCuid } from '../../../utils';
+import { shortenCuid } from '@eventespresso/utils';
 
 const { getBackgroundColorClass } = dateTimeModel;
 

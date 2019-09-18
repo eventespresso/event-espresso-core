@@ -3,12 +3,15 @@
  */
 import { IconMenuItem } from '@eventespresso/components';
 import { ifValidDateEntity, useOpenEditor } from '@eventespresso/editor-hocs';
+import {
+	useEventDateTickets,
+	useEventEditorTickets,
+} from '@eventespresso/hooks';
 import { __, _x, sprintf } from '@eventespresso/i18n';
 
 /**
  * Internal imports
  */
-import { useEventEditorTickets, useEventDateTickets } from '../../../../hooks';
 import TicketAssignmentsManagerModal
 	from '../../../../ticket-assignments-manager/ticket-assignments-manager-modal';
 import useTicketAssignmentsEditorId

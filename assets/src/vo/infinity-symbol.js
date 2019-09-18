@@ -2,7 +2,7 @@
  * External imports
  */
 import PropTypes from 'prop-types';
-import { parseInfinity } from '@eventespresso/eejs';
+import parseInfinity from '../utils/parse-infinity';
 
 /**
  * InfinitySymbol

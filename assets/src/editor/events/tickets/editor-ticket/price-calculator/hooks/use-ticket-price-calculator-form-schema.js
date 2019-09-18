@@ -6,12 +6,12 @@ import { useMemo } from '@wordpress/element';
 import { BaseEntity } from '@eventespresso/model';
 import { isModelEntityOfModel } from '@eventespresso/validators';
 import { Money } from '@eventespresso/value-objects';
+import { shortenCuid } from '@eventespresso/utils';
 
 /**
  * Internal imports
  */
 import { TICKET_PRICE_CALCULATOR_FORM_INPUT_PREFIX } from '../constants';
-import { shortenCuid } from '../../../../../utils';
 
 /**
  * @function

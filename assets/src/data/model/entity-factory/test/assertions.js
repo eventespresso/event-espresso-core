@@ -1,7 +1,7 @@
 /**
  * External imports
  */
-import { InvalidDateTime, InvalidSchema } from '@eventespresso/eejs';
+import { InvalidSchema } from '@eventespresso/eejs';
 import { DateTime, Money, SiteCurrency } from '@eventespresso/value-objects';
 import {
 	EventSchema,

@@ -10,11 +10,7 @@ import {
 	twoColumnAdminFormLayout,
 } from '@eventespresso/components';
 import { Money, SiteCurrency } from '@eventespresso/value-objects';
-
-/**
- * Internal dependencies
- */
-import { amountsMatch, parseMoneyValue } from '../utils/';
+import { amountsMatch, parseMoneyValue } from '@eventespresso/utils';
 
 const {
 	FormInput,

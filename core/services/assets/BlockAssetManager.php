@@ -3,7 +3,6 @@
 namespace EventEspresso\core\services\assets;
 
 use EventEspresso\core\domain\entities\editor\BlockInterface;
-use EventEspresso\core\domain\services\assets\CoreAssetManager;
 use EventEspresso\core\domain\values\assets\BrowserAsset;
 use EventEspresso\core\domain\values\assets\JavascriptAsset;
 use EventEspresso\core\domain\values\assets\StylesheetAsset;

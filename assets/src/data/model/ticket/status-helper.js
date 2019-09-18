@@ -8,6 +8,7 @@ import { isModelEntityOfModel } from '@eventespresso/validators';
  * Internal imports
  */
 import { MODEL_NAME, TICKET_STATUS_ID } from './constants';
+import parseInfinity from '../../../utils/parse-infinity';
 
 /**
  * @function
@@ -69,9 +70,9 @@ export const isSoldOut = ( ticketEntity, includeArchived = false ) => {
 	) {
 		return false;
 	}
-	const qty = ticketEntity.qty;
-	return ( qty !== null && qty !== 'INF' && qty !== Infinity && qty !== -1 ) &&
-		ticketEntity.sold >= qty;
+	let qty = ticketEntity.qty;
+	qty = parseInfinity( qty, true );
+	return qty !== Infinity && ticketEntity.sold >= qty;
 };
 
 /**

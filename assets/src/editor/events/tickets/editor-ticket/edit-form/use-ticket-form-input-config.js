@@ -5,6 +5,7 @@ import warning from 'warning';
 import { useCallback, useMemo } from '@wordpress/element';
 import { __, sprintf } from '@eventespresso/i18n';
 import { validations } from '@eventespresso/components';
+import { usePriceTypes, useTicketPrices } from '@eventespresso/hooks';
 import { isModelEntityOfModel } from '@eventespresso/validators';
 import {
 	ServerDateTime as DateTime,
@@ -12,14 +13,13 @@ import {
 	Money,
 	SiteCurrency,
 } from '@eventespresso/value-objects';
+import { amountsMatch } from '@eventespresso/utils';
 
 /**
  * Internal dependencies
  */
 import { TicketPriceCalculatorMenuItem } from '../price-calculator';
 import { useTicketBasePriceCalculator } from '../price-calculator/hooks';
-import { amountsMatch } from '../price-calculator/utils/';
-import { usePriceTypes, useTicketPrices } from '../../../hooks/';
 
 /**
  * @function

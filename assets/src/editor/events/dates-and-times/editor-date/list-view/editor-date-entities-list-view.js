@@ -11,7 +11,7 @@ import {
 } from '@eventespresso/components';
 import { dateTimeModel } from '@eventespresso/model';
 import { isModelEntityOfModel } from '@eventespresso/validators';
-import { InfinitySign } from '@eventespresso/value-objects';
+import { InfinitySymbol } from '@eventespresso/value-objects';
 
 /**
  * Internal dependencies
@@ -50,12 +50,7 @@ const EditorDateEntitiesListView = ( {
 		 * @param {number|string} cap AKA reg limit
 		 * @return {number|string} Event Date Capacity
 		 */
-		( cap ) => {
-			cap = parseInt( cap, 10 ) || -1;
-			return cap === -1 || cap === Infinity ?
-				<span className={ 'ee-infinity-sign' }>&infin;</span> :
-				cap;
-		},
+		( cap ) => <InfinitySymbol value={ cap } asInt />,
 		[]
 	);
 

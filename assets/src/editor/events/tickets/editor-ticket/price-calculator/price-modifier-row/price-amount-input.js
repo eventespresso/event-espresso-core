@@ -7,17 +7,13 @@ import {
 	PriceTypeSign,
 	twoColumnAdminFormLayout,
 } from '@eventespresso/components';
+import { amountsMatch, parseMoneyValue } from '@eventespresso/utils';
 import { __ } from '@eventespresso/i18n';
-const { FormInput, InputLabel } = twoColumnAdminFormLayout;
 import { priceTypeModel } from '@eventespresso/model';
 import { Money, SiteCurrency } from '@eventespresso/value-objects';
 
-/**
- * Internal dependencies
- */
-import { amountsMatch, parseMoneyValue } from '../utils/';
-
 const { BASE_PRICE_TYPES } = priceTypeModel;
+const { FormInput, InputLabel } = twoColumnAdminFormLayout;
 
 /**
  * @param {string} prefix

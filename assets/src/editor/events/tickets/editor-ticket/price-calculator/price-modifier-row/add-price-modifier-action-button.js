@@ -4,12 +4,8 @@
 import { IconButton, Tooltip } from '@wordpress/components';
 import { useMemo } from '@wordpress/element';
 import { __ } from '@eventespresso/i18n';
+import { useAddPriceModifier } from '@eventespresso/hooks';
 import { Money, SiteCurrency } from '@eventespresso/value-objects';
-
-/**
- * Internal dependencies
- */
-import useAddPriceModifier from '../../../../hooks/use-add-price-modifier';
 
 const AddPriceModifierActionButton = ( { ticket, lastRow } ) => {
 	const addPriceModifier = useAddPriceModifier();

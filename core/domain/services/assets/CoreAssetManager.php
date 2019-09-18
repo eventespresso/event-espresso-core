@@ -62,6 +62,8 @@ class CoreAssetManager extends AssetManager
 
     const JS_HANDLE_VENDOR = 'eventespresso-vendor';
 
+    const JS_HANDLE_UTILS = 'eventespresso-utils';
+
     const JS_HANDLE_DATA_STORES = 'eventespresso-data-stores';
 
     const JS_HANDLE_HELPERS = 'eventespresso-helpers';
@@ -75,8 +77,6 @@ class CoreAssetManager extends AssetManager
     const JS_HANDLE_COMPONENTS = 'eventespresso-components';
 
     const JS_HANDLE_HOOKS = 'eventespresso-hooks';
-
-    const JS_HANDLE_EDITOR_HOCS = 'eventespresso-editor-hocs';
 
     const JS_HANDLE_VALIDATORS = 'eventespresso-validators';
 
@@ -96,8 +96,6 @@ class CoreAssetManager extends AssetManager
     const CSS_HANDLE_COMPONENTS = 'eventespresso-components';
 
     const CSS_HANDLE_HOCS = 'eventespresso-hocs';
-
-    const CSS_HANDLE_EDITOR_HOCS = 'eventespresso-editor-hocs';
 
     const CSS_HANDLE_CORE_CSS_DEFAULT = 'eventespresso-core-css-default';
 
@@ -202,12 +200,14 @@ class CoreAssetManager extends AssetManager
 
         $this->addJs(self::JS_HANDLE_JS_CORE)->setHasInlineData();
         $this->addJs(self::JS_HANDLE_VENDOR);
+        $this->addJs(self::JS_HANDLE_UTILS)->setRequiresTranslation();
         $this->addJs(self::JS_HANDLE_VALIDATORS)->setRequiresTranslation();
         $this->addJs(self::JS_HANDLE_HELPERS)->setRequiresTranslation();
         $this->addJs(self::JS_HANDLE_MODEL)->setRequiresTranslation();
+        $this->addJs(self::JS_HANDLE_HOOKS);
         $this->addJs(self::JS_HANDLE_VALUE_OBJECTS)->setRequiresTranslation();
         $this->addJs(self::JS_HANDLE_DATA_STORES)->setRequiresTranslation()->setInlineDataCallback(
-            function () {
+            static function () {
                 wp_add_inline_script(
                     CoreAssetManager::JS_HANDLE_DATA_STORES,
                     is_admin()
@@ -218,8 +218,6 @@ class CoreAssetManager extends AssetManager
         );
         $this->addJs(self::JS_HANDLE_HOCS, self::JS_HANDLE_DATA_STORES)->setRequiresTranslation();
         $this->addJs(self::JS_HANDLE_COMPONENTS, self::JS_HANDLE_DATA_STORES)->setRequiresTranslation();
-        $this->addJs(self::JS_HANDLE_EDITOR_HOCS)->setRequiresTranslation();
-        $this->addJs(self::JS_HANDLE_HOOKS);
 
         $this->registry->addData('eejs_api_nonce', wp_create_nonce('wp_rest'));
         $this->registry->addData(
@@ -271,7 +269,7 @@ class CoreAssetManager extends AssetManager
             array(CoreAssetManager::JS_HANDLE_JQUERY)
         )
         ->setInlineDataCallback(
-            function () {
+            static function () {
                 wp_localize_script(
                     CoreAssetManager::JS_HANDLE_CORE,
                     CoreAssetManager::JS_HANDLE_I18N,
@@ -306,7 +304,7 @@ class CoreAssetManager extends AssetManager
         )->setVersion('16.6.0');
         $this->addVendorJavascript(CoreAssetManager::JS_HANDLE_LODASH)
             ->setInlineDataCallback(
-                function() {
+                static function() {
                     wp_add_inline_script(
                         CoreAssetManager::JS_HANDLE_LODASH,
                         'window.lodash = _.noConflict();'
@@ -392,7 +390,6 @@ class CoreAssetManager extends AssetManager
         $this->addCss(self::CSS_HANDLE_CORE_CSS_DEFAULT, 'dashicons');
         $this->addCss(self::CSS_HANDLE_COMPONENTS, self::CSS_HANDLE_CORE_CSS_DEFAULT);
         $this->addCss(self::CSS_HANDLE_HOCS);
-        $this->addCss(self::CSS_HANDLE_EDITOR_HOCS);
     }
 
 

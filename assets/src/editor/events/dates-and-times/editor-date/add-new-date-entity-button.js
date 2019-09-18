@@ -4,17 +4,20 @@
 import { useCallback, useState } from '@wordpress/element';
 import { EspressoButton } from '@eventespresso/components';
 import { useOpenEditor } from '@eventespresso/editor-hocs';
-import { cancelClickEvent } from '@eventespresso/eejs';
+import {
+	useCreateDateEntity,
+	useEventEditorEvent,
+	useEventEditorTickets,
+} from '@eventespresso/hooks';
+
 import { __, _x, sprintf } from '@eventespresso/i18n';
+import { cancelClickEvent } from '@eventespresso/utils';
 
 /**
  * Internal imports
  */
 import DateEntityFormModal from './edit-form/date-entity-form-modal';
 import useEventDateEditorId from './edit-form/use-event-date-editor-id';
-import useCreateDateEntity from '../../hooks/use-create-date-entity';
-import useEventEditorEvent from '../../hooks/use-event-editor-event';
-import { useEventEditorTickets } from '../../hooks';
 import TicketAssignmentsManagerModal
 	from '../../ticket-assignments-manager/ticket-assignments-manager-modal';
 import useTicketAssignmentsEditorId

@@ -2,6 +2,7 @@
  * External imports
  */
 import { useCallback } from '@wordpress/element';
+import { usePriceTypes } from '@eventespresso/hooks';
 
 /**
  * Internal imports
@@ -16,7 +17,6 @@ import {
 	calculateTicketBasePriceFromTotal,
 	calculateTicketTotalFromModifiers,
 } from '../utils/';
-import { usePriceTypes } from '../../../../hooks';
 
 /**
  * callback for calculating ticket base price or total prices

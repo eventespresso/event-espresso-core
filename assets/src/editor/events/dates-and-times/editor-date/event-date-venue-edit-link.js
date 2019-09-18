@@ -6,12 +6,8 @@ import { useMemo } from '@wordpress/element';
 import { addQueryArgs } from '@wordpress/url';
 import { routes } from '@eventespresso/eejs';
 import { __ } from '@eventespresso/i18n';
+import { useEventForEventDate, useEventVenue } from '@eventespresso/hooks';
 import { isModelEntityOfModel } from '@eventespresso/validators';
-
-/**
- * Internal dependencies
- */
-import { useEventForEventDate, useEventVenue } from '../../hooks';
 
 const { ADMIN_ROUTES, ADMIN_ROUTE_ACTIONS, getAdminUrl } = routes;
 

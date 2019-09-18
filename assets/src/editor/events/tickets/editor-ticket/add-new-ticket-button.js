@@ -4,7 +4,11 @@
 import { useState } from '@wordpress/element';
 import { EspressoButton } from '@eventespresso/components';
 import { useOpenEditor } from '@eventespresso/editor-hocs';
-import { cancelClickEvent } from '@eventespresso/eejs';
+import {
+	useBasePriceType,
+	useCreateTicketEntity,
+} from '@eventespresso/hooks';
+import { cancelClickEvent } from '@eventespresso/utils';
 import { __ } from '@eventespresso/i18n';
 
 /**
@@ -12,8 +16,6 @@ import { __ } from '@eventespresso/i18n';
  */
 import EditTicketFormModal from './edit-form/edit-ticket-form-modal';
 import useTicketEditorId from './edit-form/use-ticket-editor-id';
-import useBasePriceType from '../../hooks/use-base-price-type';
-import useCreateTicketEntity from '../../hooks/use-create-ticket-entity';
 
 const AddNewTicketButton = () => {
 	const [ newTicket, cacheNewTicket ] = useState( null );

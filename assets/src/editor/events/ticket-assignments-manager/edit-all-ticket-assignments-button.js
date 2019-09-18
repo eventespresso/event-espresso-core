@@ -5,6 +5,7 @@ import PropTypes from 'prop-types';
 import { useMemo } from '@wordpress/element';
 import { EspressoButton } from '@eventespresso/components';
 import { useOpenEditor } from '@eventespresso/editor-hocs';
+import { useEventEditorTickets } from '@eventespresso/hooks';
 import { __ } from '@eventespresso/i18n';
 
 /**
@@ -14,7 +15,6 @@ import TicketAssignmentsManagerModal
 	from './ticket-assignments-manager-modal';
 import useTicketAssignmentsEditorId
 	from './use-ticket-assignments-editor-id';
-import useEventEditorTickets from '../hooks/use-event-editor-tickets';
 
 /**
  * DatesListFilterBar

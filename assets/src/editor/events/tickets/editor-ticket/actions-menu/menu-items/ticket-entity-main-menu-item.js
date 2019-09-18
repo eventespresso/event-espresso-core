@@ -3,15 +3,18 @@
  */
 import { DropDownMenu } from '@eventespresso/components';
 import { ifValidTicketEntity, useOpenEditor } from '@eventespresso/editor-hocs';
+import {
+	useCopyTicket,
+	useTicketEventDates,
+	useTrashTicket,
+} from '@eventespresso/hooks';
+
 import { __ } from '@eventespresso/i18n';
 
 /**
  * Internal dependencies
  */
 import useTicketEditorId from '../../edit-form/use-ticket-editor-id';
-import useCopyTicket from '../../../../hooks/use-copy-ticket';
-import useTicketEventDates from '../../../../hooks/use-ticket-event-dates';
-import useTrashTicket from '../../../../hooks/use-trash-ticket';
 
 const TicketEntityMainMenuItem = ( { ticketEntity } ) => {
 	const { eventDates } = useTicketEventDates( ticketEntity );

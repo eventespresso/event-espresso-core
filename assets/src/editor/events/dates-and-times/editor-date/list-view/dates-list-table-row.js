@@ -1,10 +1,14 @@
 /**
+ * External imports
+ */
+import { shortenCuid } from '@eventespresso/utils';
+
+/**
  * Internal dependencies
  */
 import EditorDateEntityActionsMenu
 	from '../actions-menu/editor-date-entity-actions-menu';
 import EventDateRegistrationsLink from '../event-date-registrations-link';
-import { shortenCuid } from '../../../../utils';
 
 const DATE_TIME_FORMAT = 'ddd MMM YY h:mm a';
 
