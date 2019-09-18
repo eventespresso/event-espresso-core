@@ -39,9 +39,7 @@ const SubmitTicketAssignmentsButton = ( {
 	} );
 	return useMemo( () => (
 		<FormSubmitButton
-			onClick={ ( click ) => {
-				processChanges( click );
-			} }
+			onClick={ () => processChanges() }
 			buttonText={ __(
 				'Update Ticket Assignments',
 				'event_espresso'
@@ -53,7 +51,13 @@ const SubmitTicketAssignmentsButton = ( {
 			) }
 			disabled={ disabled }
 		/>
-	), [ assignedState, processChanges, submitting, disabled ] );
+	), [
+		assignedState,
+		hasNoAssignments,
+		processChanges,
+		submitting,
+		disabled,
+	] );
 };
 
 SubmitTicketAssignmentsButton.propTypes = {
