@@ -15,22 +15,17 @@ import { TICKET_PRICE_CALCULATOR_FORM_INPUT_PREFIX } from '../constants';
 
 /**
  * @function
- * @param {BaseEntity} price
- * @param {number|null} defaultValue
+ * @param {BaseEntity} money
+ * @param {number|null} amount used if incoming money is not valid
  * @return {number|null} amount
  */
-const getPriceAmount = ( price, defaultValue = 0 ) => {
-	if ( isModelEntityOfModel( price, 'price' ) ) {
-		if (
-			price.amount instanceof Money &&
-			typeof price.formatter === 'function'
-		) {
-			return price.formatter.formatNumber(
-				price.amount.toNumber()
-			);
-		}
+const getMoneyAmount = ( money, amount = 0 ) => {
+	if ( money instanceof Money ) {
+		amount = money.formatter.formatNumber(
+			money.amount.toNumber()
+		);
 	}
-	return defaultValue;
+	return amount;
 };
 
 /**
@@ -42,7 +37,7 @@ const getPriceAmount = ( price, defaultValue = 0 ) => {
 const buildTicketData = ( formData, ticket ) => {
 	formData.ticketID = ticket.id;
 	formData.ticketIsTaxable = ticket.taxable;
-	formData.ticketTotal = getPriceAmount( ticket.price, null );
+	formData.ticketTotal = getMoneyAmount( ticket.price, null );
 	formData.reverseCalculate = !! ticket.reverseCalculate;
 	return formData;
 };
@@ -72,7 +67,7 @@ const buildPricesData = ( formData, ticket, prices ) => {
 			formData[ `${ pricePrefix }-type` ] = parseInt( price.prtId, 10 );
 			formData[ `${ pricePrefix }-name` ] = price.name || '';
 			formData[ `${ pricePrefix }-desc` ] = price.desc || '';
-			formData[ `${ pricePrefix }-amount` ] = getPriceAmount( price );
+			formData[ `${ pricePrefix }-amount` ] = getMoneyAmount( price.amount );
 			formData[ `${ pricePrefix }-order` ] = parseInt( price.order, 10 );
 		}
 	} );

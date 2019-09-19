@@ -56,9 +56,8 @@ const useGeneratePriceModifierRow = ( ticketPrefix, values ) => {
 						price={ price }
 						prefix={ prefix }
 						values={ values }
-						priceTypeId={ priceType.id }
-						priceTypeOptions={ priceTypeOptions }
 						basePriceType={ priceType.pbtId }
+						priceTypeOptions={ priceTypeOptions }
 					/>
 				),
 			},
@@ -91,9 +90,9 @@ const useGeneratePriceModifierRow = ( ticketPrefix, values ) => {
 					<PriceAmountInput
 						prefix={ prefix }
 						values={ values }
-						priceEntity={ price }
-						ticketEntity={ ticket }
-						priceTypeEntity={ priceType }
+						price={ price }
+						priceType={ priceType }
+						reverseCalculate={ ticket.reverseCalculate }
 					/>
 				),
 			},
@@ -110,6 +109,8 @@ const useGeneratePriceModifierRow = ( ticketPrefix, values ) => {
 						<AddPriceModifierActionButton
 							ticket={ ticket }
 							lastRow={ lastRow }
+							lastPrice={ price }
+							priceTypes={ priceTypes }
 						/>
 					</Fragment>
 				),

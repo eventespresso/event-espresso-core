@@ -16,37 +16,36 @@ const { FormInput, InputLabel } = twoColumnAdminFormLayout;
  * @param {BaseEntity} price
  * @param {string} prefix
  * @param {Object} values
- * @param {number} priceTypeId
- * @param {Array} priceTypeOptions
  * @param {number} basePriceType
+ * @param {Array} priceTypeOptions
  * @return {Object} rendered select input and label for setting price type
  */
 const PriceTypeInput = ( {
 	price,
 	prefix,
 	values,
-	priceTypeId,
-	priceTypeOptions,
 	basePriceType,
+	priceTypeOptions,
 } ) => {
+	const key = `${ prefix }-type`;
 	const defaultPriceType = useDefaultPriceType();
 	return useMemo(
 		() => (
 			<Fragment>
 				<InputLabel
 					label={ __( 'Price Type', 'event_espresso' ) }
-					htmlFor={ `${ prefix }-type` }
+					htmlFor={ key }
 					htmlClass="ee-hidden-label"
 				/>
 				<FormInput
 					key="type"
 					type="select"
-					name={ `${ prefix }-type` }
+					name={ key }
 					value={
-						normalizeEntityId( values[ `${ prefix }-type` ] ) || 0
+						normalizeEntityId( values[ key ] ) || 0
 					}
 					options={ priceTypeOptions }
-					htmlId={ `${ prefix }-type` }
+					htmlId={ key }
 					changeListener={
 						( value, prev ) => {
 							if ( value !== prev ) {
@@ -60,7 +59,15 @@ const PriceTypeInput = ( {
 				/>
 			</Fragment>
 		),
-		[ prefix, values[ `${ prefix }-type` ], priceTypeId, priceTypeOptions ]
+		[
+			prefix,
+			price.id,
+			price.order,
+			price.PRT_ID,
+			basePriceType,
+			priceTypeOptions,
+			values[ key ],
+		]
 	);
 };
 

@@ -3,7 +3,13 @@
  */
 import { useMemo } from '@wordpress/element';
 import { usePriceTypes } from '@eventespresso/hooks';
+import { __ } from '@eventespresso/i18n';
 import { isModelEntityOfModel } from '@eventespresso/validators';
+
+const chooseOption = {
+	value: 0,
+	label: __( '- select type -', 'event_espresso' ),
+};
 
 const EMPTY_ARRAY = [];
 /**
@@ -18,10 +24,10 @@ const usePriceTypeOptionsForSelectInput = ( removeTypes = EMPTY_ARRAY ) => {
 	const { priceTypes, priceTypesLoaded } = usePriceTypes();
 	return useMemo( () => {
 		if ( ! priceTypesLoaded ) {
-			return [];
+			return EMPTY_ARRAY;
 		}
-		const priceTypeOptions = [];
-		const filteredPriceTypeOptions = [];
+		const priceTypeOptions = [ chooseOption ];
+		const filteredPriceTypeOptions = [ chooseOption ];
 		for ( let i = 0; i < priceTypes.length; i++ ) {
 			const priceType = priceTypes[ i ];
 			if ( isModelEntityOfModel( priceType, 'price_type' ) ) {
@@ -41,7 +47,7 @@ const usePriceTypeOptionsForSelectInput = ( removeTypes = EMPTY_ARRAY ) => {
 			priceTypeOptions,
 			filteredPriceTypeOptions,
 		};
-	}, [ priceTypes, priceTypesLoaded ] );
+	}, [ priceTypes, priceTypesLoaded, removeTypes ] );
 };
 
 export default usePriceTypeOptionsForSelectInput;
