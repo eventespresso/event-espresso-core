@@ -20,7 +20,6 @@ const DATE_TIME_FORMAT = 'ddd MMM YY h:mm a';
  * @param {string} quantity
  * @param {string} statusClass
  * @param {string} bgClass
- * @param {Function} doRefresh
  * @param {Object} otherProps
  * @return {Array} row data for the provided ticket entity
  */
@@ -29,7 +28,6 @@ const ticketsListTableRow = (
 	quantity,
 	statusClass,
 	bgClass,
-	doRefresh,
 	otherProps
 ) => {
 	return [
@@ -114,7 +112,6 @@ const ticketsListTableRow = (
 			value: (
 				<EditorTicketActionsMenu
 					ticketEntity={ ticketEntity }
-					doRefresh={ doRefresh }
 					{ ...otherProps }
 				/>
 			),

@@ -174,4 +174,4 @@ EspressoIcon.defaultProps = {
 	className: '',
 };
 
-export { EspressoIcon }; 
+export default EspressoIcon; 

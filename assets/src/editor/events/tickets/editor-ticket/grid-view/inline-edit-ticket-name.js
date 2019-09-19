@@ -34,7 +34,7 @@ const InlineEditTicketName = ( { ticket, wrapperElement } ) => useMemo(
 
 InlineEditTicketName.propTypes = {
 	ticket: PropTypes.object.isRequired,
-	wrapperElement: PropTypes.element,
+	wrapperElement: PropTypes.string,
 };
 
 export default InlineEditTicketName;

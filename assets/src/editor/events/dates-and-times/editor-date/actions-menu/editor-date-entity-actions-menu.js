@@ -4,6 +4,7 @@
 import { useEffect } from '@wordpress/element';
 import { useEntityActionMenuItems } from '@eventespresso/components';
 import { ifValidDateEntity } from '@eventespresso/editor-hocs';
+import PropTypes from 'prop-types';
 
 /**
  * Internal dependencies
@@ -69,6 +70,10 @@ const EditorDateEntityActionsMenu = ( { dateEntity } ) => {
 			/>
 		</>
 	);
+};
+
+EditorDateEntityActionsMenu.propTypes = {
+	dateEntity: PropTypes.object.isRequired,
 };
 
 export default ifValidDateEntity( EditorDateEntityActionsMenu );

@@ -77,12 +77,12 @@ const InlineEditTicketPrice = ( {
 
 InlineEditTicketPrice.propTypes = {
 	ticket: PropTypes.object.isRequired,
-	showDesc: PropTypes.bool,
-	wrapperElement: PropTypes.element,
+	showPrice: PropTypes.bool,
+	wrapperElement: PropTypes.string,
 };
 
 InlineEditTicketPrice.defaultProps = {
-	showDesc: false,
+	showPrice: false,
 };
 
 export default InlineEditTicketPrice;

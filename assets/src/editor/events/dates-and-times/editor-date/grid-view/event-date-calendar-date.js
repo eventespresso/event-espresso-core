@@ -8,6 +8,7 @@ import {
 	CalendarDateRange,
 } from '@eventespresso/components';
 import { dateTimeModel } from '@eventespresso/model';
+import PropTypes from 'prop-types';
 
 const { getBackgroundColorClass, getDateTimeStatusTextLabel } = dateTimeModel;
 
@@ -61,5 +62,14 @@ const EventDateCalendarDate = ( { eventDate, showDate } ) => useMemo( () => {
 	eventDate.sold,
 	eventDate.deleted,
 ] );
+
+EventDateCalendarDate.propTypes = {
+	eventDate: PropTypes.object.isRequired,
+	showDate: PropTypes.string,
+};
+
+EventDateCalendarDate.defaultProps = {
+	showDate: '',
+};
 
 export default EventDateCalendarDate;

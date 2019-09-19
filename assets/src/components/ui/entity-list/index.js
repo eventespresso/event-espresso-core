@@ -33,8 +33,8 @@ const EntityList = ( {
 	EntityGridView,
 	EntityListView,
 	htmlClass,
-	view = 'grid',
-	noResultsText = '',
+	view,
+	noResultsText,
 	...otherProps
 } ) => {
 	// verify array and remove undefined

@@ -2,6 +2,7 @@
  * External imports
  */
 import { ifValidDateEntity } from '@eventespresso/editor-hocs';
+import PropTypes from 'prop-types';
 
 /**
  * Internal dependencies
@@ -13,8 +14,8 @@ import EventDateVenueEditLink from '../event-date-venue-edit-link';
 
 const EditorDateEntityDetails = ( {
 	dateEntity,
-	showDesc = 'excerpt',
-	showVenue = true,
+	showDesc,
+	showVenue,
 } ) => {
 	return (
 		<div className={ 'ee-editor-date-details-wrapper-div' }>
@@ -30,6 +31,17 @@ const EditorDateEntityDetails = ( {
 			<EventDateDetailsPanel eventDate={ dateEntity } />
 		</div>
 	);
+};
+
+EditorDateEntityDetails.propTypes = {
+	dateEntity: PropTypes.object.isRequired,
+	showDesc: PropTypes.string,
+	showVenue: PropTypes.bool,
+};
+
+EditorDateEntityDetails.defaultProps = {
+	showDesc: 'excerpt',
+	showVenue: true,
 };
 
 export default ifValidDateEntity( EditorDateEntityDetails );

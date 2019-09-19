@@ -4,6 +4,7 @@
 import classNames from 'classnames';
 import { EntityPaperFrame } from '@eventespresso/components';
 import { ifValidDateEntity } from '@eventespresso/editor-hocs';
+import PropTypes from 'prop-types';
 
 /**
  * Internal dependencies
@@ -28,9 +29,9 @@ import EditorDateEntityActionsMenu
 const EditorDateEntityGridItem = ( {
 	dateEntity,
 	eventEntity,
-	showDate = 'start',
-	showDesc = 'excerpt',
-	showVenue = true,
+	showDate,
+	showDesc,
+	showVenue,
 } ) => {
 	const dateStyleClass = classNames(
 		'ee-editor-date-main',
@@ -59,6 +60,20 @@ const EditorDateEntityGridItem = ( {
 			/>
 		</EntityPaperFrame>
 	);
+};
+
+EditorDateEntityGridItem.propTypes = {
+	dateEntity: PropTypes.object.isRequired,
+	eventEntity: PropTypes.object.isRequired,
+	showDate: PropTypes.string,
+	showDesc: PropTypes.string,
+	showVenue: PropTypes.bool,
+};
+
+EditorDateEntityGridItem.defaultProps = {
+	showDate: 'start',
+	showDesc: 'excerpt',
+	showVenue: true,
 };
 
 export default ifValidDateEntity( EditorDateEntityGridItem );

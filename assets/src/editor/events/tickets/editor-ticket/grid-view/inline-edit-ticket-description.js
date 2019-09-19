@@ -39,7 +39,7 @@ const InlineEditTicketDescription = ( {
 InlineEditTicketDescription.propTypes = {
 	ticket: PropTypes.object.isRequired,
 	showDesc: PropTypes.string,
-	wrapperElement: PropTypes.element,
+	wrapperElement: PropTypes.string,
 };
 
 InlineEditTicketDescription.defaultProps = {

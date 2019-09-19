@@ -3,6 +3,7 @@
  */
 import { isModelEntityOfModel } from '@eventespresso/validators';
 import classNames from 'classnames';
+import PropTypes from 'prop-types';
 
 /**
  * Internal dependencies
@@ -46,6 +47,16 @@ const EditorDateEntitiesGridView = ( {
 			}
 		</div>
 	);
+};
+
+EditorDateEntitiesGridView.propTypes = {
+	entities: PropTypes.array.isRequired,
+	htmlClass: PropTypes.string,
+};
+
+EditorDateEntitiesGridView.defaultProps = {
+	entities: [],
+	htmlClass: '',
 };
 
 export default EditorDateEntitiesGridView;

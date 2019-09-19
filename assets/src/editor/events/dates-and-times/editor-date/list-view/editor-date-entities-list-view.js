@@ -12,6 +12,7 @@ import {
 import { dateTimeModel } from '@eventespresso/model';
 import { isModelEntityOfModel } from '@eventespresso/validators';
 import { InfinitySymbol } from '@eventespresso/value-objects';
+import PropTypes from 'prop-types';
 
 /**
  * Internal dependencies
@@ -105,6 +106,19 @@ const EditorDateEntitiesListView = ( {
 			classes={ { tableClass: htmlClass } }
 		/>
 	);
+};
+
+EditorDateEntitiesListView.propTypes = {
+	entities: PropTypes.array.isRequired,
+	showDate: PropTypes.string,
+	htmlClass: PropTypes.string,
+	doRefresh: PropTypes.func,
+};
+
+EditorDateEntitiesListView.defaultProps = {
+	entities: [],
+	showDate: '',
+	htmlClass: '',
 };
 
 export default EditorDateEntitiesListView;

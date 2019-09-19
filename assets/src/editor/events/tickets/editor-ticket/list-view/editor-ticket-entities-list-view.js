@@ -31,7 +31,6 @@ const noZebraStripe = [ 'row', 'stripe', 'name', 'actions' ];
  * @param {Array} entities 	array of JSON objects defining the Tickets
  * @param {string} displayTicketDate
  * @param {string} htmlClass
- * @param {Function} doRefresh
  * @param {Object} otherProps
  * @return {Component} 			list of rendered Tickets
  */
@@ -39,7 +38,6 @@ const EditorTicketEntitiesListView = ( {
 	entities,
 	displayTicketDate,
 	htmlClass,
-	doRefresh,
 	...otherProps
 } ) => {
 	htmlClass = classNames( htmlClass, 'ee-tickets-list-list-view' );
@@ -87,7 +85,6 @@ const EditorTicketEntitiesListView = ( {
 					getQuantity( ticketEntity.regLimit ),
 					status( ticketEntity ),
 					getBackgroundColorClass( ticketEntity ),
-					doRefresh,
 					otherProps
 				) : null;
 			return filterColumns( columns );
@@ -110,11 +107,10 @@ EditorTicketEntitiesListView.propTypes = {
 	entities: PropTypes.array.isRequired,
 	displayTicketDate: PropTypes.string,
 	htmlClass: PropTypes.string,
-	doRefresh: PropTypes.func,
 };
 
 EditorTicketEntitiesListView.defaultProps = {
-	showDesc: false,
+	htmlClass: '',
 };
 
 export default EditorTicketEntitiesListView;

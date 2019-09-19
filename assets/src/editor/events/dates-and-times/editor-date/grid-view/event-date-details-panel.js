@@ -6,6 +6,7 @@ import { EntityDetailsPanel } from '@eventespresso/components';
 import { parseInfinity } from '@eventespresso/utils';
 import { __ } from '@eventespresso/i18n';
 import { InfinitySymbol } from '@eventespresso/value-objects';
+import PropTypes from 'prop-types';
 
 /**
  * Internal dependencies
@@ -61,5 +62,9 @@ const EventDateDetailsPanel = ( { eventDate } ) => useMemo(
 		eventDate.regLimit,
 	]
 );
+
+EventDateDetailsPanel.propTypes = {
+	eventDate: PropTypes.object.isRequired,
+};
 
 export default EventDateDetailsPanel;
