@@ -40,7 +40,7 @@ const EventDateRegistrationsLink = ( { dateEntity } ) => {
 				>
 					<a
 						href={ regListUrl }
-						className={ 'ee-editor-date-details-reg-url-link' }
+						className={ 'ee-editor-details-reg-url-link' }
 						target={ '_blank' }
 						rel={ 'noopener norefferer' }
 					>
