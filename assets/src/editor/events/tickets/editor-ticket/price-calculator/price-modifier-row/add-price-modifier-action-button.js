@@ -7,7 +7,16 @@ import { __ } from '@eventespresso/i18n';
 import { useAddPriceModifier } from '@eventespresso/hooks';
 import { Money, SiteCurrency } from '@eventespresso/value-objects';
 
-const AddPriceModifierActionButton = ( { ticket, lastRow } ) => {
+import { getPriceType } from '../utils/';
+
+const INITIAL_ORDER = 99;
+
+const AddPriceModifierActionButton = ( {
+	ticket,
+	lastRow,
+	lastPrice,
+	priceTypes,
+} ) => {
 	const addPriceModifier = useAddPriceModifier();
 	return useMemo( () => lastRow ? (
 		<Tooltip
@@ -24,16 +33,31 @@ const AddPriceModifierActionButton = ( { ticket, lastRow } ) => {
 				) }
 				icon="plus-alt"
 				onClick={
-					() => addPriceModifier(
-						ticket,
-						{
-							PRT_ID: 4,
-							PRC_name: '',
-							PRC_desc: '',
-							PRC_amount: new Money( 0, SiteCurrency ),
-							PRC_order: 99,
+					() => {
+						// First let's change the initial order for
+						// the last price to match its price type order.
+						// Then the price order can be changed manually
+						// if the user doesn't like the set default order
+						if (
+							parseInt( lastPrice.order, 10 ) === INITIAL_ORDER
+						) {
+							const priceType = getPriceType(
+								lastPrice.PRT_ID,
+								priceTypes
+							);
+							lastPrice.order = priceType.order;
 						}
-					)
+						addPriceModifier(
+							ticket,
+							{
+								PRT_ID: 0,
+								PRC_name: '',
+								PRC_desc: '',
+								PRC_amount: new Money( 0, SiteCurrency ),
+								PRC_order: INITIAL_ORDER,
+							}
+						);
+					}
 				}
 				className={ 'ee-add-price-modifier-btn' }
 			/>
