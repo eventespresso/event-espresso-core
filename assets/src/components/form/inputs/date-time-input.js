@@ -11,7 +11,6 @@ import {
 	IconButton,
 } from '@wordpress/components';
 import { ENTER, SPACE } from '@wordpress/keycodes';
-import { EspressoIcon, ESPRESSO_ICON_CALENDAR } from '../../ui/image/espresso-icon';
 import { SERVER_LOCALE } from '@eventespresso/eejs';
 import { DATE_TIME_FORMAT_SITE, TIME_FORMAT_SITE } from '@eventespresso/helpers';
 import { __ } from '@eventespresso/i18n';
@@ -21,6 +20,7 @@ import { ServerDateTime } from '@eventespresso/value-objects';
  * Internal dependencies
  */
 import './date-time-input.css';
+import { EspressoIcon, ESPRESSO_ICON_CALENDAR } from '../../ui/image/espresso-icon';
 /**
  * Generates HTML5 text input that opens a WP Dropdown + DateTimePicker
  * for populating the input with a date and time
