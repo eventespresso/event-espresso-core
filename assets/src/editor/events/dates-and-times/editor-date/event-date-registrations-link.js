@@ -7,7 +7,7 @@ import { addQueryArgs } from '@wordpress/url';
 import { ifValidDateEntity } from '@eventespresso/editor-hocs';
 import { routes } from '@eventespresso/eejs';
 import { __ } from '@eventespresso/i18n';
-InlineEditEventDateName
+import PropTypes from 'prop-types';
 
 const { ADMIN_ROUTES, ADMIN_ROUTE_ACTION_DEFAULT, getAdminUrl } = routes;
 

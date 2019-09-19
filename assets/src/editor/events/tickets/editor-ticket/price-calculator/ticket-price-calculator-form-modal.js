@@ -83,7 +83,7 @@ const TicketPriceCalculatorFormModal = ( {
 TicketPriceCalculatorFormModal.propTypes = {
 	ticketEntity: PropTypes.object.isRequired,
 	prices: PropTypes.array.isRequired,
-	pricesLoaded: PropTypes.bool.isRequired
+	pricesLoaded: PropTypes.bool.isRequired,
 };
 
 export default ifValidTicketEntity( TicketPriceCalculatorFormModal );
