@@ -17,6 +17,9 @@ import { DATE_TIME_FORMAT_SITE, TIME_FORMAT_SITE } from '@eventespresso/helpers'
 import { __ } from '@eventespresso/i18n';
 import { ServerDateTime } from '@eventespresso/value-objects';
 
+/**
+ * Internal dependencies
+ */
 import './date-time-input.css';
 /**
  * Generates HTML5 text input that opens a WP Dropdown + DateTimePicker
@@ -25,15 +28,24 @@ import './date-time-input.css';
  * @function
  * @param {Object} props
  */
-const DateTimeDropdown = ( props ) => {
+const DateTimeDropdown = ( {
+	input,
+	htmlId,
+	htmlClass,
+	helpTextID,
+	initialValue,
+	dataSet,
+	inputWidth = '',
+	...rest
+} ) => {
 	const [ inputValue, setInputValue ] = useState( new Date() );
 	const [ is12HourTime, setIs12HourTime ] = useState( true );
 
 	useEffect( () => {
-		const initialValue = props.initialValue ?
-			new Date( props.initialValue ) :
+		const _initialValue = initialValue ?
+			new Date( initialValue ) :
 			new Date();
-		setInputValue( initialValue );
+		setInputValue( _initialValue );
 		// To know if the current timezone is a 12 hour time
 		// we look for "a" in the time format
 		// We also make sure this a is not escaped by a "/"
@@ -48,17 +60,6 @@ const DateTimeDropdown = ( props ) => {
 		);
 		setIs12HourTime( _is12HourTime );
 	}, [] );
-
-	const {
-		input,
-		htmlId,
-		htmlClass,
-		helpTextID,
-		dataSet,
-		inputWidth = '',
-		...attributes
-	} = props;
-	delete attributes.initialValue;
 
 	const inputClass = classNames( {
 		[ htmlClass ]: true,
@@ -75,7 +76,7 @@ const DateTimeDropdown = ( props ) => {
 
 		setInputValue( value );
 
-		const { input: { onChange } = {} } = props;
+		const { onChange } = input;
 
 		if ( typeof onChange === 'function' ) {
 			onChange( value.toISOString() );
@@ -106,7 +107,7 @@ const DateTimeDropdown = ( props ) => {
 						aria-describedby={ helpTextID }
 						aria-live="polite"
 						{ ...dataSet }
-						{ ...attributes }
+						{ ...rest }
 					/>
 					<IconButton
 						icon={
