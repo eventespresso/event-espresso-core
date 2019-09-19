@@ -23,8 +23,8 @@ const useTicketAssignments = ( {
 	allDateEntities: dateEntities,
 	allTicketEntities: ticketEntities,
 } ) => {
-	const assignmentCounts = useRef( INITIAL_COUNTS );
 	const ticketDateMap = useRef( EMPTY_OBJECT );
+	const assignmentCounts = useRef( INITIAL_COUNTS );
 	return useSelect( ( select ) => {
 		const { getRelatedEntities } = select( 'eventespresso/core' );
 		let entities;
@@ -39,25 +39,23 @@ const useTicketAssignments = ( {
 			entities = sortDateEntitiesList( dateEntities );
 			ticketEntities = sortTicketEntitiesList( ticketEntities );
 		}
-
 		// setup the assignmentCounts for all the tickets and all the dates!
 		entities.forEach( ( date ) => {
-			if ( typeof ticketDateMap.current[ date.id ] === 'undefined' ) {
-				const relatedTickets = getRelatedEntities( date, 'ticket' );
-				ticketDateMap.current[ date.id ] = relatedTickets;
-				assignmentCounts.current.dates[ date.id ] =
-					relatedTickets.length || 0;
-			}
+			const relatedTickets = getRelatedEntities( date, 'ticket' );
+			ticketDateMap.current[ date.id ] = relatedTickets;
+			assignmentCounts.current.dates[ date.id ] =
+				relatedTickets.length || 0;
 		} );
 		ticketEntities.forEach( ( ticket ) => {
-			if ( typeof assignmentCounts.current.tickets[ ticket.id ] === 'undefined' ) {
-				assignmentCounts.current.tickets[ ticket.id ] =
-					getRelatedEntities( ticket, 'datetime' ).length || 0;
-				// no need to set ticketDateMap here as
-				// those will already have been setup for all dates.
-			}
+			const relatedDates = getRelatedEntities(
+				ticket,
+				'datetime'
+			);
+			assignmentCounts.current.tickets[ ticket.id ] =
+				relatedDates.length || 0;
+			// no need to set ticketDateMap here as
+			// those will already have been setup for all dates.
 		} );
-
 		return {
 			entities,
 			dateEntities,
