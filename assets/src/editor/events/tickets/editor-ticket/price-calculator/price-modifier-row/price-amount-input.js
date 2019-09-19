@@ -18,20 +18,20 @@ const { FormInput, InputLabel } = twoColumnAdminFormLayout;
 /**
  * @param {string} prefix
  * @param {Object} values
- * @param {BaseEntity} priceEntity
- * @param {BaseEntity} priceTypeEntity
- * @param {BaseEntity} ticketEntity
+ * @param {BaseEntity} price
+ * @param {BaseEntity} priceType
+ * @param {boolean} reverseCalculate
  * @return {Object} rendered text input and label for setting price amount
  */
 const PriceAmountInput = ( {
 	prefix,
 	values,
-	priceEntity,
-	priceTypeEntity,
-	ticketEntity,
+	price,
+	priceType,
+	reverseCalculate,
 } ) => {
 	const key = `${ prefix }-amount`;
-	const priceTypeHtmlClass = usePriceTypeHtmlClass( priceTypeEntity );
+	const priceTypeHtmlClass = usePriceTypeHtmlClass( priceType );
 	return useMemo( () => (
 		<Fragment>
 			<InputLabel
@@ -39,7 +39,7 @@ const PriceAmountInput = ( {
 				htmlFor={ key }
 				htmlClass="ee-hidden-label"
 			/>
-			<PriceTypeSign priceType={ priceTypeEntity } />
+			<PriceTypeSign priceType={ priceType } />
 			<FormInput
 				key="price"
 				type="text"
@@ -47,14 +47,14 @@ const PriceAmountInput = ( {
 				htmlId={ key }
 				htmlClass={ priceTypeHtmlClass }
 				value={
-					priceEntity.amount.formatter.formatNumber(
+					price.amount.formatter.formatNumber(
 						parseMoneyValue( values[ key ] || 0 )
 					)
 				}
 				changeListener={
 					( value, prev ) => {
 						if ( ! amountsMatch( value, prev ) ) {
-							priceEntity.amount = new Money(
+							price.amount = new Money(
 								parseMoneyValue( value ),
 								SiteCurrency
 							);
@@ -62,11 +62,11 @@ const PriceAmountInput = ( {
 					}
 				}
 				disabled={
-					priceEntity.prtId === BASE_PRICE_TYPES.BASE_PRICE &&
-					ticketEntity.reverseCalculate === true
+					price.prtId === BASE_PRICE_TYPES.BASE_PRICE &&
+					reverseCalculate === true
 				}
 				format={ ( value ) => {
-					return priceEntity.amount.formatter.formatNumber(
+					return price.amount.formatter.formatNumber(
 						parseMoneyValue( value )
 					);
 				} }
@@ -75,11 +75,11 @@ const PriceAmountInput = ( {
 		</Fragment>
 	), [
 		prefix,
-		values[ `${ prefix }-name` ],
-		priceEntity.prtId,
-		priceEntity.amount.toNumber(),
-		priceTypeEntity.isPercent,
-		ticketEntity.reverseCalculate,
+		values[ key ],
+		price.prtId,
+		price.amount.toNumber(),
+		priceType.isPercent,
+		reverseCalculate,
 	] );
 };
 
