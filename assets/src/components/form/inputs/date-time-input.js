@@ -3,10 +3,9 @@
  */
 import classNames from 'classnames';
 import PropTypes from 'prop-types';
-import { Component } from '@wordpress/element';
+import { useState, useEffect } from '@wordpress/element';
 import { Field } from 'react-final-form';
 import {
-	Button,
 	DateTimePicker,
 	Dropdown,
 	IconButton,
@@ -20,62 +19,25 @@ import { ServerDateTime } from '@eventespresso/value-objects';
 
 import './date-time-input.css';
 /**
- * generates an HTML5 text input that opens a WP Dropdown + DateTimePicker
+ * Generates HTML5 text input that opens a WP Dropdown + DateTimePicker
  * for populating the input with a date and time
  *
  * @function
- * @param {Object} input
- * @param {string} htmlId
- * @param {string} htmlClass
- * @param {string} helpTextID
- * @param {Object} dataSet
- * @param {number|string} inputWidth
- * @param {Object} attributes
- * @return {string} rendered date name form row
+ * @param {Object} props
  */
-class DateTimeDropdown extends Component {
-	static propTypes = {
-		input: PropTypes.object.isRequired,
-		initialValue: PropTypes.oneOfType( [
-			PropTypes.object,
-			PropTypes.string,
-		] ),
-		htmlId: PropTypes.string.isRequired,
-		htmlClass: PropTypes.string,
-		helpTextID: PropTypes.string,
-		dataSet: PropTypes.object,
-		inputWidth: PropTypes.oneOfType( [
-			PropTypes.number,
-			PropTypes.string,
-		] ),
-	};
+const DateTimeDropdown = ( props ) => {
+	const [ inputValue, setInputValue ] = useState( new Date() );
+	const [ is12HourTime, setIs12HourTime ] = useState( true );
 
-	constructor( props ) {
-		super( props );
-		const initialValue = new Date();
-		this.state = {
-			is12HourTime: true,
-			editorOpen: false,
-			inputValue: initialValue,
-			newValue: initialValue,
-			prevValue: initialValue,
-			onChange: null,
-		};
-	}
-
-	/**
-	 * opens and closes DateTimePicker Modal
-	 *
-	 * @function
-	 */
-	componentDidMount = () => {
-		const initialValue = this.props.initialValue ?
-			new Date( this.props.initialValue ) :
+	useEffect( () => {
+		const initialValue = props.initialValue ?
+			new Date( props.initialValue ) :
 			new Date();
+		setInputValue( initialValue );
 		// To know if the current timezone is a 12 hour time
 		// we look for "a" in the time format
 		// We also make sure this a is not escaped by a "/"
-		const is12HourTime = /a(?!\\)/i.test(
+		const _is12HourTime = /a(?!\\)/i.test(
 			TIME_FORMAT_SITE
 			// Test only the lower case a
 				.toLowerCase()
@@ -84,162 +46,112 @@ class DateTimeDropdown extends Component {
 				// Reverse the string and test for "a" not followed by a slash
 				.split( '' ).reverse().join( '' )
 		);
-		this.setState( {
-			is12HourTime,
-			editorOpen: false,
-			inputValue: initialValue,
-			newValue: initialValue,
-			prevValue: initialValue,
-			onChange: this.props.input && this.props.input.onChange ?
-				this.props.input.onChange :
-				null,
-		} );
+		setIs12HourTime( _is12HourTime );
+	}, [] );
+
+	const {
+		input,
+		htmlId,
+		htmlClass,
+		helpTextID,
+		dataSet,
+		inputWidth = '',
+		...attributes
+	} = props;
+	delete attributes.initialValue;
+
+	const inputClass = classNames( {
+		[ htmlClass ]: true,
+		'ee-date-time-input-text-field': true,
+		'form-control': true,
+		[ `ee-input-width-${ inputWidth }` ]: inputWidth,
+	} );
+	const _inputValue = inputValue instanceof Date ?
+		ServerDateTime.fromJSDate( inputValue ) :
+		ServerDateTime.fromJSDate( new Date() );
+
+	const onChangeHandler = ( newDate ) => {
+		const value = new Date( newDate );
+
+		setInputValue( value );
+
+		const { input: { onChange } = {} } = props;
+
+		if ( typeof onChange === 'function' ) {
+			onChange( value.toISOString() );
+		}
 	};
 
-	/**
-	 * opens and closes DateTimePicker Modal
-	 *
-	 * @function
-	 */
-	toggleEditor = () => {
-		this.setState( ( prevState ) => (
-			{ editorOpen: ! prevState.editorOpen }
-		) );
-	};
-
-	/**
-	 * opens and closes DateTimePicker Modal
-	 *
-	 * @function
-	 * @param {string} newDate
-	 */
-	onChange = ( newDate ) => {
-		this.setState( { newValue: new Date( newDate ) } );
-	};
-
-	/**
-	 * opens and closes DateTimePicker Modal
-	 *
-	 * @function
-	 */
-	cancel = () => {
-		this.setState( ( prevState ) => (
-			{ inputValue: prevState.prevValue }
-		) );
-	};
-
-	/**
-	 * submits the value from the Datepicker
-	 *
-	 * @function
-	 */
-	update = () => {
-		this.setState( ( prevState ) => {
-			if ( typeof prevState.onChange === 'function' ) {
-				prevState.onChange( prevState.newValue.toISOString() );
-			}
-			return {
-				inputValue: prevState.newValue,
-				prevValue: prevState.newValue,
-			};
-		} );
-	};
-
-	render() {
-		const {
-			input,
-			htmlId,
-			htmlClass,
-			helpTextID,
-			dataSet,
-			inputWidth = '',
-			...attributes
-		} = this.props;
-		delete attributes.initialValue;
-		const inputClass = classNames( {
-			[ htmlClass ]: true,
-			'ee-date-time-input-text-field': true,
-			'form-control': true,
-			[ `ee-input-width-${ inputWidth }` ]: inputWidth,
-		} );
-		const inputValue = this.state.inputValue instanceof Date ?
-			ServerDateTime.fromJSDate( this.state.inputValue ) :
-			ServerDateTime.fromJSDate( new Date() );
-		return (
-			<Dropdown
-				position="bottom center"
-				contentClassName="ee-date-time-input-dialog"
-				renderToggle={ ( { onToggle } ) => (
-					<div className={ 'ee-date-time-input-text-field-wrapper' }>
-						<input
-							type="text"
-							id={ htmlId }
-							className={ inputClass }
-							value={ inputValue.toFormat( DATE_TIME_FORMAT_SITE ) }
-							onClick={ onToggle }
-							onChange={ input.onChange }
-							onKeyDown={ ( event ) => {
-								if (
-									event.keyCode === ENTER ||
-									event.keyCode === SPACE
-								) {
-									onToggle( event );
-								}
-							} }
-							aria-describedby={ helpTextID }
-							aria-live="polite"
-							{ ...dataSet }
-							{ ...attributes }
-						/>
-						<IconButton
-							icon={
-								<EspressoIcon
-									icon={ ESPRESSO_ICON_CALENDAR }
-									onClick={ onToggle }
-								/>
+	return (
+		<Dropdown
+			position="bottom center"
+			contentClassName="ee-date-time-input-dialog"
+			renderToggle={ ( { onToggle } ) => (
+				<div className={ 'ee-date-time-input-text-field-wrapper' }>
+					<input
+						type="text"
+						id={ htmlId }
+						className={ inputClass }
+						value={ _inputValue.toFormat( DATE_TIME_FORMAT_SITE ) }
+						onClick={ onToggle }
+						onChange={ input.onChange }
+						onKeyDown={ ( event ) => {
+							if (
+								event.keyCode === ENTER ||
+								event.keyCode === SPACE
+							) {
+								onToggle( event );
 							}
-							label={ __(
-								'Click to choose date and time',
-								'event_espresso'
-							) }
-						/>
-					</div>
-				) }
-				renderContent={ ( { onToggle } ) => (
-					<div className={ 'ee-date-time-input-picker-wrapper' } >
-						<DateTimePicker
-							key="ee-date-time-picker"
-							currentDate={ this.state.newValue }
-							onChange={ this.onChange }
-							locale={ SERVER_LOCALE }
-							is12Hour={ this.state.is12HourTime }
-						/>
-						<div className={ 'ee-date-time-input-buttons-wrapper' } >
-							<Button isPrimary
-								onClick={ () => {
-									this.update();
-									onToggle();
-								} }
-								className="ee-form-button-submit ee-form-button"
-							>
-								{ __( 'Submit', 'event_espresso' ) }
-							</Button>
-							<Button isDefault
-								onClick={ () => {
-									this.cancel();
-									onToggle();
-								} }
-								className="ee-form-button-submit ee-form-button"
-							>
-								{ __( 'Cancel', 'event_espresso' ) }
-							</Button>
-						</div>
-					</div>
-				) }
-			/>
-		);
-	}
-}
+						} }
+						aria-describedby={ helpTextID }
+						aria-live="polite"
+						{ ...dataSet }
+						{ ...attributes }
+					/>
+					<IconButton
+						icon={
+							<EspressoIcon
+								icon={ ESPRESSO_ICON_CALENDAR }
+								onClick={ onToggle }
+							/>
+						}
+						label={ __(
+							'Click to choose date and time',
+							'event_espresso'
+						) }
+					/>
+				</div>
+			) }
+			renderContent={ () => (
+				<div className={ 'ee-date-time-input-picker-wrapper' } >
+					<DateTimePicker
+						key="ee-date-time-picker"
+						currentDate={ inputValue }
+						onChange={ onChangeHandler }
+						locale={ SERVER_LOCALE }
+						is12Hour={ is12HourTime }
+					/>
+				</div>
+			) }
+		/>
+	);
+};
+
+DateTimeDropdown.propTypes = {
+	input: PropTypes.object.isRequired,
+	initialValue: PropTypes.oneOfType( [
+		PropTypes.object,
+		PropTypes.string,
+	] ),
+	htmlId: PropTypes.string.isRequired,
+	htmlClass: PropTypes.string,
+	helpTextID: PropTypes.string,
+	dataSet: PropTypes.object,
+	inputWidth: PropTypes.oneOfType( [
+		PropTypes.number,
+		PropTypes.string,
+	] ),
+};
 
 /**
  * @function
