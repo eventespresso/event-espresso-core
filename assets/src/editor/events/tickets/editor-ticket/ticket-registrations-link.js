@@ -1,23 +1,26 @@
 /**
  * External imports
  */
+import PropTypes from 'prop-types';
 import { Dashicon, Tooltip } from '@wordpress/components';
 import { useMemo } from '@wordpress/element';
 import { addQueryArgs } from '@wordpress/url';
-import { ifValidDateEntity } from '@eventespresso/editor-hocs';
+import { ifValidTicketEntity } from '@eventespresso/editor-hocs';
 import { routes } from '@eventespresso/eejs';
+import { useEventEditorEvent } from '@eventespresso/hooks';
 import { __ } from '@eventespresso/i18n';
 
 const { ADMIN_ROUTES, ADMIN_ROUTE_ACTION_DEFAULT, getAdminUrl } = routes;
 
 /**
  * returns a rendered Dashicon wrapped in an HTML <a> tag that links to
- * the registrations admin list table filtered for the provided eventDate
+ * the registrations admin list table filtered for the provided ticket
  *
- * @param {BaseEntity} dateEntity    The date object.
+ * @param {BaseEntity} ticketEntity    The ticket object.
  * @return {Object} rendered link to registrations list table for datetime
  */
-const EventDateRegistrationsLink = ( { dateEntity } ) => {
+const TicketRegistrationsLink = ( { ticketEntity: ticket } ) => {
+	const { eventEntity } = useEventEditorEvent();
 	return useMemo(
 		() => {
 			const regListUrl = addQueryArgs(
@@ -26,15 +29,15 @@ const EventDateRegistrationsLink = ( { dateEntity } ) => {
 					ADMIN_ROUTE_ACTION_DEFAULT
 				),
 				{
-					event_id: dateEntity.evtId,
-					datetime_id: dateEntity.id,
+					event_id: eventEntity.id,
+					ticket_id: ticket.id,
 					return: 'edit',
 				}
 			);
 			return (
 				<Tooltip
 					text={ __(
-						'view registrations for this date.',
+						'view registrations for this ticket.',
 						'event_espresso'
 					) }
 				>
@@ -49,8 +52,12 @@ const EventDateRegistrationsLink = ( { dateEntity } ) => {
 				</Tooltip>
 			);
 		},
-		[ dateEntity.evtId, dateEntity.id ]
+		[ eventEntity.id, ticket.id ]
 	);
 };
 
-export default ifValidDateEntity( EventDateRegistrationsLink );
+TicketRegistrationsLink.propTypes = {
+	ticketEntity: PropTypes.object.isRequired,
+};
+
+export default ifValidTicketEntity( TicketRegistrationsLink );
