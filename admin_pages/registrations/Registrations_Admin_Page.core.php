@@ -768,6 +768,14 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
     }
 
 
+    /**
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws ReflectionException
+     * @since $VID:$
+     */
     public function load_scripts_styles_edit_attendee()
     {
         // stuff to only show up on our attendee edit details page.
@@ -1051,7 +1059,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
             'view_filtered_messages'
         )) {
             $related_for_icon = EEH_MSG_Template::get_message_action_icon('see_notifications_for');
-            if (isset($related_for_icon['css_class']) && isset($related_for_icon['label'])) {
+            if (is_array($related_for_icon) && isset($related_for_icon['css_class'], $related_for_icon['label'])) {
                 $fc_items['view_related_messages'] = array(
                     'class' => $related_for_icon['css_class'],
                     'desc'  => $related_for_icon['label'],
@@ -1771,7 +1779,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
                 __FUNCTION__
             );
         }
-        if (isset($this->_req_data['return']) && $this->_req_data['return'] == 'view_registration') {
+        if (isset($this->_req_data['return']) && $this->_req_data['return'] === 'view_registration') {
             $route = array('action' => 'view_registration', '_REG_ID' => reset($result['REG_ID']));
         } else {
             $route = array('action' => 'default');
@@ -2308,7 +2316,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
     protected function _update_attendee_registration_form()
     {
         do_action('AHEE__Registrations_Admin_Page___update_attendee_registration_form__start', $this);
-        if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $REG_ID = isset($this->_req_data['_REG_ID']) ? absint($this->_req_data['_REG_ID']) : false;
             $success = $this->_save_reg_custom_questions_form($REG_ID);
             if ($success) {
@@ -2666,6 +2674,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
         } else {
             // grab single id and delete
             $REG_ID = $this->_req_data['_REG_ID'];
+            /** @var EE_Registration $REG */
             $REG = $REG_MDL->get_one_by_ID($REG_ID);
             $deleted = $this->_delete_registration($REG);
             if (! $deleted) {
@@ -3045,16 +3054,15 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
                         // display registration form again because there are errors (maybe validation?)
                         $this->new_registration();
                         return;
-                    } else {
-                        $this->_redirect_after_action(
-                            false,
-                            '',
-                            '',
-                            $query_args,
-                            true
-                        );
-                        return;
                     }
+                    $this->_redirect_after_action(
+                        false,
+                        '',
+                        '',
+                        $query_args,
+                        true
+                    );
+                    return;
                 }
                 // maybe update status, and make sure to save transaction if not done already
                 if (! $transaction->update_status_based_on_total_paid()) {
@@ -3266,8 +3274,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
                         'EVT_ID'      => isset($this->_req_data['EVT_ID']) ? $this->_req_data['EVT_ID'] : null,
                         'filters'     => urlencode(
                             serialize(
-                                call_user_func(
-                                    array($this, $method_name_for_getting_query_params),
+                                $this->$method_name_for_getting_query_params(
                                     EEH_Array::is_set(
                                         $this->_req_data,
                                         'filters',
@@ -3500,11 +3507,8 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
         $this->verify_cpt_object();
         remove_meta_box(
             'postexcerpt',
-            esc_html__('Excerpt', 'event_espresso'),
-            'post_excerpt_meta_box',
             $this->_cpt_routes[ $this->_req_action ],
-            'normal',
-            'core'
+            'normal'
         );
         remove_meta_box('commentstatusdiv', $this->_cpt_routes[ $this->_req_action ], 'normal', 'core');
         if (post_type_supports('espresso_attendees', 'excerpt')) {
@@ -3684,7 +3688,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
      */
     public function after_title_form_fields($post)
     {
-        if ($post->post_type == 'espresso_attendees') {
+        if ($post->post_type === 'espresso_attendees') {
             $template = REG_TEMPLATE_PATH . 'attendee_details_after_title_form_fields.template.php';
             $template_args['attendee'] = $this->_cpt_model_obj;
             EEH_Template::display_template($template, $template_args);
