@@ -52,7 +52,7 @@ const useDateEntityInputConfig = ( dateEntity ) => useMemo( () => {
 			},
 		},
 		{
-			id: 'evtStart',
+			id: 'start',
 			type: 'datetime-local',
 			label: __( 'Start Date & Time', 'event_espresso' ),
 			default: now.plus( Duration.fromObject( { days: 30 } ) ),
@@ -64,6 +64,15 @@ const useDateEntityInputConfig = ( dateEntity ) => useMemo( () => {
 						! isNaN( newDate.getTime() )
 					) {
 						dateEntity.start = DateTime.fromJSDate( newDate );
+
+						const endDate = dateEntity.end.toJSDate();
+
+						if ( endDate - newDate < 0 ) {
+							// add 2 days to the end date.
+							endDate.setDate( endDate.getDate() + 2 );
+
+							dateEntity.end = DateTime.fromJSDate( endDate );
+						}
 					}
 				}
 			},
@@ -72,7 +81,7 @@ const useDateEntityInputConfig = ( dateEntity ) => useMemo( () => {
 			inputWidth: 6,
 		},
 		{
-			id: 'evtEnd',
+			id: 'end',
 			type: 'datetime-local',
 			label: __( 'End Date & Time', 'event_espresso' ),
 			default: now.plus( Duration.fromObject( { days: 60 } ) ),
@@ -86,6 +95,24 @@ const useDateEntityInputConfig = ( dateEntity ) => useMemo( () => {
 						dateEntity.end = DateTime.fromJSDate( newDate );
 					}
 				}
+			},
+			validate: ( value ) => {
+				if ( value ) {
+					const endDate = new Date( value );
+					const startDate = dateEntity.start.toJSDate();
+					if ( endDate - startDate < 0 ) {
+						return __( 'End time must be after start time.', 'event_espresso' );
+					}
+				}
+			},
+			isInvalidDate: ( endDate ) => {
+				const startDate = dateEntity.start.toJSDate();
+				// Set the time to midnight
+				// so as not to disable the same start and end day
+				endDate.setHours( 0, 0, 0, 0 );
+				startDate.setHours( 0, 0, 0, 0 );
+
+				return endDate - startDate < 0;
 			},
 			validations: validations.required,
 			required: true,
