@@ -89,7 +89,6 @@ PriceAmountInput.propTypes = {
 	values: PropTypes.object.isRequired,
 	price: PropTypes.object.isRequired,
 	priceType: PropTypes.object.isRequired,
-	ticket: PropTypes.object.isRequired,
 	reverseCalculate: PropTypes.bool,
 };
 
