@@ -8,7 +8,11 @@ import { validations } from '@eventespresso/components';
 import { isModelEntityOfModel } from '@eventespresso/validators';
 import { ServerDateTime as DateTime, Duration } from '@eventespresso/value-objects';
 
-const useDateEntityInputConfig = ( dateEntity ) => useMemo( () => {
+const useDateEntityInputConfig = ( {
+	dateEntity,
+	prefix,
+	updateField,
+} ) => useMemo( () => {
 	warning(
 		isModelEntityOfModel( dateEntity, 'datetime' ),
 		'Can not generate input config data because an invalid date entity was supplied.'
@@ -72,6 +76,8 @@ const useDateEntityInputConfig = ( dateEntity ) => useMemo( () => {
 							endDate.setDate( endDate.getDate() + 2 );
 
 							dateEntity.end = DateTime.fromJSDate( endDate );
+
+							updateField( `${ prefix }-end`, endDate.toISOString() );
 						}
 					}
 				}
