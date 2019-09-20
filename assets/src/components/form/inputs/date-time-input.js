@@ -3,12 +3,9 @@
  */
 import classNames from 'classnames';
 import PropTypes from 'prop-types';
-import { useState, useEffect } from '@wordpress/element';
 import { Field } from 'react-final-form';
-import {
-	Dropdown,
-	IconButton,
-} from '@wordpress/components';
+import { Dropdown, IconButton } from '@wordpress/components';
+import { useState, useEffect } from '@wordpress/element';
 import { ENTER, SPACE } from '@wordpress/keycodes';
 import { SERVER_LOCALE } from '@eventespresso/eejs';
 import { DATE_TIME_FORMAT_SITE, TIME_FORMAT_SITE } from '@eventespresso/helpers';
@@ -18,9 +15,10 @@ import { ServerDateTime } from '@eventespresso/value-objects';
 /**
  * Internal dependencies
  */
-import { DateTimePicker } from './date-time-picker';
 import './date-time-input.css';
+import { DateTimePicker } from './date-time-picker';
 import { EspressoIcon, ESPRESSO_ICON_CALENDAR } from '../../ui/image';
+
 /**
  * Generates HTML5 text input that opens a WP Dropdown + DateTimePicker
  * for populating the input with a date and time
