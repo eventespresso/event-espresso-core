@@ -14,7 +14,6 @@ use EventEspresso\core\domain\services\attendee\forms\AttendeeContactDetailsMeta
  * @package               Event Espresso
  * @subpackage            includes/core/admin/transactions/Registrations_Admin_Page.core.php
  * @author                Brent Christensen
- *                        ------------------------------------------------------------------------
  */
 class Registrations_Admin_Page extends EE_Admin_Page_CPT
 {
@@ -237,6 +236,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
      *
      * @access private
      * @return void
+     * @throws EE_Error
      */
     public function _set_page_routes()
     {
@@ -719,12 +719,24 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
     }
 
 
+    /**
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @since $VID:$
+     */
     protected function _add_screen_options_default()
     {
         $this->_per_page_screen_option();
     }
 
 
+    /**
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @since $VID:$
+     */
     protected function _add_screen_options_contact_list()
     {
         $page_title = $this->_admin_page_title;
@@ -771,6 +783,14 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
     }
 
 
+    /**
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws ReflectionException
+     * @since $VID:$
+     */
     public function load_scripts_styles_view_registration()
     {
         // styles
@@ -823,6 +843,14 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
     }
 
 
+    /**
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws ReflectionException
+     * @since $VID:$
+     */
     protected function _set_list_table_views_default()
     {
         // for notification related bulk actions we need to make sure only active messengers have an option.
@@ -1275,6 +1303,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
      * @throws EntityNotFoundException
+     * @throws ReflectionException
      */
     protected function _registration_details()
     {
@@ -1369,6 +1398,14 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
     }
 
 
+    /**
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws ReflectionException
+     * @since $VID:$
+     */
     protected function _registration_details_metaboxes()
     {
         do_action('AHEE__Registrations_Admin_Page___registration_details_metabox__start', $this);
@@ -1432,7 +1469,12 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
      *
      * @access protected
      * @return string
-     * @throws \EE_Error
+     * @throws EE_Error
+     * @throws EntityNotFoundException
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws ReflectionException
      */
     public function set_reg_status_buttons_metabox()
     {
@@ -1457,7 +1499,8 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
      * @throws InvalidArgumentException
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
-     * @throws \EventEspresso\core\exceptions\EntityNotFoundException
+     * @throws EntityNotFoundException
+     * @throws ReflectionException
      */
     protected function _generate_reg_status_change_form()
     {
@@ -1567,13 +1610,14 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
      * @param bool $status REG status given for changing registrations to.
      * @param bool $notify Whether to send messages notifications or not.
      * @return array (array with reg_id(s) updated and whether update was successful.
+     * @throws DomainException
      * @throws EE_Error
+     * @throws EntityNotFoundException
      * @throws InvalidArgumentException
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
      * @throws ReflectionException
      * @throws RuntimeException
-     * @throws EntityNotFoundException
      */
     protected function _set_registration_status_from_request($status = false, $notify = false)
     {
@@ -1641,6 +1685,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
      * @throws ReflectionException
      * @throws RuntimeException
      * @throws EntityNotFoundException
+     * @throws DomainException
      */
     protected function _set_registration_status($REG_IDs = array(), $status = '', $notify = false)
     {
@@ -1684,10 +1729,17 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
     /**
      * Common logic for setting up success message and redirecting to appropriate route
      *
-     * @param  string $STS_ID status id for the registration changed to
-     * @param   bool  $notify indicates whether the _set_registration_status_from_request does notifications or not.
+     * @param string $STS_ID status id for the registration changed to
+     * @param bool   $notify indicates whether the _set_registration_status_from_request does notifications or not.
      * @return void
+     * @throws DomainException
      * @throws EE_Error
+     * @throws EntityNotFoundException
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws ReflectionException
+     * @throws RuntimeException
      */
     protected function _reg_status_change_return($STS_ID, $notify = false)
     {
@@ -1733,6 +1785,14 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
      * incoming reg status change from reg details page.
      *
      * @return void
+     * @throws EE_Error
+     * @throws EntityNotFoundException
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws ReflectionException
+     * @throws RuntimeException
+     * @throws DomainException
      */
     protected function _change_reg_status()
     {
@@ -1808,6 +1868,14 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
      * @access protected
      * @param bool $notify whether or not to notify the registrant about their approval.
      * @return void
+     * @throws EE_Error
+     * @throws EntityNotFoundException
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws ReflectionException
+     * @throws RuntimeException
+     * @throws DomainException
      */
     protected function approve_registration($notify = false)
     {
@@ -1821,6 +1889,14 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
      * @access protected
      * @param bool $notify whether or not to notify the registrant about their status change.
      * @return void
+     * @throws EE_Error
+     * @throws EntityNotFoundException
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws ReflectionException
+     * @throws RuntimeException
+     * @throws DomainException
      */
     protected function decline_registration($notify = false)
     {
@@ -1834,6 +1910,14 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
      * @access protected
      * @param bool $notify whether or not to notify the registrant about their status change.
      * @return void
+     * @throws EE_Error
+     * @throws EntityNotFoundException
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws ReflectionException
+     * @throws RuntimeException
+     * @throws DomainException
      */
     protected function cancel_registration($notify = false)
     {
@@ -1847,6 +1931,14 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
      * @access protected
      * @param bool $notify whether or not to notify the registrant about their status change.
      * @return void
+     * @throws EE_Error
+     * @throws EntityNotFoundException
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws ReflectionException
+     * @throws RuntimeException
+     * @throws DomainException
      */
     protected function not_approve_registration($notify = false)
     {
@@ -1860,6 +1952,14 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
      * @access protected
      * @param bool $notify whether or not to notify the registrant about their status change.
      * @return void
+     * @throws EE_Error
+     * @throws EntityNotFoundException
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws ReflectionException
+     * @throws RuntimeException
+     * @throws DomainException
      */
     protected function pending_registration($notify = false)
     {
@@ -1873,6 +1973,14 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
      * @access protected
      * @param bool $notify whether or not to notify the registrant about their status change.
      * @return void
+     * @throws EE_Error
+     * @throws EntityNotFoundException
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws ReflectionException
+     * @throws RuntimeException
+     * @throws DomainException
      */
     protected function wait_list_registration($notify = false)
     {
@@ -2040,6 +2148,10 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
      * @return void
      * @throws DomainException
      * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws ReflectionException
      */
     public function _reg_questions_meta_box()
     {
@@ -2188,6 +2300,10 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
      * @access protected
      * @return void
      * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws ReflectionException
      */
     protected function _update_attendee_registration_form()
     {
@@ -2239,6 +2355,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
      * @throws InvalidArgumentException
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
+     * @throws ReflectionException
      */
     private function _save_reg_custom_questions_form($REG_ID = false)
     {
@@ -2294,6 +2411,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
      * @throws InvalidArgumentException
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
+     * @throws ReflectionException
      */
     public function _reg_attendees_meta_box()
     {
@@ -2371,6 +2489,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
      * @throws InvalidArgumentException
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
+     * @throws ReflectionException
      */
     public function _reg_registrant_side_meta_box()
     {
@@ -2522,6 +2641,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
      * @throws InvalidArgumentException
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
+     * @throws ReflectionException
      */
     protected function _delete_registrations()
     {
@@ -2533,7 +2653,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
             $success = count($this->_req_data['_REG_ID']) > 1 ? 2 : 1;
             // cycle thru checkboxes
             foreach ($this->_req_data['_REG_ID'] as $REG_ID) {
-                \EEH_Debug_Tools::printr($REG_ID, '$REG_ID', __FILE__, __LINE__);
+                EEH_Debug_Tools::printr($REG_ID, '$REG_ID', __FILE__, __LINE__);
                 $REG = $REG_MDL->get_one_by_ID($REG_ID);
                 if (! $REG instanceof EE_Registration) {
                     continue;
@@ -2570,9 +2690,13 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
      * handles the permanent deletion of a registration.  See comments with _delete_registrations() for details on what
      * models get affected.
      *
-     * @param  EE_Registration $REG registration to be deleted permenantly
+     * @param EE_Registration $REG registration to be deleted permanently
      * @return bool true = successful deletion, false = fail.
      * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws ReflectionException
      */
     protected function _delete_registration(EE_Registration $REG)
     {
@@ -2642,6 +2766,10 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
      * @access private
      * @throws DomainException
      * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws ReflectionException
      */
     public function new_registration()
     {
@@ -2957,6 +3085,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
      * @throws InvalidArgumentException
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
+     * @throws ReflectionException
      */
     public function redirect_to_txn()
     {
@@ -2987,6 +3116,8 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
      *
      * @access protected
      * @return void
+     * @throws DomainException
+     * @throws EE_Error
      */
     protected function _attendee_contact_list_table()
     {
@@ -3101,6 +3232,11 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
      *
      * @access protected
      * @return void
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws ReflectionException
      */
     protected function _resend_registration()
     {
@@ -3218,6 +3354,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
      * @throws InvalidArgumentException
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
+     * @throws ReflectionException
      */
     protected function _duplicate_attendee()
     {
@@ -3271,6 +3408,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
      * @throws InvalidInterfaceException
      * @throws LogicException
      * @throws InvalidFormSubmissionException
+     * @throws ReflectionException
      */
     protected function _insert_update_cpt_item($post_id, $post)
     {
@@ -3353,6 +3491,10 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
     }
 
 
+    /**
+     * @throws EE_Error
+     * @since $VID:$
+     */
     public function attendee_editor_metaboxes()
     {
         $this->verify_cpt_object();
@@ -3518,6 +3660,10 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
      * @return void
      * @throws DomainException
      * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws ReflectionException
      */
     public function attendee_registrations_meta_box($post)
     {
@@ -3555,6 +3701,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
      * @throws InvalidArgumentException
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
+     * @throws ReflectionException
      * @access protected
      */
     protected function _trash_or_restore_attendees($trash = true)
