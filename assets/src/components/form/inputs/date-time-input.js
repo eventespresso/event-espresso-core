@@ -6,7 +6,6 @@ import PropTypes from 'prop-types';
 import { useState, useEffect } from '@wordpress/element';
 import { Field } from 'react-final-form';
 import {
-	DateTimePicker,
 	Dropdown,
 	IconButton,
 } from '@wordpress/components';
@@ -19,6 +18,7 @@ import { ServerDateTime } from '@eventespresso/value-objects';
 /**
  * Internal dependencies
  */
+import { DateTimePicker } from './date-time-picker';
 import './date-time-input.css';
 import { EspressoIcon, ESPRESSO_ICON_CALENDAR } from '../../ui/image';
 /**
@@ -33,19 +33,19 @@ const DateTimeDropdown = ( {
 	htmlId,
 	htmlClass,
 	helpTextID,
-	initialValue,
 	dataSet,
 	inputWidth = '',
+	isInvalidDate,
 	...rest
 } ) => {
 	const [ inputValue, setInputValue ] = useState( new Date() );
 	const [ is12HourTime, setIs12HourTime ] = useState( true );
 
 	useEffect( () => {
-		const _initialValue = initialValue ?
-			new Date( initialValue ) :
+		const initialValue = input.value ?
+			new Date( input.value ) :
 			new Date();
-		setInputValue( _initialValue );
+		setInputValue( initialValue );
 		// To know if the current timezone is a 12 hour time
 		// we look for "a" in the time format
 		// We also make sure this a is not escaped by a "/"
@@ -131,6 +131,7 @@ const DateTimeDropdown = ( {
 						onChange={ onChangeHandler }
 						locale={ SERVER_LOCALE }
 						is12Hour={ is12HourTime }
+						isInvalidDate={ isInvalidDate }
 					/>
 				</div>
 			) }
