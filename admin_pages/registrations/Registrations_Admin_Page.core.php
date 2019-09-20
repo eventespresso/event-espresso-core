@@ -214,15 +214,15 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
                 'add-registrant'      => esc_html__('Add New Registration', 'event_espresso'),
                 'add-attendee'        => esc_html__('Add Contact', 'event_espresso'),
                 'edit'                => esc_html__('Edit Contact', 'event_espresso'),
-                'report'              => esc_html__("Event Registrations CSV Report", "event_espresso"),
+                'report'              => esc_html__('Event Registrations CSV Report', 'event_espresso'),
                 'report_all'          => esc_html__('All Registrations CSV Report', 'event_espresso'),
                 'report_filtered'     => esc_html__('Filtered CSV Report', 'event_espresso'),
                 'contact_list_report' => esc_html__('Contact List Report', 'event_espresso'),
-                'contact_list_export' => esc_html__("Export Data", "event_espresso"),
+                'contact_list_export' => esc_html__('Export Data', 'event_espresso'),
             ),
             'publishbox'                   => array(
-                'add_new_attendee' => esc_html__("Add Contact Record", 'event_espresso'),
-                'edit_attendee'    => esc_html__("Update Contact Record", 'event_espresso'),
+                'add_new_attendee' => esc_html__('Add Contact Record', 'event_espresso'),
+                'edit_attendee'    => esc_html__('Update Contact Record', 'event_espresso'),
             ),
             'hide_add_button_on_cpt_route' => array(
                 'edit_attendee' => true,
@@ -740,7 +740,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
     protected function _add_screen_options_contact_list()
     {
         $page_title = $this->_admin_page_title;
-        $this->_admin_page_title = esc_html__("Contacts", 'event_espresso');
+        $this->_admin_page_title = esc_html__('Contacts', 'event_espresso');
         $this->_per_page_screen_option();
         $this->_admin_page_title = $page_title;
     }
