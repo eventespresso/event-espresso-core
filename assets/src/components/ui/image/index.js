@@ -1,6 +1,6 @@
 export { AvatarImage } from './avatar';
 export {
-	EspressoIcon,
+	default as EspressoIcon,
 	ESPRESSO_ICON_CALCULATOR,
 	ESPRESSO_ICON_CALENDAR,
 	ESPRESSO_ICON_SAVE,
