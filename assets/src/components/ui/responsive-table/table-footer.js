@@ -2,6 +2,7 @@
  * External imports
  */
 import classNames from 'classnames';
+import PropTypes from 'prop-types';
 
 /**
  * @param {boolean} showFooter
@@ -20,6 +21,16 @@ const TableFooter = ( { showFooter, children, htmlClass, ...extraProps } ) => {
 			{ children }
 		</tfoot>
 	) : null;
+};
+
+TableFooter.propTypes = {
+	showFooter: PropTypes.bool.isRequired,
+	children: PropTypes.node,
+	htmlClass: PropTypes.string,
+};
+
+TableFooter.defaultProps = {
+	htmlClass: '',
 };
 
 export default TableFooter;

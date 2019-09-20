@@ -8,6 +8,7 @@ import {
 	useEventEditorTickets,
 } from '@eventespresso/hooks';
 import { __, _x, sprintf } from '@eventespresso/i18n';
+import PropTypes from 'prop-types';
 
 /**
  * Internal imports
@@ -70,6 +71,10 @@ const AssignTicketsMenuItem = ( { dateEntity } ) => {
 			/>
 		</>
 	);
+};
+
+AssignTicketsMenuItem.propTypes = {
+	dateEntity: PropTypes.object.isRequired,
 };
 
 export default ifValidDateEntity( AssignTicketsMenuItem );

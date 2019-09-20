@@ -8,6 +8,7 @@ import {
 	useTrashDateEntity,
 } from '@eventespresso/hooks';
 import { __ } from '@eventespresso/i18n';
+import PropTypes from 'prop-types';
 
 import useEventDateEditorId from '../../edit-form/use-event-date-editor-id';
 
@@ -35,6 +36,10 @@ const DateEntityMainMenuItem = ( { dateEntity } ) => {
 			] }
 		/>
 	);
+};
+
+DateEntityMainMenuItem.propTypes = {
+	dateEntity: PropTypes.object.isRequired,
 };
 
 export default ifValidDateEntity( DateEntityMainMenuItem );

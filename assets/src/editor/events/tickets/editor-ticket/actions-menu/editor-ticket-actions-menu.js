@@ -4,6 +4,7 @@
 import { useEffect } from '@wordpress/element';
 import { useEntityActionMenuItems } from '@eventespresso/components';
 import { ifValidTicketEntity } from '@eventespresso/editor-hocs';
+import PropTypes from 'prop-types';
 
 /**
  * Internal dependencies
@@ -20,7 +21,6 @@ import TicketPriceCalculatorMenuItem
 
 const EditorTicketActionsMenu = ( {
 	ticketEntity,
-	toggleTicketAssignments,
 } ) => {
 	const {
 		getActionsMenuForEntity,
@@ -57,7 +57,6 @@ const EditorTicketActionsMenu = ( {
 					<AssignDatesMenuItem
 						key={ `assign-dates-${ ticketEntity.id }` }
 						ticketEntity={ ticketEntity }
-						toggleTicketAssignments={ toggleTicketAssignments }
 					/>
 				),
 			);
@@ -81,6 +80,10 @@ const EditorTicketActionsMenu = ( {
 			<EditTicketFormModal ticketEntity={ ticketEntity } />
 		</>
 	);
+};
+
+EditorTicketActionsMenu.propTypes = {
+	ticketEntity: PropTypes.object.isRequired,
 };
 
 export default ifValidTicketEntity( EditorTicketActionsMenu );

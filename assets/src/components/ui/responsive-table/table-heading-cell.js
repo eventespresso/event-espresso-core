@@ -1,4 +1,9 @@
 /**
+ * External imports
+ */
+import PropTypes from 'prop-types';
+
+/**
  * @param {mixed} children
  * @param {number} rowNumber
  * @param {number} colNumber
@@ -14,9 +19,9 @@ const TableHeadingCell = ( {
 	rowNumber,
 	colNumber,
 	rowType,
-	htmlId = '',
-	htmlClass = '',
-	classes = {},
+	htmlId,
+	htmlClass,
+	classes,
 	...extraProps
 } ) => {
 	htmlId = htmlId ?
@@ -40,6 +45,23 @@ const TableHeadingCell = ( {
 			{ children }
 		</th>
 	);
+};
+
+TableHeadingCell.propTypes = {
+	children: PropTypes.node,
+	rowNumber: PropTypes.number.isRequired,
+	colNumber: PropTypes.number.isRequired,
+	rowType: PropTypes.string,
+	htmlId: PropTypes.string,
+	htmlClass: PropTypes.string,
+	classes: PropTypes.object,
+};
+
+TableHeadingCell.defaultProps = {
+	rowType: 'body',
+	htmlId: '',
+	htmlClass: '',
+	classes: {},
 };
 
 export default TableHeadingCell;

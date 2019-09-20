@@ -4,6 +4,7 @@
 import { without } from 'lodash';
 import { __ } from '@eventespresso/i18n';
 import classNames from 'classnames';
+import PropTypes from 'prop-types';
 
 /**
  * Internal dependencies
@@ -32,8 +33,8 @@ const EntityList = ( {
 	EntityGridView,
 	EntityListView,
 	htmlClass,
-	view = 'grid',
-	noResultsText = '',
+	view,
+	noResultsText,
 	...otherProps
 } ) => {
 	// verify array and remove undefined
@@ -64,6 +65,22 @@ const EntityList = ( {
 			{ ...otherProps }
 		/>
 	);
+};
+
+EntityList.propTypes = {
+	entities: PropTypes.array,
+	EntityGridView: PropTypes.elementType.isRequired,
+	EntityListView: PropTypes.elementType.isRequired,
+	htmlClass: PropTypes.string,
+	view: PropTypes.string,
+	noResultsText: PropTypes.string,
+};
+
+EntityList.defaultProps = {
+	entities: [],
+	htmlClass: '',
+	view: 'grid',
+	noResultsText: '',
 };
 
 export default withFormContainerAndPlaceholder( EntityList );

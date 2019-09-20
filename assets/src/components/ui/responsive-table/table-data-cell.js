@@ -2,6 +2,7 @@
  * External imports
  */
 import classNames from 'classnames';
+import PropTypes from 'prop-types';
 
 /**
  * @param {mixed} children
@@ -18,9 +19,9 @@ const TableDataCell = ( {
 	children,
 	rowNumber,
 	colNumber,
-	htmlId = '',
-	htmlClass = '',
-	classes = {},
+	htmlId,
+	htmlClass,
+	classes,
 	...extraProps
 } ) => {
 	htmlId = htmlId ?
@@ -37,6 +38,21 @@ const TableDataCell = ( {
 			{ children }
 		</td>
 	);
+};
+
+TableDataCell.propTypes = {
+	children: PropTypes.node,
+	rowNumber: PropTypes.number.isRequired,
+	colNumber: PropTypes.number.isRequired,
+	htmlId: PropTypes.string,
+	htmlClass: PropTypes.string,
+	classes: PropTypes.object,
+};
+
+TableDataCell.defaultProps = {
+	htmlId: '',
+	htmlClass: '',
+	classes: {},
 };
 
 export default TableDataCell;

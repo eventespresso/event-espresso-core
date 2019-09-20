@@ -5,6 +5,7 @@ import classNames from 'classnames';
 import { useMemo } from '@wordpress/element';
 import { InlineEditInput } from '@eventespresso/components';
 import { __ } from '@eventespresso/i18n';
+import PropTypes from 'prop-types';
 
 const InlineEditEventDateDescription = ( {
 	eventDate,
@@ -34,5 +35,15 @@ const InlineEditEventDateDescription = ( {
 	},
 	[ eventDate.id, eventDate.description, showDesc, wrapperElement ]
 );
+
+InlineEditEventDateDescription.propTypes = {
+	eventDate: PropTypes.object.isRequired,
+	showDesc: PropTypes.string,
+	wrapperElement: PropTypes.string,
+};
+
+InlineEditEventDateDescription.defaultProps = {
+	showDesc: 'excerpt',
+};
 
 export default InlineEditEventDateDescription;

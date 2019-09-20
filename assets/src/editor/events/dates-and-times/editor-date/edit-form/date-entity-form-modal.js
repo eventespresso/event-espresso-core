@@ -4,6 +4,7 @@
 import { FormHandler } from '@eventespresso/components';
 import { EditorModal, ifValidDateEntity } from '@eventespresso/editor-hocs';
 import { __ } from '@eventespresso/i18n';
+import PropTypes from 'prop-types';
 
 /**
  * Internal dependencies
@@ -48,6 +49,12 @@ const DateEntityFormModal = ( {
 			/>
 		</EditorModal>
 	);
+};
+
+DateEntityFormModal.propTypes = {
+	dateEntity: PropTypes.object.isRequired,
+	onEditorOpen: PropTypes.func.isRequired,
+	onEditorClose: PropTypes.func.isRequired,
 };
 
 export default ifValidDateEntity( DateEntityFormModal );

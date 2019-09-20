@@ -4,6 +4,7 @@
 import { isEmpty } from 'lodash';
 import { twoColumnAdminFormLayout } from '@eventespresso/components';
 import { ifValidDateEntity } from '@eventespresso/editor-hocs';
+import PropTypes from 'prop-types';
 
 /**
  * Internal dependencies
@@ -27,8 +28,8 @@ const {
  */
 const DateEntityForm = ( {
 	dateEntity,
-	currentValues = {},
-	initialValues = {},
+	currentValues,
+	initialValues,
 } ) => {
 	const prefix = useDateEntityFormInputPrefix( dateEntity );
 	const inputConfig = useDateEntityInputConfig( dateEntity );
@@ -59,6 +60,17 @@ const DateEntityForm = ( {
 			/>
 		</FormWrapper>
 	) : null;
+};
+
+DateEntityForm.propTypes = {
+	dateEntity: PropTypes.object.isRequired,
+	currentValues: PropTypes.object,
+	initialValues: PropTypes.object,
+};
+
+DateEntityForm.defaultProps = {
+	currentValues: {},
+	initialValues: {},
 };
 
 export default ifValidDateEntity( DateEntityForm );

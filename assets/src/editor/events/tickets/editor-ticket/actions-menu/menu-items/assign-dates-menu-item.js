@@ -9,6 +9,7 @@ import {
 } from '@eventespresso/hooks';
 
 import { __, _x, sprintf } from '@eventespresso/i18n';
+import PropTypes from 'prop-types';
 
 /**
  * Internal dependencies
@@ -64,6 +65,10 @@ const AssignDatesMenuItem = ( { ticketEntity } ) => {
 			/>
 		</>
 	);
+};
+
+AssignDatesMenuItem.propTypes = {
+	ticketEntity: PropTypes.object.isRequired,
 };
 
 export default ifValidTicketEntity( AssignDatesMenuItem );

@@ -3,6 +3,7 @@
  */
 import { useMemo } from '@wordpress/element';
 import { twoColumnAdminFormLayout } from '@eventespresso/components';
+import PropTypes from 'prop-types';
 
 const { FormInfo } = twoColumnAdminFormLayout;
 
@@ -17,9 +18,9 @@ const { FormInfo } = twoColumnAdminFormLayout;
  */
 const TicketAssignmentsFormErrorInfo = ( {
 	errorMessage,
-	dismissable = true,
-	colSize = 10,
-	offset = 1,
+	dismissable,
+	colSize,
+	offset,
 } ) => {
 	return useMemo( () => {
 		return errorMessage ?
@@ -31,6 +32,19 @@ const TicketAssignmentsFormErrorInfo = ( {
 				offset={ offset }
 			/> : null;
 	}, [ errorMessage, dismissable, colSize, offset ] );
+};
+
+TicketAssignmentsFormErrorInfo.propTypes = {
+	errorMessage: PropTypes.string,
+	dismissable: PropTypes.bool,
+	colSize: PropTypes.number,
+	offset: PropTypes.number,
+};
+
+TicketAssignmentsFormErrorInfo.defaultProps = {
+	dismissable: true,
+	colSize: 10,
+	offset: 1,
 };
 
 export default TicketAssignmentsFormErrorInfo;

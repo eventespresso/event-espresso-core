@@ -10,6 +10,7 @@ import {
 } from '@eventespresso/hooks';
 
 import { __ } from '@eventespresso/i18n';
+import PropTypes from 'prop-types';
 
 /**
  * Internal dependencies
@@ -43,6 +44,10 @@ const TicketEntityMainMenuItem = ( { ticketEntity } ) => {
 			] }
 		/>
 	);
+};
+
+TicketEntityMainMenuItem.propTypes = {
+	ticketEntity: PropTypes.object.isRequired,
 };
 
 export default ifValidTicketEntity( TicketEntityMainMenuItem );

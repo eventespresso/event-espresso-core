@@ -2,6 +2,7 @@
  * External imports
  */
 import { ifValidTicketEntity } from '@eventespresso/editor-hocs';
+import PropTypes from 'prop-types';
 
 /**
  * Internal dependencies
@@ -20,8 +21,8 @@ import TicketDetailsPanel from './ticket-details-panel';
  */
 const EditorTicketEntityDetails = ( {
 	ticketEntity,
-	showDesc = 'excerpt',
-	showPrice = true,
+	showDesc,
+	showPrice,
 } ) => (
 	<div className={ 'ee-editor-ticket-details-wrapper-div' }>
 		<InlineEditTicketName ticket={ ticketEntity } />
@@ -36,5 +37,16 @@ const EditorTicketEntityDetails = ( {
 		<TicketDetailsPanel ticket={ ticketEntity } />
 	</div>
 );
+
+EditorTicketEntityDetails.propTypes = {
+	ticketEntity: PropTypes.object.isRequired,
+	showDesc: PropTypes.string,
+	showPrice: PropTypes.bool,
+};
+
+EditorTicketEntityDetails.defaultProps = {
+	showDesc: 'excerpt',
+	showPrice: true,
+};
 
 export default ifValidTicketEntity( EditorTicketEntityDetails );

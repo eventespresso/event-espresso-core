@@ -11,6 +11,7 @@ import { amountsMatch, parseMoneyValue } from '@eventespresso/utils';
 import { __ } from '@eventespresso/i18n';
 import { priceTypeModel } from '@eventespresso/model';
 import { Money, SiteCurrency } from '@eventespresso/value-objects';
+import PropTypes from 'prop-types';
 
 const { BASE_PRICE_TYPES } = priceTypeModel;
 const { FormInput, InputLabel } = twoColumnAdminFormLayout;
@@ -81,6 +82,14 @@ const PriceAmountInput = ( {
 		priceType.isPercent,
 		reverseCalculate,
 	] );
+};
+
+PriceAmountInput.propTypes = {
+	prefix: PropTypes.string.isRequired,
+	values: PropTypes.object.isRequired,
+	price: PropTypes.object.isRequired,
+	priceType: PropTypes.object.isRequired,
+	reverseCalculate: PropTypes.bool,
 };
 
 export default PriceAmountInput;

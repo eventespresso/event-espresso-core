@@ -5,6 +5,7 @@ import classNames from 'classnames';
 import { useMemo } from '@wordpress/element';
 import { InlineEditInput } from '@eventespresso/components';
 import { __ } from '@eventespresso/i18n';
+import PropTypes from 'prop-types';
 
 const InlineEditEventDateName = ( { eventDate, wrapperElement } ) => useMemo(
 	() => {
@@ -35,5 +36,10 @@ const InlineEditEventDateName = ( { eventDate, wrapperElement } ) => useMemo(
 	},
 	[ eventDate.id, eventDate.name ]
 );
+
+InlineEditEventDateName.propTypes = {
+	eventDate: PropTypes.object.isRequired,
+	wrapperElement: PropTypes.string,
+};
 
 export default InlineEditEventDateName;

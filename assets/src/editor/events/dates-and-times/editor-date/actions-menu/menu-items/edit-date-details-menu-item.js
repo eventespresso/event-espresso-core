@@ -4,6 +4,7 @@
 import { IconMenuItem } from '@eventespresso/components';
 import { ifValidDateEntity, useOpenEditor } from '@eventespresso/editor-hocs';
 import { __ } from '@eventespresso/i18n';
+import PropTypes from 'prop-types';
 
 /**
  * Internal dependencies
@@ -22,6 +23,10 @@ const EditDateDetailsMenuItem = ( { dateEntity } ) => {
 			onClick={ useOpenEditor( editorId ) }
 		/>
 	);
+};
+
+EditDateDetailsMenuItem.propTypes = {
+	dateEntity: PropTypes.object.isRequired,
 };
 
 export default ifValidDateEntity( EditDateDetailsMenuItem );

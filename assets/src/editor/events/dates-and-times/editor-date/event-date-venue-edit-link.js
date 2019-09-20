@@ -8,6 +8,7 @@ import { routes } from '@eventespresso/eejs';
 import { __ } from '@eventespresso/i18n';
 import { useEventForEventDate, useEventVenue } from '@eventespresso/hooks';
 import { isModelEntityOfModel } from '@eventespresso/validators';
+import PropTypes from 'prop-types';
 
 const { ADMIN_ROUTES, ADMIN_ROUTE_ACTIONS, getAdminUrl } = routes;
 
@@ -71,6 +72,16 @@ const EventDateVenueEditLink = ( { eventDate, showVenue, wrapperElement } ) => {
 		},
 		[ venueId, venueName, showVenue, wrapperElement ]
 	);
+};
+
+EventDateVenueEditLink.propTypes = {
+	eventDate: PropTypes.string.isRequired,
+	showVenue: PropTypes.bool,
+	wrapperElement: PropTypes.string,
+};
+
+EventDateVenueEditLink.propTypes = {
+	showVenue: false,
 };
 
 export default EventDateVenueEditLink;

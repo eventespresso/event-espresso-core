@@ -4,6 +4,7 @@
 import { Component } from '@wordpress/element';
 import { Dashicon, Path, SVG } from '@wordpress/components';
 import classNames from 'classnames';
+import PropTypes from 'prop-types';
 
 export const ESPRESSO_ICON_CALCULATOR = 'calculator';
 export const ESPRESSO_ICON_CALENDAR = 'calendar';
@@ -34,9 +35,9 @@ export const isEspressoIcon = ( icon ) => {
  * @param {number} size
  * @param {string} className
  */
-export class EspressoIcon extends Component {
+class EspressoIcon extends Component {
 	render() {
-		const { icon, size = 20, className, ...otherProps } = this.props;
+		const { icon, size, className, ...otherProps } = this.props;
 		let path;
 
 		switch ( icon ) {
@@ -161,3 +162,16 @@ export class EspressoIcon extends Component {
 		);
 	}
 }
+
+EspressoIcon.propTypes = {
+	icon: PropTypes.string.isRequired,
+	size: PropTypes.number,
+	className: PropTypes.string,
+};
+
+EspressoIcon.defaultProps = {
+	size: 20,
+	className: '',
+};
+
+export default EspressoIcon; 

@@ -2,6 +2,7 @@
  * External imports
  */
 import classNames from 'classnames';
+import PropTypes from 'prop-types';
 
 /**
  * @param {Array} children
@@ -19,6 +20,15 @@ const TableBody = ( { children, htmlClass, ...extraProps } ) => {
 			{ children }
 		</tbody>
 	);
+};
+
+TableBody.propTypes = {
+	children: PropTypes.node,
+	htmlClass: PropTypes.string,
+};
+
+TableBody.defaultProps = {
+	htmlClass: '',
 };
 
 export default TableBody;

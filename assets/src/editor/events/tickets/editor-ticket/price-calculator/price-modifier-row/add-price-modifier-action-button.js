@@ -6,6 +6,7 @@ import { useMemo } from '@wordpress/element';
 import { __ } from '@eventespresso/i18n';
 import { useAddPriceModifier } from '@eventespresso/hooks';
 import { Money, SiteCurrency } from '@eventespresso/value-objects';
+import PropTypes from 'prop-types';
 
 import { getPriceType } from '../utils/';
 
@@ -65,6 +66,17 @@ const AddPriceModifierActionButton = ( {
 	) : null,
 	[ ticket.id, lastRow ]
 	);
+};
+
+AddPriceModifierActionButton.propTypes = {
+	ticket: PropTypes.object.isRequired,
+	lastRow: PropTypes.bool,
+	lastPrice: PropTypes.object.isRequired,
+	priceTypes: PropTypes.arrayOf( PropTypes.object ).isRequired,
+};
+
+AddPriceModifierActionButton.defaultProps = {
+	lastRow: false,
 };
 
 export default AddPriceModifierActionButton;

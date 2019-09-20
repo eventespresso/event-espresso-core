@@ -11,6 +11,7 @@ import {
 import { __ } from '@eventespresso/i18n';
 import { ticketModel } from '@eventespresso/model';
 import { isModelEntityOfModel } from '@eventespresso/validators';
+import PropTypes from 'prop-types';
 
 /**
  * Internal dependencies
@@ -30,7 +31,6 @@ const noZebraStripe = [ 'row', 'stripe', 'name', 'actions' ];
  * @param {Array} entities 	array of JSON objects defining the Tickets
  * @param {string} displayTicketDate
  * @param {string} htmlClass
- * @param {Function} doRefresh
  * @param {Object} otherProps
  * @return {Component} 			list of rendered Tickets
  */
@@ -38,7 +38,6 @@ const EditorTicketEntitiesListView = ( {
 	entities,
 	displayTicketDate,
 	htmlClass,
-	doRefresh,
 	...otherProps
 } ) => {
 	htmlClass = classNames( htmlClass, 'ee-tickets-list-list-view' );
@@ -86,7 +85,6 @@ const EditorTicketEntitiesListView = ( {
 					getQuantity( ticketEntity.regLimit ),
 					status( ticketEntity ),
 					getBackgroundColorClass( ticketEntity ),
-					doRefresh,
 					otherProps
 				) : null;
 			return filterColumns( columns );
@@ -103,6 +101,16 @@ const EditorTicketEntitiesListView = ( {
 			classes={ { tableClass: htmlClass } }
 		/>
 	);
+};
+
+EditorTicketEntitiesListView.propTypes = {
+	entities: PropTypes.array.isRequired,
+	displayTicketDate: PropTypes.string,
+	htmlClass: PropTypes.string,
+};
+
+EditorTicketEntitiesListView.defaultProps = {
+	htmlClass: '',
 };
 
 export default EditorTicketEntitiesListView;

@@ -4,6 +4,7 @@
 import { useMemo } from '@wordpress/element';
 import { __ } from '@eventespresso/i18n';
 import { twoColumnAdminFormLayout } from '@eventespresso/components';
+import PropTypes from 'prop-types';
 
 const { FormInfo } = twoColumnAdminFormLayout;
 
@@ -37,5 +38,13 @@ const FormInfoTicketPriceReverseCalculation = ( {
 		offset={ 1 }
 	/>
 ), [ reverseCalculate ] );
+
+FormInfoTicketPriceReverseCalculation.propTypes = {
+	reverseCalculate: PropTypes.bool,
+};
+
+FormInfoTicketPriceReverseCalculation.defaultProps = {
+	reverseCalculate: true,
+};
 
 export default FormInfoTicketPriceReverseCalculation;
