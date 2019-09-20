@@ -87,9 +87,10 @@ const PriceAmountInput = ( {
 PriceAmountInput.propTypes = {
 	prefix: PropTypes.string.isRequired,
 	values: PropTypes.object.isRequired,
-	priceEntity: PropTypes.object.isRequired,
-	priceTypeEntity: PropTypes.object.isRequired,
-	ticketEntity: PropTypes.object.isRequired,
+	price: PropTypes.object.isRequired,
+	priceType: PropTypes.object.isRequired,
+	ticket: PropTypes.object.isRequired,
+	reverseCalculate: PropTypes.bool,
 };
 
 export default PriceAmountInput;

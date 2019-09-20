@@ -73,9 +73,9 @@ const PriceTypeInput = ( {
 };
 
 PriceTypeInput.propTypes = {
+	price: PropTypes.object.isRequired,
 	prefix: PropTypes.string.isRequired,
 	values: PropTypes.object.isRequired,
-	priceTypeId: PropTypes.number.isRequired,
 	priceTypeOptions: PropTypes.array.isRequired,
 	basePriceType: PropTypes.number.isRequired,
 };

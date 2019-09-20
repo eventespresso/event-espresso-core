@@ -71,6 +71,8 @@ const AddPriceModifierActionButton = ( {
 AddPriceModifierActionButton.propTypes = {
 	ticket: PropTypes.object.isRequired,
 	lastRow: PropTypes.bool,
+	lastPrice: PropTypes.object.isRequired,
+	priceTypes: PropTypes.arrayOf( PropTypes.object ).isRequired,
 };
 
 AddPriceModifierActionButton.defaultProps = {

@@ -23,7 +23,7 @@ const TableHeader = ( { children, htmlClass, ...extraProps } ) => {
 };
 
 TableHeader.propTypes = {
-	children: PropTypes.element,
+	children: PropTypes.node,
 	htmlClass: PropTypes.string,
 };
 

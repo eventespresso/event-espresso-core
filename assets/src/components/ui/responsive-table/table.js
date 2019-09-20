@@ -45,7 +45,7 @@ const Table = ( {
 };
 
 Table.propTypes = {
-	children: PropTypes.element.isRequired,
+	children: PropTypes.node,
 	tableId: PropTypes.string,
 	tableClass: PropTypes.string,
 	captionID: PropTypes.string,

@@ -55,7 +55,7 @@ const EventDateRegistrationsLink = ( { dateEntity } ) => {
 };
 
 EventDateRegistrationsLink.propTypes = {
-	dateEntity: PropTypes.string.isRequired,
+	dateEntity: PropTypes.object.isRequired,
 };
 
 export default ifValidDateEntity( EventDateRegistrationsLink );

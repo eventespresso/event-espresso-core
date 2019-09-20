@@ -48,7 +48,7 @@ const TableHeadingCell = ( {
 };
 
 TableHeadingCell.propTypes = {
-	children: PropTypes.element.isRequired,
+	children: PropTypes.node,
 	rowNumber: PropTypes.number.isRequired,
 	colNumber: PropTypes.number.isRequired,
 	rowType: PropTypes.string,

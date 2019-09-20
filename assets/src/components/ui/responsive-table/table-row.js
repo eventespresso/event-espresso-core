@@ -41,7 +41,7 @@ const TableRow = ( {
 };
 
 TableRow.propTypes = {
-	children: PropTypes.element.isRequired,
+	children: PropTypes.node,
 	rowNumber: PropTypes.number.isRequired,
 	rowType: PropTypes.string,
 	htmlId: PropTypes.string,

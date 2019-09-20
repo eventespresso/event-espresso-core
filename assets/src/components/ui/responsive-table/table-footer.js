@@ -25,7 +25,7 @@ const TableFooter = ( { showFooter, children, htmlClass, ...extraProps } ) => {
 
 TableFooter.propTypes = {
 	showFooter: PropTypes.bool.isRequired,
-	children: PropTypes.element,
+	children: PropTypes.node,
 	htmlClass: PropTypes.string,
 };
 

@@ -23,7 +23,7 @@ const TableBody = ( { children, htmlClass, ...extraProps } ) => {
 };
 
 TableBody.propTypes = {
-	children: PropTypes.element.isRequired,
+	children: PropTypes.node,
 	htmlClass: PropTypes.string,
 };
 
