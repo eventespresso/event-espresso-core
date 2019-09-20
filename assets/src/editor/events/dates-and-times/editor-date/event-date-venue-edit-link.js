@@ -75,13 +75,14 @@ const EventDateVenueEditLink = ( { eventDate, showVenue, wrapperElement } ) => {
 };
 
 EventDateVenueEditLink.propTypes = {
-	eventDate: PropTypes.string.isRequired,
+	eventDate: PropTypes.object.isRequired,
 	showVenue: PropTypes.bool,
 	wrapperElement: PropTypes.string,
 };
 
-EventDateVenueEditLink.propTypes = {
+EventDateVenueEditLink.defaultProps = {
 	showVenue: false,
+	wrapperElement: 'h3',
 };
 
 export default EventDateVenueEditLink;

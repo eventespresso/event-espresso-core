@@ -41,7 +41,7 @@ EditorDateEntityDetails.propTypes = {
 
 EditorDateEntityDetails.defaultProps = {
 	showDesc: 'excerpt',
-	showVenue: true,
+	showVenue: false,
 };
 
 export default ifValidDateEntity( EditorDateEntityDetails );

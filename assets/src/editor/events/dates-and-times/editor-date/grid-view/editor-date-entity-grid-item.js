@@ -20,7 +20,6 @@ import EditorDateEntityActionsMenu
  *
  * @function
  * @param {Object} dateEntity   the Event Date
- * @param {Object} eventEntity   the Event
  * @param {string} showDate
  * @param {string} showDesc
  * @param {boolean} showVenue
@@ -28,7 +27,6 @@ import EditorDateEntityActionsMenu
  */
 const EditorDateEntityGridItem = ( {
 	dateEntity,
-	eventEntity,
 	showDate,
 	showDesc,
 	showVenue,
@@ -48,14 +46,12 @@ const EditorDateEntityGridItem = ( {
 					showDate={ showDate }
 				/>
 				<EditorDateEntityDetails
-					eventEntity={ eventEntity }
 					dateEntity={ dateEntity }
 					showDesc={ showDesc }
 					showVenue={ showVenue }
 				/>
 			</div>
 			<EditorDateEntityActionsMenu
-				eventEntity={ eventEntity }
 				dateEntity={ dateEntity }
 			/>
 		</EntityPaperFrame>
@@ -64,7 +60,6 @@ const EditorDateEntityGridItem = ( {
 
 EditorDateEntityGridItem.propTypes = {
 	dateEntity: PropTypes.object.isRequired,
-	eventEntity: PropTypes.object.isRequired,
 	showDate: PropTypes.string,
 	showDesc: PropTypes.string,
 	showVenue: PropTypes.bool,
@@ -73,7 +68,7 @@ EditorDateEntityGridItem.propTypes = {
 EditorDateEntityGridItem.defaultProps = {
 	showDate: 'start',
 	showDesc: 'excerpt',
-	showVenue: true,
+	showVenue: false,
 };
 
 export default ifValidDateEntity( EditorDateEntityGridItem );

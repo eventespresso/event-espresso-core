@@ -53,8 +53,8 @@ const DateEntityFormModal = ( {
 
 DateEntityFormModal.propTypes = {
 	dateEntity: PropTypes.object.isRequired,
-	onEditorOpen: PropTypes.func.isRequired,
-	onEditorClose: PropTypes.func.isRequired,
+	onEditorOpen: PropTypes.func,
+	onEditorClose: PropTypes.func,
 };
 
 export default ifValidDateEntity( DateEntityFormModal );
