@@ -2532,7 +2532,8 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
             // if array has more than one element than success message should be plural
             $success = count($this->_req_data['_REG_ID']) > 1 ? 2 : 1;
             // cycle thru checkboxes
-            while (list($ind, $REG_ID) = each($this->_req_data['_REG_ID'])) {
+            foreach ($this->_req_data['_REG_ID'] as $REG_ID) {
+                \EEH_Debug_Tools::printr($REG_ID, '$REG_ID', __FILE__, __LINE__);
                 $REG = $REG_MDL->get_one_by_ID($REG_ID);
                 if (! $REG instanceof EE_Registration) {
                     continue;
@@ -3565,7 +3566,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
             // if array has more than one element than success message should be plural
             $success = count($this->_req_data['checkbox']) > 1 ? 2 : 1;
             // cycle thru checkboxes
-            while (list($ATT_ID, $value) = each($this->_req_data['checkbox'])) {
+            foreach ($this->_req_data['checkbox'] as $ATT_ID) {
                 $updated = $trash ? $this->getAttendeeModel()->update_by_ID(array('status' => 'trash'), $ATT_ID)
                     : $this->getAttendeeModel()->update_by_ID(array('status' => 'publish'), $ATT_ID);
                 if (! $updated) {
