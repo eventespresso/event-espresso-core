@@ -46,6 +46,9 @@ const DateTimeDropdown = ( {
 			new Date( input.value ) :
 			new Date();
 		setInputValue( initialValue );
+	}, [ input.value ] );
+
+	useEffect( () => {
 		// To know if the current timezone is a 12 hour time
 		// we look for "a" in the time format
 		// We also make sure this a is not escaped by a "/"
