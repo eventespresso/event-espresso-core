@@ -30,8 +30,6 @@ const useDateEntityFormSchema = ( dateEntity ) => {
 		[ `${ prefix }-description` ]: dateEntity.description || '',
 		[ `${ prefix }-start` ]: dateEntity.start.toISO(),
 		[ `${ prefix }-end` ]: dateEntity.end.toISO(),
-		[ `${ prefix }-startTime` ]: dateEntity.start.toFormat( 'HH:mm' ),
-		[ `${ prefix }-endTime` ]: dateEntity.end.toFormat( 'HH:mm' ),
 		[ `${ prefix }-regLimit` ]: parseInfinity( dateEntity.regLimit ),
 		[ `${ prefix }-sold` ]: dateEntity.sold || 0,
 		[ `${ prefix }-reserved` ]: dateEntity.reserved || 0,
