@@ -42,44 +42,70 @@ const generateFormInputFromConfig = (
 		return null;
 	}
 	const config = { ...defaultInputConfig, ...inputConfig };
-	const name = `${ formDataKeyPrefix }-${ config.id }`;
-	return config.type === 'toggle' ? (
+
+	const {
+		id,
+		type,
+		label,
+		default: defaultValue,
+		changeListener,
+		validations,
+		required,
+		disabled,
+		minLength,
+		min,
+		step,
+		inputWidth,
+		helpText: {
+			ifChecked,
+			ifNotChecked,
+			regular,
+		},
+		afterInput,
+		...rest
+	} = config;
+
+	const name = `${ formDataKeyPrefix }-${ id }`;
+
+	return type === 'toggle' ? (
 		<FormInput
-			key={ config.id }
-			type={ config.type }
+			key={ id }
+			type={ type }
 			name={ name }
 			htmlId={ name }
-			label={ config.label }
-			initialValue={ formDataValues[ name ] || config.default }
-			changeListener={ config.changeListener }
-			validations={ config.validations }
-			required={ config.required }
-			disabled={ config.disabled }
-			minLength={ config.minLength }
-			min={ config.min }
-			inputWidth={ config.inputWidth }
-			helpTextIfChecked={ config.helpText.ifChecked }
-			helpTextIfNotChecked={ config.helpText.ifNotChecked }
-			afterInput={ config.afterInput }
+			label={ label }
+			initialValue={ formDataValues[ name ] || defaultValue }
+			changeListener={ changeListener }
+			validations={ validations }
+			required={ required }
+			disabled={ disabled }
+			minLength={ minLength }
+			min={ min }
+			inputWidth={ inputWidth }
+			helpTextIfChecked={ ifChecked }
+			helpTextIfNotChecked={ ifNotChecked }
+			afterInput={ afterInput }
+			{ ...rest }
 		/>
 	) : (
 		<FormInput
-			key={ config.id }
-			type={ config.type }
+			key={ id }
+			type={ type }
 			name={ name }
 			htmlId={ name }
-			label={ config.label }
-			initialValue={ formDataValues[ name ] || config.default }
-			changeListener={ config.changeListener }
-			validations={ config.validations }
-			disabled={ config.disabled }
-			required={ config.required }
-			minLength={ config.minLength }
-			min={ config.min }
-			step={ config.step }
-			inputWidth={ config.inputWidth }
-			helpText={ config.helpText.regular }
-			afterInput={ config.afterInput }
+			label={ label }
+			initialValue={ formDataValues[ name ] || defaultValue }
+			changeListener={ changeListener }
+			validations={ validations }
+			disabled={ disabled }
+			required={ required }
+			minLength={ minLength }
+			min={ min }
+			step={ step }
+			inputWidth={ inputWidth }
+			helpText={ regular }
+			afterInput={ afterInput }
+			{ ...rest }
 		/>
 	);
 };
