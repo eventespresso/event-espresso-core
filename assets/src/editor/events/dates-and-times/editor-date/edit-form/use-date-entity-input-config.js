@@ -106,7 +106,10 @@ const useDateEntityInputConfig = ( {
 					const endDate = new Date( value );
 					const startDate = dateEntity.start.toJSDate();
 					if ( endDate - startDate < 0 ) {
-						return sprintf( __( '%1$s must be after %2$s.', 'event_espresso' ), __( 'End Date & Time', 'event_espresso' ), __( 'Start Date & Time', 'event_espresso' ) );
+						return __(
+							'End Date & Time must be after Start Date & Time',
+							'event_espresso'
+						);
 					}
 				}
 			},
@@ -116,7 +119,6 @@ const useDateEntityInputConfig = ( {
 				// so as not to disable the same start and end day
 				endDate.setHours( 0, 0, 0, 0 );
 				startDate.setHours( 0, 0, 0, 0 );
-
 				return endDate - startDate < 0;
 			},
 			validations: validations.required,
