@@ -3,13 +3,9 @@
  */
 import classNames from 'classnames';
 import PropTypes from 'prop-types';
-import { useState, useEffect } from '@wordpress/element';
 import { Field } from 'react-final-form';
-import {
-	DateTimePicker,
-	Dropdown,
-	IconButton,
-} from '@wordpress/components';
+import { Dropdown, IconButton } from '@wordpress/components';
+import { useState, useEffect } from '@wordpress/element';
 import { ENTER, SPACE } from '@wordpress/keycodes';
 import { SERVER_LOCALE } from '@eventespresso/eejs';
 import { DATE_TIME_FORMAT_SITE, TIME_FORMAT_SITE } from '@eventespresso/helpers';
@@ -20,7 +16,9 @@ import { ServerDateTime } from '@eventespresso/value-objects';
  * Internal dependencies
  */
 import './date-time-input.css';
+import { DateTimePicker } from './date-time-picker';
 import { EspressoIcon, ESPRESSO_ICON_CALENDAR } from '../../ui/image';
+
 /**
  * Generates HTML5 text input that opens a WP Dropdown + DateTimePicker
  * for populating the input with a date and time
@@ -33,19 +31,23 @@ const DateTimeDropdown = ( {
 	htmlId,
 	htmlClass,
 	helpTextID,
-	initialValue,
 	dataSet,
 	inputWidth = '',
+	isInvalidDate,
 	...rest
 } ) => {
+	delete rest.initialValue;
 	const [ inputValue, setInputValue ] = useState( new Date() );
 	const [ is12HourTime, setIs12HourTime ] = useState( true );
 
 	useEffect( () => {
-		const _initialValue = initialValue ?
-			new Date( initialValue ) :
+		const initialValue = input.value ?
+			new Date( input.value ) :
 			new Date();
-		setInputValue( _initialValue );
+		setInputValue( initialValue );
+	}, [ input.value ] );
+
+	useEffect( () => {
 		// To know if the current timezone is a 12 hour time
 		// we look for "a" in the time format
 		// We also make sure this a is not escaped by a "/"
@@ -131,6 +133,7 @@ const DateTimeDropdown = ( {
 						onChange={ onChangeHandler }
 						locale={ SERVER_LOCALE }
 						is12Hour={ is12HourTime }
+						isInvalidDate={ isInvalidDate }
 					/>
 				</div>
 			) }
@@ -140,10 +143,6 @@ const DateTimeDropdown = ( {
 
 DateTimeDropdown.propTypes = {
 	input: PropTypes.object.isRequired,
-	initialValue: PropTypes.oneOfType( [
-		PropTypes.object,
-		PropTypes.string,
-	] ),
 	htmlId: PropTypes.string.isRequired,
 	htmlClass: PropTypes.string,
 	helpTextID: PropTypes.string,

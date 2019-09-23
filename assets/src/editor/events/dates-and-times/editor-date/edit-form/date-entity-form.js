@@ -28,11 +28,18 @@ const {
  */
 const DateEntityForm = ( {
 	dateEntity,
+	updateField,
+	touchField,
 	currentValues,
 	initialValues,
 } ) => {
 	const prefix = useDateEntityFormInputPrefix( dateEntity );
-	const inputConfig = useDateEntityInputConfig( dateEntity );
+	const inputConfig = useDateEntityInputConfig( {
+		dateEntity,
+		prefix,
+		updateField,
+		touchField,
+	} );
 	// entity properties we don't want to be editable
 	const exclude = [
 		'eventId',

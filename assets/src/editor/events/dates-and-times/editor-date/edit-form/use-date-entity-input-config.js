@@ -8,7 +8,12 @@ import { validations } from '@eventespresso/components';
 import { isModelEntityOfModel } from '@eventespresso/validators';
 import { ServerDateTime as DateTime, Duration } from '@eventespresso/value-objects';
 
-const useDateEntityInputConfig = ( dateEntity ) => useMemo( () => {
+const useDateEntityInputConfig = ( {
+	dateEntity,
+	prefix,
+	updateField,
+	touchField,
+} ) => useMemo( () => {
 	warning(
 		isModelEntityOfModel( dateEntity, 'datetime' ),
 		'Can not generate input config data because an invalid date entity was supplied.'
@@ -52,18 +57,40 @@ const useDateEntityInputConfig = ( dateEntity ) => useMemo( () => {
 			},
 		},
 		{
-			id: 'evtStart',
+			id: 'start',
 			type: 'datetime-local',
 			label: __( 'Start Date & Time', 'event_espresso' ),
 			default: now.plus( Duration.fromObject( { days: 30 } ) ),
 			changeListener: ( value, prevValue ) => {
 				if ( value !== prevValue ) {
-					const newDate = new Date( value );
-					if (
-						newDate instanceof Date &&
-						! isNaN( newDate.getTime() )
-					) {
-						dateEntity.start = DateTime.fromJSDate( newDate );
+					const newDate = DateTime.fromISO( value );
+					if ( newDate instanceof DateTime ) {
+						if ( dateEntity.end < newDate ) {
+							const originalDuration = dateEntity.end.diff(
+								dateEntity.start
+							);
+							// add original date difference to new start date.
+							const newEndDate = newDate.plus( originalDuration );
+							dateEntity.end = newEndDate;
+							updateField(
+								`${ prefix }-end`,
+								newEndDate.toISO()
+							);
+						}
+						// and finally update the start date
+						dateEntity.start = newDate;
+					}
+				}
+				touchField( `${ prefix }-start` );
+			},
+			validate: ( value ) => {
+				if ( value ) {
+					const startDate = DateTime.fromISO( value );
+					if ( startDate > dateEntity.end ) {
+						return __(
+							'End Date & Time must be set later than the Start Date & Time',
+							'event_espresso'
+						);
 					}
 				}
 			},
@@ -72,20 +99,37 @@ const useDateEntityInputConfig = ( dateEntity ) => useMemo( () => {
 			inputWidth: 6,
 		},
 		{
-			id: 'evtEnd',
+			id: 'end',
 			type: 'datetime-local',
 			label: __( 'End Date & Time', 'event_espresso' ),
 			default: now.plus( Duration.fromObject( { days: 60 } ) ),
 			changeListener: ( value, prevValue ) => {
 				if ( value !== prevValue ) {
-					const newDate = new Date( value );
-					if (
-						newDate instanceof Date &&
-						! isNaN( newDate.getTime() )
-					) {
-						dateEntity.end = DateTime.fromJSDate( newDate );
+					const newDate = DateTime.fromISO( value );
+					if ( newDate instanceof DateTime ) {
+						dateEntity.end = newDate;
 					}
 				}
+				touchField( `${ prefix }-end` );
+			},
+			validate: ( value ) => {
+				if ( value ) {
+					const endDate = DateTime.fromISO( value );
+					if ( endDate < dateEntity.start ) {
+						return __(
+							'End Date & Time must be set later than the Start Date & Time',
+							'event_espresso'
+						);
+					}
+				}
+			},
+			isInvalidDate: ( endDate ) => {
+				const startDate = dateEntity.start.toJSDate();
+				// Set the time to midnight
+				// so as not to disable the same start and end day
+				endDate.setHours( 0, 0, 0, 0 );
+				startDate.setHours( 0, 0, 0, 0 );
+				return endDate - startDate < 0;
 			},
 			validations: validations.required,
 			required: true,
