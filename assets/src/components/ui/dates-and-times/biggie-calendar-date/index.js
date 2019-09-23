@@ -11,7 +11,7 @@ import { DateTime } from '@eventespresso/value-objects';
  * Internal dependencies
  */
 import './style.css';
-import { EspressoIcon } from '../../image/espresso-icon';
+import EspressoIcon from '../../image/espresso-icon';
 
 /**
  * Displays a full calendar date, but REALLY BIG!!!
