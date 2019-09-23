@@ -63,7 +63,7 @@ const useDateEntityInputConfig = ( {
 			default: now.plus( Duration.fromObject( { days: 30 } ) ),
 			changeListener: ( value, prevValue ) => {
 				if ( value !== prevValue ) {
-					const newDate = DateTime.fromISO( value ).toUTC();
+					const newDate = DateTime.fromISO( value );
 					if ( newDate instanceof DateTime ) {
 						if ( dateEntity.end < newDate ) {
 							const originalDuration = dateEntity.end.diff(
@@ -74,7 +74,7 @@ const useDateEntityInputConfig = ( {
 							dateEntity.end = newEndDate;
 							updateField(
 								`${ prefix }-end`,
-								newEndDate.toISO( false )
+								newEndDate.toISO()
 							);
 						}
 						// and finally update the start date
