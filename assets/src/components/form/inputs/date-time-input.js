@@ -36,6 +36,7 @@ const DateTimeDropdown = ( {
 	isInvalidDate,
 	...rest
 } ) => {
+	delete rest.initialValue;
 	const [ inputValue, setInputValue ] = useState( new Date() );
 	const [ is12HourTime, setIs12HourTime ] = useState( true );
 
@@ -142,10 +143,6 @@ const DateTimeDropdown = ( {
 
 DateTimeDropdown.propTypes = {
 	input: PropTypes.object.isRequired,
-	initialValue: PropTypes.oneOfType( [
-		PropTypes.object,
-		PropTypes.string,
-	] ),
 	htmlId: PropTypes.string.isRequired,
 	htmlClass: PropTypes.string,
 	helpTextID: PropTypes.string,
