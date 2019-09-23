@@ -34,3 +34,4 @@ export { default as useTicketsForEventDates }
 export { default as useTrashDateEntity } from './use-trash-date-entity';
 export { default as useTrashPriceModifier } from './use-trash-price-modifier';
 export { default as useTrashTicket } from './use-trash-ticket';
+export { default as usePrevious } from './use-previous';
