@@ -103,7 +103,7 @@ const useDateEntityInputConfig = ( {
 					const endDate = new Date( value );
 					const startDate = dateEntity.start.toJSDate();
 					if ( endDate - startDate < 0 ) {
-						return __( 'End time must be after start time.', 'event_espresso' );
+						return sprintf( __( '%1$s must be after %2$s.', 'event_espresso' ), __( 'End Date & Time', 'event_espresso' ), __( 'Start Date & Time', 'event_espresso' ) );
 					}
 				}
 			},
