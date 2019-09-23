@@ -68,15 +68,11 @@ const useDateEntityInputConfig = ( {
 						! isNaN( newDate.getTime() )
 					) {
 						dateEntity.start = DateTime.fromJSDate( newDate );
-
 						const endDate = dateEntity.end.toJSDate();
-
 						if ( endDate - newDate < 0 ) {
 							// add 2 days to the end date.
 							endDate.setDate( endDate.getDate() + 2 );
-
 							dateEntity.end = DateTime.fromJSDate( endDate );
-
 							updateField( `${ prefix }-end`, endDate.toISOString() );
 						}
 					}
