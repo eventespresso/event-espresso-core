@@ -1892,7 +1892,9 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
             EVENT_ESPRESSO_VERSION,
             true
         );
-        add_filter('FHEE_load_joyride', '__return_true');
+        if (EE_Registry::instance()->CFG->admin->help_tour_activation) {
+            add_filter('FHEE_load_joyride', '__return_true');
+        }
         // script for sorting tables
         wp_register_script(
             'espresso_ajax_table_sorting',
