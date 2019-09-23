@@ -63,22 +63,36 @@ const useDateEntityInputConfig = ( {
 			default: now.plus( Duration.fromObject( { days: 30 } ) ),
 			changeListener: ( value, prevValue ) => {
 				if ( value !== prevValue ) {
-					const newDate = new Date( value );
-					if (
-						newDate instanceof Date &&
-						! isNaN( newDate.getTime() )
-					) {
-						dateEntity.start = DateTime.fromJSDate( newDate );
-						const endDate = dateEntity.end.toJSDate();
-						if ( endDate - newDate < 0 ) {
-							// add 2 days to the end date.
-							endDate.setDate( endDate.getDate() + 2 );
-							dateEntity.end = DateTime.fromJSDate( endDate );
-							updateField( `${ prefix }-end`, endDate.toISOString() );
+					const newDate = DateTime.fromISO( value ).toUTC();
+					if ( newDate instanceof DateTime ) {
+						if ( dateEntity.end < newDate ) {
+							const originalDuration = dateEntity.end.diff(
+								dateEntity.start
+							);
+							// add original date difference to new start date.
+							const newEndDate = newDate.plus( originalDuration );
+							dateEntity.end = newEndDate;
+							updateField(
+								`${ prefix }-end`,
+								newEndDate.toISO( false )
+							);
 						}
+						// and finally update the start date
+						dateEntity.start = newDate;
 					}
 				}
 				touchField( `${ prefix }-start` );
+			},
+			validate: ( value ) => {
+				if ( value ) {
+					const startDate = DateTime.fromISO( value );
+					if ( startDate > dateEntity.end ) {
+						return __(
+							'End Date & Time must be set later than the Start Date & Time',
+							'event_espresso'
+						);
+					}
+				}
 			},
 			validations: validations.required,
 			required: true,
@@ -91,23 +105,19 @@ const useDateEntityInputConfig = ( {
 			default: now.plus( Duration.fromObject( { days: 60 } ) ),
 			changeListener: ( value, prevValue ) => {
 				if ( value !== prevValue ) {
-					const newDate = new Date( value );
-					if (
-						newDate instanceof Date &&
-						! isNaN( newDate.getTime() )
-					) {
-						dateEntity.end = DateTime.fromJSDate( newDate );
+					const newDate = DateTime.fromISO( value );
+					if ( newDate instanceof DateTime ) {
+						dateEntity.end = newDate;
 					}
 				}
 				touchField( `${ prefix }-end` );
 			},
 			validate: ( value ) => {
 				if ( value ) {
-					const endDate = new Date( value );
-					const startDate = dateEntity.start.toJSDate();
-					if ( endDate - startDate < 0 ) {
+					const endDate = DateTime.fromISO( value );
+					if ( endDate < dateEntity.start ) {
 						return __(
-							'End Date & Time must be after Start Date & Time',
+							'End Date & Time must be set later than the Start Date & Time',
 							'event_espresso'
 						);
 					}
