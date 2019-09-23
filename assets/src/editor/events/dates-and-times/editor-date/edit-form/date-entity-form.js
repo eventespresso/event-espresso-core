@@ -29,6 +29,7 @@ const {
 const DateEntityForm = ( {
 	dateEntity,
 	updateField,
+	touchField,
 	currentValues,
 	initialValues,
 } ) => {
@@ -37,6 +38,7 @@ const DateEntityForm = ( {
 		dateEntity,
 		prefix,
 		updateField,
+		touchField,
 	} );
 	// entity properties we don't want to be editable
 	const exclude = [

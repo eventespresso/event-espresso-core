@@ -14,9 +14,9 @@ import './input-error.css';
 export const InputError = ( { inputName } ) => (
 	<Field
 		name={ inputName }
-		subscription={ { touched: true, dirty: true, error: true } }
-		render={ ( { meta: { touched, dirty, error } } ) =>
-			( touched || dirty ) && error ?
+		subscription={ { touched: true, error: true } }
+		render={ ( { meta: { touched, error } } ) =>
+			touched && error ?
 				<div
 					id={ `${ inputName }-input-error` }
 					className="ee-form-input-error"

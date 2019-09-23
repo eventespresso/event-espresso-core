@@ -75,6 +75,7 @@ const FormHandlerForm = ( {
 			<FormContainer loading={ loading }>
 				<FormComponent
 					updateField={ form.change }
+					touchField={ form.blur }
 					initialValues={ initialValues }
 					currentValues={ currentValues }
 					submitButton={ submitButton }

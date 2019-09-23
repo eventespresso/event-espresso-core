@@ -12,6 +12,7 @@ const useDateEntityInputConfig = ( {
 	dateEntity,
 	prefix,
 	updateField,
+	touchField,
 } ) => useMemo( () => {
 	warning(
 		isModelEntityOfModel( dateEntity, 'datetime' ),
@@ -77,6 +78,7 @@ const useDateEntityInputConfig = ( {
 						}
 					}
 				}
+				touchField( `${ prefix }-start` );
 			},
 			validations: validations.required,
 			required: true,
@@ -97,6 +99,7 @@ const useDateEntityInputConfig = ( {
 						dateEntity.end = DateTime.fromJSDate( newDate );
 					}
 				}
+				touchField( `${ prefix }-end` );
 			},
 			validate: ( value ) => {
 				if ( value ) {
