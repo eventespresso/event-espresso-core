@@ -141,6 +141,10 @@ abstract class TicketSelectorRow
         $this->ticket_status_id = $this->event_status === EE_Datetime::sold_out
             ? EE_Ticket::sold_out
             : $this->ticket_status_id;
+        // If at admin area, display expired tickets as on sale.
+        $this->ticket_status_id = is_admin() && $this->ticket_status_id === EE_Ticket::expired
+            ? EE_Ticket::onsale
+            : $this->ticket_status_id;
         // check ticket status
         switch ($this->ticket_status_id) {
             // sold_out
@@ -196,6 +200,7 @@ abstract class TicketSelectorRow
     protected function setTicketStatusDisplay($remaining)
     {
         $this->ticket_status_display = '';
+
         // now depending on the ticket and other circumstances...
         if ($this->max_attendees === 0) {
             // registration is CLOSED because admin set max attendees to ZERO
