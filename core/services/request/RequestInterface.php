@@ -124,6 +124,15 @@ interface RequestInterface extends RequestTypeContextCheckerInterface
 
 
     /**
+     * remove params
+     *
+     * @param array $keys
+     * @param bool   $unset_from_global_too
+     */
+    public function unSetRequestParams(array $keys, $unset_from_global_too = false);
+
+
+    /**
      * @return string
      */
     public function ipAddress();
