@@ -50,7 +50,7 @@ export const InlineEditInput = ( {
 		if (
 			! saving &&
 			prevState &&
-			'undefined' !== typeof prevState.value &&
+			typeof prevState.value !== 'undefined' &&
 			prevState.value === value &&
 			prevState.inputValue !== inputValue
 		) {
