@@ -18,7 +18,7 @@ import { OptionLabelSize } from './base/option-label-size';
  * @param {Object} props
  * @return {string} rendered checkbox inputs
  */
-export const CheckboxInput = ( {
+const CheckboxInput = ( {
 	name,
 	htmlId,
 	options,
@@ -26,6 +26,7 @@ export const CheckboxInput = ( {
 	helpTextID,
 	btnGroup = true,
 	inputWidth = '',
+	initialValue,
 	...attributes
 } ) => {
 	const [ checked, setChecked ] = useState( resetState() );
@@ -50,7 +51,7 @@ export const CheckboxInput = ( {
 		return OptionCheckedState(
 			htmlId,
 			options,
-			attributes.initialValue,
+			initialValue,
 		);
 	};
 
@@ -102,3 +103,5 @@ CheckboxInput.propTypes = {
 	helpTextID: PropTypes.string,
 	dataSet: PropTypes.object,
 };
+
+export default CheckboxInput;

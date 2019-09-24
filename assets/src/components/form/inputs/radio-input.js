@@ -18,7 +18,7 @@ import { OptionLabelSize } from './base/option-label-size';
  * @param {Object} props
  * @return {string} rendered radio inputs
  */
-export const RadioInput = ( {
+const RadioInput = ( {
 	name,
 	htmlId,
 	htmlClass,
@@ -26,6 +26,7 @@ export const RadioInput = ( {
 	helpTextID,
 	btnGroup = true,
 	inputWidth = '',
+	initialValue,
 	...attributes
 } ) => {
 	const [ checked, setChecked ] = useState( setCheckedState() );
@@ -47,7 +48,7 @@ export const RadioInput = ( {
 		return OptionCheckedState(
 			htmlId,
 			options,
-			attributes.initialValue,
+			initialValue,
 			reset
 		);
 	};
@@ -98,3 +99,5 @@ RadioInput.propTypes = {
 	helpTextID: PropTypes.string,
 	dataSet: PropTypes.object,
 };
+
+export default RadioInput;
