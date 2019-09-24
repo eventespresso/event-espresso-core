@@ -4,6 +4,7 @@
 import { useState, useEffect, useRef } from '@wordpress/element';
 import { ENTER, ESCAPE, SPACE } from '@wordpress/keycodes';
 import { usePrevious } from '@eventespresso/hooks';
+import PropTypes from 'prop-types';
 
 /**
  * Internal imports
@@ -182,4 +183,28 @@ export const InlineEditInput = ( {
 				noticeStyle,
 			} }
 		/>;
+};
+
+InlineEditInput.propTypes = {
+	htmlId: PropTypes.string.isRequired,
+	onChange: PropTypes.func.isRequired,
+	value: PropTypes.oneOfType( [
+		PropTypes.number,
+		PropTypes.object,
+		PropTypes.string,
+	] ).isRequired,
+	type: PropTypes.string,
+	label: PropTypes.string,
+	valueType: PropTypes.string,
+	valueFormatter: PropTypes.func,
+	noticeStyle: PropTypes.object,
+};
+
+InlineEditInput.defaultProps = {
+	type: '',
+	valueType: 'string',
+	valueFormatter: null,
+	formatterSettings: {},
+	noticeStyle: {},
+	label: '',
 };
