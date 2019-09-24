@@ -85,7 +85,7 @@ class EE_Log
         EE_Error::doing_it_wrong(
             __METHOD__,
             $msg,
-            '$VID:$'
+            '4.10.1.p'
         );
     }
 
@@ -143,7 +143,7 @@ class EE_Log
         EE_Error::doing_it_wrong(
             __METHOD__,
             $msg,
-            '$VID:$'
+            '4.10.1.p'
         );
     }
 
@@ -197,7 +197,7 @@ class EE_Log
         EE_Error::doing_it_wrong(
             __METHOD__,
             $msg,
-            '$VID:$'
+            '4.10.1.p'
         );
     }
 
