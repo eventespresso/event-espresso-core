@@ -24,26 +24,26 @@ class QueryBuilder
     /**
      * @var RequestInterface $request
      */
-    private $request;
+    protected $request;
 
     /**
      * @var EEM_Registration $registration_model
      */
-    private $registration_model;
+    protected $registration_model;
 
     /**
      * @var string $view
      */
-    private $view;
+    protected $view;
 
     /**
-     * @var array $where_clause
+     * @var array $where_params
      */
-    private $where_clause;
+    protected $where_params;
 
 
     /**
-     * ListTableQueryBuilder constructor.
+     * QueryBuilder constructor.
      *
      * @param array            $extra_request_params
      * @param RequestInterface $request
@@ -60,6 +60,7 @@ class QueryBuilder
             $this->request->setRequestParam($key, $value);
         }
         $this->view = $this->request->getRequestParam('status', '');
+        $this->where_params = [];
     }
 
 
@@ -102,20 +103,20 @@ class QueryBuilder
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
      */
-    public function getWhereClause()
+    protected function getWhereClause()
     {
         $this->addAttendeeIdToWhereConditions();
         $this->addEventIdToWhereConditions();
         $this->addCategoryIdToWhereConditions();
         $this->addDatetimeIdToWhereConditions();
-        $this->AddTicketIdToWhereConditions();
+        $this->addTicketIdToWhereConditions();
         $this->addRegistrationStatusToWhereConditions();
         $this->addDateToWhereConditions();
         $this->addSearchToWhereConditions();
         return apply_filters(
             'FHEE__Registrations_Admin_Page___get_where_conditions_for_registrations_query',
-            $this->where_clause,
-            $this->request->getParams()
+            $this->where_params,
+            $this->request->requestParams()
         );
     }
 
@@ -125,9 +126,10 @@ class QueryBuilder
      */
     protected function addAttendeeIdToWhereConditions()
     {
-        $ATT_ID = $this->request->getRequestParam('ATT_ID');
+        $ATT_ID = $this->request->getRequestParam('attendee_id');
+        $ATT_ID = $this->request->getRequestParam('ATT_ID', $ATT_ID);
         if ($ATT_ID) {
-            $this->where_clause['ATT_ID'] = absint($ATT_ID);
+            $this->where_params['ATT_ID'] = absint($ATT_ID);
         }
     }
 
@@ -137,9 +139,10 @@ class QueryBuilder
      */
     protected function addEventIdToWhereConditions()
     {
-        $EVT_ID = $this->request->getRequestParam('EVT_ID');
+        $EVT_ID = $this->request->getRequestParam('event_id');
+        $EVT_ID = $this->request->getRequestParam('EVT_ID', $EVT_ID);
         if ($EVT_ID) {
-            $this->where_clause['EVT_ID'] = absint($EVT_ID);
+            $this->where_params['EVT_ID'] = absint($EVT_ID);
         }
     }
 
@@ -151,7 +154,7 @@ class QueryBuilder
     {
         $EVT_CAT = (int) $this->request->getRequestParam('EVT_CAT');
         if ($EVT_CAT > 0) {
-            $this->where_clause['Event.Term_Taxonomy.term_id'] = absint($EVT_CAT);
+            $this->where_params['Event.Term_Taxonomy.term_id'] = absint($EVT_CAT);
         }
     }
 
@@ -165,7 +168,7 @@ class QueryBuilder
         $DTT_ID = $this->request->getRequestParam('datetime_id');
         $DTT_ID = $this->request->getRequestParam('DTT_ID', $DTT_ID);
         if ($DTT_ID) {
-            $this->where_clause['Ticket.Datetime.DTT_ID'] = absint($DTT_ID);
+            $this->where_params['Ticket.Datetime.DTT_ID'] = absint($DTT_ID);
         }
     }
 
@@ -173,13 +176,13 @@ class QueryBuilder
     /**
      * Adds the ticket ID if it exists in the request to the where conditions for the registrations query.
      */
-    protected function AddTicketIdToWhereConditions()
+    protected function addTicketIdToWhereConditions()
     {
         // first look for 'ticket_id' then 'TKT_ID' using first result as fallback default value
         $TKT_ID = $this->request->getRequestParam('ticket_id');
         $TKT_ID = $this->request->getRequestParam('TKT_ID', $TKT_ID);
         if ($TKT_ID) {
-            $this->where_clause['TKT_ID'] = absint($TKT_ID);
+            $this->where_params['TKT_ID'] = absint($TKT_ID);
         }
     }
 
@@ -194,15 +197,15 @@ class QueryBuilder
     {
         $registration_status = $this->request->getRequestParam('_reg_status');
         if ($registration_status) {
-            $this->where_clause['STS_ID'] = sanitize_text_field($registration_status);
+            $this->where_params['STS_ID'] = sanitize_text_field($registration_status);
             return;
         }
         // make sure we exclude incomplete registrations, but only if not trashed.
         if ($this->view === 'trash') {
-            $this->where_clause['REG_deleted'] = true;
+            $this->where_params['REG_deleted'] = true;
             return;
         }
-        $this->where_clause['STS_ID'] = $this->view === 'incomplete'
+        $this->where_params['STS_ID'] = $this->view === 'incomplete'
             ? EEM_Registration::status_id_incomplete
             : ['!=', EEM_Registration::status_id_incomplete];
     }
@@ -220,7 +223,7 @@ class QueryBuilder
     {
         if ($this->view === 'today') {
             $now = date('Y-m-d', current_time('timestamp'));
-            $this->where_clause['REG_date'] = [
+            $this->where_params['REG_date'] = [
                 'BETWEEN',
                 [
                     $this->registration_model->convert_datetime_for_query(
@@ -240,7 +243,7 @@ class QueryBuilder
         if ($this->view === 'month') {
             $current_year_and_month = date('Y-m', current_time('timestamp'));
             $days_this_month = date('t', current_time('timestamp'));
-            $this->where_clause['REG_date'] = [
+            $this->where_params['REG_date'] = [
                 'BETWEEN',
                 [
                     $this->registration_model->convert_datetime_for_query(
@@ -270,7 +273,7 @@ class QueryBuilder
             // if there is not a month or year then we can't go further
             if ($month_requested && $year_requested) {
                 $days_in_month = date('t', strtotime($year_requested . '-' . $month_requested . '-' . '01'));
-                $this->where_clause['REG_date'] = [
+                $this->where_params['REG_date'] = [
                     'BETWEEN',
                     [
                         $this->registration_model->convert_datetime_for_query(
@@ -298,7 +301,7 @@ class QueryBuilder
         $search = $this->request->getRequestParam('s');
         if ($search) {
             $search_string = '%' . sanitize_text_field($search) . '%';
-            $this->where_clause['OR*search_conditions'] = [
+            $this->where_params['OR*search_conditions'] = [
                 'Event.EVT_name'                          => ['LIKE', $search_string],
                 'Event.EVT_desc'                          => ['LIKE', $search_string],
                 'Event.EVT_short_desc'                    => ['LIKE', $search_string],
@@ -373,9 +376,8 @@ class QueryBuilder
         $orderby = apply_filters(
             'FHEE__Registrations_Admin_Page___get_orderby_for_registrations_query',
             $orderby,
-            $this->request->getParams()
+            $this->request->requestParams()
         );
-
         return ['order_by' => $orderby];
     }
 
