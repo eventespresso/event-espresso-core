@@ -1180,11 +1180,11 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
             )
         ) {
             $this->_admin_page_title .= ' ' . $this->get_action_link_or_button(
-                    'new_registration',
-                    'add-registrant',
-                    array('event_id' => $EVT_ID),
-                    'add-new-h2'
-                );
+                'new_registration',
+                'add-registrant',
+                array('event_id' => $EVT_ID),
+                'add-new-h2'
+            );
         }
     }
 
@@ -1283,11 +1283,12 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
         $per_page = 10,
         $count = false
     ) {
-        $listTableQueryBuilder = $this->getLoader()->getNew(
+        /** @var EventEspresso\core\domain\services\admin\registrations\list_table\QueryBuilder $list_table_query_builder */
+        $list_table_query_builder = $this->getLoader()->getNew(
             'EventEspresso\core\domain\services\admin\registrations\list_table\QueryBuilder',
             [ $request ]
         );
-        return $listTableQueryBuilder->getQueryParams($per_page, $count);
+        return $list_table_query_builder->getQueryParams($per_page, $count);
     }
 
 

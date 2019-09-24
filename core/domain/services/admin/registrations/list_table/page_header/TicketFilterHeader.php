@@ -74,8 +74,7 @@ class TicketFilterHeader extends AdminPageHeaderDecorator
                 );
                 if (empty($text)) {
                     $text = '<h3 style="line-height:1.5em;">';
-                    $text .= esc_html__('Viewing registrations for ticket:',
-                        'event_espresso');
+                    $text .= esc_html__('Viewing registrations for ticket:', 'event_espresso');
                 }
                 $text .= '&nbsp; &nbsp; ';
                 $text .= '<span class="drk-grey-text" style="font-size:.9em;">';

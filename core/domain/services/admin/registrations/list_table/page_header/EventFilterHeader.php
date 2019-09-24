@@ -63,7 +63,7 @@ class EventFilterHeader extends AdminPageHeaderDecorator
             if ($event instanceof EE_Event) {
                 $text .= sprintf(
                     esc_html__(
-                        '%s Viewing registrations for the event: %s%s',
+                        '%1$s Viewing registrations for the event: %2$s%3$s',
                         'event_espresso'
                     ),
                     '<h3 style="line-height:1.5em;">',
