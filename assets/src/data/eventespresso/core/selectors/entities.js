@@ -37,15 +37,15 @@ const getEntityRecordsForModel = createSelector(
  * @return {Array<BaseEntity>|null} An array of entities for the given model or
  * null if none have been set in the state.
  */
-const getEntitiesForModel = createSelector(
+const getEntitiesForModel = /* createSelector( */
 	( state, modelName ) => {
 		modelName = singularModelName( modelName );
 		return state.entities.has( modelName ) ?
 			state.entities.get( modelName ).valueSeq().toArray() :
 			[];
-	},
+	}/* ,
 	( state, modelName ) => [ state.entities.get( modelName ) ],
-);
+) */;
 
 /**
  * Returns the model entity for the given model and id.
