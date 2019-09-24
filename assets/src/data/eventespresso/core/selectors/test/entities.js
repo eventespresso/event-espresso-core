@@ -48,7 +48,7 @@ describe( 'getEntityRecordsForModel()', () => {
 	} );
 } );
 describe( 'getEntitiesForModel', () => {
-	beforeEach( () => getEntitiesForModel.clear() );
+	// beforeEach( () => getEntitiesForModel.clear() );
 	it( 'returns an empty array when the model does not exist in the ' +
 		'state', () => {
 		expect(
@@ -66,13 +66,13 @@ describe( 'getEntitiesForModel', () => {
 			);
 		expect( records[ 0 ] ).toEqual( EventEntities.a );
 	} );
-	it( 'returns cached copy when selector executed multiple times', () => {
+	/* it( 'returns cached copy when selector executed multiple times', () => {
 		const records = getEntitiesForModel( mockStateForTests, 'event' );
 		const records2 = getEntitiesForModel( mockStateForTests, 'event' );
 		const records3 = getEntitiesForModel( mockStateForTests, 'datetime' );
 		expect( records ).toBe( records2 );
 		expect( records ).not.toBe( records3 );
-	} );
+	} ); */
 } );
 describe( 'getEntityById()', () => {
 	it( 'returns null if the model does not exist in the state', () => {
