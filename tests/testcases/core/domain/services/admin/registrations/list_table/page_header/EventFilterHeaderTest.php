@@ -9,6 +9,7 @@ use EventEspresso\core\domain\services\admin\registrations\list_table\page_heade
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
 use EventEspresso\tests\mocks\core\services\request\RequestMock;
+use Generator;
 use InvalidArgumentException;
 use PHPUnit\Framework\Exception;
 use PHPUnit\Framework\TestCase;
@@ -42,6 +43,20 @@ class EventFilterHeaderTest extends TestCase
 
     /**
      * @throws EE_Error
+     * @throws Exception
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws ReflectionException
+     * @since $VID:$
+     */
+    public function setUp()
+    {
+        $this->setUpEvent();
+    }
+
+    /**
+     * @throws EE_Error
      * @throws InvalidArgumentException
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
@@ -53,7 +68,7 @@ class EventFilterHeaderTest extends TestCase
     public function setUpEvent()
     {
         $this->event = EE_Event::new_instance([
-            'EVT_name'      => 'Stephen Hawking’s Time Traveler Party',
+            'EVT_name' => 'Stephen Hawking’s Time Traveler Party',
         ]);
         $saved = $this->event->save();
         $this->assertTrue($saved > 0);
@@ -80,28 +95,27 @@ class EventFilterHeaderTest extends TestCase
 
 
     /**
-     * returns following parameters:
-     *      $get_params array of simulated $_GET params
-     *      $expected   value of $header_text
+     * generator function to replace phpunit's dataProvider
+     * because those run during initial phpunit setup
+     * and NOT when this actual test class is run,
+     * therefore making it impossible to create
+     * and save entities to the database in order to use
+     * their autoincrement IDs in this function
+     * and have those entities still exist when these
+     * testcases actually run.
      *
-     * @return array
-     * @throws EE_Error
-     * @throws InvalidArgumentException
-     * @throws InvalidDataTypeException
-     * @throws InvalidInterfaceException
-     * @throws ReflectionException
-     * @throws Exception
+     * @return Generator
      * @since  $VID:$
      */
-    public function testDataProvider()
+    public function testDataGenerator()
     {
-        $this->setUpEvent();
-        return [
+        $ID = $this->event->ID();
+        $test_data = [
             // empty array
             [[], ''],
             // invalid keys
-            [['EVT-ID' => $this->event->ID()], ''],
-            [['event-id' => $this->event->ID()], ''],
+            [['EVT-ID' => $ID], ''],
+            [['event-id' => $ID], ''],
             // invalid values
             [['EVT_ID' => '<h1>I am from the Future!!!</h1>'], ''],
             [['EVT_ID' => $this->xss], ''],
@@ -109,34 +123,38 @@ class EventFilterHeaderTest extends TestCase
             [['event_id' => $this->xss], ''],
             // all good
             [
-                ['EVT_ID' => $this->event->ID()],
-                '<h3 style="line-height:1.5em;"> Viewing registrations for the event: &nbsp;<a href="http://https://src.wordpress-develop.test/wp-admin/admin.php?page=espresso_events&action=edit&post=9&edit_nonce=">Stephen Hawking’s Time Traveler Party</a>&nbsp;</h3>'
+                ['EVT_ID' => $ID],
+                '<h3 style="line-height:1.5em;"> Viewing registrations for the event: &nbsp;<a href="http://https://src.wordpress-develop.test/wp-admin/admin.php?page=espresso_events&action=edit&post=' . $ID . '&edit_nonce=">Stephen Hawking’s Time Traveler Party</a>&nbsp;</h3>'
             ],
             [
-                ['event_id' => $this->event->ID()],
-                '<h3 style="line-height:1.5em;"> Viewing registrations for the event: &nbsp;<a href="http://https://src.wordpress-develop.test/wp-admin/admin.php?page=espresso_events&action=edit&post=9&edit_nonce=">Stephen Hawking’s Time Traveler Party</a>&nbsp;</h3>'
+                ['event_id' => $ID],
+                '<h3 style="line-height:1.5em;"> Viewing registrations for the event: &nbsp;<a href="http://https://src.wordpress-develop.test/wp-admin/admin.php?page=espresso_events&action=edit&post=' . $ID . '&edit_nonce=">Stephen Hawking’s Time Traveler Party</a>&nbsp;</h3>'
             ],
         ];
+        foreach ($test_data as $data) {
+            yield $data;
+        }
     }
 
 
     /**
-     * @dataProvider testDataProvider
-     * @param array  $get_params
-     * @param string $expected
      * @throws InvalidArgumentException
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
      * @throws EE_Error
      * @throws ReflectionException
+     * @throws Exception
      * @since        $VID:$
      */
-    public function testGetHeaderText(array $get_params, $expected)
+    public function testGetHeaderText()
     {
-        $event_filter_header = $this->getEventFilterHeader($get_params);
-        $header_text = $event_filter_header->getHeaderText();
-        // strip out nonce since it constantly changes
-        $header_text = preg_replace('/&edit_nonce=\S+"/', '&edit_nonce="', $header_text);
-        $this->assertEquals($expected, $header_text);
+        foreach ($this->testDataGenerator() as list($get_params, $expected)) {
+            $this->assertInstanceOf('EE_Event', $this->event);
+            $event_filter_header = $this->getEventFilterHeader($get_params);
+            $header_text = $event_filter_header->getHeaderText();
+            // strip out nonce since it constantly changes
+            $header_text = preg_replace('/&edit_nonce=\S+"/', '&edit_nonce="', $header_text);
+            $this->assertEquals($expected, $header_text);
+        }
     }
 }

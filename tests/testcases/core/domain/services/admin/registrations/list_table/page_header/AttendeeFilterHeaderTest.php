@@ -9,6 +9,7 @@ use EventEspresso\core\domain\services\admin\registrations\list_table\page_heade
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
 use EventEspresso\tests\mocks\core\services\request\RequestMock;
+use Generator;
 use InvalidArgumentException;
 use PHPUnit\Framework\Exception;
 use PHPUnit\Framework\TestCase;
@@ -38,6 +39,20 @@ class AttendeeFilterHeaderTest extends TestCase
         }
     }
 
+
+    /**
+     * @throws EE_Error
+     * @throws Exception
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws ReflectionException
+     * @since $VID:$
+     */
+    public function setUp()
+    {
+        $this->setUpAttendee();
+    }
 
     /**
      * @throws EE_Error
@@ -79,28 +94,32 @@ class AttendeeFilterHeaderTest extends TestCase
 
 
     /**
-     * returns following parameters:
-     *      $get_params array of simulated $_GET params
-     *      $expected   value of $header_text
+     * generator function to replace phpunit's dataProvider
+     * because those run during initial phpunit setup
+     * and NOT when this actual test class is run,
+     * therefore making it impossible to create
+     * and save entities to the database in order to use
+     * their autoincrement IDs in this function
+     * and have those entities still exist when these
+     * testcases actually run.
      *
-     * @return array
+     * @return Generator
      * @throws EE_Error
      * @throws InvalidArgumentException
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
      * @throws ReflectionException
-     * @throws Exception
      * @since  $VID:$
      */
-    public function testDataProvider()
+    public function testDataGenerator()
     {
-        $this->setUpAttendee();
-        return [
+        $ID = $this->attendee->ID();
+        $test_data = [
             // empty array
             [[], ''],
             // invalid keys
-            [['ATT-ID' => $this->attendee->ID()], ''],
-            [['attendee-id' => $this->attendee->ID()], ''],
+            [['ATT-ID' => $ID], ''],
+            [['attendee-id' => $ID], ''],
             // invalid values
             [['ATT_ID' => '<h1>Ruh Oh</h1>'], ''],
             [['ATT_ID' => $this->xss], ''],
@@ -108,37 +127,51 @@ class AttendeeFilterHeaderTest extends TestCase
             [['attendee_id' => $this->xss], ''],
             // all good
             [
-                ['ATT_ID' => $this->attendee->ID()],
-                '<h3 style="line-height:1.5em;"> Viewing registrations for <a href="http://https://src.wordpress-develop.test/wp-admin/admin.php?page=espresso_registrations&action=edit_attendee&post=8&edit_attendee_nonce=">Shaggy Rogers</a></h3>'
+                ['ATT_ID' => $ID],
+                '<h3 style="line-height:1.5em;"> Viewing registrations for <a href="http://https://src.wordpress-develop.test/wp-admin/admin.php?page=espresso_registrations&action=edit_attendee&post=' . $ID . '&edit_attendee_nonce=">Shaggy Rogers</a></h3>'
             ],
             [
-                ['attendee_id' => $this->attendee->ID()],
-                '<h3 style="line-height:1.5em;"> Viewing registrations for <a href="http://https://src.wordpress-develop.test/wp-admin/admin.php?page=espresso_registrations&action=edit_attendee&post=8&edit_attendee_nonce=">Shaggy Rogers</a></h3>'
+                ['attendee_id' => $ID],
+                '<h3 style="line-height:1.5em;"> Viewing registrations for <a href="http://https://src.wordpress-develop.test/wp-admin/admin.php?page=espresso_registrations&action=edit_attendee&post=' . $ID . '&edit_attendee_nonce=">Shaggy Rogers</a></h3>'
             ],
         ];
+        foreach ($test_data as $data) {
+            yield $data;
+        }
     }
 
 
     /**
-     * @dataProvider testDataProvider
-     * @param array  $get_params
-     * @param string $expected
+     * generator function to replace phpunit's dataProvider
+     * because those run during initial phpunit setup
+     * and NOT when this actual test class is run,
+     * therefore making it impossible to create
+     * and save entities to the database in order to use
+     * their autoincrement IDs in this function
+     * and have those entities still exist when these
+     * testcases actually run.
+     *
      * @throws EE_Error
+     * @throws Exception
      * @throws InvalidArgumentException
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
+     * @throws ReflectionException
      * @since  $VID:$
      */
-    public function testGetHeaderText(array $get_params, $expected = '')
+    public function testGetHeaderText()
     {
-        $attendee_filter_header = $this->getAttendeeFilterHeader($get_params);
-        $header_text = $attendee_filter_header->getHeaderText();
-        // strip out nonce since it constantly changes
-        $header_text = preg_replace(
-            '/&edit_attendee_nonce=\S+"/',
-            '&edit_attendee_nonce="',
-            $header_text
-        );
-        $this->assertEquals($expected, $header_text);
+        foreach ($this->testDataGenerator() as list($get_params, $expected)) {
+            $this->assertInstanceOf('EE_Attendee', $this->attendee);
+            $attendee_filter_header = $this->getAttendeeFilterHeader($get_params);
+            $header_text = $attendee_filter_header->getHeaderText();
+            // strip out nonce since it constantly changes
+            $header_text = preg_replace(
+                '/&edit_attendee_nonce=\S+"/',
+                '&edit_attendee_nonce="',
+                $header_text
+            );
+            $this->assertEquals($expected, $header_text);
+        }
     }
 }

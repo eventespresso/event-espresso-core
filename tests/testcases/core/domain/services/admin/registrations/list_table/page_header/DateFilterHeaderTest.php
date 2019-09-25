@@ -9,6 +9,7 @@ use EventEspresso\core\domain\services\admin\registrations\list_table\page_heade
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
 use EventEspresso\tests\mocks\core\services\request\RequestMock;
+use Generator;
 use InvalidArgumentException;
 use PHPUnit\Framework\Exception;
 use PHPUnit\Framework\TestCase;
@@ -33,6 +34,20 @@ class DateFilterHeaderTest extends TestCase
 
     /**
      * @throws EE_Error
+     * @throws Exception
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws ReflectionException
+     * @since $VID:$
+     */
+    public function setUp()
+    {
+        $this->setUpDatetime();
+    }
+
+    /**
+     * @throws EE_Error
      * @throws InvalidArgumentException
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
@@ -44,9 +59,9 @@ class DateFilterHeaderTest extends TestCase
     {
         $this->datetime = EE_Datetime::new_instance([
             'DTT_name' => 'Stephen Hawking’s Time Traveler Party',
-            'DTT_EVT_start' => '2009-06-29 12:00:00',
-            'DTT_EVT_end'   => '2009-06-29 16:00:00',
         ]);
+        $this->datetime->set_start_date('June 29, 2009');
+        $this->datetime->set_end_date('June 29, 2009');
         $saved = $this->datetime->save();
         $this->assertTrue($saved > 0);
     }
@@ -71,24 +86,27 @@ class DateFilterHeaderTest extends TestCase
 
 
     /**
-     * returns following parameters:
-     *      $get_params array of simulated $_GET params
-     *      $event_text existing header text
-     *      $expected   value of $header_text
+     * generator function to replace phpunit's dataProvider
+     * because those run during initial phpunit setup
+     * and NOT when this actual test class is run,
+     * therefore making it impossible to create
+     * and save entities to the database in order to use
+     * their autoincrement IDs in this function
+     * and have those entities still exist when these
+     * testcases actually run.
      *
-     * @return array
+     * @return Generator
      * @throws EE_Error
      * @throws InvalidArgumentException
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
      * @throws ReflectionException
-     * @throws Exception
      * @since  $VID:$
      */
-    public function testDataProvider()
+    public function testDataGenerator()
     {
-        $this->setUpDatetime();
-        return [
+        $date = $this->datetime->start_date('F d, Y');
+        $test_data = [
             // empty array
             [[], '', ''],
             // invalid keys
@@ -108,23 +126,22 @@ class DateFilterHeaderTest extends TestCase
             [
                 ['DTT_ID' => $this->datetime->ID()],
                 'Event Details',
-                'Event Details&nbsp; &nbsp; <span class="drk-grey-text"><span class="dashicons dashicons-calendar"></span>Stephen Hawking’s Time Traveler Party ( September 24, 2019 )</span></h3>'
+                'Event Details&nbsp; &nbsp; <span class="drk-grey-text"><span class="dashicons dashicons-calendar"></span>Stephen Hawking’s Time Traveler Party ( ' . $date . ' )</span></h3>'
             ],
             [['datetime_id' => $this->datetime->ID()], '', ''],
             [
                 ['datetime_id' => $this->datetime->ID()],
                 'Event Details',
-                'Event Details&nbsp; &nbsp; <span class="drk-grey-text"><span class="dashicons dashicons-calendar"></span>Stephen Hawking’s Time Traveler Party ( September 24, 2019 )</span></h3>'
+                'Event Details&nbsp; &nbsp; <span class="drk-grey-text"><span class="dashicons dashicons-calendar"></span>Stephen Hawking’s Time Traveler Party ( ' . $date . ' )</span></h3>'
             ],
         ];
+        foreach ($test_data as $data) {
+            yield $data;
+        }
     }
 
 
     /**
-     * @dataProvider testDataProvider
-     * @param array  $get_params
-     * @param string $event_text
-     * @param string $expected
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
      * @throws EE_Error
@@ -132,10 +149,12 @@ class DateFilterHeaderTest extends TestCase
      * @throws ReflectionException
      * @since        $VID:$
      */
-    public function testGetHeaderText(array $get_params, $event_text, $expected)
+    public function testGetHeaderText()
     {
-        $datetime_filter_header = $this->getDateFilterHeader($get_params);
-        $header_text = $datetime_filter_header->getHeaderText($event_text);
-        $this->assertEquals($expected, $header_text);
+        foreach ($this->testDataGenerator() as list($get_params, $event_text, $expected)) {
+            $datetime_filter_header = $this->getDateFilterHeader($get_params);
+            $header_text = $datetime_filter_header->getHeaderText($event_text);
+            $this->assertEquals($expected, $header_text);
+        }
     }
 }
