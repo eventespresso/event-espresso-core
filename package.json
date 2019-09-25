@@ -97,7 +97,7 @@
 		"react-dom": "^16.9.0",
 		"react-test-renderer": "^16.9.0",
 		"recast": "^0.18.2",
-		"webpack": "^4.39.3",
+		"webpack": "^4.41.0",
 		"webpack-assets-manifest": "^3.1.1",
 		"webpack-cli": "^3.3.9",
 		"webpack-merge": "^4.2.2"
