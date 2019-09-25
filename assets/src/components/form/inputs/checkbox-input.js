@@ -1,7 +1,7 @@
 /**
  * External imports
  */
-import { Component } from '@wordpress/element';
+import { useState } from '@wordpress/element';
 import PropTypes from 'prop-types';
 
 /**
@@ -12,54 +12,46 @@ import { OptionInputs } from './base/option-inputs';
 import { OptionLabelSize } from './base/option-label-size';
 
 /**
- * generates one or more html checkbox inputs
+ * Generates one or more html checkbox inputs
  *
- * @constructor
- * @param {string} htmlId
- * @param {string} htmlClass
- * @param {string} value
- * @param {Array} options
- * @param {Function} onChange
- * @param {boolean} btnGroup
- * @param {string} helpTextID
- * @param {Object} dataSet
- * @param {string} inputWidth
- * @param {Object} attributes
- * @return {string} rendered date name form row
+ * @function
+ * @param {Object} props
+ * @return {string} rendered checkbox inputs
  */
-export class CheckboxInput extends Component {
-	static propTypes = {
-		htmlId: PropTypes.string.isRequired,
-		htmlClass: PropTypes.string,
-		value: PropTypes.oneOfType( [
-			PropTypes.array,
-			PropTypes.number,
-			PropTypes.string,
-		] ),
-		options: PropTypes.array,
-		onChange: PropTypes.func,
-		btnGroup: PropTypes.bool,
-		inputWidth: PropTypes.string,
-		helpTextID: PropTypes.string,
-		dataSet: PropTypes.object,
-	};
+const CheckboxInput = ( {
+	name,
+	htmlId,
+	options,
+	required,
+	helpTextID,
+	btnGroup = true,
+	inputWidth = '',
+	initialValue,
+	...attributes
+} ) => {
+	const [ checked, setChecked ] = useState( resetState() );
+	let { htmlClass } = attributes;
 
-	constructor( props ) {
-		super( props );
-		this.state = {
-			checked: this.resetState(),
-		};
-	}
+	htmlClass = required ?
+		`${ htmlClass } ee-checkbox-group-required` :
+		htmlClass;
+	const labelClass = btnGroup ?
+		'btn btn-primary' :
+		'ee-checkbox-label-after' + OptionLabelSize( options );
+	let divClass = btnGroup ? 'btn-group' : 'ee-checkbox-group';
+	divClass = inputWidth ?
+		`${ divClass } ee-input-width-${ inputWidth }` :
+		divClass;
 
 	/**
 	 * @function
 	 * @return {Object} state
 	 */
-	resetState = () => {
+	const resetState = () => {
 		return OptionCheckedState(
-			this.props.htmlId,
-			this.props.options,
-			this.props.initialValue,
+			htmlId,
+			options,
+			initialValue,
 		);
 	};
 
@@ -67,55 +59,49 @@ export class CheckboxInput extends Component {
 	 * @function
 	 * @param {Object} event
 	 */
-	toggleChecked = ( event ) => {
+	const toggleChecked = ( event ) => {
 		if ( event.target &&
 			event.target.id &&
 			event.target.checked !== undefined
 		) {
-			const checked = this.state.checked;
-			checked[ event.target.id ] = event.target.checked;
-			this.setState( { checked } );
+			const _checked = checked;
+			_checked[ event.target.id ] = event.target.checked;
+			setChecked( _checked );
 		}
 	};
 
-	render() {
-		const {
-			name,
-			htmlId,
-			options,
-			required,
-			helpTextID,
-			btnGroup = true,
-			inputWidth = '',
-			...attributes
-		} = this.props;
-		let { htmlClass } = this.props;
+	return (
+		<div className={ divClass }>
+			<OptionInputs
+				type="checkbox"
+				name={ name }
+				checkedState={ checked }
+				htmlId={ htmlId }
+				htmlClass={ htmlClass }
+				labelClass={ labelClass }
+				options={ options }
+				onClick={ toggleChecked }
+				helpTextID={ helpTextID }
+				{ ...attributes }
+			/>
+		</div>
+	);
+};
 
-		htmlClass = required ?
-			`${ htmlClass } ee-checkbox-group-required` :
-			htmlClass;
-		const labelClass = btnGroup ?
-			'btn btn-primary' :
-			'ee-checkbox-label-after' + OptionLabelSize( options );
-		let divClass = btnGroup ? 'btn-group' : 'ee-checkbox-group';
-		divClass = inputWidth ?
-			`${ divClass } ee-input-width-${ inputWidth }` :
-			divClass;
-		return (
-			<div className={ divClass }>
-				<OptionInputs
-					type="checkbox"
-					name={ name }
-					checkedState={ this.state.checked }
-					htmlId={ htmlId }
-					htmlClass={ htmlClass }
-					labelClass={ labelClass }
-					options={ options }
-					onClick={ this.toggleChecked }
-					helpTextID={ helpTextID }
-					{ ...attributes }
-				/>
-			</div>
-		);
-	}
-}
+CheckboxInput.propTypes = {
+	htmlId: PropTypes.string.isRequired,
+	htmlClass: PropTypes.string,
+	value: PropTypes.oneOfType( [
+		PropTypes.array,
+		PropTypes.number,
+		PropTypes.string,
+	] ),
+	options: PropTypes.array,
+	onChange: PropTypes.func,
+	btnGroup: PropTypes.bool,
+	inputWidth: PropTypes.string,
+	helpTextID: PropTypes.string,
+	dataSet: PropTypes.object,
+};
+
+export default CheckboxInput;
