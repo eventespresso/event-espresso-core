@@ -110,6 +110,7 @@ class EventFilterHeaderTest extends TestCase
     public function testDataGenerator()
     {
         $ID = $this->event->ID();
+        $site_admin_url = admin_url();
         $test_data = [
             // empty array
             [[], ''],
@@ -124,11 +125,15 @@ class EventFilterHeaderTest extends TestCase
             // all good
             [
                 ['EVT_ID' => $ID],
-                '<h3 style="line-height:1.5em;"> Viewing registrations for the event: &nbsp;<a href="http://https://src.wordpress-develop.test/wp-admin/admin.php?page=espresso_events&action=edit&post=' . $ID . '&edit_nonce=">Stephen Hawking’s Time Traveler Party</a>&nbsp;</h3>'
+                '<h3 style="line-height:1.5em;"> Viewing registrations for the event: &nbsp;<a href="'
+                . $site_admin_url . 'admin.php?page=espresso_events&action=edit&post=' . $ID
+                . '&edit_nonce=">Stephen Hawking’s Time Traveler Party</a>&nbsp;</h3>'
             ],
             [
                 ['event_id' => $ID],
-                '<h3 style="line-height:1.5em;"> Viewing registrations for the event: &nbsp;<a href="http://https://src.wordpress-develop.test/wp-admin/admin.php?page=espresso_events&action=edit&post=' . $ID . '&edit_nonce=">Stephen Hawking’s Time Traveler Party</a>&nbsp;</h3>'
+                '<h3 style="line-height:1.5em;"> Viewing registrations for the event: &nbsp;<a href="'
+                . $site_admin_url . 'admin.php?page=espresso_events&action=edit&post=' . $ID
+                . '&edit_nonce=">Stephen Hawking’s Time Traveler Party</a>&nbsp;</h3>'
             ],
         ];
         foreach ($test_data as $data) {

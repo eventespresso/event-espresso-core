@@ -114,6 +114,7 @@ class AttendeeFilterHeaderTest extends TestCase
     public function testDataGenerator()
     {
         $ID = $this->attendee->ID();
+        $site_admin_url = admin_url();
         $test_data = [
             // empty array
             [[], ''],
@@ -128,11 +129,15 @@ class AttendeeFilterHeaderTest extends TestCase
             // all good
             [
                 ['ATT_ID' => $ID],
-                '<h3 style="line-height:1.5em;"> Viewing registrations for <a href="http://https://src.wordpress-develop.test/wp-admin/admin.php?page=espresso_registrations&action=edit_attendee&post=' . $ID . '&edit_attendee_nonce=">Shaggy Rogers</a></h3>'
+                '<h3 style="line-height:1.5em;"> Viewing registrations for <a href="' . $site_admin_url
+                . 'admin.php?page=espresso_registrations&action=edit_attendee&post=' . $ID
+                . '&edit_attendee_nonce=">Shaggy Rogers</a></h3>'
             ],
             [
                 ['attendee_id' => $ID],
-                '<h3 style="line-height:1.5em;"> Viewing registrations for <a href="http://https://src.wordpress-develop.test/wp-admin/admin.php?page=espresso_registrations&action=edit_attendee&post=' . $ID . '&edit_attendee_nonce=">Shaggy Rogers</a></h3>'
+                '<h3 style="line-height:1.5em;"> Viewing registrations for <a href="' . $site_admin_url
+                . 'admin.php?page=espresso_registrations&action=edit_attendee&post=' . $ID
+                . '&edit_attendee_nonce=">Shaggy Rogers</a></h3>'
             ],
         ];
         foreach ($test_data as $data) {
