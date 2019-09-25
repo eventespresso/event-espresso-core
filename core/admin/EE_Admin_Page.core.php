@@ -1402,11 +1402,19 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
                 $this->_help_tour[ $route ][] = EEH_Template::help_tour_stops_generator($end_stop_tour);
             }
         }
+
         if (! empty($tours)) {
             $this->_help_tour['tours'] = $tours;
         }
         // that's it!  Now that the $_help_tours property is set (or not)
         // the scripts and html should be taken care of automatically.
+
+        /**
+         * Allow extending the help tours variable.
+         *
+         * @param Array $_help_tour The array containing all help tour information to be displayed.
+         */
+        $this->_help_tour = apply_filters('FHEE__EE_Admin_Page___add_help_tour___help_tour', $this->_help_tour);
     }
 
 
@@ -1884,7 +1892,9 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
             EVENT_ESPRESSO_VERSION,
             true
         );
-        add_filter('FHEE_load_joyride', '__return_true');
+        if (EE_Registry::instance()->CFG->admin->help_tour_activation) {
+            add_filter('FHEE_load_joyride', '__return_true');
+        }
         // script for sorting tables
         wp_register_script(
             'espresso_ajax_table_sorting',
