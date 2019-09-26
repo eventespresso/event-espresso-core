@@ -6,8 +6,8 @@ import PropTypes from 'prop-types';
 
 /**
  * @function
- * @param {string} heading
- * @param {string} value
+ * @param {Object|string} heading
+ * @param {Object|string} value
  * @return {Object} rendered headings row
  */
 const ResponsiveCell = ( { heading, value } ) => {
@@ -26,8 +26,8 @@ const ResponsiveCell = ( { heading, value } ) => {
 };
 
 ResponsiveCell.propTypes = {
-	heading: PropTypes.string,
-	value: PropTypes.string,
+	heading: PropTypes.node,
+	value: PropTypes.node,
 };
 
 ResponsiveCell.defaultProps = {
