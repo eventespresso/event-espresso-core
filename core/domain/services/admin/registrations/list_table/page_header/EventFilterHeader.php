@@ -64,10 +64,7 @@ class EventFilterHeader extends AdminPageHeaderDecorator
                 $text .= sprintf(
                     /* translators: %s: <h3>  %s: <a href>Event Name</a>  %s: </h3> */
                     // phpcs:ignore WordPress.WP.I18n.UnorderedPlaceholdersText
-                    esc_html__(
-                        '%s Viewing registrations for the event: %s%s',
-                        'event_espresso'
-                    ),
+                    esc_html__('%s Viewing registrations for the event: %s%s', 'event_espresso'),
                     '<h3 style="line-height:1.5em;">',
                     '&nbsp;<a href="'
                     . EE_Admin_Page::add_query_args_and_nonce(
