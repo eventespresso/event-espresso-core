@@ -2662,7 +2662,6 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
             $success = count($this->_req_data['_REG_ID']) > 1 ? 2 : 1;
             // cycle thru checkboxes
             foreach ($this->_req_data['_REG_ID'] as $REG_ID) {
-                EEH_Debug_Tools::printr($REG_ID, '$REG_ID', __FILE__, __LINE__);
                 $REG = $REG_MDL->get_one_by_ID($REG_ID);
                 if (! $REG instanceof EE_Registration) {
                     continue;
