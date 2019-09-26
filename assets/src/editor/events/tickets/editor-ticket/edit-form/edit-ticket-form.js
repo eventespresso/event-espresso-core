@@ -19,13 +19,10 @@ import useEditEntityFormInputs
 const {
 	FormSection,
 	FormWrapper,
-	FormSaveCancelButtons,
 } = twoColumnAdminFormLayout;
 
 const EditTicketForm = ( {
 	ticketEntity,
-	submitButton,
-	cancelButton,
 	currentValues,
 	initialValues,
 	newObject,
@@ -60,11 +57,6 @@ const EditTicketForm = ( {
 							children={ formRows }
 							showRequiredNotice={ true }
 						/>
-						<FormSaveCancelButtons
-							htmlClass={ `ee-ticket-editor-${ ticketEntity.id }` }
-							submitButton={ submitButton }
-							cancelButton={ cancelButton }
-						/>
 					</FormWrapper>
 				) : null;
 		},
@@ -73,16 +65,12 @@ const EditTicketForm = ( {
 			initialValues,
 			ticketEntity,
 			formRows,
-			submitButton,
-			cancelButton,
 		]
 	);
 };
 
 EditTicketForm.propTypes = {
 	ticketEntity: PropTypes.object.isRequired,
-	submitButton: PropTypes.element.isRequired,
-	cancelButton: PropTypes.element.isRequired,
 	currentValues: PropTypes.object,
 	initialValues: PropTypes.object,
 	newObject: PropTypes.bool,
