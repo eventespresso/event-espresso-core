@@ -32,7 +32,7 @@ import {
 const {
 	FormSection,
 	FormWrapper,
-	FormSaveCancelButtons,
+	FormButtonsRow,
 } = twoColumnAdminFormLayout;
 
 const nullFunc = () => null;
@@ -148,27 +148,23 @@ const TicketAssignmentsManager = ( {
 					setCurrentPage={ setCurrentPage }
 				/>
 			</FormSection>
-			<FormSaveCancelButtons
-				submitButton={
-					<SubmitTicketAssignmentsButton
-						assignedState={ assignedState }
-						hasNoAssignments={ hasNoAssignments }
-						beforeEditorClose={ beforeEditorClose }
-						closeEditor={ closeEditor }
-						disabled={
-							dateCount < 1 ||
-							ticketCount < 1 ||
-							noAssignmentsMessage !== ''
-						}
-					/>
-				}
-				cancelButton={
-					<CancelTicketAssignmentsButton
-						beforeEditorClose={ beforeEditorClose }
-						closeEditor={ closeEditor }
-					/>
-				}
-			/>
+			<FormButtonsRow>
+				<SubmitTicketAssignmentsButton
+					assignedState={ assignedState }
+					hasNoAssignments={ hasNoAssignments }
+					beforeEditorClose={ beforeEditorClose }
+					closeEditor={ closeEditor }
+					disabled={
+						dateCount < 1 ||
+						ticketCount < 1 ||
+						noAssignmentsMessage !== ''
+					}
+				/>
+				<CancelTicketAssignmentsButton
+					beforeEditorClose={ beforeEditorClose }
+					closeEditor={ closeEditor }
+				/>
+			</FormButtonsRow>
 		</FormWrapper>
 	);
 };

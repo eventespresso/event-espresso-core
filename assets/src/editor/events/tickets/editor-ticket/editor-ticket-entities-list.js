@@ -28,7 +28,7 @@ import {
 
 const {
 	FormWrapper,
-	FormSaveCancelButtons,
+	FormButtonsRow,
 } = twoColumnAdminFormLayout;
 
 const EditorTicketEntitiesList = ( { ...otherProps } ) => {
@@ -120,7 +120,9 @@ const EditorTicketEntitiesList = ( { ...otherProps } ) => {
 					'event_espresso'
 				) }
 			/>
-			<FormSaveCancelButtons submitButton={ <AddNewTicketButton /> } />
+			<FormButtonsRow>
+				<AddNewTicketButton />
+			</FormButtonsRow>
 		</FormWrapper>
 	);
 };
