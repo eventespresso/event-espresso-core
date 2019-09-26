@@ -7,9 +7,9 @@ import PropTypes from 'prop-types';
 /**
  * Internal imports
  */
-import { OptionCheckedState } from './base/option-checked-state';
-import { OptionInputs } from './base/option-inputs';
-import { OptionLabelSize } from './base/option-label-size';
+import OptionCheckedState from './base/option-checked-state';
+import OptionInputs from './base/option-inputs';
+import OptionLabelSize from './base/option-label-size';
 
 /**
  * Generates one or more html checkbox inputs

@@ -22,7 +22,7 @@ import Display from './display';
  * @param {Object} props    	callback for setting value
  * @return {Object} - The rendered input
  */
-export const InlineEditInput = ( {
+const InlineEditInput = ( {
 	htmlId,
 	value: inputValue,
 	onChange,
@@ -174,6 +174,7 @@ export const InlineEditInput = ( {
 		/> :
 		<Display
 			onEdit={ edit }
+			saving={ saving }
 			onKeyDown={ keySelect }
 			{ ...{
 				value,
@@ -208,3 +209,5 @@ InlineEditInput.defaultProps = {
 	noticeStyle: {},
 	label: '',
 };
+
+export default InlineEditInput;

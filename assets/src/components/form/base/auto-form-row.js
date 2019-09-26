@@ -2,7 +2,7 @@
  * Internal imports
  */
 import { addValidatorsToAttributes } from '../inputs/base/utils';
-import { InputLabel } from '../inputs/base/input-label';
+import InputLabel from '../inputs/base/input-label';
 
 /**
  * AutoFormRow

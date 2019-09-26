@@ -18,7 +18,7 @@ import { Field } from 'react-final-form';
  * @param {Object} attributes
  * @return {string} rendered date name form row
  */
-export const SelectInput = ( {
+const SelectInput = ( {
 	htmlId,
 	htmlClass,
 	options,
@@ -63,3 +63,5 @@ SelectInput.propTypes = {
 	dataSet: PropTypes.object,
 	inputWidth: PropTypes.string,
 };
+
+export default SelectInput;

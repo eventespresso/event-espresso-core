@@ -1,3 +1,6 @@
+/**
+ * External imports
+ */
 import PropTypes from 'prop-types';
 
 /**
@@ -20,10 +23,7 @@ const FormRow = ( { children, htmlClass = '' } ) => {
 };
 
 FormRow.propTypes = {
-	children: PropTypes.oneOfType( [
-		PropTypes.object,
-		PropTypes.arrayOf( PropTypes.object ),
-	] ),
+	children: PropTypes.node,
 	htmlClass: PropTypes.string,
 };
 

@@ -6,7 +6,7 @@ import PropTypes from 'prop-types';
  * @param {string} helpText
  * @return {Object} rendered help text
  */
-export const InputHelpText = ( { helpTextID, helpText } ) => {
+const InputHelpText = ( { helpTextID, helpText } ) => {
 	return helpText ? (
 		<p id={ helpTextID } className="espresso-input-help-text" >
 			{ helpText }
@@ -18,3 +18,5 @@ InputHelpText.propTypes = {
 	helpTextID: PropTypes.string.isRequired,
 	helpText: PropTypes.string,
 };
+
+export default InputHelpText;

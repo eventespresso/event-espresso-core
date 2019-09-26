@@ -7,9 +7,9 @@ import PropTypes from 'prop-types';
 /**
  * Internal imports
  */
-import { OptionCheckedState } from './base/option-checked-state';
-import { OptionInputs } from './base/option-inputs';
-import { OptionLabelSize } from './base/option-label-size';
+import OptionCheckedState from './base/option-checked-state';
+import OptionInputs from './base/option-inputs';
+import OptionLabelSize from './base/option-label-size';
 
 /**
  * generates one or more html radio inputs
@@ -41,10 +41,10 @@ const RadioInput = ( {
 
 	/**
 	 * @function
-	 * @param {mixed} reset
+	 * @param {boolean} reset
 	 * @return {Object} state
 	 */
-	const setCheckedState = ( reset ) => {
+	const setCheckedState = ( reset = false ) => {
 		return OptionCheckedState(
 			htmlId,
 			options,
@@ -52,6 +52,7 @@ const RadioInput = ( {
 			reset
 		);
 	};
+
 	/**
 	 * @function
 	 * @param {Object} event
@@ -61,7 +62,7 @@ const RadioInput = ( {
 			event.target.id &&
 			event.target.checked !== undefined
 		) {
-			const _checked = setCheckedState( false );
+			const _checked = setCheckedState();
 			_checked[ event.target.id ] = event.target.checked;
 			setChecked( _checked );
 		}

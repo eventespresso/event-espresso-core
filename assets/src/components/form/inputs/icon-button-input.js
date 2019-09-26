@@ -57,7 +57,7 @@ EspressoIconButton.propTypes = {
  * @param {Object} attributes
  * @return {Object} rendered input
  */
-export const IconButtonInput = ( attributes ) => {
+const IconButtonInput = ( attributes ) => {
 	return (
 		<Field
 			component={ EspressoIconButton }
@@ -65,3 +65,5 @@ export const IconButtonInput = ( attributes ) => {
 		/>
 	);
 };
+
+export default IconButtonInput;

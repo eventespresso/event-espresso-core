@@ -8,7 +8,7 @@ import { Field } from 'react-final-form';
 /**
  * Internal imports
  */
-import { InputLabel } from './input-label';
+import InputLabel from './input-label';
 
 /**
  * generates the <label><input> pairings for
@@ -27,9 +27,9 @@ import { InputLabel } from './input-label';
  * @param {string} helpTextID
  * @param {Object} dataSet
  * @param {Object} attributes
- * @return {string} css class describing label size
+ * @return {Array} css class describing label size
  */
-export const OptionInputs = ( {
+const OptionInputs = ( {
 	type,
 	name,
 	checkedState,
@@ -97,3 +97,5 @@ OptionInputs.propTypes = {
 	helpTextID: PropTypes.string,
 	dataSet: PropTypes.object,
 };
+
+export default OptionInputs;

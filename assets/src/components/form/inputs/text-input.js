@@ -22,7 +22,7 @@ import { HTML5_INPUT_TYPES_TEXT } from './base/constants';
  * @param {Object} attributes
  * @return {string} rendered date name form row
  */
-export const TextInput = ( {
+const TextInput = ( {
 	type = 'text',
 	htmlId,
 	htmlClass,
@@ -59,3 +59,5 @@ TextInput.propTypes = {
 		PropTypes.string,
 	] ),
 };
+
+export default TextInput;

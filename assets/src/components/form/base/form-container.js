@@ -7,6 +7,7 @@ import './form-container.css';
  * External imports
  */
 import classNames from 'classnames';
+import PropTypes from 'prop-types';
 
 /**
  * FormContainer is a wrapper that hides the form while it is loading,
@@ -18,7 +19,7 @@ import classNames from 'classnames';
  * @param {boolean} loading
  * @return {Object} form
  */
-export const FormContainer = ( { children, htmlClass, loading } ) => {
+const FormContainer = ( { children, htmlClass, loading } ) => {
 	const containerClass = classNames( {
 		'ee-form-container-div': true,
 		[ `${ htmlClass }` ]: htmlClass,
@@ -30,3 +31,11 @@ export const FormContainer = ( { children, htmlClass, loading } ) => {
 		</div>
 	);
 };
+
+FormContainer.propTypes = {
+	children: PropTypes.node,
+	htmlClass: PropTypes.string,
+	loading: PropTypes.bool,
+};
+
+export default FormContainer;
