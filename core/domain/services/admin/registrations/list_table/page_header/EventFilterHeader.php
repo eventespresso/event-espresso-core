@@ -62,10 +62,8 @@ class EventFilterHeader extends AdminPageHeaderDecorator
             $event = $this->event_model->get_one_by_ID($EVT_ID);
             if ($event instanceof EE_Event) {
                 $text .= sprintf(
-                    esc_html__(
-                        '%1$s Viewing registrations for the event: %2$s%3$s',
-                        'event_espresso'
-                    ),
+                    /* translators: %s: <h3>  %s: <a href>Event Name</a>  %s: </h3> */
+                    esc_html__( '%s Viewing registrations for the event: %s%s', 'event_espresso' ), // phpcs:ignore WordPress.WP.I18n.UnorderedPlaceholdersText
                     '<h3 style="line-height:1.5em;">',
                     '&nbsp;<a href="'
                     . EE_Admin_Page::add_query_args_and_nonce(
