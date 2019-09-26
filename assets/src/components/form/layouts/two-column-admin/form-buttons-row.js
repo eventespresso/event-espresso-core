@@ -40,14 +40,14 @@ const FormButtonsRow = ( {
 	);
 };
 
-FormRow.propTypes = {
+FormButtonsRow.propTypes = {
 	children: PropTypes.node,
 	htmlClass: PropTypes.string,
 	colSize: PropTypes.number,
 	offset: PropTypes.number,
 };
 
-FormRow.defaultProps = {
+FormButtonsRow.defaultProps = {
 	buttons: null,
 	colSize: 12,
 	offset: 0,
