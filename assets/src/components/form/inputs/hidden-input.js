@@ -15,7 +15,7 @@ import PropTypes from 'prop-types';
  * @param {Object} attributes
  * @return {string} rendered date name form row
  */
-export const HiddenInput = ( {
+const HiddenInput = ( {
 	name,
 	htmlId,
 	dataSet,
@@ -40,3 +40,4 @@ HiddenInput.propTypes = {
 	dataSet: PropTypes.object,
 };
 
+export default HiddenInput;

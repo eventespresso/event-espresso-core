@@ -11,7 +11,7 @@ import './input-error.css';
  * @param {string} inputName
  * @return {Object} rendered help text
  */
-export const InputError = ( { inputName } ) => (
+const InputError = ( { inputName } ) => (
 	<Field
 		name={ inputName }
 		subscription={ { touched: true, error: true } }
@@ -29,3 +29,5 @@ export const InputError = ( { inputName } ) => (
 );
 
 InputError.propTypes = { inputName: PropTypes.string.isRequired };
+
+export default InputError;

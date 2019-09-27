@@ -7,7 +7,7 @@ import PropTypes from 'prop-types';
  * Internal dependencies
  */
 import './style.css';
-import { InlineEditInput } from '../../form/inputs/inline-edit-input';
+import InlineEditInput from '../../form/inputs/inline-edit-input';
 
 /**
  * entity-detail

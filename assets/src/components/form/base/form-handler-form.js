@@ -7,8 +7,8 @@ import { useCallback, useMemo } from '@wordpress/element';
 /**
  * Internal imports
  */
-import { FormContainer } from './form-container';
-import { FormDataDebugDump } from './form-data-debug-dump';
+import FormContainer from './form-container';
+import FormDataDebugDump from './form-data-debug-dump';
 import FormPlaceholder from './form-placeholder';
 import FormSubmitButton from './form-submit-button';
 import FormCancelButton from './form-cancel-button';

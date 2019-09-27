@@ -10,16 +10,16 @@ import { OnChange } from 'react-final-form-listeners';
  * Internal imports
  */
 import { HTML5_INPUT_TYPES } from './base/constants';
-import { CheckboxInput } from './checkbox-input';
-import { DateTimeInput } from './date-time-input';
-import { HiddenInput } from './hidden-input';
-import { IconButtonInput } from './icon-button-input';
-import { RadioInput } from './radio-input';
-import { SelectInput } from './select-input';
-import { Textarea } from './textarea';
-import { TextInput } from './text-input';
-import { ToggleInput } from './toggle-input';
-import { DefaultInputLayout } from './base/default-input-layout';
+import CheckboxInput from './checkbox-input';
+import DateTimeInput from './date-time-input';
+import HiddenInput from './hidden-input';
+import IconButtonInput from './icon-button-input';
+import RadioInput from './radio-input';
+import SelectInput from './select-input';
+import Textarea from './textarea';
+import TextInput from './text-input';
+import ToggleInput from './toggle-input';
+import DefaultInputLayout from './base/default-input-layout';
 import {
 	cleanUpInputAttributes,
 	composeValidators,
@@ -48,7 +48,7 @@ HTML5_INPUT_TYPES.push( 'iconButton' );
  * @param {Function} changeListener
  * @return {string} rendered date name form row
  */
-export class FormInput extends Component {
+class FormInput extends Component {
 	static propTypes = {
 		type: PropTypes.oneOf( HTML5_INPUT_TYPES ).isRequired,
 		name: PropTypes.string.isRequired,
@@ -258,3 +258,5 @@ export class FormInput extends Component {
 		);
 	}
 }
+
+export default FormInput;

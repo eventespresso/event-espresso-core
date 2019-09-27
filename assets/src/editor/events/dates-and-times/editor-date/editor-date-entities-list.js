@@ -29,7 +29,7 @@ import EditAllTicketAssignmentsButton
 
 const {
 	FormWrapper,
-	FormSaveCancelButtons,
+	FormButtonsRow,
 } = twoColumnAdminFormLayout;
 
 /**
@@ -119,14 +119,12 @@ const EditorDateEntitiesList = ( { ...otherProps } ) => {
 					'event_espresso'
 				) }
 			/>
-			<FormSaveCancelButtons
-				submitButton={ <AddNewDateEntityButton /> }
-				cancelButton={
-					<EditAllTicketAssignmentsButton
-						eventDates={ paginatedEntities }
-					/>
-				}
-			/>
+			<FormButtonsRow>
+				<AddNewDateEntityButton />
+				<EditAllTicketAssignmentsButton
+					eventDates={ paginatedEntities }
+				/>
+			</FormButtonsRow>
 		</FormWrapper>
 	);
 };

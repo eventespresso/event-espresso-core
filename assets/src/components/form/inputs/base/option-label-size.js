@@ -11,7 +11,7 @@ import PropTypes from 'prop-types';
  * @param {Array} options
  * @return {string} css class describing label size
  */
-export const OptionLabelSize = ( options ) => {
+const OptionLabelSize = ( options ) => {
 	let size = 0;
 	options = isArray( options ) ? options : [];
 	options.forEach( function( option ) {
@@ -45,3 +45,5 @@ OptionLabelSize.propTypes = {
 		} ),
 	),
 };
+
+export default OptionLabelSize;

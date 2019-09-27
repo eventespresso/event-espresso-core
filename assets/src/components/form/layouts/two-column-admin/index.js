@@ -1,10 +1,10 @@
-import { FormInput } from '../../inputs/form-input';
-import { InputLabel } from '../../inputs/base/input-label';
+import FormInput from '../../inputs/form-input';
+import InputLabel from '../../inputs/base/input-label';
 import AutoColumnRow from './auto-column-row';
 import FormColumn from './form-column';
 import FormInfo from './form-info';
 import FormRow from './form-row';
-import FormSaveCancelButtons from './form-save-cancel-buttons';
+import FormButtonsRow from './form-buttons-row';
 import FormSubmitButton from '../../base/form-submit-button';
 import FormCancelButton from '../../base/form-cancel-button';
 import SubmittingNotice from '../../base/submitting-notice';
@@ -20,7 +20,7 @@ const twoColumnAdminFormLayout = {
 	FormSection,
 	FormWrapper,
 	AutoColumnRow,
-	FormSaveCancelButtons,
+	FormButtonsRow,
 	FormInfo,
 	FormSubmitButton,
 	FormCancelButton,

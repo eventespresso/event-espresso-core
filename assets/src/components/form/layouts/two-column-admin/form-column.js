@@ -1,3 +1,6 @@
+/**
+ * External imports
+ */
 import PropTypes from 'prop-types';
 
 /**

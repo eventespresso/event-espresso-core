@@ -158,7 +158,7 @@ DateTimeDropdown.propTypes = {
  * @param {Object} attributes
  * @return {Object} rendered input
  */
-export const DateTimeInput = ( attributes ) => {
+const DateTimeInput = ( attributes ) => {
 	return (
 		<Field
 			component={ DateTimeDropdown }
@@ -166,3 +166,5 @@ export const DateTimeInput = ( attributes ) => {
 		/>
 	);
 };
+
+export default DateTimeInput;

@@ -79,7 +79,7 @@ Toggle.propTypes = {
  * @param {Object} attributes
  * @return {Object} rendered input
  */
-export const ToggleInput = ( attributes ) => {
+const ToggleInput = ( attributes ) => {
 	return (
 		<Field
 			component={ Toggle }
@@ -87,3 +87,5 @@ export const ToggleInput = ( attributes ) => {
 		/>
 	);
 };
+
+export default ToggleInput;

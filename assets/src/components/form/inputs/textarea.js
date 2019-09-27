@@ -16,7 +16,7 @@ import { Field } from 'react-final-form';
  * @param {Object} attributes
  * @return {string} rendered date name form row
  */
-export const Textarea = ( {
+const Textarea = ( {
 	htmlId,
 	htmlClass,
 	helpTextID,
@@ -51,3 +51,5 @@ Textarea.propTypes = {
 	dataSet: PropTypes.object,
 	inputWidth: PropTypes.string,
 };
+
+export default Textarea;

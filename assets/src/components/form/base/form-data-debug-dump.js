@@ -15,7 +15,7 @@ import './form-data-debug-dump.css';
  * @param {Object} values
  * @return {Object} form data
  */
-export const FormDataDebugDump = ( { values } ) => {
+const FormDataDebugDump = ( { values } ) => {
 	return __DEV__ ? (
 		<div className="ee-form-data-dump-div">
 			<h3>Form Data</h3>
@@ -28,3 +28,5 @@ export const FormDataDebugDump = ( { values } ) => {
 		</div>
 	) : null;
 };
+
+export default FormDataDebugDump;

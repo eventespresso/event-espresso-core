@@ -18,7 +18,7 @@ import PropTypes from 'prop-types';
  * @param {Object} attributes
  * @return {string} rendered form label
  */
-export const InputLabel = ( {
+const InputLabel = ( {
 	label,
 	htmlFor,
 	htmlClass = '',
@@ -63,3 +63,5 @@ InputLabel.propTypes = {
 		PropTypes.arrayOf( PropTypes.object ),
 	] ),
 };
+
+export default InputLabel;
