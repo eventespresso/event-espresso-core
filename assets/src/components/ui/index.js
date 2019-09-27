@@ -5,12 +5,11 @@ export { default as MediumCalendarDate } from './dates-and-times/medium-calendar
 export { default as DropDownMenu } from './drop-down-menu';
 export { EntityActionMenuItem, useEntityActionMenuItems }
 	from './entity-actions-menu';
-export { default as EntityDetailsPanel }
-	from './entity-details-panel/entity-details-panel';
 export { default as EntityPaperFrame } from './entity-paper-frame';
 export { default as EspressoButton } from './espresso-button';
 export { default as IconMenuItem } from './icon-menu-item/icon-menu-item';
 export { default as LoadingNotice } from './loading-notice';
+export * from './entity-details-panel';
 export * from './entity-list';
 export * from './entity-list-filter-bar';
 export * from './entity-pagination';

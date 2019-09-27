@@ -46,8 +46,8 @@
     font-size: var(--ee-font-size-big) !important;
     font-weight: bold !important;
     line-height: var(--ee-font-size-big) !important;
-    margin: 0 !important;
-    min-height: var(--ee-font-size-big);
+    margin: var(--ee-margin-micro) 0 0 !important;
+    min-height: var(--ee-font-size-bigger);
     overflow: hidden;
     padding: 0 0 var(--ee-padding-tiny) !important;
     text-overflow: ellipsis;
