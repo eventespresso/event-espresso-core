@@ -56,7 +56,7 @@ export const MODEL_PREFIXES = ( modelName ) => {
 			country: [ 'CNT' ],
 			currency: [ 'CUR' ],
 			currency_payment_method: [ 'CPM' ],
-			datetime: [ 'DTT', 'DTT_EVT' ],
+			datetime: [ 'DTT_EVT', 'DTT' ],
 			datetime_ticket: [ 'DTK' ],
 			event: [ 'EVT' ],
 			event_message_template: [ 'EMT' ],
