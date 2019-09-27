@@ -5,6 +5,7 @@ import warning from 'warning';
 import { useMemo } from '@wordpress/element';
 import { __, sprintf } from '@eventespresso/i18n';
 import { validations } from '@eventespresso/components';
+import { parseInfinity } from '@eventespresso/utils';
 import { isModelEntityOfModel } from '@eventespresso/validators';
 import { ServerDateTime as DateTime, Duration } from '@eventespresso/value-objects';
 
@@ -60,7 +61,9 @@ const useDateEntityInputConfig = ( {
 			id: 'start',
 			type: 'datetime-local',
 			label: __( 'Start Date & Time', 'event_espresso' ),
-			default: now.plus( Duration.fromObject( { days: 30 } ) ),
+			default: now.plus(
+				Duration.fromObject( { days: 30 } )
+			).toISO( false ), // one month from now
 			changeListener: ( value, prevValue ) => {
 				if ( value !== prevValue ) {
 					const newDate = DateTime.fromISO( value );
@@ -69,23 +72,29 @@ const useDateEntityInputConfig = ( {
 							const originalDuration = dateEntity.end.diff(
 								dateEntity.start
 							);
-							// add original date difference to new start date.
-							const newEndDate = newDate.plus( originalDuration );
-							dateEntity.end = newEndDate;
-							updateField(
-								`${ prefix }-end`,
-								newEndDate.toISO()
-							);
+							if ( Duration.isValidDuration( originalDuration ) ) {
+								// add original date difference to new start date.
+								const newEndDate = newDate.plus(
+									originalDuration
+								);
+								dateEntity.end = newEndDate;
+								updateField(
+									`${ prefix }-end`,
+									newEndDate.toISO( false )
+								);
+							}
 						}
 						// and finally update the start date
 						dateEntity.start = newDate;
 					}
+					touchField( `${ prefix }-start` );
+					touchField( `${ prefix }-end` );
 				}
-				touchField( `${ prefix }-start` );
 			},
 			validate: ( value ) => {
 				if ( value ) {
 					const startDate = DateTime.fromISO( value );
+
 					if ( startDate > dateEntity.end ) {
 						return __(
 							'End Date & Time must be set later than the Start Date & Time',
@@ -102,15 +111,18 @@ const useDateEntityInputConfig = ( {
 			id: 'end',
 			type: 'datetime-local',
 			label: __( 'End Date & Time', 'event_espresso' ),
-			default: now.plus( Duration.fromObject( { days: 60 } ) ),
+			default: now.plus(
+				Duration.fromObject( { days: 60 } )
+			).toISO( false ), // two months from now
 			changeListener: ( value, prevValue ) => {
 				if ( value !== prevValue ) {
 					const newDate = DateTime.fromISO( value );
 					if ( newDate instanceof DateTime ) {
 						dateEntity.end = newDate;
 					}
+					touchField( `${ prefix }-start` );
+					touchField( `${ prefix }-end` );
 				}
-				touchField( `${ prefix }-end` );
 			},
 			validate: ( value ) => {
 				if ( value ) {
@@ -141,7 +153,7 @@ const useDateEntityInputConfig = ( {
 			label: __( 'Capacity', 'event_espresso' ),
 			default: -1,
 			changeListener: ( value ) => {
-				dateEntity.regLimit = parseInt( value || -1, 10 );
+				dateEntity.regLimit = parseInfinity( value || -1, true, true );
 			},
 			min: -1,
 			inputWidth: 3,

@@ -27,13 +27,13 @@ const useTicketFormSchema = ( ticketEntity ) => {
 			[ `${ prefix }-id` ]: ticketEntity.id,
 			[ `${ prefix }-name` ]: ticketEntity.name || '',
 			[ `${ prefix }-description` ]: ticketEntity.description || '',
-			[ `${ prefix }-qty` ]: parseInfinity( ticketEntity.qty ),
+			[ `${ prefix }-qty` ]: parseInfinity( ticketEntity.qty, false, true ),
 			[ `${ prefix }-sold` ]: ticketEntity.sold || 0,
 			[ `${ prefix }-reserved` ]: ticketEntity.reserved || 0,
-			[ `${ prefix }-uses` ]: parseInfinity( ticketEntity.uses ),
+			[ `${ prefix }-uses` ]: parseInfinity( ticketEntity.uses, false, true ),
 			[ `${ prefix }-required` ]: ticketEntity.required || false,
 			[ `${ prefix }-min` ]: ticketEntity.min || null,
-			[ `${ prefix }-max` ]: parseInfinity( ticketEntity.max ),
+			[ `${ prefix }-max` ]: parseInfinity( ticketEntity.max, false, true ),
 			[ `${ prefix }-price` ]: ticketEntity.price && ticketEntity.price.amount ?
 				ticketEntity.price.amount.toNumber() :
 				null,
