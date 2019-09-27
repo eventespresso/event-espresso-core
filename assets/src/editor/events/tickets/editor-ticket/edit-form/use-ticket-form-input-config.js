@@ -96,7 +96,7 @@ const useTicketFormInputConfig = ( ticket ) => {
 			helpText: {
 				regular: sprintf(
 					__(
-						'The amount of money charged for this ticket. Leave blank to make this ticket selection free.%sClick the button after the input to use the Ticket Price Calculator (warning: will close this edit form)',
+						'The total amount of money charged for this ticket. Leave blank to make this ticket selection free.%sClick the button after the input to use the Ticket Price Calculator',
 						'event_espresso'
 					),
 					' \n'
