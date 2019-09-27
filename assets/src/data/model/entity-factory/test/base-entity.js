@@ -78,98 +78,29 @@ describe( 'createEntityFactory()', () => {
 	];
 	const nonEnumerableEntityProperties = [
 		'id',
-		'evtId',
 		'name',
-		'evtName',
-		'setEVT_name',
-		'nameRendered',
 		'desc',
-		'evtDesc',
-		'setEVT_desc',
-		'descRendered',
 		'slug',
-		'evtSlug',
-		'setEVT_slug',
-		'slugRendered',
 		'created',
-		'evtCreated',
-		'setEVT_created',
-		'createdRendered',
 		'shortDesc',
-		'evtShortDesc',
-		'setEVT_short_desc',
-		'shortDescRendered',
 		'modified',
-		'evtModified',
-		'setEVT_modified',
-		'modifiedRendered',
 		'wpUser',
-		'evtWpUser',
-		'setEVT_wp_user',
-		'wpUserRendered',
-		'setParent',
-		'parentRendered',
 		'order',
-		'evtOrder',
-		'setEVT_order',
-		'orderRendered',
-		'setStatus',
-		'statusRendered',
-		'commentStatus',
-		'setComment_status',
-		'commentStatusRendered',
-		'pingStatus',
-		'setPing_status',
-		'pingStatusRendered',
 		'displayDesc',
-		'evtDisplayDesc',
-		'setEVT_display_desc',
-		'displayDescRendered',
 		'displayTicketSelector',
-		'evtDisplayTicketSelector',
-		'setEVT_display_ticket_selector',
-		'displayTicketSelectorRendered',
 		'visibleOn',
-		'evtVisibleOn',
-		'setEVT_visible_on',
-		'visibleOnRendered',
 		'additionalLimit',
-		'evtAdditionalLimit',
-		'setEVT_additional_limit',
-		'additionalLimitRendered',
 		'defaultRegistrationStatus',
-		'evtDefaultRegistrationStatus',
-		'defaultRegistrationStatusRendered',
-		'setEVT_default_registration_status',
 		'memberOnly',
-		'evtMemberOnly',
-		'setEVT_member_only',
-		'memberOnlyRendered',
 		'phone',
-		'evtPhone',
-		'setEVT_phone',
-		'phoneRendered',
 		'allowOverflow',
-		'evtAllowOverflow',
-		'setEVT_allow_overflow',
-		'allowOverflowRendered',
 		'timezoneString',
-		'evtTimezoneString',
-		'setEVT_timezone_string',
-		'timezoneStringRendered',
 		'externalUrl',
-		'evtExternalUrl',
-		'setEVT_external_URL',
-		'externalUrlRendered',
 		'donations',
-		'evtDonations',
-		'setEVT_donations',
-		'donationsRendered',
 		'forClone',
 		'forUpdate',
 		'forInsert',
 		'forPersist',
-		'getRendered',
 		'primaryKey',
 		'primaryKeys',
 		'hasMultiplePrimaryKeys',
@@ -218,23 +149,23 @@ describe( 'createEntityFactory()', () => {
 		describe( 'Test of expected values for props', () => {
 			const testConditions = [
 				[
-					[ 'EVT_name', 'evtName', 'name', 'nameRendered' ],
+					[ 'EVT_name', 'name' ],
 					'Some Event',
 				],
 				[
-					[ 'EVT_desc', 'desc', 'evtDesc', 'descRendered' ],
+					[ 'EVT_desc', 'desc' ],
 					'Some description',
 				],
 				[
-					[ 'EVT_slug', 'evtSlug', 'slug', 'slugRendered' ],
+					[ 'EVT_slug', 'slug' ],
 					'',
 				],
 				[
-					[ 'EVT_wp_user', 'wpUser', 'evtWpUser', 'wpUserRendered' ],
+					[ 'EVT_wp_user', 'wpUser' ],
 					1,
 				],
 				[
-					[ 'parent', 'parentRendered' ],
+					[ 'parent' ],
 					0,
 				],
 				[
@@ -242,29 +173,18 @@ describe( 'createEntityFactory()', () => {
 					'draft',
 				],
 				[
-					[ 'statusRendered' ],
-					'Draft',
-				],
-				[
 					[
 						'EVT_display_ticket_selector',
-						'evtDisplayTicketSelector',
 						'displayTicketSelector',
-						'displayTicketSelectorRendered',
 					],
 					true,
 				],
 				[
 					[
 						'EVT_default_registration_status',
-						'evtDefaultRegistrationStatus',
 						'defaultRegistrationStatus',
 					],
 					'RPP',
-				],
-				[
-					[ 'defaultRegistrationStatusRendered' ],
-					'PENDING_PAYMENT',
 				],
 			];
 			testConditions.forEach( ( [
@@ -282,7 +202,6 @@ describe( 'createEntityFactory()', () => {
 				() => {
 					const testProperties = [
 						'EVT_visible_on',
-						'evtVisibleOn',
 						'visibleOn',
 					];
 					testProperties.forEach( ( testProperty ) => {
@@ -292,15 +211,10 @@ describe( 'createEntityFactory()', () => {
 								.toBeInstanceOf( ServerDateTime );
 						} );
 					} );
-					it( 'event.visibleOnRendered is a string and has ' +
-						'expected value', () => {
-						expect( event.visibleOnRendered )
-							.toBe( '2018-09-17T14:36:59' );
-					} );
 				} );
 			describe( 'primary key property values are a cuid (and the same ' +
 				'cuid)', () => {
-				const idProps = [ 'EVT_ID', 'id', 'evtId' ];
+				const idProps = [ 'EVT_ID', 'id' ];
 				const canonicalCuid = event.EVT_ID;
 				idProps.forEach( ( idProp ) => {
 					it( 'event.' + idProp + ' is a cuid', () => {
@@ -397,35 +311,32 @@ describe( 'createEntityFactory()', () => {
 					const testConditions = [
 						[
 							'EVT_name',
-							[ 'EVT_name', 'evtName', 'name', 'nameRendered' ],
+							[ 'EVT_name', 'name' ],
 						],
 						[
 							[ 'EVT_desc', 'rendered' ],
-							[ 'EVT_desc', 'desc', 'evtDesc', 'descRendered' ],
+							[ 'EVT_desc', 'desc' ],
 						],
 						[
 							'EVT_slug',
-							[ 'EVT_slug', 'evtSlug', 'slug', 'slugRendered' ],
+							[ 'EVT_slug', 'slug' ],
 						],
 						[
 							[ 'EVT_created', 'date' ],
 							[
 								'EVT_created',
-								'evtCreated',
 								'created',
 							],
 						],
 						[
 							'EVT_created',
-							[ 'createdRendered' ],
+							[],
 						],
 						[
 							'EVT_wp_user',
 							[
 								'EVT_wp_user',
 								'wpUser',
-								'evtWpUser',
-								'wpUserRendered',
 							],
 						],
 						[
@@ -434,32 +345,29 @@ describe( 'createEntityFactory()', () => {
 						],
 						[
 							[ 'status', 'pretty' ],
-							[ 'statusRendered' ],
+							[],
 						],
 						[
 							'parent',
-							[ 'parent', 'parentRendered' ],
+							[ 'parent' ],
 						],
 						[
 							'EVT_display_ticket_selector',
 							[
 								'EVT_display_ticket_selector',
-								'evtDisplayTicketSelector',
 								'displayTicketSelector',
-								'displayTicketSelectorRendered',
 							],
 						],
 						[
 							[ 'EVT_default_registration_status', 'raw' ],
 							[
 								'EVT_default_registration_status',
-								'evtDefaultRegistrationStatus',
 								'defaultRegistrationStatus',
 							],
 						],
 						[
 							[ 'EVT_default_registration_status', 'pretty' ],
-							[ 'defaultRegistrationStatusRendered' ],
+							[],
 						],
 					];
 					testRuns( event, testConditions, EventResponse );
@@ -477,39 +385,36 @@ describe( 'createEntityFactory()', () => {
 						const testConditions = [
 							[
 								'EVT_name',
-								[ 'EVT_name', 'evtName', 'name', 'nameRendered' ],
+								[ 'EVT_name', 'name' ],
 							],
 							[
 								[ 'EVT_desc', 'raw' ],
-								[ 'EVT_desc', 'desc', 'evtDesc' ],
+								[ 'EVT_desc', 'desc' ],
 							],
 							[
 								[ 'EVT_desc', 'rendered' ],
-								[ 'descRendered' ],
+								[],
 							],
 							[
 								'EVT_slug',
-								[ 'EVT_slug', 'evtSlug', 'slug', 'slugRendered' ],
+								[ 'EVT_slug', 'slug' ],
 							],
 							[
 								[ 'EVT_created', 'date' ],
 								[
 									'EVT_created',
-									'evtCreated',
 									'created',
 								],
 							],
 							[
 								'EVT_created',
-								[ 'createdRendered' ],
+								[],
 							],
 							[
 								'EVT_wp_user',
 								[
 									'EVT_wp_user',
 									'wpUser',
-									'evtWpUser',
-									'wpUserRendered',
 								],
 							],
 							[
@@ -518,32 +423,29 @@ describe( 'createEntityFactory()', () => {
 							],
 							[
 								[ 'status', 'pretty' ],
-								[ 'statusRendered' ],
+								[],
 							],
 							[
 								'parent',
-								[ 'parent', 'parentRendered' ],
+								[ 'parent' ],
 							],
 							[
 								'EVT_display_ticket_selector',
 								[
 									'EVT_display_ticket_selector',
-									'evtDisplayTicketSelector',
 									'displayTicketSelector',
-									'displayTicketSelectorRendered',
 								],
 							],
 							[
 								[ 'EVT_default_registration_status', 'raw' ],
 								[
 									'EVT_default_registration_status',
-									'evtDefaultRegistrationStatus',
 									'defaultRegistrationStatus',
 								],
 							],
 							[
 								[ 'EVT_default_registration_status', 'pretty' ],
-								[ 'defaultRegistrationStatusRendered' ],
+								[],
 							],
 						];
 						testRuns( event, testConditions, AuthedEventResponse );
@@ -603,16 +505,10 @@ describe( 'createEntityFactory()', () => {
 		);
 		const testConditions = [
 			'DTT_ID',
-			'dttId',
 			'id',
 			'EVT_ID',
-			'evtId',
 			'DTT_EVT_start',
-			'dttEvtStart',
-			'evtStart',
 			'start',
-			'startRendered',
-			'soldRendered',
 		];
 		testConditions.forEach( ( fieldName ) => {
 			test( 'The ' + fieldName + ' field exists', () => {

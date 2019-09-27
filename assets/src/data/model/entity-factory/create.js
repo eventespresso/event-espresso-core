@@ -3,7 +3,6 @@
  */
 import {
 	camelCase,
-	upperFirst,
 	forEach,
 	isUndefined,
 	isArray,
@@ -21,7 +20,6 @@ import {
 	assertValidValueForPreparedField,
 } from './assertions';
 import {
-	deriveRenderedValue,
 	derivePreparedValueForField,
 	getRelationNameFromLink,
 	getBaseFieldsAndValuesForCloning,
@@ -171,27 +169,9 @@ export const createAliasGetter = (
 };
 
 /**
- * Creates a fluent setter on the provided instance for the given field name.
- *
- * @param {Object} instance
- * @param {string} fieldName
- * @param {Object} opts  Options for Object.defineProperty
- */
-export const createFluentSetter = ( instance, fieldName, opts = {} ) => {
-	Object.defineProperty( instance, 'set' + upperFirst( fieldName ), {
-		get() {
-			return ( receivedValue ) => {
-				instance[ fieldName ] = receivedValue;
-				return instance;
-			};
-		},
-		...opts,
-	} );
-};
-
-/**
  * Creates initial getters and setters for entities on the provided entity
  * instance using the given data.
+ *
  * @param {Object} instance
  * keys on instance.
  */
@@ -308,6 +288,7 @@ const populatePrimaryKeys = ( instance ) => {
 
 /**
  * Sets the validate type for a field property.
+ *
  * @param {Object} instance
  * @param {string} fieldName
  * @param {*} fieldValue
@@ -442,13 +423,6 @@ const setInitialEntityFieldsAndValues = (
 		derivePreparedValueForField( fieldName, fieldValue, instance ),
 		isPrimaryKey
 	);
-	if ( ! isPrimaryKey ) {
-		createRenderedGetters(
-			instance,
-			fieldName,
-			deriveRenderedValue( fieldValue )
-		);
-	}
 };
 
 /**
@@ -483,13 +457,13 @@ export const createRawEntityGettersSetters = (
 			fieldValue,
 			opts
 		);
-		createFluentSetter( instance, fieldName );
 		createAliasGetterAndSetterForField( instance, fieldName );
 	}
 };
 
 /**
  * Creates "alias" getter for the given field name on the entity instance.
+ *
  * @param {Object} instance
  * @param {string} fieldName
  */
@@ -517,36 +491,33 @@ export const createAliasGetterAndSetterForField = ( instance, fieldName ) => {
 
 /**
  * Creates Aliases using the provided method.
+ *
  * @param {Object} instance
  * @param {string} fieldName
- * @param {function} method
+ * @param {Function} method
  */
 const createAliasesForMethod = ( instance, fieldName, method ) => {
-	// camelCase getter (or setter) for full field name (eg. EVT_desc => evtDesc)
-	method( instance, fieldName, camelCase( fieldName ) );
 	// strip field prefixes and camelCase (if there are field prefixes for the
-	// entity. (eg. EVT_desc => desc);
+	// entity. (eg. EVT_desc => desc and DTT_EVT_start => start);
 	if ( instance.fieldPrefixes ) {
-		let newFieldName = '';
-		// Yes, its intended that if there are multiple prefixes, this could
-		// end up creating multiple aliased getters (or setters)
-		// (eg Datetime: DTT_EVT_start would end up with `evtStart` and `start`
-		// as getter accessors).
+		let newFieldName = fieldName;
+
 		instance.fieldPrefixes.forEach( ( fieldPrefix ) => {
-			newFieldName = fieldName.replace( fieldPrefix + '_', '' );
-			if ( newFieldName !== fieldName ) {
-				method(
-					instance,
-					fieldName,
-					camelCase( newFieldName )
-				);
-			}
+			newFieldName = newFieldName.replace( fieldPrefix + '_', '' );
 		} );
+		if ( newFieldName !== fieldName ) {
+			method(
+				instance,
+				fieldName,
+				camelCase( newFieldName )
+			);
+		}
 	}
 };
 
 /**
  * Returns a callback that is used in the `getRendered` field getter.
+ *
  * @param {Object} instance
  * @return {function(string): *}  A callback.
  */
@@ -647,6 +618,7 @@ const hasCalculatedFieldCallback = ( instance ) =>
 
 /**
  * Creates the getters for all the calculated fields and value on the entity.
+ *
  * @param {Object} instance
  * @param {Object.<string,*>}fieldsAndValues
  */

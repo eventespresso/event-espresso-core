@@ -11,7 +11,6 @@ import {
 	createCallbackGetter,
 	createGetterAndSetter,
 	createAliasGetterAndSetter,
-	createFluentSetter,
 	createRenderedGetters,
 	createPrimaryKeyFieldGetters,
 	setCalculatedFieldAndValues,
@@ -113,30 +112,6 @@ describe( 'testing create functions for model-entity factory', () => {
 			} );
 			it( 'sets new value on alias prop', () => {
 				expect( testInstance.aliasField ).toEqual( 20 );
-			} );
-		} );
-	} );
-	describe( 'createFluentSetter()', () => {
-		const testInstance = getMockInstance();
-		testInstance.schema = { someProp: { type: 'number' } };
-		createGetterAndSetter( testInstance, 'someProp', 42 );
-		createFluentSetter( testInstance, 'someProp' );
-		it( 'has expected getter', () => {
-			expect( testInstance.setSomeProp ).toBeDefined();
-		} );
-		describe( 'testing setting new value', () => {
-			const returnedInstance = testInstance.setSomeProp( 20 );
-			it( 'throws TypeError for value that doesn\'t match type in ' +
-				'schem', () => {
-				const setInvalidValue = () =>
-					testInstance.setSomeProp( 'invalid' );
-				expect( setInvalidValue ).toThrow( TypeError );
-			} );
-			it( 'sets new value on prop', () => {
-				expect( testInstance.someProp ).toEqual( 20 );
-			} );
-			it( 'returns expected instance', () => {
-				expect( returnedInstance ).toBe( testInstance );
 			} );
 		} );
 	} );
