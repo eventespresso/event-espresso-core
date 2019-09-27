@@ -22,8 +22,8 @@ class EE_PMT_Paypal_Pro extends EE_PMT_Base
     {
         require_once($this->file_folder().'EEG_Paypal_Pro.gateway.php');
         $this->_gateway = new EEG_Paypal_Pro();
-        $this->_pretty_name = __("Paypal Pro", 'event_espresso');
-        $this->_default_description = __('Please provide the following billing information.', 'event_espresso');
+        $this->_pretty_name = esc_html__("Paypal Pro", 'event_espresso');
+        $this->_default_description = esc_html__('Please provide the following billing information.', 'event_espresso');
         $this->_requires_https = true;
         parent::__construct($pm_instance);
     }
@@ -64,22 +64,22 @@ class EE_PMT_Paypal_Pro extends EE_PMT_Base
                 'subsections'=>array(
                     'state'=>new EE_State_Select_Input(null, ['value_field_name' => 'STA_abbrev']),
                     'credit_card'=>new EE_Credit_Card_Input(
-                        array( 'required'=>true, 'html_class' => 'ee-billing-qstn', 'html_label_text' => __('Card Number', 'event_espresso'))
+                        array( 'required'=>true, 'html_class' => 'ee-billing-qstn', 'html_label_text' => esc_html__('Card Number', 'event_espresso'))
                     ),
                     'credit_card_type'=>new EE_Select_Input(
                         // the options are set dynamically
                         array_intersect_key(EE_PMT_Paypal_Pro::card_types_supported(), array_flip($allowed_types)),
-                        array( 'required'=>true, 'html_class' => 'ee-billing-qstn', 'html_label_text' => __('Card Type', 'event_espresso'))
+                        array( 'required'=>true, 'html_class' => 'ee-billing-qstn', 'html_label_text' => esc_html__('Card Type', 'event_espresso'))
                     ),
                     'exp_month'=>new EE_Credit_Card_Month_Input(
                         true,
-                        array( 'required'=>true, 'html_class' => 'ee-billing-qstn', 'html_label_text' =>  __('Expiry Month', 'event_espresso')  )
+                        array( 'required'=>true, 'html_class' => 'ee-billing-qstn', 'html_label_text' =>  esc_html__('Expiry Month', 'event_espresso')  )
                     ),
                     'exp_year'=>new EE_Credit_Card_Year_Input(
-                        array( 'required'=>true, 'html_class' => 'ee-billing-qstn', 'html_label_text' => __('Expiry Year', 'event_espresso')  )
+                        array( 'required'=>true, 'html_class' => 'ee-billing-qstn', 'html_label_text' => esc_html__('Expiry Year', 'event_espresso')  )
                     ),
                     'cvv'=>new EE_CVV_Input(
-                        array( 'required'=>true, 'html_class' => 'ee-billing-qstn', 'html_label_text' => __('CVV', 'event_espresso') )
+                        array( 'required'=>true, 'html_class' => 'ee-billing-qstn', 'html_label_text' => esc_html__('CVV', 'event_espresso') )
                     ),
                 )
             )
@@ -124,10 +124,10 @@ class EE_PMT_Paypal_Pro extends EE_PMT_Base
     public static function card_types_supported()
     {
         return array(
-            'Visa'=>  __("Visa", 'event_espresso'),
-            'MasterCard'=>  __("MasterCard", 'event_espresso'),
-            'Amex'=>  __("American Express", 'event_espresso'),
-            'Discover'=>  __("Discover", 'event_espresso')
+            'Visa'=>  esc_html__("Visa", 'event_espresso'),
+            'MasterCard'=>  esc_html__("MasterCard", 'event_espresso'),
+            'Amex'=>  esc_html__("American Express", 'event_espresso'),
+            'Discover'=>  esc_html__("Discover", 'event_espresso')
             );
     }
 
@@ -142,7 +142,7 @@ class EE_PMT_Paypal_Pro extends EE_PMT_Base
     {
         return array(
             $this->get_help_tab_name() => array(
-                        'title' => __('PayPal Pro Settings', 'event_espresso'),
+                        'title' => esc_html__('PayPal Pro Settings', 'event_espresso'),
                         'filename' => 'payment_methods_overview_paypalpro'
                         ),
         );

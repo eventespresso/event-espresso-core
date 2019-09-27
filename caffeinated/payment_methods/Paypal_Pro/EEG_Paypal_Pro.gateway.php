@@ -322,7 +322,7 @@ class EEG_Paypal_Pro extends EE_Onsite_Gateway
             }
             if (empty($PayPalResult['RAWRESPONSE'])) {
                 $payment->set_status($this->_pay_model->failed_status());
-                $payment->set_gateway_response(__('No response received from Paypal Pro', 'event_espresso'));
+                $payment->set_gateway_response(esc_html__('No response received from Paypal Pro', 'event_espresso'));
                 $payment->set_details($PayPalResult);
             } else {
                 if ($this->_APICallSuccessful($PayPalResult)) {
