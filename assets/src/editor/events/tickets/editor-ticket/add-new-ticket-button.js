@@ -37,6 +37,12 @@ const AddNewTicketButton = () => {
 	const onEditorOpen = useCallback( () => {
 		setToggleTicketEditor( false );
 	}, [] );
+	// once the ticket editor closes, unset the cached ticket,
+	// which will get picked up by the main ticket editor list
+	// and free up the cache for creating another new ticket
+	const onEditorClose = useCallback( () => {
+		cacheNewTicket( null );
+	}, [] );
 	// don't bother rendering the ticket form modal
 	// if a new ticket does not exist
 	const ticketEditor = newTicket ? (
@@ -44,6 +50,7 @@ const AddNewTicketButton = () => {
 			editorId={ editorId }
 			ticketEntity={ newTicket }
 			onEditorOpen={ onEditorOpen }
+			onEditorClose={ onEditorClose }
 		/>
 	) : null;
 	return (

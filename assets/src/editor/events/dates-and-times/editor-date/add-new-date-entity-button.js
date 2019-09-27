@@ -65,6 +65,12 @@ const AddNewDateEntityButton = () => {
 	const onTamEditorOpen = useCallback( () => {
 		setToggleTamEditor( false );
 	}, [] );
+	// once the tam editor closes, unset the cached date,
+	// which will get picked up by the main date editor list
+	// and free up the cache for creating another new date
+	const onTamEditorClose = useCallback( () => {
+		cacheNewDate( null );
+	}, [] );
 	// don't bother rendering the date form modal if a new date does not exist
 	const dateEditor = newDate ? (
 		<DateEntityFormModal
@@ -91,6 +97,7 @@ const AddNewDateEntityButton = () => {
 				})`
 			) }
 			onEditorOpen={ onTamEditorOpen }
+			onEditorClose={ onTamEditorClose }
 		/>
 	) : null;
 
