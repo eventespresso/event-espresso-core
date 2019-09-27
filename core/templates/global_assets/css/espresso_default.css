@@ -50,8 +50,18 @@
 #wp-admin-bar-espresso-toolbar .ee-icon-ee-cup-thick:before {
     content: "\e60e";
     font-size: 24px !important;
-    left: 8px;
+    left: 4px;
     top: -2px;
+    line-height: 1;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+@media screen and (min-width: 783px) {
+    #wp-admin-bar-espresso-toolbar .ee-icon-ee-cup-thick:before {
+        vertical-align: middle;
+        position: relative;
+    }
 }
 
 @media screen and (max-width: 782px) {
