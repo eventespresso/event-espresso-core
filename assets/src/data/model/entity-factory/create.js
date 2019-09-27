@@ -3,7 +3,6 @@
  */
 import {
 	camelCase,
-	upperFirst,
 	forEach,
 	isUndefined,
 	isArray,
