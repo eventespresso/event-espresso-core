@@ -260,7 +260,7 @@ class EEG_Paypal_Pro extends EE_Onsite_Gateway
                 ? $attendee->city()
                 : $billing_info['city'], 0, 40),
             'shiptostate'          => substr($use_registration_address_info
-                ? $attendee->state_abbrev()
+                ? $attendee->state_name()
                 : $billing_info['state'], 0, 40),
             'shiptocountry'  => $use_registration_address_info
                 ? $attendee->country_ID()
