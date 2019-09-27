@@ -62,6 +62,7 @@ class EE_PMT_Paypal_Pro extends EE_PMT_Base
                 'name'=> 'Paypal_Pro_Billing_Form',
             //              'html_id'=> 'ee-Paypal_Pro-billing-form',
                 'subsections'=>array(
+                    'state'=>new EE_State_Select_Input(null, ['value_field_name' => 'STA_abbrev']),
                     'credit_card'=>new EE_Credit_Card_Input(
                         array( 'required'=>true, 'html_class' => 'ee-billing-qstn', 'html_label_text' => __('Card Number', 'event_espresso'))
                     ),
@@ -156,6 +157,7 @@ class EE_PMT_Paypal_Pro extends EE_PMT_Base
     protected function _get_billing_values_from_form($billing_form)
     {
         $billing_values = parent::_get_billing_values_from_form($billing_form);
+        $billing_values['state'] = $billing_form->get_input_value('state');
         $billing_values['country'] = $billing_form->get_input_value('country');
         $billing_values['credit_card_type'] = $billing_form->get_input_value('credit_card_type');
         return $billing_values;
