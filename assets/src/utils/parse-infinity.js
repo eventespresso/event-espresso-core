@@ -28,7 +28,10 @@ const parseInfinity = ( number, asInt = false, forDb = false ) => {
 		Infinity :
 		number;
 	number = number !== Infinity && asInt ? parseInt( number, 10 ) : number;
-	number = ! forDb || ( forDb && number !== Infinity ) ? number : -1;
+	// not infinity OR is infinity but not for db
+	number = number !== Infinity || ( number === Infinity && ! forDb ) ?
+		number :
+		-1;
 	return number;
 };
 
