@@ -14,16 +14,16 @@ import useDateEntityFormSchema from './use-date-entity-form-schema';
 
 /**
  * @function
- * @param {Object} dateEntity model object defining the Event Date
  * @param {string} editorId
+ * @param {Object} dateEntity model object defining the Event Date
  * @param {Function} onEditorOpen
  * @param {Function} onEditorClose
  * @param {Object} otherProps
  * @return {Object} rendered form with editor modal and form handler
  */
 const DateEntityFormModal = ( {
-	dateEntity,
 	editorId,
+	dateEntity,
 	onEditorOpen,
 	onEditorClose,
 	...otherProps
@@ -52,6 +52,7 @@ const DateEntityFormModal = ( {
 };
 
 DateEntityFormModal.propTypes = {
+	editorId: PropTypes.string.isRequired,
 	dateEntity: PropTypes.object.isRequired,
 	onEditorOpen: PropTypes.func,
 	onEditorClose: PropTypes.func,
