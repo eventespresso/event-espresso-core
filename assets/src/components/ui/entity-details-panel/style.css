@@ -25,24 +25,6 @@
     max-width: calc(var(--ee-font-size-tiny) * 5);
 }
 
-.ee-entity-details-id {
-    margin: -.5rem 0 0;
-    width: 100%;
-}
-
-.ee-entity-details-id span {
-    color: var(--ee-color-grey-8);
-    margin-right: var(--ee-margin-nano);
-}
-
-.ee-entity-details-id.ee-align-lft {
-    text-align: left;
-}
-
-.ee-entity-details-id.ee-align-rgt {
-    text-align: right;
-}
-
 .ee-entity-details-div .ee-inline-edit-input {
     max-width: var(--ee-font-size-extreme);
     margin: 0 0 calc(var(--ee-margin-micro) * -1);

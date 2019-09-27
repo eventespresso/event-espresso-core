@@ -5,7 +5,7 @@ import classNames from 'classnames';
 import { useMemo } from '@wordpress/element';
 import { shortenCuid } from '@eventespresso/utils';
 
-const EntityDetailsCuid = ( { entityID, align = 'left' } ) => {
+const EntityCuid = ( { entityID, align = 'left' } ) => {
 	const htmlClass = classNames(
 		'ee-entity-details-id',
 		'ee-focus-priority-9',
@@ -21,4 +21,4 @@ const EntityDetailsCuid = ( { entityID, align = 'left' } ) => {
 	), [ entityID, align ] );
 };
 
-export default EntityDetailsCuid;
+export default EntityCuid;
