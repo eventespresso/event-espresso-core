@@ -2,7 +2,6 @@
  * External imports
  */
 import PropTypes from 'prop-types';
-import { EntityDetailsCuid } from '@eventespresso/components';
 import { ifValidTicketEntity } from '@eventespresso/editor-hocs';
 
 /**
@@ -26,7 +25,6 @@ const EditorTicketEntityDetails = ( {
 	showPrice,
 } ) => (
 	<div className={ 'ee-editor-ticket-details-wrapper-div' }>
-		<EntityDetailsCuid entityID={ ticketEntity.id } align={ 'right' } />
 		<InlineEditTicketName ticket={ ticketEntity } />
 		<InlineEditTicketPrice
 			ticket={ ticketEntity }

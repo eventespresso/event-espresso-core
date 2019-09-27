@@ -2,7 +2,6 @@
  * External imports
  */
 import PropTypes from 'prop-types';
-import { EntityDetailsCuid } from '@eventespresso/components';
 import { ifValidDateEntity } from '@eventespresso/editor-hocs';
 
 /**
@@ -20,7 +19,6 @@ const EditorDateEntityDetails = ( {
 } ) => {
 	return (
 		<div className={ 'ee-editor-date-details-wrapper-div' }>
-			<EntityDetailsCuid entityID={ dateEntity.id } />
 			<InlineEditEventDateName eventDate={ dateEntity } />
 			<InlineEditEventDateDescription
 				eventDate={ dateEntity }

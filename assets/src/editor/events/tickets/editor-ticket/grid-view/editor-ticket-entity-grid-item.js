@@ -142,7 +142,7 @@ const EditorTicketEntityGridItem = ( {
 		'ee-editor-date-range' :
 		'ee-editor-date-single';
 	return (
-		<EntityPaperFrame>
+		<EntityPaperFrame entityID={ ticketEntity.id } >
 			<div className={ `ee-editor-ticket-main ${ dateStyleClass }` }>
 				<EditorTicketEntityDetails ticketEntity={ ticketEntity } />
 				{ ticketDate }
