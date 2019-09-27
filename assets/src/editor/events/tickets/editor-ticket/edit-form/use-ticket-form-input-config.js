@@ -6,6 +6,7 @@ import { useCallback, useMemo } from '@wordpress/element';
 import { __, sprintf } from '@eventespresso/i18n';
 import { validations } from '@eventespresso/components';
 import { usePriceTypes, useTicketPrices } from '@eventespresso/hooks';
+import { amountsMatch, parseInfinity } from '@eventespresso/utils';
 import { isModelEntityOfModel } from '@eventespresso/validators';
 import {
 	ServerDateTime as DateTime,
@@ -13,7 +14,6 @@ import {
 	Money,
 	SiteCurrency,
 } from '@eventespresso/value-objects';
-import { amountsMatch } from '@eventespresso/utils';
 
 /**
  * Internal dependencies
@@ -169,9 +169,9 @@ const useTicketFormInputConfig = ( ticket ) => {
 			id: 'qty',
 			type: 'number',
 			label: __( 'Quantity', 'event_espresso' ),
-			default: -1,
+			default: parseInfinity( -1 ),
 			changeListener: ( value ) => {
-				ticket.qty = parseInt( value || -1, 10 );
+				ticket.qty = parseInfinity( value || -1, true, true );
 			},
 			min: -1,
 			inputWidth: 3,
@@ -209,7 +209,7 @@ const useTicketFormInputConfig = ( ticket ) => {
 			id: 'max',
 			type: 'number',
 			label: __( 'Maximum Quantity', 'event_espresso' ),
-			default: -1,
+			default: parseInfinity( -1 ),
 			min: -1,
 			changeListener: ( value ) => {
 				ticket.max = parseInt( value || 0, 10 );
@@ -232,7 +232,7 @@ const useTicketFormInputConfig = ( ticket ) => {
 			default: -1,
 			min: 0,
 			changeListener: ( value ) => {
-				ticket.uses = parseInt( value || 0, 10 );
+				ticket.uses = parseInfinity( value || -1, true, true );
 			},
 			inputWidth: 3,
 			helpText: {
