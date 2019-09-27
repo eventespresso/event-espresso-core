@@ -182,6 +182,7 @@ const InlineEditInput = ( {
 				valueFormatter,
 				formatterSettings,
 				noticeStyle,
+				label,
 			} }
 		/>;
 };
