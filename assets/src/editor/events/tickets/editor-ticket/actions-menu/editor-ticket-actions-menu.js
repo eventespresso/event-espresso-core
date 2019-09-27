@@ -18,15 +18,16 @@ import TicketEntityMainMenuItem
 import EditTicketFormModal from '../edit-form/edit-ticket-form-modal';
 import TicketPriceCalculatorMenuItem
 	from '../price-calculator/ticket-price-calculator-menu-item';
+import useTicketEditorId from '../edit-form/use-ticket-editor-id';
 
 const EditorTicketActionsMenu = ( {
 	ticketEntity,
 } ) => {
+	const editorId = useTicketEditorId( ticketEntity );
 	const {
 		getActionsMenuForEntity,
 		registerEntityActionsMenuItem,
 	} = useEntityActionMenuItems();
-
 	const menuItems = getActionsMenuForEntity( ticketEntity );
 	useEffect( () => {
 		if ( Array.isArray( menuItems ) && menuItems.length < 1 ) {
@@ -77,7 +78,10 @@ const EditorTicketActionsMenu = ( {
 			<div className={ 'ee-editor-ticket-actions-menu' }>
 				{ menuItems }
 			</div>
-			<EditTicketFormModal ticketEntity={ ticketEntity } />
+			<EditTicketFormModal
+				editorId={ editorId }
+				ticketEntity={ ticketEntity }
+			/>
 		</>
 	);
 };

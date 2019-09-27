@@ -12,8 +12,9 @@ import { cancelClickEvent } from '@eventespresso/utils';
  */
 const useCloseEditor = ( editorId ) => {
 	const { closeEditor } = useDispatch( 'eventespresso/open-editor-state' );
-	return useCallback( ( click ) => {
-		cancelClickEvent( click, 'useCloseEditor' );
+	return useCallback( ( click, src ) => {
+		src = src ? src : editorId;
+		cancelClickEvent( click, src );
 		if ( editorId ) {
 			closeEditor( editorId );
 		}

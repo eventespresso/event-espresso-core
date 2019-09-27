@@ -12,7 +12,6 @@ import {
 	useRef,
 	useState,
 } from '@wordpress/element';
-import { cancelClickEvent } from '@eventespresso/utils';
 import { __, sprintf } from '@eventespresso/i18n';
 
 /**
@@ -100,13 +99,12 @@ const EditorModal = ( {
 	);
 
 	const onRequestClose = useCallback( ( click ) => {
-		cancelClickEvent( click, 'EditorModal.onRequestClose()' );
 		if ( ! changesSaved && closeEditorNotice !== '' ) {
 			if ( confirm( closeEditorNotice ) ) {
-				closeEditor();
+				closeEditor( click, 'EditorModal.onRequestClose()' );
 			}
 		} else {
-			closeEditor();
+			closeEditor( click, 'EditorModal.onRequestClose()' );
 		}
 	}, [
 		changesSaved,

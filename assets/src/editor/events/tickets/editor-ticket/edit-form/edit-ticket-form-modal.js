@@ -12,20 +12,24 @@ import PropTypes from 'prop-types';
  * Internal dependencies
  */
 import EditTicketForm from './edit-ticket-form';
-import useTicketEditorId from './use-ticket-editor-id';
 import useTicketFormSchema from './use-ticket-form-schema';
 
 /**
  * @function
+ * @param {string} editorId
  * @param {Object} ticketEntity model object defining the Ticket
+ * @param {Function} onEditorOpen
+ * @param {Function} onEditorClose
  * @param {Object} otherProps
  * @return {Object} rendered form with editor modal and form handler
  */
 const EditTicketFormModal = ( {
+	editorId,
 	ticketEntity,
+	onEditorOpen,
+	onEditorClose,
 	...otherProps
 } ) => {
-	const editorId = useTicketEditorId( ticketEntity );
 	const formData = useTicketFormSchema( ticketEntity );
 	return useMemo( () => (
 		<EditorModal
@@ -36,6 +40,8 @@ const EditTicketFormModal = ( {
 				'close ticket editor',
 				'event_espresso'
 			) }
+			onEditorOpen={ onEditorOpen }
+			onEditorClose={ onEditorClose }
 		>
 			<FormHandler
 				FormComponent={ EditTicketForm }
@@ -54,7 +60,10 @@ const EditTicketFormModal = ( {
 };
 
 EditTicketFormModal.propTypes = {
+	editorId: PropTypes.string.isRequired,
 	ticketEntity: PropTypes.object.isRequired,
+	onEditorOpen: PropTypes.func,
+	onEditorClose: PropTypes.func,
 };
 
 export default ifValidTicketEntity( EditTicketFormModal );
