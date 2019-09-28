@@ -1,8 +1,8 @@
 /**
  * External imports
  */
-import { useCallback, useState } from '@wordpress/element';
-import { EspressoButton } from '@eventespresso/components';
+import { useCallback, useEffect, useState } from '@wordpress/element';
+import { EspressoButton, LoadingNotice } from '@eventespresso/components';
 import { useOpenEditor } from '@eventespresso/editor-hocs';
 import {
 	useBasePriceType,
@@ -18,6 +18,7 @@ import EditTicketFormModal from './edit-form/edit-ticket-form-modal';
 import useTicketEditorId from './edit-form/use-ticket-editor-id';
 
 const AddNewTicketButton = () => {
+	const [ loading, setLoading ] = useState( false );
 	const [ newTicket, cacheNewTicket ] = useState( null );
 	const [ toggleTicketEditor, setToggleTicketEditor ] = useState( false );
 	const basePriceType = useBasePriceType();
@@ -27,6 +28,16 @@ const AddNewTicketButton = () => {
 	);
 	const editorId = useTicketEditorId( newTicket, 'new-ticket' );
 	const openTicketEditor = useOpenEditor( editorId );
+	// using the button click event to create the new ticket entity
+	// was causing issues with re-renders due to the async nature of things.
+	// triggering everything after render makes the UI run more smoothly
+	useEffect( async () => {
+		if ( loading ) {
+			setLoading( false );
+			await createTicketEntity();
+			setToggleTicketEditor( true );
+		}
+	} );
 	// because we have to wait for a valid ticket entity to be created,
 	// we can't simply open the editor via the Add New Ticket click event,
 	// so instead we toggle the following flag to indicate this
@@ -55,13 +66,16 @@ const AddNewTicketButton = () => {
 	) : null;
 	return (
 		<>
+			<LoadingNotice
+				loading={ loading }
+				htmlClass={ 'ee-loading-new-entity' }
+			/>
 			<EspressoButton
-				icon="tickets-alt"
+				icon={ 'tickets-alt' }
 				buttonText={ __( 'Add New Ticket', 'event_espresso' ) }
 				onClick={ ( click ) => {
-					setToggleTicketEditor( true );
-					createTicketEntity();
 					cancelClickEvent( click, 'AddNewTicketButton' );
+					setLoading( true );
 				} }
 				disabled={ ! basePriceType }
 			/>

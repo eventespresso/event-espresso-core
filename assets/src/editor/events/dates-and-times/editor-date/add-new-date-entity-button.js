@@ -1,8 +1,8 @@
 /**
  * External imports
  */
-import { useCallback, useState } from '@wordpress/element';
-import { EspressoButton } from '@eventespresso/components';
+import { useCallback, useEffect, useState } from '@wordpress/element';
+import { EspressoButton, LoadingNotice } from '@eventespresso/components';
 import { useOpenEditor } from '@eventespresso/editor-hocs';
 import {
 	useCreateDateEntity,
@@ -24,6 +24,7 @@ import useTicketAssignmentsEditorId
 	from '../../ticket-assignments-manager/use-ticket-assignments-editor-id';
 
 const AddNewDateEntityButton = () => {
+	const [ loading, setLoading ] = useState( false );
 	const [ newDate, cacheNewDate ] = useState( null );
 	const [ toggleDateEditor, setToggleDateEditor ] = useState( false );
 	const [ toggleTamEditor, setToggleTamEditor ] = useState( false );
@@ -43,6 +44,16 @@ const AddNewDateEntityButton = () => {
 		'new-date'
 	);
 	const openTamEditor = useOpenEditor( tamEditorId );
+	// using the button click event to create the new date entity
+	// was causing issues with re-renders due to the async nature of things.
+	// triggering everything after render makes the UI run more smoothly
+	useEffect( async () => {
+		if ( loading ) {
+			setLoading( false );
+			await createDateEntity();
+			setToggleDateEditor( true );
+		}
+	} );
 	// because we have to wait for a valid date entity to be created,
 	// we can't simply open the editor via the Add New Date click event,
 	// so instead we toggle the following flag to indicate this
@@ -103,13 +114,16 @@ const AddNewDateEntityButton = () => {
 
 	return (
 		<>
+			<LoadingNotice
+				loading={ loading }
+				htmlClass={ 'ee-loading-new-entity' }
+			/>
 			<EspressoButton
 				icon={ 'calendar' }
 				buttonText={ __( 'Add New Date', 'event_espresso' ) }
 				onClick={ ( click ) => {
-					setToggleDateEditor( true );
-					createDateEntity();
 					cancelClickEvent( click, 'AddNewDateEntityButton' );
+					setLoading( true );
 				} }
 				disabled={ ! eventEntityLoaded }
 			/>
