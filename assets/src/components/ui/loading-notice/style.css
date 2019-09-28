@@ -34,3 +34,11 @@
     vertical-align: middle;
 }
 
+.ee-loading-notice-div.ee-loading-new-entity {
+    display: inline-block;
+    margin: calc(var(--ee-margin-small)*-1) 0 0;
+    padding: var(--ee-margin-tiny) var(--ee-padding-default);
+    vertical-align: middle;
+}
+
+
