@@ -39,7 +39,7 @@ const useTicketBasePriceCalculator = ( prices, priceTypes ) => useCallback(
 				);
 				return basePriceCalculations(
 					currentTotal,
-					priceTypeEntity.pbtId,
+					priceTypeEntity.PBT_ID,
 					priceTypeEntity.isPercent,
 					getPriceAmount( priceEntity )
 				);

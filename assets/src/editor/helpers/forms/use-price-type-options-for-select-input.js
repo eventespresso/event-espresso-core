@@ -35,7 +35,7 @@ const usePriceTypeOptionsForSelectInput = ( removeTypes = EMPTY_ARRAY ) => {
 					value: priceType.id,
 					label: priceType.name,
 				} );
-				if ( ! removeTypes.includes( priceType.pbtId ) ) {
+				if ( ! removeTypes.includes( priceType.PBT_ID ) ) {
 					filteredPriceTypeOptions.push( {
 						value: priceType.id,
 						label: priceType.name,

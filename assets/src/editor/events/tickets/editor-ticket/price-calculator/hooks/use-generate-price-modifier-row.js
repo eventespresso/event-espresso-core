@@ -56,7 +56,7 @@ const useGeneratePriceModifierRow = ( ticketPrefix, values ) => {
 						price={ price }
 						prefix={ prefix }
 						values={ values }
-						basePriceType={ priceType.pbtId }
+						basePriceType={ priceType.PBT_ID }
 						priceTypeOptions={ priceTypeOptions }
 					/>
 				),
