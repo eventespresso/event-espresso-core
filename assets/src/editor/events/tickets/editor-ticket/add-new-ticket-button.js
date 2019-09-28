@@ -31,10 +31,10 @@ const AddNewTicketButton = () => {
 	// using the button click event to create the new ticket entity
 	// was causing issues with re-renders due to the async nature of things.
 	// triggering everything after render makes the UI run more smoothly
-	useEffect( async () => {
+	useEffect( () => {
 		if ( loading ) {
 			setLoading( false );
-			await createTicketEntity();
+			createTicketEntity();
 			setToggleTicketEditor( true );
 		}
 	} );

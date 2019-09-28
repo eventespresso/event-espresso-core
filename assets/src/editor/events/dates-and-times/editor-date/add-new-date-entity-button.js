@@ -47,10 +47,10 @@ const AddNewDateEntityButton = () => {
 	// using the button click event to create the new date entity
 	// was causing issues with re-renders due to the async nature of things.
 	// triggering everything after render makes the UI run more smoothly
-	useEffect( async () => {
+	useEffect( () => {
 		if ( loading ) {
 			setLoading( false );
-			await createDateEntity();
+			createDateEntity();
 			setToggleDateEditor( true );
 		}
 	} );
