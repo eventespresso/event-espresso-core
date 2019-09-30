@@ -861,7 +861,7 @@ class EE_Dependency_Map
             'EventEspresso\core\services\request\files\FilesDataHandler' => array(
                 'EventEspresso\core\services\request\Request' => EE_Dependency_Map::load_from_cache,
             ),
-            'EventEspressoBatchRequest\BatchRequestProcessor' => [
+            'EventEspressoBatchRequest\BatchRequestProcessor'                              => [
                 'EventEspresso\core\services\loaders\Loader'  => EE_Dependency_Map::load_from_cache,
             ],
             'EventEspresso\core\domain\services\admin\registrations\list_table\QueryBuilder' => [
@@ -887,10 +887,11 @@ class EE_Dependency_Map
             ],
             ],
             'EventEspresso\core\services\graphql\RequestHandler' => [
-                'EventEspresso\core\services\loaders\Loader'  => EE_Dependency_Map::load_from_cache,
+                'EventEspresso\core\services\graphql\ResolverCollection'  => EE_Dependency_Map::load_from_cache,
                 'EventEspresso\core\services\request\Request' => EE_Dependency_Map::load_from_cache,
+                'EventEspresso\core\services\loaders\Loader'  => EE_Dependency_Map::load_from_cache,
             ],
-            'EventEspresso\core\domain\services\graphql\resolvers\EventEditorEntities' => [
+            'EventEspresso\core\domain\services\graphql\resolvers\EventEditorDataResolver' => [
                 null,
                 'EEM_Datetime' => EE_Dependency_Map::load_from_cache,
             ],
