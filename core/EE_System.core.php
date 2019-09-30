@@ -1200,7 +1200,7 @@ final class EE_System implements ResettableInterface
         // builders require these even on the front-end
         require_once EE_PUBLIC . 'template_tags.php';
         // load handler for GraphQL requests
-        if ($this->request->isGQL()) {
+        if (function_exists('register_graphql_field') && $this->request->isGQL()) {
             try {
                 $graphQL_request_handler = $this->loader->getShared(
                     'EventEspresso\core\services\graphql\RequestHandler'
