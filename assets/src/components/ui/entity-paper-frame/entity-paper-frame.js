@@ -18,8 +18,9 @@ import EntityCuid from './entity-cuid';
  */
 const EntityPaperFrame = ( { instanceId, children, entityID } ) => {
 	return (
-		<div id={ `ee-entity-paper-frame-${ instanceId }` }
-			 className="ee-entity-paper-frame-wrapper"
+		<div
+			id={ `ee-entity-paper-frame-${ instanceId }` }
+			className="ee-entity-paper-frame-wrapper"
 		>
 			<EntityCuid entityID={ entityID }/>
 			<div className="ee-entity-paper-frame">
