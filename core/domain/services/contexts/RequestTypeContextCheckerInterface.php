@@ -106,6 +106,11 @@ interface RequestTypeContextCheckerInterface
      */
     public function isFrontAjax();
 
+    /**
+     * @return bool
+     */
+    public function isGQL();
+
 
     /**
      * @return bool

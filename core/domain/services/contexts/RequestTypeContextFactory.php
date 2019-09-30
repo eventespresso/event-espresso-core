@@ -107,6 +107,12 @@ class RequestTypeContextFactory implements RequestTypeContextFactoryInterface
                     'event_espresso'
                 );
                 break;
+            case RequestTypeContext::GQL:
+                $description = esc_html__(
+                    'The current request is for the EE GraphQL Manager',
+                    'event_espresso'
+                );
+                break;
             case RequestTypeContext::WP_API:
                 $description = esc_html__(
                     'The current request is for the WordPress REST API',

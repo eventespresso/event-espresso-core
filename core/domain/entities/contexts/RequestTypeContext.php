@@ -77,6 +77,11 @@ class RequestTypeContext extends Context
     const IFRAME = 'iframe-request';
 
     /**
+     * indicates that the current request is for the EE GraphQL manager
+     */
+    const GQL = 'graphql';
+
+    /**
      * indicates that the current request is for the WP REST API
      */
     const WP_API = 'wp-rest-api';
@@ -141,6 +146,7 @@ class RequestTypeContext extends Context
                     RequestTypeContext::CRON,
                     RequestTypeContext::FEED,
                     RequestTypeContext::FRONTEND,
+                    RequestTypeContext::GQL,
                     RequestTypeContext::IFRAME,
                     RequestTypeContext::WP_API,
                     RequestTypeContext::WP_SCRAPE,
