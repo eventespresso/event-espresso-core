@@ -247,7 +247,8 @@ div.TB-ee-frame a {
 
 @media screen and (max-width: 782px) {
     #wpadminbar li#wp-admin-bar-espresso-toolbar {
-        display: block;
+		display: block;
+		position: static;
     }
 
     #wpadminbar li#wp-admin-bar-espresso-toolbar .ee-icon-ee-cup-thick:before {
