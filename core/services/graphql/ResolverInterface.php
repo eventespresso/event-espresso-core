@@ -2,8 +2,8 @@
 
 namespace EventEspresso\core\services\graphql;
 
+use GraphQL\Type\Definition\ResolveInfo;
 use WPGraphQL\AppContext;
-use WPGraphQL\ResolveInfo;
 
 /**
  * Interface ResolverInterface
