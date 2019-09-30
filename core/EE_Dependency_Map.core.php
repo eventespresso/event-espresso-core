@@ -885,6 +885,15 @@ class EE_Dependency_Map
                 'EventEspresso\core\services\request\Request' => EE_Dependency_Map::load_from_cache,
                 'EEM_Ticket'  => EE_Dependency_Map::load_from_cache,
             ],
+            ],
+            'EventEspresso\core\services\graphql\RequestHandler' => [
+                'EventEspresso\core\services\loaders\Loader'  => EE_Dependency_Map::load_from_cache,
+                'EventEspresso\core\services\request\Request' => EE_Dependency_Map::load_from_cache,
+            ],
+            'EventEspresso\core\domain\services\graphql\resolvers\EventEditorEntities' => [
+                null,
+                'EEM_Datetime' => EE_Dependency_Map::load_from_cache,
+            ],
         );
     }
 
