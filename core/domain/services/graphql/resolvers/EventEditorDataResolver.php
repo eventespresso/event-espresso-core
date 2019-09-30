@@ -6,8 +6,8 @@ use EE_Datetime;
 use EE_Error;
 use EEM_Datetime;
 use EventEspresso\core\services\graphql\ResolverBase;
+use GraphQL\Type\Definition\ResolveInfo;
 use WPGraphQL\AppContext;
-use WPGraphQL\ResolveInfo;
 
 
 /**
@@ -26,15 +26,21 @@ class EventEditorDataResolver extends ResolverBase
      */
     protected $datetime_model;
 
+    /**
+     * @var object $query_data
+     */
+    protected $query_data;
+
 
     /**
      * EventEditorEntities constructor.
      *
+     * @param object $query_data
      * @param EEM_Datetime $datetime_model
      */
-    public function __construct(EEM_Datetime $datetime_model)
+    public function __construct($query_data, EEM_Datetime $datetime_model)
     {
-        \EEH_Debug_Tools::printr(__FUNCTION__, __CLASS__, __FILE__, __LINE__, 2);
+        $this->query_data = $query_data;
         $this->datetime_model = $datetime_model;
     }
 
@@ -55,7 +61,7 @@ class EventEditorDataResolver extends ResolverBase
      */
     public function field()
     {
-        return 'EventDates';
+        return 'EventEditor';
     }
 
 
@@ -74,13 +80,19 @@ class EventEditorDataResolver extends ResolverBase
      * @param array       $args
      * @param AppContext  $context
      * @param ResolveInfo $info
-     * @return mixed
+     * @return string
      * @throws EE_Error
      * @since $VID:$
      */
     public function resolve($root, array $args, AppContext $context, ResolveInfo $info)
     {
-        $dates = $this->getDatesForEvent();
+        return wp_json_encode([
+            'data' => [
+                'EventEditor' => [
+                    'eventDates' => $this->getDatesForEvent()
+                ]
+            ]
+        ]);
     }
 
 
