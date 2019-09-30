@@ -64,7 +64,10 @@ const EditorTicketEntitiesList = ( { ...otherProps } ) => {
 		paginatedEntities,
 	} = useEntityPagination( perPage, filteredTickets );
 	// update the ticket ids in state whenever the filters change
-	const { setFilteredTickets } = useTicketsListFilterStateSetters( listId );
+	const {
+		setFilteredTickets,
+		setTicketsSortedBy,
+	} = useTicketsListFilterStateSetters( listId );
 	useEffect( () => {
 		if ( Array.isArray( paginatedEntities ) ) {
 			setFilteredTickets(
@@ -106,6 +109,8 @@ const EditorTicketEntitiesList = ( { ...otherProps } ) => {
 				EntityListView={ EditorTicketEntitiesListView }
 				view={ view }
 				displayTicketDate={ displayTicketDate }
+				setEntityIds={ setFilteredTickets }
+				setSortBy={ setTicketsSortedBy }
 				loading={ ! ticketsLoaded }
 				loadingNotice={ sprintf(
 					_x(
