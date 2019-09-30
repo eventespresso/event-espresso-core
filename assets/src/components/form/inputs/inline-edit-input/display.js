@@ -2,7 +2,7 @@
  * External imports
  */
 import { isFunction } from 'lodash';
-import { __ } from '@eventespresso/i18n';
+import { __, _x, sprintf } from '@eventespresso/i18n';
 import { InfinitySymbol } from '@eventespresso/value-objects';
 
 /**
@@ -24,6 +24,7 @@ export default ( {
 	onEdit,
 	onKeyDown,
 	saving,
+	label,
 } ) => {
 	let valueToDisplay = valueType === 'infinite' ?
 		<InfinitySymbol value={ value } /> :
@@ -31,6 +32,16 @@ export default ( {
 	valueToDisplay = isFunction( valueFormatter ) ?
 		valueFormatter( value, formatterSettings ) :
 		valueToDisplay;
+	valueToDisplay = valueToDisplay ?
+		valueToDisplay :
+		(
+			<span className="ee-inline-edit-placeholder">
+				{ sprintf(
+					_x( 'click to add %s', 'some text', 'event_espresso' ),
+					label
+				) }
+			</span>
+		);
 	return (
 		<>
 			<Spinner style={ noticeStyle } submitting={ saving } />

@@ -3,7 +3,12 @@
  */
 import { useDispatch } from '@wordpress/data';
 import { useCallback } from '@wordpress/element';
-import { ServerDateTime, Duration } from '@eventespresso/value-objects';
+import {
+	Duration,
+	ServerDateTime,
+	Money,
+	SiteCurrency,
+} from '@eventespresso/value-objects';
 
 const userID = typeof window.userSettings === 'object' &&
 	window.userSettings.uid ?
@@ -39,9 +44,9 @@ const useCreateTicketEntity = ( cacheNewTicket, basePriceType ) => {
 					TKT_reserved: 0,
 					TKT_uses: -1,
 					TKT_required: false,
-					TKT_min: null,
+					TKT_min: 0,
 					TKT_max: -1,
-					TKT_price: null,
+					TKT_price: new Money( 0, SiteCurrency ),
 					TKT_startDate: now,
 					TKT_endDate: now.plus(
 						Duration.fromObject( { days: 30 } )

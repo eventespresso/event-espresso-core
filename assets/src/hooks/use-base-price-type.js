@@ -18,7 +18,7 @@ const useBasePriceType = () => {
 			}
 			return find(
 				priceTypes,
-				( priceType ) => priceType.pbtId === 1
+				( priceType ) => priceType.PBT_ID === 1
 			);
 		},
 		[ priceTypes, priceTypesLoaded ]

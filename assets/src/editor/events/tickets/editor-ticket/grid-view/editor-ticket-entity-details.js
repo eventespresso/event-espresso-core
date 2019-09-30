@@ -1,8 +1,8 @@
 /**
  * External imports
  */
-import { ifValidTicketEntity } from '@eventespresso/editor-hocs';
 import PropTypes from 'prop-types';
+import { ifValidTicketEntity } from '@eventespresso/editor-hocs';
 
 /**
  * Internal dependencies

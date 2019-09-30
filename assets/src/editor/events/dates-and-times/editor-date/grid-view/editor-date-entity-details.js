@@ -1,8 +1,8 @@
 /**
  * External imports
  */
-import { ifValidDateEntity } from '@eventespresso/editor-hocs';
 import PropTypes from 'prop-types';
+import { ifValidDateEntity } from '@eventespresso/editor-hocs';
 
 /**
  * Internal dependencies

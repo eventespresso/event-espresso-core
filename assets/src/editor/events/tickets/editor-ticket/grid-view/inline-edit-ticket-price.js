@@ -1,12 +1,13 @@
 /**
  * External imports
  */
-import { useMemo, useCallback } from '@wordpress/element';
+import PropTypes from 'prop-types';
+import { useCallback, useMemo } from '@wordpress/element';
 import { InlineEditInput } from '@eventespresso/components';
 import { usePriceTypes, useTicketPrices } from '@eventespresso/hooks';
 import { __ } from '@eventespresso/i18n';
+import { parseMoneyValue } from '@eventespresso/utils';
 import { Money, SiteCurrency } from '@eventespresso/value-objects';
-import PropTypes from 'prop-types';
 
 /**
  * Internal dependencies
@@ -38,10 +39,12 @@ const InlineEditTicketPrice = ( {
 
 	const updateTicketPrice = useCallback(
 		( amount ) => {
+			amount = parseMoneyValue( amount );
 			ticket.price = new Money( amount, SiteCurrency );
 			calculateTicketBasePrice( amount );
+			return amount;
 		},
-		[ ticketPriceAmount, calculateTicketBasePrice, prices ]
+		[ calculateTicketBasePrice ]
 	);
 	const WrapperElement = wrapperElement ? wrapperElement : 'h2';
 	return useMemo( () => showPrice ? (
@@ -53,8 +56,7 @@ const InlineEditTicketPrice = ( {
 				type="text"
 				value={ ticketPriceAmount }
 				onChange={ ( amount ) => {
-					updateTicketPrice( amount );
-					return amount;
+					return updateTicketPrice( amount );
 				} }
 				label={ __( 'Ticket Price', 'event_espresso' ) }
 				valueFormatter={

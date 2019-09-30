@@ -39,7 +39,7 @@ const EditorDateEntityGridItem = ( {
 		}
 	);
 	return (
-		<EntityPaperFrame>
+		<EntityPaperFrame entityID={ dateEntity.id } >
 			<div className={ dateStyleClass }>
 				<EventDateCalendarDate
 					eventDate={ dateEntity }
