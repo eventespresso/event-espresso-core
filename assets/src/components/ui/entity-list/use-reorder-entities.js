@@ -76,6 +76,7 @@ const useReorderEntities = ( { setSortBy, setEntityIds } ) => {
 		} );
 		// but now we need to reset the order properties for ALL entities
 		allEntities.forEach( ( entity, index ) => {
+			// add 1 so we don't end up with order: 0
 			entity.order = index + 1;
 		} );
 		allEntities = sortBy( allEntities, [ 'order' ] );
