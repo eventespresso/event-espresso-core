@@ -5,8 +5,13 @@ namespace EventEspresso\core\domain\services\graphql\resolvers;
 use EE_Datetime;
 use EE_Error;
 use EEM_Datetime;
+use EventEspresso\core\domain\services\converters\json\DatetimeToJson;
+use EventEspresso\core\exceptions\InvalidDataTypeException;
+use EventEspresso\core\exceptions\InvalidInterfaceException;
 use EventEspresso\core\services\graphql\ResolverBase;
 use GraphQL\Type\Definition\ResolveInfo;
+use InvalidArgumentException;
+use ReflectionException;
 use WPGraphQL\AppContext;
 
 
@@ -22,6 +27,11 @@ class EventEditorDataResolver extends ResolverBase
 {
 
     /**
+     * @var DatetimeToJson $converter
+     */
+    protected $converter;
+
+    /**
      * @var EEM_Datetime $datetime_model
      */
     protected $datetime_model;
@@ -35,13 +45,15 @@ class EventEditorDataResolver extends ResolverBase
     /**
      * EventEditorEntities constructor.
      *
-     * @param object $query_data
-     * @param EEM_Datetime $datetime_model
+     * @param object         $query_data
+     * @param EEM_Datetime   $datetime_model
+     * @param DatetimeToJson $converter
      */
-    public function __construct($query_data, EEM_Datetime $datetime_model)
+    public function __construct($query_data, EEM_Datetime $datetime_model, DatetimeToJson $converter)
     {
         $this->query_data = $query_data;
         $this->datetime_model = $datetime_model;
+        $this->converter = $converter;
     }
 
 
@@ -82,6 +94,10 @@ class EventEditorDataResolver extends ResolverBase
      * @param ResolveInfo $info
      * @return string
      * @throws EE_Error
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws InvalidArgumentException
+     * @throws ReflectionException
      * @since $VID:$
      */
     public function resolve($root, array $args, AppContext $context, ResolveInfo $info)
@@ -89,7 +105,7 @@ class EventEditorDataResolver extends ResolverBase
         return wp_json_encode([
             'data' => [
                 'EventEditor' => [
-                    'eventDates' => $this->getDatesForEvent()
+                    'eventDates' => $this->converter->convertArrayOf($this->getDatesForEvent())
                 ]
             ]
         ]);
