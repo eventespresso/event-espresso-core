@@ -63,7 +63,7 @@ class EventEditorDataResolver extends ResolverBase
      */
     public function query()
     {
-        return 'RootQuery';
+        return 'Event';
     }
 
 
@@ -73,7 +73,7 @@ class EventEditorDataResolver extends ResolverBase
      */
     public function field()
     {
-        return 'EventEditor';
+        return 'eventDates';
     }
 
 
@@ -83,7 +83,7 @@ class EventEditorDataResolver extends ResolverBase
      */
     public function type()
     {
-        return 'CustomRegisteredType';
+        return 'String';
     }
 
 
@@ -100,15 +100,9 @@ class EventEditorDataResolver extends ResolverBase
      * @throws ReflectionException
      * @since $VID:$
      */
-    public function resolve($root, array $args, AppContext $context, ResolveInfo $info)
+    public function resolve($event)
     {
-        return wp_json_encode([
-            'data' => [
-                'EventEditor' => [
-                    'eventDates' => $this->converter->convertArrayOf($this->getDatesForEvent())
-                ]
-            ]
-        ]);
+        return wp_json_encode($this->converter->convertArrayOf($this->getDatesForEvent($event->ID)));
     }
 
 
@@ -117,11 +111,9 @@ class EventEditorDataResolver extends ResolverBase
      * @throws EE_Error
      * @since $VID:$
      */
-    public function getDatesForEvent()
+    public function getDatesForEvent($eventId)
     {
-        return $this->datetime_model->get_all_event_dates(
-            $this->query_data->eventId()
-        );
+        return $this->datetime_model->get_all_event_dates($eventId);
     }
 
 }
