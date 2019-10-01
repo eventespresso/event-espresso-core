@@ -104,6 +104,7 @@ const EditorDateEntitiesList = ( { ...otherProps } ) => {
 			<EntityList
 				{ ...otherProps }
 				entities={ paginatedEntities }
+				allEventDates={ eventDates }
 				EntityGridView={ EditorDateEntitiesGridView }
 				EntityListView={ EditorDateEntitiesListView }
 				view={ view }

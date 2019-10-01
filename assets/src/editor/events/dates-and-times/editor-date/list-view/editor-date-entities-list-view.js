@@ -9,9 +9,7 @@ import {
 	filterColumnsByKey,
 	ResponsiveTable,
 } from '@eventespresso/components';
-import { dateTimeModel } from '@eventespresso/model';
 import { isModelEntityOfModel } from '@eventespresso/validators';
-import { InfinitySymbol } from '@eventespresso/value-objects';
 import PropTypes from 'prop-types';
 
 /**
@@ -19,9 +17,9 @@ import PropTypes from 'prop-types';
  */
 import datesListTableHeader from './dates-list-table-header';
 import datesListTableRow from './dates-list-table-row';
+import useReorderDates from './use-reorder-dates';
 import './editor-date-entities-list-view.css';
 
-const { getBackgroundColorClass, status } = dateTimeModel;
 const noZebraStripe = [ 'row', 'stripe', 'name', 'actions' ];
 
 /**
@@ -29,32 +27,29 @@ const noZebraStripe = [ 'row', 'stripe', 'name', 'actions' ];
  * Displays event date details in a standard list table like view
  *
  * @function
- * @param {Array} entities 	array of JSON objects defining the Event Dates
- * @param {string} showDate
- * @param {string} htmlClass
- * @param {Function} doRefresh
- * @param {Object} otherProps
- * @return {Component} 			list of rendered Event Dates
+ * @param {Object} props
+ * @member {Array} entities         filtered array of Event Date model objects
+ * @member {Array} allEventDates    array of ALL Event Date model objects
+ * @member {string} showDate
+ * @member {string} htmlClass
+ * @member {Object} otherProps
+ * @return {Object} rendered table of Event Dates
  */
 const EditorDateEntitiesListView = ( {
 	entities,
+	allEventDates,
 	showDate,
+	setEntityIds,
+	setSortBy,
 	htmlClass,
-	doRefresh,
 	...otherProps
 } ) => {
-	htmlClass = classNames( htmlClass, 'ee-dates-list-list-view' );
-
-	const getCapacity = useCallback(
-		/**
-		 * @function
-		 * @param {number|string} cap AKA reg limit
-		 * @return {number|string} Event Date Capacity
-		 */
-		( cap ) => <InfinitySymbol value={ cap } asInt />,
-		[]
+	const reorderDates = useReorderDates(
+		entities,
+		allEventDates,
+		setEntityIds,
+		setSortBy
 	);
-
 	/**
 	 * toggles display of start and end date columns
 	 * based on incoming value of showDate
@@ -84,39 +79,37 @@ const EditorDateEntitiesListView = ( {
 		 */
 		( dateEntity ) => {
 			const columns = isModelEntityOfModel( dateEntity, 'datetime' ) ?
-				datesListTableRow(
-					dateEntity,
-					getCapacity( dateEntity.regLimit ),
-					status( dateEntity ),
-					getBackgroundColorClass( dateEntity ),
-					doRefresh,
-					otherProps
-				) : null;
+				datesListTableRow( dateEntity, otherProps ) :
+				null;
 			return filterColumns( columns );
 		}
 	);
+
+	htmlClass = classNames( htmlClass, 'ee-dates-list-list-view' );
 
 	return (
 		<ResponsiveTable
 			columns={ filterColumns( datesListTableHeader() ) }
 			rowData={ addZebraStripesOnMobile( formRows, noZebraStripe ) }
 			metaData={ {
+				tableId: 'date-entities-list-view',
 				tableCaption: __( 'Event Dates', 'event_espresso' ),
 			} }
 			classes={ { tableClass: htmlClass } }
+			onDragEnd={ reorderDates }
 		/>
 	);
 };
 
 EditorDateEntitiesListView.propTypes = {
 	entities: PropTypes.array.isRequired,
+	allEventDates: PropTypes.array.isRequired,
 	showDate: PropTypes.string,
 	htmlClass: PropTypes.string,
 	doRefresh: PropTypes.func,
 };
 
 EditorDateEntitiesListView.defaultProps = {
-	entities: [],
 	showDate: '',
 	htmlClass: '',
 };

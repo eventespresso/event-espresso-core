@@ -2,6 +2,8 @@
  * External imports
  */
 import { shortenCuid } from '@eventespresso/utils';
+import { InfinitySymbol } from '@eventespresso/value-objects';
+import { dateTimeModel } from '@eventespresso/model';
 
 /**
  * Internal dependencies
@@ -11,6 +13,7 @@ import EditorDateEntityActionsMenu
 import EventDateRegistrationsLink from '../event-date-registrations-link';
 
 const DATE_TIME_FORMAT = 'ddd MMM YY h:mm a';
+const { getBackgroundColorClass, status } = dateTimeModel;
 
 /**
  * EditorDateEntityListItem
@@ -18,21 +21,12 @@ const DATE_TIME_FORMAT = 'ddd MMM YY h:mm a';
  *
  * @function
  * @param {Object} dateEntity Event Date entity
- * @param {string} capacity
- * @param {string} statusClass
- * @param {string} bgClass
- * @param {Function} doRefresh
  * @param {Object} otherProps
  * @return {Array} row data for the provided date entity
  */
-const datesListTableRow = (
-	dateEntity,
-	capacity,
-	statusClass,
-	bgClass,
-	doRefresh,
-	otherProps
-) => {
+const datesListTableRow = ( dateEntity, otherProps ) => {
+	const statusClass = status( dateEntity );
+	const bgClass = getBackgroundColorClass( dateEntity );
 	return [
 		{
 			key: 'row',
@@ -79,7 +73,7 @@ const datesListTableRow = (
 			key: 'capacity',
 			type: 'cell',
 			class: 'ee-date-list-cell ee-date-list-col-capacity ee-rspnsv-table-column-tiny ee-number-column',
-			value: capacity,
+			value: <InfinitySymbol value={ dateEntity.regLimit } asInt />,
 		},
 		{
 			key: 'sold',
@@ -108,7 +102,6 @@ const datesListTableRow = (
 			value: (
 				<EditorDateEntityActionsMenu
 					dateEntity={ dateEntity }
-					doRefresh={ doRefresh }
 					{ ...otherProps }
 				/>
 			),
