@@ -112,6 +112,12 @@
 }
 
 
+.ee-rspnsv-table .ee-drop-down-menu,
+.ee-rspnsv-table .ee-icon-menu-item {
+    margin: var(--ee-margin-nano);
+}
+
+
 
 
 /* COLUMN SIZES */

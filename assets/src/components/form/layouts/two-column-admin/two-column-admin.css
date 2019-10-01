@@ -527,7 +527,7 @@
         margin: var(--ee-margin-small) 0 0;
     }
 
-    .ee-two-column-admin .px-3 .ee-form-row:not(li) {
+    .ee-two-column-admin .ee-form-row:not(li) {
         margin: 0 0 var(--ee-margin-small);
     }
 }
@@ -617,7 +617,7 @@
 /* Anything bigger than Smartphone */
 @media screen and (min-width: 481px) {
 
-    .ee-two-column-admin .px-3 .ee-form-row:not(li) {
+    .ee-two-column-admin .ee-form-row:not(li) {
         margin: 0 0 var(--ee-margin-small);
     }
 
@@ -825,7 +825,7 @@
     }
 
     .ee-two-column-admin .ee-form-row,
-    .ee-two-column-admin .px-3 .ee-form-row:not(li) {
+    .ee-two-column-admin .ee-form-row:not(li) {
         flex-flow: column nowrap;
         justify-content: center;
         min-height: unset;
