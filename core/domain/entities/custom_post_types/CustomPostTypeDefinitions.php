@@ -65,10 +65,13 @@ class CustomPostTypeDefinitions
                 'class_name'    => 'EE_Event',
                 'model_name'    => 'EEM_Event',
                 'args'          => array(
-                    'public'            => true,
-                    'show_in_nav_menus' => true,
-                    'capability_type'   => 'event',
-                    'capabilities'      => array(
+                    'public'              => true,
+                    'show_in_nav_menus'   => true,
+                    'show_in_graphql'     => true,
+                    'graphql_single_name' => __( 'Event', 'event_espresso' ),
+                    'graphql_plural_name' => __( 'Events', 'event_espresso' ),
+                    'capability_type'     => 'event',
+                    'capabilities'        => array(
                         'edit_post'              => 'ee_edit_event',
                         'read_post'              => 'ee_read_event',
                         'delete_post'            => 'ee_delete_event',
@@ -83,12 +86,12 @@ class CustomPostTypeDefinitions
                         'edit_private_posts'     => 'ee_edit_private_events',
                         'edit_published_posts'   => 'ee_edit_published_events',
                     ),
-                    'taxonomies'        => array(
+                    'taxonomies'          => array(
                         'espresso_event_categories',
                         'espresso_event_type',
                         'post_tag',
                     ),
-                    'page_templates'    => true,
+                    'page_templates'      => true,
                 ),
             ),
             'espresso_venues'    => array(
