@@ -2,12 +2,17 @@
 
 namespace EventEspresso\core\domain\services\graphql\resolvers;
 
-use EE_Datetime;
 use EE_Error;
+use EE_Event;
 use EEM_Datetime;
-use EventEspresso\core\domain\services\converters\json\DatetimeToJson;
+use EventEspresso\core\domain\services\converters\spoofers\RestApiSpoofer;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
+use EventEspresso\core\exceptions\ModelConfigurationException;
+use EventEspresso\core\exceptions\RestPasswordIncorrectException;
+use EventEspresso\core\exceptions\RestPasswordRequiredException;
+use EventEspresso\core\exceptions\UnexpectedEntityException;
+use EventEspresso\core\libraries\rest_api\RestException;
 use EventEspresso\core\services\graphql\ResolverBase;
 use GraphQL\Type\Definition\ResolveInfo;
 use InvalidArgumentException;
@@ -27,33 +32,26 @@ class EventEditorDataResolver extends ResolverBase
 {
 
     /**
-     * @var DatetimeToJson $converter
-     */
-    protected $converter;
-
-    /**
      * @var EEM_Datetime $datetime_model
      */
     protected $datetime_model;
 
     /**
-     * @var object $query_data
+     * @var RestApiSpoofer $converter
      */
-    protected $query_data;
+    protected $spoofer;
 
 
     /**
      * EventEditorEntities constructor.
      *
-     * @param object         $query_data
      * @param EEM_Datetime   $datetime_model
-     * @param DatetimeToJson $converter
+     * @param RestApiSpoofer $spoofer
      */
-    public function __construct($query_data, EEM_Datetime $datetime_model, DatetimeToJson $converter)
+    public function __construct(EEM_Datetime $datetime_model, RestApiSpoofer $spoofer)
     {
-        $this->query_data = $query_data;
         $this->datetime_model = $datetime_model;
-        $this->converter = $converter;
+        $this->spoofer = $spoofer;
     }
 
 
@@ -88,32 +86,32 @@ class EventEditorDataResolver extends ResolverBase
 
 
     /**
-     * @param             $root
+     * @param EE_Event    $event
      * @param array       $args
      * @param AppContext  $context
      * @param ResolveInfo $info
      * @return string
      * @throws EE_Error
+     * @throws InvalidArgumentException
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
-     * @throws InvalidArgumentException
      * @throws ReflectionException
+     * @throws ModelConfigurationException
+     * @throws RestPasswordIncorrectException
+     * @throws RestPasswordRequiredException
+     * @throws UnexpectedEntityException
+     * @throws RestException
      * @since $VID:$
      */
     public function resolve($event, array $args, AppContext $context, ResolveInfo $info)
     {
-        return wp_json_encode($this->converter->convertArrayOf($this->getDatesForEvent($event->ID)));
+        return $event instanceof EE_Event
+            ? wp_json_encode(
+                $this->spoofer->getApiResults(
+                    $this->datetime_model,
+                    [['EVT_ID' => $event->ID()]]
+                )
+            )
+            : '{}';
     }
-
-
-    /**
-     * @return EE_Datetime[]
-     * @throws EE_Error
-     * @since $VID:$
-     */
-    public function getDatesForEvent($eventId)
-    {
-        return $this->datetime_model->get_all_event_dates($eventId);
-    }
-
 }

@@ -891,10 +891,13 @@ class EE_Dependency_Map
                 'EventEspresso\core\services\request\Request' => EE_Dependency_Map::load_from_cache,
                 'EventEspresso\core\services\loaders\Loader'  => EE_Dependency_Map::load_from_cache,
             ],
+            'EventEspresso\core\domain\services\converters\spoofers\RestApiSpoofer' => [
+                'EventEspresso\core\libraries\rest_api\controllers\model\Read' => EE_Dependency_Map::load_from_cache,
+                null
+            ],
             'EventEspresso\core\domain\services\graphql\resolvers\EventEditorDataResolver' => [
-                null,
                 'EEM_Datetime' => EE_Dependency_Map::load_from_cache,
-                'EventEspresso\core\domain\services\converters\json\DatetimeToJson' => EE_Dependency_Map::load_from_cache,
+                'EventEspresso\core\domain\services\converters\spoofers\RestApiSpoofer' => EE_Dependency_Map::load_from_cache,
             ],
         );
     }
