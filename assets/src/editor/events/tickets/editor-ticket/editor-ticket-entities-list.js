@@ -105,6 +105,7 @@ const EditorTicketEntitiesList = ( { ...otherProps } ) => {
 			<EntityList
 				{ ...otherProps }
 				entities={ paginatedEntities }
+				allTickets={ tickets }
 				EntityGridView={ EditorTicketEntitiesGridView }
 				EntityListView={ EditorTicketEntitiesListView }
 				view={ view }

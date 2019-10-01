@@ -17,6 +17,7 @@ import PropTypes from 'prop-types';
  */
 import ticketsListTableHeader from './tickets-list-table-header';
 import ticketsListTableRow from './tickets-list-table-row';
+import useReorderTickets from './use-reorder-tickets';
 import './editor-ticket-entities-list-view.css';
 
 const noZebraStripe = [ 'row', 'stripe', 'name', 'actions' ];
@@ -27,7 +28,8 @@ const noZebraStripe = [ 'row', 'stripe', 'name', 'actions' ];
  *
  * @function
  * @param {Object} props
- * @member {Array} entities    filtered array of Ticket model objects
+ * @member {Array} entities  filtered array of Ticket model objects
+ * @member {Array} tickets   array of ALL Ticket model objects
  * @member {string} displayTicketDate
  * @member {string} htmlClass
  * @member {Object} otherProps
@@ -35,10 +37,19 @@ const noZebraStripe = [ 'row', 'stripe', 'name', 'actions' ];
  */
 const EditorTicketEntitiesListView = ( {
 	entities,
+	allTickets,
 	displayTicketDate,
+	setEntityIds,
+	setSortBy,
 	htmlClass,
 	...otherProps
 } ) => {
+	const reorderTickets = useReorderTickets(
+		entities,
+		allTickets,
+		setEntityIds,
+		setSortBy
+	);
 	/**
 	 * toggles display of start and end date columns
 	 * based on incoming value of showDate
@@ -79,12 +90,14 @@ const EditorTicketEntitiesListView = ( {
 				tableCaption: __( 'Tickets', 'event_espresso' ),
 			} }
 			classes={ { tableClass: htmlClass } }
+			onDragEnd={ reorderTickets }
 		/>
 	);
 };
 
 EditorTicketEntitiesListView.propTypes = {
 	entities: PropTypes.array.isRequired,
+	allTickets: PropTypes.array.isRequired,
 	displayTicketDate: PropTypes.string,
 	htmlClass: PropTypes.string,
 };
