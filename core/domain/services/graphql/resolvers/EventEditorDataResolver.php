@@ -3,7 +3,6 @@
 namespace EventEspresso\core\domain\services\graphql\resolvers;
 
 use EE_Error;
-use EE_Event;
 use EEM_Datetime;
 use EventEspresso\core\domain\services\converters\spoofers\RestApiSpoofer;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
@@ -18,6 +17,7 @@ use GraphQL\Type\Definition\ResolveInfo;
 use InvalidArgumentException;
 use ReflectionException;
 use WPGraphQL\AppContext;
+use WPGraphQL\Model\Post;
 
 
 /**
@@ -86,7 +86,7 @@ class EventEditorDataResolver extends ResolverBase
 
 
     /**
-     * @param EE_Event    $event
+     * @param Post        $post
      * @param array       $args
      * @param AppContext  $context
      * @param ResolveInfo $info
@@ -103,15 +103,13 @@ class EventEditorDataResolver extends ResolverBase
      * @throws RestException
      * @since $VID:$
      */
-    public function resolve($event, array $args, AppContext $context, ResolveInfo $info)
+    public function resolve($post, array $args, AppContext $context, ResolveInfo $info)
     {
-        return $event instanceof EE_Event
-            ? wp_json_encode(
-                $this->spoofer->getApiResults(
-                    $this->datetime_model,
-                    [['EVT_ID' => $event->ID()]]
-                )
-            )
+        return $post instanceof Post
+            ? wp_json_encode($this->spoofer->getApiResults(
+                $this->datetime_model,
+                [['EVT_ID' => $post->ID]]
+            ))
             : '{}';
     }
 }
