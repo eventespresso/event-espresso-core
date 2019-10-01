@@ -4,6 +4,7 @@ namespace EventEspresso\core\domain\services\converters\json;
 
 use EE_Datetime;
 use EE_Error;
+use EE_Event;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
 use EventEspresso\core\services\converters\json\ModelObjectToJsonConverterInterface;
@@ -95,7 +96,7 @@ class DatetimeToJson implements ModelObjectToJsonConverterInterface
     {
         return $datetime instanceof EE_Datetime ? [
             'DTT_ID'          => $datetime->ID(),
-            'EVT_ID'          => $datetime->event()->ID(),
+            'EVT_ID'          => $datetime->event() instanceof EE_Event ? $datetime->event()->ID() : 0,
             'DTT_name'        => $datetime->name(),
             'DTT_description' => $datetime->description(),
             'DTT_EVT_start'   => $datetime->start_date(DATE_ATOM),
