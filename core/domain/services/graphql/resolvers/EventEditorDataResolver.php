@@ -100,7 +100,7 @@ class EventEditorDataResolver extends ResolverBase
      * @throws ReflectionException
      * @since $VID:$
      */
-    public function resolve($event)
+    public function resolve($event, array $args, AppContext $context, ResolveInfo $info)
     {
         return wp_json_encode($this->converter->convertArrayOf($this->getDatesForEvent($event->ID)));
     }
