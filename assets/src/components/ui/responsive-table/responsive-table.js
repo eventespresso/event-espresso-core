@@ -1,12 +1,12 @@
 /**
  * External imports
  */
-import { isArray, isEmpty, isFunction } from 'lodash';
 import warning from 'warning';
 import PropTypes from 'prop-types';
-import { withInstanceId } from '@wordpress/compose';
-import { Component } from '@wordpress/element';
 import classNames from 'classnames';
+import { isEmpty, isFunction } from 'lodash';
+import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
+import { withInstanceId } from '@wordpress/compose';
 
 /**
  * Internal dependencies
@@ -21,106 +21,70 @@ import TableDataCell from './table-data-cell';
 import ResponsiveCell from './responsive-cell';
 import './style.css';
 
+const nullFunc = () => {};
+
 /**
  * ResponsiveDataGrid responsive-table
  * produces a table like structure for displaying tabular data
  * in a grid that collapses properly on smaller screens
  *
- * @param {Array} columnHeaders
- * @param {Array} rowHeaders
- * @param {Array} tableData
- * @param {Object} metaData
+ * @param {Object} props
+ * @var {string} instanceId
+ * @var {Array} columns
+ * @var {Array} rowData
+ * @var {Array} footerData
+ * @var {Object} metaData
+ * @var {Object} classes
+ * @var {Function} onBeforeDragStart
+ * @var {Function} onDragStart
+ * @var {Function} onDragUpdate
+ * @var {Function} onDragEnd
  */
-class ResponsiveTable extends Component {
-	static propTypes = {
-		instanceId: PropTypes.number,
-		columns: PropTypes.arrayOf(
-			PropTypes.shape( {
-				type: PropTypes.string.isRequired,
-				value: PropTypes.oneOfType( [
-					PropTypes.object,
-					PropTypes.number,
-					PropTypes.string,
-				] ).isRequired,
-				id: PropTypes.string,
-				class: PropTypes.string,
-				extraProps: PropTypes.object,
-			} )
-		).isRequired,
-		rowData: PropTypes.arrayOf(
-			PropTypes.arrayOf(
-				PropTypes.shape( {
-					type: PropTypes.string.isRequired,
-					value: PropTypes.oneOfType( [
-						PropTypes.object,
-						PropTypes.number,
-						PropTypes.string,
-					] ).isRequired,
-					id: PropTypes.string,
-					class: PropTypes.string,
-					render: PropTypes.func,
-					extraProps: PropTypes.object,
-				} )
-			)
-		).isRequired,
-		metaData: PropTypes.shape( {
-			tableCaption: PropTypes.string.isRequired,
-			showTableFooter: PropTypes.bool,
-			hasRowHeaders: PropTypes.bool,
-		} ).isRequired,
-		classes: PropTypes.shape( {
-			tableClass: PropTypes.string,
-			headerClass: PropTypes.string,
-			headerRowClass: PropTypes.string,
-			headerThClass: PropTypes.string,
-			bodyClass: PropTypes.string,
-			bodyRowClass: PropTypes.string,
-			bodyThClass: PropTypes.string,
-			bodyTdClass: PropTypes.string,
-			footerClass: PropTypes.string,
-			footerRowClass: PropTypes.string,
-			footerThClass: PropTypes.string,
-		} ),
-	};
+const ResponsiveTable = ( {
+	instanceId,
+	columns = [],
+	rowData = [],
+	footerData = [],
+	metaData = {},
+	classes = {},
+	onBeforeDragStart = nullFunc,
+	onDragStart = nullFunc,
+	onDragUpdate = nullFunc,
+	onDragEnd = nullFunc,
+} ) => {
 
-	/**
-	 * @function
-	 * @param {number} instanceId
-	 * @param {Object} metaData
-	 */
-	setMetaData = ( instanceId, metaData = {} ) => {
-		this.tableId = `ee-rspnsv-table-${ instanceId }`;
-		this.tableCaption = metaData.tableCaption || '';
-		this.captionID = `${ this.tableId }-caption`;
-		this.showTableFooter = typeof metaData.showTableFooter === 'undefined' ?
-			true : metaData.showTableFooter;
-		this.hasRowHeaders = !! metaData.hasRowHeaders;
-	};
+	if ( isEmpty( columns ) ) {
+		return null;
+	}
+	const tableId = metaData.tableId || `ee-rspnsv-table-${ instanceId }`;
+	const tableCaption = metaData.tableCaption || '';
+	const captionID = `${ tableId }-caption`;
+	const showTableFooter = typeof metaData.showTableFooter === 'undefined' ?
+		true : metaData.showTableFooter;
+	const hasRowHeaders = !! metaData.hasRowHeaders;
+
+	const tableColumns = [];
+	let rowNumber = -1;
 
 	/**
 	 * @function
 	 * @param {Object} classes
 	 */
-	setCssClasses = ( classes ) => {
-		this.classes = {
-			tableClass: classes.tableClass || '',
-			headerClass: classes.headerClass || '',
-			headerRowClass: classes.headerRowClass || '',
-			headerThClass: classes.headerThClass || '',
-			bodyClass: classes.bodyClass || '',
-			bodyRowClass: classes.bodyRowClass || '',
-			bodyThClass: classes.bodyThClass || '',
-			bodyTdClass: classes.bodyTdClass || '',
-			footerClass: classes.footerClass || '',
-			footerRowClass: classes.footerRowClass || '',
-			footerThClass: classes.footerThClass || '',
-		};
-		this.classes.tableClass = classNames(
-			this.classes.tableClass,
-			{
-				'ee-rspnsv-table-has-row-headers': this.hasRowHeaders
-			}
-		);
+	const cssClasses = {
+		tableClass: classNames(
+			classes.tableClass,
+			{ 'ee-rspnsv-table-has-row-headers': hasRowHeaders }
+		),
+		headerClass: classes.headerClass || '',
+		headerRowClass: classes.headerRowClass || '',
+		headerThClass: classes.headerThClass || '',
+		bodyClass: classes.bodyClass || '',
+		bodyRowClass: classes.bodyRowClass || '',
+		bodyThClass: classes.bodyThClass || '',
+		bodyTdClass: classes.bodyTdClass || '',
+		footerClass: classes.footerClass || '',
+		footerRowClass: classes.footerRowClass || '',
+		footerThClass: classes.footerThClass || '',
 	};
 
 	/**
@@ -129,8 +93,8 @@ class ResponsiveTable extends Component {
 	 * @param {boolean} isFooter
 	 * @return {Object} rendered headings row
 	 */
-	tableHeader = ( columns, isFooter = false ) => {
-		this.rowNumber++;
+	const getTableHeader = ( columns, isFooter = false ) => {
+		rowNumber++;
 		const rowType = isFooter === true ? 'footer' : 'header';
 		let rowProps = {};
 		let indexMod = 0;
@@ -142,7 +106,7 @@ class ResponsiveTable extends Component {
 					indexMod++;
 					return null;
 				}
-				this.columns.push( column );
+				tableColumns.push( column );
 				colNumber -= indexMod;
 				const hasRenderCallback = isFunction( column.render );
 				warning(
@@ -151,32 +115,59 @@ class ResponsiveTable extends Component {
 				);
 				const renderCallback = hasRenderCallback ?
 					column.render :
-					this.headingCell;
-				return renderCallback( this.rowNumber, colNumber, column );
+					headingCell;
+				return renderCallback( rowNumber, colNumber, column );
 			}
 		);
-		return this.tableRow( headerCells, rowProps );
+		return tableRow( headerCells, rowProps );
 	};
 
 	/**
 	 * @function
 	 * @param {Array} cells
 	 * @param {Object} rowProps
+	 * @param {Object} provided
+	 * @param {Object} snapshot
 	 * @return {Object} rendered <tr> element
 	 */
-	tableRow = ( cells, rowProps = {} ) => {
+	const tableRow = ( cells, rowProps = {}, provided = {}, snapshot = {} ) => {
+		const draggableProps = provided.draggableProps || {};
+		const dragHandleProps = provided.dragHandleProps || {};
 		return (
 			<TableRow
-				key={ `row-${ this.rowNumber }` }
-				rowNumber={ this.rowNumber }
+				innerRef={ provided.innerRef }
+				key={ `row-${ rowNumber }` }
+				rowNumber={ rowNumber }
 				rowType={ rowProps.rowType || 'body' }
-				htmlId={ rowProps.id || this.tableId }
+				htmlId={ rowProps.id || tableId }
 				htmlClass={ rowProps.class || '' }
-				classes={ this.classes }
+				classes={ cssClasses }
+				{ ...draggableProps }
+				{ ...dragHandleProps }
+				style={ getRowStyle(
+					snapshot.isDragging,
+					draggableProps.style || {}
+				) }
 			>
 				{ cells }
 			</TableRow>
 		);
+	};
+
+	/**
+	 * @function
+	 * @param {boolean} isDragging
+	 * @param {Object} style
+	 * @return {Object} css styles
+	 */
+	const getRowStyle = ( isDragging = false, style = {} ) => {
+		style.border = isDragging ?
+			'1px solid var(--ee-color-bright-blue)' :
+			'none';
+		style.display = isDragging ?
+			'table' :
+			'table-row';
+		return style
 	};
 
 	/**
@@ -186,16 +177,16 @@ class ResponsiveTable extends Component {
 	 * @param {Object} cellProps
 	 * @return {Object} rendered column header cell
 	 */
-	headingCell = ( rowNumber, colNumber, cellProps ) => {
+	const headingCell = ( rowNumber, colNumber, cellProps ) => {
 		return (
 			<TableHeadingCell
 				key={ `row-${ rowNumber }-col-${ colNumber }` }
 				rowNumber={ rowNumber }
 				colNumber={ colNumber }
 				rowType={ cellProps.rowType || 'body' }
-				htmlId={ cellProps.id || this.tableId }
+				htmlId={ cellProps.id || tableId }
 				htmlClass={ cellProps.class || '' }
-				classes={ this.classes }
+				classes={ cssClasses }
 			>
 				{ cellProps.value || '' }
 			</TableHeadingCell>
@@ -205,13 +196,15 @@ class ResponsiveTable extends Component {
 	/**
 	 * @function
 	 * @param {Array} dataRow
+	 * @param {Object} provided
+	 * @param {Object} snapshot
 	 * @return {Object} rendered data row
 	 */
-	dataRow = ( dataRow ) => {
-		this.rowNumber++;
+	const renderDataRow = ( dataRow, provided, snapshot ) => {
+		rowNumber++;
 		warning(
-			isArray( dataRow ),
-			`Data for row ${ this.rowNumber } is not an array.`
+			Array.isArray( dataRow ),
+			`Data for row ${ rowNumber } is not an array.`
 		);
 		let rowProps = {};
 		let indexMod = 0;
@@ -226,12 +219,12 @@ class ResponsiveTable extends Component {
 				// adjust column number used in IDs
 				// before grabbing element from column data
 				colNumber -= indexMod;
-				const column = this.columns[ colNumber ];
+				const column = tableColumns[ colNumber ];
 				if ( ! column ) {
 					warning(
 						false,
 						`Missing data for column ${ colNumber } ` +
-						`in row ${ this.rowNumber }.`
+						`in row ${ rowNumber }.`
 					);
 					return null;
 				}
@@ -239,20 +232,20 @@ class ResponsiveTable extends Component {
 				warning(
 					hasRenderCallback || cellData.hasOwnProperty( 'value' ),
 					`Missing "value" property for table cell at ` +
-					`row ${ this.rowNumber } column ${ colNumber }.`
+					`row ${ rowNumber } column ${ colNumber }.`
 				);
 				const renderCallback = hasRenderCallback ?
 					cellData.render :
-					this.dataCell;
+					dataCell;
 				return renderCallback(
-					this.rowNumber,
+					rowNumber,
 					colNumber,
 					column,
 					cellData
 				);
 			}
 		);
-		return this.tableRow( rowCells, rowProps );
+		return tableRow( rowCells, rowProps, provided, snapshot );
 	};
 
 	/**
@@ -263,17 +256,17 @@ class ResponsiveTable extends Component {
 	 * @param {Object} cellData
 	 * @return {Object} rendered headings row
 	 */
-	dataCell = ( rowNumber, colNumber, column, cellData ) => {
-		return this.hasRowHeaders && colNumber === 0 ? (
-			this.headingCell( rowNumber, colNumber, cellData )
+	const dataCell = ( rowNumber, colNumber, column, cellData ) => {
+		return hasRowHeaders && colNumber === 0 ? (
+			headingCell( rowNumber, colNumber, cellData )
 		) : (
 			<TableDataCell
 				key={ `row-${ rowNumber }-col-${ colNumber }` }
 				rowNumber={ rowNumber }
 				colNumber={ colNumber }
-				htmlId={ cellData.id || this.tableId }
+				htmlId={ cellData.id || tableId }
 				htmlClass={ cellData.class || '' }
-				classes={ this.classes }
+				classes={ cssClasses }
 			>
 				<ResponsiveCell
 					heading={ column.value }
@@ -282,53 +275,129 @@ class ResponsiveTable extends Component {
 			</TableDataCell>
 		);
 	};
-
-	render() {
-		const {
-			instanceId,
-			columns = [],
-			rowData = [],
-			footerData = [],
-			metaData = {},
-			classes = {},
-		} = this.props;
-		if ( isEmpty( columns ) ) {
-			return null;
-		}
-		this.setMetaData( instanceId, metaData );
-		this.setCssClasses( classes || {} );
-		this.columns = [];
-		this.rowNumber = -1;
-		const tableHeader = this.tableHeader( columns );
-		this.classes.tableClass = classNames(
-			this.classes.tableClass,
-			`ee-rspnsv-table-column-count-${ this.columns.length }`
-		);
-		this.showTableFooter = this.showTableFooter && ! isEmpty( footerData );
-		return (
+	const tableHeader = getTableHeader( columns );
+	cssClasses.tableClass = classNames(
+		cssClasses.tableClass,
+		`ee-rspnsv-table-column-count-${ tableColumns.length }`
+	);
+	const droppableId = `${ tableId }-droppable`;
+	return (
+		<DragDropContext
+			onBeforeDragStart={ onBeforeDragStart }
+			onDragStart={ onDragStart }
+			onDragUpdate={ onDragUpdate }
+			onDragEnd={ onDragEnd }
+		>
 			<Table
-				tableId={ this.tableId }
-				tableClass={ this.classes.tableClass }
-				captionID={ this.captionID }
-				captionText={ this.tableCaption }
+				tableId={ tableId }
+				tableClass={ cssClasses.tableClass }
+				captionID={ captionID }
+				captionText={ tableCaption }
 			>
-				<TableHeader htmlClass={ this.classes.headerClass } >
+				<TableHeader htmlClass={ cssClasses.headerClass } >
 					{ tableHeader }
 				</TableHeader>
-				<TableBody htmlClass={ this.classes.bodyClass }>
-					{ rowData.map(
-						( dataRow ) => this.dataRow( dataRow )
+				<Droppable droppableId={ droppableId }>
+				{ (
+					{ innerRef, droppableProps, placeholder },
+					{ isDraggingOver }
+				) => (
+					<TableBody
+						innerRef={ innerRef }
+						htmlClass={ cssClasses.bodyClass }
+						style={ {
+							border: isDraggingOver ?
+								'1px solid var(--ee-color-bright-green)' :
+								'none',
+							borderSpacing: isDraggingOver ?
+								'2px' :
+								'0',
+						} }
+						{ ...droppableProps }
+					>
+						{ rowData.map(
+							( dataRow, index ) => (
+								<Draggable
+									key={ dataRow[ 0 ].id }
+									draggableId={ dataRow[ 0 ].id }
+									index={ index }
+								>
+									{ ( provided, snapshot ) => (
+										renderDataRow(
+											dataRow,
+											provided,
+											snapshot
+										)
+									) }
+								</Draggable>
+							)
+						) }
+						{ placeholder }
+					</TableBody>
 					) }
-				</TableBody>
+				</Droppable>
 				<TableFooter
-					showFooter={ this.showTableFooter }
-					htmlClass={ this.classes.footerClass }
+					showFooter={ showTableFooter && ! isEmpty( footerData ) }
+					htmlClass={ cssClasses.footerClass }
 				>
-					{ this.tableHeader( footerData, true ) }
+					{ getTableHeader( footerData, true ) }
 				</TableFooter>
 			</Table>
-		);
-	}
-}
+		</DragDropContext>
+	);
+};
+
+ResponsiveTable.propTypes = {
+	instanceId: PropTypes.number,
+	columns: PropTypes.arrayOf(
+		PropTypes.shape( {
+			type: PropTypes.string.isRequired,
+			value: PropTypes.oneOfType( [
+				PropTypes.object,
+				PropTypes.number,
+				PropTypes.string,
+			] ).isRequired,
+			key: PropTypes.string,
+			id: PropTypes.string,
+			class: PropTypes.string,
+			extraProps: PropTypes.object,
+		} )
+	).isRequired,
+	rowData: PropTypes.arrayOf(
+		PropTypes.arrayOf(
+			PropTypes.shape( {
+				type: PropTypes.string.isRequired,
+				value: PropTypes.oneOfType( [
+					PropTypes.object,
+					PropTypes.number,
+					PropTypes.string,
+				] ).isRequired,
+				id: PropTypes.string,
+				class: PropTypes.string,
+				render: PropTypes.func,
+				extraProps: PropTypes.object,
+			} )
+		)
+	).isRequired,
+	metaData: PropTypes.shape( {
+		tableId: PropTypes.string.isRequired,
+		tableCaption: PropTypes.string.isRequired,
+		showTableFooter: PropTypes.bool,
+		hasRowHeaders: PropTypes.bool,
+	} ).isRequired,
+	classes: PropTypes.shape( {
+		tableClass: PropTypes.string,
+		headerClass: PropTypes.string,
+		headerRowClass: PropTypes.string,
+		headerThClass: PropTypes.string,
+		bodyClass: PropTypes.string,
+		bodyRowClass: PropTypes.string,
+		bodyThClass: PropTypes.string,
+		bodyTdClass: PropTypes.string,
+		footerClass: PropTypes.string,
+		footerRowClass: PropTypes.string,
+		footerThClass: PropTypes.string,
+	} ),
+};
 
 export default withInstanceId( ResponsiveTable );

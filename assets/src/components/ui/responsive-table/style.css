@@ -98,7 +98,8 @@
 
 .ee-rspnsv-table .ee-rspnsv-table-header-th.ee-entity-list-status-stripe,
 .ee-rspnsv-table .ee-rspnsv-table-body-td.ee-entity-list-status-stripe {
-    width: var(--ee-padding-micro);
+    /*width: var(--ee-padding-micro);*/
+    width: .25%;
 }
 
 .ee-rspnsv-table .ee-status-stripe-div {
@@ -1194,9 +1195,18 @@
         visibility: hidden;
         width: 0;
     }
+
+    .ee-rspnsv-table .ee-rspnsv-table-header-th.ee-entity-list-status-stripe,
+    .ee-rspnsv-table .ee-rspnsv-table-body-td.ee-entity-list-status-stripe {
+        width: .275%;
+    }
 }
 
 @media only screen and (max-width: 1366px) {
+    .ee-rspnsv-table .ee-rspnsv-table-header-th.ee-entity-list-status-stripe,
+    .ee-rspnsv-table .ee-rspnsv-table-body-td.ee-entity-list-status-stripe {
+        width: .37%;
+    }
 }
 
 @media only screen and (max-width: 1280px) {
@@ -1343,9 +1353,22 @@
         padding: var(--ee-padding-micro) var(--ee-padding-smaller);
         width: 100%;
     }
+
+    .ee-rspnsv-table .ee-rspnsv-table-header-th.ee-entity-list-status-stripe,
+    .ee-rspnsv-table .ee-rspnsv-table-body-td.ee-entity-list-status-stripe {
+        width: .4%;
+    }
+
+    .columns-2 .ee-rspnsv-table .ee-rspnsv-table-body-td.ee-entity-list-status-stripe {
+        width: 100%;
+    }
 }
 
 @media only screen and (max-width: 1024px) {
+    .ee-rspnsv-table .ee-rspnsv-table-header-th.ee-entity-list-status-stripe,
+    .ee-rspnsv-table .ee-rspnsv-table-body-td.ee-entity-list-status-stripe {
+        width: .5%;
+    }
 }
 
 /* WordPress Admin Media Query Breakpoint: Auto-folding of the admin menu */
@@ -1501,6 +1524,9 @@
         width: 100%;
     }
 
+    .ee-rspnsv-table .ee-rspnsv-table-body-td.ee-entity-list-status-stripe {
+        width: 100%;
+    }
 }
 
 /* WordPress Admin Media Query Breakpoint: Smartphone */

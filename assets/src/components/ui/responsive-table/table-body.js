@@ -7,16 +7,17 @@ import PropTypes from 'prop-types';
 /**
  * @param {Array} children
  * @param {string} htmlClass
+ * @param {Object} innerRef
  * @param {Object} extraProps
  * @return {Object} rendered thead
  */
-const TableBody = ( { children, htmlClass, ...extraProps } ) => {
+const TableBody = ( { children, htmlClass, innerRef = null, ...extraProps } ) => {
 	htmlClass = classNames(
 		htmlClass,
 		'ee-rspnsv-table-body'
 	);
 	return (
-		<tbody className={ htmlClass } { ...extraProps }>
+		<tbody ref={ innerRef } className={ htmlClass } { ...extraProps }>
 			{ children }
 		</tbody>
 	);

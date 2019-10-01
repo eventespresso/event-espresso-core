@@ -12,6 +12,7 @@ import PropTypes from 'prop-types';
  * @param {Object} classes
  * @param {Object} classes
  * @param {string} rowType
+ * @param {Object} innerRef
  * @param {Object} extraProps
  * @return {Object} rendered tr
  */
@@ -22,19 +23,20 @@ const TableRow = ( {
 	htmlClass,
 	classes,
 	rowType,
+	innerRef = null,
 	...extraProps
 } ) => {
-	htmlId = htmlId ?
+	const id = htmlId ?
 		`${ htmlId }-row-${ rowNumber }` :
 		`ee-rspnsv-table-row-${ rowNumber }`;
-	htmlClass = classNames(
+	const css = classNames(
 		htmlClass,
 		`ee-rspnsv-table-${ rowType }-row`,
 		`ee-row-${ rowNumber }`,
 		classes[ `${ rowType }RowClass` ],
 	);
 	return (
-		<tr id={ htmlId } className={ htmlClass } { ...extraProps } >
+		<tr ref={ innerRef } id={ id } className={ css } { ...extraProps } >
 			{ children }
 		</tr>
 	);
