@@ -1,7 +1,7 @@
 /**
  * External imports
  */
-import { useEffect } from '@wordpress/element';
+import { useEffect, useState } from '@wordpress/element';
 import { useEntityActionMenuItems } from '@eventespresso/components';
 import { ifValidDateEntity } from '@eventespresso/editor-hocs';
 import PropTypes from 'prop-types';
@@ -18,6 +18,7 @@ import useEventDateEditorId from '../edit-form/use-event-date-editor-id';
 
 const EditorDateEntityActionsMenu = ( { dateEntity } ) => {
 	const editorId = useEventDateEditorId( dateEntity );
+	const [ menuItems, setMenuItems ] = useState( [] );
 	const {
 		getActionsMenuForEntity,
 		registerEntityActionsMenuItem,
@@ -54,6 +55,7 @@ const EditorDateEntityActionsMenu = ( { dateEntity } ) => {
 				/>
 			)
 		);
+		setMenuItems( getActionsMenuForEntity( dateEntity ) );
 	} );
 
 	return (
@@ -62,7 +64,7 @@ const EditorDateEntityActionsMenu = ( { dateEntity } ) => {
 				id={ `ee-editor-date-actions-menu-${ dateEntity.id }` }
 				className={ 'ee-editor-date-actions-menu' }
 			>
-				{ getActionsMenuForEntity( dateEntity ) }
+				{ menuItems }
 			</div>
 			<DateEntityFormModal
 				editorId={ editorId }
