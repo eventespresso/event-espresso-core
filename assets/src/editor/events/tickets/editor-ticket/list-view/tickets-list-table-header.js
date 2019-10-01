@@ -37,12 +37,6 @@ const ticketsListTableHeader = () => {
 			value: __( 'Name', 'event_espresso' ),
 		},
 		{
-			key: 'price',
-			type: 'cell',
-			class: 'ee-ticket-list-col-hdr ee-ticket-list-col-price ee-rspnsv-table-column-tiny ee-number-column',
-			value: __( 'Price', 'event_espresso' ),
-		},
-		{
 			key: 'start',
 			type: 'cell',
 			class: 'ee-ticket-list-col-hdr ee-ticket-list-col-name-start ee-rspnsv-table-column-default',
@@ -71,6 +65,12 @@ const ticketsListTableHeader = () => {
 					</span>
 				</>
 			),
+		},
+		{
+			key: 'price',
+			type: 'cell',
+			class: 'ee-ticket-list-col-hdr ee-ticket-list-col-price ee-rspnsv-table-column-tiny ee-number-column',
+			value: __( 'Price', 'event_espresso' ),
 		},
 		{
 			key: 'capacity',

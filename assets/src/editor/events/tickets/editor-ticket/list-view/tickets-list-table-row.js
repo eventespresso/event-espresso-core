@@ -1,13 +1,17 @@
 /**
  * External imports
  */
+import { ticketModel } from '@eventespresso/model';
 import { shortenCuid } from '@eventespresso/utils';
+import { InfinitySymbol } from '@eventespresso/value-objects';
 
 /**
  * Internal dependencies
  */
 import EditorTicketActionsMenu
 	from '../../../tickets/editor-ticket/actions-menu/editor-ticket-actions-menu';
+
+const { getBackgroundColorClass, status } = ticketModel;
 
 const DATE_TIME_FORMAT = 'ddd MMM YY h:mm a';
 
@@ -17,19 +21,15 @@ const DATE_TIME_FORMAT = 'ddd MMM YY h:mm a';
  *
  * @function
  * @param {Object} ticketEntity Event Date entity
- * @param {string} quantity
- * @param {string} statusClass
- * @param {string} bgClass
  * @param {Object} otherProps
  * @return {Array} row data for the provided ticket entity
  */
 const ticketsListTableRow = (
 	ticketEntity,
-	quantity,
-	statusClass,
-	bgClass,
 	otherProps
 ) => {
+	const statusClass = status( ticketEntity );
+	const bgClass = getBackgroundColorClass( ticketEntity );
 	return [
 		{
 			key: 'row',
@@ -61,15 +61,6 @@ const ticketsListTableRow = (
 			value: ticketEntity.name,
 		},
 		{
-			key: 'price',
-			type: 'cell',
-			class: 'ee-ticket-list-col-hdr ee-ticket-list-col-price ee-rspnsv-table-column-tiny ee-number-column',
-			value: ticketEntity.price.formatter.formatMoney(
-				ticketEntity.price.amount,
-				ticketEntity.price.formatter.settings
-			),
-		},
-		{
 			key: 'start',
 			type: 'cell',
 			class: 'ee-ticket-list-cell ee-ticket-list-col-start ee-rspnsv-table-column-default',
@@ -82,10 +73,19 @@ const ticketsListTableRow = (
 			value: ticketEntity.endDate.toFormat( DATE_TIME_FORMAT ),
 		},
 		{
+			key: 'price',
+			type: 'cell',
+			class: 'ee-ticket-list-col-hdr ee-ticket-list-col-price ee-rspnsv-table-column-tiny ee-number-column',
+			value: ticketEntity.price.formatter.formatMoney(
+				ticketEntity.price.amount,
+				ticketEntity.price.formatter.settings
+			),
+		},
+		{
 			key: 'quantity',
 			type: 'cell',
 			class: 'ee-ticket-list-cell ee-ticket-list-col-capacity ee-rspnsv-table-column-tiny ee-number-column',
-			value: quantity,
+			value: <InfinitySymbol value={ ticketEntity.regLimit } asInt />,
 		},
 		{
 			key: 'sold',
