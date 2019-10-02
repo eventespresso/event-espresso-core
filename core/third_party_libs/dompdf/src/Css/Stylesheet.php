@@ -1355,9 +1355,9 @@ class Stylesheet
                             /** @noinspection PhpMissingBreakStatementInspection */
                             case ":first":
                                 $key = $page_selector;
-
+                                break;
                             default:
-                                continue;
+                                break 2;
                         }
 
                         // Store the style for later...
