@@ -110,6 +110,6 @@ class EventEditorDataResolver extends ResolverBase
                 $this->datetime_model,
                 [['EVT_ID' => $post->ID]]
             ))
-            : '{}';
+            : '[]';
     }
 }
