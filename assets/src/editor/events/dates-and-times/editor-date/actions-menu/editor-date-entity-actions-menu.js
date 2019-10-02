@@ -56,7 +56,11 @@ const EditorDateEntityActionsMenu = ( { dateEntity } ) => {
 			)
 		);
 		setMenuItems( getActionsMenuForEntity( dateEntity ) );
-	} );
+	}, [
+		dateEntity,
+		getActionsMenuForEntity,
+		registerEntityActionsMenuItem,
+	] );
 
 	return (
 		<>

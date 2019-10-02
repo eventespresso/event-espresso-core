@@ -72,7 +72,11 @@ const EditorTicketActionsMenu = ( { ticketEntity } ) => {
 			);
 			setMenuItems( getActionsMenuForEntity( ticketEntity ) );
 		}
-	}, [ ticketEntity ] );
+	}, [
+		ticketEntity,
+		getActionsMenuForEntity,
+		registerEntityActionsMenuItem,
+	] );
 	return (
 		<>
 			<div className={ 'ee-editor-ticket-actions-menu' }>
