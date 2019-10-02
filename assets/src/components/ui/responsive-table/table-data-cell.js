@@ -8,7 +8,6 @@ import PropTypes from 'prop-types';
  * @param {mixed} children
  * @param {number} rowNumber
  * @param {number} colNumber
- * @param {string} rowType
  * @param {string} htmlId
  * @param {string} htmlClass
  * @param {Object} classes
