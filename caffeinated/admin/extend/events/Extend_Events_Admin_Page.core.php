@@ -330,10 +330,14 @@ class Extend_Events_Admin_Page extends Events_Admin_Page
                 'admin_footer',
                 function () {
                     $eventId = isset($_REQUEST['post']) ? absint($_REQUEST['post']) : 0;
+                    $graphqlEndpoint = class_exists( 'WPGraphQL' ) ? trailingslashit( site_url() ) . \WPGraphQL\Router::$route : '';
                     if ($eventId) {
                         echo '
         <script type="text/javascript">
-            /* <![CDATA[ */ var eeEditorEventId = ' . $eventId . '; /* ]]> */
+            /* <![CDATA[ */
+            var eeEditorEventId = ' . $eventId . ';
+            var graphqlEndpoint = \'' . esc_url($graphqlEndpoint) . '\';
+            /* ]]> */
         </script>';
                     }
                 }
