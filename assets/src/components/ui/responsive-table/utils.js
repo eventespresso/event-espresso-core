@@ -51,7 +51,7 @@ export const getTableRows = ( children ) => {
 
 export const getTableRowCells = ( children ) => {
 	return filterChildren( children, ( child ) => {
-		return isTableHeadingCell( child ) || isTableDataCell( child );
+		return isTableHeaderCell( child ) || isTableDataCell( child );
 	} );
 };
 
@@ -86,15 +86,15 @@ export const isArrayOfTableCells = ( elements ) => {
 	elements = castArray( elements );
 	let allAreCells = true;
 	elements.forEach( ( cell ) => {
-		allAreCells = isTableHeadingCell( cell ) || isTableDataCell( cell ) ?
+		allAreCells = isTableHeaderCell( cell ) || isTableDataCell( cell ) ?
 			allAreCells :
 			false;
 	} );
 	return allAreCells;
 };
 
-export const isTableHeadingCell = ( element ) => {
-	return isElement( element, 'TableHeadingCell' );
+export const isTableHeaderCell = ( element ) => {
+	return isElement( element, 'TableHeaderCell' );
 };
 
 export const isTableDataCell = ( element ) => {
@@ -106,19 +106,16 @@ export const isTableDataCell = ( element ) => {
  * except those whose table row cell "key" is in the exclude array
  *
  * @function
- * @param {[][]} formRows
+ * @param {Object[]} formRows
  * @param {Array} exclude
  * @return {Array} columns
  */
-export const addZebraStripesOnMobile = (
-	formRows,
-	exclude
-) => {
-	return Array.isArray( formRows ) ? formRows.map(
-		( formRow ) => {
+export const addZebraStripesOnMobile = ( formRows, exclude ) => {
+	return Array.isArray( formRows ) ?
+		formRows.map( ( formRow ) => {
 			let x = 0;
-			return Array.isArray( formRow ) ? formRow.map(
-				( cell ) => {
+			formRow.cells = formRow.cells && Array.isArray( formRow.cells ) ?
+				formRow.cells.map( ( cell ) => {
 					if ( ! cell.key || exclude.indexOf( cell.key ) > -1 ) {
 						return cell;
 					}
@@ -129,10 +126,9 @@ export const addZebraStripesOnMobile = (
 							'ee-zebra-stripe-on-mobile';
 					}
 					return cell;
-				}
-			) : [];
-		}
-	) : [];
+				} ) : [];
+			return formRow;
+		} ) : [];
 };
 
 /**

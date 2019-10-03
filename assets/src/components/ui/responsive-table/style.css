@@ -98,7 +98,8 @@
 
 .ee-rspnsv-table .ee-rspnsv-table-header-th.ee-entity-list-status-stripe,
 .ee-rspnsv-table .ee-rspnsv-table-body-td.ee-entity-list-status-stripe {
-    /*width: var(--ee-padding-micro);*/
+    max-width: 10px;
+    min-width: 5px;
     width: .25%;
 }
 
