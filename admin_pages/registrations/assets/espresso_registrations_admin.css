@@ -553,3 +553,16 @@
     float:left;
     max-width: 81%;
 }
+
+/** Add a bit of style to tickets details table **/
+
+.spco-ticket-details {
+    font-size: 16px;
+    border-top: 1px solid #ddd;
+    padding: 30px 0 0;
+    width: 100%;
+}
+
+.spco-ticket-details td {
+    padding-top: 15px;
+}
