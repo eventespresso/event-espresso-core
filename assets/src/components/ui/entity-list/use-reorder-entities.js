@@ -3,6 +3,7 @@
  */
 import { sortBy } from 'lodash';
 import { useCallback } from '@wordpress/element';
+import { isModelEntityOfModel } from '@eventespresso/validators';
 
 /**
  * returns a custom hook
@@ -16,19 +17,22 @@ import { useCallback } from '@wordpress/element';
  * to the beginning of the full set.
  *
  * @function
+ * @param {string} modelName
  * @param {Function} setSortBy
  * @param {Function} setEntityIds
  * @return {Function} custom hook
  */
-const useReorderEntities = ( { setSortBy, setEntityIds } ) => {
+const useReorderEntities = ( { modelName, setSortBy, setEntityIds } ) => {
 	/**
 	 * @function
 	 * @param {Array} entities    	a subset of filtered entities
 	 * @param {Array} allEntities    a list of ALL entities of the same type
 	 *   that may not have been present in the subset list that was sorted. It
 	 *   will be reorder as well.
-	 * @param {number|string} oldIndex 	existing location of entity to be moved
-	 * @param {number|string} newIndex 	target location for entity in subset array
+	 * @param {number|string} oldIndex 	existing location of entity to be
+	 *     moved
+	 * @param {number|string} newIndex 	target location for entity in subset
+	 *     array
 	 */
 	return useCallback( (
 		entities,
@@ -38,15 +42,24 @@ const useReorderEntities = ( { setSortBy, setEntityIds } ) => {
 	) => {
 		oldIndex = parseInt( oldIndex, 10 );
 		newIndex = parseInt( newIndex, 10 );
+		if ( newIndex === oldIndex ) {
+			return;
+		}
 		if ( newIndex < 0 || oldIndex < 0 ) {
 			throw new Error(
-				'Can not reorder the entity list because indexes can not be negative!'
+				'Can not reorder the entity list because' +
+				' indexes can not be negative!' +
+				"\n oldIndex: " + JSON.stringify( oldIndex ) +
+				"\n newIndex: " + JSON.stringify( newIndex )
 			);
 		}
 		if ( ! Array.isArray( entities ) ||
 			! Array.isArray( allEntities ) ) {
 			throw new Error(
-				'Can not reorder the entity list because one or more of the supplied entity lists were invalid!'
+				'Can not reorder the entity list because one or more of the' +
+				' supplied entity lists were invalid!' +
+				"\n entities: " + JSON.stringify( entities ) +
+				"\n allEntities: " + JSON.stringify( allEntities )
 			);
 		}
 		// remove entity from existing location in filtered list
@@ -55,12 +68,20 @@ const useReorderEntities = ( { setSortBy, setEntityIds } ) => {
 		entities.splice( newIndex, 0, removed );
 		// now loop thru entities in filtered list
 		entities.forEach( ( entity, index ) => {
-			// reset the order property for all entities in filtered list
-			entity.order = index + 1;
-			// grab index of reordered entities in list of all entities
-			const indexInAll = allEntities.indexOf( entity );
-			// remove reordered entities from list of all entities
-			allEntities.splice( indexInAll, 1 );
+			if ( isModelEntityOfModel( entity, modelName ) ) {
+				// reset the order property for all entities in filtered list
+				entity.order = index + 1;
+				// grab index of reordered entities in list of all entities
+				const indexInAll = allEntities.indexOf( entity );
+				// remove reordered entities from list of all entities
+				allEntities.splice( indexInAll, 1 );
+			} else {
+				throw new Error(
+					'Can not reorder the entity list because' +
+					' an invalid entity was supplied!' +
+					"\n entity: " + JSON.stringify( entity )
+				);
+			}
 		} );
 		// reorder the list of all entities as well...
 		// reverse the reordered list of entities
@@ -80,10 +101,10 @@ const useReorderEntities = ( { setSortBy, setEntityIds } ) => {
 			entity.order = index + 1;
 		} );
 		allEntities = sortBy( allEntities, [ 'order' ] );
-		const entityIds = allEntities.map( ( entity ) => entity.id );
-		setEntityIds( entityIds );
+		setEntityIds( allEntities.map( ( entity ) => entity.id ) );
 		setSortBy( 'by-order' );
 	}, [
+		modelName,
 		setSortBy,
 		setEntityIds,
 	] );
