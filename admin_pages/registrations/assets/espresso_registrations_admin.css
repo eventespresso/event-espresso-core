@@ -566,3 +566,8 @@
 .spco-ticket-details td {
     padding-top: 15px;
 }
+
+.ee-new-registration-step-content .ee-attention {
+    margin: 2em 0 1em;
+    padding: 1.5em 0 0;
+}
