@@ -368,9 +368,25 @@ class Request implements InterminableInterface, RequestInterface, ReservedInstan
      */
     public function unSetRequestParam($key, $unset_from_global_too = false)
     {
+        // because unset may not actually remove var
+        $this->request[ $key ] = null;
         unset($this->request[ $key ]);
         if ($unset_from_global_too) {
             unset($_REQUEST[ $key ]);
+        }
+    }
+
+
+    /**
+     * remove params
+     *
+     * @param array $keys
+     * @param bool  $unset_from_global_too
+     */
+    public function unSetRequestParams(array $keys, $unset_from_global_too = false)
+    {
+        foreach ($keys as $key) {
+            $this->unSetRequestParam($key, $unset_from_global_too);
         }
     }
 

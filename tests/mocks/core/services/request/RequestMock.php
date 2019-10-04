@@ -3,10 +3,7 @@
 namespace EventEspresso\tests\mocks\core\services\request;
 
 use EventEspresso\core\domain\services\contexts\RequestTypeContextCheckerInterface;
-use EventEspresso\core\interfaces\InterminableInterface;
-use EventEspresso\core\interfaces\ReservedInstanceInterface;
 use EventEspresso\core\services\request\Request;
-use EventEspresso\core\services\request\RequestInterface;
 
 /**
  * Class RequestMock
@@ -16,7 +13,7 @@ use EventEspresso\core\services\request\RequestInterface;
  * @author  Brent Christensen
  * @since   4.9.70.p
  */
-class RequestMock extends Request implements InterminableInterface, RequestInterface, ReservedInstanceInterface
+class RequestMock extends Request
 {
 
     /**
@@ -199,6 +196,7 @@ class RequestMock extends Request implements InterminableInterface, RequestInter
 
 
     /**
+     * @param string $visitor_ip
      * @return string
      */
     public function visitorIp($visitor_ip = '0.0.0.0')
@@ -208,6 +206,7 @@ class RequestMock extends Request implements InterminableInterface, RequestInter
 
 
     /**
+     * @param bool $relativeToWpRoot
      * @return string
      */
     public function requestUri($relativeToWpRoot = false)
