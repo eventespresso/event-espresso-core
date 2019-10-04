@@ -863,7 +863,28 @@ class EE_Dependency_Map
             ),
             'EventEspressoBatchRequest\BatchRequestProcessor' => [
                 'EventEspresso\core\services\loaders\Loader'  => EE_Dependency_Map::load_from_cache,
-            ]
+            ],
+            'EventEspresso\core\domain\services\admin\registrations\list_table\QueryBuilder' => [
+                null,
+                'EventEspresso\core\services\request\Request' => EE_Dependency_Map::load_from_cache,
+                'EEM_Registration'  => EE_Dependency_Map::load_from_cache,
+            ],
+            'EventEspresso\core\domain\services\admin\registrations\list_table\page_header\AttendeeFilterHeader' => [
+                'EventEspresso\core\services\request\Request' => EE_Dependency_Map::load_from_cache,
+                'EEM_Attendee'  => EE_Dependency_Map::load_from_cache,
+            ],
+            'EventEspresso\core\domain\services\admin\registrations\list_table\page_header\DateFilterHeader' => [
+                'EventEspresso\core\services\request\Request' => EE_Dependency_Map::load_from_cache,
+                'EEM_Datetime'  => EE_Dependency_Map::load_from_cache,
+            ],
+            'EventEspresso\core\domain\services\admin\registrations\list_table\page_header\EventFilterHeader' => [
+                'EventEspresso\core\services\request\Request' => EE_Dependency_Map::load_from_cache,
+                'EEM_Event'  => EE_Dependency_Map::load_from_cache,
+            ],
+            'EventEspresso\core\domain\services\admin\registrations\list_table\page_header\TicketFilterHeader' => [
+                'EventEspresso\core\services\request\Request' => EE_Dependency_Map::load_from_cache,
+                'EEM_Ticket'  => EE_Dependency_Map::load_from_cache,
+            ],
         );
     }
 

@@ -1,5 +1,9 @@
 <?php
 
+use EventEspresso\core\exceptions\EntityNotFoundException;
+use EventEspresso\core\exceptions\InvalidDataTypeException;
+use EventEspresso\core\exceptions\InvalidInterfaceException;
+
 if ( ! defined('EVENT_ESPRESSO_VERSION')) {
     exit('No direct script access allowed');
 }
@@ -40,79 +44,43 @@ class Registrations_Admin_Page_Mock extends Registrations_Admin_Page
 
 
     /**
-     * get registrations for given parameters (used by list table)
-     *
-     * @param  int     $per_page   how many registrations displayed per page
-     * @param  boolean $count      return the count or objects
-     * @param  boolean $this_month whether to return for just this month
-     * @param  boolean $today      whether to return results for just today
-     * @throws \EE_Error
-     * @return mixed (int|array)  int = count || array of registration objects
-     */
-    public function get_registrations($per_page = 10, $count = false, $this_month = false, $today = false)
-    {
-        return parent::get_registrations($per_page, $count, $this_month, $today);
-    }
-
-
-    /**
      * Mock for _set_registration_status_from_request
      *
      * @param bool|false $status
      * @param bool|false $notify
      * @return array
+     * @throws DomainException
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws ReflectionException
+     * @throws RuntimeException
+     * @throws EntityNotFoundException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
      */
     public function set_registration_status_from_request($status = false, $notify = false)
     {
         $this->_req_data = array_merge($_POST, $_REQUEST);
-        return parent::_set_registration_status_from_request($status, $notify);
-    }
-
-    public function add_event_id_to_where_conditions(array $req)
-    {
-        return $this->_add_event_id_to_where_conditions($req);
+        return $this->_set_registration_status_from_request($status, $notify);
     }
 
 
-    public function add_category_id_to_where_conditions(array $req)
-    {
-        return $this->_add_category_id_to_where_conditions($req);
+    /**
+     * @param array $request
+     * @param int   $per_page
+     * @param bool  $count
+     * @return array
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @since $VID:$
+     */
+    public function get_registration_query_parameters(
+        $request = array(),
+        $per_page = 10,
+        $count = false
+    ) {
+        return $this->_get_registration_query_parameters($request, $per_page, $count);
     }
-
-
-    public function add_datetime_id_to_where_conditions(array $req)
-    {
-        return $this->_add_datetime_id_to_where_conditions($req);
-    }
-
-
-    public function add_registration_status_to_where_conditions(array $req)
-    {
-        return $this->_add_registration_status_to_where_conditions($req);
-    }
-
-
-    public function add_date_to_where_conditions($req)
-    {
-        return $this->_add_date_to_where_conditions($req);
-    }
-
-
-    public function add_search_to_where_conditions(array $req)
-    {
-        return $this->_add_search_to_where_conditions($req);
-    }
-
-
-    public function get_orderby_for_registrations_query()
-    {
-        return $this->_get_orderby_for_registrations_query();
-    }
-
-
-    public function get_limit($per_page)
-    {
-        return $this->_get_limit($per_page);
-    }
-
-} //end class Registrations_Admin_Page_Mock
+}
