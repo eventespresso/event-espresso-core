@@ -127,6 +127,6 @@ class JavascriptAssetTest extends PHPUnit_Framework_TestCase
 
         // version for built ('.dist.js') source.
         $asset = $this->getAsset('https://testurl.com/testjs.dist.js');
-        $this->assertNull($asset->version());
+        $this->assertEquals('', $asset->version());
     }
 }
