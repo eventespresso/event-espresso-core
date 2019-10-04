@@ -1,0 +1,1 @@
+<?php return array('dependencies' => array('eejs-core', 'lodash'), 'version' => '598c00459638de56a8f22c802a8c0c0e');
