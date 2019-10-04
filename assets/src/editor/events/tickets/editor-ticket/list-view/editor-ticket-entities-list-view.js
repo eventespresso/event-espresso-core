@@ -9,7 +9,6 @@ import {
 	ResponsiveTable,
 } from '@eventespresso/components';
 import { __ } from '@eventespresso/i18n';
-import { ticketModel } from '@eventespresso/model';
 import { isModelEntityOfModel } from '@eventespresso/validators';
 import PropTypes from 'prop-types';
 
@@ -18,9 +17,9 @@ import PropTypes from 'prop-types';
  */
 import ticketsListTableHeader from './tickets-list-table-header';
 import ticketsListTableRow from './tickets-list-table-row';
+import useReorderTickets from './use-reorder-tickets';
 import './editor-ticket-entities-list-view.css';
 
-const { getBackgroundColorClass, status } = ticketModel;
 const noZebraStripe = [ 'row', 'stripe', 'name', 'actions' ];
 
 /**
@@ -28,34 +27,29 @@ const noZebraStripe = [ 'row', 'stripe', 'name', 'actions' ];
  * Displays tickets in a standard list table like view
  *
  * @function
- * @param {Array} entities 	array of JSON objects defining the Tickets
- * @param {string} displayTicketDate
- * @param {string} htmlClass
- * @param {Object} otherProps
- * @return {Component} 			list of rendered Tickets
+ * @param {Object} props
+ * @member {Array} entities  filtered array of Ticket model objects
+ * @member {Array} tickets   array of ALL Ticket model objects
+ * @member {string} displayTicketDate
+ * @member {string} htmlClass
+ * @member {Object} otherProps
+ * @return {Object} rendered table of Tickets
  */
 const EditorTicketEntitiesListView = ( {
 	entities,
+	allTickets,
 	displayTicketDate,
+	setEntityIds,
+	setSortBy,
 	htmlClass,
 	...otherProps
 } ) => {
-	htmlClass = classNames( htmlClass, 'ee-tickets-list-list-view' );
-	const getQuantity = useCallback(
-		/**
-		 * @function
-		 * @param {number|string} qty
-		 * @return {number|string} number of available tickets
-		 */
-		( qty ) => {
-			qty = parseInt( qty, 10 ) || -1;
-			return qty === -1 || qty === Infinity ?
-				<span className={ 'ee-infinity-sign' }>&infin;</span> :
-				qty;
-		},
-		[]
+	const reorderTickets = useReorderTickets(
+		entities,
+		allTickets,
+		setEntityIds,
+		setSortBy
 	);
-
 	/**
 	 * toggles display of start and end date columns
 	 * based on incoming value of showDate
@@ -64,13 +58,13 @@ const EditorTicketEntitiesListView = ( {
 	 * @param {Array} columns
 	 * @return {Array} columns
 	 */
-	const filterColumns = ( columns ) => {
+	const filterColumns = useCallback( ( columns ) => {
 		const colSwap = { start: 'end', end: 'start' };
 		const exclude = colSwap[ displayTicketDate ] ?
 			colSwap[ displayTicketDate ] :
 			'';
 		return filterColumnsByKey( columns, exclude );
-	};
+	}, [ displayTicketDate ] );
 
 	const formRows = entities.map(
 		/**
@@ -80,31 +74,30 @@ const EditorTicketEntitiesListView = ( {
 		 */
 		( ticketEntity ) => {
 			const columns = isModelEntityOfModel( ticketEntity, 'ticket' ) ?
-				ticketsListTableRow(
-					ticketEntity,
-					getQuantity( ticketEntity.regLimit ),
-					status( ticketEntity ),
-					getBackgroundColorClass( ticketEntity ),
-					otherProps
-				) : null;
+				ticketsListTableRow( ticketEntity, otherProps ) :
+				null;
 			return filterColumns( columns );
 		}
 	);
 
+	htmlClass = classNames( htmlClass, 'ee-tickets-list-list-view' );
 	return (
 		<ResponsiveTable
-			columns={ filterColumns( ticketsListTableHeader() ) }
-			rowData={ addZebraStripesOnMobile( formRows, noZebraStripe ) }
+			headerRows={ [ filterColumns( ticketsListTableHeader() ) ] }
+			tableRows={ addZebraStripesOnMobile( formRows, noZebraStripe ) }
 			metaData={ {
+				tableId: 'ticket-entities-list-view',
 				tableCaption: __( 'Tickets', 'event_espresso' ),
 			} }
 			classes={ { tableClass: htmlClass } }
+			onDragEnd={ reorderTickets }
 		/>
 	);
 };
 
 EditorTicketEntitiesListView.propTypes = {
 	entities: PropTypes.array.isRequired,
+	allTickets: PropTypes.array.isRequired,
 	displayTicketDate: PropTypes.string,
 	htmlClass: PropTypes.string,
 };

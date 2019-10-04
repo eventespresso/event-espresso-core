@@ -61,10 +61,10 @@ const buildPricesData = ( formData, ticket, prices ) => {
 		if ( isModelEntityOfModel( price, 'price' ) ) {
 			const priceId = shortenCuid( price.id );
 			priceIDs.push( priceId );
-			priceTypes.push( price.prtId );
+			priceTypes.push( price.PRT_ID );
 			const pricePrefix = `${ prefix }-${ priceId }`;
 			formData[ `${ pricePrefix }-id` ] = priceId;
-			formData[ `${ pricePrefix }-type` ] = parseInt( price.prtId, 10 );
+			formData[ `${ pricePrefix }-type` ] = parseInt( price.PRT_ID, 10 );
 			formData[ `${ pricePrefix }-name` ] = price.name || '';
 			formData[ `${ pricePrefix }-desc` ] = price.desc || '';
 			formData[ `${ pricePrefix }-amount` ] = getMoneyAmount( price.amount );

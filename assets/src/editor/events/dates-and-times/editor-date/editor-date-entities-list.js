@@ -51,6 +51,7 @@ const EditorDateEntitiesList = ( { ...otherProps } ) => {
 		showDates,
 		datesSortedBy,
 		displayDates,
+		filteredDateIds,
 	} = useDatesListFilterState( { listId } );
 	const {
 		view,
@@ -71,7 +72,10 @@ const EditorDateEntitiesList = ( { ...otherProps } ) => {
 		paginatedEntities,
 	} = useEntityPagination( perPage, filteredDates );
 	// update the date ids in state whenever the filters change
-	const { setFilteredDates } = useDatesListFilterStateSetters( listId );
+	const {
+		setFilteredDates,
+		setDatesSortedBy,
+	} = useDatesListFilterStateSetters( listId );
 	useEffect( () => {
 		if ( Array.isArray( paginatedEntities ) ) {
 			const eventDateIds = paginatedEntities.map(
@@ -80,6 +84,7 @@ const EditorDateEntitiesList = ( { ...otherProps } ) => {
 			setFilteredDates( eventDateIds );
 		}
 	}, [ currentPage, perPage, showDates, datesSortedBy, eventDates.length ] );
+	const entityOrder = filteredDateIds.join( '-' );
 	return (
 		<FormWrapper>
 			<DatesListFilterBar
@@ -92,6 +97,7 @@ const EditorDateEntitiesList = ( { ...otherProps } ) => {
 				{ ...entityListFilters }
 			/>
 			<EntityPagination
+				key={ `dates-pagination-${ entityOrder }` }
 				listId={ listId }
 				currentPage={ currentPage }
 				entitiesPerPage={ perPage }
@@ -100,11 +106,15 @@ const EditorDateEntitiesList = ( { ...otherProps } ) => {
 			/>
 			<EntityList
 				{ ...otherProps }
+				key={ `dates-list-${ entityOrder }` }
 				entities={ paginatedEntities }
+				allEventDates={ eventDates }
 				EntityGridView={ EditorDateEntitiesGridView }
 				EntityListView={ EditorDateEntitiesListView }
 				view={ view }
 				showDate={ displayDates }
+				setEntityIds={ setFilteredDates }
+				setSortBy={ setDatesSortedBy }
 				loading={ ! eventDatesLoaded }
 				loadingNotice={ sprintf(
 					_x(

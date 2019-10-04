@@ -32,90 +32,96 @@ const useGeneratePriceModifierRow = ( ticketPrefix, values ) => {
 		const prefix = `${ ticketPrefix }-price-${ priceId }`;
 		const priceTypeId = normalizeEntityId( values[ `${ prefix }-type` ] ) || 0;
 		const priceType = getPriceType( priceTypeId, priceTypes );
-		return [
-			{
-				type: 'row',
-				class: 'ee-ticket-price-calculator-price-row',
-				value: '',
-			},
-			{
-				type: 'cell',
-				class: 'ee-ticket-price-calculator-price-id ee-number-column',
-				value: (
-					<PriceIdInput
-						prefix={ prefix }
-						values={ values }
-					/>
-				),
-			},
-			{
-				type: 'cell',
-				class: 'ee-ticket-price-calculator-price-type',
-				value: (
-					<PriceTypeInput
-						price={ price }
-						prefix={ prefix }
-						values={ values }
-						basePriceType={ priceType.PBT_ID }
-						priceTypeOptions={ priceTypeOptions }
-					/>
-				),
-			},
-			{
-				type: 'cell',
-				class: 'ee-ticket-price-calculator-price-name',
-				value: (
-					<PriceNameInput
-						prefix={ prefix }
-						values={ values }
-						priceEntity={ price }
-					/>
-				),
-			},
-			{
-				type: 'cell',
-				class: 'ee-ticket-price-calculator-price-desc',
-				value: (
-					<PriceDescriptionInput
-						prefix={ prefix }
-						values={ values }
-						priceEntity={ price }
-					/>
-				),
-			},
-			{
-				type: 'cell',
-				class: 'ee-ticket-price-calculator-price-amount ee-number-column',
-				value: (
-					<PriceAmountInput
-						prefix={ prefix }
-						values={ values }
-						price={ price }
-						priceType={ priceType }
-						reverseCalculate={ ticket.reverseCalculate }
-					/>
-				),
-			},
-			{
-				type: 'cell',
-				class: 'ee-ticket-price-calculator-price-actions',
-				value: (
-					<Fragment>
-						<DeletePriceModifierActionButton
+		return {
+			key: `price-row-${ priceId }`,
+			type: 'row',
+			class: 'ee-ticket-price-calculator-price-row',
+			cells: [
+				{
+					key: 'id',
+					type: 'cell',
+					class: 'ee-ticket-price-calculator-price-id ee-number-column',
+					value: (
+						<PriceIdInput
+							prefix={ prefix }
+							values={ values }
+						/>
+					),
+				},
+				{
+					key: 'type',
+					type: 'cell',
+					class: 'ee-ticket-price-calculator-price-type',
+					value: (
+						<PriceTypeInput
 							price={ price }
-							ticket={ ticket }
+							prefix={ prefix }
+							values={ values }
+							basePriceType={ priceType.PBT_ID }
+							priceTypeOptions={ priceTypeOptions }
+						/>
+					),
+				},
+				{
+					key: 'name',
+					type: 'cell',
+					class: 'ee-ticket-price-calculator-price-name',
+					value: (
+						<PriceNameInput
+							prefix={ prefix }
+							values={ values }
+							priceEntity={ price }
+						/>
+					),
+				},
+				{
+					key: 'desc',
+					type: 'cell',
+					class: 'ee-ticket-price-calculator-price-desc',
+					value: (
+						<PriceDescriptionInput
+							prefix={ prefix }
+							values={ values }
+							priceEntity={ price }
+						/>
+					),
+				},
+				{
+					key: 'amount',
+					type: 'cell',
+					class: 'ee-ticket-price-calculator-price-amount ee-number-column',
+					value: (
+						<PriceAmountInput
+							prefix={ prefix }
+							values={ values }
+							price={ price }
 							priceType={ priceType }
+							reverseCalculate={ ticket.reverseCalculate }
 						/>
-						<AddPriceModifierActionButton
-							ticket={ ticket }
-							lastRow={ lastRow }
-							lastPrice={ price }
-							priceTypes={ priceTypes }
-						/>
-					</Fragment>
-				),
-			},
-		];
+					),
+				},
+				{
+					key: 'actions',
+					type: 'cell',
+					class: 'ee-ticket-price-calculator-price-actions',
+					value: (
+						<Fragment>
+							<DeletePriceModifierActionButton
+								price={ price }
+								ticket={ ticket }
+								priceType={ priceType }
+							/>
+							<AddPriceModifierActionButton
+								ticket={ ticket }
+								lastRow={ lastRow }
+								lastPrice={ price }
+								priceTypes={ priceTypes }
+							/>
+						</Fragment>
+					),
+				},
+			],
+		};
 	}, [
 		values,
 		ticketPrefix,

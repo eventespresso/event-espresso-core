@@ -3,7 +3,7 @@ import TableHeader from './table-header';
 import TableBody from './table-body';
 import TableFooter from './table-footer';
 import TableRow from './table-row';
-import TableHeadingCell from './table-heading-cell';
+import TableHeaderCell from './table-header-cell';
 import TableDataCell from './table-data-cell';
 
 export const EspressoTable = {
@@ -12,7 +12,7 @@ export const EspressoTable = {
 	TableBody,
 	TableRow,
 	TableFooter,
-	TableHeadingCell,
+	TableHeaderCell,
 	TableDataCell,
 };
 

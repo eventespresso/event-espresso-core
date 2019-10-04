@@ -10,18 +10,18 @@ import PropTypes from 'prop-types';
  * @param {string} rowType
  * @param {string} htmlId
  * @param {string} htmlClass
- * @param {Object} classes
+ * @param {Object} cssClasses
  * @param {Object} extraProps
  * @return {Object} rendered <th> heading cell
  */
-const TableHeadingCell = ( {
+const TableHeaderCell = ( {
 	children,
 	rowNumber,
 	colNumber,
 	rowType,
 	htmlId,
 	htmlClass,
-	classes,
+	cssClasses,
 	...extraProps
 } ) => {
 	htmlId = htmlId ?
@@ -31,8 +31,8 @@ const TableHeadingCell = ( {
 		`${ htmlClass } ee-rspnsv-table-${ rowType }-th ee-col-${ colNumber }` :
 		`ee-rspnsv-table-${ rowType }-th ee-col-${ colNumber }`;
 	const rowTypeClass = rowType + 'ThClass';
-	htmlClass = classes[ rowTypeClass ] ?
-		`${ htmlClass } ${ classes[ rowTypeClass ] }` :
+	htmlClass = cssClasses[ rowTypeClass ] ?
+		`${ htmlClass } ${ cssClasses[ rowTypeClass ] }` :
 		htmlClass;
 	if ( rowType === 'header' ) {
 		extraProps.role = "columnheader";
@@ -47,21 +47,21 @@ const TableHeadingCell = ( {
 	);
 };
 
-TableHeadingCell.propTypes = {
+TableHeaderCell.propTypes = {
 	children: PropTypes.node,
 	rowNumber: PropTypes.number.isRequired,
 	colNumber: PropTypes.number.isRequired,
 	rowType: PropTypes.string,
 	htmlId: PropTypes.string,
 	htmlClass: PropTypes.string,
-	classes: PropTypes.object,
+	cssClasses: PropTypes.object,
 };
 
-TableHeadingCell.defaultProps = {
+TableHeaderCell.defaultProps = {
 	rowType: 'body',
 	htmlId: '',
 	htmlClass: '',
-	classes: {},
+	cssClasses: {},
 };
 
-export default TableHeadingCell;
+export default TableHeaderCell;

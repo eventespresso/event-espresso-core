@@ -38,7 +38,7 @@ const EditorTicketEntitiesList = ( { ...otherProps } ) => {
 		showTickets,
 		ticketsSortedBy,
 		displayTicketDate,
-		...ticketListFilters
+		filteredTicketIds,
 	} = useTicketsListFilterState( { listId } );
 	const {
 		tickets,
@@ -55,8 +55,8 @@ const EditorTicketEntitiesList = ( { ...otherProps } ) => {
 		showTickets,
 		ticketsSortedBy,
 		displayTicketDate,
+		filteredTicketIds,
 		...entityListFilters,
-		...ticketListFilters,
 	} );
 	const {
 		currentPage,
@@ -64,7 +64,10 @@ const EditorTicketEntitiesList = ( { ...otherProps } ) => {
 		paginatedEntities,
 	} = useEntityPagination( perPage, filteredTickets );
 	// update the ticket ids in state whenever the filters change
-	const { setFilteredTickets } = useTicketsListFilterStateSetters( listId );
+	const {
+		setFilteredTickets,
+		setTicketsSortedBy,
+	} = useTicketsListFilterStateSetters( listId );
 	useEffect( () => {
 		if ( Array.isArray( paginatedEntities ) ) {
 			setFilteredTickets(
@@ -79,6 +82,7 @@ const EditorTicketEntitiesList = ( { ...otherProps } ) => {
 		ticketsSortedBy,
 		Array.isArray( tickets ) ? tickets.length : 0,
 	] );
+	const entityOrder = filteredTicketIds.join( '-' );
 	return (
 		<FormWrapper>
 			<TicketsListFilterBar
@@ -89,10 +93,11 @@ const EditorTicketEntitiesList = ( { ...otherProps } ) => {
 				showTickets={ showTickets }
 				ticketsSortedBy={ ticketsSortedBy }
 				displayTicketDate={ displayTicketDate }
-				{ ...ticketListFilters }
+				filteredTicketIds={ filteredTicketIds }
 				{ ...entityListFilters }
 			/>
 			<EntityPagination
+				key={ `tickets-pagination-${ entityOrder }` }
 				listId={ listId }
 				currentPage={ currentPage }
 				entitiesPerPage={ perPage }
@@ -101,11 +106,15 @@ const EditorTicketEntitiesList = ( { ...otherProps } ) => {
 			/>
 			<EntityList
 				{ ...otherProps }
+				key={ `tickets-list-${ entityOrder }` }
 				entities={ paginatedEntities }
+				allTickets={ tickets }
 				EntityGridView={ EditorTicketEntitiesGridView }
 				EntityListView={ EditorTicketEntitiesListView }
 				view={ view }
 				displayTicketDate={ displayTicketDate }
+				setEntityIds={ setFilteredTickets }
+				setSortBy={ setTicketsSortedBy }
 				loading={ ! ticketsLoaded }
 				loadingNotice={ sprintf(
 					_x(

@@ -1,7 +1,7 @@
 /**
  * External imports
  */
-import { useEffect } from '@wordpress/element';
+import { useEffect, useState } from '@wordpress/element';
 import { useEntityActionMenuItems } from '@eventespresso/components';
 import { ifValidTicketEntity } from '@eventespresso/editor-hocs';
 import PropTypes from 'prop-types';
@@ -20,15 +20,14 @@ import TicketPriceCalculatorMenuItem
 	from '../price-calculator/ticket-price-calculator-menu-item';
 import useTicketEditorId from '../edit-form/use-ticket-editor-id';
 
-const EditorTicketActionsMenu = ( {
-	ticketEntity,
-} ) => {
+const EditorTicketActionsMenu = ( { ticketEntity } ) => {
 	const editorId = useTicketEditorId( ticketEntity );
+	const [ menuItems, setMenuItems ] = useState( [] );
 	const {
 		getActionsMenuForEntity,
 		registerEntityActionsMenuItem,
 	} = useEntityActionMenuItems();
-	const menuItems = getActionsMenuForEntity( ticketEntity );
+
 	useEffect( () => {
 		if ( Array.isArray( menuItems ) && menuItems.length < 1 ) {
 			registerEntityActionsMenuItem(
@@ -71,8 +70,13 @@ const EditorTicketActionsMenu = ( {
 					/>
 				),
 			);
+			setMenuItems( getActionsMenuForEntity( ticketEntity ) );
 		}
-	}, [ ticketEntity ] );
+	}, [
+		ticketEntity,
+		getActionsMenuForEntity,
+		registerEntityActionsMenuItem,
+	] );
 	return (
 		<>
 			<div className={ 'ee-editor-ticket-actions-menu' }>

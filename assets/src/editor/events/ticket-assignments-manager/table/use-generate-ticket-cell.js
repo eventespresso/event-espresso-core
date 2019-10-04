@@ -29,6 +29,7 @@ const useGenerateTicketCell = ( {
 			assignmentCounts,
 		} );
 		return {
+			key: `tam-ticket-cell-${ dateId }-${ ticketId }`,
 			type: 'cell',
 			class: `ee-tam-date-row-ticket${ assignmentsErrorClass }`,
 			value: (

@@ -18,14 +18,16 @@ import TicketHeaderCell from './ticket-header-cell';
  */
 const useTicketHeaders = ( { dateCount, ticketEntities } ) => useMemo(
 	() => {
-		const headerCells = [ {
+		const headerRow = {
 			type: 'row',
-			class: '',
-			value: '',
-		} ];
+			primary: true,
+			key: 'tam-header-row',
+			cells: [],
+		};
 		if ( dateCount > 1 ) {
-			headerCells.push( {
+			headerRow.cells.push( {
 				type: 'cell',
+				key: 'tam-date-header',
 				class: 'ee-tam-dates-header',
 				value: '',
 			} );
@@ -35,13 +37,14 @@ const useTicketHeaders = ( { dateCount, ticketEntities } ) => useMemo(
 				isModelEntityOfModel( ticket, 'ticket' ),
 				'Invalid EE Ticket model object!'
 			);
-			headerCells.push( {
+			headerRow.cells.push( {
 				type: 'cell',
+				key: `tam-ticket-header-${ ticket.id }`,
 				class: 'ee-tam-ticket-header',
 				value: <TicketHeaderCell ticketEntity={ ticket } />,
 			} );
 		} );
-		return headerCells;
+		return headerRow;
 	},
 	[ ticketEntities, dateCount ]
 );

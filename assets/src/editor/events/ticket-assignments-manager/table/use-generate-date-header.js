@@ -23,6 +23,7 @@ const useGenerateDateHeader = () => {
 		const statusClass = getBackgroundColorClass( eventDate );
 		return {
 			type: 'cell',
+			key: `tam-date-cell-${ eventDate.id }`,
 			class: 'ee-tam-date-label',
 			value: (
 				<div className="ee-tam-date-label-div">

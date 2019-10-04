@@ -2,7 +2,7 @@
  * External imports
  */
 import { useEffect } from '@wordpress/element';
-import { EditorModal, ifValidTicketEntity } from '@eventespresso/editor-hocs';
+import { EditorModal, ifValidTicketEntity, useIsEditorOpen } from '@eventespresso/editor-hocs';
 import { __, _x, sprintf } from '@eventespresso/i18n';
 import { FormHandler } from '@eventespresso/components';
 import PropTypes from 'prop-types';
@@ -34,17 +34,19 @@ const TicketPriceCalculatorFormModal = ( {
 	...otherProps
 } ) => {
 	const editorId = useTicketPriceCalculatorEditorId( ticket );
+	const isEditorOpen = useIsEditorOpen( editorId );
 	const {
 		formData,
 		setFormData,
 	} = useTicketPriceCalculatorFormData( ticket, prices );
 	const calculateTicketPrices = useCalculateTicketPrices( prices, setFormData );
 	const formDecorator = useTicketPriceCalculatorFormDecorator( setFormData );
-	useEffect(
-		() => calculateTicketPrices( formData ),
-		[ formData ]
-	);
-	return editorId ? (
+	useEffect( () => {
+		if ( pricesLoaded && formData.updated ) {
+			calculateTicketPrices( formData );
+		}
+	}, [ calculateTicketPrices, formData, prices ] );
+	return editorId && pricesLoaded && isEditorOpen ? (
 		<EditorModal
 			editorId={ editorId }
 			editorTitle={ __(

@@ -60,7 +60,7 @@ const TicketPriceCalculatorForm = ( {
 	let ticketPrefix = TICKET_PRICE_CALCULATOR_FORM_INPUT_PREFIX;
 	ticketPrefix += '-ticket-' + ticketEntity.id;
 	const values = isEmpty( currentValues ) ? initialValues : currentValues;
-	const columnHeaders = useTicketPriceCalculatorFormHeader();
+	const headerRows = useTicketPriceCalculatorFormHeader();
 	const totalRow = useTicketPriceCalculatorFormTotalRow(
 		ticketEntity,
 		ticketPrefix,
@@ -84,9 +84,9 @@ const TicketPriceCalculatorForm = ( {
 					inProgress={ inProgress }
 				/>
 				<ResponsiveTable
-					columns={ columnHeaders }
-					rowData={ formRows }
-					footerData={ totalRow }
+					headerRows={ [ headerRows ] }
+					tableRows={ formRows }
+					footerRows={ [ totalRow ] }
 					metaData={ {
 						tableId: ticketPrefix,
 						tableCaption: __(
