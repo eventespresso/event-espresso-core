@@ -19,7 +19,10 @@ const useTicketPriceCalculatorFormDecorator = ( setFormData ) => {
 		{
 			field: /^(.*?(\b-amount\b))$/,
 			updates: ( value, name, formData, prevData ) => {
-				if ( ! amountsMatch( formData[ name ], prevData[ name ] ) ) {
+				if (
+					prevData[ name ] !== undefined &&
+					! amountsMatch( formData[ name ], prevData[ name ] )
+				) {
 					formData.updated = true;
 					setFormData( formData );
 				}
@@ -29,7 +32,10 @@ const useTicketPriceCalculatorFormDecorator = ( setFormData ) => {
 		{
 			field: /^(.*?(\b-type\b))$/,
 			updates: ( value, name, formData, prevData ) => {
-				if ( formData[ name ] !== prevData[ name ] ) {
+				if (
+					prevData[ name ] !== undefined &&
+					formData[ name ] !== prevData[ name ]
+				) {
 					formData.updated = true;
 					setFormData( formData );
 				}
@@ -39,7 +45,10 @@ const useTicketPriceCalculatorFormDecorator = ( setFormData ) => {
 		{
 			field: 'ticketTotal',
 			updates: ( value, name, formData, prevData ) => {
-				if ( ! amountsMatch( formData[ name ], prevData[ name ] ) ) {
+				if (
+					prevData[ name ] !== undefined &&
+					! amountsMatch( formData[ name ], prevData[ name ] )
+				) {
 					formData.updated = true;
 					setFormData( formData );
 				}
