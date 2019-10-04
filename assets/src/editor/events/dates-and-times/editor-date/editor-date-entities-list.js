@@ -51,6 +51,7 @@ const EditorDateEntitiesList = ( { ...otherProps } ) => {
 		showDates,
 		datesSortedBy,
 		displayDates,
+		filteredDateIds,
 	} = useDatesListFilterState( { listId } );
 	const {
 		view,
@@ -83,6 +84,7 @@ const EditorDateEntitiesList = ( { ...otherProps } ) => {
 			setFilteredDates( eventDateIds );
 		}
 	}, [ currentPage, perPage, showDates, datesSortedBy, eventDates.length ] );
+	const entityOrder = filteredDateIds.join( '-' );
 	return (
 		<FormWrapper>
 			<DatesListFilterBar
@@ -95,6 +97,7 @@ const EditorDateEntitiesList = ( { ...otherProps } ) => {
 				{ ...entityListFilters }
 			/>
 			<EntityPagination
+				key={ `dates-pagination-${ entityOrder }` }
 				listId={ listId }
 				currentPage={ currentPage }
 				entitiesPerPage={ perPage }
@@ -103,6 +106,7 @@ const EditorDateEntitiesList = ( { ...otherProps } ) => {
 			/>
 			<EntityList
 				{ ...otherProps }
+				key={ `dates-list-${ entityOrder }` }
 				entities={ paginatedEntities }
 				allEventDates={ eventDates }
 				EntityGridView={ EditorDateEntitiesGridView }

@@ -38,7 +38,7 @@ const EditorTicketEntitiesList = ( { ...otherProps } ) => {
 		showTickets,
 		ticketsSortedBy,
 		displayTicketDate,
-		...ticketListFilters
+		filteredTicketIds,
 	} = useTicketsListFilterState( { listId } );
 	const {
 		tickets,
@@ -55,8 +55,8 @@ const EditorTicketEntitiesList = ( { ...otherProps } ) => {
 		showTickets,
 		ticketsSortedBy,
 		displayTicketDate,
+		filteredTicketIds,
 		...entityListFilters,
-		...ticketListFilters,
 	} );
 	const {
 		currentPage,
@@ -82,6 +82,7 @@ const EditorTicketEntitiesList = ( { ...otherProps } ) => {
 		ticketsSortedBy,
 		Array.isArray( tickets ) ? tickets.length : 0,
 	] );
+	const entityOrder = filteredTicketIds.join( '-' );
 	return (
 		<FormWrapper>
 			<TicketsListFilterBar
@@ -92,10 +93,11 @@ const EditorTicketEntitiesList = ( { ...otherProps } ) => {
 				showTickets={ showTickets }
 				ticketsSortedBy={ ticketsSortedBy }
 				displayTicketDate={ displayTicketDate }
-				{ ...ticketListFilters }
+				filteredTicketIds={ filteredTicketIds }
 				{ ...entityListFilters }
 			/>
 			<EntityPagination
+				key={ `tickets-pagination-${ entityOrder }` }
 				listId={ listId }
 				currentPage={ currentPage }
 				entitiesPerPage={ perPage }
@@ -104,6 +106,7 @@ const EditorTicketEntitiesList = ( { ...otherProps } ) => {
 			/>
 			<EntityList
 				{ ...otherProps }
+				key={ `tickets-list-${ entityOrder }` }
 				entities={ paginatedEntities }
 				allTickets={ tickets }
 				EntityGridView={ EditorTicketEntitiesGridView }
