@@ -211,7 +211,7 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step
                     }
                 }
             }
-            if ($primary_registrant && ! $this->checkout->admin_request && count($registrations) > 1) {
+            if ($primary_registrant && count($registrations) > 1) {
                 $copy_options['spco_copy_attendee_chk'] = $this->_print_copy_info
                     ? $this->_copy_attendee_info_form()
                     : $this->_auto_copy_attendee_info();
