@@ -132,11 +132,11 @@ abstract class BrowserAsset extends Asset
      * @throws DomainException
      * @throws InvalidDataTypeException
      */
-    public function setVersion($version = '', $fluent = true)
+    public function setVersion($version, $fluent = true)
     {
         // if version is NOT set and this asset was NOT built for distribution,
         // then set the version equal to the EE core plugin version
-        if ($this->version === '' && ! $this->isBuiltDistributionSource()) {
+        if (empty($version) && ! $this->isBuiltDistributionSource()) {
             $version = $this->domain->version();
         }
         if (! is_string($version)) {
