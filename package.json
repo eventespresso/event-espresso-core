@@ -95,7 +95,7 @@
 		"postcss-loader": "^3.0.0",
 		"react": "^16.9.0",
 		"react-dom": "^16.9.0",
-		"react-test-renderer": "^16.9.0",
+		"react-test-renderer": "^16.10.2",
 		"recast": "^0.18.2",
 		"webpack": "^4.41.0",
 		"webpack-assets-manifest": "^3.1.1",
