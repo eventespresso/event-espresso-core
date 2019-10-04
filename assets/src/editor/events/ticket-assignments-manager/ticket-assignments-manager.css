@@ -67,14 +67,16 @@
 
 .ee-ticket-assignments-manager .ee-tam-date-id,
 .ee-ticket-assignments-manager .ee-tam-ticket-id {
-    color: var(--ee-color-grey-7);
+    color: var(--ee-color-grey-6);
     font-size: var(--ee-font-size-micro);
     font-weight: normal;
 }
 
 .ee-ticket-assignments-manager .ee-tam-date-id {
+    left: var(--ee-margin-micro);
     line-height: var(--ee-font-size-tiny);
-    margin: var(--ee-margin-micro) 0 0;
+    position: absolute;
+    top: calc(var(--ee-margin-nano)*-1);
 }
 
 .ee-ticket-assignments-manager .ee-tam-ticket-id {
@@ -132,7 +134,7 @@
 .ee-ticket-assignments-manager .ee-tam-date-label-text {
     font-size: var(--ee-font-size-small);
     line-height: var(--ee-font-size-default);
-    margin: 0;
+    margin: var(--ee-margin-nano) 0 0;
 }
 
 .ee-ticket-assignments-manager .ee-tam-date-row-ticket {
