@@ -18,7 +18,11 @@ const useReorderTickets = (
 	setEntityIds,
 	setSortBy
 ) => {
-	const reorderEntities = useReorderEntities( { setEntityIds, setSortBy } );
+	const reorderEntities = useReorderEntities( {
+		modelName: 'ticket',
+		setEntityIds,
+		setSortBy,
+	} );
 	/**
 	 * @function
 	 * @param {Object} result

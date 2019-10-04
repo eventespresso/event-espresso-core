@@ -18,7 +18,11 @@ const useReorderDates = (
 	setEntityIds,
 	setSortBy
 ) => {
-	const reorderEntities = useReorderEntities( { setEntityIds, setSortBy } );
+	const reorderEntities = useReorderEntities( {
+		modelName: 'datetime',
+		setEntityIds,
+		setSortBy,
+	} );
 	/**
 	 * @function
 	 * @param {Object} result
