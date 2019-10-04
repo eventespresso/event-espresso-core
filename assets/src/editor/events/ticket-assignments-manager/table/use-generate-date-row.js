@@ -42,15 +42,14 @@ const useGenerateDateRow = (
 		 * @return {Array} array of row data
 		 */
 		( eventDate ) => {
-			const rowData = [
-				{
-					type: 'row',
-					class: 'ee-tam-date-row',
-					value: '',
-				},
-			];
+			const rowData = {
+				key: `date-row-${ eventDate.id }`,
+				type: 'row',
+				class: 'ee-tam-date-row',
+				cells: [],
+			};
 			if ( dateCount > 1 ) {
-				rowData.push( dateHeader( eventDate ) );
+				rowData.cells.push( dateHeader( eventDate ) );
 			}
 			const dateTicketEntities = isModelEntityOfModel( eventDate, 'datetime' ) &&
 				ticketDateMap[ eventDate.id ] ?
@@ -62,7 +61,7 @@ const useGenerateDateRow = (
 					isModelEntityOfModel( ticket, 'ticket' ),
 					'Invalid EE Ticket model object!'
 				);
-				rowData.push(
+				rowData.cells.push(
 					ticketCell( eventDate.id, ticket.id, dateTicketEntities )
 				);
 			}

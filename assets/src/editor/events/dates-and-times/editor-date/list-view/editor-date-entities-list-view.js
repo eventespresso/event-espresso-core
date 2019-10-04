@@ -50,6 +50,7 @@ const EditorDateEntitiesListView = ( {
 		setEntityIds,
 		setSortBy
 	);
+
 	/**
 	 * toggles display of start and end date columns
 	 * based on incoming value of showDate
@@ -60,15 +61,16 @@ const EditorDateEntitiesListView = ( {
 	const filterColumns = useCallback(
 		/**
 		 * @function
-		 * @param {Array} columns
-		 * @return {Array} columns
+		 * @param {Object} columns
+		 * @return {Object} columns
 		 */
 		( columns ) => {
 			const colSwap = { start: 'end', end: 'start' };
 			const exclude = colSwap[ showDate ] ? colSwap[ showDate ] : '';
-			return filterColumnsByKey( columns, exclude );
+			columns.cells = filterColumnsByKey( columns.cells, exclude );
+			return columns;
 		},
-		[]
+		[ showDate ]
 	);
 
 	const formRows = entities.map(
@@ -89,8 +91,8 @@ const EditorDateEntitiesListView = ( {
 
 	return (
 		<ResponsiveTable
-			columns={ filterColumns( datesListTableHeader() ) }
-			rowData={ addZebraStripesOnMobile( formRows, noZebraStripe ) }
+			headerRows={ [ filterColumns( datesListTableHeader() ) ] }
+			tableRows={ addZebraStripesOnMobile( formRows, noZebraStripe ) }
 			metaData={ {
 				tableId: 'date-entities-list-view',
 				tableCaption: __( 'Event Dates', 'event_espresso' ),

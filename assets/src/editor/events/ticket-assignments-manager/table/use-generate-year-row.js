@@ -3,6 +3,9 @@
  */
 import PropTypes from 'prop-types';
 import { useCallback } from '@wordpress/element';
+import { EspressoTable } from '@eventespresso/components';
+
+const { TableDataCell } = EspressoTable;
 
 /**
  * @function
@@ -16,38 +19,36 @@ const useGenerateYearRow = ( ticketCount ) => useCallback(
 	 * @return {Array} data for a row showing the year
 	 */
 	( year ) => {
-		const rowData = [
-			{
-				type: 'row',
-				value: '',
-				class: 'ee-tam-year-row',
-			},
-			{
+		const yearRow = {
+			type: 'row',
+			key: `tam-year-row-${ year }`,
+			class: 'ee-tam-year-row',
+			cells: [ {
 				type: 'cell',
-				value: year,
+				key: `tam-date-label-${ year }`,
 				class: 'ee-tam-date-label',
-			},
-		];
+				value: year,
+			} ],
+		};
 		for ( let x = 0; x < ticketCount; x++ ) {
-			rowData.push(
-				{
-					type: 'cell',
-					value: '',
-					render: ( rowNumber, colNumber ) => (
-						<td
-							key={ `row-${ rowNumber }-col-${ colNumber }` }
-							className={
-								'ee-tam-date-row-ticket ee-rspnsv-table-body-td'
-							}
-						>
-						</td>
-					),
-				}
-			);
+			yearRow.cells.push( {
+				type: 'cell',
+				key: `tam-ticket-col-${ x + 1 }`,
+				value: '',
+				render: ( rowNumber, colNumber ) => (
+					<TableDataCell
+						key={ `row-${ rowNumber }-col-${ colNumber }` }
+						rowNumber={ rowNumber }
+						colNumber={ colNumber }
+						htmlClass={ 'ee-tam-date-row-ticket' }
+					>
+					</TableDataCell>
+				),
+			} );
 		}
-		return rowData;
+		return yearRow;
 	},
-	[]
+	[ ticketCount ]
 );
 
 useGenerateYearRow.propTypes = {

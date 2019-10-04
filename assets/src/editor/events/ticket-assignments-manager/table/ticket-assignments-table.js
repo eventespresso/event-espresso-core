@@ -44,8 +44,8 @@ const TicketAssignmentsTable = ( {
 	} );
 	return dateCount > 0 && ticketCount > 0 ? (
 		<ResponsiveTable
-			columns={ ticketHeaders }
-			rowData={ dateRows }
+			headerRows={ [ ticketHeaders ] }
+			tableRows={ dateRows }
 			metaData={ {
 				tableCaption: __(
 					'Ticket Assignments',

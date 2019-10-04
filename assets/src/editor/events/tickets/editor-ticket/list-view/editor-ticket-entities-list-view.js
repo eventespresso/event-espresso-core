@@ -83,8 +83,8 @@ const EditorTicketEntitiesListView = ( {
 	htmlClass = classNames( htmlClass, 'ee-tickets-list-list-view' );
 	return (
 		<ResponsiveTable
-			columns={ filterColumns( ticketsListTableHeader() ) }
-			rowData={ addZebraStripesOnMobile( formRows, noZebraStripe ) }
+			headerRows={ [ filterColumns( ticketsListTableHeader() ) ] }
+			tableRows={ addZebraStripesOnMobile( formRows, noZebraStripe ) }
 			metaData={ {
 				tableId: 'ticket-entities-list-view',
 				tableCaption: __( 'Tickets', 'event_espresso' ),
