@@ -41,13 +41,16 @@ abstract class BrowserAsset extends Asset
      * @param string          $source
      * @param array           $dependencies
      * @param DomainInterface $domain
+     * @param string          $version
+     * @throws DomainException
      * @throws InvalidDataTypeException
      */
-    public function __construct($type, $handle, $source, array $dependencies, DomainInterface $domain)
+    public function __construct($type, $handle, $source, array $dependencies, DomainInterface $domain, $version = '')
     {
         parent::__construct($type, $handle, $domain);
         $this->setSource($source);
         $this->setDependencies($dependencies);
+        $this->setVersion($version, false);
     }
 
 
@@ -118,23 +121,24 @@ abstract class BrowserAsset extends Asset
      */
     public function version()
     {
-        // if version is NOT set and this asset was NOT built for distribution,
-        // then set the version equal to the EE core plugin version
-        if ($this->version === null && ! $this->isBuiltDistributionSource()) {
-            $this->setVersion();
-        }
         return $this->version;
     }
 
 
     /**
      * @param string $version
-     * @return BrowserAsset
-     * @throws InvalidDataTypeException
+     * @param bool   $fluent
+     * @return BrowserAsset|null
      * @throws DomainException
+     * @throws InvalidDataTypeException
      */
-    public function setVersion($version = '')
+    public function setVersion($version = '', $fluent = true)
     {
+        // if version is NOT set and this asset was NOT built for distribution,
+        // then set the version equal to the EE core plugin version
+        if ($this->version === '' && ! $this->isBuiltDistributionSource()) {
+            $version = $this->domain->version();
+        }
         if (! is_string($version)) {
             throw new InvalidDataTypeException(
                 '$version',
@@ -142,11 +146,11 @@ abstract class BrowserAsset extends Asset
                 'string'
             );
         }
-        if ( $version === '' ) {
-            $version = $this->domain->version();
-        }
         $this->version = $version;
-        return $this;
+        if ($fluent) {
+            return $this;
+        }
+        return null;
     }
 
 
