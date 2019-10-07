@@ -885,7 +885,6 @@ class EE_Dependency_Map
                 'EventEspresso\core\services\request\Request' => EE_Dependency_Map::load_from_cache,
                 'EEM_Ticket'  => EE_Dependency_Map::load_from_cache,
             ],
-            ],
             'EventEspresso\core\services\graphql\RequestHandler' => [
                 'EventEspresso\core\services\graphql\ResolverCollection'  => EE_Dependency_Map::load_from_cache,
                 'EventEspresso\core\services\request\Request' => EE_Dependency_Map::load_from_cache,
