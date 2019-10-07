@@ -102,10 +102,13 @@ class CustomPostTypeDefinitions
                 'class_name'    => 'EE_Venue',
                 'model_name'    => 'EEM_Venue',
                 'args'          => array(
-                    'public'            => true,
-                    'show_in_nav_menus' => false, // by default this doesn't show for decaf,
-                    'capability_type'   => 'venue',
-                    'capabilities'      => array(
+                    'public'              => true,
+                    'show_in_nav_menus'   => false, // by default this doesn't show for decaf,
+                    'show_in_graphql'     => true,
+                    'graphql_single_name' => __( 'Venue', 'event_espresso' ),
+                    'graphql_plural_name' => __( 'Venues', 'event_espresso' ),
+                    'capability_type'     => 'venue',
+                    'capabilities'        => array(
                         'edit_post'              => 'ee_edit_venue',
                         'read_post'              => 'ee_read_venue',
                         'delete_post'            => 'ee_delete_venue',
@@ -120,11 +123,11 @@ class CustomPostTypeDefinitions
                         'edit_private_posts'     => 'ee_edit_private_venues',
                         'edit_published_posts'   => 'ee_edit_published_venues',
                     ),
-                    'taxonomies'        => array(
+                    'taxonomies'          => array(
                         'espresso_venue_categories',
                         'post_tag',
                     ),
-                    'page_templates'    => true,
+                    'page_templates'      => true,
                 ),
             ),
             'espresso_attendees' => array(
