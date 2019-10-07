@@ -4,10 +4,10 @@ namespace EventEspresso\core\services\assets;
 
 use DomainException;
 use EventEspresso\core\domain\DomainInterface;
+use EventEspresso\core\domain\values\assets\Asset;
 use EventEspresso\core\domain\values\assets\JavascriptAsset;
 use EventEspresso\core\domain\values\assets\ManifestFile;
 use EventEspresso\core\domain\values\assets\StylesheetAsset;
-use EventEspresso\core\domain\values\assets\VendorJavascriptAsset;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidEntityException;
 use EventEspresso\core\services\collections\DuplicateCollectionIdentifierException;
@@ -101,24 +101,28 @@ abstract class AssetManager implements AssetManagerInterface
      * @param string $source
      * @param array  $dependencies
      * @param bool   $load_in_footer
+     * @param string $version
      * @return JavascriptAsset
      * @throws DuplicateCollectionIdentifierException
      * @throws InvalidDataTypeException
      * @throws InvalidEntityException
+     * @throws DomainException
      * @since 4.9.62.p
      */
     public function addJavascript(
         $handle,
         $source,
         array $dependencies = array(),
-        $load_in_footer = true
+        $load_in_footer = true,
+        $version = ''
     ) {
         $asset = new JavascriptAsset(
             $handle,
             $source,
             array_unique($dependencies),
             $load_in_footer,
-            $this->domain
+            $this->domain,
+            $version
         );
         $this->assets->add($asset, $handle);
         return $asset;
@@ -128,26 +132,27 @@ abstract class AssetManager implements AssetManagerInterface
     /**
      * Used to register a javascript asset where everything is dynamically derived from the given handle.
      *
-     * @param string $handle
-     * @param string|array  $extra_dependencies
+     * @param string       $handle
+     * @param string|array $extra_dependencies
      * @return JavascriptAsset
      * @throws DuplicateCollectionIdentifierException
      * @throws InvalidDataTypeException
      * @throws InvalidEntityException
+     * @throws DomainException
      */
     public function addJs($handle, $extra_dependencies = [])
     {
-        $dependencies = $this->registry->getJsDependencies(
-            $this->domain->assetNamespace(),
-            $handle
+        $details = $this->getAssetDetails(
+            Asset::TYPE_JS,
+            $handle,
+            $extra_dependencies
         );
-        $dependencies = ! empty( $extra_dependencies )
-            ? array_merge(( array ) $extra_dependencies, $dependencies)
-            : $dependencies;
         return $this->addJavascript(
             $handle,
             $this->registry->getJsUrl($this->domain->assetNamespace(), $handle),
-            $dependencies
+            $details['dependencies'],
+            true,
+            $details['version']
         );
     }
 
@@ -156,17 +161,19 @@ abstract class AssetManager implements AssetManagerInterface
      * @param string $handle
      * @param array  $dependencies
      * @param bool   $load_in_footer
+     * @param string $version
      * @return JavascriptAsset
+     * @throws DomainException
      * @throws DuplicateCollectionIdentifierException
      * @throws InvalidDataTypeException
      * @throws InvalidEntityException
-     * @throws DomainException
      * @since 4.9.71.p
      */
     public function addVendorJavascript(
         $handle,
         array $dependencies = array(),
-        $load_in_footer = true
+        $load_in_footer = true,
+        $version = ''
     ) {
         $dev_suffix = wp_scripts_get_suffix('dev');
         $vendor_path = $this->domain->pluginUrl() . 'assets/vendor/';
@@ -174,10 +181,10 @@ abstract class AssetManager implements AssetManagerInterface
             $handle,
             "{$vendor_path}{$handle}{$dev_suffix}.js",
             $dependencies,
-            $load_in_footer
+            $load_in_footer,
+            $version
         );
     }
-
 
 
     /**
@@ -185,7 +192,9 @@ abstract class AssetManager implements AssetManagerInterface
      * @param string $source
      * @param array  $dependencies
      * @param string $media
+     * @param string $version
      * @return StylesheetAsset
+     * @throws DomainException
      * @throws DuplicateCollectionIdentifierException
      * @throws InvalidDataTypeException
      * @throws InvalidEntityException
@@ -195,14 +204,16 @@ abstract class AssetManager implements AssetManagerInterface
         $handle,
         $source,
         array $dependencies = array(),
-        $media = 'all'
+        $media = 'all',
+        $version = ''
     ) {
         $asset = new StylesheetAsset(
             $handle,
             $source,
             array_unique($dependencies),
             $this->domain,
-            $media
+            $media,
+            $version
         );
         $this->assets->add($asset, $handle);
         return $asset;
@@ -212,26 +223,27 @@ abstract class AssetManager implements AssetManagerInterface
     /**
      * Used to register a css asset where everything is dynamically derived from the given handle.
      *
-     * @param string $handle
-     * @param string|array  $extra_dependencies
+     * @param string       $handle
+     * @param string|array $extra_dependencies
      * @return StylesheetAsset
      * @throws DuplicateCollectionIdentifierException
      * @throws InvalidDataTypeException
      * @throws InvalidEntityException
+     * @throws DomainException
      */
     public function addCss($handle, $extra_dependencies = [])
     {
-        $dependencies = $this->registry->getCssDependencies(
-            $this->domain->assetNamespace(),
-            $handle
+        $details = $this->getAssetDetails(
+            Asset::TYPE_CSS,
+            $handle,
+            $extra_dependencies
         );
-        $dependencies = ! empty( $extra_dependencies )
-            ? array_merge(( array ) $extra_dependencies, $dependencies)
-            : $dependencies;
         return $this->addStylesheet(
             $handle,
             $this->registry->getCssUrl($this->domain->assetNamespace(), $handle),
-            $dependencies
+            $details['dependencies'],
+            'all',
+            $details['version']
         );
     }
 
@@ -251,5 +263,44 @@ abstract class AssetManager implements AssetManagerInterface
             }
         }
         return false;
+    }
+
+
+    /**
+     * @param string $asset_type
+     * @param string $handle
+     * @param array  $extra_dependencies
+     * @return array
+     * @since $VID:$
+     */
+    private function getAssetDetails($asset_type, $handle, $extra_dependencies = [])
+    {
+        $getAssetDetails = '';
+        switch ($asset_type) {
+            case Asset::TYPE_JS :
+                $getAssetDetails = 'getJsAssetDetails';
+                break;
+            case Asset::TYPE_CSS :
+                $getAssetDetails = 'getCssAssetDetails';
+                break;
+        }
+        if ($getAssetDetails === '') {
+            return ['dependencies' => [], 'version' => ''];
+        }
+        $details = $this->registry->$getAssetDetails(
+            $this->domain->assetNamespace(),
+            $handle
+        );
+        $details['dependencies'] = isset($details['dependencies'])
+            ? $details['dependencies']
+            : [];
+        $details['version'] = isset($details['version'])
+            ? $details['version']
+            : '';
+        $details['dependencies'] = ! empty($extra_dependencies)
+            ? array_merge($details['dependencies'], (array) $extra_dependencies)
+            : $details['dependencies'];
+        return $details;
+
     }
 }

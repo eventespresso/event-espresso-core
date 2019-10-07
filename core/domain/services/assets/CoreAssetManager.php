@@ -171,10 +171,11 @@ class CoreAssetManager extends AssetManager
 
 
     /**
-     * @since 4.9.62.p
      * @throws DuplicateCollectionIdentifierException
      * @throws InvalidDataTypeException
      * @throws InvalidEntityException
+     * @throws DomainException
+     * @since 4.9.62.p
      */
     public function addStylesheetFiles()
     {
@@ -216,8 +217,8 @@ class CoreAssetManager extends AssetManager
                 );
             }
         );
-        $this->addJs(self::JS_HANDLE_HOCS, self::JS_HANDLE_DATA_STORES)->setRequiresTranslation();
-        $this->addJs(self::JS_HANDLE_COMPONENTS, self::JS_HANDLE_DATA_STORES)->setRequiresTranslation();
+        $this->addJs(self::JS_HANDLE_HOCS, [self::JS_HANDLE_DATA_STORES])->setRequiresTranslation();
+        $this->addJs(self::JS_HANDLE_COMPONENTS, [self::JS_HANDLE_DATA_STORES])->setRequiresTranslation();
 
         $this->registry->addData('eejs_api_nonce', wp_create_nonce('wp_rest'));
         $this->registry->addData(
@@ -296,13 +297,14 @@ class CoreAssetManager extends AssetManager
         if (version_compare($wp_version, '5.0.beta', '>=')) {
             return;
         }
-        $this->addVendorJavascript(CoreAssetManager::JS_HANDLE_REACT)
-            ->setVersion('16.6.0');
+        $this->addVendorJavascript(CoreAssetManager::JS_HANDLE_REACT, [], true, '16.6.0');
         $this->addVendorJavascript(
             CoreAssetManager::JS_HANDLE_REACT_DOM,
-            array(CoreAssetManager::JS_HANDLE_REACT)
-        )->setVersion('16.6.0');
-        $this->addVendorJavascript(CoreAssetManager::JS_HANDLE_LODASH)
+            array(CoreAssetManager::JS_HANDLE_REACT),
+            true,
+            '16.6.0'
+        );
+        $this->addVendorJavascript(CoreAssetManager::JS_HANDLE_LODASH, [], true, '4.17.11')
             ->setInlineDataCallback(
                 static function() {
                     wp_add_inline_script(
@@ -310,8 +312,7 @@ class CoreAssetManager extends AssetManager
                         'window.lodash = _.noConflict();'
                     );
                 }
-            )
-            ->setVersion('4.17.11');
+            );
     }
 
 
@@ -363,10 +364,11 @@ class CoreAssetManager extends AssetManager
 
 
     /**
-     * @since 4.9.62.p
      * @throws DuplicateCollectionIdentifierException
      * @throws InvalidDataTypeException
      * @throws InvalidEntityException
+     * @throws DomainException
+     * @since 4.9.62.p
      */
     private function loadCoreCss()
     {
@@ -387,8 +389,8 @@ class CoreAssetManager extends AssetManager
                 );
             }
         }
-        $this->addCss(self::CSS_HANDLE_CORE_CSS_DEFAULT, 'dashicons');
-        $this->addCss(self::CSS_HANDLE_COMPONENTS, self::CSS_HANDLE_CORE_CSS_DEFAULT);
+        $this->addCss(self::CSS_HANDLE_CORE_CSS_DEFAULT, ['dashicons']);
+        $this->addCss(self::CSS_HANDLE_COMPONENTS, [self::CSS_HANDLE_CORE_CSS_DEFAULT]);
         $this->addCss(self::CSS_HANDLE_HOCS);
     }
 
@@ -407,16 +409,18 @@ class CoreAssetManager extends AssetManager
         $this->addJavascript(
             CoreAssetManager::JS_HANDLE_JQUERY_VALIDATE,
             EE_GLOBAL_ASSETS_URL . 'scripts/jquery.validate.min.js',
-            array(CoreAssetManager::JS_HANDLE_JQUERY)
-        )
-        ->setVersion('1.15.0');
+            array(CoreAssetManager::JS_HANDLE_JQUERY),
+            true,
+            '1.15.0'
+        );
 
         $this->addJavascript(
             CoreAssetManager::JS_HANDLE_JQUERY_VALIDATE_EXTRA,
             EE_GLOBAL_ASSETS_URL . 'scripts/jquery.validate.additional-methods.min.js',
-            array(CoreAssetManager::JS_HANDLE_JQUERY_VALIDATE)
-        )
-        ->setVersion('1.15.0');
+            array(CoreAssetManager::JS_HANDLE_JQUERY_VALIDATE),
+            true,
+            '1.15.0'
+        );
     }
 
 
@@ -436,9 +440,10 @@ class CoreAssetManager extends AssetManager
         $this->addJavascript(
             CoreAssetManager::JS_HANDLE_ACCOUNTING_CORE,
             EE_THIRD_PARTY_URL . 'accounting/accounting.js',
-            array(CoreAssetManager::JS_HANDLE_UNDERSCORE)
-        )
-        ->setVersion('0.3.2');
+            array(CoreAssetManager::JS_HANDLE_UNDERSCORE),
+            true,
+            '0.3.2'
+        );
 
         $this->addJavascript(
             CoreAssetManager::JS_HANDLE_ACCOUNTING,
@@ -453,8 +458,7 @@ class CoreAssetManager extends AssetManager
                      $this->getAccountingSettings()
                  );
             }
-        )
-        ->setVersion();
+        );
     }
 
 
@@ -479,10 +483,11 @@ class CoreAssetManager extends AssetManager
     /**
      * assets that are used in the WordPress admin
      *
-     * @since 4.9.62.p
      * @throws DuplicateCollectionIdentifierException
      * @throws InvalidDataTypeException
      * @throws InvalidEntityException
+     * @throws DomainException
+     * @since 4.9.62.p
      */
     private function registerAdminAssets()
     {

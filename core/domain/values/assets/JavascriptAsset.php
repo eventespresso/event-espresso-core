@@ -3,6 +3,7 @@
 namespace EventEspresso\core\domain\values\assets;
 
 use Closure;
+use DomainException;
 use EventEspresso\core\domain\DomainInterface;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 
@@ -46,16 +47,19 @@ class JavascriptAsset extends BrowserAsset
      * @param array           $dependencies
      * @param bool            $load_in_footer
      * @param DomainInterface $domain
+     * @param string          $version
      * @throws InvalidDataTypeException
+     * @throws DomainException
      */
     public function __construct(
         $handle,
         $source,
         array $dependencies,
         $load_in_footer,
-        DomainInterface $domain
+        DomainInterface $domain,
+        $version = ''
     ) {
-        parent::__construct(Asset::TYPE_JS, $handle, $source, $dependencies, $domain);
+        parent::__construct(Asset::TYPE_JS, $handle, $source, $dependencies, $domain, $version);
         $this->setLoadInFooter($load_in_footer);
     }
 
