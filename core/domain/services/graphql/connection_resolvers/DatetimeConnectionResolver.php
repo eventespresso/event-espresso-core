@@ -41,6 +41,9 @@ namespace EventEspresso\core\domain\services\graphql\connection_resolvers;
 
 use EE_Error;
 use EEM_Datetime;
+use EE_Event;
+use EE_Ticket;
+use EE_Checkin;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
 use InvalidArgumentException;
@@ -134,8 +137,22 @@ class DatetimeConnectionResolver extends AbstractConnectionResolver {
 		 * set the query to pull datetimes that belong to that event.
 		 * We can set more cases for other source types.
 		 */
-		if ($this->source instanceof Post ) {
-            $query_args[] = ['EVT_ID' => $this->source->ID];
+		if (is_object( $this->source )) {
+			switch (true) {
+				// It's surely an event
+				case $this->source instanceof Post:
+					$query_args[] = ['EVT_ID' => $this->source->ID];
+					break;
+				case $this->source instanceof EE_Event:
+					$query_args[] = ['EVT_ID' => $this->source->ID()];
+					break;
+				case $this->source instanceof EE_Ticket:
+					$query_args[] = ['Ticket.TKT_ID' => $this->source->ID()];
+					break;
+				case $this->source instanceof EE_Checkin:
+					$query_args[] = ['Checkin.CHK_ID' => $this->source->ID()];
+					break;
+			}
 		}
 
 		/**

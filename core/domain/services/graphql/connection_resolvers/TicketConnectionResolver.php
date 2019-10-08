@@ -136,13 +136,13 @@ class TicketConnectionResolver extends AbstractConnectionResolver {
 
 		/**
 		 * Determine where we're at in the Graph and adjust the query context appropriately.
-		 *
-		 * For example, if we're querying for datetime as a field of event query, this will automatically
-		 * set the query to pull datetimes that belong to that event.
-		 * We can set more cases for other source types.
 		 */
-		if ($this->source instanceof EE_Datetime ) {
-            $query_args[] = [ 'Datetime.DTT_ID' => $this->source->ID() ];
+		if (is_object( $this->source )) {
+			switch (true) {
+				case $this->source instanceof EE_Datetime:
+					$query_args[] = [ 'Datetime.DTT_ID' => $this->source->ID() ];
+					break;
+			}
 		}
 
 		/**
