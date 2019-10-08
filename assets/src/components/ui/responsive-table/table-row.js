@@ -42,7 +42,6 @@ const TableRow = ( {
 		`ee-row-${ rowNumber }`,
 		cssClasses[ `${ rowType }RowClass` ],
 	);
-	console.log( '%c > sortable: ', 'color: #BCBDAC;', sortable );
 	return sortable ? (
 		<Draggable
 			key={ rowData.key }
