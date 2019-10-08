@@ -59,11 +59,11 @@ class ConnectionsManager
     public function init()
     {
         $this->connections->loadConnections();
-        add_action('graphql_register_types', [$this, 'registerTypes'], 20);
+        add_action('graphql_register_types', [$this, 'registerConnections'], 20);
     }
 
 
-    public function registerTypes()
+    public function registerConnections()
     {
         // loop through the collection of types and register their fields
         foreach ($this->connections as $connection) {

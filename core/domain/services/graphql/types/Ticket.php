@@ -23,7 +23,6 @@ namespace EventEspresso\core\domain\services\graphql\types;
 use EE_Base_Class;
 use EE_Ticket;
 use EE_Error;
-use EE_WP_User;
 use EEM_Ticket;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
@@ -47,11 +46,11 @@ class Ticket extends TypeBase
     /**
      * Ticket constructor.
      *
-     * @param EEM_Ticket $datetime_model
+     * @param EEM_Ticket $ticket_model
      */
-    public function __construct(EEM_Ticket $datetime_model)
+    public function __construct(EEM_Ticket $ticket_model)
     {
-        $this->model = $datetime_model;
+        $this->model = $ticket_model;
         $this->setName('Ticket');
         $this->setDescription(__('A ticket for an event date', 'event_espresso'));
         $this->setIsCustomPostType(false);
