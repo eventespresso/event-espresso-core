@@ -58,63 +58,63 @@ class Country extends TypeBase
             'name'  => [
                 'type'        => 'String',
                 'description' => __('Country Name', 'event_espresso'),
-                'resolve'     => function (EEM_Country $country) {
+                'resolve'     => function (EE_Country $country) {
                     return $this->resolveField($country, 'name');
                 },
             ],
             'currencyCode'  => [
                 'type'        => 'String',
                 'description' => __('Country Currency Code', 'event_espresso'),
-                'resolve'     => function (EEM_Country $country) {
+                'resolve'     => function (EE_Country $country) {
                     return $this->resolveField($country, 'currency_code');
                 },
             ],
             'currencySingular'  => [
                 'type'        => 'String',
                 'description' => __('Currency Name Singular', 'event_espresso'),
-                'resolve'     => function (EEM_Country $country) {
+                'resolve'     => function (EE_Country $country) {
                     return $this->resolveField($country, 'currency_name_single');
                 },
             ],
             'currencyPlural'  => [
                 'type'        => 'String',
                 'description' => __('Currency Name Plural', 'event_espresso'),
-                'resolve'     => function (EEM_Country $country) {
+                'resolve'     => function (EE_Country $country) {
                     return $this->resolveField($country, 'currency_name_plural');
                 },
             ],
             'currencySign'  => [
                 'type'        => 'String',
                 'description' => __('Currency Sign', 'event_espresso'),
-                'resolve'     => function (EEM_Country $country) {
+                'resolve'     => function (EE_Country $country) {
                     return $this->resolveField($country, 'currency_sign');
                 },
             ],
             'currencySignBeforeNumber'  => [
                 'type'        => 'String',
                 'description' => __('Currency Sign Before Number', 'event_espresso'),
-                'resolve'     => function (EEM_Country $country) {
+                'resolve'     => function (EE_Country $country) {
                     return $this->resolveField($country, 'currency_sign_before');
                 },
             ],
             'currencyDecimalPlaces'  => [
                 'type'        => 'String',
                 'description' => __('Currency Decimal Places', 'event_espresso'),
-                'resolve'     => function (EEM_Country $country) {
+                'resolve'     => function (EE_Country $country) {
                     return $this->resolveField($country, 'currency_decimal_places');
                 },
             ],
             'currencyDecimalMark'  => [
                 'type'        => 'String',
                 'description' => __('Currency Decimal Mark', 'event_espresso'),
-                'resolve'     => function (EEM_Country $country) {
+                'resolve'     => function (EE_Country $country) {
                     return $this->resolveField($country, 'currency_decimal_mark');
                 },
             ],
             'currencyThousandsSeparator'  => [
                 'type'        => 'String',
                 'description' => __('Currency Thousands Separator', 'event_espresso'),
-                'resolve'     => function (EEM_Country $country) {
+                'resolve'     => function (EE_Country $country) {
                     return $this->resolveField($country, 'currency_thousands_separator');
                 },
             ],

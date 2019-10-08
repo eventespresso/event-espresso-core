@@ -24,6 +24,7 @@ use EE_Base_Class;
 use EE_State;
 use EE_Error;
 use EEM_State;
+use EEM_Country;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
 use EventEspresso\core\services\graphql\TypeBase;
@@ -60,29 +61,36 @@ class State extends TypeBase
                     'non_null' => 'Int',
                 ],
                 'description' => __( 'State ID', 'event_espresso' ),
-                'resolve'     => function (EEM_State $state) {
+                'resolve'     => function (EE_State $state) {
                     return $this->resolveField($state, 'ID');
                 },
             ],
             'abbreviation' => [
                 'type'        => 'String',
                 'description' => __( 'State Abbreviation', 'event_espresso' ),
-                'resolve'     => function (EEM_State $state) {
+                'resolve'     => function (EE_State $state) {
                     return $this->resolveField($state, 'abbrev' );
                 },
             ],
             'name'  => [
                 'type'        => 'String',
                 'description' => __('State Name', 'event_espresso'),
-                'resolve'     => function (EEM_State $state) {
+                'resolve'     => function (EE_State $state) {
                     return $this->resolveField($state, 'name' );
                 },
             ],
             'isActive'  => [
                 'type'        => 'Boolean',
                 'description' => __('State Active Flag', 'event_espresso'),
-                'resolve'     => function (EEM_State $state) {
+                'resolve'     => function (EE_State $state) {
                     return $this->resolveField($state, 'active' );
+                },
+            ],
+            'country'  => [
+                'type'        => 'Country',
+                'description' => __('Country for the state', 'event_espresso'),
+                'resolve'     => function (EE_State $state) {
+                    return $this->resolveCountry($state);
                 },
             ],
         ] );
@@ -98,5 +106,20 @@ class State extends TypeBase
     public function resolveField(EE_State $state, $field)
     {
         return $state instanceof EE_State ? $state->{$field}() : null;
+    }
+
+
+    /**
+     * @param EE_State $source The source instance.
+     * @return int
+     * @since $VID:$
+     */
+    public function resolveCountry(EE_State $source)
+    {
+        $country_iso = $source->country_iso();
+        if ($country_iso) {
+            return EEM_Country::instance()->get_one_by_ID($country_iso);
+        }
+        return null;
     }
 }
