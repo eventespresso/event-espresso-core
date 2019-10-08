@@ -1,13 +1,51 @@
 <?php
+/**
+ *     Event Espresso
+ *     Manage events, sell tickets, and receive payments from your WordPress website.
+ *     Copyright (c) 2008-2019 Event Espresso  All Rights Reserved.
+ *
+ *     This program is free software: you can redistribute it and/or modify
+ *     it under the terms of the GNU General Public License as published by
+ *     the Free Software Foundation, either version 3 of the License, or
+ *     (at your option) any later version.
+ *
+ *     This program is distributed in the hope that it will be useful,
+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *     GNU General Public License for more details.
+ *
+ *     You should have received a copy of the GNU General Public License
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
 
+/**
+ *     Event Espresso
+ *     Manage events, sell tickets, and receive payments from your WordPress website.
+ *     Copyright (c) 2008-2019 Event Espresso  All Rights Reserved.
+ *
+ *     This program is free software: you can redistribute it and/or modify
+ *     it under the terms of the GNU General Public License as published by
+ *     the Free Software Foundation, either version 3 of the License, or
+ *     (at your option) any later version.
+ *
+ *     This program is distributed in the hope that it will be useful,
+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *     GNU General Public License for more details.
+ *
+ *     You should have received a copy of the GNU General Public License
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
+namespace EventEspresso\core\domain\services\graphql\connection_resolvers;
+
+use EE_Error;
+use EEM_Venue;
+use EventEspresso\core\exceptions\InvalidDataTypeException;
+use EventEspresso\core\exceptions\InvalidInterfaceException;
+use InvalidArgumentException;
 use WPGraphQL\Data\Connection\AbstractConnectionResolver;
-use GraphQL\Type\Definition\ResolveInfo;
-use WPGraphQL\AppContext;
 use WPGraphQL\Model\Post;
-use WPGraphQL\Model\PostType;
-use WPGraphQL\Model\Term;
-use WPGraphQL\Model\User;
-use WPGraphQL\Types;
 
 /**
  * Class VenueConnectionResolver
@@ -15,31 +53,15 @@ use WPGraphQL\Types;
  */
 class VenueConnectionResolver extends AbstractConnectionResolver {
 
-	/**
-	 * VenueConnectionResolver constructor.
-	 *
-	 * @param mixed       $source    The object passed down from the previous level in the Resolve
-	 *                               tree
-	 * @param array       $args      The input arguments for the query
-	 * @param AppContext  $context   The context of the request
-	 * @param ResolveInfo $info      The resolve info passed down the Resolve tree
-	 *
-	 * @throws \Exception
-	 */
-	public function __construct( $source, $args, $context, $info ) {
-
-		/**
-		 * Call the parent construct to setup class data
-		 */
-		parent::__construct( $source, $args, $context, $info );
-
-	}
-
-	/**
-	 * @return \EEM_Venue
-	 */
+    /**
+     * @return EEM_Venue
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     */
 	public function get_query() {
-		return \EEM_Venue::instance();
+		return EEM_Venue::instance();
 	}
 
 	/**
@@ -92,7 +114,10 @@ class VenueConnectionResolver extends AbstractConnectionResolver {
 		/**
 		 * Set limit the highest value of $first and $last, with a (filterable) max of 100
 		 */
-		$query_args['limit'] = min( max( absint( $first ), absint( $last ), 10 ), $this->query_amount ) + 1;
+		$query_args['limit'] = min(
+		    max( absint( $first ), absint( $last ), 10 ),
+            $this->query_amount
+        ) + 1;
 
 		/**
 		 * Collect the input_fields and sanitize them to prepare them for sending to the Query
@@ -109,16 +134,9 @@ class VenueConnectionResolver extends AbstractConnectionResolver {
 		 * set the query to pull datetimes that belong to that event.
 		 * We can set more cases for other source types.
 		 */
-		if ( true === is_object( $this->source ) ) {
-			switch ( true ) {
-				case $this->source instanceof Post:
-					$query_args[] = [
-						'Event.EVT_ID' => $this->source->ID,
-					];
-
-					break;
-			}
-		}
+        if ($this->source instanceof Post) {
+            $query_args[] = ['Event.EVT_ID' => $this->source->ID];
+        }
 
 		/**
 		 * Merge the input_fields with the default query_args
@@ -139,10 +157,10 @@ class VenueConnectionResolver extends AbstractConnectionResolver {
 	 * this was quick. I'd be down to explore more dynamic ways to map this, but for
 	 * now this gets the job done.
 	 *
-	 * @access public
+     * @param array $query_args
 	 * @return array
 	 */
-	public function sanitize_input_fields( $where_args ) {
+	public function sanitize_input_fields(array $query_args) {
 
 		$arg_mapping = [
 			'orderBy' => 'order_by',
