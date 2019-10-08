@@ -919,6 +919,9 @@ class EE_Dependency_Map
             'EventEspresso\core\domain\services\graphql\connections\DatetimeTicketsConnection' => [
                 'EEM_Ticket' => EE_Dependency_Map::load_from_cache,
             ],
+            'EventEspresso\core\domain\services\graphql\connections\TicketDatetimesConnection' => [
+                'EEM_Datetime' => EE_Dependency_Map::load_from_cache,
+            ],
             'EventEspresso\core\domain\services\graphql\connections\EventVenuesConnection' => [
                 'EEM_Venue' => EE_Dependency_Map::load_from_cache,
             ],

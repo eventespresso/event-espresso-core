@@ -212,13 +212,6 @@ class Ticket extends TypeBase
                     return $this->resolveField($ticket, 'is_free');
                 },
             ],
-            'datetimes'        => [
-                'type'        => ['list_of' => 'Datetime'],
-                'description' => __('The ticket datetimes.', 'event_espresso'),
-                'resolve'     => static function (EE_Ticket $ticket, $args, $context) {
-                    return $ticket instanceof EE_Ticket ? $ticket->get_many_related('Datetime') : null;
-                },
-            ],
         ] );
     }
 
