@@ -41,6 +41,7 @@ namespace EventEspresso\core\domain\services\graphql\connection_resolvers;
 
 use EE_Error;
 use EEM_Venue;
+use EE_Event;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
 use InvalidArgumentException;
@@ -134,9 +135,17 @@ class VenueConnectionResolver extends AbstractConnectionResolver {
 		 * set the query to pull datetimes that belong to that event.
 		 * We can set more cases for other source types.
 		 */
-        if ($this->source instanceof Post) {
-            $query_args[] = ['Event.EVT_ID' => $this->source->ID];
-        }
+		if (is_object( $this->source )) {
+			switch (true) {
+				// Assumed to be an event
+				case $this->source instanceof Post:
+					$query_args[] = ['Event.EVT_ID' => $this->source->ID];
+					break;
+				case $this->source instanceof EE_Event:
+					$query_args[] = ['Event.EVT_ID' => $this->source->ID()];
+					break;
+			}
+		}
 
 		/**
 		 * Merge the input_fields with the default query_args

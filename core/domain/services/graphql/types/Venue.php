@@ -23,6 +23,8 @@ namespace EventEspresso\core\domain\services\graphql\types;
 use EE_Base_Class;
 use EE_Venue;
 use EEM_Venue;
+use EEM_State;
+use EEM_Country;
 use EventEspresso\core\services\graphql\TypeBase;
 use WPGraphQL\Model\Post;
 
@@ -128,14 +130,20 @@ class Venue extends TypeBase
                     return $this->resolveField($source, 'city');
                 },
             ],
-            /* 'state'  => [
+            'state'  => [
                 'type'        => 'State',
                 'description' => __('Venue state', 'event_espresso'),
+                'resolve'     => function ($source) {
+                    return $this->resolveState($source);
+                },
             ],
             'country'  => [
                 'type'        => 'Country',
                 'description' => __('Venue country', 'event_espresso'),
-            ], */
+                'resolve'     => function ($source) {
+                    return $this->resolveCountry($source);
+                },
+            ],
             'zip'           => [
                 'type'        => 'String',
                 'description' => __('Venue Zip/Postal Code', 'event_espresso'),
@@ -241,5 +249,37 @@ class Venue extends TypeBase
         $venue = $this->getVenue($source);
         $capacity = $venue instanceof EE_Venue ? $venue->capacity() : EE_INF;
         return $this->parseInfiniteValue($capacity);
+    }
+
+
+    /**
+     * @param Post|EE_Venue $source The source instance.
+     * @return int
+     * @since $VID:$
+     */
+    public function resolveState($source)
+    {
+        $venue = $this->getVenue($source);
+        $state_id = $venue instanceof EE_Venue ? $venue->state_ID() : 0;
+        if ($state_id) {
+            return EEM_State::instance()->get_one_by_ID($state_id);
+        }
+        return null;
+    }
+
+
+    /**
+     * @param Post|EE_Venue $source The source instance.
+     * @return int
+     * @since $VID:$
+     */
+    public function resolveCountry($source)
+    {
+        $venue = $this->getVenue($source);
+        $country_id = $venue instanceof EE_Venue ? $venue->country_ID() : 0;
+        if ($country_id) {
+            return EEM_Country::instance()->get_one_by_ID($country_id);
+        }
+        return null;
     }
 }
