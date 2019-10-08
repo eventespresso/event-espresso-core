@@ -24,7 +24,7 @@ use EE_Base_Class;
 use EE_Venue;
 use EEM_Venue;
 use EventEspresso\core\services\graphql\TypeBase;
-use WP_Post;
+use WPGraphQL\Model\Post;
 
 /**
  * Class Venue
@@ -51,36 +51,36 @@ class Venue extends TypeBase
             'name'          => [
                 'type'        => 'String',
                 'description' => __('Venue Name', 'event_espresso'),
-                'resolve' => function (WP_Post $post) {
-                    return $this->resolveField($post, 'name');
+                'resolve' => function ($source) {
+                    return $this->resolveField($source, 'name');
                 },
             ],
             'desc'          => [
                 'type'        => 'String',
                 'description' => __('Venue Description', 'event_espresso'),
-                'resolve' => function (WP_Post $post) {
-                    return $this->resolveField($post, 'description');
+                'resolve' => function ($source) {
+                    return $this->resolveField($source, 'description');
                 },
             ],
             'shortDesc'     => [
                 'type'        => 'String',
                 'description' => __('Short Description of Venue', 'event_espresso'),
-                'resolve' => function (WP_Post $post) {
-                    return $this->resolveField($post, 'excerpt');
+                'resolve' => function ($source) {
+                    return $this->resolveField($source, 'excerpt');
                 },
             ],
             'identifier'    => [
                 'type'        => 'String',
                 'description' => __('Venue Identifier', 'event_espresso'),
-                'resolve' => function (WP_Post $post) {
-                    return $this->resolveField($post, 'identifier');
+                'resolve' => function ($source) {
+                    return $this->resolveField($source, 'identifier');
                 },
             ],
             'created'       => [
                 'type'        => 'String',
                 'description' => __('Date Venue Created', 'event_espresso'),
-                'resolve' => function (WP_Post $post) {
-                    return $this->resolveField($post, 'created');
+                'resolve' => function ($source) {
+                    return $this->resolveField($source, 'created');
                 },
             ],
             // Already registered
@@ -91,15 +91,15 @@ class Venue extends TypeBase
             'order'         => [
                 'type'        => 'Int',
                 'description' => __('Venue order', 'event_espresso'),
-                'resolve' => function (WP_Post $post) {
-                    return $this->resolveField($post, 'order');
+                'resolve' => function ($source) {
+                    return $this->resolveField($source, 'order');
                 },
             ],
             'wpUser'        => [
                 'type'        => 'User',
                 'description' => __('Venue Creator', 'event_espresso'),
-                'resolve' => function (WP_Post $post) {
-                    return $this->resolveField($post, 'wp_user');
+                'resolve' => function ($source) {
+                    return $this->resolveField($source, 'wp_user');
                 },
             ],
             // Already registered
@@ -110,22 +110,22 @@ class Venue extends TypeBase
             'address'       => [
                 'type'        => 'String',
                 'description' => __('Venue Address line 1', 'event_espresso'),
-                'resolve' => function (WP_Post $post) {
-                    return $this->resolveField($post, 'address');
+                'resolve' => function ($source) {
+                    return $this->resolveField($source, 'address');
                 },
             ],
             'address2'      => [
                 'type'        => 'String',
                 'description' => __('Venue Address line 2', 'event_espresso'),
-                'resolve' => function (WP_Post $post) {
-                    return $this->resolveField($post, 'address2');
+                'resolve' => function ($source) {
+                    return $this->resolveField($source, 'address2');
                 },
             ],
             'city'          => [
                 'type'        => 'String',
                 'description' => __('Venue City', 'event_espresso'),
-                'resolve' => function (WP_Post $post) {
-                    return $this->resolveField($post, 'city');
+                'resolve' => function ($source) {
+                    return $this->resolveField($source, 'city');
                 },
             ],
             /* 'state'  => [
@@ -139,57 +139,57 @@ class Venue extends TypeBase
             'zip'           => [
                 'type'        => 'String',
                 'description' => __('Venue Zip/Postal Code', 'event_espresso'),
-                'resolve' => function (WP_Post $post) {
-                    return $this->resolveField($post, 'zip');
+                'resolve' => function ($source) {
+                    return $this->resolveField($source, 'zip');
                 },
             ],
             'capacity'      => [
                 'type'        => 'Int',
                 'description' => __('Venue Capacity', 'event_espresso'),
-                'resolve' => function (WP_Post $post) {
-                    return $this->resolveCapacity($post);
+                'resolve' => function ($source) {
+                    return $this->resolveCapacity($source);
                 },
             ],
             'phone'         => [
                 'type'        => 'String',
                 'description' => __('Venue Phone', 'event_espresso'),
-                'resolve' => function (WP_Post $post) {
-                    return $this->resolveField($post, 'phone');
+                'resolve' => function ($source) {
+                    return $this->resolveField($source, 'phone');
                 },
             ],
             'virtualPhone'  => [
                 'type'        => 'String',
                 'description' => __('Call in Number', 'event_espresso'),
-                'resolve' => function (WP_Post $post) {
-                    return $this->resolveField($post, 'virtual_phone');
+                'resolve' => function ($source) {
+                    return $this->resolveField($source, 'virtual_phone');
                 },
             ],
             'url'           => [
                 'type'        => 'String',
                 'description' => __('Venue Website', 'event_espresso'),
-                'resolve' => function (WP_Post $post) {
-                    return $this->resolveField($post, 'venue_url');
+                'resolve' => function ($source) {
+                    return $this->resolveField($source, 'venue_url');
                 },
             ],
             'virtualUrl'    => [
                 'type'        => 'String',
                 'description' => __('Virtual URL', 'event_espresso'),
-                'resolve' => function (WP_Post $post) {
-                    return $this->resolveField($post, 'virtual_url');
+                'resolve' => function ($source) {
+                    return $this->resolveField($source, 'virtual_url');
                 },
             ],
             'googleMapLink' => [
                 'type'        => 'String',
                 'description' => __('Google Map Link', 'event_espresso'),
-                'resolve' => function (WP_Post $post) {
-                    return $this->resolveField($post, 'google_map_link');
+                'resolve' => function ($source) {
+                    return $this->resolveField($source, 'google_map_link');
                 },
             ],
             'enableForGmap' => [
                 'type'        => 'String',
                 'description' => __('Show Google Map?', 'event_espresso'),
-                'resolve' => function (WP_Post $post) {
-                    return $this->resolveField($post, 'enable_for_gmap');
+                'resolve' => function ($source) {
+                    return $this->resolveField($source, 'enable_for_gmap');
                 },
             ],
         ] );
@@ -197,50 +197,49 @@ class Venue extends TypeBase
 
 
     /**
-     * @param WP_Post $post
+     * @param Post|EE_Venue $source
      * @return EE_Base_Class|EE_Venue|null
      * @since $VID:$
      */
-    private function getVenue(WP_Post $post)
+    private function getVenue($source)
     {
-        return $post instanceof WP_Post ? $this->model->get_one_by_ID($post->ID) : null;
+        // If it comes from a custom connection
+        // where the $source is already instantiated.
+        if ($source instanceof EE_Venue) {
+            return $source;
+        }
+
+        $id = $source instanceof Post ? $source->ID : 0;
+
+        if ($id) {
+            return $this->model->get_one_by_ID($id);
+        }
+        return null;
     }
 
 
     /**
-     * @param WP_Post $post
-     * @param mixed $field
-     * @return string
+     * @param Post|EE_Venue $source The source instance.
+     * @param string        $field  The field name.
+     * @return mixed
      * @since $VID:$
      */
-    public function resolveField(WP_Post $post, $field)
+    public function resolveField($source, $field)
     {
-        $venue = $this->getVenue($post);
+        $venue = $this->getVenue($source);
         return $venue instanceof EE_Venue ? $venue->{$field}() : null;
     }
 
 
     /**
-     * @param WP_Post $post
+     * @param Post|EE_Venue $source The source instance.
      * @return int
      * @since $VID:$
      */
-    public function resolveCapacity(WP_Post $post)
+    public function resolveCapacity($source)
     {
-        $venue = $this->getVenue($post);
+        $venue = $this->getVenue($source);
         $capacity = $venue instanceof EE_Venue ? $venue->capacity() : EE_INF;
         return $this->parseInfiniteValue($capacity);
-    }
-
-
-    /**
-     * @param WP_Post $post
-     * @return EE_Base_Class|EE_Venue|null
-     * @since $VID:$
-     */
-    public function resolveParent(WP_Post $post)
-    {
-        $venue = $this->getVenue($post);
-        return $venue instanceof EE_Venue ? $this->model->get_one_by_ID($venue->parent()) : null;
     }
 }

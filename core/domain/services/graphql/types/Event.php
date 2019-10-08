@@ -24,7 +24,7 @@ use EE_Base_Class;
 use EE_Event;
 use EEM_Event;
 use EventEspresso\core\services\graphql\TypeBase;
-use WP_Post;
+use WPGraphQL\Model\Post;
 
 /**
  * Class Event
@@ -51,29 +51,29 @@ class Event extends TypeBase
             'name'                  => [
                 'type'        => 'String',
                 'description' => __('Event Name', 'event_espresso'),
-                'resolve' => function (WP_Post $post) {
-                    return $this->resolveField($post, 'name');
+                'resolve' => function ($source) {
+                    return $this->resolveField($source, 'name');
                 },
             ],
             'desc'                  => [
                 'type'        => 'String',
                 'description' => __('Event Description', 'event_espresso'),
-                'resolve' => function (WP_Post $post) {
-                    return $this->resolveField($post, 'description');
+                'resolve' => function ($source) {
+                    return $this->resolveField($source, 'description');
                 },
             ],
             'shortDesc'             => [
                 'type'        => 'String',
                 'description' => __('Event Short Description', 'event_espresso'),
-                'resolve' => function (WP_Post $post) {
-                    return $this->resolveField($post, 'short_description');
+                'resolve' => function ($source) {
+                    return $this->resolveField($source, 'short_description');
                 },
             ],
             'created'               => [
                 'type'        => 'String',
                 'description' => __('Date/Time Event Created', 'event_espresso'),
-                'resolve' => function (WP_Post $post) {
-                    return $this->resolveField($post, 'created');
+                'resolve' => function ($source) {
+                    return $this->resolveField($source, 'created');
                 },
             ],
             // Already registered by WP GraphQL
@@ -84,15 +84,15 @@ class Event extends TypeBase
             'wpUser'                => [
                 'type'        => 'User',
                 'description' => __('Event Creator', 'event_espresso'),
-                'resolve' => function (WP_Post $post) {
-                    return $this->resolveField($post, 'wp_user');
+                'resolve' => function ($source) {
+                    return $this->resolveField($source, 'wp_user');
                 },
             ],
             'order'                 => [
                 'type'        => 'Int',
                 'description' => __('Event Menu Order', 'event_espresso'),
-                'resolve' => function (WP_Post $post) {
-                    return $this->resolveField($post, 'order');
+                'resolve' => function ($source) {
+                    return $this->resolveField($source, 'order');
                 },
             ],
             // Already registered by WP GraphQL
@@ -103,121 +103,121 @@ class Event extends TypeBase
             'displayDesc'           => [
                 'type'        => 'Boolean',
                 'description' => __('Display Description Flag', 'event_espresso'),
-                'resolve' => function (WP_Post $post) {
-                    return $this->resolveField($post, 'display_description');
+                'resolve' => function ($source) {
+                    return $this->resolveField($source, 'display_description');
                 },
             ],
             'displayTicketSelector' => [
                 'type'        => 'Boolean',
                 'description' => __('Display Ticket Selector Flag', 'event_espresso'),
-                'resolve' => function (WP_Post $post) {
-                    return $this->resolveField($post, 'display_ticket_selector');
+                'resolve' => function ($source) {
+                    return $this->resolveField($source, 'display_ticket_selector');
                 },
             ],
             'visibleOn'             => [
                 'type'        => 'String',
                 'description' => __('Event Visible Date', 'event_espresso'),
-                'resolve' => function (WP_Post $post) {
-                    return $this->resolveField($post, 'visible_on');
+                'resolve' => function ($source) {
+                    return $this->resolveField($source, 'visible_on');
                 },
             ],
             'additionalLimit'       => [
                 'type'        => 'String',
                 'description' => __('Limit of Additional Registrations on Same Transaction', 'event_espresso'),
-                'resolve' => function (WP_Post $post) {
-                    return $this->resolveField($post, 'additional_limit');
+                'resolve' => function ($source) {
+                    return $this->resolveField($source, 'additional_limit');
                 },
             ],
             'phone'                 => [
                 'type'        => 'String',
                 'description' => __('Event Phone Number', 'event_espresso'),
-                'resolve' => function (WP_Post $post) {
-                    return $this->resolveField($post, 'phone');
+                'resolve' => function ($source) {
+                    return $this->resolveField($source, 'phone');
                 },
             ],
             'memberOnly'            => [
                 'type'        => 'Boolean',
                 'description' => __('Member-Only Event Flag', 'event_espresso'),
-                'resolve' => function (WP_Post $post) {
-                    return $this->resolveField($post, 'member_only');
+                'resolve' => function ($source) {
+                    return $this->resolveField($source, 'member_only');
                 },
             ],
             'allowOverflow'         => [
                 'type'        => 'Boolean',
                 'description' => __('Allow Overflow on Event', 'event_espresso'),
-                'resolve' => function (WP_Post $post) {
-                    return $this->resolveField($post, 'allow_overflow');
+                'resolve' => function ($source) {
+                    return $this->resolveField($source, 'allow_overflow');
                 },
             ],
             'timezoneString'        => [
                 'type'        => 'String',
                 'description' => __('Timezone (name) for Event times', 'event_espresso'),
-                'resolve' => function (WP_Post $post) {
-                    return $this->resolveField($post, 'timezone_string');
+                'resolve' => function ($source) {
+                    return $this->resolveField($source, 'timezone_string');
                 },
             ],
             'externalUrl'           => [
                 'type'        => 'String',
                 'description' => __('URL of Event Page if hosted elsewhere', 'event_espresso'),
-                'resolve' => function (WP_Post $post) {
-                    return $this->resolveField($post, 'external_url');
+                'resolve' => function ($source) {
+                    return $this->resolveField($source, 'external_url');
                 },
             ],
             'donations'             => [
                 'type'        => 'Boolean',
                 'description' => __('Accept Donations?', 'event_espresso'),
-                'resolve' => function (WP_Post $post) {
-                    return $this->resolveField($post, 'donations');
+                'resolve' => function ($source) {
+                    return $this->resolveField($source, 'donations');
                 },
             ],
             'isSoldOut'             => [
                 'type'        => 'Boolean',
                 'description' => __('Flag indicating whether the tickets sold for the event, met or exceed the registration limit',
                     'event_espresso'),
-                'resolve' => function (WP_Post $post) {
-                    return $this->resolveField($post, 'is_sold_out');
+                'resolve' => function ($source) {
+                    return $this->resolveField($source, 'is_sold_out');
                 },
             ],
             'isPostponed'           => [
                 'type'        => 'Boolean',
                 'description' => __('Flag indicating whether the event is marked as postponed', 'event_espresso'),
-                'resolve' => function (WP_Post $post) {
-                    return $this->resolveField($post, 'is_postponed');
+                'resolve' => function ($source) {
+                    return $this->resolveField($source, 'is_postponed');
                 },
             ],
             'isCancelled'           => [
                 'type'        => 'Boolean',
                 'description' => __('Flag indicating whether the event is marked as cancelled', 'event_espresso'),
-                'resolve' => function (WP_Post $post) {
-                    return $this->resolveField($post, 'is_cancelled');
+                'resolve' => function ($source) {
+                    return $this->resolveField($source, 'is_cancelled');
                 },
             ],
             'isUpcoming'            => [
                 'type'        => 'Boolean',
                 'description' => __('Whether the event is upcoming', 'event_espresso'),
-                'resolve' => function (WP_Post $post) {
-                    return $this->resolveField($post, 'is_upcoming');
+                'resolve' => function ($source) {
+                    return $this->resolveField($source, 'is_upcoming');
                 },
             ],
             'isActive'              => [
                 'type'        => 'Boolean',
                 'description' => __('Flag indicating event is active', 'event_espresso'),
-                'resolve' => function (WP_Post $post) {
-                    return $this->resolveField($post, 'is_active');
+                'resolve' => function ($source) {
+                    return $this->resolveField($source, 'is_active');
                 },
             ],
             'isInactive'            => [
                 'type'        => 'Boolean',
                 'description' => __('Flag indicating event is inactive', 'event_espresso'),
-                'resolve' => function (WP_Post $post) {
-                    return $this->resolveField($post, 'is_inactive');
+                'resolve' => function ($source) {
+                    return $this->resolveField($source, 'is_inactive');
                 },
             ],
             'isExpired'             => [
                 'type'        => 'Boolean',
                 'description' => __('Flag indicating event is expired or not', 'event_espresso'),
-                'resolve' => function (WP_Post $post) {
-                    return $this->resolveField($post, 'is_expired');
+                'resolve' => function ($source) {
+                    return $this->resolveField($source, 'is_expired');
                 },
             ],
         ] );
@@ -225,37 +225,36 @@ class Event extends TypeBase
 
 
     /**
-     * @param WP_Post $post
+     * @param Post|EE_Event $source
      * @return EE_Base_Class|EE_Event|null
      * @since $VID:$
      */
-    private function getEvent(WP_Post $post)
+    private function getEvent($source)
     {
-        return $post instanceof WP_Post ? $this->model->get_one_by_ID($post->ID) : null;
+        // If it comes from a custom connection
+        // where the $source is already instantiated.
+        if ($source instanceof EE_Event) {
+            return $source;
+        }
+
+        $id = $source instanceof Post ? $source->ID : 0;
+
+        if ($id) {
+            return $this->model->get_one_by_ID($id);
+        }
+        return null;
     }
 
 
     /**
-     * @param WP_Post $post
+     * @param $source
      * @param mixed $field
      * @return string
      * @since $VID:$
      */
-    public function resolveField(WP_Post $post, $field)
+    public function resolveField($source, $field)
     {
-        $event = $this->getEvent($post);
+        $event = $this->getEvent($source);
         return $event instanceof EE_Event ? $event->{$field}() : null;
-    }
-
-
-    /**
-     * @param WP_Post $post
-     * @return EE_Base_Class|EE_Event|null
-     * @since $VID:$
-     */
-    public function resolveParent(WP_Post $post)
-    {
-        $event = $this->getEvent($post);
-        return $event instanceof EE_Event ? $this->model->get_one_by_ID($event->parent()) : null;
     }
 }
