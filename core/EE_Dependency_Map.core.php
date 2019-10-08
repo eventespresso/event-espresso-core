@@ -885,18 +885,36 @@ class EE_Dependency_Map
                 'EventEspresso\core\services\request\Request' => EE_Dependency_Map::load_from_cache,
                 'EEM_Ticket'  => EE_Dependency_Map::load_from_cache,
             ],
-            'EventEspresso\core\services\graphql\RequestHandler' => [
-                'EventEspresso\core\services\graphql\ResolverCollection'  => EE_Dependency_Map::load_from_cache,
-                'EventEspresso\core\services\request\Request' => EE_Dependency_Map::load_from_cache,
-                'EventEspresso\core\services\loaders\Loader'  => EE_Dependency_Map::load_from_cache,
+            'EventEspresso\core\services\graphql\GraphQLManager' => [
+                'EventEspresso\core\services\graphql\TypesManager'  => EE_Dependency_Map::load_from_cache,
+                'EventEspresso\core\services\graphql\ConnectionsManager'  => EE_Dependency_Map::load_from_cache,
             ],
-            'EventEspresso\core\domain\services\converters\spoofers\RestApiSpoofer' => [
-                'EventEspresso\core\libraries\rest_api\controllers\model\Read' => EE_Dependency_Map::load_from_cache,
-                null
+            'EventEspresso\core\services\graphql\TypesManager' => [
+                'EventEspresso\core\services\graphql\TypeCollection'  => EE_Dependency_Map::load_from_cache,
             ],
-            'EventEspresso\core\domain\services\graphql\resolvers\EventEditorDataResolver' => [
+            'EventEspresso\core\services\graphql\ConnectionsManager' => [
+                'EventEspresso\core\services\graphql\ConnectionCollection'  => EE_Dependency_Map::load_from_cache,
+            ],
+            'EventEspresso\core\domain\services\graphql\types\Datetime' => [
                 'EEM_Datetime' => EE_Dependency_Map::load_from_cache,
-                'EventEspresso\core\domain\services\converters\spoofers\RestApiSpoofer' => EE_Dependency_Map::load_from_cache,
+            ],
+            'EventEspresso\core\domain\services\graphql\types\Event' => [
+                'EEM_Event' => EE_Dependency_Map::load_from_cache,
+            ],
+            'EventEspresso\core\domain\services\graphql\types\Ticket' => [
+                'EEM_Ticket' => EE_Dependency_Map::load_from_cache,
+            ],
+            'EventEspresso\core\domain\services\graphql\types\Venue' => [
+                'EEM_Venue' => EE_Dependency_Map::load_from_cache,
+            ],
+            'EventEspresso\core\domain\services\graphql\connections\EventDatetimesConnection' => [
+                'EEM_Datetime' => EE_Dependency_Map::load_from_cache,
+            ],
+            'EventEspresso\core\domain\services\graphql\connections\DatetimeTicketsConnection' => [
+                'EEM_Ticket' => EE_Dependency_Map::load_from_cache,
+            ],
+            'EventEspresso\core\domain\services\graphql\connections\EventVenuesConnection' => [
+                'EEM_Venue' => EE_Dependency_Map::load_from_cache,
             ],
         );
     }
