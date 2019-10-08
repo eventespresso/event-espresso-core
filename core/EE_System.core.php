@@ -1202,10 +1202,10 @@ final class EE_System implements ResettableInterface
         // load handler for GraphQL requests
         if (class_exists('WPGraphQL') && $this->request->isGQL()) {
             try {
-                $graphQL_request_handler = $this->loader->getShared(
-                    'EventEspresso\core\services\graphql\RequestHandler'
+                $graphQL_manager = $this->loader->getShared(
+                    'EventEspresso\core\services\graphql\GraphQLManager'
                 );
-                $graphQL_request_handler->init();
+                $graphQL_manager->init();
             } catch (Exception $exception) {
                 new ExceptionStackTraceDisplay($exception);
             }
