@@ -25,6 +25,8 @@ use EE_Model_Field_Base;
 use EE_Post_Content_Field;
 use EE_WP_User_Field;
 use EEM_Base;
+use WPGraphQL\Data\DataSource;
+use WPGraphQL\Model\Post;
 
 /**
  * Class TypeBase
@@ -178,6 +180,62 @@ abstract class TypeBase implements TypeInterface
                 }
                 return 'object';
         }
+    }
+
+
+    /**
+     * @param Post|EE_Base_Class $source
+     * @return int
+     * @since $VID:$
+     */
+    protected function getUserId($source)
+    {
+        if ($source instanceof Post) {
+            $source = $this->model->get_one_by_ID($source->ID);
+        }
+
+        if (is_subclass_of($source, 'EE_Base_Class')) {
+            return $source->wp_user();
+        }
+        return 0;
+    }
+
+
+    /**
+     * @param EE_Base_Class|Post $source
+     * @param           $args
+     * @param           $context
+     * @return Deferred|null
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws ReflectionException
+     * @throws UserError
+     * @since $VID:$
+     */
+    public function resolveWpUser($source, $args, $context)
+    {
+        $user_id = $this->getUserId($source);
+        return $user_id
+            ? DataSource::resolve_user($user_id, $context)
+            : null;
+    }
+
+
+    /**
+     * @param EE_Base_Class $model
+     * @return EE_Base_Class|null
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws ReflectionException
+     * @since $VID:$
+     */
+    public function resolveParent($model)
+    {
+        return is_subclass_of($model, 'EE_Base_Class') ? $this->model->get_one_by_ID($model->parent()) : null;
     }
 
 }

@@ -98,8 +98,8 @@ class Venue extends TypeBase
             'wpUser'        => [
                 'type'        => 'User',
                 'description' => __('Venue Creator', 'event_espresso'),
-                'resolve' => function ($source) {
-                    return $this->resolveField($source, 'wp_user');
+                'resolve'     => function ($source, $args, $context) {
+                    return $this->resolveWpUser($source, $args, $context);
                 },
             ],
             // Already registered

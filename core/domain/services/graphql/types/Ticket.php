@@ -32,7 +32,6 @@ use GraphQL\Deferred;
 use GraphQL\Error\UserError;
 use InvalidArgumentException;
 use ReflectionException;
-use WPGraphQL\Data\DataSource;
 
 /**
  * Class Ticket
@@ -105,9 +104,10 @@ class Ticket extends TypeBase
                 'type'        => 'Int',
                 'description' => __('Maximum quantity of this ticket that can be purchased in one transaction',
                     'event_espresso'),
-                'resolve'     => function (EE_Ticket $ticket) {
-                    return $this->resolveField($ticket, 'max');
-                },
+                    'resolve' => function (EE_Ticket $ticket) {
+                        $max = $ticket instanceof EE_Ticket ? $ticket->max() : EE_INF;
+                        return $this->parseInfiniteValue($max);
+                    },
             ],
             'price'            => [
                 'type'        => 'Float',
@@ -233,43 +233,5 @@ class Ticket extends TypeBase
     public function resolveField(EE_Ticket $ticket, $field)
     {
         return $ticket instanceof EE_Ticket ? $ticket->{$field}() : null;
-    }
-
-
-    /**
-     * @param EE_Ticket $ticket
-     * @param           $args
-     * @param           $context
-     * @return Deferred|null
-     * @throws EE_Error
-     * @throws InvalidArgumentException
-     * @throws InvalidDataTypeException
-     * @throws InvalidInterfaceException
-     * @throws ReflectionException
-     * @throws UserError
-     * @since $VID:$
-     */
-    public function resolveWpUser(EE_Ticket $ticket, $args, $context)
-    {
-        $wp_user = $ticket instanceof EE_Ticket ? $ticket->wp_user() : null;
-        return $wp_user instanceof EE_WP_User
-            ? DataSource::resolve_post_object($wp_user->ID(), $context)
-            : null;
-    }
-
-
-    /**
-     * @param EE_Ticket $ticket
-     * @return EE_Base_Class|EE_Ticket|null
-     * @throws EE_Error
-     * @throws InvalidArgumentException
-     * @throws InvalidDataTypeException
-     * @throws InvalidInterfaceException
-     * @throws ReflectionException
-     * @since $VID:$
-     */
-    public function resolveParent(EE_Ticket $ticket)
-    {
-        return $ticket instanceof EE_Ticket ? $this->model->get_one_by_ID($ticket->parent()) : null;
     }
 }

@@ -244,20 +244,4 @@ class Datetime extends TypeBase
             ? DataSource::resolve_post_object($event->ID(), $context)
             : null;
     }
-
-
-    /**
-     * @param EE_Datetime $datetime
-     * @return EE_Base_Class|EE_Datetime|null
-     * @throws EE_Error
-     * @throws InvalidArgumentException
-     * @throws InvalidDataTypeException
-     * @throws InvalidInterfaceException
-     * @throws ReflectionException
-     * @since $VID:$
-     */
-    public function resolveParent(EE_Datetime $datetime)
-    {
-        return $datetime instanceof EE_Datetime ? $this->model->get_one_by_ID($datetime->parent()) : null;
-    }
 }
