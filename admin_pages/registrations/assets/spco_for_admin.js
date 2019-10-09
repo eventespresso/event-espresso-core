@@ -5,56 +5,10 @@ jQuery(document).ready( function($) {
 
 	SPCO = {
 
-		// main SPCO div
-		main_container : $('#ee-single-page-checkout-dv'),
-		// #methods-of-payment div
-		methods_of_payment : null,
-		// depending on what step is in progress, this is the current form
-		current_form_to_validate : null,
-		// all form inputs within the SPCO main_container
-		form_inputs : null,
-		// string of key value pairs like "&foo=bar" to get appended to outgoing AJAX data
-		additional_post_data : null,
 		// array of input fields that require values
 		require_values : [],
 		// array of multi-value inputs (checkboxes and radio buttons) that do NOT require values
 		multi_inputs_that_do_not_require_values : [],
-		// success message array
-		success_msgs : [],
-		// error message array
-		error_msgs : [],
-		// form system custom error message array
-		invalid_input_errors : [],
-		// pixel position from top of form to scroll to after errors
-		offset_from_top : 0,
-		// modifier for offset_from_top
-		offset_from_top_modifier : -100,
-		// the first invalid input in a form
-		invalid_input_to_scroll_to : null,
-		// display debugging info in console?
-		display_debug : eei18n.wp_debug,
-		// allow submit buttons to be enabled?
-		allow_enable_submit_buttons : true,
-		// allow reg form to be submitted?
-		allow_submit_reg_form : true,
-		// override SPCO messages
-		override_messages : false,
-		// whether or not to proceed to the next step
-		get_next_step : true,
-		// whether form has been validated successfully
-		form_is_valid : false,
-		// amount to be paid during this TXN
-		payment_amount : 0,
-		// container for displaying how much time is left to complete registration
-		registration_time_limit : $( '#spco-registration-time-limit-spn' ),
-		// timestamp for when the session expires
-		//registration_session_expiration : new Date( Date.parse( $( '#spco-registration-expiration-spn' ).html() ) ),
-		registration_session_expiration : new Date( Date.parse( eei18n.session_expiration ) ),
-		// AJAX notice fadeout times
-		notice_fadeout_success : 6000,
-		notice_fadeout_attention : 18000,
-		notice_fadeout_errors : 12000,
-		notice_fadeout_min : 4000,
         // array of inputs representing the primary registrant questions
         primary_reg_questions :  [],
         // tracking whether the  primary registrant questions have been validated or not
@@ -71,7 +25,6 @@ jQuery(document).ready( function($) {
 		 */
 		initialize : function() {
 			if ( typeof eei18n !== 'undefined' ) {
-				SPCO.form_inputs = SPCO.main_container.find( ':input' );
 				SPCO.disable_caching();
 				SPCO.uncheck_copy_option_inputs();
 				SPCO.set_listener_for_advanced_copy_options_checkbox();
@@ -156,9 +109,6 @@ jQuery(document).ready( function($) {
 			// reset
 			SPCO.require_values = [];
 			SPCO.multi_inputs_that_do_not_require_values = [];
-			SPCO.success_msgs = [];
-			SPCO.error_msgs = [];
-			SPCO.offset_from_top = 0;
 			SPCO.primary_registrant_questions_validated = false;
 		},
 
@@ -207,13 +157,10 @@ jQuery(document).ready( function($) {
 			if ( clicked_checkbox.prop('checked')) {
 				// the targeted attendee question group
 				var targeted_attendee = clicked_checkbox.val();
-				//SPCO.console_log( 'copy_primary_registrant_information : targeted_attendee', targeted_attendee, false );
 				// for each question in the targeted attendee question group
 				$( primary_reg_questions ).each( function() {
 					var new_input_id = SPCO.calculate_target_attendee_input_id( $(this), targeted_attendee );
-					//SPCO.console_log( 'copy_primary_registrant_information : new_input_id', new_input_id, true );
 					var input_exists = $( new_input_id ).length;
-					//console.log( JSON.stringify( new_input_id + ' input exists: ' + input_exists, null, 4 ) );
 					if ( input_exists ){
 						SPCO.copy_form_input_value_from_this( $(new_input_id), $(this) );
 						$(new_input_id).trigger('change');
@@ -294,21 +241,10 @@ jQuery(document).ready( function($) {
 				? $invalid_input.data('question_label')
 				: invalid_input_id + '-lbl';
 			var $invalid_input_label = $( '#' + invalid_input_label_id );
-			SPCO.invalid_input_to_scroll_to = SPCO.invalid_input_to_scroll_to === null
-                ? $invalid_input
-                : SPCO.invalid_input_to_scroll_to;
             // grab input label && remove "required" asterisk
 			var input_label_text = $invalid_input_label.text().replace( '*', '' );
 			// add to invalid input array
 			SPCO.require_values.push( input_label_text );
-			// add to list of validation errors
-			if ($invalid_input.hasClass('email') ) {
-				SPCO.error_msgs.push( eei18n.enter_valid_email );
-			} else if (is_multi) {
-				SPCO.error_msgs.push( input_label_text + eei18n.required_multi_field );
-			} else {
-				SPCO.error_msgs.push( input_label_text + eei18n.required_field );
-			}
 		},
 
 
