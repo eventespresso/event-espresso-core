@@ -77,7 +77,6 @@ jQuery(document).ready( function($) {
 				SPCO.set_listener_for_advanced_copy_options_checkbox();
 				SPCO.set_listener_for_copy_all_attendee_info_checkbox();
 				SPCO.set_listener_for_individual_copy_attendee_checkboxes();
-				console.log('Init');
 			}
 		},
 
@@ -130,18 +129,13 @@ jQuery(document).ready( function($) {
 			var spco_copy_all_attendee_chk = $('#spco-copy-all-attendee-chk');
 			$( spco_copy_all_attendee_chk ).on( 'click', function() {
 				if ( $(this).prop('checked')) {
+					
+					$('.spco-copy-attendee-chk').each( function() {
+						if ( $( spco_copy_all_attendee_chk ).prop('checked') && $(this).prop('checked') !== $( spco_copy_all_attendee_chk ).prop('checked') ) {
+							$(this ).trigger('click');
+						}
+					});
 
-					if ( SPCO.require_values.length > 0 ) {
-						// uncheck the checkbox that was clicked
-						$(this).prop('checked', false);
-					} else {
-						$('.spco-copy-attendee-chk').each( function() {
-							if ( $( spco_copy_all_attendee_chk ).prop('checked') && $(this).prop('checked') !== $( spco_copy_all_attendee_chk ).prop('checked') ) {
-								$(this ).trigger('click');
-							}
-						});
-						SPCO.display_messages( eei18n.attendee_info_copied );
-					}
                     SPCO.primary_registrant_questions_validated = false;
                 }
 			});
@@ -159,15 +153,6 @@ jQuery(document).ready( function($) {
 			SPCO.error_msgs = [];
 			SPCO.offset_from_top = 0;
 			SPCO.primary_registrant_questions_validated = false;
-		},
-
-
-		/**
-		 * @function
-		 * @param  {object} msg
-		 */
-		display_messages : function( msg ){
-			console.log( msg );
 		},
 
 
@@ -196,7 +181,7 @@ jQuery(document).ready( function($) {
 		 */
 		set_listener_for_individual_copy_attendee_checkboxes : function() {
 			$('#spco-copy-attendee-dv').on( 'click', '.spco-copy-attendee-chk', function() {
-                var primary_reg_questions = SPCO.validate_primary_registrant_questions();
+				var primary_reg_questions = SPCO.validate_primary_registrant_questions();
 				SPCO.copy_primary_registrant_information( $(this), primary_reg_questions );
 			});
 		},
@@ -241,10 +226,8 @@ jQuery(document).ready( function($) {
 		copy_form_input_value_from_this : function( target_input, copy_from ) {
 			if ( $(target_input).is(':radio') || $(target_input).is(':checkbox') ) {
 				$(target_input).prop('checked', $(copy_from).prop('checked'));
-				// SPCO.console_log( 'copy_form_input_value_from_this : input value copied', $(copy_from).prop('checked'), false );
 			} else {
 				$(target_input).val( $(copy_from).val() );
-				// SPCO.console_log( 'copy_form_input_value_from_this : input value copied', $(copy_from).val(), false );
 			}
 		},
 
@@ -259,25 +242,19 @@ jQuery(document).ready( function($) {
 			var new_input_id = '';
 			// here we go again...
 			var input_id = $(primary_reg_input).attr('id');
-			//SPCO.console_log( 'calculate_target_attendee_input_id : input_id', input_id, true );
 
 			if ( typeof input_id !== 'undefined' ) {
 				// split the above var
 				var input_id_array =  input_id.split('-');
-				//SPCO.console_log( 'calculate_target_attendee_input_id : input_id_array', input_id_array, false );
 				// grab the current input's details
 				var qstn_base = input_id_array[0];
-				//var reg_id = input_id_array[1];
 				var input_name = input_id_array[2];
 				var answer_id = input_id_array[3];
-				// var input_value = $(this).eeInputValue();
-				//SPCO.console_log( 'calculate_target_attendee_input_id : input_name', input_name, false );
 
 				new_input_id = '#' + qstn_base + '-' + targeted_attendee + '-' +  input_name;
 				if ( typeof answer_id !== 'undefined' ) {
 					new_input_id = new_input_id + '-' + answer_id;
 				}
-				//SPCO.console_log( 'calculate_target_attendee_input_id : new_input_id', new_input_id, false );
 			}
 			return new_input_id;
 		},
@@ -290,7 +267,6 @@ jQuery(document).ready( function($) {
 		get_primary_reg_questions : function () {
 			// the primary attendee question group
 			var primary_reg_qstn_grp = $('#primary_registrant').val();
-			//SPCO.console_log( 'get_primary_reg_questions : primary_reg_qstn_grp = ', primary_reg_qstn_grp );
 			// find all of the primary attendee's questions for this event
 			return $( '#ee-registration-' + primary_reg_qstn_grp ).children( '.ee-reg-form-qstn-grp-dv' ).find(':input');
 		},
