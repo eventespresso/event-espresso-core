@@ -5,22 +5,63 @@ import warning from 'warning';
 import { useMemo } from '@wordpress/element';
 import { __, sprintf } from '@eventespresso/i18n';
 import { validations } from '@eventespresso/components';
+import {
+	useEndDateAfterStartDateValidator,
+	useEntityDateChangeListeners,
+	useEntityDateChangeValidators,
+} from '@eventespresso/hooks';
 import { parseInfinity } from '@eventespresso/utils';
 import { isModelEntityOfModel } from '@eventespresso/validators';
-import { ServerDateTime as DateTime, Duration } from '@eventespresso/value-objects';
+import {
+	ServerDateTime as DateTime,
+	Duration,
+} from '@eventespresso/value-objects';
 
+/**
+ * input configuration for event date entity edit form
+ *
+ * @function
+ * @param {Object} props
+ * @member {Object} dateEntity
+ * @member {string} prefix partial identifier for React Final Form data schema
+ * @member {Function} updateField callback for editing a field
+ * @member {Function} touchField callback for marking field as changed
+ * @return {Array} memoized config array
+ */
 const useDateEntityInputConfig = ( {
 	dateEntity,
 	prefix,
 	updateField,
 	touchField,
-} ) => useMemo( () => {
+} ) => {
 	warning(
 		isModelEntityOfModel( dateEntity, 'datetime' ),
 		'Can not generate input config data because an invalid date entity was supplied.'
 	);
 	const now = new DateTime();
-	return [
+	const dateInputFormProps = {
+		entity: dateEntity,
+		dateProps: { start: 'start', end: 'end' },
+	};
+	const {
+		startDateChangeListener,
+		endDateChangeListener,
+	} = useEntityDateChangeListeners( {
+		...dateInputFormProps,
+		startDateFormKey: `${ prefix }-start`,
+		endDateFormKey: `${ prefix }-end`,
+		updateField,
+		touchField,
+	} );
+	const {
+		startDateChangeValidator,
+		endDateChangeValidator,
+	} = useEntityDateChangeValidators( dateInputFormProps );
+	const endDateIsAfterStartDate = useEndDateAfterStartDateValidator(
+		dateInputFormProps
+	);
+	// useEntityDateChangeValidators use-entity-date-change-validators
+	return useMemo( () => [
 		{
 			id: 'id',
 			label: __( 'Date ID', 'event_espresso' ),
@@ -64,45 +105,8 @@ const useDateEntityInputConfig = ( {
 			default: now.plus(
 				Duration.fromObject( { days: 30 } )
 			).toISO( false ), // one month from now
-			changeListener: ( value, prevValue ) => {
-				if ( value !== prevValue ) {
-					const newDate = DateTime.fromISO( value );
-					if ( newDate instanceof DateTime ) {
-						if ( dateEntity.end < newDate ) {
-							const originalDuration = dateEntity.end.diff(
-								dateEntity.start
-							);
-							if ( Duration.isValidDuration( originalDuration ) ) {
-								// add original date difference to new start date.
-								const newEndDate = newDate.plus(
-									originalDuration
-								);
-								dateEntity.end = newEndDate;
-								updateField(
-									`${ prefix }-end`,
-									newEndDate.toISO( false )
-								);
-							}
-						}
-						// and finally update the start date
-						dateEntity.start = newDate;
-					}
-					touchField( `${ prefix }-start` );
-					touchField( `${ prefix }-end` );
-				}
-			},
-			validate: ( value ) => {
-				if ( value ) {
-					const startDate = DateTime.fromISO( value );
-
-					if ( startDate > dateEntity.end ) {
-						return __(
-							'End Date & Time must be set later than the Start Date & Time',
-							'event_espresso'
-						);
-					}
-				}
-			},
+			changeListener: startDateChangeListener,
+			validate: startDateChangeValidator,
 			validations: validations.required,
 			required: true,
 			inputWidth: 6,
@@ -114,35 +118,9 @@ const useDateEntityInputConfig = ( {
 			default: now.plus(
 				Duration.fromObject( { days: 60 } )
 			).toISO( false ), // two months from now
-			changeListener: ( value, prevValue ) => {
-				if ( value !== prevValue ) {
-					const newDate = DateTime.fromISO( value );
-					if ( newDate instanceof DateTime ) {
-						dateEntity.end = newDate;
-					}
-					touchField( `${ prefix }-start` );
-					touchField( `${ prefix }-end` );
-				}
-			},
-			validate: ( value ) => {
-				if ( value ) {
-					const endDate = DateTime.fromISO( value );
-					if ( endDate < dateEntity.start ) {
-						return __(
-							'End Date & Time must be set later than the Start Date & Time',
-							'event_espresso'
-						);
-					}
-				}
-			},
-			isInvalidDate: ( endDate ) => {
-				const startDate = dateEntity.start.toJSDate();
-				// Set the time to midnight
-				// so as not to disable the same start and end day
-				endDate.setHours( 0, 0, 0, 0 );
-				startDate.setHours( 0, 0, 0, 0 );
-				return endDate - startDate < 0;
-			},
+			changeListener: endDateChangeListener,
+			validate: endDateChangeValidator,
+			isInvalidDate: endDateIsAfterStartDate,
 			validations: validations.required,
 			required: true,
 			inputWidth: 6,
@@ -153,7 +131,11 @@ const useDateEntityInputConfig = ( {
 			label: __( 'Capacity', 'event_espresso' ),
 			default: -1,
 			changeListener: ( value ) => {
-				dateEntity.regLimit = parseInfinity( value || -1, true, true );
+				dateEntity.regLimit = parseInfinity(
+					value || -1,
+					true,
+					true
+				);
 			},
 			min: -1,
 			inputWidth: 3,
@@ -244,20 +226,20 @@ const useDateEntityInputConfig = ( {
 				),
 			},
 		},
-	];
-}, [
-	dateEntity.id,
-	dateEntity.EVT_ID,
-	dateEntity.name,
-	dateEntity.description,
-	dateEntity.start.toISO(),
-	dateEntity.end.toISO(),
-	dateEntity.regLimit,
-	dateEntity.sold,
-	dateEntity.reserved,
-	dateEntity.order,
-	dateEntity.parent,
-	dateEntity.deleted,
-] );
+	], [
+		dateEntity.id,
+		dateEntity.EVT_ID,
+		dateEntity.name,
+		dateEntity.description,
+		dateEntity.start.toISO(),
+		dateEntity.end.toISO(),
+		dateEntity.regLimit,
+		dateEntity.sold,
+		dateEntity.reserved,
+		dateEntity.order,
+		dateEntity.parent,
+		dateEntity.deleted,
+	] );
+};
 
 export default useDateEntityInputConfig;
