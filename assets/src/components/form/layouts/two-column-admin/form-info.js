@@ -1,7 +1,9 @@
 /**
  * External imports
  */
-import { Component } from '@wordpress/element';
+import classNames from 'classnames';
+import PropTypes from 'prop-types';
+import { useState } from '@wordpress/element';
 
 /**
  * Internal dependencies
@@ -15,55 +17,68 @@ import { default as FormInfoBase } from '../../base/form-info-base';
  * displays instructions or other important information
  * that users may require to properly complete a form.
  *
- * @constructor
+ * @function
  * @param {string|Object} formInfo
  * @param {string} dashicon
  * @param {string} htmlClass
+ * @param {boolean} dismissable
+ * @param {number} colSize
+ * @param {number} offset
+ * @param {Array} formInfoVars
  */
-class FormInfo extends Component {
-	constructor( props ) {
-		super( props );
-		this.state = {
-			dismiss: false,
-		};
-	}
+const FormInfo = ( {
+	formInfo,
+	dashicon,
+	htmlClass,
+	dismissable,
+	colSize,
+	offset,
+	formInfoVars,
+} ) => {
+	const [ dismiss, setDismiss ] = useState( false );
+	const onDismiss = dismissable ? setDismiss( ! dismiss ) : null;
+	htmlClass = classNames(
+		htmlClass,
+		'ee-form-info-row',
+		{
+			dismissed: dismiss,
+			'is-dismissable': dismissable,
+		}
+	);
+	return formInfo ? (
+		<FormRow htmlClass={ htmlClass }>
+			<FormColumn colSize={ colSize } offset={ offset }>
+				<FormInfoBase
+					formInfo={ formInfo }
+					formInfoVars={ formInfoVars }
+					dashicon={ dashicon }
+					onDismiss={ onDismiss }
+				/>
+			</FormColumn>
+		</FormRow>
+	) : null;
+};
 
-	dismiss = () => {
-		this.setState( ( prevState ) => ( { dismiss: ! prevState.dismiss } ) );
-	};
+FormInfo.propTypes = {
+	formInfo: PropTypes.oneOfType( [
+		PropTypes.string,
+		PropTypes.object,
+	] ).isRequired,
+	dashicon: PropTypes.string,
+	htmlClass: PropTypes.string,
+	dismissable: PropTypes.bool,
+	colSize: PropTypes.number,
+	offset: PropTypes.number,
+	formInfoVars: PropTypes.array,
+};
 
-	render() {
-		const {
-			formInfo,
-			dashicon = '',
-			dismissable = true,
-			colSize = 6,
-			offset = 3,
-			formInfoVars = [],
-		} = this.props;
-		let { htmlClass = '' } = this.props;
-		htmlClass = htmlClass !== '' ?
-			`${ htmlClass } ee-form-info-row` :
-			'ee-form-info-row';
-		htmlClass = this.state.dismiss ?
-			`${ htmlClass } dismissed` :
-			htmlClass;
-		htmlClass = dismissable ?
-			`${ htmlClass } is-dismissable` :
-			htmlClass;
-		return formInfo ? (
-			<FormRow htmlClass={ htmlClass }>
-				<FormColumn colSize={ colSize } offset={ offset }>
-					<FormInfoBase
-						formInfo={ formInfo }
-						formInfoVars={ formInfoVars }
-						dashicon={ dashicon }
-						onDismiss={ dismissable ? this.dismiss : null }
-					/>
-				</FormColumn>
-			</FormRow>
-		) : null;
-	}
-}
+FormInfo.defaultProps = {
+	dashicon: '',
+	htmlClass: '',
+	dismissable: true,
+	colSize: 6,
+	offset: 3,
+	formInfoVars: [],
+};
 
 export default FormInfo;
