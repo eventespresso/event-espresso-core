@@ -125,8 +125,12 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step
          * @var $reg_config EE_Registration_Config
          */
         $reg_config = LoaderFactory::getLoader()->getShared('EE_Registration_Config');
-    
-        $this->_print_copy_info = $reg_config->copyAttendeeInfo();
+ 
+        $this->_print_copy_info = apply_filters(
+            'FHEE__EE_SPCO_Reg_Step_Attendee_Information__generate_reg_form___printCopyInfo',
+            $reg_config->copyAttendeeInfo()
+        );
+
         $primary_registrant = null;
         // autoload Line_Item_Display classes
         EEH_Autoloader::register_line_item_display_autoloaders();
@@ -211,6 +215,7 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step
                     }
                 }
             }
+
             if ($primary_registrant && count($registrations) > 1) {
                 $copy_options['spco_copy_attendee_chk'] = $this->_print_copy_info
                     ? $this->_copy_attendee_info_form()
