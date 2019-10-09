@@ -129,12 +129,19 @@ jQuery(document).ready( function($) {
 			var spco_copy_all_attendee_chk = $('#spco-copy-all-attendee-chk');
 			$( spco_copy_all_attendee_chk ).on( 'click', function() {
 				if ( $(this).prop('checked')) {
-					
-					$('.spco-copy-attendee-chk').each( function() {
-						if ( $( spco_copy_all_attendee_chk ).prop('checked') && $(this).prop('checked') !== $( spco_copy_all_attendee_chk ).prop('checked') ) {
-							$(this ).trigger('click');
-						}
-					});
+					SPCO.reset_validation_vars();
+					SPCO.validate_primary_registrant_questions();
+
+					if ( SPCO.require_values.length > 0 ) {
+						// uncheck the checkbox that was clicked
+						$(this).prop('checked', false);
+					} else {
+						$('.spco-copy-attendee-chk').each( function() {
+							if ( $( spco_copy_all_attendee_chk ).prop('checked') && $(this).prop('checked') !== $( spco_copy_all_attendee_chk ).prop('checked') ) {
+								$(this ).trigger('click');
+							}
+						});
+					}
 
                     SPCO.primary_registrant_questions_validated = false;
                 }
@@ -154,6 +161,7 @@ jQuery(document).ready( function($) {
 			SPCO.offset_from_top = 0;
 			SPCO.primary_registrant_questions_validated = false;
 		},
+
 
 
 		/**
