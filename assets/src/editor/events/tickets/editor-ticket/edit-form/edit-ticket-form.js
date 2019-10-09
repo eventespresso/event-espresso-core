@@ -37,6 +37,7 @@ const EditTicketForm = ( {
 	currentValues,
 	initialValues,
 	newObject,
+	...formProps
 } ) => {
 	const prefix = useTicketFormInputPrefix( ticketEntity );
 	const inputConfig = useTicketFormInputConfig( {
@@ -69,9 +70,10 @@ const EditTicketForm = ( {
 				(
 					<FormWrapper>
 						<FormSection
-							htmlId={ `ee-ticket-editor-${ ticketEntity.id }-form-section` }
+							htmlId={ `${ prefix }-form-section` }
 							children={ formRows }
 							showRequiredNotice={ true }
+							{ ...formProps }
 						/>
 					</FormWrapper>
 				) : null;
