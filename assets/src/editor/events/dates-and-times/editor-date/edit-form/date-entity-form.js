@@ -34,6 +34,7 @@ const DateEntityForm = ( {
 	touchField,
 	currentValues,
 	initialValues,
+	...formProps
 } ) => {
 	const prefix = useDateEntityFormInputPrefix( dateEntity );
 	const inputConfig = useDateEntityInputConfig( {
@@ -66,6 +67,7 @@ const DateEntityForm = ( {
 				htmlId={ `${ prefix }-form-section` }
 				showRequiredNotice={ true }
 				children={ formRows }
+				{ ...formProps }
 			/>
 		</FormWrapper>
 	) : null;

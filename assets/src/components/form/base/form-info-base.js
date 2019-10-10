@@ -2,6 +2,7 @@
  * External imports
  */
 import { isEmpty } from 'lodash';
+import PropTypes from 'prop-types';
 import { __ } from '@eventespresso/i18n';
 import { Dashicon, IconButton } from '@wordpress/components';
 
@@ -22,19 +23,20 @@ import './form-info-base.css';
  *    which can be toggled via the onDismiss callback
  *  - add an html css class of "dismissed" to hide the form info
  *
- * @constructor
- * @param {string|Object} formInfo
- * @param {string} dashicon
- * @param {string} htmlClass
- * @param {Function} onDismiss
- * @param {Array} formInfoVars
+ * @function
+ * @param {Object} props
+ * @member {string|Object} formInfo
+ * @member {string} dashicon
+ * @member {string} htmlClass
+ * @member {Function} onDismiss
+ * @member {Array} formInfoVars
  */
 const FormInfoBase = ( {
 	formInfo,
-	dashicon = '',
-	htmlClass = '',
-	onDismiss = null,
-	formInfoVars = [],
+	dashicon,
+	htmlClass,
+	onDismiss,
+	formInfoVars,
 } ) => {
 	htmlClass = htmlClass ?
 		`${ htmlClass } ee-form-info` :
@@ -56,9 +58,16 @@ const FormInfoBase = ( {
 			onClick={ onDismiss }
 		/>
 	) : null;
+	// parseHtmlPlaceholders parse-html-placeholders
 	if ( ! isEmpty( formInfoVars ) ) {
 		const formInfoText = [];
 		const chunks = formInfo.split( '%%var%%' );
+		if ( chunks.length !== formInfoVars.length ) {
+			throw new RangeError(
+				'The number of notice placeholders does not match' +
+				' the number of form info variables supplied.'
+			);
+		}
 		for ( let x = 0; x < chunks.length; x++ ) {
 			if ( chunks[ x ] ) {
 				formInfoText.push( chunks[ x ] );
@@ -79,6 +88,24 @@ const FormInfoBase = ( {
 			{ dismiss }
 		</div>
 	) : null;
+};
+
+FormInfoBase.propTypes = {
+	formInfo: PropTypes.oneOfType( [
+		PropTypes.string,
+		PropTypes.object,
+	] ).isRequired,
+	dashicon: PropTypes.string,
+	htmlClass: PropTypes.string,
+	onDismiss: PropTypes.func,
+	formInfoVars: PropTypes.array,
+};
+
+FormInfoBase.defaultProps = {
+	dashicon: '',
+	htmlClass: '',
+	onDismiss: null,
+	formInfoVars: [],
 };
 
 export default FormInfoBase;

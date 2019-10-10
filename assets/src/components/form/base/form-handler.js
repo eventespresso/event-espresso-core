@@ -33,9 +33,11 @@ const FormHandler = ( {
 	loadingNotice = '',
 	decorators = [],
 	mutators = {},
+	displayForm = true,
+	setPreventModalClose = nullFunc,
 	...otherProps
 } ) => {
-	return (
+	return displayForm ? (
 		<FormErrorBoundary errorMessage={ errorMessage } >
 			<Form
 				{ ...otherProps }
@@ -46,14 +48,17 @@ const FormHandler = ( {
 				render={ ( {
 					form,
 					values,
+					invalid,
 					initialValues,
 					...formProps
 				} ) => {
+					setPreventModalClose( invalid );
 					setMutatorCallbacks( form.mutators );
 					return (
 						<FormHandlerForm
 							{ ...formProps }
 							form={ form }
+							invalid={ invalid }
 							initialValues={ initialValues }
 							currentValues={ values }
 							notice={ loadingNotice }
@@ -66,7 +71,7 @@ const FormHandler = ( {
 				} }
 			/>
 		</FormErrorBoundary>
-	);
+	) : null;
 };
 
 export default FormHandler;

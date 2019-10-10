@@ -12,40 +12,63 @@ import FormInfo from './form-info';
 import { default as AutoFormRow } from '../../base/auto-form-row';
 import { default as AutoColumnRow } from './auto-column-row';
 
+const defaultFormInfo = {
+	requiredNotice: __(
+		'All fields marked with an asterisk (*) are required',
+		'event_espresso'
+	),
+	errorsNotice: __(
+		'Please correct all form errors before proceeding',
+		'event_espresso'
+	),
+};
+
 /**
  * FormSection
  * "two-column-admin" form layout strategy component for
  * separating parts of the form into identifiable sections
  *
- * @component
- * @param {Object} children
- * @param {string} htmlId
- * @param {string} htmlClass
- * @param {boolean} showRequiredNotice
+ * @param {Object} props
+ * @member {Object} children
+ * @member {string} htmlId
+ * @member {string} htmlClass
+ * @member {Object} extraProps
  * @return {Object} rendered form section
  */
 const FormSection = ( {
 	children,
-	htmlId = '',
-	htmlClass = '',
-	showRequiredNotice = false,
+	htmlId,
+	htmlClass,
+	...extraProps
 } ) => {
+	const {
+		requiredNotice,
+		errorsNotice,
+		hasValidationErrors,
+		showRequiredNotice,
+	} = { ...defaultFormInfo, ...extraProps };
+
 	htmlClass = htmlClass ?
 		`${ htmlClass } ee-form-section px-0 pt-3 border rounded` :
 		'ee-form-section px-0 pt-3 border rounded';
 	const formInfo = useMemo( () => showRequiredNotice && (
 		<FormInfo
 			key="formInfo"
-			formInfo={ __(
-				'all fields marked with an asterisk (*) are required',
-				'event_espresso'
-			) }
+			formInfo={ requiredNotice }
 			dismissable={ false }
 		/>
 	), [ showRequiredNotice ] );
+	const formErrors = hasValidationErrors ? (
+		<FormInfo
+			formInfo={ errorsNotice }
+			dashicon={ 'warning' }
+			dismissable={ false }
+		/>
+	) : null;
 	return (
 		<div id={ htmlId } className={ htmlClass }>
 			<div className="px-3">
+				{ formErrors }
 				{ formInfo }
 				{
 					Children.map( children, ( child, index ) => {
@@ -64,12 +87,15 @@ const FormSection = ( {
 };
 
 FormSection.propTypes = {
-	children: PropTypes.oneOfType( [
-		PropTypes.object,
-		PropTypes.arrayOf( PropTypes.object ),
-	] ),
+	children: PropTypes.node,
 	htmlId: PropTypes.string,
 	htmlClass: PropTypes.string,
+	extraProps: PropTypes.object,
+};
+
+FormSection.defaultProps = {
+	htmlId: '',
+	htmlClass: '',
 };
 
 export default FormSection;
