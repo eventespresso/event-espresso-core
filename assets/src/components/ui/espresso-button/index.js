@@ -61,7 +61,7 @@ const EspressoButton = ( {
 	if ( icon ) {
 		icon = (
 			<span className="img-wrap">
-				<EspressoIcon icon={ icon } size={ iconSize }/>
+				<EspressoIcon icon={ icon } svgSize={ iconSize }/>
 			</span>
 		);
 	} else {
