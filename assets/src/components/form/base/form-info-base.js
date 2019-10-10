@@ -1,10 +1,10 @@
 /**
  * External imports
  */
-import { isEmpty } from 'lodash';
 import PropTypes from 'prop-types';
 import { __ } from '@eventespresso/i18n';
 import { Dashicon, IconButton } from '@wordpress/components';
+import { parseHtmlPlaceholders } from '@eventespresso/utils';
 
 /**
  * Internal dependencies
@@ -58,26 +58,7 @@ const FormInfoBase = ( {
 			onClick={ onDismiss }
 		/>
 	) : null;
-	// parseHtmlPlaceholders parse-html-placeholders
-	if ( ! isEmpty( formInfoVars ) ) {
-		const formInfoText = [];
-		const chunks = formInfo.split( '%%var%%' );
-		if ( chunks.length !== formInfoVars.length ) {
-			throw new RangeError(
-				'The number of notice placeholders does not match' +
-				' the number of form info variables supplied.'
-			);
-		}
-		for ( let x = 0; x < chunks.length; x++ ) {
-			if ( chunks[ x ] ) {
-				formInfoText.push( chunks[ x ] );
-			}
-			if ( formInfoVars[ x ] ) {
-				formInfoText.push( formInfoVars[ x ] );
-			}
-		}
-		formInfo = formInfoText;
-	}
+	formInfo = parseHtmlPlaceholders( formInfo, formInfoVars );
 	return formInfo ? (
 		<div
 			aria-label={ __( 'important information', 'event_espresso' ) }

@@ -19,7 +19,7 @@ const Table = ( {
 	tableClass,
 	captionID,
 	captionText,
-	...extraProps,
+	...extraProps
 } ) => {
 	tableClass = tableClass ?
 		`${ tableClass } ee-rspnsv-table` :
