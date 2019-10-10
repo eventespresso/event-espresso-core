@@ -14,16 +14,14 @@ const PLACEHOLDER = '%%var%%';
  * @return {string} text with placeholders replaced by variables
  */
 const parseHtmlPlaceholders = ( placeholderText, replacements ) => {
-	if ( isEmpty( replacements ) ) {
+	if (
+		isEmpty( replacements ) ||
+		! placeholderText.includes( PLACEHOLDER )
+	) {
 		return placeholderText;
 	}
 	if ( ! Array.isArray( replacements ) ) {
 		replacements = [ replacements ];
-	}
-	if ( ! placeholderText.includes( PLACEHOLDER ) ) {
-		throw new RangeError(
-			'The provided string does not have any placeholders.'
-		);
 	}
 	const finalText = [];
 	const chunks = placeholderText.split( PLACEHOLDER );
@@ -33,14 +31,12 @@ const parseHtmlPlaceholders = ( placeholderText, replacements ) => {
 			' the number of replacement strings supplied.'
 		);
 	}
-	for ( let x = 0; x < chunks.length; x++ ) {
-		if ( chunks[ x ] ) {
-			finalText.push( chunks[ x ] );
+	chunks.forEach( ( chunk, index ) => {
+		finalText.push( chunk );
+		if ( replacements[ index ] ) {
+			finalText.push( replacements[ index ] );
 		}
-		if ( replacements[ x ] ) {
-			finalText.push( replacements[ x ] );
-		}
-	}
+	} );
 	return finalText.join( '' );
 };
 

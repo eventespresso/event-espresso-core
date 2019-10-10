@@ -34,11 +34,11 @@ const testData = [
 		throwsError: false,
 	},
 	{
-		testName: 'throws RangeError if string is missing placeholders',
+		testName: 'returns original text if string is missing placeholders',
 		testString: noPlaceholders,
 		replacements: [ 'turtle' ],
-		expectedResult: null,
-		throwsError: true,
+		expectedResult: noPlaceholders,
+		throwsError: false,
 	},
 	{
 		testName: 'throws RangeError if string has too many placeholders',
