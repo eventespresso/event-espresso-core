@@ -14,11 +14,11 @@ import { default as AutoColumnRow } from './auto-column-row';
 
 const defaultFormInfo = {
 	requiredNotice: __(
-		'all fields marked with an asterisk (*) are required',
+		'All fields marked with an asterisk (*) are required',
 		'event_espresso'
 	),
 	errorsNotice: __(
-		'please correct all form errors before proceeding',
+		'Please correct all form errors before proceeding',
 		'event_espresso'
 	),
 };
