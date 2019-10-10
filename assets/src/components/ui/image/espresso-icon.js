@@ -37,12 +37,10 @@ export const isEspressoIcon = ( icon ) => {
  */
 const EspressoIcon = ( {
 	icon,
-	src = '',
 	svgSize = 20,
 	className,
 	...otherProps
 } ) => {
-	console.log( '%c ' + src + ' > icon: ', 'color: #BCBDAC;', icon, svgSize );
 	let path;
 	switch ( icon ) {
 
