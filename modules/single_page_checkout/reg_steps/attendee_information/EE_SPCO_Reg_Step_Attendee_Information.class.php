@@ -325,7 +325,8 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step
                 // If we have question groups for additional attendees, then display the copy options
                 $this->_print_copy_info = apply_filters(
                     'FHEE__EE_SPCO_Reg_Step_Attendee_Information___registrations_reg_form___printCopyInfo',
-                    $attendee_nmbr > 1 ? $reg_config->copyAttendeeInfo() : false
+                    $attendee_nmbr > 1 ? $reg_config->copyAttendeeInfo() : false,
+                    $attendee_nmbr
                 );
 
                 if ($registration->is_primary_registrant()) {
