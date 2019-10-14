@@ -57,12 +57,12 @@ const CalendarDateRange = ( {
 	}
 	let time = startDate.toFormat( 'h:mm a - ' );
 	time += endDate.toFormat( 'h:mm a' );
-	headerText = headerText ? headerText : <span>&nbsp;</span>;
+	const headerTxt = headerText ? headerText : <span>&nbsp;</span>;
 	return (
 		<BiggieCalendarDate
 			date={ startDate }
 			htmlClass={ htmlClass }
-			headerText={ headerText }
+			headerText={ headerTxt }
 			footerText={ [ time, footerText ] }
 			position={ position }
 		/>

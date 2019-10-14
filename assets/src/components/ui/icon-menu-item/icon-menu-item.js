@@ -44,16 +44,17 @@ const IconMenuItem = ( {
 		'ee-icon-menu-item': true,
 		'clickable': true,
 	} );
+	let menuItemCount = null;
 	if ( itemCount !== null ) {
-		itemCount = parseInt( itemCount, 10 );
+		menuItemCount = parseInt( itemCount, 10 );
 		const itemCountClass = classNames( {
 			'ee-icon-menu-item-count': true,
-			'ee-has-items': itemCount > 0,
-			'ee-no-items': itemCount < 1,
+			'ee-has-items': menuItemCount > 0,
+			'ee-no-items': menuItemCount < 1,
 		} );
-		itemCount = (
+		menuItemCount = (
 			<div className={ itemCountClass }>
-				{ itemCount > 0 ? itemCount : '?' }
+				{ menuItemCount > 0 ? menuItemCount : '?' }
 			</div>
 		);
 	}
@@ -69,7 +70,7 @@ const IconMenuItem = ( {
 				labelPosition={ tooltipPosition }
 				icon={ dashicon }
 			/>
-			{ itemCount }
+			{ menuItemCount }
 			{ externalApp }
 		</div>
 	);

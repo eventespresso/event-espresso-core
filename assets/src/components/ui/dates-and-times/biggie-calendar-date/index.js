@@ -37,7 +37,7 @@ const BiggieCalendarDate = ( {
 	editButton = {},
 	showTime = false,
 } ) => {
-	htmlClass = classNames(
+	const classes = classNames(
 		'ee-biggie-calendar-date-bg',
 		htmlClass,
 		{
@@ -56,7 +56,7 @@ const BiggieCalendarDate = ( {
 		/>
 	): null;
 	return (
-		<div className={ htmlClass }>
+		<div className={ classes }>
 			{
 				headerText && (
 					<div className="ee-biggie-calendar-date-header">

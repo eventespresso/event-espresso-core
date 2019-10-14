@@ -31,7 +31,7 @@ const EspressoButton = ( {
 	htmlClass,
 	...buttonProps
 } ) => {
-	htmlClass = classNames( {
+	let classes = classNames( {
 		[ htmlClass ] : htmlClass,
 		'esprs-button': true,
 		'esprs-btn-accent': style === 'accent',
@@ -65,10 +65,10 @@ const EspressoButton = ( {
 			</span>
 		);
 	} else {
-		htmlClass += ' ee-noIcon';
+		classes += ' ee-noIcon';
 	}
 	return (
-		<button { ...buttonProps } className={ htmlClass } onClick={ onClick }>
+		<button { ...buttonProps } className={ classes } onClick={ onClick }>
 			<span className="text-wrap">{ buttonText }</span>{ icon }
 		</button>
 	);
