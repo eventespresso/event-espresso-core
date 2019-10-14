@@ -26,13 +26,13 @@ import './style.css';
  * @return {Object} EntityListFilterBar
  */
 const EntityListFilterBar = ( {
-	listId,
+	listId: id,
 	entityFilters = null,
 	searchText = '',
 	perPage = 6,
 	view = 'grid',
 } ) => {
-	listId = listId ? listId : 'entity-list-' + instanceId;
+	const listId = id ? id : 'entity-list-' + instanceId;
 	const {
 		setSearchText,
 		setPerPage,
