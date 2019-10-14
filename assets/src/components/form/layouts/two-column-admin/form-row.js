@@ -14,9 +14,9 @@ import PropTypes from 'prop-types';
  * @return {Object} rendered form row
  */
 const FormRow = ( { children, htmlClass = '' } ) => {
-	htmlClass = htmlClass ? `${ htmlClass } ee-form-row` : 'ee-form-row';
+	const classes = htmlClass ? `${ htmlClass } ee-form-row` : 'ee-form-row';
 	return (
-		<div className={ htmlClass }>
+		<div className={ classes }>
 			{ children }
 		</div>
 	);

@@ -19,10 +19,10 @@ const FormHandlerForm = ( {
 	FormComponent,
 	form,
 	initialValues,
-	currentValues,
+	currentValues: values,
 	handleSubmit,
 	submitting,
-	pristine,
+	pristine: isPristine,
 	invalid,
 	loading,
 	loadingNotice,
@@ -34,8 +34,8 @@ const FormHandlerForm = ( {
 	resetHandler = nullFunc,
 	...formProps
 } ) => {
-	pristine = pristine && ! formChanges;
-	currentValues = isEmpty( currentValues ) ? initialValues : currentValues;
+	const pristine = isPristine && ! formChanges;
+	const currentValues = isEmpty( values ) ? initialValues : values;
 	const formReset = useCallback(
 		( event ) => {
 			if ( resetHandler !== nullFunc ) {

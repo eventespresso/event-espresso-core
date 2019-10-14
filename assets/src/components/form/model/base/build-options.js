@@ -16,7 +16,7 @@ import warning from 'warning';
  * objects that can be passed along to the options array used for a
  * SelectControl component
  *
- * @param { Map|Object|Array }  entities
+ * @param { Map|Object|Array }  optionEntities
  * @param { Object } optionsEntityMap Object of key value pairs where values
  * are the 'label:value' pairings used to populate the Select input.
  * @param { string } mapSelection Determines which optionEntityMap pairing to
@@ -26,14 +26,14 @@ import warning from 'warning';
  * with label and value keys.
  */
 const buildOptions = (
-	entities,
+	optionEntities,
 	optionsEntityMap,
 	mapSelection = 'default',
 ) => {
-	if ( isEmpty( entities ) ) {
+	if ( isEmpty( optionEntities ) ) {
 		return [];
 	}
-	entities = isMap( entities ) ? Array.from( entities.values() ) : entities;
+	const entities = isMap( optionEntities ) ? Array.from( optionEntities.values() ) : optionEntities;
 	if ( isEmpty( optionsEntityMap ) ) {
 		warning(
 			false,

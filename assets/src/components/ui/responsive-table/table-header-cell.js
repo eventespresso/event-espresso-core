@@ -24,16 +24,16 @@ const TableHeaderCell = ( {
 	cssClasses,
 	...extraProps
 } ) => {
-	htmlId = htmlId ?
+	const id = htmlId ?
 		`${ htmlId }-${ rowType }-row-${ rowNumber }-col-${ colNumber }` :
 		`ee-rspnsv-table-${ rowType }-row-${ rowNumber }-col-${ colNumber }`;
-	htmlClass = htmlClass ?
+	let classes = htmlClass ?
 		`${ htmlClass } ee-rspnsv-table-${ rowType }-th ee-col-${ colNumber }` :
 		`ee-rspnsv-table-${ rowType }-th ee-col-${ colNumber }`;
 	const rowTypeClass = rowType + 'ThClass';
-	htmlClass = cssClasses[ rowTypeClass ] ?
-		`${ htmlClass } ${ cssClasses[ rowTypeClass ] }` :
-		htmlClass;
+	classes = cssClasses[ rowTypeClass ] ?
+		`${ classes } ${ cssClasses[ rowTypeClass ] }` :
+		classes;
 	if ( rowType === 'header' ) {
 		extraProps.role = "columnheader";
 		extraProps.scope = "col"
@@ -41,7 +41,7 @@ const TableHeaderCell = ( {
 		extraProps.scope = "row";
 	}
 	return (
-		<th id={ htmlId } className={ htmlClass } { ...extraProps } >
+		<th id={ id } className={ classes } { ...extraProps } >
 			{ children }
 		</th>
 	);

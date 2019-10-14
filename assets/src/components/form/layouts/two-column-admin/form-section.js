@@ -48,7 +48,7 @@ const FormSection = ( {
 		showRequiredNotice,
 	} = { ...defaultFormInfo, ...extraProps };
 
-	htmlClass = htmlClass ?
+	const classes = htmlClass ?
 		`${ htmlClass } ee-form-section px-0 pt-3 border rounded` :
 		'ee-form-section px-0 pt-3 border rounded';
 	const formInfo = useMemo( () => showRequiredNotice && (
@@ -66,7 +66,7 @@ const FormSection = ( {
 		/>
 	) : null;
 	return (
-		<div id={ htmlId } className={ htmlClass }>
+		<div id={ htmlId } className={ classes }>
 			<div className="px-3">
 				{ formErrors }
 				{ formInfo }

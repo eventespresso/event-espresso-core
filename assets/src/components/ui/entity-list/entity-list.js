@@ -38,10 +38,10 @@ const EntityList = ( {
 	...otherProps
 } ) => {
 	// verify array and remove undefined
-	entities = Array.isArray( entities ) ?
+	const filteredEntities = Array.isArray( entities ) ?
 		without( entities, undefined ) :
 		[];
-	if ( entities.length === 0 ) {
+	if ( filteredEntities.length === 0 ) {
 		noResultsText = noResultsText !== '' ?
 			noResultsText :
 			__( 'no results found', 'event_espresso' );
@@ -51,17 +51,17 @@ const EntityList = ( {
 			</div>
 		);
 	}
-	htmlClass = classNames( 'ee-editor-entity-list', htmlClass );
+	const classes = classNames( 'ee-editor-entity-list', htmlClass );
 	return view === 'grid' ? (
 		<EntityGridView
-			entities={ entities }
-			htmlClass={ htmlClass }
+			entities={ filteredEntities }
+			htmlClass={ classes }
 			{ ...otherProps }
 		/>
 	) : (
 		<EntityListView
-			entities={ entities }
-			htmlClass={ htmlClass }
+			entities={ filteredEntities }
+			htmlClass={ classes }
 			{ ...otherProps }
 		/>
 	);

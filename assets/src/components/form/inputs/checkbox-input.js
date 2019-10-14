@@ -30,9 +30,9 @@ const CheckboxInput = ( {
 	...attributes
 } ) => {
 	const [ checked, setChecked ] = useState( resetState() );
-	let { htmlClass } = attributes;
+	const { htmlClass } = attributes;
 
-	htmlClass = required ?
+	const classes = required ?
 		`${ htmlClass } ee-checkbox-group-required` :
 		htmlClass;
 	const labelClass = btnGroup ?
@@ -77,7 +77,7 @@ const CheckboxInput = ( {
 				name={ name }
 				checkedState={ checked }
 				htmlId={ htmlId }
-				htmlClass={ htmlClass }
+				htmlClass={ classes }
 				labelClass={ labelClass }
 				options={ options }
 				onClick={ toggleChecked }

@@ -26,11 +26,11 @@ const FormButtonsRow = ( {
 	colSize,
 	offset,
 } ) => {
-	htmlClass = htmlClass ?
+	const classes = htmlClass ?
 		`${ htmlClass } ee-form-save-cancel-buttons-div` :
 		'ee-form-save-cancel-buttons-div';
 	return children && (
-		<FormSection htmlClass={ htmlClass }>
+		<FormSection htmlClass={ classes }>
 			<FormRow htmlClass={ 'ee-form-button-row' }>
 				<FormColumn colSize={ colSize } offset={ offset }>
 					{ children }

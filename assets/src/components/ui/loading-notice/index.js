@@ -22,20 +22,20 @@ import './style.css';
  * @return {Object} rendered loading notice & spinner
  */
 const LoadingNotice = ( { loading, notice, size, htmlClass } ) => {
-	notice = notice ||
+	const noticeText = notice ||
 		sprintf(
 			_x( 'loading%s', 'loading...', 'event_espresso' ),
 			String.fromCharCode( '8230' )
 		);
-	htmlClass = classNames(
+	const classes = classNames(
 		'ee-loading-notice-div',
 		`ee-loading-notice-${ size }`,
 		htmlClass
 	);
 	return !! loading && (
-		<div className={ htmlClass } >
+		<div className={ classes } >
 			<Spinner/>
-			<span className="ee-loading-notice">{ notice }</span>
+			<span className="ee-loading-notice">{ noticeText }</span>
 		</div>
 	);
 };

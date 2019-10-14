@@ -43,10 +43,10 @@ const OptionInputs = ( {
 	...attributes
 } ) => {
 	delete attributes.initialValue;
-	options = isArray( options ) ? options : [ options ];
-	const count = options.length;
+	const inputOptions = isArray( options ) ? options : [ options ];
+	const count = inputOptions.length;
 	let checked = false;
-	return options.map( ( option, index ) => {
+	return inputOptions.map( ( option, index ) => {
 		const id = `${ htmlId }-${ index }`;
 		checked = checkedState[ id ];
 		return (

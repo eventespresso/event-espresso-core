@@ -34,7 +34,7 @@ const MediumCalendarDate = ( {
 	showTime = false,
 } ) => {
 
-	htmlClass = classNames(
+	const classes = classNames(
 		htmlClass,
 		'ee-medium-calendar-date-wrapper',
 		{
@@ -84,7 +84,7 @@ const MediumCalendarDate = ( {
 		</Fragment>
 	);
 	return addWrapper ? (
-		<div className={ htmlClass }>{ mediumDate }</div>
+		<div className={ classes }>{ mediumDate }</div>
 	) : mediumDate;
 };
 

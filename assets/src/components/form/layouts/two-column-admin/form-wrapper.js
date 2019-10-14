@@ -20,11 +20,11 @@ const FormWrapper = ( {
 	htmlId = '',
 	htmlClass = '',
 } ) => {
-	htmlClass = htmlClass ?
+	const classes = htmlClass ?
 		`${ htmlClass } ee-two-column-admin` :
 		'ee-two-column-admin';
 	return (
-		<div id={ htmlId } className={ htmlClass }>
+		<div id={ htmlId } className={ classes }>
 			{ children }
 		</div>
 	);

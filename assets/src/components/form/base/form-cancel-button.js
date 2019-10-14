@@ -24,12 +24,12 @@ const FormCancelButton = ( {
 	onClick,
 	pristine,
 	submitting,
-	buttonText,
+	buttonText: btnText,
 	htmlId,
 	htmlClass,
 } ) => {
-	buttonText = buttonText ? buttonText : __( 'Cancel', 'event_espresso' );
-	htmlClass = classNames( {
+	const buttonText = btnText ? btnText : __( 'Cancel', 'event_espresso' );
+	const classes = classNames( {
 		[ htmlClass ]: htmlClass,
 		'ee-form-button': true,
 		'ee-form-button-cancel': true,
@@ -38,7 +38,7 @@ const FormCancelButton = ( {
 		<EspressoButton
 			buttonText={ buttonText }
 			id={ htmlId }
-			htmlClass={ htmlClass }
+			htmlClass={ classes }
 			onClick={ onClick }
 			disabled={ submitting || pristine }
 		/>

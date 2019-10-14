@@ -29,7 +29,7 @@ import EspressoButton from '../../ui/espresso-button';
 const FormSubmitButton = ( {
 	submitting,
 	disabled,
-	buttonText,
+	buttonText: btnText,
 	buttonIcon,
 	submittingText,
 	submittingTextPosition,
@@ -38,8 +38,8 @@ const FormSubmitButton = ( {
 	noticeClass,
 	...buttonProps
 } ) => {
-	buttonText = buttonText ? buttonText : __( 'Submit', 'event_espresso' );
-	htmlClass = classNames( {
+	const buttonText = btnText ? btnText : __( 'Submit', 'event_espresso' );
+	const classes = classNames( {
 		[ htmlClass ]: htmlClass,
 		'ee-form-button': true,
 		'ee-form-button-submit': true,
@@ -58,7 +58,7 @@ const FormSubmitButton = ( {
 				buttonText={ buttonText }
 				disabled={ submitting || disabled }
 				id={ htmlId }
-				htmlClass={ htmlClass }
+				htmlClass={ classes }
 				icon={ buttonIcon }
 				{ ...buttonProps }
 			/>

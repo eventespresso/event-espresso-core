@@ -13,8 +13,8 @@ import PropTypes from 'prop-types';
  */
 const OptionLabelSize = ( options ) => {
 	let size = 0;
-	options = isArray( options ) ? options : [];
-	options.forEach( function( option ) {
+	const labelOptions = isArray( options ) ? options : [];
+	labelOptions.forEach( function( option ) {
 		size = option.label.length > size ? option.label.length : size;
 	} );
 	let labelSize = ' medium-lbl';

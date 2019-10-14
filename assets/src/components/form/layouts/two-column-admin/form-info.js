@@ -37,7 +37,7 @@ const FormInfo = ( {
 } ) => {
 	const [ dismiss, setDismiss ] = useState( false );
 	const onDismiss = () => dismissable ? setDismiss( true ) : null;
-	htmlClass = classNames(
+	const classes = classNames(
 		htmlClass,
 		'ee-form-info-row',
 		{
@@ -46,7 +46,7 @@ const FormInfo = ( {
 		}
 	);
 	return formInfo ? (
-		<FormRow htmlClass={ htmlClass }>
+		<FormRow htmlClass={ classes }>
 			<FormColumn colSize={ colSize } offset={ offset }>
 				<FormInfoBase
 					formInfo={ formInfo }

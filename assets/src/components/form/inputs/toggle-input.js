@@ -33,11 +33,11 @@ const Toggle = ( {
 	toggle = 'toggle', // 'toggle' or 'checkbox'
 	...attributes
 } ) => {
-	htmlClass = htmlClass ?
+	const classes = htmlClass ?
 		`${ htmlClass } ee-toggle-input` :
 		'ee-toggle-input';
 	return toggle === 'toggle' ? (
-		<div className={ `${ htmlClass } ee-switch-toggle` } >
+		<div className={ `${ classes } ee-switch-toggle` } >
 			<ToggleControl
 				checked={ checked }
 				instanceId={ htmlId }
@@ -49,7 +49,7 @@ const Toggle = ( {
 			/>
 		</div>
 	) : (
-		<div className={ `${ htmlClass } ee-checkbox-toggle` }>
+		<div className={ `${ classes } ee-checkbox-toggle` }>
 			<CheckboxControl
 				checked={ checked }
 				instanceId={ htmlId }
