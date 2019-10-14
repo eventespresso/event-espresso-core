@@ -8,7 +8,7 @@ import PropTypes from 'prop-types';
  * "two-column-admin" form layout strategy component
  * for displaying a single "column" within a form row
  *
- * @constructor
+ * @class
  * @param {Object} children
  * @param {string} htmlClass
  * @param {number} offset
@@ -32,13 +32,13 @@ const FormColumn = ( {
 	) {
 		return input;
 	}
-	htmlClass = htmlClass ? `${ htmlClass } ` : '';
-	htmlClass = offset ?
+	let classes = htmlClass ? `${ htmlClass } ` : '';
+	classes = offset ?
 		`${ htmlClass } col-sm-${ colSize } offset-sm-${ offset } ee-form-col` :
 		`${ htmlClass } col-sm-${ colSize } ee-form-col`;
-	htmlClass += align === 'right' ? ' text-sm-right' : '';
+	classes += align === 'right' ? ' text-sm-right' : '';
 	return (
-		<div className={ htmlClass } { ...extraAttributes }>
+		<div className={ classes } { ...extraAttributes }>
 			{ input }
 		</div>
 	);

@@ -27,7 +27,7 @@ const EspressoIconButton = ( {
 	dataSet,
 	...attributes
 } ) => {
-	htmlClass = htmlClass ?
+	const classes = htmlClass ?
 		`${ htmlClass } ee-toggle-input` :
 		'ee-toggle-input';
 	return (
@@ -35,7 +35,7 @@ const EspressoIconButton = ( {
 			icon={ icon }
 			onClick={ onClick }
 			id={ htmlId }
-			className={ htmlClass }
+			className={ classes }
 			aria-describedby={ helpTextID }
 			{ ...dataSet }
 			{ ...attributes }

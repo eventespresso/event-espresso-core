@@ -38,12 +38,12 @@ const FormInfoBase = ( {
 	onDismiss,
 	formInfoVars,
 } ) => {
-	htmlClass = htmlClass ?
+	let classes = htmlClass ?
 		`${ htmlClass } ee-form-info` :
 		'ee-form-info';
-	htmlClass = dashicon ?
-		`${ htmlClass } ee-form-info-type-${ dashicon } has-info-type` :
-		htmlClass;
+	classes = dashicon ?
+		`${ classes } ee-form-info-type-${ dashicon } has-info-type` :
+		classes;
 	const typeIcon = dashicon ? (
 		<Dashicon
 			className="ee-form-info-type"
@@ -58,14 +58,14 @@ const FormInfoBase = ( {
 			onClick={ onDismiss }
 		/>
 	) : null;
-	formInfo = parseHtmlPlaceholders( formInfo, formInfoVars );
-	return formInfo ? (
+	const parsedFormInfo = parseHtmlPlaceholders( formInfo, formInfoVars );
+	return parsedFormInfo ? (
 		<div
 			aria-label={ __( 'important information', 'event_espresso' ) }
-			className={ htmlClass }
+			className={ classes }
 		>
 			{ typeIcon }
-			<div className="ee-form-info-text">{ formInfo }</div>
+			<div className="ee-form-info-text">{ parsedFormInfo }</div>
 			{ dismiss }
 		</div>
 	) : null;
