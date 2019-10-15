@@ -13,7 +13,6 @@ import { pluralModelName } from '@eventespresso/model';
  * Internal imports
  */
 import { REDUCER_KEY as CORE_REDUCER_KEY } from './core/constants';
-import { setFetchHandler } from './graphql-handler';
 /**
  * Returns the action object for a fetch control.
  *
@@ -137,7 +136,6 @@ export function resolveGetRelatedEntities(
 
 const controls = {
 	FETCH_FROM_API( { request } ) {
-		setFetchHandler( apiFetch, request );
 		return apiFetch( request );
 	},
 	SELECT( { reducerKey, selectorName, args } ) {
