@@ -125,8 +125,9 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step
          * @var $reg_config EE_Registration_Config
          */
         $reg_config = LoaderFactory::getLoader()->getShared('EE_Registration_Config');
-    
+ 
         $this->_print_copy_info = $reg_config->copyAttendeeInfo();
+
         $primary_registrant = null;
         // autoload Line_Item_Display classes
         EEH_Autoloader::register_line_item_display_autoloaders();
@@ -190,30 +191,29 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step
                     && $this->checkout->visit_allows_processing_of_this_registration($registration)
                 ) {
                     $subsections[ $registration->reg_url_link() ] = $this->_registrations_reg_form($registration);
-                    if (! $this->checkout->admin_request) {
-                        $template_args['registrations'][ $registration->reg_url_link() ] = $registration;
-                        $template_args['ticket_count'][ $registration->ticket()->ID() ] = isset(
-                            $template_args['ticket_count'][ $registration->ticket()->ID() ]
-                        )
-                            ? $template_args['ticket_count'][ $registration->ticket()->ID() ] + 1
-                            : 1;
-                        $ticket_line_item = EEH_Line_Item::get_line_items_by_object_type_and_IDs(
-                            $this->checkout->cart->get_grand_total(),
-                            'Ticket',
-                            array($registration->ticket()->ID())
-                        );
-                        $ticket_line_item = is_array($ticket_line_item)
-                            ? reset($ticket_line_item)
-                            : $ticket_line_item;
-                        $template_args['ticket_line_item'][ $registration->ticket()->ID() ] =
-                            $Line_Item_Display->display_line_item($ticket_line_item);
-                    }
+                    $template_args['registrations'][ $registration->reg_url_link() ] = $registration;
+                    $template_args['ticket_count'][ $registration->ticket()->ID() ] = isset(
+                        $template_args['ticket_count'][ $registration->ticket()->ID() ]
+                    )
+                        ? $template_args['ticket_count'][ $registration->ticket()->ID() ] + 1
+                        : 1;
+                    $ticket_line_item = EEH_Line_Item::get_line_items_by_object_type_and_IDs(
+                        $this->checkout->cart->get_grand_total(),
+                        'Ticket',
+                        array($registration->ticket()->ID())
+                    );
+                    $ticket_line_item = is_array($ticket_line_item)
+                        ? reset($ticket_line_item)
+                        : $ticket_line_item;
+                    $template_args['ticket_line_item'][ $registration->ticket()->ID() ] =
+                        $Line_Item_Display->display_line_item($ticket_line_item);
                     if ($registration->is_primary_registrant()) {
                         $primary_registrant = $registration->reg_url_link();
                     }
                 }
             }
-            if ($primary_registrant && ! $this->checkout->admin_request && count($registrations) > 1) {
+
+            if ($primary_registrant && count($registrations) > 1) {
                 $copy_options['spco_copy_attendee_chk'] = $this->_print_copy_info
                     ? $this->_copy_attendee_info_form()
                     : $this->_auto_copy_attendee_info();
@@ -234,16 +234,12 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step
                 'name'            => $this->reg_form_name(),
                 'html_id'         => $this->reg_form_name(),
                 'subsections'     => $subsections,
-                'layout_strategy' => $this->checkout->admin_request
-                    ?
-                    new EE_Div_Per_Section_Layout()
-                    :
-                    new EE_Template_Layout(
-                        array(
-                            'layout_template_file' => $this->_template, // layout_template
-                            'template_args'        => $template_args,
-                        )
-                    ),
+                'layout_strategy' => new EE_Template_Layout(
+                    array(
+                        'layout_template_file' => $this->_template, // layout_template
+                        'template_args'        => $template_args,
+                    )
+                ),
             )
         );
     }
@@ -326,8 +322,13 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step
                  */
                 $reg_config = LoaderFactory::getLoader()->getShared('EE_Registration_Config');
 
-                // if we have question groups for additional attendees, then display the copy options
-                $this->_print_copy_info = $attendee_nmbr > 1 ? $reg_config->copyAttendeeInfo() : false;
+                // If we have question groups for additional attendees, then display the copy options
+                $this->_print_copy_info = apply_filters(
+                    'FHEE__EE_SPCO_Reg_Step_Attendee_Information___registrations_reg_form___printCopyInfo',
+                    $attendee_nmbr > 1 ? $reg_config->copyAttendeeInfo() : false,
+                    $attendee_nmbr
+                );
+
                 if ($registration->is_primary_registrant()) {
                     // generate hidden input
                     $form_args['subsections']['primary_registrant'] = $this->_additional_primary_registrant_inputs(
