@@ -120,14 +120,14 @@ abstract class EE_Admin_Page_Menu_Map
     /**
      * Constructor.
      *
-     * @since 4.4.0
-     *
-     * @param  array $menu_args           An array of arguments used to setup the menu
+     * @param array $menu_args            An array of arguments used to setup the menu
      *                                    properties on construct.
-     * @param  array $required            An array of keys that should be in the $menu_args, this
+     * @param array $required             An array of keys that should be in the $menu_args, this
      *                                    is used to validate that the items that should be defined
      *                                    are present.
      * @return void
+     * @throws EE_Error
+     * @since 4.4.0
      */
     public function __construct($menu_args, $required)
     {
@@ -163,7 +163,10 @@ abstract class EE_Admin_Page_Menu_Map
                     $value = (int) $value;
                     break;
                 case 'admin_init_page':
-                    if (in_array('admin_init_page', $required) && ! $value instanceof EE_Admin_Page_Init) {
+                    if (
+                        ! $value instanceof EE_Admin_Page_Init
+                        && in_array('admin_init_page', $required, true)
+                    ) {
                         throw new EE_Error(
                             sprintf(
                                 __(
@@ -203,7 +206,7 @@ abstract class EE_Admin_Page_Menu_Map
 
         // Might need to change parent slug depending on maintenance mode.
         if (! empty($this->maintenance_mode_parent)
-            && EE_Maintenance_Mode::instance()->level() == EE_Maintenance_Mode::level_2_complete_maintenance
+            && EE_Maintenance_Mode::instance()->level() === EE_Maintenance_Mode::level_2_complete_maintenance
         ) {
             $this->parent_slug = $this->maintenance_mode_parent;
         }
@@ -230,6 +233,8 @@ abstract class EE_Admin_Page_Menu_Map
      * Called by client code to use this menu map for registering a WordPress admin page
      *
      * @param boolean $network_admin whether this is being added to the network admin page or not
+     * @throws EE_Error
+     * @throws ReflectionException
      * @since  4.4.0
      */
     public function add_menu_page($network_admin = false)
@@ -356,12 +361,6 @@ class EE_Admin_Page_Main_Menu extends EE_Admin_Page_Menu_Map
  */
 class EE_Admin_Page_Sub_Menu extends EE_Admin_Page_Main_Menu
 {
-
-    public function __construct($menu_args)
-    {
-        parent::__construct($menu_args);
-    }
-
 
     protected function _add_menu_page()
     {
