@@ -24,14 +24,14 @@ const Textarea = ( {
 	inputWidth = '',
 	...attributes
 } ) => {
-	htmlClass = inputWidth ?
+	const classes = inputWidth ?
 		`${ htmlClass } ee-input-width-${ inputWidth }` :
 		htmlClass;
 	return (
 		<Field
 			component="textarea"
 			id={ htmlId }
-			className={ `${ htmlClass } form-control` }
+			className={ `${ classes } form-control` }
 			aria-describedby={ helpTextID }
 			{ ...dataSet }
 			{ ...attributes }

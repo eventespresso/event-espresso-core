@@ -32,7 +32,7 @@ const InputLabel = ( {
 	const asterisk = required && children === undefined ?
 		( <span className="required">*</span> ) :
 		'';
-	label = strong ? ( <strong>{ label }</strong> ) : label;
+	const inputLabel = strong ? ( <strong>{ label }</strong> ) : label;
 
 	htmlClass = classNames( {
 		[ htmlClass ]: htmlClass,
@@ -44,7 +44,7 @@ const InputLabel = ( {
 	return (
 		<label htmlFor={ htmlFor } className={ htmlClass } { ...attributes }>
 			{ children }
-			{ label }{ asterisk }
+			{ inputLabel }{ asterisk }
 		</label>
 	);
 };

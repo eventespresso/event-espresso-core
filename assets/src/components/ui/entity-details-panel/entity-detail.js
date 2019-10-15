@@ -28,7 +28,7 @@ const EntityDetail = ( {
 	htmlClass = '',
 	editable = {}
 } ) => {
-	value = editable.hasOwnProperty( 'type' ) ?
+	const detailValue = editable.hasOwnProperty( 'type' ) ?
 		<InlineEditInput
 			htmlId={ id }
 			value={ value }
@@ -42,7 +42,7 @@ const EntityDetail = ( {
 				{ label }
 			</div>
 			<div className={ `ee-entity-details-value-div ${ id }-value` }>
-				{ value }
+				{ detailValue }
 			</div>
 		</div>
 	);

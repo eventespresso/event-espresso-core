@@ -27,20 +27,20 @@ const SelectInput = ( {
 	inputWidth = '',
 	...attributes
 } ) => {
-	options = isArray( options ) ? options : [];
-	const optionList = options.map( ( option, index ) => (
+	const selectOptions = isArray( options ) ? options : [];
+	const optionList = selectOptions.map( ( option, index ) => (
 		<option key={ index } value={ option.value }>
 			{ option.label }
 		</option>
 	) );
-	htmlClass = inputWidth ?
+	const classes = inputWidth ?
 		`${ htmlClass } ee-input-width-${ inputWidth }` :
 		htmlClass;
 	return (
 		<Field
 			component="select"
 			id={ htmlId }
-			className={ `${ htmlClass } form-control` }
+			className={ `${ classes } form-control` }
 			aria-describedby={ helpTextID }
 			{ ...dataSet }
 			{ ...attributes }

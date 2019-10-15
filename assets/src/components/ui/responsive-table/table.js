@@ -19,9 +19,9 @@ const Table = ( {
 	tableClass,
 	captionID,
 	captionText,
-	...extraProps,
+	...extraProps
 } ) => {
-	tableClass = tableClass ?
+	const classes = tableClass ?
 		`${ tableClass } ee-rspnsv-table` :
 		'ee-rspnsv-table';
 	return (
@@ -31,7 +31,7 @@ const Table = ( {
 			className={ 'ee-rspnsv-table-wrapper' }
 			tabIndex="0"
 		>
-			<table id={ tableId } className={ tableClass } { ...extraProps }>
+			<table id={ tableId } className={ classes } { ...extraProps }>
 				<caption
 					id={ captionID }
 					className={ 'screen-reader-text' }

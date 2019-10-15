@@ -21,14 +21,31 @@ const {
 	FormWrapper,
 } = twoColumnAdminFormLayout;
 
+/**
+ * @param {Object} props
+ * @member {Object} ticketEntity model object defining the Ticket
+ * @member {Function} updateField callback for editing a field
+ * @member {Function} touchField callback for marking field as changed
+ * @member {Object} currentValues form data
+ * @member {Object} initialValues initial form data
+ * @return {Object} rendered form for editing ticket entity
+ */
 const EditTicketForm = ( {
 	ticketEntity,
+	updateField,
+	touchField,
 	currentValues,
 	initialValues,
 	newObject,
+	...formProps
 } ) => {
-	const formDataKeyPrefix = useTicketFormInputPrefix( ticketEntity );
-	const inputConfig = useTicketFormInputConfig( ticketEntity );
+	const prefix = useTicketFormInputPrefix( ticketEntity );
+	const inputConfig = useTicketFormInputConfig( {
+		ticket: ticketEntity,
+		prefix,
+		updateField,
+		touchField,
+	} );
 	// entity properties we don't want to be editable
 	const exclude = [
 		'TKT_ID',
@@ -42,7 +59,7 @@ const EditTicketForm = ( {
 	const formRows = useEditEntityFormInputs(
 		ticketEntity,
 		inputConfig,
-		formDataKeyPrefix,
+		prefix,
 		currentValues,
 		exclude
 	);
@@ -53,9 +70,10 @@ const EditTicketForm = ( {
 				(
 					<FormWrapper>
 						<FormSection
-							htmlId={ `ee-ticket-editor-${ ticketEntity.id }-form-section` }
+							htmlId={ `${ prefix }-form-section` }
 							children={ formRows }
 							showRequiredNotice={ true }
+							{ ...formProps }
 						/>
 					</FormWrapper>
 				) : null;

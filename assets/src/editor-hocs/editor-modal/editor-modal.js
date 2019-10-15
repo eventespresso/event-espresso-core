@@ -2,6 +2,7 @@
  * External Imports
  */
 import classNames from 'classnames';
+import PropTypes from 'prop-types';
 import { Modal } from '@wordpress/components';
 import {
 	Children,
@@ -28,34 +29,38 @@ const nullFunc = () => null;
  * EditorModal
  * Wraps a component with a WP Modal component
  *
- * @constructor
- * @param {Object} WrappedComponent
- * @param {string} editorId
- * @param {string} editorTitle
- * @param {string} editorHtmlClass
- * @param {string} editorCloseButtonLabel
- * @param {Function} onEditorOpen
- * @param {Function} onEditorClose
- * @param {string} closeEditorNotice
- * @param {Object} extraModalProps
+ * @function
+ * @param {Object} props
+ * @member {Array|Object} children
+ * @member {string} editorId
+ * @member {string} editorTitle
+ * @member {string} editorHtmlClass
+ * @member {string} editorCloseButtonLabel
+ * @member {Function} onEditorOpen
+ * @member {Function} onEditorClose
+ * @member {string} closeEditorNotice
+ * @member {boolean} showCloseEditorNotice
+ * @member {Object} extraModalProps
+ * @member {Object} passedProps
  * @return {Object} WrappedComponent with Editor Modal
  */
 const EditorModal = ( {
+	children,
 	editorId,
 	editorTitle,
 	editorHtmlClass,
 	editorCloseButtonLabel,
+	onEditorOpen,
+	onEditorClose,
 	closeEditorNotice,
-	onEditorOpen = nullFunc,
-	onEditorClose = nullFunc,
-	extraModalProps = {},
-	children,
+	showCloseEditorNotice,
+	extraModalProps,
 	...passedProps
 } ) => {
 	// ref used for determining when modal has JUST been opened or closed
 	// so that we know when to fire onEditorOpen() and onEditorClose()
 	const editorOpened = useRef( false );
-	const [ changesSaved, setChangesSaved ] = useState( true );
+	const [ preventModalClose, setPreventModalClose ] = useState( true );
 	const isEditorOpen = useIsEditorOpen( editorId );
 	const closeEditor = useCloseEditor( editorId );
 
@@ -86,7 +91,7 @@ const EditorModal = ( {
 	}, [ editorId, isEditorOpen, editorOpened.current, onEditorClose ] );
 
 	closeEditorNotice = useMemo(
-		() => closeEditorNotice !== undefined ?
+		() => closeEditorNotice !== '' ?
 			closeEditorNotice :
 			sprintf(
 				__(
@@ -99,15 +104,20 @@ const EditorModal = ( {
 	);
 
 	const onRequestClose = useCallback( ( click ) => {
-		if ( ! changesSaved && closeEditorNotice !== '' ) {
-			if ( confirm( closeEditorNotice ) ) {
-				closeEditor( click, 'EditorModal.onRequestClose()' );
-			}
+		if ( preventModalClose ) {
+			return;
+		}
+		if (
+			closeEditorNotice &&
+			showCloseEditorNotice &&
+			confirm( closeEditorNotice )
+		) {
+			closeEditor( click, 'EditorModal.onRequestClose()' );
 		} else {
 			closeEditor( click, 'EditorModal.onRequestClose()' );
 		}
 	}, [
-		changesSaved,
+		preventModalClose,
 		closeEditor,
 		closeEditorNotice,
 	] );
@@ -130,18 +140,39 @@ const EditorModal = ( {
 		>
 			{
 				cloneElement(
-					Children.only(
-						children,
-						{
-							isEditorOpen,
-							changesSaved: setChangesSaved,
-							...passedProps,
-						}
-					)
+					Children.only( children ),
+					{
+						...passedProps,
+						displayForm: isEditorOpen,
+						setPreventModalClose,
+					}
 				)
 			}
 		</Modal>
 	) : null;
+};
+
+EditorModal.propTypes = {
+	children: PropTypes.node,
+	editorId: PropTypes.string,
+	editorTitle: PropTypes.string,
+	editorHtmlClass: PropTypes.string,
+	editorCloseButtonLabel: PropTypes.string,
+	onEditorOpen: PropTypes.func,
+	onEditorClose: PropTypes.func,
+	closeEditorNotice: PropTypes.string,
+	showCloseEditorNotice: PropTypes.bool,
+	extraModalProps: PropTypes.object,
+	passedProps: PropTypes.object,
+};
+
+EditorModal.defaultProps = {
+	formInfoVars: [],
+	onEditorOpen: nullFunc,
+	onEditorClose: nullFunc,
+	closeEditorNotice: '',
+	showCloseEditorNotice: false,
+	extraModalProps: {},
 };
 
 export default EditorModal;

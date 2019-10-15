@@ -20,12 +20,12 @@ const {
 } = twoColumnAdminFormLayout;
 
 /**
- * @function
- * @param {Object} dateEntity model object defining the Event Date
- * @param {Function} updateField callback for editing a field
- * @param {Function} touchField callback for marking field as changed
- * @param {Object} currentValues form data
- * @param {Object} initialValues initial form data
+ * @param {Object} props
+ * @member {Object} dateEntity model object defining the Event Date
+ * @member {Function} updateField callback for editing a field
+ * @member {Function} touchField callback for marking field as changed
+ * @member {Object} currentValues form data
+ * @member {Object} initialValues initial form data
  * @return {Object} rendered form for editing date entity
  */
 const DateEntityForm = ( {
@@ -34,6 +34,7 @@ const DateEntityForm = ( {
 	touchField,
 	currentValues,
 	initialValues,
+	...formProps
 } ) => {
 	const prefix = useDateEntityFormInputPrefix( dateEntity );
 	const inputConfig = useDateEntityInputConfig( {
@@ -66,6 +67,7 @@ const DateEntityForm = ( {
 				htmlId={ `${ prefix }-form-section` }
 				showRequiredNotice={ true }
 				children={ formRows }
+				{ ...formProps }
 			/>
 		</FormWrapper>
 	) : null;

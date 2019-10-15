@@ -31,10 +31,10 @@ const SubmittingNotice = ( {
 	size,
 	style,
 } ) => {
-	submittingText = submittingText ?
+	const text = submittingText ?
 		submittingText :
 		__( 'submitting', 'event_espresso' );
-	htmlClass = classNames( {
+	const classes = classNames( {
 		[ htmlClass ]: htmlClass,
 		'ee-submitting-notice': true,
 		[ `ee-${ size }` ]: size,
@@ -42,9 +42,9 @@ const SubmittingNotice = ( {
 	} );
 	return submitting ?
 		<div className="ee-submitting-notice-wrapper">
-			<div className={ htmlClass } style={ style }>
+			<div className={ classes } style={ style }>
 				<span className="ee-spinner-wrapper"><Spinner /></span>
-				<span className="ee-text-wrapper">{ submittingText }</span>
+				<span className="ee-text-wrapper">{ text }</span>
 				<span className="ee-ellipsis-wrapper">
 					<span className="ee-ellipsis-span-1">.</span>
 					<span className="ee-ellipsis-span-2">.</span>

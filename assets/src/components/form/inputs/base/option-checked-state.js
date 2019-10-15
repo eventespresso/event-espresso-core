@@ -20,11 +20,11 @@ import PropTypes from 'prop-types';
  */
 const OptionCheckedState = ( inputId, options, values, reset = false ) => {
 	const checked = {};
-	options = isArray( options ) ? options : [];
-	values = isArray( values ) ? values : [ values ];
-	options.forEach( function( option, index ) {
+	const inputOptions = isArray( options ) ? options : [];
+	const inputValues = isArray( values ) ? values : [ values ];
+	inputOptions.forEach( function( option, index ) {
 		const key = inputId + '-' + index;
-		checked[ key ] = ! reset && indexOf( values, option.value ) !== -1;
+		checked[ key ] = ! reset && indexOf( inputValues, option.value ) !== -1;
 	} );
 	return checked;
 };

@@ -22,9 +22,9 @@ import EntityDetail from './entity-detail';
  * @return {Component}    rendered details
  */
 const EntityDetailsPanel = ( { details, htmlClass } ) => {
-	htmlClass = classNames( htmlClass, 'ee-entity-details-panel-div' );
+	const classes = classNames( htmlClass, 'ee-entity-details-panel-div' );
 	return (
-		<div className={ htmlClass }>
+		<div className={ classes }>
 			{
 				details.map(
 					( detail, index ) => {

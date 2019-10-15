@@ -3,6 +3,7 @@
  */
 import PropTypes from 'prop-types';
 import { isFunction } from 'lodash';
+import { withInstanceId } from '@wordpress/compose';
 import { useMemo, Fragment } from '@wordpress/element';
 import { IconButton, SelectControl, TextControl } from '@wordpress/components';
 import { __ } from '@eventespresso/i18n';
@@ -19,6 +20,7 @@ import './style.css';
  * a group of inputs for controlling how a list of entities is displayed
  *
  * @param {string} listId
+ * @param {string} instanceId
  * @param {Object} entityFilters additional entity specific filters
  * @param {string} searchText
  * @param {number} perPage
@@ -26,13 +28,14 @@ import './style.css';
  * @return {Object} EntityListFilterBar
  */
 const EntityListFilterBar = ( {
-	listId,
+	listId: id,
+	instanceId,
 	entityFilters = null,
 	searchText = '',
 	perPage = 6,
 	view = 'grid',
 } ) => {
-	listId = listId ? listId : 'entity-list-' + instanceId;
+	const listId = id ? id : 'entity-list-' + instanceId;
 	const {
 		setSearchText,
 		setPerPage,
@@ -132,4 +135,6 @@ EntityListFilterBar.propTypes = {
 	] ),
 	entityFilters: PropTypes.object,
 };
-export default EntityListFilterBar;
+
+export default withInstanceId( EntityListFilterBar );
+

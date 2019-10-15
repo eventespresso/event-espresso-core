@@ -5,7 +5,13 @@ import warning from 'warning';
 import { useCallback, useMemo } from '@wordpress/element';
 import { __, sprintf } from '@eventespresso/i18n';
 import { validations } from '@eventespresso/components';
-import { usePriceTypes, useTicketPrices } from '@eventespresso/hooks';
+import {
+	usePriceTypes,
+	useEndDateAfterStartDateValidator,
+	useEntityDateChangeListeners,
+	useEntityDateChangeValidators,
+	useTicketPrices,
+} from '@eventespresso/hooks';
 import { amountsMatch, parseInfinity } from '@eventespresso/utils';
 import { isModelEntityOfModel } from '@eventespresso/validators';
 import {
@@ -22,17 +28,50 @@ import { TicketPriceCalculatorMenuItem } from '../price-calculator';
 import { useTicketBasePriceCalculator } from '../price-calculator/hooks';
 
 /**
+ * input configuration for ticket entity edit form
+ *
  * @function
- * @param {Object|BaseEntity} ticket
- * @return {Array} array of ticket form input config objects
+ * @param {Object} props
+ * @member {Object} ticket
+ * @member {string} prefix partial identifier for React Final Form data schema
+ * @member {Function} updateField callback for editing a field
+ * @member {Function} touchField callback for marking field as changed
+ * @return {Array} memoized config array
  */
-const useTicketFormInputConfig = ( ticket ) => {
+const useTicketFormInputConfig = ( {
+	ticket,
+	prefix,
+	updateField,
+	touchField,
+} ) => {
 	warning(
 		isModelEntityOfModel( ticket, 'ticket' ),
 		'Can not generate input config data because an invalid ticket entity was supplied.'
 	);
 	const { prices } = useTicketPrices( ticket );
 	const { priceTypes } = usePriceTypes();
+	const dateInputFormProps = {
+		entity: ticket,
+		dateProps: { start: 'startDate', end: 'endDate' },
+	};
+	const {
+		startDateChangeListener,
+		endDateChangeListener,
+	} = useEntityDateChangeListeners( {
+		...dateInputFormProps,
+		startDateFormKey: `${ prefix }-startDate`,
+		endDateFormKey: `${ prefix }-endDate`,
+		updateField,
+		touchField,
+	} );
+	const {
+		startDateChangeValidator,
+		endDateChangeValidator,
+	} = useEntityDateChangeValidators( dateInputFormProps );
+	const endDateIsAfterStartDate = useEndDateAfterStartDateValidator(
+		dateInputFormProps
+	);
+
 	const calculateTicketBasePrice = useTicketBasePriceCalculator(
 		prices,
 		priceTypes
@@ -64,8 +103,6 @@ const useTicketFormInputConfig = ( ticket ) => {
 			changeListener: ( value ) => {
 				ticket.name = value;
 			},
-			validations: validations.required,
-			required: true,
 			minLength: 3,
 		},
 		{
@@ -130,17 +167,8 @@ const useTicketFormInputConfig = ( ticket ) => {
 			type: 'datetime-local',
 			label: __( 'Ticket Sales Start', 'event_espresso' ),
 			default: now,
-			changeListener: ( value, prevValue ) => {
-				if ( value && value !== prevValue ) {
-					const newDate = new Date( value );
-					if (
-						newDate instanceof Date &&
-						! isNaN( newDate.getTime() )
-					) {
-						ticket.startDate = DateTime.fromJSDate( newDate );
-					}
-				}
-			},
+			changeListener: startDateChangeListener,
+			validate: startDateChangeValidator,
 			validations: validations.required,
 			required: true,
 			inputWidth: 6,
@@ -150,17 +178,9 @@ const useTicketFormInputConfig = ( ticket ) => {
 			type: 'datetime-local',
 			label: __( 'Ticket Sales End', 'event_espresso' ),
 			default: now.plus( Duration.fromObject( { days: 30 } ) ),
-			changeListener: ( value, prevValue ) => {
-				if ( value && value !== prevValue ) {
-					const newDate = new Date( value );
-					if (
-						newDate instanceof Date &&
-						! isNaN( newDate.getTime() )
-					) {
-						ticket.endDate = DateTime.fromJSDate( newDate );
-					}
-				}
-			},
+			changeListener: endDateChangeListener,
+			validate: endDateChangeValidator,
+			isInvalidDate: endDateIsAfterStartDate,
 			validations: validations.required,
 			required: true,
 			inputWidth: 6,

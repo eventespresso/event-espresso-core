@@ -22,7 +22,7 @@ const DropDownMenu = ( {
 	index = 0,
 	...otherProps
 } ) => {
-	htmlClass = classNames(
+	const classes = classNames(
 		htmlClass,
 		`ee-drop-down-menu-${ index }`,
 		'ee-drop-down-menu',
@@ -31,7 +31,7 @@ const DropDownMenu = ( {
 	return (
 		<DropdownMenu
 			tabIndex={ index }
-			className={ htmlClass }
+			className={ classes }
 			labelPosition={ tooltipPosition }
 			controls={ menuItems }
 			{ ...otherProps }

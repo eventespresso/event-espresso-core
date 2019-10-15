@@ -1,9 +1,10 @@
 /**
  * External imports
  */
-import { isEmpty } from 'lodash';
+import PropTypes from 'prop-types';
 import { __ } from '@eventespresso/i18n';
 import { Dashicon, IconButton } from '@wordpress/components';
+import { parseHtmlPlaceholders } from '@eventespresso/utils';
 
 /**
  * Internal dependencies
@@ -22,26 +23,27 @@ import './form-info-base.css';
  *    which can be toggled via the onDismiss callback
  *  - add an html css class of "dismissed" to hide the form info
  *
- * @constructor
- * @param {string|Object} formInfo
- * @param {string} dashicon
- * @param {string} htmlClass
- * @param {Function} onDismiss
- * @param {Array} formInfoVars
+ * @function
+ * @param {Object} props
+ * @member {string|Object} formInfo
+ * @member {string} dashicon
+ * @member {string} htmlClass
+ * @member {Function} onDismiss
+ * @member {Array} formInfoVars
  */
 const FormInfoBase = ( {
 	formInfo,
-	dashicon = '',
-	htmlClass = '',
-	onDismiss = null,
-	formInfoVars = [],
+	dashicon,
+	htmlClass,
+	onDismiss,
+	formInfoVars,
 } ) => {
-	htmlClass = htmlClass ?
+	let classes = htmlClass ?
 		`${ htmlClass } ee-form-info` :
 		'ee-form-info';
-	htmlClass = dashicon ?
-		`${ htmlClass } ee-form-info-type-${ dashicon } has-info-type` :
-		htmlClass;
+	classes = dashicon ?
+		`${ classes } ee-form-info-type-${ dashicon } has-info-type` :
+		classes;
 	const typeIcon = dashicon ? (
 		<Dashicon
 			className="ee-form-info-type"
@@ -56,29 +58,35 @@ const FormInfoBase = ( {
 			onClick={ onDismiss }
 		/>
 	) : null;
-	if ( ! isEmpty( formInfoVars ) ) {
-		const formInfoText = [];
-		const chunks = formInfo.split( '%%var%%' );
-		for ( let x = 0; x < chunks.length; x++ ) {
-			if ( chunks[ x ] ) {
-				formInfoText.push( chunks[ x ] );
-			}
-			if ( formInfoVars[ x ] ) {
-				formInfoText.push( formInfoVars[ x ] );
-			}
-		}
-		formInfo = formInfoText;
-	}
-	return formInfo ? (
+	const parsedFormInfo = parseHtmlPlaceholders( formInfo, formInfoVars );
+	return parsedFormInfo ? (
 		<div
 			aria-label={ __( 'important information', 'event_espresso' ) }
-			className={ htmlClass }
+			className={ classes }
 		>
 			{ typeIcon }
-			<div className="ee-form-info-text">{ formInfo }</div>
+			<div className="ee-form-info-text">{ parsedFormInfo }</div>
 			{ dismiss }
 		</div>
 	) : null;
+};
+
+FormInfoBase.propTypes = {
+	formInfo: PropTypes.oneOfType( [
+		PropTypes.string,
+		PropTypes.object,
+	] ).isRequired,
+	dashicon: PropTypes.string,
+	htmlClass: PropTypes.string,
+	onDismiss: PropTypes.func,
+	formInfoVars: PropTypes.array,
+};
+
+FormInfoBase.defaultProps = {
+	dashicon: '',
+	htmlClass: '',
+	onDismiss: null,
+	formInfoVars: [],
 };
 
 export default FormInfoBase;

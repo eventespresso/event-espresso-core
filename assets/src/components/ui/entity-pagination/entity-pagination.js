@@ -31,7 +31,7 @@ const EntityPagination = ( {
 	pageRangeDisplayed = 10,
 	paginationConfig = {},
 } ) => {
-	paginationConfig = usePaginationConfig( paginationConfig );
+	const pagination = usePaginationConfig( paginationConfig );
 	return totalCount > entitiesPerPage && (
 			<div id={ `ee-entity-pagination-${ listId }` }
 				className="ee-entity-pagination"
@@ -43,10 +43,10 @@ const EntityPagination = ( {
 					totalItemsCount={ totalCount }
 					pageRangeDisplayed={ pageRangeDisplayed }
 					onChange={ setCurrentPage }
-					firstPageText={ paginationConfig.labels.first }
-					prevPageText={ paginationConfig.labels.prev }
-					nextPageText={ paginationConfig.labels.next }
-					lastPageText={ paginationConfig.labels.last }
+					firstPageText={ pagination.labels.first }
+					prevPageText={ pagination.labels.prev }
+					nextPageText={ pagination.labels.next }
+					lastPageText={ pagination.labels.last }
 				/>
 			</div>
 		);

@@ -42,9 +42,6 @@ const TableBody = ( {
 	onDragEnd,
 	...extraProps
 } ) => {
-	console.log( '%c TableBody', 'color: #1BE7FF;' );
-	console.log( '%c > typeof onDragEnd: ', 'color: #BCBDAC;', typeof onDragEnd );
-	console.log( '%c > onDragEnd: ', 'color: #BCBDAC;', onDragEnd );
 	/**
 	 * @function
 	 * @param {number} rowNumber

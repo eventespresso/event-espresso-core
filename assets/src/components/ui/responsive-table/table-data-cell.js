@@ -23,17 +23,17 @@ const TableDataCell = ( {
 	cssClasses,
 	...extraProps
 } ) => {
-	htmlId = htmlId ?
+	const id = htmlId ?
 		`${ htmlId }-row-${ rowNumber }-col-${ colNumber }` :
 		`ee-rspnsv-table-row-${ rowNumber }-col-${ colNumber }`;
-	htmlClass = classNames(
+	const classes = classNames(
 		htmlClass,
 		'ee-rspnsv-table-body-td',
 		`ee-col-${ colNumber }`,
 		cssClasses.bodyTdClass
 	);
 	return (
-		<td id={ htmlId } className={ htmlClass } { ...extraProps } >
+		<td id={ id } className={ classes } { ...extraProps } >
 			{ children }
 		</td>
 	);
