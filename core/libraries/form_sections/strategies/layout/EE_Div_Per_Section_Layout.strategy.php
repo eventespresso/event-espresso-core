@@ -110,7 +110,7 @@ class EE_Div_Per_Section_Layout extends EE_Form_Section_Layout_Base
                     ? 'ee-required-label ' . $input->html_label_class()
                     : $input->html_label_class(),
                 $input->html_label_style(),
-                $input->html_other_attributes()
+                $input->other_html_attributes()
             );
             // if no content was provided to EEH_HTML::div() above (ie: an empty label),
             // then we need to close the div manually

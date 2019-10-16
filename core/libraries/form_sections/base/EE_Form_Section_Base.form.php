@@ -327,7 +327,7 @@ abstract class EE_Form_Section_Base
      */
     public function other_html_attributes()
     {
-        return $this->_other_html_attributes;
+        return ! empty($this->_other_html_attributes) ? ' ' . $this->_other_html_attributes : '';
     }
 
 
