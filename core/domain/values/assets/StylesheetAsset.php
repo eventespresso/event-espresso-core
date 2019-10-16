@@ -2,6 +2,7 @@
 
 namespace EventEspresso\core\domain\values\assets;
 
+use DomainException;
 use EventEspresso\core\domain\DomainInterface;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 
@@ -29,12 +30,20 @@ class StylesheetAsset extends BrowserAsset
      * @param string          $source
      * @param array           $dependencies
      * @param DomainInterface $domain
-     * @param                 $media
+     * @param string          $media
+     * @param string          $version
      * @throws InvalidDataTypeException
+     * @throws DomainException
      */
-    public function __construct($handle, $source, array $dependencies, DomainInterface $domain, $media = 'all')
-    {
-        parent::__construct(Asset::TYPE_CSS, $handle, $source, $dependencies, $domain);
+    public function __construct(
+        $handle,
+        $source,
+        array $dependencies,
+        DomainInterface $domain,
+        $media = 'all',
+        $version = ''
+    ) {
+        parent::__construct(Asset::TYPE_CSS, $handle, $source, $dependencies, $domain, $version);
         $this->setMedia($media);
     }
 

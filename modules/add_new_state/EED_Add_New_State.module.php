@@ -392,7 +392,7 @@ class EED_Add_New_State extends EED_Module
                                     'New State/Province Abbreviation',
                                     'event_espresso'
                                 ) . ' *',
-                                'html_other_attributes' => 'size="24"',
+                                'other_html_attributes' => 'size="24"',
                                 'default'               => EE_Registry::instance()->REQ->get($abbrv_name, ''),
                                 'required'              => false,
                             )
