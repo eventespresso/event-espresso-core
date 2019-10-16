@@ -20,17 +20,8 @@
 
 namespace EventEspresso\core\domain\services\graphql\types;
 
-use EE_Base_Class;
-use EE_Country;
-use EE_Error;
 use EEM_Country;
-use EventEspresso\core\exceptions\InvalidDataTypeException;
-use EventEspresso\core\exceptions\InvalidInterfaceException;
 use EventEspresso\core\services\graphql\TypeBase;
-use GraphQL\Deferred;
-use GraphQL\Error\UserError;
-use InvalidArgumentException;
-use ReflectionException;
 
 /**
  * Class Country
@@ -54,82 +45,64 @@ class Country extends TypeBase
         $this->setName('Country');
         $this->setDescription(__('A country', 'event_espresso'));
         $this->setIsCustomPostType(false);
-        $this->setFields([
-            'name'  => [
-                'type'        => 'String',
-                'description' => __('Country Name', 'event_espresso'),
-                'resolve'     => function (EE_Country $country) {
-                    return $this->resolveField($country, 'name');
-                },
-            ],
-            'currencyCode'  => [
-                'type'        => 'String',
-                'description' => __('Country Currency Code', 'event_espresso'),
-                'resolve'     => function (EE_Country $country) {
-                    return $this->resolveField($country, 'currency_code');
-                },
-            ],
-            'currencySingular'  => [
-                'type'        => 'String',
-                'description' => __('Currency Name Singular', 'event_espresso'),
-                'resolve'     => function (EE_Country $country) {
-                    return $this->resolveField($country, 'currency_name_single');
-                },
-            ],
-            'currencyPlural'  => [
-                'type'        => 'String',
-                'description' => __('Currency Name Plural', 'event_espresso'),
-                'resolve'     => function (EE_Country $country) {
-                    return $this->resolveField($country, 'currency_name_plural');
-                },
-            ],
-            'currencySign'  => [
-                'type'        => 'String',
-                'description' => __('Currency Sign', 'event_espresso'),
-                'resolve'     => function (EE_Country $country) {
-                    return $this->resolveField($country, 'currency_sign');
-                },
-            ],
-            'currencySignBeforeNumber'  => [
-                'type'        => 'String',
-                'description' => __('Currency Sign Before Number', 'event_espresso'),
-                'resolve'     => function (EE_Country $country) {
-                    return $this->resolveField($country, 'currency_sign_before');
-                },
-            ],
-            'currencyDecimalPlaces'  => [
-                'type'        => 'String',
-                'description' => __('Currency Decimal Places', 'event_espresso'),
-                'resolve'     => function (EE_Country $country) {
-                    return $this->resolveField($country, 'currency_decimal_places');
-                },
-            ],
-            'currencyDecimalMark'  => [
-                'type'        => 'String',
-                'description' => __('Currency Decimal Mark', 'event_espresso'),
-                'resolve'     => function (EE_Country $country) {
-                    return $this->resolveField($country, 'currency_decimal_mark');
-                },
-            ],
-            'currencyThousandsSeparator'  => [
-                'type'        => 'String',
-                'description' => __('Currency Thousands Separator', 'event_espresso'),
-                'resolve'     => function (EE_Country $country) {
-                    return $this->resolveField($country, 'currency_thousands_separator');
-                },
-            ],
-        ] );
+        $this->setGraphQLToModelMap([
+            'name'                       => 'name',
+            'currencyCode'               => 'currency_code',
+            'currencySingular'           => 'currency_name_single',
+            'currencyPlural'             => 'currency_name_plural',
+            'currencySign'               => 'currency_sign',
+            'currencySignBeforeNumber'   => 'currency_sign_before',
+            'currencyDecimalPlaces'      => 'currency_decimal_places',
+            'currencyDecimalMark'        => 'currency_decimal_mark',
+            'currencyThousandsSeparator' => 'currency_thousands_separator',
+        ]);
+        $this->setFields($this->getFields());
     }
 
 
     /**
-     * @param EE_Country $country
-     * @param mixed $field
-     * @return string
+     * @return array
      * @since $VID:$
      */
-    public function resolveField(EE_Country $country, $field)
+    public static function getFieldDefinitions()
     {
-        return $country instanceof EE_Country ? $country->{$field}() : null;
+        return [
+            'name'                       => [
+                'type'        => 'String',
+                'description' => __('Country Name', 'event_espresso'),
+            ],
+            'currencyCode'               => [
+                'type'        => 'String',
+                'description' => __('Country Currency Code', 'event_espresso'),
+            ],
+            'currencySingular'           => [
+                'type'        => 'String',
+                'description' => __('Currency Name Singular', 'event_espresso'),
+            ],
+            'currencyPlural'             => [
+                'type'        => 'String',
+                'description' => __('Currency Name Plural', 'event_espresso'),
+            ],
+            'currencySign'               => [
+                'type'        => 'String',
+                'description' => __('Currency Sign', 'event_espresso'),
+            ],
+            'currencySignBeforeNumber'   => [
+                'type'        => 'String',
+                'description' => __('Currency Sign Before Number', 'event_espresso'),
+            ],
+            'currencyDecimalPlaces'      => [
+                'type'        => 'String',
+                'description' => __('Currency Decimal Places', 'event_espresso'),
+            ],
+            'currencyDecimalMark'        => [
+                'type'        => 'String',
+                'description' => __('Currency Decimal Mark', 'event_espresso'),
+            ],
+            'currencyThousandsSeparator' => [
+                'type'        => 'String',
+                'description' => __('Currency Thousands Separator', 'event_espresso'),
+            ],
+        ];
     }
 }

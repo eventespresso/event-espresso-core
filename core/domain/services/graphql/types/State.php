@@ -20,18 +20,8 @@
 
 namespace EventEspresso\core\domain\services\graphql\types;
 
-use EE_Base_Class;
-use EE_State;
-use EE_Error;
 use EEM_State;
-use EEM_Country;
-use EventEspresso\core\exceptions\InvalidDataTypeException;
-use EventEspresso\core\exceptions\InvalidInterfaceException;
 use EventEspresso\core\services\graphql\TypeBase;
-use GraphQL\Deferred;
-use GraphQL\Error\UserError;
-use InvalidArgumentException;
-use ReflectionException;
 
 /**
  * Class State
@@ -55,71 +45,45 @@ class State extends TypeBase
         $this->setName('State');
         $this->setDescription(__('A state', 'event_espresso'));
         $this->setIsCustomPostType(false);
-        $this->setFields([
-            'id' => [
+        $this->setGraphQLToModelMap([
+            'id'           => 'ID',
+            'abbreviation' => 'abbrev',
+            'name'         => 'name' ,
+            'isActive'     => 'active',
+        ]);
+        $this->setFields($this->getFields());
+    }
+
+
+    /**
+     * @return array
+     * @since $VID:$
+     */
+    public static function getFieldDefinitions()
+    {
+        return [
+            'id'           => [
                 'type'        => [
                     'non_null' => 'Int',
                 ],
                 'description' => __( 'State ID', 'event_espresso' ),
-                'resolve'     => function (EE_State $state) {
-                    return $this->resolveField($state, 'ID');
-                },
             ],
             'abbreviation' => [
                 'type'        => 'String',
                 'description' => __( 'State Abbreviation', 'event_espresso' ),
-                'resolve'     => function (EE_State $state) {
-                    return $this->resolveField($state, 'abbrev' );
-                },
             ],
-            'name'  => [
+            'name'         => [
                 'type'        => 'String',
                 'description' => __('State Name', 'event_espresso'),
-                'resolve'     => function (EE_State $state) {
-                    return $this->resolveField($state, 'name' );
-                },
             ],
-            'isActive'  => [
+            'isActive'     => [
                 'type'        => 'Boolean',
                 'description' => __('State Active Flag', 'event_espresso'),
-                'resolve'     => function (EE_State $state) {
-                    return $this->resolveField($state, 'active' );
-                },
             ],
-            'country'  => [
+            'country'      => [
                 'type'        => 'Country',
                 'description' => __('Country for the state', 'event_espresso'),
-                'resolve'     => function (EE_State $state) {
-                    return $this->resolveCountry($state);
-                },
             ],
-        ] );
-    }
-
-
-    /**
-     * @param EE_State $state
-     * @param mixed $field
-     * @return string
-     * @since $VID:$
-     */
-    public function resolveField(EE_State $state, $field)
-    {
-        return $state instanceof EE_State ? $state->{$field}() : null;
-    }
-
-
-    /**
-     * @param EE_State $source The source instance.
-     * @return int
-     * @since $VID:$
-     */
-    public function resolveCountry(EE_State $source)
-    {
-        $country_iso = $source->country_iso();
-        if ($country_iso) {
-            return EEM_Country::instance()->get_one_by_ID($country_iso);
-        }
-        return null;
+        ];
     }
 }
