@@ -66,6 +66,20 @@ Notice it's the same translated string with different meanings depending on the 
  <h1><?php echo esc_html_x('Post Event', 'Title for information happening after the event', 'event_espresso');?></h1>
  <p>After the event is over, we're all going to Tim Horton's for some donuts...</p>
  ```
+ * Sometimes translated strings will be longer than the Code Sniffer's allowed line length. That's normal. Don't add line breaks to fix it, instead just add special comments to indicate the Code Sniffer line length rule should be disabled.
+ ```php
+// 😁 like this
+//phpcs:disable Generic.Files.LineLength.TooLong
+echo esc_html__("This line is too long. But it's ok. Don't try breaking it into multiple lines. Just add that comment to tell the Code Sniffer to ignore that rule for now.', 'event_espresso');
+//phpcs:enable
+
+// 😡 not like this!
+echo esc_html__('It’s better than adding a bunch
+                of line breaks which will probably
+                drive translators nuts.',
+                'event_espresso'
+      );
+```
  * Be kind to translators and avoid "breaking translations" (invalidating existing translations by changing the translated text). The following will break translations:
     * changing placeholders from "%s" to "$1$s"
     * changing `esc_html__()` calls to `esc_html_x()`
