@@ -70,7 +70,7 @@ Notice it's the same translated string with different meanings depending on the 
  ```php
 // 😁 like this
 //phpcs:disable Generic.Files.LineLength.TooLong
-echo esc_html__("This line is too long. But it's ok. Don't try breaking it into multiple lines. Just add that comment to tell the Code Sniffer to ignore that rule for now.', 'event_espresso');
+echo esc_html__('This line is too long. But it’s ok. Don’t try breaking it into multiple lines. Just add that comment to tell the Code Sniffer to ignore that rule for now.', 'event_espresso');
 //phpcs:enable
 
 // 😡 not like this!
