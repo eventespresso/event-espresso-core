@@ -66,7 +66,7 @@ Notice it's the same translated string with different meanings depending on the 
  <h1><?php echo esc_html_x('Post Event', 'Title for information happening after the event', 'event_espresso');?></h1>
  <p>After the event is over, we're all going to Tim Horton's for some donuts...</p>
  ```
- * Be kind to translators and avoid "breaking translations" (invaliding existing translations by changing the translated text). The following will break translations:
+ * Be kind to translators and avoid "breaking translations" (invalidating existing translations by changing the translated text). The following will break translations:
     * changing placeholders from "%s" to "$1$s"
     * changing `esc_html__()` calls to `esc_html_x()`
     * breaking a long string into multiple shorter ones (eg changing `esc_html__('some very very long string', 'event_espresso');` to `esc_html__('some' . ' very' . ' very' . ' long' . ' string', 'event_espresso');`)
