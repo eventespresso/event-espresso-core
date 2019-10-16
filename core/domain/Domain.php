@@ -15,7 +15,6 @@ use EventEspresso\core\domain\values\Version;
  */
 class Domain extends DomainBase implements CaffeinatedInterface
 {
-
     /**
      * URL path component used to denote an API request
      */
