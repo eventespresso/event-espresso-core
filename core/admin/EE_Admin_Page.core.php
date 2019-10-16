@@ -647,10 +647,8 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
                                );
                 throw new EE_Error(implode('||', $error_msg));
             }
-            $pageHook = LoaderFactory::getLoader()->getShared($classname, [$this]);
-            // $hookobj = new ReflectionClass($classname);
             // // notice we are passing the instance of this class to the hook object.
-            // $hookobj[] = $a->newInstance($this);
+            $this->loader->getShared($classname, [$this]);
         }
     }
 
