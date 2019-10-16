@@ -1030,23 +1030,15 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
                 $args['admin_page_object'] = $this;
             }
             // is it a method on a class that doesn't work?
-            if (
-                (
-                    (
-                        method_exists($class, $method)
-                        && call_user_func_array(array($class, $method), $args) === false
-                    )
-                    && (
-                        // is it a standalone function that doesn't work?
-                        function_exists($method)
-                        && call_user_func_array(
+            if (((method_exists($class, $method)
+                  && call_user_func_array(array($class, $method), $args) === false)
+                 && (// is it a standalone function that doesn't work?
+                     function_exists($method)
+                     && call_user_func_array(
                             $func,
                             array_merge(array('admin_page_object' => $this), $args)
                         ) === false
-                    )
-                )
-                || (
-                    // is it neither a class method NOR a standalone function?
+                 )) || (// is it neither a class method NOR a standalone function?
                     ! function_exists($method)
                     && ! method_exists($class, $method)
                 )

@@ -22,7 +22,7 @@ abstract class EE_Admin_Page_CPT_Init extends EE_Admin_Page_Init
         // But note... we are ONLY doing this if the given page is NOT pages we WANT to load ;)
         // This is important because we have hooks that help redirect custom post type saves
         $requested_page = isset($_REQUEST['page']) ? sanitize_text_field($_REQUEST['page']) : '';
-        if ($requested_page !== $this->_menu_map->menu_slug ) {
+        if ($requested_page !== $this->_menu_map->menu_slug) {
             $this->_routing = false;
             $this->_initialize_admin_page();
         } else {

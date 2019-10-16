@@ -177,7 +177,7 @@ class AdvancedEditorEntityData
             [['EVT_ID' => $eventId]]
         );
         $event = is_array($event) && $event[0] && $event[0]['EVT_ID'] ? $event[0] : null;
-        if ( ! $event ) {
+        if (! $event) {
             return [];
         }
         $eventDates = $this->spoofer->getApiResults(
@@ -196,7 +196,7 @@ class AdvancedEditorEntityData
         }
         $ticketPrices = [];
         foreach ($eventDateTickets as $tickets) {
-            if (is_array($tickets)){
+            if (is_array($tickets)) {
                 foreach ($tickets as $ticket) {
                     if (isset($ticket['TKT_ID']) && $ticket['TKT_ID']) {
                         $TKT_ID = $ticket['TKT_ID'];

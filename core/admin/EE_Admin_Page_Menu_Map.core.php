@@ -163,8 +163,7 @@ abstract class EE_Admin_Page_Menu_Map
                     $value = (int) $value;
                     break;
                 case 'admin_init_page':
-                    if (
-                        ! $value instanceof EE_Admin_Page_Init
+                    if (! $value instanceof EE_Admin_Page_Init
                         && in_array('admin_init_page', $required, true)
                     ) {
                         throw new EE_Error(

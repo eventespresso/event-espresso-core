@@ -50,8 +50,7 @@ class Extend_Events_Admin_Page extends Events_Admin_Page
                 'EventEspresso\core\domain\services\admin\events\default_settings\AdvancedEditorAdminFormSection'
             );
         }
-        if (
-            isset($this->_req_data['action'])
+        if (isset($this->_req_data['action'])
             && ( $this->_req_data['action'] === 'edit' || $this->_req_data['action'] === 'create_new')
         ) {
             $this->advanced_editor_data = $this->loader->getShared(
@@ -237,7 +236,6 @@ class Extend_Events_Admin_Page extends Events_Admin_Page
         // legend item
         add_filter('FHEE__Events_Admin_Page___event_legend_items__items', array($this, 'additional_legend_items'));
         add_action('admin_init', array($this, 'admin_init'));
-
     }
 
 
