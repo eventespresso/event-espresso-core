@@ -1,5 +1,10 @@
 <?php
 
+use EventEspresso\core\exceptions\InvalidDataTypeException;
+use EventEspresso\core\exceptions\InvalidInterfaceException;
+use EventEspresso\core\services\loaders\LoaderFactory;
+use EventEspresso\core\services\loaders\LoaderInterface;
+
 /**
  * EE_Admin_Page_Init
  * This is utilizes by all Admin_Page_Init child classes in order to define their require methods
@@ -8,10 +13,14 @@
  * @abstract
  * @subpackage         includes/core/admin/EE_Admin_Page_Init.core.php
  * @author             Brent Christensen, Darren Ethier
- * ------------------------------------------------------------------------
  */
 abstract class EE_Admin_Page_Init extends EE_Base
 {
+
+    /**
+     * @var LoaderInterface $loader
+     */
+    protected $loader;
 
     // identity properties (set in _set_defaults and _set_init_properties)
     public $label;
@@ -48,7 +57,11 @@ abstract class EE_Admin_Page_Init extends EE_Base
     protected $_routing;
 
 
-    // will hold page object.
+    /**
+     * This holds the page object.
+     *
+     * @var EE_Admin_Page
+     */
     protected $_loaded_page_object;
 
 
@@ -61,12 +74,13 @@ abstract class EE_Admin_Page_Init extends EE_Base
 
 
     /**
-     * @Constructor
-     * @access public
-     * @return void
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
      */
     public function __construct()
     {
+        $this->loader = LoaderFactory::getLoader();
         // set global defaults
         $this->_set_defaults();
         // set properties that are always available with objects.
@@ -180,9 +194,13 @@ abstract class EE_Admin_Page_Init extends EE_Base
      * EE_Admin_Init class.
      *
      * @access  public
-     * @uses    _initialize_admin_page()
-     * @param  string $dir_name directory name for specific admin_page being loaded.
      * @return void
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws ReflectionException
+     * @uses    _initialize_admin_page()
      */
     public function initialize_admin_page()
     {
@@ -192,10 +210,14 @@ abstract class EE_Admin_Page_Init extends EE_Base
             return;
         }
         $this->_loaded_page_object->route_admin_request();
-        return;
     }
 
 
+    /**
+     * @param string $wp_page_slug
+     * @throws EE_Error
+     * @since $VID:$
+     */
     public function set_page_dependencies($wp_page_slug)
     {
         if (! $this->_load_page) {
@@ -229,10 +251,15 @@ abstract class EE_Admin_Page_Init extends EE_Base
 
 
     /**
-     * This executes the intial page loads for EE_Admin pages to take care of any ajax or other code needing to run
+     * This executes the initial page loads for EE_Admin pages to take care of any ajax or other code needing to run
      * before the load-page... hook. Note, the page loads are happening around the wp_init hook.
      *
      * @return void
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws ReflectionException
      */
     public function do_initial_loads()
     {
@@ -257,7 +284,7 @@ abstract class EE_Admin_Page_Init extends EE_Base
         // we're using this to get the actual folder name of the CALLING class (i.e. the child class that extends this).  Why?  Because $this->menu_slug may be different than the folder name (to avoid conflicts with other plugins)
         $class = get_class($this);
         foreach ($bt as $index => $values) {
-            if (isset($values['class']) && $values['class'] == $class) {
+            if (isset($values['class']) && $values['class'] === $class) {
                 $file_index = $index - 1;
                 $this->_folder_name = basename(dirname($bt[ $file_index ]['file']));
                 if (! empty($this->_folder_name)) {
@@ -331,12 +358,12 @@ abstract class EE_Admin_Page_Init extends EE_Base
                 $rel_admin = strtolower($rel_admin);
                 $hook_paths[] = $file;
                 // make sure we haven't already got a hook setup for this page path
-                if (in_array($rel_admin, $this->_files_hooked)) {
+                if (in_array($rel_admin, $this->_files_hooked, true)) {
                     continue;
                 }
                 $this->hook_file = $hook_file;
                 $rel_admin_hook = 'FHEE_do_other_page_hooks_' . $rel_admin;
-                $filter = add_filter($rel_admin_hook, array($this, 'load_admin_hook'));
+                add_filter($rel_admin_hook, array($this, 'load_admin_hook'));
                 $this->_files_hooked[] = $rel_admin;
             }
         }
@@ -355,15 +382,19 @@ abstract class EE_Admin_Page_Init extends EE_Base
     /**
      * _initialize_admin_page
      *
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws ReflectionException
      * @see  initialize_admin_page() for info
      */
     protected function _initialize_admin_page()
     {
-
-        // JUST CHECK WE'RE ON RIGHT PAGE.
-        if ((! isset($_REQUEST['page']) || $_REQUEST['page'] != $this->_menu_map->menu_slug) && $this->_routing) {
+        // just check we're on right page and if not get out
+        if ((! isset($_REQUEST['page']) || $_REQUEST['page'] !== $this->_menu_map->menu_slug) && $this->_routing) {
             return;
-        } //not on the right page so let's get out.
+        }
         $this->_load_page = true;
 
         // we don't need to do a page_request check here because it's only called via WP menu system.
@@ -386,8 +417,8 @@ abstract class EE_Admin_Page_Init extends EE_Base
                 'AHEE__EE_Admin_Page___initialize_admin_page__before_initialization_' . $this->_menu_map->menu_slug
             );
             require_once($path_to_file);
-            $a = new ReflectionClass($admin_page);
-            $this->_loaded_page_object = $a->newInstance($this->_routing);
+            $this->_loaded_page_object = $this->loader->getShared($admin_page, [$this->_routing]);
+            $this->_loaded_page_object->initializePage();
         }
         do_action('AHEE__EE_Admin_Page___initialize_admin_page__after_initialization');
         do_action('AHEE__EE_Admin_Page___initialize_admin_page__after_initialization_' . $this->_menu_map->menu_slug);
@@ -421,7 +452,7 @@ abstract class EE_Admin_Page_Init extends EE_Base
      * verifies user access for this admin page.  If no user access is available then let's gracefully exit with a
      * WordPress die message.
      *
-     * @return bool|die true if pass (or admin) wp_die if fail
+     * @return bool true if pass (or admin) wp_die if fail
      */
     private function _check_user_access()
     {
