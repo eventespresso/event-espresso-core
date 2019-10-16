@@ -43,7 +43,7 @@ All new classes and files will follow modern day best practices, including names
 ### Translations
  * ALL user viewable strings should be translated using ` esc_html__() ` or a suitable equivalent (avoid `__()` and `_e()` as they allow translators to add malicious Javascript.)
  * Instead of putting "Event Espresso" in translated strings, use a placeholder and `EventEspresso\core\domain\Domain::brandName()`. Eg `printf(esc_html__('Thanks for installing %1$s!', 'event_espresso'), EventEspresso\core\domain\Domain::brandName());`. 
- * As a consequence of that, you should almost never need to put HTML tags into a translated string. Use placeholders for anywhere there is translated text.
+ * You should almost never need to put HTML tags into a translated string. Put HTML outside of the translated string (eg `<b><?php esc_html_e('Hi!', 'event_espresso');?></b>`) or use placeholders (eg `printf(esc_html__('Use %1$sthis link%2$s to get a special surprise!', 'event_espresso'), '<a href="https://eventespresso.com">', '</a>');`
  * When translating strings with multiple placeholders, use [numbered placeholders (eg "$1$s")](https://codex.wordpress.org/I18n_for_WordPress_Developers#Placeholders) instead of simple placeholders (eg "%s").
  * Also when there are multiple placeholders, be sure to add a translators comment like so:
  
