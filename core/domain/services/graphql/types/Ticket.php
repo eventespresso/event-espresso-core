@@ -63,7 +63,8 @@ class Ticket extends TypeBase
             'reverseCalculate' => 'reverse_calculate',
             'isFree'           => 'is_free',
         ]);
-        $this->setFields($this->getFields());
+
+        parent::__construct();
     }
 
 

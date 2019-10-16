@@ -56,7 +56,8 @@ class Country extends TypeBase
             'currencyDecimalMark'        => 'currency_decimal_mark',
             'currencyThousandsSeparator' => 'currency_thousands_separator',
         ]);
-        $this->setFields($this->getFields());
+
+        parent::__construct();
     }
 
 

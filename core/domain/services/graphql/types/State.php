@@ -51,7 +51,8 @@ class State extends TypeBase
             'name'         => 'name' ,
             'isActive'     => 'active',
         ]);
-        $this->setFields($this->getFields());
+
+        parent::__construct();
     }
 
 

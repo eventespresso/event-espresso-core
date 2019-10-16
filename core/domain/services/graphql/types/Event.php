@@ -68,7 +68,8 @@ class Event extends TypeBase
             'isInactive'            => 'is_inactive',
             'isExpired'             => 'is_expired',
         ]);
-        $this->setFields($this->getFields());
+
+        parent::__construct();
     }
 
 

@@ -62,7 +62,8 @@ class Venue extends TypeBase
             'googleMapLink' => 'google_map_link',
             'enableForGmap' => 'enable_for_gmap',
         ]);
-        $this->setFields($this->getFields());
+
+        parent::__construct();
     }
 
 

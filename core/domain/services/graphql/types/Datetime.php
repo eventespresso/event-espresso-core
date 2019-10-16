@@ -65,7 +65,8 @@ class Datetime extends TypeBase
             'isActive'    => 'is_active',
             'isExpired'   => 'is_expired',
         ]);
-        $this->setFields($this->getFields());
+
+        parent::__construct();
     }
 
 
