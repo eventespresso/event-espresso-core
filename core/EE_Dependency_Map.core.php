@@ -885,6 +885,22 @@ class EE_Dependency_Map
                 'EventEspresso\core\services\request\Request' => EE_Dependency_Map::load_from_cache,
                 'EEM_Ticket'  => EE_Dependency_Map::load_from_cache,
             ],
+            'EventEspresso\core\domain\services\converters\RestApiSpoofer' => [
+                'EventEspresso\core\libraries\rest_api\controllers\model\Read' => EE_Dependency_Map::load_from_cache,
+                null
+            ],
+            'EventEspresso\core\domain\services\admin\events\default_settings\AdvancedEditorAdminFormSection'  => [
+                'EE_Admin_Config' => EE_Dependency_Map::load_from_cache
+            ],
+            'EventEspresso\core\domain\services\admin\events\editor\AdvancedEditorEntityData'  => [
+                'EventEspresso\core\domain\services\converters\RestApiSpoofer' => EE_Dependency_Map::load_from_cache,
+                'EE_Admin_Config' => EE_Dependency_Map::load_from_cache,
+                'EEM_Datetime'    => EE_Dependency_Map::load_from_cache,
+                'EEM_Event'       => EE_Dependency_Map::load_from_cache,
+                'EEM_Price'       => EE_Dependency_Map::load_from_cache,
+                'EEM_Price_Type'  => EE_Dependency_Map::load_from_cache,
+                'EEM_Ticket'      => EE_Dependency_Map::load_from_cache,
+            ],
         );
     }
 
