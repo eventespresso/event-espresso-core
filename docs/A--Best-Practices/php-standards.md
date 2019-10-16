@@ -48,10 +48,10 @@ All new classes and files will follow modern day best practices, including names
  * Also when there are multiple placeholders, be sure to add a translators comment like so:
  
  ```php
-// translators: 1: group affiliation, eg "Rebel" or "Imperial", 2: name of planet, eg "Alderan". 
+// translators: 1: group affiliation, eg "Rebel" or "Imperial", 2: name of planet, eg "Alderan" or "Tatooine". 
 __('The %1$s base is on %2$s', 'event_espresso');
 ```
- * Ddd translator comments to other strings where you think it would be helpful to a translator.
+ * Add translator comments to other strings where you think it would be helpful to a translator.
  * Use `esc_html_x()` (or other `_x()` family functions) where that string could be translated differently in different contexts. Eg
  ```php
  <button><?php esc_html_e('Post Event', 'event_espresso');?></button>
