@@ -18,7 +18,6 @@ All new classes and files will follow modern day best practices, including names
          then use `""` (empty string) for the default instead of `null` or `false` 
          This is especially important for return types in order to minimize the amount of type checking that client 
          code has to perform after receiving a value from a method
- * ALL user viewable strings should be translated using ` esc_html__() ` or a suitable equivalent
  * All comparisons should be using type safe equivalents<br>
     ex: `===` vs `==` or `in_array($int, $array, true)` vs `in_array($int, $array)`
     
@@ -41,6 +40,39 @@ All new classes and files will follow modern day best practices, including names
      * an @throws tag for each exception type that could be thrown as a result of calling the function
      
      
+### Translations
+ * ALL user viewable strings should be translated using ` esc_html__() ` or a suitable equivalent (avoid `__()` and `_e()` as they allow translators to add malicious Javascript.)
+ * Instead of putting "Event Espresso" in translated strings, use a placeholder and `EventEspresso\core\domain\Domain::brandName()`. Eg `printf(esc_html__('Thanks for installing %1$s!', 'event_espresso'), EventEspresso\core\domain\Domain::brandName());`. 
+ * You should almost never need to put HTML tags into a translated string. Put HTML outside of the translated string (eg `<b><?php esc_html_e('Hi!', 'event_espresso');?></b>`) or use placeholders (eg `printf(esc_html__('Use %1$sthis link%2$s to get a special surprise!', 'event_espresso'), '<a href="https://eventespresso.com">', '</a>');`
+ * When translating strings with multiple placeholders, use [numbered placeholders (eg "$1$s")](https://codex.wordpress.org/I18n_for_WordPress_Developers#Placeholders) instead of simple placeholders (eg "%s").
+ * Also when there are multiple placeholders, be sure to add a translators comment like so:
+ 
+ ```php
+// translators: 1: group affiliation, eg "Rebel" or "Imperial", 2: name of planet, eg "Alderan" or "Tatooine". 
+__('The %1$s base is on %2$s', 'event_espresso');
+```
+ * Add translator comments to other strings where you think it would be helpful to a translator.
+ * Use `esc_html_x()` (or other `_x()` family functions) where that string could be translated differently in different contexts. Eg
+ ```php
+ <button><?php esc_html_e('Post Event', 'event_espresso');?></button>
+ ...
+ <h1><?php esc_html_e('Post Event', 'event_espresso');?></h1>
+ <p>After the event is over, we're all going to Tim Horton's for some donuts...</p>
+ ```
+Notice it's the same translated string with different meanings depending on the context. In French, the first should be translated like "Publier l'événement" and the second as "Après l'événement". In order to allow translators to translate them differently, you must use `esc_html_x()`, like so:
+```php
+ <button><?php echo esc_html_x('Post Event', 'Button to publish the event', 'event_espresso');?></button>
+ ...
+ <h1><?php echo esc_html_x('Post Event', 'Title for information happening after the event', 'event_espresso');?></h1>
+ <p>After the event is over, we're all going to Tim Horton's for some donuts...</p>
+ ```
+ * Be kind to translators and avoid "breaking translations" (invaliding existing translations by changing the translated text). The following will break translations:
+    * changing placeholders from "%s" to "$1$s"
+    * changing `esc_html__()` calls to `esc_html_x()`
+    * breaking a long string into multiple shorter ones (eg changing `esc_html__('some very very long string', 'event_espresso');` to `esc_html__('some' . ' very' . ' very' . ' long' . ' string', 'event_espresso');`)
+    * changing an existing translation's context (eg changing `esc_html_x('Post event', 'after the event', 'event_espresso');` to `esc_html_x('Post event', 'subsequent the event', 'event_espresso');`)
+ * But note that it's OK to change `__()` to `esc_html__()` (it won't break translations) 
+
 ### Design and Architecture
 
  * classes, methods, or functions should not be too large. Extract logic into more granular chunks if need be
