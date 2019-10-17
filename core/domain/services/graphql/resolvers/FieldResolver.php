@@ -176,6 +176,7 @@ class FieldResolver extends ResolverBase
                 $event = $source->event();
                 break;
             case $source instanceof EE_Venue:
+            case $source instanceof EE_Ticket:
                 $event = $source->get_related_event();
                 break;
             default:

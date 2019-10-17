@@ -161,6 +161,10 @@ class Ticket extends TypeBase
                 'type'        => 'Boolean',
                 'description' => __('Flag indicating whether the ticket is free.', 'event_espresso'),
             ],
+            'event'       => [
+                'type'        => 'Event',
+                'description' => __('Event of the ticket.', 'event_espresso'),
+            ],
         ];
     }
 }
