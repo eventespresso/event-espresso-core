@@ -67,7 +67,7 @@ class TypesManager
     {
         // loop through the collection of types and register their fields
         foreach ($this->types as $type) {
-            $fields = $type->fields();
+            $fields = $type->getFieldsForGQL();
             /** @var TypeInterface $type */
             if ($type->isCustomPostType()) {
                 foreach ($fields as $field => $config) {

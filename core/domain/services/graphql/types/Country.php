@@ -22,6 +22,7 @@ namespace EventEspresso\core\domain\services\graphql\types;
 
 use EEM_Country;
 use EventEspresso\core\services\graphql\TypeBase;
+use EventEspresso\core\domain\services\graphql\fields\GraphQLField;
 
 /**
  * Class Country
@@ -45,17 +46,6 @@ class Country extends TypeBase
         $this->setName('Country');
         $this->setDescription(__('A country', 'event_espresso'));
         $this->setIsCustomPostType(false);
-        $this->setGraphQLToModelMap([
-            'name'                       => 'name',
-            'currencyCode'               => 'currency_code',
-            'currencySingular'           => 'currency_name_single',
-            'currencyPlural'             => 'currency_name_plural',
-            'currencySign'               => 'currency_sign',
-            'currencySignBeforeNumber'   => 'currency_sign_before',
-            'currencyDecimalPlaces'      => 'currency_decimal_places',
-            'currencyDecimalMark'        => 'currency_decimal_mark',
-            'currencyThousandsSeparator' => 'currency_thousands_separator',
-        ]);
 
         parent::__construct();
     }
@@ -65,45 +55,81 @@ class Country extends TypeBase
      * @return array
      * @since $VID:$
      */
-    public static function getFieldDefinitions()
+    public function getFields()
     {
         return [
-            'name'                       => [
-                'type'        => 'String',
-                'description' => __('Country Name', 'event_espresso'),
-            ],
-            'currencyCode'               => [
-                'type'        => 'String',
-                'description' => __('Country Currency Code', 'event_espresso'),
-            ],
-            'currencySingular'           => [
-                'type'        => 'String',
-                'description' => __('Currency Name Singular', 'event_espresso'),
-            ],
-            'currencyPlural'             => [
-                'type'        => 'String',
-                'description' => __('Currency Name Plural', 'event_espresso'),
-            ],
-            'currencySign'               => [
-                'type'        => 'String',
-                'description' => __('Currency Sign', 'event_espresso'),
-            ],
-            'currencySignBeforeNumber'   => [
-                'type'        => 'String',
-                'description' => __('Currency Sign Before Number', 'event_espresso'),
-            ],
-            'currencyDecimalPlaces'      => [
-                'type'        => 'String',
-                'description' => __('Currency Decimal Places', 'event_espresso'),
-            ],
-            'currencyDecimalMark'        => [
-                'type'        => 'String',
-                'description' => __('Currency Decimal Mark', 'event_espresso'),
-            ],
-            'currencyThousandsSeparator' => [
-                'type'        => 'String',
-                'description' => __('Currency Thousands Separator', 'event_espresso'),
-            ],
+            new GraphQLField(
+                'name',
+                [
+                    'key'         => 'name',
+                    'type'        => 'String',
+                    'description' => __('Country Name', 'event_espresso'),
+                ]
+            ),
+            new GraphQLField(
+                'currencyCode',
+                [
+                    'key'         => 'currency_code',
+                    'type'        => 'String',
+                    'description' => __('Country Currency Code', 'event_espresso'),
+                ]
+            ),
+            new GraphQLField(
+                'currencySingular',
+                [
+                    'key'         => 'currency_name_single',
+                    'type'        => 'String',
+                    'description' => __('Currency Name Singular', 'event_espresso'),
+                ]
+            ),
+            new GraphQLField(
+                'currencyPlural',
+                [
+                    'key'         => 'currency_name_plural',
+                    'type'        => 'String',
+                    'description' => __('Currency Name Plural', 'event_espresso'),
+                ]
+            ),
+            new GraphQLField(
+                'currencySign',
+                [
+                    'key'         => 'currency_sign',
+                    'type'        => 'String',
+                    'description' => __('Currency Sign', 'event_espresso'),
+                ]
+            ),
+            new GraphQLField(
+                'currencySignBeforeNumber',
+                [
+                    'key'         => 'currency_sign_before',
+                    'type'        => 'String',
+                    'description' => __('Currency Sign Before Number', 'event_espresso'),
+                ]
+            ),
+            new GraphQLField(
+                'currencyDecimalPlaces',
+                [
+                    'key'         => 'currency_decimal_places',
+                    'type'        => 'String',
+                    'description' => __('Currency Decimal Places', 'event_espresso'),
+                ]
+            ),
+            new GraphQLField(
+                'currencyDecimalMark',
+                [
+                    'key'         => 'currency_decimal_mark',
+                    'type'        => 'String',
+                    'description' => __('Currency Decimal Mark', 'event_espresso'),
+                ]
+            ),
+            new GraphQLField(
+                'currencyThousandsSeparator',
+                [
+                    'key'         => 'currency_thousands_separator',
+                    'type'        => 'String',
+                    'description' => __('Currency Thousands Separator', 'event_espresso'),
+                ]
+            ),
         ];
     }
 }

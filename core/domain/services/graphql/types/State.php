@@ -22,6 +22,7 @@ namespace EventEspresso\core\domain\services\graphql\types;
 
 use EEM_State;
 use EventEspresso\core\services\graphql\TypeBase;
+use EventEspresso\core\domain\services\graphql\fields\GraphQLField;
 
 /**
  * Class State
@@ -45,12 +46,6 @@ class State extends TypeBase
         $this->setName('State');
         $this->setDescription(__('A state', 'event_espresso'));
         $this->setIsCustomPostType(false);
-        $this->setGraphQLToModelMap([
-            'id'           => 'ID',
-            'abbreviation' => 'abbrev',
-            'name'         => 'name' ,
-            'isActive'     => 'active',
-        ]);
 
         parent::__construct();
     }
@@ -60,31 +55,50 @@ class State extends TypeBase
      * @return array
      * @since $VID:$
      */
-    public static function getFieldDefinitions()
+    public function getFields()
     {
         return [
-            'id'           => [
-                'type'        => [
-                    'non_null' => 'Int',
-                ],
-                'description' => __( 'State ID', 'event_espresso' ),
-            ],
-            'abbreviation' => [
-                'type'        => 'String',
-                'description' => __( 'State Abbreviation', 'event_espresso' ),
-            ],
-            'name'         => [
-                'type'        => 'String',
-                'description' => __('State Name', 'event_espresso'),
-            ],
-            'isActive'     => [
-                'type'        => 'Boolean',
-                'description' => __('State Active Flag', 'event_espresso'),
-            ],
-            'country'      => [
-                'type'        => 'Country',
-                'description' => __('Country for the state', 'event_espresso'),
-            ],
+            new GraphQLField(
+                'id',
+                [
+                    'key'         => 'ID',
+                    'type'        => [
+                        'non_null' => 'Int',
+                    ],
+                    'description' => __( 'State ID', 'event_espresso' ),
+                ]
+            ),
+            new GraphQLField(
+                'abbreviation',
+                [
+                    'key'         => 'abbrev',
+                    'type'        => 'String',
+                    'description' => __( 'State Abbreviation', 'event_espresso' ),
+                ]
+            ),
+            new GraphQLField(
+                'name',
+                [
+                    'key'         => 'name',
+                    'type'        => 'String',
+                    'description' => __('State Name', 'event_espresso'),
+                ]
+            ),
+            new GraphQLField(
+                'isActive',
+                [
+                    'key'         => 'active',
+                    'type'        => 'Boolean',
+                    'description' => __('State Active Flag', 'event_espresso'),
+                ]
+            ),
+            new GraphQLField(
+                'country',
+                [
+                    'type'        => 'Country',
+                    'description' => __('Country for the state', 'event_espresso'),
+                ]
+            ),
         ];
     }
 }

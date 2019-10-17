@@ -22,6 +22,7 @@ namespace EventEspresso\core\domain\services\graphql\types;
 
 use EEM_Venue;
 use EventEspresso\core\services\graphql\TypeBase;
+use EventEspresso\core\domain\services\graphql\fields\GraphQLField;
 
 /**
  * Class Venue
@@ -44,24 +45,6 @@ class Venue extends TypeBase
         $this->model = $venue_model;
         $this->setName('Venue');
         $this->setIsCustomPostType(true);
-        $this->setGraphQLToModelMap([
-            'name'          => 'name',
-            'desc'          => 'description',
-            'shortDesc'     => 'excerpt',
-            'identifier'    => 'identifier',
-            'created'       => 'created',
-            'order'         => 'order',
-            'address'       => 'address',
-            'address2'      => 'address2',
-            'city'          => 'city',
-            'zip'           => 'zip',
-            'phone'         => 'phone',
-            'virtualPhone'  => 'virtual_phone',
-            'url'           => 'venue_url',
-            'virtualUrl'    => 'virtual_url',
-            'googleMapLink' => 'google_map_link',
-            'enableForGmap' => 'enable_for_gmap',
-        ]);
 
         parent::__construct();
     }
@@ -71,89 +54,167 @@ class Venue extends TypeBase
      * @return array
      * @since $VID:$
      */
-    public static function getFieldDefinitions()
+    public function getFields()
     {
         return [
-            'name'          => [
-                'type'        => 'String',
-                'description' => __('Venue Name', 'event_espresso'),
-            ],
-            'desc'          => [
-                'type'        => 'String',
-                'description' => __('Venue Description', 'event_espresso'),
-            ],
-            'shortDesc'     => [
-                'type'        => 'String',
-                'description' => __('Short Description of Venue', 'event_espresso'),
-            ],
-            'identifier'    => [
-                'type'        => 'String',
-                'description' => __('Venue Identifier', 'event_espresso'),
-            ],
-            'created'       => [
-                'type'        => 'String',
-                'description' => __('Date Venue Created', 'event_espresso'),
-            ],
-            'order'         => [
-                'type'        => 'Int',
-                'description' => __('Venue order', 'event_espresso'),
-            ],
-            'wpUser'        => [
-                'type'        => 'User',
-                'description' => __('Venue Creator', 'event_espresso'),
-            ],
-            'address'       => [
-                'type'        => 'String',
-                'description' => __('Venue Address line 1', 'event_espresso'),
-            ],
-            'address2'      => [
-                'type'        => 'String',
-                'description' => __('Venue Address line 2', 'event_espresso'),
-            ],
-            'city'          => [
-                'type'        => 'String',
-                'description' => __('Venue City', 'event_espresso'),
-            ],
-            'state'  => [
-                'type'        => 'State',
-                'description' => __('Venue state', 'event_espresso'),
-            ],
-            'country'  => [
-                'type'        => 'Country',
-                'description' => __('Venue country', 'event_espresso'),
-            ],
-            'zip'           => [
-                'type'        => 'String',
-                'description' => __('Venue Zip/Postal Code', 'event_espresso'),
-            ],
-            'capacity'      => [
-                'type'        => 'Int',
-                'description' => __('Venue Capacity', 'event_espresso'),
-            ],
-            'phone'         => [
-                'type'        => 'String',
-                'description' => __('Venue Phone', 'event_espresso'),
-            ],
-            'virtualPhone'  => [
-                'type'        => 'String',
-                'description' => __('Call in Number', 'event_espresso'),
-            ],
-            'url'           => [
-                'type'        => 'String',
-                'description' => __('Venue Website', 'event_espresso'),
-            ],
-            'virtualUrl'    => [
-                'type'        => 'String',
-                'description' => __('Virtual URL', 'event_espresso'),
-            ],
-            'googleMapLink' => [
-                'type'        => 'String',
-                'description' => __('Google Map Link', 'event_espresso'),
-            ],
-            'enableForGmap' => [
-                'type'        => 'String',
-                'description' => __('Show Google Map?', 'event_espresso'),
-            ],
+            new GraphQLField(
+                'name',
+                [
+                    'key'         => 'name',
+                    'type'        => 'String',
+                    'description' => __('Venue Name', 'event_espresso'),
+                ]
+            ),
+            new GraphQLField(
+                'desc',
+                [
+                    'key'         => 'description',
+                    'type'        => 'String',
+                    'description' => __('Venue Description', 'event_espresso'),
+                ]
+            ),
+            new GraphQLField(
+                'shortDesc',
+                [
+                    'key'         => 'excerpt',
+                    'type'        => 'String',
+                    'description' => __('Short Description of Venue', 'event_espresso'),
+                ]
+            ),
+            new GraphQLField(
+                'identifier',
+                [
+                    'key'         => 'identifier',
+                    'type'        => 'String',
+                    'description' => __('Venue Identifier', 'event_espresso'),
+                ]
+            ),
+            new GraphQLField(
+                'created',
+                [
+                    'key'         => 'created',
+                    'type'        => 'String',
+                    'description' => __('Date Venue Created', 'event_espresso'),
+                ]
+            ),
+            new GraphQLField(
+                'order',
+                [
+                    'key'         => 'order',
+                    'type'        => 'Int',
+                    'description' => __('Venue order', 'event_espresso'),
+                ]
+            ),
+            new GraphQLField(
+                'wpUser',
+                [
+                    'type'        => 'User',
+                    'description' => __('Venue Creator', 'event_espresso'),
+                ]
+            ),
+            new GraphQLField(
+                'address',
+                [
+                    'key'         => 'address',
+                    'type'        => 'String',
+                    'description' => __('Venue Address line 1', 'event_espresso'),
+                ]
+            ),
+            new GraphQLField(
+                'address2',
+                [
+                    'key'         => 'address2',
+                    'type'        => 'String',
+                    'description' => __('Venue Address line 2', 'event_espresso'),
+                ]
+            ),
+            new GraphQLField(
+                'city',
+                [
+                    'key'         => 'city',
+                    'type'        => 'String',
+                    'description' => __('Venue City', 'event_espresso'),
+                ]
+            ),
+            new GraphQLField(
+                'state',
+                [
+                    'type'        => 'State',
+                    'description' => __('Venue state', 'event_espresso'),
+                ]
+            ),
+            new GraphQLField(
+                'country',
+                [
+                    'type'        => 'Country',
+                    'description' => __('Venue country', 'event_espresso'),
+                ]
+            ),
+            new GraphQLField(
+                'zip',
+                [
+                    'key'         => 'zip',
+                    'type'        => 'String',
+                    'description' => __('Venue Zip/Postal Code', 'event_espresso'),
+                ]
+            ),
+            new GraphQLField(
+                'capacity',
+                [
+                    'key'            => 'capacity',
+                    'type'           => 'Int',
+                    'description'    => __('Venue Capacity', 'event_espresso'),
+                    'formatCallback' => [$this, 'parseInfiniteValue'],
+                ]
+            ),
+            new GraphQLField(
+                'phone',
+                [
+                    'key'         => 'phone',
+                    'type'        => 'String',
+                    'description' => __('Venue Phone', 'event_espresso'),
+                ]
+            ),
+            new GraphQLField(
+                'virtualPhone',
+                [
+                    'key'         => 'virtual_phone',
+                    'type'        => 'String',
+                    'description' => __('Call in Number', 'event_espresso'),
+                ]
+            ),
+            new GraphQLField(
+                'url',
+                [
+                    'key'         => 'venue_url',
+                    'type'        => 'String',
+                    'description' => __('Venue Website', 'event_espresso'),
+                ]
+            ),
+            new GraphQLField(
+                'virtualUrl',
+                [
+                    'key'         => 'virtual_url',
+                    'type'        => 'String',
+                    'description' => __('Virtual URL', 'event_espresso'),
+                ]
+            ),
+            new GraphQLField(
+                'googleMapLink',
+                [
+                    'key'         => 'google_map_link',
+                    'type'        => 'String',
+                    'description' => __('Google Map Link', 'event_espresso'),
+                ]
+            ),
+            new GraphQLField(
+                'enableForGmap',
+                [
+                    'key'         => 'enable_for_gmap',
+                    'type'        => 'String',
+                    'description' => __('Show Google Map?', 'event_espresso'),
+                ]
+            ),
         ];
     }
 }

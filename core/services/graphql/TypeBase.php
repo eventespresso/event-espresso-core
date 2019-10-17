@@ -89,12 +89,12 @@ abstract class TypeBase implements TypeInterface
      */
     public function __construct()
     {
+        $this->setFields($this->getFields());
+
         $this->field_resolver = new FieldResolver(
             $this->model,
-            $this->graphql_to_model_map
+            $this->getFieldsForResolver()
         );
-
-        $this->setFields($this->getFields());
     }
 
 
@@ -140,7 +140,7 @@ abstract class TypeBase implements TypeInterface
      */
     public function fields()
     {
-        return $this->fields;
+        return (array) $this->fields;
     }
 
 
@@ -152,13 +152,45 @@ abstract class TypeBase implements TypeInterface
         $this->fields = $fields;
     }
 
+    /**
+     * @return array
+     * @since $VID:$
+     */
+    public function getFields()
+    {
+        return [];
+    }
+
 
     /**
-     * @param array $map
+     * Creates a key map to pass to GrapQL registration.
+     * @return array
+     * @since $VID:$
      */
-    protected function setGraphQLToModelMap(array $map)
+    public function getFieldsForGQL()
     {
-        $this->graphql_to_model_map = $map;
+        $fields = [];
+        foreach ($this->fields() as $field) {
+            $config = $field->toArray();
+            $config['resolve'] = [$this, 'resolveField'];
+            $fields[$field->name()] = $config;
+        }
+        return $fields;
+    }
+
+
+    /**
+     * Creates a key map for internal resolver.
+     * @return array
+     * @since $VID:$
+     */
+    public function getFieldsForResolver()
+    {
+        $fields = [];
+        foreach ($this->fields() as $field) {
+            $fields[$field->name()] = $field;
+        }
+        return $fields;
     }
 
 
@@ -181,50 +213,13 @@ abstract class TypeBase implements TypeInterface
 
 
     /**
-     * @return array
+     * @param int $value
+     * @return int
      * @since $VID:$
      */
-    public function getFields()
+    public function parseInfiniteValue($value)
     {
-        $fields = static::getFieldDefinitions();
-        foreach ($fields as $field => &$args) {
-            $args['resolve'] = [$this, 'resolveField'];
-        }
-        return $fields;
-    }
-
-
-    /**
-     * @param EE_Model_Field_Base $field
-     * @return string
-     * @since $VID:$
-     */
-    protected function parseFieldType(EE_Model_Field_Base $field)
-    {
-        $schema_type = $field->getSchemaType();
-        $schema_type = is_array($schema_type) ? array_shift($schema_type) : $schema_type;
-        switch ($schema_type) {
-            case 'boolean';
-                return 'Boolean';
-            case 'date-time';
-            case 'string';
-                return 'String';
-            case 'integer';
-                if ($field instanceof EE_WP_User_Field) {
-                    return 'User';
-                }
-                return 'Int';
-            case 'number';
-                return 'Float';
-            case 'object';
-                if ($field instanceof EE_Post_Content_Field) {
-                    return 'String';
-                }
-                if ($field instanceof EE_Enum_Text_Field) {
-                    return 'String';
-                }
-                return 'object';
-        }
+        return $value === EE_INF || is_infinite($value) ? -1 : $value;
     }
 
 

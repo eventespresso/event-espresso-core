@@ -22,6 +22,7 @@ namespace EventEspresso\core\domain\services\graphql\types;
 
 use EEM_Datetime;
 use EventEspresso\core\services\graphql\TypeBase;
+use EventEspresso\core\domain\services\graphql\fields\GraphQLField;
 
 /**
  * Class EventDate
@@ -45,125 +46,186 @@ class Datetime extends TypeBase
         $this->setName('Datetime');
         $this->setDescription(__('An event date', 'event_espresso'));
         $this->setIsCustomPostType(false);
-        $this->setGraphQLToModelMap([
-            'id'          => 'ID',
-            'name'        => 'name',
-            'description' => 'description',
-            'start'       => 'start',
-            'startDate'   => 'start_date',
-            'end'         => 'end',
-            'endDate'     => 'end_date',
-            'startTime'   => 'start_time',
-            'endTime'     => 'end_time',
-            'sold'        => 'sold',
-            'reserved'    => 'reserved',
-            'order'       => 'order',
-            'length'      => 'length',
-            'isPrimary'   => 'is_primary',
-            'isSoldOut'   => 'sold_out',
-            'isUpcoming'  => 'is_upcoming',
-            'isActive'    => 'is_active',
-            'isExpired'   => 'is_expired',
-        ]);
 
         parent::__construct();
     }
-
 
     /**
      * @return array
      * @since $VID:$
      */
-    public static function getFieldDefinitions()
+    public function getFields()
     {
         return [
-            'id'          => [
-                'type'        => [
-                    'non_null' => 'Int',
-                ],
-                'description' => __('The datetime ID.', 'event_espresso'),
-            ],
-            'name'        => [
-                'type'        => 'String',
-                'description' => __('Datetime Name', 'event_espresso'),
-            ],
-            'description' => [
-                'type'        => 'String',
-                'description' => __('Description for Datetime', 'event_espresso'),
-            ],
-            'start'       => [
-                'type'        => 'String',
-                'description' => __('Start timestamp of Event', 'event_espresso'),
-            ],
-            'startDate'   => [
-                'type'        => 'String',
-                'description' => __('Start time/date of Event', 'event_espresso'),
-            ],
-            'end'         => [
-                'type'        => 'String',
-                'description' => __('End timestamp of Event', 'event_espresso'),
-            ],
-            'endDate'     => [
-                'type'        => 'String',
-                'description' => __('End time/date of Event', 'event_espresso'),
-            ],
-            'startTime'   => [
-                'type'        => 'String',
-                'description' => __('Start time of Event', 'event_espresso'),
-            ],
-            'endTime'     => [
-                'type'        => 'String',
-                'description' => __('End time of Event', 'event_espresso'),
-            ],
-            'capacity'    => [
-                'type'        => 'Int',
-                'description' => __('Registration Limit for this time', 'event_espresso'),
-            ],
-            'sold'        => [
-                'type'        => 'Int',
-                'description' => __('How many sales for this Datetime that have occurred', 'event_espresso'),
-            ],
-            'reserved'    => [
-                'type'        => 'Int',
-                'description' => __('Quantity of tickets reserved, but not yet fully purchased', 'event_espresso'),
-            ],
-            'order'       => [
-                'type'        => 'Int',
-                'description' => __('The order in which the Datetime is displayed', 'event_espresso'),
-            ],
-            'length'      => [
-                'type'        => 'Int',
-                'description' => __('The length of the event (start to end time) in seconds', 'event_espresso'),
-            ],
-            'parent'      => [
-                'type'        => 'Datetime',
-                'description' => __('The parent datetime of the current datetime', 'event_espresso'),
-            ],
-            'isPrimary'   => [
-                'type'        => 'Boolean',
-                'description' => __('Flag indicating datetime is primary one for event', 'event_espresso'),
-            ],
-            'isSoldOut'   => [
-                'type'        => 'Boolean',
-                'description' => __('Flag indicating whether the tickets sold for this datetime, met or exceed the registration limit',
-                    'event_espresso'),
-            ],
-            'isUpcoming'  => [
-                'type'        => 'Boolean',
-                'description' => __('Whether the date is upcoming', 'event_espresso'),
-            ],
-            'isActive'    => [
-                'type'        => 'Boolean',
-                'description' => __('Flag indicating datetime is active', 'event_espresso'),
-            ],
-            'isExpired'   => [
-                'type'        => 'Boolean',
-                'description' => __('Flag indicating datetime is expired or not', 'event_espresso'),
-            ],
-            'event'       => [
-                'type'        => 'Event',
-                'description' => __('Event of the datetime.', 'event_espresso'),
-            ],
+            new GraphQLField(
+                'id',
+                [
+                    'key'         => 'ID',
+                    'type'        => [
+                        'non_null' => 'Int',
+                    ],
+                    'description' => __('The datetime ID.', 'event_espresso'),
+                ]
+            ),
+            new GraphQLField(
+                'name',
+                [
+                    'key'         => 'name',
+                    'type'        => 'String',
+                    'description' => __('Datetime Name', 'event_espresso'),
+                ]
+            ),
+            new GraphQLField(
+                'description',
+                [
+                    'key'         => 'description',
+                    'type'        => 'String',
+                    'description' => __('Description for Datetime', 'event_espresso'),
+                ]
+            ),
+            new GraphQLField(
+                'start',
+                [
+                    'key'         => 'start',
+                    'type'        => 'String',
+                    'description' => __('Start timestamp of Event', 'event_espresso'),
+                ]
+            ),
+            new GraphQLField(
+                'startDate',
+                [
+                    'key'         => 'start_date',
+                    'type'        => 'String',
+                    'description' => __('Start time/date of Event', 'event_espresso'),
+                ]
+            ),
+            new GraphQLField(
+                'end',
+                [
+                    'key'         => 'end',
+                    'type'        => 'String',
+                    'description' => __('End timestamp of Event', 'event_espresso'),
+                ]
+            ),
+            new GraphQLField(
+                'endDate',
+                [
+                    'key'         => 'end_date',
+                    'type'        => 'String',
+                    'description' => __('End time/date of Event', 'event_espresso'),
+                ]
+            ),
+            new GraphQLField(
+                'startTime',
+                [
+                    'key'         => 'start_time',
+                    'type'        => 'String',
+                    'description' => __('Start time of Event', 'event_espresso'),
+                ]
+            ),
+            new GraphQLField(
+                'endTime',
+                [
+                    'key'         => 'end_time',
+                    'type'        => 'String',
+                    'description' => __('End time of Event', 'event_espresso'),
+                ]
+            ),
+            new GraphQLField(
+                'capacity',
+                [
+                    'key'            => 'reg_limit',
+                    'type'           => 'Int',
+                    'description'    => __('Registration Limit for this time', 'event_espresso'),
+                    'formatCallback' => [$this, 'parseInfiniteValue'],
+                ]
+            ),
+            new GraphQLField(
+                'sold',
+                [
+                    'key'         => 'sold',
+                    'type'        => 'Int',
+                    'description' => __('How many sales for this Datetime that have occurred', 'event_espresso'),
+                ]
+            ),
+            new GraphQLField(
+                'reserved',
+                [
+                    'key'         => 'reserved',
+                    'type'        => 'Int',
+                    'description' => __('Quantity of tickets reserved, but not yet fully purchased', 'event_espresso'),
+                ]
+            ),
+            new GraphQLField(
+                'order',
+                [
+                    'key'         => 'order',
+                    'type'        => 'Int',
+                    'description' => __('The order in which the Datetime is displayed', 'event_espresso'),
+                ]
+            ),
+            new GraphQLField(
+                'length',
+                [
+                    'key'         => 'length',
+                    'type'        => 'Int',
+                    'description' => __('The length of the event (start to end time) in seconds', 'event_espresso'),
+                ]
+            ),
+            new GraphQLField(
+                'parent',
+                [
+                    'type'        => 'Datetime',
+                    'description' => __('The parent datetime of the current datetime', 'event_espresso'),
+                ]
+            ),
+            new GraphQLField(
+                'isPrimary',
+                [
+                    'key'         => 'is_primary',
+                    'type'        => 'Boolean',
+                    'description' => __('Flag indicating datetime is primary one for event', 'event_espresso'),
+                ]
+            ),
+            new GraphQLField(
+                'isSoldOut',
+                [
+                    'key'         => 'sold_out',
+                    'type'        => 'Boolean',
+                    'description' => __('Flag indicating whether the tickets sold for this datetime, met or exceed the registration limit', 'event_espresso'),
+                ]
+            ),
+            new GraphQLField(
+                'isUpcoming',
+                [
+                    'key'         => 'is_upcoming',
+                    'type'        => 'Boolean',
+                    'description' => __('Whether the date is upcoming', 'event_espresso'),
+                ]
+            ),
+            new GraphQLField(
+                'isActive',
+                [
+                    'key'         => 'is_active',
+                    'type'        => 'Boolean',
+                    'description' => __('Flag indicating datetime is active', 'event_espresso'),
+                ]
+            ),
+            new GraphQLField(
+                'isExpired',
+                [
+                    'key'         => 'is_expired',
+                    'type'        => 'Boolean',
+                    'description' => __('Flag indicating datetime is expired or not', 'event_espresso'),
+                ]
+            ),
+            new GraphQLField(
+                'event',
+                [
+                    'type'        => 'Event',
+                    'description' => __('Event of the datetime.', 'event_espresso'),
+                ]
+            ),
         ];
     }
 }

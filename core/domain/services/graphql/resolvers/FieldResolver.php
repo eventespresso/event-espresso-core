@@ -18,6 +18,7 @@ use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
 use EventEspresso\core\services\graphql\TypeBase;
 use EventEspresso\core\services\graphql\ResolverBase;
+use EventEspresso\core\domain\services\graphql\fields\GraphQLField;
 use InvalidArgumentException;
 use ReflectionException;
 
@@ -46,21 +47,21 @@ class FieldResolver extends ResolverBase
     protected $model;
 
     /**
-     * @var array $graphql_to_model_map.
+     * @var array $fields.
      */
-    protected $graphql_to_model_map;
+    protected $fields;
 
 
     /**
      * FieldResolver constructor.
      *
-	 * @param mixed   $model                The model instance.
-     * @param array   $graphql_to_model_map The GQL to model map for the fields.
+	 * @param mixed   $model  The model instance.
+     * @param array   $fields The fields registered for the type.
      */
-    public function __construct($model, array $graphql_to_model_map )
+    public function __construct($model, array $fields )
     {
-		$this->model                = $model;
-		$this->graphql_to_model_map = $graphql_to_model_map;
+		$this->model  = $model;
+		$this->fields = $fields;
     }
 
     /**
@@ -73,48 +74,42 @@ class FieldResolver extends ResolverBase
      */
     public function resolve($source, $args, AppContext $context, ResolveInfo $info)
     {
-		$fieldName = $info->fieldName;
+        $fieldName = $info->fieldName;
+        
+        // Field should exist in teh registered fields
+		if (isset($this->fields[$fieldName]) && $this->fields[$fieldName] instanceof GraphQLField) {
+            $field = $this->fields[$fieldName];
 
-		if (isset($this->graphql_to_model_map[$fieldName])) {
-			return $source->{$this->graphql_to_model_map[$fieldName]}();
-		}
+            // check if the field should be resolved.
+            if (!$field->shouldResolve()) {
+                return null;
+            }
 
-		switch ($fieldName) {
-			case 'capacity': // Datetime, Venue
-				if ($source instanceof EE_Venue) {
-					return $this->parseInfiniteValue($source->capacity());
-				} elseif ($source instanceof EE_Datetime) {
-					return $this->parseInfiniteValue($source->reg_limit());
-				}
-				break;
-			case 'max': // Ticket
-				return $this->parseInfiniteValue($source->max());
-			case 'quantity': // Ticket
-				return $this->parseInfiniteValue($source->qty());
-			case 'uses': // Ticket
-				return $this->parseInfiniteValue($source->uses());
-			case 'parent':
-				return $this->resolveParent($source);
-			case 'event':
-				return $this->resolveEvent($source, $args, $context);
-			case 'wpUser':
-				return $this->resolveWpUser($source, $args, $context);
-			case 'state': // Venue
-				return $this->resolveState($source);
-			case 'country': // State, Venue
-				return $this->resolveCountry($source);
-		}
-    }
+            // Give priority to the internal resolver.
+            if ($field->hasInternalResolver()) {
+                return call_user_func($field->resolve, $source, $args, $context, $info);
+            }
 
+            // Check if the field has a key mapped to model.
+            if (!empty($field->key())) {
+                $value = $source->{$field->key()}();
+                return $field->mayBeFormatValue($value);
+            }
 
-    /**
-     * @param int $value
-     * @return int
-     * @since $VID:$
-     */
-    protected function parseInfiniteValue($value)
-    {
-        return $value === EE_INF || is_infinite($value) ? -1 : $value;
+            switch ($fieldName) {
+                case 'parent':
+                    return $this->resolveParent($source);
+                case 'event':
+                    return $this->resolveEvent($source, $args, $context);
+                case 'wpUser':
+                    return $this->resolveWpUser($source, $args, $context);
+                case 'state': // Venue
+                    return $this->resolveState($source);
+                case 'country': // State, Venue
+                    return $this->resolveCountry($source);
+            }
+        }
+        return null;
     }
 
 
