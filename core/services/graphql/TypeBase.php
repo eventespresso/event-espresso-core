@@ -91,7 +91,7 @@ abstract class TypeBase implements TypeInterface
     {
         $this->field_resolver = new FieldResolver(
             $this->model,
-            $this->graphql_to_model_map,
+            $this->graphql_to_model_map
         );
 
         $this->setFields($this->getFields());

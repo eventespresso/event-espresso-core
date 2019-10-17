@@ -20,8 +20,6 @@ use EventEspresso\core\services\graphql\TypeBase;
 use EventEspresso\core\services\graphql\ResolverBase;
 use InvalidArgumentException;
 use ReflectionException;
-use InvalidArgumentException;
-use ReflectionException;
 
 use WPGraphQL\Data\DataSource;
 use GraphQL\Deferred;

@@ -17,30 +17,12 @@ interface ResolverInterface
 {
 
     /**
-     * @return string
-     * @since $VID:$
-     */
-    public function query();
-
-    /**
-     * @return string
-     * @since $VID:$
-     */
-    public function field();
-
-    /**
-     * @return string
-     * @since $VID:$
-     */
-    public function type();
-
-    /**
-     * @param             $root
+     * @param             $source
      * @param array       $args
      * @param AppContext  $context
      * @param ResolveInfo $info
      * @return mixed
      * @since $VID:$
      */
-    public function resolve($root, array $args, AppContext $context, ResolveInfo $info);
+    public function resolve($source, array $args, AppContext $context, ResolveInfo $info);
 }
