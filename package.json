@@ -52,7 +52,7 @@
 		"@wordpress/autop": "^2.5.0",
 		"@wordpress/babel-plugin-makepot": "^3.2.1",
 		"@wordpress/babel-preset-default": "^4.6.1",
-		"@wordpress/block-library": "^2.9.1",
+		"@wordpress/block-library": "^2.9.2",
 		"@wordpress/blocks": "^6.7.1",
 		"@wordpress/browserslist-config": "^2.6.0",
 		"@wordpress/components": "^8.3.1",
