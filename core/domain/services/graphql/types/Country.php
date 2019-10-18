@@ -46,13 +46,12 @@ class Country extends TypeBase
         $this->setName('Country');
         $this->setDescription(__('A country', 'event_espresso'));
         $this->setIsCustomPostType(false);
-
         parent::__construct();
     }
 
 
     /**
-     * @return array
+     * @return GraphQLField[]
      * @since $VID:$
      */
     public function getFields()
@@ -60,75 +59,56 @@ class Country extends TypeBase
         return [
             new GraphQLField(
                 'name',
-                [
-                    'key'         => 'name',
-                    'type'        => 'String',
-                    'description' => __('Country Name', 'event_espresso'),
-                ]
+                'name',
+                'String',
+                __('Country Name', 'event_espresso')
             ),
             new GraphQLField(
+                'currency_code',
                 'currencyCode',
-                [
-                    'key'         => 'currency_code',
-                    'type'        => 'String',
-                    'description' => __('Country Currency Code', 'event_espresso'),
-                ]
+                'String',
+                __('Country Currency Code', 'event_espresso')
             ),
             new GraphQLField(
+                'currency_name_single',
                 'currencySingular',
-                [
-                    'key'         => 'currency_name_single',
-                    'type'        => 'String',
-                    'description' => __('Currency Name Singular', 'event_espresso'),
-                ]
+                'String',
+                __('Currency Name Singular', 'event_espresso')
             ),
             new GraphQLField(
+                'currency_name_plural',
                 'currencyPlural',
-                [
-                    'key'         => 'currency_name_plural',
-                    'type'        => 'String',
-                    'description' => __('Currency Name Plural', 'event_espresso'),
-                ]
+                'String',
+                __('Currency Name Plural', 'event_espresso')
             ),
             new GraphQLField(
+                'currency_sign',
                 'currencySign',
-                [
-                    'key'         => 'currency_sign',
-                    'type'        => 'String',
-                    'description' => __('Currency Sign', 'event_espresso'),
-                ]
+                'String',__('Currency Sign', 'event_espresso')
             ),
             new GraphQLField(
+                'currency_sign_before',
                 'currencySignBeforeNumber',
-                [
-                    'key'         => 'currency_sign_before',
-                    'type'        => 'String',
-                    'description' => __('Currency Sign Before Number', 'event_espresso'),
-                ]
+                'String',
+                __('Currency Sign Before Number', 'event_espresso')
             ),
             new GraphQLField(
+                'currency_decimal_places',
                 'currencyDecimalPlaces',
-                [
-                    'key'         => 'currency_decimal_places',
-                    'type'        => 'String',
-                    'description' => __('Currency Decimal Places', 'event_espresso'),
-                ]
+                'String',
+                __('Currency Decimal Places', 'event_espresso')
             ),
             new GraphQLField(
+                'currency_decimal_mark',
                 'currencyDecimalMark',
-                [
-                    'key'         => 'currency_decimal_mark',
-                    'type'        => 'String',
-                    'description' => __('Currency Decimal Mark', 'event_espresso'),
-                ]
+                'String',
+                __('Currency Decimal Mark', 'event_espresso')
             ),
             new GraphQLField(
+                'currency_thousands_separator',
                 'currencyThousandsSeparator',
-                [
-                    'key'         => 'currency_thousands_separator',
-                    'type'        => 'String',
-                    'description' => __('Currency Thousands Separator', 'event_espresso'),
-                ]
+                'String',
+                __('Currency Thousands Separator', 'event_espresso')
             ),
         ];
     }

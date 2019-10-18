@@ -3,17 +3,14 @@
  *     Event Espresso
  *     Manage events, sell tickets, and receive payments from your WordPress website.
  *     Copyright (c) 2008-2019 Event Espresso  All Rights Reserved.
- *
  *     This program is free software: you can redistribute it and/or modify
  *     it under the terms of the GNU General Public License as published by
  *     the Free Software Foundation, either version 3 of the License, or
  *     (at your option) any later version.
- *
  *     This program is distributed in the hope that it will be useful,
  *     but WITHOUT ANY WARRANTY; without even the implied warranty of
  *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *     GNU General Public License for more details.
- *
  *     You should have received a copy of the GNU General Public License
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
@@ -45,13 +42,12 @@ class Event extends TypeBase
         $this->model = $event_model;
         $this->setName('Event');
         $this->setIsCustomPostType(true);
-
         parent::__construct();
     }
 
 
     /**
-     * @return array
+     * @return GraphQLField[]
      * @since $VID:$
      */
     public function getFields()
@@ -59,186 +55,142 @@ class Event extends TypeBase
         return [
             new GraphQLField(
                 'name',
-                [
-                    'key'         => 'name',
-                    'type'        => 'String',
-                    'description' => __('Event Name', 'event_espresso'),
-                ]
+                'name',
+                'String',
+                __('Event Name', 'event_espresso')
             ),
             new GraphQLField(
+                'description',
                 'desc',
-                [
-                    'key'         => 'description',
-                    'type'        => 'String',
-                    'description' => __('Event Description', 'event_espresso'),
-                ]
+                'String',
+                __('Event Description', 'event_espresso')
             ),
             new GraphQLField(
+                'short_description',
                 'shortDesc',
-                [
-                    'key'         => 'short_description',
-                    'type'        => 'String',
-                    'description' => __('Event Short Description', 'event_espresso'),
-                ]
+                'String',
+                __('Event Short Description', 'event_espresso')
             ),
             new GraphQLField(
                 'created',
-                [
-                    'key'         => 'created',
-                    'type'        => 'String',
-                    'description' => __('Date/Time Event Created', 'event_espresso'),
-                ]
+                'created',
+                'String',
+                __('Date/Time Event Created', 'event_espresso')
             ),
             new GraphQLField(
                 'wpUser',
-                [
-                    'type'        => 'User',
-                    'description' => __('Event Creator', 'event_espresso'),
-                ]
+                'wpUser',
+                'User',
+                __('Event Creator', 'event_espresso')
             ),
             new GraphQLField(
                 'order',
-                [
-                    'key'         => 'order',
-                    'type'        => 'Int',
-                    'description' => __('Event Menu Order', 'event_espresso'),
-                ]
+                'order',
+                'Int',
+                __('Event Menu Order', 'event_espresso')
             ),
             new GraphQLField(
+                'display_description',
                 'displayDesc',
-                [
-                    'key'         => 'display_description',
-                    'type'        => 'Boolean',
-                    'description' => __('Display Description Flag', 'event_espresso'),
-                ]
+                'Boolean',
+                __('Display Description Flag', 'event_espresso')
             ),
             new GraphQLField(
+                'display_ticket_selector',
                 'displayTicketSelector',
-                [
-                    'key'         => 'display_ticket_selector',
-                    'type'        => 'Boolean',
-                    'description' => __('Display Ticket Selector Flag', 'event_espresso'),
-                ]
+                'Boolean',
+                __('Display Ticket Selector Flag', 'event_espresso')
             ),
             new GraphQLField(
+                'visible_on',
                 'visibleOn',
-                [
-                    'key'         => 'visible_on',
-                    'type'        => 'String',
-                    'description' => __('Event Visible Date', 'event_espresso'),
-                ]
+                'String',
+                __('Event Visible Date', 'event_espresso')
             ),
             new GraphQLField(
+                'additional_limit',
                 'additionalLimit',
-                [
-                    'key'         => 'additional_limit',
-                    'type'        => 'String',
-                    'description' => __('Limit of Additional Registrations on Same Transaction', 'event_espresso'),
-                ]
+                'String',
+                __('Limit of Additional Registrations on Same Transaction', 'event_espresso')
             ),
             new GraphQLField(
                 'phone',
-                [
-                    'key'         => 'phone',
-                    'type'        => 'String',
-                    'description' => __('Event Phone Number', 'event_espresso'),
-                ]
+                'phone',
+                'String',
+                __('Event Phone Number', 'event_espresso')
             ),
             new GraphQLField(
+                'member_only',
                 'memberOnly',
-                [
-                    'key'         => 'member_only',
-                    'type'        => 'Boolean',
-                    'description' => __('Member-Only Event Flag', 'event_espresso'),
-                ]
+                'Boolean',
+                __('Member-Only Event Flag', 'event_espresso')
             ),
             new GraphQLField(
+                'allow_overflow',
                 'allowOverflow',
-                [
-                    'key'         => 'allow_overflow',
-                    'type'        => 'Boolean',
-                    'description' => __('Allow Overflow on Event', 'event_espresso'),
-                ]
+                'Boolean',
+                __('Allow Overflow on Event', 'event_espresso')
             ),
             new GraphQLField(
+                'timezone_string',
                 'timezoneString',
-                [
-                    'key'         => 'timezone_string',
-                    'type'        => 'String',
-                    'description' => __('Timezone (name) for Event times', 'event_espresso'),
-                ]
+                'String',
+                __('Timezone (name) for Event times', 'event_espresso')
             ),
             new GraphQLField(
+                'external_url',
                 'externalUrl',
-                [
-                    'key'         => 'external_url',
-                    'type'        => 'String',
-                    'description' => __('URL of Event Page if hosted elsewhere', 'event_espresso'),
-                ]
+                'String',
+                __('URL of Event Page if hosted elsewhere', 'event_espresso')
             ),
             new GraphQLField(
                 'donations',
-                [
-                    'key'         => 'donations',
-                    'type'        => 'Boolean',
-                    'description' => __('Accept Donations?', 'event_espresso'),
-                ]
+                'donations',
+                'Boolean',
+                __('Accept Donations?', 'event_espresso')
             ),
             new GraphQLField(
+                'is_sold_out',
                 'isSoldOut',
-                [
-                    'key'         => 'is_sold_out',
-                    'type'        => 'Boolean',
-                    'description' => __('Flag indicating whether the tickets sold for the event, met or exceed the registration limit', 'event_espresso'),
-                ]
+                'Boolean',
+                __('Flag indicating whether the tickets sold for the event, met or exceed the registration limit',
+                    'event_espresso')
             ),
             new GraphQLField(
+                'is_postponed',
                 'isPostponed',
-                [
-                    'key'         => 'is_postponed',
-                    'type'        => 'Boolean',
-                    'description' => __('Flag indicating whether the event is marked as postponed', 'event_espresso'),
-                ]
+                'Boolean',
+                __('Flag indicating whether the event is marked as postponed', 'event_espresso')
             ),
             new GraphQLField(
+                'is_cancelled',
                 'isCancelled',
-                [
-                    'key'         => 'is_cancelled',
-                    'type'        => 'Boolean',
-                    'description' => __('Flag indicating whether the event is marked as cancelled', 'event_espresso'),
-                ]
+                'Boolean',
+                __('Flag indicating whether the event is marked as cancelled', 'event_espresso')
             ),
             new GraphQLField(
+                'is_upcoming',
                 'isUpcoming',
-                [
-                    'key'         => 'is_upcoming',
-                    'type'        => 'Boolean',
-                    'description' => __('Whether the event is upcoming', 'event_espresso'),
-                ]
+                'Boolean',
+                __('Whether the event is upcoming', 'event_espresso')
             ),
             new GraphQLField(
+                'is_active',
                 'isActive',
-                [
-                    'key'         => 'is_active',
-                    'type'        => 'Boolean',
-                    'description' => __('Flag indicating event is active', 'event_espresso'),
-                ]
+                'Boolean',
+                __('Flag indicating event is active', 'event_espresso')
             ),
             new GraphQLField(
+                'is_inactive',
                 'isInactive',
-                [
-                    'key'         => 'is_inactive',
-                    'type'        => 'Boolean',
-                    'description' => __('Flag indicating event is inactive', 'event_espresso'),
-                ]
+                'Boolean',
+                __('Flag indicating event is inactive', 'event_espresso')
             ),
             new GraphQLField(
+                'is_expired',
                 'isExpired',
-                [
-                    'key'         => 'is_expired',
-                    'type'        => 'Boolean',
-                    'description' => __('Flag indicating event is expired or not', 'event_espresso'),
-                ]
+                'Boolean',
+                __('Flag indicating event is expired or not', 'event_espresso')
             ),
         ];
     }

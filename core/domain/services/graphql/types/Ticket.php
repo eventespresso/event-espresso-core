@@ -46,196 +46,151 @@ class Ticket extends TypeBase
         $this->setName('Ticket');
         $this->setDescription(__('A ticket for an event date', 'event_espresso'));
         $this->setIsCustomPostType(false);
-
         parent::__construct();
     }
 
 
     /**
-     * @return array
+     * @return GraphQLField[]
      * @since $VID:$
      */
-    public function getFields()
+    protected function getFields()
     {
         return [
             new GraphQLField(
+                'ID',
                 'id',
-                [
-                    'key'         => 'ID',
-                    'type'        => [
-                        'non_null' => 'Int',
-                    ],
-                    'description' => __('Ticket ID', 'event_espresso'),
-                ]
+                ['non_null' => 'Int'],
+                __('Ticket ID', 'event_espresso')
             ),
             new GraphQLField(
                 'name',
-                [
-                    'key'         => 'name',
-                    'type'        => 'String',
-                    'description' => __('Ticket Name', 'event_espresso'),
-                ]
+                'name',
+                'String',
+                __('Ticket Name', 'event_espresso')
             ),
             new GraphQLField(
                 'description',
-                [
-                    'key'         => 'description',
-                    'type'        => 'String',
-                    'description' => __('Description of Ticket', 'event_espresso'),
-                ]
+                'description',
+                'String',
+                __('Description of Ticket', 'event_espresso')
             ),
             new GraphQLField(
+                'start_date',
                 'startDate',
-                [
-                    'key'         => 'start_date',
-                    'type'        => 'String',
-                    'description' => __('Start time/date of Ticket', 'event_espresso'),
-                ]
+                'String',
+                __('Start time/date of Ticket', 'event_espresso')
             ),
             new GraphQLField(
+                'end_date',
                 'endDate',
-                [
-                    'key'         => 'end_date',
-                    'type'        => 'String',
-                    'description' => __('End time/date of Ticket', 'event_espresso'),
-                ]
+                'String',
+                __('End time/date of Ticket', 'event_espresso')
             ),
             new GraphQLField(
                 'min',
-                [
-                    'key'         => 'min',
-                    'type'        => 'Int',
-                    'description' => __('Minimum quantity of this ticket that must be purchased', 'event_espresso'),
-                ]
+                'min',
+                'Int',
+                __('Minimum quantity of this ticket that must be purchased', 'event_espresso')
             ),
             new GraphQLField(
                 'max',
-                [
-                    'key'            => 'max',
-                    'type'           => 'Int',
-                    'description'    => __('Maximum quantity of this ticket that can be purchased in one transaction', 'event_espresso'),
-                    'formatCallback' => [$this, 'parseInfiniteValue'],
-                ]
+                'max',
+                'Int',
+                __('Maximum quantity of this ticket that can be purchased in one transaction', 'event_espresso')
             ),
             new GraphQLField(
                 'price',
-                [
-                    'key'         => 'price',
-                    'type'        => 'Float',
-                    'description' => __('Final calculated price for ticket', 'event_espresso'),
-                ]
+                'price',
+                'Float',
+                __('Final calculated price for ticket', 'event_espresso')
             ),
             new GraphQLField(
                 'sold',
-                [
-                    'key'         => 'sold',
-                    'type'        => 'Int',
-                    'description' => __('Number of this ticket sold', 'event_espresso'),
-                ]
+                'sold',
+                'Int',
+                __('Number of this ticket sold', 'event_espresso')
             ),
             new GraphQLField(
+                'qty',
                 'quantity',
-                [
-                    'key'            => 'qty',
-                    'type'           => 'Int',
-                    'description'    => __('Quantity of this ticket that is available', 'event_espresso'),
-                    'formatCallback' => [$this, 'parseInfiniteValue'],
-                ]
+                'Int',
+                __('Quantity of this ticket that is available', 'event_espresso'),
+                [$this, 'parseInfiniteValue']
             ),
             new GraphQLField(
                 'reserved',
-                [
-                    'key'         => 'reserved',
-                    'type'        => 'Int',
-                    'description' => __('Quantity of this ticket that is reserved, but not yet fully purchased', 'event_espresso'),
-                ]
+                'reserved',
+                __('Quantity of this ticket that is reserved, but not yet fully purchased', 'event_espresso'),
+                'Int'
             ),
             new GraphQLField(
                 'uses',
-                [
-                    'key'            => 'uses',
-                    'type'           => 'Int',
-                    'description'    => __('Number of datetimes this ticket can be used at', 'event_espresso'),
-                    'formatCallback' => [$this, 'parseInfiniteValue'],
-                ]
+                'uses',
+                'Int',
+                __('Number of datetimes this ticket can be used at', 'event_espresso'),
+                [$this, 'parseInfiniteValue']
             ),
             new GraphQLField(
+                'required',
                 'isRequired',
-                [
-                    'key'         => 'required',
-                    'type'        => 'Boolean',
-                    'description' => __('Flag indicating whether this ticket must be purchased with a transaction', 'event_espresso'),
-                ]
+                'Boolean',
+                __('Flag indicating whether this ticket must be purchased with a transaction', 'event_espresso')
             ),
             new GraphQLField(
+                'taxable',
                 'isTaxable',
-                [
-                    'key'         => 'taxable',
-                    'type'        => 'Boolean',
-                    'description' => __('Flag indicating whether there is tax applied on this ticket', 'event_espresso'),
-                ]
+                'Boolean',
+                __('Flag indicating whether there is tax applied on this ticket', 'event_espresso')
             ),
             new GraphQLField(
+                'is_default',
                 'isDefault',
-                [
-                    'key'         => 'is_default',
-                    'type'        => 'Boolean',
-                    'description' => __('Flag indicating that this ticket is a default ticket', 'event_espresso'),
-                ]
+                'Boolean',
+                __('Flag indicating that this ticket is a default ticket', 'event_espresso')
             ),
             new GraphQLField(
                 'order',
-                [
-                    'key'         => 'order',
-                    'type'        => 'Int',
-                    'description' => __('The order in which the Datetime is displayed', 'event_espresso'),
-                ]
+                'order',
+                'Int',
+                __('The order in which the Datetime is displayed', 'event_espresso')
             ),
             new GraphQLField(
                 'row',
-                [
-                    'key'         => 'row',
-                    'type'        => 'Int',
-                    'description' => __('How tickets are displayed in the ui', 'event_espresso'),
-                ]
+                'row',
+                'Int',
+                __('How tickets are displayed in the ui', 'event_espresso')
             ),
             new GraphQLField(
                 'wpUser',
-                [
-                    'type'        => 'User',
-                    'description' => __('Ticket Creator ID', 'event_espresso'),
-                ]
+                'wpUser',
+                'User',
+                __('Ticket Creator ID', 'event_espresso')
             ),
             new GraphQLField(
+                'ID',
                 'parent',
-                [
-                    'key'         => 'ID',
-                    'type'        => 'Ticket',
-                    'description' => __('The parent ticket of the current ticket', 'event_espresso'),
-                ]
+                'String',
+                'Ticket',
+                __('The parent ticket of the current ticket', 'event_espresso')
             ),
             new GraphQLField(
+                'reverse_calculate',
                 'reverseCalculate',
-                [
-                    'key'         => 'reverse_calculate',
-                    'type'        => 'Boolean',
-                    'description' => __('Flag indicating whether ticket calculations should run in reverse and calculate the base ticket price from the provided ticket total.', 'event_espresso'),
-                ]
+                'Boolean',
+                __('Flag indicating whether ticket calculations should run in reverse and calculate the base ticket price from the provided ticket total.', 'event_espresso')
             ),
             new GraphQLField(
+                'is_free',
                 'isFree',
-                [
-                    'key'         => 'is_free',
-                    'type'        => 'Boolean',
-                    'description' => __('Flag indicating whether the ticket is free.', 'event_espresso'),
-                ]
+                'Boolean',
+                __('Flag indicating whether the ticket is free.', 'event_espresso')
             ),
             new GraphQLField(
                 'event',
-                [
-                    'type'        => 'Event',
-                    'description' => __('Event of the ticket.', 'event_espresso'),
-                ]
+                'Event',
+                'Event',
+                __('Event of the ticket.', 'event_espresso')
             ),
         ];
     }

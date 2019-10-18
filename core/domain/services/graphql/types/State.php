@@ -3,17 +3,14 @@
  *     Event Espresso
  *     Manage events, sell states, and receive payments from your WordPress website.
  *     Copyright (c) 2008-2019 Event Espresso  All Rights Reserved.
- *
  *     This program is free software: you can redistribute it and/or modify
  *     it under the terms of the GNU General Public License as published by
  *     the Free Software Foundation, either version 3 of the License, or
  *     (at your option) any later version.
- *
  *     This program is distributed in the hope that it will be useful,
  *     but WITHOUT ANY WARRANTY; without even the implied warranty of
  *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *     GNU General Public License for more details.
- *
  *     You should have received a copy of the GNU General Public License
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
@@ -52,7 +49,7 @@ class State extends TypeBase
 
 
     /**
-     * @return array
+     * @return GraphQLField[]
      * @since $VID:$
      */
     public function getFields()
@@ -60,44 +57,33 @@ class State extends TypeBase
         return [
             new GraphQLField(
                 'id',
-                [
-                    'key'         => 'ID',
-                    'type'        => [
-                        'non_null' => 'Int',
-                    ],
-                    'description' => __( 'State ID', 'event_espresso' ),
-                ]
+                'ID',
+                ['non_null' => 'Int'],
+                __('State ID', 'event_espresso')
             ),
             new GraphQLField(
                 'abbreviation',
-                [
-                    'key'         => 'abbrev',
-                    'type'        => 'String',
-                    'description' => __( 'State Abbreviation', 'event_espresso' ),
-                ]
+                'abbrev',
+                'String',
+                __('State Abbreviation', 'event_espresso')
             ),
             new GraphQLField(
                 'name',
-                [
-                    'key'         => 'name',
-                    'type'        => 'String',
-                    'description' => __('State Name', 'event_espresso'),
-                ]
+                'name',
+                'String',
+                __('State Name', 'event_espresso')
             ),
             new GraphQLField(
                 'isActive',
-                [
-                    'key'         => 'active',
-                    'type'        => 'Boolean',
-                    'description' => __('State Active Flag', 'event_espresso'),
-                ]
+                'active',
+                'Boolean',
+                __('State Active Flag', 'event_espresso')
             ),
             new GraphQLField(
                 'country',
-                [
-                    'type'        => 'Country',
-                    'description' => __('Country for the state', 'event_espresso'),
-                ]
+                'country',
+                'Country',
+                __('Country for the state', 'event_espresso')
             ),
         ];
     }
