@@ -57,32 +57,32 @@ class State extends TypeBase
         return [
             new GraphQLField(
                 'id',
-                'ID',
                 ['non_null' => 'Int'],
+                'ID',
                 __('State ID', 'event_espresso')
             ),
             new GraphQLField(
                 'abbreviation',
-                'abbrev',
                 'String',
+                'abbrev',
                 __('State Abbreviation', 'event_espresso')
             ),
             new GraphQLField(
                 'name',
-                'name',
                 'String',
+                'name',
                 __('State Name', 'event_espresso')
             ),
             new GraphQLField(
                 'isActive',
-                'active',
                 'Boolean',
+                'active',
                 __('State Active Flag', 'event_espresso')
             ),
             new GraphQLField(
                 'country',
-                'country',
                 'Country',
+                null,
                 __('Country for the state', 'event_espresso')
             ),
         ];

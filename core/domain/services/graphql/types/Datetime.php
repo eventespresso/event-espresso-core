@@ -55,131 +55,131 @@ class Datetime extends TypeBase
     {
         return [
             new GraphQLField(
-                'ID',
                 'id',
                 ['non_null' => 'Int'],
+                'ID',
                 __('The datetime ID.', 'event_espresso')
             ),
             new GraphQLField(
                 'name',
-                'name',
                 'String',
+                'name',
                 __('Datetime Name', 'event_espresso')
             ),
             new GraphQLField(
                 'description',
-                'description',
                 'String',
+                'description',
                 __('Description for Datetime', 'event_espresso')
             ),
             new GraphQLField(
                 'start',
-                'start',
                 'String',
+                'start',
                 __('Start timestamp of Event', 'event_espresso')
             ),
             new GraphQLField(
-                'start_date',
                 'startDate',
                 'String',
+                'start_date',
                 __('Start time/date of Event', 'event_espresso')
             ),
             new GraphQLField(
                 'end',
-                'end',
                 'String',
+                'end',
                 __('End timestamp of Event', 'event_espresso')
             ),
             new GraphQLField(
-                'end_date',
                 'endDate',
                 'String',
+                'end_date',
                 __('End time/date of Event', 'event_espresso')
             ),
             new GraphQLField(
-                'start_time',
                 'startTime',
                 'String',
+                'start_time',
                 __('Start time of Event', 'event_espresso')
             ),
             new GraphQLField(
-                'end_time',
                 'endTime',
                 'String',
+                'end_time',
                 __('End time of Event', 'event_espresso')
             ),
             new GraphQLField(
-                'reg_limit',
                 'capacity',
                 'Int',
+                'reg_limit',
                 __('Registration Limit for this time', 'event_espresso'),
                 [$this, 'parseInfiniteValue']
             ),
             new GraphQLField(
                 'sold',
-                'sold',
                 'Int',
+                'sold',
                 __('How many sales for this Datetime that have occurred', 'event_espresso')
             ),
             new GraphQLField(
                 'reserved',
-                'reserved',
                 'Int',
+                'reserved',
                 __('Quantity of tickets reserved, but not yet fully purchased', 'event_espresso')
             ),
             new GraphQLField(
                 'order',
-                'order',
                 'Int',
+                'order',
                 __('The order in which the Datetime is displayed', 'event_espresso')
             ),
             new GraphQLField(
                 'length',
-                'length',
                 'Int',
+                'length',
                 __('The length of the event (start to end time) in seconds', 'event_espresso')
             ),
             new GraphQLField(
                 'parent',
                 'Datetime',
-                'String',
+                null,
                 __('The parent datetime of the current datetime', 'event_espresso')
             ),
             new GraphQLField(
-                'is_primary',
                 'isPrimary',
                 'Boolean',
+                'is_primary',
                 __('Flag indicating datetime is primary one for event', 'event_espresso')
             ),
             new GraphQLField(
-                'sold_out',
                 'isSoldOut',
                 'Boolean',
+                'sold_out',
                 __('Flag indicating whether the tickets sold for this datetime, met or exceed the registration limit',
                     'event_espresso')
             ),
             new GraphQLField(
-                'is_upcoming',
                 'isUpcoming',
                 'Boolean',
+                'is_upcoming',
                 __('Whether the date is upcoming', 'event_espresso')
             ),
             new GraphQLField(
-                'is_active',
                 'isActive',
                 'Boolean',
+                'is_active',
                 __('Flag indicating datetime is active', 'event_espresso')
             ),
             new GraphQLField(
-                'is_expired',
                 'isExpired',
                 'Boolean',
+                'is_expired',
                 __('Flag indicating datetime is expired or not', 'event_espresso')
             ),
             new GraphQLField(
                 'event',
-                'event',
                 'Event',
+                null,
                 __('Event of the datetime.', 'event_espresso')
             ),
         ];

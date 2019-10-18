@@ -59,55 +59,55 @@ class Country extends TypeBase
         return [
             new GraphQLField(
                 'name',
-                'name',
                 'String',
+                'name',
                 __('Country Name', 'event_espresso')
             ),
             new GraphQLField(
-                'currency_code',
                 'currencyCode',
                 'String',
+                'currency_code',
                 __('Country Currency Code', 'event_espresso')
             ),
             new GraphQLField(
-                'currency_name_single',
                 'currencySingular',
                 'String',
+                'currency_name_single',
                 __('Currency Name Singular', 'event_espresso')
             ),
             new GraphQLField(
-                'currency_name_plural',
                 'currencyPlural',
                 'String',
+                'currency_name_plural',
                 __('Currency Name Plural', 'event_espresso')
             ),
             new GraphQLField(
-                'currency_sign',
                 'currencySign',
-                'String',__('Currency Sign', 'event_espresso')
+                'String',
+                'currency_sign',__('Currency Sign', 'event_espresso')
             ),
             new GraphQLField(
-                'currency_sign_before',
                 'currencySignBeforeNumber',
                 'String',
+                'currency_sign_before',
                 __('Currency Sign Before Number', 'event_espresso')
             ),
             new GraphQLField(
-                'currency_decimal_places',
                 'currencyDecimalPlaces',
                 'String',
+                'currency_decimal_places',
                 __('Currency Decimal Places', 'event_espresso')
             ),
             new GraphQLField(
-                'currency_decimal_mark',
                 'currencyDecimalMark',
                 'String',
+                'currency_decimal_mark',
                 __('Currency Decimal Mark', 'event_espresso')
             ),
             new GraphQLField(
-                'currency_thousands_separator',
                 'currencyThousandsSeparator',
                 'String',
+                'currency_thousands_separator',
                 __('Currency Thousands Separator', 'event_espresso')
             ),
         ];

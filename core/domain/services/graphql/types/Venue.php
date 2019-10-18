@@ -55,123 +55,123 @@ class Venue extends TypeBase
         return [
             new GraphQLField(
                 'name',
-                'name',
                 'String',
+                'name',
                 __('Venue Name', 'event_espresso')
             ),
             new GraphQLField(
                 'desc',
-                'description',
                 'String',
+                'description',
                 __('Venue Description', 'event_espresso')
             ),
             new GraphQLField(
                 'shortDesc',
-                'excerpt',
                 'String',
+                'excerpt',
                 __('Short Description of Venue', 'event_espresso')
             ),
             new GraphQLField(
                 'identifier',
-                'identifier',
                 'String',
+                'identifier',
                 __('Venue Identifier', 'event_espresso')
             ),
             new GraphQLField(
                 'created',
-                'created',
                 'String',
+                'created',
                 __('Date Venue Created', 'event_espresso')
             ),
             new GraphQLField(
                 'order',
-                'order',
                 'Int',
+                'order',
                 __('Venue order', 'event_espresso')
             ),
             new GraphQLField(
                 'wpUser',
-                'wpUser',
                 'User',
+                null,
                 __('Venue Creator', 'event_espresso')
             ),
             new GraphQLField(
                 'address',
-                'address',
                 'String',
+                'address',
                 __('Venue Address line 1', 'event_espresso')
             ),
             new GraphQLField(
                 'address2',
-                'address2',
                 'String',
+                'address2',
                 __('Venue Address line 2', 'event_espresso')
             ),
             new GraphQLField(
                 'city',
-                'city',
                 'String',
+                'city',
                 __('Venue City', 'event_espresso')
             ),
             new GraphQLField(
                 'state',
-                'state',
                 'State',
+                null,
                 __('Venue state', 'event_espresso')
             ),
             new GraphQLField(
                 'country',
-                'country',
                 'Country',
+                null,
                 __('Venue country', 'event_espresso')
             ),
             new GraphQLField(
                 'zip',
-                'zip',
                 'String',
+                'zip',
                 __('Venue Zip/Postal Code', 'event_espresso')
             ),
             new GraphQLField(
                 'capacity',
-                'capacity',
                 'Int',
+                'capacity',
                 __('Venue Capacity', 'event_espresso'),
                 [$this, 'parseInfiniteValue']
             ),
             new GraphQLField(
                 'phone',
-                'phone',
                 'String',
+                'phone',
                 __('Venue Phone', 'event_espresso')
             ),
             new GraphQLField(
                 'virtualPhone',
-                'virtual_phone',
                 'String',
+                'virtual_phone',
                 __('Call in Number', 'event_espresso')
             ),
             new GraphQLField(
                 'url',
-                'venue_url',
                 'String',
+                'venue_url',
                 __('Venue Website', 'event_espresso')
             ),
             new GraphQLField(
                 'virtualUrl',
-                'virtual_url',
                 'String',
+                'virtual_url',
                 __('Virtual URL', 'event_espresso')
             ),
             new GraphQLField(
                 'googleMapLink',
-                'google_map_link',
                 'String',
+                'google_map_link',
                 __('Google Map Link', 'event_espresso')
             ),
             new GraphQLField(
                 'enableForGmap',
-                'enable_for_gmap',
                 'String',
+                'enable_for_gmap',
                 __('Show Google Map?', 'event_espresso')
             ),
         ];

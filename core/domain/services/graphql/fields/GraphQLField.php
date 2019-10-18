@@ -31,7 +31,7 @@ class GraphQLField
     protected $formatter;
 
     /**
-     * @var string $key
+     * @var string|null $key
      */
     protected $key;
 
@@ -52,19 +52,19 @@ class GraphQLField
 
 
     /**
-     * @param string          $key
-     * @param string          $name
-     * @param string|string[] $type
+	 * @param string          $name
+	 * @param string|string[] $type
+     * @param string|null     $key
      * @param string          $description
      * @param callable|null   $formatter
      * @param callable|null   $resolver
      * @param array           $caps
      */
     public function __construct(
-        $key,
-        $name,
+		$name,
         $type,
-        $description,
+        $key = null,
+        $description = '',
         callable $formatter = null,
         callable $resolver = null,
         array $caps = []
