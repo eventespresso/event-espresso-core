@@ -32,6 +32,7 @@ export const getEndpoint = ( modelName ) => {
 
 /**
  * Applies the provided queryString to the endpoint for the provided model name.
+ *
  * @param {string} modelName  What model the final string is for.
  * @param {string} queryString  The query being appended to the endpoint.
  * @return {string} The final assembled query string.
@@ -43,8 +44,8 @@ export const applyQueryString = ( modelName, queryString = '' ) => {
 };
 
 /**
- * Strips the base_rest_route (i.e. https://myurl.com/wp-json/) from the provided
- * url string.
+ * Strips the base_rest_route (i.e. https://myurl.com/wp-json/) from the
+ * provided url string.
  *
  * @param {string} url
  * @return {string} the url with the base rest route removed.

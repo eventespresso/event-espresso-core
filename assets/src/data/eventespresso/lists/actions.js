@@ -105,8 +105,8 @@ export function* resetAllState() {
 }
 
 /**
- * Action triggering resetting state in the store for the given selector name and
- * identifier
+ * Action triggering resetting state in the store for the given selector name
+ * and identifier
  *
  * @param {string} selectorName
  * @param {string} identifier

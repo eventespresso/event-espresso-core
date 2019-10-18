@@ -15,8 +15,10 @@ import isShallowEqual from '@wordpress/is-shallow-equal';
  * Internal imports
  */
 import { ACTION_TYPES as types } from './action-types';
+
 /**
  * Reducer for a model schema.
+ *
  * @param {Map} state
  * @param {Object} action
  * @return {Map} The new (or original) state.
@@ -42,6 +44,7 @@ export const receiveSchema = (
 
 /**
  * Reducer for a model factory
+ *
  * @param {Map} state
  * @param {Object} action
  * @return {Map} the new (or original) state.
