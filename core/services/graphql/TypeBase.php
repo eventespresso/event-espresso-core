@@ -217,7 +217,16 @@ abstract class TypeBase implements TypeInterface
      */
     public function parseInfiniteValue($value)
     {
-        return $value === EE_INF || is_infinite($value) ? -1 : $value;
+        $value = trim($value);
+        return $value === null
+               || $value === ''
+               || $value === '&infin;'
+               || $value === 'INF'
+               || $value === INF
+               || $value === EE_INF
+               || is_infinite((float) $value)
+            ? -1
+            : $value;
     }
 
 
