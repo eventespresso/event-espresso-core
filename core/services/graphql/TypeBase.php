@@ -20,19 +20,17 @@
 
 namespace EventEspresso\core\services\graphql;
 
-use EE_Enum_Text_Field;
-use EE_Model_Field_Base;
-use EE_Post_Content_Field;
-use EE_WP_User_Field;
+use EE_Error;
 use EEM_Base;
 use EE_Base_Class;
-
+use EventEspresso\core\domain\services\graphql\fields\GraphQLField;
+use EventEspresso\core\domain\services\graphql\resolvers\FieldResolver;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
-use EventEspresso\core\services\graphql\TypeBase;
-use EventEspresso\core\domain\services\graphql\resolvers\FieldResolver;
-
-use WPGraphQL\Data\DataSource;
+use EventEspresso\core\exceptions\UnexpectedEntityException;
+use GraphQL\Error\UserError;
+use InvalidArgumentException;
+use ReflectionException;
 use WPGraphQL\Model\Post;
 use GraphQL\Type\Definition\ResolveInfo;
 use WPGraphQL\AppContext;
@@ -64,7 +62,7 @@ abstract class TypeBase implements TypeInterface
     protected $description = '';
 
     /**
-     * @var array $fields
+     * @var GraphQLField[] $fields
      */
     protected $fields = [];
 
@@ -85,17 +83,22 @@ abstract class TypeBase implements TypeInterface
 
     /**
      * TypeBase constructor.
-     *
      */
     public function __construct()
     {
         $this->setFields($this->getFields());
-
         $this->field_resolver = new FieldResolver(
             $this->model,
             $this->getFieldsForResolver()
         );
     }
+
+
+    /**
+     * @return GraphQLField[]
+     * @since $VID:$
+     */
+    abstract protected function getFields();
 
 
     /**
@@ -135,7 +138,7 @@ abstract class TypeBase implements TypeInterface
 
 
     /**
-     * @return array
+     * @return GraphQLField[]
      * @since $VID:$
      */
     public function fields()
@@ -145,25 +148,20 @@ abstract class TypeBase implements TypeInterface
 
 
     /**
-     * @param array $fields
+     * @param GraphQLField[] $fields
      */
     protected function setFields(array $fields)
     {
-        $this->fields = $fields;
-    }
-
-    /**
-     * @return array
-     * @since $VID:$
-     */
-    public function getFields()
-    {
-        return [];
+        foreach ($fields as $field) {
+            if ($field instanceof GraphQLField) {
+                $this->fields[] = $field;
+            }
+        }
     }
 
 
     /**
-     * Creates a key map to pass to GrapQL registration.
+     * Creates a key map to pass to GraphQL registration.
      * @return array
      * @since $VID:$
      */
@@ -232,31 +230,32 @@ abstract class TypeBase implements TypeInterface
     {
         // If it comes from a custom connection
         // where the $source is already instantiated.
-        if (is_subclass_of($source, 'EE_Base_Class')) {
+        if ($source instanceof EE_Base_Class) {
             return $source;
         }
-
-        $id = $source instanceof Post ? $source->ID : 0;
-
-        if ($id) {
-            return $this->model->get_one_by_ID($id);
-        }
-        return null;
+        return $source instanceof Post ? $this->model->get_one_by_ID($source->ID) : null;
     }
 
+
     /**
-     * @param mixed       $source     The source that's passed down the GraphQL queries
-     * @param array       $args       The inputArgs on the field
-     * @param AppContext  $context    The AppContext passed down the GraphQL tree
-     * @param ResolveInfo $info       The ResolveInfo passed down the GraphQL tree
+     * @param mixed       $source  The source that's passed down the GraphQL queries
+     * @param array       $args    The inputArgs on the field
+     * @param AppContext  $context The AppContext passed down the GraphQL tree
+     * @param ResolveInfo $info    The ResolveInfo passed down the GraphQL tree
      * @return string
+     * @throws EE_Error
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws UnexpectedEntityException
+     * @throws UserError
+     * @throws InvalidArgumentException
+     * @throws ReflectionException
      * @since $VID:$
      */
     public function resolveField($source, $args, AppContext $context, ResolveInfo $info)
     {
         $source = $this->getModel($source);
-        if (is_subclass_of($source, 'EE_Base_Class')) {
-
+        if ($source instanceof EE_Base_Class) {
             return $this->field_resolver->resolve($source, $args, $context, $info);
         }
         return null;
