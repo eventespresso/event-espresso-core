@@ -1,9 +1,10 @@
 <?php
+
 namespace EventEspresso\core\domain\services\graphql\fields;
 
-use EventEspresso\core\exceptions\InvalidDataTypeException;
-use EventEspresso\core\exceptions\InvalidInterfaceException;
-use InvalidArgumentException;
+use GraphQL\Type\Definition\ResolveInfo;
+use LogicException;
+use WPGraphQL\AppContext;
 
 /**
  * Class GraphQLField
@@ -15,38 +16,97 @@ class GraphQLField
 {
 
     /**
-     * @var mixed $name
+     * @var array $caps
+     */
+    protected $caps;
+
+    /**
+     * @var string $description
+     */
+    protected $description;
+
+    /**
+     * @var callable $formatter
+     */
+    protected $formatter;
+
+    /**
+     * @var string $key
+     */
+    protected $key;
+
+    /**
+     * @var string $name
      */
     protected $name;
 
+    /**
+     * @var callable $resolve
+     */
+    protected $resolver;
 
     /**
-     * @param string $name
-     * @param array  $config
-     * @throws InvalidArgumentException
+     * @var string|string[] $type
      */
-    public function __construct($name, array $config = [])
-    {
-		$this->name   = $name;
-		$this->setProps($config);
+    protected $type;
+
+
+    /**
+     * @param string          $key
+     * @param string          $name
+     * @param string|string[] $type
+     * @param string          $description
+     * @param callable|null   $formatter
+     * @param callable|null   $resolver
+     * @param array           $caps
+     */
+    public function __construct(
+        $key,
+        $name,
+        $type,
+        $description,
+        callable $formatter = null,
+        callable $resolver = null,
+        array $caps = []
+    ) {
+        $this->key = $key;
+        $this->name = $name;
+        $this->type = $type;
+        $this->description = $description;
+        $this->formatter = $formatter;
+        $this->resolver = $resolver;
+        $this->caps = $caps;
     }
 
 
     /**
-     * @param array  $config
-     * @throws InvalidArgumentException
+     * @return array
      */
-    public function setProps(array $config)
+    public function caps()
     {
-		foreach ($config as $key => $value) {
-			$this->{$key} = $value;
-		}
+        return $this->caps;
     }
 
 
     /**
-     * Get the field name.
-	 *
+     * @return string
+     */
+    public function description()
+    {
+        return $this->description;
+    }
+
+
+    /**
+     * @return string
+     */
+    public function key()
+    {
+        return $this->key;
+    }
+
+
+    /**
      * @return string
      */
     public function name()
@@ -56,81 +116,93 @@ class GraphQLField
 
 
     /**
-     * Get the model key of the field.
-	 *
-     * @return string|null
+     * @return string|string[]
      */
-    public function key()
+    public function type()
     {
-		if (isset($this->key)) {
-			return $this->key;
-		}
-		return null;
+        return $this->type;
     }
 
 
-    /**
-     * Get the caps required for the field.
-	 *
-     * @return array
-     */
-    public function caps()
-    {
-		if (isset($this->caps)) {
-			return (array) $this->caps;
-		}
-		return [];
-    }
 
 
     /**
-	 * Whether the field should resolve
-	 * based on the user caps etc.
+     * Whether the field should resolve
+     * based on the user caps etc.
+     *
      * @return boolean
      */
     public function shouldResolve()
     {
-		foreach ($this->caps() as $cap) {
-			if (!current_user_can($cap)) {
-				return false;
-			}
-		}
-		return true;
+        foreach ($this->caps as $cap) {
+            if (! current_user_can($cap)) {
+                return false;
+            }
+        }
+        return true;
     }
 
 
     /**
-	 * Whether the field has an explicit resolver set.
+     * Whether the field has an explicit resolver set.
+     *
      * @return boolean
      */
     public function hasInternalResolver()
     {
-		return isset($this->resolve) && is_callable($this->resolve);
+        return is_callable($this->resolver);
     }
 
 
     /**
-	 * Checks if the format callback is set.
-	 * If yes, then uses it to format the value.
+     * Whether the field has an explicit resolver set.
+     *
+     * @param mixed       $source  The source that's passed down the GraphQL queries
+     * @param array       $args    The inputArgs on the field
+     * @param AppContext  $context The AppContext passed down the GraphQL tree
+     * @param ResolveInfo $info    The ResolveInfo passed down the GraphQL tree
+     * @return mixed
+     * @throws LogicException
+     */
+    public function resolve($source, array $args, AppContext $context, ResolveInfo $info)
+    {
+        if (! $this->hasInternalResolver()) {
+            throw new LogicException('GraphQLField has no internal resolver.');
+        }
+        // dynamic methods using $this don't play nice
+        // so capture resolver to a single var first
+        $resolver = $this->resolver;
+        return $resolver($source, $args, $context, $info);
+    }
+
+
+    /**
+     * Checks if the format callback is set.
+     * If yes, then uses it to format the value.
+     *
      * @param mixed $value
      * @return mixed The formatted value.
      */
     public function mayBeFormatValue($value)
     {
-		if (isset($this->formatCallback) && is_callable($this->formatCallback)) {
-			return call_user_func($this->formatCallback, $value);
-		}
-		return $value;
+        if (is_callable($this->formatter)) {
+            // dynamic methods using $this don't play nice
+            // so capture formatter to a single var first
+            $formatter = $this->formatter;
+            return $formatter($value);
+        }
+        return $value;
     }
 
 
     /**
-	 * Convert the field to array to be
-	 * able to pass as config to WP GraphQL
+     * Convert the field to array to be
+     * able to pass as config to WP GraphQL
+     *
      * @return array
      */
     public function toArray()
     {
-		return get_object_vars($this);
+        return get_object_vars($this);
     }
 }
