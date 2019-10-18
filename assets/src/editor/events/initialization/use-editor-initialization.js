@@ -29,24 +29,24 @@ const useEditorInitialization = ( eventData ) => {
 	const eventDatesLoaded = eventDates !== EMPTY_ARRAY;
 	const ticketsLoaded = tickets !== EMPTY_ARRAY;
 	const venueLoaded = event !== EMPTY_OBJECT;
-	if ( initialized ) {
-		let {
-			eventEntity: event,
-			eventEntityLoaded: eventLoaded,
-		} = useEventEditorEvent( eventData.eventId );
-		let {
-			dateEntities: eventDates,
-			dateEntitiesLoaded: eventDatesLoaded,
-		} = useEventDatesForEvent( event, eventLoaded );
-		let {
-			ticketEntities: tickets,
-			ticketEntitiesLoaded: ticketsLoaded,
-		} = useTicketsForEventDates( eventDates, eventDatesLoaded );
-		let {
-			venueEntity: venue,
-			venueEntityLoaded: venueLoaded,
-		} = useEventVenue( event, eventLoaded );
-	} else {
+	if ( ! initialized ) {
+	// 	let {
+	// 		eventEntity: event,
+	// 		eventEntityLoaded: eventLoaded,
+	// 	} = useEventEditorEvent( eventData.eventId );
+	// 	let {
+	// 		dateEntities: eventDates,
+	// 		dateEntitiesLoaded: eventDatesLoaded,
+	// 	} = useEventDatesForEvent( event, eventLoaded );
+	// 	let {
+	// 		ticketEntities: tickets,
+	// 		ticketEntitiesLoaded: ticketsLoaded,
+	// 	} = useTicketsForEventDates( eventDates, eventDatesLoaded );
+	// 	let {
+	// 		venueEntity: venue,
+	// 		venueEntityLoaded: venueLoaded,
+	// 	} = useEventVenue( event, eventLoaded );
+	// } else {
 		for ( const results of generator.current ) {
 			results.then( ( init ) => {
 				if ( Array.isArray( init.event ) && ! isEmpty( init.event ) ) {
