@@ -16,7 +16,15 @@ import { __, } from '@eventespresso/i18n';
 import '../../editor.css';
 import { EditorTicketEntitiesList } from '../tickets';
 
-const TicketsMetabox = ( { eventId, tickets, ticketsLoaded } ) => {
+/**
+ * TicketsMetabox
+ *
+ * displays a "metabox" for managing an event's tickets
+ *
+ * @param {number} eventId
+ * @return {Object} rendered event dates metabox
+ */
+const TicketsMetabox = ( { eventId } ) => {
 	return (
 		<>
 		<h1 className="ee-metabox-heading">
@@ -32,8 +40,6 @@ const TicketsMetabox = ( { eventId, tickets, ticketsLoaded } ) => {
 					<div>
 						<EditorTicketEntitiesList
 							for={ 'event-tickets-metabox' }
-							tickets={ tickets }
-							ticketsLoaded={ ticketsLoaded }
 						/>
 					</div>
 				</PanelRow>
@@ -49,8 +55,6 @@ TicketsMetabox.propTypes = {
 		PropTypes.number,
 		PropTypes.string,
 	] ).isRequired,
-	tickets: PropTypes.array,
-	ticketsLoaded: PropTypes.bool
 };
 
 export default TicketsMetabox;

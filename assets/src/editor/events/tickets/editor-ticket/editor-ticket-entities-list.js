@@ -31,6 +31,15 @@ const {
 	FormButtonsRow,
 } = twoColumnAdminFormLayout;
 
+/**
+ * EditorTicketEntitiesList
+ *
+ * displays a paginated list of tickets with a filter bar
+ * for controlling how and what tickets are displayed
+ *
+ * @param {Object} otherProps
+ * @return {Object} rendered event dates list
+ */
 const EditorTicketEntitiesList = ( { ...otherProps } ) => {
 	const listId = 'event-editor-ticket-list';
 	const {

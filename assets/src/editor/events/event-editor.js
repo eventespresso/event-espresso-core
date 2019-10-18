@@ -18,18 +18,19 @@ import useEditorInitialization
 import useEditorPersistence
 	from './initialization/use-editor-persistence';
 
+/**
+ * @param {number} eventId
+ * @param {Object} eventData
+ * @return {Object} rendered event dates metabox
+ */
 const EventEditor = ( { eventId, eventData } ) => {
 	useEditorPersistence( eventId );
 	const {
-		eventDates,
-		tickets,
-		venue,
 		eventLoaded,
 		eventDatesLoaded,
 		ticketsLoaded,
 		venueLoaded,
 	} = useEditorInitialization( eventData );
-
 	return (
 		<>
 			<FormPlaceholder
@@ -50,14 +51,11 @@ const EventEditor = ( { eventId, eventData } ) => {
 			>
 				<EventDatesMetabox
 					eventId={ eventId }
-					eventDates={ eventDates }
 					eventDatesLoaded={ eventDatesLoaded }
-					venue={ venue }
 					venueLoaded={ venueLoaded }
 				/>
 				<TicketsMetabox
 					eventId={ eventId }
-					tickets={ tickets }
 					ticketsLoaded={ ticketsLoaded }
 				/>
 			</FormContainer>

@@ -18,11 +18,19 @@ import { __, } from '@eventespresso/i18n';
 import '../../editor.css';
 import { EditorDateEntitiesList } from '../dates-and-times';
 
+/**
+ * EventDatesMetabox
+ *
+ * displays a "metabox" for managing an event's datetimes
+ *
+ * @param {boolean} eventDatesLoaded
+ * @param {boolean} venueLoaded
+ * @param {number} eventId
+ * @return {Object} rendered event dates metabox
+ */
 const EventDatesMetabox = ( {
 	eventId,
-	eventDates,
 	eventDatesLoaded,
-	venue,
 	venueLoaded,
 } ) => {
 	return (
@@ -41,8 +49,8 @@ const EventDatesMetabox = ( {
 						<div>
 							<EditorDateEntitiesList
 								for={ 'event-dates-metabox' }
-								eventDates={ eventDates }
 								eventDatesLoaded={ eventDatesLoaded }
+								venueLoaded={ venueLoaded }
 							/>
 						</div>
 					</PanelRow>
@@ -58,8 +66,6 @@ EventDatesMetabox.propTypes = {
 		PropTypes.number,
 		PropTypes.string,
 	] ).isRequired,
-	eventDates: PropTypes.array,
-	eventDatesLoaded: PropTypes.bool
 };
 
 export default EventDatesMetabox;
