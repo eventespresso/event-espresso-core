@@ -20,6 +20,7 @@
 
 namespace EventEspresso\core\domain\services\admin\events\editor;
 
+use DomainException;
 use EE_Admin_Config;
 use EE_Error;
 use EEM_Datetime;
@@ -27,6 +28,7 @@ use EEM_Event;
 use EEM_Price;
 use EEM_Price_Type;
 use EEM_Ticket;
+use EEM_Venue;
 use EventEspresso\core\domain\services\assets\EspressoEditorAssetManager;
 use EventEspresso\core\domain\services\converters\RestApiSpoofer;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
@@ -85,6 +87,10 @@ class AdvancedEditorEntityData
      * @var EEM_Ticket $ticket_model
      */
     protected $ticket_model;
+    /**
+     * @var EEM_Venue $venue_model
+     */
+    protected $venue_model;
 
 
     /**
@@ -97,6 +103,7 @@ class AdvancedEditorEntityData
      * @param EEM_Price $price_model
      * @param EEM_Price_Type $price_type_model
      * @param EEM_Ticket $ticket_model
+     * @param EEM_Venue $venue_model
      */
     public function __construct(
         RestApiSpoofer $spoofer,
@@ -105,7 +112,8 @@ class AdvancedEditorEntityData
         EEM_Event $event_model,
         EEM_Price $price_model,
         EEM_Price_Type $price_type_model,
-        EEM_Ticket $ticket_model
+        EEM_Ticket $ticket_model,
+        EEM_Venue $venue_model
     ) {
         $this->admin_config = $admin_config;
         $this->spoofer = $spoofer;
@@ -114,6 +122,7 @@ class AdvancedEditorEntityData
         $this->price_model = $price_model;
         $this->price_type_model = $price_type_model;
         $this->ticket_model = $ticket_model;
+        $this->venue_model = $venue_model;
         add_action('admin_enqueue_scripts', [$this, 'loadScriptsStyles']);
     }
 
@@ -129,6 +138,7 @@ class AdvancedEditorEntityData
      * @throws RestPasswordIncorrectException
      * @throws RestPasswordRequiredException
      * @throws UnexpectedEntityException
+     * @throws DomainException
      * @since $VID:$
      */
     public function loadScriptsStyles()
@@ -168,42 +178,62 @@ class AdvancedEditorEntityData
      * @throws RestException
      * @throws InvalidArgumentException
      * @throws ReflectionException
+     * @throws DomainException
      * @since $VID:$
      */
     protected function getAllEventData($eventId)
     {
+        // these should ultimately be extracted out into their own classes (one per model)
         $event = $this->spoofer->getApiResults(
             $this->event_model,
             [['EVT_ID' => $eventId]]
         );
-        $event = is_array($event) && $event[0] && $event[0]['EVT_ID'] ? $event[0] : null;
-        if (! $event) {
+        if (! (is_array($event) && $event[0] && $event[0]['EVT_ID'] && $event[0]['EVT_ID'] === $eventId)) {
             return [];
         }
+        $relations = [ 'Event' => [ $eventId => [] ] ];
         $eventDates = $this->spoofer->getApiResults(
             $this->datetime_model,
             [['EVT_ID' => $eventId]]
         );
+        $relations['Event'][ $eventId ]['Datetime'] = [];
+
         $eventDateTickets = [];
-        foreach ($eventDates as $eventDate) {
-            if (isset($eventDate['DTT_ID']) && $eventDate['DTT_ID']) {
-                $DTT_ID = $eventDate['DTT_ID'];
-                $eventDateTickets[ $DTT_ID ] = $this->spoofer->getApiResults(
-                    $this->ticket_model,
-                    [['Datetime.DTT_ID' => $DTT_ID]]
-                );
+        if (is_array($eventDates)){
+            foreach ($eventDates as $eventDate) {
+                if (isset($eventDate['DTT_ID']) && $eventDate['DTT_ID']) {
+                    $DTT_ID = $eventDate['DTT_ID'];
+                    $relations['Event'][ $eventId ]['Datetime'][ $DTT_ID ] = [];
+                    $eventDateTickets[ $DTT_ID ] = $this->spoofer->getApiResults(
+                        $this->ticket_model,
+                        [['Datetime.DTT_ID' => $DTT_ID]]
+                    );
+                }
             }
         }
         $ticketPrices = [];
-        foreach ($eventDateTickets as $tickets) {
-            if (is_array($tickets)) {
-                foreach ($tickets as $ticket) {
-                    if (isset($ticket['TKT_ID']) && $ticket['TKT_ID']) {
-                        $TKT_ID = $ticket['TKT_ID'];
-                        $ticketPrices[ $TKT_ID ] = $this->spoofer->getApiResults(
-                            $this->price_model,
-                            [['Ticket.TKT_ID' => $TKT_ID]]
-                        );
+        if (is_array($eventDateTickets)) {
+            foreach ($eventDateTickets as $DTT_ID => $tickets) {
+                // echo "Datetime: {$DTT_ID}\n";
+                if (is_array($tickets)) {
+                    $relations['Event'][ $eventId ]['Datetime'][ $DTT_ID ]['Ticket'] = [];
+                    foreach ($tickets as $ticket) {
+                        if (isset($ticket['TKT_ID']) && $ticket['TKT_ID']) {
+                            $TKT_ID = $ticket['TKT_ID'];
+                            // echo " > Ticket: {$TKT_ID}\n";
+                            $ticketPrices[ $TKT_ID ] = $this->spoofer->getApiResults(
+                                $this->price_model,
+                                [['Ticket.TKT_ID' => $TKT_ID]]
+                            );
+                            if (is_array($ticketPrices[ $TKT_ID ])) {
+                                $relations['Event'][ $eventId ]['Datetime'][ $DTT_ID ]['Ticket'][ $TKT_ID ]['Price'] = [];
+                                foreach ($ticketPrices[ $TKT_ID ] as $ticketPrice) {
+                                    $PRC_ID = $ticketPrice['PRC_ID'];
+                                    // echo " > > Price: {$PRC_ID}\n";
+                                    $relations['Event'][ $eventId ]['Datetime'][ $DTT_ID ]['Ticket'][ $TKT_ID ]['Price'][ $PRC_ID ] = null;
+                                }
+                            }
+                        }
                     }
                 }
             }
@@ -212,12 +242,32 @@ class AdvancedEditorEntityData
             $this->price_type_model,
             [['PRT_deleted' => false]]
         );
+        $venue = $this->spoofer->getApiResults(
+            $this->venue_model,
+            [['Event.EVT_ID' => $eventId]]
+        );
+        if (is_array($venue) && $venue[0] && $venue[0]['VNU_ID']) {
+            $relations['Event'][ $eventId ]['Venue'][ $venue[0]['VNU_ID' ] ] = [];
+        }
+
+        $schemas = [
+            'event'      => $this->spoofer->getModelSchema($this->event_model),
+            'datetime'   => $this->spoofer->getModelSchema($this->datetime_model),
+            'ticket'     => $this->spoofer->getModelSchema($this->ticket_model),
+            'price'      => $this->spoofer->getModelSchema($this->price_model),
+            'price_type' => $this->spoofer->getModelSchema($this->price_type_model),
+            'venue'      => $this->spoofer->getModelSchema($this->venue_model),
+        ];
         return [
-            'event'            => $event,
-            'eventDates'       => $eventDates,
-            'eventDateTickets' => $eventDateTickets,
-            'ticketPrices'     => $ticketPrices,
-            'price_types'      => $price_types,
+            'eventId'    => $eventId,
+            'event'      => $event,
+            'datetime'   => $eventDates,
+            'ticket'     => $eventDateTickets,
+            'price'      => $ticketPrices,
+            'price_type' => $price_types,
+            'venue'      => $venue,
+            'models'     => $schemas,
+            'relations'  => $relations,
         ];
     }
 }
