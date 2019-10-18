@@ -14,18 +14,19 @@ const EMPTY_ARRAY = [];
  * A custom react hook for retrieving the related ticket entities
  * for the given event date entities from the eventespresso/core store state.
  *
- * @param {Object[]} tickets
- * @param {boolean} ticketsLoaded
  * @param {boolean} isChained
  * @return {Object} - an array of event dates
  *                  - boolean indicating if loading is completed
  */
-const useTicketsForEventEditorTicketList = ( tickets, ticketsLoaded, isChained ) => {
+const useTicketsForEventEditorTicketList = ( isChained ) => {
 	const { filteredDateIds } = useDatesListFilterState( {
 		listId: 'event-editor-dates-list',
 	} );
 	return useSelect( ( select ) => {
-		const { getRelatedEntitiesForIds } = select( 'eventespresso/core' );
+		const {
+			getEntitiesForModel,
+			getRelatedEntitiesForIds,
+		} = select( 'eventespresso/core' );
 		const { hasFinishedResolution } = select( 'core/data' );
 		let tickets = EMPTY_ARRAY;
 		let ticketsLoaded = false;
@@ -40,12 +41,12 @@ const useTicketsForEventEditorTicketList = ( tickets, ticketsLoaded, isChained )
 				'getRelatedEntitiesForIds',
 				[ 'datetime', filteredDateIds, 'ticket' ]
 			);
+		} else {
+			tickets = getEntitiesForModel( 'ticket' );
+			ticketsLoaded = Array.isArray( tickets ) && tickets.length > 0;
 		}
-		return {
-			ticketEntities: tickets,
-			ticketEntitiesLoaded: ticketsLoaded
-		};
-	}, [ tickets, ticketsLoaded, isChained, filteredDateIds ] );
+		return { tickets, ticketsLoaded };
+	}, [ isChained, filteredDateIds ] );
 };
 
 export default useTicketsForEventEditorTicketList;
