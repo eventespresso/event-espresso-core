@@ -3,12 +3,6 @@
  */
 import { isEmpty } from 'lodash';
 import { useRef, useState } from '@wordpress/element';
-import {
-	useEventEditorEvent,
-	useEventDatesForEvent,
-	useEventVenue,
-	useTicketsForEventDates,
-} from '@eventespresso/hooks';
 
 /**
  * External imports
@@ -28,25 +22,8 @@ const useEditorInitialization = ( eventData ) => {
 	const eventLoaded = event !== EMPTY_OBJECT;
 	const eventDatesLoaded = eventDates !== EMPTY_ARRAY;
 	const ticketsLoaded = tickets !== EMPTY_ARRAY;
-	const venueLoaded = event !== EMPTY_OBJECT;
+	const venueLoaded = venue !== EMPTY_OBJECT;
 	if ( ! initialized ) {
-	// 	let {
-	// 		eventEntity: event,
-	// 		eventEntityLoaded: eventLoaded,
-	// 	} = useEventEditorEvent( eventData.eventId );
-	// 	let {
-	// 		dateEntities: eventDates,
-	// 		dateEntitiesLoaded: eventDatesLoaded,
-	// 	} = useEventDatesForEvent( event, eventLoaded );
-	// 	let {
-	// 		ticketEntities: tickets,
-	// 		ticketEntitiesLoaded: ticketsLoaded,
-	// 	} = useTicketsForEventDates( eventDates, eventDatesLoaded );
-	// 	let {
-	// 		venueEntity: venue,
-	// 		venueEntityLoaded: venueLoaded,
-	// 	} = useEventVenue( event, eventLoaded );
-	// } else {
 		for ( const results of generator.current ) {
 			results.then( ( init ) => {
 				if ( Array.isArray( init.event ) && ! isEmpty( init.event ) ) {
@@ -69,16 +46,7 @@ const useEditorInitialization = ( eventData ) => {
 			setInitialized( true );
 		}
 	}
-	return {
-		event,
-		eventDates,
-		tickets,
-		venue,
-		eventLoaded,
-		eventDatesLoaded,
-		ticketsLoaded,
-		venueLoaded,
-	};
+	return { eventLoaded, eventDatesLoaded, ticketsLoaded, venueLoaded };
 };
 
 export default useEditorInitialization;
