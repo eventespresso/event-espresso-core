@@ -31,7 +31,22 @@ const {
 	FormButtonsRow,
 } = twoColumnAdminFormLayout;
 
-const EditorTicketEntitiesList = ( { ...otherProps } ) => {
+/**
+ * EditorTicketEntitiesList
+ *
+ * displays a paginated list of tickets with a filter bar
+ * for controlling how and what tickets are displayed
+ *
+ * @param {Object[]} tickets
+ * @param {boolean} ticketsLoaded
+ * @param {Object} otherProps
+ * @return {Object} rendered event dates list
+ */
+const EditorTicketEntitiesList = ( {
+	tickets,
+	ticketsLoaded,
+	...otherProps
+} ) => {
 	const listId = 'event-editor-ticket-list';
 	const {
 		isChained,
@@ -41,16 +56,20 @@ const EditorTicketEntitiesList = ( { ...otherProps } ) => {
 		filteredTicketIds,
 	} = useTicketsListFilterState( { listId } );
 	const {
+		ticketEntities,
+		ticketEntitiesLoaded,
+	} = useTicketsForEventEditorTicketList(
 		tickets,
 		ticketsLoaded,
-	} = useTicketsForEventEditorTicketList( isChained );
+		isChained
+	);
 	const {
 		view,
 		perPage,
 		...entityListFilters
 	} = useEntityListFilterState( { listId } );
 	const filteredTickets = useFilteredTicketsList( {
-		ticketEntities: tickets,
+		ticketEntities,
 		isChained,
 		showTickets,
 		ticketsSortedBy,
@@ -115,7 +134,7 @@ const EditorTicketEntitiesList = ( { ...otherProps } ) => {
 				displayTicketDate={ displayTicketDate }
 				setEntityIds={ setFilteredTickets }
 				setSortBy={ setTicketsSortedBy }
-				loading={ ! ticketsLoaded }
+				loading={ ! ticketEntitiesLoaded }
 				loadingNotice={ sprintf(
 					_x(
 						'loading available tickets%s',
