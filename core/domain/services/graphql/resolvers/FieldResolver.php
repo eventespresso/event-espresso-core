@@ -2,7 +2,7 @@
 
 namespace EventEspresso\core\domain\services\graphql\resolvers;
 
-use EEM_Base;
+use EE_Attendee;
 use EE_Base_Class;
 use EE_Event;
 use EE_Venue;
@@ -10,22 +10,21 @@ use EE_Datetime;
 use EE_Ticket;
 use EE_State;
 use EEM_State;
-use EE_Country;
 use EEM_Country;
 use EE_Error;
 
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
-use EventEspresso\core\services\graphql\TypeBase;
+use EventEspresso\core\exceptions\UnexpectedEntityException;
 use EventEspresso\core\services\graphql\ResolverBase;
 use EventEspresso\core\domain\services\graphql\fields\GraphQLField;
+use Exception;
 use InvalidArgumentException;
 use ReflectionException;
 
 use WPGraphQL\Data\DataSource;
 use GraphQL\Deferred;
 use GraphQL\Error\UserError;
-use WPGraphQL\Model\Post;
 use GraphQL\Type\Definition\ResolveInfo;
 use WPGraphQL\AppContext;
 
@@ -47,7 +46,7 @@ class FieldResolver extends ResolverBase
     protected $model;
 
     /**
-     * @var array $fields.
+     * @var array $fields .
      */
     protected $fields;
 
@@ -55,47 +54,51 @@ class FieldResolver extends ResolverBase
     /**
      * FieldResolver constructor.
      *
-	 * @param mixed   $model  The model instance.
-     * @param array   $fields The fields registered for the type.
+     * @param mixed $model  The model instance.
+     * @param array $fields The fields registered for the type.
      */
-    public function __construct($model, array $fields )
+    public function __construct($model, array $fields)
     {
-		$this->model  = $model;
-		$this->fields = $fields;
+        $this->model = $model;
+        $this->fields = $fields;
     }
 
+
     /**
-     * @param mixed       $source     The source that's passed down the GraphQL queries
-     * @param array       $args       The inputArgs on the field
-     * @param AppContext  $context    The AppContext passed down the GraphQL tree
-     * @param ResolveInfo $info       The ResolveInfo passed down the GraphQL tree
+     * @param mixed       $source  The source that's passed down the GraphQL queries
+     * @param array       $args    The inputArgs on the field
+     * @param AppContext  $context The AppContext passed down the GraphQL tree
+     * @param ResolveInfo $info    The ResolveInfo passed down the GraphQL tree
      * @return string
+     * @throws EE_Error
+     * @throws Exception
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws ReflectionException
+     * @throws UserError
+     * @throws UnexpectedEntityException
      * @since $VID:$
      */
-    public function resolve($source, $args, AppContext $context, ResolveInfo $info)
+    public function resolve($source, array $args, AppContext $context, ResolveInfo $info)
     {
         $fieldName = $info->fieldName;
-        
+        $field = isset($this->fields[ $fieldName ]) ? $this->fields[ $fieldName ] : null;
         // Field should exist in teh registered fields
-		if (isset($this->fields[$fieldName]) && $this->fields[$fieldName] instanceof GraphQLField) {
-            $field = $this->fields[$fieldName];
-
+        if ($field instanceof GraphQLField) {
             // check if the field should be resolved.
-            if (!$field->shouldResolve()) {
+            if (! $field->shouldResolve()) {
                 return null;
             }
-
             // Give priority to the internal resolver.
             if ($field->hasInternalResolver()) {
-                return call_user_func($field->resolve, $source, $args, $context, $info);
+                return $field->resolve($source, $args, $context, $info);
             }
-
             // Check if the field has a key mapped to model.
-            if (!empty($field->key())) {
+            if (! empty($field->key())) {
                 $value = $source->{$field->key()}();
                 return $field->mayBeFormatValue($value);
             }
-
             switch ($fieldName) {
                 case 'parent':
                     return $this->resolveParent($source);
@@ -118,12 +121,7 @@ class FieldResolver extends ResolverBase
      * @param           $args
      * @param           $context
      * @return Deferred|null
-     * @throws EE_Error
-     * @throws InvalidArgumentException
-     * @throws InvalidDataTypeException
-     * @throws InvalidInterfaceException
-     * @throws ReflectionException
-     * @throws UserError
+     * @throws Exception
      * @since $VID:$
      */
     public function resolveWpUser($source, $args, $context)
@@ -157,11 +155,12 @@ class FieldResolver extends ResolverBase
      * @param             $context
      * @return Deferred|null
      * @throws EE_Error
+     * @throws InvalidArgumentException
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
-     * @throws UserError
-     * @throws InvalidArgumentException
      * @throws ReflectionException
+     * @throws UserError
+     * @throws UnexpectedEntityException
      * @since $VID:$
      */
     public function resolveEvent($source, $args, $context)
@@ -186,12 +185,17 @@ class FieldResolver extends ResolverBase
 
     /**
      * @param mixed $source The source instance.
-     * @return int
+     * @return EE_Base_Class|null
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
      * @since $VID:$
      */
     public function resolveState($source)
     {
         switch (true) {
+            case $source instanceof EE_Attendee:
             case $source instanceof EE_Venue:
                 $state_id = $source->state_ID();
                 break;
@@ -199,17 +203,19 @@ class FieldResolver extends ResolverBase
                 $state_id = null;
                 break;
         }
-
-        if ($state_id) {
-            return EEM_State::instance()->get_one_by_ID($state_id);
-        }
-        return null;
+        return $state_id
+            ? EEM_State::instance()->get_one_by_ID($state_id)
+            : null;
     }
 
 
     /**
      * @param mixed $source The source instance.
-     * @return int
+     * @return EE_Base_Class|null
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
      * @since $VID:$
      */
     public function resolveCountry($source)
@@ -226,9 +232,8 @@ class FieldResolver extends ResolverBase
                 break;
         }
 
-        if ($country_iso) {
-            return EEM_Country::instance()->get_one_by_ID($country_iso);
-        }
-        return null;
+        return $country_iso
+            ? EEM_Country::instance()->get_one_by_ID($country_iso)
+            : null;
     }
 }
