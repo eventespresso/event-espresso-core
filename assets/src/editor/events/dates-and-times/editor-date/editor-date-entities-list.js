@@ -23,6 +23,7 @@ import {
 } from './filter-bar';
 import { EditorDateEntitiesGridView } from './grid-view';
 import { EditorDateEntitiesListView } from './list-view';
+import { useEventEditorEventDates } from '@eventespresso/hooks';
 import EditAllTicketAssignmentsButton
 	from '../../ticket-assignments-manager/edit-all-ticket-assignments-button';
 
@@ -37,17 +38,15 @@ const {
  * displays a paginated list of event dates with a filter bar
  * for controlling how and what event dates are displayed
  *
- * @param {Object[]} eventDates
- * @param {boolean} eventDatesLoaded
  * @param {Object} otherProps
  * @return {Object} rendered event dates list
  */
-const EditorDateEntitiesList = ( {
-	eventDates,
-	eventDatesLoaded,
-	...otherProps
-} ) => {
+const EditorDateEntitiesList = ( { ...otherProps } ) => {
 	const listId = 'event-editor-dates-list';
+	const { eventDates } = useEventEditorEventDates();
+	const eventDatesLoaded = Array.isArray( eventDates ) &&
+		eventDates.length >
+		0;
 	const {
 		showDates,
 		datesSortedBy,
