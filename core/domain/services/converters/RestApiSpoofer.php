@@ -20,14 +20,17 @@
 
 namespace EventEspresso\core\domain\services\converters;
 
+use DomainException;
 use EE_Error;
 use EEM_Base;
+use EventEspresso\core\entities\models\JsonModelSchema;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
 use EventEspresso\core\exceptions\ModelConfigurationException;
 use EventEspresso\core\exceptions\RestPasswordIncorrectException;
 use EventEspresso\core\exceptions\RestPasswordRequiredException;
 use EventEspresso\core\exceptions\UnexpectedEntityException;
+use EventEspresso\core\libraries\rest_api\CalculatedModelFields;
 use EventEspresso\core\libraries\rest_api\controllers\model\Read;
 use EventEspresso\core\libraries\rest_api\RestException;
 use InvalidArgumentException;
@@ -48,19 +51,25 @@ class RestApiSpoofer
     /**
      * @var Read
      */
-    protected $rest_api;
+    protected $rest_controller;
 
+    /**
+     * @var CalculatedModelFields
+     */
+    protected $fields_calculator;
 
     /**
      * RestApiSpoofer constructor.
      *
-     * @param Read   $rest_api
-     * @param string $api_version
+     * @param Read                  $rest_api
+     * @param CalculatedModelFields $fields_calculator
+     * @param string                $api_version
      */
-    public function __construct(Read $rest_api, $api_version = '4.8.36')
+    public function __construct(Read $rest_api, CalculatedModelFields $fields_calculator, $api_version = '4.8.36')
     {
-        $this->rest_api = $rest_api;
-        $this->rest_api->setRequestedVersion($api_version);
+        $this->rest_controller = $rest_api;
+        $this->rest_controller->setRequestedVersion($api_version);
+        $this->fields_calculator = $fields_calculator;
     }
 
 
@@ -79,6 +88,7 @@ class RestApiSpoofer
      * @throws RestPasswordIncorrectException
      * @throws RestPasswordRequiredException
      * @throws UnexpectedEntityException
+     * @throws DomainException
      * @since $VID:$
      */
     public function getApiResults(EEM_Base $model, array $query_params, $include = '')
@@ -90,12 +100,34 @@ class RestApiSpoofer
         $rest_request->set_param('caps', null);
         $nice_results = array();
         foreach ($results as $result) {
-            $nice_results[] = $this->rest_api->createEntityFromWpdbResult(
+            $nice_results[] = $this->rest_controller->createEntityFromWpdbResult(
                 $model,
                 $result,
                 $rest_request
             );
         }
         return $nice_results;
+    }
+
+
+    /**
+     * @param EEM_Base $model
+     * @return array
+     * @throws EE_Error
+     * @since $VID:$
+     */
+    public function getModelSchema(EEM_Base $model)
+    {
+        $model_schema = new JsonModelSchema($model, $this->fields_calculator);
+        return $model_schema->getModelSchemaForRelations(
+            $this->rest_controller->getModelVersionInfo()->relationSettings($model),
+            $this->rest_controller->customizeSchemaForRestResponse(
+                $model,
+                $model_schema->getModelSchemaForFields(
+                    $this->rest_controller->getModelVersionInfo()->fieldsOnModelInThisVersion($model),
+                    $model_schema->getInitialSchemaStructure()
+                )
+            )
+        );
     }
 }

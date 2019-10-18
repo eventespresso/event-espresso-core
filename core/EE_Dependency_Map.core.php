@@ -887,6 +887,7 @@ class EE_Dependency_Map
             ],
             'EventEspresso\core\domain\services\converters\RestApiSpoofer' => [
                 'EventEspresso\core\libraries\rest_api\controllers\model\Read' => EE_Dependency_Map::load_from_cache,
+                'EventEspresso\core\libraries\rest_api\CalculatedModelFields' => EE_Dependency_Map::load_from_cache,
                 null
             ],
             'EventEspresso\core\domain\services\admin\events\default_settings\AdvancedEditorAdminFormSection'  => [
@@ -900,6 +901,7 @@ class EE_Dependency_Map
                 'EEM_Price'       => EE_Dependency_Map::load_from_cache,
                 'EEM_Price_Type'  => EE_Dependency_Map::load_from_cache,
                 'EEM_Ticket'      => EE_Dependency_Map::load_from_cache,
+                'EEM_Venue'       => EE_Dependency_Map::load_from_cache,
             ],
         );
     }
