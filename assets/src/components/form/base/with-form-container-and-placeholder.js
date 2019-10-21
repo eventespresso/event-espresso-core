@@ -2,7 +2,7 @@
  * External imports
  */
 import { compose, createHigherOrderComponent, withInstanceId } from '@wordpress/compose';
-import { Component, Fragment } from '@wordpress/element';
+import { Fragment } from '@wordpress/element';
 import { FormContainer, FormPlaceholder } from '../';
 
 /**
@@ -18,27 +18,24 @@ export default compose( [
 	withInstanceId,
 	createHigherOrderComponent(
 		( Form ) => {
-			return class extends Component {
-				render() {
-					const {
-						instanceId,
-						loading,
-						loadingNotice,
-						...formProps
-					} = this.props;
-					return (
-						<Fragment>
-							<FormPlaceholder
-								key={ instanceId }
-								loading={ loading }
-								notice={ loadingNotice }
-							/>
-							<FormContainer loading={ loading }>
-								<Form { ...formProps } />
-							</FormContainer>
-						</Fragment>
-					);
-				}
+			return ( {
+				instanceId,
+				loading,
+				loadingNotice,
+				...formProps
+			} ) => {
+				return (
+					<Fragment>
+						<FormPlaceholder
+							key={ instanceId }
+							loading={ loading }
+							notice={ loadingNotice }
+						/>
+						<FormContainer loading={ loading }>
+							<Form { ...formProps } />
+						</FormContainer>
+					</Fragment>
+				);
 			};
 		},
 		'withFormContainerAndPlaceholder'
