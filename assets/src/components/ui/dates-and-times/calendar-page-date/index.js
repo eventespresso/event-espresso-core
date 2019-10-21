@@ -109,11 +109,10 @@ const CalendarPageDate = ({
 		);
 	};
 
-	const htmlClass = classNames( {
-		'ee-calendar-page-date-wrapper': true,
-		[ `ee-calendar-page-date-${ size }` ]: true,
-
-	} );
+	const htmlClass = classNames(
+		'ee-calendar-page-date-wrapper',
+		`ee-calendar-page-date-${ size }`
+	);
 	return (
 		<div className={ htmlClass } { ...otherProps } >
 			{ getStartDate( startDate, statusClass ) }
