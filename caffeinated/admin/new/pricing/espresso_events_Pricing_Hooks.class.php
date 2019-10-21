@@ -1971,7 +1971,7 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks
                 'default'               => $selected_price_type_id,
                 'html_name'             => $select_name,
                 'html_class'            => 'edit-price-PRT_ID',
-                'html_other_attributes' => $disabled ? 'style="width:auto;" disabled' : 'style="width:auto;"',
+                'other_html_attributes' => $disabled ? 'style="width:auto;" disabled' : 'style="width:auto;"',
             )
         );
         $price_selected_operator = $price instanceof EE_Price && $price->is_discount() ? '-' : '+';

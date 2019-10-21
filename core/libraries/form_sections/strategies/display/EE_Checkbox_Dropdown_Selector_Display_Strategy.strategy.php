@@ -124,7 +124,7 @@ class EE_Checkbox_Dropdown_Selector_Display_Strategy extends EE_Compound_Input_D
         $html .= ' class="' . $input->html_class() . ' checkbox-dropdown-selector-btn button-secondary button"';
         $html .= ' style="' . $input->html_style() . '"';
         $html .= ' data-target="' . $input->html_id() . '-options-dv"';
-        $html .= ' ' . $input->html_other_attributes() . '>';
+        $html .= ' ' . $input->other_html_attributes() . '>';
         $html .= '<span class="checkbox-dropdown-selector-selected-spn">';
         $html .= $select_button_text;
         $html .= '</span> <span class="dashicons dashicons-arrow-down"></span>';
