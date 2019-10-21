@@ -57,12 +57,20 @@ const FormInput = ( {
 	afterInput = null,
 	...rest
 } ) => {
-	const helpTextID = rest.helpTextID ? rest.helpTextID : `${ htmlId }-help-text`;
-	const htmlClass = rest.required ? `${ rest.htmlClass } required` : rest.htmlClass;
-	let helpText = rest.helpText;
+	// defaults
+	let {
+		helpTextID,
+		helpText = '',
+		htmlClass = '',
+		dataSet = {},
+		validations = [],
+	} = rest;
+
+	helpTextID = helpTextID ? helpTextID : `${ htmlId }-help-text`;
+	htmlClass = rest.required ? `${ htmlClass } required` : htmlClass;
 	// ensure data attributes are properly named
-	const dataSet = prepareDataSet( rest.dataSet );
-	let validations = Array.isArray( rest.validations ) ? rest.validations : [ rest.validations ];
+	dataSet = prepareDataSet( dataSet );
+	validations = Array.isArray( validations ) ? validations : [ validations ];
 	// remove attributes that should not be passed to inputs
 	let attributes = cleanUpInputAttributes( rest );
 	// add attributes based on validations
