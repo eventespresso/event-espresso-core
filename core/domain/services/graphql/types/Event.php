@@ -20,6 +20,8 @@ namespace EventEspresso\core\domain\services\graphql\types;
 use EEM_Event;
 use EventEspresso\core\services\graphql\TypeBase;
 use EventEspresso\core\domain\services\graphql\fields\GraphQLField;
+use EventEspresso\core\domain\services\graphql\fields\GraphQLInputField;
+use EventEspresso\core\domain\services\graphql\fields\GraphQLOutputField;
 
 /**
  * Class Event
@@ -77,11 +79,17 @@ class Event extends TypeBase
                 'created',
                 __('Date/Time Event Created', 'event_espresso')
             ),
-            new GraphQLField(
+            new GraphQLOutputField(
                 'wpUser',
                 'User',
                 null,
                 __('Event Creator', 'event_espresso')
+            ),
+            new GraphQLInputField(
+                'wpUser',
+                'Int',
+                null,
+                __('Event Creator ID', 'event_espresso')
             ),
             new GraphQLField(
                 'order',

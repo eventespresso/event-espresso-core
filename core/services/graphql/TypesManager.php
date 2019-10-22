@@ -59,29 +59,98 @@ class TypesManager
     public function init()
     {
         $this->types->loadTypes();
-        add_action('graphql_register_types', [$this, 'registerTypes'], 10);
+        add_action('graphql_register_types', [$this, 'configureTypes'], 10);
     }
 
 
-    public function registerTypes()
+    public function configureTypes()
     {
         // loop through the collection of types and register their fields
         foreach ($this->types as $type) {
-            $fields = $type->getFieldsForGQL();
-            /** @var TypeInterface $type */
             if ($type->isCustomPostType()) {
-                foreach ($fields as $field => $config) {
-                    register_graphql_field($type->name(), $field, $config);
-                }
+                $this->extendCustomPostType($type);
             } else {
-                register_graphql_object_type(
-                    $type->name(),
-                    [
-                        'description' => $type->description(),
-                        'fields' => $fields,
-                    ]
-                );
+                $this->registerType($type);
             }
         }
+    }
+
+
+    public function extendCustomPostType($type)
+    {
+        $typeName = $type->name();
+
+        foreach ($type->fields() as $field) {
+
+            $fieldName = $field->name();
+
+            $config = $field->toArray();
+
+            if ($field->useForInput()) {
+                // Register input fields for existing mutations.
+                register_graphql_field('Update' . $typeName . 'Input', $fieldName, $config);
+                register_graphql_field('Create' . $typeName . 'Input', $fieldName, $config);
+            }
+
+            if ($field->useForOutput()) {
+                $config['resolve'] = [$type, 'resolveField'];
+                // Register fields for queries.
+                register_graphql_field($typeName, $fieldName, $config);
+            }
+        }
+    }
+
+
+    public function registerType($type)
+    {
+        $outputFields = [];
+        $inputFields = [];
+
+        foreach ($type->fields() as $field) {
+
+            $fieldName = $field->name();
+
+            $config = $field->toArray();
+
+            if ($field->useForInput()) {
+                $inputFields[$fieldName] = $config;
+            }
+
+            if ($field->useForOutput()) {
+                $config['resolve'] = [$type, 'resolveField'];
+                $outputFields[$fieldName] = $config;
+            }
+        }
+
+        $typeName = $type->name();
+
+        if (! empty($outputFields)) {
+            // Register the object type.
+            register_graphql_object_type(
+                $typeName,
+                [
+                    'description' => $type->description(),
+                    'fields'      => $outputFields,
+                ]
+            );
+        }
+
+        /* register_graphql_mutation(
+			'create' . $typeName,
+			[
+				'inputFields'         => $inputFields,
+				'outputFields'        => $outputFields,
+				'mutateAndGetPayload' => [$type, 'mutateAndGetPayload'],
+			]
+		);
+
+        register_graphql_mutation(
+			'update' . $typeName,
+			[
+				'inputFields'         => $inputFields,
+				'outputFields'        => $outputFields,
+				'mutateAndGetPayload' => [$type, 'mutateAndGetPayload'],
+			]
+		); */
     }
 }

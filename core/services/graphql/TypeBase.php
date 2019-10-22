@@ -161,23 +161,6 @@ abstract class TypeBase implements TypeInterface
 
 
     /**
-     * Creates a key map to pass to GraphQL registration.
-     * @return array
-     * @since $VID:$
-     */
-    public function getFieldsForGQL()
-    {
-        $fields = [];
-        foreach ($this->fields() as $field) {
-            $config = $field->toArray();
-            $config['resolve'] = [$this, 'resolveField'];
-            $fields[$field->name()] = $config;
-        }
-        return $fields;
-    }
-
-
-    /**
      * Creates a key map for internal resolver.
      * @return array
      * @since $VID:$
@@ -186,7 +169,9 @@ abstract class TypeBase implements TypeInterface
     {
         $fields = [];
         foreach ($this->fields() as $field) {
-            $fields[$field->name()] = $field;
+            if ($field->useForOutput()) {
+                $fields[$field->name()] = $field;
+            }
         }
         return $fields;
     }
@@ -270,4 +255,18 @@ abstract class TypeBase implements TypeInterface
         return null;
     }
 
+
+    /**
+     * @param array       $input   The mutation input.
+     * @param AppContext  $context The AppContext passed down the GraphQL tree.
+     * @param ResolveInfo $info    The ResolveInfo passed down the GraphQL tree.
+     * @return mixed
+     * @throws UserError
+     * @throws InvalidArgumentException
+     * @throws ReflectionException
+     * @since $VID:$
+     */
+    public function mutateAndGetPayload($input, AppContext $context, ResolveInfo $info) {
+
+    }
 }

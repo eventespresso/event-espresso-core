@@ -16,9 +16,19 @@ class GraphQLField
 {
 
     /**
-     * @var array $caps
+     * @var string $name
      */
-    protected $caps;
+    protected $name;
+
+    /**
+     * @var string|string[] $type
+     */
+    protected $type;
+
+    /**
+     * @var string|null $key
+     */
+    protected $key;
 
     /**
      * @var string $description
@@ -31,24 +41,24 @@ class GraphQLField
     protected $formatter;
 
     /**
-     * @var string|null $key
-     */
-    protected $key;
-
-    /**
-     * @var string $name
-     */
-    protected $name;
-
-    /**
      * @var callable $resolve
      */
     protected $resolver;
 
     /**
-     * @var string|string[] $type
+     * @var array $caps
      */
-    protected $type;
+    protected $caps;
+
+    /**
+     * @var bool $use_for_input
+     */
+    protected $use_for_input;
+
+    /**
+     * @var bool $use_for_output
+     */
+    protected $use_for_output;
 
 
     /**
@@ -69,13 +79,16 @@ class GraphQLField
         callable $resolver = null,
         array $caps = []
     ) {
-        $this->key = $key;
         $this->name = $name;
         $this->type = $type;
+        $this->key = $key;
         $this->description = $description;
         $this->formatter = $formatter;
         $this->resolver = $resolver;
         $this->caps = $caps;
+
+        $this->use_for_input = true;
+        $this->use_for_output = true;
     }
 
 
@@ -124,6 +137,63 @@ class GraphQLField
     }
 
 
+    /**
+     * Convert the field to array to be
+     * able to pass as config to WP GraphQL
+     *
+     * @return array
+     */
+    public function toArray()
+    {
+        return get_object_vars($this);
+    }
+
+
+    /**
+     * Sets the value for use_for_input.
+     *
+	 * @param bool $use_for_input
+     *
+     */
+    protected function setUseForInput($use_for_input)
+    {
+        $this->use_for_input = (bool) $use_for_input;
+    }
+
+
+    /**
+     * Whether the field should be used for
+     * mutation inputs.
+     *
+     * @return bool
+     */
+    public function useForInput()
+    {
+        return (bool) $this->use_for_input;
+    }
+
+
+    /**
+     * Whether the field should be used for
+     * query outputs.
+     *
+     * @return bool
+     */
+    public function useForOutput()
+    {
+        return (bool) $this->use_for_output;
+    }
+
+
+    /**
+     * Sets the value for use_for_output
+     *
+     * @return array
+     */
+    protected function setUseForOutput($use_for_output)
+    {
+        $this->use_for_output = (bool) $use_for_output;
+    }
 
 
     /**
@@ -192,17 +262,5 @@ class GraphQLField
             return $formatter($value);
         }
         return $value;
-    }
-
-
-    /**
-     * Convert the field to array to be
-     * able to pass as config to WP GraphQL
-     *
-     * @return array
-     */
-    public function toArray()
-    {
-        return get_object_vars($this);
     }
 }

@@ -20,6 +20,8 @@ namespace EventEspresso\core\domain\services\graphql\types;
 use EEM_Venue;
 use EventEspresso\core\services\graphql\TypeBase;
 use EventEspresso\core\domain\services\graphql\fields\GraphQLField;
+use EventEspresso\core\domain\services\graphql\fields\GraphQLOutputField;
+use EventEspresso\core\domain\services\graphql\fields\GraphQLInputField;
 
 /**
  * Class Venue
@@ -89,11 +91,17 @@ class Venue extends TypeBase
                 'order',
                 __('Venue order', 'event_espresso')
             ),
-            new GraphQLField(
+            new GraphQLOutputField(
                 'wpUser',
                 'User',
                 null,
                 __('Venue Creator', 'event_espresso')
+            ),
+            new GraphQLInputField(
+                'wpUser',
+                'Int',
+                null,
+                __('Venue Creator ID', 'event_espresso')
             ),
             new GraphQLField(
                 'address',
@@ -113,17 +121,29 @@ class Venue extends TypeBase
                 'city',
                 __('Venue City', 'event_espresso')
             ),
-            new GraphQLField(
+            new GraphQLOutputField(
                 'state',
                 'State',
                 null,
                 __('Venue state', 'event_espresso')
             ),
-            new GraphQLField(
+            new GraphQLInputField(
+                'state',
+                'Int',
+                null,
+                __('State ID', 'event_espresso')
+            ),
+            new GraphQLOutputField(
                 'country',
                 'Country',
                 null,
                 __('Venue country', 'event_espresso')
+            ),
+            new GraphQLInputField(
+                'country',
+                'String',
+                null,
+                __('Country ISO Code', 'event_espresso')
             ),
             new GraphQLField(
                 'zip',
