@@ -18,17 +18,17 @@ class DatetimeUpdate {
 	 */
 	public static function mutateAndGetPayload(EEM_Datetime $model, Datetime $type)
 	{
-		return function ($input, AppContext $context, ResolveInfo $info) use ($model, $type)
+		return static function ($input, AppContext $context, ResolveInfo $info) use ($model, $type)
 		{
 
 			/**
 			 * If there's no existing post, throw an exception
 			 */
-			if (empty($input['id']) || empty($model->get_one_by_ID($input['id']))) {
+			if (empty($input['id']) || $model->get_one_by_ID($input['id']) === null) {
 				// translators: the placeholder is the name of the type of post being updated
 				throw new UserError( sprintf( __( 'No %1$s could be found to update', 'event_espresso' ), $type->name() ) );
 			}
-			
+
 			// Validate the $input fields
 			// Update the entity
 

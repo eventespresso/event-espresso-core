@@ -6,7 +6,8 @@ use EventEspresso\core\domain\services\graphql\types\Datetime;
 use GraphQL\Type\Definition\ResolveInfo;
 use WPGraphQL\AppContext;
 
-class DatetimeCreate {
+class DatetimeCreate
+{
 
 	/**
 	 * Defines the mutation data modification closure.
@@ -17,9 +18,9 @@ class DatetimeCreate {
 	 */
 	public static function mutateAndGetPayload(EEM_Datetime $model, Datetime $type)
 	{
-		return function ( $input, AppContext $context, ResolveInfo $info ) use ($model, $type)
+		return static function ( $input, AppContext $context, ResolveInfo $info ) use ($model, $type)
 		{
-			
+
 			// Validate the $input fields
 			// Create an entity
 			// Get the ID of the newly created entity.
