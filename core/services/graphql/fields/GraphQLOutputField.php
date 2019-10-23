@@ -1,19 +1,14 @@
 <?php
 
-namespace EventEspresso\core\domain\services\graphql\fields;
-
-use EventEspresso\core\domain\services\graphql\fields\GraphQLField;
-use GraphQL\Type\Definition\ResolveInfo;
-use LogicException;
-use WPGraphQL\AppContext;
+namespace EventEspresso\core\services\graphql\fields;
 
 /**
- * Class GraphQLInputField
+ * Class GraphQLOutputField
  *
  * @package       Event Espresso
  * @author        Manzoor Wani
  */
-class GraphQLInputField extends GraphQLField
+class GraphQLOutputField extends GraphQLField
 {
 
     /**
@@ -21,6 +16,8 @@ class GraphQLInputField extends GraphQLField
 	 * @param string|string[] $type
      * @param string|null     $key
      * @param string          $description
+     * @param callable|null   $formatter
+     * @param callable|null   $resolver
      * @param array           $caps
      */
     public function __construct(
@@ -28,6 +25,8 @@ class GraphQLInputField extends GraphQLField
         $type,
         $key = null,
         $description = '',
+        callable $formatter = null,
+        callable $resolver = null,
         array $caps = []
     ) {
         parent::__construct(
@@ -35,11 +34,11 @@ class GraphQLInputField extends GraphQLField
             $type,
             $key,
             $description,
-            null,
-            null,
+            $formatter,
+            $resolver,
             $caps
         );
 
-        $this->setUseForOutput(false);
+        $this->setUseForInput(false);
     }
 }

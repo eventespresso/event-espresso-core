@@ -1,6 +1,6 @@
 <?php
 
-namespace EventEspresso\core\domain\services\graphql\fields;
+namespace EventEspresso\core\services\graphql\fields;
 
 use GraphQL\Type\Definition\ResolveInfo;
 use LogicException;
@@ -12,7 +12,7 @@ use WPGraphQL\AppContext;
  * @package       Event Espresso
  * @author        Manzoor Wani
  */
-class GraphQLField
+class GraphQLField implements GraphQLFieldInterface
 {
 
     /**
@@ -53,12 +53,12 @@ class GraphQLField
     /**
      * @var bool $use_for_input
      */
-    protected $use_for_input;
+    protected $use_for_input = true;
 
     /**
      * @var bool $use_for_output
      */
-    protected $use_for_output;
+    protected $use_for_output = true;
 
 
     /**
@@ -86,9 +86,6 @@ class GraphQLField
         $this->formatter = $formatter;
         $this->resolver = $resolver;
         $this->caps = $caps;
-
-        $this->use_for_input = true;
-        $this->use_for_output = true;
     }
 
 
@@ -157,7 +154,7 @@ class GraphQLField
      */
     protected function setUseForInput($use_for_input)
     {
-        $this->use_for_input = (bool) $use_for_input;
+        $this->use_for_input = filter_var($use_for_input, FILTER_VALIDATE_BOOLEAN);
     }
 
 
@@ -188,11 +185,11 @@ class GraphQLField
     /**
      * Sets the value for use_for_output
      *
-     * @return array
+     * @param bool $use_for_output
      */
     protected function setUseForOutput($use_for_output)
     {
-        $this->use_for_output = (bool) $use_for_output;
+        $this->use_for_output = filter_var($use_for_output, FILTER_VALIDATE_BOOLEAN);
     }
 
 
