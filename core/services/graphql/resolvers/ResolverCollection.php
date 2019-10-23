@@ -1,6 +1,6 @@
 <?php
 
-namespace EventEspresso\core\services\graphql;
+namespace EventEspresso\core\services\graphql\resolvers;
 
 use EventEspresso\core\exceptions\InvalidInterfaceException;
 use EventEspresso\core\services\collections\Collection;

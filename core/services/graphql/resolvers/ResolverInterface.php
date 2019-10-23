@@ -1,6 +1,6 @@
 <?php
 
-namespace EventEspresso\core\services\graphql;
+namespace EventEspresso\core\services\graphql\resolvers;
 
 use GraphQL\Type\Definition\ResolveInfo;
 use WPGraphQL\AppContext;
