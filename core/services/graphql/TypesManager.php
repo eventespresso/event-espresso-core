@@ -1,27 +1,11 @@
 <?php
-/**
- *     Event Espresso
- *     Manage events, sell tickets, and receive payments from your WordPress website.
- *     Copyright (c) 2008-2019 Event Espresso  All Rights Reserved.
- *
- *     This program is free software: you can redistribute it and/or modify
- *     it under the terms of the GNU General Public License as published by
- *     the Free Software Foundation, either version 3 of the License, or
- *     (at your option) any later version.
- *
- *     This program is distributed in the hope that it will be useful,
- *     but WITHOUT ANY WARRANTY; without even the implied warranty of
- *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *     GNU General Public License for more details.
- *
- *     You should have received a copy of the GNU General Public License
- *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
- */
 
 namespace EventEspresso\core\services\graphql;
 
 use EventEspresso\core\services\collections\CollectionDetailsException;
 use EventEspresso\core\services\collections\CollectionLoaderException;
+use EventEspresso\core\services\graphql\types\TypeCollection;
+use EventEspresso\core\services\graphql\types\TypeInterface;
 
 /**
  * Class TypesManager
@@ -63,6 +47,9 @@ class TypesManager
     }
 
 
+    /**
+     * @since $VID:$
+     */
     public function configureTypes()
     {
         // loop through the collection of types and register their fields
@@ -76,22 +63,21 @@ class TypesManager
     }
 
 
-    public function extendCustomPostType($type)
+    /**
+     * @param TypeInterface $type
+     * @since $VID:$
+     */
+    public function extendCustomPostType(TypeInterface $type)
     {
         $typeName = $type->name();
-
         foreach ($type->fields() as $field) {
-
             $fieldName = $field->name();
-
             $config = $field->toArray();
-
             if ($field->useForInput()) {
                 // Register input fields for existing mutations.
                 register_graphql_field('Update' . $typeName . 'Input', $fieldName, $config);
                 register_graphql_field('Create' . $typeName . 'Input', $fieldName, $config);
             }
-
             if ($field->useForOutput()) {
                 $config['resolve'] = [$type, 'resolveField'];
                 // Register fields for queries.
@@ -101,29 +87,26 @@ class TypesManager
     }
 
 
-    public function registerType($type)
+    /**
+     * @param TypeInterface $type
+     * @since $VID:$
+     */
+    public function registerType(TypeInterface $type)
     {
         $outputFields = [];
         $inputFields = [];
-
         foreach ($type->fields() as $field) {
-
             $fieldName = $field->name();
-
             $config = $field->toArray();
-
             if ($field->useForInput()) {
                 $inputFields[$fieldName] = $config;
             }
-
             if ($field->useForOutput()) {
                 $config['resolve'] = [$type, 'resolveField'];
                 $outputFields[$fieldName] = $config;
             }
         }
-
         $typeName = $type->name();
-
         if (! empty($outputFields)) {
             // Register the object type.
             register_graphql_object_type(
@@ -134,7 +117,6 @@ class TypesManager
                 ]
             );
         }
-
         if (is_callable([$type, 'registerMutations'])) {
             $type->registerMutations($inputFields);
         }

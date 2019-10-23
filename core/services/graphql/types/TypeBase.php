@@ -1,29 +1,12 @@
 <?php
-/**
- *     Event Espresso
- *     Manage events, sell tickets, and receive payments from your WordPress website.
- *     Copyright (c) 2008-2019 Event Espresso  All Rights Reserved.
- *
- *     This program is free software: you can redistribute it and/or modify
- *     it under the terms of the GNU General Public License as published by
- *     the Free Software Foundation, either version 3 of the License, or
- *     (at your option) any later version.
- *
- *     This program is distributed in the hope that it will be useful,
- *     but WITHOUT ANY WARRANTY; without even the implied warranty of
- *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *     GNU General Public License for more details.
- *
- *     You should have received a copy of the GNU General Public License
- *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
- */
 
-namespace EventEspresso\core\services\graphql;
+namespace EventEspresso\core\services\graphql\types;
 
 use EE_Error;
 use EEM_Base;
 use EE_Base_Class;
-use EventEspresso\core\domain\services\graphql\fields\GraphQLField;
+use EventEspresso\core\services\graphql\fields\GraphQLField;
+use EventEspresso\core\services\graphql\fields\GraphQLFieldInterface;
 use EventEspresso\core\domain\services\graphql\resolvers\FieldResolver;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
@@ -62,7 +45,7 @@ abstract class TypeBase implements TypeInterface
     protected $description = '';
 
     /**
-     * @var GraphQLField[] $fields
+     * @var \EventEspresso\core\services\graphql\fields\GraphQLFieldInterface[] $fields
      */
     protected $fields = [];
 
@@ -95,7 +78,7 @@ abstract class TypeBase implements TypeInterface
 
 
     /**
-     * @return GraphQLField[]
+     * @return \EventEspresso\core\services\graphql\fields\GraphQLFieldInterface[]
      * @since $VID:$
      */
     abstract protected function getFields();
@@ -138,7 +121,7 @@ abstract class TypeBase implements TypeInterface
 
 
     /**
-     * @return GraphQLField[]
+     * @return \EventEspresso\core\services\graphql\fields\GraphQLFieldInterface[]
      * @since $VID:$
      */
     public function fields()
@@ -148,7 +131,7 @@ abstract class TypeBase implements TypeInterface
 
 
     /**
-     * @param GraphQLField[] $fields
+     * @param \EventEspresso\core\services\graphql\fields\GraphQLFieldInterface[] $fields
      */
     protected function setFields(array $fields)
     {

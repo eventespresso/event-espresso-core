@@ -1,24 +1,6 @@
 <?php
-/**
- *     Event Espresso
- *     Manage events, sell tickets, and receive payments from your WordPress website.
- *     Copyright (c) 2008-2019 Event Espresso  All Rights Reserved.
- *
- *     This program is free software: you can redistribute it and/or modify
- *     it under the terms of the GNU General Public License as published by
- *     the Free Software Foundation, either version 3 of the License, or
- *     (at your option) any later version.
- *
- *     This program is distributed in the hope that it will be useful,
- *     but WITHOUT ANY WARRANTY; without even the implied warranty of
- *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *     GNU General Public License for more details.
- *
- *     You should have received a copy of the GNU General Public License
- *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
- */
 
-namespace EventEspresso\core\services\graphql;
+namespace EventEspresso\core\services\graphql\types;
 
 use EventEspresso\core\exceptions\InvalidInterfaceException;
 use EventEspresso\core\services\collections\Collection;
@@ -54,7 +36,7 @@ class TypeCollection extends Collection
     public function __construct()
     {
         parent::__construct(
-            'EventEspresso\core\services\graphql\TypeInterface',
+            'EventEspresso\core\services\graphql\types\TypeInterface',
             TypeCollection::COLLECTION_NAME
         );
     }
@@ -73,7 +55,7 @@ class TypeCollection extends Collection
                 // collection name
                     TypeCollection::COLLECTION_NAME,
                     // collection interface
-                    'EventEspresso\core\services\graphql\TypeInterface',
+                    'EventEspresso\core\services\graphql\types\TypeInterface',
                     // FQCNs for classes to add (all classes within each namespace will be loaded)
                     apply_filters(
                         'FHEE__EventEspresso_core_services_graphql_TypeCollection__loadCollection__collection_FQCNs',
