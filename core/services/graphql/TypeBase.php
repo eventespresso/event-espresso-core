@@ -257,16 +257,24 @@ abstract class TypeBase implements TypeInterface
 
 
     /**
-     * @param array       $input   The mutation input.
-     * @param AppContext  $context The AppContext passed down the GraphQL tree.
-     * @param ResolveInfo $info    The ResolveInfo passed down the GraphQL tree.
-     * @return mixed
+     * @param mixed       $payload The payload returned after mutation
+     * @param array       $args    The inputArgs on the field
+     * @param AppContext  $context The AppContext passed down the GraphQL tree
+     * @return string
+     * @throws EE_Error
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws UnexpectedEntityException
      * @throws UserError
      * @throws InvalidArgumentException
      * @throws ReflectionException
      * @since $VID:$
      */
-    public function mutateAndGetPayload($input, AppContext $context, ResolveInfo $info) {
-
+    public function resolveFromPayload($payload, $args, AppContext $context)
+    {
+        if ( empty( $payload['id'] ) || ! absint( $payload['id'] ) ) {
+            return null;
+        }
+        return $this->model->get_one_by_ID($payload['id']);
     }
 }

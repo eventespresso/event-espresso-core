@@ -135,22 +135,8 @@ class TypesManager
             );
         }
 
-        /* register_graphql_mutation(
-			'create' . $typeName,
-			[
-				'inputFields'         => $inputFields,
-				'outputFields'        => $outputFields,
-				'mutateAndGetPayload' => [$type, 'mutateAndGetPayload'],
-			]
-		);
-
-        register_graphql_mutation(
-			'update' . $typeName,
-			[
-				'inputFields'         => $inputFields,
-				'outputFields'        => $outputFields,
-				'mutateAndGetPayload' => [$type, 'mutateAndGetPayload'],
-			]
-		); */
+        if (is_callable([$type, 'registerMutations'])) {
+            $type->registerMutations($inputFields);
+        }
     }
 }
