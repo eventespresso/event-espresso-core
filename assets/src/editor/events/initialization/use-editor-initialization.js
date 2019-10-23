@@ -12,6 +12,7 @@ import hydrateData from './data-hydrator';
 const EMPTY_ARRAY = [];
 const EMPTY_OBJECT = {};
 
+
 const useEditorInitialization = ( eventData ) => {
 	const generator = useRef( hydrateData( eventData ) );
 	const [ initialized, setInitialized ] = useState( false );
@@ -23,30 +24,41 @@ const useEditorInitialization = ( eventData ) => {
 	const eventDatesLoaded = eventDates !== EMPTY_ARRAY;
 	const ticketsLoaded = tickets !== EMPTY_ARRAY;
 	const venueLoaded = venue !== EMPTY_OBJECT;
+
+	const initializeEntities = async ( generator ) => {
+		for await ( const entities of generator ) {
+			if ( entities.hasOwnProperty( 'event' ) &&
+				Array.isArray( entities.event )
+			) {
+				setEvent( entities.event.pop() );
+			}
+			if ( entities.hasOwnProperty( 'datetime' ) &&
+				Array.isArray( entities.datetime ) &&
+				! isEmpty( entities.datetime )
+			) {
+				setEventDates( entities.datetime );
+			}
+			if ( entities.hasOwnProperty( 'ticket' ) &&
+				Array.isArray( entities.ticket ) &&
+				! isEmpty( entities.ticket )
+			) {
+				setTickets( entities.ticket );
+			}
+			if ( entities.hasOwnProperty( 'venue' ) &&
+				Array.isArray( entities.venue ) &&
+				! isEmpty( entities.venue )
+			) {
+				setVenue( entities.venue.pop() );
+			}
+		}
+	};
 	if ( ! initialized ) {
-		for ( const results of generator.current ) {
-			results.then( ( init ) => {
-				if ( Array.isArray( init.event ) && ! isEmpty( init.event ) ) {
-					setEvent( init.event.pop() );
-				}
-				if ( Array.isArray( init.datetime ) &&
-					! isEmpty( init.datetime ) ) {
-					setEventDates( init.datetime );
-				}
-				if ( Array.isArray( init.ticket ) &&
-					! isEmpty( init.ticket ) ) {
-					setTickets( init.ticket );
-				}
-				if ( Array.isArray( init.venue ) && ! isEmpty( init.venue ) ) {
-					setVenue( init.venue.pop() );
-				}
-			} );
-		}
-		if ( eventLoaded && eventDatesLoaded && ticketsLoaded && venueLoaded ) {
+		initializeEntities( generator.current ).then( () => {
 			setInitialized( true );
-		}
+		} );
 	}
-	return { eventLoaded, eventDatesLoaded, ticketsLoaded, venueLoaded };
+
+	return { initialized, eventLoaded, eventDatesLoaded, ticketsLoaded, venueLoaded };
 };
 
 export default useEditorInitialization;
