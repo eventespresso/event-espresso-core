@@ -20,6 +20,10 @@ namespace EventEspresso\core\domain\services\graphql\types;
 use EEM_Datetime;
 use EventEspresso\core\services\graphql\TypeBase;
 use EventEspresso\core\domain\services\graphql\fields\GraphQLField;
+use EventEspresso\core\domain\services\graphql\fields\GraphQLInputField;
+use EventEspresso\core\domain\services\graphql\fields\GraphQLOutputField;
+use EventEspresso\core\domain\services\graphql\mutators\DatetimeCreate;
+use EventEspresso\core\domain\services\graphql\mutators\DatetimeUpdate;
 
 /**
  * Class EventDate
@@ -139,11 +143,17 @@ class Datetime extends TypeBase
                 'length',
                 __('The length of the event (start to end time) in seconds', 'event_espresso')
             ),
-            new GraphQLField(
+            new GraphQLOutputField(
                 'parent',
                 'Datetime',
                 null,
                 __('The parent datetime of the current datetime', 'event_espresso')
+            ),
+            new GraphQLInputField(
+                'parent',
+                'Int',
+                null,
+                __('The parent datetime ID', 'event_espresso')
             ),
             new GraphQLField(
                 'isPrimary',
@@ -176,12 +186,60 @@ class Datetime extends TypeBase
                 'is_expired',
                 __('Flag indicating datetime is expired or not', 'event_espresso')
             ),
-            new GraphQLField(
+            new GraphQLOutputField(
                 'event',
                 'Event',
                 null,
                 __('Event of the datetime.', 'event_espresso')
             ),
+            new GraphQLInputField(
+                'event',
+                'Int',
+                null,
+                __('Event ID of the datetime.', 'event_espresso')
+            ),
         ];
+    }
+
+
+    /**
+     * @param array $inputFields The mutation input fields.
+     *
+     * @throws InvalidArgumentException
+     * @throws ReflectionException
+     * @since $VID:$
+     */
+    public function registerMutations(array $inputFields)
+    {
+        // Register mutation to update an entity.
+        register_graphql_mutation(
+			'update' . $this->name(),
+			[
+				'inputFields'         => $inputFields,
+				'outputFields'        => [
+                    lcfirst($this->name()) => [
+                        'type'    => $this->name(),
+                        'resolve' => [$this, 'resolveFromPayload'],
+                    ],
+                ],
+				'mutateAndGetPayload' => DatetimeUpdate::mutateAndGetPayload($this->model, $this),
+			]
+        );
+        // remove primary key from input.
+        unset($inputFields['id']);
+        // Register mutation to update an entity.
+        register_graphql_mutation(
+			'create' . $this->name(),
+			[
+				'inputFields'         => $inputFields,
+				'outputFields'        => [
+                    lcfirst($this->name()) => [
+                        'type'    => $this->name(),
+                        'resolve' => [$this, 'resolveFromPayload'],
+                    ],
+                ],
+				'mutateAndGetPayload' => DatetimeCreate::mutateAndGetPayload($this->model, $this),
+			]
+		);
     }
 }
