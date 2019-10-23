@@ -23,6 +23,8 @@ namespace EventEspresso\core\domain\services\graphql\types;
 use EEM_Ticket;
 use EventEspresso\core\services\graphql\TypeBase;
 use EventEspresso\core\domain\services\graphql\fields\GraphQLField;
+use EventEspresso\core\domain\services\graphql\fields\GraphQLInputField;
+use EventEspresso\core\domain\services\graphql\fields\GraphQLOutputField;
 
 /**
  * Class Ticket
@@ -162,17 +164,29 @@ class Ticket extends TypeBase
                 'row',
                 __('How tickets are displayed in the ui', 'event_espresso')
             ),
-            new GraphQLField(
+            new GraphQLOutputField(
                 'wpUser',
                 'User',
                 null,
+                __('Ticket Creator', 'event_espresso')
+            ),
+            new GraphQLInputField(
+                'wpUser',
+                'Int',
+                null,
                 __('Ticket Creator ID', 'event_espresso')
             ),
-            new GraphQLField(
+            new GraphQLOutputField(
                 'parent',
                 'Ticket',
                 null,
                 __('The parent ticket of the current ticket', 'event_espresso')
+            ),
+            new GraphQLInputField(
+                'parent',
+                'Int',
+                null,
+                __('The parent ticket ID', 'event_espresso')
             ),
             new GraphQLField(
                 'reverseCalculate',
@@ -186,11 +200,17 @@ class Ticket extends TypeBase
                 'is_free',
                 __('Flag indicating whether the ticket is free.', 'event_espresso')
             ),
-            new GraphQLField(
+            new GraphQLOutputField(
                 'Event',
                 'Event',
                 null,
                 __('Event of the ticket.', 'event_espresso')
+            ),
+            new GraphQLInputField(
+                'event',
+                'Int',
+                null,
+                __('Event ID of the ticket.', 'event_espresso')
             ),
         ];
     }

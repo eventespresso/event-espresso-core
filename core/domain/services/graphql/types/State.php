@@ -20,6 +20,8 @@ namespace EventEspresso\core\domain\services\graphql\types;
 use EEM_State;
 use EventEspresso\core\services\graphql\TypeBase;
 use EventEspresso\core\domain\services\graphql\fields\GraphQLField;
+use EventEspresso\core\domain\services\graphql\fields\GraphQLInputField;
+use EventEspresso\core\domain\services\graphql\fields\GraphQLOutputField;
 
 /**
  * Class State
@@ -79,11 +81,17 @@ class State extends TypeBase
                 'active',
                 __('State Active Flag', 'event_espresso')
             ),
-            new GraphQLField(
+            new GraphQLOutputField(
                 'country',
                 'Country',
                 null,
                 __('Country for the state', 'event_espresso')
+            ),
+            new GraphQLInputField(
+                'country',
+                'String',
+                null,
+                __('Country ISO Code', 'event_espresso')
             ),
         ];
     }
