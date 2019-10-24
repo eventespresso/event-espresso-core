@@ -36,12 +36,12 @@ export function fetch( request ) {
  *
  * @param {string} reducerKey
  * @param {string} selectorName
- * @param {...(string|number)} args
+ * @param {...Array|boolean|number|Object|string} args
  * @return {{
  *      type: string,
  *      reducerKey: string,
  *      selectorName: string,
- *      args: *[]
+ *      args: ...Array|boolean|number|Object|string
  * }}
  * Returns an action object.
  */
@@ -59,7 +59,7 @@ export function select( reducerKey, selectorName, ...args ) {
  *
  * @param {string} reducerKey
  * @param {string} selectorName
- * @param {...(string|number)} args
+ * @param {...Array|boolean|number|Object|string} args
  * @return {Object} An action object.
  */
 export function resolveSelect( reducerKey, selectorName, ...args ) {
@@ -76,12 +76,12 @@ export function resolveSelect( reducerKey, selectorName, ...args ) {
  *
  * @param {string} reducerKey
  * @param {string} dispatchName
- * @param {...(string|number)} args
+ * @param {...Array|boolean|number|Object|string} args
  * @return {{
  *      type: string,
  *      reducerKey: string,
  *      dispatchName: string,
- *      args: *[]
+ *      args: ...Array|boolean|number|Object|string
  * }}
  * An action object
  */
@@ -99,7 +99,7 @@ export function dispatch( reducerKey, dispatchName, ...args ) {
  *
  * @param {string} reducerKey
  * @param {string} dispatchName
- * @param {...(string|number)} args
+ * @param {...Array|boolean|number|Object|string} args
  * @return {Object} The action object.
  */
 export function resolveDispatch( reducerKey, dispatchName, ...args ) {
