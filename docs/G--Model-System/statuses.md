@@ -5,9 +5,7 @@ There are three flavours of models that use statuses in Event Espresso:
 * Event Espresso Status Table Models
 * Soft Deleted/Archived/Trashed Models
 
-You may want to be re-familiarize yourself with [the models in use by Event Espresso](./model-querying.md#what-models-exist).
-
-Also, we know the plural of "status" is actually "stati". But many people don't, and WordPress core doesn't use it, so to keep it simple we usually say "statuses".
+You may want to re-familiarize yourself with [the models in use by Event Espresso](./model-querying.md#what-models-exist).
 
 Lastly, if you need more details on the statuses of models, there is usually helpful information on the models' PHP classes (eg `EEM_Event`), often in constants (eg on `EEM_Event::sold_out` describes the meaning of that status).
 
@@ -78,8 +76,8 @@ Registrations are reservations for places at the event.
 * `RPP` pending payment - Payments are allowed and the status will automatically be toggled to `RAP` if payment is made in full by the attendee. No space reserved. Registration is active
 * `RWL` wait list - The registration has been placed on the waiting list (see the wait-list add-on). Payments are allowed. The status will automatically be toggled to RAP if payment is made in full by the attendee. No space reserved. Registration is active.
 * `RAP` approved - The registration has been approved (although the transaction may not yet be paid in full). Further payments are permitted if required. A space IS reserved. Registration is active.
-* `RCN` cancelled - The registration was cancelled. Payments are NOT allowed. NO space reserved. Registration is NOT active
-* `RDC` declined - The registration was the event manager. Payments are NOT allowed. No space reserved. Registration is NOT active
+* `RCN` cancelled - The registration was cancelled by the registrant. Payments are NOT allowed. NO space reserved. Registration is NOT active
+* `RDC` declined - The registration was rejected by the event manager. Payments are NOT allowed. No space reserved. Registration is NOT active
 
 ### Transactions
 Transactions are basically orders for one or more registrations. Their status is related to registrations, although they can be changed independently.
@@ -102,7 +100,7 @@ Tickets are automatically archived (trashed) when their price changes. (This is 
 They can also be explicitly archived. Archived tickets aren't visible on the frontend.
 
 ### Message Templates (the model class is `EEM_Message_Template_Group`)
-This models is actually for items called "message tempaltes" in the admin.
+This models is actually for items called "message templates" in the admin.
 
 ### Prices
 Trashed prices modifiers (eg percent discounts) will continue to apply to tickets that were already using them.
@@ -119,4 +117,4 @@ Trashed question groups will continue to appear on the frontend for their relate
 They cannot, however, be added to other events.
 
 ## Other Models
-Other models have no status. They live life to the fullest then go in a blaze of glory. 
+Other models have no status. They live life to the fullest then go out in a blaze of glory. 
