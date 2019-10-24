@@ -30,16 +30,11 @@ const DEFAULT_EMPTY_SET = Set();
  * @return {Array} An empty array if there are no ids for the given relation.
  */
 const getIdsForRelatedEntities = createSelector(
-	( state, entity, relationName, modelName = '' ) => {
+	( state, entity, relationName ) => {
 		if ( ! isModelEntity( entity ) ) {
-			throw new InvalidModelEntity(
-				modelName ? `Expected entity of type ${ modelName }` : '',
-				entity
-			);
+			throw new InvalidModelEntity( '', entity );
 		}
-		modelName = modelName ?
-			modelName :
-			singularModelName( entity.modelName );
+		const modelName = singularModelName( entity.modelName );
 		relationName = singularModelName( relationName );
 		if ( state.relations.hasIn( [ modelName, entity.id, relationName ] ) ) {
 			return ( state.relations.getIn(
@@ -75,30 +70,51 @@ const getIdsForRelatedEntities = createSelector(
  * @param {Object} state
  * @param {BaseEntity} entity
  * @param {string} relationModelName
+ * @param {Array} calculatedFields
  * @return {Array<BaseEntity>} An array of entities for the relation.
  */
 const getRelatedEntities = createSelector(
-	( state, entity, relationModelName, modelName = '' ) => {
+	(
+		state,
+		entity,
+		relationModelName,
+		calculatedFields = []
+	) => {
 		if ( ! isModelEntity( entity ) ) {
-			throw new InvalidModelEntity(
-				modelName ? `Expected entity of type ${ modelName }` : '',
-				entity
-			);
+			throw new InvalidModelEntity( '', entity );
 		}
+		console.log(
+			'%c getRelatedEntities selectors/relations.js => %c ' +
+			entity.modelName.toLowerCase() + ' ' + entity.id +
+			'%c relation %c ' + relationModelName +
+			'%c calculatedFields: ',
+			'color: Yellow; font-size:16px;',
+			'color: Khaki;',
+			'color: LightGrey;',
+			'color: Khaki;',
+			'color: LightGrey;',
+			calculatedFields,
+			'entity: ',
+			entity
+		);
 		relationModelName = singularModelName( relationModelName );
 		const relationIds = getIdsForRelatedEntities(
 			state,
 			entity,
-			relationModelName,
-			modelName
+			relationModelName
 		);
 		return getEntitiesByIds( state, relationModelName, relationIds );
 	},
-	( state, entity, relationName ) => {
+	(
+		state,
+		entity,
+		relationModelName,
+		calculatedFields = []
+	) => {
 		let relationIdDependants = getIdsForRelatedEntities.getDependants(
 			state,
 			entity,
-			singularModelName( relationName )
+			singularModelName( relationModelName )
 		);
 		relationIdDependants = relationIdDependants[ 0 ];
 		relationIdDependants = relationIdDependants ?
@@ -107,7 +123,7 @@ const getRelatedEntities = createSelector(
 		return relationIdDependants ? [
 			...getEntitiesByIds.getDependants(
 				state,
-				singularModelName( relationName ),
+				singularModelName( relationModelName ),
 				relationIdDependants
 			),
 			relationIdDependants,
@@ -147,7 +163,8 @@ const getRelatedEntitiesForIds = (
 		const entity = getEntityById(
 			state,
 			modelName,
-			entityId
+			entityId,
+			[]
 		);
 		if ( isModelEntityOfModel( entity, modelName ) ) {
 			const relatedEntities = getRelatedEntities(
