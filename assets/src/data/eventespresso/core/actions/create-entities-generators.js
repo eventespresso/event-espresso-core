@@ -20,17 +20,19 @@ import { REDUCER_KEY as CORE_REDUCER_KEY } from '../constants';
  * including it in an action object for adding to state.
  *
  * @param {string} modelName  The name of the model the incoming object is for.
+ * @param {Object} modelSchema
  * @param {Object} entityData  A plain object containing the entity properties and
  * values
  * @return {null|Object}  If the entity is successfully created the model entity
  * instance is returned, otherwise null.
  */
-export function * hydrateEntity( modelName, entityData ) {
+export function* hydrateEntity( modelName, modelSchema, entityData ) {
 	modelName = singularModelName( modelName );
 	const factory = yield resolveSelect(
 		SCHEMA_REDUCER_KEY,
 		'getFactoryForModel',
-		modelName
+		modelName,
+		modelSchema
 	);
 	if ( ! isModelEntityFactoryOfModel( factory, modelName ) ) {
 		return null;
@@ -92,7 +94,7 @@ export function* receiveEntityAndResolve( entity ) {
 		'finishResolution',
 		CORE_REDUCER_KEY,
 		'getEntityById',
-		[ entity.modelName.toLowerCase(), entity.id ]
+		[ entity.modelName.toLowerCase(), entity.id, [] ]
 	);
 }
 
@@ -115,7 +117,7 @@ export function* receiveEntitiesAndResolve( modelName, entities ) {
 			'finishResolution',
 			CORE_REDUCER_KEY,
 			'getEntityById',
-			[ modelName, entityIds.pop() ]
+			[ modelName, entityIds.pop(), [] ]
 		);
 	}
 	yield dispatch(
@@ -136,7 +138,7 @@ export function* receiveEntitiesAndResolve( modelName, entities ) {
 function assertIsModelEntity( entity ) {
 	if ( ! isModelEntity( entity ) ) {
 		throw new InvalidModelEntity(
-			'receiveEntityIdAndResolve expects an instance of BaseEntity',
+			'receiveEntityAndResolve expects an instance of BaseEntity',
 			entity,
 		);
 	}
