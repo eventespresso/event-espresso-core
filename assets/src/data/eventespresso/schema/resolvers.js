@@ -58,9 +58,9 @@ export function* getFactoryForModel( modelName, schema = {} ) {
 			'getSchemaForModel',
 			modelName
 		);
-	}
-	if ( ! isSchemaResponseOfModel( schema, modelName ) ) {
-		return null;
+		if ( ! isSchemaResponseOfModel( schema, modelName ) ) {
+			return null;
+		}
 	}
 	const factory = createEntityFactory(
 		modelName,
@@ -99,7 +99,8 @@ export function* getRelationEndpointForEntityId(
 		CORE_REDUCER_KEY,
 		'getEntityById',
 		modelName,
-		entityId
+		entityId,
+		[]
 	);
 	relationModelName = singularModelName( relationModelName );
 	const pluralRelationName = pluralModelName( relationModelName );
@@ -231,30 +232,58 @@ export function* getRelationType( modelName, relationName ) {
  * A resolver for retrieving the relation schema from the server for the given
  * modelName and relationName.
  *
+ * @param {Object} schema
+ * @param {string} modelName
+ * @param {string} relationName
+ * @throws Error
+ */
+export function* hydrateRelationSchema( schema, modelName, relationName ) {
+	modelName = singularModelName( modelName );
+	relationName = singularModelName( relationName );
+	console.log(
+		'%c hydrateRelationSchema %c > ' + modelName +
+		'%c > relation %c' + relationName +
+		'%c > schema: ' + schema,
+		'color: Coral; font-size:16px;',
+		'color: DarkSalmon;',
+		'color: LightGrey;',
+		'color: DarkSalmon;',
+		'color: DarkSalmon;',
+		schema
+	);
+	yield receiveRelationSchema(
+		modelName,
+		relationName,
+		schema
+	);
+}
+
+/**
+ * A resolver for retrieving the relation schema from the server for the given
+ * modelName and relationName.
+ *
  * @param {string} modelName
  * @param {string} relationName
  * @throws Error
  */
 export function* getRelationSchema( modelName, relationName ) {
 	modelName = singularModelName( modelName );
-	relationName = singularModelName( relationName );
-	const pluralRelationName = pluralModelName( relationName );
 	const schema = yield resolveSelect(
 		SCHEMA_REDUCER_KEY,
 		'getSchemaForModel',
 		modelName
 	);
 	if ( schema === null ) {
-		throw new Error(
-			'The ' + modelName + ' does not have a schema'
-		);
+		throw new Error( 'The ' + modelName + ' does not have a schema' );
 	}
+	relationName = singularModelName( relationName );
+	const pluralRelationName = pluralModelName( relationName );
 	// is there a schema for plural relation name?
 	let typeSchema = schema.schema.properties[ pluralRelationName ] || null;
 	typeSchema = typeSchema === null &&
 		! isUndefined( schema.schema.properties[ relationName ] ) ?
-		schema.schema.properties[ relationName ] :
-		typeSchema;
+			schema.schema.properties[ relationName ] :
+			typeSchema;
 	if ( typeSchema === null ) {
 		throw new Error(
 			'There is no relation for ' + relationName + ' on the ' +
