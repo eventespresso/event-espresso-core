@@ -8,6 +8,7 @@ use EventEspresso\core\services\graphql\types\TypeBase;
 use EventEspresso\core\services\graphql\fields\GraphQLField;
 use EventEspresso\core\services\graphql\fields\GraphQLInputField;
 use EventEspresso\core\services\graphql\fields\GraphQLOutputField;
+use EventEspresso\core\domain\services\graphql\mutators\EventUpdate;
 
 /**
  * Class Event
@@ -187,5 +188,21 @@ class Event extends TypeBase
                 __('Flag indicating event is expired or not', 'event_espresso')
             ),
         ];
+    }
+
+
+    /**
+     * Extends the existing WP GraphQL mutations.
+     * 
+     * @since $VID:$
+     */
+    public function extendMutations()
+    {
+        add_action(
+            'graphql_post_object_mutation_update_additional_data',
+            EventUpdate::mutateFields($this->model, $this),
+            10,
+            6
+        );
     }
 }

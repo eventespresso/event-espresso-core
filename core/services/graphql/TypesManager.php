@@ -84,6 +84,9 @@ class TypesManager
                 register_graphql_field($typeName, $fieldName, $config);
             }
         }
+        if (is_callable([$type, 'extendMutations'])) {
+            $type->extendMutations();
+        }
     }
 
 

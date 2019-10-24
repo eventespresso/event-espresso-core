@@ -8,6 +8,7 @@ use EventEspresso\core\services\graphql\types\TypeBase;
 use EventEspresso\core\services\graphql\fields\GraphQLField;
 use EventEspresso\core\services\graphql\fields\GraphQLOutputField;
 use EventEspresso\core\services\graphql\fields\GraphQLInputField;
+use EventEspresso\core\domain\services\graphql\mutators\VenueUpdate;
 
 /**
  * Class Venue
@@ -181,5 +182,21 @@ class Venue extends TypeBase
                 __('Show Google Map?', 'event_espresso')
             ),
         ];
+    }
+
+
+    /**
+     * Extends the existing WP GraphQL mutations.
+     * 
+     * @since $VID:$
+     */
+    public function extendMutations()
+    {
+        add_action(
+            'graphql_post_object_mutation_update_additional_data',
+            VenueUpdate::mutateFields($this->model, $this),
+            10,
+            6
+        );
     }
 }
