@@ -8,9 +8,10 @@ import { addQueryArgs } from '@wordpress/url';
 /**
  * Appends provided calculated fields to the provided path if not empty.
  *
- * Also, if modelName is passed in undefined, then any fields are appended
- * without modification.  Otherwise they will be suffixed with the modelName as
- * a part of the query to indicate what model the calculated fields apply to.
+ * Also, if modelName is supplied, then any fields will be
+ * suffixed with the modelName as a part of the query to
+ * indicate what model the calculated fields apply to.
+ * Otherwise they are appended without modification.
  *
  * @param {string} path
  * @param {Array<string>} calculatedFields
@@ -20,15 +21,13 @@ import { addQueryArgs } from '@wordpress/url';
 export const appendCalculatedFieldsToPath = (
 	path,
 	calculatedFields,
-	modelName
+	modelName = ''
 ) => {
 	calculatedFields = castArray( calculatedFields );
 	if ( calculatedFields.length > 0 ) {
 		// setup fields string
-		const nameForQueryString = modelName !== undefined ?
-			modelNameForQueryString(
-				singularModelName( modelName )
-			) :
+		const nameForQueryString = modelName !== '' ?
+			modelNameForQueryString( singularModelName( modelName ) ) :
 			'';
 		const queryStrings = nameForQueryString ?
 			calculatedFields.map(
