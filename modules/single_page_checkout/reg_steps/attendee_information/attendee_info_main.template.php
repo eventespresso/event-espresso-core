@@ -23,24 +23,8 @@
 $att_nmbr = 0;
 $prev_event = 0;
 $prev_ticket = 0;
-$total_registrations = count($registrations);
-$reg_forms = [];
 
-if ($total_registrations > 0) {
-    // Loop registrations to get the reg. forms.
-    foreach ($registrations as $registration) {
-        if ($registration instanceof EE_Registration) {
-            // Attendee questions.
-            $reg_form = trim(${ EE_Template_Layout::get_subform_name($registration->reg_url_link()) });
-            if (!empty($reg_form)) {
-                $reg_forms[] = $reg_form;
-            }
-        }
-    }
-
-    // Store the total extracted forms.
-    $total_forms = count($reg_forms);
-
+if (count($registrations) > 0) {
     foreach ($registrations as $registration) {
         if ($registration instanceof EE_Registration) {
             $att_nmbr++;
@@ -90,14 +74,9 @@ if ($total_registrations > 0) {
                 <?php } ?>
 
                 <?php
-                // If only one form is available, we display the form once.
-                if ($total_forms == 1 && $att_nmbr - 1 == $total_forms) {
-                    // Display the first and only form.
-                    echo $reg_forms[0];
-                } elseif ($total_forms > 1) {
-                    // Display the extra forms normally.
-                    echo $reg_forms[ $att_nmbr - 1 ];
-                }
+                // ATTENDEE QUESTIONS
+                $reg_form = EE_Template_Layout::get_subform_name($registration->reg_url_link());
+                echo ${$reg_form};
                 ?>
 
             </div>
@@ -117,5 +96,3 @@ if ($total_registrations > 0) {
         <?php _e('show&nbsp;event&nbsp;questions', 'event_espresso'); ?>
     </a>
 </div>
-
-
