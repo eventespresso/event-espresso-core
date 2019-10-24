@@ -26,6 +26,7 @@ import useEditorPersistence
 const EventEditor = ( { eventId, eventData } ) => {
 	useEditorPersistence( eventId );
 	const {
+		initialized,
 		eventLoaded,
 		eventDatesLoaded,
 		ticketsLoaded,
@@ -34,7 +35,7 @@ const EventEditor = ( { eventId, eventData } ) => {
 	return (
 		<>
 			<FormPlaceholder
-				loading={ ! eventLoaded }
+				loading={ ! initialized }
 				notice={ sprintf(
 					_x(
 						'loading event dates and available tickets%s',
@@ -45,18 +46,18 @@ const EventEditor = ( { eventId, eventData } ) => {
 				) }
 			/>
 			<FormContainer
-				loading={ ! eventLoaded }
+				loading={ ! initialized }
 				id={ `ee-editor-event-dates-and-tickets-${ eventId }` }
 				htmlClass="ee-editor-event-dates-and-tickets"
 			>
 				<EventDatesMetabox
 					eventId={ eventId }
-					eventDatesLoaded={ eventDatesLoaded }
-					venueLoaded={ venueLoaded }
+					eventDatesLoaded={ initialized }
+					venueLoaded={ initialized }
 				/>
 				<TicketsMetabox
 					eventId={ eventId }
-					ticketsLoaded={ ticketsLoaded }
+					ticketsLoaded={ initialized }
 				/>
 			</FormContainer>
 		</>

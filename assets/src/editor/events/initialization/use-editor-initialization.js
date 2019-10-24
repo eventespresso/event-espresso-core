@@ -54,6 +54,10 @@ const useEditorInitialization = ( eventData ) => {
 	};
 	if ( ! initialized ) {
 		initializeEntities( generator.current ).then( () => {
+			console.log(
+				'%c~~~ INITIALIZATION COMPLETE ~~~ ',
+				'color: Lime; font-size:24px;'
+			);
 			setInitialized( true );
 		} );
 	}
