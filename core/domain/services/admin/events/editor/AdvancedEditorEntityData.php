@@ -173,19 +173,27 @@ class AdvancedEditorEntityData
         if (! (is_array($event) && $event[0] && $event[0]['EVT_ID'] && $event[0]['EVT_ID'] === $eventId)) {
             return [];
         }
-        $relations = [ 'Event' => [ $eventId => [] ] ];
+        $event = [$eventId => $event[0]];
+        $relations = [
+            'event' => [ $eventId => [] ],
+            'datetime' => [],
+            'ticket' => [],
+            'price' => [],
+        ];
         $eventDates = $this->spoofer->getApiResults(
             $this->datetime_model,
             [['EVT_ID' => $eventId]]
         );
-        $relations['Event'][ $eventId ]['Datetime'] = [];
+        $relations['event'][ $eventId ]['datetime'] = [];
 
+        $datetimes = [];
         $eventDateTickets = [];
         if (is_array($eventDates)){
             foreach ($eventDates as $eventDate) {
                 if (isset($eventDate['DTT_ID']) && $eventDate['DTT_ID']) {
                     $DTT_ID = $eventDate['DTT_ID'];
-                    $relations['Event'][ $eventId ]['Datetime'][ $DTT_ID ] = [];
+                    $datetimes[ $DTT_ID ] = $eventDate;
+                    $relations['event'][ $eventId ]['datetime'][] = $DTT_ID;
                     $eventDateTickets[ $DTT_ID ] = $this->spoofer->getApiResults(
                         $this->ticket_model,
                         [['Datetime.DTT_ID' => $DTT_ID]]
@@ -193,23 +201,28 @@ class AdvancedEditorEntityData
                 }
             }
         }
-        $ticketPrices = [];
+
+        $prices = [];
+        $tickets = [];
         if (is_array($eventDateTickets)) {
-            foreach ($eventDateTickets as $DTT_ID => $tickets) {
-                if (is_array($tickets)) {
-                    $relations['Event'][ $eventId ]['Datetime'][ $DTT_ID ]['Ticket'] = [];
-                    foreach ($tickets as $ticket) {
+            foreach ($eventDateTickets as $DTT_ID => $dateTickets) {
+                if (is_array($dateTickets)) {
+                    $relations['datetime'][ $DTT_ID ]['ticket'] = [];
+                    foreach ($dateTickets as $ticket) {
                         if (isset($ticket['TKT_ID']) && $ticket['TKT_ID']) {
                             $TKT_ID = $ticket['TKT_ID'];
+                            $tickets[ $TKT_ID ] = $ticket;
+                            $relations['datetime'][ $DTT_ID ]['ticket'][] = $TKT_ID;
                             $ticketPrices[ $TKT_ID ] = $this->spoofer->getApiResults(
                                 $this->price_model,
                                 [['Ticket.TKT_ID' => $TKT_ID]]
                             );
                             if (is_array($ticketPrices[ $TKT_ID ])) {
-                                $relations['Event'][ $eventId ]['Datetime'][ $DTT_ID ]['Ticket'][ $TKT_ID ]['Price'] = [];
+                                $relations['ticket'][ $TKT_ID ]['price'] = [];
                                 foreach ($ticketPrices[ $TKT_ID ] as $ticketPrice) {
                                     $PRC_ID = $ticketPrice['PRC_ID'];
-                                    $relations['Event'][ $eventId ]['Datetime'][ $DTT_ID ]['Ticket'][ $TKT_ID ]['Price'][ $PRC_ID ] = null;
+                                    $prices[ $PRC_ID ] = $ticketPrice;
+                                    $relations['ticket'][ $TKT_ID ]['price'][] = $PRC_ID;
                                 }
                             }
                         }
@@ -217,16 +230,21 @@ class AdvancedEditorEntityData
                 }
             }
         }
-        $price_types = $this->spoofer->getApiResults(
+        $price_type_results = $this->spoofer->getApiResults(
             $this->price_type_model,
             [['PRT_deleted' => false]]
         );
+        $price_types = [];
+        foreach ($price_type_results as $price_type) {
+            $price_types[ $price_type['PRT_ID'] ] = $price_type;
+        }
         $venue = $this->spoofer->getApiResults(
             $this->venue_model,
             [['Event.EVT_ID' => $eventId]]
         );
         if (is_array($venue) && $venue[0] && $venue[0]['VNU_ID']) {
-            $relations['Event'][ $eventId ]['Venue'][ $venue[0]['VNU_ID' ] ] = [];
+            $relations['event'][ $eventId ]['venue'] = [ $venue[0]['VNU_ID'] ];
+            $venue = [$venue[0]['VNU_ID'] => $venue[0]];
         }
 
         $schemas = [
@@ -240,12 +258,12 @@ class AdvancedEditorEntityData
         return [
             'eventId'    => $eventId,
             'event'      => $event,
-            'datetime'   => $eventDates,
-            'ticket'     => $eventDateTickets,
-            'price'      => $ticketPrices,
+            'datetime'   => $datetimes,
+            'ticket'     => $tickets,
+            'price'      => $prices,
             'price_type' => $price_types,
             'venue'      => $venue,
-            'models'     => $schemas,
+            'schemas'     => $schemas,
             'relations'  => $relations,
         ];
     }
