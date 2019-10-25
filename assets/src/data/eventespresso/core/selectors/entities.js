@@ -53,14 +53,32 @@ const getEntitiesForModel = /* createSelector( */
  * @param {Object} state
  * @param {string} modelName
  * @param {number|string} entityId
+ * @param {Array} calculatedFields
  * @return {BaseEntity|null} Returns the model entity or null.
  */
-const getEntityById = ( state, modelName, entityId ) => {
+const getEntityById = ( state, modelName, entityId, calculatedFields = [] ) => {
 	modelName = singularModelName( modelName );
-	return state.entities.getIn( [
+	const entity = state.entities.getIn( [
 		modelName,
 		normalizeEntityId( entityId ),
-	] ) || null;
+	] );
+	console.log(
+		'%c getEntityById selectors/entities.js' +
+		'%c modelName: %c ' + modelName +
+		'%c entityId: %c ' + entityId +
+		'%c calculatedFields: %c ' + calculatedFields.join() +
+		'%c entity: ',
+		'color: Yellow; font-size:14px;',
+		'color: LightGrey;',
+		'color: Khaki;',
+		'color: LightGrey;',
+		'color: Khaki;',
+		'color: LightGrey;',
+		'color: Khaki;',
+		'color: LightGrey;',
+		entity
+	);
+	return entity || null;
 };
 
 /**
@@ -100,7 +118,7 @@ const retrieveEntitiesByIds = createSelector(
 		const entities = [];
 		if ( state.entities.has( modelName ) ) {
 			entityIds.forEach( ( entityId ) => {
-				const entity = getEntityById( state, modelName, entityId );
+				const entity = getEntityById( state, modelName, entityId, [] );
 				if ( entity !== null ) {
 					entities.push( entity );
 				}

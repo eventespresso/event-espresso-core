@@ -20,7 +20,7 @@ export const createResolvers = ( resolver ) => MODEL_NAMES.reduce(
 			modelName,
 			'byId',
 			'get'
-		) ] = ( entityId ) => resolver.getEntityById( modelName, entityId );
+		) ] = ( entityId ) => resolver.getEntityById( modelName, entityId, [] );
 		return resolvers;
 	},
 	{}

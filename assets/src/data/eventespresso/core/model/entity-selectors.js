@@ -40,7 +40,7 @@ export const createSelectors = ( selector ) => MODEL_NAMES.reduce(
 		) ] = (
 			state,
 			entityId
-		) => selector.getEntityById( state, modelName, entityId );
+		) => selector.getEntityById( state, modelName, entityId, [] );
 
 		selectors[ getMethodName(
 			modelName,

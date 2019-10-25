@@ -18,5 +18,5 @@ export function getLatestCheckin( state, registrationId, dateTimeId ) {
 	if ( ! checkinId ) {
 		return null;
 	}
-	return getEntityById( state, 'checkin', checkinId );
+	return getEntityById( state, 'checkin', checkinId, [] );
 }
