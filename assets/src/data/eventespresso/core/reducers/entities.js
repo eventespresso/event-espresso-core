@@ -12,6 +12,7 @@ import { normalizeEntityId } from '@eventespresso/helpers';
  */
 import { ACTION_TYPES } from '../actions/action-types';
 const { entities: types, resets: resetTypes } = ACTION_TYPES;
+const DEFAULT_STATE = fromJS( DEFAULT_CORE_STATE.entities );
 
 /**
  * This replaces any entities in the incoming object with matching entities (by
@@ -147,10 +148,7 @@ export {
  * @param {Object} action
  * @return {Immutable.Map} New or existing state
  */
-export default function entities(
-	state = fromJS( DEFAULT_CORE_STATE.entities ),
-	action
-) {
+export default function entities( state = DEFAULT_STATE, action ) {
 	if ( action.type ) {
 		switch ( action.type ) {
 			case types.RECEIVE_ENTITY_RECORDS:
@@ -161,7 +159,7 @@ export default function entities(
 			case types.REMOVE_ENTITY_BY_ID :
 				return removeEntityById( state, action );
 			case resetTypes.RESET_ALL_STATE :
-				return fromJS( DEFAULT_CORE_STATE.entities );
+				return DEFAULT_STATE;
 			case resetTypes.RESET_STATE_FOR_MODEL :
 				return state.has( singularModelName( action.modelName ) ) ?
 					state.set( singularModelName( action.modelName ), Map() ) :
