@@ -8,6 +8,9 @@ use EventEspresso\core\services\graphql\types\TypeBase;
 use EventEspresso\core\services\graphql\fields\GraphQLField;
 use EventEspresso\core\services\graphql\fields\GraphQLInputField;
 use EventEspresso\core\services\graphql\fields\GraphQLOutputField;
+use EventEspresso\core\domain\services\graphql\mutators\TicketCreate;
+use EventEspresso\core\domain\services\graphql\mutators\TicketDelete;
+use EventEspresso\core\domain\services\graphql\mutators\TicketUpdate;
 
 /**
  * Class Ticket
@@ -184,17 +187,79 @@ class Ticket extends TypeBase
                 __('Flag indicating whether the ticket is free.', 'event_espresso')
             ),
             new GraphQLOutputField(
-                'Event',
+                'event',
                 'Event',
                 null,
                 __('Event of the ticket.', 'event_espresso')
             ),
-            new GraphQLInputField(
-                'event',
-                'Int',
-                null,
-                __('Event ID of the ticket.', 'event_espresso')
-            ),
         ];
+    }
+
+
+    /**
+     * @param array $inputFields The mutation input fields.
+     *
+     * @throws InvalidArgumentException
+     * @throws ReflectionException
+     * @since $VID:$
+     */
+    public function registerMutations(array $inputFields)
+    {
+        // Register mutation to update an entity.
+        register_graphql_mutation(
+			'update' . $this->name(),
+			[
+				'inputFields'         => $inputFields,
+				'outputFields'        => [
+                    lcfirst($this->name()) => [
+                        'type'    => $this->name(),
+                        'resolve' => [$this, 'resolveFromPayload'],
+                    ],
+                ],
+				'mutateAndGetPayload' => TicketUpdate::mutateAndGetPayload($this->model, $this),
+			]
+        );
+        // Register mutation to delete an entity.
+        register_graphql_mutation(
+			'delete' . $this->name(),
+			[
+				'inputFields'         => [
+                    'id'                => $inputFields['id'],
+                    'deletePermanently' => [
+                        'type'        => 'Boolean',
+                        'description' => __( 'Whether to delete the entity permanently.', 'event_espresso' ),
+                    ],
+                ],
+				'outputFields'        => [
+                    lcfirst($this->name()) => [
+                        'type'        => $this->name(),
+                        'description' => __( 'The object before it was deleted', 'event_espresso' ),
+                        'resolve'     => function ( $payload ) {
+                            $deleted = (object) $payload['deleted'];
+        
+                            return ! empty( $deleted ) ? $deleted : null;
+                        },
+                    ],
+                ],
+				'mutateAndGetPayload' => TicketDelete::mutateAndGetPayload($this->model, $this),
+			]
+        );
+
+        // remove primary key from input.
+        unset($inputFields['id']);
+        // Register mutation to update an entity.
+        register_graphql_mutation(
+			'create' . $this->name(),
+			[
+				'inputFields'         => $inputFields,
+				'outputFields'        => [
+                    lcfirst($this->name()) => [
+                        'type'    => $this->name(),
+                        'resolve' => [$this, 'resolveFromPayload'],
+                    ],
+                ],
+				'mutateAndGetPayload' => TicketCreate::mutateAndGetPayload($this->model, $this),
+			]
+		);
     }
 }
