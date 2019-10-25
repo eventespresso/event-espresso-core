@@ -248,13 +248,14 @@ class AdvancedEditorEntityData
         }
 
         $schemas = [
-            'event'      => $this->spoofer->getModelSchema($this->event_model),
-            'datetime'   => $this->spoofer->getModelSchema($this->datetime_model),
-            'ticket'     => $this->spoofer->getModelSchema($this->ticket_model),
-            'price'      => $this->spoofer->getModelSchema($this->price_model),
-            'price_type' => $this->spoofer->getModelSchema($this->price_type_model),
-            'venue'      => $this->spoofer->getModelSchema($this->venue_model),
+            'event'      => $this->spoofer->getModelSchema('events'),
+            'datetime'   => $this->spoofer->getModelSchema('datetimes'),
+            'ticket'     => $this->spoofer->getModelSchema('tickets'),
+            'price'      => $this->spoofer->getModelSchema('prices'),
+            'price_type' => $this->spoofer->getModelSchema('price_types'),
+            'venue'      => $this->spoofer->getModelSchema('venues'),
         ];
+
         return [
             'eventId'    => $eventId,
             'event'      => $event,

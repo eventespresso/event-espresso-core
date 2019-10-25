@@ -22,20 +22,20 @@ namespace EventEspresso\core\domain\services\converters;
 
 use DomainException;
 use EE_Error;
+use EED_Core_Rest_Api;
 use EEM_Base;
-use EventEspresso\core\entities\models\JsonModelSchema;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
 use EventEspresso\core\exceptions\ModelConfigurationException;
 use EventEspresso\core\exceptions\RestPasswordIncorrectException;
 use EventEspresso\core\exceptions\RestPasswordRequiredException;
 use EventEspresso\core\exceptions\UnexpectedEntityException;
-use EventEspresso\core\libraries\rest_api\CalculatedModelFields;
 use EventEspresso\core\libraries\rest_api\controllers\model\Read;
 use EventEspresso\core\libraries\rest_api\RestException;
 use InvalidArgumentException;
 use ReflectionException;
 use WP_REST_Request;
+use WP_REST_Server;
 
 /**
  * Class RestApiSpoofer
@@ -49,30 +49,51 @@ class RestApiSpoofer
 {
 
     /**
+     * @var WP_REST_Server $wp_rest_server
+     */
+    protected $wp_rest_server;
+
+    /**
      * @var Read
      */
     protected $rest_controller;
 
     /**
-     * @var CalculatedModelFields
+     * @var EED_Core_Rest_Api $rest_module
      */
-    protected $fields_calculator;
+    protected $rest_module;
+
 
     /**
      * RestApiSpoofer constructor.
      *
+     * @param WP_REST_Server        $wp_rest_server
+     * @param EED_Core_Rest_Api $rest_module
      * @param Read                  $rest_api
-     * @param CalculatedModelFields $fields_calculator
      * @param string                $api_version
      */
-    public function __construct(Read $rest_api, CalculatedModelFields $fields_calculator, $api_version = '4.8.36')
-    {
+    public function __construct(
+        WP_REST_Server $wp_rest_server,
+        EED_Core_Rest_Api $rest_module,
+        Read $rest_api,
+        $api_version = '4.8.36'
+    ) {
+        $this->wp_rest_server = $wp_rest_server;
+        $this->rest_module = $rest_module;
         $this->rest_controller = $rest_api;
         $this->rest_controller->setRequestedVersion($api_version);
-        $this->fields_calculator = $fields_calculator;
+        $this->setUpRestServer();
     }
 
 
+    private function setUpRestServer()
+    {
+        /* @var WP_REST_Server $wp_rest_server */
+        global $wp_rest_server;
+        $wp_rest_server = $this->wp_rest_server;
+        EED_Core_Rest_Api::set_hooks_both();
+        do_action('rest_api_init', $this->wp_rest_server);
+    }
     /**
      * @param EEM_Base $model
      * @param array    $query_params
@@ -111,23 +132,19 @@ class RestApiSpoofer
 
 
     /**
-     * @param EEM_Base $model
+     * @param string $endpoint
      * @return array
      * @throws EE_Error
      * @since $VID:$
      */
-    public function getModelSchema(EEM_Base $model)
+    public function getModelSchema($endpoint)
     {
-        $model_schema = new JsonModelSchema($model, $this->fields_calculator);
-        return $model_schema->getModelSchemaForRelations(
-            $this->rest_controller->getModelVersionInfo()->relationSettings($model),
-            $this->rest_controller->customizeSchemaForRestResponse(
-                $model,
-                $model_schema->getModelSchemaForFields(
-                    $this->rest_controller->getModelVersionInfo()->fieldsOnModelInThisVersion($model),
-                    $model_schema->getInitialSchemaStructure()
-                )
+        $response = $this->wp_rest_server->dispatch(
+            new WP_REST_Request(
+                'OPTIONS',
+                "/ee/v4.8.36/{$endpoint}"
             )
         );
+        return $response->get_data();
     }
 }
