@@ -42,7 +42,7 @@ function receiveRelatedEntities(
 		modelName,
 		entityId,
 		relationName,
-		relatedEntityIds,
+		relatedEntityIds
 	};
 }
 
