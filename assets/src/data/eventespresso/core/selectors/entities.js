@@ -62,22 +62,6 @@ const getEntityById = ( state, modelName, entityId, calculatedFields = [] ) => {
 		modelName,
 		normalizeEntityId( entityId ),
 	] );
-	console.log(
-		'%c getEntityById selectors/entities.js' +
-		'%c modelName: %c ' + modelName +
-		'%c entityId: %c ' + entityId +
-		'%c calculatedFields: %c ' + calculatedFields.join() +
-		'%c entity: ',
-		'color: Yellow; font-size:14px;',
-		'color: LightGrey;',
-		'color: Khaki;',
-		'color: LightGrey;',
-		'color: Khaki;',
-		'color: LightGrey;',
-		'color: Khaki;',
-		'color: LightGrey;',
-		entity
-	);
 	return entity || null;
 };
 

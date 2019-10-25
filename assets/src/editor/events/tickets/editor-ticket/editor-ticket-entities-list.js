@@ -41,6 +41,10 @@ const {
  * @return {Object} rendered event dates list
  */
 const EditorTicketEntitiesList = ( { ...otherProps } ) => {
+	console.log(
+		'%c render EditorTicketEntitiesList: ',
+		'color: Violet; font-size:18px;'
+	);
 	const listId = 'event-editor-ticket-list';
 	const {
 		isChained,

@@ -47,8 +47,8 @@ const EditorDateEntitiesList = ( {
 	...otherProps
 } ) => {
 	console.log(
-		'%c EditorDateEntitiesList: ',
-		'color: Magenta; font-size:24px;'
+		'%c render EditorDateEntitiesList: ',
+		'color: Magenta; font-size:18px;'
 	);
 	const listId = 'event-editor-dates-list';
 	const { eventDates } = useEventEditorEventDates();

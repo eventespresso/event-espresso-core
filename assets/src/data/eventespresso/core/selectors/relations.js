@@ -83,20 +83,6 @@ const getRelatedEntities = createSelector(
 		if ( ! isModelEntity( entity ) ) {
 			throw new InvalidModelEntity( '', entity );
 		}
-		console.log(
-			'%c getRelatedEntities selectors/relations.js => %c ' +
-			entity.modelName.toLowerCase() + ' ' + entity.id +
-			'%c relation %c ' + relationModelName +
-			'%c calculatedFields: ',
-			'color: Yellow; font-size:16px;',
-			'color: Khaki;',
-			'color: LightGrey;',
-			'color: Khaki;',
-			'color: LightGrey;',
-			calculatedFields,
-			'entity: ',
-			entity
-		);
 		relationModelName = singularModelName( relationModelName );
 		const relationIds = getIdsForRelatedEntities(
 			state,
