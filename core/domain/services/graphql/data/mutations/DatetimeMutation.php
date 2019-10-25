@@ -4,7 +4,7 @@ namespace EventEspresso\core\domain\services\graphql\data\mutations;
 /**
  * Class DatetimeMutation
  *
- * @package       Datetime Espresso
+ * @package       Event Espresso
  * @author        Manzoor Wani
  */
 class DatetimeMutation
