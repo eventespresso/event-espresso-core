@@ -31,6 +31,16 @@ const DEFAULT_EMPTY_ARRAY = [];
  *   the REST request.
  */
 export function* getItems( identifier, queryString ) {
+	console.log(
+		'%c getItems resolver' +
+		'%c identifier: %c ' + identifier +
+		'%c queryString: %c ' + queryString,
+		'color: #ff0066; font-size:16px;',
+		'color: Grey;',
+		'color: #ff0066; font-size:12px;',
+		'color: Grey;',
+		'color: #ff0066; font-size:12px;',
+	);
 	const items = yield fetch( {
 		path: queryString,
 	} );
@@ -98,6 +108,16 @@ export function* buildAndDispatchEntitiesFromResponse( modelName, response ) {
  * entities retrieved.
  */
 export function* getEntities( modelName, queryString ) {
+	console.log(
+		'%c getEntities resolver' +
+		'%c modelName: %c ' + modelName +
+		'%c queryString: %c ' + queryString,
+		'color: #ff0066; font-size:16px;',
+		'color: Grey;',
+		'color: #ff0066; font-size:12px;',
+		'color: Grey;',
+		'color: #ff0066; font-size:12px;',
+	);
 	const response = yield fetch( {
 		path: applyQueryString( modelName, queryString ),
 	} );
@@ -119,6 +139,16 @@ export function* getEntities( modelName, queryString ) {
  * @return {IterableIterator<*>|Array} An empty array if no entities retrieved.
  */
 export function* getEntitiesByIds( modelName, ids = [] ) {
+	console.log(
+		'%c getEntitiesByIds resolver' +
+		'%c modelName: %c ' + modelName +
+		'%c ids: ',
+		'color: #ff0066; font-size:16px;',
+		'color: Grey;',
+		'color: #ff0066; font-size:12px;',
+		'color: Grey;',
+		ids
+	);
 	const queryString = getPrimaryKeyQueryString( modelName, ids );
 	const response = yield fetch( {
 		path: applyQueryString(
