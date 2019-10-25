@@ -5,6 +5,13 @@ use EEM_Datetime;
 use EE_Datetime;
 use EventEspresso\core\domain\services\graphql\types\Datetime;
 use EventEspresso\core\domain\services\graphql\data\mutations\DatetimeMutation;
+
+use EE_Error;
+use InvalidArgumentException;
+use ReflectionException;
+use EventEspresso\core\exceptions\InvalidDataTypeException;
+use EventEspresso\core\exceptions\InvalidInterfaceException;
+
 use GraphQL\Type\Definition\ResolveInfo;
 use WPGraphQL\AppContext;
 use GraphQL\Error\UserError;
@@ -21,6 +28,20 @@ class DatetimeCreate
 	 */
 	public static function mutateAndGetPayload(EEM_Datetime $model, Datetime $type)
 	{
+		/**
+		 * Creates an entity.
+		 *
+		 * @param array         $input   The input for the mutation
+		 * @param AppContext    $context The AppContext passed down to all resolvers
+		 * @param ResolveInfo   $info    The ResolveInfo passed down to all resolvers
+		 *
+		 * @throws UserError
+		 * @throws ReflectionException
+		 * @throws InvalidArgumentException
+		 * @throws InvalidInterfaceException
+		 * @throws InvalidDataTypeException
+		 * @throws EE_Error
+		 */
 		return static function ($input, AppContext $context, ResolveInfo $info) use ($model, $type)
 		{
 
@@ -32,7 +53,7 @@ class DatetimeCreate
 				throw new UserError(sprintf(__('Sorry, you are not allowed to create %1$s', 'event_espresso' ), $type->name()));
 			}
 
-			$args = DatetimeMutation::prepare_fields($input, $mutation_name);
+			$args = DatetimeMutation::prepare_fields($input);
 
 			$entity = EE_Datetime::new_instance($args);
 			$id = $entity->save();

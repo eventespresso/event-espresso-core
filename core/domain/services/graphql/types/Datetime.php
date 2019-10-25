@@ -9,6 +9,7 @@ use EventEspresso\core\services\graphql\fields\GraphQLField;
 use EventEspresso\core\services\graphql\fields\GraphQLInputField;
 use EventEspresso\core\services\graphql\fields\GraphQLOutputField;
 use EventEspresso\core\domain\services\graphql\mutators\DatetimeCreate;
+use EventEspresso\core\domain\services\graphql\mutators\DatetimeDelete;
 use EventEspresso\core\domain\services\graphql\mutators\DatetimeUpdate;
 use InvalidArgumentException;
 use ReflectionException;
@@ -213,6 +214,32 @@ class Datetime extends TypeBase
 				'mutateAndGetPayload' => DatetimeUpdate::mutateAndGetPayload($this->model, $this),
 			]
         );
+        // Register mutation to delete an entity.
+        register_graphql_mutation(
+			'delete' . $this->name(),
+			[
+				'inputFields'         => [
+                    'id'                => $inputFields['id'],
+                    'deletePermanently' => [
+                        'type'        => 'Boolean',
+                        'description' => __( 'Whether to delete the entity permanently.', 'event_espresso' ),
+                    ],
+                ],
+				'outputFields'        => [
+                    lcfirst($this->name()) => [
+                        'type'        => $this->name(),
+                        'description' => __( 'The object before it was deleted', 'event_espresso' ),
+                        'resolve'     => function ( $payload ) {
+                            $deleted = (object) $payload['deleted'];
+        
+                            return ! empty( $deleted ) ? $deleted : null;
+                        },
+                    ],
+                ],
+				'mutateAndGetPayload' => DatetimeDelete::mutateAndGetPayload($this->model, $this),
+			]
+        );
+
         // remove primary key from input.
         unset($inputFields['id']);
         // Register mutation to update an entity.

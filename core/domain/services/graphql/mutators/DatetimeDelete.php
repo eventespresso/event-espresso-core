@@ -4,7 +4,6 @@ namespace EventEspresso\core\domain\services\graphql\mutators;
 use EEM_Datetime;
 use EE_Datetime;
 use EventEspresso\core\domain\services\graphql\types\Datetime;
-use EventEspresso\core\domain\services\graphql\data\mutations\DatetimeMutation;
 
 use EE_Error;
 use InvalidArgumentException;
@@ -16,7 +15,7 @@ use GraphQL\Type\Definition\ResolveInfo;
 use WPGraphQL\AppContext;
 use GraphQL\Error\UserError;
 
-class DatetimeUpdate {
+class DatetimeDelete {
 
 	/**
 	 * Defines the mutation data modification closure.
@@ -28,7 +27,7 @@ class DatetimeUpdate {
 	public static function mutateAndGetPayload(EEM_Datetime $model, Datetime $type)
 	{
 		/**
-		 * Updates an entity.
+		 * Deletes an entity.
 		 *
 		 * @param array         $input   The input for the mutation
 		 * @param AppContext    $context The AppContext passed down to all resolvers
@@ -63,20 +62,18 @@ class DatetimeUpdate {
 			 */
 			if (! $id || ! ($entity instanceof EE_Datetime)) {
 				// translators: the placeholder is the name of the type being updated
-				throw new UserError(sprintf(__( 'No %1$s could be found to update', 'event_espresso' ), $type->name()));
+				throw new UserError(sprintf(__( 'No %1$s could be found to delete', 'event_espresso' ), $type->name()));
 			}
 
-			$args = DatetimeMutation::prepare_fields($input);
-
-			// Update the entity
-			$result = $entity->save($args);
+			// Delete the entity
+			$result = ! empty($input['deletePermanently']) ? $entity->delete_permanently() : $entity->delete();
 
 			if (empty($result)) {
-				throw new UserError(__( 'The object failed to update but no error was provided', 'event_espresso'));
+				throw new UserError(__( 'The object failed to delete but no error was provided', 'event_espresso'));
 			}
 
 			return [
-				'id' => $id,
+				'deleted' => $entity,
 			];
 		};
 	}

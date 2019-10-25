@@ -13,12 +13,11 @@ class DatetimeMutation
 	/**
 	 * Maps the GraphQL input to a format that the model functions can use
 	 *
-	 * @param array  $input         Data coming from the GraphQL mutation query input
-	 * @param string $mutation_name Name of the mutation being performed
+	 * @param array  $input Data coming from the GraphQL mutation query input
 	 *
 	 * @return array
 	 */
-	public static function prepare_fields(array $input, $mutation_name)
+	public static function prepare_fields(array $input)
 	{
 
 		$args = [];
