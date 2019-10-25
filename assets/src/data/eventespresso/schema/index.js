@@ -40,3 +40,5 @@ export default registerStore( REDUCER_KEY, {
 } );
 
 export const SCHEMA_KEY = REDUCER_KEY;
+
+export { hydrateRelationSchema } from './resolvers';
