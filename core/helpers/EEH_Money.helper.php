@@ -26,7 +26,7 @@ class EEH_Money extends EEH_Base
     public static function strip_localized_money_formatting($money_value, $CNT_ISO = '')
     {
         $currency_config = EEH_Money::get_currency_config($CNT_ISO);
-        $money_value     = str_replace(
+        $money_value = str_replace(
             array(
                 $currency_config->thsnds,
                 $currency_config->dec_mrk,
@@ -37,7 +37,7 @@ class EEH_Money extends EEH_Base
             ),
             $money_value
         );
-        $money_value     = filter_var(
+        $money_value = filter_var(
             $money_value,
             FILTER_SANITIZE_NUMBER_FLOAT,
             FILTER_FLAG_ALLOW_FRACTION
@@ -85,53 +85,56 @@ class EEH_Money extends EEH_Base
         $float2 = (float) $float2;
         switch ($operator) {
             // equal
-            case "=":
-            case "==":
-            case "===":
-            case "eq":
+            case '=':
+            case '==':
+            case '===':
+            case 'eq':
                 if (abs($float1 - $float2) < $epsilon) {
                     return true;
                 }
                 break;
             // less than
-            case "<":
-            case "lt":
+            case '<':
+            case 'lt':
                 if (abs($float1 - $float2) < $epsilon) {
                     return false;
-                } else {
-                    if ($float1 < $float2) {
-                        return true;
-                    }
+                }
+                if ($float1 < $float2) {
+                    return true;
                 }
                 break;
             // less than or equal
-            case "<=":
-            case "lte":
-                if (self::compare_floats($float1, $float2, '<') || self::compare_floats($float1, $float2, '=')) {
+            case '<=':
+            case 'lte':
+                if (self::compare_floats($float1, $float2, '<')
+                    || self::compare_floats($float1, $float2, '=')
+                ) {
                     return true;
                 }
                 break;
             // greater than
-            case ">":
-            case "gt":
+            case '>':
+            case 'gt':
                 if (abs($float1 - $float2) < $epsilon) {
                     return false;
-                } else {
-                    if ($float1 > $float2) {
-                        return true;
-                    }
                 }
-                break;
-            // greater than or equal
-            case ">=":
-            case "gte":
-                if (self::compare_floats($float1, $float2, '>') || self::compare_floats($float1, $float2, '=')) {
+                if ($float1 > $float2) {
                     return true;
                 }
                 break;
-            case "<>":
-            case "!=":
-            case "ne":
+            // greater than or equal
+            case '>=':
+            case 'gte':
+                if (self::compare_floats($float1, $float2, '>')
+                    || self::compare_floats($float1, $float2, '=')
+                ) {
+                    return true;
+                }
+                break;
+            case '<>':
+            case '!=':
+            case '!==':
+            case 'ne':
                 if (abs($float1 - $float2) > $epsilon) {
                     return true;
                 }
@@ -140,7 +143,7 @@ class EEH_Money extends EEH_Base
                 throw new EE_Error(
                     sprintf(
                         __(
-                            "Unknown operator %s in EEH_Money::compare_floats()",
+                            'Unknown operator %s in EEH_Money::compare_floats()',
                             'event_espresso'
                         ),
                         $operator
@@ -162,7 +165,7 @@ class EEH_Money extends EEH_Base
     public static function get_format_for_jqplot($CNT_ISO = '')
     {
         // default format
-        $format          = 'f';
+        $format = 'f';
         $currency_config = $currency_config = EEH_Money::get_currency_config($CNT_ISO);
         // first get the decimal place and number of places
         $format = "%'." . $currency_config->dec_plc . $format;
@@ -178,18 +181,18 @@ class EEH_Money extends EEH_Base
      * @param string $CNT_ISO  If this is provided, then will attempt to get the currency settings for the country.
      *                         Otherwise will use currency settings for current active country on site.
      *                         Note: GoogleCharts uses ICU pattern set
-     *                         (@see http://icu-project.org/apiref/icu4c/classDecimalFormat.html#_details)
-     * @return string
+     *                         (@return array
      * @throws EE_Error
+     * @see http://icu-project.org/apiref/icu4c/classDecimalFormat.html#_details)
      */
     public static function get_format_for_google_charts($CNT_ISO = '')
     {
-        $currency_config            = EEH_Money::get_currency_config($CNT_ISO);
+        $currency_config = EEH_Money::get_currency_config($CNT_ISO);
         $decimal_places_placeholder = str_pad('', $currency_config->dec_plc, '0');
         // first get the decimal place and number of places
         $format = '#,##0.' . $decimal_places_placeholder;
         // currency symbol on right side.
-        $format          = $currency_config->sign_b4
+        $format = $currency_config->sign_b4
             ? $currency_config->sign . $format
             : $format
               . $currency_config->sign;
@@ -212,7 +215,7 @@ class EEH_Money extends EEH_Base
 
     /**
      * @param string $CNT_ISO
-     * @return EE_Currency_Config|null
+     * @return EE_Currency_Config
      * @throws EE_Error
      */
     public static function get_currency_config($CNT_ISO = '')
