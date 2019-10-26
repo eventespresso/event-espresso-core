@@ -494,6 +494,8 @@ class Extend_Events_Admin_Page extends Events_Admin_Page
         }
         if (EE_Registry::instance()->CAP->current_user_can('ee_read_global_messages', 'view_filtered_messages')) {
             $related_for_icon = EEH_MSG_Template::get_message_action_icon('see_notifications_for');
+            // $related_for_icon can sometimes be a string so 'css_class' would be an illegal offset
+            // (can only use numeric offsets when treating strings as arrays)
             if (is_array($related_for_icon) && isset($related_for_icon['css_class'], $related_for_icon['label'])) {
                 $items['view_related_messages'] = array(
                     'class' => $related_for_icon['css_class'],
