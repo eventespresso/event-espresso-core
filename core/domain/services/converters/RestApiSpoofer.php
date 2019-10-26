@@ -21,6 +21,7 @@
 namespace EventEspresso\core\domain\services\converters;
 
 use DomainException;
+use EE_Base_Class;
 use EE_Error;
 use EED_Core_Rest_Api;
 use EEM_Base;
@@ -94,6 +95,34 @@ class RestApiSpoofer
         EED_Core_Rest_Api::set_hooks_both();
         do_action('rest_api_init', $this->wp_rest_server);
     }
+
+    /**
+     * @param EEM_Base $model
+     * @param array    $query_params
+     * @param string   $include
+     * @return array
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws ModelConfigurationException
+     * @throws ReflectionException
+     * @throws RestException
+     * @throws RestPasswordIncorrectException
+     * @throws RestPasswordRequiredException
+     * @throws UnexpectedEntityException
+     * @throws DomainException
+     * @since $VID:$
+     */
+    public function getOneApiResult(EEM_Base $model, array $query_params, $include = '')
+    {
+        if ( ! array_key_exists('limit', $query_params)) {
+            $query_params['limit'] = 1;
+        }
+        $result = $this->getApiResults($model, $query_params, $include);
+        return is_array($result) && isset($result[0]) ? $result[0] : [];
+    }
+
     /**
      * @param EEM_Base $model
      * @param array    $query_params

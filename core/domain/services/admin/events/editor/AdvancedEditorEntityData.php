@@ -137,7 +137,7 @@ class AdvancedEditorEntityData
                     static function () use ($data) {
                         wp_add_inline_script(
                             EspressoEditorAssetManager::JS_HANDLE_EDITOR,
-                            "var eeEditorEventData={$data}",
+                            "var eeEditorEventData={$data};",
                             'before'
                         );
                     }
@@ -166,14 +166,14 @@ class AdvancedEditorEntityData
     protected function getAllEventData($eventId)
     {
         // these should ultimately be extracted out into their own classes (one per model)
-        $event = $this->spoofer->getApiResults(
+        $event = $this->spoofer->getOneApiResult(
             $this->event_model,
             [['EVT_ID' => $eventId]]
         );
-        if (! (is_array($event) && $event[0] && $event[0]['EVT_ID'] && $event[0]['EVT_ID'] === $eventId)) {
+        if (! (is_array($event) && isset($event['EVT_ID']) && $event['EVT_ID'] === $eventId)) {
             return [];
         }
-        $event = [$eventId => $event[0]];
+        $event = [$eventId => $event];
         $relations = [
             'event' => [ $eventId => [] ],
             'datetime' => [],
@@ -238,13 +238,13 @@ class AdvancedEditorEntityData
         foreach ($price_type_results as $price_type) {
             $price_types[ $price_type['PRT_ID'] ] = $price_type;
         }
-        $venue = $this->spoofer->getApiResults(
+        $venue = $this->spoofer->getOneApiResult(
             $this->venue_model,
             [['Event.EVT_ID' => $eventId]]
         );
-        if (is_array($venue) && $venue[0] && $venue[0]['VNU_ID']) {
-            $relations['event'][ $eventId ]['venue'] = [ $venue[0]['VNU_ID'] ];
-            $venue = [$venue[0]['VNU_ID'] => $venue[0]];
+        if (is_array($venue) && isset($venue['VNU_ID'])) {
+            $relations['event'][ $eventId ]['venue'] = [ $venue['VNU_ID'] ];
+            $venue = [$venue['VNU_ID'] => $venue];
         }
 
         $schemas = [
@@ -264,7 +264,7 @@ class AdvancedEditorEntityData
             'price'      => $prices,
             'price_type' => $price_types,
             'venue'      => $venue,
-            'schemas'     => $schemas,
+            'schemas'    => $schemas,
             'relations'  => $relations,
         ];
     }
