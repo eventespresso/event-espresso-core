@@ -201,6 +201,15 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
 
 
     /**
+     * This logic used to be in the constructor, but that caused a chicken <--> egg scenario
+     * for child classes that needed to set properties prior to these methods getting called,
+     * but also needed the parent class to have its construction completed as well.
+     * Bottom line is that constructors should ONLY be used for setting initial properties
+     * and any complex initialization logic should only run after instantiation is complete.
+     *
+     * This method gets called immediately after construction from within
+     *      EE_Admin_Page_Init::_initialize_admin_page()
+     *
      * @throws EE_Error
      * @throws InvalidArgumentException
      * @throws InvalidDataTypeException
