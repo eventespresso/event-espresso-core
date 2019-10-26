@@ -143,6 +143,9 @@ class RestApiSpoofer
      */
     public function getApiResults(EEM_Base $model, array $query_params, $include = '')
     {
+        if (! array_key_exists('caps', $query_params)) {
+            $query_params['caps'] = EEM_Base::caps_read_admin;
+        }
         /** @type array $results */
         $results = $model->get_all_wpdb_results($query_params);
         $rest_request = new WP_REST_Request();
