@@ -182,7 +182,10 @@ class AdvancedEditorEntityData
         ];
         $eventDates = $this->spoofer->getApiResults(
             $this->datetime_model,
-            [['EVT_ID' => $eventId]]
+            [[
+                'EVT_ID' => $eventId,
+                'DTT_deleted' => ['IN', [true, false]]
+            ]]
         );
         $relations['event'][ $eventId ]['datetime'] = [];
 
@@ -196,7 +199,10 @@ class AdvancedEditorEntityData
                     $relations['event'][ $eventId ]['datetime'][] = $DTT_ID;
                     $eventDateTickets[ $DTT_ID ] = $this->spoofer->getApiResults(
                         $this->ticket_model,
-                        [['Datetime.DTT_ID' => $DTT_ID]]
+                        [[
+                            'Datetime.DTT_ID' => $DTT_ID,
+                            'TKT_deleted' => ['IN', [true, false]]
+                        ]]
                     );
                 }
             }
