@@ -96,7 +96,7 @@ Note that when you're querying these models, trashed items are automatically omi
 Trashed datetimes don't appear on the frontend, but are still visible by event managers.
 
 ### Tickets
-Tickets are automatically archived (trashed) when their price changes. (This is arguably unnecessary since the line items table was introduced.)
+Tickets are automatically archived (trashed) when their price changes.
 They can also be explicitly archived. Archived tickets aren't visible on the frontend.
 
 ### Message Templates (the model class is `EEM_Message_Template_Group`)
