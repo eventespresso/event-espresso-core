@@ -47,37 +47,37 @@ class State extends TypeBase
                 'id',
                 ['non_null' => 'Int'],
                 'ID',
-                __('State ID', 'event_espresso')
+                esc_html__('State ID', 'event_espresso')
             ),
             new GraphQLField(
                 'abbreviation',
                 'String',
                 'abbrev',
-                __('State Abbreviation', 'event_espresso')
+                esc_html__('State Abbreviation', 'event_espresso')
             ),
             new GraphQLField(
                 'name',
                 'String',
                 'name',
-                __('State Name', 'event_espresso')
+                esc_html__('State Name', 'event_espresso')
             ),
             new GraphQLField(
                 'isActive',
                 'Boolean',
                 'active',
-                __('State Active Flag', 'event_espresso')
+                esc_html__('State Active Flag', 'event_espresso')
             ),
             new GraphQLOutputField(
                 'country',
                 'Country',
                 null,
-                __('Country for the state', 'event_espresso')
+                esc_html__('Country for the state', 'event_espresso')
             ),
             new GraphQLInputField(
                 'country',
                 'String',
                 null,
-                __('Country ISO Code', 'event_espresso')
+                esc_html__('Country ISO Code', 'event_espresso')
             ),
         ];
     }

@@ -41,7 +41,7 @@ class Datetime extends TypeBase
 
 
     /**
-     * @return \EventEspresso\core\services\graphql\fields\GraphQLFieldInterface[]
+     * @return GraphQLFieldInterface[]
      * @since $VID:$
      */
     public function getFields()
@@ -51,141 +51,141 @@ class Datetime extends TypeBase
                 'id',
                 ['non_null' => 'Int'],
                 'ID',
-                __('The datetime ID.', 'event_espresso')
+                esc_html__('The datetime ID.', 'event_espresso')
             ),
             new GraphQLField(
                 'name',
                 'String',
                 'name',
-                __('Datetime Name', 'event_espresso')
+                esc_html__('Datetime Name', 'event_espresso')
             ),
             new GraphQLField(
                 'description',
                 'String',
                 'description',
-                __('Description for Datetime', 'event_espresso')
+                esc_html__('Description for Datetime', 'event_espresso')
             ),
             new GraphQLField(
                 'start',
                 'String',
                 'start',
-                __('Start timestamp of Event', 'event_espresso')
+                esc_html__('Start timestamp of Event', 'event_espresso')
             ),
             new GraphQLField(
                 'startDate',
                 'String',
                 'start_date',
-                __('Start time/date of Event', 'event_espresso')
+                esc_html__('Start time/date of Event', 'event_espresso')
             ),
             new GraphQLField(
                 'end',
                 'String',
                 'end',
-                __('End timestamp of Event', 'event_espresso')
+                esc_html__('End timestamp of Event', 'event_espresso')
             ),
             new GraphQLField(
                 'endDate',
                 'String',
                 'end_date',
-                __('End time/date of Event', 'event_espresso')
+                esc_html__('End time/date of Event', 'event_espresso')
             ),
             new GraphQLField(
                 'startTime',
                 'String',
                 'start_time',
-                __('Start time of Event', 'event_espresso')
+                esc_html__('Start time of Event', 'event_espresso')
             ),
             new GraphQLField(
                 'endTime',
                 'String',
                 'end_time',
-                __('End time of Event', 'event_espresso')
+                esc_html__('End time of Event', 'event_espresso')
             ),
             new GraphQLField(
                 'capacity',
                 'Int',
                 'reg_limit',
-                __('Registration Limit for this time', 'event_espresso'),
+                esc_html__('Registration Limit for this time', 'event_espresso'),
                 [$this, 'parseInfiniteValue']
             ),
             new GraphQLField(
                 'sold',
                 'Int',
                 'sold',
-                __('How many sales for this Datetime that have occurred', 'event_espresso')
+                esc_html__('How many sales for this Datetime that have occurred', 'event_espresso')
             ),
             new GraphQLField(
                 'reserved',
                 'Int',
                 'reserved',
-                __('Quantity of tickets reserved, but not yet fully purchased', 'event_espresso')
+                esc_html__('Quantity of tickets reserved, but not yet fully purchased', 'event_espresso')
             ),
             new GraphQLField(
                 'order',
                 'Int',
                 'order',
-                __('The order in which the Datetime is displayed', 'event_espresso')
+                esc_html__('The order in which the Datetime is displayed', 'event_espresso')
             ),
             new GraphQLField(
                 'length',
                 'Int',
                 'length',
-                __('The length of the event (start to end time) in seconds', 'event_espresso')
+                esc_html__('The length of the event (start to end time) in seconds', 'event_espresso')
             ),
             new GraphQLOutputField(
                 'parent',
                 'Datetime',
                 null,
-                __('The parent datetime of the current datetime', 'event_espresso')
+                esc_html__('The parent datetime of the current datetime', 'event_espresso')
             ),
             new GraphQLInputField(
                 'parent',
                 'Int',
                 null,
-                __('The parent datetime ID', 'event_espresso')
+                esc_html__('The parent datetime ID', 'event_espresso')
             ),
             new GraphQLField(
                 'isPrimary',
                 'Boolean',
                 'is_primary',
-                __('Flag indicating datetime is primary one for event', 'event_espresso')
+                esc_html__('Flag indicating datetime is primary one for event', 'event_espresso')
             ),
             new GraphQLField(
                 'isSoldOut',
                 'Boolean',
                 'sold_out',
-                __('Flag indicating whether the tickets sold for this datetime, met or exceed the registration limit',
+                esc_html__('Flag indicating whether the tickets sold for this datetime, met or exceed the registration limit',
                     'event_espresso')
             ),
             new GraphQLField(
                 'isUpcoming',
                 'Boolean',
                 'is_upcoming',
-                __('Whether the date is upcoming', 'event_espresso')
+                esc_html__('Whether the date is upcoming', 'event_espresso')
             ),
             new GraphQLField(
                 'isActive',
                 'Boolean',
                 'is_active',
-                __('Flag indicating datetime is active', 'event_espresso')
+                esc_html__('Flag indicating datetime is active', 'event_espresso')
             ),
             new GraphQLField(
                 'isExpired',
                 'Boolean',
                 'is_expired',
-                __('Flag indicating datetime is expired or not', 'event_espresso')
+                esc_html__('Flag indicating datetime is expired or not', 'event_espresso')
             ),
             new GraphQLOutputField(
                 'event',
                 'Event',
                 null,
-                __('Event of the datetime.', 'event_espresso')
+                esc_html__('Event of the datetime.', 'event_espresso')
             ),
             new GraphQLInputField(
                 'event',
                 'Int',
                 null,
-                __('Event ID of the datetime.', 'event_espresso')
+                esc_html__('Event ID of the datetime.', 'event_espresso')
             ),
         ];
     }
@@ -222,16 +222,16 @@ class Datetime extends TypeBase
                     'id'                => $inputFields['id'],
                     'deletePermanently' => [
                         'type'        => 'Boolean',
-                        'description' => __( 'Whether to delete the entity permanently.', 'event_espresso' ),
+                        'description' => esc_html__( 'Whether to delete the entity permanently.', 'event_espresso' ),
                     ],
                 ],
 				'outputFields'        => [
                     lcfirst($this->name()) => [
                         'type'        => $this->name(),
-                        'description' => __( 'The object before it was deleted', 'event_espresso' ),
+                        'description' => esc_html__( 'The object before it was deleted', 'event_espresso' ),
                         'resolve'     => function ( $payload ) {
                             $deleted = (object) $payload['deleted'];
-        
+
                             return ! empty( $deleted ) ? $deleted : null;
                         },
                     ],

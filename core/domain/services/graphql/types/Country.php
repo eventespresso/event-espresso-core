@@ -34,7 +34,7 @@ class Country extends TypeBase
 
 
     /**
-     * @return \EventEspresso\core\services\graphql\fields\GraphQLFieldInterface[]
+     * @return GraphQLFieldInterface[]
      * @since $VID:$
      */
     public function getFields()
@@ -44,43 +44,43 @@ class Country extends TypeBase
                 'isActive',
                 'Boolean',
                 null, // 'active',
-                __('Flag that indicates if the country should appear in dropdown select lists', 'event_espresso')
+                esc_html__('Flag that indicates if the country should appear in dropdown select lists', 'event_espresso')
             ),
             new GraphQLField(
                 'ISO',
                 'String',
                 null, //'ISO',
-                __('Country ISO Code', 'event_espresso')
+                esc_html__('Country ISO Code', 'event_espresso')
             ),
             new GraphQLField(
                 'ISO3',
                 'String',
                 null, //'ISO3',
-                __('Country ISO3 Code', 'event_espresso')
+                esc_html__('Country ISO3 Code', 'event_espresso')
             ),
             new GraphQLField(
                 'name',
                 'String',
                 'name',
-                __('Country Name', 'event_espresso')
+                esc_html__('Country Name', 'event_espresso')
             ),
             new GraphQLField(
                 'currencyCode',
                 'String',
                 'currency_code',
-                __('Country Currency Code', 'event_espresso')
+                esc_html__('Country Currency Code', 'event_espresso')
             ),
             new GraphQLField(
                 'currencySingular',
                 'String',
                 'currency_name_single',
-                __('Currency Name Singular', 'event_espresso')
+                esc_html__('Currency Name Singular', 'event_espresso')
             ),
             new GraphQLField(
                 'currencyPlural',
                 'String',
                 'currency_name_plural',
-                __('Currency Name Plural', 'event_espresso')
+                esc_html__('Currency Name Plural', 'event_espresso')
             ),
             new GraphQLField(
                 'currencySign',
@@ -91,25 +91,25 @@ class Country extends TypeBase
                 'currencySignBeforeNumber',
                 'String',
                 'currency_sign_before',
-                __('Currency Sign Before Number', 'event_espresso')
+                esc_html__('Currency Sign Before Number', 'event_espresso')
             ),
             new GraphQLField(
                 'currencyDecimalPlaces',
                 'String',
                 'currency_decimal_places',
-                __('Currency Decimal Places', 'event_espresso')
+                esc_html__('Currency Decimal Places', 'event_espresso')
             ),
             new GraphQLField(
                 'currencyDecimalMark',
                 'String',
                 'currency_decimal_mark',
-                __('Currency Decimal Mark', 'event_espresso')
+                esc_html__('Currency Decimal Mark', 'event_espresso')
             ),
             new GraphQLField(
                 'currencyThousandsSeparator',
                 'String',
                 'currency_thousands_separator',
-                __('Currency Thousands Separator', 'event_espresso')
+                esc_html__('Currency Thousands Separator', 'event_espresso')
             ),
         ];
     }
