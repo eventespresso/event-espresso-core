@@ -100,7 +100,7 @@ Tickets are automatically archived (trashed) when their price changes.
 They can also be explicitly archived. Archived tickets aren't visible on the frontend.
 
 ### Message Templates (the model class is `EEM_Message_Template_Group`)
-This models is actually for items called "message templates" in the admin.
+This model is actually for items called "message templates" in the admin.
 
 ### Prices
 Trashed prices modifiers (eg percent discounts) will continue to apply to tickets that were already using them.
