@@ -149,8 +149,7 @@ const getRelatedEntitiesForIds = (
 		const entity = getEntityById(
 			state,
 			modelName,
-			entityId,
-			[]
+			entityId
 		);
 		if ( isModelEntityOfModel( entity, modelName ) ) {
 			const relatedEntities = getRelatedEntities(

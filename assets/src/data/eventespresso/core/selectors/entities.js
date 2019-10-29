@@ -53,10 +53,9 @@ const getEntitiesForModel = /* createSelector( */
  * @param {Object} state
  * @param {string} modelName
  * @param {number|string} entityId
- * @param {Array} calculatedFields
  * @return {BaseEntity|null} Returns the model entity or null.
  */
-const getEntityById = ( state, modelName, entityId, calculatedFields = [] ) => {
+const getEntityById = ( state, modelName, entityId ) => {
 	modelName = singularModelName( modelName );
 	const entity = state.entities.getIn( [
 		modelName,
@@ -102,7 +101,7 @@ const retrieveEntitiesByIds = createSelector(
 		const entities = [];
 		if ( state.entities.has( modelName ) ) {
 			entityIds.forEach( ( entityId ) => {
-				const entity = getEntityById( state, modelName, entityId, [] );
+				const entity = getEntityById( state, modelName, entityId );
 				if ( entity !== null ) {
 					entities.push( entity );
 				}

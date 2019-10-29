@@ -90,7 +90,7 @@ function* persistEntityRecord( modelName, entity ) {
 			'finishResolution',
 			CORE_REDUCER_KEY,
 			'getEntityById',
-			[ modelName, newId, [] ]
+			[ modelName, newId ]
 		);
 		yield receiveUpdatedEntityIdForRelations( modelName, entity.id, newId );
 	}
@@ -115,8 +115,7 @@ function* persistForEntityId( modelName, entityId ) {
 		CORE_REDUCER_KEY,
 		'getEntityById',
 		modelName,
-		entityId,
-		[]
+		entityId
 	);
 	if ( isModelEntityOfModel( entity, modelName ) ) {
 		const persistedEntity = yield dispatch(

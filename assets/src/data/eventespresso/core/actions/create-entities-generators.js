@@ -130,7 +130,7 @@ export function* receiveEntitiesAndResolve( modelName, entities ) {
 			'finishResolution',
 			CORE_REDUCER_KEY,
 			'getEntityById',
-			[ modelName, entityIds.pop(), [] ]
+			[ modelName, entityIds.pop() ]
 		);
 	}
 	yield dispatch(

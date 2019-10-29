@@ -46,7 +46,7 @@ export function* receiveLatestCheckin(
 		'finishResolution',
 		REDUCER_KEY,
 		'getEntityById',
-		[ 'checkin', checkinEntity.id, [] ]
+		[ 'checkin', checkinEntity.id ]
 	);
 	yield dispatch(
 		REDUCER_KEY,

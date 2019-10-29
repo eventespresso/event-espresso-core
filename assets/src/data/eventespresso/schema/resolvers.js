@@ -114,8 +114,7 @@ export function* getRelationEndpointForEntityId(
 		CORE_REDUCER_KEY,
 		'getEntityById',
 		modelName,
-		entityId,
-		[]
+		entityId
 	);
 	relationModelName = singularModelName( relationModelName );
 	const pluralRelationName = pluralModelName( relationModelName );
