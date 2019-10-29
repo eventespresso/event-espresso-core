@@ -895,6 +895,7 @@ class EE_Dependency_Map
                 'EE_Admin_Config' => EE_Dependency_Map::load_from_cache
             ],
             'EventEspresso\core\domain\services\admin\events\editor\AdvancedEditorEntityData'  => [
+                'EE_Event'        => EE_Dependency_Map::not_registered,
                 'EventEspresso\core\domain\services\converters\RestApiSpoofer' => EE_Dependency_Map::load_from_cache,
                 'EE_Admin_Config' => EE_Dependency_Map::load_from_cache,
                 'EEM_Datetime'    => EE_Dependency_Map::load_from_cache,

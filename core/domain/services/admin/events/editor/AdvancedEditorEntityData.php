@@ -5,6 +5,7 @@ namespace EventEspresso\core\domain\services\admin\events\editor;
 use DomainException;
 use EE_Admin_Config;
 use EE_Error;
+use EE_Event;
 use EEM_Datetime;
 use EEM_Event;
 use EEM_Price;
@@ -34,6 +35,11 @@ use WP_Post;
  */
 class AdvancedEditorEntityData
 {
+
+    /**
+     * @var EE_Event
+     */
+    protected $event;
 
     /**
      * @var RestApiSpoofer
@@ -78,16 +84,18 @@ class AdvancedEditorEntityData
     /**
      * AdvancedEditorAdminForm constructor.
      *
-     * @param RestApiSpoofer $spoofer
+     * @param EE_Event        $event
+     * @param RestApiSpoofer  $spoofer
      * @param EE_Admin_Config $admin_config
-     * @param EEM_Datetime $datetime_model
-     * @param EEM_Event $event_model
-     * @param EEM_Price $price_model
-     * @param EEM_Price_Type $price_type_model
-     * @param EEM_Ticket $ticket_model
-     * @param EEM_Venue $venue_model
+     * @param EEM_Datetime    $datetime_model
+     * @param EEM_Event       $event_model
+     * @param EEM_Price       $price_model
+     * @param EEM_Price_Type  $price_type_model
+     * @param EEM_Ticket      $ticket_model
+     * @param EEM_Venue       $venue_model
      */
     public function __construct(
+        EE_Event $event,
         RestApiSpoofer $spoofer,
         EE_Admin_Config $admin_config,
         EEM_Datetime $datetime_model,
@@ -97,6 +105,7 @@ class AdvancedEditorEntityData
         EEM_Ticket $ticket_model,
         EEM_Venue $venue_model
     ) {
+        $this->event = $event;
         $this->admin_config = $admin_config;
         $this->spoofer = $spoofer;
         $this->datetime_model = $datetime_model;
@@ -126,9 +135,14 @@ class AdvancedEditorEntityData
     public function loadScriptsStyles()
     {
         if ($this->admin_config->useAdvancedEditor()) {
-            global $post;
-            $eventId = isset($_REQUEST['post']) ? absint($_REQUEST['post']) : 0;
-            $eventId = $eventId === 0 && $post instanceof WP_Post ? $post->ID : $eventId;
+            $eventId = $this->event instanceof EE_Event ? $this->event->ID() : 0;
+            if ( ! $eventId) {
+                global $post;
+                $eventId = isset($_REQUEST['post']) ? absint($_REQUEST['post']) : 0;
+                $eventId = $eventId === 0 && $post instanceof WP_Post && $post->post_type === 'espresso_events'
+                    ? $post->ID
+                    : $eventId;
+            }
             if ($eventId) {
                 $data = $this->getAllEventData($eventId);
                 $data = wp_json_encode($data);
