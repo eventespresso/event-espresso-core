@@ -24,12 +24,7 @@ import createSelector from 'rememo';
  * @return {Object} The schema object or null if it doesn't exist.
  */
 export function getSchemaForModel( state, modelName ) {
-	console.log(
-		'%c getSchemaForModel: ' + modelName,
-		'color: Yellow; font-size:16px;'
-	);
 	const schema = state.schema.get( singularModelName( modelName ), null );
-	console.log( '%c > schema: ', 'color: gold font-size:14px;;', schema );
 	return schema;
 }
 

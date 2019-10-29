@@ -34,11 +34,6 @@ export const receiveSchema = ( state = DEFAULT_STATE_SCHEMA, action ) => {
 		if ( action.type === ACTION_TYPES.RECEIVE_SCHEMA_RECORD ) {
 			const modelName = singularModelName( action.modelName );
 			if ( isSchemaResponseOfModel( action.schema, modelName ) ) {
-				console.log(
-					'%c receiveSchema for ' + modelName + ' model',
-					'color: LightSalmon; font-size:14px;',
-					action.schema
-				);
 				return state.set( modelName, action.schema );
 			}
 		}

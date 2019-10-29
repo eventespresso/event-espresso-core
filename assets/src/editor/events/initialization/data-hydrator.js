@@ -20,7 +20,8 @@ const { receiveSchemaForModelAndResolve } = dispatch( 'eventespresso/schema' );
 const hydrateData = async function*( eventData ) {
 	console.log(
 		'%cSTART DATA HYDRATION',
-		'color: YellowGreen;font-size:24px;',
+		'color: YellowGreen;font-size:18px;',
+		'DOM Data',
 		eventData
 	);
 	const { eventId, schemas, relations, ...rawData } = eventData;
@@ -29,7 +30,8 @@ const hydrateData = async function*( eventData ) {
 	await hydrateRelations( rawData, hydratedEntities, relations );
 	console.log(
 		'%cDATA HYDRATION COMPLETE',
-		'color: YellowGreen;font-size:24px;',
+		'color: YellowGreen;font-size:18px;',
+		'hydratedEntities',
 		hydratedEntities
 	);
 	yield hydratedEntities;
@@ -45,11 +47,8 @@ const hydrateData = async function*( eventData ) {
 const hydrateSchemas = async ( schemas, relations ) => {
 	const relationSchemas = [];
 	if ( schemas ) {
-		console.log( '' );
-		console.log( '%cHYDRATING SCHEMAS: ', 'color: DarkOrange;font-size:18px;' );
 		const modelSchemas = Object.entries( schemas );
 		for ( const [ model, schemaData ] of modelSchemas ) {
-			console.log( '%c ' + model + ' schema data: ', 'color: tomato;', schemaData );
 			if ( ! schemaData.hasOwnProperty( 'schema' ) ) {
 				throw new TypeError( 'Invalid Schema ' );
 			}
@@ -60,14 +59,6 @@ const hydrateSchemas = async ( schemas, relations ) => {
 				schema.schema.schema.hasOwnProperty( 'properties' )
 			) {
 				const modelSchema = schema.schema.schema.properties;
-				console.log( '' );
-				console.log(
-					'%c HYDRATING RELATION SCHEMAS for MODEL: ',
-					'color: orange;font-size:14px;',
-					model,
-					modelSchema,
-					relations[ model ]
-				);
 				let modelRelations = Object.values( relations[ model ] );
 				modelRelations = Array.isArray( modelRelations ) ?
 					modelRelations.pop() :
@@ -79,12 +70,6 @@ const hydrateSchemas = async ( schemas, relations ) => {
 					const relationSingular = modelRelation.toLowerCase();
 					const relationPlural = pluralModelName( relationSingular );
 					if ( modelSchema.hasOwnProperty( relationPlural ) ) {
-						console.log(
-							'%c HYDRATE RELATION SCHEMA: ' +
-							relationPlural,
-							'color: orange;',
-							modelSchema[ relationPlural ]
-						);
 						const generator = hydrateRelationSchema(
 							{ schema: modelSchema[ relationPlural ] },
 							model,
@@ -115,11 +100,6 @@ const hydrateSchemas = async ( schemas, relations ) => {
 			}
 		}
 	}
-	console.log(
-		'%c > RESOLVED RELATION SCHEMAS: ',
-		'color: Salmon;',
-		relationSchemas
-	);
 	return relationSchemas;
 };
 
@@ -134,11 +114,6 @@ const hydrateEntityData = async ( rawData, schemas ) => {
 	let allHydratedEntities = {};
 	if ( rawData ) {
 		const modelEntities = Object.entries( rawData );
-		console.log( '' );
-		console.log(
-			'%cHYDRATING ENTITIES',
-			'color: GreenYellow;font-size:18px;'
-		);
 		for ( const [ model, entityData ] of modelEntities ) {
 			let modelSchema = schemas[ model ] ? schemas[ model ] : null;
 			modelSchema = modelSchema.hasOwnProperty( 'schema' ) ?
@@ -152,12 +127,6 @@ const hydrateEntityData = async ( rawData, schemas ) => {
 			allHydratedEntities = { ...allHydratedEntities, ...entities };
 		}
 	}
-	console.log( '' );
-	console.log(
-		'%c ALL Hydrated Entities: ',
-		'color: LawnGreen; font-size:14px;',
-		allHydratedEntities,
-	);
 	return allHydratedEntities;
 };
 
@@ -170,12 +139,6 @@ const hydrateEntityData = async ( rawData, schemas ) => {
  * @return {Object[]} entities
  */
 const hydrateEntities = async ( model, modelSchema, rawData ) => {
-	console.log(
-		'%c hydrateEntities ' + model,
-		'color: LimeGreen;',
-		' > modelSchema: ', modelSchema,
-		' > rawData: ', rawData
-	);
 	const entityData = isDataObject( rawData ) ?
 		Object.values( rawData ) :
 		rawData;
@@ -238,11 +201,6 @@ const hydrateAndReceiveEntities = async ( model, modelSchema, entities ) => {
  * @return {Object[]} entities
  */
 const hydrateRelations = async ( rawData, hydratedEntities, related ) => {
-	console.log( '' );
-	console.log(
-		'%cHYDRATING RELATIONS',
-		'color: Orange;font-size:18px;'
-	);
 	if ( isDataObject( hydratedEntities ) && isDataObject( related ) ) {
 		for ( const [ modelName, entities ] of Object.entries( hydratedEntities ) ) {
 			if ( related.hasOwnProperty( modelName ) ) {
@@ -252,12 +210,6 @@ const hydrateRelations = async ( rawData, hydratedEntities, related ) => {
 						for ( const [ relatedModelName, relatedEntityIds ]
 							of Object.entries( relatedEntities[ entity.id ] )
 						) {
-							console.log(
-								'%c relatedModelName: ' + relatedModelName +
-								' relatedEntityIds: ',
-								'color: Chocolate;',
-								relatedEntityIds
-							);
 							if ( Array.isArray( relatedEntityIds ) ) {
 								for ( const relatedEntityId of relatedEntityIds ) {
 									const relatedEntity = retrieveHydratedEntity(

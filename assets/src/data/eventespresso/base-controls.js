@@ -25,11 +25,6 @@ import { REDUCER_KEY as CORE_REDUCER_KEY } from './core/constants';
  * An action object
  */
 export function fetch( request ) {
-	console.log(
-		'%c fetch request',
-		'color: #ff0066; font-size:24px;',
-		request
-	);
 	return {
 		type: 'FETCH_FROM_API',
 		request,
@@ -91,17 +86,6 @@ export function resolveSelect( reducerKey, selectorName, ...args ) {
  * An action object
  */
 export function dispatch( reducerKey, dispatchName, ...args ) {
-	console.log(
-		'%c dispatch %c' + dispatchName +
-		'%c reducerKey: %c' + reducerKey +
-		'%c args: ',
-		'color: Yellow; font-size:12px;',
-		'color: Khaki; font-size:14px;',
-		'color: Grey;',
-		'color: Khaki;',
-		'color: Grey;',
-		args
-	);
 	return {
 		type: 'DISPATCH',
 		reducerKey,
@@ -188,18 +172,6 @@ const controls = {
 
 			// trigger the selector (to trigger the resolver)
 			const result = getResult();
-			console.log(
-				'%c hasFinishedResolution: ',
-				'color: #ff0066;',
-				'reducerKey: ' + reducerKey,
-				'selector: ' + selectorName,
-				'hasFinished: ',
-				hasFinished(),
-				'result: ',
-				result,
-				'args: ',
-				args
-			);
 			if ( hasFinished() ) {
 				return resolve( result );
 			}

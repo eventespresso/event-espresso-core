@@ -108,11 +108,6 @@ export function* getRelatedEntities(
 		relationEndpoint,
 		calculatedFields
 	);
-
-	console.log(
-		'%c FETCH RELATED ENTITIES :' + path,
-		'color: #ff0066; font-size:12px;'
-	);
 	let relationEntities = yield fetch( { path } );
 	if ( isEmpty( relationEntities ) ) {
 		return DEFAULT_EMPTY_ARRAY;
@@ -242,16 +237,6 @@ export function* getRelatedEntitiesForIds(
 		relationType,
 		hasJoinTable,
 		calculatedFields,
-	);
-	console.log(
-		'%c getRelatedEntitiesForIds ' + modelName +
-		'%c path %c' + path +
-		'%c entityIds ',
-		'color: #ff0066; font-size:16px;',
-		'color: Grey;',
-		'color: #ff0066; font-size:14px;',
-		'color: Grey;',
-		entityIds
 	);
 	const response = yield fetch( { path } );
 	if ( ! response.length ) {

@@ -42,19 +42,7 @@ import {
  */
 export function* getSchemaForModel( modelName ) {
 	const path = getEndpoint( singularModelName( modelName ) );
-	console.log(
-		'%c FETCH SCHEMA FOR MODEL ' + modelName +
-		'%c path %c' + path,
-		'color: #ff0066; font-size:30px;',
-		'color: Grey;',
-		'color: #ff0066; font-size:14px;',
-	);
 	const schema = yield fetch( { path, method: 'OPTIONS' } );
-	console.log(
-		'%c getSchemaForModel schema:',
-		'color: #ff0066; font-size:16px;',
-		schema
-	);
 	yield receiveSchemaForModelAndResolve( modelName, schema );
 	return schema;
 }
@@ -125,13 +113,6 @@ export function* getRelationEndpointForEntityId(
 		);
 	} else {
 		const path = getEndpoint( modelName ) + '/' + entityId;
-		console.log(
-			'%c getRelationEndpointForEntityId ' + modelName +
-			'%c path %c' + path,
-			'color: #ff0066; font-size:16px;',
-			'color: Grey;',
-			'color: #ff0066; font-size:14px;',
-		);
 		const response = yield fetch( { path } );
 		if ( ! response._links ) {
 			return '';
@@ -258,17 +239,6 @@ export function* getRelationType( modelName, relationName ) {
 export function* hydrateRelationSchema( schema, modelName, relationName ) {
 	modelName = singularModelName( modelName );
 	relationName = singularModelName( relationName );
-	console.log(
-		'%c hydrateRelationSchema %c > ' + modelName +
-		'%c > relation %c' + relationName +
-		'%c > schema: ',
-		'color: Coral; font-size:12px;',
-		'color: DarkSalmon;',
-		'color: Grey;',
-		'color: DarkSalmon;',
-		'color: DarkSalmon;',
-		schema
-	);
 	yield receiveRelationSchemaAndResolve(
 		modelName,
 		relationName,
@@ -286,29 +256,10 @@ export function* hydrateRelationSchema( schema, modelName, relationName ) {
  */
 export function* getRelationSchema( modelName, relationName ) {
 	modelName = singularModelName( modelName );
-	console.log(
-		'%c getRelationSchema ' +
-		'%c model %c ' + modelName +
-		'%c => relation %c ' + relationName,
-		'color: Coral; font-size:16px;',
-		'color: Grey;',
-		'color: DarkSalmon;',
-		'color: Grey;',
-		'color: DarkSalmon;'
-	);
 	const schema = yield resolveSelect(
 		SCHEMA_REDUCER_KEY,
 		'getSchemaForModel',
 		modelName
-	);
-	console.log(
-		'%c getRelationSchema ' +
-		'%c ' + modelName + ' => ' + relationName +
-		'%c schema: ',
-		'color: Coral; font-size:12px;',
-		'color: DarkSalmon;',
-		'color: Grey;',
-		schema,
 	);
 	if ( schema === null ) {
 		throw new Error( 'The ' + modelName + ' does not have a schema' );
