@@ -17,6 +17,7 @@ import { __, _x, sprintf } from '@eventespresso/i18n';
 import AddNewTicketButton from './add-new-ticket-button';
 import useTicketsForEventEditorTicketList
 	from './use-tickets-for-event-editor-ticket-list';
+import { NewTicketFormModal, useTicketFormLoadingState } from './edit-form/';
 import { EditorTicketEntitiesGridView } from './grid-view/';
 import { EditorTicketEntitiesListView } from './list-view/';
 import {
@@ -91,6 +92,10 @@ const EditorTicketEntitiesList = ( { ...otherProps } ) => {
 		ticketsSortedBy,
 		Array.isArray( tickets ) ? tickets.length : 0,
 	] );
+	const {
+		loadingTicketForm,
+		setLoadingTicketForm,
+	} = useTicketFormLoadingState();
 	const entityOrder = filteredTicketIds.join( '-' );
 	return (
 		<FormWrapper>
@@ -139,7 +144,14 @@ const EditorTicketEntitiesList = ( { ...otherProps } ) => {
 				) }
 			/>
 			<FormButtonsRow>
-				<AddNewTicketButton />
+				<AddNewTicketButton
+					loading={ loadingTicketForm }
+					setLoading={ setLoadingTicketForm }
+				/>
+				<NewTicketFormModal
+					loading={ loadingTicketForm }
+					setLoading={ setLoadingTicketForm }
+				/>
 			</FormButtonsRow>
 		</FormWrapper>
 	);
