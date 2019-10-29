@@ -37,6 +37,9 @@ const useTicketsForEventEditorTicketList = ( isChained ) => {
 	}
 
 	return useSelect( ( select ) => {
+		if ( filteredDateIds === null ) {
+			return { tickets: EMPTY_ARRAY, ticketsLoaded: false };
+		}
 		const {
 			getEntitiesForModel,
 			getRelatedEntitiesForIds,
