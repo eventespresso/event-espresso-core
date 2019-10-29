@@ -57,7 +57,7 @@
 		"@wordpress/browserslist-config": "^2.6.0",
 		"@wordpress/components": "^8.3.1",
 		"@wordpress/compose": "^3.7.1",
-		"@wordpress/core-data": "^2.7.1",
+		"@wordpress/core-data": "^2.7.4",
 		"@wordpress/data": "^4.9.2",
 		"@wordpress/date": "^3.5.0",
 		"@wordpress/dependency-extraction-webpack-plugin": "^2.0.0",
