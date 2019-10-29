@@ -1,5 +1,7 @@
 <?php
 
+use EventEspresso\core\domain\services\admin\events\default_settings\AdvancedEditorAdminFormSection;
+use EventEspresso\core\domain\services\admin\events\editor\AdvancedEditorEntityData;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
 use EventEspresso\core\services\loaders\LoaderFactory;
@@ -16,29 +18,56 @@ class Extend_Events_Admin_Page extends Events_Admin_Page
 {
 
     /**
-     * @var EE_Admin_Config
+     * @var AdvancedEditorAdminFormSection
      */
-    protected $admin_config;
+    protected $advanced_editor_admin_form;
+    /**
+     * @var AdvancedEditorEntityData
+     */
+    protected $advanced_editor_data;
 
 
     /**
      * Extend_Events_Admin_Page constructor.
      *
      * @param bool $routing
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws ReflectionException
      */
     public function __construct($routing = true)
     {
-        parent::__construct($routing);
         if (! defined('EVENTS_CAF_TEMPLATE_PATH')) {
             define('EVENTS_CAF_TEMPLATE_PATH', EE_CORE_CAF_ADMIN_EXTEND . 'events/templates/');
             define('EVENTS_CAF_ASSETS', EE_CORE_CAF_ADMIN_EXTEND . 'events/assets/');
             define('EVENTS_CAF_ASSETS_URL', EE_CORE_CAF_ADMIN_EXTEND_URL . 'events/assets/');
+        }
+        parent::__construct($routing);
+        if (isset($this->_req_data['action']) && $this->_req_data['action'] === 'default_event_settings') {
+            $this->advanced_editor_admin_form = $this->loader->getShared(
+                'EventEspresso\core\domain\services\admin\events\default_settings\AdvancedEditorAdminFormSection'
+            );
+        }
+        if (isset($this->_req_data['action'])
+            && ( $this->_req_data['action'] === 'edit' || $this->_req_data['action'] === 'create_new')
+        ) {
+            $this->advanced_editor_data = $this->loader->getShared(
+                'EventEspresso\core\domain\services\admin\events\editor\AdvancedEditorEntityData'
+            );
         }
     }
 
 
     /**
      * Sets routes.
+     *
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @since $VID:$
      */
     protected function _extend_page_config()
     {
@@ -207,17 +236,6 @@ class Extend_Events_Admin_Page extends Events_Admin_Page
         // legend item
         add_filter('FHEE__Events_Admin_Page___event_legend_items__items', array($this, 'additional_legend_items'));
         add_action('admin_init', array($this, 'admin_init'));
-        $this->admin_config = EE_Registry::instance()->CFG->admin;
-        add_filter(
-            'FHEE__Events_Admin_Page___default_event_settings_form__form_subsections',
-            [$this, 'advancedEditorAdminFormSection']
-        );
-        add_action(
-            'AHEE__Events_Admin_Page___update_default_event_settings',
-            [$this, 'updateAdvancedEditorAdminFormSettings'],
-            10,
-            2
-        );
     }
 
 
@@ -245,6 +263,10 @@ class Extend_Events_Admin_Page extends Events_Admin_Page
 
     /**
      * Add per page screen options to the default ticket list table view.
+     *
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
      */
     protected function _add_screen_options_ticket_list_table()
     {
@@ -325,20 +347,6 @@ class Extend_Events_Admin_Page extends Events_Admin_Page
         wp_enqueue_style('espresso-ui-theme');
         wp_enqueue_script('event_editor_js');
         wp_enqueue_script('ee-event-editor-heartbeat');
-        if ($this->admin_config->useAdvancedEditor()) {
-            add_action(
-                'admin_footer',
-                function () {
-                    $eventId = isset($_REQUEST['post']) ? absint($_REQUEST['post']) : 0;
-                    if ($eventId) {
-                        echo '
-        <script type="text/javascript">
-            /* <![CDATA[ */ var eeEditorEventId = ' . $eventId . '; /* ]]> */
-        </script>';
-                    }
-                }
-            );
-        }
     }
 
 
@@ -427,12 +435,16 @@ class Extend_Events_Admin_Page extends Events_Admin_Page
     /**
      * Returns the extra action links for the default list table view.
      *
-     * @param array     $action_links
-     * @param \EE_Event $event
+     * @param array    $action_links
+     * @param EE_Event $event
      * @return array
      * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws ReflectionException
      */
-    public function extra_list_table_actions(array $action_links, \EE_Event $event)
+    public function extra_list_table_actions(array $action_links, EE_Event $event)
     {
         if (EE_Registry::instance()->CAP->current_user_can(
             'ee_read_registrations',
@@ -482,7 +494,9 @@ class Extend_Events_Admin_Page extends Events_Admin_Page
         }
         if (EE_Registry::instance()->CAP->current_user_can('ee_read_global_messages', 'view_filtered_messages')) {
             $related_for_icon = EEH_MSG_Template::get_message_action_icon('see_notifications_for');
-            if (isset($related_for_icon['css_class']) && isset($related_for_icon['label'])) {
+            // $related_for_icon can sometimes be a string so 'css_class' would be an illegal offset
+            // (can only use numeric offsets when treating strings as arrays)
+            if (is_array($related_for_icon) && isset($related_for_icon['css_class'], $related_for_icon['label'])) {
                 $items['view_related_messages'] = array(
                     'class' => $related_for_icon['css_class'],
                     'desc'  => $related_for_icon['label'],
@@ -501,8 +515,12 @@ class Extend_Events_Admin_Page extends Events_Admin_Page
      * After duplication the redirect is to the new event edit page.
      *
      * @return void
-     * @access protected
      * @throws EE_Error If EE_Event is not available with given ID
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws ReflectionException
+     * @access protected
      */
     protected function _duplicate_event()
     {
@@ -711,6 +729,10 @@ class Extend_Events_Admin_Page extends Events_Admin_Page
      * Generates output for the import page.
      *
      * @throws DomainException
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
      */
     protected function _import_page()
     {
@@ -748,6 +770,10 @@ class Extend_Events_Admin_Page extends Events_Admin_Page
      * This handles displaying the screen and running imports for importing events.
      *
      * @return void
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
      */
     protected function _import_events()
     {
@@ -826,6 +852,9 @@ class Extend_Events_Admin_Page extends Events_Admin_Page
      *
      * @throws DomainException
      * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
      */
     protected function _template_settings()
     {
@@ -852,9 +881,10 @@ class Extend_Events_Admin_Page extends Events_Admin_Page
     /**
      * Handler for updating template settings.
      *
-     * @throws InvalidInterfaceException
-     * @throws InvalidDataTypeException
+     * @throws EE_Error
      * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
      */
     protected function _update_template_settings()
     {
@@ -880,7 +910,7 @@ class Extend_Events_Admin_Page extends Events_Admin_Page
             __FUNCTION__,
             __LINE__
         );
-        if (EE_Registry::instance()->CFG->core->event_cpt_slug != $old_slug) {
+        if (EE_Registry::instance()->CFG->core->event_cpt_slug !== $old_slug) {
             /** @var EventEspresso\core\domain\services\custom_post_types\RewriteRules $rewrite_rules */
             $rewrite_rules = LoaderFactory::getLoader()->getShared(
                 'EventEspresso\core\domain\services\custom_post_types\RewriteRules'
@@ -898,6 +928,10 @@ class Extend_Events_Admin_Page extends Events_Admin_Page
      * @access protected
      * @return void
      * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws ReflectionException
      */
     protected function _premium_event_editor_meta_boxes()
     {
@@ -918,6 +952,7 @@ class Extend_Events_Admin_Page extends Events_Admin_Page
      *
      * @return void
      * @throws DomainException
+     * @throws EE_Error
      */
     public function registration_options_meta_box()
     {
@@ -982,9 +1017,14 @@ class Extend_Events_Admin_Page extends Events_Admin_Page
     /**
      * hook into list table filters and provide filters for caffeinated list table
      *
-     * @param  array $old_filters    any existing filters present
-     * @param  array $list_table_obj the list table object
+     * @param array $old_filters    any existing filters present
+     * @param array $list_table_obj the list table object
      * @return array                  new filters
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws ReflectionException
      */
     public function list_table_filters($old_filters, $list_table_obj)
     {
@@ -1049,11 +1089,17 @@ class Extend_Events_Admin_Page extends Events_Admin_Page
         return EEH_Form_Fields::select_input($select_name, $values, $current_value, '', 'wide');
     }
 
+
     /**
      * returns a list of "venues"
      *
-     * @param  string $current_value whatever the current active status is
+     * @param string $current_value whatever the current active status is
      * @return string
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws ReflectionException
      */
     protected function venuesDropdown($current_value = '')
     {
@@ -1092,6 +1138,9 @@ class Extend_Events_Admin_Page extends Events_Admin_Page
      * @access public
      * @return int
      * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
      */
     public function total_events_today()
     {
@@ -1121,6 +1170,9 @@ class Extend_Events_Admin_Page extends Events_Admin_Page
      * @access public
      * @return int
      * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
      */
     public function total_events_this_month()
     {
@@ -1152,6 +1204,12 @@ class Extend_Events_Admin_Page extends Events_Admin_Page
 
     /**
      * Output default tickets list table view.
+     *
+     * @throws DomainException
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
      */
     public function _tickets_overview_list_table()
     {
@@ -1164,7 +1222,11 @@ class Extend_Events_Admin_Page extends Events_Admin_Page
      * @param int  $per_page
      * @param bool $count
      * @param bool $trashed
-     * @return \EE_Soft_Delete_Base_Class[]|int
+     * @return EE_Soft_Delete_Base_Class[]|int
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
      */
     public function get_default_tickets($per_page = 10, $count = false, $trashed = false)
     {
@@ -1226,6 +1288,9 @@ class Extend_Events_Admin_Page extends Events_Admin_Page
     /**
      * @param bool $trash
      * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
      */
     protected function _trash_or_restore_ticket($trash = false)
     {
@@ -1236,15 +1301,13 @@ class Extend_Events_Admin_Page extends Events_Admin_Page
             // if array has more than one element then success message should be plural
             $success = count($this->_req_data['checkbox']) > 1 ? 2 : 1;
             // cycle thru the boxes
-            while (list($TKT_ID, $value) = each($this->_req_data['checkbox'])) {
+            foreach ($this->_req_data['checkbox'] as $TKT_ID) {
                 if ($trash) {
                     if (! $TKT->delete_by_ID($TKT_ID)) {
                         $success = 0;
                     }
-                } else {
-                    if (! $TKT->restore_by_ID($TKT_ID)) {
-                        $success = 0;
-                    }
+                } elseif (! $TKT->restore_by_ID($TKT_ID)) {
+                    $success = 0;
                 }
             }
         } else {
@@ -1254,10 +1317,8 @@ class Extend_Events_Admin_Page extends Events_Admin_Page
                 if (! $TKT->delete_by_ID($TKT_ID)) {
                     $success = 0;
                 }
-            } else {
-                if (! $TKT->restore_by_ID($TKT_ID)) {
-                    $success = 0;
-                }
+            } elseif (! $TKT->restore_by_ID($TKT_ID)) {
+                $success = 0;
             }
         }
         $action_desc = $trash ? 'moved to the trash' : 'restored';
@@ -1271,6 +1332,12 @@ class Extend_Events_Admin_Page extends Events_Admin_Page
 
     /**
      * Handles trashing default ticket.
+     *
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws ReflectionException
      */
     protected function _delete_ticket()
     {
@@ -1280,7 +1347,7 @@ class Extend_Events_Admin_Page extends Events_Admin_Page
             // if array has more than one element then success message should be plural
             $success = count($this->_req_data['checkbox']) > 1 ? 2 : 1;
             // cycle thru the boxes
-            while (list($TKT_ID, $value) = each($this->_req_data['checkbox'])) {
+            foreach ($this->_req_data['checkbox'] as $TKT_ID) {
                 // delete
                 if (! $this->_delete_the_ticket($TKT_ID)) {
                     $success = 0;
@@ -1315,6 +1382,10 @@ class Extend_Events_Admin_Page extends Events_Admin_Page
      * @param int $TKT_ID
      * @return bool|int
      * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws ReflectionException
      */
     protected function _delete_the_ticket($TKT_ID)
     {
@@ -1323,62 +1394,5 @@ class Extend_Events_Admin_Page extends Events_Admin_Page
         // delete all related prices first
         $tkt->delete_related_permanently('Price');
         return $tkt->delete_permanently();
-    }
-
-
-    /**
-     * @param array $default_event_settings_form_subsections
-     * @return array
-     * @since $VID:$
-     */
-    public function advancedEditorAdminFormSection(array $default_event_settings_form_subsections)
-    {
-        return [
-            'use_advanced_editor'         => new EE_Select_Input(
-                apply_filters(
-                    'FHEE__Events_Admin_Page___default_event_settings_form__advanced_editor_input_answer_options',
-                    [
-                        esc_html__('Legacy Editor', 'event_espresso'),
-                        esc_html__('Advanced Editor', 'event_espresso'),
-                    ]
-                ),
-                apply_filters(
-                    'FHEE__Events_Admin_Page___default_event_settings_form__advanced_editor_input_settings',
-                    [
-                        'default'         => $this->admin_config->useAdvancedEditor(),
-                        'html_label_text' => esc_html__('Activate Advanced Editor?', 'event_espresso'),
-                        'html_help_text'  => sprintf(
-                            esc_html__(
-                                'Controls whether the Event Espresso Event Editor continues to use the existing legacy editor that functions like the typical older WordPress admin you are used to,%1$sor uses the new Advanced Editor with a more powerful and easier to use interface. This may be automatically turned on in order to utilize advanced features from new addons.',
-                                'event_espresso'
-                            ),
-                            '<br />'
-                        ),
-                    ]
-                )
-            ),
-            'defaults_section_header' => new EE_Form_Section_HTML(
-                EEH_HTML::h2(
-                    esc_html__('Default Settings', 'event_espresso'),
-                    '',
-                    'ee-admin-settings-hdr'
-                )
-            ),
-        ] + $default_event_settings_form_subsections;
-    }
-
-
-    /**
-     * @param array     $valid_data
-     * @param EE_Config $config
-     * @since $VID:$
-     */
-    public function updateAdvancedEditorAdminFormSettings(array $valid_data, EE_Config $config)
-    {
-        $config->admin->setUseAdvancedEditor(
-            isset($valid_data['use_advanced_editor'])
-                ? $valid_data['use_advanced_editor']
-                : false
-        );
     }
 }

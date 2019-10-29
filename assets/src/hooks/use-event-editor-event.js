@@ -16,14 +16,14 @@ const useEventEditorEvent = ( eventId = 0 ) => {
 	return useSelect( ( select ) => {
 		let entity;
 		if ( eventId === 0 ) {
-			const { getEvents } = select( 'eventespresso/core' );
-			entity = getEvents( eventId );
+			const { getEntitiesForModel } = select( 'eventespresso/core' );
+			entity = getEntitiesForModel( 'event' );
 			entity = Array.isArray( entity ) && entity[ 0 ] ?
 				entity[ 0 ] :
 				null;
 		} else {
-			const { getEventById } = select( 'eventespresso/core' );
-			entity = getEventById( eventId );
+			const { getEntityById } = select( 'eventespresso/core' );
+			entity = getEntityById( 'event', eventId );
 		}
 		const loaded = isModelEntityOfModel( entity, 'event' );
 		return {

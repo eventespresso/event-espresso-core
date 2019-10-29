@@ -21,10 +21,11 @@ import { isUndefined } from 'lodash';
  * Internal dependencies
  */
 import {
-	receiveSchemaForModel,
-	receiveFactoryForModel,
+	receiveSchemaForModelAndResolve,
+	receiveFactoryForModelAndResolve,
 	receiveRelationEndpointForModelEntity,
 	receiveRelationSchema,
+	receiveRelationSchemaAndResolve,
 } from './actions';
 import { fetch, resolveSelect } from '../base-controls';
 import { REDUCER_KEY as CORE_REDUCER_KEY } from '../core/constants';
@@ -35,18 +36,32 @@ import {
 
 /**
  * A resolver for getting the schema for a given model name.
+ *
  * @param {string} modelName
  * @return {Object} Retrieved schema.
  */
 export function* getSchemaForModel( modelName ) {
 	const path = getEndpoint( singularModelName( modelName ) );
+	console.log(
+		'%c FETCH SCHEMA FOR MODEL ' + modelName +
+		'%c path %c' + path,
+		'color: #ff0066; font-size:30px;',
+		'color: Grey;',
+		'color: #ff0066; font-size:14px;',
+	);
 	const schema = yield fetch( { path, method: 'OPTIONS' } );
-	yield receiveSchemaForModel( modelName, schema );
+	console.log(
+		'%c getSchemaForModel schema:',
+		'color: #ff0066; font-size:16px;',
+		schema
+	);
+	yield receiveSchemaForModelAndResolve( modelName, schema );
 	return schema;
 }
 
 /**
  * A resolver for getting the model entity factory for a given model name.
+ *
  * @param {string} modelName
  * @param {Object} schema
  * @return {Object|null} retrieved factory
@@ -58,16 +73,16 @@ export function* getFactoryForModel( modelName, schema = {} ) {
 			'getSchemaForModel',
 			modelName
 		);
-	}
-	if ( ! isSchemaResponseOfModel( schema, modelName ) ) {
-		return null;
+		if ( ! isSchemaResponseOfModel( schema, modelName ) ) {
+			return null;
+		}
 	}
 	const factory = createEntityFactory(
 		modelName,
 		schema.schema,
 		MODEL_PREFIXES( modelName )
 	);
-	yield receiveFactoryForModel( modelName, factory );
+	yield receiveFactoryForModelAndResolve( modelName, factory );
 	return factory;
 }
 
@@ -109,11 +124,15 @@ export function* getRelationEndpointForEntityId(
 			entity[ pluralRelationName + 'Resource' ].resourceLink
 		);
 	} else {
-		const response = yield fetch(
-			{
-				path: getEndpoint( modelName ) + '/' + entityId,
-			}
+		const path = getEndpoint( modelName ) + '/' + entityId;
+		console.log(
+			'%c getRelationEndpointForEntityId ' + modelName +
+			'%c path %c' + path,
+			'color: #ff0066; font-size:16px;',
+			'color: Grey;',
+			'color: #ff0066; font-size:14px;',
 		);
+		const response = yield fetch( { path } );
 		if ( ! response._links ) {
 			return '';
 		}
@@ -231,26 +250,76 @@ export function* getRelationType( modelName, relationName ) {
  * A resolver for retrieving the relation schema from the server for the given
  * modelName and relationName.
  *
+ * @param {Object} schema
+ * @param {string} modelName
+ * @param {string} relationName
+ * @throws Error
+ */
+export function* hydrateRelationSchema( schema, modelName, relationName ) {
+	modelName = singularModelName( modelName );
+	relationName = singularModelName( relationName );
+	console.log(
+		'%c hydrateRelationSchema %c > ' + modelName +
+		'%c > relation %c' + relationName +
+		'%c > schema: ',
+		'color: Coral; font-size:12px;',
+		'color: DarkSalmon;',
+		'color: Grey;',
+		'color: DarkSalmon;',
+		'color: DarkSalmon;',
+		schema
+	);
+	yield receiveRelationSchemaAndResolve(
+		modelName,
+		relationName,
+		schema
+	);
+}
+
+/**
+ * A resolver for retrieving the relation schema from the server for the given
+ * modelName and relationName.
+ *
  * @param {string} modelName
  * @param {string} relationName
  * @throws Error
  */
 export function* getRelationSchema( modelName, relationName ) {
 	modelName = singularModelName( modelName );
-	relationName = singularModelName( relationName );
-	const pluralRelationName = pluralModelName( relationName );
+	console.log(
+		'%c getRelationSchema ' +
+		'%c model %c ' + modelName +
+		'%c => relation %c ' + relationName,
+		'color: Coral; font-size:16px;',
+		'color: Grey;',
+		'color: DarkSalmon;',
+		'color: Grey;',
+		'color: DarkSalmon;'
+	);
 	const schema = yield resolveSelect(
 		SCHEMA_REDUCER_KEY,
 		'getSchemaForModel',
 		modelName
 	);
+	console.log(
+		'%c getRelationSchema ' +
+		'%c ' + modelName + ' => ' + relationName +
+		'%c schema: ',
+		'color: Coral; font-size:12px;',
+		'color: DarkSalmon;',
+		'color: Grey;',
+		schema,
+	);
 	if ( schema === null ) {
-		throw new Error(
-			'The ' + modelName + ' does not have a schema'
-		);
+		throw new Error( 'The ' + modelName + ' does not have a schema' );
 	}
+	relationName = singularModelName( relationName );
+	const pluralRelationName = pluralModelName( relationName );
 	// is there a schema for plural relation name?
-	let typeSchema = schema.schema.properties[ pluralRelationName ] || null;
+	let typeSchema = schema.hasOwnProperty( 'schema' ) &&
+		schema.schema.hasOwnProperty( 'properties' ) ?
+		schema.schema.properties[ pluralRelationName ] :
+		null;
 	typeSchema = typeSchema === null &&
 		! isUndefined( schema.schema.properties[ relationName ] ) ?
 		schema.schema.properties[ relationName ] :

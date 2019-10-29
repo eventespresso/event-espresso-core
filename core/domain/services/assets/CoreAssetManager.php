@@ -69,6 +69,7 @@ class CoreAssetManager extends AssetManager
     const JS_HANDLE_HELPERS = 'eventespresso-helpers';
 
     const JS_HANDLE_MODEL = 'eventespresso-model';
+    const JS_HANDLE_MODEL_SCHEMA = 'eventespresso-model-schema';
 
     const JS_HANDLE_VALUE_OBJECTS = 'eventespresso-value-objects';
 
@@ -205,6 +206,7 @@ class CoreAssetManager extends AssetManager
         $this->addJs(self::JS_HANDLE_VALIDATORS)->setRequiresTranslation();
         $this->addJs(self::JS_HANDLE_HELPERS)->setRequiresTranslation();
         $this->addJs(self::JS_HANDLE_MODEL)->setRequiresTranslation();
+        $this->addJs(self::JS_HANDLE_MODEL_SCHEMA)->setRequiresTranslation();
         $this->addJs(self::JS_HANDLE_HOOKS);
         $this->addJs(self::JS_HANDLE_VALUE_OBJECTS)->setRequiresTranslation();
         $this->addJs(self::JS_HANDLE_DATA_STORES)->setRequiresTranslation()->setInlineDataCallback(

@@ -26,6 +26,22 @@ export function* getEntityById( modelName, entityId, calculatedFields = [] ) {
 	let path = `${ getEndpoint( modelName ) }/${ entityId }`;
 	path = appendCalculatedFieldsToPath(
 		path,
+		calculatedFields,
+		modelName
+	);
+	console.log(
+		'%c getEntityById generator' +
+		'%c modelName:%c ' + modelName +
+		'%c entityId:%c ' + entityId +
+		'%c path:%c ' + path,
+		'color: #ff0066; font-size:12px;',
+		'color: Grey;',
+		'color: #ff0066; font-size:12px;',
+		'color: Grey;',
+		'color: #ff0066; font-size:12px;',
+		'color: Grey;',
+		'color: #ff0066; font-size:12px;',
+		'calculatedFields: ',
 		calculatedFields
 	);
 	const entity = yield fetch( { path } );

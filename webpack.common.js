@@ -120,6 +120,19 @@ const config = [
 	},
 	{
 		entry: {
+			'eventespresso-data-stores': assets + 'data/index.js',
+		},
+		output: {
+			filename: '[name].[chunkhash].dist.js',
+			path: pathToDistFolder,
+		},
+		module: moduleConfigWithJsAndCssRules,
+		watchOptions: {
+			poll: 1000,
+		},
+	},
+	{
+		entry: {
 			'eventespresso-helpers': assets + 'data/helpers/index.js',
 		},
 		module: moduleConfigWithJsRules,
@@ -140,6 +153,21 @@ const config = [
 			path: pathToDistFolder,
 			library: [ 'eejs', 'model' ],
 			libraryTarget: 'this',
+		},
+	},
+	{
+		entry: {
+			'eventespresso-model-schema': assets + 'data/eventespresso/schema/index.js',
+		},
+		output: {
+			filename: '[name].[chunkhash].dist.js',
+			path: pathToDistFolder,
+			library: [ 'eejs', 'modelSchema' ],
+			libraryTarget: 'this',
+		},
+		module: moduleConfigWithJsAndCssRules,
+		watchOptions: {
+			poll: 1000,
 		},
 	},
 	{
@@ -205,19 +233,6 @@ const config = [
 	{
 		entry: {
 			'ee-wp-plugins-page': assets + 'wp-plugins-page/index.js',
-		},
-		output: {
-			filename: '[name].[chunkhash].dist.js',
-			path: pathToDistFolder,
-		},
-		module: moduleConfigWithJsAndCssRules,
-		watchOptions: {
-			poll: 1000,
-		},
-	},
-	{
-		entry: {
-			'eventespresso-data-stores': assets + 'data/index.js',
 		},
 		output: {
 			filename: '[name].[chunkhash].dist.js',

@@ -1,21 +1,17 @@
 /**
  * External imports.
  */
-import {
-	DEFAULT_CORE_STATE,
-	singularModelName,
-} from '@eventespresso/model';
-import {
-	removeEmptyFromState,
-	normalizeEntityId,
-} from '@eventespresso/helpers';
 import { fromJS, Set, Map } from 'immutable';
+import { DEFAULT_CORE_STATE, singularModelName } from '@eventespresso/model';
+import { removeEmptyFromState, normalizeEntityId } from '@eventespresso/helpers';
 
 /**
  * Internal Imports
  */
 import { ACTION_TYPES } from '../actions/action-types';
 const { relations: types, resets: resetTypes } = ACTION_TYPES;
+
+const DEFAULT_STATE = fromJS( DEFAULT_CORE_STATE.relations );
 
 /**
  * Handles normalizing the incoming action so that we're always only receiving
@@ -51,9 +47,11 @@ const normalizedReceiveAndRemoveRelations = ( state, action ) => {
 		relatedEntityIds: [ entityId ],
 	};
 
-	while ( relatedEntityIds.length > 0 ) {
-		newAction.entityId = normalizeEntityId( relatedEntityIds.pop() );
-		state = receiveAndRemoveRelations( state, newAction );
+	if ( Array.isArray( relatedEntityIds ) ) {
+		while ( relatedEntityIds.length > 0 ) {
+			newAction.entityId = normalizeEntityId( relatedEntityIds.pop() );
+			state = receiveAndRemoveRelations( state, newAction );
+		}
 	}
 
 	return state;
@@ -72,34 +70,37 @@ function receiveAndRemoveRelations( state, action ) {
 		relationName,
 		entityId,
 		type,
+		relatedEntityIds,
 	} = action;
-	const relationEntityIds = Set( action.relatedEntityIds );
 
+	const relationEntityIds = Set( relatedEntityIds );
 	const path = [ modelName, entityId, relationName ];
 	const existingIds = state.getIn( path, Set() );
 
+	let newState = null;
 	switch ( type ) {
 		case types.RECEIVE_RELATED_ENTITY_IDS:
-			return state.setIn(
+			newState = state.setIn(
 				path,
 				existingIds.concat( relationEntityIds )
 			);
+			break;
 		case types.REMOVE_RELATED_ENTITY_IDS:
 			const idsAfterRemoval = existingIds.filter(
 				( id ) => ! relationEntityIds.keyOf( normalizeEntityId( id ) )
 			);
 
-			// Immutable.Set().filter() returns new instance, so let's compare
-			// size
+			// Immutable.Set().filter() returns new instance,
+			// so let's compare size
 			if ( idsAfterRemoval.count() === existingIds.count() ) {
 				return state;
 			}
-			return ! idsAfterRemoval.isEmpty() ?
+			newState = ! idsAfterRemoval.isEmpty() ?
 				state.setIn( path, idsAfterRemoval ) :
 				removeEmptyFromState( state, path );
+			break;
 	}
-
-	return state;
+	return newState ? newState : state;
 }
 
 /**
@@ -316,21 +317,23 @@ export {
  * @return {Immutable.Map} Original state if no change, new state if change.
  */
 export default function relations(
-	state = fromJS( DEFAULT_CORE_STATE.relations ),
+	state = DEFAULT_STATE,
 	action
 ) {
-	switch ( action.type ) {
-		case types.RECEIVE_RELATED_ENTITY_IDS:
-		case types.REMOVE_RELATED_ENTITY_IDS:
-			return normalizedReceiveAndRemoveRelations( state, action );
-		case types.RECEIVE_UPDATED_ENTITY_ID_FOR_RELATIONS:
-			return updateEntityIdForRelations( state, action );
-		case types.REMOVE_RELATED_ENTITIES_FOR_ENTITY:
-			return removeRelatedEntitiesForEntity( state, action );
-		case resetTypes.RESET_ALL_STATE:
-			return fromJS( DEFAULT_CORE_STATE.relations );
-		case resetTypes.RESET_STATE_FOR_MODEL:
-			return resetStateForModel( state, action );
+	if ( action.type ) {
+		switch ( action.type ) {
+			case types.RECEIVE_RELATED_ENTITY_IDS:
+			case types.REMOVE_RELATED_ENTITY_IDS:
+				return normalizedReceiveAndRemoveRelations( state, action );
+			case types.RECEIVE_UPDATED_ENTITY_ID_FOR_RELATIONS:
+				return updateEntityIdForRelations( state, action );
+			case types.REMOVE_RELATED_ENTITIES_FOR_ENTITY:
+				return removeRelatedEntitiesForEntity( state, action );
+			case resetTypes.RESET_ALL_STATE:
+				return DEFAULT_STATE;
+			case resetTypes.RESET_STATE_FOR_MODEL:
+				return resetStateForModel( state, action );
+		}
 	}
 	return state;
 }

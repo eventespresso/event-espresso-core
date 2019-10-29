@@ -18,7 +18,7 @@ import {
 } from '@eventespresso/validators';
 import { InvalidModelEntity } from '@eventespresso/eejs';
 import warning from 'warning';
-import { isEmpty, isUndefined, isArray } from 'lodash';
+import { isEmpty, isUndefined } from 'lodash';
 import { Map as ImmutableMap } from 'immutable';
 import { sprintf } from '@eventespresso/i18n';
 
@@ -57,7 +57,7 @@ const DEFAULT_EMPTY_ARRAY = [];
 export function* getRelatedEntities(
 	entity,
 	relationModelName,
-	calculatedFields = []
+	calculatedFields = DEFAULT_EMPTY_ARRAY
 ) {
 	if ( ! isModelEntity( entity ) ) {
 		throw new InvalidModelEntity( '', entity );
@@ -109,18 +109,17 @@ export function* getRelatedEntities(
 		calculatedFields
 	);
 
+	console.log(
+		'%c FETCH RELATED ENTITIES :' + path,
+		'color: #ff0066; font-size:12px;'
+	);
 	let relationEntities = yield fetch( { path } );
-
-	relationEntities = ! isEmpty( relationEntities ) ?
-		relationEntities :
-		DEFAULT_EMPTY_ARRAY;
-	relationEntities = ! isArray( relationEntities ) ?
+	if ( isEmpty( relationEntities ) ) {
+		return DEFAULT_EMPTY_ARRAY;
+	}
+	relationEntities = ! Array.isArray( relationEntities ) ?
 		[ relationEntities ] :
 		relationEntities;
-
-	if ( ! relationEntities.length ) {
-		return relationEntities;
-	}
 
 	const factory = yield resolveSelect(
 		SCHEMA_REDUCER_KEY,
@@ -144,8 +143,8 @@ export function* getRelatedEntities(
 	);
 	const entityIds = Array.from( fullEntities.keys() );
 
-	// are there already entities for the ids in the store? If so...we use
-	// those.
+	// are there already entities for the ids in the store?
+	// If so...we use those.
 	const existingEntities = yield select(
 		CORE_REDUCER_KEY,
 		'getEntitiesByIds',
@@ -235,17 +234,26 @@ export function* getRelatedEntitiesForIds(
 		'getFactoryForModel',
 		relationName
 	);
-	const response = yield fetch( {
-		path: getRelationRequestUrl(
-			modelName,
-			entityIds,
-			relationName,
-			relationSchema,
-			relationType,
-			hasJoinTable,
-			calculatedFields,
-		),
-	} );
+	const path = getRelationRequestUrl(
+		modelName,
+		entityIds,
+		relationName,
+		relationSchema,
+		relationType,
+		hasJoinTable,
+		calculatedFields,
+	);
+	console.log(
+		'%c getRelatedEntitiesForIds ' + modelName +
+		'%c path %c' + path +
+		'%c entityIds ',
+		'color: #ff0066; font-size:16px;',
+		'color: Grey;',
+		'color: #ff0066; font-size:14px;',
+		'color: Grey;',
+		entityIds
+	);
+	const response = yield fetch( { path } );
 	if ( ! response.length ) {
 		return DEFAULT_EMPTY_ARRAY;
 	}
@@ -262,7 +270,7 @@ export function* getRelatedEntitiesForIds(
 				record[ relationName ] :
 				relationRecords;
 			relationRecords = relationRecords !== null &&
-				! isArray( relationRecords ) ?
+				! Array.isArray( relationRecords ) ?
 				[ relationRecords ] :
 				relationRecords;
 			if ( relationRecords !== null ) {

@@ -31,6 +31,16 @@ const DEFAULT_EMPTY_ARRAY = [];
  *   the REST request.
  */
 export function* getItems( identifier, queryString ) {
+	console.log(
+		'%c getItems resolver' +
+		'%c identifier: %c ' + identifier +
+		'%c queryString: %c ' + queryString,
+		'color: #ff0066; font-size:16px;',
+		'color: Grey;',
+		'color: #ff0066; font-size:12px;',
+		'color: Grey;',
+		'color: #ff0066; font-size:12px;',
+	);
 	const items = yield fetch( {
 		path: queryString,
 	} );
@@ -42,7 +52,7 @@ export function* getItems( identifier, queryString ) {
  * children from them.
  *
  * Note, this uses the entities stored in the eventespresso/core store as the
- * authority so if an entity already exists there, it replaces what was
+ * authority so any existing entities will be used instead of what was
  * retrieved from the server.
  *
  * @param {string} modelName
@@ -64,7 +74,8 @@ export function* buildAndDispatchEntitiesFromResponse( modelName, response ) {
 		( entity ) => factory.fromExisting( entity )
 	);
 	const entityIds = fullEntities.map( ( entity ) => entity.id );
-	// are there already entities for the ids in the store?  If so, we use those
+	// are there already entities for the ids in the store?
+	// If so, we use those
 	const existingEntities = yield select(
 		CORE_REDUCER_KEY,
 		'getEntitiesByIds',
@@ -90,12 +101,23 @@ export function* buildAndDispatchEntitiesFromResponse( modelName, response ) {
 
 /**
  * Resolver for model entities returned from an endpoint.
+ *
  * @param {string} modelName
  * @param {string} queryString
  * @return {IterableIterator<*>|Array<BaseEntity>} An empty array if no
  * entities retrieved.
  */
 export function* getEntities( modelName, queryString ) {
+	console.log(
+		'%c getEntities resolver' +
+		'%c modelName: %c ' + modelName +
+		'%c queryString: %c ' + queryString,
+		'color: #ff0066; font-size:16px;',
+		'color: Grey;',
+		'color: #ff0066; font-size:12px;',
+		'color: Grey;',
+		'color: #ff0066; font-size:12px;',
+	);
 	const response = yield fetch( {
 		path: applyQueryString( modelName, queryString ),
 	} );
@@ -111,11 +133,22 @@ export function* getEntities( modelName, queryString ) {
 
 /**
  * Resolver for getting model entities for a given set of ids
+ *
  * @param {string} modelName
  * @param {Array<number>}ids
  * @return {IterableIterator<*>|Array} An empty array if no entities retrieved.
  */
 export function* getEntitiesByIds( modelName, ids = [] ) {
+	console.log(
+		'%c getEntitiesByIds resolver' +
+		'%c modelName: %c ' + modelName +
+		'%c ids: ',
+		'color: #ff0066; font-size:16px;',
+		'color: Grey;',
+		'color: #ff0066; font-size:12px;',
+		'color: Grey;',
+		ids
+	);
 	const queryString = getPrimaryKeyQueryString( modelName, ids );
 	const response = yield fetch( {
 		path: applyQueryString(

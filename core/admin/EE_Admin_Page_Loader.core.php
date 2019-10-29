@@ -2,34 +2,31 @@
 
 use EventEspresso\core\domain\entities\notifications\PersistentAdminNotice;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
+use EventEspresso\core\exceptions\InvalidInterfaceException;
+use EventEspresso\core\services\loaders\LoaderFactory;
+use EventEspresso\core\services\loaders\LoaderInterface;
 
 /**
- * Event Espresso
- * Event Registration and Management Plugin for WordPress
- *
- * @package         Event Espresso
- * @author          Seth Shoultes
- * @copyright    (c)2009-2012 Event Espresso All Rights Reserved.
- * @license         http://eventespresso.com/support/terms-conditions/  ** see Plugin Licensing **
- * @link            http://www.eventespresso.com
- * @version         4.0
- * ------------------------------------------------------------------------
  * EE_Admin_Page_Loader
  * This is a controller class used for initializing the Event Espresso Admin system
  * @package         EE_Admin_Page_Loader
  * @subpackage      /core/
  * @author          Darren Ethier
- * ------------------------------------------------------------------------
  */
 class EE_Admin_Page_Loader
 {
+
+    /**
+     * @var LoaderInterface $loader
+     */
+    protected $loader;
 
     /**
      * _installed_pages
      * objects for page_init objects detected and loaded
      *
      * @access private
-     * @var \EE_Admin_Page_Init[]
+     * @var EE_Admin_Page_Init[]
      */
     private $_installed_pages = array();
 
@@ -94,15 +91,19 @@ class EE_Admin_Page_Loader
      * constructor
      *
      * @access public
-     * @return \EE_Admin_Page_Loader
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws ReflectionException
+     * @throws InvalidInterfaceException
      */
     public function __construct()
     {
+        $this->loader = LoaderFactory::getLoader();
         // load menu_map classes
         EE_Registry::instance()->load_file(EE_ADMIN, 'EE_Admin_Page_Menu_Map', 'core');
         // define the default "groups" for the admin_pages
         $this->_set_menu_groups();
-
         // let's do a scan and see what installed pages we have
         $this->_get_installed_pages();
         // set menus (has to be done on every load - we're not actually loading the page just setting the menus and where they point to).
@@ -137,10 +138,10 @@ class EE_Admin_Page_Loader
      *
      * @access private
      * @return void
+     * @throws EE_Error
      */
     private function _set_menu_groups()
     {
-
         // set array of EE_Admin_Page_Menu_Group objects
         $groups = array(
             'main'       => new EE_Admin_Page_Menu_Group(
@@ -196,7 +197,7 @@ class EE_Admin_Page_Loader
             ),
             'tools'      => new EE_Admin_Page_Menu_Group(
                 array(
-                    'menu_label'   => __("Tools", "event_espresso"),
+                    'menu_label'   => __('Tools', 'event_espresso'),
                     'show_on_menu' => EE_Admin_Page_Menu_Map::BLOG_ADMIN_ONLY,
                     'menu_slug'    => 'tools',
                     'capability'   => 'ee_read_ee',
@@ -227,14 +228,15 @@ class EE_Admin_Page_Loader
      * slug.  The other utility with this function is it validates that all the groups are instances of
      * EE_Admin_Page_Menu_Group (cause some invalid things might have slipped in via addons).
      *
-     * @since  4.4.0
-     * @throws \EE_Error
      * @return EE_Admin_Page_Menu_Group[]
+     * @throws EE_Error
+     * @since  4.4.0
      */
     private function _rearrange_menu_groups()
     {
         $groups = array();
-        // first let's order the menu groups by their internal menu order (note usort type hinting to ensure the incoming array is EE_Admin_Page_Menu_Map objects )
+        // first let's order the menu groups by their internal menu order
+        // (note usort type hinting to ensure the incoming array is EE_Admin_Page_Menu_Map objects )
         usort($this->_admin_menu_groups, array($this, '_sort_menu_maps'));
         foreach ($this->_admin_menu_groups as $group) {
             if (! $group instanceof EE_Admin_Page_Menu_Group) {
@@ -259,8 +261,12 @@ class EE_Admin_Page_Loader
      * This just gets the list of installed EE_Admin_pages.
      *
      * @access private
-     * @throws EE_Error
      * @return void
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws ReflectionException
      */
     private function _get_installed_pages()
     {
@@ -270,10 +276,11 @@ class EE_Admin_Page_Loader
         $admin_screens = glob(EE_ADMIN_PAGES . '*', GLOB_ONLYDIR);
         if ($admin_screens) {
             foreach ($admin_screens as $admin_screen) {
+                $admin_screen_name = basename($admin_screen);
                 // files and anything in the exclude array need not apply
-                if (is_dir($admin_screen) && ! in_array(basename($admin_screen), $exclude)) {
+                if (is_dir($admin_screen) && ! in_array($admin_screen_name, $exclude, true)) {
                     // these folders represent the different EE admin pages
-                    $installed_refs[ basename($admin_screen) ] = $admin_screen;
+                    $installed_refs[ $admin_screen_name ] = $admin_screen;
                 }
             }
         }
@@ -304,7 +311,7 @@ class EE_Admin_Page_Loader
             $this->_caffeinated_extends
         );
         // loop through admin pages and setup the $_installed_pages array.
-        $hooks_ref = array();
+        $hooks_ref = [];
         foreach ($installed_refs as $page => $path) {
             // set autoloaders for our admin page classes based on included path information
             EEH_Autoloader::instance()->register_autoloaders_for_each_file_in_folder($path);
@@ -335,13 +342,13 @@ class EE_Admin_Page_Loader
                     $caf_admin_page = $this->_caffeinated_extends[ $this->_current_caf_extend_slug ]['admin_page'];
                     add_filter(
                         "FHEE__EE_Admin_Page_Init___initialize_admin_page__path_to_file__{$menu_slug}_{$admin_page_name}",
-                        function ($path_to_file) use ($caf_path) {
+                        static function ($path_to_file) use ($caf_path) {
                             return $caf_path;
                         }
                     );
                     add_filter(
                         "FHEE__EE_Admin_Page_Init___initialize_admin_page__admin_page__{$menu_slug}_{$admin_page_name}",
-                        function ($admin_page) use ($caf_admin_page) {
+                        static function ($admin_page) use ($caf_admin_page) {
                             return $caf_admin_page;
                         }
                     );
@@ -349,7 +356,9 @@ class EE_Admin_Page_Loader
                 }
                 // let's do the registered hooks
                 $extended_hooks = $this->_installed_pages[ $page ]->register_hooks($extend);
-                $hooks_ref = array_merge($hooks_ref, $extended_hooks);
+                foreach ($extended_hooks as $key => $value) {
+                    $hooks_ref[] = $value;
+                }
             }
         }
         // the hooks_ref is all the pages where we have $extended _Hooks files that will extend a class in a different folder.  So we want to make sure we load the file for the parent.
@@ -419,10 +428,14 @@ class EE_Admin_Page_Loader
      * _load_admin_page
      * Loads and instantiates page_init object for a single EE_admin page.
      *
-     * @param  string $page page_reference
-     * @param string  $path
-     * @throws EE_Error
+     * @param string $page page_reference
+     * @param string $path
      * @return object|bool  return page object if valid, bool false if not.
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws ReflectionException
+     * @throws InvalidInterfaceException
      */
     private function _load_admin_page($page = '', $path = '')
     {
@@ -453,8 +466,7 @@ class EE_Admin_Page_Loader
                            . $inner_error_msg;
             throw new EE_Error(implode('||', $error_msg));
         }
-        $a = new ReflectionClass($class_name);
-        return $a->newInstance();
+        return $this->loader->getShared($class_name);
     }
 
 
@@ -464,6 +476,9 @@ class EE_Admin_Page_Loader
      *
      * @access private
      * @return void
+     * @throws EE_Error
+     * @throws InvalidDataTypeException
+     * @throws ReflectionException
      */
     public function set_menus()
     {
@@ -471,7 +486,7 @@ class EE_Admin_Page_Loader
         $this->_prep_pages();
         foreach ($this->_prepped_menu_maps as $menu_map) {
             if (EE_Registry::instance()->CAP->current_user_can($menu_map->capability, $menu_map->menu_slug)) {
-                $menu_map->add_menu_page(false);
+                $menu_map->add_menu_page();
             }
         }
     }
@@ -484,6 +499,9 @@ class EE_Admin_Page_Loader
      * are only added to the menu map if they are intended for the admin menu
      *
      * @return void
+     * @throws EE_Error
+     * @throws InvalidDataTypeException
+     * @throws ReflectionException
      */
     public function set_network_menus()
     {
@@ -501,8 +519,9 @@ class EE_Admin_Page_Loader
      * sets the _prepped_menu_maps property
      *
      * @access private
-     * @throws EE_Error
      * @return void
+     * @throws EE_Error
+     * @throws InvalidDataTypeException
      */
     private function _prep_pages()
     {
@@ -512,8 +531,9 @@ class EE_Admin_Page_Loader
         foreach ($this->_installed_pages as $page) {
             if ($page instanceof EE_Admin_page_Init) {
                 $page_map = $page->get_menu_map();
-                // if we've got an array then the menu map is in the old format so let's throw a persistent notice that the admin system isn't setup correctly for this item.
-                if (is_array($page_map) || empty($page_map)) {
+                // if we've got an array then the menu map is in the old format
+                // so let's throw a persistent notice that the admin system isn't setup correctly for this item.
+                if ($page_map === null || is_array($page_map)) {
                     new PersistentAdminNotice(
                         'menu_map_warning_' . str_replace(' ', '_', $page->label) . '_' . EVENT_ESPRESSO_VERSION,
                         sprintf(
@@ -541,8 +561,8 @@ class EE_Admin_Page_Loader
                 }
                 // use the maintenance_mode_parent property and maintenance mode status to determine if this page even gets added to array.
                 if (empty($page_map->maintenance_mode_parent)
-                    && EE_Maintenance_Mode::instance()->level()
-                       == EE_Maintenance_Mode::level_2_complete_maintenance) {
+                    && EE_Maintenance_Mode::instance()->level() === EE_Maintenance_Mode::level_2_complete_maintenance
+                ) {
                     continue;
                 }
                 // assign to group (remember $page_map has the admin page stored in it).
@@ -565,12 +585,15 @@ class EE_Admin_Page_Loader
             // reset $pages_array with prepped data
             $pages_array[ $group ] = $menu_maps;
         }
+
         // now let's setup the _prepped_menu_maps property
         foreach ($menu_groups as $group => $group_objs) {
             if (isset($pages_array[ $group ])) {
-                $this->_prepped_menu_maps = array_merge($this->_prepped_menu_maps, $pages_array[ $group ]);
+                foreach ($pages_array[ $group ] as $key => $value) {
+                    $this->_prepped_menu_maps[] = $value;
+                }
             }
-        }/**/
+        }
     }
 
 
@@ -591,12 +614,13 @@ class EE_Admin_Page_Loader
      * @param array $installed_refs the original installed_refs array that may contain our NEW EE_Admin_Pages to be
      *                              loaded.
      * @return array
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     private function _set_caffeinated($installed_refs)
     {
-
         // first let's check if there IS a caffeinated folder. If there is not then lets get out.
-        if (! is_dir(EE_PLUGIN_DIR_PATH . 'caffeinated/admin') || (defined('EE_DECAF') && EE_DECAF)) {
+        if ((defined('EE_DECAF') && EE_DECAF) || ! is_dir(EE_PLUGIN_DIR_PATH . 'caffeinated/admin')) {
             return $installed_refs;
         }
         $this->_define_caffeinated_constants();
@@ -605,10 +629,11 @@ class EE_Admin_Page_Loader
         $new_admin_screens = glob(EE_CORE_CAF_ADMIN . 'new/*', GLOB_ONLYDIR);
         if ($new_admin_screens) {
             foreach ($new_admin_screens as $admin_screen) {
+                $admin_screen_name = basename($admin_screen);
                 // files and anything in the exclude array need not apply
-                if (is_dir($admin_screen) && ! in_array(basename($admin_screen), $exclude)) {
+                if (is_dir($admin_screen) && ! in_array($admin_screen_name, $exclude, true)) {
                     // these folders represent the different NEW EE admin pages
-                    $installed_refs[ basename($admin_screen) ] = $admin_screen;
+                    $installed_refs[ $admin_screen_name ] = $admin_screen;
                     // set autoloaders for our admin page classes based on included path information
                     EEH_Autoloader::instance()->register_autoloaders_for_each_file_in_folder($admin_screen);
                 }
@@ -656,15 +681,18 @@ class EE_Admin_Page_Loader
             foreach ($hooks as $hook) {
                 if (is_readable($hook)) {
                     require_once $hook;
-                    $classname = str_replace(EE_CORE_CAF_ADMIN . 'hooks/', '', $hook);
-                    $classname = str_replace('.class.php', '', $classname);
+                    $classname = str_replace(
+                        [EE_CORE_CAF_ADMIN . 'hooks/', '.class.php'],
+                        '',
+                        $hook
+                    );
                     if (class_exists($classname)) {
-                        $a = new ReflectionClass($classname);
-                        $ee_admin_hooks[] = $a->newInstance();
+                        $admin_page = $this->loader->getShared($classname);
+                        $ee_admin_hooks[] = $admin_page;
                     }
                 }
             }
-        }/**/
+        }
         $ee_admin_hooks = apply_filters('FHEE__EE_Admin_Page_Loader__set_caffeinated__ee_admin_hooks', $ee_admin_hooks);
         return $installed_refs;
     }
@@ -680,7 +708,7 @@ class EE_Admin_Page_Loader
      */
     private function _sort_menu_maps(EE_Admin_Page_Menu_Map $a, EE_Admin_Page_Menu_Map $b)
     {
-        if ($a->menu_order == $b->menu_order) {
+        if ($a->menu_order === $b->menu_order) {
             return 0;
         }
         return ($a->menu_order < $b->menu_order) ? -1 : 1;

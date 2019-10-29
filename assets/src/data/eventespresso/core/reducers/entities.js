@@ -12,6 +12,7 @@ import { normalizeEntityId } from '@eventespresso/helpers';
  */
 import { ACTION_TYPES } from '../actions/action-types';
 const { entities: types, resets: resetTypes } = ACTION_TYPES;
+const DEFAULT_STATE = fromJS( DEFAULT_CORE_STATE.entities );
 
 /**
  * This replaces any entities in the incoming object with matching entities (by
@@ -23,7 +24,7 @@ const { entities: types, resets: resetTypes } = ACTION_TYPES;
  * @return {Immutable.Map} New entityRecords object.
  */
 const replaceExistingEntitiesFromState = ( state, modelName, entityRecords ) => {
-	const existingEntities = state.get( modelName, null );
+	const existingEntities = state.get( singularModelName( modelName ), null );
 	if ( existingEntities === null ) {
 		return entityRecords;
 	}
@@ -45,14 +46,14 @@ function receiveEntity( state, action ) {
 	 * @type {BaseEntity|null} entity
 	 */
 	const { entity } = action;
-
+	const keyPath = [ singularModelName( entity.modelName ), entity.id ];
 	if (
 		! isModelEntity( entity ) ||
-		state.hasIn( [ entity.modelName, entity.id ] )
+		state.hasIn( keyPath )
 	) {
 		return state;
 	}
-	return state.setIn( [ entity.modelName, entity.id ], entity );
+	return state.setIn( keyPath, entity );
 }
 
 /**
@@ -70,7 +71,8 @@ function receiveEntity( state, action ) {
  * change detected or action isn't handled by this method)
  */
 function receiveEntityRecords( state, action ) {
-	const { type, modelName } = action;
+	const { type } = action;
+	const modelName = singularModelName( action.modelName );
 	// convert from array of entities to a Map indexed by entity id.
 	const incomingEntities = Map().withMutations( ( subState ) => {
 		action.entities.forEach(
@@ -128,7 +130,7 @@ function receiveEntityRecords( state, action ) {
 function removeEntityById( state, action ) {
 	const { modelName, entityId = 0 } = action;
 	const id = normalizeEntityId( entityId );
-	return state.deleteIn( [ modelName, id ] );
+	return state.deleteIn( [ singularModelName( modelName ), id ] );
 }
 
 /**
@@ -147,10 +149,7 @@ export {
  * @param {Object} action
  * @return {Immutable.Map} New or existing state
  */
-export default function entities(
-	state = fromJS( DEFAULT_CORE_STATE.entities ),
-	action
-) {
+export default function entities( state = DEFAULT_STATE, action ) {
 	if ( action.type ) {
 		switch ( action.type ) {
 			case types.RECEIVE_ENTITY_RECORDS:
@@ -161,7 +160,7 @@ export default function entities(
 			case types.REMOVE_ENTITY_BY_ID :
 				return removeEntityById( state, action );
 			case resetTypes.RESET_ALL_STATE :
-				return fromJS( DEFAULT_CORE_STATE.entities );
+				return DEFAULT_STATE;
 			case resetTypes.RESET_STATE_FOR_MODEL :
 				return state.has( singularModelName( action.modelName ) ) ?
 					state.set( singularModelName( action.modelName ), Map() ) :

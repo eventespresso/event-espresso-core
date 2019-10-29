@@ -38,7 +38,7 @@
     /*margin: -1px calc(var(--ee-margin-micro) * -1) var(--ee-margin-smaller) 0;*/
 }
 .ee-entity-list-filter-bar-perPage-select {
-    text-align: right;
+    min-width: 60px;
 }
 
 .ee-entity-list-filter-bar .ee-filter-bar-filter {
@@ -100,7 +100,6 @@
     font-weight: bold;
     margin: var(--ee-margin-micro) var(--ee-margin-micro) 0;
     white-space: nowrap;
-    width: 100%;
 }
 
 .ee-entity-list-filter-bar-wrapper .ee-entity-list-filter-bar-perPage-select .components-base-control__label {
@@ -110,7 +109,6 @@
 .ee-entity-list-filter-bar-wrapper .components-text-control__input,
 .ee-entity-list-filter-bar-wrapper .components-select-control__input {
     display: block;
-    width: auto;
     max-width: 100%;
 }
 
@@ -131,6 +129,14 @@
     transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
     vertical-align: middle;
     width: 100%;
+}
+
+.ee-entity-list-filter-bar-wrapper input {
+    padding: var(--ee-padding-micro) var(--ee-padding-tiny);
+}
+
+.ee-entity-list-filter-bar-wrapper select {
+    padding: var(--ee-padding-micro) var(--ee-padding-default) var(--ee-padding-micro) var(--ee-padding-tiny);
 }
 
 

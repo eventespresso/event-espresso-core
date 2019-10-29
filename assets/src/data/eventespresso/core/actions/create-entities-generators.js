@@ -20,12 +20,56 @@ import { REDUCER_KEY as CORE_REDUCER_KEY } from '../constants';
  * including it in an action object for adding to state.
  *
  * @param {string} modelName  The name of the model the incoming object is for.
- * @param {Object} entity  A plain object containing the entity properties and
+ * @param {Object} modelSchema
+ * @param {Object} entityData  A plain object containing the entity properties and
  * values
  * @return {null|Object}  If the entity is successfully created the model entity
  * instance is returned, otherwise null.
  */
-export function* createEntity( modelName, entity ) {
+export function* hydrateEntity( modelName, modelSchema, entityData ) {
+	if ( ! entityData ) {
+		console.log(
+			'%c INVALID ENTITY DATA: ',
+			'color: #ff0066;',
+			entityData
+		);
+		return null;
+	}
+	modelName = singularModelName( modelName );
+	const factory = yield resolveSelect(
+		SCHEMA_REDUCER_KEY,
+		'getFactoryForModel',
+		modelName,
+		modelSchema
+	);
+	if ( ! isModelEntityFactoryOfModel( factory, modelName ) ) {
+		console.log(
+			'%c INVALID ' + modelName.toUpperCase() + ' MODEL FACTORY: ',
+			'color: #ff0066;',
+			factory
+		);
+		return null;
+	}
+	const entityInstance = factory.fromExisting( entityData );
+	yield dispatch(
+		CORE_REDUCER_KEY,
+		'receiveEntityAndResolve',
+		entityInstance
+	);
+	return entityInstance;
+}
+
+/**
+ * Returns an action generator for creating a model entity instance and
+ * including it in an action object for adding to state.
+ *
+ * @param {string} modelName  The name of the model the incoming object is for.
+ * @param {Object} entityData  A plain object containing the entity properties and
+ * values
+ * @return {null|Object}  If the entity is successfully created the model entity
+ * instance is returned, otherwise null.
+ */
+export function* createEntity( modelName, entityData ) {
 	modelName = singularModelName( modelName );
 	const factory = yield resolveSelect(
 		SCHEMA_REDUCER_KEY,
@@ -35,7 +79,7 @@ export function* createEntity( modelName, entity ) {
 	if ( ! isModelEntityFactoryOfModel( factory, modelName ) ) {
 		return null;
 	}
-	const entityInstance = factory.createNew( entity );
+	const entityInstance = factory.createNew( entityData );
 	yield dispatch(
 		CORE_REDUCER_KEY,
 		'receiveEntityAndResolve',
@@ -63,7 +107,7 @@ export function* receiveEntityAndResolve( entity ) {
 		'finishResolution',
 		CORE_REDUCER_KEY,
 		'getEntityById',
-		[ entity.modelName.toLowerCase(), entity.id ]
+		[ entity.modelName.toLowerCase(), entity.id, [] ]
 	);
 }
 
@@ -107,7 +151,7 @@ export function* receiveEntitiesAndResolve( modelName, entities ) {
 function assertIsModelEntity( entity ) {
 	if ( ! isModelEntity( entity ) ) {
 		throw new InvalidModelEntity(
-			'receiveEntityIdAndResolve expects an instance of BaseEntity',
+			'receiveEntityAndResolve expects an instance of BaseEntity',
 			entity,
 		);
 	}

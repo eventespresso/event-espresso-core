@@ -80,6 +80,7 @@ export const maybeConvertToValueObject = ( fieldName, fieldValue, schema ) => {
  * @param {Object} schema
  * @return {string|number|*}  If the value is not a value object, returns the
  * original value
+ * @throws {TypeError}
  */
 export const maybeConvertFromValueObjectWithAssertions = (
 	fieldName,
@@ -87,10 +88,24 @@ export const maybeConvertFromValueObjectWithAssertions = (
 	schema
 ) => {
 	if ( isDateTimeField( fieldName, schema ) ) {
-		DateTime.assertIsDateTime( fieldValue );
+		try {
+			DateTime.assertIsDateTime( fieldValue );
+		} catch ( error ) {
+			throw new TypeError(
+				'The following error was thrown when trying to convert the "' +
+				fieldName + '" DateTime field to an ISO string: ' + error
+			);
+		}
 		fieldValue = fieldValue.toISO();
 	} else if ( isMoneyField( fieldName, schema ) ) {
-		Money.assertMoney( fieldValue );
+		try {
+			Money.assertMoney( fieldValue );
+		} catch ( error ) {
+			throw new TypeError(
+				'The following error was thrown when trying to convert the "' +
+				fieldName + '" Money field to a number: ' + error
+			);
+		}
 		fieldValue = fieldValue.toNumber();
 	}
 	return fieldValue;
@@ -179,7 +194,6 @@ export const getRelationNameFromLink = ( resourceLink ) => {
  * is currently set on this entity.
  *
  * @param {BaseEntity} entityInstance
- *
  * @return {Object} A plain object
  */
 export const getBaseFieldsAndValuesForCloning = ( entityInstance ) => {

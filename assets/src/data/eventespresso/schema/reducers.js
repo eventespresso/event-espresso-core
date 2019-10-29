@@ -14,25 +14,33 @@ import isShallowEqual from '@wordpress/is-shallow-equal';
 /**
  * Internal imports
  */
-import { ACTION_TYPES as types } from './action-types';
+import { ACTION_TYPES } from './action-types';
+
+// setup initial state objects
+const DEFAULT_STATE_SCHEMA = fromJS( DEFAULT_SCHEMA_STATE.schema );
+const DEFAULT_STATE_FACTORY = fromJS( DEFAULT_SCHEMA_STATE.factory );
+const DEFAULT_STATE_ENDPOINTS = fromJS( DEFAULT_SCHEMA_STATE.relationEndpoints );
+const DEFAULT_STATE_RELATIONS = fromJS( DEFAULT_SCHEMA_STATE.relationSchema );
+
 /**
  * Reducer for a model schema.
+ *
  * @param {Map} state
  * @param {Object} action
  * @return {Map} The new (or original) state.
  */
-export const receiveSchema = (
-	state = fromJS( DEFAULT_SCHEMA_STATE.schema ),
-	action
-) => {
-	const { type, schema } = action;
+export const receiveSchema = ( state = DEFAULT_STATE_SCHEMA, action ) => {
 	try {
-		const modelName = singularModelName( action.modelName );
-		if (
-			isSchemaResponseOfModel( schema, modelName ) &&
-			type === types.RECEIVE_SCHEMA_RECORD
-		) {
-			return state.set( modelName, schema );
+		if ( action.type === ACTION_TYPES.RECEIVE_SCHEMA_RECORD ) {
+			const modelName = singularModelName( action.modelName );
+			if ( isSchemaResponseOfModel( action.schema, modelName ) ) {
+				console.log(
+					'%c receiveSchema for ' + modelName + ' model',
+					'color: LightSalmon; font-size:14px;',
+					action.schema
+				);
+				return state.set( modelName, action.schema );
+			}
 		}
 	} catch ( e ) {
 		return state;
@@ -42,22 +50,18 @@ export const receiveSchema = (
 
 /**
  * Reducer for a model factory
+ *
  * @param {Map} state
  * @param {Object} action
  * @return {Map} the new (or original) state.
  */
-export const receiveFactory = (
-	state = fromJS( DEFAULT_SCHEMA_STATE.factory ),
-	action
-) => {
-	const { type, factory } = action;
+export const receiveFactory = ( state = DEFAULT_STATE_FACTORY, action ) => {
 	try {
-		const modelName = singularModelName( action.modelName );
-		if (
-			isModelEntityFactoryOfModel( factory, modelName ) &&
-			type === types.RECEIVE_FACTORY_FOR_MODEL
-		) {
-			return state.set( modelName, factory );
+		if ( action.type === ACTION_TYPES.RECEIVE_FACTORY_FOR_MODEL ) {
+			const modelName = singularModelName( action.modelName );
+			if ( isModelEntityFactoryOfModel( action.factory, modelName ) ) {
+				return state.set( modelName, action.factory );
+			}
 		}
 	} catch ( e ) {
 		return state;
@@ -73,17 +77,20 @@ export const receiveFactory = (
  * @return {Map} New or original state.
  */
 export const receiveRelationEndpointForEntity = (
-	state = fromJS( DEFAULT_SCHEMA_STATE.relationEndpoints ),
+	state = DEFAULT_STATE_ENDPOINTS,
 	action
 ) => {
 	try {
-		const { type, entityId, endpoint } = action;
-		const modelName = singularModelName( action.modelName );
-		const relationName = singularModelName( action.relationName );
-		if ( type === types.RECEIVE_RELATION_ENDPOINT_FOR_MODEL_ENTITY ) {
+		if ( action.type === ACTION_TYPES.RECEIVE_RELATION_ENDPOINT_FOR_MODEL_ENTITY ) {
+			const modelName = singularModelName( action.modelName );
+			const relationName = singularModelName( action.relationName );
 			return state.setIn(
-				[ modelName, normalizeEntityId( entityId ), relationName ],
-				endpoint
+				[
+					modelName,
+					normalizeEntityId( action.entityId ),
+					relationName
+				],
+				action.endpoint
 			);
 		}
 	} catch ( e ) {
@@ -99,8 +106,11 @@ export const receiveRelationEndpointForEntity = (
  * @param {Object} action
  * @return {Map} New or original state
  */
-export const receiveRelationSchema = ( state = Map(), action ) => {
-	if ( action.type === types.RECEIVE_RELATION_SCHEMA ) {
+export const receiveRelationSchema = (
+	state = DEFAULT_STATE_RELATIONS,
+	action
+) => {
+	if ( action.type === ACTION_TYPES.RECEIVE_RELATION_SCHEMA ) {
 		const modelName = singularModelName( action.modelName );
 		const relationName = singularModelName( action.relationName );
 		if ( isShallowEqual(

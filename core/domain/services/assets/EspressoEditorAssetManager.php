@@ -24,10 +24,12 @@ class EspressoEditorAssetManager extends AssetManager
     const JS_HANDLE_EDITOR_HOCS = 'eventespresso-editor-hocs';
     const CSS_HANDLE_EDITOR_HOCS = 'eventespresso-editor-hocs';
 
+
     /**
      * @throws InvalidDataTypeException
      * @throws InvalidEntityException
      * @throws DuplicateCollectionIdentifierException
+     * @throws DomainException
      */
     public function addAssets()
     {
@@ -42,6 +44,7 @@ class EspressoEditorAssetManager extends AssetManager
      * @throws InvalidDataTypeException
      * @throws InvalidEntityException
      * @throws DuplicateCollectionIdentifierException
+     * @throws DomainException
      */
     private function registerJavascript()
     {
@@ -56,6 +59,7 @@ class EspressoEditorAssetManager extends AssetManager
      * @throws DuplicateCollectionIdentifierException
      * @throws InvalidDataTypeException
      * @throws InvalidEntityException
+     * @throws DomainException
      */
     private function registerStyleSheets()
     {

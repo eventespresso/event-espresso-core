@@ -57,10 +57,11 @@ const getEntitiesForModel = /* createSelector( */
  */
 const getEntityById = ( state, modelName, entityId ) => {
 	modelName = singularModelName( modelName );
-	return state.entities.getIn( [
+	const entity = state.entities.getIn( [
 		modelName,
 		normalizeEntityId( entityId ),
-	] ) || null;
+	] );
+	return entity || null;
 };
 
 /**

@@ -16,10 +16,20 @@ import { REDUCER_KEY as CORE_REDUCER_KEY } from './core/constants';
 
 /**
  * Returns the action object for a fetch control.
+ *
  * @param {Object} request
- * @return {{type: string, request: Object}} An action object
+ * @return {{
+ *      type: string,
+ *      request: Object
+ * }}
+ * An action object
  */
 export function fetch( request ) {
+	console.log(
+		'%c fetch request',
+		'color: #ff0066; font-size:24px;',
+		request
+	);
 	return {
 		type: 'FETCH_FROM_API',
 		request,
@@ -28,10 +38,16 @@ export function fetch( request ) {
 
 /**
  * Returns the action object for a select control.
+ *
  * @param {string} reducerKey
  * @param {string} selectorName
- * @param {*[]} args
- * @return {{type: string, reducerKey: string, selectorName: string, args: *[]}}
+ * @param {...Array|boolean|number|Object|string} args
+ * @return {{
+ *      type: string,
+ *      reducerKey: string,
+ *      selectorName: string,
+ *      args: ...Array|boolean|number|Object|string
+ * }}
  * Returns an action object.
  */
 export function select( reducerKey, selectorName, ...args ) {
@@ -45,9 +61,10 @@ export function select( reducerKey, selectorName, ...args ) {
 
 /**
  * Returns the action object for resolving a selector that has a resolver.
+ *
  * @param {string} reducerKey
  * @param {string} selectorName
- * @param {Array} args
+ * @param {...Array|boolean|number|Object|string} args
  * @return {Object} An action object.
  */
 export function resolveSelect( reducerKey, selectorName, ...args ) {
@@ -61,13 +78,30 @@ export function resolveSelect( reducerKey, selectorName, ...args ) {
 
 /**
  * Returns the action object for a dispatch control.
+ *
  * @param {string} reducerKey
  * @param {string} dispatchName
- * @param {*[]} args
- * @return {{type: string, reducerKey: string, dispatchName: string, args: *[]}}
+ * @param {...Array|boolean|number|Object|string} args
+ * @return {{
+ *      type: string,
+ *      reducerKey: string,
+ *      dispatchName: string,
+ *      args: ...Array|boolean|number|Object|string
+ * }}
  * An action object
  */
 export function dispatch( reducerKey, dispatchName, ...args ) {
+	console.log(
+		'%c dispatch %c' + dispatchName +
+		'%c reducerKey: %c' + reducerKey +
+		'%c args: ',
+		'color: Yellow; font-size:12px;',
+		'color: Khaki; font-size:14px;',
+		'color: Grey;',
+		'color: Khaki;',
+		'color: Grey;',
+		args
+	);
 	return {
 		type: 'DISPATCH',
 		reducerKey,
@@ -81,7 +115,7 @@ export function dispatch( reducerKey, dispatchName, ...args ) {
  *
  * @param {string} reducerKey
  * @param {string} dispatchName
- * @param {Array} args
+ * @param {...Array|boolean|number|Object|string} args
  * @return {Object} The action object.
  */
 export function resolveDispatch( reducerKey, dispatchName, ...args ) {
@@ -113,7 +147,7 @@ export function resolveGetEntityByIdForIds( modelName, entityIds ) {
  * Returns the action object for resolving the getRelatedEntities selector
  * on the eventespresso/core store for the given arguments.
  *
- * @param {BaseEntity} entity
+ * @param {BaseEntity|Object} entity
  * @param {Map} relationEntities
  * @param {Array<number>} relationIds
  * @return {Object} An action object
@@ -133,6 +167,7 @@ export function resolveGetRelatedEntities(
 
 const controls = {
 	FETCH_FROM_API( { request } ) {
+		// return {};
 		return apiFetch( request );
 	},
 	SELECT( { reducerKey, selectorName, args } ) {
@@ -153,6 +188,18 @@ const controls = {
 
 			// trigger the selector (to trigger the resolver)
 			const result = getResult();
+			console.log(
+				'%c hasFinishedResolution: ',
+				'color: #ff0066;',
+				'reducerKey: ' + reducerKey,
+				'selector: ' + selectorName,
+				'hasFinished: ',
+				hasFinished(),
+				'result: ',
+				result,
+				'args: ',
+				args
+			);
 			if ( hasFinished() ) {
 				return resolve( result );
 			}
