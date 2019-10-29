@@ -120,7 +120,7 @@ const useTicketFormInputConfig = ( {
 			label: __( 'Ticket Price', 'event_espresso' ),
 			default: 0,
 			min: 0,
-			step: 0.01,
+			step: 1,
 			changeListener: ( value, prevValue ) => {
 				if ( ! amountsMatch( value, prevValue ) ) {
 					ticket.price = new Money(
