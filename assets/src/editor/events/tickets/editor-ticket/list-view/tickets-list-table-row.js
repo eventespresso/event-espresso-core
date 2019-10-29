@@ -83,7 +83,7 @@ const ticketsListTableRow = (
 				key: 'quantity',
 				type: 'cell',
 				class: 'ee-ticket-list-cell ee-ticket-list-col-capacity ee-rspnsv-table-column-tiny ee-number-column',
-				value: <InfinitySymbol value={ ticketEntity.regLimit } asInt />,
+				value: <InfinitySymbol value={ ticketEntity.qty } asInt />,
 			},
 			{
 				key: 'sold',
