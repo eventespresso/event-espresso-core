@@ -21,10 +21,11 @@ import { isUndefined } from 'lodash';
  * Internal dependencies
  */
 import {
-	receiveSchemaForModel,
-	receiveFactoryForModel,
+	receiveSchemaForModelAndResolve,
+	receiveFactoryForModelAndResolve,
 	receiveRelationEndpointForModelEntity,
 	receiveRelationSchema,
+	receiveRelationSchemaAndResolve,
 } from './actions';
 import { fetch, resolveSelect } from '../base-controls';
 import { REDUCER_KEY as CORE_REDUCER_KEY } from '../core/constants';
@@ -35,6 +36,7 @@ import {
 
 /**
  * A resolver for getting the schema for a given model name.
+ *
  * @param {string} modelName
  * @return {Object} Retrieved schema.
  */
@@ -53,12 +55,13 @@ export function* getSchemaForModel( modelName ) {
 		'color: #ff0066; font-size:16px;',
 		schema
 	);
-	yield receiveSchemaForModel( modelName, schema );
+	yield receiveSchemaForModelAndResolve( modelName, schema );
 	return schema;
 }
 
 /**
  * A resolver for getting the model entity factory for a given model name.
+ *
  * @param {string} modelName
  * @param {Object} schema
  * @return {Object|null} retrieved factory
@@ -79,7 +82,7 @@ export function* getFactoryForModel( modelName, schema = {} ) {
 		schema.schema,
 		MODEL_PREFIXES( modelName )
 	);
-	yield receiveFactoryForModel( modelName, factory );
+	yield receiveFactoryForModelAndResolve( modelName, factory );
 	return factory;
 }
 
@@ -267,7 +270,7 @@ export function* hydrateRelationSchema( schema, modelName, relationName ) {
 		'color: DarkSalmon;',
 		schema
 	);
-	yield receiveRelationSchema(
+	yield receiveRelationSchemaAndResolve(
 		modelName,
 		relationName,
 		schema
@@ -316,12 +319,12 @@ export function* getRelationSchema( modelName, relationName ) {
 	// is there a schema for plural relation name?
 	let typeSchema = schema.hasOwnProperty( 'schema' ) &&
 		schema.schema.hasOwnProperty( 'properties' ) ?
-			schema.schema.properties[ pluralRelationName ]:
-			null;
+		schema.schema.properties[ pluralRelationName ] :
+		null;
 	typeSchema = typeSchema === null &&
 		! isUndefined( schema.schema.properties[ relationName ] ) ?
-			schema.schema.properties[ relationName ] :
-			typeSchema;
+		schema.schema.properties[ relationName ] :
+		typeSchema;
 	if ( typeSchema === null ) {
 		throw new Error(
 			'There is no relation for ' + relationName + ' on the ' +

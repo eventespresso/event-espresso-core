@@ -167,6 +167,7 @@ export function resolveGetRelatedEntities(
 
 const controls = {
 	FETCH_FROM_API( { request } ) {
+		// return {};
 		return apiFetch( request );
 	},
 	SELECT( { reducerKey, selectorName, args } ) {
@@ -187,6 +188,18 @@ const controls = {
 
 			// trigger the selector (to trigger the resolver)
 			const result = getResult();
+			console.log(
+				'%c hasFinishedResolution: ',
+				'color: #ff0066;',
+				'reducerKey: ' + reducerKey,
+				'selector: ' + selectorName,
+				'hasFinished: ',
+				hasFinished(),
+				'result: ',
+				result,
+				'args: ',
+				args
+			);
 			if ( hasFinished() ) {
 				return resolve( result );
 			}

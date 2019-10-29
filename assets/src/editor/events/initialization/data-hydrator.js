@@ -2,7 +2,7 @@
  * External imports
  */
 import { pluralModelName } from '@eventespresso/model';
-import { hydrateRelationSchema  } from '@eventespresso/model-schema';
+import { hydrateRelationSchema } from '@eventespresso/model-schema';
 import { isModelEntityOfModel } from '@eventespresso/validators';
 import { dispatch } from '@wordpress/data';
 
@@ -10,7 +10,7 @@ const {
 	hydrateEntity,
 	resolveRelationRecordForRelation,
 } = dispatch( 'eventespresso/core' );
-const { receiveSchemaForModel } = dispatch( 'eventespresso/schema' );
+const { receiveSchemaForModelAndResolve } = dispatch( 'eventespresso/schema' );
 
 /**
  * adds all event editor data to the store
@@ -53,7 +53,7 @@ const hydrateSchemas = async ( schemas, relations ) => {
 			if ( ! schemaData.hasOwnProperty( 'schema' ) ) {
 				throw new TypeError( 'Invalid Schema ' );
 			}
-			const schema = await receiveSchemaForModel( model, schemaData );
+			const schema = await receiveSchemaForModelAndResolve( model, schemaData );
 			if ( relations.hasOwnProperty( model ) &&
 				schema.hasOwnProperty( 'schema' ) &&
 				schema.schema.hasOwnProperty( 'schema' ) &&
@@ -73,8 +73,8 @@ const hydrateSchemas = async ( schemas, relations ) => {
 					modelRelations.pop() :
 					{};
 				modelRelations = isDataObject( modelRelations ) ?
-						modelRelations :
-						{};
+					modelRelations :
+					{};
 				for ( const modelRelation of Object.keys( modelRelations ) ) {
 					const relationSingular = modelRelation.toLowerCase();
 					const relationPlural = pluralModelName( relationSingular );
@@ -94,7 +94,7 @@ const hydrateSchemas = async ( schemas, relations ) => {
 							for await ( const resolved of gen ) {
 								if ( resolved.hasOwnProperty(
 									'relationSchema'
-									) && resolved.relationSchema
+								) && resolved.relationSchema
 									.hasOwnProperty( 'schema' )
 								) {
 									relationSchemas.push(
@@ -177,8 +177,8 @@ const hydrateEntities = async ( model, modelSchema, rawData ) => {
 		' > rawData: ', rawData
 	);
 	const entityData = isDataObject( rawData ) ?
-			Object.values( rawData ) :
-			rawData;
+		Object.values( rawData ) :
+		rawData;
 	if ( isDataObject( entityData ) ) {
 		let hydratedEntities = {};
 		for ( const moreEntityData of Object.values( entityData ) ) {
@@ -196,7 +196,6 @@ const hydrateEntities = async ( model, modelSchema, rawData ) => {
 		modelSchema,
 		entityData
 	);
-
 };
 
 /**
@@ -267,9 +266,9 @@ const hydrateRelations = async ( rawData, hydratedEntities, related ) => {
 										hydratedEntities
 									);
 									if ( isModelEntityOfModel(
-											relatedEntity,
-											relatedModelName
-										)
+										relatedEntity,
+										relatedModelName
+									)
 									) {
 										resolveRelationRecordForRelation(
 											relatedEntity,
