@@ -107,7 +107,7 @@ export function* receiveEntityAndResolve( entity ) {
 		'finishResolution',
 		CORE_REDUCER_KEY,
 		'getEntityById',
-		[ entity.modelName.toLowerCase(), entity.id, [] ]
+		[ entity.modelName.toLowerCase(), entity.id ]
 	);
 }
 
