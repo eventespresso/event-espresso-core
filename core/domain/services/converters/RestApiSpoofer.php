@@ -150,7 +150,7 @@ class RestApiSpoofer
         $results = $model->get_all_wpdb_results($query_params);
         $rest_request = new WP_REST_Request();
         $rest_request->set_param('include', $include);
-        $rest_request->set_param('caps', null);
+        $rest_request->set_param('caps', 'edit');
         $nice_results = array();
         foreach ($results as $result) {
             $nice_results[] = $this->rest_controller->createEntityFromWpdbResult(
