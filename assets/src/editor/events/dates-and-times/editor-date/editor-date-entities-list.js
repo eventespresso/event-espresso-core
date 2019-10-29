@@ -85,7 +85,9 @@ const EditorDateEntitiesList = ( {
 			setFilteredDates( eventDateIds );
 		}
 	}, [ currentPage, perPage, showDates, datesSortedBy, eventDates.length ] );
-	const entityOrder = filteredDateIds.join( '-' );
+	const entityOrder = Array.isArray( filteredDateIds ) ?
+		filteredDateIds.join( '-' ) :
+		'';
 	return (
 		<FormWrapper>
 			<DatesListFilterBar
