@@ -77,8 +77,7 @@ const getRelatedEntities = createSelector(
 	(
 		state,
 		entity,
-		relationModelName,
-		calculatedFields = []
+		relationModelName
 	) => {
 		if ( ! isModelEntity( entity ) ) {
 			throw new InvalidModelEntity( '', entity );
@@ -94,13 +93,13 @@ const getRelatedEntities = createSelector(
 	(
 		state,
 		entity,
-		relationModelName,
-		calculatedFields = []
+		relationModelName
 	) => {
+		relationModelName = singularModelName( relationModelName );
 		let relationIdDependants = getIdsForRelatedEntities.getDependants(
 			state,
 			entity,
-			singularModelName( relationModelName )
+			relationModelName
 		);
 		relationIdDependants = relationIdDependants[ 0 ];
 		relationIdDependants = relationIdDependants ?
@@ -109,7 +108,7 @@ const getRelatedEntities = createSelector(
 		return relationIdDependants ? [
 			...getEntitiesByIds.getDependants(
 				state,
-				singularModelName( relationModelName ),
+				relationModelName,
 				relationIdDependants
 			),
 			relationIdDependants,
