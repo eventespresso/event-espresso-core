@@ -113,6 +113,7 @@ export function* receiveEntityAndResolve( entity ) {
 
 /**
  * Same as receivesEntityAndResolve except this handles multiple entities.
+ *
  * @param {string} modelName
  * @param {Array<BaseEntity>}entities
  */
