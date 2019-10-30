@@ -217,6 +217,50 @@ function* resolveRelationRecordForRelation(
 }
 
 /**
+ * Resolves getRelatedEntitiesForIds for the given IDs.
+ *
+ * @param {string} modelName
+ * @param {Object} relatedIds
+ */
+export function* resolveGetRelatedEntitiesForIds(
+	modelName,
+	relatedIds
+) {
+	modelName = singularModelName( modelName );
+
+	for ( const [ relationName, entityIds ]
+		of Object.entries( relatedIds )
+	) {
+		// Finish resolution for empty set.
+		yield dispatch(
+			'core/data',
+			'finishResolution',
+			REDUCER_KEY,
+			'getRelatedEntitiesForIds',
+			[ modelName, [], relationName ]
+		);
+		// Finish resolution for all entity ids.
+		yield dispatch(
+			'core/data',
+			'finishResolution',
+			REDUCER_KEY,
+			'getRelatedEntitiesForIds',
+			[ modelName, entityIds, relationName ]
+		);
+		// Finish resolution for individual entity ids.
+		while ( entityIds.length > 0 ) {
+			yield dispatch(
+				'core/data',
+				'finishResolution',
+				REDUCER_KEY,
+				'getRelatedEntitiesForIds',
+				[ modelName, [ entityIds.pop() ], relationName ]
+			);
+		}
+	}
+}
+
+/**
  * Asserts that the provided map has BaseEntity instances for the expected
  * model name.
  *

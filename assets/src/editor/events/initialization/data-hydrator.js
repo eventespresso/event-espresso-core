@@ -9,6 +9,7 @@ import { dispatch } from '@wordpress/data';
 const {
 	hydrateEntity,
 	resolveRelationRecordForRelation,
+	resolveGetRelatedEntitiesForIds,
 } = dispatch( 'eventespresso/core' );
 const { receiveSchemaForModelAndResolve } = dispatch( 'eventespresso/schema' );
 
@@ -205,11 +206,14 @@ const hydrateRelations = async ( rawData, hydratedEntities, related ) => {
 		for ( const [ modelName, entities ] of Object.entries( hydratedEntities ) ) {
 			if ( related.hasOwnProperty( modelName ) ) {
 				const relatedEntities = related[ modelName ];
+				const relatedIds = {};
 				for ( const entity of Object.values( entities ) ) {
 					if ( relatedEntities.hasOwnProperty( entity.id ) ) {
 						for ( const [ relatedModelName, relatedEntityIds ]
 							of Object.entries( relatedEntities[ entity.id ] )
 						) {
+							relatedIds[ relatedModelName ] = relatedIds[ relatedModelName ] || [];
+							relatedIds[ relatedModelName ].push( entity.id );
 							if ( Array.isArray( relatedEntityIds ) ) {
 								for ( const relatedEntityId of relatedEntityIds ) {
 									const relatedEntity = retrieveHydratedEntity(
@@ -239,6 +243,7 @@ const hydrateRelations = async ( rawData, hydratedEntities, related ) => {
 						}
 					}
 				}
+				resolveGetRelatedEntitiesForIds( modelName, relatedIds );
 			}
 		}
 	}
