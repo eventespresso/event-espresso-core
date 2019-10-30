@@ -530,13 +530,14 @@ class EE_Data_Migration_Manager implements ResettableInterface
                 // check if this version script is DONE or not; or if it's never been run
                 if (
                     ! $scripts_ran
-                    || ! isset($scripts_ran[ $script_converts_plugin_slug ])
                     || ! isset($scripts_ran[ $script_converts_plugin_slug ][ $script_converts_to_version ])
                 ) {
                     // we haven't run this conversion script before
                     // now check if it applies...
                     // note that we've added an autoloader for it on get_all_data_migration_scripts_available
-                    $script = LoaderFactory::getLoader()->load($classname);
+                    // Also, make sure we get a new one. It's possible this is being ran during a multisite migration,
+                    // in which case we don't want to reuse a DMS script from a different blog!
+                    $script = LoaderFactory::getLoader()->load($classname, [], false);
                     /* @var $script EE_Data_Migration_Script_Base */
                     $can_migrate = $script->can_migrate_from_version($theoretical_database_state);
                     if ($can_migrate) {
