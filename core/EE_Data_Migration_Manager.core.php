@@ -264,7 +264,10 @@ class EE_Data_Migration_Manager implements ResettableInterface
     {
         $data_migration_data = maybe_unserialize($dms_option_value);
         if (isset($data_migration_data['class']) && class_exists($data_migration_data['class'])) {
-            $class = LoaderFactory::getLoader()->getShared($data_migration_data['class']);
+            // During multisite migrations, it's possible we already grabbed another instance of this class
+            // but for a different blog. Make sure we don't reuse them (as they store info specific
+            // to their respective blog, like which database table to migrate).
+            $class = LoaderFactory::getLoader()->getShared($data_migration_data['class'], [], false);
             if ($class instanceof EE_Data_Migration_Script_Base) {
                 $class->instantiate_from_array_of_properties($data_migration_data);
                 return $class;
