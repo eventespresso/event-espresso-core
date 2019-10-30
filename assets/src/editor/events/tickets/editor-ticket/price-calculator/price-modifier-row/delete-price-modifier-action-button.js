@@ -17,7 +17,7 @@ const DeletePriceModifierActionButton = ( {
 } ) => {
 	const trashPriceModifier = useTrashPriceModifier();
 	return useMemo( () => (
-		priceType.prtId !== BASE_PRICE_TYPES.BASE_PRICE ? (
+		priceType.PRT_ID !== BASE_PRICE_TYPES.BASE_PRICE ? (
 			<Tooltip
 				position={ 'top left' }
 				text={ __( 'click to delete price modifier', 'event_espresso' ) }
@@ -34,7 +34,7 @@ const DeletePriceModifierActionButton = ( {
 				/>
 			</Tooltip>
 		) : null
-	), [ ticket.id, price.id, priceType.prtId ] );
+	), [ ticket.id, price.id, priceType.PRT_ID ] );
 };
 
 DeletePriceModifierActionButton.propTypes = {
