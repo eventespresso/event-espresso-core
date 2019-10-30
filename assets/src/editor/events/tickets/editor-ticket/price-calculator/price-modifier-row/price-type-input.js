@@ -30,8 +30,17 @@ const PriceTypeInput = ( {
 } ) => {
 	const key = `${ prefix }-type`;
 	const defaultPriceType = useDefaultPriceType();
+	const isBasePriceType = basePriceType === BASE_PRICE_TYPES.BASE_PRICE;
+
 	return useMemo(
-		() => (
+		() => isBasePriceType ? (
+			<InputLabel
+				label={ __( 'Base price', 'event_espresso' ) }
+				htmlFor={ key }
+				strong={ false }
+				htmlClass="ee-visible-label"
+			/>
+		) : (
 			<Fragment>
 				<InputLabel
 					label={ __( 'Price Type', 'event_espresso' ) }
@@ -56,7 +65,6 @@ const PriceTypeInput = ( {
 							}
 						}
 					}
-					disabled={ basePriceType === BASE_PRICE_TYPES.BASE_PRICE }
 				/>
 			</Fragment>
 		),
