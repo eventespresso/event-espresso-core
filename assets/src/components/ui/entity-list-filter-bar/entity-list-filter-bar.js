@@ -4,7 +4,7 @@
 import PropTypes from 'prop-types';
 import { isFunction } from 'lodash';
 import { withInstanceId } from '@wordpress/compose';
-import { useMemo, Fragment } from '@wordpress/element';
+import { Fragment, useMemo, useState } from '@wordpress/element';
 import { IconButton, SelectControl, TextControl } from '@wordpress/components';
 import { __ } from '@eventespresso/i18n';
 
@@ -42,6 +42,10 @@ const EntityListFilterBar = ( {
 		setListView,
 		setGridView,
 	} = useEntityListFilterStateSetters( listId );
+
+	const [ showEntityFilters, setShowEntityFilters ] = useState( false );
+	const toggleEntityFilters = () => setShowEntityFilters( !showEntityFilters );
+
 	const searchInput = useMemo( () => {
 		return isFunction( setSearchText ) ? (
 			<TextControl
@@ -108,7 +112,7 @@ const EntityListFilterBar = ( {
 	return (
 		<div className="ee-entity-list-filter-bar-wrapper">
 			<div className="ee-entity-list-filter-bar">
-				{ entityFilters }
+				{ showEntityFilters && entityFilters }
 				<div className="ee-search-filter ee-filter-bar-filter">
 					{ searchInput }
 				</div>
@@ -120,6 +124,11 @@ const EntityListFilterBar = ( {
 				<div className="ee-view-filter ee-filter-bar-filter">
 					{ listViewButton }
 					{ gridViewButton }
+					<IconButton
+						icon="filter"
+						tooltip={ __( 'filter', 'event_espresso' ) }
+						onClick={ toggleEntityFilters }
+					/>
 				</div>
 			</div>
 		</div>
