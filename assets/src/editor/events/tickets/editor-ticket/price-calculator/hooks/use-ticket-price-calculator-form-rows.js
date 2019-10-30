@@ -49,7 +49,7 @@ const useTicketPriceCalculatorFormRows = (
 			if ( isModelEntityOfModel( price, 'price' ) ) {
 				// we don't want "Base Price" to be an option for
 				// price modifiers because THERE CAN ONLY BE ONE!!!
-				const options = price.prtId === BASE_PRICE_TYPES.BASE_PRICE ?
+				const options = price.PRT_ID === BASE_PRICE_TYPES.BASE_PRICE ?
 					priceTypeOptions :
 					filteredPriceTypeOptions;
 				const lastRow = i === ( priceCount - 1 );
