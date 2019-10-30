@@ -3,7 +3,8 @@
  */
 import { values } from 'lodash';
 
-export const MODEL_NAME = 'checkin';
+export const CHECKIN = 'checkin';
+export const CHECKINS = 'checkins';
 
 export const CHECKIN_STATUS_ID = {
 	STATUS_CHECKED_OUT: false,

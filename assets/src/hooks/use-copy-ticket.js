@@ -13,6 +13,7 @@ import useCreateRelationsForTicketToEventDates
 	from './use-create-relations-for-ticket-to-event-dates';
 import useCreateRelationsForTicketToPrices
 	from './use-create-relations-for-ticket-to-prices';
+import { PRICE, PRICES, TICKET } from '../data/model/constants';
 
 const falseFunc = () => false;
 
@@ -20,18 +21,18 @@ const useCopyTicket = ( ticketEntity, dateEntities ) => {
 	const { createEntity } = useDispatch( 'eventespresso/core' );
 	const relatedPrices = useSelect( ( select ) => {
 		const { getRelatedEntities } = select( 'eventespresso/core' );
-		return getRelatedEntities( ticketEntity, 'prices' );
+		return getRelatedEntities( ticketEntity, PRICES );
 	}, [ ticketEntity ] );
-	const newPrices = useCloneEntities( relatedPrices, 'price' );
+	const newPrices = useCloneEntities( relatedPrices, PRICE );
 	const updateTicketDateRelations = useCreateRelationsForTicketToEventDates();
 	const updateTicketPriceRelations = useCreateRelationsForTicketToPrices();
 	return useCallback( async () => {
-		if ( ! isModelEntityOfModel( ticketEntity, 'ticket' ) ) {
+		if ( ! isModelEntityOfModel( ticketEntity, TICKET ) ) {
 			return falseFunc;
 		}
 
 		const newTicket = await createEntity(
-			'ticket',
+			TICKET,
 			ticketEntity.forClone
 		);
 

@@ -3,7 +3,9 @@
  */
 import { values } from 'lodash';
 
-export const MODEL_NAME = 'status';
+export const STATUS = 'status';
+export const STATUSES = 'statuses';
+
 // types
 export const STATUS_TYPE_EMAIL = 'email';
 export const STATUS_TYPE_EVENT = 'event';

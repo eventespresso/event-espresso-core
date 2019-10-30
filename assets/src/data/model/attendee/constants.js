@@ -1,1 +1,2 @@
-export const MODEL_NAME = 'attendee';
+export const ATTENDEE = 'attendee';
+export const ATTENDEES = 'attendees';
