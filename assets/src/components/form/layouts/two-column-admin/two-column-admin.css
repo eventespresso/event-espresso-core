@@ -483,10 +483,6 @@
     margin-top: 3px;
 }
 
-.ee-two-column-admin .ee-visible-label {
-    padding-left: .4rem;
-}
-
 .ee-two-column-admin .ee-hidden-label {
     display: none !important;
 }
