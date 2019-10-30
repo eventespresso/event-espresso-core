@@ -53,7 +53,7 @@
 		"@wordpress/babel-plugin-makepot": "^3.2.1",
 		"@wordpress/babel-preset-default": "^4.6.1",
 		"@wordpress/block-library": "^2.9.1",
-		"@wordpress/blocks": "^6.7.1",
+		"@wordpress/blocks": "^6.7.2",
 		"@wordpress/browserslist-config": "^2.6.0",
 		"@wordpress/components": "^8.3.1",
 		"@wordpress/compose": "^3.7.2",
