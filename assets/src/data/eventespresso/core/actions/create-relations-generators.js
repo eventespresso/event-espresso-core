@@ -221,12 +221,12 @@ function* resolveRelationRecordForRelation(
  *
  * @param {string} modelName
  * @param {Object} relatedIds
- * @param {boolean} updateIndidualEntities
+ * @param {boolean} resolveIndividualEntities
  */
 export function* resolveGetRelatedEntitiesForIds(
 	modelName,
 	relatedIds,
-	resolveIndidualEntities = true
+	resolveIndividualEntities = true
 ) {
 	modelName = singularModelName( modelName );
 
@@ -239,8 +239,8 @@ export function* resolveGetRelatedEntitiesForIds(
 			'getRelatedEntitiesForIds',
 			[ modelName, entityIds, relationName ]
 		);
-		if ( resolveIndidualEntities ) {
-		// Finish resolution for empty set.
+		if ( resolveIndividualEntities ) {
+			// Finish resolution for empty set.
 			yield dispatch(
 				'core/data',
 				'finishResolution',
