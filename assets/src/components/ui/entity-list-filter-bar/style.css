@@ -16,7 +16,12 @@
     margin: 0 0 var(--ee-margin-small);
 }
 
-.ee-entity-list-always-visible-controls {
+.ee-filter-bar-filter-main {
+    display: flex;
+    flex-flow: row wrap;
+}
+
+.ee-filter-bar-filter-collapsible {
     display: flex;
     flex-flow: row wrap;
     justify-content: space-between;
