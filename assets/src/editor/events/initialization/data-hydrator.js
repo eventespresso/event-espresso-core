@@ -11,6 +11,10 @@ const {
 	resolveRelationRecordForRelation,
 	resolveGetRelatedEntitiesForIds,
 } = dispatch( 'eventespresso/core' );
+
+const {
+	resolveGetEntities,
+} = dispatch( 'eventespresso/lists' );
 const { receiveSchemaForModelAndResolve } = dispatch( 'eventespresso/schema' );
 
 /**
@@ -125,6 +129,7 @@ const hydrateEntityData = async ( rawData, schemas ) => {
 					return { [ model ]: hydratedEntities };
 				}
 			);
+			resolveGetEntities( model );
 			allHydratedEntities = { ...allHydratedEntities, ...entities };
 		}
 	}

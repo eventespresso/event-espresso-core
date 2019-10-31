@@ -223,3 +223,20 @@ const identifierInSelector = ( selectorName, identifier ) => {
 	return selectorName.indexOf( singularName ) > -1 ||
 		selectorName.indexOf( pluralName ) > -1;
 };
+
+/**
+ * Resolves getEntities for the given model name.
+ *
+ * @param {string} modelName
+ */
+export function* resolveGetEntities( modelName ) {
+	modelName = singularModelName( modelName );
+
+	yield dispatch(
+		'core/data',
+		'finishResolution',
+		REDUCER_KEY,
+		'getEntities',
+		[ modelName ]
+	);
+}
