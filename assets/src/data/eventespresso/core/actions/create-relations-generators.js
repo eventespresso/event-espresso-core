@@ -221,24 +221,16 @@ function* resolveRelationRecordForRelation(
  *
  * @param {string} modelName
  * @param {Object} relatedIds
+ * @param {boolean} updateIndidualEntities
  */
 export function* resolveGetRelatedEntitiesForIds(
 	modelName,
-	relatedIds
+	relatedIds,
+	resolveIndidualEntities = true
 ) {
 	modelName = singularModelName( modelName );
 
-	for ( const [ relationName, entityIds ]
-		of Object.entries( relatedIds )
-	) {
-		// Finish resolution for empty set.
-		yield dispatch(
-			'core/data',
-			'finishResolution',
-			REDUCER_KEY,
-			'getRelatedEntitiesForIds',
-			[ modelName, [], relationName ]
-		);
+	for ( const [ relationName, entityIds ] of Object.entries( relatedIds ) ) {
 		// Finish resolution for all entity ids.
 		yield dispatch(
 			'core/data',
@@ -247,15 +239,25 @@ export function* resolveGetRelatedEntitiesForIds(
 			'getRelatedEntitiesForIds',
 			[ modelName, entityIds, relationName ]
 		);
-		// Finish resolution for individual entity ids.
-		while ( entityIds.length > 0 ) {
+		if ( resolveIndidualEntities ) {
+		// Finish resolution for empty set.
 			yield dispatch(
 				'core/data',
 				'finishResolution',
 				REDUCER_KEY,
 				'getRelatedEntitiesForIds',
-				[ modelName, [ entityIds.pop() ], relationName ]
+				[ modelName, [], relationName ]
 			);
+			// Finish resolution for individual entity ids.
+			while ( entityIds.length > 0 ) {
+				yield dispatch(
+					'core/data',
+					'finishResolution',
+					REDUCER_KEY,
+					'getRelatedEntitiesForIds',
+					[ modelName, [ entityIds.pop() ], relationName ]
+				);
+			}
 		}
 	}
 }
