@@ -1039,6 +1039,9 @@ class EE_Dependency_Map
             'EED_Core_Rest_Api'                            => static function () {
                 return EED_Core_Rest_Api::instance();
             },
+            'WP_REST_Server'                            => static function () {
+                return rest_get_server();
+            },
         );
     }
 
