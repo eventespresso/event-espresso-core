@@ -31,8 +31,8 @@ describe( 'useEventEditorEvent', () => {
 		registry.registerStore( 'eventespresso/core', {
 			reducer: () => null,
 			selectors: {
-				getEventById: () => null,
-				getEvents: () => [],
+				getEntityById: () => null,
+				getEntitiesForModel: () => ( { eventEntity: null } ),
 			},
 		} );
 		const TestComponent = getTestComponent();
@@ -45,8 +45,10 @@ describe( 'useEventEditorEvent', () => {
 		registry.registerStore( 'eventespresso/core', {
 			reducer: () => null,
 			selectors: {
-				getEventById: () => EventClone,
-				getEvents: () => [ AuthedEventEntity ],
+				getEntityById: () => EventClone,
+				getEntitiesForModel: () => (
+					{ eventEntity: AuthedEventEntity }
+				),
 			},
 		} );
 		const TestComponent = getTestComponent();
@@ -61,8 +63,10 @@ describe( 'useEventEditorEvent', () => {
 		registry.registerStore( 'eventespresso/core', {
 			reducer: () => null,
 			selectors: {
-				getEventById: () => EventClone,
-				getEvents: () => [ AuthedEventEntity ],
+				getEntityById: () => EventClone,
+				getEntitiesForModel: () => (
+					{ eventEntity: AuthedEventEntity }
+				),
 			},
 		} );
 		const TestComponent = getTestComponent();
