@@ -85,7 +85,7 @@ const EntityListFilterBar = ( {
 			<IconButton
 				id={ `ee-list-view-btn-${ listId }` }
 				className={ view === 'list' ? 'active-list' : '' }
-				icon="editor-justify"
+				icon="list-view"
 				tooltip={ __( 'list view', 'event_espresso' ) }
 				onClick={ setListView }
 			/>
@@ -102,7 +102,7 @@ const EntityListFilterBar = ( {
 			<IconButton
 				id={ `ee-grid-view-btn-${ listId }` }
 				className={ view === 'grid' ? 'active-list' : '' }
-				icon="screenoptions"
+				icon="grid-view"
 				tooltip={ __( 'grid view', 'event_espresso' ) }
 				onClick={ setGridView }
 			/>
@@ -111,26 +111,30 @@ const EntityListFilterBar = ( {
 
 	return (
 		<div className="ee-entity-list-filter-bar-wrapper">
-			<div className="ee-entity-list-filter-bar">
-				{ showEntityFilters && entityFilters }
+			<div className="ee-entity-list-always-visible-controls">
+				<div className="ee-entity-list-view-bar">
+					<div className="ee-per-page-filter ee-filter-bar-filter">
+						{ perPageControl }
+					</div>
+					<div className="ee-view-filter ee-filter-bar-filter">
+						{ listViewButton }
+						{ gridViewButton }
+						<IconButton
+							icon="filter"
+							tooltip={ __( 'filter', 'event_espresso' ) }
+							onClick={ toggleEntityFilters }
+						/>
+					</div>
+				</div>
 				<div className="ee-search-filter ee-filter-bar-filter">
 					{ searchInput }
 				</div>
 			</div>
-			<div className="ee-entity-list-view-bar">
-				<div className="ee-per-page-filter ee-filter-bar-filter">
-					{ perPageControl }
+			{ showEntityFilters && (
+				<div className="ee-entity-list-filter-bar">
+					{ entityFilters }
 				</div>
-				<div className="ee-view-filter ee-filter-bar-filter">
-					{ listViewButton }
-					{ gridViewButton }
-					<IconButton
-						icon="filter"
-						tooltip={ __( 'filter', 'event_espresso' ) }
-						onClick={ toggleEntityFilters }
-					/>
-				</div>
-			</div>
+			)}
 		</div>
 	);
 };

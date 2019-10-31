@@ -9,14 +9,17 @@
     -moz-box-sizing: border-box;
     box-sizing: border-box;
     color: var(--ee-default-text-color);
-    display: flex;
-    flex-flow: row wrap;
-    justify-content: space-between;
     padding: 0 var(--ee-padding-tiny) var(--ee-padding-tiny);
     border-bottom-color: var(--ee-color-grey-12);
     border-bottom-style: solid;
     border-bottom-width: 1px;
     margin: 0 0 var(--ee-margin-small);
+}
+
+.ee-entity-list-always-visible-controls {
+    display: flex;
+    flex-flow: row wrap;
+    justify-content: space-between;
 }
 
 .ee-entity-list-filter-bar,
