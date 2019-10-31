@@ -57,7 +57,10 @@ const hydrateSchemas = async ( schemas, relations ) => {
 			if ( ! schemaData.hasOwnProperty( 'schema' ) ) {
 				throw new TypeError( 'Invalid Schema ' );
 			}
-			const schema = await receiveSchemaForModelAndResolve( model, schemaData );
+			const schema = await receiveSchemaForModelAndResolve(
+				model,
+				schemaData
+			);
 			if ( relations.hasOwnProperty( model ) &&
 				schema.hasOwnProperty( 'schema' ) &&
 				schema.schema.hasOwnProperty( 'schema' ) &&
@@ -124,7 +127,11 @@ const hydrateEntityData = async ( rawData, schemas ) => {
 			modelSchema = modelSchema.hasOwnProperty( 'schema' ) ?
 				modelSchema.schema :
 				null;
-			const entities = await hydrateEntities( model, modelSchema, entityData ).then(
+			const entities = await hydrateEntities(
+				model,
+				modelSchema,
+				entityData
+			).then(
 				( hydratedEntities ) => {
 					return { [ model ]: hydratedEntities };
 				}
@@ -208,7 +215,9 @@ const hydrateAndReceiveEntities = async ( model, modelSchema, entities ) => {
  */
 const hydrateRelations = async ( rawData, hydratedEntities, related ) => {
 	if ( isDataObject( hydratedEntities ) && isDataObject( related ) ) {
-		for ( const [ modelName, entities ] of Object.entries( hydratedEntities ) ) {
+		for ( const [ modelName, entities ]
+			of Object.entries( hydratedEntities )
+		) {
 			if ( related.hasOwnProperty( modelName ) ) {
 				const relatedEntities = related[ modelName ];
 				const relatedIds = {};
@@ -217,10 +226,13 @@ const hydrateRelations = async ( rawData, hydratedEntities, related ) => {
 						for ( const [ relatedModelName, relatedEntityIds ]
 							of Object.entries( relatedEntities[ entity.id ] )
 						) {
-							relatedIds[ relatedModelName ] = relatedIds[ relatedModelName ] || [];
+							relatedIds[ relatedModelName ] =
+								relatedIds[ relatedModelName ] || [];
 							relatedIds[ relatedModelName ].push( entity.id );
 							if ( Array.isArray( relatedEntityIds ) ) {
-								for ( const relatedEntityId of relatedEntityIds ) {
+								for ( const relatedEntityId
+									of relatedEntityIds
+								) {
 									const relatedEntity = retrieveHydratedEntity(
 										relatedModelName,
 										relatedEntityId,
