@@ -83,7 +83,7 @@ export const receiveRelationEndpointForEntity = (
 				[
 					modelName,
 					normalizeEntityId( action.entityId ),
-					relationName
+					relationName,
 				],
 				action.endpoint
 			);
