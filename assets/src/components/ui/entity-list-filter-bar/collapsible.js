@@ -1,6 +1,7 @@
 /**
  * External imports
  */
+import PropTypes from 'prop-types';
 import { useSpring, animated } from 'react-spring'
 import { isFunction } from 'lodash';
 import { useMemo, useRef } from '@wordpress/element';
@@ -14,6 +15,8 @@ import { useRect } from '@eventespresso/hooks';
 
 /**
  * Collapsible
+ * This component is an extraction from EntityListFilterBar
+ * and is intended to be used only in context with that parent component.
  *
  * @param {Object} entityFilters additional entity specific filters
  * @param {string} listId
@@ -79,5 +82,15 @@ const Collapsible = ( {
 		</animated.div>
 	);
 }
+
+Collapsible.propTypes = {
+	entityFilters: PropTypes.object,
+	listId: PropTypes.string.isRequired,
+	perPage: PropTypes.number.isRequired,
+	searchText: PropTypes.string.isRequired,
+	setPerPage: PropTypes.func.isRequired,
+	setSearchText: PropTypes.func.isRequired,
+	showEntityFilters: PropTypes.bool.isRequired,
+};
 
 export default Collapsible;

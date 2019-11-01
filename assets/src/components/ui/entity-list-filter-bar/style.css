@@ -24,7 +24,10 @@
 .ee-filter-bar-filter-collapsible {
     display: flex;
     flex-flow: row wrap;
-    justify-content: space-between;
+}
+
+.ee-filter-bar-filter-collapsible > div {
+    margin-right: 1rem;
 }
 
 .ee-entity-list-filter-bar,
