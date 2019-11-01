@@ -9,7 +9,7 @@ exports[`EventAttendeesEditor Block block edit matches snapshot for no props 1`]
     <ForwardRef(PanelBody)
       title="Filter By Settings"
     >
-      <WithBaseControl(EventSelect)
+      <WithBaseControl(Select)
         key="attendees-event-select"
         onSelect={[Function]}
         queryData={
@@ -20,7 +20,7 @@ exports[`EventAttendeesEditor Block block edit matches snapshot for no props 1`]
         }
         selected={0}
       />
-      <WithBaseControl(StatusSelect)
+      <WithBaseControl(Select)
         key="attendees-status-select"
         label="Select Registration Status"
         onSelect={[Function]}
@@ -150,7 +150,7 @@ exports[`EventAttendeesEditor Block block edit matches snapshot with isLoading f
     <ForwardRef(PanelBody)
       title="Filter By Settings"
     >
-      <WithBaseControl(EventSelect)
+      <WithBaseControl(Select)
         key="attendees-event-select"
         onSelect={[Function]}
         queryData={
@@ -161,7 +161,7 @@ exports[`EventAttendeesEditor Block block edit matches snapshot with isLoading f
         }
         selected={0}
       />
-      <WithBaseControl(StatusSelect)
+      <WithBaseControl(Select)
         key="attendees-status-select"
         label="Select Registration Status"
         onSelect={[Function]}
@@ -273,7 +273,7 @@ exports[`EventAttendeesEditor Block block edit matches snapshot with isLoading f
     <ForwardRef(PanelBody)
       title="Filter By Settings"
     >
-      <WithBaseControl(EventSelect)
+      <WithBaseControl(Select)
         key="attendees-event-select"
         onSelect={[Function]}
         queryData={
@@ -284,7 +284,7 @@ exports[`EventAttendeesEditor Block block edit matches snapshot with isLoading f
         }
         selected={0}
       />
-      <WithBaseControl(StatusSelect)
+      <WithBaseControl(Select)
         key="attendees-status-select"
         label="Select Registration Status"
         onSelect={[Function]}

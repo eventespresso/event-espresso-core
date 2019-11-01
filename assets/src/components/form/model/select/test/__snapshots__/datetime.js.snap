@@ -4,7 +4,6 @@ exports[`DatetimeSelect() matches snapshot with default props 1`] = `
 <Component
   getQueryString={[Function]}
   label="Select Datetime"
-  modelName="datetime"
   optionsEntityMap={
     Object {
       "default": Object {

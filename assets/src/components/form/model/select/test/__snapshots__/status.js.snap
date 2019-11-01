@@ -24,7 +24,6 @@ exports[`StatusSelect() matches snapshot with default props plus provided status
 <Component
   getQueryString={[Function]}
   label="Select Status"
-  modelName="status"
   optionsEntityMap={
     Object {
       "default": Object {
