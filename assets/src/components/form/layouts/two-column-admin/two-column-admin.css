@@ -487,6 +487,11 @@
     display: none !important;
 }
 
+.ee-two-column-admin .ee-base-price-type {
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+}
 
 .ee-two-column-admin .ee-after-input-wrapper {
     display: flex;

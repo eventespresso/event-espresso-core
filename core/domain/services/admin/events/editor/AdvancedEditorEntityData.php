@@ -191,7 +191,7 @@ class AdvancedEditorEntityData
 
         $datetimes = [];
         $eventDateTickets = [];
-        if (is_array($eventDates)){
+        if (is_array($eventDates)) {
             foreach ($eventDates as $eventDate) {
                 if (isset($eventDate['DTT_ID']) && $eventDate['DTT_ID']) {
                     $DTT_ID = $eventDate['DTT_ID'];

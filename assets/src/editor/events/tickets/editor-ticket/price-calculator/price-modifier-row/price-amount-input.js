@@ -63,7 +63,7 @@ const PriceAmountInput = ( {
 					}
 				}
 				disabled={
-					price.prtId === BASE_PRICE_TYPES.BASE_PRICE &&
+					price.PRT_ID === BASE_PRICE_TYPES.BASE_PRICE &&
 					reverseCalculate === true
 				}
 				format={ ( value ) => {
@@ -77,7 +77,7 @@ const PriceAmountInput = ( {
 	), [
 		prefix,
 		values[ key ],
-		price.prtId,
+		price.PRT_ID,
 		price.amount.toNumber(),
 		priceType.isPercent,
 		reverseCalculate,

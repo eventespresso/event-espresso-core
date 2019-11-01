@@ -14,7 +14,7 @@ const { BASE_PRICE_TYPES } = priceTypeModel;
  * @return {Array} price modifiers
  */
 const useBasePrice = useMemo( ( prices ) => prices.find(
-	( price ) => price.prtId === BASE_PRICE_TYPES.BASE_PRICE
+	( price ) => price.PRT_ID === BASE_PRICE_TYPES.BASE_PRICE
 ) );
 
 export default useBasePrice;

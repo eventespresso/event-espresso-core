@@ -116,7 +116,7 @@ class RestApiSpoofer
      */
     public function getOneApiResult(EEM_Base $model, array $query_params, $include = '')
     {
-        if ( ! array_key_exists('limit', $query_params)) {
+        if (! array_key_exists('limit', $query_params)) {
             $query_params['limit'] = 1;
         }
         $result = $this->getApiResults($model, $query_params, $include);

@@ -1293,14 +1293,14 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
                             ),
                         )
                     ) > 0;
-                    // let's just check the total price for the existing ticket and determine if it matches the new total price.  if they are different then we create a new ticket (if tkts sold) if they aren't different then we go ahead and modify existing ticket.
-                    $create_new_TKT = $ticket_sold
-                                      && ! $TKT->get('TKT_deleted')
-                                      && EEH_Money::compare_floats(
-                                          $ticket_price,
-                                          $TKT->get('TKT_price'),
-                                          '!=='
-                        );
+                    // let's just check the total price for the existing ticket and determine if it matches the new
+                    // total price.  if they are different then we create a new ticket (if tickets sold)
+                    // if they aren't different then we go ahead and modify existing ticket.
+                    $create_new_TKT = $ticket_sold && ! $TKT->deleted() && EEH_Money::compare_floats(
+                        $ticket_price,
+                        $TKT->get('TKT_price'),
+                        '!=='
+                    );
                     $TKT->set_date_format($incoming_date_formats[0]);
                     $TKT->set_time_format($incoming_date_formats[1]);
                     // set new values

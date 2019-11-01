@@ -24,8 +24,7 @@ import createSelector from 'rememo';
  * @return {Object} The schema object or null if it doesn't exist.
  */
 export function getSchemaForModel( state, modelName ) {
-	const schema = state.schema.get( singularModelName( modelName ), null );
-	return schema;
+	return state.schema.get( singularModelName( modelName ), null );
 }
 
 /**

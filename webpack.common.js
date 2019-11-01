@@ -9,7 +9,7 @@ const pathToDistFolder = path.resolve( __dirname, 'assets/dist' );
 /**
  * Clean build folder before running build
  */
-del.sync( [ path.resolve( pathToDistFolder, '**/*' ) ] );
+del.sync( [ path.resolve( pathToDistFolder, '*' ) ] );
 
 const rulesConfig = {
 	jsRulesConfig: {
