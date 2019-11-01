@@ -3,8 +3,10 @@
  */
 import { values } from 'lodash';
 
-export const TICKET = 'ticket';
-export const TICKETS = 'tickets';
+export const MODEL_NAMES = {
+	MODEL: 'ticket',
+	RELATION: 'tickets',
+};
 
 export const TICKET_STATUS_ID = {
 	SOLD_OUT: 'TKS',

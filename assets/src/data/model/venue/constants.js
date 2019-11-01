@@ -1,2 +1,4 @@
-export const VENUE = 'venue';
-export const VENUES = 'venues';
+export const MODEL_NAMES = {
+	MODEL: 'venue',
+	RELATION: 'venues',
+};

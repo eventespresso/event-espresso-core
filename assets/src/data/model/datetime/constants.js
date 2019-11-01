@@ -1,7 +1,9 @@
 import { values } from 'lodash';
 
-export const DATETIME = 'datetime';
-export const DATETIMES = 'datetimes';
+export const MODEL_NAMES = {
+	MODEL: 'datetime',
+	RELATION: 'datetimes',
+};
 
 export const DATETIME_STATUS_ID = {
 	ACTIVE: 'DTA',

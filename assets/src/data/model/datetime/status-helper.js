@@ -7,7 +7,7 @@ import { isModelEntityOfModel } from '@eventespresso/validators';
 /**
  * Internal imports
  */
-import { DATETIME_STATUS_ID, DATETIME, MONTH_IN_SECONDS } from './constants';
+import { DATETIME_STATUS_ID, MODEL_NAME, MONTH_IN_SECONDS } from './constants';
 import parseInfinity from '../../../utils/parse-infinity';
 
 /**
@@ -16,7 +16,7 @@ import parseInfinity from '../../../utils/parse-infinity';
  * @throws {TypeError}
  */
 const assertDateTimeEntity = ( DateTimeEntity ) => {
-	if ( ! isModelEntityOfModel( DateTimeEntity, DATETIME ) ) {
+	if ( ! isModelEntityOfModel( DateTimeEntity, MODEL_NAME ) ) {
 		throw new TypeError(
 			'The provided entity is not a datetime instance'
 		);

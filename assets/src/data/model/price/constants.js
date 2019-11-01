@@ -1,3 +1,4 @@
-
-export const PRICE = 'price';
-export const PRICES = 'prices';
+export const MODEL_NAMES = {
+	MODEL: 'price',
+	RELATION: 'prices',
+};
