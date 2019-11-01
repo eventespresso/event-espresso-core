@@ -2,7 +2,7 @@
  * External imports.
  */
 import { useSelect, dispatch } from '@wordpress/data';
-import { useState } from '@wordpress/element';
+import { useEffect, useState } from '@wordpress/element';
 
 import useDatesListFilterState
 	from '../../dates-and-times/editor-date/filter-bar/use-dates-list-filter-state';
