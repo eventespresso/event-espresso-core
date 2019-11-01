@@ -30,7 +30,7 @@ const PriceTypeInput = ( {
 } ) => {
 	const key = `${ prefix }-type`;
 	const defaultPriceType = useDefaultPriceType();
-	const isBasePriceType = basePriceType === BASE_PRICE_TYPES.BASE_PRICE;	
+	const isBasePriceType = basePriceType === BASE_PRICE_TYPES.BASE_PRICE;
 
 	return useMemo(
 		() => (

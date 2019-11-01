@@ -25,13 +25,7 @@ import useEditorPersistence
  */
 const EventEditor = ( { eventId, eventData } ) => {
 	useEditorPersistence( eventId );
-	const {
-		initialized,
-		eventLoaded,
-		eventDatesLoaded,
-		ticketsLoaded,
-		venueLoaded,
-	} = useEditorInitialization( eventData );
+	const { initialized } = useEditorInitialization( eventData );
 	return (
 		<>
 			<FormPlaceholder

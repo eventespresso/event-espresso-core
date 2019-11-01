@@ -1,6 +1,7 @@
 /**
  * External imports
  */
+import warning from 'warning';
 import { pluralModelName } from '@eventespresso/model';
 import { hydrateRelationSchema } from '@eventespresso/model-schema';
 import { isModelEntityOfModel } from '@eventespresso/validators';
@@ -24,22 +25,13 @@ const { receiveSchemaForModelAndResolve } = dispatch( 'eventespresso/schema' );
  * @param {Object} eventData
  */
 const hydrateData = async function*( eventData ) {
-	console.log(
-		'%cSTART DATA HYDRATION',
-		'color: YellowGreen;font-size:18px;',
-		'DOM Data',
-		eventData
-	);
-	const { eventId, schemas, relations, ...rawData } = eventData;
+	const { schemas, relations, ...rawData } = eventData;
+	if ( rawData.hasOwnProperty( 'eventId' ) ) {
+		delete rawData.eventId;
+	}
 	await hydrateSchemas( schemas, relations );
 	const hydratedEntities = await hydrateEntityData( rawData, schemas );
 	await hydrateRelations( rawData, hydratedEntities, relations );
-	console.log(
-		'%cDATA HYDRATION COMPLETE',
-		'color: YellowGreen;font-size:18px;',
-		'hydratedEntities',
-		hydratedEntities
-	);
 	yield hydratedEntities;
 };
 
@@ -95,10 +87,9 @@ const hydrateSchemas = async ( schemas, relations ) => {
 										resolved.relationSchema.schema
 									);
 								} else {
-									console.log(
-										'%c INVALID RELATION SCHEMA: ',
-										'color: DeepPink; font-size:18px;',
-										resolved
+									warning(
+										false,
+										'INVALID RELATION SCHEMA'
 									);
 								}
 							}
@@ -202,10 +193,9 @@ const hydrateAndReceiveEntities = async ( model, modelSchema, entities ) => {
 			if ( isModelEntityOfModel( entity, model ) ) {
 				resolvedEntities[ entity.id ] = entity;
 			} else {
-				console.log(
-					'%c INVALID ENTITY: ',
-					'color: DeepPink; font-size:18px;',
-					entity
+				warning(
+					false,
+					'INVALID ENTITY'
 				);
 			}
 		}
@@ -257,10 +247,9 @@ const hydrateRelations = async ( rawData, hydratedEntities, related ) => {
 											entity.id
 										);
 									} else {
-										console.log(
-											'%cINVALID ENTITY RELATION',
-											'color: DeepPink; font-size:18px;',
-											relatedEntity
+										warning(
+											false,
+											'INVALID ENTITY RELATION'
 										);
 									}
 								}

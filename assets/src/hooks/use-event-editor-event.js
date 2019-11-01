@@ -21,7 +21,7 @@ const useEventEditorEvent = ( eventId = 0 ) => {
 			entity = entity.hasOwnProperty( 'eventEntity' ) ?
 				entity.eventEntity :
 				entity;
-			entity = Array.isArray( entity ) && entity[0] ?
+			entity = Array.isArray( entity ) && entity[ 0 ] ?
 				entity[ 0 ] :
 				entity;
 		} else {

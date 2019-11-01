@@ -12,9 +12,8 @@ import hydrateData from './data-hydrator';
 const EMPTY_ARRAY = [];
 const EMPTY_OBJECT = {};
 
-
 const useEditorInitialization = ( eventData ) => {
-	const generator = useRef( hydrateData( eventData ) );
+	const dataGenerator = useRef( hydrateData( eventData ) );
 	const [ initialized, setInitialized ] = useState( false );
 	const [ event, setEvent ] = useState( EMPTY_OBJECT );
 	const [ eventDates, setEventDates ] = useState( EMPTY_ARRAY );
@@ -53,7 +52,7 @@ const useEditorInitialization = ( eventData ) => {
 		}
 	};
 	if ( ! initialized ) {
-		initializeEntities( generator.current ).then( () => {
+		initializeEntities( dataGenerator.current ).then( () => {
 			setInitialized( true );
 		} );
 	}
