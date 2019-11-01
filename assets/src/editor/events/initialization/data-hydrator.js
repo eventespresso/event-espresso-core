@@ -13,6 +13,7 @@ const {
 } = dispatch( 'eventespresso/core' );
 
 const {
+	receiveEntityResponse,
 	resolveGetEntities,
 } = dispatch( 'eventespresso/lists' );
 const { receiveSchemaForModelAndResolve } = dispatch( 'eventespresso/schema' );
@@ -136,7 +137,14 @@ const hydrateEntityData = async ( rawData, schemas ) => {
 					return { [ model ]: hydratedEntities };
 				}
 			);
-			resolveGetEntities( model );
+			if ( model === 'price_type' ) {
+				receiveEntityResponse(
+					model,
+					undefined,
+					Object.values( entities[ model ] ),
+				);
+				resolveGetEntities( model );
+			}
 			allHydratedEntities = { ...allHydratedEntities, ...entities };
 		}
 	}
