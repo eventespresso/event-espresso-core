@@ -57,10 +57,16 @@ if (count($registrations) > 0) {
                 </thead>
                 <tbody>
                 <?php
+                // Store previous values to avoid duplicated rows.
+                $prev_ticket = 0;
                 // Display all tickets inside.
                 foreach ($registrations as $registration) {
                     if ($registration instanceof EE_Registration) {
-                        echo $ticket_line_item[ $registration->ticket()->ID() ];
+                        if ($registration->ticket()->ID() !== $prev_ticket) {
+                            echo $ticket_line_item[ $registration->ticket()->ID() ];
+                        }
+
+                        $prev_ticket = $registration->ticket()->ID();
                     }
                 }
                 ?>
