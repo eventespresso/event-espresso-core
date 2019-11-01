@@ -6,6 +6,7 @@ import { useMemo } from '@wordpress/element';
 import { twoColumnAdminFormLayout } from '@eventespresso/components';
 import { ifValidTicketEntity } from '@eventespresso/editor-hocs';
 import PropTypes from 'prop-types';
+import cuid from 'cuid';
 
 /**
  * Internal dependencies
@@ -56,6 +57,13 @@ const EditTicketForm = ( {
 		'wpUser',
 		'status',
 	];
+
+	const isNewTicket = cuid.isCuid( ticketEntity.TKT_ID );
+
+	if ( isNewTicket ) {
+		exclude.push( 'deleted' );
+	}
+
 	const formRows = useEditEntityFormInputs(
 		ticketEntity,
 		inputConfig,
@@ -63,6 +71,7 @@ const EditTicketForm = ( {
 		currentValues,
 		exclude
 	);
+
 	return useMemo(
 		() => {
 			// edit forms for existing objects must have initial values
