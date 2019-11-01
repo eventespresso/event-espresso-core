@@ -578,7 +578,10 @@ class EE_DMS_Core_4_1_0 extends EE_Data_Migration_Script_Base
 				(66, 'CA', 'ON', 'Ontario', 1),
 				(67, 'CA', 'PE', 'Prince Edward Island', 1),
 				(68, 'CA', 'QC', 'Quebec', 1),
-				(69, 'CA', 'SK', 'Saskatchewan', 1);";
+				(69, 'CA', 'SK', 'Saskatchewan', 1),
+				(70, 'CA', 'NT', 'Northwest Territories', 1),
+				(71, 'CA', 'NU', 'Nunavut', 1),
+				(72, 'CA', 'YT', 'Yukon', 1);";
                 $wpdb->query($SQL);
             }
         }

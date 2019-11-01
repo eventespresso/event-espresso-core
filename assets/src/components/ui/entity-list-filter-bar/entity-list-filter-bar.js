@@ -137,4 +137,3 @@ EntityListFilterBar.propTypes = {
 };
 
 export default withInstanceId( EntityListFilterBar );
-
