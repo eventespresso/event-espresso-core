@@ -24,6 +24,7 @@ exports[`EventSelect() matches snapshot with default props 1`] = `
 <Component
   getQueryString={[Function]}
   label="Select Event"
+  modelName="event"
   optionsEntityMap={
     Object {
       "default": Object {

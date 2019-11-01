@@ -24,6 +24,7 @@ exports[`TicketSelect() matches snapshot with default props 1`] = `
 <Component
   getQueryString={[Function]}
   label="Select Ticket"
+  modelName="ticket"
   optionsEntityMap={
     Object {
       "default": Object {

@@ -20,6 +20,7 @@ describe( 'StatusSelect()', () => {
 		const wrapper = shallow(
 			<StatusSelect />
 		);
+
 		expect( wrapper.prop( 'queryData' ) )
 			.toEqual( expectedDefaultQueryData );
 		expect( wrapper.prop( 'selectConfiguration' ).placeholder ).toEqual(
