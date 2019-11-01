@@ -1,6 +1,7 @@
 /**
  * External imports
  */
+import warning from 'warning';
 import {
 	isModelEntityFactoryOfModel,
 	isModelEntity,
@@ -28,10 +29,9 @@ import { REDUCER_KEY as CORE_REDUCER_KEY } from '../constants';
  */
 export function* hydrateEntity( modelName, modelSchema, entityData ) {
 	if ( ! entityData ) {
-		console.log(
-			'%c INVALID ENTITY DATA: ',
-			'color: #ff0066;',
-			entityData
+		warning(
+			false,
+			`Invalid or missing entity data.`
 		);
 		return null;
 	}
@@ -43,10 +43,9 @@ export function* hydrateEntity( modelName, modelSchema, entityData ) {
 		modelSchema
 	);
 	if ( ! isModelEntityFactoryOfModel( factory, modelName ) ) {
-		console.log(
-			'%c INVALID ' + modelName.toUpperCase() + ' MODEL FACTORY: ',
-			'color: #ff0066;',
-			factory
+		warning(
+			false,
+			`Invalid or missing ${ modelName } model factory.`
 		);
 		return null;
 	}
