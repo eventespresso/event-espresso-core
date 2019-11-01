@@ -13,7 +13,8 @@ import useCreateRelationsForTicketToEventDates
 	from './use-create-relations-for-ticket-to-event-dates';
 import useCreateRelationsForTicketToPrices
 	from './use-create-relations-for-ticket-to-prices';
-import { PRICE, PRICES, TICKET } from '../data/model/constants';
+import { MODELS } from '../data/model/constants';
+const { PRICE, PRICES, TICKET } = MODELS;
 
 const falseFunc = () => false;
 
