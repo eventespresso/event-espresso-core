@@ -105,13 +105,13 @@ const EntityListFilterBar = ( {
 			</div>
 
 			<Collapsible
-				entityFilters={entityFilters}
-				listId={listId}
-				perPage={perPage}
-				searchText={searchText}
-				setPerPage={setPerPage}
-				setSearchText={setSearchText}
-				showEntityFilters={showEntityFilters}
+				entityFilters={ entityFilters }
+				listId={ listId }
+				perPage={ perPage }
+				searchText={ searchText }
+				setPerPage={ setPerPage }
+				setSearchText={ setSearchText }
+				showEntityFilters={ showEntityFilters }
 			/>
 		</div>
 	);
