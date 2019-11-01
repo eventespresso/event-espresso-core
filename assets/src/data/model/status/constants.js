@@ -19,20 +19,6 @@ export const EMAIL_STATUS_ID = {
 	SENT: 'ESN',
 	EXPIRED: 'EXP',
 };
-// event
-export const EVENT_STATUS_ID = {
-	ACTIVE: 'ACT',
-	REGISTRATION_CLOSED: 'CLS',
-	DELETED: 'DEL',
-	DENIED: 'DEN',
-	DRAFT: 'DRF',
-	NOT_ACTIVE: 'NAC',
-	NOT_OPEN: 'NOP',
-	ONGOING: 'ONG',
-	REGISTRATION_OPEN: 'OPN',
-	PENDING: 'PND',
-	SECONDARY: 'SEC',
-};
 // message
 export const MESSAGE_STATUS_ID = {
 	DEBUG: 'MDO',
