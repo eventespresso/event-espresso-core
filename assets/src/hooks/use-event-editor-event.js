@@ -20,7 +20,10 @@ const useEventEditorEvent = ( eventId = 0 ) => {
 			entity = getEntitiesForModel( 'event' );
 			entity = entity.hasOwnProperty( 'eventEntity' ) ?
 				entity.eventEntity :
-				null;
+				entity;
+			entity = Array.isArray( entity ) && entity[0] ?
+				entity[ 0 ] :
+				entity;
 		} else {
 			const { getEntityById } = select( 'eventespresso/core' );
 			entity = getEntityById( 'event', eventId );
