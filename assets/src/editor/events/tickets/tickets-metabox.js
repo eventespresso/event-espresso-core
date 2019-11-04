@@ -27,6 +27,7 @@ import { EditorTicketEntitiesList } from '../tickets';
 const TicketsMetabox = ( { eventId } ) => (
 	<>
 		<h1 className="ee-metabox-heading">
+			<Dashicon icon="tickets-alt" />
 			{ __( 'Available Tickets', 'event_espresso' ) }
 		</h1>
 		<Panel>
