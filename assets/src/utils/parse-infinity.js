@@ -20,13 +20,10 @@ const parseInfinity = ( number, asInt = false, forDb = false ) => {
 		value === 'INF' ||
 		value === Infinity ||
 		isNil( value );
-	number = representsInfinity( number ) || (
-		number.type &&
-		number.type.name === 'InfinitySymbol' &&
-		representsInfinity( number.props.value )
-	) ?
-		Infinity :
-		number;
+	if ( number && number.type && number.type.name === 'InfinitySymbol' ) {
+		number = number.props.value;
+	}
+	number = representsInfinity( number ) ? Infinity : number;
 	number = number !== Infinity && asInt ? parseInt( number, 10 ) : number;
 	// not infinity OR is infinity but not for db
 	number = number !== Infinity || ( number === Infinity && ! forDb ) ?
