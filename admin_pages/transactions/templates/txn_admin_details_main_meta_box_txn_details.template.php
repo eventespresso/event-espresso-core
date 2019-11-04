@@ -302,13 +302,12 @@
                         <?php esc_html_e('Apply Refund', 'event_espresso'); ?>
                     </a>
                 </li>
-                <li>
-                    <input type="text" placeholder="Discount Code">
-                    <a id="display-txn-admin-apply-discount-code" class="button-secondary no-icon no-hide"
-                       rel="txn-admin-apply-payment"> <!--display-the-hidden -->
-                        <?php esc_html_e('Apply Discount Code', 'event_espresso'); ?>
-                    </a>
-                </li>
+                <?php
+                /**
+                 * Allows extend the fields at actions area.
+                 */
+                do_action('AHEE__txn_admin_details_after_actions_buttons');
+                ?>
             <?php else : ?>
                 <li>
                     <p>
