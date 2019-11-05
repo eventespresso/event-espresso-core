@@ -16,20 +16,14 @@ import {
 	getRelationResponseType,
 	getRelationPrimaryKeyString,
 } from '../resolvers';
-import {
-	receiveSchemaForModel,
-	receiveFactoryForModel,
-	receiveRelationSchema,
-} from '../actions';
+import { receiveRelationSchema } from '../actions';
 import { EventEntities } from '../../test/fixtures/base';
 import { resolveSelect } from '../../base-controls';
 import { REDUCER_KEY as CORE_REDUCER_KEY } from '../../core/constants';
 import { REDUCER_KEY as SCHEMA_REDUCER_KEY } from '../constants';
 
 describe( 'TEST SCHEMA RESOLVERS', () => {
-
 	describe( 'getSchemaForModel()', () => {
-
 		const generator = getSchemaForModel( 'event' );
 
 		it( 'yields api fetch action', () => {
@@ -62,7 +56,7 @@ describe( 'TEST SCHEMA RESOLVERS', () => {
 				args: [
 					SCHEMA_REDUCER_KEY,
 					'getSchemaForModel',
-					[ 'event' ]
+					[ 'event' ],
 				],
 			} );
 		} );
@@ -76,9 +70,7 @@ describe( 'TEST SCHEMA RESOLVERS', () => {
 	} );
 
 	describe( 'getFactoryForModel()', () => {
-
 		describe( 'when no schema is provided', () => {
-
 			const generator = getFactoryForModel( 'event' );
 			it( 'yields expected generator for schema selector', () => {
 				const { value, done } = generator.next();
@@ -91,15 +83,17 @@ describe( 'TEST SCHEMA RESOLVERS', () => {
 				} );
 			} );
 
-			it( 'returns null when there is no schema for the given model', () => {
-				const { value, done } = generator.next( {} );
-				expect( value ).toBe( null );
-				expect( done ).toBe( true );
-			} );
+			it(
+				'returns null when there is no schema for the given model',
+				() => {
+					const { value, done } = generator.next( {} );
+					expect( value ).toBe( null );
+					expect( done ).toBe( true );
+				},
+			);
 		} );
 
 		describe( 'when schema is provided', () => {
-
 			const generator = getFactoryForModel( 'event', EventSchema );
 
 			it( 'yields receiveFactoryForModel dispatch action', () => {
@@ -131,7 +125,7 @@ describe( 'TEST SCHEMA RESOLVERS', () => {
 					args: [
 						SCHEMA_REDUCER_KEY,
 						'getFactoryForModel',
-						[ 'event' ]
+						[ 'event' ],
 					],
 				} );
 			} );
@@ -145,23 +139,21 @@ describe( 'TEST SCHEMA RESOLVERS', () => {
 						createNew: expect.any( Function ),
 						fromExisting: expect.any( Function ),
 						modelName: 'event',
-					} )
+					} ),
 				);
 			} );
 		} );
 	} );
 
 	describe( 'getRelationEndpointForEntityId()', () => {
-
 		let generator;
 		const reset = () => generator = getRelationEndpointForEntityId(
 			'event',
 			10,
-			'datetimes'
+			'datetimes',
 		);
 
 		describe( 'when entity does not exist in state', () => {
-
 			it( 'yields resolve select control action', () => {
 				reset();
 				const { value, done } = generator.next();
@@ -189,12 +181,11 @@ describe( 'TEST SCHEMA RESOLVERS', () => {
 					const { value, done } = generator.next( {} );
 					expect( value ).toEqual( '' );
 					expect( done ).toBe( true );
-				}
+				},
 			);
 		} );
 
 		describe( 'when there is no endpoint for the given relation', () => {
-
 			it( 'returns empty string', () => {
 				reset();
 				generator.next(); // RESOLVE_SELECT
@@ -212,7 +203,6 @@ describe( 'TEST SCHEMA RESOLVERS', () => {
 		} );
 
 		describe( 'when endpoint exists for the given relation', () => {
-
 			it(
 				'yields RECEIVE_RELATION_ENDPOINT_FOR_MODEL_ENTITY action',
 				() => {
@@ -236,12 +226,11 @@ describe( 'TEST SCHEMA RESOLVERS', () => {
 					} );
 					const finalStep = generator.next();
 					expect( finalStep.done ).toBe( true );
-				}
+				},
 			);
 		} );
 
 		describe( 'when entity exists in state', () => {
-
 			it(
 				'yields RECEIVE_RELATION_ENDPOINT_FOR_MODEL_ENTITY action',
 				() => {
@@ -259,45 +248,49 @@ describe( 'TEST SCHEMA RESOLVERS', () => {
 					} );
 					const finalStep = generator.next();
 					expect( finalStep.done ).toBe( true );
-				}
+				},
 			);
 		} );
 	} );
 
 	describe( 'hasJoinTableRelation()', () => {
-
 		let generator;
 		const reset = () => generator = hasJoinTableRelation(
 			'event',
-			'datetimes'
+			'datetimes',
 		);
 
-		it( 'yields resolveSelect control for getting the relation type', () => {
-			reset();
-			const { value } = generator.next();
-			expect( value ).toEqual(
-				resolveSelect(
-					SCHEMA_REDUCER_KEY,
-					'getRelationType',
-					'event',
-					'datetime'
-				)
-			);
-		} );
+		it(
+			'yields resolveSelect control for getting the relation type',
+			() => {
+				reset();
+				const { value } = generator.next();
+				expect( value ).toEqual(
+					resolveSelect(
+						SCHEMA_REDUCER_KEY,
+						'getRelationType',
+						'event',
+						'datetime',
+					),
+				);
+			},
+		);
 
-		it( 'returns expected value when relation type is not a join table', () => {
-			const { value, done } = generator.next( 'BELONGS_TO' );
-			expect( value ).toBe( false );
-			expect( done ).toBe( true );
-		} );
+		it(
+			'returns expected value when relation type is not a join table',
+			() => {
+				const { value, done } = generator.next( 'BELONGS_TO' );
+				expect( value ).toBe( false );
+				expect( done ).toBe( true );
+			},
+		);
 	} );
 
 	describe( 'getRelationType()', () => {
-
 		let generator;
 		const reset = () => generator = getRelationType(
 			'event',
-			'datetimes'
+			'datetimes',
 		);
 
 		it( 'yields resolveSelect control action for getting the relation ' +
@@ -310,7 +303,7 @@ describe( 'TEST SCHEMA RESOLVERS', () => {
 					'getRelationSchema',
 					'event',
 					'datetime',
-				)
+				),
 			);
 		} );
 
@@ -330,11 +323,10 @@ describe( 'TEST SCHEMA RESOLVERS', () => {
 	} );
 
 	describe( 'getRelationResponseType', () => {
-
 		let generator;
 		const reset = () => generator = getRelationResponseType(
 			'event',
-			'datetimes'
+			'datetimes',
 		);
 
 		it( 'yields resolve select control for getRelationSchema', () => {
@@ -346,7 +338,7 @@ describe( 'TEST SCHEMA RESOLVERS', () => {
 					'getRelationSchema',
 					'event',
 					'datetime',
-				)
+				),
 			);
 		} );
 
@@ -366,11 +358,10 @@ describe( 'TEST SCHEMA RESOLVERS', () => {
 	} );
 
 	describe( 'getRelationSchema()', () => {
-
 		let generator;
 		const reset = () => generator = getRelationSchema(
 			'event',
-			'datetimes'
+			'datetimes',
 		);
 
 		it( 'yields resolveSelect control for getting the Schema for the ' +
@@ -381,8 +372,8 @@ describe( 'TEST SCHEMA RESOLVERS', () => {
 				resolveSelect(
 					SCHEMA_REDUCER_KEY,
 					'getSchemaForModel',
-					'event'
-				)
+					'event',
+				),
 			);
 		} );
 
@@ -414,32 +405,34 @@ describe( 'TEST SCHEMA RESOLVERS', () => {
 				receiveRelationSchema(
 					'event',
 					'datetime',
-					'foo'
-				)
+					'foo',
+				),
 			);
 		} );
 	} );
 
 	describe( 'getRelationPrimaryKeyString()', () => {
-
 		let generator;
 		const reset = () => generator = getRelationPrimaryKeyString(
 			'event',
-			'datetime'
+			'datetime',
 		);
 
-		it( 'yields resolve select action for the getRelationType selector', () => {
-			reset();
-			const { value } = generator.next();
-			expect( value ).toEqual(
-				resolveSelect(
-					SCHEMA_REDUCER_KEY,
-					'getRelationType',
-					'event',
-					'datetime'
-				)
-			);
-		} );
+		it(
+			'yields resolve select action for the getRelationType selector',
+			() => {
+				reset();
+				const { value } = generator.next();
+				expect( value ).toEqual(
+					resolveSelect(
+						SCHEMA_REDUCER_KEY,
+						'getRelationType',
+						'event',
+						'datetime',
+					),
+				);
+			},
+		);
 
 		it( 'returns empty string if relation type cannot be retrieved', () => {
 			const { value, done } = generator.next( '' );
