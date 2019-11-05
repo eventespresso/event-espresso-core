@@ -1,4 +1,5 @@
 import { useLayoutEffect, useCallback, useState } from 'react';
+const { addEventListener, removeEventListener } = window;
 
 const useRect = ( ref ) => {
 	const [ rect, setRect ] = useState( getRect( ref ? ref.current : null ) );
@@ -33,10 +34,10 @@ const useRect = ( ref ) => {
 			};
 		}
 		// Browser support, remove freely
-		window.addEventListener( 'resize', handleResize );
+		addEventListener( 'resize', handleResize );
 
 		return () => {
-			window.removeEventListener( 'resize', handleResize );
+			removeEventListener( 'resize', handleResize );
 		};
 	}, [ ref.current ] );
 
