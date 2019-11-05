@@ -40,17 +40,22 @@ class EE_DMS_4_10_0_Event_Question_Group extends EE_Data_Migration_Script_Stage_
             global $wpdb;
             // If the question group was also for primary attendees, we should just update that row.
             // And we delete this row.
-            $success = $wpdb->update(
-                $this->_old_table,
-                ['EQG_additional' => true],  // data
-                [
-                    'EQG_primary' => true,
-                    'EVT_ID' => $event_question_group['EVT_ID'],
-                    'QSG_ID' => $event_question_group['QSG_ID']
-                ],  // where
-                array( '%d' ),   // data format
-                array( '%d', '%d', '%d' )  // where format
+            $ids_to_update = $wpdb->get_col(
+                $wpdb->prepare(
+                    'SELECT EQG_ID FROM ' . $this->_old_table . ' WHERE EQG_primary=1 AND EVT_ID=%d AND QSG_ID=%d',
+                    $event_question_group['EQG_ID'],
+                    $event_question_group['QSG_ID']
+                )
             );
+            if ($ids_to_update) {
+                $success = $wpdb->query(
+                    'UPDATE '
+                    . $this->_old_table
+                    . ' SET EQG_additional=1 WHERE EQG_IN IN ('
+                    . implode(',', array_map('intval',$ids_to_update))
+                    . ') LIMIT ' . count($ids_to_update)
+                );
+            }
             if ($success) {
                 // Ok it's confirmed: the question group WAS for the primary attendee group too. So
                 // now we just need to delete this row.
@@ -72,16 +77,25 @@ class EE_DMS_4_10_0_Event_Question_Group extends EE_Data_Migration_Script_Stage_
                 }
             } else {
                 // Oh, the question group actually was NOT for the primary attendee. So we just need to update this row
-                $wpdb->update(
-                    $this->_old_table,
-                    ['EQG_additional' => true],  // data
-                    [
-                        'EVT_ID' => $event_question_group['EVT_ID'],
-                        'QSG_ID' => $event_question_group['QSG_ID']
-                    ],  // where
-                    array( '%d' ),   // data format
-                    array( '%d', '%d', '%d' )  // where format
+                // Let's do the selection separately from the deletion, this way we don't lock big tables for too long.
+                $ids_to_update2 = $wpdb->get_col(
+                    $wpdb->prepare(
+                        'SELECT EQG_ID FROM '
+                        . $this->_old_table
+                        . ' WHERE EVT_ID=%d AND QSG_ID=%d',
+                        $event_question_group['EQG_ID'],
+                        $event_question_group['QSG_ID']
+                    )
                 );
+                if ($ids_to_update2) {
+                    $wpdb->query(
+                        'UPDATE '
+                        . $this->_old_table
+                        . ' SET EQG_additional=1 WHERE EQG_ID IN ('
+                        . $ids_to_update2
+                        . ') LIMIT ' . count($ids_to_update2)
+                    );
+                }
             }
         }
     }
