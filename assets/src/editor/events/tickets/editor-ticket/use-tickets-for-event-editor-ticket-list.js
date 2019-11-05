@@ -26,7 +26,10 @@ const useTicketsForEventEditorTicketList = ( isChained ) => {
 
 	const [ finishedResolution, setFinishedResolution ] = useState( false );
 	const { resolveGetRelatedEntitiesForIds } = dispatch( 'eventespresso/core' );
-	if ( filteredDateIds.length && ! finishedResolution ) {
+	if ( ! finishedResolution &&
+		Array.isArray( filteredDateIds ) &&
+		filteredDateIds.length
+	) {
 		// Finish the resolution for visible datetimes.
 		resolveGetRelatedEntitiesForIds(
 			'datetime',
