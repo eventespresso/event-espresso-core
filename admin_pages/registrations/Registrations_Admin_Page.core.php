@@ -83,7 +83,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
      * @throws InvalidArgumentException
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
-     * @since $VID:$
+     * @since 4.10.2.p
      */
     protected function getRegistrationModel()
     {
@@ -98,7 +98,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
      * @throws InvalidArgumentException
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
-     * @since $VID:$
+     * @since 4.10.2.p
      */
     protected function getAttendeeModel()
     {
@@ -114,7 +114,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
      * @throws InvalidArgumentException
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
-     * @since $VID:$
+     * @since 4.10.2.p
      */
     protected function getEventModel()
     {
@@ -129,7 +129,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
      * @throws InvalidArgumentException
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
-     * @since $VID:$
+     * @since 4.10.2.p
      */
     protected function getStatusModel()
     {
@@ -723,7 +723,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
      * @throws InvalidArgumentException
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
-     * @since $VID:$
+     * @since 4.10.2.p
      */
     protected function _add_screen_options_default()
     {
@@ -735,7 +735,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
      * @throws InvalidArgumentException
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
-     * @since $VID:$
+     * @since 4.10.2.p
      */
     protected function _add_screen_options_contact_list()
     {
@@ -774,7 +774,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
      * @throws ReflectionException
-     * @since $VID:$
+     * @since 4.10.2.p
      */
     public function load_scripts_styles_edit_attendee()
     {
@@ -797,7 +797,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
      * @throws ReflectionException
-     * @since $VID:$
+     * @since 4.10.2.p
      */
     public function load_scripts_styles_view_registration()
     {
@@ -857,7 +857,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
      * @throws ReflectionException
-     * @since $VID:$
+     * @since 4.10.2.p
      */
     protected function _set_list_table_views_default()
     {
@@ -1413,7 +1413,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
      * @throws ReflectionException
-     * @since $VID:$
+     * @since 4.10.2.p
      */
     protected function _registration_details_metaboxes()
     {
@@ -3500,7 +3500,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
 
     /**
      * @throws EE_Error
-     * @since $VID:$
+     * @since 4.10.2.p
      */
     public function attendee_editor_metaboxes()
     {
