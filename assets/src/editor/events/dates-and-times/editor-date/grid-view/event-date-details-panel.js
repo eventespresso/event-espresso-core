@@ -22,11 +22,6 @@ const EventDateDetailsPanel = ( { eventDate } ) => useMemo(
 				value: eventDate.sold || 0,
 			},
 			{
-				id: 'ee-event-date-reserved',
-				label: __( 'reserved', 'event_espresso' ),
-				value: eventDate.reserved || 0,
-			},
-			{
 				id: 'ee-event-date-capacity',
 				label: __( 'capacity', 'event_espresso' ),
 				value: <InfinitySymbol value={ eventDate.regLimit } asInt />,
@@ -41,9 +36,9 @@ const EventDateDetailsPanel = ( { eventDate } ) => useMemo(
 				},
 			},
 			{
-				id: 'ee-event-date-registrants',
+				id: 'ee-event-date-registrations',
 				htmlClass: 'ee-has-tooltip',
-				label: __( 'registrants', 'event_espresso' ),
+				label: __( 'reg list', 'event_espresso' ),
 				value: (
 					<EventDateRegistrationsLink dateEntity={ eventDate } />
 				),

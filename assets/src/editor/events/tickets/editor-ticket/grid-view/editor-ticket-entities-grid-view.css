@@ -96,7 +96,7 @@
     z-index: 10;
 }
 
-.ee-editor-ticket-details-sold-rsrvd-qty-div .ticket-registrants-label{
+.ee-editor-ticket-details-sold-rsrvd-qty-div .ticket-registrations-label{
     margin-left: calc(var(--ee-margin-micro)*-1);
 }
 
