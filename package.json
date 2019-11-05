@@ -85,7 +85,7 @@
 		"deep-freeze": "0.0.1",
 		"del": "git+https://github.com/sindresorhus/del.git",
 		"equivalent-key-map": "^0.2.2",
-		"eslint": "^6.5.1",
+		"eslint": "^6.6.0",
 		"eslint-plugin-jest": "23.0.2",
 		"handlebars": "^4.4.3",
 		"license-checker": "^25.0.1",
