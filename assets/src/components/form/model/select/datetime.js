@@ -25,7 +25,7 @@ const optionsEntityMap = {
 };
 
 const DatetimeSelect = createModelSelect(
-	model.MODEL_NAME,
+	model.MODEL_NAMES.MODEL,
 	{
 		selectConfiguration: {
 			loadingMessage: () => __( 'Retrieving Datetimes.', 'event_espresso' ),

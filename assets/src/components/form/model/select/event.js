@@ -18,7 +18,7 @@ const optionsEntityMap = {
 };
 
 const EventSelect = createModelSelect(
-	model.MODEL_NAME,
+	model.MODEL_NAMES.MODEL,
 	{
 		selectConfiguration: {
 			loadingMessage: () => __( 'Retrieving Events.', 'event_espresso' ),

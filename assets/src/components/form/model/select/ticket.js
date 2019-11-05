@@ -19,7 +19,7 @@ const optionsEntityMap = {
 };
 
 const TicketSelect = createModelSelect(
-	model.MODEL_NAME,
+	model.MODEL_NAMES.MODEL,
 	{
 		selectConfiguration: {
 			loadingMessage: () => __( 'Retrieving Tickets.', 'event_espresso' ),
