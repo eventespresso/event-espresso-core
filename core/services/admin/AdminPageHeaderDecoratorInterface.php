@@ -8,7 +8,7 @@ namespace EventEspresso\core\services\admin;
  *
  * @package EventEspresso\core\services\admin\list_table
  * @author  Brent Christensen
- * @since   $VID:$
+ * @since   4.10.2.p
  */
 interface AdminPageHeaderDecoratorInterface
 {
@@ -16,7 +16,7 @@ interface AdminPageHeaderDecoratorInterface
     /**
      * @param string $text
      * @return string
-     * @since $VID:$
+     * @since 4.10.2.p
      */
     public function getHeaderText($text = '');
 }
