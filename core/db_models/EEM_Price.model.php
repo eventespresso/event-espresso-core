@@ -38,24 +38,76 @@ class EEM_Price extends EEM_Soft_Delete_Base
         );
         $this->_fields = array(
             'Price' => array(
-                'PRC_ID'         => new EE_Primary_Key_Int_Field('PRC_ID', 'Price ID'),
-                'PRT_ID'         => new EE_Foreign_Key_Int_Field('PRT_ID', 'Price type Id', false, null, 'Price_Type'),
-                'PRC_amount'     => new EE_Money_Field('PRC_amount', 'Price Amount', false, 0),
-                'PRC_name'       => new EE_Plain_Text_Field('PRC_name', 'Name of Price', false, ''),
-                'PRC_desc'       => new EE_Post_Content_Field('PRC_desc', 'Price Description', false, ''),
-                'PRC_is_default' => new EE_Boolean_Field('PRC_is_default',
-                    'Flag indicating whether price is a default price', false, false),
-                'PRC_overrides'  => new EE_Integer_Field('PRC_overrides',
-                    'Price ID for a global Price that will be overridden by this Price  ( for replacing default prices )',
-                    true, 0),
-                'PRC_order'      => new EE_Integer_Field('PRC_order',
-                    'Order of Application of Price (lower numbers apply first?)', false, 1),
-                'PRC_deleted'    => new EE_Trashed_Flag_Field('PRC_deleted',
-                    'Flag Indicating if this has been deleted or not', false, false),
-                'PRC_parent'     => new EE_Integer_Field('PRC_parent',
-                    __('Indicates what PRC_ID is the parent of this PRC_ID', 'event_espresso'), true, 0),
-                'PRC_wp_user'    => new EE_WP_User_Field('PRC_wp_user', __('Price Creator ID', 'event_espresso'),
-                    false),
+                'PRC_ID'         => new EE_Primary_Key_Int_Field(
+                    'PRC_ID',
+                    'Price ID'
+                ),
+                'PRT_ID'         => new EE_Foreign_Key_Int_Field(
+                    'PRT_ID',
+                    esc_html__('Price type Id', 'event_espresso'),
+                    false,
+                    null,
+                    'Price_Type'
+                ),
+                'PRC_amount'     => new EE_Money_Field(
+                    'PRC_amount',
+                    esc_html__('Price Amount', 'event_espresso'),
+                    false,
+                    0
+                ),
+                'PRC_name'       => new EE_Plain_Text_Field(
+                    'PRC_name',
+                    esc_html__('Name of Price', 'event_espresso'),
+                    false,
+                    ''
+                ),
+                'PRC_desc'       => new EE_Post_Content_Field(
+                    'PRC_desc',
+                    esc_html__('Price Description', 'event_espresso'),
+                    false,
+                    ''
+                ),
+                'PRC_is_default' => new EE_Boolean_Field(
+                    'PRC_is_default',
+                    esc_html__('Flag indicating whether price is a default price', 'event_espresso'),
+                    false,
+                    false
+                ),
+                'PRC_overrides'  => new EE_Integer_Field(
+                    'PRC_overrides',
+                    esc_html__(
+                        'Price ID for a global Price that will be overridden by this Price  ( for replacing default prices )',
+                        'event_espresso'
+                    ),
+                    true,
+                    0
+                ),
+                'PRC_order'      => new EE_Integer_Field(
+                    'PRC_order',
+                    esc_html__(
+                        'Order of Application of Price (lower numbers apply first?)',
+                        'event_espresso'
+                    ),
+                    false,
+                    1
+                ),
+                'PRC_deleted'    => new EE_Trashed_Flag_Field(
+                    'PRC_deleted',
+                    esc_html__('Flag Indicating if this has been deleted or not', 'event_espresso'),
+                    false,
+                    false
+                ),
+                'PRC_parent'     => new EE_Integer_Field(
+                    'PRC_parent',
+                    esc_html__('Indicates what PRC_ID is the parent of this PRC_ID', 'event_espresso'),
+                    true,
+                    0
+                ),
+                'PRC_wp_user'    => new EE_WP_User_Field(
+                    'PRC_wp_user',
+                    esc_html__('Price Creator ID', 'event_espresso'),
+                    false
+                ),
             ),
         );
         $this->_model_relations = array(
@@ -64,15 +116,27 @@ class EEM_Price extends EEM_Soft_Delete_Base
             'WP_User'    => new EE_Belongs_To_Relation(),
         );
         // this model is generally available for reading
-        $this->_cap_restriction_generators[ EEM_Base::caps_read ] = new EE_Restriction_Generator_Default_Public('PRC_is_default',
-            'Ticket.Datetime.Event');
+        $this->_cap_restriction_generators[EEM_Base::caps_read] =
+            new EE_Restriction_Generator_Default_Public(
+                'PRC_is_default',
+                'Ticket.Datetime.Event'
+            );
         // account for default tickets in the caps
-        $this->_cap_restriction_generators[ EEM_Base::caps_read_admin ] = new EE_Restriction_Generator_Default_Protected('PRC_is_default',
-            'Ticket.Datetime.Event');
-        $this->_cap_restriction_generators[ EEM_Base::caps_edit ] = new EE_Restriction_Generator_Default_Protected('PRC_is_default',
-            'Ticket.Datetime.Event');
-        $this->_cap_restriction_generators[ EEM_Base::caps_delete ] = new EE_Restriction_Generator_Default_Protected('PRC_is_default',
-            'Ticket.Datetime.Event');
+        $this->_cap_restriction_generators[EEM_Base::caps_read_admin] =
+            new EE_Restriction_Generator_Default_Protected(
+                'PRC_is_default',
+                'Ticket.Datetime.Event'
+            );
+        $this->_cap_restriction_generators[EEM_Base::caps_edit] =
+            new EE_Restriction_Generator_Default_Protected(
+                'PRC_is_default',
+                'Ticket.Datetime.Event'
+            );
+        $this->_cap_restriction_generators[EEM_Base::caps_delete] =
+            new EE_Restriction_Generator_Default_Protected(
+                'PRC_is_default',
+                'Ticket.Datetime.Event'
+            );
         parent::__construct($timezone);
     }
 
@@ -161,7 +225,7 @@ class EEM_Price extends EEM_Soft_Delete_Base
         ));
         foreach ($all_taxes as $tax) {
             if ($tax instanceof EE_Price) {
-                $taxes[ $tax->order() ][ $tax->ID() ] = $tax;
+                $taxes[$tax->order()][$tax->ID()] = $tax;
             }
         }
         return $taxes;
@@ -186,7 +250,7 @@ class EEM_Price extends EEM_Soft_Delete_Base
             if ($default_prices) {
                 foreach ($default_prices as $price) {
                     if ($price instanceof EE_Price) {
-                        $array_of_price_objects[ $price->type() ][] = $price;
+                        $array_of_price_objects[$price->type()][] = $price;
                     }
                 }
                 return $array_of_price_objects;
@@ -204,7 +268,7 @@ class EEM_Price extends EEM_Soft_Delete_Base
         if (! empty($ticket_prices)) {
             foreach ($ticket_prices as $price) {
                 if ($price instanceof EE_Price) {
-                    $array_of_price_objects[ $price->type() ][] = $price;
+                    $array_of_price_objects[$price->type()][] = $price;
                 }
             }
             return $array_of_price_objects;
