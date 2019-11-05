@@ -47,7 +47,7 @@ class AttendeeFilterHeaderTest extends TestCase
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
      * @throws ReflectionException
-     * @since $VID:$
+     * @since 4.10.2.p
      */
     public function setUp()
     {
@@ -61,7 +61,7 @@ class AttendeeFilterHeaderTest extends TestCase
      * @throws InvalidInterfaceException
      * @throws ReflectionException
      * @throws Exception
-     * @since $VID:$
+     * @since 4.10.2.p
      */
     public function setUpAttendee()
     {
@@ -82,7 +82,7 @@ class AttendeeFilterHeaderTest extends TestCase
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
      * @throws InvalidArgumentException
-     * @since $VID:$
+     * @since 4.10.2.p
      */
     private function getAttendeeFilterHeader(array $get_params)
     {
@@ -109,7 +109,7 @@ class AttendeeFilterHeaderTest extends TestCase
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
      * @throws ReflectionException
-     * @since  $VID:$
+     * @since  4.10.2.p
      */
     public function testDataGenerator()
     {
@@ -162,7 +162,7 @@ class AttendeeFilterHeaderTest extends TestCase
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
      * @throws ReflectionException
-     * @since  $VID:$
+     * @since  4.10.2.p
      */
     public function testGetHeaderText()
     {

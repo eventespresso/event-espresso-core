@@ -1,1 +1,0 @@
-<?php return array('dependencies' => array('eejs-core', 'eventespresso-value-objects', 'eventespresso-vendor', 'lodash'), 'version' => '6dcc6313a61f08522ecfee5bb4996302');

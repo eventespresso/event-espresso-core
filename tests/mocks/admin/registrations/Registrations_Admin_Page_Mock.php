@@ -74,7 +74,7 @@ class Registrations_Admin_Page_Mock extends Registrations_Admin_Page
      * @throws InvalidArgumentException
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
-     * @since $VID:$
+     * @since 4.10.2.p
      */
     public function get_registration_query_parameters(
         $request = array(),

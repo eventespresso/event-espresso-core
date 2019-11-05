@@ -15,7 +15,7 @@ use EventEspresso\core\services\request\RequestInterface;
  *
  * @package EventEspresso\core\domain\services\admin\registrations\list_table\page_header
  * @author  Brent Christensen
- * @since   $VID:$
+ * @since   4.10.2.p
  */
 class AttendeeFilterHeader extends AdminPageHeaderDecorator
 {
@@ -43,7 +43,7 @@ class AttendeeFilterHeader extends AdminPageHeaderDecorator
      * @param string $text
      * @return string
      * @throws EE_Error
-     * @since $VID:$
+     * @since 4.10.2.p
      */
     public function getHeaderText($text = '')
     {
