@@ -4,5 +4,3 @@ export { default as NewTicketFormModal } from './new-ticket-form-modal';
 export { default as useTicketEditorId } from './use-ticket-editor-id';
 export { default as useTicketEntityFormInputPrefix }
 	from './use-ticket-editor-id';
-export { default as useTicketFormLoadingState }
-	from './use-ticket-form-loading-state';

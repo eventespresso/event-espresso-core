@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { useEffect } from '@wordpress/element';
+import { useEffect, useState } from '@wordpress/element';
 import {
 	EntityList,
 	EntityPagination,
@@ -17,7 +17,7 @@ import { __, _x, sprintf } from '@eventespresso/i18n';
 import AddNewTicketButton from './add-new-ticket-button';
 import useTicketsForEventEditorTicketList
 	from './use-tickets-for-event-editor-ticket-list';
-import { NewTicketFormModal, useTicketFormLoadingState } from './edit-form/';
+import { NewTicketFormModal } from './edit-form/';
 import { EditorTicketEntitiesGridView } from './grid-view/';
 import { EditorTicketEntitiesListView } from './list-view/';
 import {
@@ -43,6 +43,7 @@ const {
  */
 const EditorTicketEntitiesList = ( { ...otherProps } ) => {
 	const listId = 'event-editor-ticket-list';
+	const [ loading, setLoading ] = useState( false );
 	const {
 		isChained,
 		showTickets,
@@ -92,10 +93,6 @@ const EditorTicketEntitiesList = ( { ...otherProps } ) => {
 		ticketsSortedBy,
 		Array.isArray( tickets ) ? tickets.length : 0,
 	] );
-	const {
-		loadingTicketForm,
-		setLoadingTicketForm,
-	} = useTicketFormLoadingState();
 	const entityOrder = filteredTicketIds.join( '-' );
 	return (
 		<FormWrapper>
@@ -145,12 +142,12 @@ const EditorTicketEntitiesList = ( { ...otherProps } ) => {
 			/>
 			<FormButtonsRow>
 				<AddNewTicketButton
-					loading={ loadingTicketForm }
-					setLoading={ setLoadingTicketForm }
+					loading={ loading }
+					setLoading={ setLoading }
 				/>
 				<NewTicketFormModal
-					loading={ loadingTicketForm }
-					setLoading={ setLoadingTicketForm }
+					loading={ loading }
+					setLoading={ setLoading }
 				/>
 			</FormButtonsRow>
 		</FormWrapper>
