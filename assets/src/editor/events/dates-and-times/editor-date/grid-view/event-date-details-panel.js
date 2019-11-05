@@ -37,10 +37,10 @@ const EventDateDetailsPanel = ( { eventDate } ) => {
 						type: 'text',
 						valueType: 'infinite',
 						onChange: ( cap ) => {
-							cap = parseInfinity( cap, true, true );
-							eventDate.regLimit = cap;
-							updateRelatedTickets( { capacity: cap } );
-							return <InfinitySymbol value={ cap } asInt />;
+							const capacity = parseInfinity( cap, true, true );
+							eventDate.regLimit = capacity;
+							updateRelatedTickets( { capacity } );
+							return <InfinitySymbol value={ capacity } asInt />;
 						},
 					},
 				},
