@@ -156,8 +156,8 @@ describe( 'parseInfinity', () => {
 			expectedResult,
 		} = test;
 		it( doesThis, () => {
-			const result = () => parseInfinity( input, asInt, forDb );
-			expect( result() ).toEqual( expectedResult );
+			const result = parseInfinity( input, asInt, forDb );
+			expect( result ).toEqual( expectedResult );
 		} );
 	} );
 } );
