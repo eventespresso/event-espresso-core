@@ -37,6 +37,11 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step
      * @type array $_registration_answers
      */
     private $_registration_answers = array();
+   
+    /**
+     * @type int $reg_form_count
+     */
+    protected $reg_form_count = 0;
 
 
     /**
@@ -49,7 +54,6 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step
     {
         $this->_slug = 'attendee_information';
         $this->_name = esc_html__('Attendee Information', 'event_espresso');
-        $this->_template = SPCO_REG_STEPS_PATH . $this->_slug . '/attendee_info_main.template.php';
         $this->checkout = $checkout;
         $this->_reset_success_message();
         $this->set_instructions(
@@ -127,6 +131,9 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step
         $reg_config = LoaderFactory::getLoader()->getShared('EE_Registration_Config');
  
         $this->_print_copy_info = $reg_config->copyAttendeeInfo();
+
+        // Init reg forms count.
+        $this->reg_form_count = 0;
 
         $primary_registrant = null;
         // autoload Line_Item_Display classes
@@ -229,6 +236,13 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step
                 }
             }
         }
+
+        // Set the registration form template (default: one form per ticket details table).
+        // We decide the template to used based on the number of forms.
+        $this->_template = $this->reg_form_count > 1
+            ? SPCO_REG_STEPS_PATH . $this->_slug . '/attendee_info_main.template.php'
+            : SPCO_REG_STEPS_PATH . $this->_slug . '/attendee_info_single.template.php';
+
         return new EE_Form_Section_Proper(
             array(
                 'name'            => $this->reg_form_name(),
@@ -272,8 +286,8 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step
                     // @codingStandardsIgnoreEnd
                     [
                         [
-                            'Event.EVT_ID'                     => $registration->event()->ID(),
-                            $field_name => true,
+                            'Event.EVT_ID' => $registration->event()->ID(),
+                            $field_name    => true,
                         ],
                         'order_by' => ['QSG_order' => 'ASC'],
                     ],
@@ -338,6 +352,12 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step
             }
         }
         $attendee_nmbr++;
+        
+        // Increment the reg forms number if form is valid.
+        if (!empty($form_args)) {
+            $this->reg_form_count++;
+        }
+
         return ! empty($form_args)
             ? new EE_Form_Section_Proper($form_args)
             : new EE_Form_Section_HTML();

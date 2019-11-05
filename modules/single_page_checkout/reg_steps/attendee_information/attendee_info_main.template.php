@@ -96,5 +96,3 @@ if (count($registrations) > 0) {
         <?php _e('show&nbsp;event&nbsp;questions', 'event_espresso'); ?>
     </a>
 </div>
-
-
