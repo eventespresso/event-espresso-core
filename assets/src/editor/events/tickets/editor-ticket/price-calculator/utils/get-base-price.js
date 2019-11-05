@@ -16,7 +16,7 @@ const { BASE_PRICE_TYPES } = priceTypeModel;
  */
 const getBasePrice = memoize(
 	( prices ) => prices.find( ( price ) => {
-		return price.prtId === BASE_PRICE_TYPES.BASE_PRICE;
+		return price.PRT_ID === BASE_PRICE_TYPES.BASE_PRICE;
 	} )
 );
 

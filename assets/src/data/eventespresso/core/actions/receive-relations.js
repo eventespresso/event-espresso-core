@@ -42,7 +42,7 @@ function receiveRelatedEntities(
 		modelName,
 		entityId,
 		relationName,
-		relatedEntityIds
+		relatedEntityIds,
 	};
 }
 
@@ -69,7 +69,7 @@ function receiveDirtyRelationAddition(
 	relationName,
 	relationEntityId,
 	modelName,
-	entityId,
+	entityId
 ) {
 	modelName = singularModelName( modelName );
 	relationName = singularModelName( relationName );
@@ -105,7 +105,7 @@ function receiveDirtyRelationDeletion(
 	relationName,
 	relationEntityId,
 	modelName,
-	entityId,
+	entityId
 ) {
 	modelName = singularModelName( modelName );
 	relationName = singularModelName( relationName );

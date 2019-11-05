@@ -30,6 +30,8 @@ const PriceTypeInput = ( {
 } ) => {
 	const key = `${ prefix }-type`;
 	const defaultPriceType = useDefaultPriceType();
+	const isBasePriceType = basePriceType === BASE_PRICE_TYPES.BASE_PRICE;
+
 	return useMemo(
 		() => (
 			<Fragment>
@@ -41,6 +43,7 @@ const PriceTypeInput = ( {
 				<FormInput
 					key="type"
 					type="select"
+					htmlClass={ isBasePriceType && 'ee-base-price-type' }
 					name={ key }
 					value={
 						normalizeEntityId( values[ key ] ) || 0
@@ -56,7 +59,7 @@ const PriceTypeInput = ( {
 							}
 						}
 					}
-					disabled={ basePriceType === BASE_PRICE_TYPES.BASE_PRICE }
+					disabled={ isBasePriceType }
 				/>
 			</Fragment>
 		),

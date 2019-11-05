@@ -1,6 +1,7 @@
 /**
  * External imports
  */
+import warning from 'warning';
 import { pluralModelName } from '@eventespresso/model';
 import { hydrateRelationSchema } from '@eventespresso/model-schema';
 import { isModelEntityOfModel } from '@eventespresso/validators';
@@ -9,7 +10,13 @@ import { dispatch } from '@wordpress/data';
 const {
 	hydrateEntity,
 	resolveRelationRecordForRelation,
+	resolveGetRelatedEntitiesForIds,
 } = dispatch( 'eventespresso/core' );
+
+const {
+	receiveEntityResponse,
+	resolveGetEntities,
+} = dispatch( 'eventespresso/lists' );
 const { receiveSchemaForModelAndResolve } = dispatch( 'eventespresso/schema' );
 
 /**
@@ -18,22 +25,13 @@ const { receiveSchemaForModelAndResolve } = dispatch( 'eventespresso/schema' );
  * @param {Object} eventData
  */
 const hydrateData = async function*( eventData ) {
-	console.log(
-		'%cSTART DATA HYDRATION',
-		'color: YellowGreen;font-size:18px;',
-		'DOM Data',
-		eventData
-	);
-	const { eventId, schemas, relations, ...rawData } = eventData;
+	const { schemas, relations, ...rawData } = eventData;
+	if ( rawData.hasOwnProperty( 'eventId' ) ) {
+		delete rawData.eventId;
+	}
 	await hydrateSchemas( schemas, relations );
 	const hydratedEntities = await hydrateEntityData( rawData, schemas );
 	await hydrateRelations( rawData, hydratedEntities, relations );
-	console.log(
-		'%cDATA HYDRATION COMPLETE',
-		'color: YellowGreen;font-size:18px;',
-		'hydratedEntities',
-		hydratedEntities
-	);
 	yield hydratedEntities;
 };
 
@@ -52,7 +50,10 @@ const hydrateSchemas = async ( schemas, relations ) => {
 			if ( ! schemaData.hasOwnProperty( 'schema' ) ) {
 				throw new TypeError( 'Invalid Schema ' );
 			}
-			const schema = await receiveSchemaForModelAndResolve( model, schemaData );
+			const schema = await receiveSchemaForModelAndResolve(
+				model,
+				schemaData
+			);
 			if ( relations.hasOwnProperty( model ) &&
 				schema.hasOwnProperty( 'schema' ) &&
 				schema.schema.hasOwnProperty( 'schema' ) &&
@@ -86,10 +87,9 @@ const hydrateSchemas = async ( schemas, relations ) => {
 										resolved.relationSchema.schema
 									);
 								} else {
-									console.log(
-										'%c INVALID RELATION SCHEMA: ',
-										'color: DeepPink; font-size:18px;',
-										resolved
+									warning(
+										false,
+										'INVALID RELATION SCHEMA'
 									);
 								}
 							}
@@ -119,11 +119,23 @@ const hydrateEntityData = async ( rawData, schemas ) => {
 			modelSchema = modelSchema.hasOwnProperty( 'schema' ) ?
 				modelSchema.schema :
 				null;
-			const entities = await hydrateEntities( model, modelSchema, entityData ).then(
+			const entities = await hydrateEntities(
+				model,
+				modelSchema,
+				entityData
+			).then(
 				( hydratedEntities ) => {
 					return { [ model ]: hydratedEntities };
 				}
 			);
+			if ( model === 'price_type' ) {
+				receiveEntityResponse(
+					model,
+					undefined,
+					Object.values( entities[ model ] ),
+				);
+				resolveGetEntities( model );
+			}
 			allHydratedEntities = { ...allHydratedEntities, ...entities };
 		}
 	}
@@ -181,10 +193,9 @@ const hydrateAndReceiveEntities = async ( model, modelSchema, entities ) => {
 			if ( isModelEntityOfModel( entity, model ) ) {
 				resolvedEntities[ entity.id ] = entity;
 			} else {
-				console.log(
-					'%c INVALID ENTITY: ',
-					'color: DeepPink; font-size:18px;',
-					entity
+				warning(
+					false,
+					'INVALID ENTITY'
 				);
 			}
 		}
@@ -202,16 +213,24 @@ const hydrateAndReceiveEntities = async ( model, modelSchema, entities ) => {
  */
 const hydrateRelations = async ( rawData, hydratedEntities, related ) => {
 	if ( isDataObject( hydratedEntities ) && isDataObject( related ) ) {
-		for ( const [ modelName, entities ] of Object.entries( hydratedEntities ) ) {
+		for ( const [ modelName, entities ]
+			of Object.entries( hydratedEntities )
+		) {
 			if ( related.hasOwnProperty( modelName ) ) {
 				const relatedEntities = related[ modelName ];
+				const relatedIds = {};
 				for ( const entity of Object.values( entities ) ) {
 					if ( relatedEntities.hasOwnProperty( entity.id ) ) {
 						for ( const [ relatedModelName, relatedEntityIds ]
 							of Object.entries( relatedEntities[ entity.id ] )
 						) {
+							relatedIds[ relatedModelName ] =
+								relatedIds[ relatedModelName ] || [];
+							relatedIds[ relatedModelName ].push( entity.id );
 							if ( Array.isArray( relatedEntityIds ) ) {
-								for ( const relatedEntityId of relatedEntityIds ) {
+								for ( const relatedEntityId
+									of relatedEntityIds
+								) {
 									const relatedEntity = retrieveHydratedEntity(
 										relatedModelName,
 										relatedEntityId,
@@ -228,10 +247,9 @@ const hydrateRelations = async ( rawData, hydratedEntities, related ) => {
 											entity.id
 										);
 									} else {
-										console.log(
-											'%cINVALID ENTITY RELATION',
-											'color: DeepPink; font-size:18px;',
-											relatedEntity
+										warning(
+											false,
+											'INVALID ENTITY RELATION'
 										);
 									}
 								}
@@ -239,6 +257,7 @@ const hydrateRelations = async ( rawData, hydratedEntities, related ) => {
 						}
 					}
 				}
+				resolveGetRelatedEntitiesForIds( modelName, relatedIds );
 			}
 		}
 	}

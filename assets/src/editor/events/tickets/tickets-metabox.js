@@ -8,7 +8,7 @@ import {
 	PanelBody,
 	PanelRow,
 } from '@wordpress/components';
-import { __, } from '@eventespresso/i18n';
+import { __ } from '@eventespresso/i18n';
 
 /**
  * Internal imports
@@ -24,9 +24,8 @@ import { EditorTicketEntitiesList } from '../tickets';
  * @param {number} eventId
  * @return {Object} rendered event dates metabox
  */
-const TicketsMetabox = ( { eventId } ) => {
-	return (
-		<>
+const TicketsMetabox = ( { eventId } ) => (
+	<>
 		<h1 className="ee-metabox-heading">
 			<Dashicon icon="tickets-alt" />
 			{ __( 'Available Tickets', 'event_espresso' ) }
@@ -46,9 +45,8 @@ const TicketsMetabox = ( { eventId } ) => {
 			</PanelBody>
 		</Panel>
 		<br />
-		</>
-	);
-};
+	</>
+);
 
 TicketsMetabox.propTypes = {
 	eventId: PropTypes.oneOfType( [

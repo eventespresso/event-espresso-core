@@ -273,7 +273,8 @@ class JsonModelSchema
      * @return string
      */
     public function __toString()
-    {   $schema = wp_json_encode($this->getModelSchema());
+    {
+        $schema = wp_json_encode($this->getModelSchema());
         return is_string($schema) ? $schema : '';
     }
 }

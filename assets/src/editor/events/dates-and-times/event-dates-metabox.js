@@ -7,10 +7,8 @@ import {
 	PanelBody,
 	PanelRow,
 } from '@wordpress/components';
-import {
-	EspressoIcon,
-} from '@eventespresso/components';
-import { __, } from '@eventespresso/i18n';
+import { EspressoIcon } from '@eventespresso/components';
+import { __ } from '@eventespresso/i18n';
 
 /**
  * Internal imports

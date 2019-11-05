@@ -582,7 +582,7 @@ class Registry
      * @param string $namespace
      * @param string $chunk_name
      * @return array
-     * @since $VID:$
+     * @since 4.10.2.p
      */
     public function getJsAssetDetails($namespace, $chunk_name)
     {
@@ -596,7 +596,7 @@ class Registry
      * @param string $namespace
      * @param string $chunk_name
      * @return array
-     * @since $VID:$
+     * @since 4.10.2.p
      */
     public function getCssAssetDetails($namespace, $chunk_name)
     {
@@ -783,7 +783,7 @@ class Registry
      * @param string $namespace
      * @param string $chunk_name
      * @return array
-     * @deprecated $VID:$
+     * @deprecated 4.10.2.p
      * @since 4.9.82.p
      */
     public function getJsDependencies($namespace, $chunk_name)
@@ -799,7 +799,7 @@ class Registry
      * @param string $namespace
      * @param string $chunk_name
      * @return array
-     * @deprecated $VID:$
+     * @deprecated 4.10.2.p
      * @since      4.9.82.p
      */
     public function getCssDependencies($namespace, $chunk_name)

@@ -528,7 +528,7 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable
                 ),
                 'EE_Form_Section_Base::other_html_attributes()'
             ),
-            '$VID:$'
+            '4.10.2.p'
         );
 
         return $this->other_html_attributes();
@@ -550,7 +550,7 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable
                 ),
                 'EE_Form_Section_Base::set_other_html_attributes()'
             ),
-            '$VID:$'
+            '4.10.2.p'
         );
 
         $this->set_other_html_attributes($html_other_attributes);
