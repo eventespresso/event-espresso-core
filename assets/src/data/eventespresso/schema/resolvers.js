@@ -43,7 +43,7 @@ import {
 export function* getSchemaForModel( modelName ) {
 	const path = getEndpoint( singularModelName( modelName ) );
 	const schema = yield fetch( { path, method: 'OPTIONS' } );
-	yield receiveSchemaForModelAndResolve( modelName, schema );
+	yield* receiveSchemaForModelAndResolve( modelName, schema );
 	return schema;
 }
 
@@ -70,7 +70,7 @@ export function* getFactoryForModel( modelName, schema = {} ) {
 		schema.schema,
 		MODEL_PREFIXES( modelName )
 	);
-	yield receiveFactoryForModelAndResolve( modelName, factory );
+	yield* receiveFactoryForModelAndResolve( modelName, factory );
 	return factory;
 }
 
