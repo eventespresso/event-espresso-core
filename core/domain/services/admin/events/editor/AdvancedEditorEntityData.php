@@ -164,6 +164,66 @@ class AdvancedEditorEntityData
     /**
      * @param int $eventId
      * @return array
+     * @throws DomainException
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws ModelConfigurationException
+     * @throws ReflectionException
+     * @throws RestException
+     * @throws RestPasswordIncorrectException
+     * @throws RestPasswordRequiredException
+     * @throws UnexpectedEntityException
+     * @since $VID:$
+     */
+    protected function getEventDates($eventId)
+    {
+        return $this->spoofer->getApiResults(
+            $this->datetime_model,
+            [
+                [
+                    'EVT_ID'      => $eventId,
+                    'DTT_deleted' => ['IN', [true, false]]
+                ]
+            ]
+        );
+    }
+
+
+    /**
+     * @param int $eventId
+     * @param array $eventDates
+     * @return array
+     * @throws DomainException
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws ModelConfigurationException
+     * @throws ReflectionException
+     * @throws RestException
+     * @throws RestPasswordIncorrectException
+     * @throws RestPasswordRequiredException
+     * @throws UnexpectedEntityException
+     * @since $VID:$
+     */
+    protected function addDefaultDateAndTicket($eventId, array $eventDates = [])
+    {
+        $default_date = $this->datetime_model->create_default_object();
+        $default_date->save();
+        $default_date->_add_relation_to($eventId, 'Event');
+        $eventDates[] = $default_date;
+        $default_ticket = $this->ticket_model->create_default_object();
+        $default_ticket->save();
+        $default_ticket->_add_relation_to($default_date, 'Datetime');
+        return $eventDates;
+    }
+
+
+    /**
+     * @param int $eventId
+     * @return array
      * @throws EE_Error
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
@@ -187,21 +247,24 @@ class AdvancedEditorEntityData
         if (! (is_array($event) && isset($event['EVT_ID']) && $event['EVT_ID'] === $eventId)) {
             return [];
         }
+        $eventDates = $this->getEventDates($eventId);
+        if ((! is_array($eventDates) || empty($eventDates))
+            || (isset($_REQUEST['action']) && $_REQUEST['action'] === 'create_new')
+        ) {
+            $eventDates = $this->addDefaultDateAndTicket($eventId);
+        }
+
         $event = [$eventId => $event];
         $relations = [
-            'event' => [ $eventId => [] ],
+            'event'    => [
+                $eventId => [
+                    'datetime' => []
+                ]
+            ],
             'datetime' => [],
-            'ticket' => [],
-            'price' => [],
+            'ticket'   => [],
+            'price'    => [],
         ];
-        $eventDates = $this->spoofer->getApiResults(
-            $this->datetime_model,
-            [[
-                'EVT_ID' => $eventId,
-                'DTT_deleted' => ['IN', [true, false]]
-            ]]
-        );
-        $relations['event'][ $eventId ]['datetime'] = [];
 
         $datetimes = [];
         $eventDateTickets = [];
