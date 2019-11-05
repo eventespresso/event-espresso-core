@@ -10,6 +10,7 @@ use EEM_Event;
 use EEM_Price;
 use EEM_Price_Type;
 use EEM_Ticket;
+use EE_Ticket;
 use EEM_Venue;
 use EventEspresso\core\domain\services\assets\EspressoEditorAssetManager;
 use EventEspresso\core\domain\services\converters\RestApiSpoofer;
@@ -262,16 +263,26 @@ class AdvancedEditorEntityData
             'venue'      => $this->spoofer->getModelSchema('venues'),
         ];
 
+        $tktRegCount = [];
+        foreach ($tickets as $ticket) {
+            $tkt_instance = $this->ticket_model->get_one_by_ID($ticket['TKT_ID']);
+
+            $tktRegCount[$ticket['TKT_ID']] = $tkt_instance instanceof EE_Ticket ?
+            $tkt_instance->count_registrations()
+            : 0;
+        }
+
         return [
-            'eventId'    => $eventId,
-            'event'      => $event,
-            'datetime'   => $datetimes,
-            'ticket'     => $tickets,
-            'price'      => $prices,
-            'price_type' => $price_types,
-            'venue'      => $venue,
-            'schemas'    => $schemas,
-            'relations'  => $relations,
+            'eventId'     => $eventId,
+            'event'       => $event,
+            'datetime'    => $datetimes,
+            'ticket'      => $tickets,
+            'price'       => $prices,
+            'price_type'  => $price_types,
+            'venue'       => $venue,
+            'schemas'     => $schemas,
+            'relations'   => $relations,
+            'tktRegCount' => $tktRegCount,
         ];
     }
 }
