@@ -306,7 +306,7 @@
                 /**
                  * Allows extend the fields at actions area.
                  */
-                do_action('AHEE__txn_admin_details_after_actions_buttons');
+                do_action('AHEE__txn_admin_details__after_actions_buttons');
                 ?>
             <?php else : ?>
                 <li>
