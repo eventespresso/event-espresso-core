@@ -21,6 +21,7 @@ import TicketDetailsPanel from './ticket-details-panel';
  */
 const EditorTicketEntityDetails = ( {
 	ticketEntity,
+	registrationCount,
 	showDesc,
 	showPrice,
 } ) => (
@@ -34,12 +35,13 @@ const EditorTicketEntityDetails = ( {
 			ticket={ ticketEntity }
 			showDesc={ showDesc }
 		/>
-		<TicketDetailsPanel ticket={ ticketEntity } />
+		<TicketDetailsPanel ticket={ ticketEntity } registrationCount={ registrationCount } />
 	</div>
 );
 
 EditorTicketEntityDetails.propTypes = {
 	ticketEntity: PropTypes.object.isRequired,
+	registrationCount: PropTypes.number,
 	showDesc: PropTypes.string,
 	showPrice: PropTypes.bool,
 };
