@@ -4,8 +4,10 @@ namespace EventEspresso\core\domain\services\admin\events\editor;
 
 use DomainException;
 use EE_Admin_Config;
+use EE_Datetime;
 use EE_Error;
 use EE_Event;
+use EEH_DTT_Helper;
 use EEM_Datetime;
 use EEM_Event;
 use EEM_Price;
@@ -194,7 +196,6 @@ class AdvancedEditorEntityData
     /**
      * @param int $eventId
      * @param array $eventDates
-     * @return array
      * @throws DomainException
      * @throws EE_Error
      * @throws InvalidArgumentException
@@ -208,16 +209,24 @@ class AdvancedEditorEntityData
      * @throws UnexpectedEntityException
      * @since $VID:$
      */
-    protected function addDefaultDateAndTicket($eventId, array $eventDates = [])
+    protected function addDefaultEntities($eventId, array $eventDates = [])
     {
-        $default_date = $this->datetime_model->create_default_object();
-        $default_date->save();
-        $default_date->_add_relation_to($eventId, 'Event');
-        $eventDates[] = $default_date;
-        $default_ticket = $this->ticket_model->create_default_object();
-        $default_ticket->save();
-        $default_ticket->_add_relation_to($default_date, 'Datetime');
-        return $eventDates;
+        $default_dates = $this->datetime_model->create_new_blank_datetime();
+        if (is_array($default_dates) && isset($default_dates[0]) && $default_dates[0] instanceof EE_Datetime) {
+            $default_date = $default_dates[0];
+            $default_date->save();
+            $default_date->_add_relation_to($eventId, 'Event');
+            $default_tickets = $this->ticket_model->get_all_default_tickets();
+            $default_prices = $this->price_model->get_all_default_prices();
+            foreach ($default_tickets as $default_ticket) {
+                $default_ticket->save();
+                $default_ticket->_add_relation_to($default_date, 'Datetime');
+                foreach ($default_prices as $default_price) {
+                    $default_price->save();
+                    $default_price->_add_relation_to($default_ticket, 'Ticket');
+                }
+            }
+        }
     }
 
 
@@ -251,7 +260,8 @@ class AdvancedEditorEntityData
         if ((! is_array($eventDates) || empty($eventDates))
             || (isset($_REQUEST['action']) && $_REQUEST['action'] === 'create_new')
         ) {
-            $eventDates = $this->addDefaultDateAndTicket($eventId);
+            $this->addDefaultEntities($eventId);
+            $eventDates = $this->getEventDates($eventId);
         }
 
         $event = [$eventId => $event];
