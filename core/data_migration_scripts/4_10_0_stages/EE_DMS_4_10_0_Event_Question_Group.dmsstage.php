@@ -40,6 +40,8 @@ class EE_DMS_4_10_0_Event_Question_Group extends EE_Data_Migration_Script_Stage_
             global $wpdb;
             // If the question group was also for primary attendees, we should just update that row.
             // And we delete this row.
+            // Updating all the rows could be slow on massive DBs, so do the slow selection first, then a quick delete
+            // in order to avoid locking the table for too long.
             $ids_to_update = $wpdb->get_col(
                 $wpdb->prepare(
                     'SELECT EQG_ID FROM ' . $this->_old_table . ' WHERE EQG_primary=1 AND EVT_ID=%d AND QSG_ID=%d',
@@ -52,7 +54,7 @@ class EE_DMS_4_10_0_Event_Question_Group extends EE_Data_Migration_Script_Stage_
                     'UPDATE '
                     . $this->_old_table
                     . ' SET EQG_additional=1 WHERE EQG_IN IN ('
-                    . implode(',', array_map('intval',$ids_to_update))
+                    . implode(',', array_map('intval', $ids_to_update))
                     . ') LIMIT ' . count($ids_to_update)
                 );
             }
