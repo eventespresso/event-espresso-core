@@ -151,14 +151,15 @@ const TicketAssignmentsManager = ( {
 			<FormButtonsRow>
 				<SubmitTicketAssignmentsButton
 					assignedState={ assignedState }
-					hasNoAssignments={ hasNoAssignments }
 					beforeEditorClose={ beforeEditorClose }
 					closeEditor={ closeEditor }
+					dateEntity={ dateEntity }
 					disabled={
 						dateCount < 1 ||
 						ticketCount < 1 ||
 						noAssignmentsMessage !== ''
 					}
+					hasNoAssignments={ hasNoAssignments }
 				/>
 				<CancelTicketAssignmentsButton
 					beforeEditorClose={ beforeEditorClose }
