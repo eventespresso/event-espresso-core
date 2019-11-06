@@ -68,7 +68,7 @@ class EE_Dependency_Map_Test extends EE_UnitTestCase {
 				sprintf( 'The %s class has an invalid value in the EE_Dependency_Map.', $classname )
 			);
             // if class is not using PSR-4 compatible namespacing
-            if (strpos($classname,'\\') === false) {
+            if ($dependencies_or_load && strpos($classname,'\\') === false) {
                 // verify that a loader exists for the class
                 $loader = $this->_dependency_map->class_loader($classname);
                 $this->assertNotEmpty(
