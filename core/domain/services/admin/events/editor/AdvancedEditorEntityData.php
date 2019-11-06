@@ -4,7 +4,10 @@ namespace EventEspresso\core\domain\services\admin\events\editor;
 
 use DomainException;
 use EE_Admin_Config;
+use EE_Datetime;
 use EE_Error;
+use EE_Event;
+use EEH_DTT_Helper;
 use EEM_Datetime;
 use EEM_Event;
 use EEM_Price;
@@ -34,6 +37,11 @@ use WP_Post;
  */
 class AdvancedEditorEntityData
 {
+
+    /**
+     * @var EE_Event
+     */
+    protected $event;
 
     /**
      * @var RestApiSpoofer
@@ -78,16 +86,18 @@ class AdvancedEditorEntityData
     /**
      * AdvancedEditorAdminForm constructor.
      *
-     * @param RestApiSpoofer $spoofer
+     * @param EE_Event        $event
+     * @param RestApiSpoofer  $spoofer
      * @param EE_Admin_Config $admin_config
-     * @param EEM_Datetime $datetime_model
-     * @param EEM_Event $event_model
-     * @param EEM_Price $price_model
-     * @param EEM_Price_Type $price_type_model
-     * @param EEM_Ticket $ticket_model
-     * @param EEM_Venue $venue_model
+     * @param EEM_Datetime    $datetime_model
+     * @param EEM_Event       $event_model
+     * @param EEM_Price       $price_model
+     * @param EEM_Price_Type  $price_type_model
+     * @param EEM_Ticket      $ticket_model
+     * @param EEM_Venue       $venue_model
      */
     public function __construct(
+        EE_Event $event,
         RestApiSpoofer $spoofer,
         EE_Admin_Config $admin_config,
         EEM_Datetime $datetime_model,
@@ -97,6 +107,7 @@ class AdvancedEditorEntityData
         EEM_Ticket $ticket_model,
         EEM_Venue $venue_model
     ) {
+        $this->event = $event;
         $this->admin_config = $admin_config;
         $this->spoofer = $spoofer;
         $this->datetime_model = $datetime_model;
@@ -126,9 +137,14 @@ class AdvancedEditorEntityData
     public function loadScriptsStyles()
     {
         if ($this->admin_config->useAdvancedEditor()) {
-            global $post;
-            $eventId = isset($_REQUEST['post']) ? absint($_REQUEST['post']) : 0;
-            $eventId = $eventId === 0 && $post instanceof WP_Post ? $post->ID : $eventId;
+            $eventId = $this->event instanceof EE_Event ? $this->event->ID() : 0;
+            if (! $eventId) {
+                global $post;
+                $eventId = isset($_REQUEST['post']) ? absint($_REQUEST['post']) : 0;
+                $eventId = $eventId === 0 && $post instanceof WP_Post && $post->post_type === 'espresso_events'
+                    ? $post->ID
+                    : $eventId;
+            }
             if ($eventId) {
                 $data = $this->getAllEventData($eventId);
                 $data = wp_json_encode($data);
@@ -142,6 +158,73 @@ class AdvancedEditorEntityData
                         );
                     }
                 );
+            }
+        }
+    }
+
+
+    /**
+     * @param int $eventId
+     * @return array
+     * @throws DomainException
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws ModelConfigurationException
+     * @throws ReflectionException
+     * @throws RestException
+     * @throws RestPasswordIncorrectException
+     * @throws RestPasswordRequiredException
+     * @throws UnexpectedEntityException
+     * @since $VID:$
+     */
+    protected function getEventDates($eventId)
+    {
+        return $this->spoofer->getApiResults(
+            $this->datetime_model,
+            [
+                [
+                    'EVT_ID'      => $eventId,
+                    'DTT_deleted' => ['IN', [true, false]]
+                ]
+            ]
+        );
+    }
+
+
+    /**
+     * @param int $eventId
+     * @param array $eventDates
+     * @throws DomainException
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws ModelConfigurationException
+     * @throws ReflectionException
+     * @throws RestException
+     * @throws RestPasswordIncorrectException
+     * @throws RestPasswordRequiredException
+     * @throws UnexpectedEntityException
+     * @since $VID:$
+     */
+    protected function addDefaultEntities($eventId, array $eventDates = [])
+    {
+        $default_dates = $this->datetime_model->create_new_blank_datetime();
+        if (is_array($default_dates) && isset($default_dates[0]) && $default_dates[0] instanceof EE_Datetime) {
+            $default_date = $default_dates[0];
+            $default_date->save();
+            $default_date->_add_relation_to($eventId, 'Event');
+            $default_tickets = $this->ticket_model->get_all_default_tickets();
+            $default_prices = $this->price_model->get_all_default_prices();
+            foreach ($default_tickets as $default_ticket) {
+                $default_ticket->save();
+                $default_ticket->_add_relation_to($default_date, 'Datetime');
+                foreach ($default_prices as $default_price) {
+                    $default_price->save();
+                    $default_price->_add_relation_to($default_ticket, 'Ticket');
+                }
             }
         }
     }
@@ -173,21 +256,25 @@ class AdvancedEditorEntityData
         if (! (is_array($event) && isset($event['EVT_ID']) && $event['EVT_ID'] === $eventId)) {
             return [];
         }
+        $eventDates = $this->getEventDates($eventId);
+        if ((! is_array($eventDates) || empty($eventDates))
+            || (isset($_REQUEST['action']) && $_REQUEST['action'] === 'create_new')
+        ) {
+            $this->addDefaultEntities($eventId);
+            $eventDates = $this->getEventDates($eventId);
+        }
+
         $event = [$eventId => $event];
         $relations = [
-            'event' => [ $eventId => [] ],
+            'event'    => [
+                $eventId => [
+                    'datetime' => []
+                ]
+            ],
             'datetime' => [],
-            'ticket' => [],
-            'price' => [],
+            'ticket'   => [],
+            'price'    => [],
         ];
-        $eventDates = $this->spoofer->getApiResults(
-            $this->datetime_model,
-            [[
-                'EVT_ID' => $eventId,
-                'DTT_deleted' => ['IN', [true, false]]
-            ]]
-        );
-        $relations['event'][ $eventId ]['datetime'] = [];
 
         $datetimes = [];
         $eventDateTickets = [];
