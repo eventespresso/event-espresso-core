@@ -89,6 +89,7 @@ jobs:
       language: node_js
       node_js:
         - node
+          - 12
       before_install:
         - nvm install && nvm use
         - nvm install --latest-npm
