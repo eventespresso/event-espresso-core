@@ -89,10 +89,9 @@ jobs:
       language: node_js
       node_js:
         - node
-          - 12
+          - "12.13.0"
       before_install:
-        - nvm install && nvm use
-        - nvm install --latest-npm
+        - npm i -g npm@12.13.0
       before_script:
         - npm --version
         - node --version
@@ -112,6 +111,7 @@ jobs:
       before_install:
         - nvm install && nvm use
         - nvm install --latest-npm
+        - npm i -g npm@version-number
       before_script:
         - npm --version
         - node --version
