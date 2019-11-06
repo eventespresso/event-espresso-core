@@ -2,6 +2,7 @@
  * External imports.
  */
 import { useCallback } from '@wordpress/element';
+
 /**
  * Internal imports
  */
