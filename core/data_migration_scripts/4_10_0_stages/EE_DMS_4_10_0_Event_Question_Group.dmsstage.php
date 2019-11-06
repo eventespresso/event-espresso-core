@@ -40,7 +40,7 @@ class EE_DMS_4_10_0_Event_Question_Group extends EE_Data_Migration_Script_Stage_
             global $wpdb;
             // If the question group was also for primary attendees, we should just update that row.
             // And we delete this row.
-            // Updating all the rows could be slow on massive DBs, so do the slow selection first, then a quick delete
+            // Updating all the rows could be slow on massive DBs, so do the slow selection first, then a quick update
             // in order to avoid locking the table for too long.
             $ids_to_update = $wpdb->get_col(
                 $wpdb->prepare(
