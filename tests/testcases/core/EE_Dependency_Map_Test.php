@@ -55,7 +55,7 @@ class EE_Dependency_Map_Test extends EE_UnitTestCase {
 		} else {
 		    $classname = $this->_dependency_map->getFqnForAlias($classname);
 			// verify that a valid class constant has been set for the value
-            assertTrue(
+            $this->assertTrue(
                 in_array(
                     $dependencies_or_load,
                     [
