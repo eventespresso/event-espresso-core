@@ -13,6 +13,7 @@ import { useEventDateUpdateRelatedTickets } from '@eventespresso/hooks';
  * Internal dependencies
  */
 import EventDateRegistrationsLink from '../event-date-registrations-link';
+import { updateTicketQtyAfterCapacityChange } from '../../../mutations/ticket-mutations';
 
 const EventDateDetailsPanel = ( { eventDate } ) => {
 	const updateRelatedTickets = useEventDateUpdateRelatedTickets( eventDate );
@@ -39,7 +40,8 @@ const EventDateDetailsPanel = ( { eventDate } ) => {
 						onChange: ( cap ) => {
 							const capacity = parseInfinity( cap, true, true );
 							eventDate.regLimit = capacity;
-							updateRelatedTickets( { capacity } );
+							const updateTicketQty = updateTicketQtyAfterCapacityChange( capacity );
+							updateRelatedTickets( [ updateTicketQty ] );
 							return <InfinitySymbol value={ capacity } asInt />;
 						},
 					},

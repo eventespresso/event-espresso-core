@@ -19,6 +19,11 @@ import {
 } from '@eventespresso/value-objects';
 
 /**
+ * Internal dependencies
+ */
+import { updateTicketQtyAfterCapacityChange } from '../../../mutations/ticket-mutations';
+
+/**
  * input configuration for event date entity edit form
  *
  * @function
@@ -133,13 +138,14 @@ const useDateEntityInputConfig = ( {
 			label: __( 'Capacity', 'event_espresso' ),
 			default: -1,
 			changeListener: ( value ) => {
-				const regLimit = parseInfinity(
+				const capacity = parseInfinity(
 					value || -1,
 					true,
 					true
 				);
-				dateEntity.regLimit = regLimit;
-				updateRelatedTickets( { capacity: regLimit } );
+				dateEntity.regLimit = capacity;
+				const updateTicketQty = updateTicketQtyAfterCapacityChange( capacity );
+				updateRelatedTickets( [ updateTicketQty ] );
 			},
 			min: -1,
 			inputWidth: 3,
