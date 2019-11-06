@@ -88,8 +88,10 @@ jobs:
         - JAVASCRIPT_TESTS=1
       language: node_js
       node_js:
-        - node
+        - 12.13.0
       before_install:
+        - nvm install && nvm use
+        - nvm install --latest-npm
         - npm i -g npm@12.13.0
       before_script:
         - npm --version
@@ -108,7 +110,8 @@ jobs:
       env:
         - BUILD_TEST=1
       before_install:
-        - npm i -g npm@12.13.0
+        - nvm install && nvm use
+        - nvm install --latest-npm
       before_script:
         - npm --version
         - node --version
