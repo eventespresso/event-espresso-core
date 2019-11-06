@@ -116,23 +116,23 @@ class EEM_Price extends EEM_Soft_Delete_Base
             'WP_User'    => new EE_Belongs_To_Relation(),
         );
         // this model is generally available for reading
-        $this->_cap_restriction_generators[EEM_Base::caps_read] =
+        $this->_cap_restriction_generators[ EEM_Base::caps_read ] =
             new EE_Restriction_Generator_Default_Public(
                 'PRC_is_default',
                 'Ticket.Datetime.Event'
             );
         // account for default tickets in the caps
-        $this->_cap_restriction_generators[EEM_Base::caps_read_admin] =
+        $this->_cap_restriction_generators[ EEM_Base::caps_read_admin ] =
             new EE_Restriction_Generator_Default_Protected(
                 'PRC_is_default',
                 'Ticket.Datetime.Event'
             );
-        $this->_cap_restriction_generators[EEM_Base::caps_edit] =
+        $this->_cap_restriction_generators[ EEM_Base::caps_edit ] =
             new EE_Restriction_Generator_Default_Protected(
                 'PRC_is_default',
                 'Ticket.Datetime.Event'
             );
-        $this->_cap_restriction_generators[EEM_Base::caps_delete] =
+        $this->_cap_restriction_generators[ EEM_Base::caps_delete ] =
             new EE_Restriction_Generator_Default_Protected(
                 'PRC_is_default',
                 'Ticket.Datetime.Event'
@@ -225,7 +225,7 @@ class EEM_Price extends EEM_Soft_Delete_Base
         ));
         foreach ($all_taxes as $tax) {
             if ($tax instanceof EE_Price) {
-                $taxes[$tax->order()][$tax->ID()] = $tax;
+                $taxes[ $tax->order() ][ $tax->ID() ] = $tax;
             }
         }
         return $taxes;
@@ -250,7 +250,7 @@ class EEM_Price extends EEM_Soft_Delete_Base
             if ($default_prices) {
                 foreach ($default_prices as $price) {
                     if ($price instanceof EE_Price) {
-                        $array_of_price_objects[$price->type()][] = $price;
+                        $array_of_price_objects[ $price->type() ][] = $price;
                     }
                 }
                 return $array_of_price_objects;
@@ -268,7 +268,7 @@ class EEM_Price extends EEM_Soft_Delete_Base
         if (! empty($ticket_prices)) {
             foreach ($ticket_prices as $price) {
                 if ($price instanceof EE_Price) {
-                    $array_of_price_objects[$price->type()][] = $price;
+                    $array_of_price_objects[ $price->type() ][] = $price;
                 }
             }
             return $array_of_price_objects;

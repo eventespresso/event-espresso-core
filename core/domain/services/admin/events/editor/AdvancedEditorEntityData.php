@@ -138,7 +138,7 @@ class AdvancedEditorEntityData
     {
         if ($this->admin_config->useAdvancedEditor()) {
             $eventId = $this->event instanceof EE_Event ? $this->event->ID() : 0;
-            if ( ! $eventId) {
+            if (! $eventId) {
                 global $post;
                 $eventId = isset($_REQUEST['post']) ? absint($_REQUEST['post']) : 0;
                 $eventId = $eventId === 0 && $post instanceof WP_Post && $post->post_type === 'espresso_events'
