@@ -20,8 +20,9 @@ const useRect = ( ref ) => {
 		}
 
 		handleResize();
-
+		// eslint-disable-next-line
 		if ( ResizeObserver && typeof ResizeObserver === 'function' ) {
+			// eslint-disable-next-line
 			let resizeObserver = new ResizeObserver( () => handleResize() );
 			resizeObserver.observe( element );
 
