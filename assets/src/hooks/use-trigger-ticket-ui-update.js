@@ -7,7 +7,7 @@ import { select, dispatch } from '@wordpress/data';
  * To show the changes in ticket details
  * trigger the ticket UI update wihout any side effect.
  */
-const useTriggerTicketUIUpdate = () => {
+const useTriggerTicketUiUpdate = () => {
 	const listId = 'event-editor-ticket-list';
 	const defaultDisplayDate = 'start';
 	const storeKey = 'eventespresso/filter-state';
@@ -36,4 +36,4 @@ const useTriggerTicketUIUpdate = () => {
 	};
 };
 
-export default useTriggerTicketUIUpdate;
+export default useTriggerTicketUiUpdate;

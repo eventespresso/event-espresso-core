@@ -7,7 +7,7 @@ import { useCallback } from '@wordpress/element';
  * Internal imports
  */
 import useEventDateTickets from './use-event-date-tickets';
-import useTriggerTicketUIUpdate from './use-trigger-ticket-ui-update';
+import useTriggerTicketUiUpdate from './use-trigger-ticket-ui-update';
 
 /**
  * A custom react hook to update the related ticket entities for the given
@@ -17,7 +17,7 @@ import useTriggerTicketUIUpdate from './use-trigger-ticket-ui-update';
  */
 const useEventDateUpdateRelatedTickets = ( eventDate ) => {
 	const { tickets: relatedTickets, ticketsLoaded } = useEventDateTickets( eventDate );
-	const triggerUIUpdate = useTriggerTicketUIUpdate();
+	const triggerUiUpdate = useTriggerTicketUiUpdate();
 
 	return useCallback( ( mutations = [] ) => {
 		if ( ticketsLoaded ) {
@@ -28,7 +28,7 @@ const useEventDateUpdateRelatedTickets = ( eventDate ) => {
 					}
 				}
 			} );
-			triggerUIUpdate();
+			triggerUiUpdate();
 		}
 	}, [ eventDate ] );
 };

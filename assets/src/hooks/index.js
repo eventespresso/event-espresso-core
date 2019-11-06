@@ -46,4 +46,4 @@ export { default as useTrashDateEntity } from './use-trash-date-entity';
 export { default as useTrashPriceModifier } from './use-trash-price-modifier';
 export { default as useTrashTicket } from './use-trash-ticket';
 export { default as usePrevious } from './use-previous';
-export { default as useTriggerTicketUIUpdate } from './use-trigger-ticket-ui-update';
+export { default as useTriggerTicketUiUpdate } from './use-trigger-ticket-ui-update';
