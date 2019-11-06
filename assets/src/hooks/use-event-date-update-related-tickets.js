@@ -2,7 +2,6 @@
  * External imports.
  */
 import { useCallback } from '@wordpress/element';
-import { parseInfinity } from '@eventespresso/utils';
 /**
  * Internal imports
  */
@@ -16,16 +15,13 @@ import useEventDateTickets from './use-event-date-tickets';
  */
 const useEventDateUpdateRelatedTickets = ( eventDate ) => {
 	const { tickets: relatedTickets, ticketsLoaded } = useEventDateTickets( eventDate );
-	return useCallback( ( { capacity = null } ) => {
+	return useCallback( ( mutations = [] ) => {
 		if ( ticketsLoaded ) {
-			// Make sure that the ticket qty value is compared with
-			// a non negative datetime capacity value in Math.min()
-			const nonNegativeDTTCapacity = parseInfinity( capacity, false, false );
 			relatedTickets.forEach( ( ticket ) => {
-				if ( capacity !== null ) {
-					const nonNegativeTKTQty = parseInfinity( ticket.qty, false, false );
-					const qty = Math.min( nonNegativeDTTCapacity, nonNegativeTKTQty );
-					ticket.qty = parseInfinity( qty, true, true );
+				for ( const mutation of mutations ) {
+					if ( typeof mutation === 'function' ) {
+						mutation( ticket );
+					}
 				}
 			} );
 		}
