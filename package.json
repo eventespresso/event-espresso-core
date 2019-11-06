@@ -35,7 +35,7 @@
 		"test-unit:update": "npm run test-unit -- --updateSnapshot",
 		"test-unit:watch": "npm run test-unit -- --watch",
 		"test-unit:coverage": "npm run test-unit -- --coverage",
-		"test-unit:coverage-ci": "npm run test-unit -- --coverage --maxWorkers 1 && codecov",		
+		"test-unit:coverage-ci": "npm run test-unit -- --coverage --maxWorkers 1 && codecov",
 		"lc": "jsgl --local ./",
 		"build:css": "node ./bin/css-builder/css-builder.js"
 	},
