@@ -11,10 +11,10 @@ const useTriggerTicketUIUpdate = () => {
 	const listId = 'event-editor-ticket-list';
 	const defaultDisplayDate = 'start';
 	const storeKey = 'eventespresso/filter-state';
+	const { getFilter } = select( storeKey );
+	const { setFilter } = dispatch( storeKey );
 
 	return () => {
-		const { getFilter } = select( storeKey );
-		const { setFilter } = dispatch( storeKey );
 		const displayDate = getFilter(
 			listId,
 			'displayTicketDate',
