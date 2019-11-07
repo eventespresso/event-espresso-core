@@ -1,7 +1,9 @@
 module.exports = {
 	extends: [
-		'plugin:@wordpress/eslint-plugin/recommended',
+		'eslint:recommended',
 		'plugin:jest/recommended',
+		'plugin:react/recommended',
+		'plugin:@wordpress/eslint-plugin/recommended',
 	],
 	rules: {
 		'jest/valid-describe': 'off',
