@@ -45,7 +45,7 @@ class EE_DMS_4_10_0_Event_Question_Group extends EE_Data_Migration_Script_Stage_
             $ids_to_update = $wpdb->get_col(
                 $wpdb->prepare(
                     'SELECT EQG_ID FROM ' . $this->_old_table . ' WHERE EQG_primary=1 AND EVT_ID=%d AND QSG_ID=%d',
-                    $event_question_group['EQG_ID'],
+                    $event_question_group['EVT_ID'],
                     $event_question_group['QSG_ID']
                 )
             );
