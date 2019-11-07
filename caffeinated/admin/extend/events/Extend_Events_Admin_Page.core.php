@@ -45,23 +45,6 @@ class Extend_Events_Admin_Page extends Events_Admin_Page
             define('EVENTS_CAF_ASSETS_URL', EE_CORE_CAF_ADMIN_EXTEND_URL . 'events/assets/');
         }
         parent::__construct($routing);
-        if (isset($this->_req_data['action'])
-            && (
-                $this->_req_data['action'] === 'default_event_settings'
-                || $this->_req_data['action'] === 'update_default_event_settings'
-            )
-        ) {
-            $this->advanced_editor_admin_form = $this->loader->getShared(
-                'EventEspresso\core\domain\services\admin\events\default_settings\AdvancedEditorAdminFormSection'
-            );
-        }
-        if (isset($this->_req_data['action'])
-            && ( $this->_req_data['action'] === 'edit' || $this->_req_data['action'] === 'create_new')
-        ) {
-            $this->advanced_editor_data = $this->loader->getShared(
-                'EventEspresso\core\domain\services\admin\events\editor\AdvancedEditorEntityData'
-            );
-        }
     }
 
 
@@ -249,6 +232,24 @@ class Extend_Events_Admin_Page extends Events_Admin_Page
      */
     public function admin_init()
     {
+        if (isset($this->_req_data['action'])
+            && (
+                $this->_req_data['action'] === 'default_event_settings'
+                || $this->_req_data['action'] === 'update_default_event_settings'
+            )
+        ) {
+            $this->advanced_editor_admin_form = $this->loader->getShared(
+                'EventEspresso\core\domain\services\admin\events\default_settings\AdvancedEditorAdminFormSection'
+            );
+        }
+        if (isset($this->_req_data['action'])
+            && ( $this->_req_data['action'] === 'edit' || $this->_req_data['action'] === 'create_new')
+        ) {
+            $this->advanced_editor_data = $this->loader->getShared(
+                'EventEspresso\core\domain\services\admin\events\editor\AdvancedEditorEntityData',
+                [$this->_cpt_model_obj]
+            );
+        }
         EE_Registry::$i18n_js_strings = array_merge(
             EE_Registry::$i18n_js_strings,
             array(

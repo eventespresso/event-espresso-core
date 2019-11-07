@@ -34,15 +34,16 @@ describe( getEntityById.name + '()', () => {
 		it( 'yields expected path with multiple calculated fields', () => {
 			reset( [ 'foo', 'bar' ] );
 			const { value } = fulfillment.next();
-			expect( value.request.path )
-				.toBe( '/ee/v4.8.36/events/10?calculate=foo%2Cbar' );
+			expect( value.request.path ).toBe(
+				'/ee/v4.8.36/events/10?calculate=Event.foo%2CEvent.bar'
+			);
 		} );
 		it( 'yields expected path with string passed in for calculated ' +
 			'fields', () => {
 			reset( 'foo' );
 			const { value } = fulfillment.next();
 			expect( value.request.path )
-				.toBe( '/ee/v4.8.36/events/10?calculate=foo' );
+				.toBe( '/ee/v4.8.36/events/10?calculate=Event.foo' );
 		} );
 		it( 'yields resolve select action for getting factory', () => {
 			reset();

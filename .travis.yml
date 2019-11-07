@@ -88,7 +88,7 @@ jobs:
         - JAVASCRIPT_TESTS=1
       language: node_js
       node_js:
-        - node
+        - lts/*
       before_install:
         - nvm install && nvm use
         - nvm install --latest-npm

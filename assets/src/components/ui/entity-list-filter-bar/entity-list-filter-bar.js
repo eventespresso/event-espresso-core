@@ -2,10 +2,9 @@
  * External imports
  */
 import PropTypes from 'prop-types';
-import { isFunction } from 'lodash';
 import { withInstanceId } from '@wordpress/compose';
-import { useMemo, Fragment } from '@wordpress/element';
-import { IconButton, SelectControl, TextControl } from '@wordpress/components';
+import { Fragment, useMemo, useState } from '@wordpress/element';
+import { IconButton } from '@wordpress/components';
 import { __ } from '@eventespresso/i18n';
 
 /**
@@ -13,6 +12,7 @@ import { __ } from '@eventespresso/i18n';
  */
 import useEntityListFilterStateSetters
 	from './use-entity-list-filter-state-setters';
+import Collapsible from './collapsible';
 import './style.css';
 
 /**
@@ -42,34 +42,9 @@ const EntityListFilterBar = ( {
 		setListView,
 		setGridView,
 	} = useEntityListFilterStateSetters( listId );
-	const searchInput = useMemo( () => {
-		return isFunction( setSearchText ) ? (
-			<TextControl
-				id={ `ee-search-text-${ listId }` }
-				label={ __( 'search', 'event_espresso' ) }
-				className="ee-entity-list-filter-bar-search"
-				value={ searchText }
-				onChange={ setSearchText }
-			/>
-		) : null;
-	}, [ listId, searchText, setSearchText ] );
 
-	const perPageControl = useMemo( () => (
-		<SelectControl
-			id={ `ee-perPage-select-${ listId }` }
-			label={ __( 'per page', 'event_espresso' ) }
-			className="ee-entity-list-filter-bar-perPage-select"
-			value={ perPage }
-			options={ [
-				{ value: 2, label: 2 },
-				{ value: 6, label: 6 },
-				{ value: 12, label: 12 },
-				{ value: 24, label: 24 },
-				{ value: 48, label: 48 },
-			] }
-			onChange={ setPerPage }
-		/>
-	), [ listId, perPage, setPerPage ] );
+	const [ showEntityFilters, setShowEntityFilters ] = useState( false );
+	const toggleEntityFilters = () => setShowEntityFilters( !showEntityFilters );
 
 	const listViewButton = useMemo( () => (
 		<Fragment>
@@ -81,7 +56,7 @@ const EntityListFilterBar = ( {
 			<IconButton
 				id={ `ee-list-view-btn-${ listId }` }
 				className={ view === 'list' ? 'active-list' : '' }
-				icon="editor-justify"
+				icon="list-view"
 				tooltip={ __( 'list view', 'event_espresso' ) }
 				onClick={ setListView }
 			/>
@@ -98,30 +73,46 @@ const EntityListFilterBar = ( {
 			<IconButton
 				id={ `ee-grid-view-btn-${ listId }` }
 				className={ view === 'grid' ? 'active-list' : '' }
-				icon="screenoptions"
+				icon="grid-view"
 				tooltip={ __( 'grid view', 'event_espresso' ) }
 				onClick={ setGridView }
 			/>
 		</Fragment>
 	), [ listId, view, setGridView ] );
 
+	const showFiltersButton = useMemo( () => (
+		<Fragment>
+			<label
+				className="screen-reader-text"
+				htmlFor={ `ee-grid-filter-btn-${ listId }` }>
+				{ __( 'filter', 'event_espresso' ) }
+			</label>
+			<IconButton
+				id={ `ee-grid-filter-btn-${ listId }` }
+				icon="filter"
+				tooltip={ __( 'filter', 'event_espresso' ) }
+				onClick={ toggleEntityFilters }
+			/>
+		</Fragment>
+	), [ listId, toggleEntityFilters ] );
+
 	return (
 		<div className="ee-entity-list-filter-bar-wrapper">
-			<div className="ee-entity-list-filter-bar">
-				{ entityFilters }
-				<div className="ee-search-filter ee-filter-bar-filter">
-					{ searchInput }
-				</div>
+			<div className="ee-filter-bar-filter-main ee-filter-bar-filter">
+				{ listViewButton }
+				{ gridViewButton }
+				{ showFiltersButton }
 			</div>
-			<div className="ee-entity-list-view-bar">
-				<div className="ee-per-page-filter ee-filter-bar-filter">
-					{ perPageControl }
-				</div>
-				<div className="ee-view-filter ee-filter-bar-filter">
-					{ listViewButton }
-					{ gridViewButton }
-				</div>
-			</div>
+
+			<Collapsible
+				entityFilters={ entityFilters }
+				listId={ listId }
+				perPage={ perPage }
+				searchText={ searchText }
+				setPerPage={ setPerPage }
+				setSearchText={ setSearchText }
+				showEntityFilters={ showEntityFilters }
+			/>
 		</div>
 	);
 };

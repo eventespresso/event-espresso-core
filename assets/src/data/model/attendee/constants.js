@@ -1,1 +1,4 @@
-export const MODEL_NAME = 'attendee';
+export const MODEL_NAMES = {
+	MODEL: 'attendee',
+	RELATION: 'attendees',
+};
