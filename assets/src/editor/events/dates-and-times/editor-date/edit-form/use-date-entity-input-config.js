@@ -9,6 +9,7 @@ import {
 	useEndDateAfterStartDateValidator,
 	useEntityDateChangeListeners,
 	useEntityDateChangeValidators,
+	useEventDateUpdateRelatedTickets,
 } from '@eventespresso/hooks';
 import { parseInfinity } from '@eventespresso/utils';
 import { isModelEntityOfModel } from '@eventespresso/validators';
@@ -16,6 +17,11 @@ import {
 	ServerDateTime as DateTime,
 	Duration,
 } from '@eventespresso/value-objects';
+
+/**
+ * Internal dependencies
+ */
+import { updateTicketQtyAfterCapacityChange } from '../../../mutations/ticket-mutations';
 
 /**
  * input configuration for event date entity edit form
@@ -60,6 +66,7 @@ const useDateEntityInputConfig = ( {
 	const endDateIsAfterStartDate = useEndDateAfterStartDateValidator(
 		dateInputFormProps
 	);
+	const updateRelatedTickets = useEventDateUpdateRelatedTickets( dateEntity );
 	// useEntityDateChangeValidators use-entity-date-change-validators
 	return useMemo( () => [
 		{
@@ -131,11 +138,14 @@ const useDateEntityInputConfig = ( {
 			label: __( 'Capacity', 'event_espresso' ),
 			default: -1,
 			changeListener: ( value ) => {
-				dateEntity.regLimit = parseInfinity(
+				const capacity = parseInfinity(
 					value || -1,
 					true,
 					true
 				);
+				dateEntity.regLimit = capacity;
+				const updateTicketQty = updateTicketQtyAfterCapacityChange( capacity );
+				updateRelatedTickets( [ updateTicketQty ] );
 			},
 			min: -1,
 			inputWidth: 3,

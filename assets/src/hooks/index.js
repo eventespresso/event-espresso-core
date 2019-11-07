@@ -25,6 +25,7 @@ export { default as useEntityDateChangeValidators }
 	from './use-entity-date-change-validators';
 export { default as useEventDateEvent } from './use-event-date-event';
 export { default as useEventDateTickets } from './use-event-date-tickets';
+export { default as useEventDateUpdateRelatedTickets } from './use-event-date-update-related-tickets';
 export { default as useEventDatesForEvent } from './use-event-dates-for-event';
 export { default as useEventEditorEvent } from './use-event-editor-event';
 export { default as useEventEditorEventDates }
@@ -46,3 +47,4 @@ export { default as useTrashDateEntity } from './use-trash-date-entity';
 export { default as useTrashPriceModifier } from './use-trash-price-modifier';
 export { default as useTrashTicket } from './use-trash-ticket';
 export { default as usePrevious } from './use-previous';
+export { default as useTriggerTicketUiUpdate } from './use-trigger-ticket-ui-update';
