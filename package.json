@@ -2,7 +2,7 @@
 	"name": "@eventespresso/core",
 	"version": "1.0.0",
 	"author": "Event Espresso",
-	"license": "GPL-2.0",
+	"license": "GPL-3.0",
 	"description": "Event Espresso core js and css.",
 	"main": "webpack.dev.js",
 	"repository": "git+https://github.com/eventespresso/event-espresso-core.git",
@@ -22,6 +22,9 @@
 		"ci:build": "npm run build",
 		"ci:lint": "npm run lint",
 		"ci:test": "npm run test-unit:coverage-ci",
+		"dev": "concurrently \"webpack --config webpack.dev.js\" \"npm-watch build:css\"",
+		"dev-w": "webpack --watch --config webpack.dev.js",
+		"dev-p": "webpack --watch --watch-poll --config webpack.dev.js",
 		"lc": "jsgl --local ./",
 		"lint": "wp-scripts lint-js .",
 		"lint:fix": "wp-scripts lint-js . --fix",
@@ -39,9 +42,7 @@
 		"test-unit:coverage": "npm run test-unit -- --coverage",
 		"test-unit:coverage-ci": "npm run test-unit -- --coverage --maxWorkers 1 && codecov",
 		"test-unit:update": "npm run test-unit -- --updateSnapshot",
-		"test-unit:watch": "npm run test-unit -- --watch",
-		"watch": "concurrently \"webpack --watch --config webpack.dev.js\" \"npm-watch build:css\"",
-		"watch-poll": "webpack --watch --watch-poll --config webpack.dev.js"
+		"test-unit:watch": "npm run test-unit -- --watch"
 	},
 	"husky": {
 		"hooks": {
