@@ -23,7 +23,7 @@
 		"ci:lint": "npm run lint",
 		"ci:test": "npm run test-unit:coverage-ci",
 		"dev": "concurrently \"webpack --config webpack.dev.js\" \"npm-watch build:css\"",
-		"dev-w": "webpack --watch --config webpack.dev.js",
+		"dev-w": "concurrently \"webpack --watch --config webpack.dev.js\" \"npm-watch build:css\"",
 		"dev-p": "webpack --watch --watch-poll --config webpack.dev.js",
 		"lc": "jsgl --local ./",
 		"lint": "wp-scripts lint-js .",
