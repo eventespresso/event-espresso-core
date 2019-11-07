@@ -1010,7 +1010,7 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
             $this->_set_nav_tabs();
         }
         // grab callback function
-        $func = is_array($this->_route) ? $this->_route['func'] : $this->_route;
+        $func = is_array($this->_route) && isset($this->_route['func']) ? $this->_route['func'] : $this->_route;
         // check if callback has args
         $args = is_array($this->_route) && isset($this->_route['args']) ? $this->_route['args'] : array();
         $error_msg = '';

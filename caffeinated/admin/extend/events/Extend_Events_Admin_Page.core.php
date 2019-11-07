@@ -224,14 +224,7 @@ class Extend_Events_Admin_Page extends Events_Admin_Page
         // legend item
         add_filter('FHEE__Events_Admin_Page___event_legend_items__items', array($this, 'additional_legend_items'));
         add_action('admin_init', array($this, 'admin_init'));
-    }
-
-
-    /**
-     * admin_init
-     */
-    public function admin_init()
-    {
+        // setup Advanced Editor ???
         if (isset($this->_req_data['action'])
             && (
                 $this->_req_data['action'] === 'default_event_settings'
@@ -243,13 +236,21 @@ class Extend_Events_Admin_Page extends Events_Admin_Page
             );
         }
         if (isset($this->_req_data['action'])
-            && ( $this->_req_data['action'] === 'edit' || $this->_req_data['action'] === 'create_new')
+            && ($this->_req_data['action'] === 'edit' || $this->_req_data['action'] === 'create_new')
         ) {
             $this->advanced_editor_data = $this->loader->getShared(
                 'EventEspresso\core\domain\services\admin\events\editor\AdvancedEditorEntityData',
                 [$this->_cpt_model_obj]
             );
         }
+    }
+
+
+    /**
+     * admin_init
+     */
+    public function admin_init()
+    {
         EE_Registry::$i18n_js_strings = array_merge(
             EE_Registry::$i18n_js_strings,
             array(
