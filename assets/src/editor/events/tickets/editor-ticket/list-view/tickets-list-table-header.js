@@ -108,13 +108,13 @@ const ticketsListTableHeader = () => {
 				),
 			},
 			{
-				key: 'registrants',
+				key: 'registrations',
 				type: 'cell',
-				class: 'ee-ticket-list-col-hdr ee-ticket-list-col-registrants ee-rspnsv-table-column-smaller ee-centered-column',
+				class: 'ee-ticket-list-col-hdr ee-ticket-list-col-registrations ee-rspnsv-table-column-smaller ee-centered-column',
 				value: (
 					<>
 						<span className={ 'ee-rspnsv-table-long-label' }>
-							{ __( 'Registrants', 'event_espresso' ) }
+							{ __( 'Registrations', 'event_espresso' ) }
 						</span>
 						<span className={ 'ee-rspnsv-table-short-label' }>
 							{ __( 'Regs', 'event_espresso' ) }

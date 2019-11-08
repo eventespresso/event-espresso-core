@@ -30,14 +30,16 @@ const {
  * EditorTicketEntityGridItem
  *
  * @function
-
+ *
  * @param {Object} ticketEntity
- * @param {string} showDate
+ * @param {string} displayTicketDate
+ * @param {number} registrationCount
  * @return {Object} rendered ticket
  */
 const EditorTicketEntityGridItem = ( {
 	ticketEntity,
 	displayTicketDate,
+	registrationCount,
 } ) => {
 	const ticketStart = ticketEntity.startDate.toISO();
 	const ticketEnd = ticketEntity.endDate.toISO();
@@ -144,7 +146,7 @@ const EditorTicketEntityGridItem = ( {
 	return (
 		<EntityPaperFrame entityID={ ticketEntity.id } >
 			<div className={ `ee-editor-ticket-main ${ dateStyleClass }` }>
-				<EditorTicketEntityDetails ticketEntity={ ticketEntity } />
+				<EditorTicketEntityDetails ticketEntity={ ticketEntity } registrationCount={ registrationCount } />
 				{ ticketDate }
 			</div>
 			<EditorTicketActionsMenu ticketEntity={ ticketEntity } />
@@ -155,6 +157,7 @@ const EditorTicketEntityGridItem = ( {
 EditorTicketEntityGridItem.propTypes = {
 	ticketEntity: PropTypes.object.isRequired,
 	displayTicketDate: PropTypes.string,
+	registrationCount: PropTypes.number,
 };
 
 EditorTicketEntityGridItem.defaultProps = {
