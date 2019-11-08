@@ -24,6 +24,7 @@ module.exports = {
     rules: {
 		'jest/valid-describe': 'off',
 		'@wordpress/dependency-group': 'off',
+		'comma-dangle': 'off',
 	},
 	overrides: [
 		{
