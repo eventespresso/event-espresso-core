@@ -1,1 +1,0 @@
-<?php return array('dependencies' => array('eventespresso-utils', 'eventespresso-validators', 'eventespresso-value-objects', 'eventespresso-vendor', 'lodash', 'react', 'wp-data', 'wp-element', 'wp-polyfill'), 'version' => '31e478344a7c479a1521b402446fcf8d');
