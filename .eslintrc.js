@@ -5,6 +5,7 @@ module.exports = {
     },
     extends: [
 		'plugin:jest/recommended',
+		"plugin:react/recommended",
 		'plugin:@wordpress/eslint-plugin/recommended'
 	],
     globals: {
@@ -19,12 +20,14 @@ module.exports = {
         sourceType: 'module'
     },
     plugins: [
-		'react'
+		"react-hooks"
     ],
     rules: {
-		'jest/valid-describe': 'off',
-		'@wordpress/dependency-group': 'off',
 		'comma-dangle': 'off',
+		'jest/valid-describe': 'off',
+		"react-hooks/rules-of-hooks": "error",
+		"react-hooks/exhaustive-deps": "warn",
+		'@wordpress/dependency-group': 'off',
 	},
 	overrides: [
 		{
