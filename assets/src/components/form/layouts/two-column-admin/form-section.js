@@ -60,7 +60,7 @@ const FormSection = ( {
 				dismissable={ true }
 			/>
 		) : null,
-		[ showRequiredNotice, requiredNotice ]
+		[ formInfoNotice ]
 	);
 	const formErrors = useMemo(
 		() => errorsNotice && hasValidationErrors ? (
