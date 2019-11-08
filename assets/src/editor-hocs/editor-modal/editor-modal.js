@@ -105,7 +105,6 @@ const EditorModal = ( {
 
 	const onRequestClose = useCallback( ( click ) => {
 		if ( preventModalClose ) {
-			console.log( '%cNO CLOSE FOR YOU!!!', 'color: red;' );
 			return;
 		}
 		if (
