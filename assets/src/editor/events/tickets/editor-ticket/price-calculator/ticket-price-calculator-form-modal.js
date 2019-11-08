@@ -48,7 +48,7 @@ const TicketPriceCalculatorFormModal = ( {
 			...formData,
 			updated: priceCount !== prevPriceCount ?
 				true :
-				formData.updated
+				formData.updated,
 		};
 		if ( pricesLoaded && data.updated ) {
 			calculateTicketPrices( data );
