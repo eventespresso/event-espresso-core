@@ -60,7 +60,7 @@ const EditorModal = ( {
 	// ref used for determining when modal has JUST been opened or closed
 	// so that we know when to fire onEditorOpen() and onEditorClose()
 	const editorOpened = useRef( false );
-	const [ preventModalClose, setPreventModalClose ] = useState( true );
+	const [ preventModalClose, setPreventModalClose ] = useState( false );
 	const isEditorOpen = useIsEditorOpen( editorId );
 	const closeEditor = useCloseEditor( editorId );
 
@@ -105,6 +105,7 @@ const EditorModal = ( {
 
 	const onRequestClose = useCallback( ( click ) => {
 		if ( preventModalClose ) {
+			console.log( '%cNO CLOSE FOR YOU!!!', 'color: red;' );
 			return;
 		}
 		if (
