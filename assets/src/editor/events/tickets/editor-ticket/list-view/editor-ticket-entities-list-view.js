@@ -19,6 +19,7 @@ import ticketsListTableHeader from './tickets-list-table-header';
 import ticketsListTableRow from './tickets-list-table-row';
 import useReorderTickets from './use-reorder-tickets';
 import './editor-ticket-entities-list-view.css';
+import useTicketsRegistrationCount from '../use-tickets-registration-count';
 
 const noZebraStripe = [ 'row', 'stripe', 'name', 'actions' ];
 
@@ -50,6 +51,7 @@ const EditorTicketEntitiesListView = ( {
 		setEntityIds,
 		setSortBy
 	);
+	const registrationCounts = useTicketsRegistrationCount();
 	/**
 	 * toggles display of start and end date columns
 	 * based on incoming value of showDate
@@ -74,7 +76,7 @@ const EditorTicketEntitiesListView = ( {
 		 */
 		( ticketEntity ) => {
 			const columns = isModelEntityOfModel( ticketEntity, 'ticket' ) ?
-				ticketsListTableRow( ticketEntity, otherProps ) :
+				ticketsListTableRow( ticketEntity, otherProps, registrationCounts[ ticketEntity.id ] || 0 ) :
 				null;
 			return filterColumns( columns );
 		}

@@ -8,6 +8,7 @@ import PropTypes from 'prop-types';
  * Internal dependencies
  */
 import EditorTicketEntityGridItem from './editor-ticket-entity-grid-item';
+import useTicketsRegistrationCount from '../use-tickets-registration-count';
 import './editor-ticket-entities-grid-view.css';
 
 /**
@@ -26,11 +27,12 @@ const EditorTicketEntitiesGridView = ( {
 	htmlClass,
 	...otherProps
 } ) => {
-	htmlClass = htmlClass ?
+	const classes = htmlClass ?
 		`${ htmlClass } ee-tickets-list-grid-view` :
 		'ee-tickets-list-list-view';
+	const registrationCounts = useTicketsRegistrationCount();
 	return (
-		<div className={ htmlClass }>
+		<div className={ classes }>
 			{
 				entities.map(
 					function( ticketEntity ) {
@@ -38,6 +40,7 @@ const EditorTicketEntitiesGridView = ( {
 							<EditorTicketEntityGridItem
 								key={ ticketEntity.id }
 								ticketEntity={ ticketEntity }
+								registrationCount={ registrationCounts[ ticketEntity.id ] || 0 }
 								{ ...otherProps }
 							/>
 						) : null;
