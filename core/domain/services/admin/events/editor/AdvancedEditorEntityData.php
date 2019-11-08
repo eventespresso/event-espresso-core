@@ -354,7 +354,7 @@ class AdvancedEditorEntityData
         foreach ($tickets as $ticket) {
             $tkt_instance = $this->ticket_model->get_one_by_ID($ticket['TKT_ID']);
 
-            $tktRegCount[$ticket['TKT_ID']] = $tkt_instance instanceof EE_Ticket ?
+            $tktRegCount[ $ticket['TKT_ID'] ] = $tkt_instance instanceof EE_Ticket ?
             $tkt_instance->count_registrations()
             : 0;
         }
