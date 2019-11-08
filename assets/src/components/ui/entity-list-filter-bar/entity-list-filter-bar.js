@@ -55,7 +55,11 @@ const EntityListFilterBar = ( {
 			</label>
 			<IconButton
 				id={ `ee-list-view-btn-${ listId }` }
-				className={ view === 'list' ? 'active-list' : '' }
+				className={
+					view === 'list' ?
+						'ee-filter-bar-filter ee-active-filters' :
+						'ee-filter-bar-filter'
+				}
 				icon="list-view"
 				tooltip={ __( 'list view', 'event_espresso' ) }
 				onClick={ setListView }
@@ -72,7 +76,11 @@ const EntityListFilterBar = ( {
 			</label>
 			<IconButton
 				id={ `ee-grid-view-btn-${ listId }` }
-				className={ view === 'grid' ? 'active-list' : '' }
+				className={
+					view === 'grid' ?
+						'ee-filter-bar-filter ee-active-filters' :
+						'ee-filter-bar-filter'
+				}
 				icon="grid-view"
 				tooltip={ __( 'grid view', 'event_espresso' ) }
 				onClick={ setGridView }
@@ -85,20 +93,25 @@ const EntityListFilterBar = ( {
 			<label
 				className="screen-reader-text"
 				htmlFor={ `ee-grid-filter-btn-${ listId }` }>
-				{ __( 'filter', 'event_espresso' ) }
+				{ __( 'show filters', 'event_espresso' ) }
 			</label>
 			<IconButton
 				id={ `ee-grid-filter-btn-${ listId }` }
 				icon="filter"
 				tooltip={ __( 'filter', 'event_espresso' ) }
 				onClick={ toggleEntityFilters }
+				className={
+					showEntityFilters ?
+						'ee-filter-bar-filter ee-active-filters' :
+						'ee-filter-bar-filter'
+				}
 			/>
 		</Fragment>
 	), [ listId, toggleEntityFilters ] );
 
 	return (
 		<div className="ee-entity-list-filter-bar-wrapper">
-			<div className="ee-filter-bar-filter-main ee-filter-bar-filter">
+			<div className="ee-filter-bar-filter-main">
 				{ listViewButton }
 				{ gridViewButton }
 				{ showFiltersButton }
