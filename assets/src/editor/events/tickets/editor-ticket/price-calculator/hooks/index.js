@@ -1,5 +1,7 @@
 export { default as useAddTicketBasePrice }
 	from './use-add-ticket-base-price';
+export { default as useBasePrice }
+	from './use-base-price';
 export { default as useCalculateTicketPrices }
 	from './use-calculate-ticket-prices';
 export { default as useGetPriceModifiersFromFormData }

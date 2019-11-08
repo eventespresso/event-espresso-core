@@ -33,7 +33,7 @@ const Collapsible = ( {
 	perPage,
 	searchText,
 	setPerPage,
-	setSearchText,	
+	setSearchText,
 	showEntityFilters = false
 } ) => {
 	const ref = useRef();
@@ -41,7 +41,7 @@ const Collapsible = ( {
 	const props = useSpring({
 		height: showEntityFilters ? height : 0,
 		opacity: showEntityFilters ? 1 : 0
-	})
+	} );
 
 	const perPageControl = useMemo( () => (
 		<SelectControl
@@ -81,7 +81,7 @@ const Collapsible = ( {
 			</div>
 		</animated.div>
 	);
-}
+};
 
 Collapsible.propTypes = {
 	entityFilters: PropTypes.object,
