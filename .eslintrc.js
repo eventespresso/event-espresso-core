@@ -1,8 +1,30 @@
 module.exports = {
-	root: true,
-	extends: [
-		'./eslint/config.js',
+    env: {
+        browser: true,
+        es6: true
+    },
+    extends: [
+		'plugin:jest/recommended',
+		'plugin:@wordpress/eslint-plugin/recommended'
 	],
+    globals: {
+        'Atomics': 'readonly',
+        'SharedArrayBuffer': 'readonly'
+    },
+    parserOptions: {
+        ecmaFeatures: {
+            'jsx': true
+        },
+        ecmaVersion: 2018,
+        sourceType: 'module'
+    },
+    plugins: [
+		'react'
+    ],
+    rules: {
+		'jest/valid-describe': 'off',
+		'@wordpress/dependency-group': 'off',
+	},
 	overrides: [
 		{
 			files: [ 'test/e2e/**/*.js' ],
