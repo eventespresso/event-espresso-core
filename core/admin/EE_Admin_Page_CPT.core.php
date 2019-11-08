@@ -888,7 +888,10 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page
                 __LINE__
             );
         }
-        $this->loadEspressoEditorAssetManager();
+        $admin_config = $this->loader->getShared('EE_Admin_Config');
+        if ($admin_config->useAdvancedEditor()) {
+            $this->loadEspressoEditorAssetManager();
+        }
     }
 
 
