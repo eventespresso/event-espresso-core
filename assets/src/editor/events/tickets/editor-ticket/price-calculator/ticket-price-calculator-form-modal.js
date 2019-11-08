@@ -44,11 +44,14 @@ const TicketPriceCalculatorFormModal = ( {
 	const calculateTicketPrices = useCalculateTicketPrices( prices, setFormData );
 	const formDecorator = useTicketPriceCalculatorFormDecorator( setFormData );
 	useEffect( () => {
-		formData.updated = priceCount !== prevPriceCount ?
-			true :
-			formData.updated;
-		if ( pricesLoaded && formData.updated ) {
-			calculateTicketPrices( formData );
+		const data = {
+			...formData,
+			updated: priceCount !== prevPriceCount ?
+				true :
+				formData.updated
+		};
+		if ( pricesLoaded && data.updated ) {
+			calculateTicketPrices( data );
 			setPrevPriceCount( priceCount );
 		}
 	}, [ calculateTicketPrices, formData, prices ] );
