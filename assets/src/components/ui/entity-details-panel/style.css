@@ -22,7 +22,7 @@
 .ee-entity-details-div {
     display: flex;
     flex-direction: column-reverse;
-    max-width: calc(var(--ee-font-size-tiny) * 5);
+    max-width: calc(var(--ee-font-size-tiny) * 7);
 }
 
 .ee-entity-details-div .ee-inline-edit-input {

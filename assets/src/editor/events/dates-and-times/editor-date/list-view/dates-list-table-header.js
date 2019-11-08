@@ -102,13 +102,13 @@ const datesListTableHeader = () => {
 				),
 			},
 			{
-				key: 'registrants',
+				key: 'registrations',
 				type: 'cell',
-				class: 'ee-date-list-col-hdr ee-date-list-col-registrants ee-rspnsv-table-column-smaller ee-centered-column',
+				class: 'ee-date-list-col-hdr ee-date-list-col-registrations ee-rspnsv-table-column-smaller ee-centered-column',
 				value: (
 					<>
 						<span className={ 'ee-rspnsv-table-long-label' }>
-							{ __( 'Registrants', 'event_espresso' ) }
+							{ __( 'Reg list', 'event_espresso' ) }
 						</span>
 						<span className={ 'ee-rspnsv-table-short-label' }>
 							{ __( 'Regs', 'event_espresso' ) }

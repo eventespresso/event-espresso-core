@@ -25,7 +25,8 @@ const { receiveSchemaForModelAndResolve } = dispatch( 'eventespresso/schema' );
  * @param {Object} eventData
  */
 const hydrateData = async function*( eventData ) {
-	const { schemas, relations, ...rawData } = eventData;
+	/*eslint no-unused-vars: "off"*/
+	const { schemas, relations, tktRegCount, ...rawData } = eventData;
 	if ( rawData.hasOwnProperty( 'eventId' ) ) {
 		delete rawData.eventId;
 	}
