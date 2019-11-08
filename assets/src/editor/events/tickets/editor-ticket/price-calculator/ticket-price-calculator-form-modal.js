@@ -1,7 +1,7 @@
 /**
  * External imports
  */
-import { useEffect } from '@wordpress/element';
+import { useEffect, useState } from '@wordpress/element';
 import { EditorModal, ifValidTicketEntity, useIsEditorOpen } from '@eventespresso/editor-hocs';
 import { __, _x, sprintf } from '@eventespresso/i18n';
 import { FormHandler } from '@eventespresso/components';
@@ -33,6 +33,8 @@ const TicketPriceCalculatorFormModal = ( {
 	pricesLoaded,
 	...otherProps
 } ) => {
+	const priceCount = prices.length;
+	const [ prevPriceCount, setPrevPriceCount ] = useState( 0 );
 	const editorId = useTicketPriceCalculatorEditorId( ticket );
 	const isEditorOpen = useIsEditorOpen( editorId );
 	const {
@@ -42,8 +44,12 @@ const TicketPriceCalculatorFormModal = ( {
 	const calculateTicketPrices = useCalculateTicketPrices( prices, setFormData );
 	const formDecorator = useTicketPriceCalculatorFormDecorator( setFormData );
 	useEffect( () => {
+		formData.updated = priceCount !== prevPriceCount ?
+			true :
+			formData.updated;
 		if ( pricesLoaded && formData.updated ) {
 			calculateTicketPrices( formData );
+			setPrevPriceCount( priceCount );
 		}
 	}, [ calculateTicketPrices, formData, prices ] );
 	return editorId && pricesLoaded && isEditorOpen ? (
