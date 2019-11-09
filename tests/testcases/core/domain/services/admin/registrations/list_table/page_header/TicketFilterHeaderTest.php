@@ -45,7 +45,7 @@ class TicketFilterHeaderTest extends TestCase
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
      * @throws ReflectionException
-     * @since $VID:$
+     * @since 4.10.2.p
      */
     public function setUp()
     {
@@ -59,7 +59,7 @@ class TicketFilterHeaderTest extends TestCase
      * @throws ReflectionException
      * @throws InvalidArgumentException
      * @throws AssertionFailedError
-     * @since $VID:$
+     * @since 4.10.2.p
      */
     public function setUpTickets()
     {
@@ -98,7 +98,7 @@ class TicketFilterHeaderTest extends TestCase
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
      * @throws InvalidArgumentException
-     * @since $VID:$
+     * @since 4.10.2.p
      */
     private function getTicketFilterHeader(array $get_params)
     {
@@ -121,7 +121,7 @@ class TicketFilterHeaderTest extends TestCase
      *
      * @return Generator
      * @throws EE_Error
-     * @since  $VID:$
+     * @since  4.10.2.p
      */
     public function testDataGenerator()
     {
@@ -167,7 +167,7 @@ class TicketFilterHeaderTest extends TestCase
      * @throws InvalidInterfaceException
      * @throws ReflectionException
      * @throws InvalidArgumentException
-     * @since  $VID:$
+     * @since  4.10.2.p
      */
     public function testGetHeaderText()
     {

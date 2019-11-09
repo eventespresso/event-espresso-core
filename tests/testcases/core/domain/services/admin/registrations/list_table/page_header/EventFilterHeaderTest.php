@@ -48,7 +48,7 @@ class EventFilterHeaderTest extends TestCase
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
      * @throws ReflectionException
-     * @since $VID:$
+     * @since 4.10.2.p
      */
     public function setUp()
     {
@@ -63,7 +63,7 @@ class EventFilterHeaderTest extends TestCase
      * @throws ReflectionException
      * @throws Exception
      * @throws InvalidArgumentException
-     * @since $VID:$
+     * @since 4.10.2.p
      */
     public function setUpEvent()
     {
@@ -83,7 +83,7 @@ class EventFilterHeaderTest extends TestCase
      * @throws EE_Error
      * @throws InvalidArgumentException
      * @throws InvalidArgumentException
-     * @since $VID:$
+     * @since 4.10.2.p
      */
     private function getEventFilterHeader(array $get_params)
     {
@@ -105,7 +105,7 @@ class EventFilterHeaderTest extends TestCase
      * testcases actually run.
      *
      * @return Generator
-     * @since  $VID:$
+     * @since  4.10.2.p
      */
     public function testDataGenerator()
     {
@@ -149,7 +149,7 @@ class EventFilterHeaderTest extends TestCase
      * @throws EE_Error
      * @throws ReflectionException
      * @throws Exception
-     * @since        $VID:$
+     * @since        4.10.2.p
      */
     public function testGetHeaderText()
     {
