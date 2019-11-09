@@ -14,7 +14,7 @@ use InvalidArgumentException;
  *
  * @package EventEspresso\core\domain\services\admin\registrations
  * @author  Brent Christensen
- * @since   $VID:$
+ * @since   4.10.2.p
  */
 class QueryBuilderMock extends QueryBuilder
 {

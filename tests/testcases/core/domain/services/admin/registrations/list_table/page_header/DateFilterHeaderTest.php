@@ -39,7 +39,7 @@ class DateFilterHeaderTest extends TestCase
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
      * @throws ReflectionException
-     * @since $VID:$
+     * @since 4.10.2.p
      */
     public function setUp()
     {
@@ -53,7 +53,7 @@ class DateFilterHeaderTest extends TestCase
      * @throws InvalidInterfaceException
      * @throws ReflectionException
      * @throws Exception
-     * @since $VID:$
+     * @since 4.10.2.p
      */
     public function setUpDatetime()
     {
@@ -74,7 +74,7 @@ class DateFilterHeaderTest extends TestCase
      * @throws InvalidInterfaceException
      * @throws EE_Error
      * @throws InvalidArgumentException
-     * @since $VID:$
+     * @since 4.10.2.p
      */
     private function getDateFilterHeader(array $get_params)
     {
@@ -101,7 +101,7 @@ class DateFilterHeaderTest extends TestCase
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
      * @throws ReflectionException
-     * @since  $VID:$
+     * @since  4.10.2.p
      */
     public function testDataGenerator()
     {
@@ -147,7 +147,7 @@ class DateFilterHeaderTest extends TestCase
      * @throws EE_Error
      * @throws InvalidArgumentException
      * @throws ReflectionException
-     * @since        $VID:$
+     * @since        4.10.2.p
      */
     public function testGetHeaderText()
     {

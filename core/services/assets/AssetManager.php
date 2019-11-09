@@ -271,7 +271,7 @@ abstract class AssetManager implements AssetManagerInterface
      * @param string $handle
      * @param array  $extra_dependencies
      * @return array
-     * @since $VID:$
+     * @since 4.10.2.p
      */
     private function getAssetDetails($asset_type, $handle, $extra_dependencies = [])
     {
