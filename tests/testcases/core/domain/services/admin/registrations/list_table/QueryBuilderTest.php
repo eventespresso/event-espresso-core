@@ -27,7 +27,7 @@ class QueryBuilderTest extends TestCase
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
      * @throws InvalidArgumentException
-     * @since $VID:$
+     * @since 4.10.2.p
      */
     private function getQueryBuilder(array $get_params)
     {
