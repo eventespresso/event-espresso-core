@@ -59,7 +59,7 @@ class Registrations_Admin_Page_Test extends EE_UnitTestCase
      * @throws InvalidArgumentException
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
-     * @since $VID:$
+     * @since 4.10.2.p
      */
     public function setUp()
     {
@@ -400,7 +400,7 @@ class Registrations_Admin_Page_Test extends EE_UnitTestCase
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
      * @throws \PHPUnit\Framework\Exception
-     * @since $VID:$
+     * @since 4.10.2.p
      */
     public function test_add_event_id_to_where_conditions()
     {
@@ -422,7 +422,7 @@ class Registrations_Admin_Page_Test extends EE_UnitTestCase
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
      * @throws \PHPUnit\Framework\Exception
-     * @since $VID:$
+     * @since 4.10.2.p
      */
     public function test_add_category_id_to_where_conditions()
     {
@@ -444,7 +444,7 @@ class Registrations_Admin_Page_Test extends EE_UnitTestCase
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
      * @throws \PHPUnit\Framework\Exception
-     * @since $VID:$
+     * @since 4.10.2.p
      */
     public function test_add_datetime_id_to_where_conditions()
     {
@@ -467,7 +467,7 @@ class Registrations_Admin_Page_Test extends EE_UnitTestCase
      * @throws InvalidInterfaceException
      * @throws AssertionFailedError
      * @throws \PHPUnit\Framework\Exception
-     * @since $VID:$
+     * @since 4.10.2.p
      */
     public function test_add_registration_status_to_where_conditions_no_status_not_trash_view()
     {
@@ -486,7 +486,7 @@ class Registrations_Admin_Page_Test extends EE_UnitTestCase
      * @throws InvalidArgumentException
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
-     * @since $VID:$
+     * @since 4.10.2.p
      */
     public function test_add_registration_status_to_where_conditions_no_status_trash_view(){
         $this->_load_requirements();
@@ -504,7 +504,7 @@ class Registrations_Admin_Page_Test extends EE_UnitTestCase
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
      * @throws \PHPUnit\Framework\Exception
-     * @since $VID:$
+     * @since 4.10.2.p
      */
     public function test_add_registration_status_to_where_conditions_with_status_and_incomplete_view()
     {
@@ -528,7 +528,7 @@ class Registrations_Admin_Page_Test extends EE_UnitTestCase
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
      * @throws \PHPUnit\Framework\Exception
-     * @since $VID:$
+     * @since 4.10.2.p
      */
     public function test_add_registration_status_to_where_conditions_no_status_and_incomplete_view()
     {
@@ -549,7 +549,7 @@ class Registrations_Admin_Page_Test extends EE_UnitTestCase
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
      * @throws \PHPUnit\Framework\Exception
-     * @since $VID:$
+     * @since 4.10.2.p
      */
     public function test_add_registration_status_to_where_conditions_with_status()
     {
@@ -571,7 +571,7 @@ class Registrations_Admin_Page_Test extends EE_UnitTestCase
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
      * @throws \PHPUnit\Framework\Exception
-     * @since $VID:$
+     * @since 4.10.2.p
      */
     public function test_add_date_to_where_conditions_for_this_month()
     {
@@ -621,7 +621,7 @@ class Registrations_Admin_Page_Test extends EE_UnitTestCase
      * @throws InvalidInterfaceException
      * @throws AssertionFailedError
      * @throws \PHPUnit\Framework\Exception
-     * @since $VID:$
+     * @since 4.10.2.p
      */
     public function test_add_search_to_where_conditions()
     {
@@ -648,7 +648,7 @@ class Registrations_Admin_Page_Test extends EE_UnitTestCase
      * @throws InvalidInterfaceException
      * @throws AssertionFailedError
      * @throws \PHPUnit\Framework\Exception
-     * @since $VID:$
+     * @since 4.10.2.p
      */
     public function test_get_orderby_for_registrations_query_none_specified()
     {
@@ -672,7 +672,7 @@ class Registrations_Admin_Page_Test extends EE_UnitTestCase
      * @throws InvalidInterfaceException
      * @throws AssertionFailedError
      * @throws \PHPUnit\Framework\Exception
-     * @since $VID:$
+     * @since 4.10.2.p
      */
     public function test_get_orderby_for_registrations_query_specified_orderby_and_order()
     {
