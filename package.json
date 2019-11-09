@@ -85,9 +85,9 @@
 		"deep-freeze": "0.0.1",
 		"del": "git+https://github.com/sindresorhus/del.git",
 		"equivalent-key-map": "^0.2.2",
-		"eslint": "^6.5.1",
+		"eslint": "^6.6.0",
 		"eslint-plugin-jest": "23.0.2",
-		"handlebars": "^4.4.3",
+		"handlebars": "^4.5.1",
 		"license-checker": "^25.0.1",
 		"lodash": "^4.17.15",
 		"mini-css-extract-plugin": "^0.8.0",
@@ -100,7 +100,7 @@
 		"recast": "^0.18.5",
 		"webpack": "^4.41.2",
 		"webpack-assets-manifest": "^3.1.1",
-		"webpack-cli": "^3.3.9",
+		"webpack-cli": "^3.3.10",
 		"webpack-merge": "^4.2.2"
 	},
 	"dependencies": {
