@@ -33,6 +33,7 @@ export { default as useEventEditorEventDates }
 export { default as useEventEditorTickets } from './use-event-editor-tickets';
 export { default as useEventForEventDate } from './use-event-for-event-date';
 export { default as useEventVenue } from './use-event-venue';
+export { default as useIs12HourTime } from './useIs12HourTime';
 export { default as usePriceTypes } from './use-price-types';
 export { default as useRect } from './useRect';
 export { default as useRemoveRelationsForEventDateIdToTicketIds }

@@ -1,0 +1,29 @@
+.ee-date-range-picker-wrapper {
+    position: relative;
+}
+.ee-date-range-picker-wrapper .start,
+.ee-date-range-picker-wrapper .end {
+    position: absolute;
+    top: -6px;
+}
+
+.ee-date-range-picker-wrapper .start {
+    left: 140px;
+}
+
+.ee-date-range-picker-wrapper .end {
+    left: 490px;
+}
+
+.ee-date-range-picker-wrapper .components-datetime__time-field-am-pm button {
+    height: calc(100% - 2px); /* noBorder prop passed to DefaultDateRangePicker still creates a transparent border*/
+    margin-top: 1px;
+}
+
+.ee-date-range-picker .DateInput:first-child {
+    margin-right: 190px;
+}
+
+.ee-date-range-picker .DateRangePickerInput_arrow {
+    margin-right: 5px;
+}

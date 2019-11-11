@@ -8,7 +8,8 @@ import { Dropdown, IconButton } from '@wordpress/components';
 import { useState, useEffect } from '@wordpress/element';
 import { ENTER, SPACE } from '@wordpress/keycodes';
 import { SERVER_LOCALE } from '@eventespresso/eejs';
-import { DATE_TIME_FORMAT_SITE, TIME_FORMAT_SITE } from '@eventespresso/helpers';
+import { DATE_TIME_FORMAT_SITE } from '@eventespresso/helpers';
+import { useIs12HourTime } from '@eventespresso/hooks';
 import { __ } from '@eventespresso/i18n';
 import { ServerDateTime } from '@eventespresso/value-objects';
 
@@ -38,7 +39,7 @@ const DateTimeDropdown = ( {
 } ) => {
 	delete rest.initialValue;
 	const [ inputValue, setInputValue ] = useState( new Date() );
-	const [ is12HourTime, setIs12HourTime ] = useState( true );
+	const is12HourTime = useIs12HourTime();
 
 	useEffect( () => {
 		const initialValue = input.value ?
@@ -46,22 +47,6 @@ const DateTimeDropdown = ( {
 			new Date();
 		setInputValue( initialValue );
 	}, [ input.value ] );
-
-	useEffect( () => {
-		// To know if the current timezone is a 12 hour time
-		// we look for "a" in the time format
-		// We also make sure this a is not escaped by a "/"
-		const _is12HourTime = /a(?!\\)/i.test(
-			TIME_FORMAT_SITE
-			// Test only the lower case a
-				.toLowerCase()
-				// Replace "//" with empty strings
-				.replace( /\\\\/g, '' )
-				// Reverse the string and test for "a" not followed by a slash
-				.split( '' ).reverse().join( '' )
-		);
-		setIs12HourTime( _is12HourTime );
-	}, [] );
 
 	const inputClass = classNames( {
 		[ htmlClass ]: true,
