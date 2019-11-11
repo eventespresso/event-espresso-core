@@ -16,12 +16,14 @@ import { createEntitySelectors, createEntityResolvers } from './model';
 
 /**
  * Creates specific model entity selectors (getFactoryForEvent etc)
+ *
  * @type {Object<Function>}
  */
 const entitySelectors = createEntitySelectors( selectors );
 
 /**
  * Creates specific model entity resolvers (getFactoryForEvent etc)
+ *
  * @type {Object<Function>}
  */
 const entityResolvers = createEntityResolvers( resolvers );
@@ -38,3 +40,5 @@ export default registerStore( REDUCER_KEY, {
 } );
 
 export const SCHEMA_KEY = REDUCER_KEY;
+
+export { hydrateRelationSchema } from './resolvers';

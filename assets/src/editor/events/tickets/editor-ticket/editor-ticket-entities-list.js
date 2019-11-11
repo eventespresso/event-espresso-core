@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { useEffect } from '@wordpress/element';
+import { useEffect, useState } from '@wordpress/element';
 import {
 	EntityList,
 	EntityPagination,
@@ -17,6 +17,7 @@ import { __, _x, sprintf } from '@eventespresso/i18n';
 import AddNewTicketButton from './add-new-ticket-button';
 import useTicketsForEventEditorTicketList
 	from './use-tickets-for-event-editor-ticket-list';
+import { NewTicketFormModal } from './edit-form/';
 import { EditorTicketEntitiesGridView } from './grid-view/';
 import { EditorTicketEntitiesListView } from './list-view/';
 import {
@@ -31,8 +32,18 @@ const {
 	FormButtonsRow,
 } = twoColumnAdminFormLayout;
 
+/**
+ * EditorTicketEntitiesList
+ *
+ * displays a paginated list of tickets with a filter bar
+ * for controlling how and what tickets are displayed
+ *
+ * @param {Object} otherProps
+ * @return {Object} rendered event dates list
+ */
 const EditorTicketEntitiesList = ( { ...otherProps } ) => {
 	const listId = 'event-editor-ticket-list';
+	const [ loading, setLoading ] = useState( false );
 	const {
 		isChained,
 		showTickets,
@@ -130,7 +141,14 @@ const EditorTicketEntitiesList = ( { ...otherProps } ) => {
 				) }
 			/>
 			<FormButtonsRow>
-				<AddNewTicketButton />
+				<AddNewTicketButton
+					loading={ loading }
+					setLoading={ setLoading }
+				/>
+				<NewTicketFormModal
+					loading={ loading }
+					setLoading={ setLoading }
+				/>
 			</FormButtonsRow>
 		</FormWrapper>
 	);

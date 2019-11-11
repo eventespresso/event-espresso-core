@@ -3,7 +3,11 @@
  */
 import { values } from 'lodash';
 
-export const MODEL_NAME = 'status';
+export const MODEL_NAMES = {
+	MODEL: 'status',
+	RELATION: 'statuses',
+};
+
 // types
 export const STATUS_TYPE_EMAIL = 'email';
 export const STATUS_TYPE_EVENT = 'event';
@@ -16,20 +20,6 @@ export const EMAIL_STATUS_ID = {
 	DRAFT: 'EDR',
 	SENT: 'ESN',
 	EXPIRED: 'EXP',
-};
-// event
-export const EVENT_STATUS_ID = {
-	ACTIVE: 'ACT',
-	REGISTRATION_CLOSED: 'CLS',
-	DELETED: 'DEL',
-	DENIED: 'DEN',
-	DRAFT: 'DRF',
-	NOT_ACTIVE: 'NAC',
-	NOT_OPEN: 'NOP',
-	ONGOING: 'ONG',
-	REGISTRATION_OPEN: 'OPN',
-	PENDING: 'PND',
-	SECONDARY: 'SEC',
 };
 // message
 export const MESSAGE_STATUS_ID = {
@@ -86,7 +76,6 @@ export const UNKNOWN_STATUS_ID = 'unknown';
 
 export const ALL_STATUS_IDS = [
 	...values( EMAIL_STATUS_ID ),
-	...values( EVENT_STATUS_ID ),
 	...values( MESSAGE_STATUS_ID ),
 	...values( PAYMENT_STATUS_ID ),
 	...values( REGISTRATION_STATUS_ID ),

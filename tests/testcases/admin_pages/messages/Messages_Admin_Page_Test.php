@@ -31,6 +31,7 @@ class Messages_Admin_Page_Test extends EE_UnitTestCase {
 
 	protected function _load_requirements() {
 		$this->_MessagesAdminPage = new Messages_Admin_Page_Mock();
+		$this->_MessagesAdminPage->initializePage();
 		$this->_MessageResourceManager = EE_Registry::instance()->load_lib( 'Message_Resource_Manager' );
 	}
 

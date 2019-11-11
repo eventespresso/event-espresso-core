@@ -9,6 +9,7 @@ import { InfinitySymbol } from '@eventespresso/value-objects';
  * Internal imports
  */
 import Spinner from './spinner';
+
 /**
  * renders the text in display mode
  *

@@ -11,7 +11,7 @@ use EventEspresso\core\services\request\RequestInterface;
  *
  * @package EventEspresso\core\services\admin
  * @author  Brent Christensen
- * @since   $VID:$
+ * @since   4.10.2.p
  */
 abstract class AdminPageHeaderDecorator implements AdminPageHeaderDecoratorInterface
 {

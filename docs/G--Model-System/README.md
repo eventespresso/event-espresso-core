@@ -13,3 +13,4 @@ In Event Espresso 4 (EE4), we have built a system which simplifies creating, ret
 - [Using EE4 Model Objects](./using-ee4-model-objects.md)
 - [EE Model Objects and Custom Post Types](./ee-model-objects-and-custom-post-types.md)
 - [Model Query Params](./model-query-params.md) Provides documentation on the `$query_params` used by many model methods.
+- [Model Statuses](./statuses.md)

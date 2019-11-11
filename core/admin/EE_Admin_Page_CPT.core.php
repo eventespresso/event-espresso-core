@@ -3,8 +3,6 @@
 use EventEspresso\core\domain\services\assets\EspressoEditorAssetManager;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
-use EventEspresso\core\services\loaders\LoaderFactory;
-use EventEspresso\core\services\loaders\LoaderInterface;
 use EventEspresso\core\services\request\middleware\RecommendedVersions;
 
 /**
@@ -86,10 +84,6 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page
      */
     protected $_cpt_model_obj = false;
 
-    /**
-     * @var LoaderInterface $loader ;
-     */
-    protected $loader;
 
     /**
      * This will hold an array of autosave containers that will be used to obtain input values and hook into the WP
@@ -156,20 +150,6 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page
      */
     abstract public function delete_cpt_item($post_id);
 
-
-    /**
-     * @return LoaderInterface
-     * @throws InvalidArgumentException
-     * @throws InvalidDataTypeException
-     * @throws InvalidInterfaceException
-     */
-    protected function getLoader()
-    {
-        if (! $this->loader instanceof LoaderInterface) {
-            $this->loader = LoaderFactory::getLoader();
-        }
-        return $this->loader;
-    }
 
     /**
      * Just utilizing the method EE_Admin exposes for doing things before page setup.
@@ -473,7 +453,7 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page
     private function _supports_page_templates($cpt_name)
     {
         /** @var EventEspresso\core\domain\entities\custom_post_types\CustomPostTypeDefinitions $custom_post_types */
-        $custom_post_types = $this->getLoader()->getShared(
+        $custom_post_types = $this->loader->getShared(
             'EventEspresso\core\domain\entities\custom_post_types\CustomPostTypeDefinitions'
         );
         $cpt_args = $custom_post_types->getDefinitions();
@@ -736,7 +716,7 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page
         if ($ignore_route_check) {
             $post_type = get_post_type($id);
             /** @var EventEspresso\core\domain\entities\custom_post_types\CustomPostTypeDefinitions $custom_post_types */
-            $custom_post_types = $this->getLoader()->getShared(
+            $custom_post_types = $this->loader->getShared(
                 'EventEspresso\core\domain\entities\custom_post_types\CustomPostTypeDefinitions'
             );
             $model_names = $custom_post_types->getCustomPostTypeModelNames($post_type);
@@ -908,7 +888,10 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page
                 __LINE__
             );
         }
-        $this->loadEspressoEditorAssetManager();
+        $admin_config = $this->loader->getShared('EE_Admin_Config');
+        if ($admin_config->useAdvancedEditor()) {
+            $this->loadEspressoEditorAssetManager();
+        }
     }
 
 
@@ -970,7 +953,7 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page
                 'EventEspresso\core\services\assets\Registry'        => EE_Dependency_Map::load_from_cache,
             )
         );
-        LoaderFactory::getLoader()->getShared(
+        $this->loader->getShared(
             'EventEspresso\core\domain\services\assets\EspressoEditorAssetManager'
         );
         add_action('admin_enqueue_scripts', array($this, 'enqueueEspressoEditorAssets'), 100);
@@ -1449,7 +1432,7 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page
         $post_type = $this->_cpt_routes[ $this->_req_action ];
         $post_type_object = $this->_cpt_object;
         $title = $post_type_object->labels->add_new_item;
-        $post = $post = get_default_post_to_edit($this->_cpt_routes[ $this->_req_action ], true);
+        $post = get_default_post_to_edit($this->_cpt_routes[ $this->_req_action ], true);
         add_action('admin_print_styles', array($this, 'add_new_admin_page_global'));
         // modify the default editor title field with default title.
         add_filter('enter_title_here', array($this, 'add_custom_editor_default_title'), 10);

@@ -6,7 +6,6 @@ import {
 	createHigherOrderComponent,
 	withInstanceId,
 } from '@wordpress/compose';
-import { Component } from '@wordpress/element';
 import { BaseControl } from '@wordpress/components';
 
 /**
@@ -18,44 +17,42 @@ export default ( customId = '' ) => createHigherOrderComponent(
 	compose( [
 		withInstanceId,
 		( WrappedComponent ) => {
-			return class extends Component {
-				static propTypes = {
-					label: PropTypes.string,
-					instanceId: PropTypes.oneOfType( [
-						PropTypes.number,
-						PropTypes.string,
-					] ),
-					className: PropTypes.string,
-					help: PropTypes.string,
-				};
-
-				static defaultProps = {
-					label: WrappedComponent.defaultProps &&
-						WrappedComponent.defaultProps.label ?
-						WrappedComponent.defaultProps.label :
-						'',
-				};
-
-				render() {
-					const {
-						label,
-						instanceId,
-						className,
-						help,
-					} = this.props;
-					const id = `inspector-${ customId }-control-${ instanceId }`;
-					return (
-						<BaseControl
-							label={ label }
-							id={ id }
-							className={ className }
-							help={ help }
-						>
-							<WrappedComponent { ...this.props } label={ '' } id={ id } />
-						</BaseControl>
-					);
-				}
+			const HOC = ( props ) => {
+				const {
+					label,
+					instanceId,
+					className,
+					help,
+				} = props;
+				const id = `inspector-${ customId }-control-${ instanceId }`;
+				return (
+					<BaseControl
+						label={ label }
+						id={ id }
+						className={ className }
+						help={ help }
+					>
+						<WrappedComponent { ...props } label={ '' } id={ id } />
+					</BaseControl>
+				);
 			};
+			HOC.propTypes = {
+				label: PropTypes.string,
+				instanceId: PropTypes.oneOfType( [
+					PropTypes.number,
+					PropTypes.string,
+				] ),
+				className: PropTypes.string,
+				help: PropTypes.string,
+			};
+
+			HOC.defaultProps = {
+				label: WrappedComponent.defaultProps &&
+					WrappedComponent.defaultProps.label ?
+					WrappedComponent.defaultProps.label :
+					'',
+			};
+			return HOC;
 		},
 	] ),
 	'withBaseControl'

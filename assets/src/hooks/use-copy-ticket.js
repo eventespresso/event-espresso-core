@@ -29,16 +29,16 @@ const useCopyTicket = ( ticketEntity, dateEntities ) => {
 		if ( ! isModelEntityOfModel( ticketEntity, 'ticket' ) ) {
 			return falseFunc;
 		}
-		return async () => {
-			const newTicket = await createEntity(
-				'ticket',
-				ticketEntity.forClone
-			);
-			updateTicketDateRelations( newTicket, dateEntities );
-			if ( Array.isArray( newPrices ) && newPrices.length ) {
-				await updateTicketPriceRelations( newTicket, newPrices );
-			}
-		};
+
+		const newTicket = await createEntity(
+			'ticket',
+			ticketEntity.forClone
+		);
+
+		updateTicketDateRelations( newTicket, dateEntities );
+		if ( Array.isArray( newPrices ) && newPrices.length ) {
+			await updateTicketPriceRelations( newTicket, newPrices );
+		}
 	} );
 };
 

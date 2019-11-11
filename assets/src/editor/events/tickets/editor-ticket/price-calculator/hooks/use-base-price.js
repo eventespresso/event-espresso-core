@@ -8,13 +8,11 @@ const { BASE_PRICE_TYPES } = priceTypeModel;
 
 /**
  * @function
- * @param {number|string} ticketId
- * @param {Object} formData
- * @param {BaseEntity[]} prices,
- * @return {Array} price modifiers
+ * @param {Array} prices
+ * @return {Object} A price
  */
-const useBasePrice = useMemo( ( prices ) => prices.find(
-	( price ) => price.prtId === BASE_PRICE_TYPES.BASE_PRICE
-) );
+const useBasePrice = ( prices ) => useMemo( () => prices.find(
+	( price ) => price.PRT_ID === BASE_PRICE_TYPES.BASE_PRICE
+), [ prices ] );
 
 export default useBasePrice;

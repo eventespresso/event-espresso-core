@@ -14,6 +14,7 @@ import { Money, SiteCurrency } from '@eventespresso/value-objects';
  */
 import useTicketBasePriceCalculator from
 	'../price-calculator/hooks/use-ticket-base-price-calculator';
+import { useBasePrice } from '../price-calculator/hooks';
 
 /**
  * InlineEditTicketPrice inline-edit-ticket-price
@@ -37,11 +38,16 @@ const InlineEditTicketPrice = ( {
 	);
 	const ticketPriceAmount = ticket.price.amount.toNumber();
 
+	const basePrice = useBasePrice( prices );
 	const updateTicketPrice = useCallback(
 		( amount ) => {
 			amount = parseMoneyValue( amount );
 			ticket.price = new Money( amount, SiteCurrency );
-			calculateTicketBasePrice( amount );
+			const basePriceValue = calculateTicketBasePrice( amount );
+			basePrice.amount = new Money(
+				parseMoneyValue( basePriceValue ),
+				SiteCurrency
+			);
 			return amount;
 		},
 		[ calculateTicketBasePrice ]

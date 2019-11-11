@@ -105,8 +105,8 @@ export function* resetAllState() {
 }
 
 /**
- * Action triggering resetting state in the store for the given selector name and
- * identifier
+ * Action triggering resetting state in the store for the given selector name
+ * and identifier
  *
  * @param {string} selectorName
  * @param {string} identifier
@@ -223,3 +223,20 @@ const identifierInSelector = ( selectorName, identifier ) => {
 	return selectorName.indexOf( singularName ) > -1 ||
 		selectorName.indexOf( pluralName ) > -1;
 };
+
+/**
+ * Resolves getEntities for the given model name.
+ *
+ * @param {string} modelName
+ */
+export function* resolveGetEntities( modelName ) {
+	modelName = singularModelName( modelName );
+
+	yield dispatch(
+		'core/data',
+		'finishResolution',
+		REDUCER_KEY,
+		'getEntities',
+		[ modelName ]
+	);
+}

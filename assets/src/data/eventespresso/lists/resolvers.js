@@ -42,7 +42,7 @@ export function* getItems( identifier, queryString ) {
  * children from them.
  *
  * Note, this uses the entities stored in the eventespresso/core store as the
- * authority so if an entity already exists there, it replaces what was
+ * authority so any existing entities will be used instead of what was
  * retrieved from the server.
  *
  * @param {string} modelName
@@ -64,7 +64,8 @@ export function* buildAndDispatchEntitiesFromResponse( modelName, response ) {
 		( entity ) => factory.fromExisting( entity )
 	);
 	const entityIds = fullEntities.map( ( entity ) => entity.id );
-	// are there already entities for the ids in the store?  If so, we use those
+	// are there already entities for the ids in the store?
+	// If so, we use those
 	const existingEntities = yield select(
 		CORE_REDUCER_KEY,
 		'getEntitiesByIds',
@@ -90,6 +91,7 @@ export function* buildAndDispatchEntitiesFromResponse( modelName, response ) {
 
 /**
  * Resolver for model entities returned from an endpoint.
+ *
  * @param {string} modelName
  * @param {string} queryString
  * @return {IterableIterator<*>|Array<BaseEntity>} An empty array if no
@@ -111,6 +113,7 @@ export function* getEntities( modelName, queryString ) {
 
 /**
  * Resolver for getting model entities for a given set of ids
+ *
  * @param {string} modelName
  * @param {Array<number>}ids
  * @return {IterableIterator<*>|Array} An empty array if no entities retrieved.

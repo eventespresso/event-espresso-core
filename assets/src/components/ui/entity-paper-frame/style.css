@@ -20,9 +20,7 @@
 }
 
 .ee-entity-wrapper > div:first-of-type {
-    box-shadow: inset 0 0 1px var(--ee-color-black);
-    /* because the above looks wonky in FF */
-    -moz-box-shadow: 0 0 1px rgba(0, 0, 0, .25);
+    box-shadow: var(--ee-box-shadow-tiny-inset-diffuse);
 }
 
 .ee-entity-paper-frame {

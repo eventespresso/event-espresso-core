@@ -41,7 +41,7 @@ const DEFAULT_EMPTY_ARRAY = [];
  * to the server.
  *
  * @param {string} modelName
- * @param {BaseEntity} entity
+ * @param {BaseEntity|Object} entity
  * @return {null|BaseEntity} If successfully persisted the persisted entity is
  * returned.  Otherwise null.
  */
@@ -115,7 +115,7 @@ function* persistForEntityId( modelName, entityId ) {
 		CORE_REDUCER_KEY,
 		'getEntityById',
 		modelName,
-		entityId,
+		entityId
 	);
 	if ( isModelEntityOfModel( entity, modelName ) ) {
 		const persistedEntity = yield dispatch(

@@ -20,17 +20,12 @@ import TicketRegistrationsLink from '../ticket-registrations-link';
  * @param {Object} ticket model object defining the ticket
  * @return {Object}  rendered ticket details panel
  */
-const TicketDetailsPanel = ( { ticket } ) => useMemo( () => {
+const TicketDetailsPanel = ( { ticket, registrationCount } ) => useMemo( () => {
 	const details = [
 		{
 			id: 'ee-ticket-sold',
 			label: __( 'sold', 'event_espresso' ),
 			value: ticket.sold,
-		},
-		{
-			id: 'ee-ticket-reserved',
-			label: __( 'reserved', 'event_espresso' ),
-			value: ticket.reserved,
 		},
 		{
 			id: 'ee-ticket-qty',
@@ -47,8 +42,13 @@ const TicketDetailsPanel = ( { ticket } ) => useMemo( () => {
 			},
 		},
 		{
-			id: 'ee-ticket-registrants',
-			label: __( 'registrants', 'event_espresso' ),
+			id: 'ee-ticket-reserved',
+			label: __( 'reg count', 'event_espresso' ),
+			value: registrationCount,
+		},
+		{
+			id: 'ee-ticket-registrations',
+			label: __( 'reg list', 'event_espresso' ),
 			value: <TicketRegistrationsLink ticketEntity={ ticket } />,
 		},
 	];
@@ -65,6 +65,7 @@ const TicketDetailsPanel = ( { ticket } ) => useMemo( () => {
 
 TicketDetailsPanel.propTypes = {
 	ticket: PropTypes.object.isRequired,
+	registrationCount: PropTypes.number,
 };
 
 export default TicketDetailsPanel;

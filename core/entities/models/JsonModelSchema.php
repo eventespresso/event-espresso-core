@@ -270,10 +270,11 @@ class JsonModelSchema
      * $json_schema = new JsonModelSchema(EEM_Event::instance(), new CalculatedModelFields);
      * echo $json_schema; //outputs the schema as a json formatted string.
      *
-     * @return bool|false|mixed|string
+     * @return string
      */
     public function __toString()
     {
-        return wp_json_encode($this->getModelSchema());
+        $schema = wp_json_encode($this->getModelSchema());
+        return is_string($schema) ? $schema : '';
     }
 }

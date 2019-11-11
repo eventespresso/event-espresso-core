@@ -86,9 +86,9 @@ const datesListTableRow = ( dateEntity, otherProps ) => {
 				value: dateEntity.reserved,
 			},
 			{
-				key: 'registrants',
+				key: 'registrations',
 				type: 'cell',
-				class: 'ee-date-list-cell ee-date-list-col-registrants ee-rspnsv-table-column-smaller ee-centered-column',
+				class: 'ee-date-list-cell ee-date-list-col-registrations ee-rspnsv-table-column-smaller ee-centered-column',
 				value: (
 					<EventDateRegistrationsLink dateEntity={ dateEntity } />
 				),

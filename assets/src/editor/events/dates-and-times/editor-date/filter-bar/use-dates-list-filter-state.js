@@ -3,8 +3,6 @@
  */
 import { useSelect } from '@wordpress/data';
 
-const DEFAULT_EMPTY_ARRAY = [];
-
 /**
  * provides state management for DatesListFilterBar component
  *
@@ -41,7 +39,7 @@ const useDatesListFilterState = ( {
 			filteredDateIds: store.getFilter(
 				listId,
 				'filteredDateIds',
-				DEFAULT_EMPTY_ARRAY
+				null
 			),
 		};
 	}, [

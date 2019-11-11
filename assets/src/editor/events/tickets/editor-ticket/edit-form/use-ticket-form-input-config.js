@@ -12,7 +12,7 @@ import {
 	useEntityDateChangeValidators,
 	useTicketPrices,
 } from '@eventespresso/hooks';
-import { amountsMatch, parseInfinity } from '@eventespresso/utils';
+import { amountsMatch, parseInfinity, parseMoneyValue } from '@eventespresso/utils';
 import { isModelEntityOfModel } from '@eventespresso/validators';
 import {
 	ServerDateTime as DateTime,
@@ -25,7 +25,7 @@ import {
  * Internal dependencies
  */
 import { TicketPriceCalculatorMenuItem } from '../price-calculator';
-import { useTicketBasePriceCalculator } from '../price-calculator/hooks';
+import { useTicketBasePriceCalculator, useBasePrice } from '../price-calculator/hooks';
 
 /**
  * input configuration for ticket entity edit form
@@ -76,9 +76,15 @@ const useTicketFormInputConfig = ( {
 		prices,
 		priceTypes
 	);
+
+	const basePrice = useBasePrice( prices );
 	const recalculateBasePrice = useCallback( ( t ) => {
 		if ( isModelEntityOfModel( t, 'ticket' ) ) {
-			calculateTicketBasePrice( t.price.amount.toNumber() );
+			const basePriceValue = calculateTicketBasePrice( t.price.amount.toNumber() );
+			basePrice.amount = new Money(
+				parseMoneyValue( basePriceValue ),
+				SiteCurrency
+			);
 		}
 	}, [ calculateTicketBasePrice ] );
 
@@ -120,7 +126,7 @@ const useTicketFormInputConfig = ( {
 			label: __( 'Ticket Price', 'event_espresso' ),
 			default: 0,
 			min: 0,
-			step: 0.01,
+			step: 1,
 			changeListener: ( value, prevValue ) => {
 				if ( ! amountsMatch( value, prevValue ) ) {
 					ticket.price = new Money(

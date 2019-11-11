@@ -38,15 +38,16 @@ const {
  * displays a paginated list of event dates with a filter bar
  * for controlling how and what event dates are displayed
  *
+ * @param {boolean} eventDatesLoaded
  * @param {Object} otherProps
  * @return {Object} rendered event dates list
  */
-const EditorDateEntitiesList = ( { ...otherProps } ) => {
+const EditorDateEntitiesList = ( {
+	eventDatesLoaded,
+	...otherProps
+} ) => {
 	const listId = 'event-editor-dates-list';
 	const { eventDates } = useEventEditorEventDates();
-	const eventDatesLoaded = Array.isArray( eventDates ) &&
-		eventDates.length >
-		0;
 	const {
 		showDates,
 		datesSortedBy,
@@ -84,7 +85,9 @@ const EditorDateEntitiesList = ( { ...otherProps } ) => {
 			setFilteredDates( eventDateIds );
 		}
 	}, [ currentPage, perPage, showDates, datesSortedBy, eventDates.length ] );
-	const entityOrder = filteredDateIds.join( '-' );
+	const entityOrder = Array.isArray( filteredDateIds ) ?
+		filteredDateIds.join( '-' ) :
+		'';
 	return (
 		<FormWrapper>
 			<DatesListFilterBar

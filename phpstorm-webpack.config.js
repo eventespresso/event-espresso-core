@@ -14,6 +14,7 @@ const aliases = {
 	'@eventespresso/hooks': path.resolve( __dirname, assets + 'hooks' ),
 	'@eventespresso/i18n': '@wordpress/i18n',
 	'@eventespresso/model': path.resolve( __dirname, assets + 'data/model' ),
+	'@eventespresso/model-schema': path.resolve( __dirname, assets + 'data/model/eventespresso/schema' ),
 	'@eventespresso/utils': path.resolve( __dirname, assets + 'utils' ),
 	'@eventespresso/validators': path.resolve( __dirname, assets + 'eejs/validators' ),
 	'@eventespresso/value-objects': path.resolve( __dirname, assets + 'vo' ),

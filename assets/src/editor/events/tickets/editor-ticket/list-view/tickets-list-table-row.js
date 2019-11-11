@@ -22,11 +22,13 @@ const DATE_TIME_FORMAT = 'ddd MMM YY h:mm a';
  * @function
  * @param {Object} ticketEntity Event Date entity
  * @param {Object} otherProps
+ * @param {number} registrationCount
  * @return {Array} row data for the provided ticket entity
  */
 const ticketsListTableRow = (
 	ticketEntity,
-	otherProps
+	otherProps,
+	registrationCount = 0,
 ) => {
 	const statusClass = status( ticketEntity );
 	const bgClass = getBackgroundColorClass( ticketEntity );
@@ -83,7 +85,7 @@ const ticketsListTableRow = (
 				key: 'quantity',
 				type: 'cell',
 				class: 'ee-ticket-list-cell ee-ticket-list-col-capacity ee-rspnsv-table-column-tiny ee-number-column',
-				value: <InfinitySymbol value={ ticketEntity.regLimit } asInt />,
+				value: <InfinitySymbol value={ ticketEntity.qty } asInt />,
 			},
 			{
 				key: 'sold',
@@ -98,10 +100,10 @@ const ticketsListTableRow = (
 				value: ticketEntity.reserved,
 			},
 			{
-				key: 'registrants',
+				key: 'registrations',
 				type: 'cell',
-				class: 'ee-ticket-list-cell ee-ticket-list-col-registrants ee-rspnsv-table-column-smaller ee-centered-column',
-				value: ticketEntity.sold, // should be count of related registrations
+				class: 'ee-ticket-list-cell ee-ticket-list-col-registrations ee-rspnsv-table-column-smaller ee-centered-column',
+				value: registrationCount, // should be count of related registrations
 			},
 			{
 				key: 'actions',

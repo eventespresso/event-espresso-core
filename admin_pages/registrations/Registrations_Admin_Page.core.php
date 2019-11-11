@@ -41,7 +41,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
      *
      * @var EE_Registration_Custom_Questions_Form
      */
-    protected $_reg_custom_questions_form = null;
+    protected $_reg_custom_questions_form;
 
     /**
      * @var EEM_Registration $registration_model
@@ -83,12 +83,12 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
      * @throws InvalidArgumentException
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
-     * @since $VID:$
+     * @since 4.10.2.p
      */
     protected function getRegistrationModel()
     {
         if (! $this->registration_model instanceof EEM_Registration) {
-            $this->registration_model = $this->getLoader()->getShared('EEM_Registration');
+            $this->registration_model = $this->loader->getShared('EEM_Registration');
         }
         return $this->registration_model;
     }
@@ -98,12 +98,12 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
      * @throws InvalidArgumentException
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
-     * @since $VID:$
+     * @since 4.10.2.p
      */
     protected function getAttendeeModel()
     {
         if (! $this->attendee_model instanceof EEM_Attendee) {
-            $this->attendee_model = $this->getLoader()->getShared('EEM_Attendee');
+            $this->attendee_model = $this->loader->getShared('EEM_Attendee');
         }
         return $this->attendee_model;
     }
@@ -114,12 +114,12 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
      * @throws InvalidArgumentException
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
-     * @since $VID:$
+     * @since 4.10.2.p
      */
     protected function getEventModel()
     {
         if (! $this->event_model instanceof EEM_Event) {
-            $this->event_model = $this->getLoader()->getShared('EEM_Event');
+            $this->event_model = $this->loader->getShared('EEM_Event');
         }
         return $this->event_model;
     }
@@ -129,12 +129,12 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
      * @throws InvalidArgumentException
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
-     * @since $VID:$
+     * @since 4.10.2.p
      */
     protected function getStatusModel()
     {
         if (! $this->status_model instanceof EEM_Status) {
-            $this->status_model = $this->getLoader()->getShared('EEM_Status');
+            $this->status_model = $this->loader->getShared('EEM_Status');
         }
         return $this->status_model;
     }
@@ -723,7 +723,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
      * @throws InvalidArgumentException
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
-     * @since $VID:$
+     * @since 4.10.2.p
      */
     protected function _add_screen_options_default()
     {
@@ -735,7 +735,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
      * @throws InvalidArgumentException
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
-     * @since $VID:$
+     * @since 4.10.2.p
      */
     protected function _add_screen_options_contact_list()
     {
@@ -774,7 +774,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
      * @throws ReflectionException
-     * @since $VID:$
+     * @since 4.10.2.p
      */
     public function load_scripts_styles_edit_attendee()
     {
@@ -797,7 +797,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
      * @throws ReflectionException
-     * @since $VID:$
+     * @since 4.10.2.p
      */
     public function load_scripts_styles_view_registration()
     {
@@ -857,7 +857,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
      * @throws ReflectionException
-     * @since $VID:$
+     * @since 4.10.2.p
      */
     protected function _set_list_table_views_default()
     {
@@ -1152,7 +1152,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
             'EventEspresso\core\domain\services\admin\registrations\list_table\page_header\TicketFilterHeader',
         ];
         foreach ($admin_page_header_decorators as $admin_page_header_decorator) {
-            $filter_header_decorator = $this->getLoader()->getNew($admin_page_header_decorator);
+            $filter_header_decorator = $this->loader->getNew($admin_page_header_decorator);
             $header_text = $filter_header_decorator->getHeaderText($header_text);
         }
         $this->_template_args['admin_page_header'] = $header_text;
@@ -1284,7 +1284,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
         $count = false
     ) {
         /** @var EventEspresso\core\domain\services\admin\registrations\list_table\QueryBuilder $list_table_query_builder */
-        $list_table_query_builder = $this->getLoader()->getNew(
+        $list_table_query_builder = $this->loader->getNew(
             'EventEspresso\core\domain\services\admin\registrations\list_table\QueryBuilder',
             [ $request ]
         );
@@ -1413,7 +1413,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
      * @throws ReflectionException
-     * @since $VID:$
+     * @since 4.10.2.p
      */
     protected function _registration_details_metaboxes()
     {
@@ -3500,7 +3500,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
 
     /**
      * @throws EE_Error
-     * @since $VID:$
+     * @since 4.10.2.p
      */
     public function attendee_editor_metaboxes()
     {

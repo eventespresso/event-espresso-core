@@ -15,11 +15,7 @@ class Pricing_Admin_Page_Init extends EE_Admin_Page_Init
 
 
     /**
-     *        constructor
-     *
      * @Constructor
-     * @access public
-     * @return Pricing_Admin_Page_Init
      */
     public function __construct()
     {
@@ -47,6 +43,11 @@ class Pricing_Admin_Page_Init extends EE_Admin_Page_Init
     }
 
 
+    /**
+     * @return array|void
+     * @throws EE_Error
+     * @since $VID:$
+     */
     protected function _set_menu_map()
     {
         $this->_menu_map = new EE_Admin_Page_Sub_Menu(

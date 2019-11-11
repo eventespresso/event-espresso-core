@@ -7,8 +7,10 @@ import { isModelEntityOfModel } from '@eventespresso/validators';
 /**
  * Internal imports
  */
-import { MODEL_NAME, TICKET_STATUS_ID } from './constants';
+import { MODEL_NAMES, TICKET_STATUS_ID } from './constants';
 import parseInfinity from '../../../utils/parse-infinity';
+
+const { MODEL } = MODEL_NAMES;
 
 /**
  * @function
@@ -16,7 +18,7 @@ import parseInfinity from '../../../utils/parse-infinity';
  * @throws {TypeError}
  */
 const assertTicketEntity = ( ticketEntity ) => {
-	if ( ! isModelEntityOfModel( ticketEntity, MODEL_NAME ) ) {
+	if ( ! isModelEntityOfModel( ticketEntity, MODEL ) ) {
 		throw new TypeError(
 			'The provided entity is not a ticket instance'
 		);

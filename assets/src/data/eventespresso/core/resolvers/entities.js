@@ -26,7 +26,8 @@ export function* getEntityById( modelName, entityId, calculatedFields = [] ) {
 	let path = `${ getEndpoint( modelName ) }/${ entityId }`;
 	path = appendCalculatedFieldsToPath(
 		path,
-		calculatedFields
+		calculatedFields,
+		modelName
 	);
 	const entity = yield fetch( { path } );
 	const factory = yield resolveSelect(

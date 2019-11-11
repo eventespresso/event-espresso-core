@@ -18,7 +18,7 @@ use ReflectionException;
  *
  * @package EventEspresso\core\domain\services\admin\registrations\list_table\page_header
  * @author  Brent Christensen
- * @since   $VID:$
+ * @since   4.10.2.p
  */
 class TicketFilterHeader extends AdminPageHeaderDecorator
 {
@@ -50,7 +50,7 @@ class TicketFilterHeader extends AdminPageHeaderDecorator
      * @throws InvalidInterfaceException
      * @throws InvalidArgumentException
      * @throws ReflectionException
-     * @since $VID:$
+     * @since 4.10.2.p
      */
     public function getHeaderText($text = '')
     {

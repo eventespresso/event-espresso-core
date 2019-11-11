@@ -2,6 +2,10 @@
  * Internal imports
  */
 import { ACTION_TYPES as types } from './action-types';
+import {
+	REDUCER_KEY as SCHEMA_REDUCER_KEY,
+} from './constants';
+import { dispatch } from '../base-controls';
 
 /**
  * Returns an action object used to update the store with the provided schema
@@ -19,6 +23,23 @@ export function receiveSchemaForModel( modelName, schema = {} ) {
 	};
 }
 
+export function* receiveSchemaForModelAndResolve( modelName, schema = {} ) {
+	yield dispatch(
+		SCHEMA_REDUCER_KEY,
+		'receiveSchemaForModel',
+		modelName,
+		schema
+	);
+	yield dispatch(
+		'core/data',
+		'finishResolution',
+		SCHEMA_REDUCER_KEY,
+		'getSchemaForModel',
+		[ modelName.toLowerCase() ]
+	);
+	return schema;
+}
+
 /**
  * Returns an action object used to update the store with the provided model
  * entity factory for the provided modelName.
@@ -34,6 +55,23 @@ export function receiveFactoryForModel( modelName, factory = {} ) {
 		modelName,
 		factory,
 	};
+}
+
+export function* receiveFactoryForModelAndResolve( modelName, factory = {} ) {
+	yield dispatch(
+		SCHEMA_REDUCER_KEY,
+		'receiveFactoryForModel',
+		modelName,
+		factory
+	);
+	yield dispatch(
+		'core/data',
+		'finishResolution',
+		SCHEMA_REDUCER_KEY,
+		'getFactoryForModel',
+		[ modelName.toLowerCase() ]
+	);
+	return factory;
 }
 
 /**
@@ -80,4 +118,25 @@ export function receiveRelationSchema(
 		relationName,
 		relationSchema,
 	};
+}
+
+export function* receiveRelationSchemaAndResolve(
+	modelName,
+	relationName,
+	relationSchema
+) {
+	yield dispatch(
+		SCHEMA_REDUCER_KEY,
+		'receiveRelationSchema',
+		modelName,
+		relationName,
+		relationSchema
+	);
+	yield dispatch(
+		'core/data',
+		'finishResolution',
+		SCHEMA_REDUCER_KEY,
+		'getRelationSchema',
+		[ modelName.toLowerCase(), relationName ]
+	);
 }

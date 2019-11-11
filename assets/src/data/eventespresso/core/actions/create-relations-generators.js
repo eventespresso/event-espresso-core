@@ -76,7 +76,7 @@ function* createRelations(
 	modelName,
 	entityId,
 	relationName,
-	relationEntities,
+	relationEntities
 ) {
 	modelName = singularModelName( modelName );
 	relationName = singularModelName( relationName );
@@ -111,7 +111,7 @@ function* createRelations(
 		REDUCER_KEY,
 		'getEntityById',
 		modelName,
-		entityId,
+		entityId
 	);
 	yield dispatch(
 		'core/data',
@@ -151,30 +151,31 @@ function* createRelations(
  * any more granular selectors that have resolvers.  This basically allows one
  * to hydrate the `eventespresso/core` state with more efficient queries.
  *
- * @param {BaseEntity} relationEntity
+ * @param {BaseEntity|Object} relationEntity
  * @param {string} modelName
- * @param {number|string} modelId
+ * @param {number|string} entityId
  */
 function* resolveRelationRecordForRelation(
 	relationEntity,
 	modelName,
-	modelId
+	entityId
 ) {
 	modelName = singularModelName( modelName );
 	const relationName = singularModelName( relationEntity.modelName );
+	const relationEntityId = relationEntity.id;
 	const hasEntity = yield select(
 		'core/data',
 		'hasFinishedResolution',
 		REDUCER_KEY,
 		'getEntityById',
-		[ relationName, relationEntity.id ]
+		[ relationName, relationEntityId ]
 	);
 	relationEntity = hasEntity ?
 		yield select(
 			REDUCER_KEY,
 			'getEntityById',
 			relationName,
-			relationEntity.id
+			relationEntityId
 		) :
 		relationEntity;
 	if ( ! hasEntity ) {
@@ -184,19 +185,20 @@ function* resolveRelationRecordForRelation(
 			relationEntity
 		);
 	}
+	const relatedEntityIds = [ relationEntityId ];
 	yield dispatch(
 		REDUCER_KEY,
 		'receiveRelatedEntities',
 		modelName,
-		modelId,
+		entityId,
 		relationName,
-		[ relationEntity.id ]
+		relatedEntityIds
 	);
 	const modelEntity = yield resolveSelect(
 		REDUCER_KEY,
 		'getEntityById',
 		modelName,
-		modelId
+		entityId
 	);
 	yield dispatch(
 		'core/data',
@@ -212,6 +214,52 @@ function* resolveRelationRecordForRelation(
 		'getRelatedEntities',
 		[ relationEntity, modelName ]
 	);
+}
+
+/**
+ * Resolves getRelatedEntitiesForIds for the given IDs.
+ *
+ * @param {string} modelName
+ * @param {Object} relatedIds
+ * @param {boolean} resolveIndividualEntities
+ */
+export function* resolveGetRelatedEntitiesForIds(
+	modelName,
+	relatedIds,
+	resolveIndividualEntities = true
+) {
+	modelName = singularModelName( modelName );
+
+	for ( const [ relationName, entityIds ] of Object.entries( relatedIds ) ) {
+		// Finish resolution for all entity ids.
+		yield dispatch(
+			'core/data',
+			'finishResolution',
+			REDUCER_KEY,
+			'getRelatedEntitiesForIds',
+			[ modelName, entityIds, relationName ]
+		);
+		if ( resolveIndividualEntities ) {
+			// Finish resolution for empty set.
+			yield dispatch(
+				'core/data',
+				'finishResolution',
+				REDUCER_KEY,
+				'getRelatedEntitiesForIds',
+				[ modelName, [], relationName ]
+			);
+			// Finish resolution for individual entity ids.
+			while ( entityIds.length > 0 ) {
+				yield dispatch(
+					'core/data',
+					'finishResolution',
+					REDUCER_KEY,
+					'getRelatedEntitiesForIds',
+					[ modelName, [ entityIds.pop() ], relationName ]
+				);
+			}
+		}
+	}
 }
 
 /**

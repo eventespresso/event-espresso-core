@@ -25,7 +25,7 @@ const optionsEntityMap = {
  * @type {ModelSelectComponent}
  */
 const StatusSelect = createModelSelect(
-	model.MODEL_NAME,
+	model.MODEL_NAMES.MODEL,
 	{
 		selectConfiguration: {
 			loadingMessage: () => __( 'Retrieving Statuses.',
