@@ -1,5 +1,12 @@
 <?php
 
+use EventEspresso\core\exceptions\EntityNotFoundException;
+use EventEspresso\core\exceptions\InvalidDataTypeException;
+use EventEspresso\core\exceptions\InvalidInterfaceException;
+use EventEspresso\core\services\loaders\LoaderFactory;
+use EventEspresso\core\services\request\RequestInterface;
+use PHPUnit\Framework\AssertionFailedError;
+
 if ( ! defined('EVENT_ESPRESSO_VERSION')) {
     exit('No direct script access allowed');
 }
@@ -31,19 +38,46 @@ class Registrations_Admin_Page_Test extends EE_UnitTestCase
      */
     protected $original_timezone_string;
 
+    /**
+     * @var RequestInterface $request
+     */
+    protected $request;
+
+    /**
+     * @var DateTimeZone $Vancouver_TZ
+     */
+    protected $Vancouver_TZ;
+
+    /**
+     * @var DateTimeZone $UTC_TZ
+     */
+    protected $UTC_TZ;
 
 
+    /**
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @since 4.10.2.p
+     */
     public function setUp()
     {
         parent::setUp();
         $this->original_timezone_string = get_option('timezone_string');
         //set timezone of site to 'America/Vancouver' for tests.
-        update_option('timezone_string', 'America/Vancover');
+        update_option('timezone_string', 'America/Vancouver');
+        $this->Vancouver_TZ = new DateTimeZone('America/Vancouver');
+        $this->UTC_TZ = new DateTimeZone('UTC');
+
         $this->delayedAdminPageMocks('registrations');
         //need to set a user with registration privileges for default queries in the admin.
         $user = $this->factory->user->create_and_get();
         $user->add_role('administrator');
         wp_set_current_user( $user->ID );
+        $this->request = LoaderFactory::getLoader()->getShared(
+            'EventEspresso\core\services\request\RequestInterface'
+        );
     }
 
 
@@ -69,7 +103,9 @@ class Registrations_Admin_Page_Test extends EE_UnitTestCase
     /**
      * This is a utility method for this test suite to generate a url to use with the _GOTO method for testing
      * functionality.
+     *
      * @param array $extra_query_params
+     * @return string
      */
     protected function _get_reg_admin_url( $extra_query_params = array() ) {
         return add_query_arg(
@@ -83,11 +119,19 @@ class Registrations_Admin_Page_Test extends EE_UnitTestCase
 
 
     /**
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws ReflectionException
+     * @throws RuntimeException
+     * @throws EntityNotFoundException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws \PHPUnit\Framework\Exception
+     * @throws Exception
      * @since 4.6.x
-     * -- testing today queries
-     * -- testing this month queries
-     * -- testing month range queries.
-     * @throws \EE_Error
+     *        -- testing today queries
+     *        -- testing this month queries
+     *        -- testing month range queries.
      */
     public function test_get_registrations()
     {
@@ -129,7 +173,7 @@ class Registrations_Admin_Page_Test extends EE_UnitTestCase
             }
         }*/
         // baseline DateTime objects
-        $now        = new DateTime('now', new DateTimeZone('America/Vancouver'));
+        $now        = new DateTime('now', $this->Vancouver_TZ);
         $prev_month = $this->_get_date_one_month_ago($now);
         $next_month = $this->_get_date_one_month_from_now($now);
         // echo "\n\n now : " . $now->format( 'M j, Y g:i a' );
@@ -175,6 +219,7 @@ class Registrations_Admin_Page_Test extends EE_UnitTestCase
         );
         $this->_load_requirements();
         $registrations  = $this->_admin_page->get_registrations();
+        $this->request->unSetRequestParams(['page', 'status']);
         // echo "\n\n " . __LINE__ . ") " . __METHOD__ . "() STATUS: " . $_GET['status'];
         // $this->reg_debug( $registrations );
         $this->assertCount(
@@ -189,6 +234,7 @@ class Registrations_Admin_Page_Test extends EE_UnitTestCase
         );
         $this->_load_requirements();
         $registrations  = $this->_admin_page->get_registrations();
+        $this->request->unSetRequestParams(['page', 'status']);
         // echo "\n\n " . __LINE__ . ") " . __METHOD__ . "() STATUS: " . $_GET['status'];
         // $this->reg_debug( $registrations );
         $this->assertCount(
@@ -212,6 +258,7 @@ class Registrations_Admin_Page_Test extends EE_UnitTestCase
             'there should be 1 registration for ' . $_GET['month_range'] . ', not ' . count($registrations)
             . "\nHere are the registrations: " . $this->reg_debug($registrations, true)
         );
+        $this->request->unSetRequestParams(['page', 'month_range']);
     }
 
 
@@ -222,7 +269,7 @@ class Registrations_Admin_Page_Test extends EE_UnitTestCase
      */
     public function reg_debug($registrations, $return = false)
     {
-        $result = "\n\n " . __LINE__ . ") " . __METHOD__ . "()";
+        $result = "\n\n " . __LINE__ . ') ' . __METHOD__ . '()';
         $result .= "\n registration count: " . count($registrations);
         foreach ($registrations as $registration) {
             if ($registration instanceof EE_Registration) {
@@ -240,13 +287,24 @@ class Registrations_Admin_Page_Test extends EE_UnitTestCase
     /**
      * @since 4.8.10.rc.10
      * @group integration
-     * @throws \EE_Error
+     * @throws DomainException
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws ReflectionException
+     * @throws RuntimeException
+     * @throws EntityNotFoundException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws AssertionFailedError
+     * @throws \PHPUnit\Framework\Exception
      */
     public function test__set_registration_status_from_request_for_single_registration()
     {
         //first setup a registration
         /** @var EE_Registration $testing_registration */
-        $testing_registration = $this->factory->registration->create(array('STS_ID' => EEM_Registration::status_id_pending_payment));
+        $testing_registration = $this->factory->registration->create(
+            array('STS_ID' => EEM_Registration::status_id_pending_payment)
+        );
         // and a txn
         $testing_registration->_add_relation_to($this->factory->transaction->create(), 'Transaction');
         $_REQUEST['_REG_ID'] = $testing_registration->ID();
@@ -267,7 +325,16 @@ class Registrations_Admin_Page_Test extends EE_UnitTestCase
     /**
      * @since 4.8.10.rc.10
      * @group integration
-     * @throws \EE_Error
+     * @throws DomainException
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws ReflectionException
+     * @throws RuntimeException
+     * @throws EntityNotFoundException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws AssertionFailedError
+     * @throws \PHPUnit\Framework\Exception
      */
     public function test__set_registration_status_from_request_for_multiple_registrations()
     {
@@ -319,74 +386,126 @@ class Registrations_Admin_Page_Test extends EE_UnitTestCase
         $this->assertEquals($expected_ids, $success['REG_ID']);
 
         //verify registrations got changed to approved (or stayed there).
-        $registrations = EEM_Registration::reset()->instance()->get_all(array(array('STS_ID' => EEM_Registration::status_id_not_approved)));
+        $registrations = EEM_Registration::reset()->instance()->get_all(
+            array(array('STS_ID' => EEM_Registration::status_id_not_approved))
+        );
         $this->assertCount(3, $registrations);
         $this->assertEquals($expected_ids, array_keys($registrations));
     }
 
 
-
+    /**
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws \PHPUnit\Framework\Exception
+     * @since 4.10.2.p
+     */
     public function test_add_event_id_to_where_conditions()
     {
         $this->go_to(
             $this->_get_reg_admin_url(array('event_id' => 42))
         );
         $this->_load_requirements();
-        $where = $this->_admin_page->add_event_id_to_where_conditions($this->_admin_page->get_request_data());
-        $this->assertCount(1, $where);
-        $this->assertArrayHasKey('EVT_ID', $where);
-        $this->assertEquals(42, $where['EVT_ID']);
+        $where = $this->_admin_page->get_registration_query_parameters($this->_admin_page->get_request_data());
+        $this->assertCount(2, $where[0]);
+        $this->assertArrayHasKey('EVT_ID', $where[0]);
+        $this->assertEquals(42, $where[0]['EVT_ID']);
+        $this->request->unSetRequestParam('event_id', true);
     }
 
 
-
+    /**
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws \PHPUnit\Framework\Exception
+     * @since 4.10.2.p
+     */
     public function test_add_category_id_to_where_conditions()
     {
         $this->go_to(
             $this->_get_reg_admin_url(array('EVT_CAT' => 42))
         );
         $this->_load_requirements();
-        $where = $this->_admin_page->add_category_id_to_where_conditions($this->_admin_page->get_request_data());
-        $this->assertCount(1, $where);
-        $this->assertArrayHasKey('Event.Term_Taxonomy.term_id', $where);
-        $this->assertEquals(42,$where['Event.Term_Taxonomy.term_id']);
+        $where = $this->_admin_page->get_registration_query_parameters($this->_admin_page->get_request_data());
+        $this->assertCount(2, $where[0]);
+        $this->assertArrayHasKey('Event.Term_Taxonomy.term_id', $where[0]);
+        $this->assertEquals(42, $where[0]['Event.Term_Taxonomy.term_id']);
+        $this->request->unSetRequestParam('EVT_CAT', true);
     }
 
 
+    /**
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws \PHPUnit\Framework\Exception
+     * @since 4.10.2.p
+     */
     public function test_add_datetime_id_to_where_conditions()
     {
         $this->go_to(
             $this->_get_reg_admin_url(array('datetime_id' => 42))
         );
         $this->_load_requirements();
-        $where = $this->_admin_page->add_datetime_id_to_where_conditions($this->_admin_page->get_request_data());
-        $this->assertCount(1, $where);
-        $this->assertArrayHasKey('Ticket.Datetime.DTT_ID', $where);
-        $this->assertEquals(42, $where['Ticket.Datetime.DTT_ID']);
+        $where = $this->_admin_page->get_registration_query_parameters($this->_admin_page->get_request_data());
+        $this->assertCount(2, $where[0]);
+        $this->assertArrayHasKey('Ticket.Datetime.DTT_ID', $where[0]);
+        $this->assertEquals(42, $where[0]['Ticket.Datetime.DTT_ID']);
+        $this->request->unSetRequestParam('datetime_id', true);
     }
 
+
+    /**
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws AssertionFailedError
+     * @throws \PHPUnit\Framework\Exception
+     * @since 4.10.2.p
+     */
     public function test_add_registration_status_to_where_conditions_no_status_not_trash_view()
     {
         $this->_load_requirements();
-        $where = $this->_admin_page->add_registration_status_to_where_conditions($this->_admin_page->get_request_data());
-        $this->assertCount(1, $where);
-        $this->assertArrayHasKey('STS_ID', $where);
-        $this->assertTrue(is_array($where['STS_ID']));
-        $this->assertArrayContains('!=', $where['STS_ID']);
-        $this->assertArrayContains(EEM_Registration::status_id_incomplete, $where['STS_ID']);
+        $where = $this->_admin_page->get_registration_query_parameters($this->_admin_page->get_request_data());
+        $this->assertCount(1, $where[0]);
+        $this->assertArrayHasKey('STS_ID', $where[0]);
+        $this->assertInternalType('array',$where[0]['STS_ID']);
+        $this->assertArrayContains('!=', $where[0]['STS_ID']);
+        $this->assertArrayContains(EEM_Registration::status_id_incomplete, $where[0]['STS_ID']);
     }
 
 
-
+    /**
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @since 4.10.2.p
+     */
     public function test_add_registration_status_to_where_conditions_no_status_trash_view(){
         $this->_load_requirements();
         $req = $this->_admin_page->get_request_data();
         $req['status'] = 'trash';
-        $where = $this->_admin_page->add_registration_status_to_where_conditions($req);
-        $this->assertEquals(array( 'REG_deleted' => true ), $where);
+        $where = $this->_admin_page->get_registration_query_parameters($req);
+        $this->assertEquals(array( 'REG_deleted' => true ), $where[0]);
+        $this->request->unSetRequestParam('status', true);
     }
 
 
+    /**
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws \PHPUnit\Framework\Exception
+     * @since 4.10.2.p
+     */
     public function test_add_registration_status_to_where_conditions_with_status_and_incomplete_view()
     {
         $this->go_to(
@@ -395,103 +514,184 @@ class Registrations_Admin_Page_Test extends EE_UnitTestCase
         $this->_load_requirements();
         $req = $this->_admin_page->get_request_data();
         $req['status'] = 'incomplete';
-        $where = $this->_admin_page->add_registration_status_to_where_conditions($req);
-        $this->assertCount(1, $where);
-        $this->assertArrayHasKey('STS_ID',$where);
-        $this->assertEquals(EEM_Registration::status_id_approved, $where['STS_ID']);
+        $where = $this->_admin_page->get_registration_query_parameters($req);
+        $this->assertCount(1, $where[0]);
+        $this->assertArrayHasKey('STS_ID', $where[0]);
+        $this->assertEquals(EEM_Registration::status_id_approved, $where[0]['STS_ID']);
+        $this->request->unSetRequestParams(['_reg_status', 'status'], true);
     }
 
 
+    /**
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws \PHPUnit\Framework\Exception
+     * @since 4.10.2.p
+     */
     public function test_add_registration_status_to_where_conditions_no_status_and_incomplete_view()
     {
         $this->_load_requirements();
         $req = $this->_admin_page->get_request_data();
         $req['status'] = 'incomplete';
-        $where = $this->_admin_page->add_registration_status_to_where_conditions($req);
-        $this->assertCount(1, $where);
-        $this->assertArrayHasKey('STS_ID',$where);
-        $this->assertEquals(EEM_Registration::status_id_incomplete, $where['STS_ID']);
+        $where = $this->_admin_page->get_registration_query_parameters($req);
+        $this->assertCount(1, $where[0]);
+        $this->assertArrayHasKey('STS_ID', $where[0]);
+        $this->assertEquals(EEM_Registration::status_id_incomplete, $where[0]['STS_ID']);
+        $this->request->unSetRequestParam('status', true);
     }
 
 
+    /**
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws \PHPUnit\Framework\Exception
+     * @since 4.10.2.p
+     */
     public function test_add_registration_status_to_where_conditions_with_status()
     {
         $this->go_to(
             $this->_get_reg_admin_url(array('_reg_status'=>EEM_Registration::status_id_approved))
         );
         $this->_load_requirements();
-        $where = $this->_admin_page->add_registration_status_to_where_conditions($this->_admin_page->get_request_data());
-        $this->assertCount(1, $where);
-        $this->assertArrayHasKey('STS_ID',$where);
-        $this->assertEquals(EEM_Registration::status_id_approved,$where['STS_ID']);
+        $where = $this->_admin_page->get_registration_query_parameters($this->_admin_page->get_request_data());
+        $this->assertCount(1, $where[0]);
+        $this->assertArrayHasKey('STS_ID',$where[0]);
+        $this->assertEquals(EEM_Registration::status_id_approved,$where[0]['STS_ID']);
+        $this->request->unSetRequestParam('_reg_status', true);
     }
 
 
-
+    /**
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws \PHPUnit\Framework\Exception
+     * @since 4.10.2.p
+     */
     public function test_add_date_to_where_conditions_for_this_month()
     {
         $this->_load_requirements();
         $current_year_and_month = date('Y-m', current_time('timestamp'));
         $days_this_month = date('t', current_time('timestamp'));
-        $expected_start_date = date_create_from_format( 'Y-m-d H:i:s', $current_year_and_month . '-01 00:00:00' );
-        $expected_end_date = date_create_from_format( 'Y-m-d H:i:s', $current_year_and_month . '-' . $days_this_month . ' 23:59:59' );
+        $expected_start_date = date_create_from_format(
+            'Y-m-d H:i:s',
+            $current_year_and_month . '-01 00:00:00',
+            $this->Vancouver_TZ
+        )->setTimezone($this->UTC_TZ);
+        $expected_end_date = date_create_from_format(
+            'Y-m-d H:i:s',
+            $current_year_and_month . '-' . $days_this_month . ' 23:59:59',
+            $this->Vancouver_TZ
+        )->setTimezone($this->UTC_TZ);
         $req = $this->_admin_page->get_request_data();
         $req['status'] = 'month';
-        $where = $this->_admin_page->add_date_to_where_conditions($req);
-        $this->assertCount(1,$where);
-        $this->assertArrayHasKey('REG_date',$where);
-        $this->assertCount(2,$where['REG_date']);
-        $this->assertContains('BETWEEN',$where['REG_date']);
-        $this->assertInstanceOf('Datetime',$where['REG_date'][1][0]);
-        $this->assertInstanceOf('Datetime',$where['REG_date'][1][1]);
-        $actual_start_date = $where['REG_date'][1][0];
-        $actual_end_date = $where['REG_date'][1][1];
-        $this->assertEquals($expected_start_date->format('Y-m-d H:i'), $actual_start_date->format('Y-m-d H:i'));
-        $this->assertEquals($expected_end_date->format('Y-m-d H:i'), $actual_end_date->format('Y-m-d H:i'));
+        $where = $this->_admin_page->get_registration_query_parameters($req);
+        $this->request->unSetRequestParam('status', true);
+        $this->assertCount(2,$where[0]);
+        $this->assertArrayHasKey('REG_date',$where[0]);
+        $this->assertCount(2,$where[0]['REG_date']);
+        $this->assertContains('BETWEEN',$where[0]['REG_date']);
+        $this->assertInstanceOf('Datetime',$where[0]['REG_date'][1][0]);
+        $this->assertInstanceOf('Datetime',$where[0]['REG_date'][1][1]);
+        /** @var EventEspresso\core\domain\entities\DbSafeDateTime $actual_start_date */
+        /** @var EventEspresso\core\domain\entities\DbSafeDateTime $actual_end_date */
+        list($actual_start_date, $actual_end_date) = $where[0]['REG_date'][1];
+        $this->assertEquals(
+            $expected_start_date->format('Y-m-d H:i'),
+            $actual_start_date->format('Y-m-d H:i'),
+            'start dates do not match'
+        );
+        $this->assertEquals(
+            $expected_end_date->format('Y-m-d H:i'),
+            $actual_end_date->format('Y-m-d H:i'),
+            'end dates do not match'
+        );
     }
 
 
-
+    /**
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws AssertionFailedError
+     * @throws \PHPUnit\Framework\Exception
+     * @since 4.10.2.p
+     */
     public function test_add_search_to_where_conditions()
     {
         $this->go_to(
             $this->_get_reg_admin_url(array('s'=>'gogogo'))
         );
         $this->_load_requirements();
-        $where = $this->_admin_page->add_search_to_where_conditions($this->_admin_page->get_request_data());
-        $this->assertCount(1,$where);
-        $this->assertArrayHasKey('OR*search_conditions',$where);
-        $this->assertArrayHasKey('Event.EVT_name',$where['OR*search_conditions']);
-        $this->assertTrue(is_array($where['OR*search_conditions']['Event.EVT_name']));
-        $this->assertEquals('%gogogo%',$where['OR*search_conditions']['Event.EVT_name'][1]);
+        $where = $this->_admin_page->get_registration_query_parameters(
+            $this->_admin_page->get_request_data()
+        );
+        $this->assertCount(2,$where[0]);
+        $this->assertArrayHasKey('OR*search_conditions',$where[0]);
+        $this->assertArrayHasKey('Event.EVT_name',$where[0]['OR*search_conditions']);
+        $this->assertInternalType('array', $where[0]['OR*search_conditions']['Event.EVT_name']);
+        $this->assertEquals('%gogogo%',$where[0]['OR*search_conditions']['Event.EVT_name'][1]);
+        $this->request->unSetRequestParam('s', true);
     }
 
 
+    /**
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws AssertionFailedError
+     * @throws \PHPUnit\Framework\Exception
+     * @since 4.10.2.p
+     */
     public function test_get_orderby_for_registrations_query_none_specified()
     {
         $this->_load_requirements();
-        $orderby = $this->_admin_page->get_orderby_for_registrations_query();
-        $this->assertCount(1,$orderby);
-        $this->assertArrayHasKey('order_by',$orderby);
-        $this->assertTrue(is_array($orderby['order_by']));
-        $this->assertArrayHasKey('REG_date',$orderby['order_by']);
-        $this->assertEquals('DESC',$orderby['order_by']['REG_date']);
+        $query_params = $this->_admin_page->get_registration_query_parameters(
+            $this->_admin_page->get_request_data()
+        );
+        $this->assertArrayHasKey('order_by', $query_params);
+        $orderby = $query_params['order_by'];
+        $this->assertCount(2,$orderby);
+        $this->assertInternalType('array', $orderby);
+        $this->assertArrayHasKey('REG_date', $orderby);
+        $this->assertEquals('DESC', $orderby['REG_date']);
     }
 
 
-
+    /**
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws AssertionFailedError
+     * @throws \PHPUnit\Framework\Exception
+     * @since 4.10.2.p
+     */
     public function test_get_orderby_for_registrations_query_specified_orderby_and_order()
     {
         $this->go_to(
-            $this->_get_reg_admin_url(array('orderby'=>'_Reg_status','order'=>'ASC'))
+            $this->_get_reg_admin_url(array('orderby' => '_Reg_status', 'order' => 'ASC'))
         );
         $this->_load_requirements();
-        $orderby = $this->_admin_page->get_orderby_for_registrations_query();
-        $this->assertCount(1,$orderby);
-        $this->assertArrayHasKey('order_by',$orderby);
-        $this->assertTrue(is_array($orderby['order_by']));
-        $this->assertArrayHasKey('STS_ID',$orderby['order_by']);
-        $this->assertEquals('ASC',$orderby['order_by']['STS_ID']);
+        $query_params = $this->_admin_page->get_registration_query_parameters(
+            $this->_admin_page->get_request_data()
+        );
+        $this->assertArrayHasKey('order_by', $query_params);
+        $orderby = $query_params['order_by'];
+        $this->assertCount(2,$orderby);
+        $this->assertInternalType('array', $orderby);
+        $this->assertArrayHasKey('STS_ID',$orderby);
+        $this->assertEquals('ASC',$orderby['STS_ID']);
+        $this->assertArrayHasKey('REG_ID',$orderby);
+        $this->assertEquals('ASC',$orderby['REG_ID']);
+        $this->request->unSetRequestParams(['orderby', 'order'], true);
     }
 }
 //end Registrations_Admin_Page_Test

@@ -2,8 +2,8 @@
 
 namespace EventEspresso\core\services\assets;
 
+use DomainException;
 use EE_Error;
-use EventEspresso\core\domain\DomainInterface;
 use EventEspresso\core\domain\services\assets\CoreAssetManager;
 use EventEspresso\core\domain\values\assets\Asset;
 use EventEspresso\core\domain\values\assets\JavascriptAsset;
@@ -12,7 +12,6 @@ use EventEspresso\core\exceptions\ExceptionStackTraceDisplay;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidFilePathException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
-use EventEspresso\core\services\loaders\LoaderFactory;
 use Exception;
 use InvalidArgumentException;
 
@@ -161,10 +160,11 @@ class Registry
     /**
      * Registers JS assets with WP core
      *
-     * @since 4.9.62.p
      * @param JavascriptAsset[] $scripts
      * @throws AssetRegistrationException
      * @throws InvalidDataTypeException
+     * @throws DomainException
+     * @since 4.9.62.p
      */
     public function registerScripts(array $scripts)
     {
@@ -202,9 +202,10 @@ class Registry
     /**
      * Registers CSS assets with WP core
      *
-     * @since 4.9.62.p
      * @param StylesheetAsset[] $styles
      * @throws InvalidDataTypeException
+     * @throws DomainException
+     * @since 4.9.62.p
      */
     public function registerStyles(array $styles)
     {
@@ -487,7 +488,7 @@ class Registry
 
 
     /**
-     * Return the dependencies for a given asset $chunk_name
+     * Return the dependencies array and version string for a given asset $chunk_name
      *
      * @param string $namespace
      * @param string $chunk_name
@@ -495,29 +496,29 @@ class Registry
      * @return array
      * @since 4.9.82.p
      */
-    private function getDependenciesForAsset($namespace, $chunk_name, $asset_type)
+    private function getDetailsForAsset($namespace, $chunk_name, $asset_type)
     {
         $asset_index = $chunk_name . '.' . $asset_type;
         if (! isset( $this->dependencies_data[ $namespace ][ $asset_index ])) {
             $path = isset($this->manifest_data[ $namespace ]['path'])
                 ? $this->manifest_data[ $namespace ]['path']
                 : '';
-            $dependencies_index = $chunk_name . '.' . Asset::TYPE_JSON;
+            $dependencies_index = $chunk_name . '.' . Asset::TYPE_PHP;
             $file_path = isset($this->manifest_data[ $namespace ][ $dependencies_index ])
                 ? $path . $this->manifest_data[ $namespace ][ $dependencies_index ]
                 :
                 '';
             $this->dependencies_data[ $namespace ][ $asset_index ] = $file_path !== '' && file_exists($file_path)
-                ? $this->getDependenciesForAssetType($namespace, $asset_type, $file_path, $chunk_name)
+                ? $this->getDetailsForAssetType($namespace, $asset_type, $file_path, $chunk_name)
                 : [];
         }
-        return $this->dependencies_data[ $namespace ][ $asset_index ];
+        $details = $this->dependencies_data[ $namespace ][ $asset_index ];
+        return $details;
     }
 
 
     /**
-     * Return dependencies according to asset type.
-     *
+     * Return dependencies array and version string according to asset type.
      * For css assets, this filters the auto generated dependencies by css type.
      *
      * @param string $namespace
@@ -527,25 +528,32 @@ class Registry
      * @return array
      * @since 4.9.82.p
      */
-    private function getDependenciesForAssetType($namespace, $asset_type, $file_path, $chunk_name)
+    private function getDetailsForAssetType($namespace, $asset_type, $file_path, $chunk_name)
     {
-        $asset_dependencies = json_decode(file_get_contents($file_path), true);
+        // $asset_dependencies = json_decode(file_get_contents($file_path), true);
+        $asset_details = require($file_path);
+        $asset_details['dependencies'] = isset($asset_details['dependencies'])
+            ? $asset_details['dependencies']
+            : [];
+        $asset_details['version'] = isset($asset_details['version'])
+            ? $asset_details['version']
+            : '';
         if ($asset_type === Asset::TYPE_JS) {
-            return $chunk_name === 'eejs-core' ? $asset_dependencies : array_merge(
-                $asset_dependencies,
-                [ CoreAssetManager::JS_HANDLE_JS_CORE ]
-            );
+            $asset_details['dependencies'] =  $chunk_name === 'eejs-core'
+                ? $asset_details['dependencies']
+                : $asset_details['dependencies'] + [ CoreAssetManager::JS_HANDLE_JS_CORE ];
+            return $asset_details;
         }
         // for css we need to make sure there is actually a css file related to this chunk.
         if (isset($this->manifest_data[ $namespace ])) {
             // array of css chunk files for ee.
             $css_chunks = array_map(
-                function ($value) {
+                static function ($value) {
                     return str_replace('.css', '', $value);
                 },
                 array_filter(
                     array_keys($this->manifest_data[ $namespace ]),
-                    function ($value) {
+                    static function ($value) {
                         return strpos($value, '.css') !== false;
                     }
                 )
@@ -555,42 +563,43 @@ class Registry
             // flip for easier search
             $css_chunks = array_flip($css_chunks);
             // now let's filter the dependencies for the incoming chunk to actual chunks that have styles
-            return array_filter(
-                $asset_dependencies,
-                function ($chunk_name) use ($css_chunks) {
+            $asset_details['dependencies'] = array_filter(
+                $asset_details['dependencies'],
+                static function ($chunk_name) use ($css_chunks) {
                     return isset($css_chunks[ $chunk_name ]);
                 }
             );
+            return $asset_details;
         }
-        return [];
+        return ['dependencies' => [], 'version' => ''];
     }
 
 
     /**
-     * Get the dependencies array for the given js asset chunk name
+     * Get the dependencies array and version string for the given js asset chunk name
      *
      * @param string $namespace
      * @param string $chunk_name
      * @return array
-     * @since 4.9.82.p
+     * @since 4.10.2.p
      */
-    public function getJsDependencies($namespace, $chunk_name)
+    public function getJsAssetDetails($namespace, $chunk_name)
     {
-        return $this->getDependenciesForAsset($namespace, $chunk_name, Asset::TYPE_JS);
+        return $this->getDetailsForAsset($namespace, $chunk_name, Asset::TYPE_JS);
     }
 
 
     /**
-     * Get the dependencies array for the given css asset chunk name
+     * Get the dependencies array and version string for the given css asset chunk name
      *
      * @param string $namespace
      * @param string $chunk_name
      * @return array
-     * @since 4.9.82.p
+     * @since 4.10.2.p
      */
-    public function getCssDependencies($namespace, $chunk_name)
+    public function getCssAssetDetails($namespace, $chunk_name)
     {
-        return $this->getDependenciesForAsset($namespace, $chunk_name, Asset::TYPE_CSS);
+        return $this->getDetailsForAsset($namespace, $chunk_name, Asset::TYPE_CSS);
     }
 
 
@@ -764,5 +773,37 @@ class Registry
             'FHEE__EventEspresso_core_services_assets_Registry__debug',
             defined('EE_DEBUG') && EE_DEBUG
         );
+    }
+
+
+    /**
+     * Get the dependencies array for the given js asset chunk name
+     *
+     * @param string $namespace
+     * @param string $chunk_name
+     * @return array
+     * @deprecated 4.10.2.p
+     * @since 4.9.82.p
+     */
+    public function getJsDependencies($namespace, $chunk_name)
+    {
+        $details = $this->getJsAssetDetails($namespace, $chunk_name);
+        return isset($details['dependencies']) ? $details['dependencies'] : [];
+    }
+
+
+    /**
+     * Get the dependencies array for the given css asset chunk name
+     *
+     * @param string $namespace
+     * @param string $chunk_name
+     * @return array
+     * @deprecated 4.10.2.p
+     * @since      4.9.82.p
+     */
+    public function getCssDependencies($namespace, $chunk_name)
+    {
+        $details = $this->getCssAssetDetails($namespace, $chunk_name);
+        return isset($details['dependencies']) ? $details['dependencies'] : [];
     }
 }

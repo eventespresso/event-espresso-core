@@ -325,6 +325,52 @@ if( ! $conflicting_events ){
 
 (see the [model objects docs](using-ee4-model-objects.md) for info on EE_Event::new_instance(...) and the save() method)
 
+### get_col()
+
+```php
+EEM_Base::get_col($query_params = array(), $field_to_select = null)
+```
+
+Wrapper for `$wpdb->get_col()` which returns a flat array of values from the model's `$field_to_select` field,
+using the provided model query parameters.
+
+#### Parameters
+##### $query_params
+`array` Documented in [Model Query Params Documentation](model-query-params.md).
+
+##### $field_to_select
+`string | null` the name of the model field (not necessarily the same as its corresponding database column). Defaults to the field's primary key.
+
+#### Returns
+`array` A flat array of values for the requested field from the matching database rows.
+
+#### Examples
+
+```php
+$ids_of_datetimes_for_event_123 = EEM_Datetime::instance()->get_col(
+    [
+        [
+            'EVT_ID' => 123
+        ]
+    ]
+);
+```
+
+```php
+$countries_of_event_attendees = EEM_Attendee::instance()->get_col(
+    [
+        [
+            'Registration.EVT_ID' => 123
+        ],
+        'group_by' => 'CNT_ISO'
+    ],
+    'CNT_ISO'
+);
+```
+
+
+(see the [model objects docs](using-ee4-model-objects.md) for info on EE_Event::new_instance(...) and the save() method)
+
 ### count()
 
 ```php

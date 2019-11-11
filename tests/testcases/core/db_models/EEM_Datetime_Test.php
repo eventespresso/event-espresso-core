@@ -451,11 +451,16 @@ class EEM_Datetime_Test extends EE_UnitTestCase {
 	 * @since 4.8.27.rc.005
 	 */
 	public function test_get_datetime_counts_by_status_and_get_datetime_count_for_status() {
+
+	    $existing_datetimes = EEM_Datetime::instance()->get_all();
+        $this->assertInternalType('array', $existing_datetimes);
+        $this->assertCount(0, $existing_datetimes);
 		//setup some datetimes for testing with
 		$upcoming_datetimes = $this->factory->datetime->create_many(5);
 		//set upcoming datetimes to actually be upcoming!
 		foreach( $upcoming_datetimes as $datetime ) {
-			$datetime->set('DTT_EVT_start', time() + 500 );
+			$datetime->set('DTT_EVT_start', time() + MONTH_IN_SECONDS );
+            $datetime->set('DTT_EVT_end', time() + (MONTH_IN_SECONDS + DAY_IN_SECONDS) );
 			$datetime->save();
 		}
 
@@ -463,13 +468,15 @@ class EEM_Datetime_Test extends EE_UnitTestCase {
 		$expired_datetimes = $this->factory->datetime->create_many(2);
 		//set expired
 		foreach( $expired_datetimes as $datetime ) {
-			$datetime->set( 'DTT_EVT_end', time() - 500 );
-			$datetime->set( 'DTT_EVT_start', time() - 1000 );
+			$datetime->set( 'DTT_EVT_start', time() - (MONTH_IN_SECONDS + DAY_IN_SECONDS) );
+			$datetime->set( 'DTT_EVT_end', time() - MONTH_IN_SECONDS );
 			$datetime->save();
 		}
 
 		//active datetimes
-		$active_datetime = $this->factory->datetime->create( array( 'DTT_EVT_start' => time() - 500, 'DTT_EVT_end' => time() + 500 ) );
+		$active_datetime = $this->factory->datetime->create(
+		    array( 'DTT_EVT_start' => time() - DAY_IN_SECONDS, 'DTT_EVT_end' => time() + DAY_IN_SECONDS )
+        );
 
 		//now get the results from the method being tested
 		$datetimes_count = EEM_Datetime::instance()->get_datetime_counts_by_status();

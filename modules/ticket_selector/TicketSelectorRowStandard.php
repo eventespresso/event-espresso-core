@@ -133,14 +133,11 @@ class TicketSelectorRowStandard extends TicketSelectorRow
         $this->min = 0;
         $this->max = $this->ticket->max();
         $remaining = $this->ticket->remaining();
-        if ($this->ticket->is_on_sale() && $this->ticket->is_remaining()) {
-            $this->setTicketMinAndMax($remaining);
-        } else {
-            // set flag if ticket is required (flag is set to start date so that future tickets are not blocked)
-            $this->required_ticket_sold_out = $this->ticket->required() && ! $remaining
-                ? $this->ticket->start_date()
-                : $this->required_ticket_sold_out;
-        }
+        $this->setTicketMinAndMax($remaining);
+        // set flag if ticket is required (flag is set to start date so that future tickets are not blocked)
+        $this->required_ticket_sold_out = $this->ticket->required() && ! $remaining
+            ? $this->ticket->start_date()
+            : $this->required_ticket_sold_out;
         $this->setTicketPriceDetails();
         $this->setTicketStatusClasses($remaining);
         $filtered_row_html = $this->getFilteredRowHtml();
