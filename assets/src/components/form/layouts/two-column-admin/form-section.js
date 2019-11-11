@@ -53,34 +53,34 @@ const FormSection = ( {
 		`${ htmlClass } ee-form-section px-0 pt-3 border rounded` :
 		'ee-form-section px-0 pt-3 border rounded';
 	const formInfo = useMemo(
-		() => formInfoNotice ? (
+		() => !! formInfoNotice && (
 			<FormInfo
 				key="formInfo"
 				formInfo={ formInfoNotice }
 				dismissable={ true }
 			/>
-		) : null,
+		),
 		[ formInfoNotice ]
 	);
 	const formErrors = useMemo(
-		() => errorsNotice && hasValidationErrors ? (
+		() => errorsNotice && !! hasValidationErrors && (
 			<FormInfo
 				formInfo={ errorsNotice }
 				dashicon={ 'warning' }
 				dismissable={ false }
 			/>
-		) : null,
+		),
 		[ hasValidationErrors, errorsNotice ]
 	);
 	const requiredFields = useMemo(
-		() => requiredNotice && showRequiredNotice ? (
+		() => requiredNotice && !! showRequiredNotice && (
 			<FormInfo
 				key="requiredFields"
 				formInfo={ requiredNotice }
 				dismissable={ false }
 				htmlClass={ 'ee-focus-priority-8' }
 			/>
-		) : null,
+		),
 		[ showRequiredNotice, requiredNotice ]
 	);
 	return (
