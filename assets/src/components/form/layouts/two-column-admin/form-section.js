@@ -42,6 +42,7 @@ const FormSection = ( {
 	...extraProps
 } ) => {
 	const {
+		formInfoNotice,
 		requiredNotice,
 		errorsNotice,
 		hasValidationErrors,
@@ -51,20 +52,37 @@ const FormSection = ( {
 	const classes = htmlClass ?
 		`${ htmlClass } ee-form-section px-0 pt-3 border rounded` :
 		'ee-form-section px-0 pt-3 border rounded';
-	const formInfo = useMemo( () => showRequiredNotice && (
-		<FormInfo
-			key="formInfo"
-			formInfo={ requiredNotice }
-			dismissable={ false }
-		/>
-	), [ showRequiredNotice ] );
-	const formErrors = hasValidationErrors ? (
-		<FormInfo
-			formInfo={ errorsNotice }
-			dashicon={ 'warning' }
-			dismissable={ false }
-		/>
-	) : null;
+	const formInfo = useMemo(
+		() => !! formInfoNotice && (
+			<FormInfo
+				key="formInfo"
+				formInfo={ formInfoNotice }
+				dismissable={ true }
+			/>
+		),
+		[ formInfoNotice ]
+	);
+	const formErrors = useMemo(
+		() => errorsNotice && !! hasValidationErrors && (
+			<FormInfo
+				formInfo={ errorsNotice }
+				dashicon={ 'warning' }
+				dismissable={ false }
+			/>
+		),
+		[ hasValidationErrors, errorsNotice ]
+	);
+	const requiredFields = useMemo(
+		() => requiredNotice && !! showRequiredNotice && (
+			<FormInfo
+				key="requiredFields"
+				formInfo={ requiredNotice }
+				dismissable={ false }
+				htmlClass={ 'ee-focus-priority-8' }
+			/>
+		),
+		[ showRequiredNotice, requiredNotice ]
+	);
 	return (
 		<div id={ htmlId } className={ classes }>
 			<div className="px-3">
@@ -81,6 +99,7 @@ const FormSection = ( {
 						);
 					} )
 				}
+				{ requiredFields }
 			</div>
 		</div>
 	);

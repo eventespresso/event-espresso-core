@@ -8,7 +8,10 @@ import PropTypes from 'prop-types';
  */
 const InputHelpText = ( { helpTextID, helpText } ) => {
 	return helpText ? (
-		<p id={ helpTextID } className="espresso-input-help-text" >
+		<p
+			id={ helpTextID }
+			className={ 'espresso-input-help-text ee-focus-priority-6' }
+		>
 			{ helpText }
 		</p>
 	) : null;

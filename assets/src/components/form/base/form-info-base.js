@@ -1,6 +1,7 @@
 /**
  * External imports
  */
+import classNames from 'classnames';
 import PropTypes from 'prop-types';
 import { __ } from '@eventespresso/i18n';
 import { Dashicon, IconButton } from '@wordpress/components';
@@ -38,12 +39,14 @@ const FormInfoBase = ( {
 	onDismiss,
 	formInfoVars,
 } ) => {
-	let classes = htmlClass ?
-		`${ htmlClass } ee-form-info` :
-		'ee-form-info';
-	classes = dashicon ?
-		`${ classes } ee-form-info-type-${ dashicon } has-info-type` :
-		classes;
+	const classes = classNames(
+		htmlClass,
+		'ee-form-info',
+		{
+			[ `ee-form-info-type-${ dashicon }` ]: dashicon,
+			'has-info-type': dashicon,
+		}
+	);
 	const typeIcon = dashicon ? (
 		<Dashicon
 			className="ee-form-info-type"

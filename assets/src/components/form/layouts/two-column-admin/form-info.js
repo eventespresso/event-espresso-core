@@ -36,7 +36,7 @@ const FormInfo = ( {
 	formInfoVars,
 } ) => {
 	const [ dismiss, setDismiss ] = useState( false );
-	const onDismiss = () => dismissable ? setDismiss( true ) : null;
+	const onDismiss = dismissable ? () => setDismiss( true ) : null;
 	const classes = classNames(
 		htmlClass,
 		'ee-form-info-row',
