@@ -82,6 +82,7 @@ class Read extends Base
      */
     public static function handleRequestGetAll(WP_REST_Request $request, $version, $model_name)
     {
+        /** @var Read $controller */
         $controller = LoaderFactory::getLoader()->getNew('EventEspresso\core\libraries\rest_api\controllers\model\Read');
         try {
             $controller->setRequestedVersion($version);
@@ -123,6 +124,7 @@ class Read extends Base
      */
     public static function handleSchemaRequest($version, $model_name)
     {
+        /** @var Read $controller */
         $controller = LoaderFactory::getLoader()->getNew('EventEspresso\core\libraries\rest_api\controllers\model\Read');
         try {
             $controller->setRequestedVersion($version);
@@ -179,9 +181,7 @@ class Read extends Base
      * @param EE_Model_Field_Base  $field
      * @param array                $schema
      * @return array
-     * @throws RestException if a default value has a PHP object, which should never do (and if we
      * @throws EE_Error
-     * did, let's know about it ASAP, so let the exception bubble up)
      */
     protected function translateDefaultsForRestResponse($field_name, EE_Model_Field_Base $field, array $schema)
     {
@@ -398,8 +398,7 @@ class Read extends Base
      * @throws ModelConfigurationException
      * @throws ReflectionException
      * @throws RestException
-     * @throws RestPasswordIncorrectException
-     * @throws RestPasswordRequiredException
+     * @throws ModelConfigurationException
      * @throws UnexpectedEntityException
      */
     protected function getEntitiesFromRelationUsingModelQueryParams($primary_model_query_params, $relation, $request)
@@ -528,11 +527,9 @@ class Read extends Base
      * @throws InvalidArgumentException
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
-     * @throws ModelConfigurationException
      * @throws ReflectionException
      * @throws RestException
-     * @throws RestPasswordIncorrectException
-     * @throws RestPasswordRequiredException
+     * @throws ModelConfigurationException
      * @throws UnexpectedEntityException
      */
     public function getEntitiesFromRelation($id, $relation, $request)
@@ -613,17 +610,17 @@ class Read extends Base
      * @param WP_REST_Request $rest_request
      * @param string          $deprecated no longer used
      * @return array ready for being converted into json for sending to client
+     * @throws DomainException
      * @throws EE_Error
      * @throws InvalidArgumentException
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
+     * @throws ModelConfigurationException
      * @throws ReflectionException
      * @throws RestException
      * @throws RestPasswordIncorrectException
      * @throws RestPasswordRequiredException
-     * @throws ModelConfigurationException
      * @throws UnexpectedEntityException
-     * @throws DomainException
      */
     public function createEntityFromWpdbResult($model, $db_row, $rest_request, $deprecated = null)
     {
@@ -728,9 +725,9 @@ class Read extends Base
     /**
      * Returns an array describing which fields can be protected, and which actually were removed this request
      *
-     * @param $model
-     * @param $results_so_far
-     * @param $protected
+     * @param EEM_Base $model
+     * @param          $results_so_far
+     * @param          $protected
      * @return array results
      * @throws EE_Error
      * @since 4.9.74.p
@@ -781,7 +778,7 @@ class Read extends Base
         );
         // if this is a CPT, we need to set the global $post to it,
         // otherwise shortcodes etc won't work properly while rendering it
-        if ($model instanceof \EEM_CPT_Base) {
+        if ($model instanceof EEM_CPT_Base) {
             $do_chevy_shuffle = true;
         } else {
             $do_chevy_shuffle = false;
@@ -801,7 +798,7 @@ class Read extends Base
                 );
             }
             $model_object_classname = 'EE_' . $model->get_this_model_name();
-            $post->{$model_object_classname} = \EE_Registry::instance()->load_class(
+            $post->{$model_object_classname} = EE_Registry::instance()->load_class(
                 $model_object_classname,
                 $result,
                 false,
@@ -830,7 +827,7 @@ class Read extends Base
                     'raw'    => $this->prepareFieldObjValueForJson($field_obj, $field_value),
                     'pretty' => $this->prepareFieldObjValueForJson($field_obj, $field_value, 'pretty'),
                 );
-            } elseif ($field_obj instanceof \EE_Datetime_Field) {
+            } elseif ($field_obj instanceof EE_Datetime_Field) {
                 $field_value = $field_obj->prepare_for_set_from_db($field_value);
                 // if the value is null, but we're not supposed to permit null, then set to the field's default
                 if (is_null($field_value)) {
@@ -879,7 +876,6 @@ class Read extends Base
      * @param mixed               $value  as it's stored on a model object
      * @param string              $format valid values are 'normal' (default), 'pretty', 'datetime_obj'
      * @return mixed
-     * @throws RestException if $value contains a PHP object
      * @throws EE_Error
      */
     protected function prepareFieldObjValueForJson(EE_Model_Field_Base $field_obj, $value, $format = 'normal')
@@ -1112,8 +1108,6 @@ class Read extends Base
      * @param boolean         $row_is_protected whether this row is password protected or not
      * @return stdClass the _calculations item in the entity
      * @throws EE_Error
-     * @throws RestException if a default value has a PHP object, which should never do (and if we
-     *                                          did, let's know about it ASAP, so let the exception bubble up)
      * @throws UnexpectedEntityException
      */
     protected function getEntityCalculations($model, $wpdb_row, $rest_request, $row_is_protected = false)
@@ -1507,12 +1501,6 @@ class Read extends Base
 
 
     /**
-     * @param string $include_string @see Read:handle_request_get_all
-     * @param string $model_name
-     * @return array of fields for this model. If $model_name is provided, then
-     *                               the fields for that model, with the model's name removed from each.
-     *                               If $include_string was blank or '*' returns an empty array
-     * @throws EE_Error
      * @deprecated since 4.8.36.rc.001 You should instead use Read::explode_and_get_items_prefixed_with.
      *             Deprecated because its return values were really quite confusing- sometimes it returned
      *             an empty array (when the include string was blank or '*') or sometimes it returned
@@ -1520,6 +1508,12 @@ class Read extends Base
      *             Parses the $include_string so we fetch all the field names relating to THIS model
      *             (ie have NO period in them), or for the provided model (ie start with the model
      *             name and then a period).
+     * @param string $include_string @see Read:handle_request_get_all
+     * @param string $model_name
+     * @return array of fields for this model. If $model_name is provided, then
+     *                               the fields for that model, with the model's name removed from each.
+     *                               If $include_string was blank or '*' returns an empty array
+     * @throws EE_Error
      */
     public function extractIncludesForThisModel($include_string, $model_name = null)
     {

@@ -7,7 +7,6 @@ use EE_Admin_Config;
 use EE_Datetime;
 use EE_Error;
 use EE_Event;
-use EEH_DTT_Helper;
 use EEM_Datetime;
 use EEM_Event;
 use EEM_Price;
@@ -27,6 +26,7 @@ use EventEspresso\core\libraries\rest_api\RestException;
 use InvalidArgumentException;
 use ReflectionException;
 use WP_Post;
+use WPGraphQL\Router;
 
 /**
  * Class AdvancedEditorEntityData
@@ -146,15 +146,20 @@ class AdvancedEditorEntityData
                     ? $post->ID
                     : $eventId;
             }
+            $graphqlEndpoint = class_exists('WPGraphQL') ? trailingslashit(site_url()) . Router::$route : '';
+            $graphqlEndpoint = esc_url($graphqlEndpoint);
             if ($eventId) {
                 $data = $this->getAllEventData($eventId);
                 $data = wp_json_encode($data);
                 add_action(
                     'admin_footer',
-                    static function () use ($data) {
+                    static function () use ($data, $graphqlEndpoint) {
                         wp_add_inline_script(
                             EspressoEditorAssetManager::JS_HANDLE_EDITOR,
-                            "var eeEditorEventData={$data};",
+                            "
+var eeEditorEventData={$data};
+var graphqlEndpoint='{$graphqlEndpoint}';
+",
                             'before'
                         );
                     }
@@ -358,18 +363,17 @@ class AdvancedEditorEntityData
             $tkt_instance->count_registrations()
             : 0;
         }
-
         return [
-            'eventId'     => $eventId,
-            'event'       => $event,
-            'datetime'    => $datetimes,
-            'ticket'      => $tickets,
-            'price'       => $prices,
-            'price_type'  => $price_types,
-            'venue'       => $venue,
-            'schemas'     => $schemas,
-            'relations'   => $relations,
-            'tktRegCount' => $tktRegCount,
+            'eventId'         => $eventId,
+            'event'           => $event,
+            'datetime'        => $datetimes,
+            'ticket'          => $tickets,
+            'price'           => $prices,
+            'price_type'      => $price_types,
+            'venue'           => $venue,
+            'schemas'         => $schemas,
+            'relations'       => $relations,
+            'tktRegCount'     => $tktRegCount,
         ];
     }
 }

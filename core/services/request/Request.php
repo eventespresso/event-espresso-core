@@ -627,6 +627,15 @@ class Request implements InterminableInterface, RequestInterface, ReservedInstan
     /**
      * @return bool
      */
+    public function isGQL()
+    {
+        return $this->request_type->isGQL();
+    }
+
+
+    /**
+     * @return bool
+     */
     public function isIframe()
     {
         return $this->request_type->isIframe();

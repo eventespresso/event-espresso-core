@@ -1,6 +1,7 @@
 <?php
 
 use EventEspresso\core\domain\DomainFactory;
+use EventEspresso\core\exceptions\InvalidAliasException;
 use EventEspresso\core\services\loaders\ClassInterfaceCache;
 use EventEspresso\core\services\loaders\LoaderFactory;
 use EventEspresso\core\services\loaders\LoaderInterface;
@@ -105,6 +106,8 @@ class EE_Dependency_Map
 
     /**
      * @return void
+     * @throws EE_Error
+     * @throws InvalidAliasException
      */
     public function initialize()
     {
@@ -380,6 +383,7 @@ class EE_Dependency_Map
      * @param string $fqcn      the class name that should be used (concrete class to replace interface)
      * @param string $alias     the class name that would be type hinted for (abstract parent or interface)
      * @param string $for_class the class that has the dependency (is type hinting for the interface)
+     * @throws InvalidAliasException
      */
     public function add_alias($fqcn, $alias, $for_class = '')
     {
@@ -861,7 +865,7 @@ class EE_Dependency_Map
             'EventEspresso\core\services\request\files\FilesDataHandler' => array(
                 'EventEspresso\core\services\request\Request' => EE_Dependency_Map::load_from_cache,
             ),
-            'EventEspressoBatchRequest\BatchRequestProcessor' => [
+            'EventEspressoBatchRequest\BatchRequestProcessor'                              => [
                 'EventEspresso\core\services\loaders\Loader'  => EE_Dependency_Map::load_from_cache,
             ],
             'EventEspresso\core\domain\services\admin\registrations\list_table\QueryBuilder' => [
@@ -904,6 +908,46 @@ class EE_Dependency_Map
                 'EEM_Price_Type'  => EE_Dependency_Map::load_from_cache,
                 'EEM_Ticket'      => EE_Dependency_Map::load_from_cache,
                 'EEM_Venue'       => EE_Dependency_Map::load_from_cache,
+            ],
+            'EventEspresso\core\services\graphql\GraphQLManager' => [
+                'EventEspresso\core\services\graphql\TypesManager'  => EE_Dependency_Map::load_from_cache,
+                'EventEspresso\core\services\graphql\ConnectionsManager'  => EE_Dependency_Map::load_from_cache,
+            ],
+            'EventEspresso\core\services\graphql\TypesManager' => [
+                'EventEspresso\core\services\graphql\types\TypeCollection' => EE_Dependency_Map::load_from_cache,
+            ],
+            'EventEspresso\core\services\graphql\ConnectionsManager' => [
+                'EventEspresso\core\services\graphql\connections\ConnectionCollection' => EE_Dependency_Map::load_from_cache,
+            ],
+            'EventEspresso\core\domain\services\graphql\types\Datetime' => [
+                'EEM_Datetime' => EE_Dependency_Map::load_from_cache,
+            ],
+            'EventEspresso\core\domain\services\graphql\types\Event' => [
+                'EEM_Event' => EE_Dependency_Map::load_from_cache,
+            ],
+            'EventEspresso\core\domain\services\graphql\types\Ticket' => [
+                'EEM_Ticket' => EE_Dependency_Map::load_from_cache,
+            ],
+            'EventEspresso\core\domain\services\graphql\types\Venue' => [
+                'EEM_Venue' => EE_Dependency_Map::load_from_cache,
+            ],
+            'EventEspresso\core\domain\services\graphql\types\State' => [
+                'EEM_State' => EE_Dependency_Map::load_from_cache,
+            ],
+            'EventEspresso\core\domain\services\graphql\types\Country' => [
+                'EEM_Country' => EE_Dependency_Map::load_from_cache,
+            ],
+            'EventEspresso\core\domain\services\graphql\connections\EventDatetimesConnection' => [
+                'EEM_Datetime' => EE_Dependency_Map::load_from_cache,
+            ],
+            'EventEspresso\core\domain\services\graphql\connections\DatetimeTicketsConnection' => [
+                'EEM_Ticket' => EE_Dependency_Map::load_from_cache,
+            ],
+            'EventEspresso\core\domain\services\graphql\connections\TicketDatetimesConnection' => [
+                'EEM_Datetime' => EE_Dependency_Map::load_from_cache,
+            ],
+            'EventEspresso\core\domain\services\graphql\connections\EventVenuesConnection' => [
+                'EEM_Venue' => EE_Dependency_Map::load_from_cache,
             ],
         );
     }
@@ -978,7 +1022,7 @@ class EE_Dependency_Map
             'EE_DMS_Core_4_8_0'                            => 'load_dms',
             'EE_DMS_Core_4_9_0'                            => 'load_dms',
             'EE_DMS_Core_4_10_0'                            => 'load_dms',
-            'EE_Messages_Generator'                        => function () {
+            'EE_Messages_Generator'                        => static function () {
                 return EE_Registry::instance()->load_lib(
                     'Messages_Generator',
                     array(),
@@ -986,7 +1030,7 @@ class EE_Dependency_Map
                     false
                 );
             },
-            'EE_Messages_Template_Defaults'                => function ($arguments = array()) {
+            'EE_Messages_Template_Defaults'                => static function ($arguments = array()) {
                 return EE_Registry::instance()->load_lib(
                     'Messages_Template_Defaults',
                     $arguments,
@@ -995,46 +1039,46 @@ class EE_Dependency_Map
                 );
             },
             // load_helper
-            'EEH_Parse_Shortcodes'                         => function () {
+            'EEH_Parse_Shortcodes'                         => static function () {
                 if (EE_Registry::instance()->load_helper('Parse_Shortcodes')) {
                     return new EEH_Parse_Shortcodes();
                 }
                 return null;
             },
-            'EE_Template_Config'                           => function () {
+            'EE_Template_Config'                           => static function () {
                 return EE_Config::instance()->template_settings;
             },
-            'EE_Currency_Config'                           => function () {
+            'EE_Currency_Config'                           => static function () {
                 return EE_Config::instance()->currency;
             },
-            'EE_Registration_Config'                       => function () {
+            'EE_Registration_Config'                       => static function () {
                 return EE_Config::instance()->registration;
             },
-            'EE_Core_Config'                               => function () {
+            'EE_Core_Config'                               => static function () {
                 return EE_Config::instance()->core;
             },
-            'EventEspresso\core\services\loaders\Loader'   => function () {
+            'EventEspresso\core\services\loaders\Loader'   => static function () {
                 return LoaderFactory::getLoader();
             },
-            'EE_Network_Config'                            => function () {
+            'EE_Network_Config'                            => static function () {
                 return EE_Network_Config::instance();
             },
-            'EE_Config'                                    => function () {
+            'EE_Config'                                    => static function () {
                 return EE_Config::instance();
             },
-            'EventEspresso\core\domain\Domain'             => function () {
+            'EventEspresso\core\domain\Domain'             => static function () {
                 return DomainFactory::getEventEspressoCoreDomain();
             },
-            'EE_Admin_Config'                              => function () {
+            'EE_Admin_Config'                              => static function () {
                 return EE_Config::instance()->admin;
             },
-            'EE_Organization_Config'                       => function () {
+            'EE_Organization_Config'                       => static function () {
                 return EE_Config::instance()->organization;
             },
-            'EE_Network_Core_Config'                       => function () {
+            'EE_Network_Core_Config'                       => static function () {
                 return EE_Network_Config::instance()->core;
             },
-            'EE_Environment_Config'                        => function () {
+            'EE_Environment_Config'                        => static function () {
                 return EE_Config::instance()->environment;
             },
             'EED_Core_Rest_Api'                            => static function () {
@@ -1050,6 +1094,8 @@ class EE_Dependency_Map
     /**
      * can be used for supplying alternate names for classes,
      * or for connecting interface names to instantiable classes
+     *
+     * @throws InvalidAliasException
      */
     protected function _register_core_aliases()
     {

@@ -179,6 +179,17 @@ class RequestTypeContextChecker extends ContextChecker implements RequestTypeCon
 
 
     /**
+     * true if the current request is for the EE GraphQL manager
+     *
+     * @return bool
+     */
+    public function isGQL()
+    {
+        return $this->request_type->slug() === RequestTypeContext::GQL;
+    }
+
+
+    /**
      * true if the current request is for content that is to be displayed within an iframe
      *
      * @return bool

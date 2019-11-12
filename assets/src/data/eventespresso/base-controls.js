@@ -13,7 +13,6 @@ import { pluralModelName } from '@eventespresso/model';
  * Internal imports
  */
 import { REDUCER_KEY as CORE_REDUCER_KEY } from './core/constants';
-
 /**
  * Returns the action object for a fetch control.
  *

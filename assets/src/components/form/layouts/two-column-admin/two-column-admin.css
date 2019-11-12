@@ -355,7 +355,6 @@
 }
 
 .ee-two-column-admin .espresso-input-help-text {
-    color: var(--ee-default-text-color-low-contrast);
     display: inline-block;
     font-style: italic;
     line-height: inherit;
@@ -368,7 +367,6 @@
 }
 
 .ee-two-column-admin .espresso-input-help-text > p {
-    font-size: inherit;
     line-height: inherit;
     margin: 0;
 }

@@ -15,8 +15,6 @@
 }
 
 .ee-form-info {
-    color: var(--ee-default-text-color-low-contrast);
-    font-size: var(--ee-font-size-default);
     font-style: italic;
     height: auto;
     line-height: 1.25rem;
@@ -42,6 +40,7 @@
 
 .ee-form-info.ee-form-info-type-warning .ee-form-info-type {
     color: var(--ee-color-hot-pink);
+    font-size: var(--ee-font-size-default);
 }
 
 .ee-form-info .ee-form-info-text .dashicon {

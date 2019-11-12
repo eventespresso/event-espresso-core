@@ -81,10 +81,14 @@ class RequestTypeContextDetector
         // Detect EE REST API
         if ($this->isEspressoRestApiRequest()) {
             return $this->factory->create(RequestTypeContext::API);
-        }
         // Detect WP REST API
+        }
         if ($this->isWordPressRestApiRequest()) {
             return $this->factory->create(RequestTypeContext::WP_API);
+        }
+        // Detect EE GraphQL
+        if ($this->isEspressoGraphQLRequest()) {
+            return $this->factory->create(RequestTypeContext::GQL);
         }
         // Detect AJAX
         if ($this->getGlobalRouteCondition('DOING_AJAX', false)) {
@@ -135,6 +139,16 @@ class RequestTypeContextDetector
             '/' . Domain::API_NAMESPACE
         ) === 0
             || $this->uriPathMatches(trim(rest_get_url_prefix(), '/') . '/' . Domain::API_NAMESPACE);
+    }
+
+
+    /**
+     * @return bool
+     */
+    private function isEspressoGraphQLRequest()
+    {
+        // Check for URLs like https://mysite.com/graphql
+        return $this->uriPathMatches(RequestTypeContext::GQL);
     }
 
 

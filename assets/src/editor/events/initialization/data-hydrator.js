@@ -117,7 +117,8 @@ const hydrateEntityData = async ( rawData, schemas ) => {
 		const modelEntities = Object.entries( rawData );
 		for ( const [ model, entityData ] of modelEntities ) {
 			let modelSchema = schemas[ model ] ? schemas[ model ] : null;
-			modelSchema = modelSchema.hasOwnProperty( 'schema' ) ?
+			modelSchema = typeof modelSchema === 'object' &&
+			modelSchema.hasOwnProperty( 'schema' ) ?
 				modelSchema.schema :
 				null;
 			const entities = await hydrateEntities(
