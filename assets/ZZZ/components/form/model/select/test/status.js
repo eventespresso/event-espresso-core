@@ -1,6 +1,6 @@
 import StatusSelect, { EditorStatusSelect } from '../status';
 import { shallow, render } from 'enzyme';
-import { QUERY_ORDER_ASC } from 'assets/src/data/model/base';
+import { QUERY_ORDER_ASC } from 'assets/ZZZ/data/model/base';
 
 jest.mock( '../../base/model-select', () => () => <span>StatusSelect</span> );
 

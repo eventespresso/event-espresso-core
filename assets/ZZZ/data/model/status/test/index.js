@@ -3,7 +3,7 @@ import {
 	whereConditions,
 	getQueryString,
 } from '../';
-import * as statusModel from 'assets/src/data/model/status/index';
+import * as statusModel from '../index';
 
 const testParams = [
 	{
