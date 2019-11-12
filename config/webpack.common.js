@@ -5,8 +5,8 @@ const autoprefixer = require( 'autoprefixer' );
 const cssnano = require( 'cssnano' );
 const del = require( 'del' );
 
-const paths = require( "./paths" );
-const pathToDistFolder = path.resolve( __dirname, '../assets/dist' );
+const { pathToDistFolder } = require( './paths' );
+
 /**
  * Clean build folder before running build
  */
@@ -250,10 +250,10 @@ const enhance = ( conf ) => {
 
 	if ( ! enhancedConf.output ) {
 		enhancedConf.output = {};
-	} else {
-		enhancedConf.output.path = pathToDistFolder;
-		enhancedConf.output.filename = '[name].[chunkhash].dist.js';
 	}
+
+	enhancedConf.output.path = pathToDistFolder;
+	enhancedConf.output.filename = '[name].[chunkhash].dist.js';
 
 	return enhancedConf;
 };
