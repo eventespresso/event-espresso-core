@@ -18,7 +18,7 @@ class VenueMutation
      * @param string $mutation_name Name of the mutation being performed
      * @return array
      */
-    public static function prepare_fields(array $input, $mutation_name)
+    public static function prepareFields(array $input, $mutation_name)
     {
 
         $args = [];

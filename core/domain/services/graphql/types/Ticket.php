@@ -87,8 +87,10 @@ class Ticket extends TypeBase
                 'max',
                 'Int',
                 'max',
-                esc_html__('Maximum quantity of this ticket that can be purchased in one transaction',
-                    'event_espresso'),
+                esc_html__(
+                    'Maximum quantity of this ticket that can be purchased in one transaction',
+                    'event_espresso'
+                ),
                 [$this, 'parseInfiniteValue']
             ),
             new GraphQLField(
@@ -131,15 +133,18 @@ class Ticket extends TypeBase
                 'Boolean',
                 'required',
                 esc_html__(
-                    'Flag indicating whether this ticket must be purchased with a transaction', 'event_espresso'
+                    'Flag indicating whether this ticket must be purchased with a transaction',
+                    'event_espresso'
                 )
             ),
             new GraphQLField(
                 'isTaxable',
                 'Boolean',
                 'taxable',
-                esc_html__('Flag indicating whether there is tax applied on this ticket',
-                    'event_espresso')
+                esc_html__(
+                    'Flag indicating whether there is tax applied on this ticket',
+                    'event_espresso'
+                )
             ),
             new GraphQLField(
                 'isDefault',
@@ -245,7 +250,7 @@ class Ticket extends TypeBase
                     lcfirst($this->name()) => [
                         'type'        => $this->name(),
                         'description' => esc_html__('The object before it was deleted', 'event_espresso'),
-                        'resolve'     => function ($payload) {
+                        'resolve'     => static function ($payload) {
                             $deleted = (object) $payload['deleted'];
 
                             return ! empty($deleted) ? $deleted : null;

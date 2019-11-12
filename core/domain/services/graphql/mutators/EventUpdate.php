@@ -49,7 +49,7 @@ class EventUpdate
             $entity = $model->get_one_by_ID($id);
 
             if ($entity instanceof EE_Event) {
-                $args = EventMutation::prepare_fields($input, $mutation_name);
+                $args = EventMutation::prepareFields($input, $mutation_name);
 
                 // Update the entity
                 $entity->save($args);

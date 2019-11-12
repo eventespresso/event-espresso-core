@@ -50,7 +50,7 @@ class VenueUpdate
             $entity = $model->get_one_by_ID($post_id);
 
             if ($entity instanceof EE_Venue) {
-                $args = VenueMutation::prepare_fields($input, $mutation_name);
+                $args = VenueMutation::prepareFields($input, $mutation_name);
 
                 // Update the entity
                 $entity->save($args);

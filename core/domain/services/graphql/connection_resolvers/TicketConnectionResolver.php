@@ -24,6 +24,7 @@ class TicketConnectionResolver extends AbstractConnectionResolver
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
      */
+    // phpcs:ignore PSR1.Methods.CamelCapsMethodName.NotCamelCaps
     public function get_query()
     {
         return EEM_Ticket::instance();
@@ -35,6 +36,7 @@ class TicketConnectionResolver extends AbstractConnectionResolver
      *
      * @return array
      */
+    // phpcs:ignore PSR1.Methods.CamelCapsMethodName.NotCamelCaps
     public function get_items()
     {
 
@@ -52,6 +54,7 @@ class TicketConnectionResolver extends AbstractConnectionResolver
      *
      * @return bool
      */
+    // phpcs:ignore PSR1.Methods.CamelCapsMethodName.NotCamelCaps
     public function should_execute()
     {
 
@@ -75,6 +78,7 @@ class TicketConnectionResolver extends AbstractConnectionResolver
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
      */
+    // phpcs:ignore PSR1.Methods.CamelCapsMethodName.NotCamelCaps
     public function get_query_args()
     {
 
@@ -132,6 +136,7 @@ class TicketConnectionResolver extends AbstractConnectionResolver
      * @param array $query_args
      * @return array
      */
+    // phpcs:ignore PSR1.Methods.CamelCapsMethodName.NotCamelCaps
     public function sanitize_input_fields(array $query_args)
     {
 

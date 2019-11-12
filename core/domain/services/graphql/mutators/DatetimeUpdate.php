@@ -49,8 +49,9 @@ class DatetimeUpdate
              */
             if (! current_user_can('ee_edit_events')) {
                 // translators: the %1$s is the name of the object being mutated
-                throw new UserError(sprintf(__('Sorry, you are not allowed to edit %1$s', 'event_espresso'),
-                    $type->name()));
+                throw new UserError(
+                    sprintf(__('Sorry, you are not allowed to edit %1$s', 'event_espresso'), $type->name())
+                );
             }
 
             $id = ! empty($input['id']) ? absint($input['id']) : 0;
@@ -66,12 +67,11 @@ class DatetimeUpdate
             if (! $id || ! ($entity instanceof EE_Datetime)) {
                 // translators: the placeholder is the name of the type being updated
                 throw new UserError(
-                    sprintf(__('No %1$s could be found to update', 'event_espresso'),
-                        $type->name())
+                    sprintf(__('No %1$s could be found to update', 'event_espresso'), $type->name())
                 );
             }
 
-            $args = DatetimeMutation::prepare_fields($input);
+            $args = DatetimeMutation::prepareFields($input);
 
             // Update the entity
             $result = $entity->save($args);

@@ -50,11 +50,12 @@ class TicketCreate
              */
             if (! current_user_can('ee_edit_events')) {
                 // translators: the %1$s is the name of the object being mutated
-                throw new UserError(sprintf(__('Sorry, you are not allowed to create %1$s', 'event_espresso'),
-                    $type->name()));
+                throw new UserError(
+                    sprintf(__('Sorry, you are not allowed to create %1$s', 'event_espresso'), $type->name())
+                );
             }
 
-            $args = TicketMutation::prepare_fields($input);
+            $args = TicketMutation::prepareFields($input);
 
             $entity = EE_Ticket::new_instance($args);
             $id = $entity->save();

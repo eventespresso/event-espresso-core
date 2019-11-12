@@ -26,6 +26,7 @@ class DatetimeConnectionResolver extends AbstractConnectionResolver
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
      */
+    // phpcs:ignore PSR1.Methods.CamelCapsMethodName.NotCamelCaps
     public function get_query()
     {
         return EEM_Datetime::instance();
@@ -37,6 +38,7 @@ class DatetimeConnectionResolver extends AbstractConnectionResolver
      *
      * @return array
      */
+    // phpcs:ignore PSR1.Methods.CamelCapsMethodName.NotCamelCaps
     public function get_items()
     {
 
@@ -54,6 +56,7 @@ class DatetimeConnectionResolver extends AbstractConnectionResolver
      *
      * @return bool
      */
+    // phpcs:ignore PSR1.Methods.CamelCapsMethodName.NotCamelCaps
     public function should_execute()
     {
 
@@ -72,6 +75,7 @@ class DatetimeConnectionResolver extends AbstractConnectionResolver
      *
      * @return array
      */
+    // phpcs:ignore PSR1.Methods.CamelCapsMethodName.NotCamelCaps
     public function get_query_args()
     {
 
@@ -87,9 +91,9 @@ class DatetimeConnectionResolver extends AbstractConnectionResolver
          * Set limit the highest value of $first and $last, with a (filterable) max of 100
          */
         $query_args['limit'] = min(
-                                   max(absint($first), absint($last), 10),
-                                   $this->query_amount
-                               ) + 1;
+            max(absint($first), absint($last), 10),
+            $this->query_amount
+        ) + 1;
 
         /**
          * Collect the input_fields and sanitize them to prepare them for sending to the Query
@@ -146,6 +150,7 @@ class DatetimeConnectionResolver extends AbstractConnectionResolver
      * @param array $query_args
      * @return array
      */
+    // phpcs:ignore PSR1.Methods.CamelCapsMethodName.NotCamelCaps
     public function sanitize_input_fields(array $query_args)
     {
 
