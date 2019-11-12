@@ -61,4 +61,4 @@ describe( 'getQueryString', () => {
 	} );
 } );
 
-// location: assets/src/data/model/registration/test/index.js
+// location: assets/ZZZ/data/model/registration/test/index.js

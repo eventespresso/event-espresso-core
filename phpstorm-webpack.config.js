@@ -1,6 +1,6 @@
 const path = require( 'path' );
 
-const assets = 'assets/src/';
+const assets = 'assets/ZZZ/';
 
 const aliases = {
 	'@eventespresso/eejs': path.resolve( __dirname, assets + 'eejs' ),

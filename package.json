@@ -10,7 +10,7 @@
 		"build:css": {
 			"patterns": [
 				"bin/css-builder",
-				"assets/src/components/ui/styles"
+				"assets/ZZZ/components/ui/styles"
 			],
 			"ignore": "index.js"
 		}
@@ -50,7 +50,7 @@
 		}
 	},
 	"lint-staged": {
-		"assets/src/**/*.js": [
+		"assets/ZZZ/**/*.js": [
 			"wp-scripts lint-js"
 		]
 	},

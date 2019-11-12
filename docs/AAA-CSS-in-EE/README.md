@@ -20,11 +20,11 @@ function myStyles() {
 
 Alternatively, if you are using the classes from this stylesheet in a react component, you may also be utilizing the [ee components library](../AA--Javascript-in-EE/components/README.md).  the `CoreAssetManager::CSS_HANDLE_COMPONENTS` already has the default core css as a dependency so you can safely list it only as a dependency.
 
-As a part of the build process, a demo html file is created that highlights all the available classes and gives a visual example outlining its usage.  You can view this file [here](https://htmlpreview.github.io/?https://raw.githubusercontent.com/eventespresso/event-espresso-core/master/assets/src/components/ui/styles/themes/default/demo/index.html)
+As a part of the build process, a demo html file is created that highlights all the available classes and gives a visual example outlining its usage.  You can view this file [here](https://htmlpreview.github.io/?https://raw.githubusercontent.com/eventespresso/event-espresso-core/master/assets/ZZZ/components/ui/styles/themes/default/demo/index.html)
 
 ## Developing
 
-Currently the source files for all the CSS is found in [`assets/src/components/ui/styles`](../../assets/src/components/ui/styles/).  As preparation for possible themeing down the road here's how the files are organized:
+Currently the source files for all the CSS is found in [`assets/ZZZ/components/ui/styles`](../../assets/ZZZ/components/ui/styles/).  As preparation for possible themeing down the road here's how the files are organized:
 
 ### `styles/root/*.css`
 This contains all the default stylesheets that are imported as a part of the build process for the final theme stylesheet.  The root stylesheets provide the fallbacks when a css variable (see next section) isn't defined in a theme.

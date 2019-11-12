@@ -2,7 +2,7 @@ const path = require( 'path' );
 const getCssFiles = require( './get-css-files' );
 const chalk = require( 'chalk' );
 
-const STYLES_DIRECTORY = path.resolve( __dirname, '../../assets/src/components/ui/styles' );
+const STYLES_DIRECTORY = path.resolve( __dirname, '../../assets/ZZZ/components/ui/styles' );
 const pathRegex = new RegExp( '\\' + path.sep, 'g' );
 
 /**
