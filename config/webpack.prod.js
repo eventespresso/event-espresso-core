@@ -3,7 +3,7 @@ const WebpackAssetsManifest = require( 'webpack-assets-manifest' );
 const common = require( './webpack.common.js' );
 const webpack = require( 'webpack' );
 const miniExtract = require( 'mini-css-extract-plugin' );
-const wpi18nExtractor = require( './bin/i18n-map-extractor.js' );
+const wpi18nExtractor = require( '../bin/i18n-map-extractor.js' );
 const assetsData = Object.create( null );
 const DependencyExtractionWebpackPlugin = require(
 	'@wordpress/dependency-extraction-webpack-plugin'
