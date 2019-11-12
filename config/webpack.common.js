@@ -123,7 +123,6 @@ const config = [
 		},
 		module: moduleConfigWithJsRules,
 		output: {
-			filename: '[name].[chunkhash].dist.js',
 			library: [ 'eejs', 'helpers' ],
 			libraryTarget: 'this',
 		},
