@@ -11,6 +11,8 @@ use EventEspresso\core\services\graphql\fields\GraphQLOutputField;
 use EventEspresso\core\domain\services\graphql\mutators\TicketCreate;
 use EventEspresso\core\domain\services\graphql\mutators\TicketDelete;
 use EventEspresso\core\domain\services\graphql\mutators\TicketUpdate;
+use InvalidArgumentException;
+use ReflectionException;
 
 /**
  * Class Ticket
@@ -85,7 +87,8 @@ class Ticket extends TypeBase
                 'max',
                 'Int',
                 'max',
-                esc_html__('Maximum quantity of this ticket that can be purchased in one transaction', 'event_espresso'),
+                esc_html__('Maximum quantity of this ticket that can be purchased in one transaction',
+                    'event_espresso'),
                 [$this, 'parseInfiniteValue']
             ),
             new GraphQLField(
@@ -111,7 +114,10 @@ class Ticket extends TypeBase
                 'reserved',
                 'Int',
                 'reserved',
-                esc_html__('Quantity of this ticket that is reserved, but not yet fully purchased', 'event_espresso')
+                esc_html__(
+                    'Quantity of this ticket that is reserved, but not yet fully purchased',
+                    'event_espresso'
+                )
             ),
             new GraphQLField(
                 'uses',
@@ -124,13 +130,16 @@ class Ticket extends TypeBase
                 'isRequired',
                 'Boolean',
                 'required',
-                esc_html__('Flag indicating whether this ticket must be purchased with a transaction', 'event_espresso')
+                esc_html__(
+                    'Flag indicating whether this ticket must be purchased with a transaction', 'event_espresso'
+                )
             ),
             new GraphQLField(
                 'isTaxable',
                 'Boolean',
                 'taxable',
-                esc_html__('Flag indicating whether there is tax applied on this ticket', 'event_espresso')
+                esc_html__('Flag indicating whether there is tax applied on this ticket',
+                    'event_espresso')
             ),
             new GraphQLField(
                 'isDefault',
@@ -178,7 +187,10 @@ class Ticket extends TypeBase
                 'reverseCalculate',
                 'Boolean',
                 'reverse_calculate',
-                esc_html__('Flag indicating whether ticket calculations should run in reverse and calculate the base ticket price from the provided ticket total.', 'event_espresso')
+                esc_html__(
+                    'Flag indicating whether ticket calculations should run in reverse and calculate the base ticket price from the provided ticket total.',
+                    'event_espresso'
+                )
             ),
             new GraphQLField(
                 'isFree',
@@ -198,7 +210,6 @@ class Ticket extends TypeBase
 
     /**
      * @param array $inputFields The mutation input fields.
-     *
      * @throws InvalidArgumentException
      * @throws ReflectionException
      * @since $VID:$
@@ -207,59 +218,59 @@ class Ticket extends TypeBase
     {
         // Register mutation to update an entity.
         register_graphql_mutation(
-			'update' . $this->name(),
-			[
-				'inputFields'         => $inputFields,
-				'outputFields'        => [
+            'update' . $this->name(),
+            [
+                'inputFields'         => $inputFields,
+                'outputFields'        => [
                     lcfirst($this->name()) => [
                         'type'    => $this->name(),
                         'resolve' => [$this, 'resolveFromPayload'],
                     ],
                 ],
-				'mutateAndGetPayload' => TicketUpdate::mutateAndGetPayload($this->model, $this),
-			]
+                'mutateAndGetPayload' => TicketUpdate::mutateAndGetPayload($this->model, $this),
+            ]
         );
         // Register mutation to delete an entity.
         register_graphql_mutation(
-			'delete' . $this->name(),
-			[
-				'inputFields'         => [
+            'delete' . $this->name(),
+            [
+                'inputFields'         => [
                     'id'                => $inputFields['id'],
                     'deletePermanently' => [
                         'type'        => 'Boolean',
-                        'description' => esc_html__( 'Whether to delete the entity permanently.', 'event_espresso' ),
+                        'description' => esc_html__('Whether to delete the entity permanently.', 'event_espresso'),
                     ],
                 ],
-				'outputFields'        => [
+                'outputFields'        => [
                     lcfirst($this->name()) => [
                         'type'        => $this->name(),
-                        'description' => esc_html__( 'The object before it was deleted', 'event_espresso' ),
-                        'resolve'     => function ( $payload ) {
+                        'description' => esc_html__('The object before it was deleted', 'event_espresso'),
+                        'resolve'     => function ($payload) {
                             $deleted = (object) $payload['deleted'];
 
-                            return ! empty( $deleted ) ? $deleted : null;
+                            return ! empty($deleted) ? $deleted : null;
                         },
                     ],
                 ],
-				'mutateAndGetPayload' => TicketDelete::mutateAndGetPayload($this->model, $this),
-			]
+                'mutateAndGetPayload' => TicketDelete::mutateAndGetPayload($this->model, $this),
+            ]
         );
 
         // remove primary key from input.
         unset($inputFields['id']);
         // Register mutation to update an entity.
         register_graphql_mutation(
-			'create' . $this->name(),
-			[
-				'inputFields'         => $inputFields,
-				'outputFields'        => [
+            'create' . $this->name(),
+            [
+                'inputFields'         => $inputFields,
+                'outputFields'        => [
                     lcfirst($this->name()) => [
                         'type'    => $this->name(),
                         'resolve' => [$this, 'resolveFromPayload'],
                     ],
                 ],
-				'mutateAndGetPayload' => TicketCreate::mutateAndGetPayload($this->model, $this),
-			]
-		);
+                'mutateAndGetPayload' => TicketCreate::mutateAndGetPayload($this->model, $this),
+            ]
+        );
     }
 }

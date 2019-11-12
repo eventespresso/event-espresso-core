@@ -154,8 +154,10 @@ class Datetime extends TypeBase
                 'isSoldOut',
                 'Boolean',
                 'sold_out',
-                esc_html__('Flag indicating whether the tickets sold for this datetime, met or exceed the registration limit',
-                    'event_espresso')
+                esc_html__(
+                    'Flag indicating whether the tickets sold for this datetime, met or exceed the registration limit',
+                    'event_espresso'
+                )
             ),
             new GraphQLField(
                 'isUpcoming',
@@ -193,7 +195,6 @@ class Datetime extends TypeBase
 
     /**
      * @param array $inputFields The mutation input fields.
-     *
      * @throws InvalidArgumentException
      * @throws ReflectionException
      * @since $VID:$
@@ -202,59 +203,59 @@ class Datetime extends TypeBase
     {
         // Register mutation to update an entity.
         register_graphql_mutation(
-			'update' . $this->name(),
-			[
-				'inputFields'         => $inputFields,
-				'outputFields'        => [
+            'update' . $this->name(),
+            [
+                'inputFields'         => $inputFields,
+                'outputFields'        => [
                     lcfirst($this->name()) => [
                         'type'    => $this->name(),
                         'resolve' => [$this, 'resolveFromPayload'],
                     ],
                 ],
-				'mutateAndGetPayload' => DatetimeUpdate::mutateAndGetPayload($this->model, $this),
-			]
+                'mutateAndGetPayload' => DatetimeUpdate::mutateAndGetPayload($this->model, $this),
+            ]
         );
         // Register mutation to delete an entity.
         register_graphql_mutation(
-			'delete' . $this->name(),
-			[
-				'inputFields'         => [
+            'delete' . $this->name(),
+            [
+                'inputFields'         => [
                     'id'                => $inputFields['id'],
                     'deletePermanently' => [
                         'type'        => 'Boolean',
-                        'description' => esc_html__( 'Whether to delete the entity permanently.', 'event_espresso' ),
+                        'description' => esc_html__('Whether to delete the entity permanently.', 'event_espresso'),
                     ],
                 ],
-				'outputFields'        => [
+                'outputFields'        => [
                     lcfirst($this->name()) => [
                         'type'        => $this->name(),
-                        'description' => esc_html__( 'The object before it was deleted', 'event_espresso' ),
-                        'resolve'     => function ( $payload ) {
+                        'description' => esc_html__('The object before it was deleted', 'event_espresso'),
+                        'resolve'     => static function ($payload) {
                             $deleted = (object) $payload['deleted'];
 
-                            return ! empty( $deleted ) ? $deleted : null;
+                            return ! empty($deleted) ? $deleted : null;
                         },
                     ],
                 ],
-				'mutateAndGetPayload' => DatetimeDelete::mutateAndGetPayload($this->model, $this),
-			]
+                'mutateAndGetPayload' => DatetimeDelete::mutateAndGetPayload($this->model, $this),
+            ]
         );
 
         // remove primary key from input.
         unset($inputFields['id']);
         // Register mutation to update an entity.
         register_graphql_mutation(
-			'create' . $this->name(),
-			[
-				'inputFields'         => $inputFields,
-				'outputFields'        => [
+            'create' . $this->name(),
+            [
+                'inputFields'         => $inputFields,
+                'outputFields'        => [
                     lcfirst($this->name()) => [
                         'type'    => $this->name(),
                         'resolve' => [$this, 'resolveFromPayload'],
                     ],
                 ],
-				'mutateAndGetPayload' => DatetimeCreate::mutateAndGetPayload($this->model, $this),
-			]
-		);
+                'mutateAndGetPayload' => DatetimeCreate::mutateAndGetPayload($this->model, $this),
+            ]
+        );
     }
 }

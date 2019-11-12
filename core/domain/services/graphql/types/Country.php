@@ -44,18 +44,21 @@ class Country extends TypeBase
                 'isActive',
                 'Boolean',
                 null, // 'active',
-                esc_html__('Flag that indicates if the country should appear in dropdown select lists', 'event_espresso')
+                esc_html__(
+                    'Flag that indicates if the country should appear in dropdown select lists',
+                    'event_espresso'
+                )
             ),
             new GraphQLField(
                 'ISO',
                 'String',
-                null, //'ISO',
+                null, // 'ISO',
                 esc_html__('Country ISO Code', 'event_espresso')
             ),
             new GraphQLField(
                 'ISO3',
                 'String',
-                null, //'ISO3',
+                null, // 'ISO3',
                 esc_html__('Country ISO3 Code', 'event_espresso')
             ),
             new GraphQLField(
@@ -85,7 +88,8 @@ class Country extends TypeBase
             new GraphQLField(
                 'currencySign',
                 'String',
-                'currency_sign',__('Currency Sign', 'event_espresso')
+                'currency_sign',
+                __('Currency Sign', 'event_espresso')
             ),
             new GraphQLField(
                 'currencySignBeforeNumber',

@@ -30,7 +30,7 @@ class GraphQLManager
     /**
      * GraphQLManager constructor.
      *
-     * @param TypesManager $types_manager
+     * @param TypesManager       $types_manager
      * @param ConnectionsManager $connections_manager
      */
     public function __construct(TypesManager $types_manager, ConnectionsManager $connections_manager)
@@ -50,5 +50,4 @@ class GraphQLManager
         $this->types_manager->init();
         $this->connections_manager->init();
     }
-
 }

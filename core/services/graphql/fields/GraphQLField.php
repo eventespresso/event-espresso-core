@@ -62,8 +62,8 @@ class GraphQLField implements GraphQLFieldInterface
 
 
     /**
-	 * @param string          $name
-	 * @param string|string[] $type
+     * @param string          $name
+     * @param string|string[] $type
      * @param string|null     $key
      * @param string          $description
      * @param callable|null   $formatter
@@ -71,7 +71,7 @@ class GraphQLField implements GraphQLFieldInterface
      * @param array           $caps
      */
     public function __construct(
-		$name,
+        $name,
         $type,
         $key = null,
         $description = '',
@@ -149,8 +149,7 @@ class GraphQLField implements GraphQLFieldInterface
     /**
      * Sets the value for use_for_input.
      *
-	 * @param bool $use_for_input
-     *
+     * @param bool $use_for_input
      */
     protected function setUseForInput($use_for_input)
     {

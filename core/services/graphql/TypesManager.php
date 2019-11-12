@@ -102,11 +102,11 @@ class TypesManager
             $fieldName = $field->name();
             $config = $field->toArray();
             if ($field->useForInput()) {
-                $inputFields[$fieldName] = $config;
+                $inputFields[ $fieldName ] = $config;
             }
             if ($field->useForOutput()) {
                 $config['resolve'] = [$type, 'resolveField'];
-                $outputFields[$fieldName] = $config;
+                $outputFields[ $fieldName ] = $config;
             }
         }
         $typeName = $type->name();

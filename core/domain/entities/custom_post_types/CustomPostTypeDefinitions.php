@@ -56,22 +56,22 @@ class CustomPostTypeDefinitions
      */
     private function setDefinitions()
     {
-        $this->custom_post_types = array(
-            'espresso_events'    => array(
+        $this->custom_post_types = [
+            'espresso_events'    => [
                 'singular_name' => esc_html__('Event', 'event_espresso'),
                 'plural_name'   => esc_html__('Events', 'event_espresso'),
                 'singular_slug' => esc_html__('event', 'event_espresso'),
                 'plural_slug'   => $this->core_config->event_cpt_slug,
                 'class_name'    => 'EE_Event',
                 'model_name'    => 'EEM_Event',
-                'args'          => array(
+                'args'          => [
                     'public'              => true,
                     'show_in_nav_menus'   => true,
                     'show_in_graphql'     => true,
-                    'graphql_single_name' => __( 'Event', 'event_espresso' ),
-                    'graphql_plural_name' => __( 'Events', 'event_espresso' ),
+                    'graphql_single_name' => __('Event', 'event_espresso'),
+                    'graphql_plural_name' => __('Events', 'event_espresso'),
                     'capability_type'     => 'event',
-                    'capabilities'        => array(
+                    'capabilities'        => [
                         'edit_post'              => 'ee_edit_event',
                         'read_post'              => 'ee_read_event',
                         'delete_post'            => 'ee_delete_event',
@@ -85,30 +85,30 @@ class CustomPostTypeDefinitions
                         'delete_others_posts'    => 'ee_delete_others_events',
                         'edit_private_posts'     => 'ee_edit_private_events',
                         'edit_published_posts'   => 'ee_edit_published_events',
-                    ),
-                    'taxonomies'          => array(
+                    ],
+                    'taxonomies'          => [
                         'espresso_event_categories',
                         'espresso_event_type',
                         'post_tag',
-                    ),
+                    ],
                     'page_templates'      => true,
-                ),
-            ),
-            'espresso_venues'    => array(
+                ],
+            ],
+            'espresso_venues'    => [
                 'singular_name' => esc_html__('Venue', 'event_espresso'),
                 'plural_name'   => esc_html__('Venues', 'event_espresso'),
                 'singular_slug' => esc_html__('venue', 'event_espresso'),
                 'plural_slug'   => esc_html__('venues', 'event_espresso'),
                 'class_name'    => 'EE_Venue',
                 'model_name'    => 'EEM_Venue',
-                'args'          => array(
+                'args'          => [
                     'public'              => true,
                     'show_in_nav_menus'   => false, // by default this doesn't show for decaf,
                     'show_in_graphql'     => true,
-                    'graphql_single_name' => __( 'Venue', 'event_espresso' ),
-                    'graphql_plural_name' => __( 'Venues', 'event_espresso' ),
+                    'graphql_single_name' => __('Venue', 'event_espresso'),
+                    'graphql_plural_name' => __('Venues', 'event_espresso'),
                     'capability_type'     => 'venue',
-                    'capabilities'        => array(
+                    'capabilities'        => [
                         'edit_post'              => 'ee_edit_venue',
                         'read_post'              => 'ee_read_venue',
                         'delete_post'            => 'ee_delete_venue',
@@ -122,36 +122,36 @@ class CustomPostTypeDefinitions
                         'delete_others_posts'    => 'ee_edit_others_venues',
                         'edit_private_posts'     => 'ee_edit_private_venues',
                         'edit_published_posts'   => 'ee_edit_published_venues',
-                    ),
-                    'taxonomies'          => array(
+                    ],
+                    'taxonomies'          => [
                         'espresso_venue_categories',
                         'post_tag',
-                    ),
+                    ],
                     'page_templates'      => true,
-                ),
-            ),
-            'espresso_attendees' => array(
+                ],
+            ],
+            'espresso_attendees' => [
                 'singular_name' => esc_html__('Contact', 'event_espresso'),
                 'plural_name'   => esc_html__('Contacts', 'event_espresso'),
                 'singular_slug' => esc_html__('contact', 'event_espresso'),
                 'plural_slug'   => esc_html__('contacts', 'event_espresso'),
                 'class_name'    => 'EE_Attendee',
                 'model_name'    => 'EEM_Attendee',
-                'args'          => array(
+                'args'          => [
                     'public'             => false,
                     'publicly_queryable' => false,
                     'hierarchical'       => false,
                     'has_archive'        => false,
-                    'supports'           => array(
+                    'supports'           => [
                         'editor',
                         'thumbnail',
                         'excerpt',
                         'custom-fields',
                         'comments',
-                    ),
-                    'taxonomies'         => array('post_tag'),
+                    ],
+                    'taxonomies'         => ['post_tag'],
                     'capability_type'    => 'contact',
-                    'capabilities'       => array(
+                    'capabilities'       => [
                         'edit_post'              => 'ee_edit_contact',
                         'read_post'              => 'ee_read_contact',
                         'delete_post'            => 'ee_delete_contact',
@@ -165,10 +165,10 @@ class CustomPostTypeDefinitions
                         'delete_others_posts'    => 'ee_delete_contacts',
                         'edit_private_posts'     => 'ee_edit_contacts',
                         'edit_published_posts'   => 'ee_edit_contacts',
-                    ),
-                ),
-            ),
-        );
+                    ],
+                ],
+            ],
+        ];
     }
 
 
@@ -206,7 +206,7 @@ class CustomPostTypeDefinitions
      */
     public function getPrivateCustomPostTypes()
     {
-        $private_CPTs = array();
+        $private_CPTs = [];
         foreach ($this->getDefinitions() as $CPT => $details) {
             if (empty($details['args']['public'])) {
                 $private_CPTs[ $CPT ] = $details;
@@ -233,18 +233,18 @@ class CustomPostTypeDefinitions
         if (! empty($post_type_slug)) {
             // check that slug and cpt match
             if (! isset($cpts[ $post_type_slug ])) {
-                return array();
+                return [];
             }
             if (empty($cpts[ $post_type_slug ]['class_name'])
                 && empty($cpts[ $post_type_slug ]['model_name'])
             ) {
-                return array();
+                return [];
             }
             // k let's get the model name for this cpt.
             return $this->getCustomPostTypeModelName($post_type_slug, $cpts[ $post_type_slug ]);
         }
         // if we made it here then we're returning an array of cpt model names indexed by post_type_slug.
-        $cpt_models = array();
+        $cpt_models = [];
         foreach ($cpts as $slug => $args) {
             $model = $this->getCustomPostTypeModelName($post_type_slug, $cpts[ $post_type_slug ]);
             if (! empty($model)) {
@@ -263,14 +263,14 @@ class CustomPostTypeDefinitions
     private function getCustomPostTypeModelName($post_type_slug, array $cpt)
     {
         if (! empty($cpt['model_name'])) {
-            return array($post_type_slug => $cpt['model_name']);
+            return [$post_type_slug => $cpt['model_name']];
         }
         if (! empty($cpt['class_name'])) {
-            return array(
+            return [
                 $post_type_slug => $this->deriveCptModelNameFromClassName($cpt['class_name']),
-            );
+            ];
         }
-        return array();
+        return [];
     }
 
 
@@ -287,17 +287,17 @@ class CustomPostTypeDefinitions
     /**
      * This instantiates cpt models related to the cpts registered via EE.
      *
-     * @since 4.6.16.rc.000
      * @param string $post_type_slug If valid slug is provided, then will instantiate the model only for
      *                               the cpt matching the given slug.  Otherwise all cpt models will be
      *                               instantiated (if possible).
      * @return EEM_CPT_Base[]        successful instantiation will return an array of successfully instantiated
      *                               EEM models indexed by post slug.
+     * @since 4.6.16.rc.000
      */
     public function getCustomPostTypeModels($post_type_slug = '')
     {
         $cpt_model_names = $this->getCustomPostTypeModelNames($post_type_slug);
-        $instantiated = array();
+        $instantiated = [];
         foreach ($cpt_model_names as $slug => $model_name) {
             $model = $this->loader->getShared($model_name);
             if ($model instanceof EEM_CPT_Base) {

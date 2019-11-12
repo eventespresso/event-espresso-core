@@ -48,7 +48,7 @@ class TicketDatetimesConnection implements ConnectionInterface
             'fromFieldName'      => 'datetimes',
             'connectionTypeName' => 'TicketDatetimesConnection',
             'resolve'            => [$this, 'resolveConnection'],
-            'resolveNode'        => [$this, 'resolveNode']
+            'resolveNode'        => [$this, 'resolveNode'],
         ];
     }
 
