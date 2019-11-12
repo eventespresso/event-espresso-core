@@ -242,7 +242,11 @@ const config = [
 ];
 
 const enhance = ( conf ) => {
-	const enhancedConf = { ...conf };
+	const resolve = {
+		// Add '.ts' and '.tsx' as resolvable extensions.
+		extensions: [ '', '.webpack.js', '.web.js', '.ts', '.tsx', '.js' ],
+	};
+	const enhancedConf = { ...conf, resolve };
 
 	if ( ! enhancedConf.output ) {
 		enhancedConf.output = {};
@@ -254,6 +258,26 @@ const enhance = ( conf ) => {
 	return enhancedConf;
 };
 
-const enhancedConfig = config.map( enhance );
+const addLoaders = ( conf ) => {
+	const loaders = [
+		// All files with a '.ts' or '.tsx' extension will be handled by 'awesome-typescript-loader'.
+		{ test: /\.tsx?$/, loader: 'awesome-typescript-loader' },
+	];
+	const preLoaders = [
+		// All output '.js' files will have any sourcemaps re-processed by 'source-map-loader'.
+		{ test: /\.js$/, loader: 'source-map-loader' },
+	];
+
+	return {
+		...conf,
+		module: {
+			...conf.module,
+			loaders,
+			preLoaders,
+		},
+	};
+};
+
+const enhancedConfig = config.map( enhance ).map( addLoaders );
 
 module.exports = enhancedConfig;

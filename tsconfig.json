@@ -1,7 +1,6 @@
 {
     "compilerOptions": {
 		"allowJs": true,
-		"jsx": "react", // use typescript to transpile jsx to js
 		"lib": [ "dom", "es6" ],
 		"moduleResolution": "node",
 		"outDir": "./assets/dist",
