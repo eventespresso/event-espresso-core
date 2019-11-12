@@ -226,26 +226,25 @@ class Extend_Events_Admin_Page extends Events_Admin_Page
         add_filter('FHEE__Events_Admin_Page___event_legend_items__items', array($this, 'additional_legend_items'));
         add_action('admin_init', array($this, 'admin_init'));
         // setup Advanced Editor ???
+        if (isset($this->_req_data['action'])
+            && (
+                $this->_req_data['action'] === 'default_event_settings'
+                || $this->_req_data['action'] === 'update_default_event_settings'
+            )
+        ) {
+            $this->advanced_editor_admin_form = $this->loader->getShared(
+                'EventEspresso\core\domain\services\admin\events\default_settings\AdvancedEditorAdminFormSection'
+            );
+        }
         $admin_config = $this->loader->getShared('EE_Admin_Config');
-        if ($admin_config instanceof EE_Admin_Config && $admin_config->useAdvancedEditor()) {
-            if (isset($this->_req_data['action'])
-                && (
-                    $this->_req_data['action'] === 'default_event_settings'
-                    || $this->_req_data['action'] === 'update_default_event_settings'
-                )
-            ) {
-                $this->advanced_editor_admin_form = $this->loader->getShared(
-                    'EventEspresso\core\domain\services\admin\events\default_settings\AdvancedEditorAdminFormSection'
-                );
-            }
-            if (isset($this->_req_data['action'])
-                && ($this->_req_data['action'] === 'edit' || $this->_req_data['action'] === 'create_new')
-            ) {
-                $this->advanced_editor_data = $this->loader->getShared(
-                    'EventEspresso\core\domain\services\admin\events\editor\AdvancedEditorEntityData',
-                    [$this->_cpt_model_obj]
-                );
-            }
+        if (isset($this->_req_data['action'])
+            && ($this->_req_data['action'] === 'edit' || $this->_req_data['action'] === 'create_new')
+            && $admin_config instanceof EE_Admin_Config && $admin_config->useAdvancedEditor()
+        ) {
+            $this->advanced_editor_data = $this->loader->getShared(
+                'EventEspresso\core\domain\services\admin\events\editor\AdvancedEditorEntityData',
+                [$this->_cpt_model_obj]
+            );
         }
     }
 
