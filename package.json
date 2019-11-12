@@ -4,7 +4,7 @@
 	"author": "Event Espresso",
 	"license": "GPL-3.0",
 	"description": "Event Espresso core js and css.",
-	"main": "webpack.dev.js",
+	"main": "config/webpack.dev.js",
 	"repository": "git+https://github.com/eventespresso/event-espresso-core.git",
 	"watch": {
 		"build:css": {
@@ -16,7 +16,7 @@
 		}
 	},
 	"scripts": {
-		"build": "cross-env NODE_ENV=production webpack --config webpack.prod.js",
+		"build": "cross-env NODE_ENV=production webpack --config ./config/webpack.prod.js",
 		"build:css": "node ./bin/css-builder/css-builder.js",
 		"check-engines": "wp-scripts check-engines",
 		"ci:build": "npm run build",
