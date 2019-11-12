@@ -1,6 +1,5 @@
 const merge = require( 'webpack-merge' );
 const WebpackAssetsManifest = require( 'webpack-assets-manifest' );
-const path = require( 'path' );
 const common = require( './webpack.common.js' );
 const webpack = require( 'webpack' );
 const miniExtract = require( 'mini-css-extract-plugin' );
@@ -13,6 +12,8 @@ const DependencyExtractionWebpackPlugin = require(
 const { requestToExternal, requestToHandle } = require(
 	'./asset-dependency-maps'
 );
+
+const { assetsManifestOutputPath } = require( './paths' );
 
 const pluginsConfigWithExtraction = [
 	new webpack.DefinePlugin( {
@@ -35,9 +36,7 @@ const pluginsConfigWithExtraction = [
 		requestToHandle,
 	} ),
 	new WebpackAssetsManifest( {
-		output: path.resolve( __dirname,
-			'../assets/dist/build-manifest.json',
-		),
+		output: assetsManifestOutputPath,
 		assets: assetsData,
 	} ),
 	new miniExtract( {
@@ -62,9 +61,7 @@ const pluginsConfigWithoutExtraction = [
 		React: 'react',
 	} ),
 	new WebpackAssetsManifest( {
-		output: path.resolve( __dirname,
-			'../assets/dist/build-manifest.json',
-		),
+		output: assetsManifestOutputPath,
 		assets: assetsData,
 	} ),
 	new miniExtract( {

@@ -5,6 +5,7 @@ const autoprefixer = require( 'autoprefixer' );
 const cssnano = require( 'cssnano' );
 const del = require( 'del' );
 
+const paths = require( "./paths" );
 const pathToDistFolder = path.resolve( __dirname, '../assets/dist' );
 /**
  * Clean build folder before running build
