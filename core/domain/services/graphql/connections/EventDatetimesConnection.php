@@ -7,6 +7,7 @@ use EEM_Datetime;
 use EventEspresso\core\domain\services\graphql\connection_resolvers\DatetimeConnectionResolver;
 use EventEspresso\core\services\graphql\connections\ConnectionInterface;
 use Exception;
+use WPGraphQL\Type\WPObjectType;
 
 /**
  * Class EventDatetimesConnection
@@ -47,6 +48,7 @@ class EventDatetimesConnection implements ConnectionInterface
             'toType'             => 'Datetime',
             'fromFieldName'      => 'datetimes',
             'connectionTypeName' => 'EventDatetimesConnection',
+            'connectionArgs'     => self::get_connection_args(),
             'resolve'            => [$this, 'resolveConnection'],
             'resolveNode'        => [$this, 'resolveNode']
         ];
@@ -80,5 +82,46 @@ class EventDatetimesConnection implements ConnectionInterface
     public function resolveNode($id, $args, $context, $info)
     {
         return $this->model->get_one_by_ID($id);
+    }
+
+	/**
+	 * Given an optional array of args, this returns the args to be used in the connection
+	 *
+	 * @access public
+	 * @param array $args The args to modify the defaults
+	 *
+	 * @return array
+	 */
+    public static function get_connection_args( $args = [] )
+    {
+        return array_merge(
+            [
+                'orderby'      => [
+                    'type'        => ['list_of' => 'DatetimesConnectionOrderbyInput'],
+                    'description' => esc_html__( 'What paramater to use to order the objects by.', 'event_espresso' ),
+                ],
+                'eventId'  => [
+                    'type'        => 'Int',
+                    'description' => esc_html__('Event ID of the datetime.', 'event_espresso'),
+                ],
+                'ticketId' => [
+                    'type'        => 'Int',
+                    'description' => esc_html__('Ticket ID of the datetime.', 'event_espresso'),
+                ],
+                'upcoming' => [
+                    'type'        => 'Boolean',
+                    'description' => esc_html__('Datetimes which are upcoming.', 'event_espresso'),
+                ],
+                'active'   => [
+                    'type'        => 'Boolean',
+                    'description' => esc_html__('Datetimes which are active.', 'event_espresso'),
+                ],
+                'expired'  => [
+                    'type'        => 'Boolean',
+                    'description' => esc_html__('Datetimes which are expired.', 'event_espresso'),
+                ],
+            ],
+            $args
+        );
     }
 }

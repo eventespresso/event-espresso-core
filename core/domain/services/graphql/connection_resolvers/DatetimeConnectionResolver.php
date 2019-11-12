@@ -12,6 +12,7 @@ use EventEspresso\core\exceptions\InvalidInterfaceException;
 use InvalidArgumentException;
 use WPGraphQL\Data\Connection\AbstractConnectionResolver;
 use WPGraphQL\Model\Post;
+use WPGraphQL\Types;
 
 /**
  * Class DatetimeConnectionResolver
@@ -142,12 +143,10 @@ class DatetimeConnectionResolver extends AbstractConnectionResolver
 
 
     /**
-     * This sets up the "allowed" args, and translates the GraphQL-friendly keys to WP_Query
-     * friendly keys. There's probably a cleaner/more dynamic way to approach this, but
-     * this was quick. I'd be down to explore more dynamic ways to map this, but for
-     * now this gets the job done.
+     * This sets up the "allowed" args, and translates the GraphQL-friendly keys to model
+     * friendly keys.
      *
-     * @param array $query_args
+     * @param array $where_args
      * @return array
      */
     // phpcs:ignore PSR1.Methods.CamelCapsMethodName.NotCamelCaps
