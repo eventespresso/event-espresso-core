@@ -2,6 +2,7 @@
 
 namespace EventEspresso\core\domain\services\converters\spoofers;
 
+use DomainException;
 use EE_Error;
 use EEM_Base;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
@@ -61,6 +62,7 @@ class RestApiSpoofer
      * @throws RestPasswordIncorrectException
      * @throws RestPasswordRequiredException
      * @throws UnexpectedEntityException
+     * @throws DomainException
      * @since $VID:$
      */
     public function getApiResults(EEM_Base $model, array $query_params, $include = '')
@@ -80,5 +82,4 @@ class RestApiSpoofer
         }
         return $nice_results;
     }
-
 }

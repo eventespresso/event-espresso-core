@@ -48,7 +48,7 @@ class EventVenuesConnection implements ConnectionInterface
             'fromFieldName'      => 'venues',
             'connectionTypeName' => 'EventVenuesConnection',
             'resolve'            => [$this, 'resolveConnection'],
-            'resolveNode'        => [$this, 'resolveNode']
+            'resolveNode'        => [$this, 'resolveNode'],
         ];
     }
 

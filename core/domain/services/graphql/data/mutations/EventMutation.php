@@ -1,7 +1,6 @@
 <?php
-namespace EventEspresso\core\domain\services\graphql\data\mutations;
 
-use GraphQL\Error\UserError;
+namespace EventEspresso\core\domain\services\graphql\data\mutations;
 
 /**
  * Class EventMutation
@@ -12,34 +11,32 @@ use GraphQL\Error\UserError;
 class EventMutation
 {
 
-	/**
-	 * Maps the GraphQL input to a format that the model functions can use
-	 *
-	 * @param array  $input         Data coming from the GraphQL mutation query input
-	 * @param string $mutation_name Name of the mutation being performed
-	 *
-	 * @return array
-	 */
-	public static function prepare_fields(array $input, $mutation_name)
-	{
+    /**
+     * Maps the GraphQL input to a format that the model functions can use
+     *
+     * @param array  $input         Data coming from the GraphQL mutation query input
+     * @param string $mutation_name Name of the mutation being performed
+     * @return array
+     */
+    public static function prepareFields(array $input, $mutation_name)
+    {
 
-		$args = [];
+        $args = [];
 
-		if ( ! empty( $input['name'] ) ) {
-			$args['EVT_name'] = sanitize_text_field( $input['name'] );
-		}
+        if (! empty($input['name'])) {
+            $args['EVT_name'] = sanitize_text_field($input['name']);
+        }
 
-		if ( ! empty( $input['desc'] ) ) {
-			$args['EVT_desc'] = sanitize_text_field( $input['desc'] );
-		}
+        if (! empty($input['desc'])) {
+            $args['EVT_desc'] = sanitize_text_field($input['desc']);
+        }
 
-		if ( ! empty( $input['shortDesc'] ) ) {
-			$args['EVT_short_desc'] = sanitize_text_field( $input['shortDesc'] );
-		}
+        if (! empty($input['shortDesc'])) {
+            $args['EVT_short_desc'] = sanitize_text_field($input['shortDesc']);
+        }
 
-		// Likewise the other fields...
+        // Likewise the other fields...
 
-		return $args;
-	}
-
+        return $args;
+    }
 }

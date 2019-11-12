@@ -52,8 +52,7 @@ class ResolverCollection extends Collection
         if (! $this->loader instanceof CollectionLoader) {
             $this->loader = new CollectionLoader(
                 new CollectionDetails(
-                // collection name
-                    ResolverCollection::COLLECTION_NAME,
+                    // collection nameResolverCollection::COLLECTION_NAME,
                     // collection interface
                     'EventEspresso\core\services\graphql\ResolverInterface',
                     // FQCNs for classes to add (all classes within each namespace will be loaded)

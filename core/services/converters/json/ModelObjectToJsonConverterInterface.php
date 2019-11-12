@@ -2,8 +2,6 @@
 
 namespace EventEspresso\core\services\converters\json;
 
-use EE_Base_Class;
-
 /**
  * Interface ModelObjectToJsonConverterInterface
  * Description

@@ -12,7 +12,6 @@ use EE_State;
 use EEM_State;
 use EEM_Country;
 use EE_Error;
-
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
 use EventEspresso\core\exceptions\UnexpectedEntityException;
@@ -21,13 +20,11 @@ use EventEspresso\core\services\graphql\fields\GraphQLField;
 use Exception;
 use InvalidArgumentException;
 use ReflectionException;
-
 use WPGraphQL\Data\DataSource;
 use GraphQL\Deferred;
 use GraphQL\Error\UserError;
 use GraphQL\Type\Definition\ResolveInfo;
 use WPGraphQL\AppContext;
-
 
 /**
  * Class FieldResolver

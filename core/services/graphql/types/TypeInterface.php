@@ -2,9 +2,7 @@
 
 namespace EventEspresso\core\services\graphql\types;
 
-
 use EE_Error;
-use EventEspresso\core\services\graphql\fields\GraphQLFieldInterface;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
 use EventEspresso\core\exceptions\UnexpectedEntityException;
