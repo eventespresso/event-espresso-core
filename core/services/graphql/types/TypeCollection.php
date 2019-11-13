@@ -53,7 +53,8 @@ class TypeCollection extends Collection
         if (! $this->loader instanceof CollectionLoader) {
             $this->loader = new CollectionLoader(
                 new CollectionDetails(
-                    // collection nameTypeCollection::COLLECTION_NAME,
+                    // collection name
+                    TypeCollection::COLLECTION_NAME,
                     // collection interface
                     'EventEspresso\core\services\graphql\types\TypeInterface',
                     // FQCNs for classes to add (all classes within each namespace will be loaded)
