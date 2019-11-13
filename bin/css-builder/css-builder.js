@@ -15,7 +15,7 @@ const getIndexPaths = require( './get-index-paths' );
 // constants;
 const DEMO_TEMPLATES_PATH = path.resolve( __dirname, 'demo-templates' );
 const CSS_TEMPLATES_PATH = path.resolve( __dirname, 'css-templates' );
-const STYLES_DIRECTORY = path.resolve( __dirname, '../../assets/src/components/ui/styles' );
+const STYLES_DIRECTORY = path.resolve( __dirname, '../../assets/ZZZ/components/ui/styles' );
 const { readFile, parseCssTemplate, writeFile } = fileUtils;
 
 // @todo eventually the themes will be looped through, but for now we're just

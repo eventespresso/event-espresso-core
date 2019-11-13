@@ -10,7 +10,7 @@ const {
 	InvalidLocale,
 	InvalidDateTime,
 	InvalidModelEntity,
-} = require( '../../../../../assets/src/eejs' );
+} = require( '../../../../../assets/ZZZ/eejs' );
 
 const newCurrencyConfig = {
 	code: 'USD',

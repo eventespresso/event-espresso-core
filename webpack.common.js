@@ -1,5 +1,5 @@
 const path = require( 'path' );
-const assets = './assets/src/';
+const assets = './assets/ZZZ/';
 const miniExtract = require( 'mini-css-extract-plugin' );
 const autoprefixer = require( 'autoprefixer' );
 const cssnano = require( 'cssnano' );

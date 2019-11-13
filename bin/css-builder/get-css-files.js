@@ -2,7 +2,7 @@ const fs = require( 'fs' );
 const path = require( 'path' );
 const { overEvery } = require( 'lodash' );
 
-const STYLES_DIRECTORY = path.resolve( __dirname, '../../assets/src/components/ui/styles' );
+const STYLES_DIRECTORY = path.resolve( __dirname, '../../assets/ZZZ/components/ui/styles' );
 let directory = STYLES_DIRECTORY;
 
 /**

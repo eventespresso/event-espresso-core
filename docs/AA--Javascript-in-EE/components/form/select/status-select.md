@@ -59,7 +59,7 @@ Contains default properties used for the Status model REST request.
 
 ### getQueryString
 
-This is a function that returns the queryString used to retrieve the Status model data. It defaults to [statusModel.getQueryString](../../../../../assets/src/data/model/status/index.js).
+This is a function that returns the queryString used to retrieve the Status model data. It defaults to [statusModel.getQueryString](../../../../../assets/ZZZ/data/model/status/index.js).
 
 - Type: `Function`
 - Required: No
