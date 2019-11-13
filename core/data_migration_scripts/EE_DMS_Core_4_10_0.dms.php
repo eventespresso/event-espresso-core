@@ -629,7 +629,8 @@ class EE_DMS_Core_4_10_0 extends EE_Data_Migration_Script_Base
      * but it still exists so there's no problems.
      * @since $VID:$
      */
-    protected function removeMijirehPM(){
+    protected function removeMijirehPM()
+    {
         global $wpdb;
         $wpdb->update(
             $wpdb->prefix . 'esp_payment_method',
@@ -638,8 +639,16 @@ class EE_DMS_Core_4_10_0 extends EE_Data_Migration_Script_Base
                 'PMD_scope' => serialize(array())
             ],
             [
-                '%s', //PMD_type
-                '%s', //PMD_scope
+                'PMD_type' => 'Mijireh'
+            ],
+            [
+                // update formats
+                '%s', // PMD_type
+                '%s', // PMD_scope
+            ],
+            [
+                // where formats
+                '%s'
             ]
         );
     }
