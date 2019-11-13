@@ -29,7 +29,8 @@ class DatetimeConnectionResolver extends AbstractConnectionResolver
      * @throws InvalidInterfaceException
      */
 	// phpcs:ignore PSR1.Methods.CamelCapsMethodName.NotCamelCaps
-	public function get_query() {
+	public function get_query()
+	{
 		return EEM_Datetime::instance();
 	}
 
@@ -39,7 +40,8 @@ class DatetimeConnectionResolver extends AbstractConnectionResolver
 	 * @return array
 	 */
 	// phpcs:ignore PSR1.Methods.CamelCapsMethodName.NotCamelCaps
-	public function get_items() {
+	public function get_items()
+	{
 
 		$results = $this->query->get_col( $this->query_args );
 
@@ -56,7 +58,8 @@ class DatetimeConnectionResolver extends AbstractConnectionResolver
 	 * @return bool
 	 */
 	// phpcs:ignore PSR1.Methods.CamelCapsMethodName.NotCamelCaps
-	public function should_execute() {
+	public function should_execute()
+	{
 
 		if ( false === $this->should_execute ) {
 			return false;
@@ -73,7 +76,8 @@ class DatetimeConnectionResolver extends AbstractConnectionResolver
 	 * @return array
 	 */
 	// phpcs:ignore PSR1.Methods.CamelCapsMethodName.NotCamelCaps
-	public function get_query_args() {
+	public function get_query_args()
+	{
 
 		$where_params = [];
 		$query_args   = [];
@@ -188,7 +192,8 @@ class DatetimeConnectionResolver extends AbstractConnectionResolver
      * @param array $where_args
      * @return array
      */
-	public function sanitizeInputFields(array $where_args) {
+	public function sanitizeInputFields(array $where_args)
+	{
 
 		$arg_mapping = [
 			'eventId'   => 'EVT_ID',
