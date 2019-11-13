@@ -1,11 +1,11 @@
 const path = require( 'path' );
-const assets = './assets/ZZZ/';
 const miniExtract = require( 'mini-css-extract-plugin' );
 const autoprefixer = require( 'autoprefixer' );
 const cssnano = require( 'cssnano' );
 const del = require( 'del' );
 
-const pathToDistFolder = path.resolve( __dirname, 'assets/dist' );
+const { assetsPath, pathToDistFolder } = require( './paths' );
+
 /**
  * Clean build folder before running build
  */
@@ -60,71 +60,57 @@ const moduleConfigWithJsRules = { rules: [ rulesConfig.jsRulesConfig ] };
 const config = [
 	{
 		entry: {
-			'eejs-core': assets + 'eejs/index.js',
+			'eejs-core': assetsPath + 'eejs/index.js',
 		},
 		module: moduleConfigWithJsRules,
 		output: {
-			filename: '[name].[chunkhash].dist.js',
-			path: pathToDistFolder,
 			library: [ 'eejs' ],
 			libraryTarget: 'this',
 		},
 	},
 	{
 		entry: {
-			'eventespresso-vendor': assets + 'eejs/vendor/index.js',
+			'eventespresso-vendor': assetsPath + 'eejs/vendor/index.js',
 		},
 		module: moduleConfigWithJsRules,
 		output: {
-			filename: '[name].[chunkhash].dist.js',
-			path: pathToDistFolder,
 			library: [ 'eejs', 'vendor' ],
 			libraryTarget: 'this',
 		},
 	},
 	{
 		entry: {
-			'eventespresso-utils': assets + 'utils/index.js',
+			'eventespresso-utils': assetsPath + 'utils/index.js',
 		},
 		module: moduleConfigWithJsRules,
 		output: {
-			filename: '[name].[chunkhash].dist.js',
-			path: pathToDistFolder,
 			library: [ 'eejs', 'utils' ],
 			libraryTarget: 'this',
 		},
 	},
 	{
 		entry: {
-			'eventespresso-hooks': assets + 'hooks/index.js',
+			'eventespresso-hooks': assetsPath + 'hooks/index.js',
 		},
 		module: moduleConfigWithJsRules,
 		output: {
-			filename: '[name].[chunkhash].dist.js',
-			path: pathToDistFolder,
 			library: [ 'eejs', 'hooks' ],
 			libraryTarget: 'this',
 		},
 	},
 	{
 		entry: {
-			'eventespresso-validators': assets + 'eejs/validators/index.js',
+			'eventespresso-validators': assetsPath + 'eejs/validators/index.js',
 		},
 		module: moduleConfigWithJsRules,
 		output: {
-			filename: '[name].[chunkhash].dist.js',
-			path: pathToDistFolder,
 			library: [ 'eejs', 'validators' ],
 			libraryTarget: 'this',
 		},
 	},
 	{
 		entry: {
-			'eventespresso-data-stores': assets + 'data/index.js',
-		},
-		output: {
-			filename: '[name].[chunkhash].dist.js',
-			path: pathToDistFolder,
+			'eventespresso-data-stores': assetsPath + 'data/index.js',
 		},
 		module: moduleConfigWithJsAndCssRules,
 		watchOptions: {
@@ -133,35 +119,29 @@ const config = [
 	},
 	{
 		entry: {
-			'eventespresso-helpers': assets + 'data/helpers/index.js',
+			'eventespresso-helpers': assetsPath + 'data/helpers/index.js',
 		},
 		module: moduleConfigWithJsRules,
 		output: {
-			filename: '[name].[chunkhash].dist.js',
-			path: pathToDistFolder,
 			library: [ 'eejs', 'helpers' ],
 			libraryTarget: 'this',
 		},
 	},
 	{
 		entry: {
-			'eventespresso-model': assets + 'data/model/index.js',
+			'eventespresso-model': assetsPath + 'data/model/index.js',
 		},
 		module: moduleConfigWithJsRules,
 		output: {
-			filename: '[name].[chunkhash].dist.js',
-			path: pathToDistFolder,
 			library: [ 'eejs', 'model' ],
 			libraryTarget: 'this',
 		},
 	},
 	{
 		entry: {
-			'eventespresso-model-schema': assets + 'data/eventespresso/schema/index.js',
+			'eventespresso-model-schema': assetsPath + 'data/eventespresso/schema/index.js',
 		},
 		output: {
-			filename: '[name].[chunkhash].dist.js',
-			path: pathToDistFolder,
 			library: [ 'eejs', 'modelSchema' ],
 			libraryTarget: 'this',
 		},
@@ -172,71 +152,57 @@ const config = [
 	},
 	{
 		entry: {
-			'eventespresso-value-objects': assets + 'vo/index.js',
+			'eventespresso-value-objects': assetsPath + 'vo/index.js',
 		},
 		module: moduleConfigWithJsRules,
 		output: {
-			filename: '[name].[chunkhash].dist.js',
-			path: pathToDistFolder,
 			library: [ 'eejs', 'valueObjects' ],
 			libraryTarget: 'this',
 		},
 	},
 	{
 		entry: {
-			'eventespresso-hocs': assets + 'higher-order-components/index.js',
+			'eventespresso-hocs': assetsPath + 'higher-order-components/index.js',
 		},
 		module: moduleConfigWithJsAndCssRules,
 		output: {
-			filename: '[name].[chunkhash].dist.js',
-			path: pathToDistFolder,
 			library: [ 'eejs', 'hocs' ],
 			libraryTarget: 'this',
 		},
 	},
 	{
 		entry: {
-			'eventespresso-components': assets + 'components/index.js',
+			'eventespresso-components': assetsPath + 'components/index.js',
 		},
 		module: moduleConfigWithJsAndCssRules,
 		output: {
-			filename: '[name].[chunkhash].dist.js',
-			path: pathToDistFolder,
 			library: [ 'eejs', 'components' ],
 			libraryTarget: 'this',
 		},
 	},
 	{
 		entry: {
-			'eventespresso-editor-hocs': assets + 'editor-hocs/index.js',
+			'eventespresso-editor-hocs': assetsPath + 'editor-hocs/index.js',
 		},
 		module: moduleConfigWithJsAndCssRules,
 		output: {
-			filename: '[name].[chunkhash].dist.js',
-			path: pathToDistFolder,
 			library: [ 'eejs', 'editorHocs' ],
 			libraryTarget: 'this',
 		},
 	},
 	{
 		entry: {
-			'eventespresso-editor': assets + 'editor/index.js',
+			'eventespresso-editor': assetsPath + 'editor/index.js',
 		},
 		module: moduleConfigWithJsAndCssRules,
 		output: {
-			filename: '[name].[chunkhash].dist.js',
-			path: pathToDistFolder,
 			library: [ 'eejs', 'editor' ],
 			libraryTarget: 'this',
 		},
 	},
 	{
 		entry: {
-			'ee-wp-plugins-page': assets + 'wp-plugins-page/index.js',
-		},
-		output: {
-			filename: '[name].[chunkhash].dist.js',
-			path: pathToDistFolder,
+			'ee-wp-plugins-page': assetsPath + 'wp-plugins-page/index.js',
 		},
 		module: moduleConfigWithJsAndCssRules,
 		watchOptions: {
@@ -245,11 +211,7 @@ const config = [
 	},
 	{
 		entry: {
-			'eventespresso-core-blocks': assets + 'blocks/index.js',
-		},
-		output: {
-			filename: '[name].[chunkhash].dist.js',
-			path: pathToDistFolder,
+			'eventespresso-core-blocks': assetsPath + 'blocks/index.js',
 		},
 		module: moduleConfigWithJsAndCssRules,
 		watchOptions: {
@@ -258,13 +220,9 @@ const config = [
 	},
 	{
 		entry: {
-			'eventespresso-core-blocks-frontend': assets +
+			'eventespresso-core-blocks-frontend': assetsPath +
 				'blocks/index-frontend.js',
 		},
-		output: {
-			filename: '[name].[chunkhash].dist.js',
-			path: pathToDistFolder,
-		},
 		module: moduleConfigWithJsAndCssRules,
 		watchOptions: {
 			poll: 1000,
@@ -272,12 +230,8 @@ const config = [
 	},
 	{
 		entry: {
-			'eventespresso-core-css-default': assets +
+			'eventespresso-core-css-default': assetsPath +
 				'components/ui/styles/themes/default/index.js',
-		},
-		output: {
-			filename: '[name].[chunkhash].dist.js',
-			path: pathToDistFolder,
 		},
 		module: moduleConfigWithJsAndCssRules,
 		watchOptions: {
@@ -285,4 +239,50 @@ const config = [
 		},
 	},
 ];
-module.exports = config;
+
+const enhance = ( conf ) => {
+	const resolve = {
+		// Add '.ts' and '.tsx' as resolvable extensions.
+		extensions: [ '.webpack.js', '.web.js', '.ts', '.tsx', '.js' ],
+	};
+	const enhancedConf = { ...conf, resolve };
+
+	if ( ! enhancedConf.output ) {
+		enhancedConf.output = {};
+	}
+
+	enhancedConf.output.path = pathToDistFolder;
+	enhancedConf.output.filename = '[name].[chunkhash].dist.js';
+
+	return enhancedConf;
+};
+
+const addLoaders = ( conf ) => {
+	const enhancedConf = { ...conf };
+
+	enhancedConf.module.rules = [
+		...conf.module.rules,
+		{
+			test: /\.ts(x?)$/,
+			exclude: /node_modules/,
+			use: [
+				{
+					loader: 'awesome-typescript-loader',
+				},
+			],
+		},
+		{
+			enforce: 'pre',
+			test: /\.js$/,
+			loader: 'source-map-loader',
+		},
+	];
+
+	return enhancedConf;
+};
+
+const enhancedConfig = config
+	.map( enhance )
+	.map( addLoaders );
+
+module.exports = enhancedConfig;

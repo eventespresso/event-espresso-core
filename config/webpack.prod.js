@@ -1,17 +1,20 @@
 const merge = require( 'webpack-merge' );
 const WebpackAssetsManifest = require( 'webpack-assets-manifest' );
-const path = require( 'path' );
 const common = require( './webpack.common.js' );
 const webpack = require( 'webpack' );
 const miniExtract = require( 'mini-css-extract-plugin' );
-const wpi18nExtractor = require( './bin/i18n-map-extractor.js' );
+const wpi18nExtractor = require( '../bin/i18n-map-extractor.js' );
 const assetsData = Object.create( null );
 const DependencyExtractionWebpackPlugin = require(
 	'@wordpress/dependency-extraction-webpack-plugin'
 );
+
 const { requestToExternal, requestToHandle } = require(
-	'./bin/asset-dependency-maps'
+	'./asset-dependency-maps'
 );
+
+const { assetsManifestOutputPath } = require( './paths' );
+
 const pluginsConfigWithExtraction = [
 	new webpack.DefinePlugin( {
 		'process.env': {
@@ -33,15 +36,14 @@ const pluginsConfigWithExtraction = [
 		requestToHandle,
 	} ),
 	new WebpackAssetsManifest( {
-		output: path.resolve( __dirname,
-			'assets/dist/build-manifest.json',
-		),
+		output: assetsManifestOutputPath,
 		assets: assetsData,
 	} ),
 	new miniExtract( {
 		filename: '[name].[contenthash].dist.css',
 	} ),
 ];
+
 const pluginsConfigWithoutExtraction = [
 	new webpack.DefinePlugin( {
 		'process.env': {
@@ -59,15 +61,14 @@ const pluginsConfigWithoutExtraction = [
 		React: 'react',
 	} ),
 	new WebpackAssetsManifest( {
-		output: path.resolve( __dirname,
-			'assets/dist/build-manifest.json',
-		),
+		output: assetsManifestOutputPath,
 		assets: assetsData,
 	} ),
 	new miniExtract( {
 		filename: '[name].[contenthash].dist.css',
 	} ),
 ];
+
 common.forEach( ( config, index ) => {
 	const plugins = config.entry[ 'eventespresso-vendor' ] ?
 		pluginsConfigWithoutExtraction :
@@ -77,4 +78,5 @@ common.forEach( ( config, index ) => {
 		mode: 'production',
 	} );
 } );
+
 module.exports = common;
