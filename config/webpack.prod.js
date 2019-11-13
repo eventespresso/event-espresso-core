@@ -9,9 +9,11 @@ const assetsData = Object.create( null );
 const DependencyExtractionWebpackPlugin = require(
 	'@wordpress/dependency-extraction-webpack-plugin'
 );
+
 const { requestToExternal, requestToHandle } = require(
-	'./bin/asset-dependency-maps'
+	'./asset-dependency-maps'
 );
+
 const pluginsConfigWithExtraction = [
 	new webpack.DefinePlugin( {
 		'process.env': {
@@ -34,7 +36,7 @@ const pluginsConfigWithExtraction = [
 	} ),
 	new WebpackAssetsManifest( {
 		output: path.resolve( __dirname,
-			'assets/dist/build-manifest.json',
+			'../assets/dist/build-manifest.json',
 		),
 		assets: assetsData,
 	} ),
@@ -42,6 +44,7 @@ const pluginsConfigWithExtraction = [
 		filename: '[name].[contenthash].dist.css',
 	} ),
 ];
+
 const pluginsConfigWithoutExtraction = [
 	new webpack.DefinePlugin( {
 		'process.env': {
@@ -60,7 +63,7 @@ const pluginsConfigWithoutExtraction = [
 	} ),
 	new WebpackAssetsManifest( {
 		output: path.resolve( __dirname,
-			'assets/dist/build-manifest.json',
+			'../assets/dist/build-manifest.json',
 		),
 		assets: assetsData,
 	} ),
@@ -68,6 +71,7 @@ const pluginsConfigWithoutExtraction = [
 		filename: '[name].[contenthash].dist.css',
 	} ),
 ];
+
 common.forEach( ( config, index ) => {
 	const plugins = config.entry[ 'eventespresso-vendor' ] ?
 		pluginsConfigWithoutExtraction :
@@ -77,4 +81,5 @@ common.forEach( ( config, index ) => {
 		mode: 'production',
 	} );
 } );
+
 module.exports = common;

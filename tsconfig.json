@@ -10,5 +10,6 @@
     },
     "include": [
         "./assets/src/**/*"
-    ]
+	],
+	"exclude": ["node_modules", "./assets/dist"]
 }

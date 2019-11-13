@@ -8,9 +8,11 @@ const assetsData = Object.create( null );
 const DependencyExtractionWebpackPlugin = require(
 	'@wordpress/dependency-extraction-webpack-plugin'
 );
+
 const { requestToExternal, requestToHandle } = require(
-	'./bin/asset-dependency-maps'
+	'./asset-dependency-maps'
 );
+
 const pluginsConfigWithExternals = [
 	new webpack.ProvidePlugin( {
 		React: 'react',
@@ -21,7 +23,7 @@ const pluginsConfigWithExternals = [
 	} ),
 	new WebpackAssetsManifest( {
 		output: path.resolve( __dirname,
-			'assets/dist/build-manifest.json',
+			'../assets/dist/build-manifest.json',
 		),
 		assets: assetsData,
 	} ),
@@ -29,10 +31,11 @@ const pluginsConfigWithExternals = [
 		filename: '[name].[contenthash].dist.css',
 	} ),
 ];
+
 const pluginsConfigWithoutExternals = [
 	new WebpackAssetsManifest( {
 		output: path.resolve( __dirname,
-			'assets/dist/build-manifest.json',
+			'../assets/dist/build-manifest.json',
 		),
 		assets: assetsData,
 	} ),
@@ -43,14 +46,17 @@ const pluginsConfigWithoutExternals = [
 		filename: '[name].[contenthash].dist.css',
 	} ),
 ];
+
 common.forEach( ( config, index ) => {
 	const plugins = config.entry[ 'eventespresso-vendor' ] ?
 		pluginsConfigWithoutExternals :
 		pluginsConfigWithExternals;
+
 	common[ index ] = merge( config, {
 		devtool: 'inline-source-map',
 		plugins,
 		mode: 'development',
 	} );
 } );
+
 module.exports = common;
