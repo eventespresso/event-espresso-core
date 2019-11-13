@@ -21,13 +21,13 @@ class DatetimesConnectionOrderbyEnum extends EnumBase
     public function __construct()
     {
         $this->setName('DatetimesConnectionOrderbyEnum');
-        $this->setDescription(__('Field to order the connection by', 'event_espresso'));
+        $this->setDescription(esc_html__('Field to order the connection by', 'event_espresso'));
         parent::__construct();
     }
 
 
     /**
-     * @return GraphQLValueInterface[]
+     * @return array
      * @since $VID:$
      */
     protected function getValues()
@@ -35,11 +35,11 @@ class DatetimesConnectionOrderbyEnum extends EnumBase
         return [
             'NAME'     => [
 				'value'       => 'DTT_name',
-				'description' => __( 'Order by name', 'event_espresso' ),
+				'description' => esc_html__( 'Order by name', 'event_espresso' ),
 			],
             'START_DATE'     => [
 				'value'       => 'DTT_EVT_start',
-				'description' => __( 'Order by start date', 'event_espresso' ),
+				'description' => esc_html__( 'Order by start date', 'event_espresso' ),
 			],
         ];
     }

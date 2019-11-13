@@ -89,7 +89,7 @@ class DatetimeConnectionResolver extends AbstractConnectionResolver
 		$query_args['limit'] = min(
 		    max( absint( $first ), absint( $last ), 10 ),
             $this->query_amount
-        ) + 1;
+		) + 1;
 
 		/**
 		 * Collect the input_fields and sanitize them to prepare them for sending to the Query
@@ -127,10 +127,12 @@ class DatetimeConnectionResolver extends AbstractConnectionResolver
 		/**
 		 * Merge the input_fields with the default query_args
 		 */
-		if ( ! empty( $input_fields ) ) {
-			unset($input_fields['orderby']); // to be added separately
+		if (! empty($input_fields)) {
 			$where_params = array_merge($where_params, $input_fields);
 		}
+
+		// ID of the offset datetime.
+		$offset = $this->get_offset();
 
 		/**
 		 * Map the orderby inputArgs to the WP_Query
@@ -140,6 +142,9 @@ class DatetimeConnectionResolver extends AbstractConnectionResolver
 			foreach ( $this->args['where']['orderby'] as $orderby_input ) {
 				$query_args['order_by'][ $orderby_input['field'] ] = $orderby_input['order'];
 			}
+		} elseif ($offset) {
+			$compare = ! empty($last) ? '<' : '>';
+			$where_params['DTT_ID'] = array($compare, $offset);
 		}
 
 		if (! empty( $this->args['where']['upcoming'])) {

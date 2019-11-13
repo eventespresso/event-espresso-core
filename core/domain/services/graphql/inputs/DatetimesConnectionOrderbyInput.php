@@ -25,7 +25,7 @@ class DatetimesConnectionOrderbyInput extends InputBase
     public function __construct()
     {
         $this->setName('DatetimesConnectionOrderbyInput');
-        $this->setDescription(__('Options for ordering the connection', 'event_espresso'));
+        $this->setDescription(esc_html__('Options for ordering the connection', 'event_espresso'));
         parent::__construct();
     }
 

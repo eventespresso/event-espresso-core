@@ -92,7 +92,7 @@ class EventDatetimesConnection implements ConnectionInterface
 	 *
 	 * @return array
 	 */
-    public static function get_connection_args( $args = [] )
+    public static function get_connection_args($args = [])
     {
         return array_merge(
             [

@@ -8,16 +8,17 @@ use EventEspresso\core\domain\services\graphql\connection_resolvers\DatetimeConn
 use EventEspresso\core\domain\services\graphql\connections\EventDatetimesConnection;
 use EventEspresso\core\services\graphql\connections\ConnectionInterface;
 use Exception;
+use WPGraphQL\Type\WPObjectType;
 
 /**
- * Class TicketDatetimesConnection
+ * Class RootQueryDatetimesConnection
  * Description
  *
  * @package EventEspresso\core\domain\services\graphql\connections
  * @author  Brent Christensen
  * @since   $VID:$
  */
-class TicketDatetimesConnection implements ConnectionInterface
+class RootQueryDatetimesConnection implements ConnectionInterface
 {
 
     /**
@@ -29,7 +30,7 @@ class TicketDatetimesConnection implements ConnectionInterface
     /**
      * DatetimeConnection constructor.
      *
-     * @param EEM_Datetime $model
+     * @param EEM_Datetime               $model
      */
     public function __construct(EEM_Datetime $model)
     {
@@ -44,13 +45,13 @@ class TicketDatetimesConnection implements ConnectionInterface
     public function config()
     {
         return [
-            'fromType'           => 'Ticket',
+            'fromType'           => 'RootQuery',
             'toType'             => 'Datetime',
             'fromFieldName'      => 'datetimes',
-            'connectionTypeName' => 'TicketDatetimesConnection',
+            'connectionTypeName' => 'RootQueryDatetimesConnection',
             'connectionArgs'     => EventDatetimesConnection::get_connection_args(),
             'resolve'            => [$this, 'resolveConnection'],
-            'resolveNode'        => [$this, 'resolveNode'],
+            'resolveNode'        => [$this, 'resolveNode']
         ];
     }
 
