@@ -100,6 +100,8 @@
 		"equivalent-key-map": "^0.2.2",
 		"eslint": "^6.6.0",
 		"eslint-plugin-jest": "23.0.2",
+		"eslint-plugin-react": "^7.16.0",
+		"eslint-plugin-react-hooks": "^2.2.0",
 		"handlebars": "^4.5.1",
 		"husky": "^3.0.9",
 		"license-checker": "^25.0.1",
