@@ -1,11 +1,10 @@
 const path = require( 'path' );
-const assets = './assets/ZZZ/';
 const miniExtract = require( 'mini-css-extract-plugin' );
 const autoprefixer = require( 'autoprefixer' );
 const cssnano = require( 'cssnano' );
 const del = require( 'del' );
 
-const { pathToDistFolder } = require( './paths' );
+const { assetsPath, pathToDistFolder } = require( './paths' );
 
 /**
  * Clean build folder before running build
@@ -61,7 +60,7 @@ const moduleConfigWithJsRules = { rules: [ rulesConfig.jsRulesConfig ] };
 const config = [
 	{
 		entry: {
-			'eejs-core': assets + 'eejs/index.js',
+			'eejs-core': assetsPath + 'eejs/index.js',
 		},
 		module: moduleConfigWithJsRules,
 		output: {
@@ -71,7 +70,7 @@ const config = [
 	},
 	{
 		entry: {
-			'eventespresso-vendor': assets + 'eejs/vendor/index.js',
+			'eventespresso-vendor': assetsPath + 'eejs/vendor/index.js',
 		},
 		module: moduleConfigWithJsRules,
 		output: {
@@ -81,7 +80,7 @@ const config = [
 	},
 	{
 		entry: {
-			'eventespresso-utils': assets + 'utils/index.js',
+			'eventespresso-utils': assetsPath + 'utils/index.js',
 		},
 		module: moduleConfigWithJsRules,
 		output: {
@@ -91,7 +90,7 @@ const config = [
 	},
 	{
 		entry: {
-			'eventespresso-hooks': assets + 'hooks/index.js',
+			'eventespresso-hooks': assetsPath + 'hooks/index.js',
 		},
 		module: moduleConfigWithJsRules,
 		output: {
@@ -101,7 +100,7 @@ const config = [
 	},
 	{
 		entry: {
-			'eventespresso-validators': assets + 'eejs/validators/index.js',
+			'eventespresso-validators': assetsPath + 'eejs/validators/index.js',
 		},
 		module: moduleConfigWithJsRules,
 		output: {
@@ -111,7 +110,7 @@ const config = [
 	},
 	{
 		entry: {
-			'eventespresso-data-stores': assets + 'data/index.js',
+			'eventespresso-data-stores': assetsPath + 'data/index.js',
 		},
 		module: moduleConfigWithJsAndCssRules,
 		watchOptions: {
@@ -120,7 +119,7 @@ const config = [
 	},
 	{
 		entry: {
-			'eventespresso-helpers': assets + 'data/helpers/index.js',
+			'eventespresso-helpers': assetsPath + 'data/helpers/index.js',
 		},
 		module: moduleConfigWithJsRules,
 		output: {
@@ -130,7 +129,7 @@ const config = [
 	},
 	{
 		entry: {
-			'eventespresso-model': assets + 'data/model/index.js',
+			'eventespresso-model': assetsPath + 'data/model/index.js',
 		},
 		module: moduleConfigWithJsRules,
 		output: {
@@ -140,7 +139,7 @@ const config = [
 	},
 	{
 		entry: {
-			'eventespresso-model-schema': assets + 'data/eventespresso/schema/index.js',
+			'eventespresso-model-schema': assetsPath + 'data/eventespresso/schema/index.js',
 		},
 		output: {
 			library: [ 'eejs', 'modelSchema' ],
@@ -153,7 +152,7 @@ const config = [
 	},
 	{
 		entry: {
-			'eventespresso-value-objects': assets + 'vo/index.js',
+			'eventespresso-value-objects': assetsPath + 'vo/index.js',
 		},
 		module: moduleConfigWithJsRules,
 		output: {
@@ -163,7 +162,7 @@ const config = [
 	},
 	{
 		entry: {
-			'eventespresso-hocs': assets + 'higher-order-components/index.js',
+			'eventespresso-hocs': assetsPath + 'higher-order-components/index.js',
 		},
 		module: moduleConfigWithJsAndCssRules,
 		output: {
@@ -173,7 +172,7 @@ const config = [
 	},
 	{
 		entry: {
-			'eventespresso-components': assets + 'components/index.js',
+			'eventespresso-components': assetsPath + 'components/index.js',
 		},
 		module: moduleConfigWithJsAndCssRules,
 		output: {
@@ -183,7 +182,7 @@ const config = [
 	},
 	{
 		entry: {
-			'eventespresso-editor-hocs': assets + 'editor-hocs/index.js',
+			'eventespresso-editor-hocs': assetsPath + 'editor-hocs/index.js',
 		},
 		module: moduleConfigWithJsAndCssRules,
 		output: {
@@ -193,7 +192,7 @@ const config = [
 	},
 	{
 		entry: {
-			'eventespresso-editor': assets + 'editor/index.js',
+			'eventespresso-editor': assetsPath + 'editor/index.js',
 		},
 		module: moduleConfigWithJsAndCssRules,
 		output: {
@@ -203,7 +202,7 @@ const config = [
 	},
 	{
 		entry: {
-			'ee-wp-plugins-page': assets + 'wp-plugins-page/index.js',
+			'ee-wp-plugins-page': assetsPath + 'wp-plugins-page/index.js',
 		},
 		module: moduleConfigWithJsAndCssRules,
 		watchOptions: {
@@ -212,7 +211,7 @@ const config = [
 	},
 	{
 		entry: {
-			'eventespresso-core-blocks': assets + 'blocks/index.js',
+			'eventespresso-core-blocks': assetsPath + 'blocks/index.js',
 		},
 		module: moduleConfigWithJsAndCssRules,
 		watchOptions: {
@@ -221,7 +220,7 @@ const config = [
 	},
 	{
 		entry: {
-			'eventespresso-core-blocks-frontend': assets +
+			'eventespresso-core-blocks-frontend': assetsPath +
 				'blocks/index-frontend.js',
 		},
 		module: moduleConfigWithJsAndCssRules,
@@ -231,7 +230,7 @@ const config = [
 	},
 	{
 		entry: {
-			'eventespresso-core-css-default': assets +
+			'eventespresso-core-css-default': assetsPath +
 				'components/ui/styles/themes/default/index.js',
 		},
 		module: moduleConfigWithJsAndCssRules,
