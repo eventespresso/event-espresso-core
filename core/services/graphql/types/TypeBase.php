@@ -45,7 +45,7 @@ abstract class TypeBase implements TypeInterface
     protected $description = '';
 
     /**
-     * @var \EventEspresso\core\services\graphql\fields\GraphQLFieldInterface[] $fields
+     * @var GraphQLFieldInterface[] $fields
      */
     protected $fields = [];
 
@@ -64,6 +64,7 @@ abstract class TypeBase implements TypeInterface
      */
     protected $is_custom_post_type = false;
 
+
     /**
      * TypeBase constructor.
      */
@@ -78,7 +79,7 @@ abstract class TypeBase implements TypeInterface
 
 
     /**
-     * @return \EventEspresso\core\services\graphql\fields\GraphQLFieldInterface[]
+     * @return GraphQLFieldInterface[]
      * @since $VID:$
      */
     abstract protected function getFields();
@@ -121,7 +122,7 @@ abstract class TypeBase implements TypeInterface
 
 
     /**
-     * @return \EventEspresso\core\services\graphql\fields\GraphQLFieldInterface[]
+     * @return GraphQLFieldInterface[]
      * @since $VID:$
      */
     public function fields()
@@ -131,7 +132,7 @@ abstract class TypeBase implements TypeInterface
 
 
     /**
-     * @param \EventEspresso\core\services\graphql\fields\GraphQLFieldInterface[] $fields
+     * @param GraphQLFieldInterface[] $fields
      */
     protected function setFields(array $fields)
     {
@@ -145,6 +146,7 @@ abstract class TypeBase implements TypeInterface
 
     /**
      * Creates a key map for internal resolver.
+     *
      * @return array
      * @since $VID:$
      */
@@ -153,7 +155,7 @@ abstract class TypeBase implements TypeInterface
         $fields = [];
         foreach ($this->fields() as $field) {
             if ($field->useForOutput()) {
-                $fields[$field->name()] = $field;
+                $fields[ $field->name() ] = $field;
             }
         }
         return $fields;
@@ -240,9 +242,9 @@ abstract class TypeBase implements TypeInterface
 
 
     /**
-     * @param mixed       $payload The payload returned after mutation
-     * @param array       $args    The inputArgs on the field
-     * @param AppContext  $context The AppContext passed down the GraphQL tree
+     * @param mixed      $payload The payload returned after mutation
+     * @param array      $args    The inputArgs on the field
+     * @param AppContext $context The AppContext passed down the GraphQL tree
      * @return string
      * @throws EE_Error
      * @throws InvalidDataTypeException
@@ -255,7 +257,7 @@ abstract class TypeBase implements TypeInterface
      */
     public function resolveFromPayload($payload, $args, AppContext $context)
     {
-        if ( empty( $payload['id'] ) || ! absint( $payload['id'] ) ) {
+        if (empty($payload['id']) || ! absint($payload['id'])) {
             return null;
         }
         return $this->model->get_one_by_ID($payload['id']);

@@ -148,8 +148,10 @@ class Event extends TypeBase
                 'isSoldOut',
                 'Boolean',
                 'is_sold_out',
-                esc_html__('Flag indicating whether the tickets sold for the event, met or exceed the registration limit',
-                    'event_espresso')
+                esc_html__(
+                    'Flag indicating whether the tickets sold for the event, met or exceed the registration limit',
+                    'event_espresso'
+                )
             ),
             new GraphQLField(
                 'isPostponed',

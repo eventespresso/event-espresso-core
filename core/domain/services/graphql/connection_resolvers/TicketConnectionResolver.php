@@ -13,9 +13,9 @@ use WPGraphQL\Data\Connection\AbstractConnectionResolver;
 
 /**
  * Class DatetimeConnectionResolver
- *
  */
-class TicketConnectionResolver extends AbstractConnectionResolver {
+class TicketConnectionResolver extends AbstractConnectionResolver
+{
 
     /**
      * @return EEM_Ticket
@@ -24,39 +24,46 @@ class TicketConnectionResolver extends AbstractConnectionResolver {
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
      */
-	public function get_query() {
-		return EEM_Ticket::instance();
-	}
+    // phpcs:ignore PSR1.Methods.CamelCapsMethodName.NotCamelCaps
+    public function get_query()
+    {
+        return EEM_Ticket::instance();
+    }
 
-	/**
-	 * Return an array of items from the query
-	 *
-	 * @return array
-	 */
-	public function get_items() {
 
-		$results = $this->query->get_col( $this->query_args );
+    /**
+     * Return an array of items from the query
+     *
+     * @return array
+     */
+    // phpcs:ignore PSR1.Methods.CamelCapsMethodName.NotCamelCaps
+    public function get_items()
+    {
 
-		return ! empty( $results ) ? $results : [];
-	}
+        $results = $this->query->get_col($this->query_args);
 
-	/**
-	 * Determine whether the Query should execute. If it's determined that the query should
-	 * not be run based on context such as, but not limited to, who the user is, where in the
-	 * ResolveTree the Query is, the relation to the node the Query is connected to, etc
-	 *
-	 * Return false to prevent the query from executing.
-	 *
-	 * @return bool
-	 */
-	public function should_execute() {
+        return ! empty($results) ? $results : [];
+    }
 
-		if ( false === $this->should_execute ) {
-			return false;
-		}
 
-		return $this->should_execute;
-	}
+    /**
+     * Determine whether the Query should execute. If it's determined that the query should
+     * not be run based on context such as, but not limited to, who the user is, where in the
+     * ResolveTree the Query is, the relation to the node the Query is connected to, etc
+     * Return false to prevent the query from executing.
+     *
+     * @return bool
+     */
+    // phpcs:ignore PSR1.Methods.CamelCapsMethodName.NotCamelCaps
+    public function should_execute()
+    {
+
+        if (false === $this->should_execute) {
+            return false;
+        }
+
+        return $this->should_execute;
+    }
 
 
     /**
@@ -71,55 +78,53 @@ class TicketConnectionResolver extends AbstractConnectionResolver {
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
      */
-	public function get_query_args() {
+    // phpcs:ignore PSR1.Methods.CamelCapsMethodName.NotCamelCaps
+    public function get_query_args()
+    {
 
-		$query_args = [];
+        $query_args = [];
 
-		/**
-		 * Prepare for later use
-		 */
-		$last  = ! empty( $this->args['last'] ) ? $this->args['last'] : null;
-		$first = ! empty( $this->args['first'] ) ? $this->args['first'] : null;
+        /**
+         * Prepare for later use
+         */
+        $last = ! empty($this->args['last']) ? $this->args['last'] : null;
+        $first = ! empty($this->args['first']) ? $this->args['first'] : null;
 
-		/**
-		 * Set limit the highest value of $first and $last, with a (filterable) max of 100
-		 */
-		$query_args['limit'] = min(
-		    max( absint( $first ), absint( $last ), 10 ),
+        /**
+         * Set limit the highest value of $first and $last, with a (filterable) max of 100
+         */
+        $query_args['limit'] = min(
+            max(absint($first), absint($last), 10),
             $this->query_amount
         ) + 1;
 
-		/**
-		 * Collect the input_fields and sanitize them to prepare them for sending to the Query
-		 */
-		$input_fields = [];
-		if ( ! empty( $this->args['where'] ) ) {
-			$input_fields = $this->sanitize_input_fields( $this->args['where'] );
-		}
+        /**
+         * Collect the input_fields and sanitize them to prepare them for sending to the Query
+         */
+        $input_fields = [];
+        if (! empty($this->args['where'])) {
+            $input_fields = $this->sanitize_input_fields($this->args['where']);
+        }
 
-		/**
-		 * Determine where we're at in the Graph and adjust the query context appropriately.
-		 */
-		if (is_object( $this->source )) {
-			switch (true) {
-				case $this->source instanceof EE_Datetime:
-					$query_args[] = [ 'Datetime.DTT_ID' => $this->source->ID() ];
-					break;
-			}
-		}
+        /**
+         * Determine where we're at in the Graph and adjust the query context appropriately.
+         */
+        if ($this->source instanceof EE_Datetime) {
+            $query_args[] = ['Datetime.DTT_ID' => $this->source->ID()];
+        }
 
-		/**
-		 * Merge the input_fields with the default query_args
-		 */
-		if ( ! empty( $input_fields ) ) {
-			$query_args = array_merge( $query_args, $input_fields );
-		}
+        /**
+         * Merge the input_fields with the default query_args
+         */
+        if (! empty($input_fields)) {
+            $query_args = array_merge($query_args, $input_fields);
+        }
 
-		/**
-		 * Return the $query_args
-		 */
-		return $query_args;
-	}
+        /**
+         * Return the $query_args
+         */
+        return $query_args;
+    }
 
 
     /**
@@ -131,18 +136,18 @@ class TicketConnectionResolver extends AbstractConnectionResolver {
      * @param array $query_args
      * @return array
      */
-	public function sanitize_input_fields(array $query_args) {
+    // phpcs:ignore PSR1.Methods.CamelCapsMethodName.NotCamelCaps
+    public function sanitize_input_fields(array $query_args)
+    {
 
-		$arg_mapping = [
-			'orderBy' => 'order_by',
-			'order'   => 'order',
-		];
+        $arg_mapping = [
+            'orderBy' => 'order_by',
+            'order'   => 'order',
+        ];
 
-		/**
-		 * Return the Query Args
-		 */
-		return ! empty( $query_args ) && is_array( $query_args ) ? $query_args : [];
-
-	}
-
+        /**
+         * Return the Query Args
+         */
+        return ! empty($query_args) && is_array($query_args) ? $query_args : [];
+    }
 }

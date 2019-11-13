@@ -12,14 +12,14 @@ class GraphQLInputField extends GraphQLField
 {
 
     /**
-	 * @param string          $name
-	 * @param string|string[] $type
+     * @param string          $name
+     * @param string|string[] $type
      * @param string|null     $key
      * @param string          $description
      * @param array           $caps
      */
     public function __construct(
-		$name,
+        $name,
         $type,
         $key = null,
         $description = '',
