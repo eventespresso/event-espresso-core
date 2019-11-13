@@ -34,13 +34,13 @@ class TicketsConnectionOrderbyEnum extends EnumBase
     {
         return [
             'NAME'     => [
-				'value'       => 'TKT_name',
-				'description' => esc_html__( 'Order by name', 'event_espresso' ),
-			],
+                'value'       => 'TKT_name',
+                'description' => esc_html__('Order by name', 'event_espresso'),
+            ],
             'START_DATE'     => [
-				'value'       => 'TKT_start_date',
-				'description' => esc_html__( 'Order by start date', 'event_espresso' ),
-			],
+                'value'       => 'TKT_start_date',
+                'description' => esc_html__('Order by start date', 'event_espresso'),
+            ],
         ];
     }
 }

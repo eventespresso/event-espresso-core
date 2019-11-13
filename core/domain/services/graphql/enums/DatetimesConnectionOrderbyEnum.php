@@ -34,13 +34,13 @@ class DatetimesConnectionOrderbyEnum extends EnumBase
     {
         return [
             'NAME'     => [
-				'value'       => 'DTT_name',
-				'description' => esc_html__( 'Order by name', 'event_espresso' ),
-			],
+                'value'       => 'DTT_name',
+                'description' => esc_html__('Order by name', 'event_espresso'),
+            ],
             'START_DATE'     => [
-				'value'       => 'DTT_EVT_start',
-				'description' => esc_html__( 'Order by start date', 'event_espresso' ),
-			],
+                'value'       => 'DTT_EVT_start',
+                'description' => esc_html__('Order by start date', 'event_espresso'),
+            ],
         ];
     }
 }

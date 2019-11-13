@@ -39,7 +39,6 @@ class TicketConnectionResolver extends AbstractConnectionResolver
     // phpcs:ignore PSR1.Methods.CamelCapsMethodName.NotCamelCaps
     public function get_items()
     {
-
         $results = $this->query->get_col($this->query_args);
 
         return ! empty($results) ? $results : [];
@@ -57,7 +56,6 @@ class TicketConnectionResolver extends AbstractConnectionResolver
     // phpcs:ignore PSR1.Methods.CamelCapsMethodName.NotCamelCaps
     public function should_execute()
     {
-
         if (false === $this->should_execute) {
             return false;
         }
@@ -81,9 +79,8 @@ class TicketConnectionResolver extends AbstractConnectionResolver
     // phpcs:ignore PSR1.Methods.CamelCapsMethodName.NotCamelCaps
     public function get_query_args()
     {
-
-		$where_params = [];
-		$query_args   = [];
+        $where_params = [];
+        $query_args   = [];
         /**
          * Prepare for later use
          */
@@ -116,27 +113,27 @@ class TicketConnectionResolver extends AbstractConnectionResolver
         /**
          * Merge the input_fields with the default query_args
          */
-		if (! empty($input_fields)) {
-			$where_params = array_merge($where_params, $input_fields);
-		}
+        if (! empty($input_fields)) {
+            $where_params = array_merge($where_params, $input_fields);
+        }
 
-		// ID of the offset datetime.
-		$offset = $this->get_offset();
+        // ID of the offset datetime.
+        $offset = $this->get_offset();
 
-		/**
-		 * Map the orderby inputArgs to the WP_Query
-		 */
-		if (! empty( $this->args['where']['orderby']) && is_array( $this->args['where']['orderby'] ) ) {
-			$query_args['order_by'] = [];
-			foreach ( $this->args['where']['orderby'] as $orderby_input ) {
-				$query_args['order_by'][ $orderby_input['field'] ] = $orderby_input['order'];
-			}
-		} elseif ($offset) {
-			$compare = ! empty($last) ? '<' : '>';
-			$where_params['TKT_ID'] = array($compare, $offset);
-		}
+        /**
+         * Map the orderby inputArgs to the WP_Query
+         */
+        if (! empty($this->args['where']['orderby']) && is_array($this->args['where']['orderby'])) {
+            $query_args['order_by'] = [];
+            foreach ($this->args['where']['orderby'] as $orderby_input) {
+                $query_args['order_by'][ $orderby_input['field'] ] = $orderby_input['order'];
+            }
+        } elseif ($offset) {
+            $compare = ! empty($last) ? '<' : '>';
+            $where_params['TKT_ID'] = array($compare, $offset);
+        }
 
-		$query_args[] = $where_params;
+        $query_args[] = $where_params;
 
         /**
          * Return the $query_args
@@ -152,40 +149,38 @@ class TicketConnectionResolver extends AbstractConnectionResolver
      * @param array $where_args
      * @return array
      */
-	public function sanitizeInputFields(array $where_args)
-	{
+    public function sanitizeInputFields(array $where_args)
+    {
+        $arg_mapping = [
+            'datetimeId'  => 'Datetime.DTT_ID',
+        ];
 
-		$arg_mapping = [
-			'datetimeId'  => 'Datetime.DTT_ID',
-		];
+        $query_args = [];
 
-		$query_args = [];
+        foreach ($where_args as $arg => $value) {
+            if (! array_key_exists($arg, $arg_mapping)) {
+                continue;
+            }
 
-		foreach ($where_args as $arg => $value) {
-			if (! array_key_exists($arg, $arg_mapping) ) {
-				continue;
-			}
+            if (is_array($value) && ! empty($value)) {
+                $value = array_map(
+                    function ($value) {
+                        if (is_string($value)) {
+                            $value = sanitize_text_field($value);
+                        }
+                        return $value;
+                    },
+                    $value
+                );
+            } elseif (is_string($value)) {
+                $value = sanitize_text_field($value);
+            }
+            $query_args[ $arg_mapping[ $arg ] ] = $value;
+        }
 
-			if (is_array($value) && ! empty($value)) {
-				$value = array_map(
-					function($value) {
-						if (is_string($value)) {
-							$value = sanitize_text_field($value);
-						}
-						return $value;
-					},
-					$value
-				);
-			} elseif (is_string($value)) {
-				$value = sanitize_text_field($value);
-			}
-			$query_args[ $arg_mapping[ $arg ] ] = $value;
-		}
-
-		/**
-		 * Return the Query Args
-		 */
-		return ! empty($query_args) && is_array($query_args) ? $query_args : [];
-
-	}
+        /**
+         * Return the Query Args
+         */
+        return ! empty($query_args) && is_array($query_args) ? $query_args : [];
+    }
 }

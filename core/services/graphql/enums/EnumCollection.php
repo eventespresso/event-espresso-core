@@ -52,7 +52,7 @@ class EnumCollection extends Collection
         if (! $this->loader instanceof CollectionLoader) {
             $this->loader = new CollectionLoader(
                 new CollectionDetails(
-                // collection name
+                    // collection name
                     EnumCollection::COLLECTION_NAME,
                     // collection interface
                     'EventEspresso\core\services\graphql\enums\EnumInterface',

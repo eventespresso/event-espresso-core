@@ -50,8 +50,7 @@ class GraphQLManager
         InputsManager $inputs_manager,
         EnumsManager $enums_manager,
         ConnectionsManager $connections_manager
-    )
-    {
+    ) {
         $this->types_manager = $types_manager;
         $this->inputs_manager = $inputs_manager;
         $this->enums_manager = $enums_manager;

@@ -83,21 +83,22 @@ class DatetimeTicketsConnection implements ConnectionInterface
         return $this->model->get_one_by_ID($id);
     }
 
-	/**
-	 * Given an optional array of args, this returns the args to be used in the connection
-	 *
-	 * @access public
-	 * @param array $args The args to modify the defaults
-	 *
-	 * @return array
-	 */
+    /**
+     * Given an optional array of args, this returns the args to be used in the connection
+     *
+     * @access public
+     * @param array $args The args to modify the defaults
+     *
+     * @return array
+     */
+    // phpcs:ignore PSR1.Methods.CamelCapsMethodName.NotCamelCaps
     public static function get_connection_args($args = [])
     {
         return array_merge(
             [
                 'orderby'      => [
                     'type'        => ['list_of' => 'TicketsConnectionOrderbyInput'],
-                    'description' => esc_html__( 'What paramater to use to order the objects by.', 'event_espresso' ),
+                    'description' => esc_html__('What paramater to use to order the objects by.', 'event_espresso'),
                 ],
                 'datetimeId' => [
                     'type'        => 'Int',

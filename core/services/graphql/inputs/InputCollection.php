@@ -20,7 +20,6 @@ use EventEspresso\core\services\collections\CollectionLoaderException;
  */
 class InputCollection extends Collection
 {
-
     const COLLECTION_NAME = 'espresso_graphql_inputs';
 
     /**
@@ -52,7 +51,7 @@ class InputCollection extends Collection
         if (! $this->loader instanceof CollectionLoader) {
             $this->loader = new CollectionLoader(
                 new CollectionDetails(
-                // collection name
+                    // collection name
                     InputCollection::COLLECTION_NAME,
                     // collection interface
                     'EventEspresso\core\services\graphql\inputs\InputInterface',
