@@ -82,8 +82,8 @@ class TicketConnectionResolver extends AbstractConnectionResolver
     public function get_query_args()
     {
 
-        $query_args = [];
-
+		$where_params = [];
+		$query_args   = [];
         /**
          * Prepare for later use
          */
@@ -103,22 +103,40 @@ class TicketConnectionResolver extends AbstractConnectionResolver
          */
         $input_fields = [];
         if (! empty($this->args['where'])) {
-            $input_fields = $this->sanitize_input_fields($this->args['where']);
+            $input_fields = $this->sanitizeInputFields($this->args['where']);
         }
 
         /**
          * Determine where we're at in the Graph and adjust the query context appropriately.
          */
         if ($this->source instanceof EE_Datetime) {
-            $query_args[] = ['Datetime.DTT_ID' => $this->source->ID()];
+            $where_params['Datetime.DTT_ID'] = $this->source->ID();
         }
 
         /**
          * Merge the input_fields with the default query_args
          */
-        if (! empty($input_fields)) {
-            $query_args = array_merge($query_args, $input_fields);
-        }
+		if (! empty($input_fields)) {
+			$where_params = array_merge($where_params, $input_fields);
+		}
+
+		// ID of the offset datetime.
+		$offset = $this->get_offset();
+
+		/**
+		 * Map the orderby inputArgs to the WP_Query
+		 */
+		if (! empty( $this->args['where']['orderby']) && is_array( $this->args['where']['orderby'] ) ) {
+			$query_args['order_by'] = [];
+			foreach ( $this->args['where']['orderby'] as $orderby_input ) {
+				$query_args['order_by'][ $orderby_input['field'] ] = $orderby_input['order'];
+			}
+		} elseif ($offset) {
+			$compare = ! empty($last) ? '<' : '>';
+			$where_params['TKT_ID'] = array($compare, $offset);
+		}
+
+		$query_args[] = $where_params;
 
         /**
          * Return the $query_args
@@ -128,26 +146,46 @@ class TicketConnectionResolver extends AbstractConnectionResolver
 
 
     /**
-     * This sets up the "allowed" args, and translates the GraphQL-friendly keys to WP_Query
-     * friendly keys. There's probably a cleaner/more dynamic way to approach this, but
-     * this was quick. I'd be down to explore more dynamic ways to map this, but for
-     * now this gets the job done.
+     * This sets up the "allowed" args, and translates the GraphQL-friendly keys to model
+     * friendly keys.
      *
-     * @param array $query_args
+     * @param array $where_args
      * @return array
      */
-    // phpcs:ignore PSR1.Methods.CamelCapsMethodName.NotCamelCaps
-    public function sanitize_input_fields(array $query_args)
-    {
+	public function sanitizeInputFields(array $where_args)
+	{
 
-        $arg_mapping = [
-            'orderBy' => 'order_by',
-            'order'   => 'order',
-        ];
+		$arg_mapping = [
+			'datetimeId'  => 'Datetime.DTT_ID',
+		];
 
-        /**
-         * Return the Query Args
-         */
-        return ! empty($query_args) && is_array($query_args) ? $query_args : [];
-    }
+		$query_args = [];
+
+		foreach ($where_args as $arg => $value) {
+			if (! array_key_exists($arg, $arg_mapping) ) {
+				continue;
+			}
+
+			if (is_array($value) && ! empty($value)) {
+				$value = array_map(
+					function($value) {
+						if (is_string($value)) {
+							$value = sanitize_text_field($value);
+						}
+						return $value;
+					},
+					$value
+				);
+			} elseif (is_string($value)) {
+				$value = sanitize_text_field($value);
+			}
+			$query_args[ $arg_mapping[ $arg ] ] = $value;
+		}
+
+		/**
+		 * Return the Query Args
+		 */
+		return ! empty($query_args) && is_array($query_args) ? $query_args : [];
+
+	}
 }

@@ -5,18 +5,20 @@ namespace EventEspresso\core\domain\services\graphql\connections;
 use EE_Base_Class;
 use EEM_Ticket;
 use EventEspresso\core\domain\services\graphql\connection_resolvers\TicketConnectionResolver;
+use EventEspresso\core\domain\services\graphql\connections\DatetimeTicketsConnection;
 use EventEspresso\core\services\graphql\connections\ConnectionInterface;
 use Exception;
+use WPGraphQL\Type\WPObjectType;
 
 /**
- * Class DatetimeTicketsConnection
+ * Class RootQueryTicketsConnection
  * Description
  *
  * @package EventEspresso\core\domain\services\graphql\connections
  * @author  Brent Christensen
  * @since   $VID:$
  */
-class DatetimeTicketsConnection implements ConnectionInterface
+class RootQueryTicketsConnection implements ConnectionInterface
 {
 
     /**
@@ -26,9 +28,9 @@ class DatetimeTicketsConnection implements ConnectionInterface
 
 
     /**
-     * DatetimeConnection constructor.
+     * TicketConnection constructor.
      *
-     * @param EEM_Ticket $model
+     * @param EEM_Ticket               $model
      */
     public function __construct(EEM_Ticket $model)
     {
@@ -43,11 +45,11 @@ class DatetimeTicketsConnection implements ConnectionInterface
     public function config()
     {
         return [
-            'fromType'           => 'Datetime',
+            'fromType'           => 'RootQuery',
             'toType'             => 'Ticket',
             'fromFieldName'      => 'tickets',
-            'connectionTypeName' => 'DatetimeTicketsConnection',
-            'connectionArgs'     => self::get_connection_args(),
+            'connectionTypeName' => 'RootQueryTicketsConnection',
+            'connectionArgs'     => DatetimeTicketsConnection::get_connection_args(),
             'resolve'            => [$this, 'resolveConnection'],
             'resolveNode'        => [$this, 'resolveNode']
         ];
@@ -81,30 +83,5 @@ class DatetimeTicketsConnection implements ConnectionInterface
     public function resolveNode($id, $args, $context, $info)
     {
         return $this->model->get_one_by_ID($id);
-    }
-
-	/**
-	 * Given an optional array of args, this returns the args to be used in the connection
-	 *
-	 * @access public
-	 * @param array $args The args to modify the defaults
-	 *
-	 * @return array
-	 */
-    public static function get_connection_args($args = [])
-    {
-        return array_merge(
-            [
-                'orderby'      => [
-                    'type'        => ['list_of' => 'TicketsConnectionOrderbyInput'],
-                    'description' => esc_html__( 'What paramater to use to order the objects by.', 'event_espresso' ),
-                ],
-                'datetimeId' => [
-                    'type'        => 'Int',
-                    'description' => esc_html__('Datetime ID of the ticket.', 'event_espresso'),
-                ],
-            ],
-            $args
-        );
     }
 }
