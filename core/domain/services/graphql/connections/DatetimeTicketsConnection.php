@@ -102,7 +102,11 @@ class DatetimeTicketsConnection implements ConnectionInterface
                 ],
                 'datetimeId' => [
                     'type'        => 'Int',
-                    'description' => esc_html__('Datetime ID of the ticket.', 'event_espresso'),
+                    'description' => esc_html__('Datetime ID to get the tickets for.', 'event_espresso'),
+                ],
+                'datetimeIn' => [
+                    'type'        => ['list_of' => 'Int'],
+                    'description' => esc_html__('Datetime IDs to get the tickets for.', 'event_espresso'),
                 ],
             ],
             $args

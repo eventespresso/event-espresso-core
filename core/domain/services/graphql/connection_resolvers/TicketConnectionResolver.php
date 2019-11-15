@@ -95,12 +95,20 @@ class TicketConnectionResolver extends AbstractConnectionResolver
             $this->query_amount
         ) + 1;
 
+        // Avoid multiple entries by join.
+        $query_args['group_by'] = 'TKT_ID';
+
         /**
          * Collect the input_fields and sanitize them to prepare them for sending to the Query
          */
         $input_fields = [];
         if (! empty($this->args['where'])) {
             $input_fields = $this->sanitizeInputFields($this->args['where']);
+
+            // Use the proper operator.
+            if (! empty($input_fields['Datetime.DTT_ID']) && is_array($input_fields['Datetime.DTT_ID'])) {
+                $input_fields['Datetime.DTT_ID'] = ['in', $input_fields['Datetime.DTT_ID']];
+            }
         }
 
         /**
@@ -152,7 +160,8 @@ class TicketConnectionResolver extends AbstractConnectionResolver
     public function sanitizeInputFields(array $where_args)
     {
         $arg_mapping = [
-            'datetimeId'  => 'Datetime.DTT_ID',
+            'datetimeIn'  => 'Datetime.DTT_ID',
+            'datetimeId'  => 'Datetime.DTT_ID', // preferred.
         ];
 
         $query_args = [];
