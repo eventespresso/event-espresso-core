@@ -34,6 +34,14 @@ class DatetimeMutation
             $args['DTT_description'] = sanitize_text_field($input['description']);
         }
 
+        if (! empty($input['endDate'])) {
+            $args['DTT_EVT_start'] = sanitize_text_field($input['startDate']);
+        }
+
+        if (! empty($input['endDate'])) {
+            $args['DTT_EVT_end'] = sanitize_text_field($input['endDate']);
+        }
+
         // Likewise the other fields...
 
         return $args;

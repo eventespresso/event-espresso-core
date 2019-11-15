@@ -30,6 +30,10 @@ class TicketMutation
             $args['TKT_description'] = sanitize_text_field($input['description']);
         }
 
+        if (! empty($input['price'])) {
+            $args['TKT_price'] = floatval($input['price']);
+        }
+
         // Likewise the other fields...
 
         return $args;
