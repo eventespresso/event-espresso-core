@@ -92,6 +92,9 @@ class DatetimeConnectionResolver extends AbstractConnectionResolver
             $this->query_amount
         ) + 1;
 
+        // Avoid multiple entries by join.
+        $query_args['group_by'] = 'DTT_ID';
+
         /**
          * Collect the input_fields and sanitize them to prepare them for sending to the Query
          */
