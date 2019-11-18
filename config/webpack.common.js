@@ -202,6 +202,16 @@ const config = [
 	},
 	{
 		entry: {
+			'eventespresso-editor-prototype': './assets/prototype/domain/eventEditor/index.js', // This change is just for the prototype.
+		},
+		module: moduleConfigWithJsAndCssRules,
+		output: {
+			library: [ 'eejs', 'editor' ],
+			libraryTarget: 'this',
+		},
+	},
+	{
+		entry: {
 			'ee-wp-plugins-page': assetsPath + 'wp-plugins-page/index.js',
 		},
 		module: moduleConfigWithJsAndCssRules,

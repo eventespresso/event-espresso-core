@@ -970,6 +970,7 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page
     {
         wp_enqueue_style(EspressoEditorAssetManager::CSS_HANDLE_EDITOR);
         wp_enqueue_script(EspressoEditorAssetManager::JS_HANDLE_EDITOR);
+        wp_enqueue_script(EspressoEditorAssetManager::JS_HANDLE_EDITOR_PROTOTYPE);
     }
 
 
