@@ -10,9 +10,7 @@ use EE_Checkin;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
 use InvalidArgumentException;
-use WPGraphQL\Data\Connection\AbstractConnectionResolver;
 use WPGraphQL\Model\Post;
-use WPGraphQL\Types;
 
 /**
  * Class DatetimeConnectionResolver
@@ -72,25 +70,18 @@ class DatetimeConnectionResolver extends AbstractConnectionResolver
      * handle batch resolution of the posts.
      *
      * @return array
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
      */
     // phpcs:ignore PSR1.Methods.CamelCapsMethodName.NotCamelCaps
     public function get_query_args()
     {
         $where_params = [];
         $query_args   = [];
-        /**
-         * Prepare for later use
-         */
-        $last  = ! empty($this->args['last']) ? $this->args['last'] : null;
-        $first = ! empty($this->args['first']) ? $this->args['first'] : null;
 
-        /**
-         * Set limit the highest value of $first and $last, with a (filterable) max of 100
-         */
-        $query_args['limit'] = min(
-            max(absint($first), absint($last), 10),
-            $this->query_amount
-        ) + 1;
+        $query_args['limit'] = $this->getLimit();
 
         // Avoid multiple entries by join.
         $query_args['group_by'] = 'DTT_ID';
@@ -135,21 +126,7 @@ class DatetimeConnectionResolver extends AbstractConnectionResolver
             $where_params = array_merge($where_params, $input_fields);
         }
 
-        // ID of the offset datetime.
-        $offset = $this->get_offset();
-
-        /**
-         * Map the orderby inputArgs to the WP_Query
-         */
-        if (! empty($this->args['where']['orderby']) && is_array($this->args['where']['orderby'])) {
-            $query_args['order_by'] = [];
-            foreach ($this->args['where']['orderby'] as $orderby_input) {
-                $query_args['order_by'][ $orderby_input['field'] ] = $orderby_input['order'];
-            }
-        } elseif ($offset) {
-            $compare = ! empty($last) ? '<' : '>';
-            $where_params['DTT_ID'] = array($compare, $offset);
-        }
+        list($query_args, $where_params) = $this->mapOrderbyInputArgs($query_args, $where_params, 'DTT_ID');
 
         if (! empty($this->args['where']['upcoming'])) {
             $where_params['DTT_EVT_start'] = array(
@@ -177,7 +154,7 @@ class DatetimeConnectionResolver extends AbstractConnectionResolver
         }
 
         $query_args[] = $where_params;
-        
+
         /**
          * Return the $query_args
          */
@@ -198,33 +175,6 @@ class DatetimeConnectionResolver extends AbstractConnectionResolver
             'eventId'   => 'EVT_ID',
             'ticketId'  => 'Ticket.TKT_ID',
         ];
-
-        $query_args = [];
-
-        foreach ($where_args as $arg => $value) {
-            if (! array_key_exists($arg, $arg_mapping)) {
-                continue;
-            }
-
-            if (is_array($value) && ! empty($value)) {
-                $value = array_map(
-                    function ($value) {
-                        if (is_string($value)) {
-                            $value = sanitize_text_field($value);
-                        }
-                        return $value;
-                    },
-                    $value
-                );
-            } elseif (is_string($value)) {
-                $value = sanitize_text_field($value);
-            }
-            $query_args[ $arg_mapping[ $arg ] ] = $value;
-        }
-
-        /**
-         * Return the Query Args
-         */
-        return ! empty($query_args) && is_array($query_args) ? $query_args : [];
+        return $this->sanitizeWhereArgsForInputFields($where_args, $arg_mapping);
     }
 }
