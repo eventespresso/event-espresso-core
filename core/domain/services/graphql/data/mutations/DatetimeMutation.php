@@ -34,7 +34,7 @@ class DatetimeMutation
             $args['DTT_description'] = sanitize_text_field($input['description']);
         }
 
-        if (! empty($input['endDate'])) {
+        if (! empty($input['startDate'])) {
             $args['DTT_EVT_start'] = sanitize_text_field($input['startDate']);
         }
 
@@ -42,8 +42,32 @@ class DatetimeMutation
             $args['DTT_EVT_end'] = sanitize_text_field($input['endDate']);
         }
 
+        if (! empty($input['tickets'])) {
+            $args['tickets'] = array_filter(array_map('absint', (array) $input['tickets']));
+        }
+
         // Likewise the other fields...
 
         return $args;
+    }
+
+    /**
+     * Sets the related tickets for the given datetime.
+     *
+     * @param EE_Datetime $entity  The datetime instance.
+     * @param array       $tickets Array of ticket IDs to relate.
+     */
+    public static function setRelatedTickets($entity, array $tickets)
+    {
+        $relationName = 'Ticket';
+        // Remove all the existing related tickets
+        $entity->_remove_relations($relationName);
+
+        foreach ($tickets as $ID) {
+            $entity->_add_relation_to(
+                $ID,
+                $relationName
+            );
+        }
     }
 }
