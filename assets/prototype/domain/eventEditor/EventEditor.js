@@ -1,5 +1,5 @@
 import ContextProviders from '../../infrastructure/services/contextProviders/ContextProviders';
-import { DatesListData } from './containers/datesListData/index';
+import DatesListData from './containers/datesListData/index';
 import DatesList from './DatesList';
 
 const EventEditor = ( { eventId } ) => (
