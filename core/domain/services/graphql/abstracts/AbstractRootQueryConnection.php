@@ -1,6 +1,6 @@
 <?php
 
-namespace EventEspresso\core\domain\services\graphql\connections;
+namespace EventEspresso\core\domain\services\graphql\abstracts;
 
 use EE_Base_Class;
 use EEM_Base;

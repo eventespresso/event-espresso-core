@@ -4,6 +4,7 @@ namespace EventEspresso\core\domain\services\graphql\connections;
 
 use EEM_Datetime;
 use EventEspresso\core\domain\services\graphql\connection_resolvers\DatetimeConnectionResolver;
+use EventEspresso\core\domain\services\graphql\abstracts\AbstractRootQueryConnection;
 use Exception;
 
 /**

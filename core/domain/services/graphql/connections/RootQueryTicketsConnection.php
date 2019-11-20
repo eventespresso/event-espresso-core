@@ -4,6 +4,7 @@ namespace EventEspresso\core\domain\services\graphql\connections;
 
 use EEM_Ticket;
 use EventEspresso\core\domain\services\graphql\connection_resolvers\TicketConnectionResolver;
+use EventEspresso\core\domain\services\graphql\abstracts\AbstractRootQueryConnection;
 use Exception;
 
 /**
