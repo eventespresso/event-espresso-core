@@ -1,8 +1,7 @@
-import { useContext } from '@wordpress/element';
-import { DatesListDataContext } from './containers/datesListData/index';
+import useDatesListData from './containers/useDatesListData';
 
-const DatesList = () => {
-	const list = useContext( DatesListDataContext );
+const DatesList = ( { eventId } ) => {
+	const list = useDatesListData( eventId );
 
 	return list ? (
 		<ul>

@@ -1,4 +1,3 @@
-import { createContext } from '@wordpress/element';
 import gql from 'graphql-tag';
 import { useQuery } from '@apollo/react-hooks';
 import get from 'lodash/get';
@@ -33,19 +32,13 @@ const GET_DATETIMES = gql`
 	}
 `;
 
-export const DatesListDataContext = createContext();
-
-const DatesListData = ( { children, eventId } ) => {
+const useDatesListData = ( eventId ) => {
 	const { data } = useQuery( GET_DATETIMES, {
 		variables: { eventId },
 	} );
 	const datetimes = get( data, [ 'eventBy', 'datetimes', 'nodes' ] );
 
-	return (
-		<DatesListDataContext.Provider value={ datetimes }>
-			{ children }
-		</DatesListDataContext.Provider>
-	);
+	return datetimes;
 };
 
-export default DatesListData;
+export default useDatesListData;
