@@ -22,7 +22,7 @@ const GET_DATE = gql`
 	}
 `;
 
-const DateCardData = ( { eventId } ) => {
+const useDateCardData = ( { eventId } ) => {
 	const { data } = useQuery( GET_DATE, {
 		variables: { eventId },
 	} );
@@ -30,4 +30,4 @@ const DateCardData = ( { eventId } ) => {
 	return data;
 };
 
-export default DateCardData;
+export default useDateCardData;
