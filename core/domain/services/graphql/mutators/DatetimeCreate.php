@@ -55,13 +55,24 @@ class DatetimeCreate
                 );
             }
 
+            $tickets = [];
+
             $args = DatetimeMutation::prepareFields($input);
+
+            if (isset($args['tickets'])) {
+                $tickets = $args['tickets'];
+                unset($args['tickets']);
+            }
 
             $entity = EE_Datetime::new_instance($args);
             $id = $entity->save();
 
             if (empty($id)) {
                 throw new UserError(__('The object failed to create but no error was provided', 'event_espresso'));
+            }
+
+            if (! empty($tickets)) {
+                DatetimeMutation::setRelatedTickets($entity, $tickets);
             }
 
             return [

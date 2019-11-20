@@ -5,6 +5,7 @@ namespace EventEspresso\core\domain\services\graphql\connections;
 use EE_Base_Class;
 use EEM_Datetime;
 use EventEspresso\core\domain\services\graphql\connection_resolvers\DatetimeConnectionResolver;
+use EventEspresso\core\domain\services\graphql\connections\EventDatetimesConnection;
 use EventEspresso\core\services\graphql\connections\ConnectionInterface;
 use Exception;
 
@@ -47,6 +48,7 @@ class TicketDatetimesConnection implements ConnectionInterface
             'toType'             => 'Datetime',
             'fromFieldName'      => 'datetimes',
             'connectionTypeName' => 'TicketDatetimesConnection',
+            'connectionArgs'     => EventDatetimesConnection::get_connection_args(),
             'resolve'            => [$this, 'resolveConnection'],
             'resolveNode'        => [$this, 'resolveNode'],
         ];

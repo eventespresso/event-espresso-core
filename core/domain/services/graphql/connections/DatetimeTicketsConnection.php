@@ -47,6 +47,7 @@ class DatetimeTicketsConnection implements ConnectionInterface
             'toType'             => 'Ticket',
             'fromFieldName'      => 'tickets',
             'connectionTypeName' => 'DatetimeTicketsConnection',
+            'connectionArgs'     => self::get_connection_args(),
             'resolve'            => [$this, 'resolveConnection'],
             'resolveNode'        => [$this, 'resolveNode']
         ];
@@ -80,5 +81,35 @@ class DatetimeTicketsConnection implements ConnectionInterface
     public function resolveNode($id, $args, $context, $info)
     {
         return $this->model->get_one_by_ID($id);
+    }
+
+    /**
+     * Given an optional array of args, this returns the args to be used in the connection
+     *
+     * @access public
+     * @param array $args The args to modify the defaults
+     *
+     * @return array
+     */
+    // phpcs:ignore PSR1.Methods.CamelCapsMethodName.NotCamelCaps
+    public static function get_connection_args($args = [])
+    {
+        return array_merge(
+            [
+                'orderby'      => [
+                    'type'        => ['list_of' => 'TicketsConnectionOrderbyInput'],
+                    'description' => esc_html__('What paramater to use to order the objects by.', 'event_espresso'),
+                ],
+                'datetimeId' => [
+                    'type'        => 'Int',
+                    'description' => esc_html__('Datetime ID to get the tickets for.', 'event_espresso'),
+                ],
+                'datetimeIn' => [
+                    'type'        => ['list_of' => 'Int'],
+                    'description' => esc_html__('Datetime IDs to get the tickets for.', 'event_espresso'),
+                ],
+            ],
+            $args
+        );
     }
 }

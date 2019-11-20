@@ -209,6 +209,16 @@ class Ticket extends TypeBase
                 null,
                 esc_html__('Event of the ticket.', 'event_espresso')
             ),
+            new GraphQLInputField(
+                'datetimes',
+                ['list_of' => 'Int'],
+                null,
+                sprintf(
+                    '%1$s %2$s',
+                    esc_html__('IDs of the datetimes related to the ticket.', 'event_espresso'),
+                    esc_html__('Ignored if empty.', 'event_espresso')
+                )
+            ),
         ];
     }
 

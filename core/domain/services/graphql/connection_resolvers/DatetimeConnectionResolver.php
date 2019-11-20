@@ -10,11 +10,11 @@ use EE_Checkin;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
 use InvalidArgumentException;
-use WPGraphQL\Data\Connection\AbstractConnectionResolver;
 use WPGraphQL\Model\Post;
 
 /**
  * Class DatetimeConnectionResolver
+ *
  */
 class DatetimeConnectionResolver extends AbstractConnectionResolver
 {
@@ -32,7 +32,6 @@ class DatetimeConnectionResolver extends AbstractConnectionResolver
         return EEM_Datetime::instance();
     }
 
-
     /**
      * Return an array of items from the query
      *
@@ -41,17 +40,16 @@ class DatetimeConnectionResolver extends AbstractConnectionResolver
     // phpcs:ignore PSR1.Methods.CamelCapsMethodName.NotCamelCaps
     public function get_items()
     {
-
         $results = $this->query->get_col($this->query_args);
 
         return ! empty($results) ? $results : [];
     }
 
-
     /**
      * Determine whether the Query should execute. If it's determined that the query should
      * not be run based on context such as, but not limited to, who the user is, where in the
      * ResolveTree the Query is, the relation to the node the Query is connected to, etc
+     *
      * Return false to prevent the query from executing.
      *
      * @return bool
@@ -59,7 +57,6 @@ class DatetimeConnectionResolver extends AbstractConnectionResolver
     // phpcs:ignore PSR1.Methods.CamelCapsMethodName.NotCamelCaps
     public function should_execute()
     {
-
         if (false === $this->should_execute) {
             return false;
         }
@@ -67,44 +64,39 @@ class DatetimeConnectionResolver extends AbstractConnectionResolver
         return $this->should_execute;
     }
 
-
     /**
      * Here, we map the args from the input, then we make sure that we're only querying
      * for IDs. The IDs are then passed down the resolve tree, and deferred resolvers
      * handle batch resolution of the posts.
      *
      * @return array
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
      */
     // phpcs:ignore PSR1.Methods.CamelCapsMethodName.NotCamelCaps
     public function get_query_args()
     {
+        $where_params = [];
+        $query_args   = [];
 
-        $query_args = [];
+        $query_args['limit'] = $this->getLimit();
 
-        /**
-         * Prepare for later use
-         */
-        $last = ! empty($this->args['last']) ? $this->args['last'] : null;
-        $first = ! empty($this->args['first']) ? $this->args['first'] : null;
-
-        /**
-         * Set limit the highest value of $first and $last, with a (filterable) max of 100
-         */
-        $query_args['limit'] = min(
-            max(absint($first), absint($last), 10),
-            $this->query_amount
-        ) + 1;
+        // Avoid multiple entries by join.
+        $query_args['group_by'] = 'DTT_ID';
 
         /**
          * Collect the input_fields and sanitize them to prepare them for sending to the Query
          */
         $input_fields = [];
         if (! empty($this->args['where'])) {
-            $input_fields = $this->sanitize_input_fields($this->args['where']);
+            $input_fields = $this->sanitizeInputFields($this->args['where']);
         }
 
         /**
          * Determine where we're at in the Graph and adjust the query context appropriately.
+         *
          * For example, if we're querying for datetime as a field of event query, this will automatically
          * set the query to pull datetimes that belong to that event.
          * We can set more cases for other source types.
@@ -113,16 +105,16 @@ class DatetimeConnectionResolver extends AbstractConnectionResolver
             switch (true) {
                 // It's surely an event
                 case $this->source instanceof Post:
-                    $query_args[] = ['EVT_ID' => $this->source->ID];
+                    $where_params['EVT_ID'] = $this->source->ID;
                     break;
                 case $this->source instanceof EE_Event:
-                    $query_args[] = ['EVT_ID' => $this->source->ID()];
+                    $where_params['EVT_ID'] = $this->source->ID();
                     break;
                 case $this->source instanceof EE_Ticket:
-                    $query_args[] = ['Ticket.TKT_ID' => $this->source->ID()];
+                    $where_params['Ticket.TKT_ID'] = $this->source->ID();
                     break;
                 case $this->source instanceof EE_Checkin:
-                    $query_args[] = ['Checkin.CHK_ID' => $this->source->ID()];
+                    $where_params['Checkin.CHK_ID'] = $this->source->ID();
                     break;
             }
         }
@@ -131,8 +123,37 @@ class DatetimeConnectionResolver extends AbstractConnectionResolver
          * Merge the input_fields with the default query_args
          */
         if (! empty($input_fields)) {
-            $query_args = array_merge($query_args, $input_fields);
+            $where_params = array_merge($where_params, $input_fields);
         }
+
+        list($query_args, $where_params) = $this->mapOrderbyInputArgs($query_args, $where_params, 'DTT_ID');
+
+        if (! empty($this->args['where']['upcoming'])) {
+            $where_params['DTT_EVT_start'] = array(
+                '>',
+                EEM_Datetime::instance()->current_time_for_query('DTT_EVT_start')
+            );
+        }
+
+        if (! empty($this->args['where']['active'])) {
+            $where_params['DTT_EVT_start'] = array(
+                '<',
+                EEM_Datetime::instance()->current_time_for_query('DTT_EVT_start')
+            );
+            $where_params['DTT_EVT_end'] = array(
+                '>',
+                EEM_Datetime::instance()->current_time_for_query('DTT_EVT_end')
+            );
+        }
+
+        if (! empty($this->args['where']['expired'])) {
+            $where_params['DTT_EVT_end'] = array(
+                '<',
+                EEM_Datetime::instance()->current_time_for_query('DTT_EVT_end')
+            );
+        }
+
+        $query_args[] = $where_params;
 
         /**
          * Return the $query_args
@@ -142,26 +163,18 @@ class DatetimeConnectionResolver extends AbstractConnectionResolver
 
 
     /**
-     * This sets up the "allowed" args, and translates the GraphQL-friendly keys to WP_Query
-     * friendly keys. There's probably a cleaner/more dynamic way to approach this, but
-     * this was quick. I'd be down to explore more dynamic ways to map this, but for
-     * now this gets the job done.
+     * This sets up the "allowed" args, and translates the GraphQL-friendly keys to model
+     * friendly keys.
      *
-     * @param array $query_args
+     * @param array $where_args
      * @return array
      */
-    // phpcs:ignore PSR1.Methods.CamelCapsMethodName.NotCamelCaps
-    public function sanitize_input_fields(array $query_args)
+    public function sanitizeInputFields(array $where_args)
     {
-
         $arg_mapping = [
-            'orderBy' => 'order_by',
-            'order'   => 'order',
+            'eventId'   => 'EVT_ID',
+            'ticketId'  => 'Ticket.TKT_ID',
         ];
-
-        /**
-         * Return the Query Args
-         */
-        return ! empty($query_args) && is_array($query_args) ? $query_args : [];
+        return $this->sanitizeWhereArgsForInputFields($where_args, $arg_mapping);
     }
 }
