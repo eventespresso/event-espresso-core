@@ -1,11 +1,34 @@
 import { createContext, useReducer, useEffect, useState } from '@wordpress/element';
 import gql from 'graphql-tag';
 import { useQuery } from '@apollo/react-hooks';
+import get from 'lodash/get';
 
-const GET_DOGS = gql`
-	query getEventData($eventId: Number!) {
+const GET_DATETIMES = gql`
+	query getEventData($eventId: Int!) {
 		eventBy(eventId: $eventId) {
-			name
+			datetimes {
+					nodes {
+					id
+					name
+					description
+					sold
+					reserved
+					order
+					start
+					end
+					length
+					startDate
+					endDate
+					startTime
+					endTime
+					capacity
+					isPrimary
+					isSoldOut
+					isUpcoming
+					isActive
+					isExpired
+				}
+			}
 		}
 	}
 `;
@@ -17,7 +40,6 @@ const DEFAULT_STATE = {
 const reducer = ( state, action ) => {
 	switch ( action.type ) {
 		case 'setDatetimes':
-			console.log( 'action.payload', action.payload );
 			return { datetimes: action.payload };
 		case 'add':
 			return { todoList: [ ...state.todoList, action.payload ] };
@@ -30,7 +52,7 @@ export const DatesListDataContext = createContext( {
 } );
 
 export const DatesListData = ( { children, eventId } ) => {
-	const { loading, error, data } = useQuery( GET_DOGS, {
+	const { data } = useQuery( GET_DATETIMES, {
 		variables: { eventId },
 	} );
 
@@ -63,8 +85,6 @@ export const DatesListData = ( { children, eventId } ) => {
 		// eslint-disable-next-line curly
 		// if ( error ) return `Error! ${ error.message }`;
 
-		console.log( { data } );
-
 		dispatch( {
 			type: 'setDatetimes',
 			payload: data
@@ -73,8 +93,10 @@ export const DatesListData = ( { children, eventId } ) => {
 	// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [] );
 
+	const datetimes = get( data, [ 'eventBy', 'datetimes', 'nodes' ] );
+
 	return (
-		<DatesListDataContext.Provider value={ contextValue }>
+		<DatesListDataContext.Provider value={ datetimes }>
 			{ children }
 		</DatesListDataContext.Provider>
 	);
