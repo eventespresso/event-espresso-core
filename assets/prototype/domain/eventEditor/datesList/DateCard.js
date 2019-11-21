@@ -7,23 +7,30 @@ import {
 	Popover
 } from '@blueprintjs/core/lib/esm';
 import { DatePicker, TimePrecision } from '@blueprintjs/datetime/lib/esm';
+import { AppToaster } from '../EventEditor';
 
 const console = window.console;
 
 const endTwoYears = new Date( new Date().getFullYear() + 2, 11, 31 );
 
 const btnStyle = {
-	margin: '0 0 0 1rem',
+	margin: '0 0 0 .5rem',
 };
+
 const cardStyle = {
 	margin: '0 0 2rem',
 	minWidth: '360px',
+	position: 'relative',
+	textAlign: 'center',
 	width: '32%',
 };
+
 const idStyle = {
 	color: 'grey',
 	fontSize: '9px',
-	margin: '-1.5em 0 0 -1.25em',
+	left: '.75em',
+	position: 'absolute',
+	top: '.5em',
 };
 
 const DateCard = ( { date } ) => (
@@ -36,6 +43,7 @@ const DateCard = ( { date } ) => (
 					defaultValue={ date.name }
 					onCancel={ ( value ) => console.log( value ) }
 					onConfirm={ ( value ) => console.log( value ) }
+					minWidth={ '320px' }
 					selectAllOnFocus
 				/>
 			</H4>
@@ -43,7 +51,7 @@ const DateCard = ( { date } ) => (
 		<div>
 			<b>{ `${ date.startDate } ${ date.startTime }` }</b>
 			<Popover lazy>
-				<Button icon="calendar" style={ btnStyle } small />
+				<Button icon="calendar" style={ btnStyle } minimal />
 				<DatePicker
 					defaultValue={ new Date( date.start * 1000 ) }
 					formatDate={ ( jsDate ) => jsDate.toString() }
@@ -53,6 +61,19 @@ const DateCard = ( { date } ) => (
 					highlightCurrentDay
 				/>
 			</Popover>
+		</div>
+		<div style={ {
+			margin: '0 -15px -15px 0',
+			textAlign: 'right',
+		} }>
+			<Button
+				icon="trash"
+				onClick={ () => AppToaster.show( {
+					intent: 'danger',
+					message: `Date ${ date.id } Deleted`
+				} ) }
+				minimal
+			/>
 		</div>
 	</Card>
 );

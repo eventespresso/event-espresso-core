@@ -11,7 +11,7 @@ const AddNewDateButton = () => (
 		text={ 'Add New Date' }
 		onClick={ () => AppToaster.show( {
 			intent: 'success',
-			message: 'Date Created'
+			message: 'New Date Created'
 		} ) }
 		style={ btnStyle }
 		large
