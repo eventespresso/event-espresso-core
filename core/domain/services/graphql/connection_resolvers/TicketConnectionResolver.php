@@ -134,9 +134,15 @@ class TicketConnectionResolver extends AbstractConnectionResolver
     public function sanitizeInputFields(array $where_args)
     {
         $arg_mapping = [
-            'datetimeIn'  => 'Datetime.DTT_ID',
-            'datetimeId'  => 'Datetime.DTT_ID', // preferred.
+            'datetime'     => 'Datetime.DTT_ID',
+            'datetimeIn'   => 'Datetime.DTT_ID',
+            'datetimeIdIn' => 'Datetime.DTT_ID',
+            'datetimeId'   => 'Datetime.DTT_ID', // priority.
         ];
-        return $this->sanitizeWhereArgsForInputFields($where_args, $arg_mapping);
+        return $this->sanitizeWhereArgsForInputFields(
+            $where_args,
+            $arg_mapping,
+            ['datetime', 'datetimeIn']
+        );
     }
 }

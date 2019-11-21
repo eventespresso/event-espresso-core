@@ -100,11 +100,19 @@ class DatetimeTicketsConnection implements ConnectionInterface
                     'type'        => ['list_of' => 'TicketsConnectionOrderbyInput'],
                     'description' => esc_html__('What paramater to use to order the objects by.', 'event_espresso'),
                 ],
+                'datetime' => [
+                    'type'        => 'ID',
+                    'description' => esc_html__('Globally unique datetime ID to get the tickets for.', 'event_espresso'),
+                ],
+                'datetimeIn' => [
+                    'type'        => ['list_of' => 'ID'],
+                    'description' => esc_html__('Globally unique datetime IDs to get the tickets for.', 'event_espresso'),
+                ],
                 'datetimeId' => [
                     'type'        => 'Int',
                     'description' => esc_html__('Datetime ID to get the tickets for.', 'event_espresso'),
                 ],
-                'datetimeIn' => [
+                'datetimeIdIn' => [
                     'type'        => ['list_of' => 'Int'],
                     'description' => esc_html__('Datetime IDs to get the tickets for.', 'event_espresso'),
                 ],

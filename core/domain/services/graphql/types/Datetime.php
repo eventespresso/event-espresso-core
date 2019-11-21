@@ -49,6 +49,12 @@ class Datetime extends TypeBase
         return [
             new GraphQLField(
                 'id',
+                ['non_null' => 'ID'],
+                null,
+                esc_html__('The globally unique ID for the object.', 'event_espresso')
+            ),
+            new GraphQLOutputField(
+                lcfirst($this->name()) . 'Id',
                 ['non_null' => 'Int'],
                 'ID',
                 esc_html__('The datetime ID.', 'event_espresso')
@@ -184,18 +190,24 @@ class Datetime extends TypeBase
                 esc_html__('Event of the datetime.', 'event_espresso')
             ),
             new GraphQLInputField(
-                'event',
+                'eventId',
                 'Int',
                 null,
                 esc_html__('Event ID of the datetime.', 'event_espresso')
             ),
             new GraphQLInputField(
+                'event',
+                'ID',
+                null,
+                esc_html__('Globally uqinue event ID of the datetime.', 'event_espresso')
+            ),
+            new GraphQLInputField(
                 'tickets',
-                ['list_of' => 'Int'],
+                ['list_of' => 'ID'],
                 null,
                 sprintf(
                     '%1$s %2$s',
-                    esc_html__('IDs of the tickets related to the datetime.', 'event_espresso'),
+                    esc_html__('Globally uqinue IDs of the tickets related to the datetime.', 'event_espresso'),
                     esc_html__('Ignored if empty.', 'event_espresso')
                 )
             ),
