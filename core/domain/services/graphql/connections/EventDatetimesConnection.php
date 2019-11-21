@@ -102,12 +102,12 @@ class EventDatetimesConnection implements ConnectionInterface
                     'description' => esc_html__('What paramater to use to order the objects by.', 'event_espresso'),
                 ],
                 'eventId'  => [
-                    'type'        => 'Int',
-                    'description' => esc_html__('Event ID of the datetime.', 'event_espresso'),
+                    'type'        => 'ID',
+                    'description' => esc_html__('Globally unique event ID of the datetime.', 'event_espresso'),
                 ],
                 'ticketId' => [
-                    'type'        => 'Int',
-                    'description' => esc_html__('Ticket ID of the datetime.', 'event_espresso'),
+                    'type'        => 'ID',
+                    'description' => esc_html__('Globally unique ticket ID of the datetime.', 'event_espresso'),
                 ],
                 'upcoming' => [
                     'type'        => 'Boolean',

@@ -10,6 +10,7 @@ use EE_Datetime;
 use EE_Ticket;
 use EE_State;
 use EEM_State;
+use EE_Country;
 use EEM_Country;
 use EE_Error;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
@@ -24,6 +25,7 @@ use WPGraphQL\Data\DataSource;
 use GraphQL\Deferred;
 use GraphQL\Error\UserError;
 use GraphQL\Type\Definition\ResolveInfo;
+use GraphQLRelay\Relay;
 use WPGraphQL\AppContext;
 
 /**
@@ -97,6 +99,8 @@ class FieldResolver extends ResolverBase
                 return $field->mayBeFormatValue($value);
             }
             switch ($fieldName) {
+                case 'id': // the global ID
+                    return $this->resolveId($source);
                 case 'parent':
                     return $this->resolveParent($source);
                 case 'event':
@@ -110,6 +114,22 @@ class FieldResolver extends ResolverBase
             }
         }
         return null;
+    }
+
+
+    /**
+     * Resolve the global ID
+     *
+     * @param mixed     $source
+     * @return string|null
+     * @throws Exception
+     * @since $VID:$
+     */
+    public function resolveId($source)
+    {
+        $ID = $source instanceof EE_Base_Class ? $source->ID() : 0;
+
+        return $ID ? Relay::toGlobalId($this->model->item_name(), $ID) : null;
     }
 
 

@@ -137,6 +137,10 @@ class TicketConnectionResolver extends AbstractConnectionResolver
             'datetimeIn'  => 'Datetime.DTT_ID',
             'datetimeId'  => 'Datetime.DTT_ID', // preferred.
         ];
-        return $this->sanitizeWhereArgsForInputFields($where_args, $arg_mapping);
+        return $this->sanitizeWhereArgsForInputFields(
+            $where_args,
+            $arg_mapping,
+            array_unique(array_values($arg_mapping))
+        );
     }
 }

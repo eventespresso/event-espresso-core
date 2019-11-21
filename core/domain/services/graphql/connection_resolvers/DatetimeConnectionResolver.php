@@ -175,6 +175,10 @@ class DatetimeConnectionResolver extends AbstractConnectionResolver
             'eventId'   => 'EVT_ID',
             'ticketId'  => 'Ticket.TKT_ID',
         ];
-        return $this->sanitizeWhereArgsForInputFields($where_args, $arg_mapping);
+        return $this->sanitizeWhereArgsForInputFields(
+            $where_args,
+            $arg_mapping,
+            array_unique(array_values($arg_mapping))
+        );
     }
 }

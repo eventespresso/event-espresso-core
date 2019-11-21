@@ -3,6 +3,7 @@
 namespace EventEspresso\core\domain\services\graphql\connection_resolvers;
 
 use WPGraphQL\Data\Connection\AbstractConnectionResolver as WPGraphQLConnectionResolver;
+use GraphQLRelay\Relay;
 
 /**
  * Class AbstractConnectionResolver
@@ -69,10 +70,14 @@ abstract class AbstractConnectionResolver extends WPGraphQLConnectionResolver
      *
      * @param array $where_args
      * @param array $arg_mapping
+     * @param array $id_fields_to_convert The fields to convert from global IDs to DB IDs.
      * @return array
      */
-    protected function sanitizeWhereArgsForInputFields(array $where_args, array $arg_mapping)
-    {
+    protected function sanitizeWhereArgsForInputFields(
+        array $where_args,
+        array $arg_mapping,
+        array $id_fields_to_convert
+    ) {
         $query_args = [];
 
         foreach ($where_args as $arg => $value) {
@@ -96,9 +101,33 @@ abstract class AbstractConnectionResolver extends WPGraphQLConnectionResolver
             $query_args[ $arg_mapping[ $arg ] ] = $value;
         }
 
+        if (! empty($query_args) && ! empty($id_fields_to_convert)) {
+            foreach ($id_fields_to_convert as $field) {
+                if (! empty($query_args[ $field ])) {
+                    $query_args[ $field ] = $this->convertGlobalId($query_args[ $field ]);
+                }
+            }
+        }
+
         /**
          * Return the Query Args
          */
         return ! empty($query_args) && is_array($query_args) ? $query_args : [];
+    }
+
+
+    /**
+     * Converts global ID to DB ID.
+     *
+     * @param string|string[] $ID
+     * @return mixed
+     */
+    protected function convertGlobalId($ID)
+    {
+        if (is_array($ID)) {
+            return array_map([$this, 'convertGlobalId'], $ID);
+        }
+        $parts = Relay::fromGlobalId($ID);
+        return ! empty($parts['id']) ? $parts['id'] : null;
     }
 }
