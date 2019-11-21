@@ -70,13 +70,13 @@ abstract class AbstractConnectionResolver extends WPGraphQLConnectionResolver
      *
      * @param array $where_args
      * @param array $arg_mapping
-     * @param array $id_fields_to_convert The fields to convert from global IDs to DB IDs.
+     * @param array $id_fields   The fields to convert from global IDs to DB IDs.
      * @return array
      */
     protected function sanitizeWhereArgsForInputFields(
         array $where_args,
         array $arg_mapping,
-        array $id_fields_to_convert
+        array $id_fields
     ) {
         $query_args = [];
 
@@ -98,15 +98,9 @@ abstract class AbstractConnectionResolver extends WPGraphQLConnectionResolver
             } elseif (is_string($value)) {
                 $value = sanitize_text_field($value);
             }
-            $query_args[ $arg_mapping[ $arg ] ] = $value;
-        }
-
-        if (! empty($query_args) && ! empty($id_fields_to_convert)) {
-            foreach ($id_fields_to_convert as $field) {
-                if (! empty($query_args[ $field ])) {
-                    $query_args[ $field ] = $this->convertGlobalId($query_args[ $field ]);
-                }
-            }
+            $query_args[ $arg_mapping[ $arg ] ] = in_array($arg, $id_fields)
+            ? $this->convertGlobalId($value)
+            : $value;
         }
 
         /**

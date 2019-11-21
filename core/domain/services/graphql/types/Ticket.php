@@ -217,11 +217,11 @@ class Ticket extends TypeBase
             ),
             new GraphQLInputField(
                 'datetimes',
-                ['list_of' => 'Int'],
+                ['list_of' => 'ID'],
                 null,
                 sprintf(
                     '%1$s %2$s',
-                    esc_html__('IDs of the datetimes related to the ticket.', 'event_espresso'),
+                    esc_html__('Globally unique IDs of the datetimes related to the ticket.', 'event_espresso'),
                     esc_html__('Ignored if empty.', 'event_espresso')
                 )
             ),

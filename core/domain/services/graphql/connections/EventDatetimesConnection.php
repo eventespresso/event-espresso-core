@@ -101,13 +101,37 @@ class EventDatetimesConnection implements ConnectionInterface
                     'type'        => ['list_of' => 'DatetimesConnectionOrderbyInput'],
                     'description' => esc_html__('What paramater to use to order the objects by.', 'event_espresso'),
                 ],
-                'eventId'  => [
+                'event'  => [
                     'type'        => 'ID',
-                    'description' => esc_html__('Globally unique event ID of the datetime.', 'event_espresso'),
+                    'description' => esc_html__('Globally unique event ID to get the datetimes for.', 'event_espresso'),
+                ],
+                'eventIn'  => [
+                    'type'        => ['list_of' => 'ID'],
+                    'description' => esc_html__('Globally unique event IDs to get the datetimes for.', 'event_espresso'),
+                ],
+                'eventId'  => [
+                    'type'        => 'Int',
+                    'description' => esc_html__('Event ID to get the datetimes for.', 'event_espresso'),
+                ],
+                'eventIdIn'  => [
+                    'type'        => ['list_of' => 'Int'],
+                    'description' => esc_html__('Event IDs to get the datetimes for.', 'event_espresso'),
+                ],
+                'ticket' => [
+                    'type'        => 'ID',
+                    'description' => esc_html__('Globally unique ticket ID to get the datetimes for.', 'event_espresso'),
+                ],
+                'ticketIn' => [
+                    'type'        => ['list_of' => 'ID'],
+                    'description' => esc_html__('Globally unique ticket IDs to get the datetimes for.', 'event_espresso'),
                 ],
                 'ticketId' => [
-                    'type'        => 'ID',
-                    'description' => esc_html__('Globally unique ticket ID of the datetime.', 'event_espresso'),
+                    'type'        => 'Int',
+                    'description' => esc_html__('Ticket ID to get the datetimes for.', 'event_espresso'),
+                ],
+                'ticketIdIn' => [
+                    'type'        => ['list_of' => 'Int'],
+                    'description' => esc_html__('Ticket IDs to get the datetimes for.', 'event_espresso'),
                 ],
                 'upcoming' => [
                     'type'        => 'Boolean',
