@@ -1,6 +1,15 @@
-import { Callout, H4, NonIdealState, Spinner } from '@blueprintjs/core';
+import {
+	Callout,
+	H3,
+	H6,
+	NonIdealState,
+	Spinner,
+} from '@blueprintjs/core/lib/esm';
 import useDatesListData from '../containers/useDatesListData';
+import AddNewDateButton from './AddNewDateButton';
 import DateCard from './DateCard';
+
+const console = window.console;
 
 const boxStyle = {
 	padding: '2rem',
@@ -21,13 +30,21 @@ const listStyle = {
 	width: '100%',
 };
 
+const btnRowStyle = {
+	display: 'flex',
+	flexFlow: 'row wrap',
+	justifyContent: 'flex-end',
+	margin: '0 0 2rem',
+	width: '100%',
+};
+
 const DatesList = ( { eventId } ) => {
 	const dates = useDatesListData( eventId );
 	if ( ! Array.isArray( dates ) ) {
 		return (
 			<Callout style={ boxStyle }>
 				<Spinner size={ Spinner.SIZE_SMALL } />
-				<H4 style={ hdrStyle }>{ 'loading dates...' }</H4>
+				<H6 style={ hdrStyle }>{ 'loading dates...' }</H6>
 			</Callout>
 		);
 	}
@@ -44,11 +61,14 @@ const DatesList = ( { eventId } ) => {
 	}
 	return (
 		<div>
-			<H4>{ 'Dates List' }</H4>
+			<H3>{ 'Dates List' }</H3>
 			<div style={ listStyle }>
 				{ dates.map(
 					( date ) => <DateCard key={ date.id } date={ date } />
 				) }
+			</div>
+			<div style={ btnRowStyle }>
+				<AddNewDateButton />
 			</div>
 		</div>
 	);
