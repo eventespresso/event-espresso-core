@@ -9,8 +9,6 @@ import useDatesListData from '../containers/useDatesListData';
 import AddNewDateButton from './AddNewDateButton';
 import DateCard from './DateCard';
 
-const console = window.console;
-
 const boxStyle = {
 	padding: '2rem',
 	margin: '2rem 0',
