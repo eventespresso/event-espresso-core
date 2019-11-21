@@ -8,7 +8,7 @@ import {
 } from '@blueprintjs/core/lib/esm';
 import { DatePicker, TimePrecision } from '@blueprintjs/datetime/lib/esm';
 
-const console= window.console;
+const console = window.console;
 
 const endTwoYears = new Date( new Date().getFullYear() + 2, 11, 31 );
 
