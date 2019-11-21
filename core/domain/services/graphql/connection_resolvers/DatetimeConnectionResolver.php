@@ -162,7 +162,6 @@ class DatetimeConnectionResolver extends AbstractConnectionResolver
         }
 
         $query_args[] = $where_params;
-        file_put_contents(WP_CONTENT_DIR . '/args.txt', json_encode( $query_args, 128 ) . PHP_EOL, FILE_APPEND);
 
         /**
          * Return the $query_args
