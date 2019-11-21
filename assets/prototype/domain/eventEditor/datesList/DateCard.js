@@ -17,6 +17,7 @@ const btnStyle = {
 };
 const cardStyle = {
 	margin: '0 0 2rem',
+	minWidth: '360px',
 	width: '32%',
 };
 const idStyle = {
@@ -42,7 +43,7 @@ const DateCard = ( { date } ) => (
 		<div>
 			<b>{ `${ date.startDate } ${ date.startTime }` }</b>
 			<Popover lazy>
-				<Button icon="calendar" style={ btnStyle } />
+				<Button icon="calendar" style={ btnStyle } small />
 				<DatePicker
 					defaultValue={ new Date( date.start * 1000 ) }
 					formatDate={ ( jsDate ) => jsDate.toString() }
