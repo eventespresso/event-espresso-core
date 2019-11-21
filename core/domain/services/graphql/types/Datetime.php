@@ -49,6 +49,12 @@ class Datetime extends TypeBase
         return [
             new GraphQLField(
                 'id',
+                ['non_null' => 'ID'],
+                null,
+                esc_html__('The globally unique ID for the object.', 'event_espresso')
+            ),
+            new GraphQLOutputField(
+                lcfirst($this->name()) . 'Id',
                 ['non_null' => 'Int'],
                 'ID',
                 esc_html__('The datetime ID.', 'event_espresso')
