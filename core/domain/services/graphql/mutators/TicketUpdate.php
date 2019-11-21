@@ -16,6 +16,7 @@ use EventEspresso\core\exceptions\InvalidInterfaceException;
 use GraphQL\Type\Definition\ResolveInfo;
 use WPGraphQL\AppContext;
 use GraphQL\Error\UserError;
+use GraphQLRelay\Relay;
 
 class TicketUpdate
 {
@@ -53,8 +54,9 @@ class TicketUpdate
                     sprintf(__('Sorry, you are not allowed to edit %1$s', 'event_espresso'), $type->name())
                 );
             }
+            $id_parts = ! empty($input['id']) ? Relay::fromGlobalId($input['id']) : null;
 
-            $id = ! empty($input['id']) ? absint($input['id']) : 0;
+            $id = ! empty($id_parts['id']) && is_int($id_parts['id']) ? $id_parts['id'] : 0;
             $entity = null;
 
             if ($id) {
