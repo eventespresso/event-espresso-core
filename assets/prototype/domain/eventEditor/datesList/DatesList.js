@@ -11,7 +11,6 @@ import DateCard from './DateCard';
 
 const boxStyle = {
 	padding: '2rem',
-	margin: '2rem 0',
 	textAlign: 'center',
 	width: '100%',
 };
@@ -37,17 +36,40 @@ const btnRowStyle = {
 };
 
 const DatesList = ( { eventId } ) => {
+
 	const dates = useDatesListData( eventId );
+
+	const header = <H3 style={ { margin: '2rem 0 1rem' } }>{ 'Dates List' }</H3>;
+
 	if ( ! Array.isArray( dates ) ) {
 		return (
-			<Callout style={ boxStyle }>
-				<Spinner size={ Spinner.SIZE_SMALL } />
-				<H6 style={ hdrStyle }>{ 'loading dates...' }</H6>
-			</Callout>
+			<>
+				{ header }
+				<Callout style={ boxStyle }>
+					<Spinner size={ Spinner.SIZE_SMALL } />
+					<H6 style={ hdrStyle }>{ 'loading dates...' }</H6>
+				</Callout>
+			</>
 		);
 	}
-	if ( ! dates.length ) {
-		return (
+
+	const btnRow = (
+		<div style={ btnRowStyle }>
+			<AddNewDateButton/>
+		</div>
+	);
+
+	const datesList = dates.length ? (
+		<>
+			<div style={ listStyle }>
+				{ dates.map(
+					( date ) => <DateCard key={ date.id } date={ date }/>
+				) }
+			</div>
+			{ btnRow }
+		</>
+	) : (
+		<>
 			<Callout>
 				<NonIdealState
 					icon={ 'warning-sign' }
@@ -55,19 +77,14 @@ const DatesList = ( { eventId } ) => {
 					description={ 'try changing filter settings' }
 				/>
 			</Callout>
-		);
-	}
+			{ btnRow }
+		</>
+	);
+
 	return (
 		<div>
-			<H3>{ 'Dates List' }</H3>
-			<div style={ listStyle }>
-				{ dates.map(
-					( date ) => <DateCard key={ date.id } date={ date } />
-				) }
-			</div>
-			<div style={ btnRowStyle }>
-				<AddNewDateButton />
-			</div>
+			{ header }
+			{ datesList }
 		</div>
 	);
 };
