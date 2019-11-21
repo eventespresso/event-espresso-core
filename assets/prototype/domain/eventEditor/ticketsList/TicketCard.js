@@ -5,14 +5,14 @@ import {
 	Card,
 	EditableText,
 	Elevation,
-	H4,
+	H4
 } from '@blueprintjs/core/lib/esm';
 import { AppToaster } from '../EventEditor';
 
 const console = window.console;
 
 const btnStyle = {
-	margin: '0 0 0 .5rem',
+	margin: '0 0 0 .5rem'
 };
 
 const cardStyle = {
@@ -20,7 +20,7 @@ const cardStyle = {
 	minWidth: '360px',
 	position: 'relative',
 	textAlign: 'center',
-	width: '32%',
+	width: '32%'
 };
 
 const idStyle = {
@@ -28,68 +28,73 @@ const idStyle = {
 	fontSize: '9px',
 	left: '.75em',
 	position: 'absolute',
-	top: '.5em',
+	top: '.5em'
 };
 
 const priceStyle = {
-	color: 'grey',
+	color: 'grey'
 };
 
-const TicketCard = ( { ticket } ) => {
-	const [ editing, setEditing ] = useState( false );
+const TicketCard = ({ ticket }) => {
+	const [editing, setEditing] = useState(false);
 	const ticketPrice = editing ? (
 		<EditableText
-			isEditing={ editing }
-			placeholder={ 'set price...' }
-			defaultValue={ ticket.price }
-			onCancel={ () => setEditing( false ) }
-			onConfirm={ ( value ) => {
+			isEditing={editing}
+			placeholder={'set price...'}
+			defaultValue={ticket.price}
+			value={ticket.price}
+			onCancel={() => setEditing(false)}
+			onConfirm={(value) => {
 				ticket.price = value;
-				setEditing( false );
-			} }
+				setEditing(false);
+			}}
 			selectAllOnFocus
 		/>
 	) : (
-		<Currency quantity={ ticket.price } />
+		<Currency quantity={ticket.price} />
 	);
 	return (
-		<Card elevation={ Elevation.ONE } style={ cardStyle }>
+		<Card elevation={Elevation.ONE} style={cardStyle}>
 			<div>
-				<div style={ idStyle }>{ ticket.id }</div>
+				<div style={idStyle}>{ticket.id}</div>
 				<H4>
 					<EditableText
-						placeholder={ 'edit title...' }
-						defaultValue={ ticket.name }
-						onCancel={ ( value ) => console.log( value ) }
-						onConfirm={ ( value ) => {
+						placeholder={'edit title...'}
+						defaultValue={ticket.name}
+						onCancel={(value) => console.log(value)}
+						onConfirm={(value) => {
 							ticket.name = value;
-						} }
-						minWidth={ '320px' }
+						}}
+						minWidth={'320px'}
 						selectAllOnFocus
 					/>
 				</H4>
 			</div>
 			<div>
-				<H4 style={ priceStyle }>
-					{ ticketPrice }
+				<H4 style={priceStyle}>
+					{ticketPrice}
 					<Button
 						icon="edit"
-						onClick={ () => setEditing( true ) }
-						style={ btnStyle }
+						onClick={() => setEditing(true)}
+						style={btnStyle}
 						minimal
 					/>
 				</H4>
 			</div>
-			<div style={ {
-				margin: '0 -15px -15px 0',
-				textAlign: 'right',
-			} }>
+			<div
+				style={{
+					margin: '0 -15px -15px 0',
+					textAlign: 'right'
+				}}
+			>
 				<Button
 					icon="trash"
-					onClick={ () => AppToaster.show( {
-						intent: 'danger',
-						message: `Ticket ${ ticket.id } Deleted`
-					} ) }
+					onClick={() =>
+						AppToaster.show({
+							intent: 'danger',
+							message: `Ticket ${ticket.id} Deleted`
+						})
+					}
 					minimal
 				/>
 			</div>
