@@ -36,7 +36,6 @@ const btnRowStyle = {
 };
 
 const DatesList = ( { eventId } ) => {
-
 	const dates = useDatesListData( eventId );
 
 	const header = <H3 style={ { margin: '2rem 0 1rem' } }>{ 'Dates List' }</H3>;
@@ -55,7 +54,7 @@ const DatesList = ( { eventId } ) => {
 
 	const btnRow = (
 		<div style={ btnRowStyle }>
-			<AddNewDateButton/>
+			<AddNewDateButton />
 		</div>
 	);
 
@@ -63,7 +62,7 @@ const DatesList = ( { eventId } ) => {
 		<>
 			<div style={ listStyle }>
 				{ dates.map(
-					( date ) => <DateCard key={ date.id } date={ date }/>
+					( date ) => <DateCard key={ date.id } date={ date } />
 				) }
 			</div>
 			{ btnRow }

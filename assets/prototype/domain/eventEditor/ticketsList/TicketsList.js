@@ -41,7 +41,6 @@ const btnRowStyle = {
 };
 
 const TicketsList = () => {
-
 	const tickets = [
 		{
 			id: 1234,
@@ -66,7 +65,7 @@ const TicketsList = () => {
 
 	const btnRow = (
 		<div style={ btnRowStyle }>
-			<AddNewTicketButton/>
+			<AddNewTicketButton />
 		</div>
 	);
 

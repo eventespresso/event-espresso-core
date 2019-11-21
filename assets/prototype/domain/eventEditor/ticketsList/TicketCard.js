@@ -32,7 +32,7 @@ const idStyle = {
 };
 
 const priceStyle = {
-    color: 'grey',
+	color: 'grey',
 };
 
 const TicketCard = ( { ticket } ) => {
@@ -50,7 +50,7 @@ const TicketCard = ( { ticket } ) => {
 			selectAllOnFocus
 		/>
 	) : (
-		<Currency quantity={ ticket.price }/>
+		<Currency quantity={ ticket.price } />
 	);
 	return (
 		<Card elevation={ Elevation.ONE } style={ cardStyle }>
@@ -61,7 +61,9 @@ const TicketCard = ( { ticket } ) => {
 						placeholder={ 'edit title...' }
 						defaultValue={ ticket.name }
 						onCancel={ ( value ) => console.log( value ) }
-						onConfirm={ ( value ) => { ticket.name = value } }
+						onConfirm={ ( value ) => {
+							ticket.name = value;
+						} }
 						minWidth={ '320px' }
 						selectAllOnFocus
 					/>
