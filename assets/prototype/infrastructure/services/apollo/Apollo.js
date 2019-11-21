@@ -8,14 +8,16 @@ const { graphqlEndpoint } = window;
 const nonce = get( window, [ 'eejsdata', 'data', 'eejs_api_nonce' ] );
 
 const cache = new InMemoryCache();
+const link = new HttpLink( {
+	uri: graphqlEndpoint || '/graphql',
+	headers: {
+		'X-WP-Nonce': nonce,
+	},
+} );
+
 const client = new ApolloClient( {
 	cache,
-	link: new HttpLink( {
-		uri: graphqlEndpoint || '/graphql',
-		headers: {
-			'X-WP-Nonce': nonce,
-		},
-	} ),
+	link
 } );
 
 const Apollo = ( { children } ) => (

@@ -2,6 +2,8 @@
 
 namespace EventEspresso\core\domain\services\graphql\data\mutations;
 
+use GraphQLRelay\Relay;
+
 /**
  * Class DatetimeMutation
  *
@@ -22,8 +24,11 @@ class DatetimeMutation
 
         $args = [];
 
-        if (! empty($input['event'])) {
-            $args['EVT_ID'] = absint($input['event']);
+        if (! empty($input['eventId'])) {
+            $args['EVT_ID'] = absint($input['eventId']);
+        } elseif (! empty($input['event'])) {
+            $parts = Relay::fromGlobalId($input['event']);
+            $args['EVT_ID'] = (! empty($parts['id']) && is_int($parts['id'])) ? $parts['id'] : null;
         }
 
         if (! empty($input['name'])) {
@@ -43,7 +48,7 @@ class DatetimeMutation
         }
 
         if (! empty($input['tickets'])) {
-            $args['tickets'] = array_filter(array_map('absint', (array) $input['tickets']));
+            $args['tickets'] = array_map('sanitize_text_field', (array) $input['tickets']);
         }
 
         // Likewise the other fields...
@@ -64,10 +69,13 @@ class DatetimeMutation
         $entity->_remove_relations($relationName);
 
         foreach ($tickets as $ID) {
-            $entity->_add_relation_to(
-                $ID,
-                $relationName
-            );
+            $parts = Relay::fromGlobalId($ID);
+            if (! empty($parts['id']) && is_int($parts['id'])) {
+                $entity->_add_relation_to(
+                    $parts['id'],
+                    $relationName
+                );
+            }
         }
     }
 }

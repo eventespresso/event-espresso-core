@@ -41,6 +41,12 @@ class Country extends TypeBase
     {
         return [
             new GraphQLField(
+                'id',
+                ['non_null' => 'ID'],
+                null,
+                esc_html__('The globally unique ID for the object.', 'event_espresso')
+            ),
+            new GraphQLField(
                 'isActive',
                 'Boolean',
                 null, // 'active',

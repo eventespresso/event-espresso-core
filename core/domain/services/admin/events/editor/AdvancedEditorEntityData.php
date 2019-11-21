@@ -164,6 +164,20 @@ var graphqlEndpoint='{$graphqlEndpoint}';
                         );
                     }
                 );
+
+                add_action(
+                    'admin_footer',
+                    static function () use ($data, $graphqlEndpoint) {
+                        wp_add_inline_script(
+                            EspressoEditorAssetManager::JS_HANDLE_EDITOR_PROTOTYPE,
+                            "
+var eeEditorEventData={$data};
+var graphqlEndpoint='{$graphqlEndpoint}';
+",
+                            'before'
+                        );
+                    }
+                );
             }
         }
     }

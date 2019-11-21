@@ -92,6 +92,14 @@ class DatetimeConnectionResolver extends AbstractConnectionResolver
         $input_fields = [];
         if (! empty($this->args['where'])) {
             $input_fields = $this->sanitizeInputFields($this->args['where']);
+
+            // Use the proper operator.
+            if (! empty($input_fields['EVT_ID']) && is_array($input_fields['EVT_ID'])) {
+                $input_fields['EVT_ID'] = ['in', $input_fields['EVT_ID']];
+            }
+            if (! empty($input_fields['Ticket.TKT_ID']) && is_array($input_fields['Ticket.TKT_ID'])) {
+                $input_fields['Ticket.TKT_ID'] = ['in', $input_fields['Ticket.TKT_ID']];
+            }
         }
 
         /**
@@ -172,9 +180,19 @@ class DatetimeConnectionResolver extends AbstractConnectionResolver
     public function sanitizeInputFields(array $where_args)
     {
         $arg_mapping = [
-            'eventId'   => 'EVT_ID',
-            'ticketId'  => 'Ticket.TKT_ID',
+            'event'      => 'EVT_ID',
+            'eventIn'    => 'EVT_ID',
+            'eventId'    => 'EVT_ID',
+            'eventIdIn'  => 'EVT_ID',
+            'ticket'     => 'Ticket.TKT_ID',
+            'ticketIn'   => 'Ticket.TKT_ID',
+            'ticketId'   => 'Ticket.TKT_ID',
+            'ticketIdIn' => 'Ticket.TKT_ID',
         ];
-        return $this->sanitizeWhereArgsForInputFields($where_args, $arg_mapping);
+        return $this->sanitizeWhereArgsForInputFields(
+            $where_args,
+            $arg_mapping,
+            ['event', 'eventIn', 'ticket', 'ticketIn']
+        );
     }
 }
