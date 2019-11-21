@@ -30,7 +30,10 @@ mutation createTicket($input: CreateTicketInput!) {
     "name": "Some name here",
     "description": "Here goes the description",
     "price": 20.5,
-    "datetimes": [14,20]
+    "datetimes": [
+      "RGF0ZXRpbWU6MTQ=",
+      "JTRBYTRTUBYYBYT="
+    ]
   }
 }
 ```
@@ -56,10 +59,13 @@ mutation updateTicket($input: UpdateTicketInput!) {
 {
   "input": {
     "clientMutationId": "xyz",
-    "id": 17,
+    "id": "VGlja2V0OjE5",
     "name": "Some name here",
     "description": "Here goes the description",
-    "datetimes": [15,16]
+    "datetimes": [
+      "RGF0ZXRpbWU6MTQ=",
+      "JTRBYTRTUBYYBYT="
+    ]
   }
 }
 ```
@@ -84,7 +90,7 @@ mutation deleteTicket($input: DeleteTicketInput!) {
 {
   "input": {
     "clientMutationId": "xyz",
-    "id": 18
+    "id": "VGlja2V0OjE5"
   }
 }
 ```

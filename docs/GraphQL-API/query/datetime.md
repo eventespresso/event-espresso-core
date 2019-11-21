@@ -32,6 +32,16 @@ query getDatetimes($first: Int, $where: RootQueryDatetimesConnectionWhereArgs) {
   "first": 50,
   "where": {
     "upcoming": true,
+    "event": "ZXNwcmVzc29fZXZlbnRzOjIy"
+  }
+}
+```
+
+or
+
+```json
+{
+  "where": {
     "eventId": 22
   }
 }

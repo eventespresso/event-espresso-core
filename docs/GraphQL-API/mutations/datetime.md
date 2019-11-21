@@ -31,8 +31,11 @@ mutation createDatetime($input: CreateDatetimeInput!) {
     "description": "Here goes the description",
     "startDate": "",
     "endDate": "",
-    "event": 22,
-    "tickets": [17,19]
+    "eventId": 22,
+    "tickets": [
+      "RGF0ZXJKHNUYT=",
+      "UIYNFTRUYNTBYY
+    ]
   }
 }
 ```
@@ -58,12 +61,16 @@ mutation updateDatetime($input: UpdateDatetimeInput!) {
 {
   "input": {
     "clientMutationId": "xyz",
-    "id": 14,
+    "id": "RGF0ZXRpbWU6MTQ=",
     "name": "Some name here",
     "description": "Here goes the description",
     "startDate": "",
     "endDate": "",
-    "tickets": [17,19]
+    "event": "ZXNwcmVzc29fZXZlbnRzOjIy",
+    "tickets": [
+      "RGF0ZXJKHNUYT=",
+      "UIYNFTRUYNTBYY
+    ]
   }
 }
 ```
@@ -88,7 +95,7 @@ mutation deleteDatetime($input: DeleteDatetimeInput!) {
 {
   "input": {
     "clientMutationId": "xyz",
-    "id": 20
+    "id": "RGF0ZXRpbWU6MTQ="
   }
 }
 ```

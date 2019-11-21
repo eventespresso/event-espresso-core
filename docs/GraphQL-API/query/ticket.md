@@ -24,7 +24,7 @@ query getTickets ($where: RootQueryTicketsConnectionWhereArgs) {
 ```json
 {
   "where": {
-    "datetimeId": 15,
+    "datetime": "RGF0ZXRpbWU6MTQ=",
     "orderby": [
       {
         "field": "NAME",
@@ -40,7 +40,10 @@ or
 ```json
 {
   "where": {
-    "datetimeIn": [16,20,14],
+    "datetimeIn": [
+      "RGF0ZXRpbWU6MTQ=",
+      "RGF0ZXRpbWU6MTU="
+    ],
   }
 }
 ```
