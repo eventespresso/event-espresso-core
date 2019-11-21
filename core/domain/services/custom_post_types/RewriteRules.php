@@ -35,8 +35,13 @@ class RewriteRules
     public function flushRewriteRules()
     {
         if (get_option(RewriteRules::OPTION_KEY_FLUSH_REWRITE_RULES, true)) {
-            flush_rewrite_rules();
-            update_option(RewriteRules::OPTION_KEY_FLUSH_REWRITE_RULES, false);
+            add_action(
+                'shutdown',
+                static function() {
+                    flush_rewrite_rules();
+                    update_option(RewriteRules::OPTION_KEY_FLUSH_REWRITE_RULES, false);
+                }
+            );
         }
     }
 }
