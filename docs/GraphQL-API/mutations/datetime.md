@@ -1,6 +1,6 @@
 # Datetime mutation examples
 
-Datetime object has has three mutations:
+Datetime object has three mutations:
 
 - `createDatetime`
 - `updateDatetime`

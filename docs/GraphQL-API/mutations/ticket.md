@@ -1,6 +1,6 @@
 # Ticket mutation examples
 
-Ticket object has has three mutations:
+Ticket object has three mutations:
 
 - `createTicket`
 - `updateTicket`
