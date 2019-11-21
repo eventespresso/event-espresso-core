@@ -5,8 +5,10 @@ import {
 	Elevation,
 	H4,
 	Popover
-} from "@blueprintjs/core";
-import { DatePicker, TimePrecision } from "@blueprintjs/datetime";
+} from '@blueprintjs/core/lib/esm';
+import { DatePicker, TimePrecision } from '@blueprintjs/datetime/lib/esm';
+
+const console= window.console;
 
 const endTwoYears = new Date( new Date().getFullYear() + 2, 11, 31 );
 
@@ -31,8 +33,8 @@ const DateCard = ( { date } ) => (
 				<EditableText
 					placeholder="Edit title..."
 					defaultValue={ date.name }
-					onCancel={ value => console.log( value ) }
-					onConfirm={ value => console.log( value ) }
+					onCancel={ ( value ) => console.log( value ) }
+					onConfirm={ ( value ) => console.log( value ) }
 					selectAllOnFocus
 				/>
 			</H4>
@@ -40,11 +42,11 @@ const DateCard = ( { date } ) => (
 		<div>
 			<b>{ `${ date.startDate } ${ date.startTime }` }</b>
 			<Popover lazy>
-				<Button icon="calendar" style={ btnStyle }/>
+				<Button icon="calendar" style={ btnStyle } />
 				<DatePicker
 					defaultValue={ new Date( date.start * 1000 ) }
-					formatDate={ jsDate => jsDate.toString() }
-					onChange={ jsDate => console.log( jsDate ) }
+					formatDate={ ( jsDate ) => jsDate.toString() }
+					onChange={ ( jsDate ) => console.log( jsDate ) }
 					timePrecision={ TimePrecision.MINUTE }
 					maxDate={ endTwoYears }
 					highlightCurrentDay

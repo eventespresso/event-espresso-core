@@ -26,7 +26,7 @@ const DatesList = ( { eventId } ) => {
 	if ( ! Array.isArray( dates ) ) {
 		return (
 			<Callout style={ boxStyle }>
-				<Spinner size={ Spinner.SIZE_SMALL }/>
+				<Spinner size={ Spinner.SIZE_SMALL } />
 				<H4 style={ hdrStyle }>{ 'loading dates...' }</H4>
 			</Callout>
 		);
@@ -47,11 +47,11 @@ const DatesList = ( { eventId } ) => {
 			<H4>{ 'Dates List' }</H4>
 			<div style={ listStyle }>
 				{ dates.map(
-					date => <DateCard key={ date.id } date={ date }/>
+					( date ) => <DateCard key={ date.id } date={ date } />
 				) }
 			</div>
 		</div>
-	)
+	);
 };
 
 export default DatesList;
