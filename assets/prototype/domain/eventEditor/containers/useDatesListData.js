@@ -33,9 +33,13 @@ const GET_DATETIMES = gql`
 `;
 
 const useDatesListData = ( eventId ) => {
-	const { data } = useQuery( GET_DATETIMES, {
+	const { loading, data } = useQuery( GET_DATETIMES, {
 		variables: { eventId },
 	} );
+
+	// eslint-disable-next-line curly
+	if ( loading ) return <p>Loading ...</p>;
+
 	const datetimes = get( data, [ 'eventBy', 'datetimes', 'nodes' ] );
 
 	return datetimes;
