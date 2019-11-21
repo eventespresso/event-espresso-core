@@ -55,10 +55,25 @@ const DateCard = ( { date } ) => (
 				<DatePicker
 					defaultValue={ new Date( date.start * 1000 ) }
 					formatDate={ ( jsDate ) => jsDate.toString() }
-					onChange={ ( jsDate ) => console.log( jsDate ) }
+					onChange={ ( jsDate, isUserChange ) => {
+						if ( jsDate && isUserChange ) {
+							date.start = jsDate.getTime() / 1000;
+							date.startDate = jsDate.toDateString();
+							date.startTime = jsDate.toLocaleTimeString();
+							console.log(
+								'%c > date.start: ', 'color: #99c043;',
+								new Date( date.start * 1000 )
+							);
+						}
+					} }
 					timePrecision={ TimePrecision.MINUTE }
+					timePickerProps={ {
+						showArrowButtons: true,
+						useAmPm: true,
+					} }
 					maxDate={ endTwoYears }
 					highlightCurrentDay
+					showActionsBar
 				/>
 			</Popover>
 		</div>
