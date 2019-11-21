@@ -36,7 +36,6 @@ const useDatesListData = ( eventId ) => {
 	const { loading, data } = useQuery( GET_DATETIMES, {
 		variables: { eventId },
 	} );
-
 	// eslint-disable-next-line curly
 	if ( loading ) return <p>Loading ...</p>;
 
