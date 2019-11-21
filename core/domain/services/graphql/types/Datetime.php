@@ -196,6 +196,12 @@ class Datetime extends TypeBase
                 esc_html__('Event ID of the datetime.', 'event_espresso')
             ),
             new GraphQLInputField(
+                'event',
+                'ID',
+                null,
+                esc_html__('Globally uqinue event ID of the datetime.', 'event_espresso')
+            ),
+            new GraphQLInputField(
                 'tickets',
                 ['list_of' => 'ID'],
                 null,

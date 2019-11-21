@@ -26,6 +26,9 @@ class DatetimeMutation
 
         if (! empty($input['eventId'])) {
             $args['EVT_ID'] = absint($input['eventId']);
+        } elseif (! empty($input['event'])) {
+            $parts = Relay::fromGlobalId($input['event']);
+            $args['EVT_ID'] = (! empty($parts['id']) && is_int($parts['id'])) ? $parts['id'] : null;
         }
 
         if (! empty($input['name'])) {
