@@ -911,10 +911,18 @@ class EE_Dependency_Map
             ],
             'EventEspresso\core\services\graphql\GraphQLManager' => [
                 'EventEspresso\core\services\graphql\TypesManager'  => EE_Dependency_Map::load_from_cache,
+                'EventEspresso\core\services\graphql\InputsManager'  => EE_Dependency_Map::load_from_cache,
+                'EventEspresso\core\services\graphql\EnumsManager'  => EE_Dependency_Map::load_from_cache,
                 'EventEspresso\core\services\graphql\ConnectionsManager'  => EE_Dependency_Map::load_from_cache,
             ],
             'EventEspresso\core\services\graphql\TypesManager' => [
                 'EventEspresso\core\services\graphql\types\TypeCollection' => EE_Dependency_Map::load_from_cache,
+            ],
+            'EventEspresso\core\services\graphql\InputsManager' => [
+                'EventEspresso\core\services\graphql\inputs\InputCollection' => EE_Dependency_Map::load_from_cache,
+            ],
+            'EventEspresso\core\services\graphql\EnumsManager' => [
+                'EventEspresso\core\services\graphql\enums\EnumCollection' => EE_Dependency_Map::load_from_cache,
             ],
             'EventEspresso\core\services\graphql\ConnectionsManager' => [
                 'EventEspresso\core\services\graphql\connections\ConnectionCollection' => EE_Dependency_Map::load_from_cache,
@@ -940,7 +948,13 @@ class EE_Dependency_Map
             'EventEspresso\core\domain\services\graphql\connections\EventDatetimesConnection' => [
                 'EEM_Datetime' => EE_Dependency_Map::load_from_cache,
             ],
+            'EventEspresso\core\domain\services\graphql\connections\RootQueryDatetimesConnection' => [
+                'EEM_Datetime' => EE_Dependency_Map::load_from_cache,
+            ],
             'EventEspresso\core\domain\services\graphql\connections\DatetimeTicketsConnection' => [
+                'EEM_Ticket' => EE_Dependency_Map::load_from_cache,
+            ],
+            'EventEspresso\core\domain\services\graphql\connections\RootQueryTicketsConnection' => [
                 'EEM_Ticket' => EE_Dependency_Map::load_from_cache,
             ],
             'EventEspresso\core\domain\services\graphql\connections\TicketDatetimesConnection' => [

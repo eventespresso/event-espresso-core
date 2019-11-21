@@ -22,6 +22,16 @@ class GraphQLManager
     protected $types_manager;
 
     /**
+     * @var InputsManager $inputs_manager
+     */
+    protected $inputs_manager;
+
+    /**
+     * @var EnumsManager $enums_manager
+     */
+    protected $enums_manager;
+
+    /**
      * @var ConnectionsManager $connections_manager
      */
     protected $connections_manager;
@@ -30,12 +40,20 @@ class GraphQLManager
     /**
      * GraphQLManager constructor.
      *
-     * @param TypesManager       $types_manager
+     * @param TypesManager $types_manager
+     * @param InputsManager $inputs_manager
+     * @param EnumsManager $enums_manager
      * @param ConnectionsManager $connections_manager
      */
-    public function __construct(TypesManager $types_manager, ConnectionsManager $connections_manager)
-    {
+    public function __construct(
+        TypesManager $types_manager,
+        InputsManager $inputs_manager,
+        EnumsManager $enums_manager,
+        ConnectionsManager $connections_manager
+    ) {
         $this->types_manager = $types_manager;
+        $this->inputs_manager = $inputs_manager;
+        $this->enums_manager = $enums_manager;
         $this->connections_manager = $connections_manager;
     }
 
@@ -48,6 +66,8 @@ class GraphQLManager
     public function init()
     {
         $this->types_manager->init();
+        $this->inputs_manager->init();
+        $this->enums_manager->init();
         $this->connections_manager->init();
     }
 }

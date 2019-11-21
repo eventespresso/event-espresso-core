@@ -39,7 +39,6 @@ class VenueConnectionResolver extends AbstractConnectionResolver
     // phpcs:ignore PSR1.Methods.CamelCapsMethodName.NotCamelCaps
     public function get_items()
     {
-
         $results = $this->query->get_col($this->query_args);
 
         return ! empty($results) ? $results : [];
@@ -57,7 +56,6 @@ class VenueConnectionResolver extends AbstractConnectionResolver
     // phpcs:ignore PSR1.Methods.CamelCapsMethodName.NotCamelCaps
     public function should_execute()
     {
-
         if (false === $this->should_execute) {
             return false;
         }
@@ -76,7 +74,6 @@ class VenueConnectionResolver extends AbstractConnectionResolver
     // phpcs:ignore PSR1.Methods.CamelCapsMethodName.NotCamelCaps
     public function get_query_args()
     {
-
         $query_args = [];
 
         /**
@@ -145,7 +142,6 @@ class VenueConnectionResolver extends AbstractConnectionResolver
     // phpcs:ignore PSR1.Methods.CamelCapsMethodName.NotCamelCaps
     public function sanitize_input_fields(array $query_args)
     {
-
         $arg_mapping = [
             'orderBy' => 'order_by',
             'order'   => 'order',

@@ -71,13 +71,24 @@ class TicketUpdate
                 );
             }
 
+            $datetimes = [];
+
             $args = TicketMutation::prepareFields($input);
+
+            if (isset($args['datetimes'])) {
+                $datetimes = $args['datetimes'];
+                unset($args['datetimes']);
+            }
 
             // Update the entity
             $result = $entity->save($args);
 
             if (empty($result)) {
                 throw new UserError(__('The object failed to update but no error was provided', 'event_espresso'));
+            }
+
+            if (! empty($datetimes)) {
+                TicketMutation::setRelatedDatetimes($entity, $datetimes);
             }
 
             return [
