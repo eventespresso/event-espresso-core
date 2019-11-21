@@ -11,13 +11,9 @@ import PropTypes from 'prop-types';
  */
 import useDateEntityFormInputPrefix from './use-date-entity-form-input-prefix';
 import useDateEntityInputConfig from './use-date-entity-input-config';
-import useEditEntityFormInputs
-	from '../../../../helpers/forms/use-edit-entity-form-inputs';
+import useEditEntityFormInputs from '../../../../helpers/forms/use-edit-entity-form-inputs';
 
-const {
-	FormSection,
-	FormWrapper,
-} = twoColumnAdminFormLayout;
+const { FormSection, FormWrapper } = twoColumnAdminFormLayout;
 
 /**
  * @param {Object} props
@@ -28,30 +24,23 @@ const {
  * @member {Object} initialValues initial form data
  * @return {Object} rendered form for editing date entity
  */
-const DateEntityForm = ( {
+const DateEntityForm = ({
 	dateEntity,
 	updateField,
 	touchField,
 	currentValues,
 	initialValues,
 	...formProps
-} ) => {
-	const prefix = useDateEntityFormInputPrefix( dateEntity );
-	const inputConfig = useDateEntityInputConfig( {
+}) => {
+	const prefix = useDateEntityFormInputPrefix(dateEntity);
+	const inputConfig = useDateEntityInputConfig({
 		dateEntity,
 		prefix,
 		updateField,
-		touchField,
-	} );
+		touchField
+	});
 	// entity properties we don't want to be editable
-	const exclude = [
-		'eventId',
-		'sold',
-		'reserved',
-		'order',
-		'parent',
-		'deleted',
-	];
+	const exclude = ['eventId', 'sold', 'reserved', 'order', 'parent', 'deleted'];
 	const formRows = useEditEntityFormInputs(
 		dateEntity,
 		inputConfig,
@@ -59,16 +48,16 @@ const DateEntityForm = ( {
 		currentValues,
 		exclude
 	);
-	const newObject = isNaN( parseInt( dateEntity.id, 10 ) );
+	const newObject = isNaN(parseInt(dateEntity.id, 10));
 	// edit forms for existing objects must have initial values
-	return ! ( ! newObject && isEmpty( initialValues ) ) ? (
+	return !(!newObject && isEmpty(initialValues)) ? (
 		<FormWrapper>
 			<FormSection
-				htmlId={ `${ prefix }-form-section` }
-				showRequiredNotice={ true }
-				children={ formRows }
-				{ ...formProps }
+				htmlId={`${prefix}-form-section`}
+				showRequiredNotice={true}
+				{...formProps}
 			/>
+			{formRows}
 		</FormWrapper>
 	) : null;
 };
@@ -76,12 +65,12 @@ const DateEntityForm = ( {
 DateEntityForm.propTypes = {
 	dateEntity: PropTypes.object.isRequired,
 	currentValues: PropTypes.object,
-	initialValues: PropTypes.object,
+	initialValues: PropTypes.object
 };
 
 DateEntityForm.defaultProps = {
 	currentValues: {},
-	initialValues: {},
+	initialValues: {}
 };
 
-export default ifValidDateEntity( DateEntityForm );
+export default ifValidDateEntity(DateEntityForm);

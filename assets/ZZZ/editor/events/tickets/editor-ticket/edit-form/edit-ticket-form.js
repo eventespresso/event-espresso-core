@@ -12,15 +12,10 @@ import cuid from 'cuid';
  * Internal dependencies
  */
 import useTicketFormInputConfig from './use-ticket-form-input-config';
-import useTicketFormInputPrefix
-	from './use-ticket-form-input-prefix';
-import useEditEntityFormInputs
-	from '../../../../helpers/forms/use-edit-entity-form-inputs';
+import useTicketFormInputPrefix from './use-ticket-form-input-prefix';
+import useEditEntityFormInputs from '../../../../helpers/forms/use-edit-entity-form-inputs';
 
-const {
-	FormSection,
-	FormWrapper,
-} = twoColumnAdminFormLayout;
+const { FormSection, FormWrapper } = twoColumnAdminFormLayout;
 
 /**
  * @param {Object} props
@@ -31,7 +26,7 @@ const {
  * @member {Object} initialValues initial form data
  * @return {Object} rendered form for editing ticket entity
  */
-const EditTicketForm = ( {
+const EditTicketForm = ({
 	ticketEntity,
 	updateField,
 	touchField,
@@ -39,14 +34,14 @@ const EditTicketForm = ( {
 	initialValues,
 	newObject,
 	...formProps
-} ) => {
-	const prefix = useTicketFormInputPrefix( ticketEntity );
-	const inputConfig = useTicketFormInputConfig( {
+}) => {
+	const prefix = useTicketFormInputPrefix(ticketEntity);
+	const inputConfig = useTicketFormInputConfig({
 		ticket: ticketEntity,
 		prefix,
 		updateField,
-		touchField,
-	} );
+		touchField
+	});
 	// entity properties we don't want to be editable
 	const exclude = [
 		'TKT_ID',
@@ -55,13 +50,13 @@ const EditTicketForm = ( {
 		'order',
 		'parent',
 		'wpUser',
-		'status',
+		'status'
 	];
 
-	const isNewTicket = cuid.isCuid( ticketEntity.TKT_ID );
+	const isNewTicket = cuid.isCuid(ticketEntity.TKT_ID);
 
-	if ( isNewTicket ) {
-		exclude.push( 'deleted' );
+	if (isNewTicket) {
+		exclude.push('deleted');
 	}
 
 	const formRows = useEditEntityFormInputs(
@@ -72,44 +67,35 @@ const EditTicketForm = ( {
 		exclude
 	);
 
-	return useMemo(
-		() => {
-			// edit forms for existing objects must have initial values
-			return ! ( ! newObject && isEmpty( initialValues ) ) ?
-				(
-					<FormWrapper>
-						<FormSection
-							htmlId={ `${ prefix }-form-section` }
-							children={ formRows }
-							showRequiredNotice={ true }
-							{ ...formProps }
-						/>
-					</FormWrapper>
-				) : null;
-		},
-		[
-			newObject,
-			initialValues,
-			ticketEntity,
-			formRows,
-		]
-	);
+	return useMemo(() => {
+		// edit forms for existing objects must have initial values
+		return !(!newObject && isEmpty(initialValues)) ? (
+			<FormWrapper>
+				<FormSection
+					htmlId={`${prefix}-form-section`}
+					showRequiredNotice={true}
+					{...formProps}
+				/>
+				{formRows}
+			</FormWrapper>
+		) : null;
+	}, [newObject, initialValues, ticketEntity, formRows]);
 };
 
 EditTicketForm.propTypes = {
 	ticketEntity: PropTypes.object.isRequired,
 	currentValues: PropTypes.object,
 	initialValues: PropTypes.object,
-	newObject: PropTypes.bool,
+	newObject: PropTypes.bool
 };
 
 EditTicketForm.defaultProps = {
 	currentValues: {},
 	initialValues: {},
-	newObject: false,
+	newObject: false
 };
 
 /**
  * Enhanced EditTicketForm with FormHandler
  */
-export default ifValidTicketEntity( EditTicketForm );
+export default ifValidTicketEntity(EditTicketForm);
