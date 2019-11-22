@@ -5,12 +5,16 @@ import { GET_DATETIMES } from '../containers/queries/dates';
 
 const AddNewDateModal = ({ eventId, handleClose, isOpen }) => {
 	const createDate = useCreateDateMutation({ eventId });
-	console.log('%c > createDate: ', 'color: HotPink;', createDate);
+
 	const onSubmit = ({ description, name }) => {
 		const variables = {
-			input: { clientMutationId: 'xyz', description, name, eventId }
+			input: {
+				clientMutationId: 'xyz',
+				description,
+				eventId,
+				name,
+			}
 		};
-		console.log('%c > variables: ', 'color: tomato;', variables);
 		const optimisticResponse = {
 			createDatetime: {
 				__typename: 'CreateDatetimePayload',
@@ -57,7 +61,7 @@ const AddNewDateModal = ({ eventId, handleClose, isOpen }) => {
 			});
 		};
 
-		return createDate({
+		createDate({
 			variables,
 			optimisticResponse,
 			update
