@@ -17,14 +17,18 @@ const FormModal = ({ FormComponent, initialValues, onSubmit, onClose, isOpen }) 
 	const classes = classNames(Classes.CARD, Classes.ELEVATION_4);
 
 	const overlayStyle = {
-		top: '0',
-		left: 'calc(50vw - 200px)',
-		margin: '10vh 0',
-		width: '400px'
+		maxWidth: '900px',
+		height: '60%',
+		width: '80%',
+		position: 'absolute',
+		left: '50%',
+		top: '50%',
+		transform: 'translate(-50%, -50%)',
 	};
 
 	const formStyle = {
-		padding: '2em 2em 1em'
+		padding: '2em 2em 1em',
+		width: '80%',
 	};
 
 	const btnRowStyle = {
