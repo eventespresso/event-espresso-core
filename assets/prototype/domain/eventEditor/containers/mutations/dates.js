@@ -8,8 +8,12 @@ export const CREATE_DATE = gql`
 				datetimeId
 				name
 				description
+				start
+				end
 				startDate
 				endDate
+				startTime
+				endTime
 			}
 		}
 	}

@@ -7,8 +7,12 @@ export const GET_DATETIME = gql`
 			datetimeId
 			name
 			description
+			start
+			end
 			startDate
 			endDate
+			startTime
+			endTime
 		}
 	}
 `;
@@ -21,8 +25,12 @@ export const GET_DATETIMES = gql`
 				datetimeId
 				name
 				description
+				start
+				end
 				startDate
 				endDate
+				startTime
+				endTime
 			}
 		}
 	}
