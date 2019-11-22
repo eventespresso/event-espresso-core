@@ -1,20 +1,67 @@
-import gql from 'graphql-tag';
 import { useMutation } from '@apollo/react-hooks';
+import { CREATE_DATE, GET_DATETIME, GET_DATETIMES } from '../queries/dates'
 
-const CREATE_DATE = gql`
-	mutation createDatetime($input: CreateDatetimeInput!) {
-		createDatetime(input: $input) {
-			datetime {
-				id
-				name
-				description
-				startDate
-				endDate
+const { console } = window.console;
+
+
+const useCreateDateMutation = ({ eventId }) => {
+	const [ createDate ] = useMutation(
+		CREATE_DATE,
+		{
+			update( cache, { data: { createDate } } ) {
+				try {
+					console.log(
+						'%c useCreateDateMutation update()',
+						'color: #1BE7FF;',
+					);
+					console.log(
+						'%c > createDate: ',
+						'color: #BCBDAC;',
+						createDate
+					);
+					const { datetimes } = cache.readQuery( {
+						query: GET_DATETIMES,
+						variables: {
+							where: {
+								eventId
+							}
+						}
+					} );
+					console.log( '%c > datetimes: ', 'color: #BCBDAC;', datetimes );
+					cache.writeQuery( {
+						query: GET_DATETIMES,
+						variables: {
+							where: {
+								eventId
+							}
+						},
+						data: { datetimes: datetimes.concat( [ createDate ] ) },
+					} );
+					const { datetime } = cache.readQuery( {
+						query: GET_DATETIME,
+						variables: {
+							id: 'xyz',
+						}
+					} );
+					console.log(
+						'%c > datetime: ',
+						'color: #BCBDAC;',
+						datetime
+					);
+					cache.writeQuery( {
+						query: GET_DATETIME,
+						variables: {
+							id: 'xyz',
+						},
+						data: { datetime },
+					} );
+				} catch ( error ) {
+					console.error( error );
+				}
 			}
 		}
-	}
-`;
-
-const useCreateDateMutation = () => useMutation(CREATE_DATE);
+	);
+	return createDate;
+};
 
 export default useCreateDateMutation;
