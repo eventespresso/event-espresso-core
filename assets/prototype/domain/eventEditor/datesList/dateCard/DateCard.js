@@ -13,7 +13,7 @@ import {
 	A_LONG_TIME_AGO,
 	PLUS_ONE_MONTH,
 	PLUS_TEN_YEARS,
-	PLUS_TWO_MONTHS,
+	PLUS_TWO_MONTHS
 } from '../../../shared/defaultDates';
 
 import DeleteDateButton from './DeleteDateButton';
@@ -40,7 +40,7 @@ const idStyle = {
 
 const DateCard = ({ id }) => {
 	const date = useDateItem({ id });
-	const updateDate = useUpdateDateMutation();
+	const { updateDate } = useUpdateDateMutation();
 
 	const onTitleConfirm = (name) => {
 		updateDate({
@@ -48,9 +48,7 @@ const DateCard = ({ id }) => {
 		});
 	};
 
-	const startDate = date.start ?
-		new Date( date.start * 1000 ) :
-		PLUS_ONE_MONTH;
+	const startDate = date.start ? new Date(date.start * 1000) : PLUS_ONE_MONTH;
 	// const endDate = date.end ?
 	// 	new Date( date.end * 1000 ) :
 	// 	PLUS_TWO_MONTHS;
@@ -78,7 +76,7 @@ const DateCard = ({ id }) => {
 				<Popover lazy>
 					<Button icon="calendar" style={btnStyle} minimal />
 					<DatePicker
-						defaultValue={ startDate }
+						defaultValue={startDate}
 						formatDate={(jsDate) => jsDate.toString()}
 						onChange={(jsDate, isUserChange) => {
 							if (jsDate && isUserChange) {
@@ -99,8 +97,8 @@ const DateCard = ({ id }) => {
 							showArrowButtons: true,
 							useAmPm: true
 						}}
-						minDate={ A_LONG_TIME_AGO }
-						maxDate={ PLUS_TEN_YEARS }
+						minDate={A_LONG_TIME_AGO}
+						maxDate={PLUS_TEN_YEARS}
 						highlightCurrentDay
 						showActionsBar
 					/>

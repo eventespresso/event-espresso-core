@@ -1,7 +1,7 @@
 export const NOW = new Date();
-export const CURRENT_YEAR = now.getFullYear();
-export const CURRENT_MONTH = now.getMonth();
-export const CURRENT_DAY = now.getDay();
+export const CURRENT_YEAR = NOW.getFullYear();
+export const CURRENT_MONTH = NOW.getMonth();
+export const CURRENT_DAY = NOW.getDay();
 export const PLUS_ONE_MONTH = new Date( CURRENT_YEAR, CURRENT_MONTH + 1, CURRENT_DAY );
 export const PLUS_TWO_MONTHS = new Date( CURRENT_YEAR, CURRENT_MONTH + 2, CURRENT_DAY );
 export const PLUS_TEN_YEARS = new Date( CURRENT_YEAR + 10, 11, 31 );

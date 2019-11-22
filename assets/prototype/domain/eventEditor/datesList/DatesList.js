@@ -29,10 +29,10 @@ const btnRowStyle = {
 };
 
 const DatesList = ({ datetimes, error, eventId, loading }) => {
-	console.log('%c DatesList', 'color: #1BE7FF;');
-	console.log('%c > datetimes:', 'color: #99c043;', datetimes);
-	console.log('%c > loading:', 'color: #99c043;', loading);
-	console.log('%c > error:', 'color: #99c043;', error);
+	console.log('%c DatesList', 'color: orangered; font-size: 14px;');
+	console.log('%c > datetimes:', 'color: tomato;', datetimes);
+	console.log('%c > loading:', 'color: tomato;', loading);
+	console.log('%c > error:', 'color: tomato;', error);
 	const header = <H3 style={{ margin: '2rem 0 1rem' }}>{'Dates List'}</H3>;
 
 	if (loading) {
@@ -53,8 +53,8 @@ const DatesList = ({ datetimes, error, eventId, loading }) => {
 				<Callout style={boxStyle}>
 					<NonIdealState
 						icon={'warning-sign'}
-						title={'KA-BLOO-EE !!!'}
-						description={error}
+						title={ error.code }
+						description={ error.message }
 					/>
 				</Callout>
 			</>
@@ -67,8 +67,7 @@ const DatesList = ({ datetimes, error, eventId, loading }) => {
 		</div>
 	);
 
-	const datesList =
-		datetimes && datetimes.length ? (
+	const datesList = Array.isArray( datetimes ) && datetimes.length ? (
 			<>
 				<div style={listStyle}>
 					{datetimes.map((date) => (

@@ -4,7 +4,7 @@ import useCreateDateMutation from '../containers/mutations/useCreateDateMutation
 import { GET_DATETIMES } from '../containers/queries/dates';
 
 const AddNewDateModal = ({ eventId, handleClose, isOpen }) => {
-	const createDate = useCreateDateMutation({ eventId });
+	const { createDate } = useCreateDateMutation({ eventId });
 
 	const onSubmit = ({ description, name }) => {
 		const variables = {

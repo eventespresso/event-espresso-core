@@ -7,7 +7,7 @@ import {
 	Elevation,
 	H4
 } from '@blueprintjs/core/lib/esm';
-import { AppToaster } from '../EventEditor';
+import { AppToaster } from '../../EventEditor';
 
 const console = window.console;
 
