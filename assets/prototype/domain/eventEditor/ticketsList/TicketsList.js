@@ -1,6 +1,6 @@
 import { Callout, H3, H6, NonIdealState, Spinner } from '@blueprintjs/core/lib/esm';
 import AddNewTicketButton from './AddNewTicketButton';
-import TicketCard from './TicketCard';
+import TicketCard from './ticketCard/TicketCard';
 
 const boxStyle = {
 	padding: '2rem',
@@ -34,16 +34,34 @@ const btnRowStyle = {
 	width: '100%'
 };
 
-const TicketsList = ({ tickets }) => {
+const TicketsList = ({ tickets, error, loading }) => {
+	console.log( '%c TicketsList', 'color: gold; font-size: 14px;' );
+	console.log( '%c > tickets:', 'color: goldenrod;', tickets );
+	console.log( '%c > loading:', 'color: goldenrod;', loading );
+	console.log( '%c > error:', 'color: goldenrod;', error );
 	const header = <H3 style={{ margin: '2rem 0 1rem' }}>{'Tickets List'}</H3>;
 
-	if (!Array.isArray(tickets)) {
+	if ( loading ) {
 		return (
 			<>
-				{header}
-				<Callout style={boxStyle}>
-					<Spinner size={Spinner.SIZE_SMALL} />
-					<H6 style={hdrStyle}>{'loading tickets...'}</H6>
+				{ header }
+				<Callout style={ boxStyle }>
+					<Spinner size={ Spinner.SIZE_SMALL }/>
+					<H6 style={ hdrStyle }>{ 'loading tickets...' }</H6>
+				</Callout>
+			</>
+		);
+	}
+	if ( error ) {
+		return (
+			<>
+				{ header }
+				<Callout style={ boxStyle }>
+					<NonIdealState
+						icon={ 'warning-sign' }
+						title={ error.code }
+						description={ error.message }
+					/>
 				</Callout>
 			</>
 		);
@@ -55,7 +73,7 @@ const TicketsList = ({ tickets }) => {
 		</div>
 	);
 
-	const ticketList = tickets.length ? (
+	const ticketList = Array.isArray( tickets ) && tickets.length ? (
 		<>
 			<div style={listStyle}>
 				{tickets.map((ticket) => (
@@ -68,11 +86,11 @@ const TicketsList = ({ tickets }) => {
 		<>
 			<Callout style={emptyStyle}>
 				<NonIdealState
-					icon={'warning-sign'}
+					icon={'help'}
 					title={'NO TICKETS FOR YOU !!!'}
 					description={
-						"it's almost like... we haven't added any" +
-						' yet or something ?!?!'
+						"it's almost like... we haven't" +
+						' added any yet or something ?!?!'
 					}
 				/>
 			</Callout>
