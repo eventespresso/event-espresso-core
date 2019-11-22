@@ -67,7 +67,11 @@ const FormModal = ({ FormComponent, initialValues, onSubmit, onClose, isOpen }) 
 										style={'primary'}
 										buttonText={'Submit'}
 										disabled={submitting || pristine}
-										onClick={onClose}
+										onClick={(e) => {
+											e.preventDefault();
+											form.submit();
+											onClose(e);
+										}}
 									/>
 									<EspressoButton
 										buttonText={'Reset'}
