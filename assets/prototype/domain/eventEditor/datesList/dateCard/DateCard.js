@@ -38,9 +38,9 @@ const DateCard = ({ id }) => {
 	const date = useDateItem({ id });
 	const updateDate = useUpdateDateMutation();
 	const onTitleConfirm = (name) => {
-		console.log({ name });
-
-		updateDate({ variables: { name } });
+		updateDate({
+			variables: { input: { clientMutationId: 'xyz', id: date.id, name } }
+		});
 	};
 
 	return (
