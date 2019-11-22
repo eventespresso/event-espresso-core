@@ -10,7 +10,34 @@ const AddNewDateModal = ({ eventId, handleClose, isOpen }) => {
 			input: { clientMutationId: 'xyz', description, name, eventId }
 		};
 		console.log('%c > variables: ', 'color: tomato;', variables);
-		return createDate({ variables });
+		const optimisticResponse = {
+			__typename: 'Mutation',
+			createDatetime: {
+				__typename: 'Datetime',
+				description,
+				name,
+				eventId
+			}
+		};
+
+		const update = (proxy, { data: { datetime } }) => {
+			// Read the data from our cache for this query.
+			const data = proxy.readQuery({ query: GET_DATETIMES });
+			// Write our data back to the cache with the new comment in it
+			proxy.writeQuery({
+				query: GET_DATETIMES,
+				data: {
+					...data,
+					datetimes: [...data.datetimes, datetime]
+				}
+			});
+		};
+
+		return createDate({
+			variables,
+			optimisticResponse,
+			update
+		});
 	};
 
 	return (
