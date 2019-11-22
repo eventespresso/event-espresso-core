@@ -1,10 +1,10 @@
 import NewDateForm from './NewDateForm';
-import FormModal from '../FormModal';
+import FormModal from '../../shared/FormModal';
 import useCreateDateMutation from '../containers/mutations/useCreateDateMutation';
 import { GET_DATETIMES } from '../containers/queries/dates';
 
 const AddNewDateModal = ({ eventId, handleClose, isOpen }) => {
-	const { createDate } = useCreateDateMutation({ eventId });
+	const { createDate } = useCreateDateMutation();
 
 	const onSubmit = ({ description, name }) => {
 		const variables = {

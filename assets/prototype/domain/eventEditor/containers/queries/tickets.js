@@ -18,6 +18,7 @@ export const GET_TICKETS = gql`
 			edges {
 				node {
 					id
+					ticketId
 					name
 					description
 					price

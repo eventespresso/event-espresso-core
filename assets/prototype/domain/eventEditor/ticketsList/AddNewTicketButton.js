@@ -1,7 +1,8 @@
 import { useState } from '@wordpress/element';
+import AddNewTicketModal from './AddNewTicketModal';
 import { EspressoButton } from '../../../../ZZZ/components/ui';
 
-const AddNewTicketButton = () => {
+const AddNewTicketButton = ( { datetimes } ) => {
 	const [ isOpen, setIsOpen ] = useState( false );
 	const handleOpen = ( e ) => {
 		e.preventDefault();
@@ -15,11 +16,18 @@ const AddNewTicketButton = () => {
 	};
 
 	return (
-		<EspressoButton
-			icon={ 'tickets-alt' }
-			buttonText={ 'Add New Ticket' }
-			onClick={ handleOpen }
-		/>
+		<>
+			<EspressoButton
+				icon={ 'tickets-alt' }
+				buttonText={ 'Add New Ticket' }
+				onClick={ handleOpen }
+			/>
+			<AddNewTicketModal
+				datetimes={ datetimes }
+				handleClose={ handleClose }
+				isOpen={ isOpen }
+			/>
+		</>
 	);
 };
 

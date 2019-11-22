@@ -27,7 +27,7 @@ const EventEditor = ({ eventId }) => {
 			/>
 			<TicketsList
 				tickets={ tickets }
-				eventId={ eventId }
+				datetimes={ datetimes }
 				loading={ loadingTickets }
 				error={ ticketError }
 			/>

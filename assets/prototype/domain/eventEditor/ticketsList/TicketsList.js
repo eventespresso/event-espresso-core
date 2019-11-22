@@ -3,6 +3,7 @@ import AddNewTicketButton from './AddNewTicketButton';
 import TicketCard from './ticketCard/TicketCard';
 
 const boxStyle = {
+	margin: '0 0 2rem',
 	padding: '2rem',
 	textAlign: 'center',
 	width: '100%'
@@ -34,12 +35,12 @@ const btnRowStyle = {
 	width: '100%'
 };
 
-const TicketsList = ({ tickets, error, loading }) => {
+const TicketsList = ({ tickets, datetimes, error, loading }) => {
 	console.log( '%c TicketsList', 'color: gold; font-size: 14px;' );
 	console.log( '%c > tickets:', 'color: goldenrod;', tickets );
 	console.log( '%c > loading:', 'color: goldenrod;', loading );
 	console.log( '%c > error:', 'color: goldenrod;', error );
-	const header = <H3 style={{ margin: '2rem 0 1rem' }}>{'Tickets List'}</H3>;
+	const header = <H3 style={{ margin: '2rem 0 .5rem' }}>{'Tickets List'}</H3>;
 
 	if ( loading ) {
 		return (
@@ -69,7 +70,7 @@ const TicketsList = ({ tickets, error, loading }) => {
 
 	const btnRow = (
 		<div style={btnRowStyle}>
-			<AddNewTicketButton />
+			<AddNewTicketButton datetimes={ datetimes } />
 		</div>
 	);
 
@@ -77,7 +78,7 @@ const TicketsList = ({ tickets, error, loading }) => {
 		<>
 			<div style={listStyle}>
 				{tickets.map((ticket) => (
-					<TicketCard key={ticket.id} ticket={ticket} />
+					<TicketCard key={ticket.id} id={ ticket.id } />
 				))}
 			</div>
 			{btnRow}
@@ -99,7 +100,7 @@ const TicketsList = ({ tickets, error, loading }) => {
 	);
 
 	return (
-		<div>
+		<div style={ { margin: '0 0 2rem' } }>
 			{header}
 			{ticketList}
 		</div>
