@@ -1,24 +1,26 @@
 import { useState } from '@wordpress/element';
-import { Button } from '@blueprintjs/core/lib/esm';
 import AddNewDateModal from './AddNewDateModal';
-
-const btnStyle = {
-	margin: '0 0 0 1rem'
-};
+import { EspressoButton } from '../../../../ZZZ/components/ui';
 
 const AddNewDateButton = ({ eventId }) => {
 	const [isOpen, setIsOpen] = useState(false);
-	const handleOpen = () => setIsOpen(true);
-	const handleClose = () => setIsOpen(false);
+	const handleOpen = ( e ) => {
+		e.preventDefault();
+		e.stopPropagation();
+		setIsOpen( true );
+	};
+	const handleClose = ( e ) => {
+		e.preventDefault();
+		e.stopPropagation();
+		setIsOpen( false );
+	};
 
 	return (
 		<>
-			<Button
+			<EspressoButton
 				icon={'calendar'}
-				text={'Add New Date'}
+				buttonText={'Add New Date'}
 				onClick={handleOpen}
-				style={btnStyle}
-				large
 			/>
 			<AddNewDateModal
 				eventId={eventId}

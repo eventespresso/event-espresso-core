@@ -1,21 +1,26 @@
-import { Button } from '@blueprintjs/core/lib/esm';
-import { AppToaster } from '../EventEditor';
+import { useState } from '@wordpress/element';
+import { EspressoButton } from '../../../../ZZZ/components/ui';
 
-const btnStyle = {
-	margin: '0 0 0 1rem',
+const AddNewTicketButton = () => {
+	const [ isOpen, setIsOpen ] = useState( false );
+	const handleOpen = ( e ) => {
+		e.preventDefault();
+		e.stopPropagation();
+		setIsOpen( true );
+	};
+	const handleClose = ( e ) => {
+		e.preventDefault();
+		e.stopPropagation();
+		setIsOpen( false );
+	};
+
+	return (
+		<EspressoButton
+			icon={ 'tickets-alt' }
+			buttonText={ 'Add New Ticket' }
+			onClick={ handleOpen }
+		/>
+	);
 };
-
-const AddNewTicketButton = () => (
-	<Button
-		icon={ 'widget-button' }
-		text={ 'Add New Ticket' }
-		onClick={ () => AppToaster.show( {
-			intent: 'success',
-			message: 'New Ticket Created'
-		} ) }
-		style={ btnStyle }
-		large
-	/>
-);
 
 export default AddNewTicketButton;
