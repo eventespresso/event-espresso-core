@@ -3,6 +3,8 @@ import useDatesListData from '../containers/useDatesListData';
 import AddNewDateButton from './AddNewDateButton';
 import DateCard from './DateCard';
 
+const { console } = window.console;
+
 const boxStyle = {
 	padding: '2rem',
 	textAlign: 'center',
@@ -29,18 +31,35 @@ const btnRowStyle = {
 	width: '100%'
 };
 
-const DatesList = ({ eventId }) => {
-	const dates = useDatesListData(eventId);
-
+const DatesList = ({ eventId, loading }) => {
+	const { error, datetimes } = useDatesListData(eventId);
+	console.log( '%c DatesList', 'color: #1BE7FF;' );
+	console.log( '%c > datetimes:', 'color: #99c043;', datetimes );
+	console.log( '%c > loading:', 'color: #99c043;', loading );
+	console.log( '%c > error:', 'color: #99c043;', error );
 	const header = <H3 style={{ margin: '2rem 0 1rem' }}>{'Dates List'}</H3>;
 
-	if (!Array.isArray(dates)) {
+	if ( loading ) {
 		return (
 			<>
 				{header}
 				<Callout style={boxStyle}>
 					<Spinner size={Spinner.SIZE_SMALL} />
 					<H6 style={hdrStyle}>{'loading dates...'}</H6>
+				</Callout>
+			</>
+		);
+	}
+	if ( error ) {
+		return (
+			<>
+				{ header }
+				<Callout style={ boxStyle }>
+					<NonIdealState
+						icon={ 'warning-sign' }
+						title={ 'KA-BLOO-EE !!!' }
+						description={ error }
+					/>
 				</Callout>
 			</>
 		);
@@ -52,10 +71,10 @@ const DatesList = ({ eventId }) => {
 		</div>
 	);
 
-	const datesList = dates.length ? (
+	const datesList = datetimes.length ? (
 		<>
 			<div style={listStyle}>
-				{dates.map((date) => (
+				{datetimes.map((date) => (
 					<DateCard key={date.id} id={date.id} />
 				))}
 			</div>
@@ -65,7 +84,7 @@ const DatesList = ({ eventId }) => {
 		<>
 			<Callout>
 				<NonIdealState
-					icon={'warning-sign'}
+					icon={'help'}
 					title={'NO DATES FOR YOU !!!'}
 					description={'try changing filter settings'}
 				/>
