@@ -1,4 +1,5 @@
-// import './editor.css';
+import './editor.css';
+import '../components/ui/styles/themes/default';
 // export * from './events';
 // export * from './helpers';
 import '../../../node_modules/@blueprintjs/core/lib/css/blueprint.css';
