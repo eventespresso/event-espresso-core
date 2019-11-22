@@ -1,23 +1,8 @@
-import gql from 'graphql-tag';
 import { useMutation } from '@apollo/react-hooks';
-
-const UPDATE_DATETIME = gql`
-	mutation updateDatetime($input: UpdateDatetimeInput!) {
-		updateDatetime(input: $input) {
-			datetime {
-				id
-				datetimeId
-				name
-				description
-				startDate
-				endDate
-			}
-		}
-	}
-`;
+import { DELETE_DATETIME } from './dates';
 
 const useDeleteDatetimeMutation = () => {
-	const [deleteDatetime, { loading, error }] = useMutation(UPDATE_DATETIME);
+	const [deleteDatetime, { loading, error }] = useMutation(DELETE_DATETIME);
 
 	console.log({ loading, error });
 

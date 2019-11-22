@@ -38,10 +38,12 @@ const DateCard = ({ id }) => {
 	const date = useDateItem({ id });
 	const updateDate = useUpdateDateMutation();
 	const onTitleConfirm = (name) => {
-		console.log({ name });
-
-		updateDate({ variables: { name } });
+		updateDate({
+			variables: { input: { clientMutationId: 'xyz', id: date.id, name } }
+		});
 	};
+
+	console.log({ date });
 
 	return (
 		<Card elevation={Elevation.ONE} style={cardStyle}>
@@ -91,7 +93,7 @@ const DateCard = ({ id }) => {
 					/>
 				</Popover>
 			</div>
-			<DeleteDateButton id={date.id} />
+			<DeleteDateButton id={date.datetimeId} />
 		</Card>
 	);
 };
