@@ -12,14 +12,16 @@ const AddNewDateModal = ({ eventId, handleClose, isOpen }) => {
 		};
 		console.log('%c > variables: ', 'color: tomato;', variables);
 		const optimisticResponse = {
-			__typename: 'Mutation',
 			createDatetime: {
-				__typename: 'Datetime',
-				datetimeId: 0,
-				description,
-				name,
-				startDate: '',
-				endDate: ''
+				__typename: 'CreateDatetimePayload',
+				datetime: {
+					__typename: 'Datetime',
+					datetimeId: 0,
+					name,
+					description,
+					endDate: '',
+					startDate: ''
+				}
 			}
 		};
 
@@ -31,33 +33,27 @@ const AddNewDateModal = ({ eventId, handleClose, isOpen }) => {
 				}
 			}
 		) => {
-			// Read the data from our cache for this query.
-			const data = proxy.readQuery({
+			const options = {
 				query: GET_DATETIMES,
 				variables: {
 					where: {
 						eventId
 					}
 				}
-			});
-
-			console.log({ data });
-
-			return null;
-			// Write our data back to the cache with the new comment in it
-			console.log('datetime :', datetime);
-			console.log('datetimes :', datetimes);
-			// console.log('cachedData:', cachedData);
-			const newDatatimes = {
-				...datetimes,
-				nodes: [...datetimes.nodes, datetime]
 			};
+			// Read the data from our cache for this query.
+			const {datetimes = {}} = proxy.readQuery(options);
 
-			console.log({ newDatatimes });
-
+			// write the data to cache without
+			// mutating the cache directly
 			proxy.writeQuery({
-				query: GET_DATETIMES,
-				data: newDatatimes
+				...options,
+				data: {
+					datetimes: {
+						...datetimes,
+						nodes: [...datetimes.nodes, datetime],
+					}
+				}
 			});
 		};
 
