@@ -1,9 +1,8 @@
+import isNull from 'lodash/isNull';
 import { Callout, H3, H6, NonIdealState, Spinner } from '@blueprintjs/core/lib/esm';
 import useDatesListData from '../containers/useDatesListData';
 import AddNewDateButton from './AddNewDateButton';
 import DateCard from './DateCard';
-
-const { console } = window.console;
 
 const boxStyle = {
 	padding: '2rem',
@@ -31,15 +30,14 @@ const btnRowStyle = {
 	width: '100%'
 };
 
-const DatesList = ({ eventId, loading }) => {
-	const { error, datetimes } = useDatesListData(eventId);
-	console.log( '%c DatesList', 'color: #1BE7FF;' );
-	console.log( '%c > datetimes:', 'color: #99c043;', datetimes );
-	console.log( '%c > loading:', 'color: #99c043;', loading );
-	console.log( '%c > error:', 'color: #99c043;', error );
+const DatesList = ({ datetimes, error, eventId, loading }) => {
+	console.log('%c DatesList', 'color: #1BE7FF;');
+	console.log('%c > datetimes:', 'color: #99c043;', datetimes);
+	console.log('%c > loading:', 'color: #99c043;', loading);
+	console.log('%c > error:', 'color: #99c043;', error);
 	const header = <H3 style={{ margin: '2rem 0 1rem' }}>{'Dates List'}</H3>;
 
-	if ( loading ) {
+	if (loading) {
 		return (
 			<>
 				{header}
@@ -50,15 +48,15 @@ const DatesList = ({ eventId, loading }) => {
 			</>
 		);
 	}
-	if ( error ) {
+	if (error) {
 		return (
 			<>
-				{ header }
-				<Callout style={ boxStyle }>
+				{header}
+				<Callout style={boxStyle}>
 					<NonIdealState
-						icon={ 'warning-sign' }
-						title={ 'KA-BLOO-EE !!!' }
-						description={ error }
+						icon={'warning-sign'}
+						title={'KA-BLOO-EE !!!'}
+						description={error}
 					/>
 				</Callout>
 			</>
@@ -71,27 +69,28 @@ const DatesList = ({ eventId, loading }) => {
 		</div>
 	);
 
-	const datesList = datetimes.length ? (
-		<>
-			<div style={listStyle}>
-				{datetimes.map((date) => (
-					<DateCard key={date.id} id={date.id} />
-				))}
-			</div>
-			{btnRow}
-		</>
-	) : (
-		<>
-			<Callout>
-				<NonIdealState
-					icon={'help'}
-					title={'NO DATES FOR YOU !!!'}
-					description={'try changing filter settings'}
-				/>
-			</Callout>
-			{btnRow}
-		</>
-	);
+	const datesList =
+		datetimes && datetimes.length ? (
+			<>
+				<div style={listStyle}>
+					{datetimes.map((date) => (
+						<DateCard key={date.id} id={date.id} />
+					))}
+				</div>
+				{btnRow}
+			</>
+		) : (
+			<>
+				<Callout>
+					<NonIdealState
+						icon={'help'}
+						title={'NO DATES FOR YOU !!!'}
+						description={'try changing filter settings'}
+					/>
+				</Callout>
+				{btnRow}
+			</>
+		);
 
 	return (
 		<div>
