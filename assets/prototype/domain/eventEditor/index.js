@@ -7,6 +7,8 @@ import { render } from '@wordpress/element';
  * Internal imports
  */
 import EventEditor from './EventEditor';
+import ContextProviders
+	from '../../infrastructure/services/contextProviders/ContextProviders';
 
 const container = document.getElementById( 'normal-sortables' );
 
@@ -23,7 +25,9 @@ const { eventId } = eventData;
 
 if ( eventId ) {
 	render(
-		<EventEditor eventId={ eventId } eventData={ eventData } />,
+		<ContextProviders>
+			<EventEditor eventId={ eventId }/>
+		</ContextProviders>,
 		editor
 	);
 }
