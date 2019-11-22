@@ -8,12 +8,29 @@ export const AppToaster = Toaster.create({
 });
 
 const EventEditor = ({ eventId }) => {
-	const { datetimes, tickets } = useInitQueries({ eventId });
+	const {
+		datetimes,
+		datetimeError,
+		loadingDates,
+		tickets,
+		ticketError,
+		loadingTickets
+	} = useInitQueries( { eventId } );
 
 	return (
 		<>
-			<DatesList datetimes={datetimes} eventId={eventId} />
-			<TicketsList eventId={eventId} tickets={tickets} />
+			<DatesList
+				datetimes={ datetimes }
+				eventId={ eventId }
+				loading={ loadingDates }
+				error={ datetimeError }
+			/>
+			<TicketsList
+				tickets={ tickets }
+				eventId={ eventId }
+				loading={ loadingTickets }
+				error={ ticketError }
+			/>
 		</>
 	);
 };
