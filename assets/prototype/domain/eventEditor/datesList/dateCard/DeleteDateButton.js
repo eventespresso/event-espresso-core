@@ -3,8 +3,8 @@ import { DatePicker, TimePrecision } from '@blueprintjs/datetime/lib/esm';
 import useDeleteDatetimeMutation from '../../containers/mutations/useDeleteDateMutation';
 
 const DeleteDateButton = ({ id }) => {
-	const deleteDate = useDeleteDatetimeMutation({ id });
-	const variables = { clientMutationId: 'xyz', id };
+	const deleteDate = useDeleteDatetimeMutation();
+	const variables = { input: { clientMutationId: 'xyz', id } };
 
 	return (
 		<div
@@ -16,7 +16,11 @@ const DeleteDateButton = ({ id }) => {
 			<Button
 				icon="trash"
 				onClick={() => {
-					deleteDate({ variables });
+					try {
+						deleteDate({ variables });
+					} catch (e) {
+						console.log({ e });
+					}
 					// AppToaster.show({
 					// 	intent: 'danger',
 					// 	message: `Date ${date.id} Deleted`

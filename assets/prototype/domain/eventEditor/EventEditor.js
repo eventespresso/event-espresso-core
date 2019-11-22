@@ -1,4 +1,3 @@
-import ContextProviders from '../../infrastructure/services/contextProviders/ContextProviders';
 import { Position, Toaster } from '@blueprintjs/core/lib/esm';
 import { useQuery } from '@apollo/react-hooks';
 import get from 'lodash/get';
@@ -26,24 +25,20 @@ const EventEditorData = ({ children, eventId }) => {
 	return children({ loading, error, datetimes });
 };
 
-const EventEditor = ({ eventId }) => {
-	return (
-		<ContextProviders>
-			<EventEditorData eventId={eventId}>
-				{({ loading, error, datetimes }) => (
-					<>
-						<DatesList
-							datetimes={datetimes}
-							error={error}
-							eventId={eventId}
-							loading={loading}
-						/>
-						<TicketsList eventId={eventId} />
-					</>
-				)}
-			</EventEditorData>
-		</ContextProviders>
-	);
-};
+const EventEditor = ({ eventId }) => (
+	<EventEditorData eventId={eventId}>
+		{({ loading, error, datetimes }) => (
+			<>
+				<DatesList
+					datetimes={datetimes}
+					error={error}
+					eventId={eventId}
+					loading={loading}
+				/>
+				<TicketsList eventId={eventId} />
+			</>
+		)}
+	</EventEditorData>
+);
 
 export default EventEditor;

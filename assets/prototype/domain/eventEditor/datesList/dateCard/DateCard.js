@@ -43,6 +43,8 @@ const DateCard = ({ id }) => {
 		});
 	};
 
+	console.log({ date });
+
 	return (
 		<Card elevation={Elevation.ONE} style={cardStyle}>
 			<div>
@@ -91,7 +93,7 @@ const DateCard = ({ id }) => {
 					/>
 				</Popover>
 			</div>
-			<DeleteDateButton id={date.id} />
+			<DeleteDateButton id={date.datetimeId} />
 		</Card>
 	);
 };
