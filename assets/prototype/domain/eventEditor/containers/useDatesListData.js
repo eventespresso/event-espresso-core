@@ -5,9 +5,9 @@ import { GET_DATETIMES } from './queries/dates'
 const { console } = window.console;
 
 const useDatesListData = (eventId) => {
+	const client = useApolloClient();
 	try {
 		console.log( '%c useDatesListData', 'color: lime;' );
-		const client = useApolloClient();
 		const data = client.readQuery( {
 			query: GET_DATETIMES,
 			variables: {
