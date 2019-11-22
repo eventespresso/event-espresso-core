@@ -1,32 +1,48 @@
-import { Position, Toaster, } from '@blueprintjs/core/lib/esm';
+import ContextProviders from '../../infrastructure/services/contextProviders/ContextProviders';
+import { Position, Toaster } from '@blueprintjs/core/lib/esm';
 import { useQuery } from '@apollo/react-hooks';
-import { GET_DATETIMES } from '../eventEditor/containers/queries/dates'
+import get from 'lodash/get';
+import { GET_DATETIMES } from '../eventEditor/containers/queries/dates';
 import DatesList from './datesList/DatesList';
 import TicketsList from './ticketsList/TicketsList';
 
-const { console } = window.console;
+export const AppToaster = Toaster.create({
+	position: Position.BOTTOM_RIGHT
+});
 
-export const AppToaster = Toaster.create( {
-	position: Position.BOTTOM_RIGHT,
-} );
-
-
-
-const EventEditor = ( { eventId } ) => {
-	const data = useQuery( GET_DATETIMES, {
+const EventEditorData = ({ children, eventId }) => {
+	const { loading, error, data } = useQuery(GET_DATETIMES, {
 		variables: {
 			where: {
 				eventId
 			}
 		}
-	} );
-	console.log( '%c EventEditor', 'color: #1BE7FF;' );
-	console.log( '%c > data:', 'color: #99c043;', data );
+	});
+	console.log('%c EventEditor', 'color: #1BE7FF;');
+	console.log('%c > data:', 'color: #99c043;', data);
+
+	const datetimes = get(data, ['datetimes', 'nodes']);
+
+	return children({ loading, error, datetimes });
+};
+
+const EventEditor = ({ eventId }) => {
 	return (
-		<>
-			<DatesList eventId={ eventId } { ...data } />
-			<TicketsList eventId={ eventId } { ...data }/>
-		</>
+		<ContextProviders>
+			<EventEditorData eventId={eventId}>
+				{({ loading, error, datetimes }) => (
+					<>
+						<DatesList
+							datetimes={datetimes}
+							error={error}
+							eventId={eventId}
+							loading={loading}
+						/>
+						<TicketsList eventId={eventId} />
+					</>
+				)}
+			</EventEditorData>
+		</ContextProviders>
 	);
 };
 
