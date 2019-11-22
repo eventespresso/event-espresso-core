@@ -6,7 +6,11 @@ const UPDATE_DATETIME = gql`
 		updateDatetime(input: $input) {
 			datetime {
 				id
+				datetimeId
 				name
+				description
+				startDate
+				endDate
 			}
 		}
 	}
