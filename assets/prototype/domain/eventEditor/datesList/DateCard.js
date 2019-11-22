@@ -53,7 +53,7 @@ const DateCard = ({ id }) => {
 				</H4>
 			</div>
 			<div>
-				<H4>{date.description}</H4>
+				<p>{date.description}</p>
 			</div>
 			<div>
 				<b>{`${date.startDate} ${date.startTime}`}</b>

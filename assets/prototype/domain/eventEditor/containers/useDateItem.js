@@ -1,23 +1,11 @@
-import gql from 'graphql-tag';
 import { useApolloClient } from '@apollo/react-hooks';
-import get from 'lodash/get';
+import { GET_DATETIME } from './queries/dates';
 
 const useDateItem = ({ id }) => {
 	const client = useApolloClient();
 
 	const data = client.readQuery({
-		query: gql`
-			query DateTime($id: ID!) {
-				datetime(id: $id) {
-					id
-					datetimeId
-					name
-					description
-					startDate
-					endDate
-				}
-			}
-		`,
+		query: GET_DATETIME,
 		variables: {
 			id
 		}
