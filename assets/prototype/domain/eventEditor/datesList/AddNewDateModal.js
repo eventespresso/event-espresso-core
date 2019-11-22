@@ -1,5 +1,5 @@
 import NewDateForm from './NewDateForm';
-import FormModal from '../FormModal';
+import FormModal from '../../shared/FormModal';
 import useCreateDateMutation from '../containers/mutations/useCreateDateMutation';
 import { GET_DATETIMES } from '../containers/queries/dates';
 
