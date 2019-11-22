@@ -9,7 +9,7 @@ export const AppToaster = Toaster.create({
 	position: Position.BOTTOM_RIGHT
 });
 
-const EventEditorData = ({ children, eventId }) => {
+const EventEditor = ({ eventId }) => {
 	const { loading, error, data } = useQuery(GET_DATETIMES, {
 		variables: {
 			where: {
@@ -22,23 +22,17 @@ const EventEditorData = ({ children, eventId }) => {
 
 	const datetimes = get(data, ['datetimes', 'nodes']);
 
-	return children({ loading, error, datetimes });
+	return (
+		<>
+			<DatesList
+				datetimes={datetimes}
+				error={error}
+				eventId={eventId}
+				loading={loading}
+			/>
+			<TicketsList eventId={eventId} />
+		</>
+	);
 };
-
-const EventEditor = ({ eventId }) => (
-	<EventEditorData eventId={eventId}>
-		{({ loading, error, datetimes }) => (
-			<>
-				<DatesList
-					datetimes={datetimes}
-					error={error}
-					eventId={eventId}
-					loading={loading}
-				/>
-				<TicketsList eventId={eventId} />
-			</>
-		)}
-	</EventEditorData>
-);
 
 export default EventEditor;
