@@ -1,9 +1,12 @@
 import { useMutation } from '@apollo/react-hooks';
-import { CREATE_DATE } from './dates';
+import { UPDATE_DATE } from './dates';
 
 const useUpdateDateMutation = () => {
-	const [createDate] = useMutation(CREATE_DATE);
-	return createDate;
+	const [updateDate, { loading, error }] = useMutation(UPDATE_DATE);
+
+	console.log({ loading, error });
+
+	return updateDate;
 };
 
 export default useUpdateDateMutation;
