@@ -37,7 +37,7 @@ class RewriteRules
         if (get_option(RewriteRules::OPTION_KEY_FLUSH_REWRITE_RULES, true)) {
             add_action(
                 'shutdown',
-                static function() {
+                static function () {
                     flush_rewrite_rules();
                     update_option(RewriteRules::OPTION_KEY_FLUSH_REWRITE_RULES, false);
                 }
