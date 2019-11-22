@@ -3,13 +3,7 @@ import { Classes, Overlay } from '@blueprintjs/core/lib/esm';
 import { Form } from 'react-final-form';
 import { EspressoButton } from '../../../ZZZ/components/ui';
 
-const FormModal = ({
-	FormComponent,
-	initialValues,
-	onSubmit,
-	onClose,
-	isOpen,
-}) => {
+const FormModal = ({ FormComponent, initialValues, onSubmit, onClose, isOpen }) => {
 	const overlayProps = {
 		autoFocus: true,
 		canEscapeKeyClose: true,
@@ -20,10 +14,7 @@ const FormModal = ({
 		useTallContent: false
 	};
 
-	const classes = classNames(
-		Classes.CARD,
-		Classes.ELEVATION_4
-	);
+	const classes = classNames(Classes.CARD, Classes.ELEVATION_4);
 
 	const overlayStyle = {
 		top: '0',
@@ -33,12 +24,12 @@ const FormModal = ({
 	};
 
 	const formStyle = {
-		padding: '2em 2em 1em',
+		padding: '2em 2em 1em'
 	};
 
 	const btnRowStyle = {
 		padding: '1em 2em 2em',
-		textAlign: 'right',
+		textAlign: 'right'
 	};
 
 	return (
@@ -51,7 +42,7 @@ const FormModal = ({
 			<div className={classes} style={overlayStyle}>
 				<Form
 					onSubmit={onSubmit}
-					initialValues={ initialValues }
+					initialValues={initialValues}
 					render={({
 						form,
 						handleSubmit,
@@ -60,32 +51,36 @@ const FormModal = ({
 						...formProps
 					}) => {
 						return (
-							<form onSubmit={ handleSubmit }>
-								<div style={ formStyle }>
+							<form onSubmit={handleSubmit}>
+								<div style={formStyle}>
 									<FormComponent
-										form={ form }
-										submitting={ submitting }
-										pristine={ pristine }
-										{ ...formProps }
+										form={form}
+										submitting={submitting}
+										pristine={pristine}
+										{...formProps}
 									/>
 								</div>
-								<div style={ btnRowStyle }>
+								<div style={btnRowStyle}>
 									<EspressoButton
-										icon={ 'save' }
-										type={ 'submit' }
-										style={ 'primary' }
-										buttonText={ 'Submit' }
-										disabled={ submitting || pristine }
-										onClick={ onClose }
+										icon={'save'}
+										type={'submit'}
+										style={'primary'}
+										buttonText={'Submit'}
+										disabled={submitting || pristine}
+										onClick={(e) => {
+											e.preventDefault();
+											form.submit();
+											onClose(e);
+										}}
 									/>
 									<EspressoButton
-										buttonText={ 'Reset' }
-										disabled={ submitting || pristine }
-										onClick={ form.reset }
+										buttonText={'Reset'}
+										disabled={submitting || pristine}
+										onClick={form.reset}
 									/>
 								</div>
 							</form>
-						)
+						);
 					}}
 				/>
 			</div>

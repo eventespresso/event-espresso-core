@@ -1,5 +1,5 @@
 import { useApolloClient } from '@apollo/react-hooks';
-import { GET_DATETIME } from './queries/dates';
+import { GET_DATETIME } from './dates';
 
 const useDateItem = ({ id }) => {
 	const client = useApolloClient();
