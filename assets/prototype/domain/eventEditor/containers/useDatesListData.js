@@ -7,7 +7,6 @@ const { console } = window.console;
 const useDatesListData = (eventId) => {
 	const client = useApolloClient();
 	try {
-		const client = useApolloClient();
 		console.log('%c useDatesListData', 'color: lime;');
 		const data = client.readQuery({
 			query: GET_DATETIMES,

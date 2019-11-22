@@ -8,6 +8,7 @@ import {
 } from '@blueprintjs/core/lib/esm';
 import { DatePicker, TimePrecision } from '@blueprintjs/datetime/lib/esm';
 import useDateItem from '../../containers/queries/useDateItem';
+import useUpdateDateMutation from '../../containers/mutations/useUpdateDateMutation';
 
 import DeleteDateButton from './DeleteDateButton';
 
@@ -35,6 +36,12 @@ const idStyle = {
 
 const DateCard = ({ id }) => {
 	const date = useDateItem({ id });
+	const updateDate = useUpdateDateMutation();
+	const onTitleConfirm = (name) => {
+		console.log({ name });
+
+		updateDate({ variables: { name } });
+	};
 
 	return (
 		<Card elevation={Elevation.ONE} style={cardStyle}>
@@ -45,7 +52,7 @@ const DateCard = ({ id }) => {
 						placeholder="Edit title..."
 						defaultValue={date.name}
 						onCancel={(value) => console.log(value)}
-						onConfirm={(value) => console.log(value)}
+						onConfirm={onTitleConfirm}
 						minWidth={'320px'}
 						selectAllOnFocus
 					/>
