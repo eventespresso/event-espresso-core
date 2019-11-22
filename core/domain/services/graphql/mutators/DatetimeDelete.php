@@ -55,7 +55,7 @@ class DatetimeDelete
             }
             $id_parts = ! empty($input['id']) ? Relay::fromGlobalId($input['id']) : null;
 
-            $id = ! empty($id_parts['id']) && is_int($id_parts['id']) ? $id_parts['id'] : 0;
+            $id = ! empty($id_parts['id']) ? absint($id_parts['id']) : 0;
             $entity = null;
 
             if ($id) {
