@@ -40,7 +40,7 @@ const idStyle = {
 
 const DateCard = ({ id }) => {
 	const date = useDateItem({ id });
-	const updateDate = useUpdateDateMutation();
+	const { updateDate } = useUpdateDateMutation();
 
 	const onTitleConfirm = (name) => {
 		updateDate({

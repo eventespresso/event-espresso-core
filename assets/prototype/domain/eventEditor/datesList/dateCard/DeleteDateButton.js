@@ -3,7 +3,7 @@ import { DatePicker, TimePrecision } from '@blueprintjs/datetime/lib/esm';
 import useDeleteDatetimeMutation from '../../containers/mutations/useDeleteDateMutation';
 
 const DeleteDateButton = ({ id }) => {
-	const deleteDate = useDeleteDatetimeMutation();
+	const { deleteDate } = useDeleteDatetimeMutation();
 	const variables = { input: { clientMutationId: 'xyz', id } };
 
 	return (
