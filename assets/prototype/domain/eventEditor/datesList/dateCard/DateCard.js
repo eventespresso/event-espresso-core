@@ -7,10 +7,9 @@ import {
 	Popover
 } from '@blueprintjs/core/lib/esm';
 import { DatePicker, TimePrecision } from '@blueprintjs/datetime/lib/esm';
-import { AppToaster } from '../EventEditor';
-import useDateItem from '../containers/useDateItem';
+import useDateItem from '../../containers/queries/useDateItem';
 
-const console = window.console;
+import DeleteDateButton from './DeleteDateButton';
 
 const endTwoYears = new Date(new Date().getFullYear() + 2, 11, 31);
 
@@ -85,23 +84,7 @@ const DateCard = ({ id }) => {
 					/>
 				</Popover>
 			</div>
-			<div
-				style={{
-					margin: '0 -15px -15px 0',
-					textAlign: 'right'
-				}}
-			>
-				<Button
-					icon="trash"
-					onClick={() =>
-						AppToaster.show({
-							intent: 'danger',
-							message: `Date ${date.id} Deleted`
-						})
-					}
-					minimal
-				/>
-			</div>
+			<DeleteDateButton id={date.id} />
 		</Card>
 	);
 };

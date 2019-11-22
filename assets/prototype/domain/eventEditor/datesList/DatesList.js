@@ -1,8 +1,6 @@
-import isNull from 'lodash/isNull';
 import { Callout, H3, H6, NonIdealState, Spinner } from '@blueprintjs/core/lib/esm';
-import useDatesListData from '../containers/useDatesListData';
 import AddNewDateButton from './AddNewDateButton';
-import DateCard from './DateCard';
+import DateCard from './dateCard/DateCard';
 
 const boxStyle = {
 	padding: '2rem',
