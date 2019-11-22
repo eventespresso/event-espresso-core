@@ -9,10 +9,14 @@ import {
 import { DatePicker, TimePrecision } from '@blueprintjs/datetime/lib/esm';
 import useDateItem from '../../containers/queries/useDateItem';
 import useUpdateDateMutation from '../../containers/mutations/useUpdateDateMutation';
+import {
+	A_LONG_TIME_AGO,
+	PLUS_ONE_MONTH,
+	PLUS_TEN_YEARS,
+	PLUS_TWO_MONTHS,
+} from '../../../shared/defaultDates';
 
 import DeleteDateButton from './DeleteDateButton';
-
-const endTwoYears = new Date(new Date().getFullYear() + 2, 11, 31);
 
 const btnStyle = {
 	margin: '0 0 0 .5rem'
@@ -37,13 +41,19 @@ const idStyle = {
 const DateCard = ({ id }) => {
 	const date = useDateItem({ id });
 	const updateDate = useUpdateDateMutation();
+
 	const onTitleConfirm = (name) => {
 		updateDate({
 			variables: { input: { clientMutationId: 'xyz', id: date.id, name } }
 		});
 	};
 
-	console.log({ date });
+	const startDate = date.start ?
+		new Date( date.start * 1000 ) :
+		PLUS_ONE_MONTH;
+	// const endDate = date.end ?
+	// 	new Date( date.end * 1000 ) :
+	// 	PLUS_TWO_MONTHS;
 
 	return (
 		<Card elevation={Elevation.ONE} style={cardStyle}>
@@ -68,7 +78,7 @@ const DateCard = ({ id }) => {
 				<Popover lazy>
 					<Button icon="calendar" style={btnStyle} minimal />
 					<DatePicker
-						defaultValue={new Date(date.start * 1000)}
+						defaultValue={ startDate }
 						formatDate={(jsDate) => jsDate.toString()}
 						onChange={(jsDate, isUserChange) => {
 							if (jsDate && isUserChange) {
@@ -76,6 +86,8 @@ const DateCard = ({ id }) => {
 								date.startDate = jsDate.toDateString();
 								date.startTime = jsDate.toLocaleTimeString();
 								console.log(
+									'%c update state date: ',
+									'color: #F2F500; font-size:14px;',
 									'%c > date.start: ',
 									'color: #99c043;',
 									new Date(date.start * 1000)
@@ -87,7 +99,8 @@ const DateCard = ({ id }) => {
 							showArrowButtons: true,
 							useAmPm: true
 						}}
-						maxDate={endTwoYears}
+						minDate={ A_LONG_TIME_AGO }
+						maxDate={ PLUS_TEN_YEARS }
 						highlightCurrentDay
 						showActionsBar
 					/>
