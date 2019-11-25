@@ -33,12 +33,12 @@ const FormModal = ({
 		position: 'absolute',
 		left: '50%',
 		top: '50%',
-		transform: 'translate(-50%, -50%)',
+		transform: 'translate(-50%, -50%)'
 	};
 
 	const formStyle = {
 		boxSizing: 'border-box',
-		padding: '1em 2em',
+		padding: '1em 2em'
 	};
 
 	const btnRowStyle = {
@@ -52,11 +52,11 @@ const FormModal = ({
 		boxSizing: 'border-box',
 		padding: '1em 2em',
 		color: '#a9ce47',
-		backgroundColor: '#26203d',
+		backgroundColor: '#26203d'
 	};
 
-	console.log( '%c FormModal', 'color: #1BE7FF;' );
-	console.log( '%c > initialValues:', 'color: #99c043;', initialValues );
+	console.log('%c FormModal', 'color: #1BE7FF;');
+	console.log('%c > initialValues:', 'color: #99c043;', initialValues);
 	return (
 		<Overlay
 			{...overlayProps}
@@ -68,7 +68,7 @@ const FormModal = ({
 				<Form
 					onSubmit={onSubmit}
 					initialValues={initialValues}
-					{ ...extraProps }
+					{...extraProps}
 					render={({
 						form,
 						values,
@@ -82,7 +82,7 @@ const FormModal = ({
 								<div style={formStyle}>
 									<FormComponent
 										form={form}
-										values={ values }
+										values={values}
 										submitting={submitting}
 										pristine={pristine}
 										{...formProps}
@@ -107,8 +107,8 @@ const FormModal = ({
 										onClick={form.reset}
 									/>
 								</div>
-								<pre style={ dataStyle }>
-									{ JSON.stringify( values, 0, 2 ) }
+								<pre style={dataStyle}>
+									{JSON.stringify(values, 0, 2)}
 								</pre>
 							</form>
 						);

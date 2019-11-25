@@ -53,8 +53,8 @@ const DatesList = ({ datetimes, error, eventId, loading }) => {
 				<Callout style={boxStyle}>
 					<NonIdealState
 						icon={'warning-sign'}
-						title={ error.code }
-						description={ error.message }
+						title={error.code}
+						description={error.message}
 					/>
 				</Callout>
 			</>
@@ -67,7 +67,8 @@ const DatesList = ({ datetimes, error, eventId, loading }) => {
 		</div>
 	);
 
-	const datesList = Array.isArray( datetimes ) && datetimes.length ? (
+	const datesList =
+		Array.isArray(datetimes) && datetimes.length ? (
 			<>
 				<div style={listStyle}>
 					{datetimes.map((date) => (

@@ -15,21 +15,21 @@ const EventEditor = ({ eventId }) => {
 		tickets,
 		ticketError,
 		loadingTickets
-	} = useInitQueries( { eventId } );
+	} = useInitQueries({ eventId });
 
 	return (
 		<>
 			<DatesList
-				datetimes={ datetimes }
-				eventId={ eventId }
-				loading={ loadingDates }
-				error={ datetimeError }
+				datetimes={datetimes}
+				eventId={eventId}
+				loading={loadingDates}
+				error={datetimeError}
 			/>
 			<TicketsList
-				tickets={ tickets }
-				datetimes={ datetimes }
-				loading={ loadingTickets }
-				error={ ticketError }
+				tickets={tickets}
+				datetimes={datetimes}
+				loading={loadingTickets}
+				error={ticketError}
 			/>
 		</>
 	);

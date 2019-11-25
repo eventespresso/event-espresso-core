@@ -12,7 +12,7 @@ const AddNewDateModal = ({ eventId, handleClose, isOpen }) => {
 				clientMutationId: 'xyz',
 				description,
 				eventId,
-				name,
+				name
 			}
 		};
 		const optimisticResponse = {
@@ -46,7 +46,7 @@ const AddNewDateModal = ({ eventId, handleClose, isOpen }) => {
 				}
 			};
 			// Read the data from our cache for this query.
-			const {datetimes = {}} = proxy.readQuery(options);
+			const { datetimes = {} } = proxy.readQuery(options);
 
 			// write the data to cache without
 			// mutating the cache directly
@@ -55,7 +55,7 @@ const AddNewDateModal = ({ eventId, handleClose, isOpen }) => {
 				data: {
 					datetimes: {
 						...datetimes,
-						nodes: [...datetimes.nodes, datetime],
+						nodes: [...datetimes.nodes, datetime]
 					}
 				}
 			});

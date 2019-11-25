@@ -15,7 +15,7 @@ const DeleteDateButton = ({ datetimeId }) => {
 			}}
 		>
 			<Button
-				icon={ 'trash' }
+				icon={'trash'}
 				onClick={() => {
 					try {
 						deleteDate({ variables });

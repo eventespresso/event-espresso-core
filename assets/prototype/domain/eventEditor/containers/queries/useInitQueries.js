@@ -1,14 +1,14 @@
 import get from 'lodash/get';
 import { useQuery } from '@apollo/react-hooks';
-import { GET_DATETIMES  } from './dates';
+import { GET_DATETIMES } from './dates';
 import { GET_TICKETS } from './tickets';
 
 const useInitQueries = ({ eventId }) => {
-	console.log( '%c useInitQueries: ', 'color: deeppink; font-size: 14px;' );
+	console.log('%c useInitQueries: ', 'color: deeppink; font-size: 14px;');
 	const {
 		data: datetimesData,
 		error: datetimeError,
-		loading: loadingDates,
+		loading: loadingDates
 	} = useQuery(GET_DATETIMES, {
 		variables: {
 			where: {
@@ -22,7 +22,7 @@ const useInitQueries = ({ eventId }) => {
 	const {
 		data: ticketsData,
 		error: ticketError,
-		loading: loadingTickets,
+		loading: loadingTickets
 	} = useQuery(GET_TICKETS, {
 		variables: {
 			where: {
