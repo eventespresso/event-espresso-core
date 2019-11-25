@@ -4,10 +4,16 @@ module.exports = {
 		browser: true,
 		es6: true
 	},
-	extends: ["plugin:jest/recommended", "plugin:react/recommended"],
+	extends: [
+		'eslint:recommended',
+		'plugin:jest/recommended',
+		'plugin:react/recommended',
+		"prettier/react",
+		"plugin:prettier/recommended",
+	],
 	globals: {
-		Atomics: "readonly",
-		SharedArrayBuffer: "readonly"
+		Atomics: 'readonly',
+		SharedArrayBuffer: 'readonly'
 	},
 	parser: "babel-eslint",
 	parserOptions: {
@@ -15,21 +21,21 @@ module.exports = {
 			jsx: true
 		},
 		ecmaVersion: 2018,
-		sourceType: "module"
+		sourceType: 'module'
 	},
-	plugins: ["react-hooks"],
+	plugins: ['react-hooks'],
 	rules: {
-		"comma-dangle": "off",
-		"jest/valid-describe": "off",
-		"react-hooks/rules-of-hooks": "error",
-		"react-hooks/exhaustive-deps": "off",
-		"react/prop-types": "off",
-		"react/static-property-placement": "off",
-		"react/display-name": "off"
+		'comma-dangle': 'off',
+		'jest/valid-describe': 'off',
+		'react-hooks/rules-of-hooks': 'error',
+		'react-hooks/exhaustive-deps': 'off',
+		'react/prop-types': 'off',
+		'react/static-property-placement': 'off',
+		'react/display-name': 'off'
 	},
 	overrides: [
 		{
-			files: ["test/e2e/**/*.js"],
+			files: ['test/e2e/**/*.js'],
 			globals: {
 				page: true,
 				browser: true,
@@ -41,13 +47,18 @@ module.exports = {
 			}
 		},
 		{
-			files: ["*.js"],
+			files: ['*.js'],
 			rules: {
-				"react/react-in-jsx-scope": "off"
+				'react/react-in-jsx-scope': 'off'
 			},
 			globals: {
 				eejsdata: true
 			}
 		}
-	]
+	],
+	"settings": {
+		"react": {
+			"version": "detect",
+		},
+	},
 };

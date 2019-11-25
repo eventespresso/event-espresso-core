@@ -8,10 +8,8 @@ import ApolloProvider from '../apollo/Apollo';
  *
  * @returns {ReactElement} The wrapped element.
  */
-const ContextProviders = ( { children } ) => (
-	<ApolloProvider>
-		{ children }
-	</ApolloProvider>
+const ContextProviders = ({ children }) => (
+	<ApolloProvider>{children}</ApolloProvider>
 );
 
 export default ContextProviders;

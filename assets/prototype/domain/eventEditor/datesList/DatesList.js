@@ -33,7 +33,7 @@ const DatesList = ({ datetimes, error, eventId, loading }) => {
 	console.log('%c > datetimes:', 'color: tomato;', datetimes);
 	console.log('%c > loading:', 'color: tomato;', loading);
 	console.log('%c > error:', 'color: tomato;', error);
-	const header = <H3 style={{ margin: '2rem 0 1rem' }}>{'Dates List'}</H3>;
+	const header = <H3 style={{ margin: '2rem 0 .5rem' }}>{'Dates List'}</H3>;
 
 	if (loading) {
 		return (
@@ -53,8 +53,8 @@ const DatesList = ({ datetimes, error, eventId, loading }) => {
 				<Callout style={boxStyle}>
 					<NonIdealState
 						icon={'warning-sign'}
-						title={ error.code }
-						description={ error.message }
+						title={error.code}
+						description={error.message}
 					/>
 				</Callout>
 			</>
@@ -67,7 +67,8 @@ const DatesList = ({ datetimes, error, eventId, loading }) => {
 		</div>
 	);
 
-	const datesList = Array.isArray( datetimes ) && datetimes.length ? (
+	const datesList =
+		Array.isArray(datetimes) && datetimes.length ? (
 			<>
 				<div style={listStyle}>
 					{datetimes.map((date) => (

@@ -7,16 +7,14 @@ import {
 	Popover
 } from '@blueprintjs/core/lib/esm';
 import { DatePicker, TimePrecision } from '@blueprintjs/datetime/lib/esm';
+import DeleteDateButton from './DeleteDateButton';
 import useDateItem from '../../containers/queries/useDateItem';
 import useUpdateDateMutation from '../../containers/mutations/useUpdateDateMutation';
 import {
 	A_LONG_TIME_AGO,
 	PLUS_ONE_MONTH,
-	PLUS_TEN_YEARS,
-	PLUS_TWO_MONTHS
+	PLUS_TEN_YEARS
 } from '../../../shared/defaultDates';
-
-import DeleteDateButton from './DeleteDateButton';
 
 const btnStyle = {
 	margin: '0 0 0 .5rem'
@@ -44,7 +42,7 @@ const DateCard = ({ id }) => {
 
 	const onTitleConfirm = (name) => {
 		updateDate({
-			variables: { input: { clientMutationId: 'xyz', id: date.id, name } }
+			variables: { input: { clientMutationId: 'xyz', id, name } }
 		});
 	};
 
@@ -104,7 +102,7 @@ const DateCard = ({ id }) => {
 					/>
 				</Popover>
 			</div>
-			<DeleteDateButton id={date.datetimeId} />
+			<DeleteDateButton datetimeId={date.datetimeId} />
 		</Card>
 	);
 };

@@ -1,25 +1,33 @@
 import { useState } from '@wordpress/element';
+import AddNewTicketModal from './AddNewTicketModal';
 import { EspressoButton } from '../../../../ZZZ/components/ui';
 
-const AddNewTicketButton = () => {
-	const [ isOpen, setIsOpen ] = useState( false );
-	const handleOpen = ( e ) => {
+const AddNewTicketButton = ({ datetimes }) => {
+	const [isOpen, setIsOpen] = useState(false);
+	const handleOpen = (e) => {
 		e.preventDefault();
 		e.stopPropagation();
-		setIsOpen( true );
+		setIsOpen(true);
 	};
-	const handleClose = ( e ) => {
+	const handleClose = (e) => {
 		e.preventDefault();
 		e.stopPropagation();
-		setIsOpen( false );
+		setIsOpen(false);
 	};
 
 	return (
-		<EspressoButton
-			icon={ 'tickets-alt' }
-			buttonText={ 'Add New Ticket' }
-			onClick={ handleOpen }
-		/>
+		<>
+			<EspressoButton
+				icon={'tickets-alt'}
+				buttonText={'Add New Ticket'}
+				onClick={handleOpen}
+			/>
+			<AddNewTicketModal
+				datetimes={datetimes}
+				handleClose={handleClose}
+				isOpen={isOpen}
+			/>
+		</>
 	);
 };
 

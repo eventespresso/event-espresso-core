@@ -4,15 +4,15 @@ import { EspressoButton } from '../../../../ZZZ/components/ui';
 
 const AddNewDateButton = ({ eventId }) => {
 	const [isOpen, setIsOpen] = useState(false);
-	const handleOpen = ( e ) => {
+	const handleOpen = (e) => {
 		e.preventDefault();
 		e.stopPropagation();
-		setIsOpen( true );
+		setIsOpen(true);
 	};
-	const handleClose = ( e ) => {
+	const handleClose = (e) => {
 		e.preventDefault();
 		e.stopPropagation();
-		setIsOpen( false );
+		setIsOpen(false);
 	};
 
 	return (
