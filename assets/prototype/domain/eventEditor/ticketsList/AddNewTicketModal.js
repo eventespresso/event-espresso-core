@@ -6,13 +6,14 @@ import { GET_TICKETS } from '../containers/queries/tickets';
 const AddNewTicketModal = ({ datetimes, handleClose, isOpen }) => {
 	const { createTicket } = useCreateTicketMutation();
 
-	const onSubmit = ({ name, description, price }) => {
+	const onSubmit = ({ name, description, price, datetimes: ticketDatetimes }) => {
 		const variables = {
 			input: {
 				clientMutationId: 'xyz',
 				name,
 				description,
 				price,
+				datetimes: ticketDatetimes,
 			}
 		};
 		const optimisticResponse = {
@@ -28,7 +29,6 @@ const AddNewTicketModal = ({ datetimes, handleClose, isOpen }) => {
 			}
 		};
 
-		const datetimeIn = datetimes && datetimes.map( ( { id } ) => id );
 		const update = (
 			proxy,
 			{
@@ -37,6 +37,7 @@ const AddNewTicketModal = ({ datetimes, handleClose, isOpen }) => {
 				}
 			}
 		) => {
+			const datetimeIn = datetimes ? datetimes.map( ( { id } ) => id ) : [];
 			const options = {
 				query: GET_TICKETS,
 				variables: {
@@ -46,6 +47,9 @@ const AddNewTicketModal = ({ datetimes, handleClose, isOpen }) => {
 				}
 			};
 			// Read the data from our cache for this query.
+			/**
+			 * @todo use try...catch
+			 * */
 			const { tickets = {}} = proxy.readQuery(options);
 
 			// write the data to cache without
