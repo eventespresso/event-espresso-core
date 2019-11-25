@@ -70,7 +70,7 @@ class DatetimeMutation
 
         foreach ($tickets as $ID) {
             $parts = Relay::fromGlobalId($ID);
-            if (! empty($parts['id']) && is_int($parts['id'])) {
+            if (! empty($parts['id']) && absint($parts['id'])) {
                 $entity->_add_relation_to(
                     $parts['id'],
                     $relationName
