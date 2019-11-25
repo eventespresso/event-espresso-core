@@ -1,9 +1,8 @@
-import useDeleteTicketMutation from '../../containers/mutations/useDeleteTicketMutation';
 import { Button } from '@blueprintjs/core/lib/esm';
+import useDeleteTicketMutation from '../../containers/mutations/useDeleteTicketMutation';
 
-const DeleteTicketButton = ({ ticketId }) => {
-	const { deleteTicket } = useDeleteTicketMutation();
-	const variables = { input: { clientMutationId: 'xyz', id: ticketId } };
+const DeleteTicketButton = ({ datetimeIn, id }) => {
+	const deleteTicket = useDeleteTicketMutation({ datetimeIn, id });
 
 	return (
 		<div
@@ -14,17 +13,7 @@ const DeleteTicketButton = ({ ticketId }) => {
 				textAlign: 'right'
 			}}
 		>
-			<Button
-				icon={'trash'}
-				onClick={() => {
-					try {
-						deleteTicket({ variables });
-					} catch (e) {
-						console.log({ e });
-					}
-				}}
-				minimal
-			/>
+			<Button icon={'trash'} onClick={deleteTicket} minimal />
 		</div>
 	);
 };

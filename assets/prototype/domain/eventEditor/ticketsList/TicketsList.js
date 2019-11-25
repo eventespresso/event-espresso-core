@@ -76,12 +76,18 @@ const TicketsList = ({ tickets, datetimes, error, loading, loadingDates }) => {
 		</div>
 	);
 
+	const datetimeIn = datetimes.map(({ id }) => id);
+
 	const ticketList =
 		Array.isArray(tickets) && tickets.length ? (
 			<Fragment>
 				<div style={listStyle}>
 					{tickets.map((ticket) => (
-						<TicketCard key={ticket.id} id={ticket.id} />
+						<TicketCard
+							datetimeIn={datetimeIn}
+							id={ticket.id}
+							key={ticket.id}
+						/>
 					))}
 				</div>
 				{btnRow}
