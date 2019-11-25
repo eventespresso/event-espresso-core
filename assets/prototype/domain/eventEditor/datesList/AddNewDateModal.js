@@ -13,7 +13,7 @@ const AddNewDateModal = ({ eventId, handleClose, isOpen }) => {
 				clientMutationId: 'xyz',
 				description,
 				eventId,
-				name,
+				name
 			}
 		};
 		const optimisticResponse = {
@@ -48,7 +48,7 @@ const AddNewDateModal = ({ eventId, handleClose, isOpen }) => {
 				}
 			};
 			// Read the data from our cache for this query.
-			const {datetimes = {}} = proxy.readQuery(options);
+			const { datetimes = {} } = proxy.readQuery(options);
 
 			if ( datetime.id ) {
 				const datetimeIn = datetimes.nodes.map(({id}) => id);
@@ -82,7 +82,7 @@ const AddNewDateModal = ({ eventId, handleClose, isOpen }) => {
 				data: {
 					datetimes: {
 						...datetimes,
-						nodes: [...datetimes.nodes, datetime],
+						nodes: [...datetimes.nodes, datetime]
 					}
 				}
 			});

@@ -1,15 +1,15 @@
 import get from 'lodash/get';
 import { useEffect } from '@wordpress/element';
 import { useQuery, useLazyQuery } from '@apollo/react-hooks';
-import { GET_DATETIMES  } from './dates';
+import { GET_DATETIMES } from './dates';
 import { GET_TICKETS } from './tickets';
 
 const useInitQueries = ({ eventId }) => {
-	console.log( '%c useInitQueries: ', 'color: deeppink; font-size: 14px;' );
+	console.log('%c useInitQueries: ', 'color: deeppink; font-size: 14px;');
 	const {
 		data: datetimesData,
 		error: datetimeError,
-		loading: loadingDates,
+		loading: loadingDates
 	} = useQuery(GET_DATETIMES, {
 		variables: {
 			where: {
@@ -21,12 +21,12 @@ const useInitQueries = ({ eventId }) => {
 
 	const datetimeIn = datetimes ? datetimes.map(({ id }) => id) : [];
 
-	const [ fetchRelatedTickets, {
+	const [fetchRelatedTickets, {
 		data: ticketsData,
 		error: ticketError,
 		loading: loadingTickets,
 		called,
-	} ] = useLazyQuery(GET_TICKETS, {
+	}] = useLazyQuery(GET_TICKETS, {
 		variables: {
 			where: {
 				datetimeIn
@@ -40,12 +40,12 @@ const useInitQueries = ({ eventId }) => {
 	// to avoid fetching all tickets irrespective of dates
 	useEffect(() => {
 		if (
-			! called && // Make sure the query function has not already been called.
+			!called && // Make sure the query function has not already been called.
 			datetimeIn.length // Only if we have datetimes.
 		) {
 			fetchRelatedTickets();
 		}
-	}, [ datetimeIn, called ] );
+	}, [datetimeIn, called]);
 
 	console.log(
 		'%c > datetimes, tickets, errors, & loading state',

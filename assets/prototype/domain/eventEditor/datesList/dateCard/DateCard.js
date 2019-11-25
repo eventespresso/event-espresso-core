@@ -13,10 +13,8 @@ import useUpdateDateMutation from '../../containers/mutations/useUpdateDateMutat
 import {
 	A_LONG_TIME_AGO,
 	PLUS_ONE_MONTH,
-	PLUS_TEN_YEARS,
-	PLUS_TWO_MONTHS
+	PLUS_TEN_YEARS
 } from '../../../shared/defaultDates';
-
 
 const btnStyle = {
 	margin: '0 0 0 .5rem'

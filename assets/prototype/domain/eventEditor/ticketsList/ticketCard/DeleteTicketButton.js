@@ -15,7 +15,7 @@ const DeleteTicketButton = ({ ticketId }) => {
 			}}
 		>
 			<Button
-				icon={ 'trash' }
+				icon={'trash'}
 				onClick={() => {
 					try {
 						deleteTicket({ variables });

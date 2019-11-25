@@ -24,7 +24,7 @@ const AddNewTicketModal = ({ datetimes, handleClose, isOpen }) => {
 					ticketId: 0,
 					name,
 					description,
-					price,
+					price
 				}
 			}
 		};
@@ -37,7 +37,7 @@ const AddNewTicketModal = ({ datetimes, handleClose, isOpen }) => {
 				}
 			}
 		) => {
-			const datetimeIn = datetimes ? datetimes.map( ( { id } ) => id ) : [];
+			const datetimeIn = datetimes ? datetimes.map(({ id }) => id) : [];
 			const options = {
 				query: GET_TICKETS,
 				variables: {
@@ -50,7 +50,7 @@ const AddNewTicketModal = ({ datetimes, handleClose, isOpen }) => {
 			/**
 			 * @todo use try...catch
 			 * */
-			const { tickets = {}} = proxy.readQuery(options);
+			const { tickets = {} } = proxy.readQuery(options);
 
 			// write the data to cache without
 			// mutating the cache directly
@@ -59,7 +59,7 @@ const AddNewTicketModal = ({ datetimes, handleClose, isOpen }) => {
 				data: {
 					tickets: {
 						...tickets,
-						nodes: [...tickets.nodes, ticket],
+						nodes: [...tickets.nodes, ticket]
 					}
 				}
 			});
@@ -74,12 +74,12 @@ const AddNewTicketModal = ({ datetimes, handleClose, isOpen }) => {
 
 	return (
 		<FormModal
-			FormComponent={ NewTicketForm }
+			FormComponent={NewTicketForm}
 			initialValues={{}}
 			onSubmit={onSubmit}
 			onClose={handleClose}
 			isOpen={isOpen}
-			datetimes={ datetimes }
+			datetimes={datetimes}
 		/>
 	);
 };

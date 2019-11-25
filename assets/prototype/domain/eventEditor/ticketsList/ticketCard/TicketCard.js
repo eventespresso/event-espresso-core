@@ -9,8 +9,7 @@ import {
 } from '@blueprintjs/core/lib/esm';
 import DeleteTicketButton from './DeleteTicketButton';
 import useTicketItem from '../../containers/queries/useTicketItem';
-import useUpdateTicketMutation
-	from '../../containers/mutations/useUpdateTicketMutation';
+import useUpdateTicketMutation from '../../containers/mutations/useUpdateTicketMutation';
 
 const console = window.console;
 
@@ -40,19 +39,19 @@ const priceStyle = {
 
 const TicketCard = ({ id }) => {
 	const [editing, setEditing] = useState(false);
-	const ticket = useTicketItem( { id } );
+	const ticket = useTicketItem({ id });
 	const { updateTicket } = useUpdateTicketMutation();
 
-	const onTitleConfirm = ( name ) => {
-		updateTicket( {
+	const onTitleConfirm = (name) => {
+		updateTicket({
 			variables: { input: { clientMutationId: 'xyz', id, name } }
-		} );
+		});
 	};
-	const onPriceConfirm = ( price ) => {
-		updateTicket( {
+	const onPriceConfirm = (price) => {
+		updateTicket({
 			variables: { input: { clientMutationId: 'xyz', id, price } }
-		} );
-		setEditing( false );
+		});
+		setEditing(false);
 	};
 	const ticketPrice = editing ? (
 		<EditableText
@@ -61,7 +60,7 @@ const TicketCard = ({ id }) => {
 			defaultValue={ticket.price}
 			value={ticket.price}
 			onCancel={() => setEditing(false)}
-			onConfirm={ onPriceConfirm }
+			onConfirm={onPriceConfirm}
 			selectAllOnFocus
 		/>
 	) : (
@@ -76,7 +75,7 @@ const TicketCard = ({ id }) => {
 						placeholder={'edit title...'}
 						defaultValue={ticket.name}
 						onCancel={(value) => console.log(value)}
-						onConfirm={ onTitleConfirm }
+						onConfirm={onTitleConfirm}
 						minWidth={'320px'}
 						selectAllOnFocus
 					/>
@@ -93,7 +92,7 @@ const TicketCard = ({ id }) => {
 					/>
 				</H4>
 			</div>
-			<DeleteTicketButton ticketId={ ticket.ticketId } />
+			<DeleteTicketButton ticketId={ticket.ticketId} />
 		</Card>
 	);
 };
