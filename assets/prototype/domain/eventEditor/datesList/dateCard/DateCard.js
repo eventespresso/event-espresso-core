@@ -17,6 +17,7 @@ import {
 	PLUS_TWO_MONTHS
 } from '../../../shared/defaultDates';
 
+import DeleteDateButton from './DeleteDateButton';
 
 const btnStyle = {
 	margin: '0 0 0 .5rem'
