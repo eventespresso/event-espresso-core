@@ -1,7 +1,6 @@
 import { Callout, H3, H6, NonIdealState, Spinner } from '@blueprintjs/core/lib/esm';
-import useDatesListData from '../containers/useDatesListData';
 import AddNewDateButton from './AddNewDateButton';
-import DateCard from './DateCard';
+import DateCard from './dateCard/DateCard';
 
 const boxStyle = {
 	padding: '2rem',
@@ -29,18 +28,34 @@ const btnRowStyle = {
 	width: '100%'
 };
 
-const DatesList = ({ eventId }) => {
-	const dates = useDatesListData(eventId);
-
+const DatesList = ({ datetimes, error, eventId, loading }) => {
+	console.log('%c DatesList', 'color: orangered; font-size: 14px;');
+	console.log('%c > datetimes:', 'color: tomato;', datetimes);
+	console.log('%c > loading:', 'color: tomato;', loading);
+	console.log('%c > error:', 'color: tomato;', error);
 	const header = <H3 style={{ margin: '2rem 0 1rem' }}>{'Dates List'}</H3>;
 
-	if (!Array.isArray(dates)) {
+	if (loading) {
 		return (
 			<>
 				{header}
 				<Callout style={boxStyle}>
 					<Spinner size={Spinner.SIZE_SMALL} />
 					<H6 style={hdrStyle}>{'loading dates...'}</H6>
+				</Callout>
+			</>
+		);
+	}
+	if (error) {
+		return (
+			<>
+				{header}
+				<Callout style={boxStyle}>
+					<NonIdealState
+						icon={'warning-sign'}
+						title={ error.code }
+						description={ error.message }
+					/>
 				</Callout>
 			</>
 		);
@@ -52,27 +67,27 @@ const DatesList = ({ eventId }) => {
 		</div>
 	);
 
-	const datesList = dates.length ? (
-		<>
-			<div style={listStyle}>
-				{dates.map((date) => (
-					<DateCard key={date.id} id={date.id} />
-				))}
-			</div>
-			{btnRow}
-		</>
-	) : (
-		<>
-			<Callout>
-				<NonIdealState
-					icon={'warning-sign'}
-					title={'NO DATES FOR YOU !!!'}
-					description={'try changing filter settings'}
-				/>
-			</Callout>
-			{btnRow}
-		</>
-	);
+	const datesList = Array.isArray( datetimes ) && datetimes.length ? (
+			<>
+				<div style={listStyle}>
+					{datetimes.map((date) => (
+						<DateCard key={date.id} id={date.id} />
+					))}
+				</div>
+				{btnRow}
+			</>
+		) : (
+			<>
+				<Callout>
+					<NonIdealState
+						icon={'help'}
+						title={'NO DATES FOR YOU !!!'}
+						description={'try changing filter settings'}
+					/>
+				</Callout>
+				{btnRow}
+			</>
+		);
 
 	return (
 		<div>

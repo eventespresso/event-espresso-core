@@ -1,20 +1,9 @@
-import gql from 'graphql-tag';
 import { useMutation } from '@apollo/react-hooks';
+import { CREATE_DATE } from './dates';
 
-const CREATE_DATE = gql`
-	mutation createDatetime($input: CreateDatetimeInput!) {
-		createDatetime(input: $input) {
-			datetime {
-				id
-				name
-				description
-				startDate
-				endDate
-			}
-		}
-	}
-`;
-
-const useCreateDateMutation = () => useMutation(CREATE_DATE);
+const useCreateDateMutation = () => {
+	const [createDate, { loading, error }] = useMutation(CREATE_DATE);
+	return { createDate, loading, error };
+};
 
 export default useCreateDateMutation;

@@ -1,36 +1,28 @@
-import gql from 'graphql-tag';
-import { useQuery } from '@apollo/react-hooks';
 import get from 'lodash/get';
+import { useApolloClient } from '@apollo/react-hooks';
+import { GET_DATETIMES } from './queries/dates';
 
-const GET_DATETIMES = gql`
-	query GET_DATETIMES($where: RootQueryDatetimesConnectionWhereArgs) {
-		datetimes(where: $where) {
-			nodes {
-				id
-				datetimeId
-				name
-				description
-				startDate
-				endDate
-			}
-		}
-	}
-`;
+const { console } = window.console;
 
 const useDatesListData = (eventId) => {
-	const { loading, data } = useQuery(GET_DATETIMES, {
-		variables: {
-			where: {
-				eventId
+	const client = useApolloClient();
+	try {
+		console.log('%c useDatesListData', 'color: lime;');
+		const data = client.readQuery({
+			query: GET_DATETIMES,
+			variables: {
+				where: {
+					eventId
+				}
 			}
-		}
-	});
-	// eslint-disable-next-line curly
-	if (loading) return <p>Loading ...</p>;
-
-	const datetimes = get(data, ['datetimes', 'nodes']);
-
-	return datetimes;
+		});
+		console.log('%c > useDatesListData data:', 'color: lime;', data);
+		return {
+			datetimes: get(data, ['datetimes', 'nodes'])
+		};
+	} catch (errors) {
+		return { errors };
+	}
 };
 
 export default useDatesListData;

@@ -1,96 +1,81 @@
-import classNames from 'classnames';
-import { Button, Classes, Overlay } from '@blueprintjs/core/lib/esm';
-import { Form, Field } from 'react-final-form';
+import NewDateForm from './NewDateForm';
+import FormModal from '../FormModal';
 import useCreateDateMutation from '../containers/mutations/useCreateDateMutation';
+import { GET_DATETIMES } from '../containers/queries/dates';
 
 const AddNewDateModal = ({ eventId, handleClose, isOpen }) => {
-	const [createDate, { data }] = useCreateDateMutation();
+	const { createDate } = useCreateDateMutation({ eventId });
 
-	const onSubmit = async ({ description, name }) => {
+	const onSubmit = ({ description, name }) => {
 		const variables = {
-			input: { clientMutationId: 'xyz', description, name, eventId }
+			input: {
+				clientMutationId: 'xyz',
+				description,
+				eventId,
+				name,
+			}
+		};
+		const optimisticResponse = {
+			createDatetime: {
+				__typename: 'CreateDatetimePayload',
+				datetime: {
+					__typename: 'Datetime',
+					datetimeId: 0,
+					name,
+					description,
+					endDate: '',
+					startDate: ''
+				}
+			}
 		};
 
-		createDate({ variables });
-	};
+		const update = (
+			proxy,
+			{
+				data: {
+					createDatetime: { datetime }
+				}
+			}
+		) => {
+			const options = {
+				query: GET_DATETIMES,
+				variables: {
+					where: {
+						eventId
+					}
+				}
+			};
+			// Read the data from our cache for this query.
+			const {datetimes = {}} = proxy.readQuery(options);
 
-	const overlayProps = {
-		autoFocus: true,
-		canEscapeKeyClose: true,
-		canOutsideClickClose: true,
-		enforceFocus: true,
-		hasBackdrop: true,
-		usePortal: true,
-		useTallContent: false
-	};
+			// write the data to cache without
+			// mutating the cache directly
+			proxy.writeQuery({
+				...options,
+				data: {
+					datetimes: {
+						...datetimes,
+						nodes: [...datetimes.nodes, datetime],
+					}
+				}
+			});
+		};
 
-	const classes = classNames(
-		Classes.CARD,
-		Classes.ELEVATION_4,
-		'docs-overlay-example-transition',
-		'docs-overlay-example-tall'
-	);
-
-	const overlayStyle = {
-		top: '0',
-		left: 'calc(50vw - 200px)',
-		margin: '10vh 0',
-		width: '400px'
+		createDate({
+			variables,
+			optimisticResponse,
+			update
+		});
 	};
 
 	return (
-		<Overlay
-			{...overlayProps}
-			className={Classes.OVERLAY_SCROLL_CONTAINER}
+		<FormModal
+			FormComponent={NewDateForm}
+			initialValues={{}}
+			onSubmit={onSubmit}
 			onClose={handleClose}
 			isOpen={isOpen}
-		>
-			<div className={classes} style={overlayStyle}>
-				<Form
-					onSubmit={onSubmit}
-					initialValues={{ name: 'test' }}
-					render={({
-						handleSubmit,
-						form,
-						submitting,
-						pristine,
-						values
-					}) => (
-						<form onSubmit={handleSubmit}>
-							<div>
-								<label>Name</label>
-								<Field
-									name="name"
-									component="input"
-									type="text"
-									placeholder="Name"
-								/>
-							</div>
-
-							<div>
-								<label>Description</label>
-								<Field
-									name="description"
-									component="input"
-									type="text"
-									placeholder="description"
-								/>
-							</div>
-
-							<div className="buttons">
-								<Button
-									type="submit"
-									disabled={submitting || pristine}
-									intent={'primary'}
-								>
-									Submit
-								</Button>
-							</div>
-						</form>
-					)}
-				/>
-			</div>
-		</Overlay>
+		/>
 	);
 };
 
