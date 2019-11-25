@@ -9,6 +9,7 @@ const useCreateDateMutation = ({ eventId }) => {
 	console.log('useCreateDateMutation - loading: ', loading);
 	console.log('useCreateDateMutation - error: ', error);
 
+	// On submit handler receives data from FormModal
 	const createDateHandler = ({ description, name }) => {
 		const variables = {
 			input: {
