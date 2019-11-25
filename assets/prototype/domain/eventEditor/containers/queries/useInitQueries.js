@@ -12,6 +12,7 @@ const useInitQueries = ({ eventId }) => {
 		loading: loadingDates
 	} = useQuery(GET_DATETIMES, {
 		variables: {
+			first: 50,
 			where: {
 				eventId
 			}
@@ -21,17 +22,16 @@ const useInitQueries = ({ eventId }) => {
 
 	const datetimeIn = datetimes ? datetimes.map(({ id }) => id) : [];
 
-	const [fetchRelatedTickets, {
-		data: ticketsData,
-		error: ticketError,
-		loading: loadingTickets,
-		called,
-	}] = useLazyQuery(GET_TICKETS, {
+	const [
+		fetchRelatedTickets,
+		{ data: ticketsData, error: ticketError, loading: loadingTickets, called }
+	] = useLazyQuery(GET_TICKETS, {
 		variables: {
+			first: 50,
 			where: {
 				datetimeIn
 			}
-		},
+		}
 	});
 
 	const tickets = get(ticketsData, ['tickets', 'nodes'], []);

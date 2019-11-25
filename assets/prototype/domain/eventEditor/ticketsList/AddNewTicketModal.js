@@ -13,7 +13,7 @@ const AddNewTicketModal = ({ datetimes, handleClose, isOpen }) => {
 				name,
 				description,
 				price,
-				datetimes: ticketDatetimes,
+				datetimes: ticketDatetimes
 			}
 		};
 		const optimisticResponse = {

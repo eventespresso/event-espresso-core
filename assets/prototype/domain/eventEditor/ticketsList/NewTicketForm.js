@@ -43,7 +43,6 @@ const datesStyle = {
 };
 
 const NewTicketForm = ({ datetimes }) => {
-
 	return (
 		<>
 			<H2 style={hdrStyle}>New Ticket Details</H2>
@@ -81,22 +80,24 @@ const NewTicketForm = ({ datetimes }) => {
 			<div style={divStyle}>
 				<div style={datesStyle}>
 					{datetimes.map(({ id, name }) => {
-						return <Field
-							key={id}
-							name="datetimes"
-							type="checkbox"
-							value={id}
-							render={({ input, meta, ...rest }) => {
-								return (
-									<Checkbox
-										label={name}
-										inline
-										{...input}
-										{...rest}
-									/>
-								);
-							}}
-						/>
+						return (
+							<Field
+								key={id}
+								name="datetimes"
+								type="checkbox"
+								value={id}
+								render={({ input, ...rest }) => {
+									return (
+										<Checkbox
+											label={name}
+											inline
+											{...input}
+											{...rest}
+										/>
+									);
+								}}
+							/>
+						);
 					})}
 				</div>
 			</div>

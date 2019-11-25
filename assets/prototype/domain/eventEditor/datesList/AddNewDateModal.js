@@ -38,7 +38,6 @@ const AddNewDateModal = ({ eventId, handleClose, isOpen }) => {
 				}
 			}
 		) => {
-
 			const options = {
 				query: GET_DATETIMES,
 				variables: {
@@ -50,8 +49,8 @@ const AddNewDateModal = ({ eventId, handleClose, isOpen }) => {
 			// Read the data from our cache for this query.
 			const { datetimes = {} } = proxy.readQuery(options);
 
-			if ( datetime.id ) {
-				const datetimeIn = datetimes.nodes.map(({id}) => id);
+			if (datetime.id) {
+				const datetimeIn = datetimes.nodes.map(({ id }) => id);
 				// Read the data from our cache for this query.
 				const data = proxy.readQuery({
 					query: GET_TICKETS,
@@ -69,7 +68,7 @@ const AddNewDateModal = ({ eventId, handleClose, isOpen }) => {
 					data,
 					variables: {
 						where: {
-							datetimeIn: [...datetimeIn, datetime.id],
+							datetimeIn: [...datetimeIn, datetime.id]
 						}
 					}
 				});
