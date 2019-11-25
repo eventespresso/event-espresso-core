@@ -15,14 +15,12 @@ export const GET_TICKET = gql`
 export const GET_TICKETS = gql`
 	query GET_TICKETS($where: RootQueryTicketsConnectionWhereArgs) {
 		tickets(where: $where) {
-			edges {
-				node {
-					id
-					ticketId
-					name
-					description
-					price
-				}
+			nodes {
+				id
+				ticketId
+				name
+				description
+				price
 			}
 		}
 	}
