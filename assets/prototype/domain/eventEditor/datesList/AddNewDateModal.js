@@ -16,6 +16,7 @@ const AddNewDateModal = ({ eventId, handleClose, isOpen }) => {
 				name
 			}
 		};
+
 		const optimisticResponse = {
 			createDatetime: {
 				__typename: 'CreateDatetimePayload',
