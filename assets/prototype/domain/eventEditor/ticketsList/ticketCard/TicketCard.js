@@ -70,7 +70,7 @@ const TicketCard = ({ id }) => {
 	return (
 		<Card elevation={Elevation.ONE} style={cardStyle}>
 			<div>
-				<div style={idStyle}>{ticket.id}</div>
+				<div style={idStyle}>{ticket.ticketId}</div>
 				<H4>
 					<EditableText
 						placeholder={'edit title...'}
