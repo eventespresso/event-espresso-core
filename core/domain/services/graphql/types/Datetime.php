@@ -211,6 +211,12 @@ class Datetime extends TypeBase
                     esc_html__('Ignored if empty.', 'event_espresso')
                 )
             ),
+            new GraphQLOutputField(
+                'relatedTickets',
+                ['list_of' => 'ID'],
+                null,
+                esc_html__('Globally unique IDs of teh related tickets.', 'event_espresso')
+            ),
         ];
     }
 
