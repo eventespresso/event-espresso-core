@@ -7,7 +7,10 @@ import {
 	Elevation,
 	H4
 } from '@blueprintjs/core/lib/esm';
-import { AppToaster } from '../../EventEditor';
+import DeleteTicketButton from './DeleteTicketButton';
+import useTicketItem from '../../containers/queries/useTicketItem';
+import useUpdateTicketMutation
+	from '../../containers/mutations/useUpdateTicketMutation';
 
 const console = window.console;
 
@@ -35,8 +38,22 @@ const priceStyle = {
 	color: 'grey'
 };
 
-const TicketCard = ({ ticket }) => {
+const TicketCard = ({ id }) => {
 	const [editing, setEditing] = useState(false);
+	const ticket = useTicketItem( { id } );
+	const { updateTicket } = useUpdateTicketMutation();
+
+	const onTitleConfirm = ( name ) => {
+		updateTicket( {
+			variables: { input: { clientMutationId: 'xyz', id, name } }
+		} );
+	};
+	const onPriceConfirm = ( price ) => {
+		updateTicket( {
+			variables: { input: { clientMutationId: 'xyz', id, price } }
+		} );
+		setEditing( false );
+	};
 	const ticketPrice = editing ? (
 		<EditableText
 			isEditing={editing}
@@ -44,10 +61,7 @@ const TicketCard = ({ ticket }) => {
 			defaultValue={ticket.price}
 			value={ticket.price}
 			onCancel={() => setEditing(false)}
-			onConfirm={(value) => {
-				ticket.price = value;
-				setEditing(false);
-			}}
+			onConfirm={ onPriceConfirm }
 			selectAllOnFocus
 		/>
 	) : (
@@ -62,9 +76,7 @@ const TicketCard = ({ ticket }) => {
 						placeholder={'edit title...'}
 						defaultValue={ticket.name}
 						onCancel={(value) => console.log(value)}
-						onConfirm={(value) => {
-							ticket.name = value;
-						}}
+						onConfirm={ onTitleConfirm }
 						minWidth={'320px'}
 						selectAllOnFocus
 					/>
@@ -81,23 +93,7 @@ const TicketCard = ({ ticket }) => {
 					/>
 				</H4>
 			</div>
-			<div
-				style={{
-					margin: '0 -15px -15px 0',
-					textAlign: 'right'
-				}}
-			>
-				<Button
-					icon="trash"
-					onClick={() =>
-						AppToaster.show({
-							intent: 'danger',
-							message: `Ticket ${ticket.id} Deleted`
-						})
-					}
-					minimal
-				/>
-			</div>
+			<DeleteTicketButton ticketId={ ticket.ticketId } />
 		</Card>
 	);
 };
