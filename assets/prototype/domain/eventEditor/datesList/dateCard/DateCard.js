@@ -36,7 +36,7 @@ const idStyle = {
 	top: '.5em'
 };
 
-const DateCard = ({ id }) => {
+const DateCard = ({ eventId, id }) => {
 	const date = useDateItem({ id });
 	const { updateDate } = useUpdateDateMutation();
 
@@ -102,7 +102,7 @@ const DateCard = ({ id }) => {
 					/>
 				</Popover>
 			</div>
-			<DeleteDateButton datetimeId={date.datetimeId} />
+			<DeleteDateButton eventId={eventId} id={date.id} />
 		</Card>
 	);
 };
