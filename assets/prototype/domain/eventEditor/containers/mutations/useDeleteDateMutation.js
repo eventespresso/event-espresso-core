@@ -24,16 +24,19 @@ const useDeleteDatetimeMutation = ({ eventId, id }) => {
 		};
 
 		const { datetimes = {} } = proxy.readQuery(options);
+
+		//TODO - improve readability
 		const nodes = datetimes.nodes.filter(({ id }) => id !== datetime.id);
+		const data = {
+			datetimes: {
+				...datetimes,
+				nodes
+			}
+		};
 
 		proxy.writeQuery({
 			...options,
-			data: {
-				datetimes: {
-					...datetimes,
-					nodes
-				}
-			}
+			data
 		});
 	};
 
