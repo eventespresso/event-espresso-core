@@ -36,14 +36,14 @@ const btnRowStyle = {
 	width: '100%'
 };
 
-const TicketsList = ({ tickets, datetimes, error, loading }) => {
+const TicketsList = ({ tickets, datetimes, error, loading, loadingDates }) => {
 	console.log('%c TicketsList', 'color: gold; font-size: 14px;');
 	console.log('%c > tickets:', 'color: goldenrod;', tickets);
 	console.log('%c > loading:', 'color: goldenrod;', loading);
 	console.log('%c > error:', 'color: goldenrod;', error);
 	const header = <H3 style={{ margin: '2rem 0 .5rem' }}>{'Tickets List'}</H3>;
 
-	if (loading) {
+	if (loading || loadingDates) {
 		return (
 			<Fragment>
 				{header}
@@ -76,12 +76,18 @@ const TicketsList = ({ tickets, datetimes, error, loading }) => {
 		</div>
 	);
 
+	const datetimeIn = datetimes.map(({ id }) => id);
+
 	const ticketList =
 		Array.isArray(tickets) && tickets.length ? (
 			<Fragment>
 				<div style={listStyle}>
 					{tickets.map((ticket) => (
-						<TicketCard key={ticket.id} id={ticket.id} />
+						<TicketCard
+							datetimeIn={datetimeIn}
+							id={ticket.id}
+							key={ticket.id}
+						/>
 					))}
 				</div>
 				{btnRow}

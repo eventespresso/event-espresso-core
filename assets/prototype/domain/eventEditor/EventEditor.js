@@ -29,6 +29,7 @@ const EventEditor = ({ eventId }) => {
 				tickets={tickets}
 				datetimes={datetimes}
 				loading={loadingTickets}
+				loadingDates={loadingDates}
 				error={ticketError}
 			/>
 		</>
