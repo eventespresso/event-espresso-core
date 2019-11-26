@@ -93,6 +93,9 @@ class FieldResolver extends ResolverBase
             if ($field->hasInternalResolver()) {
                 return $field->resolve($source, $args, $context, $info);
             }
+            if (! ($source instanceof EE_Base_Class)) {
+                return null;
+            }
             // Check if the field has a key mapped to model.
             if (! empty($field->key())) {
                 $value = $source->{$field->key()}();
