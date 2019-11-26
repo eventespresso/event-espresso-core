@@ -78,13 +78,13 @@ class PriceType extends TypeBase
                 'isPercent',
                 'Boolean',
                 'is_percent',
-                esc_html__('Flag indicating price is a percentage.', 'event_espresso')
+                esc_html__('Flag indicating price type is a percentage.', 'event_espresso')
             ),
             new GraphQLOutputField(
                 'isDiscount',
                 'Boolean',
                 'is_discount',
-                esc_html__('Flag indicating price is a discount.', 'event_espresso')
+                esc_html__('Flag indicating price type is a discount.', 'event_espresso')
             ),
             new GraphQLField(
                 'isDeleted',

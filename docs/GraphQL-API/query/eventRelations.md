@@ -1,6 +1,6 @@
 # Event relations query examples
 
-Using the below query, you can get the relational data for he entities inside an event by passing the event ID.
+Using the below query, you can get the relational data for the entities inside an event by passing the event ID.
 
 ```gql
 query getEvetRelationalData($id: Int!) {
@@ -8,7 +8,7 @@ query getEvetRelationalData($id: Int!) {
 }
 ```
 
-### Query variables
+## Query variables
 
 ```json
 {
