@@ -140,13 +140,13 @@ class Datetime extends TypeBase
             ),
             new GraphQLOutputField(
                 'parent',
-                'Datetime',
+                $this->name(),
                 null,
                 esc_html__('The parent datetime of the current datetime', 'event_espresso')
             ),
             new GraphQLInputField(
                 'parent',
-                'Int',
+                'ID',
                 null,
                 esc_html__('The parent datetime ID', 'event_espresso')
             ),
@@ -210,12 +210,6 @@ class Datetime extends TypeBase
                     esc_html__('Globally uqinue IDs of the tickets related to the datetime.', 'event_espresso'),
                     esc_html__('Ignored if empty.', 'event_espresso')
                 )
-            ),
-            new GraphQLOutputField(
-                'relatedTickets',
-                ['list_of' => 'ID'],
-                null,
-                esc_html__('Globally unique IDs of teh related tickets.', 'event_espresso')
             ),
         ];
     }
