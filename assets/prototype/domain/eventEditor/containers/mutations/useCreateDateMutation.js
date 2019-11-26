@@ -2,15 +2,29 @@ import { useMutation } from '@apollo/react-hooks';
 import { CREATE_DATE } from './dates';
 import { GET_DATETIMES } from '../queries/dates';
 import { GET_TICKETS } from '../queries/tickets';
+import useToaster from '../../../../infrastructure/services/toaster/useToaster'
 
 const useCreateDateMutation = ({ eventId }) => {
-	const [createDate, { loading, error }] = useMutation(CREATE_DATE);
-
-	console.log('useCreateDateMutation - loading: ', loading);
-	console.log('useCreateDateMutation - error: ', error);
+	const toaster = useToaster();
+	const toasterMessage = `creating new datetime for event ${ eventId }`;
+	const [createDate, { loading, error }] = useMutation(
+		CREATE_DATE,
+		{
+			onCompleted: () => {
+				toaster.dismiss( toasterMessage );
+				toaster.success( 'datetime successfully created' );
+			},
+			onError: ( error ) => {
+				toaster.dismiss( toasterMessage );
+				toaster.error( error );
+			}
+		}
+	);
+	toaster.loading( loading, toasterMessage );
+	toaster.error( error );
 
 	// On submit handler receives data from FormModal
-	const createDateHandler = ({ description, name }) => {
+	return ({ description, name }) => {
 		const variables = {
 			input: {
 				clientMutationId: 'xyz',
@@ -97,8 +111,6 @@ const useCreateDateMutation = ({ eventId }) => {
 			update
 		});
 	};
-
-	return createDateHandler;
 };
 
 export default useCreateDateMutation;
