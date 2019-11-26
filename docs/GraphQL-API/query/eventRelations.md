@@ -20,28 +20,28 @@ The returned data for the field is a JSON encoded string with the following stru
 
 ```json
 {
-  datetimes: {
+  "datetimes": {
     "YTydBYryt": {
-      tickets: [ "JHGbUYBuytb", "jhTURYTbb" ]
+      "tickets": [ "JHGbUYBuytb", "jhTURYTbb" ]
     },
     "JHBGRFHBF": {
-      tickets: [ "JHFBGYFGFNYT", "SDRVERDVT" ]
+      "tickets": [ "JHFBGYFGFNYT", "SDRVERDVT" ]
     }
   },
-  tickets: {
+  "tickets": {
     "JHFBGYFGFNYT": {
-      datetimes: [ "YTydBYryt", "JHBGRFHBF" ],
-      prices: [ "JHBFYFTY", "GNDTRBN" ]
+      "datetimes": [ "YTydBYryt", "JHBGRFHBF" ],
+      "prices": [ "JHBFYFTY", "GNDTRBN" ]
     },
     "jhTURYTbb": {
-      datetimes: [ "JHBGRFHBF", "SDRVERDVT" ],
-      prices: [ "JHBUHFVY", "JHGBJH" ]
+      "datetimes": [ "JHBGRFHBF", "SDRVERDVT" ],
+      "prices": [ "JHBUHFVY", "JHGBJH" ]
     }
   },
-  prices: {
+  "prices": {
     "JHBFYYT": {
-      tickets: [ "JHFBGYFGFNYT", "SDRVERDVT" ],
-      priceTypes: [ "KUJNF", "JKBHKJI" ],
+      "tickets": [ "JHFBGYFGFNYT", "SDRVERDVT" ],
+      "priceTypes": [ "KUJNF", "JKBHKJI" ],
     }
   }
 }
