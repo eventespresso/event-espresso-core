@@ -936,6 +936,12 @@ class EE_Dependency_Map
             'EventEspresso\core\domain\services\graphql\types\Ticket' => [
                 'EEM_Ticket' => EE_Dependency_Map::load_from_cache,
             ],
+            'EventEspresso\core\domain\services\graphql\types\Price' => [
+                'EEM_Price' => EE_Dependency_Map::load_from_cache,
+            ],
+            'EventEspresso\core\domain\services\graphql\types\PriceType' => [
+                'EEM_Price_Type' => EE_Dependency_Map::load_from_cache,
+            ],
             'EventEspresso\core\domain\services\graphql\types\Venue' => [
                 'EEM_Venue' => EE_Dependency_Map::load_from_cache,
             ],

@@ -105,6 +105,12 @@ class Ticket extends TypeBase
                 'price',
                 esc_html__('Final calculated price for ticket', 'event_espresso')
             ),
+            new GraphQLOutputField(
+                'prices',
+                ['list_of' => 'Price'],
+                'prices',
+                esc_html__('The related ticket prices.', 'event_espresso')
+            ),
             new GraphQLField(
                 'sold',
                 'Int',
@@ -184,13 +190,13 @@ class Ticket extends TypeBase
             ),
             new GraphQLOutputField(
                 'parent',
-                'Ticket',
+                $this->name(),
                 null,
                 esc_html__('The parent ticket of the current ticket', 'event_espresso')
             ),
             new GraphQLInputField(
                 'parent',
-                'Int',
+                'ID',
                 null,
                 esc_html__('The parent ticket ID', 'event_espresso')
             ),

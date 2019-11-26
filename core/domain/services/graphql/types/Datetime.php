@@ -140,13 +140,13 @@ class Datetime extends TypeBase
             ),
             new GraphQLOutputField(
                 'parent',
-                'Datetime',
+                $this->name(),
                 null,
                 esc_html__('The parent datetime of the current datetime', 'event_espresso')
             ),
             new GraphQLInputField(
                 'parent',
-                'Int',
+                'ID',
                 null,
                 esc_html__('The parent datetime ID', 'event_espresso')
             ),

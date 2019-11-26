@@ -17,6 +17,7 @@ use ReflectionException;
 use WPGraphQL\Model\Post;
 use GraphQL\Type\Definition\ResolveInfo;
 use WPGraphQL\AppContext;
+use WPGraphQL\Type\Object\RootQuery;
 
 /**
  * Class TypeBase
@@ -233,11 +234,9 @@ abstract class TypeBase implements TypeInterface
      */
     public function resolveField($source, $args, AppContext $context, ResolveInfo $info)
     {
-        $source = $this->getModel($source);
-        if ($source instanceof EE_Base_Class) {
-            return $this->field_resolver->resolve($source, $args, $context, $info);
-        }
-        return null;
+        $source = $source instanceof RootQuery ? $source : $this->getModel($source);
+
+        return $this->field_resolver->resolve($source, $args, $context, $info);
     }
 
 
