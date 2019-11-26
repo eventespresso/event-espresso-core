@@ -2,19 +2,19 @@
  * External imports
  */
 import { createContext } from '@wordpress/element';
-import { Position, Toaster } from "@blueprintjs/core";
+import { Position, Toaster } from '@blueprintjs/core';
 
 const ToastContext = createContext();
 
-const toaster = Toaster.create( {
+const toaster = Toaster.create({
 	maxToasts: 6,
-	position: Position.BOTTOM_RIGHT,
-} );
+	position: Position.BOTTOM_RIGHT
+});
 
-const ToastProvider = ( props ) => {
+const ToastProvider = (props) => {
 	return (
-		<ToastContext.Provider value={ toaster }>
-			{ props.children }
+		<ToastContext.Provider value={toaster}>
+			{props.children}
 		</ToastContext.Provider>
 	);
 };

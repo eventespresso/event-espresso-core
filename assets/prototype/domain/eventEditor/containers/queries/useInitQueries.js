@@ -3,11 +3,11 @@ import { useEffect, useState } from '@wordpress/element';
 import { useQuery, useLazyQuery } from '@apollo/react-hooks';
 import { GET_DATETIMES } from './dates';
 import { GET_TICKETS } from './tickets';
-import useToaster from '../../../../infrastructure/services/toaster/useToaster'
+import useToaster from '../../../../infrastructure/services/toaster/useToaster';
 
 const useInitQueries = ({ eventId }) => {
-	console.log( '%c useInitQueries: ', 'color: deeppink; font-size: 14px;' );
-	const [ initialized, setInitialized ] = useState( false );
+	console.log('%c useInitQueries: ', 'color: deeppink; font-size: 14px;');
+	const [initialized, setInitialized] = useState(false);
 	const toaster = useToaster();
 	const toasterDatesMessage = 'initializing event editor datetimes';
 	const {
@@ -22,18 +22,18 @@ const useInitQueries = ({ eventId }) => {
 			}
 		},
 		onCompleted: () => {
-			toaster.dismiss( toasterDatesMessage );
-			toaster.success( `event editor datetimes initialized` );
+			toaster.dismiss(toasterDatesMessage);
+			toaster.success(`event editor datetimes initialized`);
 		},
-		onError: ( error ) => {
-			toaster.dismiss( toasterDatesMessage );
-			toaster.error( error );
+		onError: (error) => {
+			toaster.dismiss(toasterDatesMessage);
+			toaster.error(error);
 		}
 	});
 
-	if ( ! initialized ) {
-		toaster.loading( loadingDates, toasterDatesMessage );
-		toaster.error( datetimeError );
+	if (!initialized) {
+		toaster.loading(loadingDates, toasterDatesMessage);
+		toaster.error(datetimeError);
 	}
 
 	const datetimes = get(datetimesData, ['datetimes', 'nodes']);
@@ -51,18 +51,18 @@ const useInitQueries = ({ eventId }) => {
 			}
 		},
 		onCompleted: () => {
-			toaster.dismiss( toasterTicketsMessage );
-			toaster.success( 'event editor tickets initialized' );
+			toaster.dismiss(toasterTicketsMessage);
+			toaster.success('event editor tickets initialized');
 		},
-		onError: ( error ) => {
-			toaster.dismiss( toasterTicketsMessage );
-			toaster.error( error );
+		onError: (error) => {
+			toaster.dismiss(toasterTicketsMessage);
+			toaster.error(error);
 		}
 	});
 
-	if ( ! initialized ) {
-		toaster.loading( loadingTickets, toasterTicketsMessage );
-		toaster.error( ticketError );
+	if (!initialized) {
+		toaster.loading(loadingTickets, toasterTicketsMessage);
+		toaster.error(ticketError);
 	}
 
 	const tickets = get(ticketsData, ['tickets', 'nodes'], []);
@@ -79,10 +79,10 @@ const useInitQueries = ({ eventId }) => {
 	}, [datetimeIn, called]);
 
 	useEffect(() => {
-		if ( ! initialized && ! loadingDates && ! loadingTickets) {
-			setInitialized( true );
+		if (!initialized && !loadingDates && !loadingTickets) {
+			setInitialized(true);
 		}
-	}, [ initialized]);
+	}, [initialized]);
 
 	console.log(
 		'%c > datetimes, tickets, errors, & loading state',

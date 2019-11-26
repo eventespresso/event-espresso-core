@@ -2,28 +2,25 @@ import { useMutation } from '@apollo/react-hooks';
 import { DELETE_DATETIME } from './dates';
 import { GET_DATETIMES } from '../queries/dates';
 import { GET_TICKETS } from '../queries/tickets';
-import useToaster from '../../../../infrastructure/services/toaster/useToaster'
+import useToaster from '../../../../infrastructure/services/toaster/useToaster';
 
 const useDeleteDatetimeMutation = ({ eventId, id }) => {
 	const toaster = useToaster();
-	const toasterMessage = `deleting date ${ id }`;
+	const toasterMessage = `deleting date ${id}`;
 
-	const [deleteDatetime, { loading, error }] = useMutation(
-		DELETE_DATETIME,
-		{
-			onCompleted: () => {
-				toaster.dismiss( toasterMessage );
-				toaster.success( `datetime ${ id } successfully deleted` );
-			},
-			onError: ( error ) => {
-				toaster.dismiss( toasterMessage );
-				toaster.error( error );
-			}
+	const [deleteDatetime, { loading, error }] = useMutation(DELETE_DATETIME, {
+		onCompleted: () => {
+			toaster.dismiss(toasterMessage);
+			toaster.success(`datetime ${id} successfully deleted`);
+		},
+		onError: (error) => {
+			toaster.dismiss(toasterMessage);
+			toaster.error(error);
 		}
-	);
+	});
 
-	toaster.loading( loading, toasterMessage );
-	toaster.error( error );
+	toaster.loading(loading, toasterMessage);
+	toaster.error(error);
 
 	const update = (
 		proxy,

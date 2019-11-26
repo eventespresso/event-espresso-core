@@ -11,9 +11,7 @@ import { ToastProvider } from './ToastProvider';
  */
 const ContextProviders = ({ children }) => (
 	<ToastProvider>
-		<ApolloProvider>
-			{ children }
-		</ApolloProvider>
+		<ApolloProvider>{children}</ApolloProvider>
 	</ToastProvider>
 );
 
