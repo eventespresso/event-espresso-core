@@ -35,11 +35,6 @@ const useDeleteDatetimeMutation = ({ eventId, id }) => {
 			}
 		};
 
-		proxy.writeQuery({
-			...options,
-			data
-		});
-
 		if (datetime.id) {
 			const ticketsData = proxy.readQuery({
 				query: GET_TICKETS,
@@ -60,6 +55,11 @@ const useDeleteDatetimeMutation = ({ eventId, id }) => {
 				}
 			});
 		}
+
+		proxy.writeQuery({
+			...options,
+			data
+		});
 	};
 
 	const deleteHandler = () => deleteDatetime({ variables, update });

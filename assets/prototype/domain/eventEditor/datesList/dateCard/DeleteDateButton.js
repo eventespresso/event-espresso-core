@@ -1,5 +1,5 @@
-import useDeleteDatetimeMutation from '../../containers/mutations/useDeleteDateMutation';
 import { Button } from '@blueprintjs/core/lib/esm';
+import useDeleteDatetimeMutation from '../../containers/mutations/useDeleteDateMutation';
 
 const DeleteDateButton = ({ eventId, id }) => {
 	const deleteDatetime = useDeleteDatetimeMutation({ eventId, id });
@@ -13,17 +13,7 @@ const DeleteDateButton = ({ eventId, id }) => {
 				textAlign: 'right'
 			}}
 		>
-			<Button
-				icon={'trash'}
-				onClick={() => {
-					try {
-						deleteDatetime();
-					} catch (e) {
-						console.log({ e });
-					}
-				}}
-				minimal
-			/>
+			<Button icon={'trash'} onClick={deleteDatetime} minimal />
 		</div>
 	);
 };

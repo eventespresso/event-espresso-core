@@ -37,7 +37,7 @@ const priceStyle = {
 	color: 'grey'
 };
 
-const TicketCard = ({ id }) => {
+const TicketCard = ({ datetimeIn, id }) => {
 	const [editing, setEditing] = useState(false);
 	const ticket = useTicketItem({ id });
 	const { updateTicket } = useUpdateTicketMutation();
@@ -92,7 +92,7 @@ const TicketCard = ({ id }) => {
 					/>
 				</H4>
 			</div>
-			<DeleteTicketButton ticketId={ticket.ticketId} />
+			<DeleteTicketButton datetimeIn={datetimeIn} id={ticket.id} />
 		</Card>
 	);
 };
