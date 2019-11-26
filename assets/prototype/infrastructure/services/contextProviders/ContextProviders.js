@@ -1,5 +1,6 @@
 /* Internal dependencies */
 import ApolloProvider from '../apollo/Apollo';
+import { ToastProvider } from './ToastProvider';
 
 /**
  * A collection of top level providers that are used by multiple parts of the application.
@@ -9,7 +10,11 @@ import ApolloProvider from '../apollo/Apollo';
  * @returns {ReactElement} The wrapped element.
  */
 const ContextProviders = ({ children }) => (
-	<ApolloProvider>{children}</ApolloProvider>
+	<ToastProvider>
+		<ApolloProvider>
+			{ children }
+		</ApolloProvider>
+	</ToastProvider>
 );
 
 export default ContextProviders;
