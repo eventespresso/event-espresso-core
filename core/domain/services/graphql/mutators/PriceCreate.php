@@ -51,7 +51,7 @@ class PriceCreate
             if (! current_user_can('ee_edit_events')) {
                 // translators: the %1$s is the name of the object being mutated
                 throw new UserError(
-                    sprintf(__('Sorry, you are not allowed to create %1$s', 'event_espresso'), $type->name())
+                    sprintf(esc_html__('Sorry, you are not allowed to create %1$s', 'event_espresso'), $type->name())
                 );
             }
 
@@ -60,7 +60,7 @@ class PriceCreate
             if (empty($args['PRT_ID'])) {
                 // translators: the placeholder is the name of the field.
                 throw new UserError(
-                    sprintf(__('A valid %1$s must be passed.', 'event_espresso'), 'priceType')
+                    sprintf(esc_html__('A valid %1$s must be passed.', 'event_espresso'), 'priceType')
                 );
             }
 
@@ -68,7 +68,7 @@ class PriceCreate
             $id = $entity->save();
 
             if (empty($id)) {
-                throw new UserError(__('The object failed to create but no error was provided', 'event_espresso'));
+                throw new UserError(esc_html__('The object failed to create but no error was provided', 'event_espresso'));
             }
 
             return [

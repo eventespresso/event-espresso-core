@@ -51,7 +51,7 @@ class TicketDelete
                 // translators: the %1$s is the name of the object being mutated
                 throw new UserError(
                     sprintf(
-                        __('Sorry, you are not allowed to edit %1$s', 'event_espresso'),
+                        esc_html__('Sorry, you are not allowed to edit %1$s', 'event_espresso'),
                         $type->name()
                     )
                 );
@@ -72,7 +72,7 @@ class TicketDelete
                 // translators: the placeholder is the name of the type being updated
                 throw new UserError(
                     sprintf(
-                        __('No %1$s could be found to delete', 'event_espresso'),
+                        esc_html__('No %1$s could be found to delete', 'event_espresso'),
                         $type->name()
                     )
                 );
@@ -82,7 +82,7 @@ class TicketDelete
             $result = ! empty($input['deletePermanently']) ? $entity->delete_permanently() : $entity->delete();
 
             if (empty($result)) {
-                throw new UserError(__('The object failed to delete but no error was provided', 'event_espresso'));
+                throw new UserError(esc_html__('The object failed to delete but no error was provided', 'event_espresso'));
             }
 
             return [

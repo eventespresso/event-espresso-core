@@ -51,7 +51,7 @@ class DatetimeUpdate
             if (! current_user_can('ee_edit_events')) {
                 // translators: the %1$s is the name of the object being mutated
                 throw new UserError(
-                    sprintf(__('Sorry, you are not allowed to edit %1$s', 'event_espresso'), $type->name())
+                    sprintf(esc_html__('Sorry, you are not allowed to edit %1$s', 'event_espresso'), $type->name())
                 );
             }
             $id_parts = ! empty($input['id']) ? Relay::fromGlobalId($input['id']) : null;
@@ -69,7 +69,7 @@ class DatetimeUpdate
             if (! $id || ! ($entity instanceof EE_Datetime)) {
                 // translators: the placeholder is the name of the type being updated
                 throw new UserError(
-                    sprintf(__('No %1$s could be found to update', 'event_espresso'), $type->name())
+                    sprintf(esc_html__('No %1$s could be found to update', 'event_espresso'), $type->name())
                 );
             }
 
@@ -86,7 +86,7 @@ class DatetimeUpdate
             $result = $entity->save($args);
 
             if (empty($result)) {
-                throw new UserError(__('The object failed to update but no error was provided', 'event_espresso'));
+                throw new UserError(esc_html__('The object failed to update but no error was provided', 'event_espresso'));
             }
 
             if (! empty($tickets)) {
