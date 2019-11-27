@@ -1,6 +1,7 @@
 import classNames from 'classnames';
-import { Classes, Overlay } from '@blueprintjs/core/lib/esm';
 import { Form } from 'react-final-form';
+import { Classes, Overlay } from '@blueprintjs/core/lib/esm';
+import { useEffect, useState } from '@wordpress/element';
 import { EspressoButton } from '../../../ZZZ/components/ui';
 
 const FormModal = ({
@@ -11,6 +12,11 @@ const FormModal = ({
 	isOpen,
 	...extraProps
 }) => {
+	console.log( "%c FormModal", "color: #1BE7FF;" );
+	console.log( '%c > initialValues: ', 'color: #BCBDAC;', initialValues );
+	// boolean for communicating to form child components whether form needs to be reset
+	const [ formReset, setFormReset ] = useState( false );
+
 	const overlayProps = {
 		autoFocus: true,
 		canEscapeKeyClose: true,
@@ -55,8 +61,6 @@ const FormModal = ({
 		backgroundColor: '#26203d'
 	};
 
-	console.log('%c FormModal', 'color: #1BE7FF;');
-	console.log('%c > initialValues:', 'color: #99c043;', initialValues);
 	return (
 		<Overlay
 			{...overlayProps}
@@ -77,6 +81,16 @@ const FormModal = ({
 						pristine,
 						...formProps
 					}) => {
+						// clear form data and set formReset back to false
+						// after form child components have had a chance to reset
+						// after receiving a positive formReset prop
+						useEffect( () => {
+							if ( formReset ) {
+								form.reset();
+								setFormReset( false );
+							}
+						} );
+
 						return (
 							<form onSubmit={handleSubmit}>
 								<div style={formStyle}>
@@ -85,6 +99,7 @@ const FormModal = ({
 										values={values}
 										submitting={submitting}
 										pristine={pristine}
+										formReset={ formReset}
 										{...formProps}
 									/>
 								</div>
@@ -104,7 +119,10 @@ const FormModal = ({
 									<EspressoButton
 										buttonText={'Reset'}
 										disabled={submitting || pristine}
-										onClick={form.reset}
+										onClick={ ( e ) => {
+											e.preventDefault();
+											setFormReset( true );
+										} }
 									/>
 								</div>
 								<pre style={dataStyle}>
