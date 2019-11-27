@@ -15,7 +15,7 @@ const useCreateDateMutation = ({ eventId }) => {
 		onError: (error) => {
 			toaster.dismiss(toasterMessage);
 			toaster.error(error);
-		}
+		},
 	});
 	toaster.loading(loading, toasterMessage);
 	toaster.error(error);
@@ -27,8 +27,8 @@ const useCreateDateMutation = ({ eventId }) => {
 				clientMutationId: 'xyz',
 				description,
 				eventId,
-				name
-			}
+				name,
+			},
 		};
 
 		const optimisticResponse = {
@@ -40,26 +40,26 @@ const useCreateDateMutation = ({ eventId }) => {
 					name,
 					description,
 					endDate: '',
-					startDate: ''
-				}
-			}
+					startDate: '',
+				},
+			},
 		};
 
 		const update = (
 			proxy,
 			{
 				data: {
-					createDatetime: { datetime }
-				}
+					createDatetime: { datetime },
+				},
 			}
 		) => {
 			const options = {
 				query: GET_DATETIMES,
 				variables: {
 					where: {
-						eventId
-					}
-				}
+						eventId,
+					},
+				},
 			};
 			// Read the data from our cache for this query.
 			const { datetimes = {} } = proxy.readQuery(options);
@@ -71,9 +71,9 @@ const useCreateDateMutation = ({ eventId }) => {
 					query: GET_TICKETS,
 					variables: {
 						where: {
-							datetimeIn
-						}
-					}
+							datetimeIn,
+						},
+					},
 				});
 
 				// write the data to cache without
@@ -83,9 +83,9 @@ const useCreateDateMutation = ({ eventId }) => {
 					data,
 					variables: {
 						where: {
-							datetimeIn: [...datetimeIn, datetime.id]
-						}
-					}
+							datetimeIn: [...datetimeIn, datetime.id],
+						},
+					},
 				});
 			}
 
@@ -96,16 +96,16 @@ const useCreateDateMutation = ({ eventId }) => {
 				data: {
 					datetimes: {
 						...datetimes,
-						nodes: [...datetimes.nodes, datetime]
-					}
-				}
+						nodes: [...datetimes.nodes, datetime],
+					},
+				},
 			});
 		};
 
 		createDate({
 			variables,
 			optimisticResponse,
-			update
+			update,
 		});
 	};
 };

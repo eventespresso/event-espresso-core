@@ -3,14 +3,9 @@ import DatesList from './datesList/DatesList';
 import TicketsList from './ticketsList/TicketsList';
 
 const EventEditor = ({ eventId }) => {
-	const {
-		datetimes,
-		datetimeError,
-		loadingDates,
-		tickets,
-		ticketError,
-		loadingTickets
-	} = useInitQueries({ eventId });
+	const { datetimes, datetimeError, loadingDates, tickets, ticketError, loadingTickets } = useInitQueries({
+		eventId,
+	});
 	return (
 		<>
 			<DatesList
@@ -18,6 +13,7 @@ const EventEditor = ({ eventId }) => {
 				eventId={eventId}
 				loading={loadingDates}
 				error={datetimeError}
+				tickets={tickets}
 			/>
 			<TicketsList
 				tickets={tickets}

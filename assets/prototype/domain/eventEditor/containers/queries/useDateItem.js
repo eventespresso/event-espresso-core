@@ -7,8 +7,8 @@ const useDateItem = ({ id }) => {
 	const data = client.readQuery({
 		query: GET_DATETIME,
 		variables: {
-			id
-		}
+			id,
+		},
 	});
 
 	return data.datetime;

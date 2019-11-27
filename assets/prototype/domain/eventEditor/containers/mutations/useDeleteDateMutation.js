@@ -16,7 +16,7 @@ const useDeleteDatetimeMutation = ({ eventId, id }) => {
 		onError: (error) => {
 			toaster.dismiss(toasterMessage);
 			toaster.error(error);
-		}
+		},
 	});
 
 	toaster.loading(loading, toasterMessage);
@@ -26,17 +26,17 @@ const useDeleteDatetimeMutation = ({ eventId, id }) => {
 		proxy,
 		{
 			data: {
-				deleteDatetime: { datetime }
-			}
+				deleteDatetime: { datetime },
+			},
 		}
 	) => {
 		const options = {
 			query: GET_DATETIMES,
 			variables: {
 				where: {
-					eventId
-				}
-			}
+					eventId,
+				},
+			},
 		};
 
 		const { datetimes = {} } = proxy.readQuery(options);
@@ -46,8 +46,8 @@ const useDeleteDatetimeMutation = ({ eventId, id }) => {
 		const data = {
 			datetimes: {
 				...datetimes,
-				nodes
-			}
+				nodes,
+			},
 		};
 
 		if (datetime.id) {
@@ -55,9 +55,9 @@ const useDeleteDatetimeMutation = ({ eventId, id }) => {
 				query: GET_TICKETS,
 				variables: {
 					where: {
-						datetimeIn: datetimes.nodes.map(({ id }) => id)
-					}
-				}
+						datetimeIn: datetimes.nodes.map(({ id }) => id),
+					},
+				},
 			});
 
 			proxy.writeQuery({
@@ -65,15 +65,15 @@ const useDeleteDatetimeMutation = ({ eventId, id }) => {
 				data: ticketsData,
 				variables: {
 					where: {
-						datetimeIn: nodes.map(({ id }) => id)
-					}
-				}
+						datetimeIn: nodes.map(({ id }) => id),
+					},
+				},
 			});
 		}
 
 		proxy.writeQuery({
 			...options,
-			data
+			data,
 		});
 	};
 

@@ -10,16 +10,12 @@ const useInitQueries = ({ eventId }) => {
 	const [initialized, setInitialized] = useState(false);
 	const toaster = useToaster();
 	const toasterDatesMessage = 'initializing event editor datetimes';
-	const {
-		data: datetimesData,
-		error: datetimeError,
-		loading: loadingDates
-	} = useQuery(GET_DATETIMES, {
+	const { data: datetimesData, error: datetimeError, loading: loadingDates } = useQuery(GET_DATETIMES, {
 		variables: {
 			first: 50,
 			where: {
-				eventId
-			}
+				eventId,
+			},
 		},
 		onCompleted: () => {
 			toaster.dismiss(toasterDatesMessage);
@@ -28,7 +24,7 @@ const useInitQueries = ({ eventId }) => {
 		onError: (error) => {
 			toaster.dismiss(toasterDatesMessage);
 			toaster.error(error);
-		}
+		},
 	});
 
 	if (!initialized) {
@@ -42,13 +38,13 @@ const useInitQueries = ({ eventId }) => {
 	const toasterTicketsMessage = 'initializing event editor tickets';
 	const [
 		fetchRelatedTickets,
-		{ data: ticketsData, error: ticketError, loading: loadingTickets, called }
+		{ data: ticketsData, error: ticketError, loading: loadingTickets, called },
 	] = useLazyQuery(GET_TICKETS, {
 		variables: {
 			first: 50,
 			where: {
-				datetimeIn
-			}
+				datetimeIn,
+			},
 		},
 		onCompleted: () => {
 			toaster.dismiss(toasterTicketsMessage);
@@ -57,7 +53,7 @@ const useInitQueries = ({ eventId }) => {
 		onError: (error) => {
 			toaster.dismiss(toasterTicketsMessage);
 			toaster.error(error);
-		}
+		},
 	});
 
 	if (!initialized) {
@@ -84,18 +80,14 @@ const useInitQueries = ({ eventId }) => {
 		}
 	}, [initialized]);
 
-	console.log(
-		'%c > datetimes, tickets, errors, & loading state',
-		'color: palevioletred;',
-		{
-			datetimes: datetimes || [],
-			datetimeError: datetimeError || null,
-			loadingDates: loadingDates || false,
-			tickets: tickets || [],
-			ticketError: ticketError || null,
-			loadingTickets: loadingTickets || false
-		}
-	);
+	console.log('%c > datetimes, tickets, errors, & loading state', 'color: palevioletred;', {
+		datetimes: datetimes || [],
+		datetimeError: datetimeError || null,
+		loadingDates: loadingDates || false,
+		tickets: tickets || [],
+		ticketError: ticketError || null,
+		loadingTickets: loadingTickets || false,
+	});
 
 	return {
 		datetimes: datetimes || [],
@@ -103,7 +95,7 @@ const useInitQueries = ({ eventId }) => {
 		loadingDates: loadingDates || false,
 		tickets: tickets || [],
 		ticketError: ticketError || null,
-		loadingTickets: loadingTickets || false
+		loadingTickets: loadingTickets || false,
 	};
 };
 

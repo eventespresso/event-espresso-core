@@ -14,7 +14,7 @@ const useUpdateDateMutation = () => {
 		onError: (error) => {
 			toaster.dismiss(toasterMessage);
 			toaster.error(error);
-		}
+		},
 	});
 
 	toaster.loading(loading, toasterMessage);

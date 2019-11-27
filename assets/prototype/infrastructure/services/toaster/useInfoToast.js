@@ -12,7 +12,7 @@ const useInfoToast = (toaster, hash) =>
 						intent: Intent.PRIMARY,
 						message,
 						onDismiss,
-						timeout
+						timeout,
 					},
 					hash(message)
 				);

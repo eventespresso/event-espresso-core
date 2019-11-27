@@ -13,8 +13,8 @@ const AddNewTicketModal = ({ datetimes, handleClose, isOpen }) => {
 				name,
 				description,
 				price,
-				datetimes: ticketDatetimes
-			}
+				datetimes: ticketDatetimes,
+			},
 		};
 		const optimisticResponse = {
 			createTicket: {
@@ -24,17 +24,17 @@ const AddNewTicketModal = ({ datetimes, handleClose, isOpen }) => {
 					ticketId: 0,
 					name,
 					description,
-					price
-				}
-			}
+					price,
+				},
+			},
 		};
 
 		const update = (
 			proxy,
 			{
 				data: {
-					createTicket: { ticket }
-				}
+					createTicket: { ticket },
+				},
 			}
 		) => {
 			const datetimeIn = datetimes ? datetimes.map(({ id }) => id) : [];
@@ -42,9 +42,9 @@ const AddNewTicketModal = ({ datetimes, handleClose, isOpen }) => {
 				query: GET_TICKETS,
 				variables: {
 					where: {
-						datetimeIn
-					}
-				}
+						datetimeIn,
+					},
+				},
 			};
 			// Read the data from our cache for this query.
 			/**
@@ -59,16 +59,16 @@ const AddNewTicketModal = ({ datetimes, handleClose, isOpen }) => {
 				data: {
 					tickets: {
 						...tickets,
-						nodes: [...tickets.nodes, ticket]
-					}
-				}
+						nodes: [...tickets.nodes, ticket],
+					},
+				},
 			});
 		};
 
 		createTicket({
 			variables,
 			optimisticResponse,
-			update
+			update,
 		});
 	};
 

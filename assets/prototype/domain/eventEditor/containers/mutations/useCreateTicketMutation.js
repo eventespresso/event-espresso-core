@@ -14,7 +14,7 @@ const useCreateTicketMutation = () => {
 		onError: (error) => {
 			toaster.dismiss(toasterMessage);
 			toaster.error(error);
-		}
+		},
 	});
 	toaster.loading(loading, toasterMessage);
 	toaster.error(error);
@@ -22,7 +22,7 @@ const useCreateTicketMutation = () => {
 	return {
 		createTicket,
 		loading,
-		error
+		error,
 	};
 };
 

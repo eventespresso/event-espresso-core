@@ -10,7 +10,7 @@ const DeleteTicketButton = ({ datetimeIn, id }) => {
 				bottom: '.5rem',
 				position: 'absolute',
 				right: '.5rem',
-				textAlign: 'right'
+				textAlign: 'right',
 			}}
 		>
 			<Button icon={'trash'} onClick={deleteTicket} minimal />

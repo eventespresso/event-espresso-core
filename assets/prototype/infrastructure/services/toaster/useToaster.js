@@ -21,7 +21,7 @@ const useToaster = () => {
 		error: useErrorToast(toaster, hash),
 		info: useInfoToast(toaster, hash),
 		loading: useLoadingToast(toaster, hash),
-		success: useSuccessToast(toaster, hash)
+		success: useSuccessToast(toaster, hash),
 	};
 };
 
