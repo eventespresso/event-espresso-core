@@ -55,7 +55,7 @@ class PriceConnectionResolver extends AbstractConnectionResolver
     // phpcs:ignore PSR1.Methods.CamelCapsMethodName.NotCamelCaps
     public function should_execute()
     {
-        if (false === $this->should_execute) {
+        if ( $this->should_execute === false ) {
             return false;
         }
 
