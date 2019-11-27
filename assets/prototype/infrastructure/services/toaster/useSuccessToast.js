@@ -12,7 +12,7 @@ const useSuccessToast = (toaster, hash) =>
 						icon: 'tick-circle',
 						message,
 						onDismiss,
-						timeout
+						timeout,
 					},
 					hash(message)
 				);

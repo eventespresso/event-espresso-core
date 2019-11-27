@@ -4,18 +4,11 @@ import { Classes, Overlay } from '@blueprintjs/core/lib/esm';
 import { useEffect, useState } from '@wordpress/element';
 import { EspressoButton } from '../../../ZZZ/components/ui';
 
-const FormModal = ({
-	FormComponent,
-	initialValues,
-	onSubmit,
-	onClose,
-	isOpen,
-	...extraProps
-}) => {
-	console.log( "%c FormModal", "color: #1BE7FF;" );
-	console.log( '%c > initialValues: ', 'color: #BCBDAC;', initialValues );
+const FormModal = ({ FormComponent, initialValues, onSubmit, onClose, isOpen, ...extraProps }) => {
+	console.log('%c FormModal', 'color: #1BE7FF;');
+	console.log('%c > initialValues: ', 'color: #BCBDAC;', initialValues);
 	// boolean for communicating to form child components whether form needs to be reset
-	const [ formReset, setFormReset ] = useState( false );
+	const [formReset, setFormReset] = useState(false);
 
 	const overlayProps = {
 		autoFocus: true,
@@ -24,7 +17,7 @@ const FormModal = ({
 		enforceFocus: true,
 		hasBackdrop: true,
 		usePortal: true,
-		useTallContent: false
+		useTallContent: false,
 	};
 
 	const classes = classNames(Classes.CARD, Classes.ELEVATION_4);
@@ -39,18 +32,18 @@ const FormModal = ({
 		position: 'absolute',
 		left: '50%',
 		top: '50%',
-		transform: 'translate(-50%, -50%)'
+		transform: 'translate(-50%, -50%)',
 	};
 
 	const formStyle = {
 		boxSizing: 'border-box',
-		padding: '1em 2em'
+		padding: '1em 2em',
 	};
 
 	const btnRowStyle = {
 		boxSizing: 'border-box',
 		padding: '1em 2em',
-		textAlign: 'right'
+		textAlign: 'right',
 	};
 
 	const dataStyle = {
@@ -58,38 +51,26 @@ const FormModal = ({
 		boxSizing: 'border-box',
 		padding: '1em 2em',
 		color: '#a9ce47',
-		backgroundColor: '#26203d'
+		backgroundColor: '#26203d',
 	};
 
 	return (
-		<Overlay
-			{...overlayProps}
-			className={Classes.OVERLAY_SCROLL_CONTAINER}
-			onClose={onClose}
-			isOpen={isOpen}
-		>
+		<Overlay {...overlayProps} className={Classes.OVERLAY_SCROLL_CONTAINER} onClose={onClose} isOpen={isOpen}>
 			<div className={classes} style={overlayStyle}>
 				<Form
 					onSubmit={onSubmit}
 					initialValues={initialValues}
 					{...extraProps}
-					render={({
-						form,
-						values,
-						handleSubmit,
-						submitting,
-						pristine,
-						...formProps
-					}) => {
+					render={({ form, values, handleSubmit, submitting, pristine, ...formProps }) => {
 						// clear form data and set formReset back to false
 						// after form child components have had a chance to reset
 						// after receiving a positive formReset prop
-						useEffect( () => {
-							if ( formReset ) {
+						useEffect(() => {
+							if (formReset) {
 								form.reset();
-								setFormReset( false );
+								setFormReset(false);
 							}
-						} );
+						});
 
 						return (
 							<form onSubmit={handleSubmit}>
@@ -99,7 +80,7 @@ const FormModal = ({
 										values={values}
 										submitting={submitting}
 										pristine={pristine}
-										formReset={ formReset}
+										formReset={formReset}
 										{...formProps}
 									/>
 								</div>
@@ -119,15 +100,13 @@ const FormModal = ({
 									<EspressoButton
 										buttonText={'Reset'}
 										disabled={submitting || pristine}
-										onClick={ ( e ) => {
+										onClick={(e) => {
 											e.preventDefault();
-											setFormReset( true );
-										} }
+											setFormReset(true);
+										}}
 									/>
 								</div>
-								<pre style={dataStyle}>
-									{JSON.stringify(values, 0, 2)}
-								</pre>
+								<pre style={dataStyle}>{JSON.stringify(values, 0, 2)}</pre>
 							</form>
 						);
 					}}

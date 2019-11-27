@@ -17,16 +17,8 @@ const AddNewTicketButton = ({ datetimes }) => {
 
 	return (
 		<>
-			<EspressoButton
-				icon={'tickets-alt'}
-				buttonText={'Add New Ticket'}
-				onClick={handleOpen}
-			/>
-			<AddNewTicketModal
-				datetimes={datetimes}
-				handleClose={handleClose}
-				isOpen={isOpen}
-			/>
+			<EspressoButton icon={'tickets-alt'} buttonText={'Add New Ticket'} onClick={handleOpen} />
+			<AddNewTicketModal datetimes={datetimes} handleClose={handleClose} isOpen={isOpen} />
 		</>
 	);
 };

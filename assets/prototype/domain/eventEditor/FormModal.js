@@ -11,7 +11,7 @@ const FormModal = ({ FormComponent, initialValues, onSubmit, onClose, isOpen }) 
 		enforceFocus: true,
 		hasBackdrop: true,
 		usePortal: true,
-		useTallContent: false
+		useTallContent: false,
 	};
 
 	const classes = classNames(Classes.CARD, Classes.ELEVATION_4);
@@ -23,37 +23,26 @@ const FormModal = ({ FormComponent, initialValues, onSubmit, onClose, isOpen }) 
 		position: 'absolute',
 		left: '50%',
 		top: '50%',
-		transform: 'translate(-50%, -50%)'
+		transform: 'translate(-50%, -50%)',
 	};
 
 	const formStyle = {
 		padding: '2em 2em 1em',
-		width: '80%'
+		width: '80%',
 	};
 
 	const btnRowStyle = {
 		padding: '1em 2em 2em',
-		textAlign: 'right'
+		textAlign: 'right',
 	};
 
 	return (
-		<Overlay
-			{...overlayProps}
-			className={Classes.OVERLAY_SCROLL_CONTAINER}
-			onClose={onClose}
-			isOpen={isOpen}
-		>
+		<Overlay {...overlayProps} className={Classes.OVERLAY_SCROLL_CONTAINER} onClose={onClose} isOpen={isOpen}>
 			<div className={classes} style={overlayStyle}>
 				<Form
 					onSubmit={onSubmit}
 					initialValues={initialValues}
-					render={({
-						form,
-						handleSubmit,
-						submitting,
-						pristine,
-						...formProps
-					}) => {
+					render={({ form, handleSubmit, submitting, pristine, ...formProps }) => {
 						return (
 							<form onSubmit={handleSubmit}>
 								<div style={formStyle}>

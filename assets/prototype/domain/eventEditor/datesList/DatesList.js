@@ -5,19 +5,19 @@ import DateCard from './dateCard/DateCard';
 const boxStyle = {
 	padding: '2rem',
 	textAlign: 'center',
-	width: '100%'
+	width: '100%',
 };
 
 const hdrStyle = {
 	color: 'grey',
-	margin: '1rem 0 0'
+	margin: '1rem 0 0',
 };
 
 const listStyle = {
 	display: 'flex',
 	flexFlow: 'row wrap',
 	justifyContent: 'space-between',
-	width: '100%'
+	width: '100%',
 };
 
 const btnRowStyle = {
@@ -25,7 +25,7 @@ const btnRowStyle = {
 	flexFlow: 'row wrap',
 	justifyContent: 'flex-end',
 	margin: '0 0 2rem',
-	width: '100%'
+	width: '100%',
 };
 
 const DatesList = ({ datetimes, error, eventId, loading, tickets }) => {
@@ -51,11 +51,7 @@ const DatesList = ({ datetimes, error, eventId, loading, tickets }) => {
 			<>
 				{header}
 				<Callout style={boxStyle}>
-					<NonIdealState
-						icon={'warning-sign'}
-						title={error.code}
-						description={error.message}
-					/>
+					<NonIdealState icon={'warning-sign'} title={error.code} description={error.message} />
 				</Callout>
 			</>
 		);
@@ -63,7 +59,7 @@ const DatesList = ({ datetimes, error, eventId, loading, tickets }) => {
 
 	const btnRow = (
 		<div style={btnRowStyle}>
-			<AddNewDateButton eventId={eventId} tickets={ tickets } />
+			<AddNewDateButton eventId={eventId} tickets={tickets} />
 		</div>
 	);
 

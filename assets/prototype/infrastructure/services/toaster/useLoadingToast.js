@@ -6,19 +6,10 @@ const useLoadingToast = (toaster, hash) => {
 	const dismiss = useDismissToast(toaster, hash);
 
 	return useCallback(
-		(
-			loading = true,
-			message = 'loading',
-			timeout = 0,
-			action = {},
-			onDismiss = null
-		) => {
+		(loading = true, message = 'loading', timeout = 0, action = {}, onDismiss = null) => {
 			const isToasting = (msgHash) => {
 				const toasts = toaster.getToasts();
-				return (
-					Array.isArray(toasts) &&
-					find(toasts, (t) => t.key && t.key === msgHash)
-				);
+				return Array.isArray(toasts) && find(toasts, (t) => t.key && t.key === msgHash);
 			};
 
 			if (message) {
@@ -34,13 +25,13 @@ const useLoadingToast = (toaster, hash) => {
 										display: 'flex',
 										flexFlow: 'row nowrap',
 										alignContent: 'flex-start',
-										justifyContent: 'flex-start'
+										justifyContent: 'flex-start',
 									}}
 								>
 									<Spinner size={Spinner.SIZE_SMALL} />
 									<span
 										style={{
-											marginLeft: '1rem'
+											marginLeft: '1rem',
 										}}
 									>
 										{message}
@@ -48,7 +39,7 @@ const useLoadingToast = (toaster, hash) => {
 								</div>
 							),
 							onDismiss,
-							timeout
+							timeout,
 						},
 						msgHash
 					);

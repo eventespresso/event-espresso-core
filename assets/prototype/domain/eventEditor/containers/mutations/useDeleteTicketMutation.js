@@ -15,7 +15,7 @@ const useDeleteTicketMutation = ({ datetimeIn, id }) => {
 		onError: (error) => {
 			toaster.dismiss(toasterMessage);
 			toaster.error(error);
-		}
+		},
 	});
 
 	toaster.loading(loading, toasterMessage);
@@ -30,9 +30,9 @@ const useDeleteTicketMutation = ({ datetimeIn, id }) => {
 			query: GET_TICKETS,
 			variables: {
 				where: {
-					datetimeIn
-				}
-			}
+					datetimeIn,
+				},
+			},
 		};
 
 		const { tickets = {} } = proxy.readQuery(options);
@@ -44,9 +44,9 @@ const useDeleteTicketMutation = ({ datetimeIn, id }) => {
 			data: {
 				tickets: {
 					...tickets,
-					nodes
-				}
-			}
+					nodes,
+				},
+			},
 		});
 	};
 

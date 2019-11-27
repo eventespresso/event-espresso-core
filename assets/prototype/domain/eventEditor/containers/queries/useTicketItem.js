@@ -7,8 +7,8 @@ const useTicketItem = ({ id }) => {
 	const data = client.readQuery({
 		query: GET_TICKET,
 		variables: {
-			id
-		}
+			id,
+		},
 	});
 	console.log('%c > data: ', 'color: cyan;', data);
 	return data.ticket;

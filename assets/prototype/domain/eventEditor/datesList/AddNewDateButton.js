@@ -17,17 +17,8 @@ const AddNewDateButton = ({ eventId, tickets }) => {
 
 	return (
 		<>
-			<EspressoButton
-				icon={'calendar'}
-				buttonText={'Add New Date'}
-				onClick={handleOpen}
-			/>
-			<AddNewDateModal
-				eventId={eventId}
-				tickets={ tickets }
-				handleClose={handleClose}
-				isOpen={isOpen}
-			/>
+			<EspressoButton icon={'calendar'} buttonText={'Add New Date'} onClick={handleOpen} />
+			<AddNewDateModal eventId={eventId} tickets={tickets} handleClose={handleClose} isOpen={isOpen} />
 		</>
 	);
 };

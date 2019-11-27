@@ -78,7 +78,7 @@ const NewTicketForm = ({ datetimes, formReset }) => {
 								itemType={'datetime'}
 								displayFields={['name', 'startDate']}
 								placeholder={'select datetimes this ticket has access to'}
-								formReset={ formReset}
+								formReset={formReset}
 								{...input}
 							/>
 						)}

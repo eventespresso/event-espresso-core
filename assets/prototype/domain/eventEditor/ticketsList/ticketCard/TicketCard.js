@@ -1,12 +1,6 @@
 import Currency from 'react-currency-formatter';
 import { useState } from '@wordpress/element';
-import {
-	Button,
-	Card,
-	EditableText,
-	Elevation,
-	H4
-} from '@blueprintjs/core/lib/esm';
+import { Button, Card, EditableText, Elevation, H4 } from '@blueprintjs/core/lib/esm';
 import DeleteTicketButton from './DeleteTicketButton';
 import useTicketItem from '../../containers/queries/useTicketItem';
 import useUpdateTicketMutation from '../../containers/mutations/useUpdateTicketMutation';
@@ -14,7 +8,7 @@ import useUpdateTicketMutation from '../../containers/mutations/useUpdateTicketM
 const console = window.console;
 
 const btnStyle = {
-	margin: '0 0 0 .5rem'
+	margin: '0 0 0 .5rem',
 };
 
 const cardStyle = {
@@ -22,7 +16,7 @@ const cardStyle = {
 	minWidth: '360px',
 	position: 'relative',
 	textAlign: 'center',
-	width: '32%'
+	width: '32%',
 };
 
 const idStyle = {
@@ -30,11 +24,11 @@ const idStyle = {
 	fontSize: '9px',
 	left: '.75em',
 	position: 'absolute',
-	top: '.5em'
+	top: '.5em',
 };
 
 const priceStyle = {
-	color: 'grey'
+	color: 'grey',
 };
 
 const TicketCard = ({ datetimeIn, id }) => {
@@ -44,12 +38,12 @@ const TicketCard = ({ datetimeIn, id }) => {
 
 	const onTitleConfirm = (name) => {
 		updateTicket({
-			variables: { input: { clientMutationId: 'xyz', id, name } }
+			variables: { input: { clientMutationId: 'xyz', id, name } },
 		});
 	};
 	const onPriceConfirm = (price) => {
 		updateTicket({
-			variables: { input: { clientMutationId: 'xyz', id, price } }
+			variables: { input: { clientMutationId: 'xyz', id, price } },
 		});
 		setEditing(false);
 	};
@@ -84,12 +78,7 @@ const TicketCard = ({ datetimeIn, id }) => {
 			<div>
 				<H4 style={priceStyle}>
 					{ticketPrice}
-					<Button
-						icon="edit"
-						onClick={() => setEditing(true)}
-						style={btnStyle}
-						minimal
-					/>
+					<Button icon='edit' onClick={() => setEditing(true)} style={btnStyle} minimal />
 				</H4>
 			</div>
 			<DeleteTicketButton datetimeIn={datetimeIn} id={ticket.id} />

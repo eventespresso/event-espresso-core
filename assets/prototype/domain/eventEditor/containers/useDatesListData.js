@@ -12,13 +12,13 @@ const useDatesListData = (eventId) => {
 			query: GET_DATETIMES,
 			variables: {
 				where: {
-					eventId
-				}
-			}
+					eventId,
+				},
+			},
 		});
 		console.log('%c > useDatesListData data:', 'color: lime;', data);
 		return {
-			datetimes: get(data, ['datetimes', 'nodes'])
+			datetimes: get(data, ['datetimes', 'nodes']),
 		};
 	} catch (errors) {
 		return { errors };

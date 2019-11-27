@@ -1,23 +1,12 @@
-import {
-	Button,
-	Card,
-	EditableText,
-	Elevation,
-	H4,
-	Popover
-} from '@blueprintjs/core/lib/esm';
+import { Button, Card, EditableText, Elevation, H4, Popover } from '@blueprintjs/core/lib/esm';
 import { DatePicker, TimePrecision } from '@blueprintjs/datetime/lib/esm';
 import DeleteDateButton from './DeleteDateButton';
 import useDateItem from '../../containers/queries/useDateItem';
 import useUpdateDateMutation from '../../containers/mutations/useUpdateDateMutation';
-import {
-	A_LONG_TIME_AGO,
-	PLUS_ONE_MONTH,
-	PLUS_TEN_YEARS
-} from '../../../shared/defaultDates';
+import { A_LONG_TIME_AGO, PLUS_ONE_MONTH, PLUS_TEN_YEARS } from '../../../shared/defaultDates';
 
 const btnStyle = {
-	margin: '0 0 0 .5rem'
+	margin: '0 0 0 .5rem',
 };
 
 const cardStyle = {
@@ -25,7 +14,7 @@ const cardStyle = {
 	minWidth: '360px',
 	position: 'relative',
 	textAlign: 'center',
-	width: '32%'
+	width: '32%',
 };
 
 const idStyle = {
@@ -33,7 +22,7 @@ const idStyle = {
 	fontSize: '9px',
 	left: '.75em',
 	position: 'absolute',
-	top: '.5em'
+	top: '.5em',
 };
 
 const DateCard = ({ eventId, id }) => {
@@ -42,7 +31,7 @@ const DateCard = ({ eventId, id }) => {
 
 	const onTitleConfirm = (name) => {
 		updateDate({
-			variables: { input: { clientMutationId: 'xyz', id, name } }
+			variables: { input: { clientMutationId: 'xyz', id, name } },
 		});
 	};
 
@@ -57,7 +46,7 @@ const DateCard = ({ eventId, id }) => {
 				<div style={idStyle}>{date.datetimeId}</div>
 				<H4>
 					<EditableText
-						placeholder="Edit title..."
+						placeholder='Edit title...'
 						defaultValue={date.name}
 						onCancel={(value) => console.log(value)}
 						onConfirm={onTitleConfirm}
@@ -72,7 +61,7 @@ const DateCard = ({ eventId, id }) => {
 			<div>
 				<b>{`${date.startDate} ${date.startTime}`}</b>
 				<Popover lazy>
-					<Button icon="calendar" style={btnStyle} minimal />
+					<Button icon='calendar' style={btnStyle} minimal />
 					<DatePicker
 						defaultValue={startDate}
 						formatDate={(jsDate) => jsDate.toString()}
@@ -93,7 +82,7 @@ const DateCard = ({ eventId, id }) => {
 						timePrecision={TimePrecision.MINUTE}
 						timePickerProps={{
 							showArrowButtons: true,
-							useAmPm: true
+							useAmPm: true,
 						}}
 						minDate={A_LONG_TIME_AGO}
 						maxDate={PLUS_TEN_YEARS}

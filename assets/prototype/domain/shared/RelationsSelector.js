@@ -27,11 +27,11 @@ const RelationsSelector = ({
 	const [relatedItems, setRelatedItems] = useState([]);
 
 	// clear related items
-	useEffect( () => {
-		if ( formReset ) {
+	useEffect(() => {
+		if (formReset) {
 			reset();
 		}
-	} );
+	});
 
 	/**
 	 * @function
@@ -46,7 +46,7 @@ const RelationsSelector = ({
 	 * @function
 	 */
 	const reset = () => {
-		updateRelatedItems( [] );
+		updateRelatedItems([]);
 	};
 
 	/**
@@ -218,7 +218,7 @@ const RelationsSelector = ({
 		);
 	};
 
-	const clearButton = relatedItems.length > 0 ? <Button icon='cross' onClick={ reset } minimal /> : undefined;
+	const clearButton = relatedItems.length > 0 ? <Button icon='cross' onClick={reset} minimal /> : undefined;
 
 	return (
 		<MultiSelect

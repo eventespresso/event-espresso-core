@@ -10,7 +10,7 @@ const DeleteDateButton = ({ eventId, id }) => {
 				bottom: '.5rem',
 				position: 'absolute',
 				right: '.5rem',
-				textAlign: 'right'
+				textAlign: 'right',
 			}}
 		>
 			<Button icon={'trash'} onClick={deleteDatetime} minimal />

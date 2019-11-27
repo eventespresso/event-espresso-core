@@ -26,7 +26,7 @@ const useErrorToast = (toaster, hash) =>
 						intent: Intent.DANGER,
 						message: errorMessage,
 						onDismiss,
-						timeout
+						timeout,
 					},
 					hash(errorMessage)
 				);
