@@ -2,10 +2,10 @@
 
 namespace EventEspresso\core\domain\services\graphql\mutators;
 
-use EEM_Datetime;
-use EE_Datetime;
-use EventEspresso\core\domain\services\graphql\types\Datetime;
-use EventEspresso\core\domain\services\graphql\data\mutations\DatetimeMutation;
+use EEM_Price;
+use EE_Price;
+use EventEspresso\core\domain\services\graphql\types\Price;
+use EventEspresso\core\domain\services\graphql\data\mutations\PriceMutation;
 
 use EE_Error;
 use InvalidArgumentException;
@@ -17,17 +17,17 @@ use GraphQL\Type\Definition\ResolveInfo;
 use WPGraphQL\AppContext;
 use GraphQL\Error\UserError;
 
-class DatetimeCreate
+class PriceCreate
 {
 
     /**
      * Defines the mutation data modification closure.
      *
-     * @param EEM_Datetime $model
-     * @param Datetime     $type
+     * @param EEM_Price $model
+     * @param Price     $type
      * @return callable
      */
-    public static function mutateAndGetPayload(EEM_Datetime $model, Datetime $type)
+    public static function mutateAndGetPayload(EEM_Price $model, Price $type)
     {
         /**
          * Creates an entity.
@@ -46,7 +46,7 @@ class DatetimeCreate
         return static function ($input, AppContext $context, ResolveInfo $info) use ($model, $type) {
 
             /**
-             * Stop now if a user isn't allowed to create a datetime.
+             * Stop now if a user isn't allowed to create an entity.
              */
             if (! current_user_can('ee_edit_events')) {
                 // translators: the %1$s is the name of the object being mutated
@@ -55,24 +55,20 @@ class DatetimeCreate
                 );
             }
 
-            $tickets = [];
+            $args = PriceMutation::prepareFields($input);
 
-            $args = DatetimeMutation::prepareFields($input);
-
-            if (isset($args['tickets'])) {
-                $tickets = $args['tickets'];
-                unset($args['tickets']);
+            if (empty($args['PRT_ID'])) {
+                // translators: the placeholder is the name of the field.
+                throw new UserError(
+                    sprintf(esc_html__('A valid %1$s must be passed.', 'event_espresso'), 'priceType')
+                );
             }
 
-            $entity = EE_Datetime::new_instance($args);
+            $entity = EE_Price::new_instance($args);
             $id = $entity->save();
 
             if (empty($id)) {
                 throw new UserError(esc_html__('The object failed to create but no error was provided', 'event_espresso'));
-            }
-
-            if (! empty($tickets)) {
-                DatetimeMutation::setRelatedTickets($entity, $tickets);
             }
 
             return [

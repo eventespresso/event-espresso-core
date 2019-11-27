@@ -2,10 +2,10 @@
 
 namespace EventEspresso\core\domain\services\graphql\mutators;
 
-use EEM_Ticket;
-use EE_Ticket;
-use EventEspresso\core\domain\services\graphql\types\Ticket;
-use EventEspresso\core\domain\services\graphql\data\mutations\TicketMutation;
+use EEM_Price;
+use EE_Price;
+use EventEspresso\core\domain\services\graphql\types\Price;
+use EventEspresso\core\domain\services\graphql\data\mutations\PriceMutation;
 
 use EE_Error;
 use InvalidArgumentException;
@@ -18,17 +18,17 @@ use WPGraphQL\AppContext;
 use GraphQL\Error\UserError;
 use GraphQLRelay\Relay;
 
-class TicketUpdate
+class PriceUpdate
 {
 
     /**
      * Defines the mutation data modification closure.
      *
-     * @param EEM_Ticket $model
-     * @param Ticket     $type
+     * @param EEM_Price $model
+     * @param Price     $type
      * @return callable
      */
-    public static function mutateAndGetPayload(EEM_Ticket $model, Ticket $type)
+    public static function mutateAndGetPayload(EEM_Price $model, Price $type)
     {
         /**
          * Updates an entity.
@@ -66,39 +66,20 @@ class TicketUpdate
             /**
              * If there's no existing entity, throw an exception
              */
-            if (! $id || ! ($entity instanceof EE_Ticket)) {
+            if (! $id || ! ($entity instanceof EE_Price)) {
                 // translators: the placeholder is the name of the type being updated
                 throw new UserError(
                     sprintf(esc_html__('No %1$s could be found to update', 'event_espresso'), $type->name())
                 );
             }
 
-            $datetimes = [];
-            $prices = [];
-
-            $args = TicketMutation::prepareFields($input);
-
-            if (isset($args['datetimes'])) {
-                $datetimes = $args['datetimes'];
-                unset($args['datetimes']);
-            }
-            if (isset($args['prices'])) {
-                $prices = $args['prices'];
-                unset($args['prices']);
-            }
+            $args = PriceMutation::prepareFields($input);
 
             // Update the entity
             $result = $entity->save($args);
 
             if (empty($result)) {
                 throw new UserError(esc_html__('The object failed to update but no error was provided', 'event_espresso'));
-            }
-
-            if (! empty($datetimes)) {
-                TicketMutation::setRelatedDatetimes($entity, $datetimes);
-            }
-            if (! empty($prices)) {
-                TicketMutation::setRelatedPrices($entity, $prices);
             }
 
             return [

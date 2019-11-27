@@ -40,13 +40,17 @@ class TicketMutation
             $args['datetimes'] = array_map('sanitize_text_field', (array) $input['datetimes']);
         }
 
+        if (! empty($input['prices'])) {
+            $args['prices'] = array_map('sanitize_text_field', (array) $input['prices']);
+        }
+
         // Likewise the other fields...
 
         return $args;
     }
 
     /**
-     * Sets the related tickets for the given datetime.
+     * Sets the related datetimes for the given ticket.
      *
      * @param EE_Ticket $entity    The Ticket instance.
      * @param array     $datetimes Array of datetime IDs to relate.
@@ -55,9 +59,34 @@ class TicketMutation
     {
         $relationName = 'Datetime';
         // Remove all the existing related datetimes
+
+        $entity->_remove_relations($relationName);
+        // @todo replace loop with single query
+        foreach ($datetimes as $ID) {
+            $parts = Relay::fromGlobalId($ID);
+            if (! empty($parts['id']) && absint($parts['id'])) {
+                $entity->_add_relation_to(
+                    $parts['id'],
+                    $relationName
+                );
+            }
+        }
+    }
+
+    /**
+     * Sets the related prices for the given ticket.
+     *
+     * @param EE_Ticket $entity The Ticket instance.
+     * @param array     $prices Array of entity IDs to relate.
+     */
+    public static function setRelatedPrices($entity, array $prices)
+    {
+        $relationName = 'Price';
+        // Remove all the existing related entities
         $entity->_remove_relations($relationName);
 
-        foreach ($datetimes as $ID) {
+        // @todo replace loop with single query
+        foreach ($prices as $ID) {
             $parts = Relay::fromGlobalId($ID);
             if (! empty($parts['id']) && absint($parts['id'])) {
                 $entity->_add_relation_to(

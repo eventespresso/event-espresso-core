@@ -46,16 +46,17 @@ class TicketCreate
         return static function ($input, AppContext $context, ResolveInfo $info) use ($model, $type) {
 
             /**
-             * Stop now if a user isn't allowed to create a datetime.
+             * Stop now if a user isn't allowed to create an entity.
              */
             if (! current_user_can('ee_edit_events')) {
                 // translators: the %1$s is the name of the object being mutated
                 throw new UserError(
-                    sprintf(__('Sorry, you are not allowed to create %1$s', 'event_espresso'), $type->name())
+                    sprintf(esc_html__('Sorry, you are not allowed to create %1$s', 'event_espresso'), $type->name())
                 );
             }
 
             $datetimes = [];
+            $prices = [];
 
             $args = TicketMutation::prepareFields($input);
 
@@ -63,16 +64,23 @@ class TicketCreate
                 $datetimes = $args['datetimes'];
                 unset($args['datetimes']);
             }
+            if (isset($args['prices'])) {
+                $prices = $args['prices'];
+                unset($args['prices']);
+            }
 
             $entity = EE_Ticket::new_instance($args);
             $id = $entity->save();
 
             if (empty($id)) {
-                throw new UserError(__('The object failed to create but no error was provided', 'event_espresso'));
+                throw new UserError(esc_html__('The object failed to create but no error was provided', 'event_espresso'));
             }
 
             if (! empty($datetimes)) {
                 TicketMutation::setRelatedDatetimes($entity, $datetimes);
+            }
+            if (! empty($prices)) {
+                TicketMutation::setRelatedPrices($entity, $prices);
             }
 
             return [

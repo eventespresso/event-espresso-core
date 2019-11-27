@@ -105,12 +105,6 @@ class Ticket extends TypeBase
                 'price',
                 esc_html__('Final calculated price for ticket', 'event_espresso')
             ),
-            new GraphQLOutputField(
-                'prices',
-                ['list_of' => 'Price'],
-                'prices',
-                esc_html__('The related ticket prices.', 'event_espresso')
-            ),
             new GraphQLField(
                 'sold',
                 'Int',
@@ -228,6 +222,16 @@ class Ticket extends TypeBase
                 sprintf(
                     '%1$s %2$s',
                     esc_html__('Globally unique IDs of the datetimes related to the ticket.', 'event_espresso'),
+                    esc_html__('Ignored if empty.', 'event_espresso')
+                )
+            ),
+            new GraphQLInputField(
+                'prices',
+                ['list_of' => 'ID'],
+                null,
+                sprintf(
+                    '%1$s %2$s',
+                    esc_html__('Globally unique IDs of the prices related to the ticket.', 'event_espresso'),
                     esc_html__('Ignored if empty.', 'event_espresso')
                 )
             ),

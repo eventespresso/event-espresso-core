@@ -2,10 +2,9 @@
 
 namespace EventEspresso\core\domain\services\graphql\mutators;
 
-use EEM_Ticket;
-use EE_Ticket;
-use EventEspresso\core\domain\services\graphql\types\Ticket;
-use EventEspresso\core\domain\services\graphql\data\mutations\TicketMutation;
+use EEM_Price;
+use EE_Price;
+use EventEspresso\core\domain\services\graphql\types\Price;
 
 use EE_Error;
 use InvalidArgumentException;
@@ -18,20 +17,20 @@ use WPGraphQL\AppContext;
 use GraphQL\Error\UserError;
 use GraphQLRelay\Relay;
 
-class TicketUpdate
+class PriceDelete
 {
 
     /**
      * Defines the mutation data modification closure.
      *
-     * @param EEM_Ticket $model
-     * @param Ticket     $type
+     * @param EEM_Price $model
+     * @param Price     $type
      * @return callable
      */
-    public static function mutateAndGetPayload(EEM_Ticket $model, Ticket $type)
+    public static function mutateAndGetPayload(EEM_Price $model, Price $type)
     {
         /**
-         * Updates an entity.
+         * Deletes an entity.
          *
          * @param array       $input   The input for the mutation
          * @param AppContext  $context The AppContext passed down to all resolvers
@@ -51,7 +50,10 @@ class TicketUpdate
             if (! current_user_can('ee_edit_events')) {
                 // translators: the %1$s is the name of the object being mutated
                 throw new UserError(
-                    sprintf(esc_html__('Sorry, you are not allowed to edit %1$s', 'event_espresso'), $type->name())
+                    sprintf(
+                        esc_html__('Sorry, you are not allowed to edit %1$s', 'event_espresso'),
+                        $type->name()
+                    )
                 );
             }
             $id_parts = ! empty($input['id']) ? Relay::fromGlobalId($input['id']) : null;
@@ -66,43 +68,25 @@ class TicketUpdate
             /**
              * If there's no existing entity, throw an exception
              */
-            if (! $id || ! ($entity instanceof EE_Ticket)) {
+            if (! $id || ! ($entity instanceof EE_Price)) {
                 // translators: the placeholder is the name of the type being updated
                 throw new UserError(
-                    sprintf(esc_html__('No %1$s could be found to update', 'event_espresso'), $type->name())
+                    sprintf(
+                        esc_html__('No %1$s could be found to delete', 'event_espresso'),
+                        $type->name()
+                    )
                 );
             }
 
-            $datetimes = [];
-            $prices = [];
-
-            $args = TicketMutation::prepareFields($input);
-
-            if (isset($args['datetimes'])) {
-                $datetimes = $args['datetimes'];
-                unset($args['datetimes']);
-            }
-            if (isset($args['prices'])) {
-                $prices = $args['prices'];
-                unset($args['prices']);
-            }
-
-            // Update the entity
-            $result = $entity->save($args);
+            // Delete the entity
+            $result = ! empty($input['deletePermanently']) ? $entity->delete_permanently() : $entity->delete();
 
             if (empty($result)) {
-                throw new UserError(esc_html__('The object failed to update but no error was provided', 'event_espresso'));
-            }
-
-            if (! empty($datetimes)) {
-                TicketMutation::setRelatedDatetimes($entity, $datetimes);
-            }
-            if (! empty($prices)) {
-                TicketMutation::setRelatedPrices($entity, $prices);
+                throw new UserError(esc_html__('The object failed to delete but no error was provided', 'event_espresso'));
             }
 
             return [
-                'id' => $id,
+                'deleted' => $entity,
             ];
         };
     }

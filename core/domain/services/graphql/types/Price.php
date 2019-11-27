@@ -8,6 +8,9 @@ use EventEspresso\core\services\graphql\types\TypeBase;
 use EventEspresso\core\services\graphql\fields\GraphQLField;
 use EventEspresso\core\services\graphql\fields\GraphQLInputField;
 use EventEspresso\core\services\graphql\fields\GraphQLOutputField;
+use EventEspresso\core\domain\services\graphql\mutators\PriceCreate;
+use EventEspresso\core\domain\services\graphql\mutators\PriceDelete;
+use EventEspresso\core\domain\services\graphql\mutators\PriceUpdate;
 use InvalidArgumentException;
 use ReflectionException;
 
@@ -92,6 +95,12 @@ class Price extends TypeBase
                 null,
                 esc_html__('The parent price of the current price', 'event_espresso')
             ),
+            new GraphQLInputField(
+                'parent',
+                'ID',
+                null,
+                esc_html__('The parent price ID', 'event_espresso')
+            ),
             new GraphQLOutputField(
                 'priceType',
                 'PriceType',
@@ -99,12 +108,12 @@ class Price extends TypeBase
                 esc_html__('The related price type object.', 'event_espresso')
             ),
             new GraphQLInputField(
-                'parent',
+                'priceType',
                 'ID',
                 null,
-                esc_html__('The parent price ID', 'event_espresso')
+                esc_html__('The price type ID', 'event_espresso')
             ),
-            new GraphQLField(
+            new GraphQLOutputField(
                 'isDeleted',
                 'Boolean',
                 'deleted',
@@ -116,13 +125,13 @@ class Price extends TypeBase
                 'is_default',
                 esc_html__('Flag indicating price is the default one.', 'event_espresso')
             ),
-            new GraphQLField(
+            new GraphQLOutputField(
                 'isPercent',
                 'Boolean',
                 'is_percent',
                 esc_html__('Flag indicating price is a percentage.', 'event_espresso')
             ),
-            new GraphQLField(
+            new GraphQLOutputField(
                 'isBasePrice',
                 'Boolean',
                 'is_base_price',
@@ -147,5 +156,72 @@ class Price extends TypeBase
                 esc_html__('Price Creator ID', 'event_espresso')
             ),
         ];
+    }
+
+
+    /**
+     * @param array $inputFields The mutation input fields.
+     * @throws InvalidArgumentException
+     * @throws ReflectionException
+     * @since $VID:$
+     */
+    public function registerMutations(array $inputFields)
+    {
+        // Register mutation to update an entity.
+        register_graphql_mutation(
+            'update' . $this->name(),
+            [
+                'inputFields'         => $inputFields,
+                'outputFields'        => [
+                    lcfirst($this->name()) => [
+                        'type'    => $this->name(),
+                        'resolve' => [$this, 'resolveFromPayload'],
+                    ],
+                ],
+                'mutateAndGetPayload' => PriceUpdate::mutateAndGetPayload($this->model, $this),
+            ]
+        );
+        // Register mutation to delete an entity.
+        register_graphql_mutation(
+            'delete' . $this->name(),
+            [
+                'inputFields'         => [
+                    'id'                => $inputFields['id'],
+                    'deletePermanently' => [
+                        'type'        => 'Boolean',
+                        'description' => esc_html__('Whether to delete the entity permanently.', 'event_espresso'),
+                    ],
+                ],
+                'outputFields'        => [
+                    lcfirst($this->name()) => [
+                        'type'        => $this->name(),
+                        'description' => esc_html__('The object before it was deleted', 'event_espresso'),
+                        'resolve'     => static function ($payload) {
+                            $deleted = (object) $payload['deleted'];
+
+                            return ! empty($deleted) ? $deleted : null;
+                        },
+                    ],
+                ],
+                'mutateAndGetPayload' => PriceDelete::mutateAndGetPayload($this->model, $this),
+            ]
+        );
+
+        // remove primary key from input.
+        unset($inputFields['id']);
+        // Register mutation to update an entity.
+        register_graphql_mutation(
+            'create' . $this->name(),
+            [
+                'inputFields'         => $inputFields,
+                'outputFields'        => [
+                    lcfirst($this->name()) => [
+                        'type'    => $this->name(),
+                        'resolve' => [$this, 'resolveFromPayload'],
+                    ],
+                ],
+                'mutateAndGetPayload' => PriceCreate::mutateAndGetPayload($this->model, $this),
+            ]
+        );
     }
 }
