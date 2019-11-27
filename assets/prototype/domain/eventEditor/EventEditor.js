@@ -18,6 +18,7 @@ const EventEditor = ({ eventId }) => {
 				eventId={eventId}
 				loading={loadingDates}
 				error={datetimeError}
+				tickets={ tickets }
 			/>
 			<TicketsList
 				tickets={tickets}

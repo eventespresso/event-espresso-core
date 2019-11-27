@@ -2,7 +2,7 @@ import { useState } from '@wordpress/element';
 import AddNewDateModal from './AddNewDateModal';
 import { EspressoButton } from '../../../../ZZZ/components/ui';
 
-const AddNewDateButton = ({ eventId }) => {
+const AddNewDateButton = ({ eventId, tickets }) => {
 	const [isOpen, setIsOpen] = useState(false);
 	const handleOpen = (e) => {
 		e.preventDefault();
@@ -24,6 +24,7 @@ const AddNewDateButton = ({ eventId }) => {
 			/>
 			<AddNewDateModal
 				eventId={eventId}
+				tickets={ tickets }
 				handleClose={handleClose}
 				isOpen={isOpen}
 			/>
