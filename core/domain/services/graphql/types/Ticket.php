@@ -105,12 +105,6 @@ class Ticket extends TypeBase
                 'price',
                 esc_html__('Final calculated price for ticket', 'event_espresso')
             ),
-            new GraphQLOutputField(
-                'prices',
-                ['list_of' => 'Price'],
-                'prices',
-                esc_html__('The related ticket prices.', 'event_espresso')
-            ),
             new GraphQLField(
                 'sold',
                 'Int',
