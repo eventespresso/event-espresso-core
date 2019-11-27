@@ -969,6 +969,9 @@ class EE_Dependency_Map
             'EventEspresso\core\domain\services\graphql\connections\RootQueryPricesConnection' => [
                 'EEM_Price' => EE_Dependency_Map::load_from_cache,
             ],
+            'EventEspresso\core\domain\services\graphql\connections\RootQueryPriceTypesConnection' => [
+                'EEM_Price_Type' => EE_Dependency_Map::load_from_cache,
+            ],
             'EventEspresso\core\domain\services\graphql\connections\TicketDatetimesConnection' => [
                 'EEM_Datetime' => EE_Dependency_Map::load_from_cache,
             ],
