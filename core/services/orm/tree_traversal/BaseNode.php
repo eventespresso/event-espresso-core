@@ -21,15 +21,24 @@ abstract class BaseNode
     /**
      * Whether this item has already been initialized
      */
-    public abstract function isDiscovered();
+    protected abstract function isDiscovered();
 
     /**
+     * Determines if the work is done yet or not. Requires you to have first discovered what work exists by calling
+     * discover().
      * @since $VID:$
      * @return boolean
      */
     public abstract function isComplete();
 
-    public abstract function discover();
+    /**
+     * Discovers what work needs to be done to complete traversing this node and its children.
+     * Note that this is separate from the constructor, so we can create child nodes without
+     * discovering them immediately.
+     * @since $VID:$
+     * @return mixed
+     */
+    protected abstract function discover();
 
     /**
      * @since $VID:$
@@ -37,11 +46,11 @@ abstract class BaseNode
      * @return int units of work done
      */
     public function visit($work_to_do){
-        if($this->isComplete()){
-           return;
-        }
         if(! $this->isDiscovered()){
             $this->discover();
+        }
+        if($this->isComplete()){
+           return 0;
         }
         return $this->work($work_to_do);
     }
@@ -49,10 +58,10 @@ abstract class BaseNode
     /**
      *
      * @since $VID:$
-     * @param $work_to_do
+     * @param $work_budget
      * @return int units of work done
      */
-    protected abstract function work($work_to_do);
+    protected abstract function work($work_budget);
 }
 // End of file BaseNode.php
 // Location: EventEspresso\core\services\orm\tree_traversal/BaseNode.php

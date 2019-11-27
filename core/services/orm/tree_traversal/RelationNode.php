@@ -42,26 +42,63 @@ class RelationNode extends BaseNode
     }
 
 
-
-    protected function work($work_to_do){
-        $items = $this->relation->get_this_model()->get_all_related(
-            $this->mainEntity,
-            $this->relation->get_other_model(),
-            [
-                'limit' => $work_to_do
-            ]
-        );
-        foreach($items as $item){
-            $this->itemNodes[] = new EntityNode($item);
+    /**
+     * Here is where most of the work happens. We've counted how many related model objects exist, but now we need to
+     * trigger visiting each of them, and then visiting their children etc.
+     * @since $VID:$
+     * @param $work_budget
+     * @return int|void
+     * @throws \EE_Error
+     */
+    protected function work($work_budget){
+        $work_done = 0;
+        foreach($this->itemNodes as $entity_node){
+            if($work_done < $work_budget){
+                $work_done += $entity_node->visit($work_budget);
+            }
         }
+        if($work_done < $work_budget){
+            $items = $this->relation->get_this_model()->get_all_related(
+                $this->mainEntity,
+                $this->relation->get_other_model(),
+                [
+                    'limit' => [
+                        count($this->itemNodes),
+                        $work_budget
+                    ]
+                ]
+            );
+            $work_done += count($items);
+            $new_item_nodes = [];
+
+            // Add entity nodes for each of the model objects we fetched.
+            foreach($items as $item){
+                $entity_node = new EntityNode($item);
+                $this->itemNodes[] = $entity_node;
+                $new_item_nodes[] = $entity_node;
+            }
+
+            // And lastly do the work.
+            foreach($new_item_nodes as $new_item_node){
+                if($work_done >= $work_budget){
+                    break;
+                }
+                $work_done += $new_item_node->visit($work_budget - $work_done);
+            }
+        }
+        // We're all done this node if we've done everything here and still have budget for more.
+        if($work_done < $work_budget){
+            $this->complete = true;
+        }
+        return $work_done;
     }
 
     /**
      * Whether this item has already been initialized
      */
-    public function isDiscovered()
+    protected function isDiscovered()
     {
-        // TODO: Implement isDiscovered() method.
+        return $this->count !== null;
     }
 
     /**
@@ -70,10 +107,16 @@ class RelationNode extends BaseNode
      */
     public function isComplete()
     {
-        // TODO: Implement isComplete() method.
+        return $this->complete;
     }
 
-    public function discover()
+    /**
+     * Discovers how many related model objects exist.
+     * @since $VID:$
+     * @return mixed|void
+     * @throws \EE_Error
+     */
+    protected function discover()
     {
         $this->count = $this->relation->get_this_model()->count_related($this->mainEntity, $this->relation->get_other_model());
     }
