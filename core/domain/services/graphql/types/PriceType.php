@@ -64,9 +64,9 @@ class PriceType extends TypeBase
             ),
             new GraphQLField(
                 'baseType',
-                'Int',
+                'PriceBaseTypeEnum',
                 'base_type',
-                esc_html__('Price Base type ID, 1 = Price , 2 = Discount , 3 = Surcharge , 4 = Tax', 'event_espresso')
+                esc_html__('Price Base type', 'event_espresso')
             ),
             new GraphQLField(
                 'order',
