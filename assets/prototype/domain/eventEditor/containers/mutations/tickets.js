@@ -6,8 +6,8 @@ export const CREATE_TICKET = gql`
 			ticket {
 				id
 				ticketId
-				name
 				description
+				name
 				price
 			}
 		}
@@ -19,7 +19,9 @@ export const UPDATE_TICKET = gql`
 		updateTicket(input: $input) {
 			ticket {
 				id
+				description
 				name
+				price
 			}
 		}
 	}

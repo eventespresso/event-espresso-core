@@ -1,6 +1,6 @@
 import Currency from 'react-currency-formatter';
 import { useState } from '@wordpress/element';
-import { Button, Card, EditableText, Elevation, H4 } from '@blueprintjs/core/lib/esm';
+import { Button, Card, EditableText, Elevation, H4, H6 } from '@blueprintjs/core/lib/esm';
 import DeleteTicketButton from './DeleteTicketButton';
 import useTicketItem from '../../containers/queries/useTicketItem';
 import useUpdateTicketMutation from '../../containers/mutations/useUpdateTicketMutation';
@@ -34,32 +34,21 @@ const priceStyle = {
 const TicketCard = ({ datetimeIn, id }) => {
 	const [editing, setEditing] = useState(false);
 	const ticket = useTicketItem({ id });
-	const { updateTicket } = useUpdateTicketMutation();
+	const updateTicketField = useUpdateTicketMutation({ id });
 
-	const onTitleConfirm = (name) => {
-		updateTicket({
-			variables: { input: { clientMutationId: 'xyz', id, name } },
-		});
-	};
-	const onPriceConfirm = (price) => {
-		updateTicket({
-			variables: { input: { clientMutationId: 'xyz', id, price } },
-		});
-		setEditing(false);
-	};
 	const ticketPrice = editing ? (
 		<EditableText
 			isEditing={editing}
 			placeholder={'set price...'}
 			defaultValue={ticket.price}
-			value={ticket.price}
 			onCancel={() => setEditing(false)}
-			onConfirm={onPriceConfirm}
+			onConfirm={(price) => updateTicketField({ price })}
 			selectAllOnFocus
 		/>
 	) : (
 		<Currency quantity={ticket.price} />
 	);
+
 	return (
 		<Card elevation={Elevation.ONE} style={cardStyle}>
 			<div>
@@ -69,12 +58,26 @@ const TicketCard = ({ datetimeIn, id }) => {
 						placeholder={'edit title...'}
 						defaultValue={ticket.name}
 						onCancel={(value) => console.log(value)}
-						onConfirm={onTitleConfirm}
+						onConfirm={(name) => updateTicketField({ name })}
 						minWidth={'320px'}
 						selectAllOnFocus
 					/>
 				</H4>
 			</div>
+
+			<div>
+				<H6>
+					<EditableText
+						placeholder='Edit description...'
+						defaultValue={ticket.description}
+						onCancel={(value) => console.log(value)}
+						onConfirm={(description) => updateTicketField({ description })}
+						minWidth={'320px'}
+						selectAllOnFocus
+					/>
+				</H6>
+			</div>
+
 			<div>
 				<H4 style={priceStyle}>
 					{ticketPrice}

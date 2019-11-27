@@ -2,9 +2,8 @@ import { useMutation } from '@apollo/react-hooks';
 import { UPDATE_TICKET } from './tickets';
 import useToaster from '../../../../infrastructure/services/toaster/useToaster';
 
-const useUpdateTicketMutation = () => {
+const useUpdateTicketMutation = ({ id = 0 }) => {
 	const toaster = useToaster();
-	const id = 0;
 	const toasterMessage = `updating ticket ${id}`;
 	const [updateTicket, { loading, error }] = useMutation(UPDATE_TICKET, {
 		onCompleted: () => {
@@ -20,7 +19,29 @@ const useUpdateTicketMutation = () => {
 	toaster.loading(loading, toasterMessage);
 	toaster.error(error);
 
-	return { updateTicket, loading, error };
+	const updateHandler = ({ description, name, price }) => {
+		if (description) {
+			return updateTicket({
+				variables: { input: { clientMutationId: 'xyz', id, description } },
+			});
+		}
+
+		if (name) {
+			return updateTicket({
+				variables: { input: { clientMutationId: 'xyz', id, name } },
+			});
+		}
+
+		if (price) {
+			return updateTicket({
+				variables: { input: { clientMutationId: 'xyz', id, price } },
+			});
+		}
+
+		return null;
+	};
+
+	return updateHandler;
 };
 
 export default useUpdateTicketMutation;

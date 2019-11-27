@@ -11,6 +11,7 @@ const useTicketItem = ({ id }) => {
 		},
 	});
 	console.log('%c > data: ', 'color: cyan;', data);
+
 	return data.ticket;
 };
 
