@@ -19,26 +19,27 @@ const useUpdateTicketMutation = ({ id = 0 }) => {
 	toaster.loading(loading, toasterMessage);
 	toaster.error(error);
 
+	const getVariables = ({ description, name, price }) => {
+		const variables = {
+			input: {
+				clientMutationId: 'xyz',
+				id,
+				// There is room for readability improvement here
+				...(description && { description }),
+				...(name && { name }),
+				...(price && { price }),
+			},
+		};
+
+		return variables;
+	};
+
 	const updateHandler = ({ description, name, price }) => {
-		if (description) {
-			return updateTicket({
-				variables: { input: { clientMutationId: 'xyz', id, description } },
-			});
-		}
+		const variables = getVariables({ description, name, price });
 
-		if (name) {
-			return updateTicket({
-				variables: { input: { clientMutationId: 'xyz', id, name } },
-			});
-		}
-
-		if (price) {
-			return updateTicket({
-				variables: { input: { clientMutationId: 'xyz', id, price } },
-			});
-		}
-
-		return null;
+		updateTicket({
+			variables,
+		});
 	};
 
 	return updateHandler;
