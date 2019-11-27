@@ -442,8 +442,8 @@ class Write extends Base
             $join_model_obj = $relation->get_join_model()->get_one(
                 array(
                     array(
-                        $model->primary_key_name() => $model_obj->ID(),
-                        $relation->get_other_model()->primary_key_name() => $related_obj->ID()
+                        $relation->get_join_model()->get_foreign_key_to($model->get_this_model_name())->get_name() => $model_obj->ID(),
+                        $relation->get_join_model()->get_foreign_key_to($relation->get_other_model()->get_this_model_name())->get_name() => $related_obj->ID()
                     )
                 )
             );
