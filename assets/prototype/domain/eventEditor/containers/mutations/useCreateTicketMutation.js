@@ -1,8 +1,10 @@
 import { useMutation } from '@apollo/react-hooks';
 import { CREATE_TICKET } from './tickets';
+import { GET_TICKETS } from '../queries/tickets';
+
 import useToaster from '../../../../infrastructure/services/toaster/useToaster';
 
-const useCreateTicketMutation = () => {
+const useCreateTicketMutation = ({ datetimes }) => {
 	const toaster = useToaster();
 	const id = 0;
 	const toasterMessage = `creating new ticket for datetime ${id}`;
@@ -19,11 +21,73 @@ const useCreateTicketMutation = () => {
 	toaster.loading(loading, toasterMessage);
 	toaster.error(error);
 
-	return {
-		createTicket,
-		loading,
-		error,
+	const onCreateHandler = ({ name, description, price, datetimes: ticketDatetimes }) => {
+		const variables = {
+			input: {
+				clientMutationId: 'xyz',
+				name,
+				description,
+				price,
+				datetimes: ticketDatetimes,
+			},
+		};
+		const optimisticResponse = {
+			createTicket: {
+				__typename: 'CreateTicketPayload',
+				ticket: {
+					__typename: 'Ticket',
+					ticketId: 0,
+					name,
+					description,
+					price,
+				},
+			},
+		};
+
+		const update = (
+			proxy,
+			{
+				data: {
+					createTicket: { ticket },
+				},
+			}
+		) => {
+			const datetimeIn = datetimes ? datetimes.map(({ id }) => id) : [];
+			const options = {
+				query: GET_TICKETS,
+				variables: {
+					where: {
+						datetimeIn,
+					},
+				},
+			};
+			// Read the data from our cache for this query.
+			/**
+			 * @todo use try...catch
+			 * */
+			const { tickets = {} } = proxy.readQuery(options);
+
+			// write the data to cache without
+			// mutating the cache directly
+			proxy.writeQuery({
+				...options,
+				data: {
+					tickets: {
+						...tickets,
+						nodes: [...tickets.nodes, ticket],
+					},
+				},
+			});
+		};
+
+		createTicket({
+			variables,
+			optimisticResponse,
+			update,
+		});
 	};
+
+	return onCreateHandler;
 };
 
 export default useCreateTicketMutation;
