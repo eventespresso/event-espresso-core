@@ -49,3 +49,25 @@ or
 ```
 
 ## [Example with `Datetime`](datetime.md)
+
+## Example with related prices
+
+```gql
+query getTickets {
+  tickets {
+    edges {
+      node {
+        id
+        name
+        description
+        prices {
+          nodes {
+            id
+            name
+          }
+        }
+      }
+    }
+  }
+}
+```
