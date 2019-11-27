@@ -59,8 +59,9 @@ class TicketMutation
     {
         $relationName = 'Datetime';
         // Remove all the existing related datetimes
-        $entity->_remove_relations($relationName);
 
+        $entity->_remove_relations($relationName);
+        // @todo replace loop with single query
         foreach ($datetimes as $ID) {
             $parts = Relay::fromGlobalId($ID);
             if (! empty($parts['id']) && absint($parts['id'])) {
@@ -84,6 +85,7 @@ class TicketMutation
         // Remove all the existing related entities
         $entity->_remove_relations($relationName);
 
+        // @todo replace loop with single query
         foreach ($prices as $ID) {
             $parts = Relay::fromGlobalId($ID);
             if (! empty($parts['id']) && absint($parts['id'])) {
