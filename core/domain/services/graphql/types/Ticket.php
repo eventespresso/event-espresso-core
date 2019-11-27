@@ -225,6 +225,16 @@ class Ticket extends TypeBase
                     esc_html__('Ignored if empty.', 'event_espresso')
                 )
             ),
+            new GraphQLInputField(
+                'prices',
+                ['list_of' => 'ID'],
+                null,
+                sprintf(
+                    '%1$s %2$s',
+                    esc_html__('Globally unique IDs of the prices related to the ticket.', 'event_espresso'),
+                    esc_html__('Ignored if empty.', 'event_espresso')
+                )
+            ),
         ];
     }
 

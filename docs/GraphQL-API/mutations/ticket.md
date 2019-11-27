@@ -8,7 +8,7 @@ Ticket object has three mutations:
 
 ## `createTicket`
 
-This mutation creates a new ticket. It is recommended to pass `datetimes` field to make sure the ticket is not orphaned.
+This mutation creates a new ticket. It is recommended to pass `datetimes` and `prices` fields to make sure the relations are properly set.
 
 ```gql
 mutation createTicket($input: CreateTicketInput!) {
@@ -33,6 +33,10 @@ mutation createTicket($input: CreateTicketInput!) {
     "datetimes": [
       "RGF0ZXRpbWU6MTQ=",
       "JTRBYTRTUBYYBYT="
+    ],
+    "prices": [
+      "JHGBYTUYN",
+      "KLHMGYIOK"
     ]
   }
 }
@@ -65,6 +69,10 @@ mutation updateTicket($input: UpdateTicketInput!) {
     "datetimes": [
       "RGF0ZXRpbWU6MTQ=",
       "JTRBYTRTUBYYBYT="
+    ],
+    "prices": [
+      "JHGBYTUYN",
+      "KLHMGYIOK"
     ]
   }
 }

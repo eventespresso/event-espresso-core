@@ -46,7 +46,7 @@ class TicketCreate
         return static function ($input, AppContext $context, ResolveInfo $info) use ($model, $type) {
 
             /**
-             * Stop now if a user isn't allowed to create a datetime.
+             * Stop now if a user isn't allowed to create an entity.
              */
             if (! current_user_can('ee_edit_events')) {
                 // translators: the %1$s is the name of the object being mutated
@@ -56,12 +56,17 @@ class TicketCreate
             }
 
             $datetimes = [];
+            $prices = [];
 
             $args = TicketMutation::prepareFields($input);
 
             if (isset($args['datetimes'])) {
                 $datetimes = $args['datetimes'];
                 unset($args['datetimes']);
+            }
+            if (isset($args['prices'])) {
+                $prices = $args['prices'];
+                unset($args['prices']);
             }
 
             $entity = EE_Ticket::new_instance($args);
@@ -73,6 +78,9 @@ class TicketCreate
 
             if (! empty($datetimes)) {
                 TicketMutation::setRelatedDatetimes($entity, $datetimes);
+            }
+            if (! empty($prices)) {
+                TicketMutation::setRelatedPrices($entity, $prices);
             }
 
             return [
