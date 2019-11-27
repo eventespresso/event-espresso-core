@@ -2,9 +2,8 @@ import { useMutation } from '@apollo/react-hooks';
 import { UPDATE_DATE } from './dates';
 import useToaster from '../../../../infrastructure/services/toaster/useToaster';
 
-const useUpdateDateMutation = () => {
+const useUpdateDateMutation = ({ id = 0 }) => {
 	const toaster = useToaster();
-	const id = 0;
 	const toasterMessage = `updating datetime ${id}`;
 	const [updateDate, { loading, error }] = useMutation(UPDATE_DATE, {
 		onCompleted: () => {
@@ -20,7 +19,31 @@ const useUpdateDateMutation = () => {
 	toaster.loading(loading, toasterMessage);
 	toaster.error(error);
 
-	return { updateDate, loading, error };
+	const updateHandler = ({ endDate, description, name, startDate }) => {
+		if (description) {
+			return updateDate({
+				variables: { input: { clientMutationId: 'xyz', id, description } },
+			});
+		}
+
+		if (name) {
+			return updateDate({
+				variables: { input: { clientMutationId: 'xyz', id, name } },
+			});
+		}
+
+		if (startDate && endDate) {
+			return updateDate({
+				variables: {
+					input: { clientMutationId: 'xyz', id, startDate, endDate },
+				},
+			});
+		}
+
+		return null;
+	};
+
+	return updateHandler;
 };
 
 export default useUpdateDateMutation;
