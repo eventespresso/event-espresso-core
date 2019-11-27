@@ -20,7 +20,7 @@ const dataStyle = {
 	backgroundColor: '#26203d',
 };
 
-const FormModalForm = ({ FormComponent, form, values, handleSubmit, submitting, pristine, ...formProps }) => {
+const FormModalForm = ({ FormComponent, form, values, handleSubmit, submitting, pristine, onClose, ...formProps }) => {
 	// boolean for communicating to form child components whether form needs to be reset
 	const [formReset, setFormReset] = useState(false);
 	// clear form data and set formReset back to false
@@ -52,17 +52,17 @@ const FormModalForm = ({ FormComponent, form, values, handleSubmit, submitting, 
 					style={'primary'}
 					buttonText={'Submit'}
 					disabled={submitting || pristine}
-					onClick={(e) => {
-						e.preventDefault();
+					onClick={(click) => {
+						click.preventDefault();
 						form.submit();
-						onClose(e);
+						onClose(click);
 					}}
 				/>
 				<EspressoButton
 					buttonText={'Reset'}
 					disabled={submitting || pristine}
-					onClick={(e) => {
-						e.preventDefault();
+					onClick={(click) => {
+						click.preventDefault();
 						setFormReset(true);
 					}}
 				/>
