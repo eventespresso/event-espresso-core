@@ -5,82 +5,81 @@ import set from 'lodash/set';
 import cloneDeep from 'lodash/cloneDeep';
 
 const useRelationsManager = ({ eventId }) => {
-
 	const [state, dispatch] = useReducer(relationsReducer, {});
 
-	const onReceiveRelations = ({ eventRelations = '{}' }) => {
-		dispatch({ type: 'SET_DATA', data: JSON.parse(eventRelations) });
+	const onReceiveRelations = ({ relations = '{}' }) => {
+		dispatch({ type: 'SET_DATA', data: JSON.parse(relations) });
 	};
 
 	useEffect(() => {
-		console.log('>>>>>>>>>', state);
+		console.log('useRelationsManager >>>', state);
 	}, [state]);
 
 	/**
-	 * For a given `objectType` identified by `objectId`
-	 * it returns a list of globally unique Ids of `relatedType`
+	 * For a given `entity` identified by `entityId`
+	 * it returns a list of globally unique Ids for the given `relation` Type
 	 *
-	 * @param {String} objectType 
-	 * @param {String} objectId 
-	 * @param {String} relatedType 
+	 * @param {String} entity       data Type for entity
+	 * @param {String} entityId     GUID for entity
+	 * @param {String} relation     data Type for relation
 	 */
-	const getRelations = (objectType, objectId, relatedType) => {
-		return get(state, [objectType, objectId, relatedType], []);
+	const getRelations = ({ entity, entityId, relation }) => {
+		return get(state, [entity, entityId, relation], []);
 	};
 
 	/**
-	 * Adds a relations between two objects.
+	 * Adds a relations between two entities.
 	 *
-	 * @param {String} objectType 
-	 * @param {String} objectId 
-	 * @param {String} relatedType 
-	 * @param {String} relatedId 
+	 * @param {String} entity       data Type for entity
+	 * @param {String} entityId     GUID for entity
+	 * @param {String} relation     data Type for relation
+	 * @param {String} relationId   GUID for related entity
 	 */
-	const addRelation = (objectType, objectId, relatedType, relatedId) => {
+	const addRelation = ({ entity, entityId, relation, relationId }) => {
 		dispatch({
 			type: 'ADD_RELATION',
-			objectType,
-			objectId,
-			relatedType,
-			relatedId,
+			entity,
+			entityId,
+			relation,
+			relationId,
 		});
 	};
 
 	/**
-	 * Sets the relation between an object and related type objects
+	 * Updates the relation between an entity and related type entities
 	 * Overrides old relations.
 	 *
-	 * @param {String} objectType 
-	 * @param {String} objectId 
-	 * @param {String} relatedType
-	 * @param {String[]} relatedIds
+	 * @param {String} entity           data Type for entity
+	 * @param {String} entityId         GUID for entity
+	 * @param {String} relation         data Type for relation
+	 * @param {String[]} relationIds    array of GUIDs for related entities
 	 */
-	const setRelation = (objectType, objectId, relatedType, relatedIds) => {
-		console.log({ objectType, objectId, relatedType, relatedIds });
+	const updateRelations = ({ entity, entityId, relation, relationIds }) => {
+		console.log({ entity, entityId, relation, relationIds });
 		dispatch({
-			type: 'SET_RELATION',
-			objectType,
-			objectId,
-			relatedType,
-			relatedIds,
+			type: 'UPDATE_RELATIONS',
+			entity,
+			entityId,
+			relation,
+			relationIds,
 		});
 	};
 
 	/**
-	 * Removes a relations between two objects.
+	 * Removes the relation between two entities.
 	 *
-	 * @param {String} objectType 
-	 * @param {String} objectId 
-	 * @param {String} relatedType 
-	 * @param {String} relatedId 
+	 * @param {String} entity       data Type for entity
+	 * @param {String} entityId     GUID for entity
+	 * @param {String} relation     data Type for relation
+	 * @param {String} relationId   GUID for related entity
 	 */
-	const removeRelation = (objectType, objectId, relatedType, relatedId) => {
+	const removeRelation = ({ entity, entityId, relation, relationId }) => {
 		dispatch({
 			type: 'REMOVE_RELATION',
-			objectType,
-			objectId,
-			relatedType,
-			relatedId,
+			entity,
+			entityId,
+			relation,
+			relationId,
 		});
 	};
 
@@ -90,7 +89,7 @@ const useRelationsManager = ({ eventId }) => {
 		getRelations,
 		addRelation,
 		removeRelation,
-		setRelation,
+		updateRelations,
 	};
 };
 
@@ -98,15 +97,10 @@ const relationsReducer = (state, action) => {
 	switch (action.type) {
 		case 'SET_DATA':
 			return action.data;
-		case 'SET_RELATION':
-			const {
-				objectType,
-				objectId,
-				relatedType,
-				relatedIds,
-			} = action;
+		case 'UPDATE_RELATIONS':
+			const { entity, entityId, relation, relationIds } = action;
 			const newState = cloneDeep(state);
-			set(newState, [objectType, objectId, relatedType], relatedIds);
+			set(newState, [entity, entityId, relation], relationIds);
 			console.log({ newState });
 			return newState;
 		default:
