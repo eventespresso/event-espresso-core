@@ -75,13 +75,15 @@ class Ticket extends TypeBase
                 'startDate',
                 'String',
                 'start_date',
-                esc_html__('Start time/date of Ticket', 'event_espresso')
+                esc_html__('Start date and time of the Ticket', 'event_espresso'),
+                [$this, 'formatDatetime']
             ),
             new GraphQLField(
                 'endDate',
                 'String',
                 'end_date',
-                esc_html__('End time/date of Ticket', 'event_espresso')
+                esc_html__('End date and time of the Ticket', 'event_espresso'),
+                [$this, 'formatDatetime']
             ),
             new GraphQLField(
                 'min',

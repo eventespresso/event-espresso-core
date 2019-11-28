@@ -261,4 +261,26 @@ abstract class TypeBase implements TypeInterface
         }
         return $this->model->get_one_by_ID($payload['id']);
     }
+
+
+    /**
+     * Prepares a datetime value in ISO8601/RFC3339 format.
+     * It is assumed that the value of $datetime is in the format
+     * returned by EE_Base_Class::get_format().
+     * 
+     * @param string        $datetime The datetime value.
+     * @param EE_Base_Class $source   The source object.
+     * @return string ISO8601/RFC3339 formatted datetime.
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws InvalidArgumentException
+     * @throws ReflectionException
+     * @since $VID:$
+     */
+    public function formatDatetime($datetime, EE_Base_Class $source)
+    {
+        $format   = $source->get_format();
+        $datetime = \DateTime::createFromFormat($format, $datetime);
+        return $datetime->format(\DateTime::RFC3339);
+    }
 }
