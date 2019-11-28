@@ -1,0 +1,9 @@
+.ee-date-range-input .bp3-input-group {
+    margin-bottom: 1rem;
+    width: 50%;
+}
+
+/* This is a temp hack. */
+.docs-date-range > .bp3-tag {
+    margin-bottom: 1rem;
+}

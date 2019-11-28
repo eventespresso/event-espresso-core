@@ -969,10 +969,10 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page
     public function enqueueEspressoEditorAssets()
     {
         wp_enqueue_style(EspressoEditorAssetManager::CSS_HANDLE_EDITOR);
+        wp_enqueue_style(EspressoEditorAssetManager::CSS_HANDLE_EDITOR_PROTOTYPE);
         wp_enqueue_script(EspressoEditorAssetManager::JS_HANDLE_EDITOR);
         wp_enqueue_script(EspressoEditorAssetManager::JS_HANDLE_EDITOR_PROTOTYPE);
     }
-
 
     /**
      * This is a wrapper for the insert/update routes for cpt items so we can add things that are common to ALL

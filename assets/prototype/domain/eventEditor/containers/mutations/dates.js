@@ -6,14 +6,12 @@ export const CREATE_DATE = gql`
 			datetime {
 				id
 				datetimeId
-				name
 				description
-				start
-				end
-				startDate
 				endDate
-				startTime
 				endTime
+				name
+				startDate
+				startTime
 			}
 		}
 	}
@@ -24,7 +22,10 @@ export const UPDATE_DATE = gql`
 		updateDatetime(input: $input) {
 			datetime {
 				id
+				description
+				endDate
 				name
+				startDate
 			}
 		}
 	}
