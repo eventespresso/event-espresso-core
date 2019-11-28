@@ -36,6 +36,14 @@ class TicketMutation
             $args['TKT_price'] = floatval($input['price']);
         }
 
+        if (! empty($input['startDate'])) {
+            $args['TKT_start_date'] = new \DateTime(sanitize_text_field($input['startDate']));
+        }
+
+        if (! empty($input['endDate'])) {
+            $args['TKT_end_date'] = new \DateTime(sanitize_text_field($input['endDate']));
+        }
+
         if (! empty($input['datetimes'])) {
             $args['datetimes'] = array_map('sanitize_text_field', (array) $input['datetimes']);
         }

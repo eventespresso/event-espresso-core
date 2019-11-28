@@ -34,7 +34,7 @@ mutation createDatetime($input: CreateDatetimeInput!) {
     "eventId": 22,
     "tickets": [
       "RGF0ZXJKHNUYT=",
-      "UIYNFTRUYNTBYY
+      "UIYNFTRUYNTBYY"
     ]
   }
 }
@@ -69,7 +69,7 @@ mutation updateDatetime($input: UpdateDatetimeInput!) {
     "event": "ZXNwcmVzc29fZXZlbnRzOjIy",
     "tickets": [
       "RGF0ZXJKHNUYT=",
-      "UIYNFTRUYNTBYY
+      "UIYNFTRUYNTBYY"
     ]
   }
 }

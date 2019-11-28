@@ -40,11 +40,11 @@ class DatetimeMutation
         }
 
         if (! empty($input['startDate'])) {
-            $args['DTT_EVT_start'] = sanitize_text_field($input['startDate']);
+            $args['DTT_EVT_start'] = new \DateTime(sanitize_text_field($input['startDate']));
         }
 
         if (! empty($input['endDate'])) {
-            $args['DTT_EVT_end'] = sanitize_text_field($input['endDate']);
+            $args['DTT_EVT_end'] = new \DateTime(sanitize_text_field($input['endDate']));
         }
 
         if (! empty($input['tickets'])) {
