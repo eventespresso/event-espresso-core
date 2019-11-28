@@ -98,9 +98,9 @@ abstract class AbstractConnectionResolver extends WPGraphQLConnectionResolver
             } elseif (is_string($value)) {
                 $value = sanitize_text_field($value);
             }
-            $query_args[ $arg_mapping[ $arg ] ] = in_array($arg, $id_fields)
-            ? $this->convertGlobalId($value)
-            : $value;
+            $query_args[ $arg_mapping[ $arg ] ] = in_array($arg, $id_fields, true)
+                ? $this->convertGlobalId($value)
+                : $value;
         }
 
         /**

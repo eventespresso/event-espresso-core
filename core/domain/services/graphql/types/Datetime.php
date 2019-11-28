@@ -177,7 +177,7 @@ class Datetime extends TypeBase
                 'event',
                 'ID',
                 null,
-                esc_html__('Globally uqinue event ID of the datetime.', 'event_espresso')
+                esc_html__('Globally unique event ID of the datetime.', 'event_espresso')
             ),
             new GraphQLInputField(
                 'tickets',
@@ -185,7 +185,7 @@ class Datetime extends TypeBase
                 null,
                 sprintf(
                     '%1$s %2$s',
-                    esc_html__('Globally uqinue IDs of the tickets related to the datetime.', 'event_espresso'),
+                    esc_html__('Globally unique IDs of the tickets related to the datetime.', 'event_espresso'),
                     esc_html__('Ignored if empty.', 'event_espresso')
                 )
             ),

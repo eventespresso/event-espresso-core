@@ -27,7 +27,7 @@ abstract class InputBase implements InputInterface
     protected $description = '';
 
     /**
-     * @var \EventEspresso\core\services\graphql\fields\GraphQLFieldInterface[] $fields
+     * @var GraphQLFieldInterface[] $fields
      */
     protected $fields = [];
 
@@ -41,7 +41,7 @@ abstract class InputBase implements InputInterface
 
 
     /**
-     * @return \EventEspresso\core\services\graphql\fields\GraphQLFieldInterface[]
+     * @return GraphQLFieldInterface[]
      * @since $VID:$
      */
     abstract protected function getFields();
@@ -84,7 +84,7 @@ abstract class InputBase implements InputInterface
 
 
     /**
-     * @return \EventEspresso\core\services\graphql\fields\GraphQLFieldInterface[]
+     * @return GraphQLFieldInterface[]
      * @since $VID:$
      */
     public function fields()
@@ -94,7 +94,7 @@ abstract class InputBase implements InputInterface
 
 
     /**
-     * @param \EventEspresso\core\services\graphql\fields\GraphQLFieldInterface[] $fields
+     * @param GraphQLFieldInterface[] $fields
      */
     protected function setFields(array $fields)
     {

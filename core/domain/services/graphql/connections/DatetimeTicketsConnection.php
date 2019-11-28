@@ -98,7 +98,7 @@ class DatetimeTicketsConnection implements ConnectionInterface
             [
                 'orderby'      => [
                     'type'        => ['list_of' => 'TicketsConnectionOrderbyInput'],
-                    'description' => esc_html__('What paramater to use to order the objects by.', 'event_espresso'),
+                    'description' => esc_html__('What parameter to use to order the objects by.', 'event_espresso'),
                 ],
                 'datetime' => [
                     'type'        => 'ID',

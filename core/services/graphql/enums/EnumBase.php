@@ -81,7 +81,7 @@ abstract class EnumBase implements EnumInterface
 
 
     /**
-     * @return aray
+     * @return array
      * @since $VID:$
      */
     public function values()

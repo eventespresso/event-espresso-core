@@ -78,6 +78,7 @@ class GraphQLField implements GraphQLFieldInterface
      * @param string          $description
      * @param callable|null   $formatter
      * @param callable|null   $resolver
+     * @param array           $args
      * @param array           $caps
      */
     public function __construct(

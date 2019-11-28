@@ -2,8 +2,14 @@
 
 namespace EventEspresso\core\domain\services\graphql\data\mutations;
 
-use GraphQLRelay\Relay;
 use DateTime;
+use EE_Datetime;
+use EE_Error;
+use EventEspresso\core\exceptions\InvalidDataTypeException;
+use EventEspresso\core\exceptions\InvalidInterfaceException;
+use GraphQLRelay\Relay;
+use InvalidArgumentException;
+use ReflectionException;
 
 /**
  * Class DatetimeMutation
@@ -57,11 +63,17 @@ class DatetimeMutation
         return $args;
     }
 
+
     /**
      * Sets the related tickets for the given datetime.
      *
      * @param EE_Datetime $entity  The datetime instance.
      * @param array       $tickets Array of ticket IDs to relate.
+     * @throws EE_Error
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws InvalidArgumentException
+     * @throws ReflectionException
      */
     public static function setRelatedTickets($entity, array $tickets)
     {
