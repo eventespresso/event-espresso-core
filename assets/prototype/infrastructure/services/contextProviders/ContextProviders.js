@@ -13,9 +13,7 @@ import { RelationsProvider } from './RelationsProvider';
 const ContextProviders = ({ children, eventId }) => (
 	<ToastProvider>
 		<ApolloProvider>
-			<RelationsProvider eventId={eventId}>
-				{children}
-			</RelationsProvider>
+			<RelationsProvider eventId={eventId}>{children}</RelationsProvider>
 		</ApolloProvider>
 	</ToastProvider>
 );
