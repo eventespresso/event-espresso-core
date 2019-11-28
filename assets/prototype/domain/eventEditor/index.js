@@ -24,7 +24,7 @@ const { eventId } = eventData;
 
 if (eventId) {
 	render(
-		<ContextProviders>
+		<ContextProviders eventId={eventId}>
 			<EventEditor eventId={eventId} />
 		</ContextProviders>,
 		editor
