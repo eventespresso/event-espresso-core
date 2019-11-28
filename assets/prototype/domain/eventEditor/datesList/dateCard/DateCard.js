@@ -30,9 +30,13 @@ const idStyle = {
 const DateCard = ({ eventId, id }) => {
 	const date = useDateItem({ id });
 	const onFieldUpdate = useUpdateDateMutation({ id });
-
 	const { getRelations } = useRelations();
-	const relatedTickets = getRelations('datetimes', id, 'tickets');
+	// get related tickets for this datetime
+	const relatedTickets = getRelations({
+		entity: 'datetimes',
+		entityId: id,
+		relation: 'tickets',
+	});
 
 	const startDate = date.start ? new Date(date.start * 1000) : PLUS_ONE_MONTH;
 	// const endDate = date.end ?
@@ -103,7 +107,7 @@ const DateCard = ({ eventId, id }) => {
 				</Popover>
 			</div>
 			<div>
-				{'Related tickets: '} <code>{JSON.stringify(relatedTickets)}</code>
+				{'Related Tickets: '} <code>{JSON.stringify(relatedTickets)}</code>
 			</div>
 			<DeleteDateButton eventId={eventId} id={date.id} />
 		</Card>
