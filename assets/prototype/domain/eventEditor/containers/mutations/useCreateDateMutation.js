@@ -7,7 +7,7 @@ import useRelations from '../../../../infrastructure/services/relations/useRelat
 
 const useCreateDateMutation = ({ eventId }) => {
 	const toaster = useToaster();
-	const { setRelation, addRelation } = useRelations();
+	const { updateRelations, addRelation } = useRelations();
 
 	const toasterMessage = `creating new datetime for event ${eventId}`;
 	const [createDate, { loading, error }] = useMutation(CREATE_DATE, {
@@ -92,8 +92,12 @@ const useCreateDateMutation = ({ eventId }) => {
 					},
 				});
 
-				// update relations
-				setRelation('datetimes', datetime.id, 'tickets', tickets);
+				updateRelations({
+					entity: 'datetimes',
+					entityId: datetime.id,
+					relation: 'tickets',
+					relationIds: tickets,
+				});
 			}
 
 			// write the data to cache without
