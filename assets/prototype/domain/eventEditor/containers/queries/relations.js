@@ -1,7 +1,7 @@
 import gql from 'graphql-tag';
 
 export const GET_RELATIONS_DATA = gql`
-	query getEvetRelationalData($eventId: Int!) {
+	query getEventRelationalData($eventId: Int!) {
 		eventRelations(eventId: $eventId)
 	}
 `;
