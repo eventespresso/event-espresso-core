@@ -18,6 +18,7 @@ use WPGraphQL\Model\Post;
 use GraphQL\Type\Definition\ResolveInfo;
 use WPGraphQL\AppContext;
 use WPGraphQL\Type\Object\RootQuery;
+use DateTime;
 
 /**
  * Class TypeBase
@@ -280,7 +281,7 @@ abstract class TypeBase implements TypeInterface
     public function formatDatetime($datetime, EE_Base_Class $source)
     {
         $format   = $source->get_format();
-        $datetime = \DateTime::createFromFormat($format, $datetime);
-        return $datetime->format(\DateTime::RFC3339);
+        $datetime = DateTime::createFromFormat($format, $datetime);
+        return $datetime->format(DateTime::RFC3339);
     }
 }

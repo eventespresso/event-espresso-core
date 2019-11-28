@@ -3,6 +3,7 @@
 namespace EventEspresso\core\domain\services\graphql\data\mutations;
 
 use GraphQLRelay\Relay;
+use DateTime;
 
 /**
  * Class TicketMutation
@@ -37,11 +38,11 @@ class TicketMutation
         }
 
         if (! empty($input['startDate'])) {
-            $args['TKT_start_date'] = new \DateTime(sanitize_text_field($input['startDate']));
+            $args['TKT_start_date'] = new DateTime(sanitize_text_field($input['startDate']));
         }
 
         if (! empty($input['endDate'])) {
-            $args['TKT_end_date'] = new \DateTime(sanitize_text_field($input['endDate']));
+            $args['TKT_end_date'] = new DateTime(sanitize_text_field($input['endDate']));
         }
 
         if (! empty($input['datetimes'])) {
