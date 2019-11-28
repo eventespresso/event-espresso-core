@@ -5,14 +5,12 @@ export const GET_DATETIME = gql`
 		datetime(id: $id) {
 			id
 			datetimeId
-			name
 			description
-			start
-			end
-			startDate
 			endDate
-			startTime
 			endTime
+			name
+			startDate
+			startTime
 		}
 	}
 `;
@@ -23,14 +21,12 @@ export const GET_DATETIMES = gql`
 			nodes {
 				id
 				datetimeId
-				name
 				description
-				start
-				end
-				startDate
 				endDate
-				startTime
 				endTime
+				name
+				startDate
+				startTime
 			}
 		}
 	}

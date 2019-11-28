@@ -1,6 +1,7 @@
-import { Button, Card, EditableText, Elevation, H4, Popover } from '@blueprintjs/core/lib/esm';
+import { Button, Card, EditableText, Elevation, H4, H6, Popover } from '@blueprintjs/core/lib/esm';
 import { DatePicker, TimePrecision } from '@blueprintjs/datetime/lib/esm';
 import DeleteDateButton from './DeleteDateButton';
+import DateRangeInput from '../../../shared/dateRangeInput/DateRangeInput';
 import useDateItem from '../../containers/queries/useDateItem';
 import useUpdateDateMutation from '../../containers/mutations/useUpdateDateMutation';
 import { A_LONG_TIME_AGO, PLUS_ONE_MONTH, PLUS_TEN_YEARS } from '../../../shared/defaultDates';
@@ -27,13 +28,7 @@ const idStyle = {
 
 const DateCard = ({ eventId, id }) => {
 	const date = useDateItem({ id });
-	const { updateDate } = useUpdateDateMutation();
-
-	const onTitleConfirm = (name) => {
-		updateDate({
-			variables: { input: { clientMutationId: 'xyz', id, name } },
-		});
-	};
+	const onFieldUpdate = useUpdateDateMutation({ id });
 
 	const startDate = date.start ? new Date(date.start * 1000) : PLUS_ONE_MONTH;
 	// const endDate = date.end ?
@@ -49,15 +44,27 @@ const DateCard = ({ eventId, id }) => {
 						placeholder='Edit title...'
 						defaultValue={date.name}
 						onCancel={(value) => console.log(value)}
-						onConfirm={onTitleConfirm}
+						onConfirm={(name) => onFieldUpdate({ name })}
 						minWidth={'320px'}
 						selectAllOnFocus
 					/>
 				</H4>
 			</div>
 			<div>
-				<p>{date.description}</p>
+				<H6>
+					<EditableText
+						placeholder='Edit description...'
+						defaultValue={date.description}
+						onCancel={(value) => console.log(value)}
+						onConfirm={(description) => onFieldUpdate({ description })}
+						minWidth={'320px'}
+						multiline={true}
+						maxLines={4}
+						selectAllOnFocus
+					/>
+				</H6>
 			</div>
+			<DateRangeInput endDate={date.endDate} onFieldUpdate={onFieldUpdate} startDate={date.startDate} />
 			<div>
 				<b>{`${date.startDate} ${date.startTime}`}</b>
 				<Popover lazy>
