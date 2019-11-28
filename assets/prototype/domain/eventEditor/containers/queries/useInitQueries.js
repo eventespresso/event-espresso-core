@@ -1,4 +1,3 @@
-import get from 'lodash/get';
 import { pathOr } from 'ramda';
 import { useEffect, useState } from '@wordpress/element';
 import { useQuery, useLazyQuery } from '@apollo/react-hooks';
@@ -62,7 +61,7 @@ const useInitQueries = ({ eventId }) => {
 		toaster.error(ticketError);
 	}
 
-	const tickets = get(ticketsData, ['tickets', 'nodes'], []);
+	const tickets = pathOr([], ['tickets', 'nodes'], ticketsData);
 
 	// fetch tickets only when we have datetimes
 	// to avoid fetching all tickets irrespective of dates
