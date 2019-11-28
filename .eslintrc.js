@@ -27,11 +27,12 @@ module.exports = {
 	rules: {
 		'comma-dangle': 'off',
 		'jest/valid-describe': 'off',
+		'no-case-declarations': 'warn',
 		'react-hooks/rules-of-hooks': 'error',
 		'react-hooks/exhaustive-deps': 'off',
 		'react/prop-types': 'off',
 		'react/static-property-placement': 'off',
-		'react/display-name': 'off'
+		'react/display-name': 'off',
 	},
 	overrides: [
 		{
