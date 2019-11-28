@@ -1,6 +1,5 @@
 import { useState } from 'react';
 import isFunction from 'lodash/isFunction';
-import moment from 'moment';
 import { DateRangeInput as DefaultDateRangeInput } from '@blueprintjs/datetime';
 import { FORMATS } from './formatSelect';
 import { MomentDateRange } from './momentDate';
@@ -8,7 +7,7 @@ import { MomentDateRange } from './momentDate';
 import './style.css';
 
 const DateRangeInput = ({ endDate, onFieldUpdate, startDate }) => {
-	const format = FORMATS[0];
+	const format = FORMATS.MYSQL;
 	const defaultRangeValues = [startDate || null, endDate || null];
 	const [range, setRange] = useState(defaultRangeValues);
 
@@ -17,10 +16,9 @@ const DateRangeInput = ({ endDate, onFieldUpdate, startDate }) => {
 		const isUpdatable = isFunction(onFieldUpdate) && start && end;
 
 		if (isUpdatable) {
-			const format = 'YYYY-MM-DD HH:mm:ss';
 			const formattedDates = {
-				startDate: moment(start).format(format),
-				endDate: moment(end).format(format),
+				startDate: format.formatDate(start),
+				endDate: format.formatDate(end),
 			};
 
 			onFieldUpdate(formattedDates);
