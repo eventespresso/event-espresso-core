@@ -154,7 +154,7 @@ class RelationNode extends BaseNode
             'objs' => []
         ];
         foreach($this->model_obj_nodes as $id => $model_obj_node){
-            $tree['obj'][$id] = $model_obj_node->toArray();
+            $tree['objs'][$id] = $model_obj_node->toArray();
         }
         return $tree;
     }

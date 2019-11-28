@@ -111,8 +111,12 @@ class ModelObjNode extends BaseNode
             'id' => $this->model_obj->ID(),
             'rels' => []
         ];
-        foreach($this->relation_nodes as $relation_name => $relation_node){
-            $tree['rels'][$relation_name] = $relation_node->toArray();
+        if($this->relation_nodes === null){
+            $tree['rels'] = null;
+        } else {
+            foreach($this->relation_nodes as $relation_name => $relation_node){
+                $tree['rels'][$relation_name] = $relation_node->toArray();
+            }
         }
         return $tree;
     }

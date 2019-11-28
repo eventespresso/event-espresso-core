@@ -28,8 +28,6 @@ class ModelObjNodeTest extends EE_UnitTestCase
 
         // We should have a node for the datetime relation.
         $this->assertArrayHasKey('Datetime', $tree['rels']);
-        $this->assertEquals(0, $tree['rels']['Datetime']['count']);
-        $this->assertEquals([], $tree['rels']['Datetime']['objs']);
 
         // We should NOT have relation nodes for HABTM relations...
         $this->assertArrayNotHasKey('Question_Group', $tree['rels']);
@@ -40,7 +38,6 @@ class ModelObjNodeTest extends EE_UnitTestCase
         // ...even if they're only an implied relation.
         $this->assertArrayHasKey('Event_Venue', $tree['rels']);
     }
-
 }
 // End of file EntityNodeTest.php
 // Location: EventEspresso\core\services\orm\tree_traversal/EntityNodeTest.php
