@@ -86,6 +86,7 @@
 		"pluralize": "^8.0.0",
 		"prop-types": "^15.7.2",
 		"querystringify": "^2.1.1",
+		"ramda": "^0.26.1",
 		"react-beautiful-dnd": "^11.0.4",
 		"react-currency-formatter": "^1.1.0",
 		"react-final-form": "^6.3.0",

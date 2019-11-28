@@ -1,17 +1,10 @@
-import { Callout, H3, H6, NonIdealState, Spinner } from '@blueprintjs/core/lib/esm';
+import { H3 } from '@blueprintjs/core/lib/esm';
+import LoadingIndicator from '../../shared/LoadingIndicator';
+import ErrorIndicator from '../../shared/ErrorIndicator';
+import EmptyState from '../../shared/EmptyState';
+
 import AddNewDateButton from './AddNewDateButton';
 import DateCard from './dateCard/DateCard';
-
-const boxStyle = {
-	padding: '2rem',
-	textAlign: 'center',
-	width: '100%',
-};
-
-const hdrStyle = {
-	color: 'grey',
-	margin: '1rem 0 0',
-};
 
 const listStyle = {
 	display: 'flex',
@@ -35,27 +28,9 @@ const DatesList = ({ datetimes, error, eventId, loading, tickets }) => {
 	console.log('%c > error:', 'color: tomato;', error);
 	const header = <H3 style={{ margin: '2rem 0 .5rem' }}>{'Dates List'}</H3>;
 
-	if (loading) {
-		return (
-			<>
-				{header}
-				<Callout style={boxStyle}>
-					<Spinner size={Spinner.SIZE_SMALL} />
-					<H6 style={hdrStyle}>{'loading dates...'}</H6>
-				</Callout>
-			</>
-		);
-	}
-	if (error) {
-		return (
-			<>
-				{header}
-				<Callout style={boxStyle}>
-					<NonIdealState icon={'warning-sign'} title={error.code} description={error.message} />
-				</Callout>
-			</>
-		);
-	}
+	if (loading) return <LoadingIndicator header={header} message='loading dates...' />;
+
+	if (error) return <ErrorIndicator error={error} header={header} />;
 
 	const btnRow = (
 		<div style={btnRowStyle}>
@@ -63,28 +38,20 @@ const DatesList = ({ datetimes, error, eventId, loading, tickets }) => {
 		</div>
 	);
 
-	const datesList =
-		Array.isArray(datetimes) && datetimes.length ? (
-			<>
-				<div style={listStyle}>
-					{datetimes.map((date) => (
-						<DateCard eventId={eventId} id={date.id} key={date.id} />
-					))}
-				</div>
-				{btnRow}
-			</>
-		) : (
-			<>
-				<Callout>
-					<NonIdealState
-						icon={'help'}
-						title={'NO DATES FOR YOU !!!'}
-						description={'try changing filter settings'}
-					/>
-				</Callout>
-				{btnRow}
-			</>
-		);
+	const datesList = datetimes.length ? (
+		<>
+			<div style={listStyle}>
+				{datetimes.map((date) => (
+					<DateCard eventId={eventId} id={date.id} key={date.id} />
+				))}
+			</div>
+			{btnRow}
+		</>
+	) : (
+		<EmptyState description={'try changing filter settings'} title={'NO DATES FOR YOU !!!'}>
+			{btnRow}
+		</EmptyState>
+	);
 
 	return (
 		<div>
