@@ -30,6 +30,8 @@ mutation createTicket($input: CreateTicketInput!) {
     "name": "Some name here",
     "description": "Here goes the description",
     "price": 20.5,
+    "startDate": "06/12/2019 10:40:00",
+    "endDate": "12/26/2019 20:40:00",
     "datetimes": [
       "RGF0ZXRpbWU6MTQ=",
       "JTRBYTRTUBYYBYT="
@@ -66,6 +68,8 @@ mutation updateTicket($input: UpdateTicketInput!) {
     "id": "VGlja2V0OjE5",
     "name": "Some name here",
     "description": "Here goes the description",
+    "startDate": "06/12/2019 10:40:00",
+    "endDate": "12/26/2019 20:40:00",
     "datetimes": [
       "RGF0ZXRpbWU6MTQ=",
       "JTRBYTRTUBYYBYT="

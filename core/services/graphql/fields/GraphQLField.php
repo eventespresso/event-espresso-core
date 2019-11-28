@@ -2,9 +2,14 @@
 
 namespace EventEspresso\core\services\graphql\fields;
 
+use EE_Base_Class;
 use GraphQL\Type\Definition\ResolveInfo;
 use LogicException;
 use WPGraphQL\AppContext;
+use EventEspresso\core\exceptions\InvalidDataTypeException;
+use EventEspresso\core\exceptions\InvalidInterfaceException;
+use InvalidArgumentException;
+use ReflectionException;
 
 /**
  * Class GraphQLField
@@ -262,16 +267,21 @@ class GraphQLField implements GraphQLFieldInterface
      * Checks if the format callback is set.
      * If yes, then uses it to format the value.
      *
-     * @param mixed $value
+     * @param mixed         $value
+     * @param EE_Base_Class $source
      * @return mixed The formatted value.
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws InvalidArgumentException
+     * @throws ReflectionException
      */
-    public function mayBeFormatValue($value)
+    public function mayBeFormatValue($value, EE_Base_Class $source)
     {
         if (is_callable($this->formatter)) {
             // dynamic methods using $this don't play nice
             // so capture formatter to a single var first
             $formatter = $this->formatter;
-            return $formatter($value);
+            return $formatter($value, $source);
         }
         return $value;
     }

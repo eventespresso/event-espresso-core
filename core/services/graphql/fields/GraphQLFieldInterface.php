@@ -2,6 +2,7 @@
 
 namespace EventEspresso\core\services\graphql\fields;
 
+use EE_Base_Class;
 use GraphQL\Type\Definition\ResolveInfo;
 use LogicException;
 use WPGraphQL\AppContext;
@@ -106,8 +107,9 @@ interface GraphQLFieldInterface
      * Checks if the format callback is set.
      * If yes, then uses it to format the value.
      *
-     * @param mixed $value
+     * @param mixed         $value
+     * @param EE_Base_Class $source
      * @return mixed The formatted value.
      */
-    public function mayBeFormatValue($value);
+    public function mayBeFormatValue($value, EE_Base_Class $source);
 }

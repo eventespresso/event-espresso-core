@@ -99,7 +99,7 @@ class FieldResolver extends ResolverBase
             // Check if the field has a key mapped to model.
             if (! empty($field->key())) {
                 $value = $source->{$field->key()}();
-                return $field->mayBeFormatValue($value);
+                return $field->mayBeFormatValue($value, $source);
             }
             switch ($fieldName) {
                 case 'id': // the global ID

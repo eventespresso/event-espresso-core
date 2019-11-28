@@ -72,40 +72,18 @@ class Datetime extends TypeBase
                 esc_html__('Description for Datetime', 'event_espresso')
             ),
             new GraphQLField(
-                'start',
-                'String',
-                'start',
-                esc_html__('Start timestamp of Event', 'event_espresso')
-            ),
-            new GraphQLField(
                 'startDate',
                 'String',
-                'start_date',
-                esc_html__('Start time/date of Event', 'event_espresso')
-            ),
-            new GraphQLField(
-                'end',
-                'String',
-                'end',
-                esc_html__('End timestamp of Event', 'event_espresso')
+                'start_date_and_time',
+                esc_html__('Start date and time of the Event', 'event_espresso'),
+                [$this, 'formatDatetime']
             ),
             new GraphQLField(
                 'endDate',
                 'String',
-                'end_date',
-                esc_html__('End time/date of Event', 'event_espresso')
-            ),
-            new GraphQLField(
-                'startTime',
-                'String',
-                'start_time',
-                esc_html__('Start time of Event', 'event_espresso')
-            ),
-            new GraphQLField(
-                'endTime',
-                'String',
-                'end_time',
-                esc_html__('End time of Event', 'event_espresso')
+                'end_date_and_time',
+                esc_html__('End date and time of the Event', 'event_espresso'),
+                [$this, 'formatDatetime']
             ),
             new GraphQLField(
                 'capacity',
