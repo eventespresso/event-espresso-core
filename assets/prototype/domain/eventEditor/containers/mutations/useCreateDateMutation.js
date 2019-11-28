@@ -7,7 +7,7 @@ import useRelations from '../../../../infrastructure/services/relations/useRelat
 
 const useCreateDateMutation = ({ eventId }) => {
 	const toaster = useToaster();
-	const { updateRelations, addRelation } = useRelations();
+	const { updateRelations } = useRelations();
 
 	const toasterMessage = `creating new datetime for event ${eventId}`;
 	const [createDate, { loading, error }] = useMutation(CREATE_DATE, {

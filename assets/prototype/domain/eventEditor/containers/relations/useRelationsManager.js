@@ -94,12 +94,13 @@ const useRelationsManager = ({ eventId }) => {
 };
 
 const relationsReducer = (state, action) => {
+	const { entity, entityId, relation, relationIds } = action;
+	const newState = cloneDeep(state);
+
 	switch (action.type) {
 		case 'SET_DATA':
 			return action.data;
 		case 'UPDATE_RELATIONS':
-			const { entity, entityId, relation, relationIds } = action;
-			const newState = cloneDeep(state);
 			set(newState, [entity, entityId, relation], relationIds);
 			console.log({ newState });
 			return newState;
