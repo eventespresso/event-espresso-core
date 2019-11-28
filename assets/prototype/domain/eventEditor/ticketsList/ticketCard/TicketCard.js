@@ -4,6 +4,7 @@ import TicketPriceCalculatorButton from '../ticketPriceCalculator/TicketPriceCal
 import useTicketItem from '../../containers/queries/useTicketItem';
 import useUpdateTicketMutation from '../../containers/mutations/useUpdateTicketMutation';
 import CurrencyInput from '../../../shared/CurrencyInput';
+import useRelations from '../../../../infrastructure/services/relations/useRelations';
 
 const console = window.console;
 
@@ -37,6 +38,27 @@ const priceStyle = {
 const TicketCard = ({ datetimeIn, id }) => {
 	const ticket = useTicketItem({ id });
 	const updateTicketField = useUpdateTicketMutation({ id });
+	const { getRelations } = useRelations();
+	// get related datetimes for this datetime
+	const relatedDates = getRelations({
+		entity: 'tickets',
+		entityId: id,
+		relation: 'datetimes',
+	});
+
+	const ticketPrice = editing ? (
+		<EditableText
+			isEditing={editing}
+			placeholder={'set price...'}
+			defaultValue={ticket.price}
+			onCancel={() => setEditing(false)}
+			onConfirm={(price) => updateTicketField({ price })}
+			selectAllOnFocus
+		/>
+	) : (
+			<Currency quantity={ticket.price} />
+		);
+
 	return (
 		<Card elevation={Elevation.ONE} style={cardStyle}>
 			<div>
@@ -78,6 +100,10 @@ const TicketCard = ({ datetimeIn, id }) => {
 				<TicketPriceCalculatorButton ticket={ticket} />
 				<DeleteTicketButton datetimeIn={datetimeIn} id={ticket.id} />
 			</div>
+			<div>
+				{'Related Dates: '} <code>{JSON.stringify(relatedDates)}</code>
+			</div>
+			<DeleteTicketButton datetimeIn={datetimeIn} id={ticket.id} />
 		</Card>
 	);
 };
