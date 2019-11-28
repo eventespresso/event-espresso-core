@@ -5,6 +5,7 @@ import DateRangeInput from '../../../shared/dateRangeInput/DateRangeInput';
 import useDateItem from '../../containers/queries/useDateItem';
 import useUpdateDateMutation from '../../containers/mutations/useUpdateDateMutation';
 import { A_LONG_TIME_AGO, PLUS_ONE_MONTH, PLUS_TEN_YEARS } from '../../../shared/defaultDates';
+import useRelations from '../../../../infrastructure/services/relations/useRelations';
 
 const btnStyle = {
 	margin: '0 0 0 .5rem',
@@ -29,6 +30,9 @@ const idStyle = {
 const DateCard = ({ eventId, id }) => {
 	const date = useDateItem({ id });
 	const onFieldUpdate = useUpdateDateMutation({ id });
+
+	const { getRelations } = useRelations();
+	const relatedTickets = getRelations('datetimes', id, 'tickets');
 
 	const startDate = date.start ? new Date(date.start * 1000) : PLUS_ONE_MONTH;
 	// const endDate = date.end ?
@@ -97,6 +101,9 @@ const DateCard = ({ eventId, id }) => {
 						showActionsBar
 					/>
 				</Popover>
+			</div>
+			<div>
+				{'Related tickets: '} <code>{JSON.stringify(relatedTickets)}</code>
 			</div>
 			<DeleteDateButton eventId={eventId} id={date.id} />
 		</Card>

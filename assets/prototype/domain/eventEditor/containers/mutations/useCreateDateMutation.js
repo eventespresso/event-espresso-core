@@ -3,9 +3,12 @@ import { CREATE_DATE } from './dates';
 import { GET_DATETIMES } from '../queries/dates';
 import { GET_TICKETS } from '../queries/tickets';
 import useToaster from '../../../../infrastructure/services/toaster/useToaster';
+import useRelations from '../../../../infrastructure/services/relations/useRelations';
 
 const useCreateDateMutation = ({ eventId }) => {
 	const toaster = useToaster();
+	const { setRelation, addRelation } = useRelations();
+
 	const toasterMessage = `creating new datetime for event ${eventId}`;
 	const [createDate, { loading, error }] = useMutation(CREATE_DATE, {
 		onCompleted: () => {
@@ -21,13 +24,14 @@ const useCreateDateMutation = ({ eventId }) => {
 	toaster.error(error);
 
 	// On submit handler receives data from FormModal
-	return ({ description, name }) => {
+	return ({ description, name, tickets = [] }) => {
 		const variables = {
 			input: {
 				clientMutationId: 'xyz',
 				description,
 				eventId,
 				name,
+				tickets,
 			},
 		};
 
@@ -87,6 +91,9 @@ const useCreateDateMutation = ({ eventId }) => {
 						},
 					},
 				});
+
+				// update relations
+				setRelation('datetimes', datetime.id, 'tickets', tickets);
 			}
 
 			// write the data to cache without
