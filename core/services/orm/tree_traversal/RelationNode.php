@@ -3,7 +3,13 @@
 namespace EventEspresso\core\services\orm\tree_traversal;
 
 use EE_Base_Class;
-use EventEspresso\core\libraries\rest_api\controllers\Base;
+use EE_Error;
+use EE_Model_Relation_Base;
+use EEM_Base;
+use EventEspresso\core\exceptions\InvalidDataTypeException;
+use EventEspresso\core\exceptions\InvalidInterfaceException;
+use InvalidArgumentException;
+use ReflectionException;
 
 /**
  * Class RelationNode
@@ -20,7 +26,7 @@ class RelationNode extends BaseNode
     /**
      * @var EE_Base_Class
      */
-    protected $mainEntity;
+    protected $main_model_obj;
 
     /**
      * @var int
@@ -28,17 +34,17 @@ class RelationNode extends BaseNode
     protected $count;
 
     /**
-     * @var \EE_Model_Relation_Base
+     * @var EEM_Base
      */
-    protected $relation;
+    protected $related_model;
 
 
-    protected $itemNodes;
+    protected $model_obj_nodes;
 
-    public function __construct($mainEntity, $relation)
+    public function __construct($main_model_obj, $related_model)
     {
-        $this->mainEntity = $mainEntity;
-        $this->relation = $relation;
+        $this->main_model_obj = $main_model_obj;
+        $this->related_model = $related_model;
     }
 
 
@@ -48,34 +54,37 @@ class RelationNode extends BaseNode
      * @since $VID:$
      * @param $work_budget
      * @return int|void
-     * @throws \EE_Error
+     * @throws EE_Error
      */
     protected function work($work_budget){
         $work_done = 0;
-        foreach($this->itemNodes as $entity_node){
-            if($work_done < $work_budget){
-                $work_done += $entity_node->visit($work_budget);
+        if(is_array($this->model_obj_nodes)) {
+            foreach ($this->model_obj_nodes as $entity_node) {
+                if ($work_done < $work_budget) {
+                    $work_done += $entity_node->visit($work_budget);
+                }
             }
+        } else {
+            $this->model_obj_nodes = [];
         }
         if($work_done < $work_budget){
-            $items = $this->relation->get_this_model()->get_all_related(
-                $this->mainEntity,
-                $this->relation->get_other_model(),
+            $related_model_objs = $this->related_model->get_all(
                 [
+                    $this->whereQueryParams(),
                     'limit' => [
-                        count($this->itemNodes),
+                        count($this->model_obj_nodes),
                         $work_budget
                     ]
                 ]
             );
-            $work_done += count($items);
+            $work_done += count($related_model_objs);
             $new_item_nodes = [];
 
             // Add entity nodes for each of the model objects we fetched.
-            foreach($items as $item){
-                $entity_node = new EntityNode($item);
-                $this->itemNodes[] = $entity_node;
-                $new_item_nodes[] = $entity_node;
+            foreach($related_model_objs as $related_model_obj){
+                $entity_node = new ModelObjNode($related_model_obj);
+                $this->model_obj_nodes[$related_model_obj->ID()] = $entity_node;
+                $new_item_nodes[$related_model_obj->ID()] = $entity_node;
             }
 
             // And lastly do the work.
@@ -114,11 +123,40 @@ class RelationNode extends BaseNode
      * Discovers how many related model objects exist.
      * @since $VID:$
      * @return mixed|void
-     * @throws \EE_Error
+     * @throws EE_Error
      */
     protected function discover()
     {
-        $this->count = $this->relation->get_this_model()->count_related($this->mainEntity, $this->relation->get_other_model());
+        $this->count = $this->related_model->count([$this->whereQueryParams()]);
+    }
+
+    /**
+     * @since $VID:$
+     * @return array
+     * @throws EE_Error
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws InvalidArgumentException
+     * @throws ReflectionException
+     */
+    protected function whereQueryParams(){
+        return [
+            $this->related_model->get_foreign_key_to($this->main_model_obj->get_model()->get_this_model_name())->get_name() => $this->main_model_obj->ID()
+        ];
+    }
+    /**
+     * @since $VID:$
+     * @return array
+     */
+    public function toArray(){
+        $tree = [
+            'count' => $this->count,
+            'objs' => []
+        ];
+        foreach($this->model_obj_nodes as $id => $model_obj_node){
+            $tree['obj'][$id] = $model_obj_node->toArray();
+        }
+        return $tree;
     }
 }
 // End of file RelationNode.php

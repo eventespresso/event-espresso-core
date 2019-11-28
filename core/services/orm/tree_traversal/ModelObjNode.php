@@ -3,6 +3,8 @@
 namespace EventEspresso\core\services\orm\tree_traversal;
 
 use EE_Base_Class;
+use EE_HABTM_Relation;
+use EE_Has_Many_Relation;
 
 /**
  * Class Visitor
@@ -14,12 +16,12 @@ use EE_Base_Class;
  * @since         $VID:$
  *
  */
-class EntityNode extends BaseNode
+class ModelObjNode extends BaseNode
 {
     /**
      * @var EE_Base_Class
      */
-    protected $initialInstance;
+    protected $model_obj;
 
     /**
      * @var RelationNode[]
@@ -28,7 +30,7 @@ class EntityNode extends BaseNode
 
     public function __construct( $instance)
     {
-        $this->initialInstance = $instance;
+        $this->model_obj = $instance;
     }
 
     /**
@@ -43,9 +45,11 @@ class EntityNode extends BaseNode
      */
     protected function discover(){
         $this->relation_nodes = [];
-        foreach($this->initialInstance->get_model()->relation_settings() as $relation){
-            if($relation->block_delete_if_related_models_exist()){
-                $this->relation_nodes[] = new RelationNode($this->initialInstance, $relation);
+        foreach($this->model_obj->get_model()->relation_settings() as $relationName => $relation){
+            if($relation instanceof EE_Has_Many_Relation){
+                $this->relation_nodes[$relationName] = new RelationNode($this->model_obj, $relation->get_other_model());
+            } elseif($relation instanceof EE_HABTM_Relation){
+                $this->relation_nodes[$relation->get_join_model()->get_this_model_name()] = new RelationNode($this->model_obj, $relation->get_join_model() );
             }
         }
     }
@@ -90,6 +94,27 @@ class EntityNode extends BaseNode
             $this->complete = true;
         }
         return $units_worked;
+    }
+
+    /**
+     * @since $VID:$
+     * @return array
+     * @throws \EE_Error
+     * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
+     * @throws \EventEspresso\core\exceptions\InvalidInterfaceException
+     * @throws \InvalidArgumentException
+     * @throws \ReflectionException
+     */
+    public function toArray()
+    {
+        $tree = [
+            'id' => $this->model_obj->ID(),
+            'rels' => []
+        ];
+        foreach($this->relation_nodes as $relation_name => $relation_node){
+            $tree['rels'][$relation_name] = $relation_node->toArray();
+        }
+        return $tree;
     }
 }
 // End of file Visitor.php

@@ -62,6 +62,14 @@ abstract class BaseNode
      * @return int units of work done
      */
     protected abstract function work($work_budget);
+
+    /**
+     * Shows the entity/relation node as an array.
+     * @since $VID:$
+     * @return array
+     */
+    public abstract function toArray();
+
 }
 // End of file BaseNode.php
 // Location: EventEspresso\core\services\orm\tree_traversal/BaseNode.php
