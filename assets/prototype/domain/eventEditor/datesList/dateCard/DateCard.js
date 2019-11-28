@@ -58,6 +58,8 @@ const DateCard = ({ eventId, id }) => {
 						onCancel={(value) => console.log(value)}
 						onConfirm={(description) => onFieldUpdate({ description })}
 						minWidth={'320px'}
+						multiline={true}
+						maxLines={4}
 						selectAllOnFocus
 					/>
 				</H6>
