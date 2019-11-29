@@ -5,6 +5,7 @@ import useTicketItem from '../../containers/queries/useTicketItem';
 import useUpdateTicketMutation from '../../containers/mutations/useUpdateTicketMutation';
 import CurrencyInput from '../../../shared/CurrencyInput';
 import useRelations from '../../../../infrastructure/services/relations/useRelations';
+import DatetimeId from '../DatetimeId';
 
 const console = window.console;
 
@@ -44,7 +45,7 @@ const TicketCard = ({ datetimeIn, id }) => {
 		entity: 'tickets',
 		entityId: id,
 		relation: 'datetimes',
-	});
+	}).map((datetimeId) => <DatetimeId key={datetimeId} id={datetimeId} />);
 
 	const ticketPrice = editing ? (
 		<EditableText
@@ -62,7 +63,9 @@ const TicketCard = ({ datetimeIn, id }) => {
 	return (
 		<Card elevation={Elevation.ONE} style={cardStyle}>
 			<div>
-				<div style={idStyle}>{ticket.ticketId}</div>
+				<div style={idStyle}>
+					{ticket.ticketId} {':'} {ticket.id}
+				</div>
 				<H4>
 					<EditableText
 						placeholder={'edit title...'}
@@ -101,7 +104,7 @@ const TicketCard = ({ datetimeIn, id }) => {
 				<DeleteTicketButton datetimeIn={datetimeIn} id={ticket.id} />
 			</div>
 			<div>
-				{'Related Dates: '} <code>{JSON.stringify(relatedDates)}</code>
+				{'Related Dates: '} {relatedDates}
 			</div>
 			<DeleteTicketButton datetimeIn={datetimeIn} id={ticket.id} />
 		</Card>
