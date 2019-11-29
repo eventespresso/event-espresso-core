@@ -23,7 +23,13 @@ const useCreateTicketMutation = ({ datetimes }) => {
 	toaster.loading(loading, toasterMessage);
 	toaster.error(error);
 
-	const onCreateHandler = ({ name, description, price, datetimes: ticketDatetimes = [], prices: ticketPrices = [] }) => {
+	const onCreateHandler = ({
+		name,
+		description,
+		price,
+		datetimes: ticketDatetimes = [],
+		prices: ticketPrices = [],
+	}) => {
 		const variables = {
 			input: {
 				clientMutationId: 'xyz',

@@ -152,10 +152,14 @@ const relationsReducer = (state, action) => {
 			newState = cloneDeep(state);
 			// existing relation list.
 			relations = get(state, [entity, entityId, relation], []);
-			console.log('REMOVE_RELATION relations:', relations)
+			console.log('REMOVE_RELATION relations:', relations);
 			// if relationId is given remove it from the list.
 			if (relationId) {
-				set(newState, [entity, entityId, relation], relations.filter(id => id !== relationId));
+				set(
+					newState,
+					[entity, entityId, relation],
+					relations.filter((id) => id !== relationId)
+				);
 				return newState;
 			}
 
@@ -170,7 +174,7 @@ const relationsReducer = (state, action) => {
 					set(
 						newState,
 						[relation, id, entity],
-						get(newState, [relation, id, entity], []).filter(_id => _id !== entityId)
+						get(newState, [relation, id, entity], []).filter((_id) => _id !== entityId)
 					);
 				});
 				console.log('REMOVE_RELATION newState with relations:', newState);
@@ -188,7 +192,7 @@ const relationsReducer = (state, action) => {
 					set(
 						newState,
 						[relation, id, entity],
-						get(newState, [relation, id, entity], []).filter(_id => _id !== entityId)
+						get(newState, [relation, id, entity], []).filter((_id) => _id !== entityId)
 					);
 				}
 			}
