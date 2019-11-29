@@ -23,7 +23,7 @@ const useCreateTicketMutation = ({ datetimes }) => {
 	toaster.loading(loading, toasterMessage);
 	toaster.error(error);
 
-	const onCreateHandler = ({ name, description, price, datetimes: ticketDatetimes = [] }) => {
+	const onCreateHandler = ({ name, description, price, datetimes: ticketDatetimes = [], prices: ticketPrices = [] }) => {
 		const variables = {
 			input: {
 				clientMutationId: 'xyz',
@@ -31,6 +31,7 @@ const useCreateTicketMutation = ({ datetimes }) => {
 				description,
 				price,
 				datetimes: ticketDatetimes,
+				prices: ticketPrices,
 			},
 		};
 		const optimisticResponse = {
@@ -91,6 +92,14 @@ const useCreateTicketMutation = ({ datetimes }) => {
 				ticketDatetimes.forEach((entityId) => {
 					addRelation({
 						entity: 'datetimes',
+						entityId,
+						relation: 'tickets',
+						relationId: ticket.id,
+					});
+				});
+				ticketPrices.forEach((entityId) => {
+					addRelation({
+						entity: 'prices',
 						entityId,
 						relation: 'tickets',
 						relationId: ticket.id,
