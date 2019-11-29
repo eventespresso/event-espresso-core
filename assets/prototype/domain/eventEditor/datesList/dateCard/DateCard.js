@@ -5,6 +5,8 @@ import DateRangeInput from '../../../shared/dateRangeInput/DateRangeInput';
 import useDateItem from '../../containers/queries/useDateItem';
 import useUpdateDateMutation from '../../containers/mutations/useUpdateDateMutation';
 import { A_LONG_TIME_AGO, PLUS_ONE_MONTH, PLUS_TEN_YEARS } from '../../../shared/defaultDates';
+import useRelations from '../../../../infrastructure/services/relations/useRelations';
+import TicketId from '../TicketId';
 
 const btnStyle = {
 	margin: '0 0 0 .5rem',
@@ -28,7 +30,15 @@ const idStyle = {
 
 const DateCard = ({ eventId, id }) => {
 	const date = useDateItem({ id });
+
 	const onFieldUpdate = useUpdateDateMutation({ id });
+	const { getRelations } = useRelations();
+	// get related tickets for this datetime
+	const relatedTickets = getRelations({
+		entity: 'datetimes',
+		entityId: id,
+		relation: 'tickets',
+	}).map((ticketId) => <TicketId key={ticketId} id={ticketId} />);
 
 	const startDate = date.start ? new Date(date.start * 1000) : PLUS_ONE_MONTH;
 	// const endDate = date.end ?
@@ -38,7 +48,9 @@ const DateCard = ({ eventId, id }) => {
 	return (
 		<Card elevation={Elevation.ONE} style={cardStyle}>
 			<div>
-				<div style={idStyle}>{date.datetimeId}</div>
+				<div style={idStyle}>
+					{date.datetimeId} {':'} {date.id}
+				</div>
 				<H4>
 					<EditableText
 						placeholder='Edit title...'
@@ -97,6 +109,9 @@ const DateCard = ({ eventId, id }) => {
 						showActionsBar
 					/>
 				</Popover>
+			</div>
+			<div>
+				{'Related Tickets: '} {relatedTickets}
 			</div>
 			<DeleteDateButton eventId={eventId} id={date.id} />
 		</Card>

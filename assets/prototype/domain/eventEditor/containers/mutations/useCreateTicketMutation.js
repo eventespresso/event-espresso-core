@@ -3,9 +3,11 @@ import { CREATE_TICKET } from './tickets';
 import { GET_TICKETS } from '../queries/tickets';
 
 import useToaster from '../../../../infrastructure/services/toaster/useToaster';
+import useRelations from '../../../../infrastructure/services/relations/useRelations';
 
 const useCreateTicketMutation = ({ datetimes }) => {
 	const toaster = useToaster();
+	const { updateRelations, addRelation } = useRelations();
 	const id = 0;
 	const toasterMessage = `creating new ticket for datetime ${id}`;
 	const [createTicket, { loading, error }] = useMutation(CREATE_TICKET, {
@@ -21,7 +23,13 @@ const useCreateTicketMutation = ({ datetimes }) => {
 	toaster.loading(loading, toasterMessage);
 	toaster.error(error);
 
-	const onCreateHandler = ({ name, description, price, datetimes: ticketDatetimes }) => {
+	const onCreateHandler = ({
+		name,
+		description,
+		price,
+		datetimes: ticketDatetimes = [],
+		prices: ticketPrices = [],
+	}) => {
 		const variables = {
 			input: {
 				clientMutationId: 'xyz',
@@ -29,6 +37,7 @@ const useCreateTicketMutation = ({ datetimes }) => {
 				description,
 				price,
 				datetimes: ticketDatetimes,
+				prices: ticketPrices,
 			},
 		};
 		const optimisticResponse = {
@@ -78,6 +87,31 @@ const useCreateTicketMutation = ({ datetimes }) => {
 					},
 				},
 			});
+			// if it's not the optimistic response
+			if (ticket.id) {
+				updateRelations({
+					entity: 'tickets',
+					entityId: ticket.id,
+					relation: 'datetimes',
+					relationIds: ticketDatetimes,
+				});
+				ticketDatetimes.forEach((entityId) => {
+					addRelation({
+						entity: 'datetimes',
+						entityId,
+						relation: 'tickets',
+						relationId: ticket.id,
+					});
+				});
+				ticketPrices.forEach((entityId) => {
+					addRelation({
+						entity: 'prices',
+						entityId,
+						relation: 'tickets',
+						relationId: ticket.id,
+					});
+				});
+			}
 		};
 
 		createTicket({

@@ -3,9 +3,11 @@ import { DELETE_DATETIME } from './dates';
 import { GET_DATETIMES } from '../queries/dates';
 import { GET_TICKETS } from '../queries/tickets';
 import useToaster from '../../../../infrastructure/services/toaster/useToaster';
+import useRelations from '../../../../infrastructure/services/relations/useRelations';
 
 const useDeleteDatetimeMutation = ({ eventId, id }) => {
 	const toaster = useToaster();
+	const { removeRelation, dropRelations } = useRelations();
 	const toasterMessage = `deleting date ${id}`;
 
 	const [deleteDatetime, { loading, error }] = useMutation(DELETE_DATETIME, {
@@ -68,6 +70,17 @@ const useDeleteDatetimeMutation = ({ eventId, id }) => {
 						datetimeIn: nodes.map(({ id }) => id),
 					},
 				},
+			});
+			// Remove the datetime from all ticket relations
+			removeRelation({
+				entity: 'datetimes',
+				entityId: datetime.id,
+				relation: 'tickets',
+			});
+			// Drop all the relations for the datetime
+			dropRelations({
+				entity: 'datetimes',
+				entityId: datetime.id,
 			});
 		}
 
