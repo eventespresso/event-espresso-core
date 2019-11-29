@@ -47,19 +47,6 @@ const TicketCard = ({ datetimeIn, id }) => {
 		relation: 'datetimes',
 	}).map((datetimeId) => <DatetimeId key={datetimeId} id={datetimeId} />);
 
-	const ticketPrice = editing ? (
-		<EditableText
-			isEditing={editing}
-			placeholder={'set price...'}
-			defaultValue={ticket.price}
-			onCancel={() => setEditing(false)}
-			onConfirm={(price) => updateTicketField({ price })}
-			selectAllOnFocus
-		/>
-	) : (
-			<Currency quantity={ticket.price} />
-		);
-
 	return (
 		<Card elevation={Elevation.ONE} style={cardStyle}>
 			<div>
