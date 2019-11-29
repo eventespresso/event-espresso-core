@@ -70,13 +70,13 @@ const TicketCard = ({ datetimeIn, id }) => {
 						id={ticket.id}
 						amount={ticket.price}
 						placeholder={'set price...'}
-						onConfirm={({amount}) => updateTicketField({ price: amount })}
+						onConfirm={({ amount }) => updateTicketField({ price: amount })}
 					/>
 				</H4>
 			</div>
-			<div style={btnsStyle} >
-				<TicketPriceCalculatorButton ticket={ ticket }/>
-				<DeleteTicketButton datetimeIn={ datetimeIn } id={ ticket.id }/>
+			<div style={btnsStyle}>
+				<TicketPriceCalculatorButton ticket={ticket} />
+				<DeleteTicketButton datetimeIn={datetimeIn} id={ticket.id} />
 			</div>
 		</Card>
 	);

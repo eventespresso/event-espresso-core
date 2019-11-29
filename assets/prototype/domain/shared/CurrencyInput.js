@@ -1,6 +1,6 @@
 import Currency from 'react-currency-formatter';
 import { useState } from '@wordpress/element';
-import {Button, EditableText } from '@blueprintjs/core/lib/esm';
+import { Button, EditableText } from '@blueprintjs/core/lib/esm';
 
 const nullFunc = () => {};
 
@@ -24,14 +24,14 @@ const CurrencyInput = ({ id = 0, amount = 0, placeholder = '', onConfirm = nullF
 			}}
 			onConfirm={(amount) => {
 				setEditing(false);
-				onConfirm({ amount, id })
+				onConfirm({ amount, id });
 			}}
 			selectAllOnFocus
 		/>
 	) : (
 		<>
 			<Currency quantity={amount} />
-			<Button icon='edit' onClick={() => setEditing(true)} style={btnStyle} minimal/>
+			<Button icon='edit' onClick={() => setEditing(true)} style={btnStyle} minimal />
 		</>
 	);
 };

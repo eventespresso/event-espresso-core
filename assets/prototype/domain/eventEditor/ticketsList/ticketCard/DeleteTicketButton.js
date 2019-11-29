@@ -3,7 +3,7 @@ import useDeleteTicketMutation from '../../containers/mutations/useDeleteTicketM
 
 const DeleteTicketButton = ({ datetimeIn, id }) => {
 	const deleteTicket = useDeleteTicketMutation({ datetimeIn, id });
-	return <Button icon={ 'trash' } onClick={ deleteTicket } minimal/>;
+	return <Button icon={'trash'} onClick={deleteTicket} minimal />;
 };
 
 export default DeleteTicketButton;

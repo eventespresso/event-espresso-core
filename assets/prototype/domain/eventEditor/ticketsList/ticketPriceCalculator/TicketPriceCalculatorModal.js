@@ -71,10 +71,10 @@ const TicketPriceCalculatorModal = ({ ticket, handleClose, isOpen }) => {
 			FormComponent={TicketPriceCalculatorForm}
 			initialValues={{}}
 			isOpen={isOpen}
-			onSubmit={(values) => console.log( '%c Ticket Price Calculator Form Submit', 'color:YellowGreen;', values )}
+			onSubmit={(values) => console.log('%c Ticket Price Calculator Form Submit', 'color:YellowGreen;', values)}
 			onClose={handleClose}
 			prices={prices}
-			ticket={ ticket}
+			ticket={ticket}
 		/>
 	);
 };

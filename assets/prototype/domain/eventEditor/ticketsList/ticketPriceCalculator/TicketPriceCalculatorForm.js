@@ -36,14 +36,14 @@ modifierOptions.shift();
 // need to change these based on site i18n config
 const currencySign = '$';
 const currencySignB4 = true;
-const decimalMark = '.';
-const thousandsSep = ',';
+// const decimalMark = '.';
+// const thousandsSep = ',';
 const percentSign = '%';
 
 const b4Total = currencySignB4 ? currencySign : '';
 const aftTotal = currencySignB4 ? '' : currencySign;
 
-const TicketPriceCalculatorForm = ({ ticket, prices, formReset }) => {
+const TicketPriceCalculatorForm = ({ prices }) => {
 	const newRow = {
 		id: 'NEW_PRICE',
 		priceId: null,
@@ -93,7 +93,9 @@ const TicketPriceCalculatorForm = ({ ticket, prices, formReset }) => {
 						style={inputStyle}
 					>
 						{options.map((option) => (
-							<option value={option.id}>{option.type}</option>
+							<option key={option.id} value={option.id}>
+								{option.type}
+							</option>
 						))}
 					</Field>
 				</td>
@@ -148,12 +150,24 @@ const TicketPriceCalculatorForm = ({ ticket, prices, formReset }) => {
 				<HTMLTable interactive striped style={tableStyle}>
 					<thead>
 						<tr>
-							<th width={'7.5%'} style={cellStyle}>ID</th>
-							<th width={'15%'} style={typeStyle}>Price Type</th>
-							<th width={'20%'} style={cellStyle}>Label</th>
-							<th width={'30%'} style={cellStyle}>Description</th>
-							<th width={'15%'} style={amountStyle} >Amount</th>
-							<th width={'7.5%'} style={cellStyle}>Actions</th>
+							<th width={'7.5%'} style={cellStyle}>
+								ID
+							</th>
+							<th width={'15%'} style={typeStyle}>
+								Price Type
+							</th>
+							<th width={'20%'} style={cellStyle}>
+								Label
+							</th>
+							<th width={'30%'} style={cellStyle}>
+								Description
+							</th>
+							<th width={'15%'} style={amountStyle}>
+								Amount
+							</th>
+							<th width={'7.5%'} style={cellStyle}>
+								Actions
+							</th>
 						</tr>
 					</thead>
 					<tbody>
@@ -162,7 +176,9 @@ const TicketPriceCalculatorForm = ({ ticket, prices, formReset }) => {
 					</tbody>
 					<tfoot>
 						<tr>
-							<th colSpan={4} width={'77.5%'} style={{ fontSize: '18px', textAlign: 'right' }}>Total</th>
+							<th colSpan={4} width={'77.5%'} style={{ fontSize: '18px', textAlign: 'right' }}>
+								Total
+							</th>
 							<th width={'15%'} style={amountStyle}>
 								<div style={moneyStyle}>
 									<div style={b4Style}>{b4Total}</div>
