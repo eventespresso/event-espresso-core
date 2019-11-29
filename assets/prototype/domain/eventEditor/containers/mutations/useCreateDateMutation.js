@@ -7,7 +7,7 @@ import useRelations from '../../../../infrastructure/services/relations/useRelat
 
 const useCreateDateMutation = ({ eventId }) => {
 	const toaster = useToaster();
-	const { updateRelations } = useRelations();
+	const { updateRelations, addRelation } = useRelations();
 
 	const toasterMessage = `creating new datetime for event ${eventId}`;
 	const [createDate, { loading, error }] = useMutation(CREATE_DATE, {
@@ -68,6 +68,7 @@ const useCreateDateMutation = ({ eventId }) => {
 			// Read the data from our cache for this query.
 			const { datetimes = {} } = proxy.readQuery(options);
 
+			// if it's not the optimistic response
 			if (datetime.id) {
 				const datetimeIn = datetimes.nodes.map(({ id }) => id);
 				// Read the data from our cache for this query.
@@ -97,6 +98,14 @@ const useCreateDateMutation = ({ eventId }) => {
 					entityId: datetime.id,
 					relation: 'tickets',
 					relationIds: tickets,
+				});
+				tickets.forEach((entityId) => {
+					addRelation({
+						entity: 'tickets',
+						entityId,
+						relation: 'datetimes',
+						relationId: datetime.id,
+					});
 				});
 			}
 
