@@ -1,15 +1,11 @@
-import Currency from 'react-currency-formatter';
-import { useState } from '@wordpress/element';
-import { Button, Card, EditableText, Elevation, H4, H6 } from '@blueprintjs/core/lib/esm';
+import { Card, EditableText, Elevation, H4, H6 } from '@blueprintjs/core/lib/esm';
 import DeleteTicketButton from './DeleteTicketButton';
+import TicketPriceCalculatorButton from '../ticketPriceCalculator/TicketPriceCalculatorButton';
 import useTicketItem from '../../containers/queries/useTicketItem';
 import useUpdateTicketMutation from '../../containers/mutations/useUpdateTicketMutation';
+import CurrencyInput from '../../../shared/CurrencyInput';
 
 const console = window.console;
-
-const btnStyle = {
-	margin: '0 0 0 .5rem',
-};
 
 const cardStyle = {
 	margin: '0 0 2rem',
@@ -17,6 +13,13 @@ const cardStyle = {
 	position: 'relative',
 	textAlign: 'center',
 	width: '32%',
+};
+
+const btnsStyle = {
+	bottom: '.5rem',
+	position: 'absolute',
+	right: '.5rem',
+	textAlign: 'right',
 };
 
 const idStyle = {
@@ -32,23 +35,8 @@ const priceStyle = {
 };
 
 const TicketCard = ({ datetimeIn, id }) => {
-	const [editing, setEditing] = useState(false);
 	const ticket = useTicketItem({ id });
 	const updateTicketField = useUpdateTicketMutation({ id });
-
-	const ticketPrice = editing ? (
-		<EditableText
-			isEditing={editing}
-			placeholder={'set price...'}
-			defaultValue={ticket.price}
-			onCancel={() => setEditing(false)}
-			onConfirm={(price) => updateTicketField({ price })}
-			selectAllOnFocus
-		/>
-	) : (
-		<Currency quantity={ticket.price} />
-	);
-
 	return (
 		<Card elevation={Elevation.ONE} style={cardStyle}>
 			<div>
@@ -64,7 +52,6 @@ const TicketCard = ({ datetimeIn, id }) => {
 					/>
 				</H4>
 			</div>
-
 			<div>
 				<H6>
 					<EditableText
@@ -77,14 +64,20 @@ const TicketCard = ({ datetimeIn, id }) => {
 					/>
 				</H6>
 			</div>
-
 			<div>
 				<H4 style={priceStyle}>
-					{ticketPrice}
-					<Button icon='edit' onClick={() => setEditing(true)} style={btnStyle} minimal />
+					<CurrencyInput
+						id={ticket.id}
+						amount={ticket.price}
+						placeholder={'set price...'}
+						onConfirm={({ amount }) => updateTicketField({ price: amount })}
+					/>
 				</H4>
 			</div>
-			<DeleteTicketButton datetimeIn={datetimeIn} id={ticket.id} />
+			<div style={btnsStyle}>
+				<TicketPriceCalculatorButton ticket={ticket} />
+				<DeleteTicketButton datetimeIn={datetimeIn} id={ticket.id} />
+			</div>
 		</Card>
 	);
 };

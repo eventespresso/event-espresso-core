@@ -4,9 +4,6 @@ import { Classes, Overlay } from '@blueprintjs/core/lib/esm';
 import FormModalForm from './FormModalForm';
 
 const FormModal = ({ FormComponent, initialValues, onSubmit, onClose, isOpen, ...extraProps }) => {
-	console.log('%c FormModal', 'color: #1BE7FF;');
-	console.log('%c > initialValues: ', 'color: #BCBDAC;', initialValues);
-
 	const overlayProps = {
 		autoFocus: true,
 		canEscapeKeyClose: true,
@@ -22,10 +19,11 @@ const FormModal = ({ FormComponent, initialValues, onSubmit, onClose, isOpen, ..
 	const overlayStyle = {
 		boxSizing: 'border-box',
 		maxHeight: '90%',
-		maxWidth: '900px',
+		maxWidth: '1200px',
 		minHeight: '50%',
 		minWidth: '320px',
 		width: '80%',
+		overflowY: 'scroll',
 		position: 'absolute',
 		left: '50%',
 		top: '50%',
