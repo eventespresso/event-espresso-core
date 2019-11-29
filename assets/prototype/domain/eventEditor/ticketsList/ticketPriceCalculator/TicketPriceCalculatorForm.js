@@ -1,10 +1,10 @@
-import clone from 'lodash/clone';
+import { drop } from 'ramda';
 import { Field } from 'react-final-form';
 import { Button, H2, HTMLTable } from '@blueprintjs/core';
 
 // actions that need replacing with mutations
-const addNewPrice = () => console.log('%c addNewPrice', 'color: lime;', price);
-const deletePrice = () => console.log('%c deletePrice', 'color: red;', price.id);
+const addNewPrice = () => console.log('%c addNewPrice', 'color: lime;' /*price*/);
+const deletePrice = () => console.log('%c deletePrice', 'color: red;' /*price.id*/);
 
 const hdrStyle = { margin: '1em 0 .5em' };
 const tableStyle = { width: '100%' };
@@ -30,8 +30,8 @@ const allOptions = [
 	{ id: 6, type: 'Regional Tax' },
 	{ id: 7, type: 'Federal Tax' },
 ];
-const modifierOptions = clone(allOptions);
-modifierOptions.shift();
+
+const modifierOptions = drop(1, allOptions); // removes first option
 
 // need to change these based on site i18n config
 const currencySign = '$';
