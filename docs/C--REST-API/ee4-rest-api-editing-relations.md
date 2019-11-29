@@ -184,6 +184,23 @@ This means `join.questino_group_question` is a entity that joins the other two i
 
 If there were a previous entry in the joining resource, it would instead be updated.
 
+#### Providing extra parameters across Join Resources
+
+You might remember that sometimes there's extra data stored in these "Join Resources". For example, on the relation between Questions and Question Groups, there's an order property named "QGQ_order". You can set these by adding them to the request's BODY, just like you would inserting any new data. For example, you would do
+
+```
+POST https://demoee.org/wp-json/ee/v4.8.36/questions/12/question_groups/4
+```
+and in the request's "form-data" body, you could pass either
+```
+QGQ_order=123
+```
+(normal request body)
+or as JSON
+```
+{"QGQ_order":123}
+```
+Important: do NOT pass these extra parameters in the URL querystring. They will be ignored.
 ## Removing Relations
 
 You use the same routes to remove relations, just using a different HTTP method, `DELETE`.
