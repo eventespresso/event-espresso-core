@@ -3,7 +3,7 @@ import FormModal from '../../../shared/FormModal';
 import EditDateForm from '../EditDateForm';
 import { DateTimeContext } from '../../../../infrastructure/services/contextProviders/DateTimeProvider';
 
-const EditDateModal = ({ eventId, tickets, handleClose }) => {
+const EditDateModal = ({ tickets }) => {
 	const { isOpen, onClose } = useContext(DateTimeContext);
 
 	return (

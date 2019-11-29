@@ -53,7 +53,7 @@ const DateCard = ({ eventId, id }) => {
 	return (
 		<DateTimeProvider id={id}>
 			<Card elevation={Elevation.ONE} style={cardStyle}>
-				<EditDate />
+				<EditDate position='top' />
 				<div>
 					<div style={idStyle}>
 						{date.datetimeId} {':'} {date.id}
