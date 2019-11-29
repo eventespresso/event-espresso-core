@@ -125,13 +125,7 @@ const useRelationsManager = ({ eventId }) => {
 
 const relationsReducer = (state, action) => {
 	console.log('relationsReducer action: ', action);
-	const {
-		entity,
-		entityId,
-		relation,
-		relationId,
-		relationIds,
-	} = action;
+	const { entity, entityId, relation, relationId, relationIds } = action;
 	let newState, relations;
 	switch (action.type) {
 		case 'SET_DATA':
@@ -188,13 +182,11 @@ const relationsReducer = (state, action) => {
 			 * We will loop through `state.tickets` to delete `entityId` from `state.tickets[ticketId].datetimes`
 			 */
 			for (const id in newState[relation]) {
-				if (newState[relation].hasOwnProperty(id)) {
-					set(
-						newState,
-						[relation, id, entity],
-						get(newState, [relation, id, entity], []).filter((_id) => _id !== entityId)
-					);
-				}
+				set(
+					newState,
+					[relation, id, entity],
+					get(newState, [relation, id, entity], []).filter((_id) => _id !== entityId)
+				);
 			}
 			console.log('REMOVE_RELATION newState without relations:', newState);
 			return newState;
