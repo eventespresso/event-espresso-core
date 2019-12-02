@@ -1,6 +1,10 @@
+import { useContext } from '@wordpress/element';
 import { Field } from 'react-final-form';
 import { H2, H4 } from '@blueprintjs/core/lib/esm';
 import RelationsSelector from '../../shared/RelationsSelector';
+
+import { TicketContext } from '../../../infrastructure/services/contextProviders/TicketProvider';
+import useTicketItem from '../containers/queries/useTicketItem';
 
 const hdrStyle = {
 	margin: '1em 0 .5em 24%',
@@ -43,21 +47,40 @@ const relationsStyle = {
 	width: '60%',
 };
 
-const NewTicketForm = ({ datetimes, formReset }) => {
+const TicketForm = ({ datetimes, formReset, title }) => {
+	const { id } = useContext(TicketContext);
+	const { description = '', name = '', price = '' } = useTicketItem({ id });
+
 	return (
 		<>
-			<H2 style={hdrStyle}>New Ticket Details</H2>
+			<H2 style={hdrStyle}>{title}</H2>
 			<div style={divStyle}>
 				<label style={lblStyle}>Name</label>
-				<Field name='name' component='input' type='text' placeholder='Name' style={inputStyle} />
+
+				<Field
+					defaultValue={name}
+					name='name'
+					component='input'
+					type='text'
+					placeholder='Name'
+					style={inputStyle}
+				/>
 			</div>
 			<div style={divStyle}>
 				<label style={lblStyle}>Description</label>
-				<Field name='description' component='input' type='text' placeholder='description' style={inputStyle} />
+				<Field
+					defaultValue={description}
+					name='description'
+					component='input'
+					type='text'
+					placeholder='description'
+					style={inputStyle}
+				/>
 			</div>
 			<div style={divStyle}>
 				<label style={lblStyle}>Price</label>
 				<Field
+					defaultValue={price}
 					name='price'
 					component='input'
 					type='number'
@@ -89,4 +112,4 @@ const NewTicketForm = ({ datetimes, formReset }) => {
 	);
 };
 
-export default NewTicketForm;
+export default TicketForm;

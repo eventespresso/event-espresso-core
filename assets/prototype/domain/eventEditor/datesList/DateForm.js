@@ -69,12 +69,12 @@ const DateForm = ({ formReset, tickets = [], title }) => {
 			<div style={divStyle}>
 				<label style={lblStyle}>Name</label>
 				<Field
+					defaultValue={name}
 					name='name'
 					component='input'
 					type='text'
 					placeholder='Name'
 					style={inputStyle}
-					defaultValue={name}
 				/>
 			</div>
 			<div style={divStyle}>
