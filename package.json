@@ -21,7 +21,7 @@
 		"check-engines": "wp-scripts check-engines",
 		"ci:build": "npm run build",
 		"ci:lint": "npm run lint",
-		"ci:test": "npm run test-unit:coverage-ci",
+		"ci:test": "npm run test-js:coverage-ci",
 		"dev": "concurrently \"webpack --config ./config/webpack.dev.js\" \"npm-watch build:css\"",
 		"dev-w": "concurrently \"webpack --watch --config ./config/webpack.dev.js\" \"npm-watch build:css\"",
 		"dev-p": "webpack --watch --watch-poll --config ./config/webpack.dev.js",
@@ -34,15 +34,16 @@
 		"lint-php:fix": "composer run-script lint-fix",
 		"lint-php:skip-warnings": "composer run-script lint:skip-warnings",
 		"prebuild": "npm run check-engines && npm run build:css",
+		"pretty": "prettier --write \"assets/prototype/**/*.js\"",
 		"prewatch": "npm run check-engines",
-		"test": "npm run lint && npm run test-unit",
+		"test": "npm run lint && npm run test-js",
 		"test-php": "cd tests && phpunit",
 		"test-php:coverage-ci": "npm run test-php -- --coverage-clover=coverage.xml && codecov",
-		"test-unit": "wp-scripts test-unit-js --config tests/javascript-config/unit/jest.config.json",
-		"test-unit:coverage": "npm run test-unit -- --coverage",
-		"test-unit:coverage-ci": "npm run test-unit -- --coverage --maxWorkers 1 && codecov",
-		"test-unit:update": "npm run test-unit -- --updateSnapshot",
-		"test-unit:watch": "npm run test-unit -- --watch"
+		"test-js": "wp-scripts test-unit-js --config tests/javascript-config/unit/jest.config.json",
+		"test-js:coverage": "npm run test-js -- --coverage",
+		"test-js:coverage-ci": "npm run test-js -- --coverage --maxWorkers 1 && codecov",
+		"test-js:update": "npm run test-js -- --updateSnapshot",
+		"test-js:watch": "npm run test-js -- --watch"
 	},
 	"husky": {
 		"hooks": {
