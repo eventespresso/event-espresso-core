@@ -45,6 +45,7 @@ class RelationNode extends BaseNode
     {
         $this->main_model_obj = $main_model_obj;
         $this->related_model = $related_model;
+        $this->model_obj_nodes = [];
     }
 
 
@@ -57,16 +58,7 @@ class RelationNode extends BaseNode
      * @throws EE_Error
      */
     protected function work($work_budget){
-        $work_done = 0;
-        if(is_array($this->model_obj_nodes)) {
-            foreach ($this->model_obj_nodes as $entity_node) {
-                if ($work_done < $work_budget) {
-                    $work_done += $entity_node->visit($work_budget);
-                }
-            }
-        } else {
-            $this->model_obj_nodes = [];
-        }
+        $work_done = $this->visitAlreadyDiscoveredNodes($this->model_obj_nodes, $work_budget);
         if($work_done < $work_budget){
             $related_model_objs = $this->related_model->get_all(
                 [
@@ -77,7 +69,6 @@ class RelationNode extends BaseNode
                     ]
                 ]
             );
-            $work_done += count($related_model_objs);
             $new_item_nodes = [];
 
             // Add entity nodes for each of the model objects we fetched.
@@ -86,18 +77,32 @@ class RelationNode extends BaseNode
                 $this->model_obj_nodes[$related_model_obj->ID()] = $entity_node;
                 $new_item_nodes[$related_model_obj->ID()] = $entity_node;
             }
+            $work_done += count($new_item_nodes);
 
             // And lastly do the work.
-            foreach($new_item_nodes as $new_item_node){
-                if($work_done >= $work_budget){
-                    break;
-                }
-                $work_done += $new_item_node->visit($work_budget - $work_done);
-            }
+            $work_done += $this->visitAlreadyDiscoveredNodes($new_item_nodes, $work_budget - $work_done);
         }
         // We're all done this node if we've done everything here and still have budget for more.
         if($work_done < $work_budget){
             $this->complete = true;
+        }
+        return $work_done;
+    }
+
+    /**
+     * Visits the provided nodes and keeps track of how much work was done, making sure to not go over budget.
+     * @since $VID:$
+     * @param $model_obj_nodes
+     * @param $work_budget
+     * @return int
+     */
+    protected function visitAlreadyDiscoveredNodes($model_obj_nodes, $work_budget){
+        $work_done = 0;
+        foreach($model_obj_nodes as $model_obj_node){
+            if($work_done >= $work_budget){
+                break;
+            }
+            $work_done += $model_obj_node->visit($work_budget - $work_done);
         }
         return $work_done;
     }
@@ -116,6 +121,13 @@ class RelationNode extends BaseNode
      */
     public function isComplete()
     {
+        if($this->complete === null){
+            if(count($this->model_obj_nodes) === $this->count){
+                $this->complete = true;
+            } else {
+                $this->complete = false;
+            }
+        }
         return $this->complete;
     }
 
@@ -151,8 +163,10 @@ class RelationNode extends BaseNode
     public function toArray(){
         $tree = [
             'count' => $this->count,
+            'complete' => $this->isComplete(),
             'objs' => []
         ];
+        if($this->model_obj_nodes === null){}
         foreach($this->model_obj_nodes as $id => $model_obj_node){
             $tree['objs'][$id] = $model_obj_node->toArray();
         }

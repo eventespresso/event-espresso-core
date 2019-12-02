@@ -5,6 +5,10 @@ namespace EventEspresso\core\services\orm\tree_traversal;
 use EE_Base_Class;
 use EE_HABTM_Relation;
 use EE_Has_Many_Relation;
+use EventEspresso\core\exceptions\InvalidDataTypeException;
+use EventEspresso\core\exceptions\InvalidInterfaceException;
+use InvalidArgumentException;
+use ReflectionException;
 
 /**
  * Class Visitor
@@ -38,10 +42,10 @@ class ModelObjNode extends BaseNode
      * Does NOT call `discover` on them yet though.
      * @since $VID:$
      * @throws \EE_Error
-     * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
-     * @throws \EventEspresso\core\exceptions\InvalidInterfaceException
-     * @throws \InvalidArgumentException
-     * @throws \ReflectionException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws InvalidArgumentException
+     * @throws ReflectionException
      */
     protected function discover(){
         $this->relation_nodes = [];
@@ -52,6 +56,7 @@ class ModelObjNode extends BaseNode
                 $this->relation_nodes[$relation->get_join_model()->get_this_model_name()] = new RelationNode($this->model_obj, $relation->get_join_model() );
             }
         }
+        ksort($this->relation_nodes);
     }
 
 
@@ -100,15 +105,16 @@ class ModelObjNode extends BaseNode
      * @since $VID:$
      * @return array
      * @throws \EE_Error
-     * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
-     * @throws \EventEspresso\core\exceptions\InvalidInterfaceException
-     * @throws \InvalidArgumentException
-     * @throws \ReflectionException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws InvalidArgumentException
+     * @throws ReflectionException
      */
     public function toArray()
     {
         $tree = [
             'id' => $this->model_obj->ID(),
+            'complete' => $this->isComplete(),
             'rels' => []
         ];
         if($this->relation_nodes === null){
