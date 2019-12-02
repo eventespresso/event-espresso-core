@@ -1,5 +1,6 @@
 import { useMutation } from '@apollo/react-hooks';
 import { UPDATE_DATE } from './dates';
+
 import useToaster from '../../../../infrastructure/services/toaster/useToaster';
 
 const useUpdateDateMutation = ({ id = 0 }) => {
@@ -19,28 +20,27 @@ const useUpdateDateMutation = ({ id = 0 }) => {
 	toaster.loading(loading, toasterMessage);
 	toaster.error(error);
 
+	const getVariables = ({ endDate, description, name, startDate }) => {
+		const variables = {
+			input: {
+				clientMutationId: 'xyz',
+				id,
+				...(endDate && { endDate }),
+				...(description && { description }),
+				...(name && { name }),
+				...(startDate && { startDate }),
+			},
+		};
+
+		return variables;
+	};
+
 	const updateHandler = ({ endDate, description, name, startDate }) => {
-		if (description) {
-			return updateDate({
-				variables: { input: { clientMutationId: 'xyz', id, description } },
-			});
-		}
+		const variables = getVariables({ endDate, description, name, startDate });
 
-		if (name) {
-			return updateDate({
-				variables: { input: { clientMutationId: 'xyz', id, name } },
-			});
-		}
-
-		if (startDate && endDate) {
-			return updateDate({
-				variables: {
-					input: { clientMutationId: 'xyz', id, startDate, endDate },
-				},
-			});
-		}
-
-		return null;
+		updateDate({
+			variables,
+		});
 	};
 
 	return updateHandler;

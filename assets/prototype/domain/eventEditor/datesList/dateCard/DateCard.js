@@ -44,7 +44,7 @@ const DateCard = ({ eventId, id }) => {
 		entity: 'datetimes',
 		entityId: id,
 		relation: 'tickets',
-	}).map((ticketId) => <TicketId key={ticketId} id={ticketId} />);
+	});
 
 	const startDate = moment(date.startDate).toDate() || PLUS_ONE_MONTH;
 	const endDate = moment(date.endDate).toDate() || PLUS_TWO_MONTHS;
@@ -52,7 +52,7 @@ const DateCard = ({ eventId, id }) => {
 	const [range, setRange] = useState(defaultRangeValues);
 
 	return (
-		<DateTimeProvider id={id}>
+		<DateTimeProvider id={id} relatedTickets={relatedTickets}>
 			<Card elevation={Elevation.ONE} style={cardStyle}>
 				<EditDate position='top' />
 				<div>
@@ -102,7 +102,10 @@ const DateCard = ({ eventId, id }) => {
 					</Popover>
 				</div>
 				<div>
-					{'Related Tickets: '} {relatedTickets}
+					{'Related Tickets: '}{' '}
+					{relatedTickets.map((ticketId) => (
+						<TicketId key={ticketId} id={ticketId} />
+					))}
 				</div>
 				<DeleteDateButton eventId={eventId} id={date.id} />
 			</Card>

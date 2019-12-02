@@ -2,18 +2,26 @@ import { useContext } from '@wordpress/element';
 import FormModal from '../../../shared/FormModal';
 import DateForm from '../DateForm';
 import { DateTimeContext } from '../../../../infrastructure/services/contextProviders/DateTimeProvider';
+import useUpdateDateMutation from '../../containers/mutations/useUpdateDateMutation';
 
-const EditDateModal = ({ tickets }) => {
-	const { isOpen, onClose } = useContext(DateTimeContext);
+const EditDateModal = () => {
+	const { id, isOpen, onClose, relatedTickets } = useContext(DateTimeContext);
+	const tickets = relatedTickets.map((id) => {
+		// we need to get here full ticket objects
+		return id;
+	});
 
-	const formComponent = (props) => <DateForm {...props} title='Update date' />;
+	const onFieldUpdate = useUpdateDateMutation({ id });
+
+	const formComponent = (props) => <DateForm {...props} tickets={tickets} title='Update date' />;
+	const onSubmit = (fields) => onFieldUpdate(fields);
 
 	return (
 		<FormModal
 			FormComponent={formComponent}
 			initialValues={{}}
 			isOpen={isOpen}
-			onSubmit={() => null}
+			onSubmit={onSubmit}
 			onClose={onClose}
 			tickets={tickets}
 		/>
