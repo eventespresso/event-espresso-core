@@ -1,10 +1,13 @@
+import { useState } from '@wordpress/element';
+import moment from 'moment';
 import { Button, Card, EditableText, Elevation, H4, H6, Popover } from '@blueprintjs/core/lib/esm';
-import { DatePicker, TimePrecision } from '@blueprintjs/datetime/lib/esm';
 import DeleteDateButton from './DeleteDateButton';
-import DateRangeInput from '../../../shared/dateRangeInput/DateRangeInput';
+import DateRangePicker from '../../../shared/dateRangeInput/DateRangePicker';
+import { MomentDateRange } from '../../../shared/dateRangeInput/momentDate';
+import { PLUS_ONE_MONTH, PLUS_TWO_MONTHS } from '../../../shared/defaultDates';
+
 import useDateItem from '../../containers/queries/useDateItem';
 import useUpdateDateMutation from '../../containers/mutations/useUpdateDateMutation';
-import { A_LONG_TIME_AGO, PLUS_ONE_MONTH, PLUS_TEN_YEARS } from '../../../shared/defaultDates';
 import useRelations from '../../../../infrastructure/services/relations/useRelations';
 import TicketId from '../TicketId';
 
@@ -40,10 +43,10 @@ const DateCard = ({ eventId, id }) => {
 		relation: 'tickets',
 	}).map((ticketId) => <TicketId key={ticketId} id={ticketId} />);
 
-	const startDate = date.start ? new Date(date.start * 1000) : PLUS_ONE_MONTH;
-	// const endDate = date.end ?
-	// 	new Date( date.end * 1000 ) :
-	// 	PLUS_TWO_MONTHS;
+	const startDate = moment(date.startDate).toDate() || PLUS_ONE_MONTH;
+	const endDate = moment(date.endDate).toDate() || PLUS_TWO_MONTHS;
+	const defaultRangeValues = [startDate, endDate];
+	const [range, setRange] = useState(defaultRangeValues);
 
 	return (
 		<Card elevation={Elevation.ONE} style={cardStyle}>
@@ -76,38 +79,11 @@ const DateCard = ({ eventId, id }) => {
 					/>
 				</H6>
 			</div>
-			<DateRangeInput endDate={date.endDate} onFieldUpdate={onFieldUpdate} startDate={date.startDate} />
 			<div>
-				<b>{`${date.startDate} ${date.startTime}`}</b>
+				<MomentDateRange range={range} withTime />
 				<Popover lazy>
 					<Button icon='calendar' style={btnStyle} minimal />
-					<DatePicker
-						defaultValue={startDate}
-						formatDate={(jsDate) => jsDate.toString()}
-						onChange={(jsDate, isUserChange) => {
-							if (jsDate && isUserChange) {
-								date.start = jsDate.getTime() / 1000;
-								date.startDate = jsDate.toDateString();
-								date.startTime = jsDate.toLocaleTimeString();
-								console.log(
-									'%c update state date: ',
-									'color: #F2F500; font-size:14px;',
-									'%c > date.start: ',
-									'color: #99c043;',
-									new Date(date.start * 1000)
-								);
-							}
-						}}
-						timePrecision={TimePrecision.MINUTE}
-						timePickerProps={{
-							showArrowButtons: true,
-							useAmPm: true,
-						}}
-						minDate={A_LONG_TIME_AGO}
-						maxDate={PLUS_TEN_YEARS}
-						highlightCurrentDay
-						showActionsBar
-					/>
+					<DateRangePicker onFieldUpdate={onFieldUpdate} range={range} setRange={setRange} />
 				</Popover>
 			</div>
 			<div>
