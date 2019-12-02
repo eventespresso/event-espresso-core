@@ -5,14 +5,13 @@ import { createContext, useState } from '@wordpress/element';
 
 export const DateTimeContext = createContext({});
 
-const DateTimeProvider = ({ children, id, relatedTickets }) => {
+const DateTimeProvider = ({ children, id }) => {
 	const [isOpen, setIsOpen] = useState(false);
 	const onClose = () => setIsOpen(false);
 	const value = {
 		id,
 		isOpen,
 		onClose,
-		relatedTickets,
 		setIsOpen,
 	};
 

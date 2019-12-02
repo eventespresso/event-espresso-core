@@ -52,7 +52,7 @@ const DateCard = ({ eventId, id }) => {
 	const [range, setRange] = useState(defaultRangeValues);
 
 	return (
-		<DateTimeProvider id={id} relatedTickets={relatedTickets}>
+		<DateTimeProvider id={id}>
 			<Card elevation={Elevation.ONE} style={cardStyle}>
 				<EditDate position='top' />
 				<div>

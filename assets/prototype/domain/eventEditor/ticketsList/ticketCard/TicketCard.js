@@ -50,7 +50,7 @@ const TicketCard = ({ datetimeIn, id }) => {
 	});
 
 	return (
-		<TicketProvider id={id} relatedDates={relatedDates}>
+		<TicketProvider id={id}>
 			<Card elevation={Elevation.ONE} style={cardStyle}>
 				<EditTicket position='top' />
 				<div>
