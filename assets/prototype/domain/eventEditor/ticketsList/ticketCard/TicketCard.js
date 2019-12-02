@@ -1,4 +1,6 @@
 import { Card, EditableText, Elevation, H4, H6 } from '@blueprintjs/core/lib/esm';
+import TicketProvider from '../../../../infrastructure/services/contextProviders/TicketProvider';
+import EditTicket from './EditTicket';
 import DeleteTicketButton from './DeleteTicketButton';
 import TicketPriceCalculatorButton from '../ticketPriceCalculator/TicketPriceCalculatorButton';
 import useTicketItem from '../../containers/queries/useTicketItem';
@@ -45,56 +47,62 @@ const TicketCard = ({ datetimeIn, id }) => {
 		entity: 'tickets',
 		entityId: id,
 		relation: 'datetimes',
-	}).map((datetimeId) => <DatetimeId key={datetimeId} id={datetimeId} />);
+	});
 
 	return (
-		<Card elevation={Elevation.ONE} style={cardStyle}>
-			<div>
-				<div style={idStyle}>
-					{ticket.ticketId} {':'} {ticket.id}
+		<TicketProvider id={id}>
+			<Card elevation={Elevation.ONE} style={cardStyle}>
+				<EditTicket position='top' />
+				<div>
+					<div style={idStyle}>
+						{ticket.ticketId} {':'} {ticket.id}
+					</div>
+					<H4>
+						<EditableText
+							placeholder={'edit title...'}
+							defaultValue={ticket.name}
+							onCancel={(value) => console.log(value)}
+							onConfirm={(name) => updateTicketField({ name })}
+							minWidth={'320px'}
+							selectAllOnFocus
+						/>
+					</H4>
 				</div>
-				<H4>
-					<EditableText
-						placeholder={'edit title...'}
-						defaultValue={ticket.name}
-						onCancel={(value) => console.log(value)}
-						onConfirm={(name) => updateTicketField({ name })}
-						minWidth={'320px'}
-						selectAllOnFocus
-					/>
-				</H4>
-			</div>
-			<div>
-				<H6>
-					<EditableText
-						placeholder='Edit description...'
-						defaultValue={ticket.description}
-						onCancel={(value) => console.log(value)}
-						onConfirm={(description) => updateTicketField({ description })}
-						minWidth={'320px'}
-						selectAllOnFocus
-					/>
-				</H6>
-			</div>
-			<div>
-				<H4 style={priceStyle}>
-					<CurrencyInput
-						id={ticket.id}
-						amount={ticket.price}
-						placeholder={'set price...'}
-						onConfirm={({ amount }) => updateTicketField({ price: amount })}
-					/>
-				</H4>
-			</div>
-			<div style={btnsStyle}>
-				<TicketPriceCalculatorButton ticket={ticket} />
+				<div>
+					<H6>
+						<EditableText
+							placeholder='Edit description...'
+							defaultValue={ticket.description}
+							onCancel={(value) => console.log(value)}
+							onConfirm={(description) => updateTicketField({ description })}
+							minWidth={'320px'}
+							selectAllOnFocus
+						/>
+					</H6>
+				</div>
+				<div>
+					<H4 style={priceStyle}>
+						<CurrencyInput
+							id={ticket.id}
+							amount={ticket.price}
+							placeholder={'set price...'}
+							onConfirm={({ amount }) => updateTicketField({ price: amount })}
+						/>
+					</H4>
+				</div>
+				<div style={btnsStyle}>
+					<TicketPriceCalculatorButton ticket={ticket} />
+					<DeleteTicketButton datetimeIn={datetimeIn} id={ticket.id} />
+				</div>
+				<div>
+					{'Related Dates: '}{' '}
+					{relatedDates.map((datetimeId) => (
+						<DatetimeId key={datetimeId} id={datetimeId} />
+					))}
+				</div>
 				<DeleteTicketButton datetimeIn={datetimeIn} id={ticket.id} />
-			</div>
-			<div>
-				{'Related Dates: '} {relatedDates}
-			</div>
-			<DeleteTicketButton datetimeIn={datetimeIn} id={ticket.id} />
-		</Card>
+			</Card>
+		</TicketProvider>
 	);
 };
 

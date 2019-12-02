@@ -1,8 +1,12 @@
+import { useContext } from '@wordpress/element';
 import Currency from 'react-currency-formatter';
 import { Field } from 'react-final-form';
 import { H2, H4 } from '@blueprintjs/core/lib/esm';
 import { renderToString } from '@wordpress/element';
 import RelationsSelector from '../../shared/RelationsSelector';
+
+import { DateTimeContext } from '../../../infrastructure/services/contextProviders/DateTimeProvider';
+import useDateItem from '../containers/queries/useDateItem';
 
 const hdrStyle = {
 	margin: '1em 0 .5em 24%',
@@ -55,17 +59,34 @@ const formatSecondaryField = (ticketPrice, toString = false) => {
 	return toString ? renderToString(<Currency quantity={ticketPrice} />, null) : <Currency quantity={ticketPrice} />;
 };
 
-const NewDateForm = ({ tickets = [], formReset }) => {
+const DateForm = ({ formReset, tickets = [], title }) => {
+	const { id } = useContext(DateTimeContext);
+	const { description = '', name = '' } = useDateItem({ id });
+
 	return (
 		<>
-			<H2 style={hdrStyle}>New Date Details</H2>
+			<H2 style={hdrStyle}>{title}</H2>
 			<div style={divStyle}>
 				<label style={lblStyle}>Name</label>
-				<Field name='name' component='input' type='text' placeholder='Name' style={inputStyle} />
+				<Field
+					defaultValue={name}
+					name='name'
+					component='input'
+					type='text'
+					placeholder='Name'
+					style={inputStyle}
+				/>
 			</div>
 			<div style={divStyle}>
 				<label style={lblStyle}>Description</label>
-				<Field name='description' component='input' type='text' placeholder='description' style={inputStyle} />
+				<Field
+					name='description'
+					component='input'
+					type='text'
+					placeholder='description'
+					style={inputStyle}
+					defaultValue={description}
+				/>
 			</div>
 			<H4 style={{ margin: '1.5em 0 0 24%' }}>Ticket Assignments</H4>
 			<div style={divStyle}>
@@ -90,4 +111,4 @@ const NewDateForm = ({ tickets = [], formReset }) => {
 	);
 };
 
-export default NewDateForm;
+export default DateForm;
