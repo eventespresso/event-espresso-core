@@ -14,7 +14,7 @@ const useFetchPrices = ({ ticketIn = [] }) => {
 		variables: {
 			where: {
 				ticketIn,
-			}
+			},
 		},
 		skip: !ticketIn.length, // do not fetch if we don't have any tickets
 		onCompleted: () => {
