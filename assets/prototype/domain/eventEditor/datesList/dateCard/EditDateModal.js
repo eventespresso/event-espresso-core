@@ -1,19 +1,21 @@
 import { useContext } from '@wordpress/element';
 import FormModal from '../../../shared/FormModal';
-import EditDateForm from '../EditDateForm';
+import DateForm from '../DateForm';
 import { DateTimeContext } from '../../../../infrastructure/services/contextProviders/DateTimeProvider';
 
 const EditDateModal = ({ tickets }) => {
 	const { isOpen, onClose } = useContext(DateTimeContext);
 
+	const formComponent = (props) => <DateForm {...props} title='Update date' />;
+
 	return (
 		<FormModal
-			tickets={tickets}
-			FormComponent={EditDateForm}
+			FormComponent={formComponent}
 			initialValues={{}}
+			isOpen={isOpen}
 			onSubmit={() => null}
 			onClose={onClose}
-			isOpen={isOpen}
+			tickets={tickets}
 		/>
 	);
 };

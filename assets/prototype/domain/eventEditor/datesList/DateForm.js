@@ -59,13 +59,13 @@ const formatSecondaryField = (ticketPrice, toString = false) => {
 	return toString ? renderToString(<Currency quantity={ticketPrice} />, null) : <Currency quantity={ticketPrice} />;
 };
 
-const EditDateForm = ({ tickets = [], formReset }) => {
+const DateForm = ({ formReset, tickets = [], title }) => {
 	const { id } = useContext(DateTimeContext);
 	const { description, name } = useDateItem({ id });
 
 	return (
 		<>
-			<H2 style={hdrStyle}>New Date Details</H2>
+			<H2 style={hdrStyle}>{title}</H2>
 			<div style={divStyle}>
 				<label style={lblStyle}>Name</label>
 				<Field
@@ -111,4 +111,4 @@ const EditDateForm = ({ tickets = [], formReset }) => {
 	);
 };
 
-export default EditDateForm;
+export default DateForm;

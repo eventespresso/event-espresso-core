@@ -38,6 +38,7 @@ const DateCard = ({ eventId, id }) => {
 
 	const onFieldUpdate = useUpdateDateMutation({ id });
 	const { getRelations } = useRelations();
+
 	// get related tickets for this datetime
 	const relatedTickets = getRelations({
 		entity: 'datetimes',
