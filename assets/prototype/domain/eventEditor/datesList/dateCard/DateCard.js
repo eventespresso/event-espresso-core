@@ -33,14 +33,14 @@ const idStyle = {
 	top: '.5em',
 };
 
-const DateCard = ({ eventId, id }) => {
+const DateCard = ({ eventId, id, tickets }) => {
 	const date = useDateItem({ id });
 
 	const onFieldUpdate = useUpdateDateMutation({ id });
 	const { getRelations } = useRelations();
 
-	// get related tickets for this datetime
-	const relatedTickets = getRelations({
+	// get related ticket IDs for this datetime
+	const relatedTicketIds = getRelations({
 		entity: 'datetimes',
 		entityId: id,
 		relation: 'tickets',
@@ -54,21 +54,9 @@ const DateCard = ({ eventId, id }) => {
 	return (
 		<DateTimeProvider id={id}>
 			<Card elevation={Elevation.ONE} style={cardStyle}>
-				<EditDate position='top' />
-				<div>
-					<div style={idStyle}>
-						{date.datetimeId} {':'} {date.id}
-					</div>
-					<H4>
-						<EditableText
-							placeholder='Edit title...'
-							defaultValue={date.name}
-							onCancel={(value) => console.log(value)}
-							onConfirm={(name) => onFieldUpdate({ name })}
-							minWidth={'320px'}
-							selectAllOnFocus
-						/>
-					</H4>
+				<EditDate position='top' relatedTickets={relatedTicketIds} tickets={tickets} />
+				<div style={idStyle}>
+					{date.datetimeId} {':'} {date.id}
 				</div>
 				<H4>
 					<EditableText
@@ -103,9 +91,9 @@ const DateCard = ({ eventId, id }) => {
 				</div>
 				<div>
 					{'Related Tickets: '}{' '}
-					{relatedTickets.map((ticketId) => (
-						<TicketId key={ticketId} id={ticketId} />
-					))}
+					{relatedTicketIds.map((ticketId) => {
+						return ticketId ? <TicketId key={ticketId} id={ticketId} /> : null;
+					})}
 				</div>
 				<DeleteDateButton eventId={eventId} id={date.id} />
 			</Card>

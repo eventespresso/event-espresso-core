@@ -42,7 +42,7 @@ const DatesList = ({ datetimes, error, eventId, loading, tickets }) => {
 		<>
 			<div style={listStyle}>
 				{datetimes.map((date) => (
-					<DateCard eventId={eventId} id={date.id} key={date.id} />
+					<DateCard eventId={eventId} id={date.id} key={date.id} tickets={tickets} />
 				))}
 			</div>
 			{btnRow}

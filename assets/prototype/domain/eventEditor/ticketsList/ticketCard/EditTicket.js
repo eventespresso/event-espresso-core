@@ -1,10 +1,10 @@
 import EditTicketButton from './EditTicketButton';
 import EditTicketModal from './EditTicketModal';
 
-const EditTicket = ({ position }) => (
+const EditTicket = ({ datetimes, position, relatedDates }) => (
 	<>
 		<EditTicketButton position={position} />
-		<EditTicketModal />
+		<EditTicketModal datetimes={datetimes} relatedDates={relatedDates} />
 	</>
 );
 

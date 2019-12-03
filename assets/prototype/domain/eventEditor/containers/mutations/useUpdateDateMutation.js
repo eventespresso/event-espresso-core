@@ -20,23 +20,14 @@ const useUpdateDateMutation = ({ id = 0 }) => {
 	toaster.loading(loading, toasterMessage);
 	toaster.error(error);
 
-	const getVariables = ({ endDate, description, name, startDate }) => {
+	const updateHandler = (fields) => {
 		const variables = {
 			input: {
 				clientMutationId: 'xyz',
 				id,
-				...(endDate && { endDate }),
-				...(description && { description }),
-				...(name && { name }),
-				...(startDate && { startDate }),
+				...fields,
 			},
 		};
-
-		return variables;
-	};
-
-	const updateHandler = ({ endDate, description, name, startDate }) => {
-		const variables = getVariables({ endDate, description, name, startDate });
 
 		updateDate({
 			variables,

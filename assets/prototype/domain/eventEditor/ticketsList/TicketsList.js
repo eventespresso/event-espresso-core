@@ -79,7 +79,7 @@ const TicketsList = ({ tickets, datetimes, error, loading, loadingDates }) => {
 			<Fragment>
 				<div style={listStyle}>
 					{tickets.map((ticket) => (
-						<TicketCard datetimeIn={datetimeIn} id={ticket.id} key={ticket.id} />
+						<TicketCard datetimeIn={datetimeIn} id={ticket.id} key={ticket.id} datetimes={datetimes} />
 					))}
 				</div>
 				{btnRow}
