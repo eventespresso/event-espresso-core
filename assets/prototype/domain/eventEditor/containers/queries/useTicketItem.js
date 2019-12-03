@@ -1,4 +1,5 @@
 import { useApolloClient } from '@apollo/react-hooks';
+import { propOr } from 'ramda';
 import { GET_TICKET } from './tickets';
 
 const useTicketItem = ({ id }) => {
@@ -16,9 +17,11 @@ const useTicketItem = ({ id }) => {
 		data = {};
 	}
 
-	console.log('%c > data: ', 'color: cyan;', data);
+	const ticket = propOr({}, 'ticket', data);
 
-	return data.ticket || {};
+	console.log('%c > ticket: ', 'color: cyan;', ticket);
+
+	return ticket;
 };
 
 export default useTicketItem;

@@ -1,6 +1,8 @@
 import { useState } from '@wordpress/element';
 import moment from 'moment';
 import { Button, Card, EditableText, Elevation, H4, H6, Popover } from '@blueprintjs/core/lib/esm';
+import DateTimeProvider from '../../../../infrastructure/services/contextProviders/DateTimeProvider';
+import EditDate from './EditDate';
 import DeleteDateButton from './DeleteDateButton';
 import DateRangePicker from '../../../shared/dateRangeInput/DateRangePicker';
 import { MomentDateRange } from '../../../shared/dateRangeInput/momentDate';
@@ -36,12 +38,13 @@ const DateCard = ({ eventId, id }) => {
 
 	const onFieldUpdate = useUpdateDateMutation({ id });
 	const { getRelations } = useRelations();
+
 	// get related tickets for this datetime
 	const relatedTickets = getRelations({
 		entity: 'datetimes',
 		entityId: id,
 		relation: 'tickets',
-	}).map((ticketId) => <TicketId key={ticketId} id={ticketId} />);
+	});
 
 	const startDate = moment(date.startDate).toDate() || PLUS_ONE_MONTH;
 	const endDate = moment(date.endDate).toDate() || PLUS_TWO_MONTHS;
@@ -49,10 +52,23 @@ const DateCard = ({ eventId, id }) => {
 	const [range, setRange] = useState(defaultRangeValues);
 
 	return (
-		<Card elevation={Elevation.ONE} style={cardStyle}>
-			<div>
-				<div style={idStyle}>
-					{date.datetimeId} {':'} {date.id}
+		<DateTimeProvider id={id}>
+			<Card elevation={Elevation.ONE} style={cardStyle}>
+				<EditDate position='top' />
+				<div>
+					<div style={idStyle}>
+						{date.datetimeId} {':'} {date.id}
+					</div>
+					<H4>
+						<EditableText
+							placeholder='Edit title...'
+							defaultValue={date.name}
+							onCancel={(value) => console.log(value)}
+							onConfirm={(name) => onFieldUpdate({ name })}
+							minWidth={'320px'}
+							selectAllOnFocus
+						/>
+					</H4>
 				</div>
 				<H4>
 					<EditableText
@@ -64,33 +80,36 @@ const DateCard = ({ eventId, id }) => {
 						selectAllOnFocus
 					/>
 				</H4>
-			</div>
-			<div>
-				<H6>
-					<EditableText
-						placeholder='Edit description...'
-						defaultValue={date.description}
-						onCancel={(value) => console.log(value)}
-						onConfirm={(description) => onFieldUpdate({ description })}
-						minWidth={'320px'}
-						multiline={true}
-						maxLines={4}
-						selectAllOnFocus
-					/>
-				</H6>
-			</div>
-			<div>
-				<MomentDateRange range={range} withTime />
-				<Popover lazy>
-					<Button icon='calendar' style={btnStyle} minimal />
-					<DateRangePicker onFieldUpdate={onFieldUpdate} range={range} setRange={setRange} />
-				</Popover>
-			</div>
-			<div>
-				{'Related Tickets: '} {relatedTickets}
-			</div>
-			<DeleteDateButton eventId={eventId} id={date.id} />
-		</Card>
+				<div>
+					<H6>
+						<EditableText
+							placeholder='Edit description...'
+							defaultValue={date.description}
+							onCancel={(value) => console.log(value)}
+							onConfirm={(description) => onFieldUpdate({ description })}
+							minWidth={'320px'}
+							multiline={true}
+							maxLines={4}
+							selectAllOnFocus
+						/>
+					</H6>
+				</div>
+				<div>
+					<MomentDateRange range={range} withTime />
+					<Popover lazy>
+						<Button icon='calendar' style={btnStyle} minimal />
+						<DateRangePicker onFieldUpdate={onFieldUpdate} range={range} setRange={setRange} />
+					</Popover>
+				</div>
+				<div>
+					{'Related Tickets: '}{' '}
+					{relatedTickets.map((ticketId) => (
+						<TicketId key={ticketId} id={ticketId} />
+					))}
+				</div>
+				<DeleteDateButton eventId={eventId} id={date.id} />
+			</Card>
+		</DateTimeProvider>
 	);
 };
 
