@@ -1,4 +1,4 @@
-import get from 'lodash/get';
+import { path } from 'ramda';
 import { useMutation } from '@apollo/react-hooks';
 import { DELETE_TICKET } from './tickets';
 import { GET_TICKETS } from '../queries/tickets';
@@ -28,7 +28,7 @@ const useDeleteTicketMutation = ({ id }) => {
 	const variables = { input: { clientMutationId: 'xyz', id } };
 
 	const update = (proxy, { data }) => {
-		const ticket = get(data, ['deleteTicket', 'ticket']);
+		const ticket = path(['deleteTicket', 'ticket'], data);
 
 		const options = {
 			query: GET_TICKETS,
