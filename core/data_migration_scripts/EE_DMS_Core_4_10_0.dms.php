@@ -603,6 +603,7 @@ class EE_DMS_Core_4_10_0 extends EE_Data_Migration_Script_Base
     public function insert_default_data()
     {
         $this->previous_dms->insert_default_data();
+        $this->removeMijirehPM();
     }
 
 
@@ -619,5 +620,36 @@ class EE_DMS_Core_4_10_0 extends EE_Data_Migration_Script_Base
 
     public function migration_page_hooks()
     {
+    }
+
+    /**
+     * Mijireh was removed in $VID:$, but let's avoid having an error message because its files were removed, and don't
+     * show old payments made with it as being by "Unknown". The fix is to make it an "Admin_Only" payment method
+     * (like Invoice or Check) but don't allow it to be used in the admin either... so it's usable nowhere from now on,
+     * but it still exists so there's no problems.
+     * @since $VID:$
+     */
+    protected function removeMijirehPM()
+    {
+        global $wpdb;
+        $wpdb->update(
+            $wpdb->prefix . 'esp_payment_method',
+            [
+                'PMD_type' => 'Admin_Only',
+                'PMD_scope' => serialize(array())
+            ],
+            [
+                'PMD_type' => 'Mijireh'
+            ],
+            [
+                // update formats
+                '%s', // PMD_type
+                '%s', // PMD_scope
+            ],
+            [
+                // where formats
+                '%s'
+            ]
+        );
     }
 }
