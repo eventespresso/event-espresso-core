@@ -2,10 +2,12 @@ import get from 'lodash/get';
 import { useMutation } from '@apollo/react-hooks';
 import { DELETE_TICKET } from './tickets';
 import { GET_TICKETS } from '../queries/tickets';
+import useDatetimeIds from '../queries/useDatetimeIds';
 import useToaster from '../../../../infrastructure/services/toaster/useToaster';
 import useRelations from '../../../../infrastructure/services/relations/useRelations';
 
-const useDeleteTicketMutation = ({ datetimeIn, id }) => {
+const useDeleteTicketMutation = ({ id }) => {
+	const datetimeIn = useDatetimeIds();
 	const toaster = useToaster();
 	const { removeRelation, dropRelations } = useRelations();
 	const toasterMessage = `deleting ticket ${id}`;
