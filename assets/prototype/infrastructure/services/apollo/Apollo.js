@@ -7,11 +7,17 @@ import get from 'lodash/get';
 const { graphqlEndpoint } = window;
 const nonce = get(window, ['eejsdata', 'data', 'eejs_api_nonce']);
 
+const getResolver = (type) => {
+	return (_, args, { getCacheKey }) => getCacheKey({ __typename: type, id: args.id });
+};
+
 const cache = new InMemoryCache({
 	cacheRedirects: {
 		Query: {
-			datetime: (_, args, { getCacheKey }) => getCacheKey({ __typename: 'Datetime', id: args.id }),
-			ticket: (_, args, { getCacheKey }) => getCacheKey({ __typename: 'Ticket', id: args.id }),
+			datetime: getResolver('Datetime'),
+			ticket: getResolver('Ticket'),
+			price: getResolver('Price'),
+			priceType: getResolver('PriceType'),
 		},
 	},
 });
