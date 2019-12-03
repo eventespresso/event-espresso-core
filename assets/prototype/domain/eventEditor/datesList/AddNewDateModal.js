@@ -8,12 +8,12 @@ const AddNewDateModal = ({ eventId, tickets, handleClose, isOpen }) => {
 
 	return (
 		<FormModal
-			tickets={tickets}
 			FormComponent={formComponent}
 			initialValues={{}}
 			onSubmit={createDate}
 			onClose={handleClose}
 			isOpen={isOpen}
+			tickets={tickets}
 		/>
 	);
 };

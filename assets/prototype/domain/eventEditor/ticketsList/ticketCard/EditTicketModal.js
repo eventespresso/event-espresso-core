@@ -6,14 +6,9 @@ import useUpdateTicketMutation from '../../containers/mutations/useUpdateTicketM
 
 const EditTicketModal = () => {
 	const { id, isOpen, onClose, relatedDates } = useContext(TicketContext);
-	const dates = relatedDates.map((id) => {
-		// we need to get here full ticket objects
-		return id;
-	});
-
 	const onFieldUpdate = useUpdateTicketMutation({ id });
 
-	const formComponent = (props) => <TicketForm {...props} dates={dates} title='Update ticket' />;
+	const formComponent = (props) => <TicketForm {...props} dates={relatedDates} title='Update ticket' />;
 	const onSubmit = (fields) => onFieldUpdate(fields);
 
 	return (

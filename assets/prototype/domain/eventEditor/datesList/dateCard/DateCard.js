@@ -1,4 +1,5 @@
 import { useState } from '@wordpress/element';
+import * as R from 'ramda';
 import moment from 'moment';
 import { Button, Card, EditableText, Elevation, H4, H6, Popover } from '@blueprintjs/core/lib/esm';
 import DateTimeProvider from '../../../../infrastructure/services/contextProviders/DateTimeProvider';
@@ -33,14 +34,14 @@ const idStyle = {
 	top: '.5em',
 };
 
-const DateCard = ({ eventId, id }) => {
+const DateCard = ({ eventId, id, tickets }) => {
 	const date = useDateItem({ id });
 
 	const onFieldUpdate = useUpdateDateMutation({ id });
 	const { getRelations } = useRelations();
 
-	// get related tickets for this datetime
-	const relatedTickets = getRelations({
+	// get related ticket IDs for this datetime
+	const relatedTicketIds = getRelations({
 		entity: 'datetimes',
 		entityId: id,
 		relation: 'tickets',
@@ -54,7 +55,7 @@ const DateCard = ({ eventId, id }) => {
 	return (
 		<DateTimeProvider id={id}>
 			<Card elevation={Elevation.ONE} style={cardStyle}>
-				<EditDate position='top' />
+				<EditDate position='top' relatedTickets={relatedTicketIds} tickets={tickets} />
 				<div>
 					<div style={idStyle}>
 						{date.datetimeId} {':'} {date.id}
@@ -103,9 +104,9 @@ const DateCard = ({ eventId, id }) => {
 				</div>
 				<div>
 					{'Related Tickets: '}{' '}
-					{relatedTickets.map((ticketId) => (
-						<TicketId key={ticketId} id={ticketId} />
-					))}
+					{relatedTicketIds.map((ticketId) => {
+						return ticketId ? <TicketId key={ticketId} id={ticketId} /> : null;
+					})}
 				</div>
 				<DeleteDateButton eventId={eventId} id={date.id} />
 			</Card>

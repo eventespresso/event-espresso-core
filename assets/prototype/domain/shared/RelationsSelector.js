@@ -2,6 +2,12 @@ import { useEffect, useState } from '@wordpress/element';
 import { Button, MenuItem } from '@blueprintjs/core/lib/esm';
 import { MultiSelect } from '@blueprintjs/select';
 
+const transformRelatedItemsArrayToObject = (array) =>
+	array.reduce((acc, cur) => {
+		acc[cur.id] = cur;
+		return acc;
+	}, {});
+
 /**
  * @function
  * @param {Array} items array of items to select from
@@ -15,6 +21,7 @@ import { MultiSelect } from '@blueprintjs/select';
  * @return {node} rendered multi-select input
  */
 const RelationsSelector = ({
+	defaultRelatedItems = [],
 	items = [],
 	itemType = '',
 	displayFields = [],
@@ -24,7 +31,9 @@ const RelationsSelector = ({
 	formReset = false,
 	...rest
 }) => {
-	const [relatedItems, setRelatedItems] = useState([]);
+	const [relatedItems, setRelatedItems] = useState(defaultRelatedItems);
+
+	const relatedItemsObject = transformRelatedItemsArrayToObject(items);
 
 	// clear related items
 	useEffect(() => {
@@ -104,8 +113,8 @@ const RelationsSelector = ({
 	 * @param {Object} relatedItem
 	 * @return {boolean} true if relation exists
 	 */
-	const hasRelation = (relatedItem) => {
-		return relatedItems.indexOf(relatedItem.id) > -1;
+	const hasRelation = (relatedItemId) => {
+		return relatedItems.some((element) => element === relatedItemId);
 	};
 
 	/**
@@ -153,13 +162,14 @@ const RelationsSelector = ({
 	 * @param {string} secondary field to use for item tag
 	 * @return {string} item tag that appears in select box
 	 */
-	const renderItemTag = (relatedItem, format = true, primary = '', secondary = '') => {
-		const itemId = getItemId(relatedItem);
+	const renderItemTag = (itemId, format = true, primary = '', secondary = '') => {
+		const relatedItem = relatedItemsObject[itemId];
+
 		primary = primary ? primary : primaryField(relatedItem);
 		primary = formatPrimaryField(primary, format, true);
 		secondary = secondary ? secondary : secondaryField(relatedItem);
 		secondary = formatSecondaryField(secondary, format, true);
-		return `${itemId}) ${primary} : ${secondary}`;
+		return `${primary} : ${secondary}`;
 	};
 
 	/**
@@ -200,16 +210,20 @@ const RelationsSelector = ({
 	 * @param {Object} relatedItem
 	 * @return {node} render select option
 	 */
-	const renderOption = (relatedItem) => {
+	const renderOption = (relatedItemId) => {
+		const relatedItem = relatedItemsObject[relatedItemId];
+
 		const itemId = getItemId(relatedItem);
 		let primary = primaryField(relatedItem);
 		primary = formatPrimaryField(primary);
 		let secondary = secondaryField(relatedItem);
 		secondary = formatSecondaryField(secondary);
+		const text = `${itemId}) ${primary}`;
+
 		return (
 			<MenuItem
-				key={relatedItem.id}
-				text={`${itemId}) ${primary}`}
+				key={relatedItemId}
+				text={text}
 				label={secondary}
 				onClick={() => handleRelation(relatedItem)}
 				icon={hasRelation(relatedItem) ? 'tick' : 'blank'}
@@ -219,25 +233,28 @@ const RelationsSelector = ({
 	};
 
 	const clearButton = relatedItems.length > 0 ? <Button icon='cross' onClick={reset} minimal /> : undefined;
+	const onItemSelect = (itemId) => handleRelation(relatedItemsObject[itemId]);
+	const selectedItems = Object.keys(relatedItemsObject).filter((item) => hasRelation(item));
+	const tagInputProps = {
+		tagProps: { minimal: true },
+		onRemove: handleTagRemove,
+		rightElement: clearButton,
+	};
 
 	return (
 		<MultiSelect
 			{...rest}
-			items={items}
-			selectedItems={items.filter((item) => hasRelation(item))}
-			itemRenderer={renderOption}
-			onItemSelect={handleRelation}
-			tagInputProps={{
-				tagProps: { minimal: true },
-				onRemove: handleTagRemove,
-				rightElement: clearButton,
-			}}
-			tagRenderer={(relatedItem) => renderItemTag(relatedItem)}
-			itemPredicate={itemSearchCompare}
-			placeholder={placeholder}
-			noResults={<MenuItem disabled text={'no results'} />}
-			resetOnQuery={false}
 			fill
+			items={Object.keys(relatedItemsObject)}
+			itemRenderer={renderOption}
+			itemPredicate={itemSearchCompare}
+			noResults={<MenuItem disabled text={'no results'} />}
+			onItemSelect={onItemSelect}
+			placeholder={placeholder}
+			resetOnQuery={false}
+			selectedItems={selectedItems}
+			tagInputProps={tagInputProps}
+			tagRenderer={(relatedItem) => renderItemTag(relatedItem)}
 		/>
 	);
 };
