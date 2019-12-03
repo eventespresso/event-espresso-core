@@ -1,30 +1,28 @@
 import gql from 'graphql-tag';
+import { TICKET_ATTRIBUTES, TICKET_PRICES_ATTRIBUTE } from '../queries/tickets';
 
 export const CREATE_TICKET = gql`
 	mutation createTicket($input: CreateTicketInput!) {
 		createTicket(input: $input) {
 			ticket {
-				id
-				ticketId
-				description
-				name
-				price
+				...ticketAttributes
+				...ticketPricesAttribute # fetch default prices when a ticket is created.
 			}
 		}
 	}
+	${TICKET_ATTRIBUTES}
+	${TICKET_PRICES_ATTRIBUTE}
 `;
 
 export const UPDATE_TICKET = gql`
 	mutation updateTicket($input: UpdateTicketInput!) {
 		updateTicket(input: $input) {
 			ticket {
-				id
-				description
-				name
-				price
+				...ticketAttributes
 			}
 		}
 	}
+	${TICKET_ATTRIBUTES}
 `;
 
 export const DELETE_TICKET = gql`
