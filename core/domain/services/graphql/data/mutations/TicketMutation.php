@@ -4,6 +4,20 @@ namespace EventEspresso\core\domain\services\graphql\data\mutations;
 
 use GraphQLRelay\Relay;
 use DateTime;
+use EEM_Price;
+use EEM_Ticket;
+use EE_Ticket;
+use EventEspresso\core\domain\services\assets\EspressoEditorAssetManager;
+use EventEspresso\core\domain\services\converters\RestApiSpoofer;
+use EventEspresso\core\exceptions\InvalidDataTypeException;
+use EventEspresso\core\exceptions\InvalidInterfaceException;
+use EventEspresso\core\exceptions\ModelConfigurationException;
+use EventEspresso\core\exceptions\RestPasswordIncorrectException;
+use EventEspresso\core\exceptions\RestPasswordRequiredException;
+use EventEspresso\core\exceptions\UnexpectedEntityException;
+use EventEspresso\core\libraries\rest_api\RestException;
+use InvalidArgumentException;
+use ReflectionException;
 
 /**
  * Class TicketMutation
@@ -103,6 +117,31 @@ class TicketMutation
                     $relationName
                 );
             }
+        }
+    }
+
+
+    /**
+     * @param EE_Ticket $ticket_entity
+     * @param EEM_Ticket $ticket_model
+     * @throws DomainException
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws ModelConfigurationException
+     * @throws ReflectionException
+     * @throws RestException
+     * @throws UnexpectedEntityException
+     * @since $VID:$
+     */
+    public static function addDefaultPrices(EE_Ticket $ticket_entity, EEM_Ticket $ticket_model)
+    {
+        $price_model = EEM_Price::instance();
+        $default_prices = $price_model->get_all_default_prices();
+        foreach ($default_prices as $default_price) {
+            $default_price->save();
+            $default_price->_add_relation_to($ticket_entity, 'Ticket');
         }
     }
 }
