@@ -73,14 +73,20 @@ class TicketCreate
             $id = $entity->save();
 
             if (empty($id)) {
-                throw new UserError(esc_html__('The object failed to create but no error was provided', 'event_espresso'));
+                throw new UserError(esc_html__(
+                    'The object failed to create but no error was provided',
+                    'event_espresso'
+                ));
             }
 
             if (! empty($datetimes)) {
                 TicketMutation::setRelatedDatetimes($entity, $datetimes);
             }
+            // if prices are passed.
             if (! empty($prices)) {
                 TicketMutation::setRelatedPrices($entity, $prices);
+            } else {
+                TicketMutation::addDefaultPrices($entity, $model);
             }
 
             return [
