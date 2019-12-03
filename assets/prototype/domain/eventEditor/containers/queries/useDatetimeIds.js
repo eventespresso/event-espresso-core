@@ -20,9 +20,10 @@ const useDatetimeIds = () => {
 		throw new Error(error);
 	}
 
-	const getDatetimes = R.pathOr([], ['datetimes', 'nodes']);
-	const getIds = R.map(({ id }) => id);
-	const datetimeIds = R.pipe(getDatetimes, getIds)(data);
+	const getDatetimes = (data) => R.pathOr([], ['datetimes', 'nodes'], data);
+	const getIds = (datetimes) => R.map(({ id }) => id, datetimes);
+	const getDatetimeIds = R.pipe(getDatetimes, getIds);
+	const datetimeIds = getDatetimeIds(data);
 
 	return datetimeIds;
 };
