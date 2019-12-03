@@ -47,9 +47,11 @@ const relationsStyle = {
 	width: '60%',
 };
 
-const TicketForm = ({ datetimes, formReset, title }) => {
+const TicketForm = ({ datetimes, formReset, relatedDates, title }) => {
 	const { id } = useContext(TicketContext);
 	const { description = '', name = '', price = '' } = useTicketItem({ id });
+
+	console.log('relatedDatesrelatedDates'.relatedDates);
 
 	return (
 		<>
@@ -97,6 +99,7 @@ const TicketForm = ({ datetimes, formReset, title }) => {
 						name={'datetimes'}
 						render={({ input }) => (
 							<RelationsSelector
+								defaultRelatedItems={relatedDates}
 								items={datetimes}
 								itemType={'datetime'}
 								displayFields={['name', 'startDate']}

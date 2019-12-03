@@ -1,5 +1,4 @@
 import { useState } from '@wordpress/element';
-import * as R from 'ramda';
 import moment from 'moment';
 import { Button, Card, EditableText, Elevation, H4, H6, Popover } from '@blueprintjs/core/lib/esm';
 import DateTimeProvider from '../../../../infrastructure/services/contextProviders/DateTimeProvider';

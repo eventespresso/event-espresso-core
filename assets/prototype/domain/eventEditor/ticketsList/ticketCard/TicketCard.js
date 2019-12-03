@@ -38,7 +38,7 @@ const priceStyle = {
 	color: 'grey',
 };
 
-const TicketCard = ({ datetimeIn, id }) => {
+const TicketCard = ({ datetimes, datetimeIn, id }) => {
 	const ticket = useTicketItem({ id });
 	const updateTicketField = useUpdateTicketMutation({ id });
 	const { getRelations } = useRelations();
@@ -52,7 +52,7 @@ const TicketCard = ({ datetimeIn, id }) => {
 	return (
 		<TicketProvider id={id}>
 			<Card elevation={Elevation.ONE} style={cardStyle}>
-				<EditTicket position='top' />
+				<EditTicket datetimes={datetimes} position='top' relatedDates={relatedDates} />
 				<div>
 					<div style={idStyle}>
 						{ticket.ticketId} {':'} {ticket.id}
