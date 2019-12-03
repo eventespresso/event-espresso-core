@@ -55,20 +55,8 @@ const DateCard = ({ eventId, id, tickets }) => {
 		<DateTimeProvider id={id}>
 			<Card elevation={Elevation.ONE} style={cardStyle}>
 				<EditDate position='top' relatedTickets={relatedTicketIds} tickets={tickets} />
-				<div>
-					<div style={idStyle}>
-						{date.datetimeId} {':'} {date.id}
-					</div>
-					<H4>
-						<EditableText
-							placeholder='Edit title...'
-							defaultValue={date.name}
-							onCancel={(value) => console.log(value)}
-							onConfirm={(name) => onFieldUpdate({ name })}
-							minWidth={'320px'}
-							selectAllOnFocus
-						/>
-					</H4>
+				<div style={idStyle}>
+					{date.datetimeId} {':'} {date.id}
 				</div>
 				<H4>
 					<EditableText
