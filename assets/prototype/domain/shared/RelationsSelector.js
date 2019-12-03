@@ -2,10 +2,11 @@ import { useEffect, useState } from '@wordpress/element';
 import { Button, MenuItem } from '@blueprintjs/core/lib/esm';
 import { MultiSelect } from '@blueprintjs/select';
 
-const transformRelatedItemsArrayToObject = (array) =>
-	array.reduce((acc, cur) => {
-		acc[cur.id] = cur;
-		return acc;
+const transformRelatedItemsArrayToObject = (items) =>
+	items.reduce((relatedItems, relatedItem) => {
+		relatedItems[relatedItem.id] = relatedItem;
+
+		return relatedItems;
 	}, {});
 
 /**
@@ -169,7 +170,7 @@ const RelationsSelector = ({
 		primary = formatPrimaryField(primary, format, true);
 		secondary = secondary ? secondary : secondaryField(relatedItem);
 		secondary = formatSecondaryField(secondary, format, true);
-		return `${primary} : ${secondary}`;
+		return `${itemId}) ${primary} : ${secondary}`;
 	};
 
 	/**
