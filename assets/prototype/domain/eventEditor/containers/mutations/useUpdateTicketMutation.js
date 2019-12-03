@@ -19,23 +19,17 @@ const useUpdateTicketMutation = ({ id = 0 }) => {
 	toaster.loading(loading, toasterMessage);
 	toaster.error(error);
 
-	const getVariables = ({ description, name, price }) => {
+	const updateHandler = ({ description, name, price, prices }) => {
+		// it's supposed that only those variables should be passed
+		// which are to be updated.
 		const variables = {
-			input: {
-				clientMutationId: 'xyz',
-				id,
-				// There is room for readability improvement here
-				...(description && { description }),
-				...(name && { name }),
-				...(price && { price }),
-			},
+			clientMutationId: 'xyz',
+			id,
+			description,
+			name,
+			price,
+			prices,
 		};
-
-		return variables;
-	};
-
-	const updateHandler = ({ description, name, price }) => {
-		const variables = getVariables({ description, name, price });
 
 		updateTicket({
 			variables,
