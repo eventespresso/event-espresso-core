@@ -11,7 +11,6 @@ import useRelations from '../../../../infrastructure/services/relations/useRelat
 const useCreatePriceMutation = ({ tickets, ticketId }) => {
 	const toaster = useToaster();
 	const { updateRelations } = useRelations();
-	const id = 0;
 	const toasterMessage = 'creating new price';
 	const [createPrice, { loading, error }] = useMutation(CREATE_PRICE, {
 		onCompleted: () => {
@@ -42,7 +41,7 @@ const useCreatePriceMutation = ({ tickets, ticketId }) => {
 				__typename: 'CreatePricePayload',
 				price: {
 					__typename: 'Price',
-					priceId: id,
+					priceId: 0,
 					name,
 					desc,
 					amount,
