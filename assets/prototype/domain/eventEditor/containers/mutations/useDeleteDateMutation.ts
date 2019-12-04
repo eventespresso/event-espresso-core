@@ -5,7 +5,12 @@ import { GET_TICKETS } from '../queries/tickets';
 import useToaster from '../../../../infrastructure/services/toaster/useToaster';
 import useRelations from '../../../../infrastructure/services/relations/useRelations';
 
-const useDeleteDatetimeMutation = ({ eventId, id }) => {
+type useDeleteDatetimeMutationProps = {
+	eventId: string;
+	id: string;
+};
+
+const useDeleteDatetimeMutation = ({ eventId, id }: useDeleteDatetimeMutationProps) => {
 	const toaster = useToaster();
 	const { removeRelation, dropRelations } = useRelations();
 	const toasterMessage = `deleting date ${id}`;
