@@ -42,6 +42,12 @@ class Venue extends TypeBase
     public function getFields()
     {
         return [
+            new GraphQLOutputField(
+                'dbId',
+                ['non_null' => 'Int'],
+                'ID',
+                esc_html__('The venue ID.', 'event_espresso')
+            ),
             new GraphQLField(
                 'name',
                 'String',

@@ -42,6 +42,12 @@ class Event extends TypeBase
     public function getFields()
     {
         return [
+            new GraphQLOutputField(
+                'dbId',
+                ['non_null' => 'Int'],
+                'ID',
+                esc_html__('The event ID.', 'event_espresso')
+            ),
             new GraphQLField(
                 'name',
                 'String',
