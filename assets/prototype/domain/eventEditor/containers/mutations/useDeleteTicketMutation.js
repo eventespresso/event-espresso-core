@@ -1,11 +1,13 @@
-import get from 'lodash/get';
+import path from 'ramda/src/path';
 import { useMutation } from '@apollo/react-hooks';
 import { DELETE_TICKET } from './tickets';
 import { GET_TICKETS } from '../queries/tickets';
+import useDatetimeIds from '../queries/useDatetimeIds';
 import useToaster from '../../../../infrastructure/services/toaster/useToaster';
 import useRelations from '../../../../infrastructure/services/relations/useRelations';
 
-const useDeleteTicketMutation = ({ datetimeIn, id }) => {
+const useDeleteTicketMutation = ({ id }) => {
+	const datetimeIn = useDatetimeIds();
 	const toaster = useToaster();
 	const { removeRelation, dropRelations } = useRelations();
 	const toasterMessage = `deleting ticket ${id}`;
@@ -26,7 +28,7 @@ const useDeleteTicketMutation = ({ datetimeIn, id }) => {
 	const variables = { input: { clientMutationId: 'xyz', id } };
 
 	const update = (proxy, { data }) => {
-		const ticket = get(data, ['deleteTicket', 'ticket']);
+		const ticket = path(['deleteTicket', 'ticket'], data);
 
 		const options = {
 			query: GET_TICKETS,

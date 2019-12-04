@@ -38,7 +38,7 @@ const priceStyle = {
 	color: 'grey',
 };
 
-const TicketCard = ({ datetimes, datetimeIn, id }) => {
+const TicketCard = ({ datetimes, id }) => {
 	const ticket = useTicketItem({ id });
 	const updateTicketField = useUpdateTicketMutation({ id });
 	const { getRelations } = useRelations();
@@ -92,7 +92,7 @@ const TicketCard = ({ datetimes, datetimeIn, id }) => {
 				</div>
 				<div style={btnsStyle}>
 					<TicketPriceCalculatorButton ticket={ticket} />
-					<DeleteTicketButton datetimeIn={datetimeIn} id={ticket.id} />
+					<DeleteTicketButton id={ticket.id} />
 				</div>
 				<div>
 					{'Related Dates: '}{' '}
@@ -100,7 +100,6 @@ const TicketCard = ({ datetimes, datetimeIn, id }) => {
 						<DatetimeId key={datetimeId} id={datetimeId} />
 					))}
 				</div>
-				<DeleteTicketButton datetimeIn={datetimeIn} id={ticket.id} />
 			</Card>
 		</TicketProvider>
 	);
