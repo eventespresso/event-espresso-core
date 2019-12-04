@@ -62,16 +62,6 @@ const RelationsSelector = ({
 	/**
 	 * @function
 	 * @param {Object} relatedItem
-	 * @return {string} GUID for related item if relation exists
-	 */
-	const getItemId = (relatedItem) => {
-		const idField = `${itemType}Id`;
-		return relatedItem[idField] ? relatedItem[idField] : '';
-	};
-
-	/**
-	 * @function
-	 * @param {Object} relatedItem
 	 * @return {string} value for primary field if it exists
 	 */
 	const primaryField = (relatedItem) => {
@@ -214,12 +204,12 @@ const RelationsSelector = ({
 	const renderOption = (relatedItemId) => {
 		const relatedItem = relatedItemsObject[relatedItemId];
 
-		const itemId = getItemId(relatedItem);
+		const { dbId = '' } = relatedItem;
 		let primary = primaryField(relatedItem);
 		primary = formatPrimaryField(primary);
 		let secondary = secondaryField(relatedItem);
 		secondary = formatSecondaryField(secondary);
-		const text = `${itemId}) ${primary}`;
+		const text = `${dbId}) ${primary}`;
 
 		return (
 			<MenuItem
