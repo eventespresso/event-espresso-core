@@ -10,10 +10,10 @@ query getPrices ($where: RootQueryPricesConnectionWhereArgs) {
     nodes {
         id
         name
-        priceId
+        dbId
         priceType {
           id
-          priceTypeId
+          dbId
           baseType
           name
         }

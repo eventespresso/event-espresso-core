@@ -5,17 +5,18 @@ Ticket object has connections with `RootQuery`, `Datetime` etc. and thus can be 
 ## Example with `RootQuery`
 
 ```gql
-query getTickets ($where: RootQueryTicketsConnectionWhereArgs) {
-  tickets( where: $where) {
-    edges {
-      node {
-        id
-        name
-        description
-        price
-      }
-    }
-  }
+query getTickets($where: RootQueryTicketsConnectionWhereArgs) {
+	tickets(where: $where) {
+		edges {
+			node {
+				id
+				dbId
+				name
+				description
+				price
+			}
+		}
+	}
 }
 ```
 
@@ -23,15 +24,15 @@ query getTickets ($where: RootQueryTicketsConnectionWhereArgs) {
 
 ```json
 {
-  "where": {
-    "datetime": "RGF0ZXRpbWU6MTQ=",
-    "orderby": [
-      {
-        "field": "NAME",
-        "order": "DESC"
-      }
-    ]
-  }
+	"where": {
+		"datetime": "RGF0ZXRpbWU6MTQ=",
+		"orderby": [
+			{
+				"field": "NAME",
+				"order": "DESC"
+			}
+		]
+	}
 }
 ```
 
@@ -39,12 +40,9 @@ or
 
 ```json
 {
-  "where": {
-    "datetimeIn": [
-      "RGF0ZXRpbWU6MTQ=",
-      "RGF0ZXRpbWU6MTU="
-    ],
-  }
+	"where": {
+		"datetimeIn": ["RGF0ZXRpbWU6MTQ=", "RGF0ZXRpbWU6MTU="]
+	}
 }
 ```
 
@@ -54,20 +52,22 @@ or
 
 ```gql
 query getTickets {
-  tickets {
-    edges {
-      node {
-        id
-        name
-        description
-        prices {
-          nodes {
-            id
-            name
-          }
-        }
-      }
-    }
-  }
+	tickets {
+		edges {
+			node {
+				id
+				dbId
+				name
+				description
+				prices {
+					nodes {
+						id
+						dbId
+						name
+					}
+				}
+			}
+		}
+	}
 }
 ```

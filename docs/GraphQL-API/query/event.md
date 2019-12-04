@@ -4,16 +4,16 @@
 
 ```gql
 query getEventData($id: Int!) {
-  eventBy(eventId: $id) {
-    id
-    eventId
-    name
-    desc
-    isUpcoming
-    isActive
-    isInactive
-    isExpired
-  }
+	eventBy(eventId: $id) {
+		id
+		dbId
+		name
+		desc
+		isUpcoming
+		isActive
+		isInactive
+		isExpired
+	}
 }
 ```
 
@@ -21,7 +21,7 @@ query getEventData($id: Int!) {
 
 ```json
 {
-  "id": 22
+	"id": 22
 }
 ```
 
@@ -29,25 +29,25 @@ query getEventData($id: Int!) {
 
 ```gql
 query getEventData($id: Int!) {
-  eventBy(eventId: $id) {
-    id
-    eventId
-    name
-    desc
-    # All the venues
-    venues {
-      nodes {
-        name
-        desc
-        address
-        address2
-        city
-        zip
-        capacity
-        phone
-      }
-    }
-  }
+	eventBy(eventId: $id) {
+		id
+		dbId
+		name
+		desc
+		# All the venues
+		venues {
+			nodes {
+				name
+				desc
+				address
+				address2
+				city
+				zip
+				capacity
+				phone
+			}
+		}
+	}
 }
 ```
 
@@ -55,31 +55,33 @@ query getEventData($id: Int!) {
 
 ```gql
 query getEventData($id: Int!) {
-  eventBy(eventId: $id) {
-    id
-    eventId
-    name
-    desc
-    # All datetimes for the event
-    datetimes {
-      nodes {
-        id
-        name
-        description
-        startDate
-        endDate
-        # All tickets for the datetime
-        tickets {
-          nodes {
-            id
-            name
-            description
-            price
-          }
-        }
-      }
-    }
-  }
+	eventBy(eventId: $id) {
+		id
+		dbId
+		name
+		desc
+		# All datetimes for the event
+		datetimes {
+			nodes {
+				id
+				dbId
+				name
+				description
+				startDate
+				endDate
+				# All tickets for the datetime
+				tickets {
+					nodes {
+						id
+						dbId
+						name
+						description
+						price
+					}
+				}
+			}
+		}
+	}
 }
 ```
 
@@ -87,35 +89,37 @@ query getEventData($id: Int!) {
 
 ```gql
 query getEventData($id: Int!) {
-  eventBy(eventId: $id) {
-    id
-    eventId
-    name
-    desc
-    # All the venues
-    venues {
-      nodes {
-        name
-        desc
-      }
-    }
-    # All datetimes for the event
-    datetimes {
-      nodes {
-        id
-        name
-        startDate
-        endDate
-        # All tickets for the datetime
-        tickets {
-          nodes {
-            id
-            name
-            price
-          }
-        }
-      }
-    }
-  }
+	eventBy(eventId: $id) {
+		id
+		dbId
+		name
+		desc
+		# All the venues
+		venues {
+			nodes {
+				name
+				desc
+			}
+		}
+		# All datetimes for the event
+		datetimes {
+			nodes {
+				id
+				dbId
+				name
+				startDate
+				endDate
+				# All tickets for the datetime
+				tickets {
+					nodes {
+						id
+						dbId
+						name
+						price
+					}
+				}
+			}
+		}
+	}
 }
 ```
