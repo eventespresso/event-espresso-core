@@ -1,4 +1,4 @@
-import { path } from 'ramda';
+import path from 'ramda/src/path';
 import { useMutation } from '@apollo/react-hooks';
 import { DELETE_TICKET } from './tickets';
 import { GET_TICKETS } from '../queries/tickets';
