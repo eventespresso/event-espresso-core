@@ -24,7 +24,6 @@ const transformRelatedItemsArrayToObject = (items) =>
 const RelationsSelector = ({
 	defaultRelatedItems = [],
 	items = [],
-	itemType = '',
 	displayFields = [],
 	formatFields = [],
 	placeholder = 'assign relations',
@@ -50,6 +49,14 @@ const RelationsSelector = ({
 	const updateRelatedItems = (relations) => {
 		onChange(relations);
 		setRelatedItems(relations);
+	};
+
+	/**
+	 * @function
+	 * @param {string} itemId
+	 */
+	const getItem = (itemId) => {
+		return relatedItemsObject[itemId];
 	};
 
 	/**
@@ -101,24 +108,24 @@ const RelationsSelector = ({
 
 	/**
 	 * @function
-	 * @param {Object} relatedItem
+	 * @param {string} itemId
 	 * @return {boolean} true if relation exists
 	 */
-	const hasRelation = (relatedItemId) => {
-		return relatedItems.some((element) => element === relatedItemId);
+	const hasRelation = (itemId) => {
+		return relatedItems.some((element) => element === itemId);
 	};
 
 	/**
 	 * add or remove relation depending if one already exists
 	 *
 	 * @function
-	 * @param {Object} relatedItem
+	 * @param {string} itemId
 	 */
-	const handleRelation = (relatedItem) => {
-		if (hasRelation(relatedItem)) {
-			removeRelation(relatedItem);
+	const handleRelation = (itemId) => {
+		if (hasRelation(itemId)) {
+			removeRelation(itemId);
 		} else {
-			assignRelation(relatedItem);
+			assignRelation(itemId);
 		}
 	};
 
@@ -126,10 +133,10 @@ const RelationsSelector = ({
 	 * add relation
 	 *
 	 * @function
-	 * @param {Object} relatedItem
+	 * @param {string} itemId
 	 */
-	const assignRelation = (relatedItem) => {
-		const newItems = [...relatedItems, relatedItem.id];
+	const assignRelation = (itemId) => {
+		const newItems = [...relatedItems, itemId];
 		updateRelatedItems(newItems);
 	};
 
@@ -137,50 +144,51 @@ const RelationsSelector = ({
 	 * remove relation
 	 *
 	 * @function
-	 * @param {Object} relatedItem
+	 * @param {string} itemId
 	 */
-	const removeRelation = (relatedItem) => {
-		const itemId = relatedItem.id ? relatedItem.id : relatedItem;
+	const removeRelation = (itemId) => {
 		const newItems = relatedItems.filter((id) => id !== itemId);
 		updateRelatedItems(newItems);
 	};
 
 	/**
 	 * @function
-	 * @param {Object} relatedItem
+	 * @param {string} itemId
 	 * @param {boolean} format
 	 * @param {string} primary field to use for item tag
 	 * @param {string} secondary field to use for item tag
 	 * @return {string} item tag that appears in select box
 	 */
 	const renderItemTag = (itemId, format = true, primary = '', secondary = '') => {
-		const relatedItem = relatedItemsObject[itemId];
+		const relatedItem = getItem(itemId);
+		const { dbId = '' } = relatedItem;
 
 		primary = primary ? primary : primaryField(relatedItem);
 		primary = formatPrimaryField(primary, format, true);
 		secondary = secondary ? secondary : secondaryField(relatedItem);
 		secondary = formatSecondaryField(secondary, format, true);
-		return `${itemId}) ${primary} : ${secondary}`;
+		return `${dbId}) ${primary} : ${secondary}`;
 	};
 
 	/**
 	 * @function
 	 * @param {string} query text to search for
-	 * @param {Object} relatedItem
+	 * @param {string} itemId
 	 * @param {number} index
 	 * @param {boolean} exactMatch
 	 * @return {boolean} true if query matches any part of
 	 *                   primary or secondary item fields
 	 */
-	const itemSearchCompare = (query, relatedItem, index, exactMatch) => {
+	const itemSearchCompare = (query, itemId, index, exactMatch) => {
 		const normalizedQuery = query.toString().toLowerCase();
+		const relatedItem = getItem(itemId);
 		const primary = primaryField(relatedItem)
 			.toString()
 			.toLowerCase();
 		const secondary = secondaryField(relatedItem)
 			.toString()
 			.toLowerCase();
-		const itemTag = renderItemTag(relatedItem, false, primary, secondary);
+		const itemTag = renderItemTag(itemId, false, primary, secondary);
 		return exactMatch ? itemTag === normalizedQuery : itemTag.indexOf(normalizedQuery) > -1;
 	};
 
@@ -198,11 +206,11 @@ const RelationsSelector = ({
 
 	/**
 	 * @function
-	 * @param {Object} relatedItem
+	 * @param {String} itemId
 	 * @return {node} render select option
 	 */
-	const renderOption = (relatedItemId) => {
-		const relatedItem = relatedItemsObject[relatedItemId];
+	const renderOption = (itemId) => {
+		const relatedItem = getItem(itemId);
 
 		const { dbId = '' } = relatedItem;
 		let primary = primaryField(relatedItem);
@@ -213,19 +221,18 @@ const RelationsSelector = ({
 
 		return (
 			<MenuItem
-				key={relatedItemId}
+				key={itemId}
 				text={text}
 				label={secondary}
-				onClick={() => handleRelation(relatedItem)}
-				icon={hasRelation(relatedItem) ? 'tick' : 'blank'}
+				onClick={() => handleRelation(itemId)}
+				icon={hasRelation(itemId) ? 'tick' : 'blank'}
 				shouldDismissPopover={false}
 			/>
 		);
 	};
 
 	const clearButton = relatedItems.length > 0 ? <Button icon='cross' onClick={reset} minimal /> : undefined;
-	const onItemSelect = (itemId) => handleRelation(relatedItemsObject[itemId]);
-	const selectedItems = Object.keys(relatedItemsObject).filter((item) => hasRelation(item));
+	const selectedItems = Object.keys(relatedItemsObject).filter((itemId) => hasRelation(itemId));
 	const tagInputProps = {
 		tagProps: { minimal: true },
 		onRemove: handleTagRemove,
@@ -240,12 +247,12 @@ const RelationsSelector = ({
 			itemRenderer={renderOption}
 			itemPredicate={itemSearchCompare}
 			noResults={<MenuItem disabled text={'no results'} />}
-			onItemSelect={onItemSelect}
+			onItemSelect={handleRelation}
 			placeholder={placeholder}
 			resetOnQuery={false}
 			selectedItems={selectedItems}
 			tagInputProps={tagInputProps}
-			tagRenderer={(relatedItem) => renderItemTag(relatedItem)}
+			tagRenderer={(itemId) => renderItemTag(itemId)}
 		/>
 	);
 };
