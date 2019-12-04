@@ -6,22 +6,22 @@ Datetime object has connections with `RootQuery`, `Event`, `Ticket` etc. and thu
 
 ```gql
 query getDatetimes($first: Int, $where: RootQueryDatetimesConnectionWhereArgs) {
-  datetimes(first: $first, where: $where) {
-    edges {
-      node {
-        id
-        name
-        description
-        sold
-        reserved
-        order
-        startDate
-        endDate
-        startTime
-        endTime
-      }
-    }
-  }
+	datetimes(first: $first, where: $where) {
+		edges {
+			node {
+				id
+				name
+				description
+				sold
+				reserved
+				order
+				startDate
+				endDate
+				startTime
+				endTime
+			}
+		}
+	}
 }
 ```
 
@@ -29,11 +29,11 @@ query getDatetimes($first: Int, $where: RootQueryDatetimesConnectionWhereArgs) {
 
 ```json
 {
-  "first": 50,
-  "where": {
-    "upcoming": true,
-    "event": "ZXNwcmVzc29fZXZlbnRzOjIy"
-  }
+	"first": 50,
+	"where": {
+		"upcoming": true,
+		"event": "ZXNwcmVzc29fZXZlbnRzOjIy"
+	}
 }
 ```
 
@@ -41,9 +41,9 @@ or
 
 ```json
 {
-  "where": {
-    "eventId": 22
-  }
+	"where": {
+		"eventId": 22
+	}
 }
 ```
 
@@ -53,30 +53,32 @@ or
 
 ```gql
 query getDatetimes {
-  datetimes {
-    edges {
-      node {
-        id
-        name
-        description
-        sold
-        reserved
-        order
-        startDate
-        endDate
-        startTime
-        endTime
-        # All tickets for the datetime
-        tickets {
-          nodes {
-            id
-            name
-            description
-            price
-          }
-        }
-      }
-    }
-  }
+	datetimes {
+		edges {
+			node {
+				id
+				dbId
+				name
+				description
+				sold
+				reserved
+				order
+				startDate
+				endDate
+				startTime
+				endTime
+				# All tickets for the datetime
+				tickets {
+					nodes {
+						id
+						dbId
+						name
+						description
+						price
+					}
+				}
+			}
+		}
+	}
 }
 ```

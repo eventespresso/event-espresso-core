@@ -6,16 +6,16 @@ PriceType object has connections with `RootQuery` etc. and thus can be accessed 
 
 ```gql
 query getPriceTypes {
-  priceTypes {
-    nodes {
-      id
-      priceTypeId
-      name
-      baseType
-      isPercent
-      isDiscount
-      isDeleted
-    }
-  }
+	priceTypes {
+		nodes {
+			id
+			dbId
+			name
+			baseType
+			isPercent
+			isDiscount
+			isDeleted
+		}
+	}
 }
 ```

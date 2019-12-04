@@ -7,7 +7,7 @@ const TicketPriceCalculatorModal = ({ ticket, handleClose, isOpen }) => {
 	const prices = [
 		{
 			id: 'ABC123',
-			priceId: 1234,
+			dbId: 1234,
 			amount: 9.99,
 			desc: 'Base Price',
 			isBasePrice: true,
@@ -22,7 +22,7 @@ const TicketPriceCalculatorModal = ({ ticket, handleClose, isOpen }) => {
 		},
 		{
 			id: 'DEF456',
-			priceId: 1235,
+			dbId: 1235,
 			amount: 10,
 			desc: 'just to be nice',
 			isBasePrice: false,
@@ -37,7 +37,7 @@ const TicketPriceCalculatorModal = ({ ticket, handleClose, isOpen }) => {
 		},
 		{
 			id: 'XYZ890',
-			priceId: 1236,
+			dbId: 1236,
 			amount: 2.5,
 			desc: 'Just Cuz Fee',
 			isBasePrice: false,
@@ -52,7 +52,7 @@ const TicketPriceCalculatorModal = ({ ticket, handleClose, isOpen }) => {
 		},
 		{
 			id: 'TAX123',
-			priceId: 1237,
+			dbId: 1237,
 			amount: 10,
 			desc: 'theft',
 			isBasePrice: false,

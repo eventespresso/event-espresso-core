@@ -3,7 +3,7 @@ import gql from 'graphql-tag';
 export const PRICE_TYPE_ATTRIBUTES = gql`
 	fragment priceTypeAttributes on PriceType {
 		id
-		priceTypeId
+		dbId
 		name
 		baseType
 		isPercent
