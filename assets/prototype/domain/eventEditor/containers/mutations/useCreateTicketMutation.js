@@ -40,7 +40,7 @@ const useCreateTicketMutation = ({ datetimes }) => {
 				__typename: 'CreateTicketPayload',
 				ticket: {
 					__typename: 'Ticket',
-					ticketId: 0,
+					dbId: 0,
 					name,
 					description,
 					price,

@@ -4,7 +4,7 @@ export const GET_DATETIME = gql`
 	query DateTime($id: ID!) {
 		datetime(id: $id) {
 			id
-			datetimeId
+			dbId
 			description
 			endDate
 			name
@@ -18,7 +18,7 @@ export const GET_DATETIMES = gql`
 		datetimes(where: $where) {
 			nodes {
 				id
-				datetimeId
+				dbId
 				description
 				endDate
 				name

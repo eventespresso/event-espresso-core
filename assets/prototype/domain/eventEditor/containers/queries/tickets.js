@@ -4,7 +4,7 @@ import { PRICE_ATTRIBUTES } from './prices';
 export const TICKET_ATTRIBUTES = gql`
 	fragment ticketAttributes on Ticket {
 		id
-		ticketId
+		dbId
 		name
 		description
 		price

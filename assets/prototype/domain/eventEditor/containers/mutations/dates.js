@@ -5,7 +5,7 @@ export const CREATE_DATE = gql`
 		createDatetime(input: $input) {
 			datetime {
 				id
-				datetimeId
+				dbId
 				description
 				endDate
 				name

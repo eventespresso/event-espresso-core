@@ -40,7 +40,7 @@ const useCreateDateMutation = ({ eventId }) => {
 				__typename: 'CreateDatetimePayload',
 				datetime: {
 					__typename: 'Datetime',
-					datetimeId: 0,
+					dbId: 0,
 					name,
 					description,
 					endDate: '',

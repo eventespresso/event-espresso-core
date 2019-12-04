@@ -41,7 +41,7 @@ const useCreatePriceMutation = ({ tickets, ticketId }) => {
 				__typename: 'CreatePricePayload',
 				price: {
 					__typename: 'Price',
-					priceId: 0,
+					dbId: 0,
 					name,
 					desc,
 					amount,
