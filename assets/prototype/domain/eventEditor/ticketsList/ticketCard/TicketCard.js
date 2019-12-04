@@ -55,7 +55,7 @@ const TicketCard = ({ datetimes, id }) => {
 				<EditTicket datetimes={datetimes} position='top' relatedDates={relatedDates} />
 				<div>
 					<div style={idStyle}>
-						{ticket.ticketId} {':'} {ticket.id}
+						{ticket.dbId} {':'} {ticket.id}
 					</div>
 					<H4>
 						<EditableText

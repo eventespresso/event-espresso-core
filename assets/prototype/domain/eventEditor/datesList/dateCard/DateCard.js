@@ -56,7 +56,7 @@ const DateCard = ({ eventId, id, tickets }) => {
 			<Card elevation={Elevation.ONE} style={cardStyle}>
 				<EditDate position='top' relatedTickets={relatedTicketIds} tickets={tickets} />
 				<div style={idStyle}>
-					{date.datetimeId} {':'} {date.id}
+					{date.dbId} {':'} {date.id}
 				</div>
 				<H4>
 					<EditableText

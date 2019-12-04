@@ -46,7 +46,7 @@ const aftTotal = currencySignB4 ? '' : currencySign;
 const TicketPriceCalculatorForm = ({ prices }) => {
 	const newRow = {
 		id: 'NEW_PRICE',
-		priceId: null,
+		dbId: null,
 		amount: null,
 		desc: '',
 		isBasePrice: false,
@@ -82,7 +82,7 @@ const TicketPriceCalculatorForm = ({ prices }) => {
 		return (
 			<tr>
 				<td width={'7.5%'} style={cellStyle}>
-					{price.priceId}
+					{price.dbId}
 				</td>
 				<td width={'15%'} style={cellStyle}>
 					<Field
