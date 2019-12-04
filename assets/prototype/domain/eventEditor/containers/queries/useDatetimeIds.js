@@ -17,11 +17,11 @@ const useDatetimeIds = () => {
 			},
 		});
 	} catch (error) {
-		throw new Error(error);
+		data = {};
 	}
 
 	const getDatetimes = (data) => R.pathOr([], ['datetimes', 'nodes'], data);
-	const getIds = (datetimes) => R.map(({ id }) => id, datetimes);
+	const getIds = (datetimes) => R.map((datetime) => R.prop('id', datetime), datetimes);
 	const getDatetimeIds = R.pipe(getDatetimes, getIds);
 	const datetimeIds = getDatetimeIds(data);
 
