@@ -1,7 +1,5 @@
-
 import * as React from 'react';
 import { Button } from '@blueprintjs/core';
-// import useDeleteDatetimeMutation from '../../containers/mutations/useDeleteDateMutation';
 
 // import useDeleteDatetimeMutation from '../../containers/mutations/useDeleteDateMutation';
 import useEntityMutator from '../../containers/mutations/useEntityMutator';
