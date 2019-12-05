@@ -9,7 +9,8 @@ import { MomentDateRange } from '../../../shared/dateRangeInput/momentDate';
 import { PLUS_ONE_MONTH, PLUS_TWO_MONTHS } from '../../../shared/defaultDates';
 
 import useDateItem from '../../containers/queries/useDateItem';
-import useUpdateDateMutation from '../../containers/mutations/useUpdateDateMutation';
+// import useUpdateDateMutation from '../../containers/mutations/useUpdateDateMutation';
+import useEntityMutator from '../../containers/mutations/useEntityMutator';
 import useRelations from '../../../../infrastructure/services/relations/useRelations';
 import TicketId from '../TicketId';
 
@@ -36,7 +37,10 @@ const idStyle = {
 const DateCard = ({ eventId, id, tickets }) => {
 	const date = useDateItem({ id });
 
-	const onFieldUpdate = useUpdateDateMutation({ id });
+	// const onFieldUpdate = useUpdateDateMutation({ id });
+
+	const { updateEntity } = useEntityMutator('Datetime', id);
+
 	const { getRelations } = useRelations();
 
 	// get related ticket IDs for this datetime
@@ -62,8 +66,9 @@ const DateCard = ({ eventId, id, tickets }) => {
 					<EditableText
 						placeholder='Edit title...'
 						defaultValue={date.name}
+						value={date.name}
 						onCancel={(value) => console.log(value)}
-						onConfirm={(name) => onFieldUpdate({ name })}
+						onConfirm={(name) => updateEntity({ name })}
 						minWidth={'320px'}
 						selectAllOnFocus
 					/>
@@ -74,7 +79,7 @@ const DateCard = ({ eventId, id, tickets }) => {
 							placeholder='Edit description...'
 							defaultValue={date.description}
 							onCancel={(value) => console.log(value)}
-							onConfirm={(description) => onFieldUpdate({ description })}
+							onConfirm={(description) => updateEntity({ description })}
 							minWidth={'320px'}
 							multiline={true}
 							maxLines={4}
@@ -86,7 +91,7 @@ const DateCard = ({ eventId, id, tickets }) => {
 					<MomentDateRange range={range} withTime />
 					<Popover lazy>
 						<Button icon='calendar' style={btnStyle} minimal />
-						<DateRangePicker onFieldUpdate={onFieldUpdate} range={range} setRange={setRange} />
+						<DateRangePicker onFieldUpdate={updateEntity} range={range} setRange={setRange} />
 					</Popover>
 				</div>
 				<div>
