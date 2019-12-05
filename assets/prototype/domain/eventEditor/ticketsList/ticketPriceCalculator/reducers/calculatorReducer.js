@@ -21,8 +21,10 @@ const calculatorReducer = (state, action) => {
 			console.log('%c CALCULATE_BASE_PRICE: ', 'color: Khaki ; font-size:14px;');
 			ticket = pathOr({}, ['ticket'], state);
 			allPrices = pathOr([], ['prices'], state);
+			console.log('%c > allPrices: ', 'color: Khaki ;', allPrices);
 			// we're calculating the base price so we don't want to include it in the calculations
 			const withoutBasePrice = filter(propEq('isBasePrice', false), allPrices);
+			console.log('%c > withoutBasePrice: ', 'color: Khaki ;', withoutBasePrice);
 			// and the last element should be the "NEW_PRICE" row and we don't want it either
 			const justModifiers = filter(notNewPrice, withoutBasePrice);
 			console.log('%c > justModifiers: ', 'color: Khaki ;', justModifiers);
