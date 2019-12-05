@@ -1,5 +1,5 @@
 import { useMutation } from '@apollo/react-hooks';
-import { CREATE_DATE } from './dates';
+import { CREATE_DATETIME } from './dates';
 import { GET_DATETIMES } from '../queries/dates';
 import { GET_TICKETS } from '../queries/tickets';
 import useToaster from '../../../../infrastructure/services/toaster/useToaster';
@@ -10,7 +10,7 @@ const useCreateDateMutation = ({ eventId }) => {
 	const { updateRelations, addRelation } = useRelations();
 
 	const toasterMessage = `creating new datetime for event ${eventId}`;
-	const [createDate, { loading, error }] = useMutation(CREATE_DATE, {
+	const [createDate, { loading, error }] = useMutation(CREATE_DATETIME, {
 		onCompleted: () => {
 			toaster.dismiss(toasterMessage);
 			toaster.success('datetime successfully created');
