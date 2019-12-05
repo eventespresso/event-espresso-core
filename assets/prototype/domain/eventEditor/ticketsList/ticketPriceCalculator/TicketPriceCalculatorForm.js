@@ -1,200 +1,117 @@
-import { drop } from 'ramda';
 import { Field } from 'react-final-form';
 import { Button, H2, HTMLTable } from '@blueprintjs/core';
+import { FieldArray } from 'react-final-form-arrays'
+
+// import TicketPriceCalculator from './TicketPriceCalculator';
+import TicketPriceModifierRow from './TicketPriceModifierRow';
+
+// just temporary
+import styles from './inlineStyles';
 
 // actions that need replacing with mutations
-const addNewPrice = () => console.log('%c addNewPrice', 'color: lime;' /*price*/);
-const deletePrice = () => console.log('%c deletePrice', 'color: red;' /*price.id*/);
+const recalculateBasePrice = () => console.log('%c recalculateBasePrice', 'color: red;' /*price.id*/);
+const recalculateTotalPrice = () => console.log('%c recalculateTotalPrice', 'color: red;' /*price.id*/);
 
-const hdrStyle = { margin: '1em 0 .5em' };
-const tableStyle = { width: '100%' };
-const cellStyle = { padding: '.5rem .25rem' };
-const typeStyle = { padding: '.5rem .25rem', width: '170px' };
-const inputStyle = { width: '100%' };
-const amountStyle = { maxWidth: '125px', padding: '.5rem .25rem', textAlign: 'center' };
-const moneyStyle = { minWidth: '185px' };
-const signStyle = { boxSizing: 'border-box', display: 'inline-block', minWidth: '2rem' };
-const b4Style = { ...signStyle, textAlign: 'right' };
-const aftStyle = { ...signStyle, textAlign: 'left' };
-const CurrencyStyle = { boxSizing: 'border-box', display: 'inline-block', margin: '0 .25em', width: 'calc(100%-4rem)' };
-const divStyle = { boxSizing: 'border-box', display: 'block', margin: '0 0 1em', width: '100%' };
-const actionsStyle = { ...cellStyle, textAlign: 'center' };
-
-// needs to come from the db
-const allOptions = [
-	{ id: 1, type: 'Base Price' },
-	{ id: 2, type: 'Percent Discount' },
-	{ id: 3, type: 'Dollar Discount' },
-	{ id: 4, type: 'Percent Surcharge' },
-	{ id: 5, type: 'Dollar Surcharge' },
-	{ id: 6, type: 'Regional Tax' },
-	{ id: 7, type: 'Federal Tax' },
-];
-
-const modifierOptions = drop(1, allOptions); // removes first option
+function financial(x) {
+	return Number.parseFloat(x).toFixed(2);
+}
 
 // need to change these based on site i18n config
 const currencySign = '$';
 const currencySignB4 = true;
 // const decimalMark = '.';
 // const thousandsSep = ',';
-const percentSign = '%';
 
 const b4Total = currencySignB4 ? currencySign : '';
 const aftTotal = currencySignB4 ? '' : currencySign;
 
-const TicketPriceCalculatorForm = ({ prices }) => {
-	const newRow = {
-		id: 'NEW_PRICE',
-		dbId: null,
-		amount: null,
-		desc: '',
-		isBasePrice: false,
-		isDeleted: false,
-		isDefault: false,
-		isDiscount: false,
-		isPercent: false,
-		name: '',
-		priceType: 5,
-		order: 999,
-		wpUser: 1,
-	};
-	const renderPriceRow = (price, btn = 'trash') => {
-		const options = price.priceType === 1 ? allOptions : modifierOptions;
-		const sign = price.isPercent ? percentSign : currencySign;
-		let b4Price = '';
-		let afterPrice = sign;
-		// isPercent T  currencySignB4 T  sign appears  afterPrice
-		// isPercent T  currencySignB4 F  sign appears  afterPrice
-		// isPercent F  currencySignB4 F  sign appears  afterPrice
-		// isPercent F  currencySignB4 T  sign appears  b4Price
-		if (currencySignB4 && !price.isPercent) {
-			b4Price = sign;
-			afterPrice = '';
-		}
-		const actions = [];
-		if (price.priceType > 1 && btn === 'trash') {
-			actions.push(<Button icon={'trash'} onClick={deletePrice} minimal />);
-		}
-		if (btn === 'add') {
-			actions.push(<Button icon={'insert'} onClick={addNewPrice} minimal />);
-		}
-		return (
-			<tr>
-				<td width={'7.5%'} style={cellStyle}>
-					{price.dbId}
-				</td>
-				<td width={'15%'} style={cellStyle}>
-					<Field
-						component={'select'}
-						initialValue={price.priceType}
-						name={`[prices][${price.id}][type]`}
-						disabled={price.priceType === 1}
-						style={inputStyle}
-					>
-						{options.map((option) => (
-							<option key={option.id} value={option.id}>
-								{option.type}
-							</option>
-						))}
-					</Field>
-				</td>
-				<td width={'20%'} style={cellStyle}>
-					<Field
-						type={'text'}
-						component={'input'}
-						initialValue={price.name}
-						name={`[prices][${price.id}][name]`}
-						placeholder={'label...'}
-						style={inputStyle}
-					/>
-				</td>
-				<td width={'30%'} style={cellStyle}>
-					<Field
-						type={'text'}
-						component={'input'}
-						initialValue={price.desc}
-						name={`[prices][${price.id}][desc]`}
-						placeholder={'description...'}
-						style={inputStyle}
-					/>
-				</td>
-				<td width={'15%'} style={amountStyle}>
-					<div style={moneyStyle}>
-						<div style={b4Style}>{b4Price}</div>
-						<div style={CurrencyStyle}>
-							<Field
-								type={'number'}
-								component={'input'}
-								initialValue={price.amount}
-								name={`[prices][${price.id}][amount]`}
-								placeholder={'amount...'}
-								style={{ margin: '0 auto', textAlign: 'right', maxWidth: '105px' }}
-							/>
-						</div>
-						<div style={aftStyle}>{afterPrice}</div>
-					</div>
-				</td>
-				<td width={'7.5%'} style={actionsStyle}>
-					{actions}
-				</td>
-			</tr>
-		);
-	};
-	const renderPriceRowWithDelete = (price) => renderPriceRow(price, 'trash');
-
+const TicketPriceCalculatorForm = ({ form, values: { ticket, prices } }) => {
+	const calcDir = !! ticket.reverseCalculate;
+	const toggleCalcDir = () => form.mutators.toggleCalcDir('ticket.reverseCalculate');
+	const reverseCalculate = calcDir ?
+		<Button icon={'double-chevron-up'} onClick={toggleCalcDir} value={calcDir} minimal /> :
+		<Button icon={'double-chevron-down'} onClick={toggleCalcDir} value={calcDir} minimal />;
 	return (
 		<>
-			<H2 style={hdrStyle}>Ticket Price Calculator</H2>
-			<div style={divStyle}>
-				<HTMLTable interactive striped style={tableStyle}>
+			<H2 style={styles.hdr}>Ticket Price Calculator</H2>
+			<div style={styles.div}>
+				<HTMLTable interactive striped style={styles.table}>
 					<thead>
 						<tr>
-							<th width={'7.5%'} style={cellStyle}>
+							<th width={'7.5%'} style={styles.cell}>
 								ID
 							</th>
-							<th width={'15%'} style={typeStyle}>
+							<th width={'15%'} style={styles.type}>
 								Price Type
 							</th>
-							<th width={'20%'} style={cellStyle}>
+							<th width={'20%'} style={styles.cell}>
 								Label
 							</th>
-							<th width={'30%'} style={cellStyle}>
+							<th width={'30%'} style={styles.cell}>
 								Description
 							</th>
-							<th width={'15%'} style={amountStyle}>
+							<th width={'15%'} style={styles.amount}>
 								Amount
 							</th>
-							<th width={'7.5%'} style={cellStyle}>
+							<th width={'7.5%'} style={styles.cell}>
 								Actions
 							</th>
 						</tr>
 					</thead>
 					<tbody>
-						{prices.map(renderPriceRowWithDelete)}
-						{renderPriceRow(newRow, 'add')}
+						<FieldArray name={'prices'} initialValue={prices}>
+							{({ fields }) => {
+								console.log( '%c FIELDS: ', 'color: lightseagreen;', fields );
+								return fields.map((name, index) => {
+									const price = fields.value[index];
+									return price ? (
+										<TicketPriceModifierRow
+											key={price.id}
+											index={index}
+											name={name}
+											fields={fields}
+											price={price}
+											reverseCalculate={calcDir}
+										/>
+									) : null
+								});
+							}}
+						</FieldArray>
 					</tbody>
 					<tfoot>
 						<tr>
 							<th colSpan={4} width={'77.5%'} style={{ fontSize: '18px', textAlign: 'right' }}>
 								Total
 							</th>
-							<th width={'15%'} style={amountStyle}>
-								<div style={moneyStyle}>
-									<div style={b4Style}>{b4Total}</div>
-									<div style={CurrencyStyle}>
+							<th width={'15%'} style={styles.amount}>
+								<div style={styles.money}>
+									<div style={styles.b4}>{b4Total}</div>
+									<div style={styles.Currency}>
+										<Field
+											type={'hidden'}
+											component={'input'}
+											initialValue={ticket.id}
+											name={'ticket.id'}
+										/>
+										<Field
+											type={'hidden'}
+											component={'input'}
+											initialValue={ticket.reverseCalculate ? 'true' : 'false'}
+											name={'ticket.reverseCalculate'}
+										/>
 										<Field
 											type={'number'}
 											component={'input'}
-											initialValue={null}
-											name={`[prices][TOTAL][amount]`}
+											initialValue={ticket.price}
+											name={'ticket.price'}
 											style={{ margin: '0 auto', textAlign: 'right', maxWidth: '105px' }}
+											disabled={!calcDir}
 										/>
 									</div>
-									<div style={aftStyle}>{aftTotal}</div>
+									<div style={styles.aft}>{aftTotal}</div>
 								</div>
 							</th>
-							<th width={'7.5%'} style={actionsStyle}></th>
+							<th width={'7.5%'} style={styles.actions}>{reverseCalculate}</th>
 						</tr>
 					</tfoot>
 				</HTMLTable>
