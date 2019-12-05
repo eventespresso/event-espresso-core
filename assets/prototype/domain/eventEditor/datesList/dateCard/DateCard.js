@@ -9,7 +9,6 @@ import { MomentDateRange } from '../../../shared/dateRangeInput/momentDate';
 import { PLUS_ONE_MONTH, PLUS_TWO_MONTHS } from '../../../shared/defaultDates';
 
 import useDateItem from '../../containers/queries/useDateItem';
-// import useUpdateDateMutation from '../../containers/mutations/useUpdateDateMutation';
 import useEntityMutator from '../../containers/mutations/useEntityMutator';
 import useRelations from '../../../../infrastructure/services/relations/useRelations';
 import TicketId from '../TicketId';
@@ -36,8 +35,6 @@ const idStyle = {
 
 const DateCard = ({ eventId, id, tickets }) => {
 	const date = useDateItem({ id });
-
-	// const onFieldUpdate = useUpdateDateMutation({ id });
 
 	const { updateEntity } = useEntityMutator('Datetime', id);
 
