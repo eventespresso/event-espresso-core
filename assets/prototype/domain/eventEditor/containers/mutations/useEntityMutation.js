@@ -18,8 +18,8 @@ const useEntityMutation = (type, id = '') => {
 	 */
 	const getMutation = (mutationType = 'UPDATE') => {
 		// For example "CREATE_DATETIME"
-		const mutaton = `${mutationType}_${type.toUpperCase()}`;
-		return mutations[mutaton];
+		const mutation = `${mutationType}_${type.toUpperCase()}`;
+		return mutations[mutation];
 	};
 
 	/**
