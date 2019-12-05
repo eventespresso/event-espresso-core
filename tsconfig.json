@@ -2,11 +2,13 @@
 	"compilerOptions": {
 		"allowSyntheticDefaultImports": true,
 		"allowJs": true,
+		"declaration": true,
+		"esModuleInterop": true,
 		"jsx": "react", // use typescript to transpile jsx to js
+		"importHelpers": true,
 		"lib": ["dom", "es6"],
 		"moduleResolution": "node",
 		"outDir": "./assets/dist",
-		"strictNullChecks": true,
 		"target": "es6"
 	},
 	"include": ["./assets/src/**/*"],
