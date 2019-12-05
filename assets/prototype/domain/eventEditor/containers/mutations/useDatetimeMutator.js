@@ -31,11 +31,14 @@ const useDatetimeMutator = () => {
 			},
 		};
 
-		update = update = (
+		// e.g. "createDatetime"
+		const mutationName = `${mutationType.toLowerCase()}Datetime`;
+
+		update = (
 			proxy,
 			{
 				data: {
-					[`${mutationType.toLowerCase()}Datetime`]: { datetime },
+					[mutationName]: { datetime },
 				},
 			}
 		) => onUpdate({ proxy, datetime, mutationType, input });
