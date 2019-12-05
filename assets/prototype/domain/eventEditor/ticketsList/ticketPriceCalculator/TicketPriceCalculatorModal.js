@@ -1,10 +1,10 @@
 import indexOf from 'ramda/src/indexOf';
 import pickBy from 'ramda/src/pickBy';
-import arrayMutators from 'final-form-arrays';
 import { useEffect, useState } from '@wordpress/element';
 
 import TicketPriceCalculatorForm from './TicketPriceCalculatorForm';
 import useTicketPriceCalculatorFormDecorator from './useTicketPriceCalculatorFormDecorator';
+import useTicketPriceCalculatorFormMutators from './useTicketPriceCalculatorFormMutators';
 import ticketPriceCalculator from './reducers/ticketPriceCalculator';
 import {sortByPriceOrderIdAsc} from '../../../shared/entities/prices/sortingPredicates';
 
@@ -90,6 +90,7 @@ const prices = [
 ];
 const priceFormFields = [
 	'amount',
+	'dbid',
 	'desc',
 	'id',
 	'isBasePrice',
@@ -97,14 +98,14 @@ const priceFormFields = [
 	'isPercent',
 	'name',
 	'order',
-	'dbid',
 	'priceType',
 ];
-const isPriceFormField = (val, key) => indexOf(key, priceFormFields) > -1;
+const NO_INDEX = -1;
+const isPriceFormField = (val, key) => indexOf(key, priceFormFields) > NO_INDEX;
 const copyPriceFormFields = (price) => pickBy(isPriceFormField, price);
 
 const ticketFormFields = [ 'id', 'reverseCalculate', 'order', 'price' ];
-const isTicketFormField = (val, key) => indexOf(key, ticketFormFields) > -1;
+const isTicketFormField = (val, key) => indexOf(key, ticketFormFields) > NO_INDEX;
 const copyTicketFormFields = (ticket) => pickBy(isTicketFormField, ticket);
 
 const EMPTY_OBJECT = {};
@@ -113,7 +114,8 @@ const TicketPriceCalculatorModal = ({ ticket, handleClose, isOpen }) => {
 	// const { prices } = useFetchTicketRelations({ ticket });
 	const [initialValues, setInitialValues] = useState(EMPTY_OBJECT);
 	const calculator = ticketPriceCalculator();
-	const decorator = useTicketPriceCalculatorFormDecorator(calculator)();
+	const decorators = useTicketPriceCalculatorFormDecorator(calculator)();
+	const mutators = useTicketPriceCalculatorFormMutators();
 
 	useEffect(() => {
 		if (initialValues === EMPTY_OBJECT) {
@@ -132,46 +134,8 @@ const TicketPriceCalculatorModal = ({ ticket, handleClose, isOpen }) => {
 			isOpen={isOpen}
 			onSubmit={(values) => console.log('%c Ticket Price Calculator Form Submit', 'color:YellowGreen;', values)}
 			onClose={handleClose}
-			decorators={[decorator]}
-			mutators={{
-				...arrayMutators,
-				toggleCalcDir: (args, state, tools) => {
-					console.log('%c toggleCalcDir: ', 'color:Salmon; font-size:18px;');
-					console.log('%c > args: ', 'color: Salmon;', args);
-					console.log('%c > state: ', 'color: Salmon;', state);
-					console.log('%c > tools: ', 'color: Salmon;', tools);
-					tools.changeValue(state, 'ticket.reverseCalculate', value => !value)
-				},
-				reset: (args, state, tools) => {
-					console.log('%c reset: ', 'color:Salmon; font-size:18px;');
-					console.log('%c > args: ', 'color: Salmon;', args);
-					console.log('%c > state: ', 'color: Salmon;', state);
-					console.log('%c > tools: ', 'color: Salmon;', tools);
-					if(args[1]) {
-						console.log('%c > args[1]: ', 'color: Salmon;', args[1]);
-						const fields = ['priceType', 'name', 'desc', 'amount']
-						fields.forEach((field) => {
-							const fieldName = `${args[1]}.${field}`;
-							console.log('%c > > > fieldName: ', 'color: Salmon;', fieldName );
-							const initialValue = tools.getIn(state, `formState.initialValues.${fieldName}`) || null;
-							console.log('%c > > initialValue: ', 'color: Salmon;', initialValue);
-							tools.resetFieldState(fieldName);
-							tools.changeValue(state, fieldName, () => initialValue );
-						});
-					}
-				},
-				sort: (args, state, tools) => {
-					console.log('%c sort: ', 'color:Salmon; font-size:18px;');
-					console.log('%c > args: ', 'color: Salmon;', args);
-					console.log('%c > state: ', 'color: Salmon;', state);
-					console.log('%c > tools: ', 'color: Salmon;', tools);
-					const prices = tools.getIn(state, 'formState.values.prices') || [];
-					console.log('%c >> prices: ', 'color: Salmon;', prices);
-					const sortedPrices = sortByPriceOrderIdAsc(prices);
-					console.log('%c >>> sortedPrices: ', 'color: Salmon;', sortedPrices);
-					tools.setIn(state, 'formState.values.prices', sortedPrices)
-				},
-			}}
+			decorators={[decorators]}
+			mutators={mutators}
 		/>
 	);
 };
