@@ -33,7 +33,7 @@ Plus some custom statuses:
 * `sold_out` - the same as `cancelled`, but events are also automatically set to "sold out" when there are no more tickets available for purchase or all the datetimes' limits are reached. Note: if the event was initially `private`, when its tickets are sold out, it will not be updated to `sold_out` as that would make it suddenly become publicly visible. Instead, it remains `private`.
 
 ### Venues
-Like events, venues use WordPress core statuses. Please refer to [event statuses](#event). There are no custom statuses for venues.
+Like events, venues use WordPress core statuses. Please refer to [event statuses](#events). There are no custom statuses for venues.
 
 ### Attendees / Contacts
 Unlike events and venues, attendees aren't public by default. So effectively the only statuses for attendees are:
