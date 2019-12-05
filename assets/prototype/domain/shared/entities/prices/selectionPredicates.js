@@ -1,10 +1,10 @@
 import { assoc, find, map, propEq, when } from 'ramda';
 
-export const priceHasDbId = (dbid) => propEq('dbid', id);
-export const priceHasGuid = (guid) => propEq('guid', guid);
+export const priceHasDbId = (dbid) => propEq('dbid', dbid);
+export const priceHasGuid = (guid) => propEq('id', guid);
 export const isBasePrice = propEq('isBasePrice', true);
 export const findBasePrice = (prices) => find(isBasePrice)(prices);
-export const findPriceById = ({ prices, id }) => find(priceHasDbId(id))(prices);
+export const findPriceByDbId = ({ prices, dbid }) => find(priceHasDbId(dbid))(prices);
 export const findPriceByGuid = ({ prices, guid }) => find(priceHasGuid(guid))(prices);
 export const updatePriceAmount = (amount) => assoc('amount', amount);
 export const updatePriceType = (type) => assoc('priceType', type);
