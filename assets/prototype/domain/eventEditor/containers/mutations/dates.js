@@ -1,7 +1,7 @@
 import gql from 'graphql-tag';
 import { DATETIME_ATTRIBUTES } from '../queries/dates';
 
-export const CREATE_DATE = gql`
+export const CREATE_DATETIME = gql`
 	mutation createDatetime($input: CreateDatetimeInput!) {
 		createDatetime(input: $input) {
 			datetime {
@@ -12,7 +12,7 @@ export const CREATE_DATE = gql`
 	${DATETIME_ATTRIBUTES}
 `;
 
-export const UPDATE_DATE = gql`
+export const UPDATE_DATETIME = gql`
 	mutation updateDatetime($input: UpdateDatetimeInput!) {
 		updateDatetime(input: $input) {
 			datetime {

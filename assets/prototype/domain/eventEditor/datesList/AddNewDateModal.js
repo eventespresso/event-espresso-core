@@ -1,16 +1,16 @@
 import DateForm from './DateForm';
 import FormModal from '../../shared/FormModal';
-import useCreateDateMutation from '../containers/mutations/useCreateDateMutation';
+import useEntityMutator from '../containers/mutations/useEntityMutator';
 
-const AddNewDateModal = ({ eventId, tickets, handleClose, isOpen }) => {
-	const createDate = useCreateDateMutation({ eventId });
+const AddNewDateModal = ({ tickets, handleClose, isOpen }) => {
+	const { createEntity } = useEntityMutator('Datetime');
 	const formComponent = (props) => <DateForm {...props} tickets={tickets} title='New Date Details' />;
 
 	return (
 		<FormModal
 			FormComponent={formComponent}
 			initialValues={{}}
-			onSubmit={createDate}
+			onSubmit={createEntity}
 			onClose={handleClose}
 			isOpen={isOpen}
 			tickets={tickets}

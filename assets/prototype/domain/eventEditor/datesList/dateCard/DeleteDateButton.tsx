@@ -1,9 +1,10 @@
 import * as React from 'react';
 import { Button } from '@blueprintjs/core';
-import useDeleteDatetimeMutation from '../../containers/mutations/useDeleteDateMutation';
 
-const DeleteDateButton = ({ eventId, id }) => {
-	const deleteDatetime = useDeleteDatetimeMutation({ eventId, id });
+import useEntityMutator from '../../containers/mutations/useEntityMutator';
+
+const DeleteDateButton = ({ id }) => {
+	const { deleteEntity } = useEntityMutator('Datetime', id);
 
 	return (
 		<div
@@ -14,7 +15,7 @@ const DeleteDateButton = ({ eventId, id }) => {
 				textAlign: 'right',
 			}}
 		>
-			<Button icon='trash' onClick={deleteDatetime} minimal />
+			<Button icon={'trash'} onClick={deleteEntity} minimal />
 		</div>
 	);
 };
