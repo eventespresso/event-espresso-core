@@ -1,5 +1,5 @@
 import arrayMutators from 'final-form-arrays';
-import {sortByPriceOrderIdAsc} from '../../../shared/entities/prices/sortingAlgorithms';
+import {sortByPriceOrderIdAsc} from '../../../shared/entities/prices/sortingPredicates';
 
 const useTicketPriceCalculatorFormMutators = () => {
 	return {

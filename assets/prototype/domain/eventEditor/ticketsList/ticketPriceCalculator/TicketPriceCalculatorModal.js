@@ -5,7 +5,6 @@ import { useEffect, useState } from '@wordpress/element';
 import TicketPriceCalculatorForm from './TicketPriceCalculatorForm';
 import useTicketPriceCalculatorFormDecorator from './useTicketPriceCalculatorFormDecorator';
 import useTicketPriceCalculatorFormMutators from './useTicketPriceCalculatorFormMutators';
-import ticketPriceCalculator from './reducers/ticketPriceCalculator';
 import {sortByPriceOrderIdAsc} from '../../../shared/entities/prices/sortingPredicates';
 
 
@@ -113,8 +112,7 @@ const EMPTY_OBJECT = {};
 const TicketPriceCalculatorModal = ({ ticket, handleClose, isOpen }) => {
 	// const { prices } = useFetchTicketRelations({ ticket });
 	const [initialValues, setInitialValues] = useState(EMPTY_OBJECT);
-	const calculator = ticketPriceCalculator();
-	const decorators = useTicketPriceCalculatorFormDecorator(calculator)();
+	const decorators = useTicketPriceCalculatorFormDecorator();
 	const mutators = useTicketPriceCalculatorFormMutators();
 
 	useEffect(() => {

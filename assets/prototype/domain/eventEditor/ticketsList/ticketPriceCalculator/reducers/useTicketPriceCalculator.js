@@ -1,13 +1,21 @@
-import { clone, filter, pathOr, propEq, propOr, propSatisfies, reduce } from 'ramda';
+/**
+ * External imports
+ */
+import {filter, pathOr, propEq, propOr, propSatisfies, reduce} from 'ramda';
+import {useCallback} from '@wordpress/element';
+
+/**
+ * Internal imports
+ */
 import basePriceCalculator from './basePriceCalculator';
 import ticketTotalCalculator from './ticketTotalCalculator';
-import { updateBasePriceAmount } from '../../../../shared/entities/prices/selectionPredicates';
-import {updateTicketPriceForTicket } from '../../../../shared/entities/tickets/selectionPredicates';
+import {updateBasePriceAmount} from '../../../../shared/entities/prices/selectionPredicates';
+import {updateTicketPriceForTicket} from '../../../../shared/entities/tickets/selectionPredicates';
 import {sortByPriceOrderIdAsc, sortByPriceOrderIdDesc} from '../../../../shared/entities/prices/sortingPredicates';
 
-const notNewPrice = propSatisfies(x => x !== 'NEW_PRICE', 'id');
+const notNewPrice = propSatisfies(prop => prop !== 'NEW_PRICE', 'id');
 
-const calculatorReducer = (state, action) => {
+const useTicketPriceCalculator = useCallback((state, action) => {
 	console.log('%c calculatorReducer: ', 'color: Khaki ; font-size:18px;');
 	console.log('%c > state: ', 'color: Khaki ;', state);
 	console.log('%c > action: ', 'color: Khaki ;', action);
@@ -68,6 +76,13 @@ const calculatorReducer = (state, action) => {
 		default:
 			return state;
 	}
-};
+}, [
+	basePriceCalculator,
+	sortByPriceOrderIdAsc,
+	sortByPriceOrderIdDesc,
+	ticketTotalCalculator,
+	updateBasePriceAmount,
+	updateTicketPriceForTicket,
+] );
 
-export default calculatorReducer;
+export default useTicketPriceCalculator;

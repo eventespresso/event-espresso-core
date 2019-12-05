@@ -1,16 +1,17 @@
 /**
  * External imports
  */
-import assoc from 'ramda/src/assoc';
-import find from 'ramda/src/find';
-import map from 'ramda/src/map';
-import path from 'ramda/src/path';
-import propEq from 'ramda/src/propEq';
-import when from 'ramda/src/when';
 import createDecorator from 'final-form-calculate';
+import { find, map, path, propEq, when } from 'ramda';
 import {useCallback} from '@wordpress/element';
-// import {amountsMatch} from '@eventespresso/utils';
 
+/**
+ * Internal imports
+ */
+import useTicketPriceCalculator from './reducers/useTicketPriceCalculator';
+
+
+// import {amountsMatch} from '@eventespresso/utils';
 const amountsMatch = (v1, v2) => parseFloat(v1) === parseFloat(v2);
 
 const isEqual = (value, prevValue) => prevValue === null || prevValue === undefined || value === prevValue;
@@ -41,7 +42,8 @@ const getBasePriceType = (price) => find(propEq('id', parseInt(price.priceType, 
  *
  * @return {Function}  decorator callback for react-final-form
  */
-const useTicketPriceCalculatorFormDecorator = ( calculator ) => {
+const useTicketPriceCalculatorFormDecorator = () => {
+	const calculator = useTicketPriceCalculator();
 	const updateBasePrice = useCallback((formData) => {
 		console.log('%c updateBasePrice', 'color: MediumPurple; font-size:14px;');
 		console.log('%c > formData: ', 'color: Violet;', formData);
