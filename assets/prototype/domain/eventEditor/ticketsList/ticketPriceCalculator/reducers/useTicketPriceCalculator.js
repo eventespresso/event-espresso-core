@@ -15,7 +15,7 @@ import {sortByPriceOrderIdAsc, sortByPriceOrderIdDesc} from '../../../../shared/
 
 const notNewPrice = propSatisfies(prop => prop !== 'NEW_PRICE', 'id');
 
-const useTicketPriceCalculator = useCallback((state, action) => {
+const useTicketPriceCalculator = () => useCallback((state, action) => {
 	console.log('%c calculatorReducer: ', 'color: Khaki ; font-size:18px;');
 	console.log('%c > state: ', 'color: Khaki ;', state);
 	console.log('%c > action: ', 'color: Khaki ;', action);

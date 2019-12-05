@@ -112,7 +112,7 @@ const EMPTY_OBJECT = {};
 const TicketPriceCalculatorModal = ({ ticket, handleClose, isOpen }) => {
 	// const { prices } = useFetchTicketRelations({ ticket });
 	const [initialValues, setInitialValues] = useState(EMPTY_OBJECT);
-	const decorators = useTicketPriceCalculatorFormDecorator();
+	const decorator = useTicketPriceCalculatorFormDecorator();
 	const mutators = useTicketPriceCalculatorFormMutators();
 
 	useEffect(() => {
@@ -132,7 +132,7 @@ const TicketPriceCalculatorModal = ({ ticket, handleClose, isOpen }) => {
 			isOpen={isOpen}
 			onSubmit={(values) => console.log('%c Ticket Price Calculator Form Submit', 'color:YellowGreen;', values)}
 			onClose={handleClose}
-			decorators={[decorators]}
+			decorators={[decorator]}
 			mutators={mutators}
 		/>
 	);

@@ -10,7 +10,6 @@ import {useCallback} from '@wordpress/element';
  */
 import useTicketPriceCalculator from './reducers/useTicketPriceCalculator';
 
-
 // import {amountsMatch} from '@eventespresso/utils';
 const amountsMatch = (v1, v2) => parseFloat(v1) === parseFloat(v2);
 
@@ -44,6 +43,7 @@ const getBasePriceType = (price) => find(propEq('id', parseInt(price.priceType, 
  */
 const useTicketPriceCalculatorFormDecorator = () => {
 	const calculator = useTicketPriceCalculator();
+	console.log('%c calculator', 'color: Lime; font-size:24px;', calculator);
 	const updateBasePrice = useCallback((formData) => {
 		console.log('%c updateBasePrice', 'color: MediumPurple; font-size:14px;');
 		console.log('%c > formData: ', 'color: Violet;', formData);
@@ -62,7 +62,7 @@ const useTicketPriceCalculatorFormDecorator = () => {
 		console.log('%c > newTicketTotal: ', 'color: Violet; font-size:14px;', newTicketTotal);
 		return { ['ticket.price']: newTicketTotal };
 	}, [calculator]);
-	return useCallback(() => createDecorator(
+	return createDecorator(
 		{
 			field: /^prices\[\d+\]\.amount$/,
 			isEqual: amountsEqual,
@@ -156,7 +156,7 @@ const useTicketPriceCalculatorFormDecorator = () => {
 				return {};
 			},
 		},
-	), [updateBasePrice, updateTicketTotal]);
+	);
 };
 
 export default useTicketPriceCalculatorFormDecorator;
