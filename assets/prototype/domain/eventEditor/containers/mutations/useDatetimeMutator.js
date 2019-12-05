@@ -24,11 +24,17 @@ const useDatetimeMutator = () => {
 		 */
 		let variables, optimisticResponse, update;
 
+		const mutationInput = {
+			clientMutationId: `${mutationType}_DATETIME`,
+			...input,
+		};
+
+		if (mutationType === 'CREATE') {
+			mutationInput.eventId = eventId; // required for createDatetime
+		}
+
 		variables = {
-			input: {
-				clientMutationId: `${mutationType}_DATETIME`,
-				...input,
-			},
+			input: mutationInput,
 		};
 
 		// e.g. "createDatetime"
