@@ -27,7 +27,7 @@ const DateRangePicker = ({ onFieldUpdate, range, setRange }) => {
 	const appliedProps = {
 		allowSingleDayRange: true,
 		contiguousCalendarMonths: false,
-		dateRange: range,
+		value: range,
 		maxDateIndex: 0,
 		minDateIndex: 0,
 		reverseMonthAndYearMenus: false,
