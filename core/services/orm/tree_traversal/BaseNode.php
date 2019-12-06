@@ -58,6 +58,21 @@ abstract class BaseNode
     abstract protected function discover();
 
     /**
+     * Identifies model objects, up to the limit $model_objects_to_identify.
+     * @since $VID:$
+     * @param int $model_objects_to_identify
+     * @return int units of work done
+     */
+    abstract protected function work($model_objects_to_identify);
+
+    /**
+     * Shows the entity/relation node as an array.
+     * @since $VID:$
+     * @return array
+     */
+    abstract public function toArray();
+
+    /**
      * Discovers how much work there is to do, double-checks the work isn't already finished, and then does the work.
      * Note: do not call when site is in maintenance mode level 2.
      *
@@ -76,21 +91,6 @@ abstract class BaseNode
         }
         return $this->work($model_objects_to_identify);
     }
-
-    /**
-     * Identifies model objects, up to the limit $model_objects_to_identify.
-     * @since $VID:$
-     * @param int $model_objects_to_identify
-     * @return int units of work done
-     */
-    abstract protected function work($model_objects_to_identify);
-
-    /**
-     * Shows the entity/relation node as an array.
-     * @since $VID:$
-     * @return array
-     */
-    abstract public function toArray();
 }
 // End of file BaseNode.php
 // Location: EventEspresso\core\services\orm\tree_traversal/BaseNode.php
