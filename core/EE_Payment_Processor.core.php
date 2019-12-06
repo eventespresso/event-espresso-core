@@ -207,8 +207,8 @@ class EE_Payment_Processor extends EE_Processor_Base implements ResettableInterf
      * @param EE_Payment_Method  $payment_method       (or a slug or id of one)
      * @param boolean            $update_txn           whether or not to call
      *                                                 EE_Transaction_Processor::update_transaction_and_registrations_after_checkout_or_payment()
-     * @param bool               $separate_IPN_request whether the IPN uses a separate request ( true like PayPal )
-     *                                                 or is processed manually ( false like Mijireh )
+     * @param bool               $separate_IPN_request whether the IPN uses a separate request (true, like PayPal)
+     *                                                 or is processed manually (false, like Authorize.net)
      * @throws EE_Error
      * @throws Exception
      * @return EE_Payment
