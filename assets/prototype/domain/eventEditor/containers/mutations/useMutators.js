@@ -1,4 +1,4 @@
-import useDatetimeMutator from './useDatetimeMutator';
+import useDatetimeMutator from './datetimes/useDatetimeMutator';
 
 const useMutators = () => {
 	const datetimeMutator = useDatetimeMutator();

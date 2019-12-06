@@ -1,6 +1,7 @@
 import { useApolloClient } from '@apollo/react-hooks';
 import { ApolloError } from 'apollo-client';
 import { useState } from '@wordpress/element';
+import { pathOr } from 'ramda';
 
 import { mutations } from './';
 import useMutators from './useMutators';
@@ -30,9 +31,43 @@ const useEntityMutation = (type, id = '') => {
 		// e.g. "datetmeMutator"
 		const key = `${type.toLowerCase()}Mutator`;
 		const { [key]: mutator } = mutators;
-		const { variables, optimisticResponse, update } = mutator(mutationType, input);
+		/**
+		 * options = {
+		 *     variables,
+		 *     optimisticResponse,
+		 * 	   onUpdate,
+		 *     onCompleted,
+		 * 	   onError,
+		 * }
+		 */
+		const { onUpdate, ...mutationOptions } = mutator(mutationType, input);
 
-		return { variables, optimisticResponse, update };
+		let update;
+
+		if (typeof onUpdate === 'function') {
+			update = getUpdateCallback(mutationType, onUpdate);
+		}
+
+		return { ...mutationOptions, update };
+	};
+
+	/**
+	 */
+	const getUpdateCallback = (mutationType, onUpdate) => {
+		/**
+		 * Since every mutation update callback is interested
+		 * in the updated entity data in response, we will
+		 * pass just that entity to onUpdate.
+		 */
+		return (proxy, result) => {
+			// e.g. "createDatetime", "updateTicket"
+			const mutationName = `${mutationType.toLowerCase()}${type}`;
+			// Example result: { data: { deletePrice: { price : {...} } } }
+			const path = ['data', mutationName, type.toLowerCase()];
+			const entity = pathOr({}, path, result);
+
+			onUpdate({ proxy, entity });
+		};
 	};
 
 	/**
