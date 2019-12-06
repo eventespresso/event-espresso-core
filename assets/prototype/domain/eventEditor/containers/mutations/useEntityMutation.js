@@ -24,24 +24,24 @@ const useEntityMutation = (type, id = '') => {
 
 	/**
 	 * @param {string} mutation Type of mutation
-	 * @param {object} data     Mutation data
+	 * @param {object} input     Mutation input
 	 */
-	const getMutationOptions = (mutationType, data = {}) => {
+	const getMutationOptions = (mutationType, input = {}) => {
 		// e.g. "datetmeMutator"
 		const key = `${type.toLowerCase()}Mutator`;
 		const { [key]: mutator } = mutators;
-		const { variables, optimisticResponse, update } = mutator(mutationType, data);
+		const { variables, optimisticResponse, update } = mutator(mutationType, input);
 
 		return { variables, optimisticResponse, update };
 	};
 
 	/**
-	 * @param {object} data
+	 * @param {object} input
 	 */
-	const getCreateMutation = (data) => {
+	const getCreateMutation = (input) => {
 		const mutationType = 'CREATE';
 		const mutation = getMutation(mutationType);
-		const options = getMutationOptions(mutationType, data);
+		const options = getMutationOptions(mutationType, input);
 
 		return { mutation, ...options };
 	};
@@ -49,10 +49,10 @@ const useEntityMutation = (type, id = '') => {
 	/**
 	 * @param {string} id Entity id
 	 */
-	const getUpdateMutation = (data) => {
+	const getUpdateMutation = (input) => {
 		const mutationType = 'UPDATE';
 		const mutation = getMutation(mutationType);
-		const options = getMutationOptions(mutationType, { ...data, id });
+		const options = getMutationOptions(mutationType, { ...input, id });
 
 		return { mutation, ...options };
 	};
@@ -75,7 +75,7 @@ const useEntityMutation = (type, id = '') => {
 		setResult({
 			loading: true,
 			error: undefined,
-			data: undefined,
+			input: undefined,
 			called: true,
 		});
 	};
@@ -84,18 +84,18 @@ const useEntityMutation = (type, id = '') => {
 	 *
 	 */
 	const onMutationComplete = (response, onCompleted) => {
-		const { data, errors } = response;
+		const { input, errors } = response;
 		const error = errors && errors.length > 0 ? new ApolloError({ graphQLErrors: errors }) : undefined;
 
 		setResult({
 			called: true,
 			loading: false,
-			data,
+			input,
 			error,
 		});
 
 		if (typeof onCompleted === 'function') {
-			onCompleted(data);
+			onCompleted(input);
 		}
 	};
 
@@ -106,7 +106,7 @@ const useEntityMutation = (type, id = '') => {
 		setResult({
 			loading: false,
 			error,
-			data: undefined,
+			input: undefined,
 			called: true,
 		});
 
