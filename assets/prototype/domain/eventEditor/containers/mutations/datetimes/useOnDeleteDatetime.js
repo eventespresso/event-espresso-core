@@ -1,12 +1,12 @@
 import useRelations from '../../../../../infrastructure/services/relations/useRelations';
 
 import updateTicketCache from './updateTicketCache';
-import useUpdateDatetmeCache from './useUpdateDatetmeCache';
+import useUpdateDatetimeCache from './useUpdateDatetimeCache';
 
 const useOnDeleteDatetime = () => {
 	const { dropRelations, removeRelation } = useRelations();
 
-	const updateDatetmeCache = useUpdateDatetmeCache();
+	const updateDatetimeCache = useUpdateDatetimeCache();
 
 	const onDeleteDatetime = ({ proxy, datetimes, datetime }) => {
 		if (datetime.id) {
@@ -30,7 +30,7 @@ const useOnDeleteDatetime = () => {
 			});
 		}
 		// Update datetime cache after tickets cache is updated.
-		updateDatetmeCache({ proxy, datetimes, datetime, remove: true });
+		updateDatetimeCache({ proxy, datetimes, datetime, remove: true });
 	};
 
 	return onDeleteDatetime;

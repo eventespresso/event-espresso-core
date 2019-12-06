@@ -1,9 +1,9 @@
 import useDateimeQueryOptions from './useDateimeQueryOptions';
 
-const useUpdateDatetmeCache = () => {
+const useUpdateDatetimeCache = () => {
 	const options = useDateimeQueryOptions();
 
-	const updateDatetmeCache = ({ proxy, datetimes, datetime, remove = false }) => {
+	const updateDatetimeCache = ({ proxy, datetimes, datetime, remove = false }) => {
 		const nodes = datetimes.nodes;
 		// remove from or add to the list
 		const newNodes = remove ? nodes.filter(({ id }) => id !== datetime.id) : [...nodes, datetime];
@@ -21,7 +21,7 @@ const useUpdateDatetmeCache = () => {
 		});
 	};
 
-	return updateDatetmeCache;
+	return updateDatetimeCache;
 };
 
-export default useUpdateDatetmeCache;
+export default useUpdateDatetimeCache;

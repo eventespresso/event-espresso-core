@@ -1,12 +1,12 @@
 import useRelations from '../../../../../infrastructure/services/relations/useRelations';
 
 import updateTicketCache from './updateTicketCache';
-import useUpdateDatetmeCache from './useUpdateDatetmeCache';
+import useUpdateDatetimeCache from './useUpdateDatetimeCache';
 
 const useOnCreateDatetime = () => {
 	const { updateRelations, addRelation } = useRelations();
 
-	const updateDatetmeCache = useUpdateDatetmeCache();
+	const updateDatetimeCache = useUpdateDatetimeCache();
 
 	const onCreateDatetime = ({ proxy, datetimes, datetime, tickets }) => {
 		if (datetime.id) {
@@ -33,7 +33,7 @@ const useOnCreateDatetime = () => {
 			});
 		}
 		// Update datetime cache after tickets cache is updated.
-		updateDatetmeCache({ proxy, datetimes, datetime });
+		updateDatetimeCache({ proxy, datetimes, datetime });
 	};
 
 	return onCreateDatetime;
