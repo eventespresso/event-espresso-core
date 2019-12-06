@@ -62,6 +62,9 @@ class ModelObjNodeTest extends EE_UnitTestCase
 
         $e_node = new ModelObjNode($e);
         $work_budget = 2;
+
+        // Ok traverse 2 objects in the tree. That means we'll grab two of the datetimes, but not finish visiting
+        // their children.
         $work_done = $e_node->visit($work_budget);
         $this->assertEquals($work_budget, $work_done);
         $partial_tree = $e_node->toArray();
@@ -73,15 +76,50 @@ class ModelObjNodeTest extends EE_UnitTestCase
         $this->assertEquals(0, $partial_tree['rels']['Change_Log']['count']);
         // Assert datetimes done as expected.
         $this->assertArrayHasKey('Datetime', $partial_tree['rels']);
-        // Not complete, but did 2 or the three.
+        // Not complete, but did 2 of the 3.
         $this->assertFalse($partial_tree['rels']['Datetime']['complete']);
         $this->assertEquals( $datetimes_count, $partial_tree['rels']['Datetime']['count']);
         $this->assertEquals($work_done, count($partial_tree['rels']['Datetime']['objs']));
         // Their related ticket relations should not have been visited yet
         $a_datetime_node = reset($partial_tree['rels']['Datetime']['objs']);
         $this->assertFalse($a_datetime_node['complete']);
-        $this->assertNull($a_datetime_node['rels']);
-        // We'll get them next time, probably.
+
+        // Hit it again. Now we should visit the first datetime node.
+        $e_node->visit($work_budget);
+        $partial_tree = $e_node->toArray();
+        // still shouldn't be done. We haven't yet had a chance to see if the datetime's datetime-ticket relation
+        // has any related items.
+        $this->assertFalse($partial_tree['complete']);
+        $this->assertFalse($partial_tree['rels']['Datetime']['complete']);
+        // The first datetime should have been visited, and its ticket relation.
+        $a_datetime_node = reset($partial_tree['rels']['Datetime']['objs']);
+        $that_datetimes_ticket = reset($a_datetime_node['rels']['Datetime_Ticket']['objs']);
+        $this->assertTrue($that_datetimes_ticket['complete']);
+        $this->assertTrue($a_datetime_node['complete']);
+        $another_datetime_node = next($partial_tree['rels']['Datetime']['objs']);
+        $this->assertFalse($another_datetime_node['complete']);
+
+        // Hit it a third time. This time the other datetime should be visited and its ticket, but not the 3rd datetime.
+        $e_node->visit($work_budget);
+        $partial_tree = $e_node->toArray();
+        $first_datetime = reset($partial_tree['rels']['Datetime']['objs']);
+        $this->assertTrue($first_datetime['complete']);
+        $second_datetime = next($partial_tree['rels']['Datetime']['objs']);
+        $this->assertTrue($second_datetime['complete']);
+        $third_datetime = next($partial_tree['rels']['Datetime']['objs']);
+        $this->assertFalse($third_datetime['complete']);
+
+        // Hit it a fourth time. We'll fetch the last datetime, and then its datetime-ticket relation.
+        // But we won't have time to finish checking if it has more related items.
+        $e_node->visit($work_budget);
+        $partial_tree = $e_node->toArray();
+        $first_datetime = reset($partial_tree['rels']['Datetime']['objs']);
+        $this->assertTrue($first_datetime['complete']);
+        $second_datetime = next($partial_tree['rels']['Datetime']['objs']);
+        $this->assertTrue($second_datetime['complete']);
+        $third_datetime = next($partial_tree['rels']['Datetime']['objs']);
+        $this->assertTrue($third_datetime['complete']);
+        $this->assertTrue($partial_tree['complete']);
     }
 }
 // End of file EntityNodeTest.php

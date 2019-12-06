@@ -58,10 +58,10 @@ abstract class BaseNode
     /**
      *
      * @since $VID:$
-     * @param $work_budget
+     * @param $model_objects_to_identify
      * @return int units of work done
      */
-    protected abstract function work($work_budget);
+    protected abstract function work($model_objects_to_identify);
 
     /**
      * Shows the entity/relation node as an array.

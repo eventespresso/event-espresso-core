@@ -8,6 +8,7 @@ use EE_Model_Relation_Base;
 use EEM_Base;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
+use EventEspresso\core\services\payment_methods\forms\PayPalSettingsForm;
 use InvalidArgumentException;
 use ReflectionException;
 
@@ -53,19 +54,19 @@ class RelationNode extends BaseNode
      * Here is where most of the work happens. We've counted how many related model objects exist, but now we need to
      * trigger visiting each of them, and then visiting their children etc.
      * @since $VID:$
-     * @param $work_budget
+     * @param $model_objects_to_identify
      * @return int|void
      * @throws EE_Error
      */
-    protected function work($work_budget){
-        $work_done = $this->visitAlreadyDiscoveredNodes($this->model_obj_nodes, $work_budget);
-        if($work_done < $work_budget){
+    protected function work($model_objects_to_identify){
+        $num_identified = $this->visitAlreadyDiscoveredNodes($this->model_obj_nodes, $model_objects_to_identify);
+        if($num_identified < $model_objects_to_identify){
             $related_model_objs = $this->related_model->get_all(
                 [
                     $this->whereQueryParams(),
                     'limit' => [
                         count($this->model_obj_nodes),
-                        $work_budget
+                        $model_objects_to_identify
                     ]
                 ]
             );
@@ -77,16 +78,31 @@ class RelationNode extends BaseNode
                 $this->model_obj_nodes[$related_model_obj->ID()] = $entity_node;
                 $new_item_nodes[$related_model_obj->ID()] = $entity_node;
             }
-            $work_done += count($new_item_nodes);
-
-            // And lastly do the work.
-            $work_done += $this->visitAlreadyDiscoveredNodes($new_item_nodes, $work_budget - $work_done);
+            $num_identified += count($new_item_nodes);
+            if($num_identified < $model_objects_to_identify){
+                // And lastly do the work.
+                $num_identified += $this->visitAlreadyDiscoveredNodes($new_item_nodes, $model_objects_to_identify - $num_identified);
+            }
         }
-        // We're all done this node if we've done everything here and still have budget for more.
-        if($work_done < $work_budget){
+
+        if(count($this->model_obj_nodes) >= $this->count && $this->allChildrenComplete()){
             $this->complete = true;
         }
-        return $work_done;
+        return $num_identified;
+    }
+
+    /**
+     * Checks if all the identified child nodes are complete or not.
+     * @since $VID:$
+     * @return bool
+     */
+    protected function allChildrenComplete(){
+        foreach($this->model_obj_nodes as $model_obj_node){
+            if(! $model_obj_node->isComplete()){
+                return false;
+            }
+        }
+        return true;
     }
 
     /**
@@ -98,6 +114,9 @@ class RelationNode extends BaseNode
      */
     protected function visitAlreadyDiscoveredNodes($model_obj_nodes, $work_budget){
         $work_done = 0;
+        if(! $model_obj_nodes){
+            return 0;
+        }
         foreach($model_obj_nodes as $model_obj_node){
             if($work_done >= $work_budget){
                 break;

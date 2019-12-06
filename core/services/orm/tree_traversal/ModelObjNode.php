@@ -13,7 +13,17 @@ use ReflectionException;
 /**
  * Class Visitor
  *
- * Stores info about an entity in a model relations tree
+ * Stores info about an entity in a model relations tree.
+ * When traversing the tree of objects, the pseudo code is this:
+ *
+ * Start off with a model object, and a budget of how many model objects we want to discover
+ * For each of its relations:
+ *      count the number of related model objects
+ *      then fetch some of them from the DB (no more than what's in our budget)
+ *      record how many we fetched, and compare it to our budget
+ *      if we're at the budget's limit, stop.
+ *      otherwise, for each of them:
+ *          start again with it being the root model object.
  *
  * @package     Event Espresso
  * @author         Mike Nelson
@@ -83,22 +93,23 @@ class ModelObjNode extends BaseNode
     /**
      * Triggers working on each child relation node that has work to do.
      * @since $VID:$
-     * @param $work_budget
+     * @param $model_objects_to_identify
      * @return int units of work done
      */
-    protected function work($work_budget)
+    protected function work($model_objects_to_identify)
     {
-        $units_worked = 0;
+        $num_identified = 0;
+        // Begin assuming we'll finish all the work on this node and its children...
+        $this->complete = true;
         foreach($this->relation_nodes as $relation_node){
-            $units_worked += $relation_node->visit($work_budget);
-            if($units_worked >= $work_budget){
+            $num_identified += $relation_node->visit($model_objects_to_identify);
+            if($num_identified >= $model_objects_to_identify){
+                // ...but admit we're wrong if the work exceeded the budget.
+                $this->complete = false;
                 break;
             }
         }
-        if($units_worked < $work_budget){
-            $this->complete = true;
-        }
-        return $units_worked;
+        return $num_identified;
     }
 
     /**
