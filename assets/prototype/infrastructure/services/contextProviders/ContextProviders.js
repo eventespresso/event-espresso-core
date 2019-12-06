@@ -2,6 +2,7 @@
 import ApolloProvider from '../apollo/Apollo';
 import { ToastProvider } from './ToastProvider';
 import { RelationsProvider } from './RelationsProvider';
+import ConfigProvider from './ConfigProvider';
 
 /**
  * A collection of top level providers that are used by multiple parts of the application.
@@ -13,7 +14,9 @@ import { RelationsProvider } from './RelationsProvider';
 const ContextProviders = ({ children, eventId }) => (
 	<ToastProvider>
 		<ApolloProvider>
-			<RelationsProvider eventId={eventId}>{children}</RelationsProvider>
+			<ConfigProvider>
+				<RelationsProvider eventId={eventId}>{children}</RelationsProvider>
+			</ConfigProvider>
 		</ApolloProvider>
 	</ToastProvider>
 );
