@@ -37,10 +37,13 @@ const btnRowStyle = {
 };
 
 const TicketsList = ({ tickets, datetimes, error, loading, loadingDates }) => {
-	console.log('%c TicketsList', 'color: gold; font-size: 14px;');
-	console.log('%c > tickets:', 'color: goldenrod;', tickets);
-	console.log('%c > loading:', 'color: goldenrod;', loading);
-	console.log('%c > error:', 'color: goldenrod;', error);
+	if (! loading && ! loadingDates) {
+		console.log('%c TicketsList', 'color: gold; font-size: 14px;');
+		console.log('%c > tickets:', 'color: goldenrod;', tickets);
+		console.log('%c > loading:', 'color: goldenrod;', loading);
+	} else if (error) {
+		console.log('%c > error:', 'color: red; font-size:16px;', error);
+	}
 	const header = <H3 style={{ margin: '2rem 0 .5rem' }}>{'Tickets List'}</H3>;
 
 	if (loading || loadingDates) {

@@ -33,10 +33,6 @@ function formatPriceAmount(amount) {
 	return Number.parseFloat(amount).toFixed(decimalPlaces);
 }
 
-// const randomString = (length = 3) => Math.random().toString(36).substring(2, length+2);
-// const fakeId = (length = 3) => join('', chain(randomString, [length, length, length]));
-// console.log('%c > fakeId: ', 'color: yellow;', fakeId());
-
 const TicketPriceModifierRow = ({ index, name, price, calcDir, fields: { push, remove, reset, sort }}) => {
 	const options = price.priceType === 1 ? allOptions : modifierOptions;
 	const sign = price.isPercent ? percentSign : currencySign;
@@ -59,15 +55,11 @@ const TicketPriceModifierRow = ({ index, name, price, calcDir, fields: { push, r
 				icon={'add'}
 				onClick={() => {
 					const newPrice = clone(price);
-					console.log('%c > newPrice:', 'color: #99c043;', newPrice);
-					// newPrice.id = fakeId();
 					newPrice.id = null;
 					const baseType = getBaseType( newPrice.priceType );
-					console.log( '%c > > baseType:', 'color: #99c043;', baseType );
 					newPrice.order = baseType.order;
 					newPrice.isDiscount = baseType.isDiscount;
 					newPrice.isPercent = baseType.isPercent;
-					console.log('%c > > newPrice:', 'color: #99c043;', newPrice);
 					push(newPrice);
 					reset(name);
 					sort();

@@ -20,6 +20,7 @@ export default {
 	type,
 	input,
 	amount,
+	number,
 	money,
 	sign,
 	b4,

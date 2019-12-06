@@ -40,7 +40,6 @@ const TicketPriceCalculatorForm = ({ form, values: { ticket, prices } }) => {
 					<tbody>
 						<FieldArray name={'prices'} initialValue={prices}>
 							{({ fields }) => {
-								console.log( '%c FIELDS: ', 'color: lightseagreen;', fields );
 								return fields.map((name, index) => {
 									const price = fields.value[index];
 									return price ? (

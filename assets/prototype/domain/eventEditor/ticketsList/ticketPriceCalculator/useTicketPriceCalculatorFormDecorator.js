@@ -44,21 +44,13 @@ const getBasePriceType = (price) => find(propEq('id', parseInt(price.priceType, 
 const useTicketPriceCalculatorFormDecorator = () => {
 	const calculator = useTicketPriceCalculator();
 	const updateBasePrice = useCallback((formData) => {
-		console.log('%c updateBasePrice', 'color: MediumPurple; font-size:14px;');
-		console.log('%c > formData: ', 'color: Violet;', formData);
 		const result = calculator(formData, { type: 'CALCULATE_BASE_PRICE' })
-		console.log('%c > result: ', 'color: Violet;', result);
 		const newBasePrice = getValue('prices[0].amount', result);
-		console.log('%c > newBasePrice: ', 'color: Violet; font-size:14px;', newBasePrice);
 		return { ['prices[0].amount']: newBasePrice };
 	}, [calculator]);
 	const updateTicketTotal = useCallback((formData) => {
-		console.log('%c updateTicketTotal', 'color: MediumPurple; font-size:14px;');
-		console.log('%c > formData: ', 'color: Violet;', formData);
 		const result = calculator(formData, { type: 'CALCULATE_TOTAL' })
-		console.log('%c > result: ', 'color: Violet;', result);
 		const newTicketTotal = getValue('ticket.price', result);
-		console.log('%c > newTicketTotal: ', 'color: Violet; font-size:14px;', newTicketTotal);
 		return { ['ticket.price']: newTicketTotal };
 	}, [calculator]);
 	return createDecorator(
@@ -67,13 +59,9 @@ const useTicketPriceCalculatorFormDecorator = () => {
 			isEqual: amountsEqual,
 			updates: (value, name, formData, prevData) => {
 				const prevValue = getValue(name, prevData);
-				console.log('');
-				console.log('%c useTicketPriceCalculatorFormDecorator ==> ' + name, 'color: Magenta; font-size:14px;');
-				console.log('%c value, prevValue: ', 'color: Violet;', value, prevValue);
 				const reverseCalc = getValue('ticket.reverseCalculate', formData);
 				if (reverseCalc) {
 					if (name === 'prices[0].amount') {
-						console.log('%c ABORT CALCULATE_BASE_PRICE', 'color:Violet; font-size:14px;', name);
 						return {};
 					}
 					return updateBasePrice(formData);
@@ -86,14 +74,9 @@ const useTicketPriceCalculatorFormDecorator = () => {
 			isEqual: isEqual,
 			updates: (value, name, formData, prevData) => {
 				const prevValue = getValue(name, prevData);
-				console.log('');
-				console.log('%c useTicketPriceCalculatorFormDecorator ==> ' + name, 'color: Magenta; font-size:14px;');
-				console.log('%c value, prevValue: ', 'color: Violet;', value, prevValue);
 				const pricePath = name.replace('.priceType', '');
 				const price = getValue(pricePath, formData);
-				console.log('%c > > price: ', 'color: Violet;', price);
 				const priceType = getBasePriceType(price);
-				console.log('%c > > priceType: ', 'color: Violet;', priceType);
 				const updatedPrice = {
 					...price,
 					isDiscount: priceType.isDiscount,
@@ -101,27 +84,20 @@ const useTicketPriceCalculatorFormDecorator = () => {
 					order: priceType.order,
 					priceType: parseInt(priceType.id, 10),
 				};
-				console.log('%c > > > updatedPrice: ', 'color: Violet;', updatedPrice);
-				console.log('%c > > > formData: ', 'color: Violet;', formData);
-				// const formDataWithUpdatedPrice = assocPath(pathName(pricePath), updatedPrice, formData);
 				const updatedPrices = map(
 					when(propEq('id', updatedPrice.id), () => updatedPrice),
 					formData.prices
 				);
 				const formDataWithUpdatedPrice = { ticket: formData.ticket, prices: updatedPrices };
-				console.log('%c > > > formDataWithUpdatedPrice: ', 'color: Violet;', formDataWithUpdatedPrice);
 				// basePriceTypes
 				const reverseCalc = getValue('ticket.reverseCalculate', formDataWithUpdatedPrice);
 				const formDataCalculations = reverseCalc ?
 					updateBasePrice(formDataWithUpdatedPrice) :
 					updateTicketTotal(formDataWithUpdatedPrice);
-				console.log('%c > > > formDataCalculations: ', 'color: Violet;', formDataCalculations);
-				const newFormData = {
+				return {
 					...formDataCalculations,
 					[pricePath]: updatedPrice
 				}
-				console.log('%c > > > newFormData: ', 'color: Violet;', newFormData);
-				return newFormData;
 			},
 		},
 		{
@@ -129,9 +105,6 @@ const useTicketPriceCalculatorFormDecorator = () => {
 			isEqual: boolsEqual,
 			updates: (value, name, formData, prevData) => {
 				const prevValue = !! getValue(name, prevData);
-				console.log('');
-				console.log('%c useTicketPriceCalculatorFormDecorator ==> ' + name, 'color: Magenta; font-size:14px;');
-				console.log('%c value, prevValue: ', 'color: Violet;', !! value, prevValue);
 				const reverseCalc = getValue('ticket.reverseCalculate', formData);
 				return reverseCalc ? updateBasePrice(formData) : updateTicketTotal(formData);
 			},
@@ -144,12 +117,6 @@ const useTicketPriceCalculatorFormDecorator = () => {
 				const reverseCalc = getValue('ticket.reverseCalculate', formData);
 				// we don't want to update the base price if reverse calculate is false
 				if (reverseCalc) {
-					console.log('');
-					console.log(
-						'%c useTicketPriceCalculatorFormDecorator ==> ' + name,
-						'color: Magenta; font-size:14px;'
-					);
-					console.log('%c value, prevValue: ', 'color: Violet;', value, prevValue);
 					return updateBasePrice(formData);
 				}
 				return {};

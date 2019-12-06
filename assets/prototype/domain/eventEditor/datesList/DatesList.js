@@ -22,10 +22,13 @@ const btnRowStyle = {
 };
 
 const DatesList = ({ datetimes, error, loading, tickets }) => {
-	console.log('%c DatesList', 'color: orangered; font-size: 14px;');
-	console.log('%c > datetimes:', 'color: tomato;', datetimes);
-	console.log('%c > loading:', 'color: tomato;', loading);
-	console.log('%c > error:', 'color: tomato;', error);
+	if (!loading) {
+		console.log('%c DatesList', 'color: orangered; font-size: 14px;');
+		console.log('%c > datetimes:', 'color: tomato;', datetimes);
+		console.log('%c > loading:', 'color: tomato;', loading);
+	} else if (error) {
+		console.log('%c > error:', 'color: red; font-size:16px;', error);
+	}
 	const header = <H3 style={{ margin: '2rem 0 .5rem' }}>{'Dates List'}</H3>;
 
 	if (loading) return <LoadingIndicator header={header} message='loading dates...' />;
