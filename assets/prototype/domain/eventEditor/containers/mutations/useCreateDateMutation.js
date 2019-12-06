@@ -17,7 +17,7 @@ const useCreateDateMutation = ({ eventId }) => {
 	const { updateRelations, addRelation } = useRelations();
 
 	const [createDate, { loading, error }] = useMutation(CREATE_DATETIME, initToaster);
-	initToaster(loading, error);
+	initToaster.initializationNotices(loading, error);
 
 	// On submit handler receives data from FormModal
 	return ({ description, name, tickets = [] }) => {
