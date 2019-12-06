@@ -43,7 +43,6 @@ const getBasePriceType = (price) => find(propEq('id', parseInt(price.priceType, 
  */
 const useTicketPriceCalculatorFormDecorator = () => {
 	const calculator = useTicketPriceCalculator();
-	console.log('%c calculator', 'color: Lime; font-size:24px;', calculator);
 	const updateBasePrice = useCallback((formData) => {
 		console.log('%c updateBasePrice', 'color: MediumPurple; font-size:14px;');
 		console.log('%c > formData: ', 'color: Violet;', formData);

@@ -2,18 +2,13 @@ import clone from 'ramda/src/clone';
 import drop from 'ramda/src/drop';
 import find from 'ramda/src/find';
 import propEq from 'ramda/src/propEq';
-import chain from 'ramda/src/chain';
 import {Field} from 'react-final-form';
 import {Button } from '@blueprintjs/core';
-
-// actions that need replacing with mutations
-const addNewPrice = () => console.log('%c addNewPrice', 'color: lime;' /*price*/);
-const deletePrice = () => console.log('%c deletePrice', 'color: red;' /*price.id*/);
 
 // just temporary
 import styles from './inlineStyles';
 
-// needs to come from the db
+// also temporary, needs to come from the db
 const allOptions = [
 	{ id: 1, type: 'Base Price', isDiscount: false, isPercent: false, order: 0 },
 	{ id: 2, type: 'Percent Discount', isDiscount: true, isPercent: true, order: 20 },
@@ -29,15 +24,20 @@ const getBaseType = (type) => find(propEq('id', Number(type)))( modifierOptions)
 // need to change these based on site i18n config
 const currencySign = '$';
 const currencySignB4 = true;
+const decimalPlaces = 2;
 // const decimalMark = '.';
 // const thousandsSep = ',';
 const percentSign = '%';
+
+function formatPriceAmount(amount) {
+	return Number.parseFloat(amount).toFixed(decimalPlaces);
+}
 
 // const randomString = (length = 3) => Math.random().toString(36).substring(2, length+2);
 // const fakeId = (length = 3) => join('', chain(randomString, [length, length, length]));
 // console.log('%c > fakeId: ', 'color: yellow;', fakeId());
 
-const TicketPriceModifierRow = ({ index, name, price, reverseCalculate, fields: { push, remove, reset, sort }}) => {
+const TicketPriceModifierRow = ({ index, name, price, calcDir, fields: { push, remove, reset, sort }}) => {
 	const options = price.priceType === 1 ? allOptions : modifierOptions;
 	const sign = price.isPercent ? percentSign : currencySign;
 	let b4Price = '';
@@ -88,7 +88,7 @@ const TicketPriceModifierRow = ({ index, name, price, reverseCalculate, fields: 
 	return (
 		<tr>
 			<td width={'7.5%'} style={styles.cell}>
-				{price.priceId}
+				{price.dbid}
 				<Field
 					type={'hidden'}
 					component={'input'}
@@ -153,8 +153,10 @@ const TicketPriceModifierRow = ({ index, name, price, reverseCalculate, fields: 
 							initialValue={price.amount}
 							name={`${name}.amount`}
 							placeholder={'amount...'}
-							style={{ margin: '0 auto', textAlign: 'right', maxWidth: '105px' }}
-							disabled={reverseCalculate && price.isBasePrice}
+							style={styles.number}
+							disabled={calcDir && price.isBasePrice}
+							format={formatPriceAmount}
+							formatOnBlur
 						/>
 					</div>
 					<div style={styles.aft}>{afterPrice}</div>

@@ -1,36 +1,15 @@
-import { Field } from 'react-final-form';
-import { Button, H2, HTMLTable } from '@blueprintjs/core';
+import { H2, HTMLTable } from '@blueprintjs/core';
 import { FieldArray } from 'react-final-form-arrays'
 
-// import TicketPriceCalculator from './TicketPriceCalculator';
 import TicketPriceModifierRow from './TicketPriceModifierRow';
+import TicketPriceTotalRow from './TicketPriceTotalRow';
 
 // just temporary
 import styles from './inlineStyles';
 
-// actions that need replacing with mutations
-const recalculateBasePrice = () => console.log('%c recalculateBasePrice', 'color: red;' /*price.id*/);
-const recalculateTotalPrice = () => console.log('%c recalculateTotalPrice', 'color: red;' /*price.id*/);
-
-function financial(x) {
-	return Number.parseFloat(x).toFixed(2);
-}
-
-// need to change these based on site i18n config
-const currencySign = '$';
-const currencySignB4 = true;
-// const decimalMark = '.';
-// const thousandsSep = ',';
-
-const b4Total = currencySignB4 ? currencySign : '';
-const aftTotal = currencySignB4 ? '' : currencySign;
-
 const TicketPriceCalculatorForm = ({ form, values: { ticket, prices } }) => {
 	const calcDir = !! ticket.reverseCalculate;
 	const toggleCalcDir = () => form.mutators.toggleCalcDir('ticket.reverseCalculate');
-	const reverseCalculate = calcDir ?
-		<Button icon={'double-chevron-up'} onClick={toggleCalcDir} value={calcDir} minimal /> :
-		<Button icon={'double-chevron-down'} onClick={toggleCalcDir} value={calcDir} minimal />;
 	return (
 		<>
 			<H2 style={styles.hdr}>Ticket Price Calculator</H2>
@@ -71,7 +50,7 @@ const TicketPriceCalculatorForm = ({ form, values: { ticket, prices } }) => {
 											name={name}
 											fields={fields}
 											price={price}
-											reverseCalculate={calcDir}
+											calcDir={calcDir}
 										/>
 									) : null
 								});
@@ -79,40 +58,7 @@ const TicketPriceCalculatorForm = ({ form, values: { ticket, prices } }) => {
 						</FieldArray>
 					</tbody>
 					<tfoot>
-						<tr>
-							<th colSpan={4} width={'77.5%'} style={{ fontSize: '18px', textAlign: 'right' }}>
-								Total
-							</th>
-							<th width={'15%'} style={styles.amount}>
-								<div style={styles.money}>
-									<div style={styles.b4}>{b4Total}</div>
-									<div style={styles.Currency}>
-										<Field
-											type={'hidden'}
-											component={'input'}
-											initialValue={ticket.id}
-											name={'ticket.id'}
-										/>
-										<Field
-											type={'hidden'}
-											component={'input'}
-											initialValue={ticket.reverseCalculate ? 'true' : 'false'}
-											name={'ticket.reverseCalculate'}
-										/>
-										<Field
-											type={'number'}
-											component={'input'}
-											initialValue={ticket.price}
-											name={'ticket.price'}
-											style={{ margin: '0 auto', textAlign: 'right', maxWidth: '105px' }}
-											disabled={!calcDir}
-										/>
-									</div>
-									<div style={styles.aft}>{aftTotal}</div>
-								</div>
-							</th>
-							<th width={'7.5%'} style={styles.actions}>{reverseCalculate}</th>
-						</tr>
+					<TicketPriceTotalRow ticket={ticket} calcDir={calcDir} toggleCalcDir={toggleCalcDir}/>
 					</tfoot>
 				</HTMLTable>
 			</div>
