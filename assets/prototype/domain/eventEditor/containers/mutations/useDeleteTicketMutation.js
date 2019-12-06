@@ -3,27 +3,23 @@ import { useMutation } from '@apollo/react-hooks';
 import { DELETE_TICKET } from './tickets';
 import { GET_TICKETS } from '../queries/tickets';
 import useDatetimeIds from '../queries/useDatetimeIds';
-import useToaster from '../../../../infrastructure/services/toaster/useToaster';
+import useInitToaster from '../../../../infrastructure/services/toaster/useInitToaster';
 import useRelations from '../../../../infrastructure/services/relations/useRelations';
 
 const useDeleteTicketMutation = ({ id }) => {
 	const datetimeIn = useDatetimeIds();
-	const toaster = useToaster();
 	const { removeRelation, dropRelations } = useRelations();
+
 	const toasterMessage = `deleting ticket ${id}`;
-	const [deleteTicket, { loading, error }] = useMutation(DELETE_TICKET, {
-		onCompleted: () => {
-			toaster.dismiss(toasterMessage);
-			toaster.success(`ticket ${id} successfully deleted`);
-		},
-		onError: (error) => {
-			toaster.dismiss(toasterMessage);
-			toaster.error(error);
-		},
+	const initToaster = useInitToaster({
+		toasterMessage,
+		loadingMessage: toasterMessage,
+		successMessage: `ticket ${id} successfully deleted`,
 	});
 
-	toaster.loading(loading, toasterMessage);
-	toaster.error(error);
+	const [deleteTicket, { loading, error }] = useMutation(DELETE_TICKET, initToaster);
+
+	initToaster.initializationNotices(loading, error);
 
 	const variables = { input: { clientMutationId: 'xyz', id } };
 
