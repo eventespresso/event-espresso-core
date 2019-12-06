@@ -8,17 +8,17 @@ const useEntityMutator = (type, id = '') => {
 	const { getCreateMutation, getUpdateMutation, getDeleteMutation, mutate } = useEntityMutation(type, id);
 
 	/**
-	 * @param {object} data
+	 * @param {object} input
 	 */
-	const createEntity = (data) => {
-		return mutate(getCreateMutation(data));
+	const createEntity = (input) => {
+		return mutate(getCreateMutation(input));
 	};
 
 	/**
-	 * @param {string} id Entity id
+	 * @param {object} input
 	 */
-	const updateEntity = (data) => {
-		return mutate(getUpdateMutation(data));
+	const updateEntity = (input) => {
+		return mutate(getUpdateMutation(input));
 	};
 
 	/**
