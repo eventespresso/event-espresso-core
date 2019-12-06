@@ -63,7 +63,6 @@ const DateCard = ({ eventId, id, tickets }) => {
 					<EditableText
 						placeholder='Edit title...'
 						defaultValue={date.name}
-						value={date.name}
 						onCancel={(value) => console.log(value)}
 						onConfirm={(name) => updateEntity({ name })}
 						minWidth={'320px'}
