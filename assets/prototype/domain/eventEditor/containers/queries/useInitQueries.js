@@ -36,8 +36,8 @@ const useInitQueries = ({ eventId }) => {
 			where: {
 				datetimeIn,
 			},
-			skip: skipTicketsQuery,
 		},
+		skip: skipTicketsQuery,
 		onCompleted: () => {
 			toaster.dismiss(toasterTicketsMessage);
 			toaster.success('event editor tickets initialized');
