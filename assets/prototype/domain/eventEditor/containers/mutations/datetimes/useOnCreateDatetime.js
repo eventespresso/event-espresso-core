@@ -10,7 +10,8 @@ const useOnCreateDatetime = () => {
 
 	const onCreateDatetime = ({ proxy, datetimes, datetime, tickets }) => {
 		if (datetime.id) {
-			const datetimeIn = datetimes.nodes.map(({ id }) => id);
+			const { nodes = [] } = datetimes;
+			const datetimeIn = nodes.map(({ id }) => id);
 			const { id: datetimeId } = datetime;
 
 			// Update tickets cache for the changed datetimes,

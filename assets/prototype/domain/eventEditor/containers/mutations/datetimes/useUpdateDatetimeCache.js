@@ -4,7 +4,7 @@ const useUpdateDatetimeCache = () => {
 	const options = useDateimeQueryOptions();
 
 	const updateDatetimeCache = ({ proxy, datetimes, datetime, remove = false }) => {
-		const nodes = datetimes.nodes;
+		const { nodes = [] } = datetimes;
 		// remove from or add to the list
 		const newNodes = remove ? nodes.filter(({ id }) => id !== datetime.id) : [...nodes, datetime];
 
