@@ -5,15 +5,15 @@ import { useEffect, useState } from '@wordpress/element';
 import TicketPriceCalculatorForm from './TicketPriceCalculatorForm';
 import useTicketPriceCalculatorFormDecorator from './useTicketPriceCalculatorFormDecorator';
 import useTicketPriceCalculatorFormMutators from './useTicketPriceCalculatorFormMutators';
-import {sortByPriceOrderIdAsc} from '../../../shared/entities/prices/sortingPredicates';
-
+import { sortByPriceOrderIdAsc } from '../../../shared/entities/prices/sortingPredicates';
+import useTicketPrices from '../../containers/queries/useTicketPrices';
 
 import FormModal from '../../../shared/FormModal';
 // import useFetchTicketRelations from '../../containers/mutations/useFetchTicketRelations';
-const prices = [
+/* const prices = [
 	{
 		id: 'NEW_PRICE',
-		dbid: '',
+		dbId: '',
 		amount: null,
 		desc: '',
 		isBasePrice: false,
@@ -28,7 +28,7 @@ const prices = [
 	},
 	{
 		id: 'ABC123',
-		dbid: 1234,
+		dbId: 1234,
 		amount: 9.99,
 		desc: 'Base Price',
 		isBasePrice: true,
@@ -43,7 +43,7 @@ const prices = [
 	},
 	{
 		id: 'DEF456',
-		dbid: 1235,
+		dbId: 1235,
 		amount: 10,
 		desc: 'just to be nice',
 		isBasePrice: false,
@@ -58,7 +58,7 @@ const prices = [
 	},
 	{
 		id: 'XYZ890',
-		dbid: 1236,
+		dbId: 1236,
 		amount: 2.5,
 		desc: 'Just Cuz Fee',
 		isBasePrice: false,
@@ -73,7 +73,7 @@ const prices = [
 	},
 	{
 		id: 'TAX123',
-		dbid: 1237,
+		dbId: 1237,
 		amount: 10,
 		desc: 'theft',
 		isBasePrice: false,
@@ -86,10 +86,10 @@ const prices = [
 		order: 70,
 		wpUser: 1,
 	},
-];
+]; */
 const priceFormFields = [
 	'amount',
-	'dbid',
+	'dbId',
 	'desc',
 	'id',
 	'isBasePrice',
@@ -103,7 +103,7 @@ const NO_INDEX = -1;
 const isPriceFormField = (val, key) => indexOf(key, priceFormFields) > NO_INDEX;
 const copyPriceFormFields = (price) => pickBy(isPriceFormField, price);
 
-const ticketFormFields = [ 'id', 'reverseCalculate', 'order', 'price' ];
+const ticketFormFields = ['id', 'reverseCalculate', 'order', 'price'];
 const isTicketFormField = (val, key) => indexOf(key, ticketFormFields) > NO_INDEX;
 const copyTicketFormFields = (ticket) => pickBy(isTicketFormField, ticket);
 
@@ -114,6 +114,8 @@ const TicketPriceCalculatorModal = ({ ticket, handleClose, isOpen }) => {
 	const [initialValues, setInitialValues] = useState(EMPTY_OBJECT);
 	const decorator = useTicketPriceCalculatorFormDecorator();
 	const mutators = useTicketPriceCalculatorFormMutators();
+	const prices = useTicketPrices(ticket.id);
+	console.log(ticket.dbId, { prices });
 
 	useEffect(() => {
 		if (initialValues === EMPTY_OBJECT) {

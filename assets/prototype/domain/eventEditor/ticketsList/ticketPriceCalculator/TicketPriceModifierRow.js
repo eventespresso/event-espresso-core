@@ -2,8 +2,8 @@ import clone from 'ramda/src/clone';
 import drop from 'ramda/src/drop';
 import find from 'ramda/src/find';
 import propEq from 'ramda/src/propEq';
-import {Field} from 'react-final-form';
-import {Button } from '@blueprintjs/core';
+import { Field } from 'react-final-form';
+import { Button } from '@blueprintjs/core';
 
 // just temporary
 import styles from './inlineStyles';
@@ -19,7 +19,7 @@ const allOptions = [
 	{ id: 7, type: 'Federal Tax', isDiscount: false, isPercent: true, order: 70 },
 ];
 const modifierOptions = drop(1, allOptions); // removes first option
-const getBaseType = (type) => find(propEq('id', Number(type)))( modifierOptions);
+const getBaseType = (type) => find(propEq('id', Number(type)))(modifierOptions);
 
 // need to change these based on site i18n config
 const currencySign = '$';
@@ -33,7 +33,7 @@ function formatPriceAmount(amount) {
 	return Number.parseFloat(amount).toFixed(decimalPlaces);
 }
 
-const TicketPriceModifierRow = ({ index, name, price, calcDir, fields: { push, remove, reset, sort }}) => {
+const TicketPriceModifierRow = ({ index, name, price, calcDir, fields: { push, remove, reset, sort } }) => {
 	const options = price.priceType === 1 ? allOptions : modifierOptions;
 	const sign = price.isPercent ? percentSign : currencySign;
 	let b4Price = '';
@@ -42,7 +42,7 @@ const TicketPriceModifierRow = ({ index, name, price, calcDir, fields: { push, r
 	// isPercent T  currencySignB4 F  sign appears  afterPrice
 	// isPercent F  currencySignB4 F  sign appears  afterPrice
 	// isPercent F  currencySignB4 T  sign appears  b4Price
-	if (currencySignB4 && ! price.isPercent) {
+	if (currencySignB4 && !price.isPercent) {
 		b4Price = sign;
 		afterPrice = '';
 	}
@@ -56,7 +56,7 @@ const TicketPriceModifierRow = ({ index, name, price, calcDir, fields: { push, r
 				onClick={() => {
 					const newPrice = clone(price);
 					newPrice.id = null;
-					const baseType = getBaseType( newPrice.priceType );
+					const baseType = getBaseType(newPrice.priceType);
 					newPrice.order = baseType.order;
 					newPrice.isDiscount = baseType.isDiscount;
 					newPrice.isPercent = baseType.isPercent;
@@ -67,12 +67,14 @@ const TicketPriceModifierRow = ({ index, name, price, calcDir, fields: { push, r
 				minimal
 			/>
 		);
-	} else if (! price.isBasePrice) {
+	} else if (!price.isBasePrice) {
 		actions.push(
 			<Button
 				key={'trash'}
 				icon={'trash'}
-				onClick={() => {remove(index)}}
+				onClick={() => {
+					remove(index);
+				}}
 				minimal
 			/>
 		);
@@ -80,25 +82,15 @@ const TicketPriceModifierRow = ({ index, name, price, calcDir, fields: { push, r
 	return (
 		<tr>
 			<td width={'7.5%'} style={styles.cell}>
-				{price.dbid}
-				<Field
-					type={'hidden'}
-					component={'input'}
-					initialValue={price.id}
-					name={`${name}.id`}
-				/>
+				{price.dbId}
+				<Field type={'hidden'} component={'input'} initialValue={price.id} name={`${name}.id`} />
 				<Field
 					type={'hidden'}
 					component={'input'}
 					initialValue={price.isDiscount}
 					name={`${name}.isDiscount`}
 				/>
-				<Field
-					type={'hidden'}
-					component={'input'}
-					initialValue={price.isPercent}
-					name={`${name}.isPercent`}
-				/>
+				<Field type={'hidden'} component={'input'} initialValue={price.isPercent} name={`${name}.isPercent`} />
 			</td>
 			<td width={'15%'} style={styles.cell}>
 				<Field
