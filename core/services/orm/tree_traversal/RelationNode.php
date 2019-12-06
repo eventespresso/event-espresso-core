@@ -15,7 +15,8 @@ use ReflectionException;
 /**
  * Class RelationNode
  *
- * Description
+ * Wraps a model object and one of its model's relations; stores how many related model objects exist across that
+ * relation, and eventually createsa  ModelObjNode for each of its related model objects.
  *
  * @package     Event Espresso
  * @author         Mike Nelson
@@ -58,9 +59,10 @@ class RelationNode extends BaseNode
      * @return int|void
      * @throws EE_Error
      */
-    protected function work($model_objects_to_identify){
+    protected function work($model_objects_to_identify)
+    {
         $num_identified = $this->visitAlreadyDiscoveredNodes($this->model_obj_nodes, $model_objects_to_identify);
-        if($num_identified < $model_objects_to_identify){
+        if ($num_identified < $model_objects_to_identify) {
             $related_model_objs = $this->related_model->get_all(
                 [
                     $this->whereQueryParams(),
@@ -73,19 +75,19 @@ class RelationNode extends BaseNode
             $new_item_nodes = [];
 
             // Add entity nodes for each of the model objects we fetched.
-            foreach($related_model_objs as $related_model_obj){
+            foreach ($related_model_objs as $related_model_obj) {
                 $entity_node = new ModelObjNode($related_model_obj);
-                $this->model_obj_nodes[$related_model_obj->ID()] = $entity_node;
-                $new_item_nodes[$related_model_obj->ID()] = $entity_node;
+                $this->model_obj_nodes[ $related_model_obj->ID() ] = $entity_node;
+                $new_item_nodes[ $related_model_obj->ID() ] = $entity_node;
             }
             $num_identified += count($new_item_nodes);
-            if($num_identified < $model_objects_to_identify){
+            if ($num_identified < $model_objects_to_identify) {
                 // And lastly do the work.
                 $num_identified += $this->visitAlreadyDiscoveredNodes($new_item_nodes, $model_objects_to_identify - $num_identified);
             }
         }
 
-        if(count($this->model_obj_nodes) >= $this->count && $this->allChildrenComplete()){
+        if (count($this->model_obj_nodes) >= $this->count && $this->allChildrenComplete()) {
             $this->complete = true;
         }
         return $num_identified;
@@ -96,9 +98,10 @@ class RelationNode extends BaseNode
      * @since $VID:$
      * @return bool
      */
-    protected function allChildrenComplete(){
-        foreach($this->model_obj_nodes as $model_obj_node){
-            if(! $model_obj_node->isComplete()){
+    protected function allChildrenComplete()
+    {
+        foreach ($this->model_obj_nodes as $model_obj_node) {
+            if (! $model_obj_node->isComplete()) {
                 return false;
             }
         }
@@ -112,13 +115,14 @@ class RelationNode extends BaseNode
      * @param $work_budget
      * @return int
      */
-    protected function visitAlreadyDiscoveredNodes($model_obj_nodes, $work_budget){
+    protected function visitAlreadyDiscoveredNodes($model_obj_nodes, $work_budget)
+    {
         $work_done = 0;
-        if(! $model_obj_nodes){
+        if (! $model_obj_nodes) {
             return 0;
         }
-        foreach($model_obj_nodes as $model_obj_node){
-            if($work_done >= $work_budget){
+        foreach ($model_obj_nodes as $model_obj_node) {
+            if ($work_done >= $work_budget) {
                 break;
             }
             $work_done += $model_obj_node->visit($work_budget - $work_done);
@@ -140,8 +144,8 @@ class RelationNode extends BaseNode
      */
     public function isComplete()
     {
-        if($this->complete === null){
-            if(count($this->model_obj_nodes) === $this->count){
+        if ($this->complete === null) {
+            if (count($this->model_obj_nodes) === $this->count) {
                 $this->complete = true;
             } else {
                 $this->complete = false;
@@ -170,7 +174,8 @@ class RelationNode extends BaseNode
      * @throws InvalidArgumentException
      * @throws ReflectionException
      */
-    protected function whereQueryParams(){
+    protected function whereQueryParams()
+    {
         return [
             $this->related_model->get_foreign_key_to($this->main_model_obj->get_model()->get_this_model_name())->get_name() => $this->main_model_obj->ID()
         ];
@@ -179,15 +184,17 @@ class RelationNode extends BaseNode
      * @since $VID:$
      * @return array
      */
-    public function toArray(){
+    public function toArray()
+    {
         $tree = [
             'count' => $this->count,
             'complete' => $this->isComplete(),
             'objs' => []
         ];
-        if($this->model_obj_nodes === null){}
-        foreach($this->model_obj_nodes as $id => $model_obj_node){
-            $tree['objs'][$id] = $model_obj_node->toArray();
+        if ($this->model_obj_nodes === null) {
+        }
+        foreach ($this->model_obj_nodes as $id => $model_obj_node) {
+            $tree['objs'][ $id ] = $model_obj_node->toArray();
         }
         return $tree;
     }
