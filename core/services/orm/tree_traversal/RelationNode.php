@@ -16,7 +16,7 @@ use ReflectionException;
  * Class RelationNode
  *
  * Wraps a model object and one of its model's relations; stores how many related model objects exist across that
- * relation, and eventually createsa  ModelObjNode for each of its related model objects.
+ * relation, and eventually createsa a ModelObjNode for each of its related model objects.
  *
  * @package     Event Espresso
  * @author         Mike Nelson
@@ -52,12 +52,16 @@ class RelationNode extends BaseNode
 
 
     /**
-     * Here is where most of the work happens. We've counted how many related model objects exist, but now we need to
-     * trigger visiting each of them, and then visiting their children etc.
+     * Here is where most of the work happens. We've counted how many related model objects exist, here we identify
+     * them (ie, learn their IDs). But its recursive, so we'll also find their related dependent model objects etc.
      * @since $VID:$
-     * @param $model_objects_to_identify
-     * @return int|void
+     * @param int $model_objects_to_identify
+     * @return int
      * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws ReflectionException
      */
     protected function work($model_objects_to_identify)
     {
@@ -83,7 +87,10 @@ class RelationNode extends BaseNode
             $num_identified += count($new_item_nodes);
             if ($num_identified < $model_objects_to_identify) {
                 // And lastly do the work.
-                $num_identified += $this->visitAlreadyDiscoveredNodes($new_item_nodes, $model_objects_to_identify - $num_identified);
+                $num_identified += $this->visitAlreadyDiscoveredNodes(
+                    $new_item_nodes,
+                    $model_objects_to_identify - $num_identified
+                );
             }
         }
 
@@ -111,7 +118,7 @@ class RelationNode extends BaseNode
     /**
      * Visits the provided nodes and keeps track of how much work was done, making sure to not go over budget.
      * @since $VID:$
-     * @param $model_obj_nodes
+     * @param ModelObjNode[] $model_obj_nodes
      * @param $work_budget
      * @return int
      */
@@ -159,6 +166,10 @@ class RelationNode extends BaseNode
      * @since $VID:$
      * @return mixed|void
      * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws ReflectionException
      */
     protected function discover()
     {
@@ -177,7 +188,9 @@ class RelationNode extends BaseNode
     protected function whereQueryParams()
     {
         return [
-            $this->related_model->get_foreign_key_to($this->main_model_obj->get_model()->get_this_model_name())->get_name() => $this->main_model_obj->ID()
+            $this->related_model->get_foreign_key_to(
+                $this->main_model_obj->get_model()->get_this_model_name()
+            )->get_name() => $this->main_model_obj->ID()
         ];
     }
     /**
@@ -191,8 +204,6 @@ class RelationNode extends BaseNode
             'complete' => $this->isComplete(),
             'objs' => []
         ];
-        if ($this->model_obj_nodes === null) {
-        }
         foreach ($this->model_obj_nodes as $id => $model_obj_node) {
             $tree['objs'][ $id ] = $model_obj_node->toArray();
         }

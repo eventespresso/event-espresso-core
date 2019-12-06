@@ -8,7 +8,8 @@ namespace EventEspresso\core\services\orm\tree_traversal;
  * Represents a task to be done when traversing a model object tree to identify all the dependent model objects.
  * See the concrete classes for details, but the basic structure is you have a starter ModelObjNode that wraps the
  * model object whose dependent related objects you want to identify, it has a list of RelationNodes (one for each of
- * its model's relations); each of those builds a list of ModelObjNodes for each of the related model objects, recursively.
+ * its model's relations); each of those builds a list of ModelObjNodes for each of the related model objects,
+ * recursively.
  * Client code creates a ModelObjNode, provides  it with a model object, and repeatedly `visit()` on it until all of its
  * related model objects are identified.
  *
@@ -57,11 +58,15 @@ abstract class BaseNode
     abstract protected function discover();
 
     /**
+     * Discovers how much work there is to do, double-checks the work isn't already finished, and then does the work.
+     * Note: do not call when site is in maintenance mode level 2.
+     *
      * @since $VID:$
-     * @param $work_to_do
-     * @return int units of work done
+     * @param $model_objects_to_identify
+     * @return int number of model objects we want to identify during this call. On subsequent calls we'll continue
+     * where we left off.
      */
-    public function visit($work_to_do)
+    public function visit($model_objects_to_identify)
     {
         if (! $this->isDiscovered()) {
             $this->discover();
@@ -69,13 +74,13 @@ abstract class BaseNode
         if ($this->isComplete()) {
             return 0;
         }
-        return $this->work($work_to_do);
+        return $this->work($model_objects_to_identify);
     }
 
     /**
-     *
+     * Identifies model objects, up to the limit $model_objects_to_identify.
      * @since $VID:$
-     * @param $model_objects_to_identify
+     * @param int $model_objects_to_identify
      * @return int units of work done
      */
     abstract protected function work($model_objects_to_identify);
