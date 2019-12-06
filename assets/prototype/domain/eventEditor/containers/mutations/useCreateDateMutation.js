@@ -2,26 +2,22 @@ import { useMutation } from '@apollo/react-hooks';
 import { CREATE_DATETIME } from './dates';
 import { GET_DATETIMES } from '../queries/dates';
 import { GET_TICKETS } from '../queries/tickets';
-import useToaster from '../../../../infrastructure/services/toaster/useToaster';
+import useInitToaster from '../../../../infrastructure/services/toaster/useInitToaster';
 import useRelations from '../../../../infrastructure/services/relations/useRelations';
 
 const useCreateDateMutation = ({ eventId }) => {
-	const toaster = useToaster();
+	const toasterMessage = `creating new datetime for event ${eventId}`;
+
+	const initToaster = useInitToaster({
+		toasterMessage,
+		loadingMessage: toasterMessage,
+		successMessage: 'datetime successfully created'
+	});
+
 	const { updateRelations, addRelation } = useRelations();
 
-	const toasterMessage = `creating new datetime for event ${eventId}`;
-	const [createDate, { loading, error }] = useMutation(CREATE_DATETIME, {
-		onCompleted: () => {
-			toaster.dismiss(toasterMessage);
-			toaster.success('datetime successfully created');
-		},
-		onError: (error) => {
-			toaster.dismiss(toasterMessage);
-			toaster.error(error);
-		},
-	});
-	toaster.loading(loading, toasterMessage);
-	toaster.error(error);
+	const [createDate, { loading, error }] = useMutation(CREATE_DATETIME, initToaster);
+	initToaster(loading, error);
 
 	// On submit handler receives data from FormModal
 	return ({ description, name, tickets = [] }) => {
