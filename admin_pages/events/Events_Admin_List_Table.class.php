@@ -313,8 +313,7 @@ class Events_Admin_List_Table extends EE_Admin_List_Table
                                                  . esc_html__('Restore from Trash', 'event_espresso')
                                                  . '</a>';
             }
-            if ($item->count_related('Registration') === 0
-                && EE_Registry::instance()->CAP->current_user_can(
+            if ( EE_Registry::instance()->CAP->current_user_can(
                     'ee_delete_event',
                     'espresso_events_delete_event',
                     $item->ID()
