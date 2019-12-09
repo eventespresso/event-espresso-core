@@ -8,6 +8,8 @@ export const PRICE_TYPE_ATTRIBUTES = gql`
 		baseType
 		isPercent
 		isDiscount
+		isTax
+		order
 	}
 `;
 
