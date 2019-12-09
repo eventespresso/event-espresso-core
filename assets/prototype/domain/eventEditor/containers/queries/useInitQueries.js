@@ -1,63 +1,29 @@
 import { pathOr } from 'ramda';
-import { useQuery } from '@apollo/react-hooks';
-import { GET_DATETIMES } from './dates';
-import { GET_TICKETS } from './tickets';
-import useToaster from '../../../../infrastructure/services/toaster/useToaster';
+import useFetchTickets from './useFetchTickets';
+import useFetchDatetimes from './useFetchDatetimes';
+import useFetchPriceTypes from './useFetchPriceTypes';
+import useFetchPrices from './useFetchPrices';
 
-const useInitQueries = ({ eventId }) => {
+const useInitQueries = () => {
 	console.log('%c useInitQueries: ', 'color: deeppink; font-size: 14px;');
-	const toaster = useToaster();
-	const toasterDatesMessage = 'initializing event editor datetimes';
-	const { data: datetimesData, error: datetimeError, loading: loadingDates } = useQuery(GET_DATETIMES, {
-		variables: {
-			first: 50,
-			where: {
-				eventId,
-			},
-		},
-		onCompleted: () => {
-			toaster.dismiss(toasterDatesMessage);
-			toaster.success(`event editor datetimes initialized`);
-		},
-		onError: (error) => {
-			toaster.dismiss(toasterDatesMessage);
-			toaster.error(error);
-		},
-	});
+
+	// initiate datetime fetching.
+	const { data: datetimesData, error: datetimeError, loading: loadingDates } = useFetchDatetimes();
 
 	const datetimes = pathOr([], ['datetimes', 'nodes'], datetimesData);
-	const datetimeIn = datetimes ? datetimes.map(({ id }) => id) : [];
-	const toasterTicketsMessage = 'initializing event editor tickets';
-	const skipTicketsQuery = datetimeIn.length === 0;
 
-	const { data: ticketsData, error: ticketError, loading: loadingTickets } = useQuery(GET_TICKETS, {
-		variables: {
-			first: 50,
-			where: {
-				datetimeIn,
-			},
-		},
-		skip: skipTicketsQuery,
-		onCompleted: () => {
-			toaster.dismiss(toasterTicketsMessage);
-			toaster.success('event editor tickets initialized');
-		},
-		onError: (error) => {
-			toaster.dismiss(toasterTicketsMessage);
-			toaster.error(error);
-		},
-	});
+	// initiate ticket fetching.
+	const datetimeIn = datetimes ? datetimes.map(({ id }) => id) : [];
+	const { data: ticketsData, error: ticketError, loading: loadingTickets } = useFetchTickets({ datetimeIn });
 
 	const tickets = pathOr([], ['tickets', 'nodes'], ticketsData);
 
-	console.log('%c > datetimes, tickets, errors, & loading state', 'color: palevioletred;', {
-		datetimes: datetimes || [],
-		datetimeError: datetimeError || null,
-		loadingDates: loadingDates || false,
-		tickets: tickets || [],
-		ticketError: ticketError || null,
-		loadingTickets: loadingTickets || false,
-	});
+	// initiate price type fetching.
+	useFetchPriceTypes();
+
+	// initiate price fetching.
+	const ticketIn = tickets.map(({ id }) => id);
+	useFetchPrices({ ticketIn });
 
 	return {
 		datetimes: datetimes || [],
