@@ -1,5 +1,7 @@
 <?php
 
+use EventEspresso\core\services\orm\tree_traversal\ModelObjNode;
+
 /**
  * Events_Admin_Page
  * This contains the logic for setting up the Events related pages.
@@ -2155,15 +2157,25 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
 
     protected function confirmDeletion()
     {
-        echo "event deleted here";
+        $event_ids = isset($this->_req_data['EVT_IDs']) ? $this->_req_data['EVT_IDs'] : array();
 
-        // code from original _delete_event, which I assume we want to keep
         $espresso_no_ticket_prices = get_option('ee_no_ticket_prices', array());
-        // remove this event from the list of events with no prices
-        if (isset($espresso_no_ticket_prices[ $EVT_ID ])) {
-            unset($espresso_no_ticket_prices[ $EVT_ID ]);
+        foreach($event_ids as $event_id){
+            $node = new ModelObjNode(EEM_Event::instance()->get_one_by_ID($event_id));
+            $node->visit(9999);
+            if (isset($espresso_no_ticket_prices[ $event_id ])) {
+                unset($espresso_no_ticket_prices[ $event_id ]);
+            }
         }
         update_option('ee_no_ticket_prices', $espresso_no_ticket_prices);
+        $this->redirect_after_action(
+            true,
+            esc_html__('Events', 'event_espresso'),
+            esc_html__('deleted', 'event_espresso'),
+            [
+                'action' => 'default'
+            ]
+        );
     }
 
     /**
