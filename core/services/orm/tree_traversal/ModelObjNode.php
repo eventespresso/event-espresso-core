@@ -144,7 +144,7 @@ class ModelObjNode extends BaseNode
                 $this->model_obj->ID() => $this->model_obj->ID()
             ]
         ];
-        foreach($this->relation_nodes as $relation_node){
+        foreach ($this->relation_nodes as $relation_node) {
             $ids = array_replace_recursive($ids, $relation_node->getIds());
         }
         return $ids;

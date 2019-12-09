@@ -231,7 +231,7 @@ class RelationNode extends BaseNode
      */
     public function getIds()
     {
-        if(empty($this->model_obj_nodes)){
+        if (empty($this->model_obj_nodes)) {
             return [];
         }
         $ids = [
@@ -240,7 +240,7 @@ class RelationNode extends BaseNode
                 array_keys($this->model_obj_nodes)
             )
         ];
-        foreach($this->model_obj_nodes as $model_obj_node){
+        foreach ($this->model_obj_nodes as $model_obj_node) {
             $ids = array_replace_recursive($ids, $model_obj_node->getIds());
         }
         return $ids;
