@@ -1,5 +1,5 @@
 import useEventId from '../../queries/useEventId';
-import useDateimeQueryOptions from './useDateimeQueryOptions';
+import useDatetimeQueryOptions from './useDatetimeQueryOptions';
 import useOnCreateDatetime from './useOnCreateDatetime';
 import useOnUpdateDatetime from './useOnUpdateDatetime';
 import useOnDeleteDatetime from './useOnDeleteDatetime';
@@ -10,7 +10,7 @@ import useOnDeleteDatetime from './useOnDeleteDatetime';
 const useDatetimeMutator = () => {
 	const eventId = useEventId();
 
-	const options = useDateimeQueryOptions();
+	const options = useDatetimeQueryOptions();
 
 	const onCreateDatetime = useOnCreateDatetime();
 	const onUpdateDatetime = useOnUpdateDatetime();
