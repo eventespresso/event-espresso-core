@@ -5,20 +5,26 @@ Price object has connections with `RootQuery`, `Ticket` etc. and thus can be acc
 ## Example with `RootQuery`
 
 ```gql
-query getPrices ($where: RootQueryPricesConnectionWhereArgs) {
-  prices( where: $where) {
-    nodes {
-        id
-        name
-        dbId
-        priceType {
-          id
-          dbId
-          baseType
-          name
-        }
-    }
-  }
+query getPrices($where: RootQueryPricesConnectionWhereArgs) {
+	prices(where: $where) {
+		nodes {
+			id
+			name
+			dbId
+			amount
+			isBasePrice
+			isDefault
+			isPercent
+			isTax
+			priceTypeOrder
+			priceType {
+				id
+				dbId
+				baseType
+				name
+			}
+		}
+	}
 }
 ```
 
@@ -26,10 +32,10 @@ query getPrices ($where: RootQueryPricesConnectionWhereArgs) {
 
 ```json
 {
-  "where": {
-    "ticket": "VGlja2V0OjQ1",
-    "priceBaseTypeIn": ["BASE_PRICE", "DISCOUNT"]
-  }
+	"where": {
+		"ticket": "VGlja2V0OjQ1",
+		"priceBaseTypeIn": ["BASE_PRICE", "DISCOUNT"]
+	}
 }
 ```
 
@@ -37,12 +43,9 @@ or
 
 ```json
 {
-  "where": {
-    "ticketIn": [
-      "VGlja2V0OjQ1",
-      "VGlja2V0OjQ2"
-    ]
-  }
+	"where": {
+		"ticketIn": ["VGlja2V0OjQ1", "VGlja2V0OjQ2"]
+	}
 }
 ```
 
