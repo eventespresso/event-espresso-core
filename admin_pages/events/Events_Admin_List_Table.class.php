@@ -145,11 +145,7 @@ class Events_Admin_List_Table extends EE_Admin_List_Table
             return '';
         }
         $this->_dtt = $item->primary_datetime(); // set this for use in other columns
-        // does event have any attached registrations?
-        $regs = $item->count_related('Registration');
-        return $regs > 0 && $this->_view === 'trash'
-            ? '<span class="ee-lock-icon"></span>'
-            : sprintf(
+       return sprintf(
                 '<input type="checkbox" name="EVT_IDs[]" value="%s" />',
                 $item->ID()
             );
