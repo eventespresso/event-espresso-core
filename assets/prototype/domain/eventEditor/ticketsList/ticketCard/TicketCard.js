@@ -9,8 +9,6 @@ import CurrencyInput from '../../../shared/CurrencyInput';
 import useRelations from '../../../../infrastructure/services/relations/useRelations';
 import DatetimeId from '../DatetimeId';
 
-const console = window.console;
-
 const cardStyle = {
 	margin: '0 0 2rem',
 	minWidth: '360px',
