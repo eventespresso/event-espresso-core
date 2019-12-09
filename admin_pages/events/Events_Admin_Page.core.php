@@ -229,6 +229,15 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
                 'func'       => '_category_list_table',
                 'capability' => 'ee_manage_event_categories',
             ),
+            'preview_deletion' => [
+                'func' => 'previewDeletion',
+                'capability' => 'ee_delete_events'
+            ],
+            'confirm_deletion' => [
+                'func' => 'confirmDeletion',
+                'capability' => 'ee_delete_events',
+                'noheader' => true
+            ]
         );
     }
 
@@ -500,6 +509,22 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
                 'metaboxes'     => $this->_default_espresso_metaboxes,
                 'require_nonce' => false,
             ),
+            'preview_deletion'           => array(
+                'nav'           => array(
+                    'label'      => esc_html__('Preview Deletion', 'event_espresso'),
+                    'order'      => 15,
+                    'persistent' => false,
+                ),
+//                'help_tabs'     => array(
+//                    'add_category_help_tab' => array(
+//                        'title'    => esc_html__('Add New Event Category', 'event_espresso'),
+//                        'filename' => 'events_add_category',
+//                    ),
+//                ),
+//                'help_tour'     => array('Event_Add_Category_Help_Tour'),
+//                'metaboxes'     => array('_publish_post_box'),
+//                'require_nonce' => false,
+            )
         );
     }
 
@@ -1902,8 +1927,9 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
      */
     public function delete_cpt_item($post_id)
     {
+        throw new EE_Error(esc_html__('Please contact Event Espresso support with the details of what you did to produce this error.', 'event_espresso'));
         $this->_req_data['EVT_ID'] = $post_id;
-        $this->_delete_event(false);
+        $this->_delete_event();
     }
 
 
@@ -2062,37 +2088,19 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
      * @access protected
      * @param bool $redirect_after
      */
-    protected function _delete_event($redirect_after = true)
+    protected function _delete_event()
     {
         // determine the event id and set to array.
         $EVT_ID = isset($this->_req_data['EVT_ID']) ? absint($this->_req_data['EVT_ID']) : null;
-        $EVT_ID = isset($this->_req_data['post']) ? absint($this->_req_data['post']) : $EVT_ID;
-        // loop thru events
-        if ($EVT_ID) {
-            $success = $this->_permanently_delete_event($EVT_ID);
-            // get list of events with no prices
-            $espresso_no_ticket_prices = get_option('ee_no_ticket_prices', array());
-            // remove this event from the list of events with no prices
-            if (isset($espresso_no_ticket_prices[ $EVT_ID ])) {
-                unset($espresso_no_ticket_prices[ $EVT_ID ]);
-            }
-            update_option('ee_no_ticket_prices', $espresso_no_ticket_prices);
-        } else {
-            $success = false;
-            $msg = esc_html__(
-                'An error occurred. An event could not be deleted because a valid event ID was not not supplied.',
-                'event_espresso'
-            );
-            EE_Error::add_error($msg, __FILE__, __FUNCTION__, __LINE__);
-        }
-        if ($redirect_after) {
-            $this->_redirect_after_action(
-                $success,
-                'Event',
-                'deleted',
-                array('action' => 'default', 'status' => 'trash')
-            );
-        }
+        wp_safe_redirect(
+            EE_Admin_Page::add_query_args_and_nonce(
+                [
+                    'action' => 'preview_deletion',
+                    'EVT_IDs[]' => $EVT_ID
+                ],
+                $this->_admin_base_url
+            )
+        );
     }
 
 
@@ -2104,34 +2112,59 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
      */
     protected function _delete_events()
     {
-        $success = true;
-        // get list of events with no prices
-        $espresso_no_ticket_prices = get_option('ee_no_ticket_prices', array());
-        // determine the event id and set to array.
-        $EVT_IDs = isset($this->_req_data['EVT_IDs']) ? (array) $this->_req_data['EVT_IDs'] : array();
-        // loop thru events
-        foreach ($EVT_IDs as $EVT_ID) {
-            $EVT_ID = absint($EVT_ID);
-            if ($EVT_ID) {
-                $results = $this->_permanently_delete_event($EVT_ID);
-                $success = $results !== false ? $success : false;
-                // remove this event from the list of events with no prices
-                unset($espresso_no_ticket_prices[ $EVT_ID ]);
-            } else {
-                $success = false;
-                $msg = esc_html__(
-                    'An error occurred. An event could not be deleted because a valid event ID was not not supplied.',
-                    'event_espresso'
-                );
-                EE_Error::add_error($msg, __FILE__, __FUNCTION__, __LINE__);
-            }
+        $EVT_IDs = isset($this->_req_data['EVT_IDs']) ? (array)$this->_req_data['EVT_IDs'] : array();
+        $args = [
+            'action' => 'preview_deletion',
+        ];
+        foreach($EVT_IDs as $EVT_ID){
+            $args['EVT_IDs[]'] = (int)$EVT_ID;
         }
-        update_option('ee_no_ticket_prices', $espresso_no_ticket_prices);
-        // in order to force a pluralized result message we need to send back a success status greater than 1
-        $success = $success ? 2 : false;
-        $this->_redirect_after_action($success, 'Events', 'deleted', array('action' => 'default'));
+        wp_safe_redirect(
+            EE_Admin_Page::add_query_args_and_nonce(
+                $args,
+                $this->_admin_base_url
+            )
+        );
     }
 
+    /**
+     * A page for users to preview what exactly will be deleted, and confirm they want to delete it.
+     * @since $VID:$
+     */
+    protected function previewDeletion()
+    {
+        $EVT_IDs = isset($this->_req_data['EVT_IDs']) ? (array)$this->_req_data['EVT_IDs'] : array();
+        $confirm_deletion_args = [
+            'action' => 'confirm_deletion',
+        ];
+        foreach($EVT_IDs as $EVT_ID){
+            $confirm_deletion_args['EVT_ID[]'] = (int)$EVT_ID;
+        }
+        $this->_template_args['admin_page_content'] = EEH_Template::display_template(
+            EVENTS_TEMPLATE_PATH . 'event_preview_deletion.template.php',
+            [
+                'form_url' => EE_Admin_Page::add_query_args_and_nonce(
+                    $confirm_deletion_args,
+                    $this->admin_base_url()
+                )
+            ],
+            true
+        );
+        $this->display_admin_page_with_no_sidebar();
+    }
+
+    protected function confirmDeletion()
+    {
+        echo "event deleted here";
+
+        // code from original _delete_event, which I assume we want to keep
+        $espresso_no_ticket_prices = get_option('ee_no_ticket_prices', array());
+        // remove this event from the list of events with no prices
+        if (isset($espresso_no_ticket_prices[ $EVT_ID ])) {
+            unset($espresso_no_ticket_prices[ $EVT_ID ]);
+        }
+        update_option('ee_no_ticket_prices', $espresso_no_ticket_prices);
+    }
 
     /**
      * _permanently_delete_event
