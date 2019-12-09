@@ -4,8 +4,8 @@ import EditTicket from './EditTicket';
 import DeleteTicketButton from './DeleteTicketButton';
 import TicketPriceCalculatorButton from '../ticketPriceCalculator/TicketPriceCalculatorButton';
 import useTicketItem from '../../containers/queries/useTicketItem';
-import useUpdateTicketMutation from '../../containers/mutations/useUpdateTicketMutation';
 import CurrencyInput from '../../../shared/CurrencyInput';
+import useEntityMutator from '../../containers/mutations/useEntityMutator';
 import useRelations from '../../../../infrastructure/services/relations/useRelations';
 import DatetimeId from '../DatetimeId';
 
@@ -38,7 +38,7 @@ const priceStyle = {
 
 const TicketCard = ({ datetimes, id }) => {
 	const ticket = useTicketItem({ id });
-	const updateTicketField = useUpdateTicketMutation({ id });
+	const { updateEntity } = useEntityMutator('Ticket', id);
 	const { getRelations } = useRelations();
 	// get related datetimes for this datetime
 	const relatedDates = getRelations({
@@ -60,7 +60,7 @@ const TicketCard = ({ datetimes, id }) => {
 							placeholder={'edit title...'}
 							defaultValue={ticket.name}
 							onCancel={(value) => console.log(value)}
-							onConfirm={(name) => updateTicketField({ name })}
+							onConfirm={(name) => updateEntity({ name })}
 							minWidth={'320px'}
 							selectAllOnFocus
 						/>
@@ -72,7 +72,7 @@ const TicketCard = ({ datetimes, id }) => {
 							placeholder='Edit description...'
 							defaultValue={ticket.description}
 							onCancel={(value) => console.log(value)}
-							onConfirm={(description) => updateTicketField({ description })}
+							onConfirm={(description) => updateEntity({ description })}
 							minWidth={'320px'}
 							selectAllOnFocus
 						/>
@@ -84,7 +84,7 @@ const TicketCard = ({ datetimes, id }) => {
 							id={ticket.id}
 							amount={ticket.price}
 							placeholder={'set price...'}
-							onConfirm={({ amount }) => updateTicketField({ price: amount })}
+							onConfirm={({ amount }) => updateEntity({ price: amount })}
 						/>
 					</H4>
 				</div>

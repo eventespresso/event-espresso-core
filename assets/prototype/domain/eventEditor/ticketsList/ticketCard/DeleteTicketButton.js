@@ -1,10 +1,10 @@
 import { Button } from '@blueprintjs/core/lib/esm';
-import useDeleteTicketMutation from '../../containers/mutations/useDeleteTicketMutation';
+import useEntityMutator from '../../containers/mutations/useEntityMutator';
 
 const DeleteTicketButton = ({ id }) => {
-	const deleteTicket = useDeleteTicketMutation({ id });
+	const { deleteEntity } = useEntityMutator('Ticket', id);
 
-	return <Button icon={'trash'} onClick={deleteTicket} minimal />;
+	return <Button icon={'trash'} onClick={deleteEntity} minimal />;
 };
 
 export default DeleteTicketButton;
