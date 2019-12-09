@@ -155,6 +155,7 @@ class ModelObjNodeTest extends EE_UnitTestCase
                 $this->assertArrayHasKey($datetime_ticket->ID(), $ids['Datetime_Ticket']);
             }
         }
+        $this->assertEquals($datetimes_count, count($ids['Datetime']));
         // Check it doesn't have anything weird...
         $this->assertEquals(
             [
