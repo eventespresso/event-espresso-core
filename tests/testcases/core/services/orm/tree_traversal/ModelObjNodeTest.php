@@ -121,6 +121,50 @@ class ModelObjNodeTest extends EE_UnitTestCase
         $this->assertTrue($third_datetime['complete']);
         $this->assertTrue($partial_tree['complete']);
     }
+
+    public function testGetIds(){
+        $e = $this->new_model_obj_with_dependencies('Event');
+        $datetimes_count = 3;
+        for($i=0;$i<$datetimes_count;$i++){
+            $d = $this->new_model_obj_with_dependencies(
+                'Datetime',
+                [
+                    'EVT_ID'=> $e->ID()
+                ]
+            );
+            $this->new_ticket(
+                [
+                    'datetime_objects' => [
+                        $d->ID()
+                    ]
+                ]
+            );
+        }
+
+        $e_node = new ModelObjNode($e);
+        $e_node->visit(999);
+        $ids = $e_node->getIds();
+        $this->assertArrayHasKey('Event', $ids);
+        $this->assertArrayHasKey($e->ID(),$ids['Event']);
+        $this->assertEquals(1, count($ids['Event']));
+        $this->assertArrayHasKey('Datetime', $ids);
+        $this->assertArrayHasKey('Datetime_Ticket', $ids);
+        foreach($e->datetimes() as $datetime){
+            $this->assertArrayHasKey($datetime->ID(), $ids['Datetime']);
+            foreach($datetime->get_many_related('Datetime_Ticket') as $datetime_ticket){
+                $this->assertArrayHasKey($datetime_ticket->ID(), $ids['Datetime_Ticket']);
+            }
+        }
+        // Check it doesn't have anything weird...
+        $this->assertEquals(
+            [
+                'Event',
+                'Datetime',
+                'Datetime_Ticket',
+            ],
+            array_keys($ids)
+        );
+    }
 }
 // End of file EntityNodeTest.php
 // Location: EventEspresso\core\services\orm\tree_traversal/EntityNodeTest.php

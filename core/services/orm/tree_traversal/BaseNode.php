@@ -91,6 +91,13 @@ abstract class BaseNode
      * @return array
      */
     abstract public function toArray();
+
+    /**
+     * Gets the IDs of completely identified model objects that can be deleted.
+     * @since $VID:$
+     * @return mixed
+     */
+    abstract public function getIds();
 }
 // End of file BaseNode.php
 // Location: EventEspresso\core\services\orm\tree_traversal/BaseNode.php

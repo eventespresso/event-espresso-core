@@ -4,6 +4,7 @@ namespace EventEspresso\core\services\orm\tree_traversal;
 
 use EE_Base_Class;
 use EE_Error;
+use EE_Has_Many_Any_Relation;
 use EE_Model_Relation_Base;
 use EEM_Base;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
@@ -40,7 +41,9 @@ class RelationNode extends BaseNode
      */
     protected $related_model;
 
-
+    /**
+     * @var ModelObjNode[]
+     */
     protected $model_obj_nodes;
 
     public function __construct($main_model_obj, $related_model)
@@ -187,11 +190,22 @@ class RelationNode extends BaseNode
      */
     protected function whereQueryParams()
     {
-        return [
+        $where_params =  [
             $this->related_model->get_foreign_key_to(
                 $this->main_model_obj->get_model()->get_this_model_name()
             )->get_name() => $this->main_model_obj->ID()
         ];
+        try {
+            $relation_settings = $this->main_model_obj->get_model()->related_settings_for($this->related_model->get_this_model_name());
+        } catch (EE_Error $e) {
+            // This will happen for has-and-belongs-to-many relations, when this node's related model is that join table
+            // which hasn't been explicitly declared in the main model object's model's relations.
+            $relation_settings = null;
+        }
+        if ($relation_settings instanceof EE_Has_Many_Any_Relation) {
+            $where_params[ $this->related_model->get_field_containing_related_model_name()->get_name() ] = $this->main_model_obj->get_model()->get_this_model_name();
+        }
+        return $where_params;
     }
     /**
      * @since $VID:$
@@ -208,6 +222,28 @@ class RelationNode extends BaseNode
             $tree['objs'][ $id ] = $model_obj_node->toArray();
         }
         return $tree;
+    }
+
+    /**
+     * Gets the IDs of all the model objects to delete; indexed first by model object name.
+     * @since $VID:$
+     * @return array
+     */
+    public function getIds()
+    {
+        if(empty($this->model_obj_nodes)){
+            return [];
+        }
+        $ids = [
+            $this->related_model->get_this_model_name() => array_combine(
+                array_keys($this->model_obj_nodes),
+                array_keys($this->model_obj_nodes)
+            )
+        ];
+        foreach($this->model_obj_nodes as $model_obj_node){
+            $ids = array_replace_recursive($ids, $model_obj_node->getIds());
+        }
+        return $ids;
     }
 }
 // End of file RelationNode.php
