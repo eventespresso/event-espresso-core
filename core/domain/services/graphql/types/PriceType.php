@@ -93,6 +93,12 @@ class PriceType extends TypeBase
                 esc_html__('Flag indicating price type has been trashed.', 'event_espresso')
             ),
             new GraphQLOutputField(
+                'isTax',
+                'Boolean',
+                'is_tax',
+                esc_html__('Flag indicating price is a tax.', 'event_espresso')
+            ),
+            new GraphQLOutputField(
                 'wpUser',
                 'User',
                 null,
