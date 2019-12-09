@@ -1,9 +1,10 @@
 import * as R from 'ramda';
 import { useApolloClient } from '@apollo/react-hooks';
 import { GET_DATETIMES } from './dates';
+import useEventId from './useEventId';
 
 const useDatetimeIds = () => {
-	const eventId = R.pathOr(null, ['eeEditorEventData', 'eventId'], window);
+	const eventId = useEventId();
 	const client = useApolloClient();
 	let data;
 

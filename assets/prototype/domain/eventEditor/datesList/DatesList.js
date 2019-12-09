@@ -21,7 +21,7 @@ const btnRowStyle = {
 	width: '100%',
 };
 
-const DatesList = ({ datetimes, error, eventId, loading, tickets }) => {
+const DatesList = ({ datetimes, error, loading, tickets }) => {
 	console.log('%c DatesList', 'color: orangered; font-size: 14px;');
 	console.log('%c > datetimes:', 'color: tomato;', datetimes);
 	console.log('%c > loading:', 'color: tomato;', loading);
@@ -34,7 +34,7 @@ const DatesList = ({ datetimes, error, eventId, loading, tickets }) => {
 
 	const btnRow = (
 		<div style={btnRowStyle}>
-			<AddNewDateButton eventId={eventId} tickets={tickets} />
+			<AddNewDateButton tickets={tickets} />
 		</div>
 	);
 
@@ -42,7 +42,7 @@ const DatesList = ({ datetimes, error, eventId, loading, tickets }) => {
 		<>
 			<div style={listStyle}>
 				{datetimes.map((date) => (
-					<DateCard eventId={eventId} id={date.id} key={date.id} tickets={tickets} />
+					<DateCard id={date.id} key={date.id} tickets={tickets} />
 				))}
 			</div>
 			{btnRow}

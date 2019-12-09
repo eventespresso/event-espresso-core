@@ -4,7 +4,7 @@ import get from 'lodash/get';
 import set from 'lodash/set';
 import cloneDeep from 'lodash/cloneDeep';
 
-const useRelationsManager = ({ eventId }) => {
+const useRelationsManager = () => {
 	const [state, dispatch] = useReducer(relationsReducer, {});
 
 	const onReceiveRelations = ({ eventRelations: relations = '{}' }) => {
@@ -112,7 +112,7 @@ const useRelationsManager = ({ eventId }) => {
 		});
 	};
 
-	useFetchRelations({ eventId, onReceiveRelations });
+	useFetchRelations({ onReceiveRelations });
 
 	return {
 		getRelations,
