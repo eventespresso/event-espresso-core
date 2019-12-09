@@ -6,8 +6,8 @@ import useRelationsManager from '../../../domain/eventEditor/containers/relation
 
 const RelationsContext = createContext();
 
-const RelationsProvider = ({ children, eventId }) => {
-	const relations = useRelationsManager({ eventId });
+const RelationsProvider = ({ children }) => {
+	const relations = useRelationsManager();
 	return <RelationsContext.Provider value={relations}>{children}</RelationsContext.Provider>;
 };
 

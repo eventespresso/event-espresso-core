@@ -1,27 +1,30 @@
 import { useQuery } from '@apollo/react-hooks';
 import { useEffect, useState } from '@wordpress/element';
-import { GET_PRICES } from './prices';
+import { GET_DATETIMES } from './dates';
 import useToaster from '../../../../infrastructure/services/toaster/useToaster';
 import useStatus from '../../../../infrastructure/services/status/useStatus';
+import useEventId from './useEventId';
 
-const useFetchPrices = ({ ticketIn = [] }) => {
-	console.log('%c useFetchPrices: ', 'color: deeppink; font-size: 14px;');
+const useFetchDatetimes = () => {
+	console.log('%c useFetchDatetimes: ', 'color: deeppink; font-size: 14px;');
 	const [initialized, setInitialized] = useState(false);
 	const { setIsLoading, setIsLoaded, setIsError } = useStatus();
 
-	const toaster = useToaster();
-	const toasterMessage = 'initializing prices';
+	const eventId = useEventId();
 
-	const { data, error, loading } = useQuery(GET_PRICES, {
+	const toaster = useToaster();
+	const toasterMessage = 'initializing datetimes';
+
+	const { data, error, loading } = useQuery(GET_DATETIMES, {
 		variables: {
+			first: 50,
 			where: {
-				ticketIn,
+				eventId,
 			},
 		},
-		skip: !ticketIn.length, // do not fetch if we don't have any tickets
 		onCompleted: () => {
 			toaster.dismiss(toasterMessage);
-			toaster.success(`prices initialized`);
+			toaster.success(`datetimes initialized`);
 		},
 		onError: (error) => {
 			toaster.dismiss(toasterMessage);
@@ -30,9 +33,9 @@ const useFetchPrices = ({ ticketIn = [] }) => {
 	});
 
 	useEffect(() => {
-		setIsLoading('prices', loading);
-		setIsLoaded('prices', !!data);
-		setIsError('prices', !!error);
+		setIsLoading('datetimes', loading);
+		setIsLoaded('datetimes', !!data);
+		setIsError('datetimes', !!error);
 	}, [data, error, loading]);
 
 	if (!initialized) {
@@ -53,4 +56,4 @@ const useFetchPrices = ({ ticketIn = [] }) => {
 	};
 };
 
-export default useFetchPrices;
+export default useFetchDatetimes;
