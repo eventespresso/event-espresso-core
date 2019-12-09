@@ -2166,15 +2166,27 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
             $ids_to_delete = $node->getIds();
             foreach ($ids_to_delete as $model_name => $ids) {
                 $model = EE_Registry::instance()->load_model($model_name);
-                $success = $model->delete(
-                    [
-                        [
-                            $model->primary_key_name() => [
-                                'IN',
-                                $ids
-                            ]
+                if($model->has_primary_key_field()){
+                    $where_conditions = [
+                        $model->primary_key_name() => [
+                            'IN',
+                            $ids
                         ]
-                    ]
+                    ];
+                } else {
+                    $where_conditions = [
+                        'OR' => []
+                    ];
+                    foreach($ids as $index_primary_key_string){
+                        $keys_n_values = $model->parse_index_primary_key_string($index_primary_key_string);
+                        $where_conditions['OR']['AND*' . $index_primary_key_string ] = $keys_n_values;
+                    }
+                }
+                $success = $model->delete_permanently(
+                    [
+                        $where_conditions
+                    ],
+                    false
                 );
             }
             if (isset($espresso_no_ticket_prices[ $event_id ])) {
