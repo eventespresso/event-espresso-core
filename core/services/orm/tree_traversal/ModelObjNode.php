@@ -127,6 +127,28 @@ class ModelObjNode extends BaseNode
         }
         return $tree;
     }
+
+    /**
+     * @since $VID:$
+     * @return array|mixed
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws ReflectionException
+     * @throws \EE_Error
+     */
+    public function getIds()
+    {
+        $ids = [
+            $this->model_obj->get_model()->get_this_model_name() => [
+                $this->model_obj->ID() => $this->model_obj->ID()
+            ]
+        ];
+        foreach ($this->relation_nodes as $relation_node) {
+            $ids = array_replace_recursive($ids, $relation_node->getIds());
+        }
+        return $ids;
+    }
 }
 // End of file Visitor.php
 // Location: EventEspresso\core\services\orm\tree_traversal/Visitor.php
