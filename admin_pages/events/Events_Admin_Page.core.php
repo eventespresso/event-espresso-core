@@ -2140,7 +2140,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
             'action' => 'confirm_deletion',
         ];
         foreach($EVT_IDs as $EVT_ID){
-            $confirm_deletion_args['EVT_ID[]'] = (int)$EVT_ID;
+            $confirm_deletion_args['EVT_IDs[]'] = (int)$EVT_ID;
         }
         $this->_template_args['admin_page_content'] = EEH_Template::display_template(
             EVENTS_TEMPLATE_PATH . 'event_preview_deletion.template.php',
@@ -2160,16 +2160,30 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
         $event_ids = isset($this->_req_data['EVT_IDs']) ? $this->_req_data['EVT_IDs'] : array();
 
         $espresso_no_ticket_prices = get_option('ee_no_ticket_prices', array());
-        foreach($event_ids as $event_id){
+        foreach ($event_ids as $event_id) {
             $node = new ModelObjNode(EEM_Event::instance()->get_one_by_ID($event_id));
             $node->visit(9999);
+            $ids_to_delete = $node->getIds();
+            foreach ($ids_to_delete as $model_name => $ids) {
+                $model = EE_Registry::instance()->load_model($model_name);
+                $success = $model->delete(
+                    [
+                        [
+                            $model->primary_key_name() => [
+                                'IN',
+                                $ids
+                            ]
+                        ]
+                    ]
+                );
+            }
             if (isset($espresso_no_ticket_prices[ $event_id ])) {
                 unset($espresso_no_ticket_prices[ $event_id ]);
             }
         }
         update_option('ee_no_ticket_prices', $espresso_no_ticket_prices);
         $this->redirect_after_action(
-            true,
+            $success,
             esc_html__('Events', 'event_espresso'),
             esc_html__('deleted', 'event_espresso'),
             [
