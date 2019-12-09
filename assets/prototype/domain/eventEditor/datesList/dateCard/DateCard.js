@@ -33,7 +33,7 @@ const idStyle = {
 	top: '.5em',
 };
 
-const DateCard = ({ eventId, id, tickets }) => {
+const DateCard = ({ id, tickets }) => {
 	const date = useDateItem({ id });
 
 	const { updateEntity } = useEntityMutator('Datetime', id);
@@ -96,7 +96,7 @@ const DateCard = ({ eventId, id, tickets }) => {
 						return ticketId ? <TicketId key={ticketId} id={ticketId} /> : null;
 					})}
 				</div>
-				<DeleteDateButton eventId={eventId} id={date.id} />
+				<DeleteDateButton id={date.id} />
 			</Card>
 		</DateTimeProvider>
 	);
