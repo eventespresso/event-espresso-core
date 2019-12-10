@@ -4,11 +4,13 @@ export const PRICE_TYPE_ATTRIBUTES = gql`
 	fragment priceTypeAttributes on PriceType {
 		id
 		dbId
-		name
 		baseType
-		isPercent
+		isBasePrice
+		isDeleted
 		isDiscount
+		isPercent
 		isTax
+		name
 		order
 	}
 `;

@@ -5,13 +5,14 @@ export const PRICE_ATTRIBUTES = gql`
 	fragment priceAttributes on Price {
 		id
 		dbId
-		name
 		amount
+		desc
 		isBasePrice
 		isPercent
 		isDiscount
 		isDeleted
 		isTax
+		name
 		order
 		priceTypeOrder
 	}
