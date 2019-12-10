@@ -1,12 +1,12 @@
-import moment from 'moment';
 import isFunction from 'lodash/isFunction';
 import { DateRangePicker as DefaultDateRangePicker } from '@blueprintjs/datetime';
 import { A_LONG_TIME_AGO, PLUS_TEN_YEARS } from '../defaultDates';
-import useConfigProvider from '../../eventEditor/containers/useConfigProvider';
+import { FORMATS } from './formatSelect';
+
 import './style.css';
 
 const DateRangePicker = ({ onFieldUpdate, range, setRange }) => {
-	const format = useConfigProvider({ dateTimeFormat: true });
+	const format = FORMATS.MYSQL;
 
 	const handleRangeChange = (value) => {
 		const [start, end] = value;
@@ -14,8 +14,8 @@ const DateRangePicker = ({ onFieldUpdate, range, setRange }) => {
 
 		if (isUpdatable) {
 			const formattedDates = {
-				startDate: moment(start).format(format),
-				endDate: moment(end).format(format),
+				startDate: format.formatDate(start),
+				endDate: format.formatDate(end),
 			};
 
 			onFieldUpdate(formattedDates);
