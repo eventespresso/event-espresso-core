@@ -2114,12 +2114,12 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
      */
     protected function _delete_events()
     {
-        $EVT_IDs = isset($this->_req_data['EVT_IDs']) ? (array)$this->_req_data['EVT_IDs'] : array();
+        $EVT_IDs = isset($this->_req_data['EVT_IDs']) ? (array) $this->_req_data['EVT_IDs'] : array();
         $args = [
             'action' => 'preview_deletion',
         ];
-        foreach($EVT_IDs as $EVT_ID){
-            $args['EVT_IDs[]'] = (int)$EVT_ID;
+        foreach ($EVT_IDs as $EVT_ID) {
+            $args['EVT_IDs[]'] = (int) $EVT_ID;
         }
         wp_safe_redirect(
             EE_Admin_Page::add_query_args_and_nonce(
@@ -2135,12 +2135,12 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
      */
     protected function previewDeletion()
     {
-        $EVT_IDs = isset($this->_req_data['EVT_IDs']) ? (array)$this->_req_data['EVT_IDs'] : array();
+        $EVT_IDs = isset($this->_req_data['EVT_IDs']) ? (array) $this->_req_data['EVT_IDs'] : array();
         $confirm_deletion_args = [
             'action' => 'confirm_deletion',
         ];
-        foreach($EVT_IDs as $EVT_ID){
-            $confirm_deletion_args['EVT_IDs[]'] = (int)$EVT_ID;
+        foreach ($EVT_IDs as $EVT_ID) {
+            $confirm_deletion_args['EVT_IDs[]'] = (int) $EVT_ID;
         }
         $this->_template_args['admin_page_content'] = EEH_Template::display_template(
             EVENTS_TEMPLATE_PATH . 'event_preview_deletion.template.php',
@@ -2166,7 +2166,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
             $ids_to_delete = $node->getIds();
             foreach ($ids_to_delete as $model_name => $ids) {
                 $model = EE_Registry::instance()->load_model($model_name);
-                if($model->has_primary_key_field()){
+                if ($model->has_primary_key_field()) {
                     $where_conditions = [
                         $model->primary_key_name() => [
                             'IN',
@@ -2177,9 +2177,9 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
                     $where_conditions = [
                         'OR' => []
                     ];
-                    foreach($ids as $index_primary_key_string){
+                    foreach ($ids as $index_primary_key_string) {
                         $keys_n_values = $model->parse_index_primary_key_string($index_primary_key_string);
-                        $where_conditions['OR']['AND*' . $index_primary_key_string ] = $keys_n_values;
+                        $where_conditions['OR'][ 'AND*' . $index_primary_key_string ] = $keys_n_values;
                     }
                 }
                 $success = $model->delete_permanently(

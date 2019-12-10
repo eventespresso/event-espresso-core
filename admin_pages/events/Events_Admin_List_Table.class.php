@@ -145,10 +145,10 @@ class Events_Admin_List_Table extends EE_Admin_List_Table
             return '';
         }
         $this->_dtt = $item->primary_datetime(); // set this for use in other columns
-       return sprintf(
-                '<input type="checkbox" name="EVT_IDs[]" value="%s" />',
-                $item->ID()
-            );
+        return sprintf(
+            '<input type="checkbox" name="EVT_IDs[]" value="%s" />',
+            $item->ID()
+        );
     }
 
 
@@ -313,11 +313,11 @@ class Events_Admin_List_Table extends EE_Admin_List_Table
                                                  . esc_html__('Restore from Trash', 'event_espresso')
                                                  . '</a>';
             }
-            if ( EE_Registry::instance()->CAP->current_user_can(
-                    'ee_delete_event',
-                    'espresso_events_delete_event',
-                    $item->ID()
-                )
+            if (EE_Registry::instance()->CAP->current_user_can(
+                'ee_delete_event',
+                'espresso_events_delete_event',
+                $item->ID()
+            )
             ) {
                 $actions['delete'] = '<a href="' . $delete_event_link . '"'
                                      . ' title="' . esc_attr__('Delete Permanently', 'event_espresso') . '">'
