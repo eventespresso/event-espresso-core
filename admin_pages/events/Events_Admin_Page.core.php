@@ -2198,7 +2198,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
                     ]
                 ]
             );
-            $related_non_globa_prices = EEM_Price::instance()->get_all_deleted_and_undeleted(
+            $related_non_global_prices = EEM_Price::instance()->get_all_deleted_and_undeleted(
                 [
                     [
                         'PRC_is_default' => false,
@@ -2218,7 +2218,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
                 $model_objects_to_delete,
                 [$event],
                 $related_non_global_tickets,
-                $related_non_globa_prices,
+                $related_non_global_prices,
                 $related_message_templates
             );
         }
