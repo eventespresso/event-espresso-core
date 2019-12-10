@@ -1,8 +1,9 @@
-import * as R from 'ramda';
+import pathOr from 'ramda/src/pathOr';
 import { useApolloClient } from '@apollo/react-hooks';
 
 import { GET_PRICES } from './prices';
 import useTicketIds from './useTicketIds';
+import {entitiesWithGuIdInArray} from '../../../shared/predicates/shared/selectionPredicates';
 
 /**
  * A custom react hook for retrieving all the prices from cache
@@ -28,13 +29,8 @@ const usePrices = (include = []) => {
 		data = {};
 	}
 
-	let prices = R.pathOr([], ['prices', 'nodes'], data);
-
-	if (include.length) {
-		prices = prices.filter(({ id }) => include.includes(id));
-	}
-
-	return prices;
+	const prices = pathOr([], ['prices', 'nodes'], data);
+	return include.length ? entitiesWithGuIdInArray(prices, include) : prices;
 };
 
 export default usePrices;
