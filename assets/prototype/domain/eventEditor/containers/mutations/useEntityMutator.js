@@ -22,10 +22,10 @@ const useEntityMutator = (type, id = '') => {
 	};
 
 	/**
-	 *
+	 * @param {object} input
 	 */
-	const deleteEntity = () => {
-		return mutate(getDeleteMutation());
+	const deleteEntity = (input) => {
+		return mutate(getDeleteMutation(input));
 	};
 
 	return {

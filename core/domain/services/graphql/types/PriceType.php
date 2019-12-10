@@ -57,28 +57,22 @@ class PriceType extends TypeBase
                 esc_html__('Price type ID', 'event_espresso')
             ),
             new GraphQLField(
-                'name',
-                'String',
-                'name',
-                esc_html__('Price type Name', 'event_espresso')
-            ),
-            new GraphQLField(
                 'baseType',
                 'PriceBaseTypeEnum',
                 'base_type',
                 esc_html__('Price Base type', 'event_espresso')
             ),
             new GraphQLField(
-                'order',
-                'Int',
-                'order',
-                esc_html__('Order in which price should be applied.', 'event_espresso')
+                'isBasePrice',
+                'Boolean',
+                'is_base_price',
+                esc_html__('Flag indicating price type is a base price.', 'event_espresso')
             ),
             new GraphQLField(
-                'isPercent',
+                'isDeleted',
                 'Boolean',
-                'is_percent',
-                esc_html__('Flag indicating price type is a percentage.', 'event_espresso')
+                'deleted',
+                esc_html__('Flag indicating price type has been trashed.', 'event_espresso')
             ),
             new GraphQLOutputField(
                 'isDiscount',
@@ -87,10 +81,28 @@ class PriceType extends TypeBase
                 esc_html__('Flag indicating price type is a discount.', 'event_espresso')
             ),
             new GraphQLField(
-                'isDeleted',
+                'isPercent',
                 'Boolean',
-                'deleted',
-                esc_html__('Flag indicating price type has been trashed.', 'event_espresso')
+                'is_percent',
+                esc_html__('Flag indicating price type is a percentage.', 'event_espresso')
+            ),
+            new GraphQLOutputField(
+                'isTax',
+                'Boolean',
+                'is_tax',
+                esc_html__('Flag indicating price is a tax.', 'event_espresso')
+            ),
+            new GraphQLField(
+                'name',
+                'String',
+                'name',
+                esc_html__('Price type Name', 'event_espresso')
+            ),
+            new GraphQLField(
+                'order',
+                'Int',
+                'order',
+                esc_html__('Order in which price should be applied.', 'event_espresso')
             ),
             new GraphQLOutputField(
                 'wpUser',

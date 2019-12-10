@@ -11,6 +11,7 @@ import { PLUS_ONE_MONTH, PLUS_TWO_MONTHS } from '../../../shared/defaultDates';
 import useDateItem from '../../containers/queries/useDateItem';
 import useEntityMutator from '../../containers/mutations/useEntityMutator';
 import useRelations from '../../../../infrastructure/services/relations/useRelations';
+import useStatus from '../../../../infrastructure/services/status/useStatus';
 import TicketId from '../TicketId';
 
 const btnStyle = {
@@ -35,6 +36,7 @@ const idStyle = {
 
 const DateCard = ({ id, tickets }) => {
 	const date = useDateItem({ id });
+	const { isLoaded } = useStatus();
 
 	const { updateEntity } = useEntityMutator('Datetime', id);
 
@@ -51,6 +53,8 @@ const DateCard = ({ id, tickets }) => {
 	const endDate = moment(date.endDate).toDate() || PLUS_TWO_MONTHS;
 	const defaultRangeValues = [startDate, endDate];
 	const [range, setRange] = useState(defaultRangeValues);
+
+	const ticketsLoaded = isLoaded('tickets');
 
 	return (
 		<DateTimeProvider id={id}>
@@ -91,12 +95,17 @@ const DateCard = ({ id, tickets }) => {
 					</Popover>
 				</div>
 				<div>
-					{'Related Tickets: '}{' '}
-					{relatedTicketIds.map((ticketId) => {
-						return ticketId ? <TicketId key={ticketId} id={ticketId} /> : null;
-					})}
+					{ticketsLoaded && (
+						<>
+							{'Related Tickets: '}{' '}
+							{relatedTicketIds.map((ticketId) => {
+								return ticketId ? <TicketId key={ticketId} id={ticketId} /> : null;
+							})}
+						</>
+					)}
 				</div>
-				<DeleteDateButton id={date.id} />
+				{/* Delete button should be hidden to avoid relational inconsistencies */}
+				{ticketsLoaded && <DeleteDateButton id={date.id} />}
 			</Card>
 		</DateTimeProvider>
 	);

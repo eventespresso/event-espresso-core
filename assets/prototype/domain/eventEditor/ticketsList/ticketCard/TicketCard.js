@@ -7,6 +7,7 @@ import useTicketItem from '../../containers/queries/useTicketItem';
 import CurrencyInput from '../../../shared/CurrencyInput';
 import useEntityMutator from '../../containers/mutations/useEntityMutator';
 import useRelations from '../../../../infrastructure/services/relations/useRelations';
+import useStatus from '../../../../infrastructure/services/status/useStatus';
 import DatetimeId from '../DatetimeId';
 
 const cardStyle = {
@@ -38,6 +39,7 @@ const priceStyle = {
 
 const TicketCard = ({ datetimes, id }) => {
 	const ticket = useTicketItem({ id });
+	const { isLoaded } = useStatus();
 	const { updateEntity } = useEntityMutator('Ticket', id);
 	const { getRelations } = useRelations();
 	// get related datetimes for this datetime
@@ -89,8 +91,14 @@ const TicketCard = ({ datetimes, id }) => {
 					</H4>
 				</div>
 				<div style={btnsStyle}>
-					<TicketPriceCalculatorButton ticket={ticket} />
-					<DeleteTicketButton id={ticket.id} />
+					{/* Hide price calculator unless pricess are loaded */}
+					{/* Delete button should also be hidden to avoid relational inconsistencies */}
+					{isLoaded('prices') && (
+						<>
+							<TicketPriceCalculatorButton ticket={ticket} />
+							<DeleteTicketButton id={ticket.id} />
+						</>
+					)}
 				</div>
 				<div>
 					{'Related Dates: '}{' '}

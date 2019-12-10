@@ -17,11 +17,7 @@ const useTicketItem = ({ id }) => {
 		data = {};
 	}
 
-	const ticket = propOr({}, 'ticket', data);
-
-	console.log('%c > ticket: ', 'color: cyan;', ticket);
-
-	return ticket;
+	return propOr({}, 'ticket', data);
 };
 
 export default useTicketItem;

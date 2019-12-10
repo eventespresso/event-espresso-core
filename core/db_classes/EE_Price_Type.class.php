@@ -1,5 +1,8 @@
 <?php
 
+use EventEspresso\core\exceptions\InvalidDataTypeException;
+use EventEspresso\core\exceptions\InvalidInterfaceException;
+
 /**
  * EE_Price_Type class
  *
@@ -13,6 +16,11 @@ class EE_Price_Type extends EE_Soft_Delete_Base_Class
     /**
      * @param array $props_n_values
      * @return EE_Price_Type
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws ReflectionException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
      */
     public static function new_instance($props_n_values = array())
     {
@@ -24,6 +32,11 @@ class EE_Price_Type extends EE_Soft_Delete_Base_Class
     /**
      * @param array $props_n_values
      * @return EE_Price_Type
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws ReflectionException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
      */
     public static function new_instance_from_db($props_n_values = array())
     {
@@ -32,10 +45,14 @@ class EE_Price_Type extends EE_Soft_Delete_Base_Class
 
 
     /**
-     *        Set Price Type Name
+     * Set Price Type Name
      *
-     * @access        public
-     * @param        string $PRT_name
+     * @param string $PRT_name
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws ReflectionException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
      */
     public function set_name($PRT_name = '')
     {
@@ -44,10 +61,14 @@ class EE_Price_Type extends EE_Soft_Delete_Base_Class
 
 
     /**
-     *        Set Price Type a percent
+     * Set Price Type a percent
      *
-     * @access        public
-     * @param        bool $PRT_is_percent
+     * @param bool $PRT_is_percent
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws ReflectionException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
      */
     public function set_is_percent($PRT_is_percent = false)
     {
@@ -56,10 +77,14 @@ class EE_Price_Type extends EE_Soft_Delete_Base_Class
 
 
     /**
-     *        Set Price Type order
+     * Set Price Type order
      *
-     * @access        public
-     * @param        int $PRT_order
+     * @param int $PRT_order
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws ReflectionException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
      */
     public function set_order($PRT_order = 0)
     {
@@ -68,7 +93,11 @@ class EE_Price_Type extends EE_Soft_Delete_Base_Class
 
 
     /**
-     *
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws ReflectionException
      */
     public function move_to_trash()
     {
@@ -77,7 +106,11 @@ class EE_Price_Type extends EE_Soft_Delete_Base_Class
 
 
     /**
-     *
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws ReflectionException
      */
     public function restore_from_trash()
     {
@@ -86,9 +119,14 @@ class EE_Price_Type extends EE_Soft_Delete_Base_Class
 
 
     /**
-     *        get Price Type Name
+     * get Price Type Name
      *
-     * @access        public
+     * @return mixed
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws ReflectionException
      */
     public function name()
     {
@@ -97,9 +135,14 @@ class EE_Price_Type extends EE_Soft_Delete_Base_Class
 
 
     /**
-     *        get is Price Type a discount?
+     * get base Price Type
      *
-     * @access        public
+     * @return mixed
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws ReflectionException
      */
     public function base_type()
     {
@@ -109,6 +152,11 @@ class EE_Price_Type extends EE_Soft_Delete_Base_Class
 
     /**
      * @return mixed
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws ReflectionException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
      */
     public function base_type_name()
     {
@@ -117,9 +165,30 @@ class EE_Price_Type extends EE_Soft_Delete_Base_Class
 
 
     /**
-     *        get is Price Type a percent?
+     * get is Price Type a percent?
      *
-     * @access        public
+     * @return mixed
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws ReflectionException
+     */
+    public function is_base_price()
+    {
+        return $this->get('PBT_ID') === EEM_Price_Type::base_type_base_price;
+    }
+
+
+    /**
+     * get is Price Type a percent?
+     *
+     * @return mixed
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws ReflectionException
      */
     public function is_percent()
     {
@@ -129,19 +198,56 @@ class EE_Price_Type extends EE_Soft_Delete_Base_Class
 
     /**
      * @return bool
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws ReflectionException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
      */
     public function is_discount()
     {
-        return $this->get('PBT_ID') == 2 ? true : false;
+        return $this->get('PBT_ID') === EEM_Price_Type::base_type_discount;
+    }
+
+
+    /**
+     * @return bool
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws ReflectionException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     */
+    public function is_surcharge()
+    {
+        return $this->get('PBT_ID') === EEM_Price_Type::base_type_surcharge;
+    }
+
+
+    /**
+     * @return bool
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws ReflectionException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     */
+    public function is_tax()
+    {
+        return $this->get('PBT_ID') === EEM_Price_Type::base_type_tax;
     }
 
 
     /**
      * get the author of the price type.
      *
-     * @since 4.5.0
-     *
      * @return int
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws ReflectionException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @since 4.5.0
      */
     public function wp_user()
     {
@@ -150,9 +256,14 @@ class EE_Price_Type extends EE_Soft_Delete_Base_Class
 
 
     /**
-     *        get Price Type order
+     * get Price Type order
      *
-     * @access        public
+     * @return int
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws ReflectionException
      */
     public function order()
     {
@@ -161,9 +272,14 @@ class EE_Price_Type extends EE_Soft_Delete_Base_Class
 
 
     /**
-     *        get  is Price Type deleted ?
+     * get  is Price Type deleted ?
      *
-     * @access        public
+     * @return mixed
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws ReflectionException
      */
     public function deleted()
     {
