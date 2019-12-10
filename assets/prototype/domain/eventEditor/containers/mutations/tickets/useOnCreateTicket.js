@@ -51,7 +51,7 @@ const useOnCreateTicket = () => {
 				});
 			});
 		}
-		// Update ticket cache after tickets cache is updated.
+		// Update ticket cache after price cache is updated.
 		updateTicketCache({ proxy, tickets, ticket });
 	};
 

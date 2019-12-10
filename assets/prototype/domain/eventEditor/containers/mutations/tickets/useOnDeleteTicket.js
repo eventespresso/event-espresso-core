@@ -36,7 +36,7 @@ const useOnDeleteTicket = () => {
 				entityId: ticketId,
 			});
 		}
-		// Update ticket cache after datetimes cache is updated.
+		// Update ticket cache after price cache is updated.
 		updateTicketCache({ proxy, tickets, ticket, remove: true });
 	};
 
