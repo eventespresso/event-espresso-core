@@ -2087,6 +2087,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
     {
         // determine the event id and set to array.
         $EVT_ID = isset($this->_req_data['EVT_ID']) ? absint($this->_req_data['EVT_ID']) : null;
+        // @todo: prepare the contents of the deletion preview page via a batch job, then redirect to the preview page.
         wp_safe_redirect(
             EE_Admin_Page::add_query_args_and_nonce(
                 [
@@ -2114,6 +2115,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
         foreach ($EVT_IDs as $EVT_ID) {
             $args['EVT_IDs[]'] = (int) $EVT_ID;
         }
+        // @todo: prepare the contents of the deletion preview page via a batch job, then redirect to the preview page.
         wp_safe_redirect(
             EE_Admin_Page::add_query_args_and_nonce(
                 $args,
