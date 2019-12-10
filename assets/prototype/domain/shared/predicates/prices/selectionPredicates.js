@@ -1,8 +1,13 @@
-import { find, propEq } from 'ramda';
+import {filter, find, propEq } from 'ramda';
+
+import {
+	entityHasDbId,
+	entityHasGuid,
+	findEntityByDbId,
+	findEntityByGuid,
+} from '../shared/selectionPredicates';
 
 // the following return `true` if price satisfies predicate
-export const priceHasDbId = (dbid) => propEq('dbid', dbid);
-export const priceHasGuid = (guid) => propEq('id', guid);
 // is a base price ?
 export const isBasePrice = propEq('isBasePrice', true);
 export const isNotBasePrice = propEq('isBasePrice', false);
@@ -16,7 +21,12 @@ export const isNotPercent = propEq('isPercent', false);
 export const isTax = propEq('isTax', true);
 export const isNotTax = propEq('isTax', false);
 
+
 // returns price if found in array of prices
 export const findBasePrice = (prices) => find(isBasePrice)(prices);
-export const findPriceByDbId = ({ prices, dbid }) => find(priceHasDbId(dbid))(prices);
-export const findPriceByGuid = ({ prices, guid }) => find(priceHasGuid(guid))(prices);
+export const findPriceByDbId = (prices) => findEntityByDbId(prices);
+export const findPriceByGuid = (prices) => findEntityByGuid(prices);
+
+// returns array of prices that satisfy predicate
+export const getPriceModifiers = (prices) => filter(isNotBasePrice, prices);
+export const getTaxes = (prices) => filter(isTax, prices);

@@ -1,5 +1,12 @@
 import {assoc, map, when} from 'ramda';
-import {isBasePrice, priceHasGuid} from './selectionPredicates';
+import {isBasePrice } from './selectionPredicates';
+
+import {
+	entityHasDbId,
+	entityHasGuid,
+	findEntityByDbId,
+	findEntityByGuid,
+} from '../shared/selectionPredicates';
 
 /**
  * updates the price amount
@@ -34,7 +41,7 @@ export const updateBasePriceAmount = ({ prices, amount }) => map(
  * @param {string} type
  */
 export const updatePriceTypeForPrice = ({ prices, guid, type }) => map(
-	when(priceHasGuid(guid), updatePriceType(type)),
+	when(entityHasGuid(guid), updatePriceType(type)),
 	prices
 );
 
@@ -46,6 +53,6 @@ export const updatePriceTypeForPrice = ({ prices, guid, type }) => map(
  * @param {string} amount
  */
 export const updatePriceAmountForPrice = ({ prices, guid, amount }) => map(
-	when(priceHasGuid(guid), updatePriceAmount(amount)),
+	when(entityHasGuid(guid), updatePriceAmount(amount)),
 	prices
 );
