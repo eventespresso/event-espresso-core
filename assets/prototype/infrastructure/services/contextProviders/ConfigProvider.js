@@ -24,7 +24,8 @@ const ConfigProvider = ({ children }) => {
 
 	const generalSettings = propOr({}, 'generalSettings', generalSettingsData);
 	const currentUser = propOr({}, 'viewer', currentUserData);
-	const generalSettingsProps = pick(['dateFormat', 'timezone'], generalSettings);
+	const { dateFormat, timeFormat } = pick(['dateFormat', 'timeFormat', 'timezone'], generalSettings);
+
 	const currentUserProps = pick(
 		[
 			'description',
@@ -41,7 +42,7 @@ const ConfigProvider = ({ children }) => {
 		],
 		currentUser
 	);
-	const value = { ...generalSettingsProps, ...currentUserProps };
+	const value = { dateFormat, timeFormat, ...currentUserProps };
 
 	return <ConfigContext.Provider value={value}>{children}</ConfigContext.Provider>;
 };
