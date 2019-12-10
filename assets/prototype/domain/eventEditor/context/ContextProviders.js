@@ -15,7 +15,7 @@ import { EventEditorEventIdProvider } from '../../../application/services/contex
 const ContextProviders = ({ children }) => (
 	<ToastProvider>
 		<ApolloProvider>
-			<EventEditorEventIdProvider eventId={eventId}>
+			<EventEditorEventIdProvider>
 				<StatusProvider>
 					<ConfigProvider>
 						<RelationsProvider>{children}</RelationsProvider>
