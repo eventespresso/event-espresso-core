@@ -1,5 +1,7 @@
 <?php
 
+use EventEspresso\core\exceptions\InvalidDataTypeException;
+use EventEspresso\core\exceptions\InvalidInterfaceException;
 use EventEspresso\core\services\orm\tree_traversal\ModelObjNode;
 
 /**
@@ -2170,16 +2172,20 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
     }
 
     /**
+     * Deletes the events and all dependent data, plus those events' non-global/non-default tickets, prices, and
+     * message template groups.
      * @since $VID:$
      * @param $event_ids
      * @return int
      * @throws EE_Error
      * @throws InvalidArgumentException
      * @throws ReflectionException
-     * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
-     * @throws \EventEspresso\core\exceptions\InvalidInterfaceException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
      */
     protected function deleteEventsAndDependentData($event_ids){
+        // Call me an optimist.
+        $success = true;
         $espresso_no_ticket_prices = get_option('ee_no_ticket_prices', array());
 
         // Find all the root nodes to delete (this isn't just events, because there's other data, like related tickets,
@@ -2250,12 +2256,14 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
                     $where_conditions['OR'][ 'AND*' . $index_primary_key_string ] = $keys_n_values;
                 }
             }
-            $success = $model->delete_permanently(
+            if( !$model->delete_permanently(
                 [
                     $where_conditions
                 ],
                 false
-            );
+            )){
+                $success = false;
+            }
         }
         if (isset($espresso_no_ticket_prices[ $event_id ])) {
             unset($espresso_no_ticket_prices[ $event_id ]);
