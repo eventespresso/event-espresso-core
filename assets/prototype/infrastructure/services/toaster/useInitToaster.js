@@ -1,13 +1,10 @@
 import { useState, useEffect } from 'react';
 import useToaster from './useToaster';
 
-const useInitToaster = ({
-	loadingMessage,
-	successMessage,
-}) => {
+const useInitToaster = ({ loadingMessage, successMessage }) => {
 	const toaster = useToaster();
 
-	const initializationNotices = (loadingFlag, loadingError) => {
+	const useInitializationNotices = (loadingFlag, loadingError) => {
 		const [initialized, setInitialized] = useState(false);
 
 		if (!initialized) {
@@ -20,7 +17,7 @@ const useInitToaster = ({
 				setInitialized(true);
 			}
 		}, [initialized]);
-	}
+	};
 
 	return {
 		onCompleted: () => {
@@ -31,8 +28,8 @@ const useInitToaster = ({
 			toaster.dismiss(loadingMessage);
 			toaster.error(error);
 		},
-		initializationNotices,
-	}
+		initializationNotices: useInitializationNotices,
+	};
 };
 
 export default useInitToaster;

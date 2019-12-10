@@ -9,12 +9,7 @@ import useRelations from '../../../../infrastructure/services/relations/useRelat
  * @todo replace `tickets` with `useTicketsIn()`
  */
 const useCreatePriceMutation = ({ tickets, ticketId }) => {
-
-	const {
-		onCompleted,
-		onError,
-		initializationNotices,
-	} = useInitToaster({
+	const { onCompleted, onError, initializationNotices } = useInitToaster({
 		loadingMessage: 'creating new price',
 		successMessage: 'price successfully created',
 	});

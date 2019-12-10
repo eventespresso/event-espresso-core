@@ -4,16 +4,12 @@ import { UPDATE_DATETIME } from './dates';
 import useInitToaster from '../../../../infrastructure/services/toaster/useInitToaster';
 
 const useUpdateDateMutation = ({ id = 0 }) => {
-	const {
-		onCompleted,
-		onError,
-		initializationNotices,
-	} = useInitToaster({
+	const { onCompleted, onError, initializationNotices } = useInitToaster({
 		loadingMessage: `updating datetime ${id}`,
 		successMessage: `datetime ${id} successfully updated`,
 	});
 
-	const [updateDate, { loading, error }] = useMutation(UPDATE_DATE, { onCompleted, onError });
+	const [updateDate, { loading, error }] = useMutation(UPDATE_DATETIME, { onCompleted, onError });
 
 	initializationNotices(loading, error);
 

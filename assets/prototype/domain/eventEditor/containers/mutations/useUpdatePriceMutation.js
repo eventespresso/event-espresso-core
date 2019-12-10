@@ -6,13 +6,9 @@ import useRelations from '../../../../infrastructure/services/relations/useRelat
 const useUpdatePriceMutation = ({ id = 0 }) => {
 	const { updateRelations } = useRelations();
 
-	const {
-		onCompleted,
-		onError,
-		initializationNotices,
-	} = useInitToaster({
+	const { onCompleted, onError, initializationNotices } = useInitToaster({
 		loadingMessage: `updating price ${id}`,
-		successMessage: `price ${id} successfully updated`
+		successMessage: `price ${id} successfully updated`,
 	});
 
 	const [updatePrice, { loading, error }] = useMutation(UPDATE_PRICE, { onCompleted, onError });

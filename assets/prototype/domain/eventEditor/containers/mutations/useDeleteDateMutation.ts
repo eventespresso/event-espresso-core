@@ -13,11 +13,7 @@ type useDeleteDatetimeMutationProps = {
 const useDeleteDatetimeMutation = ({ eventId, id }: useDeleteDatetimeMutationProps) => {
     const { removeRelation, dropRelations } = useRelations();
 
-    const {
-        onCompleted,
-        onError,
-        initializationNotices,
-    } = useInitToaster({
+    const { onCompleted, onError, initializationNotices } = useInitToaster({
         loadingMessage: `deleting date ${id}`,
         successMessage: `datetime ${id} successfully deleted`,
     });

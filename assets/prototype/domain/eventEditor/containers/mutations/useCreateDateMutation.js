@@ -6,12 +6,7 @@ import useInitToaster from '../../../../infrastructure/services/toaster/useInitT
 import useRelations from '../../../../infrastructure/services/relations/useRelations';
 
 const useCreateDateMutation = ({ eventId }) => {
-
-	const {
-		onCompleted,
-		onError,
-		initializationNotices,
-	} = useInitToaster({
+	const { onCompleted, onError, initializationNotices } = useInitToaster({
 		loadingMessage: `creating new datetime for event ${eventId}`,
 		successMessage: 'datetime successfully created',
 	});

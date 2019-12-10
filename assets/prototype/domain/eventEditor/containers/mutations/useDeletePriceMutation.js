@@ -8,13 +8,9 @@ import useRelations from '../../../../infrastructure/services/relations/useRelat
 const useDeletePriceMutation = ({ ticketIn, id }) => {
 	const { removeRelation, dropRelations } = useRelations();
 
-	const {
-		onCompleted,
-		onError,
-		initializationNotices,
-	} = useInitToaster({
+	const { onCompleted, onError, initializationNotices } = useInitToaster({
 		loadingMessage: `deleting price ${id}`,
-		successMessage: `price ${id} successfully deleted`
+		successMessage: `price ${id} successfully deleted`,
 	});
 
 	const [deletePrice, { loading, error }] = useMutation(DELETE_PRICE, { onCompleted, onError });

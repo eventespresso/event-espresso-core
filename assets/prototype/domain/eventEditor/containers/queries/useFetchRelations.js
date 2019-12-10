@@ -1,5 +1,4 @@
 import { useQuery } from '@apollo/react-hooks';
-import { useEffect, useState } from '@wordpress/element';
 import { GET_RELATIONS_DATA } from './relations';
 import useInitToaster from '../../../../infrastructure/services/toaster/useInitToaster';
 import useEventId from './useEventId';
@@ -9,18 +8,19 @@ const useFetchRelations = ({ onReceiveRelations }) => {
 
 	const eventId = useEventId();
 
-	const {
-		onCompleted,
-		onError,
-		initializationNotices,
-	} = useInitToaster({
+	const { onCompleted, onError, initializationNotices } = useInitToaster({
 		loadingMessage: 'initializing event editor relations',
-		successMessage: 'event editor relations initialized'
+		successMessage: 'event editor relations initialized',
 	});
 
 	const { data, error, loading } = useQuery(GET_RELATIONS_DATA, {
 		variables: { eventId },
-		onCompleted,
+		onCompleted: (r_data) => {
+			if (typeof onReceiveRelations === 'function') {
+				onReceiveRelations(r_data);
+			}
+			onCompleted();
+		},
 		onError,
 	});
 

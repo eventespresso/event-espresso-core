@@ -11,11 +11,7 @@ const useCreateTicketMutation = ({ datetimes }) => {
 	const { updateRelations, addRelation } = useRelations();
 	const id = 0;
 
-	const {
-		onCompleted,
-		onError,
-		initializationNotices,
-	} = useInitToaster({
+	const { onCompleted, onError, initializationNotices } = useInitToaster({
 		loadingMessage: `creating new ticket for datetime ${id}`,
 		successMessage: 'ticket successfully created',
 	});

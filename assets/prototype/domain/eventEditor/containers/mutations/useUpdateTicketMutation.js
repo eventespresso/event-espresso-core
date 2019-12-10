@@ -3,13 +3,9 @@ import { UPDATE_TICKET } from './tickets';
 import useInitToaster from '../../../../infrastructure/services/toaster/useInitToaster';
 
 const useUpdateTicketMutation = ({ id = 0 }) => {
-	const {
-		onCompleted,
-		onError,
-		initializationNotices,
-	} = useInitToaster({
+	const { onCompleted, onError, initializationNotices } = useInitToaster({
 		loadingMessage: `update ticket ${id}`,
-		successMessage: `ticket ${id} successfully updated`
+		successMessage: `ticket ${id} successfully updated`,
 	});
 
 	const [updateTicket, { loading, error }] = useMutation(UPDATE_TICKET, { onCompleted, onError });
