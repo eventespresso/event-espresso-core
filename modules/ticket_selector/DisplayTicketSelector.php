@@ -228,7 +228,7 @@ class DisplayTicketSelector
             return $this->noTicketAvailableMessage();
         }
         // redirecting to another site for registration ??
-        $external_url = (string) $this->event->external_url() 
+        $external_url = (string) $this->event->external_url()
             && $this->event->external_url() !== get_the_permalink()
             ? $this->event->external_url()
             : '';
@@ -643,7 +643,7 @@ class DisplayTicketSelector
             __('Register Now', 'event_espresso'),
             $this->event
         );
-        $external_url = (string) $this->event->external_url() 
+        $external_url = (string) $this->event->external_url()
             && $this->event->external_url() !== get_the_permalink()
             ? $this->event->external_url()
             : '';
