@@ -14,7 +14,7 @@ const notNewPrice = propSatisfies((prop) => prop !== 'NEW_PRICE', 'id');
 const NOT_A_TICKET = {};
 const EMPTY_ARRAY = [];
 
-const useCalculateTotal = (state) => {
+const calculateTicketTotal = (state) => {
 	const ticket = pathOr(NOT_A_TICKET, ['ticket'], state);
 	const allPrices = pathOr(EMPTY_ARRAY, ['prices'], state);
 	// we're calculating the ticket total but the last element
@@ -31,4 +31,4 @@ const useCalculateTotal = (state) => {
 	return { ...state, ticket: newTicket };
 };
 
-export default useCalculateTotal;
+export default calculateTicketTotal;

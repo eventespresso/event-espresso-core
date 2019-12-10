@@ -1,4 +1,4 @@
-import { find, propEq } from 'ramda';
+import { propEq } from 'ramda';
 
 // the following return `true` if price type satisfies predicate
 // is a base price ?

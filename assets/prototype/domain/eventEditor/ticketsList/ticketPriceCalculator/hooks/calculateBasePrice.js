@@ -15,7 +15,7 @@ const notNewPrice = propSatisfies((prop) => prop !== 'NEW_PRICE', 'id');
 const NOT_A_TICKET = {};
 const EMPTY_ARRAY = [];
 
-const useCalculateBasePrice = (state) => {
+const calculateBasePrice = (state) => {
 	const ticket = pathOr(NOT_A_TICKET, ['ticket'], state);
 	if (ticket === NOT_A_TICKET) {
 		return state;
@@ -39,4 +39,4 @@ const useCalculateBasePrice = (state) => {
 	return { ticket, prices: newPrices };
 };
 
-export default useCalculateBasePrice;
+export default calculateBasePrice;

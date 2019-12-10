@@ -48,7 +48,7 @@ const useTicketPriceCalculatorFormDecorator = () => {
 	);
 	const updateTicketTotal = useCallback(
 		(formData) => {
-			const result = calculator(formData, { type: 'CALCULATE_TOTAL' });
+			const result = calculator(formData, { type: 'CALCULATE_TICKET_TOTAL/' });
 			const newTicketTotal = getValue('ticket.price', result);
 			return { ['ticket.price']: newTicketTotal };
 		},
