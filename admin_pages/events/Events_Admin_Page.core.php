@@ -519,15 +519,6 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
                     'order'      => 15,
                     'persistent' => false,
                 ),
-//                'help_tabs'     => array(
-//                    'add_category_help_tab' => array(
-//                        'title'    => esc_html__('Add New Event Category', 'event_espresso'),
-//                        'filename' => 'events_add_category',
-//                    ),
-//                ),
-//                'help_tour'     => array('Event_Add_Category_Help_Tour'),
-//                'metaboxes'     => array('_publish_post_box'),
-//                'require_nonce' => false,
             )
         );
     }
