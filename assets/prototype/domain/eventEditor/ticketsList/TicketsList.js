@@ -37,7 +37,7 @@ const btnRowStyle = {
 };
 
 const TicketsList = ({ tickets, datetimes, error, loading, loadingDates }) => {
-	if (! loading && ! loadingDates) {
+	if (!loading && !loadingDates) {
 		console.log('%c TicketsList', 'color: gold; font-size: 14px;');
 		console.log('%c > tickets:', 'color: goldenrod;', tickets);
 		console.log('%c > loading:', 'color: goldenrod;', loading);

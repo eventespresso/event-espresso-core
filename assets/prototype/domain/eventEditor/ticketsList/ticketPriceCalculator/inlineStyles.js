@@ -28,4 +28,4 @@ export default {
 	Currency,
 	div,
 	actions,
-}
+};

@@ -21,8 +21,7 @@ export const sortByPriceOrderIdDesc = sortWith([descendingPriceOrder, descending
 export const sortByPriceOrderNameAsc = sortWith([ascendingPriceOrder, ascendingPriceName]);
 export const sortByPriceOrderNameDesc = sortWith([descendingPriceOrder, descendingPriceName]);
 
-export const sortPrices = (ticket) => (prices) => ticket.reverseCalculate ?
-	sortByPriceOrderIdDesc(prices) :
-	sortByPriceOrderIdAsc(prices);
+export const sortPrices = (ticket) => (prices) =>
+	ticket.reverseCalculate ? sortByPriceOrderIdDesc(prices) : sortByPriceOrderIdAsc(prices);
 
 export default sortPrices;
