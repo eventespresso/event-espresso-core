@@ -1,25 +1,17 @@
 import clone from 'ramda/src/clone';
-import drop from 'ramda/src/drop';
-import find from 'ramda/src/find';
-import propEq from 'ramda/src/propEq';
 import { Field } from 'react-final-form';
 import { Button } from '@blueprintjs/core';
 
+/**
+ * Internal imports
+ */
+import usePriceTypes from '../../containers/queries/usePriceTypes';
+import usePriceTypeForPrice from '../../containers/queries/usePriceTypeForPrice';
+import {getPriceModifiers} from '../../../shared/predicates/prices/selectionPredicates';
+import {findPriceTypeByGuid} from '../../../shared/predicates/priceTypes/selectionPredicates';
+
 // just temporary
 import styles from './inlineStyles';
-
-// also temporary, needs to come from the db
-const allOptions = [
-	{ id: 1, type: 'Base Price', isDiscount: false, isPercent: false, order: 0 },
-	{ id: 2, type: 'Percent Discount', isDiscount: true, isPercent: true, order: 20 },
-	{ id: 3, type: 'Dollar Discount', isDiscount: true, isPercent: false, order: 30 },
-	{ id: 4, type: 'Percent Surcharge', isDiscount: false, isPercent: true, order: 40 },
-	{ id: 5, type: 'Dollar Surcharge', isDiscount: false, isPercent: false, order: 50 },
-	{ id: 6, type: 'Regional Tax', isDiscount: false, isPercent: true, order: 60 },
-	{ id: 7, type: 'Federal Tax', isDiscount: false, isPercent: true, order: 70 },
-];
-const modifierOptions = drop(1, allOptions); // removes first option
-const getBaseType = (type) => find(propEq('id', Number(type)))(modifierOptions);
 
 // need to change these based on site i18n config
 const currencySign = '$';
@@ -34,7 +26,14 @@ function formatPriceAmount(amount) {
 }
 
 const TicketPriceModifierRow = ({ index, name, price, calcDir, fields: { push, remove, reset, sort } }) => {
-	const options = price.priceType === 1 ? allOptions : modifierOptions;
+	console.log( '%c TicketPriceModifierRow: ', 'color: lime; font-size:14px;' );
+	console.log('%c > price: ', 'color: lime;', price);
+	const priceTypes = usePriceTypes();
+	const relatedPriceType = usePriceTypeForPrice(price.id);
+	console.log('%c > relatedPriceType: ', 'color: lime;', relatedPriceType);
+	const modifierOptions = getPriceModifiers(priceTypes);
+	const getPriceType = findPriceTypeByGuid(modifierOptions);
+	const options = price.isBasePrice ? priceTypes : modifierOptions;
 	const sign = price.isPercent ? percentSign : currencySign;
 	let b4Price = '';
 	let afterPrice = sign;
@@ -55,11 +54,12 @@ const TicketPriceModifierRow = ({ index, name, price, calcDir, fields: { push, r
 				icon={'add'}
 				onClick={() => {
 					const newPrice = clone(price);
-					newPrice.id = null;
-					const baseType = getBaseType(newPrice.priceType);
+					newPrice.id = '';
+					const baseType = getPriceType(newPrice.priceType);
 					newPrice.order = baseType.order;
 					newPrice.isDiscount = baseType.isDiscount;
 					newPrice.isPercent = baseType.isPercent;
+					newPrice.isTax = baseType.isTax;
 					push(newPrice);
 					reset(name);
 					sort();
@@ -95,14 +95,14 @@ const TicketPriceModifierRow = ({ index, name, price, calcDir, fields: { push, r
 			<td width={'15%'} style={styles.cell}>
 				<Field
 					component={'select'}
-					initialValue={price.priceType}
+					initialValue={relatedPriceType.dbId}
 					name={`${name}.priceType`}
-					disabled={price.priceType === 1}
+					disabled={price.isBasePrice}
 					style={styles.input}
 				>
 					{options.map((option) => (
-						<option key={option.id} value={option.id}>
-							{option.type}
+						<option key={option.id} value={option.dbId}>
+							{option.name}
 						</option>
 					))}
 				</Field>

@@ -7,9 +7,9 @@ import {filter, pathOr, propOr, propSatisfies, reduce} from 'ramda';
  * Internal imports
  */
 import basePriceCalculator from './basePriceCalculator';
-import {isNotBasePrice} from '../../../../shared/entities/prices/selectionPredicates';
-import {sortByPriceOrderIdDesc} from '../../../../shared/entities/prices/sortingPredicates';
-import {updateBasePriceAmount} from '../../../../shared/entities/prices/updatePredicates';
+import {isNotBasePrice} from '../../../../shared/predicates/prices/selectionPredicates';
+import {sortByPriceOrderIdDesc} from '../../../../shared/predicates/prices/sortingPredicates';
+import {updateBasePriceAmount} from '../../../../shared/predicates/prices/updatePredicates';
 
 const notNewPrice = propSatisfies(prop => prop !== 'NEW_PRICE', 'id');
 const NOT_A_TICKET = {};

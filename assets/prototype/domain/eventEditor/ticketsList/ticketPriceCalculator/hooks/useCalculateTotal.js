@@ -7,8 +7,8 @@ import {filter, pathOr, propSatisfies, reduce} from 'ramda';
  * Internal imports
  */
 import ticketTotalCalculator from './ticketTotalCalculator';
-import {sortByPriceOrderIdAsc} from '../../../../shared/entities/prices/sortingPredicates';
-import {updateTicketPriceForTicket} from '../../../../shared/entities/tickets/selectionPredicates';
+import {sortByPriceOrderIdAsc} from '../../../../shared/predicates/prices/sortingPredicates';
+import {updateTicketPriceForTicket} from '../../../../shared/predicates/tickets/selectionPredicates';
 
 const notNewPrice = propSatisfies(prop => prop !== 'NEW_PRICE', 'id');
 const NOT_A_TICKET = {};

@@ -6,12 +6,6 @@
  */
 const ticketTotalCalculator = (currentTotal, { name, isBasePrice, isPercent, isDiscount, amount }) => {
 	amount = parseFloat(amount);
-	console.log('%c > currentTotal: ', 'color: PaleGreen;', currentTotal);
-	console.log('%c > name: ', 'color: PaleGreen;', name);
-	console.log('%c > > isBasePrice: ', 'color: PaleGreen;', isBasePrice);
-	console.log('%c > > isPercent: ', 'color: PaleGreen;', isPercent);
-	console.log('%c > > isDiscount: ', 'color: PaleGreen;', isDiscount);
-	console.log('%c > > amount: ', 'color: PaleGreen;', amount);
 	if (isBasePrice) {
 		// basic addition
 		return currentTotal + amount;

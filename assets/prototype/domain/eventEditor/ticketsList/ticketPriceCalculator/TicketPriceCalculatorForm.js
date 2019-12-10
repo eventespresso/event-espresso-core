@@ -1,9 +1,8 @@
-import { H2, HTMLTable } from '@blueprintjs/core';
 import { FieldArray } from 'react-final-form-arrays';
+import { H2, HTMLTable } from '@blueprintjs/core';
 
 import TicketPriceModifierRow from './TicketPriceModifierRow';
 import TicketPriceTotalRow from './TicketPriceTotalRow';
-import usePriceTypes from '../../containers/queries/usePriceTypes';
 
 // just temporary
 import styles from './inlineStyles';
@@ -11,11 +10,12 @@ import styles from './inlineStyles';
 const TicketPriceCalculatorForm = ({ form, values: { ticket, prices } }) => {
 	const calcDir = !!ticket.reverseCalculate;
 	const toggleCalcDir = () => form.mutators.toggleCalcDir('ticket.reverseCalculate');
-	const priceTypes = usePriceTypes();
-	console.log('TicketPriceCalculatorForm', { priceTypes });
+	const ticketName = ticket.name ? ` for Ticket: ${ticket.name} ` : '';
 	return (
 		<>
-			<H2 style={styles.hdr}>Ticket Price Calculator</H2>
+			<H2 style={styles.hdr}>
+				{`Ticket Price Calculator${ticketName}`}
+			</H2>
 			<div style={styles.div}>
 				<HTMLTable interactive striped style={styles.table}>
 					<thead>
@@ -45,7 +45,7 @@ const TicketPriceCalculatorForm = ({ form, values: { ticket, prices } }) => {
 							{({ fields }) => {
 								return fields.map((name, index) => {
 									const price = fields.value[index];
-									return price ? (
+									return price && price.id ? (
 										<TicketPriceModifierRow
 											key={price.id}
 											index={index}

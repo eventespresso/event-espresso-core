@@ -8,32 +8,22 @@ import {useCallback} from '@wordpress/element';
 /**
  * Internal imports
  */
-import useTicketPriceCalculator from './reducers/useTicketPriceCalculator';
+import useTicketPriceCalculator from './useTicketPriceCalculator';
+import usePriceTypes from '../../../containers/queries/usePriceTypes';
 
 // import {amountsMatch} from '@eventespresso/utils';
 const amountsMatch = (v1, v2) => parseFloat(v1) === parseFloat(v2);
 
-const isEqual = (value, prevValue) => prevValue === null || prevValue === undefined || value === prevValue;
-const boolsEqual = (value, prevValue) => prevValue === null || prevValue === undefined || !! value === !! prevValue;
-const amountsEqual = (value, prevValue) => prevValue === null ||
-	prevValue === undefined ||
-	amountsMatch(prevValue, value);
+const isEqual = (value, prev) => prev === null || prev === undefined || value === prev;
+const boolsEqual = (value, prev) => prev === null || prev === undefined || !! value === !! prev;
+const amountsEqual = (value, prev) => prev === null || prev === undefined || amountsMatch(prev, value);
 
 const pathName = (name) => name.replace('[', '.').replace(']', '').split('.')
 const getValue = (name, prevData) => {
 	const namePath = pathName(name);
 	return path(namePath, prevData);
 }
-const basePriceTypes = [
-	{ id: 1, type: 'Base Price', isDiscount: false, isPercent: false, order: 0 },
-	{ id: 2, type: 'Percent Discount', isDiscount: true, isPercent: true, order: 20 },
-	{ id: 3, type: 'Dollar Discount', isDiscount: true, isPercent: false, order: 30 },
-	{ id: 4, type: 'Percent Surcharge', isDiscount: false, isPercent: true, order: 40 },
-	{ id: 5, type: 'Dollar Surcharge', isDiscount: false, isPercent: false, order: 50 },
-	{ id: 6, type: 'Regional Tax', isDiscount: false, isPercent: true, order: 60 },
-	{ id: 7, type: 'Federal Tax', isDiscount: false, isPercent: true, order: 70 },
-];
-const getBasePriceType = (price) => find(propEq('id', parseInt(price.priceType, 10)))(basePriceTypes);
+const getBasePriceType = (price, priceTypes) => find(propEq('id', price.id))(priceTypes);
 
 /**
  * a form decorator used for capturing form data
@@ -42,6 +32,7 @@ const getBasePriceType = (price) => find(propEq('id', parseInt(price.priceType, 
  * @return {Function}  decorator callback for react-final-form
  */
 const useTicketPriceCalculatorFormDecorator = () => {
+	const priceTypes = usePriceTypes();
 	const calculator = useTicketPriceCalculator();
 	const updateBasePrice = useCallback((formData) => {
 		const result = calculator(formData, { type: 'CALCULATE_BASE_PRICE' })
@@ -58,7 +49,6 @@ const useTicketPriceCalculatorFormDecorator = () => {
 			field: /^prices\[\d+\]\.amount$/,
 			isEqual: amountsEqual,
 			updates: (value, name, formData, prevData) => {
-				const prevValue = getValue(name, prevData);
 				const reverseCalc = getValue('ticket.reverseCalculate', formData);
 				if (reverseCalc) {
 					if (name === 'prices[0].amount') {
@@ -73,10 +63,9 @@ const useTicketPriceCalculatorFormDecorator = () => {
 			field: /^prices\[\d+\]\.priceType$/,
 			isEqual: isEqual,
 			updates: (value, name, formData, prevData) => {
-				const prevValue = getValue(name, prevData);
 				const pricePath = name.replace('.priceType', '');
 				const price = getValue(pricePath, formData);
-				const priceType = getBasePriceType(price);
+				const priceType = getBasePriceType(price, priceTypes);
 				const updatedPrice = {
 					...price,
 					isDiscount: priceType.isDiscount,
@@ -89,7 +78,6 @@ const useTicketPriceCalculatorFormDecorator = () => {
 					formData.prices
 				);
 				const formDataWithUpdatedPrice = { ticket: formData.ticket, prices: updatedPrices };
-				// basePriceTypes
 				const reverseCalc = getValue('ticket.reverseCalculate', formDataWithUpdatedPrice);
 				const formDataCalculations = reverseCalc ?
 					updateBasePrice(formDataWithUpdatedPrice) :
@@ -104,7 +92,6 @@ const useTicketPriceCalculatorFormDecorator = () => {
 			field: 'ticket.reverseCalculate',
 			isEqual: boolsEqual,
 			updates: (value, name, formData, prevData) => {
-				const prevValue = !! getValue(name, prevData);
 				const reverseCalc = getValue('ticket.reverseCalculate', formData);
 				return reverseCalc ? updateBasePrice(formData) : updateTicketTotal(formData);
 			},
@@ -113,7 +100,6 @@ const useTicketPriceCalculatorFormDecorator = () => {
 			field: 'ticket.price',
 			isEqual: amountsEqual,
 			updates: (value, name, formData, prevData) => {
-				const prevValue = getValue(name, prevData);
 				const reverseCalc = getValue('ticket.reverseCalculate', formData);
 				// we don't want to update the base price if reverse calculate is false
 				if (reverseCalc) {

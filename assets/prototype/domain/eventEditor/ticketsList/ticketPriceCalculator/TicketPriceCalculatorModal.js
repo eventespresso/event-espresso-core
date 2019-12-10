@@ -1,138 +1,85 @@
 import indexOf from 'ramda/src/indexOf';
+import isEmpty from 'ramda/src/isEmpty';
 import pickBy from 'ramda/src/pickBy';
 import { useEffect, useState } from '@wordpress/element';
 
 import TicketPriceCalculatorForm from './TicketPriceCalculatorForm';
-import useTicketPriceCalculatorFormDecorator from './useTicketPriceCalculatorFormDecorator';
-import useTicketPriceCalculatorFormMutators from './useTicketPriceCalculatorFormMutators';
-import { sortByPriceOrderIdAsc } from '../../../shared/entities/prices/sortingPredicates';
+import useTicketPriceCalculatorFormDecorator from './hooks/useTicketPriceCalculatorFormDecorator';
+import useTicketPriceCalculatorFormMutators from './hooks/useTicketPriceCalculatorFormMutators';
+import { sortByPriceOrderIdAsc } from '../../../shared/predicates/prices/sortingPredicates';
 import useTicketPrices from '../../containers/queries/useTicketPrices';
 
 import FormModal from '../../../shared/FormModal';
-// import useFetchTicketRelations from '../../containers/mutations/useFetchTicketRelations';
-/* const prices = [
-	{
-		id: 'NEW_PRICE',
-		dbId: '',
-		amount: null,
-		desc: '',
-		isBasePrice: false,
-		isDeleted: false,
-		isDefault: false,
-		isDiscount: false,
-		isPercent: false,
-		name: '',
-		priceType: 5,
-		order: 999,
-		wpUser: 1,
-	},
-	{
-		id: 'ABC123',
-		dbId: 1234,
-		amount: 9.99,
-		desc: 'Base Price',
-		isBasePrice: true,
-		isDeleted: false,
-		isDefault: false,
-		isDiscount: false,
-		isPercent: false,
-		name: 'Price ABC',
-		priceType: 1,
-		order: 0,
-		wpUser: 1,
-	},
-	{
-		id: 'DEF456',
-		dbId: 1235,
-		amount: 10,
-		desc: 'just to be nice',
-		isBasePrice: false,
-		isDeleted: false,
-		isDefault: false,
-		isDiscount: true,
-		isPercent: true,
-		name: 'ten % off',
-		priceType: 2,
-		order: 20,
-		wpUser: 1,
-	},
-	{
-		id: 'XYZ890',
-		dbId: 1236,
-		amount: 2.5,
-		desc: 'Just Cuz Fee',
-		isBasePrice: false,
-		isDeleted: false,
-		isDefault: false,
-		isDiscount: false,
-		isPercent: false,
-		name: 'gimme gimme',
-		priceType: 5,
-		order: 50,
-		wpUser: 1,
-	},
-	{
-		id: 'TAX123',
-		dbId: 1237,
-		amount: 10,
-		desc: 'theft',
-		isBasePrice: false,
-		isDeleted: false,
-		isDefault: false,
-		isDiscount: false,
-		isPercent: true,
-		name: 'tax',
-		priceType: 7,
-		order: 70,
-		wpUser: 1,
-	},
-]; */
-const priceFormFields = [
-	'amount',
-	'dbId',
-	'desc',
+
+const newPrice = {
+	id: 'NEW_PRICE',
+	dbId: '',
+	amount: null,
+	desc: '',
+	isBasePrice: false,
+	isDeleted: false,
+	isDefault: false,
+	isDiscount: false,
+	isPercent: false,
+	isTax: false,
+	name: '',
+	order: 999,
+	priceType: 4,
+	priceTypeOrder: 999,
+	wpUser: 1,
+};
+
+const priceFields = [
 	'id',
+	'dbId',
+	'amount',
+	'desc',
 	'isBasePrice',
 	'isDiscount',
+	'isDeleted',
 	'isPercent',
+	'isTax',
 	'name',
 	'order',
 	'priceType',
+	'priceTypeOrder',
 ];
-const NO_INDEX = -1;
-const isPriceFormField = (val, key) => indexOf(key, priceFormFields) > NO_INDEX;
-const copyPriceFormFields = (price) => pickBy(isPriceFormField, price);
 
-const ticketFormFields = ['id', 'reverseCalculate', 'order', 'price'];
-const isTicketFormField = (val, key) => indexOf(key, ticketFormFields) > NO_INDEX;
-const copyTicketFormFields = (ticket) => pickBy(isTicketFormField, ticket);
+const NO_INDEX = -1;
+const isPriceField = (val, key) => indexOf(key, priceFields) > NO_INDEX;
+const copyPriceFields = (price) => pickBy(isPriceField, price);
+
+const ticketFields = ['id', 'reverseCalculate', 'order', 'price'];
+const isTicketField = (val, key) => indexOf(key, ticketFields) > NO_INDEX;
+const copyTicketFields = (ticket) => pickBy(isTicketField, ticket);
 
 const EMPTY_OBJECT = {};
 
+const onSubmit = (values) => console.log('%c Ticket Price Calculator Form Submit', 'color:YellowGreen;', values);
+
 const TicketPriceCalculatorModal = ({ ticket, handleClose, isOpen }) => {
-	// const { prices } = useFetchTicketRelations({ ticket });
 	const [initialValues, setInitialValues] = useState(EMPTY_OBJECT);
 	const decorator = useTicketPriceCalculatorFormDecorator();
 	const mutators = useTicketPriceCalculatorFormMutators();
 	const prices = useTicketPrices(ticket.id);
-	console.log(ticket.dbId, { prices });
 
 	useEffect(() => {
-		if (initialValues === EMPTY_OBJECT) {
+		if (initialValues === EMPTY_OBJECT && ! isEmpty(prices)) {
 			const sortedPrices = sortByPriceOrderIdAsc(prices);
+			sortedPrices.push(newPrice);
 			const formData = {
-				ticket: copyTicketFormFields(ticket),
-				prices: sortedPrices.map(copyPriceFormFields),
+				ticket: copyTicketFields(ticket),
+				prices: sortedPrices.map(copyPriceFields),
 			};
 			setInitialValues(formData);
 		}
 	});
-	return (
+	return initialValues !== EMPTY_OBJECT && (
 		<FormModal
 			FormComponent={TicketPriceCalculatorForm}
 			initialValues={initialValues}
 			isOpen={isOpen}
-			onSubmit={(values) => console.log('%c Ticket Price Calculator Form Submit', 'color:YellowGreen;', values)}
+			onSubmit={onSubmit}
 			onClose={handleClose}
 			decorators={[decorator]}
 			mutators={mutators}
