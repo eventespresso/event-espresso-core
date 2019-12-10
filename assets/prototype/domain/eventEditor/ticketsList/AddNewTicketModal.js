@@ -1,16 +1,16 @@
 import TicketForm from './TicketForm';
 import FormModal from '../../shared/FormModal';
-import useCreateTicketMutation from '../containers/mutations/useCreateTicketMutation';
+import useEntityMutator from '../containers/mutations/useEntityMutator';
 
 const AddNewTicketModal = ({ datetimes, handleClose, isOpen }) => {
-	const createTicket = useCreateTicketMutation({ datetimes });
+	const { createEntity } = useEntityMutator('Ticket');
 	const formComponent = (props) => <TicketForm {...props} title='New Ticket Details' />;
 
 	return (
 		<FormModal
 			FormComponent={formComponent}
 			initialValues={{}}
-			onSubmit={createTicket}
+			onSubmit={createEntity}
 			onClose={handleClose}
 			isOpen={isOpen}
 			datetimes={datetimes}

@@ -1,7 +1,7 @@
-import useDateimeQueryOptions from './useDateimeQueryOptions';
+import useDatetimeQueryOptions from './useDatetimeQueryOptions';
 
 const useUpdateDatetimeCache = () => {
-	const options = useDateimeQueryOptions();
+	const options = useDatetimeQueryOptions();
 
 	const updateDatetimeCache = ({ proxy, datetimes, datetime, remove = false }) => {
 		const { nodes = [] } = datetimes;

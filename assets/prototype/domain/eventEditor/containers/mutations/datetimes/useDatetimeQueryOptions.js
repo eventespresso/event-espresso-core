@@ -3,7 +3,7 @@ import { queries } from '../../queries';
 
 const { GET_DATETIMES } = queries;
 
-const useDateimeQueryOptions = () => {
+const useDatetimeQueryOptions = () => {
 	const eventId = useEventId();
 
 	const options = {
@@ -18,4 +18,4 @@ const useDateimeQueryOptions = () => {
 	return options;
 };
 
-export default useDateimeQueryOptions;
+export default useDatetimeQueryOptions;
