@@ -2183,7 +2183,8 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
      */
-    protected function deleteEventsAndDependentData($event_ids){
+    protected function deleteEventsAndDependentData($event_ids)
+    {
         // Call me an optimist.
         $success = true;
         $espresso_no_ticket_prices = get_option('ee_no_ticket_prices', array());
@@ -2231,7 +2232,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
 
         // Find all the dependent model objects we want to delete.
         $ids_to_delete = [];
-        foreach ($model_objects_to_delete as $model_object_to_delete){
+        foreach ($model_objects_to_delete as $model_object_to_delete) {
             $node = new ModelObjNode($model_object_to_delete);
             $node->visit(9999);
             $ids_to_delete = array_replace_recursive($ids_to_delete, $node->getIds());
@@ -2256,12 +2257,12 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
                     $where_conditions['OR'][ 'AND*' . $index_primary_key_string ] = $keys_n_values;
                 }
             }
-            if( !$model->delete_permanently(
+            if (!$model->delete_permanently(
                 [
                     $where_conditions
                 ],
                 false
-            )){
+            )) {
                 $success = false;
             }
         }
@@ -2269,7 +2270,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
             unset($espresso_no_ticket_prices[ $event_id ]);
         }
         // Fire a legacy action.
-        foreach ($event_ids as $event_id){
+        foreach ($event_ids as $event_id) {
             do_action('AHEE__Events_Admin_Page___permanently_delete_event__after_event_deleted', $event_id);
         }
         update_option('ee_no_ticket_prices', $espresso_no_ticket_prices);
