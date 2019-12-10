@@ -228,7 +228,10 @@ class DisplayTicketSelector
             return $this->noTicketAvailableMessage();
         }
         // redirecting to another site for registration ??
-        $external_url = (string) $this->event->external_url();
+        $external_url = (string) $this->event->external_url() 
+            && $this->event->external_url() !== get_the_permalink()
+            ? $this->event->external_url()
+            : '';
         // if redirecting to another site for registration, then we don't load the TS
         $ticket_selector = $external_url
             ? $this->externalEventRegistration()
@@ -640,7 +643,10 @@ class DisplayTicketSelector
             __('Register Now', 'event_espresso'),
             $this->event
         );
-        $external_url = $this->event->external_url();
+        $external_url = (string) $this->event->external_url() 
+            && $this->event->external_url() !== get_the_permalink()
+            ? $this->event->external_url()
+            : '';
         $html = EEH_HTML::div(
             '',
             'ticket-selector-submit-' . $this->event->ID() . '-btn-wrap',
