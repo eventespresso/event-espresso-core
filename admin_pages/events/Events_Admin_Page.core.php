@@ -1922,7 +1922,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
      */
     public function delete_cpt_item($post_id)
     {
-        throw new EE_Error(esc_html__('Please contact Event Espresso support with the details of what you did to produce this error.', 'event_espresso'));
+        throw new EE_Error(esc_html__('Please contact Event Espresso support with the details of the steps taken to produce this error.', 'event_espresso'));
         $this->_req_data['EVT_ID'] = $post_id;
         $this->_delete_event();
     }
