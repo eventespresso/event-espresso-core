@@ -10,16 +10,18 @@ import useRelations from '../../../../infrastructure/services/relations/useRelat
 const useCreateTicketMutation = ({ datetimes }) => {
 	const { updateRelations, addRelation } = useRelations();
 	const id = 0;
-	const toasterMessage = `creating new ticket for datetime ${id}`;
 
-	const initToaster = useInitToaster({
-		toasterMessage,
-		loadingMessage: toasterMessage,
+	const {
+		onCompleted,
+		onError,
+		initializationNotices,
+	} = useInitToaster({
+		loadingMessage: `creating new ticket for datetime ${id}`,
 		successMessage: 'ticket successfully created',
 	});
 
-	const [createTicket, { loading, error }] = useMutation(CREATE_TICKET, initToaster);
-	initToaster.initializationNotices(loading, error);
+	const [createTicket, { loading, error }] = useMutation(CREATE_TICKET, { onCompleted, onError });
+	initializationNotices(loading, error);
 
 	const onCreateHandler = ({ name, description, price, datetimes: ticketDatetimes = [] }) => {
 		const variables = {

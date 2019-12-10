@@ -9,18 +9,20 @@ import useRelations from '../../../../infrastructure/services/relations/useRelat
  * @todo replace `tickets` with `useTicketsIn()`
  */
 const useCreatePriceMutation = ({ tickets, ticketId }) => {
-	const toasterMessage = 'creating new price';
 
-	const initToaster = useInitToaster({
-		toasterMessage,
-		loadingMessage: toasterMessage,
+	const {
+		onCompleted,
+		onError,
+		initializationNotices,
+	} = useInitToaster({
+		loadingMessage: 'creating new price',
 		successMessage: 'price successfully created',
 	});
 
 	const { updateRelations } = useRelations();
 
-	const [createPrice, { loading, error }] = useMutation(CREATE_PRICE, initToaster);
-	initToaster.initializationNotices(loading, error);
+	const [createPrice, { loading, error }] = useMutation(CREATE_PRICE, { onCompleted, onError });
+	initializationNotices(loading, error);
 
 	const onCreateHandler = ({ name, desc, amount, priceType, isDefault }) => {
 		const variables = {

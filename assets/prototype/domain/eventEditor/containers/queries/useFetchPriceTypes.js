@@ -4,16 +4,18 @@ import useInitToaster from '../../../../infrastructure/services/toaster/useInitT
 
 const useFetchPriceTypes = () => {
 	console.log('%c useFetchPriceTypes: ', 'color: deeppink; font-size: 14px;');
-	const toasterMessage = 'initializing price types';
 
-	const initToaster = useInitToaster({
-		toasterMessage,
-		loadingMessage: toasterMessage,
+	const {
+		onCompleted,
+		onError,
+		initializationNotices,
+	} = useInitToaster({
+		loadingMessage: `initializing price types`,
 		successMessage: 'price types initialized'
 	});
 
-	const { data, error, loading } = useQuery(GET_PRICE_TYPES, initToaster);
-	initToaster.initializationNotices(loading, error);
+	const { data, error, loading } = useQuery(GET_PRICE_TYPES, { onCompleted, onError });
+	initializationNotices(loading, error);
 
 	return {
 		data,

@@ -12,17 +12,19 @@ type useDeleteDatetimeMutationProps = {
 
 const useDeleteDatetimeMutation = ({ eventId, id }: useDeleteDatetimeMutationProps) => {
     const { removeRelation, dropRelations } = useRelations();
-    const toasterMessage = `deleting date ${id}`;
 
-    const initToaster = useInitToaster({
-        toasterMessage,
-        loadingMessage: toasterMessage,
+    const {
+        onCompleted,
+        onError,
+        initializationNotices,
+    } = useInitToaster({
+        loadingMessage: `deleting date ${id}`,
         successMessage: `datetime ${id} successfully deleted`,
     });
 
-    const [deleteDatetime, { loading, error }] = useMutation(DELETE_DATETIME, initToaster);
+    const [deleteDatetime, { loading, error }] = useMutation(DELETE_DATETIME, { onCompleted, onError });
 
-    initToaster.initializationNotices(loading, error);
+    initializationNotices(loading, error);
 
     const update = (
         proxy,

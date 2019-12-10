@@ -10,16 +10,18 @@ const useDeleteTicketMutation = ({ id }) => {
 	const datetimeIn = useDatetimeIds();
 	const { removeRelation, dropRelations } = useRelations();
 
-	const toasterMessage = `deleting ticket ${id}`;
-	const initToaster = useInitToaster({
-		toasterMessage,
-		loadingMessage: toasterMessage,
+	const {
+		onCompleted,
+		onError,
+		initializationNotices,
+	} = useInitToaster({
+		loadingMessage: `deleting ticket ${id}`,
 		successMessage: `ticket ${id} successfully deleted`,
 	});
 
-	const [deleteTicket, { loading, error }] = useMutation(DELETE_TICKET, initToaster);
+	const [deleteTicket, { loading, error }] = useMutation(DELETE_TICKET, { onCompleted, onError });
 
-	initToaster.initializationNotices(loading, error);
+	initializationNotices(loading, error);
 
 	const variables = { input: { clientMutationId: 'xyz', id } };
 

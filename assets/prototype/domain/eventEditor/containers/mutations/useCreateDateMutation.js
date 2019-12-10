@@ -6,18 +6,20 @@ import useInitToaster from '../../../../infrastructure/services/toaster/useInitT
 import useRelations from '../../../../infrastructure/services/relations/useRelations';
 
 const useCreateDateMutation = ({ eventId }) => {
-	const toasterMessage = `creating new datetime for event ${eventId}`;
 
-	const initToaster = useInitToaster({
-		toasterMessage,
-		loadingMessage: toasterMessage,
-		successMessage: 'datetime successfully created'
+	const {
+		onCompleted,
+		onError,
+		initializationNotices,
+	} = useInitToaster({
+		loadingMessage: `creating new datetime for event ${eventId}`,
+		successMessage: 'datetime successfully created',
 	});
 
 	const { updateRelations, addRelation } = useRelations();
 
-	const [createDate, { loading, error }] = useMutation(CREATE_DATETIME, initToaster);
-	initToaster.initializationNotices(loading, error);
+	const [createDate, { loading, error }] = useMutation(CREATE_DATETIME, { onCompleted, onError });
+	initializationNotices(loading, error);
 
 	// On submit handler receives data from FormModal
 	return ({ description, name, tickets = [] }) => {

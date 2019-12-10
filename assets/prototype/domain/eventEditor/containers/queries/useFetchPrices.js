@@ -8,11 +8,12 @@ import useStatus from '../../../../infrastructure/services/status/useStatus';
 const useFetchPrices = ({ ticketIn = [] }) => {
 	console.log('%c useFetchPrices: ', 'color: deeppink; font-size: 14px;');
 
-	const toasterMessage = 'initializing prices';
-
-	const initToaster = useInitToaster({
-		toasterMessage,
-		loadingMessage: toasterMessage,
+	const {
+		onCompleted,
+		onError,
+		initializationNotices,
+	} = useInitToaster({
+		loadingMessage: `initializing prices`,
 		successMessage: 'prices initialized'
 	});
 
@@ -23,10 +24,11 @@ const useFetchPrices = ({ ticketIn = [] }) => {
 			},
 		},
 		skip: !ticketIn.length, // do not fetch if we don't have any tickets
-		...initToaster
+		onCompleted,
+		onError,
 	});
 
-	initToaster.initializationNotices(loading, error);
+	initializationNotices(loading, error);
 
 	return {
 		data,

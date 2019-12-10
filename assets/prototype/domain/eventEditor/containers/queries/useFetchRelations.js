@@ -9,20 +9,22 @@ const useFetchRelations = ({ onReceiveRelations }) => {
 
 	const eventId = useEventId();
 
-	const initializingMessage = 'initializing event editor relations';
-
-	const initToaster = useInitToaster({
-		toasterMessage: initializingMessage,
-		loadingMessage: initializingMessage,
+	const {
+		onCompleted,
+		onError,
+		initializationNotices,
+	} = useInitToaster({
+		loadingMessage: 'initializing event editor relations',
 		successMessage: 'event editor relations initialized'
 	});
 
 	const { data, error, loading } = useQuery(GET_RELATIONS_DATA, {
 		variables: { eventId },
-		...initToaster,
+		onCompleted,
+		onError,
 	});
 
-	initToaster.initializationNotices(loading, error);
+	initializationNotices(loading, error);
 
 	return {
 		data,

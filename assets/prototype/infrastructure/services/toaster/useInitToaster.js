@@ -2,9 +2,8 @@ import { useState, useEffect } from 'react';
 import useToaster from './useToaster';
 
 const useInitToaster = ({
-	toasterMessage,
 	loadingMessage,
-	successMessage
+	successMessage,
 }) => {
 	const toaster = useToaster();
 
@@ -25,11 +24,11 @@ const useInitToaster = ({
 
 	return {
 		onCompleted: () => {
-			toaster.dismiss(toasterMessage);
+			toaster.dismiss(loadingMessage);
 			toaster.success(successMessage);
 		},
 		onError: (error) => {
-			toaster.dismiss(toasterMessage);
+			toaster.dismiss(loadingMessage);
 			toaster.error(error);
 		},
 		initializationNotices,
