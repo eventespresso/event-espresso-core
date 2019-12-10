@@ -8,12 +8,15 @@ use EventEspresso\core\domain\services\graphql\types\Ticket;
 use EventEspresso\core\domain\services\graphql\data\mutations\TicketMutation;
 
 use EE_Error;
+use EventEspresso\core\exceptions\ExceptionStackTraceDisplay;
+use Exception;
 use InvalidArgumentException;
 use ReflectionException;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
 
 use GraphQL\Type\Definition\ResolveInfo;
+use RuntimeException;
 use WPGraphQL\AppContext;
 use GraphQL\Error\UserError;
 use GraphQLRelay\Relay;
@@ -61,6 +64,7 @@ class TicketUpdate
 
             if ($id) {
                 $entity = $model->get_one_by_ID($id);
+                $id = $entity->ID();
             }
 
             /**
@@ -88,16 +92,28 @@ class TicketUpdate
             }
 
             // Update the entity
-            $result = $entity->save($args);
-
-            if (empty($result)) {
-                throw new UserError(esc_html__('The object failed to update but no error was provided', 'event_espresso'));
+            try {
+                $entity->save($args);
+            } catch (Exception $exception) {
+                new ExceptionStackTraceDisplay(
+                    new RuntimeException(
+                        sprintf(
+                            esc_html__(
+                                'The Ticket failed to update because of the following error(s):%1$s%2$s',
+                                'event_espresso'
+                            ),
+                            '<br/>',
+                            $exception->getMessage()
+                        )
+                    )
+                );
             }
 
-            if (! empty($datetimes)) {
+
+            if ($id && ! empty($datetimes)) {
                 TicketMutation::setRelatedDatetimes($entity, $datetimes);
             }
-            if (! empty($prices)) {
+            if ($id && ! empty($prices)) {
                 TicketMutation::setRelatedPrices($entity, $prices);
             }
 

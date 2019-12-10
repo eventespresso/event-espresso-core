@@ -8,12 +8,15 @@ use EventEspresso\core\domain\services\graphql\types\Price;
 use EventEspresso\core\domain\services\graphql\data\mutations\PriceMutation;
 
 use EE_Error;
+use EventEspresso\core\exceptions\ExceptionStackTraceDisplay;
+use Exception;
 use InvalidArgumentException;
 use ReflectionException;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
 
 use GraphQL\Type\Definition\ResolveInfo;
+use RuntimeException;
 use WPGraphQL\AppContext;
 use GraphQL\Error\UserError;
 use GraphQLRelay\Relay;
@@ -76,10 +79,21 @@ class PriceUpdate
             $args = PriceMutation::prepareFields($input);
 
             // Update the entity
-            $result = $entity->save($args);
-
-            if (empty($result)) {
-                throw new UserError(esc_html__('The object failed to update but no error was provided', 'event_espresso'));
+            try {
+                $entity->save($args);
+            } catch (Exception $exception) {
+                new ExceptionStackTraceDisplay(
+                    new RuntimeException(
+                        sprintf(
+                            esc_html__(
+                                'The Price failed to update because of the following error(s):%1$s%2$s',
+                                'event_espresso'
+                            ),
+                            '<br/>',
+                            $exception->getMessage()
+                        )
+                    )
+                );
             }
 
             return [
