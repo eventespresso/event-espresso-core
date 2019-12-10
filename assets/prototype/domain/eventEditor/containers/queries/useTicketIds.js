@@ -3,10 +3,15 @@ import { useApolloClient } from '@apollo/react-hooks';
 
 import useDatetimeIds from './useDatetimeIds';
 import { GET_TICKETS } from './tickets';
+import useStatus from '../../../../infrastructure/services/status/useStatus';
 
 const useTicketIds = () => {
+	const { isLoaded } = useStatus();
 	const client = useApolloClient();
 	const datetimeIn = useDatetimeIds();
+	if (!isLoaded('tickets')) {
+		return [];
+	}
 	let data;
 
 	try {

@@ -3,8 +3,8 @@ import { useApolloClient } from '@apollo/react-hooks';
 
 import { GET_PRICES } from './prices';
 import useTicketIds from './useTicketIds';
-import {entitiesWithGuIdInArray} from '../../../shared/predicates/shared/selectionPredicates';
-
+import { entitiesWithGuIdInArray } from '../../../shared/predicates/shared/selectionPredicates';
+import useStatus from '../../../../infrastructure/services/status/useStatus';
 /**
  * A custom react hook for retrieving all the prices from cache
  * limited to the ids passed in `include`
@@ -12,8 +12,12 @@ import {entitiesWithGuIdInArray} from '../../../shared/predicates/shared/selecti
  * @param {array} include Array of price ids to include.
  */
 const usePrices = (include = []) => {
+	const { isLoaded } = useStatus();
 	const client = useApolloClient();
 	const ticketIn = useTicketIds();
+	if (!isLoaded('prices')) {
+		return [];
+	}
 	let data;
 
 	try {

@@ -2,10 +2,15 @@ import * as R from 'ramda';
 import { useApolloClient } from '@apollo/react-hooks';
 import { GET_DATETIMES } from './dates';
 import useEventId from './useEventId';
+import useStatus from '../../../../infrastructure/services/status/useStatus';
 
 const useDatetimeIds = () => {
+	const { isLoaded } = useStatus();
 	const eventId = useEventId();
 	const client = useApolloClient();
+	if (!isLoaded('datetimes')) {
+		return [];
+	}
 	let data;
 
 	try {

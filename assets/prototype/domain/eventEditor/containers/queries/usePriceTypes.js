@@ -2,7 +2,8 @@ import pathOr from 'ramda/src/pathOr';
 import { useApolloClient } from '@apollo/react-hooks';
 
 import { GET_PRICE_TYPES } from './priceTypes';
-import {entitiesWithGuIdInArray } from '../../../shared/predicates/shared/selectionPredicates';
+import { entitiesWithGuIdInArray } from '../../../shared/predicates/shared/selectionPredicates';
+import useStatus from '../../../../infrastructure/services/status/useStatus';
 
 /**
  * A custom react hook for retrieving all the priceTypes from cache
@@ -11,7 +12,11 @@ import {entitiesWithGuIdInArray } from '../../../shared/predicates/shared/select
  * @param {array} include Array of price ids to include.
  */
 const usePriceTypes = (include = []) => {
+	const { isLoaded } = useStatus();
 	const client = useApolloClient();
+	if (!isLoaded('priceTypes')) {
+		return [];
+	}
 	let data;
 
 	try {
