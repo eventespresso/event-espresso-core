@@ -7,15 +7,13 @@ import TicketPriceTotalRow from './TicketPriceTotalRow';
 // just temporary
 import styles from './inlineStyles';
 
-const TicketPriceCalculatorForm = ({ form, values: { ticket, prices } }) => {
+const TicketPriceCalculatorForm = ({ form, values: { ticket } }) => {
 	const calcDir = !!ticket.reverseCalculate;
 	const toggleCalcDir = () => form.mutators.toggleCalcDir('ticket.reverseCalculate');
 	const ticketName = ticket.name ? ` for Ticket: ${ticket.name} ` : '';
 	return (
 		<>
-			<H2 style={styles.hdr}>
-				{`Ticket Price Calculator${ticketName}`}
-			</H2>
+			<H2 style={styles.hdr}>{`Ticket Price Calculator${ticketName}`}</H2>
 			<div style={styles.div}>
 				<HTMLTable interactive striped style={styles.table}>
 					<thead>
@@ -41,13 +39,13 @@ const TicketPriceCalculatorForm = ({ form, values: { ticket, prices } }) => {
 						</tr>
 					</thead>
 					<tbody>
-						<FieldArray name={'prices'} initialValue={prices}>
+						<FieldArray name={'prices'} /*  initialValue={prices} */>
 							{({ fields }) => {
 								return fields.map((name, index) => {
 									const price = fields.value[index];
-									return price && price.id ? (
+									return price /* && price.id */ ? (
 										<TicketPriceModifierRow
-											key={price.id}
+											key={`${price.id}:${index}`} /* Make the key unique even if price.id is empty */
 											index={index}
 											name={name}
 											fields={fields}

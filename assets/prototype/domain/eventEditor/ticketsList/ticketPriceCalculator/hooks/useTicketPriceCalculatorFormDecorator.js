@@ -3,7 +3,7 @@
  */
 import createDecorator from 'final-form-calculate';
 import { find, map, path, propEq, when } from 'ramda';
-import {useCallback} from '@wordpress/element';
+import { useCallback } from '@wordpress/element';
 
 /**
  * Internal imports
@@ -15,15 +15,19 @@ import usePriceTypes from '../../../containers/queries/usePriceTypes';
 const amountsMatch = (v1, v2) => parseFloat(v1) === parseFloat(v2);
 
 const isEqual = (value, prev) => prev === null || prev === undefined || value === prev;
-const boolsEqual = (value, prev) => prev === null || prev === undefined || !! value === !! prev;
+const boolsEqual = (value, prev) => prev === null || prev === undefined || !!value === !!prev;
 const amountsEqual = (value, prev) => prev === null || prev === undefined || amountsMatch(prev, value);
 
-const pathName = (name) => name.replace('[', '.').replace(']', '').split('.')
+const pathName = (name) =>
+	name
+		.replace('[', '.')
+		.replace(']', '')
+		.split('.');
 const getValue = (name, prevData) => {
 	const namePath = pathName(name);
 	return path(namePath, prevData);
-}
-const getBasePriceType = (price, priceTypes) => find(propEq('id', price.id))(priceTypes);
+};
+const getBasePriceType = (price, priceTypes) => find(propEq('id', price.priceType))(priceTypes);
 
 /**
  * a form decorator used for capturing form data
@@ -34,16 +38,22 @@ const getBasePriceType = (price, priceTypes) => find(propEq('id', price.id))(pri
 const useTicketPriceCalculatorFormDecorator = () => {
 	const priceTypes = usePriceTypes();
 	const calculator = useTicketPriceCalculator();
-	const updateBasePrice = useCallback((formData) => {
-		const result = calculator(formData, { type: 'CALCULATE_BASE_PRICE' })
-		const newBasePrice = getValue('prices[0].amount', result);
-		return { ['prices[0].amount']: newBasePrice };
-	}, [calculator]);
-	const updateTicketTotal = useCallback((formData) => {
-		const result = calculator(formData, { type: 'CALCULATE_TOTAL' })
-		const newTicketTotal = getValue('ticket.price', result);
-		return { ['ticket.price']: newTicketTotal };
-	}, [calculator]);
+	const updateBasePrice = useCallback(
+		(formData) => {
+			const result = calculator(formData, { type: 'CALCULATE_BASE_PRICE' });
+			const newBasePrice = getValue('prices[0].amount', result);
+			return { ['prices[0].amount']: newBasePrice };
+		},
+		[calculator]
+	);
+	const updateTicketTotal = useCallback(
+		(formData) => {
+			const result = calculator(formData, { type: 'CALCULATE_TOTAL' });
+			const newTicketTotal = getValue('ticket.price', result);
+			return { ['ticket.price']: newTicketTotal };
+		},
+		[calculator]
+	);
 	return createDecorator(
 		{
 			field: /^prices\[\d+\]\.amount$/,
@@ -65,13 +75,14 @@ const useTicketPriceCalculatorFormDecorator = () => {
 			updates: (value, name, formData, prevData) => {
 				const pricePath = name.replace('.priceType', '');
 				const price = getValue(pricePath, formData);
+				console.log('>>>> createDecorator', { price, priceTypes });
 				const priceType = getBasePriceType(price, priceTypes);
 				const updatedPrice = {
 					...price,
 					isDiscount: priceType.isDiscount,
 					isPercent: priceType.isPercent,
 					order: priceType.order,
-					priceType: parseInt(priceType.id, 10),
+					priceType: priceType.id,
 				};
 				const updatedPrices = map(
 					when(propEq('id', updatedPrice.id), () => updatedPrice),
@@ -79,13 +90,13 @@ const useTicketPriceCalculatorFormDecorator = () => {
 				);
 				const formDataWithUpdatedPrice = { ticket: formData.ticket, prices: updatedPrices };
 				const reverseCalc = getValue('ticket.reverseCalculate', formDataWithUpdatedPrice);
-				const formDataCalculations = reverseCalc ?
-					updateBasePrice(formDataWithUpdatedPrice) :
-					updateTicketTotal(formDataWithUpdatedPrice);
+				const formDataCalculations = reverseCalc
+					? updateBasePrice(formDataWithUpdatedPrice)
+					: updateTicketTotal(formDataWithUpdatedPrice);
 				return {
 					...formDataCalculations,
-					[pricePath]: updatedPrice
-				}
+					[pricePath]: updatedPrice,
+				};
 			},
 		},
 		{
@@ -107,7 +118,7 @@ const useTicketPriceCalculatorFormDecorator = () => {
 				}
 				return {};
 			},
-		},
+		}
 	);
 };
 

@@ -7,8 +7,8 @@ import { Button } from '@blueprintjs/core';
  */
 import usePriceTypes from '../../containers/queries/usePriceTypes';
 import usePriceTypeForPrice from '../../containers/queries/usePriceTypeForPrice';
-import {getPriceModifiers} from '../../../shared/predicates/prices/selectionPredicates';
-import {findPriceTypeByGuid} from '../../../shared/predicates/priceTypes/selectionPredicates';
+import { getPriceModifiers } from '../../../shared/predicates/prices/selectionPredicates';
+import { findPriceTypeByGuid } from '../../../shared/predicates/priceTypes/selectionPredicates';
 
 // just temporary
 import styles from './inlineStyles';
@@ -26,7 +26,7 @@ function formatPriceAmount(amount) {
 }
 
 const TicketPriceModifierRow = ({ index, name, price, calcDir, fields: { push, remove, reset, sort } }) => {
-	console.log( '%c TicketPriceModifierRow: ', 'color: lime; font-size:14px;' );
+	console.log('%c TicketPriceModifierRow: ', 'color: lime; font-size:14px;');
 	console.log('%c > price: ', 'color: lime;', price);
 	const priceTypes = usePriceTypes();
 	const relatedPriceType = usePriceTypeForPrice(price.id);
@@ -53,16 +53,21 @@ const TicketPriceModifierRow = ({ index, name, price, calcDir, fields: { push, r
 				key={'add'}
 				icon={'add'}
 				onClick={() => {
-					const newPrice = clone(price);
-					newPrice.id = '';
-					const baseType = getPriceType(newPrice.priceType);
-					newPrice.order = baseType.order;
-					newPrice.isDiscount = baseType.isDiscount;
-					newPrice.isPercent = baseType.isPercent;
-					newPrice.isTax = baseType.isTax;
-					push(newPrice);
-					reset(name);
-					sort();
+					if (price.name && price.amount && !isNaN(price.amount)) {
+						const newPrice = clone(price);
+						newPrice.id = '';
+						const baseType = getPriceType(newPrice.priceType);
+						newPrice.order = baseType.order;
+						newPrice.isDiscount = baseType.isDiscount;
+						newPrice.isPercent = baseType.isPercent;
+						newPrice.isTax = baseType.isTax;
+						push(newPrice);
+						reset(name);
+						sort();
+					} else {
+						alert('Please enter the price name and amount.');
+						return;
+					}
 				}}
 				minimal
 			/>
@@ -95,13 +100,13 @@ const TicketPriceModifierRow = ({ index, name, price, calcDir, fields: { push, r
 			<td width={'15%'} style={styles.cell}>
 				<Field
 					component={'select'}
-					initialValue={relatedPriceType.dbId}
+					initialValue={relatedPriceType.id}
 					name={`${name}.priceType`}
 					disabled={price.isBasePrice}
 					style={styles.input}
 				>
 					{options.map((option) => (
-						<option key={option.id} value={option.dbId}>
+						<option key={option.id} value={option.id}>
 							{option.name}
 						</option>
 					))}

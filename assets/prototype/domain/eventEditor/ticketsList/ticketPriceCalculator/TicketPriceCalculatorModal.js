@@ -6,8 +6,10 @@ import { useEffect, useState } from '@wordpress/element';
 import TicketPriceCalculatorForm from './TicketPriceCalculatorForm';
 import useTicketPriceCalculatorFormDecorator from './hooks/useTicketPriceCalculatorFormDecorator';
 import useTicketPriceCalculatorFormMutators from './hooks/useTicketPriceCalculatorFormMutators';
+import useOnSubmitPrices from './hooks/useOnSubmitPrices';
 import { sortByPriceOrderIdAsc } from '../../../shared/predicates/prices/sortingPredicates';
 import useTicketPrices from '../../containers/queries/useTicketPrices';
+import useDefaultPriceType from '../../containers/queries/useDefaultPriceType';
 
 import FormModal from '../../../shared/FormModal';
 
@@ -55,35 +57,39 @@ const copyTicketFields = (ticket) => pickBy(isTicketField, ticket);
 
 const EMPTY_OBJECT = {};
 
-const onSubmit = (values) => console.log('%c Ticket Price Calculator Form Submit', 'color:YellowGreen;', values);
-
 const TicketPriceCalculatorModal = ({ ticket, handleClose, isOpen }) => {
 	const [initialValues, setInitialValues] = useState(EMPTY_OBJECT);
 	const decorator = useTicketPriceCalculatorFormDecorator();
 	const mutators = useTicketPriceCalculatorFormMutators();
 	const prices = useTicketPrices(ticket.id);
+	const defaultPriceType = useDefaultPriceType();
+
+	const submitPrices = useOnSubmitPrices(prices);
 
 	useEffect(() => {
-		if (initialValues === EMPTY_OBJECT && ! isEmpty(prices)) {
+		if (initialValues === EMPTY_OBJECT && !isEmpty(prices)) {
 			const sortedPrices = sortByPriceOrderIdAsc(prices);
-			sortedPrices.push(newPrice);
+			// make sure to set a valid priceType for new price.
+			sortedPrices.push({ ...newPrice, priceType: defaultPriceType.id });
 			const formData = {
 				ticket: copyTicketFields(ticket),
 				prices: sortedPrices.map(copyPriceFields),
 			};
 			setInitialValues(formData);
 		}
-	});
-	return initialValues !== EMPTY_OBJECT && (
-		<FormModal
-			FormComponent={TicketPriceCalculatorForm}
-			initialValues={initialValues}
-			isOpen={isOpen}
-			onSubmit={onSubmit}
-			onClose={handleClose}
-			decorators={[decorator]}
-			mutators={mutators}
-		/>
+	}, [prices, ticket]);
+	return (
+		initialValues !== EMPTY_OBJECT && (
+			<FormModal
+				FormComponent={TicketPriceCalculatorForm}
+				initialValues={initialValues}
+				isOpen={isOpen}
+				onSubmit={submitPrices}
+				onClose={handleClose}
+				decorators={[decorator]}
+				mutators={mutators}
+			/>
+		)
 	);
 };
 
