@@ -58,7 +58,7 @@ const useTicketPriceCalculatorFormDecorator = () => {
 		{
 			field: /^prices\[\d+\]\.amount$/,
 			isEqual: amountsEqual,
-			updates: (value, name, formData, prevData) => {
+			updates: (value, name, formData) => {
 				const reverseCalc = getValue('ticket.reverseCalculate', formData);
 				if (reverseCalc) {
 					if (name === 'prices[0].amount') {
@@ -72,7 +72,7 @@ const useTicketPriceCalculatorFormDecorator = () => {
 		{
 			field: /^prices\[\d+\]\.priceType$/,
 			isEqual: isEqual,
-			updates: (value, name, formData, prevData) => {
+			updates: (value, name, formData) => {
 				const pricePath = name.replace('.priceType', '');
 				const price = getValue(pricePath, formData);
 				console.log('>>>> createDecorator', { price, priceTypes });
@@ -102,7 +102,7 @@ const useTicketPriceCalculatorFormDecorator = () => {
 		{
 			field: 'ticket.reverseCalculate',
 			isEqual: boolsEqual,
-			updates: (value, name, formData, prevData) => {
+			updates: (value, name, formData) => {
 				const reverseCalc = getValue('ticket.reverseCalculate', formData);
 				return reverseCalc ? updateBasePrice(formData) : updateTicketTotal(formData);
 			},
@@ -110,7 +110,7 @@ const useTicketPriceCalculatorFormDecorator = () => {
 		{
 			field: 'ticket.price',
 			isEqual: amountsEqual,
-			updates: (value, name, formData, prevData) => {
+			updates: (value, name, formData) => {
 				const reverseCalc = getValue('ticket.reverseCalculate', formData);
 				// we don't want to update the base price if reverse calculate is false
 				if (reverseCalc) {

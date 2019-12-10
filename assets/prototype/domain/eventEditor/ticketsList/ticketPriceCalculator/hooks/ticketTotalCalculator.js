@@ -4,7 +4,7 @@
  * @param {Object} formData for price
  * @return {Object} calculations based on price modifier
  */
-const ticketTotalCalculator = (currentTotal, { name, isBasePrice, isPercent, isDiscount, amount }) => {
+const ticketTotalCalculator = (currentTotal, { isBasePrice, isPercent, isDiscount, amount }) => {
 	amount = parseFloat(amount);
 	if (isBasePrice) {
 		// basic addition

@@ -4,7 +4,7 @@
  * @param {Object} formData for price
  * @return {Object} calculations based on price modifier
  */
-const basePriceCalculator = (currentTotal, { name, isPercent, isDiscount, amount }) => {
+const basePriceCalculator = (currentTotal, { isPercent, isDiscount, amount }) => {
 	amount = parseFloat(amount);
 	// NOTE: there's no case for handling base price types because that is what we are calculating
 	// ALSO NOTE: Reverse calculations seem backwards, because, well.. they are!

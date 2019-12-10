@@ -8,7 +8,7 @@ import { Button } from '@blueprintjs/core';
 import usePriceTypes from '../../containers/queries/usePriceTypes';
 import usePriceTypeForPrice from '../../containers/queries/usePriceTypeForPrice';
 import { getPriceModifiers } from '../../../shared/predicates/prices/selectionPredicates';
-import { findPriceTypeByGuid } from '../../../shared/predicates/priceTypes/selectionPredicates';
+import { findEntityByGuid } from '../../../shared/predicates/shared/selectionPredicates';
 
 // just temporary
 import styles from './inlineStyles';
@@ -32,7 +32,7 @@ const TicketPriceModifierRow = ({ index, name, price, calcDir, fields: { push, r
 	const relatedPriceType = usePriceTypeForPrice(price.id);
 	console.log('%c > relatedPriceType: ', 'color: lime;', relatedPriceType);
 	const modifierOptions = getPriceModifiers(priceTypes);
-	const getPriceType = findPriceTypeByGuid(modifierOptions);
+	const getPriceType = findEntityByGuid(modifierOptions);
 	const options = price.isBasePrice ? priceTypes : modifierOptions;
 	const sign = price.isPercent ? percentSign : currencySign;
 	let b4Price = '';

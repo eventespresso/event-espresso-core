@@ -1,7 +1,7 @@
 import { assoc, map, when } from 'ramda';
 import { isBasePrice } from './selectionPredicates';
 
-import { entityHasDbId, entityHasGuid, findEntityByDbId, findEntityByGuid } from '../shared/selectionPredicates';
+import { entityHasGuid } from '../shared/selectionPredicates';
 
 /**
  * updates the price amount

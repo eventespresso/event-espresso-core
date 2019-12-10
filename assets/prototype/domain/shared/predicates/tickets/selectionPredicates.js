@@ -1,10 +1,8 @@
-import { assoc, find, map, propEq, when } from 'ramda';
+import { assoc, map, propEq, when } from 'ramda';
 
-import { entityHasDbId, entityHasGuid, findEntityByDbId, findEntityByGuid } from '../shared/selectionPredicates';
+import { entityHasGuid } from '../shared/selectionPredicates';
 
 export const isExpired = propEq('isExpired', true);
-export const findTicketByDbId = (tickets) => findEntityByDbId(tickets);
-export const findTicketByGuid = (tickets) => findEntityByGuid(tickets);
 export const updateTicketPrice = (amount) => assoc('price', amount);
 export const updateReverseCalculate = (reverseCalculate) => assoc('reverseCalculate', reverseCalculate);
 

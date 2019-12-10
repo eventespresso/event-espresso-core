@@ -1,6 +1,6 @@
 import { filter, find, propEq } from 'ramda';
 
-import { entityHasDbId, entityHasGuid, findEntityByDbId, findEntityByGuid } from '../shared/selectionPredicates';
+import { findEntityByDbId, findEntityByGuid } from '../shared/selectionPredicates';
 
 // the following return `true` if price satisfies predicate
 // is a base price ?
