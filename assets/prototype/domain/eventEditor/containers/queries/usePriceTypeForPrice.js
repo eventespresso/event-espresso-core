@@ -2,8 +2,7 @@ import isEmpty from 'ramda/src/isEmpty';
 import type from 'ramda/src/type';
 import useRelations from '../../../../infrastructure/services/relations/useRelations';
 import usePriceTypes from './usePriceTypes';
-
-const DEFAULT_PRICE_TYPE = { dbId: 4 };
+import useDefaultPriceType from './useDefaultPriceType';
 
 /**
  * A custom react hook for retrieving the related priceType from cache for the given Price entity
@@ -18,13 +17,12 @@ const usePriceTypeForPrice = (priceId) => {
 		entityId: priceId,
 		relation: 'priceTypes',
 	});
-	if ( isEmpty(relatedPriceTypeIds)) {
-		return DEFAULT_PRICE_TYPE;
-	}
+
+	// get the default price type object
+	const defaultPriceType = useDefaultPriceType();
 	const relatedPriceTypes = usePriceTypes(relatedPriceTypeIds);
-	return type(relatedPriceTypes) === 'Array' && ! isEmpty(relatedPriceTypes) ?
-		relatedPriceTypes[0] :
-		DEFAULT_PRICE_TYPE;
+
+	return type(relatedPriceTypes) === 'Array' && !isEmpty(relatedPriceTypes) ? relatedPriceTypes[0] : defaultPriceType;
 };
 
 export default usePriceTypeForPrice;
