@@ -48,7 +48,7 @@ const useTicketPriceCalculatorFormDecorator = () => {
 	);
 	const updateTicketTotal = useCallback(
 		(formData) => {
-			const result = calculator(formData, { type: 'CALCULATE_TICKET_TOTAL/' });
+			const result = calculator(formData, { type: 'CALCULATE_TICKET_TOTAL' });
 			const newTicketTotal = getValue('ticket.price', result);
 			return { ['ticket.price']: parseFloat(newTicketTotal || 0) };
 		},
@@ -75,7 +75,6 @@ const useTicketPriceCalculatorFormDecorator = () => {
 			updates: (value, name, formData) => {
 				const pricePath = name.replace('.priceType', '');
 				const price = getValue(pricePath, formData);
-				console.log('>>>> createDecorator', { price, priceTypes });
 				const priceType = getBasePriceType(price, priceTypes);
 				const updatedPrice = {
 					...price,
