@@ -14,6 +14,22 @@ const PRICE_INPUT_FIELDS = [
 	'wpUser',
 ];
 
+const parseBooleanField = (value) => {
+	value = typeof value === 'string' ? value.toLowerCase().trim() : value;
+	switch (value) {
+		case 'true':
+		case 'yes':
+		case '1':
+			return true;
+		case 'false':
+		case 'no':
+		case '0':
+			return false;
+		default:
+			return Boolean(value);
+	}
+};
+
 const useOnSubmitPrices = (existingPrices) => {
 	const { createEntity, updateEntity, deleteEntity } = useEntityMutator('Price');
 	const { updateEntity: updateTicket } = useEntityMutator('Ticket');
@@ -31,11 +47,18 @@ const useOnSubmitPrices = (existingPrices) => {
 				return;
 			}
 			const { id, ...input } = pick(PRICE_INPUT_FIELDS, price);
+
+			const normalizedPriceFields = {
+				...input,
+				amount: parseFloat(price.amount || 0),
+				isDefault: parseBooleanField(price.isDefault),
+				order: parseInt(price.order, 10),
+			};
 			// if it's a newly added price
 			if (!id) {
-				createEntity({ ...input, ticketId: ticket.id });
+				createEntity({ ...normalizedPriceFields, ticketId: ticket.id });
 			} else {
-				updateEntity({ id, ...input });
+				updateEntity({ id, ...normalizedPriceFields });
 			}
 			updatedPrices.push(id);
 		});
@@ -47,8 +70,13 @@ const useOnSubmitPrices = (existingPrices) => {
 			deleteEntity({ id });
 		});
 
+		const normalizedTicketFields = {
+			...ticket,
+			price: parseFloat(ticket.price || 0),
+			reverseCalculate: parseBooleanField(ticket.reverseCalculate),
+		};
 		// Finally update the ticket price relation
-		updateTicket({ ...ticket, prices: updatedPrices });
+		updateTicket({ ...normalizedTicketFields, prices: updatedPrices });
 	};
 };
 
