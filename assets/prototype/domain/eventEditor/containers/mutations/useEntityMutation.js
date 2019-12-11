@@ -110,7 +110,7 @@ const useEntityMutation = (type, id = '') => {
 		setResult({
 			loading: true,
 			error: undefined,
-			input: undefined,
+			data: undefined,
 			called: true,
 		});
 	};
@@ -119,18 +119,18 @@ const useEntityMutation = (type, id = '') => {
 	 *
 	 */
 	const onMutationComplete = (response, onCompleted) => {
-		const { input, errors } = response;
+		const { data, errors } = response;
 		const error = errors && errors.length > 0 ? new ApolloError({ graphQLErrors: errors }) : undefined;
 
 		setResult({
 			called: true,
 			loading: false,
-			input,
+			data,
 			error,
 		});
 
 		if (typeof onCompleted === 'function') {
-			onCompleted(input);
+			onCompleted(data);
 		}
 	};
 
@@ -141,7 +141,7 @@ const useEntityMutation = (type, id = '') => {
 		setResult({
 			loading: false,
 			error,
-			input: undefined,
+			data: undefined,
 			called: true,
 		});
 
