@@ -8,7 +8,7 @@
         <?php echo apply_filters(
             'FHEE__registration_page_attendee_information__attendee_information_pg',
             sprintf(
-                __(
+                esc_html__(
                     'In order to process your registration, we ask you to provide the following information.%1$sPlease note that all fields marked with an asterisk (%2$s) are required.',
                     'event_espresso'
                 ),
@@ -32,24 +32,24 @@ if (count($registrations) > 0) {
 
         <div class="spco-ticket-info-dv small-text">
             <?php if (!is_admin()) : ?>
-                <h5><?php _e('Details', 'event_espresso'); ?></h5>
+                <h5><?php esc_html_e('Details', 'event_espresso'); ?></h5>
             <?php endif; ?>
             <table class="spco-ticket-details">
                 <thead>
                 <tr>
-                    <th scope="col" width="" class="jst-left"><?php _e('Name and Description', 'event_espresso'); ?></th>
+                    <th scope="col" width="" class="jst-left"><?php esc_html_e('Name and Description', 'event_espresso'); ?></th>
                     <th scope="col" width="7.5%" class="jst-rght">
-                        <?php _e(
+                        <?php esc_html_e(
                             'Qty',
                             'event_espresso'
                         ); ?></th>
                     <th scope="col" width="17.5%" class="jst-rght">
-                        <?php _e(
+                        <?php esc_html_e(
                             'Price',
                             'event_espresso'
                         ); ?></th>
                     <th scope="col" width="17.5%" class="jst-rght">
-                        <?php _e(
+                        <?php esc_html_e(
                             'Total',
                             'event_espresso'
                         ); ?></th>
@@ -92,6 +92,6 @@ if (count($registrations) > 0) {
 
 <div class="clearfix">
     <a id="spco-display-event-questions-lnk" class="act-like-link smaller-text hidden hide-if-no-js float-right">
-        <?php _e('show&nbsp;event&nbsp;questions', 'event_espresso'); ?>
+        <?php esc_html_e('show&nbsp;event&nbsp;questions', 'event_espresso'); ?>
     </a>
 </div>
