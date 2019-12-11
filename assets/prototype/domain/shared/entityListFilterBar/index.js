@@ -9,7 +9,6 @@ import { __ } from '@eventespresso/i18n';
 /**
  * Internal dependencies
  */
-import useDatesListFilterManager from '../../../domain/eventEditor/containers/dates/useDatesListFilterManager';
 import Collapsible from './Collapsible';
 import './style.css';
 
@@ -29,12 +28,13 @@ const EntityListFilterBar = ({
 	listId: id,
 	instanceId,
 	entityFilters = null,
-	searchText = '',
 	perPage = 6,
+	searchText = '',
+	setGridView,
+	setListView,
 	view = 'grid',
 }) => {
 	const listId = id ? id : 'entity-list-' + instanceId;
-	const { setSearchText, setPerPage, setListView, setGridView } = useDatesListFilterManager();
 
 	const [showEntityFilters, setShowEntityFilters] = React.useState(false);
 	const toggleEntityFilters = () => setShowEntityFilters(!showEntityFilters);

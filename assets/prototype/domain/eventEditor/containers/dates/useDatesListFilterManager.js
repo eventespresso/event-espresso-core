@@ -1,7 +1,8 @@
 import { useReducer, useEffect } from '@wordpress/element';
 
-const useDatesListFilterManager = () => {
-	const [state, dispatch] = useReducer(reducer, {});
+const useDatesListFilterManager = ({ datetimes }) => {
+	const initialState = { datetimes, view: 'list' };
+	const [state, dispatch] = useReducer(reducer, initialState);
 
 	useEffect(() => {
 		console.log('useDatesListFilterManager >>>', state);

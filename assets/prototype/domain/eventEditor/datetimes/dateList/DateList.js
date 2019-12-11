@@ -1,6 +1,7 @@
 import { H3 } from '@blueprintjs/core/lib/esm';
 import EmptyState from '../../../shared/EmptyState';
 import EntityListFilterBar from '../../../shared/entityListFilterBar';
+import useDatesListFilterManager from '../../containers/dates/useDatesListFilterManager';
 
 import AddNewDateButton from './AddNewDateButton';
 import DateCard from '../dateCard/DateCard';
@@ -21,6 +22,8 @@ const btnRowStyle = {
 };
 
 const DateList = ({ datetimes, tickets }) => {
+	const { setListView, setGridView } = useDatesListFilterManager({ datetimes });
+
 	const header = <H3 style={{ margin: '2rem 0 .5rem' }}>{'Dates List'}</H3>;
 
 	const btnRow = (
@@ -44,9 +47,11 @@ const DateList = ({ datetimes, tickets }) => {
 		</EmptyState>
 	);
 
-	const listId = "event-editor-dates-list";
+	const listId = 'event-editor-dates-list';
 	const entityListFilterBarProps = {
 		listId,
+		setListView,
+		setGridView,
 	};
 
 	return (
