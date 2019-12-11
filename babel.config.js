@@ -8,9 +8,11 @@ module.exports = function(api) {
 		'@wordpress/babel-preset-default',
 	];
 
+	const plugins = ['@babel/plugin-proposal-class-properties', '@babel/plugin-transform-runtime'];
+
 	return {
 		presets,
-		plugins: ['@babel/plugin-proposal-class-properties'],
+		plugins,
 		env: {
 			production: {
 				plugins: [
