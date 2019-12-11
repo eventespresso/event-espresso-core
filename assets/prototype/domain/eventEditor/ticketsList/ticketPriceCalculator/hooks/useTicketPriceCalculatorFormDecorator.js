@@ -42,7 +42,7 @@ const useTicketPriceCalculatorFormDecorator = () => {
 		(formData) => {
 			const result = calculator(formData, { type: 'CALCULATE_BASE_PRICE' });
 			const newBasePrice = getValue('prices[0].amount', result);
-			return { ['prices[0].amount']: newBasePrice };
+			return { ['prices[0].amount']: parseFloat(newBasePrice || 0) };
 		},
 		[calculator]
 	);
@@ -50,7 +50,7 @@ const useTicketPriceCalculatorFormDecorator = () => {
 		(formData) => {
 			const result = calculator(formData, { type: 'CALCULATE_TICKET_TOTAL/' });
 			const newTicketTotal = getValue('ticket.price', result);
-			return { ['ticket.price']: newTicketTotal };
+			return { ['ticket.price']: parseFloat(newTicketTotal || 0) };
 		},
 		[calculator]
 	);
