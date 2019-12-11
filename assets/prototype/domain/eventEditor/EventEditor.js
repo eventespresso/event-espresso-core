@@ -1,6 +1,6 @@
 import useInitQueries from '../eventEditor/containers/queries/useInitQueries';
-import DatesList from './datesList/DatesList';
-import TicketsList from './ticketsList/TicketsList';
+import DatesList from './datetimes/DatesList';
+import TicketsList from './tickets/TicketsList';
 
 const EventEditor = () => {
 	const { datetimes, datetimeError, loadingDates, tickets, ticketError, loadingTickets } = useInitQueries();
