@@ -1,5 +1,9 @@
 <?php
 
+use EventEspresso\core\exceptions\InvalidDataTypeException;
+use EventEspresso\core\exceptions\InvalidInterfaceException;
+use EventEspresso\core\services\orm\tree_traversal\ModelObjNode;
+
 /**
  * Events_Admin_Page
  * This contains the logic for setting up the Events related pages.
@@ -229,6 +233,15 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
                 'func'       => '_category_list_table',
                 'capability' => 'ee_manage_event_categories',
             ),
+            'preview_deletion' => [
+                'func' => 'previewDeletion',
+                'capability' => 'ee_delete_events'
+            ],
+            'confirm_deletion' => [
+                'func' => 'confirmDeletion',
+                'capability' => 'ee_delete_events',
+                'noheader' => true
+            ]
         );
     }
 
@@ -500,6 +513,13 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
                 'metaboxes'     => $this->_default_espresso_metaboxes,
                 'require_nonce' => false,
             ),
+            'preview_deletion'           => array(
+                'nav'           => array(
+                    'label'      => esc_html__('Preview Deletion', 'event_espresso'),
+                    'order'      => 15,
+                    'persistent' => false,
+                ),
+            )
         );
     }
 
@@ -1902,8 +1922,9 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
      */
     public function delete_cpt_item($post_id)
     {
+        throw new EE_Error(esc_html__('Please contact Event Espresso support with the details of the steps taken to produce this error.', 'event_espresso'));
         $this->_req_data['EVT_ID'] = $post_id;
-        $this->_delete_event(false);
+        $this->_delete_event();
     }
 
 
@@ -2062,37 +2083,20 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
      * @access protected
      * @param bool $redirect_after
      */
-    protected function _delete_event($redirect_after = true)
+    protected function _delete_event()
     {
         // determine the event id and set to array.
         $EVT_ID = isset($this->_req_data['EVT_ID']) ? absint($this->_req_data['EVT_ID']) : null;
-        $EVT_ID = isset($this->_req_data['post']) ? absint($this->_req_data['post']) : $EVT_ID;
-        // loop thru events
-        if ($EVT_ID) {
-            $success = $this->_permanently_delete_event($EVT_ID);
-            // get list of events with no prices
-            $espresso_no_ticket_prices = get_option('ee_no_ticket_prices', array());
-            // remove this event from the list of events with no prices
-            if (isset($espresso_no_ticket_prices[ $EVT_ID ])) {
-                unset($espresso_no_ticket_prices[ $EVT_ID ]);
-            }
-            update_option('ee_no_ticket_prices', $espresso_no_ticket_prices);
-        } else {
-            $success = false;
-            $msg = esc_html__(
-                'An error occurred. An event could not be deleted because a valid event ID was not not supplied.',
-                'event_espresso'
-            );
-            EE_Error::add_error($msg, __FILE__, __FUNCTION__, __LINE__);
-        }
-        if ($redirect_after) {
-            $this->_redirect_after_action(
-                $success,
-                'Event',
-                'deleted',
-                array('action' => 'default', 'status' => 'trash')
-            );
-        }
+        // @todo: prepare the contents of the deletion preview page via a batch job, then redirect to the preview page.
+        wp_safe_redirect(
+            EE_Admin_Page::add_query_args_and_nonce(
+                [
+                    'action' => 'preview_deletion',
+                    'EVT_IDs[]' => $EVT_ID
+                ],
+                $this->_admin_base_url
+            )
+        );
     }
 
 
@@ -2104,34 +2108,167 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
      */
     protected function _delete_events()
     {
-        $success = true;
-        // get list of events with no prices
-        $espresso_no_ticket_prices = get_option('ee_no_ticket_prices', array());
-        // determine the event id and set to array.
         $EVT_IDs = isset($this->_req_data['EVT_IDs']) ? (array) $this->_req_data['EVT_IDs'] : array();
-        // loop thru events
+        $args = [
+            'action' => 'preview_deletion',
+        ];
         foreach ($EVT_IDs as $EVT_ID) {
-            $EVT_ID = absint($EVT_ID);
-            if ($EVT_ID) {
-                $results = $this->_permanently_delete_event($EVT_ID);
-                $success = $results !== false ? $success : false;
-                // remove this event from the list of events with no prices
-                unset($espresso_no_ticket_prices[ $EVT_ID ]);
-            } else {
-                $success = false;
-                $msg = esc_html__(
-                    'An error occurred. An event could not be deleted because a valid event ID was not not supplied.',
-                    'event_espresso'
-                );
-                EE_Error::add_error($msg, __FILE__, __FUNCTION__, __LINE__);
-            }
+            $args['EVT_IDs[]'] = (int) $EVT_ID;
         }
-        update_option('ee_no_ticket_prices', $espresso_no_ticket_prices);
-        // in order to force a pluralized result message we need to send back a success status greater than 1
-        $success = $success ? 2 : false;
-        $this->_redirect_after_action($success, 'Events', 'deleted', array('action' => 'default'));
+        // @todo: prepare the contents of the deletion preview page via a batch job, then redirect to the preview page.
+        wp_safe_redirect(
+            EE_Admin_Page::add_query_args_and_nonce(
+                $args,
+                $this->_admin_base_url
+            )
+        );
     }
 
+    /**
+     * A page for users to preview what exactly will be deleted, and confirm they want to delete it.
+     * @since $VID:$
+     */
+    protected function previewDeletion()
+    {
+        $EVT_IDs = isset($this->_req_data['EVT_IDs']) ? (array) $this->_req_data['EVT_IDs'] : array();
+        $confirm_deletion_args = [
+            'action' => 'confirm_deletion',
+        ];
+        foreach ($EVT_IDs as $EVT_ID) {
+            $confirm_deletion_args['EVT_IDs[]'] = (int) $EVT_ID;
+        }
+        $this->_template_args['admin_page_content'] = EEH_Template::display_template(
+            EVENTS_TEMPLATE_PATH . 'event_preview_deletion.template.php',
+            [
+                'form_url' => EE_Admin_Page::add_query_args_and_nonce(
+                    $confirm_deletion_args,
+                    $this->admin_base_url()
+                )
+            ],
+            true
+        );
+        $this->display_admin_page_with_no_sidebar();
+    }
+
+    protected function confirmDeletion()
+    {
+        $event_ids = isset($this->_req_data['EVT_IDs']) ? $this->_req_data['EVT_IDs'] : array();
+        $success = $this->deleteEventsAndDependentData($event_ids);
+        $this->redirect_after_action(
+            $success,
+            esc_html__('Events', 'event_espresso'),
+            esc_html__('deleted', 'event_espresso'),
+            [
+                'action' => 'default'
+            ]
+        );
+    }
+
+    /**
+     * Deletes the events and all dependent data, plus those events' non-global/non-default tickets, prices, and
+     * message template groups.
+     * @since $VID:$
+     * @param $event_ids
+     * @return int
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws ReflectionException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     */
+    protected function deleteEventsAndDependentData($event_ids)
+    {
+        // Call me an optimist.
+        $success = true;
+        $espresso_no_ticket_prices = get_option('ee_no_ticket_prices', array());
+
+        // Find all the root nodes to delete (this isn't just events, because there's other data, like related tickets,
+        // prices, message templates, etc, whose model definition doesn't make them dependent on events. But,
+        // we have no UI to access them independent of events, so they may as well get deleted too.)
+        $model_objects_to_delete = [];
+        foreach ($event_ids as $event_id) {
+            $event = EEM_Event::instance()->get_one_by_ID($event_id);
+//            $model_objects_to_delete[] = $event;
+            // Also, we want to delete their related, non-global, tickets, prices and message templates
+            $related_non_global_tickets = EEM_Ticket::instance()->get_all_deleted_and_undeleted(
+                [
+                    [
+                        'TKT_is_default' => false,
+                        'Datetime.EVT_ID' => $event_id
+                    ]
+                ]
+            );
+            $related_non_global_prices = EEM_Price::instance()->get_all_deleted_and_undeleted(
+                [
+                    [
+                        'PRC_is_default' => false,
+                        'Ticket.Datetime.EVT_ID' => $event_id
+                    ]
+                ]
+            );
+            $related_message_templates = $event->get_many_related(
+                'Message_Template_Group',
+                [
+                    [
+                        'MTP_is_global' => false
+                    ]
+                ]
+            );
+            $model_objects_to_delete = array_merge(
+                $model_objects_to_delete,
+                [$event],
+                $related_non_global_tickets,
+                $related_non_global_prices,
+                $related_message_templates
+            );
+        }
+
+        // Find all the dependent model objects we want to delete.
+        $ids_to_delete = [];
+        foreach ($model_objects_to_delete as $model_object_to_delete) {
+            $node = new ModelObjNode($model_object_to_delete);
+            $node->visit(9999);
+            $ids_to_delete = array_replace_recursive($ids_to_delete, $node->getIds());
+        }
+
+        // Delete them all, one query per model.
+        foreach ($ids_to_delete as $model_name => $ids) {
+            $model = EE_Registry::instance()->load_model($model_name);
+            if ($model->has_primary_key_field()) {
+                $where_conditions = [
+                    $model->primary_key_name() => [
+                        'IN',
+                        $ids
+                    ]
+                ];
+            } else {
+                $where_conditions = [
+                    'OR' => []
+                ];
+                foreach ($ids as $index_primary_key_string) {
+                    $keys_n_values = $model->parse_index_primary_key_string($index_primary_key_string);
+                    $where_conditions['OR'][ 'AND*' . $index_primary_key_string ] = $keys_n_values;
+                }
+            }
+            if (!$model->delete_permanently(
+                [
+                    $where_conditions
+                ],
+                false
+            )) {
+                $success = false;
+            }
+        }
+        if (isset($espresso_no_ticket_prices[ $event_id ])) {
+            unset($espresso_no_ticket_prices[ $event_id ]);
+        }
+        // Fire a legacy action.
+        foreach ($event_ids as $event_id) {
+            do_action('AHEE__Events_Admin_Page___permanently_delete_event__after_event_deleted', $event_id);
+        }
+        update_option('ee_no_ticket_prices', $espresso_no_ticket_prices);
+        return $success;
+    }
 
     /**
      * _permanently_delete_event
