@@ -1,7 +1,6 @@
 import { useContext } from 'react';
-import { pick } from 'ramda';
 import { ConfigContext } from '../../../infrastructure/services/contextProviders/ConfigProvider';
-import getDateTimeFormat from '../../../application/value-objects/date-time/getDateTimeFormat';
+import getDateTimeFormat from '../../../application/valueObjects/dateTime/getDateTimeFormat';
 
 type useConfigProviderProps = {
 	dateTimeFormat: boolean;
@@ -11,22 +10,14 @@ type useConfigProviderProps = {
  *
  * useConfigProvider is used to cherry-pick the exact configs we might need from ConfigProvider.
  */
-
 const useConfigProvider = ({ dateTimeFormat }: useConfigProviderProps) => {
 	const { dateFormat, timeFormat } = useContext(ConfigContext);
 	let config: any = {};
 
 	if (dateTimeFormat) {
-		config.dateTimeFormat = getDateTimeFormat({ dateFormat, timeFormat });
+		const dateTimeFormat = getDateTimeFormat({ dateFormat, timeFormat });
+		config = { ...config, ...dateTimeFormat };
 	}
-
-	// const configArray = Object.entries(props).reduce((configs, [configName, configBool]) => {
-	// 	if (configBool) {
-	// 		configs.push(configName);
-	// 	}
-
-	// 	return configs;
-	// }, []);
 
 	return config;
 };
