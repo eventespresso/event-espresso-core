@@ -1,7 +1,6 @@
 import { H3 } from '@blueprintjs/core/lib/esm';
-import LoadingIndicator from '../../../shared/LoadingIndicator';
-import ErrorIndicator from '../../../shared/ErrorIndicator';
 import EmptyState from '../../../shared/EmptyState';
+import EntityListFilterBar from '../../../shared/entityListFilterBar';
 
 import AddNewDateButton from './AddNewDateButton';
 import DateCard from '../dateCard/DateCard';
@@ -21,19 +20,8 @@ const btnRowStyle = {
 	width: '100%',
 };
 
-const DateList = ({ datetimes, error, loading, tickets }) => {
-	if (!loading) {
-		console.log('%c DateList', 'color: orangered; font-size: 14px;');
-		console.log('%c > datetimes:', 'color: tomato;', datetimes);
-		console.log('%c > loading:', 'color: tomato;', loading);
-	} else if (error) {
-		console.log('%c > error:', 'color: red; font-size:16px;', error);
-	}
+const DateList = ({ datetimes, tickets }) => {
 	const header = <H3 style={{ margin: '2rem 0 .5rem' }}>{'Dates List'}</H3>;
-
-	if (loading) return <LoadingIndicator header={header} message='loading dates...' />;
-
-	if (error) return <ErrorIndicator error={error} header={header} />;
 
 	const btnRow = (
 		<div style={btnRowStyle}>
@@ -56,9 +44,15 @@ const DateList = ({ datetimes, error, loading, tickets }) => {
 		</EmptyState>
 	);
 
+	const listId = "event-editor-dates-list";
+	const entityListFilterBarProps = {
+		listId,
+	};
+
 	return (
 		<div>
 			{header}
+			<EntityListFilterBar {...entityListFilterBarProps} />
 			{datesList}
 		</div>
 	);
