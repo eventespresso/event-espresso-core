@@ -1,30 +1,24 @@
-import { useContext } from 'react';
-import { pick } from 'ramda';
-import { ConfigContext } from '../../../infrastructure/services/contextProviders/ConfigProvider';
+import useConfig from './useConfig';
+import getDateTimeFormat from '../../../application/valueObjects/dateTime/getDateTimeFormat';
 
 type useConfigProviderProps = {
-	dateFormat: boolean;
-	email: boolean;
-	timezone: boolean;
+	dateTimeFormat: boolean;
 };
 
 /**
  *
  * useConfigProvider is used to cherry-pick the exact configs we might need from ConfigProvider.
  */
+const useConfigProvider = ({ dateTimeFormat }: useConfigProviderProps) => {
+	const { dateFormat, timeFormat } = useConfig();
+	let config: any = {};
 
-const useConfigProvider = (props: useConfigProviderProps) => {
-	const config = useContext(ConfigContext);
+	if (dateTimeFormat) {
+		const dateTimeFormat = getDateTimeFormat({ dateFormat, timeFormat });
+		config = { ...config, ...dateTimeFormat };
+	}
 
-	const configArray = Object.entries(props).reduce((configs, [configName, configBool]) => {
-		if (configBool) {
-			configs.push(configName);
-		}
-
-		return configs;
-	}, []);
-
-	return pick(configArray, config);
+	return config;
 };
 
 export default useConfigProvider;
