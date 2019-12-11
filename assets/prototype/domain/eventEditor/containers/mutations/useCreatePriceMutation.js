@@ -2,28 +2,22 @@ import { useMutation } from '@apollo/react-hooks';
 import { CREATE_PRICE } from './prices';
 import { GET_PRICES } from '../queries/prices';
 
-import useToaster from '../../../../infrastructure/services/toaster/useToaster';
+import useInitToaster from '../../../../infrastructure/services/toaster/useInitToaster';
 import useRelations from '../../../../infrastructure/services/relations/useRelations';
 
 /**
  * @todo replace `tickets` with `useTicketsIn()`
  */
 const useCreatePriceMutation = ({ tickets, ticketId }) => {
-	const toaster = useToaster();
-	const { updateRelations } = useRelations();
-	const toasterMessage = 'creating new price';
-	const [createPrice, { loading, error }] = useMutation(CREATE_PRICE, {
-		onCompleted: () => {
-			toaster.dismiss(toasterMessage);
-			toaster.success('price successfully created');
-		},
-		onError: (error) => {
-			toaster.dismiss(toasterMessage);
-			toaster.error(error);
-		},
+	const { onCompleted, onError, initializationNotices } = useInitToaster({
+		loadingMessage: 'creating new price',
+		successMessage: 'price successfully created',
 	});
-	toaster.loading(loading, toasterMessage);
-	toaster.error(error);
+
+	const { updateRelations } = useRelations();
+
+	const [createPrice, { loading, error }] = useMutation(CREATE_PRICE, { onCompleted, onError });
+	initializationNotices(loading, error);
 
 	const onCreateHandler = ({ name, desc, amount, priceType, isDefault }) => {
 		const variables = {

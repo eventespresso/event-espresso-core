@@ -4,26 +4,20 @@ import { CREATE_TICKET } from './tickets';
 import { GET_TICKETS } from '../queries/tickets';
 import { GET_PRICES } from '../queries/prices';
 
-import useToaster from '../../../../infrastructure/services/toaster/useToaster';
+import useInitToaster from '../../../../infrastructure/services/toaster/useInitToaster';
 import useRelations from '../../../../infrastructure/services/relations/useRelations';
 
 const useCreateTicketMutation = ({ datetimes }) => {
-	const toaster = useToaster();
 	const { updateRelations, addRelation } = useRelations();
 	const id = 0;
-	const toasterMessage = `creating new ticket for datetime ${id}`;
-	const [createTicket, { loading, error }] = useMutation(CREATE_TICKET, {
-		onCompleted: () => {
-			toaster.dismiss(toasterMessage);
-			toaster.success('ticket successfully created');
-		},
-		onError: (error) => {
-			toaster.dismiss(toasterMessage);
-			toaster.error(error);
-		},
+
+	const { onCompleted, onError, initializationNotices } = useInitToaster({
+		loadingMessage: `creating new ticket for datetime ${id}`,
+		successMessage: 'ticket successfully created',
 	});
-	toaster.loading(loading, toasterMessage);
-	toaster.error(error);
+
+	const [createTicket, { loading, error }] = useMutation(CREATE_TICKET, { onCompleted, onError });
+	initializationNotices(loading, error);
 
 	const onCreateHandler = ({ name, description, price, datetimes: ticketDatetimes = [] }) => {
 		const variables = {

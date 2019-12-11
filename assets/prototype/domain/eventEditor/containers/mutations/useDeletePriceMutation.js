@@ -2,26 +2,20 @@ import get from 'lodash/get';
 import { useMutation } from '@apollo/react-hooks';
 import { DELETE_PRICE } from './prices';
 import { GET_PRICES } from '../queries/prices';
-import useToaster from '../../../../infrastructure/services/toaster/useToaster';
+import useInitToaster from '../../../../infrastructure/services/toaster/useInitToaster';
 import useRelations from '../../../../infrastructure/services/relations/useRelations';
 
 const useDeletePriceMutation = ({ ticketIn, id }) => {
-	const toaster = useToaster();
 	const { removeRelation, dropRelations } = useRelations();
-	const toasterMessage = `deleting price ${id}`;
-	const [deletePrice, { loading, error }] = useMutation(DELETE_PRICE, {
-		onCompleted: () => {
-			toaster.dismiss(toasterMessage);
-			toaster.success(`price ${id} successfully deleted`);
-		},
-		onError: (error) => {
-			toaster.dismiss(toasterMessage);
-			toaster.error(error);
-		},
+
+	const { onCompleted, onError, initializationNotices } = useInitToaster({
+		loadingMessage: `deleting price ${id}`,
+		successMessage: `price ${id} successfully deleted`,
 	});
 
-	toaster.loading(loading, toasterMessage);
-	toaster.error(error);
+	const [deletePrice, { loading, error }] = useMutation(DELETE_PRICE, { onCompleted, onError });
+
+	initializationNotices(loading, error);
 
 	const variables = { input: { clientMutationId: 'xyz', id } };
 
