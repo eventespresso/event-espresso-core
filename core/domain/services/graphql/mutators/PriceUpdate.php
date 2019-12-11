@@ -86,10 +86,9 @@ class PriceUpdate
                     new RuntimeException(
                         sprintf(
                             esc_html__(
-                                'The Price failed to update because of the following error(s):%1$s%2$s',
+                                'The Price failed to update because of the following error(s): %1$s',
                                 'event_espresso'
                             ),
-                            '<br/>',
                             $exception->getMessage()
                         )
                     )

@@ -94,10 +94,9 @@ class DatetimeUpdate
                     new RuntimeException(
                         sprintf(
                             esc_html__(
-                                'The Datetime failed to update because of the following error(s):%1$s%2$s',
+                                'The Datetime failed to update because of the following error(s): %1$s',
                                 'event_espresso'
                             ),
-                            '<br/>',
                             $exception->getMessage()
                         )
                     )
