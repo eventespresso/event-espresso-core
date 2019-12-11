@@ -1,5 +1,4 @@
-import { useContext } from 'react';
-import { ConfigContext } from '../../../infrastructure/services/contextProviders/ConfigProvider';
+import useConfig from './useConfig';
 import getDateTimeFormat from '../../../application/valueObjects/dateTime/getDateTimeFormat';
 
 type useConfigProviderProps = {
@@ -11,7 +10,7 @@ type useConfigProviderProps = {
  * useConfigProvider is used to cherry-pick the exact configs we might need from ConfigProvider.
  */
 const useConfigProvider = ({ dateTimeFormat }: useConfigProviderProps) => {
-	const { dateFormat, timeFormat } = useContext(ConfigContext);
+	const { dateFormat, timeFormat } = useConfig();
 	let config: any = {};
 
 	if (dateTimeFormat) {
