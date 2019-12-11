@@ -31,11 +31,20 @@ const useOnSubmitPrices = (existingPrices) => {
 				return;
 			}
 			const { id, ...input } = pick(PRICE_INPUT_FIELDS, price);
+
+			const normalizedPriceFields = {
+				...input,
+				amount: parseFloat(price.amount || 0),
+				isDefault: !! price.isDefault,
+				order: parseInt(price.order, 10),
+				overrides: parseInt(price.overrides, 10),
+				parent: parseInt(price.parent, 10),
+			};
 			// if it's a newly added price
 			if (!id) {
-				createEntity({ ...input, ticketId: ticket.id });
+				createEntity({ ...normalizedPriceFields, ticketId: ticket.id });
 			} else {
-				updateEntity({ id, ...input });
+				updateEntity({ id, ...normalizedPriceFields });
 			}
 			updatedPrices.push(id);
 		});
@@ -47,8 +56,13 @@ const useOnSubmitPrices = (existingPrices) => {
 			deleteEntity({ id });
 		});
 
+		const normalizedTicketFields = {
+			...ticket,
+			price: parseFloat(ticket.price || 0),
+			reverseCalculate: !! ticket.reverseCalculate,
+		};
 		// Finally update the ticket price relation
-		updateTicket({ ...ticket, prices: updatedPrices });
+		updateTicket({ ...normalizedTicketFields, prices: updatedPrices });
 	};
 };
 
