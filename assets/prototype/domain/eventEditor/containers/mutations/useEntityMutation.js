@@ -82,7 +82,7 @@ const useEntityMutation = (type, id = '') => {
 	};
 
 	/**
-	 * @param {string} id Entity id
+	 * @param {object} input
 	 */
 	const getUpdateMutation = (input) => {
 		const mutationType = 'UPDATE';
@@ -93,7 +93,7 @@ const useEntityMutation = (type, id = '') => {
 	};
 
 	/**
-	 *
+	 * @param {object} input
 	 */
 	const getDeleteMutation = (input) => {
 		const mutationType = 'DELETE';
@@ -153,7 +153,7 @@ const useEntityMutation = (type, id = '') => {
 	/**
 	 *
 	 */
-	const mutate = (options) => {
+	const mutate = async (options) => {
 		const { onCompleted, onError, ...mutationOptions } = options;
 		onMutationStart();
 		client

@@ -35,14 +35,32 @@ const useOnSubmitPrices = (existingPrices) => {
 	const { updateEntity: updateTicket } = useEntityMutator('Ticket');
 	const existingPriceIds = existingPrices.map(({ id }) => id);
 
-	return (formData) => {
+	// Async to make sure that prices are handled before updating the ticket.
+	return async (formData) => {
 		console.log('%c Ticket Price Calculator Form Submit', 'color:YellowGreen;', formData);
 		const { ticket, prices = [] } = formData;
 
 		// Array containing the updated prices
 		const updatedPrices = [];
 
-		prices.forEach((price) => {
+		await Promise.all(
+			prices.map((price) => {
+				if (price.id === 'NEW_PRICE') {
+					return Promise.resolve();
+				}
+				const { id, ...input } = pick(PRICE_INPUT_FIELDS, price);
+				// if it's a newly added price
+				if (!id) {
+					return createEntity({ ...input, ticketId: ticket.id });
+				}
+				updatedPrices.push(id);
+				return updateEntity({ id, ...input });
+			})
+		);
+
+		console.log('<<<useOnSubmitPrices>>>', { existingPriceIds, updatedPrices });
+
+		/* prices.forEach((price) => {
 			if (price.id === 'NEW_PRICE') {
 				return;
 			}
@@ -61,13 +79,14 @@ const useOnSubmitPrices = (existingPrices) => {
 				updateEntity({ id, ...normalizedPriceFields });
 			}
 			updatedPrices.push(id);
-		});
+		}); */
 
 		// the unlucky prices.
 		const deletedPrices = difference(existingPriceIds, updatedPrices);
+		console.log('<<<useOnSubmitPrices>>>', { deletedPrices });
 		// Delete all unlucky ones
-		deletedPrices.forEach((id) => {
-			deleteEntity({ id });
+		await deletedPrices.forEach(async (id) => {
+			await deleteEntity({ id });
 		});
 
 		const normalizedTicketFields = {
@@ -76,7 +95,8 @@ const useOnSubmitPrices = (existingPrices) => {
 			reverseCalculate: parseBooleanField(ticket.reverseCalculate),
 		};
 		// Finally update the ticket price relation
-		updateTicket({ ...normalizedTicketFields, prices: updatedPrices });
+		// updateTicket({ ...normalizedTicketFields, prices: updatedPrices });
+		updateTicket({ /* ...ticket */ id: ticket.id, name: 'changed name', prices: updatedPrices });
 	};
 };
 

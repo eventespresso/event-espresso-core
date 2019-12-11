@@ -15,7 +15,7 @@ const DeleteDateButton = ({ id }) => {
 				textAlign: 'right',
 			}}
 		>
-			<Button icon={'trash'} onClick={deleteEntity} minimal />
+			<Button icon={'trash'} onClick={() => deleteEntity()} minimal />
 		</div>
 	);
 };

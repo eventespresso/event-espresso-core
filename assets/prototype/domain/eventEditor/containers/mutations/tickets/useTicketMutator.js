@@ -36,14 +36,14 @@ const useTicketMutator = () => {
 		const onUpdate = ({ proxy, entity }) => {
 			// extract prices data to avoid
 			// it going to tickets cache
-			const { prices: defaultPrices, ...ticket } = entity;
-			const prices = pathOr([], ['nodes'], defaultPrices);
+			const { prices: updatedPrices, ...ticket } = entity;
+			const prices = pathOr([], ['nodes'], updatedPrices);
 
 			// Read the existing data from cache.
 			const { tickets = {} } = proxy.readQuery(options);
-			const { datetimes: datetimeIds = [], prices: inputPriceIds = [] } = input;
+			const { datetimes: datetimeIds = [] } = input;
 
-			const priceIds = inputPriceIds || prices.map(({ id }) => id);
+			const priceIds = prices.map(({ id }) => id);
 
 			switch (mutationType) {
 				case 'CREATE':
