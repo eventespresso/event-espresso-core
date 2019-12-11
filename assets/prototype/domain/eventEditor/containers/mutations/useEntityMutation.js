@@ -87,7 +87,7 @@ const useEntityMutation = (type, id = '') => {
 	const getUpdateMutation = (input) => {
 		const mutationType = 'UPDATE';
 		const mutation = getMutation(mutationType);
-		const options = getMutationOptions(mutationType, { ...input, id });
+		const options = getMutationOptions(mutationType, { id, ...input });
 
 		return { mutation, ...options };
 	};
@@ -95,10 +95,10 @@ const useEntityMutation = (type, id = '') => {
 	/**
 	 *
 	 */
-	const getDeleteMutation = () => {
+	const getDeleteMutation = (input) => {
 		const mutationType = 'DELETE';
 		const mutation = getMutation(mutationType);
-		const options = getMutationOptions(mutationType, { id });
+		const options = getMutationOptions(mutationType, { id, ...input });
 
 		return { mutation, ...options };
 	};

@@ -7,7 +7,21 @@ export const TICKET_ATTRIBUTES = gql`
 		dbId
 		name
 		description
+		startDate
+		endDate
+		isDefault
+		isFree
+		isRequired
+		isTaxable
+		max
+		min
+		order
 		price
+		quantity
+		reserved
+		reverseCalculate
+		sold
+		uses
 	}
 `;
 

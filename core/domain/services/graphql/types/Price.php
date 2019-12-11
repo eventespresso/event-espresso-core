@@ -3,8 +3,6 @@
 namespace EventEspresso\core\domain\services\graphql\types;
 
 use EEM_Price;
-use EE_Price;
-use EEM_Price_Type;
 use EventEspresso\core\services\graphql\fields\GraphQLFieldInterface;
 use EventEspresso\core\services\graphql\types\TypeBase;
 use EventEspresso\core\services\graphql\fields\GraphQLField;
@@ -13,16 +11,8 @@ use EventEspresso\core\services\graphql\fields\GraphQLOutputField;
 use EventEspresso\core\domain\services\graphql\mutators\PriceCreate;
 use EventEspresso\core\domain\services\graphql\mutators\PriceDelete;
 use EventEspresso\core\domain\services\graphql\mutators\PriceUpdate;
-
-use EE_Error;
-use Exception;
 use InvalidArgumentException;
 use ReflectionException;
-use EventEspresso\core\exceptions\InvalidDataTypeException;
-use EventEspresso\core\exceptions\InvalidInterfaceException;
-use EventEspresso\core\exceptions\UnexpectedEntityException;
-use WPGraphQL\AppContext;
-use GraphQL\Type\Definition\ResolveInfo;
 
 /**
  * Class Price
@@ -120,10 +110,8 @@ class Price extends TypeBase
             new GraphQLOutputField(
                 'priceTypeOrder',
                 'Int',
-                null,
-                esc_html__('Order of Application of Price type.', 'event_espresso'),
-                null,
-                [$this, 'priceTypeOrder']
+                'type_order',
+                esc_html__('Order of Application of Price type.', 'event_espresso')
             ),
             new GraphQLInputField(
                 'priceType',
@@ -164,10 +152,8 @@ class Price extends TypeBase
             new GraphQLOutputField(
                 'isTax',
                 'Boolean',
-                null,
-                esc_html__('Flag indicating price is a tax.', 'event_espresso'),
-                null,
-                [$this, 'isTax']
+                'is_tax',
+                esc_html__('Flag indicating price is a tax.', 'event_espresso')
             ),
             new GraphQLOutputField(
                 'wpUser',
@@ -182,52 +168,6 @@ class Price extends TypeBase
                 esc_html__('Price Creator ID', 'event_espresso')
             ),
         ];
-    }
-
-
-    /**
-     * @param EE_Price    $source  The source that's passed down the GraphQL queries
-     * @param array       $args    The inputArgs on the field
-     * @param AppContext  $context The AppContext passed down the GraphQL tree
-     * @param ResolveInfo $info    The ResolveInfo passed down the GraphQL tree
-     * @return string
-     * @throws EE_Error
-     * @throws Exception
-     * @throws InvalidArgumentException
-     * @throws InvalidDataTypeException
-     * @throws InvalidInterfaceException
-     * @throws ReflectionException
-     * @throws UserError
-     * @throws UnexpectedEntityException
-     * @since $VID:$
-     */
-    public function isTax(EE_Price $source, array $args, AppContext $context, ResolveInfo $info)
-    {
-        $price_type = $source->type_obj();
-        return $price_type->base_type() === EEM_Price_Type::base_type_tax;
-    }
-
-
-    /**
-     * @param EE_Price    $source  The source that's passed down the GraphQL queries
-     * @param array       $args    The inputArgs on the field
-     * @param AppContext  $context The AppContext passed down the GraphQL tree
-     * @param ResolveInfo $info    The ResolveInfo passed down the GraphQL tree
-     * @return string
-     * @throws EE_Error
-     * @throws Exception
-     * @throws InvalidArgumentException
-     * @throws InvalidDataTypeException
-     * @throws InvalidInterfaceException
-     * @throws ReflectionException
-     * @throws UserError
-     * @throws UnexpectedEntityException
-     * @since $VID:$
-     */
-    public function priceTypeOrder(EE_Price $source, array $args, AppContext $context, ResolveInfo $info)
-    {
-        $price_type = $source->type_obj();
-        return $price_type->order();
     }
 
 

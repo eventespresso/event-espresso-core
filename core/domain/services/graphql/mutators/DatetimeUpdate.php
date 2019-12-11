@@ -8,12 +8,15 @@ use EventEspresso\core\domain\services\graphql\types\Datetime;
 use EventEspresso\core\domain\services\graphql\data\mutations\DatetimeMutation;
 
 use EE_Error;
+use EventEspresso\core\exceptions\ExceptionStackTraceDisplay;
+use Exception;
 use InvalidArgumentException;
 use ReflectionException;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
 
 use GraphQL\Type\Definition\ResolveInfo;
+use RuntimeException;
 use WPGraphQL\AppContext;
 use GraphQL\Error\UserError;
 use GraphQLRelay\Relay;
@@ -61,6 +64,7 @@ class DatetimeUpdate
 
             if ($id) {
                 $entity = $model->get_one_by_ID($id);
+                $id = $entity->ID();
             }
 
             /**
@@ -83,13 +87,23 @@ class DatetimeUpdate
             }
 
             // Update the entity
-            $result = $entity->save($args);
-
-            if (empty($result)) {
-                throw new UserError(esc_html__('The object failed to update but no error was provided', 'event_espresso'));
+            try {
+                $entity->save($args);
+            } catch (Exception $exception) {
+                new ExceptionStackTraceDisplay(
+                    new RuntimeException(
+                        sprintf(
+                            esc_html__(
+                                'The Datetime failed to update because of the following error(s): %1$s',
+                                'event_espresso'
+                            ),
+                            $exception->getMessage()
+                        )
+                    )
+                );
             }
 
-            if (! empty($tickets)) {
+            if ($id && ! empty($tickets)) {
                 DatetimeMutation::setRelatedTickets($entity, $tickets);
             }
 

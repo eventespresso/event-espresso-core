@@ -6,8 +6,12 @@ export const PRICE_TYPE_ATTRIBUTES = gql`
 		dbId
 		name
 		baseType
-		isPercent
+		isBasePrice
+		isDeleted
 		isDiscount
+		isPercent
+		isTax
+		order
 	}
 `;
 
