@@ -153,7 +153,7 @@ const useEntityMutation = (type, id = '') => {
 	/**
 	 *
 	 */
-	const mutate = async (options) => {
+	const mutate = (options) => {
 		const { onCompleted, onError, ...mutationOptions } = options;
 		onMutationStart();
 		client
