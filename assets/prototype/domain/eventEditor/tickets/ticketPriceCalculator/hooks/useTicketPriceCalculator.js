@@ -10,7 +10,7 @@ import calculateBasePrice from './calculateBasePrice';
 import calculateTicketTotal from './calculateTicketTotal';
 
 const useTicketPriceCalculator = () => {
-	useCallback((state, action) => {
+	return useCallback((state, action) => {
 		switch (action.type) {
 			case 'CALCULATE_BASE_PRICE':
 				return calculateBasePrice(state);
