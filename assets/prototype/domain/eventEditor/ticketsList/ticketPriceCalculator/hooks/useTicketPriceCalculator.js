@@ -1,7 +1,7 @@
 /**
  * Internal imports
  */
-import {useCallback} from '@wordpress/element';
+import { useCallback } from '@wordpress/element';
 
 /**
  * Internal imports
@@ -9,8 +9,8 @@ import {useCallback} from '@wordpress/element';
 import calculateBasePrice from './calculateBasePrice';
 import calculateTicketTotal from './calculateTicketTotal';
 
-const useTicketPriceCalculator = () => useCallback(
-	(state, action) => {
+const useTicketPriceCalculator = () => {
+	useCallback((state, action) => {
 		switch (action.type) {
 			case 'CALCULATE_BASE_PRICE':
 				return calculateBasePrice(state);
@@ -19,9 +19,7 @@ const useTicketPriceCalculator = () => useCallback(
 			default:
 				return state;
 		}
-	},
-	[]
-);
-
+	}, []);
+};
 
 export default useTicketPriceCalculator;
