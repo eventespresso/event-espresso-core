@@ -1,6 +1,6 @@
 import { useQuery } from '@apollo/react-hooks';
 import { useEffect, useState } from '@wordpress/element';
-import { GET_DATETIMES } from './dates';
+import { GET_DATETIMES } from './datetimes';
 import useToaster from '../../../../infrastructure/services/toaster/useToaster';
 import useStatus from '../../../../infrastructure/services/status/useStatus';
 import useEventId from './useEventId';

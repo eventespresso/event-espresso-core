@@ -1,4 +1,4 @@
-import { GET_DATETIME, GET_DATETIMES } from './dates';
+import { GET_DATETIME, GET_DATETIMES } from './datetimes';
 import { GET_TICKET, GET_TICKETS } from './tickets';
 import { GET_PRICE, GET_PRICES } from './prices';
 

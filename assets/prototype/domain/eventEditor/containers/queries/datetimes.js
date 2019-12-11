@@ -4,10 +4,20 @@ export const DATETIME_ATTRIBUTES = gql`
 	fragment datetimeAttributes on Datetime {
 		id
 		dbId
-		description
-		endDate
 		name
+		description
 		startDate
+		endDate
+		capacity
+		isActive
+		isExpired
+		isPrimary
+		isSoldOut
+		isUpcoming
+		length
+		order
+		reserved
+		sold
 	}
 `;
 

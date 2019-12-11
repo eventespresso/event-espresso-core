@@ -1,6 +1,6 @@
 import * as R from 'ramda';
 import { useApolloClient } from '@apollo/react-hooks';
-import { GET_DATETIMES } from './dates';
+import { GET_DATETIMES } from './datetimes';
 import useEventId from './useEventId';
 import useStatus from '../../../../infrastructure/services/status/useStatus';
 
