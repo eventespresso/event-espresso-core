@@ -51,6 +51,12 @@ const useOnSubmitPrices = (existingPrices) => {
 					return Promise.resolve(price);
 				}
 				const { id, ...input } = pick(PRICE_INPUT_FIELDS, price);
+				const normalizedPriceFields = {
+					...input,
+					amount: parseFloat(price.amount || 0),
+					isDefault: parseBooleanField(price.isDefault),
+					order: parseInt(price.order, 10),
+				};
 				// if it's a newly added price
 				if (!id) {
 					return new Promise((resolve, onError) => {
@@ -58,7 +64,7 @@ const useOnSubmitPrices = (existingPrices) => {
 							createdPriceIds.push(price.id);
 							resolve(price);
 						};
-						createEntity({ ...input, ticketId: ticket.id }, { onCompleted, onError });
+						createEntity({ ...normalizedPriceFields, ticketId: ticket.id }, { onCompleted, onError });
 					});
 				}
 				return new Promise((resolve, onError) => {
@@ -66,7 +72,7 @@ const useOnSubmitPrices = (existingPrices) => {
 						updatedPriceIds.push(price.id);
 						resolve(price);
 					};
-					updateEntity({ id, ...input }, { onCompleted, onError });
+					updateEntity({ id, ...normalizedPriceFields }, { onCompleted, onError });
 				});
 			})
 		);
