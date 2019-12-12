@@ -25,10 +25,11 @@ $prev_event = 0;
 $prev_ticket = 0;
 
 if (count($registrations) > 0) {
+    $ticketID = key($template_args['ticket_count']);
     ?>
 
-    <div id="spco-attendee-panel-dv-single"
-        class="spco-attendee-panel-dv spco-attendee-ticket-<?php echo key($template_args['ticket_count']); ?>">
+    <div id="spco-attendee-panel-dv-<?php echo $ticketID; ?>"
+        class="spco-attendee-panel-dv spco-attendee-ticket-<?php echo $ticketID; ?>">
 
         <div class="spco-ticket-info-dv small-text">
             <?php if (!is_admin()) : ?>
