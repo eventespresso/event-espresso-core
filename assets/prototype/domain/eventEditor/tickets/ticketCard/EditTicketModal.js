@@ -1,6 +1,6 @@
 import { useContext } from '@wordpress/element';
 import FormModal from '../../../shared/FormModal';
-import TicketForm from '../TicketForm';
+import TicketForm from '../ticketForm/TicketForm';
 import { TicketContext } from '../../../../infrastructure/services/contextProviders/TicketProvider';
 import useEntityMutator from '../../containers/mutations/useEntityMutator';
 

@@ -1,10 +1,10 @@
 import { useContext } from '@wordpress/element';
 import { Field } from 'react-final-form';
 import { H2, H4 } from '@blueprintjs/core/lib/esm';
-import RelationsSelector from '../../shared/RelationsSelector';
+import RelationsSelector from '../../../shared/RelationsSelector';
 
-import { TicketContext } from '../../../infrastructure/services/contextProviders/TicketProvider';
-import useTicketItem from '../containers/queries/useTicketItem';
+import { TicketContext } from '../../../../infrastructure/services/contextProviders/TicketProvider';
+import useTicketItem from '../../containers/queries/useTicketItem';
 
 const hdrStyle = {
 	margin: '1em 0 .5em 24%',

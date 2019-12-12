@@ -12,7 +12,7 @@ import useDateItem from '../../containers/queries/useDateItem';
 import useEntityMutator from '../../containers/mutations/useEntityMutator';
 import useRelations from '../../../../infrastructure/services/relations/useRelations';
 import useStatus from '../../../../infrastructure/services/status/useStatus';
-import TicketId from '../TicketId';
+import TicketId from '../../tickets/TicketId';
 
 const btnStyle = {
 	margin: '0 0 0 .5rem',

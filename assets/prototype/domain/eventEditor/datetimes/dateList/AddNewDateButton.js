@@ -1,6 +1,6 @@
 import { useState } from '@wordpress/element';
 import AddNewDateModal from './AddNewDateModal';
-import { EspressoButton } from '../../../../ZZZ/components/ui';
+import { EspressoButton } from '../../../../../ZZZ/components/ui';
 
 const AddNewDateButton = ({ tickets }) => {
 	const [isOpen, setIsOpen] = useState(false);

@@ -1,6 +1,6 @@
-import DateForm from './DateForm';
-import FormModal from '../../shared/FormModal';
-import useEntityMutator from '../containers/mutations/useEntityMutator';
+import DateForm from '../dateForm/DateForm';
+import FormModal from '../../../shared/FormModal';
+import useEntityMutator from '../../containers/mutations/useEntityMutator';
 
 const AddNewDateModal = ({ tickets, handleClose, isOpen }) => {
 	const { createEntity } = useEntityMutator('Datetime');

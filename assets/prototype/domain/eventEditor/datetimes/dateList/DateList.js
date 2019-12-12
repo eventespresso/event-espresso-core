@@ -1,10 +1,10 @@
 import { H3 } from '@blueprintjs/core/lib/esm';
-import LoadingIndicator from '../../shared/LoadingIndicator';
-import ErrorIndicator from '../../shared/ErrorIndicator';
-import EmptyState from '../../shared/EmptyState';
+import LoadingIndicator from '../../../shared/LoadingIndicator';
+import ErrorIndicator from '../../../shared/ErrorIndicator';
+import EmptyState from '../../../shared/EmptyState';
 
 import AddNewDateButton from './AddNewDateButton';
-import DateCard from './dateCard/DateCard';
+import DateCard from '../dateCard/DateCard';
 
 const listStyle = {
 	display: 'flex',
@@ -21,9 +21,9 @@ const btnRowStyle = {
 	width: '100%',
 };
 
-const DatesList = ({ datetimes, error, loading, tickets }) => {
+const DateList = ({ datetimes, error, loading, tickets }) => {
 	if (!loading) {
-		console.log('%c DatesList', 'color: orangered; font-size: 14px;');
+		console.log('%c DateList', 'color: orangered; font-size: 14px;');
 		console.log('%c > datetimes:', 'color: tomato;', datetimes);
 		console.log('%c > loading:', 'color: tomato;', loading);
 	} else if (error) {
@@ -64,4 +64,4 @@ const DatesList = ({ datetimes, error, loading, tickets }) => {
 	);
 };
 
-export default DatesList;
+export default DateList;

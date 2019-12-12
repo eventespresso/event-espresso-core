@@ -3,10 +3,10 @@ import Currency from 'react-currency-formatter';
 import { Field } from 'react-final-form';
 import { H2, H4 } from '@blueprintjs/core/lib/esm';
 import { renderToString } from '@wordpress/element';
-import RelationsSelector from '../../shared/RelationsSelector';
+import RelationsSelector from '../../../shared/RelationsSelector';
 
-import { DateTimeContext } from '../../../infrastructure/services/contextProviders/DateTimeProvider';
-import useDateItem from '../containers/queries/useDateItem';
+import { DateTimeContext } from '../../../../infrastructure/services/contextProviders/DateTimeProvider';
+import useDateItem from '../../containers/queries/useDateItem';
 
 const hdrStyle = {
 	margin: '1em 0 .5em 24%',

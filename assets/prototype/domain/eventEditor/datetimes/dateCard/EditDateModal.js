@@ -1,6 +1,6 @@
 import { useContext } from '@wordpress/element';
 import FormModal from '../../../shared/FormModal';
-import DateForm from '../DateForm';
+import DateForm from '../dateForm/DateForm';
 import { DateTimeContext } from '../../../../infrastructure/services/contextProviders/DateTimeProvider';
 import useEntityMutator from '../../containers/mutations/useEntityMutator';
 

@@ -1,7 +1,7 @@
 import { Fragment } from '@wordpress/element';
 import { Callout, H3, H6, NonIdealState, Spinner } from '@blueprintjs/core/lib/esm';
 import AddNewTicketButton from './AddNewTicketButton';
-import TicketCard from './ticketCard/TicketCard';
+import TicketCard from '../ticketCard/TicketCard';
 
 const boxStyle = {
 	margin: '0 0 2rem',
@@ -36,9 +36,9 @@ const btnRowStyle = {
 	width: '100%',
 };
 
-const TicketsList = ({ tickets, datetimes, error, loading, loadingDates }) => {
+const TicketList = ({ tickets, datetimes, error, loading, loadingDates }) => {
 	if (!loading && !loadingDates) {
-		console.log('%c TicketsList', 'color: gold; font-size: 14px;');
+		console.log('%c TicketList', 'color: gold; font-size: 14px;');
 		console.log('%c > tickets:', 'color: goldenrod;', tickets);
 		console.log('%c > loading:', 'color: goldenrod;', loading);
 	} else if (error) {
@@ -108,4 +108,4 @@ const TicketsList = ({ tickets, datetimes, error, loading, loadingDates }) => {
 	);
 };
 
-export default TicketsList;
+export default TicketList;

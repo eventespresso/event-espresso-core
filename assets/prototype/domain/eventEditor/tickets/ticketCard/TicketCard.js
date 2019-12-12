@@ -8,7 +8,7 @@ import CurrencyInput from '../../../shared/CurrencyInput';
 import useEntityMutator from '../../containers/mutations/useEntityMutator';
 import useRelations from '../../../../infrastructure/services/relations/useRelations';
 import useStatus from '../../../../infrastructure/services/status/useStatus';
-import DatetimeId from '../DatetimeId';
+import DatetimeId from '../../datetimes/DatetimeId';
 
 const cardStyle = {
 	margin: '0 0 2rem',
@@ -91,7 +91,7 @@ const TicketCard = ({ datetimes, id }) => {
 					</H4>
 				</div>
 				<div style={btnsStyle}>
-					{/* Hide price calculator unless pricess are loaded */}
+					{/* Hide price calculator unless prices are loaded */}
 					{/* Delete button should also be hidden to avoid relational inconsistencies */}
 					{isLoaded('prices') && (
 						<>

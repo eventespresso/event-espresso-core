@@ -1,6 +1,6 @@
-import TicketForm from './TicketForm';
-import FormModal from '../../shared/FormModal';
-import useEntityMutator from '../containers/mutations/useEntityMutator';
+import TicketForm from '../ticketForm/TicketForm';
+import FormModal from '../../../shared/FormModal';
+import useEntityMutator from '../../containers/mutations/useEntityMutator';
 
 const AddNewTicketModal = ({ datetimes, handleClose, isOpen }) => {
 	const { createEntity } = useEntityMutator('Ticket');
