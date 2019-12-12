@@ -1,9 +1,13 @@
 import { useQuery } from '@apollo/react-hooks';
+import { useEffect } from '@wordpress/element';
 import { GET_PRICES } from './prices';
 import useInitToaster from '../../../../infrastructure/services/toaster/useInitToaster';
+import useStatus from '../../../../infrastructure/services/status/useStatus';
 
 const useFetchPrices = ({ ticketIn = [] }) => {
 	console.log('%c useFetchPrices: ', 'color: deeppink; font-size: 14px;');
+
+	const { setIsLoading, setIsLoaded, setIsError } = useStatus();
 
 	const { onCompleted, onError, initializationNotices } = useInitToaster({
 		loadingMessage: `initializing prices`,
@@ -17,9 +21,19 @@ const useFetchPrices = ({ ticketIn = [] }) => {
 			},
 		},
 		skip: !ticketIn.length, // do not fetch if we don't have any tickets
-		onCompleted,
-		onError,
+		onCompleted: (data) => {
+			setIsLoaded('prices', true);
+			onCompleted(data);
+		},
+		onError: (error) => {
+			setIsError('prices', true);
+			onError(error);
+		},
 	});
+
+	useEffect(() => {
+		setIsLoading('prices', loading);
+	}, [loading]);
 
 	initializationNotices(loading, error);
 
