@@ -1,9 +1,15 @@
-import useInitQueries from '../eventEditor/containers/queries/useInitQueries';
+import useCacheRehydration from './containers/queries/useCacheRehydration';
+import useDatetimes from './containers/queries/useDatetimes';
+import useTickets from './containers/queries/useTickets';
 import DateList from './datetimes/dateList/DateList';
 import TicketList from './tickets/ticketList/TicketList';
 
 const EventEditor = () => {
-	const { datetimes, datetimeError, loadingDates, tickets, ticketError, loadingTickets } = useInitQueries();
+	const { datetimeError, loadingDates, ticketError, loadingTickets } = {};
+	useCacheRehydration();
+
+	const datetimes = useDatetimes();
+	const tickets = useTickets();
 
 	return (
 		<>
