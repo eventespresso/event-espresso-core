@@ -1,10 +1,10 @@
 import { Button } from '@blueprintjs/core/lib/esm';
-import useOnDeleteTicket from './useOnDeleteTicket';
+import useDeleteTicketHandler from '../hooks/useDeleteTicketHandler';
 
 const DeleteTicketButton = ({ id }) => {
-	const onDeleteTicket = useOnDeleteTicket({ id });
+	const handleDeleteTicket = useDeleteTicketHandler({ id });
 
-	return <Button icon={'trash'} onClick={onDeleteTicket} minimal />;
+	return <Button icon={'trash'} onClick={handleDeleteTicket} minimal />;
 };
 
 export default DeleteTicketButton;
