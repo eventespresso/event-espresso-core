@@ -5,9 +5,7 @@ export const TICKET_ATTRIBUTES = gql`
 	fragment ticketAttributes on Ticket {
 		id
 		dbId
-		name
 		description
-		startDate
 		endDate
 		isDefault
 		isFree
@@ -15,12 +13,14 @@ export const TICKET_ATTRIBUTES = gql`
 		isTaxable
 		max
 		min
+		name
 		order
 		price
 		quantity
 		reserved
 		reverseCalculate
 		sold
+		startDate
 		uses
 	}
 `;
