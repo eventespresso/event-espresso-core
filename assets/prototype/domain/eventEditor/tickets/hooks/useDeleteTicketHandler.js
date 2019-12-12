@@ -1,7 +1,7 @@
 import useEntityMutator from '../../containers/mutations/useEntityMutator';
 import useTicketPrices from '../../containers/queries/useTicketPrices';
 
-const useOnDeleteTicket = ({ id }) => {
+const useDeleteTicketHandler = ({ id }) => {
 	const { deleteEntity: deleteTicket } = useEntityMutator('Ticket');
 	const relatedPrices = useTicketPrices(id);
 	const { deleteEntity: deletePrice } = useEntityMutator('Price');
@@ -22,4 +22,4 @@ const useOnDeleteTicket = ({ id }) => {
 	};
 };
 
-export default useOnDeleteTicket;
+export default useDeleteTicketHandler;
