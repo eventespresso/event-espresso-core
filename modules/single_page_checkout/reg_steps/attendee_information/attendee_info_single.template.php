@@ -28,7 +28,7 @@ if (count($registrations) > 0) {
     ?>
 
     <div id="spco-attendee-panel-dv-single"
-        class="spco-attendee-panel-dv spco-attendee-ticket-single">
+        class="spco-attendee-panel-dv spco-attendee-ticket-<?php echo key($template_args['ticket_count']); ?>">
 
         <div class="spco-ticket-info-dv small-text">
             <?php if (!is_admin()) : ?>
