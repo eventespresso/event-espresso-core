@@ -13,6 +13,7 @@ const useRelationsManager = () => {
 
 	useEffect(() => {
 		console.log('useRelationsManager >>>', state);
+		window.relationsManager = state;
 	}, [state]);
 
 	/**
@@ -124,7 +125,7 @@ const useRelationsManager = () => {
 };
 
 const relationsReducer = (state, action) => {
-	console.log('relationsReducer action: ', action);
+	console.log('relationsReducer action: ', { action, state });
 	const { entity, entityId, relation, relationId, relationIds } = action;
 	let newState, relations;
 	switch (action.type) {

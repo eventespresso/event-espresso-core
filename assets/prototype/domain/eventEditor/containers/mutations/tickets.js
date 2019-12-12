@@ -19,10 +19,12 @@ export const UPDATE_TICKET = gql`
 		updateTicket(input: $input) {
 			ticket {
 				...ticketAttributes
+				...ticketPricesAttribute # fetch updated prices when a ticket is updated.
 			}
 		}
 	}
 	${TICKET_ATTRIBUTES}
+	${TICKET_PRICES_ATTRIBUTE}
 `;
 
 export const DELETE_TICKET = gql`

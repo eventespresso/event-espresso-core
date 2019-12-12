@@ -25,7 +25,7 @@ const useOnCreateTicket = () => {
 				relation: 'datetimes',
 				relationIds: datetimeIds,
 			});
-			tickets.forEach((entityId) => {
+			datetimeIds.forEach((entityId) => {
 				addRelation({
 					entity: 'datetimes',
 					entityId,
