@@ -48,7 +48,7 @@ const TicketCard = ({ datetimes, id }) => {
 		entityId: id,
 		relation: 'datetimes',
 	});
-
+	console.log('%c > isLoaded( prices ): ', 'color: DeepSkyBlue; font-size: 14px;', isLoaded('prices'));
 	return (
 		<TicketProvider id={id}>
 			<Card elevation={Elevation.ONE} style={cardStyle}>
