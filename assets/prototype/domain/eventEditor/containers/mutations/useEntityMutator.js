@@ -8,7 +8,7 @@ const useEntityMutator = (type, id = '') => {
 	const { getCreateMutation, getUpdateMutation, getDeleteMutation, mutate } = useEntityMutation(type, id);
 
 	/**
-	 * @param {object} input
+	 * @param {object} input the entity properties for the mutation input
 	 * @param {object} subscriptions
 	 */
 	const createEntity = (input, subscriptions = {}) => {
@@ -16,7 +16,7 @@ const useEntityMutator = (type, id = '') => {
 	};
 
 	/**
-	 * @param {object} input
+	 * @param {object} input the entity properties for the mutation input
 	 * @param {object} subscriptions
 	 */
 	const updateEntity = (input, subscriptions = {}) => {
@@ -24,7 +24,7 @@ const useEntityMutator = (type, id = '') => {
 	};
 
 	/**
-	 * @param {object} input
+	 * @param {object} input the entity properties for the mutation input
 	 * @param {object} subscriptions
 	 */
 	const deleteEntity = (input = {}, subscriptions = {}) => {

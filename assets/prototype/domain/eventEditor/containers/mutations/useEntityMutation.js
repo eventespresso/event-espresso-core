@@ -8,6 +8,7 @@ import useMutators from './useMutators';
 
 /**
  * @param {string} type Entity type name
+ * @param id
  */
 const useEntityMutation = (type, id = '') => {
 	const client = useApolloClient();
@@ -15,7 +16,7 @@ const useEntityMutation = (type, id = '') => {
 	const mutators = useMutators();
 
 	/**
-	 * @param {string} mutation Type of mutation - CREATE|UPDATE|DELETE
+	 * @param {string} mutationType Type of mutation - CREATE|UPDATE|DELETE
 	 */
 	const getMutation = (mutationType = 'UPDATE') => {
 		// For example "CREATE_DATETIME"
@@ -24,11 +25,11 @@ const useEntityMutation = (type, id = '') => {
 	};
 
 	/**
-	 * @param {string} mutation Type of mutation
+	 * @param {string} mutationType Type of mutation
 	 * @param {object} input     Mutation input
 	 */
 	const getMutationOptions = (mutationType, input = {}) => {
-		// e.g. "datetmeMutator"
+		// e.g. "datetimeMutator"
 		const key = `${type.toLowerCase()}Mutator`;
 		const { [key]: mutator } = mutators;
 		/**
