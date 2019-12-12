@@ -1,5 +1,4 @@
 import { useReducer, useEffect } from '@wordpress/element';
-import useFetchRelations from '../queries/useFetchRelations';
 import get from 'lodash/get';
 import set from 'lodash/set';
 import cloneDeep from 'lodash/cloneDeep';
@@ -7,14 +6,19 @@ import cloneDeep from 'lodash/cloneDeep';
 const useRelationsManager = () => {
 	const [state, dispatch] = useReducer(relationsReducer, {});
 
-	const onReceiveRelations = ({ eventRelations: relations = '{}' }) => {
-		dispatch({ type: 'SET_DATA', data: JSON.parse(relations) });
-	};
-
 	useEffect(() => {
 		console.log('useRelationsManager >>>', state);
 		window.relationsManager = state;
 	}, [state]);
+
+	/**
+	 * Sets the relational data.
+	 *
+	 * @param {object} data Relational data
+	 */
+	const setData = (data) => {
+		dispatch({ type: 'SET_DATA', data });
+	};
 
 	/**
 	 * For a given `entity` identified by `entityId`
@@ -113,9 +117,8 @@ const useRelationsManager = () => {
 		});
 	};
 
-	useFetchRelations({ onReceiveRelations });
-
 	return {
+		setData,
 		getRelations,
 		addRelation,
 		removeRelation,
