@@ -5,6 +5,7 @@ import EmptyState from '../../../../application/ui/components/display/EmptyState
 import useDatetimes from '../../data/queries/datetimes/useDatetimes';
 import useStatus from '../../../../application/services/apollo/status/useStatus';
 
+import DatesListFilterBar from './filter/DatesListFilterBar';
 import AddNewDateButton from './AddNewDateButton';
 import DateCard from '../dateCard/DateCard';
 
@@ -61,6 +62,7 @@ const DateList = () => {
 	return (
 		<div>
 			{header}
+			<DatesListFilterBar datetimes={datetimes} />
 			{datesList}
 		</div>
 	);
