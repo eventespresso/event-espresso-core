@@ -15,13 +15,13 @@ import { EventEditorEventIdProvider } from '../../../application/services/contex
 const ContextProviders = ({ children }) => (
 	<ToastProvider>
 		<ApolloProvider>
-			<EventEditorEventIdProvider>
-				<StatusProvider>
-					<ConfigProvider>
+			<ConfigProvider>
+				<EventEditorEventIdProvider>
+					<StatusProvider>
 						<RelationsProvider>{children}</RelationsProvider>
-					</ConfigProvider>
-				</StatusProvider>
-			</EventEditorEventIdProvider>
+					</StatusProvider>
+				</EventEditorEventIdProvider>
+			</ConfigProvider>
 		</ApolloProvider>
 	</ToastProvider>
 );
