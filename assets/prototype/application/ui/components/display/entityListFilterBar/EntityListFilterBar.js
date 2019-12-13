@@ -34,7 +34,7 @@ const EntityListFilterBar = ({ listId: id, instanceId, entityFilters = null }) =
 		showEntityFilters,
 		toggleEntityFilters,
 		view,
-	} = useEntityListFilterState(listId);
+	} = useEntityListFilterState();
 
 	const listViewButton = React.useMemo(
 		() => (
