@@ -361,7 +361,9 @@ class EEM_Transaction extends EEM_Base
                     'STS_ID'        => EEM_Transaction::failed_status_code,
                     'Payment.PAY_ID' => array( 'IS NULL' ),
                     'TXN_timestamp' => array('<', time() - $time_to_leave_alone)
-                )
+                ),
+                'order_by' => ['TXN_timestamp' => 'DESC'],
+                'limit' => 1000
             ),
             $time_to_leave_alone
         );
