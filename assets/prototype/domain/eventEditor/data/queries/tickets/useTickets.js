@@ -1,28 +1,20 @@
 import * as R from 'ramda';
 import { useApolloClient } from '@apollo/react-hooks';
 
-import useDatetimeIds from '../datetimes/useDatetimeIds';
-import { GET_TICKETS } from './tickets';
 import useStatus from '../../../../../application/services/apollo/status/useStatus';
+import useTicketQueryOptions from './useTicketQueryOptions';
 
 const useTickets = () => {
+	const options = useTicketQueryOptions();
 	const { isLoaded } = useStatus();
 	const client = useApolloClient();
-	const datetimeIn = useDatetimeIds();
-	if (!isLoaded('tickets')) {
+	/* if (!isLoaded('tickets')) {
 		return [];
-	}
+	} */
 	let data;
 
 	try {
-		data = client.readQuery({
-			query: GET_TICKETS,
-			variables: {
-				where: {
-					datetimeIn,
-				},
-			},
-		});
+		data = client.readQuery(options);
 	} catch (error) {
 		data = {};
 	}

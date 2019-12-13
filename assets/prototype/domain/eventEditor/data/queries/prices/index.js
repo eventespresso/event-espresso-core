@@ -1,5 +1,5 @@
 import gql from 'graphql-tag';
-import { PRICE_TYPE_ATTRIBUTES } from '../priceTypes/priceTypes';
+import { PRICE_TYPE_ATTRIBUTES } from '../priceTypes';
 
 export const PRICE_ATTRIBUTES = gql`
 	fragment priceAttributes on Price {

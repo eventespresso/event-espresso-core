@@ -1,12 +1,11 @@
 import * as R from 'ramda';
 import { useApolloClient } from '@apollo/react-hooks';
-import { GET_DATETIMES } from './datetimes';
-import useEventId from '../events/useEventId';
 import useStatus from '../../../../../application/services/apollo/status/useStatus';
+import useDatetimeQueryOptions from './useDatetimeQueryOptions';
 
 const useDatetimes = () => {
+	const options = useDatetimeQueryOptions();
 	const { isLoaded } = useStatus();
-	const eventId = useEventId();
 	const client = useApolloClient();
 	if (!isLoaded('datetimes')) {
 		return [];
@@ -14,15 +13,9 @@ const useDatetimes = () => {
 	let data;
 
 	try {
-		data = client.readQuery({
-			query: GET_DATETIMES,
-			variables: {
-				where: {
-					eventId,
-				},
-			},
-		});
+		data = client.readQuery(options);
 	} catch (error) {
+		console.error('useDatetimes', error);
 		data = {};
 	}
 

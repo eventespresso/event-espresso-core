@@ -1,4 +1,4 @@
-import useTicketQueryOptions from './useTicketQueryOptions';
+import useTicketQueryOptions from '../../queries/tickets/useTicketQueryOptions';
 
 const useUpdateTicketCache = () => {
 	const options = useTicketQueryOptions();

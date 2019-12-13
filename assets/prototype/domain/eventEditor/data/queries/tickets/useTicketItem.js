@@ -1,6 +1,6 @@
 import { useApolloClient } from '@apollo/react-hooks';
 import { propOr } from 'ramda';
-import { GET_TICKET } from './tickets';
+import { GET_TICKET } from './';
 
 const useTicketItem = ({ id }) => {
 	const client = useApolloClient();

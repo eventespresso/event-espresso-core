@@ -1,5 +1,5 @@
 import gql from 'graphql-tag';
-import { TICKET_ATTRIBUTES, TICKET_PRICES_ATTRIBUTE } from '../../queries/tickets/tickets';
+import { TICKET_ATTRIBUTES, TICKET_PRICES_ATTRIBUTE } from '../../queries/tickets';
 
 export const CREATE_TICKET = gql`
 	mutation createTicket($input: CreateTicketInput!) {

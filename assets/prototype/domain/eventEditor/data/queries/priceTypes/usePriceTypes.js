@@ -1,7 +1,7 @@
 import pathOr from 'ramda/src/pathOr';
 import { useApolloClient } from '@apollo/react-hooks';
 
-import { GET_PRICE_TYPES } from './priceTypes';
+import { GET_PRICE_TYPES } from './';
 import { entitiesWithGuIdInArray } from '../../../../shared/predicates/shared/selectionPredicates';
 import useStatus from '../../../../../application/services/apollo/status/useStatus';
 

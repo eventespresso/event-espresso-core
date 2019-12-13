@@ -1,5 +1,5 @@
 import useEventId from '../../queries/events/useEventId';
-import useDatetimeQueryOptions from './useDatetimeQueryOptions';
+import useDatetimeQueryOptions from '../../queries/datetimes/useDatetimeQueryOptions';
 import useOnCreateDatetime from './useOnCreateDatetime';
 import useOnUpdateDatetime from './useOnUpdateDatetime';
 import useOnDeleteDatetime from './useOnDeleteDatetime';
