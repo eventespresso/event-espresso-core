@@ -1,4 +1,4 @@
-import EntityListFilterBar from '../../../../../application/ui/components/display/entityListFilterBar/EntityListFilterBar';
+import EntityListFilterBar from '../../../../../application/ui/components/display/entityList/filterBar/EntityListFilterBar';
 import DatesListEntityFilters from './DatesListEntityFilters';
 
 /**
