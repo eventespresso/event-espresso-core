@@ -9,7 +9,7 @@ import { useCallback } from '@wordpress/element';
  * Internal imports
  */
 import useTicketPriceCalculator from './useTicketPriceCalculator';
-import usePriceTypes from '../../../containers/queries/usePriceTypes';
+import usePriceTypes from '../../../data/queries/priceTypes/usePriceTypes';
 
 // import {amountsMatch} from '@eventespresso/utils';
 const amountsMatch = (v1, v2) => parseFloat(v1) === parseFloat(v2);

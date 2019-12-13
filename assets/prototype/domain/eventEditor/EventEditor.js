@@ -1,6 +1,6 @@
-import useCacheRehydration from './containers/queries/useCacheRehydration';
-import useDatetimes from './containers/queries/useDatetimes';
-import useTickets from './containers/queries/useTickets';
+import useCacheRehydration from './data/queries/useCacheRehydration';
+import useDatetimes from './data/queries/datetimes/useDatetimes';
+import useTickets from './data/queries/tickets/useTickets';
 import DateList from './datetimes/dateList/DateList';
 import TicketList from './tickets/ticketList/TicketList';
 

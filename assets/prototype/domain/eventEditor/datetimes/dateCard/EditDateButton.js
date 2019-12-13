@@ -1,6 +1,6 @@
 import { useContext } from '@wordpress/element';
 import { Button } from '@blueprintjs/core/lib/esm';
-import { DateTimeContext } from '../../../../infrastructure/services/contextProviders/DateTimeProvider';
+import { DateTimeContext } from '../../context/DateTimeProvider';
 
 const EditDateButton = ({ position }) => {
 	const { isOpen, setIsOpen } = useContext(DateTimeContext);

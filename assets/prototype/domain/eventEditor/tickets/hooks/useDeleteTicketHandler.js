@@ -1,5 +1,5 @@
-import useEntityMutator from '../../containers/mutations/useEntityMutator';
-import useTicketPrices from '../../containers/queries/useTicketPrices';
+import useEntityMutator from '../../../../application/services/apollo/mutations/useEntityMutator';
+import useTicketPrices from '../../data/queries/tickets/useTicketPrices';
 
 const useDeleteTicketHandler = ({ id }) => {
 	const { deleteEntity: deleteTicket } = useEntityMutator('Ticket');

@@ -1,4 +1,4 @@
-import useTicketItem from '../containers/queries/useTicketItem';
+import useTicketItem from '../data/queries/tickets/useTicketItem';
 
 const TicketId = ({ id }) => {
 	const { dbId = null } = useTicketItem({ id });

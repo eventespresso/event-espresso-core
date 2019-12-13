@@ -1,17 +1,17 @@
 import { useState } from '@wordpress/element';
 import moment from 'moment';
 import { Button, Card, EditableText, Elevation, H4, H6, Popover } from '@blueprintjs/core/lib/esm';
-import DateTimeProvider from '../../../../infrastructure/services/contextProviders/DateTimeProvider';
+import DateTimeProvider from '../../context/DateTimeProvider';
 import EditDate from './EditDate';
 import DeleteDateButton from './DeleteDateButton';
 import DateRangePicker from '../../../shared/dateRangeInput/DateRangePicker';
 import { MomentDateRange } from '../../../shared/dateRangeInput/momentDate';
 import { PLUS_ONE_MONTH, PLUS_TWO_MONTHS } from '../../../shared/defaultDates';
 
-import useDateItem from '../../containers/queries/useDateItem';
-import useEntityMutator from '../../containers/mutations/useEntityMutator';
-import useRelations from '../../../../infrastructure/services/relations/useRelations';
-import useStatus from '../../../../infrastructure/services/status/useStatus';
+import useDateItem from '../../data/queries/datetimes/useDateItem';
+import useEntityMutator from '../../../../application/services/apollo/mutations/useEntityMutator';
+import useRelations from '../../../../application/services/apollo/relations/useRelations';
+import useStatus from '../../../../application/services/apollo/status/useStatus';
 import TicketId from '../../tickets/TicketId';
 
 const btnStyle = {

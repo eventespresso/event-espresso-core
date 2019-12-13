@@ -1,13 +1,13 @@
 import { Card, EditableText, Elevation, H4, H6 } from '@blueprintjs/core/lib/esm';
-import TicketProvider from '../../../../infrastructure/services/contextProviders/TicketProvider';
+import TicketProvider from '../../context/TicketProvider';
 import EditTicket from './EditTicket';
 import DeleteTicketButton from './DeleteTicketButton';
 import TicketPriceCalculatorButton from '../ticketPriceCalculator/TicketPriceCalculatorButton';
-import useTicketItem from '../../containers/queries/useTicketItem';
-import CurrencyInput from '../../../shared/CurrencyInput';
-import useEntityMutator from '../../containers/mutations/useEntityMutator';
-import useRelations from '../../../../infrastructure/services/relations/useRelations';
-import useStatus from '../../../../infrastructure/services/status/useStatus';
+import useTicketItem from '../../data/queries/tickets/useTicketItem';
+import CurrencyInput from '../../../../application/ui/components/input/CurrencyInput';
+import useEntityMutator from '../../../../application/services/apollo/mutations/useEntityMutator';
+import useRelations from '../../../../application/services/apollo/relations/useRelations';
+import useStatus from '../../../../application/services/apollo/status/useStatus';
 import DatetimeId from '../../datetimes/DatetimeId';
 
 const cardStyle = {
@@ -48,7 +48,6 @@ const TicketCard = ({ datetimes, id }) => {
 		entityId: id,
 		relation: 'datetimes',
 	});
-	console.log('%c > isLoaded( prices ): ', 'color: DeepSkyBlue; font-size: 14px;', isLoaded('prices'));
 	return (
 		<TicketProvider id={id}>
 			<Card elevation={Elevation.ONE} style={cardStyle}>

@@ -1,5 +1,5 @@
 import { pick, difference } from 'ramda';
-import useEntityMutator from '../../../containers/mutations/useEntityMutator';
+import useEntityMutator from '../../../../../application/services/apollo/mutations/useEntityMutator';
 
 const PRICE_INPUT_FIELDS = [
 	'id',

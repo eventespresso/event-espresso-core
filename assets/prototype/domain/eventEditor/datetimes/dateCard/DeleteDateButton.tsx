@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Button } from '@blueprintjs/core';
 
-import useEntityMutator from '../../containers/mutations/useEntityMutator';
+import useEntityMutator from '../../../../application/services/apollo/mutations/useEntityMutator';
 
 const DeleteDateButton = ({ id }) => {
 	const { deleteEntity } = useEntityMutator('Datetime', id);

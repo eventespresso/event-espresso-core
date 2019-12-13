@@ -8,10 +8,10 @@ import useTicketPriceCalculatorFormDecorator from './hooks/useTicketPriceCalcula
 import useTicketPriceCalculatorFormMutators from './hooks/useTicketPriceCalculatorFormMutators';
 import useOnSubmitPrices from './hooks/useOnSubmitPrices';
 import { sortByPriceOrderIdAsc } from '../../../shared/predicates/prices/sortingPredicates';
-import useTicketPrices from '../../containers/queries/useTicketPrices';
-import useDefaultPriceType from '../../containers/queries/useDefaultPriceType';
+import useTicketPrices from '../../data/queries/tickets/useTicketPrices';
+import useDefaultPriceType from '../../data/queries/priceTypes/useDefaultPriceType';
 
-import FormModal from '../../../shared/FormModal';
+import FormModal from '../../../../application/ui/components/forms/FormModal';
 
 const newPrice = {
 	id: 'NEW_PRICE',

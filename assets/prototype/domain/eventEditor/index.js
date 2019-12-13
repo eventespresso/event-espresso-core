@@ -7,8 +7,8 @@ import { render } from '@wordpress/element';
  * Internal imports
  */
 import EventEditor from './EventEditor';
-import ContextProviders from '../../infrastructure/services/contextProviders/ContextProviders';
-import useEventId from './containers/queries/useEventId';
+import ContextProviders from './context/ContextProviders';
+import useEventId from './data/queries/events/useEventId';
 
 const container = document.getElementById('normal-sortables');
 

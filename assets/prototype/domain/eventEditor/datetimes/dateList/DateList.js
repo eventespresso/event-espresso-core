@@ -1,7 +1,7 @@
 import { H3 } from '@blueprintjs/core/lib/esm';
-import LoadingIndicator from '../../../shared/LoadingIndicator';
-import ErrorIndicator from '../../../shared/ErrorIndicator';
-import EmptyState from '../../../shared/EmptyState';
+import LoadingIndicator from '../../../../application/ui/components/display/LoadingIndicator';
+import ErrorIndicator from '../../../../application/ui/components/display/ErrorIndicator';
+import EmptyState from '../../../../application/ui/components/display/EmptyState';
 
 import AddNewDateButton from './AddNewDateButton';
 import DateCard from '../dateCard/DateCard';

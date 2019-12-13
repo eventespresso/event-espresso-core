@@ -5,8 +5,8 @@ import { Button } from '@blueprintjs/core';
 /**
  * Internal imports
  */
-import usePriceTypes from '../../containers/queries/usePriceTypes';
-import usePriceTypeForPrice from '../../containers/queries/usePriceTypeForPrice';
+import usePriceTypes from '../../data/queries/priceTypes/usePriceTypes';
+import usePriceTypeForPrice from '../../data/queries/priceTypes/usePriceTypeForPrice';
 import { getPriceModifiers } from '../../../shared/predicates/prices/selectionPredicates';
 import { findEntityByGuid } from '../../../shared/predicates/shared/selectionPredicates';
 

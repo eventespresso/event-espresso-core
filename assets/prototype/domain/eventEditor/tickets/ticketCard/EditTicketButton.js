@@ -1,6 +1,6 @@
 import { useContext } from '@wordpress/element';
 import { Button } from '@blueprintjs/core/lib/esm';
-import { TicketContext } from '../../../../infrastructure/services/contextProviders/TicketProvider';
+import { TicketContext } from '../../context/TicketProvider';
 
 const EditTicketButton = ({ position }) => {
 	const { isOpen, setIsOpen } = useContext(TicketContext);
