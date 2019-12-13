@@ -8,9 +8,9 @@ const useTickets = () => {
 	const options = useTicketQueryOptions();
 	const { isLoaded } = useStatus();
 	const client = useApolloClient();
-	/* if (!isLoaded('tickets')) {
+	if (!isLoaded('tickets')) {
 		return [];
-	} */
+	}
 	let data;
 
 	try {

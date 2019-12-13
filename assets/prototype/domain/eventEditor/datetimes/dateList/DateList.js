@@ -2,6 +2,8 @@ import { H3 } from '@blueprintjs/core/lib/esm';
 import LoadingIndicator from '../../../../application/ui/components/display/LoadingIndicator';
 import ErrorIndicator from '../../../../application/ui/components/display/ErrorIndicator';
 import EmptyState from '../../../../application/ui/components/display/EmptyState';
+import useDatetimes from '../../data/queries/datetimes/useDatetimes';
+import useStatus from '../../../../application/services/apollo/status/useStatus';
 
 import AddNewDateButton from './AddNewDateButton';
 import DateCard from '../dateCard/DateCard';
@@ -21,14 +23,14 @@ const btnRowStyle = {
 	width: '100%',
 };
 
-const DateList = ({ datetimes, error, loading, tickets }) => {
-	if (!loading) {
-		console.log('%c DateList', 'color: orangered; font-size: 14px;');
-		console.log('%c > datetimes:', 'color: tomato;', datetimes);
-		console.log('%c > loading:', 'color: tomato;', loading);
-	} else if (error) {
-		console.log('%c > error:', 'color: red; font-size:16px;', error);
-	}
+const DateList = () => {
+	const datetimes = useDatetimes();
+	console.log('DateList', datetimes);
+	const { isLoading, isError } = useStatus();
+
+	const loading = isLoading('datetimes');
+	const error = isError('datetimes');
+
 	const header = <H3 style={{ margin: '2rem 0 .5rem' }}>{'Dates List'}</H3>;
 
 	if (loading) return <LoadingIndicator header={header} message='loading dates...' />;
@@ -37,7 +39,7 @@ const DateList = ({ datetimes, error, loading, tickets }) => {
 
 	const btnRow = (
 		<div style={btnRowStyle}>
-			<AddNewDateButton tickets={tickets} />
+			<AddNewDateButton />
 		</div>
 	);
 
@@ -45,7 +47,7 @@ const DateList = ({ datetimes, error, loading, tickets }) => {
 		<>
 			<div style={listStyle}>
 				{datetimes.map((date) => (
-					<DateCard id={date.id} key={date.id} tickets={tickets} />
+					<DateCard id={date.id} key={date.id} />
 				))}
 			</div>
 			{btnRow}
