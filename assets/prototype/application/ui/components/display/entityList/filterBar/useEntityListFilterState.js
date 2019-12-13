@@ -5,7 +5,7 @@ const useEntityListFilterState = () => {
 		perPage: 6,
 		searchText: '',
 		showEntityFilters: false,
-		view: 'list',
+		view: 'grid',
 	};
 	const [state, dispatch] = useReducer(reducer, initialState);
 
