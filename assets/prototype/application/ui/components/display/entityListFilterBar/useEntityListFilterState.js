@@ -42,11 +42,8 @@ const useEntityListFilterState = () => {
 	};
 
 	const toggleEntityFilters = () => {
-		const showEntityFilters = !state.showEntityFilters;
-
 		dispatch({
 			type: 'TOGGLE_ENTITY_FILTERS',
-			showEntityFilters,
 		});
 	};
 
@@ -69,7 +66,7 @@ const useEntityListFilterState = () => {
 };
 
 const reducer = (state, action) => {
-	const { perPage, searchText, showEntityFilters, view } = action;
+	const { perPage, searchText, view } = action;
 
 	switch (action.type) {
 		case 'SET_PER_PAGE':
@@ -82,7 +79,7 @@ const reducer = (state, action) => {
 			return { ...state, view };
 
 		case 'TOGGLE_ENTITY_FILTERS':
-			return { ...state, showEntityFilters };
+			return { ...state, showEntityFilters: !state.showEntityFilters };
 
 		default:
 			throw new Error('Unexpected action');
