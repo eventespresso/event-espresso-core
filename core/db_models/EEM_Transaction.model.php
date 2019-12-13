@@ -492,12 +492,6 @@ class EEM_Transaction extends EEM_Base
                         '!=',
                         EEM_Transaction::complete_status_code
                     ),
-                ),
-                'order_by' => ['TXN_timestamp' => 'DESC'],
-                'limit' => apply_filters(
-                    'FHEE__EEM_Transaction___get_transactions_in_progress__limit',
-                    1000,
-                    $comparison
                 )
             )
         );
