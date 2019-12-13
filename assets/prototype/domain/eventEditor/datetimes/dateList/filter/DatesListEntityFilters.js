@@ -1,7 +1,7 @@
 /**
  * Internal imports
  */
-import useDatesListFilterState from '../../../containers/dates/useDatesListFilterState';
+import useDatesListFilterState from './useDatesListFilterState';
 import DatesSortedByControl from './controls/DatesSortedByControl';
 import DisplayDatesControl from './controls/DisplayDatesControl';
 import ShowDatesControl from './controls/ShowDatesControl';

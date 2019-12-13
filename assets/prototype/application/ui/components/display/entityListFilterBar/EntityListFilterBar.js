@@ -9,7 +9,7 @@ import { __ } from '@eventespresso/i18n';
 /**
  * Internal dependencies
  */
-import useEntityListFilterState from '../../../../../domain/eventEditor/containers/useEntityListFilterState';
+import useEntityListFilterState from './useEntityListFilterState';
 import Collapsible from './Collapsible';
 import './style.css';
 
@@ -20,20 +20,21 @@ import './style.css';
  * @param {string} listId
  * @param {string} instanceId
  * @param {Object} entityFilters additional entity specific filters
- * @param {string} searchText
- * @param {number} perPage
- * @param {string} view
  * @return {Object} EntityListFilterBar
  */
 const EntityListFilterBar = ({ listId: id, instanceId, entityFilters = null }) => {
-	const { perPage, searchText, setListView, setGridView, setPerPage, setSearchText, view } = useEntityListFilterState(
-		id
-	);
-
 	const listId = id ? id : 'entity-list-' + instanceId;
-
-	const [showEntityFilters, setShowEntityFilters] = React.useState(false);
-	const toggleEntityFilters = () => setShowEntityFilters(!showEntityFilters);
+	const {
+		perPage,
+		searchText,
+		setListView,
+		setGridView,
+		setPerPage,
+		setSearchText,
+		showEntityFilters,
+		toggleEntityFilters,
+		view,
+	} = useEntityListFilterState(listId);
 
 	const listViewButton = React.useMemo(
 		() => (

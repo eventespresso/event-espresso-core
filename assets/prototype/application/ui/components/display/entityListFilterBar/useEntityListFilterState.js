@@ -1,11 +1,12 @@
 import { useReducer, useEffect } from '@wordpress/element';
-import { assocPath } from 'ramda';
+import { assocPath, path } from 'ramda';
 
 const useEntityListFilterState = (listId) => {
 	const initialState = {
 		[listId]: {
 			perPage: 6,
 			searchText: '',
+			showEntityFilters: false,
 			view: 'list',
 		},
 	};
@@ -47,19 +48,38 @@ const useEntityListFilterState = (listId) => {
 		});
 	};
 
+	const toggleEntityFilters = () => {
+		const showEntityFilters = !state[listId].showEntityFilters;
+
+		dispatch({
+			listId,
+			type: 'TOGGLE_ENTITY_FILTERS',
+			showEntityFilters,
+		});
+	};
+
+	const getStateProp = (prop) => path([listId, prop], state);
+
+	const perPage = getStateProp('perPage');
+	const searchText = getStateProp('searchText');
+	const showEntityFilters = getStateProp('showEntityFilters');
+	const view = getStateProp('view');
+
 	return {
-		perPage: state.perPage,
-		searchText: state.searchText,
-		setListView,
+		perPage,
+		searchText,
 		setGridView,
+		setListView,
 		setPerPage,
 		setSearchText,
-		view: state.view,
+		showEntityFilters,
+		toggleEntityFilters,
+		view,
 	};
 };
 
 const reducer = (state, action) => {
-	const { listId, perPage, searchText, view } = action;
+	const { listId, perPage, searchText, showEntityFilters, view } = action;
 
 	switch (action.type) {
 		case 'SET_PER_PAGE':
@@ -70,6 +90,9 @@ const reducer = (state, action) => {
 
 		case 'SET_VIEW':
 			return assocPath([listId, 'view'], view, state);
+
+		case 'TOGGLE_ENTITY_FILTERS':
+			return assocPath([listId, 'showEntityFilters'], showEntityFilters, state);
 
 		default:
 			throw new Error('Unexpected action');
