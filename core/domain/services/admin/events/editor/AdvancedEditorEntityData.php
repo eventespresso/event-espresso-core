@@ -27,6 +27,7 @@ use InvalidArgumentException;
 use ReflectionException;
 use WP_Post;
 use WPGraphQL\Router;
+use GraphQLRelay\Relay;
 
 /**
  * Class AdvancedEditorEntityData
@@ -151,6 +152,8 @@ class AdvancedEditorEntityData
             if ($eventId) {
                 $data = $this->getAllEventData($eventId);
                 $data = wp_json_encode($data);
+                $GQLdata = $this->getGraphQLData($eventId);
+                $GQLdata = wp_json_encode($GQLdata);
                 add_action(
                     'admin_footer',
                     static function () use ($data, $graphqlEndpoint) {
@@ -164,14 +167,14 @@ var graphqlEndpoint='{$graphqlEndpoint}';
                         );
                     }
                 );
-
                 add_action(
                     'admin_footer',
-                    static function () use ($data, $graphqlEndpoint) {
+                    static function () use ($data, $GQLdata, $graphqlEndpoint) {
                         wp_add_inline_script(
                             EspressoEditorAssetManager::JS_HANDLE_EDITOR_PROTOTYPE,
                             "
 var eeEditorEventData={$data};
+var eeEditorGQLData={$GQLdata};
 var graphqlEndpoint='{$graphqlEndpoint}';
 ",
                             'before'
@@ -247,6 +250,347 @@ var graphqlEndpoint='{$graphqlEndpoint}';
                 }
             }
         }
+    }
+
+
+    /**
+     * @param int $eventId
+     * @return array
+     * @since $VID:$
+     */
+    protected function getGraphQLData($eventId)
+    {
+        $datetimes = $this->getGraphQLDatetimes($eventId);
+
+        if (! empty($datetimes['nodes'])) {
+            $datetimeIn = wp_list_pluck($datetimes['nodes'], 'id');
+
+            if (! empty($datetimeIn)) {
+                $tickets = $this->getGraphQLTickets($datetimeIn);
+            }
+        }
+
+        if (! empty($tickets['nodes'])) {
+            $ticketIn = wp_list_pluck($tickets['nodes'], 'id');
+
+            if (! empty($ticketIn)) {
+                $prices = $this->getGraphQLPrices($ticketIn);
+            }
+        }
+
+        $priceTypes = $this->getGraphQLPriceTypes();
+
+        $relations = $this->getRelationalData($eventId);
+
+        return compact('datetimes', 'tickets', 'prices', 'priceTypes', 'relations');
+    }
+
+
+    /**
+     * @param int $eventId
+     * @return array|null
+     * @since $VID:$
+     */
+    protected function getGraphQLDatetimes($eventId)
+    {
+        $query = <<<QUERY
+        query GET_DATETIMES(\$where: RootQueryDatetimesConnectionWhereArgs) {
+            datetimes(where: \$where) {
+                nodes {
+                    id
+                    dbId
+                    name
+                    description
+                    startDate
+                    endDate
+                    capacity
+                    isActive
+                    isExpired
+                    isPrimary
+                    isSoldOut
+                    isUpcoming
+                    length
+                    order
+                    reserved
+                    sold
+                    __typename
+                }
+                __typename
+            }
+        }
+QUERY;
+            $data = [
+                'operation_name' => 'GET_DATETIMES',
+                'variables' => [
+                    'first' => 50,
+                    'where' => [
+                        'eventId' => $eventId,
+                    ],
+                ],
+                'query' => $query,
+            ];
+
+            $responseData = $this->makeGraphQLRequest($data);
+            return !empty($responseData['datetimes']) ? $responseData['datetimes'] : null;
+    }
+
+
+    /**
+     * @param array $datetimeIn
+     * @return array|null
+     * @since $VID:$
+     */
+    protected function getGraphQLTickets(array $datetimeIn)
+    {
+        $query = <<<QUERY
+        query GET_TICKETS(\$where: RootQueryTicketsConnectionWhereArgs) {
+            tickets(where: \$where) {
+                nodes {
+                    id
+                    dbId
+                    description
+                    endDate
+                    isDefault
+                    isFree
+                    isRequired
+                    isTaxable
+                    max
+                    min
+                    name
+                    order
+                    price
+                    quantity
+                    reserved
+                    reverseCalculate
+                    sold
+                    startDate
+                    uses
+                    __typename
+                }
+                __typename
+            }
+        }
+QUERY;
+            $data = [
+                'operation_name' => 'GET_TICKETS',
+                'variables' => [
+                    'where' => [
+                        'datetimeIn' => $datetimeIn,
+                    ],
+                ],
+                'query' => $query,
+            ];
+
+            $responseData = $this->makeGraphQLRequest($data);
+            return !empty($responseData['tickets']) ? $responseData['tickets'] : null;
+    }
+
+
+    /**
+     * @param array $ticketIn
+     * @return array|null
+     * @since $VID:$
+     */
+    protected function getGraphQLPrices(array $ticketIn)
+    {
+        $query = <<<QUERY
+        query getPrices(\$where: RootQueryPricesConnectionWhereArgs) {
+            prices(where: \$where) {
+                nodes {
+                    id
+                    dbId
+                    amount
+                    desc
+                    isBasePrice
+                    isDefault
+                    isDeleted
+                    isDiscount
+                    isPercent
+                    isTax
+                    name
+                    order
+                    overrides
+                    priceTypeOrder
+                    __typename
+                }
+                __typename
+            }
+        }
+QUERY;
+            $data = [
+                'operation_name' => 'GET_PRICES',
+                'variables' => [
+                    'where' => [
+                        'ticketIn' => $ticketIn,
+                    ],
+                ],
+                'query' => $query,
+            ];
+
+            $responseData = $this->makeGraphQLRequest($data);
+            return !empty($responseData['prices']) ? $responseData['prices'] : null;
+    }
+
+
+    /**
+     * @return array|null
+     * @since $VID:$
+     */
+    protected function getGraphQLPriceTypes()
+    {
+        $query = <<<QUERY
+        query getPriceTypes {
+            priceTypes {
+                nodes {
+                    id
+                    dbId
+                    baseType
+                    isBasePrice
+                    isDeleted
+                    isDiscount
+                    isPercent
+                    isTax
+                    name
+                    order
+                    __typename
+                }
+                __typename
+            }
+        }
+QUERY;
+            $data = [
+                'operation_name' => 'GET_PRICES',
+                'query' => $query,
+            ];
+
+            $responseData = $this->makeGraphQLRequest($data);
+            return !empty($responseData['priceTypes']) ? $responseData['priceTypes'] : null;
+    }
+
+
+    /**
+     * @param array $data
+     * @return array
+     * @since $VID:$
+     */
+    protected function makeGraphQLRequest($data)
+    {
+        try {
+            $response = graphql($data);
+            if (!empty($response['data'])) {
+                return $response['data'];
+            }
+            return null;
+        } catch (\Exception $e) {
+            // do something with the errors thrown
+            return null;
+        }
+    }
+
+
+    /**
+     * @param mixed       $source  The source that's passed down the GraphQL queries
+     * @param array       $args    The inputArgs on the field
+     * @param AppContext  $context The AppContext passed down the GraphQL tree
+     * @param ResolveInfo $info    The ResolveInfo passed down the GraphQL tree
+     * @return string
+     * @throws EE_Error
+     * @throws Exception
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws ReflectionException
+     * @throws UserError
+     * @throws UnexpectedEntityException
+     * @since $VID:$
+     */
+    public static function getRelationalData($eventId)
+    {
+
+        $data = [
+            'datetimes'  => [],
+            'tickets'    => [],
+            'prices'     => [],
+        ];
+
+        $eem_datetime   = EEM_Datetime::instance();
+        $eem_ticket     = EEM_Ticket::instance();
+        $eem_price      = EEM_Price::instance();
+        $eem_price_type = EEM_Price_Type::instance();
+
+        // PROCESS DATETIMES
+        $related_models = [
+            'tickets' => $eem_ticket,
+        ];
+        // Get the IDs of event datetimes.
+        $datetimeIds = $eem_datetime->get_col([['EVT_ID' => $eventId]]);
+        foreach ($datetimeIds as $datetimeId) {
+            $GID = self::convertToGlobalId($eem_datetime->item_name(), $datetimeId);
+            foreach ($related_models as $key => $model) {
+                // Get the IDs of related entities for the datetime ID.
+                $Ids = $model->get_col([['Datetime.DTT_ID' => $datetimeId]]);
+                if (! empty($Ids)) {
+                    $data['datetimes'][ $GID ][ $key ] = self::convertToGlobalId($model->item_name(), $Ids);
+                }
+            }
+        }
+
+        // PROCESS TICKETS
+        $related_models = [
+            'datetimes' => $eem_datetime,
+            'prices'    => $eem_price,
+        ];
+        // Get the IDs of all datetime tickets.
+        $ticketIds = $eem_ticket->get_col([['Datetime.DTT_ID' => ['in', $datetimeIds]]]);
+        foreach ($ticketIds as $ticketId) {
+            $GID = self::convertToGlobalId($eem_ticket->item_name(), $ticketId);
+
+            foreach ($related_models as $key => $model) {
+                // Get the IDs of related entities for the ticket ID.
+                $Ids = $model->get_col([['Ticket.TKT_ID' => $ticketId]]);
+                if (! empty($Ids)) {
+                    $data['tickets'][ $GID ][ $key ] = self::convertToGlobalId($model->item_name(), $Ids);
+                }
+            }
+        }
+
+        // PROCESS PRICES
+        $related_models = [
+            'tickets'    => $eem_ticket,
+            'priceTypes' => $eem_price_type,
+        ];
+        // Get the IDs of all ticket prices.
+        $priceIds = $eem_price->get_col([['Ticket.TKT_ID' => ['in', $ticketIds]]]);
+        foreach ($priceIds as $priceId) {
+            $GID = self::convertToGlobalId($eem_price->item_name(), $priceId);
+
+            foreach ($related_models as $key => $model) {
+                // Get the IDs of related entities for the price ID.
+                $Ids = $model->get_col([['Price.PRC_ID' => $priceId]]);
+                if (! empty($Ids)) {
+                    $data['prices'][ $GID ][ $key ] = self::convertToGlobalId($model->item_name(), $Ids);
+                }
+            }
+        }
+
+        return $data;
+    }
+
+    /**
+     * Convert the DB ID into GID
+     *
+     * @param string    $type
+     * @param int|int[] $ID
+     * @return mixed
+     */
+    public static function convertToGlobalId($type, $ID)
+    {
+        if (is_array($ID)) {
+            return array_map(function ($id) use ($type) {
+                return self::convertToGlobalId($type, $id);
+            }, $ID);
+        }
+        return Relay::toGlobalId($type, $ID);
     }
 
 
