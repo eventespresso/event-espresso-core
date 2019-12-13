@@ -1,7 +1,5 @@
-import useDatetimeIds from '../../queries/datetimes/useDatetimeIds';
-import { queries } from '../../queries';
-
-const { GET_TICKETS } = queries;
+import useDatetimeIds from '../datetimes/useDatetimeIds';
+import { GET_TICKETS } from './';
 
 const useTicketQueryOptions = () => {
 	const datetimeIn = useDatetimeIds();

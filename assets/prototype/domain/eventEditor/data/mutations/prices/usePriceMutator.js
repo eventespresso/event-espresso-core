@@ -1,4 +1,4 @@
-import usePriceQueryOptions from './usePriceQueryOptions';
+import usePriceQueryOptions from '../../queries/prices/usePriceQueryOptions';
 import useOnCreatePrice from './useOnCreatePrice';
 import useOnUpdatePrice from './useOnUpdatePrice';
 import useOnDeletePrice from './useOnDeletePrice';

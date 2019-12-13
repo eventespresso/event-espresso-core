@@ -2,6 +2,8 @@ import { Fragment } from '@wordpress/element';
 import { Callout, H3, H6, NonIdealState, Spinner } from '@blueprintjs/core/lib/esm';
 import AddNewTicketButton from './AddNewTicketButton';
 import TicketCard from '../ticketCard/TicketCard';
+import useTickets from '../../data/queries/tickets/useTickets';
+import useStatus from '../../../../application/services/apollo/status/useStatus';
 
 const boxStyle = {
 	margin: '0 0 2rem',
@@ -36,17 +38,16 @@ const btnRowStyle = {
 	width: '100%',
 };
 
-const TicketList = ({ tickets, datetimes, error, loading, loadingDates }) => {
-	if (!loading && !loadingDates) {
-		console.log('%c TicketList', 'color: gold; font-size: 14px;');
-		console.log('%c > tickets:', 'color: goldenrod;', tickets);
-		console.log('%c > loading:', 'color: goldenrod;', loading);
-	} else if (error) {
-		console.log('%c > error:', 'color: red; font-size:16px;', error);
-	}
+const TicketList = () => {
+	const tickets = useTickets();
+	const { isLoading, isError } = useStatus();
+
+	const loading = isLoading('datetimes') || isLoading('tickets');
+	const error = isError('tickets');
+
 	const header = <H3 style={{ margin: '2rem 0 .5rem' }}>{'Tickets List'}</H3>;
 
-	if (loading || loadingDates) {
+	if (loading) {
 		return (
 			<Fragment>
 				{header}
@@ -71,18 +72,16 @@ const TicketList = ({ tickets, datetimes, error, loading, loadingDates }) => {
 
 	const btnRow = (
 		<div style={btnRowStyle}>
-			<AddNewTicketButton datetimes={datetimes} />
+			<AddNewTicketButton />
 		</div>
 	);
-
-	const datetimeIn = datetimes.map(({ id }) => id);
 
 	const ticketList =
 		Array.isArray(tickets) && tickets.length ? (
 			<Fragment>
 				<div style={listStyle}>
 					{tickets.map((ticket) => (
-						<TicketCard datetimeIn={datetimeIn} id={ticket.id} key={ticket.id} datetimes={datetimes} />
+						<TicketCard id={ticket.id} key={ticket.id} />
 					))}
 				</div>
 				{btnRow}

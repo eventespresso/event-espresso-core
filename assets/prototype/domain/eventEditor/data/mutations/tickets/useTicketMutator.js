@@ -1,6 +1,6 @@
 import { pathOr } from 'ramda';
 
-import useTicketQueryOptions from './useTicketQueryOptions';
+import useTicketQueryOptions from '../../queries/tickets/useTicketQueryOptions';
 import useOnCreateTicket from './useOnCreateTicket';
 import useOnUpdateTicket from './useOnUpdateTicket';
 import useOnDeleteTicket from './useOnDeleteTicket';
