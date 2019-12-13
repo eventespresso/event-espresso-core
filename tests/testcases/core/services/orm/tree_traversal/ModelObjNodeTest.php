@@ -3,6 +3,7 @@
 namespace EventEspresso\core\services\orm\tree_traversal;
 
 use EE_UnitTestCase;
+use SplDoublyLinkedList;
 
 /**
  * Class EntityNodeTest
