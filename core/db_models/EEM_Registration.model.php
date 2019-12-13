@@ -710,7 +710,8 @@ class EEM_Registration extends EEM_Soft_Delete_Base
 
     /**
      * Deletes all registrations with no transactions. Note that this needs to be very efficient
-     * and so it uses wpdb directly
+     * and so it uses wpdb directly. Also, we can't put a limit on this because MySQL doesn't allow a limit on a delete
+     * when joining tables like this.
      *
      * @global WPDB $wpdb
      * @return int number deleted
