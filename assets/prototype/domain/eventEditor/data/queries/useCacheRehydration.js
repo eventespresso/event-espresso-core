@@ -1,4 +1,3 @@
-import { useEffect } from '@wordpress/element';
 import { useApolloClient } from '@apollo/react-hooks';
 import useCacheRehydrationData from './useCacheRehydrationData';
 import useRelations from '../../../../application/services/apollo/relations/useRelations';
@@ -13,72 +12,70 @@ const useCacheRehydration = () => {
 	const eventId = useEventId();
 	const { setData } = useRelations();
 	const { datetimes, tickets, prices, priceTypes, relations } = useCacheRehydrationData();
-	const { setIsLoaded } = useStatus();
+	const { isLoaded } = useStatus();
 
-	useEffect(() => {
-		let { nodes = [] } = priceTypes;
-		if (nodes.length) {
-			client.writeQuery({
-				query: GET_PRICE_TYPES,
-				data: {
-					priceTypes,
-				},
-			});
-		}
-		setIsLoaded('priceTypes', true);
+	if (isLoaded('priceTypes')) {
+		return;
+	}
 
-		({ nodes = [] } = datetimes);
-		if (nodes.length) {
-			client.writeQuery({
-				query: GET_DATETIMES,
-				variables: {
-					where: {
-						eventId,
-					},
-				},
-				data: {
-					datetimes,
-				},
-			});
-		}
-		setIsLoaded('datetimes', true);
+	let { nodes = [] } = priceTypes;
+	if (nodes.length) {
+		client.writeQuery({
+			query: GET_PRICE_TYPES,
+			data: {
+				priceTypes,
+			},
+		});
+	}
 
-		const datetimeIn = nodes.map(({ id }) => id);
-		({ nodes = [] } = tickets);
-		if (datetimeIn.length && nodes.length) {
-			client.writeQuery({
-				query: GET_TICKETS,
-				variables: {
-					where: {
-						datetimeIn,
-					},
+	({ nodes = [] } = datetimes);
+	if (nodes.length) {
+		client.writeQuery({
+			query: GET_DATETIMES,
+			variables: {
+				where: {
+					eventId,
 				},
-				data: {
-					tickets,
-				},
-			});
-		}
-		setIsLoaded('tickets', true);
+			},
+			data: {
+				datetimes,
+			},
+		});
+	}
 
-		const ticketIn = nodes.map(({ id }) => id);
-		({ nodes = [] } = prices);
-		if (ticketIn.length && nodes.length) {
-			client.writeQuery({
-				query: GET_PRICES,
-				variables: {
-					where: {
-						ticketIn,
-					},
+	const datetimeIn = nodes.map(({ id }) => id);
+	({ nodes = [] } = tickets);
+	if (datetimeIn.length && nodes.length) {
+		client.writeQuery({
+			query: GET_TICKETS,
+			variables: {
+				where: {
+					datetimeIn,
 				},
-				data: {
-					prices,
-				},
-			});
-		}
-		setIsLoaded('prices', true);
+			},
+			data: {
+				tickets,
+			},
+		});
+	}
 
-		setData(relations);
-	}, []);
+	const ticketIn = nodes.map(({ id }) => id);
+	({ nodes = [] } = prices);
+	if (ticketIn.length && nodes.length) {
+		client.writeQuery({
+			query: GET_PRICES,
+			variables: {
+				where: {
+					ticketIn,
+				},
+			},
+			data: {
+				prices,
+			},
+		});
+	}
+
+	setData(relations);
 };
 
 export default useCacheRehydration;

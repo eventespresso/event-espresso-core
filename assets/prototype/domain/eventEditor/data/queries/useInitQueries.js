@@ -3,18 +3,19 @@ import useFetchTickets from './tickets/useFetchTickets';
 import useFetchDatetimes from './datetimes/useFetchDatetimes';
 import useFetchPriceTypes from './priceTypes/useFetchPriceTypes';
 import useFetchPrices from './prices/useFetchPrices';
+import useCacheRehydration from './useCacheRehydration';
 
 const useInitQueries = () => {
-	console.log('%c useInitQueries: ', 'color: deeppink; font-size: 14px;');
+	useCacheRehydration();
 
 	// initiate datetime fetching.
-	const { data: datetimesData, error: datetimeError, loading: loadingDates } = useFetchDatetimes();
+	const { data: datetimesData } = useFetchDatetimes();
 
 	const datetimes = pathOr([], ['datetimes', 'nodes'], datetimesData);
 
 	// initiate ticket fetching.
 	const datetimeIn = datetimes ? datetimes.map(({ id }) => id) : [];
-	const { data: ticketsData, error: ticketError, loading: loadingTickets } = useFetchTickets({ datetimeIn });
+	const { data: ticketsData } = useFetchTickets({ datetimeIn });
 
 	const tickets = pathOr([], ['tickets', 'nodes'], ticketsData);
 
@@ -24,15 +25,6 @@ const useInitQueries = () => {
 	// initiate price fetching.
 	const ticketIn = tickets.map(({ id }) => id);
 	useFetchPrices({ ticketIn });
-
-	return {
-		datetimes: datetimes || [],
-		datetimeError: datetimeError || null,
-		loadingDates: loadingDates || false,
-		tickets: tickets || [],
-		ticketError: ticketError || null,
-		loadingTickets: loadingTickets || false,
-	};
 };
 
 export default useInitQueries;
