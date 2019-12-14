@@ -61,7 +61,7 @@
 		"@wordpress/core-data": "^2.7.4",
 		"@wordpress/data": "^4.9.2",
 		"@wordpress/date": "^3.5.0",
-		"@wordpress/dependency-extraction-webpack-plugin": "^2.0.0",
+		"@wordpress/dependency-extraction-webpack-plugin": "^2.1.0",
 		"@wordpress/editor": "^9.8.0",
 		"@wordpress/element": "^2.8.2",
 		"@wordpress/eslint-plugin": "^3.1.0",
