@@ -1,6 +1,6 @@
 import { useApolloClient } from '@apollo/react-hooks';
 import { ApolloError } from 'apollo-client';
-import { useState } from '@wordpress/element';
+import { useState, useEffect } from '@wordpress/element';
 import { pathOr } from 'ramda';
 
 import { mutations } from '../../../../domain/eventEditor/data/mutations';
@@ -14,6 +14,13 @@ const useEntityMutation = (type, id = '') => {
 	const client = useApolloClient();
 	const [result, setResult] = useState({ called: false, loading: false });
 	const mutators = useMutators();
+	let isMounted = true;
+
+	useEffect(() => {
+		return () => {
+			isMounted = false;
+		};
+	});
 
 	/**
 	 * @param {string} mutationType Type of mutation - CREATE|UPDATE|DELETE
@@ -108,7 +115,7 @@ const useEntityMutation = (type, id = '') => {
 	 *
 	 */
 	const onMutationStart = () => {
-		setResult({
+		updateResult({
 			loading: true,
 			error: undefined,
 			data: undefined,
@@ -123,7 +130,7 @@ const useEntityMutation = (type, id = '') => {
 		const { data, errors } = response;
 		const error = errors && errors.length > 0 ? new ApolloError({ graphQLErrors: errors }) : undefined;
 
-		setResult({
+		updateResult({
 			called: true,
 			loading: false,
 			data,
@@ -139,7 +146,7 @@ const useEntityMutation = (type, id = '') => {
 	 *
 	 */
 	const onMutationError = (error, onError) => {
-		setResult({
+		updateResult({
 			loading: false,
 			error,
 			data: undefined,
@@ -148,6 +155,17 @@ const useEntityMutation = (type, id = '') => {
 
 		if (typeof onError === 'function') {
 			onError(error);
+		}
+	};
+
+	/**
+	 *
+	 */
+	const updateResult = (result) => {
+		// set state only if mounted
+		// to avoid the state update on unmounted components
+		if (isMounted) {
+			setResult(result);
 		}
 	};
 
