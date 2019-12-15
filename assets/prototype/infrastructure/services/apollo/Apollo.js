@@ -14,10 +14,10 @@ const getResolver = (type) => {
 const cache = new InMemoryCache({
 	cacheRedirects: {
 		Query: {
-			datetime: getResolver('Datetime'),
-			ticket: getResolver('Ticket'),
-			price: getResolver('Price'),
-			priceType: getResolver('PriceType'),
+			datetime: getResolver('EspressoDatetime'),
+			ticket: getResolver('EspressoTicket'),
+			price: getResolver('EspressoPrice'),
+			priceType: getResolver('EspressoPriceType'),
 		},
 	},
 });

@@ -3,30 +3,26 @@ import { useEffect, useState } from '@wordpress/element';
 import { GET_DATETIMES } from './';
 import useToaster from '../../../../../application/services/toaster/useToaster';
 import useStatus from '../../../../../application/services/apollo/status/useStatus';
-import useEventId from '../events/useEventId';
+import useDatetimeQueryOptions from './useDatetimeQueryOptions';
 
 const useFetchDatetimes = () => {
 	console.log('%c useFetchDatetimes: ', 'color: deeppink; font-size: 14px;');
 	const [initialized, setInitialized] = useState(false);
 	const { setIsLoading, setIsLoaded, setIsError } = useStatus();
-
-	const eventId = useEventId();
+	const options = useDatetimeQueryOptions();
 
 	const toaster = useToaster();
 	const toasterMessage = 'initializing datetimes';
 
 	const { data, error, loading } = useQuery(GET_DATETIMES, {
-		variables: {
-			first: 50,
-			where: {
-				eventId,
-			},
-		},
+		...options,
 		onCompleted: () => {
+			setIsLoaded('datetimes', true);
 			toaster.dismiss(toasterMessage);
 			toaster.success(`datetimes initialized`);
 		},
 		onError: (error) => {
+			setIsError('datetimes', true);
 			toaster.dismiss(toasterMessage);
 			toaster.error(error);
 		},
@@ -34,9 +30,7 @@ const useFetchDatetimes = () => {
 
 	useEffect(() => {
 		setIsLoading('datetimes', loading);
-		setIsLoaded('datetimes', !!data);
-		setIsError('datetimes', !!error);
-	}, [data, error, loading]);
+	}, [loading]);
 
 	if (!initialized) {
 		toaster.loading(loading, toasterMessage);

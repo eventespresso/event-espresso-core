@@ -37,7 +37,7 @@ const usePriceMutator = () => {
 
 		const onUpdate = ({ proxy, entity: price }) => {
 			// Read the existing data from cache.
-			const { prices = {} } = proxy.readQuery(options);
+			const { espressoPrices: prices = {} } = proxy.readQuery(options);
 
 			switch (mutationType) {
 				case 'CREATE':

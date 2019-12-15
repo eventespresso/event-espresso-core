@@ -13,7 +13,7 @@ const useUpdateDatetimeCache = () => {
 		proxy.writeQuery({
 			...options,
 			data: {
-				datetimes: {
+				espressoDatetimes: {
 					...datetimes,
 					nodes: newNodes,
 				},

@@ -60,7 +60,7 @@ const useOnSubmitPrices = (existingPrices) => {
 				// if it's a newly added price
 				if (!id) {
 					return new Promise((resolve, onError) => {
-						const onCompleted = ({ createPrice: { price } }) => {
+						const onCompleted = ({ createEspressoPrice: { espressoPrice: price } }) => {
 							createdPriceIds.push(price.id);
 							resolve(price);
 						};
@@ -68,7 +68,7 @@ const useOnSubmitPrices = (existingPrices) => {
 					});
 				}
 				return new Promise((resolve, onError) => {
-					const onCompleted = ({ updatePrice: { price } }) => {
+					const onCompleted = ({ updateEspressoPrice: { espressoPrice: price } }) => {
 						updatedPriceIds.push(price.id);
 						resolve(price);
 					};

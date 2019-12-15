@@ -1,3 +1,4 @@
+import { useCallback } from '@wordpress/element';
 import useEntityMutator from '../../../../application/services/apollo/mutations/useEntityMutator';
 import useTicketPrices from '../../data/queries/tickets/useTicketPrices';
 
@@ -6,7 +7,7 @@ const useDeleteTicketHandler = ({ id }) => {
 	const relatedPrices = useTicketPrices(id);
 	const { deleteEntity: deletePrice } = useEntityMutator('Price');
 
-	return () => {
+	return useCallback(() => {
 		const subscriptions = {
 			onCompleted: () => {
 				// The prices that are not default or tax prices.
@@ -19,7 +20,7 @@ const useDeleteTicketHandler = ({ id }) => {
 			onError: console.error,
 		};
 		deleteTicket({ id }, subscriptions);
-	};
+	}, [id]);
 };
 
 export default useDeleteTicketHandler;
