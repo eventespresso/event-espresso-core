@@ -5,8 +5,8 @@ PriceType object has connections with `RootQuery` etc. and thus can be accessed 
 ## Example with `RootQuery`
 
 ```gql
-query getPriceTypes {
-	priceTypes {
+query GET_PRICE_TYPES {
+	espressoPriceTypes {
 		nodes {
 			id
 			dbId
