@@ -30,7 +30,7 @@ class PriceType extends TypeBase
     public function __construct(EEM_Price_Type $price_type_model)
     {
         $this->model = $price_type_model;
-        $this->setName('PriceType');
+        $this->setName($this->namespace. 'PriceType');
         $this->setDescription(__('A price type.', 'event_espresso'));
         $this->setIsCustomPostType(false);
         parent::__construct();
@@ -58,7 +58,7 @@ class PriceType extends TypeBase
             ),
             new GraphQLField(
                 'baseType',
-                'PriceBaseTypeEnum',
+                $this->namespace . 'PriceBaseTypeEnum',
                 'base_type',
                 esc_html__('Price Base type', 'event_espresso')
             ),

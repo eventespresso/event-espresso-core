@@ -5,7 +5,7 @@ namespace EventEspresso\core\domain\services\graphql\connections;
 use EE_Base_Class;
 use EEM_Price;
 use EventEspresso\core\domain\services\graphql\connection_resolvers\PriceConnectionResolver;
-use EventEspresso\core\services\graphql\connections\ConnectionInterface;
+use EventEspresso\core\services\graphql\connections\ConnectionBase;
 use Exception;
 
 /**
@@ -16,13 +16,8 @@ use Exception;
  * @author  Manzoor Wani
  * @since   $VID:$
  */
-class TicketPricesConnection implements ConnectionInterface
+class TicketPricesConnection extends ConnectionBase
 {
-
-    /**
-     * @var EEM_Price $model
-     */
-    protected $model;
 
 
     /**
@@ -43,10 +38,10 @@ class TicketPricesConnection implements ConnectionInterface
     public function config()
     {
         return [
-            'fromType'           => 'Ticket',
-            'toType'             => 'Price',
+            'fromType'           => $this->namespace . 'Ticket',
+            'toType'             => $this->namespace . 'Price',
             'fromFieldName'      => 'prices',
-            'connectionTypeName' => 'TicketPricesConnection',
+            'connectionTypeName' => "{$this->namespace}TicketPricesConnection",
             'connectionArgs'     => self::get_connection_args(),
             'resolve'            => [$this, 'resolveConnection'],
             'resolveNode'        => [$this, 'resolveNode']

@@ -18,11 +18,6 @@ use Exception;
 class RootQueryPricesConnection extends AbstractRootQueryConnection
 {
 
-    /**
-     * @var EEM_Price $model
-     */
-    protected $model;
-
 
     /**
      * PriceConnection constructor.
@@ -43,9 +38,9 @@ class RootQueryPricesConnection extends AbstractRootQueryConnection
     {
         return [
             'fromType'           => 'RootQuery',
-            'toType'             => 'Price',
-            'fromFieldName'      => 'prices',
-            'connectionTypeName' => 'RootQueryPricesConnection',
+            'toType'             => $this->namespace . 'Price',
+            'fromFieldName'      => lcfirst($this->namespace) . 'Prices',
+            'connectionTypeName' => "{$this->namespace}RootQueryPricesConnection",
             'connectionArgs'     => TicketPricesConnection::get_connection_args(),
             'resolve'            => [$this, 'resolveConnection'],
             'resolveNode'        => [$this, 'resolveNode']

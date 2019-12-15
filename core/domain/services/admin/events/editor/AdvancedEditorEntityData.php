@@ -41,6 +41,11 @@ class AdvancedEditorEntityData
 {
 
     /**
+     * @var string $namespace The graphql namespace/prefix.
+     */
+    protected $namespace = 'Espresso';
+
+    /**
      * @var EE_Event
      */
     protected $event;
@@ -293,9 +298,10 @@ var graphqlEndpoint='{$graphqlEndpoint}';
      */
     protected function getGraphQLDatetimes($eventId)
     {
+        $field_key = lcfirst($this->namespace) . 'Datetimes';
         $query = <<<QUERY
-        query GET_DATETIMES(\$where: RootQueryDatetimesConnectionWhereArgs) {
-            datetimes(where: \$where) {
+        query GET_DATETIMES(\$where: {$this->namespace}RootQueryDatetimesConnectionWhereArgs) {
+            {$field_key}(where: \$where) {
                 nodes {
                     id
                     dbId
@@ -331,7 +337,7 @@ QUERY;
             ];
 
             $responseData = $this->makeGraphQLRequest($data);
-            return !empty($responseData['datetimes']) ? $responseData['datetimes'] : null;
+            return !empty($responseData[ $field_key ]) ? $responseData[ $field_key ] : null;
     }
 
 
@@ -342,9 +348,10 @@ QUERY;
      */
     protected function getGraphQLTickets(array $datetimeIn)
     {
+        $field_key = lcfirst($this->namespace) . 'Tickets';
         $query = <<<QUERY
-        query GET_TICKETS(\$where: RootQueryTicketsConnectionWhereArgs) {
-            tickets(where: \$where) {
+        query GET_TICKETS(\$where: {$this->namespace}RootQueryTicketsConnectionWhereArgs) {
+            {$field_key}(where: \$where) {
                 nodes {
                     id
                     dbId
@@ -382,7 +389,7 @@ QUERY;
             ];
 
             $responseData = $this->makeGraphQLRequest($data);
-            return !empty($responseData['tickets']) ? $responseData['tickets'] : null;
+            return !empty($responseData[ $field_key ]) ? $responseData[ $field_key ] : null;
     }
 
 
@@ -393,9 +400,10 @@ QUERY;
      */
     protected function getGraphQLPrices(array $ticketIn)
     {
+        $field_key = lcfirst($this->namespace) . 'Prices';
         $query = <<<QUERY
-        query getPrices(\$where: RootQueryPricesConnectionWhereArgs) {
-            prices(where: \$where) {
+        query GET_PRICES(\$where: {$this->namespace}RootQueryPricesConnectionWhereArgs) {
+            {$field_key}(where: \$where) {
                 nodes {
                     id
                     dbId
@@ -428,7 +436,7 @@ QUERY;
             ];
 
             $responseData = $this->makeGraphQLRequest($data);
-            return !empty($responseData['prices']) ? $responseData['prices'] : null;
+            return !empty($responseData[ $field_key ]) ? $responseData[ $field_key ] : null;
     }
 
 
@@ -438,9 +446,10 @@ QUERY;
      */
     protected function getGraphQLPriceTypes()
     {
+        $field_key = lcfirst($this->namespace) . 'PriceTypes';
         $query = <<<QUERY
-        query getPriceTypes {
-            priceTypes {
+        query GET_PRICES {
+            {$field_key} {
                 nodes {
                     id
                     dbId
@@ -464,7 +473,7 @@ QUERY;
             ];
 
             $responseData = $this->makeGraphQLRequest($data);
-            return !empty($responseData['priceTypes']) ? $responseData['priceTypes'] : null;
+            return !empty($responseData[ $field_key ]) ? $responseData[ $field_key ] : null;
     }
 
 

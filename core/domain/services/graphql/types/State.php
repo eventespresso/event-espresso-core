@@ -28,7 +28,7 @@ class State extends TypeBase
     public function __construct(EEM_State $state_model)
     {
         $this->model = $state_model;
-        $this->setName('State');
+        $this->setName($this->namespace . 'State');
         $this->setDescription(__('A state', 'event_espresso'));
         $this->setIsCustomPostType(false);
 
@@ -75,7 +75,7 @@ class State extends TypeBase
             ),
             new GraphQLOutputField(
                 'country',
-                'Country',
+                $this->namespace . 'Country',
                 null,
                 esc_html__('Country for the state', 'event_espresso')
             ),

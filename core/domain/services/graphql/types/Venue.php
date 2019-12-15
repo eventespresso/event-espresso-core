@@ -29,7 +29,7 @@ class Venue extends TypeBase
     public function __construct(EEM_Venue $venue_model)
     {
         $this->model = $venue_model;
-        $this->setName('Venue');
+        $this->setName($this->namespace . 'Venue');
         $this->setIsCustomPostType(true);
         parent::__construct();
     }
@@ -116,7 +116,7 @@ class Venue extends TypeBase
             ),
             new GraphQLOutputField(
                 'state',
-                'State',
+                $this->namespace . 'State',
                 null,
                 esc_html__('Venue state', 'event_espresso')
             ),
@@ -128,7 +128,7 @@ class Venue extends TypeBase
             ),
             new GraphQLOutputField(
                 'country',
-                'Country',
+                $this->namespace . 'Country',
                 null,
                 esc_html__('Venue country', 'event_espresso')
             ),

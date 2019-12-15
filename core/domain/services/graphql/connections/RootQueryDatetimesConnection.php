@@ -38,9 +38,9 @@ class RootQueryDatetimesConnection extends AbstractRootQueryConnection
     {
         return [
             'fromType'           => 'RootQuery',
-            'toType'             => 'Datetime',
-            'fromFieldName'      => 'datetimes',
-            'connectionTypeName' => 'RootQueryDatetimesConnection',
+            'toType'             => $this->namespace . 'Datetime',
+            'fromFieldName'      => lcfirst($this->namespace . 'Datetimes'),
+            'connectionTypeName' => "{$this->namespace}RootQueryDatetimesConnection",
             'connectionArgs'     => EventDatetimesConnection::get_connection_args(),
             'resolve'            => [$this, 'resolveConnection'],
             'resolveNode'        => [$this, 'resolveNode']
