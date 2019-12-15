@@ -62,9 +62,9 @@ const useEntityMutation = (type, id = '') => {
 		 */
 		return (proxy, result) => {
 			// e.g. "createDatetime", "updateTicket"
-			const mutationName = `${mutationType.toLowerCase()}${type}`;
+			const mutationName = `${mutationType.toLowerCase()}Espresso${type}`;
 			// Example result: { data: { deletePrice: { price : {...} } } }
-			const path = ['data', mutationName, type.toLowerCase()];
+			const path = ['data', mutationName, `espresso${type}`];
 			const entity = pathOr({}, path, result);
 
 			onUpdate({ proxy, entity });

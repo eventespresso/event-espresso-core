@@ -2,9 +2,9 @@ import gql from 'graphql-tag';
 import { PRICE_ATTRIBUTES } from '../../queries/prices';
 
 export const CREATE_PRICE = gql`
-	mutation createPrice($input: CreatePriceInput!) {
-		createPrice(input: $input) {
-			price {
+	mutation CREATE_PRICE($input: CreateEspressoPriceInput!) {
+		createEspressoPrice(input: $input) {
+			espressoPrice {
 				...priceAttributes
 			}
 		}
@@ -13,9 +13,9 @@ export const CREATE_PRICE = gql`
 `;
 
 export const UPDATE_PRICE = gql`
-	mutation updatePrice($input: UpdatePriceInput!) {
-		updatePrice(input: $input) {
-			price {
+	mutation UPDATE_PRICE($input: UpdateEspressoPriceInput!) {
+		updateEspressoPrice(input: $input) {
+			espressoPrice {
 				...priceAttributes
 			}
 		}
@@ -24,9 +24,9 @@ export const UPDATE_PRICE = gql`
 `;
 
 export const DELETE_PRICE = gql`
-	mutation deletePrice($input: DeletePriceInput!) {
-		deletePrice(input: $input) {
-			price {
+	mutation DELETE_PRICE($input: DeleteEspressoPriceInput!) {
+		deleteEspressoPrice(input: $input) {
+			espressoPrice {
 				id
 			}
 		}

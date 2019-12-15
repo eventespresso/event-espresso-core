@@ -13,7 +13,7 @@ const useUpdatePriceCache = () => {
 		proxy.writeQuery({
 			...options,
 			data: {
-				prices: {
+				espressoPrices: {
 					...prices,
 					nodes: newNodes,
 				},

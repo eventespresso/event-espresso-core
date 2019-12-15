@@ -3,11 +3,15 @@ import { useEffect } from '@wordpress/element';
 import { GET_PRICES } from './';
 import useInitToaster from '../../../../../application/services/toaster/useInitToaster';
 import useStatus from '../../../../../application/services/apollo/status/useStatus';
+import usePriceQueryOptions from './usePriceQueryOptions';
+import useTicketIds from '../tickets/useTicketIds';
 
-const useFetchPrices = ({ ticketIn = [] }) => {
+const useFetchPrices = () => {
 	console.log('%c useFetchPrices: ', 'color: deeppink; font-size: 14px;');
 
 	const { setIsLoading, setIsLoaded, setIsError } = useStatus();
+	const options = usePriceQueryOptions();
+	const ticketIn = useTicketIds();
 
 	const { onCompleted, onError, initializationNotices } = useInitToaster({
 		loadingMessage: `initializing prices`,
@@ -15,11 +19,7 @@ const useFetchPrices = ({ ticketIn = [] }) => {
 	});
 
 	const { data, error, loading } = useQuery(GET_PRICES, {
-		variables: {
-			where: {
-				ticketIn,
-			},
-		},
+		...options,
 		skip: !ticketIn.length, // do not fetch if we don't have any tickets
 		onCompleted: (data) => {
 			setIsLoaded('prices', true);

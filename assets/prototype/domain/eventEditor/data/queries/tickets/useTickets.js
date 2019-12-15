@@ -19,7 +19,7 @@ const useTickets = () => {
 		data = {};
 	}
 
-	return R.pathOr([], ['tickets', 'nodes'], data);
+	return R.pathOr([], ['espressoTickets', 'nodes'], data);
 };
 
 export default useTickets;

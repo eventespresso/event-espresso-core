@@ -40,7 +40,7 @@ const useTicketMutator = () => {
 			const prices = pathOr([], ['nodes'], updatedPrices);
 
 			// Read the existing data from cache.
-			const { tickets = {} } = proxy.readQuery(options);
+			const { espressoTickets: tickets = {} } = proxy.readQuery(options);
 			const { datetimes: datetimeIds = [] } = input;
 
 			const priceIds = prices.map(({ id }) => id);

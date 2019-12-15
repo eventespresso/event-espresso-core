@@ -11,24 +11,30 @@ const useCacheRehydration = () => {
 	const client = useApolloClient();
 	const eventId = useEventId();
 	const { setData } = useRelations();
-	const { datetimes, tickets, prices, priceTypes, relations } = useCacheRehydrationData();
+	const {
+		datetimes: espressoDatetimes,
+		tickets: espressoTickets,
+		prices: espressoPrices,
+		priceTypes: espressoPriceTypes,
+		relations,
+	} = useCacheRehydrationData();
 	const { isLoaded } = useStatus();
 
 	if (isLoaded('priceTypes')) {
 		return;
 	}
 
-	let { nodes = [] } = priceTypes;
+	let { nodes = [] } = espressoPriceTypes;
 	if (nodes.length) {
 		client.writeQuery({
 			query: GET_PRICE_TYPES,
 			data: {
-				priceTypes,
+				espressoPriceTypes,
 			},
 		});
 	}
 
-	({ nodes = [] } = datetimes);
+	({ nodes = [] } = espressoDatetimes);
 	if (nodes.length) {
 		client.writeQuery({
 			query: GET_DATETIMES,
@@ -38,13 +44,13 @@ const useCacheRehydration = () => {
 				},
 			},
 			data: {
-				datetimes,
+				espressoDatetimes,
 			},
 		});
 	}
 
 	const datetimeIn = nodes.map(({ id }) => id);
-	({ nodes = [] } = tickets);
+	({ nodes = [] } = espressoTickets);
 	if (datetimeIn.length && nodes.length) {
 		client.writeQuery({
 			query: GET_TICKETS,
@@ -54,13 +60,13 @@ const useCacheRehydration = () => {
 				},
 			},
 			data: {
-				tickets,
+				espressoTickets,
 			},
 		});
 	}
 
 	const ticketIn = nodes.map(({ id }) => id);
-	({ nodes = [] } = prices);
+	({ nodes = [] } = espressoPrices);
 	if (ticketIn.length && nodes.length) {
 		client.writeQuery({
 			query: GET_PRICES,
@@ -70,7 +76,7 @@ const useCacheRehydration = () => {
 				},
 			},
 			data: {
-				prices,
+				espressoPrices,
 			},
 		});
 	}

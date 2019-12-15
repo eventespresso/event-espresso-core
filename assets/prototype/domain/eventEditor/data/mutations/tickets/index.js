@@ -2,9 +2,9 @@ import gql from 'graphql-tag';
 import { TICKET_ATTRIBUTES, TICKET_PRICES_ATTRIBUTE } from '../../queries/tickets';
 
 export const CREATE_TICKET = gql`
-	mutation createTicket($input: CreateTicketInput!) {
-		createTicket(input: $input) {
-			ticket {
+	mutation CREATE_TICKET($input: CreateEspressoTicketInput!) {
+		createEspressoTicket(input: $input) {
+			espressoTicket {
 				...ticketAttributes
 				...ticketPricesAttribute # fetch default prices when a ticket is created.
 			}
@@ -15,9 +15,9 @@ export const CREATE_TICKET = gql`
 `;
 
 export const UPDATE_TICKET = gql`
-	mutation updateTicket($input: UpdateTicketInput!) {
-		updateTicket(input: $input) {
-			ticket {
+	mutation UPDATE_TICKET($input: UpdateEspressoTicketInput!) {
+		updateEspressoTicket(input: $input) {
+			espressoTicket {
 				...ticketAttributes
 				...ticketPricesAttribute # fetch updated prices when a ticket is updated.
 			}
@@ -28,9 +28,9 @@ export const UPDATE_TICKET = gql`
 `;
 
 export const DELETE_TICKET = gql`
-	mutation deleteTicket($input: DeleteTicketInput!) {
-		deleteTicket(input: $input) {
-			ticket {
+	mutation DELETE_TICKET($input: DeleteEspressoTicketInput!) {
+		deleteEspressoTicket(input: $input) {
+			espressoTicket {
 				id
 			}
 		}
