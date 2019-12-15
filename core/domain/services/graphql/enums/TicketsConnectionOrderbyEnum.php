@@ -20,7 +20,7 @@ class TicketsConnectionOrderbyEnum extends EnumBase
      */
     public function __construct()
     {
-        $this->setName('TicketsConnectionOrderbyEnum');
+        $this->setName($this->namespace . 'TicketsConnectionOrderbyEnum');
         $this->setDescription(esc_html__('Field to order the connection by', 'event_espresso'));
         parent::__construct();
     }

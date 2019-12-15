@@ -1,101 +1,95 @@
-# Datetime mutation examples
+# EspressoDatetime mutation examples
 
-Datetime object has three mutations:
+EspressoDatetime object has three mutations:
 
-- `createDatetime`
-- `updateDatetime`
-- `deleteDatetime`
+-   `createEspressoDatetime`
+-   `updateEspressoDatetime`
+-   `deleteEspressoDatetime`
 
-## `createDatetime`
+## `createEspressoDatetime`
 
 This mutation creates a new datetime. It is recommended to pass the `event` and `tickets` fields to make sure the datetime has proper relations set with those entities.
 
 ```gql
-mutation createDatetime($input: CreateDatetimeInput!) {
-  createDatetime(input: $input) {
-    datetime {
-      id
-      name
-    }
-  }
+mutation CREATE_DATETIME($input: CreateEspressoDatetimeInput!) {
+	createEspressoDatetime(input: $input) {
+		datetime {
+			id
+			name
+		}
+	}
 }
 ```
 
-### Query variables for `createDatetime`
+### Query variables for `createEspressoDatetime`
 
 ```json
 {
-  "input": {
-    "clientMutationId": "xyz",
-    "name": "Some name here",
-    "description": "Here goes the description",
-    "startDate": "06/12/2019 10:40:00",
-    "endDate": "12/26/2019 20:40:00",
-    "eventId": 22,
-    "tickets": [
-      "RGF0ZXJKHNUYT=",
-      "UIYNFTRUYNTBYY"
-    ]
-  }
+	"input": {
+		"clientMutationId": "xyz",
+		"name": "Some name here",
+		"description": "Here goes the description",
+		"startDate": "06/12/2019 10:40:00",
+		"endDate": "12/26/2019 20:40:00",
+		"eventId": 22,
+		"tickets": ["RGF0ZXJKHNUYT=", "UIYNFTRUYNTBYY"]
+	}
 }
 ```
 
-## `updateDatetime`
+## `updateEspressoDatetime`
 
 This mutation updates an existing datetime.
 
 ```gql
-mutation updateDatetime($input: UpdateDatetimeInput!) {
-  updateDatetime(input: $input) {
-    datetime {
-      id
-      name
-    }
-  }
+mutation UPDATE_DATETIME($input: UpdateEspressoDatetimeInput!) {
+	updateEspressoDatetime(input: $input) {
+		datetime {
+			id
+			name
+		}
+	}
 }
 ```
 
-### Query variables for `updateDatetime`
+### Query variables for `updateEspressoDatetime`
 
 ```json
 {
-  "input": {
-    "clientMutationId": "xyz",
-    "id": "RGF0ZXRpbWU6MTQ=",
-    "name": "Some name here",
-    "description": "Here goes the description",
-    "startDate": "06/12/2019 10:40:00",
-    "endDate": "12/26/2019 20:40:00",
-    "event": "ZXNwcmVzc29fZXZlbnRzOjIy",
-    "tickets": [
-      "RGF0ZXJKHNUYT=",
-      "UIYNFTRUYNTBYY"
-    ]
-  }
+	"input": {
+		"clientMutationId": "xyz",
+		"id": "RGF0ZXRpbWU6MTQ=",
+		"name": "Some name here",
+		"description": "Here goes the description",
+		"startDate": "06/12/2019 10:40:00",
+		"endDate": "12/26/2019 20:40:00",
+		"event": "ZXNwcmVzc29fZXZlbnRzOjIy",
+		"tickets": ["RGF0ZXJKHNUYT=", "UIYNFTRUYNTBYY"]
+	}
 }
 ```
 
-## `deleteDatetime`
+## `deleteEspressoDatetime`
 
 This mutation deletes a datetime.
 
 ```gql
-mutation deleteDatetime($input: DeleteDatetimeInput!) {
-  deleteDatetime(input: $input) {
-    datetime {
-      id
-    }
-  }
+mutation DELETE_DATETIME($input: DeleteEspressoDatetimeInput!) {
+	deleteEspressoDatetime(input: $input) {
+		datetime {
+			id
+		}
+	}
 }
 ```
 
-### Query variables for `deleteDatetime`
+### Query variables for `deleteEspressoDatetime`
 
 ```json
 {
-  "input": {
-    "clientMutationId": "xyz",
-    "id": "RGF0ZXRpbWU6MTQ="
-  }
+	"input": {
+		"clientMutationId": "xyz",
+		"id": "RGF0ZXRpbWU6MTQ="
+	}
 }
 ```

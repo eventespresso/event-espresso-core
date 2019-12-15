@@ -5,8 +5,9 @@ namespace EventEspresso\core\domain\services\graphql\connections;
 use EE_Base_Class;
 use EEM_Venue;
 use EventEspresso\core\domain\services\graphql\connection_resolvers\VenueConnectionResolver;
-use EventEspresso\core\services\graphql\connections\ConnectionInterface;
+use EventEspresso\core\services\graphql\connections\ConnectionBase;
 use Exception;
+use WPGraphQL\Data\DataSource;
 
 /**
  * Class EventVenuesConnection
@@ -16,13 +17,8 @@ use Exception;
  * @author  Brent Christensen
  * @since   $VID:$
  */
-class EventVenuesConnection implements ConnectionInterface
+class EventVenuesConnection extends ConnectionBase
 {
-
-    /**
-     * @var EEM_Venue $model
-     */
-    protected $model;
 
 
     /**
@@ -43,10 +39,10 @@ class EventVenuesConnection implements ConnectionInterface
     public function config()
     {
         return [
-            'fromType'           => 'Event',
-            'toType'             => 'Venue',
+            'fromType'           => $this->namespace . 'Event',
+            'toType'             => $this->namespace . 'Venue',
             'fromFieldName'      => 'venues',
-            'connectionTypeName' => 'EventVenuesConnection',
+            'connectionTypeName' => "{$this->namespace}EventVenuesConnection",
             'resolve'            => [$this, 'resolveConnection'],
             'resolveNode'        => [$this, 'resolveNode'],
         ];
@@ -79,6 +75,6 @@ class EventVenuesConnection implements ConnectionInterface
      */
     public function resolveNode($id, $args, $context, $info)
     {
-        return $this->model->get_one_by_ID($id);
+        return DataSource::resolve_post_object($id, $context);
     }
 }

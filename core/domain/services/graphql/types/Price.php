@@ -33,7 +33,7 @@ class Price extends TypeBase
     public function __construct(EEM_Price $price_model)
     {
         $this->model = $price_model;
-        $this->setName('Price');
+        $this->setName($this->namespace . 'Price');
         $this->setDescription(__('A price.', 'event_espresso'));
         $this->setIsCustomPostType(false);
         parent::__construct();
@@ -103,7 +103,7 @@ class Price extends TypeBase
             ),
             new GraphQLOutputField(
                 'priceType',
-                'PriceType',
+                $this->namespace . 'PriceType',
                 'type_obj',
                 esc_html__('The related price type object.', 'event_espresso')
             ),

@@ -32,6 +32,11 @@ abstract class TypeBase implements TypeInterface
 {
 
     /**
+     * @var string $namespace The graphql namespace/prefix.
+     */
+    protected $namespace = 'Espresso';
+
+    /**
      * @var EEM_Base $model
      */
     protected $model;

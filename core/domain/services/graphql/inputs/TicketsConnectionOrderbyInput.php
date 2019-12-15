@@ -24,7 +24,7 @@ class TicketsConnectionOrderbyInput extends InputBase
      */
     public function __construct()
     {
-        $this->setName('TicketsConnectionOrderbyInput');
+        $this->setName($this->namespace . 'TicketsConnectionOrderbyInput');
         $this->setDescription(esc_html__('Options for ordering the connection', 'event_espresso'));
         parent::__construct();
     }
@@ -39,7 +39,7 @@ class TicketsConnectionOrderbyInput extends InputBase
         return [
             new GraphQLField(
                 'field',
-                ['non_null' => 'TicketsConnectionOrderbyEnum']
+                ['non_null' => $this->namespace . 'TicketsConnectionOrderbyEnum']
             ),
             new GraphQLField(
                 'order',

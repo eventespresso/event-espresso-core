@@ -6,7 +6,7 @@ use EE_Base_Class;
 use EEM_Datetime;
 use EventEspresso\core\domain\services\graphql\connection_resolvers\DatetimeConnectionResolver;
 use EventEspresso\core\domain\services\graphql\connections\EventDatetimesConnection;
-use EventEspresso\core\services\graphql\connections\ConnectionInterface;
+use EventEspresso\core\services\graphql\connections\ConnectionBase;
 use Exception;
 
 /**
@@ -17,13 +17,8 @@ use Exception;
  * @author  Brent Christensen
  * @since   $VID:$
  */
-class TicketDatetimesConnection implements ConnectionInterface
+class TicketDatetimesConnection extends ConnectionBase
 {
-
-    /**
-     * @var EEM_Datetime $model
-     */
-    protected $model;
 
 
     /**
@@ -44,10 +39,10 @@ class TicketDatetimesConnection implements ConnectionInterface
     public function config()
     {
         return [
-            'fromType'           => 'Ticket',
-            'toType'             => 'Datetime',
+            'fromType'           => $this->namespace . 'Ticket',
+            'toType'             => $this->namespace . 'Datetime',
             'fromFieldName'      => 'datetimes',
-            'connectionTypeName' => 'TicketDatetimesConnection',
+            'connectionTypeName' => "{$this->namespace}TicketDatetimesConnection",
             'connectionArgs'     => EventDatetimesConnection::get_connection_args(),
             'resolve'            => [$this, 'resolveConnection'],
             'resolveNode'        => [$this, 'resolveNode'],

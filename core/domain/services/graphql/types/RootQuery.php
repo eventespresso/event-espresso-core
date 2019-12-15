@@ -47,7 +47,7 @@ class RootQuery extends TypeBase
     {
         return [
             new GraphQLOutputField(
-                'eventRelations',
+                lcfirst($this->namespace) . 'EventRelations',
                 'String',
                 null,
                 esc_html__('JSON encoded relational data of the models', 'event_espresso'),

@@ -20,7 +20,7 @@ class DatetimesConnectionOrderbyEnum extends EnumBase
      */
     public function __construct()
     {
-        $this->setName('DatetimesConnectionOrderbyEnum');
+        $this->setName($this->namespace . 'DatetimesConnectionOrderbyEnum');
         $this->setDescription(esc_html__('Field to order the connection by', 'event_espresso'));
         parent::__construct();
     }

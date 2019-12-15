@@ -33,7 +33,7 @@ class Datetime extends TypeBase
     public function __construct(EEM_Datetime $datetime_model)
     {
         $this->model = $datetime_model;
-        $this->setName('Datetime');
+        $this->setName($this->namespace . 'Datetime');
         $this->setDescription(__('An event date', 'event_espresso'));
         $this->setIsCustomPostType(false);
         parent::__construct();
@@ -163,7 +163,7 @@ class Datetime extends TypeBase
             ),
             new GraphQLOutputField(
                 'event',
-                'Event',
+                $this->namespace . 'Event',
                 null,
                 esc_html__('Event of the datetime.', 'event_espresso')
             ),

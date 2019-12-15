@@ -17,6 +17,11 @@ abstract class InputBase implements InputInterface
 {
 
     /**
+     * @var string $namespace The graphql namespace/prefix.
+     */
+    protected $namespace = 'Espresso';
+
+    /**
      * @var string $name
      */
     protected $name = '';
