@@ -3,8 +3,8 @@
 ## Basic event query
 
 ```gql
-query getEventData($id: Int!) {
-	eventBy(eventId: $id) {
+query GET_EVENT_DATA($id: Int!) {
+	espressoEventBy(espressoEventId: $id) {
 		id
 		dbId
 		name
@@ -28,8 +28,8 @@ query getEventData($id: Int!) {
 ## Event query with venues
 
 ```gql
-query getEventData($id: Int!) {
-	eventBy(eventId: $id) {
+query GET_EVENT_DATA($id: Int!) {
+	espressoEventBy(espressoEventId: $id) {
 		id
 		dbId
 		name
@@ -54,8 +54,8 @@ query getEventData($id: Int!) {
 ## Event query with datetimes and related tickets
 
 ```gql
-query getEventData($id: Int!) {
-	eventBy(eventId: $id) {
+query GET_EVENT_DATA($id: Int!) {
+	espressoEventBy(espressoEventId: $id) {
 		id
 		dbId
 		name
@@ -88,8 +88,8 @@ query getEventData($id: Int!) {
 ## Event query with venues, datetimes and related tickets
 
 ```gql
-query getEventData($id: Int!) {
-	eventBy(eventId: $id) {
+query GET_EVENT_DATA($id: Int!) {
+	espressoEventBy(espressoEventId: $id) {
 		id
 		dbId
 		name

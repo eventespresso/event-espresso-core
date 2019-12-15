@@ -1,12 +1,12 @@
 # Price query examples
 
-Price object has connections with `RootQuery`, `Ticket` etc. and thus can be accessed as a field of any of them.
+Price object has connections with `RootQuery`, `EspressoTicket` etc. and thus can be accessed as a field of any of them.
 
 ## Example with `RootQuery`
 
 ```gql
-query getPrices($where: RootQueryPricesConnectionWhereArgs) {
-	prices(where: $where) {
+query GET_PRICES($where: EspressoRootQueryPricesConnectionWhereArgs) {
+	espressoPrices(where: $where) {
 		nodes {
 			id
 			name
@@ -49,4 +49,4 @@ or
 }
 ```
 
-## [Example with `Ticket`](ticket.md)
+## [Example with `EspressoTicket`](ticket.md)
