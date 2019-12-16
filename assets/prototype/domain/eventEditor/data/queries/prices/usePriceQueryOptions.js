@@ -1,7 +1,5 @@
-import useTicketIds from '../../queries/tickets/useTicketIds';
-import { queries } from '../../queries';
-
-const { GET_PRICES } = queries;
+import useTicketIds from '../tickets/useTicketIds';
+import { GET_PRICES } from './';
 
 const usePriceQueryOptions = () => {
 	const ticketIn = useTicketIds();

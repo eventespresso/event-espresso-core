@@ -1,7 +1,5 @@
-import useEventId from '../../queries/events/useEventId';
-import { queries } from '../../queries';
-
-const { GET_DATETIMES } = queries;
+import useEventId from '../events/useEventId';
+import { GET_DATETIMES } from './';
 
 const useDatetimeQueryOptions = () => {
 	const eventId = useEventId();

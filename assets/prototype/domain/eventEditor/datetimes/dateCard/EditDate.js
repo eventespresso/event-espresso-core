@@ -1,10 +1,10 @@
 import EditDateButton from './EditDateButton';
 import EditDateModal from './EditDateModal';
 
-const EditDate = ({ position, relatedTickets, tickets }) => (
+const EditDate = ({ position, relatedTickets }) => (
 	<>
 		<EditDateButton position={position} />
-		<EditDateModal relatedTickets={relatedTickets} tickets={tickets} />
+		<EditDateModal relatedTickets={relatedTickets} />
 	</>
 );
 

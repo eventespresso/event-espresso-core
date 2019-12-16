@@ -34,7 +34,7 @@ const idStyle = {
 	top: '.5em',
 };
 
-const DateCard = ({ id, tickets }) => {
+const DateCard = ({ id }) => {
 	const date = useDateItem({ id });
 	const { isLoaded } = useStatus();
 
@@ -59,7 +59,7 @@ const DateCard = ({ id, tickets }) => {
 	return (
 		<DateTimeProvider id={id}>
 			<Card elevation={Elevation.ONE} style={cardStyle}>
-				<EditDate position='top' relatedTickets={relatedTicketIds} tickets={tickets} />
+				<EditDate position='top' relatedTickets={relatedTicketIds} />
 				<div style={idStyle}>
 					{date.dbId} {':'} {date.id}
 				</div>

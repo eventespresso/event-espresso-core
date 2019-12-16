@@ -1,5 +1,5 @@
 import gql from 'graphql-tag';
-import { PRICE_ATTRIBUTES } from '../prices/prices';
+import { PRICE_ATTRIBUTES } from '../prices';
 
 export const TICKET_ATTRIBUTES = gql`
 	fragment ticketAttributes on Ticket {

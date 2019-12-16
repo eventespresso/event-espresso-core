@@ -1,6 +1,6 @@
 import { useQuery } from '@apollo/react-hooks';
 import { useEffect } from '@wordpress/element';
-import { GET_PRICE_TYPES } from './priceTypes';
+import { GET_PRICE_TYPES } from './';
 import useInitToaster from '../../../../../application/services/toaster/useInitToaster';
 import useStatus from '../../../../../application/services/apollo/status/useStatus';
 

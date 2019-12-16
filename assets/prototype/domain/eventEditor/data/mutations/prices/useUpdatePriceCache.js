@@ -1,4 +1,4 @@
-import usePriceQueryOptions from './usePriceQueryOptions';
+import usePriceQueryOptions from '../../queries/prices/usePriceQueryOptions';
 
 const useUpdatePriceCache = () => {
 	const options = usePriceQueryOptions();

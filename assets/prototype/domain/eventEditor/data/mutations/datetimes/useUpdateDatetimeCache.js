@@ -1,4 +1,4 @@
-import useDatetimeQueryOptions from './useDatetimeQueryOptions';
+import useDatetimeQueryOptions from '../../queries/datetimes/useDatetimeQueryOptions';
 
 const useUpdateDatetimeCache = () => {
 	const options = useDatetimeQueryOptions();

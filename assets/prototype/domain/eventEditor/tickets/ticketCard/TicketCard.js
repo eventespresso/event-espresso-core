@@ -37,7 +37,7 @@ const priceStyle = {
 	color: 'grey',
 };
 
-const TicketCard = ({ datetimes, id }) => {
+const TicketCard = ({ id }) => {
 	const ticket = useTicketItem({ id });
 	const { isLoaded } = useStatus();
 	const { updateEntity } = useEntityMutator('Ticket', id);
@@ -51,7 +51,7 @@ const TicketCard = ({ datetimes, id }) => {
 	return (
 		<TicketProvider id={id}>
 			<Card elevation={Elevation.ONE} style={cardStyle}>
-				<EditTicket datetimes={datetimes} position='top' relatedDates={relatedDates} />
+				<EditTicket position='top' relatedDates={relatedDates} />
 				<div>
 					<div style={idStyle}>
 						{ticket.dbId} {':'} {ticket.id}

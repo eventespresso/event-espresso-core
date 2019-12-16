@@ -1,5 +1,5 @@
 import gql from 'graphql-tag';
-import { PRICE_ATTRIBUTES } from '../../queries/prices/prices';
+import { PRICE_ATTRIBUTES } from '../../queries/prices';
 
 export const CREATE_PRICE = gql`
 	mutation createPrice($input: CreatePriceInput!) {
