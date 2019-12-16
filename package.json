@@ -74,6 +74,7 @@
 		"apollo-link-http": "^1.5.16",
 		"classnames": "^2.2.6",
 		"cuid": "^2.1.6",
+		"date-fns-tz": "^1.0.8",
 		"decimal.js-light": "^2.5.0",
 		"final-form": "^4.18.6",
 		"final-form-arrays": "^3.0.2",
