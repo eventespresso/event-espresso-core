@@ -9,6 +9,7 @@ import useEntityMutator from '../../../../application/services/apollo/mutations/
 import useRelations from '../../../../application/services/apollo/relations/useRelations';
 import useStatus from '../../../../application/services/apollo/status/useStatus';
 import DatetimeId from '../../datetimes/DatetimeId';
+import InlineEditInput from '../../../../application/ui/components/input/InlineEditInput';
 
 const cardStyle = {
 	margin: '0 0 2rem',
@@ -57,9 +58,11 @@ const TicketCard = ({ id }) => {
 						{ticket.dbId} {':'} {ticket.id}
 					</div>
 					<H4>
-						<EditableText
+						<InlineEditInput
+							component={EditableText}
 							placeholder={'edit title...'}
 							defaultValue={ticket.name}
+							value={ticket.name}
 							onCancel={(value) => console.log(value)}
 							onConfirm={(name) => updateEntity({ name })}
 							minWidth={'320px'}
@@ -69,8 +72,10 @@ const TicketCard = ({ id }) => {
 				</div>
 				<div>
 					<H6>
-						<EditableText
+						<InlineEditInput
+							component={EditableText}
 							placeholder='Edit description...'
+							value={ticket.description}
 							defaultValue={ticket.description}
 							onCancel={(value) => console.log(value)}
 							onConfirm={(description) => updateEntity({ description })}

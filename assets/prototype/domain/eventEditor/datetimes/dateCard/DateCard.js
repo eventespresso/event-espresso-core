@@ -13,6 +13,7 @@ import useEntityMutator from '../../../../application/services/apollo/mutations/
 import useRelations from '../../../../application/services/apollo/relations/useRelations';
 import useStatus from '../../../../application/services/apollo/status/useStatus';
 import TicketId from '../../tickets/TicketId';
+import InlineEditInput from '../../../../application/ui/components/input/InlineEditInput';
 
 const btnStyle = {
 	margin: '0 0 0 .5rem',
@@ -64,8 +65,10 @@ const DateCard = ({ id }) => {
 					{date.dbId} {':'} {date.id}
 				</div>
 				<H4>
-					<EditableText
+					<InlineEditInput
+						component={EditableText}
 						placeholder='Edit title...'
+						value={date.name}
 						defaultValue={date.name}
 						onCancel={(value) => console.log(value)}
 						onConfirm={(name) => updateEntity({ name })}
@@ -75,8 +78,10 @@ const DateCard = ({ id }) => {
 				</H4>
 				<div>
 					<H6>
-						<EditableText
+						<InlineEditInput
+							component={EditableText}
 							placeholder='Edit description...'
+							value={date.description}
 							defaultValue={date.description}
 							onCancel={(value) => console.log(value)}
 							onConfirm={(description) => updateEntity({ description })}
