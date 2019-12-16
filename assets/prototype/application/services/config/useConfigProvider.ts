@@ -2,7 +2,7 @@ import useConfig from './useConfig';
 import getDateTimeFormat from '../../valueObjects/dateTime/getDateTimeFormat';
 
 type useConfigProviderProps = {
-	dateTimeFormat: boolean;
+	dateTimeFormat?: boolean;
 };
 
 /**
