@@ -1,5 +1,9 @@
+import { useContext } from 'react';
+import { EventEditorEventIdContext } from '../../../../../application/services/context/EventEditorEventIdProvider';
+
 const useEventId = () => {
-	const { eeEditorEventData: { eventId = 0 } = {} } = window;
+	const eventId = useContext(EventEditorEventIdContext);
+
 	return eventId;
 };
 
