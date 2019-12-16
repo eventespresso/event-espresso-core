@@ -1,7 +1,7 @@
 import { zonedTimeToUtc, utcToZonedTime } from 'date-fns-tz';
-import useConfig from '../../application/services/config/useConfig';
+import useConfig from '../services/config/useConfig';
 
-const useZonedTime = () => {
+const useTimeZoneTime = () => {
 	const { timezone } = useConfig();
 
 	const zonedTimeToUtcCb = (date: Date | string | number) => {
@@ -18,4 +18,4 @@ const useZonedTime = () => {
 	};
 };
 
-export default useZonedTime;
+export default useTimeZoneTime;
