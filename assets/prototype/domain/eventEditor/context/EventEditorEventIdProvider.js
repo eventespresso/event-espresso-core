@@ -2,19 +2,21 @@
  * External imports
  */
 import { createContext } from '@wordpress/element';
-import useToaster from '../toaster/useToaster';
+import useToaster from '../../../application/services/toaster/useToaster';
 
 const EventEditorEventIdContext = createContext();
 
 const EventEditorEventIdProvider = ({ children }) => {
 	const toaster = useToaster();
 	const { eeEditorEventData: { eventId = 0 } = {} } = window;
-
-	if (eventId == 0 || eventId == null) {
-		toaster.error('Event ID is empty or not valid.');
+	if (!eventId) {
+		toaster.error('Event ID is empty or invalid.');
 	}
-
-	return <EventEditorEventIdContext.Provider value={eventId}>{children}</EventEditorEventIdContext.Provider>;
+	return eventId && (
+		<EventEditorEventIdContext.Provider value={eventId}>
+			{children}
+		</EventEditorEventIdContext.Provider>
+	);
 };
 
 export { EventEditorEventIdContext, EventEditorEventIdProvider };
