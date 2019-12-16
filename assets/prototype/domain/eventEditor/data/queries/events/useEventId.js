@@ -1,10 +1,8 @@
 import { useContext } from 'react';
-import { EventEditorEventIdContext } from '../../../../../application/services/context/EventEditorEventIdProvider';
+import { EventEditorEventIdContext } from '../../../context/EventEditorEventIdProvider';
 
 const useEventId = () => {
-	const eventId = useContext(EventEditorEventIdContext);
-
-	return eventId;
+	return useContext(EventEditorEventIdContext);
 };
 
 export default useEventId;
