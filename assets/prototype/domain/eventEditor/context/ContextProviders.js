@@ -4,7 +4,7 @@ import { ToastProvider } from '../../../application/services/context/ToastProvid
 import { RelationsProvider } from '../../../application/services/context/RelationsProvider';
 import { StatusProvider } from '../../../application/services/context/StatusProvider';
 import ConfigProvider from '../../../application/services/context/ConfigProvider';
-import { EventEditorEventIdProvider } from '../../../application/services/context/EventEditorEventIdProvider';
+import { EventEditorEventIdProvider } from './EventEditorEventIdProvider';
 
 /**
  * A collection of top level providers that are used by multiple parts of the application.
@@ -15,13 +15,13 @@ import { EventEditorEventIdProvider } from '../../../application/services/contex
 const ContextProviders = ({ children }) => (
 	<ToastProvider>
 		<ApolloProvider>
-			<ConfigProvider>
-				<EventEditorEventIdProvider>
-					<StatusProvider>
+			<StatusProvider>
+				<ConfigProvider>
+					<EventEditorEventIdProvider>
 						<RelationsProvider>{children}</RelationsProvider>
-					</StatusProvider>
-				</EventEditorEventIdProvider>
-			</ConfigProvider>
+					</EventEditorEventIdProvider>
+				</ConfigProvider>
+			</StatusProvider>
 		</ApolloProvider>
 	</ToastProvider>
 );
