@@ -1,12 +1,12 @@
 import { useContext } from 'react';
 import { ConfigContext } from '../context/ConfigProvider';
 
-type useConfigReturnType = {
+type ConfigReturnType = {
 	dateFormat: string;
 	timeFormat: string;
 	timezone: string;
 };
 
-const useConfig = (): useConfigReturnType => useContext(ConfigContext);
+const useConfig = (): ConfigReturnType => useContext(ConfigContext);
 
 export default useConfig;
