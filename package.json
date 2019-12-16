@@ -35,7 +35,7 @@
 		"test-unit:update": "npm run test-unit -- --updateSnapshot",
 		"test-unit:watch": "npm run test-unit -- --watch",
 		"test-unit:coverage": "npm run test-unit -- --coverage",
-		"test-unit:coverage-ci": "npm run test-unit -- --coverage --maxWorkers 1 && codecov",		
+		"test-unit:coverage-ci": "npm run test-unit -- --coverage --maxWorkers 1 && codecov",
 		"lc": "jsgl --local ./",
 		"build:css": "node ./bin/css-builder/css-builder.js"
 	},
@@ -44,6 +44,27 @@
 	"browserslist": [
 		"extends @wordpress/browserslist-config"
 	],
+	"dependencies": {
+		"@eventespresso/react-exit-modal-typeform": "^1.0.4",
+		"@wordpress/i18n": "^3.7.0",
+		"@wordpress/is-shallow-equal": "^1.6.1",
+		"accounting-js": "^1.1.1",
+		"classnames": "^2.2.6",
+		"cuid": "^2.1.6",
+		"decimal.js-light": "^2.5.0",
+		"immutable": "^4.0.0-rc.12",
+		"js-green-licenses": "^1.1.0",
+		"memize": "^1.0.5",
+		"moment-duration-format": "^2.3.2",
+		"moment-timezone": "^0.5.27",
+		"npm-watch": "^0.6.0",
+		"pluralize": "^8.0.0",
+		"prop-types": "^15.7.2",
+		"querystringify": "^2.1.1",
+		"react-select": "^3.0.8",
+		"rememo": "^3.0.0",
+		"warning": "^4.0.3"
+	},
 	"devDependencies": {
 		"@babel/core": "7.7.2",
 		"@babel/plugin-proposal-class-properties": "^7.7.0",
@@ -102,26 +123,5 @@
 		"webpack-assets-manifest": "^3.1.1",
 		"webpack-cli": "^3.3.10",
 		"webpack-merge": "^4.2.2"
-	},
-	"dependencies": {
-		"@eventespresso/react-exit-modal-typeform": "^1.0.4",
-		"@wordpress/i18n": "^3.7.0",
-		"@wordpress/is-shallow-equal": "^1.6.1",
-		"accounting-js": "^1.1.1",
-		"classnames": "^2.2.6",
-		"cuid": "^2.1.6",
-		"decimal.js-light": "^2.5.0",
-		"immutable": "^4.0.0-rc.12",
-		"js-green-licenses": "^1.1.0",
-		"memize": "^1.0.5",
-		"moment-duration-format": "^2.3.2",
-		"moment-timezone": "^0.5.27",
-		"npm-watch": "^0.6.0",
-		"pluralize": "^8.0.0",
-		"prop-types": "^15.7.2",
-		"querystringify": "^2.1.1",
-		"react-select": "^3.0.8",
-		"rememo": "^3.0.0",
-		"warning": "^4.0.3"
 	}
 }
