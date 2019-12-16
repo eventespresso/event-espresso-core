@@ -1,5 +1,7 @@
 import { Fragment } from '@wordpress/element';
 import { Callout, H3, H6, NonIdealState, Spinner } from '@blueprintjs/core/lib/esm';
+
+import TicketListFilterBar from './filterBar/TicketListFilterBar';
 import AddNewTicketButton from './AddNewTicketButton';
 import TicketCard from '../ticketCard/TicketCard';
 import useTickets from '../../data/queries/tickets/useTickets';
@@ -102,6 +104,7 @@ const TicketList = () => {
 	return (
 		<div style={{ margin: '0 0 2rem' }}>
 			{header}
+			<TicketListFilterBar />
 			{ticketList}
 		</div>
 	);
