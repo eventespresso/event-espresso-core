@@ -8,7 +8,6 @@ import { render } from '@wordpress/element';
  */
 import EventEditor from './EventEditor';
 import ContextProviders from './context/ContextProviders';
-import useEventId from './data/queries/events/useEventId';
 
 const container = document.getElementById('normal-sortables');
 
@@ -19,16 +18,10 @@ editor.className = 'ee-editor-div-prototype';
 
 container.prepend(editor);
 
-const Editor = () => {
-	const eventId = useEventId();
-	if (eventId) {
-		return (
-			<ContextProviders>
-				<EventEditor />
-			</ContextProviders>
-		);
-	}
-	return null;
-};
+const Editor = () => (
+	<ContextProviders>
+		<EventEditor/>
+	</ContextProviders>
+);
 
 render(<Editor />, editor);
