@@ -362,7 +362,7 @@ class EEM_Transaction extends EEM_Base
                     'Payment.PAY_ID' => array( 'IS NULL' ),
                     'TXN_timestamp' => array('<', time() - $time_to_leave_alone)
                 ),
-                'order_by' => ['TXN_timestamp' => 'DESC'],
+                'order_by' => ['TXN_timestamp' => 'ASC'],
                 'limit' => 1000
             ),
             $time_to_leave_alone
