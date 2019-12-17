@@ -1,4 +1,9 @@
 <?php
+
+use EventEspresso\core\exceptions\InvalidDataTypeException;
+use EventEspresso\core\exceptions\InvalidInterfaceException;
+use EventEspresso\core\exceptions\UnexpectedEntityException;
+
 defined('EVENT_ESPRESSO_VERSION') || exit;
 
 
@@ -22,8 +27,8 @@ class EED_Ticket_Sales_Monitor_Test extends EE_UnitTestCase
      * @throws EE_Error
      * @throws InvalidArgumentException
      * @throws ReflectionException
-     * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
-     * @throws \EventEspresso\core\exceptions\InvalidInterfaceException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
      * @throws \PHPUnit\Framework\Exception
      */
     protected function setup_cart_and_get_ticket_line_item($ticket_count = 1, $expired = false)
@@ -61,8 +66,8 @@ class EED_Ticket_Sales_Monitor_Test extends EE_UnitTestCase
      * @throws EE_Error
      * @throws InvalidArgumentException
      * @throws ReflectionException
-     * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
-     * @throws \EventEspresso\core\exceptions\InvalidInterfaceException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
      */
     protected function fake_expired_cart(EE_Line_Item $line_item, $timestamp = 0)
     {
@@ -82,8 +87,8 @@ class EED_Ticket_Sales_Monitor_Test extends EE_UnitTestCase
      * @return void
      * @throws EE_Error
      * @throws InvalidArgumentException
-     * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
-     * @throws \EventEspresso\core\exceptions\InvalidInterfaceException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
      * @throws \PHPUnit\Framework\Exception
      */
     protected function confirm_ticket_line_item_counts($ticket_count = 1, $line_item_count = 1)
@@ -124,9 +129,9 @@ class EED_Ticket_Sales_Monitor_Test extends EE_UnitTestCase
      * @throws EE_Error
      * @throws InvalidArgumentException
      * @throws ReflectionException
-     * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
-     * @throws \EventEspresso\core\exceptions\InvalidInterfaceException
-     * @throws \EventEspresso\core\exceptions\UnexpectedEntityException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws UnexpectedEntityException
      * @throws \PHPUnit\Framework\Exception
      */
     protected function setup_and_validate_tickets_for_carts(array $cart_details)
@@ -196,9 +201,9 @@ class EED_Ticket_Sales_Monitor_Test extends EE_UnitTestCase
      * @throws EE_Error
      * @throws InvalidArgumentException
      * @throws ReflectionException
-     * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
-     * @throws \EventEspresso\core\exceptions\InvalidInterfaceException
-     * @throws \EventEspresso\core\exceptions\UnexpectedEntityException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws UnexpectedEntityException
      * @throws \PHPUnit\Framework\Exception
      */
     public function test_release_tickets_with_expired_carts()
@@ -225,9 +230,9 @@ class EED_Ticket_Sales_Monitor_Test extends EE_UnitTestCase
      * @throws EE_Error
      * @throws InvalidArgumentException
      * @throws ReflectionException
-     * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
-     * @throws \EventEspresso\core\exceptions\InvalidInterfaceException
-     * @throws \EventEspresso\core\exceptions\UnexpectedEntityException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws UnexpectedEntityException
      * @throws \PHPUnit\Framework\Exception
      */
     public function test_release_tickets_for_multiple_valid_carts()
@@ -255,9 +260,9 @@ class EED_Ticket_Sales_Monitor_Test extends EE_UnitTestCase
      * @throws EE_Error
      * @throws InvalidArgumentException
      * @throws ReflectionException
-     * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
-     * @throws \EventEspresso\core\exceptions\InvalidInterfaceException
-     * @throws \EventEspresso\core\exceptions\UnexpectedEntityException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws UnexpectedEntityException
      * @group current
      */
     public function testValidateTicketSaleTruePositive()
@@ -311,9 +316,9 @@ class EED_Ticket_Sales_Monitor_Test extends EE_UnitTestCase
      * @throws EE_Error
      * @throws InvalidArgumentException
      * @throws ReflectionException
-     * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
-     * @throws \EventEspresso\core\exceptions\InvalidInterfaceException
-     * @throws \EventEspresso\core\exceptions\UnexpectedEntityException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws UnexpectedEntityException
      * @group current
      */
     public function testValidateTicketSaleTrueNegative()
@@ -512,6 +517,38 @@ class EED_Ticket_Sales_Monitor_Test extends EE_UnitTestCase
         $this->assertEquals(0, $d1->reserved());
         $this->assertEquals(2, $d2->reserved());
         $this->assertEquals(0, $t->reserved());
+    }
+
+    /**
+     * @since $VID:$
+     * @throws DomainException
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws ReflectionException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws UnexpectedEntityException
+     */
+    public function testResetReservationCounts()
+    {
+        $this->assertEquals(0, EEM_Transaction::instance()->count());
+        // need some transactions
+        $transactions_count = 10;
+        for($i=0; $i<$transactions_count; $i++){
+            $transaction = $this->new_typical_transaction(
+                [
+                    'tkt_qty' => 5,
+                    'reg_status' => EEM_Registration::status_id_pending_payment,
+                    'setup_reg' => true,
+                    'timestamp' => current_time('timestamp') - WEEK_IN_SECONDS * 2
+                ]
+            );
+        }
+        $this->assertEquals($transactions_count, EEM_Transaction::instance()->count());
+        $a_ticket = $transaction->primary_registration()->ticket();
+        $this->assertEquals(1, $a_ticket->reserved());
+        $tickets_released = EED_Ticket_Sales_Monitor::reset_reservation_counts();
+        $this->assertEquals($transactions_count, $tickets_released);
     }
 }
 // End of file EED_Ticket_Sales_Monitor_Test.php
