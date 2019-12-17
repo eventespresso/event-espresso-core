@@ -10,7 +10,7 @@ const useIfMounted = () => {
 	);
 
 	const ifMounted = useCallback((func) => {
-		if (isMounted.current && func) {
+		if (isMounted.current && typeof func === 'function') {
 			func();
 		}
 	}, []);
