@@ -533,8 +533,8 @@ class EED_Ticket_Sales_Monitor_Test extends EE_UnitTestCase
     {
         $this->assertEquals(0, EEM_Transaction::instance()->count());
         // need some transactions
-        $transactions_count = 10;
-        for($i=0; $i<$transactions_count; $i++){
+        $old_transactions_count = 10;
+        for($i=0; $i<$old_transactions_count; $i++){
             $transaction = $this->new_typical_transaction(
                 [
                     'tkt_qty' => 5,
@@ -544,11 +544,25 @@ class EED_Ticket_Sales_Monitor_Test extends EE_UnitTestCase
                 ]
             );
         }
-        $this->assertEquals($transactions_count, EEM_Transaction::instance()->count());
+        $new_transaction_count = 1;
+        // And let's make a new transaction, just to verify its reservations don't get released
+        $new_transaction = $this->new_typical_transaction(
+            [
+                'tkt_qty' => 5,
+                'reg_status' => EEM_Registration::status_id_pending_payment,
+                'setup_reg' => true,
+            ]
+        );
+        $this->assertEquals($old_transactions_count + $new_transaction_count, EEM_Transaction::instance()->count());
         $a_ticket = $transaction->primary_registration()->ticket();
         $this->assertEquals(1, $a_ticket->reserved());
         $tickets_released = EED_Ticket_Sales_Monitor::reset_reservation_counts();
-        $this->assertEquals($transactions_count, $tickets_released);
+        // We should report that all the old transactions' tickets were released...
+        $this->assertEquals($old_transactions_count, $tickets_released);
+        // And that their reserved count goes back down to 0.
+        $this->assertEquals(0, $a_ticket->reserved());
+        // But, the new transactions' ticket should still be reserved.
+        $this->assertEquals(1, $new_transaction->primary_registration()->ticket()->reserved());
     }
 }
 // End of file EED_Ticket_Sales_Monitor_Test.php
