@@ -964,7 +964,7 @@ class EED_Ticket_Sales_Monitor extends EED_Module
         $ticket_line_items = EEH_Line_Item::get_ticket_line_items($total_line_item);
         foreach ($ticket_line_items as $ticket_line_item) {
             if ($ticket_line_item instanceof EE_Line_Item) {
-                $valid_reserved_tickets[$ticket_line_item->ID()] = $ticket_line_item;
+                $valid_reserved_tickets[ $ticket_line_item->ID() ] = $ticket_line_item;
             }
         }
         return $valid_reserved_tickets;
