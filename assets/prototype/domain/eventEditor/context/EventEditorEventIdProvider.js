@@ -9,6 +9,7 @@ const EventEditorEventIdContext = createContext();
 const EventEditorEventIdProvider = ({ children }) => {
 	const toaster = useToaster();
 	const { eeEditorEventData: { eventId = 0 } = {} } = window;
+
 	if (!eventId) {
 		toaster.error('Event ID is empty or invalid.');
 	}
