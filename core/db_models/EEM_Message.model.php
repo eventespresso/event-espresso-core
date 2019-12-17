@@ -604,8 +604,8 @@ class EEM_Message extends EEM_Base implements EEI_Query_Filter
                     'MSG_modified' => array('<', time() - $time_to_leave_alone)
                 ),
                 'limit' => apply_filters(
-                    2000,
                     'EEM_Message__delete_old_messages__limit',
+                    2000,
                     $delete_threshold
                 )
             )
