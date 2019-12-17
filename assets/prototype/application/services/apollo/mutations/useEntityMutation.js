@@ -1,10 +1,11 @@
 import { useApolloClient } from '@apollo/react-hooks';
 import { ApolloError } from 'apollo-client';
-import { useState, useEffect } from '@wordpress/element';
+import { useState } from '@wordpress/element';
 import { pathOr } from 'ramda';
 
 import { mutations } from '../../../../domain/eventEditor/data/mutations';
 import useMutators from './useMutators';
+import useIfMounted from '../../../hooks/useIfMounted';
 
 /**
  * @param {string} type Entity type name
@@ -14,13 +15,7 @@ const useEntityMutation = (type, id = '') => {
 	const client = useApolloClient();
 	const [result, setResult] = useState({ called: false, loading: false });
 	const mutators = useMutators();
-	let isMounted = true;
-
-	useEffect(() => {
-		return () => {
-			isMounted = false;
-		};
-	});
+	const ifMounted = useIfMounted();
 
 	/**
 	 * @param {string} mutationType Type of mutation - CREATE|UPDATE|DELETE
@@ -164,9 +159,7 @@ const useEntityMutation = (type, id = '') => {
 	const updateResult = (result) => {
 		// set state only if mounted
 		// to avoid the state update on unmounted components
-		if (isMounted) {
-			setResult(result);
-		}
+		ifMounted(() => setResult(result));
 	};
 
 	/**
