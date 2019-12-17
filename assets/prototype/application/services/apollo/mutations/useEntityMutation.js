@@ -158,7 +158,7 @@ const useEntityMutation = (type, id = '') => {
 	 */
 	const updateResult = (result) => {
 		// set state only if mounted
-		// to avoid the state update on unmounted components
+		// to avoid the state update on unmounted components.
 		ifMounted(() => setResult(result));
 	};
 
