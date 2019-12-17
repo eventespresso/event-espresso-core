@@ -899,23 +899,27 @@ class EED_Ticket_Sales_Monitor extends EED_Module
 
 
     /**
-     * Resets all ticket and datetime reserved counts to zero
-     * Tickets that are currently associated with a Transaction that is in progress
+     * Resets the ticket and datetime reserved counts.
      *
+     * For all the tickets with reservations, recalculates what their actual reserved counts should be based
+     * on the valid transactions.
+     *
+     * @return int number of tickets whose reservations were released.
      * @throws EE_Error
      * @throws DomainException
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
      * @throws InvalidArgumentException
      * @throws UnexpectedEntityException
+     * @throws ReflectionException
      */
     public static function reset_reservation_counts()
     {
         /** @var EE_Line_Item[] $valid_reserved_tickets */
         $valid_reserved_tickets = array();
-        /** @var EE_Transaction[] $transactions_not_in_progress */
-        $transactions_not_in_progress = EEM_Transaction::instance()->get_transactions_not_in_progress();
-        foreach ($transactions_not_in_progress as $transaction) {
+        /** @var EE_Transaction[] $transactions_in_progress */
+        $transactions_in_progress = EEM_Transaction::instance()->get_transactions_in_progress();
+        foreach ($transactions_in_progress as $transaction) {
             // if this TXN has been fully completed, then skip it
             if ($transaction->reg_step_completed('finalize_registration')) {
                 continue;
@@ -960,7 +964,7 @@ class EED_Ticket_Sales_Monitor extends EED_Module
         $ticket_line_items = EEH_Line_Item::get_ticket_line_items($total_line_item);
         foreach ($ticket_line_items as $ticket_line_item) {
             if ($ticket_line_item instanceof EE_Line_Item) {
-                $valid_reserved_tickets[] = $ticket_line_item;
+                $valid_reserved_tickets[$ticket_line_item->ID()] = $ticket_line_item;
             }
         }
         return $valid_reserved_tickets;
