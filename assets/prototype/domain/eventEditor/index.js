@@ -20,7 +20,7 @@ container.prepend(editor);
 
 const Editor = () => (
 	<ContextProviders>
-		<EventEditor/>
+		<EventEditor />
 	</ContextProviders>
 );
 
