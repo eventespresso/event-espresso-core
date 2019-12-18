@@ -1,14 +1,14 @@
 import { useReducer, useEffect } from '@wordpress/element';
-import get from 'lodash/get';
-import set from 'lodash/set';
-import cloneDeep from 'lodash/cloneDeep';
+import { pathOr, assocPath, dissocPath, clone } from 'ramda';
+import { RelationAction, RelationFunctionProps, RelationsManager, RelationalData } from './types';
 
-const useRelationsManager = () => {
-	const [state, dispatch] = useReducer(relationsReducer, {});
+const INITIAL_STATE: RelationalData = {};
+
+const useRelationsManager = (): RelationsManager => {
+	const [state, dispatch] = useReducer(relationsReducer, INITIAL_STATE);
 
 	useEffect(() => {
 		console.log('useRelationsManager >>>', state);
-		window.relationsManager = state;
 	}, [state]);
 
 	/**
@@ -16,7 +16,7 @@ const useRelationsManager = () => {
 	 *
 	 * @param {object} data Relational data
 	 */
-	const setData = (data) => {
+	const setData = (data: RelationalData): void => {
 		dispatch({ type: 'SET_DATA', data });
 	};
 
@@ -28,8 +28,8 @@ const useRelationsManager = () => {
 	 * @param {String} entityId     GUID for entity
 	 * @param {String} relation     data Type for relation
 	 */
-	const getRelations = ({ entity, entityId, relation }) => {
-		return get(state, [entity, entityId, relation], []);
+	const getRelations = ({ entity, entityId, relation }: RelationFunctionProps): string[] => {
+		return pathOr([], [entity, entityId, relation], state);
 	};
 
 	/**
@@ -40,7 +40,7 @@ const useRelationsManager = () => {
 	 * @param {String} relation     data Type for relation
 	 * @param {String} relationId   GUID for related entity
 	 */
-	const addRelation = ({ entity, entityId, relation, relationId }) => {
+	const addRelation = ({ entity, entityId, relation, relationId }: RelationFunctionProps): void => {
 		dispatch({
 			type: 'ADD_RELATION',
 			entity,
@@ -59,8 +59,7 @@ const useRelationsManager = () => {
 	 * @param {String} relation         data Type for relation
 	 * @param {String[]} relationIds    array of GUIDs for related entities
 	 */
-	const updateRelations = ({ entity, entityId, relation, relationIds }) => {
-		console.log({ entity, entityId, relation, relationIds });
+	const updateRelations = ({ entity, entityId, relation, relationIds }: RelationFunctionProps): void => {
 		dispatch({
 			type: 'UPDATE_RELATIONS',
 			entity,
@@ -84,7 +83,7 @@ const useRelationsManager = () => {
 	 * @param {String} relation     data Type for relation
 	 * @param {String} relationId   GUID for related entity
 	 */
-	const removeRelation = ({ entity, entityId, relation, relationId }) => {
+	const removeRelation = ({ entity, entityId, relation, relationId }: RelationFunctionProps): void => {
 		dispatch({
 			type: 'REMOVE_RELATION',
 			entity,
@@ -109,7 +108,7 @@ const useRelationsManager = () => {
 	 * @param {String} entity       data Type for entity
 	 * @param {String} entityId     GUID for entity
 	 */
-	const dropRelations = ({ entity, entityId }) => {
+	const dropRelations = ({ entity, entityId }: RelationFunctionProps): void => {
 		dispatch({
 			type: 'DROP_RELATIONS',
 			entity,
@@ -127,38 +126,36 @@ const useRelationsManager = () => {
 	};
 };
 
-const relationsReducer = (state, action) => {
-	console.log('relationsReducer action: ', { action, state });
+const relationsReducer = (state: RelationalData, action: RelationAction): RelationalData => {
+	console.log('relationsReducer action:', { action, state });
 	const { entity, entityId, relation, relationId, relationIds } = action;
-	let newState, relations;
+	let newState: RelationalData, relations: string[];
 	switch (action.type) {
 		case 'SET_DATA':
 			return action.data;
 
 		case 'ADD_RELATION':
-			relations = get(state, [entity, entityId, relation], []);
+			relations = pathOr([], [entity, entityId, relation], state);
 			// If the relation already exists
 			if (relations.includes(relationId)) {
 				return state;
 			}
-			newState = cloneDeep(state);
-			set(newState, [entity, entityId, relation], [...relations, relationId]);
+			newState = assocPath([entity, entityId, relation], [...relations, relationId], state);
 			console.log('ADD_RELATION newState:', newState);
 			return newState;
 
 		case 'REMOVE_RELATION':
-			newState = cloneDeep(state);
+			newState = clone(state);
 			// existing relation list.
-			relations = get(state, [entity, entityId, relation], []);
+			relations = pathOr([], [entity, entityId, relation], newState);
 			console.log('REMOVE_RELATION relations:', relations);
 			// if relationId is given remove it from the list.
 			if (relationId) {
-				set(
-					newState,
+				return assocPath(
 					[entity, entityId, relation],
-					relations.filter((id) => id !== relationId)
+					relations.filter((id) => id !== relationId),
+					newState
 				);
-				return newState;
 			}
 
 			if (relations.length) {
@@ -169,10 +166,10 @@ const relationsReducer = (state, action) => {
 				 * from where to remove `entityId`.
 				 */
 				relations.forEach((id) => {
-					set(
-						newState,
+					newState = assocPath(
 						[relation, id, entity],
-						get(newState, [relation, id, entity], []).filter((_id) => _id !== entityId)
+						pathOr([], [relation, id, entity], newState).filter((_id: string) => _id !== entityId),
+						newState
 					);
 				});
 				console.log('REMOVE_RELATION newState with relations:', newState);
@@ -186,24 +183,22 @@ const relationsReducer = (state, action) => {
 			 * We will loop through `state.tickets` to delete `entityId` from `state.tickets[ticketId].datetimes`
 			 */
 			for (const id in newState[relation]) {
-				set(
-					newState,
+				newState = assocPath(
 					[relation, id, entity],
-					get(newState, [relation, id, entity], []).filter((_id) => _id !== entityId)
+					pathOr([], [relation, id, entity], newState).filter((_id: string) => _id !== entityId),
+					newState
 				);
 			}
 			console.log('REMOVE_RELATION newState without relations:', newState);
 			return newState;
 
 		case 'UPDATE_RELATIONS':
-			newState = cloneDeep(state);
-			set(newState, [entity, entityId, relation], relationIds);
+			newState = assocPath([entity, entityId, relation], relationIds, state);
 			console.log('UPDATE_RELATIONS newState:', newState);
 			return newState;
 
 		case 'DROP_RELATIONS':
-			newState = cloneDeep(state);
-			delete newState[entity][entityId];
+			newState = dissocPath([entity, entityId], state);
 			console.log('DROP_RELATIONS newState:', newState);
 			return newState;
 
