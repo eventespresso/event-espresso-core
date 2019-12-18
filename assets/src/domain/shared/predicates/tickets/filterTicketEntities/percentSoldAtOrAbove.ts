@@ -1,3 +1,5 @@
+import validFiniteQuantity from './validFiniteQuantity';
+
 /**
  * @param {Object} ticketEntity    event ticket object
  * @param {number} maxQuantity

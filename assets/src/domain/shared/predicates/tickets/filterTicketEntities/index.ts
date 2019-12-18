@@ -8,6 +8,7 @@ import { filter } from 'lodash';
  */
 import { isOnSale, isPending } from '../../../../../application/entities/ticket';
 import nextOnSaleOrPendingOnly from './nextOnSaleOrPendingOnly';
+import soldOutOnly from './soldOutOnly';
 
 interface FilterTicketEntities {
 	ticketEntities: any[];
@@ -40,10 +41,8 @@ const filterTicketEntities = ({ ticketEntities, show = 'on-sale-and-pending' }: 
 			});
 		case 'next-on-sale-or-pending-only':
 			return nextOnSaleOrPendingOnly(ticketEntities);
-		// case 'sold-out-only':
-		// 	return filter(ticketEntities, function(ticketEntity) {
-		// 		return ticketModel.isSoldOut(ticketEntity) || percentSoldAtOrAbove(ticketEntity, 100);
-		// 	});
+		case 'sold-out-only':
+			return soldOutOnly(ticketEntities);
 		// case 'above-90-sold':
 		// 	return filter(ticketEntities, function(ticketEntity) {
 		// 		return percentSoldAtOrAbove(ticketEntity, 90);
