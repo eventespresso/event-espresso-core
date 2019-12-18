@@ -59,7 +59,7 @@ export interface MutatorGeneratedObject {
 	variables: any;
 }
 
-export type Mutator = (mutationType: string, input: MutationInput) => MutatorGeneratedObject;
+export type Mutator = (mutationType: MutationType, input: MutationInput) => MutatorGeneratedObject;
 
 export enum MutationType {
 	Create = 'CREATE',
