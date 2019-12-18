@@ -972,6 +972,12 @@ class EED_Ticket_Sales_Monitor extends EED_Module
 
 
     /**
+     * Releases ticket and datetime reservations (ie, reduces the number of reserved spots on them).
+     *
+     * Given the list of tickets which have reserved spots on them, uses the complete list of line items for tickets
+     * whose transactions aren't complete and also aren't yet expired (ie, they're incomplete and younger than the
+     * session's expiry time) to update the ticket (and their datetimes') reserved counts.
+     *
      * @param EE_Ticket[]    $tickets_with_reservations
      * @param EE_Line_Item[] $valid_reserved_ticket_line_items
      * @return int
@@ -993,11 +999,17 @@ class EED_Ticket_Sales_Monitor extends EED_Module
             if (! $ticket_with_reservations instanceof EE_Ticket) {
                 continue;
             }
-            $reserved_qty = $ticket_with_reservations->reserved();
+            // The $valid_reserved_ticket_line_items tells us what the reserved count on their tickets (and datetimes)
+            // SHOULD be. Instead of just directly updating the list, we're going to use EE_Ticket::decreaseReserved()
+            // to try to avoid race conditions, so instead of just finding the number to update TO, we're going to find
+            // the number to RELEASE. It's the same end result, just different path.
+            // Begin by assuming we're going to release all the reservations on this ticket.
+            $num_tix_for_expired_reservations = $ticket_with_reservations->reserved();
             if (self::debug) {
                 echo self::$nl . ' . $ticket_with_reservations->ID(): ' . $ticket_with_reservations->ID();
-                echo self::$nl . ' . $reserved_qty: ' . $reserved_qty;
+                echo self::$nl . ' . $reserved_qty: ' . $num_tix_for_expired_reservations;
             }
+            // Now reduce that number using the list of current valid reservations.
             foreach ($valid_reserved_ticket_line_items as $valid_reserved_ticket_line_item) {
                 if ($valid_reserved_ticket_line_item instanceof EE_Line_Item
                     && $valid_reserved_ticket_line_item->OBJ_ID() === $ticket_with_reservations->ID()
@@ -1006,17 +1018,18 @@ class EED_Ticket_Sales_Monitor extends EED_Module
                         echo self::$nl . ' . $valid_reserved_ticket_line_item->quantity(): '
                              . $valid_reserved_ticket_line_item->quantity();
                     }
-                    $reserved_qty -= $valid_reserved_ticket_line_item->quantity();
+                    $num_tix_for_expired_reservations -= $valid_reserved_ticket_line_item->quantity();
                 }
             }
-            if ($reserved_qty > 0) {
+            // Only bother saving the tickets and datetimes if we're actually going to release some spots.
+            if ($num_tix_for_expired_reservations > 0) {
                 $ticket_with_reservations->add_extra_meta(
                     EE_Ticket::META_KEY_TICKET_RESERVATIONS,
                     __LINE__ . ') ' . $source . '()'
                 );
-                $ticket_with_reservations->decreaseReserved($reserved_qty, true, 'TicketSalesMonitor:' . __LINE__);
+                $ticket_with_reservations->decreaseReserved($num_tix_for_expired_reservations, true, 'TicketSalesMonitor:' . __LINE__);
                 $ticket_with_reservations->save();
-                $total_tickets_released += $reserved_qty;
+                $total_tickets_released += $num_tix_for_expired_reservations;
                 $event = $ticket_with_reservations->get_related_event();
                 // track sold out events
                 if ($event instanceof EE_Event && $event->is_sold_out()) {
@@ -1027,7 +1040,7 @@ class EED_Ticket_Sales_Monitor extends EED_Module
         if (self::debug) {
             echo self::$nl . ' . $total_tickets_released: ' . $total_tickets_released;
         }
-        // double check whether sold out events should remain sold out after releasing tickets
+        // Double check whether sold out events should remain sold out after releasing tickets
         if ($sold_out_events !== array()) {
             foreach ($sold_out_events as $sold_out_event) {
                 /** @var EE_Event $sold_out_event */
