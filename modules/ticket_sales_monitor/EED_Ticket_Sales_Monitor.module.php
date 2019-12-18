@@ -985,7 +985,7 @@ class EED_Ticket_Sales_Monitor extends EED_Module
      * @throws DomainException
      * @throws EE_Error
      */
-    private static function release_reservations_for_tickets(
+    protected static function release_reservations_for_tickets(
         array $tickets_with_reservations,
         array $valid_reserved_ticket_line_items = array(),
         $source

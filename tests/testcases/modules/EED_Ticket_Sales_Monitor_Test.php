@@ -15,8 +15,16 @@ defined('EVENT_ESPRESSO_VERSION') || exit;
  * @author        Brent Christensen
  *
  */
+
 class EED_Ticket_Sales_Monitor_Test extends EE_UnitTestCase
 {
+
+    public function setUp()
+    {
+        parent::setUp();
+        require_once(EE_TESTS_DIR . 'mocks/modules/EED_Ticket_Sales_Monitor_Mock.php');
+    }
+
 
     /**
      * creates line items that would be generated when a cart is created and tickets are added
@@ -564,6 +572,90 @@ class EED_Ticket_Sales_Monitor_Test extends EE_UnitTestCase
         // But, the new transactions' ticket should still be reserved.
         $this->assertEquals(1, $new_transaction->primary_registration()->ticket()->reserved());
     }
+
+    /**
+     * Try to release reservations for the ticket, but there is a valid reservation for it.
+     * @since $VID:$
+     * @throws DomainException
+     * @throws EE_Error
+     * @throws UnexpectedEntityException
+     */
+    public function testReleaseReservationForTicketsAllValid()
+    {
+        EEM_Ticket::instance()->delete_permanently(
+            [
+                [
+                    'TKT_ID' => ['>',0]
+                ]
+            ],
+            false
+        );
+        $this->assertEquals(0, EEM_Ticket::instance()->count());
+        $t1 = $this->factory->ticket_chained->create(
+            [
+                'TKT_name' => 'ticket reservations all valid',
+                'TKT_qty' => 10,
+                'TKT_reserved' => 5
+            ]
+        );
+        $t2 = $this->factory->ticket_chained->create(
+            [
+                'TKT_name' => 'ticket SOME reservation still valid',
+                'TKT_qty' => 10,
+                'TKT_reserved' => 5
+            ]
+        );
+        $t3 = $this->factory->ticket_chained->create(
+            [
+                'TKT_name' => 'ticket NO reservations are still valid',
+                'TKT_qty' => 10,
+                'TKT_reserved' => 5
+            ]
+        );
+        $this->assertEquals(3, EEM_Ticket::instance()->count());
+        $li1 = $this->new_model_obj_with_dependencies(
+            'Line_Item',
+            [
+                'OBJ_type' => 'Ticket',
+                'OBJ_ID' => $t1->ID(),
+                'LIN_quantity' => 5 // ie, all the ticket's reservations are valid.
+            ]
+        );
+        $li2 = $this->new_model_obj_with_dependencies(
+            'Line_Item',
+            [
+                'OBJ_type' => 'Ticket',
+                'OBJ_ID' => $t2->ID(),
+                'LIN_quantity' => 3 // ie, three of this ticket's reservations are valid. The other two are not.
+            ]
+        );
+        // No valid reservations for ticket 3, so no ticket line items for it will be provided
+        $this->assertEquals(3, EEM_Ticket::instance()->count());
+        $num_released = EED_Ticket_Sales_Monitor_Mock::release_reservations_for_tickets(
+            [$t1, $t2, $t3],
+            [$li1, $li2],
+            'test'
+        );
+        // two tickets for t2 and 5 tickets for t3 should have had tickets released.
+        $this->assertEquals(7, $num_released);
+        // t1's reserved count should be unaffected
+        $this->assertEquals(
+            5,
+            $t1->reserved()
+        );
+        // t2's reserved count should be reduced
+        $this->assertEquals(
+            3,
+            $t2->reserved()
+        );
+        // None of t3's reserved count were valid (because we provided no line items indicating they were valid).
+        // So all its reservations should have been released.
+        $this->assertEquals(
+            0,
+            $t3->reserved()
+        );
+    }
+
 }
 // End of file EED_Ticket_Sales_Monitor_Test.php
 // Location: /tests/testcases/modules/EED_Ticket_Sales_Monitor_Test.php
