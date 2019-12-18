@@ -1,5 +1,5 @@
 import { pick, difference } from 'ramda';
-import useEntityMutator from '../../../../../application/services/apollo/mutations/useEntityMutator';
+import { useEntityMutator, EntityType } from '../../../../../application/services/apollo/mutations';
 
 const PRICE_INPUT_FIELDS = [
 	'id',
@@ -31,8 +31,8 @@ const parseBooleanField = (value) => {
 };
 
 const useOnSubmitPrices = (existingPrices) => {
-	const { createEntity, updateEntity, deleteEntity } = useEntityMutator('Price');
-	const { updateEntity: updateTicket } = useEntityMutator('Ticket');
+	const { createEntity, updateEntity, deleteEntity } = useEntityMutator(EntityType.Price);
+	const { updateEntity: updateTicket } = useEntityMutator(EntityType.Ticket);
 	const existingPriceIds = existingPrices.map(({ id }) => id);
 
 	// Async to make sure that prices are handled before updating the ticket.

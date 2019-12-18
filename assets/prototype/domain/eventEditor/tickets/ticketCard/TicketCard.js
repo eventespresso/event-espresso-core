@@ -5,7 +5,7 @@ import DeleteTicketButton from './DeleteTicketButton';
 import TicketPriceCalculatorButton from '../ticketPriceCalculator/TicketPriceCalculatorButton';
 import useTicketItem from '../../data/queries/tickets/useTicketItem';
 import CurrencyInput from '../../../../application/ui/components/input/CurrencyInput';
-import useEntityMutator from '../../../../application/services/apollo/mutations/useEntityMutator';
+import { useEntityMutator, EntityType } from '../../../../application/services/apollo/mutations';
 import useRelations from '../../../../application/services/apollo/relations/useRelations';
 import useStatus from '../../../../application/services/apollo/status/useStatus';
 import DatetimeId from '../../datetimes/DatetimeId';
@@ -41,7 +41,7 @@ const priceStyle = {
 const TicketCard = ({ id }) => {
 	const ticket = useTicketItem({ id });
 	const { isLoaded } = useStatus();
-	const { updateEntity } = useEntityMutator('Ticket', id);
+	const { updateEntity } = useEntityMutator(EntityType.Ticket, id);
 	const { getRelations } = useRelations();
 	// get related datetimes for this datetime
 	const relatedDates = getRelations({
