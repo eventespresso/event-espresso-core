@@ -990,9 +990,6 @@ class EED_Ticket_Sales_Monitor extends EED_Module
         array $valid_reserved_ticket_line_items = array(),
         $source
     ) {
-        if (self::debug) {
-            echo self::$nl . self::$nl . __LINE__ . ') ' . __METHOD__ . '()';
-        }
         $total_tickets_released = 0;
         $sold_out_events = array();
         foreach ($tickets_with_reservations as $ticket_with_reservations) {
@@ -1005,19 +1002,11 @@ class EED_Ticket_Sales_Monitor extends EED_Module
             // the number to RELEASE. It's the same end result, just different path.
             // Begin by assuming we're going to release all the reservations on this ticket.
             $num_tix_for_expired_reservations = $ticket_with_reservations->reserved();
-            if (self::debug) {
-                echo self::$nl . ' . $ticket_with_reservations->ID(): ' . $ticket_with_reservations->ID();
-                echo self::$nl . ' . $reserved_qty: ' . $num_tix_for_expired_reservations;
-            }
             // Now reduce that number using the list of current valid reservations.
             foreach ($valid_reserved_ticket_line_items as $valid_reserved_ticket_line_item) {
                 if ($valid_reserved_ticket_line_item instanceof EE_Line_Item
                     && $valid_reserved_ticket_line_item->OBJ_ID() === $ticket_with_reservations->ID()
                 ) {
-                    if (self::debug) {
-                        echo self::$nl . ' . $valid_reserved_ticket_line_item->quantity(): '
-                             . $valid_reserved_ticket_line_item->quantity();
-                    }
                     $num_tix_for_expired_reservations -= $valid_reserved_ticket_line_item->quantity();
                 }
             }
@@ -1036,9 +1025,6 @@ class EED_Ticket_Sales_Monitor extends EED_Module
                     $sold_out_events[] = $event;
                 }
             }
-        }
-        if (self::debug) {
-            echo self::$nl . ' . $total_tickets_released: ' . $total_tickets_released;
         }
         // Double check whether sold out events should remain sold out after releasing tickets
         if ($sold_out_events !== array()) {
