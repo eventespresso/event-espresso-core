@@ -1,11 +1,11 @@
 import { compareAsc, compareDesc } from 'date-fns';
 
-type DatesAreEqualType = {
+type SortProps = {
 	dates: Date[];
 	order: 'asc' | 'desc';
 };
 
-const sortDates = ({ dates, order }: DatesAreEqualType) => {
+const sort = ({ dates, order }: SortProps) => {
 	if (order === 'asc') {
 		return dates.sort(compareAsc);
 	}
@@ -15,4 +15,4 @@ const sortDates = ({ dates, order }: DatesAreEqualType) => {
 	}
 };
 
-export default sortDates;
+export default sort;
