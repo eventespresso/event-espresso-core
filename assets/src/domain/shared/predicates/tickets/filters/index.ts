@@ -6,7 +6,7 @@ import { filter } from 'lodash';
 /**
  * Internal dependencies
  */
-import { isOnSale, isPending } from '../../../../../application/entities/ticket';
+import { isOnSale, isPending } from '../index';
 import nextOnSaleOrPendingOnly from './nextOnSaleOrPendingOnly';
 import percentSoldAtOrAbove from './percentSoldAtOrAbove';
 import soldOutOnly from './soldOutOnly';
@@ -24,7 +24,7 @@ interface FilterTicketEntities {
  * @param {string} show    value for the "show" filter
  * @return {Array}         filtered tickets array
  */
-const filterTicketEntities = ({ ticketEntities, show = 'on-sale-and-pending' }: FilterTicketEntities) => {
+const filters = ({ ticketEntities, show = 'on-sale-and-pending' }: FilterTicketEntities) => {
 	switch (show) {
 		case 'all':
 			return ticketEntities;
@@ -70,4 +70,4 @@ const filterTicketEntities = ({ ticketEntities, show = 'on-sale-and-pending' }: 
 	return ticketEntities;
 };
 
-export default filterTicketEntities;
+export default filters;
