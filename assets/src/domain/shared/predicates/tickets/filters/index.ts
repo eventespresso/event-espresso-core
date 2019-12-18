@@ -11,6 +11,8 @@ import nextOnSaleOrPendingOnly from './nextOnSaleOrPendingOnly';
 import percentSoldAtOrAbove from './percentSoldAtOrAbove';
 import soldOutOnly from './soldOutOnly';
 
+export const now = new Date();
+
 interface FilterTicketEntities {
 	ticketEntities: any[];
 	show?: string;

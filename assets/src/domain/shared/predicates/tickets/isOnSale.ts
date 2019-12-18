@@ -2,6 +2,7 @@
  * External dependencies
  */
 import { differenceInMinutes } from 'date-fns';
+import { now } from './filters';
 
 interface IisOnSale {
 	startDate: Date;
@@ -9,8 +10,6 @@ interface IisOnSale {
 }
 
 const isOnSale = ({ startDate, endDate }: IisOnSale): boolean => {
-	const now = new Date();
-
 	return differenceInMinutes(startDate, now) < 0 && differenceInMinutes(endDate, now) > 0;
 };
 

@@ -2,6 +2,7 @@
  * External dependencies
  */
 import { differenceInMinutes } from 'date-fns';
+import { now } from './filters';
 
 /**
  * @function
@@ -11,7 +12,7 @@ import { differenceInMinutes } from 'date-fns';
  * 						but will be at some date in the future
  */
 const isPending = ({ startDate }) => {
-	return differenceInMinutes(startDate, new Date()) > 0;
+	return differenceInMinutes(startDate, now) > 0;
 };
 
 export default isPending;
