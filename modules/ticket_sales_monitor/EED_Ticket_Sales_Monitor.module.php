@@ -1017,7 +1017,6 @@ class EED_Ticket_Sales_Monitor extends EED_Module
                     __LINE__ . ') ' . $source . '()'
                 );
                 $ticket_with_reservations->decreaseReserved($num_tix_for_expired_reservations, true, 'TicketSalesMonitor:' . __LINE__);
-                $ticket_with_reservations->save();
                 $total_tickets_released += $num_tix_for_expired_reservations;
                 $event = $ticket_with_reservations->get_related_event();
                 // track sold out events
