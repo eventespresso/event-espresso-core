@@ -1,16 +1,17 @@
 /**
  * External dependencies
  */
-import { filter, first } from 'lodash';
+import { filter } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import { isOnSale, isPending } from '../../../../../application/entities/ticket';
+import nextOnSaleOrPendingOnly from './nextOnSaleOrPendingOnly';
 
 interface FilterTicketEntities {
 	ticketEntities: any[];
-	show: string;
+	show?: string;
 }
 
 /**
@@ -37,10 +38,8 @@ const filterTicketEntities = ({ ticketEntities, show = 'on-sale-and-pending' }: 
 			return filter(ticketEntities, function(ticketEntity) {
 				return isPending(ticketEntity);
 			});
-		// case 'next-on-sale-or-pending-only':
-		// 	ticketEntities = filterTicketEntities(ticketEntities);
-		// 	ticketEntities = sortTicketEntitiesList(ticketEntities);
-		// 	return [first(ticketEntities)];
+		case 'next-on-sale-or-pending-only':
+			return nextOnSaleOrPendingOnly(ticketEntities);
 		// case 'sold-out-only':
 		// 	return filter(ticketEntities, function(ticketEntity) {
 		// 		return ticketModel.isSoldOut(ticketEntity) || percentSoldAtOrAbove(ticketEntity, 100);

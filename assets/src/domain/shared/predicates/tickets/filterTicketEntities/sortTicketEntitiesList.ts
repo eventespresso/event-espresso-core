@@ -1,33 +1,19 @@
 /**
- * filterTicketEntities
- * reduces tickets array based on value of the "order" filter
- *
- * @param {Array} ticketEntities    original tickets array
- * @param {string} order   value for the "order" filter
- * @return {Array}         filtered tickets array
+ * External dependencies
  */
+import { ascend, prop, sortWith } from 'ramda';
+
 const sortTicketEntitiesList = (ticketEntities, order = 'chronologically') => {
 	switch (order) {
 		case 'chronologically':
-			ticketEntities = sortBy(ticketEntities, [
-				function(ticketEntity) {
-					return isModelEntityOfModel(ticketEntity, 'ticket') ? ticketEntity.startDate.toMillis() : 0;
-				},
-				'name',
-				'id',
-			]);
-			break;
+			return sortWith([ascend(prop('name')), ascend(prop('id'))], ticketEntities);
 		case 'by-name':
-			ticketEntities = sortBy(ticketEntities, ['name']);
-			break;
+			return sortWith([ascend(prop('name'))], ticketEntities);
 		case 'by-id':
-			ticketEntities = sortBy(ticketEntities, ['id']);
-			break;
+			return sortWith([ascend(prop('id'))], ticketEntities);
 		case 'by-order':
-			ticketEntities = sortBy(ticketEntities, ['order']);
-			break;
+			return sortWith([ascend(prop('order'))], ticketEntities);
 	}
-	return ticketEntities;
 };
 
 export default sortTicketEntitiesList;
