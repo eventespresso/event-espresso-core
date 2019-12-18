@@ -978,8 +978,12 @@ class EED_Ticket_Sales_Monitor extends EED_Module
      * whose transactions aren't complete and also aren't yet expired (ie, they're incomplete and younger than the
      * session's expiry time) to update the ticket (and their datetimes') reserved counts.
      *
-     * @param EE_Ticket[]    $tickets_with_reservations
-     * @param EE_Line_Item[] $valid_reserved_ticket_line_items
+     * @param EE_Ticket[]    $tickets_with_reservations all tickets with TKT_reserved > 0
+     * @param EE_Line_Item[] $valid_reserved_ticket_line_items all line items for tickets and incomplete transactions
+     *                       whose session has NOT expired. We will use these to determine the number of ticket
+     *                       reservations are now invalid. We don't use the list of invalid ticket line items because
+     *                       we don't know which of those have already been taken into account when reducing ticket
+     *                       reservation counts, and which haven't.
      * @return int
      * @throws UnexpectedEntityException
      * @throws DomainException
