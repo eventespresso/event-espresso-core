@@ -12,7 +12,7 @@ import {
 	toDate,
 } from 'date-fns';
 
-import { toInteger } from '../../../../application/utilities/converters/number';
+import { toInteger } from '../converters/number';
 
 type IntervalType =
 	| 'days'

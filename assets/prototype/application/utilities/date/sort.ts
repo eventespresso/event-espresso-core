@@ -6,13 +6,7 @@ type SortProps = {
 };
 
 const sort = ({ dates, order }: SortProps) => {
-	if (order === 'asc') {
-		return dates.sort(compareAsc);
-	}
-
-	if (order === 'desc') {
-		return dates.sort(compareDesc);
-	}
+	return order === 'asc' ? dates.sort(compareAsc) : dates.sort(compareDesc);
 };
 
 export default sort;
