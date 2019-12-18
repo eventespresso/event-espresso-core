@@ -1,11 +1,13 @@
 import useEntityMutation from './useEntityMutation';
+import { ucfirst } from '../../../utils';
 
 /**
  * @param {string} type Entity type name
  * @param {string} id   Entity id
  */
 const useEntityMutator = (type, id = '') => {
-	const { getCreateMutation, getUpdateMutation, getDeleteMutation, mutate } = useEntityMutation(type, id);
+	const _type = ucfirst(type.toLowerCase());
+	const { getCreateMutation, getUpdateMutation, getDeleteMutation, mutate } = useEntityMutation(_type, id);
 
 	/**
 	 * @param {object} input the entity properties for the mutation input

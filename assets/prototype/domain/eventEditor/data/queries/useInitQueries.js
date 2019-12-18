@@ -1,4 +1,3 @@
-import { pathOr } from 'ramda';
 import useFetchTickets from './tickets/useFetchTickets';
 import useFetchDatetimes from './datetimes/useFetchDatetimes';
 import useFetchPriceTypes from './priceTypes/useFetchPriceTypes';
@@ -9,22 +8,16 @@ const useInitQueries = () => {
 	useCacheRehydration();
 
 	// initiate datetime fetching.
-	const { data: datetimesData } = useFetchDatetimes();
-
-	const datetimes = pathOr([], ['datetimes', 'nodes'], datetimesData);
+	useFetchDatetimes();
 
 	// initiate ticket fetching.
-	const datetimeIn = datetimes ? datetimes.map(({ id }) => id) : [];
-	const { data: ticketsData } = useFetchTickets({ datetimeIn });
-
-	const tickets = pathOr([], ['tickets', 'nodes'], ticketsData);
+	useFetchTickets();
 
 	// initiate price type fetching.
 	useFetchPriceTypes();
 
 	// initiate price fetching.
-	const ticketIn = tickets.map(({ id }) => id);
-	useFetchPrices({ ticketIn });
+	useFetchPrices();
 };
 
 export default useInitQueries;

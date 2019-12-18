@@ -18,11 +18,6 @@ use Exception;
 class RootQueryTicketsConnection extends AbstractRootQueryConnection
 {
 
-    /**
-     * @var EEM_Ticket $model
-     */
-    protected $model;
-
 
     /**
      * TicketConnection constructor.
@@ -43,9 +38,9 @@ class RootQueryTicketsConnection extends AbstractRootQueryConnection
     {
         return [
             'fromType'           => 'RootQuery',
-            'toType'             => 'Ticket',
-            'fromFieldName'      => 'tickets',
-            'connectionTypeName' => 'RootQueryTicketsConnection',
+            'toType'             => $this->namespace . 'Ticket',
+            'fromFieldName'      => lcfirst($this->namespace) . 'Tickets',
+            'connectionTypeName' => "{$this->namespace}RootQueryTicketsConnection",
             'connectionArgs'     => DatetimeTicketsConnection::get_connection_args(),
             'resolve'            => [$this, 'resolveConnection'],
             'resolveNode'        => [$this, 'resolveNode']

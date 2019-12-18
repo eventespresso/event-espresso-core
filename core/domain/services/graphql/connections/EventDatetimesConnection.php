@@ -5,7 +5,7 @@ namespace EventEspresso\core\domain\services\graphql\connections;
 use EE_Base_Class;
 use EEM_Datetime;
 use EventEspresso\core\domain\services\graphql\connection_resolvers\DatetimeConnectionResolver;
-use EventEspresso\core\services\graphql\connections\ConnectionInterface;
+use EventEspresso\core\services\graphql\connections\ConnectionBase;
 use Exception;
 use WPGraphQL\Type\WPObjectType;
 
@@ -17,13 +17,8 @@ use WPGraphQL\Type\WPObjectType;
  * @author  Brent Christensen
  * @since   $VID:$
  */
-class EventDatetimesConnection implements ConnectionInterface
+class EventDatetimesConnection extends ConnectionBase
 {
-
-    /**
-     * @var EEM_Datetime $model
-     */
-    protected $model;
 
 
     /**
@@ -44,10 +39,10 @@ class EventDatetimesConnection implements ConnectionInterface
     public function config()
     {
         return [
-            'fromType'           => 'Event',
-            'toType'             => 'Datetime',
+            'fromType'           => $this->namespace . 'Event',
+            'toType'             => $this->namespace . 'Datetime',
             'fromFieldName'      => 'datetimes',
-            'connectionTypeName' => 'EventDatetimesConnection',
+            'connectionTypeName' => "{$this->namespace}EventDatetimesConnection",
             'connectionArgs'     => self::get_connection_args(),
             'resolve'            => [$this, 'resolveConnection'],
             'resolveNode'        => [$this, 'resolveNode']

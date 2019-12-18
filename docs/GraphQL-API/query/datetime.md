@@ -1,12 +1,12 @@
 # Datetime query examples
 
-Datetime object has connections with `RootQuery`, `Event`, `Ticket` etc. and thus can be accessed as a field of any of them.
+Datetime object has connections with `RootQuery`, `EspressoEvent`, `EspressoTicket` etc. and thus can be accessed as a field of any of them.
 
 ## Example with `RootQuery`
 
 ```gql
-query getDatetimes($first: Int, $where: RootQueryDatetimesConnectionWhereArgs) {
-	datetimes(first: $first, where: $where) {
+query GET_DATETIMES($first: Int, $where: EspressoRootQueryDatetimesConnectionWhereArgs) {
+	espressoDatetimes(first: $first, where: $where) {
 		edges {
 			node {
 				id
@@ -47,13 +47,13 @@ or
 }
 ```
 
-## [Example with `Event`](event.md)
+## [Example with `EspressoEvent`](event.md)
 
 ## Example with related tickets
 
 ```gql
-query getDatetimes {
-	datetimes {
+query GET_DATETIMES {
+	espressoDatetimes {
 		edges {
 			node {
 				id

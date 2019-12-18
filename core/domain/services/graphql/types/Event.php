@@ -29,7 +29,7 @@ class Event extends TypeBase
     public function __construct(EEM_Event $event_model)
     {
         $this->model = $event_model;
-        $this->setName('Event');
+        $this->setName($this->namespace . 'Event');
         $this->setIsCustomPostType(true);
         parent::__construct();
     }

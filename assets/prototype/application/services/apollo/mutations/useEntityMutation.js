@@ -5,6 +5,7 @@ import { pathOr } from 'ramda';
 
 import { mutations } from '../../../../domain/eventEditor/data/mutations';
 import useMutators from './useMutators';
+import useIfMounted from '../../../hooks/useIfMounted';
 
 /**
  * @param {string} type Entity type name
@@ -14,6 +15,7 @@ const useEntityMutation = (type, id = '') => {
 	const client = useApolloClient();
 	const [result, setResult] = useState({ called: false, loading: false });
 	const mutators = useMutators();
+	const ifMounted = useIfMounted();
 
 	/**
 	 * @param {string} mutationType Type of mutation - CREATE|UPDATE|DELETE
@@ -62,9 +64,9 @@ const useEntityMutation = (type, id = '') => {
 		 */
 		return (proxy, result) => {
 			// e.g. "createDatetime", "updateTicket"
-			const mutationName = `${mutationType.toLowerCase()}${type}`;
+			const mutationName = `${mutationType.toLowerCase()}Espresso${type}`;
 			// Example result: { data: { deletePrice: { price : {...} } } }
-			const path = ['data', mutationName, type.toLowerCase()];
+			const path = ['data', mutationName, `espresso${type}`];
 			const entity = pathOr({}, path, result);
 
 			onUpdate({ proxy, entity });
@@ -108,7 +110,7 @@ const useEntityMutation = (type, id = '') => {
 	 *
 	 */
 	const onMutationStart = () => {
-		setResult({
+		updateResult({
 			loading: true,
 			error: undefined,
 			data: undefined,
@@ -123,7 +125,7 @@ const useEntityMutation = (type, id = '') => {
 		const { data, errors } = response;
 		const error = errors && errors.length > 0 ? new ApolloError({ graphQLErrors: errors }) : undefined;
 
-		setResult({
+		updateResult({
 			called: true,
 			loading: false,
 			data,
@@ -139,7 +141,7 @@ const useEntityMutation = (type, id = '') => {
 	 *
 	 */
 	const onMutationError = (error, onError) => {
-		setResult({
+		updateResult({
 			loading: false,
 			error,
 			data: undefined,
@@ -149,6 +151,15 @@ const useEntityMutation = (type, id = '') => {
 		if (typeof onError === 'function') {
 			onError(error);
 		}
+	};
+
+	/**
+	 *
+	 */
+	const updateResult = (result) => {
+		// set state only if mounted
+		// to avoid the state update on unmounted components.
+		ifMounted(() => setResult(result));
 	};
 
 	/**

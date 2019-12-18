@@ -2,9 +2,9 @@ import gql from 'graphql-tag';
 import { DATETIME_ATTRIBUTES } from '../../queries/datetimes';
 
 export const CREATE_DATETIME = gql`
-	mutation createDatetime($input: CreateDatetimeInput!) {
-		createDatetime(input: $input) {
-			datetime {
+	mutation CREATE_DATETIME($input: CreateEspressoDatetimeInput!) {
+		createEspressoDatetime(input: $input) {
+			espressoDatetime {
 				...datetimeAttributes
 			}
 		}
@@ -13,9 +13,9 @@ export const CREATE_DATETIME = gql`
 `;
 
 export const UPDATE_DATETIME = gql`
-	mutation updateDatetime($input: UpdateDatetimeInput!) {
-		updateDatetime(input: $input) {
-			datetime {
+	mutation UPDATE_DATETIME($input: UpdateEspressoDatetimeInput!) {
+		updateEspressoDatetime(input: $input) {
+			espressoDatetime {
 				...datetimeAttributes
 			}
 		}
@@ -24,9 +24,9 @@ export const UPDATE_DATETIME = gql`
 `;
 
 export const DELETE_DATETIME = gql`
-	mutation deleteDatetime($input: DeleteDatetimeInput!) {
-		deleteDatetime(input: $input) {
-			datetime {
+	mutation DELETE_DATETIME($input: DeleteEspressoDatetimeInput!) {
+		deleteEspressoDatetime(input: $input) {
+			espressoDatetime {
 				id
 			}
 		}

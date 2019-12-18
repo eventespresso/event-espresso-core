@@ -26,7 +26,7 @@ const usePriceTypes = (include = []) => {
 	} catch (error) {
 		data = {};
 	}
-	const priceTypes = pathOr([], ['priceTypes', 'nodes'], data);
+	const priceTypes = pathOr([], ['espressoPriceTypes', 'nodes'], data);
 	return include.length ? entitiesWithGuIdInArray(priceTypes, include) : priceTypes;
 };
 

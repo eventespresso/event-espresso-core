@@ -12,10 +12,8 @@ const EventEditorEventIdProvider = ({ children }) => {
 	if (!eventId) {
 		toaster.error('Event ID is empty or invalid.');
 	}
-	return eventId && (
-		<EventEditorEventIdContext.Provider value={eventId}>
-			{children}
-		</EventEditorEventIdContext.Provider>
+	return (
+		eventId && <EventEditorEventIdContext.Provider value={eventId}>{children}</EventEditorEventIdContext.Provider>
 	);
 };
 

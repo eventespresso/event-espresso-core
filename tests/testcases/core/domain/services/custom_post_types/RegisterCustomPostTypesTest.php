@@ -130,8 +130,8 @@ class RegisterCustomPostTypesTest extends EE_UnitTestCase
                 'show_in_menu'       => false,
                 'show_in_nav_menus'  => true,
                 'show_in_graphql'     => true,
-                'graphql_single_name' => 'Event',
-                'graphql_plural_name' => 'Events',
+                'graphql_single_name' => 'EspressoEvent',
+                'graphql_plural_name' => 'EspressoEvents',
                 'query_var'          => true,
                 'rewrite'            => array(
                     'slug' => 'events',
@@ -211,8 +211,8 @@ class RegisterCustomPostTypesTest extends EE_UnitTestCase
                 'show_in_menu'       => false,
                 'show_in_nav_menus'  => true,
                 'show_in_graphql'     => true,
-                'graphql_single_name' => 'Venue',
-                'graphql_plural_name' => 'Venues',
+                'graphql_single_name' => 'EspressoVenue',
+                'graphql_plural_name' => 'EspressoVenues',
                 'query_var'          => true,
                 'rewrite'            => array(
                     'slug' => 'venues',

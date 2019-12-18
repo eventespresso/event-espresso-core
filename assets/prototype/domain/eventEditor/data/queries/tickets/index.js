@@ -2,7 +2,7 @@ import gql from 'graphql-tag';
 import { PRICE_ATTRIBUTES } from '../prices';
 
 export const TICKET_ATTRIBUTES = gql`
-	fragment ticketAttributes on Ticket {
+	fragment ticketAttributes on EspressoTicket {
 		id
 		dbId
 		description
@@ -31,7 +31,7 @@ export const TICKET_ATTRIBUTES = gql`
  * created for a ticket on the server.
  */
 export const TICKET_PRICES_ATTRIBUTE = gql`
-	fragment ticketPricesAttribute on Ticket {
+	fragment ticketPricesAttribute on EspressoTicket {
 		prices {
 			nodes {
 				...priceAttributes
@@ -51,8 +51,8 @@ export const GET_TICKET = gql`
 `;
 
 export const GET_TICKETS = gql`
-	query GET_TICKETS($where: RootQueryTicketsConnectionWhereArgs) {
-		tickets(where: $where) {
+	query GET_TICKETS($where: EspressoRootQueryTicketsConnectionWhereArgs) {
+		espressoTickets(where: $where) {
 			nodes {
 				...ticketAttributes
 			}

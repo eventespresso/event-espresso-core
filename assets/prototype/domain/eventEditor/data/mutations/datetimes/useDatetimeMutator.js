@@ -40,7 +40,7 @@ const useDatetimeMutator = () => {
 
 		const onUpdate = ({ proxy, entity: datetime }) => {
 			// Read the existing data from cache.
-			const { datetimes = {} } = proxy.readQuery(options);
+			const { espressoDatetimes: datetimes = {} } = proxy.readQuery(options);
 			const { tickets = [] } = input;
 
 			switch (mutationType) {

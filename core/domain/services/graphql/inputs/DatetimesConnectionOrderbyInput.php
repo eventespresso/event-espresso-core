@@ -24,7 +24,7 @@ class DatetimesConnectionOrderbyInput extends InputBase
      */
     public function __construct()
     {
-        $this->setName('DatetimesConnectionOrderbyInput');
+        $this->setName($this->namespace . 'DatetimesConnectionOrderbyInput');
         $this->setDescription(esc_html__('Options for ordering the connection', 'event_espresso'));
         parent::__construct();
     }
@@ -39,7 +39,7 @@ class DatetimesConnectionOrderbyInput extends InputBase
         return [
             new GraphQLField(
                 'field',
-                ['non_null' => 'DatetimesConnectionOrderbyEnum']
+                ['non_null' => $this->namespace . 'DatetimesConnectionOrderbyEnum']
             ),
             new GraphQLField(
                 'order',

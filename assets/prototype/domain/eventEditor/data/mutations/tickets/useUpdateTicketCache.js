@@ -13,7 +13,7 @@ const useUpdateTicketCache = () => {
 		proxy.writeQuery({
 			...options,
 			data: {
-				tickets: {
+				espressoTickets: {
 					...tickets,
 					nodes: newNodes,
 				},

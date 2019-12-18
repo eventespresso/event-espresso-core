@@ -18,6 +18,11 @@ class CustomPostTypeDefinitions
 {
 
     /**
+     * @var string $namespace The graphql namespace/prefix.
+     */
+    protected $namespace = 'Espresso';
+
+    /**
      * @var EE_Core_Config
      */
     public $core_config;
@@ -68,8 +73,8 @@ class CustomPostTypeDefinitions
                     'public'              => true,
                     'show_in_nav_menus'   => true,
                     'show_in_graphql'     => true,
-                    'graphql_single_name' => __('Event', 'event_espresso'),
-                    'graphql_plural_name' => __('Events', 'event_espresso'),
+                    'graphql_single_name' => $this->namespace . 'Event',
+                    'graphql_plural_name' => $this->namespace . 'Events',
                     'capability_type'     => 'event',
                     'capabilities'        => [
                         'edit_post'              => 'ee_edit_event',
@@ -105,8 +110,8 @@ class CustomPostTypeDefinitions
                     'public'              => true,
                     'show_in_nav_menus'   => false, // by default this doesn't show for decaf,
                     'show_in_graphql'     => true,
-                    'graphql_single_name' => __('Venue', 'event_espresso'),
-                    'graphql_plural_name' => __('Venues', 'event_espresso'),
+                    'graphql_single_name' => $this->namespace . 'Venue',
+                    'graphql_plural_name' => $this->namespace . 'Venues',
                     'capability_type'     => 'venue',
                     'capabilities'        => [
                         'edit_post'              => 'ee_edit_venue',

@@ -21,7 +21,7 @@ class PriceBaseTypeEnum extends EnumBase
      */
     public function __construct()
     {
-        $this->setName('PriceBaseTypeEnum');
+        $this->setName($this->namespace . 'PriceBaseTypeEnum');
         $this->setDescription(esc_html__('Price Base type ID', 'event_espresso'));
         parent::__construct();
     }

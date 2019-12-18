@@ -5,8 +5,8 @@ Ticket object has connections with `RootQuery`, `Datetime` etc. and thus can be 
 ## Example with `RootQuery`
 
 ```gql
-query getTickets($where: RootQueryTicketsConnectionWhereArgs) {
-	tickets(where: $where) {
+query GET_TICKETS($where: EspressoRootQueryTicketsConnectionWhereArgs) {
+	espressoTickets(where: $where) {
 		edges {
 			node {
 				id
@@ -51,8 +51,8 @@ or
 ## Example with related prices
 
 ```gql
-query getTickets {
-	tickets {
+query GET_TICKETS {
+	espressoTickets {
 		edges {
 			node {
 				id

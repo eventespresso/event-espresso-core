@@ -5,7 +5,7 @@ namespace EventEspresso\core\domain\services\graphql\abstracts;
 use EE_Base_Class;
 use EEM_Base;
 use EventEspresso\core\domain\services\graphql\connection_resolvers\AbstractConnectionResolver;
-use EventEspresso\core\services\graphql\connections\ConnectionInterface;
+use EventEspresso\core\services\graphql\connections\ConnectionBase;
 use Exception;
 
 /**
@@ -16,13 +16,8 @@ use Exception;
  * @author  Manzoor Ahmad Wani
  * @since   $VID:$
  */
-abstract class AbstractRootQueryConnection implements ConnectionInterface
+abstract class AbstractRootQueryConnection extends ConnectionBase
 {
-
-    /**
-     * @var EEM_Base $model
-     */
-    protected $model;
 
 
     /**

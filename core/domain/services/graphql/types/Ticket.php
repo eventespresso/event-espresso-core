@@ -33,7 +33,7 @@ class Ticket extends TypeBase
     public function __construct(EEM_Ticket $ticket_model)
     {
         $this->model = $ticket_model;
-        $this->setName('Ticket');
+        $this->setName($this->namespace . 'Ticket');
         $this->setDescription(__('A ticket for an event date', 'event_espresso'));
         $this->setIsCustomPostType(false);
         parent::__construct();
@@ -213,7 +213,7 @@ class Ticket extends TypeBase
             ),
             new GraphQLOutputField(
                 'event',
-                'Event',
+                $this->namespace . 'Event',
                 null,
                 esc_html__('Event of the ticket.', 'event_espresso')
             ),
