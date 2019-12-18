@@ -1,20 +1,39 @@
 import { MutationOptions } from 'apollo-client';
-type MutationInput = {
+import { DataProxy } from 'apollo-cache';
+
+export type MutationInput = {
 	[key: string]: any;
 };
-type BackwardSubscription = {
-	onCompleted?: () => void;
-	onError?: () => void;
+
+export type OnMutationCompletedFn = (data: any) => void;
+
+export type OnMutationErrorFn = (error: Error) => void;
+
+type OnUpdateFnOptions = {
+	proxy: DataProxy;
+	entity: any;
 };
+
+export type OnUpdateFn = (options: OnUpdateFnOptions) => void;
+
+export interface BackwardSubscription {
+	onCompleted?: OnMutationCompletedFn;
+	onError?: OnMutationErrorFn;
+}
 export interface EntityMutator {
-	createEntity: (input: MutationInput, subscriptions?: BackwardSubscription) => void;
-	updateEntity: (input: MutationInput, subscriptions?: BackwardSubscription) => void;
-	deleteEntity: (input?: MutationInput, subscriptions?: BackwardSubscription) => void;
+	createEntity: (input: MutationInput, subscriptions?: BackwardSubscription) => MutationResult;
+	updateEntity: (input: MutationInput, subscriptions?: BackwardSubscription) => MutationResult;
+	deleteEntity: (input?: MutationInput, subscriptions?: BackwardSubscription) => MutationResult;
+}
+
+export interface CustomMutationOptions extends MutationOptions {
+	onCompleted?: OnMutationCompletedFn;
+	onError?: OnMutationErrorFn;
 }
 
 type MutationGetter = (input: MutationInput) => MutationOptions;
 
-type MutationResult = {
+export type MutationResult = {
 	loading: boolean;
 	error?: any;
 	data?: any;
@@ -25,5 +44,32 @@ export interface EntityMutation {
 	getCreateMutation: MutationGetter;
 	getUpdateMutation: MutationGetter;
 	getDeleteMutation: MutationGetter;
-	mutate: (input: MutationOptions) => MutationResult;
+	mutate: (options: CustomMutationOptions) => MutationResult;
+}
+
+export interface Mutators {
+	datetimeMutator: Mutator;
+	ticketMutator: Mutator;
+	priceMutator: Mutator;
+}
+
+export interface MutatorGeneratedObject {
+	onUpdate?: OnUpdateFn;
+	optimisticResponse: any;
+	variables: any;
+}
+
+export type Mutator = (mutationType: string, input: MutationInput) => MutatorGeneratedObject;
+
+export enum MutationType {
+	Create = 'CREATE',
+	Update = 'UPDATE',
+	Delete = 'DELETE',
+}
+
+export enum EntityType {
+	Datetime = 'Datetime',
+	Ticket = 'Ticket',
+	Price = 'Price',
+	PriceType = 'PriceType',
 }
