@@ -8,16 +8,16 @@ import {
     DateTimeFormatsProps,
     LocaleProps,
     SiteUrlProps,
-    TimezoneProps
+    TimezoneProps,
 } from '../../valueObjects/config';
 
 export const configTypes = {
-	CurrencyProps,
+    CurrencyProps,
     CurrentUserProps,
     DateTimeFormatsProps,
-	LocaleProps,
-	SiteUrlProps,
-	TimezoneProps,
+    LocaleProps,
+    SiteUrlProps,
+    TimezoneProps,
 };
 
 export const useConfig = (): ConfigDataProps => useContext(ConfigContext);
