@@ -6,14 +6,14 @@ export type DateTimeFormatsProps = {
     dateTimeFormat?: string;
 }
 
-export const DateTimeFormats = ({ dateFormat, timeFormat }: DateTimeFormatsProps): DateTimeFormatsProps => {
-    const formats: DateTimeFormatsProps = {
-        dateFormat: dateFormat || defaultDateFormat,
-        timeFormat: timeFormat || defaultTimeFormat,
+export const DateTimeFormats = (formats: DateTimeFormatsProps): DateTimeFormatsProps => {
+    const maybeDefault = {
+        dateFormat: formats.dateFormat || defaultDateFormat,
+        timeFormat: formats.timeFormat || defaultTimeFormat,
         dateTimeFormat: '',
     };
     return {
-        ...formats,
-        dateTimeFormat: formats.dateFormat + ' ' + formats.timeFormat
+        ...maybeDefault,
+        dateTimeFormat: maybeDefault.dateFormat + ' ' + maybeDefault.timeFormat
     };
 };
