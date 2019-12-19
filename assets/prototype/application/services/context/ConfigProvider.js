@@ -36,7 +36,7 @@ const ConfigProvider = ({ children }) => {
 		currentUser: CurrentUser(currentUserProps),
 		dateTimeFormats: DateTimeFormats(generalSettings),
 	};
-
+	console.log('%c > ConfigData: ', 'color: Cyan;', value);
 	return <ConfigContext.Provider value={value}>{children}</ConfigContext.Provider>;
 };
 
