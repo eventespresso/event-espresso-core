@@ -1,10 +1,11 @@
 import useEventId from '../events/useEventId';
 import { GET_DATETIMES } from './';
+import { ReadQueryOptions } from '../types';
 
-const useDatetimeQueryOptions = () => {
-	const eventId = useEventId();
+const useDatetimeQueryOptions = (): ReadQueryOptions => {
+	const eventId: number = useEventId();
 
-	const options = {
+	const options: ReadQueryOptions = {
 		query: GET_DATETIMES,
 		variables: {
 			where: {
