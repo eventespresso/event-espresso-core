@@ -6,7 +6,7 @@ import { allPass, filter, head } from 'ramda';
 /**
  * Internal dependencies
  */
-import { isOnSale, isPending } from '../../../../../application/entities/ticket';
+import { isOnSale, isPending } from '../index';
 import sortTicketEntitiesList from './sortTicketEntitiesList';
 
 const nextOnSaleOrPendingOnly = (ticketEntities: any[]) => {
