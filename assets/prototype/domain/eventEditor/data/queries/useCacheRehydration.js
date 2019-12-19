@@ -18,7 +18,7 @@ const useCacheRehydration = () => {
 		return;
 	}
 
-	let { nodes = [] } = priceTypes;
+	let { nodes = [] } = priceTypes || { nodes: [] };
 	if (nodes.length) {
 		client.writeQuery({
 			query: GET_PRICE_TYPES,
@@ -28,7 +28,7 @@ const useCacheRehydration = () => {
 		});
 	}
 
-	({ nodes = [] } = datetimes);
+	({ nodes = [] } = datetimes || { nodes: [] });
 	if (nodes.length) {
 		client.writeQuery({
 			query: GET_DATETIMES,
@@ -44,7 +44,7 @@ const useCacheRehydration = () => {
 	}
 
 	const datetimeIn = nodes.map(({ id }) => id);
-	({ nodes = [] } = tickets);
+	({ nodes = [] } = tickets || { nodes: [] });
 	if (datetimeIn.length && nodes.length) {
 		client.writeQuery({
 			query: GET_TICKETS,
@@ -60,7 +60,7 @@ const useCacheRehydration = () => {
 	}
 
 	const ticketIn = nodes.map(({ id }) => id);
-	({ nodes = [] } = prices);
+	({ nodes = [] } = prices || { nodes: [] });
 	if (ticketIn.length && nodes.length) {
 		client.writeQuery({
 			query: GET_PRICES,
