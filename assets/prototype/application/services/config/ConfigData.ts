@@ -1,9 +1,17 @@
-import {Currency, CurrencyProps} from '../../valueObjects/config/Currency';
-import {CurrentUser, CurrentUserProps} from '../../valueObjects/config/CurrentUser';
-import {DateTimeFormats, DateTimeFormatsProps} from '../../valueObjects/dateTime/DateTimeFormats';
-import {Locale, LocaleProps} from '../../valueObjects/config/Locale';
-import {SiteUrl, SiteUrlProps} from '../../valueObjects/config/SiteUrl';
-import {Timezone, TimezoneProps} from '../../valueObjects/config/Timezone';
+import {
+    Currency,
+    CurrencyProps,
+    CurrentUser,
+    CurrentUserProps,
+    DateTimeFormats,
+    DateTimeFormatsProps,
+    Locale,
+    LocaleProps,
+    SiteUrl,
+    SiteUrlProps,
+    Timezone,
+    TimezoneProps
+} from '../../valueObjects/config';
 
 const { eejsdata }: eeJsProps = window;
 const { data }: eeJsDataProps = eejsdata;
