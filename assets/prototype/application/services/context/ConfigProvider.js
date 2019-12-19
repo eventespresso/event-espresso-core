@@ -6,8 +6,7 @@ import { useQuery } from '@apollo/react-hooks';
 import { createContext } from 'react';
 
 import { ConfigData } from '../config/ConfigData';
-import { CurrentUser } from '../../valueObjects/config/CurrentUser';
-import { DateTimeFormats } from '../../valueObjects/dateTime/DateTimeFormats';
+import { CurrentUser, DateTimeFormats } from '../../valueObjects/config';
 
 // import useToaster from '../../../application/services/toaster/useToaster';
 import { GET_CURRENT_USER } from '../../../domain/eventEditor/data/queries/currentUser/currentUser';

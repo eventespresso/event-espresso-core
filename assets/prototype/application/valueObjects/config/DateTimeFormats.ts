@@ -1,4 +1,4 @@
-import { defaultDateFormat, defaultTimeFormat } from './defaults';
+import { defaultDateFormat, defaultTimeFormat } from './defaultDateTimeFormats';
 
 export type DateTimeFormatsProps = {
     dateFormat: string;
