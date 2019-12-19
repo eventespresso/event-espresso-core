@@ -10,24 +10,35 @@ import {
     SiteUrl,
     SiteUrlProps,
     Timezone,
-    TimezoneProps
+    TimezoneProps,
 } from '../../valueObjects/config';
 
-const { eejsdata }: eeJsProps = window;
-const { data }: eeJsDataProps = eejsdata;
+declare global {
+    interface Window {
+        eejsdata: eeJsProps;
+    }
+}
+
+window.eejsdata = window.eejsdata || {} as eeJsProps;
+const data: eeJsDataProps = window.eejsdata.data || {} as eeJsDataProps;
 
 type eeJsProps = {
-    data: object;
+    data?: eeJsDataProps;
 };
 
 type eeJsDataProps = {
     brandName: string;
     currency_config: CurrencyProps;
     eejs_api_nonce: string;
-    locale: object;
+    locale: eeJsDataLocaleProps;
     nonce: string;
     paths: eeJsDataPathsProps;
     default_timezone: eeJsDataTimezoneProps;
+};
+
+type eeJsDataLocaleProps = {
+    user: string;
+    site: string;
 };
 
 type eeJsDataPathsProps = {
