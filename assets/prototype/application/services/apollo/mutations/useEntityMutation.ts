@@ -37,7 +37,7 @@ const useEntityMutation = (type: EntityType, id: string = ''): EntityMutation =>
 	/**
 	 * @param {string} mutationType Type of mutation - CREATE|UPDATE|DELETE
 	 */
-	const getMutation = (mutationType: MutationType = MutationType.Update): any => {
+	const getMutation = (mutationType: MutationType): any => {
 		// For example "CREATE_DATETIME"
 		const mutation: string = `${mutationType}_${type.toUpperCase()}`;
 		return mutations[mutation];
