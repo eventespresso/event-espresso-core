@@ -1,17 +1,19 @@
-import useRelations from '../../../../../application/services/apollo/relations/useRelations';
-
+import { pathOr } from 'ramda';
+import { useRelations, RelationsManager } from '../../../../../application/services/apollo/relations';
 import useUpdateTicketCache from './useUpdateTicketCache';
 import updatePriceCache from './updatePriceCache';
+import { TicketMutationCallbackFn, TicketMutationCallbackFnArgs, CacheUpdaterFn } from '../types';
+import { Ticket, Price } from '../../types';
 
-const useOnCreateTicket = () => {
-	const { updateRelations, addRelation } = useRelations();
+const useOnCreateTicket = (): TicketMutationCallbackFn => {
+	const { updateRelations, addRelation } = useRelations() as RelationsManager;
 
-	const updateTicketCache = useUpdateTicketCache();
+	const updateTicketCache: CacheUpdaterFn = useUpdateTicketCache();
 
-	const onCreateTicket = ({ proxy, datetimeIds, ticket, tickets, prices }) => {
+	const onCreateTicket = ({ proxy, datetimeIds, ticket, tickets, prices }: TicketMutationCallbackFnArgs): void => {
 		if (ticket.id) {
 			const { nodes = [] } = tickets;
-			const ticketIn = nodes.map(({ id }) => id);
+			const ticketIn: string[] = nodes.map(({ id }: Ticket) => id);
 			const { id: ticketId } = ticket;
 
 			// Update prices cache for the changed tickets,
@@ -25,7 +27,7 @@ const useOnCreateTicket = () => {
 				relation: 'datetimes',
 				relationIds: datetimeIds,
 			});
-			datetimeIds.forEach((entityId) => {
+			datetimeIds.forEach((entityId: string) => {
 				addRelation({
 					entity: 'datetimes',
 					entityId,
@@ -35,14 +37,14 @@ const useOnCreateTicket = () => {
 			});
 
 			// Set relations with prices
-			const priceIds = prices.map(({ id }) => id);
+			const priceIds = pathOr([], ['nodes'], prices).map(({ id }: Price) => id);
 			updateRelations({
 				entity: 'tickets',
 				entityId: ticketId,
 				relation: 'prices',
 				relationIds: priceIds,
 			});
-			priceIds.forEach((entityId) => {
+			priceIds.forEach((entityId: string) => {
 				addRelation({
 					entity: 'prices',
 					entityId,
