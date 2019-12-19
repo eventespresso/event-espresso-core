@@ -1,13 +1,13 @@
-import useRelations from '../../../../../application/services/apollo/relations/useRelations';
-
+import { useRelations, RelationsManager } from '../../../../../application/services/apollo/relations';
+import { PriceMutationCallbackFn, PriceMutationCallbackFnArgs, CacheUpdaterFn } from '../types';
 import useUpdatePriceCache from './useUpdatePriceCache';
 
-const useOnCreatePrice = () => {
-	const { updateRelations } = useRelations();
+const useOnCreatePrice = (): PriceMutationCallbackFn => {
+	const { updateRelations } = useRelations() as RelationsManager;
 
-	const updatePriceCache = useUpdatePriceCache();
+	const updatePriceCache: CacheUpdaterFn = useUpdatePriceCache();
 
-	const onCreatePrice = ({ proxy, price, prices, ticketId, priceTypeId }) => {
+	const onCreatePrice = ({ proxy, price, prices, ticketId, priceTypeId }: PriceMutationCallbackFnArgs): void => {
 		const { id: priceId } = price;
 		if (priceId) {
 			updateRelations({
