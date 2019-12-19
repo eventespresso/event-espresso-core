@@ -1,5 +1,6 @@
 import { MutationOptions } from 'apollo-client';
 import { DataProxy } from 'apollo-cache';
+import { Datetime, Ticket, Price } from '../../../../domain/eventEditor/data/types';
 
 export type MutationInput = {
 	[key: string]: any;
@@ -9,12 +10,12 @@ export type OnMutationCompletedFn = (data: any) => void;
 
 export type OnMutationErrorFn = (error: Error) => void;
 
-type OnUpdateFnOptions = {
+export type OnUpdateFnOptions<Entity> = {
 	proxy: DataProxy;
-	entity: any;
+	entity: Entity;
 };
 
-export type OnUpdateFn = (options: OnUpdateFnOptions) => void;
+export type OnUpdateFn<Entity> = (options: OnUpdateFnOptions<Entity>) => void;
 
 export interface BackwardSubscription {
 	onCompleted?: OnMutationCompletedFn;
