@@ -17,3 +17,5 @@ const useIfMounted = () => {
 
 	return ifMounted;
 };
+
+export default useIfMounted;
