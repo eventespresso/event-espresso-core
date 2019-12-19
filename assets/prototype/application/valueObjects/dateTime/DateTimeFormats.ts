@@ -3,11 +3,17 @@ import { defaultDateFormat, defaultTimeFormat } from './defaults';
 export type DateTimeFormatsProps = {
     dateFormat: string;
     timeFormat: string;
+    dateTimeFormat?: string;
 }
 
 export const DateTimeFormats = ({ dateFormat, timeFormat }: DateTimeFormatsProps): DateTimeFormatsProps => {
-    return {
+    const formats: DateTimeFormatsProps = {
         dateFormat: dateFormat || defaultDateFormat,
         timeFormat: timeFormat || defaultTimeFormat,
+        dateTimeFormat: '',
+    };
+    return {
+        ...formats,
+        dateTimeFormat: formats.dateFormat + ' ' + formats.timeFormat
     };
 };
