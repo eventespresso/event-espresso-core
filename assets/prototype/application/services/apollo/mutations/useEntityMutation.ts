@@ -1,28 +1,44 @@
 import { useApolloClient } from '@apollo/react-hooks';
-import { ApolloError } from 'apollo-client';
+import { ApolloError, MutationUpdaterFn, MutationOptions, OperationVariables } from 'apollo-client';
+import { DataProxy } from 'apollo-cache';
+import { FetchResult } from 'apollo-link';
 import { useState } from '@wordpress/element';
 import { pathOr } from 'ramda';
 
 import { mutations } from '../../../../domain/eventEditor/data/mutations';
 import useMutators from './useMutators';
 import useIfMounted from '../../../hooks/useIfMounted';
+import {
+	EntityMutation,
+	OnMutationCompletedFn,
+	OnUpdateFn,
+	OnMutationErrorFn,
+	MutationInput,
+	MutationResult,
+	CustomMutationOptions,
+	Mutator,
+	MutationType,
+	EntityType,
+} from './types';
+
+const DEFAULT_RESULT: MutationResult = { called: false, loading: false };
 
 /**
  * @param {string} type Entity type name
  * @param id
  */
-const useEntityMutation = (type, id = '') => {
+const useEntityMutation = (type: EntityType, id: string = ''): EntityMutation => {
 	const client = useApolloClient();
-	const [result, setResult] = useState({ called: false, loading: false });
+	const [result, setResult] = useState(DEFAULT_RESULT);
 	const mutators = useMutators();
 	const ifMounted = useIfMounted();
 
 	/**
 	 * @param {string} mutationType Type of mutation - CREATE|UPDATE|DELETE
 	 */
-	const getMutation = (mutationType = 'UPDATE') => {
+	const getMutation = (mutationType: MutationType = MutationType.Update): any => {
 		// For example "CREATE_DATETIME"
-		const mutation = `${mutationType}_${type.toUpperCase()}`;
+		const mutation: string = `${mutationType}_${type.toUpperCase()}`;
 		return mutations[mutation];
 	};
 
@@ -30,10 +46,10 @@ const useEntityMutation = (type, id = '') => {
 	 * @param {string} mutationType Type of mutation
 	 * @param {object} input     Mutation input
 	 */
-	const getMutationOptions = (mutationType, input = {}) => {
+	const getMutationOptions = (mutationType: MutationType, input: MutationInput = {}): OperationVariables => {
 		// e.g. "datetimeMutator"
-		const key = `${type.toLowerCase()}Mutator`;
-		const { [key]: mutator } = mutators;
+		const key: string = `${type.toLowerCase()}Mutator`;
+		const mutator: Mutator = mutators[key];
 		/**
 		 * options = {
 		 *     variables,
@@ -45,7 +61,7 @@ const useEntityMutation = (type, id = '') => {
 		 */
 		const { onUpdate, ...mutationOptions } = mutator(mutationType, input);
 
-		let update;
+		let update: MutationUpdaterFn;
 
 		if (typeof onUpdate === 'function') {
 			update = getUpdateCallback(mutationType, onUpdate);
@@ -56,18 +72,18 @@ const useEntityMutation = (type, id = '') => {
 
 	/**
 	 */
-	const getUpdateCallback = (mutationType, onUpdate) => {
+	const getUpdateCallback = (mutationType: MutationType, onUpdate: OnUpdateFn): MutationUpdaterFn => {
 		/**
 		 * Since every mutation update callback is interested
 		 * in the updated entity data in response, we will
 		 * pass just that entity to onUpdate.
 		 */
-		return (proxy, result) => {
+		return (proxy: DataProxy, result: FetchResult): void => {
 			// e.g. "createDatetime", "updateTicket"
-			const mutationName = `${mutationType.toLowerCase()}Espresso${type}`;
+			const mutationName: string = `${mutationType.toLowerCase()}Espresso${type}`;
 			// Example result: { data: { deletePrice: { price : {...} } } }
-			const path = ['data', mutationName, `espresso${type}`];
-			const entity = pathOr({}, path, result);
+			const path: string[] = ['data', mutationName, `espresso${type}`];
+			const entity: any = pathOr({}, path, result);
 
 			onUpdate({ proxy, entity });
 		};
@@ -76,10 +92,9 @@ const useEntityMutation = (type, id = '') => {
 	/**
 	 * @param {object} input
 	 */
-	const getCreateMutation = (input) => {
-		const mutationType = 'CREATE';
-		const mutation = getMutation(mutationType);
-		const options = getMutationOptions(mutationType, input);
+	const getCreateMutation = (input: MutationInput): MutationOptions => {
+		const mutation: any = getMutation(MutationType.Create);
+		const options: OperationVariables = getMutationOptions(MutationType.Create, input);
 
 		return { mutation, ...options };
 	};
@@ -87,10 +102,9 @@ const useEntityMutation = (type, id = '') => {
 	/**
 	 * @param {object} input
 	 */
-	const getUpdateMutation = (input) => {
-		const mutationType = 'UPDATE';
-		const mutation = getMutation(mutationType);
-		const options = getMutationOptions(mutationType, { id, ...input });
+	const getUpdateMutation = (input: MutationInput): MutationOptions => {
+		const mutation: any = getMutation(MutationType.Update);
+		const options: OperationVariables = getMutationOptions(MutationType.Update, { id, ...input });
 
 		return { mutation, ...options };
 	};
@@ -98,10 +112,9 @@ const useEntityMutation = (type, id = '') => {
 	/**
 	 * @param {object} input
 	 */
-	const getDeleteMutation = (input) => {
-		const mutationType = 'DELETE';
-		const mutation = getMutation(mutationType);
-		const options = getMutationOptions(mutationType, { id, ...input });
+	const getDeleteMutation = (input: MutationInput): MutationOptions => {
+		const mutation: any = getMutation(MutationType.Delete);
+		const options: OperationVariables = getMutationOptions(MutationType.Delete, { id, ...input });
 
 		return { mutation, ...options };
 	};
@@ -109,7 +122,7 @@ const useEntityMutation = (type, id = '') => {
 	/**
 	 *
 	 */
-	const onMutationStart = () => {
+	const onMutationStart = (): void => {
 		updateResult({
 			loading: true,
 			error: undefined,
@@ -121,7 +134,7 @@ const useEntityMutation = (type, id = '') => {
 	/**
 	 *
 	 */
-	const onMutationComplete = (response, onCompleted) => {
+	const onMutationComplete = (response: FetchResult, onCompleted: OnMutationCompletedFn): void => {
 		const { data, errors } = response;
 		const error = errors && errors.length > 0 ? new ApolloError({ graphQLErrors: errors }) : undefined;
 
@@ -140,7 +153,7 @@ const useEntityMutation = (type, id = '') => {
 	/**
 	 *
 	 */
-	const onMutationError = (error, onError) => {
+	const onMutationError = (error: Error, onError: OnMutationErrorFn): void => {
 		updateResult({
 			loading: false,
 			error,
@@ -156,7 +169,7 @@ const useEntityMutation = (type, id = '') => {
 	/**
 	 *
 	 */
-	const updateResult = (result) => {
+	const updateResult = (result: MutationResult): void => {
 		// set state only if mounted
 		// to avoid the state update on unmounted components.
 		ifMounted(() => setResult(result));
@@ -165,16 +178,16 @@ const useEntityMutation = (type, id = '') => {
 	/**
 	 *
 	 */
-	const mutate = (options) => {
+	const mutate = (options: CustomMutationOptions): MutationResult => {
 		const { onCompleted, onError, ...mutationOptions } = options;
 		onMutationStart();
 		client
 			.mutate(mutationOptions)
-			.then((response) => {
+			.then((response: FetchResult) => {
 				onMutationComplete(response, onCompleted);
 				return response;
 			})
-			.catch((error) => {
+			.catch((error: Error) => {
 				onMutationError(error, onError);
 				throw error;
 			});

@@ -1,11 +1,11 @@
 import { useCallback } from '@wordpress/element';
-import useEntityMutator from '../../../../application/services/apollo/mutations/useEntityMutator';
+import { useEntityMutator, EntityType } from '../../../../application/services/apollo/mutations';
 import useTicketPrices from '../../data/queries/tickets/useTicketPrices';
 
 const useDeleteTicketHandler = ({ id }) => {
-	const { deleteEntity: deleteTicket } = useEntityMutator('Ticket');
+	const { deleteEntity: deleteTicket } = useEntityMutator(EntityType.Ticket);
 	const relatedPrices = useTicketPrices(id);
-	const { deleteEntity: deletePrice } = useEntityMutator('Price');
+	const { deleteEntity: deletePrice } = useEntityMutator(EntityType.Price);
 
 	return useCallback(() => {
 		const subscriptions = {
