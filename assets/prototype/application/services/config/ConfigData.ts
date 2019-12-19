@@ -33,7 +33,7 @@ type eeJsDataTimezoneProps = {
     offset: number;
 };
 
-export type ConfigProps = {
+export type ConfigDataProps = {
     brandName: string;
     currency: CurrencyProps;
     currentUser: CurrentUserProps;
@@ -44,7 +44,7 @@ export type ConfigProps = {
     timezone: TimezoneProps;
 }
 
-export const ConfigData: ConfigProps = {
+export const ConfigData: ConfigDataProps = {
     brandName: data.brandName || 'Event Espresso',
     currency: Currency(data.currency_config),
     currentUser: CurrentUser({} as CurrentUserProps),
