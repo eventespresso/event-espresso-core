@@ -37,7 +37,6 @@ const ConfigProvider = ({ children }) => {
 		dateTimeFormats: DateTimeFormats(generalSettings),
 	};
 
-	console.log('%c > config: ', 'color: Cyan;', config);
 	return <ConfigContext.Provider value={value}>{children}</ConfigContext.Provider>;
 };
 
