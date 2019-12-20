@@ -1005,23 +1005,23 @@ class EED_Ticket_Sales_Monitor extends EED_Module
             // to try to avoid race conditions, so instead of just finding the number to update TO, we're going to find
             // the number to RELEASE. It's the same end result, just different path.
             // Begin by assuming we're going to release all the reservations on this ticket.
-            $num_tix_for_expired_reservations = $ticket_with_reservations->reserved();
+            $expired_reservations_count = $ticket_with_reservations->reserved();
             // Now reduce that number using the list of current valid reservations.
             foreach ($valid_reserved_ticket_line_items as $valid_reserved_ticket_line_item) {
                 if ($valid_reserved_ticket_line_item instanceof EE_Line_Item
                     && $valid_reserved_ticket_line_item->OBJ_ID() === $ticket_with_reservations->ID()
                 ) {
-                    $num_tix_for_expired_reservations -= $valid_reserved_ticket_line_item->quantity();
+                    $expired_reservations_count -= $valid_reserved_ticket_line_item->quantity();
                 }
             }
             // Only bother saving the tickets and datetimes if we're actually going to release some spots.
-            if ($num_tix_for_expired_reservations > 0) {
+            if ($expired_reservations_count > 0) {
                 $ticket_with_reservations->add_extra_meta(
                     EE_Ticket::META_KEY_TICKET_RESERVATIONS,
                     __LINE__ . ') ' . $source . '()'
                 );
-                $ticket_with_reservations->decreaseReserved($num_tix_for_expired_reservations, true, 'TicketSalesMonitor:' . __LINE__);
-                $total_tickets_released += $num_tix_for_expired_reservations;
+                $ticket_with_reservations->decreaseReserved($expired_reservations_count, true, 'TicketSalesMonitor:' . __LINE__);
+                $total_tickets_released += $expired_reservations_count;
                 $event = $ticket_with_reservations->get_related_event();
                 // track sold out events
                 if ($event instanceof EE_Event && $event->is_sold_out()) {
