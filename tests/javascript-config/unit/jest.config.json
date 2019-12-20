@@ -1,6 +1,5 @@
 {
 	"rootDir": "../../../",
-	"preset": "@wordpress/jest-preset-default",
 	"collectCoverageFrom": [
 		"assets/ZZZ/**/*.js",
 		"assets/ZZZ/**/*.js",

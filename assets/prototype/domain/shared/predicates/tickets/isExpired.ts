@@ -9,15 +9,15 @@ import { now } from './filters';
  */
 import isValidEntityOrArchive from './isValidEntityOrArchive';
 
-interface TicketEntity {
+interface Ticket {
 	endDate: Date;
 	startDate: Date;
 }
 
-const isExpired = (ticketEntity: TicketEntity, includeArchived: boolean = false): boolean => {
-	const { endDate } = ticketEntity;
+const isExpired = (ticket: Ticket, includeArchived: boolean = false): boolean => {
+	const { endDate } = ticket;
 
-	return isValidEntityOrArchive(ticketEntity, includeArchived) && differenceInMinutes(endDate, now) < 0;
+	return isValidEntityOrArchive(ticket, includeArchived) && differenceInMinutes(endDate, now) < 0;
 };
 
 export default isExpired;

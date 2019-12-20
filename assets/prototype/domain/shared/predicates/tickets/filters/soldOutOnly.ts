@@ -3,9 +3,9 @@
  */
 import percentSoldAtOrAbove from './percentSoldAtOrAbove';
 
-const soldOutOnly = (ticketEntities: any[]) => {
-	return ticketEntities.filter((ticketEntity) => {
-		return ticketEntity.isSoldOut || percentSoldAtOrAbove(ticketEntity, 100);
+const soldOutOnly = (tickets: any[]) => {
+	return tickets.filter((ticket) => {
+		return ticket.isSoldOut || percentSoldAtOrAbove(ticket, 100);
 	});
 };
 

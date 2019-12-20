@@ -1,9 +1,9 @@
 /**
- * @param {Object} ticketEntity    event ticket object
+ * @param {Object} ticket    event ticket object
  * @return {boolean} true if qty property is valid and NOT infinite
  */
-const validFiniteQuantity = (ticketEntity) => {
-	return ticketEntity.qty !== 'INF' && ticketEntity.qty !== Infinity && parseInt(ticketEntity.qty, 10) > 0;
+const validFiniteQuantity = (ticket) => {
+	return ticket.qty !== 'INF' && ticket.qty !== Infinity && parseInt(ticket.qty, 10) > 0;
 };
 
 export default validFiniteQuantity;

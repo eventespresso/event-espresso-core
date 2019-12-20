@@ -3,8 +3,8 @@
  */
 import isPending from '../isPending';
 
-const pendingOnly = (ticketEntities: any[]) => {
-	return ticketEntities.filter((ticketEntity) => isPending(ticketEntity));
+const pendingOnly = (tickets: any[]) => {
+	return tickets.filter((ticket) => isPending(ticket));
 };
 
 export default pendingOnly;

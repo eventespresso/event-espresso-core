@@ -7,12 +7,12 @@ import { allPass, filter, head } from 'ramda';
  * Internal dependencies
  */
 import { isOnSale, isPending } from '../index';
-import sortTicketEntitiesList from './sortTicketEntitiesList';
+import sortTicketsList from './sortTicketsList';
 
-const nextOnSaleOrPendingOnly = (ticketEntities: any[]) => {
+const nextOnSaleOrPendingOnly = (tickets: any[]) => {
 	const selectedPredicates = [isOnSale, isPending];
-	const onSaleAndPending = filter(allPass(selectedPredicates))(ticketEntities);
-	const sortedItems = sortTicketEntitiesList(onSaleAndPending);
+	const onSaleAndPending = filter(allPass(selectedPredicates))(tickets);
+	const sortedItems = sortTicketsList(onSaleAndPending);
 
 	return [head(sortedItems)];
 };

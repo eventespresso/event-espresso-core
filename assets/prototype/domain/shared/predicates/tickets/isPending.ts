@@ -6,7 +6,7 @@ import { now } from './filters';
 
 /**
  * @function
- * @param {Object} ticketEntity model object
+ * @param {Object} ticket model object
  * @param {boolean} includeArchived if true will not filter out archived entities
  * @return {boolean} 	true if ticket is not yet available for purchase,
  * 						but will be at some date in the future

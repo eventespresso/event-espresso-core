@@ -1,10 +1,10 @@
 /**
  * @function
- * @param {Object} ticketEntity model object
+ * @param {Object} ticket model object
  * @return {boolean} true if ticket is archived
  */
-const isArchived = (ticketEntity) => {
-	return ticketEntity.deleted;
+const isArchived = (ticket) => {
+	return ticket.deleted;
 };
 
 export default isArchived;

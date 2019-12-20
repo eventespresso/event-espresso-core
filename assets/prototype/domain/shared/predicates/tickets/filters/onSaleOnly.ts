@@ -3,8 +3,8 @@
  */
 import isOnSale from '../isOnSale';
 
-const onSaleOnly = (ticketEntities: any[]) => {
-	return ticketEntities.filter((ticketEntity) => isOnSale(ticketEntity));
+const onSaleOnly = (tickets: any[]) => {
+	return tickets.filter((ticket) => isOnSale(ticket));
 };
 
 export default onSaleOnly;

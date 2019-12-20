@@ -3,8 +3,8 @@
  */
 import isArchived from '../isArchived';
 
-const archivedOnly = (ticketEntities: any[]) => {
-	return ticketEntities.filter((ticketEntity) => isArchived(ticketEntity));
+const archivedOnly = (tickets: any[]) => {
+	return tickets.filter((ticket) => isArchived(ticket));
 };
 
 export default archivedOnly;

@@ -3,8 +3,8 @@
  */
 import isExpired from '../isExpired';
 
-const expiredOnly = (ticketEntities: any[]) => {
-	return ticketEntities.filter((ticketEntity) => isExpired(ticketEntity));
+const expiredOnly = (tickets: any[]) => {
+	return tickets.filter((ticket) => isExpired(ticket));
 };
 
 export default expiredOnly;

@@ -3,24 +3,23 @@ import validInfiniteQuantity from './validInfiniteQuantity';
 
 type PercentSoldAtOrAboveProps = {
 	maxQuantity: number;
-	ticketEntities: any[];
+	tickets: any[];
 };
 
 /**
- * @param {Object} ticketEntity    event ticket object
+ * @param {Object} ticket    event ticket object
  * @param {number} maxQuantity
  * @return {boolean} true if sold/qty less than than qty
  */
-const percentSoldBelow = ({ maxQuantity, ticketEntities }: PercentSoldAtOrAboveProps) => {
-	const filterFn = (ticketEntity) => {
+const percentSoldBelow = ({ maxQuantity, tickets }: PercentSoldAtOrAboveProps) => {
+	const filterFn = (ticket) => {
 		return (
-			validInfiniteQuantity(ticketEntity) ||
-			(validFiniteQuantity(ticketEntity) &&
-				parseInt(ticketEntity.sold, 10) / parseInt(ticketEntity.qty, 10) < maxQuantity / 100)
+			validInfiniteQuantity(ticket) ||
+			(validFiniteQuantity(ticket) && parseInt(ticket.sold, 10) / parseInt(ticket.qty, 10) < maxQuantity / 100)
 		);
 	};
 
-	return ticketEntities.filter(filterFn);
+	return tickets.filter(filterFn);
 };
 
 export default percentSoldBelow;
