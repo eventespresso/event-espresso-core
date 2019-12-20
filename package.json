@@ -21,7 +21,7 @@
 		"check-engines": "wp-scripts check-engines",
 		"ci:build": "npm run build",
 		"ci:lint": "npm run lint",
-		"ci:test": "npm run test-js:coverage-ci",
+		"ci:test": "npm run test-js",
 		"dev": "concurrently \"webpack --config ./config/webpack.dev.js\" \"npm run build:css\"",
 		"dev-w": "concurrently \"webpack --watch --config ./config/webpack.dev.js\" \"npm-watch build:css\"",
 		"dev-p": "webpack --watch --watch-poll --config ./config/webpack.dev.js",
