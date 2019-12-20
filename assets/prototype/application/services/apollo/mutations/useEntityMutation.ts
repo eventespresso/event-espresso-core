@@ -6,7 +6,6 @@ import { useState } from '@wordpress/element';
 import { pathOr } from 'ramda';
 
 import { mutations } from '../../../../domain/eventEditor/data/mutations';
-import { Entity } from '../../../../domain/eventEditor/data/types';
 import useMutators from './useMutators';
 import useIfMounted from '../../../hooks/useIfMounted';
 import {
@@ -73,7 +72,7 @@ const useEntityMutation = (type: EntityType, id: string = ''): EntityMutation =>
 
 	/**
 	 */
-	const getUpdateCallback = (mutationType: MutationType, onUpdate: OnUpdateFn<Entity>): MutationUpdaterFn => {
+	const getUpdateCallback = (mutationType: MutationType, onUpdate: OnUpdateFn): MutationUpdaterFn => {
 		/**
 		 * Since every mutation update callback is interested
 		 * in the updated entity data in response, we will
