@@ -1,11 +1,11 @@
+import pick from 'ramda/src/pick';
 import { ApolloClient } from 'apollo-client';
 import { InMemoryCache } from 'apollo-cache-inmemory';
 import { HttpLink } from 'apollo-link-http';
 import { ApolloProvider } from '@apollo/react-hooks';
-import get from 'lodash/get';
 
 const { graphqlEndpoint } = window;
-const nonce = get(window, ['eejsdata', 'data', 'eejs_api_nonce']);
+const nonce = pick(['eejsdata', 'data', 'eejs_api_nonce'], window);
 
 const getResolver = (type) => {
 	return (_, args, { getCacheKey }) => getCacheKey({ __typename: type, id: args.id });
