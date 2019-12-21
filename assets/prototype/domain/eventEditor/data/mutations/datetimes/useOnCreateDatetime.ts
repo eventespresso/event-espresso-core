@@ -1,17 +1,18 @@
-import useRelations from '../../../../../application/services/apollo/relations/useRelations';
-
+import { useRelations, RelationsManager } from '../../../../../application/services/apollo/relations';
 import updateTicketCache from './updateTicketCache';
 import useUpdateDatetimeCache from './useUpdateDatetimeCache';
+import { DatetimeMutationCallbackFn, DatetimeMutationCallbackFnArgs, CacheUpdaterFn } from '../types';
+import { Datetime } from '../../types';
 
-const useOnCreateDatetime = () => {
-	const { updateRelations, addRelation } = useRelations();
+const useOnCreateDatetime = (): DatetimeMutationCallbackFn => {
+	const { updateRelations, addRelation } = useRelations() as RelationsManager;
 
-	const updateDatetimeCache = useUpdateDatetimeCache();
+	const updateDatetimeCache: CacheUpdaterFn = useUpdateDatetimeCache();
 
-	const onCreateDatetime = ({ proxy, datetimes, datetime, tickets }) => {
+	const onCreateDatetime = ({ proxy, datetimes, datetime, tickets }: DatetimeMutationCallbackFnArgs): void => {
 		if (datetime.id) {
 			const { nodes = [] } = datetimes;
-			const datetimeIn = nodes.map(({ id }) => id);
+			const datetimeIn: string[] = nodes.map(({ id }: Datetime) => id);
 			const { id: datetimeId } = datetime;
 
 			// Update tickets cache for the changed datetimes,
@@ -24,7 +25,7 @@ const useOnCreateDatetime = () => {
 				relation: 'tickets',
 				relationIds: tickets,
 			});
-			tickets.forEach((entityId) => {
+			tickets.forEach((entityId: string) => {
 				addRelation({
 					entity: 'tickets',
 					entityId,

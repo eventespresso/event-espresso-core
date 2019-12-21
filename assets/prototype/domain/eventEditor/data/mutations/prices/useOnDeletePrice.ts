@@ -1,13 +1,13 @@
-import useRelations from '../../../../../application/services/apollo/relations/useRelations';
-
+import { useRelations, RelationsManager } from '../../../../../application/services/apollo/relations';
+import { PriceMutationCallbackFn, PriceMutationCallbackFnArgs, CacheUpdaterFn } from '../types';
 import useUpdatePriceCache from './useUpdatePriceCache';
 
-const useOnDeletePrice = () => {
-	const { dropRelations, removeRelation } = useRelations();
+const useOnDeletePrice = (): PriceMutationCallbackFn => {
+	const { dropRelations, removeRelation } = useRelations() as RelationsManager;
 
-	const updatePriceCache = useUpdatePriceCache();
+	const updatePriceCache: CacheUpdaterFn = useUpdatePriceCache();
 
-	const onDeletePrice = ({ proxy, prices, price }) => {
+	const onDeletePrice = ({ proxy, prices, price }: PriceMutationCallbackFnArgs): void => {
 		const { id: priceId } = price;
 		if (priceId) {
 			// Remove the price from all tickets relations

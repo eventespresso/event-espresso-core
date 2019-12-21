@@ -1,9 +1,10 @@
-import useRelations from '../../../../../application/services/apollo/relations/useRelations';
+import { useRelations, RelationsManager } from '../../../../../application/services/apollo/relations';
+import { PriceMutationCallbackFn, PriceMutationCallbackFnArgs } from '../types';
 
-const useOnUpdatePrice = () => {
-	const { updateRelations } = useRelations();
+const useOnUpdatePrice = (): PriceMutationCallbackFn => {
+	const { updateRelations } = useRelations() as RelationsManager;
 
-	const onUpdatePrice = ({ price, priceTypeId }) => {
+	const onUpdatePrice = ({ price, priceTypeId }: PriceMutationCallbackFnArgs): void => {
 		const { id: priceId } = price;
 		// if it's not the optimistic response
 		// and priceType has been updated.

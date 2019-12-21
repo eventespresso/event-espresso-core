@@ -1,5 +1,6 @@
-import { MutationOptions } from 'apollo-client';
+import { MutationOptions, OperationVariables } from 'apollo-client';
 import { DataProxy } from 'apollo-cache';
+import { Entity as AnEntity } from '../../../../domain/eventEditor/data/types';
 
 export type MutationInput = {
 	[key: string]: any;
@@ -9,9 +10,9 @@ export type OnMutationCompletedFn = (data: any) => void;
 
 export type OnMutationErrorFn = (error: Error) => void;
 
-type OnUpdateFnOptions = {
+export type OnUpdateFnOptions<Entity = AnEntity> = {
 	proxy: DataProxy;
-	entity: any;
+	entity: Entity;
 };
 
 export type OnUpdateFn = (options: OnUpdateFnOptions) => void;
@@ -56,7 +57,7 @@ export interface Mutators {
 export interface MutatorGeneratedObject {
 	onUpdate?: OnUpdateFn;
 	optimisticResponse: any;
-	variables: any;
+	variables: OperationVariables;
 }
 
 export type Mutator = (mutationType: MutationType, input: MutationInput) => MutatorGeneratedObject;

@@ -1,9 +1,10 @@
-import useRelations from '../../../../../application/services/apollo/relations/useRelations';
+import { useRelations, RelationsManager } from '../../../../../application/services/apollo/relations';
+import { DatetimeMutationCallbackFn, DatetimeMutationCallbackFnArgs } from '../types';
 
-const useOnUpdateDatetime = () => {
-	const { updateRelations, addRelation, removeRelation } = useRelations();
+const useOnUpdateDatetime = (): DatetimeMutationCallbackFn => {
+	const { updateRelations, addRelation, removeRelation } = useRelations() as RelationsManager;
 
-	const onUpdateDatetime = ({ datetime, tickets }) => {
+	const onUpdateDatetime = ({ datetime, tickets }: DatetimeMutationCallbackFnArgs): void => {
 		if (datetime.id && tickets.length) {
 			const { id: datetimeId } = datetime;
 
@@ -22,7 +23,7 @@ const useOnUpdateDatetime = () => {
 				relationIds: tickets,
 			});
 
-			tickets.forEach((entityId) => {
+			tickets.forEach((entityId: string) => {
 				addRelation({
 					entity: 'tickets',
 					entityId,
