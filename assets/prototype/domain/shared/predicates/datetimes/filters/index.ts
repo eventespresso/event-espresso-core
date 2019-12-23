@@ -30,6 +30,14 @@ const filters = ({ dates, show = 'on-sale-and-pending' }: FilterDates) => {
 			return upcomingOnly(dates);
 		case 'next-active-upcoming-only':
 			return nextActiveUpcomingOnly(dates);
+		case 'sold-out-only':
+			return filter(dateEntities, function(dateEntity) {
+				return (
+					!dateTimeModel.isTrashed(dateEntity) &&
+					((validStatus(dateEntity) && dateTimeModel.isSoldOut(dateEntity)) ||
+						capacityAtOrAbove(dateEntity, 100))
+				);
+			});
 	}
 	return dates;
 };
