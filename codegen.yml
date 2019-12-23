@@ -1,5 +1,5 @@
 schema: http://ee.local/graphql
 generates:
-  ./assets/prototype/application/generated/types.d.ts:
+  ./assets/prototype/domain/shared/types.d.ts:
     plugins:
       - typescript

@@ -1,4 +1,4 @@
-import { EspressoDatetime, EspressoPrice, EspressoPriceType, EspressoTicket } from '../../../generated/types';
+import { EspressoDatetime, EspressoPrice, EspressoPriceType, EspressoTicket } from '../../../../domain/shared/types';
 
 interface CommonProps {
 	relation?: string;
