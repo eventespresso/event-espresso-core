@@ -8,19 +8,14 @@ interface CommonProps {
 
 export interface RelationFunctionProps extends CommonProps {
 	entity: string;
-	entityId: string;
+	entityId: EntityId;
 }
 
 export interface RelationAction extends CommonProps {
 	type: string;
 	entity?: string;
-	entityId?: string;
+	entityId?: EntityId;
 	data?: any;
-}
-
-interface Entity {
-	id: string;
-	dbid: number;
 }
 
 type PossibleRelation = {
