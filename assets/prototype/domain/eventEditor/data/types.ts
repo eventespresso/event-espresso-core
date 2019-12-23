@@ -24,7 +24,7 @@ export interface Datetime extends Entity {
 	isUpcoming?: boolean;
 	length?: number;
 	order?: number;
-	regLimit?: number | string;
+	regLimit?: number;
 	reserved?: number;
 	sold?: number;
 	startDate?: string;
