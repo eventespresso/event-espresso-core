@@ -1,5 +1,6 @@
 import { DataProxy } from 'apollo-cache';
 import { OperationVariables } from 'apollo-client';
+import { EntityId } from '../types';
 
 export type ReadQueryOptions<TVariables = OperationVariables> = DataProxy.Query<TVariables>;
 
@@ -9,7 +10,7 @@ export type WriteQueryOptions<TData = any, TVariables = OperationVariables> = Da
 >;
 
 export interface EntityItemProps {
-	id: string;
+	id: EntityId;
 }
 
 export interface FetchEntitiesResult {
