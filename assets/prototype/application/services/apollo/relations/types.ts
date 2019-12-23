@@ -1,4 +1,4 @@
-import { Datetime, EntityIds, Price, PriceType, Ticket } from '../../../../domain/eventEditor/data/types';
+import { EntityId } from '../../../../domain/eventEditor/data/types';
 
 interface CommonProps {
 	relation?: string;
@@ -24,10 +24,10 @@ interface Entity {
 }
 
 type PossibleRelation = {
-	datetimes?: EntityIds;
-	tickets?: EntityIds;
-	prices?: EntityIds;
-	priceTypes?: EntityIds;
+	datetimes?: EntityId[];
+	tickets?: EntityId[];
+	prices?: EntityId[];
+	priceTypes?: EntityId[];
 };
 
 type RelationalEntity = {

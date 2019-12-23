@@ -5,7 +5,7 @@ export interface Entity {
 	__typename?: string;
 }
 
-export type EntityIds = string[];
+export type EntityId = string;
 
 export interface EntityEdge {
 	nodes?: Entity[];
