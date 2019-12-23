@@ -1,8 +1,8 @@
+import { useState } from 'react';
 import { useApolloClient } from '@apollo/react-hooks';
 import { ApolloError, MutationUpdaterFn, MutationOptions, OperationVariables } from 'apollo-client';
 import { DataProxy } from 'apollo-cache';
 import { FetchResult } from 'apollo-link';
-import { useState } from '@wordpress/element';
 import { pathOr } from 'ramda';
 
 import { mutations } from '../../../../domain/eventEditor/data/mutations';

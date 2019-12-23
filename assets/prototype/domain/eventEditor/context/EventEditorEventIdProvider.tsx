@@ -2,7 +2,7 @@
  * External imports
  */
 import React from 'react';
-import { createContext } from '@wordpress/element';
+import { createContext } from 'react';
 import useToaster from '../../../application/services/toaster/useToaster';
 
 const EventEditorEventIdContext = createContext<number | null>(null);

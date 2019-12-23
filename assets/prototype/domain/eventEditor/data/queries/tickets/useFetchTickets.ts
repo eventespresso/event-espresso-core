@@ -1,5 +1,5 @@
+import { useEffect, useState } from 'react';
 import { useQuery } from '@apollo/react-hooks';
-import { useEffect, useState } from '@wordpress/element';
 import { GET_TICKETS } from './';
 import useToaster from '../../../../../application/services/toaster/useToaster';
 import useStatus from '../../../../../application/services/apollo/status/useStatus';
