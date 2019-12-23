@@ -7,3 +7,13 @@ export type WriteQueryOptions<TData = any, TVariables = OperationVariables> = Da
 	TData,
 	TVariables
 >;
+
+export interface EntityItemProps {
+	id: string;
+}
+
+export interface FetchEntitiesResult {
+	data: any;
+	error: Error;
+	loading: boolean;
+}

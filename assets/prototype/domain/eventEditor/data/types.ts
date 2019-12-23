@@ -94,3 +94,9 @@ export interface PriceType extends Entity {
 export interface PriceTypeEdge extends EntityEdge {
 	nodes?: PriceType[];
 }
+
+declare global {
+	interface Window {
+		eeEditorEventData: any;
+	}
+}
