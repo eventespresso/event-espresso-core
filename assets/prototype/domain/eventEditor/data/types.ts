@@ -4,7 +4,10 @@ export interface Entity {
 	name?: string;
 	__typename?: string;
 }
-export interface EntityEgde {
+
+export type EntityId = string;
+
+export interface EntityEdge {
 	nodes?: Entity[];
 	__typename?: string;
 }
@@ -25,7 +28,7 @@ export interface Datetime extends Entity {
 	startDate?: string;
 }
 
-export interface DatetimeEdge extends EntityEgde {
+export interface DatetimeEdge extends EntityEdge {
 	nodes?: Datetime[];
 }
 
@@ -43,7 +46,7 @@ export interface Price extends Entity {
 	priceTypeOrder?: number;
 }
 
-export interface PriceEdge extends EntityEgde {
+export interface PriceEdge extends EntityEdge {
 	nodes?: Price[];
 }
 
@@ -67,7 +70,7 @@ export interface Ticket extends Entity {
 	prices?: PriceEdge; // for create and update ticket mutation
 }
 
-export interface TicketEdge extends EntityEgde {
+export interface TicketEdge extends EntityEdge {
 	nodes?: Ticket[];
 }
 
@@ -88,6 +91,6 @@ export interface PriceType extends Entity {
 	order?: number;
 }
 
-export interface PriceTypeEdge extends EntityEgde {
+export interface PriceTypeEdge extends EntityEdge {
 	nodes?: PriceType[];
 }

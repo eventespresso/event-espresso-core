@@ -1,33 +1,41 @@
+import { EntityId } from '../../../../domain/eventEditor/data/types';
+
 interface CommonProps {
 	relation?: string;
 	relationId?: string;
 	relationIds?: string[];
 }
+
 export interface RelationFunctionProps extends CommonProps {
 	entity: string;
-	entityId: string;
+	entityId: EntityId;
 }
+
 export interface RelationAction extends CommonProps {
 	type: string;
 	entity?: string;
-	entityId?: string;
+	entityId?: EntityId;
 	data?: any;
 }
+
 type PossibleRelation = {
-	datetimes?: string[];
-	tickets?: string[];
-	prices?: string[];
-	priceTypes?: string[];
+	datetimes?: EntityId[];
+	tickets?: EntityId[];
+	prices?: EntityId[];
+	priceTypes?: EntityId[];
 };
+
 type RelationalEntity = {
 	[key: string]: PossibleRelation;
 };
+
 export type RelationalData = {
 	datetimes?: RelationalEntity;
 	tickets?: RelationalEntity;
 	prices?: RelationalEntity;
 	priceTypes?: RelationalEntity;
 };
+
 export interface RelationsManager {
 	setData: (data: RelationalData) => void;
 	getRelations: (options: RelationFunctionProps) => string[];
