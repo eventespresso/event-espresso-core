@@ -1,6 +1,6 @@
 import gql from 'graphql-tag';
 
-export const GET_GENERAL_SETTINGS = gql`
+export const GET_GENERAL_SETTINGS: any = gql`
 	query GET_GENERAL_SETTINGS {
 		generalSettings {
 			dateFormat
