@@ -129,8 +129,12 @@ class ModelObjNodeTreeDTO
      */
     public function addDiscoveredItem($model_obj){
         // Figure out where our current spot in the tree.
+        $current_items_list = $this->getCurrentItemList();
+
+        // Ensure the data is of the correct type.
 
         // Add data that corresponds to it to that spot.
+
     }
 
     /**

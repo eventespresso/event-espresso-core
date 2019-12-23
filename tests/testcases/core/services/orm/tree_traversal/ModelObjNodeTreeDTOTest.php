@@ -95,13 +95,8 @@ class ModelObjNodeTreeDTOTest extends \EE_UnitTestCase
 
         $this->assertArrayHasKey(ModelObjNodeTreeDTO::ID,$first_datetime_data);
         $this->assertEquals(456, $first_datetime_data[ModelObjNodeTreeDTO::ID]);
-//
-//        $this->assertArrayHasKey(ModelObjNodeTreeDTO::MODEL, $first_datetime_data);
-//        $this->assertArrayHasKey(ModelObjNodeTreeDTO::COUNT, $first_datetime_data);
-//        $this->assertArrayHasKey(ModelObjNodeTreeDTO::ITEMS, $first_datetime_data);
-//        $this->assertEquals('Datetime', $first_datetime_data[ModelObjNodeTreeDTO::MODEL]);
-
     }
+//    public function test
 
 }
 // End of file ModelObjNodeTreeDTOTest.php
