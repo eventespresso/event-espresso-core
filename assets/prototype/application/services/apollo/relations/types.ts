@@ -1,4 +1,4 @@
-import { EspressoDatetime, EspressoPrice, EspressoPriceType, EspressoTicket } from '../../../../domain/shared/types';
+import { Datetime, Price, PriceType, Ticket } from '../../../../domain/eventEditor/data/types';
 
 interface CommonProps {
 	relation?: string;
@@ -22,11 +22,6 @@ interface Entity {
 	id: string;
 	dbid: number;
 }
-
-interface DatetimeProps extends Entity, EspressoDatetime {}
-interface PriceProps extends Entity, EspressoPrice {}
-interface PriceTypeProps extends Entity, EspressoPriceType {}
-interface TicketProps extends Entity, EspressoTicket {}
 
 type PossibleRelation = {
 	datetimes?: string[];
