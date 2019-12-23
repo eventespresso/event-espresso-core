@@ -128,7 +128,9 @@ class ModelObjNodeTreeDTO
      * @param EE_Base_Class $model_obj
      */
     public function addDiscoveredItem($model_obj){
+        // Figure out where our current spot in the tree.
 
+        // Add data that corresponds to it to that spot.
     }
 
     /**
