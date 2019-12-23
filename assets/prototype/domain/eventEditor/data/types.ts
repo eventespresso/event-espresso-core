@@ -4,6 +4,9 @@ export interface Entity {
 	name?: string;
 	__typename?: string;
 }
+
+export type EntityIds = string[];
+
 export interface EntityEdge {
 	nodes?: Entity[];
 	__typename?: string;
