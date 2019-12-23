@@ -3,8 +3,9 @@ import { useEffect } from '@wordpress/element';
 import { GET_PRICE_TYPES } from './';
 import useInitToaster from '../../../../../application/services/toaster/useInitToaster';
 import useStatus from '../../../../../application/services/apollo/status/useStatus';
+import { FetchEntitiesResult } from '../types';
 
-const useFetchPriceTypes = () => {
+const useFetchPriceTypes = (): FetchEntitiesResult => {
 	console.log('%c useFetchPriceTypes: ', 'color: deeppink; font-size: 14px;');
 
 	const { setIsLoading, setIsLoaded, setIsError } = useStatus();
@@ -15,11 +16,11 @@ const useFetchPriceTypes = () => {
 	});
 
 	const { data, error, loading } = useQuery(GET_PRICE_TYPES, {
-		onCompleted: (data) => {
+		onCompleted: (): void => {
 			setIsLoaded('priceTypes', true);
-			onCompleted(data);
+			onCompleted();
 		},
-		onError: (error) => {
+		onError: (error): void => {
 			setIsError('priceTypes', true);
 			onError(error);
 		},
