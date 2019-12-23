@@ -8,6 +8,7 @@ import { is } from 'ramda';
  */
 import { Datetime } from '../../../eventEditor/data/types';
 import validFiniteReglimit from './validFiniteReglimit';
+import validInfiniteReglimit from './validInfiniteReglimit';
 import validSold from './validStatus';
 
 /**
@@ -15,7 +16,7 @@ import validSold from './validStatus';
  * @param {number} capacity
  * @return {boolean} true if sold/regLimit >= capacity
  */
-const capacityAtOrAbove = (date: Datetime, capacity: number) => {
+const capacityBelow = (date: Datetime, capacity: number) => {
 	return (
 		validSold(date) &&
 		validFiniteReglimit(date) &&
@@ -23,4 +24,4 @@ const capacityAtOrAbove = (date: Datetime, capacity: number) => {
 	);
 };
 
-export default capacityAtOrAbove;
+export default capacityBelow;

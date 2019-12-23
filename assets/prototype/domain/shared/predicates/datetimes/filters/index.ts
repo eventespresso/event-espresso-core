@@ -1,7 +1,10 @@
+import aboveCapacity from './aboveCapacity';
 import activeOnly from './activeOnly';
 import activeUpcoming from './activeUpcoming';
+import belowCapacity from './belowCapacity';
 import allDates from './allDates';
 import nextActiveUpcomingOnly from './nextActiveUpcomingOnly';
+import soldOutOnly from './soldOutOnly';
 import upcomingOnly from './upcomingOnly';
 
 export const now = new Date();
@@ -31,14 +34,17 @@ const filters = ({ dates, show = 'on-sale-and-pending' }: FilterDates) => {
 		case 'next-active-upcoming-only':
 			return nextActiveUpcomingOnly(dates);
 		case 'sold-out-only':
-			return filter(dateEntities, function(dateEntity) {
-				return (
-					!dateTimeModel.isTrashed(dateEntity) &&
-					((validStatus(dateEntity) && dateTimeModel.isSoldOut(dateEntity)) ||
-						capacityAtOrAbove(dateEntity, 100))
-				);
-			});
+			return soldOutOnly(dates);
+		case 'above-90-capacity':
+			return aboveCapacity({ dates, capacity: 90 });
+		case 'above-75-capacity':
+			return aboveCapacity({ dates, capacity: 75 });
+		case 'above-50-capacity':
+			return aboveCapacity({ dates, capacity: 50 });
+		case 'below-50-capacity':
+			return belowCapacity({ dates, capacity: 50 });
 	}
+
 	return dates;
 };
 
