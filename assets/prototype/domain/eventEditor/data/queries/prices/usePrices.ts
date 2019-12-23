@@ -4,20 +4,22 @@ import { useApolloClient } from '@apollo/react-hooks';
 import { entitiesWithGuIdInArray } from '../../../../shared/predicates/shared/selectionPredicates';
 import useStatus from '../../../../../application/services/apollo/status/useStatus';
 import usePriceQueryOptions from './usePriceQueryOptions';
+import { ReadQueryOptions } from '../types';
+import { Price, EntityId } from '../../types';
 /**
  * A custom react hook for retrieving all the prices from cache
  * limited to the ids passed in `include`
  *
  * @param {array} include Array of price ids to include.
  */
-const usePrices = (include = []) => {
-	const options = usePriceQueryOptions();
+const usePrices = (include: EntityId[] = []): Price[] => {
+	const options: ReadQueryOptions = usePriceQueryOptions();
 	const { isLoaded } = useStatus();
 	const client = useApolloClient();
 	if (!isLoaded('prices')) {
 		return [];
 	}
-	let data;
+	let data: any;
 
 	try {
 		data = client.readQuery(options);
@@ -25,7 +27,7 @@ const usePrices = (include = []) => {
 		data = {};
 	}
 
-	const prices = pathOr([], ['espressoPrices', 'nodes'], data);
+	const prices: Price[] = pathOr([], ['espressoPrices', 'nodes'], data);
 	return include.length ? entitiesWithGuIdInArray(prices, include) : prices;
 };
 

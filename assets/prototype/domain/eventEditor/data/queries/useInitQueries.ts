@@ -4,7 +4,7 @@ import useFetchPriceTypes from './priceTypes/useFetchPriceTypes';
 import useFetchPrices from './prices/useFetchPrices';
 import useCacheRehydration from './useCacheRehydration';
 
-const useInitQueries = () => {
+const useInitQueries = (): void => {
 	useCacheRehydration();
 
 	// initiate datetime fetching.

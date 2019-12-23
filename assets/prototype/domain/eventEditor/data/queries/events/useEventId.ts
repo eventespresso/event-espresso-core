@@ -1,7 +1,7 @@
 import { useContext } from 'react';
 import { EventEditorEventIdContext } from '../../../context/EventEditorEventIdProvider';
 
-const useEventId = () => {
+const useEventId = (): number => {
 	return useContext(EventEditorEventIdContext);
 };
 

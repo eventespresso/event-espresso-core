@@ -1,6 +1,9 @@
-import { useRef, useEffect, useCallback } from '@wordpress/element';
+import { useRef, useEffect, useCallback } from 'react';
 
-const useIfMounted = () => {
+type Fn = () => void;
+type Callback = (func: any) => void;
+
+const useIfMounted = (): Callback => {
 	const isMounted = useRef(true);
 	useEffect(
 		() => () => {
@@ -9,8 +12,8 @@ const useIfMounted = () => {
 		[]
 	);
 
-	const ifMounted = useCallback((func) => {
-		if (isMounted.current && typeof func === 'function') {
+	const ifMounted: Callback = useCallback((func: Fn) => {
+		if (isMounted.current) {
 			func();
 		}
 	}, []);

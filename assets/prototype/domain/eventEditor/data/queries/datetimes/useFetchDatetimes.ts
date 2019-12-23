@@ -1,27 +1,28 @@
+import { useEffect, useState } from 'react';
 import { useQuery } from '@apollo/react-hooks';
-import { useEffect, useState } from '@wordpress/element';
 import { GET_DATETIMES } from './';
 import useToaster from '../../../../../application/services/toaster/useToaster';
 import useStatus from '../../../../../application/services/apollo/status/useStatus';
 import useDatetimeQueryOptions from './useDatetimeQueryOptions';
+import { FetchEntitiesResult, ReadQueryOptions } from '../types';
 
-const useFetchDatetimes = () => {
+const useFetchDatetimes = (): FetchEntitiesResult => {
 	console.log('%c useFetchDatetimes: ', 'color: deeppink; font-size: 14px;');
 	const [initialized, setInitialized] = useState(false);
 	const { setIsLoading, setIsLoaded, setIsError } = useStatus();
-	const options = useDatetimeQueryOptions();
+	const options: ReadQueryOptions = useDatetimeQueryOptions();
 
 	const toaster = useToaster();
 	const toasterMessage = 'initializing datetimes';
 
 	const { data, error, loading } = useQuery(GET_DATETIMES, {
 		...options,
-		onCompleted: () => {
+		onCompleted: (): void => {
 			setIsLoaded('datetimes', true);
 			toaster.dismiss(toasterMessage);
 			toaster.success(`datetimes initialized`);
 		},
-		onError: (error) => {
+		onError: (error): void => {
 			setIsError('datetimes', true);
 			toaster.dismiss(toasterMessage);
 			toaster.error(error);
