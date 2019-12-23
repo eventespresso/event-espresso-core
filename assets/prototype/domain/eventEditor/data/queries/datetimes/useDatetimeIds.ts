@@ -4,7 +4,7 @@ import { Datetime, EntityId } from '../../types';
 const useDatetimeIds = (): EntityId[] => {
 	const datetimes: Datetime[] = useDatetimes();
 
-	return datetimes.map(({ id }: Datetime) => id);
+	return datetimes.map(({ id }) => id);
 };
 
 export default useDatetimeIds;
