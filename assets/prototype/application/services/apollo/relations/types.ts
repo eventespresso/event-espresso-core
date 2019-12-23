@@ -24,10 +24,10 @@ interface Entity {
 }
 
 type PossibleRelation = {
-	datetimes?: string[];
-	tickets?: string[];
-	prices?: string[];
-	priceTypes?: string[];
+	datetimes?: Datetime['id'][];
+	tickets?: Ticket['id'][];
+	prices?: Price['id'][];
+	priceTypes?: PriceType['id'][];
 };
 
 type RelationalEntity = {
