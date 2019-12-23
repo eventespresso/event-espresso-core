@@ -1,7 +1,8 @@
 import { useReducer, useEffect } from '@wordpress/element';
 
-const useDatesListFilterState = () => {
+const useDatesListFilterState = (dates) => {
 	const initialState = {
+		dates,
 		datesSortedBy: 'chronologically',
 		displayDates: 'start',
 	};
@@ -35,6 +36,7 @@ const useDatesListFilterState = () => {
 	return {
 		datesSortedBy: state.datesSortedBy,
 		displayDates: state.displayDates,
+		filteredDates: state.filteredDates,
 		setDatesSortedBy,
 		setDisplayDates,
 		setShowDates,
@@ -43,11 +45,14 @@ const useDatesListFilterState = () => {
 };
 
 const reducer = (state, action) => {
+	let filteredDates = [];
 	const { datesSortedBy, displayDates, showDates } = action;
 
 	switch (action.type) {
 		case 'SET_DATES_SORTED_BY':
-			return { ...state, datesSortedBy };
+			filteredDates = filters({ dates: state.dates, show: datesSortedBy });
+
+			return { ...state, datesSortedBy, filteredDates };
 
 		case 'SET_DISPLAY_DATES':
 			return { ...state, displayDates };
