@@ -1,7 +1,7 @@
 import gql from 'graphql-tag';
 import { PRICE_ATTRIBUTES } from '../prices';
 
-export const TICKET_ATTRIBUTES = gql`
+export const TICKET_ATTRIBUTES: any = gql`
 	fragment ticketAttributes on EspressoTicket {
 		id
 		dbId
@@ -30,7 +30,7 @@ export const TICKET_ATTRIBUTES = gql`
  * Can be used to fetch the default prices
  * created for a ticket on the server.
  */
-export const TICKET_PRICES_ATTRIBUTE = gql`
+export const TICKET_PRICES_ATTRIBUTE: any = gql`
 	fragment ticketPricesAttribute on EspressoTicket {
 		prices {
 			nodes {
@@ -41,7 +41,7 @@ export const TICKET_PRICES_ATTRIBUTE = gql`
 	${PRICE_ATTRIBUTES}
 `;
 
-export const GET_TICKET = gql`
+export const GET_TICKET: any = gql`
 	query GET_TICKET($id: ID!) {
 		ticket(id: $id) {
 			...ticketAttributes
@@ -50,7 +50,7 @@ export const GET_TICKET = gql`
 	${TICKET_ATTRIBUTES}
 `;
 
-export const GET_TICKETS = gql`
+export const GET_TICKETS: any = gql`
 	query GET_TICKETS($where: EspressoRootQueryTicketsConnectionWhereArgs) {
 		espressoTickets(where: $where) {
 			nodes {

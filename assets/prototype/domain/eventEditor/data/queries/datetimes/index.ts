@@ -1,6 +1,6 @@
 import gql from 'graphql-tag';
 
-export const DATETIME_ATTRIBUTES = gql`
+export const DATETIME_ATTRIBUTES: any = gql`
 	fragment datetimeAttributes on EspressoDatetime {
 		id
 		dbId
@@ -21,7 +21,7 @@ export const DATETIME_ATTRIBUTES = gql`
 	}
 `;
 
-export const GET_DATETIME = gql`
+export const GET_DATETIME: any = gql`
 	query GET_DATETIME($id: ID!) {
 		datetime(id: $id) {
 			...datetimeAttributes
@@ -30,7 +30,7 @@ export const GET_DATETIME = gql`
 	${DATETIME_ATTRIBUTES}
 `;
 
-export const GET_DATETIMES = gql`
+export const GET_DATETIMES: any = gql`
 	query GET_DATETIMES($where: EspressoRootQueryDatetimesConnectionWhereArgs) {
 		espressoDatetimes(where: $where) {
 			nodes {

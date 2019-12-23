@@ -1,6 +1,6 @@
 import gql from 'graphql-tag';
 
-export const PRICE_TYPE_ATTRIBUTES = gql`
+export const PRICE_TYPE_ATTRIBUTES: any = gql`
 	fragment priceTypeAttributes on EspressoPriceType {
 		id
 		dbId
@@ -15,7 +15,7 @@ export const PRICE_TYPE_ATTRIBUTES = gql`
 	}
 `;
 
-export const GET_PRICE_TYPE = gql`
+export const GET_PRICE_TYPE: any = gql`
 	query GET_PRICE_TYPE($id: ID!) {
 		priceType(id: $id) {
 			...priceTypeAttributes
@@ -24,7 +24,7 @@ export const GET_PRICE_TYPE = gql`
 	${PRICE_TYPE_ATTRIBUTES}
 `;
 
-export const GET_PRICE_TYPES = gql`
+export const GET_PRICE_TYPES: any = gql`
 	query GET_PRICE_TYPES {
 		espressoPriceTypes {
 			nodes {
