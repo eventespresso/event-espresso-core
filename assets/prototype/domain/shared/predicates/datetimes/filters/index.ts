@@ -1,4 +1,8 @@
+import activeOnly from './activeOnly';
+import activeUpcoming from './activeUpcoming';
 import allDates from './allDates';
+import nextActiveUpcomingOnly from './nextActiveUpcomingOnly';
+import upcomingOnly from './upcomingOnly';
 
 export const now = new Date();
 
@@ -18,6 +22,14 @@ const filters = ({ dates, show = 'on-sale-and-pending' }: FilterDates) => {
 	switch (show) {
 		case 'all':
 			return allDates(dates);
+		case 'active-upcoming':
+			return activeUpcoming(dates);
+		case 'active-only':
+			return activeOnly(dates);
+		case 'upcoming-only':
+			return upcomingOnly(dates);
+		case 'next-active-upcoming-only':
+			return nextActiveUpcomingOnly(dates);
 	}
 	return dates;
 };
