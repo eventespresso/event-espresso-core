@@ -6,7 +6,7 @@ import { renderToString } from '@wordpress/element';
 import RelationsSelector from '../../../shared/RelationsSelector';
 
 import { DateTimeContext } from '../../context/DateTimeProvider';
-import useDateItem from '../../data/queries/datetimes/useDateItem';
+import useDatetimeItem from '../../data/queries/datetimes/useDatetimeItem';
 
 const hdrStyle = {
 	margin: '1em 0 .5em 24%',
@@ -61,7 +61,7 @@ const formatSecondaryField = (ticketPrice, toString = false) => {
 
 const DateForm = ({ formReset, relatedTickets, tickets = [], title }) => {
 	const { id } = useContext(DateTimeContext);
-	const { description = '', name = '' } = useDateItem({ id });
+	const { description = '', name = '' } = useDatetimeItem({ id });
 
 	return (
 		<>

@@ -1,7 +1,7 @@
-import useDateItem from '../data/queries/datetimes/useDateItem';
+import useDatetimeItem from '../data/queries/datetimes/useDatetimeItem';
 
 const DatetimeId = ({ id }) => {
-	const { dbId = null } = useDateItem({ id });
+	const { dbId = null } = useDatetimeItem({ id });
 	return <code>{dbId}</code>;
 };
 

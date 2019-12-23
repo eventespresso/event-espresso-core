@@ -8,7 +8,7 @@ import DateRangePicker from '../../../shared/dateRangeInput/DateRangePicker';
 import { MomentDateRange } from '../../../shared/dateRangeInput/momentDate';
 import { PLUS_ONE_MONTH, PLUS_TWO_MONTHS } from '../../../shared/defaultDates';
 
-import useDateItem from '../../data/queries/datetimes/useDateItem';
+import useDatetimeItem from '../../data/queries/datetimes/useDatetimeItem';
 import { useEntityMutator, EntityType } from '../../../../application/services/apollo/mutations';
 import useRelations from '../../../../application/services/apollo/relations/useRelations';
 import useStatus from '../../../../application/services/apollo/status/useStatus';
@@ -36,7 +36,7 @@ const idStyle = {
 };
 
 const DateCard = ({ id }) => {
-	const date = useDateItem({ id });
+	const date = useDatetimeItem({ id });
 	const { isLoaded } = useStatus();
 
 	const { updateEntity } = useEntityMutator(EntityType.Datetime, id);
