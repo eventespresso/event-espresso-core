@@ -3,7 +3,7 @@ import { StatusContext } from '../../context/StatusProvider';
 import { StatusManager } from './types';
 
 const useStatus = (): StatusManager => {
-	return useContext(StatusContext);
+	return useContext<StatusManager>(StatusContext);
 };
 
 export default useStatus;

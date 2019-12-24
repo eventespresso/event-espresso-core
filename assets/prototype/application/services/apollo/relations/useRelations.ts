@@ -3,7 +3,7 @@ import { RelationsContext } from '../../context/RelationsProvider';
 import { RelationsManager } from './types';
 
 const useRelations = (): RelationsManager => {
-	return useContext(RelationsContext);
+	return useContext<RelationsManager>(RelationsContext);
 };
 
 export default useRelations;
