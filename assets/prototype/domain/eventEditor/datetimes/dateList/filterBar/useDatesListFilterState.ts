@@ -6,9 +6,10 @@ import { useReducer, useEffect } from 'react';
 /**
  * Internal dependencies
  */
+import { Datetime } from '../../../../eventEditor/data/types';
 import filters from '../../../../shared/predicates/datetimes/filters';
 
-const useDatesListFilterState = (dates) => {
+const useDatesListFilterState = (dates: Datetime[]) => {
 	const initialState = {
 		dates,
 		datesSortedBy: 'chronologically',
@@ -42,13 +43,10 @@ const useDatesListFilterState = (dates) => {
 	};
 
 	return {
-		datesSortedBy: state.datesSortedBy,
-		displayDates: state.displayDates,
-		filteredDates: state.filteredDates,
+		...state,
 		setDatesSortedBy,
 		setDisplayDates,
 		setShowDates,
-		showDates: state.showDates,
 	};
 };
 
