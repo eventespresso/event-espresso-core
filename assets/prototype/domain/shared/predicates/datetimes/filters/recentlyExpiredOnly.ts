@@ -1,9 +1,4 @@
 /**
- * External dependencies
- */
-import { head } from 'ramda';
-
-/**
  * Internal dependencies
  */
 import isRecentlyExpired from '../isRecentlyExpired';

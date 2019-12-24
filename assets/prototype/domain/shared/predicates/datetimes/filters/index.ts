@@ -1,11 +1,13 @@
 import aboveCapacity from './aboveCapacity';
 import activeOnly from './activeOnly';
 import activeUpcoming from './activeUpcoming';
-import belowCapacity from './belowCapacity';
 import allDates from './allDates';
+import belowCapacity from './belowCapacity';
+import expiredOnly from './expiredOnly';
 import nextActiveUpcomingOnly from './nextActiveUpcomingOnly';
 import recentlyExpiredOnly from './recentlyExpiredOnly';
 import soldOutOnly from './soldOutOnly';
+import trashedOnly from './trashedOnly';
 import upcomingOnly from './upcomingOnly';
 
 export const now = new Date();
@@ -46,6 +48,10 @@ const filters = ({ dates, show = 'on-sale-and-pending' }: FilterDates) => {
 			return belowCapacity({ dates, capacity: 50 });
 		case 'recently-expired-only':
 			return recentlyExpiredOnly(dates);
+		case 'expired-only':
+			return expiredOnly(dates);
+		case 'trashed-only':
+			return trashedOnly(dates);
 	}
 
 	return dates;
