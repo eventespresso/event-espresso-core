@@ -1,17 +1,19 @@
+import React from 'react';
 import pick from 'ramda/src/pick';
 import { ApolloClient } from 'apollo-client';
-import { InMemoryCache } from 'apollo-cache-inmemory';
+import { InMemoryCache, InMemoryCacheConfig, CacheResolver } from 'apollo-cache-inmemory';
 import { HttpLink } from 'apollo-link-http';
 import { ApolloProvider } from '@apollo/react-hooks';
 
 const { graphqlEndpoint } = window;
 const nonce = pick(['eejsdata', 'data', 'eejs_api_nonce'], window);
 
-const getResolver = (type) => {
-	return (_, args, { getCacheKey }) => getCacheKey({ __typename: type, id: args.id });
+const getResolver = (type: string): CacheResolver => {
+	const resolver: CacheResolver = (_, args, { getCacheKey }) => getCacheKey({ __typename: type, id: args.id });
+	return resolver;
 };
 
-const cache = new InMemoryCache({
+const config: InMemoryCacheConfig = {
 	cacheRedirects: {
 		Query: {
 			datetime: getResolver('EspressoDatetime'),
@@ -20,7 +22,9 @@ const cache = new InMemoryCache({
 			priceType: getResolver('EspressoPriceType'),
 		},
 	},
-});
+};
+
+const cache = new InMemoryCache(config);
 
 const link = new HttpLink({
 	uri: graphqlEndpoint || '/graphql',
