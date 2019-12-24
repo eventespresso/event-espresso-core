@@ -8,7 +8,7 @@ import { now } from './filters';
  * Internal dependencies
  */
 import { Datetime } from '../../../eventEditor/data/types';
-import { MONTH_IN_SECONDS } from './constants';
+import { MONTH_IN_SECONDS } from '../shared/constants';
 
 /**
  * @function
