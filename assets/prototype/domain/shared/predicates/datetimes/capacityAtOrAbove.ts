@@ -1,13 +1,8 @@
 /**
- * External dependencies
- */
-import { is } from 'ramda';
-
-/**
  * Internal dependencies
  */
 import { Datetime } from '../../../eventEditor/data/types';
-import validFiniteReglimit from './validFiniteReglimit';
+import validFiniteCapacityLimit from './validFiniteCapacityLimit';
 import validSold from './validStatus';
 
 /**
@@ -18,7 +13,7 @@ import validSold from './validStatus';
 const capacityAtOrAbove = (date: Datetime, capacity: number) => {
 	return (
 		validSold(date) &&
-		validFiniteReglimit(date) &&
+		validFiniteCapacityLimit(date) &&
 		Math.round(date.sold) / Math.round(date.capacity) >= capacity / 100
 	);
 };
