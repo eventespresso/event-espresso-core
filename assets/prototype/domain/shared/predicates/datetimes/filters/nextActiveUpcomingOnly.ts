@@ -7,9 +7,10 @@ import { head } from 'ramda';
  * Internal dependencies
  */
 import activeUpcoming from './activeUpcoming';
+import { Datetime } from '../../../../eventEditor/data/types';
 
-const nextActiveUpcomingOnly = (dates: any[]) => {
-	const activeUpcomingDates = dates.filter(activeUpcoming);
+const nextActiveUpcomingOnly = (dates: Datetime[]) => {
+	const activeUpcomingDates = activeUpcoming(dates);
 	const firstActiveUpcomingDates = head(activeUpcomingDates);
 
 	return [firstActiveUpcomingDates];
