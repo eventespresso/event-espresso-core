@@ -1,5 +1,7 @@
+/**
+ * Internal dependencies
+ */
 import { Datetime } from '../../../../eventEditor/data/types';
-
 import capacityBelow from '../capacityBelow';
 
 type BelowCapacityProps = {

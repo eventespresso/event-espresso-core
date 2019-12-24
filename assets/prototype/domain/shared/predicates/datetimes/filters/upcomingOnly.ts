@@ -1,4 +1,9 @@
-const upcomingOnly = (dates: any[]) => {
+/**
+ * Internal dependencies
+ */
+import { Datetime } from '../../../../eventEditor/data/types';
+
+const upcomingOnly = (dates: Datetime[]) => {
 	return dates.filter(({ isUpcoming }) => isUpcoming);
 };
 
