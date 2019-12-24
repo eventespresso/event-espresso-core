@@ -1,7 +1,8 @@
-import { useContext } from '@wordpress/element';
+import { useContext } from 'react';
 import { StatusContext } from '../../context/StatusProvider';
+import { StatusManager } from './types';
 
-const useStatus = () => {
+const useStatus = (): StatusManager => {
 	return useContext(StatusContext);
 };
 

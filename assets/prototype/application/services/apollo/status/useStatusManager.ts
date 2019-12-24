@@ -1,20 +1,21 @@
-import { useReducer, useEffect } from '@wordpress/element';
+import { useReducer, useEffect } from 'react';
 import { pathOr } from 'ramda';
+import { StatusManager, StatusState, StatusFlags, StatusAction, StatusGetter, StatusSetter, TypeName } from './types';
 
-const INITIAL_FLAGS = {
+const INITIAL_FLAGS: StatusFlags = {
 	datetimes: false,
 	tickets: false,
 	priceTypes: false,
 	prices: false,
 };
 
-const INITIAL_STATE = {
+const INITIAL_STATE: StatusState = {
 	loading: INITIAL_FLAGS,
 	completed: INITIAL_FLAGS,
 	error: INITIAL_FLAGS,
 };
 
-const useStatusManager = () => {
+const useStatusManager = (): StatusManager => {
 	const [state, dispatch] = useReducer(statusReducer, INITIAL_STATE);
 
 	useEffect(() => {
@@ -26,7 +27,7 @@ const useStatusManager = () => {
 	 *
 	 * @param {string} typeName The plural type name like "datetimes", "tickets", "prices"
 	 */
-	const isLoading = (typeName) => {
+	const isLoading: StatusGetter = (typeName: TypeName): boolean => {
 		return pathOr(false, ['loading', typeName], state);
 	};
 
@@ -36,7 +37,7 @@ const useStatusManager = () => {
 	 * @param {string}  typeName  The plural type name like "datetimes", "tickets", "prices"
 	 * @param {boolean} value Value of the flag
 	 */
-	const setIsLoading = (typeName, value = true) => {
+	const setIsLoading: StatusSetter = (typeName: TypeName, value: boolean = true): void => {
 		dispatch({
 			type: 'SET_IS_LOADING',
 			typeName,
@@ -49,7 +50,7 @@ const useStatusManager = () => {
 	 *
 	 * @param {string} typeName The plural type name like "datetimes", "tickets", "prices"
 	 */
-	const isLoaded = (typeName) => {
+	const isLoaded: StatusGetter = (typeName: TypeName): boolean => {
 		return pathOr(false, ['completed', typeName], state);
 	};
 
@@ -59,7 +60,7 @@ const useStatusManager = () => {
 	 * @param {string} typeName The plural type name like "datetimes", "tickets", "prices"
 	 * @param {boolean} value Value of the flag
 	 */
-	const setIsLoaded = (typeName, value = true) => {
+	const setIsLoaded: StatusSetter = (typeName: TypeName, value: boolean = true): void => {
 		dispatch({
 			type: 'SET_IS_LOADED',
 			typeName,
@@ -72,7 +73,7 @@ const useStatusManager = () => {
 	 *
 	 * @param {string} typeName The plural type name like "datetimes", "tickets", "prices"
 	 */
-	const isError = (typeName) => {
+	const isError: StatusGetter = (typeName: TypeName): boolean => {
 		return pathOr(false, ['error', typeName], state);
 	};
 
@@ -82,7 +83,7 @@ const useStatusManager = () => {
 	 * @param {string} typeName The plural type name like "datetimes", "tickets", "prices"
 	 * @param {boolean} value Value of the flag
 	 */
-	const setIsError = (typeName, value = true) => {
+	const setIsError: StatusSetter = (typeName: TypeName, value: boolean = true): void => {
 		dispatch({
 			type: 'SET_IS_ERROR',
 			typeName,
@@ -100,10 +101,10 @@ const useStatusManager = () => {
 	};
 };
 
-const statusReducer = (state, action) => {
+const statusReducer = (state: StatusState, action: StatusAction): StatusState => {
 	console.log('statusReducer action: ', action);
 	const { type, typeName, value } = action;
-	let statusKey;
+	let statusKey: string;
 	switch (type) {
 		case 'SET_IS_LOADING':
 			statusKey = 'loading';
