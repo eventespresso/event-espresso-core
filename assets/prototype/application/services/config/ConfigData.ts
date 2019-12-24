@@ -14,29 +14,29 @@ import {
 	TimezoneProps,
 } from '../../valueObjects/config';
 
-const data = path(['eejsdata', 'data'], window) as eeJsDataProps;
+const data = path<JsDataProps>(['eejsdata', 'data'], window);
 
-type eeJsDataProps = {
+export type JsDataProps = {
 	brandName: string;
 	currency_config: CurrencyProps;
 	eejs_api_nonce: string;
-	locale: eeJsDataLocaleProps;
+	locale: JsDataLocaleProps;
 	nonce: string;
-	paths: eeJsDataPathsProps;
-	default_timezone: eeJsDataTimezoneProps;
+	paths: JsDataPathsProps;
+	default_timezone: JsDataTimezoneProps;
 };
 
-type eeJsDataLocaleProps = {
+type JsDataLocaleProps = {
 	user: string;
 	site: string;
 };
 
-type eeJsDataPathsProps = {
+type JsDataPathsProps = {
 	admin_url: string;
 	site_url: string;
 };
 
-type eeJsDataTimezoneProps = {
+type JsDataTimezoneProps = {
 	pretty: string;
 	string: string;
 	offset: number;

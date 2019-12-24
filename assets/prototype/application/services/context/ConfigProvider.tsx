@@ -5,14 +5,16 @@ import propOr from 'ramda/src/propOr';
 import { useQuery } from '@apollo/react-hooks';
 import { createContext } from 'react';
 
-import { ConfigData } from '../config/ConfigData';
-import { CurrentUser, DateTimeFormats } from '../../valueObjects/config';
+import { ConfigData, ConfigDataProps } from '../config/ConfigData';
+import { CurrentUser, CurrentUserProps, DateTimeFormats } from '../../valueObjects/config';
 
 // import useToaster from '../../../application/services/toaster/useToaster';
 import { GET_CURRENT_USER } from '../../../domain/eventEditor/data/queries/currentUser/currentUser';
 import { GET_GENERAL_SETTINGS } from '../../../domain/eventEditor/data/queries/generalSettings/generalSettings';
 
-export const ConfigContext = createContext(ConfigData);
+export const ConfigContext = createContext<ConfigDataProps>(ConfigData);
+
+const { Provider } = ConfigContext;
 
 const ConfigProvider = ({ children }) => {
 	// const toaster = useToaster();
@@ -28,16 +30,16 @@ const ConfigProvider = ({ children }) => {
 	// 	toaster.error(generalSettingsError);
 	// }
 
-	const currentUserProps = propOr({}, 'viewer', currentUserData);
-	const generalSettings = propOr({}, 'generalSettings', generalSettingsData);
+	const currentUser = propOr<CurrentUserProps, string, any>(null, 'viewer', currentUserData);
+	const generalSettings = propOr<any, string, any>({}, 'generalSettings', generalSettingsData);
 
 	const value = {
 		...ConfigData,
-		currentUser: CurrentUser(currentUserProps),
+		currentUser: CurrentUser(currentUser),
 		dateTimeFormats: DateTimeFormats(generalSettings),
 	};
 	console.log('%c > ConfigData: ', 'color: Cyan;', value);
-	return <ConfigContext.Provider value={value}>{children}</ConfigContext.Provider>;
+	return <Provider value={value}>{children}</Provider>;
 };
 
 export default ConfigProvider;
