@@ -13,7 +13,7 @@ import {
 	Timezone,
 	TimezoneProps,
 } from '../../valueObjects/config';
-
+import '../../../domain/eventEditor/types';
 import { JsDataProps, ConfigDataProps } from './types';
 
 const data = path<JsDataProps>(['eejsdata', 'data'], window);

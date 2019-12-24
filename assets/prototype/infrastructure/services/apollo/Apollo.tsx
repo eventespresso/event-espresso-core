@@ -1,7 +1,7 @@
 import React from 'react';
 import pick from 'ramda/src/pick';
 import { ApolloClient } from 'apollo-client';
-import { InMemoryCache, InMemoryCacheConfig, CacheResolver } from 'apollo-cache-inmemory';
+import { InMemoryCache, InMemoryCacheConfig, CacheResolver, NormalizedCacheObject } from 'apollo-cache-inmemory';
 import { HttpLink } from 'apollo-link-http';
 import { ApolloProvider } from '@apollo/react-hooks';
 
@@ -33,7 +33,7 @@ const link = new HttpLink({
 	},
 });
 
-const client = new ApolloClient({
+const client = new ApolloClient<NormalizedCacheObject>({
 	cache,
 	link,
 });
