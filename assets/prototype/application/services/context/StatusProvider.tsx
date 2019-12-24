@@ -1,9 +1,9 @@
 /**
  * External imports
  */
-import { createContext } from '@wordpress/element';
+import { createContext } from 'react';
 import useStatusManager from '../apollo/status/useStatusManager';
-import { StatusManager } from '../../../application/services/status';
+import { StatusManager } from '../apollo/status';
 
 const StatusContext = createContext<StatusManager | null>(null);
 

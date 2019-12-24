@@ -1,9 +1,9 @@
 /**
  * External imports
  */
-import { createContext } from '@wordpress/element';
+import { createContext } from 'react';
 import useRelationsManager from '../apollo/relations/useRelationsManager';
-import { RelationsManager } from '../../../application/relations/status';
+import { RelationsManager } from '../apollo/relations';
 
 const RelationsContext = createContext<RelationsManager | null>(null);
 
