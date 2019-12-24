@@ -7,7 +7,7 @@ import { is } from 'ramda';
  * Internal dependencies
  */
 import { Datetime } from '../../../eventEditor/data/types';
-import validFiniteReglimit from './validFiniteCapacityLimit';
+import validFiniteCapacityLimit from './validFiniteCapacityLimit';
 import validInfiniteCapacityLimit from './validInfiniteCapacityLimit';
 import validSold from './validStatus';
 
@@ -20,7 +20,7 @@ const capacityBelow = (date: Datetime, capacity: number) => {
 	return (
 		validInfiniteCapacityLimit(date) ||
 		(validSold(date) &&
-			validFiniteReglimit(date) &&
+			validFiniteCapacityLimit(date) &&
 			Math.round(date.sold) / Math.round(date.capacity) < capacity / 100)
 	);
 };
