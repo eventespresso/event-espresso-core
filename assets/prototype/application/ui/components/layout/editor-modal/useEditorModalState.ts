@@ -1,4 +1,8 @@
+/**
+ * External dependencies
+ */
 import { useReducer, useEffect } from 'react';
+import { drop, head } from 'ramda';
 
 const CLOSE_ALL = 'CLOSE_ALL';
 const CLOSE_EDITOR = 'CLOSE_EDITOR';
@@ -6,22 +10,30 @@ const OPEN_EDITOR = 'OPEN_EDITOR';
 
 type ActionType = 'CLOSE_ALL' | 'CLOSE_EDITOR' | 'OPEN_EDITOR';
 
+type State = string[];
+
 type Action = {
-	editorId: string;
+	editorId?: string;
 	type: ActionType;
 };
 
-const reducer = (state, action: Action) => {
+const reducer = (state: State, action: Action) => {
 	const { editorId } = action;
 
 	switch (action.type) {
 		case CLOSE_EDITOR:
-		// return { ...state, ... };
+			if (editorId === head(state)) {
+				const stateWithoutFirstItem = drop(1, state);
+				return stateWithoutFirstItem;
+			}
+			return state;
 		case CLOSE_ALL:
-		// return { ...state, ... };
+			return [];
 		case OPEN_EDITOR:
-		// return { ...state, ... };
-
+			if (editorId && !state.includes(editorId)) {
+				return [...state, editorId];
+			}
+			return state;
 		default:
 			throw new Error('Unexpected action');
 	}
@@ -55,31 +67,29 @@ const useEditorModalState = () => {
 		});
 	};
 
-	// /**
-	//  * Returns the ID of the editor currently at the top of the stack
-	//  *
-	//  * @param {Stack} state
-	//  * @return {string} editorId
-	//  */
-	// const currentlyOpenEditor = (state) => {
-	// 	return state.first() || '';
-	// };
+	/**
+	 * Returns the ID of the editor currently at the top of the stack
+	 *
+	 * @param {Stack} state
+	 * @return {string | undefined} editorId, if there is no editorId then it will return undefined
+	 */
+	const currentlyOpenEditor = (state: State): string | undefined => head(state);
 
-	// /**
-	//  * Returns true if the provided ID matches the editor
-	//  * currently at the top of the stack
-	//  *
-	//  * @param {Stack} state
-	//  * @param {string} editorId    unique identifier for editor
-	//  * @return {string} editorId
-	//  */
-	// const isEditorOpen = (state, editorId) => {
-	// 	return editorId === state.first();
-	// };
+	/**
+	 * Returns true if the provided ID matches the editor
+	 * currently at the top of the stack
+	 *
+	 * @param {Stack} state
+	 * @param {string} editorId    unique identifier for editor
+	 * @return {string} editorId
+	 */
+	const isEditorOpen = (state: State, editorId: string): boolean => editorId === head(state);
 
 	return {
 		closeEditor,
 		closeAllEditors,
+		currentlyOpenEditor,
+		isEditorOpen,
 		openEditor,
 	};
 };
