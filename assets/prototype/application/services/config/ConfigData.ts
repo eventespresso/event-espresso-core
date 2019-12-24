@@ -14,44 +14,9 @@ import {
 	TimezoneProps,
 } from '../../valueObjects/config';
 
+import { JsDataProps, ConfigDataProps } from './types';
+
 const data = path<JsDataProps>(['eejsdata', 'data'], window);
-
-export type JsDataProps = {
-	brandName: string;
-	currency_config: CurrencyProps;
-	eejs_api_nonce: string;
-	locale: JsDataLocaleProps;
-	nonce: string;
-	paths: JsDataPathsProps;
-	default_timezone: JsDataTimezoneProps;
-};
-
-type JsDataLocaleProps = {
-	user: string;
-	site: string;
-};
-
-type JsDataPathsProps = {
-	admin_url: string;
-	site_url: string;
-};
-
-type JsDataTimezoneProps = {
-	pretty: string;
-	string: string;
-	offset: number;
-};
-
-export type ConfigDataProps = {
-	brandName: string;
-	currency: CurrencyProps;
-	currentUser: CurrentUserProps;
-	dateTimeFormats: DateTimeFormatsProps;
-	locale: LocaleProps;
-	nonce: string;
-	siteUrl: SiteUrlProps;
-	timezone: TimezoneProps;
-};
 
 export const ConfigData: ConfigDataProps = {
 	brandName: data.brandName || 'Event Espresso',

@@ -5,7 +5,7 @@ import propOr from 'ramda/src/propOr';
 import { useQuery } from '@apollo/react-hooks';
 import { createContext } from 'react';
 
-import { ConfigData, ConfigDataProps } from '../config/ConfigData';
+import { ConfigData, ConfigDataProps } from '../config';
 import { CurrentUser, CurrentUserProps, DateTimeFormats } from '../../valueObjects/config';
 
 // import useToaster from '../../../application/services/toaster/useToaster';

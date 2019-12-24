@@ -1,5 +1,5 @@
 import { RelationalData } from '../../application/services/apollo/relations/types';
-import { JsDataProps } from '../../application/services/config/ConfigData';
+import { JsDataProps } from '../../application/services/config/types';
 import { DatetimeEdge, TicketEdge, PriceEdge, PriceTypeEdge } from './data/types';
 
 export interface EditorDOMData {
