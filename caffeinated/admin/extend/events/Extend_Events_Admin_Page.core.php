@@ -2,6 +2,7 @@
 
 use EventEspresso\core\domain\services\admin\events\default_settings\AdvancedEditorAdminFormSection;
 use EventEspresso\core\domain\services\admin\events\editor\AdvancedEditorEntityData;
+use EventEspresso\core\exceptions\ExceptionStackTraceDisplay;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
 use EventEspresso\core\services\loaders\LoaderFactory;
@@ -56,7 +57,7 @@ class Extend_Events_Admin_Page extends Events_Admin_Page
      * @throws InvalidArgumentException
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
-     * @since $VID:$
+     * @throws Exception
      */
     protected function _extend_page_config()
     {
@@ -225,26 +226,55 @@ class Extend_Events_Admin_Page extends Events_Admin_Page
         // legend item
         add_filter('FHEE__Events_Admin_Page___event_legend_items__items', array($this, 'additional_legend_items'));
         add_action('admin_init', array($this, 'admin_init'));
-        // setup Advanced Editor ???
-        if (isset($this->_req_data['action'])
-            && (
-                $this->_req_data['action'] === 'default_event_settings'
-                || $this->_req_data['action'] === 'update_default_event_settings'
-            )
-        ) {
-            $this->advanced_editor_admin_form = $this->loader->getShared(
-                'EventEspresso\core\domain\services\admin\events\default_settings\AdvancedEditorAdminFormSection'
-            );
-        }
-        $admin_config = $this->loader->getShared('EE_Admin_Config');
-        if (isset($this->_req_data['action'])
-            && ($this->_req_data['action'] === 'edit' || $this->_req_data['action'] === 'create_new')
-            && $admin_config instanceof EE_Admin_Config && $admin_config->useAdvancedEditor()
-        ) {
-            $this->advanced_editor_data = $this->loader->getShared(
-                'EventEspresso\core\domain\services\admin\events\editor\AdvancedEditorEntityData',
-                [$this->_cpt_model_obj]
-            );
+       // load additional handlers
+        $this->handleActionRequest();
+    }
+
+
+    private function getRequestAction()
+    {
+        return isset($this->_req_data['action']) ? sanitize_key($this->_req_data['action']) : null;
+    }
+
+
+    /**
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws Exception
+     */
+    private function handleActionRequest()
+    {
+        $action = $this->getRequestAction();
+        if ($action) {
+            // setup Advanced Editor ???
+            if ($action === 'default_event_settings' || $action === 'update_default_event_settings') {
+                $this->advanced_editor_admin_form = $this->loader->getShared(
+                    'EventEspresso\core\domain\services\admin\events\default_settings\AdvancedEditorAdminFormSection'
+                );
+            }
+            $admin_config = $this->loader->getShared('EE_Admin_Config');
+            // load handler for GraphQL requests and AdvancedEditorEntityData
+            if (($action === 'edit' || $action === 'create_new')
+                && $admin_config instanceof EE_Admin_Config
+                && class_exists('WPGraphQL')
+                && $admin_config->useAdvancedEditor()
+            ) {
+                try {
+                    /** @var EventEspresso\core\services\graphql\GraphQLManager $graphQL_manager */
+                    $graphQL_manager = $this->loader->getShared(
+                        'EventEspresso\core\services\graphql\GraphQLManager'
+                    );
+                    $graphQL_manager->init();
+                    $this->advanced_editor_data = $this->loader->getShared(
+                        'EventEspresso\core\domain\services\admin\events\editor\AdvancedEditorEntityData',
+                        [$this->_cpt_model_obj]
+                    );
+                } catch (Exception $exception) {
+                    new ExceptionStackTraceDisplay($exception);
+                }
+            }
         }
     }
 
