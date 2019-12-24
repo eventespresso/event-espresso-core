@@ -13,7 +13,7 @@ import { Datetime } from '../../../eventEditor/data/types';
  * @return {boolean} true if capacity property is valid and unlimited
  */
 const validInfiniteCapacityLimit = (date: Datetime) => {
-	return is(Number, date.capacity) && date.capacity === Infinity;
+	return is(Number, date.capacity) && date.capacity === -1;
 };
 
 export default validInfiniteCapacityLimit;
