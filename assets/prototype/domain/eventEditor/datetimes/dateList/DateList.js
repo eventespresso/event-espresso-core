@@ -3,7 +3,7 @@ import LoadingIndicator from '../../../../application/ui/components/display/Load
 import ErrorIndicator from '../../../../application/ui/components/display/ErrorIndicator';
 import EmptyState from '../../../../application/ui/components/display/EmptyState';
 import useDatetimes from '../../data/queries/datetimes/useDatetimes';
-import useStatus from '../../../../application/services/apollo/status/useStatus';
+import { useStatus, TypeName } from '../../../../application/services/apollo/status';
 
 import DatesListFilterBar from './filterBar/DatesListFilterBar';
 import AddNewDateButton from './AddNewDateButton';
@@ -29,8 +29,8 @@ const DateList = () => {
 	console.log('DateList', datetimes);
 	const { isLoading, isError } = useStatus();
 
-	const loading = isLoading('datetimes');
-	const error = isError('datetimes');
+	const loading = isLoading(TypeName.datetimes);
+	const error = isError(TypeName.datetimes);
 
 	const header = <H3 style={{ margin: '2rem 0 .5rem' }}>{'Dates List'}</H3>;
 

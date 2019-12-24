@@ -7,7 +7,7 @@ import useTicketItem from '../../data/queries/tickets/useTicketItem';
 import CurrencyInput from '../../../../application/ui/components/input/CurrencyInput';
 import { useEntityMutator, EntityType } from '../../../../application/services/apollo/mutations';
 import useRelations from '../../../../application/services/apollo/relations/useRelations';
-import useStatus from '../../../../application/services/apollo/status/useStatus';
+import { useStatus, TypeName } from '../../../../application/services/apollo/status';
 import DatetimeId from '../../datetimes/DatetimeId';
 import InlineEditInput from '../../../../application/ui/components/input/InlineEditInput';
 
@@ -97,7 +97,7 @@ const TicketCard = ({ id }) => {
 				<div style={btnsStyle}>
 					{/* Hide price calculator unless prices are loaded */}
 					{/* Delete button should also be hidden to avoid relational inconsistencies */}
-					{isLoaded('prices') && (
+					{isLoaded(TypeName.prices) && (
 						<>
 							<TicketPriceCalculatorButton ticket={ticket} />
 							<DeleteTicketButton id={ticket.id} />

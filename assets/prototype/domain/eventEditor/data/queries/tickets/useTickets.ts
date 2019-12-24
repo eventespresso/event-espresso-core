@@ -1,16 +1,16 @@
 import { pathOr } from 'ramda';
 import { useApolloClient } from '@apollo/react-hooks';
 
-import useStatus from '../../../../../application/services/apollo/status/useStatus';
+import { useStatus, TypeName } from '../../../../../application/services/apollo/status';
 import useTicketQueryOptions from './useTicketQueryOptions';
 import { ReadQueryOptions } from '../types';
-import { Ticket, EntityId } from '../../types';
+import { Ticket } from '../../types';
 
 const useTickets = (): Ticket[] => {
 	const options: ReadQueryOptions = useTicketQueryOptions();
 	const { isLoaded } = useStatus();
 	const client = useApolloClient();
-	if (!isLoaded('tickets')) {
+	if (!isLoaded(TypeName.tickets)) {
 		return [];
 	}
 	let data: any;

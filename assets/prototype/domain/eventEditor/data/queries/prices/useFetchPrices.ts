@@ -2,7 +2,7 @@ import { useEffect } from 'react';
 import { useQuery } from '@apollo/react-hooks';
 import { GET_PRICES } from './';
 import useInitToaster from '../../../../../application/services/toaster/useInitToaster';
-import useStatus from '../../../../../application/services/apollo/status/useStatus';
+import { useStatus, TypeName } from '../../../../../application/services/apollo/status';
 import usePriceQueryOptions from './usePriceQueryOptions';
 import useTicketIds from '../tickets/useTicketIds';
 import { FetchEntitiesResult, ReadQueryOptions } from '../types';
@@ -23,17 +23,17 @@ const useFetchPrices = (): FetchEntitiesResult => {
 		...options,
 		skip: !ticketIn.length, // do not fetch if we don't have any tickets
 		onCompleted: (): void => {
-			setIsLoaded('prices', true);
+			setIsLoaded(TypeName.prices, true);
 			onCompleted();
 		},
 		onError: (error): void => {
-			setIsError('prices', true);
+			setIsError(TypeName.prices, true);
 			onError(error);
 		},
 	});
 
 	useEffect(() => {
-		setIsLoading('prices', loading);
+		setIsLoading(TypeName.prices, loading);
 	}, [loading]);
 
 	initializationNotices(loading, error);

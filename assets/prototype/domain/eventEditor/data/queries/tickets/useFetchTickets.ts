@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { useQuery } from '@apollo/react-hooks';
 import { GET_TICKETS } from './';
 import useToaster from '../../../../../application/services/toaster/useToaster';
-import useStatus from '../../../../../application/services/apollo/status/useStatus';
+import { useStatus, TypeName } from '../../../../../application/services/apollo/status';
 import useTicketQueryOptions from './useTicketQueryOptions';
 import useDatetimeIds from '../datetimes/useDatetimeIds';
 import { FetchEntitiesResult, ReadQueryOptions } from '../types';
@@ -22,19 +22,19 @@ const useFetchTickets = (): FetchEntitiesResult => {
 		...options,
 		skip: !datetimeIn.length, // do not fetch if we don't have any datetimes
 		onCompleted: (): void => {
-			setIsLoaded('tickets', true);
+			setIsLoaded(TypeName.tickets, true);
 			toaster.dismiss(toasterMessage);
 			toaster.success(`tickets initialized`);
 		},
 		onError: (error): void => {
-			setIsError('tickets', true);
+			setIsError(TypeName.tickets, true);
 			toaster.dismiss(toasterMessage);
 			toaster.error(error);
 		},
 	});
 
 	useEffect(() => {
-		setIsLoading('tickets', loading);
+		setIsLoading(TypeName.tickets, loading);
 	}, [loading]);
 
 	if (!initialized) {

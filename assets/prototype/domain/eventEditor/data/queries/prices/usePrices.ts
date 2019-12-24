@@ -2,7 +2,7 @@ import pathOr from 'ramda/src/pathOr';
 import { useApolloClient } from '@apollo/react-hooks';
 
 import { entitiesWithGuIdInArray } from '../../../../shared/predicates/shared/selectionPredicates';
-import useStatus from '../../../../../application/services/apollo/status/useStatus';
+import { useStatus, TypeName } from '../../../../../application/services/apollo/status';
 import usePriceQueryOptions from './usePriceQueryOptions';
 import { ReadQueryOptions } from '../types';
 import { Price, EntityId } from '../../types';
@@ -16,7 +16,7 @@ const usePrices = (include: EntityId[] = []): Price[] => {
 	const options: ReadQueryOptions = usePriceQueryOptions();
 	const { isLoaded } = useStatus();
 	const client = useApolloClient();
-	if (!isLoaded('prices')) {
+	if (!isLoaded(TypeName.prices)) {
 		return [];
 	}
 	let data: any;
