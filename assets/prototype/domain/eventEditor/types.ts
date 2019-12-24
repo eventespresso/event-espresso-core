@@ -1,4 +1,5 @@
 import { RelationalData } from '../../application/services/apollo/relations/types';
+import { JsDataProps } from '../../application/services/config/ConfigData';
 import { DatetimeEdge, TicketEdge, PriceEdge, PriceTypeEdge } from './data/types';
 
 export interface EditorDOMData {
@@ -17,5 +18,7 @@ declare global {
 	interface Window {
 		eeEditorEventData: EditorDOMData;
 		eeEditorGQLData: GQLDOMData;
+		eejsdata: JsDataProps;
+		graphqlEndpoint: string;
 	}
 }
