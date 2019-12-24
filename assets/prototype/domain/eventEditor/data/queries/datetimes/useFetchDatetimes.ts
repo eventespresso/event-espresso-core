@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { useQuery } from '@apollo/react-hooks';
 import { GET_DATETIMES } from './';
 import useToaster from '../../../../../application/services/toaster/useToaster';
-import useStatus from '../../../../../application/services/apollo/status/useStatus';
+import { useStatus, TypeName } from '../../../../../application/services/apollo/status';
 import useDatetimeQueryOptions from './useDatetimeQueryOptions';
 import { FetchEntitiesResult, ReadQueryOptions } from '../types';
 
@@ -18,19 +18,19 @@ const useFetchDatetimes = (): FetchEntitiesResult => {
 	const { data, error, loading } = useQuery(GET_DATETIMES, {
 		...options,
 		onCompleted: (): void => {
-			setIsLoaded('datetimes', true);
+			setIsLoaded(TypeName.datetimes, true);
 			toaster.dismiss(toasterMessage);
 			toaster.success(`datetimes initialized`);
 		},
 		onError: (error): void => {
-			setIsError('datetimes', true);
+			setIsError(TypeName.datetimes, true);
 			toaster.dismiss(toasterMessage);
 			toaster.error(error);
 		},
 	});
 
 	useEffect(() => {
-		setIsLoading('datetimes', loading);
+		setIsLoading(TypeName.datetimes, loading);
 	}, [loading]);
 
 	if (!initialized) {

@@ -11,7 +11,7 @@ import { PLUS_ONE_MONTH, PLUS_TWO_MONTHS } from '../../../shared/defaultDates';
 import useDatetimeItem from '../../data/queries/datetimes/useDatetimeItem';
 import { useEntityMutator, EntityType } from '../../../../application/services/apollo/mutations';
 import useRelations from '../../../../application/services/apollo/relations/useRelations';
-import useStatus from '../../../../application/services/apollo/status/useStatus';
+import { useStatus, TypeName } from '../../../../application/services/apollo/status';
 import TicketId from '../../tickets/TicketId';
 import InlineEditInput from '../../../../application/ui/components/input/InlineEditInput';
 
@@ -55,7 +55,7 @@ const DateCard = ({ id }) => {
 	const defaultRangeValues = [startDate, endDate];
 	const [range, setRange] = useState(defaultRangeValues);
 
-	const ticketsLoaded = isLoaded('tickets');
+	const ticketsLoaded = isLoaded(TypeName.tickets);
 
 	return (
 		<DateTimeProvider id={id}>

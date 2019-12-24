@@ -3,7 +3,7 @@ import { useApolloClient } from '@apollo/react-hooks';
 
 import { GET_PRICE_TYPES } from './';
 import { entitiesWithGuIdInArray } from '../../../../shared/predicates/shared/selectionPredicates';
-import useStatus from '../../../../../application/services/apollo/status/useStatus';
+import { useStatus, TypeName } from '../../../../../application/services/apollo/status';
 import { ReadQueryOptions } from '../types';
 import { PriceType, EntityId } from '../../types';
 /**
@@ -15,7 +15,7 @@ import { PriceType, EntityId } from '../../types';
 const usePriceTypes = (include: EntityId[] = []): PriceType[] => {
 	const { isLoaded } = useStatus();
 	const client = useApolloClient();
-	if (!isLoaded('priceTypes')) {
+	if (!isLoaded(TypeName.priceTypes)) {
 		return [];
 	}
 	let data: any;

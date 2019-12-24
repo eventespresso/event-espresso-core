@@ -1,7 +1,7 @@
 import { useApolloClient } from '@apollo/react-hooks';
 import useCacheRehydrationData from './useCacheRehydrationData';
 import useRelations from '../../../../application/services/apollo/relations/useRelations';
-import useStatus from '../../../../application/services/apollo/status/useStatus';
+import { useStatus, TypeName } from '../../../../application/services/apollo/status';
 import useEventId from './events/useEventId';
 import { queries } from './';
 import { WriteQueryOptions } from './types';
@@ -21,7 +21,7 @@ const useCacheRehydration = (): void => {
 	} = useCacheRehydrationData();
 	const { isLoaded } = useStatus();
 
-	if (isLoaded('priceTypes')) {
+	if (isLoaded(TypeName.priceTypes)) {
 		return;
 	}
 	let writeQueryOptions: WriteQueryOptions;

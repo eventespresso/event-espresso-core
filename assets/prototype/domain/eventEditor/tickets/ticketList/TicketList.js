@@ -5,7 +5,7 @@ import TicketListFilterBar from './filterBar/TicketListFilterBar';
 import AddNewTicketButton from './AddNewTicketButton';
 import TicketCard from '../ticketCard/TicketCard';
 import useTickets from '../../data/queries/tickets/useTickets';
-import useStatus from '../../../../application/services/apollo/status/useStatus';
+import { useStatus, TypeName } from '../../../../application/services/apollo/status';
 
 const boxStyle = {
 	margin: '0 0 2rem',
@@ -44,8 +44,8 @@ const TicketList = () => {
 	const tickets = useTickets();
 	const { isLoading, isError } = useStatus();
 
-	const loading = isLoading('datetimes') || isLoading('tickets');
-	const error = isError('tickets');
+	const loading = isLoading(TypeName.datetimes) || isLoading(TypeName.tickets);
+	const error = isError(TypeName.tickets);
 
 	const header = <H3 style={{ margin: '2rem 0 .5rem' }}>{'Tickets List'}</H3>;
 
