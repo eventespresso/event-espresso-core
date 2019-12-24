@@ -12,7 +12,7 @@ import { CurrentUser, CurrentUserProps, DateTimeFormats } from '../../valueObjec
 import { GET_CURRENT_USER } from '../../../domain/eventEditor/data/queries/currentUser/currentUser';
 import { GET_GENERAL_SETTINGS } from '../../../domain/eventEditor/data/queries/generalSettings/generalSettings';
 
-export const ConfigContext = createContext<ConfigDataProps>(ConfigData);
+export const ConfigContext = createContext<ConfigDataProps | null>(null);
 
 const { Provider } = ConfigContext;
 
