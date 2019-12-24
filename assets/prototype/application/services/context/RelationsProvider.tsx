@@ -1,8 +1,7 @@
-import React from 'react'
 /**
  * External imports
  */
-import { createContext } from 'react';
+import React, { createContext } from 'react';
 import useRelationsManager from '../apollo/relations/useRelationsManager';
 import { RelationsManager } from '../apollo/relations';
 

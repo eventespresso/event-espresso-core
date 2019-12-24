@@ -1,8 +1,7 @@
-import React from 'react';
 /**
  * External imports
  */
-import { createContext } from 'react';
+import React, { createContext } from 'react';
 import useStatusManager from '../apollo/status/useStatusManager';
 import { StatusManager } from '../apollo/status';
 
