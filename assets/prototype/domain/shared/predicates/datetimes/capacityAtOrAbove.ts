@@ -13,13 +13,13 @@ import validSold from './validStatus';
 /**
  * @param {Object} date event date object
  * @param {number} capacity
- * @return {boolean} true if sold/regLimit >= capacity
+ * @return {boolean} true if sold/capacity >= capacity
  */
 const capacityAtOrAbove = (date: Datetime, capacity: number) => {
 	return (
 		validSold(date) &&
 		validFiniteReglimit(date) &&
-		Math.round(date.sold) / Math.round(date.regLimit) >= capacity / 100
+		Math.round(date.sold) / Math.round(date.capacity) >= capacity / 100
 	);
 };
 
