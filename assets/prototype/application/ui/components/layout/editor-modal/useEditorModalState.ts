@@ -73,7 +73,7 @@ const useEditorModalState = () => {
 	 * @param {Stack} state
 	 * @return {string | undefined} editorId, if there is no editorId then it will return undefined
 	 */
-	const currentlyOpenEditor = (state: State): string | undefined => head(state);
+	const currentlyOpenEditor = (): string | undefined => head(state);
 
 	/**
 	 * Returns true if the provided ID matches the editor
@@ -83,7 +83,7 @@ const useEditorModalState = () => {
 	 * @param {string} editorId    unique identifier for editor
 	 * @return {string} editorId
 	 */
-	const isEditorOpen = (state: State, editorId: string): boolean => editorId === head(state);
+	const isEditorOpen = (editorId: string): boolean => editorId === head(state);
 
 	return {
 		closeEditor,

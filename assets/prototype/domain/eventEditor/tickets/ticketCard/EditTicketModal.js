@@ -10,6 +10,8 @@ const EditTicketModal = ({ relatedDates }) => {
 	const datetimes = useDatetimes();
 	const { updateEntity } = useEntityMutator(EntityType.Ticket, id);
 
+	console.log({ isOpen });
+
 	const formComponent = (props) => (
 		<TicketForm {...props} datetimes={datetimes} relatedDates={relatedDates} title='Update ticket' />
 	);
