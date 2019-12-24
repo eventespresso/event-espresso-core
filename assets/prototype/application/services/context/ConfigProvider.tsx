@@ -1,9 +1,9 @@
 /**
  * External imports
  */
+import React, { createContext } from 'react';
 import propOr from 'ramda/src/propOr';
 import { useQuery } from '@apollo/react-hooks';
-import { createContext } from 'react';
 
 import { ConfigData, ConfigDataProps } from '../config';
 import { CurrentUser, CurrentUserProps, DateTimeFormats } from '../../valueObjects/config';

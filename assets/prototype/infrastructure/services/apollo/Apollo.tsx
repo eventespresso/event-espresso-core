@@ -6,7 +6,7 @@ import { HttpLink } from 'apollo-link-http';
 import { ApolloProvider } from '@apollo/react-hooks';
 
 const { graphqlEndpoint } = window;
-const nonce = pick(['eejsdata', 'data', 'eejs_api_nonce'], window);
+const nonce = pick<Window, string>(['eejsdata', 'data', 'eejs_api_nonce'], window);
 
 const getResolver = (type: string): CacheResolver => {
 	const resolver: CacheResolver = (_, args, { getCacheKey }) => getCacheKey({ __typename: type, id: args.id });
