@@ -17,6 +17,7 @@ export interface Datetime extends Entity {
 	description?: string;
 	endDate?: string;
 	isActive?: boolean;
+	isDeleted?: boolean; // TODO: refactor according to resolution from here: https://github.com/eventespresso/event-espresso-core/issues/2089
 	isExpired?: boolean;
 	isPrimary?: boolean;
 	isSoldOut?: boolean;
@@ -26,6 +27,7 @@ export interface Datetime extends Entity {
 	reserved?: number;
 	sold?: number;
 	startDate?: string;
+	status?: string;
 }
 
 export interface DatetimeEdge extends EntityEdge {
