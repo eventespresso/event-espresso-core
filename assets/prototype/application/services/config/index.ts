@@ -1,5 +1,5 @@
 export * from './useConfig';
 
-export * from './ConfigData';
+export * from './useConfigData';
 
 export * from './types';

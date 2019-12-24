@@ -5,7 +5,7 @@ import React, { createContext } from 'react';
 import propOr from 'ramda/src/propOr';
 import { useQuery } from '@apollo/react-hooks';
 
-import { ConfigData, ConfigDataProps } from '../config';
+import { useConfigData, ConfigDataProps } from '../config';
 import { CurrentUser, CurrentUserProps, DateTimeFormats } from '../../valueObjects/config';
 
 // import useToaster from '../../../application/services/toaster/useToaster';
@@ -17,6 +17,7 @@ export const ConfigContext = createContext<ConfigDataProps | null>(null);
 const { Provider } = ConfigContext;
 
 const ConfigProvider = ({ children }) => {
+	const ConfigData = useConfigData();
 	// const toaster = useToaster();
 	const { data: currentUserData, error: currentUserError, loading: currentUserLoading } = useQuery(GET_CURRENT_USER);
 	// if (currentUserError) {
