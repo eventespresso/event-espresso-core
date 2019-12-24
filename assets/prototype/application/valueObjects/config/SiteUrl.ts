@@ -1,4 +1,4 @@
-export type SiteUrlProps = {
+export interface SiteUrlProps {
 	admin: string;
 	home: string;
 }

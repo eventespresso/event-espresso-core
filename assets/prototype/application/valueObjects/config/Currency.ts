@@ -1,4 +1,4 @@
-export type CurrencyProps = {
+export interface CurrencyProps {
     code: string;
     singularLabel: string;
     pluralLabel: string;

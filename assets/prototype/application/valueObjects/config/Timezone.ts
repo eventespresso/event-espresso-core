@@ -1,4 +1,4 @@
-export type TimezoneProps = {
+export interface TimezoneProps {
 	city: string;
 	name: string;
 	offset: number;

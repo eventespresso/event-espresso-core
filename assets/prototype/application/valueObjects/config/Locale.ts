@@ -1,4 +1,4 @@
-export type LocaleProps = {
+export interface LocaleProps {
 	user: string;
 	site: string;
 }
