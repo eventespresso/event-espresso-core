@@ -1,4 +1,12 @@
-import { useReducer, useEffect } from '@wordpress/element';
+/**
+ * External dependencies
+ */
+import { useReducer, useEffect } from 'react';
+
+/**
+ * Internal dependencies
+ */
+import filters from '../../../../shared/predicates/datetimes/filters';
 
 const useDatesListFilterState = (dates) => {
 	const initialState = {
