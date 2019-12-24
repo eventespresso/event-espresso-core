@@ -3,6 +3,8 @@ import { Form } from 'react-final-form';
 import { Classes, Overlay } from '@blueprintjs/core/lib/esm';
 import FormModalForm from './FormModalForm';
 
+import './styles.css';
+
 const FormModal = ({ FormComponent, initialValues, onSubmit, onClose, isOpen, ...extraProps }) => {
 	const overlayProps = {
 		autoFocus: true,
