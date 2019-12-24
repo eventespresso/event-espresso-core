@@ -12,8 +12,8 @@ import { Datetime } from '../../../eventEditor/data/types';
  * @param {Object} date event object
  * @return {boolean} true if capacity property is valid and unlimited
  */
-const validInfiniteCapacitylimit = (date: Datetime) => {
+const validInfiniteCapacityLimit = (date: Datetime) => {
 	return is(Number, date.capacity) && date.capacity === Infinity;
 };
 
-export default validInfiniteCapacitylimit;
+export default validInfiniteCapacityLimit;
