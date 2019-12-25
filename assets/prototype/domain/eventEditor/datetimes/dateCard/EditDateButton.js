@@ -3,8 +3,7 @@ import { Button } from '@blueprintjs/core/lib/esm';
 import { DateTimeContext } from '../../context/DateTimeProvider';
 
 const EditDateButton = ({ position }) => {
-	const { isOpen, setIsOpen } = useContext(DateTimeContext);
-	const onClick = () => setIsOpen(!isOpen);
+	const { setIsOpen } = useContext(DateTimeContext);
 
 	const style = {
 		position: 'absolute',
@@ -18,7 +17,7 @@ const EditDateButton = ({ position }) => {
 
 	return (
 		<div style={style}>
-			<Button icon={'edit'} onClick={onClick} minimal />
+			<Button icon={'edit'} onClick={setIsOpen} minimal />
 		</div>
 	);
 };

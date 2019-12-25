@@ -1,10 +1,9 @@
-import { useContext } from '@wordpress/element';
+import { useContext } from 'react';
 import { Button } from '@blueprintjs/core/lib/esm';
 import { TicketContext } from '../../context/TicketProvider';
 
 const EditTicketButton = ({ position }) => {
-	const { isOpen, setIsOpen } = useContext(TicketContext);
-	const onClick = () => setIsOpen(!isOpen);
+	const { setIsOpen } = useContext(TicketContext);
 
 	const style = {
 		position: 'absolute',
@@ -18,7 +17,7 @@ const EditTicketButton = ({ position }) => {
 
 	return (
 		<div style={style}>
-			<Button icon={'edit'} onClick={onClick} minimal />
+			<Button icon={'edit'} onClick={() => setIsOpen()} minimal />
 		</div>
 	);
 };
