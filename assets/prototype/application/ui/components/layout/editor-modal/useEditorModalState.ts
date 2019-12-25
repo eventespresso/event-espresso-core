@@ -47,14 +47,14 @@ const useEditorModalState = () => {
 		console.log('useEditorModalState >>>', state);
 	}, [state]);
 
-	const openEditor = (editorId) => {
+	const openEditor = (editorId: string) => {
 		dispatch({
 			type: OPEN_EDITOR,
 			editorId,
 		});
 	};
 
-	const closeEditor = (editorId) => {
+	const closeEditor = (editorId: string) => {
 		dispatch({
 			type: CLOSE_EDITOR,
 			editorId,
