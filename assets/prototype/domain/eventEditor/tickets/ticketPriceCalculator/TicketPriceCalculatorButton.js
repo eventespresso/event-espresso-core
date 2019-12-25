@@ -10,12 +10,10 @@ const TicketPriceCalculatorButton = ({ ticket }) => {
 	const onOpen = () => setIsOpen(modalId);
 	const handleClose = () => onClose(modalId);
 
-	console.log({ isOpen });
-
 	return (
 		<>
 			<Button icon={'calculator'} onClick={onOpen} minimal />
-			<TicketPriceCalculatorModal ticket={ticket} handleClose={handleClose} isOpen={true} />
+			<TicketPriceCalculatorModal ticket={ticket} handleClose={handleClose} isOpen={isOpen} />
 		</>
 	);
 };

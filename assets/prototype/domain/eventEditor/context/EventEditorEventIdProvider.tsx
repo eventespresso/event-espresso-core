@@ -2,6 +2,7 @@
  * External imports
  */
 import React from 'react';
+import { pathOr } from 'ramda';
 import { createContext } from 'react';
 import useToaster from '../../../application/services/toaster/useToaster';
 
@@ -11,7 +12,7 @@ const { Provider } = EventEditorEventIdContext;
 
 const EventEditorEventIdProvider = ({ children }) => {
 	const toaster = useToaster();
-	const { eeEditorEventData: { eventId = 0 } = {} } = window;
+	const eventId = pathOr<number>(0, ['eeEditorEventData', 'eventId'], window);
 
 	if (!eventId) {
 		toaster.error('Event ID is empty or invalid.');

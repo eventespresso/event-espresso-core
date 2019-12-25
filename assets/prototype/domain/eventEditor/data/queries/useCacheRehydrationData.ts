@@ -1,8 +1,9 @@
+import { pathOr } from 'ramda';
 import { GQLDOMData } from '../../types';
 
 const useCacheRehydrationData = (): GQLDOMData => {
-	const { eeEditorGQLData = {} } = window;
-	return eeEditorGQLData;
+	const data = pathOr<GQLDOMData>(null, ['eeEditorGQLData'], window);
+	return data;
 };
 
 export default useCacheRehydrationData;

@@ -1,12 +1,6 @@
 import { useContext } from 'react';
+
+import { ConfigDataProps } from './types';
 import { ConfigContext } from '../context/ConfigProvider';
 
-type ConfigReturnType = {
-	dateFormat: string;
-	timeFormat: string;
-	timezone: string;
-};
-
-const useConfig = (): ConfigReturnType => useContext(ConfigContext);
-
-export default useConfig;
+export const useConfig = (): ConfigDataProps => useContext<ConfigDataProps>(ConfigContext);

@@ -1,11 +1,12 @@
 /**
  * External imports
  */
-import { render } from '@wordpress/element';
+import { render } from 'react-dom';
 
 /**
  * Internal imports
  */
+import './types';
 import EventEditor from './EventEditor';
 import ContextProviders from './context/ContextProviders';
 
