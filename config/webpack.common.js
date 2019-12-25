@@ -1,15 +1,15 @@
-const path = require( 'path' );
-const miniExtract = require( 'mini-css-extract-plugin' );
-const autoprefixer = require( 'autoprefixer' );
-const cssnano = require( 'cssnano' );
-const del = require( 'del' );
+const autoprefixer = require('autoprefixer');
+const cssnano = require('cssnano');
+const del = require('del');
+const miniExtract = require('mini-css-extract-plugin');
+const path = require('path');
 
-const { assetsPath, pathToDistFolder } = require( './paths' );
+const { assetsPath, pathToDistFolder } = require('./paths');
 
 /**
  * Clean build folder before running build
  */
-del.sync( [ path.resolve( pathToDistFolder, '*' ) ] );
+del.sync([path.resolve(pathToDistFolder, '*')]);
 
 const rulesConfig = {
 	jsRulesConfig: {
@@ -34,10 +34,7 @@ const rulesConfig = {
 				options: {
 					// eslint-disable-next-line object-shorthand
 					plugins: function() {
-						return [
-							autoprefixer,
-							cssnano( { preset: 'default' } ),
-						];
+						return [autoprefixer, cssnano({ preset: 'default' })];
 					},
 					sourceMap: true,
 				},
@@ -47,13 +44,10 @@ const rulesConfig = {
 };
 
 const moduleConfigWithJsAndCssRules = {
-	rules: [
-		rulesConfig.jsRulesConfig,
-		rulesConfig.cssRulesConfig,
-	],
+	rules: [rulesConfig.jsRulesConfig, rulesConfig.cssRulesConfig],
 };
 
-const moduleConfigWithJsRules = { rules: [ rulesConfig.jsRulesConfig ] };
+const moduleConfigWithJsRules = { rules: [rulesConfig.jsRulesConfig] };
 
 /** see below for multiple configurations.
  /** https://webpack.js.org/configuration/configuration-types/#exporting-multiple-configurations */
@@ -64,7 +58,7 @@ const config = [
 		},
 		module: moduleConfigWithJsRules,
 		output: {
-			library: [ 'eejs' ],
+			library: ['eejs'],
 			libraryTarget: 'this',
 		},
 	},
@@ -74,7 +68,7 @@ const config = [
 		},
 		module: moduleConfigWithJsRules,
 		output: {
-			library: [ 'eejs', 'vendor' ],
+			library: ['eejs', 'vendor'],
 			libraryTarget: 'this',
 		},
 	},
@@ -84,7 +78,7 @@ const config = [
 		},
 		module: moduleConfigWithJsRules,
 		output: {
-			library: [ 'eejs', 'utils' ],
+			library: ['eejs', 'utils'],
 			libraryTarget: 'this',
 		},
 	},
@@ -94,7 +88,7 @@ const config = [
 		},
 		module: moduleConfigWithJsRules,
 		output: {
-			library: [ 'eejs', 'hooks' ],
+			library: ['eejs', 'hooks'],
 			libraryTarget: 'this',
 		},
 	},
@@ -104,7 +98,7 @@ const config = [
 		},
 		module: moduleConfigWithJsRules,
 		output: {
-			library: [ 'eejs', 'validators' ],
+			library: ['eejs', 'validators'],
 			libraryTarget: 'this',
 		},
 	},
@@ -123,7 +117,7 @@ const config = [
 		},
 		module: moduleConfigWithJsRules,
 		output: {
-			library: [ 'eejs', 'helpers' ],
+			library: ['eejs', 'helpers'],
 			libraryTarget: 'this',
 		},
 	},
@@ -133,7 +127,7 @@ const config = [
 		},
 		module: moduleConfigWithJsRules,
 		output: {
-			library: [ 'eejs', 'model' ],
+			library: ['eejs', 'model'],
 			libraryTarget: 'this',
 		},
 	},
@@ -142,7 +136,7 @@ const config = [
 			'eventespresso-model-schema': assetsPath + 'data/eventespresso/schema/index.js',
 		},
 		output: {
-			library: [ 'eejs', 'modelSchema' ],
+			library: ['eejs', 'modelSchema'],
 			libraryTarget: 'this',
 		},
 		module: moduleConfigWithJsAndCssRules,
@@ -156,7 +150,7 @@ const config = [
 		},
 		module: moduleConfigWithJsRules,
 		output: {
-			library: [ 'eejs', 'valueObjects' ],
+			library: ['eejs', 'valueObjects'],
 			libraryTarget: 'this',
 		},
 	},
@@ -166,7 +160,7 @@ const config = [
 		},
 		module: moduleConfigWithJsAndCssRules,
 		output: {
-			library: [ 'eejs', 'hocs' ],
+			library: ['eejs', 'hocs'],
 			libraryTarget: 'this',
 		},
 	},
@@ -176,7 +170,7 @@ const config = [
 		},
 		module: moduleConfigWithJsAndCssRules,
 		output: {
-			library: [ 'eejs', 'components' ],
+			library: ['eejs', 'components'],
 			libraryTarget: 'this',
 		},
 	},
@@ -186,7 +180,7 @@ const config = [
 		},
 		module: moduleConfigWithJsAndCssRules,
 		output: {
-			library: [ 'eejs', 'editorHocs' ],
+			library: ['eejs', 'editorHocs'],
 			libraryTarget: 'this',
 		},
 	},
@@ -196,7 +190,7 @@ const config = [
 		},
 		module: moduleConfigWithJsAndCssRules,
 		output: {
-			library: [ 'eejs', 'editor' ],
+			library: ['eejs', 'editor'],
 			libraryTarget: 'this',
 		},
 	},
@@ -206,7 +200,7 @@ const config = [
 		},
 		module: moduleConfigWithJsAndCssRules,
 		output: {
-			library: [ 'eejs', 'editor' ],
+			library: ['eejs', 'editor'],
 			libraryTarget: 'this',
 		},
 	},
@@ -230,8 +224,7 @@ const config = [
 	},
 	{
 		entry: {
-			'eventespresso-core-blocks-frontend': assetsPath +
-				'blocks/index-frontend.js',
+			'eventespresso-core-blocks-frontend': assetsPath + 'blocks/index-frontend.js',
 		},
 		module: moduleConfigWithJsAndCssRules,
 		watchOptions: {
@@ -240,8 +233,7 @@ const config = [
 	},
 	{
 		entry: {
-			'eventespresso-core-css-default': assetsPath +
-				'components/ui/styles/themes/default/index.js',
+			'eventespresso-core-css-default': assetsPath + 'components/ui/styles/themes/default/index.js',
 		},
 		module: moduleConfigWithJsAndCssRules,
 		watchOptions: {
@@ -250,14 +242,14 @@ const config = [
 	},
 ];
 
-const enhance = ( conf ) => {
+const enhance = (conf) => {
 	const resolve = {
 		// Add '.ts' and '.tsx' as resolvable extensions.
-		extensions: [ '.webpack.js', '.web.js', '.ts', '.tsx', '.js' ],
+		extensions: ['.webpack.js', '.web.js', '.ts', '.tsx', '.js'],
 	};
 	const enhancedConf = { ...conf, resolve };
 
-	if ( ! enhancedConf.output ) {
+	if (!enhancedConf.output) {
 		enhancedConf.output = {};
 	}
 
@@ -267,7 +259,7 @@ const enhance = ( conf ) => {
 	return enhancedConf;
 };
 
-const addLoaders = ( conf ) => {
+const addLoaders = (conf) => {
 	const enhancedConf = { ...conf };
 
 	enhancedConf.module.rules = [
@@ -277,7 +269,7 @@ const addLoaders = ( conf ) => {
 			exclude: /node_modules/,
 			use: [
 				{
-					loader: 'awesome-typescript-loader',
+					loader: 'ts-loader',
 				},
 			],
 		},
@@ -288,11 +280,33 @@ const addLoaders = ( conf ) => {
 		},
 	];
 
+	// When importing a module whose path matches one of the following, just
+	// assume a corresponding global variable exists and use that instead.
+	// This is important because it allows us to avoid bundling all of our
+	// dependencies, which allows browsers to cache those libraries between builds.
+	enhancedConf.externals = {
+		react: 'React',
+		'react-dom': 'ReactDOM',
+	};
+
 	return enhancedConf;
 };
 
+const checkAndBuildOnlyEditorFiles = ({ entry }) => {
+	if (process.env.ONLY_EDITOR) {
+		if (entry['eventespresso-editor-prototype']) {
+			return true;
+		}
+
+		return false;
+	}
+
+	return true;
+};
+
 const enhancedConfig = config
-	.map( enhance )
-	.map( addLoaders );
+	.map(enhance)
+	.map(addLoaders)
+	.filter(checkAndBuildOnlyEditorFiles);
 
 module.exports = enhancedConfig;
