@@ -1,8 +1,4 @@
-export interface TimezoneProps {
-	city: string;
-	name: string;
-	offset: number;
-}
+import { TimezoneProps } from './types';
 
 export const Timezone = ({ city, name, offset }: TimezoneProps): TimezoneProps => {
 	return {

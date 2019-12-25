@@ -1,7 +1,4 @@
-export interface SiteUrlProps {
-	admin: string;
-	home: string;
-}
+import { SiteUrlProps } from './types';
 
 export const SiteUrl = ({ admin, home }: SiteUrlProps): SiteUrlProps => {
 	return {

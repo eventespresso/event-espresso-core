@@ -1,7 +1,4 @@
-export interface LocaleProps {
-	user: string;
-	site: string;
-}
+import { LocaleProps } from './types';
 
 export const Locale = ({ user, site }: LocaleProps): LocaleProps => {
 	return {

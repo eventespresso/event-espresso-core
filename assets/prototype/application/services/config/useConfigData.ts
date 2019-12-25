@@ -1,4 +1,4 @@
-import path from 'ramda/src/path';
+import { pathOr } from 'ramda';
 import {
 	Currency,
 	CurrencyProps,
@@ -16,7 +16,7 @@ import {
 import { JsDataProps, ConfigDataProps } from './types';
 
 export const useConfigData = (): ConfigDataProps => {
-	const data = path<JsDataProps>(['eejsdata', 'data'], window);
+	const data = pathOr<JsDataProps>(null, ['eejsdata', 'data'], window);
 	return {
 		brandName: data.brandName || 'Event Espresso',
 		currency: Currency(data.currency_config as CurrencyProps),

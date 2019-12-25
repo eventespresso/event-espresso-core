@@ -1,16 +1,4 @@
-export interface CurrentUserProps {
-	id: number;
-	description: string;
-	email: string;
-	firstName: string;
-	name: string;
-	nicename: string;
-	nickname: string;
-	lastName: string;
-	locale: string;
-	userId: number;
-	username: string;
-}
+import { CurrentUserProps } from './types';
 
 export const CurrentUser = (userData: CurrentUserProps): CurrentUserProps => {
 	return {

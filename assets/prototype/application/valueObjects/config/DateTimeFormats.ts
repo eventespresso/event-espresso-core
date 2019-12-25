@@ -1,10 +1,5 @@
+import { DateTimeFormatsProps } from './types';
 import { defaultDateFormat, defaultTimeFormat } from './defaultDateTimeFormats';
-
-export interface DateTimeFormatsProps {
-	dateFormat: string;
-	timeFormat: string;
-	dateTimeFormat?: string;
-}
 
 export const DateTimeFormats = (formats: DateTimeFormatsProps): DateTimeFormatsProps => {
 	const maybeDefault = {
