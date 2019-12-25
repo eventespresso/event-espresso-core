@@ -6,11 +6,10 @@ import { useEntityMutator, EntityType } from '../../../../application/services/a
 import useDatetimes from '../../data/queries/datetimes/useDatetimes';
 
 const EditTicketModal = ({ relatedDates }) => {
-	const { id, isOpen, onClose } = useContext(TicketContext);
+	const { id, getIsOpen, onClose } = useContext(TicketContext);
+	const isOpen = getIsOpen();
 	const datetimes = useDatetimes();
 	const { updateEntity } = useEntityMutator(EntityType.Ticket, id);
-
-	console.log({ isOpen });
 
 	const formComponent = (props) => (
 		<TicketForm {...props} datetimes={datetimes} relatedDates={relatedDates} title='Update ticket' />
@@ -23,7 +22,7 @@ const EditTicketModal = ({ relatedDates }) => {
 			initialValues={{}}
 			isOpen={isOpen}
 			onSubmit={onSubmit}
-			onClose={onClose}
+			onClose={() => onClose()}
 		/>
 	);
 };

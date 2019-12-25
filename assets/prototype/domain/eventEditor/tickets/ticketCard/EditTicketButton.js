@@ -1,4 +1,4 @@
-import { useContext } from '@wordpress/element';
+import { useContext } from 'react';
 import { Button } from '@blueprintjs/core/lib/esm';
 import { TicketContext } from '../../context/TicketProvider';
 
@@ -17,7 +17,7 @@ const EditTicketButton = ({ position }) => {
 
 	return (
 		<div style={style}>
-			<Button icon={'edit'} onClick={setIsOpen} minimal />
+			<Button icon={'edit'} onClick={() => setIsOpen()} minimal />
 		</div>
 	);
 };

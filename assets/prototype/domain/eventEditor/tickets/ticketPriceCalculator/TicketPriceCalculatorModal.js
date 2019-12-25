@@ -1,7 +1,7 @@
 import indexOf from 'ramda/src/indexOf';
 import isEmpty from 'ramda/src/isEmpty';
 import pickBy from 'ramda/src/pickBy';
-import { useEffect, useState } from '@wordpress/element';
+import { useEffect, useState } from 'react';
 
 import TicketPriceCalculatorForm from './TicketPriceCalculatorForm';
 import useTicketPriceCalculatorFormDecorator from './hooks/useTicketPriceCalculatorFormDecorator';
@@ -63,7 +63,6 @@ const TicketPriceCalculatorModal = ({ ticket, handleClose, isOpen }) => {
 	const mutators = useTicketPriceCalculatorFormMutators();
 	const prices = useTicketPrices(ticket.id);
 	const defaultPriceType = useDefaultPriceType();
-
 	const submitPrices = useOnSubmitPrices(prices);
 
 	useEffect(() => {
@@ -78,6 +77,7 @@ const TicketPriceCalculatorModal = ({ ticket, handleClose, isOpen }) => {
 			setInitialValues(formData);
 		}
 	}, [prices, ticket]);
+
 	return (
 		initialValues !== EMPTY_OBJECT && (
 			<FormModal
