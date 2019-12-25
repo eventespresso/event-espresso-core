@@ -1,5 +1,6 @@
+import React, { useCallback } from 'react';
 import { Spinner } from '@blueprintjs/core';
-import { useCallback } from '@wordpress/element';
+import { find } from 'ramda';
 import useDismissToast from './useDismissToast';
 
 const useLoadingToast = (toaster, hash) => {
@@ -9,7 +10,7 @@ const useLoadingToast = (toaster, hash) => {
 		(loading = true, message = 'loading', timeout = 0, action = {}, onDismiss = null) => {
 			const isToasting = (msgHash) => {
 				const toasts = toaster.getToasts();
-				return Array.isArray(toasts) && find(toasts, (t) => t.key && t.key === msgHash);
+				return Array.isArray(toasts) && find((t) => t.key && t.key === msgHash, toasts);
 			};
 
 			if (message) {

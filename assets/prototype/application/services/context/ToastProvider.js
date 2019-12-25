@@ -1,7 +1,7 @@
 /**
  * External imports
  */
-import { createContext } from '@wordpress/element';
+import React, { createContext } from 'react';
 import { Position, Toaster } from '@blueprintjs/core';
 
 const ToastContext = createContext();

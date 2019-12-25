@@ -1,5 +1,5 @@
 import { Intent } from '@blueprintjs/core';
-import { useCallback } from '@wordpress/element';
+import { useCallback } from 'react';
 
 const useSuccessToast = (toaster, hash) =>
 	useCallback(
