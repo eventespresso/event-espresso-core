@@ -7,16 +7,19 @@ import { useReducer, useEffect } from 'react';
  * Internal dependencies
  */
 import { Datetime } from '../../../../eventEditor/data/types';
-import { DatesSortedBy, DisplayDates, ShowDates } from './types';
+import { DatesSortedBy, DisplayDates, ShowDates } from '../../../../eventEditor/data/date/types';
+
 import filters from '../../../../shared/predicates/datetimes/filters';
+import sorters from '../../../../shared/predicates/datetimes/sorters';
 
 interface DatesListFilterState {
 	dates: Datetime[];
 	datesSortedBy: DatesSortedBy;
 	displayDates: DisplayDates;
-	setDatesSortedBy: (DatesSortedBy) => void;
-	setDisplayDates: () => void;
-	setShowDates: () => void;
+	processedDates: Datetime[];
+	setDatesSortedBy: (datesSortedBy: DatesSortedBy) => void;
+	setDisplayDates: (displayDates: DisplayDates) => void;
+	setShowDates: (showDates: ShowDates) => void;
 	showDates: ShowDates;
 }
 
@@ -31,6 +34,7 @@ const useDatesListFilterState = (dates: Datetime[]): DatesListFilterState => {
 		dates,
 		datesSortedBy: DatesSortedBy.chronologically,
 		displayDates: DisplayDates.start,
+		filteredDates: [],
 		showDates: ShowDates.all,
 	};
 	const [state, dispatch] = useReducer(reducer, initialState);
@@ -69,19 +73,21 @@ const useDatesListFilterState = (dates: Datetime[]): DatesListFilterState => {
 };
 
 const reducer = (state, action) => {
-	let filteredDates = [];
+	let processedDates = [];
 	const { datesSortedBy, displayDates, showDates } = action;
 
 	switch (action.type) {
 		case ActionType.SET_DATES_SORTED_BY:
-			filteredDates = filters({ dates: state.dates, show: datesSortedBy });
+			processedDates = sorters({ dates: state.dates, sort: datesSortedBy });
 
-			return { ...state, datesSortedBy, filteredDates };
+			return { ...state, datesSortedBy, processedDates };
 
 		case ActionType.SET_DISPLAY_DATES:
 			return { ...state, displayDates };
 
 		case ActionType.SET_SHOW_DATES:
+			processedDates = filters({ dates: state.dates, show: datesSortedBy });
+
 			return { ...state, showDates };
 
 		default:

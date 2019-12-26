@@ -1,5 +1,6 @@
 import { act, renderHook } from '@testing-library/react-hooks';
-import { DatesSortedBy, DisplayDates, ShowDates } from './types';
+import { DatesSortedBy, DisplayDates, ShowDates } from '../../../data/date/types';
+
 import useDatesListFilterState from './useDatesListFilterState';
 
 const datetimes = [
@@ -57,7 +58,7 @@ const datetimes = [
 		order: 0,
 		reserved: 0,
 		sold: 0,
-		startDate: '2019-12-18T11:31:00+00:00',
+		startDate: '2009-12-18T11:31:00+00:00',
 		__typename: 'EspressoDatetime',
 	},
 ];
@@ -65,7 +66,7 @@ const datetimes = [
 test('useDatesListFilterState result', () => {
 	const { result } = renderHook(() => useDatesListFilterState(datetimes));
 
-	expect(Object.keys(result.current).length).toBe(7);
+	expect(Object.keys(result.current).length).toBe(8);
 
 	expect(result.current.dates).toEqual(expect.arrayContaining(datetimes));
 	expect(typeof result.current.datesSortedBy).toBe('string');
@@ -76,7 +77,7 @@ test('useDatesListFilterState result', () => {
 	expect(typeof result.current.setShowDates).toBe('function');
 });
 
-test('should setDatesSortedBy', () => {
+test('should update datesSortedBy by invoking setDatesSortedBy with corresponding accepted enums', () => {
 	const { result } = renderHook(() => useDatesListFilterState(datetimes));
 
 	act(() => {
@@ -98,4 +99,55 @@ test('should setDatesSortedBy', () => {
 		result.current.setDatesSortedBy(DatesSortedBy.chronologically);
 	});
 	expect(result.current.datesSortedBy).toBe('chronologically');
+});
+
+test('should update displayDates by invoking setDisplayDates with corresponding accepted enums', () => {
+	const { result } = renderHook(() => useDatesListFilterState(datetimes));
+
+	act(() => {
+		result.current.setDisplayDates(DisplayDates.start);
+	});
+	expect(result.current.displayDates).toBe('start');
+
+	act(() => {
+		result.current.setDisplayDates(DisplayDates.end);
+	});
+	expect(result.current.displayDates).toBe('end');
+
+	act(() => {
+		result.current.setDisplayDates(DisplayDates.both);
+	});
+	expect(result.current.displayDates).toBe('both');
+});
+
+test('should update showDates by invoking setShowDates with corresponding accepted enums', () => {
+	const { result } = renderHook(() => useDatesListFilterState(datetimes));
+
+	act(() => {
+		result.current.setShowDates(ShowDates.all);
+	});
+	expect(result.current.showDates).toBe('all');
+
+	act(() => {
+		result.current.setShowDates(ShowDates['upcoming-only']);
+	});
+	expect(result.current.showDates).toBe('upcoming-only');
+});
+
+test('should update processedDates to reflect changes in setDatesSortedBy filter', () => {
+	const { result } = renderHook(() => useDatesListFilterState(datetimes));
+
+	act(() => {
+		result.current.setDatesSortedBy(DatesSortedBy.chronologically);
+	});
+	const startDates = result.current.processedDates.map(({ startDate }) => startDate);
+	const expectedstartDates = ['2009-12-18T11:31:00+00:00', '2019-12-18T11:31:00+00:00', '2020-01-12T08:00:00+00:00'];
+	expect(startDates).toEqual(expectedstartDates);
+
+	act(() => {
+		result.current.setDatesSortedBy(DatesSortedBy['by-name']);
+	});
+	const names = result.current.processedDates.map(({ name }) => name);
+	const expectedNames = ['another title', 'just another datetime', 'test'];
+	expect(names).toEqual(expectedNames);
 });
