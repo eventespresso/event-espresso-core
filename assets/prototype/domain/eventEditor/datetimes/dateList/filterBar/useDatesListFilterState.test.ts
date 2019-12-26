@@ -1,9 +1,11 @@
 import { act, renderHook } from '@testing-library/react-hooks';
+import * as R from 'ramda';
+import { Datetime } from '../../../data/types';
 import { DatesSortedBy, DisplayDates, ShowDates } from '../../../data/date/types';
 
 import useDatesListFilterState from './useDatesListFilterState';
 
-const datetimes = [
+const datetimes: Datetime[] = [
 	{
 		id: 'RGF0ZXRpbWU6ODM=',
 		dbId: 83,
@@ -36,7 +38,7 @@ const datetimes = [
 		isUpcoming: false,
 		length: 0,
 		name: 'just another datetime',
-		order: 0,
+		order: -2,
 		reserved: 0,
 		sold: 0,
 		startDate: '2019-12-18T11:31:00+00:00',
@@ -55,7 +57,7 @@ const datetimes = [
 		isUpcoming: false,
 		length: 0,
 		name: 'another title',
-		order: 0,
+		order: -1,
 		reserved: 0,
 		sold: 0,
 		startDate: '2009-12-18T11:31:00+00:00',
@@ -134,20 +136,34 @@ test('should update showDates by invoking setShowDates with corresponding accept
 	expect(result.current.showDates).toBe('upcoming-only');
 });
 
-test('should update processedDates to reflect changes in setDatesSortedBy filter', () => {
+test('should update processedDates to reflect changes made by invoking setDatesSortedBy', () => {
 	const { result } = renderHook(() => useDatesListFilterState(datetimes));
 
 	act(() => {
 		result.current.setDatesSortedBy(DatesSortedBy.chronologically);
 	});
-	const startDates = result.current.processedDates.map(({ startDate }) => startDate);
+	const startDates = R.map(R.view(R.lensProp('startDate')))(result.current.processedDates);
 	const expectedstartDates = ['2009-12-18T11:31:00+00:00', '2019-12-18T11:31:00+00:00', '2020-01-12T08:00:00+00:00'];
 	expect(startDates).toEqual(expectedstartDates);
 
 	act(() => {
+		result.current.setDatesSortedBy(DatesSortedBy['by-id']);
+	});
+	const ids = R.map(R.view(R.lensProp('id')))(result.current.processedDates);
+	const expectedIds = ['RGF0ZXRpbWU6ODM=', 'RGF0ZXRpbWU6ODU=', 'RGF0ZXRpbWU6ODU='];
+	expect(ids).toEqual(expectedIds);
+
+	act(() => {
 		result.current.setDatesSortedBy(DatesSortedBy['by-name']);
 	});
-	const names = result.current.processedDates.map(({ name }) => name);
+	const names = R.map(R.view(R.lensProp('name')))(result.current.processedDates);
 	const expectedNames = ['another title', 'just another datetime', 'test'];
 	expect(names).toEqual(expectedNames);
+
+	act(() => {
+		result.current.setDatesSortedBy(DatesSortedBy['by-order']);
+	});
+	const datesOrder = R.map(R.view(R.lensProp('order')))(result.current.processedDates);
+	const expectedDatesOrder = [-2, -1, 1];
+	expect(datesOrder).toEqual(expectedDatesOrder);
 });

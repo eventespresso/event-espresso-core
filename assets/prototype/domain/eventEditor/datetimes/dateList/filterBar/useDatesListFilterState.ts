@@ -72,7 +72,14 @@ const useDatesListFilterState = (dates: Datetime[]): DatesListFilterState => {
 	};
 };
 
-const reducer = (state, action) => {
+interface Action {
+	datesSortedBy?: DatesSortedBy;
+	displayDates?: DisplayDates;
+	showDates?: ShowDates;
+	type: ActionType;
+}
+
+const reducer = (state, action: Action) => {
 	let processedDates = [];
 	const { datesSortedBy, displayDates, showDates } = action;
 

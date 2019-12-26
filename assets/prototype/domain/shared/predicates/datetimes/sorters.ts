@@ -27,26 +27,14 @@ const sorters = ({ dates, sort = DatesSortedBy.chronologically }: SortDates) => 
 			return dates.sort(({ startDate: dateLeft }, { startDate: dateRight }) =>
 				compareAsc(parseISO(dateLeft), parseISO(dateRight))
 			);
-
-			// dateEntities = sortBy(dateEntities, [
-			// 	function(dateEntity) {
-			// 		return DateTime.isValid(dateEntity.start) ? dateEntity.start.toMillis() : 0;
-			// 	},
-			// 	'name',
-			// 	'id',
-			// ]);
-			break;
-		case 'by-name':
+		case DatesSortedBy['by-id']:
+			return sortBy(prop('id'))(dates);
+		case DatesSortedBy['by-name']:
 			return sortBy(prop('name'))(dates);
-		case 'by-id':
-			return sortBy(prop('name'))(dates);
-			// dateEntities = sortBy(dateEntities, ['id']);
-			break;
-		case 'by-order':
-			return sortBy(prop('name'))(dates);
-			// dateEntities = sortBy(dateEntities, ['order']);
-			break;
+		case DatesSortedBy['by-order']:
+			return sortBy(prop('order'))(dates);
 	}
+
 	return dates;
 };
 
