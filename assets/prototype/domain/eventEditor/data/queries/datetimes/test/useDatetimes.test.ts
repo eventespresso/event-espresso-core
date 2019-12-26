@@ -12,7 +12,7 @@ beforeEach(setup);
 afterEach(cleanup);
 
 describe('useDatetimes()', () => {
-	it('checks for the empty datetimes', async () => {
+	it('checks for the empty datetimes', () => {
 		const wrapper = contextWrapper(successMocks);
 		const { result } = renderHook(
 			() => {
@@ -28,7 +28,7 @@ describe('useDatetimes()', () => {
 		expect(result.current.length).toBe(0);
 	});
 
-	it('checks for the updated datetimes cache', async () => {
+	it('checks for the updated datetimes cache', () => {
 		const wrapper = contextWrapper(successMocks);
 		const { result } = renderHook(
 			() => {
@@ -52,6 +52,14 @@ describe('useDatetimes()', () => {
 			{ wrapper }
 		);
 
-		expect(result.current.length).toBe(nodes.length);
+		const { current: cachedDatetimes } = result;
+
+		expect(cachedDatetimes).toEqual(nodes);
+
+		expect(cachedDatetimes.length).toEqual(nodes.length);
+
+		expect(cachedDatetimes[0].id).toEqual(nodes[0].id);
+
+		expect(cachedDatetimes[0].capacity).toEqual(nodes[0].capacity);
 	});
 });
