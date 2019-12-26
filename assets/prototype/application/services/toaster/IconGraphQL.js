@@ -1,3 +1,4 @@
+import React from 'react';
 const IconGraphQL = () => (
 	<span className='bp3-icon'>
 		<svg width='16' height='16' viewBox='0 0 24 24'>

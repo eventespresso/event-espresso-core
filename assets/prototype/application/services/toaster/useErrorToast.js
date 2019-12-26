@@ -1,6 +1,6 @@
+import React, { useCallback } from 'react';
 import { ApolloError } from 'apollo-client';
 import { Intent } from '@blueprintjs/core';
-import { useCallback } from '@wordpress/element';
 import IconGraphQL from './IconGraphQL';
 
 const useErrorToast = (toaster, hash) =>

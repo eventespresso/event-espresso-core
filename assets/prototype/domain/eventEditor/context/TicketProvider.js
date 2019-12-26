@@ -1,7 +1,7 @@
 /**
  * External imports
  */
-import { createContext } from 'react';
+import React, { createContext } from 'react';
 
 /**
  * External imports

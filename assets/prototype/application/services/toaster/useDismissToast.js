@@ -1,4 +1,4 @@
-import { useCallback } from '@wordpress/element';
+import { useCallback } from 'react';
 
 const useDismissToast = (toaster, hash) =>
 	useCallback(

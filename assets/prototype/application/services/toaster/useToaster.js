@@ -1,4 +1,4 @@
-import { useContext } from '@wordpress/element';
+import { useContext } from 'react';
 import { ToastContext } from '../context/ToastProvider';
 import useDismissToast from './useDismissToast';
 import useErrorToast from './useErrorToast';
