@@ -14,7 +14,7 @@ interface DatesListFilterState {
 	dates: Datetime[];
 	datesSortedBy: DatesSortedBy;
 	displayDates: DisplayDates;
-	setDatesSortedBy: () => void;
+	setDatesSortedBy: (DatesSortedBy) => void;
 	setDisplayDates: () => void;
 	setShowDates: () => void;
 	showDates: ShowDates;
@@ -36,7 +36,7 @@ const useDatesListFilterState = (dates: Datetime[]): DatesListFilterState => {
 	const [state, dispatch] = useReducer(reducer, initialState);
 
 	useEffect(() => {
-		console.log('useDatesListFilterState >>>', state);
+		// console.log('useDatesListFilterState >>>', state);
 	}, [state]);
 
 	const setDatesSortedBy = (datesSortedBy: DatesSortedBy) => {
