@@ -22,7 +22,7 @@
 		"check-engines": "wp-scripts check-engines",
 		"ci:build": "npm run build",
 		"ci:lint": "npm run lint",
-		"ci:test": "npm run test-js",
+		"ci:test": "npm run test-js-ts",
 		"dev": "concurrently \"webpack --config ./config/webpack.dev.js\" \"npm run build:css\"",
 		"dev-w": "concurrently \"webpack --watch --config ./config/webpack.dev.js\" \"npm-watch build:css\"",
 		"dev-editor-w": "concurrently \"cross-env ONLY_EDITOR=true webpack --watch --config ./config/webpack.dev.js\" \"npm-watch build:css\"",
