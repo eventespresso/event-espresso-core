@@ -20,13 +20,12 @@ export const resolverMap: CacheResolverMap = {
 	},
 };
 
-const config: InMemoryCacheConfig = {
+const cacheConfig: InMemoryCacheConfig = {
 	cacheRedirects: resolverMap,
 };
+export const cache = new InMemoryCache(cacheConfig);
 
 export const getClient = () => {
-	const cache = new InMemoryCache(config);
-
 	const link = new HttpLink({
 		uri: graphqlEndpoint || '/graphql',
 		headers: {
