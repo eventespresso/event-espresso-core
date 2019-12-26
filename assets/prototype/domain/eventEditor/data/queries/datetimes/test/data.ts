@@ -1,11 +1,13 @@
 import { GraphQLError } from 'graphql';
 
 import '../../../../types';
+import { Datetime, DatetimeEdge } from '../../../types';
+import { ReadQueryOptions } from '../../types';
 import { GET_DATETIMES } from '../';
 
-const eventId = 100;
+export const eventId: number = 100;
 
-export const request = {
+export const request: ReadQueryOptions = {
 	query: GET_DATETIMES,
 	variables: {
 		where: {
@@ -14,15 +16,15 @@ export const request = {
 	},
 };
 
-export const setup = () => {
+export const setup = (): void => {
 	window.eeEditorEventData = { eventId };
 };
 
-export const cleanup = () => {
+export const cleanup = (): void => {
 	delete window.eeEditorEventData;
 };
 
-export const nodes = [
+export const nodes: Datetime[] = [
 	{
 		id: 'xyz',
 		dbId: 2,
@@ -63,7 +65,7 @@ export const nodes = [
 	},
 ];
 
-export const edge = {
+export const edge: DatetimeEdge = {
 	nodes,
 	__typename: 'EspressoRootQueryDatetimesConnection',
 };
@@ -83,7 +85,12 @@ export const successMocks = [
 
 export const errorMocks = [
 	{
-		request,
+		// modify request to simulate error
+		request: {
+			...request,
+			variables: {},
+		},
 		result: { errors },
+		error: new Error('ERROR!'),
 	},
 ];
