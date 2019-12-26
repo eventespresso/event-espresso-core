@@ -20,6 +20,12 @@ interface DatesListFilterState {
 	showDates: ShowDates;
 }
 
+enum ActionType {
+	'SET_DATES_SORTED_BY' = 'SET_DATES_SORTED_BY',
+	'SET_DISPLAY_DATES' = 'SET_DISPLAY_DATES',
+	'SET_SHOW_DATES' = 'SET_SHOW_DATES',
+}
+
 const useDatesListFilterState = (dates: Datetime[]): DatesListFilterState => {
 	const initialState = {
 		dates,
@@ -35,21 +41,21 @@ const useDatesListFilterState = (dates: Datetime[]): DatesListFilterState => {
 
 	const setDatesSortedBy = (datesSortedBy: DatesSortedBy) => {
 		dispatch({
-			type: 'SET_DATES_SORTED_BY',
+			type: ActionType.SET_DATES_SORTED_BY,
 			datesSortedBy,
 		});
 	};
 
 	const setDisplayDates = (displayDates: DisplayDates) => {
 		dispatch({
-			type: 'SET_DISPLAY_DATES',
+			type: ActionType.SET_DISPLAY_DATES,
 			displayDates,
 		});
 	};
 
 	const setShowDates = (showDates: ShowDates) => {
 		dispatch({
-			type: 'SET_SHOW_DATES',
+			type: ActionType.SET_SHOW_DATES,
 			showDates,
 		});
 	};
@@ -67,15 +73,15 @@ const reducer = (state, action) => {
 	const { datesSortedBy, displayDates, showDates } = action;
 
 	switch (action.type) {
-		case 'SET_DATES_SORTED_BY':
+		case ActionType.SET_DATES_SORTED_BY:
 			filteredDates = filters({ dates: state.dates, show: datesSortedBy });
 
 			return { ...state, datesSortedBy, filteredDates };
 
-		case 'SET_DISPLAY_DATES':
+		case ActionType.SET_DISPLAY_DATES:
 			return { ...state, displayDates };
 
-		case 'SET_SHOW_DATES':
+		case ActionType.SET_SHOW_DATES:
 			return { ...state, showDates };
 
 		default:

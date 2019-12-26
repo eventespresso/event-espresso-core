@@ -4,11 +4,11 @@
 import { useReducer, useEffect } from 'react';
 import { drop, head } from 'ramda';
 
-const CLOSE_ALL = 'CLOSE_ALL';
-const CLOSE_EDITOR = 'CLOSE_EDITOR';
-const OPEN_EDITOR = 'OPEN_EDITOR';
-
-type ActionType = 'CLOSE_ALL' | 'CLOSE_EDITOR' | 'OPEN_EDITOR';
+enum ActionType {
+	'CLOSE_ALL' = 'CLOSE_ALL',
+	'CLOSE_EDITOR' = 'CLOSE_EDITOR',
+	'OPEN_EDITOR' = 'OPEN_EDITOR',
+}
 
 type State = string[];
 
@@ -21,15 +21,15 @@ const reducer = (state: State, action: Action) => {
 	const { editorId } = action;
 
 	switch (action.type) {
-		case CLOSE_EDITOR:
+		case ActionType.CLOSE_EDITOR:
 			if (editorId === head(state)) {
 				const stateWithoutFirstItem = drop(1, state);
 				return stateWithoutFirstItem;
 			}
 			return state;
-		case CLOSE_ALL:
+		case ActionType.CLOSE_ALL:
 			return [];
-		case OPEN_EDITOR:
+		case ActionType.OPEN_EDITOR:
 			if (editorId && !state.includes(editorId)) {
 				return [...state, editorId];
 			}
@@ -49,21 +49,21 @@ const useEditorModalState = () => {
 
 	const openEditor = (editorId: string) => {
 		dispatch({
-			type: OPEN_EDITOR,
+			type: ActionType.OPEN_EDITOR,
 			editorId,
 		});
 	};
 
 	const closeEditor = (editorId: string) => {
 		dispatch({
-			type: CLOSE_EDITOR,
+			type: ActionType.CLOSE_EDITOR,
 			editorId,
 		});
 	};
 
 	const closeAllEditors = () => {
 		dispatch({
-			type: CLOSE_ALL,
+			type: ActionType.CLOSE_ALL,
 		});
 	};
 
