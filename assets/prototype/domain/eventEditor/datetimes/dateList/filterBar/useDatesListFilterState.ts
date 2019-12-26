@@ -7,22 +7,25 @@ import { useReducer, useEffect } from 'react';
  * Internal dependencies
  */
 import { Datetime } from '../../../../eventEditor/data/types';
+import { DatesSortedBy, DisplayDates, ShowDates } from './types';
 import filters from '../../../../shared/predicates/datetimes/filters';
 
 interface DatesListFilterState {
 	dates: Datetime[];
-	datesSortedBy: string;
-	displayDates: string;
+	datesSortedBy: DatesSortedBy;
+	displayDates: DisplayDates;
 	setDatesSortedBy: () => void;
 	setDisplayDates: () => void;
 	setShowDates: () => void;
+	showDates: ShowDates;
 }
 
 const useDatesListFilterState = (dates: Datetime[]): DatesListFilterState => {
 	const initialState = {
 		dates,
-		datesSortedBy: 'chronologically',
-		displayDates: 'start',
+		datesSortedBy: DatesSortedBy.chronologically,
+		displayDates: DisplayDates.start,
+		showDates: ShowDates.all,
 	};
 	const [state, dispatch] = useReducer(reducer, initialState);
 
@@ -30,21 +33,21 @@ const useDatesListFilterState = (dates: Datetime[]): DatesListFilterState => {
 		console.log('useDatesListFilterState >>>', state);
 	}, [state]);
 
-	const setDatesSortedBy = (datesSortedBy) => {
+	const setDatesSortedBy = (datesSortedBy: DatesSortedBy) => {
 		dispatch({
 			type: 'SET_DATES_SORTED_BY',
 			datesSortedBy,
 		});
 	};
 
-	const setDisplayDates = (displayDates) => {
+	const setDisplayDates = (displayDates: DisplayDates) => {
 		dispatch({
 			type: 'SET_DISPLAY_DATES',
 			displayDates,
 		});
 	};
 
-	const setShowDates = (showDates) => {
+	const setShowDates = (showDates: ShowDates) => {
 		dispatch({
 			type: 'SET_SHOW_DATES',
 			showDates,
