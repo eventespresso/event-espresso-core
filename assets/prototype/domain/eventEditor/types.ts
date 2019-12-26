@@ -14,11 +14,15 @@ export interface GQLDOMData {
 	relations?: RelationalData;
 }
 
+export interface EEJSData {
+	data: JsDataProps;
+}
+
 declare global {
 	interface Window {
 		eeEditorEventData: EditorDOMData;
 		eeEditorGQLData: GQLDOMData;
-		eejsdata: JsDataProps;
+		eejsdata: EEJSData;
 		graphqlEndpoint: string;
 	}
 }
