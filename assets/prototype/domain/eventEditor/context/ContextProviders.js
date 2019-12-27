@@ -1,6 +1,6 @@
 import React from 'react';
 import { ApolloProvider } from '@apollo/react-hooks';
-import { MockedProvider, MockedResponse } from '@apollo/react-testing';
+import { MockedProvider } from '@apollo/react-testing';
 /* Internal dependencies */
 import { getClient, cache } from '../../../infrastructure/services/apollo/Apollo';
 import { ToastProvider } from '../../../application/services/context/ToastProvider';
@@ -40,7 +40,7 @@ export const CommonProviders = ({ children }) => (
 	</ToastProvider>
 );
 
-export const ApolloMockedProvider = (mocks: MockedResponse[] = []) => ({ children }) => {
+export const ApolloMockedProvider = (mocks = []) => ({ children }) => {
 	return (
 		<MockedProvider mocks={mocks} cache={cache}>
 			<CommonProviders>{children}</CommonProviders>
