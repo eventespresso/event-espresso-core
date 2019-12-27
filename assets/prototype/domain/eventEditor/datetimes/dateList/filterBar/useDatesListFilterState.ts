@@ -24,9 +24,9 @@ interface DatesListFilterState {
 }
 
 enum ActionType {
-	'SET_DATES_SORTED_BY' = 'SET_DATES_SORTED_BY',
-	'SET_DISPLAY_DATES' = 'SET_DISPLAY_DATES',
-	'SET_SHOW_DATES' = 'SET_SHOW_DATES',
+	SET_DATES_SORTED_BY = 'SET_DATES_SORTED_BY',
+	SET_DISPLAY_DATES = 'SET_DISPLAY_DATES',
+	SET_SHOW_DATES = 'SET_SHOW_DATES',
 }
 
 const useDatesListFilterState = (dates: Datetime[]): DatesListFilterState => {

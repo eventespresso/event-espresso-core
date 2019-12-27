@@ -31,32 +31,32 @@ interface FilterDates {
  */
 const filters = ({ dates, show = 'on-sale-and-pending' }: FilterDates) => {
 	switch (show) {
-		case ShowDates.all:
-			return allDates(dates);
+		case ShowDates.above50Capacity:
+			return aboveCapacity({ dates, capacity: 50 });
+		case ShowDates.above75Capacity:
+			return aboveCapacity({ dates, capacity: 75 });
+		case ShowDates.above90Capacity:
+			return aboveCapacity({ dates, capacity: 90 });
 		case ShowDates.activeOnly:
 			return activeOnly(dates);
 		case ShowDates.activeUpcoming:
 			return activeUpcoming(dates);
-		case ShowDates.upcomingOnly:
-			return upcomingOnly(dates);
-		case ShowDates.nextActiveUpcomingOnly:
-			return nextActiveUpcomingOnly(dates);
-		case ShowDates.soldOutOnly:
-			return soldOutOnly(dates);
-		case ShowDates.above90Capacity:
-			return aboveCapacity({ dates, capacity: 90 });
-		case ShowDates.above75Capacity:
-			return aboveCapacity({ dates, capacity: 75 });
-		case ShowDates.above50Capacity:
-			return aboveCapacity({ dates, capacity: 50 });
+		case ShowDates.all:
+			return allDates(dates);
 		case ShowDates.below50Capacity:
 			return belowCapacity({ dates, capacity: 50 });
-		case ShowDates.recentlyExpiredOnly:
-			return recentlyExpiredOnly(dates);
 		case ShowDates.expiredOnly:
 			return expiredOnly(dates);
+		case ShowDates.nextActiveUpcomingOnly:
+			return nextActiveUpcomingOnly(dates);
+		case ShowDates.recentlyExpiredOnly:
+			return recentlyExpiredOnly(dates);
+		case ShowDates.soldOutOnly:
+			return soldOutOnly(dates);
 		case ShowDates.trashedOnly:
 			return trashedOnly(dates);
+		case ShowDates.upcomingOnly:
+			return upcomingOnly(dates);
 	}
 
 	return dates;
