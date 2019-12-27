@@ -3,8 +3,9 @@ import { useApolloClient } from '@apollo/react-hooks';
 import { renderHook } from '@testing-library/react-hooks';
 
 import useDatetimes from '../useDatetimes';
-import contextWrapper from './contextWrapper';
-import { successMocks, setup, cleanup, nodes, request, edge } from './data';
+import useDatetimeQueryOptions from '../useDatetimeQueryOptions';
+import { ApolloMockedProvider } from '../../../../context/ContextProviders';
+import { successMocks, setup, cleanup, nodes, edge } from './data';
 import { useStatus, TypeName } from '../../../../../../application/services/apollo/status';
 
 beforeEach(setup);
@@ -13,7 +14,15 @@ afterEach(cleanup);
 
 describe('useDatetimes()', () => {
 	it('checks for the empty datetimes', () => {
-		const wrapper = contextWrapper(successMocks);
+		/* Set query options and the wrapper */
+		const {
+			result: { current: request },
+		} = renderHook(() => useDatetimeQueryOptions(), {
+			wrapper: ApolloMockedProvider(),
+		});
+		const wrapper = ApolloMockedProvider(successMocks.map((mock) => ({ ...mock, request })));
+		/* Set query options and the wrapper */
+
 		const { result } = renderHook(
 			() => {
 				const { setIsLoaded } = useStatus();
@@ -29,7 +38,15 @@ describe('useDatetimes()', () => {
 	});
 
 	it('checks for the updated datetimes cache', () => {
-		const wrapper = contextWrapper(successMocks);
+		/* Set query options and the wrapper */
+		const {
+			result: { current: request },
+		} = renderHook(() => useDatetimeQueryOptions(), {
+			wrapper: ApolloMockedProvider(),
+		});
+		const wrapper = ApolloMockedProvider(successMocks.map((mock) => ({ ...mock, request })));
+		/* Set query options and the wrapper */
+
 		const { result } = renderHook(
 			() => {
 				// init hooks

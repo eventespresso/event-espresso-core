@@ -1,7 +1,8 @@
 import { renderHook } from '@testing-library/react-hooks';
 
 import useFetchDatetimes from '../useFetchDatetimes';
-import contextWrapper from './contextWrapper';
+import useDatetimeQueryOptions from '../useDatetimeQueryOptions';
+import { ApolloMockedProvider } from '../../../../context/ContextProviders';
 import { successMocks, errorMocks, setup, cleanup, nodes } from './data';
 
 beforeEach(setup);
@@ -10,8 +11,17 @@ afterEach(cleanup);
 
 describe('useFetchDatetimes()', () => {
 	it('checks for the error state', async () => {
+		/* Set query options and the wrapper */
+		const {
+			result: { current: request },
+		} = renderHook(() => useDatetimeQueryOptions(), {
+			wrapper: ApolloMockedProvider(),
+		});
+		const wrapper = ApolloMockedProvider(errorMocks.map((mock) => ({ ...mock, request })));
+		/* Set query options and the wrapper */
+
 		const { result, waitForNextUpdate } = renderHook(() => useFetchDatetimes(), {
-			wrapper: contextWrapper(errorMocks),
+			wrapper,
 		});
 
 		await waitForNextUpdate(); // wait for response
@@ -21,8 +31,17 @@ describe('useFetchDatetimes()', () => {
 	});
 
 	it('checks for the loading state', async () => {
+		/* Set query options and the wrapper */
+		const {
+			result: { current: request },
+		} = renderHook(() => useDatetimeQueryOptions(), {
+			wrapper: ApolloMockedProvider(),
+		});
+		const wrapper = ApolloMockedProvider(successMocks.map((mock) => ({ ...mock, request })));
+		/* Set query options and the wrapper */
+
 		const { result, waitForNextUpdate } = renderHook(() => useFetchDatetimes(), {
-			wrapper: contextWrapper(successMocks),
+			wrapper,
 		});
 
 		expect(result.current.loading).toBe(true);
@@ -32,8 +51,17 @@ describe('useFetchDatetimes()', () => {
 	});
 
 	it('checks for the response data', async () => {
+		/* Set query options and the wrapper */
+		const {
+			result: { current: request },
+		} = renderHook(() => useDatetimeQueryOptions(), {
+			wrapper: ApolloMockedProvider(),
+		});
+		const wrapper = ApolloMockedProvider(successMocks.map((mock) => ({ ...mock, request })));
+		/* Set query options and the wrapper */
+
 		const { result } = renderHook(() => useFetchDatetimes(), {
-			wrapper: contextWrapper(successMocks),
+			wrapper,
 		});
 
 		// Data is already written above
@@ -42,8 +70,17 @@ describe('useFetchDatetimes()', () => {
 	});
 
 	it('checks for the entries in response data', async () => {
+		/* Set query options and the wrapper */
+		const {
+			result: { current: request },
+		} = renderHook(() => useDatetimeQueryOptions(), {
+			wrapper: ApolloMockedProvider(),
+		});
+		const wrapper = ApolloMockedProvider(successMocks.map((mock) => ({ ...mock, request })));
+		/* Set query options and the wrapper */
+
 		const { result } = renderHook(() => useFetchDatetimes(), {
-			wrapper: contextWrapper(successMocks),
+			wrapper,
 		});
 
 		expect(result.current.data).toHaveProperty('espressoDatetimes');

@@ -2,8 +2,9 @@ import { useApolloClient } from '@apollo/react-hooks';
 import { renderHook } from '@testing-library/react-hooks';
 
 import useDatetimeItem from '../useDatetimeItem';
-import contextWrapper from './contextWrapper';
-import { successMocks, setup, cleanup, nodes, request, edge } from './data';
+import useDatetimeQueryOptions from '../useDatetimeQueryOptions';
+import { ApolloMockedProvider } from '../../../../context/ContextProviders';
+import { successMocks, setup, cleanup, nodes, edge } from './data';
 
 beforeEach(setup);
 
@@ -11,14 +12,29 @@ afterEach(cleanup);
 
 describe('useDatetimeItem()', () => {
 	it('checks for non existent datetime when the cache is empty', () => {
-		const wrapper = contextWrapper(successMocks);
+		/* Set query options and the wrapper */
+		const {
+			result: { current: request },
+		} = renderHook(() => useDatetimeQueryOptions(), {
+			wrapper: ApolloMockedProvider(),
+		});
+		const wrapper = ApolloMockedProvider(successMocks.map((mock) => ({ ...mock, request })));
+		/* Set query options and the wrapper */
+
 		const { result } = renderHook(() => useDatetimeItem({ id: 'fake-id' }), { wrapper });
 
 		expect(result.current).toBeUndefined();
 	});
 
 	it('checks for non existent datetime when the cache is NOT empty', () => {
-		const wrapper = contextWrapper(successMocks);
+		/* Set query options and the wrapper */
+		const {
+			result: { current: request },
+		} = renderHook(() => useDatetimeQueryOptions(), {
+			wrapper: ApolloMockedProvider(),
+		});
+		const wrapper = ApolloMockedProvider(successMocks.map((mock) => ({ ...mock, request })));
+		/* Set query options and the wrapper */
 
 		const { result } = renderHook(
 			() => {
@@ -41,7 +57,15 @@ describe('useDatetimeItem()', () => {
 	});
 
 	it('checks for an existent datetime', () => {
-		const wrapper = contextWrapper(successMocks);
+		/* Set query options and the wrapper */
+		const {
+			result: { current: request },
+		} = renderHook(() => useDatetimeQueryOptions(), {
+			wrapper: ApolloMockedProvider(),
+		});
+		const wrapper = ApolloMockedProvider(successMocks.map((mock) => ({ ...mock, request })));
+		/* Set query options and the wrapper */
+
 		const existingDatetime = nodes[0];
 		const { result } = renderHook(
 			() => {
