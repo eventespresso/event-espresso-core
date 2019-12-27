@@ -1,34 +1,21 @@
-import React, { useEffect } from 'react';
-import { useApolloClient } from '@apollo/react-hooks';
 import { renderHook } from '@testing-library/react-hooks';
 
 import useDatetimeIds from '../useDatetimeIds';
-import useDatetimeQueryOptions from '../useDatetimeQueryOptions';
 import { ApolloMockedProvider } from '../../../../context/ContextProviders';
-import { successMocks, setup, cleanup, nodes, edge } from './data';
-import { useStatus, TypeName } from '../../../../../../application/services/apollo/status';
+import { setup, cleanup, nodes } from './data';
+import useInitDatetimeStatus from './useInitDatetimeStatus';
+import useInitDatetimeTestCache from './useInitDatetimeTestCache';
 
-beforeEach(setup);
+beforeAll(setup);
 
-afterEach(cleanup);
+afterAll(cleanup);
 
 describe('useDatetimeIds()', () => {
-	it('checks for the empty datetime IDs', async () => {
-		/* Set query options and the wrapper */
-		const {
-			result: { current: request },
-		} = renderHook(() => useDatetimeQueryOptions(), {
-			wrapper: ApolloMockedProvider(),
-		});
-		const wrapper = ApolloMockedProvider(successMocks.map((mock) => ({ ...mock, request })));
-		/* Set query options and the wrapper */
-
+	const wrapper = ApolloMockedProvider();
+	it('checks for the empty datetime IDs', () => {
 		const { result } = renderHook(
 			() => {
-				const { setIsLoaded } = useStatus();
-				useEffect(() => {
-					setIsLoaded(TypeName.datetimes, true);
-				}, []);
+				useInitDatetimeStatus();
 				return useDatetimeIds();
 			},
 			{ wrapper }
@@ -38,32 +25,9 @@ describe('useDatetimeIds()', () => {
 	});
 
 	it('checks for datetime IDs after the cache is updated', async () => {
-		/* Set query options and the wrapper */
-		const {
-			result: { current: request },
-		} = renderHook(() => useDatetimeQueryOptions(), {
-			wrapper: ApolloMockedProvider(),
-		});
-		const wrapper = ApolloMockedProvider(successMocks.map((mock) => ({ ...mock, request })));
-		/* Set query options and the wrapper */
-
 		const { result } = renderHook(
 			() => {
-				// init hooks
-				const client = useApolloClient();
-				const { setIsLoaded } = useStatus();
-				const writeQueryOptions = {
-					...request,
-					data: {
-						espressoDatetimes: edge,
-					},
-				};
-				// write the test data to cache
-				client.writeQuery(writeQueryOptions);
-				// make sure the status flags is set for useDatetimes to work
-				useEffect(() => {
-					setIsLoaded(TypeName.datetimes, true);
-				}, []);
+				useInitDatetimeTestCache();
 				return useDatetimeIds();
 			},
 			{ wrapper }

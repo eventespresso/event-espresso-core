@@ -5,9 +5,9 @@ import useDatetimeQueryOptions from '../useDatetimeQueryOptions';
 import { ApolloMockedProvider } from '../../../../context/ContextProviders';
 import { successMocks, errorMocks, setup, cleanup, nodes } from './data';
 
-beforeEach(setup);
+beforeAll(setup);
 
-afterEach(cleanup);
+afterAll(cleanup);
 
 describe('useFetchDatetimes()', () => {
 	it('checks for the error state', async () => {
@@ -26,7 +26,6 @@ describe('useFetchDatetimes()', () => {
 
 		await waitForNextUpdate(); // wait for response
 
-		// await waitForNextUpdate(); // wait for response
 		expect(result.current.error).toBeDefined();
 	});
 
