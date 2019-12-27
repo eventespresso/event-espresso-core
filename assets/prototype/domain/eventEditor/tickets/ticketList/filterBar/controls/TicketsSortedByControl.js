@@ -25,15 +25,15 @@ const TicketsSortedByControl = ({ setTicketsSortedBy, ticketsSortedBy }) => {
 						label: __('chronologically', 'event_espresso'),
 					},
 					{
-						value: 'by-name',
+						value: 'byName',
 						label: __('by ticket name', 'event_espresso'),
 					},
 					{
-						value: 'by-id',
+						value: 'byId',
 						label: __('by ticket ID', 'event_espresso'),
 					},
 					{
-						value: 'by-order',
+						value: 'byOrder',
 						label: __('by custom order', 'event_espresso'),
 					},
 				]}

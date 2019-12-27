@@ -1,3 +1,8 @@
+/**
+ * Internal dependencies
+ */
+import { ShowDates } from '../../../../eventEditor/data/date/types';
+
 import aboveCapacity from './aboveCapacity';
 import activeOnly from './activeOnly';
 import activeUpcoming from './activeUpcoming';
@@ -26,32 +31,32 @@ interface FilterDates {
  */
 const filters = ({ dates, show = 'on-sale-and-pending' }: FilterDates) => {
 	switch (show) {
-		case 'all':
-			return allDates(dates);
-		case 'active-upcoming':
-			return activeUpcoming(dates);
-		case 'active-only':
-			return activeOnly(dates);
-		case 'upcoming-only':
-			return upcomingOnly(dates);
-		case 'next-active-upcoming-only':
-			return nextActiveUpcomingOnly(dates);
-		case 'sold-out-only':
-			return soldOutOnly(dates);
-		case 'above-90-capacity':
-			return aboveCapacity({ dates, capacity: 90 });
-		case 'above-75-capacity':
-			return aboveCapacity({ dates, capacity: 75 });
-		case 'above-50-capacity':
+		case ShowDates.above50Capacity:
 			return aboveCapacity({ dates, capacity: 50 });
-		case 'below-50-capacity':
+		case ShowDates.above75Capacity:
+			return aboveCapacity({ dates, capacity: 75 });
+		case ShowDates.above90Capacity:
+			return aboveCapacity({ dates, capacity: 90 });
+		case ShowDates.activeOnly:
+			return activeOnly(dates);
+		case ShowDates.activeUpcoming:
+			return activeUpcoming(dates);
+		case ShowDates.all:
+			return allDates(dates);
+		case ShowDates.below50Capacity:
 			return belowCapacity({ dates, capacity: 50 });
-		case 'recently-expired-only':
-			return recentlyExpiredOnly(dates);
-		case 'expired-only':
+		case ShowDates.expiredOnly:
 			return expiredOnly(dates);
-		case 'trashed-only':
+		case ShowDates.nextActiveUpcomingOnly:
+			return nextActiveUpcomingOnly(dates);
+		case ShowDates.recentlyExpiredOnly:
+			return recentlyExpiredOnly(dates);
+		case ShowDates.soldOutOnly:
+			return soldOutOnly(dates);
+		case ShowDates.trashedOnly:
 			return trashedOnly(dates);
+		case ShowDates.upcomingOnly:
+			return upcomingOnly(dates);
 	}
 
 	return dates;

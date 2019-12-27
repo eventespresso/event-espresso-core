@@ -1,8 +1,8 @@
 /**
  * Internal dependencies
  */
-import { Datetime } from '../../../../eventEditor/data/types';
-import capacityAtOrAbove from '../capacityAtOrAbove';
+import { Datetime } from '../../../../../eventEditor/data/types';
+import capacityAtOrAbove from '../../capacityAtOrAbove';
 
 type AboveCapacityProps = {
 	capacity: number;

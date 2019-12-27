@@ -1,6 +1,7 @@
+import { Datetime } from '../../../domain/eventEditor/data/types';
 import entityTextFieldSearch from './index';
 
-const datetimes = [
+const datetimes: Datetime[] = [
 	{
 		id: 'RGF0ZXRpbWU6ODM=',
 		dbId: 83,
