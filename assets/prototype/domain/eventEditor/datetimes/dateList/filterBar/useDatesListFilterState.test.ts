@@ -1,5 +1,6 @@
 import { act, renderHook } from '@testing-library/react-hooks';
 import * as R from 'ramda';
+import { formatISO, subWeeks } from 'date-fns';
 import { Datetime } from '../../../data/types';
 import { DatesSortedBy, DisplayDates, ShowDates } from '../../../data/date/types';
 
@@ -7,9 +8,29 @@ import useDatesListFilterState from './useDatesListFilterState';
 
 const datetimes: Datetime[] = [
 	{
+		id: 'WGF0ZXRpbWU6ODM=',
+		dbId: 83,
+		capacity: 10,
+		description: '',
+		endDate: '2000-01-12T17:00:00+00:00',
+		isActive: true,
+		isDeleted: true,
+		isExpired: false,
+		isPrimary: false,
+		isSoldOut: false,
+		isUpcoming: true,
+		length: 32400,
+		name: 'test',
+		order: 1,
+		reserved: 0,
+		sold: 10,
+		startDate: '2000-01-12T08:00:00+00:00',
+		__typename: 'EspressoDatetime',
+	},
+	{
 		id: 'RGF0ZXRpbWU6ODM=',
 		dbId: 83,
-		capacity: -1,
+		capacity: 10,
 		description: '',
 		endDate: '2020-01-12T17:00:00+00:00',
 		isActive: false,
@@ -21,14 +42,14 @@ const datetimes: Datetime[] = [
 		name: 'test',
 		order: 1,
 		reserved: 0,
-		sold: 0,
+		sold: 10,
 		startDate: '2020-01-12T08:00:00+00:00',
 		__typename: 'EspressoDatetime',
 	},
 	{
 		id: 'RGF0ZXRpbWU6ODU=',
 		dbId: 85,
-		capacity: -1,
+		capacity: 20,
 		description: 'test desc',
 		endDate: '2019-12-18T11:31:00+00:00',
 		isActive: false,
@@ -40,27 +61,29 @@ const datetimes: Datetime[] = [
 		name: 'just another datetime',
 		order: -2,
 		reserved: 0,
-		sold: 0,
+		sold: 20,
 		startDate: '2019-12-18T11:31:00+00:00',
+		status: 'ACTIVE',
 		__typename: 'EspressoDatetime',
 	},
 	{
 		id: 'RGF0ZXRpbWU6ODU=',
-		dbId: 85,
-		capacity: -1,
+		dbId: 87,
+		capacity: 100,
 		description: 'test desc',
 		endDate: '2019-12-18T11:31:00+00:00',
-		isActive: false,
+		isActive: true,
 		isExpired: true,
 		isPrimary: false,
-		isSoldOut: false,
+		isSoldOut: true,
 		isUpcoming: false,
 		length: 0,
 		name: 'another title',
 		order: -1,
 		reserved: 0,
-		sold: 0,
+		sold: 76,
 		startDate: '2009-12-18T11:31:00+00:00',
+		status: 'ACTIVE',
 		__typename: 'EspressoDatetime',
 	},
 ];
@@ -143,27 +166,147 @@ test('should update processedDates to reflect changes made by invoking setDatesS
 		result.current.setDatesSortedBy(DatesSortedBy.chronologically);
 	});
 	const startDates = R.map(R.view(R.lensProp('startDate')))(result.current.processedDates);
-	const expectedstartDates = ['2009-12-18T11:31:00+00:00', '2019-12-18T11:31:00+00:00', '2020-01-12T08:00:00+00:00'];
+	const expectedstartDates = [
+		'2000-01-12T08:00:00+00:00',
+		'2009-12-18T11:31:00+00:00',
+		'2019-12-18T11:31:00+00:00',
+		'2020-01-12T08:00:00+00:00',
+	];
 	expect(startDates).toEqual(expectedstartDates);
 
 	act(() => {
 		result.current.setDatesSortedBy(DatesSortedBy['by-id']);
 	});
 	const ids = R.map(R.view(R.lensProp('id')))(result.current.processedDates);
-	const expectedIds = ['RGF0ZXRpbWU6ODM=', 'RGF0ZXRpbWU6ODU=', 'RGF0ZXRpbWU6ODU='];
+	const expectedIds = ['RGF0ZXRpbWU6ODM=', 'RGF0ZXRpbWU6ODU=', 'RGF0ZXRpbWU6ODU=', 'WGF0ZXRpbWU6ODM='];
 	expect(ids).toEqual(expectedIds);
 
 	act(() => {
 		result.current.setDatesSortedBy(DatesSortedBy['by-name']);
 	});
 	const names = R.map(R.view(R.lensProp('name')))(result.current.processedDates);
-	const expectedNames = ['another title', 'just another datetime', 'test'];
+	const expectedNames = ['another title', 'just another datetime', 'test', 'test'];
 	expect(names).toEqual(expectedNames);
 
 	act(() => {
 		result.current.setDatesSortedBy(DatesSortedBy['by-order']);
 	});
 	const datesOrder = R.map(R.view(R.lensProp('order')))(result.current.processedDates);
-	const expectedDatesOrder = [-2, -1, 1];
+	const expectedDatesOrder = [-2, -1, 1, 1];
 	expect(datesOrder).toEqual(expectedDatesOrder);
+});
+
+test('should update processedDates to reflect changes made by invoking setShowDates with active-only filter', () => {
+	const { result } = renderHook(() => useDatesListFilterState(datetimes));
+
+	act(() => {
+		result.current.setShowDates(ShowDates['active-only']);
+	});
+	const dates = result.current.processedDates;
+
+	expect(dates.length).toBe(2);
+	expect(dates[0].isActive).toBe(true);
+	expect(dates[1].isActive).toBe(true);
+});
+
+test('should update processedDates to reflect changes made by invoking setShowDates with active-upcoming filter', () => {
+	const { result } = renderHook(() => useDatesListFilterState(datetimes));
+
+	act(() => {
+		result.current.setShowDates(ShowDates['active-upcoming']);
+	});
+	const dates = result.current.processedDates;
+
+	expect(dates.length).toBe(3);
+	expect(dates[0].isActive).toBe(true);
+	expect(dates[0].isUpcoming).toBe(true);
+	expect(dates[1].isActive).toBe(true);
+	expect(dates[1].isUpcoming).toBe(false);
+	expect(dates[2].isActive).toBe(false);
+	expect(dates[2].isUpcoming).toBe(true);
+});
+
+test('should update processedDates to reflect changes made by invoking setShowDates with upcoming-only filter', () => {
+	const { result } = renderHook(() => useDatesListFilterState(datetimes));
+
+	act(() => {
+		result.current.setShowDates(ShowDates['upcoming-only']);
+	});
+	const dates = result.current.processedDates;
+
+	expect(dates.length).toBe(2);
+	expect(dates[0].isUpcoming).toBe(true);
+	expect(dates[1].isUpcoming).toBe(true);
+});
+
+test('should update processedDates to reflect changes made by invoking setShowDates with next-active-upcoming-only filter', () => {
+	const { result } = renderHook(() => useDatesListFilterState(datetimes));
+
+	act(() => {
+		result.current.setShowDates(ShowDates['next-active-upcoming-only']);
+	});
+	const dates = result.current.processedDates;
+
+	expect(dates.length).toBe(1);
+	expect(dates[0].isActive).toBe(true);
+	expect(dates[0].isUpcoming).toBe(true);
+});
+
+test('should update processedDates to reflect changes made by invoking setShowDates with sold-out-only filter', () => {
+	const { result } = renderHook(() => useDatesListFilterState(datetimes));
+
+	act(() => {
+		result.current.setShowDates(ShowDates['sold-out-only']);
+	});
+	const dates = result.current.processedDates;
+
+	expect(dates.length).toBe(2);
+	expect(dates[0].isSoldOut).toBe(true);
+	expect(dates[1].capacity).toBe(20);
+	expect(dates[1].sold).toBe(20);
+});
+
+test('should update processedDates to reflect changes made by invoking setShowDates with expired-only filter', () => {
+	const { result } = renderHook(() => useDatesListFilterState(datetimes));
+
+	act(() => {
+		result.current.setShowDates(ShowDates['expired-only']);
+	});
+	const dates = result.current.processedDates;
+
+	expect(dates.length).toBe(2);
+	expect(dates[0].isExpired).toBe(true);
+	expect(dates[1].isExpired).toBe(true);
+});
+
+test('should update processedDates to reflect changes made by invoking setShowDates with recently-expired-only filter', () => {
+	const rawDates = [
+		{
+			id: 'WGF0ZXRpbWU6ODM=',
+			endDate: subWeeks(new Date(), 1),
+		},
+		{
+			id: 'RGF0ZXRpbWU6ODM=',
+			endDate: subWeeks(new Date(), 3),
+		},
+		{
+			id: 'RGF0ZXRpbWU6ODM=',
+			endDate: subWeeks(new Date(), 6),
+		},
+		{
+			id: 'RGF0ZXRpbWU6ODM=',
+			endDate: subWeeks(new Date(), 8),
+		},
+	];
+
+	const dates: Datetime[] = rawDates.map((date) => ({ ...date, endDate: formatISO(date.endDate) }));
+
+	const { result } = renderHook(() => useDatesListFilterState(dates));
+
+	act(() => {
+		result.current.setShowDates(ShowDates['recently-expired-only']);
+	});
+	const resultDates = result.current.processedDates;
+
+	expect(resultDates.length).toBe(2);
 });

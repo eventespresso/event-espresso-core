@@ -3,8 +3,6 @@
  */
 import { Datetime } from '../../../../eventEditor/data/types';
 
-const activeUpcoming = (dates: Datetime[]) => {
-	return dates.filter(({ isActive }) => isActive);
-};
+const activeOnly = (dates: Datetime[]) => dates.filter(({ isActive }) => isActive);
 
-export default activeUpcoming;
+export default activeOnly;

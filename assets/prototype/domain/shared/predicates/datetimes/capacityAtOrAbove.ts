@@ -3,7 +3,7 @@
  */
 import { Datetime } from '../../../eventEditor/data/types';
 import validFiniteCapacityLimit from './validFiniteCapacityLimit';
-import validSold from './validStatus';
+import validSold from './validSold';
 
 /**
  * @param {Object} date event date object

@@ -34,7 +34,7 @@ const useDatesListFilterState = (dates: Datetime[]): DatesListFilterState => {
 		dates,
 		datesSortedBy: DatesSortedBy.chronologically,
 		displayDates: DisplayDates.start,
-		filteredDates: [],
+		processedDates: [],
 		showDates: ShowDates.all,
 	};
 	const [state, dispatch] = useReducer(reducer, initialState);
@@ -89,13 +89,17 @@ const reducer = (state, action: Action) => {
 
 			return { ...state, datesSortedBy, processedDates };
 
+		/**
+		 * On SET_DISPLAY_DATES dates are not processed.
+		 * The logic related to what needs to be shown is applied in EventDateCalendarDate.
+		 */
 		case ActionType.SET_DISPLAY_DATES:
 			return { ...state, displayDates };
 
 		case ActionType.SET_SHOW_DATES:
-			processedDates = filters({ dates: state.dates, show: datesSortedBy });
+			processedDates = filters({ dates: state.dates, show: showDates });
 
-			return { ...state, showDates };
+			return { ...state, processedDates, showDates };
 
 		default:
 			throw new Error('Unexpected action');

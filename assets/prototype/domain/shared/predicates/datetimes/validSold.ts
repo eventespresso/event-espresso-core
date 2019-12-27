@@ -13,7 +13,7 @@ import { Datetime } from '../../../eventEditor/data/types';
  * @return {boolean} true if status property is valid
  */
 const validSold = (date: Datetime) => {
-	return is(String, date.status);
+	return is(String, date.sold) || is(Number, date.sold);
 };
 
 export default validSold;
