@@ -25,15 +25,15 @@ const DatesSortedByControl = ({ datesSortedBy, setDatesSortedBy }) => {
 						label: __('chronologically', 'event_espresso'),
 					},
 					{
-						value: 'by-name',
+						value: 'byName',
 						label: __('by date name', 'event_espresso'),
 					},
 					{
-						value: 'by-id',
+						value: 'byId',
 						label: __('by date ID', 'event_espresso'),
 					},
 					{
-						value: 'by-order',
+						value: 'byOrder',
 						label: __('by custom order', 'event_espresso'),
 					},
 				]}

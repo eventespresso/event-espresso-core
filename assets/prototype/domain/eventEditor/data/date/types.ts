@@ -1,8 +1,8 @@
 export enum DatesSortedBy {
 	chronologically = 'chronologically',
-	'by-name' = 'by-name',
-	'by-id' = 'by-id',
-	'by-order' = 'by-order',
+	byName = 'byName',
+	byId = 'byId',
+	byOrder = 'byOrder',
 }
 
 export enum DisplayDates {

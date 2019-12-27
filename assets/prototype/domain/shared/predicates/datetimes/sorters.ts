@@ -27,11 +27,11 @@ const sorters = ({ dates, sort = DatesSortedBy.chronologically }: SortDates) => 
 			return dates.sort(({ startDate: dateLeft }, { startDate: dateRight }) =>
 				compareAsc(parseISO(dateLeft), parseISO(dateRight))
 			);
-		case DatesSortedBy['by-id']:
+		case DatesSortedBy.byId:
 			return sortBy(prop('id'))(dates);
-		case DatesSortedBy['by-name']:
+		case DatesSortedBy.byName:
 			return sortBy(prop('name'))(dates);
-		case DatesSortedBy['by-order']:
+		case DatesSortedBy.byOrder:
 			return sortBy(prop('order'))(dates);
 	}
 

@@ -106,19 +106,19 @@ test('should update datesSortedBy by invoking setDatesSortedBy with correspondin
 	const { result } = renderHook(() => useDatesListFilterState(datetimes));
 
 	act(() => {
-		result.current.setDatesSortedBy(DatesSortedBy['by-name']);
+		result.current.setDatesSortedBy(DatesSortedBy.byName);
 	});
-	expect(result.current.datesSortedBy).toBe('by-name');
+	expect(result.current.datesSortedBy).toBe('byName');
 
 	act(() => {
-		result.current.setDatesSortedBy(DatesSortedBy['by-id']);
+		result.current.setDatesSortedBy(DatesSortedBy.byId);
 	});
-	expect(result.current.datesSortedBy).toBe('by-id');
+	expect(result.current.datesSortedBy).toBe('byId');
 
 	act(() => {
-		result.current.setDatesSortedBy(DatesSortedBy['by-order']);
+		result.current.setDatesSortedBy(DatesSortedBy.byOrder);
 	});
-	expect(result.current.datesSortedBy).toBe('by-order');
+	expect(result.current.datesSortedBy).toBe('byOrder');
 
 	act(() => {
 		result.current.setDatesSortedBy(DatesSortedBy.chronologically);
@@ -154,9 +154,9 @@ test('should update showDates by invoking setShowDates with corresponding accept
 	expect(result.current.showDates).toBe('all');
 
 	act(() => {
-		result.current.setShowDates(ShowDates['upcoming-only']);
+		result.current.setShowDates(ShowDates.upcomingOnly);
 	});
-	expect(result.current.showDates).toBe('upcoming-only');
+	expect(result.current.showDates).toBe('upcomingOnly');
 });
 
 test('should update processedDates to reflect changes made by invoking setDatesSortedBy', () => {
@@ -175,21 +175,21 @@ test('should update processedDates to reflect changes made by invoking setDatesS
 	expect(startDates).toEqual(expectedstartDates);
 
 	act(() => {
-		result.current.setDatesSortedBy(DatesSortedBy['by-id']);
+		result.current.setDatesSortedBy(DatesSortedBy.byId);
 	});
 	const ids = R.map(R.view(R.lensProp('id')))(result.current.processedDates);
 	const expectedIds = ['RGF0ZXRpbWU6ODM=', 'RGF0ZXRpbWU6ODU=', 'RGF0ZXRpbWU6ODU=', 'WGF0ZXRpbWU6ODM='];
 	expect(ids).toEqual(expectedIds);
 
 	act(() => {
-		result.current.setDatesSortedBy(DatesSortedBy['by-name']);
+		result.current.setDatesSortedBy(DatesSortedBy.byName);
 	});
 	const names = R.map(R.view(R.lensProp('name')))(result.current.processedDates);
 	const expectedNames = ['another title', 'just another datetime', 'test', 'test'];
 	expect(names).toEqual(expectedNames);
 
 	act(() => {
-		result.current.setDatesSortedBy(DatesSortedBy['by-order']);
+		result.current.setDatesSortedBy(DatesSortedBy.byOrder);
 	});
 	const datesOrder = R.map(R.view(R.lensProp('order')))(result.current.processedDates);
 	const expectedDatesOrder = [-2, -1, 1, 1];
@@ -287,12 +287,11 @@ test('should update processedDates to reflect changes made by invoking setShowDa
 	});
 	const dates = result.current.processedDates;
 
-	expect(dates.length).toBe(2);
-	expect(dates[0].isExpired).toBe(true);
-	expect(dates[1].isExpired).toBe(true);
+	expect(dates.length).toBe(1);
+	expect(dates[0].isDeleted).toBe(true);
 });
 
-test('should update processedDates to reflect changes made by invoking setShowDates with recently-expired-only filter', () => {
+test('should update processedDates to reflect changes made by invoking setShowDates with recentlyExpiredOnly filter', () => {
 	const rawDates = [
 		{
 			id: 'WGF0ZXRpbWU6ODM=',
@@ -317,7 +316,7 @@ test('should update processedDates to reflect changes made by invoking setShowDa
 	const { result } = renderHook(() => useDatesListFilterState(dates));
 
 	act(() => {
-		result.current.setShowDates(ShowDates['recently-expired-only']);
+		result.current.setShowDates(ShowDates.recentlyExpiredOnly);
 	});
 	const resultDates = result.current.processedDates;
 
