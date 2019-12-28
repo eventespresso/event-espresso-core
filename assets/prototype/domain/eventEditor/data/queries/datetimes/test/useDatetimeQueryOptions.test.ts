@@ -9,7 +9,7 @@ beforeEach(setup);
 afterEach(cleanup);
 
 describe('useDatetimeQueryOptions()', () => {
-	it('checks if the eventId for query is correct', () => {
+	it('checks if the query operation variables are correct', () => {
 		const wrapper = ApolloMockedProvider();
 		const { result } = renderHook(() => useDatetimeQueryOptions(), { wrapper });
 
