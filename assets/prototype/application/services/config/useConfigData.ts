@@ -3,7 +3,6 @@ import {
 	Currency,
 	CurrencyProps,
 	CurrentUser,
-	GeneralSettings,
 	CurrentUserProps,
 	DateTimeFormats,
 	DateTimeFormatsProps,

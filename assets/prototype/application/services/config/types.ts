@@ -45,3 +45,8 @@ export type ConfigDataProps = {
 	siteUrl: SiteUrlProps;
 	timezone: TimezoneProps;
 };
+
+export type Config = {
+	config: ConfigDataProps;
+	setConfig: React.Dispatch<React.SetStateAction<ConfigDataProps>>;
+};
