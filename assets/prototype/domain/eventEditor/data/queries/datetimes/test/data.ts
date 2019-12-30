@@ -3,18 +3,10 @@ import { GraphQLError } from 'graphql';
 import '../../../../types';
 import { Datetime, DatetimeEdge } from '../../../types';
 import { ReadQueryOptions } from '../../types';
-import { GET_DATETIMES } from '../';
 
 export const eventId: number = 100;
 
-export const request: ReadQueryOptions = {
-	query: GET_DATETIMES,
-	variables: {
-		where: {
-			eventId,
-		},
-	},
-};
+export const request: ReadQueryOptions = null; // to be generated via Query Options hook
 
 export const setup = (): void => {
 	window.eeEditorEventData = { eventId };

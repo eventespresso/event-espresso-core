@@ -1,37 +1,33 @@
-import { useApolloClient } from '@apollo/react-hooks';
 import { renderHook } from '@testing-library/react-hooks';
 
 import useDatetimeItem from '../useDatetimeItem';
-import contextWrapper from './contextWrapper';
-import { successMocks, setup, cleanup, nodes, request, edge } from './data';
+import { ApolloMockedProvider } from '../../../../context/ContextProviders';
+import { setup, cleanup, nodes } from './data';
+import useInitDatetimeStatus from './useInitDatetimeStatus';
+import useInitDatetimeTestCache from './useInitDatetimeTestCache';
 
-beforeEach(setup);
+beforeAll(setup);
 
-afterEach(cleanup);
+afterAll(cleanup);
 
 describe('useDatetimeItem()', () => {
+	const wrapper = ApolloMockedProvider();
 	it('checks for non existent datetime when the cache is empty', () => {
-		const wrapper = contextWrapper(successMocks);
-		const { result } = renderHook(() => useDatetimeItem({ id: 'fake-id' }), { wrapper });
+		const { result } = renderHook(
+			() => {
+				useInitDatetimeStatus();
+				return useDatetimeItem({ id: 'fake-id' });
+			},
+			{ wrapper }
+		);
 
 		expect(result.current).toBeUndefined();
 	});
 
 	it('checks for non existent datetime when the cache is NOT empty', () => {
-		const wrapper = contextWrapper(successMocks);
-
 		const { result } = renderHook(
 			() => {
-				// init hooks
-				const client = useApolloClient();
-				const writeQueryOptions = {
-					...request,
-					data: {
-						espressoDatetimes: edge,
-					},
-				};
-				// write the test data to cache
-				client.writeQuery(writeQueryOptions);
+				useInitDatetimeTestCache();
 				return useDatetimeItem({ id: 'fake-id' });
 			},
 			{ wrapper }
@@ -41,20 +37,10 @@ describe('useDatetimeItem()', () => {
 	});
 
 	it('checks for an existent datetime', () => {
-		const wrapper = contextWrapper(successMocks);
 		const existingDatetime = nodes[0];
 		const { result } = renderHook(
 			() => {
-				// init hooks
-				const client = useApolloClient();
-				const writeQueryOptions = {
-					...request,
-					data: {
-						espressoDatetimes: edge,
-					},
-				};
-				// write the test data to cache
-				client.writeQuery(writeQueryOptions);
+				useInitDatetimeTestCache();
 				return useDatetimeItem({ id: existingDatetime.id });
 			},
 			{ wrapper }

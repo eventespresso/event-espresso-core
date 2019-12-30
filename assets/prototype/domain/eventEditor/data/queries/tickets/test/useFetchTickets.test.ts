@@ -1,28 +1,41 @@
 import { renderHook } from '@testing-library/react-hooks';
 
-import useFetchDatetimes from '../useFetchDatetimes';
-import useDatetimeQueryOptions from '../useDatetimeQueryOptions';
+import useFetchTickets from '../useFetchTickets';
+import useTicketQueryOptions from '../useTicketQueryOptions';
 import { ApolloMockedProvider } from '../../../../context/ContextProviders';
 import { successMocks, errorMocks, setup, cleanup, nodes } from './data';
+import useInitDatetimeTestCache from '../../datetimes/test/useInitDatetimeTestCache';
 
 beforeAll(setup);
 
 afterAll(cleanup);
 
-describe('useFetchDatetimes()', () => {
+describe('useFetchTickets()', () => {
 	it('checks for the error state', async () => {
 		/* Set query options and the wrapper */
 		const {
 			result: { current: request },
-		} = renderHook(() => useDatetimeQueryOptions(), {
-			wrapper: ApolloMockedProvider(),
-		});
+		} = renderHook(
+			() => {
+				useInitDatetimeTestCache();
+				return useTicketQueryOptions();
+			},
+			{
+				wrapper: ApolloMockedProvider(),
+			}
+		);
 		const wrapper = ApolloMockedProvider(errorMocks.map((mock) => ({ ...mock, request })));
 		/* Set query options and the wrapper */
 
-		const { result, waitForNextUpdate } = renderHook(() => useFetchDatetimes(), {
-			wrapper,
-		});
+		const { result, waitForNextUpdate } = renderHook(
+			() => {
+				useInitDatetimeTestCache();
+				return useFetchTickets();
+			},
+			{
+				wrapper,
+			}
+		);
 
 		await waitForNextUpdate(); // wait for response
 
@@ -33,15 +46,27 @@ describe('useFetchDatetimes()', () => {
 		/* Set query options and the wrapper */
 		const {
 			result: { current: request },
-		} = renderHook(() => useDatetimeQueryOptions(), {
-			wrapper: ApolloMockedProvider(),
-		});
+		} = renderHook(
+			() => {
+				useInitDatetimeTestCache();
+				return useTicketQueryOptions();
+			},
+			{
+				wrapper: ApolloMockedProvider(),
+			}
+		);
 		const wrapper = ApolloMockedProvider(successMocks.map((mock) => ({ ...mock, request })));
 		/* Set query options and the wrapper */
 
-		const { result, waitForNextUpdate } = renderHook(() => useFetchDatetimes(), {
-			wrapper,
-		});
+		const { result, waitForNextUpdate } = renderHook(
+			() => {
+				useInitDatetimeTestCache();
+				return useFetchTickets();
+			},
+			{
+				wrapper,
+			}
+		);
 
 		expect(result.current.loading).toBe(true);
 
@@ -53,15 +78,27 @@ describe('useFetchDatetimes()', () => {
 		/* Set query options and the wrapper */
 		const {
 			result: { current: request },
-		} = renderHook(() => useDatetimeQueryOptions(), {
-			wrapper: ApolloMockedProvider(),
-		});
+		} = renderHook(
+			() => {
+				useInitDatetimeTestCache();
+				return useTicketQueryOptions();
+			},
+			{
+				wrapper: ApolloMockedProvider(),
+			}
+		);
 		const wrapper = ApolloMockedProvider(successMocks.map((mock) => ({ ...mock, request })));
 		/* Set query options and the wrapper */
 
-		const { result } = renderHook(() => useFetchDatetimes(), {
-			wrapper,
-		});
+		const { result } = renderHook(
+			() => {
+				useInitDatetimeTestCache();
+				return useFetchTickets();
+			},
+			{
+				wrapper,
+			}
+		);
 
 		// Data is already written above
 		expect(result.current.data).toBeDefined();
@@ -72,31 +109,43 @@ describe('useFetchDatetimes()', () => {
 		/* Set query options and the wrapper */
 		const {
 			result: { current: request },
-		} = renderHook(() => useDatetimeQueryOptions(), {
-			wrapper: ApolloMockedProvider(),
-		});
+		} = renderHook(
+			() => {
+				useInitDatetimeTestCache();
+				return useTicketQueryOptions();
+			},
+			{
+				wrapper: ApolloMockedProvider(),
+			}
+		);
 		const wrapper = ApolloMockedProvider(successMocks.map((mock) => ({ ...mock, request })));
 		/* Set query options and the wrapper */
 
-		const { result } = renderHook(() => useFetchDatetimes(), {
-			wrapper,
-		});
+		const { result } = renderHook(
+			() => {
+				useInitDatetimeTestCache();
+				return useFetchTickets();
+			},
+			{
+				wrapper,
+			}
+		);
 
-		expect(result.current.data).toHaveProperty('espressoDatetimes');
+		expect(result.current.data).toHaveProperty('espressoTickets');
 
 		// has nodes
-		expect(result.current.data.espressoDatetimes).toHaveProperty('nodes');
+		expect(result.current.data.espressoTickets).toHaveProperty('nodes');
 
 		// nodes is an array with `length` property
-		expect(result.current.data.espressoDatetimes.nodes).toHaveProperty('length');
+		expect(result.current.data.espressoTickets.nodes).toHaveProperty('length');
 
 		// `nodes` length is positive
-		expect(result.current.data.espressoDatetimes.nodes.length).toEqual(nodes.length);
+		expect(result.current.data.espressoTickets.nodes.length).toEqual(nodes.length);
 
 		// nodes from cache are same as written to cache
-		expect(result.current.data.espressoDatetimes.nodes).toEqual(nodes);
+		expect(result.current.data.espressoTickets.nodes).toEqual(nodes);
 
 		// the id of first entity is same
-		expect(result.current.data.espressoDatetimes.nodes[0].id).toEqual(nodes[0].id);
+		expect(result.current.data.espressoTickets.nodes[0].id).toEqual(nodes[0].id);
 	});
 });
