@@ -3,6 +3,7 @@ import {
 	Currency,
 	CurrencyProps,
 	CurrentUser,
+	GeneralSettings,
 	CurrentUserProps,
 	DateTimeFormats,
 	DateTimeFormatsProps,
@@ -17,26 +18,28 @@ import { JsDataProps, ConfigDataProps } from './types';
 
 export const useConfigData = (): ConfigDataProps => {
 	const data = pathOr<JsDataProps>(null, ['eejsdata', 'data'], window);
-	return (
-		data && {
-			brandName: data.brandName || 'Event Espresso',
-			currency: Currency(data.currency_config as CurrencyProps),
-			currentUser: CurrentUser({} as CurrentUserProps),
-			dateTimeFormats: DateTimeFormats({} as DateTimeFormatsProps),
-			locale: Locale({
-				user: data.locale && data.locale.user ? data.locale.user : '',
-				site: data.locale && data.locale.site ? data.locale.site : '',
-			} as LocaleProps),
-			nonce: data.eejs_api_nonce || '',
-			siteUrl: SiteUrl({
-				admin: data.paths && data.paths.admin_url ? data.paths.admin_url : '',
-				home: data.paths && data.paths.site_url ? data.paths.site_url : '',
-			} as SiteUrlProps),
-			timezone: Timezone({
-				city: data.default_timezone && data.default_timezone.pretty ? data.default_timezone.pretty : '',
-				name: data.default_timezone && data.default_timezone.string ? data.default_timezone.string : '',
-				offset: data.default_timezone && data.default_timezone.offset ? data.default_timezone.offset : 0,
-			} as TimezoneProps),
-		}
-	);
+	if (!data) {
+		return null;
+	}
+	return {
+		brandName: data.brandName || 'Event Espresso',
+		currency: Currency(data.currency_config as CurrencyProps),
+		currentUser: CurrentUser({} as CurrentUserProps),
+		generalSettings: null,
+		dateTimeFormats: DateTimeFormats({} as DateTimeFormatsProps),
+		locale: Locale({
+			user: data.locale && data.locale.user ? data.locale.user : '',
+			site: data.locale && data.locale.site ? data.locale.site : '',
+		} as LocaleProps),
+		nonce: data.eejs_api_nonce || '',
+		siteUrl: SiteUrl({
+			admin: data.paths && data.paths.admin_url ? data.paths.admin_url : '',
+			home: data.paths && data.paths.site_url ? data.paths.site_url : '',
+		} as SiteUrlProps),
+		timezone: Timezone({
+			city: data.default_timezone && data.default_timezone.pretty ? data.default_timezone.pretty : '',
+			name: data.default_timezone && data.default_timezone.string ? data.default_timezone.string : '',
+			offset: data.default_timezone && data.default_timezone.offset ? data.default_timezone.offset : 0,
+		} as TimezoneProps),
+	};
 };
