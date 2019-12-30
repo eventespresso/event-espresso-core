@@ -44,7 +44,7 @@ describe('usePrices()', () => {
 		expect(cachedPrices[0].name).toEqual(nodes[0].name);
 	});
 
-	it('returns the prices limitted to the supplied IDs', () => {
+	it('returns the prices limitted to the supplied ids', () => {
 		const filteredPriceIds = [nodes[1].id, nodes[2].id];
 		const filteredPrices = nodes.filter(({ id }) => filteredPriceIds.includes(id));
 		const { result } = renderHook(
