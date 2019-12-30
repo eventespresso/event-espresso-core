@@ -1,9 +1,8 @@
-import { useContext } from 'react';
 import { useApolloClient } from '@apollo/react-hooks';
 import useCacheRehydrationData from './useCacheRehydrationData';
 import useRelations from '../../../../application/services/apollo/relations/useRelations';
 import { ConfigDataProps } from '../../../../application/services/config';
-import { ConfigContext } from '../../../../application/services/context/ConfigProvider';
+import useConfig from '../../../../application/services/config/useConfig';
 import { useStatus, TypeName } from '../../../../application/services/apollo/status';
 import useEventId from './events/useEventId';
 import { queries } from './';
@@ -15,7 +14,7 @@ const useCacheRehydration = (): void => {
 	const client = useApolloClient();
 	const eventId: number = useEventId();
 	const { setData } = useRelations();
-	const { setConfig } = useContext(ConfigContext);
+	const { setConfig } = useConfig();
 	const {
 		datetimes: espressoDatetimes,
 		tickets: espressoTickets,
