@@ -2,16 +2,11 @@
  * External imports
  */
 import React, { createContext, useState } from 'react';
-import { useConfigData, ConfigDataProps } from '../config';
+import { useConfigData, ConfigDataProps, Config } from '../config';
 import { CurrentUser, DateTimeFormats } from '../../valueObjects/config';
 
 import useCurrentUser from '../../../domain/eventEditor/data/queries/currentUser/useCurrentUser';
 import useGeneralSettings from '../../../domain/eventEditor/data/queries/generalSettings/useGeneralSettings';
-
-interface Config {
-	config: ConfigDataProps;
-	setConfig: React.Dispatch<React.SetStateAction<ConfigDataProps>>;
-}
 
 export const ConfigContext = createContext<Config | null>(null);
 
