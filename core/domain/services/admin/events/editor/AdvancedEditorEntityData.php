@@ -285,9 +285,13 @@ var graphqlEndpoint='{$graphqlEndpoint}';
 
         $priceTypes = $this->getGraphQLPriceTypes();
 
+        $currentUser = $this->getGraphQLCurrentUser();
+
+        $generalSettings = $this->getGraphQLGeneralSettings();
+
         $relations = $this->getRelationalData($eventId);
 
-        return compact('datetimes', 'tickets', 'prices', 'priceTypes', 'relations');
+        return compact('datetimes', 'tickets', 'prices', 'priceTypes', 'currentUser', 'generalSettings', 'relations');
     }
 
 
@@ -469,6 +473,68 @@ QUERY;
 QUERY;
             $data = [
                 'operation_name' => 'GET_PRICES',
+                'query' => $query,
+            ];
+
+            $responseData = $this->makeGraphQLRequest($data);
+            return !empty($responseData[ $field_key ]) ? $responseData[ $field_key ] : null;
+    }
+
+
+    /**
+     * @return array|null
+     * @since $VID:$
+     */
+    protected function getGraphQLCurrentUser()
+    {
+        $field_key = 'viewer';
+        $query = <<<QUERY
+        query GET_CURRENT_USER {
+            {$field_key} {
+                description
+                email
+                firstName
+                id
+                name
+                nicename
+                nickname
+                lastName
+                locale
+                userId
+                username
+                __typename
+            }
+        }
+QUERY;
+            $data = [
+                'operation_name' => 'GET_CURRENT_USER',
+                'query' => $query,
+            ];
+
+            $responseData = $this->makeGraphQLRequest($data);
+            return !empty($responseData[ $field_key ]) ? $responseData[ $field_key ] : null;
+    }
+
+
+    /**
+     * @return array|null
+     * @since $VID:$
+     */
+    protected function getGraphQLGeneralSettings()
+    {
+        $field_key = 'generalSettings';
+        $query = <<<QUERY
+        query GET_GENERAL_SETTINGS {
+            {$field_key} {
+                dateFormat
+                timeFormat
+                timezone
+                __typename
+            }
+        }
+QUERY;
+            $data = [
+                'operation_name' => 'GET_CURRENT_USER',
                 'query' => $query,
             ];
 

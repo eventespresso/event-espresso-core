@@ -11,7 +11,7 @@ export interface CurrencyProps {
 }
 
 export interface CurrentUserProps {
-	id: number;
+	id: string;
 	description: string;
 	email: string;
 	firstName: string;
@@ -22,6 +22,12 @@ export interface CurrentUserProps {
 	locale: string;
 	userId: number;
 	username: string;
+}
+
+export interface GeneralSettings {
+	dateFormat: string;
+	timeFormat: string;
+	timezone: string;
 }
 
 export interface DateTimeFormatsProps {

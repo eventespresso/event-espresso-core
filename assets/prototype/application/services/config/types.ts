@@ -1,6 +1,7 @@
 import {
 	CurrencyProps,
 	CurrentUserProps,
+	GeneralSettings,
 	DateTimeFormatsProps,
 	LocaleProps,
 	SiteUrlProps,
@@ -37,9 +38,15 @@ export type ConfigDataProps = {
 	brandName: string;
 	currency: CurrencyProps;
 	currentUser: CurrentUserProps;
+	generalSettings: GeneralSettings;
 	dateTimeFormats: DateTimeFormatsProps;
 	locale: LocaleProps;
 	nonce: string;
 	siteUrl: SiteUrlProps;
 	timezone: TimezoneProps;
+};
+
+export type Config = {
+	config: ConfigDataProps;
+	setConfig: React.Dispatch<React.SetStateAction<ConfigDataProps>>;
 };

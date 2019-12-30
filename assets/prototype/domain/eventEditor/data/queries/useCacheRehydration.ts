@@ -1,22 +1,27 @@
 import { useApolloClient } from '@apollo/react-hooks';
 import useCacheRehydrationData from './useCacheRehydrationData';
 import useRelations from '../../../../application/services/apollo/relations/useRelations';
+import { ConfigDataProps } from '../../../../application/services/config';
+import useConfig from '../../../../application/services/config/useConfig';
 import { useStatus, TypeName } from '../../../../application/services/apollo/status';
 import useEventId from './events/useEventId';
 import { queries } from './';
 import { WriteQueryOptions } from './types';
 
-const { GET_TICKETS, GET_DATETIMES, GET_PRICE_TYPES, GET_PRICES } = queries;
+const { GET_TICKETS, GET_DATETIMES, GET_PRICE_TYPES, GET_PRICES, GET_CURRENT_USER, GET_GENERAL_SETTINGS } = queries;
 
 const useCacheRehydration = (): void => {
 	const client = useApolloClient();
 	const eventId: number = useEventId();
 	const { setData } = useRelations();
+	const { setConfig } = useConfig();
 	const {
 		datetimes: espressoDatetimes,
 		tickets: espressoTickets,
 		prices: espressoPrices,
 		priceTypes: espressoPriceTypes,
+		currentUser,
+		generalSettings,
 		relations,
 	} = useCacheRehydrationData();
 	const { isLoaded } = useStatus();
@@ -85,6 +90,28 @@ const useCacheRehydration = (): void => {
 			},
 		};
 		client.writeQuery(writeQueryOptions);
+	}
+
+	if (currentUser) {
+		writeQueryOptions = {
+			query: GET_CURRENT_USER,
+			data: {
+				viewer: currentUser,
+			},
+		};
+		client.writeQuery(writeQueryOptions);
+		setConfig((config: ConfigDataProps) => ({ ...config, currentUser }));
+	}
+
+	if (generalSettings) {
+		writeQueryOptions = {
+			query: GET_GENERAL_SETTINGS,
+			data: {
+				generalSettings,
+			},
+		};
+		client.writeQuery(writeQueryOptions);
+		setConfig((config: ConfigDataProps) => ({ ...config, generalSettings }));
 	}
 
 	setData(relations);
