@@ -1,5 +1,6 @@
 import { RelationalData } from '../../application/services/apollo/relations/types';
 import { JsDataProps } from '../../application/services/config/types';
+import { CurrentUserProps, GeneralSettings } from '../../application/valueObjects/config/types';
 import { DatetimeEdge, TicketEdge, PriceEdge, PriceTypeEdge } from './data/types';
 
 export interface EditorDOMData {
@@ -11,6 +12,8 @@ export interface GQLDOMData {
 	tickets?: TicketEdge;
 	prices?: PriceEdge;
 	priceTypes?: PriceTypeEdge;
+	currentUser?: CurrentUserProps;
+	generalSettings?: GeneralSettings;
 	relations?: RelationalData;
 }
 
