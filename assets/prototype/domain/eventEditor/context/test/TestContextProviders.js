@@ -4,6 +4,7 @@ import { MockedProvider } from '@apollo/react-testing';
 import { cache } from '../../../../infrastructure/services/apollo/Apollo';
 import { CommonProviders } from '../ContextProviders';
 import { useDomTestData } from './';
+import useResetApolloCache from './useResetApolloCache';
 
 export const ApolloMockedProvider = (mocks = []) => ({ children }) => {
 	return (
@@ -16,5 +17,7 @@ export const ApolloMockedProvider = (mocks = []) => ({ children }) => {
 export const DOMTestDataProvider = ({ children }) => {
 	// initialize DOM data
 	useDomTestData();
+	// clear Apollo cache on unmount
+	useResetApolloCache();
 	return <CommonProviders>{children}</CommonProviders>;
 };
