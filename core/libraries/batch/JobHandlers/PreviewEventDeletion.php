@@ -43,7 +43,6 @@ class PreviewEventDeletion extends JobHandler
         $model_objects_to_delete = [];
         foreach ($event_ids as $event_id) {
             $event = EEM_Event::instance()->get_one_by_ID($event_id);
-//            $model_objects_to_delete[] = $event;
             // Also, we want to delete their related, non-global, tickets, prices and message templates
             $related_non_global_tickets = EEM_Ticket::instance()->get_all_deleted_and_undeleted(
                 [
