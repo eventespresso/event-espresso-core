@@ -37,7 +37,7 @@ class ExecuteBatchDeletion extends JobHandler
     public function create_job(JobParameters $job_parameters)
     {
         $deletion_job_code = $job_parameters->request_datum('deletion_job_code', null);
-        $roots = get_option('EEBatchDeletion'  . $deletion_job_code, null);
+        $roots = get_option('ee_deletion_'  . $deletion_job_code, null);
         if($roots === null){
             throw new UnexpectedEntityException($roots, 'array', esc_html__('The job seems to be stale. Please press the back button in your browser twice.', 'event_espresso'));
         }
