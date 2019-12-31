@@ -83,8 +83,9 @@ class ModelObjNodeTest extends EE_UnitTestCase
         // Their related ticket relations should not have been visited yet
         $a_datetime_node = reset($partial_tree['rels']['Datetime']['objs']);
 
-        // Verify serializing and unserializing the object doesn't hurt.
         $this->assertFalse($a_datetime_node['complete']);
+
+        // Verify serializing and unserializing the object doesn't hurt.
         $e_node_serialized = serialize($e_node);
         $e_node = unserialize($e_node_serialized);
 
@@ -124,11 +125,6 @@ class ModelObjNodeTest extends EE_UnitTestCase
         $third_datetime = next($partial_tree['rels']['Datetime']['objs']);
         $this->assertTrue($third_datetime['complete']);
         $this->assertTrue($partial_tree['complete']);
-    }
-
-    public function testVisitRepeatSerialized()
-    {
-
     }
 
     public function testGetIds(){
