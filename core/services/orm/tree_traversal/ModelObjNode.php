@@ -31,7 +31,10 @@ class ModelObjNode extends BaseNode
      */
     protected $relation_nodes;
 
-    public function __construct($instance)
+    /**
+     * @param EE_Base_Class $instance model object whose dependencies we want to discover.
+     */
+    public function __construct(EE_Base_Class $instance)
     {
         $this->model_obj = $instance;
     }
