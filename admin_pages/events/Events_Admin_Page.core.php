@@ -2151,7 +2151,8 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
                 'form_url' => EE_Admin_Page::add_query_args_and_nonce(
                     $confirm_deletion_args,
                     $this->admin_base_url()
-                )
+                ),
+                'deletion_job_code' => $this->_req_data['deletion_job_code']
             ],
             true
         );
@@ -2160,122 +2161,28 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
 
     protected function confirmDeletion()
     {
-        $event_ids = isset($this->_req_data['EVT_IDs']) ? $this->_req_data['EVT_IDs'] : array();
-        $success = $this->deleteEventsAndDependentData($event_ids);
-        $this->redirect_after_action(
-            $success,
-            esc_html__('Events', 'event_espresso'),
-            esc_html__('deleted', 'event_espresso'),
-            [
-                'action' => 'default'
-            ]
+        $deletion_job_code = isset($this->_req_data['deletion_job_code']) ? $this->_req_data['deletion_job_code'] : null;
+        // Redirect the user to the deletion batch job.
+        wp_redirect(
+            EE_Admin_Page::add_query_args_and_nonce(
+                array(
+                    'page'        => 'espresso_batch',
+                    'batch'       => EED_Batch::batch_job,
+                    'deletion_job_code' => $deletion_job_code,
+                    'job_handler' => urlencode('EventEspressoBatchRequest\JobHandlers\ExecuteBatchDeletion'),
+                    'return_url'  => urlencode(
+                        add_query_arg(
+                        [
+                            'status' => 'trash'
+                            ],
+                            EVENTS_ADMIN_URL
+                        )
+                    )
+                ),
+                admin_url()
+            )
         );
-    }
-
-    /**
-     * Deletes the events and all dependent data, plus those events' non-global/non-default tickets, prices, and
-     * message template groups.
-     * @since $VID:$
-     * @param $event_ids
-     * @return int
-     * @throws EE_Error
-     * @throws InvalidArgumentException
-     * @throws ReflectionException
-     * @throws InvalidDataTypeException
-     * @throws InvalidInterfaceException
-     */
-    protected function deleteEventsAndDependentData($event_ids)
-    {
-        // Call me an optimist.
-        $success = true;
-        $espresso_no_ticket_prices = get_option('ee_no_ticket_prices', array());
-
-        // Find all the root nodes to delete (this isn't just events, because there's other data, like related tickets,
-        // prices, message templates, etc, whose model definition doesn't make them dependent on events. But,
-        // we have no UI to access them independent of events, so they may as well get deleted too.)
-        $model_objects_to_delete = [];
-        foreach ($event_ids as $event_id) {
-            $event = EEM_Event::instance()->get_one_by_ID($event_id);
-//            $model_objects_to_delete[] = $event;
-            // Also, we want to delete their related, non-global, tickets, prices and message templates
-            $related_non_global_tickets = EEM_Ticket::instance()->get_all_deleted_and_undeleted(
-                [
-                    [
-                        'TKT_is_default' => false,
-                        'Datetime.EVT_ID' => $event_id
-                    ]
-                ]
-            );
-            $related_non_global_prices = EEM_Price::instance()->get_all_deleted_and_undeleted(
-                [
-                    [
-                        'PRC_is_default' => false,
-                        'Ticket.Datetime.EVT_ID' => $event_id
-                    ]
-                ]
-            );
-            $related_message_templates = $event->get_many_related(
-                'Message_Template_Group',
-                [
-                    [
-                        'MTP_is_global' => false
-                    ]
-                ]
-            );
-            $model_objects_to_delete = array_merge(
-                $model_objects_to_delete,
-                [$event],
-                $related_non_global_tickets,
-                $related_non_global_prices,
-                $related_message_templates
-            );
-        }
-
-        // Find all the dependent model objects we want to delete.
-        $ids_to_delete = [];
-        foreach ($model_objects_to_delete as $model_object_to_delete) {
-            $node = new ModelObjNode($model_object_to_delete);
-            $node->visit(9999);
-            $ids_to_delete = array_replace_recursive($ids_to_delete, $node->getIds());
-        }
-
-        // Delete them all, one query per model.
-        foreach ($ids_to_delete as $model_name => $ids) {
-            $model = EE_Registry::instance()->load_model($model_name);
-            if ($model->has_primary_key_field()) {
-                $where_conditions = [
-                    $model->primary_key_name() => [
-                        'IN',
-                        $ids
-                    ]
-                ];
-            } else {
-                $where_conditions = [
-                    'OR' => []
-                ];
-                foreach ($ids as $index_primary_key_string) {
-                    $keys_n_values = $model->parse_index_primary_key_string($index_primary_key_string);
-                    $where_conditions['OR'][ 'AND*' . $index_primary_key_string ] = $keys_n_values;
-                }
-            }
-            if (!$model->delete_permanently(
-                [
-                    $where_conditions
-                ],
-                false
-            )) {
-                $success = false;
-            }
-        }
-        if (isset($espresso_no_ticket_prices[ $event_id ])) {
-            unset($espresso_no_ticket_prices[ $event_id ]);
-        }
-        // Fire a legacy action.
-        foreach ($event_ids as $event_id) {
-            do_action('AHEE__Events_Admin_Page___permanently_delete_event__after_event_deleted', $event_id);
-        }
-        update_option('ee_no_ticket_prices', $espresso_no_ticket_prices);
-        return $success;
+        exit;
     }
 
     /**
