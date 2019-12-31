@@ -33,9 +33,13 @@ describe('useFetchPrices()', () => {
 			}
 		);
 
+		expect(result.current.error).toBeUndefined();
+		expect(result.current.data).toBeUndefined();
+
 		await waitForNextUpdate(); // wait for response
 
 		expect(result.current.error).toBeDefined();
+		expect(result.current.data).toBeUndefined();
 	});
 
 	it('checks for the loading state', async () => {
@@ -86,7 +90,7 @@ describe('useFetchPrices()', () => {
 		const wrapper = ApolloMockedProvider(successMocks.map((mock) => ({ ...mock, request })));
 		/* Set query options and the wrapper */
 
-		const { result } = renderHook(
+		const { result, waitForNextUpdate } = renderHook(
 			() => {
 				useInitTicketTestCache();
 				return useFetchPrices();
@@ -96,7 +100,11 @@ describe('useFetchPrices()', () => {
 			}
 		);
 
-		// Data is already written above
+		expect(result.current.data).toBeUndefined();
+		expect(result.current.error).toBeUndefined();
+
+		await waitForNextUpdate(); // wait for response
+
 		expect(result.current.data).toBeDefined();
 		expect(result.current.error).toBeUndefined();
 	});
@@ -117,7 +125,7 @@ describe('useFetchPrices()', () => {
 		const wrapper = ApolloMockedProvider(successMocks.map((mock) => ({ ...mock, request })));
 		/* Set query options and the wrapper */
 
-		const { result } = renderHook(
+		const { result, waitForNextUpdate } = renderHook(
 			() => {
 				useInitTicketTestCache();
 				return useFetchPrices();
@@ -126,6 +134,8 @@ describe('useFetchPrices()', () => {
 				wrapper,
 			}
 		);
+
+		await waitForNextUpdate(); // wait for response
 
 		expect(result.current.data).toHaveProperty('espressoPrices');
 
