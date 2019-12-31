@@ -1,9 +1,9 @@
 /**
  * External imports
  */
-import React from 'react';
-import { pathOr } from 'ramda';
-import { createContext } from 'react';
+import { getWeekYearWithOptions } from 'date-fns/fp';
+import pathOr from 'ramda/src/pathOr';
+import React, { createContext } from 'react';
 import useToaster from '../../../application/services/toaster/useToaster';
 
 const EventEditorEventIdContext = createContext<number | null>(null);
