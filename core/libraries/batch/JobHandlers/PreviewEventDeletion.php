@@ -36,7 +36,7 @@ class PreviewEventDeletion extends JobHandler
     public function create_job(JobParameters $job_parameters)
     {
         // Set the "root" model objects we will want to delete (record their ID and model)
-        $event_ids = $job_parameters->request_datum('EVT_ID', array());
+        $event_ids = $job_parameters->request_datum('EVT_IDs', array());
         // Find all the root nodes to delete (this isn't just events, because there's other data, like related tickets,
         // prices, message templates, etc, whose model definition doesn't make them dependent on events. But,
         // we have no UI to access them independent of events, so they may as well get deleted too.)
@@ -79,7 +79,7 @@ class PreviewEventDeletion extends JobHandler
         }
         $roots = [];
         foreach($model_objects_to_delete as $model_object){
-            $roots[] = new ModelObjNode($model_objects_to_delete);
+            $roots[] = new ModelObjNode($model_object);
         }
         $job_parameters->add_extra_data('roots', $roots);
         // Set an estimate of how long this will take (we're discovering as we go, so it seems impossible to give
@@ -88,7 +88,7 @@ class PreviewEventDeletion extends JobHandler
         $job_parameters->set_job_size(count($roots) * $estimated_work_per_model_obj);
         return new JobStepResponse(
             $job_parameters,
-            esc_html__('Identified main items for deletion...', 'event_espresso')
+            esc_html__('Generating preview of data to be deleted...', 'event_espresso')
         );
     }
 
@@ -115,9 +115,13 @@ class PreviewEventDeletion extends JobHandler
             $units_processed += $root_node->visit($batch_size);
         }
         $job_parameters->mark_processed($units_processed);
-        // If the most-recently processed root node is complete, we must be all done!
-        if($root_node->isComplete()){
-            $deletion_job_code = wp_generate_password(8, false);
+        // If the most-recently processed root node is complete, we must be all done because we're doing them
+        // sequentially.
+        if(isset($root_node) && $root_node instanceof ModelObjNode && $root_node->isComplete()){
+            $job_parameters->set_status(JobParameters::status_complete);
+            // Show a full progress bar.
+            $job_parameters->set_units_processed($job_parameters->job_size());
+            $deletion_job_code = $job_parameters->request_datum('deletion_job_code');
             add_option('EEBatchDeletion' . $deletion_job_code, $job_parameters->extra_datum('roots'));
             return new JobStepResponse(
                 $job_parameters,
@@ -127,10 +131,15 @@ class PreviewEventDeletion extends JobHandler
                 ]
             );
         } else {
+            // Because the job size was a guess, it may have likely been provden wrong. We don't want to show more work
+            // done than we originally said there would be. So adjust the estimate.
+            if(($job_parameters->units_processed() / $job_parameters->job_size()) > .8){
+                $job_parameters->set_job_size($job_parameters->job_size() * 2);
+            }
             return new JobStepResponse(
                 $job_parameters,
                 sprintf(
-                    esc_html__('Identified %d items for deletions.', 'event_espresso'),
+                    esc_html__('Identified %d items for deletion.', 'event_espresso'),
                     $units_processed
                 )
             );
