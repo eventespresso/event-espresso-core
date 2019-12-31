@@ -3,19 +3,13 @@ import { renderHook } from '@testing-library/react-hooks';
 import useTicketItem from '../useTicketItem';
 import { ApolloMockedProvider } from '../../../../context';
 import { nodes } from './data';
-import useInitTicketStatus from './useInitTicketStatus';
 import useInitTicketTestCache from './useInitTicketTestCache';
 
 describe('useTicketItem()', () => {
+	const existingTicket = nodes[0];
 	const wrapper = ApolloMockedProvider();
 	it('checks for non existent ticket when the cache is empty', () => {
-		const { result } = renderHook(
-			() => {
-				useInitTicketStatus();
-				return useTicketItem({ id: 'fake-id' });
-			},
-			{ wrapper }
-		);
+		const { result } = renderHook(() => useTicketItem({ id: existingTicket.id }), { wrapper });
 
 		expect(result.current).toBeUndefined();
 	});
@@ -33,7 +27,6 @@ describe('useTicketItem()', () => {
 	});
 
 	it('checks for an existent ticket', () => {
-		const existingTicket = nodes[0];
 		const { result } = renderHook(
 			() => {
 				useInitTicketTestCache();

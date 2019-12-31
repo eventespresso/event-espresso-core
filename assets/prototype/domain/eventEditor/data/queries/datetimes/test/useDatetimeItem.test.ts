@@ -3,19 +3,13 @@ import { renderHook } from '@testing-library/react-hooks';
 import useDatetimeItem from '../useDatetimeItem';
 import { ApolloMockedProvider } from '../../../../context';
 import { nodes } from './data';
-import useInitDatetimeStatus from './useInitDatetimeStatus';
 import useInitDatetimeTestCache from './useInitDatetimeTestCache';
 
 describe('useDatetimeItem()', () => {
 	const wrapper = ApolloMockedProvider();
+	const existingDatetime = nodes[0];
 	it('checks for non existent datetime when the cache is empty', () => {
-		const { result } = renderHook(
-			() => {
-				useInitDatetimeStatus();
-				return useDatetimeItem({ id: 'fake-id' });
-			},
-			{ wrapper }
-		);
+		const { result } = renderHook(() => useDatetimeItem({ id: existingDatetime.id }), { wrapper });
 
 		expect(result.current).toBeUndefined();
 	});
@@ -33,7 +27,6 @@ describe('useDatetimeItem()', () => {
 	});
 
 	it('checks for an existent datetime', () => {
-		const existingDatetime = nodes[0];
 		const { result } = renderHook(
 			() => {
 				useInitDatetimeTestCache();

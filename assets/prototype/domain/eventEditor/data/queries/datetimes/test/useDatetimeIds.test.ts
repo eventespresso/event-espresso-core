@@ -3,19 +3,12 @@ import { renderHook } from '@testing-library/react-hooks';
 import useDatetimeIds from '../useDatetimeIds';
 import { ApolloMockedProvider } from '../../../../context';
 import { nodes } from './data';
-import useInitDatetimeStatus from './useInitDatetimeStatus';
 import useInitDatetimeTestCache from './useInitDatetimeTestCache';
 
 describe('useDatetimeIds()', () => {
 	const wrapper = ApolloMockedProvider();
 	it('checks for the empty datetime IDs', () => {
-		const { result } = renderHook(
-			() => {
-				useInitDatetimeStatus();
-				return useDatetimeIds();
-			},
-			{ wrapper }
-		);
+		const { result } = renderHook(() => useDatetimeIds(), { wrapper });
 
 		expect(result.current.length).toBe(0);
 	});

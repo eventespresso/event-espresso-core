@@ -33,9 +33,13 @@ describe('useFetchTickets()', () => {
 			}
 		);
 
+		expect(result.current.error).toBeUndefined();
+		expect(result.current.data).toBeUndefined();
+
 		await waitForNextUpdate(); // wait for response
 
 		expect(result.current.error).toBeDefined();
+		expect(result.current.data).toBeUndefined();
 	});
 
 	it('checks for the loading state', async () => {
@@ -86,7 +90,7 @@ describe('useFetchTickets()', () => {
 		const wrapper = ApolloMockedProvider(successMocks.map((mock) => ({ ...mock, request })));
 		/* Set query options and the wrapper */
 
-		const { result } = renderHook(
+		const { result, waitForNextUpdate } = renderHook(
 			() => {
 				useInitDatetimeTestCache();
 				return useFetchTickets();
@@ -95,6 +99,11 @@ describe('useFetchTickets()', () => {
 				wrapper,
 			}
 		);
+
+		expect(result.current.error).toBeUndefined();
+		expect(result.current.data).toBeUndefined();
+
+		await waitForNextUpdate(); // wait for response
 
 		// Data is already written above
 		expect(result.current.data).toBeDefined();
@@ -117,7 +126,7 @@ describe('useFetchTickets()', () => {
 		const wrapper = ApolloMockedProvider(successMocks.map((mock) => ({ ...mock, request })));
 		/* Set query options and the wrapper */
 
-		const { result } = renderHook(
+		const { result, waitForNextUpdate } = renderHook(
 			() => {
 				useInitDatetimeTestCache();
 				return useFetchTickets();
@@ -126,6 +135,8 @@ describe('useFetchTickets()', () => {
 				wrapper,
 			}
 		);
+
+		await waitForNextUpdate(); // wait for response
 
 		expect(result.current.data).toHaveProperty('espressoTickets');
 
