@@ -3,24 +3,17 @@ import { renderHook } from '@testing-library/react-hooks';
 import usePrices from '../usePrices';
 import { ApolloMockedProvider } from '../../../../context';
 import { nodes } from './data';
-import useInitPriceStatus from './useInitPriceStatus';
 import useInitPriceTestCache from './useInitPriceTestCache';
 
 describe('usePrices()', () => {
 	const wrapper = ApolloMockedProvider();
-	it('checks for the empty tickets', () => {
-		const { result } = renderHook(
-			() => {
-				useInitPriceStatus();
-				return usePrices();
-			},
-			{ wrapper }
-		);
+	it('checks for the empty prices', () => {
+		const { result } = renderHook(() => usePrices(), { wrapper });
 
 		expect(result.current.length).toBe(0);
 	});
 
-	it('checks for the updated tickets cache', () => {
+	it('checks for the updated prices cache', () => {
 		const { result } = renderHook(
 			() => {
 				useInitPriceTestCache();

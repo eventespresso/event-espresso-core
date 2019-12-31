@@ -3,19 +3,12 @@ import { renderHook } from '@testing-library/react-hooks';
 import useTicketIds from '../useTicketIds';
 import { ApolloMockedProvider } from '../../../../context';
 import { nodes } from './data';
-import useInitTicketStatus from './useInitTicketStatus';
 import useInitTicketTestCache from './useInitTicketTestCache';
 
 describe('useTicketIds()', () => {
 	const wrapper = ApolloMockedProvider();
 	it('checks for the empty ticket IDs', () => {
-		const { result } = renderHook(
-			() => {
-				useInitTicketStatus();
-				return useTicketIds();
-			},
-			{ wrapper }
-		);
+		const { result } = renderHook(() => useTicketIds(), { wrapper });
 
 		expect(result.current.length).toBe(0);
 	});
