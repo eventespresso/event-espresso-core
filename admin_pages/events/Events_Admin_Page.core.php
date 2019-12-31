@@ -2085,18 +2085,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
      */
     protected function _delete_event()
     {
-        // determine the event id and set to array.
-        $EVT_ID = isset($this->_req_data['EVT_ID']) ? absint($this->_req_data['EVT_ID']) : null;
-        // @todo: prepare the contents of the deletion preview page via a batch job, then redirect to the preview page.
-        wp_safe_redirect(
-            EE_Admin_Page::add_query_args_and_nonce(
-                [
-                    'action' => 'preview_deletion',
-                    'EVT_IDs[]' => $EVT_ID
-                ],
-                $this->_admin_base_url
-            )
-        );
+        $this->generateDeletionPreview(isset($this->_req_data['EVT_ID']) ? $this->_req_data['EVT_ID'] : array());
     }
 
 
@@ -2108,20 +2097,39 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
      */
     protected function _delete_events()
     {
-        $EVT_IDs = isset($this->_req_data['EVT_IDs']) ? (array) $this->_req_data['EVT_IDs'] : array();
-        $args = [
-            'action' => 'preview_deletion',
-        ];
-        foreach ($EVT_IDs as $EVT_ID) {
-            $args['EVT_IDs[]'] = (int) $EVT_ID;
+        $this->generateDeletionPreview(isset($this->_req_data['EVT_IDs']) ? (array) $this->_req_data['EVT_IDs'] : array());
+    }
+
+    protected function generateDeletionPreview($event_ids)
+    {
+        $event_ids = (array)$event_ids;
+        // Set a code we can use to reference this deletion task in the batch jobs and preview page.
+        $deletion_job_code = wp_generate_password(6, false);
+        $return_url = EE_Admin_Page::add_query_args_and_nonce(
+            [
+                'action' => 'preview_deletion',
+                'deletion_job_code' => $deletion_job_code,
+            ],
+            $this->_admin_base_url
+        );
+        foreach ($event_ids as $EVT_ID) {
+            $event_ids = (int) $EVT_ID;
         }
-        // @todo: prepare the contents of the deletion preview page via a batch job, then redirect to the preview page.
-        wp_safe_redirect(
+
+        wp_redirect(
             EE_Admin_Page::add_query_args_and_nonce(
-                $args,
-                $this->_admin_base_url
+                array(
+                    'page'        => 'espresso_batch',
+                    'batch'       => EED_Batch::batch_job,
+                    'EVT_IDs[]'      => $event_ids,
+                    'deletion_job_code' => $deletion_job_code,
+                    'job_handler' => urlencode('EventEspressoBatchRequest\JobHandlers\PreviewEventDeletion'),
+                    'return_url'  => urlencode($return_url),
+                ),
+                admin_url()
             )
         );
+        exit;
     }
 
     /**
