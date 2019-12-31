@@ -75,7 +75,7 @@ class RelationNode extends BaseNode
                     $this->whereQueryParams(),
                     'limit' => [
                         count($this->model_obj_nodes),
-                        $model_objects_to_identify
+                        $model_objects_to_identify - $num_identified
                     ]
                 ]
             );

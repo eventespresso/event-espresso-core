@@ -95,7 +95,7 @@ class ModelObjNode extends BaseNode
         // Begin assuming we'll finish all the work on this node and its children...
         $this->complete = true;
         foreach ($this->relation_nodes as $relation_node) {
-            $num_identified += $relation_node->visit($model_objects_to_identify);
+            $num_identified += $relation_node->visit($model_objects_to_identify - $num_identified);
             if ($num_identified >= $model_objects_to_identify) {
                 // ...but admit we're wrong if the work exceeded the budget.
                 $this->complete = false;
