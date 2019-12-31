@@ -1,5 +1,5 @@
 import { zonedTimeToUtc, utcToZonedTime } from 'date-fns-tz';
-import { useConfig } from '../services/config/useConfig';
+import useConfig from '../services/config/useConfig';
 
 type DateFn = (date: Date | string | number) => Date;
 
@@ -9,14 +9,14 @@ interface TimeZoneTime {
 }
 
 const useTimeZoneTime = (): TimeZoneTime => {
-	const { timezone } = useConfig();
+	const { config } = useConfig();
 
 	const localTimeToUtc: DateFn = (date: Date | string | number): Date => {
-		return zonedTimeToUtc(date, timezone.name);
+		return zonedTimeToUtc(date, config.timezone.name);
 	};
 
 	const utcToLocalTime: DateFn = (isoDate: Date | string | number): Date => {
-		return utcToZonedTime(isoDate, timezone.name);
+		return utcToZonedTime(isoDate, config.timezone.name);
 	};
 
 	return {
