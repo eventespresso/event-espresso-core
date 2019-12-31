@@ -1,14 +1,9 @@
 import { renderHook } from '@testing-library/react-hooks';
 
 import useTicketQueryOptions from '../useTicketQueryOptions';
-import { ApolloMockedProvider } from '../../../../context/ContextProviders';
-import { setup, cleanup } from './data';
+import { ApolloMockedProvider } from '../../../../context';
 import { nodes } from '../../datetimes/test/data';
 import useInitDatetimeTestCache from '../../datetimes/test/useInitDatetimeTestCache';
-
-beforeEach(setup);
-
-afterEach(cleanup);
 
 describe('useTicketQueryOptions()', () => {
 	it('checks if the query operation variables are correct', () => {
