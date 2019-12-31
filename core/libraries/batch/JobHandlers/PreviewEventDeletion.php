@@ -111,7 +111,7 @@ class PreviewEventDeletion extends JobHandler
             if($root_node->isComplete()){
                 continue;
             }
-            $units_processed += $root_node->visit($batch_size);
+            $units_processed += $root_node->visit($batch_size - $units_processed);
         }
         $job_parameters->mark_processed($units_processed);
         // If the most-recently processed root node is complete, we must be all done because we're doing them
@@ -121,7 +121,7 @@ class PreviewEventDeletion extends JobHandler
             // Show a full progress bar.
             $job_parameters->set_units_processed($job_parameters->job_size());
             $deletion_job_code = $job_parameters->request_datum('deletion_job_code');
-            add_option('EEBatchDeletion' . $deletion_job_code, $job_parameters->extra_datum('roots'));
+            add_option('EEBatchDeletion' . $deletion_job_code, $job_parameters->extra_datum('roots'), null, 'no');
             return new JobStepResponse(
                 $job_parameters,
                 esc_html__('Finished identifying items for deletion.', 'event_espresso'),
