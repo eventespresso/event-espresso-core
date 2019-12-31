@@ -1,14 +1,10 @@
 import { renderHook } from '@testing-library/react-hooks';
 
 import useDatetimeIds from '../useDatetimeIds';
-import { ApolloMockedProvider } from '../../../../context/ContextProviders';
-import { setup, cleanup, nodes } from './data';
+import { ApolloMockedProvider } from '../../../../context';
+import { nodes } from './data';
 import useInitDatetimeStatus from './useInitDatetimeStatus';
 import useInitDatetimeTestCache from './useInitDatetimeTestCache';
-
-beforeAll(setup);
-
-afterAll(cleanup);
 
 describe('useDatetimeIds()', () => {
 	const wrapper = ApolloMockedProvider();

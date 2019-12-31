@@ -1,14 +1,10 @@
 import { renderHook } from '@testing-library/react-hooks';
 
 import usePrices from '../usePrices';
-import { ApolloMockedProvider } from '../../../../context/ContextProviders';
-import { setup, cleanup, nodes } from './data';
+import { ApolloMockedProvider } from '../../../../context';
+import { nodes } from './data';
 import useInitPriceStatus from './useInitPriceStatus';
 import useInitPriceTestCache from './useInitPriceTestCache';
-
-beforeAll(setup);
-
-afterAll(cleanup);
 
 describe('usePrices()', () => {
 	const wrapper = ApolloMockedProvider();

@@ -1,20 +1,9 @@
 import { GraphQLError } from 'graphql';
 
-import '../../../../types';
 import { Datetime, DatetimeEdge } from '../../../types';
 import { ReadQueryOptions } from '../../types';
 
-export const eventId: number = 100;
-
 export const request: ReadQueryOptions = null; // to be generated via Query Options hook
-
-export const setup = (): void => {
-	window.eeEditorEventData = { eventId };
-};
-
-export const cleanup = (): void => {
-	delete window.eeEditorEventData;
-};
 
 export const nodes: Datetime[] = [
 	{

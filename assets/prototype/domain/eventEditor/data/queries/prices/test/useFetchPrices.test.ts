@@ -2,13 +2,9 @@ import { renderHook } from '@testing-library/react-hooks';
 
 import useFetchPrices from '../useFetchPrices';
 import usePriceQueryOptions from '../usePriceQueryOptions';
-import { ApolloMockedProvider } from '../../../../context/ContextProviders';
-import { successMocks, errorMocks, setup, cleanup, nodes } from './data';
+import { ApolloMockedProvider } from '../../../../context';
+import { successMocks, errorMocks, nodes } from './data';
 import useInitTicketTestCache from '../../tickets/test/useInitTicketTestCache';
-
-beforeAll(setup);
-
-afterAll(cleanup);
 
 describe('useFetchPrices()', () => {
 	it('checks for the error state', async () => {

@@ -1,14 +1,10 @@
 import { renderHook } from '@testing-library/react-hooks';
 
 import useTicketItem from '../useTicketItem';
-import { ApolloMockedProvider } from '../../../../context/ContextProviders';
-import { setup, cleanup, nodes } from './data';
+import { ApolloMockedProvider } from '../../../../context';
+import { nodes } from './data';
 import useInitTicketStatus from './useInitTicketStatus';
 import useInitTicketTestCache from './useInitTicketTestCache';
-
-beforeAll(setup);
-
-afterAll(cleanup);
 
 describe('useTicketItem()', () => {
 	const wrapper = ApolloMockedProvider();

@@ -2,13 +2,9 @@ import { renderHook } from '@testing-library/react-hooks';
 
 import useFetchTickets from '../useFetchTickets';
 import useTicketQueryOptions from '../useTicketQueryOptions';
-import { ApolloMockedProvider } from '../../../../context/ContextProviders';
-import { successMocks, errorMocks, setup, cleanup, nodes } from './data';
+import { ApolloMockedProvider } from '../../../../context';
+import { successMocks, errorMocks, nodes } from './data';
 import useInitDatetimeTestCache from '../../datetimes/test/useInitDatetimeTestCache';
-
-beforeAll(setup);
-
-afterAll(cleanup);
 
 describe('useFetchTickets()', () => {
 	it('checks for the error state', async () => {

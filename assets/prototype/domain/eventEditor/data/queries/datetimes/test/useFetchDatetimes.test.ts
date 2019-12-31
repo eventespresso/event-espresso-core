@@ -2,12 +2,8 @@ import { renderHook } from '@testing-library/react-hooks';
 
 import useFetchDatetimes from '../useFetchDatetimes';
 import useDatetimeQueryOptions from '../useDatetimeQueryOptions';
-import { ApolloMockedProvider } from '../../../../context/ContextProviders';
-import { successMocks, errorMocks, setup, cleanup, nodes } from './data';
-
-beforeAll(setup);
-
-afterAll(cleanup);
+import { ApolloMockedProvider } from '../../../../context';
+import { successMocks, errorMocks, nodes } from './data';
 
 describe('useFetchDatetimes()', () => {
 	it('checks for the error state', async () => {
