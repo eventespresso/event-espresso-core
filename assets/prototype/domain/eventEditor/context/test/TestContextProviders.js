@@ -5,6 +5,7 @@ import { cache } from '../../../../infrastructure/services/apollo/Apollo';
 import { CommonProviders } from '../ContextProviders';
 import { useDomTestData } from './';
 import useResetApolloCache from './useResetApolloCache';
+import useSetGlobalStatusFlags from './useSetGlobalStatusFlags';
 
 /**
  * A top level provider wrapped by Apollo MockedProvider.
@@ -47,5 +48,6 @@ export const ApolloAwareWrapper = ({ children }) => {
  * @returns {ReactElement} The wrapped element.
  */
 export const ContextAwareWrapper = ({ children }) => {
+	useSetGlobalStatusFlags();
 	return <>{children}</>;
 };
