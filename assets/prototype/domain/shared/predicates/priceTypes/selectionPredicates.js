@@ -13,3 +13,8 @@ export const isNotPercent = propEq('isPercent', false);
 // is a tax ?
 export const isTax = propEq('isTax', true);
 export const isNotTax = propEq('isTax', false);
+
+export const isDefaultPriceType = (priceType) => {
+	const { baseType, isPercent } = priceType;
+	return baseType === 'SURCHARGE' && isPercent;
+};

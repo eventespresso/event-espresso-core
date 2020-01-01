@@ -6,6 +6,7 @@ import { CommonProviders } from '../ContextProviders';
 import { useDomTestData } from './';
 import useResetApolloCache from './useResetApolloCache';
 import useSetGlobalStatusFlags from './useSetGlobalStatusFlags';
+import useSetRelationalData from './useSetRelationalData';
 
 /**
  * A top level provider wrapped by Apollo MockedProvider.
@@ -49,5 +50,6 @@ export const ApolloAwareWrapper = ({ children }) => {
  */
 export const ContextAwareWrapper = ({ children }) => {
 	useSetGlobalStatusFlags();
+	useSetRelationalData();
 	return <>{children}</>;
 };

@@ -1,9 +1,10 @@
 import { useEffect } from 'react';
-import { eventId } from './data';
+import { eventId, relationalData } from './data';
 
 const useDomTestData = () => {
 	// Set the DOM data
 	window.eeEditorEventData = { eventId };
+	window.eeEditorGQLData = { relations: relationalData };
 
 	// For Housekeeping
 	useEffect(() => {
@@ -12,6 +13,7 @@ const useDomTestData = () => {
 		// to avoid any unexpected results.
 		return () => {
 			delete window.eeEditorEventData;
+			delete window.eeEditorGQLData;
 		};
 	}, []);
 };
