@@ -2,8 +2,8 @@
  * Internal dependencies
  */
 import AddNewDateButton from './AddNewDateButton';
-import ErrorIndicator from '../../../../application/ui/components/display/ErrorIndicator';
 import EmptyState from '../../../../application/ui/components/display/EmptyState';
+import ErrorIndicator from '../../../../application/ui/components/display/ErrorIndicator';
 import DatesList from './DatesList';
 import LoadingIndicator from '../../../../application/ui/components/display/LoadingIndicator';
 import useDatetimes from '../../data/queries/datetimes/useDatetimes';
@@ -11,12 +11,12 @@ import { useStatus, TypeName } from '../../../../application/services/apollo/sta
 
 const DatesListData = () => {
 	const datetimes = useDatetimes();
-	const { isLoading, isError } = useStatus();
-
+	const { isError, isLoading } = useStatus();
+	const error = isError(TypeName.datetimes);
 	const loading = isLoading(TypeName.datetimes);
+
 	if (loading) return <LoadingIndicator message='loading dates...' />;
 
-	const error = isError(TypeName.datetimes);
 	if (error) return <ErrorIndicator error={error} />;
 
 	if (!datetimes.length) {
