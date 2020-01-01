@@ -9,10 +9,6 @@ const useEntityListFilterState = () => {
 	};
 	const [state, dispatch] = useReducer(reducer, initialState);
 
-	useEffect(() => {
-		console.log('useEntityListFilterState >>>', state);
-	}, [state]);
-
 	const setGridView = () => {
 		dispatch({
 			type: 'SET_VIEW',

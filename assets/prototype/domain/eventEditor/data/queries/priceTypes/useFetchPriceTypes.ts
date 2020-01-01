@@ -6,8 +6,6 @@ import { useStatus, TypeName } from '../../../../../application/services/apollo/
 import { FetchEntitiesResult } from '../types';
 
 const useFetchPriceTypes = (): FetchEntitiesResult => {
-	console.log('%c useFetchPriceTypes: ', 'color: deeppink; font-size: 14px;');
-
 	const { setIsLoading, setIsLoaded, setIsError } = useStatus();
 
 	const { onCompleted, onError, initializationNotices } = useInitToaster({

@@ -9,10 +9,6 @@ const useTicketListFilterState = () => {
 	};
 	const [state, dispatch] = useReducer(reducer, initialState);
 
-	useEffect(() => {
-		console.log('useTicketListFilterState >>>', state);
-	}, [state]);
-
 	const setDisplayTicketDate = (displayTicketDate) => {
 		dispatch({
 			type: 'SET_DISPLAY_TICKET_DATE',

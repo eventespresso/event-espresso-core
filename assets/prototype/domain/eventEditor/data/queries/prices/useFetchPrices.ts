@@ -8,8 +8,6 @@ import useTicketIds from '../tickets/useTicketIds';
 import { FetchEntitiesResult, ReadQueryOptions } from '../types';
 
 const useFetchPrices = (): FetchEntitiesResult => {
-	console.log('%c useFetchPrices: ', 'color: deeppink; font-size: 14px;');
-
 	const { setIsLoading, setIsLoaded, setIsError } = useStatus();
 	const options: ReadQueryOptions = usePriceQueryOptions();
 	const ticketIn: string[] = useTicketIds();

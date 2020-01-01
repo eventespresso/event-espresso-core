@@ -9,7 +9,6 @@ import { FetchEntitiesResult, ReadQueryOptions } from '../types';
 import { EntityId } from '../../types';
 
 const useFetchTickets = (): FetchEntitiesResult => {
-	console.log('%c useFetchTickets: ', 'color: deeppink; font-size: 14px;');
 	const [initialized, setInitialized] = useState(false);
 	const { setIsLoading, setIsLoaded, setIsError } = useStatus();
 	const options: ReadQueryOptions = useTicketQueryOptions();

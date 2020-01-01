@@ -43,10 +43,6 @@ const useEditorModalState = () => {
 	const initialState = [];
 	const [state, dispatch] = useReducer(reducer, initialState);
 
-	useEffect(() => {
-		console.log('useEditorModalState >>>', state);
-	}, [state]);
-
 	const openEditor = (editorId: string) => {
 		dispatch({
 			type: ActionType.OPEN_EDITOR,

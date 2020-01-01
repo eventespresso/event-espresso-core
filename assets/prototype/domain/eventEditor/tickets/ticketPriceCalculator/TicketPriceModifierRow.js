@@ -26,11 +26,8 @@ function formatPriceAmount(amount) {
 }
 
 const TicketPriceModifierRow = ({ index, name, price, calcDir, fields: { push, remove, reset, sort } }) => {
-	console.log('%c TicketPriceModifierRow: ', 'color: lime; font-size:14px;');
-	console.log('%c > price: ', 'color: lime;', price);
 	const priceTypes = usePriceTypes();
 	const relatedPriceType = usePriceTypeForPrice(price.id);
-	console.log('%c > relatedPriceType: ', 'color: lime;', relatedPriceType);
 	const modifierOptions = getPriceModifiers(priceTypes);
 	const getPriceType = findEntityByGuid(modifierOptions);
 	const options = price.isBasePrice ? priceTypes : modifierOptions;

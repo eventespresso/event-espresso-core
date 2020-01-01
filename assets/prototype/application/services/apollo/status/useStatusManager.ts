@@ -18,10 +18,6 @@ const INITIAL_STATE: StatusState = {
 const useStatusManager = (): StatusManager => {
 	const [state, dispatch] = useReducer(statusReducer, INITIAL_STATE);
 
-	useEffect(() => {
-		console.log('useStatusManager >>>', state);
-	}, [state]);
-
 	/**
 	 * Whether a type (e.g. datetimes) is being loaded.
 	 *
@@ -102,7 +98,6 @@ const useStatusManager = (): StatusManager => {
 };
 
 const statusReducer = (state: StatusState, action: StatusAction): StatusState => {
-	console.log('statusReducer action: ', action);
 	const { type, typeName, value } = action;
 	let statusKey: string;
 	switch (type) {

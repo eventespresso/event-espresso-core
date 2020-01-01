@@ -39,10 +39,6 @@ const useDatesListFilterState = (dates: Datetime[]): DatesListFilterState => {
 	};
 	const [state, dispatch] = useReducer(reducer, initialState);
 
-	useEffect(() => {
-		// console.log('useDatesListFilterState >>>', state);
-	}, [state]);
-
 	const setDatesSortedBy = (datesSortedBy: DatesSortedBy) => {
 		dispatch({
 			type: ActionType.SET_DATES_SORTED_BY,

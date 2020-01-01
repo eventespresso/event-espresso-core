@@ -37,7 +37,6 @@ const useOnSubmitPrices = (existingPrices) => {
 
 	// Async to make sure that prices are handled before updating the ticket.
 	return async (formData) => {
-		console.log('%c Ticket Price Calculator Form Submit', 'color:YellowGreen;', formData);
 		const { ticket, prices = [] } = formData;
 
 		const updatedPriceIds = [];
