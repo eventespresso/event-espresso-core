@@ -70,7 +70,10 @@ const DateCard = ({ id }) => {
 						placeholder='Edit title...'
 						value={date.name}
 						defaultValue={date.name}
-						onCancel={(value) => console.log(value)}
+						onCancel={(value) => {
+							console.log('DateTimeProvider title onCancel => NEEDS CALLBACK');
+							console.log('value', value);
+						}}
 						onConfirm={(name) => updateEntity({ name })}
 						minWidth={'320px'}
 						selectAllOnFocus
@@ -83,7 +86,10 @@ const DateCard = ({ id }) => {
 							placeholder='Edit description...'
 							value={date.description}
 							defaultValue={date.description}
-							onCancel={(value) => console.log(value)}
+							onCancel={(value) => {
+								console.log('DateTimeProvider desc onCancel => NEEDS CALLBACK');
+								console.log('value', value);
+							}}
 							onConfirm={(description) => updateEntity({ description })}
 							minWidth={'320px'}
 							multiline={true}
