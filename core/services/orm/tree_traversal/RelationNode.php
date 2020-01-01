@@ -6,6 +6,7 @@ use EE_Base_Class;
 use EE_Error;
 use EE_Has_Many_Any_Relation;
 use EE_Model_Relation_Base;
+use EE_Registry;
 use EEM_Base;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
@@ -26,10 +27,16 @@ use ReflectionException;
  */
 class RelationNode extends BaseNode
 {
+
     /**
-     * @var EE_Base_Class
+     * @var string|int
      */
-    protected $main_model_obj;
+    protected $id;
+
+    /**
+     * @var EEM_Base
+     */
+    protected $main_model;
 
     /**
      * @var int
@@ -44,13 +51,14 @@ class RelationNode extends BaseNode
     /**
      * @var ModelObjNode[]
      */
-    protected $model_obj_nodes;
+    protected $nodes;
 
-    public function __construct($main_model_obj, $related_model)
+    public function __construct($main_model_obj_id, EEM_Base $main_model, EEM_Base $related_model)
     {
-        $this->main_model_obj = $main_model_obj;
+        $this->id = $main_model_obj_id;
+        $this->main_model = $main_model;
         $this->related_model = $related_model;
-        $this->model_obj_nodes = [];
+        $this->nodes = [];
     }
 
 
@@ -68,13 +76,13 @@ class RelationNode extends BaseNode
      */
     protected function work($model_objects_to_identify)
     {
-        $num_identified = $this->visitAlreadyDiscoveredNodes($this->model_obj_nodes, $model_objects_to_identify);
+        $num_identified = $this->visitAlreadyDiscoveredNodes($this->nodes, $model_objects_to_identify);
         if ($num_identified < $model_objects_to_identify) {
             $related_model_objs = $this->related_model->get_all(
                 [
                     $this->whereQueryParams(),
                     'limit' => [
-                        count($this->model_obj_nodes),
+                        count($this->nodes),
                         $model_objects_to_identify - $num_identified
                     ]
                 ]
@@ -83,8 +91,8 @@ class RelationNode extends BaseNode
 
             // Add entity nodes for each of the model objects we fetched.
             foreach ($related_model_objs as $related_model_obj) {
-                $entity_node = new ModelObjNode($related_model_obj);
-                $this->model_obj_nodes[ $related_model_obj->ID() ] = $entity_node;
+                $entity_node = new ModelObjNode($related_model_obj->ID(), $related_model_obj->get_model());
+                $this->nodes[ $related_model_obj->ID() ] = $entity_node;
                 $new_item_nodes[ $related_model_obj->ID() ] = $entity_node;
             }
             $num_identified += count($new_item_nodes);
@@ -97,7 +105,7 @@ class RelationNode extends BaseNode
             }
         }
 
-        if (count($this->model_obj_nodes) >= $this->count && $this->allChildrenComplete()) {
+        if (count($this->nodes) >= $this->count && $this->allChildrenComplete()) {
             $this->complete = true;
         }
         return $num_identified;
@@ -110,7 +118,7 @@ class RelationNode extends BaseNode
      */
     protected function allChildrenComplete()
     {
-        foreach ($this->model_obj_nodes as $model_obj_node) {
+        foreach ($this->nodes as $model_obj_node) {
             if (! $model_obj_node->isComplete()) {
                 return false;
             }
@@ -155,7 +163,7 @@ class RelationNode extends BaseNode
     public function isComplete()
     {
         if ($this->complete === null) {
-            if (count($this->model_obj_nodes) === $this->count) {
+            if (count($this->nodes) === $this->count) {
                 $this->complete = true;
             } else {
                 $this->complete = false;
@@ -192,18 +200,18 @@ class RelationNode extends BaseNode
     {
         $where_params =  [
             $this->related_model->get_foreign_key_to(
-                $this->main_model_obj->get_model()->get_this_model_name()
-            )->get_name() => $this->main_model_obj->ID()
+                $this->main_model->get_this_model_name()
+            )->get_name() => $this->id
         ];
         try {
-            $relation_settings = $this->main_model_obj->get_model()->related_settings_for($this->related_model->get_this_model_name());
+            $relation_settings = $this->main_model->related_settings_for($this->related_model->get_this_model_name());
         } catch (EE_Error $e) {
             // This will happen for has-and-belongs-to-many relations, when this node's related model is that join table
             // which hasn't been explicitly declared in the main model object's model's relations.
             $relation_settings = null;
         }
         if ($relation_settings instanceof EE_Has_Many_Any_Relation) {
-            $where_params[ $this->related_model->get_field_containing_related_model_name()->get_name() ] = $this->main_model_obj->get_model()->get_this_model_name();
+            $where_params[ $this->related_model->get_field_containing_related_model_name()->get_name() ] = $this->main_model->get_this_model_name();
         }
         return $where_params;
     }
@@ -218,7 +226,7 @@ class RelationNode extends BaseNode
             'complete' => $this->isComplete(),
             'objs' => []
         ];
-        foreach ($this->model_obj_nodes as $id => $model_obj_node) {
+        foreach ($this->nodes as $id => $model_obj_node) {
             $tree['objs'][ $id ] = $model_obj_node->toArray();
         }
         return $tree;
@@ -231,19 +239,50 @@ class RelationNode extends BaseNode
      */
     public function getIds()
     {
-        if (empty($this->model_obj_nodes)) {
+        if (empty($this->nodes)) {
             return [];
         }
         $ids = [
             $this->related_model->get_this_model_name() => array_combine(
-                array_keys($this->model_obj_nodes),
-                array_keys($this->model_obj_nodes)
+                array_keys($this->nodes),
+                array_keys($this->nodes)
             )
         ];
-        foreach ($this->model_obj_nodes as $model_obj_node) {
+        foreach ($this->nodes as $model_obj_node) {
             $ids = array_replace_recursive($ids, $model_obj_node->getIds());
         }
         return $ids;
+    }
+
+    /**
+     * Don't serialize the models. Just record their names on some dynamic properties.
+     * @since $VID:$
+     */
+    public function __sleep(){
+        $this->m = $this->main_model->get_this_model_name();
+        $this->rm = $this->related_model->get_this_model_name();
+        return [
+            'm',
+            'rm',
+            'id',
+            'count',
+            'nodes'
+        ];
+    }
+
+    /**
+     * Use the dynamic properties to instantiate the models we use.
+     * @since $VID:$
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws ReflectionException
+     */
+    public function  __wakeup()
+    {
+        $this->main_model = EE_Registry::instance()->load_model($this->m);
+        $this->related_model = EE_Registry::instance()->load_model($this->rm);
     }
 }
 // End of file RelationNode.php

@@ -78,7 +78,7 @@ class PreviewEventDeletion extends JobHandler
         }
         $roots = [];
         foreach($model_objects_to_delete as $model_object){
-            $roots[] = new ModelObjNode($model_object);
+            $roots[] = new ModelObjNode($model_object->ID(), $model_object->get_model());
         }
         $job_parameters->add_extra_data('roots', $roots);
         // Set an estimate of how long this will take (we're discovering as we go, so it seems impossible to give
