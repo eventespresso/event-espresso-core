@@ -13,7 +13,6 @@ export type JsDataProps = {
 	currency_config: CurrencyProps;
 	eejs_api_nonce: string;
 	locale: JsDataLocaleProps;
-	nonce: string;
 	paths: JsDataPathsProps;
 	default_timezone: JsDataTimezoneProps;
 };
