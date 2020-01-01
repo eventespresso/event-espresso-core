@@ -1,59 +1,18 @@
-import indexOf from 'ramda/src/indexOf';
 import isEmpty from 'ramda/src/isEmpty';
-import pickBy from 'ramda/src/pickBy';
 import { useEffect, useState } from 'react';
 
 import TicketPriceCalculatorForm from './TicketPriceCalculatorForm';
 import useTicketPriceCalculatorFormDecorator from './hooks/useTicketPriceCalculatorFormDecorator';
 import useTicketPriceCalculatorFormMutators from './hooks/useTicketPriceCalculatorFormMutators';
 import useOnSubmitPrices from './hooks/useOnSubmitPrices';
+import defaultNewPriceModifier from '../../../shared/entities/prices/defaultNewPriceModifier';
 import { sortByPriceOrderIdAsc } from '../../../shared/predicates/prices/sortingPredicates';
+import { copyPriceFields } from '../../../shared/predicates/prices/updatePredicates';
+import { copyTicketFields } from '../../../shared/predicates/tickets/updatePredicates';
 import useTicketPrices from '../../data/queries/tickets/useTicketPrices';
 import useDefaultPriceType from '../../data/queries/priceTypes/useDefaultPriceType';
 
 import FormModal from '../../../../application/ui/components/forms/FormModal';
-
-const newPrice = {
-	id: 'NEW_PRICE',
-	dbId: '',
-	amount: null,
-	desc: '',
-	isBasePrice: false,
-	isDeleted: false,
-	isDefault: false,
-	isDiscount: false,
-	isPercent: false,
-	isTax: false,
-	name: '',
-	order: 999,
-	priceType: 4,
-	priceTypeOrder: 999,
-	wpUser: 1,
-};
-
-const priceFields = [
-	'id',
-	'dbId',
-	'amount',
-	'desc',
-	'isBasePrice',
-	'isDiscount',
-	'isDeleted',
-	'isPercent',
-	'isTax',
-	'name',
-	'order',
-	'priceType',
-	'priceTypeOrder',
-];
-
-const NO_INDEX = -1;
-const isPriceField = (val, key) => indexOf(key, priceFields) > NO_INDEX;
-const copyPriceFields = (price) => pickBy(isPriceField, price);
-
-const ticketFields = ['id', 'reverseCalculate', 'order', 'price'];
-const isTicketField = (val, key) => indexOf(key, ticketFields) > NO_INDEX;
-const copyTicketFields = (ticket) => pickBy(isTicketField, ticket);
 
 const EMPTY_OBJECT = {};
 
@@ -69,7 +28,7 @@ const TicketPriceCalculatorModal = ({ ticket, handleClose, isOpen }) => {
 		if (initialValues === EMPTY_OBJECT && !isEmpty(prices)) {
 			const sortedPrices = sortByPriceOrderIdAsc(prices);
 			// make sure to set a valid priceType for new price.
-			sortedPrices.push({ ...newPrice, priceType: defaultPriceType.id });
+			sortedPrices.push({ ...defaultNewPriceModifier, priceType: defaultPriceType.id });
 			const formData = {
 				ticket: copyTicketFields(ticket),
 				prices: sortedPrices.map(copyPriceFields),
