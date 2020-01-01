@@ -1,3 +1,7 @@
+/**
+ * External dependencies
+ */
+import * as React from 'react';
 import { Callout, NonIdealState, Spinner } from '@blueprintjs/core/lib/esm';
 import { boxStyle } from './LoadingIndicator';
 

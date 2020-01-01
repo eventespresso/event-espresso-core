@@ -1,3 +1,7 @@
+/**
+ * External dependencies
+ */
+import * as React from 'react';
 import { Callout, H6, Spinner } from '@blueprintjs/core/lib/esm';
 
 export const boxStyle = {
