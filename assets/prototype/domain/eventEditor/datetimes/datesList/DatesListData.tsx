@@ -1,4 +1,9 @@
 /**
+ * External dependencies
+ */
+import * as React from 'react';
+
+/**
  * Internal dependencies
  */
 import AddNewDateButton from './AddNewDateButton';

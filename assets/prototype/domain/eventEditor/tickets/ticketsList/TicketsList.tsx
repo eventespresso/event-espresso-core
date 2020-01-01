@@ -2,12 +2,13 @@
  * External dependencies
  */
 import * as React from 'react';
-import { Callout, H3, H6, NonIdealState, Spinner } from '@blueprintjs/core/lib/esm';
+import { H3 } from '@blueprintjs/core/lib/esm';
 
 /**
  * Internal dependencies
  */
 import AddNewTicketButton from './AddNewTicketButton';
+import { Ticket } from '../../data/types';
 import TicketListFilterBar from './filterBar/TicketListFilterBar';
 import TicketCard from '../ticketCard/TicketCard';
 
@@ -18,7 +19,11 @@ const listStyle = {
 	width: '100%',
 };
 
-const TicketsList = ({ tickets }) => {
+interface TicketsListProps {
+	tickets: Ticket[];
+}
+
+const TicketsList = ({ tickets }: TicketsListProps) => {
 	const header = <H3 style={{ margin: '2rem 0 .5rem' }}>{'Tickets List'}</H3>;
 
 	const ticketList = (

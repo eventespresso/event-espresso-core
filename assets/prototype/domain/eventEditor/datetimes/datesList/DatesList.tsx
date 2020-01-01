@@ -1,6 +1,7 @@
 /**
  * External dependencies
  */
+import * as React from 'react';
 import { H3 } from '@blueprintjs/core/lib/esm';
 import DatesListFilterBar from './filterBar/DatesListFilterBar';
 import AddNewDateButton from './AddNewDateButton';
