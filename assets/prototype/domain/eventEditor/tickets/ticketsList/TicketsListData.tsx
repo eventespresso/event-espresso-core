@@ -22,7 +22,7 @@ const TicketsListData = () => {
 
 	if (loading) return <LoadingIndicator message='loading tickets...' />;
 
-	if (error) return <ErrorIndicator error={error} />;
+	if (error) return <ErrorIndicator />;
 
 	if (!tickets.length) {
 		return (

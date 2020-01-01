@@ -3,12 +3,11 @@
  */
 import * as React from 'react';
 import { Callout, NonIdealState, Spinner } from '@blueprintjs/core/lib/esm';
-import { boxStyle } from './LoadingIndicator';
 
-const ErrorIndicator = ({ error }) => (
-	<Callout style={boxStyle}>
+const ErrorIndicator = () => (
+	<Callout>
 		<Spinner size={Spinner.SIZE_SMALL} />
-		<NonIdealState icon={'warning-sign'} title={error.code} description={error.message} />
+		<NonIdealState icon={'warning-sign'} />
 	</Callout>
 );
 

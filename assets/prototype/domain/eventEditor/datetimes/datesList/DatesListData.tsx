@@ -22,7 +22,7 @@ const DatesListData = () => {
 
 	if (loading) return <LoadingIndicator message='loading dates...' />;
 
-	if (error) return <ErrorIndicator error={error} />;
+	if (error) return <ErrorIndicator />;
 
 	if (!datetimes.length) {
 		return (
