@@ -24,7 +24,6 @@ const ConfigProvider = ({ children }) => {
 	};
 
 	const [config, setConfig] = useState<ConfigDataProps>(value);
-	console.log('%c > ConfigData: ', 'color: Cyan;', config);
 	return <Provider value={{ config, setConfig }}>{children}</Provider>;
 };
 

@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { useReducer, useEffect } from 'react';
+import { useReducer } from 'react';
 import { drop, head } from 'ramda';
 
 enum ActionType {
@@ -42,10 +42,6 @@ const reducer = (state: State, action: Action) => {
 const useEditorModalState = () => {
 	const initialState = [];
 	const [state, dispatch] = useReducer(reducer, initialState);
-
-	useEffect(() => {
-		console.log('useEditorModalState >>>', state);
-	}, [state]);
 
 	const openEditor = (editorId: string) => {
 		dispatch({

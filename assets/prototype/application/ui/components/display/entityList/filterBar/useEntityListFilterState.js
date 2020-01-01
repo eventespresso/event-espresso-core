@@ -1,4 +1,4 @@
-import { useReducer, useEffect } from '@wordpress/element';
+import { useReducer } from 'react';
 
 const useEntityListFilterState = () => {
 	const initialState = {
@@ -8,10 +8,6 @@ const useEntityListFilterState = () => {
 		view: 'grid',
 	};
 	const [state, dispatch] = useReducer(reducer, initialState);
-
-	useEffect(() => {
-		console.log('useEntityListFilterState >>>', state);
-	}, [state]);
 
 	const setGridView = () => {
 		dispatch({

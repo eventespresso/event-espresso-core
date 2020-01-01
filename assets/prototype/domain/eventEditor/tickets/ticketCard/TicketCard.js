@@ -63,7 +63,10 @@ const TicketCard = ({ id }) => {
 							placeholder={'edit title...'}
 							defaultValue={ticket.name}
 							value={ticket.name}
-							onCancel={(value) => console.log(value)}
+							onCancel={(value) => {
+								console.log('TicketProvider title onCancel => NEEDS CALLBACK');
+								console.log('value', value);
+							}}
 							onConfirm={(name) => updateEntity({ name })}
 							minWidth={'320px'}
 							selectAllOnFocus
@@ -77,7 +80,10 @@ const TicketCard = ({ id }) => {
 							placeholder='Edit description...'
 							value={ticket.description}
 							defaultValue={ticket.description}
-							onCancel={(value) => console.log(value)}
+							onCancel={(value) => {
+								console.log('TicketProvider desc onCancel => NEEDS CALLBACK');
+								console.log('value', value);
+							}}
 							onConfirm={(description) => updateEntity({ description })}
 							minWidth={'320px'}
 							selectAllOnFocus

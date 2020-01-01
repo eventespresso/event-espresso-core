@@ -1,4 +1,4 @@
-import { useReducer, useEffect } from 'react';
+import { useReducer } from 'react';
 import { pathOr, assocPath, dissocPath, clone } from 'ramda';
 import { RelationAction, RelationFunctionProps, RelationsManager, RelationalData } from './types';
 
@@ -6,10 +6,6 @@ const INITIAL_STATE: RelationalData = {};
 
 const useRelationsManager = (data: RelationalData = INITIAL_STATE): RelationsManager => {
 	const [state, dispatch] = useReducer(relationsReducer, data);
-
-	useEffect(() => {
-		console.log('useRelationsManager >>>', state);
-	}, [state]);
 
 	/**
 	 * Sets the relational data.
@@ -135,7 +131,6 @@ const useRelationsManager = (data: RelationalData = INITIAL_STATE): RelationsMan
 };
 
 const relationsReducer = (state: RelationalData, action: RelationAction): RelationalData => {
-	// console.log('relationsReducer action:', { action, state });
 	const { entity, entityId, relation, relationId, relationIds } = action;
 	let newState: RelationalData, relations: string[];
 	switch (action.type) {
@@ -149,14 +144,12 @@ const relationsReducer = (state: RelationalData, action: RelationAction): Relati
 				return state;
 			}
 			newState = assocPath([entity, entityId, relation], [...relations, relationId], state);
-			console.log('ADD_RELATION newState:', newState);
 			return newState;
 
 		case 'REMOVE_RELATION':
 			newState = clone(state);
 			// existing relation list.
 			relations = pathOr([], [entity, entityId, relation], newState);
-			console.log('REMOVE_RELATION relations:', relations);
 			// if relationId is given remove it from the list.
 			if (relationId) {
 				return assocPath(
@@ -180,7 +173,6 @@ const relationsReducer = (state: RelationalData, action: RelationAction): Relati
 						newState
 					);
 				});
-				console.log('REMOVE_RELATION newState with relations:', newState);
 				return newState;
 			}
 			/**
@@ -197,17 +189,14 @@ const relationsReducer = (state: RelationalData, action: RelationAction): Relati
 					newState
 				);
 			}
-			console.log('REMOVE_RELATION newState without relations:', newState);
 			return newState;
 
 		case 'UPDATE_RELATIONS':
 			newState = assocPath([entity, entityId, relation], relationIds, state);
-			console.log('UPDATE_RELATIONS newState:', newState);
 			return newState;
 
 		case 'DROP_RELATIONS':
 			newState = dissocPath([entity, entityId], state);
-			console.log('DROP_RELATIONS newState:', newState);
 			return newState;
 
 		default:

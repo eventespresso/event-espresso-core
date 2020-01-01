@@ -26,7 +26,6 @@ const btnRowStyle = {
 
 const DateList = () => {
 	const datetimes = useDatetimes();
-	console.log('DateList', datetimes);
 	const { isLoading, isError } = useStatus();
 
 	const loading = isLoading(TypeName.datetimes);

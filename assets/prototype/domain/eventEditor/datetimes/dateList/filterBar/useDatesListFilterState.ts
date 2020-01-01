@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { useReducer, useEffect } from 'react';
+import { useReducer } from 'react';
 
 /**
  * Internal dependencies
@@ -38,10 +38,6 @@ const useDatesListFilterState = (dates: Datetime[]): DatesListFilterState => {
 		showDates: ShowDates.all,
 	};
 	const [state, dispatch] = useReducer(reducer, initialState);
-
-	useEffect(() => {
-		// console.log('useDatesListFilterState >>>', state);
-	}, [state]);
 
 	const setDatesSortedBy = (datesSortedBy: DatesSortedBy) => {
 		dispatch({

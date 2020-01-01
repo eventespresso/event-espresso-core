@@ -1,4 +1,4 @@
-import { useReducer, useEffect } from '@wordpress/element';
+import { useReducer } from '@wordpress/element';
 
 const useTicketListFilterState = () => {
 	const initialState = {
@@ -8,10 +8,6 @@ const useTicketListFilterState = () => {
 		ticketsSortedBy: 'chronologically',
 	};
 	const [state, dispatch] = useReducer(reducer, initialState);
-
-	useEffect(() => {
-		console.log('useTicketListFilterState >>>', state);
-	}, [state]);
 
 	const setDisplayTicketDate = (displayTicketDate) => {
 		dispatch({

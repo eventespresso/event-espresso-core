@@ -7,7 +7,6 @@ import useDatetimeQueryOptions from './useDatetimeQueryOptions';
 import { FetchEntitiesResult, ReadQueryOptions } from '../types';
 
 const useFetchDatetimes = (): FetchEntitiesResult => {
-	console.log('%c useFetchDatetimes: ', 'color: deeppink; font-size: 14px;');
 	const [initialized, setInitialized] = useState(false);
 	const { setIsLoading, setIsLoaded, setIsError } = useStatus();
 	const options: ReadQueryOptions = useDatetimeQueryOptions();
