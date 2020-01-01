@@ -2,7 +2,7 @@ import { Card, EditableText, Elevation, H4, H6 } from '@blueprintjs/core/lib/esm
 import TicketProvider from '../../context/TicketProvider';
 import EditTicket from './EditTicket';
 import DeleteTicketButton from './DeleteTicketButton';
-import TicketPriceCalculatorButton from '../ticketPriceCalculator/TicketPriceCalculatorButton';
+import TicketPriceCalculatorButton from '../ticketPriceCalculator/TicketPriceCalculatorButtonData';
 import useTicketItem from '../../data/queries/tickets/useTicketItem';
 import CurrencyInput from '../../../../application/ui/components/input/CurrencyInput';
 import { useEntityMutator, EntityType } from '../../../../application/services/apollo/mutations';

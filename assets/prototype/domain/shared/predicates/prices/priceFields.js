@@ -1,0 +1,15 @@
+export const priceFields = [
+	'id',
+	'dbId',
+	'amount',
+	'desc',
+	'isBasePrice',
+	'isDiscount',
+	'isDeleted',
+	'isPercent',
+	'isTax',
+	'name',
+	'order',
+	'priceType',
+	'priceTypeOrder',
+];

@@ -1,7 +1,9 @@
-import { assoc, map, when } from 'ramda';
-import { isBasePrice } from './selectionPredicates';
+import { assoc, map, pickBy, when } from 'ramda';
 
+import { isBasePrice, isPriceField } from './selectionPredicates';
 import { entityHasGuid } from '../shared/selectionPredicates';
+
+export const copyPriceFields = (price) => pickBy(isPriceField, price);
 
 /**
  * updates the price amount
