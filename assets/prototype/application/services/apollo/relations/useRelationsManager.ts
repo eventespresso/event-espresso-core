@@ -4,8 +4,8 @@ import { RelationAction, RelationFunctionProps, RelationsManager, RelationalData
 
 const INITIAL_STATE: RelationalData = {};
 
-const useRelationsManager = (): RelationsManager => {
-	const [state, dispatch] = useReducer(relationsReducer, INITIAL_STATE);
+const useRelationsManager = (data: RelationalData = INITIAL_STATE): RelationsManager => {
+	const [state, dispatch] = useReducer(relationsReducer, data);
 
 	useEffect(() => {
 		console.log('useRelationsManager >>>', state);
@@ -18,6 +18,13 @@ const useRelationsManager = (): RelationsManager => {
 	 */
 	const setData = (data: RelationalData): void => {
 		dispatch({ type: 'SET_DATA', data });
+	};
+
+	/**
+	 * Retrieve the relational data.
+	 */
+	const getData = (): RelationalData => {
+		return state;
 	};
 
 	/**
@@ -118,6 +125,7 @@ const useRelationsManager = (): RelationsManager => {
 
 	return {
 		setData,
+		getData,
 		getRelations,
 		addRelation,
 		removeRelation,
@@ -127,7 +135,7 @@ const useRelationsManager = (): RelationsManager => {
 };
 
 const relationsReducer = (state: RelationalData, action: RelationAction): RelationalData => {
-	console.log('relationsReducer action:', { action, state });
+	// console.log('relationsReducer action:', { action, state });
 	const { entity, entityId, relation, relationId, relationIds } = action;
 	let newState: RelationalData, relations: string[];
 	switch (action.type) {

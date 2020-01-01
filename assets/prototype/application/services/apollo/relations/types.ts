@@ -1,21 +1,11 @@
 import { EntityId } from '../../../../domain/eventEditor/data/types';
 
+type RelationEntity = 'datetimes' | 'tickets' | 'prices' | 'priceTypes';
+
 interface CommonProps {
-	relation?: string;
-	relationId?: string;
-	relationIds?: string[];
-}
-
-export interface RelationFunctionProps extends CommonProps {
-	entity: string;
-	entityId: EntityId;
-}
-
-export interface RelationAction extends CommonProps {
-	type: string;
-	entity?: string;
-	entityId?: EntityId;
-	data?: any;
+	relation?: RelationEntity;
+	relationId?: EntityId;
+	relationIds?: EntityId[];
 }
 
 type PossibleRelation = {
@@ -36,9 +26,22 @@ export type RelationalData = {
 	priceTypes?: RelationalEntity;
 };
 
+export interface RelationFunctionProps extends CommonProps {
+	entity: RelationEntity;
+	entityId: EntityId;
+}
+
+export interface RelationAction extends CommonProps {
+	type: 'SET_DATA' | 'ADD_RELATION' | 'REMOVE_RELATION' | 'UPDATE_RELATIONS' | 'DROP_RELATIONS';
+	entity?: RelationEntity;
+	entityId?: EntityId;
+	data?: RelationalData;
+}
+
 export interface RelationsManager {
 	setData: (data: RelationalData) => void;
-	getRelations: (options: RelationFunctionProps) => string[];
+	getData: () => RelationalData;
+	getRelations: (options: RelationFunctionProps) => EntityId[];
 	addRelation: (options: RelationFunctionProps) => void;
 	updateRelations: (options: RelationFunctionProps) => void;
 	removeRelation: (options: RelationFunctionProps) => void;
