@@ -1,4 +1,4 @@
-import { useReducer, useEffect } from '@wordpress/element';
+import { useReducer } from '@wordpress/element';
 
 const useEntityListFilterState = () => {
 	const initialState = {

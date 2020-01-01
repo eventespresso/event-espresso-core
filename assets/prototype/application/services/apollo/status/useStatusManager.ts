@@ -1,4 +1,4 @@
-import { useReducer, useEffect } from 'react';
+import { useReducer } from 'react';
 import { pathOr } from 'ramda';
 import { StatusManager, StatusState, StatusFlags, StatusAction, StatusGetter, StatusSetter, TypeName } from './types';
 

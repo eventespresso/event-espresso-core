@@ -1,4 +1,4 @@
-import { useReducer, useEffect } from 'react';
+import { useReducer } from 'react';
 import { pathOr, assocPath, dissocPath, clone } from 'ramda';
 import { RelationAction, RelationFunctionProps, RelationsManager, RelationalData } from './types';
 
