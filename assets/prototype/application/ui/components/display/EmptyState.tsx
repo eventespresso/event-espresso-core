@@ -5,7 +5,7 @@ import * as React from 'react';
 import { Callout, NonIdealState } from '@blueprintjs/core/lib/esm';
 
 interface EmptyStateProps {
-	children: React.ReactNode;
+	children: React.ReactChild;
 	description: string;
 	title: string;
 }

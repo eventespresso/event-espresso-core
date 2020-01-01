@@ -26,7 +26,7 @@ const DatesListData = () => {
 
 	if (!datetimes.length) {
 		return (
-			<EmptyState description={'try changing filter settings'} title={'NO DATES FOR YOU !!!'}>
+			<EmptyState description='try changing filter settings' title='NO DATES FOR YOU !!!'>
 				<AddNewDateButton />
 			</EmptyState>
 		);

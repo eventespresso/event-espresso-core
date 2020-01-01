@@ -1,9 +1,12 @@
-import { useState } from '@wordpress/element';
+/**
+ * External dependencies
+ */
+import * as React from 'react';
 import AddNewTicketModal from './AddNewTicketModal';
 import { EspressoButton } from '../../../../../ZZZ/components/ui';
 
 const AddNewTicketButton = () => {
-	const [isOpen, setIsOpen] = useState(false);
+	const [isOpen, setIsOpen] = React.useState(false);
 	const handleOpen = (e) => {
 		e.preventDefault();
 		e.stopPropagation();

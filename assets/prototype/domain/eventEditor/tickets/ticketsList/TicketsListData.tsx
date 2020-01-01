@@ -26,7 +26,7 @@ const TicketsListData = () => {
 
 	if (!tickets.length) {
 		return (
-			<EmptyState description={'try changing filter settings'} title={'NO TICKETS FOR YOU !!!'}>
+			<EmptyState description='try changing filter settings' title='NO TICKETS FOR YOU !!!'>
 				<AddNewTicketButton />
 			</EmptyState>
 		);
