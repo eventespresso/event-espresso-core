@@ -1,10 +1,13 @@
 import { useEffect } from 'react';
 import { eventId, relationalData } from './data';
 
+import { mockEeJsData } from '../../../../application/services/config/test/data';
+
 const useDomTestData = () => {
 	// Set the DOM data
 	window.eeEditorEventData = { eventId };
 	window.eeEditorGQLData = { relations: relationalData };
+	window.eejsdata = { data: mockEeJsData };
 
 	// For Housekeeping
 	useEffect(() => {
@@ -14,6 +17,7 @@ const useDomTestData = () => {
 		return () => {
 			delete window.eeEditorEventData;
 			delete window.eeEditorGQLData;
+			delete window.eejsdata;
 		};
 	}, []);
 };
