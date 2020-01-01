@@ -1,11 +1,11 @@
+export type EntityId = string;
+
 export interface Entity {
-	id: string;
+	id: EntityId;
 	dbId?: number;
 	name?: string;
 	__typename?: string;
 }
-
-export type EntityId = string;
 
 export interface EntityEdge {
 	nodes?: Entity[];
