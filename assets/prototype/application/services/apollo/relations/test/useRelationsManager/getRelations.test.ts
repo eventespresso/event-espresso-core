@@ -1,8 +1,8 @@
 import { renderHook, act } from '@testing-library/react-hooks';
 import { pathOr, assocPath } from 'ramda';
 
-import { relationalData } from '../../../../../domain/eventEditor/context';
-import useRelationsManager from '../useRelationsManager';
+import { relationalData } from '../../../../../../domain/eventEditor/context';
+import useRelationsManager from '../../useRelationsManager';
 
 describe('RelationsManager.getRelations()', () => {
 	const existingRelationalEntityId = Object.keys(relationalData.datetimes)[0];
