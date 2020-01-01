@@ -1,7 +1,11 @@
-import { assoc, map, propEq, when } from 'ramda';
+import { assoc, indexOf, map, propEq, when } from 'ramda';
 
+import { ticketFields } from './ticketFields';
 import { entityHasGuid } from '../shared/selectionPredicates';
 
+const NO_INDEX = -1;
+
+export const isTicketField = (val, key) => indexOf(key, ticketFields) > NO_INDEX;
 export const isExpired = propEq('isExpired', true);
 export const updateTicketPrice = (amount) => assoc('price', amount);
 export const updateReverseCalculate = (reverseCalculate) => assoc('reverseCalculate', reverseCalculate);
