@@ -4,7 +4,7 @@
 import AddNewDateButton from './AddNewDateButton';
 import ErrorIndicator from '../../../../application/ui/components/display/ErrorIndicator';
 import EmptyState from '../../../../application/ui/components/display/EmptyState';
-import DatesList from './DateList';
+import DatesList from './DatesList';
 import LoadingIndicator from '../../../../application/ui/components/display/LoadingIndicator';
 import useDatetimes from '../../data/queries/datetimes/useDatetimes';
 import { useStatus, TypeName } from '../../../../application/services/apollo/status';

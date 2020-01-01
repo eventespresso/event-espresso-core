@@ -6,8 +6,8 @@ import { useReducer } from 'react';
 /**
  * Internal dependencies
  */
-import { Datetime } from '../../../../eventEditor/data/types';
-import { DatesSortedBy, DisplayDates, ShowDates } from '../../../../eventEditor/data/date/types';
+import { Datetime } from '../../../data/types';
+import { DatesSortedBy, DisplayDates, ShowDates } from '../../../data/date/types';
 
 import filters from '../../../../shared/predicates/datetimes/filters';
 import sorters from '../../../../shared/predicates/datetimes/sorters';

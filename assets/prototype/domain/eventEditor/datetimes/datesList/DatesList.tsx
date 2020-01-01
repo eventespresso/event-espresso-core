@@ -18,11 +18,11 @@ const listStyle = {
 	width: '100%',
 };
 
-interface DateListProps {
+interface DatesListProps {
 	datetimes: Datetime[];
 }
 
-const DateList = ({ datetimes }: DateListProps) => {
+const DatesList = ({ datetimes }: DatesListProps) => {
 	const header = <H3 style={{ margin: '2rem 0 .5rem' }}>{'Dates List'}</H3>;
 
 	const datesList = (
@@ -45,4 +45,4 @@ const DateList = ({ datetimes }: DateListProps) => {
 	);
 };
 
-export default DateList;
+export default DatesList;
