@@ -11,9 +11,8 @@ export const hdrStyle = {
 	margin: '1rem 0 0',
 };
 
-const LoadingIndicator = ({ header, message }) => (
+const LoadingIndicator = ({ message }) => (
 	<>
-		{header}
 		<Callout style={boxStyle}>
 			<Spinner size={Spinner.SIZE_SMALL} />
 			<H6 style={hdrStyle}>{message}</H6>
