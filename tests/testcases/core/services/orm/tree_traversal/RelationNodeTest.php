@@ -4,6 +4,7 @@ namespace EventEspresso\core\services\orm\tree_traversal;
 
 use EE_Error;
 use EE_UnitTestCase;
+use EEM_Event_Venue;
 use EEM_Term_Relationship;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
@@ -34,7 +35,7 @@ class RelationNodeTest extends EE_UnitTestCase
      */
     public function testVisitTermRelationshipZeroItems(){
         $e = $this->new_model_obj_with_dependencies('Event');
-        $term_relationship_relation_node = new RelationNode($e, EEM_Term_Relationship::instance());
+        $term_relationship_relation_node = new RelationNode($e->ID(), $e->get_model(), EEM_Term_Relationship::instance());
         $work_done = $term_relationship_relation_node->visit(1);
         $this->assertEquals(0, $work_done);
         $tree = $term_relationship_relation_node->toArray();
@@ -58,7 +59,7 @@ class RelationNodeTest extends EE_UnitTestCase
             ],
             'espresso_event_categories'
         );
-        $term_relationship_relation_node = new RelationNode($e, EEM_Term_Relationship::instance());
+        $term_relationship_relation_node = new RelationNode($e->ID(), $e->get_model(), EEM_Term_Relationship::instance());
         $work_done = $term_relationship_relation_node->visit(2);
         $this->assertEquals(1, $work_done);
         $tree = $term_relationship_relation_node->toArray();
@@ -89,7 +90,7 @@ class RelationNodeTest extends EE_UnitTestCase
             ]
         );
 
-        $e_node = new RelationNode($e, \EEM_Event_Venue::instance());
+        $e_node = new RelationNode($e->ID(), $e->get_model(), EEM_Event_Venue::instance());
         $e_node->visit(2);
         $tree = $e_node->toArray();
         $this->assertEquals(1, $tree['count']);
@@ -97,6 +98,14 @@ class RelationNodeTest extends EE_UnitTestCase
         $this->assertArrayHasKey($ev->ID(), $tree['objs']);
         $this->assertEquals($ev->ID(), $tree['objs'][$ev->ID()]['id']);
         $this->assertEquals(true, $tree['complete']);
+    }
+
+    public function testSerializesSmall()
+    {
+        $e = $this->new_model_obj_with_dependencies('Event');
+        $e_node = new RelationNode($e->ID(), $e->get_model(), EEM_Event_Venue::instance());
+        echo serialize($e_node);
+        $this->assertLessThan(175, strlen(serialize($e_node)));
     }
 }
 // End of file RelationNodeTest.php

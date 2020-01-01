@@ -2,7 +2,12 @@
 
 namespace EventEspresso\core\services\orm\tree_traversal;
 
+use EE_Error;
 use EE_UnitTestCase;
+use EventEspresso\core\exceptions\InvalidDataTypeException;
+use EventEspresso\core\exceptions\InvalidInterfaceException;
+use InvalidArgumentException;
+use ReflectionException;
 
 /**
  * Class EntityNodeTest
@@ -18,7 +23,7 @@ class ModelObjNodeTest extends EE_UnitTestCase
 {
     public function testVisit(){
         $e = $this->new_model_obj_with_dependencies('Event');
-        $event_node = new ModelObjNode($e);
+        $event_node = new ModelObjNode($e->ID(), $e->get_model());
         $work_done = $event_node->visit(1);
         $this->assertEquals(0, $work_done);
         $tree = $event_node->toArray();
@@ -60,7 +65,7 @@ class ModelObjNodeTest extends EE_UnitTestCase
             );
         }
 
-        $e_node = new ModelObjNode($e);
+        $e_node = new ModelObjNode($e->ID(), $e->get_model());
         $work_budget = 2;
 
         // Ok traverse 2 objects in the tree. That means we'll grab two of the datetimes, but not finish visiting
@@ -146,7 +151,7 @@ class ModelObjNodeTest extends EE_UnitTestCase
             );
         }
 
-        $e_node = new ModelObjNode($e);
+        $e_node = new ModelObjNode($e->ID(), $e->get_model());
         $e_node->visit(999);
         $ids = $e_node->getIds();
         $this->assertArrayHasKey('Event', $ids);
@@ -170,6 +175,23 @@ class ModelObjNodeTest extends EE_UnitTestCase
             ],
             array_keys($ids)
         );
+    }
+
+    /**
+     * @since $VID:$
+     * @throws EE_Error
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws InvalidArgumentException
+     * @throws ReflectionException
+     */
+    public function testSerializesSmall()
+    {
+        $e = $this->new_model_obj_with_dependencies('Event');
+        $e_node = new ModelObjNode($e->ID(), $e->get_model());
+        // Asserts that the serialized model object node stays small. Less than 125 would be great (half of it is taken
+        // up by the classname
+        $this->assertLessThan(126, strlen(serialize($e_node)));
     }
 }
 // End of file EntityNodeTest.php
