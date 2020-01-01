@@ -3,8 +3,13 @@
  */
 import { trim } from 'ramda';
 
+/**
+ * Internal dependencies
+ */
+import { Entity } from '../../../../domain/eventEditor/data/types';
+
 type EntityFieldSearchProps = {
-	entities: any[];
+	entities: Entity[];
 	searchText: string;
 	field?: string;
 };
@@ -14,12 +19,12 @@ type EntityFieldSearchProps = {
  * of entities where the set field (defaults to entity name)
  * matches the current search text (fully or partially)
  *
- * @param {BaseEntity[]} entities
+ * @param {Entity[]} entities
  * @param {string} searchText
  * @param {string} field
- * @return {BaseEntity[]} entities matching search criteria
+ * @return {Entity[]} entities matching search criteria
  */
-const entityFieldSearch = ({ entities, searchText }: EntityFieldSearchProps) => {
+const entityFieldSearch = ({ entities, searchText }: EntityFieldSearchProps): Entity[] => {
 	const isSearchable = searchText && trim(searchText).length && Array.isArray(entities) && entities.length;
 	const textToSearch = trim(searchText).toLowerCase();
 	const searchResult =
