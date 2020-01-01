@@ -2,7 +2,7 @@
  * External imports
  */
 import { SelectControl } from '@wordpress/components';
-import { useMemo } from 'react';
+import * as React from 'react';
 import { __ } from '@wordpress/i18n';
 
 /**
@@ -19,7 +19,7 @@ import { ShowTickets } from '../../../../../eventEditor/data/ticket/types';
  * @return {Object} rendered control
  */
 const ShowTicketsControl = ({ isChained, setShowTickets, showTickets }) => {
-	return useMemo(() => {
+	return React.useMemo(() => {
 		return (
 			<SelectControl
 				label={__('show', 'event_espresso')}

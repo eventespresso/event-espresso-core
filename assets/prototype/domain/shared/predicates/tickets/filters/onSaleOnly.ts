@@ -2,8 +2,9 @@
  * Internal dependencies
  */
 import isOnSale from '../isOnSale';
+import { Ticket } from '../../../../eventEditor/data/types';
 
-const onSaleOnly = (tickets: any[]) => {
+const onSaleOnly = (tickets: Ticket[]) => {
 	return tickets.filter((ticket) => isOnSale(ticket));
 };
 

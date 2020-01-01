@@ -81,39 +81,6 @@ test('Should filter out tickets based on above75Sold show type', () => {
 	expect(filteredTickets[2].id).toBe('4');
 });
 
-test('Should filter out tickets based on above75Sold show type', () => {
-	const filteredTickets = percentSoldAtOrAbove({
-		maxQuantity: 75,
-		tickets: [
-			{
-				id: '1',
-				quantity: 10,
-				sold: 8,
-			},
-			{
-				id: '2',
-				quantity: 100,
-				sold: 74,
-			},
-			{
-				id: '3',
-				quantity: 100,
-				sold: 75,
-			},
-			{
-				id: '4',
-				quantity: 100,
-				sold: 76,
-			},
-		],
-	});
-
-	expect(filteredTickets.length).toBe(3);
-	expect(filteredTickets[0].id).toBe('1');
-	expect(filteredTickets[1].id).toBe('3');
-	expect(filteredTickets[2].id).toBe('4');
-});
-
 test('Should filter out tickets based on above90Sold show type', () => {
 	const filteredTickets = percentSoldAtOrAbove({
 		maxQuantity: 90,

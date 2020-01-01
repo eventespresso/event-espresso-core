@@ -54,10 +54,11 @@ export interface PriceEdge extends EntityEdge {
 
 export interface Ticket extends Entity {
 	description?: string;
-	endDate?: string;
+	endDate?: string; // ISO string
 	isDefault?: boolean;
 	isFree?: boolean;
 	isRequired?: boolean;
+	isSoldOut?: boolean;
 	isTaxable?: boolean;
 	max?: number;
 	min?: number;
@@ -68,7 +69,7 @@ export interface Ticket extends Entity {
 	reserved?: number;
 	reverseCalculate?: boolean;
 	sold?: number;
-	startDate?: string;
+	startDate?: string; // ISO string
 	uses?: number;
 }
 

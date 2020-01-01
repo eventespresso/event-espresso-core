@@ -1,23 +1,24 @@
 /**
  * External dependencies
  */
-import { ascend, prop, sortWith } from 'ramda';
+import { ascend, prop, propOr, sortWith } from 'ramda';
 
 /**
  * Internal dependencies
  */
-import { DatesSortedBy } from '../../../../eventEditor/data/date/types';
+import { TicketsSortedBy } from '../../../../eventEditor/data/ticket/types';
+import { Ticket } from '../../../../eventEditor/data/types';
 
-const sortTicketsList = (tickets, order = 'chronologically') => {
+const sortTicketsList = (tickets: Ticket[], order = TicketsSortedBy.chronologically) => {
 	switch (order) {
-		case DatesSortedBy.chronologically:
-			return sortWith([ascend(prop('name')), ascend(prop('id'))], tickets);
-		case DatesSortedBy.byName:
-			return sortWith([ascend(prop('name'))], tickets);
-		case DatesSortedBy.byId:
+		case TicketsSortedBy.chronologically:
+			return sortWith([ascend(propOr(null, 'name')), ascend(prop('id'))], tickets);
+		case TicketsSortedBy.byName:
+			return sortWith([ascend(propOr(null, 'name'))], tickets);
+		case TicketsSortedBy.byId:
 			return sortWith([ascend(prop('id'))], tickets);
-		case DatesSortedBy.byOrder:
-			return sortWith([ascend(prop('order'))], tickets);
+		case TicketsSortedBy.byOrder:
+			return sortWith([ascend(propOr(null, 'order'))], tickets);
 	}
 };
 
