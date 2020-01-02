@@ -22,10 +22,16 @@ use ReflectionException;
 class ModelObjNodeTest extends EE_UnitTestCase
 {
     public function testVisit(){
-        $e = $this->new_model_obj_with_dependencies('Event');
+        $d = $this->new_model_obj_with_dependencies('Datetime');
+        $e = $d->get_first_related('Event');
+        $v = $this->new_model_obj_with_dependencies('Venue');
+        $e->_add_relation_to($v, 'Venue');
+        $qg = \EEM_Question_Group::instance()->get_one();
+        $e->_add_relation_to($qg, 'Question_Group');
+
         $event_node = new ModelObjNode($e->ID(), $e->get_model());
-        $work_done = $event_node->visit(1);
-        $this->assertEquals(0, $work_done);
+        $work_done = $event_node->visit(10);
+        $this->assertEquals(3, $work_done);
         $tree = $event_node->toArray();
 
         // We should know the ID of the main object.
@@ -75,10 +81,8 @@ class ModelObjNodeTest extends EE_UnitTestCase
         $partial_tree = $e_node->toArray();
         $this->assertFalse($partial_tree['complete']);
         // It goes through the relations in alphabetical order. Change log is the first at the time of writing.
-        // So we should have checked for change logs, found none (did not "work"), and then kept going.
-        $this->assertArrayHasKey('Change_Log', $partial_tree['rels']);
-        $this->assertTrue($partial_tree['rels']['Change_Log']['complete']);
-        $this->assertEquals(0, $partial_tree['rels']['Change_Log']['count']);
+        // So we should have checked for change logs, found none (did not "work"), and then remove it as a relation.
+        $this->assertArrayNotHasKey('Change_Log', $partial_tree['rels']);
         // Assert datetimes done as expected.
         $this->assertArrayHasKey('Datetime', $partial_tree['rels']);
         // Not complete, but did 2 of the 3.
@@ -109,6 +113,10 @@ class ModelObjNodeTest extends EE_UnitTestCase
         $another_datetime_node = next($partial_tree['rels']['Datetime']['objs']);
         $this->assertFalse($another_datetime_node['complete']);
 
+        // Again, verify serializing doesn't hurt.
+        $e_node_serialized = serialize($e_node);
+        $e_node = unserialize($e_node_serialized);
+
         // Hit it a third time. This time the other datetime should be visited and its ticket, but not the 3rd datetime.
         $e_node->visit($work_budget);
         $partial_tree = $e_node->toArray();
@@ -118,6 +126,10 @@ class ModelObjNodeTest extends EE_UnitTestCase
         $this->assertTrue($second_datetime['complete']);
         $third_datetime = next($partial_tree['rels']['Datetime']['objs']);
         $this->assertFalse($third_datetime['complete']);
+
+        // Again, verify serializing doesn't hurt.
+        $e_node_serialized = serialize($e_node);
+        $e_node = unserialize($e_node_serialized);
 
         // Hit it a fourth time. We'll fetch the last datetime, and then its datetime-ticket relation.
         // But we won't have time to finish checking if it has more related items.
@@ -191,7 +203,13 @@ class ModelObjNodeTest extends EE_UnitTestCase
         $e_node = new ModelObjNode($e->ID(), $e->get_model());
         // Asserts that the serialized model object node stays small. Less than 125 would be great (half of it is taken
         // up by the classname
-        $this->assertLessThan(126, strlen(serialize($e_node)));
+//        echo serialize($e_node);
+        $this->assertLessThan(135, strlen(serialize($e_node)));
+
+        // Also check that the fully discovered node isn't too big.
+        $e_node->visit(100);
+//        echo serialize($e_node);
+        $this->assertLessThan(141, strlen(serialize($e_node)));
     }
 }
 // End of file EntityNodeTest.php

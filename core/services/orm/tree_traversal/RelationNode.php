@@ -255,19 +255,32 @@ class RelationNode extends BaseNode
     }
 
     /**
+     * Returns the number of sub-nodes found (ie, related model objects across this relation.)
+     * @since $VID:$
+     * @return int
+     */
+    public function countSubNodes()
+    {
+        return count($this->nodes);
+    }
+
+    /**
      * Don't serialize the models. Just record their names on some dynamic properties.
      * @since $VID:$
      */
     public function __sleep(){
         $this->m = $this->main_model->get_this_model_name();
         $this->rm = $this->related_model->get_this_model_name();
-        return [
-            'm',
-            'rm',
-            'id',
-            'count',
-            'nodes'
-        ];
+        return array_merge(
+            [
+                'm',
+                'rm',
+                'id',
+                'count',
+                'nodes',
+            ],
+            parent::__sleep()
+        );
     }
 
     /**
@@ -283,6 +296,7 @@ class RelationNode extends BaseNode
     {
         $this->main_model = EE_Registry::instance()->load_model($this->m);
         $this->related_model = EE_Registry::instance()->load_model($this->rm);
+        parent::__wakeup();
     }
 }
 // End of file RelationNode.php
