@@ -12,7 +12,7 @@ use EventEspresso\core\exceptions\UnexpectedEntityException;
 use EventEspresso\core\services\graphql\fields\GraphQLFieldInterface;
 use EventEspresso\core\services\graphql\types\TypeBase;
 use EventEspresso\core\services\graphql\fields\GraphQLOutputField;
-use EventEspresso\core\domain\services\admin\events\editor\AdvancedEditorEntityData;
+use EventEspresso\core\domain\services\admin\events\editor\AdvancedEditorData;
 use GraphQL\Error\UserError;
 use WPGraphQL\AppContext;
 use GraphQL\Type\Definition\ResolveInfo;
@@ -93,6 +93,6 @@ class RootQuery extends TypeBase
 
         $eventId = absint($args['eventId']);
 
-        return json_encode(AdvancedEditorEntityData::getRelationalData($eventId));
+        return json_encode(AdvancedEditorData::getRelationalData($eventId));
     }
 }

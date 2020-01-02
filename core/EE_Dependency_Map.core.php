@@ -898,16 +898,9 @@ class EE_Dependency_Map
             'EventEspresso\core\domain\services\admin\events\default_settings\AdvancedEditorAdminFormSection'  => [
                 'EE_Admin_Config' => EE_Dependency_Map::load_from_cache
             ],
-            'EventEspresso\core\domain\services\admin\events\editor\AdvancedEditorEntityData'  => [
+            'EventEspresso\core\domain\services\admin\events\editor\AdvancedEditorData'  => [
                 'EE_Event'        => EE_Dependency_Map::not_registered,
-                'EventEspresso\core\domain\services\converters\RestApiSpoofer' => EE_Dependency_Map::load_from_cache,
                 'EE_Admin_Config' => EE_Dependency_Map::load_from_cache,
-                'EEM_Datetime'    => EE_Dependency_Map::load_from_cache,
-                'EEM_Event'       => EE_Dependency_Map::load_from_cache,
-                'EEM_Price'       => EE_Dependency_Map::load_from_cache,
-                'EEM_Price_Type'  => EE_Dependency_Map::load_from_cache,
-                'EEM_Ticket'      => EE_Dependency_Map::load_from_cache,
-                'EEM_Venue'       => EE_Dependency_Map::load_from_cache,
             ],
             'EventEspresso\core\services\graphql\GraphQLManager' => [
                 'EventEspresso\core\services\graphql\TypesManager'  => EE_Dependency_Map::load_from_cache,
