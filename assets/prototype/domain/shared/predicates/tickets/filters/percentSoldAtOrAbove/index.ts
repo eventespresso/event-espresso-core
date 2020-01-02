@@ -21,11 +21,10 @@ type PercentSoldAtOrAboveProps = {
  */
 const percentSoldAtOrAbove = ({ percentage, tickets }: PercentSoldAtOrAboveProps) => {
 	const calc = (ticket: Ticket) => {
-		const checkIfSoldAndQtyAreNumbers = is(Number, ticket.sold) && is(Number, ticket.quantity);
+		const { quantity, sold } = ticket;
+		const checkIfSoldAndQtyAreNumbers = is(Number, sold) && is(Number, quantity);
 
-		return (
-			checkIfSoldAndQtyAreNumbers && Math.round(ticket.sold) / Math.round(ticket.quantity) >= maxQuantity / 100
-		);
+		return checkIfSoldAndQtyAreNumbers && Math.round(sold) / Math.round(quantity) >= percentage / 100;
 	};
 
 	const filterFn = (ticket: Ticket) => {
