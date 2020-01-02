@@ -1,4 +1,4 @@
-import { filter, find, indexOf, propEq } from 'ramda';
+import { filter, find, indexOf, prop, propEq } from 'ramda';
 
 import { priceFields } from './priceFields';
 import { findEntityByDbId, findEntityByGuid } from '../shared/selectionPredicates';
@@ -28,3 +28,9 @@ export const findPriceByGuid = (prices) => findEntityByGuid(prices);
 // returns array of prices that satisfy predicate
 export const getPriceModifiers = (prices) => filter(isNotBasePrice, prices);
 export const getTaxes = (prices) => filter(isTax, prices);
+
+// returns GUID for price entity's related price type
+export const getPriceTypeGuid = (price) => prop('priceType', price);
+
+// returns price type for supplied price if found in array of price types
+export const getPriceType = (price, priceTypes) => findEntityByGuid(priceTypes)(getPriceTypeGuid(price));
