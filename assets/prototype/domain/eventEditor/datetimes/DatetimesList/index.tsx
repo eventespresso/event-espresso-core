@@ -9,12 +9,12 @@ import * as React from 'react';
 import AddNewDatetimeButton from './AddNewDatetimeButton';
 import EmptyState from '../../../../application/ui/components/display/EmptyState';
 import ErrorIndicator from '../../../../application/ui/components/display/ErrorIndicator';
-import DatetimesList from './DatetimesList';
+import List from './List';
 import LoadingIndicator from '../../../../application/ui/components/display/LoadingIndicator';
 import useDatetimes from '../../data/queries/datetimes/useDatetimes';
 import { useStatus, TypeName } from '../../../../application/services/apollo/status';
 
-const DatetimesListData = () => {
+const DatetimesList = () => {
 	const datetimes = useDatetimes();
 	const noDatetimes = datetimes.length === 0;
 	const { isError, isLoading } = useStatus();
@@ -33,7 +33,7 @@ const DatetimesListData = () => {
 		);
 	}
 
-	return <DatetimesList datetimes={datetimes} />;
+	return <List datetimes={datetimes} />;
 };
 
-export default DatetimesListData;
+export default DatetimesList;

@@ -23,7 +23,7 @@ interface DatesListProps {
 	datetimes: Datetime[];
 }
 
-const DatetimesList = ({ datetimes }: DatesListProps) => {
+const List = ({ datetimes }: DatesListProps) => {
 	const header = <H3 style={{ margin: '2rem 0 .5rem' }}>{'Dates List'}</H3>;
 
 	const datetimesList = (
@@ -46,4 +46,4 @@ const DatetimesList = ({ datetimes }: DatesListProps) => {
 	);
 };
 
-export default DatetimesList;
+export default List;
