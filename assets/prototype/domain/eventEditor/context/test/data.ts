@@ -46,6 +46,7 @@ export const relationalData: RelationalData = {
 	},
 };
 
+// Add only what's needed
 export const event: EventData = {
 	dbId: eventId,
 	relations: relationalData,
