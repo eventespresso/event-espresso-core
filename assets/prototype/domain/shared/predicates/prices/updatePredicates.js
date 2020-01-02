@@ -8,22 +8,22 @@ export const copyPriceFields = (price) => pickBy(isPriceField, price);
 /**
  * updates the price amount
  *
- * @param {Object} price
+ * @param {number} amount
  */
-export const updatePriceAmount = (price) => (amount) => assoc('amount', parseFloat(amount), price);
+export const updatePriceAmount = (amount) => (price) => assoc('amount', parseFloat(amount || 0), price);
 
 /**
  * updates the price type
  *
- * @param {Object} price
+ * @param {string} type
  */
-export const updatePriceType = (price) => (type) => assoc('priceType', type, price);
+export const updatePriceType = (type) => (price) => assoc('priceType', type, price);
 
 /**
  * given an array of prices, finds and updates the base price amount
  *
  * @param {price[]} prices
- * @param {Number} amount
+ * @param {number} amount
  */
 export const updateBasePriceAmount = ({ prices, amount }) => map(when(isBasePrice, updatePriceAmount(amount)), prices);
 
