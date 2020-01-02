@@ -1,11 +1,11 @@
 import { useContext } from '@wordpress/element';
 import FormModal from '../../../../application/ui/components/forms/FormModal';
-import DatetimeForm from '../datetimeForm/DatetimeForm';
+import DatetimeForm from '../dateForm/DateForm';
 import { DateTimeContext } from '../../context/DateTimeProvider';
 import { useEntityMutator, EntityType } from '../../../../application/services/apollo/mutations';
 import useTickets from '../../data/queries/tickets/useTickets';
 
-const EditDatetimeModal = ({ relatedTickets }) => {
+const EditDateModal = ({ relatedTickets }) => {
 	const { id, isOpen, onClose } = useContext(DateTimeContext);
 	const { updateEntity } = useEntityMutator(EntityType.Datetime, id);
 	const tickets = useTickets();
@@ -27,4 +27,4 @@ const EditDatetimeModal = ({ relatedTickets }) => {
 	);
 };
 
-export default EditDatetimeModal;
+export default EditDateModal;

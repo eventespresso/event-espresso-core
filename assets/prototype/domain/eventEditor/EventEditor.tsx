@@ -7,7 +7,7 @@ import * as React from 'react';
  * Internal dependencies
  */
 import useInitQueries from './data/queries/useInitQueries';
-import DatetimesList from './datetimes/DatetimesList';
+import DatesList from './datetimes/DatesList';
 import TicketsList from './tickets/TicketsList';
 
 const EventEditor = () => {
@@ -15,7 +15,7 @@ const EventEditor = () => {
 
 	return (
 		<>
-			<DatetimesList />
+			<DatesList />
 			<TicketsList />
 		</>
 	);

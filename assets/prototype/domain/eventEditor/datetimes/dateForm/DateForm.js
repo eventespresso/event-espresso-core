@@ -59,7 +59,7 @@ const formatSecondaryField = (ticketPrice, toString = false) => {
 	return toString ? renderToString(<Currency quantity={ticketPrice} />, null) : <Currency quantity={ticketPrice} />;
 };
 
-const DatetimeForm = ({ formReset, relatedTickets, tickets = [], title }) => {
+const DateForm = ({ formReset, relatedTickets, tickets = [], title }) => {
 	const { id } = useContext(DateTimeContext);
 	const { description = '', name = '' } = useDatetimeItem({ id });
 
@@ -112,4 +112,4 @@ const DatetimeForm = ({ formReset, relatedTickets, tickets = [], title }) => {
 	);
 };
 
-export default DatetimeForm;
+export default DateForm;

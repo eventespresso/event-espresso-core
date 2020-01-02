@@ -2,8 +2,8 @@ import { useState } from '@wordpress/element';
 import moment from 'moment';
 import { Button, Card, EditableText, Elevation, H4, H6, Popover } from '@blueprintjs/core/lib/esm';
 import DateTimeProvider from '../../context/DateTimeProvider';
-import EditDatetime from './EditDatetime';
-import DeleteDatetimeButton from './DeleteDatetimeButton';
+import EditDatetime from './EditDate';
+import DeleteDatetimeButton from './DeleteDateButton';
 import DateRangePicker from '../../../shared/dateRangeInput/DateRangePicker';
 import { MomentDateRange } from '../../../shared/dateRangeInput/momentDate';
 import { PLUS_ONE_MONTH, PLUS_TWO_MONTHS } from '../../../shared/defaultDates';
@@ -35,7 +35,7 @@ const idStyle = {
 	top: '.5em',
 };
 
-const DatetimeCard = ({ id }) => {
+const DateCard = ({ id }) => {
 	const date = useDatetimeItem({ id });
 	const { isLoaded } = useStatus();
 	const { updateEntity } = useEntityMutator(EntityType.Datetime, id);
@@ -120,4 +120,4 @@ const DatetimeCard = ({ id }) => {
 	);
 };
 
-export default DatetimeCard;
+export default DateCard;

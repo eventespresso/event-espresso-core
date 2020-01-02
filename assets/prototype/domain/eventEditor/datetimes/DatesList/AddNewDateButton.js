@@ -1,5 +1,5 @@
 import { useState } from '@wordpress/element';
-import AddNewDatetimeModal from './AddNewDatetimeModal';
+import AddNewDatetimeModal from './AddNewDateModal';
 import { EspressoButton } from '../../../../../ZZZ/components/ui';
 
 const btnRowStyle = {
@@ -10,7 +10,7 @@ const btnRowStyle = {
 	width: '100%',
 };
 
-const AddNewDatetimeButton = () => {
+const AddNewDateButton = () => {
 	const [isOpen, setIsOpen] = useState(false);
 	const handleOpen = (e) => {
 		e.preventDefault();
@@ -31,4 +31,4 @@ const AddNewDatetimeButton = () => {
 	);
 };
 
-export default AddNewDatetimeButton;
+export default AddNewDateButton;
