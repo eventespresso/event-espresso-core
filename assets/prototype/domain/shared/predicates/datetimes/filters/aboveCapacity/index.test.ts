@@ -1,3 +1,6 @@
+/**
+ * Internal dependencies
+ */
 import aboveCapacity from './index';
 import { Datetime } from '../../../../../eventEditor/data/types';
 

@@ -63,13 +63,13 @@ export interface Ticket extends Entity {
 	min?: number;
 	order?: number;
 	price?: number;
+	prices?: PriceEdge; // for create and update ticket mutation
 	quantity?: number;
 	reserved?: number;
 	reverseCalculate?: boolean;
 	sold?: number;
 	startDate?: string;
 	uses?: number;
-	prices?: PriceEdge; // for create and update ticket mutation
 }
 
 export interface TicketEdge extends EntityEdge {

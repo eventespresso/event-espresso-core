@@ -1,9 +1,13 @@
-import validFiniteQuantity from './validFiniteQuantity';
-import validInfiniteQuantity from './validInfiniteQuantity';
+/**
+ * Internal dependencies
+ */
+import validFiniteQuantity from '../validFiniteQuantity';
+import validInfiniteQuantity from '../validInfiniteQuantity';
+import { Ticket } from '../../../../../eventEditor/data/types';
 
 type PercentSoldAtOrAboveProps = {
 	maxQuantity: number;
-	tickets: any[];
+	tickets: Ticket[];
 };
 
 /**
@@ -12,10 +16,10 @@ type PercentSoldAtOrAboveProps = {
  * @return {boolean} true if sold/qty less than than qty
  */
 const percentSoldBelow = ({ maxQuantity, tickets }: PercentSoldAtOrAboveProps) => {
-	const filterFn = (ticket) => {
+	const filterFn = (ticket: Ticket) => {
 		return (
 			validInfiniteQuantity(ticket) ||
-			(validFiniteQuantity(ticket) && parseInt(ticket.sold, 10) / parseInt(ticket.qty, 10) < maxQuantity / 100)
+			(validFiniteQuantity(ticket) && Math.round(ticket.sold) / Math.round(ticket.quantity) < maxQuantity / 100)
 		);
 	};
 

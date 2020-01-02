@@ -1,6 +1,7 @@
 /**
  * Internal dependencies
  */
+import { Datetime } from '../../../../eventEditor/data/types';
 import { ShowDates } from '../../../../eventEditor/data/date/types';
 
 import aboveCapacity from './aboveCapacity';
@@ -18,7 +19,7 @@ import upcomingOnly from './upcomingOnly';
 export const now = new Date();
 
 interface FilterDates {
-	dates: any[];
+	dates: Datetime[];
 	show?: string;
 }
 
