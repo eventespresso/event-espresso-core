@@ -17,9 +17,11 @@ type PercentSoldAtOrAboveProps = {
  */
 const percentSoldBelow = ({ percentage, tickets }: PercentSoldAtOrAboveProps) => {
 	const filterFn = (ticket: Ticket) => {
+		const { quantity, sold } = ticket;
+
 		return (
 			validInfiniteQuantity(ticket) ||
-			(validFiniteQuantity(ticket) && Math.round(ticket.sold) / Math.round(ticket.quantity) < percentage / 100)
+			(validFiniteQuantity(ticket) && Math.round(sold) / Math.round(quantity) < percentage / 100)
 		);
 	};
 
