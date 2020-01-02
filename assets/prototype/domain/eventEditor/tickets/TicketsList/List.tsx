@@ -19,11 +19,11 @@ const listStyle = {
 	width: '100%',
 };
 
-interface TicketsListProps {
+interface ListProps {
 	tickets: Ticket[];
 }
 
-const TicketsList = ({ tickets }: TicketsListProps) => {
+const List = ({ tickets }: ListProps) => {
 	const header = <H3 style={{ margin: '2rem 0 .5rem' }}>{'Tickets List'}</H3>;
 
 	const ticketList = (
@@ -46,4 +46,4 @@ const TicketsList = ({ tickets }: TicketsListProps) => {
 	);
 };
 
-export default TicketsList;
+export default List;

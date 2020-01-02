@@ -19,11 +19,11 @@ const listStyle = {
 	width: '100%',
 };
 
-interface DatesListProps {
+interface ListProps {
 	datetimes: Datetime[];
 }
 
-const List = ({ datetimes }: DatesListProps) => {
+const List = ({ datetimes }: ListProps) => {
 	const header = <H3 style={{ margin: '2rem 0 .5rem' }}>{'Dates List'}</H3>;
 
 	const datetimesList = (

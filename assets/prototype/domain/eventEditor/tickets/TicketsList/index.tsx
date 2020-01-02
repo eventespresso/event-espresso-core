@@ -10,11 +10,11 @@ import AddNewTicketButton from './AddNewTicketButton';
 import EmptyState from '../../../../application/ui/components/display/EmptyState';
 import ErrorIndicator from '../../../../application/ui/components/display/ErrorIndicator';
 import LoadingIndicator from '../../../../application/ui/components/display/LoadingIndicator';
-import TicketsList from './TicketsList';
+import List from './List';
 import useTickets from '../../data/queries/tickets/useTickets';
 import { useStatus, TypeName } from '../../../../application/services/apollo/status';
 
-const TicketsListData = () => {
+const TicketsList = () => {
 	const tickets = useTickets();
 	const noTickets = tickets.length === 0;
 	const { isError, isLoading } = useStatus();
@@ -33,7 +33,7 @@ const TicketsListData = () => {
 		);
 	}
 
-	return <TicketsList tickets={tickets} />;
+	return <List tickets={tickets} />;
 };
 
-export default TicketsListData;
+export default TicketsList;
