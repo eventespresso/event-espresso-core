@@ -4,7 +4,7 @@ import { formatISO, subWeeks } from 'date-fns';
 import { Datetime } from '../../../../data/types';
 import { DatesSortedBy, DisplayDates, ShowDates } from '../../../../data/date/types';
 
-import useDatesListFilterState from '.';
+import useDatesListFilterState from './index';
 
 const datetimes: Datetime[] = [
 	{

@@ -1,8 +1,8 @@
 /**
  * External imports
  */
+import * as React from 'react';
 import { SelectControl } from '@wordpress/components';
-import { useMemo } from 'react';
 import { __ } from '@wordpress/i18n';
 
 /**
@@ -18,7 +18,7 @@ import { DisplayDates } from '../../../../data/ticket/types';
  * @return {Object} rendered control
  */
 const DisplayTicketsControl = ({ displayTicketDate, setDisplayTicketDate }) => {
-	return useMemo(() => {
+	return React.useMemo(() => {
 		return (
 			<SelectControl
 				label={__('display', 'event_espresso')}

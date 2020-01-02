@@ -49,7 +49,7 @@ const relationsStyle = {
 
 const TicketForm = ({ datetimes, formReset, relatedDates, title }) => {
 	const { id } = useContext(TicketContext);
-	const { description = '', name = '', price = '' } = useTicketItem({ id }) || {};
+	const { description = '', name = '', price = '' } = useTicketItem({ id });
 
 	return (
 		<>

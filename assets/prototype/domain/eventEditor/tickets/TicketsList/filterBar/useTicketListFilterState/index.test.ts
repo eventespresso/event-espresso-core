@@ -26,6 +26,6 @@ test('useTicketListFilterState initial state result', () => {
 	expect(is(Array, currentResult.tickets)).toBe(true);
 	expect(currentResult.tickets).toEqual(tickets);
 
-	expect(is(String, currentResult.ticketsSortedBy)).toBe(true);
-	expect(currentResult.ticketsSortedBy).toBe(SortTickets.chronologically);
+	expect(is(String, currentResult.sortTickets)).toBe(true);
+	expect(currentResult.sortTickets).toBe(SortTickets.chronologically);
 });

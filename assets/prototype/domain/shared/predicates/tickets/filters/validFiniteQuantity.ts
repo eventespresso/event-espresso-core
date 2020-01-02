@@ -15,7 +15,7 @@ import { Ticket } from '../../../../eventEditor/data/types';
 const validFiniteQuantity = (ticket: Ticket): boolean => {
 	const { quantity } = ticket;
 	const isNumber = is(Number, quantity);
-	const isFinite = Number.isFinite(Infinity);
+	const isFinite = Number.isFinite(quantity);
 
 	return isNumber && isFinite && Math.round(quantity) > 0;
 };

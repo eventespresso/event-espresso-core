@@ -13,7 +13,7 @@ import { Ticket } from '../../../../data/types';
 enum ActionType {
 	SET_DISPLAY_TICKET_DATE = 'SET_DISPLAY_TICKET_DATE',
 	SET_SHOW_TICKETS = 'SET_SHOW_TICKETS',
-	SET_TICKETS_SORTED_BY = 'SET_TICKETS_SORTED_BY',
+	SET_SORT_TICKETS = 'SET_SORT_TICKETS',
 	TOGGLE_IS_CHAINED = 'TOGGLE_IS_CHAINED',
 }
 
@@ -23,7 +23,7 @@ interface TicketListFilterState {
 	processedTickets: Ticket[];
 	showTickets: ShowTickets;
 	tickets: Ticket[];
-	SortTickets: SortTickets;
+	sortTickets: SortTickets;
 }
 
 const useTicketListFilterState = (tickets: Ticket[]): TicketListFilterState => {
@@ -33,7 +33,7 @@ const useTicketListFilterState = (tickets: Ticket[]): TicketListFilterState => {
 		processedTickets: [],
 		showTickets: ShowTickets.all,
 		tickets,
-		SortTickets: SortTickets.chronologically,
+		sortTickets: SortTickets.chronologically,
 	};
 	const [state, dispatch] = useReducer(reducer, initialState);
 
@@ -54,7 +54,7 @@ const useTicketListFilterState = (tickets: Ticket[]): TicketListFilterState => {
 	const setSortTickets = (SortTickets) => {
 		dispatch({
 			SortTickets,
-			type: ActionType.SET_TICKETS_SORTED_BY,
+			type: ActionType.SET_SORT_TICKETS,
 		});
 	};
 
@@ -88,7 +88,7 @@ const reducer = (state, action) => {
 			processedDates = filters({ tickets: state.tickets, show: showTickets });
 
 			return { ...state, processedDates, showTickets };
-		case ActionType.SET_TICKETS_SORTED_BY:
+		case ActionType.SET_SORT_TICKETS:
 			return { ...state, SortTickets };
 		case ActionType.TOGGLE_IS_CHAINED:
 			return { ...state, isChained: !state.isChained };

@@ -1,9 +1,14 @@
 /**
  * External imports
  */
+import * as React from 'react';
 import { SelectControl } from '@wordpress/components';
-import { useMemo } from '@wordpress/element';
-import { __ } from '@eventespresso/i18n';
+import { __ } from '@wordpress/i18n';
+
+/**
+ * Internal imports
+ */
+import { SortTickets } from '../../../../data/ticket/types';
 
 /**
  * filter for controlling the sorting of a list of Tickets
@@ -13,7 +18,7 @@ import { __ } from '@eventespresso/i18n';
  * @return {Object} rendered control
  */
 const TicketsSortedByControl = ({ setTicketsSortedBy, ticketsSortedBy }) => {
-	return useMemo(() => {
+	return React.useMemo(() => {
 		return (
 			<SelectControl
 				label={__('sort', 'event_espresso')}
@@ -21,19 +26,19 @@ const TicketsSortedByControl = ({ setTicketsSortedBy, ticketsSortedBy }) => {
 				value={ticketsSortedBy}
 				options={[
 					{
-						value: 'chronologically',
+						value: SortTickets.chronologically,
 						label: __('chronologically', 'event_espresso'),
 					},
 					{
-						value: 'byName',
+						value: SortTickets.byName,
 						label: __('by ticket name', 'event_espresso'),
 					},
 					{
-						value: 'byId',
+						value: SortTickets.byId,
 						label: __('by ticket ID', 'event_espresso'),
 					},
 					{
-						value: 'byOrder',
+						value: SortTickets.byOrder,
 						label: __('by custom order', 'event_espresso'),
 					},
 				]}

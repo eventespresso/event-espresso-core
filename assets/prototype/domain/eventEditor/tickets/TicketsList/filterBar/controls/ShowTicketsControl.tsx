@@ -1,14 +1,14 @@
 /**
  * External imports
  */
-import { SelectControl } from '@wordpress/components';
 import * as React from 'react';
+import { SelectControl } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 
 /**
  * Internal imports
  */
-import { ShowTickets } from '../../../../../eventEditor/data/ticket/types';
+import { ShowTickets } from '../../../../data/ticket/types';
 
 /**
  * filter for controlling which dates display in a list of Tickets
