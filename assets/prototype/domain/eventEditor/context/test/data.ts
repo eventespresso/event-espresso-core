@@ -1,4 +1,5 @@
 import '../../types';
+import { EventData } from '../../types';
 import { RelationalData } from '../../../../application/services/apollo/relations';
 import { nodes as datetimes } from '../../data/queries/datetimes/test/data';
 import { nodes as tickets } from '../../data/queries/tickets/test/data';
@@ -43,4 +44,9 @@ export const relationalData: RelationalData = {
 			priceTypes: [priceTypes[3].id],
 		},
 	},
+};
+
+export const event: EventData = {
+	dbId: eventId,
+	relations: relationalData,
 };

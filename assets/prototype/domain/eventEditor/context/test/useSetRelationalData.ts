@@ -5,7 +5,7 @@ import './data';
 const useSetRelationalData = (): void => {
 	const { setData } = useRelations();
 	useEffect(() => {
-		setData(window.eeEditorGQLData.relations);
+		setData(window.eeEditorData.event.relations);
 	}, []);
 };
 export default useSetRelationalData;

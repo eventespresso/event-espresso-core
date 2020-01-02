@@ -3,7 +3,7 @@ import ApolloClient from 'apollo-client';
 import { InMemoryCache, InMemoryCacheConfig, CacheResolver, CacheResolverMap } from 'apollo-cache-inmemory';
 import { HttpLink } from 'apollo-link-http';
 
-const graphqlEndpoint = pathOr<string>('', ['graphqlEndpoint'], window);
+const graphqlEndpoint = pathOr<string>('', ['eeEditorData', 'graphqlEndpoint'], window);
 const nonce = pathOr<string>('', ['eejsdata', 'data', 'eejs_api_nonce'], window);
 
 const getResolver = (type: string): CacheResolver => {
