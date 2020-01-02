@@ -1,7 +1,7 @@
 <?php
 
 use EventEspresso\core\domain\services\admin\events\default_settings\AdvancedEditorAdminFormSection;
-use EventEspresso\core\domain\services\admin\events\editor\AdvancedEditorEntityData;
+use EventEspresso\core\domain\services\admin\events\editor\AdvancedEditorData;
 use EventEspresso\core\exceptions\ExceptionStackTraceDisplay;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
@@ -24,7 +24,7 @@ class Extend_Events_Admin_Page extends Events_Admin_Page
     protected $advanced_editor_admin_form;
 
     /**
-     * @var AdvancedEditorEntityData
+     * @var AdvancedEditorData
      */
     protected $advanced_editor_data;
 
@@ -255,7 +255,7 @@ class Extend_Events_Admin_Page extends Events_Admin_Page
                 );
             }
             $admin_config = $this->loader->getShared('EE_Admin_Config');
-            // load handler for GraphQL requests and AdvancedEditorEntityData
+            // load handler for GraphQL requests and AdvancedEditorData
             if (($action === 'edit' || $action === 'create_new')
                 && $admin_config instanceof EE_Admin_Config
                 && class_exists('WPGraphQL')
@@ -268,7 +268,7 @@ class Extend_Events_Admin_Page extends Events_Admin_Page
                     );
                     $graphQL_manager->init();
                     $this->advanced_editor_data = $this->loader->getShared(
-                        'EventEspresso\core\domain\services\admin\events\editor\AdvancedEditorEntityData',
+                        'EventEspresso\core\domain\services\admin\events\editor\AdvancedEditorData',
                         [$this->_cpt_model_obj]
                     );
                 } catch (Exception $exception) {

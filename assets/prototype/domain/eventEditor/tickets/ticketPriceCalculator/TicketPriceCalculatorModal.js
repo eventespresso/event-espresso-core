@@ -5,7 +5,7 @@ import TicketPriceCalculatorForm from './TicketPriceCalculatorForm';
 import useTicketPriceCalculatorFormDecorator from './hooks/useTicketPriceCalculatorFormDecorator';
 import useTicketPriceCalculatorFormMutators from './hooks/useTicketPriceCalculatorFormMutators';
 import useOnSubmitPrices from './hooks/useOnSubmitPrices';
-import defaultNewPriceModifier from '../../../shared/entities/prices/defaultNewPriceModifier';
+import { defaultNewPriceModifier } from '../../../shared/entities/prices/defaultNewPriceModifier';
 import { sortByPriceOrderIdAsc } from '../../../shared/predicates/prices/sortingPredicates';
 import { copyPriceFields } from '../../../shared/predicates/prices/updatePredicates';
 import { copyTicketFields } from '../../../shared/predicates/tickets/updatePredicates';

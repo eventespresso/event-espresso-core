@@ -1,7 +1,6 @@
 /**
  * External imports
  */
-import { getWeekYearWithOptions } from 'date-fns/fp';
 import pathOr from 'ramda/src/pathOr';
 import React, { createContext } from 'react';
 import useToaster from '../../../application/services/toaster/useToaster';
@@ -12,7 +11,7 @@ const { Provider } = EventEditorEventIdContext;
 
 const EventEditorEventIdProvider = ({ children }) => {
 	const toaster = useToaster();
-	const eventId = pathOr<number>(0, ['eeEditorEventData', 'eventId'], window);
+	const eventId = pathOr<number>(0, ['eeEditorData', 'event', 'dbId'], window);
 
 	if (!eventId) {
 		toaster.error('Event ID is empty or invalid.');

@@ -3,18 +3,20 @@ import { JsDataProps } from '../../application/services/config/types';
 import { CurrentUserProps, GeneralSettings } from '../../application/valueObjects/config/types';
 import { DatetimeEdge, TicketEdge, PriceEdge, PriceTypeEdge } from './data/types';
 
-export interface EditorDOMData {
-	eventId: number;
-}
-
-export interface GQLDOMData {
+export interface EventData {
+	dbId: number;
 	datetimes?: DatetimeEdge;
 	tickets?: TicketEdge;
 	prices?: PriceEdge;
 	priceTypes?: PriceTypeEdge;
+	relations?: RelationalData;
+}
+
+export interface EEEditorData {
+	event: EventData;
+	graphqlEndpoint?: string;
 	currentUser?: CurrentUserProps;
 	generalSettings?: GeneralSettings;
-	relations?: RelationalData;
 }
 
 export interface EEJSData {
@@ -23,9 +25,7 @@ export interface EEJSData {
 
 declare global {
 	interface Window {
-		eeEditorEventData: EditorDOMData;
-		eeEditorGQLData: GQLDOMData;
+		eeEditorData: EEEditorData;
 		eejsdata: EEJSData;
-		graphqlEndpoint: string;
 	}
 }
