@@ -1,6 +1,6 @@
 import { renderHook } from '@testing-library/react-hooks';
 import { is } from 'ramda';
-import { DisplayDates, ShowTickets, TicketsSortedBy } from '../../../../data/ticket/types';
+import { DisplayDates, ShowTickets, SortTickets } from '../../../../data/ticket/types';
 
 import useTicketListFilterState from './index';
 import { tickets } from '../../../../../shared/predicates/tickets/test/data';
@@ -27,5 +27,5 @@ test('useTicketListFilterState initial state result', () => {
 	expect(currentResult.tickets).toEqual(tickets);
 
 	expect(is(String, currentResult.ticketsSortedBy)).toBe(true);
-	expect(currentResult.ticketsSortedBy).toBe(TicketsSortedBy.chronologically);
+	expect(currentResult.ticketsSortedBy).toBe(SortTickets.chronologically);
 });

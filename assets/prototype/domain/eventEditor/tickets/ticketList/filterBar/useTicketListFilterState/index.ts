@@ -7,7 +7,7 @@ import { useReducer, useEffect } from 'react';
  * Internal dependencies
  */
 import filters from '../../../../../shared/predicates/tickets/filters';
-import { DisplayDates, ShowTickets, TicketsSortedBy } from '../../../../data/ticket/types';
+import { DisplayDates, ShowTickets, SortTickets } from '../../../../data/ticket/types';
 import { Ticket } from '../../../../data/types';
 
 enum ActionType {
@@ -23,7 +23,7 @@ interface TicketListFilterState {
 	processedTickets: Ticket[];
 	showTickets: ShowTickets;
 	tickets: Ticket[];
-	ticketsSortedBy: TicketsSortedBy;
+	SortTickets: SortTickets;
 }
 
 const useTicketListFilterState = (tickets: Ticket[]): TicketListFilterState => {
@@ -33,7 +33,7 @@ const useTicketListFilterState = (tickets: Ticket[]): TicketListFilterState => {
 		processedTickets: [],
 		showTickets: ShowTickets.all,
 		tickets,
-		ticketsSortedBy: TicketsSortedBy.chronologically,
+		SortTickets: SortTickets.chronologically,
 	};
 	const [state, dispatch] = useReducer(reducer, initialState);
 
@@ -51,9 +51,9 @@ const useTicketListFilterState = (tickets: Ticket[]): TicketListFilterState => {
 		});
 	};
 
-	const setTicketsSortedBy = (ticketsSortedBy) => {
+	const setSortTickets = (SortTickets) => {
 		dispatch({
-			ticketsSortedBy,
+			SortTickets,
 			type: ActionType.SET_TICKETS_SORTED_BY,
 		});
 	};
@@ -68,7 +68,7 @@ const useTicketListFilterState = (tickets: Ticket[]): TicketListFilterState => {
 		...state,
 		setDisplayTicketDate,
 		setShowTickets,
-		setTicketsSortedBy,
+		setSortTickets,
 		toggleIsChained,
 	};
 };
@@ -78,7 +78,7 @@ interface Action {
 }
 
 const reducer = (state, action) => {
-	const { displayTicketDate, showTickets, ticketsSortedBy } = action;
+	const { displayTicketDate, showTickets, SortTickets } = action;
 	let processedDates = [];
 
 	switch (action.type) {
@@ -89,7 +89,7 @@ const reducer = (state, action) => {
 
 			return { ...state, processedDates, showTickets };
 		case ActionType.SET_TICKETS_SORTED_BY:
-			return { ...state, ticketsSortedBy };
+			return { ...state, SortTickets };
 		case ActionType.TOGGLE_IS_CHAINED:
 			return { ...state, isChained: !state.isChained };
 

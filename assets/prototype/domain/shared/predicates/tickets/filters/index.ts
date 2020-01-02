@@ -31,17 +31,17 @@ interface FilterTickets {
 const filters = ({ tickets, show = ShowTickets.nextOnSaleOrPendingOnly }: FilterTickets) => {
 	switch (show) {
 		case ShowTickets.above50Sold:
-			return percentSoldAtOrAbove({ maxQuantity: 50, tickets });
+			return percentSoldAtOrAbove({ percentage: 50, tickets });
 		case ShowTickets.above75Sold:
-			return percentSoldAtOrAbove({ maxQuantity: 75, tickets });
+			return percentSoldAtOrAbove({ percentage: 75, tickets });
 		case ShowTickets.above90Sold:
-			return percentSoldAtOrAbove({ maxQuantity: 90, tickets });
+			return percentSoldAtOrAbove({ percentage: 90, tickets });
 		case ShowTickets.all:
 			return tickets;
 		case ShowTickets.archivedOnly:
 			return archivedOnly(tickets);
 		case ShowTickets.below50Sold:
-			return percentSoldBelow({ maxQuantity: 50, tickets });
+			return percentSoldBelow({ percentage: 50, tickets });
 		case ShowTickets.expiredOnly:
 			return expiredOnly(tickets);
 		case ShowTickets.nextOnSaleOrPendingOnly:

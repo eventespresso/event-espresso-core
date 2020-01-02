@@ -10,16 +10,16 @@ import { Ticket } from '../../../../../eventEditor/data/types';
 import validFiniteQuantity from '../validFiniteQuantity';
 
 type PercentSoldAtOrAboveProps = {
-	maxQuantity: number;
+	percentage: number;
 	tickets: Ticket[];
 };
 
 /**
  * @param {Object} ticket event ticket object
- * @param {number} maxQuantity
- * @return {boolean} true if sold/qty >= maxQuantity
+ * @param {number} percentage
+ * @return {boolean} true if sold/qty >= percentage
  */
-const percentSoldAtOrAbove = ({ maxQuantity, tickets }: PercentSoldAtOrAboveProps) => {
+const percentSoldAtOrAbove = ({ percentage, tickets }: PercentSoldAtOrAboveProps) => {
 	const calc = (ticket: Ticket) => {
 		const checkIfSoldAndQtyAreNumbers = is(Number, ticket.sold) && is(Number, ticket.quantity);
 

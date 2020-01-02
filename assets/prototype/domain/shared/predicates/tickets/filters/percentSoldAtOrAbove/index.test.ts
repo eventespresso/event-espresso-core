@@ -5,7 +5,7 @@ import percentSoldAtOrAbove from './index';
 
 test('Should return empty array if tickets has invalid finite quantity', () => {
 	const filteredTickets = percentSoldAtOrAbove({
-		maxQuantity: 10,
+		percentage: 10,
 		tickets: [
 			{
 				id: '1',
@@ -23,7 +23,7 @@ test('Should return empty array if tickets has invalid finite quantity', () => {
 
 test('Should filter out tickets based on above50Sold show type', () => {
 	const filteredTickets = percentSoldAtOrAbove({
-		maxQuantity: 50,
+		percentage: 50,
 		tickets: [
 			{
 				id: '1',
@@ -50,7 +50,7 @@ test('Should filter out tickets based on above50Sold show type', () => {
 
 test('Should filter out tickets based on above75Sold show type', () => {
 	const filteredTickets = percentSoldAtOrAbove({
-		maxQuantity: 75,
+		percentage: 75,
 		tickets: [
 			{
 				id: '1',
@@ -83,7 +83,7 @@ test('Should filter out tickets based on above75Sold show type', () => {
 
 test('Should filter out tickets based on above90Sold show type', () => {
 	const filteredTickets = percentSoldAtOrAbove({
-		maxQuantity: 90,
+		percentage: 90,
 		tickets: [
 			{
 				id: '1',
