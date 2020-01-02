@@ -98,6 +98,28 @@ abstract class BaseNode
      * @return mixed
      */
     abstract public function getIds();
+
+    /**
+     * Make sure we encode whether its complete or not, but don't use such a long name.
+     * @since $VID:$
+     * @return array
+     */
+    public function __sleep()
+    {
+        $this->c = $this->complete;
+        return [
+            'c'
+        ];
+    }
+
+    /**
+     * Use the dynamic property to set the "complete" property.
+     * @since $VID:$
+     */
+    public function  __wakeup()
+    {
+        $this->complete = $this->c;
+    }
 }
 // End of file BaseNode.php
 // Location: EventEspresso\core\services\orm\tree_traversal/BaseNode.php
