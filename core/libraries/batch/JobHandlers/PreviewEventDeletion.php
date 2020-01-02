@@ -100,6 +100,10 @@ class PreviewEventDeletion extends JobHandler
      */
     public function continue_job(JobParameters $job_parameters, $batch_size = 50)
     {
+        // Serializing and unserializing is what really makes this drag on (eg on localhost, the ajax requests took
+        // about 4 seconds when the batch size was 250, but 3 seconds when the batch size was 50. So like
+        // 50% of the request is just serializing and unserializing.) So, make the batches much bigger.
+        $batch_size *= 3;
         $units_processed = 0;
         foreach($job_parameters->extra_datum('roots', array()) as $root_node){
             if($units_processed >= $batch_size){

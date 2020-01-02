@@ -74,6 +74,8 @@ class ExecuteBatchDeletion extends JobHandler
      */
     public function continue_job(JobParameters $job_parameters, $batch_size = 50)
     {
+        // We already have the items IDs. So deleting is really fast. Let's speed it up.
+        $batch_size *= 10;
         $units_processed = 0;
         $models_and_ids_to_delete = $job_parameters->extra_datum('models_and_ids_to_delete', []);
         // Build a new list of everything leftover after this request's of deletions.
