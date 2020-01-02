@@ -1,4 +1,9 @@
 /**
+ * External dependencies
+ */
+import { is } from 'ramda';
+
+/**
  * Internal dependencies
  */
 import { Ticket } from '../../../../eventEditor/data/types';
@@ -8,7 +13,11 @@ import { Ticket } from '../../../../eventEditor/data/types';
  * @return {boolean} true if qty property is valid and NOT infinite
  */
 const validFiniteQuantity = (ticket: Ticket): boolean => {
-	return ticket.quantity !== Infinity && Math.round(ticket.quantity) > 0;
+	const { quantity } = ticket;
+	const isNumber = is(Number, quantity);
+	const isFinite = Number.isFinite(Infinity);
+
+	return isNumber && isFinite && Math.round(quantity) > 0;
 };
 
 export default validFiniteQuantity;
