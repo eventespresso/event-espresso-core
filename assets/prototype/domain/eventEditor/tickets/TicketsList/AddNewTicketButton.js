@@ -1,4 +1,7 @@
-import { useState } from '@wordpress/element';
+/**
+ * External dependencies
+ */
+import { useState } from 'react';
 import AddNewTicketModal from './AddNewTicketModal';
 import { EspressoButton } from '../../../../../ZZZ/components/ui';
 

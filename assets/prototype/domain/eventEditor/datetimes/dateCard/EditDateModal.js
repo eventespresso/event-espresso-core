@@ -1,6 +1,6 @@
 import { useContext } from '@wordpress/element';
 import FormModal from '../../../../application/ui/components/forms/FormModal';
-import DateForm from '../dateForm/DateForm';
+import DatetimeForm from '../dateForm/DateForm';
 import { DateTimeContext } from '../../context/DateTimeProvider';
 import { useEntityMutator, EntityType } from '../../../../application/services/apollo/mutations';
 import useTickets from '../../data/queries/tickets/useTickets';
@@ -11,7 +11,7 @@ const EditDateModal = ({ relatedTickets }) => {
 	const tickets = useTickets();
 
 	const formComponent = (props) => (
-		<DateForm {...props} relatedTickets={relatedTickets} tickets={tickets} title='Update date' />
+		<DatetimeForm {...props} relatedTickets={relatedTickets} tickets={tickets} title='Update date' />
 	);
 	const onSubmit = (fields) => updateEntity(fields);
 

@@ -2,8 +2,8 @@ import { useState } from '@wordpress/element';
 import moment from 'moment';
 import { Button, Card, EditableText, Elevation, H4, H6, Popover } from '@blueprintjs/core/lib/esm';
 import DateTimeProvider from '../../context/DateTimeProvider';
-import EditDate from './EditDate';
-import DeleteDateButton from './DeleteDateButton';
+import EditDatetime from './EditDate';
+import DeleteDatetimeButton from './DeleteDateButton';
 import DateRangePicker from '../../../shared/dateRangeInput/DateRangePicker';
 import { MomentDateRange } from '../../../shared/dateRangeInput/momentDate';
 import { PLUS_ONE_MONTH, PLUS_TWO_MONTHS } from '../../../shared/defaultDates';
@@ -38,9 +38,7 @@ const idStyle = {
 const DateCard = ({ id }) => {
 	const date = useDatetimeItem({ id });
 	const { isLoaded } = useStatus();
-
 	const { updateEntity } = useEntityMutator(EntityType.Datetime, id);
-
 	const { getRelations } = useRelations();
 
 	// get related ticket IDs for this datetime
@@ -60,7 +58,7 @@ const DateCard = ({ id }) => {
 	return (
 		<DateTimeProvider id={id}>
 			<Card elevation={Elevation.ONE} style={cardStyle}>
-				<EditDate position='top' relatedTickets={relatedTicketIds} />
+				<EditDatetime position='top' relatedTickets={relatedTicketIds} />
 				<div style={idStyle}>
 					{date.dbId} {':'} {date.id}
 				</div>
@@ -116,7 +114,7 @@ const DateCard = ({ id }) => {
 					)}
 				</div>
 				{/* Delete button should be hidden to avoid relational inconsistencies */}
-				{ticketsLoaded && <DeleteDateButton id={date.id} />}
+				{ticketsLoaded && <DeleteDatetimeButton id={date.id} />}
 			</Card>
 		</DateTimeProvider>
 	);
