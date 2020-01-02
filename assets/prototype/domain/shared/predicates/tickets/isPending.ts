@@ -11,7 +11,7 @@ import { Ticket } from '../../../eventEditor/data/types';
  * @return {boolean} 	true if ticket is not yet available for purchase,
  * 						but will be at some date in the future
  */
-const isPending = ({ startDate }: Ticket) => {
+const isPending = ({ startDate }: Ticket): boolean => {
 	return differenceInMinutes(parseISO(startDate), now) > 0;
 };
 
