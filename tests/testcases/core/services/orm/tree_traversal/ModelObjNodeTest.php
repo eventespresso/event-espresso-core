@@ -82,7 +82,12 @@ class ModelObjNodeTest extends EE_UnitTestCase
         $this->assertEquals($work_done, count($partial_tree['rels']['Datetime']['objs']));
         // Their related ticket relations should not have been visited yet
         $a_datetime_node = reset($partial_tree['rels']['Datetime']['objs']);
+
         $this->assertFalse($a_datetime_node['complete']);
+
+        // Verify serializing and unserializing the object doesn't hurt.
+        $e_node_serialized = serialize($e_node);
+        $e_node = unserialize($e_node_serialized);
 
         // Hit it again. Now we should visit the first datetime node.
         $e_node->visit($work_budget);
