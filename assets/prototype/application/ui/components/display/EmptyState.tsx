@@ -10,13 +10,17 @@ interface EmptyStateProps {
 	title: string;
 }
 
-const EmptyState = ({ children, description, title }: EmptyStateProps) => (
-	<>
-		<Callout>
-			<NonIdealState icon={'help'} title={title} description={description} />
-		</Callout>
-		{children}
-	</>
-);
+const EmptyState = (props: EmptyStateProps) => {
+	const { children, description, title } = props;
+
+	return (
+		<>
+			<Callout>
+				<NonIdealState icon={'help'} title={title} description={description} />
+			</Callout>
+			{children}
+		</>
+	);
+};
 
 export default EmptyState;

@@ -27,11 +27,9 @@ const TicketsListData = () => {
 
 	if (noTickets) {
 		return (
-			<EmptyState
-				children={<AddNewTicketButton />}
-				description='try changing filter settings'
-				title='NO TICKETS FOR YOU !!!'
-			></EmptyState>
+			<EmptyState description='try changing filter settings' title='NO TICKETS FOR YOU !!!'>
+				<AddNewTicketButton />
+			</EmptyState>
 		);
 	}
 
