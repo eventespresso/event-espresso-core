@@ -1,8 +1,9 @@
 /**
  * External dependencies
  */
-import { differenceInMinutes } from 'date-fns';
+import { differenceInMinutes, parseISO } from 'date-fns';
 import { now } from './filters';
+import { Ticket } from '../../../eventEditor/data/types';
 
 /**
  * @function
@@ -10,8 +11,8 @@ import { now } from './filters';
  * @return {boolean} 	true if ticket is not yet available for purchase,
  * 						but will be at some date in the future
  */
-const isPending = ({ startDate }) => {
-	return differenceInMinutes(startDate, now) > 0;
+const isPending = ({ startDate }: Ticket): boolean => {
+	return differenceInMinutes(parseISO(startDate), now) > 0;
 };
 
 export default isPending;

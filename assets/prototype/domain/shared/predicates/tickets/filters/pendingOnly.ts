@@ -2,8 +2,9 @@
  * Internal dependencies
  */
 import isPending from '../isPending';
+import { Ticket } from '../../../../eventEditor/data/types';
 
-const pendingOnly = (tickets: any[]) => {
+const pendingOnly = (tickets: Ticket[]) => {
 	return tickets.filter((ticket) => isPending(ticket));
 };
 

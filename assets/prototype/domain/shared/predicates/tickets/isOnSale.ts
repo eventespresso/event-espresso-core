@@ -1,16 +1,12 @@
 /**
  * External dependencies
  */
-import { differenceInMinutes } from 'date-fns';
+import { differenceInMinutes, parseISO } from 'date-fns';
 import { now } from './filters';
+import { Ticket } from '../../../eventEditor/data/types';
 
-interface IsOnSale {
-	startDate: Date;
-	endDate: Date;
-}
-
-const isOnSale = ({ startDate, endDate }: IsOnSale): boolean => {
-	return differenceInMinutes(startDate, now) < 0 && differenceInMinutes(endDate, now) > 0;
+const isOnSale = ({ startDate, endDate }: Ticket): boolean => {
+	return differenceInMinutes(parseISO(startDate), now) < 0 && differenceInMinutes(parseISO(endDate), now) > 0;
 };
 
 export default isOnSale;

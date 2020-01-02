@@ -1,10 +1,10 @@
 import { act, renderHook } from '@testing-library/react-hooks';
 import * as R from 'ramda';
 import { formatISO, subWeeks } from 'date-fns';
-import { Datetime } from '../../../data/types';
-import { DatesSortedBy, DisplayDates, ShowDates } from '../../../data/date/types';
+import { Datetime } from '../../../../data/types';
+import { DatesSortedBy, DisplayDates, ShowDates } from '../../../../data/date/types';
 
-import useDatesListFilterState from './useDatesListFilterState';
+import useDatesListFilterState from './index';
 
 const datetimes: Datetime[] = [
 	{

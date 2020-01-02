@@ -1,3 +1,6 @@
+/**
+ * Internal dependencies
+ */
 import archivedOnly from './archivedOnly';
 import expiredOnly from './expiredOnly';
 import nextOnSaleOrPendingOnly from './nextOnSaleOrPendingOnly';
@@ -6,13 +9,15 @@ import onSaleOnly from './onSaleOnly';
 import pendingOnly from './pendingOnly';
 import percentSoldAtOrAbove from './percentSoldAtOrAbove';
 import percentSoldBelow from './percentSoldBelow';
+import { ShowTickets } from '../../../../eventEditor/data/ticket/types';
 import soldOutOnly from './soldOutOnly';
+import { Ticket } from '../../../../eventEditor/data/types';
 
 export const now = new Date();
 
 interface FilterTickets {
-	tickets: any[];
-	show?: string;
+	tickets: Ticket[];
+	show?: ShowTickets;
 }
 
 /**
@@ -23,32 +28,32 @@ interface FilterTickets {
  * @param {string} show    value for the "show" filter
  * @return {Array}         filtered tickets array
  */
-const filters = ({ tickets, show = 'on-sale-and-pending' }: FilterTickets) => {
+const filters = ({ tickets, show = ShowTickets.nextOnSaleOrPendingOnly }: FilterTickets) => {
 	switch (show) {
-		case 'all':
+		case ShowTickets.above50Sold:
+			return percentSoldAtOrAbove({ percentage: 50, tickets });
+		case ShowTickets.above75Sold:
+			return percentSoldAtOrAbove({ percentage: 75, tickets });
+		case ShowTickets.above90Sold:
+			return percentSoldAtOrAbove({ percentage: 90, tickets });
+		case ShowTickets.all:
 			return tickets;
-		case 'on-sale-and-pending':
-			return onSaleAndPending(tickets);
-		case 'on-sale-only':
-			return onSaleOnly(tickets);
-		case 'pending-only':
-			return pendingOnly(tickets);
-		case 'next-on-sale-or-pending-only':
-			return nextOnSaleOrPendingOnly(tickets);
-		case 'sold-out-only':
-			return soldOutOnly(tickets);
-		case 'above-90-sold':
-			return percentSoldAtOrAbove({ maxQuantity: 90, tickets });
-		case 'above-75-sold':
-			return percentSoldAtOrAbove({ maxQuantity: 75, tickets });
-		case 'above-50-sold':
-			return percentSoldAtOrAbove({ maxQuantity: 50, tickets });
-		case 'below-50-sold':
-			return percentSoldBelow({ maxQuantity: 50, tickets });
-		case 'expired-only':
-			return expiredOnly(tickets);
-		case 'archived-only':
+		case ShowTickets.archivedOnly:
 			return archivedOnly(tickets);
+		case ShowTickets.below50Sold:
+			return percentSoldBelow({ percentage: 50, tickets });
+		case ShowTickets.expiredOnly:
+			return expiredOnly(tickets);
+		case ShowTickets.nextOnSaleOrPendingOnly:
+			return nextOnSaleOrPendingOnly(tickets);
+		case ShowTickets.onSaleAndPending:
+			return onSaleAndPending(tickets);
+		case ShowTickets.onSaleOnly:
+			return onSaleOnly(tickets);
+		case ShowTickets.pendingOnly:
+			return pendingOnly(tickets);
+		case ShowTickets.soldOutOnly:
+			return soldOutOnly(tickets);
 	}
 	return tickets;
 };

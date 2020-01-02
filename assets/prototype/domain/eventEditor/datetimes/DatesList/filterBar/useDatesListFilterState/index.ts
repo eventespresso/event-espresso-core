@@ -6,11 +6,16 @@ import { useReducer } from 'react';
 /**
  * Internal dependencies
  */
-import { Datetime } from '../../../data/types';
-import { DatesSortedBy, DisplayDates, ShowDates } from '../../../data/date/types';
+import { Datetime } from '../../../../data/types';
+import { DatesSortedBy, DisplayDates, ShowDates } from '../../../../data/date/types';
+import filters from '../../../../../shared/predicates/datetimes/filters';
+import sorters from '../../../../../shared/predicates/datetimes/sorters';
 
-import filters from '../../../../shared/predicates/datetimes/filters';
-import sorters from '../../../../shared/predicates/datetimes/sorters';
+enum ActionType {
+	SET_DATES_SORTED_BY = 'SET_DATES_SORTED_BY',
+	SET_DISPLAY_DATES = 'SET_DISPLAY_DATES',
+	SET_SHOW_DATES = 'SET_SHOW_DATES',
+}
 
 interface DatesListFilterState {
 	dates: Datetime[];
@@ -21,12 +26,6 @@ interface DatesListFilterState {
 	setDisplayDates: (displayDates: DisplayDates) => void;
 	setShowDates: (showDates: ShowDates) => void;
 	showDates: ShowDates;
-}
-
-enum ActionType {
-	SET_DATES_SORTED_BY = 'SET_DATES_SORTED_BY',
-	SET_DISPLAY_DATES = 'SET_DISPLAY_DATES',
-	SET_SHOW_DATES = 'SET_SHOW_DATES',
 }
 
 const useDatesListFilterState = (dates: Datetime[]): DatesListFilterState => {
@@ -76,8 +75,8 @@ interface Action {
 }
 
 const reducer = (state, action: Action) => {
-	let processedDates = [];
 	const { datesSortedBy, displayDates, showDates } = action;
+	let processedDates = [];
 
 	switch (action.type) {
 		case ActionType.SET_DATES_SORTED_BY:

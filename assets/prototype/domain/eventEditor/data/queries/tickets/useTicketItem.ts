@@ -6,7 +6,8 @@ import { EntityItemProps, ReadQueryOptions } from '../types';
 
 const useTicketItem = ({ id }: EntityItemProps): Ticket => {
 	const client = useApolloClient();
-	let data: any, ticket: Ticket;
+	let data: any;
+	let ticket: Ticket;
 
 	const queryOptions: ReadQueryOptions = {
 		query: GET_TICKET,
