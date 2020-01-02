@@ -2,7 +2,7 @@ import { useContext } from '@wordpress/element';
 import { Button } from '@blueprintjs/core/lib/esm';
 import { DateTimeContext } from '../../context/DateTimeProvider';
 
-const EditDateButton = ({ position }) => {
+const EditDatetimeButton = ({ position }) => {
 	const { setIsOpen } = useContext(DateTimeContext);
 
 	const style = {
@@ -22,4 +22,4 @@ const EditDateButton = ({ position }) => {
 	);
 };
 
-export default EditDateButton;
+export default EditDatetimeButton;

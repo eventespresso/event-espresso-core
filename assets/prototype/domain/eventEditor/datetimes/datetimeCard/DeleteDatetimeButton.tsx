@@ -3,7 +3,7 @@ import { Button } from '@blueprintjs/core';
 
 import { useEntityMutator, EntityType } from '../../../../application/services/apollo/mutations';
 
-const DeleteDateButton = ({ id }) => {
+const DeleteDatetimeButton = ({ id }) => {
 	const { deleteEntity } = useEntityMutator(EntityType.Datetime, id);
 
 	return (
@@ -20,4 +20,4 @@ const DeleteDateButton = ({ id }) => {
 	);
 };
 
-export default DeleteDateButton;
+export default DeleteDatetimeButton;

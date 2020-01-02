@@ -6,15 +6,15 @@ import * as React from 'react';
 /**
  * Internal dependencies
  */
-import AddNewDateButton from './AddNewDateButton';
+import AddNewDatetimeButton from './AddNewDatetimeButton';
 import EmptyState from '../../../../application/ui/components/display/EmptyState';
 import ErrorIndicator from '../../../../application/ui/components/display/ErrorIndicator';
-import DatesList from './DatesList';
+import DatetimesList from './DatetimesList';
 import LoadingIndicator from '../../../../application/ui/components/display/LoadingIndicator';
 import useDatetimes from '../../data/queries/datetimes/useDatetimes';
 import { useStatus, TypeName } from '../../../../application/services/apollo/status';
 
-const DatesListData = () => {
+const DatetimesListData = () => {
 	const datetimes = useDatetimes();
 	const noDatetimes = datetimes.length === 0;
 	const { isError, isLoading } = useStatus();
@@ -28,12 +28,12 @@ const DatesListData = () => {
 	if (noDatetimes) {
 		return (
 			<EmptyState description='try changing filter settings' title='NO DATES FOR YOU !!!'>
-				<AddNewDateButton />
+				<AddNewDatetimeButton />
 			</EmptyState>
 		);
 	}
 
-	return <DatesList datetimes={datetimes} />;
+	return <DatetimesList datetimes={datetimes} />;
 };
 
-export default DatesListData;
+export default DatetimesListData;

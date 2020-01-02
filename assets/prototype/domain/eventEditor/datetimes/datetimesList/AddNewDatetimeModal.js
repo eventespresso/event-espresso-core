@@ -1,9 +1,9 @@
-import DateForm from '../dateForm/DateForm';
+import DateForm from '../datetimeForm/DatetimeForm';
 import FormModal from '../../../../application/ui/components/forms/FormModal';
 import { useEntityMutator, EntityType } from '../../../../application/services/apollo/mutations';
 import useTickets from '../../data/queries/tickets/useTickets';
 
-const AddNewDateModal = ({ handleClose, isOpen }) => {
+const AddNewDatetimeModal = ({ handleClose, isOpen }) => {
 	const { createEntity } = useEntityMutator(EntityType.Datetime);
 	const tickets = useTickets();
 	const formComponent = (props) => <DateForm {...props} tickets={tickets} title='New Date Details' />;
@@ -20,4 +20,4 @@ const AddNewDateModal = ({ handleClose, isOpen }) => {
 	);
 };
 
-export default AddNewDateModal;
+export default AddNewDatetimeModal;

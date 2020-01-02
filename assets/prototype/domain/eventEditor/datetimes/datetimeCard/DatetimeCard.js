@@ -35,12 +35,10 @@ const idStyle = {
 	top: '.5em',
 };
 
-const DateCard = ({ id }) => {
+const DatetimeCard = ({ id }) => {
 	const date = useDatetimeItem({ id });
 	const { isLoaded } = useStatus();
-
 	const { updateEntity } = useEntityMutator(EntityType.Datetime, id);
-
 	const { getRelations } = useRelations();
 
 	// get related ticket IDs for this datetime
@@ -122,4 +120,4 @@ const DateCard = ({ id }) => {
 	);
 };
 
-export default DateCard;
+export default DatetimeCard;

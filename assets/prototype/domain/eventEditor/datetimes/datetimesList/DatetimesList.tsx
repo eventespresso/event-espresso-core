@@ -4,8 +4,8 @@
 import * as React from 'react';
 import { H3 } from '@blueprintjs/core/lib/esm';
 import DatesListFilterBar from './filterBar/DatesListFilterBar';
-import AddNewDateButton from './AddNewDateButton';
-import DateCard from '../dateCard/DateCard';
+import AddNewDateButton from './AddNewDatetimeButton';
+import DatetimeCard from '../datetimeCard/DatetimeCard';
 
 /**
  * Internal dependencies
@@ -23,14 +23,14 @@ interface DatesListProps {
 	datetimes: Datetime[];
 }
 
-const DatesList = ({ datetimes }: DatesListProps) => {
+const DatetimesList = ({ datetimes }: DatesListProps) => {
 	const header = <H3 style={{ margin: '2rem 0 .5rem' }}>{'Dates List'}</H3>;
 
-	const datesList = (
+	const datetimesList = (
 		<>
 			<div style={listStyle}>
 				{datetimes.map((date) => (
-					<DateCard id={date.id} key={date.id} />
+					<DatetimeCard id={date.id} key={date.id} />
 				))}
 			</div>
 			<AddNewDateButton />
@@ -41,9 +41,9 @@ const DatesList = ({ datetimes }: DatesListProps) => {
 		<div>
 			{header}
 			<DatesListFilterBar />
-			{datesList}
+			{datetimesList}
 		</div>
 	);
 };
 
-export default DatesList;
+export default DatetimesList;
