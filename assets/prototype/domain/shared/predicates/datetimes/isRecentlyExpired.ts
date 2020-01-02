@@ -8,7 +8,7 @@ import { now } from './filters';
  * Internal dependencies
  */
 import { Datetime } from '../../../eventEditor/data/types';
-import { MONTH_IN_SECONDS } from '../shared/constants';
+import TIME from '../../../../application/constants/time';
 
 /**
  * @function
@@ -20,7 +20,7 @@ const isRecentlyExpired = (date: Datetime): boolean => {
 
 	return (
 		differenceInSeconds(parseISO(endDate), now) < 0 &&
-		differenceInSeconds(parseISO(endDate), now) > MONTH_IN_SECONDS * -1
+		differenceInSeconds(parseISO(endDate), now) > TIME.MONTH_IN_SECONDS * -1
 	);
 };
 
