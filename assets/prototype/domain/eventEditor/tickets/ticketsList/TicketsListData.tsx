@@ -16,6 +16,7 @@ import { useStatus, TypeName } from '../../../../application/services/apollo/sta
 
 const TicketsListData = () => {
 	const tickets = useTickets();
+	const noTickets = tickets.length === 0;
 	const { isError, isLoading } = useStatus();
 	const error = isError(TypeName.tickets);
 	const loading = isLoading(TypeName.datetimes) || isLoading(TypeName.tickets);
@@ -24,11 +25,13 @@ const TicketsListData = () => {
 
 	if (error) return <ErrorIndicator />;
 
-	if (!tickets.length) {
+	if (noTickets) {
 		return (
-			<EmptyState description='try changing filter settings' title='NO TICKETS FOR YOU !!!'>
-				<AddNewTicketButton />
-			</EmptyState>
+			<EmptyState
+				children={<AddNewTicketButton />}
+				description='try changing filter settings'
+				title='NO TICKETS FOR YOU !!!'
+			></EmptyState>
 		);
 	}
 

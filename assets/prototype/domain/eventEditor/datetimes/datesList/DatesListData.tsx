@@ -16,6 +16,7 @@ import { useStatus, TypeName } from '../../../../application/services/apollo/sta
 
 const DatesListData = () => {
 	const datetimes = useDatetimes();
+	const noDatetimes = datetimes.length === 0;
 	const { isError, isLoading } = useStatus();
 	const error = isError(TypeName.datetimes);
 	const loading = isLoading(TypeName.datetimes);
@@ -24,11 +25,13 @@ const DatesListData = () => {
 
 	if (error) return <ErrorIndicator />;
 
-	if (!datetimes.length) {
+	if (noDatetimes) {
 		return (
-			<EmptyState description='try changing filter settings' title='NO DATES FOR YOU !!!'>
-				<AddNewDateButton />
-			</EmptyState>
+			<EmptyState
+				children={<AddNewDateButton />}
+				description='try changing filter settings'
+				title='NO DATES FOR YOU !!!'
+			></EmptyState>
 		);
 	}
 
