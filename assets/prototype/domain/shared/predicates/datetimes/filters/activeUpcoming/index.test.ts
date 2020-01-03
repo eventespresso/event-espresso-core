@@ -1,52 +1,8 @@
 /**
  * Internal dependencies
  */
-import aboveCapacity from './index';
-import { Datetime } from '../../../../../eventEditor/data/types';
-
-const dates: Datetime[] = [
-	{
-		id: 'RGF0ZXRpbWU6ODM=',
-		capacity: -1,
-		sold: 0,
-	},
-	{
-		id: 'RGF0ZXRpbWU6ODM=',
-		capacity: 10,
-		sold: 5,
-		status: 'ACTIVE',
-	},
-	{
-		id: 'RGF0ZXRpbWU6ODM=',
-		capacity: 10,
-		sold: 6,
-		status: 'ACTIVE',
-	},
-	{
-		id: 'RGF0ZXRpbWU6ODM=',
-		capacity: 10,
-		sold: 7,
-		status: 'ACTIVE',
-	},
-	{
-		id: 'RGF0ZXRpbWU6ODM=',
-		capacity: 10,
-		sold: 8,
-		status: 'ACTIVE',
-	},
-	{
-		id: 'RGF0ZXRpbWU6ODM=',
-		capacity: 10,
-		sold: 9,
-		status: 'ACTIVE',
-	},
-	{
-		id: 'RGF0ZXRpbWU6ODM=',
-		capacity: 10,
-		sold: 10,
-		status: 'ACTIVE',
-	},
-];
+import aboveCapacity from '../aboveCapacity/index';
+import dates from '../tests/data';
 
 test('Should filter out dates based on above50Capacity show type', () => {
 	const filteredDates = aboveCapacity({ capacity: 50, dates });
