@@ -17,7 +17,12 @@ const updateTicketCache = ({ proxy, datetimeIn, datetimeId, remove = false }: Ca
 	try {
 		data = proxy.readQuery(queryOptions);
 	} catch (error) {
-		data = {};
+		data = null;
+	}
+
+	// if there are no tickets
+	if (!data) {
+		return;
 	}
 
 	const newDatetimeIn: string[] = remove

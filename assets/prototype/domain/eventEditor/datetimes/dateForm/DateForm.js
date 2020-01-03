@@ -61,7 +61,7 @@ const formatSecondaryField = (ticketPrice, toString = false) => {
 
 const DateForm = ({ formReset, relatedTickets, tickets = [], title }) => {
 	const { id } = useContext(DateTimeContext);
-	const { description = '', name = '' } = useDatetimeItem({ id });
+	const { description = '', name = '' } = useDatetimeItem({ id }) || {};
 
 	return (
 		<>
