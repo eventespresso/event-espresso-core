@@ -1,4 +1,6 @@
 import { useApolloClient } from '@apollo/react-hooks';
+import { pathOr } from 'ramda';
+
 import useCacheRehydrationData from './useCacheRehydrationData';
 import useRelations from '../../../../application/services/apollo/relations/useRelations';
 import { ConfigDataProps } from '../../../../application/services/config';
@@ -10,16 +12,25 @@ import { WriteQueryOptions } from './types';
 
 const { GET_TICKETS, GET_DATETIMES, GET_PRICE_TYPES, GET_PRICES, GET_CURRENT_USER, GET_GENERAL_SETTINGS } = queries;
 
+type Entity = 'Datetimes' | 'Tickets' | 'Prices' | 'PriceTypes';
+
+const DEFAULT_DATA = (entity: Entity) => {
+	return {
+		nodes: [],
+		__typename: `EspressoRootQuery${entity}Connection`,
+	};
+};
+
 const useCacheRehydration = (): void => {
 	const client = useApolloClient();
 	const eventId: number = useEventId();
 	const { setData } = useRelations();
 	const { setConfig } = useConfig();
 	const {
-		datetimes: espressoDatetimes,
-		tickets: espressoTickets,
-		prices: espressoPrices,
-		priceTypes: espressoPriceTypes,
+		datetimes: espressoDatetimes = DEFAULT_DATA('Datetimes'),
+		tickets: espressoTickets = DEFAULT_DATA('Tickets'),
+		prices: espressoPrices = DEFAULT_DATA('Prices'),
+		priceTypes: espressoPriceTypes = DEFAULT_DATA('PriceTypes'),
 		currentUser,
 		generalSettings,
 		relations,
@@ -29,91 +40,83 @@ const useCacheRehydration = (): void => {
 	if (isLoaded(TypeName.priceTypes)) {
 		return;
 	}
+
 	let writeQueryOptions: WriteQueryOptions;
 
-	let { nodes = [] } = espressoPriceTypes;
-	if (nodes.length) {
-		writeQueryOptions = {
-			query: GET_PRICE_TYPES,
-			data: {
-				espressoPriceTypes,
-			},
-		};
-		client.writeQuery(writeQueryOptions);
-	}
+	/* Rehydrate price types */
+	writeQueryOptions = {
+		query: GET_PRICE_TYPES,
+		data: {
+			espressoPriceTypes,
+		},
+	};
+	client.writeQuery(writeQueryOptions);
 
-	({ nodes = [] } = espressoDatetimes);
-	if (nodes.length) {
-		writeQueryOptions = {
-			query: GET_DATETIMES,
-			variables: {
-				where: {
-					eventId,
-				},
+	/* Rehydrate datetimes */
+	writeQueryOptions = {
+		query: GET_DATETIMES,
+		variables: {
+			where: {
+				eventId,
 			},
-			data: {
-				espressoDatetimes,
-			},
-		};
-		client.writeQuery(writeQueryOptions);
-	}
+		},
+		data: {
+			espressoDatetimes,
+		},
+	};
+	client.writeQuery(writeQueryOptions);
 
-	const datetimeIn = nodes.map(({ id }) => id);
-	({ nodes = [] } = espressoTickets);
-	if (datetimeIn.length && nodes.length) {
-		writeQueryOptions = {
-			query: GET_TICKETS,
-			variables: {
-				where: {
-					datetimeIn,
-				},
+	/* Rehydrate tickets */
+	const datetimeIn = pathOr([], ['nodes'], espressoDatetimes).map(({ id }) => id);
+	writeQueryOptions = {
+		query: GET_TICKETS,
+		variables: {
+			where: {
+				datetimeIn,
 			},
-			data: {
-				espressoTickets,
-			},
-		};
-		client.writeQuery(writeQueryOptions);
-	}
+		},
+		data: {
+			espressoTickets,
+		},
+	};
+	client.writeQuery(writeQueryOptions);
 
-	const ticketIn = nodes.map(({ id }) => id);
-	({ nodes = [] } = espressoPrices);
-	if (ticketIn.length && nodes.length) {
-		writeQueryOptions = {
-			query: GET_PRICES,
-			variables: {
-				where: {
-					ticketIn,
-				},
+	/* Rehydrate prices */
+	const ticketIn = pathOr([], ['nodes'], espressoTickets).map(({ id }) => id);
+	writeQueryOptions = {
+		query: GET_PRICES,
+		variables: {
+			where: {
+				ticketIn,
 			},
-			data: {
-				espressoPrices,
-			},
-		};
-		client.writeQuery(writeQueryOptions);
-	}
+		},
+		data: {
+			espressoPrices,
+		},
+	};
+	client.writeQuery(writeQueryOptions);
 
-	if (currentUser) {
-		writeQueryOptions = {
-			query: GET_CURRENT_USER,
-			data: {
-				viewer: currentUser,
-			},
-		};
-		client.writeQuery(writeQueryOptions);
-		setConfig((config: ConfigDataProps) => ({ ...config, currentUser }));
-	}
+	/* Rehydrate current user */
+	writeQueryOptions = {
+		query: GET_CURRENT_USER,
+		data: {
+			viewer: currentUser,
+		},
+	};
+	client.writeQuery(writeQueryOptions);
+	setConfig((config: ConfigDataProps) => ({ ...config, currentUser }));
 
-	if (generalSettings) {
-		writeQueryOptions = {
-			query: GET_GENERAL_SETTINGS,
-			data: {
-				generalSettings,
-			},
-		};
-		client.writeQuery(writeQueryOptions);
-		setConfig((config: ConfigDataProps) => ({ ...config, generalSettings }));
-	}
+	/* Rehydrate general settings */
+	writeQueryOptions = {
+		query: GET_GENERAL_SETTINGS,
+		data: {
+			generalSettings,
+		},
+	};
+	client.writeQuery(writeQueryOptions);
+	setConfig((config: ConfigDataProps) => ({ ...config, generalSettings }));
 
+	/* Rehydrate relations */
 	setData(relations);
 };
 
