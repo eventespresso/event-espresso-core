@@ -8,16 +8,18 @@ import { useCallback } from '@wordpress/element';
  */
 import calculateBasePrice from './calculateBasePrice';
 import calculateTicketTotal from './calculateTicketTotal';
+import { parseAmountFromPath } from '../formDecorators/utilities';
 
 const useTicketPriceCalculator = () => {
-	return useCallback((state, action) => {
+	return useCallback((action) => {
+		let result;
 		switch (action.type) {
 			case 'CALCULATE_BASE_PRICE':
-				return calculateBasePrice(state);
+				result = calculateBasePrice(action.data);
+				return parseAmountFromPath(action.path, result);
 			case 'CALCULATE_TICKET_TOTAL':
-				return calculateTicketTotal(state);
-			default:
-				return state;
+				result = calculateTicketTotal(action.data);
+				return parseAmountFromPath(action.path, result);
 		}
 	}, []);
 };
