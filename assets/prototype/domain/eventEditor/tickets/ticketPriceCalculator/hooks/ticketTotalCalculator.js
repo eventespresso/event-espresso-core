@@ -5,17 +5,18 @@
  * @return {Object} calculations based on price modifier
  */
 const ticketTotalCalculator = (currentTotal, { isBasePrice, isPercent, isDiscount, amount }) => {
-	amount = parseFloat(amount);
+	amount = parseFloat(amount || 0);
+	const total = parseFloat(currentTotal || 0);
 	if (isBasePrice) {
 		// basic addition
-		return currentTotal + amount;
+		return total + amount;
 	}
 	if (isDiscount) {
 		// subtract percent or dollar discount
-		return isPercent ? currentTotal - (amount / 100) * currentTotal : currentTotal - amount;
+		return isPercent ? total - (amount / 100) * total : total - amount;
 	}
 	// add percent or dollar surcharge
-	return isPercent ? currentTotal + (amount / 100) * currentTotal : currentTotal + amount;
+	return isPercent ? total + (amount / 100) * total : total + amount;
 };
 
 export default ticketTotalCalculator;
