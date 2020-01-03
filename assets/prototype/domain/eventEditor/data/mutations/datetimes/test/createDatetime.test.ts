@@ -11,6 +11,9 @@ import { nodes as tickets } from '../../../queries/tickets/test/data';
 import { MutationInput } from '../../../../../../application/services/apollo/mutations/types';
 import useDatetimeItem from '../../../queries/datetimes/useDatetimeItem';
 import useDatetimeIds from '../../../queries/datetimes/useDatetimeIds';
+import useInitTicketTestCache from '../../../queries/tickets/test/useInitTicketTestCache';
+import useTickets from '../../../queries/tickets/useTickets';
+import useTicketQueryOptions from '../../../queries/tickets/useTicketQueryOptions';
 
 describe('createDatetime', () => {
 	let testInput: MutationInput = { name: 'New Test Date', description: 'New Test Desc' };
@@ -103,16 +106,15 @@ describe('createDatetime', () => {
 			}
 		);
 
-		let cache: any;
-
 		act(() => {
 			mutationResult.current.mutator.createEntity(testInput);
-			cache = mutationResult.current.client.extract();
 		});
 
 		// wait for mutation promise to resolve
 		await waitForNextMutationUpdate();
 
+		const cache = mutationResult.current.client.extract();
+		// console.log('<<<<cache>>>', JSON.stringify(cache, null, 4));
 		const { result: cacheResult } = renderHook(
 			() => {
 				const client = useApolloClient();
@@ -131,7 +133,9 @@ describe('createDatetime', () => {
 	});
 
 	it('checks for relation update after mutation', async () => {
+		// Add related ticket Ids to the mutation input
 		testInput = { ...testInput, tickets: ticketIds };
+
 		mutationMocks = getMutationMocks(testInput, MutationType.Create);
 
 		const wrapper = ApolloMockedProvider(mutationMocks);
@@ -153,6 +157,7 @@ describe('createDatetime', () => {
 		// wait for mutation promise to resolve
 		await waitForNextMutationUpdate();
 
+		// check if datetime is related to all the passed tickets
 		const relatedTicketIds = mutationResult.current.relationsManager.getRelations({
 			entity: 'datetimes',
 			entityId: mockedDatetime.id,
@@ -162,5 +167,69 @@ describe('createDatetime', () => {
 		expect(ticketIds.length).toEqual(relatedTicketIds.length);
 
 		expect(ticketIds).toEqual(relatedTicketIds);
+
+		// check if all the passed tickets are related to the datetime
+		ticketIds.forEach((ticketId) => {
+			const relatedDatetimeIds = mutationResult.current.relationsManager.getRelations({
+				entity: 'tickets',
+				entityId: ticketId,
+				relation: 'datetimes',
+			});
+
+			expect(relatedDatetimeIds).toContain(mockedDatetime.id);
+		});
+	});
+
+	it('checks if the mutation updates tickets cache', async () => {
+		// Add related ticket Ids to the mutation input
+		testInput = { ...testInput, tickets: ticketIds };
+
+		mutationMocks = getMutationMocks(testInput, MutationType.Create);
+
+		const wrapper = ApolloMockedProvider(mutationMocks);
+
+		const { result: mutationResult, waitForNextUpdate: waitForNextMutationUpdate } = renderHook(
+			() => {
+				useInitTicketTestCache();
+				return {
+					mutator: useEntityMutator(EntityType.Datetime),
+					client: useApolloClient(),
+				};
+			},
+			{
+				wrapper,
+			}
+		);
+
+		act(() => {
+			mutationResult.current.mutator.createEntity(testInput);
+		});
+
+		// wait for mutation promise to resolve
+		await waitForNextMutationUpdate();
+
+		const cache = mutationResult.current.client.extract();
+		const { result: cacheResult } = renderHook(
+			() => {
+				const client = useApolloClient();
+				// restore the cache from previous render
+				client.restore(cache);
+				return {
+					queryOptions: useTicketQueryOptions(),
+					tickets: useTickets(),
+				};
+			},
+			{
+				wrapper,
+			}
+		);
+
+		const queryOptions = cacheResult.current.queryOptions;
+		const cachedTickets = cacheResult.current.tickets;
+
+		// check if query options are updated,
+		// which means the cache is updated
+		expect(queryOptions.variables.where.datetimeIn).toContain(mockedDatetime.id);
+		expect(cachedTickets).toBeDefined();
 	});
 });

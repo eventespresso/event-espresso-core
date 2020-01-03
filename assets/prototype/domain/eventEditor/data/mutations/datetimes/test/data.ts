@@ -1,3 +1,4 @@
+import { pickBy } from 'ramda';
 import { nodes as datetimes } from '../../../queries/datetimes/test/data';
 import { ReadQueryOptions } from '../../../queries/types';
 import { MutationInput, MutationType } from '../../../../../../application/services/apollo/mutations/types';
@@ -5,7 +6,7 @@ import { ucFirst } from '../../../../../../application/utilities/text/changeCase
 import { eventId } from '../../../../context';
 import { mutations } from '../../';
 
-export const mockedDatetime = datetimes[0];
+export const mockedDatetime = { ...datetimes[0], id: datetimes[0].id + '-alpha' }; // make sure to change the ID to make it different
 
 export const getMutationMocks = (mutationInput: MutationInput, mutationType: MutationType) => {
 	return [
@@ -34,13 +35,18 @@ export const getMockRequest = (mutationInput: MutationInput, mutationType: Mutat
 };
 
 export const getMockResult = (mutationInput: MutationInput, mutationType: MutationType) => {
+	// make sure that tickets don't go into the result
+	const input = pickBy<MutationInput, MutationInput>(
+		(_, key) => Object.keys(mockedDatetime).includes(key),
+		mutationInput
+	);
 	return {
 		data: {
 			// e.g. createEspressoDatetime
 			[`${mutationType.toLowerCase()}EspressoDatetime`]: {
 				// e.g. UpdateEspressoDatetimePayload
 				__typename: `${ucFirst(mutationType.toLowerCase())}EspressoDatetimePayload`,
-				espressoDatetime: { ...mockedDatetime, ...mutationInput },
+				espressoDatetime: { ...mockedDatetime, ...input },
 			},
 		},
 	};
