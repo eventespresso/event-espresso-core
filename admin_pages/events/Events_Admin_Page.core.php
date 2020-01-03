@@ -2161,7 +2161,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
 
     protected function confirmDeletion()
     {
-        $deletion_job_code = isset($this->_req_data['deletion_job_code']) ? $this->_req_data['deletion_job_code'] : null;
+        $deletion_job_code = isset($this->_req_data['deletion_job_code']) ? sanitize_key($this->_req_data['deletion_job_code']) : null;
         // Redirect the user to the deletion batch job.
         wp_redirect(
             EE_Admin_Page::add_query_args_and_nonce(
