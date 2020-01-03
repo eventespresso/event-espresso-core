@@ -11,7 +11,7 @@ export const defaultNewPriceModifier = {
 	isTax: false,
 	name: '',
 	order: 999,
-	priceType: 4,
+	priceType: '',
 	priceTypeOrder: 999,
 	wpUser: 1,
 };
