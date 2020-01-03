@@ -60,20 +60,11 @@ class PreviewEventDeletion extends JobHandler
                     ]
                 ]
             );
-            $related_message_templates = $event->get_many_related(
-                'Message_Template_Group',
-                [
-                    [
-                        'MTP_is_global' => false
-                    ]
-                ]
-            );
             $model_objects_to_delete = array_merge(
                 $model_objects_to_delete,
                 [$event],
                 $related_non_global_tickets,
-                $related_non_global_prices,
-                $related_message_templates
+                $related_non_global_prices
             );
         }
         $roots = [];
