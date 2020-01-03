@@ -799,7 +799,7 @@ class Extend_Registrations_Admin_Page extends Registrations_Admin_Page
         if (! $registration instanceof EE_Registration) {
             throw new EE_Error(
                 sprintf(
-                    esc_html__('An EE_Registration object could not be retrieved for the given ID (%d)', 'event_espresso'),
+                    esc_html__('An error occurred. There is no registration with ID (%d)', 'event_espresso'),
                     $reg_id
                 )
             );
