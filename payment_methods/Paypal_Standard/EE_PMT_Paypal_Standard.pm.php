@@ -96,8 +96,8 @@ class EE_PMT_Paypal_Standard extends EE_PMT_Base
     /**
      * Logic to be accomplished when the payment attempt is complete.
      * Most payment methods don't need to do anything at this point; but some, like Mijireh, do.
-     * (Mijireh is an offsite gateway which doesn't send an IPN. So when the user returns to EE from
-     * mijireh, this method needs to be called so the Mijireh PM can ping Mijireh to know the status
+     * (Mijireh was an offsite gateway which doesn't send an IPN. So when the user returns to EE from
+     * Mijireh, this method needs to be called so the Mijireh PM can ping Mijireh to know the status
      * of the payment). Fed a transaction because it's always assumed to be the last payment that
      *
      * @param EE_Transaction $transaction
