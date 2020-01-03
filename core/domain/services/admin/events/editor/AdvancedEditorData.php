@@ -47,6 +47,18 @@ class AdvancedEditorData
      * @var EE_Admin_Config
      */
     protected $admin_config;
+    /**
+     * @var EEM_Datetime $datetime_model
+     */
+    protected $datetime_model;
+    /**
+     * @var EEM_Price $price_model
+     */
+    protected $price_model;
+    /**
+     * @var EEM_Ticket $ticket_model
+     */
+    protected $ticket_model;
 
 
     /**
@@ -54,13 +66,22 @@ class AdvancedEditorData
      *
      * @param EE_Event        $event
      * @param EE_Admin_Config $admin_config
+     * @param EEM_Datetime    $datetime_model
+     * @param EEM_Price       $price_model
+     * @param EEM_Ticket      $ticket_model
      */
     public function __construct(
         EE_Event $event,
-        EE_Admin_Config $admin_config
+        EE_Admin_Config $admin_config,
+        EEM_Datetime $datetime_model,
+        EEM_Price $price_model,
+        EEM_Ticket $ticket_model
     ) {
         $this->event = $event;
         $this->admin_config = $admin_config;
+        $this->datetime_model = $datetime_model;
+        $this->price_model = $price_model;
+        $this->ticket_model = $ticket_model;
         add_action('admin_enqueue_scripts', [$this, 'loadScriptsStyles']);
     }
 
@@ -157,6 +178,11 @@ var eeEditorData={$data};
     {
         $datetimes = $this->getGraphQLDatetimes($eventId);
 
+        if (empty($datetimes['nodes']) || (isset($_REQUEST['action']) && $_REQUEST['action'] === 'create_new')) {
+            $this->addDefaultEntities($eventId);
+            $datetimes = $this->getGraphQLDatetimes($eventId);
+        }
+
         if (! empty($datetimes['nodes'])) {
             $datetimeIn = wp_list_pluck($datetimes['nodes'], 'id');
 
@@ -178,6 +204,38 @@ var eeEditorData={$data};
         $relations = $this->getRelationalData($eventId);
 
         return compact('datetimes', 'tickets', 'prices', 'priceTypes', 'relations');
+    }
+
+    /**
+     * @param int $eventId
+     * @throws DomainException
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws ModelConfigurationException
+     * @throws ReflectionException
+     * @throws UnexpectedEntityException
+     * @since $VID:$
+     */
+    protected function addDefaultEntities($eventId)
+    {
+        $default_dates = $this->datetime_model->create_new_blank_datetime();
+        if (is_array($default_dates) && isset($default_dates[0]) && $default_dates[0] instanceof EE_Datetime) {
+            $default_date = $default_dates[0];
+            $default_date->save();
+            $default_date->_add_relation_to($eventId, 'Event');
+            $default_tickets = $this->ticket_model->get_all_default_tickets();
+            $default_prices = $this->price_model->get_all_default_prices();
+            foreach ($default_tickets as $default_ticket) {
+                $default_ticket->save();
+                $default_ticket->_add_relation_to($default_date, 'Datetime');
+                foreach ($default_prices as $default_price) {
+                    $default_price->save();
+                    $default_price->_add_relation_to($default_ticket, 'Ticket');
+                }
+            }
+        }
     }
 
 

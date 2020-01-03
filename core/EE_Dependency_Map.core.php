@@ -901,6 +901,9 @@ class EE_Dependency_Map
             'EventEspresso\core\domain\services\admin\events\editor\AdvancedEditorData'  => [
                 'EE_Event'        => EE_Dependency_Map::not_registered,
                 'EE_Admin_Config' => EE_Dependency_Map::load_from_cache,
+                'EEM_Datetime'    => EE_Dependency_Map::load_from_cache,
+                'EEM_Price'       => EE_Dependency_Map::load_from_cache,
+                'EEM_Ticket'      => EE_Dependency_Map::load_from_cache,
             ],
             'EventEspresso\core\services\graphql\GraphQLManager' => [
                 'EventEspresso\core\services\graphql\TypesManager'  => EE_Dependency_Map::load_from_cache,
