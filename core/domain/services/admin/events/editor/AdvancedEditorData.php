@@ -7,6 +7,7 @@ use EE_Admin_Config;
 use EE_Error;
 use EE_Event;
 use EEM_Datetime;
+use EE_Datetime;
 use EEM_Price;
 use EEM_Price_Type;
 use EEM_Ticket;
