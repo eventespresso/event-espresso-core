@@ -1,8 +1,8 @@
 import useTicketItem from '../data/queries/tickets/useTicketItem';
 
 const TicketId = ({ id }) => {
-	const { dbId = null } = useTicketItem({ id });
-	return <code>{dbId}</code>;
+	const { dbId } = useTicketItem({ id }) || {};
+	return dbId ? <code>{dbId}</code> : null;
 };
 
 export default TicketId;
