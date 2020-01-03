@@ -2152,7 +2152,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
                     $confirm_deletion_args,
                     $this->admin_base_url()
                 ),
-                'deletion_job_code' => $this->_req_data['deletion_job_code']
+                'deletion_job_code' => sanitize_key($this->_req_data['deletion_job_code']);
             ],
             true
         );
