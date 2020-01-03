@@ -2,6 +2,7 @@
 
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
+use EventEspresso\core\exceptions\UnexpectedEntityException;
 use EventEspresso\core\services\orm\tree_traversal\ModelObjNode;
 
 /**
@@ -2137,6 +2138,30 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
      */
     protected function previewDeletion()
     {
+        $deletion_job_code = isset($this->_req_data['deletion_job_code']) ? $this->_req_data['deletion_job_code'] : '';
+        if( ! $deletion_job_code){
+            throw new Exception(esc_html__('We aren’t sure which job you are performing. Please press back in your browser and try again.', 'event_espresso'));
+        }
+        $deletion_data = get_option('ee_deletion_' . $deletion_job_code, []);
+
+        $models_and_ids_to_delete = [];
+        foreach ($deletion_data as $root) {
+            if (! $root instanceof ModelObjNode) {
+                throw new UnexpectedEntityException($root, 'ModelObjNode');
+            }
+            $models_and_ids_to_delete = array_replace_recursive($models_and_ids_to_delete, $root->getIds());
+        }
+
+        if(! WP_DEBUG){
+            $models_to_mention = [
+                'Event',
+                'Datetime',
+                'Ticket',
+                'Registration'
+            ];
+
+            $models_and_ids_to_delete = array_intersect_key($models_and_ids_to_delete, array_flip($models_to_mention));
+        }
         $EVT_IDs = isset($this->_req_data['EVT_IDs']) ? (array) $this->_req_data['EVT_IDs'] : array();
         $confirm_deletion_args = [
             'action' => 'confirm_deletion',
@@ -2144,6 +2169,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
         foreach ($EVT_IDs as $EVT_ID) {
             $confirm_deletion_args['EVT_IDs[]'] = (int) $EVT_ID;
         }
+
         $this->_template_args['admin_page_content'] = EEH_Template::display_template(
             EVENTS_TEMPLATE_PATH . 'event_preview_deletion.template.php',
             [
@@ -2151,7 +2177,9 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
                     $confirm_deletion_args,
                     $this->admin_base_url()
                 ),
-                'deletion_job_code' => sanitize_key($this->_req_data['deletion_job_code'])
+                'deletion_job_code' => sanitize_key($this->_req_data['deletion_job_code']),
+                'models_and_ids_to_delete' => $models_and_ids_to_delete,
+                'quantity_to_preview' => 20
             ],
             true
         );
