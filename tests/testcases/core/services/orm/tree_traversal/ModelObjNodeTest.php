@@ -203,7 +203,7 @@ class ModelObjNodeTest extends EE_UnitTestCase
         $e_node = new ModelObjNode($e->ID(), $e->get_model());
         // Asserts that the serialized model object node stays small. Less than 125 would be great (half of it is taken
         // up by the classname
-        echo serialize($e_node);
+//        echo serialize($e_node);
         $this->assertLessThan(138, strlen(serialize($e_node)));
 
         // Also check that the fully discovered node isn't too big.
