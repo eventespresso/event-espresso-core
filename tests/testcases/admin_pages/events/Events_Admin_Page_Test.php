@@ -41,21 +41,4 @@ class Events_Admin_Page_Test extends EE_UnitTestCase {
 		$this->_event->save();
 		$this->_set_default_dates( $timezone );
 	}
-
-
-
-
-	/**
-	 * Tests the _delete_event method via the mock
-	 * @see https://events.codebasehq.com/projects/event-espresso/tickets/9699
-	 * @group 9699
-	 */
-	public function test_delete_event() {
-		$this->_load_requirements();
-		//let's delete the event
-		$this->_admin_page->delete_event( $this->_event->ID() );
-
-		//assert it got deleted!
-		$this->assertEmpty( EEM_Event::instance()->get_one_by_ID( $this->_event->ID() ) );
-	}
 }
