@@ -10,9 +10,7 @@ enum ActionType {
 	OPEN_EDITOR = 'OPEN_EDITOR',
 }
 
-type State = {
-	stack: string[];
-};
+type State = string[];
 
 type Action = {
 	editorId?: string;
@@ -75,7 +73,7 @@ const useEditorModalState = () => {
 	 * @param {Stack} state
 	 * @return {string | undefined} editorId, if there is no editorId then it will return undefined
 	 */
-	const getCurrentlyOpenEditor = (): string | undefined => last(state.stack);
+	const currentlyOpenEditor = (): string | undefined => last(state.stack);
 
 	/**
 	 * Returns true if the provided ID matches the editor
@@ -90,7 +88,7 @@ const useEditorModalState = () => {
 	return {
 		closeEditor,
 		closeAllEditors,
-		getCurrentlyOpenEditor,
+		currentlyOpenEditor,
 		isEditorOpen,
 		openEditor,
 	};

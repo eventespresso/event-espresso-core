@@ -6,19 +6,31 @@ import React, { createContext } from 'react';
 /**
  * Internal dependencies
  */
-import useEditorModalState from '../../../../application/ui/components/layout/editor-modal/useEditorModalState';
 import { EntityId } from '../../data/types';
+import useEditorModalState from '../../../../application/ui/components/layout/editor-modal/useEditorModalState';
+import useTicketEditorId from './useTicketEditorId';
 
-interface IContextProps {
+interface EditorIds {
+	calculator: string;
+	editForm: string;
+	relations: string;
+}
+
+interface EditorState {
 	closeAllEditors: () => void;
 	currentlyOpenEditor: string | undefined;
-	id: EntityId;
 	getIsOpen: (arg: string) => boolean;
 	onClose: (arg: string) => void;
 	setIsOpen: (arg: string) => void;
 }
 
-export const TicketContext = createContext({} as IContextProps);
+interface ContextProps {
+	editorIds: EditorIds;
+	editorState: EditorState;
+	id: EntityId;
+}
+
+export const TicketContext = createContext({} as ContextProps);
 
 interface TicketProviderProps {
 	children: React.ReactChildren;
@@ -26,19 +38,29 @@ interface TicketProviderProps {
 }
 
 const TicketProvider = ({ children, id }: TicketProviderProps) => {
-	const { closeEditor, closeAllEditors, isEditorOpen, getCurrentlyOpenEditor, openEditor } = useEditorModalState();
-	const currentlyOpenEditor = getCurrentlyOpenEditor();
+	const { closeEditor, closeAllEditors, currentlyOpenEditor, isEditorOpen, openEditor } = useEditorModalState();
 	const getIsOpen = (modalId = '') => isEditorOpen(id + modalId);
 	const onClose = (modalId = '') => closeEditor(id + modalId);
 	const setIsOpen = (modalId = '') => openEditor(id + modalId);
 
-	const value = {
+	const editorIds: EditorIds = {
+		calculator: useTicketEditorId('price-calculator', id),
+		editForm: useTicketEditorId('ticket-editor', id),
+		relations: useTicketEditorId('ticket-relations', id),
+	};
+
+	const editorState = {
 		closeAllEditors,
 		currentlyOpenEditor,
-		id,
 		getIsOpen,
 		onClose,
 		setIsOpen,
+	};
+
+	const value = {
+		editorIds,
+		editorState,
+		id,
 	};
 
 	return <TicketContext.Provider value={value}>{children}</TicketContext.Provider>;
