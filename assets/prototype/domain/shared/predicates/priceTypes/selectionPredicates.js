@@ -1,4 +1,4 @@
-import { propEq } from 'ramda';
+import { allPass, find, propEq } from 'ramda';
 
 // the following return `true` if price type satisfies predicate
 // is a base price ?
@@ -14,7 +14,6 @@ export const isNotPercent = propEq('isPercent', false);
 export const isTax = propEq('isTax', true);
 export const isNotTax = propEq('isTax', false);
 
-export const isDefaultPriceType = (priceType) => {
-	const { baseType, isPercent } = priceType;
-	return baseType === 'SURCHARGE' && isPercent;
-};
+// returns true if supplied price type is a flat fee (dollar) surcharge
+export const isFlatFeeSurcharge = allPass([isNotBasePrice, isNotDiscount, isNotPercent]);
+export const getDefaultPriceType = (priceTypes) => find(isFlatFeeSurcharge)(priceTypes);
