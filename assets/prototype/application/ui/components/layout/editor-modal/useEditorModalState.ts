@@ -4,11 +4,6 @@
 import { useReducer } from 'react';
 import { assoc, dropLast, last } from 'ramda';
 
-/**
- * Internal dependencies
- */
-import { EntityId } from '../../../../../domain/eventEditor/data/types';
-
 enum ActionType {
 	CLOSE_ALL = 'CLOSE_ALL',
 	CLOSE_EDITOR = 'CLOSE_EDITOR',
@@ -53,8 +48,6 @@ const useEditorModalState = () => {
 		stack: [],
 	};
 	const [state, dispatch] = useReducer(reducer, initialState);
-
-	console.log({ state });
 
 	const openEditor = (editorId: string) => {
 		dispatch({
