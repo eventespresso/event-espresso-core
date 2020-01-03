@@ -38,12 +38,12 @@ class ExecuteBatchDeletion extends JobHandler
     {
         $deletion_job_code = $job_parameters->request_datum('deletion_job_code', null);
         $roots = get_option('ee_deletion_'  . $deletion_job_code, null);
-        if($roots === null){
+        if ($roots === null) {
             throw new UnexpectedEntityException($roots, 'array', esc_html__('The job seems to be stale. Please press the back button in your browser twice.', 'event_espresso'));
         }
         $models_and_ids_to_delete = [];
         foreach ($roots as $root) {
-            if(! $root instanceof ModelObjNode){
+            if (! $root instanceof ModelObjNode) {
                 throw new UnexpectedEntityException($root, 'ModelObjNode');
             }
             $models_and_ids_to_delete = array_replace_recursive($models_and_ids_to_delete, $root->getIds());
@@ -55,7 +55,7 @@ class ExecuteBatchDeletion extends JobHandler
         );
         // Find the job's actual size.
         $job_size = 0;
-        foreach($models_and_ids_to_delete as $model_name => $ids){
+        foreach ($models_and_ids_to_delete as $model_name => $ids) {
             $job_size += count($ids);
         }
         $job_parameters->set_job_size($job_size);
@@ -80,8 +80,8 @@ class ExecuteBatchDeletion extends JobHandler
         $models_and_ids_to_delete = $job_parameters->extra_datum('models_and_ids_to_delete', []);
         // Build a new list of everything leftover after this request's of deletions.
         $models_and_ids_remaining = [];
-        foreach($models_and_ids_to_delete as $model_name => $ids_to_delete){
-            if($units_processed < $batch_size){
+        foreach ($models_and_ids_to_delete as $model_name => $ids_to_delete) {
+            if ($units_processed < $batch_size) {
                 $model = EE_Registry::instance()->load_model($model_name);
                 $ids_to_delete_this_query = array_slice($ids_to_delete, 0, $batch_size - $units_processed, true);
                 if ($model->has_primary_key_field()) {
@@ -112,16 +112,16 @@ class ExecuteBatchDeletion extends JobHandler
                 $units_processed += count($ids_to_delete_this_query);
                 $remaining_ids = array_diff_key($ids_to_delete, $ids_to_delete_this_query);
                 // If there's any more from this model, we'll do them next time.
-                if(count($remaining_ids) > 0){
-                    $models_and_ids_remaining[$model_name] = $remaining_ids;
+                if (count($remaining_ids) > 0) {
+                    $models_and_ids_remaining[ $model_name ] = $remaining_ids;
                 }
             } else {
-                $models_and_ids_remaining[$model_name] = $models_and_ids_to_delete[$model_name];
+                $models_and_ids_remaining[ $model_name ] = $models_and_ids_to_delete[ $model_name ];
             }
         }
         $job_parameters->mark_processed($units_processed);
         // All done deleting for this request. Is there anything to do next time?
-        if(empty($models_and_ids_remaining)){
+        if (empty($models_and_ids_remaining)) {
             $job_parameters->set_status(JobParameters::status_complete);
             return new JobStepResponse(
                 $job_parameters,

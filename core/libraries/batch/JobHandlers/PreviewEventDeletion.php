@@ -77,7 +77,7 @@ class PreviewEventDeletion extends JobHandler
             );
         }
         $roots = [];
-        foreach($model_objects_to_delete as $model_object){
+        foreach ($model_objects_to_delete as $model_object) {
             $roots[] = new ModelObjNode($model_object->ID(), $model_object->get_model());
         }
         $job_parameters->add_extra_data('roots', $roots);
@@ -105,14 +105,14 @@ class PreviewEventDeletion extends JobHandler
         // 50% of the request is just serializing and unserializing.) So, make the batches much bigger.
         $batch_size *= 3;
         $units_processed = 0;
-        foreach($job_parameters->extra_datum('roots', array()) as $root_node){
-            if($units_processed >= $batch_size){
+        foreach ($job_parameters->extra_datum('roots', array()) as $root_node) {
+            if ($units_processed >= $batch_size) {
                 break;
             }
-            if(! $root_node instanceof ModelObjNode){
+            if (! $root_node instanceof ModelObjNode) {
                 throw new InvalidClassException('ModelObjNode');
             }
-            if($root_node->isComplete()){
+            if ($root_node->isComplete()) {
                 continue;
             }
             $units_processed += $root_node->visit($batch_size - $units_processed);
@@ -120,7 +120,7 @@ class PreviewEventDeletion extends JobHandler
         $job_parameters->mark_processed($units_processed);
         // If the most-recently processed root node is complete, we must be all done because we're doing them
         // sequentially.
-        if(isset($root_node) && $root_node instanceof ModelObjNode && $root_node->isComplete()){
+        if (isset($root_node) && $root_node instanceof ModelObjNode && $root_node->isComplete()) {
             $job_parameters->set_status(JobParameters::status_complete);
             // Show a full progress bar.
             $job_parameters->set_units_processed($job_parameters->job_size());
@@ -136,7 +136,7 @@ class PreviewEventDeletion extends JobHandler
         } else {
             // Because the job size was a guess, it may have likely been provden wrong. We don't want to show more work
             // done than we originally said there would be. So adjust the estimate.
-            if(($job_parameters->units_processed() / $job_parameters->job_size()) > .8){
+            if (($job_parameters->units_processed() / $job_parameters->job_size()) > .8) {
                 $job_parameters->set_job_size($job_parameters->job_size() * 2);
             }
             return new JobStepResponse(

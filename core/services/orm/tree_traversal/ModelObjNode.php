@@ -107,8 +107,8 @@ class ModelObjNode extends BaseNode
             $num_identified += $relation_node->visit($model_objects_to_identify - $num_identified);
             // To save on space when serializing, only bother keeping a record of relation nodes that actually found
             // related model objects.
-            if($relation_node->isComplete() && $relation_node->countSubNodes() === 0){
-                unset($this->nodes[$model_name]);
+            if ($relation_node->isComplete() && $relation_node->countSubNodes() === 0) {
+                unset($this->nodes[ $model_name ]);
             }
             if ($num_identified >= $model_objects_to_identify) {
                 // ...but admit we're wrong if the work exceeded the budget.
@@ -161,7 +161,7 @@ class ModelObjNode extends BaseNode
                 $this->id => $this->id
             ]
         ];
-        if($this->nodes && is_array($this->nodes)){
+        if ($this->nodes && is_array($this->nodes)) {
             foreach ($this->nodes as $relation_node) {
                 $ids = array_replace_recursive($ids, $relation_node->getIds());
             }
@@ -173,7 +173,8 @@ class ModelObjNode extends BaseNode
      * Don't serialize the models. Just record their names on some dynamic properties.
      * @since $VID:$
      */
-    public function __sleep(){
+    public function __sleep()
+    {
         $this->m = $this->model->get_this_model_name();
         return array_merge(
             [
@@ -194,7 +195,7 @@ class ModelObjNode extends BaseNode
      * @throws InvalidInterfaceException
      * @throws ReflectionException
      */
-    public function  __wakeup()
+    public function __wakeup()
     {
         $this->model = EE_Registry::instance()->load_model($this->m);
         parent::__wakeup();

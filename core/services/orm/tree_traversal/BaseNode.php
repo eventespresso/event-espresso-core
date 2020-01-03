@@ -116,7 +116,7 @@ abstract class BaseNode
      * Use the dynamic property to set the "complete" property.
      * @since $VID:$
      */
-    public function  __wakeup()
+    public function __wakeup()
     {
         $this->complete = $this->c;
     }

@@ -2102,7 +2102,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
 
     protected function generateDeletionPreview($event_ids)
     {
-        $event_ids = (array)$event_ids;
+        $event_ids = (array) $event_ids;
         // Set a code we can use to reference this deletion task in the batch jobs and preview page.
         $deletion_job_code = wp_generate_password(6, false);
         $return_url = EE_Admin_Page::add_query_args_and_nonce(
@@ -2116,7 +2116,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
             $event_ids = (int) $EVT_ID;
         }
 
-        wp_redirect(
+        EEH_URL::safeRedirectAndExit(
             EE_Admin_Page::add_query_args_and_nonce(
                 array(
                     'page'        => 'espresso_batch',
@@ -2129,7 +2129,6 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
                 admin_url()
             )
         );
-        exit;
     }
 
     /**
@@ -2163,7 +2162,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
     {
         $deletion_job_code = isset($this->_req_data['deletion_job_code']) ? $this->_req_data['deletion_job_code'] : null;
         // Redirect the user to the deletion batch job.
-        wp_redirect(
+        EEH_URL::safeRedirectAndExit(
             EE_Admin_Page::add_query_args_and_nonce(
                 array(
                     'page'        => 'espresso_batch',
@@ -2172,7 +2171,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
                     'job_handler' => urlencode('EventEspressoBatchRequest\JobHandlers\ExecuteBatchDeletion'),
                     'return_url'  => urlencode(
                         add_query_arg(
-                        [
+                            [
                             'status' => 'trash'
                             ],
                             EVENTS_ADMIN_URL
@@ -2182,7 +2181,6 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
                 admin_url()
             )
         );
-        exit;
     }
 
     /**
