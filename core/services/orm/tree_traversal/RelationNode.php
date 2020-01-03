@@ -268,7 +268,8 @@ class RelationNode extends BaseNode
      * Don't serialize the models. Just record their names on some dynamic properties.
      * @since $VID:$
      */
-    public function __sleep(){
+    public function __sleep()
+    {
         $this->m = $this->main_model->get_this_model_name();
         $this->rm = $this->related_model->get_this_model_name();
         return array_merge(
@@ -292,7 +293,7 @@ class RelationNode extends BaseNode
      * @throws InvalidInterfaceException
      * @throws ReflectionException
      */
-    public function  __wakeup()
+    public function __wakeup()
     {
         $this->main_model = EE_Registry::instance()->load_model($this->m);
         $this->related_model = EE_Registry::instance()->load_model($this->rm);
