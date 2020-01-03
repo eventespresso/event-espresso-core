@@ -1,4 +1,5 @@
 import { OperationVariables } from 'apollo-client';
+import { pathOr } from 'ramda';
 import useEventId from '../../queries/events/useEventId';
 import useDatetimeQueryOptions from '../../queries/datetimes/useDatetimeQueryOptions';
 import useOnCreateDatetime from './useOnCreateDatetime';
@@ -12,7 +13,8 @@ import {
 	MutatorGeneratedObject,
 } from '../../../../../application/services/apollo/mutations/types';
 import { ReadQueryOptions } from '../../queries/types';
-import { Datetime } from '../../types';
+import { DEFAULT_ENTITY_LIST_DATA as DEFAULT_LIST_DATA } from '../../queries';
+import { Datetime, DatetimeEdge } from '../../types';
 import { DatetimeMutationCallbackFn } from '../types';
 
 /**
@@ -51,7 +53,13 @@ const useDatetimeMutator = (): Mutator => {
 
 		const onUpdate = ({ proxy, entity: datetime }: OnUpdateFnOptions<Datetime>): void => {
 			// Read the existing data from cache.
-			const { espressoDatetimes: datetimes = {} } = proxy.readQuery(options);
+			let data: any;
+			try {
+				data = proxy.readQuery(options);
+			} catch (error) {
+				data = {};
+			}
+			const datetimes = pathOr<DatetimeEdge>(DEFAULT_LIST_DATA('Datetimes'), ['espressoDatetimes'], data);
 			const { tickets = [] } = input;
 
 			switch (mutationType) {

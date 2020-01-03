@@ -5,6 +5,8 @@ import { GET_PRICE_TYPE, GET_PRICE_TYPES } from './priceTypes';
 import { GET_CURRENT_USER } from './currentUser';
 import { GET_GENERAL_SETTINGS } from './generalSettings';
 
+import { EntityListName } from './types';
+
 export const queries = {
 	/* datetimes */
 	GET_DATETIME,
@@ -21,4 +23,11 @@ export const queries = {
 	/* config */
 	GET_CURRENT_USER,
 	GET_GENERAL_SETTINGS,
+};
+
+export const DEFAULT_ENTITY_LIST_DATA = (entity: EntityListName) => {
+	return {
+		nodes: [],
+		__typename: `EspressoRootQuery${entity}Connection`,
+	};
 };
