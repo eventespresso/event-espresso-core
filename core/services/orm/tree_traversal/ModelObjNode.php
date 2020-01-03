@@ -2,9 +2,10 @@
 
 namespace EventEspresso\core\services\orm\tree_traversal;
 
-use EE_Base_Class;
 use EE_HABTM_Relation;
 use EE_Has_Many_Relation;
+use EE_Registry;
+use EEM_Base;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
 use InvalidArgumentException;
@@ -22,18 +23,29 @@ use ReflectionException;
 class ModelObjNode extends BaseNode
 {
     /**
-     * @var EE_Base_Class
+     * @var int|string
      */
-    protected $model_obj;
+    protected $id;
+
+    /**
+     * @var EEM_Base
+     */
+    protected $model;
 
     /**
      * @var RelationNode[]
      */
-    protected $relation_nodes;
+    protected $nodes;
 
-    public function __construct($instance)
+    /**
+     * We don't pass the model objects because this needs to serialize to something tiny for effiency.
+     * @param $model_obj_id
+     * @param EEM_Base $model
+     */
+    public function __construct($model_obj_id, EEM_Base $model)
     {
-        $this->model_obj = $instance;
+        $this->id = $model_obj_id;
+        $this->model = $model;
     }
 
     /**
@@ -48,15 +60,15 @@ class ModelObjNode extends BaseNode
      */
     protected function discover()
     {
-        $this->relation_nodes = [];
-        foreach ($this->model_obj->get_model()->relation_settings() as $relationName => $relation) {
+        $this->nodes = [];
+        foreach ($this->model->relation_settings() as $relationName => $relation) {
             if ($relation instanceof EE_Has_Many_Relation) {
-                $this->relation_nodes[ $relationName ] = new RelationNode($this->model_obj, $relation->get_other_model());
+                $this->nodes[ $relationName ] = new RelationNode($this->id, $this->model, $relation->get_other_model());
             } elseif ($relation instanceof EE_HABTM_Relation) {
-                $this->relation_nodes[ $relation->get_join_model()->get_this_model_name() ] = new RelationNode($this->model_obj, $relation->get_join_model());
+                $this->nodes[ $relation->get_join_model()->get_this_model_name() ] = new RelationNode($this->id, $this->model, $relation->get_join_model());
             }
         }
-        ksort($this->relation_nodes);
+        ksort($this->nodes);
     }
 
 
@@ -65,7 +77,7 @@ class ModelObjNode extends BaseNode
      */
     protected function isDiscovered()
     {
-        return $this->relation_nodes !== null && is_array($this->relation_nodes);
+        return $this->nodes !== null && is_array($this->nodes);
     }
 
     /**
@@ -91,8 +103,13 @@ class ModelObjNode extends BaseNode
         $num_identified = 0;
         // Begin assuming we'll finish all the work on this node and its children...
         $this->complete = true;
-        foreach ($this->relation_nodes as $relation_node) {
-            $num_identified += $relation_node->visit($model_objects_to_identify);
+        foreach ($this->nodes as $model_name => $relation_node) {
+            $num_identified += $relation_node->visit($model_objects_to_identify - $num_identified);
+            // To save on space when serializing, only bother keeping a record of relation nodes that actually found
+            // related model objects.
+            if ($relation_node->isComplete() && $relation_node->countSubNodes() === 0) {
+                unset($this->nodes[ $model_name ]);
+            }
             if ($num_identified >= $model_objects_to_identify) {
                 // ...but admit we're wrong if the work exceeded the budget.
                 $this->complete = false;
@@ -114,14 +131,14 @@ class ModelObjNode extends BaseNode
     public function toArray()
     {
         $tree = [
-            'id' => $this->model_obj->ID(),
+            'id' => $this->id,
             'complete' => $this->isComplete(),
             'rels' => []
         ];
-        if ($this->relation_nodes === null) {
+        if ($this->nodes === null) {
             $tree['rels'] = null;
         } else {
-            foreach ($this->relation_nodes as $relation_name => $relation_node) {
+            foreach ($this->nodes as $relation_name => $relation_node) {
                 $tree['rels'][ $relation_name ] = $relation_node->toArray();
             }
         }
@@ -140,14 +157,48 @@ class ModelObjNode extends BaseNode
     public function getIds()
     {
         $ids = [
-            $this->model_obj->get_model()->get_this_model_name() => [
-                $this->model_obj->ID() => $this->model_obj->ID()
+            $this->model->get_this_model_name() => [
+                $this->id => $this->id
             ]
         ];
-        foreach ($this->relation_nodes as $relation_node) {
-            $ids = array_replace_recursive($ids, $relation_node->getIds());
+        if ($this->nodes && is_array($this->nodes)) {
+            foreach ($this->nodes as $relation_node) {
+                $ids = array_replace_recursive($ids, $relation_node->getIds());
+            }
         }
         return $ids;
+    }
+
+    /**
+     * Don't serialize the models. Just record their names on some dynamic properties.
+     * @since $VID:$
+     */
+    public function __sleep()
+    {
+        $this->m = $this->model->get_this_model_name();
+        return array_merge(
+            [
+                'm',
+                'id',
+                'nodes',
+            ],
+            parent::__sleep()
+        );
+    }
+
+    /**
+     * Use the dynamic properties to instantiate the models we use.
+     * @since $VID:$
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws ReflectionException
+     */
+    public function __wakeup()
+    {
+        $this->model = EE_Registry::instance()->load_model($this->m);
+        parent::__wakeup();
     }
 }
 // End of file Visitor.php
