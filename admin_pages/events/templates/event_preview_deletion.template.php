@@ -64,6 +64,6 @@ foreach ($models_and_ids_to_delete as $model_name => $ids) {
 }
 ?>
 <form action="<?php echo $form_url; ?>" method="POST">
-    <input type="hidden" value="<?php echo esc_attr($deletion_job_code); ?>" name="deletion_job_code">
+    <?php echo $form->get_html_and_js();?>
     <input type="submit" value="<?php echo esc_attr(esc_html__('Confirm', 'event_espresso')); ?>">
 </form>

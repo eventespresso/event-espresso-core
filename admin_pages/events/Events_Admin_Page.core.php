@@ -1,5 +1,6 @@
 <?php
 
+use EventEspresso\admin_pages\events\form_sections\ConfirmEventDeletionForm;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
 use EventEspresso\core\exceptions\UnexpectedEntityException;
@@ -46,6 +47,18 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
      * @var EE_Event
      */
     protected $_cpt_model_obj = false;
+
+    /**
+     * Used to hold onto a form across various stages of a request.
+     * @var EE_Form_Section_Proper
+     */
+    protected $form;
+
+    /**
+     * Used so we don't have to repeatedly fetch a potentially large array of data from the WP options table.
+     * @var array
+     */
+    protected $models_and_ids_to_delete;
 
 
     /**
@@ -236,12 +249,13 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
             ),
             'preview_deletion' => [
                 'func' => 'previewDeletion',
-                'capability' => 'ee_delete_events'
+                'capability' => 'ee_delete_events',
             ],
             'confirm_deletion' => [
                 'func' => 'confirmDeletion',
                 'capability' => 'ee_delete_events',
-                'noheader' => true
+                'noheader' => true,
+                'headers_sent_route' => 'preview_deletion',
             ]
         );
     }
@@ -520,6 +534,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
                     'order'      => 15,
                     'persistent' => false,
                 ),
+                'require_nonce' => false
             )
         );
     }
@@ -2133,12 +2148,65 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
     }
 
     /**
-     * A page for users to preview what exactly will be deleted, and confirm they want to delete it.
+     * Checks for a POST submission
      * @since $VID:$
      */
-    protected function previewDeletion()
+    protected function confirmDeletion()
     {
         $deletion_job_code = isset($this->_req_data['deletion_job_code']) ? $this->_req_data['deletion_job_code'] : '';
+        $this->models_and_ids_to_delete = $this->getModelsAndIdsToDelete($deletion_job_code);
+        $this->form = new ConfirmEventDeletionForm($this->models_and_ids_to_delete['Event']);
+        if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+            // Initialize the form from the request, and check if its valid.
+            $this->form->receive_form_submission($this->_req_data);
+            if($this->form->is_valid()){
+                // Redirect the user to the deletion batch job.
+                EEH_URL::safeRedirectAndExit(
+                    EE_Admin_Page::add_query_args_and_nonce(
+                        array(
+                            'page'        => 'espresso_batch',
+                            'batch'       => EED_Batch::batch_job,
+                            'deletion_job_code' => $deletion_job_code,
+                            'job_handler' => urlencode('EventEspressoBatchRequest\JobHandlers\ExecuteBatchDeletion'),
+                            'return_url'  => urlencode(
+                                add_query_arg(
+                                    [
+                                        'status' => 'trash'
+                                    ],
+                                    EVENTS_ADMIN_URL
+                                )
+                            )
+                        ),
+                        admin_url()
+                    )
+                );
+            } else {
+                EE_Error::add_error(
+                    __(
+                        'Data was not deleted because you did not complete the form correctly.',
+                        'event_espresso'
+                    ),
+                    __FILE__,
+                    __FUNCTION__,
+                    __LINE__
+                );
+            }
+        }
+    }
+
+    /**
+     * Uses the querystring and job option to figure out what we intend to delete.
+     * @since $VID:$
+     * @return array top-level keys are model names, and their values are arrays of IDs.
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws ReflectionException
+     * @throws UnexpectedEntityException
+     */
+    protected function getModelsAndIdsToDelete($deletion_job_code)
+    {
         if( ! $deletion_job_code){
             throw new Exception(esc_html__('We aren’t sure which job you are performing. Please press back in your browser and try again.', 'event_espresso'));
         }
@@ -2151,7 +2219,21 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
             }
             $models_and_ids_to_delete = array_replace_recursive($models_and_ids_to_delete, $root->getIds());
         }
+        return $models_and_ids_to_delete;
+    }
 
+    /**
+     * A page for users to preview what exactly will be deleted, and confirm they want to delete it.
+     * @since $VID:$
+     */
+    protected function previewDeletion()
+    {
+        $deletion_job_code = isset($this->_req_data['deletion_job_code']) ? $this->_req_data['deletion_job_code'] : '';
+        if(! $this->form instanceof ConfirmEventDeletionForm){
+            $this->models_and_ids_to_delete = $this->getModelsAndIdsToDelete($deletion_job_code);
+            $this->form = new ConfirmEventDeletionForm($this->models_and_ids_to_delete['Event']);
+        }
+        // If they're not in debug mode, don't list all model objectss that will be deleted. They'll just be confused.
         if(! WP_DEBUG){
             $models_to_mention = [
                 'Event',
@@ -2160,15 +2242,12 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
                 'Registration'
             ];
 
-            $models_and_ids_to_delete = array_intersect_key($models_and_ids_to_delete, array_flip($models_to_mention));
-        }
-        $EVT_IDs = isset($this->_req_data['EVT_IDs']) ? (array) $this->_req_data['EVT_IDs'] : array();
+            $this->models_and_ids_to_delete = array_intersect_key($this->models_and_ids_to_delete, array_flip($models_to_mention));
+        };
         $confirm_deletion_args = [
             'action' => 'confirm_deletion',
+            'deletion_job_code' => $deletion_job_code
         ];
-        foreach ($EVT_IDs as $EVT_ID) {
-            $confirm_deletion_args['EVT_IDs[]'] = (int) $EVT_ID;
-        }
 
         $this->_template_args['admin_page_content'] = EEH_Template::display_template(
             EVENTS_TEMPLATE_PATH . 'event_preview_deletion.template.php',
@@ -2177,38 +2256,13 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
                     $confirm_deletion_args,
                     $this->admin_base_url()
                 ),
-                'deletion_job_code' => sanitize_key($this->_req_data['deletion_job_code']),
-                'models_and_ids_to_delete' => $models_and_ids_to_delete,
+                'form' => $this->form,
+                'models_and_ids_to_delete' => $this->models_and_ids_to_delete,
                 'quantity_to_preview' => 20
             ],
             true
         );
         $this->display_admin_page_with_no_sidebar();
-    }
-
-    protected function confirmDeletion()
-    {
-        $deletion_job_code = isset($this->_req_data['deletion_job_code']) ? sanitize_key($this->_req_data['deletion_job_code']) : null;
-        // Redirect the user to the deletion batch job.
-        EEH_URL::safeRedirectAndExit(
-            EE_Admin_Page::add_query_args_and_nonce(
-                array(
-                    'page'        => 'espresso_batch',
-                    'batch'       => EED_Batch::batch_job,
-                    'deletion_job_code' => $deletion_job_code,
-                    'job_handler' => urlencode('EventEspressoBatchRequest\JobHandlers\ExecuteBatchDeletion'),
-                    'return_url'  => urlencode(
-                        add_query_arg(
-                            [
-                            'status' => 'trash'
-                            ],
-                            EVENTS_ADMIN_URL
-                        )
-                    )
-                ),
-                admin_url()
-            )
-        );
     }
 
     /**
