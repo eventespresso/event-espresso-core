@@ -4,6 +4,8 @@ namespace EventEspresso\admin_pages\events\form_sections;
 
 use EE_Checkbox_Multi_Input;
 use EE_Event;
+use EE_Form_Section_HTML;
+use EEH_HTML;
 use EEM_Event;
 use EventEspresso\core\exceptions\UnexpectedEntityException;
 
@@ -43,13 +45,17 @@ class ConfirmEventDeletionForm extends \EE_Form_Section_Proper
             throw new UnexpectedEntityException($event_ids, 'array');
         }
         $this->events = $events;
-        $events_inputs = [];
+        $events_inputs = [
+            'intro' => new EE_Form_Section_HTML(
+                EEH_HTML::h2(esc_html__('In order to prevent accidentally deleting the wrong events, please enter the unique URL slug of each event.', 'event_espresso'))
+            )
+        ];
         foreach($events as $event){
              $events_inputs[$event->slug()] = new \EE_Text_Input(
                 [
                     'html_label_text' => esc_html(
                         sprintf(
-                            __('You are about to delete the event "%1$s" (whose URL slug is "%2$s"). Please confirm the URL slug of the event', 'event_espresso'),
+                            __('Please enter the URL slug of "%1$s" (hint: it’s "%2$s")', 'event_espresso'),
                             $event->name(),
                             $event->slug()
                         )
