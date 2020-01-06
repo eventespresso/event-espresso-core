@@ -209,7 +209,7 @@ class ModelObjNodeTest extends EE_UnitTestCase
         // Also check that the fully discovered node isn't too big.
         $e_node->visit(100);
 //        echo serialize($e_node);
-        $this->assertLessThan(141, strlen(serialize($e_node)));
+        $this->assertLessThan(144, strlen(serialize($e_node)));
     }
 }
 // End of file EntityNodeTest.php

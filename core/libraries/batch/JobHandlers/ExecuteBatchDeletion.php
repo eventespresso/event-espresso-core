@@ -27,7 +27,7 @@ use EventEspressoBatchRequest\JobHandlerBaseClasses\JobHandler;
 class ExecuteBatchDeletion extends JobHandler
 {
 
-
+    // phpcs:disable PSR1.Methods.CamelCapsMethodName.NotCamelCaps
     /**
      *
      * @param JobParameters $job_parameters
