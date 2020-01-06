@@ -2,7 +2,7 @@
  * External dependencies
  */
 import { useReducer } from 'react';
-import { assoc, dropLast, last } from 'ramda';
+import { dropLast, last } from 'ramda';
 
 enum ActionType {
 	CLOSE_ALL = 'CLOSE_ALL',
@@ -18,22 +18,20 @@ type Action = {
 };
 
 const reducer = (state: State, action: Action) => {
-	const { stack } = state;
 	const { editorId } = action;
 
 	switch (action.type) {
 		case ActionType.CLOSE_EDITOR:
-			if (editorId === last(stack)) {
-				const stackWithoutLastItem = dropLast(1, stack);
-				return { ...state, stack: stackWithoutLastItem };
+			if (editorId === last(state)) {
+				const stackWithoutLastItem = dropLast(1, state);
+				return stackWithoutLastItem;
 			}
 			return state;
 		case ActionType.CLOSE_ALL:
-			return assoc('stack', [], state);
+			return [];
 		case ActionType.OPEN_EDITOR:
-			if (editorId.length && !stack.includes(editorId)) {
-				const newState = { ...state, stack: [...stack, editorId] };
-				return newState;
+			if (editorId.length && !state.includes(editorId)) {
+				return [...state, editorId];
 			}
 			return state;
 		default:
@@ -42,9 +40,7 @@ const reducer = (state: State, action: Action) => {
 };
 
 const useEditorModalState = () => {
-	const initialState = {
-		stack: [],
-	};
+	const initialState = [];
 	const [state, dispatch] = useReducer(reducer, initialState);
 
 	const openEditor = (editorId: string) => {
@@ -73,7 +69,7 @@ const useEditorModalState = () => {
 	 * @param {Stack} state
 	 * @return {string | undefined} editorId, if there is no editorId then it will return undefined
 	 */
-	const currentlyOpenEditor = (): string | undefined => last(state.stack);
+	const currentlyOpenEditor = (): string | undefined => last(state);
 
 	/**
 	 * Returns true if the provided ID matches the editor
@@ -83,7 +79,7 @@ const useEditorModalState = () => {
 	 * @param {string} editorId    unique identifier for editor
 	 * @return {string} editorId
 	 */
-	const isEditorOpen = (editorId: string): boolean => editorId === last(state.stack);
+	const isEditorOpen = (editorId: string): boolean => editorId === last(state);
 
 	return {
 		closeEditor,
