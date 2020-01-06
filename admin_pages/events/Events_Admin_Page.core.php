@@ -255,7 +255,6 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
                 'func' => 'confirmDeletion',
                 'capability' => 'ee_delete_events',
                 'noheader' => true,
-                'headers_sent_route' => 'preview_deletion',
             ]
         );
     }
@@ -2156,43 +2155,50 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
         $deletion_job_code = isset($this->_req_data['deletion_job_code']) ? $this->_req_data['deletion_job_code'] : '';
         $this->models_and_ids_to_delete = $this->getModelsAndIdsToDelete($deletion_job_code);
         $this->form = new ConfirmEventDeletionForm($this->models_and_ids_to_delete['Event']);
-        if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-            // Initialize the form from the request, and check if its valid.
-            $this->form->receive_form_submission($this->_req_data);
-            if($this->form->is_valid()){
-                // Redirect the user to the deletion batch job.
-                EEH_URL::safeRedirectAndExit(
-                    EE_Admin_Page::add_query_args_and_nonce(
-                        array(
-                            'page'        => 'espresso_batch',
-                            'batch'       => EED_Batch::batch_job,
-                            'deletion_job_code' => $deletion_job_code,
-                            'job_handler' => urlencode('EventEspressoBatchRequest\JobHandlers\ExecuteBatchDeletion'),
-                            'return_url'  => urlencode(
-                                add_query_arg(
-                                    [
-                                        'status' => 'trash'
-                                    ],
-                                    EVENTS_ADMIN_URL
-                                )
+        // Initialize the form from the request, and check if its valid.
+        $this->form->receive_form_submission($this->_req_data);
+        if($this->form->is_valid()){
+            // Redirect the user to the deletion batch job.
+            EEH_URL::safeRedirectAndExit(
+                EE_Admin_Page::add_query_args_and_nonce(
+                    array(
+                        'page'        => 'espresso_batch',
+                        'batch'       => EED_Batch::batch_job,
+                        'deletion_job_code' => $deletion_job_code,
+                        'job_handler' => urlencode('EventEspressoBatchRequest\JobHandlers\ExecuteBatchDeletion'),
+                        'return_url'  => urlencode(
+                            add_query_arg(
+                                [
+                                    'status' => 'trash'
+                                ],
+                                EVENTS_ADMIN_URL
                             )
-                        ),
-                        admin_url()
-                    )
-                );
-            } else {
-                EE_Error::add_error(
-                    __(
-                        // @codingStandardsIgnoreStart
-                        'You filled the form out incorrectly. In order to prevent accidentally deleting the wrong data, please enter the URL slugs of the events you want to delete.',
-                        // @codingStandardsIgnoreEnd
-                        'event_espresso'
+                        )
                     ),
-                    __FILE__,
-                    __FUNCTION__,
-                    __LINE__
-                );
-            }
+                    admin_url()
+                )
+            );
+        } else {
+            EE_Error::add_error(
+                __(
+                    // @codingStandardsIgnoreStart
+                    'You filled the form out incorrectly. In order to prevent accidentally deleting the wrong data, please enter the URL slugs of the events you want to delete.',
+                    // @codingStandardsIgnoreEnd
+                    'event_espresso'
+                ),
+                __FILE__,
+                __FUNCTION__,
+                __LINE__
+            );
+            EEH_URL::safeRedirectAndExit(
+                EE_Admin_Page::add_query_args_and_nonce(
+                    [
+                        'action' => 'preview_deletion',
+                        'deletion_job_code' => $deletion_job_code
+                    ],
+                    $this->admin_base_url()
+                )
+            );
         }
     }
 
