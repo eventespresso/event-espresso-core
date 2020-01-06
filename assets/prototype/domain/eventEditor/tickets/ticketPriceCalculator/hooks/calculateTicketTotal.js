@@ -10,7 +10,7 @@ import ticketTotalCalculator from './ticketTotalCalculator';
 import { sortByPriceOrderIdAsc } from '../../../../shared/predicates/prices/sortingPredicates';
 import { updateTicketPriceForTicket } from '../../../../shared/predicates/tickets/selectionPredicates';
 
-const notNewPrice = propSatisfies((prop) => prop !== 'NEW_PRICE', 'id');
+const notNewPrice = propSatisfies((id) => id !== 'NEW_PRICE', 'id');
 const NOT_A_TICKET = {};
 const EMPTY_ARRAY = [];
 
