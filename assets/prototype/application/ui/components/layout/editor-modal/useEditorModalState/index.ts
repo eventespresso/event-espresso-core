@@ -43,21 +43,21 @@ const useEditorModalState = () => {
 	const initialState = [];
 	const [state, dispatch] = useReducer(reducer, initialState);
 
-	const openEditor = (editorId: string) => {
+	const openEditor = (editorId: string): void => {
 		dispatch({
 			type: ActionType.OPEN_EDITOR,
 			editorId,
 		});
 	};
 
-	const closeEditor = (editorId: string) => {
+	const closeEditor = (editorId: string): void => {
 		dispatch({
 			type: ActionType.CLOSE_EDITOR,
 			editorId,
 		});
 	};
 
-	const closeAllEditors = () => {
+	const closeAllEditors = (): void => {
 		dispatch({
 			type: ActionType.CLOSE_ALL,
 		});
