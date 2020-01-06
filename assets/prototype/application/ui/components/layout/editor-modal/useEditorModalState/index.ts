@@ -2,12 +2,12 @@
  * External dependencies
  */
 import { useReducer } from 'react';
-import { drop, head } from 'ramda';
+import { dropLast, last } from 'ramda';
 
 enum ActionType {
-	'CLOSE_ALL' = 'CLOSE_ALL',
-	'CLOSE_EDITOR' = 'CLOSE_EDITOR',
-	'OPEN_EDITOR' = 'OPEN_EDITOR',
+	CLOSE_ALL = 'CLOSE_ALL',
+	CLOSE_EDITOR = 'CLOSE_EDITOR',
+	OPEN_EDITOR = 'OPEN_EDITOR',
 }
 
 type State = string[];
@@ -22,15 +22,15 @@ const reducer = (state: State, action: Action) => {
 
 	switch (action.type) {
 		case ActionType.CLOSE_EDITOR:
-			if (editorId === head(state)) {
-				const stateWithoutFirstItem = drop(1, state);
-				return stateWithoutFirstItem;
+			if (editorId === last(state)) {
+				// return stack after removing the last editor added (top of stack)
+				return dropLast(1, state);
 			}
 			return state;
 		case ActionType.CLOSE_ALL:
 			return [];
 		case ActionType.OPEN_EDITOR:
-			if (editorId && !state.includes(editorId)) {
+			if (editorId.length && !state.includes(editorId)) {
 				return [...state, editorId];
 			}
 			return state;
@@ -43,21 +43,21 @@ const useEditorModalState = () => {
 	const initialState = [];
 	const [state, dispatch] = useReducer(reducer, initialState);
 
-	const openEditor = (editorId: string) => {
+	const openEditor = (editorId: string): void => {
 		dispatch({
 			type: ActionType.OPEN_EDITOR,
 			editorId,
 		});
 	};
 
-	const closeEditor = (editorId: string) => {
+	const closeEditor = (editorId: string): void => {
 		dispatch({
 			type: ActionType.CLOSE_EDITOR,
 			editorId,
 		});
 	};
 
-	const closeAllEditors = () => {
+	const closeAllEditors = (): void => {
 		dispatch({
 			type: ActionType.CLOSE_ALL,
 		});
@@ -69,7 +69,7 @@ const useEditorModalState = () => {
 	 * @param {Stack} state
 	 * @return {string | undefined} editorId, if there is no editorId then it will return undefined
 	 */
-	const currentlyOpenEditor = (): string | undefined => head(state);
+	const currentlyOpenEditor = (): string | undefined => last(state);
 
 	/**
 	 * Returns true if the provided ID matches the editor
@@ -79,7 +79,7 @@ const useEditorModalState = () => {
 	 * @param {string} editorId    unique identifier for editor
 	 * @return {string} editorId
 	 */
-	const isEditorOpen = (editorId: string): boolean => editorId === head(state);
+	const isEditorOpen = (editorId: string): boolean => editorId === last(state);
 
 	return {
 		closeEditor,
