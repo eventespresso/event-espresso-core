@@ -2183,7 +2183,9 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
             } else {
                 EE_Error::add_error(
                     __(
-                        'Data was not deleted because you did not complete the form correctly.',
+                        // @codingStandardsIgnoreStart
+                        'You filled the form out incorrectly. In order to prevent accidentally deleting the wrong data, please enter the URL slugs of the events you want to delete.',
+                        // @codingStandardsIgnoreEnd
                         'event_espresso'
                     ),
                     __FILE__,
