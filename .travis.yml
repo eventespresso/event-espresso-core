@@ -8,7 +8,7 @@ services:
 cache:
   apt: true
   directories:
-    - $HOME/.composer/cache
+#    - $HOME/.composer/cache
     - $HOME/.npm
 
 env:
