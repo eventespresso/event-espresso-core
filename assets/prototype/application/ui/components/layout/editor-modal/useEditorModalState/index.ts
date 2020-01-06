@@ -23,8 +23,8 @@ const reducer = (state: State, action: Action) => {
 	switch (action.type) {
 		case ActionType.CLOSE_EDITOR:
 			if (editorId === last(state)) {
-				const stackWithoutLastItem = dropLast(1, state);
-				return stackWithoutLastItem;
+				// return stack after removing the last editor added (top of stack)
+				return dropLast(1, state);
 			}
 			return state;
 		case ActionType.CLOSE_ALL:
