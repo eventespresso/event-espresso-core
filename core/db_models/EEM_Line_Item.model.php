@@ -308,7 +308,8 @@ class EEM_Line_Item extends EEM_Base
     /**
      * Deletes line items with no transaction who have passed the transaction cutoff time.
      * This needs to be very efficient
-     * because if there are spam bots afoot there will be LOTS of line items
+     * because if there are spam bots afoot there will be LOTS of line items. Also MySQL doesn't allow a limit when
+     * deleting and joining tables like this.
      *
      * @return int count of how many deleted
      * @throws EE_Error
