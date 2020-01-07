@@ -1,36 +1,23 @@
 import { Field } from 'react-final-form';
 import { Button } from '@blueprintjs/core';
+
 // just temporary
 import styles from './inlineStyles';
-
-// need to change these based on site i18n config
-const currencySign = '$';
-const currencySignB4 = true;
-const decimalPlaces = 2;
-// const decimalMark = '.';
-// const thousandsSep = ',';
-
-const formatPriceAmount = (amount) => (amount === undefined ? '' : Number.parseFloat(amount).toFixed(decimalPlaces));
-
-const b4Total = currencySignB4 ? currencySign : '';
-const aftTotal = currencySignB4 ? '' : currencySign;
+import useMoneyDisplay from '../../../../application/utilities/money';
 
 const TicketPriceTotalRow = ({ ticket, calcDir, toggleCalcDir }) => {
-	const reverseCalculate = calcDir ? (
-		<Button icon={'double-chevron-up'} onClick={toggleCalcDir} value={calcDir} minimal />
-	) : (
-		<Button icon={'double-chevron-down'} onClick={toggleCalcDir} value={calcDir} minimal />
-	);
+	const { afterAmount, beforeAmount, formatAmount } = useMoneyDisplay();
+	const calcDirIcon = calcDir ? 'double-chevron-up' : 'double-chevron-down';
 	return (
 		<tr>
-			<th colSpan={4} width={'77.5%'} style={{ fontSize: '18px', textAlign: 'right' }}>
+			<th colSpan={4} style={styles.total}>
 				Total
 			</th>
-			<th width={'15%'} style={styles.amount}>
+			<th style={{ ...styles.colWidth15, ...styles.amount }}>
 				<div style={styles.money}>
-					<div style={styles.b4}>{b4Total}</div>
-					<div style={styles.Currency}>
-						<Field type={'hidden'} component={'input'} initialValue={ticket.id} name={'ticket.id'} />
+					<Field type={'hidden'} component={'input'} initialValue={ticket.id} name={'ticket.id'} />
+					<div style={styles.b4}>{beforeAmount}</div>
+					<div style={styles.currency}>
 						<Field
 							type={'hidden'}
 							component={'input'}
@@ -44,15 +31,15 @@ const TicketPriceTotalRow = ({ ticket, calcDir, toggleCalcDir }) => {
 							name={'ticket.price'}
 							style={styles.number}
 							disabled={!calcDir}
-							format={formatPriceAmount}
+							format={formatAmount}
 							formatOnBlur
 						/>
 					</div>
-					<div style={styles.aft}>{aftTotal}</div>
+					<div style={styles.aft}>{afterAmount}</div>
 				</div>
 			</th>
-			<th width={'7.5%'} style={styles.actions}>
-				{reverseCalculate}
+			<th style={{ ...styles.colWidth7h, ...styles.actions }}>
+				<Button icon={calcDirIcon} onClick={toggleCalcDir} value={calcDir} minimal />
 			</th>
 		</tr>
 	);
