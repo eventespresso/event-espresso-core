@@ -32,7 +32,7 @@ const TicketProvider: React.FunctionComponent<TicketProviderProps> = ({ children
 		editForm: useTicketEditorId('edit-ticket-form', id),
 		relations: useTicketEditorId('ticket-relations', id),
 	};
-
+    
 	const value: TicketContextProps = { editors, editorState, id };
 
 	return <TicketContext.Provider value={value}>{children}</TicketContext.Provider>;
