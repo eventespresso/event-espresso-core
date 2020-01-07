@@ -6,7 +6,10 @@ import { ucFirst } from '../../../../../../application/utilities/text/changeCase
 import { eventId } from '../../../../context';
 import { mutations } from '../../';
 
-export const mockedDatetime = { ...datetimes[0], id: datetimes[0].id + '-alpha' }; // make sure to change the ID to make it different
+export const mockedDatetimes = {
+	[MutationType.Create]: { ...datetimes[0], id: datetimes[0].id + '-alpha' }, // make sure to change the ID to make it different}
+	[MutationType.Update]: datetimes[0],
+};
 
 export const getMutationMocks = (mutationInput: MutationInput, mutationType: MutationType) => {
 	return [
@@ -37,7 +40,7 @@ export const getMockRequest = (mutationInput: MutationInput, mutationType: Mutat
 export const getMockResult = (mutationInput: MutationInput, mutationType: MutationType) => {
 	// make sure that tickets don't go into the result
 	const input = pickBy<MutationInput, MutationInput>(
-		(_, key) => Object.keys(mockedDatetime).includes(key),
+		(_, key) => Object.keys(mockedDatetimes[mutationType]).includes(key),
 		mutationInput
 	);
 	return {
@@ -46,7 +49,7 @@ export const getMockResult = (mutationInput: MutationInput, mutationType: Mutati
 			[`${mutationType.toLowerCase()}EspressoDatetime`]: {
 				// e.g. UpdateEspressoDatetimePayload
 				__typename: `${ucFirst(mutationType.toLowerCase())}EspressoDatetimePayload`,
-				espressoDatetime: { ...mockedDatetime, ...input },
+				espressoDatetime: { ...mockedDatetimes[mutationType], ...input },
 			},
 		},
 	};

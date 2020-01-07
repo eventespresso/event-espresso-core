@@ -6,7 +6,7 @@ import { useEntityMutator, EntityType } from '../../../../../../application/serv
 import { useRelations } from '../../../../../../application/services/apollo/relations';
 import { MutationType } from '../../../../../../application/services/apollo/mutations/types';
 import { ApolloMockedProvider } from '../../../../context';
-import { getMutationMocks, mockedDatetime } from './data';
+import { getMutationMocks, mockedDatetimes } from './data';
 import { nodes as tickets } from '../../../queries/tickets/test/data';
 import { MutationInput } from '../../../../../../application/services/apollo/mutations/types';
 import useDatetimeItem from '../../../queries/datetimes/useDatetimeItem';
@@ -17,6 +17,7 @@ import useTicketQueryOptions from '../../../queries/tickets/useTicketQueryOption
 
 describe('createDatetime', () => {
 	let testInput: MutationInput = { name: 'New Test Date', description: 'New Test Desc' };
+	const mockedDatetime = mockedDatetimes.CREATE;
 
 	const ticketIds = tickets.map(({ id }) => id);
 
@@ -114,7 +115,6 @@ describe('createDatetime', () => {
 		await waitForNextMutationUpdate();
 
 		const cache = mutationResult.current.client.extract();
-		// console.log('<<<<cache>>>', JSON.stringify(cache, null, 4));
 		const { result: cacheResult } = renderHook(
 			() => {
 				const client = useApolloClient();
