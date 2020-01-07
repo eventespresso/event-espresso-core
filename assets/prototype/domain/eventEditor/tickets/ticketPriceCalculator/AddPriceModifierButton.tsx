@@ -25,8 +25,8 @@ const AddPriceModifierButton = ({ modifiers, name, price, push, reset, sort }: A
 			icon={'add'}
 			onClick={() => {
 				if (price.amount && !isNaN(price.amount)) {
-					const baseType: Price = getPriceType(price.priceType);
 					const priceClone: Price = clone(price);
+					const baseType: Price = getPriceType(priceClone.priceType);
 					const newPrice = {
 						...priceClone,
 						id: '',
@@ -36,6 +36,7 @@ const AddPriceModifierButton = ({ modifiers, name, price, push, reset, sort }: A
 						isTax: baseType.isTax,
 						order: baseType.order,
 						priceType: baseType.id,
+						priceTypeOrder: baseType.order,
 					};
 					push(newPrice);
 					reset(name);
