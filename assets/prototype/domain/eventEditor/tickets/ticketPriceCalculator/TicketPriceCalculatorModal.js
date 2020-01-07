@@ -28,7 +28,8 @@ const TicketPriceCalculatorModal = ({ ticket, onClose, isOpen }) => {
 		if (initialValues === EMPTY_OBJECT && !isEmpty(prices)) {
 			const sortedPrices = sortByPriceOrderIdAsc(prices);
 			// make sure to set a valid priceType for new price.
-			sortedPrices.push({ ...defaultNewPriceModifier, priceType: defaultPriceType.id });
+			const newPriceModifier = { ...defaultNewPriceModifier, priceType: defaultPriceType.id };
+			sortedPrices.push(newPriceModifier);
 			const formData = {
 				ticket: copyTicketFields(ticket),
 				prices: sortedPrices.map(copyPriceFields),
