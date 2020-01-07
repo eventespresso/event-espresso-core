@@ -2127,16 +2127,17 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
             ],
             $this->_admin_base_url
         );
-        foreach ($event_ids as $EVT_ID) {
-            $event_ids = (int) $EVT_ID;
-        }
+        $event_ids = array_map(
+            'intval',
+            $event_ids
+        );
 
         EEH_URL::safeRedirectAndExit(
             EE_Admin_Page::add_query_args_and_nonce(
                 array(
                     'page'        => 'espresso_batch',
                     'batch'       => EED_Batch::batch_job,
-                    'EVT_IDs[]'      => $event_ids,
+                    'EVT_IDs'      => $event_ids,
                     'deletion_job_code' => $deletion_job_code,
                     'job_handler' => urlencode('EventEspressoBatchRequest\JobHandlers\PreviewEventDeletion'),
                     'return_url'  => urlencode($return_url),
@@ -2179,12 +2180,18 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
                 )
             );
         } else {
-            EE_Error::add_error(
-                $this->form->submission_error_message(),
-                __FILE__,
-                __FUNCTION__,
-                __LINE__
-            );
+            // Dont' use $this->form->submission_error_message() because it adds the form input's label in front
+            // of each validation error which ends up looking quite confusing.
+            $validation_errors = $this->form->get_validation_errors_accumulated();
+            foreach($validation_errors as $validation_error){
+                 EE_Error::add_error(
+                     $validation_error->getMessage(),
+                     __FILE__,
+                     __FUNCTION__,
+                     __LINE__
+                 );
+            }
+
             EEH_URL::safeRedirectAndExit(
                 EE_Admin_Page::add_query_args_and_nonce(
                     [
