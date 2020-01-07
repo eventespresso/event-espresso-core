@@ -55,7 +55,7 @@ describe('updateDatetime', () => {
 		expect(nameFromMutationData).toEqual(nameFromMockData);
 	});
 
-	it('checks for relation update after mutation', async () => {
+	it('checks for relation addition/update after mutation', async () => {
 		// Add related ticket Ids to the mutation input
 		testInput = { ...testInput, tickets: ticketIds };
 
@@ -101,5 +101,62 @@ describe('updateDatetime', () => {
 
 			expect(relatedDatetimeIds).toContain(mockedDatetime.id);
 		});
+	});
+
+	it('checks for relation removal/update after mutation', async () => {
+		// Add related ticket Ids to the mutation input
+		testInput = { ...testInput, tickets: ticketIds };
+
+		mutationMocks = getMutationMocks({ ...testInput, id: mockedDatetime.id }, MutationType.Update);
+
+		const wrapper = ApolloMockedProvider(mutationMocks);
+
+		const { result: mutationResult, waitForNextUpdate: waitForNextMutationUpdate } = renderHook(
+			() => ({
+				mutator: useEntityMutator(EntityType.Datetime, mockedDatetime.id),
+				relationsManager: useRelations(),
+			}),
+			{
+				wrapper,
+			}
+		);
+
+		const tempTicketId: string = 'temp-tkt-id';
+
+		act(() => {
+			// add relation between mockedDatetime and a random ticket id
+			mutationResult.current.relationsManager.addRelation({
+				entity: 'datetimes',
+				entityId: mockedDatetime.id,
+				relation: 'tickets',
+				relationId: tempTicketId,
+			});
+		});
+
+		// check if datetime is related to `tempTicketId`
+		let relatedTicketIds = mutationResult.current.relationsManager.getRelations({
+			entity: 'datetimes',
+			entityId: mockedDatetime.id,
+			relation: 'tickets',
+		});
+		expect(relatedTicketIds).toContain(tempTicketId);
+
+		act(() => {
+			// mutate
+			mutationResult.current.mutator.updateEntity(testInput);
+		});
+
+		// wait for mutation promise to resolve
+		await waitForNextMutationUpdate();
+
+		// check if datetime is related to `tempTicketId`
+		relatedTicketIds = mutationResult.current.relationsManager.getRelations({
+			entity: 'datetimes',
+			entityId: mockedDatetime.id,
+			relation: 'tickets',
+		});
+
+		// check if datetime has been removed from tempTicketId relation
+		expect(relatedTicketIds).not.toContain(tempTicketId);
 	});
 });
