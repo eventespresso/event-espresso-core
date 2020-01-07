@@ -750,6 +750,28 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
         return $this->get_first_related('Attendee');
     }
 
+    /**
+     * Gets the name of the attendee.
+     * @since $VID:$
+     * @param bool $apply_html_entities set to true if you want to use HTML entities.
+     * @return string
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws ReflectionException
+     */
+    public function attendeeName($apply_html_entities = false)
+    {
+        $attendee = $this->get_first_related('Attendee');
+        if($attendee instanceof EE_Attendee){
+            $attendee_name = $attendee->full_name($apply_html_entities);
+        } else {
+            $attendee_name = esc_html__('Unknown', 'event_espresso');
+        }
+        return $attendee_name;
+    }
+
 
     /**
      *        get Event ID
