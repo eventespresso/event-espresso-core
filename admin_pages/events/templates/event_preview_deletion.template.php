@@ -58,7 +58,7 @@
 <?php
 if ($reg_count > count($registrations)) {
     ?>
-    <p class="notice">
+    <p>
         <?php
         printf(
             esc_html__('Only showing first %1$d.', 'event_espresso'),
