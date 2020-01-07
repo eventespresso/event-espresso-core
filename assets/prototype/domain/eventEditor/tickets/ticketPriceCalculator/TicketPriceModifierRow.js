@@ -16,19 +16,19 @@ const TicketPriceModifierRow = ({ index, name, price, reverseCalculate, fields }
 	return (
 		<tr>
 			<td style={{ ...styles.colWidth7h, ...styles.cell }}>
-				<PriceIdInput price={price} />
+				<PriceIdInput name={name} price={price} />
 			</td>
 			<td style={{ ...styles.colWidth15, ...styles.type }}>
-				<PriceTypeInput price={price} priceTypes={priceTypes} modifierOptions={modifierOptions} />
+				<PriceTypeInput name={name} price={price} priceTypes={priceTypes} modifierOptions={modifierOptions} />
 			</td>
 			<td style={{ ...styles.colWidth20, ...styles.cell }}>
-				<PriceNameInput price={price} />
+				<PriceNameInput name={name} price={price} />
 			</td>
 			<td style={{ ...styles.colWidth30, ...styles.cell }}>
-				<PriceDescriptionInput price={price} />
+				<PriceDescriptionInput name={name} price={price} />
 			</td>
 			<td style={{ ...styles.colWidth15, ...styles.amount }}>
-				<PriceAmountInput reverseCalculate={reverseCalculate} name={name} price={price} />
+				<PriceAmountInput name={name} price={price} reverseCalculate={reverseCalculate} />
 			</td>
 			<td style={{ ...styles.colWidth7h, ...styles.actions }}>
 				<PriceModifierActions
