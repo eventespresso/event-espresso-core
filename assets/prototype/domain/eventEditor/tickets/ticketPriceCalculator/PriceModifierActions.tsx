@@ -22,10 +22,11 @@ const PriceModifierActions = ({
 	fields: { push, remove, reset, sort },
 }: PriceModifierActionsProps): React.ReactNode => {
 	const actions = [];
+	const key = `${price.id}-${index}`;
 	if (price.id === 'NEW_PRICE') {
 		actions.push(
 			<AddPriceModifierButton
-				key={`${price.id}-${index}`}
+				key={key}
 				modifiers={modifierOptions}
 				name={name}
 				price={price}
@@ -35,7 +36,7 @@ const PriceModifierActions = ({
 			/>
 		);
 	} else if (!price.isBasePrice) {
-		actions.push(<DeletePriceModifierButton key={index} index={index} remove={remove} />);
+		actions.push(<DeletePriceModifierButton key={key} index={index} remove={remove} />);
 	}
 	return <>{actions}</>;
 };
