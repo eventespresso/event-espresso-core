@@ -9,36 +9,27 @@ import usePriceTypes from '../../data/queries/priceTypes/usePriceTypes';
 import usePriceTypeForPrice from '../../data/queries/priceTypes/usePriceTypeForPrice';
 import { getPriceModifiers } from '../../../shared/predicates/prices/selectionPredicates';
 import { findEntityByGuid } from '../../../shared/predicates/shared/selectionPredicates';
+import useMoneyDisplay from '../../../../application/utilities/money';
 
 // just temporary
 import styles from './inlineStyles';
-
-// need to change these based on site i18n config
-const currencySign = '$';
-const currencySignB4 = true;
-const decimalPlaces = 2;
-// const decimalMark = '.';
-// const thousandsSep = ',';
 const percentSign = '%';
-
-function formatPriceAmount(amount) {
-	return Number.parseFloat(amount).toFixed(decimalPlaces);
-}
 
 const TicketPriceModifierRow = ({ index, name, price, calcDir, fields: { push, remove, reset, sort } }) => {
 	const priceTypes = usePriceTypes();
 	const relatedPriceType = usePriceTypeForPrice(price.id);
 	const modifierOptions = getPriceModifiers(priceTypes);
 	const getPriceType = findEntityByGuid(modifierOptions);
+	const { currency, formatAmount } = useMoneyDisplay();
 	const options = price.isBasePrice ? priceTypes : modifierOptions;
-	const sign = price.isPercent ? percentSign : currencySign;
+	const sign = price.isPercent ? percentSign : currency.sign;
 	let b4Price = '';
 	let afterPrice = sign;
 	// isPercent T  currencySignB4 T  sign appears  afterPrice
 	// isPercent T  currencySignB4 F  sign appears  afterPrice
 	// isPercent F  currencySignB4 F  sign appears  afterPrice
 	// isPercent F  currencySignB4 T  sign appears  b4Price
-	if (currencySignB4 && !price.isPercent) {
+	if (currency.signB4 && !price.isPercent) {
 		b4Price = sign;
 		afterPrice = '';
 	}
@@ -50,7 +41,7 @@ const TicketPriceModifierRow = ({ index, name, price, calcDir, fields: { push, r
 				key={'add'}
 				icon={'add'}
 				onClick={() => {
-					if (price.name && price.amount && !isNaN(price.amount)) {
+					if (price.amount && !isNaN(price.amount)) {
 						const newPrice = clone(price);
 						newPrice.id = '';
 						const baseType = getPriceType(newPrice.priceType);
@@ -62,7 +53,7 @@ const TicketPriceModifierRow = ({ index, name, price, calcDir, fields: { push, r
 						reset(name);
 						sort();
 					} else {
-						alert('Please enter the price name and amount.');
+						alert('Please enter an amount for the new price modifier.');
 						return;
 					}
 				}}
@@ -83,7 +74,7 @@ const TicketPriceModifierRow = ({ index, name, price, calcDir, fields: { push, r
 	}
 	return (
 		<tr>
-			<td width={'7.5%'} style={styles.cell}>
+			<td style={{ ...styles.colWidth7h, ...styles.cell }}>
 				{price.dbId}
 				<Field type={'hidden'} component={'input'} initialValue={price.id} name={`${name}.id`} />
 				<Field
@@ -94,7 +85,7 @@ const TicketPriceModifierRow = ({ index, name, price, calcDir, fields: { push, r
 				/>
 				<Field type={'hidden'} component={'input'} initialValue={price.isPercent} name={`${name}.isPercent`} />
 			</td>
-			<td width={'15%'} style={styles.cell}>
+			<td style={{ ...styles.colWidth15, ...styles.type }}>
 				<Field
 					component={'select'}
 					initialValue={relatedPriceType.id}
@@ -109,7 +100,7 @@ const TicketPriceModifierRow = ({ index, name, price, calcDir, fields: { push, r
 					))}
 				</Field>
 			</td>
-			<td width={'20%'} style={styles.cell}>
+			<td style={{ ...styles.colWidth20, ...styles.cell }}>
 				<Field
 					type={'text'}
 					component={'input'}
@@ -119,7 +110,7 @@ const TicketPriceModifierRow = ({ index, name, price, calcDir, fields: { push, r
 					style={styles.input}
 				/>
 			</td>
-			<td width={'30%'} style={styles.cell}>
+			<td style={{ ...styles.colWidth30, ...styles.cell }}>
 				<Field
 					type={'text'}
 					component={'input'}
@@ -129,10 +120,10 @@ const TicketPriceModifierRow = ({ index, name, price, calcDir, fields: { push, r
 					style={styles.input}
 				/>
 			</td>
-			<td width={'15%'} style={styles.amount}>
+			<td style={{ ...styles.colWidth15, ...styles.amount }}>
 				<div style={styles.money}>
 					<div style={styles.b4}>{b4Price}</div>
-					<div style={styles.Currency}>
+					<div style={styles.currency}>
 						<Field
 							type={'number'}
 							component={'input'}
@@ -141,16 +132,14 @@ const TicketPriceModifierRow = ({ index, name, price, calcDir, fields: { push, r
 							placeholder={'amount...'}
 							style={styles.number}
 							disabled={calcDir && price.isBasePrice}
-							format={formatPriceAmount}
+							format={formatAmount}
 							formatOnBlur
 						/>
 					</div>
 					<div style={styles.aft}>{afterPrice}</div>
 				</div>
 			</td>
-			<td width={'7.5%'} style={styles.actions}>
-				{actions}
-			</td>
+			<td style={{ ...styles.colWidth7h, ...styles.actions }}>{actions}</td>
 		</tr>
 	);
 };
