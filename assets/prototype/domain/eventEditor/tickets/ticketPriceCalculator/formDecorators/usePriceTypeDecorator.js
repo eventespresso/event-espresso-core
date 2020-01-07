@@ -25,7 +25,6 @@ const usePriceTypeDecorator = () => {
 				isDiscount: priceType.isDiscount,
 				isPercent: priceType.isPercent,
 				isTax: priceType.isTax,
-				order: priceType.order,
 				priceType: priceType.id,
 			};
 			const updatedPrices = map(
@@ -40,6 +39,7 @@ const usePriceTypeDecorator = () => {
 					allPass([
 						propEq('id', updatedPrice.id),
 						propEq('name', updatedPrice.name),
+						propEq('desc', updatedPrice.desc),
 						propEq('amount', updatedPrice.amount),
 						propEq('priceType', updatedPrice.priceType),
 					]),
