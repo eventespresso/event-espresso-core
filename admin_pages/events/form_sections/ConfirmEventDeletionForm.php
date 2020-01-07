@@ -34,7 +34,7 @@ class ConfirmEventDeletionForm extends \EE_Form_Section_Proper
             $events_subsection = new \EE_Form_Section_Proper();
             $options_array['subsections']['events'] = $events_subsection;
         }
-        $events = EEM_Event::instance()->get_all_deleted(
+        $events = EEM_Event::instance()->get_all_deleted_and_undeleted(
             [
                 [
                     'EVT_ID' => ['IN',$event_ids]
@@ -51,7 +51,7 @@ class ConfirmEventDeletionForm extends \EE_Form_Section_Proper
             )
         ];
         foreach($events as $event){
-             $events_inputs[$event->slug()] = new \EE_Text_Input(
+             $events_inputs[$event->ID()] = new \EE_Text_Input(
                 [
                     'html_label_text' => esc_html(
                         sprintf(
@@ -82,7 +82,7 @@ class ConfirmEventDeletionForm extends \EE_Form_Section_Proper
         parent::_validate();
         $events_subsection = $this->get_proper_subsection('events');
         foreach($this->events as $event){
-            $event_input = $events_subsection->get_input($event->slug());
+            $event_input = $events_subsection->get_input($event->ID());
             if((string)$event_input->normalized_value() !== $event->slug()){
                 $event_input->add_validation_error(
                     sprintf(

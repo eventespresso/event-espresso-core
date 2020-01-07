@@ -49,19 +49,6 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
     protected $_cpt_model_obj = false;
 
     /**
-     * Used to hold onto a form across various stages of a request.
-     * @var EE_Form_Section_Proper
-     */
-    protected $form;
-
-    /**
-     * Used so we don't have to repeatedly fetch a potentially large array of data from the WP options table.
-     * @var array
-     */
-    protected $models_and_ids_to_delete;
-
-
-    /**
      * Initialize page props for this admin page group.
      */
     protected function _init_page_props()
@@ -2154,11 +2141,11 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
     protected function confirmDeletion()
     {
         $deletion_job_code = isset($this->_req_data['deletion_job_code']) ? $this->_req_data['deletion_job_code'] : '';
-        $this->models_and_ids_to_delete = $this->getModelsAndIdsToDelete($deletion_job_code);
-        $this->form = new ConfirmEventDeletionForm($this->models_and_ids_to_delete['Event']);
+        $models_and_ids_to_delete = $this->getModelsAndIdsToDelete($deletion_job_code);
+        $form = new ConfirmEventDeletionForm($models_and_ids_to_delete['Event']);
         // Initialize the form from the request, and check if its valid.
-        $this->form->receive_form_submission($this->_req_data);
-        if($this->form->is_valid()){
+        $form->receive_form_submission($this->_req_data);
+        if($form->is_valid()){
             // Redirect the user to the deletion batch job.
             EEH_URL::safeRedirectAndExit(
                 EE_Admin_Page::add_query_args_and_nonce(
@@ -2180,9 +2167,9 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
                 )
             );
         } else {
-            // Dont' use $this->form->submission_error_message() because it adds the form input's label in front
+            // Dont' use $form->submission_error_message() because it adds the form input's label in front
             // of each validation error which ends up looking quite confusing.
-            $validation_errors = $this->form->get_validation_errors_accumulated();
+            $validation_errors = $form->get_validation_errors_accumulated();
             foreach($validation_errors as $validation_error){
                  EE_Error::add_error(
                      $validation_error->getMessage(),
@@ -2235,14 +2222,13 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
     /**
      * A page for users to preview what exactly will be deleted, and confirm they want to delete it.
      * @since $VID:$
+     * @throws EE_Error
      */
     protected function previewDeletion()
     {
         $deletion_job_code = isset($this->_req_data['deletion_job_code']) ? $this->_req_data['deletion_job_code'] : '';
-        if(! $this->form instanceof ConfirmEventDeletionForm){
-            $this->models_and_ids_to_delete = $this->getModelsAndIdsToDelete($deletion_job_code);
-            $this->form = new ConfirmEventDeletionForm($this->models_and_ids_to_delete['Event']);
-        }
+        $models_and_ids_to_delete = $this->getModelsAndIdsToDelete($deletion_job_code);
+        $form = new ConfirmEventDeletionForm($models_and_ids_to_delete['Event']);
         // If they're not in debug mode, don't list all model objectss that will be deleted. They'll just be confused.
         if(! WP_DEBUG){
             $models_to_mention = [
@@ -2252,7 +2238,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
                 'Registration'
             ];
 
-            $this->models_and_ids_to_delete = array_intersect_key($this->models_and_ids_to_delete, array_flip($models_to_mention));
+            $models_and_ids_to_delete = array_intersect_key($models_and_ids_to_delete, array_flip($models_to_mention));
         };
         $confirm_deletion_args = [
             'action' => 'confirm_deletion',
@@ -2266,8 +2252,8 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
                     $confirm_deletion_args,
                     $this->admin_base_url()
                 ),
-                'form' => $this->form,
-                'models_and_ids_to_delete' => $this->models_and_ids_to_delete,
+                'form' => $form,
+                'models_and_ids_to_delete' => $models_and_ids_to_delete,
                 'quantity_to_preview' => 20
             ],
             true
