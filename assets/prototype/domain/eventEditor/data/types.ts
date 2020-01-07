@@ -47,7 +47,7 @@ export interface DatetimesList {
 }
 
 export interface Price extends Entity {
-	amount?: number;
+	amount?: number | string;
 	desc?: string;
 	isBasePrice?: boolean;
 	isDefault?: boolean;
