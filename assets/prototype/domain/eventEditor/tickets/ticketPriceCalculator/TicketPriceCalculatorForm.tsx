@@ -8,8 +8,8 @@ import TicketPriceTotalRow from './TicketPriceTotalRow';
 // just temporary
 import styles from './inlineStyles';
 
-const TicketPriceCalculatorForm = ({ form, values: { ticket } }) => {
-	const calcDir = !!ticket.reverseCalculate;
+const TicketPriceCalculatorForm = ({ form, values: { ticket } }): React.ReactNode => {
+	const reverseCalculate = !!ticket.reverseCalculate;
 	const toggleCalcDir = () => form.mutators.toggleCalcDir('ticket.reverseCalculate');
 	const ticketName = ticket.name ? ` for Ticket: ${ticket.name} ` : '';
 	return (
@@ -31,7 +31,11 @@ const TicketPriceCalculatorForm = ({ form, values: { ticket } }) => {
 						<FieldArray name={'prices'} children={TicketPriceModifierRowIterator} />
 					</tbody>
 					<tfoot>
-						<TicketPriceTotalRow ticket={ticket} calcDir={calcDir} toggleCalcDir={toggleCalcDir} />
+						<TicketPriceTotalRow
+							ticket={ticket}
+							reverseCalculate={reverseCalculate}
+							toggleCalcDir={toggleCalcDir}
+						/>
 					</tfoot>
 				</HTMLTable>
 			</div>
