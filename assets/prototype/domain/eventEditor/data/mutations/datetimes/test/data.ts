@@ -9,6 +9,7 @@ import { mutations } from '../../';
 export const mockedDatetimes = {
 	[MutationType.Create]: { ...datetimes[0], id: datetimes[0].id + '-alpha' }, // make sure to change the ID to make it different}
 	[MutationType.Update]: datetimes[0],
+	[MutationType.Delete]: { id: datetimes[0].id, __typename: datetimes[0].__typename },
 };
 
 export const getMutationMocks = (mutationInput: MutationInput, mutationType: MutationType) => {
@@ -27,6 +28,8 @@ export const getMockRequest = (mutationInput: MutationInput, mutationType: Mutat
 	};
 	if (mutationType === MutationType.Create) {
 		input.eventId = eventId; // required for createDatetime
+	} else if (!input.id) {
+		input.id = mockedDatetimes[mutationType].id
 	}
 
 	return {
@@ -49,7 +52,10 @@ export const getMockResult = (mutationInput: MutationInput, mutationType: Mutati
 			[`${mutationType.toLowerCase()}EspressoDatetime`]: {
 				// e.g. UpdateEspressoDatetimePayload
 				__typename: `${ucFirst(mutationType.toLowerCase())}EspressoDatetimePayload`,
-				espressoDatetime: { ...mockedDatetimes[mutationType], ...input },
+				espressoDatetime:
+					MutationType.Delete === mutationType
+						? mockedDatetimes[mutationType]
+						: { ...mockedDatetimes[mutationType], ...input },
 			},
 		},
 	};

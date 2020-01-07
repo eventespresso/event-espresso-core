@@ -67,16 +67,14 @@ describe('createDatetime', () => {
 			}
 		);
 
-		let cache: any;
-
 		act(() => {
 			mutationResult.current.mutator.createEntity(testInput);
-			cache = mutationResult.current.client.extract();
 		});
-
+		
 		// wait for mutation promise to resolve
 		await waitForNextMutationUpdate();
-
+		
+		const cache = mutationResult.current.client.extract();
 		const { result: cacheResult } = renderHook(
 			() => {
 				const client = useApolloClient();
