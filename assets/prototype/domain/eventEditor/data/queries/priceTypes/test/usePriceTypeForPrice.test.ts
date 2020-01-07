@@ -5,7 +5,7 @@ import { ApolloMockedProvider } from '../../../../context';
 import { nodes, edge } from './data';
 import { nodes as prices } from '../../prices/test/data';
 import useInitPriceTypeTestCache from './useInitPriceTypeTestCache';
-import { isDefaultPriceType } from '../../../../../shared/predicates/priceTypes/selectionPredicates';
+import { isFlatFeeSurcharge } from '../../../../../shared/predicates/priceTypes/selectionPredicates';
 import { useRelations } from '../../../../../../application/services/apollo/relations';
 
 describe('usePriceTypeForPrice()', () => {
@@ -24,7 +24,7 @@ describe('usePriceTypeForPrice()', () => {
 	});
 
 	it('returns null as price type when the price and default price type do not exist but the cache is NOT empty', () => {
-		const nonDefaultPriceTypeNodes = nodes.filter((priceType) => !isDefaultPriceType(priceType));
+		const nonDefaultPriceTypeNodes = nodes.filter((priceType) => !isFlatFeeSurcharge(priceType));
 		const { result } = renderHook(
 			() => {
 				useInitPriceTypeTestCache({ ...edge, nodes: nonDefaultPriceTypeNodes });
@@ -37,7 +37,7 @@ describe('usePriceTypeForPrice()', () => {
 	});
 
 	it('returns the default price type when the price does not exist and the cache is NOT empty', () => {
-		const defaultPriceType = nodes.filter(isDefaultPriceType)[0];
+		const defaultPriceType = nodes.filter(isFlatFeeSurcharge)[0];
 		const { result } = renderHook(
 			() => {
 				useInitPriceTypeTestCache();
