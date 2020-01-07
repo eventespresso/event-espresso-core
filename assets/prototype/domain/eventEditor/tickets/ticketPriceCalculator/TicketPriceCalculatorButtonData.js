@@ -3,13 +3,13 @@ import TicketPriceCalculatorButton from './TicketPriceCalculatorButton';
 import { TicketContext } from '../../context/TicketProvider';
 
 const TicketPriceCalculatorButtonData = ({ ticket }) => {
-	const { getIsOpen, onClose, setIsOpen } = useContext(TicketContext);
-	const modalId = 'TicketPriceCalculator';
-	const isOpen = getIsOpen(modalId);
-	const onOpen = () => setIsOpen(modalId);
-	const handleClose = () => onClose(modalId);
+	const { editorIds, editorState } = useContext(TicketContext);
+	const editorId = editorIds.calculator;
+	const isOpen = editorState.getIsOpen(editorId);
+	const onClose = () => editorState.onClose(editorId);
+	const onOpen = () => editorState.setIsOpen(editorId);
 
-	return <TicketPriceCalculatorButton ticket={ticket} onOpen={onOpen} onClose={handleClose} isOpen={isOpen} />;
+	return <TicketPriceCalculatorButton ticket={ticket} onOpen={onOpen} onClose={onClose} isOpen={isOpen} />;
 };
 
 export default TicketPriceCalculatorButtonData;
