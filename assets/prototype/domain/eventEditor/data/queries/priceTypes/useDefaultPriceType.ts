@@ -5,9 +5,10 @@ import { getDefaultPriceType } from '../../../../shared/predicates/priceTypes/se
 /**
  * A custom react hook for retrieving the default price type object.
  */
-const useDefaultPriceType = (): PriceType => {
+const useDefaultPriceType = (): PriceType | null => {
 	const allPriceTypes: PriceType[] = usePriceTypes();
-	return getDefaultPriceType(allPriceTypes);
+	const defaultPriceType = getDefaultPriceType(allPriceTypes);
+	return defaultPriceType ? defaultPriceType : null;
 };
 
 export default useDefaultPriceType;
