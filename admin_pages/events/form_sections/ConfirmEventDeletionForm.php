@@ -60,7 +60,7 @@ class ConfirmEventDeletionForm extends \EE_Form_Section_Proper
                             $event->slug()
                         )
                     ),
-                    'required' => true
+                    'required' => false
                 ]
             );
         }
@@ -83,7 +83,7 @@ class ConfirmEventDeletionForm extends \EE_Form_Section_Proper
         $events_subsection = $this->get_proper_subsection('events');
         foreach($this->events as $event){
             $event_input = $events_subsection->get_input($event->slug());
-            if($event_input->normalized_value() !== $event->slug()){
+            if((string)$event_input->normalized_value() !== $event->slug()){
                 $event_input->add_validation_error(
                     sprintf(
                         esc_html__('You entered the incorrect URL slug for the event "%1$s". Please enter it again (use "%2$s") to confirm you are deleting the correct event.', 'event_espresso'),
