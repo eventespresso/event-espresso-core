@@ -18,7 +18,7 @@ interface EditorIds {
 
 interface EditorState {
 	closeAllEditors: () => void;
-	currentlyOpenEditor: string | undefined;
+	currentlyOpenEditor: () => string | undefined;
 	getIsOpen: (arg: string) => boolean;
 	onClose: (arg: string) => void;
 	setIsOpen: (arg: string) => void;
@@ -49,7 +49,7 @@ const TicketProvider = ({ children, id }: TicketProviderProps) => {
 		relations: useTicketEditorId('ticket-relations', id),
 	};
 
-	const editorState = {
+	const editorState: EditorState = {
 		closeAllEditors,
 		currentlyOpenEditor,
 		getIsOpen,
@@ -57,7 +57,7 @@ const TicketProvider = ({ children, id }: TicketProviderProps) => {
 		setIsOpen,
 	};
 
-	const value = {
+	const value: ContextProps = {
 		editorIds,
 		editorState,
 		id,

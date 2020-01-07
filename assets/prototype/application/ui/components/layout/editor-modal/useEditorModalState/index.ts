@@ -66,7 +66,6 @@ const useEditorModalState = () => {
 	/**
 	 * Returns the ID of the editor currently at the top of the stack
 	 *
-	 * @param {Stack} state
 	 * @return {string | undefined} editorId, if there is no editorId then it will return undefined
 	 */
 	const currentlyOpenEditor = (): string | undefined => last(state);
