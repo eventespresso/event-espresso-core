@@ -2228,18 +2228,47 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
     {
         $deletion_job_code = isset($this->_req_data['deletion_job_code']) ? $this->_req_data['deletion_job_code'] : '';
         $models_and_ids_to_delete = $this->getModelsAndIdsToDelete($deletion_job_code);
-        $form = new ConfirmEventDeletionForm($models_and_ids_to_delete['Event']);
-        // If they're not in debug mode, don't list all model objectss that will be deleted. They'll just be confused.
-        if(! WP_DEBUG){
-            $models_to_mention = [
-                'Event',
-                'Datetime',
-                'Ticket',
-                'Registration'
-            ];
-
-            $models_and_ids_to_delete = array_intersect_key($models_and_ids_to_delete, array_flip($models_to_mention));
-        };
+        $event_ids = isset($models_and_ids_to_delete['Event']) ? $models_and_ids_to_delete['Event'] : array();
+        if(empty($event_ids) || ! is_array($event_ids)){
+            throw new EE_Error(
+                esc_html__('No Events were found to delete.', 'event_espresso')
+            );
+        }
+        $datetime_ids = isset($models_and_ids_to_delete['Datetime']) ? $models_and_ids_to_delete['Datetime'] : array();
+        if(! is_array($datetime_ids)){
+            throw new UnexpectedEntityException($datetime_ids, 'array');
+        }
+        $registration_ids = isset($models_and_ids_to_delete['Registration']) ? $models_and_ids_to_delete['Registration'] : array();
+        if(! is_array($registration_ids)){
+            throw new UnexpectedEntityException($registration_ids, 'array');
+        }
+        $num_registrations_to_show = 10;
+        $reg_count = count($registration_ids);
+        if($reg_count > $num_registrations_to_show ){
+            $registration_ids = array_slice($registration_ids, 0, $num_registrations_to_show);
+        }
+        $form = new ConfirmEventDeletionForm($event_ids);
+        $events = EEM_Event::instance()->get_all_deleted_and_undeleted(
+            [
+                [
+                    'EVT_ID' => ['IN', $event_ids]
+                ]
+            ]
+        );
+        $datetimes = EEM_Datetime::instance()->get_all_deleted_and_undeleted(
+            [
+                [
+                    'DTT_ID' => ['IN', $datetime_ids]
+                ]
+            ]
+        );
+        $registrations = EEM_Registration::instance()->get_all_deleted_and_undeleted(
+            [
+                [
+                    'REG_ID' => ['IN', $registration_ids]
+                ]
+            ]
+        );
         $confirm_deletion_args = [
             'action' => 'confirm_deletion',
             'deletion_job_code' => $deletion_job_code
@@ -2253,8 +2282,11 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
                     $this->admin_base_url()
                 ),
                 'form' => $form,
-                'models_and_ids_to_delete' => $models_and_ids_to_delete,
-                'quantity_to_preview' => 20
+                'events' => $events,
+                'datetimes' => $datetimes,
+                'registrations' => $registrations,
+                'reg_count' => $reg_count,
+                'num_registrations_to_show' => $num_registrations_to_show
             ],
             true
         );
