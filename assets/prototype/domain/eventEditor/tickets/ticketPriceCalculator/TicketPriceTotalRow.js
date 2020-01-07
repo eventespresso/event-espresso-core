@@ -3,11 +3,11 @@ import { Button } from '@blueprintjs/core';
 
 // just temporary
 import styles from './inlineStyles';
-import useMoneyDisplay from '../../../../application/utilities/money';
+import { useMoneyDisplay } from '../../../../application/utilities/money';
 
-const TicketPriceTotalRow = ({ ticket, calcDir, toggleCalcDir }) => {
+const TicketPriceTotalRow = ({ ticket, reverseCalculate, toggleCalcDir }) => {
 	const { afterAmount, beforeAmount, formatAmount } = useMoneyDisplay();
-	const calcDirIcon = calcDir ? 'double-chevron-up' : 'double-chevron-down';
+	const calcDirIcon = reverseCalculate ? 'double-chevron-up' : 'double-chevron-down';
 	return (
 		<tr>
 			<th colSpan={4} style={styles.total}>
@@ -30,7 +30,7 @@ const TicketPriceTotalRow = ({ ticket, calcDir, toggleCalcDir }) => {
 							initialValue={ticket.price}
 							name={'ticket.price'}
 							style={styles.number}
-							disabled={!calcDir}
+							disabled={!reverseCalculate}
 							format={formatAmount}
 							formatOnBlur
 						/>
@@ -39,7 +39,7 @@ const TicketPriceTotalRow = ({ ticket, calcDir, toggleCalcDir }) => {
 				</div>
 			</th>
 			<th style={{ ...styles.colWidth7h, ...styles.actions }}>
-				<Button icon={calcDirIcon} onClick={toggleCalcDir} value={calcDir} minimal />
+				<Button icon={calcDirIcon} onClick={toggleCalcDir} value={reverseCalculate} minimal />
 			</th>
 		</tr>
 	);
