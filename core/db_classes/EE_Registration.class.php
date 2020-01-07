@@ -764,7 +764,7 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
     public function attendeeName($apply_html_entities = false)
     {
         $attendee = $this->get_first_related('Attendee');
-        if($attendee instanceof EE_Attendee){
+        if ($attendee instanceof EE_Attendee) {
             $attendee_name = $attendee->full_name($apply_html_entities);
         } else {
             $attendee_name = esc_html__('Unknown', 'event_espresso');
@@ -2108,7 +2108,7 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
     public function name()
     {
         $attendee = $this->attendee();
-        if($attendee instanceof EE_Attendee){
+        if ($attendee instanceof EE_Attendee) {
             $attendee_name = $attendee->full_name();
         } else {
             $attendee_name = esc_html__('Unknown', 'event_espresso');

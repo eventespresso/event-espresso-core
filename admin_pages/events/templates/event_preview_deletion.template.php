@@ -7,7 +7,6 @@
             _n('%1$d Event', '%1$d Events', count($events), 'event_espresso')
         ),
         count($events)
-
     );
     ?>
 </h3>
@@ -27,10 +26,9 @@
     printf(
         esc_html(
             // translators: 1: number of datetimes
-            _n('%1$d Datetime', '%1$d Datetimes', count($datetimes),'event_espresso')
+            _n('%1$d Datetime', '%1$d Datetimes', count($datetimes), 'event_espresso')
         ),
         count($datetimes)
-
     );
     ?>
 </h3>

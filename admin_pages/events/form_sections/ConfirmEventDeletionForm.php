@@ -27,10 +27,10 @@ class ConfirmEventDeletionForm extends \EE_Form_Section_Proper
     protected $events;
     public function __construct($event_ids, $options_array = array())
     {
-        if(! isset($options_array['subsections'])){
+        if (! isset($options_array['subsections'])) {
             $options_array['subsections'] = [];
         }
-        if(! isset($options_array['subsections']['events'])){
+        if (! isset($options_array['subsections']['events'])) {
             $events_subsection = new \EE_Form_Section_Proper();
             $options_array['subsections']['events'] = $events_subsection;
         }
@@ -41,7 +41,7 @@ class ConfirmEventDeletionForm extends \EE_Form_Section_Proper
                 ]
             ]
         );
-        if( ! is_array($events)){
+        if (! is_array($events)) {
             throw new UnexpectedEntityException($event_ids, 'array');
         }
         $this->events = $events;
@@ -50,9 +50,9 @@ class ConfirmEventDeletionForm extends \EE_Form_Section_Proper
                 EEH_HTML::h2(esc_html__('In order to prevent accidentally deleting the wrong events, please enter the unique URL slug of each event.', 'event_espresso'))
             )
         ];
-        foreach($events as $event){
-             $events_inputs[$event->ID()] = new \EE_Text_Input(
-                [
+        foreach ($events as $event) {
+             $events_inputs[ $event->ID() ] = new \EE_Text_Input(
+                 [
                     'html_label_text' => esc_html(
                         sprintf(
                             __('Please enter the URL slug of "%1$s" (hint: it’s "%2$s")', 'event_espresso'),
@@ -61,8 +61,8 @@ class ConfirmEventDeletionForm extends \EE_Form_Section_Proper
                         )
                     ),
                     'required' => false
-                ]
-            );
+                 ]
+             );
         }
         $events_subsection->add_subsections($events_inputs);
         $options_array['subsections']['backup'] = new EE_Checkbox_Multi_Input(
@@ -81,9 +81,9 @@ class ConfirmEventDeletionForm extends \EE_Form_Section_Proper
     {
         parent::_validate();
         $events_subsection = $this->get_proper_subsection('events');
-        foreach($this->events as $event){
+        foreach ($this->events as $event) {
             $event_input = $events_subsection->get_input($event->ID());
-            if((string)$event_input->normalized_value() !== $event->slug()){
+            if ((string) $event_input->normalized_value() !== $event->slug()) {
                 $event_input->add_validation_error(
                     sprintf(
                         esc_html__('You entered the incorrect URL slug for the event "%1$s". Please enter it again (use "%2$s") to confirm you are deleting the correct event.', 'event_espresso'),
@@ -94,7 +94,6 @@ class ConfirmEventDeletionForm extends \EE_Form_Section_Proper
             }
         }
     }
-
 }
 // End of file ConfirmEventDeletionForm.php
 // Location: EventEspresso\admin_pages\events\form_sections/ConfirmEventDeletionForm.php

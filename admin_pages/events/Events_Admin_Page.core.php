@@ -2145,7 +2145,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
         $form = new ConfirmEventDeletionForm($models_and_ids_to_delete['Event']);
         // Initialize the form from the request, and check if its valid.
         $form->receive_form_submission($this->_req_data);
-        if($form->is_valid()){
+        if ($form->is_valid()) {
             // Redirect the user to the deletion batch job.
             EEH_URL::safeRedirectAndExit(
                 EE_Admin_Page::add_query_args_and_nonce(
@@ -2170,7 +2170,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
             // Dont' use $form->submission_error_message() because it adds the form input's label in front
             // of each validation error which ends up looking quite confusing.
             $validation_errors = $form->get_validation_errors_accumulated();
-            foreach($validation_errors as $validation_error){
+            foreach ($validation_errors as $validation_error) {
                  EE_Error::add_error(
                      $validation_error->getMessage(),
                      __FILE__,
@@ -2204,7 +2204,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
      */
     protected function getModelsAndIdsToDelete($deletion_job_code)
     {
-        if( ! $deletion_job_code){
+        if (! $deletion_job_code) {
             throw new Exception(esc_html__('We aren’t sure which job you are performing. Please press back in your browser and try again.', 'event_espresso'));
         }
         $deletion_data = get_option('ee_deletion_' . $deletion_job_code, []);
@@ -2229,22 +2229,22 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
         $deletion_job_code = isset($this->_req_data['deletion_job_code']) ? $this->_req_data['deletion_job_code'] : '';
         $models_and_ids_to_delete = $this->getModelsAndIdsToDelete($deletion_job_code);
         $event_ids = isset($models_and_ids_to_delete['Event']) ? $models_and_ids_to_delete['Event'] : array();
-        if(empty($event_ids) || ! is_array($event_ids)){
+        if (empty($event_ids) || ! is_array($event_ids)) {
             throw new EE_Error(
                 esc_html__('No Events were found to delete.', 'event_espresso')
             );
         }
         $datetime_ids = isset($models_and_ids_to_delete['Datetime']) ? $models_and_ids_to_delete['Datetime'] : array();
-        if(! is_array($datetime_ids)){
+        if (! is_array($datetime_ids)) {
             throw new UnexpectedEntityException($datetime_ids, 'array');
         }
         $registration_ids = isset($models_and_ids_to_delete['Registration']) ? $models_and_ids_to_delete['Registration'] : array();
-        if(! is_array($registration_ids)){
+        if (! is_array($registration_ids)) {
             throw new UnexpectedEntityException($registration_ids, 'array');
         }
         $num_registrations_to_show = 10;
         $reg_count = count($registration_ids);
-        if($reg_count > $num_registrations_to_show ){
+        if ($reg_count > $num_registrations_to_show) {
             $registration_ids = array_slice($registration_ids, 0, $num_registrations_to_show);
         }
         $form = new ConfirmEventDeletionForm($event_ids);
