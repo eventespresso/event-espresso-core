@@ -26,7 +26,7 @@ export const nodes: PriceType[] = [
 		isBasePrice: false,
 		isDeleted: false,
 		isDiscount: false,
-		isPercent: true,
+		isPercent: false,
 		isTax: false,
 		name: 'PriceType ABC',
 		order: 2,
