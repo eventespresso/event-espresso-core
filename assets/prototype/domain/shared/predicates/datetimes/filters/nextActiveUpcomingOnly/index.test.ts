@@ -10,8 +10,7 @@ describe('nextActiveUpcomingOnly', () => {
 			{ id: 'def', isUpcoming: false },
 		]);
 
-		expect(Array.isArray(filteredDates)).toBe(true);
-		expect(filteredDates.length).toBe(0);
+		expect(filteredDates).toEqual([]);
 	});
 
 	it('Should return an array of nextActiveUpcomingOnly date', () => {
@@ -20,7 +19,7 @@ describe('nextActiveUpcomingOnly', () => {
 			{ id: 'def', isUpcoming: true },
 			{ id: 'xyz', isUpcoming: false },
 		]);
-		expect(Array.isArray(filteredDates)).toBe(true);
+
 		expect(filteredDates.length).toBe(1);
 		expect(filteredDates[0].id).toBe('def');
 	});
@@ -31,7 +30,7 @@ describe('nextActiveUpcomingOnly', () => {
 			{ id: 'def', isUpcoming: true },
 			{ id: 'xyz', isUpcoming: false },
 		]);
-		expect(Array.isArray(filteredDates)).toBe(true);
+
 		expect(filteredDates.length).toBe(1);
 		expect(filteredDates[0].id).toBe('abc');
 	});

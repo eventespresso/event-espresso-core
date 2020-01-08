@@ -15,8 +15,7 @@ describe('recentlyExpiredOnly', () => {
 			{ id: 'def', endDate: '2000-12-18T11:31:00+00:00' },
 		]);
 
-		expect(Array.isArray(filteredDates)).toBe(true);
-		expect(filteredDates.length).toBe(0);
+		expect(filteredDates).toEqual([]);
 	});
 
 	it('Should return an array of recentlyExpiredOnly dates', () => {
@@ -25,7 +24,7 @@ describe('recentlyExpiredOnly', () => {
 			{ id: 'def', endDate: formatISO(subWeeks(new Date(), 4)) },
 			{ id: 'xyz', endDate: formatISO(subWeeks(new Date(), 5)) },
 		]);
-		expect(Array.isArray(filteredDates)).toBe(true);
+
 		expect(filteredDates.length).toBe(2);
 		expect(filteredDates[0].id).toBe('abc');
 		expect(filteredDates[1].id).toBe('def');

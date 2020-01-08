@@ -11,8 +11,7 @@ describe('soldOutOnly', () => {
 			{ id: 'def', status: 'ACTIVE' },
 		]);
 
-		expect(Array.isArray(filteredDates)).toBe(true);
-		expect(filteredDates.length).toBe(0);
+		expect(filteredDates).toEqual([]);
 	});
 
 	it('Should return an array of soldOutOnly date when isSoldOut is true and have a valid status', () => {
@@ -22,7 +21,6 @@ describe('soldOutOnly', () => {
 			{ id: 'xyz', isSoldOut: true, status: 'WHATEVER' },
 		]);
 
-		expect(Array.isArray(filteredDates)).toBe(true);
 		expect(filteredDates.length).toBe(2);
 		expect(filteredDates[0].id).toBe('def');
 		expect(filteredDates[1].id).toBe('xyz');
@@ -35,7 +33,6 @@ describe('soldOutOnly', () => {
 			{ id: 'xyz', capacity: 100, sold: 100 },
 		]);
 
-		expect(Array.isArray(filteredDates)).toBe(true);
 		expect(filteredDates.length).toBe(2);
 		expect(filteredDates[0].id).toBe('abc');
 		expect(filteredDates[1].id).toBe('xyz');

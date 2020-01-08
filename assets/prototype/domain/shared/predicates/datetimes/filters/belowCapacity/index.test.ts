@@ -13,8 +13,7 @@ describe('belowCapacity', () => {
 			],
 		});
 
-		expect(Array.isArray(filteredDates)).toBe(true);
-		expect(filteredDates.length).toBe(0);
+		expect(filteredDates).toEqual([]);
 	});
 
 	test('Should pass all dates with infinite capacity', () => {
@@ -27,7 +26,6 @@ describe('belowCapacity', () => {
 			],
 		});
 
-		expect(Array.isArray(filteredDates)).toBe(true);
 		expect(filteredDates.length).toBe(3);
 	});
 
@@ -41,7 +39,6 @@ describe('belowCapacity', () => {
 			],
 		});
 
-		expect(Array.isArray(filteredDates)).toBe(true);
 		expect(filteredDates.length).toBe(2);
 		expect(filteredDates[0].id).toBe('abc');
 		expect(filteredDates[1].id).toBe('xyz');

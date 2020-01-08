@@ -5,10 +5,9 @@ describe('allDates', () => {
 	it('Should return an array with active-only dates', () => {
 		const filteredDates = allDates(dates);
 
-		expect(Array.isArray(filteredDates)).toBe(true);
 		filteredDates.forEach((date) => {
 			// Since in Datetime this is set as optional, we need to check first is this is defined first
-			if (date.isDeleted) {
+			if (date.isDeleted !== undefined) {
 				expect(date.isDeleted).toBe(false);
 			}
 		});
@@ -20,7 +19,6 @@ describe('allDates', () => {
 			{ id: 'def', isDeleted: true },
 		]);
 
-		expect(Array.isArray(filteredDates)).toBe(true);
-		expect(filteredDates.length).toBe(0);
+		expect(filteredDates).toEqual([]);
 	});
 });

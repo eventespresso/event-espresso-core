@@ -10,8 +10,7 @@ describe('expiredOnly', () => {
 			{ id: 'def', isExpired: false },
 		]);
 
-		expect(Array.isArray(filteredDates)).toBe(true);
-		expect(filteredDates.length).toBe(0);
+		expect(filteredDates).toEqual([]);
 	});
 
 	it('Should return an array of dates that are expired', () => {
@@ -21,7 +20,6 @@ describe('expiredOnly', () => {
 			{ id: 'xyz', isExpired: true },
 		]);
 
-		expect(Array.isArray(filteredDates)).toBe(true);
 		expect(filteredDates.length).toBe(1);
 		expect(filteredDates[0].id).toBe('xyz');
 	});
@@ -33,7 +31,6 @@ describe('expiredOnly', () => {
 			{ id: 'xyz', isExpired: true, isDeleted: true },
 		]);
 
-		expect(Array.isArray(filteredDates)).toBe(true);
 		expect(filteredDates.length).toBe(1);
 		expect(filteredDates[0].id).toBe('def');
 	});

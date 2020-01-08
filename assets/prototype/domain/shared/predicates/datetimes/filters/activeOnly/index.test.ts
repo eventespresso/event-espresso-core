@@ -5,7 +5,6 @@ describe('activeOnly', () => {
 	it('Should return an array with active-only dates', () => {
 		const filteredDates = activeOnly(dates);
 
-		expect(Array.isArray(filteredDates)).toBe(true);
 		filteredDates.forEach((date) => {
 			expect(date.isActive).toBe(true);
 		});
@@ -17,7 +16,6 @@ describe('activeOnly', () => {
 			{ id: 'def', isActive: false },
 		]);
 
-		expect(Array.isArray(filteredDates)).toBe(true);
-		expect(filteredDates.length).toBe(0);
+		expect(filteredDates).toEqual([]);
 	});
 });

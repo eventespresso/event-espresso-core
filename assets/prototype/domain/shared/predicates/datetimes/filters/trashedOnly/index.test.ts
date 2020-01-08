@@ -11,8 +11,7 @@ describe('trashedOnly', () => {
 			{ id: 'xyz', isDeleted: false },
 		]);
 
-		expect(Array.isArray(filteredDates)).toBe(true);
-		expect(filteredDates.length).toBe(0);
+		expect(filteredDates).toEqual([]);
 	});
 
 	it('Should return an array of trashedOnly dates', () => {
@@ -22,7 +21,6 @@ describe('trashedOnly', () => {
 			{ id: 'xyz', isDeleted: true },
 		]);
 
-		expect(Array.isArray(filteredDates)).toBe(true);
 		expect(filteredDates.length).toBe(2);
 		expect(filteredDates[0].id).toBe('abc');
 		expect(filteredDates[1].id).toBe('xyz');

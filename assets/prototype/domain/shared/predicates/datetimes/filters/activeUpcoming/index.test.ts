@@ -5,7 +5,6 @@ describe('activeUpcoming', () => {
 	it('Should return an array of dates which are active OR upcoming', () => {
 		const filteredDates = activeUpcoming(dates);
 
-		expect(Array.isArray(filteredDates)).toBe(true);
 		filteredDates.forEach((date) => {
 			expect(date.isActive || date.isUpcoming).toBe(true);
 		});
