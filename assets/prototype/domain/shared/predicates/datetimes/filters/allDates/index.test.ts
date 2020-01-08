@@ -1,7 +1,7 @@
 import dates from '../tests/data';
 import allDates from './index';
 
-describe.only('allDates', () => {
+describe('allDates', () => {
 	it('Should return an array with active-only dates', () => {
 		const filteredDates = allDates(dates);
 

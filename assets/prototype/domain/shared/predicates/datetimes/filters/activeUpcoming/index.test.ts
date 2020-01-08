@@ -1,7 +1,7 @@
 import dates from '../tests/data';
 import activeUpcoming from '.';
 
-describe.only('activeUpcoming', () => {
+describe('activeUpcoming', () => {
 	it('Should return an array of dates which are active OR upcoming', () => {
 		const filteredDates = activeUpcoming(dates);
 
