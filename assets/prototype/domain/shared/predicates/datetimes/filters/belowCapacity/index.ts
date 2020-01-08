@@ -7,7 +7,7 @@ import { is } from 'ramda';
  * Internal dependencies
  */
 import capacityBelow from './capacityBelow';
-import isTrashed from '../isTrashed';
+import isTrashed from '../../isTrashed';
 import { Datetime } from '../../../../../eventEditor/data/types';
 
 type BelowCapacityProps = {
