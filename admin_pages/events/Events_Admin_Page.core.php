@@ -53,7 +53,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
     /**
      * @var ModelObjNodeGroupPersister
      */
-    protected $batch_persister;
+    protected $model_obj_node_group_persister;
 
     /**
      * Initialize page props for this admin page group.
@@ -2107,10 +2107,10 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
      */
     protected function getModelObjNodeGroupPersister()
     {
-        if (! $this->batch_persister instanceof ModelObjNodeGroupPersister) {
-            $this->batch_persister = $this->getLoader()->load('\EventEspresso\core\services\orm\tree_traversal\ModelObjNodeGroupPersister');
+        if (! $this->model_obj_node_group_persister instanceof ModelObjNodeGroupPersister) {
+            $this->model_obj_node_group_persister = $this->getLoader()->load('\EventEspresso\core\services\orm\tree_traversal\ModelObjNodeGroupPersister');
         }
-        return $this->batch_persister;
+        return $this->model_obj_node_group_persister;
     }
 
     /**

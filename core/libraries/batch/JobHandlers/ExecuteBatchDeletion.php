@@ -2,6 +2,7 @@
 
 namespace EventEspressoBatchRequest\JobHandlers;
 
+use EE_Change_Log;
 use EE_Registry;
 use EEM_Event;
 use EEM_Price;
@@ -166,6 +167,17 @@ class ExecuteBatchDeletion extends JobHandler
         // For backwards compatibility with how we used to delete events, make sure we still trigger the old action.
         $models_and_ids_to_delete = $job_parameters->extra_datum('models_and_ids_to_delete', []);
         foreach ($models_and_ids_to_delete['Event'] as $event_id) {
+            // Create a log entry so we know who and when this event was permanently deleted.
+            (EE_Change_Log::new_instance(
+                [
+                    'OBJ_ID' => $event_id,
+                    'OBJ_type' => 'Event',
+                    'LOG_message' => sprintf(
+                        esc_html__('Event %1$d permanently deleted using ExecuteBatchDeletion.', 'event_espresso'),
+                        $event_id
+                    )
+                ]
+            ))->save();
             do_action('AHEE__Events_Admin_Page___permanently_delete_event__after_event_deleted', $event_id);
         }
     }
