@@ -88,5 +88,6 @@ if ($reg_count > count($registrations)) {
 </ul>
 <form action="<?php echo $form_url; ?>" method="POST">
     <?php echo $form->get_html_and_js(); ?>
-    <input type="submit" value="<?php echo esc_attr(esc_html__('Confirm', 'event_espresso')); ?>">
+    <input type="submit" class="button button-primary" value="<?php echo esc_attr(esc_html__('Confirm', 'event_espresso')); ?>">
+    <a href="javascript:window.history.back();" class="button button-secondary"><?php esc_html_e('Cancel', 'event_espresso'); ?></a>
 </form>
