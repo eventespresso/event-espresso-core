@@ -20,7 +20,8 @@ const usePriceTypeForPrice = (priceId: EntityId): PriceType => {
 
 	// get the default price type object
 	const defaultPriceType: PriceType = useDefaultPriceType();
-	const relatedPriceTypes: PriceType[] = relatedPriceTypeIds.length ? usePriceTypes(relatedPriceTypeIds) : [];
+	let relatedPriceTypes: PriceType[] = usePriceTypes(relatedPriceTypeIds);
+	relatedPriceTypes = relatedPriceTypeIds.length ? relatedPriceTypes : [];
 
 	return !isEmpty(relatedPriceTypes) ? relatedPriceTypes[0] : defaultPriceType;
 };
