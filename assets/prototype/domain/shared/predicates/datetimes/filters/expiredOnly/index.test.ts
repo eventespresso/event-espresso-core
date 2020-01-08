@@ -1,12 +1,40 @@
 /**
  * Internal dependencies
  */
-import dates from '../tests/data';
 import expiredOnly from './index';
 
 describe('expiredOnly', () => {
-	test('Should filter out dates based on below50Capacity show type', () => {
-		// const filteredDates = expiredOnly({ capacity: 50, dates });
-		// expect(filteredDates.length).toBe(0);
+	it('Should return empty array if dates are not expired', () => {
+		const filteredDates = expiredOnly([
+			{ id: 'abc', isExpired: false },
+			{ id: 'def', isExpired: false },
+		]);
+
+		expect(Array.isArray(filteredDates)).toBe(true);
+		expect(filteredDates.length).toBe(0);
+	});
+
+	it('Should return an array of dates that are expired', () => {
+		const filteredDates = expiredOnly([
+			{ id: 'abc', isExpired: false },
+			{ id: 'def', isExpired: false },
+			{ id: 'xyz', isExpired: true },
+		]);
+
+		expect(Array.isArray(filteredDates)).toBe(true);
+		expect(filteredDates.length).toBe(1);
+		expect(filteredDates[0].id).toBe('xyz');
+	});
+
+	it('Should return an array of dates that are expired and not trashed', () => {
+		const filteredDates = expiredOnly([
+			{ id: 'abc', isExpired: false, isDeleted: true },
+			{ id: 'def', isExpired: true, isDeleted: false },
+			{ id: 'xyz', isExpired: true, isDeleted: true },
+		]);
+
+		expect(Array.isArray(filteredDates)).toBe(true);
+		expect(filteredDates.length).toBe(1);
+		expect(filteredDates[0].id).toBe('def');
 	});
 });

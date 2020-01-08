@@ -22,7 +22,6 @@ interface capacityBelowProps {
  * @return {boolean} true if sold/capacity less than than capacity
  */
 const capacityBelow = ({ capacity, date }): boolean => {
-	console.log(Math.round(date.sold) / Math.round(date.capacity) < capacity / 100);
 	return (
 		validInfiniteCapacityLimit(date) ||
 		(validSold(date) &&
