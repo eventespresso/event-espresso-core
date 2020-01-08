@@ -95,7 +95,8 @@ class ModelObjNodeGroupPersister
      * @throws ReflectionException
      * @throws UnexpectedEntityException
      */
-    public function getModelsAndIdsFromGroup($code){
+    public function getModelsAndIdsFromGroup($code)
+    {
         $model_obj_nodes = $this->getModelObjNodesInGroup($code);
         return $this->getModelsAndIdsContainedIn($model_obj_nodes);
     }

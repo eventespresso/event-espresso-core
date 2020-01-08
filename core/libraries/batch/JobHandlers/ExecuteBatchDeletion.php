@@ -168,7 +168,7 @@ class ExecuteBatchDeletion extends JobHandler
         );
         // For backwards compatibility with how we used to delete events, make sure we still trigger the old action.
         $models_and_ids_to_delete = $job_parameters->extra_datum('models_and_ids_to_delete', []);
-        foreach($models_and_ids_to_delete['Event'] as $event_id){
+        foreach ($models_and_ids_to_delete['Event'] as $event_id) {
             do_action('AHEE__Events_Admin_Page___permanently_delete_event__after_event_deleted', $event_id);
         }
     }

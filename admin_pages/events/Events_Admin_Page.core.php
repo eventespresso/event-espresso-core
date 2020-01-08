@@ -2107,7 +2107,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
      */
     protected function getModelObjNodeGroupPersister()
     {
-        if(! $this->batch_persister instanceof ModelObjNodeGroupPersister){
+        if (! $this->batch_persister instanceof ModelObjNodeGroupPersister) {
             $this->batch_persister = $this->getLoader()->load('\EventEspresso\core\services\orm\tree_traversal\ModelObjNodeGroupPersister');
         }
         return $this->batch_persister;
