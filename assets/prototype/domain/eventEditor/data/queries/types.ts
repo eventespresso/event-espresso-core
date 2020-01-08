@@ -18,3 +18,5 @@ export interface FetchEntitiesResult {
 	error: Error;
 	loading: boolean;
 }
+
+export type EntityListName = 'Datetimes' | 'Tickets' | 'Prices' | 'PriceTypes';

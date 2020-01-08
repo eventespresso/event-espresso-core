@@ -7,19 +7,10 @@ import { ConfigDataProps } from '../../../../application/services/config';
 import useConfig from '../../../../application/services/config/useConfig';
 import { useStatus, TypeName } from '../../../../application/services/apollo/status';
 import useEventId from './events/useEventId';
-import { queries } from './';
+import { queries, DEFAULT_ENTITY_LIST_DATA as DEFAULT_DATA } from './';
 import { WriteQueryOptions } from './types';
 
 const { GET_TICKETS, GET_DATETIMES, GET_PRICE_TYPES, GET_PRICES, GET_CURRENT_USER, GET_GENERAL_SETTINGS } = queries;
-
-type Entity = 'Datetimes' | 'Tickets' | 'Prices' | 'PriceTypes';
-
-const DEFAULT_DATA = (entity: Entity) => {
-	return {
-		nodes: [],
-		__typename: `EspressoRootQuery${entity}Connection`,
-	};
-};
 
 const useCacheRehydration = (): void => {
 	const client = useApolloClient();
