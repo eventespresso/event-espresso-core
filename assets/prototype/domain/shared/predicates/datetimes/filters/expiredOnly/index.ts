@@ -9,7 +9,7 @@ import { is } from 'ramda';
 import { Datetime } from '../../../../../eventEditor/data/types';
 import isTrashed from '../../isTrashed';
 
-const expiredOnly = (dates: Datetime[]) => {
+const expiredOnly = (dates: Datetime[]): Datetime[] | [] => {
 	const filterFn = (date: Datetime) => {
 		return is(Boolean, date.isExpired) && date.isExpired && !isTrashed(date);
 	};

@@ -3,6 +3,6 @@
  */
 import { Datetime } from '../../../../eventEditor/data/types';
 
-const upcomingOnly = (dates: Datetime[]) => dates.filter(({ isUpcoming }) => isUpcoming);
+const upcomingOnly = (dates: Datetime[]): Datetime[] | [] => dates.filter(({ isUpcoming }) => isUpcoming);
 
 export default upcomingOnly;
