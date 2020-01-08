@@ -2140,7 +2140,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
      */
     protected function confirmDeletion()
     {
-        $deletion_job_code = isset($this->_req_data['deletion_job_code']) ? $this->_req_data['deletion_job_code'] : '';
+        $deletion_job_code = isset($this->_req_data['deletion_job_code']) ? sanitize_key($this->_req_data['deletion_job_code']) : '';
         $models_and_ids_to_delete = $this->getModelsAndIdsToDelete($deletion_job_code);
         $form = new ConfirmEventDeletionForm($models_and_ids_to_delete['Event']);
         // Initialize the form from the request, and check if its valid.
@@ -2166,29 +2166,28 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
                     admin_url()
                 )
             );
-        } else {
-            // Dont' use $form->submission_error_message() because it adds the form input's label in front
-            // of each validation error which ends up looking quite confusing.
-            $validation_errors = $form->get_validation_errors_accumulated();
-            foreach ($validation_errors as $validation_error) {
-                 EE_Error::add_error(
-                     $validation_error->getMessage(),
-                     __FILE__,
-                     __FUNCTION__,
-                     __LINE__
-                 );
-            }
-
-            EEH_URL::safeRedirectAndExit(
-                EE_Admin_Page::add_query_args_and_nonce(
-                    [
-                        'action' => 'preview_deletion',
-                        'deletion_job_code' => $deletion_job_code
-                    ],
-                    $this->admin_base_url()
-                )
-            );
         }
+        // Dont' use $form->submission_error_message() because it adds the form input's label in front
+        // of each validation error which ends up looking quite confusing.
+        $validation_errors = $form->get_validation_errors_accumulated();
+        foreach ($validation_errors as $validation_error) {
+             EE_Error::add_error(
+                 $validation_error->getMessage(),
+                 __FILE__,
+                 __FUNCTION__,
+                 __LINE__
+             );
+        }
+
+        EEH_URL::safeRedirectAndExit(
+            EE_Admin_Page::add_query_args_and_nonce(
+                [
+                    'action' => 'preview_deletion',
+                    'deletion_job_code' => $deletion_job_code
+                ],
+                $this->admin_base_url()
+            )
+        );
     }
 
     /**
@@ -2226,7 +2225,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
      */
     protected function previewDeletion()
     {
-        $deletion_job_code = isset($this->_req_data['deletion_job_code']) ? $this->_req_data['deletion_job_code'] : '';
+        $deletion_job_code = isset($this->_req_data['deletion_job_code']) ? sanitize_key($this->_req_data['deletion_job_code']) : '';
         $models_and_ids_to_delete = $this->getModelsAndIdsToDelete($deletion_job_code);
         $event_ids = isset($models_and_ids_to_delete['Event']) ? $models_and_ids_to_delete['Event'] : array();
         if (empty($event_ids) || ! is_array($event_ids)) {
