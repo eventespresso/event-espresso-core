@@ -31,18 +31,15 @@ use InvalidArgumentException;
  */
 class ExecuteBatchDeletion extends JobHandler
 {
-
     /**
-     * @since $VID:$
-     * @return ModelObjNodeGroupPersister
-     * @throws InvalidDataTypeException
-     * @throws InvalidInterfaceException
-     * @throws InvalidArgumentException
+     * @var ModelObjNodeGroupPersister
      */
-    protected function getTreePersister()
+    protected $model_obj_node_group_persister;
+    public function __construct(ModelObjNodeGroupPersister $model_obj_node_group_persister)
     {
-        return LoaderFactory::getLoader()->getShared('\EventEspresso\core\services\orm\tree_traversal\ModelObjNodeGroupPersister');
+        $this->model_obj_node_group_persister = $model_obj_node_group_persister;
     }
+
 
     // phpcs:disable PSR1.Methods.CamelCapsMethodName.NotCamelCaps
     /**
@@ -54,7 +51,7 @@ class ExecuteBatchDeletion extends JobHandler
     public function create_job(JobParameters $job_parameters)
     {
         $deletion_job_code = $job_parameters->request_datum('deletion_job_code', null);
-        $roots = $this->getTreePersister()->getModelObjNodesInGroup($deletion_job_code);
+        $roots = $this->model_obj_node_group_persister->getModelObjNodesInGroup($deletion_job_code);
         if ($roots === null) {
             throw new UnexpectedEntityException($roots, 'array', esc_html__('The job seems to be stale. Please press the back button in your browser twice.', 'event_espresso'));
         }
@@ -163,7 +160,7 @@ class ExecuteBatchDeletion extends JobHandler
      */
     public function cleanup_job(JobParameters $job_parameters)
     {
-        $this->getTreePersister()->deleteModelObjNodesInGroup(
+        $this->model_obj_node_group_persister->deleteModelObjNodesInGroup(
             $job_parameters->request_datum('deletion_job_code')
         );
         // For backwards compatibility with how we used to delete events, make sure we still trigger the old action.

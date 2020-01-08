@@ -885,6 +885,12 @@ class EE_Dependency_Map
                 'EventEspresso\core\services\request\Request' => EE_Dependency_Map::load_from_cache,
                 'EEM_Ticket'  => EE_Dependency_Map::load_from_cache,
             ],
+            'EventEspressoBatchRequest\JobHandlers\ExecuteBatchDeletion' => [
+                'EventEspresso\core\services\orm\tree_traversal\ModelObjNodeGroupPersister' => EE_Dependency_Map::load_from_cache
+            ],
+            'EventEspressoBatchRequest\JobHandlers\PreviewEventDeletion' => [
+                'EventEspresso\core\services\orm\tree_traversal\ModelObjNodeGroupPersister' => EE_Dependency_Map::load_from_cache
+            ]
         );
     }
 
