@@ -4,6 +4,7 @@ use EventEspresso\admin_pages\events\form_sections\ConfirmEventDeletionForm;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
 use EventEspresso\core\exceptions\UnexpectedEntityException;
+use EventEspresso\core\services\orm\tree_traversal\ModelObjNodeGroupPersister;
 use EventEspresso\core\services\orm\tree_traversal\ModelObjNode;
 
 /**
@@ -47,6 +48,12 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
      * @var EE_Event
      */
     protected $_cpt_model_obj = false;
+
+
+    /**
+     * @var ModelObjNodeGroupPersister
+     */
+    protected $batch_persister;
 
     /**
      * Initialize page props for this admin page group.
@@ -2090,6 +2097,21 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
         $this->generateDeletionPreview(isset($this->_req_data['EVT_ID']) ? $this->_req_data['EVT_ID'] : array());
     }
 
+    /**
+     * Gets the tree traversal batch persister.
+     * @since $VID:$
+     * @return ModelObjNodeGroupPersister
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     */
+    protected function getModelObjNodeGroupPersister()
+    {
+        if(! $this->batch_persister instanceof ModelObjNodeGroupPersister){
+            $this->batch_persister = $this->getLoader()->load('\EventEspresso\core\services\orm\tree_traversal\ModelObjNodeGroupPersister');
+        }
+        return $this->batch_persister;
+    }
 
     /**
      * _delete_events
@@ -2106,7 +2128,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
     {
         $event_ids = (array) $event_ids;
         // Set a code we can use to reference this deletion task in the batch jobs and preview page.
-        $deletion_job_code = wp_generate_password(6, false);
+        $deletion_job_code = $this->getModelObjNodeGroupPersister()->generateGroupCode();
         $return_url = EE_Admin_Page::add_query_args_and_nonce(
             [
                 'action' => 'preview_deletion',
@@ -2141,7 +2163,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
     protected function confirmDeletion()
     {
         $deletion_job_code = isset($this->_req_data['deletion_job_code']) ? sanitize_key($this->_req_data['deletion_job_code']) : '';
-        $models_and_ids_to_delete = $this->getModelsAndIdsToDelete($deletion_job_code);
+        $models_and_ids_to_delete = $this->getModelObjNodeGroupPersister()->getModelsAndIdsFromGroup($deletion_job_code);
         $form = new ConfirmEventDeletionForm($models_and_ids_to_delete['Event']);
         // Initialize the form from the request, and check if its valid.
         $form->receive_form_submission($this->_req_data);
@@ -2191,34 +2213,6 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
     }
 
     /**
-     * Uses the querystring and job option to figure out what we intend to delete.
-     * @since $VID:$
-     * @return array top-level keys are model names, and their values are arrays of IDs.
-     * @throws EE_Error
-     * @throws InvalidArgumentException
-     * @throws InvalidDataTypeException
-     * @throws InvalidInterfaceException
-     * @throws ReflectionException
-     * @throws UnexpectedEntityException
-     */
-    protected function getModelsAndIdsToDelete($deletion_job_code)
-    {
-        if (! $deletion_job_code) {
-            throw new Exception(esc_html__('We aren’t sure which job you are performing. Please press back in your browser and try again.', 'event_espresso'));
-        }
-        $deletion_data = get_option('ee_deletion_' . $deletion_job_code, []);
-
-        $models_and_ids_to_delete = [];
-        foreach ($deletion_data as $root) {
-            if (! $root instanceof ModelObjNode) {
-                throw new UnexpectedEntityException($root, 'ModelObjNode');
-            }
-            $models_and_ids_to_delete = array_replace_recursive($models_and_ids_to_delete, $root->getIds());
-        }
-        return $models_and_ids_to_delete;
-    }
-
-    /**
      * A page for users to preview what exactly will be deleted, and confirm they want to delete it.
      * @since $VID:$
      * @throws EE_Error
@@ -2226,7 +2220,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
     protected function previewDeletion()
     {
         $deletion_job_code = isset($this->_req_data['deletion_job_code']) ? sanitize_key($this->_req_data['deletion_job_code']) : '';
-        $models_and_ids_to_delete = $this->getModelsAndIdsToDelete($deletion_job_code);
+        $models_and_ids_to_delete = $this->getModelObjNodeGroupPersister()->getModelsAndIdsFromGroup($deletion_job_code);
         $event_ids = isset($models_and_ids_to_delete['Event']) ? $models_and_ids_to_delete['Event'] : array();
         if (empty($event_ids) || ! is_array($event_ids)) {
             throw new EE_Error(

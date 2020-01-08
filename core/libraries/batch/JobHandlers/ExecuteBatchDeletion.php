@@ -7,12 +7,17 @@ use EEM_Event;
 use EEM_Price;
 use EEM_Ticket;
 use EventEspresso\core\exceptions\InvalidClassException;
+use EventEspresso\core\exceptions\InvalidDataTypeException;
+use EventEspresso\core\exceptions\InvalidInterfaceException;
 use EventEspresso\core\exceptions\UnexpectedEntityException;
+use EventEspresso\core\services\loaders\LoaderFactory;
+use EventEspresso\core\services\orm\tree_traversal\ModelObjNodeGroupPersister;
 use EventEspresso\core\services\orm\tree_traversal\ModelObjNode;
 use EventEspressoBatchRequest\Helpers\BatchRequestException;
 use EventEspressoBatchRequest\Helpers\JobParameters;
 use EventEspressoBatchRequest\Helpers\JobStepResponse;
 use EventEspressoBatchRequest\JobHandlerBaseClasses\JobHandler;
+use InvalidArgumentException;
 
 /**
  * Class EventDeletion
@@ -27,6 +32,18 @@ use EventEspressoBatchRequest\JobHandlerBaseClasses\JobHandler;
 class ExecuteBatchDeletion extends JobHandler
 {
 
+    /**
+     * @since $VID:$
+     * @return ModelObjNodeGroupPersister
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws InvalidArgumentException
+     */
+    protected function getTreePersister()
+    {
+        return LoaderFactory::getLoader()->getShared('\EventEspresso\core\services\orm\tree_traversal\ModelObjNodeGroupPersister');
+    }
+
     // phpcs:disable PSR1.Methods.CamelCapsMethodName.NotCamelCaps
     /**
      *
@@ -37,7 +54,7 @@ class ExecuteBatchDeletion extends JobHandler
     public function create_job(JobParameters $job_parameters)
     {
         $deletion_job_code = $job_parameters->request_datum('deletion_job_code', null);
-        $roots = get_option('ee_deletion_'  . $deletion_job_code, null);
+        $roots = $this->getTreePersister()->getModelObjNodesInGroup($deletion_job_code);
         if ($roots === null) {
             throw new UnexpectedEntityException($roots, 'array', esc_html__('The job seems to be stale. Please press the back button in your browser twice.', 'event_espresso'));
         }
@@ -146,15 +163,14 @@ class ExecuteBatchDeletion extends JobHandler
      */
     public function cleanup_job(JobParameters $job_parameters)
     {
-        delete_option(
-            'EEBatchDeletion' . $job_parameters->request_datum('deletion_job_code')
+        $this->getTreePersister()->deleteModelObjNodesInGroup(
+            $job_parameters->request_datum('deletion_job_code')
         );
         // For backwards compatibility with how we used to delete events, make sure we still trigger the old action.
         $models_and_ids_to_delete = $job_parameters->extra_datum('models_and_ids_to_delete', []);
         foreach($models_and_ids_to_delete['Event'] as $event_id){
             do_action('AHEE__Events_Admin_Page___permanently_delete_event__after_event_deleted', $event_id);
         }
-
     }
 }
 // End of file EventDeletion.php

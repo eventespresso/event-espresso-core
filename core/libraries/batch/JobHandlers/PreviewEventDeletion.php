@@ -6,6 +6,7 @@ use EEM_Event;
 use EEM_Price;
 use EEM_Ticket;
 use EventEspresso\core\exceptions\InvalidClassException;
+use EventEspresso\core\services\loaders\LoaderFactory;
 use EventEspresso\core\services\orm\tree_traversal\ModelObjNode;
 use EventEspressoBatchRequest\Helpers\BatchRequestException;
 use EventEspressoBatchRequest\Helpers\JobParameters;
@@ -116,7 +117,11 @@ class PreviewEventDeletion extends JobHandler
             // Show a full progress bar.
             $job_parameters->set_units_processed($job_parameters->job_size());
             $deletion_job_code = $job_parameters->request_datum('deletion_job_code');
-            add_option('ee_deletion_' . $deletion_job_code, $job_parameters->extra_datum('roots'), null, 'no');
+            $persister = LoaderFactory::getLoader()->getShared('\EventEspresso\core\services\orm\tree_traversal\ModelObjNodeGroupPersister');
+            $persister->persistModelObjNodesGroup(
+                $job_parameters->extra_datum('roots'),
+                $deletion_job_code
+            );
             return new JobStepResponse(
                 $job_parameters,
                 esc_html__('Finished identifying items for deletion.', 'event_espresso'),
