@@ -2105,23 +2105,18 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
         return $this->event()->primary_datetime();
     }
 
+    /**
+     * Returns the contact's name (or "Unknown" if there is no contact.)
+     * @since $VID:$
+     * @return string
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws ReflectionException
+     */
     public function name()
     {
-        $attendee = $this->attendee();
-        if ($attendee instanceof EE_Attendee) {
-            $attendee_name = $attendee->full_name();
-        } else {
-            $attendee_name = esc_html__('Unknown', 'event_espresso');
-        }
-        return esc_html(
-            sprintf(
-                // translators: 1: registration code, 2: number, 3: group size, 4: attendee name.
-                __('Registration with code "%1$s", %2$d of %3$d for %4$s', 'event_espresso'),
-                $this->reg_code(),
-                $this->count(),
-                $this->group_size(),
-                $attendee_name
-            )
-        );
+        return $this->attendeeName();
     }
 }
