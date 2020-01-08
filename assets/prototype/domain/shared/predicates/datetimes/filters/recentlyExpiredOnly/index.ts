@@ -1,8 +1,8 @@
 /**
  * Internal dependencies
  */
-import { Datetime } from '../../../../eventEditor/data/types';
-import isRecentlyExpired from '../isRecentlyExpired';
+import { Datetime } from '../../../../../eventEditor/data/types';
+import isRecentlyExpired from '../../isRecentlyExpired';
 
 const recentlyExpiredOnly = (dates: Datetime[]): Datetime[] | [] => {
 	const filterFn = (date: Datetime) => {
