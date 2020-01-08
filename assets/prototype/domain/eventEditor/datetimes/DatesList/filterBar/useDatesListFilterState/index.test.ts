@@ -88,7 +88,7 @@ const datetimes: Datetime[] = [
 	},
 ];
 
-describe.skip('useDatesListFilterState', () => {
+describe('useDatesListFilterState', () => {
 	test('useDatesListFilterState result', () => {
 		const { result } = renderHook(() => useDatesListFilterState(datetimes));
 
