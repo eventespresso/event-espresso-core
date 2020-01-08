@@ -1,4 +1,4 @@
-import formatAmount from './formatAmount';
+import formatAmount, { FormatAmountFunction } from './formatAmount';
 import useConfig from '../../services/config/useConfig';
 import { CurrencyProps } from '../../valueObjects/config/types';
 
@@ -10,7 +10,7 @@ export type MoneyDisplay = {
 	// the full currency config object
 	currency: CurrencyProps;
 	// function for formatting the amount using the correct number of decimal places for the currency
-	formatAmount: (amount: number | string) => string;
+	formatAmount: FormatAmountFunction;
 };
 
 const useMoneyDisplay = (): MoneyDisplay => {
