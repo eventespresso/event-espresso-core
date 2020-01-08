@@ -12,8 +12,8 @@ import { Datetime } from '../../../eventEditor/data/types';
  * @param {Object} date event object
  * @return {boolean} true if status property is valid
  */
-const validFiniteCapacityLimit = (date: Datetime) => {
-	return is(String, date.status);
+const validFiniteCapacityLimit = ({ capacity }: Datetime) => {
+	return is(Number, capacity) && isFinite(capacity);
 };
 
 export default validFiniteCapacityLimit;

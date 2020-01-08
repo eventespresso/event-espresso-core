@@ -260,7 +260,7 @@ test('should update processedDates to reflect changes made by invoking setShowDa
 	});
 	const dates = result.current.processedDates;
 
-	expect(dates.length).toBe(2);
+	expect(dates.length).toBe(3);
 	expect(dates[0].isSoldOut).toBe(true);
 	expect(dates[1].capacity).toBe(20);
 	expect(dates[1].sold).toBe(20);

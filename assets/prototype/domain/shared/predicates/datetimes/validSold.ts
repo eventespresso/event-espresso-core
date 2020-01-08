@@ -8,12 +8,8 @@ import { is } from 'ramda';
  */
 import { Datetime } from '../../../eventEditor/data/types';
 
-/**
- * @param {Object} date event object
- * @return {boolean} true if status property is valid
- */
-const validSold = (date: Datetime) => {
-	return is(String, date.sold) || is(Number, date.sold);
+const validSold = ({ sold }: Datetime): boolean => {
+	return is(String, sold) || is(Number, sold); // TODO: rethink this.
 };
 
 export default validSold;

@@ -6,10 +6,10 @@ import { is } from 'ramda';
 /**
  * Internal dependencies
  */
-import { Datetime } from '../../../eventEditor/data/types';
-import validFiniteCapacityLimit from './validFiniteCapacityLimit';
+import { Datetime } from '../../../../../eventEditor/data/types';
+import validFiniteCapacityLimit from '../../validFiniteCapacityLimit';
 import validInfiniteCapacityLimit from './validInfiniteCapacityLimit';
-import validSold from './validStatus';
+import validSold from '../../validSold';
 
 interface capacityBelowProps {
 	capacity: number;
@@ -22,6 +22,7 @@ interface capacityBelowProps {
  * @return {boolean} true if sold/capacity less than than capacity
  */
 const capacityBelow = ({ capacity, date }): boolean => {
+	console.log(Math.round(date.sold) / Math.round(date.capacity) < capacity / 100);
 	return (
 		validInfiniteCapacityLimit(date) ||
 		(validSold(date) &&

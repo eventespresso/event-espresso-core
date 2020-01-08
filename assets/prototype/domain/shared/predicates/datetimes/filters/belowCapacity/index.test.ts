@@ -2,12 +2,48 @@
  * Internal dependencies
  */
 import belowCapacity from './index';
-import dates from '../tests/data';
 
-describe.only('belowCapacity', () => {
-	test('Should filter out dates based on below50Capacity show type', () => {
-		const filteredDates = belowCapacity({ capacity: 50, dates });
+describe('belowCapacity', () => {
+	it('Should return empty array if dates are deleted', () => {
+		const filteredDates = belowCapacity({
+			capacity: 50,
+			dates: [
+				{ id: 'abc', isDeleted: true },
+				{ id: 'def', isDeleted: true },
+			],
+		});
 
+		expect(Array.isArray(filteredDates)).toBe(true);
 		expect(filteredDates.length).toBe(0);
+	});
+
+	test('Should pass all dates with infinite capacity', () => {
+		const filteredDates = belowCapacity({
+			capacity: 50,
+			dates: [
+				{ capacity: Infinity, id: 'abc', isDeleted: false },
+				{ capacity: Infinity, id: 'def', isDeleted: false },
+				{ capacity: Infinity, id: 'xyz', isDeleted: false },
+			],
+		});
+
+		expect(Array.isArray(filteredDates)).toBe(true);
+		expect(filteredDates.length).toBe(3);
+	});
+
+	test('Should pass all dates with finite capacity', () => {
+		const filteredDates = belowCapacity({
+			capacity: 50,
+			dates: [
+				{ capacity: 100, id: 'abc', isDeleted: false, sold: 10 },
+				{ capacity: 11, id: 'def', isDeleted: false, sold: 6 },
+				{ capacity: 13, id: 'xyz', isDeleted: false, sold: 6 },
+			],
+		});
+
+		expect(Array.isArray(filteredDates)).toBe(true);
+		expect(filteredDates.length).toBe(2);
+		expect(filteredDates[0].id).toBe('abc');
+		expect(filteredDates[1].id).toBe('xyz');
 	});
 });
