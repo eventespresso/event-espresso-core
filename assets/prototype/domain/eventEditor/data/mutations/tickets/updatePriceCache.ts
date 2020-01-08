@@ -1,5 +1,5 @@
 import { assocPath, pathOr } from 'ramda';
-import { queries } from '../../queries';
+import { queries, DEFAULT_ENTITY_LIST_DATA } from '../../queries';
 import { CacheUpdaterFnArgs } from '../types';
 import { ReadQueryOptions, WriteQueryOptions } from '../../queries/types';
 import { Price } from '../../types';
@@ -19,24 +19,30 @@ const updatePriceCache = ({ proxy, prices = {}, ticketIn, ticketId, remove = fal
 	try {
 		data = proxy.readQuery(queryOptions);
 	} catch (error) {
-		data = {};
+		data = {
+			espressoPrices: DEFAULT_ENTITY_LIST_DATA('Prices'),
+		};
 	}
 
 	const newTicketIn: string[] = remove ? ticketIn.filter((id) => id !== ticketId) : [...ticketIn, ticketId];
-	const priceNodes = pathOr([], ['nodes'], prices);
+	const priceNodes = pathOr<Price[]>([], ['nodes'], prices);
+	const pathToNodes = ['espressoPrices', 'nodes'];
 
-	let newData: any;
 	if (!remove && priceNodes.length) {
-		const pathToNodes = ['prices', 'nodes'];
-		const existingPrices: Price[] = pathOr([], pathToNodes, data);
-		newData = assocPath(pathToNodes, [...existingPrices, ...priceNodes], data);
+		const existingPrices: Price[] = pathOr<Price[]>([], pathToNodes, data);
+		data = assocPath(pathToNodes, [...existingPrices, ...priceNodes], data);
+	}
+	const nodes = pathOr<Price[]>([], pathToNodes, data);
+	// if there are no prices
+	if (!nodes.length) {
+		return;
 	}
 
 	// write the data to cache without
 	// mutating the cache directly
 	const writeOptions: WriteQueryOptions = {
 		query: GET_PRICES,
-		data: newData || data,
+		data,
 		variables: {
 			where: {
 				ticketIn: newTicketIn,

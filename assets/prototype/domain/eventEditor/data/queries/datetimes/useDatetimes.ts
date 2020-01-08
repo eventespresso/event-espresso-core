@@ -20,7 +20,7 @@ const useDatetimes = (): Datetime[] => {
 		data = {};
 	}
 
-	return R.pathOr([], ['espressoDatetimes', 'nodes'], data);
+	return R.pathOr<Datetime[]>([], ['espressoDatetimes', 'nodes'], data);
 };
 
 export default useDatetimes;

@@ -46,8 +46,8 @@ describe('deleteDatetime', () => {
 		expect(mutationData).toEqual(mockResult.data);
 		const pathToId = ['deleteEspressoDatetime', 'espressoDatetime', 'name'];
 
-		const idFromMutationData = path(pathToId, mutationData);
-		const idFromMockData = path(pathToId, mockResult.data);
+		const idFromMutationData = path<string>(pathToId, mutationData);
+		const idFromMockData = path<string>(pathToId, mockResult.data);
 
 		expect(idFromMutationData).toEqual(idFromMockData);
 	});
@@ -95,6 +95,4 @@ describe('deleteDatetime', () => {
 			expect(relatedDatetimeIds).not.toContain(mockedDatetime.id);
 		});
 	});
-
-	/* @todo: Add more test cases after testing ticket mutations */
 });

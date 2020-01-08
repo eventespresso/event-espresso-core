@@ -48,8 +48,8 @@ describe('createDatetime', () => {
 		expect(mutationData).toEqual(mockResult.data);
 		const pathToName = ['createEspressoDatetime', 'espressoDatetime', 'name'];
 
-		const nameFromMutationData = path(pathToName, mutationData);
-		const nameFromMockData = path(pathToName, mockResult.data);
+		const nameFromMutationData = path<string>(pathToName, mutationData);
+		const nameFromMockData = path<string>(pathToName, mockResult.data);
 
 		expect(nameFromMutationData).toEqual(nameFromMockData);
 	});
