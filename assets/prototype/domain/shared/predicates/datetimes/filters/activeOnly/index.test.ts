@@ -1,4 +1,4 @@
-import dates from '../tests/data';
+import { nodes as dates } from '../../../../../eventEditor/data/queries/datetimes/test/data';
 import activeOnly from './index';
 
 describe('activeOnly', () => {

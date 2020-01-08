@@ -1,5 +1,5 @@
-import dates from '../tests/data';
 import activeUpcoming from '.';
+import { nodes as dates } from '../../../../../eventEditor/data/queries/datetimes/test/data';
 
 describe('activeUpcoming', () => {
 	it('Should return an array of dates which are active OR upcoming', () => {
