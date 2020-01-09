@@ -158,11 +158,14 @@ class PreviewEventDeletion extends JobHandler
      * Performs any clean-up logic when we know the job is completed
      * @param JobParameters $job_parameters
      * @return JobStepResponse
-     * @throws BatchRequestException
      */
     public function cleanup_job(JobParameters $job_parameters)
     {
         // Nothing much to do. We can't delete the option with the built tree because we may need it in a moment for the deletion
+        return new JobStepResponse(
+            $job_parameters,
+            esc_html__('All done', 'event_espresso')
+        );
     }
 }
 // End of file EventDeletion.php

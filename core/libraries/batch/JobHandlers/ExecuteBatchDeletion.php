@@ -157,7 +157,6 @@ class ExecuteBatchDeletion extends JobHandler
      * Performs any clean-up logic when we know the job is completed
      * @param JobParameters $job_parameters
      * @return JobStepResponse
-     * @throws BatchRequestException
      */
     public function cleanup_job(JobParameters $job_parameters)
     {
@@ -180,6 +179,10 @@ class ExecuteBatchDeletion extends JobHandler
             ))->save();
             do_action('AHEE__Events_Admin_Page___permanently_delete_event__after_event_deleted', $event_id);
         }
+        return new JobStepResponse(
+            $job_parameters,
+            esc_html__('All done', 'event_espresso')
+        );
     }
 }
 // End of file EventDeletion.php

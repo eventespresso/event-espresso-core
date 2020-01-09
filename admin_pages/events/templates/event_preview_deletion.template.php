@@ -47,7 +47,7 @@
     <?php
     printf(
         esc_html(
-            _n('$1%d Registration', '%1$d Registrations', $reg_count, 'event_espresso')
+            _n('%1$d Registration', '%1$d Registrations', $reg_count, 'event_espresso')
         ),
         $reg_count
     );
