@@ -2,7 +2,7 @@
  * Internal dependencies
  */
 import soldOutOnly from './index';
-import { Status } from '../../../../../eventEditor/data/date/types';
+import { Status } from '../../../../../eventEditor/data/types';
 
 describe('soldOutOnly', () => {
 	it('Should return empty array if dates are not active, nor upcoming', () => {

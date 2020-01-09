@@ -26,13 +26,3 @@ export enum ShowDates {
 	trashedOnly = 'trashedOnly',
 	upcomingOnly = 'upcomingOnly',
 }
-
-export enum Status {
-	soldOut = 'DTS',
-	active = 'DTA',
-	upcoming = 'DTU',
-	postponed = 'DTP',
-	cancelled = 'DTC',
-	expired = 'DTE',
-	inactive = 'DTI',
-}

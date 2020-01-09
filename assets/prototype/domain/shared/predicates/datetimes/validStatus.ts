@@ -7,7 +7,7 @@ import { is } from 'ramda';
  * Internal dependencies
  */
 import { Datetime } from '../../../eventEditor/data/types';
-import { Status } from '../../../eventEditor/data/date/types';
+import { Status } from '../../../eventEditor/data/types';
 
 const validStatus = ({ status }: Datetime): boolean => {
 	return is(String, status) && Object.values(Status).includes(status);

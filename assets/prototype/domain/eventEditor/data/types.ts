@@ -1,5 +1,3 @@
-import { Status } from './date/types';
-
 export type EntityId = string;
 
 export interface Entity {
@@ -13,6 +11,18 @@ export interface EntityEdge {
 	nodes?: Entity[];
 	__typename?: string;
 }
+
+export enum Status {
+	soldOut = 'DTS',
+	active = 'DTA',
+	upcoming = 'DTU',
+	postponed = 'DTP',
+	cancelled = 'DTC',
+	expired = 'DTE',
+	inactive = 'DTI',
+}
+
+type StatusType = typeof Status[keyof typeof Status];
 
 export interface Datetime extends Entity {
 	capacity?: number;
@@ -29,7 +39,7 @@ export interface Datetime extends Entity {
 	reserved?: number;
 	sold?: number;
 	startDate?: string;
-	status?: keyof typeof Status;
+	status?: StatusType;
 }
 
 export interface DatetimeEdge extends EntityEdge {

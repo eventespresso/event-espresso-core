@@ -1,5 +1,5 @@
 import { Datetime } from '../../../../../eventEditor/data/types';
-import { Status } from '../../../../../eventEditor/data/date/types';
+import { Status } from '../../../../../eventEditor/data/types';
 
 const dates: Datetime[] = [
 	{

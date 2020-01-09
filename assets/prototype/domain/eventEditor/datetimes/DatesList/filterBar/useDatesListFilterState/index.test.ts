@@ -3,7 +3,7 @@ import * as R from 'ramda';
 import { formatISO, subWeeks } from 'date-fns';
 import { Datetime } from '../../../../data/types';
 import { DatesSortedBy, DisplayDates, ShowDates } from '../../../../data/date/types';
-import { Status } from '../../../../../eventEditor/data/date/types';
+import { Status } from '../../../../../eventEditor/data/types';
 
 import useDatesListFilterState from './index';
 
