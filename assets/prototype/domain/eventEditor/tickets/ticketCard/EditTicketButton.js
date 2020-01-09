@@ -3,7 +3,8 @@ import { Button } from '@blueprintjs/core/lib/esm';
 import { TicketContext } from '../../context/TicketProvider';
 
 const EditTicketButton = ({ position }) => {
-	const { setIsOpen } = useContext(TicketContext);
+	const { editors, editorState } = useContext(TicketContext);
+	const setIsOpen = editorState.setIsOpen(editors.editForm);
 
 	const style = {
 		position: 'absolute',
@@ -17,7 +18,7 @@ const EditTicketButton = ({ position }) => {
 
 	return (
 		<div style={style}>
-			<Button icon={'edit'} onClick={() => setIsOpen()} minimal />
+			<Button icon={'edit'} onClick={setIsOpen} minimal />
 		</div>
 	);
 };
