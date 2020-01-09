@@ -12,21 +12,21 @@ import {
 	EditorIds,
 } from '../../../../application/ui/components/layout/editor-modal/useEditorModalState/types';
 import useEditorModalState from '../../../../application/ui/components/layout/editor-modal/useEditorModalState';
-import useTicketEditorId from './useTicketEditorId';
+import useDateEditorId from './useDateEditorId';
 
-export const TicketContext = createContext({} as ContextProps);
+export const DateTimeContext = createContext({} as ContextProps);
 
-interface TicketProviderProps {
+interface DatetimeProviderProps {
 	children: React.ReactChildren;
 	id: EntityId;
 }
 
-const TicketProvider = ({ children, id }: TicketProviderProps) => {
+const DateTimeProvider = ({ children, id }: DatetimeProviderProps) => {
 	const { closeAllEditors, currentlyOpenEditor, getIsOpen, onClose, setIsOpen } = useEditorModalState(id);
 	const editorIds: EditorIds = {
-		calculator: useTicketEditorId('price-calculator', id),
-		editForm: useTicketEditorId('ticket-editor', id),
-		relations: useTicketEditorId('ticket-relations', id),
+		calculator: useDateEditorId('price-calculator', id),
+		editForm: useDateEditorId('date-editor', id),
+		relations: useDateEditorId('date-relations', id),
 	};
 
 	const editorState = {
@@ -43,7 +43,7 @@ const TicketProvider = ({ children, id }: TicketProviderProps) => {
 		id,
 	};
 
-	return <TicketContext.Provider value={value}>{children}</TicketContext.Provider>;
+	return <DateTimeContext.Provider value={value}>{children}</DateTimeContext.Provider>;
 };
 
-export default TicketProvider;
+export default DateTimeProvider;
