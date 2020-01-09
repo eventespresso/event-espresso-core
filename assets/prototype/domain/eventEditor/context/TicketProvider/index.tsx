@@ -9,12 +9,13 @@ import React, { createContext } from 'react';
 import { EntityId } from '../../data/types';
 import {
 	ContextProps,
-	EditorIds,
+	Editors,
 } from '../../../../application/ui/components/layout/editor-modal/useEditorModalState/types';
 import useEditorModalState from '../../../../application/ui/components/layout/editor-modal/useEditorModalState';
 import useTicketEditorId from './useTicketEditorId';
 
-export const TicketContext = createContext({} as ContextProps);
+export interface TicketContextProps extends ContextProps {}
+export const TicketContext = createContext({} as TicketContextProps);
 
 interface TicketProviderProps {
 	children: React.ReactChildren;
@@ -22,23 +23,14 @@ interface TicketProviderProps {
 }
 
 const TicketProvider = ({ children, id }: TicketProviderProps) => {
-	const { closeAllEditors, currentlyOpenEditor, getIsOpen, onClose, setIsOpen } = useEditorModalState(id);
-	const editorIds: EditorIds = {
+	const editorState = useEditorModalState(id);
+	const editors: Editors = {
 		calculator: useTicketEditorId('price-calculator', id),
-		editForm: useTicketEditorId('ticket-editor', id),
+		editForm: useTicketEditorId('edit-ticket-form', id),
 		relations: useTicketEditorId('ticket-relations', id),
 	};
-
-	const editorState = {
-		closeAllEditors,
-		currentlyOpenEditor,
-		getIsOpen,
-		onClose,
-		setIsOpen,
-	};
-
-	const value = {
-		editorIds,
+	const value: TicketContextProps = {
+		editors,
 		editorState,
 		id,
 	};
