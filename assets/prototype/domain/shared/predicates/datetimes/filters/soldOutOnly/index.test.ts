@@ -14,7 +14,7 @@ describe('soldOutOnly', () => {
 		expect(filteredDates).toEqual([]);
 	});
 
-	it('Should return an array of soldOutOnly date when isSoldOut is true and have a valid status', () => {
+	it('Should return an array of soldOutOnly dates when isSoldOut is true and have a valid status', () => {
 		const filteredDates = soldOutOnly([
 			{ id: 'abc', isActive: false },
 			{ id: 'def', isSoldOut: true, status: 'ACTIVE' },
@@ -26,7 +26,7 @@ describe('soldOutOnly', () => {
 		expect(filteredDates[1].id).toBe('xyz');
 	});
 
-	it('Should return an array of soldOutOnly date when isSoldOut is true and have a valid status', () => {
+	it('Should return an array of soldOutOnly dates when capacity is equal to amount sold', () => {
 		const filteredDates = soldOutOnly([
 			{ id: 'abc', capacity: 2, sold: 2 },
 			{ id: 'def', capacity: 20, sold: 10 },

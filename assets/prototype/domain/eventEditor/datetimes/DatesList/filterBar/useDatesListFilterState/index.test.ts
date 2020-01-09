@@ -253,20 +253,6 @@ describe('useDatesListFilterState', () => {
 		expect(dates[0].isUpcoming).toBe(true);
 	});
 
-	test('should update processedDates to reflect changes made by invoking setShowDates with soldOutOnly filter', () => {
-		const { result } = renderHook(() => useDatesListFilterState(datetimes));
-
-		act(() => {
-			result.current.setShowDates(ShowDates.soldOutOnly);
-		});
-		const dates = result.current.processedDates;
-
-		expect(dates.length).toBe(3);
-		expect(dates[0].isSoldOut).toBe(true);
-		expect(dates[1].capacity).toBe(20);
-		expect(dates[1].sold).toBe(20);
-	});
-
 	test('should update processedDates to reflect changes made by invoking setShowDates with expiredOnly filter', () => {
 		const { result } = renderHook(() => useDatesListFilterState(datetimes));
 
