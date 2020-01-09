@@ -3,22 +3,40 @@
  */
 import { EntityId } from '../../../../../../domain/eventEditor/data/types';
 
-export interface ContextProps {
-	editorIds: EditorIds;
+enum ActionType {
+	CLOSE_ALL = 'CLOSE_ALL',
+	CLOSE_EDITOR = 'CLOSE_EDITOR',
+	OPEN_EDITOR = 'OPEN_EDITOR',
+}
+
+interface ContextProps {
+	editors: Editors;
 	editorState: EditorState;
 	id: EntityId;
 }
 
-export interface EditorIds {
-	calculator: string;
-	editForm: string;
-	relations: string;
+type EditorAction = {
+	editorId?: EditorId;
+	type: ActionType;
+};
+
+type EditorId = string;
+
+interface Editors {
+	calculator?: string;
+	editForm?: string;
+	relations?: string;
 }
 
-export interface EditorState {
+type EditorStack = string[];
+
+interface EditorState {
 	closeAllEditors: () => void;
-	currentlyOpenEditor: () => string | undefined;
-	getIsOpen: (arg: string) => boolean;
-	onClose: (arg: string) => void;
-	setIsOpen: (arg: string) => void;
+	currentlyOpenEditor: () => EditorId | undefined;
+	getIsOpen: (editorId: EditorId) => boolean;
+	onClose: (editorId: EditorId) => void;
+	openEditor: (editorId: EditorId) => void;
+	setIsOpen: (editorId: EditorId) => void;
 }
+
+export { ActionType, ContextProps, EditorAction, EditorId, Editors, EditorStack, EditorState };
