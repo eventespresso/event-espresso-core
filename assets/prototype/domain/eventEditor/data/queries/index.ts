@@ -5,7 +5,7 @@ import { GET_PRICE_TYPE, GET_PRICE_TYPES } from './priceTypes';
 import { GET_CURRENT_USER } from './currentUser';
 import { GET_GENERAL_SETTINGS } from './generalSettings';
 
-import { EntityListName } from './types';
+import { EntityEdge, DatetimeEdge, TicketEdge, PriceEdge, PriceTypeEdge } from '../types';
 
 export const queries = {
 	/* datetimes */
@@ -25,9 +25,27 @@ export const queries = {
 	GET_GENERAL_SETTINGS,
 };
 
-export const DEFAULT_ENTITY_LIST_DATA = (entity: EntityListName) => {
-	return {
-		nodes: [],
-		__typename: `EspressoRootQuery${entity}Connection`,
-	};
+export const DEFAULT_ENTITY_LIST_DATA: EntityEdge = {
+	nodes: [],
+	__typename: '',
+};
+
+export const DEFAULT_DATETIME_LIST_DATA: DatetimeEdge = {
+	...DEFAULT_ENTITY_LIST_DATA,
+	__typename: 'EspressoRootQueryDatetimesConnection',
+};
+
+export const DEFAULT_TICKET_LIST_DATA: TicketEdge = {
+	...DEFAULT_ENTITY_LIST_DATA,
+	__typename: 'EspressoRootQueryTicketsConnection',
+};
+
+export const DEFAULT_PRICE_LIST_DATA: PriceEdge = {
+	...DEFAULT_ENTITY_LIST_DATA,
+	__typename: 'EspressoRootQueryPricesConnection',
+};
+
+export const DEFAULT_PRICE_TYPE_LIST_DATA: PriceTypeEdge = {
+	...DEFAULT_ENTITY_LIST_DATA,
+	__typename: 'EspressoRootQueryPriceTypesConnection',
 };
