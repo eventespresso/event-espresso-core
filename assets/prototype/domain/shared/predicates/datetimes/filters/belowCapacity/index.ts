@@ -1,14 +1,8 @@
 /**
- * External dependencies
- */
-import { is } from 'ramda';
-
-/**
  * Internal dependencies
  */
-import capacityBelow from './capacityBelow';
-import isTrashed from '../../isTrashed';
 import { Datetime } from '../../../../../eventEditor/data/types';
+import filter from './filter';
 
 type BelowCapacityProps = {
 	capacity: number;
@@ -16,11 +10,7 @@ type BelowCapacityProps = {
 };
 
 const belowCapacity = ({ capacity, dates }: BelowCapacityProps): Datetime[] | [] => {
-	const filterFn = (date: Datetime) => {
-		return !isTrashed(date) && capacityBelow({ capacity, date });
-	};
-
-	return dates.filter(filterFn);
+	return dates.filter((date) => filter({ capacity, date }));
 };
 
 export default belowCapacity;
