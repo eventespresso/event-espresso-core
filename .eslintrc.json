@@ -9,13 +9,14 @@
 		"plugin:jest/recommended",
 		"plugin:react/recommended",
 		"prettier/react",
-		"plugin:prettier/recommended"
+		"plugin:prettier/recommended",
+		"plugin:@typescript-eslint/recommended"
 	],
 	"globals": {
 		"Atomics": "readonly",
 		"SharedArrayBuffer": "readonly"
 	},
-	"parser": "babel-eslint",
+	"parser": "@typescript-eslint/parser",
 	"parserOptions": {
 		"ecmaFeatures": {
 			"jsx": true
@@ -23,9 +24,7 @@
 		"ecmaVersion": 2018,
 		"sourceType": "module"
 	},
-	"plugins": [
-		"react-hooks"
-	],
+	"plugins": ["react-hooks"],
 	"rules": {
 		"comma-dangle": "off",
 		"jest/valid-describe": "off",
@@ -34,13 +33,12 @@
 		"react-hooks/exhaustive-deps": "off",
 		"react/prop-types": "off",
 		"react/static-property-placement": "off",
-		"react/display-name": "off"
+		"react/display-name": "off",
+		"@typescript-eslint/no-explicit-any": "off"
 	},
 	"overrides": [
 		{
-			"files": [
-				"test/e2e/**/*.js"
-			],
+			"files": ["test/e2e/**/*.js"],
 			"globals": {
 				"page": true,
 				"browser": true,
@@ -52,9 +50,7 @@
 			}
 		},
 		{
-			"files": [
-				"*.js"
-			],
+			"files": ["*.js"],
 			"rules": {
 				"react/react-in-jsx-scope": "off"
 			},
