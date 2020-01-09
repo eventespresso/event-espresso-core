@@ -7,12 +7,21 @@ use EE_Error;
 use EED_Batch;
 use EEH_URL;
 use EventEspresso\admin_pages\events\form_sections\ConfirmEventDeletionForm;
+use EventEspresso\core\exceptions\InvalidDataTypeException;
+use EventEspresso\core\exceptions\InvalidInterfaceException;
+use EventEspresso\core\exceptions\UnexpectedEntityException;
 use EventEspresso\core\services\orm\tree_traversal\NodeGroupDao;
+use Events_Admin_Page;
+use InvalidArgumentException;
+use ReflectionException;
 
 /**
  * Class ConfirmDeletion
  *
- * Description
+ * Controller-like logic for redirecting to the batch job for deleting model objects if the request data for
+ * ConfirmEventDeletionForm is valid, otherwise providing an error message and redirecting back to the deletion preview
+ * page (the forms system takes care of stashing the invalid form submission data and then populating that form with
+ * it).
  *
  * @package     Event Espresso
  * @author         Mike Nelson
@@ -32,23 +41,24 @@ class ConfirmDeletion
      */
     public function __construct(
         NodeGroupDao $dao
-    )
-    {
+    ) {
 
         $this->dao = $dao;
     }
 
     /**
+     * Redirects to the batch job for deleting events if the form submission is valid, otherwise back to the deletion
+     * preview page.
      * @since $VID:$
-     * @param \Events_Admin_Page $admin_page
+     * @param Events_Admin_Page $admin_page
      * @throws EE_Error
-     * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
-     * @throws \EventEspresso\core\exceptions\InvalidInterfaceException
-     * @throws \EventEspresso\core\exceptions\UnexpectedEntityException
-     * @throws \InvalidArgumentException
-     * @throws \ReflectionException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws UnexpectedEntityException
+     * @throws InvalidArgumentException
+     * @throws ReflectionException
      */
-    public function handle(\Events_Admin_Page $admin_page)
+    public function handle(Events_Admin_Page $admin_page)
     {
         $request_data = $admin_page->get_request_data();
         $deletion_job_code = isset($request_data['deletion_job_code']) ? sanitize_key($request_data['deletion_job_code']) : '';

@@ -15,7 +15,8 @@ use Events_Admin_Page;
 /**
  * Class PreviewDeletion
  *
- * Description
+ * Displays the important data that will be deleted. If the form had been submitted earlier but wasn't valid, the
+ * user is redirected here, and the forms system takes care of populating the form with that invalid data.
  *
  * @package     Event Espresso
  * @author         Mike Nelson
@@ -56,14 +57,25 @@ class PreviewDeletion
         EEM_Event $event_model,
         EEM_Datetime $datetime_model,
         EEM_Registration $registration_model
-    )
-    {
+    ) {
         $this->dao = $dao;
         $this->event_model = $event_model;
         $this->datetime_model = $datetime_model;
         $this->registration_model = $registration_model;
     }
 
+    /**
+     * Renders the preview deletion page.
+     * @since $VID:$
+     * @param Events_Admin_Page $admin_page
+     * @throws UnexpectedEntityException
+     * @throws \DomainException
+     * @throws \EE_Error
+     * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
+     * @throws \EventEspresso\core\exceptions\InvalidInterfaceException
+     * @throws \InvalidArgumentException
+     * @throws \ReflectionException
+     */
     public function handle(Events_Admin_Page $admin_page)
     {
         $request_data = $admin_page->get_request_data();
