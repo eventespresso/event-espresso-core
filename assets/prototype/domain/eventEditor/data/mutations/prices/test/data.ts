@@ -1,4 +1,4 @@
-import { pickBy } from 'ramda';
+import { pickBy, omit } from 'ramda';
 import { nodes as prices } from '../../../queries/prices/test/data';
 import { ReadQueryOptions } from '../../../queries/types';
 import { MutationInput, MutationType } from '../../../../../../application/services/apollo/mutations/types';
@@ -21,7 +21,7 @@ export const getMutationMocks = (mutationInput: MutationInput, mutationType: Mut
 };
 
 export const getMockRequest = (mutationInput: MutationInput, mutationType: MutationType): ReadQueryOptions => {
-	const input: MutationInput = {
+	let input: MutationInput = {
 		clientMutationId: `${mutationType}_PRICE`,
 		...mutationInput,
 	};
@@ -30,7 +30,7 @@ export const getMockRequest = (mutationInput: MutationInput, mutationType: Mutat
 	}
 
 	// Avoid ticketId being part of the request
-	delete input.ticketId;
+	input = omit<MutationInput, string>(['ticketId'], input);
 
 	return {
 		query: mutations[`${mutationType}_PRICE`],
