@@ -8,7 +8,7 @@ use EEM_Ticket;
 use EventEspresso\core\exceptions\InvalidClassException;
 use EventEspresso\core\services\loaders\LoaderFactory;
 use EventEspresso\core\services\orm\tree_traversal\ModelObjNode;
-use EventEspresso\core\services\orm\tree_traversal\ModelObjNodeGroupPersister;
+use EventEspresso\core\services\orm\tree_traversal\NodeGroupDao;
 use EventEspressoBatchRequest\Helpers\BatchRequestException;
 use EventEspressoBatchRequest\Helpers\JobParameters;
 use EventEspressoBatchRequest\Helpers\JobStepResponse;
@@ -29,10 +29,10 @@ class PreviewEventDeletion extends JobHandler
 {
 
     /**
-     * @var ModelObjNodeGroupPersister
+     * @var NodeGroupDao
      */
     protected $model_obj_node_group_persister;
-    public function __construct(ModelObjNodeGroupPersister $model_obj_node_group_persister)
+    public function __construct(NodeGroupDao $model_obj_node_group_persister)
     {
         $this->model_obj_node_group_persister = $model_obj_node_group_persister;
     }

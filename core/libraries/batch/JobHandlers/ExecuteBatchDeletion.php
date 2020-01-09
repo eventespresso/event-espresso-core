@@ -12,7 +12,7 @@ use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
 use EventEspresso\core\exceptions\UnexpectedEntityException;
 use EventEspresso\core\services\loaders\LoaderFactory;
-use EventEspresso\core\services\orm\tree_traversal\ModelObjNodeGroupPersister;
+use EventEspresso\core\services\orm\tree_traversal\NodeGroupDao;
 use EventEspresso\core\services\orm\tree_traversal\ModelObjNode;
 use EventEspressoBatchRequest\Helpers\BatchRequestException;
 use EventEspressoBatchRequest\Helpers\JobParameters;
@@ -33,10 +33,10 @@ use InvalidArgumentException;
 class ExecuteBatchDeletion extends JobHandler
 {
     /**
-     * @var ModelObjNodeGroupPersister
+     * @var NodeGroupDao
      */
     protected $model_obj_node_group_persister;
-    public function __construct(ModelObjNodeGroupPersister $model_obj_node_group_persister)
+    public function __construct(NodeGroupDao $model_obj_node_group_persister)
     {
         $this->model_obj_node_group_persister = $model_obj_node_group_persister;
     }

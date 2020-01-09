@@ -11,7 +11,7 @@ use InvalidArgumentException;
 use ReflectionException;
 
 /**
- * Class ModelObjNodeGroupPersister
+ * Class NodeGroupDao
  *
  * Used to store, retrieve, and delete a group of ModelObjNodes.
  *
@@ -20,7 +20,7 @@ use ReflectionException;
  * @since         $VID:$
  *
  */
-class ModelObjNodeGroupPersister
+class NodeGroupDao
 {
     /**
      * @since $VID:$
@@ -129,5 +129,5 @@ class ModelObjNodeGroupPersister
         return delete_option($this->getOptionPrefix() . $code);
     }
 }
-// End of file Persister.php
-// Location: EventEspresso\core\services\orm\tree_traversal/Persister.php
+// End of file NodeGroupDao.php
+// Location: EventEspresso\core\services\orm\tree_traversal/NodeGroupDao.php
