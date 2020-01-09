@@ -2,13 +2,13 @@
  * Internal dependencies
  */
 import { EntityId } from '../../data/types';
+import { EditorId } from '../../../../application/ui/components/layout/editor-modal/useEditorModalState/types';
 
 /**
  * Function that returns editor id for a given event date
  */
-const useDateEditorId = (dateId: EntityId, prefix: string = ''): string => {
-	const editorId: string = `event-date-editor-${dateId}`;
-	return prefix !== '' ? `${prefix}-${editorId}` : editorId;
+const useDateEditorId = (prefix: string = 'datetime-editor', datetimeId: EntityId): EditorId => {
+	return prefix !== '' ? `${prefix}-${datetimeId}` : `datetime-editor-${datetimeId}`;
 };
 
 export default useDateEditorId;
