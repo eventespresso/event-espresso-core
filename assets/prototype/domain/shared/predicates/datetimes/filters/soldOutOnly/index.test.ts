@@ -2,14 +2,14 @@
  * Internal dependencies
  */
 import soldOutOnly from './index';
-import { Status } from '../../../../../eventEditor/data/types';
+import { DatetimeStatus } from '../../../../../eventEditor/data/types';
 
 describe('soldOutOnly', () => {
 	it('Should return empty array if dates are not active, nor upcoming', () => {
 		const filteredDates = soldOutOnly([
 			{ id: 'abc', isDeleted: true },
 			{ id: 'def', isSoldOut: false },
-			{ id: 'def', status: Status.active },
+			{ id: 'def', status: DatetimeStatus.active },
 		]);
 
 		expect(filteredDates).toEqual([]);
@@ -18,8 +18,8 @@ describe('soldOutOnly', () => {
 	it('Should return an array of soldOutOnly dates when isSoldOut is true and have a valid status', () => {
 		const filteredDates = soldOutOnly([
 			{ id: 'abc', isActive: false },
-			{ id: 'def', isSoldOut: true, status: Status.soldOut },
-			{ id: 'xyz', isSoldOut: true, status: Status.soldOut },
+			{ id: 'def', isSoldOut: true, status: DatetimeStatus.soldOut },
+			{ id: 'xyz', isSoldOut: true, status: DatetimeStatus.soldOut },
 		]);
 
 		expect(filteredDates.length).toBe(2);

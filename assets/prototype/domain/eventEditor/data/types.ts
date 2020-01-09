@@ -12,7 +12,7 @@ export interface EntityEdge {
 	__typename?: string;
 }
 
-export enum Status {
+export enum DatetimeStatus {
 	soldOut = 'DTS',
 	active = 'DTA',
 	upcoming = 'DTU',
@@ -37,7 +37,7 @@ export interface Datetime extends Entity {
 	reserved?: number;
 	sold?: number;
 	startDate?: string;
-	status?: string;
+	status?: DatetimeStatus;
 }
 
 export interface DatetimeEdge extends EntityEdge {

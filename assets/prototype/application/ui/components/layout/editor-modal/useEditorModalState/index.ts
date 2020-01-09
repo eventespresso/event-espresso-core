@@ -56,7 +56,6 @@ const useEditorModalState = (id: EntityId) => {
 	};
 
 	const closeEditor = (editorId: string): void => {
-		console.log({ editorId });
 		dispatch({
 			type: ActionType.CLOSE_EDITOR,
 			editorId,

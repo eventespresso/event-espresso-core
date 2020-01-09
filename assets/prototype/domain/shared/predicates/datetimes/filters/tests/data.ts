@@ -1,5 +1,5 @@
 import { Datetime } from '../../../../../eventEditor/data/types';
-import { Status } from '../../../../../eventEditor/data/types';
+import { DatetimeStatus } from '../../../../../eventEditor/data/types';
 
 const dates: Datetime[] = [
 	{
@@ -13,28 +13,28 @@ const dates: Datetime[] = [
 		capacity: 10,
 		isActive: true,
 		sold: 5,
-		status: Status.active,
+		status: DatetimeStatus.active,
 	},
 	{
 		id: 'RGF0ZXRpbWU6ODM=',
 		capacity: 10,
 		isActive: true,
 		sold: 6,
-		status: Status.active,
+		status: DatetimeStatus.active,
 	},
 	{
 		id: 'RGF0ZXRpbWU6ODM=',
 		capacity: 10,
 		isActive: true,
 		sold: 7,
-		status: Status.active,
+		status: DatetimeStatus.active,
 	},
 	{
 		id: 'RGF0ZXRpbWU6ODM=',
 		capacity: 10,
 		isActive: true,
 		sold: 8,
-		status: Status.active,
+		status: DatetimeStatus.active,
 	},
 	{
 		id: 'RGF0ZXRpbWU6ODM=',
@@ -42,7 +42,7 @@ const dates: Datetime[] = [
 		isActive: false,
 		isUpcoming: true,
 		sold: 9,
-		status: Status.active,
+		status: DatetimeStatus.active,
 	},
 	{
 		id: 'RGF0ZXRpbWU6ODM=',
@@ -50,7 +50,7 @@ const dates: Datetime[] = [
 		isActive: false,
 		isUpcoming: true,
 		sold: 10,
-		status: Status.active,
+		status: DatetimeStatus.active,
 	},
 ];
 
