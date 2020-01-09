@@ -2,15 +2,21 @@
 
 namespace EventEspresso\core\domain\services\admin\events\data;
 
+use DomainException;
 use EE_Admin_Page;
+use EE_Error;
 use EEH_Template;
 use EEM_Datetime;
 use EEM_Event;
 use EEM_Registration;
 use EventEspresso\admin_pages\events\form_sections\ConfirmEventDeletionForm;
+use EventEspresso\core\exceptions\InvalidDataTypeException;
+use EventEspresso\core\exceptions\InvalidInterfaceException;
 use EventEspresso\core\exceptions\UnexpectedEntityException;
 use EventEspresso\core\services\orm\tree_traversal\NodeGroupDao;
 use Events_Admin_Page;
+use InvalidArgumentException;
+use ReflectionException;
 
 /**
  * Class PreviewDeletion
@@ -67,18 +73,19 @@ class PreviewDeletion
     /**
      * Renders the preview deletion page.
      * @since $VID:$
-     * @param Events_Admin_Page $admin_page
+     * @param $request_data
+     * @param $admin_base_url
+     * @return array
      * @throws UnexpectedEntityException
-     * @throws \DomainException
-     * @throws \EE_Error
-     * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
-     * @throws \EventEspresso\core\exceptions\InvalidInterfaceException
-     * @throws \InvalidArgumentException
-     * @throws \ReflectionException
+     * @throws DomainException
+     * @throws EE_Error
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws InvalidArgumentException
+     * @throws ReflectionException
      */
-    public function handle(Events_Admin_Page $admin_page)
+    public function handle($request_data, $admin_base_url)
     {
-        $request_data = $admin_page->get_request_data();
         $deletion_job_code = isset($request_data['deletion_job_code']) ? sanitize_key($request_data['deletion_job_code']) : '';
         $models_and_ids_to_delete = $this->dao->getModelsAndIdsFromGroup($deletion_job_code);
         $event_ids = isset($models_and_ids_to_delete['Event']) ? $models_and_ids_to_delete['Event'] : array();
@@ -126,27 +133,24 @@ class PreviewDeletion
             'action' => 'confirm_deletion',
             'deletion_job_code' => $deletion_job_code
         ];
-        $admin_page->set_template_args(
-            [
-                'admin_page_content' => EEH_Template::display_template(
-                    EVENTS_TEMPLATE_PATH . 'event_preview_deletion.template.php',
-                    [
-                        'form_url' => EE_Admin_Page::add_query_args_and_nonce(
-                            $confirm_deletion_args,
-                            $admin_page->admin_base_url()
-                        ),
-                        'form' => $form,
-                        'events' => $events,
-                        'datetimes' => $datetimes,
-                        'registrations' => $registrations,
-                        'reg_count' => $reg_count,
-                        'num_registrations_to_show' => $num_registrations_to_show
-                    ],
-                    true
-                )
-            ]
-        );
-        $admin_page->display_admin_page_with_no_sidebar();
+        return [
+            'admin_page_content' => EEH_Template::display_template(
+                EVENTS_TEMPLATE_PATH . 'event_preview_deletion.template.php',
+                [
+                    'form_url' => EE_Admin_Page::add_query_args_and_nonce(
+                        $confirm_deletion_args,
+                        $admin_base_url
+                    ),
+                    'form' => $form,
+                    'events' => $events,
+                    'datetimes' => $datetimes,
+                    'registrations' => $registrations,
+                    'reg_count' => $reg_count,
+                    'num_registrations_to_show' => $num_registrations_to_show
+                ],
+                true
+            )
+        ];
     }
 }
 // End of file PreviewDeletion.php

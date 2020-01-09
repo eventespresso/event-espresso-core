@@ -50,17 +50,17 @@ class ConfirmDeletion
      * Redirects to the batch job for deleting events if the form submission is valid, otherwise back to the deletion
      * preview page.
      * @since $VID:$
-     * @param Events_Admin_Page $admin_page
+     * @param $request_data
+     * @param $admin_base_url
      * @throws EE_Error
+     * @throws InvalidArgumentException
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
-     * @throws UnexpectedEntityException
-     * @throws InvalidArgumentException
      * @throws ReflectionException
+     * @throws UnexpectedEntityException
      */
-    public function handle(Events_Admin_Page $admin_page)
+    public function handle($request_data, $admin_base_url)
     {
-        $request_data = $admin_page->get_request_data();
         $deletion_job_code = isset($request_data['deletion_job_code']) ? sanitize_key($request_data['deletion_job_code']) : '';
         $models_and_ids_to_delete = $this->dao->getModelsAndIdsFromGroup($deletion_job_code);
         $form = new ConfirmEventDeletionForm($models_and_ids_to_delete['Event']);
@@ -106,7 +106,7 @@ class ConfirmDeletion
                     'action' => 'preview_deletion',
                     'deletion_job_code' => $deletion_job_code
                 ],
-                $admin_page->admin_base_url()
+                $admin_base_url
             )
         );
     }

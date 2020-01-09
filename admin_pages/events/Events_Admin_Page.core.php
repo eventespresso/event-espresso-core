@@ -2163,7 +2163,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
     protected function confirmDeletion()
     {
         $deletion_redirect_logic = $this->getLoader()->getShared('\EventEspresso\core\domain\services\admin\events\data\ConfirmDeletion');
-        return $deletion_redirect_logic->handle($this);
+        $deletion_redirect_logic->handle($this->get_request_data(), $this->admin_base_url());
     }
 
     /**
@@ -2174,7 +2174,8 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
     protected function previewDeletion()
     {
         $preview_deletion_logic = $this->getLoader()->getShared('\EventEspresso\core\domain\services\admin\events\data\PreviewDeletion');
-        return $preview_deletion_logic->handle($this);
+        $this->set_template_args($preview_deletion_logic->handle($this->get_request_data(), $this->admin_base_url()));
+        $this->display_admin_page_with_no_sidebar();
     }
 
     /**
