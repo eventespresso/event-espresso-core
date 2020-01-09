@@ -21,7 +21,7 @@ const useTickets = (): Ticket[] => {
 		data = {};
 	}
 
-	return pathOr([], ['espressoTickets', 'nodes'], data);
+	return pathOr<Ticket[]>([], ['espressoTickets', 'nodes'], data);
 };
 
 export default useTickets;

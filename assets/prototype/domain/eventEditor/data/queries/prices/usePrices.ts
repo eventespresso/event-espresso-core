@@ -27,7 +27,7 @@ const usePrices = (include: EntityId[] = []): Price[] => {
 		data = {};
 	}
 
-	const prices: Price[] = pathOr([], ['espressoPrices', 'nodes'], data);
+	const prices = pathOr<Price[]>([], ['espressoPrices', 'nodes'], data);
 	return include.length ? entitiesWithGuIdInArray(prices, include) : prices;
 };
 

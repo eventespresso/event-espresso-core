@@ -37,7 +37,7 @@ const useOnCreateTicket = (): TicketMutationCallbackFn => {
 			});
 
 			// Set relations with prices
-			const priceIds = pathOr([], ['nodes'], prices).map(({ id }: Price) => id);
+			const priceIds = pathOr<Price[]>([], ['nodes'], prices).map(({ id }: Price) => id);
 			updateRelations({
 				entity: 'tickets',
 				entityId: ticketId,
