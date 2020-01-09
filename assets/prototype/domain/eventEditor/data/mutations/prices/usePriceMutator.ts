@@ -1,4 +1,6 @@
 import { OperationVariables } from 'apollo-client';
+import { pathOr } from 'ramda';
+
 import usePriceQueryOptions from '../../queries/prices/usePriceQueryOptions';
 import useOnCreatePrice from './useOnCreatePrice';
 import useOnUpdatePrice from './useOnUpdatePrice';
@@ -11,8 +13,9 @@ import {
 	MutatorGeneratedObject,
 } from '../../../../../application/services/apollo/mutations/types';
 import { ReadQueryOptions } from '../../queries/types';
-import { Price } from '../../types';
+import { Price, PriceEdge } from '../../types';
 import { PriceMutationCallbackFn } from '../types';
+import { DEFAULT_ENTITY_LIST_DATA as DEFAULT_LIST_DATA } from '../../queries';
 
 /**
  *
@@ -48,7 +51,13 @@ const usePriceMutator = (): Mutator => {
 
 		const onUpdate = ({ proxy, entity: price }: OnUpdateFnOptions<Price>): void => {
 			// Read the existing data from cache.
-			const { espressoPrices: prices = {} } = proxy.readQuery(options);
+			let data: any;
+			try {
+				data = proxy.readQuery(options);
+			} catch (error) {
+				data = {};
+			}
+			const prices = pathOr<PriceEdge>(DEFAULT_LIST_DATA('Prices'), ['espressoPrices'], data);
 
 			switch (mutationType) {
 				case MutationType.Create:
