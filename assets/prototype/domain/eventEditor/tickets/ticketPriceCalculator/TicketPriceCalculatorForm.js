@@ -39,13 +39,13 @@ const TicketPriceCalculatorForm = ({ form, values: { ticket } }) => {
 						</tr>
 					</thead>
 					<tbody>
-						<FieldArray name={'prices'} /*  initialValue={prices} */>
+						<FieldArray name={'prices'}>
 							{({ fields }) => {
 								return fields.map((name, index) => {
 									const price = fields.value[index];
-									return price /* && price.id */ ? (
+									return price ? (
 										<TicketPriceModifierRow
-											key={`${price.id}:${index}`} /* Make the key unique even if price.id is empty */
+											key={`${price.id}:${index}`} // make key unique even if price.id is empty
 											index={index}
 											name={name}
 											fields={fields}
