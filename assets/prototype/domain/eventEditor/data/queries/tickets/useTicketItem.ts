@@ -4,9 +4,13 @@ import { GET_TICKET } from './';
 import { Ticket } from '../../types';
 import { EntityItemProps, ReadQueryOptions } from '../types';
 
+type TicketItemData = {
+	ticket: Ticket;
+};
+
 const useTicketItem = ({ id }: EntityItemProps): Ticket => {
 	const client = useApolloClient();
-	let data: any;
+	let data: TicketItemData;
 	let ticket: Ticket;
 
 	const queryOptions: ReadQueryOptions = {
@@ -17,8 +21,8 @@ const useTicketItem = ({ id }: EntityItemProps): Ticket => {
 	};
 
 	try {
-		data = client.readQuery(queryOptions);
-		ticket = propOr<Ticket, string, any>(null, 'ticket', data);
+		data = client.readQuery<TicketItemData>(queryOptions);
+		ticket = propOr<Ticket, TicketItemData, Ticket>(null, 'ticket', data);
 	} catch (error) {
 		// may be do something with the error
 	}

@@ -1,7 +1,7 @@
 import useDatetimeQueryOptions from '../../queries/datetimes/useDatetimeQueryOptions';
 import { CacheUpdaterFn, CacheUpdaterFnArgs } from '../types';
 import { ReadQueryOptions, WriteQueryOptions } from '../../queries/types';
-import { Datetime } from '../../types';
+import { Datetime, DatetimesList } from '../../types';
 
 const useUpdateDatetimeCache = (): CacheUpdaterFn => {
 	const queryOptions: ReadQueryOptions = useDatetimeQueryOptions();
@@ -24,7 +24,7 @@ const useUpdateDatetimeCache = (): CacheUpdaterFn => {
 				},
 			},
 		};
-		proxy.writeQuery(writeOptions);
+		proxy.writeQuery<DatetimesList>(writeOptions);
 	};
 
 	return updateDatetimeCache;

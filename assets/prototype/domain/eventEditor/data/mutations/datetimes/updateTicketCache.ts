@@ -2,6 +2,7 @@ import { queries } from '../../queries';
 const { GET_TICKETS } = queries;
 import { CacheUpdaterFnArgs } from '../types';
 import { ReadQueryOptions, WriteQueryOptions } from '../../queries/types';
+import { TicketsList } from '../../types';
 
 const updateTicketCache = ({ proxy, datetimeIn, datetimeId, remove = false }: CacheUpdaterFnArgs): void => {
 	const queryOptions: ReadQueryOptions = {
@@ -12,10 +13,10 @@ const updateTicketCache = ({ proxy, datetimeIn, datetimeId, remove = false }: Ca
 			},
 		},
 	};
-	let data: any;
+	let data: TicketsList;
 	// Read the existing data from cache.
 	try {
-		data = proxy.readQuery(queryOptions);
+		data = proxy.readQuery<TicketsList>(queryOptions);
 	} catch (error) {
 		data = null;
 	}
@@ -41,7 +42,7 @@ const updateTicketCache = ({ proxy, datetimeIn, datetimeId, remove = false }: Ca
 
 	// write the data to cache without
 	// mutating the cache directly
-	proxy.writeQuery(writeOptions);
+	proxy.writeQuery<TicketsList>(writeOptions);
 };
 
 export default updateTicketCache;

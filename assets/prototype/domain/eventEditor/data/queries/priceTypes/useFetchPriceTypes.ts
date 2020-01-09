@@ -4,6 +4,7 @@ import { GET_PRICE_TYPES } from './';
 import useInitToaster from '../../../../../application/services/toaster/useInitToaster';
 import { useStatus, TypeName } from '../../../../../application/services/apollo/status';
 import { FetchEntitiesResult } from '../types';
+import { PriceTypesList } from '../../types';
 
 const useFetchPriceTypes = (): FetchEntitiesResult => {
 	const { setIsLoading, setIsLoaded, setIsError } = useStatus();
@@ -13,7 +14,7 @@ const useFetchPriceTypes = (): FetchEntitiesResult => {
 		successMessage: 'price types initialized',
 	});
 
-	const { data, error, loading } = useQuery(GET_PRICE_TYPES, {
+	const { data, error, loading } = useQuery<PriceTypesList>(GET_PRICE_TYPES, {
 		onCompleted: (): void => {
 			setIsLoaded(TypeName.priceTypes, true);
 			onCompleted();

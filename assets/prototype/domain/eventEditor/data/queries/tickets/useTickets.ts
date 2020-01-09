@@ -4,7 +4,7 @@ import { useApolloClient } from '@apollo/react-hooks';
 import { useStatus, TypeName } from '../../../../../application/services/apollo/status';
 import useTicketQueryOptions from './useTicketQueryOptions';
 import { ReadQueryOptions } from '../types';
-import { Ticket } from '../../types';
+import { Ticket, TicketsList } from '../../types';
 
 const useTickets = (): Ticket[] => {
 	const options: ReadQueryOptions = useTicketQueryOptions();
@@ -13,12 +13,12 @@ const useTickets = (): Ticket[] => {
 	if (!isLoaded(TypeName.tickets)) {
 		return [];
 	}
-	let data: any;
+	let data: TicketsList;
 
 	try {
-		data = client.readQuery(options);
+		data = client.readQuery<TicketsList>(options);
 	} catch (error) {
-		data = {};
+		data = null;
 	}
 
 	return pathOr<Ticket[]>([], ['espressoTickets', 'nodes'], data);

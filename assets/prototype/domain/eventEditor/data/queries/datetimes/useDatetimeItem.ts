@@ -4,9 +4,14 @@ import { GET_DATETIME } from './';
 import { Datetime } from '../../types';
 import { EntityItemProps, ReadQueryOptions } from '../types';
 
+type DatetimeItemData = {
+	datetime: Datetime;
+};
+
 const useDatetimeItem = ({ id }: EntityItemProps): Datetime => {
 	const client = useApolloClient();
-	let data: any, datetime: Datetime;
+
+	let data: DatetimeItemData, datetime: Datetime;
 
 	const queryOptions: ReadQueryOptions = {
 		query: GET_DATETIME,
@@ -16,8 +21,8 @@ const useDatetimeItem = ({ id }: EntityItemProps): Datetime => {
 	};
 
 	try {
-		data = client.readQuery(queryOptions);
-		datetime = propOr<Datetime, string, any>(null, 'datetime', data);
+		data = client.readQuery<DatetimeItemData>(queryOptions);
+		datetime = propOr<Datetime, DatetimeItemData, Datetime>(null, 'datetime', data);
 	} catch (error) {
 		// may be do something with the error
 	}

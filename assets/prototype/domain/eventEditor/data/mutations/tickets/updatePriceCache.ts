@@ -1,11 +1,11 @@
 import { assocPath, pathOr } from 'ramda';
-import { queries, DEFAULT_ENTITY_LIST_DATA } from '../../queries';
+import { queries, DEFAULT_PRICE_LIST_DATA } from '../../queries';
 import { CacheUpdaterFnArgs } from '../types';
 import { ReadQueryOptions, WriteQueryOptions } from '../../queries/types';
-import { Price } from '../../types';
+import { Price, PricesList } from '../../types';
 const { GET_PRICES } = queries;
 
-const updatePriceCache = ({ proxy, prices = {}, ticketIn, ticketId, remove = false }: CacheUpdaterFnArgs): void => {
+const updatePriceCache = ({ proxy, prices = null, ticketIn, ticketId, remove = false }: CacheUpdaterFnArgs): void => {
 	const queryOptions: ReadQueryOptions = {
 		query: GET_PRICES,
 		variables: {
@@ -14,13 +14,13 @@ const updatePriceCache = ({ proxy, prices = {}, ticketIn, ticketId, remove = fal
 			},
 		},
 	};
-	let data: any;
+	let data: PricesList;
 	// Read the existing data from cache.
 	try {
-		data = proxy.readQuery(queryOptions);
+		data = proxy.readQuery<PricesList>(queryOptions);
 	} catch (error) {
 		data = {
-			espressoPrices: DEFAULT_ENTITY_LIST_DATA('Prices'),
+			espressoPrices: DEFAULT_PRICE_LIST_DATA,
 		};
 	}
 
@@ -30,7 +30,7 @@ const updatePriceCache = ({ proxy, prices = {}, ticketIn, ticketId, remove = fal
 
 	if (!remove && priceNodes.length) {
 		const existingPrices: Price[] = pathOr<Price[]>([], pathToNodes, data);
-		data = assocPath(pathToNodes, [...existingPrices, ...priceNodes], data);
+		data = assocPath<Price[], PricesList>(pathToNodes, [...existingPrices, ...priceNodes], data);
 	}
 	const nodes = pathOr<Price[]>([], pathToNodes, data);
 	// if there are no prices
@@ -49,7 +49,7 @@ const updatePriceCache = ({ proxy, prices = {}, ticketIn, ticketId, remove = fal
 			},
 		},
 	};
-	proxy.writeQuery(writeOptions);
+	proxy.writeQuery<PricesList>(writeOptions);
 };
 
 export default updatePriceCache;

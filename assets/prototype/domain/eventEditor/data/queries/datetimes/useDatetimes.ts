@@ -2,7 +2,7 @@ import * as R from 'ramda';
 import { useApolloClient } from '@apollo/react-hooks';
 import { useStatus, TypeName } from '../../../../../application/services/apollo/status';
 import useDatetimeQueryOptions from './useDatetimeQueryOptions';
-import { Datetime } from '../../types';
+import { Datetime, DatetimesList } from '../../types';
 import { ReadQueryOptions } from '../types';
 
 const useDatetimes = (): Datetime[] => {
@@ -12,12 +12,12 @@ const useDatetimes = (): Datetime[] => {
 	if (!isLoaded(TypeName.datetimes)) {
 		return [];
 	}
-	let data: any;
+	let data: DatetimesList;
 
 	try {
-		data = client.readQuery(options);
+		data = client.readQuery<DatetimesList>(options);
 	} catch (error) {
-		data = {};
+		data = null;
 	}
 
 	return R.pathOr<Datetime[]>([], ['espressoDatetimes', 'nodes'], data);

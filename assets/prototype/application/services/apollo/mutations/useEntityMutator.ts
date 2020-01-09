@@ -12,7 +12,7 @@ import {
  * @param {string} type Entity type name
  * @param {string} id   Entity id
  */
-const useEntityMutator = (type: EntityType, id: string = ''): EntityMutator => {
+const useEntityMutator = (type: EntityType, id?: string): EntityMutator => {
 	const { getCreateMutation, getUpdateMutation, getDeleteMutation, mutate } = useEntityMutation(type, id);
 
 	/**
