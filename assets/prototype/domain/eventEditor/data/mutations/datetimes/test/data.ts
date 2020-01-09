@@ -29,7 +29,7 @@ export const getMockRequest = (mutationInput: MutationInput, mutationType: Mutat
 	if (mutationType === MutationType.Create) {
 		input.eventId = eventId; // required for createDatetime
 	} else if (!input.id) {
-		input.id = mockedDatetimes[mutationType].id
+		input.id = mockedDatetimes[mutationType].id;
 	}
 
 	return {
