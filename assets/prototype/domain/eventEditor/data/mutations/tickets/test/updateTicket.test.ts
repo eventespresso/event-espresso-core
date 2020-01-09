@@ -123,7 +123,7 @@ describe('updateTicket', () => {
 			}
 		);
 
-		const tempDatetimeId: string = 'temp-dtt-id';
+		const tempDatetimeId = 'temp-dtt-id';
 
 		act(() => {
 			// add relation between mockedTicket and a random datetime id
@@ -228,7 +228,7 @@ describe('updateTicket', () => {
 			}
 		);
 
-		const tempPriceId: string = 'temp-price-id';
+		const tempPriceId = 'temp-price-id';
 
 		act(() => {
 			// add relation between mockedTicket and a random price id

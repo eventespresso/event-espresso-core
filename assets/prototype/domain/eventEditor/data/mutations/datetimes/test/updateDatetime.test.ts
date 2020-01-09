@@ -121,7 +121,7 @@ describe('updateDatetime', () => {
 			}
 		);
 
-		const tempTicketId: string = 'temp-tkt-id';
+		const tempTicketId = 'temp-tkt-id';
 
 		act(() => {
 			// add relation between mockedDatetime and a random ticket id

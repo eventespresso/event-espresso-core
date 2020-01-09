@@ -13,7 +13,7 @@ import { nodes as priceTypes } from '../../../queries/priceTypes/test/data';
 import { MutationInput } from '../../../../../../application/services/apollo/mutations/types';
 
 describe('createPrice', () => {
-	let testInput: MutationInput = { name: 'New Test Price', desc: 'New Test Desc' };
+	const testInput: MutationInput = { name: 'New Test Price', desc: 'New Test Desc' };
 	const mockedPrice = mockedPrices.CREATE;
 
 	const ticketId = tickets[0].id;
