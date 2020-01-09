@@ -9,12 +9,13 @@ import React, { createContext } from 'react';
 import { EntityId } from '../../data/types';
 import {
 	ContextProps,
-	EditorIds,
+	Editors,
 } from '../../../../application/ui/components/layout/editor-modal/useEditorModalState/types';
 import useEditorModalState from '../../../../application/ui/components/layout/editor-modal/useEditorModalState';
 import useDateEditorId from './useDateEditorId';
 
-export const DateTimeContext = createContext({} as ContextProps);
+export interface DateTimeContextProps extends ContextProps {}
+export const DateTimeContext = createContext({} as DateTimeContextProps);
 
 interface DatetimeProviderProps {
 	children: React.ReactChildren;
@@ -22,23 +23,13 @@ interface DatetimeProviderProps {
 }
 
 const DateTimeProvider = ({ children, id }: DatetimeProviderProps) => {
-	const { closeAllEditors, currentlyOpenEditor, getIsOpen, onClose, setIsOpen } = useEditorModalState(id);
-	const editorIds: EditorIds = {
-		calculator: useDateEditorId('price-calculator', id),
-		editForm: useDateEditorId('date-editor', id),
+	const editorState = useEditorModalState(id);
+	const editors: Editors = {
+		editForm: useDateEditorId('edit-date-form', id),
 		relations: useDateEditorId('date-relations', id),
 	};
-
-	const editorState = {
-		closeAllEditors,
-		currentlyOpenEditor,
-		getIsOpen,
-		onClose,
-		setIsOpen,
-	};
-
-	const value = {
-		editorIds,
+	const value: DateTimeContextProps = {
+		editors,
 		editorState,
 		id,
 	};
