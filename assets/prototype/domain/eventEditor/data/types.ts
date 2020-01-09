@@ -22,8 +22,6 @@ export enum Status {
 	inactive = 'DTI',
 }
 
-type StatusType = typeof Status[keyof typeof Status];
-
 export interface Datetime extends Entity {
 	capacity?: number;
 	description?: string;
@@ -39,7 +37,7 @@ export interface Datetime extends Entity {
 	reserved?: number;
 	sold?: number;
 	startDate?: string;
-	status?: StatusType;
+	status?: string;
 }
 
 export interface DatetimeEdge extends EntityEdge {
