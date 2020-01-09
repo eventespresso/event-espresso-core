@@ -4,6 +4,11 @@
 import { useReducer } from 'react';
 import { dropLast, last } from 'ramda';
 
+/**
+ * Internal imports
+ */
+import { EntityId } from '../../../../../../domain/eventEditor/data/types';
+
 enum ActionType {
 	CLOSE_ALL = 'CLOSE_ALL',
 	CLOSE_EDITOR = 'CLOSE_EDITOR',
@@ -39,7 +44,7 @@ const reducer = (state: State, action: Action) => {
 	}
 };
 
-const useEditorModalState = () => {
+const useEditorModalState = (id: EntityId) => {
 	const initialState = [];
 	const [state, dispatch] = useReducer(reducer, initialState);
 
@@ -51,6 +56,7 @@ const useEditorModalState = () => {
 	};
 
 	const closeEditor = (editorId: string): void => {
+		console.log({ editorId });
 		dispatch({
 			type: ActionType.CLOSE_EDITOR,
 			editorId,
@@ -81,12 +87,17 @@ const useEditorModalState = () => {
 	 */
 	const isEditorOpen = (editorId: string): boolean => editorId === last(state);
 
+	const getIsOpen = (modalId: string = '') => isEditorOpen(id + modalId);
+	const onClose = (modalId: string = '') => closeEditor(id + modalId);
+	const setIsOpen = (modalId: string = '') => openEditor(id + modalId);
+
 	return {
-		closeEditor,
+		onClose,
 		closeAllEditors,
 		currentlyOpenEditor,
-		isEditorOpen,
+		getIsOpen,
 		openEditor,
+		setIsOpen,
 	};
 };
 
