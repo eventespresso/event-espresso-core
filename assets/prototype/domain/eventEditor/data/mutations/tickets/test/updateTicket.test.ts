@@ -12,7 +12,7 @@ import { MutationInput } from '../../../../../../application/services/apollo/mut
 import useInitTicketTestCache from '../../../queries/tickets/test/useInitTicketTestCache';
 
 describe('updateTicket', () => {
-	let testInput: MutationInput = { name: 'New Test Date', description: 'New Test Desc' };
+	let testInput: MutationInput = { name: 'New Test Ticket', description: 'New Test Desc' };
 	const mockedTicket = mockedTickets.UPDATE;
 
 	const datetimeIds = datetimes.map(({ id }) => id);

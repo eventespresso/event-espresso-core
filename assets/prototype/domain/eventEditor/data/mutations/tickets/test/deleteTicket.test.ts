@@ -96,8 +96,6 @@ describe('deleteTicket', () => {
 	});
 
 	it('checks for price relation update after mutation', async () => {
-		// Add related price Ids to the mutation input
-
 		mutationMocks = getMutationMocks({}, MutationType.Delete);
 
 		const wrapper = ApolloMockedProvider(mutationMocks);
