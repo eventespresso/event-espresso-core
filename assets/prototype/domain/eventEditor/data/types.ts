@@ -1,3 +1,5 @@
+import { Status } from './date/types';
+
 export type EntityId = string;
 
 export interface Entity {
@@ -27,7 +29,7 @@ export interface Datetime extends Entity {
 	reserved?: number;
 	sold?: number;
 	startDate?: string;
-	status?: string;
+	status?: keyof typeof Status;
 }
 
 export interface DatetimeEdge extends EntityEdge {

@@ -3,6 +3,7 @@ import * as R from 'ramda';
 import { formatISO, subWeeks } from 'date-fns';
 import { Datetime } from '../../../../data/types';
 import { DatesSortedBy, DisplayDates, ShowDates } from '../../../../data/date/types';
+import { Status } from '../../../../../eventEditor/data/date/types';
 
 import useDatesListFilterState from './index';
 
@@ -63,7 +64,7 @@ const datetimes: Datetime[] = [
 		reserved: 0,
 		sold: 20,
 		startDate: '2019-12-18T11:31:00+00:00',
-		status: 'ACTIVE',
+		status: Status.active,
 		__typename: 'EspressoDatetime',
 	},
 	{
@@ -83,7 +84,7 @@ const datetimes: Datetime[] = [
 		reserved: 0,
 		sold: 76,
 		startDate: '2009-12-18T11:31:00+00:00',
-		status: 'ACTIVE',
+		status: Status.active,
 		__typename: 'EspressoDatetime',
 	},
 ];
