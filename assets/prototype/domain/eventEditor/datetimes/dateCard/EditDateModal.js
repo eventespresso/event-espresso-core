@@ -1,4 +1,4 @@
-import { useContext } from '@wordpress/element';
+import { useContext } from 'react';
 import FormModal from '../../../../application/ui/components/forms/FormModal';
 import DatetimeForm from '../dateForm/DateForm';
 import { DateTimeContext } from '../../context/DateTimeProvider';
@@ -6,7 +6,9 @@ import { useEntityMutator, EntityType } from '../../../../application/services/a
 import useTickets from '../../data/queries/tickets/useTickets';
 
 const EditDateModal = ({ relatedTickets }) => {
-	const { id, isOpen, onClose } = useContext(DateTimeContext);
+	const { id, editors, editorState } = useContext(DateTimeContext);
+	const isOpen = editorState.getIsOpen(editors.editForm);
+	const onClose = editorState.onClose(editors.editForm);
 	const { updateEntity } = useEntityMutator(EntityType.Datetime, id);
 	const tickets = useTickets();
 
