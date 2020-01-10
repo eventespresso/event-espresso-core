@@ -1,59 +1,34 @@
-import { pick, difference } from 'ramda';
+import { difference } from 'ramda';
+
+import { TpcFormData } from '../types';
+import { Price } from '../../../data/types';
+import { copyPriceFields } from '../../../../shared/predicates/prices/updatePredicates';
 import { useEntityMutator, EntityType } from '../../../../../application/services/apollo/mutations';
+import toBoolean from '../../../../../application/utilities/converters/toBoolean';
+import parsedAmount from '../../../../../application/utilities/money/parsedAmount';
 
-const PRICE_INPUT_FIELDS = [
-	'id',
-	'amount',
-	'desc',
-	'isDefault',
-	'name',
-	'order',
-	'overrides',
-	'parent',
-	'priceType',
-	'wpUser',
-];
-
-const parseBooleanField = (value) => {
-	value = typeof value === 'string' ? value.toLowerCase().trim() : value;
-	switch (value) {
-		case 'true':
-		case 'yes':
-		case '1':
-			return true;
-		case 'false':
-		case 'no':
-		case '0':
-			return false;
-		default:
-			return Boolean(value);
-	}
-};
-
-const useOnSubmitPrices = (existingPrices) => {
+const useOnSubmitPrices = (existingPrices: Price[]) => {
 	const { createEntity, updateEntity, deleteEntity } = useEntityMutator(EntityType.Price);
 	const { updateEntity: updateTicket } = useEntityMutator(EntityType.Ticket);
 	const existingPriceIds = existingPrices.map(({ id }) => id);
 
 	// Async to make sure that prices are handled before updating the ticket.
-	return async (formData) => {
-		const { ticket, prices = [] } = formData;
-
+	return async ({ ticket, prices = [] }: TpcFormData) => {
 		const updatedPriceIds = [];
 		const createdPriceIds = [];
 
 		// make sure to complete all price operations before updating the ticket
 		await Promise.all(
 			// covert the price operations into promises
-			prices.map((price) => {
+			prices.map((price: Price) => {
 				if (price.id === 'NEW_PRICE') {
 					return Promise.resolve(price);
 				}
-				const { id, ...input } = pick(PRICE_INPUT_FIELDS, price);
+				const { id, ...priceFields } = copyPriceFields(price);
 				const normalizedPriceFields = {
-					...input,
-					amount: parseFloat(price.amount || 0),
-					isDefault: parseBooleanField(price.isDefault),
+					...priceFields,
+					amount: parsedAmount(price.amount || '0'),
+					isDefault: toBoolean(price.isDefault),
 					order: parseInt(price.order, 10),
 				};
 				// if it's a newly added price
@@ -87,8 +62,8 @@ const useOnSubmitPrices = (existingPrices) => {
 
 		const normalizedTicketFields = {
 			...ticket,
-			price: parseFloat(ticket.price || 0),
-			reverseCalculate: parseBooleanField(ticket.reverseCalculate),
+			price: parsedAmount(ticket.price || '0'),
+			reverseCalculate: toBoolean(ticket.reverseCalculate),
 		};
 		// Finally update the ticket price relation
 		updateTicket({ ...normalizedTicketFields, prices: [...updatedPriceIds, ...createdPriceIds] });
