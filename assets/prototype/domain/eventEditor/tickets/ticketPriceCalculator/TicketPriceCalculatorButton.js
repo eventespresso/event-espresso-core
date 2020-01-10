@@ -5,7 +5,7 @@ const TicketPriceCalculatorButton = ({ ticket, isOpen, onOpen, onClose }) => {
 	return (
 		<>
 			<Button icon={'calculator'} onClick={() => onOpen()} minimal />
-			<TicketPriceCalculatorModal ticket={ticket} handleClose={() => onClose()} isOpen={isOpen} />
+			<TicketPriceCalculatorModal ticket={ticket} onClose={onClose} isOpen={isOpen} />
 		</>
 	);
 };

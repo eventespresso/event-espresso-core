@@ -1,27 +1,28 @@
-/**
- * External dependencies
- */
-import { useState } from 'react';
+import { useContext } from 'react';
+
 import AddNewTicketModal from './AddNewTicketModal';
+import useDateEditorId from './useDateEditorId';
+import { TicketContext } from '../../context/TicketProvider';
 import { EspressoButton } from '../../../../../ZZZ/components/ui';
 
 const AddNewTicketButton = () => {
-	const [isOpen, setIsOpen] = useState(false);
-	const handleOpen = (e) => {
+	const { editorIds, editorState } = useContext(TicketContext);
+
+	const onClick = (e) => {
 		e.preventDefault();
 		e.stopPropagation();
-		setIsOpen(true);
+		editorState.openEditor(editorIds.editForm);
 	};
-	const handleClose = (e) => {
+	const onClose = (e) => {
 		e.preventDefault();
 		e.stopPropagation();
-		setIsOpen(false);
+		editorState.closeEditor(editorIds.editForm);
 	};
 
 	return (
 		<>
-			<EspressoButton icon={'tickets-alt'} buttonText={'Add New Ticket'} onClick={handleOpen} />
-			<AddNewTicketModal handleClose={handleClose} isOpen={isOpen} />
+			<EspressoButton icon={'tickets-alt'} buttonText={'Add New Ticket'} onClick={onClick} />
+			<AddNewTicketModal onClose={onClose} isOpen={isOpen} />
 		</>
 	);
 };

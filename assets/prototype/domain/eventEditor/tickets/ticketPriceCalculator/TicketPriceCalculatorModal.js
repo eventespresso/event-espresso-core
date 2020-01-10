@@ -16,7 +16,7 @@ import FormModal from '../../../../application/ui/components/forms/FormModal';
 
 const EMPTY_OBJECT = {};
 
-const TicketPriceCalculatorModal = ({ ticket, handleClose, isOpen }) => {
+const TicketPriceCalculatorModal = ({ ticket, onClose, isOpen }) => {
 	const [initialValues, setInitialValues] = useState(EMPTY_OBJECT);
 	const decorator = useTicketPriceCalculatorFormDecorator();
 	const mutators = useTicketPriceCalculatorFormMutators();
@@ -44,7 +44,7 @@ const TicketPriceCalculatorModal = ({ ticket, handleClose, isOpen }) => {
 				initialValues={initialValues}
 				isOpen={isOpen}
 				onSubmit={submitPrices}
-				onClose={handleClose}
+				onClose={onClose}
 				decorators={[decorator]}
 				mutators={mutators}
 			/>

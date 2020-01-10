@@ -4,7 +4,7 @@ import { TicketContext } from '../../context/TicketProvider';
 
 const EditTicketButton = ({ position }) => {
 	const { editors, editorState } = useContext(TicketContext);
-	const setIsOpen = editorState.setIsOpen(editors.editForm);
+	const onClick = () => editorState.openEditor(editors.editForm);
 
 	const style = {
 		position: 'absolute',
@@ -18,7 +18,7 @@ const EditTicketButton = ({ position }) => {
 
 	return (
 		<div style={style}>
-			<Button icon={'edit'} onClick={setIsOpen} minimal />
+			<Button icon={'edit'} onClick={onClick} minimal />
 		</div>
 	);
 };
