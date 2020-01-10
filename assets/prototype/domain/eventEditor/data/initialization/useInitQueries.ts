@@ -1,9 +1,8 @@
-import useFetchTickets from './tickets/useFetchTickets';
-import useFetchDatetimes from './datetimes/useFetchDatetimes';
-import useFetchPriceTypes from './priceTypes/useFetchPriceTypes';
-import useFetchPrices from './prices/useFetchPrices';
-import useFetchCurrentUser from './currentUser/useFetchCurrentUser';
-import useFetchGeneralSettings from './generalSettings/useFetchGeneralSettings';
+import useFetchTickets from '../queries/tickets/useFetchTickets';
+import useFetchDatetimes from '../queries/datetimes/useFetchDatetimes';
+import useFetchPriceTypes from '../queries/priceTypes/useFetchPriceTypes';
+import useFetchPrices from '../queries/prices/useFetchPrices';
+import { useFetchCurrentUser, useFetchGeneralSettings } from '../../../shared/data/queries';
 import useCacheRehydration from './useCacheRehydration';
 
 const useInitQueries = (): void => {

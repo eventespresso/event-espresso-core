@@ -6,7 +6,7 @@ import * as React from 'react';
 /**
  * Internal dependencies
  */
-import useInitQueries from './data/queries/useInitQueries';
+import useInitQueries from './data/initialization/useInitQueries';
 import DatesList from './datetimes/DatesList';
 import TicketsList from './tickets/TicketsList';
 

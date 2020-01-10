@@ -1,4 +1,3 @@
-import { useApolloClient } from '@apollo/react-hooks';
 import { pathOr } from 'ramda';
 
 import useCacheRehydrationData from './useCacheRehydrationData';
@@ -6,23 +5,30 @@ import useRelations from '../../../../application/services/apollo/relations/useR
 import { ConfigDataProps } from '../../../../application/services/config';
 import useConfig from '../../../../application/services/config/useConfig';
 import { useStatus, TypeName } from '../../../../application/services/apollo/status';
-import useEventId from './events/useEventId';
 import {
 	queries,
 	DEFAULT_DATETIME_LIST_DATA,
 	DEFAULT_TICKET_LIST_DATA,
 	DEFAULT_PRICE_LIST_DATA,
 	DEFAULT_PRICE_TYPE_LIST_DATA,
-} from './';
-import { WriteQueryOptions } from './types';
-import { Datetime, DatetimesList, Ticket, TicketsList, PricesList, PriceTypesList } from '../types';
-import { Viewer, GeneralSettingsData } from '../../../../application/valueObjects/config/types';
+} from '../queries';
+import usePriceTypeQueryOptions from '../queries/priceTypes/usePriceTypeQueryOptions';
+import useDatetimeQueryOptions from '../queries/datetimes/useDatetimeQueryOptions';
+import useTicketQueryOptions from '../queries/tickets/useTicketQueryOptions';
+import usePriceQueryOptions from '../queries/prices/usePriceQueryOptions';
+import { Datetime, Ticket } from '../types';
+import {
+	useUpdateDatetimeList,
+	useUpdatePriceTypeList,
+	useUpdateTicketList,
+	useUpdatePriceList,
+	useUpdateCurrentUserCache,
+	useUpdateGeneralSettingsCache,
+} from '../../../shared/data/queries';
 
-const { GET_TICKETS, GET_DATETIMES, GET_PRICE_TYPES, GET_PRICES, GET_CURRENT_USER, GET_GENERAL_SETTINGS } = queries;
+const { GET_CURRENT_USER, GET_GENERAL_SETTINGS } = queries;
 
 const useCacheRehydration = (): void => {
-	const client = useApolloClient();
-	const eventId: number = useEventId();
 	const { setData } = useRelations();
 	const { setConfig } = useConfig();
 	const {
@@ -36,83 +42,76 @@ const useCacheRehydration = (): void => {
 	} = useCacheRehydrationData();
 	const { isLoaded } = useStatus();
 
+	const datetimeIn = pathOr<Datetime[]>([], ['nodes'], espressoDatetimes).map(({ id }) => id);
+	const ticketIn = pathOr<Ticket[]>([], ['nodes'], espressoTickets).map(({ id }) => id);
+
+	const priceTypeQueryOptions = usePriceTypeQueryOptions();
+	const updatePriceTypeList = useUpdatePriceTypeList();
+
+	const datetimeQueryOptions = useDatetimeQueryOptions();
+	const updateDatetimeList = useUpdateDatetimeList();
+
+	const ticketQueryOptions = useTicketQueryOptions(datetimeIn);
+	const updateTicketList = useUpdateTicketList();
+
+	const priceQueryOptions = usePriceQueryOptions(ticketIn);
+	const updatePriceList = useUpdatePriceList();
+
+	const updateCurrentUser = useUpdateCurrentUserCache();
+	const updateGeneralSettings = useUpdateGeneralSettingsCache();
+
 	if (isLoaded(TypeName.priceTypes)) {
 		return;
 	}
 
-	let writeQueryOptions: WriteQueryOptions;
-
 	/* Rehydrate price types */
-	writeQueryOptions = {
-		query: GET_PRICE_TYPES,
+	updatePriceTypeList({
+		...priceTypeQueryOptions,
 		data: {
 			espressoPriceTypes,
 		},
-	};
-	client.writeQuery<PriceTypesList>(writeQueryOptions);
+	});
 
 	/* Rehydrate datetimes */
-	writeQueryOptions = {
-		query: GET_DATETIMES,
-		variables: {
-			where: {
-				eventId,
-			},
-		},
+	updateDatetimeList({
+		...datetimeQueryOptions,
 		data: {
 			espressoDatetimes,
 		},
-	};
-	client.writeQuery<DatetimesList>(writeQueryOptions);
+	});
 
 	/* Rehydrate tickets */
-	const datetimeIn = pathOr<Datetime[]>([], ['nodes'], espressoDatetimes).map(({ id }) => id);
-	writeQueryOptions = {
-		query: GET_TICKETS,
-		variables: {
-			where: {
-				datetimeIn,
-			},
-		},
+	updateTicketList({
+		...ticketQueryOptions,
 		data: {
 			espressoTickets,
 		},
-	};
-	client.writeQuery<TicketsList>(writeQueryOptions);
+	});
 
 	/* Rehydrate prices */
-	const ticketIn = pathOr<Ticket[]>([], ['nodes'], espressoTickets).map(({ id }) => id);
-	writeQueryOptions = {
-		query: GET_PRICES,
-		variables: {
-			where: {
-				ticketIn,
-			},
-		},
+	updatePriceList({
+		...priceQueryOptions,
 		data: {
 			espressoPrices,
 		},
-	};
-	client.writeQuery<PricesList>(writeQueryOptions);
+	});
 
 	/* Rehydrate current user */
-	writeQueryOptions = {
+	updateCurrentUser({
 		query: GET_CURRENT_USER,
 		data: {
 			viewer: currentUser,
 		},
-	};
-	client.writeQuery<Viewer>(writeQueryOptions);
+	});
 	setConfig((config: ConfigDataProps) => ({ ...config, currentUser }));
 
 	/* Rehydrate general settings */
-	writeQueryOptions = {
+	updateGeneralSettings({
 		query: GET_GENERAL_SETTINGS,
 		data: {
 			generalSettings,
 		},
-	};
-	client.writeQuery<GeneralSettingsData>(writeQueryOptions);
+	});
 	setConfig((config: ConfigDataProps) => ({ ...config, generalSettings }));
 
 	/* Rehydrate relations */
