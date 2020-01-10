@@ -7,16 +7,17 @@ import { useEntityMutator, EntityType } from '../../../../application/services/a
 import FormModal from '../../../../application/ui/components/forms/FormModal';
 
 const EditTicketModal = ({ relatedDates }) => {
-	const { id, editors, editorState } = useContext<TicketContextProps>(TicketContext);
+	const { editors, editorState, id } = useContext<TicketContextProps>(TicketContext);
 	const isOpen = editorState.isEditorOpen(editors.editForm);
 	const onClose = editorState.closeEditor(editors.editForm);
-	const datetimes = useDatetimes();
+
 	const { updateEntity } = useEntityMutator(EntityType.Ticket, id);
+	const onSubmit = (fields) => updateEntity(fields);
+	const datetimes = useDatetimes();
 
 	const formComponent = (props) => (
 		<TicketForm {...props} datetimes={datetimes} relatedDates={relatedDates} title='Update ticket' />
 	);
-	const onSubmit = (fields) => updateEntity(fields);
 
 	return (
 		<FormModal
