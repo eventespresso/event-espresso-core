@@ -10,6 +10,7 @@ import { EntityId } from '../../data/types';
 import {
 	ContextProps,
 	Editors,
+	EditorState,
 } from '../../../../application/ui/components/layout/editor-modal/useEditorModalState/types';
 import useEditorModalState from '../../../../application/ui/components/layout/editor-modal/useEditorModalState';
 import useDateEditorId from './useDateEditorId';
@@ -23,16 +24,16 @@ interface DatetimeProviderProps {
 }
 
 const DateTimeProvider = ({ children, id }: DatetimeProviderProps) => {
-	const editorState = useEditorModalState(id);
+	const editorState: EditorState = useEditorModalState();
+
 	const editors: Editors = {
-		editForm: useDateEditorId('edit-date-form', id),
+		addNewForm: useDateEditorId('add-new-date', 'xyz'),
+		calculator: useDateEditorId('price-calculator', id),
+		editForm: useDateEditorId('date-editor', id),
 		relations: useDateEditorId('date-relations', id),
 	};
-	const value: DateTimeContextProps = {
-		editors,
-		editorState,
-		id,
-	};
+
+	const value: DateTimeContextProps = { editors, editorState, id };
 
 	return <DateTimeContext.Provider value={value}>{children}</DateTimeContext.Provider>;
 };

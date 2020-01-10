@@ -10,6 +10,7 @@ import { EntityId } from '../../data/types';
 import {
 	ContextProps,
 	Editors,
+	EditorState,
 } from '../../../../application/ui/components/layout/editor-modal/useEditorModalState/types';
 import useEditorModalState from '../../../../application/ui/components/layout/editor-modal/useEditorModalState';
 import useTicketEditorId from './useTicketEditorId';
@@ -23,17 +24,16 @@ interface TicketProviderProps {
 }
 
 const TicketProvider = ({ children, id }: TicketProviderProps) => {
-	const editorState = useEditorModalState(id);
+	const editorState: EditorState = useEditorModalState();
+
 	const editors: Editors = {
+		addNewForm: useTicketEditorId('add-new-ticket', 'xyz'),
 		calculator: useTicketEditorId('price-calculator', id),
 		editForm: useTicketEditorId('edit-ticket-form', id),
 		relations: useTicketEditorId('ticket-relations', id),
 	};
-	const value: TicketContextProps = {
-		editors,
-		editorState,
-		id,
-	};
+
+	const value: TicketContextProps = { editors, editorState, id };
 
 	return <TicketContext.Provider value={value}>{children}</TicketContext.Provider>;
 };
