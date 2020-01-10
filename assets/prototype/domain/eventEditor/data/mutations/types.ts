@@ -1,4 +1,5 @@
 import { DataProxy } from 'apollo-cache';
+
 import { Datetime, DatetimeEdge, Ticket, TicketEdge, Price, PriceEdge } from '../types';
 
 export interface MutationCallbackFnArgs {

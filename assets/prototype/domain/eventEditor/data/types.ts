@@ -7,9 +7,9 @@ export interface Entity {
 	__typename?: string;
 }
 
-export interface EntityEdge {
-	nodes?: Entity[];
-	__typename?: string;
+export interface EntityEdge<E = Entity, ConnectionTypeName = string> {
+	nodes: E[];
+	__typename: ConnectionTypeName;
 }
 
 export enum DatetimeStatus {
@@ -40,8 +40,10 @@ export interface Datetime extends Entity {
 	status?: DatetimeStatus;
 }
 
-export interface DatetimeEdge extends EntityEdge {
-	nodes?: Datetime[];
+export type DatetimeEdge<Connection = 'EspressoRootQueryDatetimesConnection'> = EntityEdge<Datetime, Connection>;
+
+export interface DatetimesList {
+	espressoDatetimes: DatetimeEdge;
 }
 
 export interface Price extends Entity {
@@ -58,8 +60,10 @@ export interface Price extends Entity {
 	priceTypeOrder?: number;
 }
 
-export interface PriceEdge extends EntityEdge {
-	nodes?: Price[];
+export type PriceEdge = EntityEdge<Price, 'EspressoRootQueryPricesConnection'>;
+
+export interface PricesList {
+	espressoPrices: PriceEdge;
 }
 
 export interface Ticket extends Entity {
@@ -83,8 +87,10 @@ export interface Ticket extends Entity {
 	uses?: number;
 }
 
-export interface TicketEdge extends EntityEdge {
-	nodes?: Ticket[];
+export type TicketEdge = EntityEdge<Ticket, 'EspressoRootQueryTicketsConnection'>;
+
+export interface TicketsList {
+	espressoTickets: TicketEdge;
 }
 
 export enum PriceBasetype {
@@ -104,6 +110,8 @@ export interface PriceType extends Entity {
 	order?: number;
 }
 
-export interface PriceTypeEdge extends EntityEdge {
-	nodes?: PriceType[];
+export type PriceTypeEdge = EntityEdge<PriceType, 'EspressoRootQueryPriceTypesConnection'>;
+
+export interface PriceTypesList {
+	espressoPriceTypes: PriceTypeEdge;
 }

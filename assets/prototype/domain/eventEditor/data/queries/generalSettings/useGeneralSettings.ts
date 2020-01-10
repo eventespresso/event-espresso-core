@@ -3,13 +3,13 @@ import { useApolloClient } from '@apollo/react-hooks';
 
 import { GET_GENERAL_SETTINGS } from './';
 import { ReadQueryOptions } from '../types';
-import { GeneralSettings } from '../../../../../application/valueObjects/config/types';
+import { GeneralSettings, GeneralSettingsData } from '../../../../../application/valueObjects/config/types';
 /**
  * A custom react hook for retrieving GeneralSettings
  */
 const useGeneralSettings = (): GeneralSettings => {
 	const client = useApolloClient();
-	let data: any;
+	let data: GeneralSettingsData;
 
 	try {
 		const options: ReadQueryOptions = {
@@ -17,7 +17,7 @@ const useGeneralSettings = (): GeneralSettings => {
 		};
 		data = client.readQuery(options);
 	} catch (error) {
-		data = {};
+		data = null;
 	}
 	return pathOr<GeneralSettings>(null, ['generalSettings'], data);
 };

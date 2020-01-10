@@ -13,8 +13,8 @@ import {
 	MutatorGeneratedObject,
 } from '../../../../../application/services/apollo/mutations/types';
 import { ReadQueryOptions } from '../../queries/types';
-import { DEFAULT_ENTITY_LIST_DATA as DEFAULT_LIST_DATA } from '../../queries';
-import { Ticket, TicketEdge, Price } from '../../types';
+import { DEFAULT_TICKET_LIST_DATA as DEFAULT_LIST_DATA } from '../../queries';
+import { Ticket, TicketEdge, Price, TicketsList } from '../../types';
 import { TicketMutationCallbackFn } from '../types';
 
 /**
@@ -51,13 +51,13 @@ const useTicketMutator = (): Mutator => {
 			const { prices, ...ticket } = entity;
 
 			// Read the existing data from cache.
-			let data: any;
+			let data: TicketsList;
 			try {
-				data = proxy.readQuery(options);
+				data = proxy.readQuery<TicketsList>(options);
 			} catch (error) {
-				data = {};
+				data = null;
 			}
-			const tickets = pathOr<TicketEdge>(DEFAULT_LIST_DATA('Tickets'), ['espressoTickets'], data);
+			const tickets = pathOr<TicketEdge>(DEFAULT_LIST_DATA, ['espressoTickets'], data);
 			const { datetimes: datetimeIds = [] } = input;
 
 			const priceIds = pathOr<Price[]>([], ['nodes'], prices).map(({ id }: Price) => id);

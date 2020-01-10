@@ -27,7 +27,7 @@ const DEFAULT_RESULT: MutationResult = { called: false, loading: false };
  * @param {string} type Entity type name
  * @param id
  */
-const useEntityMutation = (type: EntityType, id: string = ''): EntityMutation => {
+const useEntityMutation = (type: EntityType, id?: string): EntityMutation => {
 	const client = useApolloClient();
 	const [result, setResult] = useState(DEFAULT_RESULT);
 	const mutators = useMutators();
@@ -38,7 +38,7 @@ const useEntityMutation = (type: EntityType, id: string = ''): EntityMutation =>
 	 */
 	const getMutation = (mutationType: MutationType): any => {
 		// For example "CREATE_DATETIME"
-		const mutation: string = `${mutationType}_${type.toUpperCase()}`;
+		const mutation = `${mutationType}_${type.toUpperCase()}`;
 		return mutations[mutation];
 	};
 
@@ -48,7 +48,7 @@ const useEntityMutation = (type: EntityType, id: string = ''): EntityMutation =>
 	 */
 	const getMutationOptions = (mutationType: MutationType, input: MutationInput = {}): OperationVariables => {
 		// e.g. "datetimeMutator"
-		const key: string = `${type.toLowerCase()}Mutator`;
+		const key = `${type.toLowerCase()}Mutator`;
 		const mutator: Mutator = mutators[key];
 		/**
 		 * options = {
@@ -80,7 +80,7 @@ const useEntityMutation = (type: EntityType, id: string = ''): EntityMutation =>
 		 */
 		return (proxy: DataProxy, result: FetchResult): void => {
 			// e.g. "createDatetime", "updateTicket"
-			const mutationName: string = `${mutationType.toLowerCase()}Espresso${type}`;
+			const mutationName = `${mutationType.toLowerCase()}Espresso${type}`;
 			// Example result: { data: { deletePrice: { price : {...} } } }
 			const path: string[] = ['data', mutationName, `espresso${type}`];
 			const entity: any = pathOr({}, path, result);

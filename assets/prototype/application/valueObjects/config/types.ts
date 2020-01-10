@@ -10,6 +10,10 @@ export interface CurrencyProps {
 	subunits?: number;
 }
 
+export interface Viewer {
+	viewer: CurrentUserProps;
+}
+
 export interface CurrentUserProps {
 	id: string;
 	description: string;
@@ -22,6 +26,10 @@ export interface CurrentUserProps {
 	locale: string;
 	userId: number;
 	username: string;
+}
+
+export interface GeneralSettingsData {
+	generalSettings: GeneralSettings;
 }
 
 export interface GeneralSettings {

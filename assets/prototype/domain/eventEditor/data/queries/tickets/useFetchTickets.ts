@@ -7,8 +7,9 @@ import useTicketQueryOptions from './useTicketQueryOptions';
 import useDatetimeIds from '../datetimes/useDatetimeIds';
 import { FetchEntitiesResult, ReadQueryOptions } from '../types';
 import { EntityId } from '../../types';
+import { TicketsList } from '../../types';
 
-const useFetchTickets = (): FetchEntitiesResult => {
+const useFetchTickets = (): FetchEntitiesResult<TicketsList> => {
 	const [initialized, setInitialized] = useState(false);
 	const { setIsLoading, setIsLoaded, setIsError } = useStatus();
 	const options: ReadQueryOptions = useTicketQueryOptions();
@@ -17,7 +18,7 @@ const useFetchTickets = (): FetchEntitiesResult => {
 	const toaster = useToaster();
 	const toasterMessage = 'initializing tickets';
 
-	const { data, error, loading } = useQuery(GET_TICKETS, {
+	const { data, error, loading } = useQuery<TicketsList>(GET_TICKETS, {
 		...options,
 		skip: !datetimeIn.length, // do not fetch if we don't have any datetimes
 		onCompleted: (): void => {

@@ -5,7 +5,7 @@ import { entitiesWithGuIdInArray } from '../../../../shared/predicates/shared/se
 import { useStatus, TypeName } from '../../../../../application/services/apollo/status';
 import usePriceQueryOptions from './usePriceQueryOptions';
 import { ReadQueryOptions } from '../types';
-import { Price, EntityId } from '../../types';
+import { Price, PricesList, EntityId } from '../../types';
 /**
  * A custom react hook for retrieving all the prices from cache
  * limited to the ids passed in `include`
@@ -19,12 +19,12 @@ const usePrices = (include: EntityId[] = []): Price[] => {
 	if (!isLoaded(TypeName.prices)) {
 		return [];
 	}
-	let data: any;
+	let data: PricesList;
 
 	try {
-		data = client.readQuery(options);
+		data = client.readQuery<PricesList>(options);
 	} catch (error) {
-		data = {};
+		data = null;
 	}
 
 	const prices = pathOr<Price[]>([], ['espressoPrices', 'nodes'], data);

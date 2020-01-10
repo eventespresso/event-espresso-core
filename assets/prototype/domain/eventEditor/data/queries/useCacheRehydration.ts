@@ -7,8 +7,16 @@ import { ConfigDataProps } from '../../../../application/services/config';
 import useConfig from '../../../../application/services/config/useConfig';
 import { useStatus, TypeName } from '../../../../application/services/apollo/status';
 import useEventId from './events/useEventId';
-import { queries, DEFAULT_ENTITY_LIST_DATA as DEFAULT_DATA } from './';
+import {
+	queries,
+	DEFAULT_DATETIME_LIST_DATA,
+	DEFAULT_TICKET_LIST_DATA,
+	DEFAULT_PRICE_LIST_DATA,
+	DEFAULT_PRICE_TYPE_LIST_DATA,
+} from './';
 import { WriteQueryOptions } from './types';
+import { Datetime, DatetimesList, Ticket, TicketsList, PricesList, PriceTypesList } from '../types';
+import { Viewer, GeneralSettingsData } from '../../../../application/valueObjects/config/types';
 
 const { GET_TICKETS, GET_DATETIMES, GET_PRICE_TYPES, GET_PRICES, GET_CURRENT_USER, GET_GENERAL_SETTINGS } = queries;
 
@@ -18,10 +26,10 @@ const useCacheRehydration = (): void => {
 	const { setData } = useRelations();
 	const { setConfig } = useConfig();
 	const {
-		datetimes: espressoDatetimes = DEFAULT_DATA('Datetimes'),
-		tickets: espressoTickets = DEFAULT_DATA('Tickets'),
-		prices: espressoPrices = DEFAULT_DATA('Prices'),
-		priceTypes: espressoPriceTypes = DEFAULT_DATA('PriceTypes'),
+		datetimes: espressoDatetimes = DEFAULT_DATETIME_LIST_DATA,
+		tickets: espressoTickets = DEFAULT_TICKET_LIST_DATA,
+		prices: espressoPrices = DEFAULT_PRICE_LIST_DATA,
+		priceTypes: espressoPriceTypes = DEFAULT_PRICE_TYPE_LIST_DATA,
 		currentUser,
 		generalSettings,
 		relations,
@@ -41,7 +49,7 @@ const useCacheRehydration = (): void => {
 			espressoPriceTypes,
 		},
 	};
-	client.writeQuery(writeQueryOptions);
+	client.writeQuery<PriceTypesList>(writeQueryOptions);
 
 	/* Rehydrate datetimes */
 	writeQueryOptions = {
@@ -55,10 +63,10 @@ const useCacheRehydration = (): void => {
 			espressoDatetimes,
 		},
 	};
-	client.writeQuery(writeQueryOptions);
+	client.writeQuery<DatetimesList>(writeQueryOptions);
 
 	/* Rehydrate tickets */
-	const datetimeIn = pathOr([], ['nodes'], espressoDatetimes).map(({ id }) => id);
+	const datetimeIn = pathOr<Datetime[]>([], ['nodes'], espressoDatetimes).map(({ id }) => id);
 	writeQueryOptions = {
 		query: GET_TICKETS,
 		variables: {
@@ -70,10 +78,10 @@ const useCacheRehydration = (): void => {
 			espressoTickets,
 		},
 	};
-	client.writeQuery(writeQueryOptions);
+	client.writeQuery<TicketsList>(writeQueryOptions);
 
 	/* Rehydrate prices */
-	const ticketIn = pathOr([], ['nodes'], espressoTickets).map(({ id }) => id);
+	const ticketIn = pathOr<Ticket[]>([], ['nodes'], espressoTickets).map(({ id }) => id);
 	writeQueryOptions = {
 		query: GET_PRICES,
 		variables: {
@@ -85,7 +93,7 @@ const useCacheRehydration = (): void => {
 			espressoPrices,
 		},
 	};
-	client.writeQuery(writeQueryOptions);
+	client.writeQuery<PricesList>(writeQueryOptions);
 
 	/* Rehydrate current user */
 	writeQueryOptions = {
@@ -94,7 +102,7 @@ const useCacheRehydration = (): void => {
 			viewer: currentUser,
 		},
 	};
-	client.writeQuery(writeQueryOptions);
+	client.writeQuery<Viewer>(writeQueryOptions);
 	setConfig((config: ConfigDataProps) => ({ ...config, currentUser }));
 
 	/* Rehydrate general settings */
@@ -104,7 +112,7 @@ const useCacheRehydration = (): void => {
 			generalSettings,
 		},
 	};
-	client.writeQuery(writeQueryOptions);
+	client.writeQuery<GeneralSettingsData>(writeQueryOptions);
 	setConfig((config: ConfigDataProps) => ({ ...config, generalSettings }));
 
 	/* Rehydrate relations */

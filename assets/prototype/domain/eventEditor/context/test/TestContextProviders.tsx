@@ -7,6 +7,7 @@ import { useDomTestData } from './';
 import useResetApolloCache from './useResetApolloCache';
 import useSetGlobalStatusFlags from './useSetGlobalStatusFlags';
 import useSetRelationalData from './useSetRelationalData';
+import { MockedResponse } from './types';
 
 /**
  * A top level provider wrapped by Apollo MockedProvider.
@@ -14,7 +15,7 @@ import useSetRelationalData from './useSetRelationalData';
  * @param {ReactElement} children The element that should be wrapped.
  * @returns {ReactElement} The wrapped element.
  */
-export const ApolloMockedProvider = (mocks = []) => ({ children }) => {
+export const ApolloMockedProvider = (mocks: ReadonlyArray<MockedResponse> = []) => ({ children }) => {
 	return (
 		<MockedProvider mocks={mocks} cache={cache}>
 			<ApolloAwareWrapper>{children}</ApolloAwareWrapper>

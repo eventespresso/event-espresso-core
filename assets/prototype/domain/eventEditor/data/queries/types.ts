@@ -13,8 +13,8 @@ export interface EntityItemProps {
 	id: EntityId;
 }
 
-export interface FetchEntitiesResult {
-	data: any;
+export interface FetchEntitiesResult<Data> {
+	data: Data;
 	error: Error;
 	loading: boolean;
 }

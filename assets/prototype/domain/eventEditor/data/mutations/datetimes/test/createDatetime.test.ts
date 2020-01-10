@@ -70,10 +70,10 @@ describe('createDatetime', () => {
 		act(() => {
 			mutationResult.current.mutator.createEntity(testInput);
 		});
-		
+
 		// wait for mutation promise to resolve
 		await waitForNextMutationUpdate();
-		
+
 		const cache = mutationResult.current.client.extract();
 		const { result: cacheResult } = renderHook(
 			() => {
