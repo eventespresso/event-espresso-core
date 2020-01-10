@@ -4,7 +4,7 @@ import { FetchEntitiesResult } from '../../../../eventEditor/data/queries/types'
 import { Viewer } from '../../../../../application/valueObjects/config/types';
 
 const useFetchCurrentUser = (): FetchEntitiesResult<Viewer> => {
-	const { data, error, loading } = useQuery(GET_CURRENT_USER);
+	const { data, error, loading } = useQuery<Viewer>(GET_CURRENT_USER);
 
 	return {
 		data,
