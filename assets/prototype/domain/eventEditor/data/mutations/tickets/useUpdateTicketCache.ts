@@ -1,10 +1,10 @@
 import useTicketQueryOptions from '../../queries/tickets/useTicketQueryOptions';
 import { CacheUpdaterFn, CacheUpdaterFnArgs } from '../types';
-import { ReadQueryOptions, WriteQueryOptions } from '../../queries/types';
+import { WriteQueryOptions } from '../../queries/types';
 import { Ticket, TicketsList } from '../../types';
 
 const useUpdateTicketCache = (): CacheUpdaterFn => {
-	const queryOptions: ReadQueryOptions = useTicketQueryOptions();
+	const queryOptions = useTicketQueryOptions();
 
 	const updateTicketCache = ({ proxy, tickets, ticket, remove = false }: CacheUpdaterFnArgs): void => {
 		const { nodes = [] } = tickets;

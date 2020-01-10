@@ -3,7 +3,7 @@ import { GET_DATETIMES } from './';
 import { ReadQueryOptions } from '../types';
 
 const useDatetimeQueryOptions = (): ReadQueryOptions => {
-	const eventId: number = useEventId();
+	const eventId = useEventId();
 
 	const options: ReadQueryOptions = {
 		query: GET_DATETIMES,

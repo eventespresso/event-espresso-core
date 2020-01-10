@@ -1,10 +1,10 @@
 import usePriceQueryOptions from '../../queries/prices/usePriceQueryOptions';
 import { CacheUpdaterFn, CacheUpdaterFnArgs } from '../types';
-import { ReadQueryOptions, WriteQueryOptions } from '../../queries/types';
+import { WriteQueryOptions } from '../../queries/types';
 import { Price, PricesList } from '../../types';
 
 const useUpdatePriceCache = (): CacheUpdaterFn => {
-	const queryOptions: ReadQueryOptions = usePriceQueryOptions();
+	const queryOptions = usePriceQueryOptions();
 
 	const updatePriceCache = ({ proxy, prices, price, remove = false }: CacheUpdaterFnArgs): void => {
 		const { nodes = [] } = prices;

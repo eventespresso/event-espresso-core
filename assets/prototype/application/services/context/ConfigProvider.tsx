@@ -5,8 +5,7 @@ import React, { createContext, useState } from 'react';
 import { useConfigData, ConfigDataProps, Config } from '../config';
 import { CurrentUser, DateTimeFormats } from '../../valueObjects/config';
 
-import useCurrentUser from '../../../domain/eventEditor/data/queries/currentUser/useCurrentUser';
-import useGeneralSettings from '../../../domain/eventEditor/data/queries/generalSettings/useGeneralSettings';
+import { useCurrentUser, useGeneralSettings } from '../../../domain/shared/data/queries';
 
 export const ConfigContext = createContext<Config | null>(null);
 
