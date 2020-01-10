@@ -6,7 +6,7 @@ import { nodes as tickets } from '../../data/queries/tickets/test/data';
 import { nodes as prices } from '../../data/queries/prices/test/data';
 import { nodes as priceTypes } from '../../data/queries/priceTypes/test/data';
 
-export const eventId: number = 100;
+export const eventId = 100;
 
 /**
  * See the structure of returned data in `/docs/GraphQL-API/query/eventRelations.md`
