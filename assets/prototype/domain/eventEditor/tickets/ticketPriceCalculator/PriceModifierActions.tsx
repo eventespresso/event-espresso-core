@@ -1,26 +1,16 @@
 import React from 'react';
 
-import AddPriceModifierButton from './AddPriceModifierButton';
+import AddPriceModifierButton from './AddPriceModifierButtonData';
 import DeletePriceModifierButton from './DeletePriceModifierButton';
+import { TpcModifierFormRowProps } from './types';
 
-import { Price } from '../../data/types';
-import { TicketPriceCalculatorMutators } from './types';
-
-interface PriceModifierActionsProps {
-	index: number;
-	name: string;
-	price: Price;
-	modifierOptions: Price[];
-	fields: TicketPriceCalculatorMutators;
-}
-
-const PriceModifierActions = ({
+const PriceModifierActions: React.FunctionComponent<TpcModifierFormRowProps> = ({
 	index,
 	name,
 	price,
 	modifierOptions,
 	fields: { push, remove, reset, sort },
-}: PriceModifierActionsProps): React.ReactNode => {
+}) => {
 	const actions = [];
 	const key = `${price.id}-${index}`;
 	if (price.id === 'NEW_PRICE') {

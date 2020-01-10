@@ -5,7 +5,7 @@ import { Field } from 'react-final-form';
 import styles from './inlineStyles';
 import { PriceInputProps } from './types';
 
-const PriceNameInput = ({ name, price }: PriceInputProps): React.ReactNode => {
+const PriceNameInput: React.FunctionComponent<PriceInputProps> = ({ name, price }) => {
 	return (
 		<Field
 			type={'text'}
