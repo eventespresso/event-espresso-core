@@ -1,25 +1,29 @@
+import { Calculation } from 'final-form-calculate';
 import { allPass, map, propEq, when } from 'ramda';
+
+import { TpcFormData } from '../types';
 import { isEqual, getFromFormData } from './utilities';
 import useTicketPriceCalculator from '../hooks/useTicketPriceCalculator';
+import { Price, PriceType } from '../../../data/types';
 import usePriceTypes from '../../../data/queries/priceTypes/usePriceTypes';
 import { getPriceType } from '../../../../shared/predicates/prices/selectionPredicates';
 import { getDefaultPriceType } from '../../../../shared/predicates/priceTypes/selectionPredicates';
 
-const usePriceTypeDecorator = () => {
-	const priceTypes = usePriceTypes();
+const usePriceTypeDecorator = (): Calculation => {
+	const priceTypes: PriceType[] = usePriceTypes();
 	const getPriceTypeForPrice = getPriceType(priceTypes);
-	const defaultPriceType = getDefaultPriceType(priceTypes);
+	const defaultPriceType: PriceType = getDefaultPriceType(priceTypes);
 	const calculator = useTicketPriceCalculator();
 	return {
 		field: /^prices\[\d+\]\.priceType$/,
 		isEqual: isEqual,
-		updates: (value, name, formData) => {
-			const pricePath = name.replace('.priceType', '');
-			const price = getFromFormData(pricePath, formData);
-			const reverseCalc = getFromFormData('ticket.reverseCalculate', formData);
-			let priceType = getPriceTypeForPrice(price);
+		updates: (value, name, formData: TpcFormData) => {
+			const pricePath: string = name.replace('.priceType', '');
+			const price: Price = getFromFormData(pricePath, formData);
+			const reverseCalc: boolean = Boolean(getFromFormData('ticket.reverseCalculate', formData));
+			let priceType: PriceType = getPriceTypeForPrice(price);
 			priceType = priceType || defaultPriceType;
-			const updatedPrice = {
+			const updatedPrice: Price = {
 				...price,
 				isBasePrice: priceType.isBasePrice,
 				isDiscount: priceType.isDiscount,
@@ -27,7 +31,7 @@ const usePriceTypeDecorator = () => {
 				isTax: priceType.isTax,
 				priceType: priceType.id,
 			};
-			const updatedPrices = map(
+			const updatedPrices: Price[] = map(
 				when(
 					// Need to replace the existing price in the form data based on several criteria,
 					// since id will be blank for any newly added price modifiers, and several prices
@@ -47,7 +51,7 @@ const usePriceTypeDecorator = () => {
 				),
 				formData.prices
 			);
-			const formDataWithUpdatedPrice = { ticket: formData.ticket, prices: updatedPrices };
+			const formDataWithUpdatedPrice: TpcFormData = { ticket: formData.ticket, prices: updatedPrices };
 			const formDataCalculations = reverseCalc
 				? calculator({
 						data: formDataWithUpdatedPrice,

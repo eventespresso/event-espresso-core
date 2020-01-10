@@ -1,30 +1,27 @@
+import { Calculation } from 'final-form-calculate';
+
+import { TpcFormData, UpdatedTpcFormDataPath } from '../types';
 import { amountsEqual, getFromFormData } from './utilities';
 import useTicketPriceCalculator from '../hooks/useTicketPriceCalculator';
 
-const usePriceAmountDecorator = () => {
+const useTicketTotalDecorator = (): Calculation => {
 	const calculator = useTicketPriceCalculator();
 	return {
-		field: /^prices\[\d+\]\.amount$/,
+		field: 'ticket.price',
 		isEqual: amountsEqual,
-		updates: (value, name, formData) => {
+		updates: (value, name, formData: TpcFormData) => {
 			const reverseCalc = getFromFormData('ticket.reverseCalculate', formData);
+			// we don't want to update the base price if reverse calculate is false
 			if (reverseCalc) {
-				if (name === 'prices[0].amount') {
-					return {};
-				}
 				return calculator({
 					data: formData,
 					path: 'prices[0].amount',
 					type: 'CALCULATE_BASE_PRICE',
 				});
 			}
-			return calculator({
-				data: formData,
-				path: 'ticket.price',
-				type: 'CALCULATE_TICKET_TOTAL',
-			});
+			return {};
 		},
 	};
 };
 
-export default usePriceAmountDecorator;
+export default useTicketTotalDecorator;
