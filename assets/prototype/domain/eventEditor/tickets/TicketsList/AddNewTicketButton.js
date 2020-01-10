@@ -1,7 +1,6 @@
 import { useContext } from 'react';
 
 import AddNewTicketModal from './AddNewTicketModal';
-import useDateEditorId from './useDateEditorId';
 import { TicketContext } from '../../context/TicketProvider';
 import { EspressoButton } from '../../../../../ZZZ/components/ui';
 
@@ -18,6 +17,7 @@ const AddNewTicketButton = () => {
 		e.stopPropagation();
 		editorState.closeEditor(editorIds.editForm);
 	};
+	const isOpen = editorState.isEditorOpen(editors.editForm);
 
 	return (
 		<>
