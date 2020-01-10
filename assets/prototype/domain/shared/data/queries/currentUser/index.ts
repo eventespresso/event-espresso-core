@@ -17,3 +17,9 @@ export const GET_CURRENT_USER: any = gql`
 		}
 	}
 `;
+
+export { default as useCurrentUser } from './useCurrentUser';
+
+export { default as useFetchCurrentUser } from './useFetchCurrentUser';
+
+export { default as useUpdateCurrentUserCache } from './useUpdateCurrentUserCache';

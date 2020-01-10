@@ -1,8 +1,9 @@
 import { useQuery } from '@apollo/react-hooks';
 import { GET_CURRENT_USER } from './';
-import { FetchEntitiesResult } from '../types';
+import { FetchEntitiesResult } from '../../../../eventEditor/data/queries/types';
+import { Viewer } from '../../../../../application/valueObjects/config/types';
 
-const useFetchCurrentUser = (): FetchEntitiesResult => {
+const useFetchCurrentUser = (): FetchEntitiesResult<Viewer> => {
 	const { data, error, loading } = useQuery(GET_CURRENT_USER);
 
 	return {
