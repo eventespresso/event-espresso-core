@@ -895,8 +895,7 @@ class EE_Dependency_Map
                 'EventEspresso\core\services\orm\tree_traversal\NodeGroupDao' => EE_Dependency_Map::load_from_cache,
                 'EEM_Event' => EE_Dependency_Map::load_from_cache,
                 'EEM_Datetime' => EE_Dependency_Map::load_from_cache,
-                'EEM_Registration' => EE_Dependency_Map::load_from_cache,
-                'Events_Admin_Page' => EE_Dependency_Map::load_from_cache
+                'EEM_Registration' => EE_Dependency_Map::load_from_cache
             ],
             'EventEspresso\core\domain\services\admin\events\data\ConfirmDeletion' => [
                 'EventEspresso\core\services\orm\tree_traversal\NodeGroupDao' => EE_Dependency_Map::load_from_cache,
