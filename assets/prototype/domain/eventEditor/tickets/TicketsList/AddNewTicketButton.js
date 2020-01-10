@@ -5,17 +5,17 @@ import { TicketContext } from '../../context/TicketProvider';
 import { EspressoButton } from '../../../../../ZZZ/components/ui';
 
 const AddNewTicketButton = () => {
-	const { editorIds, editorState } = useContext(TicketContext);
+	const { editors, editorState } = useContext(TicketContext);
 
 	const onClick = (e) => {
 		e.preventDefault();
 		e.stopPropagation();
-		editorState.openEditor(editorIds.editForm);
+		editorState.openEditor(editors.editForm);
 	};
 	const onClose = (e) => {
 		e.preventDefault();
 		e.stopPropagation();
-		editorState.closeEditor(editorIds.editForm);
+		editorState.closeEditor(editors.editForm);
 	};
 	const isOpen = editorState.isEditorOpen(editors.editForm);
 
