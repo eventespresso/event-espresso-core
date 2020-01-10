@@ -34,9 +34,8 @@ interface EditorState {
 	closeAllEditors: () => void;
 	currentlyOpenEditor: () => EditorId | undefined;
 	getIsOpen: (editorId: EditorId) => boolean;
-	onClose: (editorId: EditorId) => void;
-	openEditor: (editorId: EditorId) => void;
-	setIsOpen: (editorId: EditorId) => void;
+	onClose: (editorId: EditorId) => () => void;
+	setIsOpen: (editorId: EditorId) => () => void;
 }
 
 export { ActionType, ContextProps, EditorAction, EditorId, Editors, EditorStack, EditorState };

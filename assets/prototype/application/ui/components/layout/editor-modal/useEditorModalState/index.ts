@@ -82,7 +82,6 @@ const useEditorModalState = (id: EntityId): EditorState => {
 		currentlyOpenEditor,
 		getIsOpen,
 		onClose,
-		openEditor,
 		setIsOpen,
 	};
 };
