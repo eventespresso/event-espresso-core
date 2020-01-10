@@ -793,7 +793,7 @@ class Extend_Registrations_Admin_Page extends Registrations_Admin_Page
     protected function _registration_checkin_list_table()
     {
         do_action('AHEE_log', __FILE__, __FUNCTION__, '');
-        $reg_id = isset($this->_req_data['_REG_ID']) ? $this->_req_data['_REG_ID'] : null;
+        $reg_id = isset($this->_req_data['_REG_ID']) ? absint($this->_req_data['_REG_ID']) : null;
         /** @var EE_Registration $registration */
         $registration = EEM_Registration::instance()->get_one_by_ID($reg_id);
         if (! $registration instanceof EE_Registration) {

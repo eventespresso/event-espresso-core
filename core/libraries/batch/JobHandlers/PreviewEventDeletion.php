@@ -6,7 +6,9 @@ use EEM_Event;
 use EEM_Price;
 use EEM_Ticket;
 use EventEspresso\core\exceptions\InvalidClassException;
+use EventEspresso\core\services\loaders\LoaderFactory;
 use EventEspresso\core\services\orm\tree_traversal\ModelObjNode;
+use EventEspresso\core\services\orm\tree_traversal\NodeGroupDao;
 use EventEspressoBatchRequest\Helpers\BatchRequestException;
 use EventEspressoBatchRequest\Helpers\JobParameters;
 use EventEspressoBatchRequest\Helpers\JobStepResponse;
@@ -25,6 +27,15 @@ use EventEspressoBatchRequest\JobHandlerBaseClasses\JobHandler;
  */
 class PreviewEventDeletion extends JobHandler
 {
+
+    /**
+     * @var NodeGroupDao
+     */
+    protected $model_obj_node_group_persister;
+    public function __construct(NodeGroupDao $model_obj_node_group_persister)
+    {
+        $this->model_obj_node_group_persister = $model_obj_node_group_persister;
+    }
 
     // phpcs:disable PSR1.Methods.CamelCapsMethodName.NotCamelCaps
     /**
@@ -116,7 +127,10 @@ class PreviewEventDeletion extends JobHandler
             // Show a full progress bar.
             $job_parameters->set_units_processed($job_parameters->job_size());
             $deletion_job_code = $job_parameters->request_datum('deletion_job_code');
-            add_option('ee_deletion_' . $deletion_job_code, $job_parameters->extra_datum('roots'), null, 'no');
+            $this->model_obj_node_group_persister->persistModelObjNodesGroup(
+                $job_parameters->extra_datum('roots'),
+                $deletion_job_code
+            );
             return new JobStepResponse(
                 $job_parameters,
                 esc_html__('Finished identifying items for deletion.', 'event_espresso'),
@@ -144,11 +158,14 @@ class PreviewEventDeletion extends JobHandler
      * Performs any clean-up logic when we know the job is completed
      * @param JobParameters $job_parameters
      * @return JobStepResponse
-     * @throws BatchRequestException
      */
     public function cleanup_job(JobParameters $job_parameters)
     {
         // Nothing much to do. We can't delete the option with the built tree because we may need it in a moment for the deletion
+        return new JobStepResponse(
+            $job_parameters,
+            esc_html__('All done', 'event_espresso')
+        );
     }
 }
 // End of file EventDeletion.php

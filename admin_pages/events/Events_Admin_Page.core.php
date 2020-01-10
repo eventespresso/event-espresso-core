@@ -1,7 +1,10 @@
 <?php
 
+use EventEspresso\admin_pages\events\form_sections\ConfirmEventDeletionForm;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
+use EventEspresso\core\exceptions\UnexpectedEntityException;
+use EventEspresso\core\services\orm\tree_traversal\NodeGroupDao;
 use EventEspresso\core\services\orm\tree_traversal\ModelObjNode;
 
 /**
@@ -46,6 +49,11 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
      */
     protected $_cpt_model_obj = false;
 
+
+    /**
+     * @var NodeGroupDao
+     */
+    protected $model_obj_node_group_persister;
 
     /**
      * Initialize page props for this admin page group.
@@ -235,12 +243,12 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
             ),
             'preview_deletion' => [
                 'func' => 'previewDeletion',
-                'capability' => 'ee_delete_events'
+                'capability' => 'ee_delete_events',
             ],
             'confirm_deletion' => [
                 'func' => 'confirmDeletion',
                 'capability' => 'ee_delete_events',
-                'noheader' => true
+                'noheader' => true,
             ]
         );
     }
@@ -519,6 +527,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
                     'order'      => 15,
                     'persistent' => false,
                 ),
+                'require_nonce' => false
             )
         );
     }
@@ -2088,6 +2097,21 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
         $this->generateDeletionPreview(isset($this->_req_data['EVT_ID']) ? $this->_req_data['EVT_ID'] : array());
     }
 
+    /**
+     * Gets the tree traversal batch persister.
+     * @since $VID:$
+     * @return NodeGroupDao
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     */
+    protected function getModelObjNodeGroupPersister()
+    {
+        if (! $this->model_obj_node_group_persister instanceof NodeGroupDao) {
+            $this->model_obj_node_group_persister = $this->getLoader()->load('\EventEspresso\core\services\orm\tree_traversal\NodeGroupDao');
+        }
+        return $this->model_obj_node_group_persister;
+    }
 
     /**
      * _delete_events
@@ -2104,7 +2128,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
     {
         $event_ids = (array) $event_ids;
         // Set a code we can use to reference this deletion task in the batch jobs and preview page.
-        $deletion_job_code = wp_generate_password(6, false);
+        $deletion_job_code = $this->getModelObjNodeGroupPersister()->generateGroupCode();
         $return_url = EE_Admin_Page::add_query_args_and_nonce(
             [
                 'action' => 'preview_deletion',
@@ -2112,16 +2136,17 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
             ],
             $this->_admin_base_url
         );
-        foreach ($event_ids as $EVT_ID) {
-            $event_ids = (int) $EVT_ID;
-        }
+        $event_ids = array_map(
+            'intval',
+            $event_ids
+        );
 
         EEH_URL::safeRedirectAndExit(
             EE_Admin_Page::add_query_args_and_nonce(
                 array(
                     'page'        => 'espresso_batch',
                     'batch'       => EED_Batch::batch_job,
-                    'EVT_IDs[]'      => $event_ids,
+                    'EVT_IDs'      => $event_ids,
                     'deletion_job_code' => $deletion_job_code,
                     'job_handler' => urlencode('EventEspressoBatchRequest\JobHandlers\PreviewEventDeletion'),
                     'return_url'  => urlencode($return_url),
@@ -2132,131 +2157,26 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
     }
 
     /**
-     * A page for users to preview what exactly will be deleted, and confirm they want to delete it.
+     * Checks for a POST submission
      * @since $VID:$
      */
-    protected function previewDeletion()
-    {
-        $EVT_IDs = isset($this->_req_data['EVT_IDs']) ? (array) $this->_req_data['EVT_IDs'] : array();
-        $confirm_deletion_args = [
-            'action' => 'confirm_deletion',
-        ];
-        foreach ($EVT_IDs as $EVT_ID) {
-            $confirm_deletion_args['EVT_IDs[]'] = (int) $EVT_ID;
-        }
-        $this->_template_args['admin_page_content'] = EEH_Template::display_template(
-            EVENTS_TEMPLATE_PATH . 'event_preview_deletion.template.php',
-            [
-                'form_url' => EE_Admin_Page::add_query_args_and_nonce(
-                    $confirm_deletion_args,
-                    $this->admin_base_url()
-                ),
-                'deletion_job_code' => sanitize_key($this->_req_data['deletion_job_code'])
-            ],
-            true
-        );
-        $this->display_admin_page_with_no_sidebar();
-    }
-
     protected function confirmDeletion()
     {
-        $deletion_job_code = isset($this->_req_data['deletion_job_code']) ? sanitize_key($this->_req_data['deletion_job_code']) : null;
-        // Redirect the user to the deletion batch job.
-        EEH_URL::safeRedirectAndExit(
-            EE_Admin_Page::add_query_args_and_nonce(
-                array(
-                    'page'        => 'espresso_batch',
-                    'batch'       => EED_Batch::batch_job,
-                    'deletion_job_code' => $deletion_job_code,
-                    'job_handler' => urlencode('EventEspressoBatchRequest\JobHandlers\ExecuteBatchDeletion'),
-                    'return_url'  => urlencode(
-                        add_query_arg(
-                            [
-                            'status' => 'trash'
-                            ],
-                            EVENTS_ADMIN_URL
-                        )
-                    )
-                ),
-                admin_url()
-            )
-        );
+        $deletion_redirect_logic = $this->getLoader()->getShared('\EventEspresso\core\domain\services\admin\events\data\ConfirmDeletion');
+        $deletion_redirect_logic->handle($this->get_request_data(), $this->admin_base_url());
     }
 
     /**
-     * _permanently_delete_event
-     *
-     * @access  private
-     * @param  int $EVT_ID
-     * @return bool
+     * A page for users to preview what exactly will be deleted, and confirm they want to delete it.
+     * @since $VID:$
+     * @throws EE_Error
      */
-    private function _permanently_delete_event($EVT_ID = 0)
+    protected function previewDeletion()
     {
-        // grab event id
-        if (! $EVT_ID) {
-            $msg = esc_html__(
-                'An error occurred. No Event ID or an invalid Event ID was received.',
-                'event_espresso'
-            );
-            EE_Error::add_error($msg, __FILE__, __FUNCTION__, __LINE__);
-            return false;
-        }
-        if (! $this->_cpt_model_obj instanceof EE_Event
-            || $this->_cpt_model_obj->ID() !== $EVT_ID
-        ) {
-            $this->_cpt_model_obj = EEM_Event::instance()->get_one_by_ID($EVT_ID);
-        }
-        if (! $this->_cpt_model_obj instanceof EE_Event) {
-            return false;
-        }
-        // need to delete related tickets and prices first.
-        $datetimes = $this->_cpt_model_obj->get_many_related('Datetime');
-        foreach ($datetimes as $datetime) {
-            $this->_cpt_model_obj->_remove_relation_to($datetime, 'Datetime');
-            $tickets = $datetime->get_many_related('Ticket');
-            foreach ($tickets as $ticket) {
-                $ticket->_remove_relation_to($datetime, 'Datetime');
-                $ticket->delete_related_permanently('Price');
-                $ticket->delete_permanently();
-            }
-            $datetime->delete();
-        }
-        // what about related venues or terms?
-        $venues = $this->_cpt_model_obj->get_many_related('Venue');
-        foreach ($venues as $venue) {
-            $this->_cpt_model_obj->_remove_relation_to($venue, 'Venue');
-        }
-        // any attached question groups?
-        $question_groups = $this->_cpt_model_obj->get_many_related('Question_Group');
-        if (! empty($question_groups)) {
-            foreach ($question_groups as $question_group) {
-                $this->_cpt_model_obj->_remove_relation_to($question_group, 'Question_Group');
-            }
-        }
-        // Message Template Groups
-        $this->_cpt_model_obj->_remove_relations('Message_Template_Group');
-        /** @type EE_Term_Taxonomy[] $term_taxonomies */
-        $term_taxonomies = $this->_cpt_model_obj->term_taxonomies();
-        foreach ($term_taxonomies as $term_taxonomy) {
-            $this->_cpt_model_obj->remove_relation_to_term_taxonomy($term_taxonomy);
-        }
-        $success = $this->_cpt_model_obj->delete_permanently();
-        // did it all go as planned ?
-        if ($success) {
-            $msg = sprintf(esc_html__('Event ID # %d has been deleted.', 'event_espresso'), $EVT_ID);
-            EE_Error::add_success($msg);
-        } else {
-            $msg = sprintf(
-                esc_html__('An error occurred. Event ID # %d could not be deleted.', 'event_espresso'),
-                $EVT_ID
-            );
-            EE_Error::add_error($msg, __FILE__, __FUNCTION__, __LINE__);
-            return false;
-        }
-        do_action('AHEE__Events_Admin_Page___permanently_delete_event__after_event_deleted', $EVT_ID);
-        return true;
+        $preview_deletion_logic = $this->getLoader()->getShared('\EventEspresso\core\domain\services\admin\events\data\PreviewDeletion');
+        $this->set_template_args($preview_deletion_logic->handle($this->get_request_data(), $this->admin_base_url()));
+        $this->display_admin_page_with_no_sidebar();
     }
-
 
     /**
      * get total number of events
