@@ -8,7 +8,7 @@ const TicketPriceCalculatorButtonData = ({ ticket }) => {
 	const onClose = () => editorState.closeEditor(editors.calculator);
 	const onOpen = () => editorState.openEditor(editors.calculator);
 
-	return <TicketPriceCalculatorButton ticket={ticket} onOpen={onOpen} onClose={handleClose} isOpen={isOpen} />;
+	return <TicketPriceCalculatorButton ticket={ticket} onOpen={onOpen} onClose={onClose} isOpen={isOpen} />;
 };
 
 export default TicketPriceCalculatorButtonData;
