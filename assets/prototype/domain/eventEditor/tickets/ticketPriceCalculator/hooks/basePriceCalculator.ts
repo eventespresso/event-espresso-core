@@ -1,12 +1,15 @@
+import { Price } from '../../../data/types';
+import parsedAmount from '../../../../../application/utilities/money/parsedAmount';
+
 /**
  * @function
  * @param {number} currentTotal
- * @param {Object} formData for price
- * @return {Object} calculations based on price modifier
+ * @param {Price} formData for price
+ * @return {number} calculations based on price modifier
  */
-const basePriceCalculator = (currentTotal, { isPercent, isDiscount, amount }) => {
-	amount = parseFloat(amount || 0);
-	const total = parseFloat(currentTotal || 0);
+const basePriceCalculator = (currentTotal: number, { isPercent, isDiscount, amount }: Price): number => {
+	amount = parsedAmount(amount || 0);
+	const total = parsedAmount(currentTotal || 0);
 	// NOTE: there's no case for handling base price types because that is what we are calculating
 	// ALSO NOTE: Reverse calculations seem backwards, because, well.. they are!
 	//            So discounts will increase the total and surcharges will decrease it

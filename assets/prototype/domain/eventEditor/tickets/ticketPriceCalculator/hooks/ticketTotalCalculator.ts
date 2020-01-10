@@ -1,12 +1,15 @@
+import { Price } from '../../../data/types';
+import parsedAmount from '../../../../../application/utilities/money/parsedAmount';
+
 /**
  * @function
  * @param {number} currentTotal
  * @param {Object} formData for price
- * @return {Object} calculations based on price modifier
+ * @return {number} calculations based on price modifier
  */
-const ticketTotalCalculator = (currentTotal, { isBasePrice, isPercent, isDiscount, amount }) => {
-	amount = parseFloat(amount || 0);
-	const total = parseFloat(currentTotal || 0);
+const ticketTotalCalculator = (currentTotal: number, { isBasePrice, isPercent, isDiscount, amount }: Price): number => {
+	amount = parsedAmount(amount || 0);
+	const total = parsedAmount(currentTotal || 0);
 	if (isBasePrice) {
 		// basic addition
 		return total + amount;
