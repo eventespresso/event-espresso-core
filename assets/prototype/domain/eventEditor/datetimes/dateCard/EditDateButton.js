@@ -4,7 +4,7 @@ import { DateTimeContext } from '../../context/DateTimeProvider';
 
 const EditDateButton = ({ position }) => {
 	const { editors, editorState } = useContext(DateTimeContext);
-	const setIsOpen = editorState.setIsOpen(editors.editForm);
+	const onClick = () => editorState.openEditor(editors.editForm);
 
 	const style = {
 		position: 'absolute',
@@ -18,7 +18,7 @@ const EditDateButton = ({ position }) => {
 
 	return (
 		<div style={style}>
-			<Button icon={'edit'} onClick={setIsOpen} minimal />
+			<Button icon={'edit'} onClick={onClick} minimal />
 		</div>
 	);
 };

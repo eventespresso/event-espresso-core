@@ -1,5 +1,8 @@
-import { useState } from '@wordpress/element';
+import { useContext } from 'react';
+
 import AddNewDatetimeModal from './AddNewDateModal';
+import useDateEditorId from './useDateEditorId';
+import { DateTimeContext } from '../../context/DateTimeProvider';
 import { EspressoButton } from '../../../../../ZZZ/components/ui';
 
 const btnRowStyle = {
@@ -11,22 +14,25 @@ const btnRowStyle = {
 };
 
 const AddNewDateButton = () => {
-	const [isOpen, setIsOpen] = useState(false);
-	const handleOpen = (e) => {
+	const { editors, editorState } = useContext(DateTimeContext);
+
+	const onClick = (e) => {
 		e.preventDefault();
 		e.stopPropagation();
-		setIsOpen(true);
+		editorState.openEditor(editors.editForm);
 	};
-	const handleClose = (e) => {
+	const onClose = (e) => {
 		e.preventDefault();
 		e.stopPropagation();
-		setIsOpen(false);
+		editorState.closeEditor(editors.editForm);
 	};
+
+	const isOpen = editorState.isEditorOpen(editors.editForm);
 
 	return (
 		<div style={btnRowStyle}>
-			<EspressoButton icon={'calendar'} buttonText={'Add New Date'} onClick={handleOpen} />
-			<AddNewDatetimeModal handleClose={handleClose} isOpen={isOpen} />
+			<EspressoButton icon={'calendar'} buttonText={'Add New Date'} onClick={onClick} />
+			<AddNewDatetimeModal onClose={onClose} isOpen={isOpen} />
 		</div>
 	);
 };

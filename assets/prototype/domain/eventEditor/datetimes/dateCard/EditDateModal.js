@@ -5,17 +5,18 @@ import { DateTimeContext } from '../../context/DateTimeProvider';
 import { useEntityMutator, EntityType } from '../../../../application/services/apollo/mutations';
 import useTickets from '../../data/queries/tickets/useTickets';
 
-const EditDateModal = ({ relatedTickets }) => {
-	const { id, editors, editorState } = useContext(DateTimeContext);
-	const isOpen = editorState.getIsOpen(editors.editForm);
-	const onClose = editorState.onClose(editors.editForm);
+const EditDateModal = ({ relatedTickets, id }) => {
+	const { editors, editorState } = useContext(DateTimeContext);
+	const isOpen = editorState.isEditorOpen(editors.editForm);
+	const onClose = () => editorState.closeEditor(editors.editForm);
+
 	const { updateEntity } = useEntityMutator(EntityType.Datetime, id);
+	const onSubmit = (fields) => updateEntity(fields);
 	const tickets = useTickets();
 
 	const formComponent = (props) => (
 		<DatetimeForm {...props} relatedTickets={relatedTickets} tickets={tickets} title='Update date' />
 	);
-	const onSubmit = (fields) => updateEntity(fields);
 
 	return (
 		<FormModal
