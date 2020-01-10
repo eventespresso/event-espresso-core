@@ -23,19 +23,20 @@ type EditorAction = {
 type EditorId = string;
 
 interface Editors {
-	calculator?: string;
-	editForm?: string;
-	relations?: string;
+	addNewForm?: EditorId;
+	calculator?: EditorId;
+	editForm?: EditorId;
+	relations?: EditorId;
 }
 
-type EditorStack = string[];
+type EditorStack = EditorId[];
 
 interface EditorState {
 	closeAllEditors: () => void;
 	currentlyOpenEditor: () => EditorId | undefined;
-	getIsOpen: (editorId: EditorId) => boolean;
-	onClose: (editorId: EditorId) => () => void;
-	setIsOpen: (editorId: EditorId) => () => void;
+	isEditorOpen: (editorId: EditorId) => boolean;
+	closeEditor: (editorId: EditorId) => void;
+	openEditor: (editorId: EditorId) => void;
 }
 
 export { ActionType, ContextProps, EditorAction, EditorId, Editors, EditorStack, EditorState };

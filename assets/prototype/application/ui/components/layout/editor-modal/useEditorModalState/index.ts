@@ -1,16 +1,11 @@
-/**
- * External dependencies
- */
-import { useReducer } from 'react';
 import { dropLast, last } from 'ramda';
+import { useReducer } from 'react';
 
-/**
- * Internal imports
- */
 import { ActionType, EditorAction, EditorId, EditorStack, EditorState } from './types';
-import { EntityId } from '../../../../../../domain/eventEditor/data/types';
 
-const reducer = (state: EditorStack, action: EditorAction): EditorStack => {
+const INITIAL_STATE: EditorStack = [];
+
+const reducer = (state: EditorStack, action: EditorAction) => {
 	const { editorId, type } = action;
 	switch (type) {
 		case ActionType.CLOSE_EDITOR:
@@ -20,9 +15,10 @@ const reducer = (state: EditorStack, action: EditorAction): EditorStack => {
 			}
 			return state;
 		case ActionType.CLOSE_ALL:
-			return [];
+			return INITIAL_STATE;
 		case ActionType.OPEN_EDITOR:
 			if (editorId.length && !state.includes(editorId)) {
+				// has editor id and editor is not already in the stack
 				return [...state, editorId];
 			}
 			return state;
@@ -32,9 +28,8 @@ const reducer = (state: EditorStack, action: EditorAction): EditorStack => {
 	return state;
 };
 
-const useEditorModalState = (id: EntityId): EditorState => {
-	const initialState = [];
-	const [state, dispatch] = useReducer(reducer, initialState);
+const useEditorModalState = (): EditorState => {
+	const [state, dispatch] = useReducer(reducer, INITIAL_STATE);
 
 	const openEditor = (editorId: EditorId): void => {
 		dispatch({
@@ -67,22 +62,17 @@ const useEditorModalState = (id: EntityId): EditorState => {
 	 * Returns true if the provided ID matches the editor
 	 * currently at the top of the stack
 	 *
-	 * @param {Stack} state
 	 * @param {EditorId} editorId    unique identifier for editor
-	 * @return {string} editorId
+	 * @return {boolean} true if editor is the currently open editor
 	 */
 	const isEditorOpen = (editorId: EditorId): boolean => editorId === last(state);
 
-	const getIsOpen = (editorId: EditorId) => isEditorOpen(editorId);
-	const onClose = (editorId: EditorId) => () => closeEditor(editorId);
-	const setIsOpen = (editorId: EditorId) => () => openEditor(editorId);
-
 	return {
 		closeAllEditors,
+		closeEditor,
 		currentlyOpenEditor,
-		getIsOpen,
-		onClose,
-		setIsOpen,
+		isEditorOpen,
+		openEditor,
 	};
 };
 
