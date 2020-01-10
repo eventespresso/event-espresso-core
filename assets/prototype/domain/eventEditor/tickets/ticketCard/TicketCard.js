@@ -49,8 +49,8 @@ const TicketCard = ({ id }) => {
 		entityId: id,
 		relation: 'datetimes',
 	});
-	return (
-		<TicketProvider id={id}>
+	return ticket ? (
+		<TicketProvider id={ticket.id}>
 			<Card elevation={Elevation.ONE} style={cardStyle}>
 				<EditTicket position='top' relatedDates={relatedDates} />
 				<div>
@@ -118,7 +118,7 @@ const TicketCard = ({ id }) => {
 				</div>
 			</Card>
 		</TicketProvider>
-	);
+	) : null;
 };
 
 export default TicketCard;

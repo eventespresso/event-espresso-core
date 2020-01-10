@@ -55,8 +55,8 @@ const DateCard = ({ id }) => {
 
 	const ticketsLoaded = isLoaded(TypeName.tickets);
 
-	return (
-		<DateTimeProvider id={id}>
+	return date ? (
+		<DateTimeProvider id={date.id}>
 			<Card elevation={Elevation.ONE} style={cardStyle}>
 				<EditDatetime position='top' relatedTickets={relatedTicketIds} />
 				<div style={idStyle}>
@@ -117,7 +117,7 @@ const DateCard = ({ id }) => {
 				{ticketsLoaded && <DeleteDatetimeButton id={date.id} />}
 			</Card>
 		</DateTimeProvider>
-	);
+	) : null;
 };
 
 export default DateCard;
