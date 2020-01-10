@@ -4,7 +4,7 @@ import { FetchEntitiesResult } from '../../../../eventEditor/data/queries/types'
 import { GeneralSettingsData } from '../../../../../application/valueObjects/config/types';
 
 const useFetchGeneralSettings = (): FetchEntitiesResult<GeneralSettingsData> => {
-	const { data, error, loading } = useQuery(GET_GENERAL_SETTINGS);
+	const { data, error, loading } = useQuery<GeneralSettingsData>(GET_GENERAL_SETTINGS);
 
 	return {
 		data,
