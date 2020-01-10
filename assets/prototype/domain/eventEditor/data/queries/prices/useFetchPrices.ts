@@ -8,7 +8,7 @@ import useTicketIds from '../tickets/useTicketIds';
 import { FetchEntitiesResult } from '../types';
 import { PricesList } from '../../types';
 
-const useFetchPrices = (): FetchEntitiesResult => {
+const useFetchPrices = (): FetchEntitiesResult<PricesList> => {
 	const { setIsLoading, setIsLoaded, setIsError } = useStatus();
 	const options = usePriceQueryOptions();
 	const ticketIn = useTicketIds();

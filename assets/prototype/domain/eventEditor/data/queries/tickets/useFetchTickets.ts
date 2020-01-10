@@ -9,7 +9,7 @@ import { FetchEntitiesResult, ReadQueryOptions } from '../types';
 import { EntityId } from '../../types';
 import { TicketsList } from '../../types';
 
-const useFetchTickets = (): FetchEntitiesResult => {
+const useFetchTickets = (): FetchEntitiesResult<TicketsList> => {
 	const [initialized, setInitialized] = useState(false);
 	const { setIsLoading, setIsLoaded, setIsError } = useStatus();
 	const options: ReadQueryOptions = useTicketQueryOptions();
