@@ -885,6 +885,21 @@ class EE_Dependency_Map
                 'EventEspresso\core\services\request\Request' => EE_Dependency_Map::load_from_cache,
                 'EEM_Ticket'  => EE_Dependency_Map::load_from_cache,
             ],
+            'EventEspressoBatchRequest\JobHandlers\ExecuteBatchDeletion' => [
+                'EventEspresso\core\services\orm\tree_traversal\NodeGroupDao' => EE_Dependency_Map::load_from_cache
+            ],
+            'EventEspressoBatchRequest\JobHandlers\PreviewEventDeletion' => [
+                'EventEspresso\core\services\orm\tree_traversal\NodeGroupDao' => EE_Dependency_Map::load_from_cache
+            ],
+            'EventEspresso\core\domain\services\admin\events\data\PreviewDeletion' => [
+                'EventEspresso\core\services\orm\tree_traversal\NodeGroupDao' => EE_Dependency_Map::load_from_cache,
+                'EEM_Event' => EE_Dependency_Map::load_from_cache,
+                'EEM_Datetime' => EE_Dependency_Map::load_from_cache,
+                'EEM_Registration' => EE_Dependency_Map::load_from_cache
+            ],
+            'EventEspresso\core\domain\services\admin\events\data\ConfirmDeletion' => [
+                'EventEspresso\core\services\orm\tree_traversal\NodeGroupDao' => EE_Dependency_Map::load_from_cache,
+            ]
         );
     }
 
