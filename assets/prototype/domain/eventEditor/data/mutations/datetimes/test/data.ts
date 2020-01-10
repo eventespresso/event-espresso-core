@@ -1,9 +1,12 @@
+import { GraphQLRequest } from 'apollo-link';
 import { pickBy } from 'ramda';
+import { ExecutionResult } from 'graphql';
+
 import { nodes as datetimes } from '../../../queries/datetimes/test/data';
-import { ReadQueryOptions } from '../../../queries/types';
 import { MutationInput, MutationType } from '../../../../../../application/services/apollo/mutations/types';
 import { ucFirst } from '../../../../../../application/utilities/text/changeCase';
 import { eventId } from '../../../../context';
+import { MockedResponse } from '../../../../context/test/types';
 import { mutations } from '../../';
 
 export const mockedDatetimes = {
@@ -12,7 +15,10 @@ export const mockedDatetimes = {
 	[MutationType.Delete]: { id: datetimes[0].id, __typename: datetimes[0].__typename },
 };
 
-export const getMutationMocks = (mutationInput: MutationInput, mutationType: MutationType) => {
+export const getMutationMocks = (
+	mutationInput: MutationInput,
+	mutationType: MutationType
+): ReadonlyArray<MockedResponse> => {
 	return [
 		{
 			request: getMockRequest(mutationInput, mutationType),
@@ -21,7 +27,7 @@ export const getMutationMocks = (mutationInput: MutationInput, mutationType: Mut
 	];
 };
 
-export const getMockRequest = (mutationInput: MutationInput, mutationType: MutationType): ReadQueryOptions => {
+export const getMockRequest = (mutationInput: MutationInput, mutationType: MutationType): GraphQLRequest => {
 	const input: MutationInput = {
 		clientMutationId: `${mutationType}_DATETIME`,
 		...mutationInput,
@@ -40,7 +46,7 @@ export const getMockRequest = (mutationInput: MutationInput, mutationType: Mutat
 	};
 };
 
-export const getMockResult = (mutationInput: MutationInput, mutationType: MutationType) => {
+export const getMockResult = (mutationInput: MutationInput, mutationType: MutationType): ExecutionResult => {
 	// make sure that tickets don't go into the result
 	const input = pickBy<MutationInput, MutationInput>(
 		(_, key) => Object.keys(mockedDatetimes[mutationType]).includes(key),

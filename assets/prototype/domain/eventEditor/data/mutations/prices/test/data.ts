@@ -1,9 +1,12 @@
 import { pickBy, omit } from 'ramda';
+import { ExecutionResult } from 'graphql';
+
 import { nodes as prices } from '../../../queries/prices/test/data';
 import { ReadQueryOptions } from '../../../queries/types';
 import { MutationInput, MutationType } from '../../../../../../application/services/apollo/mutations/types';
 import { ucFirst } from '../../../../../../application/utilities/text/changeCase';
 import { mutations } from '../../';
+import { MockedResponse } from '../../../../context/test/types';
 
 export const mockedPrices = {
 	[MutationType.Create]: { ...prices[0], id: prices[0].id + '-alpha' }, // make sure to change the ID to make it different}
@@ -11,7 +14,10 @@ export const mockedPrices = {
 	[MutationType.Delete]: { id: prices[0].id, __typename: prices[0].__typename },
 };
 
-export const getMutationMocks = (mutationInput: MutationInput, mutationType: MutationType) => {
+export const getMutationMocks = (
+	mutationInput: MutationInput,
+	mutationType: MutationType
+): ReadonlyArray<MockedResponse> => {
 	return [
 		{
 			request: getMockRequest(mutationInput, mutationType),
@@ -40,7 +46,7 @@ export const getMockRequest = (mutationInput: MutationInput, mutationType: Mutat
 	};
 };
 
-export const getMockResult = (mutationInput: MutationInput, mutationType: MutationType) => {
+export const getMockResult = (mutationInput: MutationInput, mutationType: MutationType): ExecutionResult => {
 	// make sure that prices don't go into the result
 	const input = pickBy<MutationInput, MutationInput>(
 		(_, key) => Object.keys(mockedPrices[mutationType]).includes(key),
