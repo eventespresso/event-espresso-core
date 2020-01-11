@@ -1,19 +1,13 @@
-/**
- * External dependencies
- */
 import React, { createContext } from 'react';
 
-/**
- * Internal dependencies
- */
+import useTicketEditorId from './useTicketEditorId';
 import { EntityId } from '../../data/types';
+import useEditorModalState from '../../../../application/ui/components/layout/editor-modal/useEditorModalState';
 import {
 	ContextProps,
 	Editors,
 	EditorState,
 } from '../../../../application/ui/components/layout/editor-modal/useEditorModalState/types';
-import useEditorModalState from '../../../../application/ui/components/layout/editor-modal/useEditorModalState';
-import useTicketEditorId from './useTicketEditorId';
 
 export interface TicketContextProps extends ContextProps {}
 export const TicketContext = createContext({} as TicketContextProps);
@@ -23,7 +17,7 @@ interface TicketProviderProps {
 	id: EntityId;
 }
 
-const TicketProvider = ({ children, id }: TicketProviderProps) => {
+const TicketProvider: React.FunctionComponent<TicketProviderProps> = ({ children, id }) => {
 	const editorState: EditorState = useEditorModalState();
 
 	const editors: Editors = {

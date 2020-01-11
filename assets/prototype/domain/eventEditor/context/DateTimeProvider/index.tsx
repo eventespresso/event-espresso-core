@@ -1,19 +1,13 @@
-/**
- * External dependencies
- */
 import React, { createContext } from 'react';
 
-/**
- * Internal dependencies
- */
+import useDateEditorId from './useDateEditorId';
 import { EntityId } from '../../data/types';
+import useEditorModalState from '../../../../application/ui/components/layout/editor-modal/useEditorModalState';
 import {
 	ContextProps,
 	Editors,
 	EditorState,
 } from '../../../../application/ui/components/layout/editor-modal/useEditorModalState/types';
-import useEditorModalState from '../../../../application/ui/components/layout/editor-modal/useEditorModalState';
-import useDateEditorId from './useDateEditorId';
 
 export interface DateTimeContextProps extends ContextProps {}
 export const DateTimeContext = createContext({} as DateTimeContextProps);
@@ -23,7 +17,7 @@ interface DatetimeProviderProps {
 	id: EntityId;
 }
 
-const DateTimeProvider = ({ children, id }: DatetimeProviderProps) => {
+const DateTimeProvider: React.FunctionComponent<DatetimeProviderProps> = ({ children, id }) => {
 	const editorState: EditorState = useEditorModalState();
 
 	const editors: Editors = {
