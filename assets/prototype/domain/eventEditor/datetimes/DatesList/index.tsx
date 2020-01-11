@@ -1,18 +1,14 @@
-/**
- * External dependencies
- */
-import * as React from 'react';
+import React from 'react';
 
-/**
- * Internal dependencies
- */
 import AddNewDateButton from './AddNewDateButton';
+import List from './List';
+
+import useDatetimes from '../../data/queries/datetimes/useDatetimes';
+
+import { useStatus, TypeName } from '../../../../application/services/apollo/status';
 import EmptyState from '../../../../application/ui/components/display/EmptyState';
 import ErrorIndicator from '../../../../application/ui/components/display/ErrorIndicator';
-import List from './List';
 import LoadingIndicator from '../../../../application/ui/components/display/LoadingIndicator';
-import useDatetimes from '../../data/queries/datetimes/useDatetimes';
-import { useStatus, TypeName } from '../../../../application/services/apollo/status';
 
 const DatesList = () => {
 	const datetimes = useDatetimes();
