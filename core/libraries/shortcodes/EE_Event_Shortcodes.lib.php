@@ -237,7 +237,7 @@ class EE_Event_Shortcodes extends EE_Shortcodes
             // pull the meta value from the event post
             $event_meta = $this->_event->get_post_meta($shortcode, true);
 
-            return ! empty($event_meta) ? $this->_event->get_post_meta($shortcode, true) : '';
+            return ! empty($event_meta) ? do_shortcode($this->_event->get_post_meta($shortcode, true)) : '';
         }
 
         if (strpos($shortcode, '[EVENT_TOTAL_AVAILABLE_SPACES_*') !== false) {
