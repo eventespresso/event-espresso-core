@@ -1,7 +1,12 @@
-import { useContext } from 'react';
+import React from 'react';
 
 import AddNewDatetimeModal from './AddNewDateModal';
-import { DateTimeContext } from '../../context/DateTimeProvider';
+import useDateEditorId from '../../context/DateTimeProvider/useDateEditorId';
+import useEditorModalState from '../../../../application/ui/components/layout/editor-modal/useEditorModalState';
+import {
+	EditorId,
+	EditorState,
+} from '../../../../application/ui/components/layout/editor-modal/useEditorModalState/types';
 import { EspressoButton } from '../../../../../ZZZ/components/ui';
 
 const btnRowStyle = {
@@ -13,20 +18,21 @@ const btnRowStyle = {
 };
 
 const AddNewDateButton = () => {
-	const { editors, editorState } = useContext(DateTimeContext);
+	const editorState: EditorState = useEditorModalState();
+	const editorId: EditorId = useDateEditorId('add-new-date', 'xyz');
 
 	const onClick = (e) => {
 		e.preventDefault();
 		e.stopPropagation();
-		editorState.openEditor(editors.editForm);
+		editorState.openEditor(editorId);
 	};
 	const onClose = (e) => {
 		e.preventDefault();
 		e.stopPropagation();
-		editorState.closeEditor(editors.editForm);
+		editorState.closeEditor(editorId);
 	};
 
-	const isOpen = editorState.isEditorOpen(editors.editForm);
+	const isOpen = editorState.isEditorOpen(editorId);
 
 	return (
 		<div style={btnRowStyle}>
