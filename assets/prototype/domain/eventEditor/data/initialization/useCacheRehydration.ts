@@ -26,13 +26,15 @@ const useCacheRehydration = (): void => {
 	const { setData: setRelationalData } = useRelations();
 	const { setConfig } = useConfig();
 	const {
-		datetimes: espressoDatetimes = DEFAULT_DATETIME_LIST_DATA,
-		tickets: espressoTickets = DEFAULT_TICKET_LIST_DATA,
-		prices: espressoPrices = DEFAULT_PRICE_LIST_DATA,
-		priceTypes: espressoPriceTypes = DEFAULT_PRICE_TYPE_LIST_DATA,
+		event: {
+			datetimes: espressoDatetimes = DEFAULT_DATETIME_LIST_DATA,
+			tickets: espressoTickets = DEFAULT_TICKET_LIST_DATA,
+			prices: espressoPrices = DEFAULT_PRICE_LIST_DATA,
+			priceTypes: espressoPriceTypes = DEFAULT_PRICE_TYPE_LIST_DATA,
+			relations,
+		},
 		currentUser,
 		generalSettings,
-		relations,
 	} = useCacheRehydrationData();
 	const { isLoaded } = useStatus();
 
