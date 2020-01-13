@@ -3,9 +3,8 @@ import classNames from 'classnames';
 import { Dashicon } from '@wordpress/components';
 import { Path, SVG } from '@wordpress/components/src/primitives';
 
-import ICONS from './constants';
-import PATHS from './svgPaths';
-import EspressoIconProps from './types';
+import { SvgPath } from './svgPaths';
+import { EspressoIconProps, Icon } from './types';
 
 /**
  * Custom Event Espresso Dashicons
@@ -13,24 +12,24 @@ import EspressoIconProps from './types';
 const EspressoIcon: React.FunctionComponent<EspressoIconProps> = ({ icon, svgSize = 20, className, ...otherProps }) => {
 	let path: string;
 	switch (icon) {
-		case ICONS.CALCULATOR:
-			path = PATHS.CALCULATOR;
+		case Icon.CALCULATOR:
+			path = SvgPath.CALCULATOR;
 			break;
 
-		case ICONS.CALENDAR:
-			path = PATHS.CALENDAR;
+		case Icon.CALENDAR:
+			path = SvgPath.CALENDAR;
 			break;
 
-		case ICONS.REM:
-			path = PATHS.REM;
+		case Icon.REM:
+			path = SvgPath.REM;
 			break;
 
-		case ICONS.ROTATE:
-			path = PATHS.ROTATE;
+		case Icon.ROTATE:
+			path = SvgPath.ROTATE;
 			break;
 
-		case ICONS.SAVE:
-			path = PATHS.SAVE;
+		case Icon.SAVE:
+			path = SvgPath.SAVE;
 			break;
 
 		default:

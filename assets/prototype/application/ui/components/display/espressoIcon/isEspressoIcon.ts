@@ -1,15 +1,15 @@
-import ICONS from './constants';
+import { Icon } from './types';
 
 /**
  * returns true if icon is an EspressoIcon
  */
 const isEspressoIcon = (icon: string): boolean => {
 	switch (icon) {
-		case ICONS.CALCULATOR:
-		case ICONS.CALENDAR:
-		case ICONS.REM:
-		case ICONS.ROTATE:
-		case ICONS.SAVE:
+		case Icon.CALCULATOR:
+		case Icon.CALENDAR:
+		case Icon.REM:
+		case Icon.ROTATE:
+		case Icon.SAVE:
 			return true;
 		default:
 			return false;
