@@ -7,7 +7,7 @@ import {
 	EditorId,
 	EditorState,
 } from '../../../../application/ui/components/layout/editor-modal/useEditorModalState/types';
-import { ClickEvent, EspressoButton } from '../../../../application/ui/components/input';
+import { EspressoButton } from '../../../../application/ui/components/input';
 
 const btnRowStyle = {
 	display: 'flex',
