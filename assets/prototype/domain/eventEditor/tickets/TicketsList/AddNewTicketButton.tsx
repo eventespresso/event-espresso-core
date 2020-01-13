@@ -7,20 +7,20 @@ import {
 	EditorId,
 	EditorState,
 } from '../../../../application/ui/components/layout/editor-modal/useEditorModalState/types';
-import { EspressoButton } from '../../../../../ZZZ/components/ui';
+import { ClickEvent, EspressoButton } from '../../../../application/ui/components/input';
 
-const AddNewTicketButton = () => {
+const AddNewTicketButton: React.FunctionComponent = () => {
 	const editorState: EditorState = useEditorModalState();
 	const editorId: EditorId = useTicketEditorId('add-new-ticket', 'xyz');
 
-	const onClick = (e) => {
-		e.preventDefault();
-		e.stopPropagation();
+	const onClick: ClickEvent = (click) => {
+		click.preventDefault();
+		click.stopPropagation();
 		editorState.openEditor(editorId);
 	};
-	const onClose = (e) => {
-		e.preventDefault();
-		e.stopPropagation();
+	const onClose: ClickEvent = (click) => {
+		click.preventDefault();
+		click.stopPropagation();
 		editorState.closeEditor(editorId);
 	};
 	const isOpen = editorState.isEditorOpen(editorId);
