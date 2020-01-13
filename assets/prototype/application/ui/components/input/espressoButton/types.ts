@@ -24,7 +24,7 @@ export interface EspressoButtonProps {
 	buttonProps?: object;
 	htmlClass?: string;
 	icon?: Icon | string;
-	onClick: ClickEvent;
+	onClick: () => void;
 	size?: EspressoButtonSize;
 	style?: EspressoButtonStyle;
 }

@@ -2,7 +2,7 @@ import React from 'react';
 import classNames from 'classnames';
 
 import { EspressoButtonProps, EspressoButtonSize, EspressoButtonStyle } from './types';
-import {EspressoIcon } from '../../display/espressoIcon';
+import { EspressoIcon } from '../../display/espressoIcon';
 
 /**
  * Button wrapper for adding styles
@@ -38,8 +38,15 @@ const EspressoButton: React.FunctionComponent<EspressoButtonProps> = ({
 	} else {
 		classes += ' ee-noIcon';
 	}
+
+	const onClickHandler = (e) => {
+		e.preventDefault();
+		e.stopPropagation();
+		onClick();
+	};
+
 	return (
-		<button {...buttonProps} className={classes} onClick={onClick}>
+		<button {...buttonProps} className={classes} onClick={onClickHandler}>
 			<span className='text-wrap'>{buttonText}</span>
 			{renderedIcon}
 		</button>

@@ -21,14 +21,10 @@ const AddNewDateButton: React.FunctionComponent = () => {
 	const editorState: EditorState = useEditorModalState();
 	const editorId: EditorId = useDateEditorId('add-new-date', 'xyz');
 
-	const onClick: ClickEvent = (click) => {
-		click.preventDefault();
-		click.stopPropagation();
+	const onClick = (): void => {
 		editorState.openEditor(editorId);
 	};
-	const onClose: ClickEvent = (click) => {
-		click.preventDefault();
-		click.stopPropagation();
+	const onClose = (): void => {
 		editorState.closeEditor(editorId);
 	};
 
