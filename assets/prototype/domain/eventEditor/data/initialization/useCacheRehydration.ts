@@ -23,7 +23,7 @@ import { useUpdateCurrentUserCache, useUpdateGeneralSettingsCache } from '../../
 const { GET_CURRENT_USER, GET_GENERAL_SETTINGS } = queries;
 
 const useCacheRehydration = (): void => {
-	const { setData } = useRelations();
+	const { setData: setRelationalData } = useRelations();
 	const { setConfig } = useConfig();
 	const {
 		datetimes: espressoDatetimes = DEFAULT_DATETIME_LIST_DATA,
@@ -109,7 +109,7 @@ const useCacheRehydration = (): void => {
 	setConfig((config: ConfigDataProps) => ({ ...config, generalSettings }));
 
 	/* Rehydrate relations */
-	setData(relations);
+	setRelationalData(relations);
 };
 
 export default useCacheRehydration;
