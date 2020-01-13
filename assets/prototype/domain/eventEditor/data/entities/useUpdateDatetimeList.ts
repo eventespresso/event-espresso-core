@@ -1,8 +1,8 @@
-import { DatetimesList } from '../../../../eventEditor/data/types';
-import { WriteQueryOptions } from '../../../../eventEditor/data/queries/types';
+import { DatetimesList } from '../types';
+import { WriteQueryOptions } from '../queries/types';
 import useUpdateEntityList from './useUpdateEntityList';
-import useDatetimeQueryOptions from '../../../../eventEditor/data/queries/datetimes/useDatetimeQueryOptions';
-import { CacheUpdaterFn } from '../types';
+import useDatetimeQueryOptions from '../queries/datetimes/useDatetimeQueryOptions';
+import { CacheUpdaterFn } from '../../../shared/data/queries/types';
 
 const useUpdateDatetimeList = (
 	writeQueryOptions: WriteQueryOptions<DatetimesList> = undefined

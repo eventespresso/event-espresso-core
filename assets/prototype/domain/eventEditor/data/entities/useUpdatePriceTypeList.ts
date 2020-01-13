@@ -1,8 +1,8 @@
-import { PriceTypesList } from '../../../../eventEditor/data/types';
-import { WriteQueryOptions } from '../../../../eventEditor/data/queries/types';
+import { PriceTypesList } from '../types';
+import { WriteQueryOptions } from '../queries/types';
 import useUpdateEntityList from './useUpdateEntityList';
-import usePriceTypeQueryOptions from '../../../../eventEditor/data/queries/priceTypes/usePriceTypeQueryOptions';
-import { CacheUpdaterFn } from '../types';
+import usePriceTypeQueryOptions from '../queries/priceTypes/usePriceTypeQueryOptions';
+import { CacheUpdaterFn } from '../../../shared/data/queries/types';
 
 const useUpdatePriceTypeList = (
 	writeQueryOptions: WriteQueryOptions<PriceTypesList> = undefined

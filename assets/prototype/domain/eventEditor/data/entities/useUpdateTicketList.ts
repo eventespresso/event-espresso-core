@@ -1,8 +1,8 @@
-import { TicketsList } from '../../../../eventEditor/data/types';
-import { WriteQueryOptions } from '../../../../eventEditor/data/queries/types';
+import { TicketsList } from '../types';
+import { WriteQueryOptions } from '../queries/types';
 import useUpdateEntityList from './useUpdateEntityList';
-import useTicketQueryOptions from '../../../../eventEditor/data/queries/tickets/useTicketQueryOptions';
-import { CacheUpdaterFn } from '../types';
+import useTicketQueryOptions from '../queries/tickets/useTicketQueryOptions';
+import { CacheUpdaterFn } from '../../../shared/data/queries/types';
 
 const useUpdateTicketList = (
 	writeQueryOptions: WriteQueryOptions<TicketsList> = undefined

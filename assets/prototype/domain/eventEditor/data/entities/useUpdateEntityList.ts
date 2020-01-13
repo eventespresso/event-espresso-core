@@ -1,6 +1,6 @@
-import { WriteQueryOptions } from '../../../../eventEditor/data/queries/types';
-import { CacheUpdaterFn } from '../types';
-import useUpdateCache from '../useUpdateCache';
+import { WriteQueryOptions } from '../queries/types';
+import { CacheUpdaterFn } from '../../../shared/data/queries/types';
+import useUpdateCache from '../../../shared/data/queries/useUpdateCache';
 
 const useUpdateEntityList = <List = any>(
 	writeQueryOptions: WriteQueryOptions<List> = undefined

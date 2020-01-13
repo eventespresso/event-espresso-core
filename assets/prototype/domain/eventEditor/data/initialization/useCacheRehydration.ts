@@ -17,14 +17,8 @@ import useDatetimeQueryOptions from '../queries/datetimes/useDatetimeQueryOption
 import useTicketQueryOptions from '../queries/tickets/useTicketQueryOptions';
 import usePriceQueryOptions from '../queries/prices/usePriceQueryOptions';
 import { Datetime, Ticket } from '../types';
-import {
-	useUpdateDatetimeList,
-	useUpdatePriceTypeList,
-	useUpdateTicketList,
-	useUpdatePriceList,
-	useUpdateCurrentUserCache,
-	useUpdateGeneralSettingsCache,
-} from '../../../shared/data/queries';
+import { useUpdateDatetimeList, useUpdatePriceTypeList, useUpdateTicketList, useUpdatePriceList } from '../entities';
+import { useUpdateCurrentUserCache, useUpdateGeneralSettingsCache } from '../../../shared/data/queries';
 
 const { GET_CURRENT_USER, GET_GENERAL_SETTINGS } = queries;
 
