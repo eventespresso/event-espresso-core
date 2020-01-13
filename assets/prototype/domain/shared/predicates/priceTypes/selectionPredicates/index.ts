@@ -25,6 +25,6 @@ export const isNotTax = propEq('isTax', false);
 // returns true if supplied price type is a flat fee (dollar) surcharge
 export const isFlatFeeSurcharge = allPass([isNotBasePrice, isNotDiscount, isNotPercent]);
 
-export const getDefaultPriceType = (priceTypes: PriceType[]): PriceType | undefined => {
+export const getDefaultPriceModifierType = (priceTypes: PriceType[]): PriceType | undefined => {
 	return find(isFlatFeeSurcharge)(priceTypes);
 };
