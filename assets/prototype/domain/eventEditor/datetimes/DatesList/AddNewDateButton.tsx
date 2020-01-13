@@ -7,7 +7,7 @@ import {
 	EditorId,
 	EditorState,
 } from '../../../../application/ui/components/layout/editor-modal/useEditorModalState/types';
-import { EspressoButton } from '../../../../../ZZZ/components/ui';
+import { EspressoButton } from '../../../../application/ui/components/input';
 
 const btnRowStyle = {
 	display: 'flex',
@@ -17,18 +17,14 @@ const btnRowStyle = {
 	width: '100%',
 };
 
-const AddNewDateButton = () => {
+const AddNewDateButton: React.FunctionComponent = () => {
 	const editorState: EditorState = useEditorModalState();
 	const editorId: EditorId = useDateEditorId('add-new-date', 'xyz');
 
-	const onClick = (e) => {
-		e.preventDefault();
-		e.stopPropagation();
+	const onClick = (): void => {
 		editorState.openEditor(editorId);
 	};
-	const onClose = (e) => {
-		e.preventDefault();
-		e.stopPropagation();
+	const onClose = (): void => {
 		editorState.closeEditor(editorId);
 	};
 

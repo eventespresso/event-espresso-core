@@ -32,6 +32,12 @@ const FormModal = ({ FormComponent, initialValues, onSubmit, onClose, isOpen, ..
 		transform: 'translate(-50%, -50%)',
 	};
 
+	const onCloseHandler = (e) => {
+		e.preventDefault();
+		e.stopPropagation();
+		onClose();
+	};
+
 	return (
 		<Overlay {...overlayProps} className={Classes.OVERLAY_SCROLL_CONTAINER} onClose={onClose} isOpen={isOpen}>
 			<div className={classes} style={overlayStyle}>
@@ -39,7 +45,7 @@ const FormModal = ({ FormComponent, initialValues, onSubmit, onClose, isOpen, ..
 					FormComponent={FormComponent}
 					initialValues={initialValues}
 					onSubmit={onSubmit}
-					onClose={onClose}
+					onClose={onCloseHandler}
 					{...extraProps}
 					render={({ ...formProps }) => <FormModalForm {...formProps} />}
 				/>
