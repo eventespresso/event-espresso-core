@@ -1,7 +1,5 @@
 import { useEffect } from 'react';
-import { event } from './data';
-import { currentUser } from '../../../../domain/shared/data/queries/currentUser/test/data';
-import { generalSettings } from '../../../../domain/shared/data/queries/generalSettings/test/data';
+import { event, currentUser, generalSettings } from './data';
 
 import { mockEeJsData } from '../../../../application/services/config/test/data';
 
