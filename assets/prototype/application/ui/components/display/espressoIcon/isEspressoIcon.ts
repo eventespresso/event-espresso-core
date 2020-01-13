@@ -3,7 +3,7 @@ import { Icon } from './types';
 /**
  * returns true if icon is an EspressoIcon
  */
-const isEspressoIcon = (icon: string): boolean => {
+const isEspressoIcon = (icon: Icon | string): boolean => {
 	switch (icon) {
 		case Icon.CALCULATOR:
 		case Icon.CALENDAR:
