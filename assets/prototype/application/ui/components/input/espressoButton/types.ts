@@ -1,3 +1,7 @@
+import React from 'react';
+
+export type ClickEvent = (click: React.MouseEvent<HTMLElement>) => void;
+
 export enum EspressoButtonSize {
 	TINY = 'TINY',
 	SMALL = 'SMALL',
@@ -17,7 +21,7 @@ export interface EspressoButtonProps {
 	buttonProps?: object;
 	htmlClass?: string;
 	icon?: string;
-	onClick: () => null;
+	onClick: ClickEvent;
 	size?: EspressoButtonSize;
 	style?: EspressoButtonStyle;
 }
