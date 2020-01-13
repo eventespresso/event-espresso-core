@@ -9,8 +9,14 @@ import {
 	EditorState,
 } from '../../../../application/ui/components/layout/editor-modal/useEditorModalState/types';
 
+const DEFAULT_CONTEXT = {
+	editors: null,
+	editorState: null,
+	id: '',
+};
+
 export interface TicketContextProps extends ContextProps {}
-export const TicketContext = createContext({} as TicketContextProps);
+export const TicketContext = createContext<TicketContextProps>(DEFAULT_CONTEXT);
 
 interface TicketProviderProps {
 	children: React.ReactChildren;
