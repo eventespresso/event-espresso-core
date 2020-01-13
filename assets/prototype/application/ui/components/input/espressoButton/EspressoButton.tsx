@@ -2,7 +2,7 @@ import React from 'react';
 import classNames from 'classnames';
 
 import { EspressoButtonProps, EspressoButtonSize, EspressoButtonStyle } from './types';
-import { EspressoIcon } from '../../display/espressoIcon';
+import {EspressoIcon } from '../../display/espressoIcon';
 
 /**
  * Button wrapper for adding styles
@@ -28,26 +28,11 @@ const EspressoButton: React.FunctionComponent<EspressoButtonProps> = ({
 		'esprs-btn-big': size === EspressoButtonSize.BIG,
 		'esprs-btn-huge': size === EspressoButtonSize.HUGE,
 	});
-	let iconSize = 24;
-	switch (size) {
-		case EspressoButtonSize.TINY:
-			iconSize = 18;
-			break;
-		case EspressoButtonSize.SMALL:
-			iconSize = 21;
-			break;
-		case EspressoButtonSize.BIG:
-			iconSize = 27;
-			break;
-		case EspressoButtonSize.HUGE:
-			iconSize = 30;
-			break;
-	}
 	let renderedIcon = null;
 	if (icon) {
 		renderedIcon = (
 			<span className='img-wrap'>
-				<EspressoIcon icon={icon} svgSize={iconSize} />
+				<EspressoIcon icon={icon} svgSize={size} />
 			</span>
 		);
 	} else {

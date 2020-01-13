@@ -1,12 +1,15 @@
 import React from 'react';
 
+import { Icon } from '../../display/espressoIcon';
+
 export type ClickEvent = (click: React.MouseEvent<HTMLElement>) => void;
 
 export enum EspressoButtonSize {
-	TINY = 'TINY',
-	SMALL = 'SMALL',
-	BIG = 'BIG',
-	HUGE = 'HUGE',
+	TINY = 18,
+	SMALL = 21,
+	DEFAULT = 24,
+	BIG = 27,
+	HUGE = 30,
 }
 
 export enum EspressoButtonStyle {
@@ -20,7 +23,7 @@ export interface EspressoButtonProps {
 	buttonText: string;
 	buttonProps?: object;
 	htmlClass?: string;
-	icon?: string;
+	icon?: Icon | string;
 	onClick: ClickEvent;
 	size?: EspressoButtonSize;
 	style?: EspressoButtonStyle;
