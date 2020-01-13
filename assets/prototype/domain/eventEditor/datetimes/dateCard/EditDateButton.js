@@ -1,9 +1,10 @@
-import { useContext } from '@wordpress/element';
+import { useContext } from 'react';
 import { Button } from '@blueprintjs/core/lib/esm';
 import { DateTimeContext } from '../../context/DateTimeProvider';
 
 const EditDateButton = ({ position }) => {
-	const { setIsOpen } = useContext(DateTimeContext);
+	const { editors, editorState } = useContext(DateTimeContext);
+	const onClick = () => editorState.openEditor(editors.editForm);
 
 	const style = {
 		position: 'absolute',
@@ -17,7 +18,7 @@ const EditDateButton = ({ position }) => {
 
 	return (
 		<div style={style}>
-			<Button icon={'edit'} onClick={setIsOpen} minimal />
+			<Button icon={'edit'} onClick={onClick} minimal />
 		</div>
 	);
 };

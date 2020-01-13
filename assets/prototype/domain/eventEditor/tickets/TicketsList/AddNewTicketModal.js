@@ -3,7 +3,7 @@ import FormModal from '../../../../application/ui/components/forms/FormModal';
 import { useEntityMutator, EntityType } from '../../../../application/services/apollo/mutations';
 import useDatetimes from '../../data/queries/datetimes/useDatetimes';
 
-const AddNewTicketModal = ({ handleClose, isOpen }) => {
+const AddNewTicketModal = ({ onClose, isOpen }) => {
 	const { createEntity } = useEntityMutator(EntityType.Ticket);
 	const datetimes = useDatetimes();
 	const formComponent = (props) => <TicketForm {...props} title='New Ticket Details' />;
@@ -13,7 +13,7 @@ const AddNewTicketModal = ({ handleClose, isOpen }) => {
 			FormComponent={formComponent}
 			initialValues={{}}
 			onSubmit={createEntity}
-			onClose={handleClose}
+			onClose={onClose}
 			isOpen={isOpen}
 			datetimes={datetimes}
 		/>

@@ -1,47 +1,33 @@
-/**
- * External dependencies
- */
 import React, { createContext } from 'react';
 
-/**
- * Internal dependencies
- */
+import useDateEditorId from './useDateEditorId';
 import { EntityId } from '../../data/types';
+import useEditorModalState from '../../../../application/ui/components/layout/editor-modal/useEditorModalState';
 import {
 	ContextProps,
-	EditorIds,
+	Editors,
+	EditorState,
 } from '../../../../application/ui/components/layout/editor-modal/useEditorModalState/types';
-import useEditorModalState from '../../../../application/ui/components/layout/editor-modal/useEditorModalState';
-import useDateEditorId from './useDateEditorId';
 
-export const DateTimeContext = createContext({} as ContextProps);
+export interface DateTimeContextProps extends ContextProps {}
+export const DateTimeContext = createContext({} as DateTimeContextProps);
 
 interface DatetimeProviderProps {
 	children: React.ReactChildren;
 	id: EntityId;
 }
 
-const DateTimeProvider = ({ children, id }: DatetimeProviderProps) => {
-	const { closeAllEditors, currentlyOpenEditor, getIsOpen, onClose, setIsOpen } = useEditorModalState(id);
-	const editorIds: EditorIds = {
+const DateTimeProvider: React.FunctionComponent<DatetimeProviderProps> = ({ children, id }) => {
+	const editorState: EditorState = useEditorModalState();
+
+	const editors: Editors = {
+		addNewForm: useDateEditorId('add-new-date', 'xyz'),
 		calculator: useDateEditorId('price-calculator', id),
 		editForm: useDateEditorId('date-editor', id),
 		relations: useDateEditorId('date-relations', id),
 	};
 
-	const editorState = {
-		closeAllEditors,
-		currentlyOpenEditor,
-		getIsOpen,
-		onClose,
-		setIsOpen,
-	};
-
-	const value = {
-		editorIds,
-		editorState,
-		id,
-	};
+	const value: DateTimeContextProps = { editors, editorState, id };
 
 	return <DateTimeContext.Provider value={value}>{children}</DateTimeContext.Provider>;
 };

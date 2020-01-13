@@ -1,18 +1,21 @@
-import { useState } from '@wordpress/element';
 import moment from 'moment';
+import { useState } from 'react';
 import { Button, Card, EditableText, Elevation, H4, H6, Popover } from '@blueprintjs/core/lib/esm';
-import DateTimeProvider from '../../context/DateTimeProvider';
-import EditDatetime from './EditDate';
+
 import DeleteDatetimeButton from './DeleteDateButton';
+import EditDatetime from './EditDate';
+
+import DateTimeProvider from '../../context/DateTimeProvider';
+import useDatetimeItem from '../../data/queries/datetimes/useDatetimeItem';
+import TicketId from '../../tickets/TicketId';
+
 import DateRangePicker from '../../../shared/dateRangeInput/DateRangePicker';
 import { MomentDateRange } from '../../../shared/dateRangeInput/momentDate';
 import { PLUS_ONE_MONTH, PLUS_TWO_MONTHS } from '../../../shared/defaultDates';
 
-import useDatetimeItem from '../../data/queries/datetimes/useDatetimeItem';
 import { useEntityMutator, EntityType } from '../../../../application/services/apollo/mutations';
 import useRelations from '../../../../application/services/apollo/relations/useRelations';
 import { useStatus, TypeName } from '../../../../application/services/apollo/status';
-import TicketId from '../../tickets/TicketId';
 import InlineEditInput from '../../../../application/ui/components/input/InlineEditInput';
 
 const btnStyle = {
@@ -55,8 +58,8 @@ const DateCard = ({ id }) => {
 
 	const ticketsLoaded = isLoaded(TypeName.tickets);
 
-	return (
-		<DateTimeProvider id={id}>
+	return date ? (
+		<DateTimeProvider id={date.id}>
 			<Card elevation={Elevation.ONE} style={cardStyle}>
 				<EditDatetime position='top' relatedTickets={relatedTicketIds} />
 				<div style={idStyle}>
@@ -117,7 +120,7 @@ const DateCard = ({ id }) => {
 				{ticketsLoaded && <DeleteDatetimeButton id={date.id} />}
 			</Card>
 		</DateTimeProvider>
-	);
+	) : null;
 };
 
 export default DateCard;

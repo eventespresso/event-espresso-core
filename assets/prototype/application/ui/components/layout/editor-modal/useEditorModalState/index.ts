@@ -1,31 +1,13 @@
-/**
- * External dependencies
- */
-import { useReducer } from 'react';
 import { dropLast, last } from 'ramda';
+import { useReducer } from 'react';
 
-/**
- * Internal imports
- */
-import { EntityId } from '../../../../../../domain/eventEditor/data/types';
+import { ActionType, EditorAction, EditorId, EditorStack, EditorState } from './types';
 
-enum ActionType {
-	CLOSE_ALL = 'CLOSE_ALL',
-	CLOSE_EDITOR = 'CLOSE_EDITOR',
-	OPEN_EDITOR = 'OPEN_EDITOR',
-}
+const INITIAL_STATE: EditorStack = [];
 
-type State = string[];
-
-type Action = {
-	editorId?: string;
-	type: ActionType;
-};
-
-const reducer = (state: State, action: Action) => {
-	const { editorId } = action;
-
-	switch (action.type) {
+const reducer = (state: EditorStack, action: EditorAction) => {
+	const { editorId, type } = action;
+	switch (type) {
 		case ActionType.CLOSE_EDITOR:
 			if (editorId === last(state)) {
 				// return stack after removing the last editor added (top of stack)
@@ -33,29 +15,30 @@ const reducer = (state: State, action: Action) => {
 			}
 			return state;
 		case ActionType.CLOSE_ALL:
-			return [];
+			return INITIAL_STATE;
 		case ActionType.OPEN_EDITOR:
 			if (editorId.length && !state.includes(editorId)) {
+				// has editor id and editor is not already in the stack
 				return [...state, editorId];
 			}
 			return state;
 		default:
 			throw new Error('Unexpected action');
 	}
+	return state;
 };
 
-const useEditorModalState = (id: EntityId) => {
-	const initialState = [];
-	const [state, dispatch] = useReducer(reducer, initialState);
+const useEditorModalState = (): EditorState => {
+	const [state, dispatch] = useReducer(reducer, INITIAL_STATE);
 
-	const openEditor = (editorId: string): void => {
+	const openEditor = (editorId: EditorId): void => {
 		dispatch({
 			type: ActionType.OPEN_EDITOR,
 			editorId,
 		});
 	};
 
-	const closeEditor = (editorId: string): void => {
+	const closeEditor = (editorId: EditorId): void => {
 		dispatch({
 			type: ActionType.CLOSE_EDITOR,
 			editorId,
@@ -71,32 +54,25 @@ const useEditorModalState = (id: EntityId) => {
 	/**
 	 * Returns the ID of the editor currently at the top of the stack
 	 *
-	 * @param {Stack} state
-	 * @return {string | undefined} editorId, if there is no editorId then it will return undefined
+	 * @return {EditorId | undefined} editorId, if there is no editorId then it will return undefined
 	 */
-	const currentlyOpenEditor = (): string | undefined => last(state);
+	const currentlyOpenEditor = (): EditorId | undefined => last(state);
 
 	/**
 	 * Returns true if the provided ID matches the editor
 	 * currently at the top of the stack
 	 *
-	 * @param {Stack} state
-	 * @param {string} editorId    unique identifier for editor
-	 * @return {string} editorId
+	 * @param {EditorId} editorId    unique identifier for editor
+	 * @return {boolean} true if editor is the currently open editor
 	 */
-	const isEditorOpen = (editorId: string): boolean => editorId === last(state);
-
-	const getIsOpen = (modalId: string = '') => isEditorOpen(id + modalId);
-	const onClose = (modalId: string = '') => closeEditor(id + modalId);
-	const setIsOpen = (modalId: string = '') => openEditor(id + modalId);
+	const isEditorOpen = (editorId: EditorId): boolean => editorId === last(state);
 
 	return {
-		onClose,
 		closeAllEditors,
+		closeEditor,
 		currentlyOpenEditor,
-		getIsOpen,
+		isEditorOpen,
 		openEditor,
-		setIsOpen,
 	};
 };
 

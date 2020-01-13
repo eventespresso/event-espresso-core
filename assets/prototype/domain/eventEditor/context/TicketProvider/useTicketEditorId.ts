@@ -2,6 +2,7 @@
  * Internal dependencies
  */
 import { EntityId } from '../../data/types';
+import { EditorId } from '../../../../application/ui/components/layout/editor-modal/useEditorModalState/types';
 
 /**
  * @function
@@ -9,10 +10,8 @@ import { EntityId } from '../../data/types';
  * @param {string} prefix
  * @return {string} editor id for ticket
  */
-const useTicketEditorId = (prefix: string = '', ticketId: EntityId): string => {
-	const editorId: string = `ticket-editor-${ticketId}`;
-
-	return prefix !== '' ? `${prefix}-${editorId}` : editorId;
+const useTicketEditorId = (prefix: string = 'ticket-editor', ticketId: EntityId): EditorId => {
+	return prefix !== '' ? `${prefix}-${ticketId}` : `ticket-editor-${ticketId}`;
 };
 
 export default useTicketEditorId;
