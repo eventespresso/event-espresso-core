@@ -1,10 +1,10 @@
 import useDatetimeQueryOptions from '../../queries/datetimes/useDatetimeQueryOptions';
 import { CacheUpdaterFn, CacheUpdaterFnArgs } from '../types';
-import { ReadQueryOptions, WriteQueryOptions } from '../../queries/types';
+import { WriteQueryOptions } from '../../queries/types';
 import { Datetime, DatetimesList } from '../../types';
 
 const useUpdateDatetimeCache = (): CacheUpdaterFn => {
-	const queryOptions: ReadQueryOptions = useDatetimeQueryOptions();
+	const queryOptions = useDatetimeQueryOptions();
 
 	const updateDatetimeCache = ({ proxy, datetimes, datetime, remove = false }: CacheUpdaterFnArgs): void => {
 		const { nodes = [] } = datetimes;

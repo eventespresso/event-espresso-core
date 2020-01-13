@@ -2,7 +2,7 @@ import pathOr from 'ramda/src/pathOr';
 import { useApolloClient } from '@apollo/react-hooks';
 
 import { GET_CURRENT_USER } from './';
-import { ReadQueryOptions } from '../types';
+import { ReadQueryOptions } from '../../../../eventEditor/data/queries/types';
 import { CurrentUserProps, Viewer } from '../../../../../application/valueObjects/config/types';
 /**
  * A custom react hook for retrieving CurrentUser

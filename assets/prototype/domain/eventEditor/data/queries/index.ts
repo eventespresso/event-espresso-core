@@ -2,8 +2,7 @@ import { GET_DATETIME, GET_DATETIMES } from './datetimes';
 import { GET_TICKET, GET_TICKETS } from './tickets';
 import { GET_PRICE, GET_PRICES } from './prices';
 import { GET_PRICE_TYPE, GET_PRICE_TYPES } from './priceTypes';
-import { GET_CURRENT_USER } from './currentUser';
-import { GET_GENERAL_SETTINGS } from './generalSettings';
+import { GET_CURRENT_USER, GET_GENERAL_SETTINGS } from '../../../shared/data/queries';
 
 import { EntityEdge, DatetimeEdge, TicketEdge, PriceEdge, PriceTypeEdge } from '../types';
 

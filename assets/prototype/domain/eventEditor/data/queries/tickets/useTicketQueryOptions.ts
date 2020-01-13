@@ -3,13 +3,13 @@ import { GET_TICKETS } from './';
 import { ReadQueryOptions } from '../types';
 import { EntityId } from '../../types';
 
-const useTicketQueryOptions = (): ReadQueryOptions => {
-	const datetimeIn: EntityId[] = useDatetimeIds();
+const useTicketQueryOptions = (datetimeIn: EntityId[] = []): ReadQueryOptions => {
+	const datetimeIds = useDatetimeIds();
 	const options: ReadQueryOptions = {
 		query: GET_TICKETS,
 		variables: {
 			where: {
-				datetimeIn,
+				datetimeIn: datetimeIn.length ? datetimeIn : datetimeIds,
 			},
 		},
 	};
