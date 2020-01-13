@@ -9,7 +9,7 @@ export enum Icon {
 }
 
 export interface EspressoIconProps {
-	icon: Icon;
+	icon: Icon | string;
 	svgSize?: number;
 	className?: string;
 	otherProps?: object;
