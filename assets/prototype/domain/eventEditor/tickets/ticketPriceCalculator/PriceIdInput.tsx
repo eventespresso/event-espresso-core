@@ -3,7 +3,7 @@ import { Field } from 'react-final-form';
 
 import { PriceInputProps } from './types';
 
-const PriceIdInput = ({ name, price }: PriceInputProps): React.ReactNode => {
+const PriceIdInput: React.FunctionComponent<PriceInputProps> = ({ name, price }): JSX.Element => {
 	return (
 		<>
 			<Field type={'hidden'} component={'input'} initialValue={price.id} name={`${name}.id`} />

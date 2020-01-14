@@ -1,16 +1,16 @@
 import React from 'react';
-import { FieldArray } from 'react-final-form-arrays';
 import { H2, HTMLTable } from '@blueprintjs/core';
 
 import TicketPriceModifierRowIterator from './TicketPriceModifierRowIterator';
 import TicketPriceTotalRow from './TicketPriceTotalRow';
+import { TpcForm } from './types';
 
 // just temporary
 import styles from './inlineStyles';
 
-const TicketPriceCalculatorForm = ({ form, values: { ticket } }): React.ReactNode => {
-	const reverseCalculate = !!ticket.reverseCalculate;
-	const toggleCalcDir = () => form.mutators.toggleCalcDir('ticket.reverseCalculate');
+const TicketPriceCalculatorForm: React.FunctionComponent<TpcForm> = ({ form, values: { ticket } }): JSX.Element => {
+	const reverseCalculate = Boolean(ticket.reverseCalculate);
+	const toggleCalcDir = (): void => form.mutators.toggleCalcDir();
 	const ticketName = ticket.name ? ` for Ticket: ${ticket.name} ` : '';
 	return (
 		<>
@@ -28,12 +28,12 @@ const TicketPriceCalculatorForm = ({ form, values: { ticket } }): React.ReactNod
 						</tr>
 					</thead>
 					<tbody>
-						<FieldArray name={'prices'} children={TicketPriceModifierRowIterator} />
+						<TicketPriceModifierRowIterator reverseCalculate={reverseCalculate} />
 					</tbody>
 					<tfoot>
 						<TicketPriceTotalRow
-							ticket={ticket}
 							reverseCalculate={reverseCalculate}
+							ticket={ticket}
 							toggleCalcDir={toggleCalcDir}
 						/>
 					</tfoot>

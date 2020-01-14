@@ -1,65 +1,35 @@
-import { pick, difference } from 'ramda';
+import { difference } from 'ramda';
+
+import { FnCallback, TpcFormData } from '../types';
+import { Price } from '../../../data/types';
+import { cloneAndNormalizePrice } from '../../../../shared/predicates/prices/updatePredicates';
 import { useEntityMutator, EntityType } from '../../../../../application/services/apollo/mutations';
+import toBoolean from '../../../../../application/utilities/converters/toBoolean';
+import parsedAmount from '../../../../../application/utilities/money/parsedAmount';
 
-const PRICE_INPUT_FIELDS = [
-	'id',
-	'amount',
-	'desc',
-	'isDefault',
-	'name',
-	'order',
-	'overrides',
-	'parent',
-	'priceType',
-	'wpUser',
-];
-
-const parseBooleanField = (value) => {
-	value = typeof value === 'string' ? value.toLowerCase().trim() : value;
-	switch (value) {
-		case 'true':
-		case 'yes':
-		case '1':
-			return true;
-		case 'false':
-		case 'no':
-		case '0':
-			return false;
-		default:
-			return Boolean(value);
-	}
-};
-
-const useOnSubmitPrices = (existingPrices) => {
-	const { createEntity, updateEntity, deleteEntity } = useEntityMutator(EntityType.Price);
-	const { updateEntity: updateTicket } = useEntityMutator(EntityType.Ticket);
+const useOnSubmitPrices = (existingPrices: Price[]): FnCallback => {
+	const { createEntity, updateEntity, deleteEntity } = useEntityMutator(EntityType.Price, null);
+	const { updateEntity: updateTicket } = useEntityMutator(EntityType.Ticket, null);
 	const existingPriceIds = existingPrices.map(({ id }) => id);
 
 	// Async to make sure that prices are handled before updating the ticket.
-	return async (formData) => {
-		const { ticket, prices = [] } = formData;
-
+	return async ({ ticket, prices = [] }: TpcFormData): Promise<void> => {
 		const updatedPriceIds = [];
 		const createdPriceIds = [];
 
 		// make sure to complete all price operations before updating the ticket
 		await Promise.all(
 			// covert the price operations into promises
-			prices.map((price) => {
+			prices.map((price: Price) => {
 				if (price.id === 'NEW_PRICE') {
 					return Promise.resolve(price);
 				}
-				const { id, ...input } = pick(PRICE_INPUT_FIELDS, price);
-				const normalizedPriceFields = {
-					...input,
-					amount: parseFloat(price.amount || 0),
-					isDefault: parseBooleanField(price.isDefault),
-					order: parseInt(price.order, 10),
-				};
+				const id = price.id;
+				const normalizedPriceFields = cloneAndNormalizePrice(price);
 				// if it's a newly added price
 				if (!id) {
 					return new Promise((resolve, onError) => {
-						const onCompleted = ({ createEspressoPrice: { espressoPrice: price } }) => {
+						const onCompleted = ({ createEspressoPrice: { espressoPrice: price } }): void => {
 							createdPriceIds.push(price.id);
 							resolve(price);
 						};
@@ -67,7 +37,7 @@ const useOnSubmitPrices = (existingPrices) => {
 					});
 				}
 				return new Promise((resolve, onError) => {
-					const onCompleted = ({ updateEspressoPrice: { espressoPrice: price } }) => {
+					const onCompleted = ({ updateEspressoPrice: { espressoPrice: price } }): void => {
 						updatedPriceIds.push(price.id);
 						resolve(price);
 					};
@@ -87,8 +57,8 @@ const useOnSubmitPrices = (existingPrices) => {
 
 		const normalizedTicketFields = {
 			...ticket,
-			price: parseFloat(ticket.price || 0),
-			reverseCalculate: parseBooleanField(ticket.reverseCalculate),
+			price: parsedAmount(ticket.price || '0'),
+			reverseCalculate: toBoolean(ticket.reverseCalculate),
 		};
 		// Finally update the ticket price relation
 		updateTicket({ ...normalizedTicketFields, prices: [...updatedPriceIds, ...createdPriceIds] });

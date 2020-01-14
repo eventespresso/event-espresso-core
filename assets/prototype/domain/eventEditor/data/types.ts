@@ -47,7 +47,7 @@ export interface DatetimesList {
 }
 
 export interface Price extends Entity {
-	amount?: number;
+	amount?: number | string;
 	desc?: string;
 	isBasePrice?: boolean;
 	isDefault?: boolean;
@@ -55,10 +55,10 @@ export interface Price extends Entity {
 	isDiscount?: boolean;
 	isPercent?: boolean;
 	isTax?: boolean;
-	order?: number;
+	order?: number | string;
 	overrides?: string;
 	priceType?: string;
-	priceTypeOrder?: number;
+	priceTypeOrder?: number | string;
 }
 
 export type PriceEdge = EntityEdge<Price, 'EspressoRootQueryPricesConnection'>;

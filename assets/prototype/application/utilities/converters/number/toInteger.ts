@@ -1,6 +1,6 @@
 import { is } from 'ramda';
 
-const toInteger = (dirtyNumber) => {
+const toInteger = (dirtyNumber: number | string): number => {
 	const number = Number(dirtyNumber);
 
 	if (is(Number, number)) {

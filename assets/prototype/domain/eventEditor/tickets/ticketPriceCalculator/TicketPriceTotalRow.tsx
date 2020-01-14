@@ -1,13 +1,20 @@
+import React from 'react';
 import { Field } from 'react-final-form';
 import { Button } from '@blueprintjs/core';
 
 // just temporary
 import styles from './inlineStyles';
+import { TpcFormElement } from './types';
 import { useMoneyDisplay } from '../../../../application/utilities/money';
 
-const TicketPriceTotalRow = ({ ticket, reverseCalculate, toggleCalcDir }) => {
+const TicketPriceTotalRow: React.FunctionComponent<TpcFormElement> = ({
+	ticket,
+	reverseCalculate,
+	toggleCalcDir,
+}): JSX.Element => {
 	const { afterAmount, beforeAmount, formatAmount } = useMoneyDisplay();
 	const calcDirIcon = reverseCalculate ? 'double-chevron-up' : 'double-chevron-down';
+	const reverseCalc = reverseCalculate ? 'true' : 'false';
 	return (
 		<tr>
 			<th colSpan={4} style={styles.total}>
@@ -21,7 +28,7 @@ const TicketPriceTotalRow = ({ ticket, reverseCalculate, toggleCalcDir }) => {
 						<Field
 							type={'hidden'}
 							component={'input'}
-							initialValue={ticket.reverseCalculate ? 'true' : 'false'}
+							initialValue={reverseCalc}
 							name={'ticket.reverseCalculate'}
 						/>
 						<Field
@@ -39,7 +46,7 @@ const TicketPriceTotalRow = ({ ticket, reverseCalculate, toggleCalcDir }) => {
 				</div>
 			</th>
 			<th style={{ ...styles.colWidth7h, ...styles.actions }}>
-				<Button icon={calcDirIcon} onClick={toggleCalcDir} value={reverseCalculate} minimal />
+				<Button icon={calcDirIcon} onClick={toggleCalcDir} value={reverseCalc} minimal />
 			</th>
 		</tr>
 	);

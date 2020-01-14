@@ -1,23 +1,18 @@
-/**
- * Internal imports
- */
-import { useCallback } from '@wordpress/element';
+import { useCallback } from 'react';
 
-/**
- * Internal imports
- */
 import calculateBasePrice from './calculateBasePrice';
 import calculateTicketTotal from './calculateTicketTotal';
+import { TpcAction, TpcActionType, TpcCallback, TpcFormData, UpdatedTpcFormDataPath } from '../types';
 import { parseAmountFromPath } from '../formDecorators/utilities';
 
-const useTicketPriceCalculator = () => {
-	return useCallback((action) => {
-		let result;
+const useTicketPriceCalculator = (): TpcCallback => {
+	return useCallback((action: TpcAction): UpdatedTpcFormDataPath => {
+		let result: TpcFormData;
 		switch (action.type) {
-			case 'CALCULATE_BASE_PRICE':
+			case TpcActionType.CalculateBasePrice:
 				result = calculateBasePrice(action.data);
 				return parseAmountFromPath(action.path, result);
-			case 'CALCULATE_TICKET_TOTAL':
+			case TpcActionType.CalculateTicketTotal:
 				result = calculateTicketTotal(action.data);
 				return parseAmountFromPath(action.path, result);
 		}
