@@ -231,13 +231,28 @@ class EE_Event_Shortcodes extends EE_Shortcodes
         }
 
         if (strpos($shortcode, '[EVENT_META_*') !== false) {
+            // Strip the shortcode itself from $shortcode leaving any attributes set.
             $shortcode = str_replace('[EVENT_META_*', '', $shortcode);
             $shortcode = trim(str_replace(']', '', $shortcode));
-
-            // pull the meta value from the event post
-            $event_meta = $this->_event->get_post_meta($shortcode, true);
-
-            return ! empty($event_meta) ? $this->_event->get_post_meta($shortcode, true) : '';
+            // Get any attributes set on this shortcode.
+            $attrs = $this->_get_shortcode_attrs($shortcode);
+            // The meta_key set on the shortcode should always be the first value in the array.
+            $meta_key = $attrs[0];
+            // Pull the meta value from the event post.
+            $event_meta = $this->_event->get_post_meta($meta_key, true);
+            // If we have no event_meta, just return an empty string.
+            if (empty($event_meta)) {
+                return '';
+            }
+            // Add a filter to allow all instances of EVENT_META_* to run through do_shortcode, default to false.
+            // Check if a do_shortcode attribute was set to true and if so run $event_meta through that function.
+            if (apply_filters('FHEE__EE_Event_Shortcodes___parser__event_meta_do_shortcode', false)
+                || !empty($attrs['do_shortcode']) && filter_var($attrs['do_shortcode'], FILTER_VALIDATE_BOOLEAN)
+            ) {
+                return do_shortcode($event_meta);
+            }
+            // Still here? We just need to return the event_meta value as is.
+            return $event_meta;
         }
 
         if (strpos($shortcode, '[EVENT_TOTAL_AVAILABLE_SPACES_*') !== false) {
