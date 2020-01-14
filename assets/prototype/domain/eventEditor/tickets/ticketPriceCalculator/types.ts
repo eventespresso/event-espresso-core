@@ -1,4 +1,4 @@
-import { Price, Ticket } from '../../data/types';
+import { Entity, Price, Ticket } from '../../data/types';
 
 export interface AddPriceModifierDataProps extends WithPriceProp {
 	modifiers: Price[];
@@ -63,7 +63,7 @@ export interface TpcFormMutators extends WithToggleCalcDir {
 }
 
 export interface UpdatedTpcFormDataPath {
-	[key: string]: string | number;
+	[key: string]: string | number | Entity;
 }
 
 export interface WithPriceProp {
