@@ -26,7 +26,11 @@ export interface TpcAction {
 	type: string;
 }
 
-export interface TpcButtonDataProps extends WithTicketProp {}
+export interface TpcButtonDataProps extends WithTicketProp {
+	isOpen: boolean;
+	onClose: () => void;
+	onOpen?: () => void;
+}
 
 export interface TpcFormData extends WithPriceArrayProp, WithTicketProp {}
 
@@ -35,7 +39,7 @@ export interface TpcForm extends WithTicketProp {
 	values: WithTicketProp;
 }
 
-export interface TpcFormElement extends withRevCalc, WithTicketProp, WithToggleCalcDir {}
+export interface TpcFormElement extends WithRevCalc, WithTicketProp, WithToggleCalcDir {}
 
 export interface TpcModalProps {
 	isOpen: boolean;
@@ -43,7 +47,7 @@ export interface TpcModalProps {
 	onOpen?: () => void;
 }
 
-export interface TpcModifierFormRowProps extends FieldArrayProps, WithPriceProp, withRevCalc {
+export interface TpcModifierFormRowProps extends FieldArrayProps, WithPriceProp, WithRevCalc {
 	index?: number;
 	modifierOptions?: Price[];
 	name?: string;
@@ -70,7 +74,7 @@ export interface WithPriceArrayProp {
 	prices: Price[];
 }
 
-export interface withRevCalc {
+export interface WithRevCalc {
 	reverseCalculate?: boolean;
 }
 
