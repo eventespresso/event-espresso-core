@@ -58,7 +58,7 @@ export interface Price extends Entity {
 	order?: number | string;
 	overrides?: string;
 	priceType?: string;
-	priceTypeOrder?: number;
+	priceTypeOrder?: number | string;
 }
 
 export type PriceEdge = EntityEdge<Price, 'EspressoRootQueryPricesConnection'>;
