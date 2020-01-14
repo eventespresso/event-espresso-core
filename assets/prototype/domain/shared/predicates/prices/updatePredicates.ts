@@ -13,18 +13,18 @@ type updatePriceArrayProps = {
 };
 
 /**
- * updates the price amount
+ * returns object with properties that match those of a Price entity
  *
- * @param {number} amount
+ * @param {Price} price
  */
-export const copyPriceFields = (price: Price) => pickBy(isPriceField, price);
+export const copyPriceFields = (price: Price): Price => pickBy<Price, Price>(isPriceField, price);
 
 /**
  * updates the price amount
  *
  * @param {number} amount
  */
-export const updatePriceAmount = (amount: number) => (price: Price) =>
+export const updatePriceAmount = (amount: number) => (price: Price): Price =>
 	assoc('amount', parsedAmount(amount || 0), price);
 
 /**
@@ -32,7 +32,7 @@ export const updatePriceAmount = (amount: number) => (price: Price) =>
  *
  * @param {string} type
  */
-export const updatePriceType = (type: string) => (price: Price) => assoc('priceType', type, price);
+export const updatePriceType = (type: string) => (price: Price): Price => assoc('priceType', type, price);
 
 /**
  * given an array of prices, finds and updates the base price amount
