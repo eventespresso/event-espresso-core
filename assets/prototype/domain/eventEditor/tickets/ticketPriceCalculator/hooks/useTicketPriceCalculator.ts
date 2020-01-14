@@ -2,10 +2,10 @@ import { useCallback } from 'react';
 
 import calculateBasePrice from './calculateBasePrice';
 import calculateTicketTotal from './calculateTicketTotal';
-import { TpcAction, TpcFormData, UpdatedTpcFormDataPath } from '../types';
+import { TpcAction, TpcCallback, TpcFormData, UpdatedTpcFormDataPath } from '../types';
 import { parseAmountFromPath } from '../formDecorators/utilities';
 
-const useTicketPriceCalculator = () => {
+const useTicketPriceCalculator = (): TpcCallback => {
 	return useCallback((action: TpcAction): UpdatedTpcFormDataPath => {
 		let result: TpcFormData;
 		switch (action.type) {

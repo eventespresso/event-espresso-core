@@ -1,6 +1,5 @@
 import { Mutator, MutableState, Tools } from 'final-form';
 import arrayMutators from 'final-form-arrays';
-import propOr from 'ramda/src/propOr';
 
 import { TpcFormData } from '../types';
 import { sortByPriceOrderIdAsc } from '../../../../shared/predicates/prices/sortingPredicates';
@@ -12,10 +11,10 @@ interface TpcFormMutators {
 const useTicketPriceCalculatorFormMutators = (): TpcFormMutators => {
 	return {
 		...arrayMutators,
-		toggleCalcDir: (args: any[], state: MutableState<TpcFormData>, tools: Tools<TpcFormData>) => {
+		toggleCalcDir: (args: any[], state: MutableState<TpcFormData>, tools: Tools<TpcFormData>): void => {
 			tools.changeValue(state, 'ticket.reverseCalculate', (value) => !value);
 		},
-		reset: (args: any[], state: MutableState<TpcFormData>, tools: Tools<TpcFormData>) => {
+		reset: (args: any[], state: MutableState<TpcFormData>, tools: Tools<TpcFormData>): void => {
 			const path = typeof args[1] === 'string' ? args[1] : null;
 			if (path) {
 				const fields = ['priceType', 'name', 'desc', 'amount'];
@@ -27,7 +26,7 @@ const useTicketPriceCalculatorFormMutators = (): TpcFormMutators => {
 				});
 			}
 		},
-		sort: (args: any[], state: MutableState<TpcFormData>, tools: Tools<TpcFormData>) => {
+		sort: (args: any[], state: MutableState<TpcFormData>, tools: Tools<TpcFormData>): void => {
 			const prices = tools.getIn(state, 'formState.values.prices') || [];
 			const sortedPrices = sortByPriceOrderIdAsc(prices);
 			const newState = tools.setIn(state, 'formState.values.prices', sortedPrices);

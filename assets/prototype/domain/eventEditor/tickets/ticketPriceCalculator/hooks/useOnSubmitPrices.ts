@@ -1,19 +1,20 @@
 import { difference } from 'ramda';
 
-import { TpcFormData } from '../types';
+import { FnCallback, TpcFormData } from '../types';
 import { Price } from '../../../data/types';
 import { copyPriceFields } from '../../../../shared/predicates/prices/updatePredicates';
 import { useEntityMutator, EntityType } from '../../../../../application/services/apollo/mutations';
 import toBoolean from '../../../../../application/utilities/converters/toBoolean';
+import toInteger from '../../../../../application/utilities/converters/number/toInteger';
 import parsedAmount from '../../../../../application/utilities/money/parsedAmount';
 
-const useOnSubmitPrices = (existingPrices: Price[]) => {
+const useOnSubmitPrices = (existingPrices: Price[]): FnCallback => {
 	const { createEntity, updateEntity, deleteEntity } = useEntityMutator(EntityType.Price);
 	const { updateEntity: updateTicket } = useEntityMutator(EntityType.Ticket);
 	const existingPriceIds = existingPrices.map(({ id }) => id);
 
 	// Async to make sure that prices are handled before updating the ticket.
-	return async ({ ticket, prices = [] }: TpcFormData) => {
+	return async ({ ticket, prices = [] }: TpcFormData): Promise<void> => {
 		const updatedPriceIds = [];
 		const createdPriceIds = [];
 
@@ -29,12 +30,12 @@ const useOnSubmitPrices = (existingPrices: Price[]) => {
 					...priceFields,
 					amount: parsedAmount(price.amount || '0'),
 					isDefault: toBoolean(price.isDefault),
-					order: parseInt(price.order, 10),
+					order: toInteger(price.order),
 				};
 				// if it's a newly added price
 				if (!id) {
 					return new Promise((resolve, onError) => {
-						const onCompleted = ({ createEspressoPrice: { espressoPrice: price } }) => {
+						const onCompleted = ({ createEspressoPrice: { espressoPrice: price } }): void => {
 							createdPriceIds.push(price.id);
 							resolve(price);
 						};
@@ -42,7 +43,7 @@ const useOnSubmitPrices = (existingPrices: Price[]) => {
 					});
 				}
 				return new Promise((resolve, onError) => {
-					const onCompleted = ({ updateEspressoPrice: { espressoPrice: price } }) => {
+					const onCompleted = ({ updateEspressoPrice: { espressoPrice: price } }): void => {
 						updatedPriceIds.push(price.id);
 						resolve(price);
 					};

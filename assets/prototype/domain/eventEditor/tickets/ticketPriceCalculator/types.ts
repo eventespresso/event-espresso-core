@@ -8,6 +8,8 @@ export interface AddPriceModifierDataProps extends WithPriceProp {
 	sort: () => void;
 }
 
+export type FnCallback = (func: any) => void;
+
 export interface FieldArrayProps {
 	fields: TpcFormMutators;
 }
@@ -31,6 +33,8 @@ export interface TpcButtonDataProps extends WithTicketProp {
 	onClose: () => void;
 	onOpen?: () => void;
 }
+
+export type TpcCallback = (func: any) => UpdatedTpcFormDataPath;
 
 export interface TpcFormData extends WithPriceArrayProp, WithTicketProp {}
 
