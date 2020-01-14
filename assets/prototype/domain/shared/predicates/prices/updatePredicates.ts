@@ -1,9 +1,11 @@
 import { assoc, map, pickBy, when } from 'ramda';
 
-import { parsedAmount } from '../../../../application/utilities/money';
-import { Price } from '../../../eventEditor/data/types';
 import { isBasePrice, isPriceField } from './selectionPredicates';
 import { entityHasGuid } from '../shared/selectionPredicates';
+import { Price } from '../../../eventEditor/data/types';
+import toBoolean from '../../../../application/utilities/converters/toBoolean';
+import toInteger from '../../../../application/utilities/converters/number/toInteger';
+import parsedAmount from '../../../../application/utilities/money/parsedAmount';
 
 type updatePriceArrayProps = {
 	amount: number;
@@ -64,3 +66,20 @@ export const updatePriceTypeForPrice = ({ prices, guid, type }: updatePriceArray
  */
 export const updatePriceAmountForPrice = ({ prices, guid, amount }: updatePriceArrayProps): Price[] =>
 	map(when(entityHasGuid(guid), updatePriceAmount(amount)), prices);
+
+/**
+ * shallow copies the supplied price and normalizes fields for persistence
+ *
+ * @param {Price} price
+ * @return {Price} price
+ */
+export const cloneAndNormalizePrice = (price: Price): Price => {
+	const { ...priceFields } = copyPriceFields(price);
+	return {
+		...priceFields,
+		id: null,
+		amount: parsedAmount(price.amount || '0'),
+		isDefault: toBoolean(price.isDefault),
+		order: toInteger(price.order),
+	};
+};

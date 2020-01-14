@@ -2,15 +2,14 @@ import { difference } from 'ramda';
 
 import { FnCallback, TpcFormData } from '../types';
 import { Price } from '../../../data/types';
-import { copyPriceFields } from '../../../../shared/predicates/prices/updatePredicates';
+import { cloneAndNormalizePrice } from '../../../../shared/predicates/prices/updatePredicates';
 import { useEntityMutator, EntityType } from '../../../../../application/services/apollo/mutations';
 import toBoolean from '../../../../../application/utilities/converters/toBoolean';
-import toInteger from '../../../../../application/utilities/converters/number/toInteger';
 import parsedAmount from '../../../../../application/utilities/money/parsedAmount';
 
 const useOnSubmitPrices = (existingPrices: Price[]): FnCallback => {
-	const { createEntity, updateEntity, deleteEntity } = useEntityMutator(EntityType.Price);
-	const { updateEntity: updateTicket } = useEntityMutator(EntityType.Ticket);
+	const { createEntity, updateEntity, deleteEntity } = useEntityMutator(EntityType.Price, null);
+	const { updateEntity: updateTicket } = useEntityMutator(EntityType.Ticket, null);
 	const existingPriceIds = existingPrices.map(({ id }) => id);
 
 	// Async to make sure that prices are handled before updating the ticket.
@@ -25,13 +24,8 @@ const useOnSubmitPrices = (existingPrices: Price[]): FnCallback => {
 				if (price.id === 'NEW_PRICE') {
 					return Promise.resolve(price);
 				}
-				const { id, ...priceFields } = copyPriceFields(price);
-				const normalizedPriceFields = {
-					...priceFields,
-					amount: parsedAmount(price.amount || '0'),
-					isDefault: toBoolean(price.isDefault),
-					order: toInteger(price.order),
-				};
+				const id = price.id;
+				const normalizedPriceFields = cloneAndNormalizePrice(price);
 				// if it's a newly added price
 				if (!id) {
 					return new Promise((resolve, onError) => {
