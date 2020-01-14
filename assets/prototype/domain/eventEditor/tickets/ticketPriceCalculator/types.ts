@@ -33,11 +33,7 @@ export enum TpcActionType {
 	CalculateTicketTotal = 'CALCULATE_TICKET_TOTAL',
 }
 
-export interface TpcButtonDataProps extends WithTicketProp {
-	isOpen: boolean;
-	onClose: () => void;
-	onOpen?: () => void;
-}
+export interface TpcButtonDataProps extends WithTicketProp, TpcModalProps {}
 
 export type TpcCallback = (func: any) => UpdatedTpcFormDataPath;
 
