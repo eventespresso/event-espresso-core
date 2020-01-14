@@ -5,7 +5,7 @@ import { getClient } from '../../../infrastructure/services/apollo/Apollo';
 import { ToastProvider } from '../../../application/services/context/ToastProvider';
 import { RelationsProvider } from '../../../application/services/context/RelationsProvider';
 import { StatusProvider } from '../../../application/services/context/StatusProvider';
-import ConfigProvider from '../../../application/services/context/ConfigProvider';
+import { ConfigProvider } from '../../../application/services/context/ConfigProvider';
 import { EventEditorEventIdProvider } from './EventEditorEventIdProvider';
 
 /**

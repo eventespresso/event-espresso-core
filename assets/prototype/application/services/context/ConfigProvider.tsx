@@ -7,9 +7,9 @@ import { CurrentUser, DateTimeFormats } from '../../valueObjects/config';
 import { ProviderProps } from './types';
 import { useCurrentUser, useGeneralSettings } from '../../../domain/shared/data/queries';
 
-export const ConfigContext = createContext<Config | null>(null);
+const ConfigContext = createContext<Config | null>(null);
 
-const { Provider } = ConfigContext;
+const { Provider, Consumer: ConfigConsumer } = ConfigContext;
 
 const ConfigProvider: React.FunctionComponent<ProviderProps> = ({ children }): JSX.Element => {
 	const ConfigData = useConfigData();
@@ -26,4 +26,4 @@ const ConfigProvider: React.FunctionComponent<ProviderProps> = ({ children }): J
 	return <Provider value={{ config, setConfig }}>{children}</Provider>;
 };
 
-export default ConfigProvider;
+export { ConfigProvider, ConfigConsumer, ConfigContext };
