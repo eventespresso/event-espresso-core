@@ -25,14 +25,15 @@ export const copyPriceFields = (price: Price): Price => pickBy<Price, Price>(isP
  * @param {number} amount
  */
 export const updatePriceAmount = (amount: number) => (price: Price): Price =>
-	assoc('amount', parsedAmount(amount || 0), price);
+	assoc<number, Price, string>('amount', parsedAmount(amount || 0), price);
 
 /**
  * updates the price type
  *
  * @param {string} type
  */
-export const updatePriceType = (type: string) => (price: Price): Price => assoc('priceType', type, price);
+export const updatePriceType = (type: string) => (price: Price): Price =>
+	assoc<string, Price, string>('priceType', type, price);
 
 /**
  * given an array of prices, finds and updates the base price amount
