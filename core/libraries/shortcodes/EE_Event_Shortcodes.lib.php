@@ -101,9 +101,13 @@ class EE_Event_Shortcodes extends EE_Shortcodes
                 'This will return the Twitter URL for the event if you have it set via custom field in your event, otherwise it will use the Twitter URL set in "Your Organization Settings". To set the facebook url in your event, add a custom field with the key as <code>event_twitter</code> and the value as your facebook url',
                 'event_espresso'
             ),
-            '[EVENT_META_*]'                          => __(
-                'This is a special dynamic shortcode. After the "*", add the exact name for your custom field, if there is a value set for that custom field within the event then it will be output in place of this shortcode.',
-                'event_espresso'
+            '[EVENT_META_*]'                          => sprintf(
+                __(
+                    'This is a special dynamic shortcode. After the "*", add the exact name for your custom field, if there is a value set for that custom field within the event then it will be output in place of this shortcode. If you use shortcodes within your custom fields set %1$sdo_shortcode=true%2$s at the end of the shortcode to run the value through the do_shortcode function. ',
+                    'event_espresso'
+                ),
+                '<code>',
+                '</code>'
             ),
             '[REGISTRATION_LIST_TABLE_FOR_EVENT_URL]' => __(
                 'This parses to the url for the registration list table filtered by registrations for this event.',
