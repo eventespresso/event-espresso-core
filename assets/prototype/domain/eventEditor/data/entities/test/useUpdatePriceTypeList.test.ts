@@ -57,8 +57,10 @@ describe('useUpdatePriceTypeList', () => {
 			}
 		);
 
-		const cachedPriceTypes = cacheResult.current;
+		const cachedPriceTypeIds = cacheResult.current.map(({ id }) => id);
 
-		expect(cachedPriceTypes.length).toBe(priceTypelist.length + 1);
+		expect(cachedPriceTypeIds.length).toBe(priceTypelist.length + 1);
+
+		expect(cachedPriceTypeIds).toContain(priceType.id);
 	});
 });
