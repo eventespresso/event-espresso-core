@@ -250,7 +250,7 @@ class EE_Event_Shortcodes extends EE_Shortcodes
             }
             // Add a filter to allow all instances of EVENT_META_* to run through do_shortcode, default to false.
             // Check if a do_shortcode attribute was set to true and if so run $event_meta through that function.
-            if (apply_filters('FHEE__EE_Event_Shortcodes___parser__event_meta_do_shortcode', false)
+            if (apply_filters('FHEE__EventEspresso_core_libraries_shortcodes_EE_Event_Shortcodes___parser__event_meta_do_shortcode', false)
                 || !empty($attrs['do_shortcode']) && filter_var($attrs['do_shortcode'], FILTER_VALIDATE_BOOLEAN)
             ) {
                 return do_shortcode($event_meta);
