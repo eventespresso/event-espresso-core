@@ -8,16 +8,14 @@ import { sortByPriceOrderIdDesc } from '../../../../shared/predicates/prices/sor
 import { updateBasePriceAmount } from '../../../../shared/predicates/prices/updatePredicates';
 
 const notNewPrice = propSatisfies((prop) => prop !== 'NEW_PRICE', 'id');
-const NOT_A_TICKET = {};
-const EMPTY_ARRAY = [];
 
 const calculateBasePrice = (state: TpcFormData): TpcFormData => {
-	const ticket = pathOr<Ticket | {}>(NOT_A_TICKET, ['ticket'], state);
-	if (ticket === NOT_A_TICKET) {
+	const ticket = pathOr<Ticket>(null, ['ticket'], state);
+	if (!ticket) {
 		return state;
 	}
-	const allPrices = pathOr<Price[]>(EMPTY_ARRAY, ['prices'], state);
-	if (allPrices === EMPTY_ARRAY) {
+	const allPrices = pathOr<Price[]>(null, ['prices'], state);
+	if (!allPrices) {
 		return state;
 	}
 	// we're calculating the base price so we don't want to include it in the calculations
