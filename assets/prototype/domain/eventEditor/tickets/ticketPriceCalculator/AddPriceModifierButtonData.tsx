@@ -6,13 +6,20 @@ import { AddPriceModifierDataProps } from './types';
 import { Price } from '../../data/types';
 import { findEntityByGuid } from '../../../shared/predicates/shared/selectionPredicates';
 
-const AddPriceModifierButtonData = ({ modifiers, name, price, push, reset, sort }: AddPriceModifierDataProps) => {
+const AddPriceModifierButtonData = ({
+	modifiers,
+	name,
+	price,
+	push,
+	reset,
+	sort,
+}: AddPriceModifierDataProps): JSX.Element => {
 	const getPriceType = findEntityByGuid(modifiers);
 	const addPriceModifier = useCallback(() => {
 		if (Number(price.amount)) {
 			const priceClone: Price = clone(price);
 			const baseType: Price = getPriceType(priceClone.priceType);
-			const newPrice = {
+			const newPrice: Price = {
 				...priceClone,
 				id: '',
 				isBasePrice: baseType.isBasePrice,

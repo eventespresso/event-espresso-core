@@ -22,7 +22,7 @@ const TicketPriceCalculatorModal: React.FunctionComponent<TpcButtonDataProps & T
 	ticket,
 	onClose,
 	isOpen,
-}) => {
+}): JSX.Element => {
 	const [initialValues, setInitialValues] = useState(EMPTY_OBJECT);
 	const decorator = useTicketPriceCalculatorFormDecorator();
 	const mutators = useTicketPriceCalculatorFormMutators();

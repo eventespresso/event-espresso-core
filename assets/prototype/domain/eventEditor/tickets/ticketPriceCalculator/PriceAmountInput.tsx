@@ -13,7 +13,11 @@ interface PriceAmountInputProps {
 	reverseCalculate: boolean;
 }
 
-const PriceAmountInput: React.FunctionComponent<PriceAmountInputProps> = ({ name, price, reverseCalculate }) => {
+const PriceAmountInput: React.FunctionComponent<PriceAmountInputProps> = ({
+	name,
+	price,
+	reverseCalculate,
+}): JSX.Element => {
 	const { currency, formatAmount } = useMoneyDisplay();
 	const sign = price.isPercent ? percentSign : currency.sign;
 	let b4Price = '';

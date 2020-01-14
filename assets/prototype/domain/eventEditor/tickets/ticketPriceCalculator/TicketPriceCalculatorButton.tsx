@@ -9,7 +9,7 @@ const TicketPriceCalculatorButton: React.FunctionComponent<TpcButtonDataProps & 
 	isOpen,
 	onOpen,
 	onClose,
-}) => {
+}): JSX.Element => {
 	return (
 		<>
 			<Button icon={'calculator'} onClick={onOpen} minimal />

@@ -13,7 +13,12 @@ interface PriceTypeInputProps {
 	modifierOptions: Price[];
 }
 
-const PriceTypeInput: React.FunctionComponent<PriceTypeInputProps> = ({ name, price, priceTypes, modifierOptions }) => {
+const PriceTypeInput: React.FunctionComponent<PriceTypeInputProps> = ({
+	name,
+	price,
+	priceTypes,
+	modifierOptions,
+}): JSX.Element => {
 	const relatedPriceType = usePriceTypeForPrice(price.id);
 	const options = price.isBasePrice ? priceTypes : modifierOptions;
 	return (

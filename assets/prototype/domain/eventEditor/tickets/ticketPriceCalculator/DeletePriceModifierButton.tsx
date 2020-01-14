@@ -6,8 +6,11 @@ type DeletePriceModifierButtonProps = {
 	remove: (index: number) => void;
 };
 
-const DeletePriceModifierButton: React.FunctionComponent<DeletePriceModifierButtonProps> = ({ index, remove }) => {
-	return <Button key={'trash'} icon={'trash'} onClick={() => remove(index)} minimal />;
+const DeletePriceModifierButton: React.FunctionComponent<DeletePriceModifierButtonProps> = ({
+	index,
+	remove,
+}): JSX.Element => {
+	return <Button key={'trash'} icon={'trash'} onClick={(): void => remove(index)} minimal />;
 };
 
 export default DeletePriceModifierButton;
