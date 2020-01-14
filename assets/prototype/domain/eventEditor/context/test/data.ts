@@ -1,10 +1,14 @@
 import '../../types';
 import { EventData } from '../../types';
 import { RelationalData } from '../../../../application/services/apollo/relations';
-import { nodes as datetimes } from '../../data/queries/datetimes/test/data';
-import { nodes as tickets } from '../../data/queries/tickets/test/data';
-import { nodes as prices } from '../../data/queries/prices/test/data';
-import { nodes as priceTypes } from '../../data/queries/priceTypes/test/data';
+import { nodes as datetimes, edge as datetimesEdge } from '../../data/queries/datetimes/test/data';
+import { nodes as tickets, edge as ticketsEdge } from '../../data/queries/tickets/test/data';
+import { nodes as prices, edge as pricesEdge } from '../../data/queries/prices/test/data';
+import { nodes as priceTypes, edge as priceTypesEdge } from '../../data/queries/priceTypes/test/data';
+
+export { currentUser } from '../../../../domain/shared/data/queries/currentUser/test/data';
+
+export { generalSettings } from '../../../../domain/shared/data/queries/generalSettings/test/data';
 
 export const eventId = 100;
 
@@ -49,5 +53,9 @@ export const relationalData: RelationalData = {
 // Add only what's needed
 export const event: EventData = {
 	dbId: eventId,
+	datetimes: datetimesEdge,
+	tickets: ticketsEdge,
+	prices: pricesEdge,
+	priceTypes: priceTypesEdge,
 	relations: relationalData,
 };
