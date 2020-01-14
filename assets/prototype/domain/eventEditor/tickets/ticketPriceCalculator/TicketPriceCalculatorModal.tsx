@@ -1,3 +1,4 @@
+import React from 'react';
 import isEmpty from 'ramda/src/isEmpty';
 import { useEffect, useState } from 'react';
 
@@ -5,6 +6,7 @@ import TicketPriceCalculatorForm from './TicketPriceCalculatorForm';
 import useTicketPriceCalculatorFormDecorator from './hooks/useTicketPriceCalculatorFormDecorator';
 import useTicketPriceCalculatorFormMutators from './hooks/useTicketPriceCalculatorFormMutators';
 import useOnSubmitPrices from './hooks/useOnSubmitPrices';
+import { TpcButtonDataProps, TpcModalProps } from './types';
 import { defaultNewPriceModifier } from '../../../shared/entities/prices/defaultNewPriceModifier';
 import { sortByPriceOrderIdAsc } from '../../../shared/predicates/prices/sortingPredicates';
 import { copyPriceFields } from '../../../shared/predicates/prices/updatePredicates';
@@ -16,7 +18,11 @@ import FormModal from '../../../../application/ui/components/forms/FormModal';
 
 const EMPTY_OBJECT = {};
 
-const TicketPriceCalculatorModal = ({ ticket, onClose, isOpen }) => {
+const TicketPriceCalculatorModal: React.FunctionComponent<TpcButtonDataProps & TpcModalProps> = ({
+	ticket,
+	onClose,
+	isOpen,
+}) => {
 	const [initialValues, setInitialValues] = useState(EMPTY_OBJECT);
 	const decorator = useTicketPriceCalculatorFormDecorator();
 	const mutators = useTicketPriceCalculatorFormMutators();
