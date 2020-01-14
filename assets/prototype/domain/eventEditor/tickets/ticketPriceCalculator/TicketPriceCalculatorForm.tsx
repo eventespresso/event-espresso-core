@@ -31,7 +31,11 @@ const TicketPriceCalculatorForm: React.FunctionComponent<TpcForm> = ({ form, val
 						<TicketPriceModifierRowIterator reverseCalculate={reverseCalculate} />
 					</tbody>
 					<tfoot>
-						<TicketPriceTotalRow ticket={ticket} toggleCalcDir={toggleCalcDir} />
+						<TicketPriceTotalRow
+							reverseCalculate={reverseCalculate}
+							ticket={ticket}
+							toggleCalcDir={toggleCalcDir}
+						/>
 					</tfoot>
 				</HTMLTable>
 			</div>
