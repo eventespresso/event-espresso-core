@@ -9,11 +9,11 @@ import { ProviderProps } from './types';
 
 const RelationsContext = createContext<RelationsManager | null>(null);
 
-const { Provider } = RelationsContext;
+const { Provider, Consumer: RelationsConsumer } = RelationsContext;
 
 const RelationsProvider: React.FunctionComponent<ProviderProps> = ({ children }): JSX.Element => {
 	const relations = useRelationsManager();
 	return <Provider value={relations}>{children}</Provider>;
 };
 
-export { RelationsContext, RelationsProvider };
+export { RelationsContext, RelationsProvider, RelationsConsumer };
