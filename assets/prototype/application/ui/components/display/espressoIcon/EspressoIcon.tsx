@@ -1,4 +1,4 @@
-import React, { createElement } from 'react';
+import React from 'react';
 import classNames from 'classnames';
 
 import { SvgPath } from './svgPaths';

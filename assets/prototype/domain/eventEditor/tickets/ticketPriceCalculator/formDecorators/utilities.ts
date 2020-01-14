@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { allPass, map, path, propEq, when } from 'ramda';
 import { TpcFormData, UpdatedTpcFormDataPath } from '../types';
 import { Price, PriceType } from '../../../data/types';

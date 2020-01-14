@@ -3,12 +3,12 @@
  */
 import * as React from 'react';
 import { SelectControl } from '@wordpress/components';
-import { __ } from '@wordpress/i18n'; // @todo: replace with '@eventespresso/i18n'
 
 /**
  * Internal imports
  */
 import { DisplayDates } from '../../../../data/ticket/types';
+import { __ } from '../../../../../../application/utilities/text';
 
 interface DisplayTicketsControlProps {
 	displayTicketDate: DisplayDates;

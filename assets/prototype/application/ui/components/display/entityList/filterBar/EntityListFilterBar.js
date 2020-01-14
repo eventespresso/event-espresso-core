@@ -4,11 +4,11 @@
 import * as React from 'react';
 import { withInstanceId } from '@wordpress/compose';
 import { IconButton } from '@wordpress/components';
-import { __ } from '@eventespresso/i18n';
 
 /**
  * Internal dependencies
  */
+import { __ } from '../../../../../../application/utilities/text';
 import useEntityListFilterState from './useEntityListFilterState';
 import Collapsible from './Collapsible';
 import './style.css';

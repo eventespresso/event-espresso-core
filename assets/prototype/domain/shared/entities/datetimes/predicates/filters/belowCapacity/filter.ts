@@ -7,7 +7,7 @@ import validFiniteCapacityLimit from '../../../../../entities/datetimes/predicat
 import validInfiniteCapacityLimit from './validInfiniteCapacityLimit';
 import validSold from '../../../../../entities/datetimes/predicates/validSold';
 
-interface FilterProps {
+interface Props {
 	capacity: number;
 	date: Datetime;
 }
@@ -15,13 +15,19 @@ interface FilterProps {
 /**
  * Filter function which returns true if sold/capacity less than than capacity
  */
-const filter = ({ capacity, date }: FilterProps): boolean => {
+const filter = ({ capacity, date }: Props): boolean => {
+	const belowCapacityComparison = (): boolean => {
+		if (date.capacity !== undefined && date.sold !== undefined) {
+			return Math.round(date.sold) / Math.round(date.capacity) < capacity / 100;
+		}
+
+		return false;
+	};
+
 	return (
 		!isTrashed(date) &&
 		(validInfiniteCapacityLimit(date) ||
-			(validSold(date) &&
-				validFiniteCapacityLimit(date) &&
-				Math.round(date.sold) / Math.round(date.capacity) < capacity / 100))
+			(validSold(date) && validFiniteCapacityLimit(date) && belowCapacityComparison()))
 	);
 };
 

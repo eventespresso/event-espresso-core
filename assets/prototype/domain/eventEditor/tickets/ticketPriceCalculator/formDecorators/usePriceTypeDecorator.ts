@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { Calculation } from 'final-form-calculate';
 
 import { TpcActionType, TpcFormData, UpdatedTpcFormDataPath } from '../types';

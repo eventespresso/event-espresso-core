@@ -5,7 +5,7 @@ const useOnUpdateDatetime = (): DatetimeMutationCallbackFn => {
 	const { updateRelations, addRelation, removeRelation } = useRelations() as RelationsManager;
 
 	const onUpdateDatetime = ({ datetime, tickets }: DatetimeMutationCallbackFnArgs): void => {
-		if (datetime.id && tickets.length) {
+		if (datetime.id && tickets && tickets.length) {
 			const { id: datetimeId } = datetime;
 
 			// make sure to remove datetime from

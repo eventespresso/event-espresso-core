@@ -4,12 +4,12 @@
 import { useMemo, useRef } from 'react';
 import { useSpring, animated } from 'react-spring';
 import { SelectControl, TextControl } from '@wordpress/components';
-import { __ } from '@eventespresso/i18n';
 
 /**
  * Internal dependencies
  */
 import useRect from '../../../../../hooks/useRect';
+import { __ } from '@eventespresso/i18n';
 
 /**
  * Collapsible

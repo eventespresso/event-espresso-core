@@ -1,16 +1,19 @@
 {
 	"compilerOptions": {
-		"allowSyntheticDefaultImports": true,
 		"allowJs": true,
-		"declaration": true,
+		"allowSyntheticDefaultImports": true,
 		"esModuleInterop": true,
-		"jsx": "react", // use typescript to transpile jsx to js
-		"importHelpers": true,
-		"lib": ["dom", "es6"],
+		"forceConsistentCasingInFileNames": true,
+		"jsx": "react",
+		"isolatedModules": true,
+		"lib": ["dom", "dom.iterable", "esnext"],
+		"module": "esnext",
 		"moduleResolution": "node",
-		"outDir": "./assets/dist",
-		"target": "es6"
+		"noEmit": true,
+		"resolveJsonModule": true,
+		"skipLibCheck": true,
+		"strict": false,
+		"target": "es5"
 	},
-	"include": ["./assets/src/**/*"],
-	"exclude": ["node_modules", "./assets/dist"]
+	"include": ["assets/prototype"]
 }

@@ -1,4 +1,5 @@
-import isTrashed from './isOnSale';
+
+import isTrashed from './isTrashed';
 
 /**
  * @function
