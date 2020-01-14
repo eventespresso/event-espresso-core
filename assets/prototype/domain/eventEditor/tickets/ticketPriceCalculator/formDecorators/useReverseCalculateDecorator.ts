@@ -1,6 +1,6 @@
 import { Calculation } from 'final-form-calculate';
 
-import { TpcFormData } from '../types';
+import { TpcFormData, UpdatedTpcFormDataPath } from '../types';
 import { boolsEqual, getFromFormData } from './utilities';
 import useTicketPriceCalculator from '../hooks/useTicketPriceCalculator';
 
@@ -9,7 +9,7 @@ const useReverseCalculateDecorator = (): Calculation => {
 	return {
 		field: 'ticket.reverseCalculate',
 		isEqual: boolsEqual,
-		updates: (value, name, formData: TpcFormData) => {
+		updates: (value, name, formData: TpcFormData): UpdatedTpcFormDataPath => {
 			const reverseCalc = getFromFormData('ticket.reverseCalculate', formData);
 			return reverseCalc
 				? calculator({

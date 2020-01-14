@@ -1,7 +1,7 @@
 import { Calculation } from 'final-form-calculate';
 import { allPass, map, propEq, when } from 'ramda';
 
-import { TpcFormData } from '../types';
+import { TpcFormData, UpdatedTpcFormDataPath } from '../types';
 import { isEqual, getFromFormData } from './utilities';
 import useTicketPriceCalculator from '../hooks/useTicketPriceCalculator';
 import { Price, PriceType } from '../../../data/types';
@@ -10,17 +10,17 @@ import { getPriceType } from '../../../../shared/predicates/prices/selectionPred
 import { getDefaultPriceType } from '../../../../shared/predicates/priceTypes/selectionPredicates';
 
 const usePriceTypeDecorator = (): Calculation => {
-	const priceTypes: PriceType[] = usePriceTypes();
+	const priceTypes = usePriceTypes();
 	const getPriceTypeForPrice = getPriceType(priceTypes);
-	const defaultPriceType: PriceType = getDefaultPriceType(priceTypes);
+	const defaultPriceType = getDefaultPriceType(priceTypes);
 	const calculator = useTicketPriceCalculator();
 	return {
 		field: /^prices\[\d+\]\.priceType$/,
 		isEqual: isEqual,
-		updates: (value, name, formData: TpcFormData) => {
+		updates: (value, name, formData: TpcFormData): UpdatedTpcFormDataPath => {
 			const pricePath: string = name.replace('.priceType', '');
 			const price: Price = getFromFormData(pricePath, formData);
-			const reverseCalc: boolean = Boolean(getFromFormData('ticket.reverseCalculate', formData));
+			const reverseCalc = Boolean(getFromFormData('ticket.reverseCalculate', formData));
 			let priceType: PriceType = getPriceTypeForPrice(price);
 			priceType = priceType || defaultPriceType;
 			const updatedPrice: Price = {

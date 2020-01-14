@@ -9,7 +9,7 @@ const useTicketTotalDecorator = (): Calculation => {
 	return {
 		field: 'ticket.price',
 		isEqual: amountsEqual,
-		updates: (value, name, formData: TpcFormData) => {
+		updates: (value, name, formData: TpcFormData): UpdatedTpcFormDataPath => {
 			const reverseCalc = getFromFormData('ticket.reverseCalculate', formData);
 			// we don't want to update the base price if reverse calculate is false
 			if (reverseCalc) {
