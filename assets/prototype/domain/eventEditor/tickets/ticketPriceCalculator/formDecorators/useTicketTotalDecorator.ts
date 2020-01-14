@@ -1,6 +1,6 @@
 import { Calculation } from 'final-form-calculate';
 
-import { TpcFormData, UpdatedTpcFormDataPath } from '../types';
+import { TpcActionType, TpcFormData, UpdatedTpcFormDataPath } from '../types';
 import { amountsEqual, getFromFormData } from './utilities';
 import useTicketPriceCalculator from '../hooks/useTicketPriceCalculator';
 
@@ -16,7 +16,7 @@ const useTicketTotalDecorator = (): Calculation => {
 				return calculator({
 					data: formData,
 					path: 'prices[0].amount',
-					type: 'CALCULATE_BASE_PRICE',
+					type: TpcActionType.CalculateBasePrice,
 				});
 			}
 			return {};

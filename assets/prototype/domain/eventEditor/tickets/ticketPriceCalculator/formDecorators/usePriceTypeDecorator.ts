@@ -1,7 +1,7 @@
 import { Calculation } from 'final-form-calculate';
 import { allPass, map, propEq, when } from 'ramda';
 
-import { TpcFormData, UpdatedTpcFormDataPath } from '../types';
+import { TpcActionType, TpcFormData, UpdatedTpcFormDataPath } from '../types';
 import { isEqual, getFromFormData } from './utilities';
 import useTicketPriceCalculator from '../hooks/useTicketPriceCalculator';
 import { Price, PriceType } from '../../../data/types';
@@ -56,12 +56,12 @@ const usePriceTypeDecorator = (): Calculation => {
 				? calculator({
 						data: formDataWithUpdatedPrice,
 						path: 'prices[0].amount',
-						type: 'CALCULATE_BASE_PRICE',
+						type: TpcActionType.CalculateBasePrice,
 				  })
 				: calculator({
 						data: formDataWithUpdatedPrice,
 						path: 'ticket.price',
-						type: 'CALCULATE_TICKET_TOTAL',
+						type: TpcActionType.CalculateTicketTotal,
 				  });
 			return { ...formDataCalculations, [pricePath]: updatedPrice };
 		},

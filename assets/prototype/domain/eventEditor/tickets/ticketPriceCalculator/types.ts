@@ -25,7 +25,12 @@ export interface PriceInputProps extends WithPriceProp {
 export interface TpcAction {
 	data: TpcFormData;
 	path: string;
-	type: string;
+	type: TpcActionType;
+}
+
+export enum TpcActionType {
+	CalculateBasePrice = 'CALCULATE_BASE_PRICE',
+	CalculateTicketTotal = 'CALCULATE_TICKET_TOTAL',
 }
 
 export interface TpcButtonDataProps extends WithTicketProp {

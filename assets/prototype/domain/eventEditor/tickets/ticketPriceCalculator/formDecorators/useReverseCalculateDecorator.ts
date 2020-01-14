@@ -1,6 +1,6 @@
 import { Calculation } from 'final-form-calculate';
 
-import { TpcFormData, UpdatedTpcFormDataPath } from '../types';
+import { TpcActionType, TpcFormData, UpdatedTpcFormDataPath } from '../types';
 import { boolsEqual, getFromFormData } from './utilities';
 import useTicketPriceCalculator from '../hooks/useTicketPriceCalculator';
 
@@ -15,12 +15,12 @@ const useReverseCalculateDecorator = (): Calculation => {
 				? calculator({
 						data: formData,
 						path: 'prices[0].amount',
-						type: 'CALCULATE_BASE_PRICE',
+						type: TpcActionType.CalculateBasePrice,
 				  })
 				: calculator({
 						data: formData,
 						path: 'ticket.price',
-						type: 'CALCULATE_TICKET_TOTAL',
+						type: TpcActionType.CalculateTicketTotal,
 				  });
 		},
 	};
