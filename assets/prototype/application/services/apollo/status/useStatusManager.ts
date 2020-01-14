@@ -33,7 +33,7 @@ const useStatusManager = (): StatusManager => {
 	 * @param {string}  typeName  The plural type name like "datetimes", "tickets", "prices"
 	 * @param {boolean} value Value of the flag
 	 */
-	const setIsLoading: StatusSetter = (typeName: TypeName, value: boolean = true): void => {
+	const setIsLoading: StatusSetter = (typeName: TypeName, value = true): void => {
 		dispatch({
 			type: 'SET_IS_LOADING',
 			typeName,
@@ -56,7 +56,7 @@ const useStatusManager = (): StatusManager => {
 	 * @param {string} typeName The plural type name like "datetimes", "tickets", "prices"
 	 * @param {boolean} value Value of the flag
 	 */
-	const setIsLoaded: StatusSetter = (typeName: TypeName, value: boolean = true): void => {
+	const setIsLoaded: StatusSetter = (typeName: TypeName, value = true): void => {
 		dispatch({
 			type: 'SET_IS_LOADED',
 			typeName,
@@ -79,7 +79,7 @@ const useStatusManager = (): StatusManager => {
 	 * @param {string} typeName The plural type name like "datetimes", "tickets", "prices"
 	 * @param {boolean} value Value of the flag
 	 */
-	const setIsError: StatusSetter = (typeName: TypeName, value: boolean = true): void => {
+	const setIsError: StatusSetter = (typeName: TypeName, value = true): void => {
 		dispatch({
 			type: 'SET_IS_ERROR',
 			typeName,
