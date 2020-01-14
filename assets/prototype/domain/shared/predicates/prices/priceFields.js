@@ -1,15 +1,19 @@
-export const priceFields = [
+export const PRICE_FIELDS = [
 	'id',
 	'dbId',
 	'amount',
 	'desc',
 	'isBasePrice',
-	'isDiscount',
+	'isDefault',
 	'isDeleted',
+	'isDiscount',
 	'isPercent',
 	'isTax',
 	'name',
 	'order',
+	'overrides',
+	'parent',
 	'priceType',
 	'priceTypeOrder',
+	'wpUser',
 ];
