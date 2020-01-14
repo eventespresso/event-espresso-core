@@ -39,7 +39,7 @@ export type TpcCallback = (func: any) => UpdatedTpcFormDataPath;
 
 export interface TpcFormData extends WithPriceArrayProp, WithTicketProp {}
 
-export interface TpcForm extends WithTicketProp {
+export interface TpcForm {
 	form: FormProps;
 	values: WithTicketProp;
 }
