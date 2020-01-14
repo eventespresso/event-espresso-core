@@ -7,16 +7,14 @@ import { sortByPriceOrderIdAsc } from '../../../../shared/predicates/prices/sort
 import { updateTicketPriceForTicket } from '../../../../shared/predicates/tickets/selectionPredicates';
 
 const notNewPrice = propSatisfies((id) => id !== 'NEW_PRICE', 'id');
-const NOT_A_TICKET = { id: '' };
-const EMPTY_ARRAY = [];
 
 const calculateTicketTotal = (state: TpcFormData): TpcFormData => {
-	const ticket = pathOr<Ticket | { id: '' }>(NOT_A_TICKET, ['ticket'], state);
-	if (ticket === NOT_A_TICKET) {
+	const ticket = pathOr<Ticket>(null, ['ticket'], state);
+	if (!ticket) {
 		return state;
 	}
-	const allPrices: Price[] = pathOr<Price[]>(EMPTY_ARRAY, ['prices'], state);
-	if (allPrices === EMPTY_ARRAY) {
+	const allPrices: Price[] = pathOr<Price[]>(null, ['prices'], state);
+	if (!allPrices) {
 		return state;
 	}
 	// we're calculating the ticket total but the last element
