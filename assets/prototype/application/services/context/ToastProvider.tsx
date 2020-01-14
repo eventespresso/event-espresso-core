@@ -4,14 +4,16 @@
 import React, { createContext } from 'react';
 import { Position, Toaster } from '@blueprintjs/core';
 
-const ToastContext = createContext();
+import { ProviderProps } from './types';
+
+const ToastContext = createContext(null);
 
 const toaster = Toaster.create({
 	maxToasts: 6,
 	position: Position.BOTTOM_RIGHT,
 });
 
-const ToastProvider = (props) => {
+const ToastProvider: React.FunctionComponent<ProviderProps> = (props): JSX.Element => {
 	return <ToastContext.Provider value={toaster}>{props.children}</ToastContext.Provider>;
 };
 
