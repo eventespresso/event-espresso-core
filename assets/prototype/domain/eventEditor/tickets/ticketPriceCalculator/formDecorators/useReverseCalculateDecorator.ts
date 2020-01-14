@@ -10,7 +10,7 @@ const useReverseCalculateDecorator = (): Calculation => {
 		field: 'ticket.reverseCalculate',
 		isEqual: boolsEqual,
 		updates: (value, name, formData: TpcFormData): UpdatedTpcFormDataPath => {
-			const reverseCalc = getFromFormData('ticket.reverseCalculate', formData);
+			const reverseCalc = getFromFormData<boolean>('ticket.reverseCalculate', formData);
 			return reverseCalc
 				? calculator({
 						data: formData,

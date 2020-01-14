@@ -10,7 +10,7 @@ const usePriceAmountDecorator = (): Calculation => {
 		field: /^prices\[\d+\]\.amount$/,
 		isEqual: amountsEqual,
 		updates: (value, name, formData: TpcFormData): UpdatedTpcFormDataPath => {
-			const reverseCalc = getFromFormData('ticket.reverseCalculate', formData);
+			const reverseCalc = getFromFormData<boolean>('ticket.reverseCalculate', formData);
 			if (reverseCalc) {
 				if (name === 'prices[0].amount') {
 					return {};
