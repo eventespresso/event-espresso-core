@@ -100,7 +100,7 @@ class PayPalSettingsForm extends EE_Payment_Method_Form
             // If we got here then there was an error in this request.
             // maybe is turned off. We don't know the credentials are invalid
             $error = sprintf(
-            // translators: %1$s Error message received from PayPal
+                // translators: %1$s Error message received from PayPal
                 esc_html__(
                 // @codingStandardsIgnoreStart
                     'Your PayPal credentials could not be verified. The following error occurred while communicating with PayPal: %1$s',
