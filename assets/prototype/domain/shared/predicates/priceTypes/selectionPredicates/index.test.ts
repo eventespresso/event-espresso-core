@@ -87,7 +87,9 @@ describe('isFlatFeeSurcharge', () => {
 			const { isBasePrice, isDiscount, isPercent } = priceType;
 			const basePrice = isBasePrice === true && isDiscount === false && isPercent === false;
 
-			expect(isFlatFeeSurcharge(priceType)).toBe(basePrice);
+			if (basePrice === true) {
+				expect(isFlatFeeSurcharge(priceType)).toBe(false);
+			}
 		});
 	});
 
@@ -96,7 +98,9 @@ describe('isFlatFeeSurcharge', () => {
 			const { isBasePrice, isDiscount, isPercent } = priceType;
 			const dollarDiscount = isBasePrice === false && isDiscount === true && isPercent === false;
 
-			expect(isFlatFeeSurcharge(priceType)).toBe(dollarDiscount);
+			if (dollarDiscount === true) {
+				expect(isFlatFeeSurcharge(priceType)).toBe(false);
+			}
 		});
 	});
 
@@ -105,7 +109,9 @@ describe('isFlatFeeSurcharge', () => {
 			const { isBasePrice, isDiscount, isPercent } = priceType;
 			const percentageSurcharge = isBasePrice === false && isDiscount === false && isPercent === true;
 
-			expect(isFlatFeeSurcharge(priceType)).toBe(percentageSurcharge);
+			if (percentageSurcharge === true) {
+				expect(isFlatFeeSurcharge(priceType)).toBe(false);
+			}
 		});
 	});
 
@@ -114,7 +120,9 @@ describe('isFlatFeeSurcharge', () => {
 			const { isBasePrice, isDiscount, isPercent } = priceType;
 			const precentageDiscount = isBasePrice === false && isDiscount === true && isPercent === true;
 
-			expect(isFlatFeeSurcharge(priceType)).toBe(precentageDiscount);
+			if (precentageDiscount === true) {
+				expect(isFlatFeeSurcharge(priceType)).toBe(false);
+			}
 		});
 	});
 });
