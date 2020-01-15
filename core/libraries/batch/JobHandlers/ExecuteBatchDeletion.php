@@ -3,11 +3,14 @@
 namespace EventEspressoBatchRequest\JobHandlers;
 
 use EE_Change_Log;
+use EE_Error;
 use EE_Registry;
 use EE_Transaction;
 use EEM_Event;
 use EEM_Price;
+use EEM_Registration;
 use EEM_Ticket;
+use EEM_Transaction;
 use EventEspresso\core\exceptions\InvalidClassException;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
@@ -20,6 +23,7 @@ use EventEspressoBatchRequest\Helpers\JobParameters;
 use EventEspressoBatchRequest\Helpers\JobStepResponse;
 use EventEspressoBatchRequest\JobHandlerBaseClasses\JobHandler;
 use InvalidArgumentException;
+use ReflectionException;
 
 /**
  * Class EventDeletion
@@ -86,7 +90,11 @@ class ExecuteBatchDeletion extends JobHandler
      * @param JobParameters $job_parameters
      * @param int $batch_size
      * @return JobStepResponse
-     * @throws BatchRequestException
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws ReflectionException
      */
     public function continue_job(JobParameters $job_parameters, $batch_size = 50)
     {
@@ -99,7 +107,7 @@ class ExecuteBatchDeletion extends JobHandler
         foreach ($models_and_ids_to_delete as $model_name => $ids_to_delete) {
             if ($units_processed < $batch_size) {
                 $model = EE_Registry::instance()->load_model($model_name);
-                if ($model instanceof \EEM_Registration) {
+                if ($model instanceof EEM_Registration) {
                     // Now THIS could be a command!
                     $units_processed += $this->deleteRegistrationsAndTransactions($ids_to_delete, $batch_size - $units_processed, $job_parameters);
                 } else {
@@ -153,7 +161,8 @@ class ExecuteBatchDeletion extends JobHandler
         return new JobStepResponse(
             $job_parameters,
             sprintf(
-                esc_html__('Deleted %d items.', 'event_espresso'),
+                // translators: 1: the quantity of items deleted.
+                esc_html__('Deleted %1$d items.', 'event_espresso'),
                 $units_processed
             )
         );
@@ -168,8 +177,8 @@ class ExecuteBatchDeletion extends JobHandler
      * @throws InvalidArgumentException
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
-     * @throws \EE_Error
-     * @throws \ReflectionException
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     protected function deleteRegistrationsAndTransactions($reg_ids, $batch_size, JobParameters $job_parameters)
     {
@@ -186,17 +195,18 @@ class ExecuteBatchDeletion extends JobHandler
     /**
      * @since $VID:$
      * @param $reg_id
+     * @param JobParameters $job_parameters
      * @return int
-     * @throws \EE_Error
-     * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
-     * @throws \EventEspresso\core\exceptions\InvalidInterfaceException
-     * @throws \InvalidArgumentException
-     * @throws \ReflectionException
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws ReflectionException
      */
     protected function deleteRegistrationAndTransaction($reg_id, JobParameters $job_parameters)
     {
         // If the registration's transaction has no other valid registrations, delete it, and its dependent data too.
-        $TXN = \EEM_Transaction::instance()->get_one(
+        $TXN = EEM_Transaction::instance()->get_one(
             [
                 [
                     'Registration.REG_ID' => $reg_id
@@ -240,7 +250,7 @@ class ExecuteBatchDeletion extends JobHandler
             }
         } else {
             // Get rid of the registration now.
-            $count_deleted += \EEM_Registration::instance()->delete_permanently(
+            $count_deleted += EEM_Registration::instance()->delete_permanently(
                 [
                     [
                         'REG_ID' => $reg_id
@@ -257,6 +267,11 @@ class ExecuteBatchDeletion extends JobHandler
      * Performs any clean-up logic when we know the job is completed
      * @param JobParameters $job_parameters
      * @return JobStepResponse
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     public function cleanup_job(JobParameters $job_parameters)
     {
