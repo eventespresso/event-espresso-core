@@ -1,4 +1,12 @@
+/**
+ * External dependencies
+ */
 import { allPass, find, propEq } from 'ramda';
+
+/**
+ * Internal dependencies
+ */
+import { PriceType } from '../../../../../domain/eventEditor/data/types';
 
 // the following return `true` if price type satisfies predicate
 // is a base price ?
@@ -16,4 +24,7 @@ export const isNotTax = propEq('isTax', false);
 
 // returns true if supplied price type is a flat fee (dollar) surcharge
 export const isFlatFeeSurcharge = allPass([isNotBasePrice, isNotDiscount, isNotPercent]);
-export const getDefaultPriceType = (priceTypes) => find(isFlatFeeSurcharge)(priceTypes);
+
+export const getDefaultPriceModifierType = (priceTypes: PriceType[]): PriceType | undefined => {
+	return find(isFlatFeeSurcharge)(priceTypes);
+};
