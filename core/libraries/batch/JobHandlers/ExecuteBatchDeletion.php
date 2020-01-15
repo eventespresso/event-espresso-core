@@ -171,11 +171,12 @@ class ExecuteBatchDeletion extends JobHandler
      * @throws \EE_Error
      * @throws \ReflectionException
      */
-    protected function deleteRegistrationsAndTransactions($reg_ids, $batch_size, JobParameters $job_parameters){
+    protected function deleteRegistrationsAndTransactions($reg_ids, $batch_size, JobParameters $job_parameters)
+    {
         $count_deleted = 0;
-        foreach($reg_ids as $reg_id){
+        foreach ($reg_ids as $reg_id) {
             $count_deleted += $this->deleteRegistrationAndTransaction($reg_id, $job_parameters);
-            if($count_deleted >= $batch_size){
+            if ($count_deleted >= $batch_size) {
                 return $count_deleted;
             }
         }
@@ -192,7 +193,8 @@ class ExecuteBatchDeletion extends JobHandler
      * @throws \InvalidArgumentException
      * @throws \ReflectionException
      */
-    protected function deleteRegistrationAndTransaction($reg_id, JobParameters $job_parameters){
+    protected function deleteRegistrationAndTransaction($reg_id, JobParameters $job_parameters)
+    {
         // If the registration's transaction has no other valid registrations, delete it, and its dependent data too.
         $TXN = \EEM_Transaction::instance()->get_one(
             [
@@ -202,7 +204,7 @@ class ExecuteBatchDeletion extends JobHandler
             ]
         );
         $count_deleted = 0;
-        if( $TXN instanceof EE_Transaction) {
+        if ($TXN instanceof EE_Transaction) {
             $valid_regs = $TXN->count_related(
                 'Registration',
                 [
@@ -210,14 +212,15 @@ class ExecuteBatchDeletion extends JobHandler
                         'REG_deleted' => false,
                         'Event.status' => ['!=', EEM_Event::post_status_trashed]
                     ]
-                ]);
-            if(! $valid_regs){
+                ]
+            );
+            if (! $valid_regs) {
                 // delete the transaction
                 // and its dependent data
                 $transaction_as_root_of_tree = new ModelObjNode($TXN->ID(), $TXN->get_model());
                 $transaction_as_root_of_tree->visit(1000);
                 $ids_to_delete = $transaction_as_root_of_tree->getIds();
-                foreach($ids_to_delete as $model_name => $ids){
+                foreach ($ids_to_delete as $model_name => $ids) {
                     // just grab the IDs the easy way, there's no Term_Relationship model related to transactions
                     $model_to_delete = EE_Registry::instance()->load_model($model_name);
                     $deleted_from_this_model = $model_to_delete->delete_permanently(
