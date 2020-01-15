@@ -99,61 +99,64 @@ class PayPalSettingsForm extends EE_Payment_Method_Form
         if (is_wp_error($response)) {
             // If we got here then there was an error in this request.
             // maybe is turned off. We don't know the credentials are invalid
-            EE_Error::add_error(
-                sprintf(
-                    // translators: %1$s Error message received from PayPal
-                    esc_html__(
-                        // @codingStandardsIgnoreStart
-                        'Your PayPal credentials could not be verified. The following error occurred while communicating with PayPal: %1$s',
-                        // @codingStandardsIgnoreEnd
-                        'event_espresso'
-                    ),
-                    $response->get_error_message()
+            $error = sprintf(
+            // translators: %1$s Error message received from PayPal
+                esc_html__(
+                // @codingStandardsIgnoreStart
+                    'Your PayPal credentials could not be verified. The following error occurred while communicating with PayPal: %1$s',
+                    // @codingStandardsIgnoreEnd
+                    'event_espresso'
                 ),
+                $response->get_error_message()
+            );
+            EE_Error::add_error(
+                $error,
                 __FILE__,
                 __FUNCTION__,
                 __LINE__
             );
+            return $error;
         }
         $response_args = array();
         parse_str(urldecode($response['body']), $response_args);
 
         if (empty($response_args['ACK'])) {
+            $error = esc_html__(
+                'Your PayPal credentials could not be verified. Part of their response was missing.',
+                'event_espresso'
+            );
             EE_Error::add_error(
-                esc_html__(
-                    'Your PayPal credentials could not be verified. Part of their response was missing.',
-                    'event_espresso'
-                ),
+                $error,
                 __FILE__,
                 __FUNCTION__,
                 __LINE__
             );
-        } elseif (
-            in_array(
-                $response_args['ACK'],
-                array(
-                    'Success',
-                    'SuccessWithWarning'
-                ),
-                true
-            )
+            return $error;
+        }
+        if (in_array(
+            $response_args['ACK'],
+            array(
+                'Success',
+                'SuccessWithWarning'
+            ),
+            true
+        )
         ) {
             return '';
-        } else {
-            return sprintf(
-                // translators: %1$s: PayPal response message, %2$s: PayPal response code
-                esc_html__(
-                    // @codingStandardsIgnoreStart
-                    'Your PayPal API credentials appear to be invalid. PayPal said "%1$s (%2$s)". Please see tips below.',
-                    // @codingStandardsIgnoreEnd
-                    'event_espresso'
-                ),
-                isset($response_args['L_LONGMESSAGE0'])
-                    ? $response_args['L_LONGMESSAGE0']
-                    : esc_html__('No error message received from PayPal', 'event_espresso'),
-                isset($response_args['L_ERRORCODE0']) ? $response_args['L_ERRORCODE0'] : 0
-            );
         }
+        return sprintf(
+            // translators: %1$s: PayPal response message, %2$s: PayPal response code
+            esc_html__(
+                // @codingStandardsIgnoreStart
+                'Your PayPal API credentials appear to be invalid. PayPal said "%1$s (%2$s)". Please see tips below.',
+                // @codingStandardsIgnoreEnd
+                'event_espresso'
+            ),
+            isset($response_args['L_LONGMESSAGE0'])
+                ? $response_args['L_LONGMESSAGE0']
+                : esc_html__('No error message received from PayPal', 'event_espresso'),
+            isset($response_args['L_ERRORCODE0']) ? $response_args['L_ERRORCODE0'] : 0
+        );
     }
 
     /**
