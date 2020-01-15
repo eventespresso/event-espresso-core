@@ -81,17 +81,56 @@ describe('isFlatFeeSurcharge', () => {
 		});
 	});
 
-	it('should return false if price type is NOT flat fee surcharge', () => {
+	it('should return true if it is flatFeeSurcharge', () => {
 		priceTypes.forEach((priceType) => {
-			if (priceType.isBasePrice === true && priceType.isDiscount === false && priceType.isPercent === false) {
+			const flatFeeSurcharge =
+				priceType.isBasePrice === false && priceType.isDiscount === false && priceType.isPercent === false;
+
+			if (flatFeeSurcharge) {
+				expect(isFlatFeeSurcharge(priceType)).toBe(true);
+			}
+		});
+	});
+
+	it('should return false if it is basePrice', () => {
+		priceTypes.forEach((priceType) => {
+			const basePrice =
+				priceType.isBasePrice === true && priceType.isDiscount === false && priceType.isPercent === false;
+
+			if (basePrice) {
 				expect(isFlatFeeSurcharge(priceType)).toBe(false);
 			}
+		});
+	});
 
-			if (priceType.isBasePrice === false && priceType.isDiscount === true && priceType.isPercent === false) {
+	it('should return false if it is dollarDiscount', () => {
+		priceTypes.forEach((priceType) => {
+			const dollarDiscount =
+				priceType.isBasePrice === false && priceType.isDiscount === true && priceType.isPercent === false;
+
+			if (dollarDiscount) {
 				expect(isFlatFeeSurcharge(priceType)).toBe(false);
 			}
+		});
+	});
 
-			if (priceType.isBasePrice === false && priceType.isDiscount === false && priceType.isPercent === true) {
+	it('should return false if it is percentageSurcharge', () => {
+		priceTypes.forEach((priceType) => {
+			const percentageSurcharge =
+				priceType.isBasePrice === false && priceType.isDiscount === false && priceType.isPercent === true;
+
+			if (percentageSurcharge) {
+				expect(isFlatFeeSurcharge(priceType)).toBe(false);
+			}
+		});
+	});
+
+	it('should return false if it is precentageDiscount', () => {
+		priceTypes.forEach((priceType) => {
+			const precentageDiscount =
+				priceType.isBasePrice === false && priceType.isDiscount === true && priceType.isPercent === true;
+
+			if (precentageDiscount) {
 				expect(isFlatFeeSurcharge(priceType)).toBe(false);
 			}
 		});
