@@ -1,5 +1,5 @@
 /**
- * ?Internal dependencies
+ * Internal dependencies
  */
 import { PriceBasetype } from '../../../../../domain/eventEditor/data/types';
 import {
@@ -114,7 +114,7 @@ describe('isFlatFeeSurcharge', () => {
 	});
 });
 
-describe('getDefaultPriceType', () => {
+describe('getDefaultPriceModifierType', () => {
 	it('should get default price type - SURCHARGE', () => {
 		const defaultPriceType = getDefaultPriceModifierType(priceTypes);
 		expect(defaultPriceType.baseType).toBe(PriceBasetype.SURCHARGE);

@@ -6,13 +6,13 @@ import useTicketPriceCalculator from '../hooks/useTicketPriceCalculator';
 import { Price, PriceType } from '../../../data/types';
 import usePriceTypes from '../../../data/queries/priceTypes/usePriceTypes';
 import { getPriceType } from '../../../../shared/predicates/prices/selectionPredicates';
-import { getDefaultPriceType } from '../../../../shared/predicates/priceTypes/selectionPredicates';
+import { getDefaultPriceModifierType } from '../../../../shared/predicates/priceTypes/selectionPredicates';
 import toBoolean from '../../../../../application/utilities/converters/toBoolean';
 
 const usePriceTypeDecorator = (): Calculation => {
 	const priceTypes = usePriceTypes();
 	const getPriceTypeForPrice = getPriceType(priceTypes);
-	const defaultPriceType = getDefaultPriceType(priceTypes);
+	const defaultPriceType = getDefaultPriceModifierType(priceTypes);
 	const calculator = useTicketPriceCalculator();
 	return {
 		field: /^prices\[\d+\]\.priceType$/,
