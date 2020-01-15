@@ -11,6 +11,7 @@ import {
 	isNotPercent,
 	isTax,
 	isNotTax,
+	isFlatFeeSurcharge,
 	getDefaultPriceModifierType,
 } from './index';
 import { nodes as priceTypes } from '../../../../../domain/eventEditor/data/queries/priceTypes/test/data';
@@ -82,6 +83,32 @@ describe('isTax & isNotTax', () => {
 		priceTypes.forEach((priceType) => {
 			if (priceType.isTax === false) {
 				expect(isNotTax(priceType)).toBe(true);
+			}
+		});
+	});
+});
+
+describe('isFlatFeeSurcharge', () => {
+	it('should return true if price type is flat fee surcharge', () => {
+		priceTypes.forEach((priceType) => {
+			if (priceType.isBasePrice === false && priceType.isDiscount === false && priceType.isPercent === false) {
+				expect(isFlatFeeSurcharge(priceType)).toBe(true);
+			}
+		});
+	});
+
+	it('should return false if price type is NOT flat fee surcharge', () => {
+		priceTypes.forEach((priceType) => {
+			if (priceType.isBasePrice === true && priceType.isDiscount === false && priceType.isPercent === false) {
+				expect(isFlatFeeSurcharge(priceType)).toBe(false);
+			}
+
+			if (priceType.isBasePrice === false && priceType.isDiscount === true && priceType.isPercent === false) {
+				expect(isFlatFeeSurcharge(priceType)).toBe(false);
+			}
+
+			if (priceType.isBasePrice === false && priceType.isDiscount === false && priceType.isPercent === true) {
+				expect(isFlatFeeSurcharge(priceType)).toBe(false);
 			}
 		});
 	});
