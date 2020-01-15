@@ -19,17 +19,13 @@ import { nodes as priceTypes } from '../../../../../domain/eventEditor/data/quer
 describe('isBasePrice & isNotBasePrice', () => {
 	it('should return true if priceType is base price', () => {
 		priceTypes.forEach((priceType) => {
-			if (priceType.isBasePrice === true) {
-				expect(isBasePrice(priceType)).toBe(true);
-			}
+			expect(isBasePrice(priceType)).toBe(priceType.isBasePrice);
 		});
 	});
 
 	it('should return true if priceType is NOT base price', () => {
 		priceTypes.forEach((priceType) => {
-			if (priceType.isBasePrice === false) {
-				expect(isNotBasePrice(priceType)).toBe(true);
-			}
+			expect(isNotBasePrice(priceType)).toBe(!priceType.isBasePrice);
 		});
 	});
 });
@@ -37,17 +33,13 @@ describe('isBasePrice & isNotBasePrice', () => {
 describe('isDiscount & isNotDiscount', () => {
 	it('should return true if priceType is a discount', () => {
 		priceTypes.forEach((priceType) => {
-			if (priceType.isDiscount === true) {
-				expect(isDiscount(priceType)).toBe(true);
-			}
+			expect(isDiscount(priceType)).toBe(priceType.isDiscount);
 		});
 	});
 
 	it('should return true if priceType is NOT a discount', () => {
 		priceTypes.forEach((priceType) => {
-			if (priceType.isDiscount === false) {
-				expect(isNotDiscount(priceType)).toBe(true);
-			}
+			expect(isNotDiscount(priceType)).toBe(!priceType.isDiscount);
 		});
 	});
 });
@@ -55,17 +47,13 @@ describe('isDiscount & isNotDiscount', () => {
 describe('isPercent & isNotPercent', () => {
 	it('should return true if priceType is percent', () => {
 		priceTypes.forEach((priceType) => {
-			if (priceType.isPercent === true) {
-				expect(isPercent(priceType)).toBe(true);
-			}
+			expect(isPercent(priceType)).toBe(priceType.isPercent);
 		});
 	});
 
 	it('should return true if priceType is NOT percent', () => {
 		priceTypes.forEach((priceType) => {
-			if (priceType.isPercent === false) {
-				expect(isNotPercent(priceType)).toBe(true);
-			}
+			expect(isNotPercent(priceType)).toBe(!priceType.isPercent);
 		});
 	});
 });
@@ -73,17 +61,13 @@ describe('isPercent & isNotPercent', () => {
 describe('isTax & isNotTax', () => {
 	it('should return true if priceType is tax', () => {
 		priceTypes.forEach((priceType) => {
-			if (priceType.isTax === true) {
-				expect(isTax(priceType)).toBe(true);
-			}
+			expect(isTax(priceType)).toBe(priceType.isTax);
 		});
 	});
 
 	it('should return true if priceType is NOT tax', () => {
 		priceTypes.forEach((priceType) => {
-			if (priceType.isTax === false) {
-				expect(isNotTax(priceType)).toBe(true);
-			}
+			expect(isNotTax(priceType)).toBe(!priceType.isTax);
 		});
 	});
 });
