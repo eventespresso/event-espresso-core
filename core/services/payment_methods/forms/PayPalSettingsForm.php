@@ -96,7 +96,7 @@ class PayPalSettingsForm extends EE_Payment_Method_Form
                 'body'        => http_build_query($request_params, '', '&'),
             )
         );
-        if (is_wp_error($response) || empty($response['body'])) {
+        if (is_wp_error($response)) {
             // If we got here then there was an error in this request.
             // maybe is turned off. We don't know the credentials are invalid
             EE_Error::add_error(
@@ -128,15 +128,15 @@ class PayPalSettingsForm extends EE_Payment_Method_Form
                 __FUNCTION__,
                 __LINE__
             );
-        }
-        if (in_array(
-            $response_args['ACK'],
-            array(
-                'Success',
-                'SuccessWithWarning'
-            ),
-            true
-        )
+        } elseif (
+            in_array(
+                $response_args['ACK'],
+                array(
+                    'Success',
+                    'SuccessWithWarning'
+                ),
+                true
+            )
         ) {
             return '';
         } else {
