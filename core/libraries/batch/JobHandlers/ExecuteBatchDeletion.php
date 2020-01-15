@@ -4,6 +4,7 @@ namespace EventEspressoBatchRequest\JobHandlers;
 
 use EE_Change_Log;
 use EE_Registry;
+use EE_Transaction;
 use EEM_Event;
 use EEM_Price;
 use EEM_Ticket;
@@ -98,37 +99,42 @@ class ExecuteBatchDeletion extends JobHandler
         foreach ($models_and_ids_to_delete as $model_name => $ids_to_delete) {
             if ($units_processed < $batch_size) {
                 $model = EE_Registry::instance()->load_model($model_name);
-                $ids_to_delete_this_query = array_slice($ids_to_delete, 0, $batch_size - $units_processed, true);
-                if ($model->has_primary_key_field()) {
-                    $where_conditions = [
-                        $model->primary_key_name() => [
-                            'IN',
-                            $ids_to_delete_this_query
-                        ]
-                    ];
+                if ($model instanceof \EEM_Registration) {
+                    // Now THIS could be a command!
+                    $units_processed += $this->deleteRegistrationsAndTransactions($ids_to_delete, $batch_size - $units_processed, $job_parameters);
                 } else {
-                    $where_conditions = [
-                        'OR' => []
-                    ];
-                    foreach ($ids_to_delete_this_query as $index_primary_key_string) {
-                        $keys_n_values = $model->parse_index_primary_key_string($index_primary_key_string);
-                        $where_conditions['OR'][ 'AND*' . $index_primary_key_string ] = $keys_n_values;
+                    $ids_to_delete_this_query = array_slice($ids_to_delete, 0, $batch_size - $units_processed, true);
+                    if ($model->has_primary_key_field()) {
+                        $where_conditions = [
+                            $model->primary_key_name() => [
+                                'IN',
+                                $ids_to_delete_this_query
+                            ]
+                        ];
+                    } else {
+                        $where_conditions = [
+                            'OR' => []
+                        ];
+                        foreach ($ids_to_delete_this_query as $index_primary_key_string) {
+                            $keys_n_values = $model->parse_index_primary_key_string($index_primary_key_string);
+                            $where_conditions['OR'][ 'AND*' . $index_primary_key_string ] = $keys_n_values;
+                        }
                     }
-                }
-                // Deleting time!
-                // The model's deletion method reports every ROW deleted, and in the case of CPT models that will be
-                // two rows deleted for event CPT item. So don't rely on it for the count of items deleted.
-                $model->delete_permanently(
-                    [
-                        $where_conditions
-                    ],
-                    false
-                );
-                $units_processed += count($ids_to_delete_this_query);
-                $remaining_ids = array_diff_key($ids_to_delete, $ids_to_delete_this_query);
-                // If there's any more from this model, we'll do them next time.
-                if (count($remaining_ids) > 0) {
-                    $models_and_ids_remaining[ $model_name ] = $remaining_ids;
+                    // Deleting time!
+                    // The model's deletion method reports every ROW deleted, and in the case of CPT models that will be
+                    // two rows deleted for event CPT item. So don't rely on it for the count of items deleted.
+                    $model->delete_permanently(
+                        [
+                            $where_conditions
+                        ],
+                        false
+                    );
+                    $units_processed += count($ids_to_delete_this_query);
+                    $remaining_ids = array_diff_key($ids_to_delete, $ids_to_delete_this_query);
+                    // If there's any more from this model, we'll do them next time.
+                    if (count($remaining_ids) > 0) {
+                        $models_and_ids_remaining[ $model_name ] = $remaining_ids;
+                    }
                 }
             } else {
                 $models_and_ids_remaining[ $model_name ] = $models_and_ids_to_delete[ $model_name ];
@@ -152,6 +158,97 @@ class ExecuteBatchDeletion extends JobHandler
             )
         );
     }
+
+    /**
+     * @since $VID:$
+     * @param $reg_ids
+     * @param $batch_size
+     * @param JobParameters $job_parameters
+     * @return int
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws \EE_Error
+     * @throws \ReflectionException
+     */
+    protected function deleteRegistrationsAndTransactions($reg_ids, $batch_size, JobParameters $job_parameters){
+        $count_deleted = 0;
+        foreach($reg_ids as $reg_id){
+            $count_deleted += $this->deleteRegistrationAndTransaction($reg_id, $job_parameters);
+            if($count_deleted >= $batch_size){
+                return $count_deleted;
+            }
+        }
+        return $count_deleted;
+    }
+
+    /**
+     * @since $VID:$
+     * @param $reg_id
+     * @return int
+     * @throws \EE_Error
+     * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
+     * @throws \EventEspresso\core\exceptions\InvalidInterfaceException
+     * @throws \InvalidArgumentException
+     * @throws \ReflectionException
+     */
+    protected function deleteRegistrationAndTransaction($reg_id, JobParameters $job_parameters){
+        // If the registration's transaction has no other valid registrations, delete it, and its dependent data too.
+        $TXN = \EEM_Transaction::instance()->get_one(
+            [
+                [
+                    'Registration.REG_ID' => $reg_id
+                ]
+            ]
+        );
+        $count_deleted = 0;
+        if( $TXN instanceof EE_Transaction) {
+            $valid_regs = $TXN->count_related(
+                'Registration',
+                [
+                    [
+                        'REG_deleted' => false,
+                        'Event.status' => ['!=', EEM_Event::post_status_trashed]
+                    ]
+                ]);
+            if(! $valid_regs){
+                // delete the transaction
+                // and its dependent data
+                $transaction_as_root_of_tree = new ModelObjNode($TXN->ID(), $TXN->get_model());
+                $transaction_as_root_of_tree->visit(1000);
+                $ids_to_delete = $transaction_as_root_of_tree->getIds();
+                foreach($ids_to_delete as $model_name => $ids){
+                    // just grab the IDs the easy way, there's no Term_Relationship model related to transactions
+                    $model_to_delete = EE_Registry::instance()->load_model($model_name);
+                    $deleted_from_this_model = $model_to_delete->delete_permanently(
+                        [
+                            [
+                                $model_to_delete->primary_key_name() => ['IN', $ids]
+                            ]
+                        ],
+                        false
+                    );
+                    // We discovered something new. Increase the job size.
+                    $job_parameters->set_job_size(
+                        $job_parameters->job_size() + $deleted_from_this_model
+                    );
+                    $count_deleted += $deleted_from_this_model;
+                }
+            }
+        } else {
+            // Get rid of the registration now.
+            $count_deleted += \EEM_Registration::instance()->delete_permanently(
+                [
+                    [
+                        'REG_ID' => $reg_id
+                    ]
+                ],
+                false
+            );
+        }
+        return $count_deleted;
+    }
+
 
     /**
      * Performs any clean-up logic when we know the job is completed
