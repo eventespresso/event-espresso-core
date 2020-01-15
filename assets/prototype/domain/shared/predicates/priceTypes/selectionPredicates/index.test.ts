@@ -75,64 +75,46 @@ describe('isTax & isNotTax', () => {
 describe('isFlatFeeSurcharge', () => {
 	it('should return true if price type is flat fee surcharge', () => {
 		priceTypes.forEach((priceType) => {
-			if (priceType.isBasePrice === false && priceType.isDiscount === false && priceType.isPercent === false) {
-				expect(isFlatFeeSurcharge(priceType)).toBe(true);
-			}
-		});
-	});
+			const { isBasePrice, isDiscount, isPercent } = priceType;
+			const flatFeeSurcharge = isBasePrice === false && isDiscount === false && isPercent === false;
 
-	it('should return true if it is flatFeeSurcharge', () => {
-		priceTypes.forEach((priceType) => {
-			const flatFeeSurcharge =
-				priceType.isBasePrice === false && priceType.isDiscount === false && priceType.isPercent === false;
-
-			if (flatFeeSurcharge) {
-				expect(isFlatFeeSurcharge(priceType)).toBe(true);
-			}
+			expect(isFlatFeeSurcharge(priceType)).toBe(flatFeeSurcharge);
 		});
 	});
 
 	it('should return false if it is basePrice', () => {
 		priceTypes.forEach((priceType) => {
-			const basePrice =
-				priceType.isBasePrice === true && priceType.isDiscount === false && priceType.isPercent === false;
+			const { isBasePrice, isDiscount, isPercent } = priceType;
+			const basePrice = isBasePrice === true && isDiscount === false && isPercent === false;
 
-			if (basePrice) {
-				expect(isFlatFeeSurcharge(priceType)).toBe(false);
-			}
+			expect(isFlatFeeSurcharge(priceType)).toBe(basePrice);
 		});
 	});
 
 	it('should return false if it is dollarDiscount', () => {
 		priceTypes.forEach((priceType) => {
-			const dollarDiscount =
-				priceType.isBasePrice === false && priceType.isDiscount === true && priceType.isPercent === false;
+			const { isBasePrice, isDiscount, isPercent } = priceType;
+			const dollarDiscount = isBasePrice === false && isDiscount === true && isPercent === false;
 
-			if (dollarDiscount) {
-				expect(isFlatFeeSurcharge(priceType)).toBe(false);
-			}
+			expect(isFlatFeeSurcharge(priceType)).toBe(dollarDiscount);
 		});
 	});
 
 	it('should return false if it is percentageSurcharge', () => {
 		priceTypes.forEach((priceType) => {
-			const percentageSurcharge =
-				priceType.isBasePrice === false && priceType.isDiscount === false && priceType.isPercent === true;
+			const { isBasePrice, isDiscount, isPercent } = priceType;
+			const percentageSurcharge = isBasePrice === false && isDiscount === false && isPercent === true;
 
-			if (percentageSurcharge) {
-				expect(isFlatFeeSurcharge(priceType)).toBe(false);
-			}
+			expect(isFlatFeeSurcharge(priceType)).toBe(percentageSurcharge);
 		});
 	});
 
 	it('should return false if it is precentageDiscount', () => {
 		priceTypes.forEach((priceType) => {
-			const precentageDiscount =
-				priceType.isBasePrice === false && priceType.isDiscount === true && priceType.isPercent === true;
+			const { isBasePrice, isDiscount, isPercent } = priceType;
+			const precentageDiscount = isBasePrice === false && isDiscount === true && isPercent === true;
 
-			if (precentageDiscount) {
-				expect(isFlatFeeSurcharge(priceType)).toBe(false);
-			}
+			expect(isFlatFeeSurcharge(priceType)).toBe(precentageDiscount);
 		});
 	});
 });
