@@ -57,7 +57,6 @@ export interface Price extends Entity {
 	isTax: boolean;
 	order: number | string;
 	overrides: string;
-	priceType: string;
 	priceTypeOrder: number | string;
 }
 

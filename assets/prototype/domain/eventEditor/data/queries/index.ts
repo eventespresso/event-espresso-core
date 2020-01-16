@@ -30,21 +30,21 @@ export const DEFAULT_ENTITY_LIST_DATA: EntityEdge = {
 };
 
 export const DEFAULT_DATETIME_LIST_DATA: DatetimeEdge = {
-	...DEFAULT_ENTITY_LIST_DATA,
+	nodes: [],
 	__typename: 'EspressoRootQueryDatetimesConnection',
 };
 
 export const DEFAULT_TICKET_LIST_DATA: TicketEdge = {
-	...DEFAULT_ENTITY_LIST_DATA,
+	nodes: [],
 	__typename: 'EspressoRootQueryTicketsConnection',
 };
 
 export const DEFAULT_PRICE_LIST_DATA: PriceEdge = {
-	...DEFAULT_ENTITY_LIST_DATA,
+	nodes: [],
 	__typename: 'EspressoRootQueryPricesConnection',
 };
 
 export const DEFAULT_PRICE_TYPE_LIST_DATA: PriceTypeEdge = {
-	...DEFAULT_ENTITY_LIST_DATA,
+	nodes: [],
 	__typename: 'EspressoRootQueryPriceTypesConnection',
 };
