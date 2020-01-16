@@ -53,12 +53,13 @@ class RelationNode extends BaseNode
      */
     protected $nodes;
 
-    public function __construct($main_model_obj_id, EEM_Base $main_model, EEM_Base $related_model)
+    public function __construct($main_model_obj_id, EEM_Base $main_model, EEM_Base $related_model, $dont_traverse_models = [])
     {
         $this->id = $main_model_obj_id;
         $this->main_model = $main_model;
         $this->related_model = $related_model;
         $this->nodes = [];
+        $this->dont_traverse_models = $dont_traverse_models;
     }
 
 
@@ -91,7 +92,7 @@ class RelationNode extends BaseNode
 
             // Add entity nodes for each of the model objects we fetched.
             foreach ($related_model_objs as $related_model_obj) {
-                $entity_node = new ModelObjNode($related_model_obj->ID(), $related_model_obj->get_model());
+                $entity_node = new ModelObjNode($related_model_obj->ID(), $related_model_obj->get_model(), $this->dont_traverse_models);
                 $this->nodes[ $related_model_obj->ID() ] = $entity_node;
                 $new_item_nodes[ $related_model_obj->ID() ] = $entity_node;
             }

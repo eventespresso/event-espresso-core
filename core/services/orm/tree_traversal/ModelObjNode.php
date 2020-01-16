@@ -42,10 +42,11 @@ class ModelObjNode extends BaseNode
      * @param $model_obj_id
      * @param EEM_Base $model
      */
-    public function __construct($model_obj_id, EEM_Base $model)
+    public function __construct($model_obj_id, EEM_Base $model, $dont_traverse_models = array())
     {
         $this->id = $model_obj_id;
         $this->model = $model;
+        $this->dont_traverse_models = $dont_traverse_models;
     }
 
     /**
@@ -62,10 +63,28 @@ class ModelObjNode extends BaseNode
     {
         $this->nodes = [];
         foreach ($this->model->relation_settings() as $relationName => $relation) {
+            // Make sure this isn't one of the models we were told to not traverse into.
+            if(in_array($relationName,$this->dont_traverse_models)){
+                continue;
+            }
             if ($relation instanceof EE_Has_Many_Relation) {
-                $this->nodes[ $relationName ] = new RelationNode($this->id, $this->model, $relation->get_other_model());
-            } elseif ($relation instanceof EE_HABTM_Relation) {
-                $this->nodes[ $relation->get_join_model()->get_this_model_name() ] = new RelationNode($this->id, $this->model, $relation->get_join_model());
+                $this->nodes[ $relationName ] = new RelationNode(
+                    $this->id,
+                    $this->model,
+                    $relation->get_other_model(),
+                    $this->dont_traverse_models
+                );
+            } elseif ($relation instanceof EE_HABTM_Relation &&
+                ! in_array(
+                    $relation->get_join_model()->get_this_model_name(),
+                    $this->dont_traverse_models
+                )) {
+                $this->nodes[ $relation->get_join_model()->get_this_model_name() ] = new RelationNode(
+                    $this->id,
+                    $this->model,
+                    $relation->get_join_model(),
+                    $this->dont_traverse_models
+                );
             }
         }
         ksort($this->nodes);
