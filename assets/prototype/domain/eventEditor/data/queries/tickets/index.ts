@@ -10,6 +10,7 @@ export const TICKET_ATTRIBUTES: any = gql`
 		isDefault
 		isFree
 		isRequired
+		isSoldOut
 		isTaxable
 		max
 		min

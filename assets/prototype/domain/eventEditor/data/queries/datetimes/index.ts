@@ -8,6 +8,7 @@ export const DATETIME_ATTRIBUTES: any = gql`
 		description
 		endDate
 		isActive
+		isDeleted
 		isExpired
 		isPrimary
 		isSoldOut
@@ -17,6 +18,7 @@ export const DATETIME_ATTRIBUTES: any = gql`
 		order
 		reserved
 		sold
+		status
 		startDate
 	}
 `;
