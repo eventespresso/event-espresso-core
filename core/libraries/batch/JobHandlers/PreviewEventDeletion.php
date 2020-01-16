@@ -32,12 +32,14 @@ class PreviewEventDeletion extends JobHandler
      * @var NodeGroupDao
      */
     protected $model_obj_node_group_persister;
+
     public function __construct(NodeGroupDao $model_obj_node_group_persister)
     {
         $this->model_obj_node_group_persister = $model_obj_node_group_persister;
     }
 
     // phpcs:disable PSR1.Methods.CamelCapsMethodName.NotCamelCaps
+
     /**
      *
      * @param JobParameters $job_parameters
@@ -67,6 +69,13 @@ class PreviewEventDeletion extends JobHandler
                     ]
                 ]
             );
+            foreach ($related_non_global_tickets as $ticket) {
+                $roots[] = new ModelObjNode(
+                    $ticket->ID(),
+                    $ticket->get_model(),
+                    ['Registration']
+                );
+            }
             $related_non_global_prices = EEM_Price::instance()->get_all_deleted_and_undeleted(
                 [
                     [
@@ -75,12 +84,19 @@ class PreviewEventDeletion extends JobHandler
                     ]
                 ]
             );
-            $roots = array_merge(
-                $roots,
-                // Dont have ticket nodes also traverse registrations, its unnecessary because
-                // registrations also depend on events so they will already get traversed.
-                $this->createModelObjNodes($related_non_global_tickets, ['Registration']),
-                $this->createModelObjNodes($related_non_global_prices)
+            foreach ($related_non_global_prices as $price) {
+                $roots[] = new ModelObjNode(
+                    $price->ID(),
+                    $price->get_model()
+                );
+            }
+        }
+        $transactions_ids = $this->getTransactionsWeWouldOrphan($event_ids);
+        foreach ($transactions_ids as $transaction_id) {
+            $roots[] = new ModelObjNode(
+                $transaction_id,
+                \EEM_Transaction::instance(),
+                ['Registration']
             );
         }
         $job_parameters->add_extra_data('roots', $roots);
@@ -113,6 +129,51 @@ class PreviewEventDeletion extends JobHandler
     }
 
     /**
+     * Gets all the transactions related to these events that aren't related to other events. They'll be deleted too.
+     * (Ones that are related to other events can stay around until those other events are deleted too.)
+     * @since $VID:$
+     * @param $event_ids
+     * @return array of transaction IDs
+     */
+    protected function getTransactionsWeWouldOrphan($event_ids)
+    {
+        if (empty($event_ids)) {
+            return [];
+        }
+        global $wpdb;
+        $event_ids = array_map(
+            'intval',
+            $event_ids
+        );
+        $imploded_sanitized_event_ids = implode(',', $event_ids);
+        // select transactions for events
+        // with subquery looking for other events
+        return array_map(
+            'intval',
+            $wpdb->get_col(
+                "SELECT 
+                      DISTINCT t.TXN_ID
+                    FROM 
+                      {$wpdb->prefix}esp_transaction t INNER JOIN 
+                      {$wpdb->prefix}esp_registration r ON t.TXN_ID=r.TXN_ID
+                    WHERE
+                       r.EVT_ID IN ({$imploded_sanitized_event_ids})
+                       AND NOT EXISTS 
+                       (
+                        SELECT 
+                          t.TXN_ID
+                        FROM 
+                          {$wpdb->prefix}esp_transaction ti INNER JOIN 
+                          {$wpdb->prefix}esp_registration ri ON ti.TXN_ID=ri.TXN_ID
+                        WHERE
+                          ti.TXN_ID=t.TXN_ID AND
+                          ri.EVT_ID NOT IN ({$imploded_sanitized_event_ids})
+                       )"
+            )
+        );
+    }
+
+    /**
      * Performs another step of the job
      * @param JobParameters $job_parameters
      * @param int $batch_size
@@ -130,7 +191,7 @@ class PreviewEventDeletion extends JobHandler
             if ($units_processed >= $batch_size) {
                 break;
             }
-            if (! $root_node instanceof ModelObjNode) {
+            if (!$root_node instanceof ModelObjNode) {
                 throw new InvalidClassException('ModelObjNode');
             }
             if ($root_node->isComplete()) {
