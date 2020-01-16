@@ -4,6 +4,7 @@ namespace EventEspressoBatchRequest\JobHandlers;
 
 use EEM_Event;
 use EEM_Price;
+use EEM_Registration;
 use EEM_Ticket;
 use EventEspresso\core\exceptions\InvalidClassException;
 use EventEspresso\core\services\loaders\LoaderFactory;
@@ -91,7 +92,7 @@ class PreviewEventDeletion extends JobHandler
                 );
             }
         }
-        $transactions_ids = $this->getTransactionsWeWouldOrphan($event_ids);
+        $transactions_ids = $this->getTransactionsToDelete($event_ids);
         foreach ($transactions_ids as $transaction_id) {
             $roots[] = new ModelObjNode(
                 $transaction_id,
@@ -102,8 +103,15 @@ class PreviewEventDeletion extends JobHandler
         $job_parameters->add_extra_data('roots', $roots);
         // Set an estimate of how long this will take (we're discovering as we go, so it seems impossible to give
         // an accurate count.)
-        $estimated_work_per_model_obj = 100;
-        $job_parameters->set_job_size(count($roots) * $estimated_work_per_model_obj);
+        $estimated_work_per_model_obj = 10;
+        $count_regs = EEM_Registration::instance()->count(
+            [
+                [
+                    'EVT_ID' => ['IN', $event_ids]
+                ]
+            ]
+        );
+        $job_parameters->set_job_size((count($roots) + $count_regs) * $estimated_work_per_model_obj);
         return new JobStepResponse(
             $job_parameters,
             esc_html__('Generating preview of data to be deleted...', 'event_espresso')
@@ -135,7 +143,7 @@ class PreviewEventDeletion extends JobHandler
      * @param $event_ids
      * @return array of transaction IDs
      */
-    protected function getTransactionsWeWouldOrphan($event_ids)
+    protected function getTransactionsToDelete($event_ids)
     {
         if (empty($event_ids)) {
             return [];
