@@ -1065,6 +1065,7 @@ class EE_Register_Addon implements EEI_Plugin_API
         $addon->set_config_section(self::$_settings[ $addon_name ]['config_section']);
         $addon->set_config_class(self::$_settings[ $addon_name ]['config_class']);
         $addon->set_config_name(self::$_settings[ $addon_name ]['config_name']);
+        $addon->setPueSlug(self::$_settings[ $addon_name ]['pue_options']['pue_plugin_slug']);
         // unfortunately this can't be hooked in upon construction, because we don't have
         // the plugin mainfile's path upon construction.
         register_deactivation_hook($addon->get_main_plugin_file(), array($addon, 'deactivation'));
