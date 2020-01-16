@@ -42,7 +42,7 @@ class ModelObjNode extends BaseNode
      * @param $model_obj_id
      * @param EEM_Base $model
      */
-    public function __construct($model_obj_id, EEM_Base $model, $dont_traverse_models = array())
+    public function __construct($model_obj_id, EEM_Base $model, array $dont_traverse_models = []])
     {
         $this->id = $model_obj_id;
         $this->model = $model;
