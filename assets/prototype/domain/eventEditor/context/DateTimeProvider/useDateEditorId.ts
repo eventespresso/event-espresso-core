@@ -7,7 +7,7 @@ import { EditorId } from '../../../../application/ui/components/layout/editor-mo
 /**
  * Function that returns editor id for a given event date
  */
-const useDateEditorId = (prefix: string = 'datetime-editor', datetimeId: EntityId): EditorId => {
+const useDateEditorId = (prefix = 'datetime-editor', datetimeId: EntityId): EditorId => {
 	return prefix !== '' ? `${prefix}-${datetimeId}` : `datetime-editor-${datetimeId}`;
 };
 
