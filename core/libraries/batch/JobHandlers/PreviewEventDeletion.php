@@ -52,8 +52,12 @@ class PreviewEventDeletion extends JobHandler
         // prices, message templates, etc, whose model definition doesn't make them dependent on events. But,
         // we have no UI to access them independent of events, so they may as well get deleted too.)
         $model_objects_to_delete = [];
+        $roots = [];
         foreach ($event_ids as $event_id) {
-            $event = EEM_Event::instance()->get_one_by_ID($event_id);
+            $roots[] = new ModelObjNode(
+                $event_id,
+                EEM_Event::instance()
+            );
             // Also, we want to delete their related, non-global, tickets, prices and message templates
             $related_non_global_tickets = EEM_Ticket::instance()->get_all_deleted_and_undeleted(
                 [
@@ -71,16 +75,13 @@ class PreviewEventDeletion extends JobHandler
                     ]
                 ]
             );
-            $model_objects_to_delete = array_merge(
-                $model_objects_to_delete,
-                [$event],
-                $related_non_global_tickets,
-                $related_non_global_prices
+            $roots = array_merge(
+                $roots,
+                // Dont have ticket nodes also traverse registrations, its unnecessary because
+                // registrations also depend on events so they will already get traversed.
+                $this->createModelObjNodes($related_non_global_tickets,['Registration']),
+                $this->createModelObjNodes($related_non_global_prices)
             );
-        }
-        $roots = [];
-        foreach ($model_objects_to_delete as $model_object) {
-            $roots[] = new ModelObjNode($model_object->ID(), $model_object->get_model());
         }
         $job_parameters->add_extra_data('roots', $roots);
         // Set an estimate of how long this will take (we're discovering as we go, so it seems impossible to give
@@ -91,6 +92,24 @@ class PreviewEventDeletion extends JobHandler
             $job_parameters,
             esc_html__('Generating preview of data to be deleted...', 'event_espresso')
         );
+    }
+
+    /**
+     * @since $VID:$
+     * @param EE_Base_Class[] $model_objs
+     * @param array $dont_traverse_models
+     */
+    protected function createModelObjNodes($model_objs, $dont_traverse_models = [])
+    {
+        $nodes = [];
+        foreach($model_objs as $model_obj){
+            $nodes[] = new ModelObjNode(
+                $model_obj->ID(),
+                $model_obj->get_model(),
+                $dont_traverse_models
+            );
+        }
+        return $nodes;
     }
 
     /**
