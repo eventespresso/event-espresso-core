@@ -1032,6 +1032,20 @@ if (! class_exists('PluginUpdateEngineChecker')):
                 if (isset($response->extra_notices)) {
                     $this->add_persistent_notice($response->extra_notices);
                 }
+                if ($this->slug == 'event-espresso-core-reg' && isset($response->extra_data) && !empty($response->extra_data->plugins) ) {
+                    $plugins_array = json_decode($result['body'], true);
+                    $plugins = $plugins_array['extra_data']['plugins'];
+                    foreach (EE_Registry::instance()->addons as $addon) {
+                        if( isset($plugins[ $addon->getPueSlug() ]) ) {
+                            $addon_state = get_option('external_updates-' . $addon->getPueSlug());
+                            if( empty($addon_state)) {
+                                continue;
+                            }
+                            $addon_state->latestVersion = $plugins[$addon->getPueSlug()];
+                            update_option('external_updates-' . $addon->getPueSlug(), $addon_state);
+                        }
+                    }
+                }
             }
 
 
