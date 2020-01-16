@@ -110,7 +110,7 @@ class Event extends TypeBase
             ),
             new GraphQLField(
                 'additionalLimit',
-                'String',
+                'Int',
                 'additional_limit',
                 esc_html__('Limit of Additional Registrations on Same Transaction', 'event_espresso')
             ),
@@ -171,25 +171,25 @@ class Event extends TypeBase
                 'is_cancelled',
                 esc_html__('Flag indicating whether the event is marked as cancelled', 'event_espresso')
             ),
-            new GraphQLField(
+            new GraphQLOutputField(
                 'isUpcoming',
                 'Boolean',
                 'is_upcoming',
                 esc_html__('Whether the event is upcoming', 'event_espresso')
             ),
-            new GraphQLField(
+            new GraphQLOutputField(
                 'isActive',
                 'Boolean',
                 'is_active',
                 esc_html__('Flag indicating event is active', 'event_espresso')
             ),
-            new GraphQLField(
+            new GraphQLOutputField(
                 'isInactive',
                 'Boolean',
                 'is_inactive',
                 esc_html__('Flag indicating event is inactive', 'event_espresso')
             ),
-            new GraphQLField(
+            new GraphQLOutputField(
                 'isExpired',
                 'Boolean',
                 'is_expired',
