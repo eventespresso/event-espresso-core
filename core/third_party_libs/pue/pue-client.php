@@ -1662,6 +1662,14 @@ if (! class_exists('PluginUpdateEngineChecker')):
                 $state->checkedVersion = '';
                 $state->update = null;
             }
+
+            // If this is an add-on, only ping ee.com if there is an update actually available for it.
+            if( $this->slug !== 'event-espresso-core-reg' && isset($state->latestVersion) ) {
+                if( version_compare($state->latestVersion, $this->_installed_version, '<=') ) {
+                    return;
+                }
+            }
+
             $state->lastCheck = time();
             $state->checkedVersion = $this->_installed_version;
             //Save before checking in case something goes wrong
