@@ -143,19 +143,19 @@ class Datetime extends TypeBase
                     'event_espresso'
                 )
             ),
-            new GraphQLField(
+            new GraphQLOutputField(
                 'isUpcoming',
                 'Boolean',
                 'is_upcoming',
                 esc_html__('Whether the date is upcoming', 'event_espresso')
             ),
-            new GraphQLField(
+            new GraphQLOutputField(
                 'isActive',
                 'Boolean',
                 'is_active',
                 esc_html__('Flag indicating datetime is active', 'event_espresso')
             ),
-            new GraphQLField(
+            new GraphQLOutputField(
                 'isExpired',
                 'Boolean',
                 'is_expired',
