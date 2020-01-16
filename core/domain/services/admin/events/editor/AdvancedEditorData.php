@@ -260,6 +260,7 @@ var eeEditorData={$data};
                     endDate
                     capacity
                     isActive
+                    isDeleted
                     isExpired
                     isPrimary
                     isSoldOut
@@ -268,6 +269,7 @@ var eeEditorData={$data};
                     order
                     reserved
                     sold
+                    status
                     __typename
                 }
                 __typename
@@ -309,6 +311,7 @@ QUERY;
                     isDefault
                     isFree
                     isRequired
+                    isSoldOut
                     isTaxable
                     max
                     min

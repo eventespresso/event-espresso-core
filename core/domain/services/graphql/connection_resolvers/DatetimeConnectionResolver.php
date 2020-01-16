@@ -78,7 +78,7 @@ class DatetimeConnectionResolver extends AbstractConnectionResolver
     // phpcs:ignore PSR1.Methods.CamelCapsMethodName.NotCamelCaps
     public function get_query_args()
     {
-        $where_params = [];
+        $where_params = ['DTT_deleted' => ['IN', [true, false]]];
         $query_args   = [];
 
         $query_args['limit'] = $this->getLimit();

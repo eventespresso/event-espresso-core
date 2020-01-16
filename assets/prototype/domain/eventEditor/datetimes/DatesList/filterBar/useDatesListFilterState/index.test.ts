@@ -25,6 +25,7 @@ const datetimes: Datetime[] = [
 		order: 1,
 		reserved: 0,
 		sold: 10,
+		status: DatetimeStatus.active,
 		startDate: '2000-01-12T08:00:00+00:00',
 		__typename: 'EspressoDatetime',
 	},
@@ -35,6 +36,7 @@ const datetimes: Datetime[] = [
 		description: '',
 		endDate: '2020-01-12T17:00:00+00:00',
 		isActive: false,
+		isDeleted: false,
 		isExpired: false,
 		isPrimary: false,
 		isSoldOut: false,
@@ -44,6 +46,7 @@ const datetimes: Datetime[] = [
 		order: 1,
 		reserved: 0,
 		sold: 10,
+		status: DatetimeStatus.upcoming,
 		startDate: '2020-01-12T08:00:00+00:00',
 		__typename: 'EspressoDatetime',
 	},
@@ -54,6 +57,7 @@ const datetimes: Datetime[] = [
 		description: 'test desc',
 		endDate: '2019-12-18T11:31:00+00:00',
 		isActive: false,
+		isDeleted: false,
 		isExpired: true,
 		isPrimary: false,
 		isSoldOut: false,
@@ -74,6 +78,7 @@ const datetimes: Datetime[] = [
 		description: 'test desc',
 		endDate: '2019-12-18T11:31:00+00:00',
 		isActive: true,
+		isDeleted: false,
 		isExpired: true,
 		isPrimary: false,
 		isSoldOut: true,
@@ -282,18 +287,22 @@ describe('useDatesListFilterState', () => {
 	test('should update processedDates to reflect changes made by invoking setShowDates with recentlyExpiredOnly filter', () => {
 		const rawDates = [
 			{
+				...datetimes[1],
 				id: 'WGF0ZXRpbWU6ODM=',
 				endDate: subWeeks(new Date(), 1),
 			},
 			{
+				...datetimes[1],
 				id: 'RGF0ZXRpbWU6ODM=',
 				endDate: subWeeks(new Date(), 3),
 			},
 			{
+				...datetimes[1],
 				id: 'RGF0ZXRpbWU6ODM=',
 				endDate: subWeeks(new Date(), 6),
 			},
 			{
+				...datetimes[1],
 				id: 'RGF0ZXRpbWU6ODM=',
 				endDate: subWeeks(new Date(), 8),
 			},

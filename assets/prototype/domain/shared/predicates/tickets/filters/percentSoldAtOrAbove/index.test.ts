@@ -2,16 +2,21 @@
  * Internal dependencies
  */
 import percentSoldAtOrAbove from './index';
+import { nodes as tickets } from '../../../../../eventEditor/data/queries/tickets/test/data';
+
+const ticket = tickets[0];
 
 test('Should return empty array if tickets has invalid finite quantity', () => {
 	const filteredTickets = percentSoldAtOrAbove({
 		percentage: 10,
 		tickets: [
 			{
+				...ticket,
 				id: '1',
 				quantity: Infinity,
 			},
 			{
+				...ticket,
 				id: '2',
 				quantity: 0,
 			},
@@ -26,16 +31,19 @@ test('Should filter out tickets based on above50Sold show type', () => {
 		percentage: 50,
 		tickets: [
 			{
+				...ticket,
 				id: '1',
 				quantity: 10,
 				sold: 5,
 			},
 			{
+				...ticket,
 				id: '2',
 				quantity: 100,
 				sold: 49,
 			},
 			{
+				...ticket,
 				id: '3',
 				quantity: 100,
 				sold: 50,
@@ -53,21 +61,25 @@ test('Should filter out tickets based on above75Sold show type', () => {
 		percentage: 75,
 		tickets: [
 			{
+				...ticket,
 				id: '1',
 				quantity: 10,
 				sold: 8,
 			},
 			{
+				...ticket,
 				id: '2',
 				quantity: 100,
 				sold: 74,
 			},
 			{
+				...ticket,
 				id: '3',
 				quantity: 100,
 				sold: 75,
 			},
 			{
+				...ticket,
 				id: '4',
 				quantity: 100,
 				sold: 76,
@@ -86,21 +98,25 @@ test('Should filter out tickets based on above90Sold show type', () => {
 		percentage: 90,
 		tickets: [
 			{
+				...ticket,
 				id: '1',
 				quantity: 100,
 				sold: 89,
 			},
 			{
+				...ticket,
 				id: '2',
 				quantity: 10,
 				sold: 9,
 			},
 			{
+				...ticket,
 				id: '3',
 				quantity: 1000,
 				sold: 899,
 			},
 			{
+				...ticket,
 				id: '4',
 				quantity: 1000,
 				sold: 900,

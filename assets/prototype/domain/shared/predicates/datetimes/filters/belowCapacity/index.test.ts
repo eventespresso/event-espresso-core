@@ -2,14 +2,17 @@
  * Internal dependencies
  */
 import belowCapacity from './index';
+import { nodes as datetimes } from '../../../../../eventEditor/data/queries/datetimes/test/data';
+
+const datetime = datetimes[0];
 
 describe('belowCapacity', () => {
 	it('Should return empty array if dates are deleted', () => {
 		const filteredDates = belowCapacity({
 			capacity: 50,
 			dates: [
-				{ id: 'abc', isDeleted: true },
-				{ id: 'def', isDeleted: true },
+				{ ...datetime, id: 'abc', isDeleted: true },
+				{ ...datetime, id: 'def', isDeleted: true },
 			],
 		});
 
@@ -20,9 +23,9 @@ describe('belowCapacity', () => {
 		const filteredDates = belowCapacity({
 			capacity: 50,
 			dates: [
-				{ capacity: Infinity, id: 'abc', isDeleted: false },
-				{ capacity: Infinity, id: 'def', isDeleted: false },
-				{ capacity: Infinity, id: 'xyz', isDeleted: false },
+				{ ...datetime, capacity: Infinity, id: 'abc', isDeleted: false },
+				{ ...datetime, capacity: Infinity, id: 'def', isDeleted: false },
+				{ ...datetime, capacity: Infinity, id: 'xyz', isDeleted: false },
 			],
 		});
 
@@ -33,9 +36,9 @@ describe('belowCapacity', () => {
 		const filteredDates = belowCapacity({
 			capacity: 50,
 			dates: [
-				{ capacity: 100, id: 'abc', isDeleted: false, sold: 10 },
-				{ capacity: 11, id: 'def', isDeleted: false, sold: 6 },
-				{ capacity: 13, id: 'xyz', isDeleted: false, sold: 6 },
+				{ ...datetime, capacity: 100, id: 'abc', isDeleted: false, sold: 10 },
+				{ ...datetime, capacity: 11, id: 'def', isDeleted: false, sold: 6 },
+				{ ...datetime, capacity: 13, id: 'xyz', isDeleted: false, sold: 6 },
 			],
 		});
 

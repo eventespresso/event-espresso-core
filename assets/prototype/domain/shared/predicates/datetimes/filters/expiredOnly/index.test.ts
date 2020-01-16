@@ -2,12 +2,15 @@
  * Internal dependencies
  */
 import expiredOnly from './index';
+import { nodes as datetimes } from '../../../../../eventEditor/data/queries/datetimes/test/data';
+
+const datetime = datetimes[0];
 
 describe('expiredOnly', () => {
 	it('Should return empty array if dates are not expired', () => {
 		const filteredDates = expiredOnly([
-			{ id: 'abc', isExpired: false },
-			{ id: 'def', isExpired: false },
+			{ ...datetime, id: 'abc', isExpired: false },
+			{ ...datetime, id: 'def', isExpired: false },
 		]);
 
 		expect(filteredDates).toEqual([]);
@@ -15,9 +18,9 @@ describe('expiredOnly', () => {
 
 	it('Should return an array of dates that are expired', () => {
 		const filteredDates = expiredOnly([
-			{ id: 'abc', isExpired: false },
-			{ id: 'def', isExpired: false },
-			{ id: 'xyz', isExpired: true },
+			{ ...datetime, id: 'abc', isExpired: false },
+			{ ...datetime, id: 'def', isExpired: false },
+			{ ...datetime, id: 'xyz', isExpired: true },
 		]);
 
 		expect(filteredDates.length).toBe(1);
@@ -26,9 +29,9 @@ describe('expiredOnly', () => {
 
 	it('Should return an array of dates that are expired and not trashed', () => {
 		const filteredDates = expiredOnly([
-			{ id: 'abc', isExpired: false, isDeleted: true },
-			{ id: 'def', isExpired: true, isDeleted: false },
-			{ id: 'xyz', isExpired: true, isDeleted: true },
+			{ ...datetime, id: 'abc', isExpired: false, isDeleted: true },
+			{ ...datetime, id: 'def', isExpired: true, isDeleted: false },
+			{ ...datetime, id: 'xyz', isExpired: true, isDeleted: true },
 		]);
 
 		expect(filteredDates.length).toBe(1);

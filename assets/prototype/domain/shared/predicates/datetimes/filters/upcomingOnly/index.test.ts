@@ -2,13 +2,16 @@
  * Internal dependencies
  */
 import upcomingOnly from './index';
+import { nodes as datetimes } from '../../../../../eventEditor/data/queries/datetimes/test/data';
+
+const datetime = datetimes[0];
 
 describe('upcomingOnly', () => {
 	it('Should return empty array if dates are not upcoming', () => {
 		const filteredDates = upcomingOnly([
-			{ id: 'abc', isUpcoming: false },
-			{ id: 'def', isUpcoming: false },
-			{ id: 'xyz', isUpcoming: false },
+			{ ...datetime, id: 'abc', isUpcoming: false },
+			{ ...datetime, id: 'def', isUpcoming: false },
+			{ ...datetime, id: 'xyz', isUpcoming: false },
 		]);
 
 		expect(filteredDates).toEqual([]);
@@ -16,9 +19,9 @@ describe('upcomingOnly', () => {
 
 	it('Should return an array of upcomingOnly dates', () => {
 		const filteredDates = upcomingOnly([
-			{ id: 'abc', isUpcoming: false },
-			{ id: 'def', isUpcoming: true },
-			{ id: 'xyz', isUpcoming: true },
+			{ ...datetime, id: 'abc', isUpcoming: false },
+			{ ...datetime, id: 'def', isUpcoming: true },
+			{ ...datetime, id: 'xyz', isUpcoming: true },
 		]);
 
 		expect(filteredDates.length).toBe(2);

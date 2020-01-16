@@ -2,6 +2,12 @@
 
 namespace EventEspresso\core\domain\services\graphql\types;
 
+use Exception;
+use EventEspresso\core\exceptions\InvalidDataTypeException;
+use EventEspresso\core\exceptions\InvalidInterfaceException;
+use EventEspresso\core\exceptions\UnexpectedEntityException;
+
+use EE_Datetime;
 use EEM_Datetime;
 use EventEspresso\core\services\graphql\fields\GraphQLFieldInterface;
 use EventEspresso\core\services\graphql\types\TypeBase;
@@ -13,6 +19,8 @@ use EventEspresso\core\domain\services\graphql\mutators\DatetimeDelete;
 use EventEspresso\core\domain\services\graphql\mutators\DatetimeUpdate;
 use InvalidArgumentException;
 use ReflectionException;
+use WPGraphQL\AppContext;
+use GraphQL\Type\Definition\ResolveInfo;
 
 /**
  * Class EventDate
@@ -189,7 +197,42 @@ class Datetime extends TypeBase
                     esc_html__('Ignored if empty.', 'event_espresso')
                 )
             ),
+            new GraphQLOutputField(
+                'status',
+                $this->namespace . 'DatetimeStatusEnum',
+                'get_active_status',
+                esc_html__('Datetime status', 'event_espresso')
+            ),
+            new GraphQLOutputField(
+                'isDeleted',
+                'Boolean',
+                null,
+                esc_html__('Flag indicating whether the datetime is deleted', 'event_espresso'),
+                null,
+                [$this, 'getIsDeleted']
+            ),
         ];
+    }
+
+
+    /**
+     * @param EE_Datetime   $source  The source that's passed down the GraphQL queries
+     * @param array       $args    The inputArgs on the field
+     * @param AppContext  $context The AppContext passed down the GraphQL tree
+     * @param ResolveInfo $info    The ResolveInfo passed down the GraphQL tree
+     * @return string
+     * @throws Exception
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws ReflectionException
+     * @throws UserError
+     * @throws UnexpectedEntityException
+     * @since $VID:$
+     */
+    public function getIsDeleted(EE_Datetime $source, array $args, AppContext $context, ResolveInfo $info)
+    {
+        return (bool) $source->get('DTT_deleted');
     }
 
 
