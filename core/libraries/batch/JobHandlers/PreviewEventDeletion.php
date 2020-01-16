@@ -79,7 +79,7 @@ class PreviewEventDeletion extends JobHandler
                 $roots,
                 // Dont have ticket nodes also traverse registrations, its unnecessary because
                 // registrations also depend on events so they will already get traversed.
-                $this->createModelObjNodes($related_non_global_tickets,['Registration']),
+                $this->createModelObjNodes($related_non_global_tickets, ['Registration']),
                 $this->createModelObjNodes($related_non_global_prices)
             );
         }
@@ -102,7 +102,7 @@ class PreviewEventDeletion extends JobHandler
     protected function createModelObjNodes($model_objs, $dont_traverse_models = [])
     {
         $nodes = [];
-        foreach($model_objs as $model_obj){
+        foreach ($model_objs as $model_obj) {
             $nodes[] = new ModelObjNode(
                 $model_obj->ID(),
                 $model_obj->get_model(),

@@ -64,7 +64,7 @@ class ModelObjNode extends BaseNode
         $this->nodes = [];
         foreach ($this->model->relation_settings() as $relationName => $relation) {
             // Make sure this isn't one of the models we were told to not traverse into.
-            if(in_array($relationName,$this->dont_traverse_models)){
+            if (in_array($relationName, $this->dont_traverse_models)) {
                 continue;
             }
             if ($relation instanceof EE_Has_Many_Relation) {
