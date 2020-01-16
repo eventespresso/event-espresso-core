@@ -99,7 +99,7 @@ class PreviewEventDeletion extends JobHandler
      * @param EE_Base_Class[] $model_objs
      * @param array $dont_traverse_models
      */
-    protected function createModelObjNodes($model_objs, $dont_traverse_models = [])
+    protected function createModelObjNodes($model_objs, array $dont_traverse_models = [])
     {
         $nodes = [];
         foreach ($model_objs as $model_obj) {
