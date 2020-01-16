@@ -1,8 +1,9 @@
 export type EntityId = string;
+export type EntityDbId = number;
 
 export interface Entity {
 	id: EntityId;
-	dbId: number;
+	dbId: EntityDbId;
 	name: string;
 	__typename?: string;
 }
