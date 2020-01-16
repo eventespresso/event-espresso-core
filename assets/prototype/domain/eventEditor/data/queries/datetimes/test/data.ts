@@ -1,6 +1,6 @@
 import { GraphQLError } from 'graphql';
 
-import { Datetime, DatetimeEdge } from '../../../types';
+import { Datetime, DatetimeEdge, DatetimeStatus } from '../../../types';
 import { ReadQueryOptions } from '../../types';
 
 export const request: ReadQueryOptions = null; // to be generated via Query Options hook
@@ -18,6 +18,8 @@ export const nodes: Datetime[] = [
 		isPrimary: false,
 		isSoldOut: false,
 		isUpcoming: false,
+		isDeleted: false,
+		status: DatetimeStatus.active,
 		length: null,
 		order: 0,
 		reserved: 0,
@@ -37,6 +39,8 @@ export const nodes: Datetime[] = [
 		isPrimary: false,
 		isSoldOut: false,
 		isUpcoming: false,
+		isDeleted: false,
+		status: DatetimeStatus.expired,
 		length: null,
 		order: 0,
 		reserved: 0,
