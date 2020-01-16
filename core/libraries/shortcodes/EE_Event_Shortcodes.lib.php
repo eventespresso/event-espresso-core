@@ -236,6 +236,7 @@ class EE_Event_Shortcodes extends EE_Shortcodes
 
         if (strpos($shortcode, '[EVENT_META_*') !== false) {
             // Strip the shortcode itself from $shortcode leaving any attributes set.
+            // Removing the * is correct here as _* is used to indiciate a dynamic shortcode.
             $shortcode = str_replace('[EVENT_META_*', '', $shortcode);
             $shortcode = trim(str_replace(']', '', $shortcode));
             // Get any attributes set on this shortcode.
