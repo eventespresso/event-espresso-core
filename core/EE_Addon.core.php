@@ -88,6 +88,13 @@ abstract class EE_Addon extends EE_Configurable implements RequiresDependencyMap
      */
     protected $_main_plugin_file;
 
+    /**
+     *    This is the slug used to identify this add-on within the plugin update engine.
+     *
+     * @type string
+     */
+    protected $pue_slug;
+
 
     /**
      * @var EE_Dependency_Map $dependency_map
@@ -883,5 +890,20 @@ abstract class EE_Addon extends EE_Configurable implements RequiresDependencyMap
     public function after_registration()
     {
         // cricket chirp... cricket chirp...
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getPueSlug()
+    {
+        return $this->pue_slug;
+    }
+    /**
+     * @param mixed $pue_slug
+     */
+    public function setPueSlug($pue_slug)
+    {
+        $this->pue_slug = $pue_slug;
     }
 }
