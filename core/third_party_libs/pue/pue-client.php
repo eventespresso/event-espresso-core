@@ -1657,17 +1657,17 @@ if (! class_exists('PluginUpdateEngineChecker')):
         {
             $state = get_site_option($this->optionName);
 
+            // If this is an add-on, only call home if there is an update available for it.
+            if( $this->slug !== 'event-espresso-core-reg' && isset($state->latestVersion) ) {
+                if( version_compare($this->_installed_version, $state->latestVersion, '>=') ) {
+                    return;
+                }
+            }
+
             if (empty($state) || ! is_object($state)) {
                 $state = new StdClass;
                 $state->checkedVersion = '';
                 $state->update = null;
-            }
-
-            // If this is an add-on, only ping ee.com if there is an update actually available for it.
-            if( $this->slug !== 'event-espresso-core-reg' && isset($state->latestVersion) ) {
-                if( version_compare($state->latestVersion, $this->_installed_version, '<=') ) {
-                    return;
-                }
             }
 
             $state->lastCheck = time();
