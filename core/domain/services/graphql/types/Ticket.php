@@ -2,6 +2,12 @@
 
 namespace EventEspresso\core\domain\services\graphql\types;
 
+use Exception;
+use EventEspresso\core\exceptions\InvalidDataTypeException;
+use EventEspresso\core\exceptions\InvalidInterfaceException;
+use EventEspresso\core\exceptions\UnexpectedEntityException;
+
+use EE_Ticket;
 use EEM_Ticket;
 use EventEspresso\core\services\graphql\fields\GraphQLFieldInterface;
 use EventEspresso\core\services\graphql\types\TypeBase;
@@ -13,6 +19,8 @@ use EventEspresso\core\domain\services\graphql\mutators\TicketDelete;
 use EventEspresso\core\domain\services\graphql\mutators\TicketUpdate;
 use InvalidArgumentException;
 use ReflectionException;
+use WPGraphQL\AppContext;
+use GraphQL\Type\Definition\ResolveInfo;
 
 /**
  * Class Ticket
@@ -237,7 +245,42 @@ class Ticket extends TypeBase
                     esc_html__('Ignored if empty.', 'event_espresso')
                 )
             ),
+            new GraphQLOutputField(
+                'status',
+                $this->namespace . 'TicketStatusEnum',
+                'ticket_status',
+                esc_html__('Ticket status', 'event_espresso')
+            ),
+            new GraphQLOutputField(
+                'isSoldOut',
+                'Boolean',
+                null,
+                esc_html__('Flag indicating whether the ticket is sold out', 'event_espresso'),
+                null,
+                [$this, 'getIsSoldOut']
+            ),
         ];
+    }
+
+
+    /**
+     * @param EE_Ticket   $source  The source that's passed down the GraphQL queries
+     * @param array       $args    The inputArgs on the field
+     * @param AppContext  $context The AppContext passed down the GraphQL tree
+     * @param ResolveInfo $info    The ResolveInfo passed down the GraphQL tree
+     * @return string
+     * @throws Exception
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws ReflectionException
+     * @throws UserError
+     * @throws UnexpectedEntityException
+     * @since $VID:$
+     */
+    public function getIsSoldOut(EE_Ticket $source, array $args, AppContext $context, ResolveInfo $info)
+    {
+        return $source->ticket_status() === EE_Ticket::sold_out;
     }
 
 
