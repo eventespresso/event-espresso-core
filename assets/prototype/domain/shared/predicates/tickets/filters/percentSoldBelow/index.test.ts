@@ -2,6 +2,9 @@
  * Internal dependencies
  */
 import percentSoldBelow from './index';
+import { nodes as tickets } from '../../../../../eventEditor/data/queries/tickets/test/data';
+
+const ticket = tickets[0];
 
 describe('percentSoldBelow', () => {
 	test('Should return empty array if tickets has invalid finite and infinite quantity', () => {
@@ -9,14 +12,17 @@ describe('percentSoldBelow', () => {
 			percentage: 10,
 			tickets: [
 				{
+					...ticket,
 					id: '1',
 					quantity: 0,
 				},
 				{
+					...ticket,
 					id: '2',
 					quantity: -1,
 				},
 				{
+					...ticket,
 					id: '3',
 					quantity: -2,
 				},
@@ -31,14 +37,17 @@ describe('percentSoldBelow', () => {
 			percentage: 10,
 			tickets: [
 				{
+					...ticket,
 					id: '1',
 					quantity: -1,
 				},
 				{
+					...ticket,
 					id: '2',
 					quantity: 0,
 				},
 				{
+					...ticket,
 					id: '3',
 					quantity: Infinity,
 				},
@@ -54,16 +63,19 @@ describe('percentSoldBelow', () => {
 			percentage: 50,
 			tickets: [
 				{
+					...ticket,
 					id: '1',
 					quantity: 10,
 					sold: 5,
 				},
 				{
+					...ticket,
 					id: '2',
 					quantity: 100,
 					sold: 49,
 				},
 				{
+					...ticket,
 					id: '3',
 					quantity: 100,
 					sold: 50,

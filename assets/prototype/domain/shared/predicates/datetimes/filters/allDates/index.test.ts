@@ -1,5 +1,8 @@
 import dates from '../tests/data';
 import allDates from './index';
+import { nodes as datetimes } from '../../../../../eventEditor/data/queries/datetimes/test/data';
+
+const datetime = datetimes[0];
 
 describe('allDates', () => {
 	it('Should return an array with active-only dates', () => {
@@ -15,8 +18,8 @@ describe('allDates', () => {
 
 	it('Should return empty array if there are no active dates', () => {
 		const filteredDates = allDates([
-			{ id: 'abc', isDeleted: true },
-			{ id: 'def', isDeleted: true },
+			{ ...datetime, id: 'abc', isDeleted: true },
+			{ ...datetime, id: 'def', isDeleted: true },
 		]);
 
 		expect(filteredDates).toEqual([]);

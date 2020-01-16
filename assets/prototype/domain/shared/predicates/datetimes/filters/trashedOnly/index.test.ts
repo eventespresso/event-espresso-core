@@ -2,13 +2,16 @@
  * Internal dependencies
  */
 import trashedOnly from './index';
+import { nodes as datetimes } from '../../../../../eventEditor/data/queries/datetimes/test/data';
+
+const datetime = datetimes[0];
 
 describe('trashedOnly', () => {
 	it('Should return empty array if dates are not active, nor upcoming', () => {
 		const filteredDates = trashedOnly([
-			{ id: 'abc' },
-			{ id: 'def', isDeleted: false },
-			{ id: 'xyz', isDeleted: false },
+			{ ...datetime, id: 'abc' },
+			{ ...datetime, id: 'def', isDeleted: false },
+			{ ...datetime, id: 'xyz', isDeleted: false },
 		]);
 
 		expect(filteredDates).toEqual([]);
@@ -16,9 +19,9 @@ describe('trashedOnly', () => {
 
 	it('Should return an array of trashedOnly dates', () => {
 		const filteredDates = trashedOnly([
-			{ id: 'abc', isDeleted: true },
-			{ id: 'def', isDeleted: false },
-			{ id: 'xyz', isDeleted: true },
+			{ ...datetime, id: 'abc', isDeleted: true },
+			{ ...datetime, id: 'def', isDeleted: false },
+			{ ...datetime, id: 'xyz', isDeleted: true },
 		]);
 
 		expect(filteredDates.length).toBe(2);

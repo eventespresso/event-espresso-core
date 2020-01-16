@@ -1,4 +1,4 @@
-import { Datetime } from '../../../../domain/eventEditor/data/types';
+import { Datetime, DatetimeStatus } from '../../../../domain/eventEditor/data/types';
 import entityTextFieldSearch from './index';
 
 const datetimes: Datetime[] = [
@@ -9,6 +9,7 @@ const datetimes: Datetime[] = [
 		description: '',
 		endDate: '2020-01-12T17:00:00+00:00',
 		isActive: false,
+		isDeleted: false,
 		isExpired: false,
 		isPrimary: false,
 		isSoldOut: false,
@@ -18,6 +19,7 @@ const datetimes: Datetime[] = [
 		order: 1,
 		reserved: 0,
 		sold: 0,
+		status: DatetimeStatus.upcoming,
 		startDate: '2020-01-12T08:00:00+00:00',
 		__typename: 'EspressoDatetime',
 	},
@@ -28,6 +30,7 @@ const datetimes: Datetime[] = [
 		description: 'test desc',
 		endDate: '2019-12-18T11:31:00+00:00',
 		isActive: false,
+		isDeleted: false,
 		isExpired: true,
 		isPrimary: false,
 		isSoldOut: false,
@@ -37,6 +40,7 @@ const datetimes: Datetime[] = [
 		order: 0,
 		reserved: 0,
 		sold: 0,
+		status: DatetimeStatus.expired,
 		startDate: '2019-12-18T11:31:00+00:00',
 		__typename: 'EspressoDatetime',
 	},
@@ -47,6 +51,7 @@ const datetimes: Datetime[] = [
 		description: 'test desc',
 		endDate: '2019-12-18T11:31:00+00:00',
 		isActive: false,
+		isDeleted: false,
 		isExpired: true,
 		isPrimary: false,
 		isSoldOut: false,
@@ -56,6 +61,7 @@ const datetimes: Datetime[] = [
 		order: 0,
 		reserved: 0,
 		sold: 0,
+		status: DatetimeStatus.expired,
 		startDate: '2019-12-18T11:31:00+00:00',
 		__typename: 'EspressoDatetime',
 	},
