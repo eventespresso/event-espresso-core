@@ -4,7 +4,7 @@
 import nextActiveUpcomingOnly from './index';
 import { nodes as datetimes } from '../../../../../eventEditor/data/queries/datetimes/test/data';
 
-const datetime = datetimes[0];
+const datetime = datetimes[1];
 
 describe('nextActiveUpcomingOnly', () => {
 	it('Should return empty array if dates are not active, nor upcoming', () => {
