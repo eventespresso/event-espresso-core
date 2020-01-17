@@ -60,7 +60,7 @@ describe('entityHasGuid', () => {
 
 describe('findEntityByDbId', () => {
 	it('should return the entity with corresponding dbId', () => {
-		const dbIds = [datetimes[0].dbId, datetimes[1].dbId, datetimes[2].dbId];
+		const dbIds = datetimes.map(({ dbId }) => dbId);
 
 		dbIds.forEach((dbId) => {
 			const entity = findEntityByDbId(datetimes)(dbId);
@@ -78,7 +78,7 @@ describe('findEntityByDbId', () => {
 
 describe('findEntityByGuid', () => {
 	it('should return the entity with corresponding id', () => {
-		const ids = [datetimes[0].id, datetimes[1].id, datetimes[2].id];
+		const ids = datetimes.map(({ id }) => id);
 
 		ids.forEach((id) => {
 			const entity = findEntityByGuid(datetimes)(id);
@@ -96,13 +96,13 @@ describe('findEntityByGuid', () => {
 
 describe('entitiesWithDbIdInArray', () => {
 	it('should return an array of entities corresponding to provided dbIds', () => {
-		const dbIds = [datetimes[0].dbId, datetimes[1].dbId, datetimes[2].dbId];
+		const dbIds = datetimes.map(({ dbId }) => dbId);
 		const entities = entitiesWithDbIdInArray(datetimes, dbIds);
 
-		expect(entities.length).toBe(3);
-		expect(entities[0].dbId).toBe(dbIds[0]);
-		expect(entities[1].dbId).toBe(dbIds[1]);
-		expect(entities[2].dbId).toBe(dbIds[2]);
+		expect(entities.length).toBe(datetimes.length);
+		entities.forEach((entity, index) => {
+			expect(entity.dbId).toBe(dbIds[index]);
+		});
 	});
 
 	it('should return an array of entities corresponding to provided dbIds and ignore inexisting dbIds', () => {
@@ -124,12 +124,13 @@ describe('entitiesWithDbIdInArray', () => {
 
 describe('entitiesWithGuIdInArray', () => {
 	it('should return an array of entities corresponding to provided ids', () => {
-		const ids = [tickets[0].id, tickets[1].id];
+		const ids = tickets.map(({ id }) => id);
 		const entities = entitiesWithGuIdInArray(tickets, ids);
 
-		expect(entities.length).toBe(2);
-		expect(entities[0].id).toBe(ids[0]);
-		expect(entities[1].id).toBe(ids[1]);
+		expect(entities.length).toBe(tickets.length);
+		entities.forEach((entity, index) => {
+			expect(entity.id).toBe(ids[index]);
+		});
 	});
 
 	it('should return an array of entities corresponding to provided dbIds and ignore inexisting dbIds', () => {

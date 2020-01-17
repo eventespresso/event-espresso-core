@@ -6,7 +6,7 @@ import { filter, find, includes, prop, propEq } from 'ramda';
 /**
  * Internal dependencies
  */
-import { Entity, EntityDbId, EntityId, Price, PriceType } from '../../../../../domain/eventEditor/data/types';
+import { Entity, EntityDbId, EntityId } from '../../../../../domain/eventEditor/data/types';
 
 // the following return specified entity prop
 export const entityDbId = (entity: Entity): EntityDbId => prop('dbId', entity);
