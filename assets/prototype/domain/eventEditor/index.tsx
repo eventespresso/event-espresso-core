@@ -1,6 +1,7 @@
 /**
  * External imports
  */
+import React from 'react';
 import { render } from 'react-dom';
 
 /**
@@ -19,7 +20,7 @@ editor.className = 'ee-editor-div-prototype';
 
 container.prepend(editor);
 
-const Editor = () => (
+const Editor: React.FC = (): JSX.Element => (
 	<ContextProviders>
 		<EventEditor />
 	</ContextProviders>
