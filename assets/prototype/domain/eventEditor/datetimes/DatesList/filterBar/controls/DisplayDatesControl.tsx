@@ -1,9 +1,10 @@
 /**
  * External imports
  */
+import React, { useMemo } from 'react';
 import { SelectControl } from '@wordpress/components';
-import { useMemo } from '@wordpress/element';
-import { __ } from '@eventespresso/i18n';
+import { __ } from '@wordpress/i18n'; // @todo: replace with '@eventespresso/i18n'
+import { DisplayDatesControlProps } from '../../../types';
 
 /**
  * filter for controlling which dates display in a list of Event Dates
@@ -12,8 +13,8 @@ import { __ } from '@eventespresso/i18n';
  * @param {Function} setDisplayDates
  * @return {Object} rendered control
  */
-const DisplayDatesControl = ({ displayDates, setDisplayDates }) =>
-	useMemo(() => {
+const DisplayDatesControl: React.FC<DisplayDatesControlProps> = ({ displayDates, setDisplayDates }): JSX.Element =>
+	useMemo<JSX.Element>(() => {
 		return (
 			<SelectControl
 				label={__('display', 'event_espresso')}
