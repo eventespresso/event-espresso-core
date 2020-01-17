@@ -19,8 +19,8 @@ const AddPriceModifierButtonData = ({
 	const getPriceType = findEntityByGuid(modifiers);
 	const addPriceModifier = useCallback(() => {
 		if (Number(price.amount)) {
-			const priceClone: Price = clone(price);
-			const baseType: Price = getPriceType(priceClone.priceType);
+			const priceClone = clone(price);
+			const baseType = getPriceType(priceClone.priceType);
 			const newPrice: Price = {
 				...priceClone,
 				id: '',
