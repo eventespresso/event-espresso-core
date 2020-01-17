@@ -1,4 +1,5 @@
-import React, { useState, CSSProperties } from 'react';
+// @ts-nocheck
+import React, { useState } from 'react';
 import moment from 'moment';
 import { Button, Card, EditableText, Elevation, H4, H6, Popover } from '@blueprintjs/core/lib/esm';
 
@@ -18,26 +19,7 @@ import useRelations from '../../../../application/services/apollo/relations/useR
 import { useStatus, TypeName } from '../../../../application/services/apollo/status';
 import InlineEditInput from '../../../../application/ui/components/input/InlineEditInput';
 import { ListItemProps } from '../../types';
-
-const btnStyle: CSSProperties = {
-	margin: '0 0 0 .5rem',
-};
-
-const cardStyle: CSSProperties = {
-	margin: '0 0 2rem',
-	minWidth: '360px',
-	position: 'relative' as 'relative', // cast value to type
-	textAlign: 'center' as 'center',
-	width: '32%',
-};
-
-const idStyle: CSSProperties = {
-	color: 'grey',
-	fontSize: '9px',
-	left: '.75em',
-	position: 'absolute' as 'absolute',
-	top: '.5em',
-};
+import { btnStyle, cardStyle, idStyle } from './styles';
 
 const DateCard: React.FC<ListItemProps> = ({ id }): JSX.Element => {
 	const date = useDatetimeItem({ id });

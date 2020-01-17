@@ -1,3 +1,4 @@
+// @ts-nocheck
 import React from 'react';
 import isFunction from 'lodash/isFunction';
 import { DateRangePicker as DefaultDateRangePicker, IDateRangePickerProps } from '@blueprintjs/datetime';

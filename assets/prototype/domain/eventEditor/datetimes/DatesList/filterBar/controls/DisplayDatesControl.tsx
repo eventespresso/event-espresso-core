@@ -4,8 +4,12 @@
 import React, { useMemo } from 'react';
 import { SelectControl } from '@wordpress/components';
 import { __ } from '@wordpress/i18n'; // @todo: replace with '@eventespresso/i18n'
-import { DisplayDatesControlProps } from '../../../types';
+import { DisplayDates } from '../../../../data/date/types';
 
+interface DisplayDatesControlProps {
+	displayDates: DisplayDates;
+	setDisplayDates: (displayDates: DisplayDates) => void;
+}
 /**
  * filter for controlling which dates display in a list of Event Dates
  *

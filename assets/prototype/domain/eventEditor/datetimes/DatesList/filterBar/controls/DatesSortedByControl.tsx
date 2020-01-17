@@ -4,8 +4,12 @@ import React, { useMemo } from 'react';
  */
 import { SelectControl } from '@wordpress/components';
 import { __ } from '@wordpress/i18n'; // @todo: replace with '@eventespresso/i18n'
-import { DatesSortedByControlProps } from '../../../types';
+import { DatesSortedBy } from '../../../../data/date/types';
 
+export interface DatesSortedByControlProps {
+	datesSortedBy: DatesSortedBy;
+	setDatesSortedBy: (datesSortedBy: DatesSortedBy) => void;
+}
 /**
  * filter for controlling the sorting of a list of Event Dates
  *
