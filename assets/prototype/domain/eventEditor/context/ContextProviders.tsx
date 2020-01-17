@@ -7,6 +7,7 @@ import { RelationsProvider } from '../../../application/services/context/Relatio
 import { StatusProvider } from '../../../application/services/context/StatusProvider';
 import { ConfigProvider } from '../../../application/services/context/ConfigProvider';
 import { EventEditorEventIdProvider } from './EventEditorEventIdProvider';
+import { ContextProvider } from './types';
 
 /**
  * A collection of top level providers wrapped by ApolloProvider.
@@ -14,7 +15,7 @@ import { EventEditorEventIdProvider } from './EventEditorEventIdProvider';
  * @param {ReactElement} children The element that should be wrapped.
  * @returns {ReactElement} The wrapped element.
  */
-export const ContextProviders = ({ children }) => (
+export const ContextProviders: ContextProvider = ({ children }): JSX.Element => (
 	<ApolloProvider client={getClient()}>
 		<CommonProviders>{children}</CommonProviders>
 	</ApolloProvider>
@@ -27,7 +28,7 @@ export const ContextProviders = ({ children }) => (
  * @param {ReactElement} children The element that should be wrapped.
  * @returns {ReactElement} The wrapped element.
  */
-export const CommonProviders = ({ children }) => (
+export const CommonProviders: ContextProvider = ({ children }): JSX.Element => (
 	<ToastProvider>
 		<StatusProvider>
 			<ConfigProvider>
