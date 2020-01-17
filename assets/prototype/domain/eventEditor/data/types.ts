@@ -64,6 +64,7 @@ export interface Price extends Entity, Trashable {
 	isTax: boolean;
 	order: number | string;
 	overrides: string;
+	priceType: string;
 	priceTypeOrder: number | string;
 }
 
