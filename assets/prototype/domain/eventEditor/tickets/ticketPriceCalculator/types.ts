@@ -1,7 +1,7 @@
-import { Entity, EntityId, Price, Ticket } from '../../data/types';
+import { Entity, Price, PriceType, Ticket } from '../../data/types';
 
 export interface AddPriceModifierDataProps extends WithPriceProp {
-	modifiers: Price[];
+	modifiers: PriceType[];
 	name: string;
 	push: (price: Price) => void;
 	reset: (name: string) => void;
@@ -56,7 +56,7 @@ export interface TpcModalProps {
 
 export interface TpcModifierFormRowProps extends FieldArrayProps, WithPriceProp, WithRevCalc {
 	index?: number;
-	modifierOptions?: Price[];
+	modifierOptions?: PriceType[];
 	name?: string;
 }
 
