@@ -9,7 +9,7 @@ import {
 } from '../../../../application/ui/components/layout/editor-modal/useEditorModalState/types';
 import { EspressoButton } from '../../../../application/ui/components/input';
 
-const AddNewTicketButton: React.FunctionComponent = () => {
+const AddNewTicketButton: React.FC = () => {
 	const editorState: EditorState = useEditorModalState();
 	const editorId: EditorId = useTicketEditorId('add-new-ticket', 'xyz');
 

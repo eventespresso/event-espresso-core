@@ -17,7 +17,7 @@ const btnRowStyle: CSSProperties = {
 	width: '100%',
 };
 
-const AddNewDateButton: React.FunctionComponent = (): JSX.Element => {
+const AddNewDateButton: React.FC = (): JSX.Element => {
 	const editorState: EditorState = useEditorModalState();
 	const editorId: EditorId = useDateEditorId('add-new-date', 'xyz');
 
