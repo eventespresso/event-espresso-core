@@ -893,7 +893,7 @@ abstract class EE_Addon extends EE_Configurable implements RequiresDependencyMap
     }
 
     /**
-     * @return mixed
+     * @return string
      */
     public function getPueSlug()
     {
