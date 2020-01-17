@@ -21,7 +21,7 @@ interface DateRangePickerProps {
 const DateRangePicker: React.FC<DateRangePickerProps> = ({ onFieldUpdate, range, setRange }): JSX.Element => {
 	const format = FORMATS.MYSQL;
 
-	const handleRangeChange = (value: any): void => {
+	const handleRangeChange = (value: [Date, Date]): void => {
 		const [start, end] = value;
 		const isUpdatable = isFunction(onFieldUpdate) && start && end;
 
