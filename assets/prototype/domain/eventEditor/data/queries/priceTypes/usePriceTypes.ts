@@ -27,6 +27,7 @@ const usePriceTypes = (include: EntityId[] = []): PriceType[] => {
 		data = null;
 	}
 	const priceTypes = pathOr<PriceType[]>([], ['espressoPriceTypes', 'nodes'], data);
+
 	return include.length ? entitiesWithGuIdInArray(priceTypes, include) : priceTypes;
 };
 

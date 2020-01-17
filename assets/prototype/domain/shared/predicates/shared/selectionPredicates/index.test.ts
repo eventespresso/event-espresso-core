@@ -41,6 +41,13 @@ describe('entityHasDbId', () => {
 			expect(entityHasDbId(entity.dbId)(entity)).toBe(true);
 		});
 	});
+
+	it('should return false if entity does NOT have dbId', () => {
+		datetimes.forEach((entity) => {
+			const newEntity: any = omit(['dbId'], entity);
+			expect(entityHasDbId(newEntity.dbId)(entity)).toBe(false);
+		});
+	});
 });
 
 describe('entityHasGuid', () => {
