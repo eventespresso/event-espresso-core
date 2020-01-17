@@ -18,7 +18,7 @@ import FormModal from '../../../../application/ui/components/forms/FormModal';
 
 const EMPTY_OBJECT = {};
 
-const TicketPriceCalculatorModal: React.FunctionComponent<TpcButtonDataProps & TpcModalProps> = ({
+const TicketPriceCalculatorModal: React.FC<TpcButtonDataProps & TpcModalProps> = ({
 	ticket,
 	onClose,
 	isOpen,

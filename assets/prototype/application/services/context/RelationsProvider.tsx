@@ -11,7 +11,7 @@ const RelationsContext = createContext<RelationsManager | null>(null);
 
 const { Provider, Consumer: RelationsConsumer } = RelationsContext;
 
-const RelationsProvider: React.FunctionComponent<ProviderProps> = ({ children }): JSX.Element => {
+const RelationsProvider: React.FC<ProviderProps> = ({ children }): JSX.Element => {
 	const relations = useRelationsManager();
 	return <Provider value={relations}>{children}</Provider>;
 };

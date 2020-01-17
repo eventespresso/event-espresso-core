@@ -17,7 +17,7 @@ interface DatetimeProviderProps {
 	id: EntityId;
 }
 
-const DateTimeProvider: React.FunctionComponent<DatetimeProviderProps> = (props) => {
+const DateTimeProvider: React.FC<DatetimeProviderProps> = (props) => {
 	const { children, id } = props;
 	const editorState: EditorState = useEditorModalState();
 

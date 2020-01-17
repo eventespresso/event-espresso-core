@@ -13,7 +13,7 @@ import { getPriceModifiers } from '../../../shared/predicates/prices/selectionPr
 // just temporary
 import styles from './inlineStyles';
 
-const TicketPriceModifierRow: React.FunctionComponent<TpcModifierFormRowProps> = ({
+const TicketPriceModifierRow: React.FC<TpcModifierFormRowProps> = ({
 	index,
 	name,
 	price,

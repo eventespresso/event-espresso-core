@@ -7,7 +7,7 @@ import { EspressoIcon } from '../../display/espressoIcon';
 /**
  * Button wrapper for adding styles
  */
-const EspressoButton: React.FunctionComponent<EspressoButtonProps> = ({
+const EspressoButton: React.FC<EspressoButtonProps> = ({
 	buttonText,
 	icon,
 	onClick,

@@ -15,7 +15,7 @@ const DEFAULT_CONTEXT = {
 	id: '',
 };
 
-export interface TicketContextProps extends ContextProps {}
+export type TicketContextProps = ContextProps;
 export const TicketContext = createContext<TicketContextProps>(DEFAULT_CONTEXT);
 
 interface TicketProviderProps {
@@ -23,7 +23,7 @@ interface TicketProviderProps {
 	id: EntityId;
 }
 
-const TicketProvider: React.FunctionComponent<TicketProviderProps> = ({ children, id }) => {
+const TicketProvider: React.FC<TicketProviderProps> = ({ children, id }) => {
 	const editorState: EditorState = useEditorModalState();
 
 	const editors: Editors = {
@@ -32,7 +32,7 @@ const TicketProvider: React.FunctionComponent<TicketProviderProps> = ({ children
 		editForm: useTicketEditorId('edit-ticket-form', id),
 		relations: useTicketEditorId('ticket-relations', id),
 	};
-    
+
 	const value: TicketContextProps = { editors, editorState, id };
 
 	return <TicketContext.Provider value={value}>{children}</TicketContext.Provider>;

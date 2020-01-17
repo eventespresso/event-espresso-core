@@ -4,7 +4,7 @@ import { Button } from '@blueprintjs/core/lib/esm';
 import TicketPriceCalculatorModal from './TicketPriceCalculatorModal';
 import { TpcButtonDataProps, TpcModalProps } from './types';
 
-const TicketPriceCalculatorButton: React.FunctionComponent<TpcButtonDataProps & TpcModalProps> = ({
+const TicketPriceCalculatorButton: React.FC<TpcButtonDataProps & TpcModalProps> = ({
 	ticket,
 	isOpen,
 	onOpen,

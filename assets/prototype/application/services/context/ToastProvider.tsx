@@ -13,7 +13,7 @@ const toaster = Toaster.create({
 	position: Position.BOTTOM_RIGHT,
 });
 
-const ToastProvider: React.FunctionComponent<ProviderProps> = (props): JSX.Element => {
+const ToastProvider: React.FC<ProviderProps> = (props): JSX.Element => {
 	return <ToastContext.Provider value={toaster}>{props.children}</ToastContext.Provider>;
 };
 
