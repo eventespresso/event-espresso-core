@@ -900,7 +900,7 @@ abstract class EE_Addon extends EE_Configurable implements RequiresDependencyMap
         return $this->pue_slug;
     }
     /**
-     * @param mixed $pue_slug
+     * @param string $pue_slug
      */
     public function setPueSlug($pue_slug)
     {
