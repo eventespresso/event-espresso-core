@@ -1,5 +1,5 @@
-import { EditItemModalProps, EditItemFormProps, ListItemProps } from '../types';
 import { Ticket, EntityId } from '../data/types';
+import { EditItemModalProps, EditItemFormProps, ListItemProps } from '../types';
 import { DatesSortedBy, DisplayDates, ShowDates } from '../data/date/types';
 
 export interface EditDateProps extends ListItemProps {
