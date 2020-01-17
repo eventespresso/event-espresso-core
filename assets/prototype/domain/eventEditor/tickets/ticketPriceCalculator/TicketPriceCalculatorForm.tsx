@@ -8,7 +8,7 @@ import { TpcForm } from './types';
 // just temporary
 import styles from './inlineStyles';
 
-const TicketPriceCalculatorForm: React.FunctionComponent<TpcForm> = ({ form, values: { ticket } }): JSX.Element => {
+const TicketPriceCalculatorForm: React.FC<TpcForm> = ({ form, values: { ticket } }): JSX.Element => {
 	const reverseCalculate = Boolean(ticket.reverseCalculate);
 	const toggleCalcDir = (): void => form.mutators.toggleCalcDir();
 	const ticketName = ticket.name ? ` for Ticket: ${ticket.name} ` : '';

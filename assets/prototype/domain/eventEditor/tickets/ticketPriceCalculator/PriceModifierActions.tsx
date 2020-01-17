@@ -4,7 +4,7 @@ import AddPriceModifierButton from './AddPriceModifierButtonData';
 import DeletePriceModifierButton from './DeletePriceModifierButton';
 import { TpcModifierFormRowProps } from './types';
 
-const PriceModifierActions: React.FunctionComponent<TpcModifierFormRowProps> = ({
+const PriceModifierActions: React.FC<TpcModifierFormRowProps> = ({
 	index,
 	name,
 	price,

@@ -7,13 +7,7 @@ import { EspressoIconProps, Icon } from './types';
 /**
  * Custom Event Espresso Dashicons
  */
-const EspressoIcon: React.FunctionComponent<EspressoIconProps> = ({
-	icon,
-	svgSize = 20,
-	className,
-	isPressed,
-	...otherProps
-}) => {
+const EspressoIcon: React.FC<EspressoIconProps> = ({ icon, svgSize = 20, className, isPressed, ...otherProps }) => {
 	let path: string;
 	switch (icon) {
 		case Icon.CALCULATOR:

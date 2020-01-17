@@ -4,7 +4,7 @@ import { FieldArray } from 'react-final-form-arrays';
 import TicketPriceModifierRow from './TicketPriceModifierRow';
 import { FieldArrayProps, WithRevCalc } from './types';
 
-const TicketPriceModifierRowIterator: React.FunctionComponent<WithRevCalc> = ({ reverseCalculate }): JSX.Element => (
+const TicketPriceModifierRowIterator: React.FC<WithRevCalc> = ({ reverseCalculate }): JSX.Element => (
 	<FieldArray name={'prices'}>
 		{(props: FieldArrayProps): JSX.Element[] => {
 			const { fields } = props;

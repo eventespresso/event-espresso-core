@@ -11,7 +11,7 @@ const ConfigContext = createContext<Config | null>(null);
 
 const { Provider, Consumer: ConfigConsumer } = ConfigContext;
 
-const ConfigProvider: React.FunctionComponent<ProviderProps> = ({ children }): JSX.Element => {
+const ConfigProvider: React.FC<ProviderProps> = ({ children }): JSX.Element => {
 	const ConfigData = useConfigData();
 	const currentUser = useCurrentUser();
 	const generalSettings = useGeneralSettings();
