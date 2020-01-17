@@ -53,8 +53,19 @@ class RelationNode extends BaseNode
      */
     protected $nodes;
 
-    public function __construct($main_model_obj_id, EEM_Base $main_model, EEM_Base $related_model, array $dont_traverse_models = [])
-    {
+    /**
+     * RelationNode constructor.
+     * @param $main_model_obj_id
+     * @param EEM_Base $main_model
+     * @param EEM_Base $related_model
+     * @param array $dont_traverse_models array of model names we DON'T want to traverse
+     */
+    public function __construct(
+        $main_model_obj_id,
+        EEM_Base $main_model,
+        EEM_Base $related_model,
+        array $dont_traverse_models = []
+    ) {
         $this->id = $main_model_obj_id;
         $this->main_model = $main_model;
         $this->related_model = $related_model;

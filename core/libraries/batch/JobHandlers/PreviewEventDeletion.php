@@ -2,11 +2,16 @@
 
 namespace EventEspressoBatchRequest\JobHandlers;
 
+use EE_Base_Class;
+use EE_Error;
 use EEM_Event;
 use EEM_Price;
 use EEM_Registration;
 use EEM_Ticket;
+use EEM_Transaction;
 use EventEspresso\core\exceptions\InvalidClassException;
+use EventEspresso\core\exceptions\InvalidDataTypeException;
+use EventEspresso\core\exceptions\InvalidInterfaceException;
 use EventEspresso\core\services\loaders\LoaderFactory;
 use EventEspresso\core\services\orm\tree_traversal\ModelObjNode;
 use EventEspresso\core\services\orm\tree_traversal\NodeGroupDao;
@@ -14,6 +19,8 @@ use EventEspressoBatchRequest\Helpers\BatchRequestException;
 use EventEspressoBatchRequest\Helpers\JobParameters;
 use EventEspressoBatchRequest\Helpers\JobStepResponse;
 use EventEspressoBatchRequest\JobHandlerBaseClasses\JobHandler;
+use InvalidArgumentException;
+use ReflectionException;
 
 /**
  * Class EventDeletion
@@ -44,8 +51,12 @@ class PreviewEventDeletion extends JobHandler
     /**
      *
      * @param JobParameters $job_parameters
-     * @throws BatchRequestException
      * @return JobStepResponse
+     * @throws EE_Error
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws InvalidArgumentException
+     * @throws ReflectionException
      */
     public function create_job(JobParameters $job_parameters)
     {
@@ -54,7 +65,6 @@ class PreviewEventDeletion extends JobHandler
         // Find all the root nodes to delete (this isn't just events, because there's other data, like related tickets,
         // prices, message templates, etc, whose model definition doesn't make them dependent on events. But,
         // we have no UI to access them independent of events, so they may as well get deleted too.)
-        $model_objects_to_delete = [];
         $roots = [];
         foreach ($event_ids as $event_id) {
             $roots[] = new ModelObjNode(
@@ -96,7 +106,7 @@ class PreviewEventDeletion extends JobHandler
         foreach ($transactions_ids as $transaction_id) {
             $roots[] = new ModelObjNode(
                 $transaction_id,
-                \EEM_Transaction::instance(),
+                EEM_Transaction::instance(),
                 ['Registration']
             );
         }
@@ -122,6 +132,12 @@ class PreviewEventDeletion extends JobHandler
      * @since $VID:$
      * @param EE_Base_Class[] $model_objs
      * @param array $dont_traverse_models
+     * @return array
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws ReflectionException
      */
     protected function createModelObjNodes($model_objs, array $dont_traverse_models = [])
     {
@@ -154,8 +170,11 @@ class PreviewEventDeletion extends JobHandler
             $event_ids
         );
         $imploded_sanitized_event_ids = implode(',', $event_ids);
-        // select transactions for events
-        // with subquery looking for other events
+        // Select transactions with registrations for the events $event_ids which also don't have registrations
+        // for any events NOT in $event_ids.
+        // Notice the outer query searched for transactions whose registrations ARE in $event_ids,
+        // whereas the inner query checks if the outer query's transaction has any registrations that are
+        // NOT IN $event_ids (ie, don't have registrations for events we're not just about to delete.)
         return array_map(
             'intval',
             $wpdb->get_col(
@@ -168,14 +187,14 @@ class PreviewEventDeletion extends JobHandler
                        r.EVT_ID IN ({$imploded_sanitized_event_ids})
                        AND NOT EXISTS 
                        (
-                        SELECT 
-                          t.TXN_ID
-                        FROM 
-                          {$wpdb->prefix}esp_transaction ti INNER JOIN 
-                          {$wpdb->prefix}esp_registration ri ON ti.TXN_ID=ri.TXN_ID
-                        WHERE
-                          ti.TXN_ID=t.TXN_ID AND
-                          ri.EVT_ID NOT IN ({$imploded_sanitized_event_ids})
+                         SELECT 
+                           t.TXN_ID
+                         FROM 
+                           {$wpdb->prefix}esp_transaction tsub INNER JOIN 
+                           {$wpdb->prefix}esp_registration rsub ON tsub.TXN_ID=rsub.TXN_ID
+                         WHERE
+                           tsub.TXN_ID=t.TXN_ID AND
+                           rsub.EVT_ID NOT IN ({$imploded_sanitized_event_ids})
                        )"
             )
         );

@@ -41,8 +41,9 @@ class ModelObjNode extends BaseNode
      * We don't pass the model objects because this needs to serialize to something tiny for effiency.
      * @param $model_obj_id
      * @param EEM_Base $model
+     * @param array $dont_traverse_models array of model names we DON'T want to traverse.
      */
-    public function __construct($model_obj_id, EEM_Base $model, array $dont_traverse_models = []])
+    public function __construct($model_obj_id, EEM_Base $model, array $dont_traverse_models = [])
     {
         $this->id = $model_obj_id;
         $this->model = $model;
