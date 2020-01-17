@@ -25,11 +25,10 @@ export const findEntityByGuid = (entities: Entity[]) => (guid: EntityId): Entity
 	return find(entityHasGuid(guid))(entities);
 };
 
-// returns array of entities if DbId found in array of entities
-export const entitiesWithDbIdInArray = (entities: any[], dbidArray: EntityDbId[]): any[] => {
-	return filter((entity) => includes(entityDbId(entity), dbidArray), entities);
+export const entitiesWithDbIdInArray = (entities: Entity[], dbidArray: EntityDbId[]): any[] => {
+	return filter((entity: Entity) => includes(entityDbId(entity), dbidArray), entities);
 };
 
-export const entitiesWithGuIdInArray = (entities: any[], guidArray: EntityId[]): any[] => {
-	return filter((entity) => includes(entityGuId(entity), guidArray), entities);
+export const entitiesWithGuIdInArray = (entities: Entity[], guidArray: EntityId[]): any[] => {
+	return filter((entity: Entity) => includes(entityGuId(entity), guidArray), entities);
 };
