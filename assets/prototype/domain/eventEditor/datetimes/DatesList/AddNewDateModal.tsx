@@ -1,12 +1,17 @@
+import React from 'react';
 import DateForm from '../dateForm/DateForm';
 import FormModal from '../../../../application/ui/components/forms/FormModal';
 import { useEntityMutator, EntityType } from '../../../../application/services/apollo/mutations';
 import useTickets from '../../data/queries/tickets/useTickets';
+import { AddItemModalProps } from '../../types';
+import { DateItemFormProps } from '../types';
 
-const AddNewDateModal = ({ onClose, isOpen }) => {
+const AddNewDateModal: React.FC<AddItemModalProps> = ({ onClose, isOpen }): JSX.Element => {
 	const { createEntity } = useEntityMutator(EntityType.Datetime);
 	const tickets = useTickets();
-	const formComponent = (props) => <DateForm {...props} tickets={tickets} title='New Date Details' />;
+	const formComponent = (props: DateItemFormProps): JSX.Element => (
+		<DateForm {...props} tickets={tickets} title='New Date Details' />
+	);
 
 	return (
 		<FormModal
