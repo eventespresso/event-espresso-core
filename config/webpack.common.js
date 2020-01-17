@@ -4,7 +4,7 @@ const del = require('del');
 const miniExtract = require('mini-css-extract-plugin');
 const path = require('path');
 
-const { assetsPath, pathToDistFolder } = require('./paths');
+const { pathToDistFolder, pathToEDTRv1, pathToPrototype } = require('./paths');
 
 /**
  * Clean build folder before running build
@@ -33,7 +33,7 @@ const rulesConfig = {
 				loader: 'postcss-loader',
 				options: {
 					// eslint-disable-next-line object-shorthand
-					plugins: function () {
+					plugins: function() {
 						return [autoprefixer, cssnano({ preset: 'default' })];
 					},
 					sourceMap: true,
@@ -54,7 +54,7 @@ const moduleConfigWithJsRules = { rules: [rulesConfig.jsRulesConfig] };
 const config = [
 	{
 		entry: {
-			'eejs-core': assetsPath + 'eejs/index.js',
+			'eejs-core': pathToEDTRv1 + 'eejs/index.js',
 		},
 		module: moduleConfigWithJsRules,
 		output: {
@@ -64,7 +64,7 @@ const config = [
 	},
 	{
 		entry: {
-			'eventespresso-vendor': assetsPath + 'eejs/vendor/index.js',
+			'eventespresso-vendor': pathToEDTRv1 + 'eejs/vendor/index.js',
 		},
 		module: moduleConfigWithJsRules,
 		output: {
@@ -74,7 +74,7 @@ const config = [
 	},
 	{
 		entry: {
-			'eventespresso-utils': assetsPath + 'utils/index.js',
+			'eventespresso-utils': pathToEDTRv1 + 'utils/index.js',
 		},
 		module: moduleConfigWithJsRules,
 		output: {
@@ -84,7 +84,7 @@ const config = [
 	},
 	{
 		entry: {
-			'eventespresso-hooks': assetsPath + 'hooks/index.js',
+			'eventespresso-hooks': pathToEDTRv1 + 'hooks/index.js',
 		},
 		module: moduleConfigWithJsRules,
 		output: {
@@ -94,7 +94,7 @@ const config = [
 	},
 	{
 		entry: {
-			'eventespresso-validators': assetsPath + 'eejs/validators/index.js',
+			'eventespresso-validators': pathToEDTRv1 + 'eejs/validators/index.js',
 		},
 		module: moduleConfigWithJsRules,
 		output: {
@@ -104,7 +104,7 @@ const config = [
 	},
 	{
 		entry: {
-			'eventespresso-data-stores': assetsPath + 'data/index.js',
+			'eventespresso-data-stores': pathToEDTRv1 + 'data/index.js',
 		},
 		module: moduleConfigWithJsAndCssRules,
 		watchOptions: {
@@ -113,7 +113,7 @@ const config = [
 	},
 	{
 		entry: {
-			'eventespresso-helpers': assetsPath + 'data/helpers/index.js',
+			'eventespresso-helpers': pathToEDTRv1 + 'data/helpers/index.js',
 		},
 		module: moduleConfigWithJsRules,
 		output: {
@@ -123,7 +123,7 @@ const config = [
 	},
 	{
 		entry: {
-			'eventespresso-model': assetsPath + 'data/model/index.js',
+			'eventespresso-model': pathToEDTRv1 + 'data/model/index.js',
 		},
 		module: moduleConfigWithJsRules,
 		output: {
@@ -133,7 +133,7 @@ const config = [
 	},
 	{
 		entry: {
-			'eventespresso-model-schema': assetsPath + 'data/eventespresso/schema/index.js',
+			'eventespresso-model-schema': pathToEDTRv1 + 'data/eventespresso/schema/index.js',
 		},
 		output: {
 			library: ['eejs', 'modelSchema'],
@@ -146,7 +146,7 @@ const config = [
 	},
 	{
 		entry: {
-			'eventespresso-value-objects': assetsPath + 'vo/index.js',
+			'eventespresso-value-objects': pathToEDTRv1 + 'vo/index.js',
 		},
 		module: moduleConfigWithJsRules,
 		output: {
@@ -156,7 +156,7 @@ const config = [
 	},
 	{
 		entry: {
-			'eventespresso-hocs': assetsPath + 'higher-order-components/index.js',
+			'eventespresso-hocs': pathToEDTRv1 + 'higher-order-components/index.js',
 		},
 		module: moduleConfigWithJsAndCssRules,
 		output: {
@@ -166,7 +166,7 @@ const config = [
 	},
 	{
 		entry: {
-			'eventespresso-components': assetsPath + 'components/index.js',
+			'eventespresso-components': pathToEDTRv1 + 'components/index.js',
 		},
 		module: moduleConfigWithJsAndCssRules,
 		output: {
@@ -176,7 +176,7 @@ const config = [
 	},
 	{
 		entry: {
-			'eventespresso-editor-hocs': assetsPath + 'editor-hocs/index.js',
+			'eventespresso-editor-hocs': pathToEDTRv1 + 'editor-hocs/index.js',
 		},
 		module: moduleConfigWithJsAndCssRules,
 		output: {
@@ -186,7 +186,7 @@ const config = [
 	},
 	{
 		entry: {
-			'eventespresso-editor': assetsPath + 'editor/index.js',
+			'eventespresso-editor': pathToEDTRv1 + 'editor/index.js',
 		},
 		module: moduleConfigWithJsAndCssRules,
 		output: {
@@ -196,7 +196,8 @@ const config = [
 	},
 	{
 		entry: {
-			'eventespresso-editor-prototype': './assets/prototype/domain/eventEditor/index.tsx', // This change is just for the prototype.
+			// This change is just for the prototype.
+			'eventespresso-editor-prototype': pathToPrototype + '/domain/eventEditor/index.tsx',
 		},
 		module: moduleConfigWithJsAndCssRules,
 		output: {
@@ -206,7 +207,7 @@ const config = [
 	},
 	{
 		entry: {
-			'ee-wp-plugins-page': assetsPath + 'wp-plugins-page/index.js',
+			'ee-wp-plugins-page': pathToEDTRv1 + 'wp-plugins-page/index.js',
 		},
 		module: moduleConfigWithJsAndCssRules,
 		watchOptions: {
@@ -215,7 +216,7 @@ const config = [
 	},
 	{
 		entry: {
-			'eventespresso-core-blocks': assetsPath + 'blocks/index.js',
+			'eventespresso-core-blocks': pathToEDTRv1 + 'blocks/index.js',
 		},
 		module: moduleConfigWithJsAndCssRules,
 		watchOptions: {
@@ -224,7 +225,7 @@ const config = [
 	},
 	{
 		entry: {
-			'eventespresso-core-blocks-frontend': assetsPath + 'blocks/index-frontend.js',
+			'eventespresso-core-blocks-frontend': pathToEDTRv1 + 'blocks/index-frontend.js',
 		},
 		module: moduleConfigWithJsAndCssRules,
 		watchOptions: {
@@ -233,7 +234,7 @@ const config = [
 	},
 	{
 		entry: {
-			'eventespresso-core-css-default': assetsPath + 'components/ui/styles/themes/default/index.js',
+			'eventespresso-core-css-default': pathToEDTRv1 + 'components/ui/styles/themes/default/index.js',
 		},
 		module: moduleConfigWithJsAndCssRules,
 		watchOptions: {
