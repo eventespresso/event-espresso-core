@@ -101,9 +101,13 @@ class EE_Event_Shortcodes extends EE_Shortcodes
                 'This will return the Twitter URL for the event if you have it set via custom field in your event, otherwise it will use the Twitter URL set in "Your Organization Settings". To set the facebook url in your event, add a custom field with the key as <code>event_twitter</code> and the value as your facebook url',
                 'event_espresso'
             ),
-            '[EVENT_META_*]'                          => __(
-                'This is a special dynamic shortcode. After the "*", add the exact name for your custom field, if there is a value set for that custom field within the event then it will be output in place of this shortcode.',
-                'event_espresso'
+            '[EVENT_META_*]'                          => sprintf(
+                __(
+                    'This is a special dynamic shortcode. After the "*", add the exact name for your custom field, if there is a value set for that custom field within the event then it will be output in place of this shortcode. If you use shortcodes within your custom fields set %1$sdo_shortcode=true%2$s at the end of the shortcode to run the value through the do_shortcode function. ',
+                    'event_espresso'
+                ),
+                '<code>',
+                '</code>'
             ),
             '[REGISTRATION_LIST_TABLE_FOR_EVENT_URL]' => __(
                 'This parses to the url for the registration list table filtered by registrations for this event.',
@@ -231,13 +235,29 @@ class EE_Event_Shortcodes extends EE_Shortcodes
         }
 
         if (strpos($shortcode, '[EVENT_META_*') !== false) {
+            // Strip the shortcode itself from $shortcode leaving any attributes set.
+            // Removing the * is correct here as _* is used to indiciate a dynamic shortcode.
             $shortcode = str_replace('[EVENT_META_*', '', $shortcode);
             $shortcode = trim(str_replace(']', '', $shortcode));
-
-            // pull the meta value from the event post
-            $event_meta = $this->_event->get_post_meta($shortcode, true);
-
-            return ! empty($event_meta) ? $this->_event->get_post_meta($shortcode, true) : '';
+            // Get any attributes set on this shortcode.
+            $attrs = $this->_get_shortcode_attrs($shortcode);
+            // The meta_key set on the shortcode should always be the first value in the array.
+            $meta_key = $attrs[0];
+            // Pull the meta value from the event post.
+            $event_meta = $this->_event->get_post_meta($meta_key, true);
+            // If we have no event_meta, just return an empty string.
+            if (empty($event_meta)) {
+                return '';
+            }
+            // Add a filter to allow all instances of EVENT_META_* to run through do_shortcode, default to false.
+            // Check if a do_shortcode attribute was set to true and if so run $event_meta through that function.
+            if (apply_filters('FHEE__EventEspresso_core_libraries_shortcodes_EE_Event_Shortcodes___parser__event_meta_do_shortcode', false)
+                || !empty($attrs['do_shortcode']) && filter_var($attrs['do_shortcode'], FILTER_VALIDATE_BOOLEAN)
+            ) {
+                return do_shortcode($event_meta);
+            }
+            // Still here? We just need to return the event_meta value as is.
+            return $event_meta;
         }
 
         if (strpos($shortcode, '[EVENT_TOTAL_AVAILABLE_SPACES_*') !== false) {
