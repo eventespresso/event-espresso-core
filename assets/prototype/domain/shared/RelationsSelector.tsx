@@ -1,4 +1,4 @@
-import { useEffect, useState } from '@wordpress/element';
+import React, { useEffect, useState } from 'react';
 import { Button, MenuItem } from '@blueprintjs/core/lib/esm';
 import { MultiSelect } from '@blueprintjs/select';
 
@@ -8,6 +8,17 @@ const transformRelatedItemsArrayToObject = (items) =>
 
 		return relatedItems;
 	}, {});
+
+interface RelationsSelectorProps {
+	defaultRelatedItems: any[];
+	items: any[];
+	displayFields: string[];
+	formatFields: any;
+	placeholder: string;
+	onChange: (e: any) => void | null;
+	formReset: boolean;
+	itemType: string;
+}
 
 /**
  * @function
@@ -21,13 +32,13 @@ const transformRelatedItemsArrayToObject = (items) =>
  * @param {Object} rest
  * @return {node} rendered multi-select input
  */
-const RelationsSelector = ({
+const RelationsSelector: React.FC<RelationsSelectorProps> = ({
 	defaultRelatedItems = [],
 	items = [],
 	displayFields = [],
 	formatFields = [],
 	placeholder = 'assign relations',
-	onChange = () => null,
+	onChange = (e: any): null => null,
 	formReset = false,
 	...rest
 }) => {

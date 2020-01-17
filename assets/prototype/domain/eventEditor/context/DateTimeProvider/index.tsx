@@ -9,15 +9,16 @@ import {
 	EditorState,
 } from '../../../../application/ui/components/layout/editor-modal/useEditorModalState/types';
 
-export interface DateTimeContextProps extends ContextProps {}
-export const DateTimeContext = createContext({} as DateTimeContextProps);
+export type DateTimeContextProps = ContextProps;
+export const DateTimeContext = createContext<DateTimeContextProps>(null);
 
 interface DatetimeProviderProps {
-	children: React.ReactChildren;
+	children?: React.ReactNode;
 	id: EntityId;
 }
 
-const DateTimeProvider: React.FunctionComponent<DatetimeProviderProps> = ({ children, id }) => {
+const DateTimeProvider: React.FunctionComponent<DatetimeProviderProps> = (props) => {
+	const { children, id } = props;
 	const editorState: EditorState = useEditorModalState();
 
 	const editors: Editors = {
