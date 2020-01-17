@@ -1,10 +1,15 @@
 /**
  * External imports
  */
+import React, { useMemo } from 'react';
 import { SelectControl } from '@wordpress/components';
-import { useMemo } from 'react';
-import { __ } from '@eventespresso/i18n';
+import { __ } from '@wordpress/i18n'; // @todo: replace with '@eventespresso/i18n'
+import { DatesSortedBy } from '../../../../data/date/types';
 
+export interface DatesSortedByControlProps {
+	datesSortedBy: DatesSortedBy;
+	setDatesSortedBy: (datesSortedBy: DatesSortedBy) => void;
+}
 /**
  * filter for controlling the sorting of a list of Event Dates
  *
@@ -12,7 +17,10 @@ import { __ } from '@eventespresso/i18n';
  * @param {Function} setDatesSortedBy
  * @return {Object} rendered control
  */
-const DatesSortedByControl = ({ datesSortedBy, setDatesSortedBy }) => {
+const DatesSortedByControl: React.FC<DatesSortedByControlProps> = ({
+	datesSortedBy,
+	setDatesSortedBy,
+}): JSX.Element => {
 	return useMemo(() => {
 		return (
 			<SelectControl

@@ -1,4 +1,4 @@
-import { useContext } from 'react';
+import React, { useContext, CSSProperties } from 'react';
 import Currency from 'react-currency-formatter';
 import { Field } from 'react-final-form';
 import { H2, H4 } from '@blueprintjs/core/lib/esm';
@@ -7,12 +7,13 @@ import RelationsSelector from '../../../shared/RelationsSelector';
 
 import { DateTimeContext } from '../../context/DateTimeProvider';
 import useDatetimeItem from '../../data/queries/datetimes/useDatetimeItem';
+import { DateItemFormProps } from '../types';
 
-const hdrStyle = {
+const hdrStyle: CSSProperties = {
 	margin: '1em 0 .5em 24%',
 };
 
-const lblStyle = {
+const lblStyle: CSSProperties = {
 	boxSizing: 'border-box',
 	color: 'grey',
 	display: 'inline-block',
@@ -25,7 +26,7 @@ const lblStyle = {
 	width: '24%',
 };
 
-const inputStyle = {
+const inputStyle: CSSProperties = {
 	boxSizing: 'border-box',
 	display: 'inline-block',
 	fontSize: '1em',
@@ -34,14 +35,14 @@ const inputStyle = {
 	width: '60%',
 };
 
-const divStyle = {
+const divStyle: CSSProperties = {
 	boxSizing: 'border-box',
 	display: 'block',
 	margin: '0 0 1em',
 	width: '100%',
 };
 
-const relationsStyle = {
+const relationsStyle: CSSProperties = {
 	boxSizing: 'border-box',
 	display: 'inline-block',
 	marginLeft: '24%',
@@ -55,11 +56,11 @@ const relationsStyle = {
  * @param {boolean} toString
  * @return {node|string} rendered ticket price
  */
-const formatSecondaryField = (ticketPrice, toString = false) => {
+const formatSecondaryField = (ticketPrice: number, toString = false): JSX.Element => {
 	return toString ? renderToString(<Currency quantity={ticketPrice} />, null) : <Currency quantity={ticketPrice} />;
 };
 
-const DateForm = ({ formReset, relatedTickets, tickets = [], title }) => {
+const DateForm: React.FC<DateItemFormProps> = ({ formReset, relatedTickets, tickets = [], title }): JSX.Element => {
 	const { id } = useContext(DateTimeContext);
 	const { description = '', name = '' } = useDatetimeItem({ id }) || {};
 
@@ -93,7 +94,7 @@ const DateForm = ({ formReset, relatedTickets, tickets = [], title }) => {
 				<div style={relationsStyle}>
 					<Field
 						name={'tickets'}
-						render={({ input }) => (
+						render={({ input }): JSX.Element => (
 							<RelationsSelector
 								defaultRelatedItems={relatedTickets}
 								items={tickets}

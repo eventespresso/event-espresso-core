@@ -1,19 +1,32 @@
+// @ts-nocheck
+import React from 'react';
 import isFunction from 'lodash/isFunction';
-import { DateRangePicker as DefaultDateRangePicker } from '@blueprintjs/datetime';
+import { DateRangePicker as DefaultDateRangePicker, IDateRangePickerProps } from '@blueprintjs/datetime';
 import { A_LONG_TIME_AGO, PLUS_TEN_YEARS } from '../defaultDates';
 import { FORMATS } from './formatSelect';
 
 import './style.css';
 
-const DateRangePicker = ({ onFieldUpdate, range, setRange }) => {
+type FormattedDates = {
+	startDate: string;
+	endDate: string;
+};
+
+interface DateRangePickerProps {
+	onFieldUpdate: (formattedDates: FormattedDates) => void;
+	range: [Date, Date];
+	setRange: React.Dispatch<React.SetStateAction<[Date, Date]>>;
+}
+
+const DateRangePicker: React.FC<DateRangePickerProps> = ({ onFieldUpdate, range, setRange }): JSX.Element => {
 	const format = FORMATS.MYSQL;
 
-	const handleRangeChange = (value) => {
+	const handleRangeChange = (value: [Date, Date]): void => {
 		const [start, end] = value;
 		const isUpdatable = isFunction(onFieldUpdate) && start && end;
 
 		if (isUpdatable) {
-			const formattedDates = {
+			const formattedDates: FormattedDates = {
 				startDate: format.formatDate(start),
 				endDate: format.formatDate(end),
 			};
@@ -24,16 +37,14 @@ const DateRangePicker = ({ onFieldUpdate, range, setRange }) => {
 		setRange(value);
 	};
 
-	const appliedProps = {
+	const appliedProps: IDateRangePickerProps = {
 		allowSingleDayRange: true,
 		contiguousCalendarMonths: false,
 		value: range,
-		maxDateIndex: 0,
-		minDateIndex: 0,
 		reverseMonthAndYearMenus: false,
 		shortcuts: false,
 		singleMonthOnly: false,
-		timePrecision: true,
+		timePrecision: 'minute' as 'minute',
 	};
 
 	return (

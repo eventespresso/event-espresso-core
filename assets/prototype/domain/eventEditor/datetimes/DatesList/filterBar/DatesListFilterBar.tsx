@@ -1,3 +1,5 @@
+import React from 'react';
+
 import EntityListFilterBar from '../../../../../application/ui/components/display/entityList/filterBar/EntityListFilterBar';
 import DatesListEntityFilters from './DatesListEntityFilters';
 
@@ -8,9 +10,9 @@ import DatesListEntityFilters from './DatesListEntityFilters';
 
  * @return {Object} EditorDatesListView with added DateListFilters
  */
-const DatesListFilterBar = () => {
+const DatesListFilterBar: React.FC = (): JSX.Element => {
 	const listId = 'event-editor-dates-list';
-	const entityFilters = <DatesListEntityFilters listId={listId} />;
+	const entityFilters = <DatesListEntityFilters />;
 
 	return <EntityListFilterBar listId={listId} entityFilters={entityFilters} />;
 };

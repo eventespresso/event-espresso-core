@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { CSSProperties } from 'react';
 
 import AddNewDatetimeModal from './AddNewDateModal';
 import useDateEditorId from '../../context/DateTimeProvider/useDateEditorId';
@@ -9,7 +9,7 @@ import {
 } from '../../../../application/ui/components/layout/editor-modal/useEditorModalState/types';
 import { EspressoButton } from '../../../../application/ui/components/input';
 
-const btnRowStyle = {
+const btnRowStyle: CSSProperties = {
 	display: 'flex',
 	flexFlow: 'row wrap',
 	justifyContent: 'flex-end',
@@ -17,7 +17,7 @@ const btnRowStyle = {
 	width: '100%',
 };
 
-const AddNewDateButton: React.FunctionComponent = () => {
+const AddNewDateButton: React.FC = (): JSX.Element => {
 	const editorState: EditorState = useEditorModalState();
 	const editorId: EditorId = useDateEditorId('add-new-date', 'xyz');
 

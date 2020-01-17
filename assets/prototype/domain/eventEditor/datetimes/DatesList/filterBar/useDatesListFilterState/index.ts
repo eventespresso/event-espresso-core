@@ -22,14 +22,17 @@ interface DatesListFilterState {
 	datesSortedBy: DatesSortedBy;
 	displayDates: DisplayDates;
 	processedDates: Datetime[];
-	setDatesSortedBy: (datesSortedBy: DatesSortedBy) => void;
-	setDisplayDates: (displayDates: DisplayDates) => void;
-	setShowDates: (showDates: ShowDates) => void;
 	showDates: ShowDates;
 }
 
-const useDatesListFilterState = (dates: Datetime[]): DatesListFilterState => {
-	const initialState = {
+interface DatesListFilterStateManager extends DatesListFilterState {
+	setDatesSortedBy: (datesSortedBy: DatesSortedBy) => void;
+	setDisplayDates: (displayDates: DisplayDates) => void;
+	setShowDates: (showDates: ShowDates) => void;
+}
+
+const useDatesListFilterState = (dates: Datetime[]): DatesListFilterStateManager => {
+	const initialState: DatesListFilterState = {
 		dates,
 		datesSortedBy: DatesSortedBy.chronologically,
 		displayDates: DisplayDates.start,
@@ -38,21 +41,21 @@ const useDatesListFilterState = (dates: Datetime[]): DatesListFilterState => {
 	};
 	const [state, dispatch] = useReducer(reducer, initialState);
 
-	const setDatesSortedBy = (datesSortedBy: DatesSortedBy) => {
+	const setDatesSortedBy = (datesSortedBy: DatesSortedBy): void => {
 		dispatch({
 			type: ActionType.SET_DATES_SORTED_BY,
 			datesSortedBy,
 		});
 	};
 
-	const setDisplayDates = (displayDates: DisplayDates) => {
+	const setDisplayDates = (displayDates: DisplayDates): void => {
 		dispatch({
 			type: ActionType.SET_DISPLAY_DATES,
 			displayDates,
 		});
 	};
 
-	const setShowDates = (showDates: ShowDates) => {
+	const setShowDates = (showDates: ShowDates): void => {
 		dispatch({
 			type: ActionType.SET_SHOW_DATES,
 			showDates,
@@ -74,7 +77,7 @@ interface Action {
 	type: ActionType;
 }
 
-const reducer = (state, action: Action) => {
+const reducer = (state: DatesListFilterState, action: Action): DatesListFilterState => {
 	const { datesSortedBy, displayDates, showDates } = action;
 	let processedDates = [];
 

@@ -1,9 +1,10 @@
 import * as React from 'react';
 import { Button } from '@blueprintjs/core';
 
-import { useEntityMutator, EntityType } from '../../../../application/services/apollo/mutations';
+import { useEntityMutator, EntityType, MutationResult } from '../../../../application/services/apollo/mutations';
+import { ListItemProps } from '../../types';
 
-const DeleteDateButton = ({ id }) => {
+const DeleteDateButton: React.FC<ListItemProps> = ({ id }): JSX.Element => {
 	const { deleteEntity } = useEntityMutator(EntityType.Datetime, id);
 
 	return (
@@ -15,7 +16,7 @@ const DeleteDateButton = ({ id }) => {
 				textAlign: 'right',
 			}}
 		>
-			<Button icon={'trash'} onClick={() => deleteEntity()} minimal />
+			<Button icon={'trash'} onClick={(): MutationResult => deleteEntity()} minimal />
 		</div>
 	);
 };
