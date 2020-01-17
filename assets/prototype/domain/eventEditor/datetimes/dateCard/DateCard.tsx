@@ -1,5 +1,5 @@
+import React, { useState, CSSProperties } from 'react';
 import moment from 'moment';
-import { useState } from 'react';
 import { Button, Card, EditableText, Elevation, H4, H6, Popover } from '@blueprintjs/core/lib/esm';
 
 import DeleteDatetimeButton from './DeleteDateButton';
@@ -13,32 +13,33 @@ import DateRangePicker from '../../../shared/dateRangeInput/DateRangePicker';
 import { MomentDateRange } from '../../../shared/dateRangeInput/momentDate';
 import { PLUS_ONE_MONTH, PLUS_TWO_MONTHS } from '../../../shared/defaultDates';
 
-import { useEntityMutator, EntityType } from '../../../../application/services/apollo/mutations';
+import { useEntityMutator, EntityType, MutationResult } from '../../../../application/services/apollo/mutations';
 import useRelations from '../../../../application/services/apollo/relations/useRelations';
 import { useStatus, TypeName } from '../../../../application/services/apollo/status';
 import InlineEditInput from '../../../../application/ui/components/input/InlineEditInput';
+import { ListItemProps } from '../../types';
 
-const btnStyle = {
+const btnStyle: CSSProperties = {
 	margin: '0 0 0 .5rem',
 };
 
-const cardStyle = {
+const cardStyle: CSSProperties = {
 	margin: '0 0 2rem',
 	minWidth: '360px',
-	position: 'relative',
-	textAlign: 'center',
+	position: 'relative' as 'relative', // cast value to type
+	textAlign: 'center' as 'center',
 	width: '32%',
 };
 
-const idStyle = {
+const idStyle: CSSProperties = {
 	color: 'grey',
 	fontSize: '9px',
 	left: '.75em',
-	position: 'absolute',
+	position: 'absolute' as 'absolute',
 	top: '.5em',
 };
 
-const DateCard = ({ id }) => {
+const DateCard: React.FC<ListItemProps> = ({ id }): JSX.Element => {
 	const date = useDatetimeItem({ id });
 	const { isLoaded } = useStatus();
 	const { updateEntity } = useEntityMutator(EntityType.Datetime, id);
@@ -51,17 +52,17 @@ const DateCard = ({ id }) => {
 		relation: 'tickets',
 	});
 
-	const startDate = moment(date.startDate).toDate() || PLUS_ONE_MONTH;
-	const endDate = moment(date.endDate).toDate() || PLUS_TWO_MONTHS;
-	const defaultRangeValues = [startDate, endDate];
-	const [range, setRange] = useState(defaultRangeValues);
+	const startDate: Date = moment(date.startDate).toDate() || PLUS_ONE_MONTH;
+	const endDate: Date = moment(date.endDate as moment.MomentInput).toDate() || PLUS_TWO_MONTHS;
+	const defaultRangeValues: [Date, Date] = [startDate, endDate];
+	const [range, setRange] = useState<[Date, Date]>(defaultRangeValues);
 
 	const ticketsLoaded = isLoaded(TypeName.tickets);
 
 	return date ? (
 		<DateTimeProvider id={date.id}>
 			<Card elevation={Elevation.ONE} style={cardStyle}>
-				<EditDatetime position='top' relatedTickets={relatedTicketIds} />
+				<EditDatetime id={date.id} position='top' relatedTickets={relatedTicketIds} />
 				<div style={idStyle}>
 					{date.dbId} {':'} {date.id}
 				</div>
@@ -71,11 +72,11 @@ const DateCard = ({ id }) => {
 						placeholder='Edit title...'
 						value={date.name}
 						defaultValue={date.name}
-						onCancel={(value) => {
+						onCancel={(value: any): void => {
 							console.log('DateTimeProvider title onCancel => NEEDS CALLBACK');
 							console.log('value', value);
 						}}
-						onConfirm={(name) => updateEntity({ name })}
+						onConfirm={(name: string): MutationResult => updateEntity({ name })}
 						minWidth={'320px'}
 						selectAllOnFocus
 					/>
@@ -87,11 +88,11 @@ const DateCard = ({ id }) => {
 							placeholder='Edit description...'
 							value={date.description}
 							defaultValue={date.description}
-							onCancel={(value) => {
+							onCancel={(value: any): void => {
 								console.log('DateTimeProvider desc onCancel => NEEDS CALLBACK');
 								console.log('value', value);
 							}}
-							onConfirm={(description) => updateEntity({ description })}
+							onConfirm={(description: string): MutationResult => updateEntity({ description })}
 							minWidth={'320px'}
 							multiline={true}
 							maxLines={4}
