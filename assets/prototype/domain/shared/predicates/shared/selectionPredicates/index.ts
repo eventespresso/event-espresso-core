@@ -17,19 +17,19 @@ export const entityHasDbId = (dbId: EntityDbId) => propEq('dbId', dbId);
 export const entityHasGuid = (guid: EntityId) => propEq('id', guid);
 
 // returns entity if found in array of entities
-export const findEntityByDbId = (entities: Entity[]) => (dbid: EntityDbId): Entity[] => {
+export const findEntityByDbId = (entities: Entity[]) => (dbid: EntityDbId): Entity => {
 	return find(entityHasDbId(dbid))(entities);
 };
 
-export const findEntityByGuid = (entities: Entity[]) => (guid: EntityId): Entity[] => {
+export const findEntityByGuid = (entities: Entity[]) => (guid: EntityId): Entity => {
 	return find(entityHasGuid(guid))(entities);
 };
 
 // returns array of entities if DbId found in array of entities
-export const entitiesWithDbIdInArray = (entities: any[], dbidArray: EntityDbId[]) => {
+export const entitiesWithDbIdInArray = (entities: any[], dbidArray: EntityDbId[]): Entity[] => {
 	return filter((entity) => includes(entityDbId(entity), dbidArray), entities);
 };
 
-export const entitiesWithGuIdInArray = (entities: any[], guidArray: EntityId[]) => {
+export const entitiesWithGuIdInArray = (entities: any[], guidArray: EntityId[]): Entity[] => {
 	return filter((entity) => includes(entityGuId(entity), guidArray), entities);
 };

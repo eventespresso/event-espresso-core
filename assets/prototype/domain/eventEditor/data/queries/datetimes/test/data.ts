@@ -48,6 +48,27 @@ export const nodes: Datetime[] = [
 		startDate: 'end data',
 		__typename: 'EspressoDatetime',
 	},
+	{
+		id: 'def',
+		dbId: 4,
+		capacity: 420,
+		name: 'Hello World',
+		description: 'Test Desc',
+		endDate: 'some dat',
+		isActive: false,
+		isExpired: true,
+		isPrimary: false,
+		isSoldOut: false,
+		isUpcoming: false,
+		isDeleted: false,
+		status: DatetimeStatus.expired,
+		length: null,
+		order: 0,
+		reserved: 0,
+		sold: 6,
+		startDate: 'end data',
+		__typename: 'EspressoDatetime',
+	},
 ];
 
 export const edge: DatetimeEdge = {
