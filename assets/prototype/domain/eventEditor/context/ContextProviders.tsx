@@ -15,11 +15,18 @@ import { ContextProvider } from './types';
  * @param {ReactElement} children The element that should be wrapped.
  * @returns {ReactElement} The wrapped element.
  */
-export const ContextProviders: ContextProvider = ({ children }): JSX.Element => (
-	<ApolloProvider client={getClient()}>
-		<CommonProviders>{children}</CommonProviders>
-	</ApolloProvider>
-);
+export const ContextProviders: ContextProvider = ({ children }): JSX.Element => {
+	// Make TS (TS2769) friends with ESLint (react/no-children-prop)
+	const props = {
+		client: getClient(),
+		children: null,
+	};
+	return (
+		<ApolloProvider {...props}>
+			<CommonProviders>{children}</CommonProviders>
+		</ApolloProvider>
+	);
+};
 
 /**
  * A collection of top level providers that are used by multiple parts of the application.

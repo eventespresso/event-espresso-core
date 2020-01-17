@@ -1,6 +1,12 @@
 import { pathOr } from 'ramda';
 import ApolloClient from 'apollo-client';
-import { InMemoryCache, InMemoryCacheConfig, CacheResolver, CacheResolverMap } from 'apollo-cache-inmemory';
+import {
+	InMemoryCache,
+	InMemoryCacheConfig,
+	CacheResolver,
+	CacheResolverMap,
+	NormalizedCacheObject,
+} from 'apollo-cache-inmemory';
 import { HttpLink } from 'apollo-link-http';
 
 const graphqlEndpoint = pathOr<string>('', ['eeEditorData', 'graphqlEndpoint'], window);
@@ -25,7 +31,7 @@ const cacheConfig: InMemoryCacheConfig = {
 };
 export const cache = new InMemoryCache(cacheConfig);
 
-export const getClient = () => {
+export const getClient = (): ApolloClient<NormalizedCacheObject> => {
 	const link = new HttpLink({
 		uri: graphqlEndpoint || '/graphql',
 		headers: {
