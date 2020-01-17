@@ -33,7 +33,7 @@ const rulesConfig = {
 				loader: 'postcss-loader',
 				options: {
 					// eslint-disable-next-line object-shorthand
-					plugins: function() {
+					plugins: function () {
 						return [autoprefixer, cssnano({ preset: 'default' })];
 					},
 					sourceMap: true,
@@ -196,7 +196,7 @@ const config = [
 	},
 	{
 		entry: {
-			'eventespresso-editor-prototype': './assets/prototype/domain/eventEditor/index.js', // This change is just for the prototype.
+			'eventespresso-editor-prototype': './assets/prototype/domain/eventEditor/index.tsx', // This change is just for the prototype.
 		},
 		module: moduleConfigWithJsAndCssRules,
 		output: {
