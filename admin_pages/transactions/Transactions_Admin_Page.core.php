@@ -1043,8 +1043,9 @@ class Transactions_Admin_Page extends EE_Admin_Page
         $this->_template_args['line_item_table'] = $Line_Item_Display->display_line_item(
             $this->_transaction->total_line_item()
         );
-        $this->_template_args['REG_code'] = $this->_transaction->primary_registration()->reg_code();
-
+        $this->_template_args['REG_code'] = $this->_transaction->primary_registration() instanceof EE_Registration
+            ? $this->_transaction->primary_registration()->reg_code()
+            : null;
         // process taxes
         $taxes = $this->_transaction->line_items(array(array('LIN_type' => EEM_Line_Item::type_tax)));
         $this->_template_args['taxes'] = ! empty($taxes) ? $taxes : false;
@@ -1081,9 +1082,10 @@ class Transactions_Admin_Page extends EE_Admin_Page
             );
         }
 
-        $this->_template_args['txn_details']['registration_session']['value'] = $this->_transaction
-            ->primary_registration()
-            ->session_ID();
+        $this->_template_args['txn_details']['registration_session']['value'] 
+            = $this->_transaction->primary_registration() instanceof EE_Registration
+            ? $this->_transaction->primary_registration()->session_ID()
+            : null;
         $this->_template_args['txn_details']['registration_session']['label'] = esc_html__(
             'Registration Session',
             'event_espresso'
