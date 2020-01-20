@@ -1,13 +1,13 @@
 /**
  * External dependencies
  */
-import { useReducer, useEffect } from 'react';
+import { useReducer } from 'react';
 
 /**
  * Internal dependencies
  */
 import filters from '../../../../../shared/predicates/tickets/filters';
-import { DisplayDates, ShowTickets, SortTickets } from '../../../../data/ticket/types';
+import { DisplayDates, ShowTickets, SortTicketsBy } from '../../../../data/ticket/types';
 import { Ticket } from '../../../../data/types';
 
 enum ActionType {
@@ -23,42 +23,49 @@ interface TicketListFilterState {
 	processedTickets: Ticket[];
 	showTickets: ShowTickets;
 	tickets: Ticket[];
-	sortTickets: SortTickets;
+	sortTicketsBy: SortTicketsBy;
 }
 
-const useTicketListFilterState = (tickets: Ticket[]): TicketListFilterState => {
+interface TicketsListFilterStateManager extends TicketListFilterState {
+	setSortTicketsBy: (sortTicketsBy: SortTicketsBy) => void;
+	setDisplayTicketDate: (displayDates: DisplayDates) => void;
+	setShowTickets: (showTickets: ShowTickets) => void;
+	toggleIsChained: () => void;
+}
+
+const useTicketListFilterState = (tickets: Ticket[] = []): TicketsListFilterStateManager => {
 	const initialState = {
 		displayTicketDate: DisplayDates.start,
 		isChained: false,
 		processedTickets: [],
 		showTickets: ShowTickets.all,
 		tickets,
-		sortTickets: SortTickets.chronologically,
+		sortTicketsBy: SortTicketsBy.chronologically,
 	};
 	const [state, dispatch] = useReducer(reducer, initialState);
 
-	const setDisplayTicketDate = (displayTicketDate) => {
+	const setDisplayTicketDate = (displayTicketDate: DisplayDates): void => {
 		dispatch({
 			type: ActionType.SET_DISPLAY_TICKET_DATE,
 			displayTicketDate,
 		});
 	};
 
-	const setShowTickets = (showTickets) => {
+	const setShowTickets = (showTickets: ShowTickets): void => {
 		dispatch({
 			type: ActionType.SET_SHOW_TICKETS,
 			showTickets,
 		});
 	};
 
-	const setSortTickets = (SortTickets) => {
+	const setSortTicketsBy = (sortTicketsBy: SortTicketsBy): void => {
 		dispatch({
-			SortTickets,
+			sortTicketsBy,
 			type: ActionType.SET_SORT_TICKETS,
 		});
 	};
 
-	const toggleIsChained = () => {
+	const toggleIsChained = (): void => {
 		dispatch({
 			type: ActionType.TOGGLE_IS_CHAINED,
 		});
@@ -68,28 +75,31 @@ const useTicketListFilterState = (tickets: Ticket[]): TicketListFilterState => {
 		...state,
 		setDisplayTicketDate,
 		setShowTickets,
-		setSortTickets,
+		setSortTicketsBy,
 		toggleIsChained,
 	};
 };
 
 interface Action {
+	displayTicketDate?: DisplayDates;
 	type: ActionType;
+	showTickets?: ShowTickets;
+	sortTicketsBy?: SortTicketsBy;
 }
 
-const reducer = (state, action) => {
-	const { displayTicketDate, showTickets, SortTickets } = action;
-	let processedDates = [];
+const reducer = (state: TicketListFilterState, action: Action): TicketListFilterState => {
+	const { displayTicketDate, showTickets, sortTicketsBy } = action;
+	let processedTickets = [];
 
 	switch (action.type) {
 		case ActionType.SET_DISPLAY_TICKET_DATE:
 			return { ...state, displayTicketDate };
 		case ActionType.SET_SHOW_TICKETS:
-			processedDates = filters({ tickets: state.tickets, show: showTickets });
+			processedTickets = filters({ tickets: state.tickets, show: showTickets });
 
-			return { ...state, processedDates, showTickets };
+			return { ...state, processedTickets, showTickets };
 		case ActionType.SET_SORT_TICKETS:
-			return { ...state, SortTickets };
+			return { ...state, sortTicketsBy };
 		case ActionType.TOGGLE_IS_CHAINED:
 			return { ...state, isChained: !state.isChained };
 

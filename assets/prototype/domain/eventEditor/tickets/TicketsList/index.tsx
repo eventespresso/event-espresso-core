@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import * as React from 'react';
+import React from 'react';
 
 /**
  * Internal dependencies
@@ -14,7 +14,7 @@ import List from './List';
 import useTickets from '../../data/queries/tickets/useTickets';
 import { useStatus, TypeName } from '../../../../application/services/apollo/status';
 
-const TicketsList = () => {
+const TicketsList: React.FC = (): JSX.Element => {
 	const tickets = useTickets();
 	const noTickets = tickets.length === 0;
 	const { isError, isLoading } = useStatus();

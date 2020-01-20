@@ -1,3 +1,4 @@
+import React from 'react';
 /**
  * Internal dependencies
  */
@@ -13,15 +14,15 @@ import './style.css';
  *
  * @return {Object} EditorTicketsListView with added TicketListFilters
  */
-const TicketsListEntityFilters = () => {
+const TicketsListEntityFilters: React.FC = (): JSX.Element => {
 	const {
 		displayTicketDate,
 		isChained,
 		setDisplayTicketDate,
 		setShowTickets,
-		setTicketsSortedBy,
+		setSortTicketsBy,
 		showTickets,
-		ticketsSortedBy,
+		sortTicketsBy,
 		toggleIsChained,
 	} = useTicketListFilterState();
 
@@ -34,7 +35,7 @@ const TicketsListEntityFilters = () => {
 				<TicketsChainedButton isChained={isChained} toggleIsChained={toggleIsChained} />
 			</div>
 			<div className='ee-sort-tickets-filter ee-filter-bar-filter'>
-				<TicketsSortedByControl ticketsSortedBy={ticketsSortedBy} setTicketsSortedBy={setTicketsSortedBy} />
+				<TicketsSortedByControl sortTicketsBy={sortTicketsBy} setSortTicketsBy={setSortTicketsBy} />
 			</div>
 			<div className='ee-display-ticket-dates-filter ee-filter-bar-filter'>
 				<DisplayTicketsControl

@@ -1,51 +1,59 @@
 /**
  * External imports
  */
-import * as React from 'react';
+import React from 'react';
 import { SelectControl } from '@wordpress/components';
-import { __ } from '@wordpress/i18n';
+import { __ } from '@wordpress/i18n'; // @todo: replace with '@eventespresso/i18n'
 
 /**
  * Internal imports
  */
-import { SortTickets } from '../../../../data/ticket/types';
+import { SortTicketsBy } from '../../../../data/ticket/types';
+
+interface TicketsSortedByControlProps {
+	sortTicketsBy: SortTicketsBy;
+	setSortTicketsBy: (sortTicketsBy: SortTicketsBy) => void;
+}
 
 /**
  * filter for controlling the sorting of a list of Tickets
  *
- * @param {Function} setTicketsSortedBy
- * @param {string} ticketsSortedBy
+ * @param {Function} setSortTicketsBy
+ * @param {string} sortTicketsBy
  * @return {Object} rendered control
  */
-const TicketsSortedByControl = ({ setTicketsSortedBy, ticketsSortedBy }) => {
+const TicketsSortedByControl: React.FC<TicketsSortedByControlProps> = ({
+	setSortTicketsBy,
+	sortTicketsBy,
+}): JSX.Element => {
 	return React.useMemo(() => {
 		return (
 			<SelectControl
 				label={__('sort', 'event_espresso')}
 				className='ee-ticket-list-filter-bar-order-select'
-				value={ticketsSortedBy}
+				value={sortTicketsBy}
 				options={[
 					{
-						value: SortTickets.chronologically,
+						value: SortTicketsBy.chronologically,
 						label: __('chronologically', 'event_espresso'),
 					},
 					{
-						value: SortTickets.byName,
+						value: SortTicketsBy.byName,
 						label: __('by ticket name', 'event_espresso'),
 					},
 					{
-						value: SortTickets.byId,
+						value: SortTicketsBy.byId,
 						label: __('by ticket ID', 'event_espresso'),
 					},
 					{
-						value: SortTickets.byOrder,
+						value: SortTicketsBy.byOrder,
 						label: __('by custom order', 'event_espresso'),
 					},
 				]}
-				onChange={setTicketsSortedBy}
+				onChange={setSortTicketsBy}
 			/>
 		);
-	}, [ticketsSortedBy, setTicketsSortedBy]);
+	}, [sortTicketsBy, setSortTicketsBy]);
 };
 
 export default TicketsSortedByControl;

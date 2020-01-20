@@ -1,9 +1,15 @@
 /**
  * External imports
  */
+import React from 'react';
 import { IconButton } from '@wordpress/components';
 import { useMemo } from '@wordpress/element';
-import { __ } from '@eventespresso/i18n';
+import { __ } from '@wordpress/i18n'; // @todo: replace with '@eventespresso/i18n'
+
+interface TicketsChainedButtonProps {
+	isChained?: boolean;
+	toggleIsChained: () => void;
+}
 
 /**
  * filter for controlling whether Tickets List is chained to the Dates List
@@ -14,7 +20,7 @@ import { __ } from '@eventespresso/i18n';
  * @param {Function} toggleIsChained
  * @return {Object} rendered control
  */
-const TicketsChainedButton = ({ isChained, toggleIsChained }) => {
+const TicketsChainedButton: React.FC<TicketsChainedButtonProps> = ({ isChained, toggleIsChained }): JSX.Element => {
 	return useMemo(
 		() => (
 			<IconButton
