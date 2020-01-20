@@ -204,12 +204,12 @@ class ModelObjNodeTest extends EE_UnitTestCase
         // Asserts that the serialized model object node stays small. Less than 125 would be great (half of it is taken
         // up by the classname
 //        echo serialize($e_node);
-        $this->assertLessThan(152, strlen(serialize($e_node)));
+        $this->assertLessThan(153, strlen(serialize($e_node)));
 
         // Also check that the fully discovered node isn't too big.
         $e_node->visit(100);
 //        echo serialize($e_node);
-        $this->assertLessThan(158, strlen(serialize($e_node)));
+        $this->assertLessThan(159, strlen(serialize($e_node)));
     }
 
     public function testDontVisitModelsDirectChildren()
