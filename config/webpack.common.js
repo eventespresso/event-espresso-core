@@ -84,16 +84,6 @@ const config = [
 	},
 	{
 		entry: {
-			'eventespresso-hooks': pathToEDTRv1 + 'hooks/index.js',
-		},
-		module: moduleConfigWithJsRules,
-		output: {
-			library: ['eejs', 'hooks'],
-			libraryTarget: 'this',
-		},
-	},
-	{
-		entry: {
 			'eventespresso-validators': pathToEDTRv1 + 'eejs/validators/index.js',
 		},
 		module: moduleConfigWithJsRules,

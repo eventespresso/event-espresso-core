@@ -9,7 +9,7 @@ import { __ } from '@eventespresso/i18n';
 /**
  * Internal dependencies
  */
-import { useRect } from '@eventespresso/hooks';
+import { useRect } from '../../../../../hooks/useRect';
 
 /**
  * Collapsible
