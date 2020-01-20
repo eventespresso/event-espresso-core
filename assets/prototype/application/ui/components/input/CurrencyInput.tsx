@@ -1,6 +1,5 @@
-import React from 'react';
+import React, { useState } from 'react';
 import Currency from 'react-currency-formatter';
-import { useState } from '@wordpress/element';
 import { Button, EditableText } from '@blueprintjs/core/lib/esm';
 import InlineEditInput from './InlineEditInput';
 
