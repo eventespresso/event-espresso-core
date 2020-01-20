@@ -107,12 +107,6 @@ class Price extends TypeBase
                 'type_obj',
                 esc_html__('The related price type object.', 'event_espresso')
             ),
-            new GraphQLOutputField(
-                'priceTypeOrder',
-                'Int',
-                'type_order',
-                esc_html__('Order of Application of Price type.', 'event_espresso')
-            ),
             new GraphQLInputField(
                 'priceTypeId',
                 'ID',
