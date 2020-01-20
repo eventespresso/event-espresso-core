@@ -20,7 +20,7 @@ const AddPriceModifierButtonData = ({
 	const addPriceModifier = useCallback(() => {
 		if (Number(price.amount)) {
 			const priceClone = clone(price);
-			const baseType = getPriceType(priceClone.priceType);
+			const baseType = getPriceType(priceClone.priceType.id);
 			const newPrice: Price = {
 				...priceClone,
 				id: '',
@@ -29,7 +29,7 @@ const AddPriceModifierButtonData = ({
 				isPercent: baseType.isPercent,
 				isTax: baseType.isTax,
 				order: baseType.order,
-				priceType: baseType.id,
+				priceType: baseType,
 			};
 			push(newPrice);
 			reset(name);
