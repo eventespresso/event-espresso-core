@@ -93,16 +93,6 @@ const config = [
 	},
 	{
 		entry: {
-			'eventespresso-value-objects': pathToEDTRv1 + 'vo/index.js',
-		},
-		module: moduleConfigWithJsRules,
-		output: {
-			library: ['eejs', 'valueObjects'],
-			libraryTarget: 'this',
-		},
-	},
-	{
-		entry: {
 			'eventespresso-editor': pathToEDTRv1 + 'editor/index.js',
 		},
 		module: moduleConfigWithJsAndCssRules,
