@@ -30,7 +30,6 @@ const AddPriceModifierButtonData = ({
 				isTax: baseType.isTax,
 				order: baseType.order,
 				priceType: baseType.id,
-				priceTypeOrder: baseType.order,
 			};
 			push(newPrice);
 			reset(name);
