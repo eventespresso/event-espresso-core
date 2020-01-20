@@ -1033,8 +1033,10 @@ if (! class_exists('PluginUpdateEngineChecker')):
                     $this->add_persistent_notice($response->extra_notices);
                 }
                 // This instance is for EE Core, we have a response from PUE so lets check if it contains PUE Plugin data.
-                if ($this->slug == 'event-espresso-core-reg' && isset($response->extra_data) && !empty($response->extra_data->plugins) ) {
-                    // Pull PUE pugin data from 'extra_data'.
+                if ( stripos($this->slug, 'event-espresso-core') !== false
+                    && isset($response->extra_data)
+                    && !empty($response->extra_data->plugins)
+                ) {                    // Pull PUE pugin data from 'extra_data'.
                     $plugins_array = json_decode($result['body'], true);
                     $plugins = $plugins_array['extra_data']['plugins'];
                     // Pull all of the add-ons EE has active and update the local latestVersion value of each of them.
