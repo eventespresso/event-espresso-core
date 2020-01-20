@@ -6,7 +6,7 @@ import { SelectControl } from '@wordpress/components';
 import { __ } from '@wordpress/i18n'; // @todo: replace with '@eventespresso/i18n'
 import { DatesSortedBy } from '../../../../data/date/types';
 
-export interface DatesSortedByControlProps {
+interface DatesSortedByControlProps {
 	datesSortedBy: DatesSortedBy;
 	setDatesSortedBy: (datesSortedBy: DatesSortedBy) => void;
 }

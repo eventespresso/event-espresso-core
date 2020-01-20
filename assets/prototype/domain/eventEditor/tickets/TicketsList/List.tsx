@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import * as React from 'react';
+import React from 'react';
 import { H3 } from '@blueprintjs/core/lib/esm';
 
 /**
@@ -23,7 +23,7 @@ interface ListProps {
 	tickets: Ticket[];
 }
 
-const List = ({ tickets }: ListProps) => {
+const List: React.FC<ListProps> = ({ tickets }): JSX.Element => {
 	const header = <H3 style={{ margin: '2rem 0 .5rem' }}>{'Tickets List'}</H3>;
 
 	const ticketList = (

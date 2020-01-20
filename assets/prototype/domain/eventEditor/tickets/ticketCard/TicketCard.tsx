@@ -1,44 +1,22 @@
+// @ts-nocheck
+import React from 'react';
 import { Card, EditableText, Elevation, H4, H6 } from '@blueprintjs/core/lib/esm';
+
 import TicketProvider from '../../context/TicketProvider';
 import EditTicket from './EditTicket';
 import DeleteTicketButton from './DeleteTicketButton';
 import TicketPriceCalculatorButton from '../ticketPriceCalculator/TicketPriceCalculatorButtonData';
 import useTicketItem from '../../data/queries/tickets/useTicketItem';
 import CurrencyInput from '../../../../application/ui/components/input/CurrencyInput';
-import { useEntityMutator, EntityType } from '../../../../application/services/apollo/mutations';
+import { useEntityMutator, EntityType, MutationResult } from '../../../../application/services/apollo/mutations';
 import useRelations from '../../../../application/services/apollo/relations/useRelations';
 import { useStatus, TypeName } from '../../../../application/services/apollo/status';
 import DatetimeId from '../../datetimes/DatetimeId';
 import InlineEditInput from '../../../../application/ui/components/input/InlineEditInput';
+import { ListItemProps } from '../../types';
+import { cardStyle, idStyle, priceStyle, btnsStyle } from './styles';
 
-const cardStyle = {
-	margin: '0 0 2rem',
-	minWidth: '360px',
-	position: 'relative',
-	textAlign: 'center',
-	width: '32%',
-};
-
-const btnsStyle = {
-	bottom: '.5rem',
-	position: 'absolute',
-	right: '.5rem',
-	textAlign: 'right',
-};
-
-const idStyle = {
-	color: 'grey',
-	fontSize: '9px',
-	left: '.75em',
-	position: 'absolute',
-	top: '.5em',
-};
-
-const priceStyle = {
-	color: 'grey',
-};
-
-const TicketCard = ({ id }) => {
+const TicketCard: React.FC<ListItemProps> = ({ id }): JSX.Element => {
 	const ticket = useTicketItem({ id });
 	const { isLoaded } = useStatus();
 	const { updateEntity } = useEntityMutator(EntityType.Ticket, id);
@@ -63,11 +41,11 @@ const TicketCard = ({ id }) => {
 							placeholder={'edit title...'}
 							defaultValue={ticket.name}
 							value={ticket.name}
-							onCancel={(value) => {
+							onCancel={(value: any): void => {
 								console.log('TicketProvider title onCancel => NEEDS CALLBACK');
 								console.log('value', value);
 							}}
-							onConfirm={(name) => updateEntity({ name })}
+							onConfirm={(name: string): MutationResult => updateEntity({ name })}
 							minWidth={'320px'}
 							selectAllOnFocus
 						/>
@@ -80,11 +58,11 @@ const TicketCard = ({ id }) => {
 							placeholder='Edit description...'
 							value={ticket.description}
 							defaultValue={ticket.description}
-							onCancel={(value) => {
+							onCancel={(value: any): void => {
 								console.log('TicketProvider desc onCancel => NEEDS CALLBACK');
 								console.log('value', value);
 							}}
-							onConfirm={(description) => updateEntity({ description })}
+							onConfirm={(description: string): MutationResult => updateEntity({ description })}
 							minWidth={'320px'}
 							selectAllOnFocus
 						/>
@@ -96,7 +74,9 @@ const TicketCard = ({ id }) => {
 							id={ticket.id}
 							amount={ticket.price}
 							placeholder={'set price...'}
-							onConfirm={({ amount }) => updateEntity({ price: amount })}
+							onConfirm={({ amount }: any): void => {
+								updateEntity({ price: amount });
+							}}
 						/>
 					</H4>
 				</div>

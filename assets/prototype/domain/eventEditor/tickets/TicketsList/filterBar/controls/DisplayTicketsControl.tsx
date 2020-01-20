@@ -3,12 +3,17 @@
  */
 import * as React from 'react';
 import { SelectControl } from '@wordpress/components';
-import { __ } from '@wordpress/i18n';
+import { __ } from '@wordpress/i18n'; // @todo: replace with '@eventespresso/i18n'
 
 /**
  * Internal imports
  */
 import { DisplayDates } from '../../../../data/ticket/types';
+
+interface DisplayTicketsControlProps {
+	displayTicketDate: DisplayDates;
+	setDisplayTicketDate: (displayDates: DisplayDates) => void;
+}
 
 /**
  * filter for controlling which dates display in a list of Tickets
@@ -17,7 +22,7 @@ import { DisplayDates } from '../../../../data/ticket/types';
  * @param {Function} setDisplayTicketDate
  * @return {Object} rendered control
  */
-const DisplayTicketsControl = ({ displayTicketDate, setDisplayTicketDate }) => {
+const DisplayTicketsControl: React.FC<DisplayTicketsControlProps> = ({ displayTicketDate, setDisplayTicketDate }) => {
 	return React.useMemo(() => {
 		return (
 			<SelectControl

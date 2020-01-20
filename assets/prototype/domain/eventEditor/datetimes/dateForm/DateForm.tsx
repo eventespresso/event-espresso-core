@@ -8,47 +8,7 @@ import RelationsSelector from '../../../shared/RelationsSelector';
 import { DateTimeContext } from '../../context/DateTimeProvider';
 import useDatetimeItem from '../../data/queries/datetimes/useDatetimeItem';
 import { DateItemFormProps } from '../types';
-
-const hdrStyle: CSSProperties = {
-	margin: '1em 0 .5em 24%',
-};
-
-const lblStyle: CSSProperties = {
-	boxSizing: 'border-box',
-	color: 'grey',
-	display: 'inline-block',
-	fontSize: '1em',
-	lineHeight: '2rem',
-	minWidth: '80px',
-	paddingRight: '1em',
-	textAlign: 'right',
-	verticalAlign: 'top',
-	width: '24%',
-};
-
-const inputStyle: CSSProperties = {
-	boxSizing: 'border-box',
-	display: 'inline-block',
-	fontSize: '1em',
-	lineHeight: '2rem',
-	minWidth: '200px',
-	width: '60%',
-};
-
-const divStyle: CSSProperties = {
-	boxSizing: 'border-box',
-	display: 'block',
-	margin: '0 0 1em',
-	width: '100%',
-};
-
-const relationsStyle: CSSProperties = {
-	boxSizing: 'border-box',
-	display: 'inline-block',
-	marginLeft: '24%',
-	padding: '.5em 0 1em',
-	width: '60%',
-};
+import { hdrStyle, lblStyle, inputStyle, divStyle, relationsStyle } from './style';
 
 /**
  * @function

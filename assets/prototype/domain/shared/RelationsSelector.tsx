@@ -13,7 +13,7 @@ interface RelationsSelectorProps {
 	defaultRelatedItems: any[];
 	items: any[];
 	displayFields: string[];
-	formatFields: any;
+	formatFields?: any;
 	placeholder: string;
 	onChange: (e: any) => void | null;
 	formReset: boolean;

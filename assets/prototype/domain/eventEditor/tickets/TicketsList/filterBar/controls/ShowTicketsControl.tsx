@@ -1,14 +1,20 @@
 /**
  * External imports
  */
-import * as React from 'react';
+import React from 'react';
 import { SelectControl } from '@wordpress/components';
-import { __ } from '@wordpress/i18n';
+import { __ } from '@wordpress/i18n'; // @todo: replace with '@eventespresso/i18n'
 
 /**
  * Internal imports
  */
 import { ShowTickets } from '../../../../data/ticket/types';
+
+interface ShowDatesControlProps {
+	isChained?: boolean;
+	showTickets: ShowTickets;
+	setShowTickets: (showTickets: ShowTickets) => void;
+}
 
 /**
  * filter for controlling which dates display in a list of Tickets
@@ -18,7 +24,11 @@ import { ShowTickets } from '../../../../data/ticket/types';
  * @param {Function} setShowTickets
  * @return {Object} rendered control
  */
-const ShowTicketsControl = ({ isChained, setShowTickets, showTickets }) => {
+const ShowTicketsControl: React.FC<ShowDatesControlProps> = ({
+	isChained,
+	setShowTickets,
+	showTickets,
+}): JSX.Element => {
 	return React.useMemo(() => {
 		return (
 			<SelectControl

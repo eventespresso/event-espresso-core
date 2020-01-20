@@ -1,4 +1,4 @@
-export enum SortTickets {
+export enum SortTicketsBy {
 	chronologically = 'chronologically',
 	byName = 'byName',
 	byId = 'byId',
