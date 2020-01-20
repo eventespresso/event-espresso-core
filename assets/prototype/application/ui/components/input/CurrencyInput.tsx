@@ -1,15 +1,30 @@
+import React from 'react';
 import Currency from 'react-currency-formatter';
 import { useState } from '@wordpress/element';
 import { Button, EditableText } from '@blueprintjs/core/lib/esm';
 import InlineEditInput from './InlineEditInput';
 
-const nullFunc = () => { };
+const nullFunc = (args?: any) => {};
 
 const btnStyle = {
 	margin: '0 0 0 .5rem',
 };
 
-const CurrencyInput = ({ id = 0, amount = 0, placeholder = '', onConfirm = nullFunc, onCancel = nullFunc }) => {
+interface CurrencyInputProps {
+	id: string;
+	amount: string | number;
+	placeholder?: string;
+	onConfirm?: (result?: { amount: string | number; id: string }) => void;
+	onCancel?: (id?: string) => void;
+}
+
+const CurrencyInput: React.FC<CurrencyInputProps> = ({
+	id = '',
+	amount = 0,
+	placeholder = '',
+	onConfirm = nullFunc,
+	onCancel = nullFunc,
+}) => {
 	const [editing, setEditing] = useState(false);
 	return editing ? (
 		<InlineEditInput
@@ -25,18 +40,18 @@ const CurrencyInput = ({ id = 0, amount = 0, placeholder = '', onConfirm = nullF
 					onCancel(id);
 				}
 			}}
-			onConfirm={(amount) => {
+			onConfirm={(amount: string) => {
 				setEditing(false);
 				onConfirm({ amount, id });
 			}}
 			selectAllOnFocus
 		/>
 	) : (
-			<>
-				<Currency quantity={amount} />
-				<Button icon='edit' onClick={() => setEditing(true)} style={btnStyle} minimal />
-			</>
-		);
+		<>
+			<Currency quantity={amount} />
+			<Button icon='edit' onClick={() => setEditing(true)} style={btnStyle} minimal />
+		</>
+	);
 };
 
 export default CurrencyInput;
