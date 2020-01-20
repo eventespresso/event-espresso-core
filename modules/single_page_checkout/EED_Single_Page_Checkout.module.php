@@ -481,7 +481,7 @@ class EED_Single_Page_Checkout extends EED_Module
             // checkout the action!!!
             $this->_process_form_action();
             // add some style and make it dance
-            $this->add_styles_and_scripts();
+            $this->add_styles_and_scripts($this);
             // kk... SPCO has successfully run
             EED_Single_Page_Checkout::$_initialized = true;
             // set no cache headers and constants
@@ -865,7 +865,7 @@ class EED_Single_Page_Checkout extends EED_Module
                 );
                 $this->checkout->transaction = EE_Transaction::new_instance();
                 // add some style and make it dance
-                $this->add_styles_and_scripts();
+                $this->add_styles_and_scripts($this);
                 EED_Single_Page_Checkout::$_initialized = true;
                 return false;
             }
@@ -1225,9 +1225,7 @@ class EED_Single_Page_Checkout extends EED_Module
                 continue;
             }
             // add css and JS for current step
-            $reg_step->enqueue_styles_and_scripts();
-            // i18n
-            $reg_step->translate_js_strings();
+            $this->add_styles_and_scripts($reg_step);
             if ($reg_step->is_current_step()) {
                 // the text that appears on the reg step form submit button
                 $reg_step->set_submit_button_text();
@@ -1374,22 +1372,20 @@ class EED_Single_Page_Checkout extends EED_Module
 
 
     /**
-     *        add_styles_and_scripts
-     *
-     * @access        public
+     * @param EED_Single_Page_Checkout|EE_SPCO_Reg_Step $target
+     * @param object $target an object with the method `translate_js_strings` and `enqueue_styles_and_scripts`.
      * @return        void
      */
-    public function add_styles_and_scripts()
+    public function add_styles_and_scripts($target)
     {
         // i18n
-        $this->translate_js_strings();
+        $target->translate_js_strings();
         if ($this->checkout->admin_request) {
-            add_action('admin_enqueue_scripts', array($this, 'enqueue_styles_and_scripts'), 10);
+            add_action('admin_enqueue_scripts', array($target, 'enqueue_styles_and_scripts'), 10);
         } else {
-            add_action('wp_enqueue_scripts', array($this, 'enqueue_styles_and_scripts'), 10);
+            add_action('wp_enqueue_scripts', array($target, 'enqueue_styles_and_scripts'), 10);
         }
     }
-
 
     /**
      *        translate_js_strings

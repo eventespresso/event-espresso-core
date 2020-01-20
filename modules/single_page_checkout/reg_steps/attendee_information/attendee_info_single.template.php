@@ -74,7 +74,6 @@ if (count($registrations) > 0) {
                 </tbody>
             </table>
         </div>
-    </div>
 
     <?php
     // Display the forms below the table.
@@ -83,6 +82,9 @@ if (count($registrations) > 0) {
             // Attendee Questions.
             $reg_form = EE_Template_Layout::get_subform_name($registration->reg_url_link());
             echo ${$reg_form};
+    ?>
+    </div>
+<?php
         } // if ( $registration instanceof EE_Registration )
     } // end foreach ( $registrations as $registration )
 
