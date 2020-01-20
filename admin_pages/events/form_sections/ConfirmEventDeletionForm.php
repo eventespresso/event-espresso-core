@@ -46,23 +46,17 @@ class ConfirmEventDeletionForm extends \EE_Form_Section_Proper
         }
         $this->events = $events;
         $events_inputs = [
-            'intro' => new EE_Form_Section_HTML(
-                EEH_HTML::h2(esc_html__('In order to prevent accidentally deleting the wrong events, please enter the unique URL slug of each event.', 'event_espresso'))
-            )
         ];
         foreach ($events as $event) {
-             $events_inputs[ $event->ID() ] = new \EE_Text_Input(
-                 [
-                    'html_label_text' => esc_html(
-                        sprintf(
-                            __('Please enter the URL slug of "%1$s" (hint: it’s "%2$s")', 'event_espresso'),
-                            $event->name(),
-                            $event->slug()
-                        )
-                    ),
-                    'required' => false
-                 ]
-             );
+             $events_inputs[ $event->ID() ] = new EE_Checkbox_Multi_Input(
+                [
+                    'yes' => $event->name(),
+                ],
+                [
+                    'html_label_text' => esc_html__('Please confirm you wish to delete:', 'event_espresso'),
+                    'required' => true
+                ]
+            );
         }
         $events_subsection->add_subsections($events_inputs);
         $options_array['subsections']['backup'] = new EE_Checkbox_Multi_Input(
@@ -75,24 +69,6 @@ class ConfirmEventDeletionForm extends \EE_Form_Section_Proper
             ]
         );
         parent::__construct($options_array);
-    }
-
-    public function _validate()
-    {
-        parent::_validate();
-        $events_subsection = $this->get_proper_subsection('events');
-        foreach ($this->events as $event) {
-            $event_input = $events_subsection->get_input($event->ID());
-            if ((string) $event_input->normalized_value() !== $event->slug()) {
-                $event_input->add_validation_error(
-                    sprintf(
-                        esc_html__('You entered the incorrect URL slug for the event "%1$s". Please enter it again (use "%2$s") to confirm you are deleting the correct event.', 'event_espresso'),
-                        $event->name(),
-                        $event->slug()
-                    )
-                );
-            }
-        }
     }
 }
 // End of file ConfirmEventDeletionForm.php
