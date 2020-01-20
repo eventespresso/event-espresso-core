@@ -103,29 +103,6 @@ const config = [
 	},
 	{
 		entry: {
-			'eventespresso-model': pathToEDTRv1 + 'data/model/index.js',
-		},
-		module: moduleConfigWithJsRules,
-		output: {
-			library: ['eejs', 'model'],
-			libraryTarget: 'this',
-		},
-	},
-	{
-		entry: {
-			'eventespresso-model-schema': pathToEDTRv1 + 'data/eventespresso/schema/index.js',
-		},
-		output: {
-			library: ['eejs', 'modelSchema'],
-			libraryTarget: 'this',
-		},
-		module: moduleConfigWithJsAndCssRules,
-		watchOptions: {
-			poll: 1000,
-		},
-	},
-	{
-		entry: {
 			'eventespresso-value-objects': pathToEDTRv1 + 'vo/index.js',
 		},
 		module: moduleConfigWithJsRules,
