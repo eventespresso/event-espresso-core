@@ -74,16 +74,6 @@ const config = [
 	},
 	{
 		entry: {
-			'eventespresso-utils': pathToEDTRv1 + 'utils/index.js',
-		},
-		module: moduleConfigWithJsRules,
-		output: {
-			library: ['eejs', 'utils'],
-			libraryTarget: 'this',
-		},
-	},
-	{
-		entry: {
 			'eventespresso-validators': pathToEDTRv1 + 'eejs/validators/index.js',
 		},
 		module: moduleConfigWithJsRules,
