@@ -1082,7 +1082,7 @@ class Transactions_Admin_Page extends EE_Admin_Page
             );
         }
 
-        $this->_template_args['txn_details']['registration_session']['value'] 
+        $this->_template_args['txn_details']['registration_session']['value']
             = $this->_transaction->primary_registration() instanceof EE_Registration
             ? $this->_transaction->primary_registration()->session_ID()
             : null;

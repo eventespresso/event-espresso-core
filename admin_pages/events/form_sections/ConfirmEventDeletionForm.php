@@ -12,7 +12,8 @@ use EventEspresso\core\exceptions\UnexpectedEntityException;
 /**
  * Class ConfirmEventDeletionForm
  *
- * Description
+ * Special form that requests the user confirm they want to delete the specified events, and have made a database
+ * backup.
  *
  * @package     Event Espresso
  * @author         Mike Nelson
@@ -48,7 +49,7 @@ class ConfirmEventDeletionForm extends \EE_Form_Section_Proper
         $events_inputs = [
         ];
         foreach ($events as $event) {
-             $events_inputs[ $event->ID() ] = new EE_Checkbox_Multi_Input(
+            $events_inputs[ $event->ID() ] = new EE_Checkbox_Multi_Input(
                 [
                     'yes' => $event->name(),
                 ],
