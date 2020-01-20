@@ -16,3 +16,5 @@ export const mutations: any = {
 	UPDATE_PRICE,
 	DELETE_PRICE,
 };
+
+export { default as useMutators } from './useMutators';
