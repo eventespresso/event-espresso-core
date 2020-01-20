@@ -11,7 +11,6 @@ export const defaultNewPriceModifier = {
 	isTrashed: false,
 	name: '',
 	order: 999,
-	priceType: '',
-	priceTypeOrder: 999,
+	priceType: null,
 	wpUser: 1,
 };
