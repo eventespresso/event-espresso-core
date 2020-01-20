@@ -546,10 +546,10 @@ if (! class_exists('PluginUpdateEngineChecker')):
             //set other properties related to version
             //is_premium?
             $premium_search_ref = is_array($slug) ? key($slug['premium']) : null;
+
             //case insensitive search in version
             $this->_is_premium = ! empty($premium_search_ref)
-                                 && preg_match("/$premium_search_ref/i", $this->_installed_version);
-
+                                 && stripos($this->_installed_version, $premium_search_ref) !== false;
 
             //wait... if slug is_string() then we'll assume this is a premium install by default
             $this->_is_premium = ! $this->_is_premium && ! is_array($slug) ? true : $this->_is_premium;
@@ -557,13 +557,12 @@ if (! class_exists('PluginUpdateEngineChecker')):
             //set pre-release flag
             $pr_search_ref = is_array($slug) && isset($slug['prerelease']) ? key($slug['prerelease']) : null;
             $this->_is_prerelease = ! empty($pr_search_ref)
-                                    && preg_match("/$pr_search_ref/i", $this->_installed_version);
+                                    && stripos($this->_installed_version, $pr_search_ref) !== false;
 
             //free_release?
             $fr_search_ref = is_array($slug) && isset($slug['free']) ? key($slug['free']) : null;
             $this->_is_freerelease = ! empty($fr_search_ref)
-                                     && preg_match("/$fr_search_ref/", $this->_installed_version);
-
+                                     && stripos($this->_installed_version, $fr_search_ref) !== false;
 
             //set slug we use
             $this->slug = $this->_is_premium && is_array($slug) ? $slug['premium'][key($slug['premium'])] : null;
