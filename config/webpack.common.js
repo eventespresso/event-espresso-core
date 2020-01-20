@@ -83,16 +83,6 @@ const config = [
 	},
 	{
 		entry: {
-			'eventespresso-helpers': pathToEDTRv1 + 'data/helpers/index.js',
-		},
-		module: moduleConfigWithJsRules,
-		output: {
-			library: ['eejs', 'helpers'],
-			libraryTarget: 'this',
-		},
-	},
-	{
-		entry: {
 			'eventespresso-editor': pathToEDTRv1 + 'editor/index.js',
 		},
 		module: moduleConfigWithJsAndCssRules,
