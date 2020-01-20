@@ -3,10 +3,10 @@ import EditDateButton from './EditDateButton';
 import EditDateModal from './EditDateModal';
 import { EditDateProps } from '../types';
 
-const EditDate: React.FC<EditDateProps> = ({ id, position, relatedTickets }): JSX.Element => (
+const EditDate: React.FC<EditDateProps> = ({ position, relatedTickets }): JSX.Element => (
 	<>
 		<EditDateButton position={position} />
-		<EditDateModal id={id} relatedTickets={relatedTickets} />
+		<EditDateModal relatedTickets={relatedTickets} />
 	</>
 );
 
