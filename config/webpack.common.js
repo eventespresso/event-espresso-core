@@ -136,26 +136,6 @@ const config = [
 	},
 	{
 		entry: {
-			'eventespresso-hocs': pathToEDTRv1 + 'higher-order-components/index.js',
-		},
-		module: moduleConfigWithJsAndCssRules,
-		output: {
-			library: ['eejs', 'hocs'],
-			libraryTarget: 'this',
-		},
-	},
-	{
-		entry: {
-			'eventespresso-editor-hocs': pathToEDTRv1 + 'editor-hocs/index.js',
-		},
-		module: moduleConfigWithJsAndCssRules,
-		output: {
-			library: ['eejs', 'editorHocs'],
-			libraryTarget: 'this',
-		},
-	},
-	{
-		entry: {
 			'eventespresso-editor': pathToEDTRv1 + 'editor/index.js',
 		},
 		module: moduleConfigWithJsAndCssRules,
