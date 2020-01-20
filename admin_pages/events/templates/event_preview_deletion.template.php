@@ -67,7 +67,13 @@ if ($reg_count > count($registrations)) {
     <?php
 }
 ?>
-<p><?php esc_html_e('Note: contacts will not be deleted, only their registrations for the enumerated events.', 'event_espresso'); ?></p>
+<?php
+if ($reg_count > 0) {
+    ?>
+    <p><?php esc_html_e('Note: contacts will not be deleted, only their registrations for the enumerated events.', 'event_espresso'); ?></p>
+    <?php
+}
+?>
 <ul>
     <?php
     foreach ($registrations as $registration) {
