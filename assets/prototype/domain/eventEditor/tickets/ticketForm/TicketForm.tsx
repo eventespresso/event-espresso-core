@@ -1,53 +1,14 @@
-import { useContext } from 'react';
+import React, { useContext } from 'react';
 import { Field } from 'react-final-form';
 import { H2, H4 } from '@blueprintjs/core/lib/esm';
-import RelationsSelector from '../../../shared/RelationsSelector';
 
+import RelationsSelector from '../../../shared/RelationsSelector';
 import { TicketContext } from '../../context/TicketProvider';
 import useTicketItem from '../../data/queries/tickets/useTicketItem';
+import { TicketItemFormProps } from '../types';
+import { hdrStyle, lblStyle, inputStyle, divStyle, relationsStyle } from './style';
 
-const hdrStyle = {
-	margin: '1em 0 .5em 24%',
-};
-
-const lblStyle = {
-	boxSizing: 'border-box',
-	color: 'grey',
-	display: 'inline-block',
-	fontSize: '1em',
-	lineHeight: '2rem',
-	minWidth: '80px',
-	paddingRight: '1em',
-	textAlign: 'right',
-	verticalAlign: 'top',
-	width: '24%',
-};
-
-const inputStyle = {
-	boxSizing: 'border-box',
-	display: 'inline-block',
-	fontSize: '1em',
-	lineHeight: '2rem',
-	minWidth: '200px',
-	width: '60%',
-};
-
-const divStyle = {
-	boxSizing: 'border-box',
-	display: 'block',
-	margin: '0 0 1em',
-	width: '100%',
-};
-
-const relationsStyle = {
-	boxSizing: 'border-box',
-	display: 'inline-block',
-	marginLeft: '24%',
-	padding: '.5em 0 1em',
-	width: '60%',
-};
-
-const TicketForm = ({ datetimes, formReset, relatedDates, title }) => {
+const TicketForm: React.FC<TicketItemFormProps> = ({ datetimes, formReset, relatedDates, title }): JSX.Element => {
 	const { id } = useContext(TicketContext);
 	const { description = '', name = '', price = '' } = useTicketItem({ id }) || {};
 
@@ -95,7 +56,7 @@ const TicketForm = ({ datetimes, formReset, relatedDates, title }) => {
 				<div style={relationsStyle}>
 					<Field
 						name={'datetimes'}
-						render={({ input }) => (
+						render={({ input }): JSX.Element => (
 							<RelationsSelector
 								defaultRelatedItems={relatedDates}
 								items={datetimes}
