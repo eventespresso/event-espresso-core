@@ -19,7 +19,7 @@ export type TicketContextProps = ContextProps;
 export const TicketContext = createContext<TicketContextProps>(DEFAULT_CONTEXT);
 
 interface TicketProviderProps {
-	children: React.ReactChildren;
+	children: React.ReactNode;
 	id: EntityId;
 }
 
