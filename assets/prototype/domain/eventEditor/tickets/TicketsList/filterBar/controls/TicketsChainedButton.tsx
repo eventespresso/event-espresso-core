@@ -3,7 +3,6 @@
  */
 import React from 'react';
 import { IconButton } from '@wordpress/components';
-import { useMemo } from '@wordpress/element';
 import { __ } from '@wordpress/i18n'; // @todo: replace with '@eventespresso/i18n'
 
 interface TicketsChainedButtonProps {
@@ -21,20 +20,17 @@ interface TicketsChainedButtonProps {
  * @return {Object} rendered control
  */
 const TicketsChainedButton: React.FC<TicketsChainedButtonProps> = ({ isChained, toggleIsChained }): JSX.Element => {
-	return useMemo(
-		() => (
-			<IconButton
-				label={
-					isChained
-						? __('showing tickets for above dates only', 'event_espresso')
-						: __('showing tickets for all event dates', 'event_espresso')
-				}
-				icon={isChained ? 'admin-links' : 'editor-unlink'}
-				onClick={toggleIsChained}
-				value={isChained}
-			/>
-		),
-		[isChained]
+	return (
+		<IconButton
+			label={
+				isChained
+					? __('showing tickets for above dates only', 'event_espresso')
+					: __('showing tickets for all event dates', 'event_espresso')
+			}
+			icon={isChained ? 'admin-links' : 'editor-unlink'}
+			onClick={toggleIsChained}
+			value={isChained}
+		/>
 	);
 };
 

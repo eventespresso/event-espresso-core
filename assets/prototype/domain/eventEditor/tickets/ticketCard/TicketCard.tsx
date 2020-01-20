@@ -1,3 +1,4 @@
+// @ts-nocheck
 import React from 'react';
 import { Card, EditableText, Elevation, H4, H6 } from '@blueprintjs/core/lib/esm';
 
