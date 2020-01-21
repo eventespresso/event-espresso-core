@@ -1040,15 +1040,16 @@ if (! class_exists('PluginUpdateEngineChecker')):
                     $plugins = $plugins_array['extra_data']['plugins'];
                     // Pull all of the add-ons EE has active and update the local latestVersion value of each of them.
                     foreach (EE_Registry::instance()->addons as $addon) {
-                        if( isset($plugins[ $addon->getPueSlug() ]) ) {
-                            $addon_state = get_option('external_updates-' . $addon->getPueSlug());
+                        $addon_slug = $addon->getPueSlug();
+                        if( isset($response->extra_data->plugins->{ $addon_slug }) ) {
+                            $addon_state = get_option('external_updates-' . $addon_slug);
                             // If we don't have an addon state, get out we'll update it next time.
                             if( empty($addon_state)) {
                                 continue;
                             }
                             // Have an addon state? Set the latestVersion value!
-                            $addon_state->latestVersion = $plugins[$addon->getPueSlug()];
-                            update_option('external_updates-' . $addon->getPueSlug(), $addon_state);
+                            $addon_state->latestVersion = $response->extra_data->plugins->{ $addon_slug };
+                            update_option('external_updates-' . $addon_slug, $addon_state);
                         }
                     }
                 }
