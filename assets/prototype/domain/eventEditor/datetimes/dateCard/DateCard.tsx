@@ -8,7 +8,7 @@ import EditDatetime from './EditDate';
 
 import DateTimeProvider from '../../context/DateTimeProvider';
 import useDatetimeItem from '../../data/queries/datetimes/useDatetimeItem';
-import TicketId from '../../tickets/TicketId';
+import TicketIdTag from '../../tickets/TicketIdTag';
 
 import DateRangePicker from '../../../shared/dateRangeInput/DateRangePicker';
 import { DateRangeDisplay } from '../../../shared/dateRangeInput/dateDisplay';
@@ -93,9 +93,9 @@ const DateCard: React.FC<ListItemProps> = ({ id }): JSX.Element => {
 					{ticketsLoaded && (
 						<>
 							{'Related Tickets: '}{' '}
-							{relatedTicketIds.map((ticketId) => {
-								return ticketId ? <TicketId key={ticketId} id={ticketId} /> : null;
-							})}
+							{relatedTicketIds.filter(Boolean).map((ticketId) => (
+								<TicketIdTag key={ticketId} id={ticketId} />
+							))}
 						</>
 					)}
 				</div>

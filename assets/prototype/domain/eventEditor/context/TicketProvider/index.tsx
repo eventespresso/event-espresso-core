@@ -2,12 +2,12 @@ import React, { createContext } from 'react';
 
 import useTicketEditorId from './useTicketEditorId';
 import { EntityId } from '../../data/types';
-import useEditorModalState from '../../../../application/ui/components/layout/editor-modal/useEditorModalState';
+import useEditorModalState from '../../../../application/ui/components/layout/editorModal/useEditorModalState';
 import {
 	ContextProps,
 	Editors,
 	EditorState,
-} from '../../../../application/ui/components/layout/editor-modal/useEditorModalState/types';
+} from '../../../../application/ui/components/layout/editorModal/useEditorModalState/types';
 
 const DEFAULT_CONTEXT = {
 	editors: null,

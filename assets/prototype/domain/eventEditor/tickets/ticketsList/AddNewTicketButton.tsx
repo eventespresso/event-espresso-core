@@ -2,11 +2,11 @@ import React from 'react';
 
 import AddNewTicketModal from './AddNewTicketModal';
 import useTicketEditorId from '../../context/TicketProvider/useTicketEditorId';
-import useEditorModalState from '../../../../application/ui/components/layout/editor-modal/useEditorModalState';
+import useEditorModalState from '../../../../application/ui/components/layout/editorModal/useEditorModalState';
 import {
 	EditorId,
 	EditorState,
-} from '../../../../application/ui/components/layout/editor-modal/useEditorModalState/types';
+} from '../../../../application/ui/components/layout/editorModal/useEditorModalState/types';
 import { EspressoButton } from '../../../../application/ui/components/input';
 
 const AddNewTicketButton: React.FC = () => {

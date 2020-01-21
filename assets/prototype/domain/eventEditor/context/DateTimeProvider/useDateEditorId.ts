@@ -2,7 +2,7 @@
  * Internal dependencies
  */
 import { EntityId } from '../../data/types';
-import { EditorId } from '../../../../application/ui/components/layout/editor-modal/useEditorModalState/types';
+import { EditorId } from '../../../../application/ui/components/layout/editorModal/useEditorModalState/types';
 
 /**
  * Function that returns editor id for a given event date

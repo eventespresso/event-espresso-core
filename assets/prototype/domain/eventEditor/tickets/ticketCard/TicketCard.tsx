@@ -11,7 +11,7 @@ import CurrencyInput from '../../../../application/ui/components/input/CurrencyI
 import { useEntityMutator, EntityType, MutationResult } from '../../../../application/services/apollo/mutations';
 import useRelations from '../../../../application/services/apollo/relations/useRelations';
 import { useStatus, TypeName } from '../../../../application/services/apollo/status';
-import DatetimeId from '../../datetimes/DatetimeId';
+import DatetimeIdTag from '../../datetimes/DatetimeIdTag';
 import InlineEditInput from '../../../../application/ui/components/input/InlineEditInput';
 import { ListItemProps } from '../../types';
 import { cardStyle, idStyle, priceStyle, btnsStyle } from './styles';
@@ -92,8 +92,8 @@ const TicketCard: React.FC<ListItemProps> = ({ id }): JSX.Element => {
 				</div>
 				<div>
 					{'Related Dates: '}{' '}
-					{relatedDates.map((datetimeId) => (
-						<DatetimeId key={datetimeId} id={datetimeId} />
+					{relatedDates.filter(Boolean).map((datetimeId) => (
+						<DatetimeIdTag key={datetimeId} id={datetimeId} />
 					))}
 				</div>
 			</Card>
