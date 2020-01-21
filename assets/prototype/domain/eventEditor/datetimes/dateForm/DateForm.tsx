@@ -1,11 +1,11 @@
-import React, { useContext, CSSProperties } from 'react';
+import React from 'react';
 import Currency from 'react-currency-formatter';
 import { Field } from 'react-final-form';
 import { H2, H4 } from '@blueprintjs/core/lib/esm';
 import { renderToString } from '@wordpress/element';
-import RelationsSelector from '../../../shared/RelationsSelector';
 
-import { DateTimeContext } from '../../context/DateTimeProvider';
+import RelationsSelector from '../../../shared/RelationsSelector';
+import { useDatetimeContext } from './../../hooks';
 import useDatetimeItem from '../../data/queries/datetimes/useDatetimeItem';
 import { DateItemFormProps } from '../types';
 import { hdrStyle, lblStyle, inputStyle, divStyle, relationsStyle } from './style';
@@ -21,7 +21,7 @@ const formatSecondaryField = (ticketPrice: number, toString = false): JSX.Elemen
 };
 
 const DateForm: React.FC<DateItemFormProps> = ({ formReset, relatedTickets, tickets = [], title }): JSX.Element => {
-	const { id } = useContext(DateTimeContext);
+	const { id } = useDatetimeContext();
 	const { description = '', name = '' } = useDatetimeItem({ id }) || {};
 
 	return (
