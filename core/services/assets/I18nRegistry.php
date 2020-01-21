@@ -116,8 +116,8 @@ class I18nRegistry
     protected function registerInlineScript($handle, array $translations, $domain)
     {
         $script = $domain ?
-        'eejs.i18n.setLocaleData( ' . wp_json_encode($translations) . ', "' . $domain . '" );' :
-        'eejs.i18n.setLocaleData( ' . wp_json_encode($translations) . ' );';
+        'wp.i18n.setLocaleData( ' . wp_json_encode($translations) . ', "' . $domain . '" );' :
+        'wp.i18n.setLocaleData( ' . wp_json_encode($translations) . ' );';
         wp_add_inline_script($handle, $script, 'before');
     }
 

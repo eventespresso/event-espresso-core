@@ -150,6 +150,11 @@ module.exports = function(webpackEnv) {
 		return newObj;
 	}, {});
 
+	const externals = {
+		react: 'React',
+		'react-dom': 'ReactDOM',
+	};
+
 	return {
 		mode: isEnvProduction ? 'production' : isEnvDevelopment && 'development',
 		// Stop compilation early in production
@@ -188,6 +193,7 @@ module.exports = function(webpackEnv) {
 			// this defaults to 'window', but by setting it to 'this' then
 			// module chunks which are built will work in web workers as well.
 		},
+		externals,
 		optimization: {
 			minimize: isEnvProduction,
 			minimizer: [

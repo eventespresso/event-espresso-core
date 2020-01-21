@@ -1,3 +1,4 @@
+// @ts-nocheck
 import React, { useState } from 'react';
 import Currency from 'react-currency-formatter';
 import { Button, EditableText } from '@blueprintjs/core/lib/esm';

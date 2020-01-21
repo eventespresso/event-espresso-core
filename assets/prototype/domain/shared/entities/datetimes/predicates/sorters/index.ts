@@ -24,13 +24,9 @@ interface SortDates {
 const sorters = ({ dates, sort = DatesSortedBy.chronologically }: SortDates): Datetime[] => {
 	switch (sort) {
 		case DatesSortedBy.chronologically:
-			return dates.sort(({ startDate: dateLeft }, { startDate: dateRight }) => {
-				return (
-					dateLeft !== undefined &&
-					dateRight !== undefined &&
-					compareAsc(parseISO(dateLeft), parseISO(dateRight))
-				);
-			});
+			return dates.sort(({ startDate: dateLeft }, { startDate: dateRight }) =>
+				compareAsc(parseISO(dateLeft), parseISO(dateRight))
+			);
 		case DatesSortedBy.byId:
 			return sortBy(prop('id'))(dates);
 		case DatesSortedBy.byName:
