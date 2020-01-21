@@ -92,7 +92,7 @@ const TicketCard: React.FC<ListItemProps> = ({ id }): JSX.Element => {
 				</div>
 				<div>
 					{'Related Dates: '}{' '}
-					{relatedDates.map((datetimeId) => (
+					{relatedDates.filter(Boolean).map((datetimeId) => (
 						<DatetimeIdTag key={datetimeId} id={datetimeId} />
 					))}
 				</div>
