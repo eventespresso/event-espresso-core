@@ -75,17 +75,17 @@ if (count($registrations) > 0) {
             </table>
         </div><!-- close spco-ticket-info-dv -->
 
-    <?php
-    // Display the forms below the table.
-    foreach ($registrations as $registration) {
-        if ($registration instanceof EE_Registration) {
-            // Attendee Questions.
-            $reg_form = EE_Template_Layout::get_subform_name($registration->reg_url_link());
-            echo ${$reg_form};
-        } // if ( $registration instanceof EE_Registration )
-    } // end foreach ( $registrations as $registration )
+        <?php
+        // Display the forms below the table.
+        foreach ($registrations as $registration) {
+            if ($registration instanceof EE_Registration) {
+                // Attendee Questions.
+                $reg_form = EE_Template_Layout::get_subform_name($registration->reg_url_link());
+                echo ${$reg_form};
+            } // if ( $registration instanceof EE_Registration )
+        } // end foreach ( $registrations as $registration )
 
-    ?>
+        ?>
     </div><!-- close spco-attendee-panel-dv -->
     <?php
     echo $default_hidden_inputs;
