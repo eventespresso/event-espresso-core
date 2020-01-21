@@ -9,8 +9,14 @@ import {
 	EditorState,
 } from '../../../../application/ui/components/layout/editor-modal/useEditorModalState/types';
 
+const DEFAULT_CONTEXT = {
+	editors: null,
+	editorState: null,
+	id: '',
+};
+
 export type DateTimeContextProps = ContextProps;
-export const DateTimeContext = createContext<DateTimeContextProps>(null);
+export const DateTimeContext = createContext<DateTimeContextProps>(DEFAULT_CONTEXT);
 
 interface DatetimeProviderProps {
 	children?: React.ReactNode;
