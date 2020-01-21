@@ -1,4 +1,4 @@
-import { useState, useEffect } from '@wordpress/element';
+import { useState, useEffect } from 'react';
 
 const InlineEditInput = ({ value, defaultValue, component: Component, ...rest }) => {
 	const [currentValue, setcurrentValue] = useState(defaultValue);

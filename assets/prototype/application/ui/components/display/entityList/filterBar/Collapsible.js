@@ -1,15 +1,15 @@
 /**
  * External imports
  */
+import { useMemo, useRef } from 'react';
 import { useSpring, animated } from 'react-spring';
-import { useMemo, useRef } from '@wordpress/element';
 import { SelectControl, TextControl } from '@wordpress/components';
 import { __ } from '@eventespresso/i18n';
 
 /**
  * Internal dependencies
  */
-import { useRect } from '../../../../../hooks/useRect';
+import useRect from '../../../../../hooks/useRect';
 
 /**
  * Collapsible

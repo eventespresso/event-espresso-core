@@ -23,8 +23,6 @@ class EspressoEditorAssetManager extends AssetManager
     const JS_HANDLE_EDITOR_PROTOTYPE = 'eventespresso-editor-prototype';
     const CSS_HANDLE_EDITOR = 'eventespresso-editor';
     const CSS_HANDLE_EDITOR_PROTOTYPE = 'eventespresso-editor-prototype';
-    const JS_HANDLE_EDITOR_HOCS = 'eventespresso-editor-hocs';
-    const CSS_HANDLE_EDITOR_HOCS = 'eventespresso-editor-hocs';
 
 
     /**
@@ -52,7 +50,6 @@ class EspressoEditorAssetManager extends AssetManager
     {
         $this->addJs(self::JS_HANDLE_EDITOR)->setRequiresTranslation();
         $this->addJs(self::JS_HANDLE_EDITOR_PROTOTYPE)->setRequiresTranslation();
-        $this->addJs(self::JS_HANDLE_EDITOR_HOCS)->setRequiresTranslation();
     }
 
 
@@ -68,6 +65,5 @@ class EspressoEditorAssetManager extends AssetManager
     {
         $this->addCss(self::CSS_HANDLE_EDITOR);
         $this->addCss(self::CSS_HANDLE_EDITOR_PROTOTYPE);
-        $this->addCss(self::CSS_HANDLE_EDITOR_HOCS);
     }
 }
