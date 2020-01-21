@@ -6,7 +6,7 @@ import { useReducer } from 'react';
 /**
  * Internal dependencies
  */
-import filters from '../../../../../shared/predicates/tickets/filters';
+import filters from '../../../../../shared/entities/tickets/predicates/filters';
 import { DisplayDates, ShowTickets, SortTicketsBy } from '../../../../data/ticket/types';
 import { Ticket } from '../../../../data/types';
 

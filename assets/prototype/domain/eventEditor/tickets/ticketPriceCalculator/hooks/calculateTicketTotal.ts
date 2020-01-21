@@ -3,8 +3,8 @@ import { filter, pathOr, propSatisfies, reduce } from 'ramda';
 import ticketTotalCalculator from './ticketTotalCalculator';
 import { TpcFormData } from '../types';
 import { Price, Ticket } from '../../../data/types';
-import { sortByPriceOrderIdAsc } from '../../../../shared/predicates/prices/sortingPredicates';
-import { updateTicketPriceForTicket } from '../../../../shared/predicates/tickets/selectionPredicates';
+import { sortByPriceOrderIdAsc } from '../../../../shared/entities/prices/predicates/sortingPredicates';
+import { updateTicketPriceForTicket } from '../../../../shared/entities/tickets/predicates/selectionPredicates';
 
 const notNewPrice = propSatisfies((id) => id !== 'NEW_PRICE', 'id');
 

@@ -2,7 +2,7 @@ import { difference } from 'ramda';
 
 import { FnCallback, TpcFormData } from '../types';
 import { Price } from '../../../data/types';
-import { cloneAndNormalizePrice } from '../../../../shared/predicates/prices/updatePredicates';
+import { cloneAndNormalizePrice } from '../../../../shared/entities/prices/predicates/updatePredicates';
 import { useEntityMutator, EntityType } from '../../../../../application/services/apollo/mutations';
 import toBoolean from '../../../../../application/utilities/converters/toBoolean';
 import parsedAmount from '../../../../../application/utilities/money/parsedAmount';

@@ -5,8 +5,8 @@ import { isEqual, getFromFormData, updatePriceModifier, updatePriceInFormData } 
 import useTicketPriceCalculator from '../hooks/useTicketPriceCalculator';
 import { Price, PriceType } from '../../../data/types';
 import usePriceTypes from '../../../data/queries/priceTypes/usePriceTypes';
-import { getPriceType } from '../../../../shared/predicates/prices/selectionPredicates';
-import { getDefaultPriceModifierType } from '../../../../shared/predicates/priceTypes/selectionPredicates';
+import { getPriceType } from '../../../../shared/entities/prices/predicates/selectionPredicates';
+import { getDefaultPriceModifierType } from '../../../../shared/entities/priceTypes/predicates/index';
 import toBoolean from '../../../../../application/utilities/converters/toBoolean';
 
 const usePriceTypeDecorator = (): Calculation => {

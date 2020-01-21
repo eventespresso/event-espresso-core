@@ -8,9 +8,9 @@ import useTicketPriceCalculatorFormMutators from './hooks/useTicketPriceCalculat
 import useOnSubmitPrices from './hooks/useOnSubmitPrices';
 import { TpcButtonDataProps, TpcModalProps } from './types';
 import { defaultNewPriceModifier } from '../../../shared/entities/prices/defaultNewPriceModifier';
-import { sortByPriceOrderIdAsc } from '../../../shared/predicates/prices/sortingPredicates';
-import { copyPriceFields } from '../../../shared/predicates/prices/updatePredicates';
-import { copyTicketFields } from '../../../shared/predicates/tickets/updatePredicates';
+import { sortByPriceOrderIdAsc } from '../../../shared/entities/prices/predicates/sortingPredicates';
+import { copyPriceFields } from '../../../shared/entities/prices/predicates/updatePredicates';
+import { copyTicketFields } from '../../../shared/entities/tickets/predicates/updatePredicates';
 import useTicketPrices from '../../data/queries/tickets/useTicketPrices';
 import useDefaultPriceType from '../../data/queries/priceTypes/useDefaultPriceType';
 

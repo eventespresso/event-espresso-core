@@ -8,7 +8,7 @@ import PriceModifierActions from './PriceModifierActions';
 import PriceTypeInput from './PriceTypeInput';
 import { TpcModifierFormRowProps } from './types';
 import usePriceTypes from '../../data/queries/priceTypes/usePriceTypes';
-import { getPriceModifiers } from '../../../shared/predicates/prices/selectionPredicates';
+import { getPriceModifiers } from '../../../shared/entities/prices/predicates/selectionPredicates';
 
 // just temporary
 import styles from './inlineStyles';
