@@ -1048,7 +1048,7 @@ if (! class_exists('PluginUpdateEngineChecker')):
                                 continue;
                             }
                             // Have an addon state? Set the latestVersion value!
-                            $addon_state->latestVersion = $response->extra_data->plugins->{ $addon_slug };
+                            $addon_state->latestVersion = $response->extra_data->plugins->{ $addon_slug }->version;
                             update_option('external_updates-' . $addon_slug, $addon_state);
                         }
                     }
