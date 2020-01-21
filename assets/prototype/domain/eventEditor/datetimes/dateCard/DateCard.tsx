@@ -11,7 +11,7 @@ import useDatetimeItem from '../../data/queries/datetimes/useDatetimeItem';
 import TicketId from '../../tickets/TicketId';
 
 import DateRangePicker from '../../../shared/dateRangeInput/DateRangePicker';
-import { MomentDateRange } from '../../../shared/dateRangeInput/momentDate';
+import { DateRangeDisplay } from '../../../shared/dateRangeInput/dateDisplay';
 import { PLUS_ONE_MONTH, PLUS_TWO_MONTHS } from '../../../shared/defaultDates';
 
 import { useEntityMutator, EntityType, MutationResult } from '../../../../application/services/apollo/mutations';
@@ -83,7 +83,7 @@ const DateCard: React.FC<ListItemProps> = ({ id }): JSX.Element => {
 					</H6>
 				</div>
 				<div>
-					<MomentDateRange range={range} withTime />
+					<DateRangeDisplay range={range} withTime />
 					<Popover lazy>
 						<Button icon='calendar' style={btnStyle} minimal />
 						<DateRangePicker onFieldUpdate={updateEntity} range={range} setRange={setRange} />
