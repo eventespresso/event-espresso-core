@@ -83,16 +83,6 @@ const config = [
 	},
 	{
 		entry: {
-			'eventespresso-editor': pathToEDTRv1 + 'editor/index.js',
-		},
-		module: moduleConfigWithJsAndCssRules,
-		output: {
-			library: ['eejs', 'editor'],
-			libraryTarget: 'this',
-		},
-	},
-	{
-		entry: {
 			// This change is just for the prototype.
 			'eventespresso-editor-prototype': pathToPrototype + '/domain/eventEditor/index.tsx',
 		},
