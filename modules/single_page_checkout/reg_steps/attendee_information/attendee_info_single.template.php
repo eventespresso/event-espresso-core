@@ -73,7 +73,7 @@ if (count($registrations) > 0) {
                 ?>
                 </tbody>
             </table>
-        </div>
+        </div><!-- close spco-ticket-info-dv -->
 
     <?php
     // Display the forms below the table.
@@ -82,12 +82,12 @@ if (count($registrations) > 0) {
             // Attendee Questions.
             $reg_form = EE_Template_Layout::get_subform_name($registration->reg_url_link());
             echo ${$reg_form};
-    ?>
-    </div>
-<?php
         } // if ( $registration instanceof EE_Registration )
     } // end foreach ( $registrations as $registration )
 
+    ?>
+    </div><!-- close spco-attendee-panel-dv -->
+    <?php
     echo $default_hidden_inputs;
 } // end if ( count( $registrations ) > 0 )
 
