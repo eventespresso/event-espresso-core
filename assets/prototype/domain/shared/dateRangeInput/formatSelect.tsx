@@ -1,17 +1,17 @@
-import moment from 'moment';
+import { format, parse } from 'date-fns';
 
-interface MomentFormatter {
+interface DateFormatter {
 	formatDate: (date: Date) => string;
 	parseDate: (str: string) => Date;
 	placeholder: string;
 }
 
-const momentFormatter = (format: string): MomentFormatter => ({
-	formatDate: (date: Date): string => moment(date).format(format),
-	parseDate: (str: string): Date => moment(str, format).toDate(),
-	placeholder: `${format} (moment)`,
+const dateFormatter = (formatString: string): DateFormatter => ({
+	formatDate: (date: Date): string => format(date, formatString),
+	parseDate: (dateString: string): Date => parse(dateString, formatString, new Date()),
+	placeholder: `${formatString} (moment)`,
 });
 
 export const FORMATS = {
-	MYSQL: momentFormatter('YYYY-MM-DD HH:mm:ss'),
+	MYSQL: dateFormatter('yyyy-MM-dd HH:mm:ss'),
 };
