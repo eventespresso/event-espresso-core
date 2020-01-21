@@ -33,7 +33,7 @@ const rulesConfig = {
 				loader: 'postcss-loader',
 				options: {
 					// eslint-disable-next-line object-shorthand
-					plugins: function() {
+					plugins: function () {
 						return [autoprefixer, cssnano({ preset: 'default' })];
 					},
 					sourceMap: true,
