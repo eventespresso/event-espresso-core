@@ -2,11 +2,11 @@ import React, { CSSProperties } from 'react';
 
 import AddNewDatetimeModal from './AddNewDateModal';
 import useDateEditorId from '../../context/DateTimeProvider/useDateEditorId';
-import useEditorModalState from '../../../../application/ui/components/layout/editor-modal/useEditorModalState';
+import useEditorModalState from '../../../../application/ui/components/layout/editorModal/useEditorModalState';
 import {
 	EditorId,
 	EditorState,
-} from '../../../../application/ui/components/layout/editor-modal/useEditorModalState/types';
+} from '../../../../application/ui/components/layout/editorModal/useEditorModalState/types';
 import { EspressoButton } from '../../../../application/ui/components/input';
 
 const btnRowStyle: CSSProperties = {
