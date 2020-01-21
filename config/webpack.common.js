@@ -74,11 +74,114 @@ const config = [
 	},
 	{
 		entry: {
+			'eventespresso-utils': pathToEDTRv1 + 'utils/index.js',
+		},
+		module: moduleConfigWithJsRules,
+		output: {
+			library: ['eejs', 'utils'],
+			libraryTarget: 'this',
+		},
+	},
+	{
+		entry: {
+			'eventespresso-validators': pathToEDTRv1 + 'eejs/validators/index.js',
+		},
+		module: moduleConfigWithJsRules,
+		output: {
+			library: ['eejs', 'validators'],
+			libraryTarget: 'this',
+		},
+	},
+	{
+		entry: {
 			'eventespresso-data-stores': pathToEDTRv1 + 'data/index.js',
 		},
 		module: moduleConfigWithJsAndCssRules,
 		watchOptions: {
 			poll: 1000,
+		},
+	},
+	{
+		entry: {
+			'eventespresso-helpers': pathToEDTRv1 + 'data/helpers/index.js',
+		},
+		module: moduleConfigWithJsRules,
+		output: {
+			library: ['eejs', 'helpers'],
+			libraryTarget: 'this',
+		},
+	},
+	{
+		entry: {
+			'eventespresso-model': pathToEDTRv1 + 'data/model/index.js',
+		},
+		module: moduleConfigWithJsRules,
+		output: {
+			library: ['eejs', 'model'],
+			libraryTarget: 'this',
+		},
+	},
+	{
+		entry: {
+			'eventespresso-model-schema': pathToEDTRv1 + 'data/eventespresso/schema/index.js',
+		},
+		output: {
+			library: ['eejs', 'modelSchema'],
+			libraryTarget: 'this',
+		},
+		module: moduleConfigWithJsAndCssRules,
+		watchOptions: {
+			poll: 1000,
+		},
+	},
+	{
+		entry: {
+			'eventespresso-value-objects': pathToEDTRv1 + 'vo/index.js',
+		},
+		module: moduleConfigWithJsRules,
+		output: {
+			library: ['eejs', 'valueObjects'],
+			libraryTarget: 'this',
+		},
+	},
+	{
+		entry: {
+			'eventespresso-hocs': pathToEDTRv1 + 'higher-order-components/index.js',
+		},
+		module: moduleConfigWithJsAndCssRules,
+		output: {
+			library: ['eejs', 'hocs'],
+			libraryTarget: 'this',
+		},
+	},
+	{
+		entry: {
+			'eventespresso-components': pathToEDTRv1 + 'components/index.js',
+		},
+		module: moduleConfigWithJsAndCssRules,
+		output: {
+			library: ['eejs', 'components'],
+			libraryTarget: 'this',
+		},
+	},
+	{
+		entry: {
+			'eventespresso-editor-hocs': pathToEDTRv1 + 'editor-hocs/index.js',
+		},
+		module: moduleConfigWithJsAndCssRules,
+		output: {
+			library: ['eejs', 'editorHocs'],
+			libraryTarget: 'this',
+		},
+	},
+	{
+		entry: {
+			'eventespresso-editor': pathToEDTRv1 + 'editor/index.js',
+		},
+		module: moduleConfigWithJsAndCssRules,
+		output: {
+			library: ['eejs', 'editor'],
+			libraryTarget: 'this',
 		},
 	},
 	{
