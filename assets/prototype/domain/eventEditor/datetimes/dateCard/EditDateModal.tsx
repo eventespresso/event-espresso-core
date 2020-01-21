@@ -1,14 +1,14 @@
-import React, { useContext } from 'react';
+import React from 'react';
 import FormModal from '../../../../application/ui/components/forms/FormModal';
 import DatetimeForm from '../dateForm/DateForm';
-import { DateTimeContext } from '../../context/DateTimeProvider';
+import { useDatetimeContext } from './../../hooks';
 import { useEntityMutator, EntityType, MutationResult } from '../../../../application/services/apollo/mutations';
 import useTickets from '../../data/queries/tickets/useTickets';
 import { DateItemFormProps } from '../types';
 import { EditDateModalProps } from '../types';
 
 const EditDateModal: React.FC<EditDateModalProps> = ({ relatedTickets }): JSX.Element => {
-	const { editors, editorState, id } = useContext(DateTimeContext);
+	const { editors, editorState, id } = useDatetimeContext();
 	const isOpen = editorState.isEditorOpen(editors.editForm);
 	const onClose = (): void => editorState.closeEditor(editors.editForm);
 

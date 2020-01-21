@@ -1,15 +1,15 @@
-import React, { useContext } from 'react';
+import React from 'react';
 import { Field } from 'react-final-form';
 import { H2, H4 } from '@blueprintjs/core/lib/esm';
 
 import RelationsSelector from '../../../shared/RelationsSelector';
-import { TicketContext } from '../../context/TicketProvider';
+import { useTicketContext } from '../../hooks';
 import useTicketItem from '../../data/queries/tickets/useTicketItem';
 import { TicketItemFormProps } from '../types';
 import { hdrStyle, lblStyle, inputStyle, divStyle, relationsStyle } from './style';
 
 const TicketForm: React.FC<TicketItemFormProps> = ({ datetimes, formReset, relatedDates, title }): JSX.Element => {
-	const { id } = useContext(TicketContext);
+	const { id } = useTicketContext();
 	const { description = '', name = '', price = '' } = useTicketItem({ id }) || {};
 
 	return (

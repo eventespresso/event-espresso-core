@@ -1,10 +1,10 @@
-import React, { useContext, CSSProperties } from 'react';
+import React, { CSSProperties } from 'react';
 import { Button } from '@blueprintjs/core/lib/esm';
-import { DateTimeContext } from '../../context/DateTimeProvider';
 import { EditItemButtonProps } from '../../types';
+import { useDatetimeContext } from './../../hooks';
 
 const EditDateButton: React.FC<EditItemButtonProps> = ({ position }): JSX.Element => {
-	const { editors, editorState } = useContext(DateTimeContext);
+	const { editors, editorState } = useDatetimeContext();
 	const onClick = (): void => editorState.openEditor(editors.editForm);
 
 	const style: CSSProperties = {

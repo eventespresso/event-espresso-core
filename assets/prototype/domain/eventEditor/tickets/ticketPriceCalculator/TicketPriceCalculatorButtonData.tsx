@@ -1,11 +1,11 @@
-import React, { useContext } from 'react';
+import React from 'react';
 
 import TicketPriceCalculatorButton from './TicketPriceCalculatorButton';
 import { WithTicketProp } from './types';
-import { TicketContext, TicketContextProps } from '../../context/TicketProvider';
+import { useTicketContext } from '../../hooks';
 
 const TicketPriceCalculatorButtonData: React.FC<WithTicketProp> = ({ ticket }): JSX.Element => {
-	const { editors, editorState } = useContext<TicketContextProps>(TicketContext);
+	const { editors, editorState } = useTicketContext();
 	const isOpen = editorState.isEditorOpen(editors.calculator);
 	const onClose = (): void => editorState.closeEditor(editors.calculator);
 	const onOpen = (): void => editorState.openEditor(editors.calculator);
