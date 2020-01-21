@@ -1,6 +1,5 @@
 // @ts-nocheck
 import React from 'react';
-import isFunction from 'lodash/isFunction';
 import { DateRangePicker as DefaultDateRangePicker, IDateRangePickerProps } from '@blueprintjs/datetime';
 import { A_LONG_TIME_AGO, PLUS_TEN_YEARS } from '../defaultDates';
 import { FORMATS } from './formatSelect';
@@ -23,7 +22,7 @@ const DateRangePicker: React.FC<DateRangePickerProps> = ({ onFieldUpdate, range,
 
 	const handleRangeChange = (value: [Date, Date]): void => {
 		const [start, end] = value;
-		const isUpdatable = isFunction(onFieldUpdate) && start && end;
+		const isUpdatable = start && end;
 
 		if (isUpdatable) {
 			const formattedDates: FormattedDates = {
