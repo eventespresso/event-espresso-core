@@ -1,11 +1,11 @@
-import React, { useContext, CSSProperties } from 'react';
+import React, { CSSProperties } from 'react';
 import { Button } from '@blueprintjs/core/lib/esm';
 
-import { TicketContext } from '../../context/TicketProvider';
 import { EditItemButtonProps } from '../../types';
+import { useTicketContext } from '../../hooks';
 
 const EditTicketButton: React.FC<EditItemButtonProps> = ({ position }): JSX.Element => {
-	const { editors, editorState } = useContext(TicketContext);
+	const { editors, editorState } = useTicketContext();
 	const onClick = (): void => editorState.openEditor(editors.editForm);
 
 	const style: CSSProperties = {

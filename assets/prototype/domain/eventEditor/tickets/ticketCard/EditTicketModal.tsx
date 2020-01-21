@@ -1,7 +1,7 @@
-import React, { useContext } from 'react';
+import React from 'react';
 
 import TicketForm from '../ticketForm/TicketForm';
-import { TicketContext, TicketContextProps } from '../../context/TicketProvider';
+import { useTicketContext } from '../../hooks';
 import useDatetimes from '../../data/queries/datetimes/useDatetimes';
 import { useEntityMutator, EntityType, MutationResult } from '../../../../application/services/apollo/mutations';
 import FormModal from '../../../../application/ui/components/forms/FormModal';
@@ -9,7 +9,7 @@ import { TicketItemFormProps } from '../types';
 import { EditTicketModalProps } from '../types';
 
 const EditTicketModal: React.FC<EditTicketModalProps> = ({ relatedDates }): JSX.Element => {
-	const { editors, editorState, id } = useContext<TicketContextProps>(TicketContext);
+	const { editors, editorState, id } = useTicketContext();
 	const isOpen = editorState.isEditorOpen(editors.editForm);
 	const onClose = editorState.closeEditor(editors.editForm);
 
