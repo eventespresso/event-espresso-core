@@ -3,7 +3,7 @@ import { is } from 'ramda';
 import { DisplayDates, ShowTickets, SortTicketsBy } from '../../../../data/ticket/types';
 
 import useTicketListFilterState from './index';
-import { tickets } from '../../../../../shared/predicates/tickets/test/data';
+import { tickets } from '../../../../../shared/entities/tickets/predicates/test/data';
 
 test('useTicketListFilterState initial state result', () => {
 	const { result } = renderHook(() => useTicketListFilterState(tickets));

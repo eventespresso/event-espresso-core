@@ -3,9 +3,9 @@ import { filter, pathOr, propOr, propSatisfies, reduce } from 'ramda';
 import basePriceCalculator from './basePriceCalculator';
 import { TpcFormData } from '../types';
 import { Price, Ticket } from '../../../data/types';
-import { isNotBasePrice } from '../../../../shared/predicates/prices/selectionPredicates';
-import { sortByPriceOrderIdDesc } from '../../../../shared/predicates/prices/sortingPredicates';
-import { updateBasePriceAmount } from '../../../../shared/predicates/prices/updatePredicates';
+import { isNotBasePrice } from '../../../../shared/entities/prices/predicates/selectionPredicates';
+import { sortByPriceOrderIdDesc } from '../../../../shared/entities/prices/predicates/sortingPredicates';
+import { updateBasePriceAmount } from '../../../../shared/entities/prices/predicates/updatePredicates';
 
 const notNewPrice = propSatisfies((prop) => prop !== 'NEW_PRICE', 'id');
 

@@ -8,8 +8,8 @@ import { useReducer } from 'react';
  */
 import { Datetime } from '../../../../data/types';
 import { DatesSortedBy, DisplayDates, ShowDates } from '../../../../data/date/types';
-import filters from '../../../../../shared/predicates/datetimes/filters';
-import sorters from '../../../../../shared/predicates/datetimes/sorters';
+import filters from '../../../../../shared/entities/datetimes/predicates/filters';
+import sorters from '../../../../../shared/entities/datetimes/predicates/sorters';
 
 enum ActionType {
 	SET_DATES_SORTED_BY = 'SET_DATES_SORTED_BY',

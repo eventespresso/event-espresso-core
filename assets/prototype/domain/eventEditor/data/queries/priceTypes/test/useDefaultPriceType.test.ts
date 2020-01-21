@@ -4,7 +4,7 @@ import useDefaultPriceType from '../useDefaultPriceType';
 import { ApolloMockedProvider } from '../../../../context';
 import { nodes, edge } from './data';
 import useInitPriceTypeTestCache from './useInitPriceTypeTestCache';
-import { isFlatFeeSurcharge } from '../../../../../shared/predicates/priceTypes/selectionPredicates';
+import { isFlatFeeSurcharge } from '../../../../../shared/entities/priceTypes/predicates/selectionPredicates';
 
 describe('useDefaultPriceType()', () => {
 	const wrapper = ApolloMockedProvider();

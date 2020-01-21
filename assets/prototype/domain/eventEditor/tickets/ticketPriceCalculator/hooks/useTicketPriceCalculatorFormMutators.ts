@@ -2,7 +2,7 @@ import { Mutator, MutableState, Tools } from 'final-form';
 import arrayMutators from 'final-form-arrays';
 
 import { TpcFormData } from '../types';
-import { sortByPriceOrderIdAsc } from '../../../../shared/predicates/prices/sortingPredicates';
+import { sortByPriceOrderIdAsc } from '../../../../shared/entities/prices/predicates/sortingPredicates';
 
 interface TpcFormMutators {
 	[key: string]: Mutator<TpcFormData>;
