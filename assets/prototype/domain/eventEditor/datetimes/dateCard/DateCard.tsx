@@ -4,7 +4,7 @@ import moment from 'moment';
 import { Button, Card, EditableText, Elevation, H4, H6, Popover } from '@blueprintjs/core/lib/esm';
 
 import DeleteDatetimeButton from './DeleteDateButton';
-import EditDatetime from './EditDate';
+import EditDateButton from './EditDateButton';
 
 import DateTimeProvider from '../../context/DateTimeProvider';
 import useDatetimeItem from '../../data/queries/datetimes/useDatetimeItem';
@@ -44,7 +44,7 @@ const DateCard: React.FC<ListItemProps> = ({ id }): JSX.Element => {
 	return date ? (
 		<DateTimeProvider id={date.id}>
 			<Card elevation={Elevation.ONE} style={cardStyle}>
-				<EditDatetime id={date.id} position='top' relatedTickets={relatedTicketIds} />
+				<EditDateButton position='top' />
 				<div style={idStyle}>
 					{date.dbId} {':'} {date.id}
 				</div>
