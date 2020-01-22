@@ -55,7 +55,7 @@ export type ToasterHash = (message: ToasterMsg) => string;
 export type ToasterNotices = (loadingFlag: boolean, loadingError: ApolloError) => void;
 export type ToasterMsg = string;
 
-export interface UseToasterHook {
+export interface ToasterHook {
 	dismiss: DismissToastCallback;
 	error: ErrorToastCallback;
 	info: InfoToastCallback;

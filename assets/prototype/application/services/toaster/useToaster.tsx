@@ -1,6 +1,6 @@
 import { useContext } from 'react';
 
-import { ToasterHash, UseToasterHook } from './types';
+import { ToasterHash, ToasterHook } from './types';
 import useDismissToast from './useDismissToast';
 import useErrorToast from './useErrorToast';
 import useInfoToast from './useInfoToast';
@@ -19,7 +19,7 @@ const hash: ToasterHash = (message): string => {
 		.toString();
 };
 
-const useToaster = (): UseToasterHook => {
+const useToaster = (): ToasterHook => {
 	const toaster = useContext(ToastContext);
 	return {
 		dismiss: useDismissToast(toaster, hash),
