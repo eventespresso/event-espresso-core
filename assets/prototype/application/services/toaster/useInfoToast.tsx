@@ -1,7 +1,9 @@
 import { Intent } from '@blueprintjs/core';
 import { useCallback } from 'react';
 
-const useInfoToast = (toaster, hash) =>
+import { InfoToast } from './types';
+
+const useInfoToast: InfoToast = (toaster, hash) =>
 	useCallback(
 		(message, timeout = 10000, action = {}, onDismiss = null) => {
 			if (message) {

@@ -1,7 +1,9 @@
 import { Intent } from '@blueprintjs/core';
 import { useCallback } from 'react';
 
-const useSuccessToast = (toaster, hash) =>
+import { SuccessToast } from './types';
+
+const useSuccessToast: SuccessToast = (toaster, hash) =>
 	useCallback(
 		(message = '', timeout = 2500, action = {}, onDismiss = null) => {
 			if (message) {

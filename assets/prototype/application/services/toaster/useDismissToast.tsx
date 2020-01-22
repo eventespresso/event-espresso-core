@@ -1,8 +1,10 @@
 import { useCallback } from 'react';
 
-const useDismissToast = (toaster, hash) =>
+import { DismissToast } from './types';
+
+const useDismissToast: DismissToast = (toaster, hash) =>
 	useCallback(
-		(message = '') => {
+		(message) => {
 			const msgHash = hash(message);
 			toaster.dismiss(msgHash);
 		},
