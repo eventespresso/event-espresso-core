@@ -1,7 +1,6 @@
 import { Entity, Price, PriceType, Ticket } from '../../data/types';
 
 export interface AddPriceModifierDataProps extends WithPriceProp {
-	modifiers: PriceType[];
 	name: string;
 	push: (price: Price) => void;
 	reset: (name: string) => void;
