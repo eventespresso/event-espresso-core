@@ -1,6 +1,6 @@
 import React from 'react';
 import DateForm from '../dateForm/DateForm';
-import FormModal from '../../../../application/ui/components/forms/FormModal';
+import FormModal from '../../../../application/ui/components/forms/FormModal/FormModal';
 import { useEntityMutator, EntityType } from '../../../../application/services/apollo/mutations';
 import useTickets from '../../data/queries/tickets/useTickets';
 import { AddItemModalProps } from '../../types';

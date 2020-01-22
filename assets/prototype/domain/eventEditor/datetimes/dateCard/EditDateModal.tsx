@@ -1,5 +1,5 @@
 import React from 'react';
-import FormModal from '../../../../application/ui/components/forms/FormModal';
+import FormModal from '../../../../application/ui/components/forms/FormModal/FormModal';
 import DatetimeForm from '../dateForm/DateForm';
 import { useDatetimeContext } from './../../hooks';
 import { useEntityMutator, EntityType, MutationResult } from '../../../../application/services/apollo/mutations';
