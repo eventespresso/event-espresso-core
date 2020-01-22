@@ -2,9 +2,9 @@ import React, { useCallback } from 'react';
 import clone from 'ramda/src/clone';
 
 import AddPriceModifierButton from './AddPriceModifierButton';
-import { AddPriceModifierDataProps } from './types';
-import { Price } from '../../data/types';
-import { findEntityByGuid } from '../../../shared/predicates/shared/selectionPredicates';
+import { AddPriceModifierDataProps } from '../types';
+import { Price } from '../../../data/types';
+import { findEntityByGuid } from '../../../../shared/predicates/shared/selectionPredicates';
 
 const AddPriceModifierButtonData = ({
 	modifiers,

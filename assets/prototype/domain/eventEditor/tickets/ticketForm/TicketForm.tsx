@@ -2,7 +2,7 @@ import React from 'react';
 import { Field } from 'react-final-form';
 import { H2, H4 } from '@blueprintjs/core/lib/esm';
 
-import RelationsSelector from '../../../shared/RelationsSelector';
+import RelationsSelector from '../../../shared/ui/RelationsSelector';
 import { useTicketContext } from '../../hooks';
 import useTicketItem from '../../data/queries/tickets/useTicketItem';
 import { TicketItemFormProps } from '../types';

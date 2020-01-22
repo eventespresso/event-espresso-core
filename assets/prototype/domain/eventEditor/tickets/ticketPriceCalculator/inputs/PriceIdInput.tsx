@@ -1,7 +1,7 @@
 import React from 'react';
 import { Field } from 'react-final-form';
 
-import { PriceInputProps } from './types';
+import { PriceInputProps } from '../types';
 
 const PriceIdInput: React.FC<PriceInputProps> = ({ name, price }): JSX.Element => {
 	return (

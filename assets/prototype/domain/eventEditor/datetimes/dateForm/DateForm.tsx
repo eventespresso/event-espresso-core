@@ -4,7 +4,7 @@ import { Field } from 'react-final-form';
 import { H2, H4 } from '@blueprintjs/core/lib/esm';
 import { renderToString } from '@wordpress/element';
 
-import RelationsSelector from '../../../shared/RelationsSelector';
+import RelationsSelector from '../../../shared/ui/RelationsSelector';
 import { useDatetimeContext } from './../../hooks';
 import useDatetimeItem from '../../data/queries/datetimes/useDatetimeItem';
 import { DateItemFormProps } from '../types';
