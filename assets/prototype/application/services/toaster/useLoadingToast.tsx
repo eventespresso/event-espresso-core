@@ -3,12 +3,12 @@ import React, { useCallback } from 'react';
 import { IToastProps } from '@blueprintjs/core';
 
 import LoadingToastNotice from './LoadingToast';
-import { LoadingToast } from './types';
+import { LoadingToast, LoadingToastCallback } from './types';
 import useDismissToast from './useDismissToast';
 
 const useLoadingToast: LoadingToast = (toaster, hash) => {
 	const dismiss = useDismissToast(toaster, hash);
-	return useCallback(
+	return useCallback<LoadingToastCallback>(
 		(loading = true, message = 'loading', timeout = 0, action = {}, onDismiss = null) => {
 			const isToasting = (msgHash: string): boolean => {
 				const toasts = toaster.getToasts();

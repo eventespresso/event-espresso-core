@@ -3,10 +3,10 @@ import { ApolloError } from 'apollo-client';
 import { Intent } from '@blueprintjs/core';
 
 import IconGraphQL from './IconGraphQL';
-import { ErrorIcon, ErrorToast, ToasterMsg } from './types';
+import { ErrorIcon, ErrorToast, ErrorToastCallback, ToasterMsg } from './types';
 
 const useErrorToast: ErrorToast = (toaster, hash) =>
-	useCallback(
+	useCallback<ErrorToastCallback>(
 		(message, timeout = 5000, action = {}, onDismiss = null) => {
 			let icon: ErrorIcon = 'warning-sign';
 			let errorMessage: ToasterMsg;
