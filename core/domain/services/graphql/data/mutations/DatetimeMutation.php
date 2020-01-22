@@ -7,6 +7,7 @@ use EE_Datetime;
 use EE_Error;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
+use Exception;
 use GraphQLRelay\Relay;
 use InvalidArgumentException;
 use ReflectionException;
@@ -25,6 +26,7 @@ class DatetimeMutation
      *
      * @param array $input Data coming from the GraphQL mutation query input
      * @return array
+     * @throws Exception
      */
     public static function prepareFields(array $input)
     {

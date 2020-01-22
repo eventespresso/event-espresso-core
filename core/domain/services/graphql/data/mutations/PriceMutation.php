@@ -37,7 +37,7 @@ class PriceMutation
         }
 
         if (! empty($input['amount'])) {
-            $args['PRC_amount'] = floatval($input['amount']);
+            $args['PRC_amount'] = (float) $input['amount'];
         }
 
         if (array_key_exists('isDefault', $input)) {
@@ -49,11 +49,11 @@ class PriceMutation
         }
 
         if (! empty($input['overrides'])) {
-            $args['PRC_overrides'] = intval($input['overrides']);
+            $args['PRC_overrides'] = (int) $input['overrides'];
         }
 
         if (! empty($input['order'])) {
-            $args['PRC_order'] = intval($input['order']);
+            $args['PRC_order'] = (int) $input['order'];
         }
 
         if (! empty($input['parent'])) {

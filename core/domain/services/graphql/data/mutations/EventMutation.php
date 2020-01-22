@@ -3,6 +3,7 @@
 namespace EventEspresso\core\domain\services\graphql\data\mutations;
 
 use DateTime;
+use Exception;
 
 /**
  * Class EventMutation
@@ -19,6 +20,7 @@ class EventMutation
      * @param array  $input         Data coming from the GraphQL mutation query input
      * @param string $mutation_name Name of the mutation being performed
      * @return array
+     * @throws Exception
      */
     public static function prepareFields(array $input, $mutation_name)
     {

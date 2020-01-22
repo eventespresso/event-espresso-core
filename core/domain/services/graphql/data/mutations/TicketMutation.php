@@ -2,18 +2,17 @@
 
 namespace EventEspresso\core\domain\services\graphql\data\mutations;
 
+use DomainException;
+use EE_Error;
+use Exception;
 use GraphQLRelay\Relay;
 use DateTime;
 use EEM_Price;
 use EEM_Ticket;
 use EE_Ticket;
-use EventEspresso\core\domain\services\assets\EspressoEditorAssetManager;
-use EventEspresso\core\domain\services\converters\RestApiSpoofer;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
 use EventEspresso\core\exceptions\ModelConfigurationException;
-use EventEspresso\core\exceptions\RestPasswordIncorrectException;
-use EventEspresso\core\exceptions\RestPasswordRequiredException;
 use EventEspresso\core\exceptions\UnexpectedEntityException;
 use EventEspresso\core\libraries\rest_api\RestException;
 use InvalidArgumentException;
@@ -33,6 +32,7 @@ class TicketMutation
      *
      * @param array $input Data coming from the GraphQL mutation query input
      * @return array
+     * @throws Exception
      */
     public static function prepareFields(array $input)
     {
@@ -47,7 +47,7 @@ class TicketMutation
         }
 
         if (! empty($input['price'])) {
-            $args['TKT_price'] = floatval($input['price']);
+            $args['TKT_price'] = (float) $input['price'];
         }
 
         if (! empty($input['startDate'])) {
@@ -75,11 +75,17 @@ class TicketMutation
         return $args;
     }
 
+
     /**
      * Sets the related datetimes for the given ticket.
      *
      * @param EE_Ticket $entity    The Ticket instance.
      * @param array     $datetimes Array of datetime IDs to relate.
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws ReflectionException
      */
     public static function setRelatedDatetimes($entity, array $datetimes)
     {
@@ -99,11 +105,17 @@ class TicketMutation
         }
     }
 
+
     /**
      * Sets the related prices for the given ticket.
      *
      * @param EE_Ticket $entity The Ticket instance.
      * @param array     $prices Array of entity IDs to relate.
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws ReflectionException
      */
     public static function setRelatedPrices($entity, array $prices)
     {
@@ -125,7 +137,7 @@ class TicketMutation
 
 
     /**
-     * @param EE_Ticket $ticket_entity
+     * @param EE_Ticket  $ticket_entity
      * @param EEM_Ticket $ticket_model
      * @throws DomainException
      * @throws EE_Error
@@ -136,6 +148,7 @@ class TicketMutation
      * @throws ReflectionException
      * @throws RestException
      * @throws UnexpectedEntityException
+     * @throws EE_Error
      * @since $VID:$
      */
     public static function addDefaultPrices(EE_Ticket $ticket_entity, EEM_Ticket $ticket_model)
