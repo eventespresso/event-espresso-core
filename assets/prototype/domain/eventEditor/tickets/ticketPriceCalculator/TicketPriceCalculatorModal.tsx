@@ -2,19 +2,19 @@ import React from 'react';
 import isEmpty from 'ramda/src/isEmpty';
 import { useEffect, useState } from 'react';
 
-import TicketPriceCalculatorForm from './TicketPriceCalculatorForm';
-import useTicketPriceCalculatorFormDecorator from './hooks/useTicketPriceCalculatorFormDecorator';
-import useTicketPriceCalculatorFormMutators from './hooks/useTicketPriceCalculatorFormMutators';
-import useOnSubmitPrices from './hooks/useOnSubmitPrices';
+import FormModal from '../../../../application/ui/components/forms/formModal/FormModal';
+
 import { TpcButtonDataProps, TpcModalProps } from './types';
 import { defaultNewPriceModifier } from '../../../shared/entities/prices/defaultNewPriceModifier';
 import { sortByPriceOrderIdAsc } from '../../../shared/entities/prices/predicates/sortingPredicates';
 import { copyPriceFields } from '../../../shared/entities/prices/predicates/updatePredicates';
 import { copyTicketFields } from '../../../shared/entities/tickets/predicates/updatePredicates';
-import useTicketPrices from '../../data/queries/tickets/useTicketPrices';
+import TicketPriceCalculatorForm from './TicketPriceCalculatorForm';
 import useDefaultPriceType from '../../data/queries/priceTypes/useDefaultPriceType';
-
-import FormModal from '../../../../application/ui/components/forms/FormModal';
+import useOnSubmitPrices from './hooks/useOnSubmitPrices';
+import useTicketPriceCalculatorFormDecorator from './hooks/useTicketPriceCalculatorFormDecorator';
+import useTicketPriceCalculatorFormMutators from './hooks/useTicketPriceCalculatorFormMutators';
+import useTicketPrices from '../../data/queries/tickets/useTicketPrices';
 
 const EMPTY_OBJECT = {};
 

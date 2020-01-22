@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import Currency from 'react-currency-formatter';
 import { Button, EditableText } from '@blueprintjs/core/lib/esm';
-import InlineEditInput from '../InlineEditInput/InlineEditInput';
+import InlineEditInput from '../inlineEditInput/InlineEditInput';
 
 const nullFunc = (args?: any) => {};
 

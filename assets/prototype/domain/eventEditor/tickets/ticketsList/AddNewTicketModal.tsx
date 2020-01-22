@@ -1,7 +1,7 @@
 import React from 'react';
 
 import TicketForm from '../ticketForm/TicketForm';
-import FormModal from '../../../../application/ui/components/forms/FormModal/FormModal';
+import FormModal from '../../../../application/ui/components/forms/formModal/FormModal';
 import { useEntityMutator, EntityType } from '../../../../application/services/apollo/mutations';
 import useDatetimes from '../../data/queries/datetimes/useDatetimes';
 import { AddItemModalProps } from '../../types';

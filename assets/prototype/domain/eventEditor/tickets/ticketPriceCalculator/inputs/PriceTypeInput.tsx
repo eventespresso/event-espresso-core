@@ -2,7 +2,7 @@ import React from 'react';
 import { Field } from 'react-final-form';
 
 // just temporary
-import styles from './inlineStyles';
+import styles from '../inlineStyles';
 import { Price } from '../../../data/types';
 import usePriceTypeForPrice from '../../../data/queries/priceTypes/usePriceTypeForPrice';
 

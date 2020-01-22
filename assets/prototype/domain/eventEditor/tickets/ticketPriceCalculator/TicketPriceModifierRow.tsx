@@ -1,11 +1,11 @@
 import React from 'react';
 
-import PriceAmountInput from './PriceAmountInput';
-import PriceDescriptionInput from './PriceDescriptionInput';
-import PriceIdInput from './PriceIdInput';
-import PriceNameInput from './PriceNameInput';
-import PriceModifierActions from './PriceModifierActions';
-import PriceTypeInput from './PriceTypeInput';
+import PriceAmountInput from './inputs/PriceAmountInput';
+import PriceDescriptionInput from './inputs/PriceDescriptionInput';
+import PriceIdInput from './inputs/PriceIdInput';
+import PriceNameInput from './inputs/PriceNameInput';
+import PriceModifierActions from './buttons/PriceModifierActions';
+import PriceTypeInput from './inputs/PriceTypeInput';
 import { TpcModifierFormRowProps } from './types';
 import usePriceTypes from '../../data/queries/priceTypes/usePriceTypes';
 import { getPriceModifiers } from '../../../shared/entities/prices/predicates/selectionPredicates';

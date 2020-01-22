@@ -4,7 +4,7 @@ import TicketForm from '../ticketForm/TicketForm';
 import { useTicketContext } from '../../hooks';
 import useDatetimes from '../../data/queries/datetimes/useDatetimes';
 import { useEntityMutator, EntityType, MutationResult } from '../../../../application/services/apollo/mutations';
-import FormModal from '../../../../application/ui/components/forms/FormModal/FormModal';
+import FormModal from '../../../../application/ui/components/forms/formModal/FormModal';
 import { TicketItemFormProps } from '../types';
 import { EditTicketModalProps } from '../types';
 

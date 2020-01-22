@@ -17,7 +17,7 @@ import { PLUS_ONE_MONTH, PLUS_TWO_MONTHS } from '../../../shared/defaultDates';
 import { useEntityMutator, EntityType, MutationResult } from '../../../../application/services/apollo/mutations';
 import useRelations from '../../../../application/services/apollo/relations/useRelations';
 import { useStatus, TypeName } from '../../../../application/services/apollo/status';
-import InlineEditInput from '../../../../application/ui/components/input/InlineEditInput/InlineEditInput';
+import InlineEditInput from '../../../../application/ui/components/input/inlineEditInput/InlineEditInput';
 import { ListItemProps } from '../../types';
 import { btnStyle, cardStyle, idStyle } from './styles';
 

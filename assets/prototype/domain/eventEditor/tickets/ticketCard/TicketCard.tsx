@@ -7,12 +7,12 @@ import EditTicket from './EditTicket';
 import DeleteTicketButton from './DeleteTicketButton';
 import TicketPriceCalculatorButton from '../ticketPriceCalculator/buttons/TicketPriceCalculatorButtonData';
 import useTicketItem from '../../data/queries/tickets/useTicketItem';
-import CurrencyInput from '../../../../application/ui/components/input/CurrencyInput/CurrencyInput';
+import CurrencyInput from '../../../../application/ui/components/input/currencyInput/CurrencyInput';
 import { useEntityMutator, EntityType, MutationResult } from '../../../../application/services/apollo/mutations';
 import useRelations from '../../../../application/services/apollo/relations/useRelations';
 import { useStatus, TypeName } from '../../../../application/services/apollo/status';
 import DatetimeIdTag from '../../datetimes/DatetimeIdTag';
-import InlineEditInput from '../../../../application/ui/components/input/InlineEditInput/InlineEditInput';
+import InlineEditInput from '../../../../application/ui/components/input/inlineEditInput/InlineEditInput';
 import { ListItemProps } from '../../types';
 import { cardStyle, idStyle, priceStyle, btnsStyle } from './styles';
 
