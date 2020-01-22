@@ -43,7 +43,7 @@ export type SuccessToastCallback = (
 	onDismiss?: OnDismissFn
 ) => void;
 
-export type ToasterInit = (props: ToasterInitProps) => void;
+export type ToasterInit = (props: ToasterInitProps) => ToasterInitCallbacks;
 export interface ToasterInitProps {
 	loadingMessage: string;
 	successMessage: string;
