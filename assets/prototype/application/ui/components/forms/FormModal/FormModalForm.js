@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { EspressoButton } from '../input/espressoButton';
+import { EspressoButton } from '../../input/espressoButton';
 
 const formStyle = {
 	boxSizing: 'border-box',
