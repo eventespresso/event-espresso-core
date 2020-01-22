@@ -1,8 +1,8 @@
 import React from 'react';
 
 import TicketPriceCalculatorButton from './TicketPriceCalculatorButton';
-import { WithTicketProp } from './types';
-import { useTicketContext } from '../../hooks';
+import { WithTicketProp } from '../types';
+import { useTicketContext } from '../../../hooks';
 
 const TicketPriceCalculatorButtonData: React.FC<WithTicketProp> = ({ ticket }): JSX.Element => {
 	const { editors, editorState } = useTicketContext();

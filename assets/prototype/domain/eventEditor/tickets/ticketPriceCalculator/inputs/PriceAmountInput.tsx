@@ -3,8 +3,8 @@ import { Field } from 'react-final-form';
 
 // just temporary
 import styles from './inlineStyles';
-import { Price } from '../../data/types';
-import { useMoneyDisplay } from '../../../../application/utilities/money';
+import { Price } from '../../../data/types';
+import { useMoneyDisplay } from '../../../../../application/utilities/money';
 const percentSign = '%';
 
 interface PriceAmountInputProps {

@@ -3,7 +3,7 @@ import { Field } from 'react-final-form';
 
 // just temporary
 import styles from './inlineStyles';
-import { PriceInputProps } from './types';
+import { PriceInputProps } from '../types';
 
 const PriceNameInput: React.FC<PriceInputProps> = ({ name, price }): JSX.Element => {
 	return (
