@@ -5,22 +5,17 @@ import { __ } from '@wordpress/i18n';
 
 import AddPriceModifierButton from './AddPriceModifierButton';
 import { AddPriceModifierDataProps } from '../types';
+import usePriceTypeForPrice from '../../../data/queries/priceTypes/usePriceTypeForPrice';
 import { Price } from '../../../data/types';
-import { findEntityByGuid } from '../../../../shared/predicates/shared/selectionPredicates';
+// import { findEntityByGuid } from '../../../../shared/predicates/shared/selectionPredicates';
+import { useRelations } from '../../../../../application/services/apollo/relations';
 
-const AddPriceModifierButtonData = ({
-	modifiers,
-	name,
-	price,
-	push,
-	reset,
-	sort,
-}: AddPriceModifierDataProps): JSX.Element => {
-	const getPriceType = findEntityByGuid(modifiers);
+const AddPriceModifierButtonData = ({ name, price, push, reset, sort }: AddPriceModifierDataProps): JSX.Element => {
+	const { addRelation } = useRelations();
+	const baseType = usePriceTypeForPrice(price.id);
 	const addPriceModifier = useCallback(() => {
 		if (Number(price.amount)) {
 			const priceClone = clone(price);
-			const baseType = getPriceType(priceClone.priceType.id);
 			const newPrice: Price = {
 				...priceClone,
 				id: '',
@@ -29,8 +24,13 @@ const AddPriceModifierButtonData = ({
 				isPercent: baseType.isPercent,
 				isTax: baseType.isTax,
 				order: baseType.order,
-				priceType: baseType,
 			};
+			addRelation({
+				entity: 'prices',
+				entityId: newPrice.id,
+				relation: 'priceTypes',
+				relationId: baseType.id,
+			});
 			push(newPrice);
 			reset(name);
 			sort();
