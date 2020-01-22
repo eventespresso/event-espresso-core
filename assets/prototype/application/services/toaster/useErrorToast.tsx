@@ -13,6 +13,7 @@ const useErrorToast: ErrorToast = (toaster, hash) =>
 			if (message instanceof ApolloError) {
 				errorMessage = message.message;
 				if (message.graphQLErrors) {
+					// @ts-ignore
 					icon = <IconGraphQL />;
 				} else if (message.networkError) {
 					icon = 'globe-network';
