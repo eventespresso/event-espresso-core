@@ -2,9 +2,9 @@ import { ApolloError } from 'apollo-client';
 import { useState, useEffect } from 'react';
 
 import useToaster from './useToaster';
-import { ToasterInit, ToasterNotices } from './types';
+import { ToasterInit, ToasterInitCallbacks, ToasterNotices } from './types';
 
-const useInitToaster: ToasterInit = ({ loadingMessage, successMessage }) => {
+const useInitToaster: ToasterInit = ({ loadingMessage, successMessage }): ToasterInitCallbacks => {
 	const toaster = useToaster();
 
 	const useInitializationNotices: ToasterNotices = (loadingFlag, loadingError): void => {

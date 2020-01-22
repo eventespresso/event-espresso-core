@@ -48,6 +48,11 @@ export interface ToasterInitProps {
 	loadingMessage: string;
 	successMessage: string;
 }
+export type ToasterInitCallbacks = {
+	onCompleted: () => void;
+	onError: (error: ApolloError) => void;
+	initializationNotices: ToasterNotices;
+};
 
 type OnDismissFn = (didTimeoutExpire: boolean) => void;
 type ToasterAction = IActionProps & ILinkProps;
