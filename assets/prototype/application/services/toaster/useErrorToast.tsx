@@ -1,22 +1,27 @@
 import React, { useCallback } from 'react';
 import { ApolloError } from 'apollo-client';
 import { Intent } from '@blueprintjs/core';
-import IconGraphQL from './IconGraphQL';
 
-const useErrorToast = (toaster, hash) =>
-	useCallback(
+import IconGraphQL from './IconGraphQL';
+import { ErrorIcon, ErrorToast, ErrorToastCallback, ToasterMsg } from './types';
+
+const useErrorToast: ErrorToast = (toaster, hash) =>
+	useCallback<ErrorToastCallback>(
 		(message, timeout = 5000, action = {}, onDismiss = null) => {
-			let icon = 'warning-sign';
-			let errorMessage = message;
+			let icon: ErrorIcon = 'warning-sign';
+			let errorMessage: ToasterMsg;
 			if (message instanceof ApolloError) {
 				errorMessage = message.message;
 				if (message.graphQLErrors) {
+					// @ts-ignore
 					icon = <IconGraphQL />;
 				} else if (message.networkError) {
 					icon = 'globe-network';
 				} else {
 					icon = 'layout-auto';
 				}
+			} else {
+				errorMessage = message;
 			}
 			if (errorMessage) {
 				toaster.show(

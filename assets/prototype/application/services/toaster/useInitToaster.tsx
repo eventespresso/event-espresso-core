@@ -1,10 +1,13 @@
+import { ApolloError } from 'apollo-client';
 import { useState, useEffect } from 'react';
-import useToaster from './useToaster';
 
-const useInitToaster = ({ loadingMessage, successMessage }) => {
+import useToaster from './useToaster';
+import { ToasterInit, ToasterInitCallbacks, ToasterNotices } from './types';
+
+const useInitToaster: ToasterInit = ({ loadingMessage, successMessage }): ToasterInitCallbacks => {
 	const toaster = useToaster();
 
-	const useInitializationNotices = (loadingFlag, loadingError) => {
+	const useInitializationNotices: ToasterNotices = (loadingFlag, loadingError): void => {
 		const [initialized, setInitialized] = useState(false);
 
 		if (!initialized) {
@@ -12,7 +15,7 @@ const useInitToaster = ({ loadingMessage, successMessage }) => {
 			toaster.error(loadingError);
 		}
 
-		useEffect(() => {
+		useEffect((): void => {
 			if (!initialized && !loadingFlag) {
 				setInitialized(true);
 			}
@@ -20,11 +23,11 @@ const useInitToaster = ({ loadingMessage, successMessage }) => {
 	};
 
 	return {
-		onCompleted: () => {
+		onCompleted: (): void => {
 			toaster.dismiss(loadingMessage);
 			toaster.success(successMessage);
 		},
-		onError: (error) => {
+		onError: (error: ApolloError): void => {
 			toaster.dismiss(loadingMessage);
 			toaster.error(error);
 		},
