@@ -41,13 +41,7 @@ const TicketPriceModifierRow: React.FC<TpcModifierFormRowProps> = ({
 				<PriceAmountInput name={name} price={price} reverseCalculate={reverseCalculate} />
 			</td>
 			<td style={{ ...styles.colWidth7h, ...styles.actions }}>
-				<PriceModifierActions
-					fields={fields}
-					index={index}
-					modifierOptions={modifierOptions}
-					name={name}
-					price={price}
-				/>
+				<PriceModifierActions fields={fields} index={index} name={name} price={price} />
 			</td>
 		</tr>
 	);

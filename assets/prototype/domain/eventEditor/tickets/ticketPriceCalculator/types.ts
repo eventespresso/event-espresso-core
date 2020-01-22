@@ -55,7 +55,6 @@ export interface TpcModalProps {
 
 export interface TpcModifierFormRowProps extends FieldArrayProps, WithPriceProp, WithRevCalc {
 	index?: number;
-	modifierOptions?: PriceType[];
 	name?: string;
 }
 
