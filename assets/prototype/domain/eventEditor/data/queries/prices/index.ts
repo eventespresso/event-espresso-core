@@ -16,7 +16,6 @@ export const PRICE_ATTRIBUTES: any = gql`
 		name
 		order
 		overrides
-		priceType
 	}
 `;
 

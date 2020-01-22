@@ -108,7 +108,7 @@ class Price extends TypeBase
                 esc_html__('The related price type object.', 'event_espresso')
             ),
             new GraphQLInputField(
-                'priceTypeId',
+                'priceType',
                 'ID',
                 null,
                 esc_html__('The price type ID', 'event_espresso')

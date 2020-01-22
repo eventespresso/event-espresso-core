@@ -64,7 +64,7 @@ export interface Price extends Entity, Trashable {
 	isTax: boolean;
 	order: number | string;
 	overrides: string;
-	priceType: PriceType;
+	priceTypeOrder: number | string;
 }
 
 export type PriceEdge = EntityEdge<Price, 'EspressoRootQueryPricesConnection'>;

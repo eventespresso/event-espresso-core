@@ -20,7 +20,7 @@ export const nodes: Price[] = [
 		name: 'Price XYZ',
 		order: 1,
 		overrides: null,
-		priceType: null,
+		priceTypeOrder: null,
 		__typename: 'EspressoPrice',
 	},
 	{
@@ -37,7 +37,7 @@ export const nodes: Price[] = [
 		name: 'Price ABC',
 		order: 2,
 		overrides: null,
-		priceType: null,
+		priceTypeOrder: null,
 		__typename: 'EspressoPrice',
 	},
 	{
@@ -54,7 +54,7 @@ export const nodes: Price[] = [
 		name: 'Price PQR',
 		order: 3,
 		overrides: null,
-		priceType: null,
+		priceTypeOrder: null,
 		__typename: 'EspressoPrice',
 	},
 ];
