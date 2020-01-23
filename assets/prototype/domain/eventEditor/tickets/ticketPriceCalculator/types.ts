@@ -1,4 +1,4 @@
-import { Entity, Price, Ticket } from '../../data/types';
+import { Entity, EntityId, Price, Ticket } from '../../data/types';
 
 export interface AddPriceModifierDataProps extends WithPriceProp {
 	modifiers: Price[];
@@ -33,7 +33,9 @@ export enum TpcActionType {
 	CalculateTicketTotal = 'CALCULATE_TICKET_TOTAL',
 }
 
-export interface TpcButtonDataProps extends WithTicketProp, TpcModalProps {}
+export interface TpcButtonDataProps {
+	ticketId: EntityId;
+}
 
 export type TpcCallback = (func: any) => UpdatedTpcFormDataPath;
 
