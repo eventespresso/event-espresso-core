@@ -8,17 +8,13 @@ import RelationsSelector from '../../../shared/ui/RelationsSelector';
 import useDatetimeItem from '../../data/queries/datetimes/useDatetimeItem';
 import useDatetimes from '../../data/queries/datetimes/useDatetimes';
 import useRelations from '../../../../application/services/apollo/relations/useRelations';
+import parsedAmount from '../../../../application/utilities/money/parsedAmount';
 import { DateItemFormProps } from '../types';
 import { hdrStyle, lblStyle, inputStyle, divStyle, relationsStyle } from './style';
 
-/**
- * @function
- * @param {number} ticketPrice
- * @param {boolean} toString
- * @return {node|string} rendered ticket price
- */
-const formatSecondaryField = (ticketPrice: number, toString = false): JSX.Element => {
-	return toString ? renderToString(<Currency quantity={ticketPrice} />, null) : <Currency quantity={ticketPrice} />;
+const formatSecondaryField = (ticketPrice: number | string, toString = false): JSX.Element => {
+	const priceAmount = parsedAmount(ticketPrice);
+	return toString ? renderToString(<Currency quantity={priceAmount} />, null) : <Currency quantity={priceAmount} />;
 };
 
 const DateForm: React.FC<DateItemFormProps> = ({ id, formReset, title }): JSX.Element => {
