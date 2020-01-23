@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
-import { isEmpty } from 'ramda';
+import { isEmpty, isNil } from 'ramda';
 
 import {
 	useEditorModal,
@@ -18,11 +18,20 @@ import useTicketPriceCalculatorFormDecorator from './useTicketPriceCalculatorFor
 import useTicketPriceCalculatorFormMutators from './useTicketPriceCalculatorFormMutators';
 import useTicketPrices from '../../../data/queries/tickets/useTicketPrices';
 import useTicketItem from '../../../data/queries/tickets/useTicketItem';
+import { Ticket, Price } from '../../../../eventEditor/data/types';
 
-const EMPTY_OBJECT = {};
+interface TPCFormValues {
+	ticket: Ticket;
+	prices: Price[];
+}
+
+const INITIAL_STATE: TPCFormValues = {
+	ticket: null,
+	prices: [],
+};
 
 const useTicketPriceCalculatorModal: EditorModal = (ticketId: EntityId) => {
-	const [initialValues, setInitialValues] = useState(EMPTY_OBJECT);
+	const [initialValues, setInitialValues] = useState<TPCFormValues>(INITIAL_STATE);
 	const decorator = useTicketPriceCalculatorFormDecorator();
 	const mutators = useTicketPriceCalculatorFormMutators();
 	const prices = useTicketPrices(ticketId);
@@ -33,7 +42,10 @@ const useTicketPriceCalculatorModal: EditorModal = (ticketId: EntityId) => {
 	const { closeEditor } = useEditorModal();
 
 	useEffect(() => {
-		if (initialValues === EMPTY_OBJECT && !isEmpty(prices)) {
+		const updatable =
+			(isEmpty(initialValues) || isNil(initialValues.ticket) || isEmpty(initialValues.ticket)) &&
+			!isEmpty(prices);
+		if (updatable) {
 			const sortedPrices = sortByPriceOrderIdAsc(prices);
 			// make sure to set a valid priceType for new price.
 			const newPriceModifier = { ...defaultNewPriceModifier, priceType: defaultPriceType.id };
@@ -49,7 +61,7 @@ const useTicketPriceCalculatorModal: EditorModal = (ticketId: EntityId) => {
 	return useCallback<EditorModalCallback>(() => {
 		const onClose = (): void => {
 			closeEditor('ticketPriceCalculator');
-			setInitialValues(EMPTY_OBJECT);
+			setInitialValues(INITIAL_STATE);
 		};
 
 		return {
@@ -60,7 +72,7 @@ const useTicketPriceCalculatorModal: EditorModal = (ticketId: EntityId) => {
 			decorators: [decorator],
 			mutators,
 		};
-	}, [initialValues, ticketId, decorator, mutators, ticket]);
+	}, [initialValues, decorator, mutators, ticket]);
 };
 
 export default useTicketPriceCalculatorModal;
