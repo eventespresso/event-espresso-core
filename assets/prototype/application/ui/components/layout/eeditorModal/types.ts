@@ -44,13 +44,13 @@ export interface EditorAction {
 	entityId?: EntityId;
 }
 
-export interface EditorModalData {
+export interface EditorModalProps {
 	formComponent: any;
 	onSubmit: (values?: any) => void;
 	onClose: () => void;
 	[key: string]: any;
 }
 
-export type EditorModalCallback = (entityId?: EntityId) => EditorModalData;
+export type EditorModalCallback = (entityId?: EntityId) => EditorModalProps;
 
 export type EditorModal = (entityId?: EntityId) => EditorModalCallback;

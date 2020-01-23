@@ -4,10 +4,9 @@ import useEditDatetimeModal from '../../eventEditor/datetimes/useEditDatetimeMod
 import useAddTicketModal from '../../eventEditor/tickets/useAddTicketModal';
 import useEditTicketModal from '../../eventEditor/tickets/useEditTicketModal';
 import useTicketPriceCalculatorModal from '../../eventEditor/tickets/ticketPriceCalculator/hooks/useTicketPriceCalculatorModal';
-import { EntityId } from '../../../application/ui/components/layout/eeditorModal';
-import { EditorModals } from './';
+import { EditorModalsHook } from './';
 
-const useEditorModals = (entityId: EntityId): (() => EditorModals) => {
+const useEditorModals: EditorModalsHook = (entityId) => {
 	const addDatetime = useAddDatetimeModal();
 	const editDatetime = useEditDatetimeModal(entityId);
 	const addTicket = useAddTicketModal();
