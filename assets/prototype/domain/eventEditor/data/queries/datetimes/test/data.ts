@@ -65,7 +65,7 @@ export const nodes: Datetime[] = [
 		length: null,
 		order: 0,
 		reserved: 0,
-		sold: 6,
+		sold: 42,
 		startDate: 'end data',
 		__typename: 'EspressoDatetime',
 	},
