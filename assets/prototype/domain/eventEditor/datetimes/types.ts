@@ -10,8 +10,6 @@ export interface EditDateModalProps {
 
 export interface DateItemFormProps {
 	id?: EntityId;
-	tickets: Ticket[];
-	relatedTickets: EntityId[];
 	title?: string;
 	formReset?: boolean;
 }

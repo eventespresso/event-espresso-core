@@ -6,6 +6,8 @@ import { renderToString } from '@wordpress/element';
 
 import RelationsSelector from '../../../shared/ui/RelationsSelector';
 import useDatetimeItem from '../../data/queries/datetimes/useDatetimeItem';
+import useDatetimes from '../../data/queries/datetimes/useDatetimes';
+import useRelations from '../../../../application/services/apollo/relations/useRelations';
 import { DateItemFormProps } from '../types';
 import { hdrStyle, lblStyle, inputStyle, divStyle, relationsStyle } from './style';
 
@@ -19,8 +21,18 @@ const formatSecondaryField = (ticketPrice: number, toString = false): JSX.Elemen
 	return toString ? renderToString(<Currency quantity={ticketPrice} />, null) : <Currency quantity={ticketPrice} />;
 };
 
-const DateForm: React.FC<DateItemFormProps> = ({ id, formReset, relatedTickets, tickets = [], title }): JSX.Element => {
+const DateForm: React.FC<DateItemFormProps> = ({ id, formReset, title }): JSX.Element => {
 	const { description = '', name = '' } = useDatetimeItem({ id }) || {};
+	const { getRelations } = useRelations();
+	const tickets = useDatetimes();
+
+	const relatedTicketIds = id
+		? getRelations({
+				entity: 'datetimes',
+				entityId: id,
+				relation: 'tickets',
+		  })
+		: [];
 
 	return (
 		<>
@@ -54,7 +66,7 @@ const DateForm: React.FC<DateItemFormProps> = ({ id, formReset, relatedTickets, 
 						name={'tickets'}
 						render={({ input }): JSX.Element => (
 							<RelationsSelector
-								defaultRelatedItems={relatedTickets}
+								defaultRelatedItems={relatedTicketIds}
 								items={tickets}
 								itemType={'ticket'}
 								displayFields={['name', 'price']}
