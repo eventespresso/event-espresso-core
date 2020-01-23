@@ -19,10 +19,8 @@ import useTicketPriceCalculatorFormMutators from './useTicketPriceCalculatorForm
 import useTicketPrices from '../../../data/queries/tickets/useTicketPrices';
 import useTicketItem from '../../../data/queries/tickets/useTicketItem';
 
-const EMPTY_OBJECT = {};
-
 const useTicketPriceCalculatorModal: EditorModal = (ticketId: EntityId) => {
-	const [initialValues, setInitialValues] = useState(EMPTY_OBJECT);
+	const [initialValues, setInitialValues] = useState(null);
 	const decorator = useTicketPriceCalculatorFormDecorator();
 	const mutators = useTicketPriceCalculatorFormMutators();
 	const prices = useTicketPrices(ticketId);
@@ -33,7 +31,7 @@ const useTicketPriceCalculatorModal: EditorModal = (ticketId: EntityId) => {
 	const { closeEditor } = useEditorModal();
 
 	useEffect(() => {
-		if (initialValues === EMPTY_OBJECT && !isEmpty(prices)) {
+		if (initialValues === null && ticketId && !isEmpty(prices)) {
 			const sortedPrices = sortByPriceOrderIdAsc(prices);
 			// make sure to set a valid priceType for new price.
 			const newPriceModifier = { ...defaultNewPriceModifier, priceType: defaultPriceType.id };
@@ -49,17 +47,20 @@ const useTicketPriceCalculatorModal: EditorModal = (ticketId: EntityId) => {
 	return useCallback<EditorModalCallback>(() => {
 		const onClose = (): void => {
 			closeEditor('ticketPriceCalculator');
-			setInitialValues(EMPTY_OBJECT);
+			setInitialValues(null);
 		};
 
-		return {
-			formComponent: TicketPriceCalculatorForm,
-			onSubmit: submitPrices,
-			initialValues,
-			onClose,
-			decorators: [decorator],
-			mutators,
-		};
+		return (
+			ticketId &&
+			initialValues && {
+				formComponent: TicketPriceCalculatorForm,
+				onSubmit: submitPrices,
+				initialValues,
+				onClose,
+				decorators: [decorator],
+				mutators,
+			}
+		);
 	}, [initialValues, ticketId, decorator, mutators, ticket]);
 };
 
