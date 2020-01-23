@@ -2,7 +2,7 @@
  * Internal dependencies
  */
 import { Datetime } from '../../../../../../eventEditor/data/types';
-import isTrashed from '../../../../../entities/datetimes/predicates/isTrashed';
+import isTrashed from '../../isTrashed';
 import validFiniteCapacityLimit from '../../../../../entities/datetimes/predicates/validFiniteCapacityLimit';
 import validInfiniteCapacityLimit from './validInfiniteCapacityLimit';
 import validSold from '../../../../../entities/datetimes/predicates/validSold';

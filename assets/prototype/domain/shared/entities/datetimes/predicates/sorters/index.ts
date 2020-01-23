@@ -7,12 +7,12 @@ import { compareAsc, parseISO } from 'date-fns';
 /**
  * Internal dependencies
  */
-import { Datetime } from '../../../../eventEditor/data/types';
-import { DatesSortedBy } from '../../../../eventEditor/data/date/types';
+import { Datetime } from '../../../../../eventEditor/data/types';
+import { DatesSortedBy } from '../../../../../eventEditor/data/date/types';
 
 interface SortDates {
 	dates: Datetime[];
-	sort: DatesSortedBy;
+	sort?: DatesSortedBy;
 }
 
 /**
@@ -21,7 +21,7 @@ interface SortDates {
  *
  * @return {Array}         filtered dateEntities array
  */
-const sorters = ({ dates, sort = DatesSortedBy.chronologically }: SortDates) => {
+const sorters = ({ dates, sort = DatesSortedBy.chronologically }: SortDates): Datetime[] => {
 	switch (sort) {
 		case DatesSortedBy.chronologically:
 			return dates.sort(({ startDate: dateLeft }, { startDate: dateRight }) =>
@@ -33,9 +33,9 @@ const sorters = ({ dates, sort = DatesSortedBy.chronologically }: SortDates) => 
 			return sortBy(prop('name'))(dates);
 		case DatesSortedBy.byOrder:
 			return sortBy(prop('order'))(dates);
+		default:
+			return dates;
 	}
-
-	return dates;
 };
 
 export default sorters;

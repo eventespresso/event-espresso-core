@@ -7,7 +7,7 @@ import { is } from 'ramda';
  * Internal dependencies
  */
 import { Datetime } from '../../../../../../eventEditor/data/types';
-import isTrashed from '../../../../../entities/datetimes/predicates/isTrashed';
+import isTrashed from '../../isTrashed';
 
 const expiredOnly = (dates: Datetime[]): Datetime[] | [] => {
 	const filterFn = (date: Datetime) => {

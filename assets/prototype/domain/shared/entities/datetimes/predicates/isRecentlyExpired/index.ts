@@ -16,8 +16,6 @@ import TIME from '../../../../../../application/constants/time';
  * @return {boolean} true if end date is in the past
  */
 const isRecentlyExpired = ({ endDate }: Datetime): boolean => {
-	console.log(differenceInSeconds(parseISO(endDate), now));
-
 	return (
 		differenceInSeconds(parseISO(endDate), now) < 0 &&
 		differenceInSeconds(parseISO(endDate), now) > TIME.MONTH_IN_SECONDS * -1
