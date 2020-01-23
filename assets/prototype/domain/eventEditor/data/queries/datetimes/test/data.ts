@@ -1,4 +1,5 @@
 import { GraphQLError } from 'graphql';
+import { formatISO } from 'date-fns';
 
 import { Datetime, DatetimeEdge, DatetimeStatus } from '../../../types';
 import { ReadQueryOptions } from '../../types';
@@ -24,7 +25,7 @@ export const nodes: Datetime[] = [
 		order: 0,
 		reserved: 0,
 		sold: 6,
-		startDate: 'end',
+		startDate: formatISO(new Date(1987, 1, 11)),
 		__typename: 'EspressoDatetime',
 	},
 	{
@@ -42,10 +43,10 @@ export const nodes: Datetime[] = [
 		isDeleted: false,
 		status: DatetimeStatus.expired,
 		length: null,
-		order: 0,
+		order: 10,
 		reserved: 0,
 		sold: 6,
-		startDate: 'end data',
+		startDate: formatISO(new Date(1986, 1, 11)),
 		__typename: 'EspressoDatetime',
 	},
 	{
@@ -63,10 +64,10 @@ export const nodes: Datetime[] = [
 		isDeleted: false,
 		status: DatetimeStatus.expired,
 		length: null,
-		order: 0,
+		order: 5,
 		reserved: 0,
 		sold: 42,
-		startDate: 'end data',
+		startDate: formatISO(new Date(1985, 1, 11)),
 		__typename: 'EspressoDatetime',
 	},
 ];
