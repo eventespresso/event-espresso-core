@@ -1,5 +1,5 @@
 import React from 'react';
-import FormModal from '../../../application/ui/components/forms/FormModal';
+import FormModal from '../../../application/ui/components/forms/formModal/FormModal';
 import { useEditorModal } from '../../../application/ui/components/layout/eeditorModal';
 import useEditors from './useEditors';
 
