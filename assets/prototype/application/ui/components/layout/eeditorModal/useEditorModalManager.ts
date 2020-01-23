@@ -16,10 +16,6 @@ export const INITIAL_STATE: EditorStack = [];
 const useEditorModalManager = (): EditorStateManager => {
 	const [state, dispatch] = useReducer<EditorStateReducer>(reducer, INITIAL_STATE);
 
-	useEffect(() => {
-		console.log('<<<EditorModalManager>>>', state);
-	}, [state]);
-
 	const openEditor = (options: OpenEditorOptions): void => {
 		dispatch({
 			...options,
