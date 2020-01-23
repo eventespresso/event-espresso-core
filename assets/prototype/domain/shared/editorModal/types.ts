@@ -4,6 +4,7 @@ import { EditorModalCallback } from '../../../application/ui/components/layout/e
 export interface EditorModals {
 	addDatetime: EditorModalCallback;
 	editDatetime: EditorModalCallback;
-	// addTicket: EditorModalCallback;
-	// editTicket: EditorModalCallback;
+	addTicket: EditorModalCallback;
+	editTicket: EditorModalCallback;
+	ticketPriceCalculator: EditorModalCallback;
 }
