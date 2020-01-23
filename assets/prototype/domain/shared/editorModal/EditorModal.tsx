@@ -13,25 +13,31 @@ const EditorModal: React.FC = (): JSX.Element => {
 		[editorModals.length - 1],
 		editorModals
 	);
-	const editors = useEditors(entityId);
-
-	const entitySpecificEditor = editors()[editorId];
-
-	if (!entitySpecificEditor) {
+	// get array of editors
+	const editors = useEditors(entityId)();
+	const entitySpecificEditor = editors[editorId];
+	if (!editorId || !entitySpecificEditor) {
 		return null;
 	}
 
-	const { formComponent, initialValues = {}, onSubmit, onClose, ...rest } = entitySpecificEditor();
+	const editorProps = entitySpecificEditor();
+	if (!editorProps) {
+		return null;
+	}
+
+	const { formComponent, initialValues = {}, onSubmit, onClose, ...rest } = editorProps;
 	return (
-		<FormModal
-			key={editorId + entityId}
-			FormComponent={formComponent}
-			initialValues={initialValues}
-			isOpen={isOpen}
-			onSubmit={onSubmit}
-			onClose={onClose}
-			{...rest}
-		/>
+		editorId && (
+			<FormModal
+				key={editorId + entityId}
+				FormComponent={formComponent}
+				initialValues={initialValues}
+				isOpen={isOpen}
+				onSubmit={onSubmit}
+				onClose={onClose}
+				{...rest}
+			/>
+		)
 	);
 };
 
