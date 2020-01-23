@@ -4,27 +4,31 @@ import { useEditorModal } from '../../../application/ui/components/layout/eedito
 import useEditors from './useEditors';
 
 const EditorModal: React.FC = (): JSX.Element => {
-	const { isOpen, editorId, closeEditor, entityId } = useEditorModal();
-	const editors = useEditors(entityId);
+	const { editors: editorModals } = useEditorModal();
+	const editors = useEditors();
 
-	const entitySpecificEditor = editors[editorId];
+	const modals = editorModals.map(({ editorId, entityId, isOpen }) => {
+		const entitySpecificEditor = editors[editorId];
 
-	if (!isOpen || !entitySpecificEditor) {
-		return null;
-	}
+		if (!entitySpecificEditor) {
+			return null;
+		}
 
-	const { formComponent, initialValues = {}, onSubmit, onClose = closeEditor, ...rest } = entitySpecificEditor;
+		const { formComponent, initialValues = {}, onSubmit, onClose, ...rest } = entitySpecificEditor(entityId);
 
-	return (
-		<FormModal
-			FormComponent={formComponent}
-			initialValues={initialValues}
-			isOpen={isOpen}
-			onSubmit={onSubmit}
-			onClose={onClose}
-			{...rest}
-		/>
-	);
+		return (
+			<FormModal
+				key={editorId + entityId}
+				FormComponent={formComponent}
+				initialValues={initialValues}
+				isOpen={isOpen}
+				onSubmit={onSubmit}
+				onClose={onClose}
+				{...rest}
+			/>
+		);
+	});
+	return <>{modals}</>;
 };
 
 export default EditorModal;

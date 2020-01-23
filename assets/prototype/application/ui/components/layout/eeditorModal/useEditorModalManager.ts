@@ -1,20 +1,17 @@
 import { useReducer, useEffect } from 'react';
+import { dropLast, last, path } from 'ramda';
 
 import {
+	EditorStack,
 	EditorState,
 	EditorId,
 	EditorStateManager,
 	EditorStateReducer,
 	ActionType,
 	OpenEditorOptions,
-	EntityId,
 } from './types';
 
-export const INITIAL_STATE: EditorState = {
-	isOpen: false,
-	editorId: null,
-	entityId: '',
-};
+export const INITIAL_STATE: EditorStack = [];
 
 const useEditorModalManager = (): EditorStateManager => {
 	const [state, dispatch] = useReducer<EditorStateReducer>(reducer, INITIAL_STATE);
@@ -31,30 +28,15 @@ const useEditorModalManager = (): EditorStateManager => {
 		});
 	};
 
-	const setEditorId = (editorId: EditorId): void => {
+	const closeEditor = (editorId: EditorId): void => {
 		dispatch({
-			type: ActionType.SET_EDITOR_ID,
+			type: ActionType.CLOSE_EDITOR,
 			editorId,
 		});
 	};
 
-	const setEntityId = (entityId: EntityId): void => {
-		dispatch({
-			type: ActionType.SET_ENTITY_ID,
-			entityId,
-		});
-	};
-
-	const closeEditor = (): void => {
-		dispatch({
-			type: ActionType.CLOSE_EDITOR,
-		});
-	};
-
 	return {
-		...state,
-		setEditorId,
-		setEntityId,
+		editors: state,
 		closeEditor,
 		openEditor,
 	};
@@ -62,15 +44,17 @@ const useEditorModalManager = (): EditorStateManager => {
 
 const reducer: EditorStateReducer = (state, action) => {
 	const { type, ...rest } = action;
-	const { editorId, entityId } = rest;
+	const { editorId } = rest;
 	switch (type) {
 		case ActionType.OPEN_EDITOR:
-			return { ...state, ...rest };
-		case ActionType.SET_EDITOR_ID:
-			return { ...state, editorId };
-		case ActionType.SET_ENTITY_ID:
-			return { ...state, entityId };
+			return [...state, { isOpen: true, ...rest }];
 		case ActionType.CLOSE_EDITOR:
+			const lastEditorId = path<EditorId>(['editorId'], last<EditorState>(state));
+			if (lastEditorId && lastEditorId === editorId) {
+				return dropLast<EditorState>(1, state);
+			}
+			return state;
+		case ActionType.CLOSE_ALL:
 			return INITIAL_STATE;
 		default:
 			throw new Error('Unexpected action');

@@ -9,44 +9,47 @@ export { EntityId };
 export type EditorId = keyof EditorModals;
 
 export interface EditorState {
-	isOpen: boolean;
 	editorId: EditorId;
-	entityId: EntityId;
+	isOpen: boolean;
+	entityId?: EntityId;
+	[key: string]: any;
 }
 
+export type EditorStack = EditorState[];
+
 export interface OpenEditorOptions {
-	editorId?: EditorId;
+	editorId: EditorId;
 	entityId?: EntityId;
 }
 
-export type EditorStateReducer = (state: EditorState, action: EditorAction) => EditorState;
+export type EditorStateReducer = (state: EditorStack, action: EditorAction) => EditorStack;
 
-export interface EditorStateManager extends EditorState {
+export interface EditorStateManager {
+	editors: EditorStack;
 	openEditor: (options: OpenEditorOptions) => void;
-	setEditorId: (editorId: EditorId) => void;
-	setEntityId: (entityId: EntityId) => void;
-	closeEditor: () => void;
+	closeEditor: (editorId: EditorId) => void;
 }
 
 export enum ActionType {
 	CLOSE_EDITOR = 'CLOSE_EDITOR',
 	OPEN_EDITOR = 'OPEN_EDITOR',
-	SET_EDITOR_ID = 'SET_EDITOR_ID',
-	SET_ENTITY_ID = 'SET_ENTITY_ID',
+	CLOSE_ALL = 'CLOSE_ALL',
 }
 
 export interface EditorAction {
 	type: ActionType;
+	editorId: EditorId;
 	isOpen?: boolean;
-	editorId?: EditorId;
 	entityId?: EntityId;
 }
 
-export type EditorModalData = {
+export interface EditorModalData {
 	formComponent: any;
 	onSubmit: (values?: any) => void;
-	onClose?: () => void;
+	onClose: () => void;
 	[key: string]: any;
-};
+}
 
-export type EditorModal = (entityId?: EntityId) => EditorModalData;
+export type EditorModalCallback = (entityId?: EntityId) => EditorModalData;
+
+export type EditorModal = () => EditorModalCallback;
