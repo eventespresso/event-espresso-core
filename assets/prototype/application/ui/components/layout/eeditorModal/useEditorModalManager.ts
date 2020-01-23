@@ -35,10 +35,18 @@ const useEditorModalManager = (): EditorStateManager => {
 		});
 	};
 
+	const closeAllEditors = (): void => {
+		dispatch({
+			type: ActionType.CLOSE_ALL,
+			editorId: null,
+		});
+	};
+
 	return {
 		editors: state,
 		closeEditor,
 		openEditor,
+		closeAllEditors,
 	};
 };
 

@@ -28,6 +28,7 @@ export interface EditorStateManager {
 	editors: EditorStack;
 	openEditor: (options: OpenEditorOptions) => void;
 	closeEditor: (editorId: EditorId) => void;
+	closeAllEditors: () => void;
 }
 
 export enum ActionType {
@@ -52,4 +53,4 @@ export interface EditorModalData {
 
 export type EditorModalCallback = (entityId?: EntityId) => EditorModalData;
 
-export type EditorModal = () => EditorModalCallback;
+export type EditorModal = (entityId?: EntityId) => EditorModalCallback;
