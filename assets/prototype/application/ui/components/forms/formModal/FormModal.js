@@ -39,18 +39,20 @@ const FormModal = ({ FormComponent, initialValues, onSubmit, onClose, isOpen, ..
 	};
 
 	return (
-		<Overlay {...overlayProps} className={Classes.OVERLAY_SCROLL_CONTAINER} onClose={onClose} isOpen={isOpen}>
-			<div className={classes} style={overlayStyle}>
-				<Form
-					FormComponent={FormComponent}
-					initialValues={initialValues}
-					onSubmit={onSubmit}
-					onClose={onCloseHandler}
-					{...extraProps}
-					render={({ ...formProps }) => <FormModalForm {...formProps} />}
-				/>
-			</div>
-		</Overlay>
+		initialValues && (
+			<Overlay {...overlayProps} className={Classes.OVERLAY_SCROLL_CONTAINER} onClose={onClose} isOpen={isOpen}>
+				<div className={classes} style={overlayStyle}>
+					<Form
+						FormComponent={FormComponent}
+						initialValues={initialValues}
+						onSubmit={onSubmit}
+						onClose={onCloseHandler}
+						{...extraProps}
+						render={({ ...formProps }) => <FormModalForm {...formProps} />}
+					/>
+				</div>
+			</Overlay>
+		)
 	);
 };
 
