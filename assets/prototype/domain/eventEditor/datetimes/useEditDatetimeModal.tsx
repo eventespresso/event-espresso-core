@@ -31,7 +31,7 @@ const useEditDatetimeModal: EditorModal = (entityId) => {
 			onSubmit,
 			onClose,
 		};
-	}, []);
+	}, [entityId]);
 };
 
 export default useEditDatetimeModal;

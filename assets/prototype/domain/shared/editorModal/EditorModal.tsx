@@ -15,7 +15,7 @@ const EditorModal: React.FC = (): JSX.Element => {
 	);
 	const editors = useEditors(entityId);
 
-	const entitySpecificEditor = editors[editorId];
+	const entitySpecificEditor = editors()[editorId];
 
 	if (!entitySpecificEditor) {
 		return null;

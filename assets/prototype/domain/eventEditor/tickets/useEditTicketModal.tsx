@@ -31,7 +31,7 @@ const useEditTicketModal: EditorModal = (entityId): EditorModalCallback => {
 			onSubmit,
 			onClose,
 		};
-	}, []);
+	}, [entityId]);
 };
 
 export default useEditTicketModal;

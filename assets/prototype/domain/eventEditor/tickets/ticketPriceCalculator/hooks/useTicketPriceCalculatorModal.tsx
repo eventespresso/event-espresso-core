@@ -49,6 +49,7 @@ const useTicketPriceCalculatorModal: EditorModal = (ticketId: EntityId) => {
 	return useCallback<EditorModalCallback>(() => {
 		const onClose = (): void => {
 			closeEditor('ticketPriceCalculator');
+			setInitialValues(EMPTY_OBJECT);
 		};
 
 		return {
@@ -59,7 +60,7 @@ const useTicketPriceCalculatorModal: EditorModal = (ticketId: EntityId) => {
 			decorators: [decorator],
 			mutators,
 		};
-	}, [ticket, initialValues]);
+	}, [initialValues, ticketId, decorator, mutators, ticket]);
 };
 
 export default useTicketPriceCalculatorModal;
