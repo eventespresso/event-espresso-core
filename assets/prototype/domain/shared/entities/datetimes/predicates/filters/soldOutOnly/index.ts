@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import capacityAtOrAbove from '../../../capacityAtOrAbove';
+import capacityAtOrAbove from '../../capacityAtOrAbove';
 import { Datetime } from '../../../../../../eventEditor/data/types';
 import isTrashed from '../../isTrashed';
 import validStatus from '../../validStatus';

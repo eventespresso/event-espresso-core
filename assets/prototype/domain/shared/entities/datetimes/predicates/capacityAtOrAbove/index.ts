@@ -1,9 +1,9 @@
 /**
  * Internal dependencies
  */
-import { Datetime } from '../../../../eventEditor/data/types';
-import validFiniteCapacityLimit from '../predicates/validFiniteCapacityLimit';
-import validSold from '../predicates/validSold';
+import { Datetime } from '../../../../../eventEditor/data/types';
+import validFiniteCapacityLimit from '../validFiniteCapacityLimit';
+import validSold from '../validSold';
 
 /**
  * @param {Object} date event date object

@@ -2,13 +2,13 @@
  * External dependencies
  */
 import { differenceInSeconds, parseISO } from 'date-fns';
-import { now } from './filters';
+import { now } from '../filters';
 
 /**
  * Internal dependencies
  */
-import { Datetime } from '../../../../eventEditor/data/types';
-import TIME from '../../../../../application/constants/time';
+import { Datetime } from '../../../../../eventEditor/data/types';
+import TIME from '../../../../../../application/constants/time';
 
 /**
  * @function
@@ -16,6 +16,8 @@ import TIME from '../../../../../application/constants/time';
  * @return {boolean} true if end date is in the past
  */
 const isRecentlyExpired = ({ endDate }: Datetime): boolean => {
+	console.log(differenceInSeconds(parseISO(endDate), now));
+
 	return (
 		differenceInSeconds(parseISO(endDate), now) < 0 &&
 		differenceInSeconds(parseISO(endDate), now) > TIME.MONTH_IN_SECONDS * -1
