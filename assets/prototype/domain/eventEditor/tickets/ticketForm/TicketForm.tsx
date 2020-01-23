@@ -3,14 +3,24 @@ import { Field } from 'react-final-form';
 import { H2, H4 } from '@blueprintjs/core/lib/esm';
 
 import RelationsSelector from '../../../shared/ui/RelationsSelector';
-import { useTicketContext } from '../../hooks';
 import useTicketItem from '../../data/queries/tickets/useTicketItem';
+import useDatetimes from '../../data/queries/datetimes/useDatetimes';
+import useRelations from '../../../../application/services/apollo/relations/useRelations';
 import { TicketItemFormProps } from '../types';
 import { hdrStyle, lblStyle, inputStyle, divStyle, relationsStyle } from './style';
 
-const TicketForm: React.FC<TicketItemFormProps> = ({ datetimes, formReset, relatedDates, title }): JSX.Element => {
-	const { id } = useTicketContext();
+const TicketForm: React.FC<TicketItemFormProps> = ({ id, formReset, title }): JSX.Element => {
 	const { description = '', name = '', price = '' } = useTicketItem({ id }) || {};
+	const { getRelations } = useRelations();
+	const datetimes = useDatetimes();
+
+	const relatedDatetimeIds = id
+		? getRelations({
+				entity: 'tickets',
+				entityId: id,
+				relation: 'datetimes',
+		  })
+		: [];
 
 	return (
 		<>
@@ -58,7 +68,7 @@ const TicketForm: React.FC<TicketItemFormProps> = ({ datetimes, formReset, relat
 						name={'datetimes'}
 						render={({ input }): JSX.Element => (
 							<RelationsSelector
-								defaultRelatedItems={relatedDates}
+								defaultRelatedItems={relatedDatetimeIds}
 								items={datetimes}
 								itemType={'datetime'}
 								displayFields={['name', 'startDate']}

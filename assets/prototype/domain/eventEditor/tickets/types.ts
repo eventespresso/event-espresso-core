@@ -9,8 +9,7 @@ export interface EditTicketModalProps {
 }
 
 export interface TicketItemFormProps {
-	datetimes: Datetime[];
-	relatedDates: EntityId[];
+	id?: EntityId;
 	title?: string;
 	formReset?: boolean;
 }

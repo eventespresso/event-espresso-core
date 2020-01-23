@@ -3,9 +3,9 @@ import React from 'react';
 import { Card, EditableText, Elevation, H4, H6 } from '@blueprintjs/core/lib/esm';
 
 import TicketProvider from '../../context/TicketProvider';
-import EditTicket from './EditTicket';
+import EditTicketButton from './EditTicketButton';
 import DeleteTicketButton from './DeleteTicketButton';
-import TicketPriceCalculatorButton from '../ticketPriceCalculator/buttons/TicketPriceCalculatorButtonData';
+import TicketPriceCalculatorButton from '../ticketPriceCalculator/buttons/TicketPriceCalculatorButton';
 import useTicketItem from '../../data/queries/tickets/useTicketItem';
 import CurrencyInput from '../../../../application/ui/components/input/currencyInput/CurrencyInput';
 import { useEntityMutator, EntityType, MutationResult } from '../../../../application/services/apollo/mutations';
@@ -30,7 +30,7 @@ const TicketCard: React.FC<ListItemProps> = ({ id }): JSX.Element => {
 	return ticket ? (
 		<TicketProvider id={ticket.id}>
 			<Card elevation={Elevation.ONE} style={cardStyle}>
-				<EditTicket position='top' relatedDates={relatedDates} />
+				<EditTicketButton position='top' />
 				<div>
 					<div style={idStyle}>
 						{ticket.dbId} {':'} {ticket.id}
@@ -85,7 +85,7 @@ const TicketCard: React.FC<ListItemProps> = ({ id }): JSX.Element => {
 					{/* Delete button should also be hidden to avoid relational inconsistencies */}
 					{isLoaded(TypeName.prices) && (
 						<>
-							<TicketPriceCalculatorButton ticket={ticket} />
+							<TicketPriceCalculatorButton ticketId={ticket.id} />
 							<DeleteTicketButton id={ticket.id} />
 						</>
 					)}

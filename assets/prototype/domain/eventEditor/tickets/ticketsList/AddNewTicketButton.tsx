@@ -1,32 +1,17 @@
 import React from 'react';
 
-import AddNewTicketModal from './AddNewTicketModal';
-import useTicketEditorId from '../../context/TicketProvider/useTicketEditorId';
-import useEditorModalState from '../../../../application/ui/components/layout/editorModal/useEditorModalState';
-import {
-	EditorId,
-	EditorState,
-} from '../../../../application/ui/components/layout/editorModal/useEditorModalState/types';
 import { EspressoButton } from '../../../../application/ui/components/input';
+import { useEditorModal } from '../../../../application/ui/components/layout/eeditorModal';
 
 const AddNewTicketButton: React.FC = () => {
-	const editorState: EditorState = useEditorModalState();
-	const editorId: EditorId = useTicketEditorId('add-new-ticket', 'xyz');
+	const { openEditor } = useEditorModal();
 
 	const onClick = (): void => {
-		editorState.openEditor(editorId);
+		openEditor({
+			editorId: 'addTicket',
+		});
 	};
-	const onClose = (): void => {
-		editorState.closeEditor(editorId);
-	};
-	const isOpen = editorState.isEditorOpen(editorId);
-
-	return (
-		<>
-			<EspressoButton icon={'tickets-alt'} buttonText={'Add New Ticket'} onClick={onClick} />
-			<AddNewTicketModal onClose={onClose} isOpen={isOpen} />
-		</>
-	);
+	return <EspressoButton icon={'tickets-alt'} buttonText={'Add New Ticket'} onClick={onClick} />;
 };
 
 export default AddNewTicketButton;
