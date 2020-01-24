@@ -8,6 +8,7 @@ export const ticketFields = [
 	'isTaxable',
 	'max',
 	'min',
+	'name',
 	'order',
 	'price',
 	'prices',

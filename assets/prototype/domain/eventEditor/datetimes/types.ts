@@ -1,4 +1,4 @@
-import { Ticket, EntityId } from '../data/types';
+import { EntityId } from '../data/types';
 
 export interface EditDateProps {
 	position?: string;
@@ -9,8 +9,7 @@ export interface EditDateModalProps {
 }
 
 export interface DateItemFormProps {
-	tickets: Ticket[];
-	relatedTickets: EntityId[];
+	id?: EntityId;
 	title?: string;
 	formReset?: boolean;
 }

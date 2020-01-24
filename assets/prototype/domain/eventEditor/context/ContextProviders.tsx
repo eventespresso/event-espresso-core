@@ -6,6 +6,7 @@ import { ToastProvider } from '../../../application/services/context/ToastProvid
 import { RelationsProvider } from '../../../application/services/context/RelationsProvider';
 import { StatusProvider } from '../../../application/services/context/StatusProvider';
 import { ConfigProvider } from '../../../application/services/context/ConfigProvider';
+import { EditorModalProvider } from '../../../application/services/context/EditorModalProvider';
 import { EventEditorEventIdProvider } from './EventEditorEventIdProvider';
 import { ContextProvider } from './types';
 
@@ -40,7 +41,9 @@ export const CommonProviders: ContextProvider = ({ children }): JSX.Element => (
 		<StatusProvider>
 			<ConfigProvider>
 				<EventEditorEventIdProvider>
-					<RelationsProvider>{children}</RelationsProvider>
+					<RelationsProvider>
+						<EditorModalProvider>{children}</EditorModalProvider>
+					</RelationsProvider>
 				</EventEditorEventIdProvider>
 			</ConfigProvider>
 		</StatusProvider>

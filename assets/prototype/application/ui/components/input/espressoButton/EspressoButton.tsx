@@ -1,7 +1,7 @@
 import React from 'react';
 import classNames from 'classnames';
 
-import { ClickEvent, EspressoButtonProps, EspressoButtonSize, EspressoButtonStyle } from './types';
+import { ClickHandler, EspressoButtonProps, EspressoButtonSize, EspressoButtonStyle } from './types';
 import { EspressoIcon } from '../../display/espressoIcon';
 
 /**
@@ -39,10 +39,10 @@ const EspressoButton: React.FC<EspressoButtonProps> = ({
 		classes += ' ee-noIcon';
 	}
 
-	const onClickHandler: ClickEvent = (click) => {
+	const onClickHandler: ClickHandler = (click) => {
 		click.preventDefault();
 		click.stopPropagation();
-		onClick();
+		onClick(click);
 	};
 
 	return (

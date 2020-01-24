@@ -5,24 +5,30 @@ import { H2, H4 } from '@blueprintjs/core/lib/esm';
 import { renderToString } from '@wordpress/element';
 
 import RelationsSelector from '../../../shared/ui/RelationsSelector';
-import { useDatetimeContext } from './../../hooks';
 import useDatetimeItem from '../../data/queries/datetimes/useDatetimeItem';
+import useDatetimes from '../../data/queries/datetimes/useDatetimes';
+import useRelations from '../../../../application/services/apollo/relations/useRelations';
+import parsedAmount from '../../../../application/utilities/money/parsedAmount';
 import { DateItemFormProps } from '../types';
 import { hdrStyle, lblStyle, inputStyle, divStyle, relationsStyle } from './style';
 
-/**
- * @function
- * @param {number} ticketPrice
- * @param {boolean} toString
- * @return {node|string} rendered ticket price
- */
-const formatSecondaryField = (ticketPrice: number, toString = false): JSX.Element => {
-	return toString ? renderToString(<Currency quantity={ticketPrice} />, null) : <Currency quantity={ticketPrice} />;
+const formatSecondaryField = (ticketPrice: number | string, toString = false): JSX.Element => {
+	const priceAmount = parsedAmount(ticketPrice);
+	return toString ? renderToString(<Currency quantity={priceAmount} />, null) : <Currency quantity={priceAmount} />;
 };
 
-const DateForm: React.FC<DateItemFormProps> = ({ formReset, relatedTickets, tickets = [], title }): JSX.Element => {
-	const { id } = useDatetimeContext();
+const DateForm: React.FC<DateItemFormProps> = ({ id, formReset, title }): JSX.Element => {
 	const { description = '', name = '' } = useDatetimeItem({ id }) || {};
+	const { getRelations } = useRelations();
+	const tickets = useDatetimes();
+
+	const relatedTicketIds = id
+		? getRelations({
+				entity: 'datetimes',
+				entityId: id,
+				relation: 'tickets',
+		  })
+		: [];
 
 	return (
 		<>
@@ -56,7 +62,7 @@ const DateForm: React.FC<DateItemFormProps> = ({ formReset, relatedTickets, tick
 						name={'tickets'}
 						render={({ input }): JSX.Element => (
 							<RelationsSelector
-								defaultRelatedItems={relatedTickets}
+								defaultRelatedItems={relatedTicketIds}
 								items={tickets}
 								itemType={'ticket'}
 								displayFields={['name', 'price']}
