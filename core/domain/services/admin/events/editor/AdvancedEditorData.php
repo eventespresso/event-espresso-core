@@ -546,7 +546,10 @@ QUERY;
             'tickets' => $eem_ticket,
         ];
         // Get the IDs of event datetimes.
-        $datetimeIds = $eem_datetime->get_col([['EVT_ID' => $eventId]]);
+        $datetimeIds = $eem_datetime->get_col([[
+            'EVT_ID' => $eventId,
+            'DTT_deleted' => ['IN', [true, false]],
+        ]]);
         foreach ($datetimeIds as $datetimeId) {
             $GID = self::convertToGlobalId($eem_datetime->item_name(), $datetimeId);
             foreach ($related_models as $key => $model) {
@@ -564,7 +567,10 @@ QUERY;
             'prices'    => $eem_price,
         ];
         // Get the IDs of all datetime tickets.
-        $ticketIds = $eem_ticket->get_col([['Datetime.DTT_ID' => ['in', $datetimeIds]]]);
+        $ticketIds = $eem_ticket->get_col([[
+            'Datetime.DTT_ID' => ['in', $datetimeIds],
+            'TKT_deleted' => ['IN', [true, false]],
+        ]]);
         foreach ($ticketIds as $ticketId) {
             $GID = self::convertToGlobalId($eem_ticket->item_name(), $ticketId);
 
