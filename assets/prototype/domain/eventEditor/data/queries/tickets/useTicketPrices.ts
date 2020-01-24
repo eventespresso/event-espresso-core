@@ -19,7 +19,7 @@ const useTicketPrices = (ticketId: EntityId): Price[] => {
 	// get price objects.
 	const relatedPrices: Price[] = usePrices(relatedPriceIds);
 
-	return relatedPrices;
+	return relatedPriceIds.length ? relatedPrices : [];
 };
 
 export default useTicketPrices;
