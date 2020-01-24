@@ -18,7 +18,7 @@ import {
 	EditorModal,
 	EntityId,
 	ModalClose,
-} from '../../../../../application/ui/components/layout/eeditorModal';
+} from '../../../../../application/ui/components/layout/editorModal';
 
 interface TPCFormValues {
 	ticket: Ticket;

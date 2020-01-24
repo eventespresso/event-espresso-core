@@ -7,7 +7,7 @@ import {
 	EditorModal,
 	ModalSubmit,
 	ModalClose,
-} from '../../../application/ui/components/layout/eeditorModal';
+} from '../../../application/ui/components/layout/editorModal';
 
 const useAddTicketModal: EditorModal = () => {
 	const { createEntity } = useEntityMutator(EntityType.Ticket);

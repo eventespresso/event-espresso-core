@@ -1,4 +1,4 @@
-import { useReducer, useEffect } from 'react';
+import { useReducer } from 'react';
 import { dropLast, last, path } from 'ramda';
 
 import {
@@ -24,6 +24,8 @@ const useEditorModalManager = (): EditorStateManager => {
 		});
 	};
 
+	const currentlyOpenEditor = (): EditorState => last(state);
+
 	const closeEditor = (editorId: EditorId): void => {
 		dispatch({
 			type: ActionType.CLOSE_EDITOR,
@@ -40,8 +42,9 @@ const useEditorModalManager = (): EditorStateManager => {
 
 	return {
 		editors: state,
-		closeEditor,
 		openEditor,
+		closeEditor,
+		currentlyOpenEditor,
 		closeAllEditors,
 	};
 };

@@ -4,7 +4,7 @@
 import React, { createContext } from 'react';
 
 import { ProviderProps } from './types';
-import { useEditorModalManager } from '../../ui/components/layout/eeditorModal';
+import { useEditorModalManager } from '../../ui/components/layout/editorModal';
 
 const EditorModalContext = createContext(null);
 

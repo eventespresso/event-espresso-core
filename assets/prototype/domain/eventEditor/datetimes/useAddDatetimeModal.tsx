@@ -7,7 +7,7 @@ import {
 	EditorModal,
 	ModalSubmit,
 	ModalClose,
-} from '../../../application/ui/components/layout/eeditorModal';
+} from '../../../application/ui/components/layout/editorModal';
 
 const useAddDatetimeModal: EditorModal = () => {
 	const { createEntity } = useEntityMutator(EntityType.Datetime);

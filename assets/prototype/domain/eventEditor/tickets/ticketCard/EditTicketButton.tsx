@@ -3,7 +3,7 @@ import { Button } from '@blueprintjs/core/lib/esm';
 
 import { EditItemButtonProps } from '../../types';
 import { useTicketContext } from '../../hooks';
-import { useEditorModal } from '../../../../application/ui/components/layout/eeditorModal';
+import { useEditorModal } from '../../../../application/ui/components/layout/editorModal';
 
 const EditTicketButton: React.FC<EditItemButtonProps> = ({ position }): JSX.Element => {
 	const { id: entityId } = useTicketContext();

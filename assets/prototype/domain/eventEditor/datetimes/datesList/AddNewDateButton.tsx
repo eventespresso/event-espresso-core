@@ -1,7 +1,7 @@
 import React, { CSSProperties } from 'react';
 
 import { EspressoButton } from '../../../../application/ui/components/input';
-import { useEditorModal } from '../../../../application/ui/components/layout/eeditorModal';
+import { useEditorModal } from '../../../../application/ui/components/layout/editorModal';
 
 const btnRowStyle: CSSProperties = {
 	display: 'flex',

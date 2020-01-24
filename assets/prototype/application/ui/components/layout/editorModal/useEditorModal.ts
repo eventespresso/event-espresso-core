@@ -1,5 +1,5 @@
 import { useContext } from 'react';
-import { EditorModalContext } from '../../../../../application/services/context/EditorModalProvider';
+import { EditorModalContext } from '../../../../services/context/EditorModalProvider';
 import { EditorStateManager } from './types';
 
 const useEditorModal = (): EditorStateManager => {

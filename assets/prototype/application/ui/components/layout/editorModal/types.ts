@@ -29,6 +29,7 @@ export interface EditorStateManager {
 	openEditor: (options: OpenEditorOptions) => void;
 	closeEditor: (editorId: EditorId) => void;
 	closeAllEditors: () => void;
+	currentlyOpenEditor: () => EditorState;
 }
 
 export enum ActionType {
