@@ -1,3 +1,5 @@
+// @ts-nocheck
+
 import React from 'react';
 import isEmpty from 'ramda/src/isEmpty';
 import { useEffect, useState } from 'react';
