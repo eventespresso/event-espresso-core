@@ -42,8 +42,7 @@ const useTicketPriceCalculatorModal: EditorModal = (ticketId: EntityId) => {
 
 	useEffect(() => {
 		const updatable =
-			(isEmpty(initialValues) || isNil(initialValues.ticket) || isEmpty(initialValues.ticket)) &&
-			!isEmpty(prices);
+			!isNil(ticket) && !isEmpty(ticket) && (isNil(initialValues.ticket) || isEmpty(initialValues.ticket));
 		if (updatable) {
 			const sortedPrices = sortByPriceOrderIdAsc(prices);
 			// make sure to set a valid priceType for new price.
