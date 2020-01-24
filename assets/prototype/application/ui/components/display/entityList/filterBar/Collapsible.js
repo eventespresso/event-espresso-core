@@ -1,7 +1,7 @@
 /**
  * External imports
  */
-import { useMemo, useRef } from 'react';
+import React, { useMemo, useRef } from 'react';
 import { useSpring, animated } from 'react-spring';
 import { SelectControl, TextControl } from '@wordpress/components';
 
