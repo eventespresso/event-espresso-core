@@ -6,7 +6,7 @@ import { renderToString } from '@wordpress/element';
 
 import RelationsSelector from '../../../shared/ui/RelationsSelector';
 import useDatetimeItem from '../../data/queries/datetimes/useDatetimeItem';
-import useDatetimes from '../../data/queries/datetimes/useDatetimes';
+import useTickets from '../../data/queries/tickets/useTickets';
 import useRelations from '../../../../application/services/apollo/relations/useRelations';
 import parsedAmount from '../../../../application/utilities/money/parsedAmount';
 import { DateItemFormProps } from '../types';
@@ -20,7 +20,7 @@ const formatSecondaryField = (ticketPrice: number | string, toString = false): J
 const DateForm: React.FC<DateItemFormProps> = ({ id, formReset, title }): JSX.Element => {
 	const { description = '', name = '' } = useDatetimeItem({ id }) || {};
 	const { getRelations } = useRelations();
-	const tickets = useDatetimes();
+	const tickets = useTickets();
 
 	const relatedTicketIds = id
 		? getRelations({

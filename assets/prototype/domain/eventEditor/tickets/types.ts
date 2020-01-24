@@ -1,4 +1,4 @@
-import { Datetime, EntityId } from '../data/types';
+import { EntityId } from '../data/types';
 
 export interface EditTicketProps {
 	position?: string;
