@@ -31,7 +31,7 @@ export const nodes: Datetime[] = [
 	{
 		id: 'abc',
 		dbId: 3,
-		capacity: 420,
+		capacity: 100,
 		name: 'Hello World',
 		description: 'Test Desc',
 		endDate: 'some dat',
@@ -45,7 +45,7 @@ export const nodes: Datetime[] = [
 		length: null,
 		order: 10,
 		reserved: 0,
-		sold: 6,
+		sold: 10,
 		startDate: formatISO(new Date(1986, 1, 11)),
 		__typename: 'EspressoDatetime',
 	},

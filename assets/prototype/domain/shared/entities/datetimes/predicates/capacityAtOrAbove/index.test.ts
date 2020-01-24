@@ -32,8 +32,8 @@ describe('capacityAtOrAbove', () => {
 		});
 	});
 
-	it('should return false if capacity is below', () => {
-		const capacityToCompare = [16, 2, 11];
+	it('should return false if capacity is below the expected values', () => {
+		const capacityToCompare = [16, 11, 11];
 
 		datetimes.forEach((datetime, index) => {
 			const result = capacityAtOrAbove(datetime, capacityToCompare[index]);
@@ -51,7 +51,7 @@ describe('capacityAtOrAbove', () => {
 	});
 
 	it('should return true if capacity is above the expected one', () => {
-		const capacityToCompare = [14, 0.9, 9];
+		const capacityToCompare = [14, 10, 9];
 
 		datetimes.forEach((datetime, index) => {
 			const result = capacityAtOrAbove(datetime, capacityToCompare[index]);
