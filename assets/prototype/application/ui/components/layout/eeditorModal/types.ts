@@ -44,13 +44,14 @@ export interface EditorAction {
 	entityId?: EntityId;
 }
 
+export type ModalSubmit = (values?: any) => void;
+export type ModalClose = () => void;
+
 export interface EditorModalProps {
-	formComponent: any;
-	onSubmit: (values?: any) => void;
-	onClose: () => void;
+	formComponent: React.FC;
+	onSubmit: ModalSubmit;
+	onClose: ModalClose;
 	[key: string]: any;
 }
 
-export type EditorModalCallback = (entityId?: EntityId) => EditorModalProps;
-
-export type EditorModal = (entityId?: EntityId) => EditorModalCallback;
+export type EditorModal = (entityId?: EntityId) => EditorModalProps;

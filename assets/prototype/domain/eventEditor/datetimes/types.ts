@@ -1,4 +1,4 @@
-import { Ticket, EntityId } from '../data/types';
+import { EntityId } from '../data/types';
 
 export interface EditDateProps {
 	position?: string;

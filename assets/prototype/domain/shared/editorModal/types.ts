@@ -1,12 +1,12 @@
 // @ts-nocheck
-import { EditorModalCallback, EntityId } from '../../../application/ui/components/layout/eeditorModal/types';
+import { EditorModalProps, EntityId } from '../../../application/ui/components/layout/eeditorModal/types';
 
-export interface EditorModals {
-	addDatetime: EditorModalCallback;
-	editDatetime: EditorModalCallback;
-	addTicket: EditorModalCallback;
-	editTicket: EditorModalCallback;
-	ticketPriceCalculator: EditorModalCallback;
-}
+export type EditorModals = {
+	addDatetime: EditorModalProps;
+	editDatetime: EditorModalProps;
+	addTicket: EditorModalProps;
+	editTicket: EditorModalProps;
+	ticketPriceCalculator: EditorModalProps;
+};
 
-export type EditorModalsHook = (entityId: EntityId) => () => EditorModals;
+export type EditorModalsHook = (entityId: EntityId) => EditorModals;
