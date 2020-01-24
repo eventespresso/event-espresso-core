@@ -7,7 +7,7 @@ import isTrashed from '../../isTrashed';
 import validStatus from '../../validStatus';
 
 const soldOutOnly = (dates: Datetime[]): Datetime[] | [] => {
-	const filterFn = (date: Datetime) => {
+	const filterFn = (date: Datetime): boolean => {
 		return !isTrashed(date) && ((validStatus(date) && date.isSoldOut) || capacityAtOrAbove(date, 100));
 	};
 
