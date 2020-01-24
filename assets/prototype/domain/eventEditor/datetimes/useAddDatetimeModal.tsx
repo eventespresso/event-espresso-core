@@ -5,31 +5,35 @@ import { DateItemFormProps } from './types';
 import {
 	useEditorModal,
 	EditorModal,
-	EditorModalCallback,
+	ModalSubmit,
+	ModalClose,
 } from '../../../application/ui/components/layout/eeditorModal';
 
 const useAddDatetimeModal: EditorModal = () => {
 	const { createEntity } = useEntityMutator(EntityType.Datetime);
 	const { closeEditor } = useEditorModal();
 
-	return useCallback<EditorModalCallback>(() => {
-		const onSubmit = (fields: any): void => {
+	const onClose = useCallback<ModalClose>((): void => {
+		closeEditor('addDatetime');
+	}, [closeEditor]);
+
+	const onSubmit = useCallback<ModalSubmit>(
+		(fields: any): void => {
 			createEntity(fields);
-		};
+		},
+		[createEntity]
+	);
 
-		const onClose = (): void => {
-			closeEditor('addDatetime');
-		};
+	const formComponent = useCallback<React.FC<DateItemFormProps>>(
+		(props): JSX.Element => <DateForm {...props} title='New Datetime Details' />,
+		[]
+	);
 
-		const formComponent = (props: DateItemFormProps): JSX.Element => (
-			<DateForm {...props} title='New Datetime Details' />
-		);
-		return {
-			formComponent,
-			onSubmit,
-			onClose,
-		};
-	}, []);
+	return {
+		formComponent,
+		onSubmit,
+		onClose,
+	};
 };
 
 export default useAddDatetimeModal;

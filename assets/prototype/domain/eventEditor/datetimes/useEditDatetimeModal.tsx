@@ -5,33 +5,38 @@ import { DateItemFormProps } from './types';
 import {
 	useEditorModal,
 	EditorModal,
-	EditorModalCallback,
+	ModalSubmit,
+	ModalClose,
 } from '../../../application/ui/components/layout/eeditorModal';
 
 const useEditDatetimeModal: EditorModal = (entityId) => {
 	const { updateEntity } = useEntityMutator(EntityType.Datetime, entityId);
 	const { closeEditor } = useEditorModal();
 
-	return useCallback<EditorModalCallback>(() => {
-		const onSubmit = (fields: any): void => {
+	const onClose = useCallback<ModalClose>((): void => {
+		closeEditor('editDatetime');
+	}, [closeEditor]);
+
+	const onSubmit = useCallback<ModalSubmit>(
+		(fields: any): void => {
 			updateEntity({ ...fields });
-		};
+		},
+		[updateEntity]
+	);
 
-		const onClose = (): void => {
-			closeEditor('editDatetime');
-		};
-
-		const formComponent: React.FC<DateItemFormProps> = (props): JSX.Element => (
+	const formComponent = useCallback<React.FC<DateItemFormProps>>(
+		(props): JSX.Element => (
 			// id prop is needed because modal is out of DatetimeContext
 			<DateForm {...props} id={entityId} title='Update datetime' />
-		);
+		),
+		[entityId]
+	);
 
-		return {
-			formComponent,
-			onSubmit,
-			onClose,
-		};
-	}, [entityId]);
+	return {
+		formComponent,
+		onSubmit,
+		onClose,
+	};
 };
 
 export default useEditDatetimeModal;

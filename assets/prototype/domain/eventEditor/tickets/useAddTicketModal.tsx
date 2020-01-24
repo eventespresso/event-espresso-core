@@ -5,31 +5,35 @@ import { TicketItemFormProps } from './types';
 import {
 	useEditorModal,
 	EditorModal,
-	EditorModalCallback,
+	ModalSubmit,
+	ModalClose,
 } from '../../../application/ui/components/layout/eeditorModal';
 
 const useAddTicketModal: EditorModal = () => {
 	const { createEntity } = useEntityMutator(EntityType.Ticket);
 	const { closeEditor } = useEditorModal();
 
-	return useCallback<EditorModalCallback>(() => {
-		const onSubmit = (fields: any): void => {
+	const onClose = useCallback<ModalClose>((): void => {
+		closeEditor('addTicket');
+	}, [closeEditor]);
+
+	const onSubmit = useCallback<ModalSubmit>(
+		(fields: any): void => {
 			createEntity(fields);
-		};
+		},
+		[createEntity]
+	);
 
-		const onClose = (): void => {
-			closeEditor('addTicket');
-		};
+	const formComponent = useCallback<React.FC<TicketItemFormProps>>(
+		(props): JSX.Element => <TicketForm {...props} title='New Ticket Details' />,
+		[]
+	);
 
-		const formComponent = (props: TicketItemFormProps): JSX.Element => (
-			<TicketForm {...props} title='New Ticket Details' />
-		);
-		return {
-			formComponent,
-			onSubmit,
-			onClose,
-		};
-	}, []);
+	return {
+		formComponent,
+		onSubmit,
+		onClose,
+	};
 };
 
 export default useAddTicketModal;
