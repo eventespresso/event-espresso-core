@@ -254,11 +254,9 @@ var eeEditorData={$data};
                 nodes {
                     id
                     dbId
-                    name
-                    description
-                    startDate
-                    endDate
                     capacity
+                    description
+                    endDate
                     isActive
                     isDeleted
                     isExpired
@@ -266,10 +264,12 @@ var eeEditorData={$data};
                     isSoldOut
                     isUpcoming
                     length
+                    name
                     order
                     reserved
                     sold
                     status
+                    startDate
                     __typename
                 }
                 __typename
