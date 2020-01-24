@@ -1,24 +1,24 @@
 import { useState, useEffect, useCallback } from 'react';
 import { isEmpty, isNil } from 'ramda';
 
-import {
-	useEditorModal,
-	EditorModal,
-	EntityId,
-	EditorModalCallback,
-} from '../../../../../application/ui/components/layout/eeditorModal';
+import useOnSubmitPrices from './useOnSubmitPrices';
+import useTicketPriceCalculatorFormDecorator from './useTicketPriceCalculatorFormDecorator';
+import useTicketPriceCalculatorFormMutators from './useTicketPriceCalculatorFormMutators';
+import TicketPriceCalculatorForm from '../TicketPriceCalculatorForm';
+import useDefaultPriceType from '../../../data/queries/priceTypes/useDefaultPriceType';
+import useTicketPrices from '../../../data/queries/tickets/useTicketPrices';
+import useTicketItem from '../../../data/queries/tickets/useTicketItem';
+import { Ticket, Price } from '../../../../eventEditor/data/types';
 import { defaultNewPriceModifier } from '../../../../shared/entities/prices/defaultNewPriceModifier';
 import { sortByPriceOrderIdAsc } from '../../../../shared/entities/prices/predicates/sortingPredicates';
 import { copyPriceFields } from '../../../../shared/entities/prices/predicates/updatePredicates';
 import { copyTicketFields } from '../../../../shared/entities/tickets/predicates/updatePredicates';
-import TicketPriceCalculatorForm from '../TicketPriceCalculatorForm';
-import useDefaultPriceType from '../../../data/queries/priceTypes/useDefaultPriceType';
-import useOnSubmitPrices from './useOnSubmitPrices';
-import useTicketPriceCalculatorFormDecorator from './useTicketPriceCalculatorFormDecorator';
-import useTicketPriceCalculatorFormMutators from './useTicketPriceCalculatorFormMutators';
-import useTicketPrices from '../../../data/queries/tickets/useTicketPrices';
-import useTicketItem from '../../../data/queries/tickets/useTicketItem';
-import { Ticket, Price } from '../../../../eventEditor/data/types';
+import {
+	useEditorModal,
+	EditorModal,
+	EntityId,
+	ModalClose,
+} from '../../../../../application/ui/components/layout/eeditorModal';
 
 interface TPCFormValues {
 	ticket: Ticket;
@@ -38,7 +38,6 @@ const useTicketPriceCalculatorModal: EditorModal = (ticketId: EntityId) => {
 	const defaultPriceType = useDefaultPriceType();
 	const submitPrices = useOnSubmitPrices(prices);
 	const ticket = useTicketItem({ id: ticketId });
-
 	const { closeEditor } = useEditorModal();
 
 	useEffect(() => {
@@ -58,21 +57,19 @@ const useTicketPriceCalculatorModal: EditorModal = (ticketId: EntityId) => {
 		}
 	}, [prices, ticket]);
 
-	return useCallback<EditorModalCallback>(() => {
-		const onClose = (): void => {
-			closeEditor('ticketPriceCalculator');
-			setInitialValues(INITIAL_STATE);
-		};
+	const onClose = useCallback<ModalClose>((): void => {
+		closeEditor('ticketPriceCalculator');
+		setInitialValues(INITIAL_STATE);
+	}, [closeEditor]);
 
-		return {
-			formComponent: TicketPriceCalculatorForm,
-			onSubmit: submitPrices,
-			initialValues,
-			onClose,
-			decorators: [decorator],
-			mutators,
-		};
-	}, [initialValues, decorator, mutators, ticket]);
+	return {
+		formComponent: TicketPriceCalculatorForm,
+		onSubmit: submitPrices,
+		initialValues,
+		onClose,
+		decorators: [decorator],
+		mutators,
+	};
 };
 
 export default useTicketPriceCalculatorModal;
