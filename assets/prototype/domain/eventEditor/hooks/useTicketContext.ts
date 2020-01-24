@@ -1,10 +1,11 @@
 import { useContext } from 'react';
 import invariant from 'invariant';
 
-import { TicketContext, TicketContextProps } from '../context/TicketProvider';
+import { TicketContext } from '../context/TicketProvider';
+import { EntityContextProps } from '../context/types';
 
-const useTicketContext = (): TicketContextProps => {
-	const value = useContext<TicketContextProps>(TicketContext);
+const useTicketContext = (): EntityContextProps => {
+	const value = useContext<EntityContextProps>(TicketContext);
 
 	invariant(value, 'useTicketContext must be used inside <TicketProvider> component');
 

@@ -1,10 +1,11 @@
 import { useContext } from 'react';
 import invariant from 'invariant';
 
-import { DateTimeContext, DateTimeContextProps } from '../context/DateTimeProvider';
+import { DateTimeContext } from '../context/DateTimeProvider';
+import { EntityContextProps } from '../context/types';
 
-const useDatetimeContext = (): DateTimeContextProps => {
-	const value = useContext<DateTimeContextProps>(DateTimeContext);
+const useDatetimeContext = (): EntityContextProps => {
+	const value = useContext<EntityContextProps>(DateTimeContext);
 
 	invariant(value, 'useDatetimeContext must be used inside <DateTimeProvider> component');
 
