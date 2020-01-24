@@ -14,14 +14,9 @@ const EditorModal: React.FC = (): JSX.Element => {
 		editorModals
 	);
 	// get array of editors
-	const editors = useEditors(entityId)();
-	const entitySpecificEditor = editors[editorId];
-	if (!editorId || !entitySpecificEditor) {
-		return null;
-	}
-
-	const editorProps = entitySpecificEditor();
-	if (!editorProps) {
+	const editors = useEditors(entityId);
+	const editorProps = editors[editorId];
+	if (!editorId || !editorProps) {
 		return null;
 	}
 
