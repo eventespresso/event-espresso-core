@@ -2,13 +2,13 @@
  * External dependencies
  */
 import { differenceInSeconds, parseISO } from 'date-fns';
-import { now } from './filters';
+import { now } from '../filters';
 
 /**
  * Internal dependencies
  */
-import { Datetime } from '../../../../eventEditor/data/types';
-import TIME from '../../../../../application/constants/time';
+import { Datetime } from '../../../../../eventEditor/data/types';
+import TIME from '../../../../../../application/constants/time';
 
 /**
  * @function
