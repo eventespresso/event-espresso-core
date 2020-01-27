@@ -6,7 +6,7 @@ import { filter, find, includes, prop, propEq } from 'ramda';
 /**
  * Internal dependencies
  */
-import { Entity, EntityDbId, EntityId } from '../../../../../domain/eventEditor/data/types';
+import { Entity, EntityDbId, EntityId, Price } from '../../../../../domain/eventEditor/data/types';
 
 // the following return specified entity prop
 export const entityDbId = (entity: Entity): EntityDbId => prop('dbId', entity);
@@ -17,7 +17,7 @@ export const entityHasDbId = (dbId: EntityDbId) => propEq('dbId', dbId);
 export const entityHasGuid = (guid: EntityId) => propEq('id', guid);
 
 // returns entity if found in array of entities
-export const findEntityByDbId = (entities: Entity[]) => (dbid: EntityDbId): Entity => {
+export const findEntityByDbId = (entities: Entity[]) => (dbid: EntityDbId): Entity | Price => {
 	return find(entityHasDbId(dbid))(entities);
 };
 
