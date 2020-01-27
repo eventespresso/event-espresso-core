@@ -264,6 +264,9 @@ const RelationsSelector: React.FC<RelationsSelectorProps> = ({
 			selectedItems={selectedItems}
 			tagInputProps={tagInputProps}
 			tagRenderer={(itemId) => renderItemTag(itemId)}
+			popoverProps={{
+				usePortal: false,
+			}}
 		/>
 	);
 };
