@@ -8,7 +8,8 @@ import ApolloClient from 'apollo-client';
 
 import { useStatus } from '../../../../application/services/apollo/status';
 import useEventId from '../../data/queries/events/useEventId';
-import { ApolloMockedProvider, eventId } from '../testContext';
+import { eventId } from '../testContext/data';
+import { ApolloMockedProvider } from '../testContext/TestContextProviders';
 
 describe('ContextProviders', () => {
 	it('checks for Apollo context without ContextProviders', () => {
