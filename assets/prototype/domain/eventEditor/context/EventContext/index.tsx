@@ -1,15 +1,17 @@
 /**
  * External imports
  */
-import pathOr from 'ramda/src/pathOr';
 import React, { createContext } from 'react';
-import useToaster from '../../../application/services/toaster/useToaster';
+import pathOr from 'ramda/src/pathOr';
+
+import useToaster from '../../../../application/services/toaster/useToaster';
+import { ContextProviderProps } from '../types';
 
 const EventEditorEventIdContext = createContext<number | null>(null);
 
 const { Provider } = EventEditorEventIdContext;
 
-const EventEditorEventIdProvider = ({ children }) => {
+const EventEditorEventIdProvider: React.FC<ContextProviderProps> = ({ children }) => {
 	const toaster = useToaster();
 	const eventId = pathOr<number>(0, ['eeEditorData', 'event', 'dbId'], window);
 
