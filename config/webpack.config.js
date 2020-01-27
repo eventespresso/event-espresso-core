@@ -24,6 +24,7 @@ const typescriptFormatter = require('react-dev-utils/typescriptFormatter');
 const postcssNormalize = require('postcss-normalize');
 const DependencyExtractionWebpackPlugin = require('@wordpress/dependency-extraction-webpack-plugin');
 const miniExtract = require('mini-css-extract-plugin');
+const WriteFilePlugin = require('write-file-webpack-plugin');
 
 const paths = require('./paths');
 const modules = require('./modules');
@@ -615,6 +616,13 @@ module.exports = function(webpackEnv) {
 					// The formatter is invoked directly in WebpackDevServerUtils during development
 					formatter: isEnvProduction ? typescriptFormatter : undefined,
 				}),
+			isEnvDevelopment &&
+				new WriteFilePlugin({
+					// Write only files that have ".ts" extension.
+					test: /\.ts$/,
+					useHashIndex: true,
+				}),
+
 			// ...pluginsConfigWithExternals,
 		].filter(Boolean),
 		// Some libraries import Node modules but don't use them in the browser.
