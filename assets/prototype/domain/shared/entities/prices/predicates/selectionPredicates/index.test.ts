@@ -213,7 +213,7 @@ describe('getPriceByDbId', () => {
 });
 
 describe('getPriceByGuid', () => {
-	it('should return price entity with corresponding dbId', () => {
+	it('should return price entity with corresponding id', () => {
 		const ids = prices.map(({ id }) => id);
 		ids.forEach((id) => {
 			const price = getPriceByGuid(prices, id);

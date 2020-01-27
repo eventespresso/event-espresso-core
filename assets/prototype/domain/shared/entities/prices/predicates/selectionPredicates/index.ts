@@ -25,8 +25,8 @@ export const isNotTax = propEq('isTax', false);
 
 // returns price if found in array of prices
 export const getBasePrice = (prices: Price[]): Price | undefined => find(isBasePrice)(prices);
-export const getPriceByDbId = (prices: Price[], dbId: EntityDbId): Price | any => findEntityByDbId(prices)(dbId);
-export const getPriceByGuid = (prices: Price[], guid: EntityId): Price | any => findEntityByGuid(prices)(guid);
+export const getPriceByDbId = (prices: Price[], dbId: EntityDbId): Price => findEntityByDbId(prices)(dbId);
+export const getPriceByGuid = (prices: Price[], guid: EntityId): Price => findEntityByGuid(prices)(guid);
 
 // returns array of prices that satisfy predicate
 export const getPriceModifiers = (prices: Price[]): Price | any => filter(isNotBasePrice, prices);
