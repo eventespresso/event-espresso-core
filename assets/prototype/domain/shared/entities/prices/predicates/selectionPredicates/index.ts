@@ -1,6 +1,6 @@
 import { filter, find, includes, prop, propEq } from 'ramda';
 
-import { EntityDbId, Price } from '../../../../../../domain/eventEditor/data/types';
+import { EntityId, EntityDbId, Price } from '../../../../../../domain/eventEditor/data/types';
 import { PRICE_FIELDS } from '../priceFields';
 import { findEntityByDbId, findEntityByGuid } from '../../../../predicates/shared/selectionPredicates';
 
@@ -26,7 +26,7 @@ export const isNotTax = propEq('isTax', false);
 // returns price if found in array of prices
 export const getBasePrice = (prices: Price[]): Price | undefined => find(isBasePrice)(prices);
 export const getPriceByDbId = (prices: Price[], dbId: EntityDbId): Price | any => findEntityByDbId(prices)(dbId);
-export const getPriceByGuid = (prices) => findEntityByGuid(prices);
+export const getPriceByGuid = (prices: Price[], guid: EntityId): Price | any => findEntityByGuid(prices)(guid);
 
 // returns array of prices that satisfy predicate
 export const getPriceModifiers = (prices) => filter(isNotBasePrice, prices);

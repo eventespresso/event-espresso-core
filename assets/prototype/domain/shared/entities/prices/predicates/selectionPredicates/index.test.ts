@@ -13,6 +13,7 @@ import {
 	isNotTax,
 	getBasePrice,
 	getPriceByDbId,
+	getPriceByGuid,
 } from './index';
 import { nodes as prices } from '../../../../../../domain/eventEditor/data/queries/prices/test/data';
 
@@ -206,6 +207,22 @@ describe('getPriceByDbId', () => {
 			'01100101011101100110010101101110011101000110010101110011011100000111001001100101011100110111001101101111'
 		);
 		const entity = getPriceByDbId(prices, dbId);
+		expect(entity).toBeUndefined();
+	});
+});
+
+describe('getPriceByGuid', () => {
+	it('should return price entity with corresponding dbId', () => {
+		const ids = prices.map(({ id }) => id);
+		ids.forEach((id) => {
+			const price = getPriceByGuid(prices, id);
+			expect(price.id).toBe(id);
+		});
+	});
+
+	it('should return undefined if there is no corresponding price entity to the specified id', () => {
+		const id = 'a b c d e f g h i j k l m n o p q r s t u v w x y z';
+		const entity = getPriceByGuid(prices, id);
 		expect(entity).toBeUndefined();
 	});
 });
