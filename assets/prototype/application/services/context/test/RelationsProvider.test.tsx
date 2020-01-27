@@ -4,7 +4,7 @@ import '@testing-library/jest-dom/extend-expect';
 
 import { RelationsProvider, RelationsConsumer } from '../RelationsProvider';
 import { RelationsManager, RelationalData } from '../../apollo/relations';
-import { ApolloMockedProvider } from '../../../../domain/eventEditor/context';
+import { ApolloMockedProvider } from '../../../../domain/eventEditor/context/TestContext';
 
 describe('RelationsProvider', () => {
 	it('checks for relationsProvider functions', () => {

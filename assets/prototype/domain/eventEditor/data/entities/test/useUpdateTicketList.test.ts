@@ -6,7 +6,7 @@ import useUpdateTicketList from '../useUpdateTicketList';
 import useTicketQueryOptions from '../../queries/tickets/useTicketQueryOptions';
 import useTickets from '../../queries/tickets/useTickets';
 import useTicketIds from '../../queries/tickets/useTicketIds';
-import { ApolloMockedProvider } from '../../../context';
+import { ApolloMockedProvider } from '../../../context/TestContext';
 
 describe('useUpdateTicketList', () => {
 	it('checks for tickets cache update', async () => {

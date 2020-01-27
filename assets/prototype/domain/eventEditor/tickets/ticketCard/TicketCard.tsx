@@ -2,7 +2,7 @@
 import React from 'react';
 import { Card, EditableText, Elevation, H4, H6 } from '@blueprintjs/core/lib/esm';
 
-import TicketProvider from '../../context/TicketProvider';
+import TicketProvider from '../../context/TicketContext';
 import EditTicketButton from './EditTicketButton';
 import DeleteTicketButton from './DeleteTicketButton';
 import TicketPriceCalculatorButton from '../ticketPriceCalculator/buttons/TicketPriceCalculatorButton';

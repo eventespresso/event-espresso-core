@@ -2,7 +2,7 @@ import { renderHook } from '@testing-library/react-hooks';
 
 import useFetchDatetimes from '../useFetchDatetimes';
 import useDatetimeQueryOptions from '../useDatetimeQueryOptions';
-import { ApolloMockedProvider } from '../../../../context';
+import { ApolloMockedProvider } from '../../../../context/TestContext';
 import { successMocks, errorMocks, nodes } from './data';
 
 describe('useFetchDatetimes()', () => {

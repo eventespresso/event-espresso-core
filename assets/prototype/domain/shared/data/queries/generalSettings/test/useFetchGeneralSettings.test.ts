@@ -1,7 +1,7 @@
 import { renderHook } from '@testing-library/react-hooks';
 
 import useFetchGeneralSettings from '../useFetchGeneralSettings';
-import { ApolloMockedProvider } from '../../../../../eventEditor/context';
+import { ApolloMockedProvider } from '../../../../../eventEditor/context/TestContext';
 import { successMocks, errorMocks, generalSettings } from './data';
 
 describe('useFetchGeneralSettings', () => {

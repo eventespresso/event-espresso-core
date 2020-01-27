@@ -1,6 +1,6 @@
 import { renderHook, act } from '@testing-library/react-hooks';
 
-import { relationalData } from '../../../../../../domain/eventEditor/context';
+import { relationalData } from '../../../../../../domain/eventEditor/context/TestContext';
 import useRelationsManager from '../../useRelationsManager';
 
 describe('RelationsManager.getData()', () => {

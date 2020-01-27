@@ -5,8 +5,8 @@ import { ExecutionResult } from 'graphql';
 import { nodes as datetimes } from '../../../queries/datetimes/test/data';
 import { MutationInput, MutationType } from '../../../../../../application/services/apollo/mutations/types';
 import { ucFirst } from '../../../../../../application/utilities/text/changeCase';
-import { eventId } from '../../../../context';
-import { MockedResponse } from '../../../../context/test/types';
+import { eventId } from '../../../../context/TestContext';
+import { MockedResponse } from '../../../../context/TestContext/types';
 import { mutations } from '../../';
 
 export const mockedDatetimes = {

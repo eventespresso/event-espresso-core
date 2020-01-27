@@ -6,7 +6,7 @@ import useUpdateDatetimeList from '../useUpdateDatetimeList';
 import useDatetimeQueryOptions from '../../queries/datetimes/useDatetimeQueryOptions';
 import useDatetimes from '../../queries/datetimes/useDatetimes';
 import useDatetimeIds from '../../queries/datetimes/useDatetimeIds';
-import { ApolloMockedProvider } from '../../../context';
+import { ApolloMockedProvider } from '../../../context/TestContext';
 
 describe('useUpdateDatetimeList', () => {
 	it('checks for datetimes cache update', async () => {

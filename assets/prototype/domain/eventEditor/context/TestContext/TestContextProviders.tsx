@@ -2,11 +2,8 @@ import React from 'react';
 import { MockedProvider } from '@apollo/react-testing';
 /* Internal dependencies */
 import { cache } from '../../../../infrastructure/services/apollo/Apollo';
-import { CommonProviders } from '../ContextProviders';
-import { useDomTestData } from './';
-import useResetApolloCache from './useResetApolloCache';
-import useSetGlobalStatusFlags from './useSetGlobalStatusFlags';
-import useSetRelationalData from './useSetRelationalData';
+import { CommonProviders } from '../EventEditorContext/ContextProviders';
+import { useDomTestData, useResetApolloCache, useSetGlobalStatusFlags, useSetRelationalData } from './';
 import { MockedResponse } from './types';
 import { ContextProvider } from '../types';
 

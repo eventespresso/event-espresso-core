@@ -6,7 +6,7 @@ import { Button, Card, EditableText, Elevation, H4, H6, Popover } from '@bluepri
 import DeleteDatetimeButton from './DeleteDateButton';
 import EditDateButton from './EditDateButton';
 
-import DateTimeProvider from '../../context/DateTimeProvider';
+import { DatetimeProvider } from '../../context/DatetimeContext';
 import useDatetimeItem from '../../data/queries/datetimes/useDatetimeItem';
 import TicketIdTag from '../../tickets/TicketIdTag';
 
@@ -42,7 +42,7 @@ const DateCard: React.FC<ListItemProps> = ({ id }): JSX.Element => {
 	const ticketsLoaded = isLoaded(TypeName.tickets);
 
 	return date ? (
-		<DateTimeProvider id={date.id}>
+		<DatetimeProvider id={date.id}>
 			<Card elevation={Elevation.ONE} style={cardStyle}>
 				<EditDateButton position='top' />
 				<div style={idStyle}>
@@ -55,7 +55,7 @@ const DateCard: React.FC<ListItemProps> = ({ id }): JSX.Element => {
 						value={date.name}
 						defaultValue={date.name}
 						onCancel={(value: any): void => {
-							console.log('DateTimeProvider title onCancel => NEEDS CALLBACK');
+							console.log('DatetimeProvider title onCancel => NEEDS CALLBACK');
 							console.log('value', value);
 						}}
 						onConfirm={(name: string): MutationResult => updateEntity({ name })}
@@ -71,7 +71,7 @@ const DateCard: React.FC<ListItemProps> = ({ id }): JSX.Element => {
 							value={date.description}
 							defaultValue={date.description}
 							onCancel={(value: any): void => {
-								console.log('DateTimeProvider desc onCancel => NEEDS CALLBACK');
+								console.log('DatetimeProvider desc onCancel => NEEDS CALLBACK');
 								console.log('value', value);
 							}}
 							onConfirm={(description: string): MutationResult => updateEntity({ description })}
@@ -102,7 +102,7 @@ const DateCard: React.FC<ListItemProps> = ({ id }): JSX.Element => {
 				{/* Delete button should be hidden to avoid relational inconsistencies */}
 				{ticketsLoaded && <DeleteDatetimeButton id={date.id} />}
 			</Card>
-		</DateTimeProvider>
+		</DatetimeProvider>
 	) : null;
 };
 

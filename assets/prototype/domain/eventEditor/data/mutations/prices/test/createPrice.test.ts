@@ -5,7 +5,7 @@ import { path } from 'ramda';
 import { useEntityMutator, EntityType } from '../../../../../../application/services/apollo/mutations';
 import { useRelations } from '../../../../../../application/services/apollo/relations';
 import { MutationType } from '../../../../../../application/services/apollo/mutations/types';
-import { ApolloMockedProvider } from '../../../../context';
+import { ApolloMockedProvider } from '../../../../context/TestContext';
 import { getMutationMocks, mockedPrices } from './data';
 import usePrices from '../../../queries/prices/usePrices';
 import { nodes as tickets } from '../../../queries/tickets/test/data';

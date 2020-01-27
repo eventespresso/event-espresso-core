@@ -1,7 +1,7 @@
 import { useContext } from 'react';
 import invariant from 'invariant';
 
-import { TicketContext } from '../context/TicketProvider';
+import { TicketContext } from '../context/TicketContext';
 import { EntityContextProps } from '../context/types';
 
 const useTicketContext = (): EntityContextProps => {

@@ -6,9 +6,9 @@ import { nodes as tickets, edge as ticketsEdge } from '../../data/queries/ticket
 import { nodes as prices, edge as pricesEdge } from '../../data/queries/prices/test/data';
 import { nodes as priceTypes, edge as priceTypesEdge } from '../../data/queries/priceTypes/test/data';
 
-export { currentUser } from '../../../../domain/shared/data/queries/currentUser/test/data';
+export { currentUser } from '../../../shared/data/queries/currentUser/test/data';
 
-export { generalSettings } from '../../../../domain/shared/data/queries/generalSettings/test/data';
+export { generalSettings } from '../../../shared/data/queries/generalSettings/test/data';
 
 export const eventId = 100;
 

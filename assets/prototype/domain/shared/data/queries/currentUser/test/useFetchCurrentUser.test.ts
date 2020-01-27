@@ -1,7 +1,7 @@
 import { renderHook } from '@testing-library/react-hooks';
 
 import useFetchCurrentUser from '../useFetchCurrentUser';
-import { ApolloMockedProvider } from '../.../../../../../../eventEditor/context';
+import { ApolloMockedProvider } from '../.../../../../../../eventEditor/context/TestContext';
 import { successMocks, errorMocks, currentUser } from './data';
 
 describe('useFetchCurrentUser', () => {
