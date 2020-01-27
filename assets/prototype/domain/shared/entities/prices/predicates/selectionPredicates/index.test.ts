@@ -15,6 +15,7 @@ import {
 	getPriceByDbId,
 	getPriceByGuid,
 	getPriceModifiers,
+	getTaxes,
 } from './index';
 import { nodes as prices } from '../../../../../../domain/eventEditor/data/queries/prices/test/data';
 
@@ -240,5 +241,20 @@ describe('getPriceModifiers', () => {
 		const updatedPrices = prices.map((price) => ({ ...price, isBasePrice: true }));
 		const priceModifiers = getPriceModifiers(updatedPrices);
 		expect(priceModifiers).toEqual([]);
+	});
+});
+
+describe('getTaxes', () => {
+	it('should return prices which have isTax prop set to true', () => {
+		const result = getTaxes(prices);
+		result.forEach((price) => {
+			expect(price.isTax).toBe(true);
+		});
+	});
+
+	it('should return empty array if there is no price with isTax prop set to true', () => {
+		const updatedPrices = prices.map((price) => ({ ...price, isTax: false }));
+		const result = getTaxes(updatedPrices);
+		expect(result).toEqual([]);
 	});
 });
