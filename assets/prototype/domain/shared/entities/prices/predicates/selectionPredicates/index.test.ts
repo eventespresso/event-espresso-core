@@ -1,6 +1,5 @@
 import { omit } from 'ramda';
 
-import { Price } from '../../../../../../domain/eventEditor/data/types';
 import {
 	isPriceField,
 	isBasePrice,

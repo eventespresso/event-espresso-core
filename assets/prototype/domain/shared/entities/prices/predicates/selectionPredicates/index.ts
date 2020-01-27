@@ -1,6 +1,6 @@
 import { filter, find, includes, prop, propEq } from 'ramda';
 
-import { EntityId, EntityDbId, Price } from '../../../../../../domain/eventEditor/data/types';
+import { EntityId, EntityDbId, Price, PriceType } from '../../../../../../domain/eventEditor/data/types';
 import { PRICE_FIELDS } from '../priceFields';
 import { findEntityByDbId, findEntityByGuid } from '../../../../predicates/shared/selectionPredicates';
 
@@ -36,4 +36,6 @@ export const getTaxes = (prices: Price[]): Price[] => filter(isTax, prices);
 export const getPriceTypeGuid = (price) => prop('priceType', price);
 
 // returns price type for supplied price if found in array of price types
-export const getPriceType = (priceTypes) => (price) => findEntityByGuid(priceTypes)(getPriceTypeGuid(price));
+export const getPriceType = (priceTypes: PriceType[]) => (price: Price) => {
+	return findEntityByGuid(priceTypes)(getPriceTypeGuid(price));
+};
