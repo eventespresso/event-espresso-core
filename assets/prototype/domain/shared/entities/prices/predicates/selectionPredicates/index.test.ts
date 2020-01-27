@@ -1,7 +1,7 @@
 import { omit } from 'ramda';
 
 import { Price } from '../../../../../../domain/eventEditor/data/types';
-import { isPriceField, isBasePrice } from './index';
+import { isPriceField, isBasePrice, isNotBasePrice } from './index';
 import { nodes as prices } from '../../../../../../domain/eventEditor/data/queries/prices/test/data';
 
 describe('isPriceField', () => {
@@ -25,7 +25,7 @@ describe('isPriceField', () => {
 describe('isBasePrice', () => {
 	it('should return true if isBasePrice value is true for each entity', () => {
 		prices.forEach((price) => {
-			if (price.isBasePrice) {
+			if (price.isBasePrice === true) {
 				expect(isBasePrice(price)).toBe(true);
 			}
 		});
@@ -33,8 +33,26 @@ describe('isBasePrice', () => {
 
 	it('should return false if isBasePrice value is false for each entity', () => {
 		prices.forEach((price) => {
-			if (!price.isBasePrice) {
+			if (price.isBasePrice === false) {
 				expect(isBasePrice(price)).toBe(false);
+			}
+		});
+	});
+});
+
+describe('isNotBasePrice', () => {
+	it('should return true if isBasePrice value is true for each entity', () => {
+		prices.forEach((price) => {
+			if (price.isBasePrice === false) {
+				expect(isNotBasePrice(price)).toBe(true);
+			}
+		});
+	});
+
+	it('should return false if isBasePrice value is false for each entity', () => {
+		prices.forEach((price) => {
+			if (price.isBasePrice === true) {
+				expect(isNotBasePrice(price)).toBe(false);
 			}
 		});
 	});
