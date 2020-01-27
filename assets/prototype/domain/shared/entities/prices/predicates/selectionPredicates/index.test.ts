@@ -14,6 +14,7 @@ import {
 	getBasePrice,
 	getPriceByDbId,
 	getPriceByGuid,
+	getPriceModifiers,
 } from './index';
 import { nodes as prices } from '../../../../../../domain/eventEditor/data/queries/prices/test/data';
 
@@ -224,5 +225,20 @@ describe('getPriceByGuid', () => {
 		const id = 'a b c d e f g h i j k l m n o p q r s t u v w x y z';
 		const entity = getPriceByGuid(prices, id);
 		expect(entity).toBeUndefined();
+	});
+});
+
+describe('getPriceModifiers', () => {
+	it('should return price modifiers', () => {
+		const priceModifiers = getPriceModifiers(prices);
+		priceModifiers.forEach((priceModifier) => {
+			expect(priceModifier.isBasePrice).toBe(false);
+		});
+	});
+
+	it('should return empty array if there is no price with base price type set to false', () => {
+		const updatedPrices = prices.map((price) => ({ ...price, isBasePrice: true }));
+		const priceModifiers = getPriceModifiers(updatedPrices);
+		expect(priceModifiers).toEqual([]);
 	});
 });

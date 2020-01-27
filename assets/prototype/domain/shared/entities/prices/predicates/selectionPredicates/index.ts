@@ -29,7 +29,7 @@ export const getPriceByDbId = (prices: Price[], dbId: EntityDbId): Price | any =
 export const getPriceByGuid = (prices: Price[], guid: EntityId): Price | any => findEntityByGuid(prices)(guid);
 
 // returns array of prices that satisfy predicate
-export const getPriceModifiers = (prices) => filter(isNotBasePrice, prices);
+export const getPriceModifiers = (prices: Price[]): Price | any => filter(isNotBasePrice, prices);
 export const getTaxes = (prices) => filter(isTax, prices);
 
 // returns GUID for price entity's related price type
