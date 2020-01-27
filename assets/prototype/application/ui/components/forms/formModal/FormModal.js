@@ -14,6 +14,7 @@ const FormModal = ({ FormComponent, initialValues, onSubmit, onClose, isOpen, ..
 		hasBackdrop: true,
 		usePortal: true,
 		useTallContent: false,
+		portalClassName: 'ee-form-modal',
 	};
 
 	const classes = classNames(Classes.CARD, Classes.ELEVATION_4);
