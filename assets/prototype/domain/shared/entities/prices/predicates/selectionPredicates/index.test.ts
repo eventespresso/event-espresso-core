@@ -1,7 +1,7 @@
 import { omit } from 'ramda';
 
 import { Price } from '../../../../../../domain/eventEditor/data/types';
-import { isPriceField, isBasePrice, isNotBasePrice } from './index';
+import { isPriceField, isBasePrice, isNotBasePrice, isDiscount, isNotDiscount } from './index';
 import { nodes as prices } from '../../../../../../domain/eventEditor/data/queries/prices/test/data';
 
 describe('isPriceField', () => {
@@ -31,7 +31,7 @@ describe('isBasePrice', () => {
 		});
 	});
 
-	it('should return false if isBasePrice value is false for each entity', () => {
+	it('should return false if isBasePrice value is false for each price entity', () => {
 		prices.forEach((price) => {
 			if (price.isBasePrice === false) {
 				expect(isBasePrice(price)).toBe(false);
@@ -41,7 +41,7 @@ describe('isBasePrice', () => {
 });
 
 describe('isNotBasePrice', () => {
-	it('should return true if isBasePrice value is true for each entity', () => {
+	it('should return true if isBasePrice value is true for each price entity', () => {
 		prices.forEach((price) => {
 			if (price.isBasePrice === false) {
 				expect(isNotBasePrice(price)).toBe(true);
@@ -49,10 +49,46 @@ describe('isNotBasePrice', () => {
 		});
 	});
 
-	it('should return false if isBasePrice value is false for each entity', () => {
+	it('should return false if isBasePrice value is false for each price entity', () => {
 		prices.forEach((price) => {
 			if (price.isBasePrice === true) {
 				expect(isNotBasePrice(price)).toBe(false);
+			}
+		});
+	});
+});
+
+describe('isDiscount', () => {
+	it('should return true if isDiscount value is true for each price entity', () => {
+		prices.forEach((price) => {
+			if (price.isDiscount === true) {
+				expect(isDiscount(price)).toBe(true);
+			}
+		});
+	});
+
+	it('should return false if isDiscount value is false for each entity', () => {
+		prices.forEach((price) => {
+			if (price.isDiscount === false) {
+				expect(isDiscount(price)).toBe(false);
+			}
+		});
+	});
+});
+
+describe('isNotDiscount', () => {
+	it('should return true if isDiscount value is true for each entity', () => {
+		prices.forEach((price) => {
+			if (price.isDiscount === false) {
+				expect(isNotDiscount(price)).toBe(true);
+			}
+		});
+	});
+
+	it('should return false if isDiscount value is false for each entity', () => {
+		prices.forEach((price) => {
+			if (price.isDiscount === true) {
+				expect(isNotDiscount(price)).toBe(false);
 			}
 		});
 	});
