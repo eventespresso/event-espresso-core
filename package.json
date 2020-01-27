@@ -52,6 +52,7 @@
 		"@wordpress/i18n": "^3.7.0",
 		"@wordpress/is-shallow-equal": "^1.6.1",
 		"accounting-js": "^1.1.1",
+		"build": "^0.1.4",
 		"classnames": "^2.2.6",
 		"cuid": "^2.1.6",
 		"decimal.js-light": "^2.5.0",
@@ -60,12 +61,14 @@
 		"memize": "^1.0.5",
 		"moment-duration-format": "^2.3.2",
 		"moment-timezone": "^0.5.27",
+		"npm": "^6.13.6",
 		"npm-watch": "^0.6.0",
 		"pluralize": "^8.0.0",
 		"prop-types": "^15.7.2",
 		"querystringify": "^2.1.1",
 		"react-select": "^3.0.8",
 		"rememo": "^3.0.0",
+		"run": "^1.4.0",
 		"warning": "^4.0.3"
 	},
 	"devDependencies": {
