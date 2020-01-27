@@ -17,11 +17,11 @@ export const entityHasDbId = (dbId: EntityDbId) => propEq('dbId', dbId);
 export const entityHasGuid = (guid: EntityId) => propEq('id', guid);
 
 // returns entity if found in array of entities
-export const findEntityByDbId = (entities: Entity[]) => (dbid: EntityDbId): Entity => {
+export const findEntityByDbId = <T extends Entity>(entities: T[]) => (dbid: EntityDbId): T => {
 	return find(entityHasDbId(dbid))(entities);
 };
 
-export const findEntityByGuid = (entities: Entity[]) => (guid: EntityId): Entity => {
+export const findEntityByGuid = <T extends Entity>(entities: T[]) => (guid: EntityId): T => {
 	return find(entityHasGuid(guid))(entities);
 };
 
