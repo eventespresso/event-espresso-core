@@ -9,7 +9,7 @@ import { render } from 'react-dom';
  */
 import './types';
 import EventEditor from './EventEditor';
-import { ContextProviders } from './context/ContextProviders';
+import { ContextProviders } from './context/EventEditorContext';
 
 const container = document.getElementById('normal-sortables');
 

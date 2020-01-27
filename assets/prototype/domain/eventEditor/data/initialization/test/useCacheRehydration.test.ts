@@ -4,7 +4,7 @@ import useCacheRehydration from '../useCacheRehydration';
 import useDatetimes from '../../queries/datetimes/useDatetimes';
 import useTickets from '../../queries/tickets/useTickets';
 import usePriceTypes from '../../queries/priceTypes/usePriceTypes';
-import { ApolloMockedProvider } from '../../../context';
+import { ApolloMockedProvider } from '../../../context/TestContext';
 
 describe('useCacheRehydration', () => {
 	it('checks for datetimes rehydration', async () => {

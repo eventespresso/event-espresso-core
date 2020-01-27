@@ -2,7 +2,7 @@ import { renderHook } from '@testing-library/react-hooks';
 
 import useFetchPrices from '../useFetchPrices';
 import usePriceQueryOptions from '../usePriceQueryOptions';
-import { ApolloMockedProvider } from '../../../../context';
+import { ApolloMockedProvider } from '../../../../context/TestContext';
 import { successMocks, errorMocks, nodes } from './data';
 import useInitTicketTestCache from '../../tickets/test/useInitTicketTestCache';
 

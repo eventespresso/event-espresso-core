@@ -1,7 +1,7 @@
 import { renderHook } from '@testing-library/react-hooks';
 
 import useCacheRehydrationData from '../useCacheRehydrationData';
-import { ApolloMockedProvider } from '../../../context';
+import { ApolloMockedProvider } from '../../../context/TestContext';
 
 describe('useCacheRehydrationData', () => {
 	it('checks for event data', async () => {

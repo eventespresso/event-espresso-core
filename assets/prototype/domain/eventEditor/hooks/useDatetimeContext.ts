@@ -1,7 +1,7 @@
 import { useContext } from 'react';
 import invariant from 'invariant';
 
-import { DateTimeContext } from '../context/DateTimeProvider';
+import { DateTimeContext } from '../context/DatetimeContext';
 import { EntityContextProps } from '../context/types';
 
 const useDatetimeContext = (): EntityContextProps => {

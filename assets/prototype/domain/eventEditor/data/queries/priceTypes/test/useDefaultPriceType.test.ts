@@ -1,7 +1,7 @@
 import { renderHook } from '@testing-library/react-hooks';
 
 import useDefaultPriceType from '../useDefaultPriceType';
-import { ApolloMockedProvider } from '../../../../context';
+import { ApolloMockedProvider } from '../../../../context/TestContext';
 import { nodes, edge } from './data';
 import useInitPriceTypeTestCache from './useInitPriceTypeTestCache';
 import { isFlatFeeSurcharge } from '../../../../../shared/entities/priceTypes/predicates/selectionPredicates';

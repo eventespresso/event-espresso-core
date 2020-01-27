@@ -5,7 +5,7 @@ import '@testing-library/jest-dom/extend-expect';
 import { ConfigConsumer } from '../ConfigProvider';
 import { Config } from '../../config/types';
 import { mockEeJsData } from '../../config/test/data';
-import { ApolloMockedProvider } from '../../../../domain/eventEditor/context';
+import { ApolloMockedProvider } from '../../../../domain/eventEditor/context/TestContext';
 
 describe('ConfigProvider', () => {
 	it('checks for ConfigProvider setConfig function', () => {

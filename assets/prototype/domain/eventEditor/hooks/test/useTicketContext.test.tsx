@@ -2,7 +2,7 @@ import React from 'react';
 import { renderHook } from '@testing-library/react-hooks';
 
 import useTicketContext from '../useTicketContext';
-import TicketProvider from '../../context/TicketProvider';
+import TicketProvider from '../../context/TicketContext';
 
 describe('useTicketContext', () => {
 	it('checks for error when used outside the context', () => {

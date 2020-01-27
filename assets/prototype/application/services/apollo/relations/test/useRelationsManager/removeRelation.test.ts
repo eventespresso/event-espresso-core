@@ -1,7 +1,7 @@
 import { renderHook, act } from '@testing-library/react-hooks';
 import { pathOr, path } from 'ramda';
 
-import { relationalData } from '../../../../../../domain/eventEditor/context';
+import { relationalData } from '../../../../../../domain/eventEditor/context/TestContext';
 import useRelationsManager from '../../useRelationsManager';
 import { RelationFunctionProps } from '../../types';
 
@@ -82,7 +82,7 @@ describe('RelationsManager.removeRelation()', () => {
 		};
 
 		// before updating relations
-		let relatedIds = result.current.getRelations(options);
+		const relatedIds = result.current.getRelations(options);
 
 		const passedRelatedIds = path<string[]>(pathToRelatedEntityIds, relationalData);
 

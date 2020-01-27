@@ -5,7 +5,7 @@ import useCacheRehydration from '../../initialization/useCacheRehydration';
 import useUpdatePriceList from '../useUpdatePriceList';
 import usePriceQueryOptions from '../../queries/prices/usePriceQueryOptions';
 import usePrices from '../../queries/prices/usePrices';
-import { ApolloMockedProvider } from '../../../context';
+import { ApolloMockedProvider } from '../../../context/TestContext';
 
 describe('useUpdatePriceList', () => {
 	it('checks for prices cache update', async () => {
