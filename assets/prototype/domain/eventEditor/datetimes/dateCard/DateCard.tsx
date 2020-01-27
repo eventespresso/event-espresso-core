@@ -6,7 +6,7 @@ import { Button, Card, EditableText, Elevation, H4, H6, Popover } from '@bluepri
 import DeleteDatetimeButton from './DeleteDateButton';
 import EditDateButton from './EditDateButton';
 
-import DateTimeProvider from '../../context/DateContext';
+import DateTimeProvider from '../../context/DatetimeContext';
 import useDatetimeItem from '../../data/queries/datetimes/useDatetimeItem';
 import TicketIdTag from '../../tickets/TicketIdTag';
 
