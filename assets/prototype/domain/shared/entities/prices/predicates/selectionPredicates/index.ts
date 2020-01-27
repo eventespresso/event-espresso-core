@@ -1,12 +1,11 @@
-import { filter, find, indexOf, prop, propEq } from 'ramda';
+import { filter, find, includes, prop, propEq } from 'ramda';
 
-import { PRICE_FIELDS } from './priceFields';
-import { findEntityByDbId, findEntityByGuid } from '../../../predicates/shared/selectionPredicates';
-
-const NO_INDEX = -1;
+import { Price } from '../../../../../../domain/eventEditor/data/types';
+import { PRICE_FIELDS } from '../priceFields';
+import { findEntityByDbId, findEntityByGuid } from '../../../../predicates/shared/selectionPredicates';
 
 // the following return `true` if price satisfies predicate
-export const isPriceField = (val, key) => indexOf(key, PRICE_FIELDS) > NO_INDEX;
+export const isPriceField = (_, field): boolean => includes(field, PRICE_FIELDS);
 // is a base price ?
 export const isBasePrice = propEq('isBasePrice', true);
 export const isNotBasePrice = propEq('isBasePrice', false);
