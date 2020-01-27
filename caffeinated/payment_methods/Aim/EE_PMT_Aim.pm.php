@@ -193,21 +193,6 @@ class EE_PMT_Aim extends EE_PMT_Base
                             'html_help_text' => __('Note: if fields are excluded they cannot be required.', 'event_espresso')
                         )
                     ),
-                    'server' => new EE_Select_Input(
-                        apply_filters(
-                            'FHEE__EE_PMT_Aim__generate_new_settings_form__server_select_input__options',
-                            array(
-                                'akamai' => __('Authorize.net/Akamai (default)', 'event_espresso'),
-                                'authorize.net' => __('Authorize.net (deprecated)', 'event_espresso'),
-                            ),
-                            $this
-                        ),
-                        array(
-                            'html_label_text' => __('Server', 'event_espresso'),
-                            'html_help_text' => __('The Gateway Server where payment requests will be sent', 'event_espresso')
-                        )
-                    )
-                        
                 )
             )
         );

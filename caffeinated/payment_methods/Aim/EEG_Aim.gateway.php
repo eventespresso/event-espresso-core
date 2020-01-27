@@ -34,8 +34,6 @@ class EEG_Aim extends EE_Onsite_Gateway
 
     protected $_transaction_key;
 
-    protected $_server;
-
     protected $_currencies_supported = array(
         'AUD',
         'USD',
@@ -151,28 +149,6 @@ class EEG_Aim extends EE_Onsite_Gateway
 
 
     /**
-     * TEMPORARY CALLBACK! Do not use
-     * Callback which filters the server url. This is added so site admins can revert to using
-     * the old AIM server in case Akamai service breaks their integration.
-     * Using Akamai will, however, be mandatory on June 30th 2016 Authorize.net
-     * (see http://www.authorize.net/support/akamaifaqs/#firewall?utm_campaign=April%202016%20Technical%20Updates%20for%20Merchants.html&utm_medium=email&utm_source=Eloqua&elqTrackId=46103bdc375c411a979c2f658fc99074&elq=7026706360154fee9b6d588b27d8eb6a&elqaid=506&elqat=1&elqCampaignId=343)
-     * Once that happens, this will be obsolete and WILL BE REMOVED.
-     *
-     * @param string $url
-     * @param EEG_Aim $gateway_object
-     * @return string
-     */
-    public function possibly_use_deprecated_aim_server($url, EEG_Aim $gateway_object)
-    {
-        if ($gateway_object->_server === 'authorize.net' && ! $gateway_object->_debug_mode) {
-            return 'https://secure.authorize.net/gateway/transact.dll';
-        } else {
-            return $url;
-        }
-    }
-
-
-    /**
      * Asks the gateway to do whatever it does to process the payment. Onsite gateways will
      * usually send a request directly to the payment provider and update the payment's status based on that;
      * whereas offsite gateways will usually just update the payment with the URL and query parameters to use
@@ -190,7 +166,6 @@ class EEG_Aim extends EE_Onsite_Gateway
      */
     public function do_direct_payment($payment, $billing_info = null)
     {
-        add_filter('FHEE__EEG_Aim___get_server_url', array($this, 'possibly_use_deprecated_aim_server'), 10, 2);
         // Enable test mode if needed
         // 4007000000027  <-- test successful visa
         // 4222222222222  <-- test failure card number
