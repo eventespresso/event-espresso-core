@@ -89,9 +89,9 @@ const testCases = [
 ];
 
 describe('toBoolean', () => {
-	for (const testCase of testCases) {
-		it(testCase.desc, () => {
-			expect(toBoolean(testCase.input)).toBe(testCase.result);
+	testCases.forEach(({ desc, input, result }) => {
+		it(desc, () => {
+			expect(toBoolean(input)).toBe(result);
 		});
-	}
+	});
 });

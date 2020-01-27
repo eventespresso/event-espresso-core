@@ -49,9 +49,9 @@ const testCases = [
 ];
 
 describe('toInteger', () => {
-	for (const testCase of testCases) {
-		it(testCase.desc, () => {
-			expect(toInteger(testCase.input)).toBe(testCase.result);
+	testCases.forEach(({ desc, input, result }) => {
+		it(desc, () => {
+			expect(toInteger(input)).toBe(result);
 		});
-	}
+	});
 });
