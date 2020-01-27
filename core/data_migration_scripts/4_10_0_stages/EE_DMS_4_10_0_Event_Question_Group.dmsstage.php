@@ -140,7 +140,9 @@ class EE_DMS_4_10_0_Event_Question_Group extends EE_Data_Migration_Script_Stage_
             $this->_migrate_old_row($old_row);
             $items_actually_migrated++;
         }
-        if ($this->count_records_migrated() + $items_actually_migrated >= $this->count_records_to_migrate()) {
+        if (empty($rows)
+            || ($this->count_records_migrated() + $items_actually_migrated >= $this->count_records_to_migrate())
+        ) {
             $this->set_completed();
         }
         return $items_actually_migrated;
