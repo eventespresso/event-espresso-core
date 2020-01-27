@@ -6,14 +6,12 @@ const DEFAULT_CONTEXT = {
 	id: '',
 };
 
-export const DateTimeContext = createContext<EntityContextProps>(DEFAULT_CONTEXT);
+export const DatetimeContext = createContext<EntityContextProps>(DEFAULT_CONTEXT);
 
-const DateTimeProvider: EntityContextProvider = (props): JSX.Element => {
+export const DatetimeProvider: EntityContextProvider = (props): JSX.Element => {
 	const { children, id } = props;
 
 	const value: EntityContextProps = { id };
 
-	return <DateTimeContext.Provider value={value}>{children}</DateTimeContext.Provider>;
+	return <DatetimeContext.Provider value={value}>{children}</DatetimeContext.Provider>;
 };
-
-export default DateTimeProvider;
