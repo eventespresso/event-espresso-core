@@ -2,7 +2,7 @@ import React from 'react';
 import { renderHook } from '@testing-library/react-hooks';
 
 import useDatetimeContext from '../useDatetimeContext';
-import DateTimeProvider from '../../context/DatetimeContext';
+import { DatetimeProvider } from '../../context/DatetimeContext';
 
 describe('useDatetimeContext', () => {
 	it('checks for empty id when used outside the context', () => {
@@ -17,7 +17,7 @@ describe('useDatetimeContext', () => {
 	it('checks for the returned context and its data', async () => {
 		const id = 'fake-id';
 		const wrapper: React.FC<any> = ({ children }): JSX.Element => (
-			<DateTimeProvider id={id}>{children}</DateTimeProvider>
+			<DatetimeProvider id={id}>{children}</DatetimeProvider>
 		);
 		const { result } = renderHook(
 			() => {

@@ -1,15 +1,14 @@
 import React from 'react';
 import { useApolloClient } from '@apollo/react-hooks';
+import { ApolloClient } from 'apollo-client';
 import { render } from '@testing-library/react';
 import { renderHook } from '@testing-library/react-hooks';
-import '@testing-library/jest-dom/extend-expect';
 import { InvariantError } from 'ts-invariant';
-import ApolloClient from 'apollo-client';
+import '@testing-library/jest-dom/extend-expect';
 
 import { useStatus } from '../../../../application/services/apollo/status';
 import useEventId from '../../data/queries/events/useEventId';
-import { eventId } from '../testContext/data';
-import { ApolloMockedProvider } from '../testContext/TestContextProviders';
+import { ApolloMockedProvider, eventId } from '../TestContext';
 
 describe('ContextProviders', () => {
 	it('checks for Apollo context without ContextProviders', () => {
