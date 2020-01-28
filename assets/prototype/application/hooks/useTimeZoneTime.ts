@@ -11,11 +11,11 @@ interface TimeZoneTime {
 const useTimeZoneTime = (): TimeZoneTime => {
 	const { config } = useConfig();
 
-	const localTimeToUtc: DateFn = (date: Date | string | number): Date => {
+	const localTimeToUtc: DateFn = (date) => {
 		return zonedTimeToUtc(date, config.timezone.name);
 	};
 
-	const utcToLocalTime: DateFn = (isoDate: Date | string | number): Date => {
+	const utcToLocalTime: DateFn = (isoDate) => {
 		return utcToZonedTime(isoDate, config.timezone.name);
 	};
 
