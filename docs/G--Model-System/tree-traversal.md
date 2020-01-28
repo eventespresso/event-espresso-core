@@ -58,8 +58,9 @@ $t_serialized = serialize($transaction_node);
 // Unserialize it.
 $transaction_node_unserialized = unserialize($t_serialized);
 
-// Keep using it. It will pick up where it left off exploring the tree
-$transaction_node_unserialized->visit(20);
+// Keep using it to grab the next 10 rows (ie: 11-20).
+// It will pick up where it left off exploring the tree
+$transaction_node_unserialized->visit(10);
 ```
 
 `ModelObjNode::visit()` identifies all the model object's dependent model objects.
