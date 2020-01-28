@@ -63,7 +63,7 @@ describe('useIfMounted', () => {
 		expect(result.current.count).toBe(1);
 	});
 
-	it('updates state without ifMounted after unmount', () => {
+	it('should throw an error if state is updated without ifMounted after unmount', () => {
 		const { result, unmount } = renderHook(() => useCounter(false));
 
 		expect(result.current.count).toBe(0);
