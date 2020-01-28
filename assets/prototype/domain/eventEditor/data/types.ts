@@ -71,7 +71,7 @@ export interface Ticket extends Entity {
 	description: string;
 	endDate: string; // ISO string
 	isDefault: boolean;
-	isDeleted: boolean; // TODO add/ swap with isTrashed
+	isDeleted?: boolean; // TODO add/ swap with isTrashed
 	isFree: boolean;
 	isRequired: boolean;
 	isSoldOut: boolean;

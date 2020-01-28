@@ -28,7 +28,7 @@ interface FilterTickets {
  * @param {string} show    value for the "show" filter
  * @return {Array}         filtered tickets array
  */
-const filters = ({ tickets, show = ShowTickets.nextOnSaleOrPendingOnly }: FilterTickets) => {
+const filters = ({ tickets, show = ShowTickets.nextOnSaleOrPendingOnly }: FilterTickets): Ticket[] => {
 	switch (show) {
 		case ShowTickets.above50Sold:
 			return percentSoldAtOrAbove({ percentage: 50, tickets });
@@ -54,8 +54,9 @@ const filters = ({ tickets, show = ShowTickets.nextOnSaleOrPendingOnly }: Filter
 			return pendingOnly(tickets);
 		case ShowTickets.soldOutOnly:
 			return soldOutOnly(tickets);
+		default:
+			return tickets;
 	}
-	return tickets;
 };
 
 export default filters;
