@@ -899,23 +899,27 @@ class EED_Ticket_Sales_Monitor extends EED_Module
 
 
     /**
-     * Resets all ticket and datetime reserved counts to zero
-     * Tickets that are currently associated with a Transaction that is in progress
+     * Resets the ticket and datetime reserved counts.
      *
+     * For all the tickets with reservations, recalculates what their actual reserved counts should be based
+     * on the valid transactions.
+     *
+     * @return int number of tickets whose reservations were released.
      * @throws EE_Error
      * @throws DomainException
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
      * @throws InvalidArgumentException
      * @throws UnexpectedEntityException
+     * @throws ReflectionException
      */
     public static function reset_reservation_counts()
     {
         /** @var EE_Line_Item[] $valid_reserved_tickets */
         $valid_reserved_tickets = array();
-        /** @var EE_Transaction[] $transactions_not_in_progress */
-        $transactions_not_in_progress = EEM_Transaction::instance()->get_transactions_not_in_progress();
-        foreach ($transactions_not_in_progress as $transaction) {
+        /** @var EE_Transaction[] $transactions_in_progress */
+        $transactions_in_progress = EEM_Transaction::instance()->get_transactions_in_progress();
+        foreach ($transactions_in_progress as $transaction) {
             // if this TXN has been fully completed, then skip it
             if ($transaction->reg_step_completed('finalize_registration')) {
                 continue;
@@ -960,7 +964,7 @@ class EED_Ticket_Sales_Monitor extends EED_Module
         $ticket_line_items = EEH_Line_Item::get_ticket_line_items($total_line_item);
         foreach ($ticket_line_items as $ticket_line_item) {
             if ($ticket_line_item instanceof EE_Line_Item) {
-                $valid_reserved_tickets[] = $ticket_line_item;
+                $valid_reserved_tickets[ $ticket_line_item->ID() ] = $ticket_line_item;
             }
         }
         return $valid_reserved_tickets;
@@ -968,51 +972,56 @@ class EED_Ticket_Sales_Monitor extends EED_Module
 
 
     /**
-     * @param EE_Ticket[]    $tickets_with_reservations
-     * @param EE_Line_Item[] $valid_reserved_ticket_line_items
+     * Releases ticket and datetime reservations (ie, reduces the number of reserved spots on them).
+     *
+     * Given the list of tickets which have reserved spots on them, uses the complete list of line items for tickets
+     * whose transactions aren't complete and also aren't yet expired (ie, they're incomplete and younger than the
+     * session's expiry time) to update the ticket (and their datetimes') reserved counts.
+     *
+     * @param EE_Ticket[]    $tickets_with_reservations all tickets with TKT_reserved > 0
+     * @param EE_Line_Item[] $valid_reserved_ticket_line_items all line items for tickets and incomplete transactions
+     *                       whose session has NOT expired. We will use these to determine the number of ticket
+     *                       reservations are now invalid. We don't use the list of invalid ticket line items because
+     *                       we don't know which of those have already been taken into account when reducing ticket
+     *                       reservation counts, and which haven't.
      * @return int
      * @throws UnexpectedEntityException
      * @throws DomainException
      * @throws EE_Error
      */
-    private static function release_reservations_for_tickets(
+    protected static function release_reservations_for_tickets(
         array $tickets_with_reservations,
         array $valid_reserved_ticket_line_items = array(),
         $source
     ) {
-        if (self::debug) {
-            echo self::$nl . self::$nl . __LINE__ . ') ' . __METHOD__ . '()';
-        }
         $total_tickets_released = 0;
         $sold_out_events = array();
         foreach ($tickets_with_reservations as $ticket_with_reservations) {
             if (! $ticket_with_reservations instanceof EE_Ticket) {
                 continue;
             }
-            $reserved_qty = $ticket_with_reservations->reserved();
-            if (self::debug) {
-                echo self::$nl . ' . $ticket_with_reservations->ID(): ' . $ticket_with_reservations->ID();
-                echo self::$nl . ' . $reserved_qty: ' . $reserved_qty;
-            }
+            // The $valid_reserved_ticket_line_items tells us what the reserved count on their tickets (and datetimes)
+            // SHOULD be. Instead of just directly updating the list, we're going to use EE_Ticket::decreaseReserved()
+            // to try to avoid race conditions, so instead of just finding the number to update TO, we're going to find
+            // the number to RELEASE. It's the same end result, just different path.
+            // Begin by assuming we're going to release all the reservations on this ticket.
+            $expired_reservations_count = $ticket_with_reservations->reserved();
+            // Now reduce that number using the list of current valid reservations.
             foreach ($valid_reserved_ticket_line_items as $valid_reserved_ticket_line_item) {
                 if ($valid_reserved_ticket_line_item instanceof EE_Line_Item
                     && $valid_reserved_ticket_line_item->OBJ_ID() === $ticket_with_reservations->ID()
                 ) {
-                    if (self::debug) {
-                        echo self::$nl . ' . $valid_reserved_ticket_line_item->quantity(): '
-                             . $valid_reserved_ticket_line_item->quantity();
-                    }
-                    $reserved_qty -= $valid_reserved_ticket_line_item->quantity();
+                    $expired_reservations_count -= $valid_reserved_ticket_line_item->quantity();
                 }
             }
-            if ($reserved_qty > 0) {
+            // Only bother saving the tickets and datetimes if we're actually going to release some spots.
+            if ($expired_reservations_count > 0) {
                 $ticket_with_reservations->add_extra_meta(
                     EE_Ticket::META_KEY_TICKET_RESERVATIONS,
                     __LINE__ . ') ' . $source . '()'
                 );
-                $ticket_with_reservations->decreaseReserved($reserved_qty, true, 'TicketSalesMonitor:' . __LINE__);
-                $ticket_with_reservations->save();
-                $total_tickets_released += $reserved_qty;
+                $ticket_with_reservations->decreaseReserved($expired_reservations_count, true, 'TicketSalesMonitor:' . __LINE__);
+                $total_tickets_released += $expired_reservations_count;
                 $event = $ticket_with_reservations->get_related_event();
                 // track sold out events
                 if ($event instanceof EE_Event && $event->is_sold_out()) {
@@ -1020,10 +1029,7 @@ class EED_Ticket_Sales_Monitor extends EED_Module
                 }
             }
         }
-        if (self::debug) {
-            echo self::$nl . ' . $total_tickets_released: ' . $total_tickets_released;
-        }
-        // double check whether sold out events should remain sold out after releasing tickets
+        // Double check whether sold out events should remain sold out after releasing tickets
         if ($sold_out_events !== array()) {
             foreach ($sold_out_events as $sold_out_event) {
                 /** @var EE_Event $sold_out_event */

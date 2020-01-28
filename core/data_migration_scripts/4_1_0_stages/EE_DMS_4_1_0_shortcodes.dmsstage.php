@@ -54,6 +54,6 @@ class EE_DMS_4_1_0_shortcodes extends EE_Data_Migration_Script_Stage
 
     private function _sql_to_only_select_non_drafts()
     {
-        return " WHERE post_type NOT IN ('revision','auto-draft') ";
+        return " WHERE post_type NOT IN ('revision','auto-draft','attachment','nav_menu_item') ";
     }
 }
