@@ -25,6 +25,6 @@ export const mockEeJsData: JsDataProps = {
 	default_timezone: {
 		pretty: 'Calcutta',
 		string: 'Asia/Calcutta',
-		offset: -6,
+		offset: +5.5,
 	},
 };
