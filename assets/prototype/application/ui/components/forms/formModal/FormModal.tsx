@@ -1,11 +1,21 @@
+import React, { CSSProperties } from 'react';
 import classNames from 'classnames';
 import { Form } from 'react-final-form';
 import { Classes, Overlay } from '@blueprintjs/core/lib/esm';
+
+import { FormModalProps } from './types';
 import FormModalForm from './FormModalForm';
 
 import './styles.css';
 
-const FormModal = ({ FormComponent, initialValues, onSubmit, onClose, isOpen, ...extraProps }) => {
+const FormModal: React.FC<FormModalProps> = ({
+	FormComponent,
+	initialValues,
+	onSubmit,
+	onClose,
+	isOpen,
+	...extraProps
+}) => {
 	const overlayProps = {
 		autoFocus: true,
 		canEscapeKeyClose: true,
@@ -19,7 +29,7 @@ const FormModal = ({ FormComponent, initialValues, onSubmit, onClose, isOpen, ..
 
 	const classes = classNames(Classes.CARD, Classes.ELEVATION_4);
 
-	const overlayStyle = {
+	const overlayStyle: CSSProperties = {
 		boxSizing: 'border-box',
 		maxHeight: '90%',
 		maxWidth: '1200px',
@@ -27,13 +37,13 @@ const FormModal = ({ FormComponent, initialValues, onSubmit, onClose, isOpen, ..
 		minWidth: '320px',
 		width: '80%',
 		overflowY: 'scroll',
-		position: 'absolute',
+		position: 'absolute' as 'absolute',
 		left: '50%',
 		top: '50%',
 		transform: 'translate(-50%, -50%)',
 	};
 
-	const onCloseHandler = (e) => {
+	const onCloseHandler = (e?: React.SyntheticEvent) => {
 		e.preventDefault();
 		e.stopPropagation();
 		onClose();
@@ -44,12 +54,12 @@ const FormModal = ({ FormComponent, initialValues, onSubmit, onClose, isOpen, ..
 			<Overlay {...overlayProps} className={Classes.OVERLAY_SCROLL_CONTAINER} onClose={onClose} isOpen={isOpen}>
 				<div className={classes} style={overlayStyle}>
 					<Form
-						FormComponent={FormComponent}
 						initialValues={initialValues}
 						onSubmit={onSubmit}
-						onClose={onCloseHandler}
 						{...extraProps}
-						render={({ ...formProps }) => <FormModalForm {...formProps} />}
+						render={({ ...formProps }) => (
+							<FormModalForm {...formProps} FormComponent={FormComponent} onClose={onCloseHandler} />
+						)}
 					/>
 				</div>
 			</Overlay>
