@@ -35,7 +35,7 @@ describe('useTimeZoneTime', () => {
 	describe('utcToLocalTime', () => {
 		it('returns local date for a given UTC date as ISO string', () => {
 			const testDate = '2020-01-28T07:30:20'; // in UTC
-			const expectedDate = '2020-01-28T02:00:20.000Z'; // in IST (5:30 ahead of UTC)
+			const expectedDate = '2020-01-28T13:00:20.000Z'; // in IST (5:30 ahead of UTC)
 			const {
 				result: { current: TZ },
 			} = renderHook(() => useTimeZoneTime(), { wrapper });
@@ -47,7 +47,7 @@ describe('useTimeZoneTime', () => {
 
 		it('returns local date for a given UTC date as Date insatance', () => {
 			const testDate = new Date(2020, 0 /* Jan */, 28, 7, 30, 20, 0); // in UTC
-			const expectedDate = '2020-01-28T02:00:20.000Z'; // in IST (5:30 ahead of UTC)
+			const expectedDate = '2020-01-28T13:00:20.000Z'; // in IST (5:30 ahead of UTC)
 			const {
 				result: { current: TZ },
 			} = renderHook(() => useTimeZoneTime(), { wrapper });
