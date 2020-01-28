@@ -1,7 +1,5 @@
 sudo: required
 
-language: php
-
 services:
   - mysql
 
@@ -66,29 +64,19 @@ jobs:
         - PHP_LINT_WITH_WARNINGS=yes
   include:
     - stage: test
-      if: NOT commit_message =~ js_only AND NOT commit_message =~ dependabot AND NOT sender =~ dependabot
-      php: 7.3
-      env:
-        - PHP_LINT=1
-        - PHP_LINT_WITH_WARNINGS=no
-      script:
-        - composer install || exit 1
-        - composer config-eventespressocs || exit 1
-        - npm run lint-php:skip-warnings || exit 1
-    - php: 7.3
-      if: NOT commit_message =~ js_only AND NOT commit_message =~ dependabot AND NOT sender =~ dependabot
-      env:
-        - PHP_LINT=1
-        - PHP_LINT_WITH_WARNINGS=yes
-      script:
-        - composer install || exit 1
-        - composer config-eventespressocs || exit 1
-        - npm run lint-php || exit 1
-    - env:
-        - JAVASCRIPT_TESTS=1
       language: node_js
+      env:
+        - JS_LINT=1
+      before_script:
+        - npm --version
+        - node --version
+      script:
+        - npm run ci:lint || exit 1
+    - language: node_js
       node_js:
         - node
+      env:
+        - JAVASCRIPT_TESTS=1
       before_install:
         - nvm install && nvm use
         - nvm install --latest-npm
@@ -98,14 +86,8 @@ jobs:
       script:
         - npm run ci:test || exit 1
     - language: node_js
-      env:
-        - LICENSE_CHECK=1
-      before_script:
-        - npm --version
-        - node --version
-      script:
-        - npm run lc || exit 1
-    - language: node_js
+      node_js:
+        - node
       env:
         - BUILD_TEST=1
       before_install:
@@ -116,35 +98,53 @@ jobs:
         - node --version
       script:
         - npm run ci:build || exit 1
+    - language: php
+      if: NOT commit_message =~ js_only AND NOT commit_message =~ dependabot AND NOT sender =~ dependabot
+      php: 7.3
+      env:
+        - PHP_LINT=1
+        - PHP_LINT_WITH_WARNINGS=no
+      script:
+        - composer install || exit 1
+        - composer config-eventespressocs || exit 1
+        - npm run lint-php:skip-warnings || exit 1
+    - language: php
+      php: 7.3
+      if: NOT commit_message =~ js_only AND NOT commit_message =~ dependabot AND NOT sender =~ dependabot
+    - language: php
+      php: 7.2
+      if: NOT commit_message =~ js_only AND NOT commit_message =~ dependabot AND NOT sender =~ dependabot
+    - language: php
+      php: 7.1
+      if: NOT commit_message =~ js_only AND NOT commit_message =~ dependabot AND NOT sender =~ dependabot
+    - language: php
+      php: 7.0
+      if: NOT commit_message =~ js_only AND NOT commit_message =~ dependabot AND NOT sender =~ dependabot
+    - language: php
+      php: 5.6
+      if: NOT commit_message =~ js_only AND NOT commit_message =~ dependabot AND NOT sender =~ dependabot
+    # multisite
+    - language: php
+      php: 7.2
+      env: WP_MULTISITE=1
+      if: NOT commit_message =~ js_only AND NOT commit_message =~ dependabot AND NOT sender =~ dependabot
+    # wp 4.5 builds
+    - language: php
+      php: 5.5
+      dist: trusty
+      env: WP_VERSION=4.5
+      if: NOT commit_message =~ js_only AND NOT commit_message =~ dependabot AND NOT sender =~ dependabot
+    - language: php
+      php: nightly
+      if: NOT commit_message =~ js_only AND NOT commit_message =~ dependabot AND NOT sender =~ dependabot
     - language: node_js
       env:
-        - JS_LINT=1
+        - LICENSE_CHECK=1
       before_script:
         - npm --version
         - node --version
       script:
-        - npm run ci:lint || exit 1
-    - php: 7.3
-      if: NOT commit_message =~ js_only AND NOT commit_message =~ dependabot AND NOT sender =~ dependabot
-    - php: 7.2
-      if: NOT commit_message =~ js_only AND NOT commit_message =~ dependabot AND NOT sender =~ dependabot
-    - php: 7.1
-      if: NOT commit_message =~ js_only AND NOT commit_message =~ dependabot AND NOT sender =~ dependabot
-    - php: 7.0
-      if: NOT commit_message =~ js_only AND NOT commit_message =~ dependabot AND NOT sender =~ dependabot
-    - php: 5.6
-      if: NOT commit_message =~ js_only AND NOT commit_message =~ dependabot AND NOT sender =~ dependabot
-    # multisite
-    - php: 7.2
-      env: WP_MULTISITE=1
-      if: NOT commit_message =~ js_only AND NOT commit_message =~ dependabot AND NOT sender =~ dependabot
-    # wp 4.5 builds
-    - php: 5.5
-      dist: trusty
-      env: WP_VERSION=4.5
-      if: NOT commit_message =~ js_only AND NOT commit_message =~ dependabot AND NOT sender =~ dependabot
-    - php: nightly
-      if: NOT commit_message =~ js_only AND NOT commit_message =~ dependabot AND NOT sender =~ dependabot
+        - npm run lc || exit 1
 
 notifications:
   slack:
