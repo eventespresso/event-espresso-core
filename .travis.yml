@@ -81,9 +81,6 @@ jobs:
       node_js: node
       env:
         - JAVASCRIPT_TESTS=1
-      before_install:
-        - nvm install && nvm use
-        - nvm install --latest-npm
       before_script:
         - npm --version
         - node --version
@@ -93,9 +90,6 @@ jobs:
       node_js: node
       env:
         - BUILD_TEST=1
-      before_install:
-        - nvm install && nvm use
-        - nvm install --latest-npm
       before_script:
         - npm --version
         - node --version
