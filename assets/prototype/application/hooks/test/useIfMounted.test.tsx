@@ -34,6 +34,35 @@ describe('useIfMounted', () => {
 		expect(result.current.count).toBe(1);
 	});
 
+	it('updates state via ifMounted after unmount', () => {
+		const { result, unmount } = renderHook(() => useCounter());
+
+		expect(result.current.count).toBe(0);
+
+		unmount();
+
+		// We won't see any console error now
+		act(() => {
+			result.current.increment();
+		});
+
+		// value won't have changed
+		expect(result.current.count).toBe(0);
+	});
+
+	it('updates state without ifMounted and without unmount', () => {
+		const { result } = renderHook(() => useCounter(false));
+
+		expect(result.current.count).toBe(0);
+
+		act(() => {
+			result.current.increment();
+		});
+
+		// value will have changed
+		expect(result.current.count).toBe(1);
+	});
+
 	it('updates state without ifMounted after unmount', () => {
 		const { result, unmount } = renderHook(() => useCounter(false));
 
@@ -49,22 +78,6 @@ describe('useIfMounted', () => {
 		});
 
 		expect(consoleSpy).toHaveBeenCalled();
-		// value won't have changed
-		expect(result.current.count).toBe(0);
-	});
-
-	it('updates state via ifMounted after unmount', () => {
-		const { result, unmount } = renderHook(() => useCounter());
-
-		expect(result.current.count).toBe(0);
-
-		unmount();
-
-		// We won't see any console error now
-		act(() => {
-			result.current.increment();
-		});
-
 		// value won't have changed
 		expect(result.current.count).toBe(0);
 	});
