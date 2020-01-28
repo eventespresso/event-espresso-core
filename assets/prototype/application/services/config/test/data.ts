@@ -23,8 +23,8 @@ export const mockEeJsData: JsDataProps = {
 		site_url: '',
 	},
 	default_timezone: {
-		pretty: 'Chicago',
-		string: 'America/Chicago',
+		pretty: 'Calcutta',
+		string: 'Asia/Calcutta',
 		offset: -6,
 	},
 };
