@@ -25,6 +25,6 @@ export const mockEeJsData: JsDataProps = {
 	default_timezone: {
 		pretty: 'ManZooria',
 		string: 'Manzooropa/ManZooria',
-		offset: +27.333,
+		offset: +3.5,
 	},
 };
