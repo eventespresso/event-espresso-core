@@ -27,4 +27,5 @@ export interface EspressoButtonProps {
 	onClick: ClickHandler;
 	size?: EspressoButtonSize;
 	style?: EspressoButtonStyle;
+	[key: string]: any;
 }

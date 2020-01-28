@@ -23,8 +23,8 @@ export const mockEeJsData: JsDataProps = {
 		site_url: '',
 	},
 	default_timezone: {
-		pretty: 'ManZooria',
-		string: 'Manzooropa/ManZooria',
-		offset: +27.333,
+		pretty: 'Calcutta',
+		string: 'Asia/Calcutta',
+		offset: +5.5,
 	},
 };

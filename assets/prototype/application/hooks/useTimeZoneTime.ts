@@ -1,5 +1,7 @@
-import { zonedTimeToUtc, utcToZonedTime } from 'date-fns-tz';
+import { path } from 'ramda';
+
 import useConfig from '../services/config/useConfig';
+import { localToUtc, utcToLocal } from '../utilities/date';
 
 type DateFn = (date: Date | string | number) => Date;
 
@@ -9,14 +11,16 @@ interface TimeZoneTime {
 }
 
 const useTimeZoneTime = (): TimeZoneTime => {
-	const { config } = useConfig();
+	const config = useConfig();
 
-	const localTimeToUtc: DateFn = (date: Date | string | number): Date => {
-		return zonedTimeToUtc(date, config.timezone.name);
+	const timezone = path<string>(['config', 'timezone', 'name'], config);
+
+	const localTimeToUtc: DateFn = (date) => {
+		return localToUtc(date, timezone);
 	};
 
-	const utcToLocalTime: DateFn = (isoDate: Date | string | number): Date => {
-		return utcToZonedTime(isoDate, config.timezone.name);
+	const utcToLocalTime: DateFn = (isoDate) => {
+		return utcToLocal(isoDate, timezone);
 	};
 
 	return {
