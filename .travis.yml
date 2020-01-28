@@ -1,4 +1,6 @@
-sudo: required
+dist: xenial
+
+os: linux
 
 language: php
 
@@ -66,57 +68,8 @@ jobs:
         - PHP_LINT_WITH_WARNINGS=yes
   include:
     - stage: test
-      if: NOT commit_message =~ js_only AND NOT commit_message =~ dependabot AND NOT sender =~ dependabot
-      php: 7.3
-      env:
-        - PHP_LINT=1
-        - PHP_LINT_WITH_WARNINGS=no
-      script:
-        - composer install || exit 1
-        - composer config-eventespressocs || exit 1
-        - npm run lint-php:skip-warnings || exit 1
-    - php: 7.3
-      if: NOT commit_message =~ js_only AND NOT commit_message =~ dependabot AND NOT sender =~ dependabot
-      env:
-        - PHP_LINT=1
-        - PHP_LINT_WITH_WARNINGS=yes
-      script:
-        - composer install || exit 1
-        - composer config-eventespressocs || exit 1
-        - npm run lint-php || exit 1
-    - env:
-        - JAVASCRIPT_TESTS=1
       language: node_js
-      node_js:
-        - node
-      before_install:
-        - nvm install && nvm use
-        - nvm install --latest-npm
-      before_script:
-        - npm --version
-        - node --version
-      script:
-        - npm run ci:test || exit 1
-    - language: node_js
-      env:
-        - LICENSE_CHECK=1
-      before_script:
-        - npm --version
-        - node --version
-      script:
-        - npm run lc || exit 1
-    - language: node_js
-      env:
-        - BUILD_TEST=1
-      before_install:
-        - nvm install && nvm use
-        - nvm install --latest-npm
-      before_script:
-        - npm --version
-        - node --version
-      script:
-        - npm run ci:build || exit 1
-    - language: node_js
+      node_js: 11.0.0
       env:
         - JS_LINT=1
       before_script:
@@ -124,6 +77,33 @@ jobs:
         - node --version
       script:
         - npm run ci:lint || exit 1
+    - language: node_js
+      node_js: 11.0.0
+      env:
+        - JAVASCRIPT_TESTS=1
+      before_script:
+        - npm --version
+        - node --version
+      script:
+        - npm run ci:test || exit 1
+    - language: node_js
+      node_js: 11.0.0
+      env:
+        - BUILD_TEST=1
+      before_script:
+        - npm --version
+        - node --version
+      script:
+        - npm run ci:build || exit 1
+    - php: 7.3
+      if: NOT commit_message =~ js_only AND NOT commit_message =~ dependabot AND NOT sender =~ dependabot
+      env:
+        - PHP_LINT=1
+        - PHP_LINT_WITH_WARNINGS=no
+      script:
+        - composer install || exit 1
+        - composer config-eventespressocs || exit 1
+        - npm run lint-php:skip-warnings || exit 1
     - php: 7.3
       if: NOT commit_message =~ js_only AND NOT commit_message =~ dependabot AND NOT sender =~ dependabot
     - php: 7.2
@@ -145,6 +125,15 @@ jobs:
       if: NOT commit_message =~ js_only AND NOT commit_message =~ dependabot AND NOT sender =~ dependabot
     - php: nightly
       if: NOT commit_message =~ js_only AND NOT commit_message =~ dependabot AND NOT sender =~ dependabot
+    - language: node_js
+      node_js: 11.0.0
+      env:
+        - LICENSE_CHECK=1
+      before_script:
+        - npm --version
+        - node --version
+      script:
+        - npm run lc || exit 1
 
 notifications:
   slack:
@@ -152,7 +141,6 @@ notifications:
       secure: e2xmbwOoagh/rZIqUnx15HcTv5hZGxykvg8Tj0ENGi/bLcXgrEYxs2hpW+nzGggmSl22Eh+6wLRo62L0dEIIo1n+yknqDdAbVG7lmnX7Tc45JNgxWtSmAPzC3wAp0e9w1hy8HILPjYLxl0G7eXUvo3mKVRCCyD/Cyz5dDicE8tQ=
     on_success: change
     on_failure: always
-    on_start: always
     template:
       - "Build <%{build_url}|#%{build_number}> (<%{compare_url}|%{commit}>) of %{repository}@%{branch} by %{author} %{result} in %{duration}"
       - "%{commit_message}"
