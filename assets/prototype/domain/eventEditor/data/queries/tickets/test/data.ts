@@ -65,6 +65,7 @@ export const nodes: Ticket[] = [
 		isRequired: false,
 		isTaxable: false,
 		isSoldOut: false,
+		isTrashed: false,
 		max: -1,
 		min: 0,
 		name: 'Ticket DEF',

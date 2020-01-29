@@ -7,6 +7,7 @@ import { useReducer } from 'react';
  * Internal dependencies
  */
 import filters from '../../../../../shared/entities/tickets/predicates/filters';
+import sorters from '../../../../../shared/entities/tickets/predicates/sorters';
 import { DisplayDates, ShowTickets, SortTicketsBy } from '../../../../data/ticket/types';
 import { Ticket } from '../../../../data/types';
 
@@ -96,10 +97,10 @@ const reducer = (state: TicketListFilterState, action: Action): TicketListFilter
 			return { ...state, displayTicketDate };
 		case ActionType.SET_SHOW_TICKETS:
 			processedTickets = filters({ tickets: state.tickets, show: showTickets });
-
 			return { ...state, processedTickets, showTickets };
 		case ActionType.SET_SORT_TICKETS:
-			return { ...state, sortTicketsBy };
+			processedTickets = sorters({ tickets: state.tickets, order: sortTicketsBy });
+			return { ...state, processedTickets, sortTicketsBy };
 		case ActionType.TOGGLE_IS_CHAINED:
 			return { ...state, isChained: !state.isChained };
 

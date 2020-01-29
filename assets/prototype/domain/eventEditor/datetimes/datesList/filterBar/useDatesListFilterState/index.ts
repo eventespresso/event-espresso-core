@@ -83,7 +83,7 @@ const reducer = (state: DatesListFilterState, action: Action): DatesListFilterSt
 
 	switch (action.type) {
 		case ActionType.SET_DATES_SORTED_BY:
-			processedDates = sorters({ dates: state.dates, sort: datesSortedBy });
+			processedDates = sorters({ dates: state.dates, order: datesSortedBy });
 
 			return { ...state, datesSortedBy, processedDates };
 

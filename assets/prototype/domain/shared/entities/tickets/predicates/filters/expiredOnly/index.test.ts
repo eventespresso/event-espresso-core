@@ -5,7 +5,7 @@ import { nodes as tickets } from '../../../../../../../domain/eventEditor/data/q
 
 describe('expiredOnly', () => {
 	it('should return an empty array if tickets are archived', () => {
-		const updatedTickets = tickets.map((ticket) => ({ ...ticket, isDeleted: true }));
+		const updatedTickets = tickets.map((ticket) => ({ ...ticket, isTrashed: true }));
 		const filteredTickets = expiredOnly(updatedTickets);
 		expect(filteredTickets).toEqual([]);
 	});

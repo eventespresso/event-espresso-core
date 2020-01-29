@@ -12,7 +12,7 @@ import { DatesSortedBy } from '../../../../../eventEditor/data/date/types';
 
 interface SortDates {
 	dates: Datetime[];
-	sort?: DatesSortedBy;
+	order?: DatesSortedBy;
 }
 
 /**
@@ -21,8 +21,8 @@ interface SortDates {
  *
  * @return {Array}         filtered dateEntities array
  */
-const sorters = ({ dates, sort = DatesSortedBy.chronologically }: SortDates): Datetime[] => {
-	switch (sort) {
+const sorters = ({ dates, order = DatesSortedBy.chronologically }: SortDates): Datetime[] => {
+	switch (order) {
 		case DatesSortedBy.chronologically:
 			return dates.sort(({ startDate: dateLeft }, { startDate: dateRight }) =>
 				compareAsc(parseISO(dateLeft), parseISO(dateRight))

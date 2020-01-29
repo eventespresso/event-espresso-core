@@ -9,8 +9,8 @@ const datetime = datetimes[0];
 describe('expiredOnly', () => {
 	it('Should return empty array if dates are not expired', () => {
 		const filteredDates = expiredOnly([
-			{ ...datetime, id: 'abc', isExpired: false },
-			{ ...datetime, id: 'def', isExpired: false },
+			{ ...datetime, id: 'abc', isExpired: false, isTrashed: true },
+			{ ...datetime, id: 'def', isExpired: false, isTrashed: true },
 		]);
 
 		expect(filteredDates).toEqual([]);
