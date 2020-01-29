@@ -13,14 +13,11 @@ describe('deleteDatetime', () => {
 
 	const ticketIds = tickets.map(({ id }) => id);
 
-	const mutationMocks = getMutationMocks({}, MutationType.Delete);
+	let mutationMocks = getMutationMocks({}, MutationType.Delete);
 
 	const { result: mockResult } = mutationMocks[0];
-	it('true', () => {
-		expect(true).toBe(true);
-	});
 
-	/* it('checks for the mutation data to be same as the mock data', async () => {
+	it('checks for the mutation data to be same as the mock data', async () => {
 		const wrapper = ApolloMockedProvider(mutationMocks);
 
 		const { result, waitForNextUpdate } = renderHook(
@@ -97,5 +94,5 @@ describe('deleteDatetime', () => {
 
 			expect(relatedDatetimeIds).not.toContain(mockedDatetime.id);
 		});
-	}); */
+	});
 });
