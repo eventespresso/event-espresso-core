@@ -725,4 +725,4 @@ $payments = EEM_Payment::instance()->get_all(
 	
 
 
-Please read [the documentation specifically about dates and times in Event Espresso](https://github.com/eventespresso/event-espresso-core/blob/master/docs/F--Datetime-System/dates-times-timezones-in-models.md) for related information on dealing with datetime fields on model objects, and see ]our developer blog post](http://developer.eventespresso.com/important-changes-to-ee-datetime-system-coming-to-ee/) about helper functions for working with datetimes.
+Please read [the documentation specifically about dates and times in Event Espresso](https://github.com/eventespresso/event-espresso-core/blob/master/docs/F--Datetime-System/dates-times-timezones-in-models.md) for related information on dealing with datetime fields on model objects, and see [our developer blog post](http://developer.eventespresso.com/important-changes-to-ee-datetime-system-coming-to-ee/) about helper functions for working with datetimes.
