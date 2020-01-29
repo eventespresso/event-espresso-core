@@ -8,10 +8,10 @@ export const DATETIME_ATTRIBUTES: any = gql`
 		description
 		endDate
 		isActive
-		isDeleted
 		isExpired
 		isPrimary
 		isSoldOut
+		isTrashed
 		isUpcoming
 		length
 		name

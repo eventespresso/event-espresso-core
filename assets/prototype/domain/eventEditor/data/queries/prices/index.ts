@@ -9,10 +9,10 @@ export const PRICE_ATTRIBUTES: any = gql`
 		desc
 		isBasePrice
 		isDefault
-		isDeleted
 		isDiscount
 		isPercent
 		isTax
+		isTrashed
 		name
 		order
 		overrides
