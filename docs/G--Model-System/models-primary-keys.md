@@ -1,18 +1,19 @@
 # Models' Primary Keys and IDs
-The primary keys of models, or their IDs, are currently either integers (eg on events and registrations), 
-short strings (eg countries and statuses), or they instead have a combined key (eg term relationships).
+In Event Espresso code, the model's "primary key" refers to its field of type `EE_Primary_Key_Field_Base`.
+On model objects, the corresponding field value is an either integer (eg on events and registrations), 
+short string (eg countries and statuses), or they instead have a combined key (eg term relationships).
 
-This article especially explains the strange situation with Event Espresso models that have no primary key. It assumes you've already
+This article especially explains the strange situation with Event Espresso models that have no primary key field. It assumes you've already
 read about [model querying](model-querying.md) and [Using EE4 Model Objects](using-ee4-model-objects.md).
 
 ## Background
 Early in its development, the Event Espresso team decided all models would have a primary key in order to simplify querying.
 And so it was. Until we realized we wanted to use the model system to query for terms and taxonomies, which are stored in
-WordPress core tables, one of which, `wp_term_relationships` doesn't have a primary key. That was when support for models
-with no primary key was added.
+WordPress core tables, one of which, `wp_term_relationships` has an index primary key using two columns. That was when support for models
+with no primary key field was added.
 
 ## Models with Primary Keys/IDs
-Although most models use a different name for their primary key, all model object have a method `EE_Base_Class::ID()` which retrieves
+Although most models use a different name for their primary key field, all model object have a method `EE_Base_Class::ID()` which retrieves
 the value of the primary key.
 eg
 ```php
@@ -43,7 +44,7 @@ That's well and good for models with primary keys, but some don't. Unfortunately
 can't use it when one of the models could be `EEM_Term_Relationship` (currently the only model that doesn't have a primary key).
 
 ### Combined Keys
-Instead of having one column in the model's primary key, they have several (ie, it's unique for that combination of columns.) 
+Instead of having one column in the table's primary key index, they have several (ie, it's unique for that combination of columns.) 
 Eg the table `wp_term_relationships`'s primary key uses the columns `object_id` and `term_taxonomy_id`. So many rows can
 have the same value for `object_id`, only one row can have the same avlue for `object_id` AND `term_taxonomy_id`.
 In Event Espresso's code, having a combined key like that is indicated by the model having an entry in `_indexes` of type
@@ -53,7 +54,7 @@ $this->_indexes = array(
     'PRIMARY' => new EE_Primary_Key_Index(array('object_id', 'term_taxonomy_id')),
 );
 ```
-(Note: currently entries in `_indexes` only *imply* there is a corresponding index in the column, they don't create one. 
+(Note: currently entries in `_indexes` only *imply* there is a corresponding index on the table, they don't create one. 
 That's done in the [data migration scripts.](../H--Data-Migration-System/README.md).)
  
 ### EE_Base_Class::ID()
