@@ -13,7 +13,7 @@ This mutation creates a new ticket. It is recommended to pass `datetimes` and `p
 ```gql
 mutation CREATE_TICKET($input: CreateEspressoTicketInput!) {
 	createEspressoTicket(input: $input) {
-		ticket {
+		espressoTicket {
 			id
 			name
 		}
@@ -45,7 +45,7 @@ This mutation updates an existing ticket.
 ```gql
 mutation UPDATE_TICKET($input: UpdateEspressoTicketInput!) {
 	updateEspressoTicket(input: $input) {
-		ticket {
+		espressoTicket {
 			id
 			name
 		}
@@ -77,7 +77,7 @@ This mutation deletes a ticket.
 ```gql
 mutation DELETE_TICKET($input: DeleteEspressoTicketInput!) {
 	deleteEspressoTicket(input: $input) {
-		ticket {
+		espressoTicket {
 			id
 		}
 	}
@@ -90,7 +90,10 @@ mutation DELETE_TICKET($input: DeleteEspressoTicketInput!) {
 {
 	"input": {
 		"clientMutationId": "xyz",
-		"id": "VGlja2V0OjE5"
+		"id": "VGlja2V0OjE5",
+		"deletePermanently": false //default
 	}
 }
 ```
+
+Note: To untrash, use `updateEspressoTicket` and pass `isTrashed` as `false`
