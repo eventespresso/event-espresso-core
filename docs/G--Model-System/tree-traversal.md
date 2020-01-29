@@ -4,7 +4,40 @@ Those model objects can in turn depend on others. This can make a fairly wide tr
 some classes that help traversing that tree, whose first application is performing "cascading deletions" (instead of just
 deleting a single model object, also recursively delete all its dependent model objects.)
 
-First off, discovering all the model objects that depend on a particular model object can take quite a few database queries,
+Here's an example of a model object dependency tree.
+
+```
+Event 1 has dependents:
+-Datetime 1 has dependents:
+--Datetime Ticket 1
+--Datetime Ticket 2
+-Registration 1 has dependents:
+--Answer 1
+--Answer 2
+--Registration_Payment 1
+-Registration 2 has dependents:
+--Answer 3
+--Answer 4
+--Registraiton_Payment 2
+-Event Venue 1
+-Event_Message_Template 1
+-Event_Message_Template 2
+-Event_Message_Template 3
+-Event_Message_Template 4
+-Event_Message_Template 5
+-Event_Message_Template 6
+-Event_Message_Template 7
+-Event_Message_Template 8
+-Event_Question_Group
+-Term_Relationship 1
+-Term_Relationship 2
+-Term_Relationship 3
+
+etc...
+```
+The situation gets worse considering add-ons may define other model objects which are also related.
+
+As you might guess, discovering all the model objects that depend on a particular model object can take quite a few database queries,
 so it's often best to perform these as part of a batch process.
 
 These classes are in the namespace (and corresponding folder) `\EventEspresso\core\services\orm\tree_traversal\`
@@ -89,3 +122,56 @@ The `ModelObjNode`s are designed to be quite small when serialized.
 `NodeGroupDao` helps with saving `ModelObjNode`s across multiple requests by saving state to the WordPress Options table.
 It has methods for generating a unique code to be used in the option name, serializing a group of `ModelObjNode`s to the
 database, fetching a group of serialized `ModelObjNode`s from the database, and deleting the group of nodes from the database.
+E.g.,
+
+```php 
+$nodeGroupDao = LoaderFactory::getLoader()->getShared('\EventEspresso\core\services\orm\tree_traversal\NodeGroupDao');
+$code = $nodeGroupDao->generateGroupCode();
+$some_obj_to_traverse = [
+    EEM_Event::instance()->get_one(),
+    EEM_Venue::instance()->get_one()
+];
+// Store those ModelObjNodes to the DB.
+$nodeGroupDao->persistModelObjNodesGroup($some_obj_to_traverse, $code);
+
+```
+
+Then, on a subsequent request, using the `$code` (which you can put in the session, querystring, etc) you can retrieve
+those same `ModelObjNode`s and continue using them, like so:
+
+```php
+$nodeGroupDao = LoaderFactory::getLoader()->getShared('\EventEspresso\core\services\orm\tree_traversal\NodeGroupDao');
+$some_obj_to_traverse = $nodeGroupDao->getModelObjNodesInGroup($code);
+
+// And now you cn continue using the ModelObjNodes
+foreach($some_obj_to_traverse as $model_obj_node){
+    $model_obj_node->visit(100);
+}
+// And optionally store them again...
+$nodeGroupDao->persistModelObjNodesGroup($some_obj_to_traverse, $code);
+```
+
+Or you could get the actual model object IDs later, and delete it.
+
+```php
+$nodeGroupDao = LoaderFactory::getLoader()->getShared('\EventEspresso\core\services\orm\tree_traversal\NodeGroupDao');
+$models_and_ids = $nodeGroupDao->getModelsAndIdsFromGroup($code);
+
+// Do whatever you want with those model objects, like deleting them.
+foreach($models_and_ids as $model_name => $ids){
+    $model = EE_Registry::instance()->load_model($model_name); 
+    $model->delete_permanently(
+        [
+            [
+                $model->primary_key_name() => ['IN', $ids]
+            ]
+        ],
+        false // Don't block if there are dependent model objects. They're all on the chopping block!
+    );
+}
+
+// And remove the option (which can be several MBs if it contains thousands of model objects.)
+$nodeGroupDao->deleteModelObjNodesInGroup($code);
+```
+
+

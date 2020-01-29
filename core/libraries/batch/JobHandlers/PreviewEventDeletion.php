@@ -9,6 +9,7 @@ use EEM_Price;
 use EEM_Registration;
 use EEM_Ticket;
 use EEM_Transaction;
+use EETests\bootstrap\CoreLoader;
 use EventEspresso\core\exceptions\InvalidClassException;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
