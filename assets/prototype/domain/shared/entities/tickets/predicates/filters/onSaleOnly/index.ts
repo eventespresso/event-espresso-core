@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import isOnSale from '../../isOnSale';
 import { Ticket } from '../../../../../../eventEditor/data/types';
 
