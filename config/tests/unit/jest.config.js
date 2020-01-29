@@ -8,5 +8,5 @@ module.exports = {
 	transform: {
 		'^.+\\.(js|jsx|ts|tsx)$': 'ts-jest',
 	},
-	coveragePathIgnorePatterns: [/data\/mutations/],
+	coveragePathIgnorePatterns: ['<rootDir>/domain/eventEditor/data/mutations/'],
 };
