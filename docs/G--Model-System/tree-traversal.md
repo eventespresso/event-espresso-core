@@ -143,7 +143,7 @@ those same `ModelObjNode`s and continue using them, like so:
 $nodeGroupDao = LoaderFactory::getLoader()->getShared('\EventEspresso\core\services\orm\tree_traversal\NodeGroupDao');
 $some_obj_to_traverse = $nodeGroupDao->getModelObjNodesInGroup($code);
 
-// And now you cn continue using the ModelObjNodes
+// And now you can continue using the ModelObjNodes
 foreach($some_obj_to_traverse as $model_obj_node){
     $model_obj_node->visit(100);
 }
@@ -173,5 +173,4 @@ foreach($models_and_ids as $model_name => $ids){
 // And remove the option (which can be several MBs if it contains thousands of model objects.)
 $nodeGroupDao->deleteModelObjNodesInGroup($code);
 ```
-
 
