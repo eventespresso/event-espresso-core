@@ -13,7 +13,7 @@ This mutation creates a new price. You must pass the `priceType` (GID) field to 
 ```gql
 mutation CREATE_PRICE($input: CreateEspressoPriceInput!) {
 	createEspressoPrice(input: $input) {
-		price {
+		espressoPrice {
 			id
 			name
 		}
@@ -43,7 +43,7 @@ This mutation updates an existing price.
 ```gql
 mutation UPDATE_PRICE($input: UpdateEspressoPriceInput!) {
 	updateEspressoPrice(input: $input) {
-		price {
+		espressoPrice {
 			id
 			name
 		}
@@ -74,7 +74,7 @@ This mutation deletes a price.
 ```gql
 mutation DELETE_PRICE($input: DeleteEspressoPriceInput!) {
 	deleteEspressoPrice(input: $input) {
-		price {
+		espressoPrice {
 			id
 		}
 	}
@@ -87,7 +87,10 @@ mutation DELETE_PRICE($input: DeleteEspressoPriceInput!) {
 {
 	"input": {
 		"clientMutationId": "xyz",
-		"id": "JGYUKUH"
+		"id": "JGYUKUH",
+		"deletePermanently": false //default
 	}
 }
 ```
+
+Note: To untrash, use `updateEspressoPrice` and pass `isTrashed` as `false`

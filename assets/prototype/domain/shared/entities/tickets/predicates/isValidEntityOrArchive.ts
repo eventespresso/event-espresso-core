@@ -1,4 +1,4 @@
-import isArchived from './isOnSale';
+import isTrashed from './isOnSale';
 
 /**
  * @function
@@ -7,7 +7,7 @@ import isArchived from './isOnSale';
  * @return {boolean} true if event date is valid entity or archive
  */
 const isValidEntityOrArchive = (ticket, includeArchived) => {
-	return includeArchived || (!includeArchived && !isArchived(ticket));
+	return includeArchived || (!includeArchived && !isTrashed(ticket));
 };
 
 export default isValidEntityOrArchive;

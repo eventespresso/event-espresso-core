@@ -169,6 +169,12 @@ class Ticket extends TypeBase
                 esc_html__('Flag indicating that this ticket is a default ticket', 'event_espresso')
             ),
             new GraphQLField(
+                'isTrashed',
+                'Boolean',
+                'deleted',
+                esc_html__('Flag indicating ticket has been trashed.', 'event_espresso')
+            ),
+            new GraphQLField(
                 'order',
                 'Int',
                 'order',

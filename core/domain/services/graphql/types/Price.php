@@ -119,8 +119,8 @@ class Price extends TypeBase
                 null,
                 esc_html__('The price type ID', 'event_espresso')
             ),
-            new GraphQLOutputField(
-                'isDeleted',
+            new GraphQLField(
+                'isTrashed',
                 'Boolean',
                 'deleted',
                 esc_html__('Flag indicating price has been trashed.', 'event_espresso')

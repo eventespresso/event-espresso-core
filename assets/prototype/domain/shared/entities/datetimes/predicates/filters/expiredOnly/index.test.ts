@@ -29,9 +29,9 @@ describe('expiredOnly', () => {
 
 	it('Should return an array of dates that are expired and not trashed', () => {
 		const filteredDates = expiredOnly([
-			{ ...datetime, id: 'abc', isExpired: false, isDeleted: true },
-			{ ...datetime, id: 'def', isExpired: true, isDeleted: false },
-			{ ...datetime, id: 'xyz', isExpired: true, isDeleted: true },
+			{ ...datetime, id: 'abc', isExpired: false, isTrashed: true },
+			{ ...datetime, id: 'def', isExpired: true, isTrashed: false },
+			{ ...datetime, id: 'xyz', isExpired: true, isTrashed: true },
 		]);
 
 		expect(filteredDates.length).toBe(1);

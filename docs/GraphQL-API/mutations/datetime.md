@@ -13,7 +13,7 @@ This mutation creates a new datetime. It is recommended to pass the `event` and 
 ```gql
 mutation CREATE_DATETIME($input: CreateEspressoDatetimeInput!) {
 	createEspressoDatetime(input: $input) {
-		datetime {
+		espressoDatetime {
 			id
 			name
 		}
@@ -44,7 +44,7 @@ This mutation updates an existing datetime.
 ```gql
 mutation UPDATE_DATETIME($input: UpdateEspressoDatetimeInput!) {
 	updateEspressoDatetime(input: $input) {
-		datetime {
+		espressoDatetime {
 			id
 			name
 		}
@@ -71,12 +71,12 @@ mutation UPDATE_DATETIME($input: UpdateEspressoDatetimeInput!) {
 
 ## `deleteEspressoDatetime`
 
-This mutation deletes a datetime.
+This mutation deletes/trashes a datetime.
 
 ```gql
 mutation DELETE_DATETIME($input: DeleteEspressoDatetimeInput!) {
 	deleteEspressoDatetime(input: $input) {
-		datetime {
+		espressoDatetime {
 			id
 		}
 	}
@@ -89,7 +89,10 @@ mutation DELETE_DATETIME($input: DeleteEspressoDatetimeInput!) {
 {
 	"input": {
 		"clientMutationId": "xyz",
-		"id": "RGF0ZXRpbWU6MTQ="
+		"id": "RGF0ZXRpbWU6MTQ=",
+		"deletePermanently": false //default
 	}
 }
 ```
+
+Note: To untrash, use `updateEspressoDatetime` and pass `isTrashed` as `false`

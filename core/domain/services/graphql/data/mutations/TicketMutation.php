@@ -36,7 +36,6 @@ class TicketMutation
      */
     public static function prepareFields(array $input)
     {
-
         $args = [];
 
         if (! empty($input['name'])) {
@@ -65,6 +64,10 @@ class TicketMutation
 
         if (! empty($input['prices'])) {
             $args['prices'] = array_map('sanitize_text_field', (array) $input['prices']);
+        }
+
+        if (array_key_exists('isTrashed', $input)) {
+            $args['TKT_deleted'] = (bool) $input['isTrashed'];
         }
 
         // Likewise the other fields...

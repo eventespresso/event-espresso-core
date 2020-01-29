@@ -203,13 +203,13 @@ class Datetime extends TypeBase
                 'get_active_status',
                 esc_html__('Datetime status', 'event_espresso')
             ),
-            new GraphQLOutputField(
-                'isDeleted',
+            new GraphQLField(
+                'isTrashed',
                 'Boolean',
                 null,
-                esc_html__('Flag indicating whether the datetime is deleted', 'event_espresso'),
+                esc_html__('Flag indicating datetime has been trashed.', 'event_espresso'),
                 null,
-                [$this, 'getIsDeleted']
+                [$this, 'getIsTrashed']
             ),
         ];
     }
@@ -230,7 +230,7 @@ class Datetime extends TypeBase
      * @throws UnexpectedEntityException
      * @since $VID:$
      */
-    public function getIsDeleted(EE_Datetime $source, array $args, AppContext $context, ResolveInfo $info)
+    public function getIsTrashed(EE_Datetime $source, array $args, AppContext $context, ResolveInfo $info)
     {
         return (bool) $source->get('DTT_deleted');
     }

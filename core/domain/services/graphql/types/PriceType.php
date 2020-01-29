@@ -69,7 +69,7 @@ class PriceType extends TypeBase
                 esc_html__('Flag indicating price type is a base price.', 'event_espresso')
             ),
             new GraphQLField(
-                'isDeleted',
+                'isTrashed',
                 'Boolean',
                 'deleted',
                 esc_html__('Flag indicating price type has been trashed.', 'event_espresso')

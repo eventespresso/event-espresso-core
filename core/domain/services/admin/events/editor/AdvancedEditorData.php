@@ -258,10 +258,10 @@ var eeEditorData={$data};
                     description
                     endDate
                     isActive
-                    isDeleted
                     isExpired
                     isPrimary
                     isSoldOut
+                    isTrashed
                     isUpcoming
                     length
                     name
@@ -276,19 +276,19 @@ var eeEditorData={$data};
             }
         }
 QUERY;
-            $data = [
-                'operation_name' => 'GET_DATETIMES',
-                'variables' => [
-                    'first' => 50,
-                    'where' => [
-                        'eventId' => $eventId,
-                    ],
+        $data = [
+            'operation_name' => 'GET_DATETIMES',
+            'variables' => [
+                'first' => 50,
+                'where' => [
+                    'eventId' => $eventId,
                 ],
-                'query' => $query,
-            ];
+            ],
+            'query' => $query,
+        ];
 
-            $responseData = $this->makeGraphQLRequest($data);
-            return !empty($responseData[ $field_key ]) ? $responseData[ $field_key ] : null;
+        $responseData = $this->makeGraphQLRequest($data);
+        return !empty($responseData[ $field_key ]) ? $responseData[ $field_key ] : null;
     }
 
 
@@ -313,6 +313,7 @@ QUERY;
                     isRequired
                     isSoldOut
                     isTaxable
+                    isTrashed
                     max
                     min
                     name
@@ -330,18 +331,18 @@ QUERY;
             }
         }
 QUERY;
-            $data = [
-                'operation_name' => 'GET_TICKETS',
-                'variables' => [
-                    'where' => [
-                        'datetimeIn' => $datetimeIn,
-                    ],
+        $data = [
+            'operation_name' => 'GET_TICKETS',
+            'variables' => [
+                'where' => [
+                    'datetimeIn' => $datetimeIn,
                 ],
-                'query' => $query,
-            ];
+            ],
+            'query' => $query,
+        ];
 
-            $responseData = $this->makeGraphQLRequest($data);
-            return !empty($responseData[ $field_key ]) ? $responseData[ $field_key ] : null;
+        $responseData = $this->makeGraphQLRequest($data);
+        return !empty($responseData[ $field_key ]) ? $responseData[ $field_key ] : null;
     }
 
 
@@ -363,10 +364,10 @@ QUERY;
                     desc
                     isBasePrice
                     isDefault
-                    isDeleted
                     isDiscount
                     isPercent
                     isTax
+                    isTrashed
                     name
                     order
                     overrides
@@ -377,18 +378,18 @@ QUERY;
             }
         }
 QUERY;
-            $data = [
-                'operation_name' => 'GET_PRICES',
-                'variables' => [
-                    'where' => [
-                        'ticketIn' => $ticketIn,
-                    ],
+        $data = [
+            'operation_name' => 'GET_PRICES',
+            'variables' => [
+                'where' => [
+                    'ticketIn' => $ticketIn,
                 ],
-                'query' => $query,
-            ];
+            ],
+            'query' => $query,
+        ];
 
-            $responseData = $this->makeGraphQLRequest($data);
-            return !empty($responseData[ $field_key ]) ? $responseData[ $field_key ] : null;
+        $responseData = $this->makeGraphQLRequest($data);
+        return !empty($responseData[ $field_key ]) ? $responseData[ $field_key ] : null;
     }
 
 
@@ -407,10 +408,10 @@ QUERY;
                     dbId
                     baseType
                     isBasePrice
-                    isDeleted
                     isDiscount
                     isPercent
                     isTax
+                    isTrashed
                     name
                     order
                     __typename
@@ -419,13 +420,13 @@ QUERY;
             }
         }
 QUERY;
-            $data = [
-                'operation_name' => 'GET_PRICES',
-                'query' => $query,
-            ];
+        $data = [
+            'operation_name' => 'GET_PRICES',
+            'query' => $query,
+        ];
 
-            $responseData = $this->makeGraphQLRequest($data);
-            return !empty($responseData[ $field_key ]) ? $responseData[ $field_key ] : null;
+        $responseData = $this->makeGraphQLRequest($data);
+        return !empty($responseData[ $field_key ]) ? $responseData[ $field_key ] : null;
     }
 
 
@@ -454,13 +455,13 @@ QUERY;
             }
         }
 QUERY;
-            $data = [
-                'operation_name' => 'GET_CURRENT_USER',
-                'query' => $query,
-            ];
+        $data = [
+            'operation_name' => 'GET_CURRENT_USER',
+            'query' => $query,
+        ];
 
-            $responseData = $this->makeGraphQLRequest($data);
-            return !empty($responseData[ $field_key ]) ? $responseData[ $field_key ] : null;
+        $responseData = $this->makeGraphQLRequest($data);
+        return !empty($responseData[ $field_key ]) ? $responseData[ $field_key ] : null;
     }
 
 
@@ -481,13 +482,13 @@ QUERY;
             }
         }
 QUERY;
-            $data = [
-                'operation_name' => 'GET_CURRENT_USER',
-                'query' => $query,
-            ];
+        $data = [
+            'operation_name' => 'GET_CURRENT_USER',
+            'query' => $query,
+        ];
 
-            $responseData = $this->makeGraphQLRequest($data);
-            return !empty($responseData[ $field_key ]) ? $responseData[ $field_key ] : null;
+        $responseData = $this->makeGraphQLRequest($data);
+        return !empty($responseData[ $field_key ]) ? $responseData[ $field_key ] : null;
     }
 
 
@@ -529,7 +530,6 @@ QUERY;
      */
     public static function getRelationalData($eventId)
     {
-
         $data = [
             'datetimes'  => [],
             'tickets'    => [],
