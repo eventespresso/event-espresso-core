@@ -1,4 +1,5 @@
 import { GraphQLError } from 'graphql';
+import { formatISO } from 'date-fns';
 
 import { Ticket, TicketEdge } from '../../../types';
 import { ReadQueryOptions } from '../../types';
@@ -10,7 +11,7 @@ export const nodes: Ticket[] = [
 		id: 'xyz',
 		dbId: 1,
 		description: 'some desc',
-		endDate: 'the end date',
+		endDate: formatISO(new Date(2019, 8, 18, 19, 0, 52)),
 		isDefault: true,
 		isFree: false,
 		isRequired: false,
@@ -34,7 +35,7 @@ export const nodes: Ticket[] = [
 		id: 'abc',
 		dbId: 3,
 		description: 'some new desc',
-		endDate: 'end date',
+		endDate: formatISO(new Date(2029, 8, 18, 19, 0, 52)),
 		isDefault: true,
 		isFree: false,
 		isRequired: false,
