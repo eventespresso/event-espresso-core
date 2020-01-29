@@ -108,7 +108,7 @@ Useful if you want to organize the tree by model type.
 * Create a `RelationNode` for each of the model's `EE_Has_Many_Relation`s and the join models for `EE_HABTM_Relation`s
 (eg on `EEM_Transaction`, it would make one for `Registration`, `Payment`, `Line_Item`, `Message`, `Extra_Meta`, etc)
 * Call `visit()` on each of them, which
-* Finds all the model related model objects across that relation (eg when called on the `RelationNode` for `Registration`, 
+* Finds all of the model objects across that relation (eg when called on the `RelationNode` for `Registration`, 
 it finds all the registrations related to the original transaction)
 * For each of those related model objects, create a `ModelObjNode` and calls `visit()` on it (recurses)
 
