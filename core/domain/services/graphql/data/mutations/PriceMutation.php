@@ -21,7 +21,6 @@ class PriceMutation
      */
     public static function prepareFields(array $input)
     {
-
         $args = [];
 
         if (! empty($input['priceType'])) {
@@ -41,8 +40,12 @@ class PriceMutation
             $args['PRC_amount'] = floatval($input['amount']);
         }
 
-        if (isset($input['isDefault'])) { // it can be false
-            $args['PRC_is_default'] = boolval($input['isDefault']);
+        if (array_key_exists('isDefault', $input)) {
+            $args['PRC_is_default'] = (bool) $input['isDefault'];
+        }
+
+        if (array_key_exists('isTrashed', $input)) {
+            $args['PRC_deleted'] = (bool) $input['isTrashed'];
         }
 
         if (! empty($input['overrides'])) {

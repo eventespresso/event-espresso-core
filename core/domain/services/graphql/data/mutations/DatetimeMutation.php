@@ -28,7 +28,6 @@ class DatetimeMutation
      */
     public static function prepareFields(array $input)
     {
-
         $args = [];
 
         if (! empty($input['eventId'])) {
@@ -56,6 +55,10 @@ class DatetimeMutation
 
         if (! empty($input['tickets'])) {
             $args['tickets'] = array_map('sanitize_text_field', (array) $input['tickets']);
+        }
+
+        if (array_key_exists('isTrashed', $input)) {
+            $args['DTT_deleted'] = (bool) $input['isTrashed'];
         }
 
         // Likewise the other fields...
