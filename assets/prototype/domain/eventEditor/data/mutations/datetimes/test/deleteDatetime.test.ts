@@ -1,4 +1,4 @@
-/* import { renderHook, act } from '@testing-library/react-hooks';
+import { renderHook, act } from '@testing-library/react-hooks';
 import { path } from 'ramda';
 
 import { useEntityMutator, EntityType } from '../../../../../../application/services/apollo/mutations';
@@ -96,4 +96,3 @@ describe('deleteDatetime', () => {
 		});
 	});
 });
- */
