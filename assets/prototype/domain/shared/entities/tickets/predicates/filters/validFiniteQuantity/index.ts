@@ -1,12 +1,6 @@
-/**
- * External dependencies
- */
 import { is } from 'ramda';
 
-/**
- * Internal dependencies
- */
-import { Ticket } from '../../../../../eventEditor/data/types';
+import { Ticket } from '../../../../../../eventEditor/data/types';
 
 /**
  * @param {Object} ticket    event ticket object
