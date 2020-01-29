@@ -21,6 +21,7 @@ describe('updateDatetime', () => {
 	const { result: mockResult } = mutationMocks[0];
 
 	it('checks for the mutation data to be same as the mock data', async () => {
+		expect(true).toBe(false);
 		const wrapper = ApolloMockedProvider(mutationMocks);
 
 		const { result, waitForNextUpdate } = renderHook(
