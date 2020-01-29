@@ -8,7 +8,7 @@ import { useReducer } from 'react';
  */
 import filters from '../../../../../shared/entities/tickets/predicates/filters';
 import sorters from '../../../../../shared/entities/tickets/predicates/sorters';
-import { DisplayDates, ShowTickets, SortTicketsBy } from '../../../../data/ticket/types';
+import { DisplayDates, ShowTickets, SortTickets } from '../../../../data/ticket/types';
 import { Ticket } from '../../../../data/types';
 
 enum ActionType {
@@ -24,11 +24,11 @@ interface TicketListFilterState {
 	processedTickets: Ticket[];
 	showTickets: ShowTickets;
 	tickets: Ticket[];
-	sortTicketsBy: SortTicketsBy;
+	sortTicketsBy: SortTickets;
 }
 
 interface TicketsListFilterStateManager extends TicketListFilterState {
-	setSortTicketsBy: (sortTicketsBy: SortTicketsBy) => void;
+	setSortTickets: (sortTicketsBy: SortTickets) => void;
 	setDisplayTicketDate: (displayDates: DisplayDates) => void;
 	setShowTickets: (showTickets: ShowTickets) => void;
 	toggleIsChained: () => void;
@@ -41,7 +41,7 @@ const useTicketListFilterState = (tickets: Ticket[] = []): TicketsListFilterStat
 		processedTickets: [],
 		showTickets: ShowTickets.all,
 		tickets,
-		sortTicketsBy: SortTicketsBy.chronologically,
+		sortTicketsBy: SortTickets.chronologically,
 	};
 	const [state, dispatch] = useReducer(reducer, initialState);
 
@@ -59,7 +59,7 @@ const useTicketListFilterState = (tickets: Ticket[] = []): TicketsListFilterStat
 		});
 	};
 
-	const setSortTicketsBy = (sortTicketsBy: SortTicketsBy): void => {
+	const setSortTickets = (sortTicketsBy: SortTickets): void => {
 		dispatch({
 			sortTicketsBy,
 			type: ActionType.SET_SORT_TICKETS,
@@ -76,7 +76,7 @@ const useTicketListFilterState = (tickets: Ticket[] = []): TicketsListFilterStat
 		...state,
 		setDisplayTicketDate,
 		setShowTickets,
-		setSortTicketsBy,
+		setSortTickets,
 		toggleIsChained,
 	};
 };
@@ -85,7 +85,7 @@ interface Action {
 	displayTicketDate?: DisplayDates;
 	type: ActionType;
 	showTickets?: ShowTickets;
-	sortTicketsBy?: SortTicketsBy;
+	sortTicketsBy?: SortTickets;
 }
 
 const reducer = (state: TicketListFilterState, action: Action): TicketListFilterState => {

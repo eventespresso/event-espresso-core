@@ -1,31 +1,32 @@
 import { compareAsc, parseISO } from 'date-fns';
 import { ascend, prop, propOr, sortWith } from 'ramda';
 
-import { SortTicketsBy } from '../../../../../eventEditor/data/ticket/types';
+import { SortTickets } from '../../../../../eventEditor/data/ticket/types';
 import { Ticket } from '../../../../../eventEditor/data/types';
 
+type sortFn = (a: Ticket, b: Ticket) => number;
 const sortChronologically = (tickets: Ticket[]): Ticket[] => {
-	const chronologicPredicate = ({ startDate: dateLeft }: Ticket, { startDate: dateRight }: Ticket): any => {
+	const chronologicPredicate = ({ startDate: dateLeft }: Ticket, { startDate: dateRight }: Ticket): number => {
 		return compareAsc(parseISO(dateLeft), parseISO(dateRight));
 	};
-	const sortPredicates: any[] = [ascend(prop('name')), ascend(prop('id')), chronologicPredicate];
+	const sortPredicates: sortFn[] = [ascend(prop('name')), ascend(prop('id')), chronologicPredicate];
 	return sortWith(sortPredicates, tickets);
 };
 
-interface SortTickets {
+interface SortTicketsProps {
 	tickets: Ticket[];
-	order?: SortTicketsBy;
+	order?: SortTickets;
 }
 
-const sorters = ({ tickets, order = SortTicketsBy.chronologically }: SortTickets): Ticket[] => {
+const sorters = ({ tickets, order = SortTickets.chronologically }: SortTicketsProps): Ticket[] => {
 	switch (order) {
-		case SortTicketsBy.chronologically:
+		case SortTickets.chronologically:
 			return sortChronologically(tickets);
-		case SortTicketsBy.byName:
+		case SortTickets.byName:
 			return sortWith([ascend(propOr(null, 'name'))], tickets);
-		case SortTicketsBy.byId:
+		case SortTickets.byId:
 			return sortWith([ascend(prop('id'))], tickets);
-		case SortTicketsBy.byOrder:
+		case SortTickets.byOrder:
 			return sortWith([ascend(propOr(null, 'order'))], tickets);
 	}
 };

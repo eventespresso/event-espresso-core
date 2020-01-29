@@ -1,7 +1,7 @@
 import { compareAsc, parseISO } from 'date-fns';
 
 import sorters from './index';
-import { SortTicketsBy } from '../../../../../eventEditor/data/ticket/types';
+import { SortTickets } from '../../../../../eventEditor/data/ticket/types';
 import { nodes as tickets } from '../../../../../eventEditor/data/queries/tickets/test/data';
 
 describe('sorters', () => {
@@ -22,7 +22,7 @@ describe('sorters', () => {
 	});
 
 	it('should return tickets sorted in chronological order if sort prop is set to `chronologically`', () => {
-		const sortedTickets = sorters({ tickets, order: SortTicketsBy.chronologically });
+		const sortedTickets = sorters({ tickets, order: SortTickets.chronologically });
 		sortedTickets.forEach((currentTicket, index) => {
 			const nextTicket = sortedTickets.length <= index + 1 ? sortedTickets[index + 1] : null;
 			if (nextTicket) {
@@ -38,7 +38,7 @@ describe('sorters', () => {
 	});
 
 	it('should return tickets sorted by Id if sort prop is set to `byId`', () => {
-		const sortedTickets = sorters({ tickets, order: SortTicketsBy.byId });
+		const sortedTickets = sorters({ tickets, order: SortTickets.byId });
 		sortedTickets.forEach((currentTicket, index) => {
 			const nextTicket = sortedTickets.length <= index + 1 ? sortedTickets[index + 1] : null;
 			if (nextTicket) {
@@ -49,7 +49,7 @@ describe('sorters', () => {
 	});
 
 	it('should return tickets sorted by name if sort prop is set to `byName`', () => {
-		const sortedTickets = sorters({ tickets, order: SortTicketsBy.byName });
+		const sortedTickets = sorters({ tickets, order: SortTickets.byName });
 		sortedTickets.forEach((currentTicket, index) => {
 			const nextTicket = sortedTickets.length <= index + 1 ? sortedTickets[index + 1] : null;
 			if (nextTicket) {
@@ -60,7 +60,7 @@ describe('sorters', () => {
 	});
 
 	it('should return tickets sorted by order if sort prop is set to `byOrder`', () => {
-		const sortedTickets = sorters({ tickets, order: SortTicketsBy.byOrder });
+		const sortedTickets = sorters({ tickets, order: SortTickets.byOrder });
 		sortedTickets.forEach((currentTicket, index) => {
 			const nextTicket = sortedTickets.length <= index + 1 ? sortedTickets[index + 1] : null;
 			if (nextTicket) {
