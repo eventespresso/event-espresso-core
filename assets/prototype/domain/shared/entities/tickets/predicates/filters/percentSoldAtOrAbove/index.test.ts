@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import percentSoldAtOrAbove from './index';
 import { nodes as tickets } from '../../../../../../eventEditor/data/queries/tickets/test/data';
 

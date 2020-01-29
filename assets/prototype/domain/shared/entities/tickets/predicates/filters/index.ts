@@ -1,16 +1,14 @@
-/**
- * Internal dependencies
- */
+import allOnSaleAndPending from './allOnSaleAndPending';
 import archivedOnly from './archivedOnly';
 import expiredOnly from './expiredOnly';
 import nextOnSaleOrPendingOnly from './nextOnSaleOrPendingOnly';
-import allOnSaleAndPending from './allOnSaleAndPending';
 import onSaleOnly from './onSaleOnly';
 import pendingOnly from './pendingOnly';
 import percentSoldAtOrAbove from './percentSoldAtOrAbove';
 import percentSoldBelow from './percentSoldBelow';
-import { ShowTickets } from '../../../../../eventEditor/data/ticket/types';
 import soldOutOnly from './soldOutOnly';
+
+import { ShowTickets } from '../../../../../eventEditor/data/ticket/types';
 import { Ticket } from '../../../../../eventEditor/data/types';
 
 export const now = new Date();
@@ -21,7 +19,6 @@ interface FilterTickets {
 }
 
 /**
- * filterTickets
  * reduces tickets array based on value of the "show" filter
  *
  * @param {Array} tickets    original tickets array

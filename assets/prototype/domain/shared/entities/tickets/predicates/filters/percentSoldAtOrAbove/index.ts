@@ -13,25 +13,29 @@ type PercentSoldAtOrAboveProps = {
 	percentage: number;
 	tickets: Ticket[];
 };
+type FilterFnProps = {
+	percentage: number;
+	ticket: Ticket;
+};
 
-/**
- * @param {Object} ticket event ticket object
- * @param {number} percentage
- * @return {boolean} true if sold/qty >= percentage
- */
-const percentSoldAtOrAbove = ({ percentage, tickets }: PercentSoldAtOrAboveProps) => {
-	const calc = (ticket: Ticket) => {
+export const filterFn = ({ percentage, ticket }: FilterFnProps): boolean => {
+	const calc = (ticket: Ticket): boolean => {
 		const { quantity, sold } = ticket;
 		const checkIfSoldAndQtyAreNumbers = is(Number, sold) && is(Number, quantity);
 
 		return checkIfSoldAndQtyAreNumbers && Math.round(sold) / Math.round(quantity) >= percentage / 100;
 	};
 
-	const filterFn = (ticket: Ticket) => {
-		return validFiniteQuantity(ticket) && calc(ticket);
-	};
+	return validFiniteQuantity(ticket) && calc(ticket);
+};
 
-	return tickets.filter(filterFn);
+/**
+ * @param {Object} ticket event ticket object
+ * @param {number} percentage
+ * @return {boolean} true if sold/qty >= percentage
+ */
+const percentSoldAtOrAbove = ({ percentage, tickets }: PercentSoldAtOrAboveProps): Ticket[] => {
+	return tickets.filter((ticket) => filterFn({ percentage, ticket }));
 };
 
 export default percentSoldAtOrAbove;
