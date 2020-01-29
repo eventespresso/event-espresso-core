@@ -7,6 +7,8 @@ import isPending from '../../isPending';
 import { nodes as tickets } from '../../../../../../eventEditor/data/queries/tickets/test/data';
 
 describe('allOnSaleAndPending', () => {
+	const now = new Date();
+
 	it('should return an empty array if tickets are not on sale and not pending', () => {
 		const updatedTickets = tickets.map((ticket) => {
 			const startDate = formatISO(new Date(2008, 8, 18, 19, 0, 52));
@@ -19,8 +21,8 @@ describe('allOnSaleAndPending', () => {
 
 	it('should return an array of tickets on sale if start date is past now and end date is in future', () => {
 		const updatedTickets = tickets.map((ticket) => {
-			const startDate = pipe(subWeeks(1), formatISO)(new Date());
-			const endDate = pipe(addWeeks(1), formatISO)(new Date());
+			const startDate = pipe(subWeeks(1), formatISO)(now);
+			const endDate = pipe(addWeeks(1), formatISO)(now);
 			return { ...ticket, endDate, startDate };
 		});
 		const filteredTickets = allOnSaleAndPending(updatedTickets);
@@ -34,7 +36,7 @@ describe('allOnSaleAndPending', () => {
 
 	it('should return an array of pending tickets if start date is in the future', () => {
 		const updatedTickets = tickets.map((ticket) => {
-			const startDate = pipe(addWeeks(1), formatISO)(new Date());
+			const startDate = pipe(addWeeks(1), formatISO)(now);
 			return { ...ticket, startDate };
 		});
 		const filteredTickets = allOnSaleAndPending(updatedTickets);

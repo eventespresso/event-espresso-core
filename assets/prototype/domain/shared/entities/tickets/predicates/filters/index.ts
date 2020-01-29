@@ -4,7 +4,7 @@
 import archivedOnly from './archivedOnly';
 import expiredOnly from './expiredOnly';
 import nextOnSaleOrPendingOnly from './nextOnSaleOrPendingOnly';
-import onSaleAndPending from './onSaleAndPending';
+import allOnSaleAndPending from './allOnSaleAndPending';
 import onSaleOnly from './onSaleOnly';
 import pendingOnly from './pendingOnly';
 import percentSoldAtOrAbove from './percentSoldAtOrAbove';
@@ -47,7 +47,7 @@ const filters = ({ tickets, show = ShowTickets.nextOnSaleOrPendingOnly }: Filter
 		case ShowTickets.nextOnSaleOrPendingOnly:
 			return nextOnSaleOrPendingOnly(tickets);
 		case ShowTickets.onSaleAndPending:
-			return onSaleAndPending(tickets);
+			return allOnSaleAndPending(tickets);
 		case ShowTickets.onSaleOnly:
 			return onSaleOnly(tickets);
 		case ShowTickets.pendingOnly:
