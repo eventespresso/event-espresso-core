@@ -7,6 +7,8 @@ import { pathOr } from 'ramda';
 
 import { mutations, useMutators } from '../../../../domain/eventEditor/data/mutations';
 import useIfMounted from '../../../hooks/useIfMounted';
+import useToaster from '../../toaster/useToaster';
+import { ucFirst } from '../../../utilities/text';
 import {
 	EntityMutation,
 	OnMutationCompletedFn,
@@ -31,6 +33,7 @@ const useEntityMutation = (type: EntityType, id?: string): EntityMutation => {
 	const [result, setResult] = useState(DEFAULT_RESULT);
 	const mutators = useMutators();
 	const ifMounted = useIfMounted();
+	const toaster = useToaster();
 
 	/**
 	 * @param {string} mutationType Type of mutation - CREATE|UPDATE|DELETE
@@ -119,9 +122,23 @@ const useEntityMutation = (type: EntityType, id?: string): EntityMutation => {
 	};
 
 	/**
+	 * @param {string} mutationType Type of mutation - CREATE|UPDATE|DELETE
+	 * @param {string} suffix       Suffix to be added to mutation type
+	 */
+	const getToasterMessage = (mutationType: MutationType, suffix: 'ing' | 'ed' = 'ing'): any => {
+		// For example "CREATE" will become "creating" or "created"
+		const verb = mutationType.toLowerCase().replace(/e$/, suffix);
+		// e.g. "updating datetime"
+		return `${verb} ${type.toLowerCase()}`;
+	};
+
+	/**
 	 *
 	 */
-	const onMutationStart = (): void => {
+	const onMutationStart = (mutationType: MutationType): void => {
+		const message = getToasterMessage(mutationType);
+		toaster.loading(true, message);
+
 		updateResult({
 			loading: true,
 			error: undefined,
@@ -133,7 +150,13 @@ const useEntityMutation = (type: EntityType, id?: string): EntityMutation => {
 	/**
 	 *
 	 */
-	const onMutationComplete = (response: FetchResult, onCompleted: OnMutationCompletedFn): void => {
+	const onMutationComplete = (
+		response: FetchResult,
+		onCompleted: OnMutationCompletedFn,
+		mutationType: MutationType
+	): void => {
+		toaster.dismiss(getToasterMessage(mutationType));
+		toaster.success(`successfully ${getToasterMessage(mutationType, 'ed')}`);
 		const { data, errors } = response;
 		const error = errors && errors.length > 0 ? new ApolloError({ graphQLErrors: errors }) : undefined;
 
@@ -152,7 +175,10 @@ const useEntityMutation = (type: EntityType, id?: string): EntityMutation => {
 	/**
 	 *
 	 */
-	const onMutationError = (error: Error, onError: OnMutationErrorFn): void => {
+	const onMutationError = (error: Error, onError: OnMutationErrorFn, mutationType: MutationType): void => {
+		toaster.dismiss(getToasterMessage(mutationType));
+		toaster.error(`error ${getToasterMessage(mutationType)}`);
+
 		updateResult({
 			loading: false,
 			error,
@@ -177,17 +203,17 @@ const useEntityMutation = (type: EntityType, id?: string): EntityMutation => {
 	/**
 	 *
 	 */
-	const mutate = (options: CustomMutationOptions): MutationResult => {
+	const mutate = (options: CustomMutationOptions, mutationType: MutationType): MutationResult => {
 		const { onCompleted, onError, ...mutationOptions } = options;
-		onMutationStart();
+		onMutationStart(mutationType);
 		client
 			.mutate(mutationOptions)
 			.then((response: FetchResult) => {
-				onMutationComplete(response, onCompleted);
+				onMutationComplete(response, onCompleted, mutationType);
 				return response;
 			})
 			.catch((error: Error) => {
-				onMutationError(error, onError);
+				onMutationError(error, onError, mutationType);
 				throw error;
 			});
 
