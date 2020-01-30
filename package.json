@@ -16,39 +16,25 @@
 		}
 	},
 	"scripts": {
-		"build": "cross-env NODE_ENV=production webpack --config ./config/webpack.prod.js",
-		"build:new": "node scripts/build.js",
+		"build": "node scripts/build.js",
 		"build:css": "node ./bin/css-builder/css-builder.js",
-		"check-engines": "wp-scripts check-engines",
 		"ci:build": "npm run build",
 		"ci:lint": "npm run lint",
 		"ci:test": "npm run test-js-ts",
-		"dev": "concurrently \"cross-env NODE_ENV=development webpack --config ./config/webpack.dev.js\" \"npm run build:css\"",
-		"dev-w": "concurrently \"cross-env NODE_ENV=development webpack --watch --config ./config/webpack.dev.js\" \"npm-watch build:css\"",
-		"dev-w:new": "node scripts/start.js",
+		"dev": "node scripts/start.js",
 		"dev-p": "webpack --watch --watch-poll --config ./config/webpack.dev.js",
 		"generate": "graphql-codegen",
 		"lc": "jsgl --local ./",
-		"lint": "wp-scripts lint-js .",
-		"lint:fix": "wp-scripts lint-js . --fix",
-		"lint-js": "wp-scripts lint-js .",
-		"lint-js:fix": "wp-scripts lint-js . --fix",
 		"lint-php": "composer run-script lint",
 		"lint-php:fix": "composer run-script lint-fix",
 		"lint-php:skip-warnings": "composer run-script lint:skip-warnings",
-		"prebuild": "npm run check-engines && npm run build:css",
 		"pretty": "prettier --write \"assets/prototype/**/*.js\"",
 		"prewatch": "npm run check-engines",
 		"test": "npm run lint && npm run test-js",
-		"test:new": "node scripts/test.js",
 		"test-php": "cd tests && phpunit",
-		"test-js": "wp-scripts test-unit-js --config tests/javascript-config/unit/jest.config.json",
-		"test-js-ts": "jest --config config/tests/unit/jest.config.js",
-		"test-js-ts:watch": "jest --config config/tests/unit/jest.config.js --watch",
+		"test-js": "node scripts/test.js",
 		"test-js:coverage": "npm run test-js -- --coverage",
-		"test-js:coverage-ci": "npm run test-js -- --coverage --maxWorkers 1",
-		"test-js:update": "npm run test-js -- --updateSnapshot",
-		"test-js:watch": "npm run test-js -- --watch"
+		"test-js:coverage-ci": "npm run test-js -- --coverage --maxWorkers 1"
 	},
 	"browserslist": {
 		"production": [
@@ -68,8 +54,9 @@
 		}
 	},
 	"lint-staged": {
-		"assets/ZZZ/**/*.js": [
-			"wp-scripts lint-js"
+		"assets/prototype/**/*.{js,jsx,ts,tsx,json,css,scss,md}": [
+			"prettier --write",
+			"git add"
 		]
 	},
 	"babel": {

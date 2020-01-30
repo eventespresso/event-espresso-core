@@ -1,6 +1,5 @@
 import React, { CSSProperties } from 'react';
 import classNames from 'classnames';
-import React from 'react';
 import { Form } from 'react-final-form';
 import { Classes, Overlay } from '@blueprintjs/core/lib/esm';
 

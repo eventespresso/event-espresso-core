@@ -1,4 +1,3 @@
-
 import isTrashed from './isTrashed';
 
 /**
