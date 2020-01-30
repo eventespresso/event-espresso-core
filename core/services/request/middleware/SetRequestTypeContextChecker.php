@@ -39,6 +39,11 @@ class SetRequestTypeContextChecker extends Middleware
                     'EventEspresso\core\domain\services\contexts\RequestTypeContextFactory',
                     array($this->loader)
                 ),
+                array(
+                    'DOING_AJAX' => defined('DOING_AJAX') && DOING_AJAX,
+                    'WP_CLI'     => defined('WP_CLI') && WP_CLI,
+                    'is_admin'   => is_admin(),
+                )
             )
         );
         $request_type_context          = $request_type_context_detector->detectRequestTypeContext();

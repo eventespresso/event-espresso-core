@@ -110,7 +110,12 @@ class EEH_Sideloader extends EEH_Base
         $temp_file = wp_tempnam($this->_upload_from);
 
         if (!$temp_file) {
-            EE_Error::add_error(__('Something went wrong with the upload.  Unable to create a tmp file for the uploaded file on the server', 'event_espresso'), __FILE__, __FUNCTION__, __LINE__);
+            EE_Error::add_error(
+                esc_html__('Something went wrong with the upload.  Unable to create a tmp file for the uploaded file on the server', 'event_espresso'),
+                __FILE__,
+                __FUNCTION__,
+                __LINE__
+            );
             return false;
         }
 
@@ -123,7 +128,15 @@ class EEH_Sideloader extends EEH_Base
         if (is_wp_error($response) || 200 != wp_remote_retrieve_response_code($response)) {
             unlink($temp_file);
             if (defined('WP_DEBUG') && WP_DEBUG) {
-                EE_Error::add_error(sprintf(__('Unable to upload the file.  Either the path given to upload from is incorrect, or something else happened.  Here is the response returned:<br />%s<br />Here is the path given: %s', 'event_espresso'), var_export($response, true), $this->_upload_from), __FILE__, __FUNCTION__, __LINE__);
+                EE_Error::add_error(
+                    sprintf(
+                        esc_html__('Unable to upload the file. Either the path given to upload from is incorrect, or something else happened. Here is the path given: %s', 'event_espresso'),
+                        $this->_upload_from
+                    ),
+                    __FILE__,
+                    __FUNCTION__,
+                    __LINE__
+                );
             }
             return false;
         }
@@ -134,7 +147,12 @@ class EEH_Sideloader extends EEH_Base
             $md5_check = verify_file_md5($temp_file, $content_md5);
             if (is_wp_error($md5_check)) {
                 unlink($temp_file);
-                EE_Error::add_error($md5_check->get_error_message(), __FILE__, __FUNCTION__, __LINE__);
+                EE_Error::add_error(
+                    $md5_check->get_error_message(),
+                    __FILE__,
+                    __FUNCTION__,
+                    __LINE__
+                );
                 return false;
             }
         }
@@ -147,7 +165,15 @@ class EEH_Sideloader extends EEH_Base
         // move file in
         if (false === @ rename($file, $path)) {
             unlink($temp_file);
-            EE_Error::add_error(sprintf(__('Unable to move the file to new location (possible permissions errors). This is the path the class attempted to move the file to: %s', 'event_espresso'), $path), __FILE__, __FUNCTION__, __LINE__);
+            EE_Error::add_error(
+                sprintf(
+                    esc_html__('Unable to move the file to new location (possible permissions errors). This is the path the class attempted to move the file to: %s', 'event_espresso'),
+                    $path
+                ),
+                __FILE__,
+                __FUNCTION__,
+                __LINE__
+            );
             return false;
         }
 

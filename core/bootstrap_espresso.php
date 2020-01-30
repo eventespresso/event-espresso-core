@@ -69,21 +69,30 @@ function bootstrap_espresso()
     require_once __DIR__ . '/espresso_definitions.php';
     try {
         espresso_load_error_handling();
+        // include WordPress shims for functions introduced in later versions of WordPress
+        espresso_load_required(
+            '',
+            EE_CORE . 'wordpress-shims.php'
+        );
+        espresso_load_required(
+            '',
+            EE_CORE . 'third-party-compatibility.php'
+        );
         espresso_load_required(
             'EEH_Base',
-            EE_CORE . 'helpers' . DS . 'EEH_Base.helper.php'
+            EE_CORE . 'helpers/EEH_Base.helper.php'
         );
         espresso_load_required(
             'EEH_File',
-            EE_CORE . 'interfaces' . DS . 'EEHI_File.interface.php'
+            EE_CORE . 'interfaces/EEHI_File.interface.php'
         );
         espresso_load_required(
             'EEH_File',
-            EE_CORE . 'helpers' . DS . 'EEH_File.helper.php'
+            EE_CORE . 'helpers/EEH_File.helper.php'
         );
         espresso_load_required(
             'EEH_Array',
-            EE_CORE . 'helpers' . DS . 'EEH_Array.helper.php'
+            EE_CORE . 'helpers/EEH_Array.helper.php'
         );
         espresso_load_required(
             'EE_Base',
@@ -102,7 +111,7 @@ function bootstrap_espresso()
         $AutoloaderInit->initializeAutoloader();
         new EventEspresso\core\services\bootstrap\BootstrapCore();
     } catch (Exception $e) {
-        require_once EE_CORE . 'exceptions' . DS . 'ExceptionStackTraceDisplay.php';
+        require_once EE_CORE . 'exceptions/ExceptionStackTraceDisplay.php';
         new EventEspresso\core\exceptions\ExceptionStackTraceDisplay($e);
     }
 }

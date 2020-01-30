@@ -92,14 +92,127 @@ Accessing these related model objects is easy: use either `EE_Base_Class::_get_f
 
 ## Adding and Removing Related Model Objects
 
-You can use `EE_Base_Class::_add_relation_to()` and `EE_Base_Class::_remove_relation_to()` to add/remove related items. Eg
+No matter what type of relationship exists between two model objects, so long as it's a direct relationship mentioned in the model's `_model_relations` property, you can use `EE_Base_Class::_add_relation_to()` and `EE_Base_Class::_remove_relation_to()` to add/remove related items. 
+
+
+### Adding Related Model Objects
+
+Here are a few examples of different relations, all using `EE_Base_Class::_add_relation_to()` to add related items.
+
+#### BelongsTo
+Each `EE_Answer` belongs to an `EE_Question` (meaning the database table `wp_esp_answer` has a column `QST_ID` which is a foreign key to the `wp_esp_question` table; also `EEM_Answer::_model_relations` has a key `Question` whose value is a `EE_Belongs_To_Relation`). 
+Here is how to associate an `EE_Answer` with an `EE_Question`:
+
+```
+// create a new answer (or you could fetch a pre-existing one instead).
+$answer = EE_Answer::new_instance(
+    [
+        'REG_ID' => 123,
+        'ANS_value' => 'light saber'
+    ]
+);
+$answer->save();
+// fetch a pre-existing question (or we could have created a new one, like we just created a new answer)/
+$question = EEM_Question::instance()->get_one();
+// now make these instances related.
+$answer->_add_relation_to($question,'Question');
+```
+That will set the `EE_Answer`'s `QST_ID` field to be the ID of the `EE_Question`, so it's equivalent to 
+
+```
+$answer->set('QST_ID', $question->ID());
+$answer->save();
+```
+
+#### HasMany
+Each `EE_Event` has many `EE_Datetime`s (meaning the database table `wp_esp_datetime` has a column `EVT_ID` which is a foreign key to the posts table - where the event custom post types are stored; also `EEM_Event::_model_relations` has a key `Datetime` whose value is an `EE_Has_Many_Relation`).
+Here is how to associate an `EE_Event` with an `EE_Datetime`:
+
+```
+$event = EE_Event::new_instance();
+$datetime = EE_Datetime::new_instance();
+$event->_add_relation_to($datetime, 'Datetime');
+```
+That will set the `EE_Datetime`'s `EVT_ID` to the ID of the `EE_EVent`, so it's equivalent to
+
+```
+$datetime->set('EVT_ID', $event->ID());
+$datetime->save();
+```
+
+Like each `EE_Event` `HasMany` `EE_Datetime`s, conversely each `EE_Datetime` `BelongsTo` an `EE_Event`; so using
+
+```
+$datetime->_add_relation_to($event, 'Event');`
+```
+
+is equally valid.
+
+#### Has and Belongs To Many (HABTM)
+Each `EE_Ticket` can grant access to many `EE_Datetime`s, but also access to each `EE_Datetime` can be through many `EE_Ticket`s (meaning there is a join table `wp_esp_datetime_ticket` with a row for each relation between a datetime and a ticket; also `EEM_Ticket::_model_relations` has a key `Datetime` whose value is `EE_HABTM`; likewise `EEM_Datetime::_model_relations` has a key `Ticket` whose value is also an `EE_HABMT`.)
+Here is how to an existing `EE_Ticket` to a new `EE_Datetime`:
+
+```
+$ticket = EEM_Ticket::instance()->get_one();
+$datetime = EE_Datetime::new_instance(
+    [
+        'DTT_EVT_start' => '2019-01-01 08:00:00',
+        'DTT_EVT_end' => '2019-01-01 17:00:00'
+    ]
+);
+$datetime->save();
+$ticket->_add_relation_to($datetime, 'Datetime');
+```
+That will automatically create a new row in `wp_esp_datetime_ticket` using the IDs of the `EE_Ticket` and `EE_Datetime`. It's the equivalent of 
+
+```
+$datetime_ticket_relation = EE_Datetime_Ticket::new_instance(
+    [
+        'DTT_ID' => $datetime->ID(),
+        'TKT_ID' => $ticket->ID()
+    ]
+);
+$datetime_ticket_relation->save();
+```
+
+Sometimes these has-and-belongs-to-many relations have additional properties, like how the relation between `EE_Question`s and `EE_Question_Groups` have an order property (ie, `EEM_Question_Group_Question` has a field `QGQ_order`). You can set pass these values in as a 3rd parameter to `EE_Base_Class::_add_relation_to()`, like so:
+
+```
+$question = EEM_Question::instance()->get_one();
+$question_group = EEM_Question_Group::instance()->get_one();
+$question->_add_relation_to($question_group, 'Question_Group', ['QGQ_order' => 123]);
+```
+which is equivalent to 
+```
+EE_Question_Group_Question::new_instance(
+    [
+        'QSG_ID' => $question_group->ID(),
+        'QST_ID' => $question->ID(),
+        'QGQ_order' => 123
+    ]
+);
+```
+
+Note: what if you want to create a new object AND add it as a relation at the same time? Sorry, but there is no `EE_Base_Class::_create_and_add_related()` method or anything. You need to first create it and then use `EE_Base_Class::_add_relation_to()` (although if you're creating the model object with a foreign key, you can always set teh foreign key, eg `EE_Datetime::new_instance(['EVT_ID' => 123]);`.)
+
+### Removing Related Model Objects
+
+The method `EE_Base_Class::_remove_relation_to()` can also be used to remove any relation between two related model objects.
+
+Eg
 
 ```php
+$registration = EEM_Registration::instance()->get_one();
 $answer1 = $registration->_get_first_related( 'Answer' );
 $registation->_remove_relation_to( $answer1, 'Answer' );
-echo "The answer with ID " . $answer->ID() .
-" was removed from being related to the registration with ID " . $registration->ID();
 ```
+which is equivalent to 
+```
+$answer1->set('REG_ID',0);
+$answer1->save();
+```
+
+This again works for any relation. For has-and-belongs-to-many relations, it automatically removes the entry in the join table.
 
 If the model object already exists, this change will be immediately saved to the database. However, if the primary model object (the object on which we are calling `EE_Base_Class::_remove_relation_to()`) has not yet been saved to the database, then the change will be cached only on the model object. If you do finally decide to save the related model object, you can call `EE_Base_Class::save_new_cached_related_objs()`, which will save all the related model objects which also don't yet exist in the database (if they do already exist in the database, then for now you will need to manually call `EE_Base_Class::save()` on each).
 

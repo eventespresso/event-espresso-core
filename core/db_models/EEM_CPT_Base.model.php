@@ -209,8 +209,8 @@ abstract class EEM_CPT_Base extends EEM_Soft_Delete_Base
     /**
      * Alters the query params so that only trashed/soft-deleted items are considered
      *
-     * @param array $query_params like EEM_Base::get_all's $query_params
-     * @return array like EEM_Base::get_all's $query_params
+     * @param array $query_params @see https://github.com/eventespresso/event-espresso-core/tree/master/docs/G--Model-System/model-query-params.md
+     * @return array @see https://github.com/eventespresso/event-espresso-core/tree/master/docs/G--Model-System/model-query-params.md
      */
     protected function _alter_query_params_so_only_trashed_items_included($query_params)
     {
@@ -237,7 +237,7 @@ abstract class EEM_CPT_Base extends EEM_Soft_Delete_Base
      * Performs deletes or restores on items. Both soft-deleted and non-soft-deleted items considered.
      *
      * @param boolean $delete       true to indicate deletion, false to indicate restoration
-     * @param array   $query_params like EEM_Base::get_all
+     * @param array   $query_params @see https://github.com/eventespresso/event-espresso-core/tree/master/docs/G--Model-System/model-query-params.md
      * @return boolean success
      */
     public function delete_or_restore($delete = true, $query_params = array())

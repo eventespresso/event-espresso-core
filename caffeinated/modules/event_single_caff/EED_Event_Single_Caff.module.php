@@ -52,8 +52,7 @@ class EED_Event_Single_Caff extends EED_Event_Single
      */
     public static function set_hooks_admin()
     {
-        define('EVENT_SINGLE_CAFF_TEMPLATES_PATH', plugin_dir_path(__FILE__) . 'templates' . DS);
-        define('EVENT_SINGLE_CAFF_ASSETS_URL', plugin_dir_url(__FILE__) . 'assets' . DS);
+        self::setDefinitions();
         add_action(
             'FHEE__EE_Admin_Page___load_page_dependencies__after_load__espresso_events__template_settings',
             array('EED_Event_Single_Caff', 'load_scripts_styles'),
@@ -105,6 +104,18 @@ class EED_Event_Single_Caff extends EED_Event_Single
             true
         );
         wp_enqueue_script('eed-event-single-sortable');
+    }
+
+
+    /**
+     * Set constants only if they haven't been set yet.
+     */
+    public static function setDefinitions()
+    {
+        if (! defined('EVENT_SINGLE_CAFF_TEMPLATES_PATH')) {
+            define('EVENT_SINGLE_CAFF_TEMPLATES_PATH', plugin_dir_path(__FILE__) . 'templates/');
+            define('EVENT_SINGLE_CAFF_ASSETS_URL', plugin_dir_url(__FILE__) . 'assets/');
+        }
     }
 
 

@@ -38,7 +38,7 @@ jQuery(document).ready(function($) {
 
 	$('#reg-admin-attendee-questions-frm').on( 'click', '.reg-admin-edit-attendee-question-lnk', function(e) {
 		e.preventDefault();
-		$(this).closest('table').find('td, .reg-admin-attendee-questions-input-td' ).each(function() {//also select deprecated .reg-admin-attendee-questions-input-td
+		$(this).closest('table.question-group-questions').find('td, .reg-admin-attendee-questions-input-td' ).each(function() {//also select deprecated .reg-admin-attendee-questions-input-td
 			$(this).removeClass('disabled-input');
 			$(this).find('input').prop( 'disabled', false ).addClass('editable-input');
 			$(this).find('select').prop( 'disabled', false ).addClass('editable-input');

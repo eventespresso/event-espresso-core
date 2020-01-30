@@ -307,6 +307,8 @@ abstract class EE_Data_Migration_Class_Base
         $properties = get_object_vars($this);
         $properties['class'] = get_class($this);
         unset($properties['_migration_script']);
+        unset($properties['_table_manager']);
+        unset($properties['_table_analysis']);
         return $properties;
     }
 

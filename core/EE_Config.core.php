@@ -1062,7 +1062,7 @@ final class EE_Config implements ResettableInterface
             // sanitize shortcode directory name
             $widget = sanitize_key($widget);
             // now we need to rebuild the shortcode path
-            $widget_path = explode(DS, $widget_path);
+            $widget_path = explode('/', $widget_path);
             // remove last segment
             array_pop($widget_path);
             // glue it back together
@@ -1076,20 +1076,20 @@ final class EE_Config implements ResettableInterface
         // add class prefix
         $widget_class = 'EEW_' . $widget;
         // does the widget exist ?
-        if (! is_readable($widget_path . DS . $widget_class . $widget_ext)) {
+        if (! is_readable($widget_path . '/' . $widget_class . $widget_ext)) {
             $msg = sprintf(
                 __(
                     'The requested %s widget file could not be found or is not readable due to file permissions. Please ensure the following path is correct: %s',
                     'event_espresso'
                 ),
                 $widget_class,
-                $widget_path . DS . $widget_class . $widget_ext
+                $widget_path . '/' . $widget_class . $widget_ext
             );
             EE_Error::add_error($msg . '||' . $msg, __FILE__, __FUNCTION__, __LINE__);
             return;
         }
         // load the widget class file
-        require_once($widget_path . DS . $widget_class . $widget_ext);
+        require_once($widget_path . '/' . $widget_class . $widget_ext);
         // verify that class exists
         if (! class_exists($widget_class)) {
             $msg = sprintf(__('The requested %s widget class does not exist.', 'event_espresso'), $widget_class);
@@ -1098,7 +1098,7 @@ final class EE_Config implements ResettableInterface
         }
         register_widget($widget_class);
         // add to array of registered widgets
-        EE_Registry::instance()->widgets->{$widget_class} = $widget_path . DS . $widget_class . $widget_ext;
+        EE_Registry::instance()->widgets->{$widget_class} = $widget_path . '/' . $widget_class . $widget_ext;
     }
 
 
@@ -1149,17 +1149,17 @@ final class EE_Config implements ResettableInterface
         do_action('AHEE__EE_Config__register_module__begin', $module_path);
         $module_ext = '.module.php';
         // make all separators match
-        $module_path = str_replace(array('\\', '/'), DS, $module_path);
+        $module_path = str_replace(array('\\', '/'), '/', $module_path);
         // does the file path INCLUDE the actual file name as part of the path ?
         if (strpos($module_path, $module_ext) !== false) {
             // grab and shortcode file name from directory name and break apart at dots
             $module_file = explode('.', basename($module_path));
             // now we need to rebuild the shortcode path
-            $module_path = explode(DS, $module_path);
+            $module_path = explode('/', $module_path);
             // remove last segment
             array_pop($module_path);
             // glue it back together
-            $module_path = implode(DS, $module_path) . DS;
+            $module_path = implode('/', $module_path) . '/';
             // take first segment from file name pieces and sanitize it
             $module = preg_replace('/[^a-zA-Z0-9_\-]/', '', $module_file[0]);
             // ensure class prefix is added
@@ -1170,14 +1170,14 @@ final class EE_Config implements ResettableInterface
             $module = strtolower(basename($module_path));
             $module = preg_replace('/[^a-z0-9_\-]/', '', $module);
             // like trailingslashit()
-            $module_path = rtrim($module_path, DS) . DS;
+            $module_path = rtrim($module_path, '/') . '/';
             // create classname from module directory name
             $module = str_replace(' ', '_', ucwords(str_replace('_', ' ', $module)));
             // add class prefix
             $module_class = 'EED_' . $module;
         }
         // does the module exist ?
-        if (! is_readable($module_path . DS . $module_class . $module_ext)) {
+        if (! is_readable($module_path . '/' . $module_class . $module_ext)) {
             $msg = sprintf(
                 __(
                     'The requested %s module file could not be found or is not readable due to file permissions.',
@@ -1267,7 +1267,7 @@ final class EE_Config implements ResettableInterface
             EE_Error::add_error($msg . '||' . $msg, __FILE__, __FUNCTION__, __LINE__);
             return false;
         }
-        EE_Config::$_module_route_map[ $key ][ $route ] = array('EED_' . $module, $method_name);
+        EE_Config::$_module_route_map[ (string) $key ][ (string) $route ] = array('EED_' . $module, $method_name);
         return true;
     }
 
@@ -1923,37 +1923,37 @@ class EE_Organization_Config extends EE_Config_Base
      * @var string $address_1
      * eg 123 Onna Road
      */
-    public $address_1;
+    public $address_1 = '';
 
     /**
      * @var string $address_2
      * eg PO Box 123
      */
-    public $address_2;
+    public $address_2 = '';
 
     /**
      * @var string $city
      * eg Inna City
      */
-    public $city;
+    public $city = '';
 
     /**
      * @var int $STA_ID
      * eg 4
      */
-    public $STA_ID;
+    public $STA_ID = 0;
 
     /**
      * @var string $CNT_ISO
      * eg US
      */
-    public $CNT_ISO;
+    public $CNT_ISO = '';
 
     /**
      * @var string $zip
      * eg 12345  or V1A 2B3
      */
-    public $zip;
+    public $zip = '';
 
     /**
      * @var string $email
@@ -1965,19 +1965,19 @@ class EE_Organization_Config extends EE_Config_Base
      * @var string $phone
      * eg. 111-111-1111
      */
-    public $phone;
+    public $phone = '';
 
     /**
      * @var string $vat
      * VAT/Tax Number
      */
-    public $vat;
+    public $vat = '';
 
     /**
      * @var string $logo_url
      * eg http://www.somedomain.com/wp-content/uploads/kittehs.jpg
      */
-    public $logo_url;
+    public $logo_url = '';
 
     /**
      * The below are all various properties for holding links to organization social network profiles
@@ -1989,42 +1989,42 @@ class EE_Organization_Config extends EE_Config_Base
      *
      * @var string
      */
-    public $facebook;
+    public $facebook = '';
 
     /**
      * twitter (twitter.com/twitter_handle)
      *
      * @var string
      */
-    public $twitter;
+    public $twitter = '';
 
     /**
      * linkedin (linkedin.com/in/profile_name)
      *
      * @var string
      */
-    public $linkedin;
+    public $linkedin = '';
 
     /**
      * pinterest (www.pinterest.com/profile_name)
      *
      * @var string
      */
-    public $pinterest;
+    public $pinterest = '';
 
     /**
      * google+ (google.com/+profileName)
      *
      * @var string
      */
-    public $google;
+    public $google = '';
 
     /**
      * instagram (instagram.com/handle)
      *
      * @var string
      */
-    public $instagram;
+    public $instagram = '';
 
 
     /**
@@ -2037,22 +2037,7 @@ class EE_Organization_Config extends EE_Config_Base
         // set default organization settings
         // decode HTML entities from the WP blogname, because it's stored in the DB with HTML entities encoded
         $this->name = wp_specialchars_decode(get_bloginfo('name'), ENT_QUOTES);
-        $this->address_1 = '123 Onna Road';
-        $this->address_2 = 'PO Box 123';
-        $this->city = 'Inna City';
-        $this->STA_ID = 4;
-        $this->CNT_ISO = 'US';
-        $this->zip = '12345';
         $this->email = get_bloginfo('admin_email');
-        $this->phone = '';
-        $this->vat = '123456789';
-        $this->logo_url = '';
-        $this->facebook = '';
-        $this->twitter = '';
-        $this->linkedin = '';
-        $this->pinterest = '';
-        $this->google = '';
-        $this->instagram = '';
     }
 }
 
@@ -2347,6 +2332,13 @@ class EE_Registration_Config extends EE_Config_Base
      */
     public $gateway_log_lifespan = '1 week';
 
+    /**
+     * Enable copy attendee info at form
+     *
+     * @var boolean $enable_copy_attendee
+     */
+    protected $copy_attendee_info = true;
+
 
     /**
      *    class constructor
@@ -2377,6 +2369,7 @@ class EE_Registration_Config extends EE_Config_Base
         $this->consent_checkbox_enabled = false;
         $this->consent_checkbox_label_text = '';
         $this->gateway_log_lifespan = '7 days';
+        $this->copy_attendee_info = true;
     }
 
 
@@ -2475,6 +2468,26 @@ class EE_Registration_Config extends EE_Config_Base
         );
     }
 
+    /**
+     * @return boolean
+     */
+    public function copyAttendeeInfo()
+    {
+        return $this->copy_attendee_info;
+    }
+
+
+    /**
+     * @param boolean $copy_attendee_info
+     */
+    public function setCopyAttendeeInfo($copy_attendee_info)
+    {
+        $this->copy_attendee_info = filter_var(
+            $copy_attendee_info,
+            FILTER_VALIDATE_BOOLEAN
+        );
+    }
+
 
     /**
      * Gets the options to make availalbe for the gateway log lifespan
@@ -2561,11 +2574,6 @@ class EE_Admin_Config extends EE_Config_Base
     public $use_event_timezones;
 
     /**
-     * @var boolean $use_full_logging
-     */
-    public $use_full_logging;
-
-    /**
      * @var string $log_file_name
      */
     public $log_file_name;
@@ -2625,10 +2633,12 @@ class EE_Admin_Config extends EE_Config_Base
         $this->use_dashboard_widget = true;
         $this->events_in_dashboard = 30;
         $this->use_event_timezones = false;
-        $this->use_full_logging = false;
         $this->use_remote_logging = false;
         $this->remote_logging_url = null;
-        $this->show_reg_footer = true;
+        $this->show_reg_footer = apply_filters(
+            'FHEE__EE_Admin_Config__show_reg_footer__default',
+            false
+        );
         $this->affiliate_id = 'default';
         $this->help_tour_activation = true;
         $this->encode_session_data = false;
@@ -3010,6 +3020,13 @@ class EE_Ticket_Selector_Config extends EE_Config_Base
      */
     private $datetime_selector_threshold = 3;
 
+    /**
+     * determines the maximum number of "checked" dates in the date and time filter
+     *
+     * @var int $datetime_selector_checked
+     */
+    private $datetime_selector_max_checked = 10;
+
 
     /**
      *    class constructor
@@ -3021,6 +3038,7 @@ class EE_Ticket_Selector_Config extends EE_Config_Base
         $this->show_expired_tickets = true;
         $this->show_datetime_selector = \EE_Ticket_Selector_Config::DO_NOT_SHOW_DATETIME_SELECTOR;
         $this->datetime_selector_threshold = 3;
+        $this->datetime_selector_max_checked = 10;
     }
 
 
@@ -3108,6 +3126,24 @@ class EE_Ticket_Selector_Config extends EE_Config_Base
         $datetime_selector_threshold = absint($datetime_selector_threshold);
         $this->datetime_selector_threshold = $datetime_selector_threshold ? $datetime_selector_threshold : 3;
     }
+
+
+    /**
+     * @return int
+     */
+    public function getDatetimeSelectorMaxChecked()
+    {
+        return $this->datetime_selector_max_checked;
+    }
+
+
+    /**
+     * @param int $datetime_selector_max_checked
+     */
+    public function setDatetimeSelectorMaxChecked($datetime_selector_max_checked)
+    {
+        $this->datetime_selector_max_checked = absint($datetime_selector_max_checked);
+    }
 }
 
 /**
@@ -3168,17 +3204,22 @@ class EE_Environment_Config extends EE_Config_Base
     {
         if (! empty($this->php->max_input_vars)
             && ($input_count >= $this->php->max_input_vars)
-            && (PHP_MAJOR_VERSION >= 5 && PHP_MINOR_VERSION >= 3 && PHP_RELEASE_VERSION >= 9)
         ) {
-            return sprintf(
-                __(
-                    'The maximum number of inputs on this page has been exceeded.  You cannot add anymore items (i.e. tickets, datetimes, custom fields) on this page because of your servers PHP "max_input_vars" setting.%1$sThere are %2$d inputs and the maximum amount currently allowed by your server is %3$d.',
-                    'event_espresso'
-                ),
-                '<br>',
-                $input_count,
-                $this->php->max_input_vars
-            );
+            // check the server setting because the config value could be stale
+            $max_input_vars = ini_get('max_input_vars');
+            if ($input_count >= $max_input_vars) {
+                return sprintf(
+                    esc_html__(
+                        'The maximum number of inputs on this page has been exceeded. You cannot make edits to this page because of your server\'s PHP "max_input_vars" setting.%1$sThere are %2$d inputs and the maximum amount currently allowed by your server is %3$d.%1$sPlease contact your web host and ask them to raise the "max_input_vars" limit.',
+                        'event_espresso'
+                    ),
+                    '<br>',
+                    $input_count,
+                    $max_input_vars
+                );
+            } else {
+                return '';
+            }
         } else {
             return '';
         }

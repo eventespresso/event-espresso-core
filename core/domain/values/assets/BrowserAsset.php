@@ -2,6 +2,7 @@
 
 namespace EventEspresso\core\domain\values\assets;
 
+use DomainException;
 use EventEspresso\core\domain\DomainInterface;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 
@@ -40,13 +41,16 @@ abstract class BrowserAsset extends Asset
      * @param string          $source
      * @param array           $dependencies
      * @param DomainInterface $domain
+     * @param string          $version
+     * @throws DomainException
      * @throws InvalidDataTypeException
      */
-    public function __construct($type, $handle, $source, array $dependencies, DomainInterface $domain)
+    public function __construct($type, $handle, $source, array $dependencies, DomainInterface $domain, $version = '')
     {
         parent::__construct($type, $handle, $domain);
         $this->setSource($source);
         $this->setDependencies($dependencies);
+        $this->setVersion($version, false);
     }
 
 
@@ -113,31 +117,28 @@ abstract class BrowserAsset extends Asset
     /**
      * @return string
      * @throws InvalidDataTypeException
+     * @throws DomainException
      */
     public function version()
     {
-        // if version is NOT set and this asset was NOT built for distribution,
-        // then set the version equal to the EE core plugin version
-        if (
-            $this->version === null
-            && (
-                substr($this->source, -8) !== Asset::FILE_EXTENSION_DISTRIBUTION_JS
-                || substr($this->source, -9) !== Asset::FILE_EXTENSION_DISTRIBUTION_CSS
-            )
-        ) {
-            $this->setVersion();
-        }
         return $this->version;
     }
 
 
     /**
      * @param string $version
-     * @return BrowserAsset
+     * @param bool   $fluent
+     * @return BrowserAsset|null
+     * @throws DomainException
      * @throws InvalidDataTypeException
      */
-    public function setVersion($version = EVENT_ESPRESSO_VERSION)
+    public function setVersion($version, $fluent = true)
     {
+        // if version is NOT set and this asset was NOT built for distribution,
+        // then set the version equal to the EE core plugin version
+        if (empty($version) && ! $this->isBuiltDistributionSource()) {
+            $version = $this->domain->version();
+        }
         if (! is_string($version)) {
             throw new InvalidDataTypeException(
                 '$version',
@@ -146,6 +147,18 @@ abstract class BrowserAsset extends Asset
             );
         }
         $this->version = $version;
-        return $this;
+        if ($fluent) {
+            return $this;
+        }
+        return null;
+    }
+
+
+    /**
+     * @return bool
+     */
+    public function isBuiltDistributionSource() {
+        return substr($this->source, -8) === Asset::FILE_EXTENSION_DISTRIBUTION_JS
+               || substr($this->source, -9) === Asset::FILE_EXTENSION_DISTRIBUTION_CSS;
     }
 }

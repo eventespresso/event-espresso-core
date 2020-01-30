@@ -138,6 +138,43 @@ class ModelDataTranslatorTest extends EE_REST_TestCase
         $this->assertEquals(false, $rest_query['where']['REG_deleted']);
     }
 
+    /**
+     * @group private-1
+     */
+    public function testPrepareConditionsQueryParamsForModelsUnprivilegedUseOfPassword()
+    {
+        $this->setExceptionExpected(RestException::class);
+        // you can't filter by password unless you're an admin
+            ModelDataTranslator::prepareConditionsQueryParamsForModels(
+                array(
+                    'password' => 'imahacker'
+                ),
+                EEM_Event::instance(),
+                '4.8.36'
+            );
+    }
+
+    /**
+     * @group private-1
+     */
+    public function testPrepareConditionsQueryParamsForModelsPrivilegedUseOfPassword()
+    {
+        // you can't filter by password unless you're an admin
+        $this->authenticate_as_admin();
+        $password = 'imanadmin';
+        $query_params = ModelDataTranslator::prepareConditionsQueryParamsForModels(
+            array(
+                'password' => $password
+            ),
+            EEM_Event::instance(),
+            '4.8.36'
+        );
+        $this->assertEquals(
+            $query_params['password'],
+            $password
+        );
+    }
+
 
 
     /**
@@ -234,10 +271,15 @@ class ModelDataTranslatorTest extends EE_REST_TestCase
     public function dataProviderForTestPrepareFieldValueFromJsonOk()
     {
         $serialized_field = new EE_Maybe_Serialized_Simple_HTML_Field('whatever', 'Whatever', true);
+        $bool_field = new EE_Boolean_Field('whatever2', 'whatever2', true);
         return array(
-            array('1', '1', $serialized_field),
-            array('stringy', 'stringy', $serialized_field),
-            array(array('foo' => 'bar'), array('foo' => 'bar'), $serialized_field),
+            ['1', '1', $serialized_field],
+            ['stringy', 'stringy', $serialized_field],
+            [['foo' => 'bar'], ['foo' => 'bar'], $serialized_field],
+            [false, 'false', $bool_field],
+            [false, 0, $bool_field],
+            [true, 'true', $bool_field],
+            [true, 1, $bool_field],
         );
     }
 
@@ -619,6 +661,74 @@ class ModelDataTranslatorTest extends EE_REST_TestCase
                 ),
                 'Event',
                 false
+            ),
+            'quick syntax two operators' => array(
+                array(
+                    'EVT_ID' => array(
+                        'IN' => '1,2',
+                        '<' => 'huh there shouldnt be two operators!'
+                    )
+                ),
+                'Event',
+                false
+            ),
+            'quick syntax too few arguments for between operator with csv' => array(
+                array(
+                    'EVT_created' => array(
+                        'BETWEEN' => '2017-01-01T00:00:00'
+                    )
+                ),
+                'Event',
+                false
+            ),
+            'quick syntax too few arguments for between operator with json' => array(
+                array(
+                    'EVT_created' => array(
+                        'BETWEEN' => array(
+                            '2017-01-01T00:00:00'
+                        )
+                    )
+                ),
+                'Event',
+                false
+            ),
+            'quick syntax between with too many dates' => array(
+                array(
+                    'EVT_created' => array(
+                        'between' =>
+                        array(
+                            '2017-01-01T00:00:00',
+                            '2018-01-01T00:00:00',
+                            '2019-01-01T00:00:00',
+                        )
+                    )
+                ),
+                'Event',
+                false
+            ),
+            'quick syntax too many arguments for like operator' => array(
+                array(
+                    'EVT_name' => array(
+                        'LIKE' => array(
+                            'foobar',
+                            'something_extra'
+                        )
+                    )
+                ),
+                'Event',
+                false
+            ),
+            'quick syntax too many arguments for normal operator' => array(
+                array(
+                    'EVT_ID' => array(
+                        '<' => array(
+                            123,
+                            23452343
+                        )
+                    )
+                ),
+                'Event',
+                false
             )
         );
     }
@@ -809,6 +919,98 @@ class ModelDataTranslatorTest extends EE_REST_TestCase
                 ),
                 'Ticket',
                 true
+            ),
+            'quick syntax with in csv' => array(
+                array(
+                    'EVT_ID' => array('IN', array('1','2','3'))
+                ),
+                array(
+                    'EVT_ID' => array(
+                        'IN' => '1,2,3'
+                    )
+                ),
+                'Event',
+                false
+            ),
+            'quick syntax with in json' => array(
+                array(
+                    'EVT_ID' => array('IN', array(1,2,3))
+                ),
+                array(
+                    'EVT_ID' => array(
+                        'IN' => wp_json_encode(array(1,2,3))
+                    )
+                ),
+                'Event',
+                false
+            ),
+            'quick syntax with between csv' => array(
+                array(
+                    'DTT_EVT_start' => array(
+                        'BETWEEN',
+                        array(
+                            rest_parse_date('2015-01-01 00:02:00'),
+                            rest_parse_date('2015-01-01 00:05:00')
+                        )
+                    )
+                ),
+                array(
+                    'DTT_EVT_start' => array(
+                        'BETWEEN' => '2015-01-01T00:02:00, 2015-01-01T00:05:00'
+                    )
+                ),
+                'Datetime',
+                false
+            ),
+            'quick syntax with between json' => array(
+                array(
+                    'DTT_EVT_start' => array(
+                        'BETWEEN',
+                        array(
+                            rest_parse_date('2015-01-01 00:02:00'),
+                            rest_parse_date('2015-01-01 00:05:00')
+                        )
+                    )
+                ),
+                array(
+                    'DTT_EVT_start' => array(
+                        'BETWEEN' => wp_json_encode(
+                            array(
+                                '2015-01-01T00:02:00',
+                                '2015-01-01T00:05:00'
+                            )
+                        )
+                    )
+                ),
+                'Datetime',
+                false
+            ),
+            'quick syntax with normal' => array(
+                array(
+                    'EVT_name' => array(
+                        'LIKE',
+                        '%foobar%'
+                    )
+                ),
+                array(
+                    'EVT_name' => array(
+                        'LIKE' => '%foobar%'
+                    )
+                ),
+                'Event',
+                false
+            ),
+            'quick syntax with null' => array(
+                array(
+                    'EVT_ID' => array('IS_NULL')
+                ),
+                array(
+                    'EVT_ID' => array(
+                        'IS_NULL' => true
+                    )
+                ),
+                'Event',
+                false
             )
         );
     }

@@ -1,5 +1,7 @@
 # The `eejs.data` Api.
 
+> Note: the eejs.data API [does not work with WP 4.9 and lower](eejs-core-dependency.md)
+
 One common problem encountered with WordPress development is transferring arbitrary data from php (the server) to javascript (client).  WordPress natively has [`wp_localize_script`](https://developer.wordpress.org/reference/functions/wp_localize_script/) to assist with that and it usually is sufficient.  However, one caveat with `wp_localize_script` is you need to define a reference to the js object that will hold that arbitrary data and attach it to the script needing it.  This creates some potential issues such as:
 
 - Greater chance of collisions between other scripts that register a data object named the same.
@@ -145,4 +147,4 @@ var data = eejs.data || {},
 
 ## Anything else?
 
-You can read more about the `eejs` global module in [this document](eejs-module.md).
+You can read more about the `eejs` global module in [this document](./eejs/README.md).

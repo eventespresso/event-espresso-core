@@ -1,12 +1,18 @@
 <?php
 namespace EventEspresso\core\libraries\rest_api\controllers\model;
 
+use EE_Error;
+use EE_REST_TestCase;
 use EED_Core_Rest_Api;
 use EEM_CPT_Base;
 use EEM_Event;
 use EventEspresso\core\domain\services\event\EventSpacesCalculator;
+use EventEspresso\core\exceptions\InvalidDataTypeException;
+use EventEspresso\core\exceptions\InvalidInterfaceException;
 use EventEspresso\core\libraries\rest_api\controllers\Base as Controller_Base;
 use EventEspresso\core\services\loaders\LoaderFactory;
+use InvalidArgumentException;
+use ReflectionException;
 use WP_REST_Request;
 
 if (! defined('EVENT_ESPRESSO_VERSION')) {
@@ -23,7 +29,7 @@ if (! defined('EVENT_ESPRESSO_VERSION')) {
  * @author                Mike Nelson
  * @group                 rest_api
  */
-class Read_Test extends \EE_REST_TestCase
+class Read_Test extends EE_REST_TestCase
 {
 
     public function test_explode_and_get_items_prefixed_with__basic()
@@ -334,6 +340,7 @@ class Read_Test extends \EE_REST_TestCase
                 'optimum_sales_at_start' => $limit_on_ticket,
                 'spots_taken'            => 1,
                 'spaces_remaining'       => $limit_on_ticket - 1,
+                '_protected' => array(),
             ),
             $result['_calculated_fields']
         );
@@ -343,6 +350,7 @@ class Read_Test extends \EE_REST_TestCase
         $this->assertEquals(
             (object)array(
                 'registrations_checked_in_count' => 0,
+                '_protected' => array()
             ),
             $result['datetimes'][0]['_calculated_fields']
         );
@@ -355,6 +363,7 @@ class Read_Test extends \EE_REST_TestCase
      * DO change it, in which case this unit test will need to be updated to
      * include the known modifications).
      * This helps prevent accidental changes
+     * @group private-1
      */
     public function test_handle_request_get_one__event()
     {
@@ -446,6 +455,7 @@ class Read_Test extends \EE_REST_TestCase
                 'EVT_donations'                   => $event->get('EVT_donations'),
                 'featured_image_url'              => null,
                 'EVT_timezone_string'             => '',
+                'password'                        => '',
                 'link'                            => get_permalink($event->ID()),
                 '_links'                          => array(
                     'self'                                                  =>
@@ -598,7 +608,20 @@ class Read_Test extends \EE_REST_TestCase
                                     'single' => false,
                                 ),
                         ),
+                    'https://api.eventespresso.com/event_question_groups'   =>
+                        array(
+                            0 =>
+                                array(
+                                    'href'   => rest_url(
+                                        '/ee/v4.8.29/events/'
+                                        . $event_id
+                                        . '/event_question_groups'
+                                    ),
+                                    'single' => false,
+                                ),
+                        ),
                 ),
+                '_protected' => array()
             ),
             $result
         );
@@ -690,7 +713,14 @@ class Read_Test extends \EE_REST_TestCase
     }
 
 
-
+    /**
+     * @since 4.9.74.p
+     * @throws EE_Error
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws InvalidArgumentException
+     * @throws ReflectionException
+     */
     public function test_handle_request_get_one__registration_include_answers_and_question_bare_min_from_each()
     {
         $this->authenticate_as_admin();
@@ -718,7 +748,14 @@ class Read_Test extends \EE_REST_TestCase
     }
 
 
-
+    /**
+     * @since 4.9.74.p
+     * @throws EE_Error
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws InvalidArgumentException
+     * @throws ReflectionException
+     */
     public function test_handle_request_get_one__doesnt_exist()
     {
         $e = $this->new_model_obj_with_dependencies('Event');
@@ -916,7 +953,7 @@ class Read_Test extends \EE_REST_TestCase
 
     /**
      * @group 536 see https://github.com/eventespresso/event-espresso-core/pull/536
-     * @throws \EE_Error
+     * @throws EE_Error
      */
     public function testHandleRequestGetAllSoldOutEventsToo()
     {
@@ -970,7 +1007,7 @@ class Read_Test extends \EE_REST_TestCase
 
     /**
      * @group 536
-     * @throws \EE_Error
+     * @throws EE_Error
      */
     public function testHandleRequestGetAllIncludeDatetimesToSoldOutEvents()
     {
@@ -1014,7 +1051,7 @@ class Read_Test extends \EE_REST_TestCase
      * This was temporarily broken while working on 536, but no test picked up on it, so here's one that does.
      *
      * @group 536 see https://github.com/eventespresso/event-espresso-core/pull/536
-     * @throws \EE_Error
+     * @throws EE_Error
      */
     public function testHandleRequestGetAllVenues()
     {
@@ -1051,6 +1088,42 @@ class Read_Test extends \EE_REST_TestCase
         $this->assertEquals($my_public_venue->ID(), $data[0]['VNU_ID']);
         $this->assertEquals($others_private_venue->ID(), $data[1]['VNU_ID']);
     }
+
+    /**
+     * Reproduces https://github.com/eventespresso/event-espresso-core/issues/845, which has been an often-recurring
+     * regression.
+     * @since 4.9.76.p
+     * @throws EE_Error
+     */
+    public function testHandleRequestGeAllTermRelationships()
+    {
+        $e = $this->new_model_obj_with_dependencies(
+            'Event',
+            ['status' => EEM_Event::post_status_publish]
+        );
+        $term_taxonomy = $this->new_model_obj_with_dependencies(
+            'Term_Taxonomy',
+            ['taxonomy' => 'espresso_event_categories']
+        );
+        $e->_add_relation_to($term_taxonomy, 'Term_Taxonomy');
+        $request = new WP_REST_Request('GET', '/' . EED_Core_Rest_Api::ee_api_namespace . '4.8.36/term_relationships');
+        $response = rest_do_request($request);
+        $data = $response->get_data();
+        $this->assertNotEmpty($data);
+        $this->assertEquals(1, count($data));
+        $first_result = reset($data);
+        $this->assertEquals(
+            $e->ID(),
+            $first_result['object_id']
+        );
+        $this->assertEquals(
+            $term_taxonomy->ID(),
+            $first_result['term_taxonomy_id']
+        );
+    }
+
+
+
 
 
 
@@ -1150,6 +1223,7 @@ class Read_Test extends \EE_REST_TestCase
                 'https://api.eventespresso.com/registration',
                 'https://api.eventespresso.com/datetime',
                 'https://api.eventespresso.com/question_group',
+                'https://api.eventespresso.com/event_question_group',
                 'https://api.eventespresso.com/venue',
                 'https://api.eventespresso.com/term_relationship',
                 'https://api.eventespresso.com/term_taxonomy',
@@ -1166,7 +1240,7 @@ class Read_Test extends \EE_REST_TestCase
         $this->assertArrayHasKey('_calculated_fields', $data['schema']['properties']);
         $calculated_fields = $data['schema']['properties']['_calculated_fields'];
         $this->assertEquals(
-            array('description', 'type', 'properties', 'additionalProperties', 'readonly'),
+            array('description', 'type', 'properties', 'additionalProperties', 'readonly', '_protected'),
             array_keys($calculated_fields)
         );
         $this->assertEquals(
@@ -1287,6 +1361,7 @@ class Read_Test extends \EE_REST_TestCase
      * Verify that if we loop over them and render their pretty content (which renders shortcodes)
      * we don't accidentally cache the shortcode from one event to the other
      * @group 10851
+     * @group big_rest_tests
      */
     public function testShortcodesNotCachedForDifferentEvents()
     {
@@ -1319,6 +1394,53 @@ class Read_Test extends \EE_REST_TestCase
             $data[0]['EVT_desc']['rendered'],
             $data[1]['EVT_desc']['rendered']
         );
+    }
+
+    /**
+     * Reproduces https://github.com/eventespresso/event-espresso-core/issues/903
+     * where including an innaccessible model caused the entire request to fail instead
+     * of just swapping out the response for null.
+     * @since 4.9.77.p
+     * @throws EE_Error
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws InvalidArgumentException
+     * @throws ReflectionException
+     */
+    public function testHandleGetOneIncludeInnaccessibleModel()
+    {
+        // Create an event and some registrations
+        $e = $this->new_model_obj_with_dependencies(
+            'Event',
+            [
+                'status' => EEM_Event::post_status_publish
+            ]
+        );
+        $d = $this->new_model_obj_with_dependencies('Datetime');
+        $t = $this->new_model_obj_with_dependencies('Ticket');
+        $d->_add_relation_to($t, 'Ticket');
+        $r = $this->new_model_obj_with_dependencies(
+            'Registration',
+            [
+                'EVT_ID' => $e->ID(),
+                'TKT_ID' => $t->ID()
+            ]
+        );
+
+        // Request to include the registrations.
+        $request = new WP_REST_Request( 'GET', '/' . EED_Core_Rest_Api::ee_api_namespace . '4.8.36/events/' . $e->ID());
+        $request->set_query_params(
+            array(
+                'include' => 'Registration',
+            )
+        );
+        $response = rest_do_request($request);
+        $data = $response->get_data();
+
+        // The registrations should just be removed, we shouldn't have a big error response.
+        $this->assertArrayNotHasKey('code', $data);
+        $this->assertEquals($e->ID(), $data['EVT_ID']);
+        $this->assertEquals(array(), $data['registrations']);
     }
 }
 // End of file Read_Test.php

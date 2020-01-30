@@ -3,7 +3,6 @@
 namespace EventEspresso\core\domain\services\contexts;
 
 use EventEspresso\core\domain\Domain;
-use EventEspresso\core\services\request\middleware\RecommendedVersions;
 use EventEspresso\core\services\request\RequestInterface;
 use InvalidArgumentException;
 use EventEspresso\core\domain\entities\contexts\RequestTypeContext;
@@ -20,7 +19,7 @@ class RequestTypeContextDetector
 {
 
     /**
-     * @var RequestTypeContextFactory $factory
+     * @var RequestTypeContextFactoryInterface $factory
      */
     private $factory;
 
@@ -29,17 +28,41 @@ class RequestTypeContextDetector
      */
     private $request;
 
+    /**
+     * @var array $globalRouteConditions
+     */
+    private $globalRouteConditions;
+
 
     /**
      * RequestTypeContextDetector constructor.
      *
-     * @param RequestInterface          $request
-     * @param RequestTypeContextFactory $factory
+     * @param RequestInterface                   $request
+     * @param RequestTypeContextFactoryInterface $factory
+     * @param array                              $globalRouteConditions an array for injecting values that would
+     *                                                                  otherwise be defined as global constants
+     *                                                                  or other global variables for the current
+     *                                                                  request route such as DOING_AJAX
      */
-    public function __construct(RequestInterface $request, RequestTypeContextFactory $factory)
-    {
+    public function __construct(
+        RequestInterface $request,
+        RequestTypeContextFactoryInterface $factory,
+        array $globalRouteConditions = array()
+    ) {
         $this->request = $request;
         $this->factory = $factory;
+        $this->globalRouteConditions = $globalRouteConditions;
+    }
+
+
+    /**
+     * @return mixed
+     */
+    private function getGlobalRouteCondition($globalRouteCondition, $default)
+    {
+        return isset($this->globalRouteConditions[ $globalRouteCondition ])
+            ? $this->globalRouteConditions[ $globalRouteCondition ]
+            : $default;
     }
 
 
@@ -59,13 +82,20 @@ class RequestTypeContextDetector
         if ($this->isEspressoRestApiRequest()) {
             return $this->factory->create(RequestTypeContext::API);
         }
+        // Detect WP REST API
+        if ($this->isWordPressRestApiRequest()) {
+            return $this->factory->create(RequestTypeContext::WP_API);
+        }
         // Detect AJAX
-        if (defined('DOING_AJAX') && DOING_AJAX) {
+        if ($this->getGlobalRouteCondition('DOING_AJAX', false)) {
             if (filter_var($this->request->getRequestParam('ee_front_ajax'), FILTER_VALIDATE_BOOLEAN)) {
                 return $this->factory->create(RequestTypeContext::AJAX_FRONT);
             }
             if (filter_var($this->request->getRequestParam('ee_admin_ajax'), FILTER_VALIDATE_BOOLEAN)) {
                 return $this->factory->create(RequestTypeContext::AJAX_ADMIN);
+            }
+            if ($this->request->getRequestParam('action') === 'heartbeat') {
+                return $this->factory->create(RequestTypeContext::AJAX_HEARTBEAT);
             }
             return $this->factory->create(RequestTypeContext::AJAX_OTHER);
         }
@@ -74,11 +104,11 @@ class RequestTypeContextDetector
             return $this->factory->create(RequestTypeContext::CRON);
         }
         // Detect command line requests
-        if (defined('WP_CLI') && WP_CLI) {
+        if ($this->getGlobalRouteCondition('WP_CLI', false)) {
             return $this->factory->create(RequestTypeContext::CLI);
         }
         // detect WordPress admin (ie: "Dashboard")
-        if (is_admin()) {
+        if ($this->getGlobalRouteCondition('is_admin', false)) {
             return $this->factory->create(RequestTypeContext::ADMIN);
         }
         // Detect iFrames
@@ -99,11 +129,24 @@ class RequestTypeContextDetector
      */
     private function isEspressoRestApiRequest()
     {
-        $ee_rest_url_prefix = RecommendedVersions::compareWordPressVersion('4.4.0')
-            ? trim(rest_get_url_prefix(), '/')
-            : 'wp-json';
-        $ee_rest_url_prefix .= '/' . Domain::API_NAMESPACE;
-        return $this->uriPathMatches($ee_rest_url_prefix);
+        // Check for URLs like http://mysite.com/?rest_route=/ee... and http://mysite.com/wp-json/ee/...
+        return strpos(
+            $this->request->getRequestParam('rest_route', false),
+            '/' . Domain::API_NAMESPACE
+        ) === 0
+            || $this->uriPathMatches(trim(rest_get_url_prefix(), '/') . '/' . Domain::API_NAMESPACE);
+    }
+
+
+
+    /**
+     * @return bool
+     */
+    private function isWordPressRestApiRequest()
+    {
+        // Check for URLs like http://mysite.com/?rest_route=/.. and http://mysite.com/wp-json/...
+        return $this->request->getRequestParam('rest_route', false)
+            || $this->uriPathMatches(trim(rest_get_url_prefix(), '/'));
     }
 
 
@@ -131,7 +174,7 @@ class RequestTypeContextDetector
      */
     private function uriPathMatches($component)
     {
-        $request_uri = $this->request->requestUri();
+        $request_uri = $this->request->requestUri(true);
         $parts = explode('?', $request_uri);
         $path = trim(reset($parts), '/');
         return strpos($path, $component) === 0;

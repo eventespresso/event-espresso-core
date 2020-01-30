@@ -144,7 +144,8 @@
 
 .admin-side-mbox-dv { margin : 1em 0 2em; }
 
-.admin-side-mbox-dv p { margin : .5em 0; line-height : 1.2em; color : #333; text-shadow : 0 1px 0 #FFF; }
+.admin-side-mbox-dv p,
+.admin-side-mbox-dv > div { margin : .5em 0; line-height : 1.2em; color : #333; text-shadow : 0 1px 0 #FFF; }
 
 .admin-side-mbox-label-spn { width : 30%; padding-right : .5em; text-align : right; }
 
@@ -424,8 +425,13 @@
 
 .status-RWL { color : #8A549A; }
 
-#admin-primary-mbox-reg-details-dv .secondary-button {
-    margin:0 0 10px 10px;
+#admin-primary-mbox-reg-details-dv .button {
+    margin : 10px 0;
+}
+
+#additional-registration-actions-dv ul li {
+    display      : inline-block;
+    margin-right : 10px;
 }
 
 #reg_status_change_form {
@@ -546,4 +552,22 @@
 .ee-registration-event-datetimes-container .left {
     float:left;
     max-width: 81%;
+}
+
+/** Add a bit of style to tickets details table **/
+
+.spco-ticket-details {
+    font-size: 16px;
+    border-top: 1px solid #ddd;
+    padding: 30px 0 15px;
+    width: 100%;
+}
+
+.spco-ticket-details td {
+    padding-top: 15px;
+}
+
+.ee-new-registration-step-content .ee-attention {
+    margin: 2em 0 1em;
+    padding: 1.5em 0 0;
 }

@@ -2,6 +2,9 @@
 
 namespace EventEspresso\core\exceptions;
 
+use Exception;
+use InvalidArgumentException;
+
 /**
  * Class InvalidEntityException
  * thrown when an entity is not of the expected instance
@@ -10,21 +13,24 @@ namespace EventEspresso\core\exceptions;
  * @author        Brent Christensen
  * @since         4.9.0
  */
-class InvalidEntityException extends \InvalidArgumentException
+class InvalidEntityException extends InvalidArgumentException
 {
 
     /**
-     * InvalidInterfaceException constructor.
+     * InvalidEntityException constructor.
      *
-     * @param string     $actual   classname of what we got
-     * @param string     $expected classname of the entity we wanted
-     * @param string     $message
-     * @param int        $code
-     * @param \Exception $previous
+     * @param mixed     $actual   the actual object (or thing) we got
+     * @param string    $expected classname of the entity we wanted
+     * @param string    $message
+     * @param int       $code
+     * @param Exception $previous
      */
-    public function __construct($actual, $expected, $message = '', $code = 0, \Exception $previous = null)
+    public function __construct($actual, $expected, $message = '', $code = 0, Exception $previous = null)
     {
         if (empty($message)) {
+            ob_start();
+            var_dump($actual);
+            $object = ob_get_clean();
             $message = sprintf(
                 __(
                     'The supplied entity is an instance of "%1$s", but an instance of "%2$s" was expected. Object: %3$s',
@@ -34,7 +40,7 @@ class InvalidEntityException extends \InvalidArgumentException
                     ? get_class($actual)
                     : gettype($actual),
                 $expected,
-                var_export($actual, true)
+                $object
             );
         }
         parent::__construct($message, $code, $previous);

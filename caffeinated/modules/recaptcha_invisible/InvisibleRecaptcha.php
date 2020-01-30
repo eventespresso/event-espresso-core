@@ -7,10 +7,10 @@ use EE_Error;
 use EE_Form_Section_Proper;
 use EE_Invisible_Recaptcha_Input;
 use EE_Registration_Config;
-use EE_Request;
 use EE_Session;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
+use EventEspresso\core\services\request\RequestInterface;
 use InvalidArgumentException;
 use RuntimeException;
 use WP_Error;
@@ -123,17 +123,39 @@ class InvisibleRecaptcha
 
 
     /**
-     * @param EE_Request $request
+     * @param RequestInterface $request
      * @return boolean
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
      * @throws RuntimeException
      */
-    public function verifyToken(EE_Request $request)
+    public function verifyToken(RequestInterface $request)
     {
         static $previous_recaptcha_response = array();
-        $grecaptcha_response = $request->get('g-recaptcha-response');
+        $grecaptcha_response = $request->getRequestParam('g-recaptcha-response');
         // if this token has already been verified, then return previous response
         if (isset($previous_recaptcha_response[ $grecaptcha_response ])) {
             return $previous_recaptcha_response[ $grecaptcha_response ];
+        }
+        // still here but no g-recaptcha-response ? - verification failed
+        if (! $grecaptcha_response) {
+            EE_Error::add_error(
+                sprintf(
+                    /* translators: 1: missing parameter */
+                    esc_html__(
+                        // @codingStandardsIgnoreStart
+                        'We\'re sorry but an attempt to verify the form\'s reCAPTCHA has failed. Missing "%1$s". Please try again.',
+                        // @codingStandardsIgnoreEnd
+                        'event_espresso'
+                    ),
+                    'g-recaptcha-response'
+                ),
+                __FILE__,
+                __FUNCTION__,
+                __LINE__
+            );
+            return false;
         }
         // will update to true if everything passes
         $previous_recaptcha_response[ $grecaptcha_response ] = false;
@@ -143,7 +165,7 @@ class InvisibleRecaptcha
                 'body' => array(
                     'secret'   => $this->config->recaptcha_privatekey,
                     'response' => $grecaptcha_response,
-                    'remoteip' => $request->ip_address(),
+                    'remoteip' => $request->ipAddress(),
                 ),
             )
         );
@@ -160,7 +182,7 @@ class InvisibleRecaptcha
             if (isset($results['challenge_ts'])) {
                 $errors[] = 'challenge timestamp: ' . $results['challenge_ts'] . '.';
             }
-            $this->generateError(implode(' ', $errors));
+            $this->generateError(implode(' ', $errors), true);
         }
         $previous_recaptcha_response[ $grecaptcha_response ] = true;
         add_action('shutdown', array($this, 'setSessionData'));
@@ -170,10 +192,11 @@ class InvisibleRecaptcha
 
     /**
      * @param string $error_response
+     * @param bool   $show_errors
      * @return void
      * @throws RuntimeException
      */
-    public function generateError($error_response = '')
+    public function generateError($error_response = '', $show_errors = false)
     {
         throw new RuntimeException(
             sprintf(
@@ -182,7 +205,7 @@ class InvisibleRecaptcha
                     'event_espresso'
                 ),
                 '<br />',
-                current_user_can('manage_options') ? $error_response : ''
+                $show_errors || current_user_can('manage_options') ? $error_response : ''
             )
         );
     }
@@ -221,6 +244,10 @@ class InvisibleRecaptcha
                 'recaptcha_passed' => $this->recaptchaPassed(),
                 'wp_debug'         => WP_DEBUG,
                 'disable_submit'   => defined('EE_EVENT_QUEUE_BASE_URL'),
+                'failed_message'   => esc_html__(
+                    'We\'re sorry but an attempt to verify the form\'s reCAPTCHA has failed. Please try again.',
+                    'event_espresso'
+                )
             )
         );
     }

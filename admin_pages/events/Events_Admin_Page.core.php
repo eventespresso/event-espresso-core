@@ -732,9 +732,13 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
             return;
         }
         EE_Error::add_attention(
-            esc_html__(
-                'Please be advised that this event has been published and is open for registrations on your website. If you update any registration-related details (i.e. custom questions, messages, tickets, datetimes, etc.) while a registration is in process, the registration process could be interrupted and result in errors for the person registering and potentially incorrect registration or transaction data inside Event Espresso. We recommend editing events during a period of slow traffic, or even temporarily changing the status of an event to "Draft" until your edits are complete.',
-                'event_espresso'
+            sprintf(
+                esc_html__(
+                    'Your event is open for registration. Making changes may disrupt any transactions in progress. %sLearn more%s',
+                    'event_espresso'
+                ),
+                '<a class="espresso-help-tab-lnk">',
+                '</a>'
             )
         );
     }
@@ -1768,7 +1772,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
         $category = isset($this->_req_data['EVT_CAT']) && $this->_req_data['EVT_CAT'] > 0
             ? $this->_req_data['EVT_CAT'] : null;
         if (! empty($category)) {
-            $where['Term_Taxonomy.taxonomy'] = 'espresso_event_categories';
+            $where['Term_Taxonomy.taxonomy'] = EEM_CPT_Base::EVENT_CATEGORY_TAXONOMY;
             $where['Term_Taxonomy.term_id'] = $category;
         }
         // date where conditions
@@ -1832,6 +1836,10 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
                 'EVT_short_desc' => array('LIKE', $search_string),
             );
         }
+        // filter events by venue.
+        if (isset($this->_req_data['venue']) && ! empty($this->_req_data['venue'])) {
+            $where['Venue.VNU_ID'] = absint($this->_req_data['venue']);
+        }
         $where = apply_filters('FHEE__Events_Admin_Page__get_events__where', $where, $this->_req_data);
         $query_params = apply_filters(
             'FHEE__Events_Admin_Page__get_events__query_params',
@@ -1861,6 +1869,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
                     break;
             }
         }
+
         $events = $count ? $EEME->count(array($where), 'EVT_ID', true) : $EEME->get_all($query_params);
         return $events;
     }
@@ -2372,9 +2381,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
         $this->_admin_page_title = esc_html__('Template Settings (Preview)', 'event_espresso');
         $this->_template_args['preview_img'] = '<img src="'
                                                . EVENTS_ASSETS_URL
-                                               . DS
-                                               . 'images'
-                                               . DS
+                                               . '/images/'
                                                . 'caffeinated_template_features.jpg" alt="'
                                                . esc_attr__('Template Settings Preview screenshot', 'event_espresso')
                                                . '" />';
@@ -2406,7 +2413,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
             return;
         }
         $category_id = absint($this->_req_data['EVT_CAT_ID']);
-        $term = get_term($category_id, 'espresso_event_categories');
+        $term = get_term($category_id, EEM_CPT_Base::EVENT_CATEGORY_TAXONOMY);
         if (! empty($term)) {
             $this->_category->category_name = $term->name;
             $this->_category->category_identifier = $term->slug;
@@ -2482,7 +2489,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
         );
         $_wp_editor = $this->_generate_admin_form_fields($editor_args, 'array');
         $all_terms = get_terms(
-            array('espresso_event_categories'),
+            array(EEM_CPT_Base::EVENT_CATEGORY_TAXONOMY),
             array('hide_empty' => 0, 'exclude' => array($this->_category->id))
         );
         // setup category select for term parents.
@@ -2540,7 +2547,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
     protected function _delete_category($cat_id)
     {
         $cat_id = absint($cat_id);
-        wp_delete_term($cat_id, 'espresso_event_categories');
+        wp_delete_term($cat_id, EEM_CPT_Base::EVENT_CATEGORY_TAXONOMY);
     }
 
 
@@ -2592,8 +2599,8 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
             $term_args['slug'] = $this->_req_data['category_identifier'];
         }
         $insert_ids = $update
-            ? wp_update_term($cat_id, 'espresso_event_categories', $term_args)
-            : wp_insert_term($category_name, 'espresso_event_categories', $term_args);
+            ? wp_update_term($cat_id, EEM_CPT_Base::EVENT_CATEGORY_TAXONOMY, $term_args)
+            : wp_insert_term($category_name, EEM_CPT_Base::EVENT_CATEGORY_TAXONOMY, $term_args);
         if (! is_array($insert_ids)) {
             $msg = esc_html__(
                 'An error occurred and the category has not been saved to the database.',
@@ -2623,7 +2630,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
         $orderby = isset($this->_req_data['orderby']) ? $this->_req_data['orderby'] : 'Term.term_id';
         $order = isset($this->_req_data['order']) ? $this->_req_data['order'] : 'DESC';
         $limit = ($current_page - 1) * $per_page;
-        $where = array('taxonomy' => 'espresso_event_categories');
+        $where = array('taxonomy' => EEM_CPT_Base::EVENT_CATEGORY_TAXONOMY);
         if (isset($this->_req_data['s'])) {
             $sstr = '%' . $this->_req_data['s'] . '%';
             $where['OR'] = array(
@@ -2659,7 +2666,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
             : '';
         if (empty($timezone_string) || ! EEH_DTT_Helper::validate_timezone($timezone_string, false)) {
             EE_Error::add_error(
-                esc_html('An invalid timezone string submitted.', 'event_espresso'),
+                esc_html__('An invalid timezone string submitted.', 'event_espresso'),
                 __FILE__,
                 __FUNCTION__,
                 __LINE__

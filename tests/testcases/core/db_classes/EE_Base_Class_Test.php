@@ -1,5 +1,8 @@
 <?php
 
+use EventEspresso\core\exceptions\InvalidDataTypeException;
+use EventEspresso\core\exceptions\InvalidInterfaceException;
+
 /**
  * EE_Base_Class_Test
  * Cannot be used until models and model objects are allowed to be located elsewhere besides
@@ -152,16 +155,21 @@ class EE_Base_Class_Test extends EE_UnitTestCase
         $this->assertNotEquals(0, $result2);
     }
 
-    //	function test_save_no_pk(){
-    //@todo: make this test work
-    //the following is known to not work for the time-being (the models
-    //system should be improved to allow this, when we get time)
-    //		$term_taxonomy = $this->new_model_obj_with_dependencies('Term_Taxonomy', array('taxonomy'=>'monkeys'));
-    //		$e = $this->new_model_obj_with_dependencies('Event');
-    //		$tr = EE_Term_Relationship::new_instance(array('object_id'=>$e->ID()));
-    //		$results = $tr->save();
-    //		$this->assertNotNull($results);
-    //	}
+    /**
+     * @since 4.9.76.p
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws ReflectionException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     */
+   	function test_save_no_pk(){
+        $term_taxonomy = $this->new_model_obj_with_dependencies('Term_Taxonomy', array('taxonomy'=>'monkeys'));
+        $e = $this->new_model_obj_with_dependencies('Event');
+        $tr = EE_Term_Relationship::new_instance(array('object_id'=>$e->ID()));
+        $results = $tr->save();
+        $this->assertNotNull($results);
+    }
     /**
      * @group 8686
      */
@@ -189,6 +197,74 @@ class EE_Base_Class_Test extends EE_UnitTestCase
         $this->assertFalse(empty($rs_from_t));
     }
 
+    /**
+     * @group 8686
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws ReflectionException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     */
+    function testAddRelationToHABTM()
+    {
+        $q = $this->new_model_obj_with_dependencies('Question');
+        $qg = $this->new_model_obj_with_dependencies('Question_Group');
+        $this->assertFalse(EEM_Question_Group_Question::instance()->exists(
+            array(
+                array(
+                    'QST_ID' => $q->ID(),
+                    'QSG_ID' => $qg->ID()
+                )
+            )
+        ));
+        $first_join_row_order = 100;
+        $q->_add_relation_to(
+            $qg,
+            'Question_Group',
+            array('QGQ_order' => $first_join_row_order)
+        );
+        $this->assertEquals(
+            1,
+            EEM_Question_Group_Question::instance()->count(
+                array(
+                    array(
+                        'QST_ID' => $q->ID(),
+                        'QSG_ID' => $qg->ID()
+                    )
+                )
+            )
+        );
+        // ok great. Do it again and make sure no new entries added to the DB.
+        $second_join_entry_order = 200;
+        $q->_add_relation_to(
+            $qg,
+            'Question_Group',
+            array('QGQ_order' => $second_join_entry_order)
+        );
+        $this->markTestIncomplete(
+            'This was reverted in order to fix https://github.com/eventespresso/event-espresso-core/issues/873'
+        );
+        $this->assertEquals(
+            1,
+            EEM_Question_Group_Question::instance()->count(
+                array(
+                    array(
+                        'QST_ID' => $q->ID(),
+                        'QSG_ID' => $qg->ID()
+                    )
+                )
+            )
+        );
+        $join_entry = EEM_Question_Group_Question::instance()->get_one(
+            array(
+                array(
+                    'QST_ID' => $q->ID(),
+                    'QSG_ID' => $qg->ID()
+                )
+            )
+        );
+        $this->assertEquals($second_join_entry_order, $join_entry->get('QGQ_order'));
+    }
 
     /**
      * @group 8686
@@ -1081,8 +1157,8 @@ class EE_Base_Class_Test extends EE_UnitTestCase
      * @throws EE_Error
      * @throws InvalidArgumentException
      * @throws ReflectionException
-     * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
-     * @throws \EventEspresso\core\exceptions\InvalidInterfaceException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
      * @throws \PHPUnit\Framework\Exception
      */
     public function testGetDateTimeObject()
@@ -1107,8 +1183,8 @@ class EE_Base_Class_Test extends EE_UnitTestCase
      * @throws EE_Error
      * @throws InvalidArgumentException
      * @throws ReflectionException
-     * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
-     * @throws \EventEspresso\core\exceptions\InvalidInterfaceException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
      */
     public function testClone()
     {
@@ -1127,5 +1203,34 @@ class EE_Base_Class_Test extends EE_UnitTestCase
             spl_object_hash($ee_mock->internalDateTimeObject('MCK_datetime')),
             spl_object_hash($new_ee_datetime->internalDateTimeObject('MCK_datetime'))
         );
+    }
+
+    /**
+     * @since 4.9.80.p
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws ReflectionException
+     */
+    public function testAdjustNumericFieldsInDb()
+    {
+        $original_sold_count = 5;
+        $original_reserved_count = 10;
+        $d = $this->new_model_obj_with_dependencies(
+            'Datetime',
+            [
+                'DTT_sold' => $original_sold_count,
+                'DTT_reserved' => $original_reserved_count
+            ]
+        );
+        $d->adjustNumericFieldsInDb(
+            [
+                    'DTT_sold' => 1,
+                    'DTT_reserved' => -1,
+            ]
+        );
+        $this->assertEquals($original_sold_count + 1, $d->sold());
+        $this->assertEquals($original_reserved_count - 1, $d->reserved());
     }
 }

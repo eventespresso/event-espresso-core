@@ -46,6 +46,13 @@ class Request implements InterminableInterface, RequestInterface, ReservedInstan
     private $server;
 
     /**
+     * $_FILES parameters
+     *
+     * @var array $files
+     */
+    private $files;
+
+    /**
      * $_REQUEST parameters
      *
      * @var array $request
@@ -82,14 +89,16 @@ class Request implements InterminableInterface, RequestInterface, ReservedInstan
      * @param array $post
      * @param array $cookie
      * @param array $server
+     * @param array $files
      */
-    public function __construct(array $get, array $post, array $cookie, array $server)
+    public function __construct(array $get, array $post, array $cookie, array $server, array $files = array())
     {
         // grab request vars
         $this->get = $get;
         $this->post = $post;
         $this->cookie = $cookie;
         $this->server = $server;
+        $this->files = $files;
         $this->request = array_merge($this->get, $this->post);
         $this->ip_address = $this->visitorIp();
     }
@@ -137,6 +146,15 @@ class Request implements InterminableInterface, RequestInterface, ReservedInstan
     public function serverParams()
     {
         return $this->server;
+    }
+
+
+    /**
+     * @return array
+     */
+    public function filesParams()
+    {
+        return $this->files;
     }
 
 
@@ -203,7 +221,7 @@ class Request implements InterminableInterface, RequestInterface, ReservedInstan
      *
      * @param string     $pattern
      * @param null|mixed $default
-     * @return false|int
+     * @return mixed
      */
     public function getMatch($pattern, $default = null)
     {
@@ -219,7 +237,7 @@ class Request implements InterminableInterface, RequestInterface, ReservedInstan
      * returns true if a match is found or false if not
      *
      * @param string $pattern
-     * @return false|int
+     * @return bool
      */
     public function matches($pattern)
     {
@@ -350,9 +368,25 @@ class Request implements InterminableInterface, RequestInterface, ReservedInstan
      */
     public function unSetRequestParam($key, $unset_from_global_too = false)
     {
+        // because unset may not actually remove var
+        $this->request[ $key ] = null;
         unset($this->request[ $key ]);
         if ($unset_from_global_too) {
             unset($_REQUEST[ $key ]);
+        }
+    }
+
+
+    /**
+     * remove params
+     *
+     * @param array $keys
+     * @param bool  $unset_from_global_too
+     */
+    public function unSetRequestParams(array $keys, $unset_from_global_too = false)
+    {
+        foreach ($keys as $key) {
+            $this->unSetRequestParam($key, $unset_from_global_too);
         }
     }
 
@@ -399,9 +433,13 @@ class Request implements InterminableInterface, RequestInterface, ReservedInstan
 
 
     /**
+     * Gets the request's literal URI. Related to `requestUriAfterSiteHomeUri`, see its description for a comparison.
+     * @param boolean $relativeToWpRoot If home_url() is "http://mysite.com/wp/", and a request comes to
+     *                                  "http://mysite.com/wp/wp-json", setting $relativeToWpRoot=true will return
+     *                                  "/wp-json", whereas $relativeToWpRoot=false will return "/wp/wp-json/".
      * @return string
      */
-    public function requestUri()
+    public function requestUri($relativeToWpRoot = false)
     {
         $request_uri = filter_input(
             INPUT_SERVER,
@@ -413,9 +451,21 @@ class Request implements InterminableInterface, RequestInterface, ReservedInstan
             // fallback sanitization if the above fails
             $request_uri = wp_sanitize_redirect($this->server['REQUEST_URI']);
         }
+        if ($relativeToWpRoot) {
+            $home_path = untrailingslashit(
+                parse_url(
+                    home_url(),
+                    PHP_URL_PATH
+                )
+            );
+            $request_uri = str_replace(
+                $home_path,
+                '',
+                $request_uri
+            );
+        }
         return $request_uri;
     }
-
 
     /**
      * @return string
@@ -581,6 +631,26 @@ class Request implements InterminableInterface, RequestInterface, ReservedInstan
     {
         return $this->request_type->isIframe();
     }
+
+
+    /**
+     * @return bool
+     */
+    public function isWordPressApi()
+    {
+        return $this->request_type->isWordPressApi();
+    }
+
+
+
+    /**
+     * @return bool
+     */
+    public function isWordPressHeartbeat()
+    {
+        return $this->request_type->isWordPressHeartbeat();
+    }
+
 
 
     /**

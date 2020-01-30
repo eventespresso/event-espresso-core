@@ -283,7 +283,7 @@ class PersistentAdminNoticeManager
         // used in template
         $persistent_admin_notice_name = $persistent_admin_notice->getName();
         $persistent_admin_notice_message = $persistent_admin_notice->getMessage();
-        require EE_TEMPLATES . DS . 'notifications' . DS . 'persistent_admin_notice.template.php';
+        require EE_TEMPLATES . '/notifications/persistent_admin_notice.template.php';
     }
 
 

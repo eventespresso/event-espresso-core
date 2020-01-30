@@ -61,6 +61,12 @@ class CommandHandlerManager implements CommandHandlerManagerInterface
      *      );
      *      would result in the alternate CommandHandler being used to process that Command
      *
+     * !!! IMPORTANT !!!
+     * If overriding the default CommandHandler for a Command,
+     * be sure to also override CommandHandler::verify(),
+     * or else an Exception will be thrown when the CommandBus
+     * attempts to verify that the incoming Command matches the Handler
+     *
      * @param CommandHandlerInterface $command_handler
      * @param string                  $fqcn_for_command Fully Qualified ClassName for Command
      * @return void
@@ -88,6 +94,19 @@ class CommandHandlerManager implements CommandHandlerManagerInterface
     public function getCommandHandler(CommandInterface $command, CommandBusInterface $command_bus = null)
     {
         $command_name = get_class($command);
+        /*
+         * Filters the Fully Qualified Class Name for the Command Handler
+         * that will be used to handle the incoming Command
+         *
+         * !!! IMPORTANT !!!
+         * If overriding the default CommandHandler for a Command,
+         * be sure to also override CommandHandler::verify(),
+         * or else an Exception will be thrown when the CommandBus
+         * attempts to verify that the incoming Command matches the Handler
+         *
+         * @param string "CommandHandler::class" Fully Qualified Class Name for the Command Handler
+         * @param CommandInterface $command the actual Command instance
+         */
         $command_handler = apply_filters(
             'FHEE__EventEspresso_core_services_commands_CommandHandlerManager__getCommandHandler__command_handler',
             str_replace('Command', 'CommandHandler', $command_name),

@@ -1,11 +1,11 @@
 === Event Espresso 4 Decaf - Event Registration Event Ticketing ===
-Contributors: eventespresso, sethshoultes, garthkoyle, pebblo, nerrad, mnelson4, lorenzocaum, charliespider, builtbynorthby
+Contributors: eventespresso, sethshoultes, garthkoyle, pebblo, mnelson4, lorenzocaum, charliespider, builtbynorthby
 Donate link: https://eventespresso.com/pricing/?ee_ver=ee4&utm_source=wordpress_org&utm_medium=link&utm_campaign=ee4_decaf_plugin_donate_link&utm_content=Donate+link
-Tags: events, tickets, registration, event management, event manager, event booking, class booking, booking, class registration, conference registration, events calendar, events planner, event ticketing, online registration, registration, sports, training, event expresso, wordpress events, online event registration
-Requires at least: 4.1
-Requires PHP Version: 5.4
-Tested up to: 4.9
-Stable tag: 4.9.63.decaf
+Tags: event registration, ticketing, online registration, ticket sales, event booking, class registration, conference registration, event ticketing, registration, event, events, online event registration
+Requires at least: 4.5
+Requires PHP: 5.4
+Tested up to: 5.3
+Stable tag: 4.10.2.decaf
 License: GPL2
 
 Manage online event registration and ticketing. Create event registration forms, sell tickets, collect money, send email, and SEO for events.
@@ -14,7 +14,9 @@ Manage online event registration and ticketing. Create event registration forms,
 
 Manage your events from your WordPress dashboard. Reduce your admin, [reduce your costs](https://eventespresso.com/2010/08/friends-dont-let-friends-host-events-eventbrite/?utm_source=wordpress_org&utm_medium=link&utm_campaign=ee4_decaf_plugin_description_tab&utm_content=reduce+your+costs+link), make your life easier!
 
-Event Espresso is a [WordPress event manager](https://eventespresso.com/?utm_source=wordpress_org&utm_medium=link&utm_campaign=ee4_decaf_plugin_description_tab&utm_content=WordPress+event+manager) which makes it easy for you to sell tickets for events, workshops, events, training, conferences or concerts, register attendees for classes, all from your WordPress website. Quickly create events from within the WordPress admin area using the Event Espresso engine. You can create signup forms to collect information about your attendees, accept payments, and create reports. The decaf version of the plugin provides everything that you need to sell tickets, collect payments, and manage events all from within your WordPress dashboard.
+Event Espresso is a [WordPress event manager](https://eventespresso.com/?utm_source=wordpress_org&utm_medium=link&utm_campaign=ee4_decaf_plugin_description_tab&utm_content=WordPress+event+manager) which makes it easy for you to sell tickets for events, workshops, training, conferences or concerts, register attendees for classes, all from your WordPress website. Quickly create events from within the WordPress admin area using the Event Espresso engine. You can create signup forms to collect information about your attendees, accept payments, and create reports. The decaf version of the plugin provides everything that you need to sell tickets, collect payments, and manage events all from within your WordPress dashboard.
+
+Would you like to do online event registration and ticketing _without_ having to build and maintain a WordPress website? Please be sure to check out our service website called [Event Smart](https://eventsmart.com/?utm_source=wordpress_org&utm_medium=link&utm_campaign=ee4_decaf_plugin_description_tab&utm_content=event+smart).
 
 [youtube http://www.youtube.com/watch?v=K_yVwWnTjL8]
 (Some features not available in all versions)
@@ -207,7 +209,7 @@ Yes, you can get access to the core files via the [Event Espresso 4 Github page]
 
 = Important Note =
 
-Backup your WordPress before installing any updates. Please see our article on [Backing Up your WordPress Site](https://eventespresso.com/wiki/how-to-back-up-your-site/?utm_source=wordpress_org&utm_medium=link&utm_content=changelog&utm_campaign=ee4_decaf_plugin_changelog_tab).
+Backup your database before installing any updates. Please see our article on [Backing Up your WordPress Site](https://eventespresso.com/wiki/how-to-back-up-your-site/?utm_source=wordpress_org&utm_medium=link&utm_content=changelog&utm_campaign=ee4_decaf_plugin_changelog_tab).
 
 **Please Note:** Due to the fact that the Event Espresso 4 Decaf and Caffeinated (paid) versions share the same codebase, the changelog presented here is based on the Caffeinated (paid) version of Event Espresso 4. Up to date changelog for the current premium version [can be found here](https://eventespresso.com/wiki/ee4-changelog/?utm_source=wordpress_org&utm_medium=link&utm_content=changelog&utm_campaign=ee4_decaf_plugin_changelog_tab).
 
@@ -220,6 +222,8 @@ Backup your WordPress website before installing any updates.
 == Other Notes ==
 
 **Developers, [find us on Github](http://evts.io/EE4_WP_Readme)**
+
+**Translators, find out how [you can translate Event Espresso](https://eventespresso.com/wiki/how-to-translate-event-espresso/?utm_source=wordpress_org)**
 
 **Use Cases**
 
@@ -272,12 +276,8 @@ Backup your WordPress website before installing any updates.
 * [Backyard Barbecues](https://eventespresso.com/use-cases/backyard-bbq-ticketing/?utm_source=wordpress_org&utm_medium=link&utm_campaign=ee4_decaf_plugin_more_info_use_cases_tab&utm_content=WordPress+event+manager+use_cases)
 * [BBQ Festivals](https://eventespresso.com/use-cases/bbq-festival-ticketing/?utm_source=wordpress_org&utm_medium=link&utm_campaign=ee4_decaf_plugin_more_info_use_cases_tab&utm_content=WordPress+event+manager+use_cases)
 * [Car Shows](https://eventespresso.com/use-cases/car-show-registration-ticket-sales/?utm_source=wordpress_org&utm_medium=link&utm_campaign=ee4_decaf_plugin_more_info_use_cases_tab&utm_content=WordPress+event+manager+use_cases)
-* Geek/IT Conferences/Camps
 * Group Meetings
-* Political Conferences
-* Social Media Conferences
-* Tradeshow Booth Reservations/Sales
-* WordCamps
+* Neighborhood Association Gatherings
 * Youth Conferences/Camps
 
 = Conferences =
@@ -297,16 +297,16 @@ Backup your WordPress website before installing any updates.
 * Course Registrations
 * School Lunch Reservations
 * Parent Teacher Conferences
-* Parent Teacher Association Conferences and Meetings
+* Parent Teacher Association Meetings
 * Wildlife Education and Tours 
 
 = Fundraisers & Non-Profit Organizations =
 
-* Boy Scout Troop Events
+* Boy Scout Jamborees
 * [Car Show Registration](https://eventespresso.com/use-cases/car-show-registration-ticket-sales/?utm_source=wordpress_org&utm_medium=link&utm_campaign=ee4_decaf_plugin_more_info_use_cases_tab&utm_content=WordPress+event+manager+use_cases)
 * Donation Drives
-* Indusry Association Events
-* Religous Events
+* Industry Association Events
+* Religious Events
 * Volunteer Management
 
 = Government =

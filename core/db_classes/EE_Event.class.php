@@ -1,6 +1,8 @@
 <?php
 
 use EventEspresso\core\domain\services\event\EventSpacesCalculator;
+use EventEspresso\core\exceptions\InvalidDataTypeException;
+use EventEspresso\core\exceptions\InvalidInterfaceException;
 use EventEspresso\core\exceptions\UnexpectedEntityException;
 
 /**
@@ -144,7 +146,7 @@ class EE_Event extends EE_CPT_Base implements EEI_Line_Item_Object, EEI_Admin_Li
     /**
      * Gets all the datetimes for this event
      *
-     * @param array $query_params like EEM_Base::get_all
+     * @param array $query_params @see https://github.com/eventespresso/event-espresso-core/tree/master/docs/G--Model-System/model-query-params.md
      * @return EE_Base_Class[]|EE_Datetime[]
      * @throws EE_Error
      */
@@ -226,7 +228,7 @@ class EE_Event extends EE_CPT_Base implements EEI_Line_Item_Object, EEI_Admin_Li
     /**
      * Gets all the tickets available for purchase of this event
      *
-     * @param array $query_params like EEM_Base::get_all
+     * @param array $query_params @see https://github.com/eventespresso/event-espresso-core/tree/master/docs/G--Model-System/model-query-params.md
      * @return EE_Base_Class[]|EE_Ticket[]
      * @throws EE_Error
      */
@@ -694,7 +696,7 @@ class EE_Event extends EE_CPT_Base implements EEI_Line_Item_Object, EEI_Admin_Li
     /**
      * Gets all the venues related ot the event. May provide additional $query_params if desired
      *
-     * @param array $query_params like EEM_Base::get_all's $query_params
+     * @param array $query_params @see https://github.com/eventespresso/event-espresso-core/tree/master/docs/G--Model-System/model-query-params.md
      * @return EE_Base_Class[]|EE_Venue[]
      * @throws EE_Error
      */
@@ -872,10 +874,10 @@ class EE_Event extends EE_CPT_Base implements EEI_Line_Item_Object, EEI_Admin_Li
      */
     public function perform_sold_out_status_check()
     {
-        // get all unexpired untrashed tickets
+        // get all tickets
         $tickets = $this->tickets(
             array(
-                array('TKT_deleted' => false),
+                'default_where_conditions' => 'none',
                 'order_by' => array('TKT_qty' => 'ASC'),
             )
         );
@@ -892,8 +894,10 @@ class EE_Event extends EE_CPT_Base implements EEI_Line_Item_Object, EEI_Admin_Li
         }
         $spaces_remaining = $this->spaces_remaining($tickets);
         if ($spaces_remaining < 1) {
-            $this->set_status(EEM_Event::sold_out);
-            $this->save();
+            if ($this->status() !== EEM_Event::post_status_private) {
+                $this->set_status(EEM_Event::sold_out);
+                $this->save();
+            }
             $sold_out = true;
         } else {
             $sold_out = false;
@@ -1024,7 +1028,7 @@ class EE_Event extends EE_CPT_Base implements EEI_Line_Item_Object, EEI_Admin_Li
         }
         $where_params_for_event = array(array('EVT_ID' => $this->ID()));
         // if event is published:
-        if ($this->status() === 'publish') {
+        if ($this->status() === EEM_Event::post_status_publish || $this->status() === EEM_Event::post_status_private) {
             // active?
             if (EEM_Datetime::instance()->get_datetime_count_for_status(
                 EE_Datetime::active,
@@ -1161,6 +1165,23 @@ class EE_Event extends EE_CPT_Base implements EEI_Line_Item_Object, EEI_Admin_Li
 
 
     /**
+     * This returns the number of different ticket types currently on sale for this event.
+     *
+     * @return int
+     * @throws EE_Error
+     */
+    public function countTicketsOnSale()
+    {
+        $where = array(
+            'Datetime.EVT_ID' => $this->ID(),
+            'TKT_start_date'  => array('<', time()),
+            'TKT_end_date'    => array('>', time()),
+        );
+        return EEM_Ticket::instance()->count(array($where));
+    }
+
+
+    /**
      * This returns whether there are any tickets on sale for this event.
      *
      * @return bool true = YES tickets on sale.
@@ -1168,16 +1189,7 @@ class EE_Event extends EE_CPT_Base implements EEI_Line_Item_Object, EEI_Admin_Li
      */
     public function tickets_on_sale()
     {
-        $earliest_ticket = $this->get_ticket_with_earliest_start_time();
-        $latest_ticket = $this->get_ticket_with_latest_end_time();
-        if (! $latest_ticket instanceof EE_Ticket && ! $earliest_ticket instanceof EE_Ticket) {
-            return false;
-        }
-        // check on sale for these two tickets.
-        if ($latest_ticket->is_on_sale() || $earliest_ticket->is_on_sale()) {
-            return true;
-        }
-        return false;
+        return $this->countTicketsOnSale() > 0;
     }
 
 
@@ -1200,7 +1212,7 @@ class EE_Event extends EE_CPT_Base implements EEI_Line_Item_Object, EEI_Admin_Li
     /**
      * Gets the first term for 'espresso_event_categories' we can find
      *
-     * @param array $query_params like EEM_Base::get_all
+     * @param array $query_params @see https://github.com/eventespresso/event-espresso-core/tree/master/docs/G--Model-System/model-query-params.md
      * @return EE_Base_Class|EE_Term|null
      * @throws EE_Error
      */
@@ -1231,17 +1243,26 @@ class EE_Event extends EE_CPT_Base implements EEI_Line_Item_Object, EEI_Admin_Li
      * Adds a question group to this event
      *
      * @param EE_Question_Group|int $question_group_id_or_obj
-     * @param bool                  $for_primary if true, the question group will be added for the primary
+     * @param bool $for_primary if true, the question group will be added for the primary
      *                                           registrant, if false will be added for others. default: false
      * @return EE_Base_Class|EE_Question_Group
      * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws ReflectionException
      */
     public function add_question_group($question_group_id_or_obj, $for_primary = false)
     {
-        $extra = $for_primary
-            ? array('EQG_primary' => 1)
-            : array();
-        return $this->_add_relation_to($question_group_id_or_obj, 'Question_Group', $extra);
+        // If the row already exists, it will be updated. If it doesn't, it will be inserted.
+        // That's in EE_HABTM_Relation::add_relation_to().
+        return $this->_add_relation_to(
+            $question_group_id_or_obj,
+            'Question_Group',
+            [
+                EEM_Event_Question_Group::instance()->fieldNameForContext($for_primary) => true
+            ]
+        );
     }
 
 
@@ -1249,24 +1270,46 @@ class EE_Event extends EE_CPT_Base implements EEI_Line_Item_Object, EEI_Admin_Li
      * Removes a question group from the event
      *
      * @param EE_Question_Group|int $question_group_id_or_obj
-     * @param bool                  $for_primary if true, the question group will be removed from the primary
+     * @param bool $for_primary if true, the question group will be removed from the primary
      *                                           registrant, if false will be removed from others. default: false
      * @return EE_Base_Class|EE_Question_Group
      * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws ReflectionException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
      */
     public function remove_question_group($question_group_id_or_obj, $for_primary = false)
     {
-        $where = $for_primary
-            ? array('EQG_primary' => 1)
-            : array();
-        return $this->_remove_relation_to($question_group_id_or_obj, 'Question_Group', $where);
+        // If the question group is used for the other type (primary or additional)
+        // then just update it. If not, delete it outright.
+        $existing_relation = $this->get_first_related(
+            'Event_Question_Group',
+            [
+                [
+                    'QSG_ID' => EEM_Question_Group::instance()->ensure_is_ID($question_group_id_or_obj)
+                ]
+            ]
+        );
+        $field_to_update = EEM_Event_Question_Group::instance()->fieldNameForContext($for_primary);
+        $other_field = EEM_Event_Question_Group::instance()->fieldNameForContext(! $for_primary);
+        if ($existing_relation->get($other_field) === false) {
+            // Delete it. It's now no longer for primary or additional question groups.
+            return $this->_remove_relation_to($question_group_id_or_obj, 'Question_Group');
+        }
+        // Just update it. They'll still use this question group for the other category
+        $existing_relation->save(
+            [
+                $field_to_update => false
+            ]
+        );
     }
 
 
     /**
      * Gets all the question groups, ordering them by QSG_order ascending
      *
-     * @param array $query_params @see EEM_Base::get_all
+     * @param array $query_params @see https://github.com/eventespresso/event-espresso-core/tree/master/docs/G--Model-System/model-query-params.md
      * @return EE_Base_Class[]|EE_Question_Group[]
      * @throws EE_Error
      */

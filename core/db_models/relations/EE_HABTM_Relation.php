@@ -155,7 +155,7 @@ class EE_HABTM_Relation extends EE_Model_Relation_Base
         $join_model_fk_to_this_model  = $this->get_join_model()->get_foreign_key_to($this->get_this_model()->get_this_model_name());
         $join_model_fk_to_other_model = $this->get_join_model()->get_foreign_key_to($this->get_other_model()->get_this_model_name());
 
-        $cols_n_values = array(
+        $foreign_keys = $all_fields = array(
             $join_model_fk_to_this_model->get_name()  => $this_model_obj->ID(),
             $join_model_fk_to_other_model->get_name() => $other_model_obj->ID(),
         );
@@ -173,18 +173,21 @@ class EE_HABTM_Relation extends EE_Model_Relation_Base
                 );
                 $parsed_query[ $query_param ] = $val;
             }
-            $cols_n_values = array_merge($cols_n_values, $parsed_query);
+            $all_fields = array_merge($foreign_keys, $parsed_query);
         }
 
-        $query_params = array($cols_n_values);
-
-
-        $existing_entry_in_join_table = $this->get_join_model()->get_one($query_params);
-        // if there is already an entry in the join table, indicating a relationship, we're done
-        // again, if you want more sophisticated logic or insertions (handling more columns than just 2 foreign keys to
-        // the other tables, use the joining model directly!
+        $existing_entry_in_join_table = $this->get_join_model()->get_one(array($foreign_keys));
+        // If there is already an entry in the join table, indicating a relationship, update it instead of adding a
+        // new row.
+        // Again, if you want more sophisticated logic or insertions (handling more columns than just 2 foreign keys to
+        // the other tables) use the joining model directly!
         if (! $existing_entry_in_join_table) {
-            $this->get_join_model()->insert($cols_n_values);
+            $this->get_join_model()->insert($all_fields);
+        } else {
+            $this->get_join_model()->update(
+                $all_fields,
+                [$foreign_keys]
+            );
         }
         return $other_model_obj;
     }
@@ -231,5 +234,41 @@ class EE_HABTM_Relation extends EE_Model_Relation_Base
 
         $this->get_join_model()->delete(array($cols_n_values));
         return $other_model_obj;
+    }
+
+    /**
+     * Gets all the non-key fields (ie, not the primary key and not foreign keys) on the join model.
+     * @since 4.9.76.p
+     * @return EE_Model_Field_Base[]
+     * @throws EE_Error
+     */
+    public function getNonKeyFields()
+    {
+        // all fields besides the primary key and two foreign keys should be parameters
+        $join_model = $this->get_join_model();
+        $standard_fields = array();
+        if ($join_model->has_primary_key_field()) {
+            $standard_fields[] = $join_model->primary_key_name();
+        }
+        if ($this->get_this_model()->has_primary_key_field()) {
+            $standard_fields[] = $this->get_this_model()->primary_key_name();
+        }
+        if ($this->get_other_model()->has_primary_key_field()) {
+            $standard_fields[] = $this->get_other_model()->primary_key_name();
+        }
+        return array_diff_key(
+            $join_model->field_settings(),
+            array_flip($standard_fields)
+        );
+    }
+
+    /**
+     * Returns true if the join model has non-key fields (ie, fields that aren't the primary key or foreign keys.)
+     * @since 4.9.76.p
+     * @return boolean
+     */
+    public function hasNonKeyFields()
+    {
+        return count($this->get_join_model()->field_settings()) > 3;
     }
 }

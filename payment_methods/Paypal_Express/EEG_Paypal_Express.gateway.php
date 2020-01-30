@@ -431,7 +431,7 @@ class EEG_Paypal_Express extends EE_Offsite_Gateway
                 $itemized_list = array();
                 $this->log(
                     array(
-                        esc_html__(
+                        (string) esc_html__(
                             'Could not generate a proper item list with:',
                             'event_espresso'
                         ) => $request_response_args
@@ -563,9 +563,9 @@ class EEG_Paypal_Express extends EE_Offsite_Gateway
     {
         $request_dtls = array(
             'VERSION' => '204.0',
-            'USER' => urlencode($this->_api_username),
-            'PWD' => urlencode($this->_api_password),
-            'SIGNATURE' => urlencode($this->_api_signature),
+            'USER' => $this->_api_username,
+            'PWD' => $this->_api_password,
+            'SIGNATURE' => $this->_api_signature,
             // EE will blow up if you change this
             'BUTTONSOURCE' => 'EventEspresso_SP',
         );

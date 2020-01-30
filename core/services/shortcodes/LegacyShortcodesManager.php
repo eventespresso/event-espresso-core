@@ -103,7 +103,7 @@ class LegacyShortcodesManager
         do_action('AHEE__EE_Config__register_shortcode__begin', $shortcode_path);
         $shortcode_ext = '.shortcode.php';
         // make all separators match
-        $shortcode_path = str_replace(array('\\', '/'), DS, $shortcode_path);
+        $shortcode_path = str_replace(array('\\', '/'), '/', $shortcode_path);
         // does the file path INCLUDE the actual file name as part of the path ?
         if (strpos($shortcode_path, $shortcode_ext) !== false) {
             // grab shortcode file name from directory name and break apart at dots
@@ -115,30 +115,30 @@ class LegacyShortcodesManager
             // sanitize shortcode directory name
             $shortcode = sanitize_key($shortcode);
             // now we need to rebuild the shortcode path
-            $shortcode_path = explode(DS, $shortcode_path);
+            $shortcode_path = explode('/', $shortcode_path);
             // remove last segment
             array_pop($shortcode_path);
             // glue it back together
-            $shortcode_path = implode(DS, $shortcode_path) . DS;
+            $shortcode_path = implode('/', $shortcode_path) . '/';
         } else {
             // we need to generate the filename based off of the folder name
             // grab and sanitize shortcode directory name
             $shortcode = sanitize_key(basename($shortcode_path));
-            $shortcode_path = rtrim($shortcode_path, DS) . DS;
+            $shortcode_path = rtrim($shortcode_path, '/') . '/';
         }
         // create classname from shortcode directory or file name
         $shortcode = str_replace(' ', '_', ucwords(str_replace('_', ' ', $shortcode)));
         // add class prefix
         $shortcode_class = 'EES_' . $shortcode;
         // does the shortcode exist ?
-        if (! is_readable($shortcode_path . DS . $shortcode_class . $shortcode_ext)) {
+        if (! is_readable($shortcode_path . '/' . $shortcode_class . $shortcode_ext)) {
             $msg = sprintf(
                 esc_html__(
                     'The requested %1$s shortcode file could not be found or is not readable due to file permissions. It should be in %2$s',
                     'event_espresso'
                 ),
                 $shortcode_class,
-                $shortcode_path . DS . $shortcode_class . $shortcode_ext
+                $shortcode_path . '/' . $shortcode_class . $shortcode_ext
             );
             EE_Error::add_error($msg . '||' . $msg, __FILE__, __FUNCTION__, __LINE__);
             return false;

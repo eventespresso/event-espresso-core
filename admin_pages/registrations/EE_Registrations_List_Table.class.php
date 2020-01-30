@@ -143,19 +143,22 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table
             'route'         => 'registrations_report',
             'extra_request' => array(
                 'use_filters' => true,
-                'filters'     => array_diff_key(
-                    $this->_req_data,
-                    array_flip(
-                        array(
-                            'page',
-                            'action',
-                            'default_nonce',
-                        )
-                    )
-                ),
                 'return_url'  => urlencode("//{$_SERVER['HTTP_HOST']}{$_SERVER['REQUEST_URI']}"),
             ),
         );
+        $filters = array_diff_key(
+            $this->_req_data,
+            array_flip(
+                array(
+                    'page',
+                    'action',
+                    'default_nonce',
+                )
+            )
+        );
+        if (!empty($filters)) {
+            $this->_bottom_buttons['report_filtered']['extra_request']['filters'] = $filters;
+        }
         $this->_primary_column = '_REG_ID';
         $this->_sortable_columns = array(
             '_REG_date'     => array('_REG_date' => true),   // true means its already sorted
@@ -664,6 +667,10 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table
         $link .= '<br><span class="ee-status-text-small">'
                  . EEH_Template::pretty_status($item->status_ID(), false, 'sentence')
                  . '</span>';
+        $action = [ '_REG_ID' => $item->ID() ];
+        if (isset($this->_req_data['event_id'])) {
+            $action['event_id'] = $item->event_ID();
+        }
         // trash/restore/delete actions
         $actions = array();
         if ($this->_view !== 'trash'
@@ -673,11 +680,9 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table
                 'espresso_registrations_trash_registrations',
                 $item->ID()
             )) {
+            $action['action'] = 'trash_registrations';
             $trash_lnk_url = EE_Admin_Page::add_query_args_and_nonce(
-                array(
-                    'action'  => 'trash_registrations',
-                    '_REG_ID' => $item->ID(),
-                ),
+                $action,
                 REG_ADMIN_URL
             );
             $actions['trash'] = '<a href="'
@@ -692,11 +697,9 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table
                 'espresso_registrations_restore_registrations',
                 $item->ID()
             )) {
+                $action['action'] = 'restore_registrations';
                 $restore_lnk_url = EE_Admin_Page::add_query_args_and_nonce(
-                    array(
-                        'action'  => 'restore_registrations',
-                        '_REG_ID' => $item->ID(),
-                    ),
+                    $action,
                     REG_ADMIN_URL
                 );
                 $actions['restore'] = '<a href="'
@@ -710,11 +713,9 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table
                 'espresso_registrations_ee_delete_registrations',
                 $item->ID()
             )) {
+                $action['action'] = 'delete_registrations';
                 $delete_lnk_url = EE_Admin_Page::add_query_args_and_nonce(
-                    array(
-                        'action'  => 'delete_registrations',
-                        '_REG_ID' => $item->ID(),
-                    ),
+                    $action,
                     REG_ADMIN_URL
                 );
                 $actions['delete'] = '<a href="'

@@ -157,7 +157,7 @@ td.column-TXN_ID { padding: 4px 7px  29px; }
 
 .txn-admin-payment-action-edit-lnk,
 .txn-admin-payment-action-delete-lnk { cursor:pointer; }
-.payment-date-dv { width: 100px; }
+.payment-date-dv { display: table-caption; }
 
 .admin-side-mbox-dv { margin:1em 0 2em; }
 .admin-side-mbox-dv p { margin:.5em 0; line-height:1.2em; color:#333; text-shadow:0 1px 0 #fff; }
@@ -317,4 +317,10 @@ td.column-TXN_ID { padding: 4px 7px  29px; }
 #additional-transaction-actions-dv ul li {
     display:inline-block;
     margin-right: 10px;
+}
+
+.payment-txn-id-chq-nmbr {
+    max-width: 52px;
+    max-width: 3rem;
+    word-wrap: break-word;
 }

@@ -104,14 +104,6 @@ class EED_Thank_You_Page extends EED_Module
      */
     public static function set_hooks_admin()
     {
-        // AJAX for IPN monitoring
-        add_filter('heartbeat_received', array('EED_Thank_You_Page', 'thank_you_page_IPN_monitor'), 10, 3);
-        add_filter(
-            'heartbeat_nopriv_received',
-            array('EED_Thank_You_Page', 'thank_you_page_IPN_monitor'),
-            10,
-            3
-        );
         add_action(
             'wp_ajax_espresso_resend_reg_confirmation_email',
             array('EED_Thank_You_Page', 'resend_reg_confirmation_email'),
@@ -134,8 +126,8 @@ class EED_Thank_You_Page extends EED_Module
      */
     public static function set_definitions()
     {
-        define('THANK_YOU_ASSETS_URL', plugin_dir_url(__FILE__) . 'assets' . DS);
-        define('THANK_YOU_TEMPLATES_PATH', str_replace('\\', DS, plugin_dir_path(__FILE__)) . 'templates' . DS);
+        define('THANK_YOU_ASSETS_URL', plugin_dir_url(__FILE__) . 'assets/');
+        define('THANK_YOU_TEMPLATES_PATH', str_replace('\\', '/', plugin_dir_path(__FILE__)) . 'templates/');
     }
 
 
@@ -197,6 +189,17 @@ class EED_Thank_You_Page extends EED_Module
         // get array of payments with most recent first
         return $this->_current_txn->payments($args);
     }
+
+
+    /**
+     * @return bool
+     */
+    public function isOfflinePaymentMethod()
+    {
+        return $this->_is_offline_payment_method;
+    }
+
+
 
 
     /**
@@ -459,118 +462,6 @@ class EED_Thank_You_Page extends EED_Module
         );
     }
 
-
-    /**
-     * thank_you_page_IPN_monitor
-     * this basically just pulls the TXN based on the reg_url_link sent from the server,
-     * then checks that the TXN status is not failed, and that no other errors have been generated.
-     * it also calculates the IPN wait time since the Thank You page was first loaded
-     *
-     * @param array $response
-     * @param array $data
-     * @return array
-     * @throws \EE_Error
-     */
-    public static function thank_you_page_IPN_monitor($response = array(), $data = array())
-    {
-        // does this heartbeat contain our data ?
-        if (! isset($data['espresso_thank_you_page'])) {
-            return $response;
-        }
-        // check for reg_url_link in the incoming heartbeat data
-        if (! isset($data['espresso_thank_you_page']['e_reg_url_link'])) {
-            $response['espresso_thank_you_page'] = array(
-                'errors' => ! empty($notices['errors'])
-                    ? $notices['errors']
-                    : __(
-                        'No transaction information could be retrieved because the registration URL link is missing or invalid.',
-                        'event_espresso'
-                    ),
-            );
-            return $response;
-        }
-        // kk heartbeat has our data
-        $response['espresso_thank_you_page'] = array();
-        // set_definitions, instantiate the thank you page class, and get the ball rolling
-        EED_Thank_You_Page::set_definitions();
-        /** @var $espresso_thank_you_page EED_Thank_You_Page */
-        $espresso_thank_you_page = EED_Thank_You_Page::instance();
-        $espresso_thank_you_page->set_reg_url_link($data['espresso_thank_you_page']['e_reg_url_link']);
-        $espresso_thank_you_page->init();
-        // get TXN
-        $TXN = $espresso_thank_you_page->get_txn();
-        // no TXN? then get out
-        if (! $TXN instanceof EE_Transaction) {
-            $notices = EE_Error::get_notices();
-            $response['espresso_thank_you_page'] = array(
-                'errors' => ! empty($notices['errors'])
-                    ? $notices['errors']
-                    : sprintf(
-                        __(
-                            'The information for your transaction could not be retrieved from the server or the transaction data received was invalid because of a technical reason. (%s)',
-                            'event_espresso'
-                        ),
-                        __LINE__
-                    ),
-            );
-            return $response;
-        }
-        // grab transient of TXN's status
-        $txn_status = isset($data['espresso_thank_you_page']['txn_status'])
-            ? $data['espresso_thank_you_page']['txn_status']
-            : null;
-        // has the TXN status changed since we last checked (or empty because this is the first time running through this code)?
-        if ($txn_status !== $TXN->status_ID()) {
-            // switch between two possible basic outcomes
-            switch ($TXN->status_ID()) {
-                // TXN has been updated in some way
-                case EEM_Transaction::overpaid_status_code:
-                case EEM_Transaction::complete_status_code:
-                case EEM_Transaction::incomplete_status_code:
-                    // send updated TXN results back to client,
-                    $response['espresso_thank_you_page'] = array(
-                        'transaction_details' => $espresso_thank_you_page->get_transaction_details(),
-                        'txn_status'          => $TXN->status_ID(),
-                    );
-                    break;
-                // or we have a bad TXN, or really slow IPN, so calculate the wait time and send that back...
-                case EEM_Transaction::failed_status_code:
-                default:
-                    // keep on waiting...
-                    return $espresso_thank_you_page->_update_server_wait_time($data['espresso_thank_you_page']);
-            }
-            // or is the TXN still failed (never been updated) ???
-        } elseif ($TXN->failed()) {
-            // keep on waiting...
-            return $espresso_thank_you_page->_update_server_wait_time($data['espresso_thank_you_page']);
-        }
-        // TXN is happening so let's get the payments now
-        // if we've already gotten payments then the heartbeat data will contain the timestamp of the last time we checked
-        $since = isset($data['espresso_thank_you_page']['get_payments_since'])
-            ? $data['espresso_thank_you_page']['get_payments_since']
-            : 0;
-        // then check for payments
-        $payments = $espresso_thank_you_page->get_txn_payments($since);
-        // has a payment been processed ?
-        if (! empty($payments) || $espresso_thank_you_page->_is_offline_payment_method) {
-            if ($since) {
-                $response['espresso_thank_you_page'] = array(
-                    'new_payments'        => $espresso_thank_you_page->get_new_payments($payments),
-                    'transaction_details' => $espresso_thank_you_page->get_transaction_details(),
-                    'txn_status'          => $TXN->status_ID(),
-                );
-            } else {
-                $response['espresso_thank_you_page']['payment_details'] = $espresso_thank_you_page->get_payment_details(
-                    $payments
-                );
-            }
-            // reset time to check for payments
-            $response['espresso_thank_you_page']['get_payments_since'] = time();
-        } else {
-            $response['espresso_thank_you_page']['get_payments_since'] = $since;
-        }
-        return $response;
-    }
 
 
     /**

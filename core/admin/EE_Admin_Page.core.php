@@ -4,6 +4,7 @@ use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
 use EventEspresso\core\interfaces\InterminableInterface;
 use EventEspresso\core\services\loaders\LoaderFactory;
+use EventEspresso\core\services\loaders\LoaderInterface;
 
 /**
  * EE_Admin_Page class
@@ -16,6 +17,10 @@ use EventEspresso\core\services\loaders\LoaderFactory;
 abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
 {
 
+    /**
+     * @var LoaderInterface $loader
+     */
+    protected $loader;
 
     // set in _init_page_props()
     public $page_slug;
@@ -180,6 +185,7 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
      */
     public function __construct($routing = true)
     {
+        $this->loader = LoaderFactory::getLoader();
         if (strpos($this->_get_dir(), 'caffeinated') !== false) {
             $this->_is_caf = true;
         }
@@ -1396,11 +1402,19 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
                 $this->_help_tour[ $route ][] = EEH_Template::help_tour_stops_generator($end_stop_tour);
             }
         }
+
         if (! empty($tours)) {
             $this->_help_tour['tours'] = $tours;
         }
         // that's it!  Now that the $_help_tours property is set (or not)
         // the scripts and html should be taken care of automatically.
+
+        /**
+         * Allow extending the help tours variable.
+         *
+         * @param Array $_help_tour The array containing all help tour information to be displayed.
+         */
+        $this->_help_tour = apply_filters('FHEE__EE_Admin_Page___add_help_tour___help_tour', $this->_help_tour);
     }
 
 
@@ -1878,7 +1892,9 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
             EVENT_ESPRESSO_VERSION,
             true
         );
-        add_filter('FHEE_load_joyride', '__return_true');
+        if (EE_Registry::instance()->CFG->admin->help_tour_activation) {
+            add_filter('FHEE_load_joyride', '__return_true');
+        }
         // script for sorting tables
         wp_register_script(
             'espresso_ajax_table_sorting',
@@ -2139,7 +2155,7 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
                     )
                 );
             }
-            $this->_list_table_object = LoaderFactory::getLoader()->getShared(
+            $this->_list_table_object = $this->loader->getShared(
                 $this->_route_config['list_table'],
                 array($this)
             );
@@ -3404,6 +3420,31 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
 
 
     /**
+     * Helper method for merging existing request data with the returned redirect url.
+     *
+     * This is typically used for redirects after an action so that if the original view was a filtered view those
+     * filters are still applied.
+     *
+     * @param array $new_route_data
+     * @return array
+     */
+    protected function mergeExistingRequestParamsWithRedirectArgs(array $new_route_data)
+    {
+        foreach ($this->_req_data as $ref => $value) {
+            // unset nonces
+            if (strpos($ref, 'nonce') !== false) {
+                unset($this->_req_data[ $ref ]);
+                continue;
+            }
+            // urlencode values.
+            $value = is_array($value) ? array_map('urlencode', $value) : urlencode($value);
+            $this->_req_data[ $ref ] = $value;
+        }
+        return array_merge($this->_req_data, $new_route_data);
+    }
+
+
+    /**
      *    _redirect_after_action
      *
      * @param int    $success            - whether success was for two or more records, or just one, or none
@@ -3680,7 +3721,7 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
             ),
             'default' => (int) apply_filters(
                 'FHEE__EE_Admin_Page___per_page_screen_options__default',
-                10
+                20
             ),
             'option'  => $this->_current_page . '_' . $this->_current_view . '_per_page',
         );

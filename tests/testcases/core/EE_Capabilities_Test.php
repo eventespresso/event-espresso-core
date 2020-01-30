@@ -281,7 +281,7 @@ class EE_Capabilities_Test extends EE_UnitTestCase
             'onsite',
             array(
                 'payment_method_paths' => array(
-                    EE_TESTS_DIR . 'mocks' . DS . 'payment_methods' . DS . 'Mock_Onsite',
+                    EE_TESTS_DIR . 'mocks/payment_methods/Mock_Onsite',
                 ),
             )
         );

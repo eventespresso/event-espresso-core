@@ -1,0 +1,175 @@
+<html>
+    <head>
+        <meta charset="UTF-8"/>
+        <meta name="viewport" content="width=device-width, initial-scale=1"/>
+        <title>{{themeName}} CSS Theme Demo Event Espresso</title>
+        {{#each variableStylesheets}}
+            <link href="{{this}}" rel="stylesheet">
+        {{/each}}
+        {{#each baseStylesheets}}
+            <link href="{{this}}" rel="stylesheet">
+        {{/each}}
+        {{#each overrideStylesheets}}
+            <link href="{{this}}" rel="stylesheet">
+        {{/each}}
+        <link href="./demo.css" rel="stylesheet">
+        <script type="text/javascript">
+            function toggle_menu( scroll = false ) {
+                const header = document.getElementById( 'header' );
+                header.classList.toggle( 'isActive' );
+                const toggle = document.getElementById( 'toggle-menu' );
+                if ( toggle.getAttribute( 'aria-expanded' ) === 'true' ) {
+                    toggle.setAttribute( 'aria-expanded', 'false' );
+                } else {
+                    toggle.setAttribute( 'aria-expanded', 'true' );
+                }
+                let timeOut;
+                if ( scroll ) {
+                    timeOut = setTimeout( function() {
+                        window.scrollBy( 0, -150 );
+                        clearTimeout( timeOut );
+                    }, 50 );
+                } else {
+                    clearTimeout( timeOut );
+                }
+                return false;
+            }
+        </script>
+    </head>
+    <body>
+        <div>
+            <header id="header">
+                <div class="wrapper">
+                    <nav id="navigation">
+                        <button aria-label="toggle-menu"
+                                aria-controls="menu"
+                                aria-expanded="false"
+                                id="toggle-menu"
+                                onclick="toggle_menu();"
+                                tabindex="0"
+                        >
+                            <span>Menu</span>
+                        </button>
+                        <ul id="menu"
+                            role="menu"
+                            aria-label="CSS Theme Demo Menu"
+                            class="menu-container ee-container"
+                        >
+                            <li role="none">
+                                <button aria-hidden="close-menu"
+                                        id="close-menu"
+                                        onclick="toggle_menu();"
+                                        tabindex="0"
+                                >
+                                    <span>&times;</span>
+                                </button>
+                            </li>
+                            <li role="none">
+                                <a role="menuitem" href="#intro" tabindex="0" onclick="toggle_menu( true )">
+                                    top
+                                </a>
+                            </li>
+                            <li role="none">
+                                <a role="menuitem" href="#colors" tabindex="0" onclick="toggle_menu( true )">
+                                    theme colors
+                                </a>
+                            </li>
+                            <li role="none">
+                                <a role="menuitem" href="#base-colors" tabindex="0" onclick="toggle_menu( true )">
+                                    base colors
+                                </a>
+                            </li>
+                            <li role="none">
+                                <a role="menuitem" href="#greys" tabindex="0" onclick="toggle_menu( true )">
+                                    greyscale colors
+                                </a>
+                            </li>
+                            <li role="none">
+                                <a role="menuitem" href="#Transaction-status-colors" tabindex="0"
+                                   onclick="toggle_menu( true )">
+                                    transaction status colors
+                                </a>
+                            </li>
+                            <li role="none">
+                                <a role="menuitem" href="#Payment-status-colors" tabindex="0"
+                                   onclick="toggle_menu( true )">
+                                    payment status colors
+                                </a>
+                            </li>
+                            <li role="none">
+                                <a role="menuitem" href="#Registration-status-colors" tabindex="0"
+                                   onclick="toggle_menu( true )">
+                                    registration status colors
+                                </a>
+                            </li>
+                            <li role="none">
+                                <a role="menuitem" href="#Datetime-status-colors" tabindex="0"
+                                   onclick="toggle_menu( true )">
+                                    datetime status colors
+                                </a>
+                            </li>
+                            <li role="none">
+                                <a role="menuitem" href="#buttons" tabindex="0" onclick="toggle_menu( true )">
+                                    buttons
+                                </a>
+                            </li>
+                            <li role="none">
+                                <a role="menuitem" href="#font-sizes" tabindex="0" onclick="toggle_menu( true )">
+                                    font sizes
+                                </a>
+                            </li>
+                            <li role="none">
+                                <a role="menuitem" href="#margin-sizes" tabindex="0" onclick="toggle_menu( true )">
+                                    margin sizes
+                                </a>
+                            </li>
+                            <li role="none">
+                                <a role="menuitem" href="#padding-sizes" tabindex="0" onclick="toggle_menu( true )">
+                                    padding sizes
+                                </a>
+                            </li>
+                            <li role="none">
+                                <a role="menuitem" href="#border-radius" tabindex="0" onclick="toggle_menu()">
+                                    border radius
+                                </a>
+                            </li>
+                            <li role="none">
+                                <a role="menuitem" href="#shadows" tabindex="0" onclick="toggle_menu()">
+                                    shadows
+                                </a>
+                            </li>
+                        </ul>
+                    </nav>
+                    <div class="logo">
+                        <img class="espresso-icon"
+                             src="../../../../../../../../wp-assets/icon-128x128.png"
+                             height="50px"
+                             width="50px"
+                        >
+                    </div>
+                    <div class="title">
+                        <h4 class="ee-focus-priority-3">Event Espresso CSS Demo</h4>
+                    </div>
+                </div>
+            </header>
+            <section class="wrapper">
+                <h1 id="intro" class="ee-focus-priority-1">Introduction</h1>
+                <p class="intro ee-focus-priority-4">
+                    With the arrival of the WordPress Gutenberg Editor, Event Espresso has been transitioning to a
+                    presentation layer powered by JavaScript and React. Part of this transition is the development of a new
+                    CSS foundation that utilizes theming and CSS variables for applying styles to HTML elements. This
+                    document is a demonstration of this new system and utilizes styles from the dynamically generated
+                    {{themeName}} Theme
+                </p>
+                {{#each demoSections}}
+                {{{this}}}
+                {{/each}}
+            </section>
+            <footer class="ee-focus-priority-7">
+                <div class="wrapper">
+                    <span class="ee">css demo by <a href="https://github.com/eventespresso/event-espresso-core/">Event Espresso</a></span>
+                </div>
+            </footer>
+        </div>
+    </body>
+</html>

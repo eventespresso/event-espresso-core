@@ -1,8 +1,9 @@
 # Event Espresso Core
 
 [![Latest Tag](https://img.shields.io/github/tag/eventespresso/event-espresso-core.svg?style=flat&label=Latest%20Tag)](https://github.com/eventespresso/event-espresso-core/releases)
-[![Travis](https://travis-ci.org/eventespresso/event-espresso-core.svg?branch=master)](https://travis-ci.org/eventespresso/event-espresso-core)
+[![Travis](https://travis-ci.com/eventespresso/event-espresso-core.svg?branch=master)](https://travis-ci.com/eventespresso/event-espresso-core)
 [![PHP](https://img.shields.io/badge/PHP-7%20Ready-brightgreen.svg?style=flat)](https://eventespresso.com/)
+[![Dependabot Status](https://api.dependabot.com/badges/status?host=github&repo=eventespresso/event-espresso-core)](https://dependabot.com)
 [![WordPress](https://img.shields.io/badge/WordPress-v4.7.x+%20Tested-brightgreen.svg?style=flat)](https://eventespresso.com/)
 [![License](https://img.shields.io/badge/License-GPLv2-blue.svg?style=flat)](https://www.gnu.org/licenses/gpl-2.0.html)
 [![Join Chat](https://img.shields.io/badge/Slack-Join%20Chat-aa30ff.svg?style=flat)](https://eventespresso.com/contact/community-chat/)
@@ -24,7 +25,7 @@ Resources on Event Espresso 4 for a beginner to advanced users.
 
 [View Event Espresso 4 Documentation →](https://eventespresso.com/support/documentation/versioned-docs?doc_ver=ee4&utm_source=github&utm_medium=link&utm_campaign=ee4_github_plugin_description_homepage&utm_content=view+ee4+documentation)
 
-Notable changes for each released version of the project can be found in our [changelog](CHANGELOG.md)
+Notable changes for each released version of the project can be found in our [changelog](https://eventespresso.com/wiki/ee4-changelog/)
 
 ## Mobile Event Apps
 The Event Espresso 4 check-in & ticket scanning event app is available for [Android](http://evts.io/EE4_Android_App?utm_source=github&utm_medium=link&utm_campaign=ee4_github_plugin_description_homepage&utm_content=mobile+event+apps+android) and [Apple](http://evts.io/EE4_Apple_App?utm_source=github&utm_medium=link&utm_campaign=ee4_github_plugin_description_homepage&utm_content=mobile+event+apps+apple) devices.
@@ -59,6 +60,7 @@ This is the Core for Event Espresso 4. This README.md file is targeted for displ
 
 
 ## Event Espresso Releases
+
 At Event Espresso we follow a set pattern for releases:
 
 1. Active development for new features happens on a **FET/{ticket-number}/{description}** branch.  We continually merge master into the feature branch while its in development.  Once its complete, then testing is done on it and its merged back to master ready for release.
@@ -68,6 +70,7 @@ At Event Espresso we follow a set pattern for releases:
 
 
 ## Testing
+
 For all testers on GitHub, please take note of the following when reporting issues.
 
 1. There is a difference between a feature and a bug, we consider a bug is something that reveals brokenness in intended functionality.  A feature, is something beyond intended functionality.  To help determine the difference, think about your issue like this, "I know A does C, however I *wish* it did D."  If you find yourself saying that, its a feature.  For Event Espresso,  GitHub is not the place to suggest a new feature UNLESS you've already got a pull request to implement it (see pull requests section below).  Info on sponsoring new features can [be found here](https://eventespresso.com/rich-features/sponsor-new-features/).  If you aren't sure whether something is a feature or bug feel free to post the issue - however we give priority to bug issues here.

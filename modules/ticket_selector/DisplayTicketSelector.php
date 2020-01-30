@@ -218,7 +218,7 @@ class DisplayTicketSelector
             return $this->ticketSalesClosedMessage();
         }
         // is the event expired ?
-        $template_args['event_is_expired'] = $this->event->is_expired();
+        $template_args['event_is_expired'] = ! is_admin() ? $this->event->is_expired() : false;
         if ($template_args['event_is_expired']) {
             return $this->expiredEventMessage();
         }
@@ -228,7 +228,10 @@ class DisplayTicketSelector
             return $this->noTicketAvailableMessage();
         }
         // redirecting to another site for registration ??
-        $external_url = (string) $this->event->external_url();
+        $external_url = (string) $this->event->external_url()
+            && $this->event->external_url() !== get_the_permalink()
+            ? $this->event->external_url()
+            : '';
         // if redirecting to another site for registration, then we don't load the TS
         $ticket_selector = $external_url
             ? $this->externalEventRegistration()
@@ -363,6 +366,11 @@ class DisplayTicketSelector
      */
     protected function getTickets()
     {
+        $show_expired_tickets = is_admin() || (
+            EE_Registry::instance()->CFG->template_settings->EED_Ticket_Selector instanceof EE_Ticket_Selector_Config
+            && EE_Registry::instance()->CFG->template_settings->EED_Ticket_Selector->show_expired_tickets
+        );
+
         $ticket_query_args = array(
             array('Datetime.EVT_ID' => $this->event->ID()),
             'order_by' => array(
@@ -373,10 +381,7 @@ class DisplayTicketSelector
                 'Datetime.DTT_EVT_start' => 'DESC',
             ),
         );
-        if (! (
-            EE_Registry::instance()->CFG->template_settings->EED_Ticket_Selector instanceof EE_Ticket_Selector_Config
-            && EE_Registry::instance()->CFG->template_settings->EED_Ticket_Selector->show_expired_tickets
-        )) {
+        if (! $show_expired_tickets) {
             // use the correct applicable time query depending on what version of core is being run.
             $current_time = method_exists('EEM_Datetime', 'current_time_for_query')
                 ? time()
@@ -638,7 +643,10 @@ class DisplayTicketSelector
             __('Register Now', 'event_espresso'),
             $this->event
         );
-        $external_url = $this->event->external_url();
+        $external_url = (string) $this->event->external_url()
+            && $this->event->external_url() !== get_the_permalink()
+            ? $this->event->external_url()
+            : '';
         $html = EEH_HTML::div(
             '',
             'ticket-selector-submit-' . $this->event->ID() . '-btn-wrap',

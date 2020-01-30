@@ -1581,15 +1581,18 @@ abstract class EE_Base_Class
                     $datetime_value,
                     $this->_fields[ $fieldname ]
                 );
+                $this->_has_changes = true;
                 break;
             case 'D':
                 $this->_fields[ $fieldname ] = $field->prepare_for_set_with_new_date(
                     $datetime_value,
                     $this->_fields[ $fieldname ]
                 );
+                $this->_has_changes = true;
                 break;
             case 'B':
                 $this->_fields[ $fieldname ] = $field->prepare_for_set($datetime_value);
+                $this->_has_changes = true;
                 break;
         }
         $this->_clear_cached_property($fieldname);
@@ -2329,8 +2332,8 @@ abstract class EE_Base_Class
      *                You can optionally include an array of key=>value pairs that allow you to further constrict the
      *                relation to being added. However, keep in mind that the columns (keys) given must match a column
      *                on the JOIN table and currently only the HABTM models accept these additional conditions. Also
-     *                remember that if an exact match isn't found for these extra cols/val pairs, then a NEW row is
-     *                created in the join table.
+     *                remember that if an exact match isn't found for these extra cols/val pairs, then no row is
+     *                deleted.
      * @return EE_Base_Class the relation was removed from
      * @throws ReflectionException
      * @throws InvalidArgumentException
@@ -2373,7 +2376,7 @@ abstract class EE_Base_Class
      * Removes ALL the related things for the $relationName.
      *
      * @param string $relationName
-     * @param array  $where_query_params like EEM_Base::get_all's $query_params[0] (where conditions)
+     * @param array  $where_query_params @see https://github.com/eventespresso/event-espresso-core/tree/master/docs/G--Model-System/model-query-params.md#0-where-conditions
      * @return EE_Base_Class
      * @throws ReflectionException
      * @throws InvalidArgumentException
@@ -2422,7 +2425,7 @@ abstract class EE_Base_Class
      * because we want to get even deleted items etc.
      *
      * @param string $relationName key in the model's _model_relations array
-     * @param array  $query_params like EEM_Base::get_all
+     * @param array  $query_params @see https://github.com/eventespresso/event-espresso-core/tree/master/docs/G--Model-System/model-query-params.md#0-where-conditions
      * @return EE_Base_Class[]     Results not necessarily indexed by IDs, because some results might not have primary
      *                             keys or might not be saved yet. Consider using EEM_Base::get_IDs() on these
      *                             results if you want IDs
@@ -2474,7 +2477,7 @@ abstract class EE_Base_Class
      * unless otherwise specified in the $query_params
      *
      * @param string $relation_name  model_name like 'Event', or 'Registration'
-     * @param array  $query_params   like EEM_Base::get_all's
+     * @param array  $query_params   @see https://github.com/eventespresso/event-espresso-core/tree/master/docs/G--Model-System/model-query-params.md
      * @param string $field_to_count name of field to count by. By default, uses primary key
      * @param bool   $distinct       if we want to only count the distinct values for the column then you can trigger
      *                               that by the setting $distinct to TRUE;
@@ -2502,7 +2505,7 @@ abstract class EE_Base_Class
      * Note: ignores default_where_conditions by default, unless otherwise specified in the $query_params
      *
      * @param string $relation_name model_name like 'Event', or 'Registration'
-     * @param array  $query_params  like EEM_Base::get_all's
+     * @param array  $query_params  @see https://github.com/eventespresso/event-espresso-core/tree/master/docs/G--Model-System/model-query-params.md
      * @param string $field_to_sum  name of field to count by.
      *                              By default, uses primary key
      *                              (which doesn't make much sense, so you should probably change it)
@@ -2528,7 +2531,7 @@ abstract class EE_Base_Class
      * Gets the first (ie, one) related model object of the specified type.
      *
      * @param string $relationName key in the model's _model_relations array
-     * @param array  $query_params like EEM_Base::get_all
+     * @param array  $query_params @see https://github.com/eventespresso/event-espresso-core/tree/master/docs/G--Model-System/model-query-params.md
      * @return EE_Base_Class (not an array, a single object)
      * @throws ReflectionException
      * @throws InvalidArgumentException
@@ -2596,7 +2599,7 @@ abstract class EE_Base_Class
      * If this model object doesn't exist yet in the DB, just removes its related things
      *
      * @param string $relationName
-     * @param array  $query_params like EEM_Base::get_all's
+     * @param array  $query_params @see https://github.com/eventespresso/event-espresso-core/tree/master/docs/G--Model-System/model-query-params.md
      * @return int how many deleted
      * @throws ReflectionException
      * @throws InvalidArgumentException
@@ -2628,7 +2631,7 @@ abstract class EE_Base_Class
      * to delete_related(). If this model object doesn't exist in the DB, just remove its related things
      *
      * @param string $relationName
-     * @param array  $query_params like EEM_Base::get_all's
+     * @param array  $query_params @see https://github.com/eventespresso/event-espresso-core/tree/master/docs/G--Model-System/model-query-params.md
      * @return int how many deleted (including those soft deleted)
      * @throws ReflectionException
      * @throws InvalidArgumentException
@@ -3052,6 +3055,207 @@ abstract class EE_Base_Class
                 );
             }
         }
+    }
+
+
+    /**
+     * Change $fields' values to $new_value_sql (which is a string of raw SQL)
+     *
+     * @since 4.9.80.p
+     * @param EE_Model_Field_Base[] $fields
+     * @param string $new_value_sql
+     *      example: 'column_name=123',
+     *      or 'column_name=column_name+1',
+     *      or 'column_name= CASE
+     *          WHEN (`column_name` + `other_column` + 5) <= `yet_another_column`
+     *          THEN `column_name` + 5
+     *          ELSE `column_name`
+     *      END'
+     *      Also updates $field on this model object with the latest value from the database.
+     * @return bool
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws ReflectionException
+     */
+    protected function updateFieldsInDB($fields, $new_value_sql)
+    {
+        // First make sure this model object actually exists in the DB. It would be silly to try to update it in the DB
+        // if it wasn't even there to start off.
+        if (! $this->ID()) {
+            $this->save();
+        }
+        global $wpdb;
+        if (empty($fields)) {
+            throw new InvalidArgumentException(
+                esc_html__(
+                    'EE_Base_Class::updateFieldsInDB was passed an empty array of fields.',
+                    'event_espresso'
+                )
+            );
+        }
+        $first_field = reset($fields);
+        $table_alias = $first_field->get_table_alias();
+        foreach ($fields as $field) {
+            if ($table_alias !== $field->get_table_alias()) {
+                throw new InvalidArgumentException(
+                    sprintf(
+                        esc_html__(
+                            // @codingStandardsIgnoreStart
+                            'EE_Base_Class::updateFieldsInDB was passed fields for different tables ("%1$s" and "%2$s"), which is not supported. Instead, please call the method multiple times.',
+                            // @codingStandardsIgnoreEnd
+                            'event_espresso'
+                        ),
+                        $table_alias,
+                        $field->get_table_alias()
+                    )
+                );
+            }
+        }
+        // Ok the fields are now known to all be for the same table. Proceed with creating the SQL to update it.
+        $table_obj = $this->get_model()->get_table_obj_by_alias($table_alias);
+        $table_pk_value = $this->ID();
+        $table_name = $table_obj->get_table_name();
+        if ($table_obj instanceof EE_Secondary_Table) {
+            $table_pk_field_name = $table_obj->get_fk_on_table();
+        } else {
+            $table_pk_field_name = $table_obj->get_pk_column();
+        }
+
+        $query =
+            "UPDATE `{$table_name}`
+            SET "
+            . $new_value_sql
+            . $wpdb->prepare(
+                "
+            WHERE `{$table_pk_field_name}` = %d;",
+                $table_pk_value
+            );
+        $result = $wpdb->query($query);
+        foreach ($fields as $field) {
+            // If it was successful, we'd like to know the new value.
+            // If it failed, we'd also like to know the new value.
+            $new_value = $this->get_model()->get_var(
+                $this->get_model()->alter_query_params_to_restrict_by_ID(
+                    $this->get_model()->get_index_primary_key_string(
+                        $this->model_field_array()
+                    ),
+                    array(
+                        'default_where_conditions' => 'minimum',
+                    )
+                ),
+                $field->get_name()
+            );
+            $this->set_from_db(
+                $field->get_name(),
+                $new_value
+            );
+        }
+        return (bool) $result;
+    }
+
+
+    /**
+     * Nudges $field_name's value by $quantity, without any conditionals (in comparison to bumpConditionally()).
+     * Does not allow negative values, however.
+     *
+     * @since 4.9.80.p
+     * @param array $fields_n_quantities keys are the field names, and values are the amount by which to bump them
+     *                                   (positive or negative). One important gotcha: all these values must be
+     *                                   on the same table (eg don't pass in one field for the posts table and
+     *                                   another for the event meta table.)
+     * @return bool
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws ReflectionException
+     */
+    public function adjustNumericFieldsInDb(array $fields_n_quantities)
+    {
+        global $wpdb;
+        if (empty($fields_n_quantities)) {
+            // No fields to update? Well sure, we updated them to that value just fine.
+            return true;
+        }
+        $fields = [];
+        $set_sql_statements = [];
+        foreach ($fields_n_quantities as $field_name => $quantity) {
+            $field = $this->get_model()->field_settings_for($field_name, true);
+            $fields[] = $field;
+            $column_name = $field->get_table_column();
+
+            $abs_qty = absint($quantity);
+            if ($quantity > 0) {
+                // don't let the value be negative as often these fields are unsigned
+                $set_sql_statements[] = $wpdb->prepare(
+                    "`{$column_name}` = `{$column_name}` + %d",
+                    $abs_qty
+                );
+            } else {
+                $set_sql_statements[] = $wpdb->prepare(
+                    "`{$column_name}` = CASE
+                       WHEN (`{$column_name}` >= %d)
+                       THEN `{$column_name}` - %d
+                       ELSE 0
+                    END",
+                    $abs_qty,
+                    $abs_qty
+                );
+            }
+        }
+        return $this->updateFieldsInDB(
+            $fields,
+            implode(', ', $set_sql_statements)
+        );
+    }
+
+
+    /**
+     * Increases the value of the field $field_name_to_bump by $quantity, but only if the values of
+     * $field_name_to_bump plus $field_name_affecting_total and $quantity won't exceed $limit_field_name's value.
+     * For example, this is useful when bumping the value of TKT_reserved, TKT_sold, DTT_reserved or DTT_sold.
+     * Returns true if the value was successfully bumped, and updates the value on this model object.
+     * Otherwise returns false.
+     *
+     * @since 4.9.80.p
+     * @param string $field_name_to_bump
+     * @param string $field_name_affecting_total
+     * @param string $limit_field_name
+     * @param int    $quantity
+     * @return bool
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws ReflectionException
+     */
+    public function incrementFieldConditionallyInDb($field_name_to_bump, $field_name_affecting_total, $limit_field_name, $quantity)
+    {
+        global $wpdb;
+        $field = $this->get_model()->field_settings_for($field_name_to_bump, true);
+        $column_name = $field->get_table_column();
+
+        $field_affecting_total = $this->get_model()->field_settings_for($field_name_affecting_total, true);
+        $column_affecting_total = $field_affecting_total->get_table_column();
+
+        $limiting_field = $this->get_model()->field_settings_for($limit_field_name, true);
+        $limiting_column = $limiting_field->get_table_column();
+        return $this->updateFieldsInDB(
+            [$field],
+            $wpdb->prepare(
+                "`{$column_name}` =
+            CASE
+               WHEN ((`{$column_name}` + `{$column_affecting_total}` + %d) <= `{$limiting_column}`) OR `{$limiting_column}` = %d
+               THEN `{$column_name}` + %d
+               ELSE `{$column_name}`
+            END",
+                $quantity,
+                EE_INF_IN_DB,
+                $quantity
+            )
+        );
     }
 
 

@@ -24,14 +24,14 @@ class EE_PMT_Paypal_Express extends EE_PMT_Base
         $this->_gateway = new EEG_Paypal_Express();
 
         $this->_pretty_name = esc_html__('PayPal Express', 'event_espresso');
-        $this->_template_path = $this->file_folder() . 'templates' . DS;
+        $this->_template_path = $this->file_folder() . 'templates/';
         $this->_default_description = esc_html__(
             // @codingStandardsIgnoreStart
             'After clicking \'Finalize Registration\', you will be forwarded to PayPal website to Login and make your payment.',
             // @codingStandardsIgnoreEnd
             'event_espresso'
         );
-        $this->_default_button_url = $this->file_url() . 'lib' . DS . 'paypal-express-checkout-logo-gold-160.png';
+        $this->_default_button_url = $this->file_url() . 'lib/paypal-express-checkout-logo-gold-160.png';
 
         parent::__construct($pm_instance);
     }
@@ -61,8 +61,7 @@ class EE_PMT_Paypal_Express extends EE_PMT_Base
      */
     public function generate_new_settings_form()
     {
-        $form = new SettingsForm(array(), $this->get_help_tab_link());
-        return $form;
+        return new SettingsForm(array(), $this->get_help_tab_link());
     }
 
 

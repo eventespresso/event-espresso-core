@@ -41,10 +41,8 @@ if ($display_ticket_price) { ?>
                 <?php
                 if ($ticket->base_price() instanceof EE_Price) { ?>
                     <tr>
-                        <td data-th="<?php esc_html_e('Name', 'event_espresso'); ?>" class="small-text">
+                        <td data-th="<?php esc_html_e('Name', 'event_espresso'); ?>" class="small-text" colspan="2">
                             <b><?php echo $ticket->base_price()->name(); ?></b></td>
-                        <td data-th="<?php esc_html_e('Description', 'event_espresso'); ?>"
-                            class="small-text"><?php echo $ticket->base_price()->desc(); ?></td>
                         <td data-th="<?php esc_html_e('Amount', 'event_espresso'); ?>"
                             class="jst-rght small-text"><?php echo $ticket->base_price()->pretty_price(); ?></td>
                     </tr>

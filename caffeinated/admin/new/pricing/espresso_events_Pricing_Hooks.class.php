@@ -758,8 +758,7 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks
                     // Is this an existing ticket (has an ID) and does it have any sold?
                     // If so, then we need to add that to the DTT sold because this DTT is getting added.
                     if ($ticket->ID() && $ticket->sold() > 0) {
-                        $saved_datetimes[ $row_id ]->increase_sold($ticket->sold());
-                        $saved_datetimes[ $row_id ]->save();
+                        $saved_datetimes[ $row_id ]->increaseSold($ticket->sold(), false);
                     }
                 }
             }
@@ -775,8 +774,7 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks
                     // Is this an existing ticket (has an ID) and does it have any sold?
                     // If so, then we need to remove it's sold from the DTT_sold.
                     if ($ticket->ID() && $ticket->sold() > 0) {
-                        $saved_datetimes[ $row_id ]->decrease_sold($ticket->sold());
-                        $saved_datetimes[ $row_id ]->save();
+                        $saved_datetimes[ $row_id ]->decreaseSold($ticket->sold());
                     }
                 }
             }
@@ -1971,7 +1969,7 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks
                 'default'               => $selected_price_type_id,
                 'html_name'             => $select_name,
                 'html_class'            => 'edit-price-PRT_ID',
-                'html_other_attributes' => $disabled ? 'style="width:auto;" disabled' : 'style="width:auto;"',
+                'other_html_attributes' => $disabled ? 'style="width:auto;" disabled' : 'style="width:auto;"',
             )
         );
         $price_selected_operator = $price instanceof EE_Price && $price->is_discount() ? '-' : '+';

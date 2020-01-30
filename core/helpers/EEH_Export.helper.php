@@ -16,12 +16,22 @@ class EEH_Export
      * Gets the 'normal' column named for fields
      * @param EE_Model_Field_Base $field
      * @return string
+     * @throws EE_Error
      */
     public static function get_column_name_for_field(EE_Model_Field_Base $field)
     {
-        return wp_specialchars_decode($field->get_nicename(), ENT_QUOTES)
-               . "[" . wp_specialchars_decode($field->get_name(), ENT_QUOTES)
-               . "]";
+        $column_name = wp_specialchars_decode($field->get_nicename(), ENT_QUOTES);
+        if (apply_filters(
+            'FHEE__EEH_Export__get_column_name_for_field__add_field_name',
+            false,
+            $column_name,
+            $field
+        )) {
+            $column_name .= "["
+                . wp_specialchars_decode($field->get_name(), ENT_QUOTES)
+                . "]";
+        }
+        return $column_name;
     }
 
     /**

@@ -546,10 +546,10 @@ if (! class_exists('PluginUpdateEngineChecker')):
             //set other properties related to version
             //is_premium?
             $premium_search_ref = is_array($slug) ? key($slug['premium']) : null;
+
             //case insensitive search in version
             $this->_is_premium = ! empty($premium_search_ref)
-                                 && preg_match("/$premium_search_ref/i", $this->_installed_version);
-
+                                 && stripos($this->_installed_version, $premium_search_ref) !== false;
 
             //wait... if slug is_string() then we'll assume this is a premium install by default
             $this->_is_premium = ! $this->_is_premium && ! is_array($slug) ? true : $this->_is_premium;
@@ -557,13 +557,12 @@ if (! class_exists('PluginUpdateEngineChecker')):
             //set pre-release flag
             $pr_search_ref = is_array($slug) && isset($slug['prerelease']) ? key($slug['prerelease']) : null;
             $this->_is_prerelease = ! empty($pr_search_ref)
-                                    && preg_match("/$pr_search_ref/i", $this->_installed_version);
+                                    && stripos($this->_installed_version, $pr_search_ref) !== false;
 
             //free_release?
             $fr_search_ref = is_array($slug) && isset($slug['free']) ? key($slug['free']) : null;
             $this->_is_freerelease = ! empty($fr_search_ref)
-                                     && preg_match("/$fr_search_ref/", $this->_installed_version);
-
+                                     && stripos($this->_installed_version, $fr_search_ref) !== false;
 
             //set slug we use
             $this->slug = $this->_is_premium && is_array($slug) ? $slug['premium'][key($slug['premium'])] : null;
@@ -1032,6 +1031,28 @@ if (! class_exists('PluginUpdateEngineChecker')):
                 if (isset($response->extra_notices)) {
                     $this->add_persistent_notice($response->extra_notices);
                 }
+                // This instance is for EE Core, we have a response from PUE so lets check if it contains PUE Plugin data.
+                if ( stripos($this->slug, 'event-espresso-core') !== false
+                    && isset($response->extra_data)
+                    && !empty($response->extra_data->plugins)
+                ) {                    // Pull PUE pugin data from 'extra_data'.
+                    $plugins_array = json_decode($result['body'], true);
+                    $plugins = $plugins_array['extra_data']['plugins'];
+                    // Pull all of the add-ons EE has active and update the local latestVersion value of each of them.
+                    foreach (EE_Registry::instance()->addons as $addon) {
+                        $addon_slug = $addon->getPueSlug();
+                        if( isset($response->extra_data->plugins->{ $addon_slug }) ) {
+                            $addon_state = get_option('external_updates-' . $addon_slug);
+                            // If we don't have an addon state, get out we'll update it next time.
+                            if( empty($addon_state)) {
+                                continue;
+                            }
+                            // Have an addon state? Set the latestVersion value!
+                            $addon_state->latestVersion = $response->extra_data->plugins->{ $addon_slug }->version;
+                            update_option('external_updates-' . $addon_slug, $addon_state);
+                        }
+                    }
+                }
             }
 
 
@@ -1083,6 +1104,7 @@ if (! class_exists('PluginUpdateEngineChecker')):
                 );
             }
 
+            $existing_notices = is_array( $existing_notices ) ? $existing_notices : array();
 
             //k make sure there are no existing notices matching the incoming notices and only append new notices
             //(unless overwrite is set to true).
@@ -1159,6 +1181,7 @@ if (! class_exists('PluginUpdateEngineChecker')):
 
             //okay let's get any extra notices
             $notices = get_option('pue_special_notices_' . $this->_installed_version, array());
+            $notices = is_array($notices) ? $notices : array();
 
             //setup the message content for each notice;
             $errors = $attentions = $successes = '';
@@ -1641,11 +1664,19 @@ if (! class_exists('PluginUpdateEngineChecker')):
         {
             $state = get_site_option($this->optionName);
 
-            if (empty($state)) {
+            // If this is an add-on, only call home if there is an update available for it.
+            if( $this->slug !== 'event-espresso-core-reg' && !empty($state->latestVersion) ) {
+                if( version_compare($this->_installed_version, $state->latestVersion, '>=') ) {
+                    return;
+                }
+            }
+
+            if (empty($state) || ! is_object($state)) {
                 $state = new StdClass;
                 $state->checkedVersion = '';
                 $state->update = null;
             }
+
             $state->lastCheck = time();
             $state->checkedVersion = $this->_installed_version;
             //Save before checking in case something goes wrong

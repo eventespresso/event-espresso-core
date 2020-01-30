@@ -21,9 +21,9 @@ class Events_Admin_Page_Mock extends Events_Admin_Page {
 		if ( ! defined( 'EVENTS_PG_SLUG' ) ) {
 			define( 'EVENTS_PG_SLUG', 'espresso_events' );
 			define( 'EVENTS_LABEL', __('Events', 'event_espresso'));
-			define( 'EVENTS_ADMIN', EE_ADMIN_PAGES . 'events' . DS );
+			define( 'EVENTS_ADMIN', EE_ADMIN_PAGES . 'events/');
 			define( 'EVENTS_ADMIN_URL', admin_url( 'admin.php?page=' . EVENTS_PG_SLUG ));
-			define( 'EVENTS_TEMPLATE_PATH', EVENTS_ADMIN . 'templates' . DS );
+			define( 'EVENTS_TEMPLATE_PATH', EVENTS_ADMIN . 'templates/');
 			define( 'EVENTS_ASSETS_URL', EE_PLUGIN_DIR_URL . 'admin_pages/events/assets/' );
 		}
 

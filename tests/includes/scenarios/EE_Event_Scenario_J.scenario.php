@@ -81,7 +81,7 @@ class EE_Event_Scenario_J extends EE_Test_Scenario {
 		) {
 			/** @type EE_Ticket $ticket */
 			$ticket = $build_objects['Ticket'][1];
-			$ticket->increase_sold( 6 );
+			$ticket->increaseSold( 6 );
 		}
 		// and 4 sales for ticket 2, which will also increase sold qty for D1
 		if (
@@ -90,7 +90,7 @@ class EE_Event_Scenario_J extends EE_Test_Scenario {
 		) {
 			/** @type EE_Ticket $ticket */
 			$ticket = $build_objects['Ticket'][2];
-			$ticket->increase_sold( 4 );
+			$ticket->increaseSold( 4 );
 		}
 		//EEH_Debug_Tools::printr( $build_objects['Datetime'], 'Datetimes', __FILE__, __LINE__ );
 		//assign the event object as the scenario object

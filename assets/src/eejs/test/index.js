@@ -1,4 +1,8 @@
-import { data, exception, routes } from '../';
+import {
+	data,
+	Exception,
+	routes,
+} from '../';
 
 describe( 'eejs', () => {
 	describe( 'data', () => {
@@ -7,25 +11,22 @@ describe( 'eejs', () => {
 		} );
 	} );
 
-	describe( 'exception', () => {
+	describe( 'Exception', () => {
 		const t = () => {
-			throw new exception( 'error thrown' );
+			throw new Exception( 'error thrown' );
 		};
 		it( 'should throw error with msg "error thrown"', () => {
-			expect( t ).toThrowError( 'error thrown' );
+			expect( t ).toThrow( 'error thrown' );
 		} );
-		it( 'should throw an error which is an instance of "exception"', () => {
-			expect( t ).toThrowError( exception );
+		it( 'should throw an error which is an instance of "Exception"', () => {
+			expect( t ).toThrow( Exception );
 		} );
 	} );
-
 	describe( 'routes', () => {
-		describe( 'getAdminUrl()', () => {
-			it( 'provides the url to the events admin page by default.', () => {
-				expect( routes.getAdminUrl() ).toEqual(
-					'https://eetest.test/wp-admin/?admin.php&page=espresso_events&action=default'
-				);
-			} );
+		it( 'provides the url to the events admin page by default.', () => {
+			expect( routes.getAdminUrl() ).toEqual(
+				'https://eetest.test/wp-admin/admin.php?page=espresso_events&action=default'
+			);
 		} );
 	} );
 } );

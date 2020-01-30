@@ -19,10 +19,10 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page
      */
     public function __construct($routing = true)
     {
-        define('REGISTRATION_FORM_CAF_ADMIN', EE_CORE_CAF_ADMIN_EXTEND . 'registration_form' . DS);
-        define('REGISTRATION_FORM_CAF_ASSETS_PATH', REGISTRATION_FORM_CAF_ADMIN . 'assets' . DS);
+        define('REGISTRATION_FORM_CAF_ADMIN', EE_CORE_CAF_ADMIN_EXTEND . 'registration_form/');
+        define('REGISTRATION_FORM_CAF_ASSETS_PATH', REGISTRATION_FORM_CAF_ADMIN . 'assets/');
         define('REGISTRATION_FORM_CAF_ASSETS_URL', EE_CORE_CAF_ADMIN_EXTEND_URL . 'registration_form/assets/');
-        define('REGISTRATION_FORM_CAF_TEMPLATE_PATH', REGISTRATION_FORM_CAF_ADMIN . 'templates' . DS);
+        define('REGISTRATION_FORM_CAF_TEMPLATE_PATH', REGISTRATION_FORM_CAF_ADMIN . 'templates/');
         define('REGISTRATION_FORM_CAF_TEMPLATE_URL', EE_CORE_CAF_ADMIN_EXTEND_URL . 'registration_form/templates/');
         parent::__construct($routing);
     }
@@ -672,13 +672,37 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page
         do_action('AHEE_log', __FILE__, __FUNCTION__, '');
         $set_column_values = $this->_set_column_values_for($this->_question_group_model);
         if ($new_question_group) {
+            // make sure identifier is unique
+            $identifier_value = isset($set_column_values['QSG_identifier']) ? $set_column_values['QSG_identifier'] : '';
+            $identifier_exists = ! empty($identifier_value)
+                ? $this->_question_group_model->count([['QSG_identifier' => $set_column_values['QSG_identifier']]]) > 0
+                : false;
+            if ($identifier_exists) {
+                $set_column_values['QSG_identifier'] .= uniqid('id', true);
+            }
             $QSG_ID = $this->_question_group_model->insert($set_column_values);
             $success = $QSG_ID ? 1 : 0;
+            if ($success === 0) {
+                EE_Error::add_error(
+                    esc_html__('Something went wrong saving the question group.', 'event_espresso'),
+                    __FILE__,
+                    __FUNCTION__,
+                    __LINE__
+                );
+                $this->_redirect_after_action(
+                    false,
+                    '',
+                    '',
+                    array('action' => 'edit_question_group', 'QSG_ID' => $QSG_ID),
+                    true
+                );
+            }
         } else {
             $QSG_ID = absint($this->_req_data['QSG_ID']);
             unset($set_column_values['QSG_ID']);
             $success = $this->_question_group_model->update($set_column_values, array(array('QSG_ID' => $QSG_ID)));
         }
+
         $phone_question_id = EEM_Question::instance()->get_Question_ID_from_system_string(
             EEM_Attendee::system_question_phone
         );
@@ -1072,6 +1096,11 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page
             array($this, 'email_validation_settings_form'),
             2
         );
+        add_action(
+            'AHEE__Extend_Registration_Form_Admin_Page___reg_form_settings_template',
+            array($this, 'copy_attendee_info_settings_form'),
+            4
+        );
         $this->_template_args = (array) apply_filters(
             'FHEE__Extend_Registration_Form_Admin_Page___reg_form_settings___template_args',
             $this->_template_args
@@ -1100,6 +1129,9 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page
         EE_Registry::instance()->CFG->registration = $this->update_email_validation_settings_form(
             EE_Registry::instance()->CFG->registration
         );
+        EE_Registry::instance()->CFG->registration = $this->update_copy_attendee_info_settings_form(
+            EE_Registry::instance()->CFG->registration
+        );
         EE_Registry::instance()->CFG->registration = apply_filters(
             'FHEE__Extend_Registration_Form_Admin_Page___update_reg_form_settings__CFG_registration',
             EE_Registry::instance()->CFG->registration
@@ -1117,6 +1149,112 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page
             'updated',
             array('action' => 'view_reg_form_settings')
         );
+    }
+
+
+    /**
+     * @return void
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     */
+    public function copy_attendee_info_settings_form()
+    {
+        echo $this->_copy_attendee_info_settings_form()->get_html();
+    }
+
+    /**
+     * _copy_attendee_info_settings_form
+     *
+     * @access protected
+     * @return EE_Form_Section_Proper
+     * @throws \EE_Error
+     */
+    protected function _copy_attendee_info_settings_form()
+    {
+        return new EE_Form_Section_Proper(
+            array(
+                'name'            => 'copy_attendee_info_settings',
+                'html_id'         => 'copy_attendee_info_settings',
+                'layout_strategy' => new EE_Admin_Two_Column_Layout(),
+                'subsections'     => apply_filters(
+                    'FHEE__Extend_Registration_Form_Admin_Page___copy_attendee_info_settings_form__form_subsections',
+                    array(
+                        'copy_attendee_info_hdr'   => new EE_Form_Section_HTML(
+                            EEH_HTML::h2(esc_html__('Copy Attendee Info Settings', 'event_espresso'))
+                        ),
+                        'copy_attendee_info' => new EE_Yes_No_Input(
+                            array(
+                                'html_label_text' => esc_html__(
+                                    'Allow copy #1 attendee info to extra attendees?',
+                                    'event_espresso'
+                                ),
+                                'html_help_text'  => esc_html__(
+                                    'Set to yes if you want to enable the copy of #1 attendee info to extra attendees at Registration Form.',
+                                    'event_espresso'
+                                ),
+                                'default'         => EE_Registry::instance()->CFG->registration->copyAttendeeInfo(),
+                                'required'        => false,
+                                'display_html_label_text' => false,
+                            )
+                        ),
+                    )
+                ),
+            )
+        );
+    }
+
+    /**
+     * @param EE_Registration_Config $EE_Registration_Config
+     * @return EE_Registration_Config
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws ReflectionException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     */
+    public function update_copy_attendee_info_settings_form(EE_Registration_Config $EE_Registration_Config)
+    {
+        $prev_copy_attendee_info = $EE_Registration_Config->copyAttendeeInfo();
+        try {
+            $copy_attendee_info_settings_form = $this->_copy_attendee_info_settings_form();
+            // if not displaying a form, then check for form submission
+            if ($copy_attendee_info_settings_form->was_submitted()) {
+                // capture form data
+                $copy_attendee_info_settings_form->receive_form_submission();
+                // validate form data
+                if ($copy_attendee_info_settings_form->is_valid()) {
+                    // grab validated data from form
+                    $valid_data = $copy_attendee_info_settings_form->valid_data();
+                    if (isset($valid_data['copy_attendee_info'])) {
+                        $EE_Registration_Config->setCopyAttendeeInfo($valid_data['copy_attendee_info']);
+                    } else {
+                        EE_Error::add_error(
+                            esc_html__(
+                                'Invalid or missing Copy Attendee Info settings. Please refresh the form and try again.',
+                                'event_espresso'
+                            ),
+                            __FILE__,
+                            __FUNCTION__,
+                            __LINE__
+                        );
+                    }
+                } else {
+                    if ($copy_attendee_info_settings_form->submission_error_message() !== '') {
+                        EE_Error::add_error(
+                            $copy_attendee_info_settings_form->submission_error_message(),
+                            __FILE__,
+                            __FUNCTION__,
+                            __LINE__
+                        );
+                    }
+                }
+            }
+        } catch (EE_Error $e) {
+            $e->get_error();
+        }
+        return $EE_Registration_Config;
     }
 
 
@@ -1298,7 +1436,7 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page
                             'event_espresso'
                         ),
                         '<br />',
-                        '<a href="http://php.net/manual/en/pcre.installation.php" target="_blank">http://php.net/manual/en/pcre.installation.php</a>'
+                        '<a href="http://php.net/manual/en/pcre.installation.php" target="_blank" rel="noopener noreferrer">http://php.net/manual/en/pcre.installation.php</a>'
                     ),
                     __FILE__,
                     __FUNCTION__,

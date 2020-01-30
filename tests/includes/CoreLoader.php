@@ -102,7 +102,7 @@ class CoreLoader
         tests_add_filter(
             'FHEE__EE_Registry__load_core__core_paths',
             function ($core_paths = array()) {
-                $core_paths[] = EE_TESTS_DIR . 'mocks' . DS . 'core' . DS;
+                $core_paths[] = EE_TESTS_DIR . 'mocks/core/';
                 return $core_paths;
             }
         );
@@ -164,10 +164,6 @@ class CoreLoader
                 'EE_Session_Mock' => EE_Dependency_Map::load_from_cache
             ),
             true
-        );
-        EE_Dependency_Map::instance()->add_alias(
-            'EE_Session_Mock',
-            'EventEspresso\core\domain\services\session\SessionIdentifierInterface'
         );
     }
 

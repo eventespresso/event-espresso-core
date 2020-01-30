@@ -3,6 +3,7 @@ use EventEspresso\core\services\commands\CommandBus;
 use EventEspresso\core\services\commands\middleware\CapChecker;
 use EventEspresso\tests\mocks\core\domain\services\capabilities\CapabilitiesCheckerMock;
 use EventEspresso\tests\mocks\core\services\commands\MockCommand;
+use EventEspresso\tests\mocks\core\services\commands\MockTwoCommand;
 use EventEspresso\tests\mocks\core\services\commands\MockCommandHandler;
 use EventEspresso\tests\mocks\core\services\commands\RequiresCapCheckMockCommand;
 
@@ -38,8 +39,8 @@ class CommandBusTest extends EE_UnitTestCase
         // need to override the existing alias for the CommandHandlerManagerInterface
         // or else the REAL class will still get used
         EE_Dependency_Map::instance()->add_alias(
-            'EventEspresso\core\services\commands\CommandHandlerManagerInterface',
-            'EventEspresso\tests\mocks\core\services\commands\CommandHandlerManagerMock'
+            'EventEspresso\tests\mocks\core\services\commands\CommandHandlerManagerMock',
+            'EventEspresso\core\services\commands\CommandHandlerManagerInterface'
         );
         parent::setUp();
     }
@@ -174,8 +175,31 @@ class CommandBusTest extends EE_UnitTestCase
         $this->fail('InsufficientPermissionsException should have been thrown');
     }
 
-
-
+    /**
+     * @throws InvalidArgumentException
+     * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
+     * @throws \EventEspresso\core\services\commands\InvalidCommandHandlerException
+     * @throws \EventEspresso\core\services\commands\middleware\InvalidCommandBusMiddlewareException
+     * @throws \PHPUnit\Framework\AssertionFailedError
+     * @throws \PHPUnit\Framework\Exception
+     */
+    public function testExecuteWithIncorrectCommand()
+    {
+        $this->setupCommandBus();
+        // create CommandHandler and set the results
+        $command_handler = new MockCommandHandler();
+        // the Command that we have configured our CommandHandler to expect
+        $command_handler->expected = 'EventEspresso\tests\mocks\core\services\commands\MockTwoCommand';
+        // the Command we are actually going to use
+        $command_fqcn = 'EventEspresso\tests\mocks\core\services\commands\MockCommand';
+        // associate CommandHandler with the above Command
+        $command_handler_manager = $this->command_bus->getCommandHandlerManager();
+        $command_handler_manager->addCommandHandler($command_handler, $command_fqcn);
+        $this->setExpectedException('EventEspresso\core\exceptions\InvalidEntityException');
+        // execute Command
+        $this->command_bus->execute(new MockCommand());
+        $this->fail('InvalidEntityException should have been thrown');
+    }
 }
 // End of file CommandBusTest.php
 // Location: testcases/core/services/commands/CommandBusTest.php

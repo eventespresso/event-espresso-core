@@ -202,8 +202,6 @@ class Extend_Events_Admin_Page extends Events_Admin_Page
         // legend item
         add_filter('FHEE__Events_Admin_Page___event_legend_items__items', array($this, 'additional_legend_items'));
         add_action('admin_init', array($this, 'admin_init'));
-        // heartbeat stuff
-        add_filter('heartbeat_received', array($this, 'heartbeat_response'), 10, 2);
     }
 
 
@@ -226,29 +224,6 @@ class Extend_Events_Admin_Page extends Events_Admin_Page
                 'remove_event_dt_msg'    => esc_html__('Remove this Event Time', 'event_espresso'),
             )
         );
-    }
-
-
-    /**
-     * This will be used to listen for any heartbeat data packages coming via the WordPress heartbeat API and handle
-     * accordingly.
-     *
-     * @param array $response The existing heartbeat response array.
-     * @param array $data     The incoming data package.
-     * @return array  possibly appended response.
-     */
-    public function heartbeat_response($response, $data)
-    {
-        /**
-         * check whether count of tickets is approaching the potential
-         * limits for the server.
-         */
-        if (! empty($data['input_count'])) {
-            $response['max_input_vars_check'] = EE_Registry::instance()->CFG->environment->max_input_vars_limit_check(
-                $data['input_count']
-            );
-        }
-        return $response;
     }
 
 
@@ -561,24 +536,24 @@ class Extend_Events_Admin_Page extends Events_Admin_Page
         // first primary question groups
         $orig_primary_qgs = $orig_event->get_many_related(
             'Question_Group',
-            array(array('Event_Question_Group.EQG_primary' => 1))
+            [['Event_Question_Group.EQG_primary' => true]]
         );
         if (! empty($orig_primary_qgs)) {
             foreach ($orig_primary_qgs as $id => $obj) {
                 if ($obj instanceof EE_Question_Group) {
-                    $new_event->_add_relation_to($obj, 'Question_Group', array('EQG_primary' => 1));
+                    $new_event->_add_relation_to($obj, 'Question_Group', ['EQG_primary' => true]);
                 }
             }
         }
         // next additional attendee question groups
         $orig_additional_qgs = $orig_event->get_many_related(
             'Question_Group',
-            array(array('Event_Question_Group.EQG_primary' => 0))
+            [['Event_Question_Group.EQG_additional' => true]]
         );
         if (! empty($orig_additional_qgs)) {
             foreach ($orig_additional_qgs as $id => $obj) {
                 if ($obj instanceof EE_Question_Group) {
-                    $new_event->_add_relation_to($obj, 'Question_Group', array('EQG_primary' => 0));
+                    $new_event->_add_relation_to($obj, 'Question_Group', ['EQG_additional' => true]);
                 }
             }
         }
@@ -992,6 +967,9 @@ class Extend_Events_Admin_Page extends Events_Admin_Page
             $filters[] = $this->active_status_dropdown(
                 isset($this->_req_data['active_status']) ? $this->_req_data['active_status'] : ''
             );
+            $filters[] = $this->venuesDropdown(
+                isset($this->_req_data['venue']) ? $this->_req_data['venue'] : ''
+            );
         }
         // category filter
         $filters[] = $this->category_dropdown();
@@ -1037,9 +1015,31 @@ class Extend_Events_Admin_Page extends Events_Admin_Page
             'expired'  => esc_html__('Expired', 'event_espresso'),
             'inactive' => esc_html__('Inactive', 'event_espresso'),
         );
-        $id = 'id="espresso-active-status-dropdown-filter"';
-        $class = 'wide';
-        return EEH_Form_Fields::select_input($select_name, $values, $current_value, $id, $class);
+
+        return EEH_Form_Fields::select_input($select_name, $values, $current_value, '', 'wide');
+    }
+
+    /**
+     * returns a list of "venues"
+     *
+     * @param  string $current_value whatever the current active status is
+     * @return string
+     */
+    protected function venuesDropdown($current_value = '')
+    {
+        $select_name = 'venue';
+        $values = array(
+            '' => esc_html__('All Venues', 'event_espresso'),
+        );
+        // populate the list of venues.
+        $venue_model = EE_Registry::instance()->load_model('Venue');
+        $venues = $venue_model->get_all(array('order_by' => array('VNU_name' => 'ASC')));
+
+        foreach ($venues as $venue) {
+            $values[ $venue->ID() ] = $venue->name();
+        }
+
+        return EEH_Form_Fields::select_input($select_name, $values, $current_value, '', 'wide');
     }
 
 

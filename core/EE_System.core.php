@@ -222,6 +222,11 @@ final class EE_System implements ResettableInterface
             array($this, 'load_core_configuration'),
             5
         );
+        // load specifications for matching routes to current request
+        add_action(
+            'AHEE__EE_Bootstrap__load_core_configuration',
+            array($this, 'loadRouteMatchSpecifications')
+        );
         // load EE_Config, EE_Textdomain, etc
         add_action(
             'AHEE__EE_Bootstrap__register_shortcodes_modules_and_widgets',
@@ -381,7 +386,8 @@ final class EE_System implements ResettableInterface
         // also, don't load the basic auth when a plugin is getting activated, because
         // it could be the basic auth plugin, and it doesn't check if its methods are already defined
         // and causes a fatal error
-        if ($this->request->getRequestParam('activate') !== 'true'
+        if (($this->request->isWordPressApi() || $this->request->isApi())
+            && $this->request->getRequestParam('activate') !== 'true'
             && ! function_exists('json_basic_auth_handler')
             && ! function_exists('json_basic_auth_error')
             && ! in_array(
@@ -390,7 +396,7 @@ final class EE_System implements ResettableInterface
                 true
             )
         ) {
-            include_once EE_THIRD_PARTY . 'wp-api-basic-auth' . DS . 'basic-auth.php';
+            include_once EE_THIRD_PARTY . 'wp-api-basic-auth/basic-auth.php';
         }
         do_action('AHEE__EE_System__load_espresso_addons__complete');
     }
@@ -835,6 +841,7 @@ final class EE_System implements ResettableInterface
      *
      * @return void
      * @throws ReflectionException
+     * @throws Exception
      */
     public function load_core_configuration()
     {
@@ -842,12 +849,14 @@ final class EE_System implements ResettableInterface
         $this->loader->getShared('EE_Load_Textdomain');
         // load textdomain
         EE_Load_Textdomain::load_textdomain();
+        // load caf stuff a chance to play during the activation process too.
+        $this->_maybe_brew_regular();
         // load and setup EE_Config and EE_Network_Config
         $config = $this->loader->getShared('EE_Config');
         $this->loader->getShared('EE_Network_Config');
         // setup autoloaders
         // enable logging?
-        if ($config->admin->use_full_logging) {
+        if ($config->admin->use_remote_logging) {
             $this->loader->getShared('EE_Log');
         }
         // check for activation errors
@@ -858,8 +867,6 @@ final class EE_System implements ResettableInterface
         }
         // get model names
         $this->_parse_model_names();
-        // load caf stuff a chance to play during the activation process too.
-        $this->_maybe_brew_regular();
         // configure custom post type definitions
         $this->loader->getShared('EventEspresso\core\domain\entities\custom_post_types\CustomTaxonomyDefinitions');
         $this->loader->getShared('EventEspresso\core\domain\entities\custom_post_types\CustomPostTypeDefinitions');
@@ -924,6 +931,23 @@ final class EE_System implements ResettableInterface
         if ($domain->isCaffeinated()) {
             require_once EE_CAFF_PATH . 'brewing_regular.php';
         }
+    }
+
+
+    /**
+     * @since 4.9.71.p
+     * @throws Exception
+     */
+    public function loadRouteMatchSpecifications()
+    {
+        try {
+            $this->loader->getShared(
+                'EventEspresso\core\services\route_match\RouteMatchSpecificationManager'
+            );
+        } catch (Exception $exception) {
+            new ExceptionStackTraceDisplay($exception);
+        }
+        do_action('AHEE__EE_System__loadRouteMatchSpecifications');
     }
 
 
@@ -1129,6 +1153,8 @@ final class EE_System implements ResettableInterface
         } elseif ($this->request->isAdmin() || $this->request->isAdminAjax()) {
             do_action('AHEE__EE_System__load_controllers__load_admin_controllers');
             $this->loader->getShared('EE_Admin');
+        } elseif ($this->request->isWordPressHeartbeat()) {
+            $this->loader->getShared('EventEspresso\core\domain\services\admin\ajax\WordpressHeartbeat');
         }
         do_action('AHEE__EE_System__load_controllers__complete');
     }
@@ -1144,10 +1170,19 @@ final class EE_System implements ResettableInterface
      */
     public function core_loaded_and_ready()
     {
-        if ($this->request->isAdmin() || $this->request->isFrontend() || $this->request->isIframe()) {
+        if ($this->request->isAdmin()
+            || $this->request->isFrontend()
+            || $this->request->isIframe()
+            || $this->request->isWordPressApi()
+        ) {
             try {
                 $this->loader->getShared('EventEspresso\core\services\assets\Registry');
                 $this->loader->getShared('EventEspresso\core\domain\services\assets\CoreAssetManager');
+                if ($this->canLoadBlocks()) {
+                    $this->loader->getShared(
+                        'EventEspresso\core\services\editor\BlockRegistrationManager'
+                    );
+                }
             } catch (Exception $exception) {
                 new ExceptionStackTraceDisplay($exception);
             }
@@ -1286,5 +1321,19 @@ final class EE_System implements ResettableInterface
     public function remove_pages_from_wp_list_pages($exclude_array)
     {
         return array_merge($exclude_array, $this->registry->CFG->core->get_critical_pages_array());
+    }
+
+
+    /**
+     * Return whether blocks can be registered/loaded or not.
+     * @return bool
+     */
+    private function canLoadBlocks()
+    {
+        return apply_filters('FHEE__EE_System__canLoadBlocks', true)
+               && function_exists('register_block_type')
+               // don't load blocks if in the Divi page builder editor context
+               // @see https://github.com/eventespresso/event-espresso-core/issues/814
+               && ! $this->request->getRequestParam('et_fb', false);
     }
 }

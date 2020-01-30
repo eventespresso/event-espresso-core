@@ -286,7 +286,7 @@ class EEM_Datetime_Test extends EE_UnitTestCase {
 		}
 
 		//make sure now is in the timezone we want to test with.
-		$now =  new Datetime( '@' . ( time() + ( DAY_IN_SECONDS * 30 ) ) );
+		$now =  new DateTime( '@' . ( time() + ( DAY_IN_SECONDS * 30 ) ) );
 		$now->setTimeZone( new DateTimeZone( EEH_DTT_Helper::get_timezone() ) );
 		$now->setTime( '8', '0', '0' );
 		$now->setTimeZone( new DateTimeZone( 'America/Toronto' ) );
@@ -314,6 +314,52 @@ class EEM_Datetime_Test extends EE_UnitTestCase {
 		$this->assertEquals( $now->format('H'), $actual->format( 'H' ) );
 		$this->assertEquals( $now->format('i'), $actual->format('i' ) );
 	}
+
+
+    /**
+     * @since 4.9.80.p
+     */
+	public function testCreateNewBlankDatetimeWithFilters() {
+        $start_date = new DateTime('@' . strtotime('2012-10-12'));
+        $end_date = new DateTime('@' . strtotime('2012-10-31'));
+        add_filter(
+            'FHEE__EEM_Datetime__create_new_blank_datetime__start_date',
+            function () use ($start_date) {
+                return $start_date->format('U');
+            }
+        );
+        add_filter(
+            'FHEE__EEM_Datetime__create_new_blank_datetime__end_date',
+            function () use ($end_date) {
+                return $end_date->format('U');
+            }
+        );
+        add_filter(
+            'FHEE__EEM_Datetime__create_new_blank_datetime__start_time',
+            function () {
+                return ['10am', 'ga'];
+            }
+        );
+        add_filter(
+            'FHEE__EEM_Datetime__create_new_blank_datetime__end_time',
+            function () {
+                return ['8pm', 'ga'];
+            }
+        );
+        $blank_date = EEM_Datetime::instance()->create_new_blank_datetime()[0];
+        $actual_start = $blank_date->get_DateTime_object('DTT_EVT_start');
+        $actual_end = $blank_date->get_DateTime_object('DTT_EVT_end');
+
+        $start_date->setTime('10', '0', '0');
+        $end_date->setTime('20', '0', '0');
+        $formats = [ 'Y', 'm', 'd', 'H', 'i' ];
+        // test each format to ensure it matches expectation
+        foreach( $formats as $format ) {
+            $message = 'For format ' . $format;
+            $this->assertEquals($actual_start->format($format), $start_date->format($format), $message);
+            $this->assertEquals($actual_end->format($format), $end_date->format($format), $message );
+        }
+    }
 
 
 
@@ -405,11 +451,16 @@ class EEM_Datetime_Test extends EE_UnitTestCase {
 	 * @since 4.8.27.rc.005
 	 */
 	public function test_get_datetime_counts_by_status_and_get_datetime_count_for_status() {
+
+	    $existing_datetimes = EEM_Datetime::instance()->get_all();
+        $this->assertInternalType('array', $existing_datetimes);
+        $this->assertCount(0, $existing_datetimes);
 		//setup some datetimes for testing with
 		$upcoming_datetimes = $this->factory->datetime->create_many(5);
 		//set upcoming datetimes to actually be upcoming!
 		foreach( $upcoming_datetimes as $datetime ) {
-			$datetime->set('DTT_EVT_start', time() + 500 );
+			$datetime->set('DTT_EVT_start', time() + MONTH_IN_SECONDS );
+            $datetime->set('DTT_EVT_end', time() + (MONTH_IN_SECONDS + DAY_IN_SECONDS) );
 			$datetime->save();
 		}
 
@@ -417,13 +468,15 @@ class EEM_Datetime_Test extends EE_UnitTestCase {
 		$expired_datetimes = $this->factory->datetime->create_many(2);
 		//set expired
 		foreach( $expired_datetimes as $datetime ) {
-			$datetime->set( 'DTT_EVT_end', time() - 500 );
-			$datetime->set( 'DTT_EVT_start', time() - 1000 );
+			$datetime->set( 'DTT_EVT_start', time() - (MONTH_IN_SECONDS + DAY_IN_SECONDS) );
+			$datetime->set( 'DTT_EVT_end', time() - MONTH_IN_SECONDS );
 			$datetime->save();
 		}
 
 		//active datetimes
-		$active_datetime = $this->factory->datetime->create( array( 'DTT_EVT_start' => time() - 500, 'DTT_EVT_end' => time() + 500 ) );
+		$active_datetime = $this->factory->datetime->create(
+		    array( 'DTT_EVT_start' => time() - DAY_IN_SECONDS, 'DTT_EVT_end' => time() + DAY_IN_SECONDS )
+        );
 
 		//now get the results from the method being tested
 		$datetimes_count = EEM_Datetime::instance()->get_datetime_counts_by_status();
@@ -438,4 +491,46 @@ class EEM_Datetime_Test extends EE_UnitTestCase {
 		$this->assertEquals( 1, EEM_Datetime::instance()->get_datetime_count_for_status() );
 		$this->assertEquals( 2, EEM_Datetime::instance()->get_datetime_count_for_status( EE_Datetime::expired ) );
 	}
+
+    /**
+     * @since 4.9.74.p
+     * @group private-1
+     */
+    public function testGetAllExcludeProtected()
+    {
+        // create two events, one is password-protected
+        $e_password = $this->new_model_obj_with_dependencies(
+            'Event',
+            array(
+                'status' => EEM_Event::post_status_publish,
+                'password' => 'foobar'
+            )
+        );
+        $e_no_password = $this->new_model_obj_with_dependencies(
+            'Event',
+            array(
+                'status' => EEM_Event::post_status_publish,
+                'password' => ''
+            )
+        );
+
+        // create related data
+        $d_password = $this->new_model_obj_with_dependencies(
+            'Datetime',
+            array(
+                'EVT_ID' => $e_password->ID()
+            )
+        );
+        $d_no_password = $this->new_model_obj_with_dependencies(
+            'Datetime',
+            array(
+                'EVT_ID' => $e_no_password->ID()
+            )
+        );
+
+        // fetch related data. Those for password-protected events should be excluded
+        $datetime_ids = EEM_Datetime::instance()->get_col(array('exclude_protected'=>true));
+        $this->assertArrayContains((string) $d_no_password->ID(),$datetime_ids);
+        $this->assertArrayDoesNotContain((string) $d_password, $datetime_ids);
+    }
 }

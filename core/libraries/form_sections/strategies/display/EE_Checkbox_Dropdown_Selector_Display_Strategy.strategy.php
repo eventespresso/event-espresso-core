@@ -37,6 +37,17 @@ class EE_Checkbox_Dropdown_Selector_Display_Strategy extends EE_Compound_Input_D
             EVENT_ESPRESSO_VERSION,
             true
         );
+        wp_localize_script(
+            'ticket_selector',
+            'eeDTS',
+            array(
+                'maxChecked' => EE_Registry::instance()
+                    ->CFG
+                    ->template_settings
+                    ->EED_Ticket_Selector
+                    ->getDatetimeSelectorMaxChecked()
+            )
+        );
         wp_enqueue_script('checkbox_dropdown_selector');
     }
 
@@ -113,7 +124,7 @@ class EE_Checkbox_Dropdown_Selector_Display_Strategy extends EE_Compound_Input_D
         $html .= ' class="' . $input->html_class() . ' checkbox-dropdown-selector-btn button-secondary button"';
         $html .= ' style="' . $input->html_style() . '"';
         $html .= ' data-target="' . $input->html_id() . '-options-dv"';
-        $html .= ' ' . $input->html_other_attributes() . '>';
+        $html .= ' ' . $input->other_html_attributes() . '>';
         $html .= '<span class="checkbox-dropdown-selector-selected-spn">';
         $html .= $select_button_text;
         $html .= '</span> <span class="dashicons dashicons-arrow-down"></span>';
@@ -149,7 +160,7 @@ class EE_Checkbox_Dropdown_Selector_Display_Strategy extends EE_Compound_Input_D
             $html .= ' name="' . $input->html_name() . '[]"';
             $html .= ' id="' . $html_id . '"';
             $html .= ' class="' . $input->html_class() . '-option"';
-            $html .= ' style="' . $input->html_style() . '"';
+            $html .= $input->html_style() ? ' style="' . $input->html_style() . '"' : '';
             $html .= ' value="' . esc_attr($value) . '"';
             $html .= ! empty($input_raw_value) && in_array($value, $input_raw_value, true)
                 ? ' checked="checked"'
@@ -163,6 +174,17 @@ class EE_Checkbox_Dropdown_Selector_Display_Strategy extends EE_Compound_Input_D
         $html .= EEH_HTML::ulx();
         $html .= EEH_HTML::divx();
         $html .= EEH_HTML::divx();
+        $html .= EEH_HTML::p(
+            apply_filters(
+                'FHEE__EE_Checkbox_Dropdown_Selector_Display_Strategy__display__html',
+                esc_html__(
+                    'To view additional ticket options, click the "Filter by Date" button and select more dates.',
+                    'event_espresso'
+                )
+            ),
+            $input->html_id() . '-date-time-filter-notice-pg',
+            'date-time-filter-notice-pg small-text lt-grey-text'
+        );
         $html .= \EEH_HTML::br();
         return $html;
     }
