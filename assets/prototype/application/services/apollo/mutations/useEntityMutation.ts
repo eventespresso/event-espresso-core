@@ -155,8 +155,10 @@ const useEntityMutation = (type: EntityType, id?: string): EntityMutation => {
 		onCompleted: OnMutationCompletedFn,
 		mutationType: MutationType
 	): void => {
-		toaster.dismiss(getToasterMessage(mutationType));
-		toaster.success(`successfully ${getToasterMessage(mutationType, 'ed')}`);
+		const dismissMessage = getToasterMessage(mutationType);
+		const successMessage = `successfully ${getToasterMessage(mutationType, 'ed')}`;
+		toaster.dismiss(dismissMessage);
+		toaster.success(successMessage);
 		const { data, errors } = response;
 		const error = errors && errors.length > 0 ? new ApolloError({ graphQLErrors: errors }) : undefined;
 
@@ -176,8 +178,10 @@ const useEntityMutation = (type: EntityType, id?: string): EntityMutation => {
 	 *
 	 */
 	const onMutationError = (error: Error, onError: OnMutationErrorFn, mutationType: MutationType): void => {
-		toaster.dismiss(getToasterMessage(mutationType));
-		toaster.error(`error ${getToasterMessage(mutationType)}`);
+		const dismissMessage = getToasterMessage(mutationType);
+		const successMessage = `error ${getToasterMessage(mutationType)}`;
+		toaster.dismiss(dismissMessage);
+		toaster.success(successMessage);
 
 		updateResult({
 			loading: false,
