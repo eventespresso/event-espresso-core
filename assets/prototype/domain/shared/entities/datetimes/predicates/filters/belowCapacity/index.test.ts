@@ -7,7 +7,7 @@ import { nodes as datetimes } from '../../../../../../eventEditor/data/queries/d
 const datetime = datetimes[0];
 
 describe('belowCapacity', () => {
-	it('Should return empty array if dates are deleted', () => {
+	it('Should return empty array if dates are trashed', () => {
 		const filteredDates = belowCapacity({
 			capacity: 50,
 			dates: [

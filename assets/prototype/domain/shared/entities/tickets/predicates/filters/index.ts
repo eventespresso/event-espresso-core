@@ -1,5 +1,5 @@
 import allOnSaleAndPending from './allOnSaleAndPending';
-import archivedOnly from './archivedOnly';
+import trashedOnly from './trashedOnly';
 import expiredOnly from './expiredOnly';
 import nextOnSaleOrPendingOnly from './nextOnSaleOrPendingOnly';
 import onSaleOnly from './onSaleOnly';
@@ -35,8 +35,8 @@ const filters = ({ tickets, show = ShowTickets.nextOnSaleOrPendingOnly }: Filter
 			return percentSoldAtOrAbove({ percentage: 90, tickets });
 		case ShowTickets.all:
 			return tickets;
-		case ShowTickets.archivedOnly:
-			return archivedOnly(tickets);
+		case ShowTickets.trashedOnly:
+			return trashedOnly(tickets);
 		case ShowTickets.below50Sold:
 			return percentSoldBelow({ percentage: 50, tickets });
 		case ShowTickets.expiredOnly:

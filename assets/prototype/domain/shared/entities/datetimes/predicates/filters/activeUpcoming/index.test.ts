@@ -9,6 +9,4 @@ describe('activeUpcoming', () => {
 			expect(date.isActive || date.isUpcoming).toBe(true);
 		});
 	});
-
-	it('Should return empty array if there are no active dates', () => {});
 });

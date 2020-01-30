@@ -55,8 +55,8 @@ const ShowTicketsControl: React.FC<ShowDatesControlProps> = ({
 							: __('all tickets for all dates', 'event_espresso'),
 					},
 					{
-						value: ShowTickets.archivedOnly,
-						label: __('archived tickets only', 'event_espresso'),
+						value: ShowTickets.trashedOnly,
+						label: __('trashed tickets only', 'event_espresso'),
 					},
 					{
 						value: ShowTickets.below50Sold,

@@ -16,7 +16,7 @@ export enum ShowTickets {
 	above75Sold = 'above-75-sold',
 	above90Sold = 'above-90-sold',
 	all = 'all',
-	archivedOnly = 'archived-only',
+	trashedOnly = 'trashed-only',
 	below50Sold = 'below-50-sold',
 	expiredOnly = 'expired-only',
 	nextOnSaleOrPendingOnly = 'next-on-sale-or-pending-only',

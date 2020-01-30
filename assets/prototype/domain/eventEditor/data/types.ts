@@ -8,6 +8,10 @@ export interface Entity {
 	__typename?: string;
 }
 
+export interface Trashable {
+	isTrashed: boolean;
+}
+
 export interface EntityEdge<E = Entity, ConnectionTypeName = string> {
 	nodes: E[];
 	__typename: ConnectionTypeName;
@@ -23,7 +27,7 @@ export enum DatetimeStatus {
 	inactive = 'DTI',
 }
 
-export interface Datetime extends Entity {
+export interface Datetime extends Entity, Trashable {
 	capacity: number;
 	description: string;
 	endDate: string;
@@ -31,7 +35,6 @@ export interface Datetime extends Entity {
 	isExpired: boolean;
 	isPrimary: boolean;
 	isSoldOut: boolean;
-	isTrashed: boolean;
 	isUpcoming: boolean;
 	length: number;
 	order: number;
@@ -51,7 +54,7 @@ export interface DatetimesList {
 	espressoDatetimes: DatetimeEdge;
 }
 
-export interface Price extends Entity {
+export interface Price extends Entity, Trashable {
 	amount: number | string;
 	desc: string;
 	isBasePrice: boolean;
@@ -59,7 +62,6 @@ export interface Price extends Entity {
 	isDiscount: boolean;
 	isPercent: boolean;
 	isTax: boolean;
-	isTrashed: boolean;
 	order: number | string;
 	overrides: string;
 	priceTypeOrder: number | string;
@@ -71,7 +73,7 @@ export interface PricesList {
 	espressoPrices: PriceEdge;
 }
 
-export interface Ticket extends Entity {
+export interface Ticket extends Entity, Trashable {
 	description: string;
 	endDate: string; // ISO string
 	isDefault: boolean;
@@ -79,7 +81,6 @@ export interface Ticket extends Entity {
 	isRequired: boolean;
 	isSoldOut: boolean;
 	isTaxable: boolean;
-	isTrashed: boolean;
 	max: number;
 	min: number;
 	order: number;
@@ -110,13 +111,12 @@ export enum PriceBasetype {
 	TAX = 'TAX',
 }
 
-export interface PriceType extends Entity {
+export interface PriceType extends Entity, Trashable {
 	baseType: PriceBasetype;
 	isBasePrice: boolean;
 	isDiscount: boolean;
 	isPercent: boolean;
 	isTax: boolean;
-	isTrashed: boolean;
 	order: number;
 }
 
