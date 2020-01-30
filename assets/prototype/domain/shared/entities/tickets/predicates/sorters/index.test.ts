@@ -8,7 +8,7 @@ describe('sorters', () => {
 	it('should return tickets sorted in default chronological order if no order prop is provided', () => {
 		const sortedTickets = sorters({ tickets });
 		sortedTickets.forEach((currentTicket, index) => {
-			const nextTicket = sortedTickets.length <= index + 1 ? sortedTickets[index + 1] : null;
+			const nextTicket = index + 1 <= sortedTickets.length ? sortedTickets[index + 1] : null;
 			if (nextTicket) {
 				const chronologicComparison = compareAsc(
 					parseISO(currentTicket.startDate),

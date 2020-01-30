@@ -1,16 +1,16 @@
 import { compareAsc, parseISO } from 'date-fns';
-import { ascend, prop, propOr, sortWith } from 'ramda';
+import { ascend, prop, propOr, sort, sortWith } from 'ramda';
 
 import { SortTickets } from '../../../../../eventEditor/data/ticket/types';
 import { Ticket } from '../../../../../eventEditor/data/types';
 
-type sortFn = (a: Ticket, b: Ticket) => number;
 const sortChronologically = (tickets: Ticket[]): Ticket[] => {
 	const chronologicPredicate = ({ startDate: dateLeft }: Ticket, { startDate: dateRight }: Ticket): number => {
 		return compareAsc(parseISO(dateLeft), parseISO(dateRight));
 	};
-	const sortPredicates: sortFn[] = [ascend(prop('name')), ascend(prop('id')), chronologicPredicate];
-	return sortWith(sortPredicates, tickets);
+	// const sortPredicates: any[] = [pipe(prop('name'), ascend), pipe(prop('id'), ascend), chronologicPredicate];
+	// return sortWith(sortPredicates, tickets);
+	return sort(chronologicPredicate, tickets);
 };
 
 interface SortTicketsProps {
