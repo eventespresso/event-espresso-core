@@ -35,6 +35,13 @@ abstract class BaseNode
      * @var boolean
      */
     protected $complete;
+
+
+    /**
+     * @var array of model names we don't want to traverse
+     */
+    protected $dont_traverse_models;
+
     /**
      * Whether this item has already been initialized
      */
@@ -107,8 +114,10 @@ abstract class BaseNode
     public function __sleep()
     {
         $this->c = $this->complete;
+        $this->dtm = $this->dont_traverse_models;
         return [
-            'c'
+            'c',
+            'dtm'
         ];
     }
 
@@ -119,6 +128,7 @@ abstract class BaseNode
     public function __wakeup()
     {
         $this->complete = $this->c;
+        $this->dont_traverse_models = $this->dtm;
     }
 }
 // End of file BaseNode.php

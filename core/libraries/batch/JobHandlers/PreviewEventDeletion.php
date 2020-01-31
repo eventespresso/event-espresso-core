@@ -2,10 +2,17 @@
 
 namespace EventEspressoBatchRequest\JobHandlers;
 
+use EE_Base_Class;
+use EE_Error;
 use EEM_Event;
 use EEM_Price;
+use EEM_Registration;
 use EEM_Ticket;
+use EEM_Transaction;
+use EETests\bootstrap\CoreLoader;
 use EventEspresso\core\exceptions\InvalidClassException;
+use EventEspresso\core\exceptions\InvalidDataTypeException;
+use EventEspresso\core\exceptions\InvalidInterfaceException;
 use EventEspresso\core\services\loaders\LoaderFactory;
 use EventEspresso\core\services\orm\tree_traversal\ModelObjNode;
 use EventEspresso\core\services\orm\tree_traversal\NodeGroupDao;
@@ -13,6 +20,8 @@ use EventEspressoBatchRequest\Helpers\BatchRequestException;
 use EventEspressoBatchRequest\Helpers\JobParameters;
 use EventEspressoBatchRequest\Helpers\JobStepResponse;
 use EventEspressoBatchRequest\JobHandlerBaseClasses\JobHandler;
+use InvalidArgumentException;
+use ReflectionException;
 
 /**
  * Class EventDeletion
@@ -32,17 +41,23 @@ class PreviewEventDeletion extends JobHandler
      * @var NodeGroupDao
      */
     protected $model_obj_node_group_persister;
+
     public function __construct(NodeGroupDao $model_obj_node_group_persister)
     {
         $this->model_obj_node_group_persister = $model_obj_node_group_persister;
     }
 
     // phpcs:disable PSR1.Methods.CamelCapsMethodName.NotCamelCaps
+
     /**
      *
      * @param JobParameters $job_parameters
-     * @throws BatchRequestException
      * @return JobStepResponse
+     * @throws EE_Error
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws InvalidArgumentException
+     * @throws ReflectionException
      */
     public function create_job(JobParameters $job_parameters)
     {
@@ -51,9 +66,12 @@ class PreviewEventDeletion extends JobHandler
         // Find all the root nodes to delete (this isn't just events, because there's other data, like related tickets,
         // prices, message templates, etc, whose model definition doesn't make them dependent on events. But,
         // we have no UI to access them independent of events, so they may as well get deleted too.)
-        $model_objects_to_delete = [];
+        $roots = [];
         foreach ($event_ids as $event_id) {
-            $event = EEM_Event::instance()->get_one_by_ID($event_id);
+            $roots[] = new ModelObjNode(
+                $event_id,
+                EEM_Event::instance()
+            );
             // Also, we want to delete their related, non-global, tickets, prices and message templates
             $related_non_global_tickets = EEM_Ticket::instance()->get_all_deleted_and_undeleted(
                 [
@@ -63,6 +81,13 @@ class PreviewEventDeletion extends JobHandler
                     ]
                 ]
             );
+            foreach ($related_non_global_tickets as $ticket) {
+                $roots[] = new ModelObjNode(
+                    $ticket->ID(),
+                    $ticket->get_model(),
+                    ['Registration']
+                );
+            }
             $related_non_global_prices = EEM_Price::instance()->get_all_deleted_and_undeleted(
                 [
                     [
@@ -71,25 +96,108 @@ class PreviewEventDeletion extends JobHandler
                     ]
                 ]
             );
-            $model_objects_to_delete = array_merge(
-                $model_objects_to_delete,
-                [$event],
-                $related_non_global_tickets,
-                $related_non_global_prices
-            );
+            foreach ($related_non_global_prices as $price) {
+                $roots[] = new ModelObjNode(
+                    $price->ID(),
+                    $price->get_model()
+                );
+            }
         }
-        $roots = [];
-        foreach ($model_objects_to_delete as $model_object) {
-            $roots[] = new ModelObjNode($model_object->ID(), $model_object->get_model());
+        $transactions_ids = $this->getTransactionsToDelete($event_ids);
+        foreach ($transactions_ids as $transaction_id) {
+            $roots[] = new ModelObjNode(
+                $transaction_id,
+                EEM_Transaction::instance(),
+                ['Registration']
+            );
         }
         $job_parameters->add_extra_data('roots', $roots);
         // Set an estimate of how long this will take (we're discovering as we go, so it seems impossible to give
         // an accurate count.)
-        $estimated_work_per_model_obj = 100;
-        $job_parameters->set_job_size(count($roots) * $estimated_work_per_model_obj);
+        $estimated_work_per_model_obj = 10;
+        $count_regs = EEM_Registration::instance()->count(
+            [
+                [
+                    'EVT_ID' => ['IN', $event_ids]
+                ]
+            ]
+        );
+        $job_parameters->set_job_size((count($roots) + $count_regs) * $estimated_work_per_model_obj);
         return new JobStepResponse(
             $job_parameters,
             esc_html__('Generating preview of data to be deleted...', 'event_espresso')
+        );
+    }
+
+    /**
+     * @since $VID:$
+     * @param EE_Base_Class[] $model_objs
+     * @param array $dont_traverse_models
+     * @return array
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws ReflectionException
+     */
+    protected function createModelObjNodes($model_objs, array $dont_traverse_models = [])
+    {
+        $nodes = [];
+        foreach ($model_objs as $model_obj) {
+            $nodes[] = new ModelObjNode(
+                $model_obj->ID(),
+                $model_obj->get_model(),
+                $dont_traverse_models
+            );
+        }
+        return $nodes;
+    }
+
+    /**
+     * Gets all the transactions related to these events that aren't related to other events. They'll be deleted too.
+     * (Ones that are related to other events can stay around until those other events are deleted too.)
+     * @since $VID:$
+     * @param $event_ids
+     * @return array of transaction IDs
+     */
+    protected function getTransactionsToDelete($event_ids)
+    {
+        if (empty($event_ids)) {
+            return [];
+        }
+        global $wpdb;
+        $event_ids = array_map(
+            'intval',
+            $event_ids
+        );
+        $imploded_sanitized_event_ids = implode(',', $event_ids);
+        // Select transactions with registrations for the events $event_ids which also don't have registrations
+        // for any events NOT in $event_ids.
+        // Notice the outer query searched for transactions whose registrations ARE in $event_ids,
+        // whereas the inner query checks if the outer query's transaction has any registrations that are
+        // NOT IN $event_ids (ie, don't have registrations for events we're not just about to delete.)
+        return array_map(
+            'intval',
+            $wpdb->get_col(
+                "SELECT 
+                      DISTINCT t.TXN_ID
+                    FROM 
+                      {$wpdb->prefix}esp_transaction t INNER JOIN 
+                      {$wpdb->prefix}esp_registration r ON t.TXN_ID=r.TXN_ID
+                    WHERE
+                       r.EVT_ID IN ({$imploded_sanitized_event_ids})
+                       AND NOT EXISTS 
+                       (
+                         SELECT 
+                           t.TXN_ID
+                         FROM 
+                           {$wpdb->prefix}esp_transaction tsub INNER JOIN 
+                           {$wpdb->prefix}esp_registration rsub ON tsub.TXN_ID=rsub.TXN_ID
+                         WHERE
+                           tsub.TXN_ID=t.TXN_ID AND
+                           rsub.EVT_ID NOT IN ({$imploded_sanitized_event_ids})
+                       )"
+            )
         );
     }
 
@@ -111,7 +219,7 @@ class PreviewEventDeletion extends JobHandler
             if ($units_processed >= $batch_size) {
                 break;
             }
-            if (! $root_node instanceof ModelObjNode) {
+            if (!$root_node instanceof ModelObjNode) {
                 throw new InvalidClassException('ModelObjNode');
             }
             if ($root_node->isComplete()) {

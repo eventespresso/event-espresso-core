@@ -105,7 +105,7 @@ class RelationNodeTest extends EE_UnitTestCase
         $e = $this->new_model_obj_with_dependencies('Event');
         $e_node = new RelationNode($e->ID(), $e->get_model(), EEM_Event_Venue::instance());
         // echo serialize($e_node);
-        $this->assertLessThan(188, strlen(serialize($e_node)));
+        $this->assertLessThan(202, strlen(serialize($e_node)));
     }
 }
 // End of file RelationNodeTest.php

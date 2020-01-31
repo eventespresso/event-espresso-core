@@ -204,12 +204,64 @@ class ModelObjNodeTest extends EE_UnitTestCase
         // Asserts that the serialized model object node stays small. Less than 125 would be great (half of it is taken
         // up by the classname
 //        echo serialize($e_node);
-        $this->assertLessThan(138, strlen(serialize($e_node)));
+        $this->assertLessThan(153, strlen(serialize($e_node)));
 
         // Also check that the fully discovered node isn't too big.
         $e_node->visit(100);
 //        echo serialize($e_node);
-        $this->assertLessThan(144, strlen(serialize($e_node)));
+        $this->assertLessThan(159, strlen(serialize($e_node)));
+    }
+
+    public function testDontVisitModelsDirectChildren()
+    {
+        $e = $this->new_model_obj_with_dependencies('Event');
+        $d = $this->new_model_obj_with_dependencies(
+            'Datetime',
+            [
+                'EVT_ID' => $e->ID()
+            ]
+        );
+        $t = $this->new_model_obj_with_dependencies('Ticket');
+        $d->_add_relation_to($t, 'Ticket');
+        $r = $this->new_model_obj_with_dependencies(
+            'Registration',
+            [
+                'EVT_ID' => $e->ID(),
+                'TKT_ID' => $t->ID()
+            ]
+        );
+        $e_node = new ModelObjNode($e->ID(), $e->get_model(), ['Registration']);
+        $e_node->visit(1000);
+        $ids_found = $e_node->getIds();
+        $this->assertArrayNotHasKey('Registration', $ids_found);
+        $this->assertArrayHasKey('Datetime',$ids_found);
+        $this->assertArrayHasKey('Datetime_Ticket',$ids_found);
+    }
+
+    public function testDontVisitModelsIndirectChildren()
+    {
+        $e = $this->new_model_obj_with_dependencies('Event');
+        $d = $this->new_model_obj_with_dependencies(
+            'Datetime',
+            [
+                'EVT_ID' => $e->ID()
+            ]
+        );
+        $t = $this->new_model_obj_with_dependencies('Ticket');
+        $d->_add_relation_to($t, 'Ticket');
+        $r = $this->new_model_obj_with_dependencies(
+            'Registration',
+            [
+                'EVT_ID' => $e->ID(),
+                'TKT_ID' => $t->ID()
+            ]
+        );
+        $e_node = new ModelObjNode($e->ID(), $e->get_model(), ['Datetime_Ticket']);
+        $e_node->visit(1000);
+        $ids_found = $e_node->getIds();
+        $this->assertArrayHasKey('Registration', $ids_found);
+        $this->assertArrayHasKey('Datetime',$ids_found);
+        $this->assertArrayNotHasKey('Datetime_Ticket',$ids_found);
     }
 }
 // End of file EntityNodeTest.php
