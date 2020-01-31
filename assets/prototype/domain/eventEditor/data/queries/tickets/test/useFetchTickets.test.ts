@@ -6,6 +6,7 @@ import { ApolloMockedProvider } from '../../../../context/TestContext';
 import { successMocks, errorMocks, nodes } from './data';
 import useInitDatetimeTestCache from '../../datetimes/test/useInitDatetimeTestCache';
 
+const timeout = 5000; // milliseconds
 describe('useFetchTickets()', () => {
 	it('checks for the error state', async () => {
 		/* Set query options and the wrapper */
@@ -36,7 +37,7 @@ describe('useFetchTickets()', () => {
 		expect(result.current.error).toBeUndefined();
 		expect(result.current.data).toBeUndefined();
 
-		await waitForNextUpdate(); // wait for response
+		await waitForNextUpdate({ timeout }); // wait for response
 
 		expect(result.current.error).toBeDefined();
 		expect(result.current.data).toBeUndefined();
@@ -70,7 +71,7 @@ describe('useFetchTickets()', () => {
 
 		expect(result.current.loading).toBe(true);
 
-		await waitForNextUpdate(); // wait for response
+		await waitForNextUpdate({ timeout }); // wait for response
 		expect(result.current.loading).toBe(false);
 	});
 
@@ -103,7 +104,7 @@ describe('useFetchTickets()', () => {
 		expect(result.current.error).toBeUndefined();
 		expect(result.current.data).toBeUndefined();
 
-		await waitForNextUpdate(); // wait for response
+		await waitForNextUpdate({ timeout }); // wait for response
 
 		// Data is already written above
 		expect(result.current.data).toBeDefined();
@@ -136,7 +137,7 @@ describe('useFetchTickets()', () => {
 			}
 		);
 
-		await waitForNextUpdate(); // wait for response
+		await waitForNextUpdate({ timeout }); // wait for response
 
 		expect(result.current.data).toHaveProperty('espressoTickets');
 

@@ -9,6 +9,7 @@ import { getMutationMocks, mockedTickets } from './data';
 import { nodes as datetimes } from '../../../queries/datetimes/test/data';
 import { nodes as prices } from '../../../queries/prices/test/data';
 
+const timeout = 5000; // milliseconds
 describe('deleteTicket', () => {
 	const mockedTicket = mockedTickets.DELETE;
 
@@ -40,7 +41,7 @@ describe('deleteTicket', () => {
 		});
 
 		// wait for mutation promise to resolve
-		await waitForNextUpdate();
+		await waitForNextUpdate({ timeout });
 
 		expect(mutationData).toEqual(mockResult.data);
 		const pathToId = ['deleteEspressoTicket', 'espressoTicket', 'name'];
@@ -73,7 +74,7 @@ describe('deleteTicket', () => {
 		});
 
 		// wait for mutation promise to resolve
-		await waitForNextMutationUpdate();
+		await waitForNextMutationUpdate({ timeout });
 
 		const relatedDatetimeIds = mutationResult.current.relationsManager.getRelations({
 			entity: 'tickets',
@@ -115,7 +116,7 @@ describe('deleteTicket', () => {
 		});
 
 		// wait for mutation promise to resolve
-		await waitForNextMutationUpdate();
+		await waitForNextMutationUpdate({ timeout });
 
 		const relatedPriceIds = mutationResult.current.relationsManager.getRelations({
 			entity: 'tickets',

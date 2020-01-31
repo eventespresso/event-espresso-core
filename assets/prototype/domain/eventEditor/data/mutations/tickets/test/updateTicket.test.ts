@@ -11,6 +11,7 @@ import { nodes as prices } from '../../../queries/prices/test/data';
 import { MutationInput } from '../../../../../../application/services/apollo/mutations/types';
 import useInitTicketTestCache from '../../../queries/tickets/test/useInitTicketTestCache';
 
+const timeout = 5000; // milliseconds
 describe('updateTicket', () => {
 	let testInput: MutationInput = { name: 'New Test Ticket', description: 'New Test Desc' };
 	const mockedTicket = mockedTickets.UPDATE;
@@ -46,7 +47,7 @@ describe('updateTicket', () => {
 		});
 
 		// wait for mutation promise to resolve
-		await waitForNextUpdate();
+		await waitForNextUpdate({ timeout });
 
 		expect(mutationData).toEqual(mockResult.data);
 		const pathToName = ['updateEspressoTicket', 'espressoTicket', 'name'];
@@ -80,7 +81,7 @@ describe('updateTicket', () => {
 		});
 
 		// wait for mutation promise to resolve
-		await waitForNextMutationUpdate();
+		await waitForNextMutationUpdate({ timeout });
 
 		// check if ticket is related to all the passed datetimes
 		const relatedDatetimeIds = mutationResult.current.relationsManager.getRelations({
@@ -149,7 +150,7 @@ describe('updateTicket', () => {
 		});
 
 		// wait for mutation promise to resolve
-		await waitForNextMutationUpdate();
+		await waitForNextMutationUpdate({ timeout });
 
 		// check if ticket is related to `tempDatetimeId`
 		relatedDatetimeIds = mutationResult.current.relationsManager.getRelations({
@@ -185,7 +186,7 @@ describe('updateTicket', () => {
 		});
 
 		// wait for mutation promise to resolve
-		await waitForNextMutationUpdate();
+		await waitForNextMutationUpdate({ timeout });
 
 		// check if ticket is related to all the passed prices
 		const relatedPriceIds = mutationResult.current.relationsManager.getRelations({
@@ -254,7 +255,7 @@ describe('updateTicket', () => {
 		});
 
 		// wait for mutation promise to resolve
-		await waitForNextMutationUpdate();
+		await waitForNextMutationUpdate({ timeout });
 
 		// check if ticket is related to `tempPriceId`
 		relatedPriceIds = mutationResult.current.relationsManager.getRelations({

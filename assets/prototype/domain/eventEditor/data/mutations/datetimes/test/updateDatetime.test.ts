@@ -10,6 +10,7 @@ import { nodes as tickets } from '../../../queries/tickets/test/data';
 import { MutationInput } from '../../../../../../application/services/apollo/mutations/types';
 import useInitDatetimeTestCache from '../../../queries/datetimes/test/useInitDatetimeTestCache';
 
+const timeout = 5000; // milliseconds
 describe('updateDatetime', () => {
 	let testInput: MutationInput = { name: 'New Test Date', description: 'New Test Desc' };
 	const mockedDatetime = mockedDatetimes.UPDATE;
@@ -44,7 +45,7 @@ describe('updateDatetime', () => {
 		});
 
 		// wait for mutation promise to resolve
-		await waitForNextUpdate();
+		await waitForNextUpdate({ timeout });
 
 		expect(mutationData).toEqual(mockResult.data);
 		const pathToName = ['updateEspressoDatetime', 'espressoDatetime', 'name'];
@@ -78,7 +79,7 @@ describe('updateDatetime', () => {
 		});
 
 		// wait for mutation promise to resolve
-		await waitForNextMutationUpdate();
+		await waitForNextMutationUpdate({ timeout });
 
 		// check if datetime is related to all the passed tickets
 		const relatedTicketIds = mutationResult.current.relationsManager.getRelations({
@@ -147,7 +148,7 @@ describe('updateDatetime', () => {
 		});
 
 		// wait for mutation promise to resolve
-		await waitForNextMutationUpdate();
+		await waitForNextMutationUpdate({ timeout });
 
 		// check if datetime is related to `tempTicketId`
 		relatedTicketIds = mutationResult.current.relationsManager.getRelations({

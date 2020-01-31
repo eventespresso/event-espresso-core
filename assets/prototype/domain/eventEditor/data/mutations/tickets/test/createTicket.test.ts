@@ -13,6 +13,7 @@ import { MutationInput } from '../../../../../../application/services/apollo/mut
 import useTicketItem from '../../../queries/tickets/useTicketItem';
 import useTicketIds from '../../../queries/tickets/useTicketIds';
 
+const timeout = 5000; // milliseconds
 describe('createTicket', () => {
 	let testInput: MutationInput = { name: 'New Test Ticket', description: 'New Test Desc' };
 	const mockedTicket = mockedTickets.CREATE;
@@ -42,7 +43,7 @@ describe('createTicket', () => {
 		});
 
 		// wait for mutation promise to resolve
-		await waitForNextUpdate();
+		await waitForNextUpdate({ timeout });
 
 		expect(mutationData).toEqual(mockResult.data);
 		const pathToName = ['createEspressoTicket', 'espressoTicket', 'name'];
@@ -71,7 +72,7 @@ describe('createTicket', () => {
 		});
 
 		// wait for mutation promise to resolve
-		await waitForNextMutationUpdate();
+		await waitForNextMutationUpdate({ timeout });
 
 		const cache = mutationResult.current.client.extract();
 		const { result: cacheResult } = renderHook(
@@ -109,7 +110,7 @@ describe('createTicket', () => {
 		});
 
 		// wait for mutation promise to resolve
-		await waitForNextMutationUpdate();
+		await waitForNextMutationUpdate({ timeout });
 
 		const cache = mutationResult.current.client.extract();
 		const { result: cacheResult } = renderHook(
@@ -152,7 +153,7 @@ describe('createTicket', () => {
 		});
 
 		// wait for mutation promise to resolve
-		await waitForNextMutationUpdate();
+		await waitForNextMutationUpdate({ timeout });
 
 		// check if ticket is related to all the passed tickets
 		const relatedDatetimeIds = mutationResult.current.relationsManager.getRelations({
@@ -200,7 +201,7 @@ describe('createTicket', () => {
 		});
 
 		// wait for mutation promise to resolve
-		await waitForNextMutationUpdate();
+		await waitForNextMutationUpdate({ timeout });
 
 		// check if ticket is related to all the passed datetimes
 		const relatedPriceIds = mutationResult.current.relationsManager.getRelations({

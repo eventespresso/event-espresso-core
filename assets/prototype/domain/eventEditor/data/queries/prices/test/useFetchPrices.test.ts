@@ -6,6 +6,7 @@ import { ApolloMockedProvider } from '../../../../context/TestContext';
 import { successMocks, errorMocks, nodes } from './data';
 import useInitTicketTestCache from '../../tickets/test/useInitTicketTestCache';
 
+const timeout = 5000; // milliseconds
 describe('useFetchPrices()', () => {
 	it('checks for the error state', async () => {
 		/* Set query options and the wrapper */
@@ -36,7 +37,7 @@ describe('useFetchPrices()', () => {
 		expect(result.current.error).toBeUndefined();
 		expect(result.current.data).toBeUndefined();
 
-		await waitForNextUpdate(); // wait for response
+		await waitForNextUpdate({ timeout }); // wait for response
 
 		expect(result.current.error).toBeDefined();
 		expect(result.current.data).toBeUndefined();
@@ -70,7 +71,7 @@ describe('useFetchPrices()', () => {
 
 		expect(result.current.loading).toBe(true);
 
-		await waitForNextUpdate(); // wait for response
+		await waitForNextUpdate({ timeout }); // wait for response
 		expect(result.current.loading).toBe(false);
 	});
 
@@ -103,7 +104,7 @@ describe('useFetchPrices()', () => {
 		expect(result.current.data).toBeUndefined();
 		expect(result.current.error).toBeUndefined();
 
-		await waitForNextUpdate(); // wait for response
+		await waitForNextUpdate({ timeout }); // wait for response
 
 		expect(result.current.data).toBeDefined();
 		expect(result.current.error).toBeUndefined();
@@ -135,7 +136,7 @@ describe('useFetchPrices()', () => {
 			}
 		);
 
-		await waitForNextUpdate(); // wait for response
+		await waitForNextUpdate({ timeout }); // wait for response
 
 		expect(result.current.data).toHaveProperty('espressoPrices');
 
