@@ -1,4 +1,3 @@
-import { head, last } from 'ramda';
 import { compareAsc, parseISO } from 'date-fns';
 
 import sorters from './index';

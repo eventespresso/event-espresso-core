@@ -8,8 +8,6 @@ const sortChronologically = (tickets: Ticket[]): Ticket[] => {
 	const chronologicPredicate = ({ startDate: dateLeft }: Ticket, { startDate: dateRight }: Ticket): number => {
 		return compareAsc(parseISO(dateLeft), parseISO(dateRight));
 	};
-	// const sortPredicates: any[] = [pipe(prop('name'), ascend), pipe(prop('id'), ascend), chronologicPredicate];
-	// return sortWith(sortPredicates, tickets);
 	return sort(chronologicPredicate, tickets);
 };
 
