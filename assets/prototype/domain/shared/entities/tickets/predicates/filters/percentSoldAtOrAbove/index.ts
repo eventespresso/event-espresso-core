@@ -23,7 +23,9 @@ export const filterFn = ({ percentage, ticket }: FilterFnProps): boolean => {
 		const { quantity, sold } = ticket;
 		const checkIfSoldAndQtyAreNumbers = is(Number, sold) && is(Number, quantity);
 
-		return checkIfSoldAndQtyAreNumbers && Math.round(sold) / Math.round(quantity) >= percentage / 100;
+		return (
+			checkIfSoldAndQtyAreNumbers && quantity !== 0 && Math.round(sold) / Math.round(quantity) >= percentage / 100
+		);
 	};
 
 	return validFiniteQuantity(ticket) && calc(ticket);
