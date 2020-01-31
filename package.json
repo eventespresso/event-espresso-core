@@ -16,8 +16,6 @@
 		}
 	},
 	"scripts": {
-		"build": "node scripts/build.js",
-		"build:css": "node ./bin/css-builder/css-builder.js",
 		"ci:build": "npm run build",
 		"ci:lint": "npm run lint",
 		"ci:test": "npm run test-js-ts",
@@ -29,6 +27,7 @@
 		"lint-php:fix": "composer run-script lint-fix",
 		"lint-php:skip-warnings": "composer run-script lint:skip-warnings",
 		"pretty": "prettier --write \"assets/prototype/**/*.js\"",
+		"prod": "node scripts/build.js",
 		"test": "npm run lint && npm run test-js",
 		"test-php": "cd tests && phpunit",
 		"test-js": "node scripts/test.js",
