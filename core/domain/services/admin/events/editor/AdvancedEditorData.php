@@ -648,7 +648,7 @@ QUERY;
         }
 
         foreach ($translations->entries as $msgid => $entry) {
-            $locale[$msgid] = $entry->translations;
+            $locale[ $msgid ] = $entry->translations;
         }
 
         return $locale;
