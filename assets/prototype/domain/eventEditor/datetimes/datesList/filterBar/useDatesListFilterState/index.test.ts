@@ -2,7 +2,7 @@ import { act, renderHook } from '@testing-library/react-hooks';
 import * as R from 'ramda';
 import { formatISO, subWeeks } from 'date-fns';
 import { Datetime } from '../../../../data/types';
-import { DatesSortedBy, DisplayDates, ShowDates } from '../../../../data/date/types';
+import { DatesSorted, DisplayDates, ShowDates } from '../../../../data/date/types';
 import { DatetimeStatus } from '../../../../../eventEditor/data/types';
 
 import useDatesListFilterState from './index';
@@ -113,22 +113,22 @@ describe('useDatesListFilterState', () => {
 		const { result } = renderHook(() => useDatesListFilterState(datetimes));
 
 		act(() => {
-			result.current.setDatesSortedBy(DatesSortedBy.byName);
+			result.current.setDatesSortedBy(DatesSorted.byName);
 		});
 		expect(result.current.datesSortedBy).toBe('byName');
 
 		act(() => {
-			result.current.setDatesSortedBy(DatesSortedBy.byId);
+			result.current.setDatesSortedBy(DatesSorted.byId);
 		});
 		expect(result.current.datesSortedBy).toBe('byId');
 
 		act(() => {
-			result.current.setDatesSortedBy(DatesSortedBy.byOrder);
+			result.current.setDatesSortedBy(DatesSorted.byOrder);
 		});
 		expect(result.current.datesSortedBy).toBe('byOrder');
 
 		act(() => {
-			result.current.setDatesSortedBy(DatesSortedBy.chronologically);
+			result.current.setDatesSortedBy(DatesSorted.chronologically);
 		});
 		expect(result.current.datesSortedBy).toBe('chronologically');
 	});
@@ -170,7 +170,7 @@ describe('useDatesListFilterState', () => {
 		const { result } = renderHook(() => useDatesListFilterState(datetimes));
 
 		act(() => {
-			result.current.setDatesSortedBy(DatesSortedBy.chronologically);
+			result.current.setDatesSortedBy(DatesSorted.chronologically);
 		});
 		const startDates = R.map(R.view(R.lensProp('startDate')))(result.current.processedDates);
 		const expectedstartDates = [
@@ -182,21 +182,21 @@ describe('useDatesListFilterState', () => {
 		expect(startDates).toEqual(expectedstartDates);
 
 		act(() => {
-			result.current.setDatesSortedBy(DatesSortedBy.byId);
+			result.current.setDatesSortedBy(DatesSorted.byId);
 		});
 		const ids = R.map(R.view(R.lensProp('id')))(result.current.processedDates);
 		const expectedIds = ['RGF0ZXRpbWU6ODM=', 'RGF0ZXRpbWU6ODU=', 'RGF0ZXRpbWU6ODU=', 'WGF0ZXRpbWU6ODM='];
 		expect(ids).toEqual(expectedIds);
 
 		act(() => {
-			result.current.setDatesSortedBy(DatesSortedBy.byName);
+			result.current.setDatesSortedBy(DatesSorted.byName);
 		});
 		const names = R.map(R.view(R.lensProp('name')))(result.current.processedDates);
 		const expectedNames = ['another title', 'just another datetime', 'test', 'test'];
 		expect(names).toEqual(expectedNames);
 
 		act(() => {
-			result.current.setDatesSortedBy(DatesSortedBy.byOrder);
+			result.current.setDatesSortedBy(DatesSorted.byOrder);
 		});
 		const datesOrder = R.map(R.view(R.lensProp('order')))(result.current.processedDates);
 		const expectedDatesOrder = [-2, -1, 1, 1];

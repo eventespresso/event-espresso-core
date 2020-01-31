@@ -1,7 +1,7 @@
 import { compareAsc, parseISO } from 'date-fns';
 
 import sorters from './index';
-import { DatesSortedBy } from '../../../../../eventEditor/data/date/types';
+import { DatesSorted } from '../../../../../eventEditor/data/date/types';
 import { nodes as dates } from '../../../../../eventEditor/data/queries/datetimes/test/data';
 
 describe('sorters', () => {
@@ -17,7 +17,7 @@ describe('sorters', () => {
 	});
 
 	it('should return dates sorted in chronological order if sort prop is set to `chronologically`', () => {
-		const sortedDates = sorters({ dates, order: DatesSortedBy.chronologically });
+		const sortedDates = sorters({ dates, order: DatesSorted.chronologically });
 		sortedDates.forEach((currentDatetime, index) => {
 			const nextDatetime = sortedDates.length <= index + 1 ? sortedDates[index + 1] : null;
 			if (nextDatetime) {
@@ -28,7 +28,7 @@ describe('sorters', () => {
 	});
 
 	it('should return dates sorted by Id if sort prop is set to `byId`', () => {
-		const sortedDates = sorters({ dates, order: DatesSortedBy.byId });
+		const sortedDates = sorters({ dates, order: DatesSorted.byId });
 		sortedDates.forEach((currentDatetime, index) => {
 			const nextDatetime = sortedDates.length <= index + 1 ? sortedDates[index + 1] : null;
 			if (nextDatetime) {
@@ -39,7 +39,7 @@ describe('sorters', () => {
 	});
 
 	it('should return dates sorted by name if sort prop is set to `byName`', () => {
-		const sortedDates = sorters({ dates, order: DatesSortedBy.byName });
+		const sortedDates = sorters({ dates, order: DatesSorted.byName });
 		sortedDates.forEach((currentDatetime, index) => {
 			const nextDatetime = sortedDates.length <= index + 1 ? sortedDates[index + 1] : null;
 			if (nextDatetime) {
@@ -50,7 +50,7 @@ describe('sorters', () => {
 	});
 
 	it('should return dates sorted by order if sort prop is set to `byOrder`', () => {
-		const sortedDates = sorters({ dates, order: DatesSortedBy.byOrder });
+		const sortedDates = sorters({ dates, order: DatesSorted.byOrder });
 		sortedDates.forEach((currentDatetime, index) => {
 			const nextDatetime = sortedDates.length <= index + 1 ? sortedDates[index + 1] : null;
 			if (nextDatetime) {

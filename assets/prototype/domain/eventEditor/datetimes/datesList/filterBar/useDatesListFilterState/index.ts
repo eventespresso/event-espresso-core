@@ -7,7 +7,7 @@ import { useReducer } from 'react';
  * Internal dependencies
  */
 import { Datetime } from '../../../../data/types';
-import { DatesSortedBy, DisplayDates, ShowDates } from '../../../../data/date/types';
+import { DatesSorted, DisplayDates, ShowDates } from '../../../../data/date/types';
 import filters from '../../../../../shared/entities/datetimes/predicates/filters';
 import sorters from '../../../../../shared/entities/datetimes/predicates/sorters';
 
@@ -19,14 +19,14 @@ enum ActionType {
 
 interface DatesListFilterState {
 	dates: Datetime[];
-	datesSortedBy: DatesSortedBy;
+	datesSortedBy: DatesSorted;
 	displayDates: DisplayDates;
 	processedDates: Datetime[];
 	showDates: ShowDates;
 }
 
 interface DatesListFilterStateManager extends DatesListFilterState {
-	setDatesSortedBy: (datesSortedBy: DatesSortedBy) => void;
+	setDatesSortedBy: (datesSortedBy: DatesSorted) => void;
 	setDisplayDates: (displayDates: DisplayDates) => void;
 	setShowDates: (showDates: ShowDates) => void;
 }
@@ -34,14 +34,14 @@ interface DatesListFilterStateManager extends DatesListFilterState {
 const useDatesListFilterState = (dates: Datetime[]): DatesListFilterStateManager => {
 	const initialState: DatesListFilterState = {
 		dates,
-		datesSortedBy: DatesSortedBy.chronologically,
+		datesSortedBy: DatesSorted.chronologically,
 		displayDates: DisplayDates.start,
 		processedDates: [],
 		showDates: ShowDates.all,
 	};
 	const [state, dispatch] = useReducer(reducer, initialState);
 
-	const setDatesSortedBy = (datesSortedBy: DatesSortedBy): void => {
+	const setDatesSortedBy = (datesSortedBy: DatesSorted): void => {
 		dispatch({
 			type: ActionType.SET_DATES_SORTED_BY,
 			datesSortedBy,
@@ -71,7 +71,7 @@ const useDatesListFilterState = (dates: Datetime[]): DatesListFilterStateManager
 };
 
 interface Action {
-	datesSortedBy?: DatesSortedBy;
+	datesSortedBy?: DatesSorted;
 	displayDates?: DisplayDates;
 	showDates?: ShowDates;
 	type: ActionType;

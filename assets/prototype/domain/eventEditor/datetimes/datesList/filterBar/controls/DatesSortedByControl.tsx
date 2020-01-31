@@ -4,11 +4,11 @@
 import React, { useMemo } from 'react';
 import { SelectControl } from '@wordpress/components';
 import { __ } from '@wordpress/i18n'; // @todo: replace with '@eventespresso/i18n'
-import { DatesSortedBy } from '../../../../data/date/types';
+import { DatesSorted } from '../../../../data/date/types';
 
-interface DatesSortedByControlProps {
-	datesSortedBy: DatesSortedBy;
-	setDatesSortedBy: (datesSortedBy: DatesSortedBy) => void;
+interface DatesSortedControlProps {
+	datesSortedBy: DatesSorted;
+	setDatesSortedBy: (datesSortedBy: DatesSorted) => void;
 }
 /**
  * filter for controlling the sorting of a list of Event Dates
@@ -17,7 +17,7 @@ interface DatesSortedByControlProps {
  * @param {Function} setDatesSortedBy
  * @return {Object} rendered control
  */
-const DatesSortedByControl: React.FC<DatesSortedByControlProps> = ({
+const DatesSortedControl: React.FC<DatesSortedByControlProps> = ({
 	datesSortedBy,
 	setDatesSortedBy,
 }): JSX.Element => {
@@ -51,4 +51,4 @@ const DatesSortedByControl: React.FC<DatesSortedByControlProps> = ({
 	}, [datesSortedBy, setDatesSortedBy]);
 };
 
-export default DatesSortedByControl;
+export default DatesSortedControl;

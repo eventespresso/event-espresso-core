@@ -3,7 +3,7 @@ import React from 'react';
  * Internal imports
  */
 import useDatesListFilterState from './useDatesListFilterState';
-import DatesSortedByControl from './controls/DatesSortedByControl';
+import DatesSortedControl from './controls/DatesSortedByControl';
 import DisplayDatesControl from './controls/DisplayDatesControl';
 import ShowDatesControl from './controls/ShowDatesControl';
 
