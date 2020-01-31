@@ -11,8 +11,6 @@ const devConfig = config(DEVELOPMENT);
 webpack(devConfig).watch({}, (err, stats) => {
 	if (err) {
 		console.error(err);
-	} else {
-		copyPublicFolder();
 	}
 	console.error(
 		stats.toString({
@@ -21,10 +19,3 @@ webpack(devConfig).watch({}, (err, stats) => {
 		})
 	);
 });
-
-function copyPublicFolder() {
-	fs.copySync(paths.appPublic, paths.appBuild, {
-		dereference: true,
-		filter: (file) => file !== paths.appHtml,
-	});
-}
