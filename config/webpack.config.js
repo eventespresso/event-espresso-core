@@ -143,10 +143,6 @@ module.exports = function(webpackEnv) {
 	};
 
 	const entry = Object.entries(entries).reduce((newObj, [entry, path]) => {
-		// newObj[entry] = [isEnvDevelopment && require.resolve('react-dev-utils/webpackHotDevClient'), path].filter(
-		// 	Boolean
-		// );
-
 		newObj[entry] = [path].filter(Boolean);
 
 		return newObj;
