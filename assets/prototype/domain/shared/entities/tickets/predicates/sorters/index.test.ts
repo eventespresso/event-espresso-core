@@ -15,8 +15,6 @@ describe('sorters', () => {
 					parseISO(nextTicket.startDate)
 				);
 				expect(chronologicComparison).toBe(-1);
-				expect(currentTicket.id < nextTicket.id).toBe(-1);
-				expect(currentTicket.name < nextTicket.name).toBe(-1);
 			}
 		});
 	});
