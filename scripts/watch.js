@@ -12,7 +12,7 @@ webpack(devConfig).watch({}, (err, stats) => {
 	if (err) {
 		console.error(err);
 	}
-	console.error(
+	console.log(
 		stats.toString({
 			chunks: false,
 			colors: true,
