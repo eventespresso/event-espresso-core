@@ -8,6 +8,6 @@ import { Ticket } from '../../../../eventEditor/data/types';
  * @param {Object} ticket object
  * @return {boolean} true if ticket is archived
  */
-const isArchived = (ticket: Ticket): boolean => ticket.isDeleted;
+const isArchived = (ticket: Ticket): boolean => ticket.isTrashed;
 
 export default isArchived;
