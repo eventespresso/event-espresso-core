@@ -12,6 +12,7 @@ use EEM_Price;
 use EEM_Price_Type;
 use EEM_Ticket;
 use EEM_Venue;
+use EEH_DTT_Helper;
 use EventEspresso\core\domain\services\assets\EspressoEditorAssetManager;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
@@ -166,7 +167,9 @@ var eeEditorData={$data};
 
         $generalSettings = $this->getGraphQLGeneralSettings();
 
-        return compact('event', 'graphqlEndpoint', 'currentUser', 'generalSettings');
+        $i18n = self::getJedLocaleData('event_espresso');
+
+        return compact('event', 'graphqlEndpoint', 'currentUser', 'generalSettings', 'i18n');
     }
 
 
@@ -620,5 +623,34 @@ QUERY;
             }, $ID);
         }
         return Relay::toGlobalId($type, $ID);
+    }
+
+
+    /**
+     * Returns Jed-formatted localization data.
+     *
+     * @param  string $domain Translation domain.
+     * @return array
+     */
+    public static function getJedLocaleData($domain)
+    {
+        $translations = get_translations_for_domain($domain);
+
+        $locale = array(
+            '' => array(
+                'domain' => $domain,
+                'lang'   => is_admin() ? EEH_DTT_Helper::get_user_locale() : get_locale()
+            ),
+        );
+
+        if (! empty($translations->headers['Plural-Forms'])) {
+            $locale['']['plural_forms'] = $translations->headers['Plural-Forms'];
+        }
+
+        foreach ($translations->entries as $msgid => $entry) {
+            $locale[ $msgid ] = $entry->translations;
+        }
+
+        return $locale;
     }
 }

@@ -15,6 +15,8 @@ import useInitTicketTestCache from '../../../queries/tickets/test/useInitTicketT
 import useTickets from '../../../queries/tickets/useTickets';
 import useTicketQueryOptions from '../../../queries/tickets/useTicketQueryOptions';
 
+const timeout = 5000; // milliseconds
+
 describe('createDatetime', () => {
 	let testInput: MutationInput = { name: 'New Test Date', description: 'New Test Desc' };
 	const mockedDatetime = mockedDatetimes.CREATE;
@@ -43,7 +45,7 @@ describe('createDatetime', () => {
 		});
 
 		// wait for mutation promise to resolve
-		await waitForNextUpdate();
+		await waitForNextUpdate({ timeout });
 
 		expect(mutationData).toEqual(mockResult.data);
 		const pathToName = ['createEspressoDatetime', 'espressoDatetime', 'name'];
@@ -72,7 +74,7 @@ describe('createDatetime', () => {
 		});
 
 		// wait for mutation promise to resolve
-		await waitForNextMutationUpdate();
+		await waitForNextMutationUpdate({ timeout });
 
 		const cache = mutationResult.current.client.extract();
 		const { result: cacheResult } = renderHook(
@@ -110,7 +112,7 @@ describe('createDatetime', () => {
 		});
 
 		// wait for mutation promise to resolve
-		await waitForNextMutationUpdate();
+		await waitForNextMutationUpdate({ timeout });
 
 		const cache = mutationResult.current.client.extract();
 		const { result: cacheResult } = renderHook(
@@ -153,7 +155,7 @@ describe('createDatetime', () => {
 		});
 
 		// wait for mutation promise to resolve
-		await waitForNextMutationUpdate();
+		await waitForNextMutationUpdate({ timeout });
 
 		// check if datetime is related to all the passed tickets
 		const relatedTicketIds = mutationResult.current.relationsManager.getRelations({
@@ -204,7 +206,7 @@ describe('createDatetime', () => {
 		});
 
 		// wait for mutation promise to resolve
-		await waitForNextMutationUpdate();
+		await waitForNextMutationUpdate({ timeout });
 
 		const cache = mutationResult.current.client.extract();
 		const { result: cacheResult } = renderHook(

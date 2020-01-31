@@ -67,43 +67,45 @@ const datetimes: Datetime[] = [
 	},
 ];
 
-test('Search with one result', () => {
-	const searchResult = entityTextFieldSearch({ entities: datetimes, searchText: 'just' });
+describe('entityTextFieldSearch', () => {
+	it('Search with one result', () => {
+		const searchResult = entityTextFieldSearch({ entities: datetimes, searchText: 'just' });
 
-	expect(Array.isArray(searchResult)).toBe(true);
-	expect(searchResult.length).toBe(1);
-	expect(searchResult[0].name).toBe('just another datetime');
-});
+		expect(Array.isArray(searchResult)).toBe(true);
+		expect(searchResult.length).toBe(1);
+		expect(searchResult[0].name).toBe('just another datetime');
+	});
 
-test('Should output the same result as with trimmed search term', () => {
-	const searchResult = entityTextFieldSearch({ entities: datetimes, searchText: '    just    ' });
+	it('Should output the same result as with trimmed search term', () => {
+		const searchResult = entityTextFieldSearch({ entities: datetimes, searchText: '    just    ' });
 
-	expect(Array.isArray(searchResult)).toBe(true);
-	expect(searchResult.length).toBe(1);
-	expect(searchResult[0].name).toBe('just another datetime');
-});
+		expect(Array.isArray(searchResult)).toBe(true);
+		expect(searchResult.length).toBe(1);
+		expect(searchResult[0].name).toBe('just another datetime');
+	});
 
-test('Search with two results', () => {
-	const searchResult = entityTextFieldSearch({ entities: datetimes, searchText: 'another' });
+	it('Search with two results', () => {
+		const searchResult = entityTextFieldSearch({ entities: datetimes, searchText: 'another' });
 
-	expect(Array.isArray(searchResult)).toBe(true);
-	expect(searchResult.length).toBe(2);
-	expect(searchResult[0].name).toBe('just another datetime');
-	expect(searchResult[1].name).toBe('another title');
-});
+		expect(Array.isArray(searchResult)).toBe(true);
+		expect(searchResult.length).toBe(2);
+		expect(searchResult[0].name).toBe('just another datetime');
+		expect(searchResult[1].name).toBe('another title');
+	});
 
-test('Should not search anything if search text is just whitespaces', () => {
-	const searchResult = entityTextFieldSearch({ entities: datetimes, searchText: '          ' });
+	it('Should not search anything if search text is just whitespaces', () => {
+		const searchResult = entityTextFieldSearch({ entities: datetimes, searchText: '          ' });
 
-	expect(Array.isArray(searchResult)).toBe(true);
-	expect(searchResult.length).toBe(3);
-	expect(searchResult).toEqual(datetimes);
-});
+		expect(Array.isArray(searchResult)).toBe(true);
+		expect(searchResult.length).toBe(3);
+		expect(searchResult).toEqual(datetimes);
+	});
 
-test('Should return empty array if empty entity list is provided and no search term is provided ', () => {
-	const searchResult = entityTextFieldSearch({ entities: [], searchText: '' });
+	it('Should return empty array if empty entity list is provided and no search term is provided ', () => {
+		const searchResult = entityTextFieldSearch({ entities: [], searchText: '' });
 
-	expect(Array.isArray(searchResult)).toBe(true);
-	expect(searchResult.length).toBe(0);
-	expect(searchResult).toEqual([]);
+		expect(Array.isArray(searchResult)).toBe(true);
+		expect(searchResult.length).toBe(0);
+		expect(searchResult).toEqual([]);
+	});
 });

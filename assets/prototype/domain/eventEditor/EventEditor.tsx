@@ -6,14 +6,15 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import useInitQueries from './data/initialization/useInitQueries';
+import useEditorInitialization from './hooks/useEditorInitialization';
 import DatesList from './datetimes/datesList';
 import TicketsList from './tickets/ticketsList';
 import { EditorModal } from '../shared/editorModal';
 import { useStatus, TypeName } from '../../application/services/apollo/status';
 
 const EventEditor: React.FC = (): JSX.Element => {
-	useInitQueries();
+	useEditorInitialization();
+
 	const { isLoaded } = useStatus();
 
 	return (

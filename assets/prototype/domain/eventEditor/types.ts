@@ -17,6 +17,7 @@ export interface EEEditorData {
 	graphqlEndpoint?: string;
 	currentUser?: CurrentUserProps;
 	generalSettings?: GeneralSettings;
+	i18n?: any;
 }
 
 export interface EEJSData {

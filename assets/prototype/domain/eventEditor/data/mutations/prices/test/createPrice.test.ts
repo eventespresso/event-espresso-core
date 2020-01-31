@@ -12,6 +12,7 @@ import { nodes as tickets } from '../../../queries/tickets/test/data';
 import { nodes as priceTypes } from '../../../queries/priceTypes/test/data';
 import { MutationInput } from '../../../../../../application/services/apollo/mutations/types';
 
+const timeout = 5000; // milliseconds
 describe('createPrice', () => {
 	const testInput: MutationInput = { name: 'New Test Price', desc: 'New Test Desc' };
 	const mockedPrice = mockedPrices.CREATE;
@@ -41,7 +42,7 @@ describe('createPrice', () => {
 		});
 
 		// wait for mutation promise to resolve
-		await waitForNextUpdate();
+		await waitForNextUpdate({ timeout });
 
 		expect(mutationData).toEqual(mockResult.data);
 		const pathToName = ['createEspressoPrice', 'espressoPrice', 'name'];
@@ -70,7 +71,7 @@ describe('createPrice', () => {
 		});
 
 		// wait for mutation promise to resolve
-		await waitForNextMutationUpdate();
+		await waitForNextMutationUpdate({ timeout });
 
 		const cache = mutationResult.current.client.extract();
 		const { result: cacheResult } = renderHook(
@@ -113,7 +114,7 @@ describe('createPrice', () => {
 		});
 
 		// wait for mutation promise to resolve
-		await waitForNextMutationUpdate();
+		await waitForNextMutationUpdate({ timeout });
 
 		// check if price is related to all the passed prices
 		const relatedTicketIds = mutationResult.current.relationsManager.getRelations({

@@ -3,6 +3,7 @@ import Currency from 'react-currency-formatter';
 import { Field } from 'react-final-form';
 import { H2, H4 } from '@blueprintjs/core/lib/esm';
 import { renderToString } from '@wordpress/element';
+import { __ } from '@wordpress/i18n';
 
 import RelationsSelector from '../../../shared/ui/RelationsSelector';
 import useDatetimeItem from '../../data/queries/datetimes/useDatetimeItem';
@@ -12,7 +13,7 @@ import parsedAmount from '../../../../application/utilities/money/parsedAmount';
 import { DateItemFormProps } from '../types';
 import { hdrStyle, lblStyle, inputStyle, divStyle, relationsStyle } from './style';
 
-const formatSecondaryField = (ticketPrice: number | string, toString = false): JSX.Element => {
+const formatSecondaryField = (ticketPrice: number | string, toString = false): JSX.Element | string => {
 	const priceAmount = parsedAmount(ticketPrice);
 	return toString ? renderToString(<Currency quantity={priceAmount} />, null) : <Currency quantity={priceAmount} />;
 };
@@ -34,23 +35,23 @@ const DateForm: React.FC<DateItemFormProps> = ({ id, formReset, title }): JSX.El
 		<>
 			<H2 style={hdrStyle}>{title}</H2>
 			<div style={divStyle}>
-				<label style={lblStyle}>Name</label>
+				<label style={lblStyle}>{__('Name', 'event_espresso')}</label>
 				<Field
 					defaultValue={name}
 					name='name'
 					component='input'
 					type='text'
-					placeholder='Name'
+					placeholder={__('Name', 'event_espresso')}
 					style={inputStyle}
 				/>
 			</div>
 			<div style={divStyle}>
-				<label style={lblStyle}>Description</label>
+				<label style={lblStyle}>{__('Description', 'event_espresso')}</label>
 				<Field
 					name='description'
 					component='input'
 					type='text'
-					placeholder='description'
+					placeholder={__('Description', 'event_espresso')}
 					style={inputStyle}
 					defaultValue={description}
 				/>

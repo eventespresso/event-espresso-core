@@ -3,6 +3,7 @@
  */
 import React from 'react';
 import { H3 } from '@blueprintjs/core/lib/esm';
+import { __ } from '@wordpress/i18n';
 
 /**
  * Internal dependencies
@@ -24,7 +25,7 @@ interface ListProps {
 }
 
 const List: React.FC<ListProps> = ({ tickets }): JSX.Element => {
-	const header = <H3 style={{ margin: '2rem 0 .5rem' }}>{'Tickets List'}</H3>;
+	const header = <H3 style={{ margin: '2rem 0 .5rem' }}>{__('Tickets List', 'event_espresso')}</H3>;
 
 	const ticketList = (
 		<>

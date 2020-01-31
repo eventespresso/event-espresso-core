@@ -8,6 +8,7 @@ import { ApolloMockedProvider } from '../../../../context/TestContext';
 import { getMutationMocks, mockedPrices } from './data';
 import { nodes as tickets } from '../../../queries/tickets/test/data';
 
+const timeout = 5000; // milliseconds
 describe('deletePrice', () => {
 	const mockedPrice = mockedPrices.DELETE;
 
@@ -38,7 +39,7 @@ describe('deletePrice', () => {
 		});
 
 		// wait for mutation promise to resolve
-		await waitForNextUpdate();
+		await waitForNextUpdate({ timeout });
 
 		expect(mutationData).toEqual(mockResult.data);
 		const pathToId = ['deleteEspressoPrice', 'espressoPrice', 'name'];
@@ -70,7 +71,7 @@ describe('deletePrice', () => {
 		});
 
 		// wait for mutation promise to resolve
-		await waitForNextMutationUpdate();
+		await waitForNextMutationUpdate({ timeout });
 
 		const relatedTicketIds = mutationResult.current.relationsManager.getRelations({
 			entity: 'prices',
@@ -112,7 +113,7 @@ describe('deletePrice', () => {
 		});
 
 		// wait for mutation promise to resolve
-		await waitForNextMutationUpdate();
+		await waitForNextMutationUpdate({ timeout });
 
 		const relatedPriceTypeIds = mutationResult.current.relationsManager.getRelations({
 			entity: 'prices',
