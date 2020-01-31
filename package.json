@@ -29,12 +29,12 @@
 		"lint-php:fix": "composer run-script lint-fix",
 		"lint-php:skip-warnings": "composer run-script lint:skip-warnings",
 		"pretty": "prettier --write \"assets/prototype/**/*.js\"",
-		"prewatch": "npm run check-engines",
 		"test": "npm run lint && npm run test-js",
 		"test-php": "cd tests && phpunit",
 		"test-js": "node scripts/test.js",
 		"test-js:coverage": "npm run test-js -- --coverage",
-		"test-js:coverage-ci": "npm run test-js -- --coverage --maxWorkers 1"
+		"test-js:coverage-ci": "npm run test-js -- --coverage --maxWorkers 1",
+		"watch": "node scripts/watch.js"
 	},
 	"browserslist": {
 		"production": [
@@ -260,7 +260,6 @@
 		"webpack": "^4.41.2",
 		"webpack-assets-manifest": "^3.1.1",
 		"webpack-cli": "^3.3.10",
-		"webpack-merge": "^4.2.2",
-		"write-file-webpack-plugin": "^4.5.1"
+		"webpack-merge": "^4.2.2"
 	}
 }
