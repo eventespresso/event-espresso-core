@@ -71,7 +71,7 @@ describe('createPrice', () => {
 		});
 
 		// wait for mutation promise to resolve
-		await waitForNextMutationUpdate();
+		await waitForNextMutationUpdate({ timeout });
 
 		const cache = mutationResult.current.client.extract();
 		const { result: cacheResult } = renderHook(
