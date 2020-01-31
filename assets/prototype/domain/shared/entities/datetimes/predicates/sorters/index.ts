@@ -23,7 +23,7 @@ interface SortDates {
  */
 const sorters = ({ dates, order = DatesSorted.chronologically }: SortDates): Datetime[] => {
 	switch (order) {
-		case DatesSortedBy.chronologically:
+		case DatesSorted.chronologically:
 			return dates.sort(({ startDate: dateLeft }, { startDate: dateRight }) =>
 				compareAsc(parseISO(dateLeft), parseISO(dateRight))
 			);
