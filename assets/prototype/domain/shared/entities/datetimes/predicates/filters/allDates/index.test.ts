@@ -9,10 +9,7 @@ describe('allDates', () => {
 		const filteredDates = allDates(dates);
 
 		filteredDates.forEach((date) => {
-			// Since in Datetime this is set as optional, we need to check first is this is defined first
-			if (date.isTrashed !== undefined) {
-				expect(date.isTrashed).toBe(false);
-			}
+			expect(date.isTrashed).toBe(false);
 		});
 	});
 

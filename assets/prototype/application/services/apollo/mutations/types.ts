@@ -45,7 +45,7 @@ export interface EntityMutation {
 	getCreateMutation: MutationGetter;
 	getUpdateMutation: MutationGetter;
 	getDeleteMutation: MutationGetter;
-	mutate: (options: CustomMutationOptions) => MutationResult;
+	mutate: (options: CustomMutationOptions, mutationType: MutationType) => MutationResult;
 }
 
 export interface Mutators {
