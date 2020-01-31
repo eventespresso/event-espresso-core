@@ -1,6 +1,7 @@
 import React from 'react';
 import { Field } from 'react-final-form';
 import { H2, H4 } from '@blueprintjs/core/lib/esm';
+import { __ } from '@wordpress/i18n';
 
 import RelationsSelector from '../../../shared/ui/RelationsSelector';
 import useTicketItem from '../../data/queries/tickets/useTicketItem';
@@ -26,36 +27,36 @@ const TicketForm: React.FC<TicketItemFormProps> = ({ id, formReset, title }): JS
 		<>
 			<H2 style={hdrStyle}>{title}</H2>
 			<div style={divStyle}>
-				<label style={lblStyle}>Name</label>
+				<label style={lblStyle}>{__('Name', 'event_espresso')}</label>
 
 				<Field
 					defaultValue={name}
 					name='name'
 					component='input'
 					type='text'
-					placeholder='Name'
+					placeholder={__('Name', 'event_espresso')}
 					style={inputStyle}
 				/>
 			</div>
 			<div style={divStyle}>
-				<label style={lblStyle}>Description</label>
+				<label style={lblStyle}>{__('Description', 'event_espresso')}</label>
 				<Field
 					defaultValue={description}
 					name='description'
 					component='input'
 					type='text'
-					placeholder='description'
+					placeholder={__('Description', 'event_espresso')}
 					style={inputStyle}
 				/>
 			</div>
 			<div style={divStyle}>
-				<label style={lblStyle}>Price</label>
+				<label style={lblStyle}>{__('Price', 'event_espresso')}</label>
 				<Field
 					defaultValue={price}
 					name='price'
 					component='input'
 					type='number'
-					placeholder='ticket price'
+					placeholder={__('ticket price', 'event_espresso')}
 					style={inputStyle}
 					min={0}
 					required
