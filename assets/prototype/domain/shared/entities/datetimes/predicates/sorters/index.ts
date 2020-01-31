@@ -21,7 +21,7 @@ interface SortDates {
  *
  * @return {Array}         filtered dateEntities array
  */
-const sorters = ({ dates, order = DatesSortedBy.chronologically }: SortDates): Datetime[] => {
+const sorters = ({ dates, order = DatesSorted.chronologically }: SortDates): Datetime[] => {
 	switch (order) {
 		case DatesSortedBy.chronologically:
 			return dates.sort(({ startDate: dateLeft }, { startDate: dateRight }) =>
