@@ -3,7 +3,7 @@ import { renderHook } from '@testing-library/react-hooks';
 import useTimeZoneTime from '../useTimeZoneTime';
 import { ApolloMockedProvider } from '../../../domain/eventEditor/context/TestContext';
 
-describe('useTimeZoneTime', () => {
+describe.skip('useTimeZoneTime', () => {
 	const wrapper = ApolloMockedProvider();
 
 	describe('localTimeToUtc', () => {
