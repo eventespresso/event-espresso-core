@@ -27,7 +27,7 @@ abstract class AbstractConnectionResolver extends WPGraphQLConnectionResolver
         $last  = ! empty($this->args['last']) ? absint($this->args['last']) : null;
 
         $limit = min(
-            max($first, $last, 10),
+            max($first, $last, 100),
             $this->query_amount
         );
         $limit++;
