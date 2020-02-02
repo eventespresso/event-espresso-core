@@ -1,1 +1,0 @@
-<?php return array('dependencies' => array('eejs-core', 'eventespresso-vendor', 'jquery', 'react', 'react-dom', 'wp-element'), 'version' => '1ce7c976f3c476a82aa35d5269f94fb3');
