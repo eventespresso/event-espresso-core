@@ -6,10 +6,10 @@ export const PRICE_TYPE_ATTRIBUTES: any = gql`
 		dbId
 		baseType
 		isBasePrice
-		isDeleted
 		isDiscount
 		isPercent
 		isTax
+		isTrashed
 		name
 		order
 	}

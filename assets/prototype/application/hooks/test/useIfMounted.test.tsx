@@ -3,7 +3,7 @@ import { renderHook, act } from '@testing-library/react-hooks';
 
 import useIfMounted from '../useIfMounted';
 
-describe.skip('useIfMounted', () => {
+describe('useIfMounted', () => {
 	const useCounter = (updateOnlyIfMounted = true): any => {
 		const [count, setCount] = useState(0);
 		const ifMounted = useIfMounted();

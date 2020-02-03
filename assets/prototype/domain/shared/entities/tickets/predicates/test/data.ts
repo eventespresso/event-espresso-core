@@ -21,6 +21,7 @@ export const tickets: Ticket[] = [
 		isRequired: false,
 		isSoldOut: false,
 		isTaxable: false,
+		isTrashed: false,
 		reverseCalculate: true,
 	},
 	{
@@ -43,6 +44,7 @@ export const tickets: Ticket[] = [
 		isRequired: false,
 		isSoldOut: false,
 		isTaxable: false,
+		isTrashed: false,
 		reverseCalculate: true,
 	},
 	{
@@ -65,6 +67,7 @@ export const tickets: Ticket[] = [
 		isRequired: false,
 		isSoldOut: false,
 		isTaxable: false,
+		isTrashed: false,
 		reverseCalculate: true,
 	},
 	{
@@ -87,6 +90,7 @@ export const tickets: Ticket[] = [
 		isRequired: false,
 		isSoldOut: false,
 		isTaxable: false,
+		isTrashed: false,
 		reverseCalculate: true,
 	},
 	{
@@ -109,6 +113,7 @@ export const tickets: Ticket[] = [
 		isRequired: false,
 		isSoldOut: false,
 		isTaxable: false,
+		isTrashed: false,
 		reverseCalculate: true,
 	},
 ];

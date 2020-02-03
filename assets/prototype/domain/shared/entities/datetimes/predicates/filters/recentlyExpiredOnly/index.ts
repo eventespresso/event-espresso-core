@@ -5,8 +5,8 @@ import { Datetime } from '../../../../../../eventEditor/data/types';
 import isRecentlyExpired from '../../isRecentlyExpired';
 
 const recentlyExpiredOnly = (dates: Datetime[]): Datetime[] | [] => {
-	const filterFn = (date: Datetime) => {
-		return isRecentlyExpired(date) && !date.isDeleted;
+	const filterFn = (date: Datetime): boolean => {
+		return isRecentlyExpired(date) && !date.isTrashed;
 	};
 
 	return dates.filter(filterFn);

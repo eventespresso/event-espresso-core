@@ -5,7 +5,7 @@ import { ApolloMockedProvider } from '../.../../../../../../eventEditor/context/
 import { successMocks, errorMocks, currentUser } from './data';
 
 const timeout = 5000; // milliseconds
-describe.skip('useFetchCurrentUser', () => {
+describe('useFetchCurrentUser', () => {
 	it('checks for the error state', async () => {
 		const wrapper = ApolloMockedProvider(errorMocks);
 
