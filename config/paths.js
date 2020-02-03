@@ -87,7 +87,6 @@ module.exports = {
 		'eventespresso-editor-prototype': resolveModule(resolveApp, './assets/prototype/domain/eventEditor/index'),
 		// To be done as part of: https://github.com/eventespresso/event-espresso-core/issues/2250
 		// 'ee-wp-plugins-page': resolveModule(resolveApp, assetsPath + 'wp-plugins-page/index'),
-		'eventespresso-i18n': resolveModule(resolveApp, 'assets/prototype/application/utilities/text/i18n'),
 		// 'eventespresso-core-blocks': resolveModule(resolveApp, assetsPath + 'blocks/index'),
 		// 'eventespresso-core-blocks-frontend': resolveModule(resolveApp, assetsPath + 'blocks/index-frontend'),
 		'eventespresso-core-css-default': resolveModule(
