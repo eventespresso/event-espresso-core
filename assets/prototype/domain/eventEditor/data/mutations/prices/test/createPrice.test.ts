@@ -27,7 +27,7 @@ describe('createPrice', () => {
 	it('checks for the mutation data to be same as the mock data', async () => {
 		const wrapper = ApolloMockedProvider(mutationMocks);
 
-		const { result, waitForNextUpdate } = renderHook(() => useEntityMutator(EntityType.Price), {
+		const { result, waitForValueToChange } = renderHook(() => useEntityMutator(EntityType.Price), {
 			wrapper,
 		});
 
@@ -42,7 +42,7 @@ describe('createPrice', () => {
 		});
 
 		// wait for mutation promise to resolve
-		await waitForNextUpdate({ timeout });
+		await waitForValueToChange(() => mutationData, { timeout });
 
 		expect(mutationData).toEqual(mockResult.data);
 		const pathToName = ['createEspressoPrice', 'espressoPrice', 'name'];
@@ -56,7 +56,7 @@ describe('createPrice', () => {
 	it('checks for the mutation data to be same as that in the cache - usePrices', async () => {
 		const wrapper = ApolloMockedProvider(mutationMocks);
 
-		const { result: mutationResult, waitForNextUpdate: waitForNextMutationUpdate } = renderHook(
+		const { result: mutationResult, waitForNextUpdate, waitForValueToChange } = renderHook(
 			() => ({
 				mutator: useEntityMutator(EntityType.Price),
 				client: useApolloClient(),
@@ -66,15 +66,17 @@ describe('createPrice', () => {
 			}
 		);
 
+		await waitForValueToChange(() => mutationResult.current, { timeout });
+
 		act(() => {
 			mutationResult.current.mutator.createEntity(testInput);
 		});
 
 		// wait for mutation promise to resolve
-		await waitForNextMutationUpdate({ timeout });
+		await waitForNextUpdate({ timeout });
 
 		const cache = mutationResult.current.client.extract();
-		const { result: cacheResult } = renderHook(
+		const { result: cacheResult, waitForNextUpdate: waitForUpdate } = renderHook(
 			() => {
 				const client = useApolloClient();
 				// restore the cache from previous render
@@ -85,6 +87,9 @@ describe('createPrice', () => {
 				wrapper,
 			}
 		);
+
+		// wait for mutation promise to resolve
+		await waitForUpdate({ timeout });
 
 		const cachedPriceIds = cacheResult.current.map(({ id }) => id);
 
@@ -99,7 +104,7 @@ describe('createPrice', () => {
 
 		const wrapper = ApolloMockedProvider(mutationMocks);
 
-		const { result: mutationResult, waitForNextUpdate: waitForNextMutationUpdate } = renderHook(
+		const { result: mutationResult, waitForNextUpdate, waitForValueToChange } = renderHook(
 			() => ({
 				mutator: useEntityMutator(EntityType.Price),
 				relationsManager: useRelations(),
@@ -109,12 +114,14 @@ describe('createPrice', () => {
 			}
 		);
 
+		await waitForValueToChange(() => mutationResult.current, { timeout });
+
 		act(() => {
 			mutationResult.current.mutator.createEntity(newTestInput);
 		});
 
 		// wait for mutation promise to resolve
-		await waitForNextMutationUpdate({ timeout });
+		await waitForNextUpdate({ timeout });
 
 		// check if price is related to all the passed prices
 		const relatedTicketIds = mutationResult.current.relationsManager.getRelations({

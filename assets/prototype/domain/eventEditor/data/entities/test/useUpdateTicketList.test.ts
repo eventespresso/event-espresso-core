@@ -8,10 +8,11 @@ import useTickets from '../../queries/tickets/useTickets';
 import useTicketIds from '../../queries/tickets/useTicketIds';
 import { ApolloMockedProvider } from '../../../context/TestContext';
 
+const timeout = 5000; // milliseconds
 describe('useUpdateTicketList', () => {
 	it('checks for tickets cache update', async () => {
 		const wrapper = ApolloMockedProvider();
-		const { result } = renderHook(
+		const { result, waitForValueToChange } = renderHook(
 			() => {
 				useCacheRehydration();
 				return {
@@ -25,6 +26,7 @@ describe('useUpdateTicketList', () => {
 				wrapper,
 			}
 		);
+		await waitForValueToChange(() => result.current, { timeout });
 
 		const ticketlist = result.current.ticketlist;
 
@@ -46,7 +48,7 @@ describe('useUpdateTicketList', () => {
 		});
 
 		const cache = result.current.client.extract();
-		const { result: cacheResult } = renderHook(
+		const { result: cacheResult, waitForNextUpdate: waitForUpdate } = renderHook(
 			() => {
 				const client = useApolloClient();
 				// restore the cache from previous render
@@ -57,6 +59,7 @@ describe('useUpdateTicketList', () => {
 				wrapper,
 			}
 		);
+		await waitForUpdate({ timeout });
 
 		const cachedTicketIds = cacheResult.current;
 

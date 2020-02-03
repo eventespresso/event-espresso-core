@@ -23,9 +23,12 @@ describe('deleteTicket', () => {
 	it('checks for the mutation data to be same as the mock data', async () => {
 		const wrapper = ApolloMockedProvider(mutationMocks);
 
-		const { result, waitForNextUpdate } = renderHook(() => useEntityMutator(EntityType.Ticket, mockedTicket.id), {
-			wrapper,
-		});
+		const { result, waitForValueToChange } = renderHook(
+			() => useEntityMutator(EntityType.Ticket, mockedTicket.id),
+			{
+				wrapper,
+			}
+		);
 
 		let mutationData: any;
 
@@ -41,7 +44,7 @@ describe('deleteTicket', () => {
 		});
 
 		// wait for mutation promise to resolve
-		await waitForNextUpdate({ timeout });
+		await waitForValueToChange(() => mutationData, { timeout });
 
 		expect(mutationData).toEqual(mockResult.data);
 		const pathToId = ['deleteEspressoTicket', 'espressoTicket', 'name'];
@@ -59,7 +62,7 @@ describe('deleteTicket', () => {
 
 		const wrapper = ApolloMockedProvider(mutationMocks);
 
-		const { result: mutationResult, waitForNextUpdate: waitForNextMutationUpdate } = renderHook(
+		const { result: mutationResult, waitForNextUpdate, waitForValueToChange } = renderHook(
 			() => ({
 				mutator: useEntityMutator(EntityType.Ticket, mockedTicket.id),
 				relationsManager: useRelations(),
@@ -69,12 +72,14 @@ describe('deleteTicket', () => {
 			}
 		);
 
+		await waitForValueToChange(() => mutationResult.current, { timeout });
+
 		act(() => {
 			mutationResult.current.mutator.deleteEntity();
 		});
 
 		// wait for mutation promise to resolve
-		await waitForNextMutationUpdate({ timeout });
+		await waitForNextUpdate({ timeout });
 
 		const relatedDatetimeIds = mutationResult.current.relationsManager.getRelations({
 			entity: 'tickets',
@@ -101,7 +106,7 @@ describe('deleteTicket', () => {
 
 		const wrapper = ApolloMockedProvider(mutationMocks);
 
-		const { result: mutationResult, waitForNextUpdate: waitForNextMutationUpdate } = renderHook(
+		const { result: mutationResult, waitForNextUpdate, waitForValueToChange } = renderHook(
 			() => ({
 				mutator: useEntityMutator(EntityType.Ticket, mockedTicket.id),
 				relationsManager: useRelations(),
@@ -111,12 +116,14 @@ describe('deleteTicket', () => {
 			}
 		);
 
+		await waitForValueToChange(() => mutationResult.current, { timeout });
+
 		act(() => {
 			mutationResult.current.mutator.deleteEntity();
 		});
 
 		// wait for mutation promise to resolve
-		await waitForNextMutationUpdate({ timeout });
+		await waitForNextUpdate({ timeout });
 
 		const relatedPriceIds = mutationResult.current.relationsManager.getRelations({
 			entity: 'tickets',

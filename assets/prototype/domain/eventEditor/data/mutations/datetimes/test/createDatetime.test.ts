@@ -30,7 +30,7 @@ describe('createDatetime', () => {
 	it('checks for the mutation data to be same as the mock data', async () => {
 		const wrapper = ApolloMockedProvider(mutationMocks);
 
-		const { result, waitForNextUpdate } = renderHook(() => useEntityMutator(EntityType.Datetime), {
+		const { result, waitForValueToChange } = renderHook(() => useEntityMutator(EntityType.Datetime), {
 			wrapper,
 		});
 
@@ -45,7 +45,7 @@ describe('createDatetime', () => {
 		});
 
 		// wait for mutation promise to resolve
-		await waitForNextUpdate({ timeout });
+		await waitForValueToChange(() => mutationData, { timeout });
 
 		expect(mutationData).toEqual(mockResult.data);
 		const pathToName = ['createEspressoDatetime', 'espressoDatetime', 'name'];
@@ -59,7 +59,7 @@ describe('createDatetime', () => {
 	it('checks for the mutation data to be same as that in the cache - useDatetimeItem', async () => {
 		const wrapper = ApolloMockedProvider(mutationMocks);
 
-		const { result: mutationResult, waitForNextUpdate: waitForNextMutationUpdate } = renderHook(
+		const { result: mutationResult, waitForValueToChange } = renderHook(
 			() => ({
 				mutator: useEntityMutator(EntityType.Datetime),
 				client: useApolloClient(),
@@ -74,10 +74,10 @@ describe('createDatetime', () => {
 		});
 
 		// wait for mutation promise to resolve
-		await waitForNextMutationUpdate({ timeout });
+		await waitForValueToChange(() => mutationResult.current, { timeout });
 
 		const cache = mutationResult.current.client.extract();
-		const { result: cacheResult } = renderHook(
+		const { result: cacheResult, waitForNextUpdate } = renderHook(
 			() => {
 				const client = useApolloClient();
 				// restore the cache from previous render
@@ -89,6 +89,8 @@ describe('createDatetime', () => {
 			}
 		);
 
+		await waitForNextUpdate({ timeout });
+
 		const cachedDatetime = cacheResult.current;
 
 		expect(cachedDatetime).toEqual({ ...mockedDatetime, ...testInput });
@@ -97,7 +99,7 @@ describe('createDatetime', () => {
 	it('checks for the mutation data to be same as that in the cache - useDatetimeIds', async () => {
 		const wrapper = ApolloMockedProvider(mutationMocks);
 
-		const { result: mutationResult, waitForNextUpdate: waitForNextMutationUpdate } = renderHook(
+		const { result: mutationResult, waitForValueToChange, waitForNextUpdate } = renderHook(
 			() => ({
 				mutator: useEntityMutator(EntityType.Datetime),
 				client: useApolloClient(),
@@ -107,15 +109,17 @@ describe('createDatetime', () => {
 			}
 		);
 
+		await waitForValueToChange(() => mutationResult.current, { timeout });
+
 		act(() => {
 			mutationResult.current.mutator.createEntity(testInput);
 		});
-
-		// wait for mutation promise to resolve
-		await waitForNextMutationUpdate({ timeout });
+		// wait for actual update instead of optimistic response
+		await waitForNextUpdate({ timeout });
 
 		const cache = mutationResult.current.client.extract();
-		const { result: cacheResult } = renderHook(
+
+		const { result: cacheResult, waitForNextUpdate: waitForUpdate } = renderHook(
 			() => {
 				const client = useApolloClient();
 				// restore the cache from previous render
@@ -126,6 +130,8 @@ describe('createDatetime', () => {
 				wrapper,
 			}
 		);
+
+		await waitForUpdate({ timeout });
 
 		const cachedDatetimes = cacheResult.current;
 
@@ -140,7 +146,7 @@ describe('createDatetime', () => {
 
 		const wrapper = ApolloMockedProvider(mutationMocks);
 
-		const { result: mutationResult, waitForNextUpdate: waitForNextMutationUpdate } = renderHook(
+		const { result: mutationResult, waitForNextUpdate, waitForValueToChange } = renderHook(
 			() => ({
 				mutator: useEntityMutator(EntityType.Datetime),
 				relationsManager: useRelations(),
@@ -150,12 +156,13 @@ describe('createDatetime', () => {
 			}
 		);
 
+		await waitForValueToChange(() => mutationResult.current, { timeout });
+
 		act(() => {
 			mutationResult.current.mutator.createEntity(testInput);
 		});
-
-		// wait for mutation promise to resolve
-		await waitForNextMutationUpdate({ timeout });
+		// wait for actual update instead of optimistic response
+		await waitForNextUpdate({ timeout });
 
 		// check if datetime is related to all the passed tickets
 		const relatedTicketIds = mutationResult.current.relationsManager.getRelations({
@@ -188,7 +195,7 @@ describe('createDatetime', () => {
 
 		const wrapper = ApolloMockedProvider(mutationMocks);
 
-		const { result: mutationResult, waitForNextUpdate: waitForNextMutationUpdate } = renderHook(
+		const { result: mutationResult, waitForNextUpdate, waitForValueToChange } = renderHook(
 			() => {
 				useInitTicketTestCache();
 				return {
@@ -201,15 +208,16 @@ describe('createDatetime', () => {
 			}
 		);
 
+		await waitForValueToChange(() => mutationResult.current, { timeout });
+
 		act(() => {
 			mutationResult.current.mutator.createEntity(testInput);
 		});
-
-		// wait for mutation promise to resolve
-		await waitForNextMutationUpdate({ timeout });
+		// wait for actual update instead of optimistic response
+		await waitForNextUpdate({ timeout });
 
 		const cache = mutationResult.current.client.extract();
-		const { result: cacheResult } = renderHook(
+		const { result: cacheResult, waitForNextUpdate: waitForUpdate } = renderHook(
 			() => {
 				const client = useApolloClient();
 				// restore the cache from previous render
@@ -223,6 +231,8 @@ describe('createDatetime', () => {
 				wrapper,
 			}
 		);
+
+		await waitForUpdate({ timeout });
 
 		const queryOptions = cacheResult.current.queryOptions;
 		const cachedTickets = cacheResult.current.tickets;

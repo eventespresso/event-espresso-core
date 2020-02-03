@@ -26,7 +26,7 @@ describe('updateTicket', () => {
 	it('checks for the mutation data to be same as the mock data', async () => {
 		const wrapper = ApolloMockedProvider(mutationMocks);
 
-		const { result, waitForNextUpdate } = renderHook(
+		const { result, waitForValueToChange } = renderHook(
 			() => {
 				useInitTicketTestCache();
 				return useEntityMutator(EntityType.Ticket, mockedTicket.id);
@@ -47,7 +47,7 @@ describe('updateTicket', () => {
 		});
 
 		// wait for mutation promise to resolve
-		await waitForNextUpdate({ timeout });
+		await waitForValueToChange(() => mutationData, { timeout });
 
 		expect(mutationData).toEqual(mockResult.data);
 		const pathToName = ['updateEspressoTicket', 'espressoTicket', 'name'];
@@ -66,7 +66,7 @@ describe('updateTicket', () => {
 
 		const wrapper = ApolloMockedProvider(mutationMocks);
 
-		const { result: mutationResult, waitForNextUpdate: waitForNextMutationUpdate } = renderHook(
+		const { result: mutationResult, waitForNextUpdate, waitForValueToChange } = renderHook(
 			() => ({
 				mutator: useEntityMutator(EntityType.Ticket, mockedTicket.id),
 				relationsManager: useRelations(),
@@ -76,12 +76,14 @@ describe('updateTicket', () => {
 			}
 		);
 
+		await waitForValueToChange(() => mutationResult.current, { timeout });
+
 		act(() => {
 			mutationResult.current.mutator.updateEntity(testInput);
 		});
 
 		// wait for mutation promise to resolve
-		await waitForNextMutationUpdate({ timeout });
+		await waitForNextUpdate({ timeout });
 
 		// check if ticket is related to all the passed datetimes
 		const relatedDatetimeIds = mutationResult.current.relationsManager.getRelations({
@@ -114,7 +116,7 @@ describe('updateTicket', () => {
 
 		const wrapper = ApolloMockedProvider(mutationMocks);
 
-		const { result: mutationResult, waitForNextUpdate: waitForNextMutationUpdate } = renderHook(
+		const { result: mutationResult, waitForNextUpdate, waitForValueToChange } = renderHook(
 			() => ({
 				mutator: useEntityMutator(EntityType.Ticket, mockedTicket.id),
 				relationsManager: useRelations(),
@@ -125,6 +127,8 @@ describe('updateTicket', () => {
 		);
 
 		const tempDatetimeId = 'temp-dtt-id';
+
+		await waitForValueToChange(() => mutationResult.current, { timeout });
 
 		act(() => {
 			// add relation between mockedTicket and a random datetime id
@@ -150,7 +154,7 @@ describe('updateTicket', () => {
 		});
 
 		// wait for mutation promise to resolve
-		await waitForNextMutationUpdate({ timeout });
+		await waitForNextUpdate({ timeout });
 
 		// check if ticket is related to `tempDatetimeId`
 		relatedDatetimeIds = mutationResult.current.relationsManager.getRelations({
@@ -171,7 +175,7 @@ describe('updateTicket', () => {
 
 		const wrapper = ApolloMockedProvider(mutationMocks);
 
-		const { result: mutationResult, waitForNextUpdate: waitForNextMutationUpdate } = renderHook(
+		const { result: mutationResult, waitForNextUpdate, waitForValueToChange } = renderHook(
 			() => ({
 				mutator: useEntityMutator(EntityType.Ticket, mockedTicket.id),
 				relationsManager: useRelations(),
@@ -181,12 +185,14 @@ describe('updateTicket', () => {
 			}
 		);
 
+		await waitForValueToChange(() => mutationResult.current, { timeout });
+
 		act(() => {
 			mutationResult.current.mutator.updateEntity(testInput);
 		});
 
 		// wait for mutation promise to resolve
-		await waitForNextMutationUpdate({ timeout });
+		await waitForNextUpdate({ timeout });
 
 		// check if ticket is related to all the passed prices
 		const relatedPriceIds = mutationResult.current.relationsManager.getRelations({
@@ -219,7 +225,7 @@ describe('updateTicket', () => {
 
 		const wrapper = ApolloMockedProvider(mutationMocks);
 
-		const { result: mutationResult, waitForNextUpdate: waitForNextMutationUpdate } = renderHook(
+		const { result: mutationResult, waitForNextUpdate, waitForValueToChange } = renderHook(
 			() => ({
 				mutator: useEntityMutator(EntityType.Ticket, mockedTicket.id),
 				relationsManager: useRelations(),
@@ -230,6 +236,8 @@ describe('updateTicket', () => {
 		);
 
 		const tempPriceId = 'temp-price-id';
+
+		await waitForValueToChange(() => mutationResult.current, { timeout });
 
 		act(() => {
 			// add relation between mockedTicket and a random price id
@@ -255,7 +263,7 @@ describe('updateTicket', () => {
 		});
 
 		// wait for mutation promise to resolve
-		await waitForNextMutationUpdate({ timeout });
+		await waitForNextUpdate({ timeout });
 
 		// check if ticket is related to `tempPriceId`
 		relatedPriceIds = mutationResult.current.relationsManager.getRelations({

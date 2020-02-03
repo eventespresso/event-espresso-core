@@ -12,8 +12,8 @@ import useInitDatetimeTestCache from '../../../queries/datetimes/test/useInitDat
 
 const timeout = 5000; // milliseconds
 describe('updateDatetime', () => {
-	let testInput: MutationInput = { name: 'New Test Date', description: 'New Test Desc' };
 	const mockedDatetime = mockedDatetimes.UPDATE;
+	let testInput: MutationInput = { ...mockedDatetime, name: 'New Test Date', description: 'New Test Desc' };
 
 	const ticketIds = tickets.map(({ id }) => id);
 
@@ -24,7 +24,7 @@ describe('updateDatetime', () => {
 	it('checks for the mutation data to be same as the mock data', async () => {
 		const wrapper = ApolloMockedProvider(mutationMocks);
 
-		const { result, waitForNextUpdate } = renderHook(
+		const { result, waitForValueToChange } = renderHook(
 			() => {
 				useInitDatetimeTestCache();
 				return useEntityMutator(EntityType.Datetime, mockedDatetime.id);
@@ -45,7 +45,7 @@ describe('updateDatetime', () => {
 		});
 
 		// wait for mutation promise to resolve
-		await waitForNextUpdate({ timeout });
+		await waitForValueToChange(() => mutationData, { timeout });
 
 		expect(mutationData).toEqual(mockResult.data);
 		const pathToName = ['updateEspressoDatetime', 'espressoDatetime', 'name'];
@@ -64,7 +64,7 @@ describe('updateDatetime', () => {
 
 		const wrapper = ApolloMockedProvider(mutationMocks);
 
-		const { result: mutationResult, waitForNextUpdate: waitForNextMutationUpdate } = renderHook(
+		const { result: mutationResult, waitForNextUpdate, waitForValueToChange } = renderHook(
 			() => ({
 				mutator: useEntityMutator(EntityType.Datetime, mockedDatetime.id),
 				relationsManager: useRelations(),
@@ -74,12 +74,14 @@ describe('updateDatetime', () => {
 			}
 		);
 
+		await waitForValueToChange(() => mutationResult.current, { timeout });
+
 		act(() => {
 			mutationResult.current.mutator.updateEntity(testInput);
 		});
 
 		// wait for mutation promise to resolve
-		await waitForNextMutationUpdate({ timeout });
+		await waitForNextUpdate({ timeout });
 
 		// check if datetime is related to all the passed tickets
 		const relatedTicketIds = mutationResult.current.relationsManager.getRelations({
@@ -112,7 +114,7 @@ describe('updateDatetime', () => {
 
 		const wrapper = ApolloMockedProvider(mutationMocks);
 
-		const { result: mutationResult, waitForNextUpdate: waitForNextMutationUpdate } = renderHook(
+		const { result: mutationResult, waitForNextUpdate, waitForValueToChange } = renderHook(
 			() => ({
 				mutator: useEntityMutator(EntityType.Datetime, mockedDatetime.id),
 				relationsManager: useRelations(),
@@ -123,6 +125,8 @@ describe('updateDatetime', () => {
 		);
 
 		const tempTicketId = 'temp-tkt-id';
+
+		await waitForValueToChange(() => mutationResult.current, { timeout });
 
 		act(() => {
 			// add relation between mockedDatetime and a random ticket id
@@ -148,7 +152,7 @@ describe('updateDatetime', () => {
 		});
 
 		// wait for mutation promise to resolve
-		await waitForNextMutationUpdate({ timeout });
+		await waitForNextUpdate({ timeout });
 
 		// check if datetime is related to `tempTicketId`
 		relatedTicketIds = mutationResult.current.relationsManager.getRelations({

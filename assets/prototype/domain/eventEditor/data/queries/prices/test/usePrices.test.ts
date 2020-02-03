@@ -5,22 +5,26 @@ import { ApolloMockedProvider } from '../../../../context/TestContext';
 import { nodes } from './data';
 import useInitPriceTestCache from './useInitPriceTestCache';
 
+const timeout = 5000; // milliseconds
 describe('usePrices()', () => {
 	const wrapper = ApolloMockedProvider();
-	it('checks for the empty prices', () => {
-		const { result } = renderHook(() => usePrices(), { wrapper });
+	it('checks for the empty prices', async () => {
+		const { result, waitForNextUpdate } = renderHook(() => usePrices(), { wrapper });
 
+		await waitForNextUpdate({ timeout });
 		expect(result.current.length).toBe(0);
 	});
 
-	it('checks for the updated prices cache', () => {
-		const { result } = renderHook(
+	it('checks for the updated prices cache', async () => {
+		const { result, waitForNextUpdate } = renderHook(
 			() => {
 				useInitPriceTestCache();
 				return usePrices();
 			},
 			{ wrapper }
 		);
+
+		await waitForNextUpdate({ timeout });
 
 		const { current: cachedPrices } = result;
 
@@ -33,16 +37,18 @@ describe('usePrices()', () => {
 		expect(cachedPrices[0].name).toEqual(nodes[0].name);
 	});
 
-	it('returns the prices limitted to the supplied ids', () => {
+	it('returns the prices limitted to the supplied ids', async () => {
 		const filteredPriceIds = [nodes[1].id, nodes[2].id];
 		const filteredPrices = nodes.filter(({ id }) => filteredPriceIds.includes(id));
-		const { result } = renderHook(
+		const { result, waitForNextUpdate } = renderHook(
 			() => {
 				useInitPriceTestCache();
 				return usePrices(filteredPriceIds);
 			},
 			{ wrapper }
 		);
+
+		await waitForNextUpdate({ timeout });
 
 		const { current: cachedPrices } = result;
 

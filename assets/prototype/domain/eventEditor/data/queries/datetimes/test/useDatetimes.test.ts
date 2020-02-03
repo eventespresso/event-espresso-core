@@ -5,22 +5,26 @@ import { ApolloMockedProvider } from '../../../../context/TestContext';
 import { nodes } from './data';
 import useInitDatetimeTestCache from './useInitDatetimeTestCache';
 
+const timeout = 5000; // milliseconds
 describe('useDatetimes()', () => {
 	const wrapper = ApolloMockedProvider();
-	it('checks for the empty datetimes', () => {
-		const { result } = renderHook(() => useDatetimes(), { wrapper });
+	it('checks for the empty datetimes', async () => {
+		const { result, waitForNextUpdate } = renderHook(() => useDatetimes(), { wrapper });
+
+		await waitForNextUpdate({ timeout });
 
 		expect(result.current.length).toBe(0);
 	});
 
-	it('checks for the updated datetimes cache', () => {
-		const { result } = renderHook(
+	it('checks for the updated datetimes cache', async () => {
+		const { result, waitForNextUpdate } = renderHook(
 			() => {
 				useInitDatetimeTestCache();
 				return useDatetimes();
 			},
 			{ wrapper }
 		);
+		await waitForNextUpdate({ timeout });
 
 		const { current: cachedDatetimes } = result;
 
