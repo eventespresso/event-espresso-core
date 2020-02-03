@@ -252,8 +252,8 @@ var eeEditorData={$data};
     {
         $field_key = lcfirst($this->namespace) . 'Datetimes';
         $query = <<<QUERY
-        query GET_DATETIMES(\$where: {$this->namespace}RootQueryDatetimesConnectionWhereArgs) {
-            {$field_key}(where: \$where) {
+        query GET_DATETIMES(\$where: {$this->namespace}RootQueryDatetimesConnectionWhereArgs, \$first: Int, \$last: Int ) {
+            {$field_key}(where: \$where, first: \$first, last: \$last) {
                 nodes {
                     id
                     dbId
@@ -282,7 +282,7 @@ QUERY;
         $data = [
             'operation_name' => 'GET_DATETIMES',
             'variables' => [
-                'first' => 50,
+                'first' => 100,
                 'where' => [
                     'eventId' => $eventId,
                 ],
@@ -304,8 +304,8 @@ QUERY;
     {
         $field_key = lcfirst($this->namespace) . 'Tickets';
         $query = <<<QUERY
-        query GET_TICKETS(\$where: {$this->namespace}RootQueryTicketsConnectionWhereArgs) {
-            {$field_key}(where: \$where) {
+        query GET_TICKETS(\$where: {$this->namespace}RootQueryTicketsConnectionWhereArgs, \$first: Int, \$last: Int ) {
+            {$field_key}(where: \$where, first: \$first, last: \$last) {
                 nodes {
                     id
                     dbId
@@ -337,6 +337,7 @@ QUERY;
         $data = [
             'operation_name' => 'GET_TICKETS',
             'variables' => [
+                'first' => 100,
                 'where' => [
                     'datetimeIn' => $datetimeIn,
                 ],
@@ -358,8 +359,8 @@ QUERY;
     {
         $field_key = lcfirst($this->namespace) . 'Prices';
         $query = <<<QUERY
-        query GET_PRICES(\$where: {$this->namespace}RootQueryPricesConnectionWhereArgs) {
-            {$field_key}(where: \$where) {
+        query GET_PRICES(\$where: {$this->namespace}RootQueryPricesConnectionWhereArgs, \$first: Int, \$last: Int ) {
+            {$field_key}(where: \$where, first: \$first, last: \$last) {
                 nodes {
                     id
                     dbId
@@ -384,6 +385,7 @@ QUERY;
         $data = [
             'operation_name' => 'GET_PRICES',
             'variables' => [
+                'first' => 100,
                 'where' => [
                     'ticketIn' => $ticketIn,
                 ],
@@ -404,8 +406,8 @@ QUERY;
     {
         $field_key = lcfirst($this->namespace) . 'PriceTypes';
         $query = <<<QUERY
-        query GET_PRICES {
-            {$field_key} {
+        query GET_PRICE_TYPES(\$where: {$this->namespace}RootQueryPriceTypesConnectionWhereArgs, \$first: Int, \$last: Int ) {
+            {$field_key}(where: \$where, first: \$first, last: \$last) {
                 nodes {
                     id
                     dbId
@@ -424,7 +426,11 @@ QUERY;
         }
 QUERY;
         $data = [
-            'operation_name' => 'GET_PRICES',
+            'operation_name' => 'GET_PRICE_TYPES',
+            'variables' => [
+                'first' => 100,
+                'where' => [],
+            ],
             'query' => $query,
         ];
 

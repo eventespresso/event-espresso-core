@@ -23,11 +23,11 @@ abstract class AbstractConnectionResolver extends WPGraphQLConnectionResolver
      */
     protected function getLimit()
     {
-        $this->args['first'] = ! empty($this->args['first']) ? absint($this->args['first']) : 0;
-        $this->args['last'] = ! empty($this->args['last']) ? absint($this->args['last']) : 0;
+        $first = ! empty($this->args['first']) ? absint($this->args['first']) : null;
+        $last  = ! empty($this->args['last']) ? absint($this->args['last']) : null;
 
         $limit = min(
-            max($this->args['first'], $this->args['last'], 10),
+            max($first, $last, 10),
             $this->query_amount
         );
         $limit++;
@@ -57,10 +57,10 @@ abstract class AbstractConnectionResolver extends WPGraphQLConnectionResolver
                 $query_args['order_by'][ $orderby_input['field'] ] = $orderby_input['order'];
             }
         } elseif ($offset) {
-            $compare = $this->args['last'] ? '<' : '>';
-            $where_params[ $primary_key ] = [$compare, $offset];
+            $compare                      = $this->args['last'] ? '<' : '>';
+            $where_params[ $primary_key ] = [ $compare, $offset ];
         }
-        return [$query_args, $where_params];
+        return [ $query_args, $where_params ];
     }
 
 
@@ -119,7 +119,7 @@ abstract class AbstractConnectionResolver extends WPGraphQLConnectionResolver
     protected function convertGlobalId($ID)
     {
         if (is_array($ID)) {
-            return array_map([$this, 'convertGlobalId'], $ID);
+            return array_map([ $this, 'convertGlobalId' ], $ID);
         }
         $parts = Relay::fromGlobalId($ID);
         return ! empty($parts['id']) ? $parts['id'] : null;
