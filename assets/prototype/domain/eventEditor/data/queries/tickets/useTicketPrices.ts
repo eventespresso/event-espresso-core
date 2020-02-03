@@ -10,14 +10,14 @@ import { Price, EntityId } from '../../types';
 const useTicketPrices = (ticketId: EntityId): Price[] => {
 	const { getRelations } = useRelations();
 	// get related price Ids for this ticket
-	const relatedPriceIds: EntityId[] = getRelations({
+	const relatedPriceIds = getRelations({
 		entity: 'tickets',
 		entityId: ticketId,
 		relation: 'prices',
 	});
 
 	// get price objects.
-	const relatedPrices: Price[] = usePrices(relatedPriceIds);
+	const relatedPrices = usePrices(relatedPriceIds);
 
 	return relatedPriceIds.length ? relatedPrices : [];
 };

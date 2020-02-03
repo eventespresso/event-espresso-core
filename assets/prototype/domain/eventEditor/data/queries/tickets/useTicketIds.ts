@@ -1,8 +1,8 @@
 import useTickets from './useTickets';
-import { Ticket, EntityId } from '../../types';
+import { EntityId } from '../../types';
 
 const useTicketIds = (): EntityId[] => {
-	const tickets: Ticket[] = useTickets();
+	const tickets = useTickets();
 
 	return tickets.map(({ id }) => id);
 };

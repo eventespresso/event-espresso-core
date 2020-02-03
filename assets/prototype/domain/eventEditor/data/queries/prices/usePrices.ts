@@ -1,11 +1,10 @@
-import pathOr from 'ramda/src/pathOr';
-import { useApolloClient } from '@apollo/react-hooks';
+import { pathOr } from 'ramda';
 
 import { entitiesWithGuIdInArray } from '../../../../shared/predicates/shared/selectionPredicates';
 import { useStatus, TypeName } from '../../../../../application/services/apollo/status';
 import usePriceQueryOptions from './usePriceQueryOptions';
-import { ReadQueryOptions } from '../types';
 import { Price, PricesList, EntityId } from '../../types';
+import useCacheQuery from '../useCacheQuery';
 /**
  * A custom react hook for retrieving all the prices from cache
  * limited to the ids passed in `include`
@@ -13,18 +12,12 @@ import { Price, PricesList, EntityId } from '../../types';
  * @param {array} include Array of price ids to include.
  */
 const usePrices = (include: EntityId[] = []): Price[] => {
-	const options: ReadQueryOptions = usePriceQueryOptions();
+	const options = usePriceQueryOptions();
 	const { isLoaded } = useStatus();
-	const client = useApolloClient();
+	const { data } = useCacheQuery<PricesList>(options);
+
 	if (!isLoaded(TypeName.prices)) {
 		return [];
-	}
-	let data: PricesList;
-
-	try {
-		data = client.readQuery<PricesList>(options);
-	} catch (error) {
-		data = null;
 	}
 
 	const prices = pathOr<Price[]>([], ['espressoPrices', 'nodes'], data);

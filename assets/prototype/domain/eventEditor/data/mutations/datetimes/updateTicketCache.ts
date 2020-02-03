@@ -26,9 +26,7 @@ const updateTicketCache = ({ proxy, datetimeIn, datetimeId, remove = false }: Ca
 		return;
 	}
 
-	const newDatetimeIn: string[] = remove
-		? datetimeIn.filter((id: string) => id !== datetimeId)
-		: [...datetimeIn, datetimeId];
+	const newDatetimeIn = remove ? datetimeIn.filter((id: string) => id !== datetimeId) : [...datetimeIn, datetimeId];
 
 	const writeOptions: WriteQueryOptions = {
 		query: GET_TICKETS,

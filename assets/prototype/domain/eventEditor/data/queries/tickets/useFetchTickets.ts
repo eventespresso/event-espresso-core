@@ -1,26 +1,27 @@
 import { useEffect, useState } from 'react';
 import { useQuery } from '@apollo/react-hooks';
-import { GET_TICKETS } from './';
 import useToaster from '../../../../../application/services/toaster/useToaster';
 import { useStatus, TypeName } from '../../../../../application/services/apollo/status';
 import useTicketQueryOptions from './useTicketQueryOptions';
-import useDatetimeIds from '../datetimes/useDatetimeIds';
-import { FetchEntitiesResult, ReadQueryOptions } from '../types';
-import { EntityId } from '../../types';
+import { FetchEntitiesResult } from '../types';
 import { TicketsList } from '../../types';
 
-const useFetchTickets = (): FetchEntitiesResult<TicketsList> => {
+const useFetchTickets = (skipFetch: boolean = undefined): FetchEntitiesResult<TicketsList> => {
 	const [initialized, setInitialized] = useState(false);
-	const { setIsLoading, setIsLoaded, setIsError } = useStatus();
-	const options: ReadQueryOptions = useTicketQueryOptions();
-	const datetimeIn: EntityId[] = useDatetimeIds();
+	const { setIsLoading, setIsLoaded, setIsError, isLoaded } = useStatus();
+	const { query, ...options } = useTicketQueryOptions();
+
+	const { datetimeIn } = options.variables.where;
+	// do not fetch if we don't have any datetimes
+	// or tickets have already been fetched
+	const skip = typeof skipFetch !== 'undefined' ? skipFetch : !datetimeIn.length || isLoaded(TypeName.tickets);
 
 	const toaster = useToaster();
 	const toasterMessage = 'initializing tickets';
 
-	const { data, error, loading } = useQuery<TicketsList>(GET_TICKETS, {
+	const { data, error, loading } = useQuery<TicketsList>(query, {
 		...options,
-		skip: !datetimeIn.length, // do not fetch if we don't have any datetimes
+		skip,
 		onCompleted: (): void => {
 			setIsLoaded(TypeName.tickets, true);
 			toaster.dismiss(toasterMessage);

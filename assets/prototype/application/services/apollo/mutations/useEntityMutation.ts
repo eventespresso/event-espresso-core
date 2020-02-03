@@ -8,7 +8,6 @@ import { pathOr } from 'ramda';
 import { mutations, useMutators } from '../../../../domain/eventEditor/data/mutations';
 import useIfMounted from '../../../hooks/useIfMounted';
 import useToaster from '../../toaster/useToaster';
-import { ucFirst } from '../../../utilities/text';
 import {
 	EntityMutation,
 	OnMutationCompletedFn,

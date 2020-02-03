@@ -1,32 +1,19 @@
-import { useApolloClient } from '@apollo/react-hooks';
-import { propOr } from 'ramda';
+import { pathOr } from 'ramda';
 import { GET_DATETIME } from './';
-import { Datetime } from '../../types';
+import { Datetime, DatetimeItem } from '../../types';
 import { EntityItemProps, ReadQueryOptions } from '../types';
-
-type DatetimeItemData = {
-	datetime: Datetime;
-};
+import useCacheQuery from '../useCacheQuery';
 
 const useDatetimeItem = ({ id }: EntityItemProps): Datetime => {
-	const client = useApolloClient();
-
-	let data: DatetimeItemData, datetime: Datetime;
-
-	const queryOptions: ReadQueryOptions = {
+	const options: ReadQueryOptions = {
 		query: GET_DATETIME,
 		variables: {
 			id,
 		},
 	};
+	const { data } = useCacheQuery<DatetimeItem>(options);
 
-	try {
-		data = client.readQuery<DatetimeItemData>(queryOptions);
-		datetime = propOr<Datetime, DatetimeItemData, Datetime>(null, 'datetime', data);
-	} catch (error) {
-		// may be do something with the error
-	}
-	return datetime;
+	return pathOr<Datetime>(null, ['datetime'], data);
 };
 
 export default useDatetimeItem;
