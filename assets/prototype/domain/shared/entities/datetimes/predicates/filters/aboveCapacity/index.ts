@@ -10,7 +10,7 @@ type AboveCapacityProps = {
 };
 
 const aboveCapacity = ({ capacity, dates }: AboveCapacityProps): Datetime[] | [] => {
-	const filterFn = (date: Datetime): boolean => !date.isTrashed && capacityAtOrAbove(date, capacity);
+	const filterFn = (date) => !date.isDeleted && capacityAtOrAbove(date, capacity);
 
 	return dates.filter(filterFn);
 };

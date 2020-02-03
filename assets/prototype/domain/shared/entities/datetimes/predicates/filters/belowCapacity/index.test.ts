@@ -11,8 +11,8 @@ describe('belowCapacity', () => {
 		const filteredDates = belowCapacity({
 			capacity: 50,
 			dates: [
-				{ ...datetime, id: 'abc', isTrashed: true },
-				{ ...datetime, id: 'def', isTrashed: true },
+				{ ...datetime, id: 'abc', isDeleted: true },
+				{ ...datetime, id: 'def', isDeleted: true },
 			],
 		});
 
@@ -23,9 +23,9 @@ describe('belowCapacity', () => {
 		const filteredDates = belowCapacity({
 			capacity: 50,
 			dates: [
-				{ ...datetime, capacity: Infinity, id: 'abc', isTrashed: false },
-				{ ...datetime, capacity: Infinity, id: 'def', isTrashed: false },
-				{ ...datetime, capacity: Infinity, id: 'xyz', isTrashed: false },
+				{ ...datetime, capacity: Infinity, id: 'abc', isDeleted: false },
+				{ ...datetime, capacity: Infinity, id: 'def', isDeleted: false },
+				{ ...datetime, capacity: Infinity, id: 'xyz', isDeleted: false },
 			],
 		});
 
@@ -36,9 +36,9 @@ describe('belowCapacity', () => {
 		const filteredDates = belowCapacity({
 			capacity: 50,
 			dates: [
-				{ ...datetime, capacity: 100, id: 'abc', isTrashed: false, sold: 10 },
-				{ ...datetime, capacity: 11, id: 'def', isTrashed: false, sold: 6 },
-				{ ...datetime, capacity: 13, id: 'xyz', isTrashed: false, sold: 6 },
+				{ ...datetime, capacity: 100, id: 'abc', isDeleted: false, sold: 10 },
+				{ ...datetime, capacity: 11, id: 'def', isDeleted: false, sold: 6 },
+				{ ...datetime, capacity: 13, id: 'xyz', isDeleted: false, sold: 6 },
 			],
 		});
 

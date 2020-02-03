@@ -10,7 +10,7 @@ const datetime = datetimes[0];
 describe('soldOutOnly', () => {
 	it('Should return empty array if dates are not active, nor upcoming', () => {
 		const filteredDates = soldOutOnly([
-			{ ...datetime, id: 'abc', isTrashed: true },
+			{ ...datetime, id: 'abc', isDeleted: true },
 			{ ...datetime, id: 'def', isSoldOut: false },
 			{ ...datetime, id: 'def', status: DatetimeStatus.active },
 		]);

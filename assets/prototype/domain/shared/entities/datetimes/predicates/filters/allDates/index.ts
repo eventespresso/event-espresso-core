@@ -9,8 +9,8 @@ import { is } from 'ramda';
 import { Datetime } from '../../../../../../eventEditor/data/types';
 
 const allDates = (dates: Datetime[]): Datetime[] | [] => {
-	const withoutTrashed = ({ isTrashed }: Datetime): boolean => {
-		return is(Boolean, isTrashed) && !isTrashed;
+	const withoutTrashed = ({ isDeleted }: Datetime) => {
+		return is(Boolean, isDeleted) && !isDeleted;
 	};
 
 	return dates.filter(withoutTrashed);

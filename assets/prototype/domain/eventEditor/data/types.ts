@@ -28,10 +28,10 @@ export interface Datetime extends Entity {
 	description: string;
 	endDate: string;
 	isActive: boolean;
+	isDeleted: boolean; // TODO: refactor according to resolution from here: https://github.com/eventespresso/event-espresso-core/issues/2089
 	isExpired: boolean;
 	isPrimary: boolean;
 	isSoldOut: boolean;
-	isTrashed: boolean;
 	isUpcoming: boolean;
 	length: number;
 	order: number;
@@ -52,10 +52,10 @@ export interface Price extends Entity {
 	desc: string;
 	isBasePrice: boolean;
 	isDefault: boolean;
+	isDeleted: boolean;
 	isDiscount: boolean;
 	isPercent: boolean;
 	isTax: boolean;
-	isTrashed: boolean;
 	order: number | string;
 	overrides: string;
 	priceTypeOrder: number | string;
@@ -75,7 +75,6 @@ export interface Ticket extends Entity {
 	isRequired: boolean;
 	isSoldOut: boolean;
 	isTaxable: boolean;
-	isTrashed: boolean;
 	max: number;
 	min: number;
 	order: number;
@@ -105,10 +104,10 @@ export enum PriceBasetype {
 export interface PriceType extends Entity {
 	baseType: PriceBasetype;
 	isBasePrice: boolean;
+	isDeleted: boolean;
 	isDiscount: boolean;
 	isPercent: boolean;
 	isTax: boolean;
-	isTrashed: boolean;
 	order: number;
 }
 

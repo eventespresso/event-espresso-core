@@ -12,7 +12,6 @@ export const TICKET_ATTRIBUTES: any = gql`
 		isRequired
 		isSoldOut
 		isTaxable
-		isTrashed
 		max
 		min
 		name

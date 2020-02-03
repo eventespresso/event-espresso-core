@@ -10,8 +10,8 @@ describe('trashedOnly', () => {
 	it('Should return empty array if dates are not active, nor upcoming', () => {
 		const filteredDates = trashedOnly([
 			{ ...datetime, id: 'abc' },
-			{ ...datetime, id: 'def', isTrashed: false },
-			{ ...datetime, id: 'xyz', isTrashed: false },
+			{ ...datetime, id: 'def', isDeleted: false },
+			{ ...datetime, id: 'xyz', isDeleted: false },
 		]);
 
 		expect(filteredDates).toEqual([]);
@@ -19,9 +19,9 @@ describe('trashedOnly', () => {
 
 	it('Should return an array of trashedOnly dates', () => {
 		const filteredDates = trashedOnly([
-			{ ...datetime, id: 'abc', isTrashed: true },
-			{ ...datetime, id: 'def', isTrashed: false },
-			{ ...datetime, id: 'xyz', isTrashed: true },
+			{ ...datetime, id: 'abc', isDeleted: true },
+			{ ...datetime, id: 'def', isDeleted: false },
+			{ ...datetime, id: 'xyz', isDeleted: true },
 		]);
 
 		expect(filteredDates.length).toBe(2);

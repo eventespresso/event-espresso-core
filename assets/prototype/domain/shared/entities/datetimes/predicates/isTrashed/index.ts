@@ -8,6 +8,6 @@ import { is } from 'ramda';
  */
 import { Datetime } from '../../../../../eventEditor/data/types';
 
-const isTrashed = ({ isTrashed }: Datetime): boolean => is(Boolean, isTrashed) && isTrashed;
+const isTrashed = ({ isDeleted }: Datetime): boolean => is(Boolean, isDeleted) && isDeleted;
 
 export default isTrashed;

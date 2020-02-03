@@ -15,10 +15,10 @@ const datetimes: Datetime[] = [
 		description: '',
 		endDate: '2000-01-12T17:00:00+00:00',
 		isActive: true,
+		isDeleted: true,
 		isExpired: false,
 		isPrimary: false,
 		isSoldOut: false,
-		isTrashed: true,
 		isUpcoming: true,
 		length: 32400,
 		name: 'test',
@@ -36,10 +36,10 @@ const datetimes: Datetime[] = [
 		description: '',
 		endDate: '2020-01-12T17:00:00+00:00',
 		isActive: false,
+		isDeleted: false,
 		isExpired: false,
 		isPrimary: false,
 		isSoldOut: false,
-		isTrashed: false,
 		isUpcoming: true,
 		length: 32400,
 		name: 'test',
@@ -57,10 +57,10 @@ const datetimes: Datetime[] = [
 		description: 'test desc',
 		endDate: '2019-12-18T11:31:00+00:00',
 		isActive: false,
+		isDeleted: false,
 		isExpired: true,
 		isPrimary: false,
 		isSoldOut: false,
-		isTrashed: false,
 		isUpcoming: false,
 		length: 0,
 		name: 'just another datetime',
@@ -78,10 +78,10 @@ const datetimes: Datetime[] = [
 		description: 'test desc',
 		endDate: '2019-12-18T11:31:00+00:00',
 		isActive: true,
+		isDeleted: false,
 		isExpired: true,
 		isPrimary: false,
 		isSoldOut: true,
-		isTrashed: false,
 		isUpcoming: false,
 		length: 0,
 		name: 'another title',
@@ -281,7 +281,7 @@ describe('useDatesListFilterState', () => {
 		const dates = result.current.processedDates;
 
 		expect(dates.length).toBe(1);
-		expect(dates[0].isTrashed).toBe(true);
+		expect(dates[0].isDeleted).toBe(true);
 	});
 
 	test('should update processedDates to reflect changes made by invoking setShowDates with recentlyExpiredOnly filter', () => {

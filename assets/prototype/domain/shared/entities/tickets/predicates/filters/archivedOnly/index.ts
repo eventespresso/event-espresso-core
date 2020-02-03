@@ -1,11 +1,11 @@
 /**
  * Internal dependencies
  */
-import isTrashed from '../../isTrashed';
+import isArchived from '../../isArchived';
 import { Ticket } from '../../../../../../eventEditor/data/types';
 
-const archivedOnly = (tickets: Ticket[]): Ticket[] => {
-	return tickets.filter((ticket) => isTrashed(ticket));
+const archivedOnly = (tickets: Ticket[]) => {
+	return tickets.filter((ticket) => isArchived(ticket));
 };
 
 export default archivedOnly;
