@@ -1,146 +1,158 @@
-dist: xenial
-
-os: linux
+sudo: required
 
 language: php
 
 services:
-  - mysql
+    - mysql
 
 cache:
-  apt: true
-  directories:
-    - $HOME/.composer/cache
-    - $HOME/.npm
+    apt: true
+    directories:
+        - $HOME/.composer/cache
+        - $HOME/.npm
 
 env:
-  global:
-    - WP_VERSION=latest WP_MULTISITE=0
+    global:
+        - WP_VERSION=latest WP_MULTISITE=0
 
 before_install:
-   - |
-      if [[ "$SKIP_XDEBUG_REMOVE" != "true" ]]; then
-        cp $HOME/.phpenv/versions/$(phpenv global)/etc/conf.d/xdebug.ini /tmp
-        phpenv config-rm xdebug.ini
-        echo "xdebug removed";
-      fi
+    - |
+        if [[ "$SKIP_XDEBUG_REMOVE" != "true" ]]; then
+          cp $HOME/.phpenv/versions/$(phpenv global)/etc/conf.d/xdebug.ini /tmp
+          phpenv config-rm xdebug.ini
+          echo "xdebug removed";
+        fi
 before_script:
-  - bash tests/bin/install-wp-tests.sh wordpress_test root '' localhost $WP_VERSION
-  - export PATH="$HOME/.composer/vendor/bin:$PATH"
-  - |
-    # Install the specified version of PHPUnit depending on the PHP version:
-    if [[ -n "$TRAVIS_PHP_VERSION" ]]; then
-      case "$TRAVIS_PHP_VERSION" in
-        7.3|nightly)
-          # when wp tests support phpunit 7 we'll update this.
-          echo "Using PHPUnit 6"
-          composer global require "phpunit/phpunit=6.5.*"
-          ;;
-        7.2|7.1|7.0)
-          echo "Using PHPUnit 6"
-          composer global require "phpunit/phpunit=6.5.*"
-          ;;
-        5.6|5.5)
-          echo "Using PHPUnit 4.8"
-          composer global require "phpunit/phpunit=4.8.*"
-          ;;
-        *)
-          echo "No PHPUnit version handling for PHP version $TRAVIS_PHP_VERSION"
-          exit 1
-          ;;
-      esac
-    fi
-  - mysql --version
-  - phpunit --version
-  - phpenv versions
-  - npm --version
-  - node --version
+    - bash tests/bin/install-wp-tests.sh wordpress_test root '' localhost $WP_VERSION
+    - export PATH="$HOME/.composer/vendor/bin:$PATH"
+    - |
+        # Install the specified version of PHPUnit depending on the PHP version:
+        if [[ -n "$TRAVIS_PHP_VERSION" ]]; then
+          case "$TRAVIS_PHP_VERSION" in
+            7.3|nightly)
+              # when wp tests support phpunit 7 we'll update this.
+              echo "Using PHPUnit 6"
+              composer global require "phpunit/phpunit=6.5.*"
+              ;;
+            7.2|7.1|7.0)
+              echo "Using PHPUnit 6"
+              composer global require "phpunit/phpunit=6.5.*"
+              ;;
+            5.6|5.5)
+              echo "Using PHPUnit 4.8"
+              composer global require "phpunit/phpunit=4.8.*"
+              ;;
+            *)
+              echo "No PHPUnit version handling for PHP version $TRAVIS_PHP_VERSION"
+              exit 1
+              ;;
+          esac
+        fi
+    - mysql --version
+    - phpunit --version
+    - phpenv versions
+    - npm --version
+    - node --version
 
 script: npm run test-php
 
 jobs:
-  fast_finish: true
-  allow_failures:
-    - php: nightly
-    - php: 7.3
-      env:
-        - PHP_LINT=1
-        - PHP_LINT_WITH_WARNINGS=yes
-  include:
-    - stage: test
-      language: node_js
-      node_js: 11.0.0
-      env:
-        - JS_LINT=1
-      before_script:
-        - npm --version
-        - node --version
-      script:
-        - npm run ci:lint || exit 1
-    - language: node_js
-      node_js: 11.0.0
-      env:
-        - JAVASCRIPT_TESTS=1
-      before_script:
-        - npm --version
-        - node --version
-      script:
-        - npm run ci:test || exit 1
-    - language: node_js
-      node_js: 11.0.0
-      env:
-        - BUILD_TEST=1
-      before_script:
-        - npm --version
-        - node --version
-      script:
-        - npm run ci:build || exit 1
-    - php: 7.3
-      if: NOT commit_message =~ js_only AND NOT commit_message =~ dependabot AND NOT sender =~ dependabot
-      env:
-        - PHP_LINT=1
-        - PHP_LINT_WITH_WARNINGS=no
-      script:
-        - composer install || exit 1
-        - composer config-eventespressocs || exit 1
-        - npm run lint-php:skip-warnings || exit 1
-    - php: 7.3
-      if: NOT commit_message =~ js_only AND NOT commit_message =~ dependabot AND NOT sender =~ dependabot
-    - php: 7.2
-      if: NOT commit_message =~ js_only AND NOT commit_message =~ dependabot AND NOT sender =~ dependabot
-    - php: 7.1
-      if: NOT commit_message =~ js_only AND NOT commit_message =~ dependabot AND NOT sender =~ dependabot
-    - php: 7.0
-      if: NOT commit_message =~ js_only AND NOT commit_message =~ dependabot AND NOT sender =~ dependabot
-    - php: 5.6
-      if: NOT commit_message =~ js_only AND NOT commit_message =~ dependabot AND NOT sender =~ dependabot
-    # multisite
-    - php: 7.2
-      env: WP_MULTISITE=1
-      if: NOT commit_message =~ js_only AND NOT commit_message =~ dependabot AND NOT sender =~ dependabot
-    # wp 4.5 builds
-    - php: 5.5
-      dist: trusty
-      env: WP_VERSION=4.5
-      if: NOT commit_message =~ js_only AND NOT commit_message =~ dependabot AND NOT sender =~ dependabot
-    - php: nightly
-      if: NOT commit_message =~ js_only AND NOT commit_message =~ dependabot AND NOT sender =~ dependabot
-    - language: node_js
-      node_js: 11.0.0
-      env:
-        - LICENSE_CHECK=1
-      before_script:
-        - npm --version
-        - node --version
-      script:
-        - npm run lc || exit 1
+    fast_finish: true
+    allow_failures:
+        - php: nightly
+        - php: 7.3
+          env:
+              - PHP_LINT=1
+              - PHP_LINT_WITH_WARNINGS=yes
+    include:
+        - stage: test
+          if: NOT commit_message =~ js_only AND NOT commit_message =~ dependabot AND NOT sender =~ dependabot
+          php: 7.3
+          env:
+              - PHP_LINT=1
+              - PHP_LINT_WITH_WARNINGS=no
+          script:
+              - composer install || exit 1
+              - composer config-eventespressocs || exit 1
+              - npm run lint-php:skip-warnings || exit 1
+        - php: 7.3
+          if: NOT commit_message =~ js_only AND NOT commit_message =~ dependabot AND NOT sender =~ dependabot
+          env:
+              - PHP_LINT=1
+              - PHP_LINT_WITH_WARNINGS=yes
+          script:
+              - composer install || exit 1
+              - composer config-eventespressocs || exit 1
+              - npm run lint-php || exit 1
+        - env:
+              - JAVASCRIPT_TESTS=1
+          language: node_js
+          node_js:
+              - node
+          before_install:
+              - nvm install && nvm use
+              - nvm install --latest-npm
+          before_script:
+              - npm --version
+              - node --version
+          script:
+              - npm run ci:test || exit 1
+        - language: node_js
+          env:
+              - LICENSE_CHECK=1
+          before_script:
+              - npm --version
+              - node --version
+          script:
+              - npm run lc || exit 1
+        - language: node_js
+          env:
+              - BUILD_TEST=1
+          before_install:
+              - nvm install && nvm use
+              - nvm install --latest-npm
+          before_script:
+              - npm --version
+              - node --version
+          script:
+              - npm run ci:build || exit 1
+        - language: node_js
+          env:
+              - JS_LINT=1
+          before_script:
+              - npm --version
+              - node --version
+          script:
+              - npm run ci:lint || exit 1
+        - php: 7.3
+          if: NOT commit_message =~ js_only AND NOT commit_message =~ dependabot AND NOT sender =~ dependabot
+        - php: 7.2
+          if: NOT commit_message =~ js_only AND NOT commit_message =~ dependabot AND NOT sender =~ dependabot
+        - php: 7.1
+          if: NOT commit_message =~ js_only AND NOT commit_message =~ dependabot AND NOT sender =~ dependabot
+        - php: 7.0
+          if: NOT commit_message =~ js_only AND NOT commit_message =~ dependabot AND NOT sender =~ dependabot
+        - php: 5.6
+          if: NOT commit_message =~ js_only AND NOT commit_message =~ dependabot AND NOT sender =~ dependabot
+        # multisite
+        - php: 7.2
+          env: WP_MULTISITE=1
+          if: NOT commit_message =~ js_only AND NOT commit_message =~ dependabot AND NOT sender =~ dependabot
+        # wp 4.5 builds
+        - php: 5.5
+          dist: trusty
+          env: WP_VERSION=4.5
+          if: NOT commit_message =~ js_only AND NOT commit_message =~ dependabot AND NOT sender =~ dependabot
+        - php: nightly
+          if: NOT commit_message =~ js_only AND NOT commit_message =~ dependabot AND NOT sender =~ dependabot
 
 notifications:
-  slack:
-    rooms:
-      secure: e2xmbwOoagh/rZIqUnx15HcTv5hZGxykvg8Tj0ENGi/bLcXgrEYxs2hpW+nzGggmSl22Eh+6wLRo62L0dEIIo1n+yknqDdAbVG7lmnX7Tc45JNgxWtSmAPzC3wAp0e9w1hy8HILPjYLxl0G7eXUvo3mKVRCCyD/Cyz5dDicE8tQ=
-    on_success: change
-    on_failure: always
-    template:
-      - "Build <%{build_url}|#%{build_number}> (<%{compare_url}|%{commit}>) of %{repository}@%{branch} by %{author} %{result} in %{duration}"
-      - "%{commit_message}"
+    slack:
+        rooms:
+            secure: e2xmbwOoagh/rZIqUnx15HcTv5hZGxykvg8Tj0ENGi/bLcXgrEYxs2hpW+nzGggmSl22Eh+6wLRo62L0dEIIo1n+yknqDdAbVG7lmnX7Tc45JNgxWtSmAPzC3wAp0e9w1hy8HILPjYLxl0G7eXUvo3mKVRCCyD/Cyz5dDicE8tQ=
+        on_success: change
+        on_failure: always
+        on_start: always
+        template:
+            - 'Build <%{build_url}|#%{build_number}> (<%{compare_url}|%{commit}>) of %{repository}@%{branch} by %{author} %{result} in %{duration}'
+            - '%{commit_message}'
