@@ -1,5 +1,7 @@
 import { OperationVariables } from 'apollo-client';
 import { pathOr } from 'ramda';
+import { useApolloClient } from '@apollo/react-hooks';
+
 import useEventId from '../../queries/events/useEventId';
 import useDatetimeQueryOptions from '../../queries/datetimes/useDatetimeQueryOptions';
 import useOnCreateDatetime from './useOnCreateDatetime';
@@ -12,22 +14,46 @@ import {
 	OnUpdateFnOptions,
 	MutatorGeneratedObject,
 } from '../../../../../application/services/apollo/mutations/types';
-import { ReadQueryOptions } from '../../queries/types';
-import { DEFAULT_DATETIME_LIST_DATA as DEFAULT_LIST_DATA } from '../../queries';
-import { Datetime, DatetimeEdge, DatetimesList } from '../../types';
-import { DatetimeMutationCallbackFn } from '../types';
+import { ucFirst } from '../../../../../application/utilities/text';
+import { DEFAULT_DATETIME_LIST_DATA as DEFAULT_LIST_DATA, queries } from '../../queries';
+import { Datetime, DatetimeEdge, DatetimesList, DatetimeItem } from '../../types';
+import { PLUS_ONE_MONTH, PLUS_TWO_MONTHS } from '../../../../shared/defaultDates';
+
+const { GET_DATETIME } = queries;
+
+const DATETIME_DEFAULTS: Datetime = {
+	id: 'NEW',
+	dbId: 0,
+	capacity: -1,
+	description: '',
+	endDate: PLUS_TWO_MONTHS.toISOString(),
+	isActive: false,
+	isExpired: false,
+	isPrimary: false,
+	isSoldOut: false,
+	isTrashed: false,
+	isUpcoming: false,
+	length: 0,
+	name: '',
+	order: 0,
+	reserved: 0,
+	sold: 0,
+	startDate: PLUS_ONE_MONTH.toISOString(),
+	status: null,
+};
 
 /**
  *
  */
 const useDatetimeMutator = (): Mutator => {
-	const eventId: number = useEventId();
+	const eventId = useEventId();
 
-	const options: ReadQueryOptions = useDatetimeQueryOptions();
+	const options = useDatetimeQueryOptions();
+	const client = useApolloClient();
 
-	const onCreateDatetime: DatetimeMutationCallbackFn = useOnCreateDatetime();
-	const onUpdateDatetime: DatetimeMutationCallbackFn = useOnUpdateDatetime();
-	const onDeleteDatetime: DatetimeMutationCallbackFn = useOnDeleteDatetime();
+	const onCreateDatetime = useOnCreateDatetime();
+	const onUpdateDatetime = useOnUpdateDatetime();
+	const onDeleteDatetime = useOnDeleteDatetime();
 
 	const createVariables = (mutationType: MutationType, input: MutationInput): OperationVariables => {
 		const mutationInput: MutationInput = {
@@ -44,12 +70,63 @@ const useDatetimeMutator = (): Mutator => {
 		};
 	};
 
+	const createOptimisticResponse = (mutationType: MutationType, input: MutationInput): any => {
+		let espressoDatetime = {
+			__typename: 'EspressoDatetime',
+		};
+		let data: DatetimeItem, datetime: Datetime;
+		switch (mutationType) {
+			case MutationType.Create:
+				espressoDatetime = {
+					...espressoDatetime,
+					...DATETIME_DEFAULTS,
+					...input,
+				};
+				break;
+			case MutationType.Delete:
+				espressoDatetime = {
+					...espressoDatetime,
+					...input,
+				};
+				break;
+			case MutationType.Update:
+				try {
+					data = client.readQuery<DatetimeItem>({
+						query: GET_DATETIME,
+						variables: {
+							id: input.id,
+						},
+					});
+				} catch (error) {
+					// do nothing
+				}
+				datetime = pathOr<Datetime>(null, ['datetime'], data);
+
+				espressoDatetime = {
+					...espressoDatetime,
+					...datetime,
+					...input,
+				};
+		}
+
+		const lcMutationtype = mutationType.toLowerCase();
+		const ucFirstMutationtype = ucFirst(lcMutationtype);
+
+		// e.g. "deleteEspressoDatetime", "createEspressoDatetime"
+		const mutation = `${lcMutationtype}EspressoDatetime`;
+
+		return {
+			__typename: 'RootMutation',
+			[mutation]: {
+				__typename: `${ucFirstMutationtype}EspressoDatetimePayload`,
+				espressoDatetime,
+			},
+		};
+	};
+
 	const mutator = (mutationType: MutationType, input: MutationInput): MutatorGeneratedObject => {
-		const variables: OperationVariables = createVariables(mutationType, input);
-		/**
-		 * @todo update optimisticResponse
-		 */
-		let optimisticResponse: any;
+		const variables = createVariables(mutationType, input);
+		const optimisticResponse = createOptimisticResponse(mutationType, input);
 
 		const onUpdate = ({ proxy, entity: datetime }: OnUpdateFnOptions<Datetime>): void => {
 			// Read the existing data from cache.
