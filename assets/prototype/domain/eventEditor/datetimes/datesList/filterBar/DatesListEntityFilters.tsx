@@ -3,7 +3,7 @@ import React from 'react';
  * Internal imports
  */
 import useDatesListFilterState from './useDatesListFilterState';
-import DatesSortedControl from './controls/DatesSortedByControl';
+import DatesSortedControl from './controls/DatesSortedControl';
 import DisplayDatesControl from './controls/DisplayDatesControl';
 import ShowDatesControl from './controls/ShowDatesControl';
 
@@ -32,7 +32,7 @@ const DatesListEntityFilters: React.FC = (): JSX.Element => {
 				<ShowDatesControl showDates={showDates} setShowDates={setShowDates} />
 			</div>
 			<div className='ee-sort-dates-filter ee-filter-bar-filter'>
-				<DatesSortedByControl datesSortedBy={datesSortedBy} setDatesSortedBy={setDatesSortedBy} />
+				<DatesSortedControl datesSortedBy={datesSortedBy} setDatesSortedBy={setDatesSortedBy} />
 			</div>
 			<div className='ee-display-dates-dates-filter ee-filter-bar-filter'>
 				<DisplayDatesControl displayDates={displayDates} setDisplayDates={setDisplayDates} />

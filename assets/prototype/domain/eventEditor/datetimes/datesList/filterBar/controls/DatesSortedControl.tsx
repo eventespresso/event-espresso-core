@@ -17,10 +17,7 @@ interface DatesSortedControlProps {
  * @param {Function} setDatesSortedBy
  * @return {Object} rendered control
  */
-const DatesSortedControl: React.FC<DatesSortedByControlProps> = ({
-	datesSortedBy,
-	setDatesSortedBy,
-}): JSX.Element => {
+const DatesSortedControl: React.FC<DatesSortedControlProps> = ({ datesSortedBy, setDatesSortedBy }): JSX.Element => {
 	return useMemo(() => {
 		return (
 			<SelectControl
