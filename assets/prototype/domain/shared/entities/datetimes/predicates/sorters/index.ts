@@ -8,11 +8,11 @@ import { compareAsc, parseISO } from 'date-fns';
  * Internal dependencies
  */
 import { Datetime } from '../../../../../eventEditor/data/types';
-import { DatesSortedBy } from '../../../../../eventEditor/data/date/types';
+import { DatesSorted } from '../../../../../eventEditor/data/date/types';
 
 interface SortDates {
 	dates: Datetime[];
-	sort?: DatesSortedBy;
+	order?: DatesSorted;
 }
 
 /**
@@ -21,17 +21,17 @@ interface SortDates {
  *
  * @return {Array}         filtered dateEntities array
  */
-const sorters = ({ dates, sort = DatesSortedBy.chronologically }: SortDates): Datetime[] => {
-	switch (sort) {
-		case DatesSortedBy.chronologically:
+const sorters = ({ dates, order = DatesSorted.chronologically }: SortDates): Datetime[] => {
+	switch (order) {
+		case DatesSorted.chronologically:
 			return dates.sort(({ startDate: dateLeft }, { startDate: dateRight }) =>
 				compareAsc(parseISO(dateLeft), parseISO(dateRight))
 			);
-		case DatesSortedBy.byId:
+		case DatesSorted.byId:
 			return sortBy(prop('id'))(dates);
-		case DatesSortedBy.byName:
+		case DatesSorted.byName:
 			return sortBy(prop('name'))(dates);
-		case DatesSortedBy.byOrder:
+		case DatesSorted.byOrder:
 			return sortBy(prop('order'))(dates);
 		default:
 			return dates;

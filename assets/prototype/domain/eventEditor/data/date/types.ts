@@ -1,4 +1,4 @@
-export enum DatesSortedBy {
+export enum DatesSorted {
 	chronologically = 'chronologically',
 	byName = 'byName',
 	byId = 'byId',

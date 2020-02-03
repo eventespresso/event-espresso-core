@@ -1,4 +1,5 @@
-import isTrashed from './isOnSale';
+import { Ticket } from '../../../../eventEditor/data/types';
+import isTrashed from './isTrashed';
 
 /**
  * @function
@@ -6,7 +7,7 @@ import isTrashed from './isOnSale';
  * @param {boolean} includeArchived if true will not filter out trashed entities
  * @return {boolean} true if event date is valid entity or archive
  */
-const isValidEntityOrArchive = (ticket, includeArchived) => {
+const isValidEntityOrArchive = (ticket: Ticket, includeArchived: boolean): boolean => {
 	return includeArchived || (!includeArchived && !isTrashed(ticket));
 };
 

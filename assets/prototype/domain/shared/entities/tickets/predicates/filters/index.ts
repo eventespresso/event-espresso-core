@@ -1,16 +1,14 @@
-/**
- * Internal dependencies
- */
+import allOnSaleAndPending from './allOnSaleAndPending';
 import archivedOnly from './archivedOnly';
 import expiredOnly from './expiredOnly';
 import nextOnSaleOrPendingOnly from './nextOnSaleOrPendingOnly';
-import onSaleAndPending from './onSaleAndPending';
 import onSaleOnly from './onSaleOnly';
 import pendingOnly from './pendingOnly';
 import percentSoldAtOrAbove from './percentSoldAtOrAbove';
 import percentSoldBelow from './percentSoldBelow';
-import { ShowTickets } from '../../../../../eventEditor/data/ticket/types';
 import soldOutOnly from './soldOutOnly';
+
+import { ShowTickets } from '../../../../../eventEditor/data/ticket/types';
 import { Ticket } from '../../../../../eventEditor/data/types';
 
 export const now = new Date();
@@ -21,14 +19,13 @@ interface FilterTickets {
 }
 
 /**
- * filterTickets
  * reduces tickets array based on value of the "show" filter
  *
  * @param {Array} tickets    original tickets array
  * @param {string} show    value for the "show" filter
  * @return {Array}         filtered tickets array
  */
-const filters = ({ tickets, show = ShowTickets.nextOnSaleOrPendingOnly }: FilterTickets) => {
+const filters = ({ tickets, show = ShowTickets.nextOnSaleOrPendingOnly }: FilterTickets): Ticket[] => {
 	switch (show) {
 		case ShowTickets.above50Sold:
 			return percentSoldAtOrAbove({ percentage: 50, tickets });
@@ -47,15 +44,16 @@ const filters = ({ tickets, show = ShowTickets.nextOnSaleOrPendingOnly }: Filter
 		case ShowTickets.nextOnSaleOrPendingOnly:
 			return nextOnSaleOrPendingOnly(tickets);
 		case ShowTickets.onSaleAndPending:
-			return onSaleAndPending(tickets);
+			return allOnSaleAndPending(tickets);
 		case ShowTickets.onSaleOnly:
 			return onSaleOnly(tickets);
 		case ShowTickets.pendingOnly:
 			return pendingOnly(tickets);
 		case ShowTickets.soldOutOnly:
 			return soldOutOnly(tickets);
+		default:
+			return tickets;
 	}
-	return tickets;
 };
 
 export default filters;

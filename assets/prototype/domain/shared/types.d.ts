@@ -2140,7 +2140,7 @@ export type EspressoPrice = {
   /** Flag indicating price is the default one. */
   isDefault?: Maybe<Scalars['Boolean']>,
   /** Flag indicating price has been trashed. */
-  isDeleted?: Maybe<Scalars['Boolean']>,
+  isTrashed?: Maybe<Scalars['Boolean']>,
   /** Flag indicating price is a discount. */
   isDiscount?: Maybe<Scalars['Boolean']>,
   /** Flag indicating price is a percentage. */
@@ -2183,7 +2183,7 @@ export type EspressoPriceType = {
   /** Flag indicating price type is a base price. */
   isBasePrice?: Maybe<Scalars['Boolean']>,
   /** Flag indicating price type has been trashed. */
-  isDeleted?: Maybe<Scalars['Boolean']>,
+  isTrashed?: Maybe<Scalars['Boolean']>,
   /** Flag indicating price type is a discount. */
   isDiscount?: Maybe<Scalars['Boolean']>,
   /** Flag indicating price type is a percentage. */

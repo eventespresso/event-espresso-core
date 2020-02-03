@@ -1,7 +1,5 @@
-/**
- * External dependencies
- */
 import { differenceInMinutes, parseISO } from 'date-fns';
+
 import { now } from './filters';
 import { Ticket } from '../../../../eventEditor/data/types';
 

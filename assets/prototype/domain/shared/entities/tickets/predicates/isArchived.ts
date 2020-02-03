@@ -1,3 +1,6 @@
+/**
+ * Internal dependencies
+ */
 import { Ticket } from '../../../../eventEditor/data/types';
 
 /**
@@ -5,8 +8,6 @@ import { Ticket } from '../../../../eventEditor/data/types';
  * @param {Object} ticket object
  * @return {boolean} true if ticket is archived
  */
-const isTrashed = (ticket: Ticket): boolean => {
-	return ticket.isTrashed;
-};
+const isArchived = (ticket: Ticket): boolean => ticket.isTrashed;
 
-export default isTrashed;
+export default isArchived;
