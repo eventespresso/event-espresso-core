@@ -6,13 +6,13 @@ import usePriceQueryOptions from './usePriceQueryOptions';
 import { FetchEntitiesResult } from '../types';
 import { PricesList } from '../../types';
 
-const useFetchPrices = (skipFetch: boolean = undefined): FetchEntitiesResult<PricesList> => {
+const useFetchPrices = (skipFetch: boolean = null): FetchEntitiesResult<PricesList> => {
 	const { setIsLoading, setIsLoaded, setIsError, isLoaded } = useStatus();
 	const { query, ...options } = usePriceQueryOptions();
 	const { ticketIn } = options.variables.where;
 	// do not fetch if we don't have any tickets
 	// or prices have already been fetched
-	const skip = typeof skipFetch !== 'undefined' ? skipFetch : !ticketIn.length || isLoaded(TypeName.prices);
+	const skip = skipFetch !== null ? skipFetch : !ticketIn.length || isLoaded(TypeName.prices);
 
 	const { onCompleted, onError, initializationNotices } = useInitToaster({
 		loadingMessage: `initializing prices`,
