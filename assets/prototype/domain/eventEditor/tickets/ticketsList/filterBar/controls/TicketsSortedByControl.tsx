@@ -35,7 +35,7 @@ const TicketsSortedByControl: React.FC<TicketsSortedByControlProps> = ({
 				options={[
 					{
 						value: SortTicketsBy.date,
-						label: __('date'),
+						label: __('by ticket sale date'),
 					},
 					{
 						value: SortTicketsBy.name,
