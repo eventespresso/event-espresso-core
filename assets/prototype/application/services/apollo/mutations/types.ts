@@ -48,11 +48,7 @@ export interface EntityMutation {
 	mutate: (options: CustomMutationOptions, mutationType: MutationType) => MutationResult;
 }
 
-interface MutatorsMap {
-	[key: string]: Mutator;
-}
-
-export interface Mutators extends MutatorsMap {
+export interface Mutators {
 	datetimeMutator: Mutator;
 	ticketMutator: Mutator;
 	priceMutator: Mutator;

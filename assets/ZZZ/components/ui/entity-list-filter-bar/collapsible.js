@@ -6,13 +6,12 @@ import { useSpring, animated } from 'react-spring';
 import { isFunction } from 'lodash';
 import { useMemo, useRef } from '@wordpress/element';
 import { SelectControl, TextControl } from '@wordpress/components';
+import { __ } from '@wordpress/i18n';
 
 /**
  * Internal dependencies
  */
 import { useRect } from '@eventespresso/hooks';
-const __ = () => null;
-// import { __ } from '../../../../../../application/utilities/text';
 
 /**
  * Collapsible
