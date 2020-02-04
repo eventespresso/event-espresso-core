@@ -33,7 +33,7 @@ const rulesConfig = {
 				loader: 'postcss-loader',
 				options: {
 					// eslint-disable-next-line object-shorthand
-					plugins: function () {
+					plugins: function() {
 						return [autoprefixer, cssnano({ preset: 'default' })];
 					},
 					sourceMap: true,
@@ -186,17 +186,6 @@ const config = [
 	},
 	{
 		entry: {
-			// This change is just for the prototype.
-			'eventespresso-editor-prototype': pathToPrototype + '/domain/eventEditor/index.tsx',
-		},
-		module: moduleConfigWithJsAndCssRules,
-		output: {
-			library: ['eejs', 'editor'],
-			libraryTarget: 'this',
-		},
-	},
-	{
-		entry: {
 			'ee-wp-plugins-page': pathToEDTRv1 + 'wp-plugins-page/index.js',
 		},
 		module: moduleConfigWithJsAndCssRules,
@@ -250,39 +239,6 @@ const enhance = (conf) => {
 	return enhancedConf;
 };
 
-const addLoaders = (conf) => {
-	const enhancedConf = { ...conf };
-
-	enhancedConf.module.rules = [
-		...conf.module.rules,
-		{
-			test: /\.ts(x?)$/,
-			exclude: /node_modules/,
-			use: [
-				{
-					loader: 'ts-loader',
-				},
-			],
-		},
-		{
-			enforce: 'pre',
-			test: /\.js$/,
-			loader: 'source-map-loader',
-		},
-	];
-
-	// When importing a module whose path matches one of the following, just
-	// assume a corresponding global variable exists and use that instead.
-	// This is important because it allows us to avoid bundling all of our
-	// dependencies, which allows browsers to cache those libraries between builds.
-	enhancedConf.externals = {
-		react: 'React',
-		'react-dom': 'ReactDOM',
-	};
-
-	return enhancedConf;
-};
-
 const checkAndBuildOnlyEditorFiles = ({ entry }) => {
 	if (process.env.ONLY_EDITOR) {
 		if (entry['eventespresso-editor-prototype']) {
@@ -295,9 +251,6 @@ const checkAndBuildOnlyEditorFiles = ({ entry }) => {
 	return true;
 };
 
-const enhancedConfig = config
-	.map(enhance)
-	.map(addLoaders)
-	.filter(checkAndBuildOnlyEditorFiles);
+const enhancedConfig = config.map(enhance).filter(checkAndBuildOnlyEditorFiles);
 
 module.exports = enhancedConfig;

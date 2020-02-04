@@ -7,7 +7,7 @@ const assetsData = Object.create(null);
 const DependencyExtractionWebpackPlugin = require('@wordpress/dependency-extraction-webpack-plugin');
 
 const { requestToExternal, requestToHandle } = require('./asset-dependency-maps');
-const { assetsManifestOutputPath } = require('./paths');
+const { assetsManifestOutputPath } = require('./old-paths');
 
 const pluginsConfigWithExternals = [
 	new webpack.ProvidePlugin({

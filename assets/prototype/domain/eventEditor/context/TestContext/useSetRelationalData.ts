@@ -8,4 +8,5 @@ const useSetRelationalData = (): void => {
 		setData(window.eeEditorData.event.relations);
 	}, []);
 };
+
 export default useSetRelationalData;
