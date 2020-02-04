@@ -375,7 +375,6 @@ QUERY;
                     name
                     order
                     overrides
-                    priceTypeOrder
                     __typename
                 }
                 __typename
