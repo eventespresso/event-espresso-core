@@ -406,8 +406,8 @@ QUERY;
     {
         $field_key = lcfirst($this->namespace) . 'PriceTypes';
         $query = <<<QUERY
-        query GET_PRICE_TYPES(\$where: {$this->namespace}RootQueryPriceTypesConnectionWhereArgs, \$first: Int, \$last: Int ) {
-            {$field_key}(where: \$where, first: \$first, last: \$last) {
+        query GET_PRICE_TYPES(\$first: Int, \$last: Int ) {
+            {$field_key}(first: \$first, last: \$last) {
                 nodes {
                     id
                     dbId
@@ -429,7 +429,6 @@ QUERY;
             'operation_name' => 'GET_PRICE_TYPES',
             'variables' => [
                 'first' => 100,
-                'where' => [],
             ],
             'query' => $query,
         ];
