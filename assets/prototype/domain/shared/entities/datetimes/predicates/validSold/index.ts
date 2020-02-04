@@ -1,3 +1,4 @@
+import { is } from 'ramda';
 /**
  * Internal dependencies
  */
