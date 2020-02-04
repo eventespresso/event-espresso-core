@@ -16,6 +16,7 @@
 		}
 	},
 	"scripts": {
+		"build:css": "node ./bin/css-builder/css-builder.js",
 		"ci:build": "npm run prod",
 		"ci:test": "npm run test-js",
 		"dev": "node scripts/watch.js",
