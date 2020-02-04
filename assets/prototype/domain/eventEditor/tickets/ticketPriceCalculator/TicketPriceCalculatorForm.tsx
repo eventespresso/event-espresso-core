@@ -14,7 +14,7 @@ const TicketPriceCalculatorForm: React.FC<TpcForm> = ({ form, values: { ticket }
 	const toggleCalcDir = (): void => form.mutators.toggleCalcDir();
 	return (
 		<>
-			<H2 style={styles.hdr}>{sprintf(__('Price Calculator for Ticket.: %s'), ticket.name)}</H2>
+			<H2 style={styles.hdr}>{sprintf(__('Price Calculator for Ticket: %s'), ticket.name)}</H2>
 			<div style={styles.div}>
 				<HTMLTable interactive striped style={styles.table}>
 					<thead>
