@@ -21,61 +21,61 @@ const ShowDatesControl: React.FC<ShowDatesControlProps> = ({ showDates, setShowD
 	return useMemo<JSX.Element>(() => {
 		return (
 			<SelectControl
-				label={__('show', 'event_espresso')}
+				label={__('show')}
 				className='espresso-date-list-filter-bar-show-select'
 				value={showDates}
 				options={[
 					{
 						value: 'all',
-						label: __('all dates', 'event_espresso'),
+						label: __('all dates'),
 					},
 					{
 						value: 'active-upcoming',
-						label: __('all active and upcoming', 'event_espresso'),
+						label: __('all active and upcoming'),
 					},
 					{
 						value: 'active-only',
-						label: __('active dates only', 'event_espresso'),
+						label: __('active dates only'),
 					},
 					{
 						value: 'upcoming-only',
-						label: __('upcoming dates only', 'event_espresso'),
+						label: __('upcoming dates only'),
 					},
 					{
 						value: 'next-active-upcoming-only',
-						label: __('next active or upcoming only', 'event_espresso'),
+						label: __('next active or upcoming only'),
 					},
 					{
 						value: 'sold-out-only',
-						label: __('sold out dates only', 'event_espresso'),
+						label: __('sold out dates only'),
 					},
 					{
 						value: 'above-90-capacity',
-						label: __('dates above 90% capacity', 'event_espresso'),
+						label: __('dates above 90% capacity'),
 					},
 					{
 						value: 'above-75-capacity',
-						label: __('dates above 75% capacity', 'event_espresso'),
+						label: __('dates above 75% capacity'),
 					},
 					{
 						value: 'above-50-capacity',
-						label: __('dates above 50% capacity', 'event_espresso'),
+						label: __('dates above 50% capacity'),
 					},
 					{
 						value: 'below-50-capacity',
-						label: __('dates below 50% capacity', 'event_espresso'),
+						label: __('dates below 50% capacity'),
 					},
 					{
 						value: 'recently-expired-only',
-						label: __('recently expired dates', 'event_espresso'),
+						label: __('recently expired dates'),
 					},
 					{
 						value: 'expired-only',
-						label: __('all expired dates', 'event_espresso'),
+						label: __('all expired dates'),
 					},
 					{
 						value: 'trashed-only',
-						label: __('trashed dates only', 'event_espresso'),
+						label: __('trashed dates only'),
 					},
 				]}
 				onChange={setShowDates}

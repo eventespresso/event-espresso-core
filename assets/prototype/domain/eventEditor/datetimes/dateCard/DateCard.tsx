@@ -55,7 +55,7 @@ const DateCard: React.FC<ListItemProps> = ({ id }): JSX.Element => {
 				<H4>
 					<InlineEditInput
 						component={EditableText}
-						placeholder={__('Edit title...', 'event_espresso')}
+						placeholder={__('Edit title...')}
 						value={date.name}
 						onCancel={(value: any): void => {
 							console.log('DatetimeProvider title onCancel => NEEDS CALLBACK');
@@ -74,7 +74,7 @@ const DateCard: React.FC<ListItemProps> = ({ id }): JSX.Element => {
 					<H6>
 						<InlineEditInput
 							component={EditableText}
-							placeholder={__('Edit description...', 'event_espresso')}
+							placeholder={__('Edit description...')}
 							value={date.description}
 							onCancel={(value: any): void => {
 								console.log('DatetimeProvider desc onCancel => NEEDS CALLBACK');
@@ -102,7 +102,7 @@ const DateCard: React.FC<ListItemProps> = ({ id }): JSX.Element => {
 				<div>
 					{ticketsLoaded && (
 						<>
-							{__('Related Tickets:', 'event_espresso')}{' '}
+							{__('Related Tickets:')}{' '}
 							{relatedTicketIds.filter(Boolean).map((ticketId) => (
 								<TicketIdTag key={ticketId} id={ticketId} />
 							))}

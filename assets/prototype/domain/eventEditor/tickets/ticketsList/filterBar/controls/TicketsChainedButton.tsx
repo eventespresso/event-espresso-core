@@ -22,11 +22,7 @@ interface TicketsChainedButtonProps {
 const TicketsChainedButton: React.FC<TicketsChainedButtonProps> = ({ isChained, toggleIsChained }): JSX.Element => {
 	return (
 		<IconButton
-			label={
-				isChained
-					? __('showing tickets for above dates only', 'event_espresso')
-					: __('showing tickets for all event dates', 'event_espresso')
-			}
+			label={isChained ? __('showing tickets for above dates only') : __('showing tickets for all event dates')}
 			icon={isChained ? 'admin-links' : 'editor-unlink'}
 			onClick={toggleIsChained}
 		/>

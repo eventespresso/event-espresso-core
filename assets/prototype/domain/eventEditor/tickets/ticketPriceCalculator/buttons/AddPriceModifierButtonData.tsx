@@ -35,7 +35,7 @@ const AddPriceModifierButtonData = ({
 			reset(name);
 			sort();
 		} else {
-			alert(__('Please enter an amount for the new price modifier.', 'event_espresso'));
+			alert(__('Please enter an amount for the new price modifier.'));
 			return;
 		}
 	}, []);

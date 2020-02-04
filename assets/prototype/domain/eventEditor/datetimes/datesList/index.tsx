@@ -16,16 +16,13 @@ const DatesList: React.FC = (): JSX.Element => {
 	const error = isError(TypeName.datetimes);
 	const loading = isLoading(TypeName.datetimes);
 
-	if (loading) return <LoadingIndicator message={__('loading dates...', 'event_espresso')} />;
+	if (loading) return <LoadingIndicator message={__('loading dates...')} />;
 
 	if (error) return <ErrorIndicator />;
 
 	if (noDatetimes) {
 		return (
-			<EmptyState
-				description={__('try changing filter settings', 'event_espresso')}
-				title={__('NO DATES FOR YOU !!!', 'event_espresso')}
-			>
+			<EmptyState description={__('try changing filter settings')} title={__('NO DATES FOR YOU !!!')}>
 				<AddNewDateButton />
 			</EmptyState>
 		);

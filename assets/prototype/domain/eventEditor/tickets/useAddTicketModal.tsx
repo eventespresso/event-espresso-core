@@ -27,7 +27,7 @@ const useAddTicketModal: EditorModal = () => {
 	);
 
 	const formComponent = useCallback<React.FC<TicketItemFormProps>>(
-		(props): JSX.Element => <TicketForm {...props} title={__('New Ticket Details', 'event_espresso')} />,
+		(props): JSX.Element => <TicketForm {...props} title={__('New Ticket Details')} />,
 		[]
 	);
 

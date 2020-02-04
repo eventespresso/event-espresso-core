@@ -14,23 +14,17 @@ const TicketPriceCalculatorForm: React.FC<TpcForm> = ({ form, values: { ticket }
 	const toggleCalcDir = (): void => form.mutators.toggleCalcDir();
 	return (
 		<>
-			<H2 style={styles.hdr}>{sprintf(__(`Price Calculator for Ticket: %s`, 'event_espresso'), ticket.name)}</H2>
+			<H2 style={styles.hdr}>{sprintf(__('Price Calculator for Ticket.: %s'), ticket.name)}</H2>
 			<div style={styles.div}>
 				<HTMLTable interactive striped style={styles.table}>
 					<thead>
 						<tr>
-							<th style={{ ...styles.colWidth7h, ...styles.cell }}>{__('ID', 'event_espresso')}</th>
-							<th style={{ ...styles.colWidth15, ...styles.type }}>
-								{__('Price Type', 'event_espresso')}
-							</th>
-							<th style={{ ...styles.colWidth20, ...styles.cell }}>{__('Label', 'event_espresso')}</th>
-							<th style={{ ...styles.colWidth30, ...styles.cell }}>
-								{__('Description', 'event_espresso')}
-							</th>
-							<th style={{ ...styles.colWidth15, ...styles.amount }}>{__('Amount', 'event_espresso')}</th>
-							<th style={{ ...styles.colWidth7h, ...styles.actions }}>
-								{__('Actions', 'event_espresso')}
-							</th>
+							<th style={{ ...styles.colWidth7h, ...styles.cell }}>{__('ID')}</th>
+							<th style={{ ...styles.colWidth15, ...styles.type }}>{__('Price Type')}</th>
+							<th style={{ ...styles.colWidth20, ...styles.cell }}>{__('Label')}</th>
+							<th style={{ ...styles.colWidth30, ...styles.cell }}>{__('Description')}</th>
+							<th style={{ ...styles.colWidth15, ...styles.amount }}>{__('Amount')}</th>
+							<th style={{ ...styles.colWidth7h, ...styles.actions }}>{__('Actions')}</th>
 						</tr>
 					</thead>
 					<tbody>

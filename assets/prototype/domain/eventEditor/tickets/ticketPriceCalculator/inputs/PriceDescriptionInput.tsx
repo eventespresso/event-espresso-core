@@ -13,7 +13,7 @@ const PriceDescriptionInput: React.FC<PriceInputProps> = ({ name, price }): JSX.
 			component={'input'}
 			initialValue={price.desc}
 			name={`${name}.desc`}
-			placeholder={__('description...', 'event_espresso')}
+			placeholder={__('description...')}
 			style={styles.input}
 		/>
 	);

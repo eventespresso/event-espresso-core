@@ -15,7 +15,7 @@ const TicketPriceTotalRow: React.FC<TpcFormElement> = ({ ticket, reverseCalculat
 	return (
 		<tr>
 			<th colSpan={4} style={styles.total}>
-				{__('Total', 'event_espresso')}
+				{__('Total')}
 			</th>
 			<th style={{ ...styles.colWidth15, ...styles.amount }}>
 				<div style={styles.money}>

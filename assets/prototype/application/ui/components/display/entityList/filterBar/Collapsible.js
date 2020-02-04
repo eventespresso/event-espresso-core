@@ -45,7 +45,7 @@ const Collapsible = ({
 		() => (
 			<SelectControl
 				id={`ee-perPage-select-${listId}`}
-				label={__('per page', 'event_espresso')}
+				label={__('per page')}
 				className='ee-entity-list-filter-bar-perPage-select'
 				value={perPage}
 				options={[
@@ -65,7 +65,7 @@ const Collapsible = ({
 		return typeof setSearchText === 'function' ? (
 			<TextControl
 				id={`ee-search-text-${listId}`}
-				label={__('search', 'event_espresso')}
+				label={__('search')}
 				className='ee-entity-list-filter-bar-search'
 				value={searchText}
 				onChange={setSearchText}

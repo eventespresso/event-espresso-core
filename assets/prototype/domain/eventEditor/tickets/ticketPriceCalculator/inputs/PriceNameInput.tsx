@@ -13,7 +13,7 @@ const PriceNameInput: React.FC<PriceInputProps> = ({ name, price }): JSX.Element
 			component={'input'}
 			initialValue={price.name}
 			name={`${name}.name`}
-			placeholder={__('label...', 'event_espresso')}
+			placeholder={__('label...')}
 			style={styles.input}
 		/>
 	);

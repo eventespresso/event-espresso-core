@@ -27,42 +27,42 @@ const TicketForm: React.FC<TicketItemFormProps> = ({ id, formReset, title }): JS
 		<>
 			<H2 style={hdrStyle}>{title}</H2>
 			<div style={divStyle}>
-				<label style={lblStyle}>{__('Name', 'event_espresso')}</label>
+				<label style={lblStyle}>{__('Name')}</label>
 
 				<Field
 					defaultValue={name}
 					name='name'
 					component='input'
 					type='text'
-					placeholder={__('Name', 'event_espresso')}
+					placeholder={__('Name')}
 					style={inputStyle}
 				/>
 			</div>
 			<div style={divStyle}>
-				<label style={lblStyle}>{__('Description', 'event_espresso')}</label>
+				<label style={lblStyle}>{__('Description')}</label>
 				<Field
 					defaultValue={description}
 					name='description'
 					component='input'
 					type='text'
-					placeholder={__('Description', 'event_espresso')}
+					placeholder={__('Description')}
 					style={inputStyle}
 				/>
 			</div>
 			<div style={divStyle}>
-				<label style={lblStyle}>{__('Price', 'event_espresso')}</label>
+				<label style={lblStyle}>{__('Price')}</label>
 				<Field
 					defaultValue={price}
 					name='price'
 					component='input'
 					type='number'
-					placeholder={__('ticket price', 'event_espresso')}
+					placeholder={__('ticket price')}
 					style={inputStyle}
 					min={0}
 					required
 				/>
 			</div>
-			<H4 style={{ margin: '1.5em 0 0 24%' }}>{__('Date Assignments', 'event_espresso')}</H4>
+			<H4 style={{ margin: '1.5em 0 0 24%' }}>{__('Date Assignments')}</H4>
 			<div style={divStyle}>
 				<div style={relationsStyle}>
 					<Field
@@ -73,7 +73,7 @@ const TicketForm: React.FC<TicketItemFormProps> = ({ id, formReset, title }): JS
 								items={datetimes}
 								itemType={'datetime'}
 								displayFields={['name', 'startDate']}
-								placeholder={__('select datetimes this ticket has access to', 'event_espresso')}
+								placeholder={__('select datetimes this ticket has access to')}
 								formReset={formReset}
 								{...input}
 							/>

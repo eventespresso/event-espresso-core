@@ -26,21 +26,21 @@ const DisplayTicketsControl: React.FC<DisplayTicketsControlProps> = ({ displayTi
 	return React.useMemo(() => {
 		return (
 			<SelectControl
-				label={__('display', 'event_espresso')}
+				label={__('display')}
 				className='ee-ticket-list-filter-bar-display-select'
 				value={displayTicketDate}
 				options={[
 					{
 						value: DisplayDates.start,
-						label: __('ticket sales start date only', 'event_espresso'),
+						label: __('ticket sales start date only'),
 					},
 					{
 						value: DisplayDates.end,
-						label: __('ticket sales end date only', 'event_espresso'),
+						label: __('ticket sales end date only'),
 					},
 					{
 						value: DisplayDates.both,
-						label: __('ticket sales start and end dates', 'event_espresso'),
+						label: __('ticket sales start and end dates'),
 					},
 				]}
 				onChange={setDisplayTicketDate}

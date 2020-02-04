@@ -12,9 +12,7 @@ const AddNewTicketButton: React.FC = () => {
 			editorId: 'addTicket',
 		});
 	};
-	return (
-		<EspressoButton icon={'tickets-alt'} buttonText={__('Add New Ticket', 'event_espresso')} onClick={onClick} />
-	);
+	return <EspressoButton icon={'tickets-alt'} buttonText={__('Add New Ticket')} onClick={onClick} />;
 };
 
 export default AddNewTicketButton;

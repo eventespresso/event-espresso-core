@@ -5,7 +5,7 @@ import { setLocaleData } from '@wordpress/i18n';
 const useEditorInitialization = (): void => {
 	// init i18n
 	const localeData = useI18nData();
-	setLocaleData(localeData, 'event_espresso');
+	setLocaleData(localeData);
 
 	// Fire initial queries
 	useInitQueries();

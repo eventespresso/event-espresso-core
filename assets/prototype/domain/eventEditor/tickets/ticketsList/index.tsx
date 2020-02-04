@@ -22,16 +22,13 @@ const TicketsList: React.FC = (): JSX.Element => {
 	const error = isError(TypeName.tickets);
 	const loading = isLoading(TypeName.datetimes) || isLoading(TypeName.tickets);
 
-	if (loading) return <LoadingIndicator message={__('loading tickets...', 'event_espresso')} />;
+	if (loading) return <LoadingIndicator message={__('loading tickets...')} />;
 
 	if (error) return <ErrorIndicator />;
 
 	if (noTickets) {
 		return (
-			<EmptyState
-				description={__('try changing filter settings', 'event_espresso')}
-				title={__('NO TICKETS FOR YOU !!!', 'event_espresso')}
-			>
+			<EmptyState description={__('try changing filter settings')} title={__('NO TICKETS FOR YOU !!!')}>
 				<AddNewTicketButton />
 			</EmptyState>
 		);

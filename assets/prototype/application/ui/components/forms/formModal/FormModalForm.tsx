@@ -62,7 +62,7 @@ const FormModalForm: React.FC<FormModalFormProps> = ({
 					icon={'save'}
 					type={'submit'}
 					style={EspressoButtonStyle.PRIMARY}
-					buttonText={__('Submit', 'event_espresso')}
+					buttonText={__('Submit')}
 					disabled={submitting || pristine}
 					onClick={(click) => {
 						click.preventDefault();
@@ -71,7 +71,7 @@ const FormModalForm: React.FC<FormModalFormProps> = ({
 					}}
 				/>
 				<EspressoButton
-					buttonText={__('Reset', 'event_espresso')}
+					buttonText={__('Reset')}
 					disabled={submitting || pristine}
 					onClick={(click) => {
 						click.preventDefault();

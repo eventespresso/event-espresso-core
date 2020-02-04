@@ -23,7 +23,7 @@ const AddNewDateButton: React.FC = (): JSX.Element => {
 
 	return (
 		<div style={btnRowStyle}>
-			<EspressoButton icon={'calendar'} buttonText={__('Add New Date', 'event_espresso')} onClick={onClick} />
+			<EspressoButton icon={'calendar'} buttonText={__('Add New Date')} onClick={onClick} />
 		</div>
 	);
 };

@@ -21,25 +21,25 @@ const DatesSortedControl: React.FC<DatesSortedControlProps> = ({ datesSortedBy, 
 	return useMemo(() => {
 		return (
 			<SelectControl
-				label={__('sort', 'event_espresso')}
+				label={__('sort')}
 				className='espresso-date-list-filter-bar-order-select'
 				value={datesSortedBy}
 				options={[
 					{
 						value: 'chronologically',
-						label: __('chronologically', 'event_espresso'),
+						label: __('chronologically'),
 					},
 					{
 						value: 'byName',
-						label: __('by date name', 'event_espresso'),
+						label: __('by date name'),
 					},
 					{
 						value: 'byId',
-						label: __('by date ID', 'event_espresso'),
+						label: __('by date ID'),
 					},
 					{
 						value: 'byOrder',
-						label: __('by custom order', 'event_espresso'),
+						label: __('by custom order'),
 					},
 				]}
 				onChange={setDatesSortedBy}

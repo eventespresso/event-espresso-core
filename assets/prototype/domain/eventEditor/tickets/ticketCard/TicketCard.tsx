@@ -39,7 +39,7 @@ const TicketCard: React.FC<ListItemProps> = ({ id }): JSX.Element => {
 					<H4>
 						<InlineEditInput
 							component={EditableText}
-							placeholder={__('edit title...', 'event_espresso')}
+							placeholder={__('edit title...')}
 							value={ticket.name}
 							onCancel={(value: any): void => {
 								console.log('value', value);
@@ -58,7 +58,7 @@ const TicketCard: React.FC<ListItemProps> = ({ id }): JSX.Element => {
 					<H6>
 						<InlineEditInput
 							component={EditableText}
-							placeholder={__('Edit description...', 'event_espresso')}
+							placeholder={__('Edit description...')}
 							value={ticket.description}
 							onCancel={(value: any): void => {
 								console.log('value', value);
@@ -78,7 +78,7 @@ const TicketCard: React.FC<ListItemProps> = ({ id }): JSX.Element => {
 						<CurrencyInput
 							id={ticket.id}
 							amount={parseFloat(ticket.price)}
-							placeholder={__('set price...', 'event_espresso')}
+							placeholder={__('set price...')}
 							onConfirm={({ amount: price }: any): void => {
 								if (price !== ticket.price) {
 									updateEntity({ price });
@@ -98,7 +98,7 @@ const TicketCard: React.FC<ListItemProps> = ({ id }): JSX.Element => {
 					)}
 				</div>
 				<div>
-					{__('Related Dates:', 'event_espresso')}{' '}
+					{__('Related Dates:')}{' '}
 					{relatedDates.filter(Boolean).map((datetimeId) => (
 						<DatetimeIdTag key={datetimeId} id={datetimeId} />
 					))}
