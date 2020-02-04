@@ -9,4 +9,5 @@ const useSetGlobalStatusFlags = (): void => {
 		}
 	}
 };
+
 export default useSetGlobalStatusFlags;

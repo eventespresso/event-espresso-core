@@ -5,7 +5,7 @@ const useOnUpdateTicket = (): TicketMutationCallbackFn => {
 	const { updateRelations, addRelation, removeRelation } = useRelations() as RelationsManager;
 
 	const onUpdateTicket = ({ ticket, datetimeIds, priceIds }: TicketMutationCallbackFnArgs): void => {
-		if (ticket.id && datetimeIds.length) {
+		if (ticket.id && datetimeIds && datetimeIds.length) {
 			const { id: ticketId } = ticket;
 
 			// make sure to remove ticket from
@@ -33,7 +33,7 @@ const useOnUpdateTicket = (): TicketMutationCallbackFn => {
 			});
 		}
 
-		if (ticket.id && priceIds.length) {
+		if (ticket.id && priceIds && priceIds.length) {
 			const { id: ticketId } = ticket;
 
 			// make sure to remove ticket from

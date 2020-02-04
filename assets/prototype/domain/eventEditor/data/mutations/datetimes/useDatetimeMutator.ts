@@ -16,7 +16,7 @@ const useDatetimeMutator = (): Mutator => {
 	const onCreateDatetime = useOnCreateDatetime();
 	const onUpdateDatetime = useOnUpdateDatetime();
 	const onDeleteDatetime = useOnDeleteDatetime();
-	
+
 	const getMutationVariables = useMutationVariables();
 	const getOptimisticResponse = useOptimisticResponse();
 

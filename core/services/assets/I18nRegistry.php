@@ -2,8 +2,8 @@
 
 namespace EventEspresso\core\services\assets;
 
-use EventEspresso\core\domain\DomainInterface;
 use EEH_DTT_Helper;
+use EventEspresso\core\domain\DomainInterface;
 
 /**
  * I18nRegistry
@@ -27,7 +27,6 @@ class I18nRegistry
      */
     private $registered_i18n = array();
 
-
     /**
      * Used to hold queued translations for the chunks loading in a view.
      *
@@ -42,7 +41,6 @@ class I18nRegistry
      */
     private $queued_scripts = array();
 
-
     /**
      * Obtained from the generated json file from the all javascript using wp.i18n with a map of script handle names to
      * translation strings.
@@ -50,7 +48,6 @@ class I18nRegistry
      * @var array
      */
     private $i18n_map;
-
 
     /**
      * I18nRegistry constructor.
@@ -67,7 +64,6 @@ class I18nRegistry
         add_filter('print_scripts_array', array($this, 'queueI18n'));
     }
 
-
     /**
      * Used to register a script that has i18n strings for its $handle
      *
@@ -76,13 +72,11 @@ class I18nRegistry
      */
     public function registerScriptI18n($handle, $domain = 'event_espresso')
     {
-        if(! isset($this->registered_i18n[$handle])) {
-            $this->registered_i18n[ $handle ] = 1;
-            $this->queued_scripts[ $handle ] = $domain;
+        if (!isset($this->registered_i18n[$handle])) {
+            $this->registered_i18n[$handle] = 1;
+            $this->queued_scripts[$handle] = $domain;
         }
     }
-
-
 
     /**
      * Callback on print_scripts_array to listen for scripts enqueued and handle setting up the localized data.
@@ -111,7 +105,6 @@ class I18nRegistry
         return $handles;
     }
 
-
     /**
      * Registers inline script with translations for given handle and domain.
      *
@@ -123,11 +116,10 @@ class I18nRegistry
     protected function registerInlineScript($handle, array $translations, $domain)
     {
         $script = $domain ?
-            'eejs.i18n.setLocaleData( ' . wp_json_encode($translations) . ', "' . $domain . '" );' :
-            'eejs.i18n.setLocaleData( ' . wp_json_encode($translations) . ' );';
+        'wp.i18n.setLocaleData( ' . wp_json_encode($translations) . ', "' . $domain . '" );' :
+        'wp.i18n.setLocaleData( ' . wp_json_encode($translations) . ' );';
         wp_add_inline_script($handle, $script, 'before');
     }
-
 
     /**
      * Queues up the translation strings for the given handle.
@@ -141,14 +133,13 @@ class I18nRegistry
             $translations = $this->getJedLocaleDataForDomainAndChunk($handle, $domain);
             if (count($translations) > 0) {
                 $this->queued_handle_translations[$handle] = array(
-                    'domain'       => $domain,
+                    'domain' => $domain,
                     'translations' => $translations,
                 );
             }
             unset($this->queued_scripts[$handle]);
         }
     }
-
 
     /**
      * Sets the internal i18n_map property.
@@ -161,15 +152,14 @@ class I18nRegistry
     {
         if (empty($i18n_map)) {
             $i18n_map = file_exists($this->domain->pluginPath() . 'translation-map.json')
-                ? json_decode(
-                        file_get_contents($this->domain->pluginPath() . 'translation-map.json'),
-                        true
-                    )
-                : array();
+            ? json_decode(
+                file_get_contents($this->domain->pluginPath() . 'translation-map.json'),
+                true
+            )
+            : array();
         }
         $this->i18n_map = $i18n_map;
     }
-
 
     /**
      * Get the jed locale data for a given $handle and domain
@@ -191,7 +181,6 @@ class I18nRegistry
         return $translations;
     }
 
-
     /**
      * Get locale data for given strings from given translations
      *
@@ -210,7 +199,6 @@ class I18nRegistry
         return array_intersect_key($translations, array_flip($string_set));
     }
 
-
     /**
      * Get original strings to translate for the given chunk from the map
      *
@@ -221,7 +209,6 @@ class I18nRegistry
     {
         return isset($this->i18n_map[$handle]) ? $this->i18n_map[$handle] : array();
     }
-
 
     /**
      * Returns Jed-formatted localization data.
@@ -236,11 +223,11 @@ class I18nRegistry
         $locale = array(
             '' => array(
                 'domain' => $domain,
-                'lang'   => is_admin() ? EEH_DTT_Helper::get_user_locale() : get_locale()
+                'lang' => is_admin() ? EEH_DTT_Helper::get_user_locale() : get_locale(),
             ),
         );
 
-        if (! empty($translations->headers['Plural-Forms'])) {
+        if (!empty($translations->headers['Plural-Forms'])) {
             $locale['']['plural_forms'] = $translations->headers['Plural-Forms'];
         }
 

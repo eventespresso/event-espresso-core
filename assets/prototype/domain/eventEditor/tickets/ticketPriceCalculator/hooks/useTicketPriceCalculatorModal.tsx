@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { useState, useEffect, useCallback } from 'react';
 import { isEmpty, isNil } from 'ramda';
 
@@ -13,12 +14,8 @@ import { defaultNewPriceModifier } from '../../../../shared/entities/prices/defa
 import { sortByPriceOrderIdAsc } from '../../../../shared/entities/prices/predicates/sortingPredicates';
 import { copyPriceFields } from '../../../../shared/entities/prices/predicates/updatePredicates';
 import { copyTicketFields } from '../../../../shared/entities/tickets/predicates/updatePredicates';
-import {
-	useEditorModal,
-	EditorModal,
-	EntityId,
-	ModalClose,
-} from '../../../../../application/ui/components/layout/editorModal';
+import { EntityId } from '../../../../../domain/eventEditor/data/types';
+import { useEditorModal, EditorModal, ModalClose } from '../../../../../application/ui/components/layout/editorModal';
 
 interface TPCFormValues {
 	ticket: Ticket;

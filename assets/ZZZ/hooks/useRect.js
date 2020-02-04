@@ -1,33 +1,33 @@
 import { useLayoutEffect, useCallback, useState } from 'react';
 const { addEventListener, removeEventListener } = window;
 
-const useRect = ( ref ) => {
-	const [ rect, setRect ] = useState( getRect( ref ? ref.current : null ) );
+const useRect = (ref) => {
+	const [rect, setRect] = useState(getRect(ref ? ref.current : null));
 
-	const handleResize = useCallback( () => {
-		if ( ! ref.current ) {
+	const handleResize = useCallback(() => {
+		if (!ref.current) {
 			return;
 		}
 
 		// Update client rect
-		setRect( getRect( ref.current ) );
-	}, [ ref ] );
+		setRect(getRect(ref.current));
+	}, [ref]);
 
-	useLayoutEffect( () => {
+	useLayoutEffect(() => {
 		const element = ref.current;
-		if ( ! element ) {
+		if (!element) {
 			return;
 		}
 
 		handleResize();
 		// eslint-disable-next-line
-		if ( ResizeObserver && typeof ResizeObserver === 'function' ) {
+		if (ResizeObserver && typeof ResizeObserver === 'function') {
 			// eslint-disable-next-line
-			let resizeObserver = new ResizeObserver( () => handleResize() );
-			resizeObserver.observe( element );
+			let resizeObserver = new ResizeObserver(() => handleResize());
+			resizeObserver.observe(element);
 
 			return () => {
-				if ( ! resizeObserver ) {
+				if (!resizeObserver) {
 					return;
 				}
 				resizeObserver.disconnect();
@@ -35,18 +35,18 @@ const useRect = ( ref ) => {
 			};
 		}
 		// Browser support, remove freely
-		addEventListener( 'resize', handleResize );
+		addEventListener('resize', handleResize);
 
 		return () => {
-			removeEventListener( 'resize', handleResize );
+			removeEventListener('resize', handleResize);
 		};
-	}, [ ref.current ] );
+	}, [ref.current]);
 
 	return rect;
 };
 
-function getRect( element ) {
-	if ( ! element ) {
+function getRect(element) {
+	if (!element) {
 		return {
 			bottom: 0,
 			height: 0,

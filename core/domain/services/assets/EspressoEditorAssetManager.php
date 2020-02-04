@@ -48,8 +48,8 @@ class EspressoEditorAssetManager extends AssetManager
      */
     private function registerJavascript()
     {
-        $this->addJs(self::JS_HANDLE_EDITOR)->setRequiresTranslation();
-        $this->addJs(self::JS_HANDLE_EDITOR_PROTOTYPE)->setRequiresTranslation();
+        $this->addJs(self::JS_HANDLE_EDITOR, [CoreAssetManager::JS_HANDLE_JS_CORE])->setRequiresTranslation();
+        $this->addJs(self::JS_HANDLE_EDITOR_PROTOTYPE, [self::JS_HANDLE_EDITOR])->setRequiresTranslation();
     }
 
 
@@ -64,6 +64,6 @@ class EspressoEditorAssetManager extends AssetManager
     private function registerStyleSheets()
     {
         $this->addCss(self::CSS_HANDLE_EDITOR);
-        $this->addCss(self::CSS_HANDLE_EDITOR_PROTOTYPE);
+        $this->addCss(self::CSS_HANDLE_EDITOR_PROTOTYPE, [self::CSS_HANDLE_EDITOR]);
     }
 }

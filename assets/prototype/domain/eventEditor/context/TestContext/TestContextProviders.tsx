@@ -1,6 +1,6 @@
 import React from 'react';
 import { MockedProvider } from '@apollo/react-testing';
-/* Internal dependencies */
+
 import { cache } from '../../../../infrastructure/services/apollo/Apollo';
 import { CommonProviders } from '../EventEditorContext/ContextProviders';
 import { useDomTestData, useResetApolloCache, useSetGlobalStatusFlags, useSetRelationalData } from './';

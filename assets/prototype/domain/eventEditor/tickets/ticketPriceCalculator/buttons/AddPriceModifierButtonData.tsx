@@ -1,3 +1,4 @@
+// @ts-nocheck
 import React, { useCallback } from 'react';
 import clone from 'ramda/src/clone';
 import { __ } from '@wordpress/i18n';

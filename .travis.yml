@@ -124,8 +124,6 @@ jobs:
           before_script:
               - npm --version
               - node --version
-          script:
-              - npm run ci:lint || exit 1
         - php: 7.3
           if: NOT commit_message =~ js_only AND NOT commit_message =~ dependabot AND NOT sender =~ dependabot
         - php: 7.2

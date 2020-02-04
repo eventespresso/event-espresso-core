@@ -1,8 +1,9 @@
 import { queries } from '../../queries';
-const { GET_TICKETS } = queries;
 import { CacheUpdaterFnArgs } from '../types';
 import { ReadQueryOptions, WriteQueryOptions } from '../../queries/types';
 import { TicketsList } from '../../types';
+
+const { GET_TICKETS } = queries;
 
 const updateTicketCache = ({ proxy, datetimeIn, datetimeId, remove = false }: CacheUpdaterFnArgs): void => {
 	const queryOptions: ReadQueryOptions = {

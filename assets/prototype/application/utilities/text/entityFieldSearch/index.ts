@@ -27,11 +27,11 @@ type EntityFieldSearchProps = {
 const entityFieldSearch = ({ entities, searchText }: EntityFieldSearchProps): Entity[] => {
 	const isSearchable = searchText && trim(searchText).length && Array.isArray(entities) && entities.length;
 	const textToSearch = trim(searchText).toLowerCase();
-	const searchResult =
-		isSearchable &&
-		entities.filter(({ name: title }) => {
-			return title && title.toLowerCase().search(textToSearch) !== -1;
-		});
+	const searchResult = isSearchable
+		? entities.filter(({ name: title }) => {
+				return title && title.toLowerCase().search(textToSearch) !== -1;
+		  })
+		: [];
 
 	return isSearchable ? searchResult : entities;
 };

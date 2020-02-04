@@ -4,8 +4,6 @@
 import { EntityId } from '../../../../../domain/eventEditor/data/types';
 import { EditorModals } from '../../../../../domain/shared/editorModal/types';
 
-export { EntityId };
-
 export type EditorId = keyof EditorModals;
 
 export interface EditorState {
