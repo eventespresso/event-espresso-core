@@ -1,6 +1,7 @@
 import React from 'react';
 import { Field } from 'react-final-form';
 import { Button } from '@blueprintjs/core';
+import { __ } from '@wordpress/i18n';
 
 // just temporary
 import styles from './inlineStyles';
@@ -14,7 +15,7 @@ const TicketPriceTotalRow: React.FC<TpcFormElement> = ({ ticket, reverseCalculat
 	return (
 		<tr>
 			<th colSpan={4} style={styles.total}>
-				Total
+				{__('Total', 'event_espresso')}
 			</th>
 			<th style={{ ...styles.colWidth15, ...styles.amount }}>
 				<div style={styles.money}>

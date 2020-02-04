@@ -1,5 +1,6 @@
 import React from 'react';
 import { H2, HTMLTable } from '@blueprintjs/core';
+import { __, sprintf } from '@wordpress/i18n';
 
 import TicketPriceModifierRowIterator from './TicketPriceModifierRowIterator';
 import TicketPriceTotalRow from './TicketPriceTotalRow';
@@ -11,20 +12,25 @@ import styles from './inlineStyles';
 const TicketPriceCalculatorForm: React.FC<TpcForm> = ({ form, values: { ticket } }): JSX.Element => {
 	const reverseCalculate = Boolean(ticket.reverseCalculate);
 	const toggleCalcDir = (): void => form.mutators.toggleCalcDir();
-	const ticketName = ticket.name ? ` for Ticket: ${ticket.name} ` : '';
 	return (
 		<>
-			<H2 style={styles.hdr}>{`Ticket Price Calculator${ticketName}`}</H2>
+			<H2 style={styles.hdr}>{sprintf(__(`Price Calculator for Ticket: %s`, 'event_espresso'), ticket.name)}</H2>
 			<div style={styles.div}>
 				<HTMLTable interactive striped style={styles.table}>
 					<thead>
 						<tr>
-							<th style={{ ...styles.colWidth7h, ...styles.cell }}>ID</th>
-							<th style={{ ...styles.colWidth15, ...styles.type }}>Price Type</th>
-							<th style={{ ...styles.colWidth20, ...styles.cell }}>Label</th>
-							<th style={{ ...styles.colWidth30, ...styles.cell }}>Description</th>
-							<th style={{ ...styles.colWidth15, ...styles.amount }}>Amount</th>
-							<th style={{ ...styles.colWidth7h, ...styles.actions }}>Actions</th>
+							<th style={{ ...styles.colWidth7h, ...styles.cell }}>{__('ID', 'event_espresso')}</th>
+							<th style={{ ...styles.colWidth15, ...styles.type }}>
+								{__('Price Type', 'event_espresso')}
+							</th>
+							<th style={{ ...styles.colWidth20, ...styles.cell }}>{__('Label', 'event_espresso')}</th>
+							<th style={{ ...styles.colWidth30, ...styles.cell }}>
+								{__('Description', 'event_espresso')}
+							</th>
+							<th style={{ ...styles.colWidth15, ...styles.amount }}>{__('Amount', 'event_espresso')}</th>
+							<th style={{ ...styles.colWidth7h, ...styles.actions }}>
+								{__('Actions', 'event_espresso')}
+							</th>
 						</tr>
 					</thead>
 					<tbody>

@@ -1,5 +1,6 @@
 import React from 'react';
 import { Field } from 'react-final-form';
+import { __ } from '@wordpress/i18n';
 
 // just temporary
 import styles from '../inlineStyles';
@@ -12,7 +13,7 @@ const PriceDescriptionInput: React.FC<PriceInputProps> = ({ name, price }): JSX.
 			component={'input'}
 			initialValue={price.desc}
 			name={`${name}.desc`}
-			placeholder={'description...'}
+			placeholder={__('description...', 'event_espresso')}
 			style={styles.input}
 		/>
 	);

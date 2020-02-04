@@ -1,5 +1,6 @@
 import React from 'react';
 import { Field } from 'react-final-form';
+import { __ } from '@wordpress/i18n';
 
 // just temporary
 import styles from '../inlineStyles';
@@ -35,7 +36,7 @@ const PriceAmountInput: React.FC<PriceAmountInputProps> = ({ name, price, revers
 					component={'input'}
 					initialValue={price.amount}
 					name={`${name}.amount`}
-					placeholder={'amount...'}
+					placeholder={__('amount...', 'event_espresso')}
 					style={styles.number}
 					disabled={reverseCalculate && price.isBasePrice}
 					format={formatAmount}
