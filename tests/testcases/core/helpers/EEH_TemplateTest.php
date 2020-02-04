@@ -20,6 +20,9 @@
  */
 class EEH_TemplateTest extends PHPUnit_Framework_TestCase {
 
+    /**
+     * @doesNotPerformAssertions
+     */
 	public function test() {
 
 	}

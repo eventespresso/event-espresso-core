@@ -6,7 +6,21 @@
  * and open the template in the editor.
  */
 
+use EventEspresso\core\exceptions\InvalidDataTypeException;
+use EventEspresso\core\exceptions\InvalidInterfaceException;
+
 class EE_Model_Matching_Query_Validation_Strategy_Test extends EE_UnitTestCase {
+
+    /**
+     * @since $VID:$
+     * @throws EE_Error
+     * @throws EE_Validation_Error
+     * @throws InvalidArgumentException
+     * @throws ReflectionException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @doesNotPerformAssertions
+     */
 	public function test_valid() {
 		$validator = new EE_Model_Matching_Query_Validation_Strategy(
 			'',
@@ -33,7 +47,13 @@ class EE_Model_Matching_Query_Validation_Strategy_Test extends EE_UnitTestCase {
 		//and the id exists
 		$validator->validate( $ev->ID() );
 	}
-	
+
+    /**
+     * @since $VID:$
+     * @throws EE_Error
+     * @throws EE_Validation_Error
+     * @doesNotPerformAssertions
+     */
 	public function test_valid__treating_input_as_other_field() {
 		$validator = new EE_Model_Matching_Query_Validation_Strategy(
 			'',
