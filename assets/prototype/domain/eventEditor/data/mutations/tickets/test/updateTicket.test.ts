@@ -13,8 +13,8 @@ import useInitTicketTestCache from '../../../queries/tickets/test/useInitTicketT
 
 const timeout = 5000; // milliseconds
 describe('updateTicket', () => {
-	let testInput: MutationInput = { name: 'New Test Ticket', description: 'New Test Desc' };
 	const mockedTicket = mockedTickets.UPDATE;
+	let testInput: MutationInput = { ...mockedTicket, name: 'New Test Ticket', description: 'New Test Desc' };
 
 	const datetimeIds = datetimes.map(({ id }) => id);
 	const priceIds = prices.map(({ id }) => id);

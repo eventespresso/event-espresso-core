@@ -7,7 +7,7 @@ export const request: ReadQueryOptions = null; // to be generated via Query Opti
 
 export const nodes: Price[] = [
 	{
-		id: 'xyz',
+		id: 'price-xyz',
 		dbId: 1,
 		amount: 40,
 		desc: 'some desc',
@@ -24,7 +24,7 @@ export const nodes: Price[] = [
 		__typename: 'EspressoPrice',
 	},
 	{
-		id: 'abc',
+		id: 'price-abc',
 		dbId: 3,
 		amount: 4.8,
 		desc: 'some new desc',
@@ -41,7 +41,7 @@ export const nodes: Price[] = [
 		__typename: 'EspressoPrice',
 	},
 	{
-		id: 'pqr',
+		id: 'price-pqr',
 		dbId: 4,
 		amount: 97,
 		desc: 'PQR desc',

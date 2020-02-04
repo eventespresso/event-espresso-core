@@ -26,7 +26,7 @@ describe('useFetchPrices', () => {
 		const { result, waitForNextUpdate } = renderHook(
 			() => {
 				useInitTicketTestCache();
-				return useFetchPrices();
+				return useFetchPrices(false);
 			},
 			{
 				wrapper,
@@ -60,7 +60,7 @@ describe('useFetchPrices', () => {
 		const { result, waitForNextUpdate } = renderHook(
 			() => {
 				useInitTicketTestCache();
-				return useFetchPrices();
+				return useFetchPrices(false);
 			},
 			{
 				wrapper,
@@ -91,7 +91,7 @@ describe('useFetchPrices', () => {
 		const { result, waitForNextUpdate } = renderHook(
 			() => {
 				useInitTicketTestCache();
-				return useFetchPrices();
+				return useFetchPrices(false);
 			},
 			{
 				wrapper,
@@ -125,7 +125,7 @@ describe('useFetchPrices', () => {
 		const { result, waitForNextUpdate } = renderHook(
 			() => {
 				useInitTicketTestCache();
-				return useFetchPrices();
+				return useFetchPrices(false);
 			},
 			{
 				wrapper,
