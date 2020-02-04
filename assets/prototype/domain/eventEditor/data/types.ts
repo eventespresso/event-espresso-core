@@ -41,6 +41,10 @@ export interface Datetime extends Entity {
 	status: DatetimeStatus;
 }
 
+export interface DatetimeItem {
+	datetime: Datetime;
+}
+
 export type DatetimeEdge<Connection = 'EspressoRootQueryDatetimesConnection'> = EntityEdge<Datetime, Connection>;
 
 export interface DatetimesList {
@@ -87,6 +91,10 @@ export interface Ticket extends Entity {
 	sold: number;
 	startDate: string; // ISO string
 	uses: number;
+}
+
+export interface TicketItem {
+	ticket: Ticket;
 }
 
 export type TicketEdge = EntityEdge<Ticket, 'EspressoRootQueryTicketsConnection'>;

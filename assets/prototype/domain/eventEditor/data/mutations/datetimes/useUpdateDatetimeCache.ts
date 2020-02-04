@@ -9,9 +9,7 @@ const useUpdateDatetimeCache = (): CacheUpdaterFn => {
 	const updateDatetimeCache = ({ proxy, datetimes, datetime, remove = false }: CacheUpdaterFnArgs): void => {
 		const { nodes = [] } = datetimes;
 		// remove from or add to the list
-		const newNodes: Datetime[] = remove
-			? nodes.filter(({ id }: Datetime) => id !== datetime.id)
-			: [...nodes, datetime];
+		const newNodes = remove ? nodes.filter(({ id }: Datetime) => id !== datetime.id) : [...nodes, datetime];
 
 		// write the data to cache without
 		// mutating the cache directly

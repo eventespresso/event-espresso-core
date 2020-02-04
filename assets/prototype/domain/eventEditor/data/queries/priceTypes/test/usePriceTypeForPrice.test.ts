@@ -8,24 +8,27 @@ import useInitPriceTypeTestCache from './useInitPriceTypeTestCache';
 import { isFlatFeeSurcharge } from '../../../../../shared/entities/priceTypes/predicates/selectionPredicates';
 import { useRelations } from '../../../../../../application/services/apollo/relations';
 
+const timeout = 5000; // milliseconds
 describe('usePriceTypeForPrice()', () => {
 	const wrapper = ApolloMockedProvider();
 	const existingPrice = prices[0];
-	it('returns null as price type when the cache is empty', () => {
-		const { result } = renderHook(() => usePriceTypeForPrice(existingPrice.id), { wrapper });
+	it('returns null as price type when the cache is empty', async () => {
+		const { result, waitForNextUpdate } = renderHook(() => usePriceTypeForPrice(existingPrice.id), { wrapper });
 
+		await waitForNextUpdate({ timeout });
 		expect(result.current).toBeNull();
 	});
 
-	it('returns null as price type when the price does not exist and the cache is empty', () => {
-		const { result } = renderHook(() => usePriceTypeForPrice('fake-id'), { wrapper });
+	it('returns null as price type when the price does not exist and the cache is empty', async () => {
+		const { result, waitForNextUpdate } = renderHook(() => usePriceTypeForPrice('fake-id'), { wrapper });
 
+		await waitForNextUpdate({ timeout });
 		expect(result.current).toBeNull();
 	});
 
-	it('returns null as price type when the price and default price type do not exist but the cache is NOT empty', () => {
+	it('returns null as price type when the price and default price type do not exist but the cache is NOT empty', async () => {
 		const nonDefaultPriceTypeNodes = nodes.filter((priceType) => !isFlatFeeSurcharge(priceType));
-		const { result } = renderHook(
+		const { result, waitForNextUpdate } = renderHook(
 			() => {
 				useInitPriceTypeTestCache({ ...edge, nodes: nonDefaultPriceTypeNodes });
 				return usePriceTypeForPrice('fake-id');
@@ -33,18 +36,20 @@ describe('usePriceTypeForPrice()', () => {
 			{ wrapper }
 		);
 
+		await waitForNextUpdate({ timeout });
 		expect(result.current).toBeNull();
 	});
 
-	it('returns the default price type when the price does not exist and the cache is NOT empty', () => {
+	it('returns the default price type when the price does not exist and the cache is NOT empty', async () => {
 		const defaultPriceType = nodes.filter(isFlatFeeSurcharge)[0];
-		const { result } = renderHook(
+		const { result, waitForNextUpdate } = renderHook(
 			() => {
 				useInitPriceTypeTestCache();
 				return usePriceTypeForPrice('fake-id');
 			},
 			{ wrapper }
 		);
+		await waitForNextUpdate({ timeout });
 
 		const { current: cachedDefaultPriceType } = result;
 
@@ -55,18 +60,19 @@ describe('usePriceTypeForPrice()', () => {
 		expect(cachedDefaultPriceType.name).toEqual(defaultPriceType.name);
 	});
 
-	it('returns null as price type when the price exists, has relation with a price type but the cache is empty', () => {
-		const { result } = renderHook(
+	it('returns null as price type when the price exists, has relation with a price type but the cache is empty', async () => {
+		const { result, waitForNextUpdate } = renderHook(
 			() => {
 				return usePriceTypeForPrice(existingPrice.id);
 			},
 			{ wrapper }
 		);
+		await waitForNextUpdate({ timeout });
 
 		expect(result.current).toBeNull();
 	});
 
-	it('returns the related price type when the price exists, has relation with the price type and the cache is NOT empty', () => {
+	it('returns the related price type when the price exists, has relation with the price type and the cache is NOT empty', async () => {
 		const {
 			result: { current: relationsManager },
 		} = renderHook(() => useRelations(), { wrapper });
@@ -77,13 +83,14 @@ describe('usePriceTypeForPrice()', () => {
 			relation: 'priceTypes',
 		})[0];
 
-		const { result } = renderHook(
+		const { result, waitForNextUpdate } = renderHook(
 			() => {
 				useInitPriceTypeTestCache();
 				return usePriceTypeForPrice(existingPrice.id);
 			},
 			{ wrapper }
 		);
+		await waitForNextUpdate({ timeout });
 
 		const { current: cachedRelatedPriceType } = result;
 

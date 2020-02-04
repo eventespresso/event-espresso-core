@@ -1,55 +1,28 @@
-import { OperationVariables } from 'apollo-client';
 import { pathOr } from 'ramda';
-import useEventId from '../../queries/events/useEventId';
+
 import useDatetimeQueryOptions from '../../queries/datetimes/useDatetimeQueryOptions';
 import useOnCreateDatetime from './useOnCreateDatetime';
 import useOnUpdateDatetime from './useOnUpdateDatetime';
 import useOnDeleteDatetime from './useOnDeleteDatetime';
-import {
-	Mutator,
-	MutationType,
-	MutationInput,
-	OnUpdateFnOptions,
-	MutatorGeneratedObject,
-} from '../../../../../application/services/apollo/mutations/types';
-import { ReadQueryOptions } from '../../queries/types';
+import { Mutator, MutationType, OnUpdateFnOptions } from '../../../../../application/services/apollo/mutations/types';
 import { DEFAULT_DATETIME_LIST_DATA as DEFAULT_LIST_DATA } from '../../queries';
 import { Datetime, DatetimeEdge, DatetimesList } from '../../types';
-import { DatetimeMutationCallbackFn } from '../types';
+import useOptimisticResponse from './useOptimisticResponse';
+import useMutationVariables from './useMutationVariables';
 
-/**
- *
- */
 const useDatetimeMutator = (): Mutator => {
-	const eventId: number = useEventId();
+	const options = useDatetimeQueryOptions();
+	const getOptimisticResponse = useOptimisticResponse();
 
-	const options: ReadQueryOptions = useDatetimeQueryOptions();
+	const onCreateDatetime = useOnCreateDatetime();
+	const onUpdateDatetime = useOnUpdateDatetime();
+	const onDeleteDatetime = useOnDeleteDatetime();
 
-	const onCreateDatetime: DatetimeMutationCallbackFn = useOnCreateDatetime();
-	const onUpdateDatetime: DatetimeMutationCallbackFn = useOnUpdateDatetime();
-	const onDeleteDatetime: DatetimeMutationCallbackFn = useOnDeleteDatetime();
+	const getMutationVariables = useMutationVariables();
 
-	const createVariables = (mutationType: MutationType, input: MutationInput): OperationVariables => {
-		const mutationInput: MutationInput = {
-			clientMutationId: `${mutationType}_DATETIME`,
-			...input,
-		};
-
-		if (mutationType === 'CREATE') {
-			mutationInput.eventId = eventId; // required for createDatetime
-		}
-
-		return {
-			input: mutationInput,
-		};
-	};
-
-	const mutator = (mutationType: MutationType, input: MutationInput): MutatorGeneratedObject => {
-		const variables: OperationVariables = createVariables(mutationType, input);
-		/**
-		 * @todo update optimisticResponse
-		 */
-		let optimisticResponse: any;
+	const mutator: Mutator = (mutationType, input) => {
+		const variables = getMutationVariables(mutationType, input);
+		const optimisticResponse = getOptimisticResponse(mutationType, input);
 
 		const onUpdate = ({ proxy, entity: datetime }: OnUpdateFnOptions<Datetime>): void => {
 			// Read the existing data from cache.

@@ -1,6 +1,6 @@
 // @ts-nocheck
 import React, { useState } from 'react';
-import moment from 'moment';
+import { parseISO } from 'date-fns';
 import { Button, Card, EditableText, Elevation, H4, H6, Popover } from '@blueprintjs/core/lib/esm';
 
 import DeleteDatetimeButton from './DeleteDateButton';
@@ -14,7 +14,7 @@ import DateRangePicker from '../../../shared/dateRangeInput/DateRangePicker';
 import { DateRangeDisplay } from '../../../shared/dateRangeInput/dateDisplay';
 import { PLUS_ONE_MONTH, PLUS_TWO_MONTHS } from '../../../shared/defaultDates';
 
-import { useEntityMutator, EntityType, MutationResult } from '../../../../application/services/apollo/mutations';
+import { useEntityMutator, EntityType } from '../../../../application/services/apollo/mutations';
 import useRelations from '../../../../application/services/apollo/relations/useRelations';
 import { useStatus, TypeName } from '../../../../application/services/apollo/status';
 import InlineEditInput from '../../../../application/ui/components/input/inlineEditInput/InlineEditInput';
@@ -27,17 +27,20 @@ const DateCard: React.FC<ListItemProps> = ({ id }): JSX.Element => {
 	const { updateEntity } = useEntityMutator(EntityType.Datetime, id);
 	const { getRelations } = useRelations();
 
+	const startDate = parseISO(date.startDate) || PLUS_ONE_MONTH;
+	const endDate = parseISO(date.endDate) || PLUS_TWO_MONTHS;
+	const defaultRangeValues: [Date, Date] = [startDate, endDate];
+	const [range, setRange] = useState<[Date, Date]>(defaultRangeValues);
+	if (!date) {
+		return null;
+	}
+
 	// get related ticket IDs for this datetime
 	const relatedTicketIds = getRelations({
 		entity: 'datetimes',
 		entityId: id,
 		relation: 'tickets',
 	});
-
-	const startDate: Date = moment(date.startDate).toDate() || PLUS_ONE_MONTH;
-	const endDate: Date = moment(date.endDate as moment.MomentInput).toDate() || PLUS_TWO_MONTHS;
-	const defaultRangeValues: [Date, Date] = [startDate, endDate];
-	const [range, setRange] = useState<[Date, Date]>(defaultRangeValues);
 
 	const ticketsLoaded = isLoaded(TypeName.tickets);
 
@@ -53,13 +56,16 @@ const DateCard: React.FC<ListItemProps> = ({ id }): JSX.Element => {
 						component={EditableText}
 						placeholder='Edit title...'
 						value={date.name}
-						defaultValue={date.name}
 						onCancel={(value: any): void => {
 							console.log('DatetimeProvider title onCancel => NEEDS CALLBACK');
 							console.log('value', value);
 						}}
-						onConfirm={(name: string): MutationResult => updateEntity({ name })}
-						minWidth={'320px'}
+						onConfirm={(name: string): void => {
+							if (name !== date.name) {
+								updateEntity({ name });
+							}
+						}}
+						minWidth={320}
 						selectAllOnFocus
 					/>
 				</H4>
@@ -69,13 +75,16 @@ const DateCard: React.FC<ListItemProps> = ({ id }): JSX.Element => {
 							component={EditableText}
 							placeholder='Edit description...'
 							value={date.description}
-							defaultValue={date.description}
 							onCancel={(value: any): void => {
 								console.log('DatetimeProvider desc onCancel => NEEDS CALLBACK');
 								console.log('value', value);
 							}}
-							onConfirm={(description: string): MutationResult => updateEntity({ description })}
-							minWidth={'320px'}
+							onConfirm={(description: string): void => {
+								if (description !== date.description) {
+									updateEntity({ description });
+								}
+							}}
+							minWidth={320}
 							multiline={true}
 							maxLines={4}
 							selectAllOnFocus

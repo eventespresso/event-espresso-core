@@ -22,7 +22,7 @@ describe('deleteDatetime', () => {
 	it('checks for the mutation data to be same as the mock data', async () => {
 		const wrapper = ApolloMockedProvider(mutationMocks);
 
-		const { result, waitForNextUpdate } = renderHook(
+		const { result, waitForValueToChange } = renderHook(
 			() => useEntityMutator(EntityType.Datetime, mockedDatetime.id),
 			{
 				wrapper,
@@ -43,7 +43,7 @@ describe('deleteDatetime', () => {
 		});
 
 		// wait for mutation promise to resolve
-		await waitForNextUpdate({ timeout });
+		await waitForValueToChange(() => mutationData, { timeout });
 
 		expect(mutationData).toEqual(mockResult.data);
 		const pathToId = ['deleteEspressoDatetime', 'espressoDatetime', 'name'];
@@ -61,7 +61,7 @@ describe('deleteDatetime', () => {
 
 		const wrapper = ApolloMockedProvider(mutationMocks);
 
-		const { result: mutationResult, waitForNextUpdate: waitForNextMutationUpdate } = renderHook(
+		const { result: mutationResult, waitForNextUpdate, waitForValueToChange } = renderHook(
 			() => ({
 				mutator: useEntityMutator(EntityType.Datetime, mockedDatetime.id),
 				relationsManager: useRelations(),
@@ -71,12 +71,14 @@ describe('deleteDatetime', () => {
 			}
 		);
 
+		await waitForValueToChange(() => mutationResult.current, { timeout });
+
 		act(() => {
 			mutationResult.current.mutator.deleteEntity();
 		});
 
 		// wait for mutation promise to resolve
-		await waitForNextMutationUpdate({ timeout });
+		await waitForNextUpdate({ timeout });
 
 		const relatedTicketIds = mutationResult.current.relationsManager.getRelations({
 			entity: 'datetimes',

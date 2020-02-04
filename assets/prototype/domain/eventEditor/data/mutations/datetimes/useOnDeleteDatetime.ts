@@ -2,7 +2,6 @@ import { useRelations, RelationsManager } from '../../../../../application/servi
 import { DatetimeMutationCallbackFn, DatetimeMutationCallbackFnArgs, CacheUpdaterFn } from '../types';
 import updateTicketCache from './updateTicketCache';
 import useUpdateDatetimeCache from './useUpdateDatetimeCache';
-import { Datetime } from '../../types';
 
 const useOnDeleteDatetime = (): DatetimeMutationCallbackFn => {
 	const { dropRelations, removeRelation } = useRelations() as RelationsManager;
@@ -12,7 +11,7 @@ const useOnDeleteDatetime = (): DatetimeMutationCallbackFn => {
 	const onDeleteDatetime = ({ proxy, datetimes, datetime }: DatetimeMutationCallbackFnArgs): void => {
 		if (datetime.id) {
 			const { nodes = [] } = datetimes;
-			const datetimeIn: string[] = nodes.map(({ id }: Datetime) => id);
+			const datetimeIn = nodes.map(({ id }) => id);
 			const { id: datetimeId } = datetime;
 
 			// Update tickets cache for the changed datetimes,

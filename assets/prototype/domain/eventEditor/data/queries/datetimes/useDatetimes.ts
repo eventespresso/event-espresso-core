@@ -1,26 +1,20 @@
-import * as R from 'ramda';
-import { useApolloClient } from '@apollo/react-hooks';
+import { pathOr } from 'ramda';
+
 import { useStatus, TypeName } from '../../../../../application/services/apollo/status';
 import useDatetimeQueryOptions from './useDatetimeQueryOptions';
 import { Datetime, DatetimesList } from '../../types';
-import { ReadQueryOptions } from '../types';
+import useCacheQuery from '../useCacheQuery';
 
-const useDatetimes = (): Datetime[] => {
-	const options: ReadQueryOptions = useDatetimeQueryOptions();
+const useDatetimes = (): Array<Datetime> => {
+	const options = useDatetimeQueryOptions();
 	const { isLoaded } = useStatus();
-	const client = useApolloClient();
+	const { data } = useCacheQuery<DatetimesList>(options);
+
 	if (!isLoaded(TypeName.datetimes)) {
 		return [];
 	}
-	let data: DatetimesList;
 
-	try {
-		data = client.readQuery<DatetimesList>(options);
-	} catch (error) {
-		data = null;
-	}
-
-	return R.pathOr<Datetime[]>([], ['espressoDatetimes', 'nodes'], data);
+	return pathOr<Array<Datetime>>([], ['espressoDatetimes', 'nodes'], data);
 };
 
 export default useDatetimes;

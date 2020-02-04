@@ -23,7 +23,7 @@ const useOnUpdateDatetime = (): DatetimeMutationCallbackFn => {
 				relationIds: tickets,
 			});
 
-			tickets.forEach((entityId: string) => {
+			tickets.forEach((entityId) => {
 				addRelation({
 					entity: 'tickets',
 					entityId,

@@ -7,10 +7,11 @@ import usePriceQueryOptions from '../../queries/prices/usePriceQueryOptions';
 import usePrices from '../../queries/prices/usePrices';
 import { ApolloMockedProvider } from '../../../context/TestContext';
 
+const timeout = 5000; // milliseconds
 describe('useUpdatePriceList', () => {
 	it('checks for prices cache update', async () => {
 		const wrapper = ApolloMockedProvider();
-		const { result } = renderHook(
+		const { result, waitForNextUpdate } = renderHook(
 			() => {
 				useCacheRehydration();
 				return {
@@ -43,9 +44,10 @@ describe('useUpdatePriceList', () => {
 				},
 			});
 		});
+		await waitForNextUpdate({ timeout });
 
 		const cache = result.current.client.extract();
-		const { result: cacheResult } = renderHook(
+		const { result: cacheResult, waitForNextUpdate: waitForUpdate } = renderHook(
 			() => {
 				const client = useApolloClient();
 				// restore the cache from previous render
@@ -56,6 +58,7 @@ describe('useUpdatePriceList', () => {
 				wrapper,
 			}
 		);
+		await waitForUpdate({ timeout });
 
 		const cachedPriceIds = cacheResult.current.map(({ id }) => id);
 

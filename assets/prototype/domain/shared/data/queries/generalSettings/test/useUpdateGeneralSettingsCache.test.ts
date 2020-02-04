@@ -7,10 +7,11 @@ import useUpdateGeneralSettingsCache from '../useUpdateGeneralSettingsCache';
 import { useGeneralSettings } from '../';
 import { request } from './data';
 
+const timeout = 5000; // milliseconds
 describe('useUpdateGeneralSettingsCache', () => {
 	it('checks for generalSettings cache update', async () => {
 		const wrapper = ApolloMockedProvider();
-		const { result } = renderHook(
+		const { result, waitForNextUpdate } = renderHook(
 			() => {
 				useCacheRehydration();
 				return {
@@ -40,6 +41,7 @@ describe('useUpdateGeneralSettingsCache', () => {
 				},
 			});
 		});
+		await waitForNextUpdate({ timeout });
 
 		const cache = result.current.client.extract();
 		const { result: cacheResult } = renderHook(

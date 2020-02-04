@@ -13,3 +13,7 @@ node_modules/
 node_modules
 .DS_Store
 /vendor/
+.vscode
+
+# temporary
+/assets/dist/

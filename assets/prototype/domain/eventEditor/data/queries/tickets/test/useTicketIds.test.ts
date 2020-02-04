@@ -5,22 +5,25 @@ import { ApolloMockedProvider } from '../../../../context/TestContext';
 import { nodes } from './data';
 import useInitTicketTestCache from './useInitTicketTestCache';
 
+const timeout = 5000; // milliseconds
 describe('useTicketIds()', () => {
 	const wrapper = ApolloMockedProvider();
-	it('checks for the empty ticket IDs', () => {
-		const { result } = renderHook(() => useTicketIds(), { wrapper });
+	it('checks for the empty ticket IDs', async () => {
+		const { result, waitForValueToChange } = renderHook(() => useTicketIds(), { wrapper });
 
+		await waitForValueToChange(() => result.current, { timeout });
 		expect(result.current.length).toBe(0);
 	});
 
 	it('checks for ticket IDs after the cache is updated', async () => {
-		const { result } = renderHook(
+		const { result, waitForValueToChange } = renderHook(
 			() => {
 				useInitTicketTestCache();
 				return useTicketIds();
 			},
 			{ wrapper }
 		);
+		await waitForValueToChange(() => result.current, { timeout });
 
 		const { current: cachedTicketIds } = result;
 		const passedTicketIds = nodes.map(({ id }) => id);

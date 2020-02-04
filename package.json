@@ -42,7 +42,7 @@
 		"test": "npm run lint && npm run test-js",
 		"test-php": "cd tests && phpunit",
 		"test-js": "wp-scripts test-unit-js --config tests/javascript-config/unit/jest.config.json",
-		"test-js-ts": "jest --config config/tests/unit/jest.config.js --runInBand --listTests && jest --config config/tests/unit/jest.config.js --runInBand",
+		"test-js-ts": "jest --config config/tests/unit/jest.config.js",
 		"test-js-ts:watch": "jest --config config/tests/unit/jest.config.js --watch",
 		"test-js:coverage": "npm run test-js -- --coverage",
 		"test-js:coverage-ci": "npm run test-js -- --coverage --maxWorkers 1",

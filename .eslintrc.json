@@ -35,7 +35,8 @@
 		"react/static-property-placement": "off",
 		"react/display-name": "off",
 		"@typescript-eslint/no-explicit-any": "off",
-		"@typescript-eslint/no-use-before-define": "off"
+		"@typescript-eslint/no-use-before-define": "off",
+		"no-unused-vars": "error"
 	},
 	"overrides": [
 		{

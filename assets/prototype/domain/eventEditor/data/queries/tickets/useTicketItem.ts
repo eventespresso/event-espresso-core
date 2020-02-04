@@ -1,33 +1,19 @@
-import { useApolloClient } from '@apollo/react-hooks';
-import { propOr } from 'ramda';
+import { pathOr } from 'ramda';
 import { GET_TICKET } from './';
-import { Ticket } from '../../types';
+import { Ticket, TicketItem } from '../../types';
 import { EntityItemProps, ReadQueryOptions } from '../types';
-
-type TicketItemData = {
-	ticket: Ticket;
-};
+import useCacheQuery from '../useCacheQuery';
 
 const useTicketItem = ({ id }: EntityItemProps): Ticket => {
-	const client = useApolloClient();
-	let data: TicketItemData;
-	let ticket: Ticket;
-
-	const queryOptions: ReadQueryOptions = {
+	const options: ReadQueryOptions = {
 		query: GET_TICKET,
 		variables: {
 			id,
 		},
 	};
+	const { data } = useCacheQuery<TicketItem>(options);
 
-	try {
-		data = client.readQuery<TicketItemData>(queryOptions);
-		ticket = propOr<Ticket, TicketItemData, Ticket>(null, 'ticket', data);
-	} catch (error) {
-		// may be do something with the error
-	}
-
-	return ticket;
+	return pathOr<Ticket>(null, ['ticket'], data);
 };
 
 export default useTicketItem;

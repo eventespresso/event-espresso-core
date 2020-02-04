@@ -8,7 +8,7 @@ import DeleteTicketButton from './DeleteTicketButton';
 import TicketPriceCalculatorButton from '../ticketPriceCalculator/buttons/TicketPriceCalculatorButton';
 import useTicketItem from '../../data/queries/tickets/useTicketItem';
 import CurrencyInput from '../../../../application/ui/components/input/currencyInput/CurrencyInput';
-import { useEntityMutator, EntityType, MutationResult } from '../../../../application/services/apollo/mutations';
+import { useEntityMutator, EntityType } from '../../../../application/services/apollo/mutations';
 import useRelations from '../../../../application/services/apollo/relations/useRelations';
 import { useStatus, TypeName } from '../../../../application/services/apollo/status';
 import DatetimeIdTag from '../../datetimes/DatetimeIdTag';
@@ -39,14 +39,17 @@ const TicketCard: React.FC<ListItemProps> = ({ id }): JSX.Element => {
 						<InlineEditInput
 							component={EditableText}
 							placeholder={'edit title...'}
-							defaultValue={ticket.name}
 							value={ticket.name}
 							onCancel={(value: any): void => {
 								console.log('TicketProvider title onCancel => NEEDS CALLBACK');
 								console.log('value', value);
 							}}
-							onConfirm={(name: string): MutationResult => updateEntity({ name })}
-							minWidth={'320px'}
+							onConfirm={(name: string): void => {
+								if (name !== ticket.name) {
+									updateEntity({ name });
+								}
+							}}
+							minWidth={320}
 							selectAllOnFocus
 						/>
 					</H4>
@@ -57,13 +60,16 @@ const TicketCard: React.FC<ListItemProps> = ({ id }): JSX.Element => {
 							component={EditableText}
 							placeholder='Edit description...'
 							value={ticket.description}
-							defaultValue={ticket.description}
 							onCancel={(value: any): void => {
 								console.log('TicketProvider desc onCancel => NEEDS CALLBACK');
 								console.log('value', value);
 							}}
-							onConfirm={(description: string): MutationResult => updateEntity({ description })}
-							minWidth={'320px'}
+							onConfirm={(description: string): void => {
+								if (description !== ticket.description) {
+									updateEntity({ description });
+								}
+							}}
+							minWidth={320}
 							selectAllOnFocus
 						/>
 					</H6>
@@ -74,8 +80,10 @@ const TicketCard: React.FC<ListItemProps> = ({ id }): JSX.Element => {
 							id={ticket.id}
 							amount={ticket.price}
 							placeholder={'set price...'}
-							onConfirm={({ amount }: any): void => {
-								updateEntity({ price: amount });
+							onConfirm={({ amount: price }: any): void => {
+								if (price !== ticket.price) {
+									updateEntity({ price });
+								}
 							}}
 						/>
 					</H4>
