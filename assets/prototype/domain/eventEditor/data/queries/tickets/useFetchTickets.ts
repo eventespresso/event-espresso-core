@@ -6,7 +6,7 @@ import useTicketQueryOptions from './useTicketQueryOptions';
 import { FetchEntitiesResult } from '../types';
 import { TicketsList } from '../../types';
 
-const useFetchTickets = (skipFetch: boolean = undefined): FetchEntitiesResult<TicketsList> => {
+const useFetchTickets = (skipFetch: boolean = null): FetchEntitiesResult<TicketsList> => {
 	const [initialized, setInitialized] = useState(false);
 	const { setIsLoading, setIsLoaded, setIsError, isLoaded } = useStatus();
 	const { query, ...options } = useTicketQueryOptions();
@@ -14,7 +14,7 @@ const useFetchTickets = (skipFetch: boolean = undefined): FetchEntitiesResult<Ti
 	const { datetimeIn } = options.variables.where;
 	// do not fetch if we don't have any datetimes
 	// or tickets have already been fetched
-	const skip = typeof skipFetch !== 'undefined' ? skipFetch : !datetimeIn.length || isLoaded(TypeName.tickets);
+	const skip = skipFetch !== null ? skipFetch : !datetimeIn.length || isLoaded(TypeName.tickets);
 
 	const toaster = useToaster();
 	const toasterMessage = 'initializing tickets';

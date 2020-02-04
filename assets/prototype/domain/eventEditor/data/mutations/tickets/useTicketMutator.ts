@@ -1,25 +1,17 @@
 import { pathOr } from 'ramda';
-import { OperationVariables } from 'apollo-client';
 
 import useTicketQueryOptions from '../../queries/tickets/useTicketQueryOptions';
 import useOnCreateTicket from './useOnCreateTicket';
 import useOnUpdateTicket from './useOnUpdateTicket';
 import useOnDeleteTicket from './useOnDeleteTicket';
-import {
-	Mutator,
-	MutationType,
-	MutationInput,
-	OnUpdateFnOptions,
-	MutatorGeneratedObject,
-} from '../../../../../application/services/apollo/mutations/types';
+import { Mutator, MutationType, OnUpdateFnOptions } from '../../../../../application/services/apollo/mutations/types';
 import { ReadQueryOptions } from '../../queries/types';
 import { DEFAULT_TICKET_LIST_DATA as DEFAULT_LIST_DATA } from '../../queries';
 import { Ticket, TicketEdge, Price, TicketsList } from '../../types';
 import { TicketMutationCallbackFn } from '../types';
+import useOptimisticResponse from './useOptimisticResponse';
+import useMutationVariables from './useMutationVariables';
 
-/**
- *
- */
 const useTicketMutator = (): Mutator => {
 	const options: ReadQueryOptions = useTicketQueryOptions();
 
@@ -27,23 +19,12 @@ const useTicketMutator = (): Mutator => {
 	const onUpdateTicket: TicketMutationCallbackFn = useOnUpdateTicket();
 	const onDeleteTicket: TicketMutationCallbackFn = useOnDeleteTicket();
 
-	const createVariables = (mutationType: MutationType, input: MutationInput): OperationVariables => {
-		const mutationInput: MutationInput = {
-			clientMutationId: `${mutationType}_TICKET`,
-			...input,
-		};
+	const getMutationVariables = useMutationVariables();
+	const getOptimisticResponse = useOptimisticResponse();
 
-		return {
-			input: mutationInput,
-		};
-	};
-
-	const mutator = (mutationType: MutationType, input: MutationInput): MutatorGeneratedObject => {
-		const variables: OperationVariables = createVariables(mutationType, input);
-		/**
-		 * @todo update optimisticResponse
-		 */
-		let optimisticResponse: any;
+	const mutator: Mutator = (mutationType, input) => {
+		const variables = getMutationVariables(mutationType, input);
+		const optimisticResponse = getOptimisticResponse(mutationType, input);
 
 		const onUpdate = ({ proxy, entity }: OnUpdateFnOptions<Ticket>): void => {
 			// extract prices data to avoid

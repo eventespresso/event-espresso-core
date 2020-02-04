@@ -12,13 +12,13 @@ import useMutationVariables from './useMutationVariables';
 
 const useDatetimeMutator = (): Mutator => {
 	const options = useDatetimeQueryOptions();
-	const getOptimisticResponse = useOptimisticResponse();
 
 	const onCreateDatetime = useOnCreateDatetime();
 	const onUpdateDatetime = useOnUpdateDatetime();
 	const onDeleteDatetime = useOnDeleteDatetime();
-
+	
 	const getMutationVariables = useMutationVariables();
+	const getOptimisticResponse = useOptimisticResponse();
 
 	const mutator: Mutator = (mutationType, input) => {
 		const variables = getMutationVariables(mutationType, input);

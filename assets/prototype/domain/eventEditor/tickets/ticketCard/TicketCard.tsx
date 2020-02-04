@@ -78,7 +78,7 @@ const TicketCard: React.FC<ListItemProps> = ({ id }): JSX.Element => {
 					<H4 style={priceStyle}>
 						<CurrencyInput
 							id={ticket.id}
-							amount={ticket.price}
+							amount={parseFloat(ticket.price)}
 							placeholder={'set price...'}
 							onConfirm={({ amount: price }: any): void => {
 								if (price !== ticket.price) {
