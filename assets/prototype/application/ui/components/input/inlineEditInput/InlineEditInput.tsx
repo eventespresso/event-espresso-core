@@ -4,6 +4,7 @@ interface InlineEditInputProps {
 	component: React.ReactType;
 	defaultValue: string | number;
 	value: string | number;
+	[key: string]: any;
 }
 
 const InlineEditInput: React.FC<InlineEditInputProps> = ({ component: Component, defaultValue, value, ...rest }) => {
