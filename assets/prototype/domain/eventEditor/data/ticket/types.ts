@@ -1,8 +1,8 @@
-export enum SortTickets {
-	chronologically = 'chronologically',
-	byName = 'byName',
-	byId = 'byId',
-	byOrder = 'byOrder',
+export enum SortTicketsBy {
+	date = 'date',
+	name = 'name',
+	id = 'id',
+	order = 'order',
 }
 
 export enum DisplayDates {

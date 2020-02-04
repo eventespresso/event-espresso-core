@@ -8,22 +8,22 @@ import { __ } from '@wordpress/i18n';
 /**
  * Internal imports
  */
-import { SortTickets } from '../../../../data/ticket/types';
+import { SortTicketsBy } from '../../../../data/ticket/types';
 
 interface TicketsSortedByControlProps {
-	sortTicketsBy: SortTickets;
-	setSortTickets: (sortTicketsBy: SortTickets) => void;
+	sortTicketsBy: SortTicketsBy;
+	setSortTicketsBy: (sortTicketsBy: SortTicketsBy) => void;
 }
 
 /**
  * filter for controlling the sorting of a list of Tickets
  *
- * @param {Function} setSortTickets
+ * @param {Function} setSortTicketsBy
  * @param {string} sortTicketsBy
  * @return {Object} rendered control
  */
 const TicketsSortedByControl: React.FC<TicketsSortedByControlProps> = ({
-	setSortTickets,
+	setSortTicketsBy,
 	sortTicketsBy,
 }): JSX.Element => {
 	return React.useMemo(() => {
@@ -34,26 +34,26 @@ const TicketsSortedByControl: React.FC<TicketsSortedByControlProps> = ({
 				value={sortTicketsBy}
 				options={[
 					{
-						value: SortTickets.chronologically,
-						label: __('chronologically'),
+						value: SortTicketsBy.date,
+						label: __('by ticket sale date'),
 					},
 					{
-						value: SortTickets.byName,
+						value: SortTicketsBy.name,
 						label: __('by ticket name'),
 					},
 					{
-						value: SortTickets.byId,
+						value: SortTicketsBy.id,
 						label: __('by ticket ID'),
 					},
 					{
-						value: SortTickets.byOrder,
+						value: SortTicketsBy.order,
 						label: __('by custom order'),
 					},
 				]}
-				onChange={setSortTickets}
+				onChange={setSortTicketsBy}
 			/>
 		);
-	}, [sortTicketsBy, setSortTickets]);
+	}, [sortTicketsBy, setSortTicketsBy]);
 };
 
 export default TicketsSortedByControl;

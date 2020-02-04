@@ -20,7 +20,7 @@ const TicketsListEntityFilters: React.FC = (): JSX.Element => {
 		isChained,
 		setDisplayTicketDate,
 		setShowTickets,
-		setSortTickets,
+		setSortTicketsBy,
 		showTickets,
 		sortTicketsBy,
 		toggleIsChained,
@@ -35,7 +35,7 @@ const TicketsListEntityFilters: React.FC = (): JSX.Element => {
 				<TicketsChainedButton isChained={isChained} toggleIsChained={toggleIsChained} />
 			</div>
 			<div className='ee-sort-tickets-filter ee-filter-bar-filter'>
-				<TicketsSortedByControl sortTicketsBy={sortTicketsBy} setSortTickets={setSortTickets} />
+				<TicketsSortedByControl sortTicketsBy={sortTicketsBy} setSortTicketsBy={setSortTicketsBy} />
 			</div>
 			<div className='ee-display-ticket-dates-filter ee-filter-bar-filter'>
 				<DisplayTicketsControl

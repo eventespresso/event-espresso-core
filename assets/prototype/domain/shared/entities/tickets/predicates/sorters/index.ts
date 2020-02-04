@@ -1,7 +1,7 @@
 import { compareAsc, parseISO } from 'date-fns';
 import { ascend, prop, propOr, sort, sortWith } from 'ramda';
 
-import { SortTickets } from '../../../../../eventEditor/data/ticket/types';
+import { SortTicketsBy } from '../../../../../eventEditor/data/ticket/types';
 import { Ticket } from '../../../../../eventEditor/data/types';
 
 const sortChronologically = (tickets: Ticket[]): Ticket[] => {
@@ -11,20 +11,20 @@ const sortChronologically = (tickets: Ticket[]): Ticket[] => {
 	return sort(chronologicPredicate, tickets);
 };
 
-interface SortTicketsProps {
+interface SortTicketsByProps {
 	tickets: Ticket[];
-	order?: SortTickets;
+	order?: SortTicketsBy;
 }
 
-const sorters = ({ tickets, order = SortTickets.chronologically }: SortTicketsProps): Ticket[] => {
+const sorters = ({ tickets, order = SortTicketsBy.date }: SortTicketsByProps): Ticket[] => {
 	switch (order) {
-		case SortTickets.chronologically:
+		case SortTicketsBy.date:
 			return sortChronologically(tickets);
-		case SortTickets.byName:
+		case SortTicketsBy.name:
 			return sortWith([ascend(propOr(null, 'name'))], tickets);
-		case SortTickets.byId:
+		case SortTicketsBy.id:
 			return sortWith([ascend(prop('id'))], tickets);
-		case SortTickets.byOrder:
+		case SortTicketsBy.order:
 			return sortWith([ascend(propOr(null, 'order'))], tickets);
 	}
 };
