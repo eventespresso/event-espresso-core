@@ -35,28 +35,28 @@ const DateForm: React.FC<DateItemFormProps> = ({ id, formReset, title }): JSX.El
 		<>
 			<H2 style={hdrStyle}>{title}</H2>
 			<div style={divStyle}>
-				<label style={lblStyle}>{__('Name', 'event_espresso')}</label>
+				<label style={lblStyle}>{__('Name')}</label>
 				<Field
 					defaultValue={name}
 					name='name'
 					component='input'
 					type='text'
-					placeholder={__('Name', 'event_espresso')}
+					placeholder={__('Name')}
 					style={inputStyle}
 				/>
 			</div>
 			<div style={divStyle}>
-				<label style={lblStyle}>{__('Description', 'event_espresso')}</label>
+				<label style={lblStyle}>{__('Description')}</label>
 				<Field
 					name='description'
 					component='input'
 					type='text'
-					placeholder={__('Description', 'event_espresso')}
+					placeholder={__('Description')}
 					style={inputStyle}
 					defaultValue={description}
 				/>
 			</div>
-			<H4 style={{ margin: '1.5em 0 0 24%' }}>Ticket Assignments</H4>
+			<H4 style={{ margin: '1.5em 0 0 24%' }}>{__('Ticket Assignments')}</H4>
 			<div style={divStyle}>
 				<div style={relationsStyle}>
 					<Field
@@ -67,7 +67,7 @@ const DateForm: React.FC<DateItemFormProps> = ({ id, formReset, title }): JSX.El
 								items={tickets}
 								itemType={'ticket'}
 								displayFields={['name', 'price']}
-								placeholder={'select tickets this datetime gives access to'}
+								placeholder={__('select tickets this datetime gives access to')}
 								formatFields={[null, formatSecondaryField]}
 								formReset={formReset}
 								{...input}

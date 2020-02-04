@@ -1,5 +1,6 @@
 import React, { useCallback } from 'react';
 import clone from 'ramda/src/clone';
+import { __ } from '@wordpress/i18n';
 
 import AddPriceModifierButton from './AddPriceModifierButton';
 import { AddPriceModifierDataProps } from '../types';
@@ -34,7 +35,7 @@ const AddPriceModifierButtonData = ({
 			reset(name);
 			sort();
 		} else {
-			alert('Please enter an amount for the new price modifier.');
+			alert(__('Please enter an amount for the new price modifier.'));
 			return;
 		}
 	}, []);

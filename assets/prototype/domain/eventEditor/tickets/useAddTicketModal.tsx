@@ -1,4 +1,6 @@
 import React, { useCallback } from 'react';
+import { __ } from '@wordpress/i18n';
+
 import TicketForm from './ticketForm/TicketForm';
 import { useEntityMutator, EntityType } from '../../../application/services/apollo/mutations';
 import { TicketItemFormProps } from './types';
@@ -25,7 +27,7 @@ const useAddTicketModal: EditorModal = () => {
 	);
 
 	const formComponent = useCallback<React.FC<TicketItemFormProps>>(
-		(props): JSX.Element => <TicketForm {...props} title='New Ticket Details' />,
+		(props): JSX.Element => <TicketForm {...props} title={__('New Ticket Details')} />,
 		[]
 	);
 

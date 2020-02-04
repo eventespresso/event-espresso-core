@@ -19,7 +19,7 @@ interface ListProps {
 }
 
 const List: React.FC<ListProps> = ({ datetimes }): JSX.Element => {
-	const header = <H3 style={{ margin: '2rem 0 .5rem' }}>{__('Dates List', 'event_espresso')}</H3>;
+	const header = <H3 style={{ margin: '2rem 0 .5rem' }}>{__('Dates List')}</H3>;
 
 	const datetimesList = (
 		<>

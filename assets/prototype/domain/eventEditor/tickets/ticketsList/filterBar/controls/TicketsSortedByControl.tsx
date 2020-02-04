@@ -3,7 +3,7 @@
  */
 import React from 'react';
 import { SelectControl } from '@wordpress/components';
-import { __ } from '@wordpress/i18n'; // @todo: replace with '@eventespresso/i18n'
+import { __ } from '@wordpress/i18n';
 
 /**
  * Internal imports
@@ -29,25 +29,25 @@ const TicketsSortedByControl: React.FC<TicketsSortedByControlProps> = ({
 	return React.useMemo(() => {
 		return (
 			<SelectControl
-				label={__('sort', 'event_espresso')}
+				label={__('sort')}
 				className='ee-ticket-list-filter-bar-order-select'
 				value={sortTicketsBy}
 				options={[
 					{
 						value: SortTickets.chronologically,
-						label: __('chronologically', 'event_espresso'),
+						label: __('chronologically'),
 					},
 					{
 						value: SortTickets.byName,
-						label: __('by ticket name', 'event_espresso'),
+						label: __('by ticket name'),
 					},
 					{
 						value: SortTickets.byId,
-						label: __('by ticket ID', 'event_espresso'),
+						label: __('by ticket ID'),
 					},
 					{
 						value: SortTickets.byOrder,
-						label: __('by custom order', 'event_espresso'),
+						label: __('by custom order'),
 					},
 				]}
 				onChange={setSortTickets}

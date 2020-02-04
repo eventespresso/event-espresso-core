@@ -4,7 +4,7 @@
 import * as React from 'react';
 import { withInstanceId } from '@wordpress/compose';
 import { IconButton } from '@wordpress/components';
-import { __ } from '@eventespresso/i18n';
+import { __ } from '@wordpress/i18n';
 
 /**
  * Internal dependencies
@@ -40,13 +40,13 @@ const EntityListFilterBar = ({ listId: id, instanceId, entityFilters = null }) =
 		() => (
 			<>
 				<label className='screen-reader-text' htmlFor={`ee-list-view-btn-${listId}`}>
-					{__('list view', 'event_espresso')}
+					{__('list view')}
 				</label>
 				<IconButton
 					id={`ee-list-view-btn-${listId}`}
 					className={view === 'list' ? 'ee-filter-bar-filter ee-active-filters' : 'ee-filter-bar-filter'}
 					icon='list-view'
-					tooltip={__('list view', 'event_espresso')}
+					tooltip={__('list view')}
 					onClick={setListView}
 				/>
 			</>
@@ -58,13 +58,13 @@ const EntityListFilterBar = ({ listId: id, instanceId, entityFilters = null }) =
 		() => (
 			<>
 				<label className='screen-reader-text' htmlFor={`ee-grid-view-btn-${listId}`}>
-					{__('list view', 'event_espresso')}
+					{__('list view')}
 				</label>
 				<IconButton
 					id={`ee-grid-view-btn-${listId}`}
 					className={view === 'grid' ? 'ee-filter-bar-filter ee-active-filters' : 'ee-filter-bar-filter'}
 					icon='grid-view'
-					tooltip={__('grid view', 'event_espresso')}
+					tooltip={__('grid view')}
 					onClick={setGridView}
 				/>
 			</>
@@ -76,12 +76,12 @@ const EntityListFilterBar = ({ listId: id, instanceId, entityFilters = null }) =
 		() => (
 			<>
 				<label className='screen-reader-text' htmlFor={`ee-grid-filter-btn-${listId}`}>
-					{__('show filters', 'event_espresso')}
+					{__('show filters')}
 				</label>
 				<IconButton
 					id={`ee-grid-filter-btn-${listId}`}
 					icon='filter'
-					tooltip={__('filter', 'event_espresso')}
+					tooltip={__('filter')}
 					onClick={toggleEntityFilters}
 					className={showEntityFilters ? 'ee-filter-bar-filter ee-active-filters' : 'ee-filter-bar-filter'}
 				/>

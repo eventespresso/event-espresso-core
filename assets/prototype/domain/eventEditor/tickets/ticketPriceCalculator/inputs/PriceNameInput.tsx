@@ -1,5 +1,6 @@
 import React from 'react';
 import { Field } from 'react-final-form';
+import { __ } from '@wordpress/i18n';
 
 // just temporary
 import styles from '../inlineStyles';
@@ -12,7 +13,7 @@ const PriceNameInput: React.FC<PriceInputProps> = ({ name, price }): JSX.Element
 			component={'input'}
 			initialValue={price.name}
 			name={`${name}.name`}
-			placeholder={'label...'}
+			placeholder={__('label...')}
 			style={styles.input}
 		/>
 	);

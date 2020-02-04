@@ -1,10 +1,9 @@
 import React from 'react';
+import { __ } from '@wordpress/i18n';
 
 import AddNewDateButton from './AddNewDateButton';
 import List from './List';
-
 import useDatetimes from '../../data/queries/datetimes/useDatetimes';
-
 import { useStatus, TypeName } from '../../../../application/services/apollo/status';
 import EmptyState from '../../../../application/ui/components/display/EmptyState';
 import ErrorIndicator from '../../../../application/ui/components/display/ErrorIndicator';
@@ -17,13 +16,13 @@ const DatesList: React.FC = (): JSX.Element => {
 	const error = isError(TypeName.datetimes);
 	const loading = isLoading(TypeName.datetimes);
 
-	if (loading) return <LoadingIndicator message='loading dates...' />;
+	if (loading) return <LoadingIndicator message={__('loading dates...')} />;
 
 	if (error) return <ErrorIndicator />;
 
 	if (noDatetimes) {
 		return (
-			<EmptyState description='try changing filter settings' title='NO DATES FOR YOU !!!'>
+			<EmptyState description={__('try changing filter settings')} title={__('NO DATES FOR YOU !!!')}>
 				<AddNewDateButton />
 			</EmptyState>
 		);

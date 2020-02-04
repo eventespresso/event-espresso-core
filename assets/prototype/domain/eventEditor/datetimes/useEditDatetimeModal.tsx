@@ -1,4 +1,6 @@
 import React, { useCallback } from 'react';
+import { __ } from '@wordpress/i18n';
+
 import DateForm from './dateForm/DateForm';
 import { useEntityMutator, EntityType } from '../../../application/services/apollo/mutations';
 import { DateItemFormProps } from './types';
@@ -27,7 +29,7 @@ const useEditDatetimeModal: EditorModal = (entityId) => {
 	const formComponent = useCallback<React.FC<DateItemFormProps>>(
 		(props): JSX.Element => (
 			// id prop is needed because modal is out of DatetimeContext
-			<DateForm {...props} id={entityId} title='Update datetime' />
+			<DateForm {...props} id={entityId} title={__('Update datetime')} />
 		),
 		[entityId]
 	);

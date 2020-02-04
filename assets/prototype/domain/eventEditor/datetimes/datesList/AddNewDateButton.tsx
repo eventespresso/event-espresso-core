@@ -1,4 +1,5 @@
 import React, { CSSProperties } from 'react';
+import { __ } from '@wordpress/i18n';
 
 import { EspressoButton } from '../../../../application/ui/components/input';
 import { useEditorModal } from '../../../../application/ui/components/layout/editorModal';
@@ -22,7 +23,7 @@ const AddNewDateButton: React.FC = (): JSX.Element => {
 
 	return (
 		<div style={btnRowStyle}>
-			<EspressoButton icon={'calendar'} buttonText={'Add New Date'} onClick={onClick} />
+			<EspressoButton icon={'calendar'} buttonText={__('Add New Date')} onClick={onClick} />
 		</div>
 	);
 };

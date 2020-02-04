@@ -3,7 +3,7 @@
  */
 import React, { useMemo } from 'react';
 import { SelectControl } from '@wordpress/components';
-import { __ } from '@wordpress/i18n'; // @todo: replace with '@eventespresso/i18n'
+import { __ } from '@wordpress/i18n';
 import { DatesSorted } from '../../../../data/date/types';
 
 interface DatesSortedControlProps {
@@ -21,25 +21,25 @@ const DatesSortedControl: React.FC<DatesSortedControlProps> = ({ datesSortedBy, 
 	return useMemo(() => {
 		return (
 			<SelectControl
-				label={__('sort', 'event_espresso')}
+				label={__('sort')}
 				className='espresso-date-list-filter-bar-order-select'
 				value={datesSortedBy}
 				options={[
 					{
 						value: 'chronologically',
-						label: __('chronologically', 'event_espresso'),
+						label: __('chronologically'),
 					},
 					{
 						value: 'byName',
-						label: __('by date name', 'event_espresso'),
+						label: __('by date name'),
 					},
 					{
 						value: 'byId',
-						label: __('by date ID', 'event_espresso'),
+						label: __('by date ID'),
 					},
 					{
 						value: 'byOrder',
-						label: __('by custom order', 'event_espresso'),
+						label: __('by custom order'),
 					},
 				]}
 				onChange={setDatesSortedBy}

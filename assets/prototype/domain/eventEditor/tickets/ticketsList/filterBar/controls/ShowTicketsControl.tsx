@@ -3,7 +3,7 @@
  */
 import React from 'react';
 import { SelectControl } from '@wordpress/components';
-import { __ } from '@wordpress/i18n'; // @todo: replace with '@eventespresso/i18n'
+import { __ } from '@wordpress/i18n';
 
 /**
  * Internal imports
@@ -32,61 +32,59 @@ const ShowTicketsControl: React.FC<ShowDatesControlProps> = ({
 	return React.useMemo(() => {
 		return (
 			<SelectControl
-				label={__('show', 'event_espresso')}
+				label={__('show')}
 				className='ee-ticket-list-filter-bar-show-select'
 				value={showTickets}
 				options={[
 					{
 						value: ShowTickets.above50Sold,
-						label: __('tickets with 50% or more sold', 'event_espresso'),
+						label: __('tickets with 50% or more sold'),
 					},
 					{
 						value: ShowTickets.above75Sold,
-						label: __('tickets with 75% or more sold', 'event_espresso'),
+						label: __('tickets with 75% or more sold'),
 					},
 					{
 						value: ShowTickets.above90Sold,
-						label: __('tickets with 90% or more sold', 'event_espresso'),
+						label: __('tickets with 90% or more sold'),
 					},
 					{
 						value: ShowTickets.all,
-						label: isChained
-							? __('all tickets for above dates', 'event_espresso')
-							: __('all tickets for all dates', 'event_espresso'),
+						label: isChained ? __('all tickets for above dates') : __('all tickets for all dates'),
 					},
 					{
 						value: ShowTickets.trashedOnly,
-						label: __('trashed tickets only', 'event_espresso'),
+						label: __('trashed tickets only'),
 					},
 					{
 						value: ShowTickets.below50Sold,
-						label: __('tickets with less than 50% sold', 'event_espresso'),
+						label: __('tickets with less than 50% sold'),
 					},
 
 					{
 						value: ShowTickets.expiredOnly,
-						label: __('expired tickets only', 'event_espresso'),
+						label: __('expired tickets only'),
 					},
 					{
 						value: ShowTickets.nextOnSaleOrPendingOnly,
-						label: __('next on sale or sale pending only', 'event_espresso'),
+						label: __('next on sale or sale pending only'),
 					},
 					{
 						value: ShowTickets.onSaleAndPending,
-						label: __('all on sale and sale pending', 'event_espresso'),
+						label: __('all on sale and sale pending'),
 					},
 					{
 						value: ShowTickets.onSaleOnly,
-						label: __('on sale tickets only', 'event_espresso'),
+						label: __('on sale tickets only'),
 					},
 					{
 						value: ShowTickets.pendingOnly,
-						label: __('sale pending tickets only', 'event_espresso'),
+						label: __('sale pending tickets only'),
 					},
 
 					{
 						value: ShowTickets.soldOutOnly,
-						label: __('sold out tickets only', 'event_espresso'),
+						label: __('sold out tickets only'),
 					},
 				]}
 				onChange={setShowTickets}
