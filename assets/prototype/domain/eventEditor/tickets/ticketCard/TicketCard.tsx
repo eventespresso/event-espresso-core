@@ -1,6 +1,7 @@
 // @ts-nocheck
 import React from 'react';
 import { Card, EditableText, Elevation, H4, H6 } from '@blueprintjs/core/lib/esm';
+import { __ } from '@wordpress/i18n';
 
 import TicketProvider from '../../context/TicketContext';
 import EditTicketButton from './EditTicketButton';
@@ -38,10 +39,9 @@ const TicketCard: React.FC<ListItemProps> = ({ id }): JSX.Element => {
 					<H4>
 						<InlineEditInput
 							component={EditableText}
-							placeholder={'edit title...'}
+							placeholder={__('edit title...', 'event_espresso')}
 							value={ticket.name}
 							onCancel={(value: any): void => {
-								console.log('TicketProvider title onCancel => NEEDS CALLBACK');
 								console.log('value', value);
 							}}
 							onConfirm={(name: string): void => {
@@ -58,10 +58,9 @@ const TicketCard: React.FC<ListItemProps> = ({ id }): JSX.Element => {
 					<H6>
 						<InlineEditInput
 							component={EditableText}
-							placeholder='Edit description...'
+							placeholder={__('Edit description...', 'event_espresso')}
 							value={ticket.description}
 							onCancel={(value: any): void => {
-								console.log('TicketProvider desc onCancel => NEEDS CALLBACK');
 								console.log('value', value);
 							}}
 							onConfirm={(description: string): void => {
@@ -79,7 +78,7 @@ const TicketCard: React.FC<ListItemProps> = ({ id }): JSX.Element => {
 						<CurrencyInput
 							id={ticket.id}
 							amount={parseFloat(ticket.price)}
-							placeholder={'set price...'}
+							placeholder={__('set price...', 'event_espresso')}
 							onConfirm={({ amount: price }: any): void => {
 								if (price !== ticket.price) {
 									updateEntity({ price });
@@ -99,7 +98,7 @@ const TicketCard: React.FC<ListItemProps> = ({ id }): JSX.Element => {
 					)}
 				</div>
 				<div>
-					{'Related Dates: '}{' '}
+					{__('Related Dates:', 'event_espresso')}{' '}
 					{relatedDates.filter(Boolean).map((datetimeId) => (
 						<DatetimeIdTag key={datetimeId} id={datetimeId} />
 					))}

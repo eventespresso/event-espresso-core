@@ -1,4 +1,5 @@
 import React, { useEffect, useState, CSSProperties } from 'react';
+import { __ } from '@wordpress/i18n';
 
 import { FormModalFormProps } from './types';
 import { EspressoButton, EspressoButtonStyle } from '../../input/espressoButton';
@@ -61,7 +62,7 @@ const FormModalForm: React.FC<FormModalFormProps> = ({
 					icon={'save'}
 					type={'submit'}
 					style={EspressoButtonStyle.PRIMARY}
-					buttonText={'Submit'}
+					buttonText={__('Submit', 'event_espresso')}
 					disabled={submitting || pristine}
 					onClick={(click) => {
 						click.preventDefault();
@@ -70,7 +71,7 @@ const FormModalForm: React.FC<FormModalFormProps> = ({
 					}}
 				/>
 				<EspressoButton
-					buttonText={'Reset'}
+					buttonText={__('Reset', 'event_espresso')}
 					disabled={submitting || pristine}
 					onClick={(click) => {
 						click.preventDefault();

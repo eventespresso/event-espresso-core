@@ -1,4 +1,6 @@
 import React, { useCallback } from 'react';
+import { __ } from '@wordpress/i18n';
+
 import DateForm from './dateForm/DateForm';
 import { useEntityMutator, EntityType } from '../../../application/services/apollo/mutations';
 import { DateItemFormProps } from './types';
@@ -25,7 +27,7 @@ const useAddDatetimeModal: EditorModal = () => {
 	);
 
 	const formComponent = useCallback<React.FC<DateItemFormProps>>(
-		(props): JSX.Element => <DateForm {...props} title='New Datetime Details' />,
+		(props): JSX.Element => <DateForm {...props} title={__('New Datetime Details', 'event_espresso')} />,
 		[]
 	);
 

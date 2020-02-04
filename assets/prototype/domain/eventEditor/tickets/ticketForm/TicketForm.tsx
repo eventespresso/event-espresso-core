@@ -62,7 +62,7 @@ const TicketForm: React.FC<TicketItemFormProps> = ({ id, formReset, title }): JS
 					required
 				/>
 			</div>
-			<H4 style={{ margin: '1.5em 0 0 24%' }}>Date Assignments</H4>
+			<H4 style={{ margin: '1.5em 0 0 24%' }}>{__('Date Assignments', 'event_espresso')}</H4>
 			<div style={divStyle}>
 				<div style={relationsStyle}>
 					<Field
@@ -73,7 +73,7 @@ const TicketForm: React.FC<TicketItemFormProps> = ({ id, formReset, title }): JS
 								items={datetimes}
 								itemType={'datetime'}
 								displayFields={['name', 'startDate']}
-								placeholder={'select datetimes this ticket has access to'}
+								placeholder={__('select datetimes this ticket has access to', 'event_espresso')}
 								formReset={formReset}
 								{...input}
 							/>

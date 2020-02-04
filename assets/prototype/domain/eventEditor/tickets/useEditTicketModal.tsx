@@ -1,4 +1,6 @@
 import React, { useCallback } from 'react';
+import { __ } from '@wordpress/i18n';
+
 import TicketForm from './ticketForm/TicketForm';
 import { useEntityMutator, EntityType } from '../../../application/services/apollo/mutations';
 import { TicketItemFormProps } from './types';
@@ -27,7 +29,7 @@ const useEditTicketModal: EditorModal = (entityId) => {
 	const formComponent = useCallback<React.FC<TicketItemFormProps>>(
 		(props): JSX.Element => (
 			// id prop is needed because modal is out of TicketContext
-			<TicketForm {...props} id={entityId} title='Update ticket' />
+			<TicketForm {...props} id={entityId} title={__('Update ticket', 'event_espresso')} />
 		),
 		[entityId]
 	);

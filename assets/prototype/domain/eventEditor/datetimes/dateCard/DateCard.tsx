@@ -2,6 +2,7 @@
 import React, { useState } from 'react';
 import { parseISO } from 'date-fns';
 import { Button, Card, EditableText, Elevation, H4, H6, Popover } from '@blueprintjs/core/lib/esm';
+import { __ } from '@wordpress/i18n';
 
 import DeleteDatetimeButton from './DeleteDateButton';
 import EditDateButton from './EditDateButton';
@@ -54,7 +55,7 @@ const DateCard: React.FC<ListItemProps> = ({ id }): JSX.Element => {
 				<H4>
 					<InlineEditInput
 						component={EditableText}
-						placeholder='Edit title...'
+						placeholder={__('Edit title...', 'event_espresso')}
 						value={date.name}
 						onCancel={(value: any): void => {
 							console.log('DatetimeProvider title onCancel => NEEDS CALLBACK');
@@ -73,7 +74,7 @@ const DateCard: React.FC<ListItemProps> = ({ id }): JSX.Element => {
 					<H6>
 						<InlineEditInput
 							component={EditableText}
-							placeholder='Edit description...'
+							placeholder={__('Edit description...', 'event_espresso')}
 							value={date.description}
 							onCancel={(value: any): void => {
 								console.log('DatetimeProvider desc onCancel => NEEDS CALLBACK');
@@ -101,7 +102,7 @@ const DateCard: React.FC<ListItemProps> = ({ id }): JSX.Element => {
 				<div>
 					{ticketsLoaded && (
 						<>
-							{'Related Tickets: '}{' '}
+							{__('Related Tickets:', 'event_espresso')}{' '}
 							{relatedTicketIds.filter(Boolean).map((ticketId) => (
 								<TicketIdTag key={ticketId} id={ticketId} />
 							))}

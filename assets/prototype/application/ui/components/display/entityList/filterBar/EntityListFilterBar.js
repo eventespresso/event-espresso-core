@@ -4,7 +4,7 @@
 import * as React from 'react';
 import { withInstanceId } from '@wordpress/compose';
 import { IconButton } from '@wordpress/components';
-import { __ } from '@eventespresso/i18n';
+import { __ } from '@wordpress/i18n';
 
 /**
  * Internal dependencies

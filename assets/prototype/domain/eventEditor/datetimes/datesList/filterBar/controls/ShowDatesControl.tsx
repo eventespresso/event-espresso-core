@@ -3,7 +3,7 @@
  */
 import React, { useMemo } from 'react';
 import { SelectControl } from '@wordpress/components';
-import { __ } from '@wordpress/i18n'; // @todo: replace with '@eventespresso/i18n'
+import { __ } from '@wordpress/i18n';
 import { ShowDates } from '../../../../data/date/types';
 
 interface ShowDatesControlProps {

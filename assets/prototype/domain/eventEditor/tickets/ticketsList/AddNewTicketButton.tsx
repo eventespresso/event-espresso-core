@@ -1,4 +1,5 @@
 import React from 'react';
+import { __ } from '@wordpress/i18n';
 
 import { EspressoButton } from '../../../../application/ui/components/input';
 import { useEditorModal } from '../../../../application/ui/components/layout/editorModal';
@@ -11,7 +12,9 @@ const AddNewTicketButton: React.FC = () => {
 			editorId: 'addTicket',
 		});
 	};
-	return <EspressoButton icon={'tickets-alt'} buttonText={'Add New Ticket'} onClick={onClick} />;
+	return (
+		<EspressoButton icon={'tickets-alt'} buttonText={__('Add New Ticket', 'event_espresso')} onClick={onClick} />
+	);
 };
 
 export default AddNewTicketButton;

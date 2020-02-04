@@ -4,7 +4,7 @@
 import { useMemo, useRef } from 'react';
 import { useSpring, animated } from 'react-spring';
 import { SelectControl, TextControl } from '@wordpress/components';
-import { __ } from '@eventespresso/i18n';
+import { __ } from '@wordpress/i18n';
 
 /**
  * Internal dependencies

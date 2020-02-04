@@ -56,7 +56,7 @@ const DateForm: React.FC<DateItemFormProps> = ({ id, formReset, title }): JSX.El
 					defaultValue={description}
 				/>
 			</div>
-			<H4 style={{ margin: '1.5em 0 0 24%' }}>Ticket Assignments</H4>
+			<H4 style={{ margin: '1.5em 0 0 24%' }}>{__('Ticket Assignments', 'event_espresso')}</H4>
 			<div style={divStyle}>
 				<div style={relationsStyle}>
 					<Field
@@ -67,7 +67,7 @@ const DateForm: React.FC<DateItemFormProps> = ({ id, formReset, title }): JSX.El
 								items={tickets}
 								itemType={'ticket'}
 								displayFields={['name', 'price']}
-								placeholder={'select tickets this datetime gives access to'}
+								placeholder={__('select tickets this datetime gives access to', 'event_espresso')}
 								formatFields={[null, formatSecondaryField]}
 								formReset={formReset}
 								{...input}

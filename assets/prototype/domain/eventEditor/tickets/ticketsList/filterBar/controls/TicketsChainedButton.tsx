@@ -3,7 +3,7 @@
  */
 import React from 'react';
 import { IconButton } from '@wordpress/components';
-import { __ } from '@wordpress/i18n'; // @todo: replace with '@eventespresso/i18n'
+import { __ } from '@wordpress/i18n';
 
 interface TicketsChainedButtonProps {
 	isChained?: boolean;
@@ -29,7 +29,6 @@ const TicketsChainedButton: React.FC<TicketsChainedButtonProps> = ({ isChained, 
 			}
 			icon={isChained ? 'admin-links' : 'editor-unlink'}
 			onClick={toggleIsChained}
-			value={isChained}
 		/>
 	);
 };
