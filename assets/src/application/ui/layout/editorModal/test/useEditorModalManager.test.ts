@@ -7,7 +7,7 @@ import { renderHook, act } from '@testing-library/react-hooks';
  * Internal dependencies
  */
 import { useEditorModalManager, EditorState } from '../';
-import { ApolloMockedProvider } from '../../../../../../domain/eventEditor/context/TestContext';
+import { ApolloMockedProvider } from '../../../../../domain/eventEditor/services/context/TestContext';
 
 describe('useEditorModalManager', () => {
 	const modalId1: EditorState = {

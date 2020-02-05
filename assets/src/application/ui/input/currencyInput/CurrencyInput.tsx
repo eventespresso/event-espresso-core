@@ -1,6 +1,6 @@
 // @ts-nocheck
 import React, { useState } from 'react';
-import Currency from 'react-currency-formatter';
+import Currency from '../../../../domain/eventEditor/ui/datetimes/dateForm/node_modules/react-currency-formatter';
 import { Button, EditableText } from '@blueprintjs/core/lib/esm';
 import InlineEditInput from '../inlineEditInput/InlineEditInput';
 
