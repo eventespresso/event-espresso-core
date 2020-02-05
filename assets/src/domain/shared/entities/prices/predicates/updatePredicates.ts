@@ -2,7 +2,7 @@ import { assoc, map, pickBy, when } from 'ramda';
 
 import { isBasePrice, isPriceField } from './selectionPredicates';
 import { entityHasGuid } from '../../../predicates/shared/selectionPredicates';
-import { Price } from '../../../../eventEditor/data/types';
+import { Price } from '../../../../../../prototype/domain/eventEditor/data/types';
 import toBoolean from '../../../../../application/utilities/converters/toBoolean';
 import toInteger from '../../../../../application/utilities/converters/number/toInteger';
 import parsedAmount from '../../../../../application/utilities/money/parsedAmount';

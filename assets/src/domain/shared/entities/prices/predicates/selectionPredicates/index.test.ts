@@ -16,7 +16,7 @@ import {
 	getPriceModifiers,
 	getTaxes,
 } from './index';
-import { nodes as prices } from '../../../../../../domain/eventEditor/data/queries/prices/test/data';
+import { nodes as prices } from '../../../../../../../prototype/domain/eventEditor/data/queries/prices/test/data';
 
 describe('isPriceField', () => {
 	it('should return true if field is included in price type', () => {

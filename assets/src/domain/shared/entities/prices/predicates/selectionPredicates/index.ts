@@ -1,7 +1,7 @@
 import { filter, find, includes, propEq } from 'ramda';
 
-import { EntityId, EntityDbId, Price } from '../../../../../../domain/eventEditor/data/types';
-import { PRICE_FIELDS } from '../priceFields';
+import { EntityId, EntityDbId, Price } from '../../../../../../../prototype/domain/eventEditor/data/types';
+import { PRICE_FIELDS } from '../../priceFields';
 import { findEntityByDbId, findEntityByGuid } from '../../../../predicates/shared/selectionPredicates';
 
 // the following return `true` if price satisfies predicate
