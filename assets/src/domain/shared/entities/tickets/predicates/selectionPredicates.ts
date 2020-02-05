@@ -1,7 +1,7 @@
 import { assoc, indexOf, map, propEq, when } from 'ramda';
 
 import { ticketFields } from './ticketFields';
-import { entityHasGuid } from '../../../services/predicates/shared/selectionPredicates';
+import { entityHasGuid } from '../../../services/predicates';
 
 const NO_INDEX = -1;
 

@@ -1,6 +1,6 @@
 import { pathOr } from 'ramda';
 
-import { entitiesWithGuIdInArray } from '../../../../../shared/services/predicates/shared/selectionPredicates';
+import { entitiesWithGuIdInArray } from '../../../../../shared/services/predicates';
 import { useStatus, TypeName } from '../../../../../../application/services/apollo/status';
 import usePriceQueryOptions from './usePriceQueryOptions';
 import { Price, PricesList, EntityId } from '../../types';

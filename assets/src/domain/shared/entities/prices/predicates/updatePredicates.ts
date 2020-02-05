@@ -1,7 +1,7 @@
 import { assoc, map, pickBy, when } from 'ramda';
 
 import { isBasePrice, isPriceField } from './selectionPredicates';
-import { entityHasGuid } from '../../../services/predicates/shared/selectionPredicates';
+import { entityHasGuid } from '../../../services/predicates';
 import { Price } from '../../../../eventEditor/services/apollo/types';
 import { toBoolean, toInteger } from '../../../../../application/services/utilities/converters';
 import parsedAmount from '../../../../../application/services/utilities/money/parsedAmount';

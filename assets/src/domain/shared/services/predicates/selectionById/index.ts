@@ -1,6 +1,6 @@
 import { filter, find, includes, prop, propEq } from 'ramda';
 
-import { Entity, EntityDbId, EntityId } from '../../../../../eventEditor/services/apollo/types';
+import { Entity, EntityDbId, EntityId } from '../../../../eventEditor/services/apollo/types';
 
 // the following return specified entity prop
 export const entityDbId = <T extends Entity>(entity: T): EntityDbId => prop('dbId', entity);
