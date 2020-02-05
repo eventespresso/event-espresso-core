@@ -98,7 +98,6 @@ module.exports = {
 	proxySetup: resolveApp('src/setupProxy.js'),
 	pathToDistFolder: path.resolve(ASSETS, 'dist') + '/',
 	pathToEDTRv1: path.resolve(ASSETS, 'ZZZ') + '/',
-	pathToPrototype: path.resolve(ASSETS, 'prototype') + '/',
 	publicUrl: getPublicUrl(resolveApp('package.json')),
 	servedPath: getServedPath(resolveApp('package.json')),
 	testsSetup: resolveModule(resolveApp, 'src/setupTests'),

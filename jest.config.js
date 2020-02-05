@@ -1,5 +1,5 @@
 module.exports = {
-	roots: [`<rootDir>/assets/prototype`],
+	roots: [`<rootDir>/assets/src`],
 	testMatch: [`**/?(*.)test.{ts,tsx}`],
 	transform: {
 		'^.+\\.(js|jsx|ts|tsx)$': 'ts-jest',
