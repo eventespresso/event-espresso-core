@@ -2,7 +2,7 @@ import { renderHook } from '@testing-library/react-hooks';
 
 import useFetchTickets from '../useFetchTickets';
 import useTicketQueryOptions from '../useTicketQueryOptions';
-import { ApolloMockedProvider } from '../../../../context/TestContext';
+import { ApolloMockedProvider } from '../../../../../services/context/TestContext';
 import { successMocks, errorMocks, nodes } from './data';
 import useInitDatetimeTestCache from '../../datetimes/test/useInitDatetimeTestCache';
 

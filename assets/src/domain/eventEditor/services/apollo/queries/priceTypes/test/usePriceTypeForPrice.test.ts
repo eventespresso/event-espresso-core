@@ -1,7 +1,7 @@
 import { renderHook } from '@testing-library/react-hooks';
 
 import usePriceTypeForPrice from '../usePriceTypeForPrice';
-import { ApolloMockedProvider } from '../../../../context/TestContext';
+import { ApolloMockedProvider } from '../../../../../services/context/TestContext';
 import { nodes, edge } from './data';
 import { nodes as prices } from '../../prices/test/data';
 import useInitPriceTypeTestCache from './useInitPriceTypeTestCache';

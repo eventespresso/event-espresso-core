@@ -2,7 +2,7 @@ import { renderHook } from '@testing-library/react-hooks';
 
 import useFetchDatetimes from '../useFetchDatetimes';
 import useDatetimeQueryOptions from '../useDatetimeQueryOptions';
-import { ApolloMockedProvider } from '../../../../context/TestContext';
+import { ApolloMockedProvider } from '../../../../../services/context/TestContext';
 import { successMocks, errorMocks, nodes } from './data';
 
 const timeout = 5000; // milliseconds

@@ -1,7 +1,7 @@
 import { renderHook } from '@testing-library/react-hooks';
 
 import useTickets from '../useTickets';
-import { ApolloMockedProvider } from '../../../../context/TestContext';
+import { ApolloMockedProvider } from '../../../../../services/context/TestContext';
 import { nodes } from './data';
 import useInitTicketTestCache from './useInitTicketTestCache';
 

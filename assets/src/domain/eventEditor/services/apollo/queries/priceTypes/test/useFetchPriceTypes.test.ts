@@ -2,7 +2,7 @@ import { renderHook } from '@testing-library/react-hooks';
 
 import useFetchPriceTypes from '../useFetchPriceTypes';
 import usePriceTypeQueryOptions from '../usePriceTypeQueryOptions';
-import { ApolloMockedProvider } from '../../../../context/TestContext';
+import { ApolloMockedProvider } from '../../../../../services/context/TestContext';
 import { successMocks, errorMocks, nodes } from './data';
 
 const timeout = 5000; // milliseconds

@@ -1,7 +1,7 @@
 import { renderHook } from '@testing-library/react-hooks';
 
 import useDatetimeQueryOptions from '../useDatetimeQueryOptions';
-import { ApolloMockedProvider, eventId } from '../../../../context/TestContext';
+import { ApolloMockedProvider, eventId } from '../../../../../services/context/TestContext';
 
 describe('useDatetimeQueryOptions()', () => {
 	it('checks if the query operation variables are correct', () => {
