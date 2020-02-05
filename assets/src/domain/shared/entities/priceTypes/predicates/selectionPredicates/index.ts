@@ -6,7 +6,7 @@ import { allPass, filter, find, propEq } from 'ramda';
 /**
  * Internal dependencies
  */
-import { PriceType } from '../../../../../../../prototype/domain/eventEditor/data/types';
+import { PriceType } from '../../../../../eventEditor/services/apollo/types';
 
 // the following return `true` if price type satisfies predicate
 // is a base price ?
