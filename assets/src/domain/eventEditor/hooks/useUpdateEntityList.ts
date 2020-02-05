@@ -1,6 +1,6 @@
 import { WriteQueryOptions } from '../queries/types';
-import { CacheUpdaterFn } from '../../../shared/data/queries/types';
-import useUpdateCache from '../../../shared/data/queries/useUpdateCache';
+import { CacheUpdaterFn } from '../../../shared/services/apollo/queries/types';
+import useUpdateCache from '../../../shared/services/apollo/queries/useUpdateCache';
 
 const useUpdateEntityList = <List = any>(
 	writeQueryOptions: WriteQueryOptions<List> = undefined
