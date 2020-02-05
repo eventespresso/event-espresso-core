@@ -1,1 +1,1 @@
-export * from '../shared//constants/defaultDates';
+export * from '../shared/constants/defaultDates';
