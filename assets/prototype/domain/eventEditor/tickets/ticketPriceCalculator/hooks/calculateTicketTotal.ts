@@ -1,8 +1,8 @@
 import { filter, pathOr, propSatisfies, reduce } from 'ramda';
 
 import ticketTotalCalculator from './ticketTotalCalculator';
-import { TpcFormData } from '../types';
-import { Price, Ticket } from '../../../data/types';
+import { TpcPriceModifier, TpcFormData } from '../types';
+import { Ticket } from '../../../data/types';
 import { sortByPriceOrderIdAsc } from '../../../../shared/entities/prices/predicates/sortingPredicates';
 import { updateTicketPriceForTicket } from '../../../../shared/entities/tickets/predicates/selectionPredicates';
 
@@ -13,14 +13,14 @@ const calculateTicketTotal = (state: TpcFormData): TpcFormData => {
 	if (!ticket) {
 		return state;
 	}
-	const allPrices: Price[] = pathOr<Price[]>(null, ['prices'], state);
+	const allPrices: TpcPriceModifier[] = pathOr<TpcPriceModifier[]>(null, ['prices'], state);
 	if (!allPrices) {
 		return state;
 	}
 	// we're calculating the ticket total but the last element
 	// should be the "NEW_PRICE" row and we don't want it
-	const modifiers: Price[] = filter<Price>(notNewPrice, allPrices);
-	const sortedModifiers: Price[] = sortByPriceOrderIdAsc(modifiers);
+	const modifiers: TpcPriceModifier[] = filter<TpcPriceModifier>(notNewPrice, allPrices);
+	const sortedModifiers: TpcPriceModifier[] = sortByPriceOrderIdAsc(modifiers);
 	const newTicketTotal: number = reduce(ticketTotalCalculator, 0, sortedModifiers);
 	const tickets: Ticket[] = updateTicketPriceForTicket({
 		tickets: [ticket],
