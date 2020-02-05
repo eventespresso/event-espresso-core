@@ -1,5 +1,5 @@
 import { pathOr } from 'ramda';
-import { GET_TICKET } from './';
+import { GET_TICKET } from '.';
 import { Ticket, TicketItem } from '../../types';
 import { EntityItemProps, ReadQueryOptions } from '../types';
 import useCacheQuery from '../useCacheQuery';

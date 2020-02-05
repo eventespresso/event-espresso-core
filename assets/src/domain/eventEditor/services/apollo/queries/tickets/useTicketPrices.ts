@@ -1,4 +1,4 @@
-import useRelations from '../../../../../application/services/apollo/relations/useRelations';
+import useRelations from '../../../../../../application/services/apollo/relations/useRelations';
 import usePrices from '../prices/usePrices';
 import { Price, EntityId } from '../../types';
 /**
