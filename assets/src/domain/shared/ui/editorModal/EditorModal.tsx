@@ -1,7 +1,7 @@
 import React from 'react';
 import { pathOr } from 'ramda';
-import FormModal from '../../../../src/application/ui/forms/formModal/FormModal';
-import { useEditorModal, EditorState } from '../../../../src/application/ui/layout/editorModal';
+import FormModal from '../../../../application/ui/forms/formModal/FormModal';
+import { useEditorModal, EditorState } from '../../../../application/ui/layout/editorModal';
 import useEditors from './useEditors';
 
 const DEFAULT_EDITOR: EditorState = { editorId: null, entityId: '', isOpen: false };
