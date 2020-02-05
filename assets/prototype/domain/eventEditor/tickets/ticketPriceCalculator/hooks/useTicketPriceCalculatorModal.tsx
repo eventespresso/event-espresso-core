@@ -5,34 +5,29 @@ import { isEmpty, isNil } from 'ramda';
 import useOnSubmitPrices from './useOnSubmitPrices';
 import useTicketPriceCalculatorFormDecorator from './useTicketPriceCalculatorFormDecorator';
 import useTicketPriceCalculatorFormMutators from './useTicketPriceCalculatorFormMutators';
+import usePriceModifier from '../usePriceModifier';
 import TicketPriceCalculatorForm from '../TicketPriceCalculatorForm';
-import useDefaultPriceType from '../../../data/queries/priceTypes/useDefaultPriceType';
+import { TpcFormData } from '../types';
 import useTicketPrices from '../../../data/queries/tickets/useTicketPrices';
 import useTicketItem from '../../../data/queries/tickets/useTicketItem';
-import { Ticket, Price } from '../../../../eventEditor/data/types';
-import { defaultNewPriceModifier } from '../../../../shared/entities/prices/defaultNewPriceModifier';
+import defaultPrice from '../defaultPriceModifier';
 import { sortByPriceOrderIdAsc } from '../../../../shared/entities/prices/predicates/sortingPredicates';
 import { copyPriceFields } from '../../../../shared/entities/prices/predicates/updatePredicates';
 import { copyTicketFields } from '../../../../shared/entities/tickets/predicates/updatePredicates';
 import { EntityId } from '../../../../../domain/eventEditor/data/types';
 import { useEditorModal, EditorModal, ModalClose } from '../../../../../application/ui/components/layout/editorModal';
 
-interface TPCFormValues {
-	ticket: Ticket;
-	prices: Price[];
-}
-
-const INITIAL_STATE: TPCFormValues = {
+const INITIAL_STATE: TpcFormData = {
 	ticket: null,
 	prices: [],
 };
 
 const useTicketPriceCalculatorModal: EditorModal = (ticketId: EntityId) => {
-	const [initialValues, setInitialValues] = useState<TPCFormValues>(INITIAL_STATE);
+	const [initialValues, setInitialValues] = useState<TpcFormData>(INITIAL_STATE);
 	const decorator = useTicketPriceCalculatorFormDecorator();
 	const mutators = useTicketPriceCalculatorFormMutators();
 	const prices = useTicketPrices(ticketId);
-	const defaultPriceType = useDefaultPriceType();
+	const defaultPriceModifier = usePriceModifier(defaultPrice);
 	const submitPrices = useOnSubmitPrices(prices);
 	const ticket = useTicketItem({ id: ticketId });
 	const { closeEditor } = useEditorModal();
@@ -42,9 +37,7 @@ const useTicketPriceCalculatorModal: EditorModal = (ticketId: EntityId) => {
 			!isNil(ticket) && !isEmpty(ticket) && (isNil(initialValues.ticket) || isEmpty(initialValues.ticket));
 		if (updatable) {
 			const sortedPrices = sortByPriceOrderIdAsc(prices);
-			// make sure to set a valid priceType for new price.
-			const newPriceModifier = { ...defaultNewPriceModifier, priceType: defaultPriceType.id };
-			sortedPrices.push(newPriceModifier);
+			sortedPrices.push(defaultPriceModifier);
 			const formData = {
 				ticket: copyTicketFields(ticket),
 				prices: sortedPrices.map(copyPriceFields),
