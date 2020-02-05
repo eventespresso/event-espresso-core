@@ -22,6 +22,7 @@
 		"dev": "node scripts/watch.js",
 		"generate": "graphql-codegen",
 		"lc": "jsgl --local ./",
+		"lint": "wp-scripts lint-js ./assets/src --fix",
 		"lint-php": "composer run-script lint",
 		"lint-php:fix": "composer run-script lint-fix",
 		"lint-php:skip-warnings": "composer run-script lint:skip-warnings",
