@@ -1,9 +1,9 @@
 import { act, renderHook } from '@testing-library/react-hooks';
 import * as R from 'ramda';
 import { formatISO, subWeeks } from 'date-fns';
-import { Datetime } from '../../../../data/types';
-import { DatesSorted, DisplayDates, ShowDates } from '../../../../data/date/types';
-import { DatetimeStatus } from '../../../../../eventEditor/data/types';
+import { Datetime } from '../../../../../services/apollo/types';
+import { DatesSorted, DisplayDates, ShowDates } from '../../../../../interfaces/datetimes/types';
+import { DatetimeStatus } from '../../../../../../eventEditor/services/apollo/types';
 
 import useDatesListFilterState from './index';
 

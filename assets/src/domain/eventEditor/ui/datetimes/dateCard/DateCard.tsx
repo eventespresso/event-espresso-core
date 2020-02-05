@@ -8,18 +8,18 @@ import DeleteDatetimeButton from './DeleteDateButton';
 import EditDateButton from './EditDateButton';
 
 import { DatetimeProvider } from '../../context/DatetimeContext';
-import useDatetimeItem from '../../data/queries/datetimes/useDatetimeItem';
+import useDatetimeItem from '../../../services/apollo/queries/datetimes/useDatetimeItem';
 import TicketIdTag from '../../tickets/TicketIdTag';
 
-import DateRangePicker from '../../../shared/dateRangeInput/DateRangePicker';
-import { DateRangeDisplay } from '../../../shared/dateRangeInput/dateDisplay';
-import { PLUS_ONE_MONTH, PLUS_TWO_MONTHS } from '../../../shared/defaultDates';
+import DateRangePicker from '../../../../shared/ui/dateRangeInput/DateRangePicker';
+import { DateRangeDisplay } from '../../../../shared/ui/dateRangeInput/dateDisplay';
+import { PLUS_ONE_MONTH, PLUS_TWO_MONTHS } from '../../../../shared/constants/defaultDates';
 
 import { useEntityMutator, EntityType } from '../../../../application/services/apollo/mutations';
 import useRelations from '../../../../application/services/apollo/relations/useRelations';
 import { useStatus, TypeName } from '../../../../application/services/apollo/status';
-import InlineEditInput from '../../../../application/ui/components/input/inlineEditInput/InlineEditInput';
-import { ListItemProps } from '../../types';
+import InlineEditInput from '../../../../../application/ui/input/inlineEditInput/InlineEditInput';
+import { ListItemProps } from '../../../interfaces/types';
 import { btnStyle, cardStyle, idStyle } from './styles';
 
 const DateCard: React.FC<ListItemProps> = ({ id }): JSX.Element => {
