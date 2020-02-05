@@ -5,7 +5,7 @@ const fs = require('fs');
 const url = require('url');
 
 const ASSETS = 'assets';
-const SOURCE_FOLDER = 'prototype';
+const SOURCE_FOLDER = 'src';
 const appSrc = `./${ASSETS}/${SOURCE_FOLDER}`;
 
 // Make sure any symlinks in the project folder are resolved:
@@ -84,7 +84,7 @@ module.exports = {
 		'eejs-core': resolveModule(resolveApp, assetsPath + 'eejs/index'),
 		'eventespresso-vendor': resolveModule(resolveApp, assetsPath + 'eejs/vendor/index'),
 		'eventespresso-editor': resolveModule(resolveApp, assetsPath + 'editor/index'),
-		'eventespresso-editor-prototype': resolveModule(resolveApp, './assets/prototype/domain/eventEditor/index'),
+		'eventespresso-editor-prototype': resolveModule(resolveApp, './assets/src/domain/eventEditor/index'),
 		// To be done as part of: https://github.com/eventespresso/event-espresso-core/issues/2250
 		// 'ee-wp-plugins-page': resolveModule(resolveApp, assetsPath + 'wp-plugins-page/index'),
 		// 'eventespresso-core-blocks': resolveModule(resolveApp, assetsPath + 'blocks/index'),
