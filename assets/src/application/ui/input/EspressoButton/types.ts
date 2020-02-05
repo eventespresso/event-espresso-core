@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { Icon } from '../../../display/espressoIcon';
+import { Icon } from '../../display/espressoIcon';
 
 export type ClickHandler = (click?: React.MouseEvent<HTMLElement>) => void;
 

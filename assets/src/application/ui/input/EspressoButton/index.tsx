@@ -2,7 +2,7 @@ import React from 'react';
 import classNames from 'classnames';
 
 import { ClickHandler, EspressoButtonProps, EspressoButtonSize, EspressoButtonStyle } from './types';
-import { EspressoIcon } from '../../../display/espressoIcon';
+import { EspressoIcon } from '../../display/espressoIcon';
 
 /**
  * Button wrapper for adding styles

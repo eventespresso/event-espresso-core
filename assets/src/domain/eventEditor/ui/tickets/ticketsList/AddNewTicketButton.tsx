@@ -1,7 +1,7 @@
 import React from 'react';
 import { __ } from '@wordpress/i18n';
 
-import { EspressoButton } from '../../../../../application/ui/components/input';
+import { EspressoButton } from '../../../../../application/ui/input';
 import { useEditorModal } from '../../../../../application/ui/layout/editorModal';
 
 const AddNewTicketButton: React.FC = () => {
