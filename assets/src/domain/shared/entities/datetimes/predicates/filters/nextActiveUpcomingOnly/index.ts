@@ -7,7 +7,7 @@ import { head } from 'ramda';
  * Internal dependencies
  */
 import activeUpcoming from '../activeUpcoming';
-import { Datetime } from '../../../../../../../../prototype/domain/eventEditor/data/types';
+import { Datetime } from '../../../../../../eventEditor/services/apollo/types';
 
 const nextActiveUpcomingOnly = (dates: Datetime[]): Datetime[] | [] => {
 	const activeUpcomingDates = activeUpcoming(dates);

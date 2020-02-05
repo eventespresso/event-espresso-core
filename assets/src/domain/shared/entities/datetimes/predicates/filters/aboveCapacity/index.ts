@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import { Datetime } from '../../../../../../../../prototype/domain/eventEditor/data/types';
+import { Datetime } from '../../../../../../eventEditor/services/apollo/types';
 import capacityAtOrAbove from '../../capacityAtOrAbove';
 
 type AboveCapacityProps = {

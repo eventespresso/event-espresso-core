@@ -1,8 +1,8 @@
 /**
  * Internal dependencies
  */
-import { Datetime } from '../../../../../../../../prototype/domain/eventEditor/data/types';
-import isTrashed from '../../../../../predicates/shared/isTrashed';
+import { Datetime } from '../../../../../../eventEditor/services/apollo/types';
+import isTrashed from '../../../../../services/predicates/isTrashed';
 import validFiniteCapacityLimit from '../../validFiniteCapacityLimit';
 import validInfiniteCapacityLimit from './validInfiniteCapacityLimit';
 import validSold from '../../validSold';

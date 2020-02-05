@@ -7,7 +7,7 @@ import { compareAsc, parseISO } from 'date-fns';
 /**
  * Internal dependencies
  */
-import { Datetime } from '../../../../../../../prototype/domain/eventEditor/data/types';
+import { Datetime } from '../../../../../eventEditor/services/apollo/types';
 import { DatesSorted } from '../../../../../eventEditor/interfaces/datetimes/types';
 
 interface SortDates {

@@ -7,7 +7,7 @@ import { now } from '../filters';
 /**
  * Internal dependencies
  */
-import { Datetime } from '../../../../../../../prototype/domain/eventEditor/data/types';
+import { Datetime } from '../../../../../eventEditor/services/apollo/types';
 import TIME from '../../../../../../application/constants/time';
 
 /**

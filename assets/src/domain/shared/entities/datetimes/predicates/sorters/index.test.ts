@@ -2,7 +2,7 @@ import { compareAsc, parseISO } from 'date-fns';
 
 import sorters from './index';
 import { DatesSorted } from '../../../../../eventEditor/interfaces/datetimes/types';
-import { nodes as dates } from '../../../../../../../prototype/domain/eventEditor/data/queries/datetimes/test/data';
+import { nodes as dates } from '../../../../../eventEditor/services/apollo/queries/datetimes/test/data';
 
 describe('sorters', () => {
 	it('should return dates sorted in default chronological order if no sort prop is provided', () => {

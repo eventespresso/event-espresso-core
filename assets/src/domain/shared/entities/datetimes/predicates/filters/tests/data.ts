@@ -1,5 +1,5 @@
-import { Datetime } from '../../../../../../../../prototype/domain/eventEditor/data/types';
-import { DatetimeStatus } from '../../../../../../../../prototype/domain/eventEditor/data/types';
+import { Datetime } from '../../../../../../eventEditor/services/apollo/types';
+import { DatetimeStatus } from '../../../../../../eventEditor/services/apollo/types';
 
 const dates: Datetime[] = [
 	{

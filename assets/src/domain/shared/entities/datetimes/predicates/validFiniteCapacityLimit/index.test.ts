@@ -1,7 +1,7 @@
 import { omit } from 'ramda';
 
 import validFiniteCapacityLimit from './index';
-import { nodes as datetimes } from '../../../../../../../prototype/domain/eventEditor/data/queries/datetimes/test/data';
+import { nodes as datetimes } from '../../../../../eventEditor/services/apollo/queries/datetimes/test/data';
 
 describe('validFiniteCapacityLimit', () => {
 	it('should return false if datetime has missing capacity property', () => {
