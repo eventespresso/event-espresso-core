@@ -15,11 +15,7 @@ import { sortByPriceOrderIdAsc } from '../../../../../shared/entities/prices/pre
 import { copyPriceFields } from '../../../../../shared/entities/prices/predicates/updatePredicates';
 import { copyTicketFields } from '../../../../../shared/entities/tickets/predicates/updatePredicates';
 import { EntityId } from '../../../../services/apollo/types';
-import {
-	useEditorModal,
-	EditorModal,
-	ModalClose,
-} from '../../../../../../application/ui/components/layout/editorModal';
+import { useEditorModal, EditorModal, ModalClose } from '../../../../../../application/ui/layout/editorModal';
 
 const INITIAL_STATE: TpcFormData = {
 	ticket: null,

@@ -2,7 +2,7 @@ import React from 'react';
 import { Button } from '@blueprintjs/core/lib/esm';
 
 import { TpcButtonDataProps, TpcModalProps } from '../types';
-import { useEditorModal } from '../../../../../../application/ui/components/layout/editorModal';
+import { useEditorModal } from '../../../../../../application/ui/layout/editorModal';
 
 const TicketPriceCalculatorButton: React.FC<TpcButtonDataProps & TpcModalProps> = ({ ticketId }): JSX.Element => {
 	const { openEditor } = useEditorModal();

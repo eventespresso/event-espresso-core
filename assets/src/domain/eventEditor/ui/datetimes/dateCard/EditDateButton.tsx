@@ -2,7 +2,7 @@ import React, { CSSProperties } from 'react';
 import { Button } from '@blueprintjs/core/lib/esm';
 import { EditItemButtonProps } from '../../../interfaces/types';
 import { useDatetimeContext } from '../../../hooks';
-import { useEditorModal } from '../../../../../application/ui/components/layout/editorModal';
+import { useEditorModal } from '../../../../../application/ui/layout/editorModal';
 
 const EditDateButton: React.FC<EditItemButtonProps> = ({ position }): JSX.Element => {
 	const { id: entityId } = useDatetimeContext();

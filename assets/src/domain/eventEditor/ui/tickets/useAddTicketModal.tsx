@@ -4,12 +4,7 @@ import { __ } from '@wordpress/i18n';
 import TicketForm from './ticketForm/TicketForm';
 import { useEntityMutator, EntityType } from '../../../../application/services/apollo/mutations';
 import { TicketItemFormProps } from './types';
-import {
-	useEditorModal,
-	EditorModal,
-	ModalSubmit,
-	ModalClose,
-} from '../../../../application/ui/components/layout/editorModal';
+import { useEditorModal, EditorModal, ModalSubmit, ModalClose } from '../../../../application/ui/layout/editorModal';
 
 const useAddTicketModal: EditorModal = () => {
 	const { createEntity } = useEntityMutator(EntityType.Ticket);

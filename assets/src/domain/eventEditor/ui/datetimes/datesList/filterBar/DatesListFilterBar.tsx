@@ -1,6 +1,6 @@
 import React from 'react';
 
-import EntityListFilterBar from '../../../../../../application/ui/components/display/entityList/filterBar/EntityListFilterBar';
+import EntityListFilterBar from '../../../../../../application/ui/layout/entityList/filterBar/EntityListFilterBar';
 import DatesListEntityFilters from './DatesListEntityFilters';
 
 /**

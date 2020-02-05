@@ -1,5 +1,5 @@
 // @ts-nocheck
-import { EditorModalProps, EntityId } from '../../../../application/ui/components/layout/editorModal/types';
+import { EditorModalProps, EntityId } from '../../../../application/ui/layout/editorModal/types';
 
 export type EditorModals = {
 	addDatetime: EditorModalProps;

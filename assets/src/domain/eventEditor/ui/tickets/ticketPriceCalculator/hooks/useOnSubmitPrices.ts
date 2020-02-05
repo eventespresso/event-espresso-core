@@ -7,7 +7,7 @@ import { cloneAndNormalizePrice } from '../../../../../shared/entities/prices/pr
 import { useEntityMutator, EntityType } from '../../../../../../application/services/apollo/mutations';
 import toBoolean from '../../../../../../application/services/utilities/converters/toBoolean';
 import parsedAmount from '../../../../../../application/services/utilities/money/parsedAmount';
-import { ModalSubmit } from '../../../../../../application/ui/components/layout/editorModal';
+import { ModalSubmit } from '../../../../../../application/ui/layout/editorModal';
 
 const useOnSubmitPrices = (existingPrices: Price[]): FnCallback => {
 	const { createEntity, updateEntity, deleteEntity } = useEntityMutator(EntityType.Price, null);
