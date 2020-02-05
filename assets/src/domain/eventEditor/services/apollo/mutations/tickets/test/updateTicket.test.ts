@@ -1,14 +1,14 @@
 import { renderHook, act } from '@testing-library/react-hooks';
 import { path } from 'ramda';
 
-import { useEntityMutator, EntityType } from '../../../../../../application/services/apollo/mutations';
-import { useRelations } from '../../../../../../application/services/apollo/relations';
-import { MutationType } from '../../../../../../application/services/apollo/mutations/types';
+import { useEntityMutator, EntityType } from '../../../../../../../application/services/apollo/mutations';
+import { useRelations } from '../../../../../../../application/services/apollo/relations';
+import { MutationType } from '../../../../../../../application/services/apollo/mutations/types';
 import { ApolloMockedProvider } from '../../../../context/TestContext';
 import { getMutationMocks, mockedTickets } from './data';
 import { nodes as datetimes } from '../../../queries/datetimes/test/data';
 import { nodes as prices } from '../../../queries/prices/test/data';
-import { MutationInput } from '../../../../../../application/services/apollo/mutations/types';
+import { MutationInput } from '../../../../../../../application/services/apollo/mutations/types';
 import useInitTicketTestCache from '../../../queries/tickets/test/useInitTicketTestCache';
 
 const timeout = 5000; // milliseconds

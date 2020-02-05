@@ -2,13 +2,13 @@ import { useApolloClient } from '@apollo/react-hooks';
 import { renderHook, act } from '@testing-library/react-hooks';
 import { path } from 'ramda';
 
-import { useEntityMutator, EntityType } from '../../../../../../application/services/apollo/mutations';
-import { useRelations } from '../../../../../../application/services/apollo/relations';
-import { MutationType } from '../../../../../../application/services/apollo/mutations/types';
+import { useEntityMutator, EntityType } from '../../../../../../../application/services/apollo/mutations';
+import { useRelations } from '../../../../../../../application/services/apollo/relations';
+import { MutationType } from '../../../../../../../application/services/apollo/mutations/types';
 import { ApolloMockedProvider } from '../../../../context/TestContext';
 import { getMutationMocks, mockedDatetimes } from './data';
 import { nodes as tickets } from '../../../queries/tickets/test/data';
-import { MutationInput } from '../../../../../../application/services/apollo/mutations/types';
+import { MutationInput } from '../../../../../../../application/services/apollo/mutations/types';
 import useDatetimeItem from '../../../queries/datetimes/useDatetimeItem';
 import useDatetimeIds from '../../../queries/datetimes/useDatetimeIds';
 import useInitTicketTestCache from '../../../queries/tickets/test/useInitTicketTestCache';

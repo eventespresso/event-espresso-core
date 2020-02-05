@@ -5,8 +5,8 @@ import { ApolloMockedProvider } from '../../../../context/TestContext';
 import { nodes, edge } from './data';
 import { nodes as prices } from '../../prices/test/data';
 import useInitPriceTypeTestCache from './useInitPriceTypeTestCache';
-import { isFlatFeeSurcharge } from '../../../../../shared/entities/priceTypes/predicates/selectionPredicates';
-import { useRelations } from '../../../../../../application/services/apollo/relations';
+import { isFlatFeeSurcharge } from '../../../../../../shared/entities/priceTypes/predicates/selectionPredicates';
+import { useRelations } from '../../../../../../../application/services/apollo/relations';
 
 const timeout = 5000; // milliseconds
 describe('usePriceTypeForPrice()', () => {

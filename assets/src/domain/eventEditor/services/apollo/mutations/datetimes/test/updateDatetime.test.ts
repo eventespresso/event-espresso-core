@@ -1,13 +1,13 @@
 import { renderHook, act } from '@testing-library/react-hooks';
 import { path } from 'ramda';
 
-import { useEntityMutator, EntityType } from '../../../../../../application/services/apollo/mutations';
-import { useRelations } from '../../../../../../application/services/apollo/relations';
-import { MutationType } from '../../../../../../application/services/apollo/mutations/types';
+import { useEntityMutator, EntityType } from '../../../../../../../application/services/apollo/mutations';
+import { useRelations } from '../../../../../../../application/services/apollo/relations';
+import { MutationType } from '../../../../../../../application/services/apollo/mutations/types';
 import { ApolloMockedProvider } from '../../../../context/TestContext';
 import { getMutationMocks, mockedDatetimes } from './data';
 import { nodes as tickets } from '../../../queries/tickets/test/data';
-import { MutationInput } from '../../../../../../application/services/apollo/mutations/types';
+import { MutationInput } from '../../../../../../../application/services/apollo/mutations/types';
 import useInitDatetimeTestCache from '../../../queries/datetimes/test/useInitDatetimeTestCache';
 
 const timeout = 5000; // milliseconds

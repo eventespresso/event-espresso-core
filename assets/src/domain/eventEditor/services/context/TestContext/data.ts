@@ -1,4 +1,4 @@
-import '../../types';
+import '../../../interfaces/types';
 import { EventData } from '../../../interfaces';
 import { RelationalData } from '../../../../../application/services/apollo/relations';
 import { nodes as datetimes, edge as datetimesEdge } from '../../../services/apollo/queries/datetimes/test/data';

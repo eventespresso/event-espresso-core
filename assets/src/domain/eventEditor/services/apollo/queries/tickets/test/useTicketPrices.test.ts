@@ -5,7 +5,7 @@ import { ApolloMockedProvider } from '../../../../context/TestContext';
 import { nodes } from './data';
 import useInitTicketTestCache from './useInitTicketTestCache';
 import useInitPriceTestCache from '../../prices/test/useInitPriceTestCache';
-import { useRelations } from '../../../../../../application/services/apollo/relations';
+import { useRelations } from '../../../../../../../application/services/apollo/relations';
 
 const timeout = 5000; // milliseconds
 describe('useTicketPrices', () => {

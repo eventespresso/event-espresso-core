@@ -2,7 +2,7 @@ import React from 'react';
 import { renderHook } from '@testing-library/react-hooks';
 
 import useDatetimeContext from '../useDatetimeContext';
-import { DatetimeProvider } from '../../context/DatetimeContext';
+import { DatetimeProvider } from '../../services/context/DatetimeContext';
 
 describe('useDatetimeContext', () => {
 	it('checks for empty id when used outside the context', () => {
