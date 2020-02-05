@@ -2356,6 +2356,13 @@
   dependencies:
     ts-toolbelt "^4.12.0"
 
+"@types/react-currency-formatter@^1.1.2":
+  version "1.1.2"
+  resolved "https://registry.yarnpkg.com/@types/react-currency-formatter/-/react-currency-formatter-1.1.2.tgz#08e0b6b072152a2cb911a64ca3be3453119874ce"
+  integrity sha512-t61yAO5v0fUF0nPqTbB4KenJkxWQW7HQfxGAF7UVj324qS/fPuEakBfxvf5f5QkIt12wKC1IRgIvB7pYXQStWg==
+  dependencies:
+    "@types/react" "*"
+
 "@types/react-dom@*", "@types/react-dom@^16.9.4":
   version "16.9.5"
   resolved "https://registry.yarnpkg.com/@types/react-dom/-/react-dom-16.9.5.tgz#5de610b04a35d07ffd8f44edad93a71032d9aaa7"
