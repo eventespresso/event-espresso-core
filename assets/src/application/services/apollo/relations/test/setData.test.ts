@@ -1,8 +1,8 @@
 import { renderHook, act } from '@testing-library/react-hooks';
 import { pick } from 'ramda';
 
-import { relationalData } from '../../../../../../domain/eventEditor/context/TestContext';
-import useRelationsManager from '../../useRelationsManager';
+import { relationalData } from '../../../../../domain/eventEditor/services/context/TestContext';
+import useRelationsManager from '../useRelationsManager';
 
 describe('RelationsManager.setData()', () => {
 	it('returns the relational state set via setData when initial state is NOT passed', () => {

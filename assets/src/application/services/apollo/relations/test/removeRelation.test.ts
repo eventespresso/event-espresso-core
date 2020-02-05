@@ -1,9 +1,9 @@
 import { renderHook, act } from '@testing-library/react-hooks';
 import { pathOr, path } from 'ramda';
 
-import { relationalData } from '../../../../../../domain/eventEditor/context/TestContext';
-import useRelationsManager from '../../useRelationsManager';
-import { RelationFunctionProps } from '../../types';
+import { relationalData } from '../../../../../domain/eventEditor/services/context/TestContext';
+import useRelationsManager from '../useRelationsManager';
+import { RelationFunctionProps } from '../types';
 
 describe('RelationsManager.removeRelation()', () => {
 	const existingRelationalEntityId = Object.keys(relationalData.datetimes)[0];

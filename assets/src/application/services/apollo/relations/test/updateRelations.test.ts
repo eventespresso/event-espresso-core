@@ -1,14 +1,14 @@
 import { renderHook, act } from '@testing-library/react-hooks';
-import { pathOr, pick } from 'ramda';
+import { pathOr } from 'ramda';
 
-import { relationalData } from '../../../../../../domain/eventEditor/context/TestContext';
-import useRelationsManager from '../../useRelationsManager';
-import { RelationFunctionProps } from '../../types';
+import { relationalData } from '../../../../../domain/eventEditor/services/context/TestContext';
+import useRelationsManager from '../useRelationsManager';
+import { RelationFunctionProps } from '../types';
 
-describe('RelationsManager.dropRelations()', () => {
+describe('RelationsManager.updateRelations()', () => {
 	const existingRelationalEntityId = Object.keys(relationalData.datetimes)[0];
 
-	it('returns an empty array for related entity ids after using dropRelations', () => {
+	it('returns an updated array of related entity ids after using updateRelations', () => {
 		const { result } = renderHook(() => useRelationsManager(relationalData));
 
 		const options: RelationFunctionProps = {
@@ -22,17 +22,22 @@ describe('RelationsManager.dropRelations()', () => {
 
 		const pathToRelatedEntityIds = Object.values(options);
 		const passedRelatedIds = pathOr([], pathToRelatedEntityIds, relationalData);
+		const newRelatedEntities = ['alpha', 'beta', 'gamma'];
+		const updatedRelatedEntities = [...passedRelatedIds, ...newRelatedEntities];
 
 		// before update
 		expect(relatedIds).toEqual(passedRelatedIds);
 
 		act(() => {
-			result.current.dropRelations(pick(['entity', 'entityId'], options));
+			result.current.updateRelations({
+				...options,
+				relationIds: updatedRelatedEntities,
+			});
 		});
 
 		relatedIds = result.current.getRelations(options);
 
 		// after update
-		expect(relatedIds).toEqual([]);
+		expect(relatedIds).toEqual(updatedRelatedEntities);
 	});
 });

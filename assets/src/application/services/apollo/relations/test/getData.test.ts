@@ -1,7 +1,7 @@
 import { renderHook, act } from '@testing-library/react-hooks';
 
-import { relationalData } from '../../../../../../domain/eventEditor/context/TestContext';
-import useRelationsManager from '../../useRelationsManager';
+import { relationalData } from '../../../../../domain/eventEditor/services/context/TestContext';
+import useRelationsManager from '../useRelationsManager';
 
 describe('RelationsManager.getData()', () => {
 	it('returns the initial relational state (empty object)', () => {
