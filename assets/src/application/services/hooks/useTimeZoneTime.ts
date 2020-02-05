@@ -1,6 +1,6 @@
 import { path } from 'ramda';
 
-import useConfig from '../services/config/useConfig';
+import useConfig from '../config/useConfig';
 import { localToUtc, utcToLocal } from '../utilities/date';
 
 type DateFn = (date: Date | string | number) => Date;
