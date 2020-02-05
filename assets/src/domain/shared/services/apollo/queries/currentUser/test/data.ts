@@ -1,7 +1,7 @@
 import { GraphQLError } from 'graphql';
 
-import { ReadQueryOptions } from '../../../../../eventEditor/data/queries/types';
-import { Viewer } from '../../../../../../application/valueObjects/config/types';
+import { ReadQueryOptions } from '../../../../../../eventEditor/services/apollo/queries/types';
+import { Viewer } from '../../../../../../../application/valueObjects/types';
 import { GET_CURRENT_USER } from '..';
 
 export const request: ReadQueryOptions = {

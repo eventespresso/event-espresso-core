@@ -1,5 +1,5 @@
 import isTrashed from '.';
-import { nodes as datetimes } from '../../../../eventEditor/data/queries/datetimes/test/data';
+import { nodes as datetimes } from '../../../../eventEditor/services/apollo/queries/datetimes/test/data';
 
 describe('isTrashed', () => {
 	it(`should return false if isTrashed prop is boolean and it's value is false`, () => {

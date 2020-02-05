@@ -16,8 +16,8 @@ import {
 	entitiesWithDbIdInArray,
 	entitiesWithGuIdInArray,
 } from './index';
-import { nodes as datetimes } from '../../../../../domain/eventEditor/data/queries/datetimes/test/data';
-import { nodes as tickets } from '../../../../../domain/eventEditor/data/queries/tickets/test/data';
+import { nodes as datetimes } from '../../../../../domain/eventEditor/services/apollo/queries/datetimes/test/data';
+import { nodes as tickets } from '../../../../../domain/eventEditor/services/apollo/queries/tickets/test/data';
 
 describe('entityDbId', () => {
 	it('should return dbId for each entity', () => {

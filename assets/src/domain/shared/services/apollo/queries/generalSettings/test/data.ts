@@ -1,7 +1,7 @@
 import { GraphQLError } from 'graphql';
 
-import { ReadQueryOptions } from '../../../../../eventEditor/data/queries/types';
-import { GeneralSettingsData } from '../../../../../../application/valueObjects/config/types';
+import { ReadQueryOptions } from '../../../../../../eventEditor/services/apollo/queries/types';
+import { GeneralSettingsData } from '../../../../../../../application/valueObjects/types';
 import { GET_GENERAL_SETTINGS } from '..';
 
 export const request: ReadQueryOptions = {

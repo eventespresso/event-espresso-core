@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import { Trashable } from '../../../../eventEditor/data/types';
+import { Trashable } from '../../../../eventEditor/services/apollo/types';
 
 /**
  * @function
