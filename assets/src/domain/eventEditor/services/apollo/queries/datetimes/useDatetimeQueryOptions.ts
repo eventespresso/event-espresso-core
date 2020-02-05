@@ -1,5 +1,5 @@
 import useEventId from '../events/useEventId';
-import { GET_DATETIMES } from './';
+import { GET_DATETIMES } from '.';
 import { ReadQueryOptions } from '../types';
 
 const useDatetimeQueryOptions = (): ReadQueryOptions => {

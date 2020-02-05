@@ -1,5 +1,5 @@
 import { pathOr } from 'ramda';
-import { GET_DATETIME } from './';
+import { GET_DATETIME } from '.';
 import { Datetime, DatetimeItem } from '../../types';
 import { EntityItemProps, ReadQueryOptions } from '../types';
 import useCacheQuery from '../useCacheQuery';
