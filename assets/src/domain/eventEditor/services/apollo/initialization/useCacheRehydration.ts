@@ -1,10 +1,10 @@
 import { pathOr } from 'ramda';
 
 import useCacheRehydrationData from './useCacheRehydrationData';
-import useRelations from '../../../../application/services/apollo/relations/useRelations';
-import { ConfigDataProps } from '../../../../application/services/config';
-import useConfig from '../../../../application/services/config/useConfig';
-import { useStatus, TypeName } from '../../../../application/services/apollo/status';
+import useRelations from '../../../../../application/services/apollo/relations/useRelations';
+import { ConfigDataProps } from '../../../../../application/services/config';
+import useConfig from '../../../../../application/services/config/useConfig';
+import { useStatus, TypeName } from '../../../../../application/services/apollo/status';
 import {
 	queries,
 	DEFAULT_DATETIME_LIST_DATA,
@@ -17,8 +17,8 @@ import useDatetimeQueryOptions from '../queries/datetimes/useDatetimeQueryOption
 import useTicketQueryOptions from '../queries/tickets/useTicketQueryOptions';
 import usePriceQueryOptions from '../queries/prices/usePriceQueryOptions';
 import { Datetime, Ticket } from '../types';
-import { useUpdateDatetimeList, useUpdatePriceTypeList, useUpdateTicketList, useUpdatePriceList } from '../entities';
-import { useUpdateCurrentUserCache, useUpdateGeneralSettingsCache } from '../../../shared/data/queries';
+import { useUpdateDatetimeList, useUpdatePriceTypeList, useUpdateTicketList, useUpdatePriceList } from '../../../hooks';
+import { useUpdateCurrentUserCache, useUpdateGeneralSettingsCache } from '../../../../shared/services/apollo/queries';
 
 const { GET_CURRENT_USER, GET_GENERAL_SETTINGS } = queries;
 

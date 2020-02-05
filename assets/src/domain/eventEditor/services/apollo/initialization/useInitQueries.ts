@@ -2,7 +2,7 @@ import useFetchTickets from '../queries/tickets/useFetchTickets';
 import useFetchDatetimes from '../queries/datetimes/useFetchDatetimes';
 import useFetchPriceTypes from '../queries/priceTypes/useFetchPriceTypes';
 import useFetchPrices from '../queries/prices/useFetchPrices';
-import { useFetchCurrentUser, useFetchGeneralSettings } from '../../../shared/data/queries';
+import { useFetchCurrentUser, useFetchGeneralSettings } from '../../../../shared/services/apollo/queries';
 import useCacheRehydration from './useCacheRehydration';
 
 const useInitQueries = (): void => {
