@@ -11,7 +11,7 @@ import {
 	MutationInput,
 	OnUpdateFnOptions,
 	MutatorGeneratedObject,
-} from '../../../../../application/services/apollo/mutations/types';
+} from '../../../../../../application/services/apollo/mutations/types';
 import { ReadQueryOptions } from '../../queries/types';
 import { Price, PriceEdge, PricesList } from '../../types';
 import { PriceMutationCallbackFn } from '../types';
