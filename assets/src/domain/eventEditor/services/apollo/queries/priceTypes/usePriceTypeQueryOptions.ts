@@ -1,4 +1,4 @@
-import { GET_PRICE_TYPES } from './';
+import { GET_PRICE_TYPES } from '.';
 import { ReadQueryOptions } from '../types';
 
 const usePriceTypeQueryOptions = (): ReadQueryOptions => {

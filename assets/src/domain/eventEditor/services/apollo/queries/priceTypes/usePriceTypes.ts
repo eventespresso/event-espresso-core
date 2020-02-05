@@ -1,8 +1,8 @@
 import { pathOr } from 'ramda';
 
 import usePriceTypeQueryOptions from './usePriceTypeQueryOptions';
-import { entitiesWithGuIdInArray } from '../../../../shared/predicates/shared/selectionPredicates';
-import { useStatus, TypeName } from '../../../../../application/services/apollo/status';
+import { entitiesWithGuIdInArray } from '../../../../../shared/services/predicates/selectionPredicates';
+import { useStatus, TypeName } from '../../../../../../application/services/apollo/status';
 import { PriceType, PriceTypesList, EntityId } from '../../types';
 import useCacheQuery from '../useCacheQuery';
 /**

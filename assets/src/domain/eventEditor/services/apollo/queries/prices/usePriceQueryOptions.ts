@@ -1,5 +1,5 @@
 import useTicketIds from '../tickets/useTicketIds';
-import { GET_PRICES } from './';
+import { GET_PRICES } from '.';
 import { ReadQueryOptions } from '../types';
 import { EntityId } from '../../types';
 
