@@ -28,5 +28,5 @@ export const isFlatFeeSurcharge = allPass([isNotBasePrice, isNotDiscount, isNotP
 export const getPriceModifiers = (priceTypes: PriceType[]): PriceType[] => filter(isNotBasePrice, priceTypes);
 
 export const getDefaultPriceModifierType = (priceTypes: PriceType[]): PriceType => {
-	return find(isFlatFeeSurcharge)(priceTypes);
+	return find<PriceType>(isFlatFeeSurcharge)(priceTypes);
 };
