@@ -5,8 +5,8 @@ import { DataProxy } from 'apollo-cache';
 import { FetchResult } from 'apollo-link';
 import { pathOr } from 'ramda';
 
-import { mutations, useMutators } from '../../../../domain/eventEditor/data/mutations';
-import useIfMounted from '../../../hooks/useIfMounted';
+import { mutations, useMutators } from '../../../../domain/eventEditor/services/apollo/mutations';
+import useIfMounted from '../../hooks/useIfMounted';
 import useToaster from '../../toaster/useToaster';
 import {
 	EntityMutation,

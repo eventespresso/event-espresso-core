@@ -5,7 +5,7 @@ import React, { createContext, useState } from 'react';
 import { useConfigData, ConfigDataProps, Config } from '../config';
 import { CurrentUser, DateTimeFormats } from '../../valueObjects/config';
 import { ProviderProps } from './types';
-import { useCurrentUser, useGeneralSettings } from '../../../domain/shared/data/queries';
+import { useCurrentUser, useGeneralSettings } from '../../../domain/shared/services/apollo/queries';
 
 const ConfigContext = createContext<Config | null>(null);
 
