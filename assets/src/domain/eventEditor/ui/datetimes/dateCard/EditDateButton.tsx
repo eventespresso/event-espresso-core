@@ -1,18 +1,17 @@
 import React, { CSSProperties } from 'react';
 import { Button } from '@blueprintjs/core/lib/esm';
+import { EditItemButtonProps } from '../../../interfaces/types';
+import { useDatetimeContext } from '../../../hooks';
+import { useEditorModal } from '../../../../../application/ui/components/layout/editorModal';
 
-import { EditItemButtonProps } from '../../types';
-import { useTicketContext } from '../../hooks';
-import { useEditorModal } from '../../../../application/ui/components/layout/editorModal';
-
-const EditTicketButton: React.FC<EditItemButtonProps> = ({ position }): JSX.Element => {
-	const { id: entityId } = useTicketContext();
+const EditDateButton: React.FC<EditItemButtonProps> = ({ position }): JSX.Element => {
+	const { id: entityId } = useDatetimeContext();
 
 	const { openEditor } = useEditorModal();
 
 	const onClick = (): void =>
 		openEditor({
-			editorId: 'editTicket',
+			editorId: 'editDatetime',
 			entityId,
 		});
 
@@ -33,4 +32,4 @@ const EditTicketButton: React.FC<EditItemButtonProps> = ({ position }): JSX.Elem
 	);
 };
 
-export default EditTicketButton;
+export default EditDateButton;
