@@ -1,4 +1,4 @@
-const colors =  {
+const colors = {
 	magenta: '#962557',
 	red: '#b00e13',
 	'hot-pink': '#de5882',
@@ -28,7 +28,7 @@ const meta = {
 	name: '2019 Default',
 	primary: colors.blue,
 	secondary: colors.green,
-	accent: colors[ 'hot-pink' ],
+	accent: colors['hot-pink'],
 	background: colors.white,
 	// offset applied when generating high and low contrast alternates
 	rgbModifier: { r: 32, g: 32, b: 32 },
