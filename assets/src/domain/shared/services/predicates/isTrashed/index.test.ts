@@ -1,4 +1,4 @@
-import isTrashed from './';
+import isTrashed from '.';
 import { nodes as datetimes } from '../../../../eventEditor/data/queries/datetimes/test/data';
 
 describe('isTrashed', () => {
