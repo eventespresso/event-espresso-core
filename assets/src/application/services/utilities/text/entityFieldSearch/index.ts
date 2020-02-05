@@ -6,7 +6,7 @@ import { trim } from 'ramda';
 /**
  * Internal dependencies
  */
-import { Entity } from '../../../../domain/eventEditor/data/types';
+import { Entity } from '../../../../../domain/eventEditor/services/apollo/types';
 
 type EntityFieldSearchProps = {
 	entities: Entity[];
