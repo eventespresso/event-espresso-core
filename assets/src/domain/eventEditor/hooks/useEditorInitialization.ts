@@ -1,5 +1,5 @@
-import useInitQueries from '../data/initialization/useInitQueries';
-import useI18nData from '../data/initialization/useI18nData';
+import useInitQueries from '../services/apollo/initialization/useInitQueries';
+import useI18nData from '../services/apollo/initialization/useI18nData';
 import { setLocaleData } from '@wordpress/i18n';
 
 const useEditorInitialization = (): void => {

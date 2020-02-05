@@ -6,7 +6,7 @@ import { is } from 'ramda';
 /**
  * Internal dependencies
  */
-import { Datetime } from '../../../../../../eventEditor/data/types';
+import { Datetime } from '../../../../../../eventEditor/services/apollo/types';
 
 const activeOnly = (dates: Datetime[]): Datetime[] | [] => {
 	return dates.filter(({ isActive }) => {

@@ -8,8 +8,8 @@ import percentSoldAtOrAbove from './percentSoldAtOrAbove';
 import percentSoldBelow from './percentSoldBelow';
 import soldOutOnly from './soldOutOnly';
 
-import { ShowTickets } from '../../../../../eventEditor/data/ticket/types';
-import { Ticket } from '../../../../../eventEditor/data/types';
+import { ShowTickets } from '../../../../../eventEditor/interfaces/ticket/types';
+import { Ticket } from '../../../../../eventEditor/services/apollo/types';
 
 export const now = new Date();
 
