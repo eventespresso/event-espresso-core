@@ -1,4 +1,4 @@
-import { useRelations, RelationsManager } from '../../../../../application/services/apollo/relations';
+import { useRelations, RelationsManager } from '../../../../../../application/services/apollo/relations';
 import { TicketMutationCallbackFn, TicketMutationCallbackFnArgs, CacheUpdaterFn } from '../types';
 import useUpdateTicketCache from './useUpdateTicketCache';
 import updatePriceCache from './updatePriceCache';

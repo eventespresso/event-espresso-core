@@ -4,7 +4,11 @@ import useTicketQueryOptions from '../../queries/tickets/useTicketQueryOptions';
 import useOnCreateTicket from './useOnCreateTicket';
 import useOnUpdateTicket from './useOnUpdateTicket';
 import useOnDeleteTicket from './useOnDeleteTicket';
-import { Mutator, MutationType, OnUpdateFnOptions } from '../../../../../application/services/apollo/mutations/types';
+import {
+	Mutator,
+	MutationType,
+	OnUpdateFnOptions,
+} from '../../../../../../application/services/apollo/mutations/types';
 import { ReadQueryOptions } from '../../queries/types';
 import { DEFAULT_TICKET_LIST_DATA as DEFAULT_LIST_DATA } from '../../queries';
 import { Ticket, TicketEdge, Price, TicketsList } from '../../types';
