@@ -9,7 +9,7 @@ import percentSoldBelow from './percentSoldBelow';
 import soldOutOnly from './soldOutOnly';
 
 import { ShowTickets } from '../../../../../eventEditor/interfaces/ticket/types';
-import { Ticket } from '../../../../../../../prototype/domain/eventEditor/data/types';
+import { Ticket } from '../../../../../eventEditor/services/apollo/types';
 
 export const now = new Date();
 

@@ -1,7 +1,7 @@
 import { addWeeks, differenceInMinutes, formatISO, parseISO } from 'date-fns';
 
 import expiredOnly from './index';
-import { nodes as tickets } from '../../../../../../../../prototype/domain/eventEditor/data/queries/tickets/test/data';
+import { nodes as tickets } from '../../../../../../eventEditor/services/apollo/queries/tickets/test/data';
 
 describe('expiredOnly', () => {
 	it('should return an empty array if tickets are trashed', () => {

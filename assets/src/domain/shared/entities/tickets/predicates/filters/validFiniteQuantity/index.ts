@@ -1,6 +1,6 @@
 import { is } from 'ramda';
 
-import { Ticket } from '../../../../../../../../prototype/domain/eventEditor/data/types';
+import { Ticket } from '../../../../../../eventEditor/services/apollo/types';
 
 /**
  * @param {Object} ticket    event ticket object

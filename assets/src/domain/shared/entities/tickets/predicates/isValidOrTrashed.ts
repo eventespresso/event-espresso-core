@@ -1,5 +1,5 @@
-import { Ticket } from '../../../../../../prototype/domain/eventEditor/data/types';
-import isTrashed from '../../../predicates/shared/isTrashed';
+import { Ticket } from '../../../../eventEditor/services/apollo/types';
+import isTrashed from '../../../services/predicates/isTrashed';
 
 /**
  * @function

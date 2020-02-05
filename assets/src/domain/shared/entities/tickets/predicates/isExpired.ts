@@ -8,7 +8,7 @@ import { now } from './filters';
  * Internal dependencies
  */
 import isValidOrTrashed from './isValidOrTrashed';
-import { Ticket } from '../../../../../../prototype/domain/eventEditor/data/types';
+import { Ticket } from '../../../../eventEditor/services/apollo/types';
 
 const isExpired = (ticket: Ticket, includeTrashed = false): boolean => {
 	const { endDate } = ticket;

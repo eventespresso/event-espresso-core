@@ -2,7 +2,7 @@ import { compareAsc, parseISO } from 'date-fns';
 import { ascend, prop, propOr, sort, sortWith } from 'ramda';
 
 import { SortTicketsBy } from '../../../../../eventEditor/interfaces/ticket/types';
-import { Ticket } from '../../../../../../../prototype/domain/eventEditor/data/types';
+import { Ticket } from '../../../../../eventEditor/services/apollo/types';
 
 const sortChronologically = (tickets: Ticket[]): Ticket[] => {
 	const chronologicPredicate = ({ startDate: dateLeft }: Ticket, { startDate: dateRight }: Ticket): number => {

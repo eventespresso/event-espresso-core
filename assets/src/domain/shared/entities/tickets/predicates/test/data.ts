@@ -1,4 +1,4 @@
-import { Ticket } from '../../../../../../../prototype/domain/eventEditor/data/types';
+import { Ticket } from '../../../../../eventEditor/services/apollo/types';
 
 export const tickets: Ticket[] = [
 	{

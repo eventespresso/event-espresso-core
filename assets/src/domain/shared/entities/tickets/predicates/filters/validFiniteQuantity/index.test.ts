@@ -1,5 +1,5 @@
 import validFiniteQuantity from './index';
-import { nodes as tickets } from '../../../../../../../../prototype/domain/eventEditor/data/queries/tickets/test/data';
+import { nodes as tickets } from '../../../../../../eventEditor/services/apollo/queries/tickets/test/data';
 
 describe('validFiniteQuantity', () => {
 	it('should return an empty array when filtering tickets that have quantity prop set to a string, null, undefined, Infinity or a negative number', () => {

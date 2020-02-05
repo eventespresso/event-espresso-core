@@ -1,7 +1,7 @@
 import { differenceInMinutes, parseISO } from 'date-fns';
 
 import { now } from './filters';
-import { Ticket } from '../../../../../../prototype/domain/eventEditor/data/types';
+import { Ticket } from '../../../../eventEditor/services/apollo/types';
 
 /**
  * @function

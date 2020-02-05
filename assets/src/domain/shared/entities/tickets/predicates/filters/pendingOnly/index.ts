@@ -1,5 +1,5 @@
 import isPending from '../../isPending';
-import { Ticket } from '../../../../../../../../prototype/domain/eventEditor/data/types';
+import { Ticket } from '../../../../../../eventEditor/services/apollo/types';
 
 const pendingOnly = (tickets: Ticket[]): Ticket[] => {
 	return tickets.filter(isPending);
