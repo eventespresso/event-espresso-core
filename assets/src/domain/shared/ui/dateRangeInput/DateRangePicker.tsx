@@ -1,7 +1,7 @@
 // @ts-nocheck
 import React from 'react';
 import { DateRangePicker as DefaultDateRangePicker, IDateRangePickerProps } from '@blueprintjs/datetime';
-import { A_LONG_TIME_AGO, PLUS_TEN_YEARS } from '../defaultDates';
+import { A_LONG_TIME_AGO, PLUS_TEN_YEARS } from '../../constants/defaultDates';
 import { FORMATS } from './formatSelect';
 
 import './style.css';
