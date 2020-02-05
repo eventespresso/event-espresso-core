@@ -2,11 +2,11 @@ import { useCallback } from 'react';
 import { pathOr } from 'ramda';
 import { useApolloClient } from '@apollo/react-hooks';
 
-import { MutationType, MutationInput } from '../../../../../application/services/apollo/mutations/types';
-import { ucFirst } from '../../../../../application/utilities/text';
+import { MutationType, MutationInput } from '../../../../../../application/services/apollo/mutations/types';
+import { ucFirst } from '../../../../../../application/services/utilities/text';
 import { queries } from '../../queries';
 import { Datetime, DatetimeItem } from '../../types';
-import { PLUS_ONE_MONTH, PLUS_TWO_MONTHS } from '../../../../shared/defaultDates';
+import { PLUS_ONE_MONTH, PLUS_TWO_MONTHS } from '../../../../../shared/constants/defaultDates';
 
 const { GET_DATETIME } = queries;
 

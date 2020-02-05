@@ -3,11 +3,11 @@ import { pickBy } from 'ramda';
 import { ExecutionResult } from 'graphql';
 
 import { nodes as datetimes } from '../../../queries/datetimes/test/data';
-import { MutationInput, MutationType } from '../../../../../../application/services/apollo/mutations/types';
-import { ucFirst } from '../../../../../../application/utilities/text/changeCase';
+import { MutationInput, MutationType } from '../../../../../../../application/services/apollo/mutations/types';
+import { ucFirst } from '../../../../../../../application/services/utilities/text/changeCase';
 import { eventId } from '../../../../context/TestContext';
 import { MockedResponse } from '../../../../context/TestContext/types';
-import { mutations } from '../../';
+import { mutations } from '../..';
 
 export const mockedDatetimes = {
 	[MutationType.Create]: { ...datetimes[0], id: datetimes[0].id + '-alpha' }, // make sure to change the ID to make it different}

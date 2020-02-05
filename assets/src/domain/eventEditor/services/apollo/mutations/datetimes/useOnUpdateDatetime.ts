@@ -1,4 +1,4 @@
-import { useRelations, RelationsManager } from '../../../../../application/services/apollo/relations';
+import { useRelations, RelationsManager } from '../../../../../../application/services/apollo/relations';
 import { DatetimeMutationCallbackFn, DatetimeMutationCallbackFnArgs } from '../types';
 
 const useOnUpdateDatetime = (): DatetimeMutationCallbackFn => {

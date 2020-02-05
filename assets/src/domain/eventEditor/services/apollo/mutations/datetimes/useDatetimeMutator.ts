@@ -4,7 +4,11 @@ import useDatetimeQueryOptions from '../../queries/datetimes/useDatetimeQueryOpt
 import useOnCreateDatetime from './useOnCreateDatetime';
 import useOnUpdateDatetime from './useOnUpdateDatetime';
 import useOnDeleteDatetime from './useOnDeleteDatetime';
-import { Mutator, MutationType, OnUpdateFnOptions } from '../../../../../application/services/apollo/mutations/types';
+import {
+	Mutator,
+	MutationType,
+	OnUpdateFnOptions,
+} from '../../../../../../application/services/apollo/mutations/types';
 import { DEFAULT_DATETIME_LIST_DATA as DEFAULT_LIST_DATA } from '../../queries';
 import { Datetime, DatetimeEdge, DatetimesList } from '../../types';
 import useOptimisticResponse from './useOptimisticResponse';

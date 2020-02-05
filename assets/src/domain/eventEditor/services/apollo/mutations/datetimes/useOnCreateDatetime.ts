@@ -1,4 +1,4 @@
-import { useRelations, RelationsManager } from '../../../../../application/services/apollo/relations';
+import { useRelations, RelationsManager } from '../../../../../../application/services/apollo/relations';
 import updateTicketCache from './updateTicketCache';
 import useUpdateDatetimeCache from './useUpdateDatetimeCache';
 import { DatetimeMutationCallbackFn, DatetimeMutationCallbackFnArgs } from '../types';
