@@ -1,10 +1,11 @@
 import '../../types';
 import { EventData } from '../../types';
-import { RelationalData } from '../../../../application/services/apollo/relations';
-import { nodes as datetimes, edge as datetimesEdge } from '../../data/queries/datetimes/test/data';
-import { nodes as tickets, edge as ticketsEdge } from '../../data/queries/tickets/test/data';
-import { nodes as prices, edge as pricesEdge } from '../../data/queries/prices/test/data';
-import { nodes as priceTypes, edge as priceTypesEdge } from '../../data/queries/priceTypes/test/data';
+import { RelationalData } from '../../../../../application/services/apollo/relations';
+import { nodes as datetimes, edge as datetimesEdge } from '../../apollo/queries/datetimes/test/data';
+
+import { nodes as tickets, edge as ticketsEdge } from '../../apollo/queries/tickets/test/data';
+import { nodes as prices, edge as pricesEdge } from '../../apollo/queries/prices/test/data';
+import { nodes as priceTypes, edge as priceTypesEdge } from '../../apollo/queries/priceTypes/test/data';
 
 export { currentUser } from '../../../shared/data/queries/currentUser/test/data';
 

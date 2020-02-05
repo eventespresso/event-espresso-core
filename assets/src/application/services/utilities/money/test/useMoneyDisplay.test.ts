@@ -1,8 +1,8 @@
 import { renderHook } from '@testing-library/react-hooks';
 
 import useMoneyDisplay from '../useMoneyDisplay';
-import { mockEeJsData } from '../../../services/config/test/data';
-import { ApolloMockedProvider } from '../../../../domain/eventEditor/context/TestContext';
+import { mockEeJsData } from '../../../../services/config/test/data';
+import { ApolloMockedProvider } from '../../../../../domain/eventEditor/services/context/TestContext';
 
 describe('useMoneyDisplay', () => {
 	const wrapper = ApolloMockedProvider();

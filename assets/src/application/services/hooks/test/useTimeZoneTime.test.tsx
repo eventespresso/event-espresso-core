@@ -1,7 +1,7 @@
 import { renderHook } from '@testing-library/react-hooks';
 
 import useTimeZoneTime from '../useTimeZoneTime';
-import { ApolloMockedProvider } from '../../../../domain/eventEditor/context/TestContext';
+import { ApolloMockedProvider } from '../../../../../domain/eventEditor/context/TestContext';
 
 describe('useTimeZoneTime', () => {
 	const wrapper = ApolloMockedProvider();
