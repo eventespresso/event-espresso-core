@@ -6,7 +6,7 @@ import { is } from 'ramda';
 /**
  * Internal dependencies
  */
-import { Ticket } from '../../../../../../eventEditor/data/types';
+import { Ticket } from '../../../../../../eventEditor/services/apollo/types';
 import validFiniteQuantity from '../validFiniteQuantity';
 
 type PercentSoldAtOrAboveProps = {

@@ -1,7 +1,7 @@
 import { formatISO } from 'date-fns';
 
 import nextOnSaleOrPendingOnly from './index';
-import { nodes as tickets } from '../../../../../../../domain/eventEditor/data/queries/tickets/test/data';
+import { nodes as tickets } from '../../../../../../eventEditor/services/apollo/queries/tickets/test/data';
 
 describe('nextOnSaleOrPendingOnly', () => {
 	it('should return an empty array if tickets are not on sale', () => {

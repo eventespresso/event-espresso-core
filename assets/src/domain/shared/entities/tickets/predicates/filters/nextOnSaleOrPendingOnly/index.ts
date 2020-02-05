@@ -8,7 +8,7 @@ import { anyPass, filter, head } from 'ramda';
  */
 import { isOnSale, isPending } from '../../index';
 import sorters from '../../sorters';
-import { Ticket } from '../../../../../../eventEditor/data/types';
+import { Ticket } from '../../../../../../eventEditor/services/apollo/types';
 
 const nextOnSaleOrPendingOnly = (tickets: Ticket[]): Ticket[] => {
 	const isOnSaleOrIsPending = anyPass([isOnSale, isPending]);

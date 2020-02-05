@@ -2,7 +2,7 @@
  * Internal dependencies
  */
 import { filterFn } from '../percentSoldAtOrAbove';
-import { Ticket } from '../../../../../../eventEditor/data/types';
+import { Ticket } from '../../../../../../eventEditor/services/apollo/types';
 
 const soldOutOnly = (tickets: Ticket[]): Ticket[] => {
 	return tickets.filter((ticket) => {

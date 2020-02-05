@@ -1,6 +1,6 @@
 import soldOutOnly from './index';
 import { filterFn as percentSoldAtOrAboveFilterFn } from '../percentSoldAtOrAbove';
-import { nodes as tickets } from '../../../../../../eventEditor/data/queries/tickets/test/data';
+import { nodes as tickets } from '../../../../../../eventEditor/services/apollo/queries/tickets/test/data';
 
 describe('soldOutOnly', () => {
 	it('should return an empty array if tickets are not sold out', () => {

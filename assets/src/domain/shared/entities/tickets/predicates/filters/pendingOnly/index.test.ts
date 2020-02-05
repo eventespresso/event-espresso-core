@@ -3,7 +3,7 @@ import { pipe } from 'ramda';
 
 import pendingOnly from './index';
 import isPending from '../../isPending';
-import { nodes as tickets } from '../../../../../../eventEditor/data/queries/tickets/test/data';
+import { nodes as tickets } from '../../../../../../eventEditor/services/apollo/queries/tickets/test/data';
 
 describe('pendingOnly', () => {
 	const now = new Date();

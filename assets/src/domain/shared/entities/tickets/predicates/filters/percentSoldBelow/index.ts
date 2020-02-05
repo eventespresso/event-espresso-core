@@ -3,7 +3,7 @@
  */
 import validFiniteQuantity from '../validFiniteQuantity';
 import validInfiniteQuantity from '../validInfiniteQuantity';
-import { Ticket } from '../../../../../../eventEditor/data/types';
+import { Ticket } from '../../../../../../eventEditor/services/apollo/types';
 
 type PercentSoldAtOrAboveProps = {
 	percentage: number;

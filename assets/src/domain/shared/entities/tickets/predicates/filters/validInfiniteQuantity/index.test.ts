@@ -1,5 +1,5 @@
 import validInfiniteQuantity from './index';
-import { nodes as tickets } from '../../../../../../eventEditor/data/queries/tickets/test/data';
+import { nodes as tickets } from '../../../../../../eventEditor/services/apollo/queries/tickets/test/data';
 
 describe('validInfiniteQuantity', () => {
 	it('should return an empty array when filtering tickets that have quantity prop set to a string, null or undefined ', () => {

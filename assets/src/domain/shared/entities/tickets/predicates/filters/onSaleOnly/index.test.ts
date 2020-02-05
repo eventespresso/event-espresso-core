@@ -3,7 +3,7 @@ import { pipe } from 'ramda';
 
 import onSaleOnly from './index';
 import isOnSale from '../../isOnSale';
-import { nodes as tickets } from '../../../../../../eventEditor/data/queries/tickets/test/data';
+import { nodes as tickets } from '../../../../../../eventEditor/services/apollo/queries/tickets/test/data';
 
 describe('onSaleOnly', () => {
 	const now = new Date();
