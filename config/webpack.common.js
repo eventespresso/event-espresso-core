@@ -241,7 +241,7 @@ const enhance = (conf) => {
 
 const checkAndBuildOnlyEditorFiles = ({ entry }) => {
 	if (process.env.ONLY_EDITOR) {
-		if (entry['eventespresso-editor-prototype']) {
+		if (entry['eventespresso-event-editor']) {
 			return true;
 		}
 
