@@ -1,19 +1,22 @@
-import { useLayoutEffect, useCallback, useState } from 'react';
+import React, { useLayoutEffect, useCallback, useState } from 'react';
 const { addEventListener, removeEventListener } = window;
 
-const useRect = (ref) => {
-	const [rect, setRect] = useState(getRect(ref ? ref.current : null));
+import getHTMLElementClientRect from '../utilities/dom/getHTMLElementClientRect';
 
-	const handleResize = useCallback(() => {
+type voidFn = () => void;
+
+const useRect = (ref: React.RefObject<HTMLElement>): ClientRect => {
+	const [rect, setRect] = useState(getHTMLElementClientRect(ref ? ref.current : null));
+
+	const handleResize: voidFn = useCallback(() => {
 		if (!ref.current) {
 			return;
 		}
-
 		// Update client rect
-		setRect(getRect(ref.current));
+		setRect(getHTMLElementClientRect(ref.current));
 	}, [ref]);
 
-	useLayoutEffect(() => {
+	useLayoutEffect((): voidFn => {
 		const element = ref.current;
 		if (!element) {
 			return;
@@ -37,27 +40,12 @@ const useRect = (ref) => {
 		// Browser support, remove freely
 		addEventListener('resize', handleResize);
 
-		return () => {
+		return (): void => {
 			removeEventListener('resize', handleResize);
 		};
 	}, [ref.current]);
 
 	return rect;
 };
-
-function getRect(element) {
-	if (!element) {
-		return {
-			bottom: 0,
-			height: 0,
-			left: 0,
-			right: 0,
-			top: 0,
-			width: 0,
-		};
-	}
-
-	return element.getBoundingClientRect();
-}
 
 export default useRect;
