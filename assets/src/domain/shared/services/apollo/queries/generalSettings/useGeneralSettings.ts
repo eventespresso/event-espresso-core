@@ -1,7 +1,7 @@
 import pathOr from 'ramda/src/pathOr';
 import { useApolloClient } from '@apollo/react-hooks';
 
-import { GET_GENERAL_SETTINGS } from './';
+import { GET_GENERAL_SETTINGS } from '.';
 import { ReadQueryOptions } from '../../../../eventEditor/data/queries/types';
 import { GeneralSettings, GeneralSettingsData } from '../../../../../application/valueObjects/config/types';
 /**

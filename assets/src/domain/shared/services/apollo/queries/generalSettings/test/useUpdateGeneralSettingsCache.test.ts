@@ -4,7 +4,7 @@ import { renderHook, act } from '@testing-library/react-hooks';
 import useCacheRehydration from '../../../../../eventEditor/data/initialization/useCacheRehydration';
 import { ApolloMockedProvider } from '../.../../../../../../eventEditor/context/TestContext';
 import useUpdateGeneralSettingsCache from '../useUpdateGeneralSettingsCache';
-import { useGeneralSettings } from '../';
+import { useGeneralSettings } from '..';
 import { request } from './data';
 
 const timeout = 5000; // milliseconds

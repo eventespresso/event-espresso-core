@@ -1,5 +1,5 @@
 import { useQuery } from '@apollo/react-hooks';
-import { GET_GENERAL_SETTINGS } from './';
+import { GET_GENERAL_SETTINGS } from '.';
 import { FetchEntitiesResult } from '../../../../eventEditor/data/queries/types';
 import { GeneralSettingsData } from '../../../../../application/valueObjects/config/types';
 

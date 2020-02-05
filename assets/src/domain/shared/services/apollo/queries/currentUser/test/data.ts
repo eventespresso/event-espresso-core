@@ -1,22 +1,30 @@
 import { GraphQLError } from 'graphql';
 
 import { ReadQueryOptions } from '../../../../../eventEditor/data/queries/types';
-import { GeneralSettingsData } from '../../../../../../application/valueObjects/config/types';
-import { GET_GENERAL_SETTINGS } from '../';
+import { Viewer } from '../../../../../../application/valueObjects/config/types';
+import { GET_CURRENT_USER } from '..';
 
 export const request: ReadQueryOptions = {
-	query: GET_GENERAL_SETTINGS,
+	query: GET_CURRENT_USER,
 };
 
-export const generalSettings = {
-	dateFormat: 'F j, Y',
-	timeFormat: 'g:i a',
-	timezone: 'Asia/Kolkata',
-	__typename: 'GeneralSettings',
+export const currentUser = {
+	description: null,
+	email: 'user@eventespresso.com',
+	firstName: null,
+	id: 'dXNlcjox',
+	name: 'admin',
+	nicename: 'admin',
+	nickname: 'admin',
+	lastName: null,
+	locale: 'en_US',
+	userId: 1,
+	username: 'admin',
+	__typename: 'User',
 };
 
-export const data: GeneralSettingsData = {
-	generalSettings,
+export const data: Viewer = {
+	viewer: currentUser,
 };
 
 const errors = [new GraphQLError('Error!')];
