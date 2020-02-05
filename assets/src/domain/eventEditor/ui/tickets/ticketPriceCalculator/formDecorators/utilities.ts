@@ -2,7 +2,7 @@
 import { allPass, map, path, prop, propEq, when } from 'ramda';
 import { TpcFormData, TpcPriceModifier, UpdatedTpcFormDataPath } from '../types';
 import { PriceType } from '../../../../services/apollo/types';
-import { findEntityByGuid } from '../../../../shared/services/predicates/selectionPredicates';
+import { findEntityByGuid } from '../../../../../shared/services/predicates/selectionPredicates';
 import toBoolean from '../../../../../../application/services/utilities/converters/toBoolean';
 import toInteger from '../../../../../../application/services/utilities/converters/number/toInteger';
 import { amountsMatch } from '../../../../../../application/services/utilities/money';

@@ -1,8 +1,8 @@
 import { useEffect } from 'react';
 import { useQuery } from '@apollo/react-hooks';
-import useInitToaster from '../../../../../application/services/toaster/useInitToaster';
+import useInitToaster from '../../../../../../application/services/toaster/useInitToaster';
 import usePriceTypeQueryOptions from './usePriceTypeQueryOptions';
-import { useStatus, TypeName } from '../../../../../application/services/apollo/status';
+import { useStatus, TypeName } from '../../../../../../application/services/apollo/status';
 import { FetchEntitiesResult } from '../types';
 import { PriceTypesList } from '../../types';
 

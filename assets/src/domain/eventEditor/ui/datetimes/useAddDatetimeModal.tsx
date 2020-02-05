@@ -2,7 +2,7 @@ import React, { useCallback } from 'react';
 import { __ } from '@wordpress/i18n';
 
 import DateForm from './dateForm/DateForm';
-import { useEntityMutator, EntityType } from '../../../application/services/apollo/mutations';
+import { useEntityMutator, EntityType } from '../../../../application/services/apollo/mutations';
 import { DateItemFormProps } from './types';
 import { useEditorModal, EditorModal, ModalSubmit, ModalClose } from '../../../../application/ui/layout/editorModal';
 

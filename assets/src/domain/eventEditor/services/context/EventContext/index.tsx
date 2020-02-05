@@ -4,7 +4,7 @@
 import React, { createContext } from 'react';
 import pathOr from 'ramda/src/pathOr';
 
-import useToaster from '../../../../application/services/toaster/useToaster';
+import useToaster from '../../../../../application/services/toaster/useToaster';
 import { ContextProviderProps } from '../types';
 
 const EventEditorEventIdContext = createContext<number | null>(null);

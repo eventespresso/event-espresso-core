@@ -7,7 +7,7 @@ import { __ } from '@wordpress/i18n';
 import DeleteDatetimeButton from './DeleteDateButton';
 import EditDateButton from './EditDateButton';
 
-import { DatetimeProvider } from '../../context/DatetimeContext';
+import { DatetimeProvider } from '../../../services/context/DatetimeContext';
 import useDatetimeItem from '../../../services/apollo/queries/datetimes/useDatetimeItem';
 import TicketIdTag from '../../tickets/TicketIdTag';
 
@@ -15,9 +15,9 @@ import DateRangePicker from '../../../../shared/ui/dateRangeInput/DateRangePicke
 import { DateRangeDisplay } from '../../../../shared/ui/dateRangeInput/dateDisplay';
 import { PLUS_ONE_MONTH, PLUS_TWO_MONTHS } from '../../../../shared/constants/defaultDates';
 
-import { useEntityMutator, EntityType } from '../../../../application/services/apollo/mutations';
-import useRelations from '../../../../application/services/apollo/relations/useRelations';
-import { useStatus, TypeName } from '../../../../application/services/apollo/status';
+import { useEntityMutator, EntityType } from '../../../../../application/services/apollo/mutations';
+import useRelations from '../../../../../application/services/apollo/relations/useRelations';
+import { useStatus, TypeName } from '../../../../../application/services/apollo/status';
 import InlineEditInput from '../../../../../application/ui/input/inlineEditInput/InlineEditInput';
 import { ListItemProps } from '../../../interfaces/types';
 import { btnStyle, cardStyle, idStyle } from './styles';

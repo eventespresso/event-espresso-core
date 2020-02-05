@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useQuery } from '@apollo/react-hooks';
-import useToaster from '../../../../../application/services/toaster/useToaster';
-import { useStatus, TypeName } from '../../../../../application/services/apollo/status';
+import useToaster from '../../../../../../application/services/toaster/useToaster';
+import { useStatus, TypeName } from '../../../../../../application/services/apollo/status';
 import useDatetimeQueryOptions from './useDatetimeQueryOptions';
 import { FetchEntitiesResult } from '../types';
 import { DatetimesList } from '../../types';

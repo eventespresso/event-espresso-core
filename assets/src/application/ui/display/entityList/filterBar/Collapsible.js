@@ -9,7 +9,7 @@ import { __ } from '@wordpress/i18n';
 /**
  * Internal dependencies
  */
-import useRect from '../../../../../hooks/useRect';
+import useRect from '../../../../services/hooks/useRect';
 
 /**
  * Collapsible

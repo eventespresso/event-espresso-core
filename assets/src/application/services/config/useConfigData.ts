@@ -12,7 +12,7 @@ import {
 	SiteUrlProps,
 	Timezone,
 	TimezoneProps,
-} from '../../valueObjects/config';
+} from '../../valueObjects';
 import { JsDataProps, ConfigDataProps } from './types';
 
 export const useConfigData = (): ConfigDataProps => {

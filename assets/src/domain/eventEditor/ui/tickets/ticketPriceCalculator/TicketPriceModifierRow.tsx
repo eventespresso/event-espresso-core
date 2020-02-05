@@ -9,7 +9,7 @@ import PriceModifierActions from './buttons/PriceModifierActions';
 import PriceTypeInput from './inputs/PriceTypeInput';
 import { TpcModifierFormRowProps } from './types';
 import usePriceTypes from '../../../services/apollo/queries/priceTypes/usePriceTypes';
-import { getPriceModifiers } from '../../../../../../domain/shared/entities/priceTypes/predicates/selectionPredicates';
+import { getPriceModifiers } from '../../../../shared/entities/priceTypes/predicates/selectionPredicates';
 
 // just temporary
 import styles from './inlineStyles';
