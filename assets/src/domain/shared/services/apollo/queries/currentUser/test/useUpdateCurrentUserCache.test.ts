@@ -2,7 +2,7 @@ import { useApolloClient } from '@apollo/react-hooks';
 import { renderHook, act } from '@testing-library/react-hooks';
 
 import useCacheRehydration from '../../../../../../eventEditor/services/apollo/initialization/useCacheRehydration';
-import { ApolloMockedProvider } from '../.../../../../../../eventEditor/context/TestContext';
+import { ApolloMockedProvider } from '../../../../../../eventEditor/services/context/TestContext';
 import useUpdateCurrentUserCache from '../useUpdateCurrentUserCache';
 import { useCurrentUser } from '..';
 import { request } from './data';

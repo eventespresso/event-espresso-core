@@ -1,7 +1,7 @@
 import { renderHook, act } from '@testing-library/react-hooks';
 import { pick } from 'ramda';
 
-import { relationalData } from '../../../../../../domain/eventEditor/context/TestContext';
+import { relationalData } from '../../../../../../domain/eventEditor/services/context/TestContext/data';
 import useRelationsManager from '../../useRelationsManager';
 
 describe('RelationsManager.setData()', () => {

@@ -1,7 +1,7 @@
 import { compareAsc, parseISO } from 'date-fns';
 
 import sorters from './index';
-import { DatesSorted } from '../../../../../eventEditor/interfaces/date/types';
+import { DatesSorted } from '../../../../../eventEditor/interfaces/datetimes/types';
 import { nodes as dates } from '../../../../../eventEditor/services/apollo/queries/datetimes/test/data';
 
 describe('sorters', () => {
