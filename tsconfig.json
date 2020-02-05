@@ -15,5 +15,7 @@
 		"strict": false,
 		"target": "es5"
 	},
-	"include": ["assets/prototype"]
+	"include": [
+		"assets/src",
+	]
 }
