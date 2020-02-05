@@ -2,7 +2,7 @@ import React, { useEffect, useState, CSSProperties } from 'react';
 import { __ } from '@wordpress/i18n';
 
 import { FormModalFormProps } from './types';
-import { EspressoButton, EspressoButtonStyle } from '../../../input/';
+import { EspressoButton, EspressoButtonStyle } from '../../input';
 
 const formStyle: CSSProperties = {
 	boxSizing: 'border-box',
