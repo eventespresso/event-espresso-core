@@ -42,53 +42,19 @@ if (!defined('ABSPATH')) {
     exit('No direct script access allowed');
 }
 
-if (function_exists('espresso_version')) {
-    if (! function_exists('espresso_duplicate_plugin_error')) {
-        /**
-         * Displays a notice if more than one version of EE is activated at the same time.
-         */
-        function espresso_duplicate_plugin_error()
-        {
-            ?>
-            <div class="error">
-                <p>
-                    <?php
-                    echo esc_html__(
-                        'Can not run multiple versions of Event Espresso! One version has been automatically deactivated. Please verify that you have the correct version you want still active.',
-                        'event_espresso'
-                    );
-                    ?>
-                </p>
-            </div>
-            <?php
-            espresso_deactivate_plugin(plugin_basename(__FILE__));
-        }
-    }
-    add_action('admin_notices', 'espresso_duplicate_plugin_error', 1, 0);
-    return;
-}
-
-define('EE_MIN_PHP_VER_REQUIRED', '5.4.0');
-
-if (! version_compare(PHP_VERSION, EE_MIN_PHP_VER_REQUIRED, '>=')) {
+if (! function_exists('espresso_duplicate_plugin_error')) {
     /**
-     * Displays a notice about required PHP version.
+     * Displays a notice if more than one version of EE is activated at the same time.
      */
-    function espresso_minimum_php_version_error()
+    function espresso_duplicate_plugin_error()
     {
         ?>
         <div class="error">
             <p>
                 <?php
-                printf(
-                    esc_html__(
-                        'We\'re sorry, but Event Espresso requires PHP version %1$s or greater in order to operate. You are currently running version %2$s.%3$sIn order to update your version of PHP, you will need to contact your current hosting provider.%3$sFor information on stable PHP versions, please go to %4$s.',
-                        'event_espresso'
-                    ),
-                    EE_MIN_PHP_VER_REQUIRED,
-                    PHP_VERSION,
-                    '<br/>',
-                    '<a href="http://php.net/downloads.php">http://php.net/downloads.php</a>'
+                echo esc_html__(
+                    'Can not run multiple versions of Event Espresso! One version has been automatically deactivated. Please verify that you have the correct version you want still active.',
+                    'event_espresso'
                 );
                 ?>
             </p>
@@ -96,11 +62,33 @@ if (! version_compare(PHP_VERSION, EE_MIN_PHP_VER_REQUIRED, '>=')) {
         <?php
         espresso_deactivate_plugin(plugin_basename(__FILE__));
     }
-    add_action('admin_notices', 'espresso_minimum_php_version_error', 1, 0);
-    return;
 }
 
-define('EVENT_ESPRESSO_MAIN_FILE', __FILE__);
+/**
+ * Displays a notice about required PHP version.
+ */
+function espresso_minimum_php_version_error()
+{
+    ?>
+    <div class="error">
+        <p>
+            <?php
+            printf(
+                esc_html__(
+                    'We\'re sorry, but Event Espresso requires PHP version %1$s or greater in order to operate. You are currently running version %2$s.%3$sIn order to update your version of PHP, you will need to contact your current hosting provider.%3$sFor information on stable PHP versions, please go to %4$s.',
+                    'event_espresso'
+                ),
+                EE_MIN_PHP_VER_REQUIRED,
+                PHP_VERSION,
+                '<br/>',
+                '<a href="http://php.net/downloads.php">http://php.net/downloads.php</a>'
+            );
+            ?>
+        </p>
+    </div>
+    <?php
+    espresso_deactivate_plugin(plugin_basename(__FILE__));
+}
 
 /**
  * Returns the plugin version
@@ -119,10 +107,6 @@ function espresso_plugin_activation()
 {
     update_option('ee_espresso_activation', true);
 }
-register_activation_hook(EVENT_ESPRESSO_MAIN_FILE, 'espresso_plugin_activation');
-
-require_once __DIR__ . '/core/bootstrap_espresso.php';
-bootstrap_espresso();
 
 if (! function_exists('espresso_deactivate_plugin')) {
     /**
@@ -142,3 +126,21 @@ if (! function_exists('espresso_deactivate_plugin')) {
         deactivate_plugins($plugin_basename);
     }
 }
+
+define('EVENT_ESPRESSO_MAIN_FILE', __FILE__);
+define('EE_MIN_PHP_VER_REQUIRED', '5.4.0');
+
+if (function_exists('espresso_version')) {
+    add_action('admin_notices', 'espresso_duplicate_plugin_error', 1, 0);
+    return;
+}
+
+if (! version_compare(PHP_VERSION, EE_MIN_PHP_VER_REQUIRED, '>=')) {
+    add_action('admin_notices', 'espresso_minimum_php_version_error', 1, 0);
+    return;
+}
+
+register_activation_hook(EVENT_ESPRESSO_MAIN_FILE, 'espresso_plugin_activation');
+
+require_once __DIR__ . '/core/bootstrap_espresso.php';
+bootstrap_espresso();
