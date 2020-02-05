@@ -7,9 +7,9 @@ import { render } from 'react-dom';
 /**
  * Internal imports
  */
-import './types';
-import EventEditor from './EventEditor';
-import { ContextProviders } from './context/EventEditorContext';
+import './interfaces/types';
+import EventEditor from './ui/EventEditor';
+import { ContextProviders } from './services/context/EventEditorContext';
 
 const container = document.getElementById('normal-sortables');
 
