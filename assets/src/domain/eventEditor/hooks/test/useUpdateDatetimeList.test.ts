@@ -6,7 +6,7 @@ import useUpdateDatetimeList from '../useUpdateDatetimeList';
 import useDatetimeQueryOptions from '../../services/apollo/queries/datetimes/useDatetimeQueryOptions';
 import useDatetimes from '../../services/apollo/queries/datetimes/useDatetimes';
 import useDatetimeIds from '../../services/apollo/queries/datetimes/useDatetimeIds';
-import { ApolloMockedProvider } from '../../../context/TestContext';
+import { ApolloMockedProvider } from '../../services/context/TestContext';
 
 const timeout = 5000; // milliseconds
 describe('useUpdateDatetimeList', () => {

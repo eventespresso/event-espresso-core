@@ -5,7 +5,7 @@ import { nodes as tickets } from '../../../queries/tickets/test/data';
 import { edge as priceEdge } from '../../../queries/prices/test/data';
 import { ReadQueryOptions } from '../../../queries/types';
 import { MutationInput, MutationType } from '../../../../../../../application/services/apollo/mutations/types';
-import { ucFirst } from '../../../../../../application/utilities/text/changeCase';
+import { ucFirst } from '../../../../../../../application/services/utilities/text/changeCase';
 import { mutations } from '../..';
 import { MockedResponse } from '../../../../context/TestContext/types';
 

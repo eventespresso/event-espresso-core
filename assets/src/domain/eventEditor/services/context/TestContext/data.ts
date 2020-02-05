@@ -1,5 +1,4 @@
-import '../../types';
-import { EventData } from '../../types';
+import { EventData } from '../../../interfaces/types';
 import { RelationalData } from '../../../../../application/services/apollo/relations';
 import { nodes as datetimes, edge as datetimesEdge } from '../../apollo/queries/datetimes/test/data';
 
@@ -7,9 +6,9 @@ import { nodes as tickets, edge as ticketsEdge } from '../../apollo/queries/tick
 import { nodes as prices, edge as pricesEdge } from '../../apollo/queries/prices/test/data';
 import { nodes as priceTypes, edge as priceTypesEdge } from '../../apollo/queries/priceTypes/test/data';
 
-export { currentUser } from '../../../shared/data/queries/currentUser/test/data';
+export { currentUser } from '../../../../shared/services/apollo/queries/currentUser/test/data';
 
-export { generalSettings } from '../../../shared/data/queries/generalSettings/test/data';
+export { generalSettings } from '../../../../shared/services/apollo/queries/generalSettings/test/data';
 
 export const eventId = 100;
 
