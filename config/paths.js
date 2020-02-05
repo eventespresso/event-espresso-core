@@ -91,7 +91,7 @@ module.exports = {
 		// 'eventespresso-core-blocks-frontend': resolveModule(resolveApp, assetsPath + 'blocks/index-frontend'),
 		'eventespresso-core-css-default': resolveModule(
 			resolveApp,
-			assetsPath + 'components/ui/styles/themes/default/index'
+			assetsPath + 'application/ui/styles/themes/default/index'
 		),
 	},
 
