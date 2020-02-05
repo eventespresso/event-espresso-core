@@ -6,7 +6,7 @@ import {
 	LocaleProps,
 	SiteUrlProps,
 	TimezoneProps,
-} from '../../valueObjects/config/types';
+} from '../../valueObjects/types';
 
 export type JsDataProps = {
 	brandName: string;
