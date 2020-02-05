@@ -1,8 +1,7 @@
 import React, { useRef } from 'react';
 import { useSpring, animated } from 'react-spring';
 
-import PerPageControl from '../../../input/perPageControl';
-import SearchInput from '../../../input/searchInput';
+import { PerPageControl, SearchInput } from '../../../input';
 import useRect from '../../../../services/hooks/useRect';
 
 type voidFn = () => void;
