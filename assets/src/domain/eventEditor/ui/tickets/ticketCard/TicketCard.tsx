@@ -9,11 +9,11 @@ import DeleteTicketButton from './DeleteTicketButton';
 import TicketPriceCalculatorButton from '../ticketPriceCalculator/buttons/TicketPriceCalculatorButton';
 import useTicketItem from '../../../services/apollo/queries/tickets/useTicketItem';
 import CurrencyInput from '../../../../../application/ui/components/input/currencyInput/CurrencyInput';
+import InlineEditInput from '../../../../../application/ui/input/InlineEditInput';
 import { useEntityMutator, EntityType } from '../../../../../application/services/apollo/mutations';
 import useRelations from '../../../../../application/services/apollo/relations/useRelations';
 import { useStatus, TypeName } from '../../../../../application/services/apollo/status';
 import DatetimeIdTag from '../../datetimes/DatetimeIdTag';
-import InlineEditInput from '../../../../../application/ui/components/input/inlineEditInput/InlineEditInput';
 import { ListItemProps } from '../../../interfaces/types';
 import { cardStyle, idStyle, priceStyle, btnsStyle } from './styles';
 
