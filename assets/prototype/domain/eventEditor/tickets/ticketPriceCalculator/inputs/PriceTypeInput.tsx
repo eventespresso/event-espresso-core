@@ -3,14 +3,14 @@ import { Field } from 'react-final-form';
 
 // just temporary
 import styles from '../inlineStyles';
-import { Price } from '../../../data/types';
+import { Price, PriceType } from '../../../data/types';
 import usePriceTypeForPrice from '../../../data/queries/priceTypes/usePriceTypeForPrice';
 
 interface PriceTypeInputProps {
 	name: string;
 	price: Price;
-	priceTypes: Price[];
-	modifierOptions: Price[];
+	priceTypes: PriceType[];
+	modifierOptions: PriceType[];
 }
 
 const PriceTypeInput: React.FC<PriceTypeInputProps> = ({ name, price, priceTypes, modifierOptions }): JSX.Element => {
@@ -25,7 +25,7 @@ const PriceTypeInput: React.FC<PriceTypeInputProps> = ({ name, price, priceTypes
 			style={styles.input}
 		>
 			{options.map(
-				(option: Price): React.ReactNode => (
+				(option: PriceType): JSX.Element => (
 					<option key={option.id} value={option.id}>
 						{option.name}
 					</option>

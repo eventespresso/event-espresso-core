@@ -9,7 +9,7 @@ import PriceModifierActions from './buttons/PriceModifierActions';
 import PriceTypeInput from './inputs/PriceTypeInput';
 import { TpcModifierFormRowProps } from './types';
 import usePriceTypes from '../../data/queries/priceTypes/usePriceTypes';
-import { getPriceModifiers } from '../../../shared/entities/prices/predicates/selectionPredicates';
+import { getPriceModifiers } from '../../../shared/entities/priceTypes/predicates/selectionPredicates';
 
 // just temporary
 import styles from './inlineStyles';
@@ -41,13 +41,7 @@ const TicketPriceModifierRow: React.FC<TpcModifierFormRowProps> = ({
 				<PriceAmountInput name={name} price={price} reverseCalculate={reverseCalculate} />
 			</td>
 			<td style={{ ...styles.colWidth7h, ...styles.actions }}>
-				<PriceModifierActions
-					fields={fields}
-					index={index}
-					modifierOptions={modifierOptions}
-					name={name}
-					price={price}
-				/>
+				<PriceModifierActions fields={fields} index={index} name={name} price={price} />
 			</td>
 		</tr>
 	);

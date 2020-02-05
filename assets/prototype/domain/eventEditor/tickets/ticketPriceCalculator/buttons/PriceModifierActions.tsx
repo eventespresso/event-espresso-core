@@ -8,22 +8,13 @@ const PriceModifierActions: React.FC<TpcModifierFormRowProps> = ({
 	index,
 	name,
 	price,
-	modifierOptions,
 	fields: { push, remove, reset, sort },
 }): JSX.Element => {
 	const actions = [];
 	const key = `${price.id}-${index}`;
 	if (price.id === 'NEW_PRICE') {
 		actions.push(
-			<AddPriceModifierButton
-				key={key}
-				modifiers={modifierOptions}
-				name={name}
-				price={price}
-				push={push}
-				reset={reset}
-				sort={sort}
-			/>
+			<AddPriceModifierButton key={key} name={name} price={price} push={push} reset={reset} sort={sort} />
 		);
 	} else if (!price.isBasePrice) {
 		actions.push(<DeletePriceModifierButton key={key} index={index} remove={remove} />);

@@ -1,6 +1,8 @@
-export const defaultNewPriceModifier = {
+import { Price } from '../../data/types';
+
+const defaultPriceModifier: Price = {
 	id: 'NEW_PRICE',
-	dbId: '',
+	dbId: 0,
 	amount: null,
 	desc: '',
 	isBasePrice: false,
@@ -11,7 +13,7 @@ export const defaultNewPriceModifier = {
 	isTrashed: false,
 	name: '',
 	order: 999,
-	priceType: '',
-	priceTypeOrder: 999,
-	wpUser: 1,
+	overrides: '',
 };
+
+export default defaultPriceModifier;

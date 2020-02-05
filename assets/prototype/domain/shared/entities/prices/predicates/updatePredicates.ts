@@ -7,10 +7,10 @@ import toBoolean from '../../../../../application/utilities/converters/toBoolean
 import toInteger from '../../../../../application/utilities/converters/number/toInteger';
 import parsedAmount from '../../../../../application/utilities/money/parsedAmount';
 
-type updatePriceArrayProps = {
+type updatePriceArrayProps<T extends Price> = {
 	amount: number;
 	guid?: string;
-	prices?: Price[];
+	prices?: T[];
 	type?: string;
 };
 
@@ -19,23 +19,23 @@ type updatePriceArrayProps = {
  *
  * @param {Price} price
  */
-export const copyPriceFields = (price: Price): Price => pickBy<Price, Price>(isPriceField, price);
+export const copyPriceFields = <T extends Price>(price: T): T => pickBy<T, T>(isPriceField, price);
 
 /**
  * updates the price amount
  *
  * @param {number} amount
  */
-export const updatePriceAmount = (amount: number) => (price: Price): Price =>
-	assoc<number, Price, string>('amount', parsedAmount(amount || 0), price);
+export const updatePriceAmount = <T extends Price>(amount: number) => (price: T): T =>
+	assoc<number, T, string>('amount', parsedAmount(amount || 0), price);
 
 /**
  * updates the price type
  *
  * @param {string} type
  */
-export const updatePriceType = (type: string) => (price: Price): Price =>
-	assoc<string, Price, string>('priceType', type, price);
+export const updatePriceType = <T extends Price>(type: string) => (price: T): T =>
+	assoc<string, T, string>('priceType', type, price);
 
 /**
  * given an array of prices, finds and updates the base price amount
@@ -44,7 +44,7 @@ export const updatePriceType = (type: string) => (price: Price): Price =>
  * @param {number} amount
  * @return {Price[]}
  */
-export const updateBasePriceAmount = ({ prices, amount }: updatePriceArrayProps): Price[] =>
+export const updateBasePriceAmount = <T extends Price>({ prices, amount }: updatePriceArrayProps<T>): T[] =>
 	map(when(isBasePrice, updatePriceAmount(amount)), prices);
 
 /**
@@ -54,7 +54,7 @@ export const updateBasePriceAmount = ({ prices, amount }: updatePriceArrayProps)
  * @param {string} guid
  * @param {string} type
  */
-export const updatePriceTypeForPrice = ({ prices, guid, type }: updatePriceArrayProps): Price[] =>
+export const updatePriceTypeForPrice = <T extends Price>({ prices, guid, type }: updatePriceArrayProps<T>): T[] =>
 	map(when(entityHasGuid(guid), updatePriceType(type)), prices);
 
 /**
@@ -64,7 +64,7 @@ export const updatePriceTypeForPrice = ({ prices, guid, type }: updatePriceArray
  * @param {string} guid
  * @param {string} amount
  */
-export const updatePriceAmountForPrice = ({ prices, guid, amount }: updatePriceArrayProps): Price[] =>
+export const updatePriceAmountForPrice = <T extends Price>({ prices, guid, amount }: updatePriceArrayProps<T>): T[] =>
 	map(when(entityHasGuid(guid), updatePriceAmount(amount)), prices);
 
 /**
@@ -73,7 +73,7 @@ export const updatePriceAmountForPrice = ({ prices, guid, amount }: updatePriceA
  * @param {Price} price
  * @return {Price} price
  */
-export const cloneAndNormalizePrice = (price: Price): Price => {
+export const cloneAndNormalizePrice = <T extends Price>(price: T): T => {
 	const { ...priceFields } = copyPriceFields(price);
 	return {
 		...priceFields,

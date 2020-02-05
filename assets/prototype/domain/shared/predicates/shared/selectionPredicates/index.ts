@@ -1,34 +1,33 @@
-/**
- * External dependencies
- */
 import { filter, find, includes, prop, propEq } from 'ramda';
 
-/**
- * Internal dependencies
- */
 import { Entity, EntityDbId, EntityId } from '../../../../../domain/eventEditor/data/types';
 
 // the following return specified entity prop
-export const entityDbId = (entity: Entity): EntityDbId => prop('dbId', entity);
-export const entityGuId = (entity: Entity): EntityId => prop('id', entity);
+export const entityDbId = <T extends Entity>(entity: T): EntityDbId => prop('dbId', entity);
+export const entityGuId = <T extends Entity>(entity: T): EntityId => prop('id', entity);
 
-// the following return `true` if entity satisfies predicate
-export const entityHasDbId = (dbId: EntityDbId) => propEq('dbId', dbId);
-export const entityHasGuid = (guid: EntityId) => propEq('id', guid);
+// the following return a function that:
+// recieves an entity and returns`true` if entity matches property supplied to predicate
+export const entityHasDbId = <T extends Entity>(dbId: EntityDbId): ((entity: T) => boolean) => {
+	return propEq<EntityDbId>('dbId', dbId);
+};
+export const entityHasGuid = <T extends Entity>(guid: EntityId): ((entity: T) => boolean) => {
+	return propEq<EntityId>('id', guid);
+};
 
-// returns entity if found in array of entities
+// the following return a function that:
+// returns the entity with specified property if found in array of entities supplied to predicate
 export const findEntityByDbId = <T extends Entity>(entities: T[]) => (dbid: EntityDbId): T => {
-	return find(entityHasDbId(dbid))(entities);
+	return find(entityHasDbId(dbid), entities);
 };
-
 export const findEntityByGuid = <T extends Entity>(entities: T[]) => (guid: EntityId): T => {
-	return find(entityHasGuid(guid))(entities);
+	return find(entityHasGuid(guid), entities);
 };
-
-export const entitiesWithDbIdInArray = (entities: Entity[], dbidArray: EntityDbId[]): any[] => {
-	return filter((entity: Entity) => includes(entityDbId(entity), dbidArray), entities);
+// the following return a function that:
+// returns an array of entities with specified property found in array of property values supplied to predicate
+export const entitiesWithDbIdInArray = <T extends Entity>(entities: T[], dbidArray: EntityDbId[]): T[] => {
+	return filter((entity: T) => includes(entityDbId(entity), dbidArray), entities);
 };
-
-export const entitiesWithGuIdInArray = (entities: Entity[], guidArray: EntityId[]): any[] => {
-	return filter((entity: Entity) => includes(entityGuId(entity), guidArray), entities);
+export const entitiesWithGuIdInArray = <T extends Entity>(entities: T[], guidArray: EntityId[]): T[] => {
+	return filter((entity: T) => includes(entityGuId(entity), guidArray), entities);
 };

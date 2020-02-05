@@ -13,7 +13,5 @@ export const PRICE_FIELDS = [
 	'order',
 	'overrides',
 	'parent',
-	'priceType',
-	'priceTypeOrder',
 	'wpUser',
 ];

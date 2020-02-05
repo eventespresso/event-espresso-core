@@ -1,9 +1,8 @@
 import { Entity, EntityId, Price, Ticket } from '../../data/types';
 
-export interface AddPriceModifierDataProps extends WithPriceProp {
-	modifiers: Price[];
+export interface AddPriceModifierDataProps extends WithPriceModifierProp {
 	name: string;
-	push: (price: Price) => void;
+	push: (price: TpcPriceModifier) => void;
 	reset: (name: string) => void;
 	sort: () => void;
 }
@@ -18,8 +17,22 @@ export interface FormProps {
 	mutators: TpcFormMutators;
 }
 
-export interface PriceInputProps extends WithPriceProp {
+export interface PriceInputProps extends WithPriceModifierProp {
 	name: string;
+}
+
+export interface TpcPriceModifier extends Price {
+	amount: number | string;
+	desc: string;
+	isBasePrice: boolean;
+	isDefault: boolean;
+	isDiscount: boolean;
+	isPercent: boolean;
+	isTax: boolean;
+	order: number | string;
+	overrides: string;
+	priceType: EntityId;
+	priceTypeOrder: number | string;
 }
 
 export interface TpcAction {
@@ -39,7 +52,7 @@ export interface TpcButtonDataProps {
 
 export type TpcCallback = (func: any) => UpdatedTpcFormDataPath;
 
-export interface TpcFormData extends WithPriceArrayProp, WithTicketProp {}
+export interface TpcFormData extends WithPriceModifierArrayProp, WithTicketProp {}
 
 export interface TpcForm {
 	form: FormProps;
@@ -54,31 +67,30 @@ export interface TpcModalProps {
 	onOpen?: () => void;
 }
 
-export interface TpcModifierFormRowProps extends FieldArrayProps, WithPriceProp, WithRevCalc {
+export interface TpcModifierFormRowProps extends FieldArrayProps, WithPriceModifierProp, WithRevCalc {
 	index?: number;
-	modifierOptions?: Price[];
 	name?: string;
 }
 
 export interface TpcFormMutators extends WithToggleCalcDir {
 	map: <R>(iterator: (name: string, index: number) => R) => R[];
-	push: (value: Price) => void;
-	remove: (index: number) => Price;
+	push: (value: TpcPriceModifier) => void;
+	remove: (index: number) => TpcPriceModifier;
 	reset: (name: string) => void;
 	sort: () => void;
-	value: Price[];
+	value: TpcPriceModifier[];
 }
 
 export interface UpdatedTpcFormDataPath {
 	[key: string]: string | number | Entity;
 }
 
-export interface WithPriceProp {
-	price: Price;
+export interface WithPriceModifierProp {
+	price: TpcPriceModifier;
 }
 
-export interface WithPriceArrayProp {
-	prices: Price[];
+export interface WithPriceModifierArrayProp {
+	prices: TpcPriceModifier[];
 }
 
 export interface WithRevCalc {

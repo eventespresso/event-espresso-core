@@ -1,7 +1,8 @@
 // @ts-nocheck
-import { allPass, map, path, propEq, when } from 'ramda';
-import { TpcFormData, UpdatedTpcFormDataPath } from '../types';
-import { Price, PriceType } from '../../../data/types';
+import { allPass, map, path, prop, propEq, when } from 'ramda';
+import { TpcFormData, TpcPriceModifier, UpdatedTpcFormDataPath } from '../types';
+import { PriceType } from '../../../data/types';
+import { findEntityByGuid } from '../../../../shared/predicates/shared/selectionPredicates';
 import toBoolean from '../../../../../application/utilities/converters/toBoolean';
 import toInteger from '../../../../../application/utilities/converters/number/toInteger';
 import { amountsMatch } from '../../../../../application/utilities/money';
@@ -59,6 +60,14 @@ export const getFromFormData = <T>(fieldPath: string, data: TpcFormData): T => {
 	return path(fieldPathArray, data);
 };
 
+// returns GUID for price modifier's related price type
+export const getPriceModifierPriceTypeGuid = (price: PriceModifier) => prop('priceType', price);
+
+// returns price type for supplied price modifier if found in array of price types
+export const getPriceType = (priceTypes: PriceType[]) => (price: PriceModifier) => {
+	return findEntityByGuid(priceTypes)(getPriceModifierPriceTypeGuid(price));
+};
+
 /**
  * returns an object where the key is the provided field path
  * and the value is the amount located at provided field path
@@ -76,7 +85,7 @@ export const parseAmountFromPath = (fieldPath: string, data: TpcFormData): Updat
 /**
  * returns a copy of price with price type properties applied
  */
-export const updatePriceModifier = (price: Price, priceType: PriceType): Price => {
+export const updatePriceModifier = (price: TpcPriceModifier, priceType?: PriceType): TpcPriceModifier => {
 	return {
 		...price,
 		isBasePrice: priceType.isBasePrice,
@@ -84,13 +93,17 @@ export const updatePriceModifier = (price: Price, priceType: PriceType): Price =
 		isPercent: priceType.isPercent,
 		isTax: priceType.isTax,
 		priceType: priceType.id,
+		// priceTypeOrder: priceType.order,
 	};
 };
 
 /**
  * returns a copy of price with price type properties applied
  */
-export const updatePriceInFormData = (updatedPrice: Price, prices: Price[]): Price[] => {
+export const updatePriceInFormData = (
+	updatedPrice: TpcPriceModifier,
+	prices: TpcPriceModifier[]
+): TpcPriceModifier[] => {
 	return map(
 		when(
 			// Need to replace the existing price in the form data based on several criteria,
