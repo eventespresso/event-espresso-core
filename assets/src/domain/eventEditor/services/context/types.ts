@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { EntityId } from '../data/types';
+import { EntityId } from '../../services/apollo/types';
 
 export interface ContextProviderProps {
 	children?: React.ReactNode;

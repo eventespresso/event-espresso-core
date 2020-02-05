@@ -1,12 +1,12 @@
 import React from 'react';
 import { ApolloProvider } from '@apollo/react-hooks';
 /* Internal dependencies */
-import { getClient } from '../../../../infrastructure/services/apollo/Apollo';
-import { ToastProvider } from '../../../../application/services/context/ToastProvider';
-import { RelationsProvider } from '../../../../application/services/context/RelationsProvider';
-import { StatusProvider } from '../../../../application/services/context/StatusProvider';
-import { ConfigProvider } from '../../../../application/services/context/ConfigProvider';
-import { EditorModalProvider } from '../../../../application/services/context/EditorModalProvider';
+import { getClient } from '../../../../../infrastructure/services/apollo/Apollo';
+import { ToastProvider } from '../../../../../application/services/context/ToastProvider';
+import { RelationsProvider } from '../../../../../application/services/context/RelationsProvider';
+import { StatusProvider } from '../../../../../application/services/context/StatusProvider';
+import { ConfigProvider } from '../../../../../application/services/context/ConfigProvider';
+import { EditorModalProvider } from '../../../../../application/services/context/EditorModalProvider';
 import { EventEditorEventIdProvider } from '../EventContext';
 import { ContextProvider } from '../types';
 

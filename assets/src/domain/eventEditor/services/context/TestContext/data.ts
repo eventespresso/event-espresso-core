@@ -1,14 +1,14 @@
 import '../../types';
-import { EventData } from '../../types';
-import { RelationalData } from '../../../../application/services/apollo/relations';
-import { nodes as datetimes, edge as datetimesEdge } from '../../data/queries/datetimes/test/data';
-import { nodes as tickets, edge as ticketsEdge } from '../../data/queries/tickets/test/data';
-import { nodes as prices, edge as pricesEdge } from '../../data/queries/prices/test/data';
-import { nodes as priceTypes, edge as priceTypesEdge } from '../../data/queries/priceTypes/test/data';
+import { EventData } from '../../../interfaces';
+import { RelationalData } from '../../../../../application/services/apollo/relations';
+import { nodes as datetimes, edge as datetimesEdge } from '../../../services/apollo/queries/datetimes/test/data';
+import { nodes as tickets, edge as ticketsEdge } from '../../../services/apollo/queries/tickets/test/data';
+import { nodes as prices, edge as pricesEdge } from '../../../services/apollo/queries/prices/test/data';
+import { nodes as priceTypes, edge as priceTypesEdge } from '../../../services/apollo/queries/priceTypes/test/data';
 
-export { currentUser } from '../../../shared/data/queries/currentUser/test/data';
+export { currentUser } from '../../../../shared/services/apollo/queries/currentUser/test/data';
 
-export { generalSettings } from '../../../shared/data/queries/generalSettings/test/data';
+export { generalSettings } from '../../../../shared/services/apollo/queries/generalSettings/test/data';
 
 export const eventId = 100;
 

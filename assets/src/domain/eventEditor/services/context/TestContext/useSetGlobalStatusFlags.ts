@@ -1,4 +1,4 @@
-import { useStatus, TypeName } from '../../../../application/services/apollo/status';
+import { useStatus, TypeName } from '../../../../../application/services/apollo/status';
 
 const useSetGlobalStatusFlags = (): void => {
 	const { setIsLoaded, isLoaded } = useStatus();

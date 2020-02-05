@@ -6,8 +6,8 @@ import { renderHook } from '@testing-library/react-hooks';
 import { InvariantError } from 'ts-invariant';
 import '@testing-library/jest-dom/extend-expect';
 
-import { useStatus } from '../../../../application/services/apollo/status';
-import useEventId from '../../data/queries/events/useEventId';
+import { useStatus } from '../../../../../application/services/apollo/status';
+import useEventId from '../../../services/apollo/queries/events/useEventId';
 import { ApolloMockedProvider, eventId } from '../TestContext';
 
 describe('ContextProviders', () => {
