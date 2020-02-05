@@ -2,8 +2,8 @@
  * Internal dependencies
  */
 import capacityAtOrAbove from '../../capacityAtOrAbove';
-import { Datetime } from '../../../../../../eventEditor/data/types';
-import isTrashed from '../../../../../predicates/shared/isTrashed';
+import { Datetime } from '../../../../../../eventEditor/services/apollo/types';
+import isTrashed from '../../../../../services/predicates/shared/isTrashed';
 import validStatus from '../../validStatus';
 
 const soldOutOnly = (dates: Datetime[]): Datetime[] | [] => {

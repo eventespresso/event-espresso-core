@@ -7,8 +7,8 @@ import { compareAsc, parseISO } from 'date-fns';
 /**
  * Internal dependencies
  */
-import { Datetime } from '../../../../../eventEditor/data/types';
-import { DatesSorted } from '../../../../../eventEditor/data/date/types';
+import { Datetime } from '../../../../../eventEditor/services/apollo/types';
+import { DatesSorted } from '../../../../../eventEditor/interfaces/datetimes/types';
 
 interface SortDates {
 	dates: Datetime[];

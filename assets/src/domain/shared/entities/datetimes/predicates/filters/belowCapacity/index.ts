@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import { Datetime } from '../../../../../../eventEditor/data/types';
+import { Datetime } from '../../../../../../eventEditor/services/apollo/types';
 import filter from './filter';
 
 type BelowCapacityProps = {

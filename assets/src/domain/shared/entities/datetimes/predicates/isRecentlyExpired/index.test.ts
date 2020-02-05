@@ -1,7 +1,7 @@
 import { addWeeks, formatISO, subMonths, subWeeks } from 'date-fns';
 
 import isRecentlyExpired from './index';
-import { nodes as datetimes } from '../../../../../eventEditor/data/queries/datetimes/test/data';
+import { nodes as datetimes } from '../../../../../eventEditor/services/apollo/queries/datetimes/test/data';
 
 describe('isRecentlyExpired', () => {
 	it('should return false if endDate is in the future', () => {

@@ -1,8 +1,8 @@
 /**
  * Internal dependencies
  */
-import { Datetime } from '../../../../../eventEditor/data/types';
-import { ShowDates } from '../../../../../eventEditor/data/date/types';
+import { Datetime } from '../../../../../eventEditor/services/apollo/types';
+import { ShowDates } from '../../../../../eventEditor/interfaces/datetimes/types';
 
 import aboveCapacity from './aboveCapacity';
 import activeOnly from './activeOnly';

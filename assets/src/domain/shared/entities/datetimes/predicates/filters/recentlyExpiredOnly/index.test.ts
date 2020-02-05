@@ -2,7 +2,7 @@
  * Internal dependencies
  */
 import { formatISO, subWeeks } from 'date-fns';
-import { nodes as datetimes } from '../../../../../../eventEditor/data/queries/datetimes/test/data';
+import { nodes as datetimes } from '../../../../../../eventEditor/services/apollo/queries/datetimes/test/data';
 
 const datetime = datetimes[0];
 

@@ -1,6 +1,6 @@
 import dates from '../tests/data';
 import allDates from './index';
-import { nodes as datetimes } from '../../../../../../eventEditor/data/queries/datetimes/test/data';
+import { nodes as datetimes } from '../../../../../../eventEditor/services/apollo/queries/datetimes/test/data';
 
 const datetime = datetimes[0];
 

@@ -4,7 +4,7 @@ import { pipe } from 'ramda';
 import allOnSaleAndPending from './index';
 import isOnSale from '../../isOnSale';
 import isPending from '../../isPending';
-import { nodes as tickets } from '../../../../../../eventEditor/data/queries/tickets/test/data';
+import { nodes as tickets } from '../../../../../../eventEditor/services/apollo/queries/tickets/test/data';
 
 describe('allOnSaleAndPending', () => {
 	const now = new Date();

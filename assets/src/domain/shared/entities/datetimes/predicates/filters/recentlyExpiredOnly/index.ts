@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import { Datetime } from '../../../../../../eventEditor/data/types';
+import { Datetime } from '../../../../../../eventEditor/services/apollo/types';
 import isRecentlyExpired from '../../isRecentlyExpired';
 
 const recentlyExpiredOnly = (dates: Datetime[]): Datetime[] | [] => {
