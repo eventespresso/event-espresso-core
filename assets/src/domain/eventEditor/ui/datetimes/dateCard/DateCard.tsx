@@ -72,24 +72,26 @@ const DateCard: React.FC<ListItemProps> = ({ id }) => {
 					/>
 				</H4>
 				<div>
-					<InlineEditInput
-						component={EditableText}
-						placeholder={__('Edit description...')}
-						value={date.description}
-						onCancel={(value: any): void => {
-							console.log('DatetimeProvider desc onCancel => NEEDS CALLBACK');
-							console.log('value', value);
-						}}
-						onConfirm={(description: string): void => {
-							if (description !== date.description) {
-								updateEntity({ description });
-							}
-						}}
-						minWidth={320}
-						multiline={true}
-						maxLines={4}
-						selectAllOnFocus
-					/>
+					<H6>
+						<InlineEditInput
+							component={EditableText}
+							placeholder={__('Edit description...')}
+							value={date.description}
+							onCancel={(value: any): void => {
+								console.log('DatetimeProvider desc onCancel => NEEDS CALLBACK');
+								console.log('value', value);
+							}}
+							onConfirm={(description: string): void => {
+								if (description !== date.description) {
+									updateEntity({ description });
+								}
+							}}
+							minWidth={320}
+							multiline={true}
+							maxLines={4}
+							selectAllOnFocus
+						/>
+					</H6>
 				</div>
 				<div>
 					<DateRangeDisplay range={range} withTime />
