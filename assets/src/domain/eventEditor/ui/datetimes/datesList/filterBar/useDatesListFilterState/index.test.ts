@@ -1,6 +1,8 @@
 import { act, renderHook } from '@testing-library/react-hooks';
 import * as R from 'ramda';
-import { formatISO, subWeeks } from 'date-fns';
+
+import { sub } from '../../../../../../../application/services/utilities/date';
+import { formatISO } from 'date-fns';
 import { Datetime } from '../../../../../services/apollo/types';
 import { DatesSorted, DisplayDates, ShowDates } from '../../../../../interfaces/datetimes/types';
 import { DatetimeStatus } from '../../../../../services/apollo/types';
@@ -289,22 +291,22 @@ describe('useDatesListFilterState', () => {
 			{
 				...datetimes[1],
 				id: 'WGF0ZXRpbWU6ODM=',
-				endDate: subWeeks(new Date(), 1),
+				endDate: sub('weeks', new Date(), 1),
 			},
 			{
 				...datetimes[1],
 				id: 'RGF0ZXRpbWU6ODM=',
-				endDate: subWeeks(new Date(), 3),
+				endDate: sub('weeks', new Date(), 3),
 			},
 			{
 				...datetimes[1],
 				id: 'RGF0ZXRpbWU6ODM=',
-				endDate: subWeeks(new Date(), 6),
+				endDate: sub('weeks', new Date(), 6),
 			},
 			{
 				...datetimes[1],
 				id: 'RGF0ZXRpbWU6ODM=',
-				endDate: subWeeks(new Date(), 8),
+				endDate: sub('weeks', new Date(), 8),
 			},
 		];
 

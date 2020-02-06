@@ -1,14 +1,9 @@
-/**
- * External dependencies
- */
-import { differenceInSeconds, parseISO } from 'date-fns';
-import { now } from '../filters';
+import { parseISO } from 'date-fns';
 
-/**
- * Internal dependencies
- */
+import { now } from '../filters';
 import { Datetime } from '../../../../../eventEditor/services/apollo/types';
 import TIME from '../../../../../../application/constants/time';
+import { diff } from '../../../../../../application/services/utilities/date';
 
 /**
  * @function
@@ -17,8 +12,8 @@ import TIME from '../../../../../../application/constants/time';
  */
 const isRecentlyExpired = ({ endDate }: Datetime): boolean => {
 	return (
-		differenceInSeconds(parseISO(endDate), now) < 0 &&
-		differenceInSeconds(parseISO(endDate), now) > TIME.MONTH_IN_SECONDS * -1
+		diff('seconds', parseISO(endDate), now) < 0 &&
+		diff('seconds', parseISO(endDate), now) > TIME.MONTH_IN_SECONDS * -1
 	);
 };
 
