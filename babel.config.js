@@ -1,14 +1,19 @@
 module.exports = function(api) {
 	api.cache(true);
 
-	const presets = [
-		'@babel/preset-env',
-		'@babel/preset-react',
-		'@babel/preset-typescript',
-		'@wordpress/babel-preset-default',
-	];
+	const presets = ['@babel/preset-env', '@babel/preset-react', '@babel/preset-typescript'];
 
-	const plugins = ['@babel/plugin-proposal-class-properties', '@babel/plugin-transform-runtime'];
+	const plugins = [
+		'@babel/plugin-proposal-class-properties',
+		'@babel/plugin-transform-runtime',
+		[
+			'import',
+			{
+				libraryName: 'antd',
+				style: 'css', // or 'css'
+			},
+		],
+	];
 
 	return {
 		presets,
