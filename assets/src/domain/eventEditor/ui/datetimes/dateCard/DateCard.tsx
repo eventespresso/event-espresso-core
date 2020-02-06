@@ -1,7 +1,7 @@
 // @ts-nocheck
 import React, { useState } from 'react';
 import { parseISO } from 'date-fns';
-import { EditableText, Card, Elevation, H4, H6, Popover } from '@blueprintjs/core/lib/esm';
+import { Card, EditableText, Elevation, H4, H6, Popover } from '@blueprintjs/core/lib/esm';
 import { __ } from '@wordpress/i18n';
 
 import { EspressoButton } from '@application/ui/input';
@@ -53,26 +53,27 @@ const DateCard: React.FC<ListItemProps> = ({ id }) => {
 				<div style={idStyle}>
 					{date.dbId} {':'} {date.id}
 				</div>
-				<InlineEditInput
-					as='p'
-					placeholder={__('Edit title...')}
-					value={date.name}
-					onCancel={(value: any): void => {
-						console.log('DatetimeProvider title onCancel => NEEDS CALLBACK');
-						console.log('value', value);
-					}}
-					onConfirm={(name: string): void => {
-						if (name !== date.name) {
-							updateEntity({ name });
-						}
-					}}
-					minWidth={320}
-					selectAllOnFocus
-				/>
-
+				<H4>
+					<InlineEditInput
+						component={EditableText}
+						placeholder={__('Edit title...')}
+						value={date.name}
+						onCancel={(value: any): void => {
+							console.log('DatetimeProvider title onCancel => NEEDS CALLBACK');
+							console.log('value', value);
+						}}
+						onConfirm={(name: string): void => {
+							if (name !== date.name) {
+								updateEntity({ name });
+							}
+						}}
+						minWidth={320}
+						selectAllOnFocus
+					/>
+				</H4>
 				<div>
 					<InlineEditInput
-						as='p'
+						component={EditableText}
 						placeholder={__('Edit description...')}
 						value={date.description}
 						onCancel={(value: any): void => {
