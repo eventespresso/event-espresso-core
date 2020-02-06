@@ -10,7 +10,7 @@ module.exports = function(api) {
 			'import',
 			{
 				libraryName: 'antd',
-				style: 'css', // or 'css'
+				style: 'css',
 			},
 		],
 	];

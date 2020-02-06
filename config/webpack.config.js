@@ -28,7 +28,6 @@ const miniExtract = require('mini-css-extract-plugin');
 const paths = require('./paths');
 const modules = require('./modules');
 const getClientEnvironment = require('./env');
-const { requestToExternal, requestToHandle } = require('./asset-dependency-maps');
 
 const appPackageJson = require(paths.appPackageJson);
 const { entries } = paths;
@@ -49,16 +48,6 @@ const cssRegex = /\.css$/;
 const cssModuleRegex = /\.module\.css$/;
 const sassRegex = /\.(scss|sass)$/;
 const sassModuleRegex = /\.module\.(scss|sass)$/;
-
-const pluginsConfigWithExternals = [
-	new DependencyExtractionWebpackPlugin({
-		requestToExternal,
-		requestToHandle,
-	}),
-	new miniExtract({
-		filename: '[name].[contenthash].dist.css',
-	}),
-];
 
 // This is the production and development configuration.
 // It is focused on developer experience, fast rebuilds, and a minimal bundle.
@@ -612,7 +601,7 @@ module.exports = function(webpackEnv) {
 					// The formatter is invoked directly in WebpackDevServerUtils during development
 					formatter: isEnvProduction ? typescriptFormatter : undefined,
 				}),
-			// ...pluginsConfigWithExternals,
+			new webpack.ContextReplacementPlugin(/moment[\/\\]locale$/, /(en)$/),
 		].filter(Boolean),
 		// Some libraries import Node modules but don't use them in the browser.
 		// Tell Webpack to provide empty mocks for them so importing them works.
