@@ -5,8 +5,8 @@ import { Icon } from './types';
  */
 const isEspressoIcon = (icon: Icon | string): boolean => {
 	switch (icon) {
-		// case Icon.CALCULATOR:
-		// case Icon.CALENDAR:
+		case Icon.CALCULATOR:
+		case Icon.CALENDAR:
 		case Icon.REM:
 		case Icon.ROTATE:
 		case Icon.SAVE:

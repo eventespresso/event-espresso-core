@@ -1,8 +1,8 @@
 import React from 'react';
 import classNames from 'classnames';
-import { Button } from 'antd';
+import { Button, Icon } from 'antd';
 
-import { ClickHandler, EspressoButtonProps, EspressoButtonSize, EspressoButtonStyle } from './types';
+import { EspressoButtonProps, EspressoButtonSize, EspressoButtonStyle } from './types';
 import { EspressoIcon, isEspressoIcon } from '../../display';
 
 /**
@@ -32,33 +32,24 @@ const EspressoButton: React.FC<EspressoButtonProps> = ({
 	let renderedIcon = null;
 
 	if (icon) {
-		renderedIcon = (
-			<span className='img-wrap'>
-				<EspressoIcon icon={icon} svgSize={size} />
-			</span>
-		);
+		renderedIcon = () => <EspressoIcon icon={icon} svgSize={size} />;
 	} else {
 		classes += ' ee-noIcon';
 	}
 
-	const onClickHandler: ClickHandler = (click) => {
-		click.preventDefault();
-		click.stopPropagation();
-		onClick(click);
-	};
-
 	if (isEspressoIcon(icon)) {
 		return (
-			<button {...buttonProps} className={classes} onClick={onClickHandler}>
-				<span className='text-wrap'>{buttonText}</span>
-				{renderedIcon}
-			</button>
+			<Button onClick={onClick}>
+				{buttonText && buttonText}
+				<Icon component={renderedIcon} />
+			</Button>
 		);
 	}
 
 	return (
 		<Button icon={icon} onClick={onClick}>
-			{buttonText}
+			{buttonText && buttonText}
+			<Icon component={renderedIcon} />
 		</Button>
 	);
 };
