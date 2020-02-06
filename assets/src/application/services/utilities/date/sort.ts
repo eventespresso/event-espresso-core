@@ -5,7 +5,7 @@ type SortProps = {
 	order: 'asc' | 'desc';
 };
 
-const sort = ({ dates, order }: SortProps) => {
+const sort = ({ dates, order }: SortProps): Date[] => {
 	return order === 'asc' ? dates.sort(compareAsc) : dates.sort(compareDesc);
 };
 

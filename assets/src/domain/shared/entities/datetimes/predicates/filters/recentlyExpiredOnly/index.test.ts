@@ -1,9 +1,9 @@
+import { formatISO } from 'date-fns';
 /**
  * Internal dependencies
  */
-import { formatISO, subWeeks } from 'date-fns';
 import { nodes as datetimes } from '../../../../../../eventEditor/services/apollo/queries/datetimes/test/data';
-
+import { sub } from '../../../../../../../application/services/utilities/date';
 const datetime = datetimes[0];
 
 /**
@@ -23,9 +23,9 @@ describe('recentlyExpiredOnly', () => {
 
 	it('Should return an array of recentlyExpiredOnly dates', () => {
 		const filteredDates = recentlyExpiredOnly([
-			{ ...datetime, id: 'abc', endDate: formatISO(subWeeks(new Date(), 3)) },
-			{ ...datetime, id: 'def', endDate: formatISO(subWeeks(new Date(), 4)) },
-			{ ...datetime, id: 'xyz', endDate: formatISO(subWeeks(new Date(), 5)) },
+			{ ...datetime, id: 'abc', endDate: formatISO(sub('weeks', new Date(), 3)) },
+			{ ...datetime, id: 'def', endDate: formatISO(sub('weeks', new Date(), 4)) },
+			{ ...datetime, id: 'xyz', endDate: formatISO(sub('weeks', new Date(), 5)) },
 		]);
 
 		expect(filteredDates.length).toBe(2);

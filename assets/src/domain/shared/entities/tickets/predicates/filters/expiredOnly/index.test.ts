@@ -1,7 +1,8 @@
-import { addWeeks, differenceInMinutes, formatISO, parseISO } from 'date-fns';
+import { formatISO, parseISO } from 'date-fns';
 
 import expiredOnly from './index';
 import { nodes as tickets } from '../../../../../../eventEditor/services/apollo/queries/tickets/test/data';
+import { diff, add } from '../../../../../../../application/services/utilities/date';
 
 describe('expiredOnly', () => {
 	it('should return an empty array if tickets are trashed', () => {
@@ -12,7 +13,7 @@ describe('expiredOnly', () => {
 
 	it('should return an empty array if tickets are not expired', () => {
 		const updatedTickets = tickets.map((ticket) => {
-			const endDate = formatISO(addWeeks(new Date(), 1));
+			const endDate = formatISO(add('weeks', new Date(), 1));
 			return { ...ticket, endDate };
 		});
 		const filteredTickets = expiredOnly(updatedTickets);
@@ -23,8 +24,8 @@ describe('expiredOnly', () => {
 		const filteredTickets = expiredOnly(tickets);
 		filteredTickets.forEach((ticket) => {
 			const endDate = parseISO(ticket.endDate);
-			const diff = differenceInMinutes(endDate, new Date()) < 0;
-			expect(diff).toBe(true);
+			const result = diff('minutes', endDate, new Date()) < 0;
+			expect(result).toBe(true);
 		});
 	});
 });
