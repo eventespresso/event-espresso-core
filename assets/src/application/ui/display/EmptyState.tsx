@@ -2,7 +2,7 @@
  * External dependencies
  */
 import * as React from 'react';
-import { Callout, NonIdealState } from '@blueprintjs/core/lib/esm';
+import { Empty } from 'antd';
 
 interface EmptyStateProps {
 	children: React.ReactChild;
@@ -15,9 +15,16 @@ const EmptyState = (props: EmptyStateProps) => {
 
 	return (
 		<>
-			<Callout>
-				<NonIdealState icon={'help'} title={title} description={description} />
-			</Callout>
+			<Empty
+				description={
+					<div>
+						<div>{title}</div>
+						<span>{description}</span>
+					</div>
+				}
+				image={Empty.PRESENTED_IMAGE_SIMPLE}
+			/>
+
 			{children}
 		</>
 	);
