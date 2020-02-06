@@ -12,7 +12,7 @@ import TicketsList from './tickets/ticketsList';
 import { EditorModal } from '../../shared/ui/editorModal';
 import { useStatus, TypeName } from '../../../application/services/apollo/status';
 
-const EventEditor: React.FC = (): JSX.Element => {
+const EventEditor: React.FC = () => {
 	useEditorInitialization();
 
 	const { isLoaded } = useStatus();

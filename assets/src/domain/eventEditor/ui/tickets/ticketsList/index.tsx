@@ -15,7 +15,7 @@ import List from './List';
 import useTickets from '../../../services/apollo/queries/tickets/useTickets';
 import { useStatus, TypeName } from '../../../../../application/services/apollo/status';
 
-const TicketsList: React.FC = (): JSX.Element => {
+const TicketsList: React.FC = () => {
 	const tickets = useTickets();
 	const noTickets = tickets.length === 0;
 	const { isError, isLoading } = useStatus();

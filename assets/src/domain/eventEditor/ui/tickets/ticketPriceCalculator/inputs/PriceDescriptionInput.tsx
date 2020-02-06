@@ -6,7 +6,7 @@ import { __ } from '@wordpress/i18n';
 import styles from '../inlineStyles';
 import { PriceInputProps } from '../types';
 
-const PriceDescriptionInput: React.FC<PriceInputProps> = ({ name, price }): JSX.Element => {
+const PriceDescriptionInput: React.FC<PriceInputProps> = ({ name, price }) => {
 	return (
 		<Field
 			type={'text'}

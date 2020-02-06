@@ -9,7 +9,7 @@ import TicketsListEntityFilters from './TicketsListEntityFilters';
  *
  * @return {Object} EditorTicketsListView with added TicketListFilters
  */
-const TicketListFilterBar: React.FC = (): JSX.Element => {
+const TicketListFilterBar: React.FC = () => {
 	const listId = 'event-editor-tickets-list';
 	const entityFilters = <TicketsListEntityFilters />;
 

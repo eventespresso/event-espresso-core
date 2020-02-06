@@ -24,11 +24,7 @@ interface ShowDatesControlProps {
  * @param {Function} setShowTickets
  * @return {Object} rendered control
  */
-const ShowTicketsControl: React.FC<ShowDatesControlProps> = ({
-	isChained,
-	setShowTickets,
-	showTickets,
-}): JSX.Element => {
+const ShowTicketsControl: React.FC<ShowDatesControlProps> = ({ isChained, setShowTickets, showTickets }) => {
 	return React.useMemo(() => {
 		return (
 			<SelectControl

@@ -20,7 +20,7 @@ interface DateTagProps extends DateFCProps {
 	date: Date;
 }
 
-export const DateTag: React.FC<DateTagProps> = ({ date, withTime = false, format: formatStr }): JSX.Element => {
+export const DateTag: React.FC<DateTagProps> = ({ date, withTime = false, format: formatStr }) => {
 	const formatString = formatStr || (withTime ? FORMAT_TIME : FORMAT);
 	if (isValid(date)) {
 		return <Tag intent={Intent.SUCCESS}>{format(date, formatString)}</Tag>;
@@ -34,7 +34,7 @@ export const DateRangeDisplay: React.FC<DateRangeDisplayProps> = ({
 	range: [start, end],
 	withTime = false,
 	format,
-}): JSX.Element => {
+}) => {
 	const formatString = format || (withTime ? FORMAT_TIME : FORMAT);
 	return (
 		<div className={classNames('docs-date-range', className)}>

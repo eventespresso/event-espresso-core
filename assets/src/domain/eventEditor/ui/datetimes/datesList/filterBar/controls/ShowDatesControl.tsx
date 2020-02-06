@@ -17,7 +17,7 @@ interface ShowDatesControlProps {
  * @param {Function} setShowDates
  * @return {Object} rendered control
  */
-const ShowDatesControl: React.FC<ShowDatesControlProps> = ({ showDates, setShowDates }): JSX.Element => {
+const ShowDatesControl: React.FC<ShowDatesControlProps> = ({ showDates, setShowDates }) => {
 	return useMemo<JSX.Element>(() => {
 		return (
 			<SelectControl

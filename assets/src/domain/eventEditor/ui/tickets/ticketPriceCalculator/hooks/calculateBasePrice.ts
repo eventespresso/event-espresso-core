@@ -24,7 +24,7 @@ const calculateBasePrice = (state: TpcFormData): TpcFormData => {
 	const justModifiers = filter<TpcPriceModifier>(notNewPrice, withoutBasePrice);
 	const sortedModifiers = sortByPriceOrderIdDesc(justModifiers);
 	// now extract the value for "total" or set to 0
-	const ticketTotal = propOr(0, 'price', ticket);
+	const ticketTotal = propOr<number, Ticket, number>(0, 'price', ticket);
 	const newBasePrice = reduce<TpcPriceModifier, number>(basePriceCalculator, ticketTotal, sortedModifiers);
 	const newPrices = updateBasePriceAmount<TpcPriceModifier>({
 		prices: state.prices,
