@@ -39,12 +39,12 @@ const addMapping = {
 	years: addYears,
 };
 
-export const add = (interval: IntervalType, date: Date, amount: number) => {
+export const add = (interval: IntervalType, date: Date | number, amount: number): Date => {
 	const func = addMapping[interval];
 	return func(date, amount);
 };
 
-export const sub = (interval: IntervalType, dirtyDate: Date, dirtyAmount: number) => {
+export const sub = (interval: IntervalType, dirtyDate: Date | number, dirtyAmount: number): Date => {
 	const func = addMapping[interval];
 	const amount = toInteger(dirtyAmount);
 	const date = toDate(dirtyDate);
