@@ -14,7 +14,7 @@ const InlineEditInput: React.FC<InlineEditInputProps> = ({ as, defaultValue, lev
 	useEffect(() => setcurrentValue(value), [value]);
 
 	if (as === 'p') {
-		<Paragraph editable={{ onChange: setcurrentValue }}>{currentValue}</Paragraph>;
+		return <Paragraph editable={{ onChange: setcurrentValue }}>{currentValue}</Paragraph>;
 	}
 
 	return (

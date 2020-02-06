@@ -54,7 +54,7 @@ const DateCard: React.FC<ListItemProps> = ({ id }) => {
 					{date.dbId} {':'} {date.id}
 				</div>
 				<InlineEditInput
-					level='4'
+					as='p'
 					placeholder={__('Edit title...')}
 					value={date.name}
 					onCancel={(value: any): void => {
@@ -71,26 +71,24 @@ const DateCard: React.FC<ListItemProps> = ({ id }) => {
 				/>
 
 				<div>
-					<H6>
-						<InlineEditInput
-							level='3'
-							placeholder={__('Edit description...')}
-							value={date.description}
-							onCancel={(value: any): void => {
-								console.log('DatetimeProvider desc onCancel => NEEDS CALLBACK');
-								console.log('value', value);
-							}}
-							onConfirm={(description: string): void => {
-								if (description !== date.description) {
-									updateEntity({ description });
-								}
-							}}
-							minWidth={320}
-							multiline={true}
-							maxLines={4}
-							selectAllOnFocus
-						/>
-					</H6>
+					<InlineEditInput
+						as='p'
+						placeholder={__('Edit description...')}
+						value={date.description}
+						onCancel={(value: any): void => {
+							console.log('DatetimeProvider desc onCancel => NEEDS CALLBACK');
+							console.log('value', value);
+						}}
+						onConfirm={(description: string): void => {
+							if (description !== date.description) {
+								updateEntity({ description });
+							}
+						}}
+						minWidth={320}
+						multiline={true}
+						maxLines={4}
+						selectAllOnFocus
+					/>
 				</div>
 				<div>
 					<DateRangeDisplay range={range} withTime />
