@@ -30,7 +30,7 @@ export const ApolloMockedProvider = (mocks: ReadonlyArray<MockedResponse> = []):
  * @param {ReactElement} children The element that should be wrapped.
  * @returns {ReactElement} The wrapped element.
  */
-export const ApolloAwareWrapper: ContextProvider = ({ children }): JSX.Element => {
+export const ApolloAwareWrapper: ContextProvider = ({ children }) => {
 	// initialize DOM data
 	useDomTestData();
 	// clear Apollo cache on unmount
@@ -49,7 +49,7 @@ export const ApolloAwareWrapper: ContextProvider = ({ children }): JSX.Element =
  * @param {ReactElement} children The element that should be wrapped.
  * @returns {ReactElement} The wrapped element.
  */
-export const ContextAwareWrapper: ContextProvider = ({ children }): JSX.Element => {
+export const ContextAwareWrapper: ContextProvider = ({ children }) => {
 	useSetGlobalStatusFlags();
 	useSetRelationalData();
 	return <>{children}</>;

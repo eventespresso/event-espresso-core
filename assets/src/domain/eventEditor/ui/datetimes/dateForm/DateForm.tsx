@@ -18,7 +18,7 @@ const formatSecondaryField = (ticketPrice: number | string, toString = false): J
 	return toString ? renderToString(<Currency quantity={priceAmount} />, null) : <Currency quantity={priceAmount} />;
 };
 
-const DateForm: React.FC<DateItemFormProps> = ({ id, formReset, title }): JSX.Element => {
+const DateForm: React.FC<DateItemFormProps> = ({ id, formReset, title }) => {
 	const { description = '', name = '' } = useDatetimeItem({ id }) || {};
 	const { getRelations } = useRelations();
 	const tickets = useTickets();
@@ -61,7 +61,7 @@ const DateForm: React.FC<DateItemFormProps> = ({ id, formReset, title }): JSX.El
 				<div style={relationsStyle}>
 					<Field
 						name={'tickets'}
-						render={({ input }): JSX.Element => (
+						render={({ input }) => (
 							<RelationsSelector
 								defaultRelatedItems={relatedTicketIds}
 								items={tickets}

@@ -22,7 +22,7 @@ import { InlineEditInput } from '../../../../../application/ui/input';
 import { ListItemProps } from '../../../interfaces/types';
 import { btnStyle, cardStyle, idStyle } from './styles';
 
-const DateCard: React.FC<ListItemProps> = ({ id }): JSX.Element => {
+const DateCard: React.FC<ListItemProps> = ({ id }) => {
 	const date = useDatetimeItem({ id });
 	const { isLoaded } = useStatus();
 	const { updateEntity } = useEntityMutator(EntityType.Datetime, id);

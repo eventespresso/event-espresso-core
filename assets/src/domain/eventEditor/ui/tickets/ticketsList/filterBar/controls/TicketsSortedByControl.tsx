@@ -22,10 +22,7 @@ interface TicketsSortedByControlProps {
  * @param {string} sortTicketsBy
  * @return {Object} rendered control
  */
-const TicketsSortedByControl: React.FC<TicketsSortedByControlProps> = ({
-	setSortTicketsBy,
-	sortTicketsBy,
-}): JSX.Element => {
+const TicketsSortedByControl: React.FC<TicketsSortedByControlProps> = ({ setSortTicketsBy, sortTicketsBy }) => {
 	return React.useMemo(() => {
 		return (
 			<SelectControl

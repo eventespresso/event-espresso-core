@@ -12,15 +12,15 @@ import { PriceType, EntityId } from '../../types';
 const usePriceTypeForPrice = (priceId: EntityId): PriceType => {
 	const { getRelations } = useRelations();
 	// get related priceTypes for this price
-	const relatedPriceTypeIds: EntityId[] = getRelations({
+	const relatedPriceTypeIds = getRelations({
 		entity: 'prices',
 		entityId: priceId,
 		relation: 'priceTypes',
 	});
 
 	// get the default price type object
-	const defaultPriceType: PriceType = useDefaultPriceType();
-	let relatedPriceTypes: PriceType[] = usePriceTypes(relatedPriceTypeIds);
+	const defaultPriceType = useDefaultPriceType();
+	let relatedPriceTypes = usePriceTypes(relatedPriceTypeIds);
 	relatedPriceTypes = relatedPriceTypeIds.length ? relatedPriceTypes : [];
 
 	return !isEmpty(relatedPriceTypes) ? relatedPriceTypes[0] : defaultPriceType;

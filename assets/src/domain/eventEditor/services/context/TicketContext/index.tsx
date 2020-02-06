@@ -8,7 +8,7 @@ const DEFAULT_CONTEXT = {
 
 export const TicketContext = createContext<EntityContextProps>(DEFAULT_CONTEXT);
 
-const TicketProvider: EntityContextProvider = ({ children, id }): JSX.Element => {
+const TicketProvider: EntityContextProvider = ({ children, id }) => {
 	const value: EntityContextProps = { id };
 
 	return <TicketContext.Provider value={value}>{children}</TicketContext.Provider>;

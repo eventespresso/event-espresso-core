@@ -1,6 +1,6 @@
 import React from 'react';
 
-const IconGraphQL: React.FC = (): JSX.Element => (
+const IconGraphQL: React.FC = () => (
 	<span className='bp3-icon ee-graphql-icon'>
 		<svg width='16' height='16' viewBox='0 0 24 24'>
 			<desc>graphql</desc>

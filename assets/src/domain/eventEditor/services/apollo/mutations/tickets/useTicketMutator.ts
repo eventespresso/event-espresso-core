@@ -9,19 +9,17 @@ import {
 	MutationType,
 	OnUpdateFnOptions,
 } from '../../../../../../application/services/apollo/mutations/types';
-import { ReadQueryOptions } from '../../queries/types';
 import { DEFAULT_TICKET_LIST_DATA as DEFAULT_LIST_DATA } from '../../queries';
 import { Ticket, TicketEdge, Price, TicketsList } from '../../types';
-import { TicketMutationCallbackFn } from '../types';
 import useOptimisticResponse from './useOptimisticResponse';
 import useMutationVariables from './useMutationVariables';
 
 const useTicketMutator = (): Mutator => {
-	const options: ReadQueryOptions = useTicketQueryOptions();
+	const options = useTicketQueryOptions();
 
-	const onCreateTicket: TicketMutationCallbackFn = useOnCreateTicket();
-	const onUpdateTicket: TicketMutationCallbackFn = useOnUpdateTicket();
-	const onDeleteTicket: TicketMutationCallbackFn = useOnDeleteTicket();
+	const onCreateTicket = useOnCreateTicket();
+	const onUpdateTicket = useOnUpdateTicket();
+	const onDeleteTicket = useOnDeleteTicket();
 
 	const getMutationVariables = useMutationVariables();
 	const getOptimisticResponse = useOptimisticResponse();

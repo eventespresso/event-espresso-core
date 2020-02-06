@@ -15,8 +15,8 @@ type PercentSoldAtOrAboveProps = {
  * @param {number} percentage
  * @return {boolean} true if sold/qty less than than qty
  */
-const percentSoldBelow = ({ percentage, tickets }: PercentSoldAtOrAboveProps) => {
-	const filterFn = (ticket: Ticket) => {
+const percentSoldBelow = ({ percentage, tickets }: PercentSoldAtOrAboveProps): Ticket[] => {
+	const filterFn = (ticket: Ticket): boolean => {
 		const { quantity, sold } = ticket;
 
 		return (

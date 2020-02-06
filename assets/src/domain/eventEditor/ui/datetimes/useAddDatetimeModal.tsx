@@ -22,7 +22,7 @@ const useAddDatetimeModal: EditorModal = () => {
 	);
 
 	const formComponent = useCallback<React.FC<DateItemFormProps>>(
-		(props): JSX.Element => <DateForm {...props} title={__('New Datetime Details')} />,
+		(props) => <DateForm {...props} title={__('New Datetime Details')} />,
 		[]
 	);
 

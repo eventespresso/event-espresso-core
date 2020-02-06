@@ -30,7 +30,7 @@ interface FilterDates {
  * @param {string} showDates    value for the "showDates" filter
  * @return {Array}         filtered dateEntities array
  */
-const filters = ({ dates, show = ShowDates.activeUpcoming }: FilterDates) => {
+const filters = ({ dates, show = ShowDates.activeUpcoming }: FilterDates): Datetime[] => {
 	switch (show) {
 		case ShowDates.above50Capacity:
 			return aboveCapacity({ dates, capacity: 50 });

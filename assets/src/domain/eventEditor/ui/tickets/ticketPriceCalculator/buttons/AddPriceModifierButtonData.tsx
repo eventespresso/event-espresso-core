@@ -7,7 +7,7 @@ import { AddPriceModifierDataProps } from '../types';
 import usePriceTypeForPrice from '../../../../services/apollo/queries/priceTypes/usePriceTypeForPrice';
 import { Price } from '../../../../services/apollo/types';
 
-const AddPriceModifierButtonData = ({ name, price, push, reset, sort }: AddPriceModifierDataProps): JSX.Element => {
+const AddPriceModifierButtonData = ({ name, price, push, reset, sort }: AddPriceModifierDataProps) => {
 	const baseType = usePriceTypeForPrice(price.id);
 	const addPriceModifier = useCallback(() => {
 		if (Number(price.amount)) {

@@ -16,9 +16,7 @@ describe('useDatetimeContext', () => {
 
 	it('checks for the returned context and its data', async () => {
 		const id = 'fake-id';
-		const wrapper: React.FC<any> = ({ children }): JSX.Element => (
-			<DatetimeProvider id={id}>{children}</DatetimeProvider>
-		);
+		const wrapper: React.FC<any> = ({ children }) => <DatetimeProvider id={id}>{children}</DatetimeProvider>;
 		const { result } = renderHook(
 			() => {
 				return useDatetimeContext();

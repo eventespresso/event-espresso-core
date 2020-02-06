@@ -10,7 +10,7 @@ import useRelations from '../../../../../application/services/apollo/relations/u
 import { TicketItemFormProps } from '../types';
 import { hdrStyle, lblStyle, inputStyle, divStyle, relationsStyle } from './style';
 
-const TicketForm: React.FC<TicketItemFormProps> = ({ id, formReset, title }): JSX.Element => {
+const TicketForm: React.FC<TicketItemFormProps> = ({ id, formReset, title }) => {
 	const { description = '', name = '', price = '' } = useTicketItem({ id }) || {};
 	const { getRelations } = useRelations();
 	const datetimes = useDatetimes();
@@ -67,7 +67,7 @@ const TicketForm: React.FC<TicketItemFormProps> = ({ id, formReset, title }): JS
 				<div style={relationsStyle}>
 					<Field
 						name={'datetimes'}
-						render={({ input }): JSX.Element => (
+						render={({ input }) => (
 							<RelationsSelector
 								defaultRelatedItems={relatedDatetimeIds}
 								items={datetimes}

@@ -1,10 +1,10 @@
 /**
  * Internal dependencies
  */
-import { Datetime } from '../../../../../../eventEditor/services/apollo/types';
 import { isTrashed } from '../../../../../services/predicates';
+import { DatetimeFilterFn } from '../types';
 
-const trashedOnly = (dates: Datetime[]): Datetime[] | [] => {
+const trashedOnly: DatetimeFilterFn = (dates) => {
 	return dates.filter(isTrashed);
 };
 

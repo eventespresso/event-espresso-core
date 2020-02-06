@@ -6,7 +6,7 @@ import useEditors from './useEditors';
 
 const DEFAULT_EDITOR: EditorState = { editorId: null, entityId: '', isOpen: false };
 
-const EditorModal: React.FC = (): JSX.Element => {
+const EditorModal: React.FC = () => {
 	const { editors: editorModals } = useEditorModal();
 	const { editorId, entityId = '', isOpen } = pathOr<EditorState>(
 		DEFAULT_EDITOR,

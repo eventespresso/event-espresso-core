@@ -16,7 +16,7 @@ import { ContextProvider } from '../types';
  * @param {ReactElement} children The element that should be wrapped.
  * @returns {ReactElement} The wrapped element.
  */
-export const ContextProviders: ContextProvider = ({ children }): JSX.Element => {
+export const ContextProviders: ContextProvider = ({ children }) => {
 	// Make TS (TS2769) friends with ESLint (react/no-children-prop)
 	const props = {
 		client: getClient(),
@@ -36,7 +36,7 @@ export const ContextProviders: ContextProvider = ({ children }): JSX.Element => 
  * @param {ReactElement} children The element that should be wrapped.
  * @returns {ReactElement} The wrapped element.
  */
-export const CommonProviders: ContextProvider = ({ children }): JSX.Element => (
+export const CommonProviders: ContextProvider = ({ children }) => (
 	<ToastProvider>
 		<StatusProvider>
 			<ConfigProvider>

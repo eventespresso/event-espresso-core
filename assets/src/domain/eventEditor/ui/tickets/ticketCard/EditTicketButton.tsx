@@ -5,7 +5,7 @@ import { EditItemButtonProps } from '../../../interfaces/types';
 import { useTicketContext } from '../../../hooks';
 import { useEditorModal } from '../../../../../application/ui/layout/editorModal';
 
-const EditTicketButton: React.FC<EditItemButtonProps> = ({ position }): JSX.Element => {
+const EditTicketButton: React.FC<EditItemButtonProps> = ({ position }) => {
 	const { id: entityId } = useTicketContext();
 
 	const { openEditor } = useEditorModal();

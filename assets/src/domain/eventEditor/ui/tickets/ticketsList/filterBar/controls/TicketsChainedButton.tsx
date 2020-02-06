@@ -19,7 +19,7 @@ interface TicketsChainedButtonProps {
  * @param {Function} toggleIsChained
  * @return {Object} rendered control
  */
-const TicketsChainedButton: React.FC<TicketsChainedButtonProps> = ({ isChained, toggleIsChained }): JSX.Element => {
+const TicketsChainedButton: React.FC<TicketsChainedButtonProps> = ({ isChained, toggleIsChained }) => {
 	return (
 		<IconButton
 			label={isChained ? __('showing tickets for above dates only') : __('showing tickets for all event dates')}

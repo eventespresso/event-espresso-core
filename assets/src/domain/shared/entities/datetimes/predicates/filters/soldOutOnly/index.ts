@@ -5,8 +5,9 @@ import capacityAtOrAbove from '../../capacityAtOrAbove';
 import { Datetime } from '../../../../../../eventEditor/services/apollo/types';
 import { isTrashed } from '../../../../../services/predicates';
 import validStatus from '../../validStatus';
+import { DatetimeFilterFn } from '../types';
 
-const soldOutOnly = (dates: Datetime[]): Datetime[] | [] => {
+const soldOutOnly: DatetimeFilterFn = (dates) => {
 	const filterFn = (date: Datetime): boolean => {
 		return !isTrashed(date) && ((validStatus(date) && date.isSoldOut) || capacityAtOrAbove(date, 100));
 	};

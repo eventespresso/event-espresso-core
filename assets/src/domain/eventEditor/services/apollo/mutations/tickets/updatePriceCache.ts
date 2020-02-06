@@ -24,12 +24,12 @@ const updatePriceCache = ({ proxy, prices = null, ticketIn, ticketId, remove = f
 		};
 	}
 
-	const newTicketIn: string[] = remove ? ticketIn.filter((id) => id !== ticketId) : [...ticketIn, ticketId];
+	const newTicketIn = remove ? ticketIn.filter((id) => id !== ticketId) : [...ticketIn, ticketId];
 	const priceNodes = pathOr<Price[]>([], ['nodes'], prices);
 	const pathToNodes = ['espressoPrices', 'nodes'];
 
 	if (!remove && priceNodes.length) {
-		const existingPrices: Price[] = pathOr<Price[]>([], pathToNodes, data);
+		const existingPrices = pathOr<Price[]>([], pathToNodes, data);
 		data = assocPath<Price[], PricesList>(pathToNodes, [...existingPrices, ...priceNodes], data);
 	}
 	const nodes = pathOr<Price[]>([], pathToNodes, data);

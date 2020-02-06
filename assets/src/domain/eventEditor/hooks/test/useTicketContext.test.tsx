@@ -16,9 +16,7 @@ describe('useTicketContext', () => {
 
 	it('checks for the returned context and is data', async () => {
 		const id = 'fake-id';
-		const wrapper: React.FC<any> = ({ children }): JSX.Element => (
-			<TicketProvider id={id}>{children}</TicketProvider>
-		);
+		const wrapper: React.FC<any> = ({ children }) => <TicketProvider id={id}>{children}</TicketProvider>;
 		const { result } = renderHook(
 			() => {
 				return useTicketContext();

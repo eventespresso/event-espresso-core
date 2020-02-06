@@ -16,7 +16,7 @@ import {
 	MutationInput,
 	MutationResult,
 	CustomMutationOptions,
-	Mutator,
+	Mutators,
 	MutationType,
 	EntityType,
 } from './types';
@@ -49,8 +49,8 @@ const useEntityMutation = (type: EntityType, id?: string): EntityMutation => {
 	 */
 	const getMutationOptions = (mutationType: MutationType, input: MutationInput = {}): OperationVariables => {
 		// e.g. "datetimeMutator"
-		const key = `${type.toLowerCase()}Mutator`;
-		const mutator: Mutator = mutators[key];
+		const key = `${type.toLowerCase()}Mutator` as keyof Mutators;
+		const mutator = mutators[key];
 		/**
 		 * options = {
 		 *     variables,
@@ -81,8 +81,8 @@ const useEntityMutation = (type: EntityType, id?: string): EntityMutation => {
 			// e.g. "createDatetime", "updateTicket"
 			const mutationName = `${mutationType.toLowerCase()}Espresso${type}`;
 			// Example result: { data: { deletePrice: { price : {...} } } }
-			const path: string[] = ['data', mutationName, `espresso${type}`];
-			const entity: any = pathOr({}, path, result);
+			const path = ['data', mutationName, `espresso${type}`];
+			const entity = pathOr<any>({}, path, result);
 
 			onUpdate({ proxy, entity });
 		};
@@ -92,8 +92,8 @@ const useEntityMutation = (type: EntityType, id?: string): EntityMutation => {
 	 * @param {object} input
 	 */
 	const getCreateMutation = (input: MutationInput): MutationOptions => {
-		const mutation: any = getMutation(MutationType.Create);
-		const options: OperationVariables = getMutationOptions(MutationType.Create, input);
+		const mutation = getMutation(MutationType.Create);
+		const options = getMutationOptions(MutationType.Create, input);
 
 		return { mutation, ...options };
 	};
@@ -102,8 +102,8 @@ const useEntityMutation = (type: EntityType, id?: string): EntityMutation => {
 	 * @param {object} input
 	 */
 	const getUpdateMutation = (input: MutationInput): MutationOptions => {
-		const mutation: any = getMutation(MutationType.Update);
-		const options: OperationVariables = getMutationOptions(MutationType.Update, { id, ...input });
+		const mutation = getMutation(MutationType.Update);
+		const options = getMutationOptions(MutationType.Update, { id, ...input });
 
 		return { mutation, ...options };
 	};
@@ -112,8 +112,8 @@ const useEntityMutation = (type: EntityType, id?: string): EntityMutation => {
 	 * @param {object} input
 	 */
 	const getDeleteMutation = (input: MutationInput): MutationOptions => {
-		const mutation: any = getMutation(MutationType.Delete);
-		const options: OperationVariables = getMutationOptions(MutationType.Delete, { id, ...input });
+		const mutation = getMutation(MutationType.Delete);
+		const options = getMutationOptions(MutationType.Delete, { id, ...input });
 
 		return { mutation, ...options };
 	};

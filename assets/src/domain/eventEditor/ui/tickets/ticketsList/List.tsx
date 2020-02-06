@@ -24,7 +24,7 @@ interface ListProps {
 	tickets: Ticket[];
 }
 
-const List: React.FC<ListProps> = ({ tickets }): JSX.Element => {
+const List: React.FC<ListProps> = ({ tickets }) => {
 	const header = <H3 style={{ margin: '2rem 0 .5rem' }}>{__('Tickets List')}</H3>;
 
 	const ticketList = (

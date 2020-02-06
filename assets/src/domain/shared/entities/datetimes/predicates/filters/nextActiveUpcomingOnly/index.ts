@@ -7,9 +7,9 @@ import { head } from 'ramda';
  * Internal dependencies
  */
 import activeUpcoming from '../activeUpcoming';
-import { Datetime } from '../../../../../../eventEditor/services/apollo/types';
+import { DatetimeFilterFn } from '../types';
 
-const nextActiveUpcomingOnly = (dates: Datetime[]): Datetime[] | [] => {
+const nextActiveUpcomingOnly: DatetimeFilterFn = (dates) => {
 	const activeUpcomingDates = activeUpcoming(dates);
 	const firstActiveUpcomingDates = head(activeUpcomingDates);
 

@@ -1,7 +1,7 @@
 import isOnSale from '../../isOnSale';
-import { Ticket } from '../../../../../../eventEditor/services/apollo/types';
+import { TicketFilterFn } from '../types';
 
-const onSaleOnly = (tickets: Ticket[]): Ticket[] => {
+const onSaleOnly: TicketFilterFn = (tickets) => {
 	return tickets.filter((ticket) => isOnSale(ticket));
 };
 

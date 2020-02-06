@@ -9,7 +9,7 @@ type BelowCapacityProps = {
 	dates: Datetime[];
 };
 
-const belowCapacity = ({ capacity, dates }: BelowCapacityProps): Datetime[] | [] => {
+const belowCapacity = ({ capacity, dates }: BelowCapacityProps): Datetime[] => {
 	return dates.filter((date) => filter({ capacity, date }));
 };
 

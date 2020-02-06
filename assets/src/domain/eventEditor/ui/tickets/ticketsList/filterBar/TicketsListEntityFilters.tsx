@@ -14,7 +14,7 @@ import './style.css';
  *
  * @return {Object} EditorTicketsListView with added TicketListFilters
  */
-const TicketsListEntityFilters: React.FC = (): JSX.Element => {
+const TicketsListEntityFilters: React.FC = () => {
 	const {
 		displayTicketDate,
 		isChained,

@@ -23,7 +23,7 @@ describe('ContextProviders', () => {
 		expect(result.current).toBeInstanceOf(ApolloClient);
 	});
 
-	const StatusComponent: React.FC = (): JSX.Element => {
+	const StatusComponent: React.FC = () => {
 		const statusManager = useStatus();
 		return <span>{`Status Manager is: ${statusManager === null ? 'NULL' : 'NOT_NULL'}`}</span>;
 	};
@@ -38,7 +38,7 @@ describe('ContextProviders', () => {
 		expect(getByText('Status Manager is: NOT_NULL')).toBeInTheDocument();
 	});
 
-	const EventIdComponent = (): JSX.Element => {
+	const EventIdComponent = () => {
 		const _eventId_ = useEventId() || 0;
 		return <span>{`Event ID is: ${_eventId_}`}</span>;
 	};

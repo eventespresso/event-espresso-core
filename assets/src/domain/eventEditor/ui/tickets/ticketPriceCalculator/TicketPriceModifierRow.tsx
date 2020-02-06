@@ -20,7 +20,7 @@ const TicketPriceModifierRow: React.FC<TpcModifierFormRowProps> = ({
 	price,
 	reverseCalculate,
 	fields,
-}): JSX.Element => {
+}) => {
 	const priceTypes = usePriceTypes();
 	const modifierOptions = getPriceModifiers(priceTypes);
 	return (

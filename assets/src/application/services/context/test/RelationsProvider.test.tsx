@@ -12,7 +12,7 @@ describe('RelationsProvider', () => {
 		const consumer = (
 			<RelationsProvider>
 				<RelationsConsumer>
-					{(_relationsProvider_): JSX.Element => {
+					{(_relationsProvider_) => {
 						relationsProvider = _relationsProvider_;
 						return null;
 					}}
@@ -34,7 +34,7 @@ describe('RelationsProvider', () => {
 		let relationalData: RelationalData = null;
 		const consumer = (
 			<RelationsConsumer>
-				{(relationsProvider): JSX.Element => {
+				{(relationsProvider) => {
 					relationalData = relationsProvider.getData();
 					return null;
 				}}

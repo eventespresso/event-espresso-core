@@ -5,7 +5,7 @@ interface AddPriceModifierButtonProps {
 	addPriceModifier: () => void;
 }
 
-const AddPriceModifierButton: React.FC<AddPriceModifierButtonProps> = ({ addPriceModifier }): JSX.Element => (
+const AddPriceModifierButton: React.FC<AddPriceModifierButtonProps> = ({ addPriceModifier }) => (
 	<Button key={'add'} icon={'add'} onClick={addPriceModifier} minimal />
 );
 

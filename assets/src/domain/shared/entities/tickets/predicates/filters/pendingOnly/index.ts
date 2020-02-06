@@ -1,7 +1,7 @@
 import isPending from '../../isPending';
-import { Ticket } from '../../../../../../eventEditor/services/apollo/types';
+import { TicketFilterFn } from '../types';
 
-const pendingOnly = (tickets: Ticket[]): Ticket[] => {
+const pendingOnly: TicketFilterFn = (tickets) => {
 	return tickets.filter(isPending);
 };
 

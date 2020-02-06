@@ -16,7 +16,7 @@ import DatetimeIdTag from '../../datetimes/DatetimeIdTag';
 import { ListItemProps } from '../../../interfaces/types';
 import { cardStyle, idStyle, priceStyle, btnsStyle } from './styles';
 
-const TicketCard: React.FC<ListItemProps> = ({ id }): JSX.Element => {
+const TicketCard: React.FC<ListItemProps> = ({ id }) => {
 	const ticket = useTicketItem({ id });
 	const { isLoaded } = useStatus();
 	const { updateEntity } = useEntityMutator(EntityType.Ticket, id);

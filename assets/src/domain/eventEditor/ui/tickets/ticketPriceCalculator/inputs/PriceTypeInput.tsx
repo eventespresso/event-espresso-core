@@ -13,7 +13,7 @@ interface PriceTypeInputProps {
 	modifierOptions: PriceType[];
 }
 
-const PriceTypeInput: React.FC<PriceTypeInputProps> = ({ name, price, priceTypes, modifierOptions }): JSX.Element => {
+const PriceTypeInput: React.FC<PriceTypeInputProps> = ({ name, price, priceTypes, modifierOptions }) => {
 	const relatedPriceType = usePriceTypeForPrice(price.id);
 	const options = price.isBasePrice ? priceTypes : modifierOptions;
 	return (
@@ -24,13 +24,11 @@ const PriceTypeInput: React.FC<PriceTypeInputProps> = ({ name, price, priceTypes
 			disabled={price.isBasePrice}
 			style={styles.input}
 		>
-			{options.map(
-				(option: PriceType): JSX.Element => (
-					<option key={option.id} value={option.id}>
-						{option.name}
-					</option>
-				)
-			)}
+			{options.map((option: PriceType) => (
+				<option key={option.id} value={option.id}>
+					{option.name}
+				</option>
+			))}
 		</Field>
 	);
 };

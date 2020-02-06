@@ -2,7 +2,7 @@ import React from 'react';
 import { Spinner } from '@blueprintjs/core';
 import { LoadingToastProps } from './types';
 
-const LoadingToastNotice: React.FC<LoadingToastProps> = ({ message }): JSX.Element => {
+const LoadingToastNotice: React.FC<LoadingToastProps> = ({ message }) => {
 	return (
 		<div
 			style={{

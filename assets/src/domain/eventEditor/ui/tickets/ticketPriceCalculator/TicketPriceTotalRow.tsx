@@ -8,7 +8,7 @@ import styles from './inlineStyles';
 import { TpcFormElement } from './types';
 import { useMoneyDisplay } from '../../../../../application/services/utilities/money';
 
-const TicketPriceTotalRow: React.FC<TpcFormElement> = ({ ticket, reverseCalculate, toggleCalcDir }): JSX.Element => {
+const TicketPriceTotalRow: React.FC<TpcFormElement> = ({ ticket, reverseCalculate, toggleCalcDir }) => {
 	const { afterAmount, beforeAmount, formatAmount } = useMoneyDisplay();
 	const calcDirIcon = reverseCalculate ? 'double-chevron-up' : 'double-chevron-down';
 	const reverseCalc = reverseCalculate ? 'true' : 'false';

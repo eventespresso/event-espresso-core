@@ -9,7 +9,7 @@ const PriceModifierActions: React.FC<TpcModifierFormRowProps> = ({
 	name,
 	price,
 	fields: { push, remove, reset, sort },
-}): JSX.Element => {
+}) => {
 	const actions = [];
 	const key = `${price.id}-${index}`;
 	if (price.id === 'NEW_PRICE') {

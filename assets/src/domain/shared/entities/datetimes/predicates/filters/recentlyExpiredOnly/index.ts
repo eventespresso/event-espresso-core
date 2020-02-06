@@ -3,8 +3,9 @@
  */
 import { Datetime } from '../../../../../../eventEditor/services/apollo/types';
 import isRecentlyExpired from '../../isRecentlyExpired';
+import { DatetimeFilterFn } from '../types';
 
-const recentlyExpiredOnly = (dates: Datetime[]): Datetime[] | [] => {
+const recentlyExpiredOnly: DatetimeFilterFn = (dates) => {
 	const filterFn = (date: Datetime): boolean => {
 		return isRecentlyExpired(date) && !date.isTrashed;
 	};

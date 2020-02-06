@@ -9,7 +9,7 @@ import EmptyState from '../../../../../application/ui/display/EmptyState';
 import ErrorIndicator from '../../../../../application/ui/display/ErrorIndicator';
 import LoadingIndicator from '../../../../../application/ui/display/LoadingIndicator';
 
-const DatesList: React.FC = (): JSX.Element => {
+const DatesList: React.FC = () => {
 	const datetimes = useDatetimes();
 	const noDatetimes = datetimes.length === 0;
 	const { isError, isLoading } = useStatus();
