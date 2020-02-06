@@ -1,32 +1,32 @@
 import { ascend, descend, prop, sort, sortWith } from 'ramda';
 
-import { EntityId, Price, Ticket } from '../../../../eventEditor/services/apollo/types';
+import { Price, Ticket } from '../../../../eventEditor/services/apollo/types';
 
-type sortFn = (a: Price, b: Price) => number;
-type sortPricesFn = (c: Price[]) => Price[];
+type sortFn = <T extends Price>(a: T, b: T) => number;
+type sortPricesFn = <T extends Price>(c: T[]) => T[];
 
-const ascendingPriceDbId: sortFn = ascend<Price>(prop<EntityId>('dbid'));
-const descendingPriceDbId: sortFn = descend<Price>(prop<EntityId>('dbid'));
-const ascendingPriceName: sortFn = ascend<Price>(prop<string>('name'));
-const descendingPriceName: sortFn = descend<Price>(prop<string>('name'));
-const ascendingPriceOrder: sortFn = ascend<Price>(prop<string>('order'));
-const descendingPriceOrder: sortFn = descend<Price>(prop<string>('order'));
+const ascendingPriceDbId: sortFn = ascend(prop('dbid'));
+const descendingPriceDbId: sortFn = descend(prop('dbid'));
+const ascendingPriceName: sortFn = ascend(prop('name'));
+const descendingPriceName: sortFn = descend(prop('name'));
+const ascendingPriceOrder: sortFn = ascend(prop('order'));
+const descendingPriceOrder: sortFn = descend(prop('order'));
 
-export const sortByPriceDbIdAsc: sortPricesFn = sort<Price>(ascendingPriceDbId);
-export const sortByPriceDbIdDesc: sortPricesFn = sort<Price>(descendingPriceDbId);
+export const sortByPriceDbIdAsc: sortPricesFn = sort(ascendingPriceDbId);
+export const sortByPriceDbIdDesc: sortPricesFn = sort(descendingPriceDbId);
 
-export const sortByPriceNameAsc: sortPricesFn = sort<Price>(ascendingPriceName);
-export const sortByPriceNameDesc: sortPricesFn = sort<Price>(descendingPriceName);
+export const sortByPriceNameAsc: sortPricesFn = sort(ascendingPriceName);
+export const sortByPriceNameDesc: sortPricesFn = sort(descendingPriceName);
 
-export const sortByPriceOrderAsc: sortPricesFn = sort<Price>(ascendingPriceOrder);
-export const sortByPriceOrderDesc: sortPricesFn = sort<Price>(descendingPriceOrder);
+export const sortByPriceOrderAsc: sortPricesFn = sort(ascendingPriceOrder);
+export const sortByPriceOrderDesc: sortPricesFn = sort(descendingPriceOrder);
 
-export const sortByPriceOrderIdAsc: sortPricesFn = sortWith<Price>([ascendingPriceOrder, ascendingPriceDbId]);
-export const sortByPriceOrderIdDesc: sortPricesFn = sortWith<Price>([descendingPriceOrder, descendingPriceDbId]);
-export const sortByPriceOrderNameAsc: sortPricesFn = sortWith<Price>([ascendingPriceOrder, ascendingPriceName]);
-export const sortByPriceOrderNameDesc: sortPricesFn = sortWith<Price>([descendingPriceOrder, descendingPriceName]);
+export const sortByPriceOrderIdAsc: sortPricesFn = sortWith([ascendingPriceOrder, ascendingPriceDbId]);
+export const sortByPriceOrderIdDesc: sortPricesFn = sortWith([descendingPriceOrder, descendingPriceDbId]);
+export const sortByPriceOrderNameAsc: sortPricesFn = sortWith([ascendingPriceOrder, ascendingPriceName]);
+export const sortByPriceOrderNameDesc: sortPricesFn = sortWith([descendingPriceOrder, descendingPriceName]);
 
-export const sortPrices = (ticket: Ticket) => (prices: Price[]) =>
+export const sortPrices = (ticket: Ticket) => <T extends Price>(prices: T[]) =>
 	ticket.reverseCalculate ? sortByPriceOrderIdDesc(prices) : sortByPriceOrderIdAsc(prices);
 
 export default sortPrices;
