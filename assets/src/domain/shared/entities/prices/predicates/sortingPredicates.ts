@@ -2,15 +2,15 @@ import { ascend, descend, prop, sort, sortWith } from 'ramda';
 
 import { Price, Ticket } from '../../../../eventEditor/services/apollo/types';
 
-type sortFn = <T extends Price>(a: T, b: T) => number;
+type comparator = <T extends Price>(a: T, b: T) => number;
 type sortPricesFn = <T extends Price>(c: T[]) => T[];
 
-const ascendingPriceDbId: sortFn = ascend(prop('dbid'));
-const descendingPriceDbId: sortFn = descend(prop('dbid'));
-const ascendingPriceName: sortFn = ascend(prop('name'));
-const descendingPriceName: sortFn = descend(prop('name'));
-const ascendingPriceOrder: sortFn = ascend(prop('order'));
-const descendingPriceOrder: sortFn = descend(prop('order'));
+const ascendingPriceDbId: comparator = ascend(prop('dbId'));
+const descendingPriceDbId: comparator = descend(prop('dbId'));
+const ascendingPriceName: comparator = ascend(prop('name'));
+const descendingPriceName: comparator = descend(prop('name'));
+const ascendingPriceOrder: comparator = ascend(prop('order'));
+const descendingPriceOrder: comparator = descend(prop('order'));
 
 export const sortByPriceDbIdAsc: sortPricesFn = sort(ascendingPriceDbId);
 export const sortByPriceDbIdDesc: sortPricesFn = sort(descendingPriceDbId);
