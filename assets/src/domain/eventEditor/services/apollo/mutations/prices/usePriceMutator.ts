@@ -12,20 +12,18 @@ import {
 	OnUpdateFnOptions,
 	MutatorGeneratedObject,
 } from '../../../../../../application/services/apollo/mutations/types';
-import { ReadQueryOptions } from '../../queries/types';
 import { Price, PriceEdge, PricesList } from '../../types';
-import { PriceMutationCallbackFn } from '../types';
 import { DEFAULT_PRICE_LIST_DATA as DEFAULT_LIST_DATA } from '../../queries';
 
 /**
  *
  */
 const usePriceMutator = (): Mutator => {
-	const options: ReadQueryOptions = usePriceQueryOptions();
+	const options = usePriceQueryOptions();
 
-	const onCreatePrice: PriceMutationCallbackFn = useOnCreatePrice();
-	const onUpdatePrice: PriceMutationCallbackFn = useOnUpdatePrice();
-	const onDeletePrice: PriceMutationCallbackFn = useOnDeletePrice();
+	const onCreatePrice = useOnCreatePrice();
+	const onUpdatePrice = useOnUpdatePrice();
+	const onDeletePrice = useOnDeletePrice();
 
 	const createVariables = (mutationType: MutationType, input: MutationInput): OperationVariables => {
 		const mutationInput: MutationInput = {
@@ -43,7 +41,7 @@ const usePriceMutator = (): Mutator => {
 		// so as to properly set the relations
 		const { ticketId, ...restInput } = input;
 		const { priceType: priceTypeId } = input;
-		const variables: OperationVariables = createVariables(mutationType, restInput);
+		const variables = createVariables(mutationType, restInput);
 		/**
 		 * @todo update optimisticResponse
 		 */

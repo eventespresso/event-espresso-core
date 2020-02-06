@@ -8,7 +8,7 @@ type voidFn = () => void;
 const useRect = (ref: React.RefObject<HTMLElement>): ClientRect => {
 	const [rect, setRect] = useState(getHTMLElementClientRect(ref ? ref.current : null));
 
-	const handleResize: voidFn = useCallback(() => {
+	const handleResize = useCallback<voidFn>(() => {
 		if (!ref.current) {
 			return;
 		}
@@ -29,7 +29,7 @@ const useRect = (ref: React.RefObject<HTMLElement>): ClientRect => {
 			let resizeObserver = new ResizeObserver(() => handleResize());
 			resizeObserver.observe(element);
 
-			return () => {
+			return (): void => {
 				if (!resizeObserver) {
 					return;
 				}

@@ -1,9 +1,9 @@
 /**
  * Internal dependencies
  */
-import { Datetime } from '../../../../../../eventEditor/services/apollo/types';
+import { DatetimeFilterFn } from '../types';
 
-const activeUpcoming = (dates: Datetime[]): Datetime[] | [] => {
+const activeUpcoming: DatetimeFilterFn = (dates) => {
 	return dates.filter(({ isActive, isUpcoming }) => isActive || isUpcoming);
 };
 

@@ -15,7 +15,7 @@ interface RelationsSelectorProps {
 	displayFields: string[];
 	formatFields?: any;
 	placeholder: string;
-	onChange: (e: any) => void | null;
+	onChange: (e: any) => void;
 	formReset: boolean;
 	itemType: string;
 }

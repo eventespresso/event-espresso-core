@@ -21,10 +21,10 @@ const calculateBasePrice = (state: TpcFormData): TpcFormData => {
 	// we're calculating the base price so we don't want to include it in the calculations
 	const withoutBasePrice = filter<TpcPriceModifier>(isNotBasePrice, allPrices);
 	// and the last element should be the "NEW_PRICE" row and we don't want it either
-	const justModifiers: TpcPriceModifier[] = filter<TpcPriceModifier>(notNewPrice, withoutBasePrice);
-	const sortedModifiers: TpcPriceModifier[] = sortByPriceOrderIdDesc(justModifiers);
+	const justModifiers = filter<TpcPriceModifier>(notNewPrice, withoutBasePrice);
+	const sortedModifiers = sortByPriceOrderIdDesc(justModifiers);
 	// now extract the value for "total" or set to 0
-	const ticketTotal: number = propOr(0, 'price', ticket);
+	const ticketTotal = propOr(0, 'price', ticket);
 	const newBasePrice = reduce<TpcPriceModifier, number>(basePriceCalculator, ticketTotal, sortedModifiers);
 	const newPrices = updateBasePriceAmount<TpcPriceModifier>({
 		prices: state.prices,

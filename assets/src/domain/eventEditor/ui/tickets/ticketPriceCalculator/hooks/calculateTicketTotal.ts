@@ -13,15 +13,15 @@ const calculateTicketTotal = (state: TpcFormData): TpcFormData => {
 	if (!ticket) {
 		return state;
 	}
-	const allPrices: TpcPriceModifier[] = pathOr<TpcPriceModifier[]>(null, ['prices'], state);
+	const allPrices = pathOr<TpcPriceModifier[]>(null, ['prices'], state);
 	if (!allPrices) {
 		return state;
 	}
 	// we're calculating the ticket total but the last element
 	// should be the "NEW_PRICE" row and we don't want it
-	const modifiers: TpcPriceModifier[] = filter<TpcPriceModifier>(notNewPrice, allPrices);
-	const sortedModifiers: TpcPriceModifier[] = sortByPriceOrderIdAsc(modifiers);
-	const newTicketTotal: number = reduce(ticketTotalCalculator, 0, sortedModifiers);
+	const modifiers = filter<TpcPriceModifier>(notNewPrice, allPrices);
+	const sortedModifiers = sortByPriceOrderIdAsc(modifiers);
+	const newTicketTotal = reduce(ticketTotalCalculator, 0, sortedModifiers);
 	const tickets: Ticket[] = updateTicketPriceForTicket({
 		tickets: [ticket],
 		guid: ticket.id,

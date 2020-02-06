@@ -18,7 +18,7 @@ const usePriceTypeDecorator = (): Calculation => {
 		isEqual: isEqual,
 		updates: (value, name, formData: TpcFormData): UpdatedTpcFormDataPath => {
 			// get the form data path for the price modifier
-			const pricePath: string = name.replace('.priceType', '');
+			const pricePath = name.replace('.priceType', '');
 			// get ALL of the price modifier data from the form data
 			const priceModifier = getFromFormData<TpcPriceModifier>(pricePath, formData);
 			// whether we are calculating the base price or ticket total

@@ -6,9 +6,9 @@ import { is } from 'ramda';
 /**
  * Internal dependencies
  */
-import { Datetime } from '../../../../../../eventEditor/services/apollo/types';
+import { DatetimeFilterFn } from '../types';
 
-const activeOnly = (dates: Datetime[]): Datetime[] | [] => {
+const activeOnly: DatetimeFilterFn = (dates) => {
 	return dates.filter(({ isActive }) => {
 		return is(Boolean, isActive) && isActive;
 	});

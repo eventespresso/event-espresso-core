@@ -1,5 +1,5 @@
 import { useRelations, RelationsManager } from '../../../../../../application/services/apollo/relations';
-import { TicketMutationCallbackFn, TicketMutationCallbackFnArgs, CacheUpdaterFn } from '../types';
+import { TicketMutationCallbackFn, TicketMutationCallbackFnArgs } from '../types';
 import useUpdateTicketCache from './useUpdateTicketCache';
 import updatePriceCache from './updatePriceCache';
 import { Ticket } from '../../types';
@@ -7,12 +7,12 @@ import { Ticket } from '../../types';
 const useOnDeleteTicket = (): TicketMutationCallbackFn => {
 	const { dropRelations, removeRelation } = useRelations() as RelationsManager;
 
-	const updateTicketCache: CacheUpdaterFn = useUpdateTicketCache();
+	const updateTicketCache = useUpdateTicketCache();
 
 	const onDeleteTicket = ({ proxy, tickets, ticket }: TicketMutationCallbackFnArgs): void => {
 		if (ticket.id) {
 			const { nodes = [] } = tickets;
-			const ticketIn: string[] = nodes.map(({ id }: Ticket) => id);
+			const ticketIn = nodes.map(({ id }: Ticket) => id);
 			const { id: ticketId } = ticket;
 
 			// Update prices cache for the changed tickets,

@@ -1,13 +1,13 @@
 import { useApolloClient } from '@apollo/react-hooks';
 
 import usePriceQueryOptions from '../usePriceQueryOptions';
-import { ReadQueryOptions, WriteQueryOptions } from '../../types';
+import { WriteQueryOptions } from '../../types';
 import { edge } from './data';
 
 const useInitPriceTestCache = (espressoPrices = edge): void => {
 	// init hooks
 	const client = useApolloClient();
-	const queryOptions: ReadQueryOptions = usePriceQueryOptions();
+	const queryOptions = usePriceQueryOptions();
 
 	const writeQueryOptions: WriteQueryOptions = {
 		...queryOptions,
