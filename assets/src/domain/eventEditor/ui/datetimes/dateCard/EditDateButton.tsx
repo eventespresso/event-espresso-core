@@ -4,7 +4,7 @@ import { EditItemButtonProps } from '../../../interfaces/types';
 import { useDatetimeContext } from '../../../hooks';
 import { useEditorModal } from '../../../../../application/ui/layout/editorModal';
 
-const EditDateButton: React.FC<EditItemButtonProps> = ({ position }): JSX.Element => {
+const EditDateButton: React.FC<EditItemButtonProps> = ({ position }) => {
 	const { id: entityId } = useDatetimeContext();
 
 	const { openEditor } = useEditorModal();

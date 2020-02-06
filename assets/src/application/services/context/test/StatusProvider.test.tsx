@@ -11,7 +11,7 @@ describe('StatusProvider', () => {
 		const consumer = (
 			<StatusProvider>
 				<StatusConsumer>
-					{(_statusProvider_): JSX.Element => {
+					{(_statusProvider_) => {
 						statusProvider = _statusProvider_;
 						return null;
 					}}
@@ -28,7 +28,7 @@ describe('StatusProvider', () => {
 		const consumer = (
 			<StatusProvider>
 				<StatusConsumer>
-					{(statusProvider): JSX.Element => {
+					{(statusProvider) => {
 						const value = JSON.stringify(statusProvider.isLoading(TypeName.datetimes));
 						return <span>{`Is Loading datetimes: ${value}`}</span>;
 					}}
@@ -43,7 +43,7 @@ describe('StatusProvider', () => {
 		const consumer = (
 			<StatusProvider>
 				<StatusConsumer>
-					{(statusProvider): JSX.Element => {
+					{(statusProvider) => {
 						const value = JSON.stringify(statusProvider.isLoaded(TypeName.priceTypes));
 						return <span>{`Is Loaded priceTypes: ${value}`}</span>;
 					}}
@@ -58,7 +58,7 @@ describe('StatusProvider', () => {
 		const consumer = (
 			<StatusProvider>
 				<StatusConsumer>
-					{(statusProvider): JSX.Element => {
+					{(statusProvider) => {
 						const value = JSON.stringify(statusProvider.isError(TypeName.tickets));
 						return <span>{`Is isError tickets: ${value}`}</span>;
 					}}

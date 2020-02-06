@@ -36,7 +36,7 @@ export const ContextProviders: ContextProvider = ({ children }) => {
  * @param {ReactElement} children The element that should be wrapped.
  * @returns {ReactElement} The wrapped element.
  */
-export const CommonProviders: ContextProvider = ({ children }): JSX.Element => (
+export const CommonProviders: ContextProvider = ({ children }) => (
 	<ToastProvider>
 		<StatusProvider>
 			<ConfigProvider>

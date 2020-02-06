@@ -20,7 +20,7 @@ editor.className = 'ee-editor-div-prototype';
 
 container.prepend(editor);
 
-const Editor: React.FC = (): JSX.Element => (
+const Editor: React.FC = () => (
 	<ContextProviders>
 		<EventEditor />
 	</ContextProviders>

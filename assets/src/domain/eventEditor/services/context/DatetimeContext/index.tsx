@@ -8,7 +8,7 @@ const DEFAULT_CONTEXT = {
 
 export const DatetimeContext = createContext<EntityContextProps>(DEFAULT_CONTEXT);
 
-export const DatetimeProvider: EntityContextProvider = (props): JSX.Element => {
+export const DatetimeProvider: EntityContextProvider = (props) => {
 	const { children, id } = props;
 
 	const value: EntityContextProps = { id };

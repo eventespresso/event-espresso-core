@@ -11,7 +11,7 @@ const StatusContext = createContext<StatusManager | null>(null);
 
 const { Provider, Consumer: StatusConsumer } = StatusContext;
 
-const StatusProvider: React.FC<ProviderProps> = ({ children }): JSX.Element => {
+const StatusProvider: React.FC<ProviderProps> = ({ children }) => {
 	const statusManager = useStatusManager();
 	return <Provider value={statusManager}>{children}</Provider>;
 };

@@ -10,7 +10,7 @@ const EditorModalContext = createContext(null);
 
 const { Provider, Consumer: EditorModalConsumer } = EditorModalContext;
 
-const EditorModalProvider: React.FC<ProviderProps> = (props): JSX.Element => {
+const EditorModalProvider: React.FC<ProviderProps> = (props) => {
 	const editorModal = useEditorModalManager();
 
 	return <Provider value={editorModal}>{props.children}</Provider>;
