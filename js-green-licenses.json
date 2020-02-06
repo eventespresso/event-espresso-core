@@ -20,6 +20,7 @@
 		"@svgr/webpack",
 		"@typeform/embed",
 		"caniuse-lite",
+		"component-indexof",
 		"colors",
 		"detect-libc",
 		"domelementtype",

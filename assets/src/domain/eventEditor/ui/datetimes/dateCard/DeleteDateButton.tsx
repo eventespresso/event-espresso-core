@@ -1,6 +1,6 @@
 import * as React from 'react';
-import { Button } from '@blueprintjs/core';
 
+import { EspressoButton } from '@application/ui/input';
 import { useEntityMutator, EntityType, MutationResult } from '../../../../../application/services/apollo/mutations';
 import { ListItemProps } from '../../../interfaces/types';
 
@@ -16,7 +16,7 @@ const DeleteDateButton: React.FC<ListItemProps> = ({ id }) => {
 				textAlign: 'right',
 			}}
 		>
-			<Button icon={'trash'} onClick={(): MutationResult => deleteEntity()} minimal />
+			<EspressoButton icon='delete' onClick={(): MutationResult => deleteEntity()} minimal />
 		</div>
 	);
 };

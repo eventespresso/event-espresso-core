@@ -1,8 +1,9 @@
 import React from 'react';
 import classNames from 'classnames';
+import { Button, Icon } from 'antd';
 
-import { ClickHandler, EspressoButtonProps, EspressoButtonSize, EspressoButtonStyle } from './types';
-import { EspressoIcon } from '../../display/espressoIcon';
+import { EspressoButtonProps, EspressoButtonSize, EspressoButtonStyle } from './types';
+import { EspressoIcon, isEspressoIcon } from '../../display';
 
 /**
  * Button wrapper for adding styles
@@ -29,27 +30,27 @@ const EspressoButton: React.FC<EspressoButtonProps> = ({
 		'esprs-btn-huge': size === EspressoButtonSize.HUGE,
 	});
 	let renderedIcon = null;
+
 	if (icon) {
-		renderedIcon = (
-			<span className='img-wrap'>
-				<EspressoIcon icon={icon} svgSize={size} />
-			</span>
-		);
+		renderedIcon = () => <EspressoIcon icon={icon} svgSize={size} />;
 	} else {
 		classes += ' ee-noIcon';
 	}
 
-	const onClickHandler: ClickHandler = (click) => {
-		click.preventDefault();
-		click.stopPropagation();
-		onClick(click);
-	};
+	if (isEspressoIcon(icon)) {
+		return (
+			<Button onClick={onClick}>
+				{buttonText && buttonText}
+				<Icon component={renderedIcon} />
+			</Button>
+		);
+	}
 
 	return (
-		<button {...buttonProps} className={classes} onClick={onClickHandler}>
-			<span className='text-wrap'>{buttonText}</span>
-			{renderedIcon}
-		</button>
+		<Button icon={icon} onClick={onClick}>
+			{buttonText && buttonText}
+			<Icon component={renderedIcon} />
+		</Button>
 	);
 };
 

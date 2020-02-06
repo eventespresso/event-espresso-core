@@ -1,15 +1,12 @@
 // @ts-nocheck
 import React, { useState } from 'react';
 import Currency from 'react-currency-formatter';
-import { Button, EditableText } from '@blueprintjs/core/lib/esm';
+import { EditableText } from '@blueprintjs/core/lib/esm';
 
+import { EspressoButton } from '@application/ui/input';
 import InlineEditInput from '../InlineEditInput';
 
 const nullFunc = (args?: any) => {};
-
-const btnStyle = {
-	margin: '0 0 0 .5rem',
-};
 
 interface CurrencyInputProps {
 	id: string;
@@ -50,7 +47,7 @@ const CurrencyInput: React.FC<CurrencyInputProps> = ({
 	) : (
 		<>
 			<Currency quantity={amount} />
-			<Button icon='edit' onClick={() => setEditing(true)} style={btnStyle} minimal />
+			<EspressoButton icon='edit' onClick={() => setEditing(true)} />
 		</>
 	);
 };

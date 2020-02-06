@@ -1,6 +1,6 @@
 import React, { CSSProperties } from 'react';
-import { Button } from '@blueprintjs/core/lib/esm';
 
+import { EspressoButton } from '@application/ui/input';
 import { EditItemButtonProps } from '../../../interfaces/types';
 import { useTicketContext } from '../../../hooks';
 import { useEditorModal } from '../../../../../application/ui/layout/editorModal';
@@ -28,7 +28,7 @@ const EditTicketButton: React.FC<EditItemButtonProps> = ({ position }) => {
 
 	return (
 		<div style={style}>
-			<Button icon={'edit'} onClick={onClick} minimal />
+			<EspressoButton icon='edit' onClick={onClick} />
 		</div>
 	);
 };

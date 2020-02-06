@@ -1,12 +1,13 @@
 import React from 'react';
-import { Button } from '@blueprintjs/core';
+
+import { EspressoButton } from '@application/ui/input';
 
 interface AddPriceModifierButtonProps {
 	addPriceModifier: () => void;
 }
 
 const AddPriceModifierButton: React.FC<AddPriceModifierButtonProps> = ({ addPriceModifier }) => (
-	<Button key={'add'} icon={'add'} onClick={addPriceModifier} minimal />
+	<EspressoButton key='add' icon='plus-circle' onClick={addPriceModifier} />
 );
 
 export default AddPriceModifierButton;

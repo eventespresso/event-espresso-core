@@ -1,16 +1,17 @@
 import React from 'react';
 import { Field } from 'react-final-form';
-import { Button } from '@blueprintjs/core';
 import { __ } from '@wordpress/i18n';
 
-// just temporary
-import styles from './inlineStyles';
+import { EspressoButton } from '@application/ui/input';
 import { TpcFormElement } from './types';
 import { useMoneyDisplay } from '../../../../../application/services/utilities/money';
 
+// just temporary
+import styles from './inlineStyles';
+
 const TicketPriceTotalRow: React.FC<TpcFormElement> = ({ ticket, reverseCalculate, toggleCalcDir }) => {
 	const { afterAmount, beforeAmount, formatAmount } = useMoneyDisplay();
-	const calcDirIcon = reverseCalculate ? 'double-chevron-up' : 'double-chevron-down';
+	const calcDirIcon = reverseCalculate ? 'up-circle' : 'down-circle';
 	const reverseCalc = reverseCalculate ? 'true' : 'false';
 	return (
 		<tr>
@@ -43,7 +44,7 @@ const TicketPriceTotalRow: React.FC<TpcFormElement> = ({ ticket, reverseCalculat
 				</div>
 			</th>
 			<th style={{ ...styles.colWidth7h, ...styles.actions }}>
-				<Button icon={calcDirIcon} onClick={toggleCalcDir} value={reverseCalc} minimal />
+				<EspressoButton icon={calcDirIcon} onClick={toggleCalcDir} />
 			</th>
 		</tr>
 	);

@@ -1,11 +1,11 @@
 import React, { CSSProperties } from 'react';
+import { __ } from '@wordpress/i18n';
 import { H3 } from '@blueprintjs/core/lib/esm';
 
 import DatesListFilterBar from './filterBar/DatesListFilterBar';
 import AddNewDateButton from './AddNewDateButton';
 import DatetimeCard from '../dateCard/DateCard';
 import { Datetime } from '../../../services/apollo/types';
-import { __ } from '@wordpress/i18n';
 
 const listStyle: CSSProperties = {
 	display: 'flex',
