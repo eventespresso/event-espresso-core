@@ -20,7 +20,7 @@ export enum EspressoButtonStyle {
 }
 
 export interface EspressoButtonProps {
-	buttonText: string;
+	buttonText?: string;
 	buttonProps?: object;
 	htmlClass?: string;
 	icon?: Icon | string;

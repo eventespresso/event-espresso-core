@@ -1,8 +1,9 @@
 import React from 'react';
 import classNames from 'classnames';
+import { Button } from 'antd';
 
 import { ClickHandler, EspressoButtonProps, EspressoButtonSize, EspressoButtonStyle } from './types';
-import { EspressoIcon } from '../../display/espressoIcon';
+import { EspressoIcon, isEspressoIcon } from '../../display';
 
 /**
  * Button wrapper for adding styles
@@ -29,6 +30,7 @@ const EspressoButton: React.FC<EspressoButtonProps> = ({
 		'esprs-btn-huge': size === EspressoButtonSize.HUGE,
 	});
 	let renderedIcon = null;
+
 	if (icon) {
 		renderedIcon = (
 			<span className='img-wrap'>
@@ -45,12 +47,16 @@ const EspressoButton: React.FC<EspressoButtonProps> = ({
 		onClick(click);
 	};
 
-	return (
-		<button {...buttonProps} className={classes} onClick={onClickHandler}>
-			<span className='text-wrap'>{buttonText}</span>
-			{renderedIcon}
-		</button>
-	);
+	if (isEspressoIcon(icon)) {
+		return (
+			<button {...buttonProps} className={classes} onClick={onClickHandler}>
+				<span className='text-wrap'>{buttonText}</span>
+				{renderedIcon}
+			</button>
+		);
+	}
+
+	return <Button icon={icon}>{buttonText}</Button>;
 };
 
 export default EspressoButton;

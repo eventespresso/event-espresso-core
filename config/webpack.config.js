@@ -28,6 +28,7 @@ const miniExtract = require('mini-css-extract-plugin');
 const paths = require('./paths');
 const modules = require('./modules');
 const getClientEnvironment = require('./env');
+const resolveTsconfigPathsToAlias = require('./resolve-tsconfig-path-to-webpack-alias');
 
 const appPackageJson = require(paths.appPackageJson);
 const { entries } = paths;
@@ -291,6 +292,7 @@ module.exports = function(webpackEnv) {
 					'scheduler/tracing': 'scheduler/tracing-profiling',
 				}),
 				...(modules.webpackAliases || {}),
+				...resolveTsconfigPathsToAlias(),
 			},
 			plugins: [
 				// Adds support for installing with Plug'n'Play, leading to faster installs and adding

@@ -2,6 +2,7 @@
 	"compilerOptions": {
 		"allowJs": true,
 		"allowSyntheticDefaultImports": true,
+		"baseUrl": "./",
 		"esModuleInterop": true,
 		"forceConsistentCasingInFileNames": true,
 		"jsx": "react",
@@ -10,6 +11,9 @@
 		"module": "esnext",
 		"moduleResolution": "node",
 		"noEmit": true,
+		"paths": {
+			"@application/*": ["assets/src/application/*"]
+		},
 		"resolveJsonModule": true,
 		"skipLibCheck": true,
 		"strict": false,
