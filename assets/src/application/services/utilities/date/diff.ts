@@ -17,6 +17,7 @@ import {
 	differenceInSeconds,
 	differenceInWeeks,
 	differenceInYears,
+	Locale,
 } from 'date-fns';
 
 type UnitsType =
@@ -60,10 +61,21 @@ const diffMapping = {
 	years: differenceInYears,
 };
 
-const diff = (unit: UnitsType, dateLeft: Date | number, dateRight: Date | number) => {
+// only for calendarWeeks
+type DirtyOptions = {
+	locale?: Locale;
+	weekStartsOn?: 0 | 1 | 2 | 3 | 4 | 5 | 6;
+};
+
+const diff = (
+	unit: UnitsType,
+	dateLeft: Date | number,
+	dateRight: Date | number,
+	dirtyOptions?: DirtyOptions
+): number => {
 	const func = diffMapping[unit];
 
-	return func(dateLeft, dateRight);
+	return unit === 'calendarWeeks' ? func(dateLeft, dateRight, dirtyOptions) : func(dateLeft, dateRight);
 };
 
 export default diff;
