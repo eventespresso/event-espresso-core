@@ -17,10 +17,10 @@ const EmptyState = (props: EmptyStateProps) => {
 		<>
 			<Empty
 				description={
-					<div>
-						<div>{title}</div>
+					<>
+						{title}
 						<span>{description}</span>
-					</div>
+					</>
 				}
 				image={Empty.PRESENTED_IMAGE_SIMPLE}
 			/>
