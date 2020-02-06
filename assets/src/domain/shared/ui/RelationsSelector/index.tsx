@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import { Button, MenuItem } from '@blueprintjs/core/lib/esm';
+import { MenuItem } from '@blueprintjs/core/lib/esm';
 import { MultiSelect } from '@blueprintjs/select';
+
+import { EspressoButton } from '@application/ui/input';
 
 const transformRelatedItemsArrayToObject = (items) =>
 	items.reduce((relatedItems, relatedItem) => {
@@ -242,7 +244,7 @@ const RelationsSelector: React.FC<RelationsSelectorProps> = ({
 		);
 	};
 
-	const clearButton = relatedItems.length > 0 ? <Button icon='cross' onClick={reset} minimal /> : undefined;
+	const clearButton = relatedItems.length > 0 && <EspressoButton icon='disconnect' onClick={reset} />;
 	const selectedItems = Object.keys(relatedItemsObject).filter((itemId) => hasRelation(itemId));
 	const tagInputProps = {
 		tagProps: { minimal: true },

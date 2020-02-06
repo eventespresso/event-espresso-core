@@ -1,9 +1,10 @@
 // @ts-nocheck
 import React, { useState } from 'react';
 import { parseISO } from 'date-fns';
-import { Button, Card, EditableText, Elevation, H4, H6, Popover } from '@blueprintjs/core/lib/esm';
+import { Card, EditableText, Elevation, H4, H6, Popover } from '@blueprintjs/core/lib/esm';
 import { __ } from '@wordpress/i18n';
 
+import { EspressoButton } from '@application/ui/input';
 import DeleteDatetimeButton from './DeleteDateButton';
 import EditDateButton from './EditDateButton';
 
@@ -95,7 +96,7 @@ const DateCard: React.FC<ListItemProps> = ({ id }) => {
 				<div>
 					<DateRangeDisplay range={range} withTime />
 					<Popover lazy>
-						<Button icon='calendar' style={btnStyle} minimal />
+						<EspressoButton icon='calendar' />
 						<DateRangePicker onFieldUpdate={updateEntity} range={range} setRange={setRange} />
 					</Popover>
 				</div>

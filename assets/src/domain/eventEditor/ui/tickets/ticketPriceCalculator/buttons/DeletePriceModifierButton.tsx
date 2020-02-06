@@ -1,5 +1,5 @@
 import React from 'react';
-import { Button } from '@blueprintjs/core';
+import { EspressoButton } from '@application/ui/input';
 
 type DeletePriceModifierButtonProps = {
 	index: number;
@@ -7,7 +7,7 @@ type DeletePriceModifierButtonProps = {
 };
 
 const DeletePriceModifierButton: React.FC<DeletePriceModifierButtonProps> = ({ index, remove }) => {
-	return <Button key={'trash'} icon={'trash'} onClick={(): void => remove(index)} minimal />;
+	return <EspressoButton key='delete' icon='delete' onClick={(): void => remove(index)} />;
 };
 
 export default DeletePriceModifierButton;

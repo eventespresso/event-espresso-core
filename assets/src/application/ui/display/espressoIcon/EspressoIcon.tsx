@@ -10,9 +10,9 @@ import { EspressoIconProps, Icon } from './types';
 const EspressoIcon: React.FC<EspressoIconProps> = ({ icon, svgSize = 20, className, isPressed, ...otherProps }) => {
 	let path: string;
 	switch (icon) {
-		case Icon.CALCULATOR:
-			path = SvgPath.CALCULATOR;
-			break;
+		// case Icon.CALCULATOR:
+		// 	path = SvgPath.CALCULATOR;
+		// 	break;
 
 		case Icon.CALENDAR:
 			path = SvgPath.CALENDAR;

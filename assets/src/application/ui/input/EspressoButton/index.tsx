@@ -56,7 +56,11 @@ const EspressoButton: React.FC<EspressoButtonProps> = ({
 		);
 	}
 
-	return <Button icon={icon}>{buttonText}</Button>;
+	return (
+		<Button icon={icon} onClick={onClick}>
+			{buttonText}
+		</Button>
+	);
 };
 
 export default EspressoButton;

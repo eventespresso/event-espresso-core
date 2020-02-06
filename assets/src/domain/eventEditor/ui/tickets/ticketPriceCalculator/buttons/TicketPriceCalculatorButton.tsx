@@ -1,5 +1,5 @@
 import React from 'react';
-import { Button } from '@blueprintjs/core/lib/esm';
+import { EspressoButton } from '@application/ui/input';
 
 import { TpcButtonDataProps, TpcModalProps } from '../types';
 import { useEditorModal } from '../../../../../../application/ui/layout/editorModal';
@@ -13,7 +13,7 @@ const TicketPriceCalculatorButton: React.FC<TpcButtonDataProps & TpcModalProps> 
 			entityId: ticketId,
 		});
 	};
-	return <Button icon={'calculator'} onClick={onClick} minimal />;
+	return <EspressoButton icon='calculator' onClick={onClick} />;
 };
 
 export default TicketPriceCalculatorButton;
