@@ -176,6 +176,55 @@ export const formConfig: EspressoFormProps = {
 			desc: 'Please enter a strong password',
 		},
 		{
+			id: 'country',
+			label: 'Country',
+			fieldType: 'select',
+			options: [
+				{
+					label: 'United States',
+					value: 'us',
+				},
+				{
+					label: 'Canada',
+					value: 'ca',
+				},
+				{
+					label: 'India',
+					value: 'in',
+				},
+			],
+			defaultValue: 'ca',
+		},
+		{
+			id: 'languages',
+			label: 'Languages',
+			fieldType: 'multicheck',
+			options: [
+				{
+					label: 'English',
+					value: 'en',
+				},
+				{
+					label: 'French',
+					value: 'fr',
+				},
+				{
+					label: 'Spanish',
+					value: 'es',
+				},
+				{
+					label: 'Russian',
+					value: 'ru',
+				},
+			],
+			defaultValue: ['en'],
+		},
+		{
+			id: 'subscribe',
+			label: 'Subscribe',
+			fieldType: 'switch',
+		},
+		{
 			id: 'bio',
 			label: 'About',
 			fieldType: 'textarea',

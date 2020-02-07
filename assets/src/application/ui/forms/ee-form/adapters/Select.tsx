@@ -1,32 +1,31 @@
 import React from 'react';
 import { Select } from 'antd';
-import { OptionProps } from 'antd/lib/select';
 import { SelectProps } from './types';
 
-const SelectField: React.FC<SelectProps> = ({ input, mode, options, ...restProps }) => {
-	const children = options.map(({ optgroup, options: optionGroups = [], value, label, ...rest }) => {
-		if (optgroup) {
+const SelectField: React.FC<SelectProps> = ({ input, mode, options, ...selectProps }) => {
+	const children = options.map(({ optgroup, options: optionGroups = [], label, ...optionProps }) => {
+		if (optgroup && optionGroups.length) {
 			return (
 				<Select.OptGroup label={optgroup} key={optgroup}>
-					{optionGroups.map((props) => (
-						<SelectOption {...props} />
+					{optionGroups.map(({ value, label: optLabel, ...opts }) => (
+						<Select.Option key={value} {...opts}>
+							{optLabel}
+						</Select.Option>
 					))}
 				</Select.OptGroup>
 			);
 		}
-		return <SelectOption key={value} value={value} label={label} {...rest} />;
+		return (
+			<Select.Option key={optionProps.value} {...optionProps}>
+				{label}
+			</Select.Option>
+		);
 	});
 	return (
-		<Select {...input} {...restProps} mode={mode}>
+		<Select {...input} {...selectProps} mode={mode}>
 			{children}
 		</Select>
 	);
 };
-
-const SelectOption: React.FC<OptionProps> = ({ value, label, ...rest }) => (
-	<Select.Option key={value} value={value} {...rest}>
-		{label}
-	</Select.Option>
-);
 
 export default SelectField;
