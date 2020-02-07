@@ -12,7 +12,18 @@
 		"moduleResolution": "node",
 		"noEmit": true,
 		"paths": {
-			"@application/*": ["assets/src/application/*"]
+			"@application/*": ["assets/src/application/*"],
+			"@appConstants/*": ["assets/src/application/constants/*"],
+			"@appServices/*": ["assets/src/application/services/*"],
+			"@appDisplay/*": ["assets/src/application/ui/display/*"],
+			"@appForms/*": ["assets/src/application/ui/forms/*"],
+			"@appInputs/*": ["assets/src/application/ui/input/*"],
+			"@appLayout/*": ["assets/src/application/ui/layout/*"],
+			"@appConfig/*": ["assets/src/application/valueObjects/config/*"],
+			"@edtrHooks/*": ["assets/src/domain/eventEditor/hooks/*"],
+			"@edtrInterfaces/*": ["assets/src/domain/eventEditor/interfaces/*"],
+			"@edtrServices/*": ["assets/src/domain/eventEditor/services/*"],
+			"@edtrUI/*": ["assets/src/domain/eventEditor/ui/*"]
 		},
 		"resolveJsonModule": true,
 		"skipLibCheck": true,
