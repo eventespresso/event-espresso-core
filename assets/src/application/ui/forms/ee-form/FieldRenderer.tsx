@@ -1,5 +1,4 @@
 import React from 'react';
-import { __ } from '@wordpress/i18n';
 
 import { FormItem, MappedField } from './adapters';
 import { FieldRendererProps } from './types';
