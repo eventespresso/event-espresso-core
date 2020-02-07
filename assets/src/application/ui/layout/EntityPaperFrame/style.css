@@ -1,0 +1,134 @@
+/** -------------------------------------------------------------------------
+ * Event Espresso EntityPaperFrame Stylesheet
+ * © 2018 Event Espresso
+ * ------------------------------------------------------------------------- */
+
+.ee-entity-paper-frame-wrapper {
+	margin: 0 1.3% var(--ee-margin-default) 0;
+	max-width: calc(var(--ee-font-size-small) * 33);
+	min-width: calc(var(--ee-font-size-small) * 27);
+	position: relative;
+	width: 32%;
+}
+
+.ee-entity-wrapper {
+	background: var(--ee-background-color);
+	box-shadow: var(--ee-box-shadow-big-diffuse);
+	box-sizing: border-box;
+	min-height: calc(var(--ee-font-size-default) * 12);
+	max-width: calc(var(--ee-font-size-small) * 33);
+	min-width: calc(var(--ee-font-size-small) * 27);
+	position: relative;
+}
+
+.ee-entity-wrapper > div:first-of-type {
+	box-shadow: var(--ee-box-shadow-tiny-inset-diffuse);
+}
+
+.ee-entity-paper-frame {
+	bottom: 0;
+	box-sizing: border-box;
+	height: calc(var(--ee-font-size-small) * 11);
+	max-width: calc(var(--ee-font-size-small) * 33);
+	width: 100%;
+	position: absolute;
+	z-index: 0;
+}
+
+.ee-entity-paper-frame:before,
+.ee-entity-paper-frame:after {
+	position: absolute;
+	content: '';
+	bottom: 14px;
+	left: 10px;
+	width: 50%;
+	top: 70%;
+	max-width: 300px;
+	background: var(--ee-color-black);
+	-webkit-box-shadow: 0 15px 10px rgba(0, 0, 0, 0.6);
+	-moz-box-shadow: 0 15px 10px rgba(0, 0, 0, 0.6);
+	box-shadow: 0 15px 10px rgba(0, 0, 0, 0.6);
+	-webkit-transform: rotate(-3deg);
+	-moz-transform: rotate(-3deg);
+	-o-transform: rotate(-3deg);
+	-ms-transform: rotate(-3deg);
+	transform: rotate(-3deg);
+	z-index: -1;
+}
+
+.ee-entity-paper-frame:after {
+	-webkit-transform: rotate(3deg);
+	-moz-transform: rotate(3deg);
+	-o-transform: rotate(3deg);
+	-ms-transform: rotate(3deg);
+	transform: rotate(3deg);
+	right: 10px;
+	left: auto;
+}
+
+/* Media Queries for specific screen sizes
+ * -------------------------------------------------------------------------*/
+
+@media only screen and (max-width: 1920px) {
+}
+
+@media only screen and (max-width: 1766px) {
+	.ee-entity-paper-frame-wrapper {
+		margin-right: 1.5%;
+		width: 48.5%;
+	}
+}
+
+@media only screen and (max-width: 1366px) {
+	.ee-entity-wrapper,
+	.ee-entity-paper-frame,
+	.ee-entity-paper-frame-wrapper {
+		max-width: 525px;
+		width: 100%;
+	}
+}
+
+@media only screen and (max-width: 1280px) {
+}
+
+@media only screen and (max-width: 1024px) {
+}
+
+/* WordPress Admin Media Query Breakpoint: Auto-folding of the admin menu */
+@media only screen and (max-width: 960px) {
+}
+
+/* WordPress Admin Media Query Breakpoint: one column on the post write/edit screen */
+@media only screen and (max-width: 850px) {
+	.ee-entity-wrapper,
+	.ee-entity-paper-frame,
+	.ee-entity-paper-frame-wrapper {
+		width: 100%;
+	}
+
+	.ee-entity-wrapper,
+	.ee-entity-paper-frame {
+		max-width: 525px;
+	}
+}
+
+/* WordPress Admin Media Query Breakpoint: Tablet */
+@media screen and (max-width: 782px) {
+}
+
+/* WordPress Admin Media Query Breakpoint: Smartphone */
+@media screen and (max-width: 600px) {
+	.ee-entity-wrapper,
+	.ee-entity-paper-frame,
+	.ee-entity-paper-frame-wrapper {
+		max-width: 100%;
+		min-width: 100%;
+		width: 100%;
+	}
+}
+
+@media only screen and (max-width: 480px) {
+}
+
+@media only screen and (max-width: 360px) {
+}
