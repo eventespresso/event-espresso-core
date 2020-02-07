@@ -1,20 +1,21 @@
 // @ts-nocheck
 import React from 'react';
-import { Card, EditableText, Elevation, H4, H6 } from '@blueprintjs/core/lib/esm';
+import { EditableText, H4, H6 } from '@blueprintjs/core/lib/esm';
 import { __ } from '@wordpress/i18n';
 
-import TicketProvider from '../../../services/context/TicketContext';
 import EditTicketButton from './EditTicketButton';
 import DeleteTicketButton from './DeleteTicketButton';
 import TicketPriceCalculatorButton from '../ticketPriceCalculator/buttons/TicketPriceCalculatorButton';
-import useTicketItem from '../../../services/apollo/queries/tickets/useTicketItem';
-import { CurrencyInput, InlineEditInput } from '../../../../../application/ui/input';
-import { useEntityMutator, EntityType } from '../../../../../application/services/apollo/mutations';
-import useRelations from '../../../../../application/services/apollo/relations/useRelations';
-import { useStatus, TypeName } from '../../../../../application/services/apollo/status';
+import useTicketItem from '@edtrServices/apollo/queries/tickets/useTicketItem';
+import TicketProvider from '@edtrServices/context/TicketContext';
+import { CurrencyInput, InlineEditInput } from '@appInputs';
+import { useEntityMutator, EntityType } from '@appServices/apollo/mutations';
+import useRelations from '@appServices/apollo/relations/useRelations';
+import { useStatus, TypeName } from '@appServices/apollo/status';
+import EntityPaperFrame from '@appLayout/EntityPaperFrame';
 import DatetimeIdTag from '../../datetimes/DatetimeIdTag';
 import { ListItemProps } from '../../../interfaces/types';
-import { cardStyle, idStyle, priceStyle, btnsStyle } from './styles';
+import { priceStyle, btnsStyle } from './styles';
 
 const TicketCard: React.FC<ListItemProps> = ({ id }) => {
 	const ticket = useTicketItem({ id });
@@ -29,12 +30,9 @@ const TicketCard: React.FC<ListItemProps> = ({ id }) => {
 	});
 	return ticket ? (
 		<TicketProvider id={ticket.id}>
-			<Card elevation={Elevation.ONE} style={cardStyle}>
+			<EntityPaperFrame entity={ticket}>
 				<EditTicketButton position='top' />
 				<div>
-					<div style={idStyle}>
-						{ticket.dbId} {':'} {ticket.id}
-					</div>
 					<H4>
 						<InlineEditInput
 							component={EditableText}
@@ -102,7 +100,7 @@ const TicketCard: React.FC<ListItemProps> = ({ id }) => {
 						<DatetimeIdTag key={datetimeId} id={datetimeId} />
 					))}
 				</div>
-			</Card>
+			</EntityPaperFrame>
 		</TicketProvider>
 	) : null;
 };
