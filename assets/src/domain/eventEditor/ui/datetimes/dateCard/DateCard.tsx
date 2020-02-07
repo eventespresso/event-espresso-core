@@ -1,27 +1,27 @@
 // @ts-nocheck
 import React, { useState } from 'react';
 import { parseISO } from 'date-fns';
-import { Card, EditableText, Elevation, H4, H6, Popover } from '@blueprintjs/core/lib/esm';
+import { EditableText, H4, H6, Popover } from '@blueprintjs/core/lib/esm';
 import { __ } from '@wordpress/i18n';
 
 import { EspressoButton } from '@application/ui/input';
 import DeleteDatetimeButton from './DeleteDateButton';
 import EditDateButton from './EditDateButton';
 
-import { DatetimeProvider } from '../../../services/context/DatetimeContext';
-import useDatetimeItem from '../../../services/apollo/queries/datetimes/useDatetimeItem';
+import { DatetimeProvider } from '@edtrServices/context/DatetimeContext';
+import useDatetimeItem from '@edtrServices/apollo/queries/datetimes/useDatetimeItem';
 import TicketIdTag from '../../tickets/TicketIdTag';
 
 import DateRangePicker from '../../../../shared/ui/dateRangeInput/DateRangePicker';
 import { DateRangeDisplay } from '../../../../shared/ui/dateRangeInput/dateDisplay';
 import { PLUS_ONE_MONTH, PLUS_TWO_MONTHS } from '../../../../shared/constants/defaultDates';
 
-import { useEntityMutator, EntityType } from '../../../../../application/services/apollo/mutations';
-import useRelations from '../../../../../application/services/apollo/relations/useRelations';
-import { useStatus, TypeName } from '../../../../../application/services/apollo/status';
-import { InlineEditInput } from '../../../../../application/ui/input';
+import { useEntityMutator, EntityType } from '@appServices/apollo/mutations';
+import useRelations from '@appServices/apollo/relations/useRelations';
+import { useStatus, TypeName } from '@appServices/apollo/status';
+import { InlineEditInput } from '@appInputs';
+import EntityPaperFrame from '@appLayout/EntityPaperFrame';
 import { ListItemProps } from '../../../interfaces/types';
-import { btnStyle, cardStyle, idStyle } from './styles';
 
 const DateCard: React.FC<ListItemProps> = ({ id }) => {
 	const date = useDatetimeItem({ id });
@@ -48,11 +48,8 @@ const DateCard: React.FC<ListItemProps> = ({ id }) => {
 
 	return date ? (
 		<DatetimeProvider id={date.id}>
-			<Card elevation={Elevation.ONE} style={cardStyle}>
+			<EntityPaperFrame entity={date}>
 				<EditDateButton position='top' />
-				<div style={idStyle}>
-					{date.dbId} {':'} {date.id}
-				</div>
 				<H4>
 					<InlineEditInput
 						component={EditableText}
@@ -112,7 +109,7 @@ const DateCard: React.FC<ListItemProps> = ({ id }) => {
 				</div>
 				{/* Delete button should be hidden to avoid relational inconsistencies */}
 				{ticketsLoaded && <DeleteDatetimeButton id={date.id} />}
-			</Card>
+			</EntityPaperFrame>
 		</DatetimeProvider>
 	) : null;
 };
