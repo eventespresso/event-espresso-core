@@ -1,7 +1,9 @@
 import React from 'react';
 import { Button as AntdButton } from 'antd';
 
-const Button: React.FC<any> = (props) => {
+import { ButtonProps } from './types';
+
+const Button: React.FC<ButtonProps> = (props) => {
 	return <AntdButton {...props} />;
 };
 

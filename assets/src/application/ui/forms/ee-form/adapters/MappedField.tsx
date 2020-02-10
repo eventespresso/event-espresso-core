@@ -2,7 +2,7 @@ import React from 'react';
 import { Text, TextArea, Select, Switch, MultiCheck, Number as NumberField } from './';
 import { FieldRendererProps } from '../types';
 
-const MappedField: React.FC<FieldRendererProps> = ({ fieldType, ...rest }) => {
+const MappedField: React.FC<Omit<FieldRendererProps, 'meta'>> = ({ fieldType, ...rest }) => {
 	let Component: React.ReactType;
 	switch (fieldType) {
 		case 'text':

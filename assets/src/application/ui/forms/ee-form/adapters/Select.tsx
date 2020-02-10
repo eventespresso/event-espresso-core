@@ -3,12 +3,12 @@ import { Select } from 'antd';
 import { SelectProps } from './types';
 
 const SelectField: React.FC<SelectProps> = ({ input, mode, options, ...selectProps }) => {
-	const children = options.map(({ optgroup, options: optionGroups = [], label, ...optionProps }) => {
+	const children = options.map(({ optgroup, options: optionGroups = [], label, ...optionProps }, index) => {
 		if (optgroup && optionGroups.length) {
 			return (
-				<Select.OptGroup label={optgroup} key={optgroup}>
-					{optionGroups.map(({ value, label: optLabel, ...opts }) => (
-						<Select.Option key={value} {...opts}>
+				<Select.OptGroup label={optgroup} key={`${optgroup}${index}`}>
+					{optionGroups.map(({ value, label: optLabel, ...opts }, i) => (
+						<Select.Option {...opts} key={`${value}${i}`}>
 							{optLabel}
 						</Select.Option>
 					))}
@@ -16,13 +16,17 @@ const SelectField: React.FC<SelectProps> = ({ input, mode, options, ...selectPro
 			);
 		}
 		return (
-			<Select.Option key={optionProps.value} {...optionProps}>
+			<Select.Option {...optionProps} key={`${optionProps.value}${index}`}>
 				{label}
 			</Select.Option>
 		);
 	});
+
+	// make sure the value is an array when mode is "multiple"
+	const value = mode === 'multiple' ? input.value || [] : input.value;
+
 	return (
-		<Select {...input} {...selectProps} mode={mode}>
+		<Select {...input} {...selectProps} mode={mode} value={value}>
 			{children}
 		</Select>
 	);
