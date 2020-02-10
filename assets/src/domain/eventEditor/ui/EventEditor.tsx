@@ -11,17 +11,19 @@ import DatesList from './datetimes/datesList';
 import TicketsList from './tickets/ticketsList';
 import { EditorModal } from '../../shared/ui/editorModal';
 import { useStatus, TypeName } from '../../../application/services/apollo/status';
+import EspressoForm from '@application/ui/forms/ee-form';
 
 const EventEditor: React.FC = () => {
-	useEditorInitialization();
+	// useEditorInitialization();
 
-	const { isLoaded } = useStatus();
+	// const { isLoaded } = useStatus();
 
 	return (
 		<>
-			{isLoaded(TypeName.datetimes) && <EditorModal />}
-			<DatesList />
-			<TicketsList />
+			<EspressoForm />
+			{/* {isLoaded(TypeName.datetimes) && <EditorModal />} */}
+			{/* <DatesList /> */}
+			{/* <TicketsList /> */}
 		</>
 	);
 };
