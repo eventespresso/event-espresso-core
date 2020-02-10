@@ -1,4 +1,3 @@
-// @ts-nocheck
 import React from 'react';
 import { Table } from 'antd';
 import { DndProvider, DragSource, DropTarget } from 'react-dnd';
@@ -9,24 +8,21 @@ import './styles.scss';
 
 let dragingIndex = -1;
 
-class BodyRow extends React.Component {
-	render() {
-		const { isOver, connectDragSource, connectDropTarget, moveRow, ...restProps } = this.props;
-		const style = { ...restProps.style, cursor: 'move' };
+const BodyRow = ({ isOver, connectDragSource, connectDropTarget, moveRow, ...restProps }) => {
+	const style = { ...restProps.style, cursor: 'move' };
+	let { className } = restProps;
 
-		let { className } = restProps;
-		if (isOver) {
-			if (restProps.index > dragingIndex) {
-				className += ' drop-over-downward';
-			}
-			if (restProps.index < dragingIndex) {
-				className += ' drop-over-upward';
-			}
+	if (isOver) {
+		if (restProps.index > dragingIndex) {
+			className += ' drop-over-downward';
 		}
-
-		return connectDragSource(connectDropTarget(<tr {...restProps} className={className} style={style} />));
+		if (restProps.index < dragingIndex) {
+			className += ' drop-over-upward';
+		}
 	}
-}
+
+	return connectDragSource(connectDropTarget(<tr {...restProps} className={className} style={style} />));
+};
 
 const rowSource = {
 	beginDrag(props) {
