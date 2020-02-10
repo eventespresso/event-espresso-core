@@ -3,12 +3,13 @@ import React from 'react';
 import { RenderFieldsProps } from './types';
 import RenderField from './RenderField';
 
-const RenderFields: React.FC<RenderFieldsProps> = ({ fields }) => {
+const RenderFields: React.FC<RenderFieldsProps> = ({ fields, namespace }) => {
 	return (
 		<div>
-			{fields.map((field, key) => (
-				<RenderField key={key} {...field} />
-			))}
+			{fields.map(({ name, ...fieldProps }, key) => {
+				const fieldName = namespace ? `${namespace}.${name}` : name;
+				return <RenderField key={key} {...fieldProps} name={fieldName} />;
+			})}
 		</div>
 	);
 };
