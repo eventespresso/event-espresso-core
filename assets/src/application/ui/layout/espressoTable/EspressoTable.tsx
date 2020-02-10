@@ -1,5 +1,5 @@
 import React from 'react';
-import { pathOr } from 'ramda';
+import { pathOr, propOr } from 'ramda';
 import { Table } from 'antd';
 import { TableProps } from 'antd/lib/table/interface';
 
@@ -17,7 +17,7 @@ const EspressoTable = <RecordType extends object = any>(props: TableProps<Record
 			dataSource={props.dataSource}
 			locale={props.locale}
 			pagination={pagination}
-			size='middle'
+			size={props.size || 'middle'}
 		/>
 	);
 };
