@@ -1,14 +1,54 @@
-import { FormRenderProps, FormProps, FieldRenderProps } from 'react-final-form';
-import { SelectOptions } from './adapters/types';
+import React from 'react';
+import { FormRenderProps, FormProps, FieldRenderProps, FieldProps as RFFFieldProps } from 'react-final-form';
+import { FieldArrayProps } from 'react-final-form-arrays';
 
-type FieldList = Array<FieldProps>;
-type SectionList = Array<any>;
+import { SelectOptions, ButtonProps } from './adapters/types';
+
+interface FormButtonProps extends ButtonProps {
+	label?: string;
+}
 
 interface AdditionalFormProps {
 	sections?: SectionList;
 	fields?: FieldList;
-	submitLabel?: string;
+	submitButton?: FormButtonProps;
+	resetButton?: FormButtonProps;
 }
+
+export interface AdditionalFieldProps {
+	label?: React.ReactNode | string;
+	fieldType: 'text' | 'textarea' | 'switch' | 'select' | 'multicheck' | 'number' | 'group';
+	htmlType?: string;
+	before?: React.ReactNode | string;
+	after?: React.ReactNode | string;
+	desc?: React.ReactNode | string;
+	subFields?: FieldList;
+	options?: SelectOptions;
+	repeatable?: boolean;
+	conditions?: FieldConditions;
+	[key: string]: any;
+}
+
+export interface FieldCondition {
+	field: string;
+	compare:
+		| '='
+		| '!='
+		| '!='
+		| '>'
+		| '>='
+		| '<'
+		| '<='
+		| 'EMPTY'
+		| 'NOT_EMPTY'
+		| 'CONTAINS'
+		| 'NOT_CONTAINS'
+		| 'MATCHES'
+		| 'NOT_MATCHES';
+	value?: string;
+}
+
+export type FieldConditions = Array<FieldCondition>;
 
 export interface EspressoFormProps extends FormProps, AdditionalFormProps {}
 
@@ -16,33 +56,43 @@ export interface FormRendererProps extends FormRenderProps, AdditionalFormProps 
 
 export interface FieldRendererProps<FieldValue = any> extends FieldRenderProps<FieldValue>, FieldProps<FieldValue> {}
 
-export interface FieldProps<FieldValue = any> {
-	id?: string;
-	label?: HTMLElement | string;
-	fieldType: 'text' | 'textarea' | 'switch' | 'select' | 'multicheck' | 'number';
-	htmlType?: string;
-	before?: HTMLElement | string;
-	after?: HTMLElement | string;
-	desc?: HTMLElement | string;
-	subFields?: Array<FieldProps>;
-	defaultValue?: FieldValue;
-	options?: SelectOptions;
-	repeatable?: boolean;
-	[key: string]: any;
-}
+export interface RepeatableRendererProps<FieldValue = any>
+	extends FieldArrayProps<FieldValue, any>,
+		AdditionalFieldProps {}
+
+export interface FieldProps<FieldValue = any>
+	extends AdditionalFieldProps,
+		RFFFieldProps<FieldValue, FieldRendererProps> {}
 
 export type FormValuesShape = {
 	[key: string]: any;
 };
 
-export interface SubmitProps {
+export interface SubmitProps extends Pick<AdditionalFormProps, 'submitButton' | 'resetButton'> {
 	submitting: boolean;
-	label?: string;
-	[key: string]: any;
 }
 
 export interface RenderFieldsProps {
 	fields: FieldList;
+	namespace?: string;
+}
+
+export interface RenderSectionsProps {
+	sections: SectionList;
 }
 
 export interface RenderFieldProps extends FieldProps {}
+
+export interface SectionProps {
+	name: string;
+	title?: string;
+	fields: FieldList;
+	/**
+	 * If true, each field inside the section
+	 * will be saved as `${section.name}.{field.name}`
+	 */
+	namespaceFields?: boolean;
+}
+
+type FieldList = Array<FieldProps>;
+type SectionList = Array<SectionProps>;
