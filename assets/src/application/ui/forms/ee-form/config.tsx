@@ -55,13 +55,6 @@ export const formConfig: EspressoFormProps = {
 					label: 'Phone',
 					fieldType: 'text',
 				},
-				{
-					name: 'password',
-					label: 'Password',
-					fieldType: 'text',
-					htmlType: 'email',
-					desc: 'Please enter a strong password',
-				},
 			],
 		},
 		{
@@ -216,28 +209,11 @@ export const formConfig: EspressoFormProps = {
 	],
 	fields: [
 		{
-			name: 'full_name',
-			label: 'Full Name',
-			fieldType: 'text',
-		},
-		{
-			name: 'username',
-			label: 'Username',
-			fieldType: 'text',
-			addonBefore: '@',
-		},
-		{
 			name: 'price',
 			label: 'Price',
 			fieldType: 'text',
 			addonAfter: '$',
 			htmlType: 'number',
-		},
-		{
-			name: 'email',
-			label: 'Email',
-			fieldType: 'text',
-			htmlType: 'email',
 		},
 		{
 			name: 'password',
@@ -265,54 +241,6 @@ export const formConfig: EspressoFormProps = {
 				},
 			],
 			initialValue: 'ca',
-		},
-		{
-			name: 'address',
-			label: 'Address',
-			fieldType: 'group',
-			subFields: [
-				{
-					name: 'street',
-					label: 'Street',
-					fieldType: 'text',
-				},
-				{
-					name: 'city',
-					label: 'City',
-					fieldType: 'text',
-				},
-				{
-					name: 'state',
-					label: 'State/Province',
-					fieldType: 'select',
-					options: [],
-				},
-				{
-					name: 'zip',
-					label: 'Zip/Postal code',
-					fieldType: 'text',
-				},
-				{
-					name: 'country',
-					label: 'Country',
-					fieldType: 'select',
-					options: [
-						{
-							label: 'United States',
-							value: 'us',
-						},
-						{
-							label: 'Canada',
-							value: 'ca',
-						},
-						{
-							label: 'India',
-							value: 'in',
-						},
-					],
-					initialValue: 'ca',
-				},
-			],
 		},
 		{
 			name: 'languages',
