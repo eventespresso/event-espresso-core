@@ -30,7 +30,7 @@ const TableHeader = ({ tableId, headerRows, cssClasses, ...extraProps }) => {
 					rowNumber={row}
 					rowType={'header'}
 					htmlId={headerRow.id || tableId}
-					htmlClass={headerRow.class || ''}
+					htmlClass={headerRow.className || ''}
 					cssClasses={cssClasses}
 				>
 					{headerRow.cells.map((column, col) => {
@@ -44,7 +44,7 @@ const TableHeader = ({ tableId, headerRows, cssClasses, ...extraProps }) => {
 								colNumber={col}
 								rowType={'header'}
 								htmlId={column.id || tableId}
-								htmlClass={column.class || ''}
+								htmlClass={column.className || ''}
 								cssClasses={cssClasses}
 							>
 								{column.value || ''}

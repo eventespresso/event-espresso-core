@@ -35,7 +35,7 @@ const TableFooter = ({ tableId, cssClasses, footerRows, rowCount, ...extraProps 
 						rowNumber={row}
 						rowType={'footer'}
 						htmlId={footerRow.id || tableId}
-						htmlClass={footerRow.class || ''}
+						htmlClass={footerRow.className || ''}
 						cssClasses={cssClasses}
 					>
 						{footerRow.cells.map((column, col) => {
@@ -52,7 +52,7 @@ const TableFooter = ({ tableId, cssClasses, footerRows, rowCount, ...extraProps 
 									colNumber={col}
 									rowType={'footer'}
 									htmlId={column.id || tableId}
-									htmlClass={column.class || ''}
+									htmlClass={column.className || ''}
 									cssClasses={cssClasses}
 								>
 									{column.value || ''}

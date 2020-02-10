@@ -100,8 +100,8 @@ export const addZebraStripesOnMobile = (formRows, exclude) => {
 								}
 								x++;
 								if (x % 2 === 0) {
-									cell.class = cell.class
-										? cell.class + ' ee-zebra-stripe-on-mobile'
+									cell.className = cell.className
+										? cell.className + ' ee-zebra-stripe-on-mobile'
 										: 'ee-zebra-stripe-on-mobile';
 								}
 								return cell;

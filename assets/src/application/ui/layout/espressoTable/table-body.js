@@ -58,7 +58,7 @@ const TableBody = ({
 				colNumber={colNumber}
 				rowType={'body'}
 				htmlId={cellData.id || tableId}
-				htmlClass={cellData.class || ''}
+				htmlClass={cellData.className || ''}
 				cssClasses={cssClasses}
 			>
 				{cellData.value || ''}
@@ -69,7 +69,7 @@ const TableBody = ({
 				rowNumber={rowNumber}
 				colNumber={colNumber}
 				htmlId={cellData.id || tableId}
-				htmlClass={cellData.class || ''}
+				htmlClass={cellData.className || ''}
 				cssClasses={cssClasses}
 			>
 				<ResponsiveCell heading={column.value} value={cellData.value} />
@@ -85,7 +85,7 @@ const TableBody = ({
 				rowNumber={rowNumber}
 				rowType={'body'}
 				htmlId={row.id || tableId}
-				htmlClass={row.class || ''}
+				htmlClass={row.className || ''}
 				cssClasses={cssClasses}
 				headerRowCount={headerRowCount}
 				sortable={typeof onDragEnd === 'function'}
