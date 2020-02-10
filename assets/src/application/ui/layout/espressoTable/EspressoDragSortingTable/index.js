@@ -84,7 +84,7 @@ const EspressoDragSortingTable = (props) => {
 		<DndProvider backend={HTML5Backend}>
 			<Table
 				className='table-drag-sorting'
-				columns={columns}
+				columns={props.columns}
 				dataSource={data}
 				components={components}
 				onRow={(record, index) => ({
