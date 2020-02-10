@@ -129,7 +129,7 @@ export const formConfig: EspressoFormProps = {
 					name: 'address',
 					label: 'Address',
 					fieldType: 'group',
-					repeatable: true,
+					isRepeatable: true,
 					subFields: [
 						{
 							name: 'street',
@@ -209,7 +209,7 @@ export const formConfig: EspressoFormProps = {
 					name: 'skills',
 					label: 'Skills',
 					fieldType: 'text',
-					repeatable: true,
+					isRepeatable: true,
 				},
 			],
 		},

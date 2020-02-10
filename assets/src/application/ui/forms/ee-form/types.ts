@@ -24,7 +24,7 @@ export interface AdditionalFieldProps {
 	desc?: React.ReactNode | string;
 	subFields?: FieldList;
 	options?: SelectOptions;
-	repeatable?: boolean;
+	isRepeatable?: boolean;
 	conditions?: FieldConditions;
 	[key: string]: any;
 }

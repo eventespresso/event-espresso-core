@@ -9,9 +9,9 @@ const RenderField: React.FC<RenderFieldProps> = (props) => {
 		return null;
 	}
 
-	const { repeatable, ...rest } = props;
+	const { isRepeatable, ...rest } = props;
 
-	if (repeatable) {
+	if (isRepeatable) {
 		return <Repeatable {...rest} />;
 	}
 	if (fieldType === 'group') {
