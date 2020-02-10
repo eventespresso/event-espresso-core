@@ -3,62 +3,99 @@ import { EspressoFormProps } from './types';
 export const formConfig: EspressoFormProps = {
 	onSubmit: (values) => console.log(values),
 	initialValues: {},
-	// validate: () => {},
-	submitLabel: 'Save Changes',
+	validate: ({ password, account }) => {
+		let errors = {};
+		if (!password || password.length < 8) {
+			errors = {
+				...errors,
+				password: 'Password must be at least 8 characters long.',
+			};
+		}
+		if (account && account.username && !/^\w{8,20}$/.test(account.username)) {
+			errors = {
+				...errors,
+				account: {
+					username: 'Invalid Username',
+				},
+			};
+		}
+		return errors;
+	},
+	submitButton: {
+		label: 'Save Changes',
+	},
+	resetButton: {
+		label: 'Reset',
+	},
 	sections: [
 		{
-			id: 'account',
+			name: 'account',
 			title: 'Account',
+			namespaceFields: true,
 			fields: [
 				{
-					id: 'full_name',
+					name: 'full_name',
 					label: 'Full Name',
 					fieldType: 'text',
 				},
 				{
-					id: 'username',
+					name: 'username',
 					label: 'Username',
 					fieldType: 'text',
-					before: '@',
+					addonBefore: '@',
 				},
 				{
-					id: 'email',
+					name: 'email',
 					label: 'Email',
-					fieldType: 'email',
+					fieldType: 'text',
+					htmlType: 'email',
 				},
 				{
-					id: 'password',
+					name: 'phone',
+					label: 'Phone',
+					fieldType: 'text',
+				},
+				{
+					name: 'password',
 					label: 'Password',
-					fieldType: 'password',
+					fieldType: 'text',
+					htmlType: 'email',
 					desc: 'Please enter a strong password',
 				},
 			],
 		},
 		{
-			id: 'billing_details',
+			name: 'billing',
 			title: 'Billing Details',
+			namespaceFields: true,
 			fields: [
 				{
-					id: 'name',
+					name: 'name',
 					label: 'Name',
 					fieldType: 'text',
 				},
 				{
-					id: 'phone',
+					name: 'phone',
 					label: 'Phone',
 					fieldType: 'group',
+					conditions: [
+						{
+							field: 'account.phone',
+							compare: 'EMPTY',
+						},
+						{
+							field: 'account.email',
+							compare: 'NOT_EMPTY',
+						},
+					],
 					subFields: [
 						{
-							id: 'code',
-							label: '',
+							name: 'code',
+							label: 'Country',
 							fieldType: 'select',
 							options: [
 								{
-									label: 'United States',
-									value: '+1',
-								},
-								{
-									label: 'Canada',
+									label: 'US/Canada',
 									value: '+1',
 								},
 								{
@@ -66,43 +103,81 @@ export const formConfig: EspressoFormProps = {
 									value: '+91',
 								},
 							],
-							defaultValue: '+1',
+							initialValue: '+1',
+							conditions: [
+								{
+									field: 'billing.phone.number',
+									compare: 'CONTAINS',
+									value: '76',
+								},
+								{
+									field: 'billing.phone.number',
+									compare: 'NOT_MATCHES',
+									value: '86',
+								},
+							],
 						},
 						{
-							id: 'number',
+							name: 'number',
 							label: 'Number',
-							fieldType: 'number',
+							fieldType: 'text',
+							pattern: '[0-9]{5,12}',
 						},
 					],
 				},
 				{
-					id: 'address',
+					name: 'address',
 					label: 'Address',
 					fieldType: 'group',
+					repeatable: true,
 					subFields: [
 						{
-							id: 'street',
+							name: 'street',
 							label: 'Street',
 							fieldType: 'text',
 						},
 						{
-							id: 'city',
+							name: 'city',
 							label: 'City',
 							fieldType: 'text',
 						},
 						{
-							id: 'state',
+							name: 'state',
 							label: 'State/Province',
 							fieldType: 'select',
 							options: [],
+							conditions: [
+								{
+									field: 'billing.address[x].country',
+									compare: 'MATCHES',
+									value: 'us|in',
+								},
+							],
 						},
 						{
-							id: 'zip',
+							name: 'zip',
 							label: 'Zip/Postal code',
 							fieldType: 'text',
+							conditions: [
+								{
+									field: 'billing.address[x].city',
+									compare: '=',
+									value: 'London',
+								},
+								{
+									field: 'misc.skills',
+									compare: 'CONTAINS',
+									value: 'react',
+								},
+								{
+									field: 'price',
+									compare: '>',
+									value: '100',
+								},
+							],
 						},
 						{
-							id: 'country',
+							name: 'country',
 							label: 'Country',
 							fieldType: 'select',
 							options: [
@@ -119,18 +194,19 @@ export const formConfig: EspressoFormProps = {
 									value: 'in',
 								},
 							],
-							defaultValue: 'ca',
+							initialValue: 'ca',
 						},
 					],
 				},
 			],
 		},
 		{
-			id: 'misc',
+			name: 'misc',
 			title: 'Miscellaneous',
+			namespaceFields: true,
 			fields: [
 				{
-					id: 'skills',
+					name: 'skills',
 					label: 'Skills',
 					fieldType: 'text',
 					repeatable: true,
@@ -140,43 +216,38 @@ export const formConfig: EspressoFormProps = {
 	],
 	fields: [
 		{
-			id: 'full_name',
+			name: 'full_name',
 			label: 'Full Name',
 			fieldType: 'text',
 		},
 		{
-			id: 'username',
+			name: 'username',
 			label: 'Username',
 			fieldType: 'text',
 			addonBefore: '@',
 		},
 		{
-			id: 'price',
+			name: 'price',
 			label: 'Price',
 			fieldType: 'text',
 			addonAfter: '$',
 			htmlType: 'number',
 		},
 		{
-			id: 'email',
+			name: 'email',
 			label: 'Email',
 			fieldType: 'text',
 			htmlType: 'email',
 		},
 		{
-			id: 'phone',
-			label: 'Phone',
-			fieldType: 'text',
-		},
-		{
-			id: 'password',
+			name: 'password',
 			label: 'Password',
 			fieldType: 'text',
 			htmlType: 'password',
 			desc: 'Please enter a strong password',
 		},
 		{
-			id: 'country',
+			name: 'country',
 			label: 'Country',
 			fieldType: 'select',
 			options: [
@@ -193,10 +264,58 @@ export const formConfig: EspressoFormProps = {
 					value: 'in',
 				},
 			],
-			defaultValue: 'ca',
+			initialValue: 'ca',
 		},
 		{
-			id: 'languages',
+			name: 'address',
+			label: 'Address',
+			fieldType: 'group',
+			subFields: [
+				{
+					name: 'street',
+					label: 'Street',
+					fieldType: 'text',
+				},
+				{
+					name: 'city',
+					label: 'City',
+					fieldType: 'text',
+				},
+				{
+					name: 'state',
+					label: 'State/Province',
+					fieldType: 'select',
+					options: [],
+				},
+				{
+					name: 'zip',
+					label: 'Zip/Postal code',
+					fieldType: 'text',
+				},
+				{
+					name: 'country',
+					label: 'Country',
+					fieldType: 'select',
+					options: [
+						{
+							label: 'United States',
+							value: 'us',
+						},
+						{
+							label: 'Canada',
+							value: 'ca',
+						},
+						{
+							label: 'India',
+							value: 'in',
+						},
+					],
+					initialValue: 'ca',
+				},
+			],
+		},
+		{
+			name: 'languages',
 			label: 'Languages',
 			fieldType: 'multicheck',
 			options: [
@@ -217,15 +336,44 @@ export const formConfig: EspressoFormProps = {
 					value: 'ru',
 				},
 			],
-			defaultValue: ['en'],
+			initialValue: ['en', 'es'],
 		},
 		{
-			id: 'subscribe',
+			name: 'skills',
+			label: 'Skills',
+			fieldType: 'select',
+			mode: 'multiple',
+			options: [
+				{
+					label: 'Javascript',
+					value: 'js',
+				},
+				{
+					label: 'React',
+					value: 'react',
+				},
+				{
+					label: 'GraphQL',
+					value: 'gql',
+				},
+				{
+					label: 'Typescript',
+					value: 'ts',
+				},
+				{
+					label: 'PHP',
+					value: 'php',
+				},
+			],
+			initialValue: ['ts', 'react'],
+		},
+		{
+			name: 'subscribe',
 			label: 'Subscribe',
 			fieldType: 'switch',
 		},
 		{
-			id: 'bio',
+			name: 'bio',
 			label: 'About',
 			fieldType: 'textarea',
 		},
