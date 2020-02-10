@@ -2,9 +2,7 @@ import React, { useState } from 'react';
 import { Table } from 'antd';
 import { DndProvider, DragSource, DropTarget } from 'react-dnd';
 import { pipe, update } from 'ramda';
-
 import HTML5Backend from 'react-dnd-html5-backend';
-// import update from 'immutability-helper';
 
 import './styles.scss';
 
@@ -65,24 +63,6 @@ const DragableBodyRow = DropTarget('row', rowTarget, (connect, monitor) => ({
 	}))(BodyRow)
 );
 
-const columns = [
-	{
-		title: 'Name',
-		dataIndex: 'name',
-		key: 'name',
-	},
-	{
-		title: 'Age',
-		dataIndex: 'age',
-		key: 'age',
-	},
-	{
-		title: 'Address',
-		dataIndex: 'address',
-		key: 'address',
-	},
-];
-
 const EspressoDragSortingTable = (props) => {
 	const [data, setData] = useState(props.data);
 
@@ -93,7 +73,6 @@ const EspressoDragSortingTable = (props) => {
 	};
 
 	const moveRow = (dragIndex, hoverIndex) => {
-		const { data } = this.state;
 		const dragRow = data[dragIndex];
 		const hoverRow = data[hoverIndex];
 		const newData = pipe(update(hoverIndex, dragRow), update(dragIndex, hoverRow))(data);

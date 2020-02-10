@@ -33,59 +33,48 @@ const List: React.FC<ListProps> = ({ datetimes }) => {
 		</>
 	);
 
-	const columns = [
-		{
-			title: 'Name',
-			dataIndex: 'name',
-		},
-		{
-			title: 'Age',
-			dataIndex: 'age',
-		},
-		{
-			title: 'Address',
-			dataIndex: 'address',
-		},
-		{
-			title: 'Address2',
-			dataIndex: 'address2',
-		},
-	];
-
 	const data = [
 		{
 			key: '1',
 			name: 'John Brown',
 			age: 32,
 			address: 'New York No. 1 Lake Park',
-			address2: 'New York No. 1 Lake Park',
 		},
 		{
 			key: '2',
 			name: 'Jim Green',
 			age: 42,
 			address: 'London No. 1 Lake Park',
-			address2: 'New York No. 1 Lake Park',
 		},
 		{
 			key: '3',
 			name: 'Joe Black',
 			age: 32,
 			address: 'Sidney No. 1 Lake Park',
-			address2: 'New York No. 1 Lake Park',
+		},
+	];
+
+	const columns = [
+		{
+			title: 'Name',
+			dataIndex: 'name',
+			key: 'name',
 		},
 		{
-			key: '4',
-			name: 'Joe Black',
-			age: 32,
-			address: 'Sidney No. 1 Lake Park',
-			address2: 'New York No. 1 Lake Park',
+			title: 'Age',
+			dataIndex: 'age',
+			key: 'age',
+		},
+		{
+			title: 'Address',
+			dataIndex: 'address',
+			key: 'address',
 		},
 	];
 
 	return (
 		<div>
-			<EspressoDragSortingTable />
+			<EspressoDragSortingTable columns={columns} data={data} />
 			{header}
 			<DatesListFilterBar />
 			{datetimesList}
