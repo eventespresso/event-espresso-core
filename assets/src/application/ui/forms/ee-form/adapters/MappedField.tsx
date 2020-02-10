@@ -1,5 +1,5 @@
 import React from 'react';
-import { Text, TextArea, Select, Switch, MultiCheck, Number as NumberField } from './';
+import { Text, TextArea, Select, Switch, MultiCheck, Number as NumberField, Radio } from './';
 import { FieldRendererProps } from '../types';
 
 const MappedField: React.FC<Omit<FieldRendererProps, 'meta'>> = ({ fieldType, ...rest }) => {
@@ -22,6 +22,9 @@ const MappedField: React.FC<Omit<FieldRendererProps, 'meta'>> = ({ fieldType, ..
 			break;
 		case 'multicheck':
 			Component = MultiCheck;
+			break;
+		case 'radio':
+			Component = Radio;
 			break;
 		default:
 			Component = () => null;

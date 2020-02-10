@@ -204,6 +204,33 @@ export const formConfig: EspressoFormProps = {
 					fieldType: 'text',
 					isRepeatable: true,
 				},
+				{
+					name: 'age',
+					label: 'Age',
+					fieldType: 'radio',
+					options: [
+						{
+							label: 'Below 5',
+							value: '5',
+						},
+						{
+							label: 'Below 15',
+							value: '15',
+						},
+						{
+							label: 'Below 25',
+							value: '25',
+						},
+						{
+							label: 'Below 40',
+							value: '40',
+						},
+						{
+							label: 'Above 40',
+							value: '40+',
+						},
+					],
+				},
 			],
 		},
 	],
@@ -273,24 +300,38 @@ export const formConfig: EspressoFormProps = {
 			mode: 'multiple',
 			options: [
 				{
-					label: 'Javascript',
-					value: 'js',
+					optgroup: 'JS',
+					options: [
+						{
+							label: 'Javascript',
+							value: 'js',
+						},
+						{
+							label: 'React',
+							value: 'react',
+						},
+						{
+							label: 'GraphQL',
+							value: 'gql',
+						},
+						{
+							label: 'Typescript',
+							value: 'ts',
+						},
+					],
 				},
 				{
-					label: 'React',
-					value: 'react',
-				},
-				{
-					label: 'GraphQL',
-					value: 'gql',
-				},
-				{
-					label: 'Typescript',
-					value: 'ts',
-				},
-				{
-					label: 'PHP',
-					value: 'php',
+					optgroup: 'PHP',
+					options: [
+						{
+							label: 'PHP',
+							value: 'php',
+						},
+						{
+							label: 'Laravel',
+							value: 'laravel',
+						},
+					],
 				},
 			],
 			initialValue: ['ts', 'react'],

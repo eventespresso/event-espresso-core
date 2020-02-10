@@ -17,7 +17,7 @@ interface AdditionalFormProps {
 
 export interface AdditionalFieldProps {
 	label?: React.ReactNode | string;
-	fieldType: 'text' | 'textarea' | 'switch' | 'select' | 'multicheck' | 'number' | 'group';
+	fieldType: 'text' | 'textarea' | 'switch' | 'select' | 'multicheck' | 'number' | 'radio' | 'group';
 	htmlType?: string;
 	before?: React.ReactNode | string;
 	after?: React.ReactNode | string;

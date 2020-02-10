@@ -8,7 +8,7 @@ import useShouldBeVisible from '../hooks/useShouldBeVisible';
 const Field: React.FC<FieldProps> = ({ conditions, ...rest }) => {
 	const visible = useShouldBeVisible(conditions, rest.name);
 
-	return visible && <RFFField render={FieldRenderer} {...rest} />;
+	return visible && <RFFField render={FieldRenderer} {...rest} type={rest.fieldType} />;
 };
 
 export default Field;
