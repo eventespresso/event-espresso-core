@@ -1,0 +1,65 @@
+$border: 1px solid #ccc;
+
+.ee-form {
+	.form-wrapper {
+		max-width: 800px;
+		padding-top: 1em;
+		padding-bottom: 1em;
+		margin: 0 auto;
+	}
+	.field-group-wrapper {
+		border: $border;
+		padding: 0.5em;
+		border-radius: 0.5em;
+		margin-bottom: 2em;
+	}
+	.field-group-items {
+		display: flex;
+		flex-wrap: wrap;
+	}
+	@media only screen and (max-width: 782px) {
+		.field-group-item {
+			flex: 0 100%;
+		}
+		.section-heading,
+		.section-body {
+			flex: 0 100%;
+		}
+	}
+	@media only screen and (min-width: 782px) {
+		.field-group-item {
+			flex: 0 49%;
+		}
+		.field-group-item.left-item {
+			margin-right: 0.5em;
+		}
+		.section-heading {
+			flex: 0 25%;
+		}
+		.section-body {
+			flex: 0 75%;
+		}
+	}
+	.section-wrapper {
+		border-top: $border;
+		padding-top: 1.5em;
+		display: flex;
+		flex-wrap: wrap;
+	}
+	.repeatable-wrap {
+		margin-bottom: 1em;
+	}
+	.repeatable-item {
+		.remove-item {
+			float: right;
+			margin-left: 0.5em;
+		}
+	}
+	.submit-wrapper {
+		display: flex;
+
+		> div {
+			padding: 0 0.5em;
+		}
+	}
+}
