@@ -44,8 +44,8 @@ const EntityList = ({
 	const filteredEntities = Array.isArray(entities) ? without([undefined], entities) : [];
 
 	if (filteredEntities.length === 0) {
-		const description = noResultsText !== '' ? noResultsText : 'no results found';
-		return <EmptyState className='ee-entity-list-no-results' description={__(description)} />;
+		const description = noResultsText !== '' ? noResultsText : __('no results found');
+		return <EmptyState className='ee-entity-list-no-results' description={description} />;
 	}
 
 	const classes = classNames('ee-editor-entity-list', htmlClass);
