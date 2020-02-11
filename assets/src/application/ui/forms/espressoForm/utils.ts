@@ -3,7 +3,9 @@ import { getIn, AnyObject } from 'final-form';
 
 import { FieldConditions } from './types';
 
-export const getValidateStatus = ({ touched, error, submitError }: FieldMetaState<any>) => {
+type ValidateStatus = '' | 'error' | 'success' | 'warning' | 'validating';
+
+export const getValidateStatus = ({ touched, error, submitError }: FieldMetaState<any>): ValidateStatus => {
 	if (touched) {
 		if (!(error || submitError)) {
 			return 'success';
