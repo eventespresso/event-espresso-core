@@ -1,2 +1,2 @@
-export { default as EntityPagination } from './entity-pagination';
-export { default as useEntityPagination } from './use-entity-pagination';
+export { default as EntityPagination } from './EntityPagination';
+export { default as useEntityPagination } from './useEntityPagination';
