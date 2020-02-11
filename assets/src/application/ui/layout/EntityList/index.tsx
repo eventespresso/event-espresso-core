@@ -1,9 +1,9 @@
 import React from 'react';
 import { without } from 'ramda';
-import { __ } from '@wordpress/i18n';
 import classNames from 'classnames';
 
 import { Entity } from '@edtrServices/apollo/types';
+import EmptyState from '@appDisplay/EmptyState';
 import './style.scss';
 
 interface EntityListProps {
@@ -43,14 +43,15 @@ const EntityList = ({
 	const filteredEntities = Array.isArray(entities) ? without([undefined], entities) : [];
 
 	if (filteredEntities.length === 0) {
-		noResultsText = noResultsText !== '' ? noResultsText : __('no results found', 'event_espresso');
-		return <div className='ee-entity-list-no-results'>{noResultsText}</div>;
+		const description = noResultsText !== '' ? noResultsText : 'no results found';
+		return <EmptyState className='ee-entity-list-no-results' description={description} />;
 	}
+
 	const classes = classNames('ee-editor-entity-list', htmlClass);
 	return view === 'grid' ? (
-		<EntityGridView entities={filteredEntities} htmlClass={classes} {...otherProps} />
+		<EntityGridView entities={filteredEntities} className={classes} {...otherProps} />
 	) : (
-		<EntityListView entities={filteredEntities} htmlClass={classes} {...otherProps} />
+		<EntityListView entities={filteredEntities} className={classes} {...otherProps} />
 	);
 };
 

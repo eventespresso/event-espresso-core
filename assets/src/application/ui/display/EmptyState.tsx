@@ -2,31 +2,31 @@
  * External dependencies
  */
 import * as React from 'react';
+import { __ } from '@wordpress/i18n';
 import { Empty } from 'antd';
 
 interface EmptyStateProps {
-	children: React.ReactChild;
+	children?: React.ReactNode;
+	className?: string;
 	description: string;
-	title: string;
+	title?: string;
 }
 
-const EmptyState = (props: EmptyStateProps) => {
-	const { children, description, title } = props;
-
+const EmptyState = ({ className, children, description, title }: EmptyStateProps) => {
 	return (
-		<>
+		<div className={className}>
 			<Empty
 				description={
 					<>
-						{title}
-						<span>{description}</span>
+						{title && __(title)}
+						<span>{__(description)}</span>
 					</>
 				}
 				image={Empty.PRESENTED_IMAGE_SIMPLE}
 			/>
 
-			{children}
-		</>
+			{children && children}
+		</div>
 	);
 };
 

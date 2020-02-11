@@ -5,9 +5,9 @@ import AddNewDateButton from './AddNewDateButton';
 import List from './List';
 import useDatetimes from '../../../services/apollo/queries/datetimes/useDatetimes';
 import { useStatus, TypeName } from '../../../../../application/services/apollo/status';
-import EmptyState from '../../../../../application/ui/display/EmptyState';
-import ErrorIndicator from '../../../../../application/ui/display/ErrorIndicator';
-import LoadingIndicator from '../../../../../application/ui/display/LoadingIndicator';
+import EmptyState from '@appDisplay/EmptyState';
+import ErrorIndicator from '@appDisplay/ErrorIndicator';
+import LoadingIndicator from '@appDisplay/LoadingIndicator';
 
 const DatesList: React.FC = () => {
 	const datetimes = useDatetimes();
