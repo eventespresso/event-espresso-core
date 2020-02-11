@@ -3,6 +3,7 @@ import { EspressoFormProps } from './types';
 export const formConfig: EspressoFormProps = {
 	onSubmit: (values) => console.log(values),
 	initialValues: {},
+	layout: 'vertical',
 	validate: ({ password, account }) => {
 		let errors = {};
 		if (!password || password.length < 8) {
@@ -31,7 +32,7 @@ export const formConfig: EspressoFormProps = {
 		{
 			name: 'account',
 			title: 'Account',
-			namespaceFields: true,
+			addSectionToFieldNames: true,
 			fields: [
 				{
 					name: 'full_name',
@@ -60,7 +61,7 @@ export const formConfig: EspressoFormProps = {
 		{
 			name: 'billing',
 			title: 'Billing Details',
-			namespaceFields: true,
+			addSectionToFieldNames: true,
 			fields: [
 				{
 					name: 'name',
@@ -196,7 +197,7 @@ export const formConfig: EspressoFormProps = {
 		{
 			name: 'misc',
 			title: 'Miscellaneous',
-			namespaceFields: true,
+			addSectionToFieldNames: true,
 			fields: [
 				{
 					name: 'skills',
@@ -340,6 +341,11 @@ export const formConfig: EspressoFormProps = {
 			name: 'subscribe',
 			label: 'Subscribe',
 			fieldType: 'switch',
+			formItemProps: {
+				labelCol: { span: 4 },
+				wrapperCol: { span: 14 },
+				labelAlign: 'left',
+			},
 		},
 		{
 			name: 'bio',

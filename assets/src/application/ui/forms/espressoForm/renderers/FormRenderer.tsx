@@ -13,10 +13,11 @@ const FormRenderer: React.FC<FormRendererProps> = ({
 	fields,
 	submitButton,
 	resetButton,
+	layout,
 }) => {
 	return (
 		<div className='form-wrapper'>
-			<Form onSubmit={handleSubmit}>
+			<Form onSubmit={handleSubmit} layout={layout}>
 				<RenderSections sections={sections} />
 				<RenderFields fields={fields} />
 				<Submit submitting={submitting} submitButton={submitButton} resetButton={resetButton} />

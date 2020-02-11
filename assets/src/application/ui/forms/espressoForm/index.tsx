@@ -5,23 +5,28 @@ import arrayMutators from 'final-form-arrays';
 import { EspressoFormProps } from './types';
 import FormRenderer from './renderers/FormRenderer';
 import { formConfig } from './config';
-import './styles.css';
+import { FormProvider } from './context';
+import './styles.scss';
 
-const EspressoForm: React.FC<EspressoFormProps> = ({ onSubmit, initialValues, validate, ...rest }) => {
+const EspressoForm: React.FC<EspressoFormProps> = ({ onSubmit, mutators, layout, ...rest }) => {
+	const context = { layout };
 	return (
 		<div className='ee-form'>
-			<ReactFinalForm
-				initialValues={initialValues}
-				onSubmit={onSubmit}
-				validate={validate}
-				render={FormRenderer}
-				mutators={{ ...arrayMutators }}
-				{...rest}
-			/>
+			<FormProvider value={context}>
+				<ReactFinalForm
+					onSubmit={onSubmit}
+					render={FormRenderer}
+					mutators={{
+						...arrayMutators,
+						...mutators,
+					}}
+					{...rest}
+				/>
+			</FormProvider>
 		</div>
 	);
 };
 
-const TestForm = () => <EspressoForm {...formConfig} />;
+export const TestForm = () => <EspressoForm {...formConfig} />;
 
-export default TestForm;
+export default EspressoForm;

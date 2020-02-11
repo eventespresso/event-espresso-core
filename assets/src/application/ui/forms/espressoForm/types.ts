@@ -2,13 +2,17 @@ import React from 'react';
 import { FormRenderProps, FormProps, FieldRenderProps, FieldProps as RFFFieldProps } from 'react-final-form';
 import { FieldArrayProps } from 'react-final-form-arrays';
 
-import { SelectOptions, ButtonProps } from './adapters/types';
+import { SelectOptions, ButtonProps, FormItemProps } from './adapters/types';
 
 interface FormButtonProps extends ButtonProps {
 	label?: string;
 }
 
-interface AdditionalFormProps {
+export interface FormContextProps {
+	layout?: 'horizontal' | 'vertical' | 'inline';
+}
+
+interface AdditionalFormProps extends FormContextProps {
 	sections?: SectionList;
 	fields?: FieldList;
 	submitButton?: FormButtonProps;
@@ -26,6 +30,7 @@ export interface AdditionalFieldProps {
 	options?: SelectOptions;
 	isRepeatable?: boolean;
 	conditions?: FieldConditions;
+	formItemProps?: FormItemProps;
 	[key: string]: any;
 }
 
@@ -91,7 +96,7 @@ export interface SectionProps {
 	 * If true, each field inside the section
 	 * will be saved as `${section.name}.{field.name}`
 	 */
-	namespaceFields?: boolean;
+	addSectionToFieldNames?: boolean;
 }
 
 type FieldList = Array<FieldProps>;
