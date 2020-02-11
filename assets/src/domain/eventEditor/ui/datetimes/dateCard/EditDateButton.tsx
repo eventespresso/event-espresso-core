@@ -1,4 +1,4 @@
-import React, { CSSProperties } from 'react';
+import React from 'react';
 
 import { EspressoButton } from '@application/ui/input';
 import { EditItemButtonProps } from '../../../interfaces/types';

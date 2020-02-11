@@ -9,8 +9,7 @@ import { __ } from '@wordpress/i18n';
 import { EspressoButton } from '@application/ui/input';
 import { BiggieCalendarDate, CalendarPosition } from '@application/ui/calendars';
 import DeleteDatetimeButton from './DeleteDateButton';
-import EditDateButton from './EditDateButton';
-import DateDetails from './DateDetails';
+import DateActionsMenu from './DateActionsMenu';
 
 import { DatetimeProvider } from '@edtrServices/context/DatetimeContext';
 import useDatetimeItem from '@edtrServices/apollo/queries/datetimes/useDatetimeItem';
@@ -181,6 +180,7 @@ const DateCard: React.FC<ListItemProps> = ({ id }) => {
 						</div>
 					</div>
 					{/* the following will be replaced by the entity action menu */}
+					<DateActionsMenu entity={date} position='top' />
 					<div style={menuWrapperStype}>
 						<div style={menuStype}>
 							<EditDateButton style={btnStyle} />

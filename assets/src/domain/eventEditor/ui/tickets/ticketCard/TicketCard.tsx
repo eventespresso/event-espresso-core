@@ -3,7 +3,7 @@ import React from 'react';
 import { EditableText, H4, H6 } from '@blueprintjs/core/lib/esm';
 import { __ } from '@wordpress/i18n';
 
-import EditTicketButton from './EditTicketButton';
+import TicketActionsMenu from './TicketActionsMenu';
 import DeleteTicketButton from './DeleteTicketButton';
 import TicketDetails from './TicketDetails';
 import TicketPriceCalculatorButton from '../ticketPriceCalculator/buttons/TicketPriceCalculatorButton';
@@ -32,7 +32,7 @@ const TicketCard: React.FC<ListItemProps> = ({ id }) => {
 	return ticket ? (
 		<TicketProvider id={ticket.id}>
 			<EntityPaperFrame entity={ticket}>
-				<EditTicketButton position='top' />
+				<TicketActionsMenu entity={ticket} position='top' layout='vertical' />
 				<div>
 					<H4>
 						<InlineEditInput
