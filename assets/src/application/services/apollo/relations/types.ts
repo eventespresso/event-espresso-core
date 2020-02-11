@@ -1,4 +1,4 @@
-import { EntityId } from '../../../../domain/eventEditor/services/apollo/types';
+import { EntityId } from '@edtrServices/apollo/types';
 
 type RelationEntity = 'datetimes' | 'tickets' | 'prices' | 'priceTypes';
 
