@@ -15,10 +15,12 @@ const EntityPagination = ({
 	pageSizeOptions = ['6', '12', '24', '48'],
 	showTotal,
 	total,
+	...rest
 }: PaginationProps) => {
 	return (
 		<div className='ee-entity-pagination'>
 			<Pagination
+				{...rest}
 				current={current}
 				onChange={onChange}
 				pageSize={pageSize}
