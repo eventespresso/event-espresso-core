@@ -1,8 +1,4 @@
-/**
- * External dependencies
- */
 import * as React from 'react';
-import { __ } from '@wordpress/i18n';
 import { Empty } from 'antd';
 
 interface EmptyStateProps {
@@ -18,8 +14,8 @@ const EmptyState = ({ className, children, description, title }: EmptyStateProps
 			<Empty
 				description={
 					<>
-						{title && __(title)}
-						<span>{__(description)}</span>
+						{title && title}
+						<span>{description}</span>
 					</>
 				}
 				image={Empty.PRESENTED_IMAGE_SIMPLE}

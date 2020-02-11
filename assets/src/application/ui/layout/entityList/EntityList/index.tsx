@@ -1,4 +1,5 @@
 import React from 'react';
+import { __ } from '@wordpress/i18n';
 import { without } from 'ramda';
 import classNames from 'classnames';
 
@@ -44,7 +45,7 @@ const EntityList = ({
 
 	if (filteredEntities.length === 0) {
 		const description = noResultsText !== '' ? noResultsText : 'no results found';
-		return <EmptyState className='ee-entity-list-no-results' description={description} />;
+		return <EmptyState className='ee-entity-list-no-results' description={__(description)} />;
 	}
 
 	const classes = classNames('ee-editor-entity-list', htmlClass);
