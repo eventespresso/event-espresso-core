@@ -12,7 +12,7 @@ const EntityPagination = ({
 	current,
 	onChange,
 	pageSize = 10,
-	pageSizeOptions = ['10', '20', '30', '40'],
+	pageSizeOptions = ['6', '12', '24', '48'],
 	showTotal,
 	total,
 }: PaginationProps) => {
