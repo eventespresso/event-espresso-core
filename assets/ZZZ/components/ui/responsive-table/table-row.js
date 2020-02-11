@@ -18,7 +18,7 @@ import { Draggable } from 'react-beautiful-dnd';
  * @param {Object} extraProps
  * @return {Object} rendered tr
  */
-const TableRow = ({
+const TableRow = ( {
 	rowData,
 	children,
 	rowNumber,
@@ -29,46 +29,59 @@ const TableRow = ({
 	rowType,
 	sortable,
 	...extraProps
-}) => {
-	if (!rowData) {
+} ) => {
+	if ( ! rowData ) {
 		return null;
 	}
-	const id = htmlId ? `${htmlId}-row-${rowNumber}` : `ee-rspnsv-table-row-${rowNumber}`;
+	const id = htmlId ?
+		`${ htmlId }-row-${ rowNumber }` :
+		`ee-rspnsv-table-row-${ rowNumber }`;
 	const css = classNames(
 		htmlClass,
-		`ee-rspnsv-table-${rowType}-row`,
-		`ee-row-${rowNumber}`,
-		cssClasses[`${rowType}RowClass`]
+		`ee-rspnsv-table-${ rowType }-row`,
+		`ee-row-${ rowNumber }`,
+		cssClasses[ `${ rowType }RowClass` ],
 	);
 	return sortable ? (
-		<Draggable key={rowData.key} draggableId={rowData.key} index={rowNumber}>
-			{({ innerRef, draggableProps, dragHandleProps }, { isDragging }) => {
+		<Draggable
+			key={ rowData.key }
+			draggableId={ rowData.key }
+			index={ rowNumber }
+		>
+			{ (
+				{ innerRef, draggableProps, dragHandleProps },
+				{ isDragging }
+			) => {
 				// incrementing row number here
 				// because the Draggable needs
 				// indexes to start at 0
 				rowNumber += headerRowCount;
 				return (
 					<tr
-						ref={innerRef}
-						id={id}
-						className={css}
-						style={{
+						ref={ innerRef }
+						id={ id }
+						className={ css }
+						style={ {
 							...draggableProps.style,
-							border: isDragging ? '1px solid var(--ee-color-bright-blue)' : 'none',
-							display: isDragging ? 'table' : 'table-row',
-						}}
-						{...draggableProps}
-						{...dragHandleProps}
-						{...extraProps}
+							border: isDragging ?
+								'1px solid var(--ee-color-bright-blue)' :
+								'none',
+							display: isDragging ?
+								'table' :
+								'table-row',
+						} }
+						{ ...draggableProps }
+						{ ...dragHandleProps }
+						{ ...extraProps }
 					>
-						{children}
+						{ children }
 					</tr>
-				);
-			}}
+				)
+			} }
 		</Draggable>
 	) : (
-		<tr id={id} className={css} {...extraProps}>
-			{children}
+		<tr id={ id } className={ css } { ...extraProps } >
+			{ children }
 		</tr>
 	);
 };

@@ -74,7 +74,7 @@ const List: React.FC<ListProps> = ({ datetimes }) => {
 
 	return (
 		<div>
-			<EspressoDragSortingTable columns={columns} data={data} />
+			<EspressoDragSortingTable columns={columns} dataSource={data} />
 			{header}
 			<DatesListFilterBar />
 			{datetimesList}

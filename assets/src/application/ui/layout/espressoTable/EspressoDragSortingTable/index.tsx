@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Table } from 'antd';
+import { TableProps } from 'antd/lib/table/interface';
 import { DndProvider, DragSource, DropTarget } from 'react-dnd';
 import { pipe, update } from 'ramda';
 import HTML5Backend from 'react-dnd-html5-backend';
@@ -63,8 +64,8 @@ const DragableBodyRow = DropTarget('row', rowTarget, (connect, monitor) => ({
 	}))(BodyRow)
 );
 
-const EspressoDragSortingTable = (props) => {
-	const [data, setData] = useState(props.data);
+const EspressoDragSortingTable = <RecordType extends object = any>(props: TableProps<RecordType>) => {
+	const [data, setData] = useState(props.dataSource);
 
 	const components = {
 		body: {
