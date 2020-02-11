@@ -1,8 +1,10 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Table } from 'antd';
 import { DndProvider, DragSource, DropTarget } from 'react-dnd';
+import { pipe, update } from 'ramda';
+
 import HTML5Backend from 'react-dnd-html5-backend';
-import update from 'immutability-helper';
+// import update from 'immutability-helper';
 
 import './styles.scss';
 
@@ -81,68 +83,38 @@ const columns = [
 	},
 ];
 
-class EspressoDragSortingTable extends React.Component {
-	state = {
-		data: [
-			{
-				key: '1',
-				name: 'John Brown',
-				age: 32,
-				address: 'New York No. 1 Lake Park',
-			},
-			{
-				key: '2',
-				name: 'Jim Green',
-				age: 42,
-				address: 'London No. 1 Lake Park',
-			},
-			{
-				key: '3',
-				name: 'Joe Black',
-				age: 32,
-				address: 'Sidney No. 1 Lake Park',
-			},
-		],
-	};
+const EspressoDragSortingTable = (props) => {
+	const [data, setData] = useState(props.data);
 
-	components = {
+	const components = {
 		body: {
 			row: DragableBodyRow,
 		},
 	};
 
-	moveRow = (dragIndex, hoverIndex) => {
+	const moveRow = (dragIndex, hoverIndex) => {
 		const { data } = this.state;
 		const dragRow = data[dragIndex];
+		const hoverRow = data[hoverIndex];
+		const newData = pipe(update(hoverIndex, dragRow), update(dragIndex, hoverRow))(data);
 
-		this.setState(
-			update(this.state, {
-				data: {
-					$splice: [
-						[dragIndex, 1],
-						[hoverIndex, 0, dragRow],
-					],
-				},
-			})
-		);
+		setData(newData);
 	};
 
-	render() {
-		return (
-			<DndProvider backend={HTML5Backend}>
-				<Table
-					className='table-drag-sorting'
-					columns={columns}
-					dataSource={this.state.data}
-					components={this.components}
-					onRow={(record, index) => ({
-						index,
-						moveRow: this.moveRow,
-					})}
-				/>
-			</DndProvider>
-		);
-	}
-}
+	return (
+		<DndProvider backend={HTML5Backend}>
+			<Table
+				className='table-drag-sorting'
+				columns={columns}
+				dataSource={data}
+				components={components}
+				onRow={(record, index) => ({
+					index,
+					moveRow: moveRow,
+				})}
+			/>
+		</DndProvider>
+	);
+};
 
 export default EspressoDragSortingTable;

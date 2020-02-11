@@ -95,7 +95,6 @@
 		"graphql-tag": "^2.10.1",
 		"html-webpack-plugin": "4.0.0-beta.5",
 		"identity-obj-proxy": "3.0.0",
-		"immutability-helper": "^3.0.1",
 		"immutable": "^4.0.0-rc.12",
 		"invariant": "^2.2.4",
 		"js-green-licenses": "^1.1.0",
