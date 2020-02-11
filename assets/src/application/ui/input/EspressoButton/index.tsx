@@ -31,13 +31,13 @@ const EspressoButton: React.FC<EspressoButtonProps> = ({
 	});
 	let renderedIcon = null;
 
-	if (icon) {
+	if (isEspressoIcon(icon)) {
 		renderedIcon = () => <EspressoIcon icon={icon} svgSize={size} />;
 	} else {
 		classes += ' ee-noIcon';
 	}
 
-	if (isEspressoIcon(icon)) {
+	if (renderedIcon) {
 		return (
 			<Button onClick={onClick}>
 				{buttonText && buttonText}
@@ -49,7 +49,6 @@ const EspressoButton: React.FC<EspressoButtonProps> = ({
 	return (
 		<Button icon={icon} onClick={onClick}>
 			{buttonText && buttonText}
-			<Icon component={renderedIcon} />
 		</Button>
 	);
 };
