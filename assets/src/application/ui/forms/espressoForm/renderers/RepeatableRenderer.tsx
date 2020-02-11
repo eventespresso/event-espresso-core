@@ -27,7 +27,6 @@ const RepeatableRenderer: React.FC<Omit<RepeatableRendererProps, 'component'>> =
 							label={
 								<>
 									{sprintf(__('Entry %d'), index + 1)}
-									&nbsp;
 									<Button
 										className='remove-item'
 										shape='circle'

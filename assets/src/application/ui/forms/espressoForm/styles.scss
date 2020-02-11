@@ -16,6 +16,7 @@ $border: 1px solid #ccc;
 	.field-group-items {
 		display: flex;
 		flex-wrap: wrap;
+		width: 100%;
 	}
 	@media only screen and (max-width: 782px) {
 		.field-group-item {
@@ -29,9 +30,7 @@ $border: 1px solid #ccc;
 	@media only screen and (min-width: 782px) {
 		.field-group-item {
 			flex: 0 49%;
-		}
-		.field-group-item.left-item {
-			margin-right: 0.5em;
+			padding: 0 0.5em;
 		}
 		.section-heading {
 			flex: 0 25%;

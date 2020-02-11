@@ -15,9 +15,8 @@ const Group: React.FC<FieldProps> = ({ subFields, label, name: groupName, before
 				<div className='field-group-items'>
 					{subFields.map(({ name: fieldname, fieldType, ...props }, i) => {
 						const name = `${groupName}.${fieldname}`;
-						const position = i % 2 === 0 ? 'left' : 'right';
 						return (
-							<div className={`field-group-item ${position}-item`} key={name + i}>
+							<div className='field-group-item' key={name + i}>
 								<Field render={FieldRenderer} {...props} fieldType={fieldType} name={name} />
 							</div>
 						);
