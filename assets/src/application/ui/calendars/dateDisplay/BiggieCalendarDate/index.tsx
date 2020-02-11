@@ -2,31 +2,12 @@ import classNames from 'classnames';
 import { format, isValid } from 'date-fns';
 import React from 'react';
 
-/**
- * Internal dependencies
- */
-import './style.css';
 import EspressoButton from '@appInputs/EspressoButton';
+import { CalendarDateProps, CalendarPosition } from '../types';
+import './style.css';
 
-export interface EditButtonProps {
-	tooltip: string;
-	tooltipPosition: string;
-}
-
-export enum Position {
-	LEFT = 'left',
-	RIGHT = 'right',
-}
-
-export interface BiggieCalendarDateProps {
+export interface BiggieCalendarDateProps extends CalendarDateProps {
 	date: Date;
-	editButton: EditButtonProps;
-	htmlClass: string;
-	headerText: string[] | string;
-	footerText: string[] | string;
-	onEdit: (event: React.MouseEvent<HTMLButtonElement>) => void;
-	position: Position;
-	showTime: boolean;
 }
 
 /**
@@ -37,7 +18,7 @@ export const BiggieCalendarDate: React.FC<BiggieCalendarDateProps> = ({
 	htmlClass,
 	headerText,
 	footerText,
-	position = Position.LEFT,
+	position = CalendarPosition.LEFT,
 	onEdit = null,
 	editButton = {},
 	showTime = false,
@@ -46,8 +27,8 @@ export const BiggieCalendarDate: React.FC<BiggieCalendarDateProps> = ({
 		return null;
 	}
 	const classes = classNames('ee-biggie-calendar-date-bg', htmlClass, {
-		'ee-bcd-pos-left': position === Position.LEFT,
-		'ee-bcd-pos-right': position !== Position.LEFT,
+		'ee-bcd-pos-left': position === CalendarPosition.LEFT,
+		'ee-bcd-pos-right': position !== CalendarPosition.LEFT,
 	});
 	const editDateButton =
 		typeof onEdit === 'function' ? (
