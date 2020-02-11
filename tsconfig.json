@@ -30,5 +30,6 @@
 		"strict": false,
 		"target": "es5"
 	},
+	"exclude": ["node_modules", "assets/dist", "assets/ZZZ"],
 	"include": ["assets/src"]
 }

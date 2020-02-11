@@ -1,4 +1,4 @@
-import { Datetime, DatetimeStatus } from '@edtrServices/apollo/types';
+import { Datetime, DatetimeStatus } from '../../../../../domain/eventEditor/services/apollo/types';
 import entityTextFieldSearch from './index';
 
 const datetimes: Datetime[] = [
