@@ -1,11 +1,14 @@
-export const ticketFields = [
+export const TICKET_FIELDS = [
 	'id',
 	'dbId',
+	'description',
 	'endDate',
 	'isDefault',
 	'isFree',
 	'isRequired',
+	'isSoldOut',
 	'isTaxable',
+	'isTrashed',
 	'max',
 	'min',
 	'name',
