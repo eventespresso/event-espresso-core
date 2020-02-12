@@ -12,6 +12,7 @@ export type Domain = 'eventEditor';
 export interface SubscriptionData<E> {
 	entityType: EntityType;
 	entity: E;
+	menuItemProps?: ActionsMenuItemProps;
 }
 
 export type SubscriptionCallback<E extends Entity, MenuKey extends string> = (
@@ -26,6 +27,10 @@ export type EntityActionsMenuCallback<E extends Entity, MenuKey extends string> 
 
 export interface ActionsMenuComponentProps<E extends Entity> {
 	entity: E;
-	position?: 'top' | 'bottom';
-	layout?: 'vertical' | 'horizontal';
+	menuItemProps?: ActionsMenuItemProps;
+	[key: string]: any;
+}
+
+export interface ActionsMenuItemProps {
+	[key: string]: any;
 }
