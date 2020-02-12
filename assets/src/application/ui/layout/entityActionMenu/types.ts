@@ -1,10 +1,5 @@
 import React from 'react';
 
-export type EntityActionsManagerHook<EntityType extends string, MenuKey extends string> = (
-	entityType: EntityType,
-	entityId: string
-) => EntityActionsManager<MenuKey>;
-
 export interface EntityActionsManager<MenuKey extends string> {
 	registerMenuItem: (key: MenuKey, render: () => React.ReactNode) => void;
 	unRegisterMenuItem: (key: MenuKey) => void;
@@ -16,36 +11,49 @@ export type EntityMenuItems<MenuKey extends string> = {
 	[K in MenuKey]?: React.ReactNode;
 };
 
-export type MenuRegistry<EntityType extends string, MenuKey extends string> = {
+export type MenuRegistry<EntityType extends string = '', MenuKey extends string = ''> = {
 	[K in EntityType]?: {
 		// entityId
 		[key: string]: EntityMenuItems<MenuKey>;
 	};
 };
 
-export type SubscribeFn<MenuKey extends string = ''> = (cb: SubscriptionCallback<MenuKey>) => VoidFunction;
+export type SubscribeFn<EntityType extends string, MenuKey extends string> = (
+	cb: SubscriptionCallback<MenuKey>,
+	options?: SubscriptionsOptions<EntityType>
+) => VoidFunction;
 
-export type Subscriptions<MenuKey extends string = ''> = {
-	[key: string]: SubscriptionCallback<MenuKey>;
+export interface SubscriptionsOptions<EntityType extends string> {
+	entityType?: EntityType; // to limit the subscription only to specific entityType
+}
+
+export interface Subscription<EntityType extends string, MenuKey extends string> {
+	callback: SubscriptionCallback<MenuKey>;
+	options: SubscriptionsOptions<EntityType>;
+}
+
+export type Subscriptions<EntityType extends string, MenuKey extends string> = {
+	[key: string]: Subscription<EntityType, MenuKey>;
 };
 
-export type SubscriptionCallback<MenuKey extends string = '', D = any> = (
+export type SubscriptionCallback<MenuKey extends string, D = any> = (
 	data: D,
 	entityActionsManager: EntityActionsManager<MenuKey>
 ) => void;
 
-export interface EntityActionsData<MenuKey extends string = ''> {
-	subscribe: SubscribeFn<MenuKey>;
-	subscriptions: Subscriptions<MenuKey>;
+export interface EntityActionsData<EntityType extends string, MenuKey extends string> {
+	subscribe: SubscribeFn<EntityType, MenuKey>;
+	subscriptions: Subscriptions<EntityType, MenuKey>;
 }
 
-export interface EntityActions<MenuKey extends string> {
-	subscribe: SubscribeFn<MenuKey>;
-	getSubscriptions: () => Subscriptions<MenuKey>;
+export interface EntityActions<EntityType extends string, MenuKey extends string> {
+	subscribe: SubscribeFn<EntityType, MenuKey>;
+	getSubscriptions: (options?: SubscriptionsOptions<EntityType>) => Subscriptions<EntityType, MenuKey>;
 }
 
-export interface UpdateSubscriptionProps<MenuKey extends string = ''> {
+export interface UpdateSubscriptionProps<EntityType extends string, MenuKey extends string> {
 	id: string;
-	callback: SubscriptionCallback<MenuKey>;
+	callback?: SubscriptionCallback<MenuKey>;
+	options?: SubscriptionsOptions<EntityType>;
 	action?: 'add' | 'remove';
 }

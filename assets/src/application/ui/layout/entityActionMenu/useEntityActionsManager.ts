@@ -1,9 +1,9 @@
 import { useState } from 'react';
 import { pathOr, assocPath } from 'ramda';
 
-import { EntityActionsManager, EntityMenuItems } from './types';
+import { EntityActionsManager, EntityMenuItems, MenuRegistry } from './types';
 
-let menuRegistry = {};
+let menuRegistry: MenuRegistry = {};
 
 const useEntityActionsManager = <EntityType extends string, MenuKey extends string>(
 	entityType: EntityType,
