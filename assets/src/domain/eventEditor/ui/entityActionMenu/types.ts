@@ -14,9 +14,9 @@ export interface SubscriptionData<E> {
 	entity: E;
 }
 
-export type SubscriptionCallback<E = Entity> = (
+export type SubscriptionCallback<E extends Entity, MenuKey extends string> = (
 	data: SubscriptionData<E>,
-	entityActionsManager: EntityActionsManager<DateMenuKey | TicketMenuKey>
+	entityActionsManager: EntityActionsManager<MenuKey>
 ) => void;
 
 export type EntityActionsMenuCallback<E extends Entity, MenuKey extends string> = (

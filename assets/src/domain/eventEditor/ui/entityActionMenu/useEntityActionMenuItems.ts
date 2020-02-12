@@ -1,18 +1,22 @@
+import React from 'react';
+
 import { useEntityActions, useEntityActionsManager } from '@appLayout/entityActionMenu';
-import { EntityType, DateMenuKey, TicketMenuKey, Domain } from './types';
+import { DateMenuKey, TicketMenuKey, Domain, EntityType } from './types';
 import { Entity } from '../../services/apollo/types';
 
-const useEntityActionMenuItems = (entityType: EntityType, entity: Entity) => {
-	const entityActionsManager = useEntityActionsManager<EntityType, DateMenuKey | TicketMenuKey>(
-		entityType,
-		entity.id
-	);
-	const { getSubscriptions } = useEntityActions<Domain, DateMenuKey | TicketMenuKey>('eventEditor');
+const useEntityActionMenuItems = <E extends Entity, MenuKey extends DateMenuKey | TicketMenuKey>(
+	entityType: EntityType,
+	entity: E,
+	filterByEntityType = true
+): Array<React.ReactNode> => {
+	const entityActionsManager = useEntityActionsManager<EntityType, MenuKey>(entityType, entity.id);
+	const { getSubscriptions } = useEntityActions<Domain, EntityType, MenuKey>('eventEditor');
+
 	const { getMenuItems } = entityActionsManager;
 
-	const subscriptions = getSubscriptions();
+	const subscriptions = getSubscriptions({ entityType: filterByEntityType ? entityType : null });
 
-	Object.values(subscriptions).forEach((callback) => {
+	Object.values(subscriptions).forEach(({ callback }) => {
 		callback({ entityType, entity }, entityActionsManager);
 	});
 
