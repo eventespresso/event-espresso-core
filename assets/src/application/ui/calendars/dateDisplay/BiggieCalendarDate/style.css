@@ -6,21 +6,14 @@
 .ee-biggie-calendar-date-bg {
 	box-sizing: border-box;
 	color: var(--ee-color-white);
+	flex: 0, 0, calc(var(--ee-padding-micro) * 34);
 	height: 100%;
+	min-height: calc(var(--ee-padding-micro) * 45);
+	min-width: calc(var(--ee-padding-micro) * 34);
 	padding: var(--ee-padding-tiny) var(--ee-padding-micro);
-	position: absolute;
 	text-align: center;
-	width: calc(var(--ee-padding-micro) * 34);
+	width: 100%;
 	vertical-align: bottom;
-}
-
-.ee-biggie-calendar-date-bg.ee-bcd-pos-left {
-	float: left;
-	left: 0;
-}
-.ee-biggie-calendar-date-bg.ee-bcd-pos-right {
-	float: right;
-	right: 0;
 }
 
 .ee-biggie-calendar-date-header {

@@ -1,17 +1,16 @@
+import React from 'react';
+
 export interface CalendarDateProps {
-	position: CalendarPosition;
 	editButton?: EditButtonProps;
 	htmlClass?: string;
 	headerText?: string | React.ReactNode;
 	footerText?: string | React.ReactNode;
-	onEdit?: (event: React.MouseEvent<HTMLButtonElement>) => void;
+	onEdit?: clickHandler | keyPressHandler;
 	showTime?: boolean;
 }
 
-export enum CalendarPosition {
-	LEFT = 'left',
-	RIGHT = 'right',
-}
+export type clickHandler = (event: React.MouseEvent<HTMLButtonElement>) => void;
+export type keyPressHandler = (event: React.KeyboardEventHandler<HTMLButtonElement>) => void;
 
 export interface EditButtonProps {
 	tooltip: string;

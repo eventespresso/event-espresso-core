@@ -1,9 +1,8 @@
-import classNames from 'classnames';
 import { format, parseISO, isValid } from 'date-fns';
 import React, { useCallback } from 'react';
 
 import EspressoButton from '@appInputs/EspressoButton';
-import { CalendarDateProps, CalendarPosition } from '../types';
+import { CalendarDateProps } from '../types';
 import './style.css';
 
 export interface BiggieCalendarDateProps extends CalendarDateProps {
@@ -18,7 +17,6 @@ export const BiggieCalendarDate: React.FC<BiggieCalendarDateProps> = ({
 	htmlClass,
 	headerText,
 	footerText,
-	position = CalendarPosition.LEFT,
 	onEdit = null,
 	editButton = {},
 	showTime = false,
@@ -28,10 +26,7 @@ export const BiggieCalendarDate: React.FC<BiggieCalendarDateProps> = ({
 	if (!isValid(dateObject)) {
 		return null;
 	}
-	const classes = classNames('ee-biggie-calendar-date-bg', htmlClass, {
-		'ee-bcd-pos-left': position === CalendarPosition.LEFT,
-		'ee-bcd-pos-right': position !== CalendarPosition.LEFT,
-	});
+	const classes = htmlClass + ' ee-biggie-calendar-date-bg';
 
 	const editDateButton = typeof onEdit === 'function' && (
 		<EspressoButton
