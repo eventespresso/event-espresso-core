@@ -2,7 +2,7 @@ import React, { useEffect, useState, CSSProperties } from 'react';
 import { __ } from '@wordpress/i18n';
 
 import { FormModalFormProps } from './types';
-import { EspressoButton, EspressoButtonStyle } from '../../input';
+import { EspressoButton, EspressoButtonType } from '../../input';
 
 const formStyle: CSSProperties = {
 	boxSizing: 'border-box',
@@ -61,7 +61,7 @@ const FormModalForm: React.FC<FormModalFormProps> = ({
 				<EspressoButton
 					icon={'save'}
 					type={'submit'}
-					style={EspressoButtonStyle.PRIMARY}
+					btnType={EspressoButtonType.PRIMARY}
 					buttonText={__('Submit')}
 					disabled={submitting || pristine}
 					onClick={(click) => {
