@@ -6,9 +6,7 @@ import { Typography } from 'antd';
 
 import { __ } from '@wordpress/i18n';
 
-import { EspressoButton } from '@application/ui/input';
 import { BiggieCalendarDate, CalendarPosition } from '@application/ui/calendars';
-import DeleteDatetimeButton from './DeleteDateButton';
 import DateActionsMenu from './DateActionsMenu';
 
 import { DatetimeProvider } from '@edtrServices/context/DatetimeContext';
@@ -17,7 +15,6 @@ import TicketIdTag from '../../tickets/TicketIdTag';
 
 import { PLUS_ONE_MONTH, PLUS_TWO_MONTHS } from '../../../../shared/constants/defaultDates';
 import statusBgColorClass from '../../../../shared/entities/datetimes/helpers/statusBgColorClass';
-import DateRangePicker from '../../../../shared/ui/dateRangeInput/DateRangePicker';
 
 import { useEntityMutator, EntityType } from '@appServices/apollo/mutations';
 import useRelations from '@appServices/apollo/relations/useRelations';
@@ -179,19 +176,8 @@ const DateCard: React.FC<ListItemProps> = ({ id }) => {
 							<DateDetails datetime={date} updateDatetime={updateEntity} />
 						</div>
 					</div>
-					{/* the following will be replaced by the entity action menu */}
-					<DateActionsMenu entity={date} position='top' />
 					<div style={menuWrapperStype}>
-						<div style={menuStype}>
-							<EditDateButton style={btnStyle} />
-							<div>
-								<Popover lazy>
-									<EspressoButton icon='calendar' style={btnStyle} />
-									<DateRangePicker onFieldUpdate={updateEntity} range={range} setRange={setRange} />
-								</Popover>
-							</div>
-							{ticketsLoaded && <DeleteDatetimeButton id={date.id} style={btnStyle} />}
-						</div>
+						<DateActionsMenu entity={date} menuItemProps={{ style: btnStyle }} style={menuStype} />
 					</div>
 				</div>
 			</EntityPaperFrame>
