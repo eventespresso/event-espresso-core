@@ -1,10 +1,15 @@
 import React, { CSSProperties } from 'react';
 
-import { useEntityActionMenuItems, ActionsMenuComponentProps } from '../../entityActionMenu';
+import { ActionsMenuComponentProps } from '../../entityActionMenu';
+import useTicketsActionMenuItems from '../hooks/useTicketsActionMenuItems';
 import { Ticket } from '../../../services/apollo/types';
 
-const TicketActionsMenu: React.FC<ActionsMenuComponentProps<Ticket>> = ({ entity, position, layout }) => {
-	const menuItems = useEntityActionMenuItems('ticket', entity);
+const TicketActionsMenu: React.FC<ActionsMenuComponentProps<Ticket>> = ({
+	entity,
+	position,
+	layout = 'horizontal',
+}) => {
+	const menuItems = useTicketsActionMenuItems(entity);
 
 	const style: CSSProperties = {
 		position: 'absolute',
@@ -18,7 +23,11 @@ const TicketActionsMenu: React.FC<ActionsMenuComponentProps<Ticket>> = ({ entity
 		}),
 	};
 
-	return <div style={style}>{menuItems}</div>;
+	return (
+		<div className={`ee-entity-menu ee-ticket-menu ee-entity-menu-${layout}`} style={style}>
+			{menuItems}
+		</div>
+	);
 };
 
 export default TicketActionsMenu;

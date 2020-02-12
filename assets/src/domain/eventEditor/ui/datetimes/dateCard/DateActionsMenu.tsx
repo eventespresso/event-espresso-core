@@ -1,10 +1,15 @@
 import React, { CSSProperties } from 'react';
 
-import { useEntityActionMenuItems, ActionsMenuComponentProps } from '../../entityActionMenu';
+import { ActionsMenuComponentProps } from '../../entityActionMenu';
+import useDatesActionMenuItems from '../hooks/useDatesActionMenuItems';
 import { Datetime } from '../../../services/apollo/types';
 
-const DateActionsMenu: React.FC<ActionsMenuComponentProps<Datetime>> = ({ entity, position, layout }) => {
-	const menuItems = useEntityActionMenuItems('datetime', entity);
+const DateActionsMenu: React.FC<ActionsMenuComponentProps<Datetime>> = ({
+	entity,
+	position,
+	layout = 'horizontal',
+}) => {
+	const menuItems = useDatesActionMenuItems(entity);
 
 	const style: CSSProperties = {
 		position: 'absolute',
@@ -17,7 +22,11 @@ const DateActionsMenu: React.FC<ActionsMenuComponentProps<Datetime>> = ({ entity
 		}),
 	};
 
-	return <div style={style}>{menuItems}</div>;
+	return (
+		<div className={`ee-entity-menu ee-datetime-menu ee-entity-menu-${layout}`} style={style}>
+			{menuItems}
+		</div>
+	);
 };
 
 export default DateActionsMenu;
