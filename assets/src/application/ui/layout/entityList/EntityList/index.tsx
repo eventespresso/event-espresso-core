@@ -9,10 +9,10 @@ import './style.scss';
 
 interface EntityListProps {
 	entities: Entity[];
-	EntityGridView: React.ReactNode;
-	EntityListView: React.ReactNode;
+	EntityGridView: React.ElementType;
+	EntityListView: React.ElementType;
 	htmlClass: string;
-	view: string;
+	view: 'grid' | 'list';
 	noResultsText: string;
 }
 
@@ -39,7 +39,7 @@ const EntityList = ({
 	view = 'grid',
 	noResultsText = '',
 	...otherProps
-}) => {
+}: EntityListProps) => {
 	// verify array and remove undefined
 	const filteredEntities = Array.isArray(entities) ? without([undefined], entities) : [];
 
