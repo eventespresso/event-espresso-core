@@ -2712,7 +2712,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
         // first we start with the transaction... ultimately, we WILL not delete permanently if there are any related
         // registrations on the transaction that are NOT trashed.
         $TXN = $REG->get_first_related('Transaction');
-        if(! $TXN instanceof EE_Transaction) {
+        if (! $TXN instanceof EE_Transaction) {
             EE_Error::add_error(
                 sprintf(
                     esc_html__(
