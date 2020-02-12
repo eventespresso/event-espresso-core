@@ -5,7 +5,7 @@ import { EditItemButtonProps } from '../../../interfaces/types';
 import { useDatetimeContext } from '../../../hooks';
 import { useEditorModal } from '../../../../../application/ui/layout/editorModal';
 
-const EditDateButton: React.FC<EditItemButtonProps> = ({ position }) => {
+const EditDateButton: React.FC<EditItemButtonProps> = ({ ...rest }) => {
 	const { id: entityId } = useDatetimeContext();
 
 	const { openEditor } = useEditorModal();
@@ -16,21 +16,7 @@ const EditDateButton: React.FC<EditItemButtonProps> = ({ position }) => {
 			entityId,
 		});
 
-	const style: CSSProperties = {
-		position: 'absolute',
-		right: '.5rem',
-		textAlign: 'right',
-		zIndex: 1,
-		...(position === 'top' && {
-			top: '.5rem',
-		}),
-	};
-
-	return (
-		<div style={style}>
-			<EspressoButton icon='edit' onClick={onClick} />
-		</div>
-	);
+	return <EspressoButton icon='edit' onClick={onClick} {...rest} />;
 };
 
 export default EditDateButton;
