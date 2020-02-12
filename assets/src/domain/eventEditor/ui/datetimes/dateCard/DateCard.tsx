@@ -137,7 +137,7 @@ const DateCard: React.FC<ListItemProps> = ({ id }) => {
 			<EntityPaperFrame entity={date}>
 				<div style={cardStype}>
 					<div style={dateStype}>
-						<BiggieCalendarDate headerText={__('starts')} htmlClass={bgClass} date={range[0]} />
+						<BiggieCalendarDate headerText={__('starts')} className={bgClass} date={range[0]} />
 					</div>
 					<div style={detailsStype}>
 						<div style={detailsWrapperStype}>
