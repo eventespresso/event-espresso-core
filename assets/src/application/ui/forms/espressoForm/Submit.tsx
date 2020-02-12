@@ -1,12 +1,11 @@
 import React from 'react';
 import { __ } from '@wordpress/i18n';
-import { useForm } from 'react-final-form';
 
 import { Button } from './adapters';
 import { SubmitProps } from './types';
+import ResetButton from './ResetButton';
 
 const Submit: React.FC<SubmitProps> = ({ submitting, submitButton, resetButton }) => {
-	const form = useForm();
 	return (
 		<div className='submit-wrapper'>
 			<div className='submit-button'>
@@ -23,19 +22,7 @@ const Submit: React.FC<SubmitProps> = ({ submitting, submitButton, resetButton }
 				</Button>
 			</div>
 
-			{resetButton ? (
-				<div className='reset-button'>
-					<Button
-						htmlType='reset'
-						disabled={submitting}
-						className='reset-button'
-						onClick={() => form.reset()}
-						{...resetButton}
-					>
-						{resetButton.label || __('Reset')}
-					</Button>
-				</div>
-			) : null}
+			{resetButton ? <ResetButton disabled={submitting} {...resetButton} /> : null}
 		</div>
 	);
 };

@@ -4,7 +4,7 @@ import { FieldArrayProps } from 'react-final-form-arrays';
 
 import { SelectOptions, ButtonProps, FormItemProps } from './adapters/types';
 
-interface FormButtonProps extends ButtonProps {
+export interface FormButtonProps extends ButtonProps {
 	label?: string;
 }
 
