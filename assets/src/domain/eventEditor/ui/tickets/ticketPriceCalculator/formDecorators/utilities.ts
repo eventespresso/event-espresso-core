@@ -60,10 +60,10 @@ export const getFromFormData = <T>(fieldPath: string, data: TpcFormData): T => {
 };
 
 // returns GUID for price modifier's related price type
-export const getPriceModifierPriceTypeGuid = (price: PriceModifier) => prop('priceType', price);
+export const getPriceModifierPriceTypeGuid = (price: TpcPriceModifier) => prop('priceType', price);
 
 // returns price type for supplied price modifier if found in array of price types
-export const getPriceType = (priceTypes: PriceType[]) => (price: PriceModifier) => {
+export const getPriceType = (priceTypes: PriceType[]) => (price: TpcPriceModifier) => {
 	return findEntityByGuid(priceTypes)(getPriceModifierPriceTypeGuid(price));
 };
 
