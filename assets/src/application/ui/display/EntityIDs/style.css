@@ -1,6 +1,7 @@
 .ee-entity-ids {
-	margin: calc(var(--ee-margin-tiny) * -1) var(--ee-margin-micro) 0;
-	width: 100%;
+	padding: 0 var(--ee-margin-micro);
+	position: absolute;
+	top: 0;
 }
 
 .ee-entity-ids .ee-entity-dbid,
