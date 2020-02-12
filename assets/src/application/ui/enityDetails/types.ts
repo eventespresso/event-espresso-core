@@ -2,7 +2,7 @@ import React from 'react';
 
 export interface EntityDetailsPanelProps {
 	details: Array<EntityDetailProps>;
-	htmlClass?: string;
+	className?: string;
 }
 
 export interface EntityDetailProps {
@@ -10,7 +10,7 @@ export interface EntityDetailProps {
 	id?: string;
 	label?: string;
 	value?: number | string | React.ReactNode | HTMLElement;
-	htmlClass?: string;
+	className?: string;
 	[key: string]: any; // custom props to component
 }
 

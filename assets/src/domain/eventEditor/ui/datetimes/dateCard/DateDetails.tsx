@@ -35,12 +35,12 @@ const DateDetails: React.FC<DateDetailsProps> = ({ datetime, updateDatetime }) =
 			},
 			{
 				id: 'ee-event-date-registrations',
-				htmlClass: 'ee-has-tooltip',
+				className: 'ee-has-tooltip',
 				label: __('reg list'),
 				value: <DateRegistrationsLink datetime={datetime} />,
 			},
 		];
-		return <EntityDetailsPanel details={details} htmlClass='ee-editor-date-details-sold-rsrvd-cap-div' />;
+		return <EntityDetailsPanel details={details} className='ee-editor-date-details-sold-rsrvd-cap-div' />;
 	}, [datetime.capacity, datetime.sold]);
 };
 

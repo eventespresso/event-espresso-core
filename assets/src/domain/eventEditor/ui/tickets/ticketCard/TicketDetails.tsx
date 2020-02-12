@@ -49,7 +49,7 @@ const TicketDetails: React.FC<TicketDetailsProps> = ({ ticket, updateTicket }) =
 				value: <TicketRegistrationsLink ticket={ticket} />,
 			},
 		];
-		return <EntityDetailsPanel details={details} htmlClass='ee-editor-ticket-details-sold-rsrvd-qty-div' />;
+		return <EntityDetailsPanel details={details} className='ee-editor-ticket-details-sold-rsrvd-qty-div' />;
 	}, [ticket.quantity, ticket.sold]);
 };
 

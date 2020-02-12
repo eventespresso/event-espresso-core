@@ -6,10 +6,10 @@ import DetailsSeparator from './DetailsSeparator';
 import EntityDetail from './EntityDetail';
 import { EntityDetailsPanelProps } from './types';
 
-const EntityDetailsPanel: React.FC<EntityDetailsPanelProps> = ({ details, htmlClass }) => {
-	const htmlClasses = classNames(htmlClass, 'ee-entity-details-panel-div');
+const EntityDetailsPanel: React.FC<EntityDetailsPanelProps> = ({ details, className }) => {
+	const htmlClass = classNames(className, 'ee-entity-details-panel-div');
 	return (
-		<div className={htmlClasses}>
+		<div className={htmlClass}>
 			{details.map((detail, index) => {
 				return (
 					<Fragment key={index}>
