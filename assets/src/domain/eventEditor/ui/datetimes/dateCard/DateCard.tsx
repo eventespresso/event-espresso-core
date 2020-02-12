@@ -21,7 +21,7 @@ import useRelations from '@appServices/apollo/relations/useRelations';
 import { useStatus, TypeName } from '@appServices/apollo/status';
 // import { InlineEditInput } from '@appInputs';
 import EntityPaperFrame from '@appLayout/EntityPaperFrame';
-import { ListItemProps } from '../../../interfaces/types';
+import { ListItemProps } from '@edtrInterfaces';
 
 const { Title, Paragraph } = Typography;
 
