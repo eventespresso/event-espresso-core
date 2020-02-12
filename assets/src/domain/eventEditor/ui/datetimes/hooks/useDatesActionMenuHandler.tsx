@@ -8,21 +8,25 @@ import { SubscriptionCallback, DateMenuKey } from '../../entityActionMenu/';
 type DatesSubscriptionCallback = SubscriptionCallback<Datetime, DateMenuKey>;
 
 const useDatesActionMenuHandler = (): DatesSubscriptionCallback => {
-	return useCallback<DatesSubscriptionCallback>(({ entityType, entity: date }, { registerMenuItem }) => {
-		// although this is not needed
-		if (entityType !== 'datetime') {
-			return;
-		}
-		registerMenuItem('editDate', () => <EditDateButton key={date.id + 'editDate'} />);
+	return useCallback<DatesSubscriptionCallback>(
+		({ entityType, entity: date, menuItemProps }, { registerMenuItem }) => {
+			// although this is not needed
+			if (entityType !== 'datetime') {
+				return;
+			}
+			registerMenuItem('editDate', () => <EditDateButton key={date.id + 'editDate'} {...menuItemProps} />);
 
-		registerMenuItem('assignTickets', () => (
-			<EspressoButton
-				icon='form'
-				onClick={() => console.log('You clicked TAM')}
-				key={date.id + 'assignTickets'}
-			/>
-		));
-	}, []);
+			registerMenuItem('assignTickets', () => (
+				<EspressoButton
+					icon='form'
+					onClick={() => console.log('You clicked TAM')}
+					key={date.id + 'assignTickets'}
+					{...menuItemProps}
+				/>
+			));
+		},
+		[]
+	);
 };
 
 export default useDatesActionMenuHandler;
