@@ -14,7 +14,7 @@ export interface BiggieCalendarDateProps extends CalendarDateProps {
  */
 export const BiggieCalendarDate: React.FC<BiggieCalendarDateProps> = ({
 	date,
-	htmlClass,
+	className,
 	headerText,
 	footerText,
 	onEdit = null,
@@ -26,7 +26,7 @@ export const BiggieCalendarDate: React.FC<BiggieCalendarDateProps> = ({
 	if (!isValid(dateObject)) {
 		return null;
 	}
-	const classes = htmlClass + ' ee-biggie-calendar-date-bg';
+	className += ' ee-biggie-calendar-date-bg';
 
 	const editDateButton = typeof onEdit === 'function' && (
 		<EspressoButton
@@ -40,7 +40,7 @@ export const BiggieCalendarDate: React.FC<BiggieCalendarDateProps> = ({
 	);
 
 	return (
-		<div className={classes}>
+		<div className={className}>
 			{headerText && <div className='ee-biggie-calendar-date-header'>{headerText}</div>}
 			<div className='ee-biggie-calendar-date'>
 				<div className='ee-bcd-weekday'>{format(dateObject, 'eeee')}</div>
