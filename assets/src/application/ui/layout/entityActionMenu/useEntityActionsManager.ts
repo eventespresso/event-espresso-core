@@ -17,6 +17,8 @@ const useEntityActionsManager = <EntityType extends string, MenuKey extends stri
 		const mapKey = getMapKey(key);
 		if (!menuItems.includes(mapKey)) {
 			setMenuItems((items) => [...items, mapKey]);
+			// Add menu item(may be JSX) to the registry
+			// by calling the render function
 			menuRegistry = assocPath([entityType, entityId, key], render(), menuRegistry);
 		}
 	};
