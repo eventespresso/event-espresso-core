@@ -8,6 +8,7 @@ import { EspressoButton } from '@application/ui/input';
 import { BiggieCalendarDate, CalendarPosition } from '@application/ui/calendars';
 import DeleteDatetimeButton from './DeleteDateButton';
 import EditDateButton from './EditDateButton';
+import DateDetails from './DateDetails';
 
 import { DatetimeProvider } from '@edtrServices/context/DatetimeContext';
 import useDatetimeItem from '@edtrServices/apollo/queries/datetimes/useDatetimeItem';
@@ -169,6 +170,7 @@ const DateCard: React.FC<ListItemProps> = ({ id }) => {
 						</div>
 					</div>
 				</div>
+				<DateDetails datetime={date} updateDatetime={updateEntity} />
 			</EntityPaperFrame>
 		</DatetimeProvider>
 	) : null;
