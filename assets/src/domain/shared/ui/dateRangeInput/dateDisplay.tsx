@@ -1,10 +1,13 @@
 import React from 'react';
-import { Icon, Intent, Tag } from '@blueprintjs/core/lib/esm';
+import { Icon, Tag } from 'antd';
 import classNames from 'classnames';
 import { format, isValid } from 'date-fns';
 
-const FORMAT = 'EEEE, PPP';
-const FORMAT_TIME = 'EEEE, PPP p';
+const FORMAT = 'EE MMM eo, yyyy';
+const FORMAT_TIME = 'EE MMM eo, yyyy p';
+
+const toUnixTimestamp = (date: Date) => Math.round(date.getTime() / 1000);
+const now = toUnixTimestamp(new Date());
 
 interface DateFCProps {
 	withTime?: boolean;
@@ -18,14 +21,15 @@ interface DateRangeDisplayProps extends DateFCProps {
 
 interface DateTagProps extends DateFCProps {
 	date: Date;
+	color: string;
 }
 
-export const DateTag: React.FC<DateTagProps> = ({ date, withTime = false, format: formatStr }) => {
+export const DateTag: React.FC<DateTagProps> = ({ date, color, withTime = false, format: formatStr }) => {
 	const formatString = formatStr || (withTime ? FORMAT_TIME : FORMAT);
 	if (isValid(date)) {
-		return <Tag intent={Intent.SUCCESS}>{format(date, formatString)}</Tag>;
+		return <Tag color={color}>{format(date, formatString)}</Tag>;
 	} else {
-		return <Tag minimal={true}>no date</Tag>;
+		return <Tag>no date</Tag>;
 	}
 };
 
@@ -35,12 +39,24 @@ export const DateRangeDisplay: React.FC<DateRangeDisplayProps> = ({
 	withTime = false,
 	format,
 }) => {
+	const startTime = toUnixTimestamp(start);
+	const endTime = toUnixTimestamp(end);
+	let startColor = '';
+	let endColor = '';
+	if (endTime > now) {
+		endColor = 'var(--ee-color-blue)';
+		if (startTime < now) {
+			startColor = 'var(--ee-color-green)';
+		} else {
+			startColor = 'var(--ee-color-blue)';
+		}
+	}
 	const formatString = format || (withTime ? FORMAT_TIME : FORMAT);
 	return (
 		<div className={classNames('docs-date-range', className)}>
-			<DateTag withTime={withTime} date={start} format={formatString} />
-			<Icon icon='arrow-right' />
-			<DateTag withTime={withTime} date={end} format={formatString} />
+			<DateTag withTime={withTime} date={start} color={startColor} format={formatString} />
+			<Icon type='arrow-right' style={{ marginRight: '8px' }} />
+			<DateTag withTime={withTime} date={end} color={endColor} format={formatString} />
 		</div>
 	);
 };
