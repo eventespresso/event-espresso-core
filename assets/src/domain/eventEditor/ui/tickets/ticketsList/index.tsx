@@ -8,9 +8,9 @@ import { __ } from '@wordpress/i18n';
  * Internal dependencies
  */
 import AddNewTicketButton from './AddNewTicketButton';
-import EmptyState from '../../../../../application/ui/display/EmptyState';
-import ErrorIndicator from '../../../../../application/ui/display/ErrorIndicator';
-import LoadingIndicator from '../../../../../application/ui/display/LoadingIndicator';
+import EmptyState from '@appDisplay/EmptyState';
+import ErrorIndicator from '@appDisplay/ErrorIndicator';
+import LoadingIndicator from '@appDisplay/LoadingIndicator';
 import List from './List';
 import useTickets from '../../../services/apollo/queries/tickets/useTickets';
 import { useStatus, TypeName } from '../../../../../application/services/apollo/status';

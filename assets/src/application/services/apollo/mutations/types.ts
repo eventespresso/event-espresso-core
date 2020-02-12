@@ -1,6 +1,6 @@
 import { MutationOptions, OperationVariables } from 'apollo-client';
 import { DataProxy } from 'apollo-cache';
-import { Entity as AnEntity } from '../../../../domain/eventEditor/services/apollo/types';
+import { Entity as AnEntity } from '@edtrServices/apollo/types';
 
 export type MutationInput = {
 	[key: string]: any;

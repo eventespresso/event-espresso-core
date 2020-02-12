@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import { EntityId } from '../../../../domain/eventEditor/services/apollo/types';
+import { EntityId } from '@edtrServices/apollo/types';
 import { EditorModals } from '../../../../domain/shared/ui/editorModal/types';
 
 export type EditorId = keyof EditorModals;

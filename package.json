@@ -102,6 +102,7 @@
 		"moment": "^2.24.0",
 		"moment-duration-format": "^2.3.2",
 		"moment-timezone": "^0.5.27",
+		"node-sass": "^4.13.1",
 		"npm-watch": "^0.6.0",
 		"optimize-css-assets-webpack-plugin": "5.0.3",
 		"pluralize": "^8.0.0",
