@@ -11,7 +11,25 @@ export type EntityMenuItems<MenuKey extends string> = {
 	[K in MenuKey]?: React.ReactNode;
 };
 
+/**
+ * e.g.
+ * menuRegistry = {
+ *     datetime: {
+ *         YTBUKTUYRytB: {
+ *             editDate: () => null,
+ *             assignTickets: () => null,
+ *         },
+ *     },
+ *     ticket: {
+ *         KJGNFGHFjhfbY: {
+ *             editTicket: () => null,
+ *             tpc: () => null,
+ *         },
+ *     },
+ * }
+ */
 export type MenuRegistry<EntityType extends string = '', MenuKey extends string = ''> = {
+	// entityType e.g. "datetime"
 	[K in EntityType]?: {
 		// entityId
 		[key: string]: EntityMenuItems<MenuKey>;
