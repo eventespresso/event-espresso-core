@@ -36,7 +36,7 @@ export const MediumCalendarDate: React.FC<MediumCalendarDateProps> = ({
 					<span className='ee-mcd-day'>{format(dateObject, 'ee')}</span>
 				</div>
 				<div className='ee-mcd-year'>
-					{format(dateObject, 'YYYY')}
+					{format(dateObject, 'yyyy')}
 					{showTime && <span className='ee-mcd-time'>&nbsp;{format(dateObject, 'h:mm a')}</span>}
 				</div>
 				{footerText && <div className='ee-medium-calendar-date-footer'>{footerText}</div>}
