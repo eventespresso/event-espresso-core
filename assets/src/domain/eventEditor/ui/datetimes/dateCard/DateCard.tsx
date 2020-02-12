@@ -5,7 +5,7 @@ import { Typography } from 'antd';
 
 import { __ } from '@wordpress/i18n';
 
-import { BiggieCalendarDate } from '@application/ui/calendars';
+import { CalendarDateRange } from '@appCalendars';
 import DateDetails from './DateDetails';
 import DateActionsMenu from './DateActionsMenu';
 
@@ -39,7 +39,7 @@ const dateStype: CSSProperties = {
 	alignItems: 'stretch',
 	boxSizing: 'border-box',
 	padding: 0,
-	maxWidth: '25%',
+	width: '25%',
 };
 
 const detailsStype: CSSProperties = {
@@ -63,7 +63,7 @@ const menuWrapperStype: CSSProperties = {
 	alignItems: 'stretch',
 	boxSizing: 'border-box',
 	flex: '0, 0, 3rem',
-	padding: '.5rem',
+	padding: '0.25rem',
 };
 
 const menuStype: CSSProperties = {
@@ -79,7 +79,7 @@ const btnStyle: CSSProperties = {
 	background: 'var(--ee-background-color)',
 	border: '1px solid var(--ee-color-grey-8)',
 	color: 'var(--ee-color-black)',
-	margin: '0 0 .5rem',
+	margin: '0.25rem',
 };
 
 const hdrStyle: CSSProperties = {
@@ -137,7 +137,12 @@ const DateCard: React.FC<ListItemProps> = ({ id }) => {
 			<EntityPaperFrame entity={date}>
 				<div style={cardStype}>
 					<div style={dateStype}>
-						<BiggieCalendarDate headerText={__('starts')} className={bgClass} date={range[0]} />
+						<CalendarDateRange
+							headerText={__('starts')}
+							className={bgClass}
+							startDate={range[0]}
+							endDate={range[1]}
+						/>
 					</div>
 					<div style={detailsStype}>
 						<div style={detailsWrapperStype}>
