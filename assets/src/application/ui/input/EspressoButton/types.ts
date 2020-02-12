@@ -12,7 +12,7 @@ export enum EspressoButtonSize {
 	HUGE = 30,
 }
 
-export enum EspressoButtonStyle {
+export enum EspressoButtonType {
 	ACCENT = 'ACCENT',
 	DEFAULT = 'DEFAULT',
 	PRIMARY = 'PRIMARY',
@@ -26,6 +26,6 @@ export interface EspressoButtonProps {
 	icon?: Icon | string;
 	onClick: ClickHandler;
 	size?: EspressoButtonSize;
-	style?: EspressoButtonStyle;
+	btnType?: EspressoButtonType;
 	[key: string]: any;
 }
