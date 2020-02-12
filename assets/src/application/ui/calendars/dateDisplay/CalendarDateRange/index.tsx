@@ -1,10 +1,8 @@
 import React from 'react';
-import { format, isValid } from 'date-fns';
+import { format, parseISO, isValid } from 'date-fns';
 import { __ } from '@wordpress/i18n';
 
-import { BiggieCalendarDate } from '../BiggieCalendarDate';
-import { MediumCalendarDate } from '../MediumCalendarDate';
-import { CalendarDateProps } from '../types';
+import { BiggieCalendarDate, MediumCalendarDate, CalendarDateProps } from '../index';
 
 export interface CalendarDateRange extends CalendarDateProps {
 	startDate: Date;
@@ -14,28 +12,30 @@ export interface CalendarDateRange extends CalendarDateProps {
 /**
  * Displays a pair of calendar dates representing a date range
  */
-const CalendarDateRange: React.FC<CalendarDateRange> = ({
+export const CalendarDateRange: React.FC<CalendarDateRange> = ({
 	startDate,
 	endDate,
 	headerText = '',
 	footerText = '',
-	htmlClass = '',
+	className = '',
 	showTime = false,
 }) => {
-	if (!isValid(startDate) || !isValid(endDate)) {
+	const startDateObject = startDate instanceof Date ? startDate : parseISO(startDate);
+	const endDateObject = endDate instanceof Date ? endDate : parseISO(endDate);
+	if (!isValid(startDateObject) || !isValid(endDateObject)) {
 		return null;
 	}
-	if (format(startDate, 'YY-MM-DD') !== format(endDate, 'YY-MM-DD')) {
+	if (format(startDateObject, 'yy-MM-dd') !== format(endDateObject, 'yy-MM-dd')) {
 		return (
 			<MediumCalendarDate
-				date={startDate}
-				htmlClass={htmlClass}
+				date={startDateObject}
+				className={className}
 				showTime={showTime}
 				addWrapper
 				footerText={
 					<MediumCalendarDate
 						key={'end-date'}
-						date={endDate}
+						date={endDateObject}
 						headerText={__('to', 'event_espresso')}
 						showTime={showTime}
 						footerText={footerText}
@@ -44,16 +44,14 @@ const CalendarDateRange: React.FC<CalendarDateRange> = ({
 			/>
 		);
 	}
-	const time = format(startDate, 'h:mm a - ') + format(endDate, 'h:mm a');
+	const time = format(startDateObject, 'h:mm a - ') + format(endDateObject, 'h:mm a');
 	const headerTxt = headerText ? headerText : <span>&nbsp;</span>;
 	return (
 		<BiggieCalendarDate
-			date={startDate}
-			htmlClass={htmlClass}
+			date={startDateObject}
+			className={className}
 			headerText={headerTxt}
 			footerText={[time, footerText]}
 		/>
 	);
 };
-
-export default CalendarDateRange;
