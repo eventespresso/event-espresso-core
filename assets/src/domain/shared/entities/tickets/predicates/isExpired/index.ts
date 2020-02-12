@@ -13,8 +13,6 @@ interface Props {
 const isExpired = ({ ticket, includeTrashed = false }: Props): boolean => {
 	const { endDate } = ticket;
 
-	console.log(isValidOrTrashed(ticket, includeTrashed));
-
 	return isValidOrTrashed(ticket, includeTrashed) && diff('minutes', parseISO(endDate), now) < 0;
 };
 

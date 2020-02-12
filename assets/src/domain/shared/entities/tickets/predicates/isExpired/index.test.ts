@@ -36,7 +36,7 @@ describe('isExpired', () => {
 		});
 	});
 
-	it('should return true if ticket is trashed, includeTrashed prop is set to true and end date is in the future', () => {
+	it('should return false if ticket is trashed, includeTrashed prop is set to true and end date is in the future', () => {
 		tickets.forEach((ticket) => {
 			const endDate = formatISO(add('weeks', new Date(), 1));
 			const newTicket = { ...ticket, endDate, isTrashed: true };
