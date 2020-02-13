@@ -1,0 +1,53 @@
+/** -------------------------------------------------------------------------
+ * Event Espresso IconMenuItem Stylesheet
+ * © 2020 Event Espresso
+ * ------------------------------------------------------------------------- */
+
+.ee-icon-menu-item-wrapper {
+	position: relative;
+}
+
+.ee-icon-menu-item {
+	background: none;
+	border: 1px solid var(--ee-background-color);
+	color: var(--ee-default-text-color);
+	height: calc(var(--ee-icon-button-size) + 2px);
+	margin: 0 0 var(--ee-margin-micro);
+	width: calc(var(--ee-icon-button-size) + 2px);
+
+	&:hover {
+		background: var(--ee-background-color) !important;
+		box-shadow: none !important;
+		color: var(--ee-color-primary) !important;
+		border: 1px solid var(--ee-border-color);
+	}
+}
+
+.ee-icon-menu-item-count {
+	border-radius: var(--ee-border-radius-full);
+	box-sizing: border-box;
+	box-shadow: var(--ee-box-shadow-tiny);
+	color: var(--ee-color-white);
+	font-size: var(--ee-font-size-tiny);
+	font-weight: normal;
+	height: calc(var(--ee-font-size-default) + 1px);
+	line-height: var(--ee-font-size-micro);
+	padding: var(--ee-padding-micro);
+	position: absolute;
+	right: 0;
+	text-align: center;
+	text-shadow: var(--ee-text-shadow-inset);
+	top: 0;
+	vertical-align: top;
+	min-width: calc(var(--ee-font-size-default) + 1px);
+
+	&.ee-has-items {
+		background: var(--ee-color-bright-blue);
+	}
+
+	&.ee-no-items {
+		background: var(--ee-color-hot-pink);
+		font-size: var(--ee-font-size-tiny);
+		font-weight: bold;
+	}
+}
