@@ -4,14 +4,18 @@
  * ------------------------------------------------------------------------- */
 
 .ee-entity-details-panel-div {
+	align-self: flex-end;
 	color: var(--ee-default-text-color);
 	display: flex;
 	flex-flow: row nowrap;
-	justify-content: space-between;
 	font-size: var(--ee-font-size-big);
 	height: var(--ee-font-size-extreme);
+	justify-content: center; /* space-between */
 	line-height: var(--ee-font-size-big);
-	width: calc(var(--ee-font-size-tiny) * 21);
+	min-width: calc(var(--ee-font-size-tiny) * 21);
+	text-align: center;
+	vertical-align: bottom;
+	width: 100%;
 }
 
 .ee-entity-details-panel-div .ee-inline-edit-text {
@@ -23,6 +27,7 @@
 	display: flex;
 	flex-direction: column-reverse;
 	max-width: calc(var(--ee-font-size-tiny) * 7);
+	width: 100%;
 }
 
 .ee-entity-details-div .ee-inline-edit-input {
