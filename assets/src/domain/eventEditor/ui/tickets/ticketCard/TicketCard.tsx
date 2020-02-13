@@ -5,6 +5,7 @@ import { __ } from '@wordpress/i18n';
 
 import EditTicketButton from './EditTicketButton';
 import DeleteTicketButton from './DeleteTicketButton';
+import TicketDetails from './TicketDetails';
 import TicketPriceCalculatorButton from '../ticketPriceCalculator/buttons/TicketPriceCalculatorButton';
 import useTicketItem from '@edtrServices/apollo/queries/tickets/useTicketItem';
 import TicketProvider from '@edtrServices/context/TicketContext';
@@ -100,6 +101,7 @@ const TicketCard: React.FC<ListItemProps> = ({ id }) => {
 						<DatetimeIdTag key={datetimeId} id={datetimeId} />
 					))}
 				</div>
+				<TicketDetails ticket={ticket} updateTicket={updateEntity} />
 			</EntityPaperFrame>
 		</TicketProvider>
 	) : null;

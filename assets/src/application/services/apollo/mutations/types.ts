@@ -21,10 +21,14 @@ export interface BackwardSubscription {
 	onCompleted?: OnMutationCompletedFn;
 	onError?: OnMutationErrorFn;
 }
+
+export type EntityMutatorFn = (input: MutationInput, subscriptions?: BackwardSubscription) => MutationResult;
+export type EntityMutatorDeleteFn = (input?: MutationInput, subscriptions?: BackwardSubscription) => MutationResult;
+
 export interface EntityMutator {
-	createEntity: (input: MutationInput, subscriptions?: BackwardSubscription) => MutationResult;
-	updateEntity: (input: MutationInput, subscriptions?: BackwardSubscription) => MutationResult;
-	deleteEntity: (input?: MutationInput, subscriptions?: BackwardSubscription) => MutationResult;
+	createEntity: EntityMutatorFn;
+	updateEntity: EntityMutatorFn;
+	deleteEntity: EntityMutatorDeleteFn;
 }
 
 export interface CustomMutationOptions extends MutationOptions {
