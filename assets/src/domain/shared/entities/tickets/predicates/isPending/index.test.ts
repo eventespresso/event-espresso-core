@@ -9,7 +9,7 @@ describe('isPending', () => {
 		tickets.forEach((ticket) => {
 			const startDate = formatISO(sub('weeks', new Date(), 1));
 			const newTicket = { ...ticket, startDate };
-			expect(isPending(newTicket)).toEqual(false);
+			expect(isPending(newTicket)).toBe(false);
 		});
 	});
 
@@ -17,7 +17,7 @@ describe('isPending', () => {
 		tickets.forEach((ticket) => {
 			const startDate = formatISO(add('weeks', new Date(), 1));
 			const newTicket = { ...ticket, startDate };
-			expect(isPending(newTicket)).toEqual(true);
+			expect(isPending(newTicket)).toBe(true);
 		});
 	});
 });

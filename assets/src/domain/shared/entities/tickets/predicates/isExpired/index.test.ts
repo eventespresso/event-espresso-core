@@ -8,7 +8,7 @@ describe('isExpired', () => {
 	it('should return false if ticket is trashed', () => {
 		tickets.forEach((ticket) => {
 			const newTicket = { ...ticket, isTrashed: true };
-			expect(isExpired({ ticket: newTicket })).toEqual(false);
+			expect(isExpired({ ticket: newTicket })).toBe(false);
 		});
 	});
 
@@ -16,7 +16,7 @@ describe('isExpired', () => {
 		tickets.forEach((ticket) => {
 			const endDate = formatISO(sub('weeks', new Date(), 1));
 			const newTicket = { ...ticket, endDate, isTrashed: false };
-			expect(isExpired({ ticket: newTicket })).toEqual(true);
+			expect(isExpired({ ticket: newTicket })).toBe(true);
 		});
 	});
 
@@ -24,7 +24,7 @@ describe('isExpired', () => {
 		tickets.forEach((ticket) => {
 			const endDate = formatISO(add('weeks', new Date(), 1));
 			const newTicket = { ...ticket, endDate, isTrashed: false };
-			expect(isExpired({ ticket: newTicket })).toEqual(false);
+			expect(isExpired({ ticket: newTicket })).toBe(false);
 		});
 	});
 
@@ -32,7 +32,7 @@ describe('isExpired', () => {
 		tickets.forEach((ticket) => {
 			const endDate = formatISO(sub('weeks', new Date(), 1));
 			const newTicket = { ...ticket, endDate, isTrashed: true };
-			expect(isExpired({ ticket: newTicket, includeTrashed: true })).toEqual(true);
+			expect(isExpired({ ticket: newTicket, includeTrashed: true })).toBe(true);
 		});
 	});
 
@@ -40,7 +40,7 @@ describe('isExpired', () => {
 		tickets.forEach((ticket) => {
 			const endDate = formatISO(add('weeks', new Date(), 1));
 			const newTicket = { ...ticket, endDate, isTrashed: true };
-			expect(isExpired({ ticket: newTicket, includeTrashed: true })).toEqual(false);
+			expect(isExpired({ ticket: newTicket, includeTrashed: true })).toBe(false);
 		});
 	});
 });

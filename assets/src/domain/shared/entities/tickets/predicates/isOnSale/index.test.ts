@@ -9,7 +9,7 @@ describe('isOnSale', () => {
 		tickets.forEach((ticket) => {
 			const startDate = formatISO(add('weeks', new Date(), 1));
 			const newTicket = { ...ticket, startDate };
-			expect(isOnSale(newTicket)).toEqual(false);
+			expect(isOnSale(newTicket)).toBe(false);
 		});
 	});
 
@@ -18,7 +18,7 @@ describe('isOnSale', () => {
 			const startDate = formatISO(sub('weeks', new Date(), 1));
 			const endDate = formatISO(sub('weeks', new Date(), 1));
 			const newTicket = { ...ticket, startDate, endDate };
-			expect(isOnSale(newTicket)).toEqual(false);
+			expect(isOnSale(newTicket)).toBe(false);
 		});
 	});
 
@@ -27,7 +27,7 @@ describe('isOnSale', () => {
 			const startDate = formatISO(sub('weeks', new Date(), 1));
 			const endDate = formatISO(add('weeks', new Date(), 1));
 			const newTicket = { ...ticket, startDate, endDate };
-			expect(isOnSale(newTicket)).toEqual(true);
+			expect(isOnSale(newTicket)).toBe(true);
 		});
 	});
 });

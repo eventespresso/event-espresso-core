@@ -5,42 +5,42 @@ describe('isValidOrTrashed', () => {
 	it('should return false if ticket is trashed', () => {
 		tickets.forEach((ticket) => {
 			const newTicket = { ...ticket, isTrashed: true };
-			expect(isValidOrTrashed({ ticket: newTicket })).toEqual(false);
+			expect(isValidOrTrashed({ ticket: newTicket })).toBe(false);
 		});
 	});
 
 	it('should return false if ticket is trashed and includeTrashed is false', () => {
 		tickets.forEach((ticket) => {
 			const newTicket = { ...ticket, isTrashed: true };
-			expect(isValidOrTrashed({ ticket: newTicket, includeTrashed: false })).toEqual(false);
+			expect(isValidOrTrashed({ ticket: newTicket, includeTrashed: false })).toBe(false);
 		});
 	});
 
 	it('should return true if ticket is trashed and includeTrashed is true', () => {
 		tickets.forEach((ticket) => {
 			const newTicket = { ...ticket, isTrashed: true };
-			expect(isValidOrTrashed({ ticket: newTicket, includeTrashed: true })).toEqual(true);
+			expect(isValidOrTrashed({ ticket: newTicket, includeTrashed: true })).toBe(true);
 		});
 	});
 
 	it('should return true if ticket is not trashed', () => {
 		tickets.forEach((ticket) => {
 			const newTicket = { ...ticket, isTrashed: false };
-			expect(isValidOrTrashed({ ticket: newTicket })).toEqual(true);
+			expect(isValidOrTrashed({ ticket: newTicket })).toBe(true);
 		});
 	});
 
 	it('should return true if ticket is not trashed and includeTrashed is false', () => {
 		tickets.forEach((ticket) => {
 			const newTicket = { ...ticket, isTrashed: false };
-			expect(isValidOrTrashed({ ticket: newTicket, includeTrashed: false })).toEqual(true);
+			expect(isValidOrTrashed({ ticket: newTicket, includeTrashed: false })).toBe(true);
 		});
 	});
 
 	it('should return true if ticket is not trashed and includeTrashed is true', () => {
 		tickets.forEach((ticket) => {
 			const newTicket = { ...ticket, isTrashed: false };
-			expect(isValidOrTrashed({ ticket: newTicket, includeTrashed: true })).toEqual(true);
+			expect(isValidOrTrashed({ ticket: newTicket, includeTrashed: true })).toBe(true);
 		});
 	});
 });
