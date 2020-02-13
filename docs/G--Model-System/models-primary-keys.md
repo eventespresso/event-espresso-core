@@ -1,6 +1,6 @@
 # Models' Primary Keys and IDs
 In Event Espresso code, the model's "primary key" refers to its field of type `EE_Primary_Key_Field_Base`.
-On model objects, the corresponding field value is an either integer (eg on events and registrations), 
+On model objects, the corresponding field value is either an integer (eg on events and registrations), 
 short string (eg countries and statuses), or they instead have a combined key (eg term relationships).
 
 This article especially explains the strange situation with Event Espresso models that have no primary key field. It assumes you've already
@@ -131,4 +131,3 @@ $term_relationship = $term_relationship_model->get_one(
     $term_relationship_model->alter_query_params_to_restrict_by_ID('object_id=123&term_taxonomy_id=345')
 );
 ```
-
