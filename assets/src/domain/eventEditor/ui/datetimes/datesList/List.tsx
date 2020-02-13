@@ -6,6 +6,7 @@ import DatesListFilterBar from './filterBar/DatesListFilterBar';
 import AddNewDateButton from './AddNewDateButton';
 import DatetimeCard from '../dateCard/DateCard';
 import { Datetime } from '../../../services/apollo/types';
+import { EspressoDragSortingTable } from '@application/ui/layout';
 
 const listStyle: CSSProperties = {
 	display: 'flex',
@@ -32,8 +33,59 @@ const List: React.FC<ListProps> = ({ datetimes }) => {
 		</>
 	);
 
+	const columns = [
+		{
+			title: 'Name',
+			dataIndex: 'name',
+		},
+		{
+			title: 'Age',
+			dataIndex: 'age',
+		},
+		{
+			title: 'Address',
+			dataIndex: 'address',
+		},
+		{
+			title: 'Address2',
+			dataIndex: 'address2',
+		},
+	];
+
+	const data = [
+		{
+			key: '1',
+			name: 'John Brown',
+			age: 32,
+			address: 'New York No. 1 Lake Park',
+			address2: 'New York No. 1 Lake Park',
+		},
+		{
+			key: '2',
+			name: 'Jim Green',
+			age: 42,
+			address: 'London No. 1 Lake Park',
+			address2: 'New York No. 1 Lake Park',
+		},
+		{
+			key: '3',
+			name: 'Joe Black',
+			age: 32,
+			address: 'Sidney No. 1 Lake Park',
+			address2: 'New York No. 1 Lake Park',
+		},
+		{
+			key: '4',
+			name: 'Joe Black',
+			age: 32,
+			address: 'Sidney No. 1 Lake Park',
+			address2: 'New York No. 1 Lake Park',
+		},
+	];
+
 	return (
 		<div>
+			<EspressoDragSortingTable />
 			{header}
 			<DatesListFilterBar />
 			{datetimesList}

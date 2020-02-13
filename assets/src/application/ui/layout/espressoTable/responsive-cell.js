@@ -10,17 +10,13 @@ import PropTypes from 'prop-types';
  * @param {Object|string} value
  * @return {Object} rendered headings row
  */
-const ResponsiveCell = ( { heading, value } ) => {
+const ResponsiveCell = ({ heading, value }) => {
 	return (
 		<Fragment>
-			<div aria-hidden
-				className={ 'ee-rspnsv-table-mobile-only-column-header' }
-			>
-				{ heading }
+			<div aria-hidden className={'ee-rspnsv-table-mobile-only-column-header'}>
+				{heading}
 			</div>
-			<div className={ 'ee-rspnsv-table-mobile-only-column-value' } >
-				{ value }
-			</div>
+			<div className={'ee-rspnsv-table-mobile-only-column-value'}>{value}</div>
 		</Fragment>
 	);
 };
