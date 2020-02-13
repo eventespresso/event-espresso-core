@@ -76,7 +76,7 @@ const RelationsSelector: React.FC<RelationsSelectorProps> = ({
 	 * @function
 	 */
 	const reset = () => {
-		updateRelatedItems([]);
+		updateRelatedItems(defaultRelatedItems);
 	};
 
 	/**
