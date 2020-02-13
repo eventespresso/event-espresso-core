@@ -30,7 +30,7 @@ const TicketForm: React.FC<TicketItemFormProps> = ({ id, formReset, title }) => 
 				<label style={lblStyle}>{__('Name')}</label>
 
 				<Field
-					defaultValue={name}
+					initialValue={name}
 					name='name'
 					component='input'
 					type='text'
@@ -41,7 +41,7 @@ const TicketForm: React.FC<TicketItemFormProps> = ({ id, formReset, title }) => 
 			<div style={divStyle}>
 				<label style={lblStyle}>{__('Description')}</label>
 				<Field
-					defaultValue={description}
+					initialValue={description}
 					name='description'
 					component='input'
 					type='text'
@@ -52,7 +52,7 @@ const TicketForm: React.FC<TicketItemFormProps> = ({ id, formReset, title }) => 
 			<div style={divStyle}>
 				<label style={lblStyle}>{__('Price')}</label>
 				<Field
-					defaultValue={price}
+					initialValue={price}
 					name='price'
 					component='input'
 					type='number'
@@ -67,6 +67,7 @@ const TicketForm: React.FC<TicketItemFormProps> = ({ id, formReset, title }) => 
 				<div style={relationsStyle}>
 					<Field
 						name={'datetimes'}
+						initialValue={relatedDatetimeIds}
 						render={({ input }) => (
 							<RelationsSelector
 								defaultRelatedItems={relatedDatetimeIds}

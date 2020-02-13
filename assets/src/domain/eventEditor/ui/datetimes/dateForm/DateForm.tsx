@@ -37,12 +37,12 @@ const DateForm: React.FC<DateItemFormProps> = ({ id, formReset, title }) => {
 			<div style={divStyle}>
 				<label style={lblStyle}>{__('Name')}</label>
 				<Field
-					defaultValue={name}
 					name='name'
 					component='input'
 					type='text'
 					placeholder={__('Name')}
 					style={inputStyle}
+					initialValue={name}
 				/>
 			</div>
 			<div style={divStyle}>
@@ -53,7 +53,7 @@ const DateForm: React.FC<DateItemFormProps> = ({ id, formReset, title }) => {
 					type='text'
 					placeholder={__('Description')}
 					style={inputStyle}
-					defaultValue={description}
+					initialValue={description}
 				/>
 			</div>
 			<H4 style={{ margin: '1.5em 0 0 24%' }}>{__('Ticket Assignments')}</H4>
@@ -61,6 +61,7 @@ const DateForm: React.FC<DateItemFormProps> = ({ id, formReset, title }) => {
 				<div style={relationsStyle}>
 					<Field
 						name={'tickets'}
+						initialValue={relatedTicketIds}
 						render={({ input }) => (
 							<RelationsSelector
 								defaultRelatedItems={relatedTicketIds}

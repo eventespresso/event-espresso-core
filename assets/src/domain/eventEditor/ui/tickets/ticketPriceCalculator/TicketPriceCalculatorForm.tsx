@@ -10,6 +10,9 @@ import { TpcForm } from './types';
 import styles from './inlineStyles';
 
 const TicketPriceCalculatorForm: React.FC<TpcForm> = ({ form, values: { ticket } }) => {
+	if (!ticket) {
+		return null;
+	}
 	const reverseCalculate = Boolean(ticket.reverseCalculate);
 	const toggleCalcDir = (): void => form.mutators.toggleCalcDir();
 	return (
