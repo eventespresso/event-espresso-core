@@ -5,6 +5,11 @@ import isExpired from './index';
 import { nodes as tickets } from '../../../../../eventEditor/services/apollo/queries/tickets/test/data';
 
 describe('isExpired', () => {
+	it('should return false if null or undefined is passed', () => {
+		[null, undefined].forEach((value) => {
+			expect(isExpired({ ticket: value })).toBe(false);
+		});
+	});
 	it('should return false if ticket is trashed', () => {
 		tickets.forEach((ticket) => {
 			const newTicket = { ...ticket, isTrashed: true };

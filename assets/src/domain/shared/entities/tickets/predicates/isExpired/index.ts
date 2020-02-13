@@ -1,4 +1,5 @@
 import { parseISO } from 'date-fns';
+import { isNil } from 'ramda';
 
 import { now } from '../filters';
 import isValidOrTrashed from '../isValidOrTrashed';
@@ -11,9 +12,9 @@ interface Props {
 }
 
 const isExpired = ({ ticket, includeTrashed = false }: Props): boolean => {
-	const { endDate } = ticket;
+	const validationChecks = !isNil(ticket) && isValidOrTrashed({ ticket, includeTrashed });
 
-	return isValidOrTrashed({ ticket, includeTrashed }) && diff('minutes', parseISO(endDate), now) < 0;
+	return validationChecks && diff('minutes', parseISO(ticket.endDate), now) < 0;
 };
 
 export default isExpired;
