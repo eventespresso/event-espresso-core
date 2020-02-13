@@ -1,7 +1,9 @@
 // @ts-nocheck
 import React, { useState } from 'react';
 import { parseISO } from 'date-fns';
-import { EditableText, H4, H6, Popover } from '@blueprintjs/core/lib/esm';
+import { /* EditableText, */ Popover } from '@blueprintjs/core/lib/esm';
+import { Typography } from 'antd';
+
 import { __ } from '@wordpress/i18n';
 
 import { EspressoButton } from '@application/ui/input';
@@ -21,9 +23,11 @@ import DateRangePicker from '../../../../shared/ui/dateRangeInput/DateRangePicke
 import { useEntityMutator, EntityType } from '@appServices/apollo/mutations';
 import useRelations from '@appServices/apollo/relations/useRelations';
 import { useStatus, TypeName } from '@appServices/apollo/status';
-import { InlineEditInput } from '@appInputs';
+// import { InlineEditInput } from '@appInputs';
 import EntityPaperFrame from '@appLayout/EntityPaperFrame';
 import { ListItemProps } from '../../../interfaces/types';
+
+const { Title, Paragraph } = Typography;
 
 const cardStype: CSSProperties = {
 	alignItems: 'stretch',
@@ -44,8 +48,19 @@ const dateStype: CSSProperties = {
 
 const detailsStype: CSSProperties = {
 	boxSizing: 'border-box',
-	padding: '1rem',
+	padding: '.5rem 1rem',
 	maxWidth: 'calc(75% - 3rem)',
+};
+
+const detailsWrapperStype: CSSProperties = {
+	alignContent: 'space-between',
+	alignItems: 'center',
+	boxSizing: 'border-box',
+	display: 'flex',
+	flexFlow: 'column nowrap',
+	height: '100%',
+	justifyContent: 'space-between',
+	width: '100%',
 };
 
 const menuWrapperStype: CSSProperties = {
@@ -71,6 +86,23 @@ const btnStyle: CSSProperties = {
 	margin: '0 0 .5rem',
 };
 
+const hdrStyle: CSSProperties = {
+	color: 'var(--ee-default-text-color)',
+	fontSize: 'var(--ee-font-size-bigger )',
+	fontWeight: 'bold',
+	letterSpacing: 'var(--ee-letter-spacing-font-size-huge)',
+	lineHeight: 'calc(var(--ee-line-height-modifier) * .875)',
+	margin: '0 0 .25rem',
+	padding: 0,
+	textAlign: 'center',
+	width: '100%',
+};
+
+const textStyle: CSSProperties = {
+	textAlign: 'center',
+	width: '100%',
+};
+
 const DateCard: React.FC<ListItemProps> = ({ id }) => {
 	const date = useDatetimeItem({ id });
 	const { isLoaded } = useStatus();
@@ -86,14 +118,21 @@ const DateCard: React.FC<ListItemProps> = ({ id }) => {
 		return null;
 	}
 
-	// get related ticket IDs for this datetime
-	const relatedTicketIds = getRelations({
-		entity: 'datetimes',
-		entityId: id,
-		relation: 'tickets',
-	});
-
 	const ticketsLoaded = isLoaded(TypeName.tickets);
+
+	// get related ticket IDs for this datetime
+	const relatedTicketIds =
+		ticketsLoaded &&
+		getRelations({
+			entity: 'datetimes',
+			entityId: id,
+			relation: 'tickets',
+		});
+
+	let relatedTicketTags =
+		ticketsLoaded &&
+		relatedTicketIds.filter(Boolean).map((ticketId) => <TicketIdTag key={ticketId} id={ticketId} />);
+	relatedTicketTags = relatedTicketTags ? relatedTicketTags : __('none');
 
 	const bgClass = statusBgColorClass(date);
 
@@ -105,55 +144,40 @@ const DateCard: React.FC<ListItemProps> = ({ id }) => {
 						<BiggieCalendarDate headerText={__('starts')} htmlClass={bgClass} date={range[0]} />
 					</div>
 					<div style={detailsStype}>
-						{/* the following will be replaced by the date entity details */}
-						<H4>
-							<InlineEditInput
-								component={EditableText}
-								placeholder={__('Edit title...')}
-								value={date.name}
-								onCancel={(value: any): void => {
-									console.log('DatetimeProvider title onCancel => NEEDS CALLBACK');
-									console.log('value', value);
+						<div style={detailsWrapperStype}>
+							{/* the following will be replaced by the date entity details */}
+							<Title
+								level={2}
+								style={hdrStyle}
+								className={'ee-focus-priority-2'}
+								editable={{
+									onChange: (name: string): void => {
+										if (name !== date.name) {
+											updateEntity({ name });
+										}
+									},
 								}}
-								onConfirm={(name: string): void => {
-									if (name !== date.name) {
-										updateEntity({ name });
-									}
-								}}
-								minWidth={320}
-								selectAllOnFocus
-							/>
-						</H4>
-						<H6>
-							<InlineEditInput
-								component={EditableText}
-								placeholder={__('Edit description...')}
-								value={date.description}
-								onCancel={(value: any): void => {
-									console.log('DatetimeProvider desc onCancel => NEEDS CALLBACK');
-									console.log('value', value);
-								}}
-								onConfirm={(description: string): void => {
+								ellipsis={{ rows: 2 }}
+							>
+								{date.name ? date.name : __('Edit title...')}
+							</Title>
+							<Paragraph
+								style={textStyle}
+								editable={(description: string): void => {
 									if (description !== date.description) {
 										updateEntity({ description });
 									}
 								}}
-								minWidth={320}
-								multiline={true}
-								maxLines={4}
-								selectAllOnFocus
-							/>
-						</H6>
-						{/* the following will be replaced by the entity details panel */}
-						<div>
-							{ticketsLoaded && (
-								<>
-									{__('Related Tickets:')}{' '}
-									{relatedTicketIds.filter(Boolean).map((ticketId) => (
-										<TicketIdTag key={ticketId} id={ticketId} />
-									))}
-								</>
-							)}
+								ellipsis={{ rows: 2, expandable: true }}
+							>
+								{date.description ? date.description : __('Edit description...')}
+							</Paragraph>
+							{/* the following will be replaced by the entity details panel */}
+							<div>
+								{__('Related Tickets:') + ' '}
+								{relatedTicketTags}
+							</div>
+							<DateDetails datetime={date} updateDatetime={updateEntity} />
 						</div>
 					</div>
 					{/* the following will be replaced by the entity action menu */}
@@ -170,7 +194,6 @@ const DateCard: React.FC<ListItemProps> = ({ id }) => {
 						</div>
 					</div>
 				</div>
-				<DateDetails datetime={date} updateDatetime={updateEntity} />
 			</EntityPaperFrame>
 		</DatetimeProvider>
 	) : null;
