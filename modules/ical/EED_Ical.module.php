@@ -130,87 +130,87 @@ class EED_Ical extends EED_Module
                 // get related event, venues, and event categories
                 $event = $datetime->event();
                 if ($event instanceof EE_Event) {
-                // get related category Term object and it's name
-                $category = $event->first_event_category();
-                if ($category instanceof EE_Term) {
-                    $category = $category->name();
-                }
-                $location = '';
-                // get first related venue and convert to CSV string
-                $venue = $event->venues(array('limit' => 1));
-                if (is_array($venue) && ! empty($venue)) {
-                    $venue = array_shift($venue);
-                    if ($venue instanceof EE_Venue) {
-                        $location = espresso_venue_raw_address('inline', $venue->ID(), false);
+                    // get related category Term object and it's name
+                    $category = $event->first_event_category();
+                    if ($category instanceof EE_Term) {
+                        $category = $category->name();
                     }
-                }
-
-                // Generate filename
-                $filename = $event->slug() . '-' . $datetime->start_date('Y-m-d') . '.ics';
-
-                // Check the datetime status has not been cancelled and set the ics value accordingly
-                $status = $datetime->get_active_status();
-                $status = $status === EE_Datetime::cancelled ? 'CANCELLED' : 'CONFIRMED';
-
-                // Create array of ics details, escape strings, convert timestamps to ics format, etc
-                $ics_data = array(
-                    'ORGANIZER_NAME' => EE_Registry::instance()->CFG->organization->name,
-                    'UID'            => md5($event->name() . $event->ID() . $datetime->ID()),
-                    'ORGANIZER'      => EE_Registry::instance()->CFG->organization->email,
-                    'DTSTAMP'        => date(EED_Ical::iCal_datetime_format),
-                    'LOCATION'       => $location,
-                    'SUMMARY'        => $event->name(),
-                    'DESCRIPTION'    => wp_strip_all_tags($event->description()),
-                    'STATUS'         => $status,
-                    'CATEGORIES'     => $category,
-                    'URL;VALUE=URI'  => get_permalink($event->ID()),
-                    'DTSTART'        => date(EED_Ical::iCal_datetime_format, $datetime->start()),
-                    'DTEND'          => date(EED_Ical::iCal_datetime_format, $datetime->end()),
-                );
-
-                // Filter the values used within the ics output.
-                // NOTE - all values within ics_data will be escaped automatically.
-                $ics_data = apply_filters('FHEE__EED_Ical__download_ics_file_ics_data', $ics_data, $datetime);
-
-                // Escape all ics data
-                foreach ($ics_data as $key => $value) {
-                    // Description is escaped differently from all all values
-                    if ($key === 'DESCRIPTION') {
-                        $ics_data[ $key ] = EED_Ical::_escape_ICal_description(wp_strip_all_tags($value));
-                    } else {
-                        $ics_data[ $key ] = EED_Ical::_escape_ICal_data($value);
+                    $location = '';
+                    // get first related venue and convert to CSV string
+                    $venue = $event->venues(array('limit' => 1));
+                    if (is_array($venue) && ! empty($venue)) {
+                        $venue = array_shift($venue);
+                        if ($venue instanceof EE_Venue) {
+                            $location = espresso_venue_raw_address('inline', $venue->ID(), false);
+                        }
                     }
-                }
 
-                // Pull the organizer name from ics_data and remove it from the array.
-                $organizer_name = isset($ics_data['ORGANIZER_NAME']) ? $ics_data['ORGANIZER_NAME'] : '';
-                unset($ics_data['ORGANIZER_NAME']);
+                    // Generate filename
+                    $filename = $event->slug() . '-' . $datetime->start_date('Y-m-d') . '.ics';
 
-                // set headers
-                header('Content-type: text/calendar; charset=utf-8');
-                header('Content-Disposition: attachment; filename="' . $filename . '"');
-                header('Cache-Control: private, max-age=0, must-revalidate');
-                header('Pragma: public');
-                header('Content-Type: application/octet-stream');
-                header('Content-Type: application/force-download');
-                header('Cache-Control: no-cache, must-revalidate');
-                header('Content-Transfer-Encoding: binary');
-                header('Expires: Sat, 26 Jul 1997 05:00:00 GMT'); // past date
-                ini_set('zlib.output_compression', '0');
-                // echo the output
-                echo "BEGIN:VCALENDAR\r\n";
-                echo "VERSION:2.0\r\n";
-                echo "PRODID:-//{$organizer_name}//NONSGML PDA Calendar Version 1.0//EN\r\n";
-                echo "CALSCALE:GREGORIAN\r\n";
-                echo "BEGIN:VEVENT\r\n";
+                    // Check the datetime status has not been cancelled and set the ics value accordingly
+                    $status = $datetime->get_active_status();
+                    $status = $status === EE_Datetime::cancelled ? 'CANCELLED' : 'CONFIRMED';
 
-                // Output all remaining values from ics_data.
-                foreach ($ics_data as $key => $value) {
-                    echo $key . ':' . $value . "\r\n";
-                }
+                    // Create array of ics details, escape strings, convert timestamps to ics format, etc
+                    $ics_data = array(
+                        'ORGANIZER_NAME' => EE_Registry::instance()->CFG->organization->name,
+                        'UID'            => md5($event->name() . $event->ID() . $datetime->ID()),
+                        'ORGANIZER'      => EE_Registry::instance()->CFG->organization->email,
+                        'DTSTAMP'        => date(EED_Ical::iCal_datetime_format),
+                        'LOCATION'       => $location,
+                        'SUMMARY'        => $event->name(),
+                        'DESCRIPTION'    => wp_strip_all_tags($event->description()),
+                        'STATUS'         => $status,
+                        'CATEGORIES'     => $category,
+                        'URL;VALUE=URI'  => get_permalink($event->ID()),
+                        'DTSTART'        => date(EED_Ical::iCal_datetime_format, $datetime->start()),
+                        'DTEND'          => date(EED_Ical::iCal_datetime_format, $datetime->end()),
+                    );
 
-                echo "END:VEVENT\r\n";
-                echo "END:VCALENDAR\r\n";
+                    // Filter the values used within the ics output.
+                    // NOTE - all values within ics_data will be escaped automatically.
+                    $ics_data = apply_filters('FHEE__EED_Ical__download_ics_file_ics_data', $ics_data, $datetime);
+
+                    // Escape all ics data
+                    foreach ($ics_data as $key => $value) {
+                        // Description is escaped differently from all all values
+                        if ($key === 'DESCRIPTION') {
+                            $ics_data[ $key ] = EED_Ical::_escape_ICal_description(wp_strip_all_tags($value));
+                        } else {
+                            $ics_data[ $key ] = EED_Ical::_escape_ICal_data($value);
+                        }
+                    }
+
+                    // Pull the organizer name from ics_data and remove it from the array.
+                    $organizer_name = isset($ics_data['ORGANIZER_NAME']) ? $ics_data['ORGANIZER_NAME'] : '';
+                    unset($ics_data['ORGANIZER_NAME']);
+
+                    // set headers
+                    header('Content-type: text/calendar; charset=utf-8');
+                    header('Content-Disposition: attachment; filename="' . $filename . '"');
+                    header('Cache-Control: private, max-age=0, must-revalidate');
+                    header('Pragma: public');
+                    header('Content-Type: application/octet-stream');
+                    header('Content-Type: application/force-download');
+                    header('Cache-Control: no-cache, must-revalidate');
+                    header('Content-Transfer-Encoding: binary');
+                    header('Expires: Sat, 26 Jul 1997 05:00:00 GMT'); // past date
+                    ini_set('zlib.output_compression', '0');
+                    // echo the output
+                    echo "BEGIN:VCALENDAR\r\n";
+                    echo "VERSION:2.0\r\n";
+                    echo "PRODID:-//{$organizer_name}//NONSGML PDA Calendar Version 1.0//EN\r\n";
+                    echo "CALSCALE:GREGORIAN\r\n";
+                    echo "BEGIN:VEVENT\r\n";
+
+                    // Output all remaining values from ics_data.
+                    foreach ($ics_data as $key => $value) {
+                        echo $key . ':' . $value . "\r\n";
+                    }
+
+                    echo "END:VEVENT\r\n";
+                    echo "END:VCALENDAR\r\n";
                 }
             }
         }
