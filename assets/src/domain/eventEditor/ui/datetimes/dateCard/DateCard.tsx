@@ -21,7 +21,7 @@ import useRelations from '@appServices/apollo/relations/useRelations';
 import { useStatus, TypeName } from '@appServices/apollo/status';
 // import { InlineEditInput } from '@appInputs';
 import EntityPaperFrame from '@appLayout/EntityPaperFrame';
-import { ListItemProps } from '../../../interfaces/types';
+import { ListItemProps } from '@edtrInterfaces';
 
 const { Title, Paragraph } = Typography;
 
@@ -137,7 +137,7 @@ const DateCard: React.FC<ListItemProps> = ({ id }) => {
 			<EntityPaperFrame entity={date}>
 				<div style={cardStype}>
 					<div style={dateStype}>
-						<BiggieCalendarDate headerText={__('starts')} htmlClass={bgClass} date={range[0]} />
+						<BiggieCalendarDate headerText={__('starts')} className={bgClass} date={range[0]} />
 					</div>
 					<div style={detailsStype}>
 						<div style={detailsWrapperStype}>

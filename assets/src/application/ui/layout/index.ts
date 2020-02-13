@@ -1,3 +1,3 @@
 export * from './editorModal';
 export * from './entityList';
-export * from './EntityPaperFrame';
+export { default as EntityPaperFrame } from './EntityPaperFrame';

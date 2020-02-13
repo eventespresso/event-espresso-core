@@ -15,6 +15,7 @@
 			"@application/*": ["assets/src/application/*"],
 			"@appConstants/*": ["assets/src/application/constants/*"],
 			"@appServices/*": ["assets/src/application/services/*"],
+			"@appCalendars/*": ["assets/src/application/ui/calendars/*"],
 			"@appDisplay/*": ["assets/src/application/ui/display/*"],
 			"@appForms/*": ["assets/src/application/ui/forms/*"],
 			"@appInputs/*": ["assets/src/application/ui/input/*"],
