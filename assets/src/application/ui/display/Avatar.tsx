@@ -11,7 +11,7 @@ const Avatar = ({ badgeProps, userName, ...avatarProps }: Props) => {
 	if (badgeProps) {
 		return (
 			<Badge {...badgeProps}>
-				<Avatar {...avatarProps} />
+				<DefaultAvatar {...avatarProps} />
 			</Badge>
 		);
 	}
@@ -20,13 +20,13 @@ const Avatar = ({ badgeProps, userName, ...avatarProps }: Props) => {
 		const size = avatarProps.size || 'large';
 
 		return (
-			<Avatar {...avatarProps} size={size}>
+			<DefaultAvatar {...avatarProps} size={size}>
 				{userName}
-			</Avatar>
+			</DefaultAvatar>
 		);
 	}
 
-	return <Avatar {...avatarProps} />;
+	return <DefaultAvatar {...avatarProps} />;
 };
 
 export default Avatar;
