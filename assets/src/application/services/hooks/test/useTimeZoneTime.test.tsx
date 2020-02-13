@@ -1,8 +1,10 @@
 import { renderHook } from '@testing-library/react-hooks';
-import { formatISO } from 'date-fns';
+import { format } from 'date-fns';
 
 import useTimeZoneTime from '../useTimeZoneTime';
 import { ApolloMockedProvider } from '../../../../domain/eventEditor/services/context/TestContext';
+
+const formatString = "yyyy-MM-dd'T'HH:mm:ss.SSS";
 
 describe('useTimeZoneTime', () => {
 	const wrapper = ApolloMockedProvider();
@@ -36,26 +38,26 @@ describe('useTimeZoneTime', () => {
 	describe('utcToLocalTime', () => {
 		it('returns local date for a given UTC date as ISO string', () => {
 			const testDate = '2020-01-28T07:30:20.123Z'; // in UTC
-			const expectedDate = '2020-01-28T13:00:20+5.5:30'; // in IST (5:30 ahead of UTC)
+			const expectedDate = '2020-01-28T13:00:20.123'; // in IST (5:30 ahead of UTC)
 			const {
 				result: { current: TZ },
 			} = renderHook(() => useTimeZoneTime(), { wrapper });
 
 			const result = TZ.utcToLocalTime(testDate);
 
-			expect(formatISO(result)).toBe(expectedDate);
+			expect(format(result, formatString)).toBe(expectedDate);
 		});
 
 		it('returns local date for a given UTC date as Date insatance', () => {
 			const testDate = new Date('2020-01-28T07:30:20.123Z'); // in UTC
-			const expectedDate = '2020-01-28T13:00:20+5.5:30'; // in IST (5:30 ahead of UTC)
+			const expectedDate = '2020-01-28T13:00:20.123'; // in IST (5:30 ahead of UTC)
 			const {
 				result: { current: TZ },
 			} = renderHook(() => useTimeZoneTime(), { wrapper });
 
 			const result = TZ.utcToLocalTime(testDate);
 
-			expect(formatISO(result)).toBe(expectedDate);
+			expect(format(result, formatString)).toBe(expectedDate);
 		});
 	});
 });
