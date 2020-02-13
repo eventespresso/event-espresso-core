@@ -1,10 +1,10 @@
 import React from 'react';
 import { EspressoButton } from '@application/ui/input';
 
-import { TpcButtonDataProps, TpcModalProps } from '../types';
+import { TpcButtonDataProps } from '../types';
 import { useEditorModal } from '../../../../../../application/ui/layout/editorModal';
 
-const TicketPriceCalculatorButton: React.FC<TpcButtonDataProps & TpcModalProps> = ({ ticketId }) => {
+const TicketPriceCalculatorButton: React.FC<TpcButtonDataProps> = ({ ticketId, ...buttonProps }) => {
 	const { openEditor } = useEditorModal();
 
 	const onClick = (): void => {
@@ -13,7 +13,7 @@ const TicketPriceCalculatorButton: React.FC<TpcButtonDataProps & TpcModalProps> 
 			entityId: ticketId,
 		});
 	};
-	return <EspressoButton icon='calculator' onClick={onClick} />;
+	return <EspressoButton icon='calculator' onClick={onClick} {...buttonProps} />;
 };
 
 export default TicketPriceCalculatorButton;
