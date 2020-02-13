@@ -1,12 +1,12 @@
 // @ts-nocheck
 import React, { useState } from 'react';
 import { parseISO } from 'date-fns';
-import { /* EditableText, */ Popover } from '@blueprintjs/core/lib/esm';
 import { Typography } from 'antd';
 
 import { __ } from '@wordpress/i18n';
 
-import { BiggieCalendarDate, CalendarPosition } from '@application/ui/calendars';
+import { BiggieCalendarDate } from '@application/ui/calendars';
+import DateDetails from './DateDetails';
 import DateActionsMenu from './DateActionsMenu';
 
 import { DatetimeProvider } from '@edtrServices/context/DatetimeContext';

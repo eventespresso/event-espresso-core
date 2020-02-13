@@ -4,15 +4,12 @@ import { EditableText, H4, H6 } from '@blueprintjs/core/lib/esm';
 import { __ } from '@wordpress/i18n';
 
 import TicketActionsMenu from './TicketActionsMenu';
-import DeleteTicketButton from './DeleteTicketButton';
 import TicketDetails from './TicketDetails';
-import TicketPriceCalculatorButton from '../ticketPriceCalculator/buttons/TicketPriceCalculatorButton';
 import useTicketItem from '@edtrServices/apollo/queries/tickets/useTicketItem';
 import TicketProvider from '@edtrServices/context/TicketContext';
 import { CurrencyInput, InlineEditInput } from '@appInputs';
 import { useEntityMutator, EntityType } from '@appServices/apollo/mutations';
 import useRelations from '@appServices/apollo/relations/useRelations';
-import { useStatus, TypeName } from '@appServices/apollo/status';
 import EntityPaperFrame from '@appLayout/EntityPaperFrame';
 import DatetimeIdTag from '../../datetimes/DatetimeIdTag';
 import { ListItemProps } from '../../../interfaces/types';
@@ -27,6 +24,10 @@ const menuWrapperStype: CSSProperties = {
 const menuStype: CSSProperties = {
 	display: 'flex',
 	flexWrap: 'wrap',
+	position: 'absolute',
+	right: '0.5em',
+	flexDirection: 'column',
+	top: '0.5em',
 };
 
 const btnStyle: CSSProperties = {
@@ -38,7 +39,6 @@ const btnStyle: CSSProperties = {
 
 const TicketCard: React.FC<ListItemProps> = ({ id }) => {
 	const ticket = useTicketItem({ id });
-	const { isLoaded } = useStatus();
 	const { updateEntity } = useEntityMutator(EntityType.Ticket, id);
 	const { getRelations } = useRelations();
 	// get related datetimes for this datetime
@@ -108,10 +108,10 @@ const TicketCard: React.FC<ListItemProps> = ({ id }) => {
 						<DatetimeIdTag key={datetimeId} id={datetimeId} />
 					))}
 				</div>
-				<TicketDetails ticket={ticket} updateTicket={updateEntity} />
 				<div style={menuWrapperStype}>
 					<TicketActionsMenu entity={ticket} menuItemProps={{ style: btnStyle }} style={menuStype} />
 				</div>
+				<TicketDetails ticket={ticket} updateTicket={updateEntity} />
 			</EntityPaperFrame>
 		</TicketProvider>
 	) : null;
