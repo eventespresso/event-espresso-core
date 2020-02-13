@@ -129,6 +129,7 @@ class EED_Ical extends EED_Module
             if ($datetime instanceof EE_Datetime) {
                 // get related event, venues, and event categories
                 $event = $datetime->event();
+                if ($event instanceof EE_Event) {
                 // get related category Term object and it's name
                 $category = $event->first_event_category();
                 if ($category instanceof EE_Term) {
@@ -210,6 +211,7 @@ class EED_Ical extends EED_Module
 
                 echo "END:VEVENT\r\n";
                 echo "END:VCALENDAR\r\n";
+                }
             }
         }
         die();
