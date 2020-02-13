@@ -1,5 +1,5 @@
 import React from 'react';
-import { pathOr, propOr } from 'ramda';
+import { pathOr } from 'ramda';
 import { Table } from 'antd';
 import { TableProps } from 'antd/lib/table/interface';
 

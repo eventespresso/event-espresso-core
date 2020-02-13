@@ -1,3 +1,4 @@
+export { default as Avatar } from './Avatar';
 export * from './espressoIcon';
 export { default as EmptyState } from './EmptyState';
 export * from './EntityIDs';
