@@ -11,7 +11,7 @@ interface IconMenuItemProps extends BadgeProps {
 }
 
 const IconMenuItem = ({ children, showClock, ...props }: IconMenuItemProps) => {
-	const count = showClock ? <Icon type='clock-circle' style={{ color: '#f5222d' }} /> : rest.count;
+	const count = showClock ? <Icon type='clock-circle' style={{ color: '#f5222d' }} /> : props.count;
 	const id = props.id ? `ee-icon-menu-item-${props.id}` : 'ee-icon-menu-item';
 
 	return (

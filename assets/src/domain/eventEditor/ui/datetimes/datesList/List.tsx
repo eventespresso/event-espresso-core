@@ -6,7 +6,6 @@ import DatesListFilterBar from './filterBar/DatesListFilterBar';
 import AddNewDateButton from './AddNewDateButton';
 import DatetimeCard from '../dateCard/DateCard';
 import { Datetime } from '../../../services/apollo/types';
-import IconMenuItem from '@appDisplay/IconMenuItem';
 
 const listStyle: CSSProperties = {
 	display: 'flex',
@@ -35,7 +34,7 @@ const List: React.FC<ListProps> = ({ datetimes }) => {
 
 	return (
 		<div>
-			<IconMenuItem showClock>{header}</IconMenuItem>
+			{header}
 			<DatesListFilterBar />
 			{datetimesList}
 		</div>
