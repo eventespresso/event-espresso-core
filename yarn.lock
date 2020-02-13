@@ -3274,7 +3274,7 @@
     jest-matcher-utils "^24.7.0"
     lodash "^4.17.15"
 
-"@wordpress/jest-preset-default@^5.1.1":
+"@wordpress/jest-preset-default@^5.1.1", "@wordpress/jest-preset-default@^5.3.1":
   version "5.4.0"
   resolved "https://registry.yarnpkg.com/@wordpress/jest-preset-default/-/jest-preset-default-5.4.0.tgz#8b0020f31cf0e6580339ed909ac6270ca7168d76"
   integrity sha512-+7zlgPB57jxlVHQ2Vg0bbYYcJozc+YbBocHZ2ZQlQC5IUXHJ2IZDPGb6kUAWGCNXy/1MzFIMEa0znjxG5zc1Fg==

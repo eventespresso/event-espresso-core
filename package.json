@@ -190,6 +190,7 @@
 		"@wordpress/editor": "^9.8.0",
 		"@wordpress/eslint-plugin": "^3.1.0",
 		"@wordpress/hooks": "^2.6.0",
+		"@wordpress/jest-preset-default": "^5.3.1",
 		"@wordpress/keycodes": "^2.7.0",
 		"@wordpress/plugins": "^2.8.0",
 		"@wordpress/scripts": "^5.1.0",
