@@ -3,7 +3,7 @@ In Event Espresso code, the model's "primary key" refers to its field of type `E
 On model objects, the corresponding field value is either an integer (eg on events and registrations), 
 short string (eg countries and statuses), or they instead have a combined key (eg term relationships).
 
-This article especially explains the strange situation with Event Espresso models that have no primary key field. It assumes you've already
+This article explains the strange situation with Event Espresso models that have no primary key field. It assumes you've already
 read about [model querying](model-querying.md) and [Using EE4 Model Objects](using-ee4-model-objects.md).
 
 ## Background
