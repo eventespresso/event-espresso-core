@@ -7,7 +7,7 @@ import { Entity } from '../../services/apollo/types';
 const useEntityActionMenuItems = <E extends Entity, MenuKey extends DateMenuKey | TicketMenuKey>(
 	entityType: EntityType,
 	entity: E,
-	menuItemProps: ActionsMenuItemProps,
+	menuItemProps?: ActionsMenuItemProps,
 	filterByEntityType = true
 ): Array<React.ReactNode> => {
 	const entityActionsManager = useEntityActionsManager<EntityType, MenuKey>(entityType, entity.id);
