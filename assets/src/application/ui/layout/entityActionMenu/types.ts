@@ -1,14 +1,14 @@
 import React from 'react';
 
 export interface EntityActionsManager<MenuKey extends string> {
-	registerMenuItem: (key: MenuKey, render: () => React.ReactNode) => void;
+	registerMenuItem: (key: MenuKey, component: React.ReactType) => void;
 	unRegisterMenuItem: (key: MenuKey) => void;
 	getMenuItems: () => EntityMenuItems<MenuKey>;
 }
 
 export type EntityMenuItems<MenuKey extends string> = {
-	// menuKey: render()
-	[K in MenuKey]?: React.ReactNode;
+	// menuKey: component
+	[K in MenuKey]?: React.ReactType;
 };
 
 /**
@@ -54,10 +54,15 @@ export type Subscriptions<EntityType extends string, MenuKey extends string> = {
 	[key: string]: Subscription<EntityType, MenuKey>;
 };
 
-export type SubscriptionCallback<MenuKey extends string, D = any> = (
+export type SubscriptionCallback<MenuKey extends string, D = any, AO = AdditionalSubscriptionCbOptions> = (
 	data: D,
-	entityActionsManager: EntityActionsManager<MenuKey>
+	entityActionsManager: EntityActionsManager<MenuKey>,
+	additionalOptions?: AO
 ) => void;
+
+export interface AdditionalSubscriptionCbOptions {
+	[key: string]: any;
+}
 
 export interface EntityActionsData<EntityType extends string, MenuKey extends string> {
 	subscribe: SubscribeFn<EntityType, MenuKey>;

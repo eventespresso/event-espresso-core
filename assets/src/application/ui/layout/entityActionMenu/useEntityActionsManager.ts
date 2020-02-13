@@ -13,13 +13,13 @@ const useEntityActionsManager = <EntityType extends string, MenuKey extends stri
 
 	const getMapKey = (itemKey: MenuKey) => `${entityType}:${entityId}:${itemKey}`;
 
-	const registerMenuItem = (key: MenuKey, render: () => React.ReactNode): void => {
+	const registerMenuItem = (key: MenuKey, component: React.ReactType): void => {
 		const mapKey = getMapKey(key);
 		if (!menuItems.includes(mapKey)) {
 			setMenuItems((items) => [...items, mapKey]);
 			// Add menu item(may be JSX) to the registry
-			// by calling the render function
-			menuRegistry = assocPath([entityType, entityId, key], render(), menuRegistry);
+			// by calling the component function
+			menuRegistry = assocPath([entityType, entityId, key], component, menuRegistry);
 		}
 	};
 
