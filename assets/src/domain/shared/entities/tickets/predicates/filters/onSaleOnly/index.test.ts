@@ -4,10 +4,9 @@ import { pipe } from 'ramda';
 import onSaleOnly from './index';
 import isOnSale from '../../isOnSale';
 import { nodes as tickets } from '../../../../../../eventEditor/services/apollo/queries/tickets/test/data';
+import { now } from '../';
 
 describe('onSaleOnly', () => {
-	const now = new Date();
-
 	it('should return an empty array if tickets are not on sale', () => {
 		const updatedTickets = tickets.map((ticket) => {
 			const startDate = formatISO(new Date(2008, 8, 18, 19, 0, 52));
