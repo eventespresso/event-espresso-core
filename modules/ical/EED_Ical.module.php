@@ -90,21 +90,21 @@ class EED_Ical extends EED_Module
                     $html .= '<form id="download-iCal-frm-' . $datetime->ID();
                     $html .= '" class="download-iCal-frm" action="' . $URL . '" method="post" >';
                     $html .= '<input type="submit" class="ee-ical-sbmt" value="&#xf145;" title="';
-                    $html .= __('Add to iCal Calendar', 'event_espresso') . '"/>';
+                    $html .= esc_html__('Add to iCal Calendar', 'event_espresso') . '"/>';
                     $html .= '</form>';
                     break;
                 // buttons are just links that have been styled to appear as buttons,
                 // but may not be blend with a theme as well as submit buttons
                 case 'button':
                     $html .= '<a class="ee-ical-btn small ee-button ee-roundish" href="' . $URL;
-                    $html .= '" title="' . __('Add to iCal Calendar', 'event_espresso') . '">';
+                    $html .= '" title="' . esc_html__('Add to iCal Calendar', 'event_espresso') . '">';
                     $html .= ' <span class="dashicons dashicons-calendar"></span>';
                     $html .= '</a>';
                     break;
                 // links are just links that use the calendar dashicon
                 case 'icon':
                     $html .= '<a class="ee-ical-lnk" href="' . $URL . '" title="';
-                    $html .= __('Add to iCal Calendar', 'event_espresso') . '">';
+                    $html .= esc_html__('Add to iCal Calendar', 'event_espresso') . '">';
                     $html .= ' <span class="dashicons dashicons-calendar"></span>';
                     $html .= '</a>';
                     break;
