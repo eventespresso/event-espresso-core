@@ -1,4 +1,5 @@
 import { EntityId } from '../../services/apollo/types';
+import { ActionsMenuItemProps } from '../entityActionMenu';
 
 export interface EditTicketProps {
 	position?: string;
@@ -12,4 +13,8 @@ export interface TicketItemFormProps {
 	id?: EntityId;
 	title?: string;
 	formReset?: boolean;
+}
+
+export interface AdditionalTicketMenuOptions {
+	ticketMenuItemProps?: ActionsMenuItemProps;
 }

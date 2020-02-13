@@ -1,10 +1,13 @@
 import React from 'react';
 
 import { Ticket } from '../../../services/apollo/types';
-import { useEntityActionMenuItems, TicketMenuKey } from '../../entityActionMenu';
+import { useEntityActionMenuItems, TicketMenuKey, ActionsMenuItemProps } from '../../entityActionMenu';
+import { AdditionalTicketMenuOptions } from '../types';
 
-const useTicketsActionMenuItems = (ticket: Ticket): Array<React.ReactNode> => {
-	return useEntityActionMenuItems<Ticket, TicketMenuKey>('ticket', ticket);
+const useTicketsActionMenuItems = (ticket: Ticket, menuItemProps?: ActionsMenuItemProps): Array<React.ReactNode> => {
+	return useEntityActionMenuItems<Ticket, TicketMenuKey, AdditionalTicketMenuOptions>('ticket', ticket, {
+		ticketMenuItemProps: menuItemProps,
+	});
 };
 
 export default useTicketsActionMenuItems;

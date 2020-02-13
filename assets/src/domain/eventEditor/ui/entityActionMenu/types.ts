@@ -1,24 +1,28 @@
 import { Entity } from '../../services/apollo/types';
-import { EntityActionsManager } from '@appLayout/entityActionMenu';
+import {
+	EntityActionsManager,
+	SubscriptionCallback,
+	AdditionalSubscriptionCbOptions,
+} from '@appLayout/entityActionMenu';
 
 export type EntityType = 'datetime' | 'ticket';
 
-export type DateMenuKey = 'editDate' | 'assignTickets';
+export type DateMenuKey = 'editDate' | 'deleteTicket' | 'assignTickets';
 
-export type TicketMenuKey = 'editTicket' | 'assignDates' | 'tpc';
+export type TicketMenuKey = 'editTicket' | 'deleteTicket' | 'assignDates' | 'tpc';
 
 export type Domain = 'eventEditor';
 
 export interface SubscriptionData<E> {
 	entityType: EntityType;
 	entity: E;
-	menuItemProps?: ActionsMenuItemProps;
 }
 
-export type SubscriptionCallback<E extends Entity, MenuKey extends string> = (
-	data: SubscriptionData<E>,
-	entityActionsManager: EntityActionsManager<MenuKey>
-) => void;
+export type EntitySubscriptionCallback<
+	E extends Entity,
+	MenuKey extends string,
+	AO = AdditionalSubscriptionCbOptions
+> = SubscriptionCallback<MenuKey, SubscriptionData<E>, AO>;
 
 export type EntityActionsMenuCallback<E extends Entity, MenuKey extends string> = (
 	entity: E,

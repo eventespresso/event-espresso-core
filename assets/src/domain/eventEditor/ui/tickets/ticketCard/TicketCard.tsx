@@ -1,5 +1,5 @@
 // @ts-nocheck
-import React from 'react';
+import React, { CSSProperties } from 'react';
 import { EditableText, H4, H6 } from '@blueprintjs/core/lib/esm';
 import { __ } from '@wordpress/i18n';
 
@@ -16,7 +16,25 @@ import { useStatus, TypeName } from '@appServices/apollo/status';
 import EntityPaperFrame from '@appLayout/EntityPaperFrame';
 import DatetimeIdTag from '../../datetimes/DatetimeIdTag';
 import { ListItemProps } from '../../../interfaces/types';
-import { priceStyle, btnsStyle } from './styles';
+import { priceStyle } from './styles';
+
+const menuWrapperStype: CSSProperties = {
+	alignItems: 'stretch',
+	boxSizing: 'border-box',
+	flex: '0, 0, 3rem',
+	padding: '.5rem',
+};
+const menuStype: CSSProperties = {
+	display: 'flex',
+	flexWrap: 'wrap',
+};
+
+const btnStyle: CSSProperties = {
+	background: 'var(--ee-background-color)',
+	border: '1px solid var(--ee-color-grey-8)',
+	color: 'var(--ee-color-black)',
+	margin: '0 0 .5rem',
+};
 
 const TicketCard: React.FC<ListItemProps> = ({ id }) => {
 	const ticket = useTicketItem({ id });
@@ -32,7 +50,6 @@ const TicketCard: React.FC<ListItemProps> = ({ id }) => {
 	return ticket ? (
 		<TicketProvider id={ticket.id}>
 			<EntityPaperFrame entity={ticket}>
-				<TicketActionsMenu entity={ticket} position='top' layout='vertical' />
 				<div>
 					<H4>
 						<InlineEditInput
@@ -85,16 +102,6 @@ const TicketCard: React.FC<ListItemProps> = ({ id }) => {
 						/>
 					</H4>
 				</div>
-				<div style={btnsStyle}>
-					{/* Hide price calculator unless prices are loaded */}
-					{/* Delete button should also be hidden to avoid relational inconsistencies */}
-					{isLoaded(TypeName.prices) && (
-						<>
-							<TicketPriceCalculatorButton ticketId={ticket.id} />
-							<DeleteTicketButton id={ticket.id} />
-						</>
-					)}
-				</div>
 				<div>
 					{__('Related Dates:')}{' '}
 					{relatedDates.filter(Boolean).map((datetimeId) => (
@@ -102,6 +109,9 @@ const TicketCard: React.FC<ListItemProps> = ({ id }) => {
 					))}
 				</div>
 				<TicketDetails ticket={ticket} updateTicket={updateEntity} />
+				<div style={menuWrapperStype}>
+					<TicketActionsMenu entity={ticket} menuItemProps={{ style: btnStyle }} style={menuStype} />
+				</div>
 			</EntityPaperFrame>
 		</TicketProvider>
 	) : null;
