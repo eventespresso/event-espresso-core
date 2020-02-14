@@ -8,7 +8,7 @@ import { pathOr } from 'ramda';
 import { mutations, useMutators } from '../../../../domain/eventEditor/services/apollo/mutations';
 import useIfMounted from '../../hooks/useIfMounted';
 import useToaster from '../../toaster/useToaster';
-import notification from '../../notification';
+import { successNotification } from '../../notification';
 
 import {
 	EntityMutation,
@@ -157,7 +157,7 @@ const useEntityMutation = (type: EntityType, id?: string): EntityMutation => {
 		const dismissMessage = getToasterMessage(mutationType);
 		const successMessage = `successfully ${getToasterMessage(mutationType, 'ed')}`;
 		toaster.dismiss(dismissMessage);
-		notification({ message: successMessage, type: 'success' });
+		successNotification({ message: successMessage });
 
 		const { data, errors } = response;
 		const error = errors && errors.length > 0 ? new ApolloError({ graphQLErrors: errors }) : undefined;
@@ -181,7 +181,7 @@ const useEntityMutation = (type: EntityType, id?: string): EntityMutation => {
 		const dismissMessage = getToasterMessage(mutationType);
 		const successMessage = `error ${getToasterMessage(mutationType)}`;
 		toaster.dismiss(dismissMessage);
-		notification({ message: successMessage, type: 'success' });
+		successNotification({ message: successMessage });
 
 		updateResult({
 			loading: false,

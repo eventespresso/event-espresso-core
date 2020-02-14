@@ -38,6 +38,8 @@ const notification = (type: 'success' | 'info' | 'warning' | 'error') => ({
 	}, 0);
 };
 
+export const errorNotification = notification('error');
 export const infoNotification = notification('info');
+export const successNotification = notification('success');
 
 export default notification;

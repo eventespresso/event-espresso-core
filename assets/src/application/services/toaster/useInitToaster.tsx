@@ -2,7 +2,7 @@ import { ApolloError } from 'apollo-client';
 import { useState, useEffect } from 'react';
 
 import useToaster from './useToaster';
-import notification from '../notification';
+import { errorNotification, successNotification } from '../notification';
 import { ToasterInit, ToasterInitCallbacks, ToasterNotices } from './types';
 
 const useInitToaster: ToasterInit = ({ loadingMessage, successMessage }): ToasterInitCallbacks => {
@@ -13,7 +13,7 @@ const useInitToaster: ToasterInit = ({ loadingMessage, successMessage }): Toaste
 
 		if (!initialized) {
 			toaster.loading(loadingFlag, loadingMessage);
-			notification({ message: loadingError, type: 'error' });
+			successNotification({ message: loadingError });
 		}
 
 		useEffect((): void => {
@@ -26,11 +26,11 @@ const useInitToaster: ToasterInit = ({ loadingMessage, successMessage }): Toaste
 	return {
 		onCompleted: (): void => {
 			toaster.dismiss(loadingMessage);
-			notification({ message: successMessage, type: 'success' });
+			successNotification({ message: successMessage });
 		},
 		onError: (error: ApolloError): void => {
 			toaster.dismiss(loadingMessage);
-			notification({ message: error, type: 'error' });
+			errorNotification({ message: error });
 		},
 		initializationNotices: useInitializationNotices,
 	};

@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useQuery } from '@apollo/react-hooks';
 import useToaster from '../../../../../../application/services/toaster/useToaster';
-import notification from '@appServices/notification';
+import { successNotification } from '@appServices/notification';
 import { useStatus, TypeName } from '../../../../../../application/services/apollo/status';
 import useTicketQueryOptions from './useTicketQueryOptions';
 import { FetchEntitiesResult } from '../types';
@@ -26,12 +26,12 @@ const useFetchTickets = (skipFetch: boolean = null): FetchEntitiesResult<Tickets
 		onCompleted: (): void => {
 			setIsLoaded(TypeName.tickets, true);
 			toaster.dismiss(toasterMessage);
-			notification({ message: `tickets initialized`, type: 'success' });
+			successNotification({ message: `tickets initialized` });
 		},
 		onError: (error): void => {
 			setIsError(TypeName.tickets, true);
 			toaster.dismiss(toasterMessage);
-			notification({ message: `datetimes initialized`, type: 'success' });
+			successNotification({ message: `datetimes initialized` });
 		},
 	});
 
@@ -41,7 +41,7 @@ const useFetchTickets = (skipFetch: boolean = null): FetchEntitiesResult<Tickets
 
 	if (!initialized) {
 		toaster.loading(loading, toasterMessage);
-		notification({ message: `datetimes initialized`, type: 'success' });
+		successNotification({ message: `datetimes initialized` });
 	}
 
 	useEffect(() => {
