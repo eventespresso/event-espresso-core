@@ -2,7 +2,7 @@ import { useApolloClient } from '@apollo/react-hooks';
 import { renderHook, act } from '@testing-library/react-hooks';
 import { path } from 'ramda';
 
-import { useEntityMutator, EntityType } from '../../../../../../../application/services/apollo/mutations';
+import { useDatetimeMutator } from '../';
 import { useRelations } from '../../../../../../../application/services/apollo/relations';
 import { MutationType } from '../../../../../../../application/services/apollo/mutations/types';
 import { ApolloMockedProvider } from '../../../../context/TestContext';
@@ -30,7 +30,7 @@ describe('createDatetime', () => {
 	it('checks for the mutation data to be same as the mock data', async () => {
 		const wrapper = ApolloMockedProvider(mutationMocks);
 
-		const { result, waitForValueToChange } = renderHook(() => useEntityMutator(EntityType.Datetime), {
+		const { result, waitForValueToChange } = renderHook(() => useDatetimeMutator(), {
 			wrapper,
 		});
 
@@ -61,7 +61,7 @@ describe('createDatetime', () => {
 
 		const { result: mutationResult, waitForValueToChange } = renderHook(
 			() => ({
-				mutator: useEntityMutator(EntityType.Datetime),
+				mutator: useDatetimeMutator(),
 				client: useApolloClient(),
 			}),
 			{
@@ -101,7 +101,7 @@ describe('createDatetime', () => {
 
 		const { result: mutationResult, waitForValueToChange, waitForNextUpdate } = renderHook(
 			() => ({
-				mutator: useEntityMutator(EntityType.Datetime),
+				mutator: useDatetimeMutator(),
 				client: useApolloClient(),
 			}),
 			{
@@ -148,7 +148,7 @@ describe('createDatetime', () => {
 
 		const { result: mutationResult, waitForNextUpdate, waitForValueToChange } = renderHook(
 			() => ({
-				mutator: useEntityMutator(EntityType.Datetime),
+				mutator: useDatetimeMutator(),
 				relationsManager: useRelations(),
 			}),
 			{
@@ -199,7 +199,7 @@ describe('createDatetime', () => {
 			() => {
 				useInitTicketTestCache();
 				return {
-					mutator: useEntityMutator(EntityType.Datetime),
+					mutator: useDatetimeMutator(),
 					client: useApolloClient(),
 				};
 			},

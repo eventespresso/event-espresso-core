@@ -1,19 +1,18 @@
 import { renderHook, act } from '@testing-library/react-hooks';
 import { path } from 'ramda';
 
-import { useEntityMutator, EntityType } from '../../../../../../../application/services/apollo/mutations';
 import { useRelations } from '../../../../../../../application/services/apollo/relations';
 import { MutationType } from '../../../../../../../application/services/apollo/mutations/types';
 import { ApolloMockedProvider } from '../../../../context/TestContext';
 import { getMutationMocks, mockedDatetimes } from './data';
 import { nodes as tickets } from '../../../queries/tickets/test/data';
-import { MutationInput } from '../../../../../../../application/services/apollo/mutations/types';
 import useInitDatetimeTestCache from '../../../queries/datetimes/test/useInitDatetimeTestCache';
+import { useDatetimeMutator, UpdateDatetimeInput } from '../';
 
 const timeout = 5000; // milliseconds
 describe('updateDatetime', () => {
 	const mockedDatetime = mockedDatetimes.UPDATE;
-	let testInput: MutationInput = { ...mockedDatetime, name: 'New Test Date', description: 'New Test Desc' };
+	let testInput: UpdateDatetimeInput = { ...mockedDatetime, name: 'New Test Date', description: 'New Test Desc' };
 
 	const ticketIds = tickets.map(({ id }) => id);
 
@@ -27,7 +26,7 @@ describe('updateDatetime', () => {
 		const { result, waitForValueToChange } = renderHook(
 			() => {
 				useInitDatetimeTestCache();
-				return useEntityMutator(EntityType.Datetime, mockedDatetime.id);
+				return useDatetimeMutator(mockedDatetime.id);
 			},
 			{
 				wrapper,
@@ -66,7 +65,7 @@ describe('updateDatetime', () => {
 
 		const { result: mutationResult, waitForNextUpdate, waitForValueToChange } = renderHook(
 			() => ({
-				mutator: useEntityMutator(EntityType.Datetime, mockedDatetime.id),
+				mutator: useDatetimeMutator(mockedDatetime.id),
 				relationsManager: useRelations(),
 			}),
 			{
@@ -116,7 +115,7 @@ describe('updateDatetime', () => {
 
 		const { result: mutationResult, waitForNextUpdate, waitForValueToChange } = renderHook(
 			() => ({
-				mutator: useEntityMutator(EntityType.Datetime, mockedDatetime.id),
+				mutator: useDatetimeMutator(mockedDatetime.id),
 				relationsManager: useRelations(),
 			}),
 			{

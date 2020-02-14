@@ -1,12 +1,12 @@
 import { renderHook, act } from '@testing-library/react-hooks';
 import { path } from 'ramda';
 
-import { useEntityMutator, EntityType } from '../../../../../../../application/services/apollo/mutations';
 import { useRelations } from '../../../../../../../application/services/apollo/relations';
 import { MutationType } from '../../../../../../../application/services/apollo/mutations/types';
 import { ApolloMockedProvider } from '../../../../context/TestContext';
 import { getMutationMocks, mockedDatetimes } from './data';
 import { nodes as tickets } from '../../../queries/tickets/test/data';
+import { useDatetimeMutator } from '../';
 
 const timeout = 5000; // milliseconds
 
@@ -22,12 +22,9 @@ describe('deleteDatetime', () => {
 	it('checks for the mutation data to be same as the mock data', async () => {
 		const wrapper = ApolloMockedProvider(mutationMocks);
 
-		const { result, waitForValueToChange } = renderHook(
-			() => useEntityMutator(EntityType.Datetime, mockedDatetime.id),
-			{
-				wrapper,
-			}
-		);
+		const { result, waitForValueToChange } = renderHook(() => useDatetimeMutator(mockedDatetime.id), {
+			wrapper,
+		});
 
 		let mutationData: any;
 
@@ -63,7 +60,7 @@ describe('deleteDatetime', () => {
 
 		const { result: mutationResult, waitForNextUpdate, waitForValueToChange } = renderHook(
 			() => ({
-				mutator: useEntityMutator(EntityType.Datetime, mockedDatetime.id),
+				mutator: useDatetimeMutator(mockedDatetime.id),
 				relationsManager: useRelations(),
 			}),
 			{
@@ -74,7 +71,7 @@ describe('deleteDatetime', () => {
 		await waitForValueToChange(() => mutationResult.current, { timeout });
 
 		act(() => {
-			mutationResult.current.mutator.deleteEntity();
+			mutationResult.current.mutator.deleteEntity({});
 		});
 
 		// wait for mutation promise to resolve
