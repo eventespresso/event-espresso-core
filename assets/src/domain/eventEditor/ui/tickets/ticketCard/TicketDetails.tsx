@@ -6,12 +6,12 @@ import useTicketRegistrationCount from '../hooks/useTicketRegistrationCount';
 import InfinitySymbol from '@application/valueObjects/InfinitySymbol';
 import parseInfinity from '@appServices/utilities/parseInfinity';
 import { EntityDetailsPanel } from '@appDisplay/enityDetails';
-import { EntityMutatorFn } from '@appServices/apollo/mutations';
+import { MutatorFn } from '@appServices/apollo/mutations';
 import { Ticket } from '../../../services/apollo/types';
 
 interface TicketDetailsProps {
 	ticket: Ticket;
-	updateTicket: EntityMutatorFn;
+	updateTicket: MutatorFn;
 }
 
 const TicketDetails: React.FC<TicketDetailsProps> = ({ ticket, updateTicket }) => {
