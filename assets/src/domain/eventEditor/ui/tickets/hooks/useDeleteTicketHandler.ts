@@ -1,16 +1,16 @@
 import { useCallback } from 'react';
 
-import { useEntityMutator, EntityType } from '../../../../../application/services/apollo/mutations';
 import useTicketPrices from '../../../services/apollo/queries/tickets/useTicketPrices';
 import { ListItemProps } from '../../../interfaces/types';
 import { BackwardSubscription } from '../../../../../application/services/apollo/mutations';
+import { useTicketMutator, usePriceMutator } from '@edtrServices/apollo/mutations';
 
 type VoidFn = () => void;
 
 const useDeleteTicketHandler = ({ id }: ListItemProps): VoidFn => {
-	const { deleteEntity: deleteTicket } = useEntityMutator(EntityType.Ticket);
+	const { deleteEntity: deleteTicket } = useTicketMutator();
 	const relatedPrices = useTicketPrices(id);
-	const { deleteEntity: deletePrice } = useEntityMutator(EntityType.Price);
+	const { deleteEntity: deletePrice } = usePriceMutator();
 
 	return useCallback<VoidFn>((): void => {
 		const subscriptions: BackwardSubscription = {

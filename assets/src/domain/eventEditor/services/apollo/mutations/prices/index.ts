@@ -32,3 +32,7 @@ export const DELETE_PRICE = gql`
 		}
 	}
 `;
+
+export { default as usePriceMutator } from './usePriceMutator';
+
+export * from './types';

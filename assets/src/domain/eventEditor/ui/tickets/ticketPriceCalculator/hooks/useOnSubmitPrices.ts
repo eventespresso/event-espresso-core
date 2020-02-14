@@ -4,14 +4,14 @@ import { useCallback } from 'react';
 import { FnCallback, TpcFormData } from '../types';
 import { Price } from '../../../../services/apollo/types';
 import { cloneAndNormalizePrice } from '../../../../../shared/entities/prices/predicates/updatePredicates';
-import { useEntityMutator, EntityType } from '../../../../../../application/services/apollo/mutations';
 import toBoolean from '../../../../../../application/services/utilities/converters/toBoolean';
 import parsedAmount from '../../../../../../application/services/utilities/money/parsedAmount';
 import { ModalSubmit } from '../../../../../../application/ui/layout/editorModal';
+import { useTicketMutator, usePriceMutator } from '@edtrServices/apollo/mutations';
 
 const useOnSubmitPrices = (existingPrices: Price[]): FnCallback => {
-	const { createEntity, updateEntity, deleteEntity } = useEntityMutator(EntityType.Price, null);
-	const { updateEntity: updateTicket } = useEntityMutator(EntityType.Ticket, null);
+	const { createEntity, updateEntity, deleteEntity } = usePriceMutator();
+	const { updateEntity: updateTicket } = useTicketMutator();
 	const existingPriceIds = existingPrices.map(({ id }) => id);
 
 	// Async to make sure that prices are handled before updating the ticket.
@@ -28,7 +28,7 @@ const useOnSubmitPrices = (existingPrices: Price[]): FnCallback => {
 						return Promise.resolve(price);
 					}
 					const id = price.id;
-					const normalizedPriceFields = cloneAndNormalizePrice(price);
+					const normalizedPriceFields = cloneAndNormalizePrice<Price>(price);
 					// if it's a newly added price
 					if (!id) {
 						return new Promise((resolve, onError) => {
@@ -36,7 +36,7 @@ const useOnSubmitPrices = (existingPrices: Price[]): FnCallback => {
 								createdPriceIds.push(price.id);
 								resolve(price);
 							};
-							createEntity({ ...normalizedPriceFields, ticketId: ticket.id }, { onCompleted, onError });
+							createEntity({ ...normalizedPriceFields }, { onCompleted, onError });
 						});
 					}
 					return new Promise((resolve, onError) => {

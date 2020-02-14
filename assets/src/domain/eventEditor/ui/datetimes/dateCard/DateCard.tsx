@@ -16,12 +16,12 @@ import TicketIdTag from '../../tickets/TicketIdTag';
 import { PLUS_ONE_MONTH, PLUS_TWO_MONTHS } from '../../../../shared/constants/defaultDates';
 import statusBgColorClass from '../../../../shared/entities/datetimes/helpers/statusBgColorClass';
 
-import { useEntityMutator, EntityType } from '@appServices/apollo/mutations';
 import useRelations from '@appServices/apollo/relations/useRelations';
 import { useStatus, TypeName } from '@appServices/apollo/status';
 // import { InlineEditInput } from '@appInputs';
 import EntityPaperFrame from '@appLayout/EntityPaperFrame';
 import { ListItemProps } from '@edtrInterfaces';
+import { useDatetimeMutator } from '@edtrServices/apollo/mutations';
 
 const { Title, Paragraph } = Typography;
 
@@ -102,7 +102,7 @@ const textStyle: CSSProperties = {
 const DateCard: React.FC<ListItemProps> = ({ id }) => {
 	const date = useDatetimeItem({ id });
 	const { isLoaded } = useStatus();
-	const { updateEntity } = useEntityMutator(EntityType.Datetime, id);
+	const { updateEntity } = useDatetimeMutator(id);
 	const { getRelations } = useRelations();
 
 	const startDate = parseISO(date.startDate) || PLUS_ONE_MONTH;
