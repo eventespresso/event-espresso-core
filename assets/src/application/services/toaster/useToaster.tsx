@@ -5,7 +5,6 @@ import useDismissToast from './useDismissToast';
 import useErrorToast from './useErrorToast';
 import useInfoToast from './useInfoToast';
 import useLoadingToast from './useLoadingToast';
-import useSuccessToast from './useSuccessToast';
 import { ToastContext } from '../context/ToastProvider';
 
 const hash: ToasterHash = (message): string => {
@@ -27,7 +26,6 @@ const useToaster = (): ToasterHook => {
 		error: useErrorToast(toaster, hash),
 		info: useInfoToast(toaster, hash),
 		loading: useLoadingToast(toaster, hash),
-		success: useSuccessToast(toaster, hash),
 	};
 };
 

@@ -1,6 +1,8 @@
 import { notification as defaultNotification } from 'antd';
 import { ArgsProps } from 'antd/lib/notification';
 
+import error from './error';
+
 interface NotificationProps extends ArgsProps {
 	type: 'success' | 'info' | 'warning' | 'error';
 }
@@ -27,6 +29,10 @@ const notification = ({ description, duration, message, placement, type }: Notif
 	};
 
 	setTimeout(() => {
+		if (type === 'error') {
+			return error(args);
+		}
+
 		defaultNotification[type](args);
 	}, 0);
 };
