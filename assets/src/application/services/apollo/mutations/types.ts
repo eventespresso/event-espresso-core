@@ -1,80 +1,72 @@
-import { MutationOptions, OperationVariables } from 'apollo-client';
-import { DataProxy } from 'apollo-cache';
-import { Entity as AnEntity } from '@edtrServices/apollo/types';
+import { MutationOptions } from 'apollo-client';
 
-export type MutationInput = {
-	[key: string]: any;
-};
-
-export type OnMutationCompletedFn = (data: any) => void;
-
-export type OnMutationErrorFn = (error: Error) => void;
-
-export type OnUpdateFnOptions<Entity = AnEntity> = {
-	proxy: DataProxy;
-	entity: Entity;
-};
-
-export type OnUpdateFn = (options: OnUpdateFnOptions) => void;
-
-export interface BackwardSubscription {
-	onCompleted?: OnMutationCompletedFn;
-	onError?: OnMutationErrorFn;
+export interface BaseType {
+	id: string;
 }
 
-export type EntityMutatorFn = (input: MutationInput, subscriptions?: BackwardSubscription) => MutationResult;
-export type EntityMutatorDeleteFn = (input?: MutationInput, subscriptions?: BackwardSubscription) => MutationResult;
+export type MutationOptionsCb = <Type extends BaseType, MI = MutationInput>(
+	mutationType: MutationType,
+	input: MI
+) => MutationOptions<Type>;
 
-export interface EntityMutator {
-	createEntity: EntityMutatorFn;
-	updateEntity: EntityMutatorFn;
-	deleteEntity: EntityMutatorDeleteFn;
+export type Mutator = (getMutationOptions: MutationOptionsCb) => MutatorCallback;
+export type MutatorCallback = <Name extends string, Type extends BaseType>(
+	typeName: Name,
+	id?: string
+) => MutatorObject;
+export interface MutatorObject {
+	createEntity: MutatorFn;
+	updateEntity: MutatorFn;
+	deleteEntity: MutatorFn;
 }
 
-export interface CustomMutationOptions extends MutationOptions {
-	onCompleted?: OnMutationCompletedFn;
-	onError?: OnMutationErrorFn;
-}
-
-type MutationGetter = (input: MutationInput) => MutationOptions;
-
-export type MutationResult = {
-	loading: boolean;
-	error?: any;
-	data?: any;
-	called: boolean;
-};
-
-export interface EntityMutation {
+export type MutationHandler = (getMutationOptions: MutationOptionsCb) => MutationHandlerCallback;
+export type MutationHandlerCallback = <Name extends string>(typeName: Name, id?: string) => MutationHandlerObject;
+export type MutationGetter = <Type extends BaseType, MI = MutationInput>(input: MI) => MutationOptions<Type>;
+export interface MutationHandlerObject {
 	getCreateMutation: MutationGetter;
 	getUpdateMutation: MutationGetter;
 	getDeleteMutation: MutationGetter;
 	mutate: (options: CustomMutationOptions, mutationType: MutationType) => MutationResult;
 }
 
-export interface Mutators {
-	datetimeMutator: Mutator;
-	ticketMutator: Mutator;
-	priceMutator: Mutator;
+export interface MutationInput {
+	[key: string]: any;
 }
 
-export interface MutatorGeneratedObject {
-	onUpdate?: OnUpdateFn;
-	optimisticResponse: any;
-	variables: OperationVariables;
+export type OnMutationCompletedFn<DShape = any> = (data: DShape) => void;
+
+export type OnMutationErrorFn = (error: Error) => void;
+
+export interface BackwardSubscription<DShape = any> {
+	onCompleted?: OnMutationCompletedFn<DShape>;
+	onError?: OnMutationErrorFn;
 }
 
-export type Mutator = (mutationType: MutationType, input: MutationInput) => MutatorGeneratedObject;
+export type MutatorFn = <MI = MutationInput, DShape = any>(
+	input: MI,
+	subscriptions?: BackwardSubscription<DShape>
+) => MutationResult<DShape>;
+
+export type MutatorFnGn<MI = MutationInput, DShape = any> = (
+	input: MI,
+	subscriptions?: BackwardSubscription<DShape>
+) => MutationResult<DShape>;
+
+export interface CustomMutationOptions extends MutationOptions {
+	onCompleted?: OnMutationCompletedFn;
+	onError?: OnMutationErrorFn;
+}
+
+export type MutationResult<D = any> = {
+	loading: boolean;
+	error?: Error;
+	data?: D;
+	called: boolean;
+};
 
 export enum MutationType {
 	Create = 'CREATE',
 	Update = 'UPDATE',
 	Delete = 'DELETE',
-}
-
-export enum EntityType {
-	Datetime = 'Datetime',
-	Ticket = 'Ticket',
-	Price = 'Price',
-	PriceType = 'PriceType',
 }
