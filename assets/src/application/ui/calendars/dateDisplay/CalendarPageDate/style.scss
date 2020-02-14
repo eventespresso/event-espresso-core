@@ -1,0 +1,116 @@
+.ee-calendar-page-date-wrapper {
+	box-sizing: border-box;
+	margin: 0;
+	padding: 0;
+	text-align: center;
+}
+
+.ee-calendar-page-date-tiny {
+	.ee-calendar-page-date-wrapper-start,
+	.ee-calendar-page-date-wrapper-end {
+		height: calc(var(--ee-font-size-big) * 2);
+		width: calc(var(--ee-font-size-big) * 2);
+	}
+}
+
+.ee-calendar-page-date-small {
+	.ee-calendar-page-date-wrapper-start,
+	.ee-calendar-page-date-wrapper-end {
+		height: calc(var(--ee-font-size-bigger) * 2);
+		width: calc(var(--ee-font-size-bigger) * 2);
+	}
+}
+
+.ee-calendar-page-date-medium {
+	.ee-calendar-page-date-wrapper-start,
+	.ee-calendar-page-date-wrapper-end {
+		height: calc(var(--ee-font-size-huge) * 2);
+		width: calc(var(--ee-font-size-huge) * 2);
+	}
+}
+
+.ee-calendar-page-date-big {
+	.ee-calendar-page-date-wrapper-start,
+	.ee-calendar-page-date-wrapper-end {
+		height: calc(var(--ee-font-size-extreme) * 2);
+		width: calc(var(--ee-font-size-extreme) * 2);
+	}
+}
+
+.ee-calendar-page-date-month {
+	font-weight: bold;
+	letter-spacing: var(--ee-letter-spacing-font-size-micro);
+
+	&.ee-no-status-class {
+		background: rgba(0, 0, 0, 0.1);
+	}
+}
+
+.ee-calendar-page-date-tiny .ee-calendar-page-date-month {
+	font-size: var(--ee-font-size-micro);
+	height: var(--ee-font-size-big);
+	line-height: var(--ee-font-size-default);
+}
+
+.ee-calendar-page-date-small .ee-calendar-page-date-month {
+	font-size: var(--ee-font-size-tiny);
+	height: var(--ee-font-size-bigger);
+	line-height: var(--ee-font-size-big);
+}
+
+.ee-calendar-page-date-medium .ee-calendar-page-date-month {
+	font-size: var(--ee-font-size-smaller);
+	height: var(--ee-font-size-huge);
+	line-height: var(--ee-font-size-bigger);
+}
+
+.ee-calendar-page-date-big .ee-calendar-page-date-month {
+	font-size: var(--ee-font-size-small);
+	height: var(--ee-font-size-extreme);
+	line-height: var(--ee-font-size-huge);
+}
+
+.ee-calendar-page-date-day {
+	background: var(--ee-background-color);
+	color: var(--ee-default-text-color-super-high-contrast);
+	font-family: 'Arial Black', Gadget, sans-serif;
+	font-weight: bold;
+	margin: 0 1px 1px;
+	position: relative;
+	top: -1px;
+	width: calc(100% - 2px);
+}
+
+.ee-calendar-page-date-tiny .ee-calendar-page-date-day {
+	font-size: var(--ee-font-size-small);
+	height: var(--ee-font-size-big);
+	line-height: var(--ee-font-size-big);
+}
+
+.ee-calendar-page-date-small .ee-calendar-page-date-day {
+	font-size: var(--ee-font-size-default);
+	height: var(--ee-font-size-bigger);
+	line-height: var(--ee-font-size-bigger);
+}
+
+.ee-calendar-page-date-medium .ee-calendar-page-date-day {
+	font-size: var(--ee-font-size-big);
+	height: var(--ee-font-size-huge);
+	line-height: var(--ee-font-size-huge);
+}
+
+.ee-calendar-page-date-big .ee-calendar-page-date-day {
+	font-size: var(--ee-font-size-bigger);
+	height: var(--ee-font-size-extreme);
+	line-height: var(--ee-font-size-extreme);
+}
+
+.ee-calendar-page-date-to {
+	color: rgba(255, 255, 255, 0.75);
+	position: relative;
+	top: var(--ee-padding-nano);
+	left: var(--ee-padding-default);
+	font-size: var(--ee-font-size-micro);
+	letter-spacing: var(--ee-letter-spacing-font-size-micro);
+	line-height: var(--ee-font-size-smaller);
+}
