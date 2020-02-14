@@ -1,4 +1,5 @@
-import { notification as defaultNotification } from 'antd';
+import React from 'react';
+import { Icon, notification as defaultNotification } from 'antd';
 import { ArgsProps } from 'antd/lib/notification';
 
 import error from './error';
@@ -14,7 +15,7 @@ const getHash = (message): string => {
 		.toString();
 };
 
-const notification = (type: 'success' | 'info' | 'warning' | 'error') => ({
+const notification = (type: 'success' | 'info' | 'warning' | 'error' | 'loading') => ({
 	description,
 	duration,
 	message,
@@ -32,6 +33,13 @@ const notification = (type: 'success' | 'info' | 'warning' | 'error') => ({
 	setTimeout(() => {
 		if (type === 'error') {
 			return error(args);
+		}
+		if (type === 'loading') {
+			// const icon = <Icon type='loading-3-quarters' />;
+			defaultNotification.open({
+				...args,
+				//  icon
+			});
 		}
 
 		defaultNotification[type](args);
