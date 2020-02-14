@@ -2,6 +2,7 @@ import { JsDataProps } from '../types';
 
 export const mockEeJsData: JsDataProps = {
 	brandName: 'EE',
+	/* eslint-disable @typescript-eslint/camelcase */
 	currency_config: {
 		code: 'MZR',
 		singularLabel: 'Zoorie',

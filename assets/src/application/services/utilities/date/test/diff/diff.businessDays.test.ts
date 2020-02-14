@@ -77,7 +77,7 @@ describe('diff.businessDays', () => {
 		});
 
 		it('does not return -0 when the given dates are the same', () => {
-			function isNegativeZero(x) {
+			function isNegativeZero(x: number): boolean {
 				return x === 0 && 1 / x < 0;
 			}
 

@@ -12,7 +12,7 @@ describe('ConfigProvider', () => {
 		let configData: Config = null;
 		const consumer = (
 			<ConfigConsumer>
-				{(_config_) => {
+				{(_config_): JSX.Element => {
 					configData = _config_;
 					return null;
 				}}
@@ -27,7 +27,7 @@ describe('ConfigProvider', () => {
 	it('checks for brandName in config data', () => {
 		const consumer = (
 			<ConfigConsumer>
-				{(configData) => {
+				{(configData): JSX.Element => {
 					const value = configData.config.brandName;
 					return <span>{`Brand name: ${value}`}</span>;
 				}}
@@ -43,7 +43,7 @@ describe('ConfigProvider', () => {
 	it('checks for user and site locale in config data', () => {
 		const consumer = (
 			<ConfigConsumer>
-				{(configData) => {
+				{(configData): JSX.Element => {
 					const userLocale = configData.config.locale.user;
 					const siteLocale = configData.config.locale.site;
 					return (

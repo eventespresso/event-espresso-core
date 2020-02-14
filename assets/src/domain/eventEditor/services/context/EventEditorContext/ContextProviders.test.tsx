@@ -38,7 +38,7 @@ describe('ContextProviders', () => {
 		expect(getByText('Status Manager is: NOT_NULL')).toBeInTheDocument();
 	});
 
-	const EventIdComponent = () => {
+	const EventIdComponent: React.FC = () => {
 		const _eventId_ = useEventId() || 0;
 		return <span>{`Event ID is: ${_eventId_}`}</span>;
 	};

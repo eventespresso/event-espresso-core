@@ -10,7 +10,9 @@
 		"plugin:react/recommended",
 		"prettier/react",
 		"plugin:prettier/recommended",
-		"plugin:@typescript-eslint/recommended"
+		"plugin:@typescript-eslint/recommended",
+		"plugin:jsx-a11y/recommended",
+		"react-app"
 	],
 	"globals": {
 		"Atomics": "readonly",
@@ -24,7 +26,7 @@
 		"ecmaVersion": 2018,
 		"sourceType": "module"
 	},
-	"plugins": ["react-hooks"],
+	"plugins": ["react-hooks", "jsx-a11y"],
 	"rules": {
 		"comma-dangle": "off",
 		"jest/valid-describe": "off",
