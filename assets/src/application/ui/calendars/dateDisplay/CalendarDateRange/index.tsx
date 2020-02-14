@@ -1,5 +1,5 @@
 import React from 'react';
-import { format, parseISO, isValid } from 'date-fns';
+import { differenceInCalendarDays, format, parseISO, isValid } from 'date-fns';
 import { __ } from '@wordpress/i18n';
 
 import { BiggieCalendarDate, MediumCalendarDate, CalendarDateProps } from '../index';
@@ -25,7 +25,7 @@ export const CalendarDateRange: React.FC<CalendarDateRange> = ({
 	if (!isValid(startDateObject) || !isValid(endDateObject)) {
 		return null;
 	}
-	if (format(startDateObject, 'yy-MM-dd') !== format(endDateObject, 'yy-MM-dd')) {
+	if (differenceInCalendarDays(startDateObject, endDateObject) !== 0) {
 		return (
 			<MediumCalendarDate
 				date={startDateObject}
