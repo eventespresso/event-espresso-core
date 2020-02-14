@@ -2,8 +2,6 @@ import { useContext } from 'react';
 
 import { ToasterHash, ToasterHook } from './types';
 import useDismissToast from './useDismissToast';
-import useErrorToast from './useErrorToast';
-import useInfoToast from './useInfoToast';
 import useLoadingToast from './useLoadingToast';
 import { ToastContext } from '../context/ToastProvider';
 
@@ -23,8 +21,6 @@ const useToaster = (): ToasterHook => {
 
 	return {
 		dismiss: useDismissToast(toaster, hash),
-		error: useErrorToast(toaster, hash),
-		info: useInfoToast(toaster, hash),
 		loading: useLoadingToast(toaster, hash),
 	};
 };

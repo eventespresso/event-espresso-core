@@ -3,10 +3,6 @@ import { ArgsProps } from 'antd/lib/notification';
 
 import error from './error';
 
-interface NotificationProps extends ArgsProps {
-	type: 'success' | 'info' | 'warning' | 'error';
-}
-
 const getHash = (message): string => {
 	const msg = JSON.stringify(message);
 	return msg
@@ -18,7 +14,12 @@ const getHash = (message): string => {
 		.toString();
 };
 
-const notification = ({ description, duration, message, placement, type }: NotificationProps): void => {
+const notification = (type: 'success' | 'info' | 'warning' | 'error') => ({
+	description,
+	duration,
+	message,
+	placement,
+}: ArgsProps): void => {
 	const hash = getHash(message);
 	const args: ArgsProps = {
 		message,
@@ -36,5 +37,7 @@ const notification = ({ description, duration, message, placement, type }: Notif
 		defaultNotification[type](args);
 	}, 0);
 };
+
+export const infoNotification = notification('info');
 
 export default notification;
