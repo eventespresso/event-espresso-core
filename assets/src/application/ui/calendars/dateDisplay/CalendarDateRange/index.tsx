@@ -3,6 +3,7 @@ import { differenceInCalendarDays, format, parseISO, isValid } from 'date-fns';
 import { __ } from '@wordpress/i18n';
 
 import { BiggieCalendarDate, MediumCalendarDate, CalendarDateProps } from '../index';
+import { TIME_ONLY_12H_SHORT_FORMAT } from '@appConstants/date-fns-formats';
 
 export interface CalendarDateRange extends CalendarDateProps {
 	startDate: Date;
@@ -44,7 +45,8 @@ export const CalendarDateRange: React.FC<CalendarDateRange> = ({
 			/>
 		);
 	}
-	const time = format(startDateObject, 'h:mm a - ') + format(endDateObject, 'h:mm a');
+	const time =
+		format(startDateObject, TIME_ONLY_12H_SHORT_FORMAT + ' - ') + format(endDateObject, TIME_ONLY_12H_SHORT_FORMAT);
 	const headerTxt = headerText ? headerText : <span>&nbsp;</span>;
 	return (
 		<BiggieCalendarDate
