@@ -31,7 +31,7 @@ const useFetchTickets = (skipFetch: boolean = null): FetchEntitiesResult<Tickets
 		onError: (error): void => {
 			setIsError(TypeName.tickets, true);
 			toaster.dismiss(toasterMessage);
-			toaster.error(error);
+			notification({ message: `datetimes initialized`, type: 'success' });
 		},
 	});
 
@@ -41,7 +41,7 @@ const useFetchTickets = (skipFetch: boolean = null): FetchEntitiesResult<Tickets
 
 	if (!initialized) {
 		toaster.loading(loading, toasterMessage);
-		toaster.error(error);
+		notification({ message: `datetimes initialized`, type: 'success' });
 	}
 
 	useEffect(() => {

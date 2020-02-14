@@ -25,7 +25,7 @@ const useFetchDatetimes = (): FetchEntitiesResult<DatetimesList> => {
 		onError: (error): void => {
 			setIsError(TypeName.datetimes, true);
 			toaster.dismiss(toasterMessage);
-			toaster.error(error);
+			notification({ message: error, type: 'error' });
 		},
 	});
 
@@ -35,7 +35,7 @@ const useFetchDatetimes = (): FetchEntitiesResult<DatetimesList> => {
 
 	if (!initialized) {
 		toaster.loading(loading, toasterMessage);
-		toaster.error(error);
+		notification({ message: error, type: 'error' });
 	}
 
 	useEffect(() => {
