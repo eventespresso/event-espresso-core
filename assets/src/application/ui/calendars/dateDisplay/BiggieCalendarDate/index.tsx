@@ -2,6 +2,13 @@ import { format, parseISO, isValid } from 'date-fns';
 import React, { useCallback } from 'react';
 
 import EspressoButton from '@appInputs/EspressoButton';
+import {
+	DAY_ONLY_SHORT_FORMAT,
+	MONTH_ONLY_FULL_FORMAT,
+	TIME_ONLY_12H_SHORT_FORMAT,
+	WEEKDAY_ONLY_FULL_FORMAT,
+	YEAR_ONLY_LONG_FORMAT,
+} from '@appConstants/date-fns-formats';
 import { CalendarDateProps } from '../types';
 import './style.css';
 
@@ -43,12 +50,12 @@ export const BiggieCalendarDate: React.FC<BiggieCalendarDateProps> = ({
 		<div className={className}>
 			{headerText && <div className='ee-biggie-calendar-date-header'>{headerText}</div>}
 			<div className='ee-biggie-calendar-date'>
-				<div className='ee-bcd-weekday'>{format(dateObject, 'eeee')}</div>
-				<div className='ee-bcd-month'>{format(dateObject, 'MMMM')}</div>
+				<div className='ee-bcd-weekday'>{format(dateObject, WEEKDAY_ONLY_FULL_FORMAT)}</div>
+				<div className='ee-bcd-month'>{format(dateObject, MONTH_ONLY_FULL_FORMAT)}</div>
 				<div className='ee-bcd-month-day-sep'></div>
-				<div className='ee-bcd-day'>{format(dateObject, 'ee')}</div>
-				<div className='ee-bcd-year'>{format(dateObject, 'yyyy')}</div>
-				{showTime && <div className='ee-bcd-time'>{format(dateObject, 'h:mm a')}</div>}
+				<div className='ee-bcd-day'>{format(dateObject, DAY_ONLY_SHORT_FORMAT)}</div>
+				<div className='ee-bcd-year'>{format(dateObject, YEAR_ONLY_LONG_FORMAT)}</div>
+				{showTime && <div className='ee-bcd-time'>{format(dateObject, TIME_ONLY_12H_SHORT_FORMAT)}</div>}
 			</div>
 			{footerText && <div className='ee-biggie-calendar-date-footer'>{footerText}</div>}
 			{editDateButton}
