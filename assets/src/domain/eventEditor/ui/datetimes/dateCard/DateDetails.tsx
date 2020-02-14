@@ -3,7 +3,7 @@ import { __ } from '@wordpress/i18n';
 
 import InfinitySymbol from '@application/valueObjects/InfinitySymbol';
 import parseInfinity from '@appServices/utilities/parseInfinity';
-import { EntityDetailsPanel } from '@application/ui/enityDetails';
+import { EntityDetailsPanel } from '@appDisplay/enityDetails';
 import { EntityMutatorFn } from '@appServices/apollo/mutations';
 import { Datetime } from '../../../services/apollo/types';
 import DateRegistrationsLink from '../DateRegistrationsLink';
