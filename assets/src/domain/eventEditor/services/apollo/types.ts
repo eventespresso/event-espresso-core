@@ -1,7 +1,9 @@
+import { BaseType } from '@appServices/apollo/mutations';
+
 export type EntityId = string;
 export type EntityDbId = number;
 
-export interface Entity {
+export interface Entity extends BaseType {
 	id: EntityId;
 	dbId: EntityDbId;
 	name: string;
