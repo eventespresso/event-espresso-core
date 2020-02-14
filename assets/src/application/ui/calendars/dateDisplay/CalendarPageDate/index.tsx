@@ -1,15 +1,14 @@
-/**
- * External imports
- */
 import React from 'react';
 import { format, parseISO, isValid } from 'date-fns';
 import { Tooltip } from 'antd';
 import { __ } from '@wordpress/i18n';
 
-/**
- * Internal dependencies
- */
-import './style.css';
+import './style.scss';
+import {
+	DAY_ONLY_SHORT_FORMAT,
+	MONTH_ONLY_LONG_FORMAT,
+	LOCALIZED_DATE_AND_TIME_FULL_FORMAT,
+} from '@appConstants/date-fns-formats';
 
 export enum CalendarPageSize {
 	TINY = 'tiny',
@@ -22,7 +21,7 @@ export interface CalendarPageDateProps {
 	startDate?: Date;
 	endDate?: Date;
 	size?: CalendarPageSize;
-	statusClass?: string;
+	statusClassName?: string;
 }
 
 /**
@@ -34,7 +33,7 @@ export const CalendarPageDate: React.FC<CalendarPageDateProps> = ({
 	startDate,
 	endDate,
 	size = CalendarPageSize.SMALL,
-	statusClass,
+	statusClassName,
 	...otherProps
 }) => {
 	const startDateObject = startDate instanceof Date ? startDate : parseISO(startDate);
@@ -43,19 +42,21 @@ export const CalendarPageDate: React.FC<CalendarPageDateProps> = ({
 		return null;
 	}
 
-	const getStartDate = (startDate: Date, statusClass: string) => {
+	const getStartDate = (startDate: Date, statusClassName: string) => {
 		return (
 			startDate && (
-				<div className='ee-calendar-page-date-wrapper-start'>{renderCalendarPage(startDate, statusClass)}</div>
+				<div className='ee-calendar-page-date-wrapper-start'>
+					{renderCalendarPage(startDate, statusClassName)}
+				</div>
 			)
 		);
 	};
 
-	const getEndDate = (endDate: Date, statusClass: string) => {
+	const getEndDate = (endDate: Date, statusClassName: string) => {
 		return (
 			endDate && (
 				<div className='ee-calendar-page-date-wrapper-end'>
-					{renderCalendarPage(endDate, statusClass, 'end')}
+					{renderCalendarPage(endDate, statusClassName, 'end')}
 				</div>
 			)
 		);
@@ -65,14 +66,14 @@ export const CalendarPageDate: React.FC<CalendarPageDateProps> = ({
 		return startDate && endDate && <div className='ee-calendar-page-date-to'>{__('TO', 'event_espresso')}</div>;
 	};
 
-	const renderCalendarPage = (date: Date, statusClass: string, startOrEnd = 'start') => {
+	const renderCalendarPage = (date: Date, statusClassName: string, startOrEnd = 'start') => {
 		let className = `ee-calendar-page-date-page ee-calendar-page-date-${startOrEnd}`;
-		className += statusClass ? ` ${statusClass}` : '';
+		className += statusClassName ? ` ${statusClassName}` : '';
 		return (
-			<Tooltip title={format(date, 'PPPPpppp')}>
+			<Tooltip title={format(date, LOCALIZED_DATE_AND_TIME_FULL_FORMAT)}>
 				<div className={className}>
-					<div className={'ee-calendar-page-date-month'}>{format(date, 'MMM')}</div>
-					<div className={'ee-calendar-page-date-day'}>{format(date, 'ee')}</div>
+					<div className={'ee-calendar-page-date-month'}>{format(date, MONTH_ONLY_LONG_FORMAT)}</div>
+					<div className={'ee-calendar-page-date-day'}>{format(date, DAY_ONLY_SHORT_FORMAT)}</div>
 				</div>
 			</Tooltip>
 		);
@@ -81,9 +82,9 @@ export const CalendarPageDate: React.FC<CalendarPageDateProps> = ({
 	const className = `ee-calendar-page-date-wrapper ee-calendar-page-date-${size}`;
 	return (
 		<div className={className} {...otherProps}>
-			{getStartDate(startDateObject, statusClass)}
+			{getStartDate(startDateObject, statusClassName)}
 			{getDivider(startDateObject, endDateObject)}
-			{getEndDate(endDateObject, statusClass)}
+			{getEndDate(endDateObject, statusClassName)}
 		</div>
 	);
 };
