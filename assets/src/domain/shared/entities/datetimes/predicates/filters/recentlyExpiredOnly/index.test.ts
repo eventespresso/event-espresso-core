@@ -1,15 +1,10 @@
 import { formatISO } from 'date-fns';
-/**
- * Internal dependencies
- */
+
 import { nodes as datetimes } from '../../../../../../eventEditor/services/apollo/queries/datetimes/test/data';
 import { sub } from '../../../../../../../application/services/utilities/date';
-const datetime = datetimes[0];
-
-/**
- * Internal dependencies
- */
 import recentlyExpiredOnly from './index';
+
+const datetime = datetimes[0];
 
 describe('recentlyExpiredOnly', () => {
 	it('Should return empty array if dates are not recently being expired', () => {

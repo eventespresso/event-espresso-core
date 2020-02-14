@@ -11,7 +11,8 @@
 		"prettier/react",
 		"plugin:prettier/recommended",
 		"plugin:@typescript-eslint/recommended",
-		"plugin:jsx-a11y/recommended"
+		"plugin:jsx-a11y/recommended",
+		"react-app"
 	],
 	"globals": {
 		"Atomics": "readonly",

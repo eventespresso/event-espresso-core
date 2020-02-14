@@ -1,7 +1,7 @@
 import React, { useLayoutEffect, useCallback, useState } from 'react';
-const { addEventListener, removeEventListener } = window;
-
 import getHTMLElementClientRect from '../utilities/dom/getHTMLElementClientRect';
+
+const { addEventListener, removeEventListener } = window;
 
 type voidFn = () => void;
 
