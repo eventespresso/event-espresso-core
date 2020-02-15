@@ -29,8 +29,8 @@ export interface TpcPriceModifier extends Price {
 	isDiscount: boolean;
 	isPercent: boolean;
 	isTax: boolean;
-	order: number | string;
-	overrides: string;
+	order: number;
+	overrides: number;
 	priceType: EntityId;
 	priceTypeOrder: number | string;
 }
