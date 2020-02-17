@@ -1,7 +1,7 @@
 import { useContext } from 'react';
 
 import { ToasterHash, ToasterHook } from './types';
-import useDismissLoading from './useDismissLoading';
+import useDismissToast from './useDismissToast';
 import useLoadingToast from './useLoadingToast';
 import { ToastContext } from '../context/ToastProvider';
 
@@ -20,7 +20,7 @@ const useToaster = (): ToasterHook => {
 	const toaster = useContext(ToastContext);
 
 	return {
-		dismiss: useDismissLoading(),
+		dismiss: useDismissToast(toaster, hash),
 		loading: useLoadingToast(toaster, hash),
 	};
 };

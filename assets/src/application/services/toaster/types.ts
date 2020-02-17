@@ -62,8 +62,5 @@ export type ToasterMsg = string;
 
 export interface ToasterHook {
 	dismiss: DismissToastCallback;
-	error: ErrorToastCallback;
-	info: InfoToastCallback;
 	loading: LoadingToastCallback;
-	success: SuccessToastCallback;
 }
