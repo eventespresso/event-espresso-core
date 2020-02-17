@@ -8,7 +8,7 @@ export interface LoadingToastProps {
 }
 
 export type DismissToast = (toaster: IToaster, hash: ToasterHash) => DismissToastCallback;
-export type DismissToastCallback = (message: ToasterMsg) => void;
+export type DismissToastCallback = (key: ToasterMsg) => void;
 
 export type ErrorToast = (toaster: IToaster, hash: ToasterHash) => ErrorToastCallback;
 export type ErrorToastCallback = (
