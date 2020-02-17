@@ -1,19 +1,9 @@
 import React from 'react';
+import uuidv4 from 'uuid/v4';
 import { Icon, notification as defaultNotification } from 'antd';
 import { ArgsProps } from 'antd/lib/notification';
 
 import error from './error';
-
-const getHash = (message): string => {
-	const msg = JSON.stringify(message);
-	return msg
-		.split('')
-		.reduce((a, b) => {
-			a = (a << 5) - a + b.charCodeAt(0);
-			return a & a;
-		}, 0)
-		.toString();
-};
 
 const notification = (type: 'success' | 'info' | 'warning' | 'error' | 'loading') => ({
 	description,
@@ -21,12 +11,12 @@ const notification = (type: 'success' | 'info' | 'warning' | 'error' | 'loading'
 	message,
 	placement,
 }: ArgsProps): void => {
-	const hash = getHash(message);
+	const key = uuidv4();
 	const args: ArgsProps = {
 		message,
 		description,
 		duration: duration,
-		key: hash,
+		key,
 		placement: placement || 'bottomRight',
 	};
 
