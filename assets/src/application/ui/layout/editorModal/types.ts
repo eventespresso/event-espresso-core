@@ -47,7 +47,7 @@ export type ModalSubmit = (values?: any) => void;
 export type ModalClose = () => void;
 
 export interface EditorModalProps {
-	formComponent: React.ReactNode;
+	formComponent: React.NamedExoticComponent;
 	onSubmit: ModalSubmit;
 	onClose: ModalClose;
 	[key: string]: any;

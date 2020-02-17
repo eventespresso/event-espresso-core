@@ -3,7 +3,7 @@ import { FormProps, FormRenderProps } from 'react-final-form';
 import { FormApi } from 'final-form';
 
 export interface FormModalProps extends FormProps {
-	FormComponent: React.FC;
+	FormComponent: React.NamedExoticComponent;
 	onClose: (e?: any) => void;
 	isOpen: boolean;
 }
@@ -19,6 +19,6 @@ export interface FormComponentProps {
 }
 
 export interface FormModalFormProps extends FormRenderProps {
-	FormComponent: React.FC<FormComponentProps>;
+	FormComponent: React.NamedExoticComponent<FormComponentProps>;
 	onClose: (e?: any) => void;
 }
