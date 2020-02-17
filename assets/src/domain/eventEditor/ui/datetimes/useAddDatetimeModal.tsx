@@ -2,12 +2,12 @@ import React, { useCallback } from 'react';
 import { __ } from '@wordpress/i18n';
 
 import DateForm from './dateForm/DateForm';
-import { useEntityMutator, EntityType } from '../../../../application/services/apollo/mutations';
 import { DateItemFormProps } from './types';
-import { useEditorModal, EditorModal, ModalSubmit, ModalClose } from '../../../../application/ui/layout/editorModal';
+import { useEditorModal, EditorModal, ModalSubmit, ModalClose } from '@appLayout/editorModal';
+import { useDatetimeMutator } from '@edtrServices/apollo/mutations';
 
 const useAddDatetimeModal: EditorModal = () => {
-	const { createEntity } = useEntityMutator(EntityType.Datetime);
+	const { createEntity } = useDatetimeMutator();
 	const { closeEditor } = useEditorModal();
 
 	const onClose = useCallback<ModalClose>((): void => {
@@ -21,10 +21,9 @@ const useAddDatetimeModal: EditorModal = () => {
 		[createEntity]
 	);
 
-	const formComponent = useCallback<React.FC<DateItemFormProps>>(
-		(props) => <DateForm {...props} title={__('New Datetime Details')} />,
-		[]
-	);
+	const formComponent = React.memo<DateItemFormProps>((props) => (
+		<DateForm {...props} title={__('New Datetime Details')} />
+	));
 
 	return {
 		formComponent,

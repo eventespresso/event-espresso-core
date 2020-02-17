@@ -1,12 +1,12 @@
 import { renderHook, act } from '@testing-library/react-hooks';
 import { path } from 'ramda';
 
-import { useEntityMutator, EntityType } from '../../../../../../../application/services/apollo/mutations';
 import { useRelations } from '../../../../../../../application/services/apollo/relations';
 import { MutationType } from '../../../../../../../application/services/apollo/mutations/types';
 import { ApolloMockedProvider } from '../../../../context/TestContext';
 import { getMutationMocks, mockedPrices } from './data';
 import { nodes as tickets } from '../../../queries/tickets/test/data';
+import { usePriceMutator } from '../';
 
 const timeout = 5000; // milliseconds
 describe('deletePrice', () => {
@@ -21,7 +21,7 @@ describe('deletePrice', () => {
 	it('checks for the mutation data to be same as the mock data', async () => {
 		const wrapper = ApolloMockedProvider(mutationMocks);
 
-		const { result, waitForValueToChange } = renderHook(() => useEntityMutator(EntityType.Price, mockedPrice.id), {
+		const { result, waitForValueToChange } = renderHook(() => usePriceMutator(mockedPrice.id), {
 			wrapper,
 		});
 
@@ -58,7 +58,7 @@ describe('deletePrice', () => {
 
 		const { result: mutationResult, waitForNextUpdate, waitForValueToChange } = renderHook(
 			() => ({
-				mutator: useEntityMutator(EntityType.Price, mockedPrice.id),
+				mutator: usePriceMutator(mockedPrice.id),
 				relationsManager: useRelations(),
 			}),
 			{
@@ -69,7 +69,7 @@ describe('deletePrice', () => {
 		await waitForValueToChange(() => mutationResult.current, { timeout });
 
 		act(() => {
-			mutationResult.current.mutator.deleteEntity();
+			mutationResult.current.mutator.deleteEntity({});
 		});
 
 		// wait for mutation promise to resolve
@@ -102,7 +102,7 @@ describe('deletePrice', () => {
 
 		const { result: mutationResult, waitForNextUpdate, waitForValueToChange } = renderHook(
 			() => ({
-				mutator: useEntityMutator(EntityType.Price, mockedPrice.id),
+				mutator: usePriceMutator(mockedPrice.id),
 				relationsManager: useRelations(),
 			}),
 			{
@@ -113,7 +113,7 @@ describe('deletePrice', () => {
 		await waitForValueToChange(() => mutationResult.current, { timeout });
 
 		act(() => {
-			mutationResult.current.mutator.deleteEntity();
+			mutationResult.current.mutator.deleteEntity({});
 		});
 
 		// wait for mutation promise to resolve

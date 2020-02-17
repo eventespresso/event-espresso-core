@@ -1,7 +1,6 @@
 import { renderHook, act } from '@testing-library/react-hooks';
 import { path } from 'ramda';
 
-import { useEntityMutator, EntityType } from '../../../../../../../application/services/apollo/mutations';
 import { useRelations } from '../../../../../../../application/services/apollo/relations';
 import { MutationType } from '../../../../../../../application/services/apollo/mutations/types';
 import { ApolloMockedProvider } from '../../../../context/TestContext';
@@ -9,6 +8,7 @@ import { getMutationMocks, mockedPrices } from './data';
 import { nodes as priceTypes } from '../../../queries/priceTypes/test/data';
 import { MutationInput } from '../../../../../../../application/services/apollo/mutations/types';
 import useInitPriceTestCache from '../../../queries/prices/test/useInitPriceTestCache';
+import { usePriceMutator } from '../';
 
 const timeout = 5000; // milliseconds
 describe('updatePrice', () => {
@@ -27,7 +27,7 @@ describe('updatePrice', () => {
 		const { result, waitForValueToChange } = renderHook(
 			() => {
 				useInitPriceTestCache();
-				return useEntityMutator(EntityType.Price, mockedPrice.id);
+				return usePriceMutator(mockedPrice.id);
 			},
 			{
 				wrapper,
@@ -66,7 +66,7 @@ describe('updatePrice', () => {
 
 		const { result: mutationResult, waitForNextUpdate, waitForValueToChange } = renderHook(
 			() => ({
-				mutator: useEntityMutator(EntityType.Price, mockedPrice.id),
+				mutator: usePriceMutator(mockedPrice.id),
 				relationsManager: useRelations(),
 			}),
 			{

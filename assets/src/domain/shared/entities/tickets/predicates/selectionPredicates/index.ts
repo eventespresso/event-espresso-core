@@ -1,6 +1,6 @@
 import { assoc, includes, map, when } from 'ramda';
 
-import { TICKET_FIELDS } from '../ticketFields';
+import { TICKET_FIELDS, TICKET_INPUT_FIELDS } from '../ticketFields';
 import { entityHasGuid } from '../../../../services/predicates';
 import { EntityId, Ticket } from '@edtrServices/apollo/types';
 
@@ -17,6 +17,8 @@ interface UpdateTicketReverseCalculateProps {
 }
 
 export const isTicketField = (_, field): boolean => includes(field, TICKET_FIELDS);
+
+export const isTicketInputField = (_, field): boolean => includes(field, TICKET_INPUT_FIELDS);
 
 export const updateTicketPrice = (amount: number): ((obj: Ticket) => Record<keyof Ticket, number> & Ticket) => {
 	return assoc<number, keyof Ticket>('price', amount);

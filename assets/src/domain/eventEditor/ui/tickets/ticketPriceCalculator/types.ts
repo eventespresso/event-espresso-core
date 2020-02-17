@@ -22,15 +22,15 @@ export interface PriceInputProps extends WithPriceModifierProp {
 }
 
 export interface TpcPriceModifier extends Price {
-	amount: number | string;
+	amount: number;
 	desc: string;
 	isBasePrice: boolean;
 	isDefault: boolean;
 	isDiscount: boolean;
 	isPercent: boolean;
 	isTax: boolean;
-	order: number | string;
-	overrides: string;
+	order: number;
+	overrides: number;
 	priceType: EntityId;
 	priceTypeOrder: number | string;
 }

@@ -1,3 +1,3 @@
-export { default as useEntityMutator } from './useEntityMutator';
+export { default as useMutator } from './useMutator';
 
 export * from './types';

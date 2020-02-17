@@ -1,13 +1,13 @@
 import { renderHook, act } from '@testing-library/react-hooks';
 import { path } from 'ramda';
 
-import { useEntityMutator, EntityType } from '../../../../../../../application/services/apollo/mutations';
 import { useRelations } from '../../../../../../../application/services/apollo/relations';
 import { MutationType } from '../../../../../../../application/services/apollo/mutations/types';
 import { ApolloMockedProvider } from '../../../../context/TestContext';
 import { getMutationMocks, mockedTickets } from './data';
 import { nodes as datetimes } from '../../../queries/datetimes/test/data';
 import { nodes as prices } from '../../../queries/prices/test/data';
+import { useTicketMutator } from '../';
 
 const timeout = 5000; // milliseconds
 describe('deleteTicket', () => {
@@ -23,12 +23,9 @@ describe('deleteTicket', () => {
 	it('checks for the mutation data to be same as the mock data', async () => {
 		const wrapper = ApolloMockedProvider(mutationMocks);
 
-		const { result, waitForValueToChange } = renderHook(
-			() => useEntityMutator(EntityType.Ticket, mockedTicket.id),
-			{
-				wrapper,
-			}
-		);
+		const { result, waitForValueToChange } = renderHook(() => useTicketMutator(mockedTicket.id), {
+			wrapper,
+		});
 
 		let mutationData: any;
 
@@ -64,7 +61,7 @@ describe('deleteTicket', () => {
 
 		const { result: mutationResult, waitForNextUpdate, waitForValueToChange } = renderHook(
 			() => ({
-				mutator: useEntityMutator(EntityType.Ticket, mockedTicket.id),
+				mutator: useTicketMutator(mockedTicket.id),
 				relationsManager: useRelations(),
 			}),
 			{
@@ -75,7 +72,7 @@ describe('deleteTicket', () => {
 		await waitForValueToChange(() => mutationResult.current, { timeout });
 
 		act(() => {
-			mutationResult.current.mutator.deleteEntity();
+			mutationResult.current.mutator.deleteEntity({});
 		});
 
 		// wait for mutation promise to resolve
@@ -108,7 +105,7 @@ describe('deleteTicket', () => {
 
 		const { result: mutationResult, waitForNextUpdate, waitForValueToChange } = renderHook(
 			() => ({
-				mutator: useEntityMutator(EntityType.Ticket, mockedTicket.id),
+				mutator: useTicketMutator(mockedTicket.id),
 				relationsManager: useRelations(),
 			}),
 			{
@@ -119,7 +116,7 @@ describe('deleteTicket', () => {
 		await waitForValueToChange(() => mutationResult.current, { timeout });
 
 		act(() => {
-			mutationResult.current.mutator.deleteEntity();
+			mutationResult.current.mutator.deleteEntity({});
 		});
 
 		// wait for mutation promise to resolve

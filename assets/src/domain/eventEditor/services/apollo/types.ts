@@ -1,7 +1,9 @@
+import { BaseType } from '@appServices/apollo/mutations';
+
 export type EntityId = string;
 export type EntityDbId = number;
 
-export interface Entity {
+export interface Entity extends BaseType {
 	id: EntityId;
 	dbId: EntityDbId;
 	name: string;
@@ -55,15 +57,15 @@ export interface DatetimesList {
 }
 
 export interface Price extends Entity, Trashable {
-	amount: number | string;
+	amount: number;
 	desc: string;
 	isBasePrice: boolean;
 	isDefault: boolean;
 	isDiscount: boolean;
 	isPercent: boolean;
 	isTax: boolean;
-	order: number | string;
-	overrides: string;
+	order: number;
+	overrides: number;
 }
 
 export type PriceEdge = EntityEdge<Price, 'EspressoRootQueryPricesConnection'>;

@@ -8,12 +8,12 @@ import TicketDetails from './TicketDetails';
 import useTicketItem from '@edtrServices/apollo/queries/tickets/useTicketItem';
 import TicketProvider from '@edtrServices/context/TicketContext';
 import { CurrencyInput, InlineEditInput } from '@appInputs';
-import { useEntityMutator, EntityType } from '@appServices/apollo/mutations';
 import useRelations from '@appServices/apollo/relations/useRelations';
 import EntityPaperFrame from '@appLayout/EntityPaperFrame';
 import DatetimeIdTag from '../../datetimes/DatetimeIdTag';
 import { ListItemProps } from '../../../interfaces/types';
 import { priceStyle } from './styles';
+import { useTicketMutator } from '@edtrServices/apollo/mutations';
 
 const menuWrapperStype: CSSProperties = {
 	alignItems: 'stretch',
@@ -39,7 +39,7 @@ const btnStyle: CSSProperties = {
 
 const TicketCard: React.FC<ListItemProps> = ({ id }) => {
 	const ticket = useTicketItem({ id });
-	const { updateEntity } = useEntityMutator(EntityType.Ticket, id);
+	const { updateEntity } = useTicketMutator(id);
 	const { getRelations } = useRelations();
 	// get related datetimes for this datetime
 	const relatedDates = getRelations({

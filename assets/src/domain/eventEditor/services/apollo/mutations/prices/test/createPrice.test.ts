@@ -2,7 +2,6 @@ import { useApolloClient } from '@apollo/react-hooks';
 import { renderHook, act } from '@testing-library/react-hooks';
 import { path } from 'ramda';
 
-import { useEntityMutator, EntityType } from '../../../../../../../application/services/apollo/mutations';
 import { useRelations } from '../../../../../../../application/services/apollo/relations';
 import { MutationType } from '../../../../../../../application/services/apollo/mutations/types';
 import { ApolloMockedProvider } from '../../../../context/TestContext';
@@ -10,15 +9,15 @@ import { getMutationMocks, mockedPrices } from './data';
 import usePrices from '../../../queries/prices/usePrices';
 import { nodes as tickets } from '../../../queries/tickets/test/data';
 import { nodes as priceTypes } from '../../../queries/priceTypes/test/data';
-import { MutationInput } from '../../../../../../../application/services/apollo/mutations/types';
+import { usePriceMutator, CreatePriceInput } from '../';
 
 const timeout = 5000; // milliseconds
 describe('createPrice', () => {
-	const testInput: MutationInput = { name: 'New Test Price', desc: 'New Test Desc' };
 	const mockedPrice = mockedPrices.CREATE;
 
 	const ticketId = tickets[0].id;
 	const priceTypeId = priceTypes[0].id;
+	const testInput: CreatePriceInput = { name: 'New Test Price', desc: 'New Test Desc', priceType: priceTypeId };
 
 	let mutationMocks = getMutationMocks(testInput, MutationType.Create);
 
@@ -27,7 +26,7 @@ describe('createPrice', () => {
 	it('checks for the mutation data to be same as the mock data', async () => {
 		const wrapper = ApolloMockedProvider(mutationMocks);
 
-		const { result, waitForValueToChange } = renderHook(() => useEntityMutator(EntityType.Price), {
+		const { result, waitForValueToChange } = renderHook(() => usePriceMutator(), {
 			wrapper,
 		});
 
@@ -58,7 +57,7 @@ describe('createPrice', () => {
 
 		const { result: mutationResult, waitForNextUpdate, waitForValueToChange } = renderHook(
 			() => ({
-				mutator: useEntityMutator(EntityType.Price),
+				mutator: usePriceMutator(),
 				client: useApolloClient(),
 			}),
 			{
@@ -106,7 +105,7 @@ describe('createPrice', () => {
 
 		const { result: mutationResult, waitForNextUpdate, waitForValueToChange } = renderHook(
 			() => ({
-				mutator: useEntityMutator(EntityType.Price),
+				mutator: usePriceMutator(),
 				relationsManager: useRelations(),
 			}),
 			{

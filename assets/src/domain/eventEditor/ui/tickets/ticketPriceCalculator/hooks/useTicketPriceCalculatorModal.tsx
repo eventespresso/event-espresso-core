@@ -40,7 +40,7 @@ const useTicketPriceCalculatorModal: EditorModal = (ticketId: EntityId) => {
 			sortedPrices.push(defaultPriceModifier);
 			const formData = {
 				ticket: copyTicketFields(ticket),
-				prices: sortedPrices.map(copyPriceFields),
+				prices: sortedPrices.map((price) => copyPriceFields(price)), // avoid passing index in .map() as 2nd param
 			};
 			setInitialValues(formData);
 		}

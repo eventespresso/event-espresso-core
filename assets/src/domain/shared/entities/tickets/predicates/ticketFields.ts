@@ -1,24 +1,27 @@
-export const TICKET_FIELDS = [
-	'id',
-	'dbId',
+export const TICKET_INPUT_FIELDS = [
+	'datetimes',
 	'description',
 	'endDate',
 	'isDefault',
 	'isFree',
 	'isRequired',
-	'isSoldOut',
 	'isTaxable',
 	'isTrashed',
 	'max',
 	'min',
 	'name',
 	'order',
+	'parent',
 	'price',
 	'prices',
 	'quantity',
 	'reserved',
 	'reverseCalculate',
+	'row',
 	'sold',
 	'startDate',
 	'uses',
+	'wpUser',
 ];
+
+export const TICKET_FIELDS = [...TICKET_INPUT_FIELDS, 'id', 'dbId', 'isSoldOut'];

@@ -2,12 +2,12 @@ import React, { useCallback } from 'react';
 import { __ } from '@wordpress/i18n';
 
 import TicketForm from './ticketForm/TicketForm';
-import { useEntityMutator, EntityType } from '../../../../application/services/apollo/mutations';
 import { TicketItemFormProps } from './types';
-import { useEditorModal, EditorModal, ModalSubmit, ModalClose } from '../../../../application/ui/layout/editorModal';
+import { useEditorModal, EditorModal, ModalSubmit, ModalClose } from '@appLayout/editorModal';
+import { useTicketMutator } from '@edtrServices/apollo/mutations';
 
 const useEditTicketModal: EditorModal = (entityId) => {
-	const { updateEntity } = useEntityMutator(EntityType.Ticket, entityId);
+	const { updateEntity } = useTicketMutator(entityId);
 	const { closeEditor } = useEditorModal();
 
 	const onClose = useCallback<ModalClose>((): void => {
@@ -21,13 +21,10 @@ const useEditTicketModal: EditorModal = (entityId) => {
 		[updateEntity]
 	);
 
-	const formComponent = useCallback<React.FC<TicketItemFormProps>>(
-		(props) => (
-			// id prop is needed because modal is out of TicketContext
-			<TicketForm {...props} id={entityId} title={__('Update ticket')} />
-		),
-		[entityId]
-	);
+	const formComponent = React.memo<TicketItemFormProps>((props) => (
+		// id prop is needed because modal is out of TicketContext
+		<TicketForm {...props} id={entityId} title={__('Update ticket')} />
+	));
 
 	return {
 		formComponent,

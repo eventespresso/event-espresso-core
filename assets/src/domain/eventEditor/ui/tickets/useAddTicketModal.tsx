@@ -2,12 +2,12 @@ import React, { useCallback } from 'react';
 import { __ } from '@wordpress/i18n';
 
 import TicketForm from './ticketForm/TicketForm';
-import { useEntityMutator, EntityType } from '../../../../application/services/apollo/mutations';
 import { TicketItemFormProps } from './types';
-import { useEditorModal, EditorModal, ModalSubmit, ModalClose } from '../../../../application/ui/layout/editorModal';
+import { useEditorModal, EditorModal, ModalSubmit, ModalClose } from '@appLayout/editorModal';
+import { useTicketMutator } from '@edtrServices/apollo/mutations';
 
 const useAddTicketModal: EditorModal = () => {
-	const { createEntity } = useEntityMutator(EntityType.Ticket);
+	const { createEntity } = useTicketMutator();
 	const { closeEditor } = useEditorModal();
 
 	const onClose = useCallback<ModalClose>((): void => {
@@ -21,10 +21,9 @@ const useAddTicketModal: EditorModal = () => {
 		[createEntity]
 	);
 
-	const formComponent = useCallback<React.FC<TicketItemFormProps>>(
-		(props) => <TicketForm {...props} title={__('New Ticket Details')} />,
-		[]
-	);
+	const formComponent = React.memo<TicketItemFormProps>((props) => (
+		<TicketForm {...props} title={__('New Ticket Details')} />
+	));
 
 	return {
 		formComponent,

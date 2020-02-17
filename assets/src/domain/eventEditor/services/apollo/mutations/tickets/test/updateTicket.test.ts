@@ -1,7 +1,6 @@
 import { renderHook, act } from '@testing-library/react-hooks';
 import { path } from 'ramda';
 
-import { useEntityMutator, EntityType } from '../../../../../../../application/services/apollo/mutations';
 import { useRelations } from '../../../../../../../application/services/apollo/relations';
 import { MutationType } from '../../../../../../../application/services/apollo/mutations/types';
 import { ApolloMockedProvider } from '../../../../context/TestContext';
@@ -10,6 +9,7 @@ import { nodes as datetimes } from '../../../queries/datetimes/test/data';
 import { nodes as prices } from '../../../queries/prices/test/data';
 import { MutationInput } from '../../../../../../../application/services/apollo/mutations/types';
 import useInitTicketTestCache from '../../../queries/tickets/test/useInitTicketTestCache';
+import { useTicketMutator } from '../';
 
 const timeout = 5000; // milliseconds
 describe('updateTicket', () => {
@@ -29,7 +29,7 @@ describe('updateTicket', () => {
 		const { result, waitForValueToChange } = renderHook(
 			() => {
 				useInitTicketTestCache();
-				return useEntityMutator(EntityType.Ticket, mockedTicket.id);
+				return useTicketMutator(mockedTicket.id);
 			},
 			{
 				wrapper,
@@ -68,7 +68,7 @@ describe('updateTicket', () => {
 
 		const { result: mutationResult, waitForNextUpdate, waitForValueToChange } = renderHook(
 			() => ({
-				mutator: useEntityMutator(EntityType.Ticket, mockedTicket.id),
+				mutator: useTicketMutator(mockedTicket.id),
 				relationsManager: useRelations(),
 			}),
 			{
@@ -118,7 +118,7 @@ describe('updateTicket', () => {
 
 		const { result: mutationResult, waitForNextUpdate, waitForValueToChange } = renderHook(
 			() => ({
-				mutator: useEntityMutator(EntityType.Ticket, mockedTicket.id),
+				mutator: useTicketMutator(mockedTicket.id),
 				relationsManager: useRelations(),
 			}),
 			{
@@ -177,7 +177,7 @@ describe('updateTicket', () => {
 
 		const { result: mutationResult, waitForNextUpdate, waitForValueToChange } = renderHook(
 			() => ({
-				mutator: useEntityMutator(EntityType.Ticket, mockedTicket.id),
+				mutator: useTicketMutator(mockedTicket.id),
 				relationsManager: useRelations(),
 			}),
 			{
@@ -227,7 +227,7 @@ describe('updateTicket', () => {
 
 		const { result: mutationResult, waitForNextUpdate, waitForValueToChange } = renderHook(
 			() => ({
-				mutator: useEntityMutator(EntityType.Ticket, mockedTicket.id),
+				mutator: useTicketMutator(mockedTicket.id),
 				relationsManager: useRelations(),
 			}),
 			{

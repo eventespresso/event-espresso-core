@@ -13,7 +13,7 @@ const defaultPriceModifier: Price = {
 	isTrashed: false,
 	name: '',
 	order: 999,
-	overrides: '',
+	overrides: null,
 };
 
 export default defaultPriceModifier;

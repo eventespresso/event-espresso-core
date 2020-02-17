@@ -1,6 +1,6 @@
 import { assoc, map, pickBy, when } from 'ramda';
 
-import { isBasePrice, isPriceField } from './selectionPredicates';
+import { isBasePrice, isPriceField, isPriceInputField } from './selectionPredicates';
 import { entityHasGuid } from '../../../services/predicates';
 import { Price } from '../../../../eventEditor/services/apollo/types';
 import { toBoolean, toInteger } from '../../../../../application/services/utilities/converters';
@@ -18,7 +18,8 @@ type updatePriceArrayProps<T extends Price> = {
  *
  * @param {Price} price
  */
-export const copyPriceFields = <T extends Price>(price: T): T => pickBy<T, T>(isPriceField, price);
+export const copyPriceFields = <T extends Price>(price: T, predicate = isPriceField): T =>
+	pickBy<T, T>(predicate, price);
 
 /**
  * updates the price amount
@@ -73,10 +74,9 @@ export const updatePriceAmountForPrice = <T extends Price>({ prices, guid, amoun
  * @return {Price} price
  */
 export const cloneAndNormalizePrice = <T extends Price>(price: T): T => {
-	const { ...priceFields } = copyPriceFields(price);
+	const { ...priceFields } = copyPriceFields(price, isPriceInputField);
 	return {
 		...priceFields,
-		id: null,
 		amount: parsedAmount(price.amount || '0'),
 		isDefault: toBoolean(price.isDefault),
 		order: toInteger(price.order),

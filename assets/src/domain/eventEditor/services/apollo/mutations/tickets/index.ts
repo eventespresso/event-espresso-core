@@ -36,3 +36,7 @@ export const DELETE_TICKET = gql`
 		}
 	}
 `;
+
+export { default as useTicketMutator } from './useTicketMutator';
+
+export * from './types';

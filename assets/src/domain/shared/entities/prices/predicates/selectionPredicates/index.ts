@@ -1,11 +1,14 @@
 import { filter, find, includes, propEq } from 'ramda';
 
 import { EntityId, EntityDbId, Price } from '../../../../../eventEditor/services/apollo/types';
-import { PRICE_FIELDS } from '../priceFields';
+import { PRICE_FIELDS, PRICE_INPUT_FIELDS } from '../priceFields';
 import { findEntityByDbId, findEntityByGuid } from '../../../../services/predicates';
 
 // the following return `true` if price satisfies predicate
 export const isPriceField = (_, field): boolean => includes(field, PRICE_FIELDS);
+
+// the following return `true` if price satisfies predicate
+export const isPriceInputField = (_, field): boolean => includes(field, PRICE_INPUT_FIELDS);
 
 // is a base price ?
 export const isBasePrice = propEq('isBasePrice', true);

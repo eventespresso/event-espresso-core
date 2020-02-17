@@ -32,3 +32,7 @@ export const DELETE_DATETIME = gql`
 		}
 	}
 `;
+
+export { default as useDatetimeMutator } from './useDatetimeMutator';
+
+export * from './types';
