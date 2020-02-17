@@ -32,5 +32,6 @@ const notification = (type: 'success' | 'info' | 'warning' | 'error' | 'loading'
 export const errorNotification = notification('error');
 export const infoNotification = notification('info');
 export const successNotification = notification('success');
+export const warningNotification = notification('warning');
 
 export default notification;

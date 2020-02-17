@@ -1,14 +1,21 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Button } from 'antd';
 
-import { loadingNotification } from '@appServices/notification';
+import { loadingNotification, warningNotification } from '@appServices/notification';
 
 const Demo: React.FC = () => {
 	const [loading, setLoading] = useState(true);
-	const { closeLoadingNotification, loadingKey, openLoadingNotification } = loadingNotification({
+	const {
+		closeLoadingNotification,
+		closeLoadingNotificationByKey,
+		loadingKey,
+		openLoadingNotification,
+	} = loadingNotification({
 		loading,
 		message: 'bla bla',
 	});
+
+	warningNotification({ message: 'warning set on render' });
 
 	return (
 		<div>
@@ -18,8 +25,12 @@ const Demo: React.FC = () => {
 			<Button type='danger' onClick={closeLoadingNotification}>
 				Close
 			</Button>
-			<Button type='dashed'>Dashed</Button>
-			<Button type='link'>Link</Button>
+			<Button type='danger' onClick={() => closeLoadingNotificationByKey(loadingKey)}>
+				Close by key
+			</Button>
+			<Button type='dashed' onClick={() => warningNotification({ message: 'warn' })}>
+				Warn
+			</Button>
 		</div>
 	);
 };

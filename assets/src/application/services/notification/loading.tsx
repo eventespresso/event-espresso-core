@@ -22,9 +22,11 @@ const loading = ({ loading, message, placement = 'bottomRight', ...args }: Loadi
 
 	const openLoadingNotification = (): void => notification.open(notificationArgs);
 	const closeLoadingNotification = (): void => notification.close(key);
+	const closeLoadingNotificationByKey = (loadingKey): void => notification.close(loadingKey);
 
 	return {
 		closeLoadingNotification,
+		closeLoadingNotificationByKey,
 		loadingKey: key,
 		openLoadingNotification,
 	};
