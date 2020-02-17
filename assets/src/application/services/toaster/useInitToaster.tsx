@@ -13,7 +13,7 @@ const useInitToaster: ToasterInit = ({ loadingMessage, successMessage }): Toaste
 
 		if (!initialized) {
 			toaster.loading(loadingFlag, loadingMessage);
-			successNotification({ message: loadingError });
+			errorNotification({ message: loadingError });
 		}
 
 		useEffect((): void => {
