@@ -1,6 +1,6 @@
 import { EntityId } from '../../types';
 
-interface TicketBaseInput {
+export interface TicketBaseInput {
 	datetimes?: Array<EntityId>;
 	description?: string;
 	endDate?: string;

@@ -72,16 +72,13 @@ export interface MutationHandlers {
 	priceMutationHandler: MutationHandler;
 }
 
-export interface MutatorGeneratedObject<T = any> {
+export interface MutatorGeneratedObject {
 	onUpdate?: OnUpdateFn;
-	optimisticResponse: T;
+	optimisticResponse: any;
 	variables: OperationVariables;
 }
 
-export type MutationHandler = <T = any, MI = MutationInput>(
-	mutationType: MutationType,
-	input: MI
-) => MutatorGeneratedObject<T>;
+export type MutationHandler = <MI = MutationInput>(mutationType: MutationType, input: MI) => MutatorGeneratedObject;
 
 // merges two types
 type Merge<A, B> = Omit<A, keyof B> & B extends infer O ? { [K in keyof O]: O[K] } : never;

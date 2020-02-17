@@ -57,7 +57,7 @@ export interface DatetimesList {
 }
 
 export interface Price extends Entity, Trashable {
-	amount: number | string;
+	amount: number;
 	desc: string;
 	isBasePrice: boolean;
 	isDefault: boolean;

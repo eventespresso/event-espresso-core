@@ -1,7 +1,7 @@
 import { EntityId } from '../../types';
 
-interface PriceBaseInput {
-	amount?: number | string;
+export interface PriceBaseInput {
+	amount?: number;
 	desc?: string;
 	isDefault?: boolean;
 	isTrashed?: boolean;
@@ -13,7 +13,9 @@ interface PriceBaseInput {
 	wpUser?: number;
 }
 
-export type CreatePriceInput = PriceBaseInput;
+export interface CreatePriceInput extends PriceBaseInput {
+	priceType: string; // required for create mutation
+}
 
 export interface UpdatePriceInput extends PriceBaseInput {
 	id?: EntityId;

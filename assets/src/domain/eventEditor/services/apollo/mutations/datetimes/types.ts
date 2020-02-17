@@ -1,6 +1,6 @@
 import { EntityId } from '../../types';
 
-interface DatetimeBaseInput {
+export interface DatetimeBaseInput {
 	capacity?: number;
 	description?: string;
 	endDate?: string;

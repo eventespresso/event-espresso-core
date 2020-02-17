@@ -4,7 +4,7 @@ import { DataProxy } from 'apollo-cache';
 import { FetchResult } from 'apollo-link';
 import { pathOr } from 'ramda';
 
-import { MutationType, MutationOptionsCb, BaseType } from '../../../../../application/services/apollo/mutations';
+import { MutationType, MutationOptionsCb, BaseType } from '@appServices/apollo/mutations';
 import { OnUpdateFn, TypeName } from './types';
 import { useMutationHandler, mutations } from './';
 
@@ -27,7 +27,7 @@ const useMutationOptions = <Name extends TypeName>(typeName: Name): MutationOpti
 		 * @param {object} input     Mutation input
 		 */
 		const getMutationOptions = (): OperationVariables => {
-			const mutationHandler = getMutationHandler<Type>(typeName);
+			const mutationHandler = getMutationHandler(typeName);
 			/**
 			 * options = {
 			 *     variables,

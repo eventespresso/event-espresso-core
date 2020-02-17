@@ -1,4 +1,4 @@
-import { MutatorFnGn } from '../../../../../../application/services/apollo/mutations';
+import { MutatorFnGn } from '@appServices/apollo/mutations';
 import { useMutator, TypeName } from '../';
 import { Price } from '../../types';
 import { CreatePriceInput, UpdatePriceInput, DeletePriceInput } from './types';

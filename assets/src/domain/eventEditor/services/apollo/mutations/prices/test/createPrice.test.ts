@@ -9,16 +9,15 @@ import { getMutationMocks, mockedPrices } from './data';
 import usePrices from '../../../queries/prices/usePrices';
 import { nodes as tickets } from '../../../queries/tickets/test/data';
 import { nodes as priceTypes } from '../../../queries/priceTypes/test/data';
-import { MutationInput } from '../../../../../../../application/services/apollo/mutations/types';
-import { usePriceMutator } from '../';
+import { usePriceMutator, CreatePriceInput } from '../';
 
 const timeout = 5000; // milliseconds
 describe('createPrice', () => {
-	const testInput: MutationInput = { name: 'New Test Price', desc: 'New Test Desc' };
 	const mockedPrice = mockedPrices.CREATE;
 
 	const ticketId = tickets[0].id;
 	const priceTypeId = priceTypes[0].id;
+	const testInput: CreatePriceInput = { name: 'New Test Price', desc: 'New Test Desc', priceType: priceTypeId };
 
 	let mutationMocks = getMutationMocks(testInput, MutationType.Create);
 
