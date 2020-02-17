@@ -7,6 +7,8 @@ import AddNewDateButton from './AddNewDateButton';
 import DatetimeCard from '../dateCard/DateCard';
 import { Datetime } from '../../../services/apollo/types';
 
+import Demo from './Demo';
+
 const listStyle: CSSProperties = {
 	display: 'flex',
 	flexFlow: 'row wrap',
@@ -34,6 +36,7 @@ const List: React.FC<ListProps> = ({ datetimes }) => {
 
 	return (
 		<div>
+			<Demo />
 			{header}
 			<DatesListFilterBar />
 			{datetimesList}
