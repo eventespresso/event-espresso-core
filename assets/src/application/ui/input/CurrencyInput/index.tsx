@@ -1,9 +1,8 @@
 // @ts-nocheck
 import React from 'react';
-import Currency from 'react-currency-formatter';
 
 import { InlineEditText } from '@appInputs/InlineEditInput';
-import { parsedAmount } from '@appServices/utilities/money';
+import { parsedAmount, useMoneyDisplay } from '@appServices/utilities/money';
 
 const nullFunc = (args?: any) => {};
 
@@ -15,10 +14,11 @@ interface CurrencyInputProps {
 }
 
 const CurrencyInput: React.FC<CurrencyInputProps> = ({ id = '', amount = 0, onConfirm = nullFunc }) => {
-	const safeAmount = parsedAmount(amount);
+	const { formatAmount, beforeAmount, afterAmount } = useMoneyDisplay();
+	const formattedAmount = formatAmount(amount);
 	return (
 		<>
-			<Currency quantity={safeAmount} />
+			{beforeAmount}
 			<InlineEditText
 				key={id}
 				onChange={(value: string) => {
@@ -28,8 +28,9 @@ const CurrencyInput: React.FC<CurrencyInputProps> = ({ id = '', amount = 0, onCo
 					}
 				}}
 			>
-				{safeAmount}
+				{formattedAmount}
 			</InlineEditText>
+			{afterAmount}
 		</>
 	);
 };

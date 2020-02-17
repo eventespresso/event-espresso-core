@@ -8,7 +8,6 @@ import TicketDetails from './TicketDetails';
 import useTicketItem from '@edtrServices/apollo/queries/tickets/useTicketItem';
 import TicketProvider from '@edtrServices/context/TicketContext';
 import { CurrencyInput } from '@appInputs';
-import { CurrencyInput } from '@appInputs';
 import useRelations from '@appServices/apollo/relations/useRelations';
 import EntityPaperFrame from '@appLayout/EntityPaperFrame';
 import DatetimeIdTag from '../../datetimes/DatetimeIdTag';
