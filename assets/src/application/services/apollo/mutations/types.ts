@@ -38,6 +38,8 @@ export type OnMutationCompletedFn<DShape = any> = (data: DShape) => void;
 
 export type OnMutationErrorFn = (error: Error) => void;
 
+// These are backward subscriptions towards components
+// i.e. when a component wants to be notified
 export interface BackwardSubscription<DShape = any> {
 	onCompleted?: OnMutationCompletedFn<DShape>;
 	onError?: OnMutationErrorFn;
@@ -53,6 +55,8 @@ export type MutatorFnGn<MI = MutationInput, DShape = any> = (
 	subscriptions?: BackwardSubscription<DShape>
 ) => MutationResult<DShape>;
 
+// These are forward subscriptions towards mutators
+// i.e. when an entity mutation handler wants to be notified
 export interface CustomMutationOptions extends MutationOptions {
 	onCompleted?: OnMutationCompletedFn;
 	onError?: OnMutationErrorFn;
