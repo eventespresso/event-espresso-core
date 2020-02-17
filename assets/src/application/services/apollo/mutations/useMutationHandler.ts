@@ -28,7 +28,7 @@ const useMutationHandler: MutationHandler = (getMutationOptions) => {
 	const toaster = useToaster();
 
 	return useCallback(
-		<Name extends any>(typeName: Name, id?: string) => {
+		<Name extends string>(typeName: Name, id?: string) => {
 			/**
 			 * @param {object} input
 			 */

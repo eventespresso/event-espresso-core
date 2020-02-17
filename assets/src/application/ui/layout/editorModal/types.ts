@@ -47,7 +47,7 @@ export type ModalSubmit = (values?: any) => void;
 export type ModalClose = () => void;
 
 export interface EditorModalProps {
-	formComponent: React.FC;
+	formComponent: React.ReactNode;
 	onSubmit: ModalSubmit;
 	onClose: ModalClose;
 	[key: string]: any;
