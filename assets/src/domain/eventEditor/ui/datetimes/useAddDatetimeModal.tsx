@@ -3,7 +3,7 @@ import { __ } from '@wordpress/i18n';
 
 import DateForm from './dateForm/DateForm';
 import { DateItemFormProps } from './types';
-import { useEditorModal, EditorModal, ModalSubmit, ModalClose } from '../../../../application/ui/layout/editorModal';
+import { useEditorModal, EditorModal, ModalSubmit, ModalClose } from '@appLayout/editorModal';
 import { useDatetimeMutator } from '@edtrServices/apollo/mutations';
 
 const useAddDatetimeModal: EditorModal = () => {
@@ -21,10 +21,9 @@ const useAddDatetimeModal: EditorModal = () => {
 		[createEntity]
 	);
 
-	const formComponent = useCallback<React.FC<DateItemFormProps>>(
-		(props) => <DateForm {...props} title={__('New Datetime Details')} />,
-		[]
-	);
+	const formComponent = React.memo<DateItemFormProps>((props) => (
+		<DateForm {...props} title={__('New Datetime Details')} />
+	));
 
 	return {
 		formComponent,

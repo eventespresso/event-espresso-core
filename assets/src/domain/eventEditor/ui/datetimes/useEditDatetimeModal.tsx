@@ -3,7 +3,7 @@ import { __ } from '@wordpress/i18n';
 
 import DateForm from './dateForm/DateForm';
 import { DateItemFormProps } from './types';
-import { useEditorModal, EditorModal, ModalSubmit, ModalClose } from '../../../../application/ui/layout/editorModal';
+import { useEditorModal, EditorModal, ModalSubmit, ModalClose } from '@appLayout/editorModal';
 import { useDatetimeMutator } from '@edtrServices/apollo/mutations';
 
 const useEditDatetimeModal: EditorModal = (entityId) => {
@@ -21,13 +21,10 @@ const useEditDatetimeModal: EditorModal = (entityId) => {
 		[updateEntity]
 	);
 
-	const formComponent = useCallback<React.FC<DateItemFormProps>>(
-		(props) => (
-			// id prop is needed because modal is out of DatetimeContext
-			<DateForm {...props} id={entityId} title={__('Update datetime')} />
-		),
-		[entityId]
-	);
+	const formComponent = React.memo<DateItemFormProps>((props) => (
+		// id prop is needed because modal is out of DatetimeContext
+		<DateForm {...props} id={entityId} title={__('Update datetime')} />
+	));
 
 	return {
 		formComponent,

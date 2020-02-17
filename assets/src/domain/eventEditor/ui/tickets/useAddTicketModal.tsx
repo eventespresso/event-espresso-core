@@ -3,7 +3,7 @@ import { __ } from '@wordpress/i18n';
 
 import TicketForm from './ticketForm/TicketForm';
 import { TicketItemFormProps } from './types';
-import { useEditorModal, EditorModal, ModalSubmit, ModalClose } from '../../../../application/ui/layout/editorModal';
+import { useEditorModal, EditorModal, ModalSubmit, ModalClose } from '@appLayout/editorModal';
 import { useTicketMutator } from '@edtrServices/apollo/mutations';
 
 const useAddTicketModal: EditorModal = () => {
@@ -21,10 +21,9 @@ const useAddTicketModal: EditorModal = () => {
 		[createEntity]
 	);
 
-	const formComponent = useCallback<React.FC<TicketItemFormProps>>(
-		(props) => <TicketForm {...props} title={__('New Ticket Details')} />,
-		[]
-	);
+	const formComponent = React.memo<TicketItemFormProps>((props) => (
+		<TicketForm {...props} title={__('New Ticket Details')} />
+	));
 
 	return {
 		formComponent,
