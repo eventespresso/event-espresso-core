@@ -1,19 +1,21 @@
 // @ts-nocheck
 import React, { CSSProperties } from 'react';
-import { EditableText, H4, H6 } from '@blueprintjs/core/lib/esm';
+import { Typography } from 'antd';
 import { __ } from '@wordpress/i18n';
 
 import TicketActionsMenu from './TicketActionsMenu';
 import TicketDetails from './TicketDetails';
 import useTicketItem from '@edtrServices/apollo/queries/tickets/useTicketItem';
 import TicketProvider from '@edtrServices/context/TicketContext';
-import { CurrencyInput, InlineEditInput } from '@appInputs';
+import { CurrencyInput } from '@appInputs';
+import { CurrencyInput } from '@appInputs';
 import useRelations from '@appServices/apollo/relations/useRelations';
 import EntityPaperFrame from '@appLayout/EntityPaperFrame';
 import DatetimeIdTag from '../../datetimes/DatetimeIdTag';
 import { ListItemProps } from '../../../interfaces/types';
 import { priceStyle } from './styles';
 import { useTicketMutator } from '@edtrServices/apollo/mutations';
+import { InlineEditHeading, InlineEditTextArea } from '@appInputs/InlineEditInput';
 
 const menuWrapperStype: CSSProperties = {
 	alignItems: 'stretch',
@@ -51,45 +53,29 @@ const TicketCard: React.FC<ListItemProps> = ({ id }) => {
 		<TicketProvider id={ticket.id}>
 			<EntityPaperFrame entity={ticket}>
 				<div>
-					<H4>
-						<InlineEditInput
-							component={EditableText}
-							placeholder={__('edit title...')}
-							value={ticket.name}
-							onCancel={(value: any): void => {
-								console.log('value', value);
-							}}
-							onConfirm={(name: string): void => {
-								if (name !== ticket.name) {
-									updateEntity({ name });
-								}
-							}}
-							minWidth={320}
-							selectAllOnFocus
-						/>
-					</H4>
+					<InlineEditHeading
+						onChange={(name: string): void => {
+							if (name !== ticket.name) {
+								updateEntity({ name });
+							}
+						}}
+					>
+						{ticket.name ? ticket.name : __('Edit title...')}
+					</InlineEditHeading>
 				</div>
 				<div>
-					<H6>
-						<InlineEditInput
-							component={EditableText}
-							placeholder={__('Edit description...')}
-							value={ticket.description}
-							onCancel={(value: any): void => {
-								console.log('value', value);
-							}}
-							onConfirm={(description: string): void => {
-								if (description !== ticket.description) {
-									updateEntity({ description });
-								}
-							}}
-							minWidth={320}
-							selectAllOnFocus
-						/>
-					</H6>
+					<InlineEditTextArea
+						onChange={(description: string): void => {
+							if (description !== ticket.description) {
+								updateEntity({ description });
+							}
+						}}
+					>
+						{ticket.description ? ticket.description : __('Edit description...')}
+					</InlineEditTextArea>
 				</div>
 				<div>
-					<H4 style={priceStyle}>
+					<Typography.Title level={4} style={priceStyle}>
 						<CurrencyInput
 							id={ticket.id}
 							amount={parseFloat(ticket.price)}
@@ -100,7 +86,7 @@ const TicketCard: React.FC<ListItemProps> = ({ id }) => {
 								}
 							}}
 						/>
-					</H4>
+					</Typography.Title>
 				</div>
 				<div>
 					{__('Related Dates:')}{' '}
