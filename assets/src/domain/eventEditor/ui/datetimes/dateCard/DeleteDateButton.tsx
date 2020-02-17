@@ -1,7 +1,7 @@
 import * as React from 'react';
 
 import { EspressoButton } from '@application/ui/input';
-import { MutationResult } from '../../../../../application/services/apollo/mutations';
+import { MutationResult } from '@appServices/apollo/mutations';
 import { ListItemProps } from '../../../interfaces/types';
 import { useDatetimeMutator } from '@edtrServices/apollo/mutations';
 

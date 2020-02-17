@@ -2,12 +2,14 @@ import { difference } from 'ramda';
 import { useCallback } from 'react';
 
 import { FnCallback, TpcFormData } from '../types';
-import { Price } from '../../../../services/apollo/types';
+import { EntityId, Price } from '../../../../services/apollo/types';
 import { cloneAndNormalizePrice } from '../../../../../shared/entities/prices/predicates/updatePredicates';
 import toBoolean from '../../../../../../application/services/utilities/converters/toBoolean';
 import parsedAmount from '../../../../../../application/services/utilities/money/parsedAmount';
 import { ModalSubmit } from '../../../../../../application/ui/layout/editorModal';
 import { useTicketMutator, usePriceMutator } from '@edtrServices/apollo/mutations';
+import { copyTicketFields } from '../../../../../shared/entities/tickets/predicates/updatePredicates';
+import { isTicketInputField } from '../../../../../shared/entities/tickets/predicates/selectionPredicates';
 
 const useOnSubmitPrices = (existingPrices: Price[]): FnCallback => {
 	const { createEntity, updateEntity, deleteEntity } = usePriceMutator();
@@ -17,18 +19,18 @@ const useOnSubmitPrices = (existingPrices: Price[]): FnCallback => {
 	// Async to make sure that prices are handled before updating the ticket.
 	return useCallback<ModalSubmit>(
 		async ({ ticket, prices = [] }: TpcFormData): Promise<void> => {
-			const updatedPriceIds = [];
-			const createdPriceIds = [];
+			const updatedPriceIds: EntityId[] = [];
+			const createdPriceIds: EntityId[] = [];
 
 			// make sure to complete all price operations before updating the ticket
 			await Promise.all(
 				// covert the price operations into promises
-				prices.map((price: Price) => {
+				prices.map((price) => {
 					if (price.id === 'NEW_PRICE') {
 						return Promise.resolve(price);
 					}
 					const id = price.id;
-					const normalizedPriceFields = cloneAndNormalizePrice<Price>(price);
+					const normalizedPriceFields = cloneAndNormalizePrice(price);
 					// if it's a newly added price
 					if (!id) {
 						return new Promise((resolve, onError) => {
@@ -50,7 +52,7 @@ const useOnSubmitPrices = (existingPrices: Price[]): FnCallback => {
 			);
 
 			// the unlucky prices.
-			const deletedPriceIds = difference(existingPriceIds, updatedPriceIds);
+			const deletedPriceIds = difference<EntityId>(existingPriceIds, updatedPriceIds);
 			// Delete all unlucky ones
 			await Promise.all(
 				deletedPriceIds.map((id) => {
@@ -59,7 +61,8 @@ const useOnSubmitPrices = (existingPrices: Price[]): FnCallback => {
 			);
 
 			const normalizedTicketFields = {
-				...ticket,
+				...copyTicketFields(ticket, isTicketInputField),
+				id: ticket.id,
 				price: parsedAmount(ticket.price || '0'),
 				reverseCalculate: toBoolean(ticket.reverseCalculate),
 			};

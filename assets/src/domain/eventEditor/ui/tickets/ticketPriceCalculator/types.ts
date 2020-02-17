@@ -22,7 +22,7 @@ export interface PriceInputProps extends WithPriceModifierProp {
 }
 
 export interface TpcPriceModifier extends Price {
-	amount: number | string;
+	amount: number;
 	desc: string;
 	isBasePrice: boolean;
 	isDefault: boolean;
