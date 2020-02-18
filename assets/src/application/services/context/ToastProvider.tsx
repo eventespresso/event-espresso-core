@@ -9,7 +9,6 @@ import { ProviderProps } from './types';
 const ToastContext = createContext(null);
 
 const toaster = Toaster.create({
-	maxToasts: 6,
 	position: Position.BOTTOM_RIGHT,
 });
 

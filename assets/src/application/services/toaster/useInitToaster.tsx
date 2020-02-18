@@ -2,6 +2,7 @@ import { ApolloError } from 'apollo-client';
 import { useState, useEffect } from 'react';
 
 import useToaster from './useToaster';
+import notification from '../notification';
 import { ToasterInit, ToasterInitCallbacks, ToasterNotices } from './types';
 
 const useInitToaster: ToasterInit = ({ loadingMessage, successMessage }): ToasterInitCallbacks => {
@@ -25,7 +26,7 @@ const useInitToaster: ToasterInit = ({ loadingMessage, successMessage }): Toaste
 	return {
 		onCompleted: (): void => {
 			toaster.dismiss(loadingMessage);
-			toaster.success(successMessage);
+			notification({ message: successMessage, type: 'success' });
 		},
 		onError: (error: ApolloError): void => {
 			toaster.dismiss(loadingMessage);

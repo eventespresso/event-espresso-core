@@ -21,6 +21,7 @@ const hash: ToasterHash = (message): string => {
 
 const useToaster = (): ToasterHook => {
 	const toaster = useContext(ToastContext);
+
 	return {
 		dismiss: useDismissToast(toaster, hash),
 		error: useErrorToast(toaster, hash),
