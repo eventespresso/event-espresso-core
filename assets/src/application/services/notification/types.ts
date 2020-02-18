@@ -1,7 +1,7 @@
 import { ApolloError } from 'apollo-client';
 import { IToaster, IActionProps, ILinkProps } from '@blueprintjs/core';
 
-export type ErrorIcon = 'globe-network' | 'layout-auto' | 'warning-sign' | React.ReactNode;
+export type ErrorIcon = 'globe-network' | 'layout-auto' | 'warning' | React.ReactNode;
 
 export interface LoadingToastProps {
 	message: ToasterMsg;

@@ -1,11 +1,13 @@
-import { notification } from 'antd';
+import React from 'react';
+import { Icon, notification } from 'antd';
 import { ApolloError } from 'apollo-client';
 
 import IconGraphQL from './IconGraphQL';
-import { ErrorIcon, ToasterMsg } from '../types';
+import { ToasterMsg } from '../types';
 
 const error = ({ message, ...args }): void => {
-	let icon: ErrorIcon = 'warning-sign';
+	let icon = <Icon type='close-circle' theme='twoTone' twoToneColor='#eb2f96' />;
+
 	let errorMessage: ToasterMsg;
 
 	if (message instanceof ApolloError) {
