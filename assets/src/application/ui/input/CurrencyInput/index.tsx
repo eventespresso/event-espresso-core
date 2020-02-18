@@ -10,10 +10,10 @@ interface CurrencyInputProps {
 	id: string;
 	amount: string | number;
 	placeholder?: string;
-	onConfirm?: (result?: { amount: string | number; id: string }) => void;
+	onChange?: (result?: { amount: string | number; id: string }) => void;
 }
 
-const CurrencyInput: React.FC<CurrencyInputProps> = ({ id = '', amount = 0, onConfirm = nullFunc }) => {
+const CurrencyInput: React.FC<CurrencyInputProps> = ({ id = '', amount = 0, onChange = nullFunc }) => {
 	const { formatAmount, beforeAmount, afterAmount } = useMoneyDisplay();
 	const formattedAmount = formatAmount(amount);
 	return (
@@ -24,7 +24,7 @@ const CurrencyInput: React.FC<CurrencyInputProps> = ({ id = '', amount = 0, onCo
 				onChange={(value: string) => {
 					const newAmount = parsedAmount(value);
 					if (newAmount !== amount) {
-						onConfirm({ amount: newAmount, id });
+						onChange({ amount: newAmount, id });
 					}
 				}}
 			>
