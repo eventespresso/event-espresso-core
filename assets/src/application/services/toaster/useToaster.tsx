@@ -10,7 +10,7 @@ import { ToastContext } from '../context/ToastProvider';
 
 const useToaster = (): ToasterHook => {
 	const toaster = useContext(ToastContext);
-	const hash = uuidv4;
+	const hash = (): string => uuidv4();
 
 	return {
 		dismiss: useDismissToast(toaster, hash),
