@@ -9,6 +9,7 @@ import { nodes as tickets } from '../../../queries/tickets/test/data';
 import { usePriceMutator } from '../';
 
 const timeout = 5000; // milliseconds
+
 describe('deletePrice', () => {
 	const mockedPrice = mockedPrices.DELETE;
 

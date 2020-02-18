@@ -5,6 +5,8 @@ import { FetchResult } from 'apollo-link';
 
 import useIfMounted from '../../hooks/useIfMounted';
 import useToaster from '../../toaster/useToaster';
+import { successNotification } from '../../notification';
+
 import {
 	BaseType,
 	OnMutationCompletedFn,
@@ -87,7 +89,7 @@ const useMutationHandler: MutationHandler = (getMutationOptions) => {
 				const dismissMessage = getToasterMessage(mutationType);
 				const successMessage = `successfully ${getToasterMessage(mutationType, 'ed')}`;
 				toaster.dismiss(dismissMessage);
-				toaster.success(successMessage);
+				successNotification({ message: successMessage });
 				const { data, errors } = response;
 				const error = errors && errors.length > 0 ? new ApolloError({ graphQLErrors: errors }) : undefined;
 
@@ -110,7 +112,7 @@ const useMutationHandler: MutationHandler = (getMutationOptions) => {
 				const dismissMessage = getToasterMessage(mutationType);
 				const successMessage = `error ${getToasterMessage(mutationType)}`;
 				toaster.dismiss(dismissMessage);
-				toaster.success(successMessage);
+				successNotification({ message: successMessage });
 
 				updateResult({
 					loading: false,

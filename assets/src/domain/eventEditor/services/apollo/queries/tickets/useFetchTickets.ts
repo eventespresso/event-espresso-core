@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useQuery } from '@apollo/react-hooks';
 import useToaster from '../../../../../../application/services/toaster/useToaster';
-import { errorNotification, successNotification } from '@appServices/notification';
+import { errorNotification, successNotification } from '../../../../../../application/services/notification';
 import { useStatus, TypeName } from '../../../../../../application/services/apollo/status';
 import useTicketQueryOptions from './useTicketQueryOptions';
 import { FetchEntitiesResult } from '../types';
