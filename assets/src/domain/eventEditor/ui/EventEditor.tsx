@@ -1,11 +1,5 @@
-/**
- * External dependencies
- */
 import React from 'react';
 
-/**
- * Internal dependencies
- */
 import useEditorInitialization from '../hooks/useEditorInitialization';
 import DatesList from './datetimes/datesList';
 import TicketsList from './tickets/ticketsList';

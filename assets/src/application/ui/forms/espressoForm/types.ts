@@ -17,6 +17,7 @@ interface AdditionalFormProps extends FormContextProps {
 	fields?: FieldList;
 	submitButton?: FormButtonProps;
 	resetButton?: FormButtonProps;
+	formWrapper?: React.ReactType;
 }
 
 export interface AdditionalFieldProps {

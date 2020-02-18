@@ -6,23 +6,35 @@ import Submit from '../Submit';
 import RenderFields from '../RenderFields';
 import RenderSections from '../RenderSections';
 
-const FormRenderer: React.FC<FormRendererProps> = ({
-	handleSubmit,
-	submitting,
-	sections,
-	fields,
-	submitButton,
-	resetButton,
-	layout,
-}) => {
-	return (
+const FormRenderer: React.FC<FormRendererProps> = (props) => {
+	const {
+		handleSubmit,
+		submitting,
+		sections,
+		fields,
+		submitButton,
+		resetButton,
+		layout,
+		formWrapper: FormWrapper,
+	} = props;
+
+	const form = (
 		<div className='form-wrapper'>
 			<Form onSubmit={handleSubmit} layout={layout}>
 				<RenderSections sections={sections} />
 				<RenderFields fields={fields} />
-				<Submit submitting={submitting} submitButton={submitButton} resetButton={resetButton} />
+				{/* May be formWrapper handles form submission */}
+				{submitButton ? (
+					<Submit submitting={submitting} submitButton={submitButton} resetButton={resetButton} />
+				) : null}
 			</Form>
 		</div>
 	);
+
+	if (FormWrapper) {
+		return <FormWrapper {...props}>{form}</FormWrapper>;
+	}
+
+	return form;
 };
 export default FormRenderer;
