@@ -1,34 +1,37 @@
 import React from 'react';
-import { Form } from 'react-final-form';
+import { Form as ReactFinalForm } from 'react-final-form';
 
 import { FormModalProps } from './types';
 import FormModalForm from './FormModalForm';
+import FormRenderer from './FormRenderer';
+import { EspressoForm } from '@application/ui/forms/espressoForm';
 
 import './styles.css';
 
 const FormModal: React.FC<FormModalProps> = ({
 	FormComponent,
+	formConfig,
 	initialValues,
 	onSubmit,
-	onClose,
 	isOpen,
 	...extraProps
 }) => {
-	const onCloseHandler = (e?: React.SyntheticEvent) => {
-		e.preventDefault();
-		e.stopPropagation();
-		onClose();
-	};
+	if (!isOpen) {
+		return null;
+	}
+
+	// formConfig has the priority
+	if (formConfig) {
+		return <EspressoForm {...formConfig} formWrapper={FormModalForm} />;
+	}
+
 	return (
-		isOpen &&
 		initialValues && (
-			<Form
+			<ReactFinalForm
 				initialValues={initialValues}
 				onSubmit={onSubmit}
 				{...extraProps}
-				render={({ ...formProps }) => (
-					<FormModalForm {...formProps} FormComponent={FormComponent} onClose={onCloseHandler} />
-				)}
+				render={({ ...formProps }) => <FormRenderer {...formProps} FormComponent={FormComponent} />}
 			/>
 		)
 	);
