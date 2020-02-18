@@ -13,11 +13,7 @@ const error = ({ message, ...args }): void => {
 	if (message instanceof ApolloError) {
 		errorMessage = message.message;
 		if (message.graphQLErrors) {
-			icon = IconGraphQL;
-		} else if (message.networkError) {
-			icon = 'globe-network';
-		} else {
-			icon = 'layout-auto';
+			icon = <Icon component={IconGraphQL} />;
 		}
 	} else {
 		errorMessage = message;
