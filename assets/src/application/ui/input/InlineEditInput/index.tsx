@@ -1,17 +1,5 @@
-import React, { useState, useEffect } from 'react';
+export { default as InlineEditText } from './InlineEditText';
 
-interface InlineEditInputProps {
-	component: React.ReactType;
-	defaultValue: string | number;
-	value: string | number;
-	[key: string]: any;
-}
+export { default as InlineEditHeading } from './InlineEditHeading';
 
-const InlineEditInput: React.FC<InlineEditInputProps> = ({ component: Component, defaultValue, value, ...rest }) => {
-	const [currentValue, setcurrentValue] = useState(defaultValue);
-	useEffect(() => setcurrentValue(value), [value]);
-
-	return <Component value={currentValue} onChange={(newValue) => setcurrentValue(newValue)} {...rest} />;
-};
-
-export default InlineEditInput;
+export { default as InlineEditTextArea } from './InlineEditTextArea';

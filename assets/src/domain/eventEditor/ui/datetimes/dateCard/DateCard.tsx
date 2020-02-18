@@ -1,7 +1,6 @@
 // @ts-nocheck
 import React, { useState } from 'react';
 import { parseISO } from 'date-fns';
-import { Typography } from 'antd';
 
 import { __ } from '@wordpress/i18n';
 
@@ -18,12 +17,11 @@ import statusBgColorClass from '../../../../shared/entities/datetimes/helpers/st
 
 import useRelations from '@appServices/apollo/relations/useRelations';
 import { useStatus, TypeName } from '@appServices/apollo/status';
-// import { InlineEditInput } from '@appInputs';
 import EntityPaperFrame from '@appLayout/EntityPaperFrame';
 import { ListItemProps } from '@edtrInterfaces';
 import { useDatetimeMutator } from '@edtrServices/apollo/mutations';
+import { InlineEditHeading, InlineEditTextArea } from '@appInputs/InlineEditInput';
 
-const { Title, Paragraph } = Typography;
 
 const cardStype: CSSProperties = {
 	alignItems: 'stretch',
@@ -147,24 +145,21 @@ const DateCard: React.FC<ListItemProps> = ({ id }) => {
 					<div style={detailsStype}>
 						<div style={detailsWrapperStype}>
 							{/* the following will be replaced by the date entity details */}
-							<Title
-								level={2}
+							<InlineEditHeading
 								style={hdrStyle}
 								className={'ee-focus-priority-2'}
-								editable={{
-									onChange: (name: string): void => {
-										if (name !== date.name) {
-											updateEntity({ name });
-										}
-									},
+								onChange={(name: string): void => {
+									if (name !== date.name) {
+										updateEntity({ name });
+									}
 								}}
 								ellipsis={{ rows: 2 }}
 							>
 								{date.name ? date.name : __('Edit title...')}
-							</Title>
-							<Paragraph
+							</InlineEditHeading>
+							<InlineEditTextArea
 								style={textStyle}
-								editable={(description: string): void => {
+								onChange={(description: string): void => {
 									if (description !== date.description) {
 										updateEntity({ description });
 									}
@@ -172,7 +167,7 @@ const DateCard: React.FC<ListItemProps> = ({ id }) => {
 								ellipsis={{ rows: 2, expandable: true }}
 							>
 								{date.description ? date.description : __('Edit description...')}
-							</Paragraph>
+							</InlineEditTextArea>
 							{/* the following will be replaced by the entity details panel */}
 							<div>
 								{__('Related Tickets:') + ' '}
