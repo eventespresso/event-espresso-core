@@ -16,7 +16,7 @@ const useInfoToast: InfoToast = (toaster, hash) =>
 						onDismiss,
 						timeout,
 					},
-					hash(message)
+					hash()
 				);
 			}
 		},

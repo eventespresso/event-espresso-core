@@ -16,7 +16,7 @@ const useLoadingToast: LoadingToast = (toaster, hash) => {
 			};
 
 			if (message) {
-				const msgHash = hash(message);
+				const msgHash = hash();
 				const isLoading = isToasting(msgHash);
 				const msgToast = <LoadingToastNotice message={message} />;
 				const toastProps: IToastProps = { action, message: msgToast, onDismiss, timeout };
