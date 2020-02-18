@@ -19,3 +19,7 @@ export { default as TextArea } from './TextArea';
 export { default as MultiCheck } from './MultiCheck';
 
 export { default as Radio } from './Radio';
+
+export { default as DatePicker } from './DatePicker';
+
+export { default as TimePicker } from './TimePicker';
