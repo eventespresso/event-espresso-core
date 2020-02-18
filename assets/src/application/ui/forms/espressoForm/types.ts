@@ -1,6 +1,7 @@
 import React from 'react';
 import { FormRenderProps, FormProps, FieldRenderProps, FieldProps as RFFFieldProps } from 'react-final-form';
 import { FieldArrayProps } from 'react-final-form-arrays';
+import { FormState } from 'final-form';
 
 import { SelectOptions, ButtonProps, FormItemProps } from './adapters/types';
 
@@ -18,11 +19,22 @@ interface AdditionalFormProps extends FormContextProps {
 	submitButton?: FormButtonProps;
 	resetButton?: FormButtonProps;
 	formWrapper?: React.ReactType;
+	debugFields?: Array<keyof FormState<any>>; // The fields from RFF form state to display in debug
 }
 
 export interface AdditionalFieldProps {
 	label?: React.ReactNode | string;
-	fieldType: 'text' | 'textarea' | 'switch' | 'select' | 'multicheck' | 'number' | 'radio' | 'group';
+	fieldType:
+		| 'text'
+		| 'textarea'
+		| 'switch'
+		| 'select'
+		| 'multicheck'
+		| 'number'
+		| 'radio'
+		| 'group'
+		| 'datepicker'
+		| 'timepicker';
 	htmlType?: string;
 	before?: React.ReactNode | string;
 	after?: React.ReactNode | string;
@@ -91,7 +103,7 @@ export interface RenderFieldProps extends FieldProps {}
 
 export interface SectionProps {
 	name: string;
-	title?: string;
+	title?: string | React.ReactNode;
 	fields: FieldList;
 	/**
 	 * If true, each field inside the section

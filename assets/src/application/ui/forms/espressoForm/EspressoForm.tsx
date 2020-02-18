@@ -4,7 +4,6 @@ import arrayMutators from 'final-form-arrays';
 
 import { EspressoFormProps } from './types';
 import FormRenderer from './renderers/FormRenderer';
-import { formConfig } from './config';
 import { FormProvider } from './context';
 import './styles.scss';
 
@@ -26,7 +25,5 @@ const EspressoForm: React.FC<EspressoFormProps> = ({ onSubmit, mutators, layout,
 		</div>
 	);
 };
-
-export const TestForm = () => <EspressoForm {...formConfig} />;
 
 export default EspressoForm;
