@@ -10,8 +10,8 @@ const FormRenderer: React.FC<FormRendererProps> = (props) => {
 	const {
 		handleSubmit,
 		submitting,
-		sections,
-		fields,
+		sections = [],
+		fields = [],
 		submitButton,
 		resetButton,
 		layout,
@@ -21,8 +21,10 @@ const FormRenderer: React.FC<FormRendererProps> = (props) => {
 	const form = (
 		<div className='form-wrapper'>
 			<Form onSubmit={handleSubmit} layout={layout}>
-				<RenderSections sections={sections} />
-				<RenderFields fields={fields} />
+				{sections.length ? <RenderSections sections={sections} /> : null}
+
+				{fields.length ? <RenderFields fields={fields} /> : null}
+
 				{/* May be formWrapper handles form submission */}
 				{submitButton ? (
 					<Submit submitting={submitting} submitButton={submitButton} resetButton={resetButton} />

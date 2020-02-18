@@ -3,6 +3,7 @@
  */
 import { EntityId } from '@edtrServices/apollo/types';
 import { EditorModals } from '../../../../domain/shared/ui/editorModal/types';
+import { EspressoFormProps } from '@application/ui/forms/espressoForm';
 
 export type EditorId = keyof EditorModals;
 
@@ -47,10 +48,10 @@ export type ModalSubmit = (values?: any) => void;
 export type ModalClose = () => void;
 
 export interface EditorModalProps {
-	formComponent: React.NamedExoticComponent;
+	formComponent?: React.NamedExoticComponent;
 	onSubmit: ModalSubmit;
 	onClose: ModalClose;
-	[key: string]: any;
+	formConfig?: EspressoFormProps;
 }
 
 export type EditorModal = (entityId?: EntityId) => EditorModalProps;
