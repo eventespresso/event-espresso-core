@@ -4,8 +4,10 @@ import { ArgsProps } from 'antd/lib/notification';
 
 import { SuccessToast } from './types';
 
+type SuccessToastCallback = (...ArgsProps) => void;
+
 const useSuccessToast: SuccessToast = (toaster, hash) =>
-	useCallback<any>(
+	useCallback<SuccessToastCallback>(
 		(message = '', description, duration, placement) => {
 			const args: ArgsProps = {
 				message,
