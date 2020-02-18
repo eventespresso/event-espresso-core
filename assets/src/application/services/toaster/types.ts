@@ -56,7 +56,7 @@ export type ToasterInitCallbacks = {
 
 type OnDismissFn = (didTimeoutExpire: boolean) => void;
 type ToasterAction = IActionProps & ILinkProps;
-export type ToasterHash = (message: ToasterMsg) => string;
+export type ToasterHash = () => string;
 export type ToasterNotices = (loadingFlag: boolean, loadingError: ApolloError) => void;
 export type ToasterMsg = string;
 

@@ -1,24 +1,24 @@
-import { Intent } from '@blueprintjs/core';
 import { useCallback } from 'react';
+import { notification } from 'antd';
+import { ArgsProps } from 'antd/lib/notification';
 
-import { SuccessToast, SuccessToastCallback } from './types';
+import { SuccessToast } from './types';
+
+type SuccessToastCallback = (...ArgsProps) => void;
 
 const useSuccessToast: SuccessToast = (toaster, hash) =>
 	useCallback<SuccessToastCallback>(
-		(message = '', timeout = 2500, action = {}, onDismiss = null) => {
-			if (message) {
-				toaster.show(
-					{
-						action,
-						intent: Intent.SUCCESS,
-						icon: 'tick-circle',
-						message,
-						onDismiss,
-						timeout,
-					},
-					hash(message)
-				);
-			}
+		(message = '', description, duration, placement) => {
+			const args: ArgsProps = {
+				message,
+				description,
+				duration,
+				placement: placement || 'bottomRight',
+			};
+
+			setTimeout(() => {
+				notification.success(args);
+			}, 0);
 		},
 		[toaster, hash]
 	);

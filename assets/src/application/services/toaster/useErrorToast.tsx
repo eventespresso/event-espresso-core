@@ -32,7 +32,7 @@ const useErrorToast: ErrorToast = (toaster, hash) =>
 						onDismiss,
 						timeout,
 					},
-					hash(errorMessage)
+					hash()
 				);
 			}
 		},
