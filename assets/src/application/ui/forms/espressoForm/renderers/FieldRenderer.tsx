@@ -22,9 +22,11 @@ const FieldRenderer: React.FC<FieldRendererProps> = (props) => {
 			{...formItemLayout}
 			{...formItemProps}
 		>
-			{before}
-			<MappedField {...rest} />
-			{after}
+			<>
+				{before}
+				<MappedField {...rest} />
+				{after}
+			</>
 		</FormItem>
 	);
 };
