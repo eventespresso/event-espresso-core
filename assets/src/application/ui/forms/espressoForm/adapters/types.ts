@@ -10,8 +10,8 @@ export interface SelectProps extends Pick<FieldRendererProps, 'input'>, Pick<Ant
 }
 
 export interface OptionProps {
-	label: string;
-	value: string;
+	label?: string;
+	value?: string;
 }
 
 export interface SelectOptionProps extends OptionProps {
