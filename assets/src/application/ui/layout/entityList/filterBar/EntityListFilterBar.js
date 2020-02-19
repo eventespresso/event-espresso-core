@@ -2,8 +2,8 @@
  * External imports
  */
 import * as React from 'react';
-import { withInstanceId } from '@wordpress/compose';
-import { IconButton } from '@wordpress/components';
+import { Icon } from 'antd';
+import EspressoButton from '../../../input/EspressoButton';
 import { __ } from '@wordpress/i18n';
 
 /**
@@ -16,14 +16,8 @@ import './style.css';
 /**
  * EntityListFilterBar
  * a group of inputs for controlling how a list of entities is displayed
- *
- * @param {string} listId
- * @param {string} instanceId
- * @param {Object} entityFilters additional entity specific filters
- * @return {Object} EntityListFilterBar
  */
-const EntityListFilterBar = ({ listId: id, instanceId, entityFilters = null }) => {
-	const listId = id ? id : 'entity-list-' + instanceId;
+const EntityListFilterBar = ({ listId, entityFilters = null }) => {
 	const {
 		perPage,
 		searchText,
@@ -39,13 +33,13 @@ const EntityListFilterBar = ({ listId: id, instanceId, entityFilters = null }) =
 	const listViewButton = React.useMemo(
 		() => (
 			<>
-				<label className='screen-reader-text' htmlFor={`ee-list-view-btn-${listId}`}>
+				<label className='esprs-button-label screen-reader-text' htmlFor={`ee-list-view-btn-${listId}`}>
 					{__('list view')}
 				</label>
-				<IconButton
+				<EspressoButton
 					id={`ee-list-view-btn-${listId}`}
 					className={view === 'list' ? 'ee-filter-bar-filter ee-active-filters' : 'ee-filter-bar-filter'}
-					icon='list-view'
+					icon='table'
 					tooltip={__('list view')}
 					onClick={setListView}
 				/>
@@ -53,17 +47,26 @@ const EntityListFilterBar = ({ listId: id, instanceId, entityFilters = null }) =
 		),
 		[listId, view, setListView]
 	);
-
+	/*
+	buttonText?: string;
+	buttonProps?: object;
+	htmlClass?: string;
+	icon?: Icon | string;
+	onClick: ClickHandler;
+	size?: EspressoButtonSize;
+	btnType?: EspressoButtonType;
+	[key: string]: any;
+*/
 	const gridViewButton = React.useMemo(
 		() => (
 			<>
-				<label className='screen-reader-text' htmlFor={`ee-grid-view-btn-${listId}`}>
+				<label className='esprs-button-label screen-reader-text' htmlFor={`ee-grid-view-btn-${listId}`}>
 					{__('list view')}
 				</label>
-				<IconButton
+				<EspressoButton
 					id={`ee-grid-view-btn-${listId}`}
+					icon={<Icon type='appstore' theme='filled' />}
 					className={view === 'grid' ? 'ee-filter-bar-filter ee-active-filters' : 'ee-filter-bar-filter'}
-					icon='grid-view'
 					tooltip={__('grid view')}
 					onClick={setGridView}
 				/>
@@ -75,10 +78,10 @@ const EntityListFilterBar = ({ listId: id, instanceId, entityFilters = null }) =
 	const showFiltersButton = React.useMemo(
 		() => (
 			<>
-				<label className='screen-reader-text' htmlFor={`ee-grid-filter-btn-${listId}`}>
+				<label className='esprs-button-label screen-reader-text' htmlFor={`ee-grid-filter-btn-${listId}`}>
 					{__('show filters')}
 				</label>
-				<IconButton
+				<EspressoButton
 					id={`ee-grid-filter-btn-${listId}`}
 					icon='filter'
 					tooltip={__('filter')}
@@ -111,4 +114,4 @@ const EntityListFilterBar = ({ listId: id, instanceId, entityFilters = null }) =
 	);
 };
 
-export default withInstanceId(EntityListFilterBar);
+export default EntityListFilterBar;
