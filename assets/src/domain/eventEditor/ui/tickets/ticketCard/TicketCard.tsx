@@ -75,9 +75,10 @@ const TicketCard: React.FC<ListItemProps> = ({ id }) => {
 						<Typography.Title level={4} style={priceStyle}>
 							<CurrencyInput
 								id={ticket.id}
-								amount={parseFloat(ticket.price)}
+								amount={ticket.price}
 								placeholder={__('set price...')}
 								onChange={({ amount: price }: any): void => {
+									price = parseFloat(price);
 									if (price !== ticket.price) {
 										updateEntity({ price });
 									}
