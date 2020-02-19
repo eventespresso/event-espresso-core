@@ -52,6 +52,7 @@ export interface EditorModalProps {
 	onSubmit: ModalSubmit;
 	onClose: ModalClose;
 	formConfig?: EspressoFormProps;
+	initialValues?: any;
 }
 
 export type EditorModal = (entityId?: EntityId) => EditorModalProps;
