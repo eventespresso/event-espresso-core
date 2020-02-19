@@ -1,4 +1,5 @@
 import React from 'react';
+import { __ } from '@wordpress/i18n';
 
 import { EspressoButton } from '@application/ui/input';
 import { EditItemButtonProps } from '../../../interfaces/types';
@@ -16,7 +17,15 @@ const EditTicketButton: React.FC<EditItemButtonProps> = (props) => {
 			entityId,
 		});
 
-	return <EspressoButton icon='edit' onClick={onClick} {...props} />;
+	return (
+		<EspressoButton
+			icon='edit'
+			onClick={onClick}
+			tooltip={__('edit ticket')}
+			tooltipProps={{ placement: 'left' }}
+			{...props}
+		/>
+	);
 };
 
 export default EditTicketButton;
