@@ -19,21 +19,17 @@ export interface EntityEdge<E = Entity, ConnectionTypeName = string> {
 	__typename: ConnectionTypeName;
 }
 
-export interface Event extends Entity, Trashable {
-	capacity: number;
-	description: string;
-	endDate: string;
+export interface Event extends Entity {
+	desc: string;
 	isActive: boolean;
+	isCancelled: boolean;
 	isExpired: boolean;
-	isPrimary: boolean;
+	isInactive: boolean;
+	isPostponed: boolean;
 	isSoldOut: boolean;
 	isUpcoming: boolean;
-	length: number;
 	order: number;
-	reserved: number;
-	sold: number;
-	startDate: string;
-	status: DatetimeStatus;
+	shortDesc: string;
 }
 
 export interface EventData {
