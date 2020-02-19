@@ -1,4 +1,42 @@
 import React from 'react';
+import { Entity } from '@edtrServices/apollo/types';
+
+// export type EntityType = 'datetime' | 'ticket';
+
+// export type DateMenuKey = 'editDate' | 'deleteTicket' | 'assignTickets';
+
+// export type TicketMenuKey = 'editTicket' | 'deleteTicket' | 'assignDates' | 'tpc';
+
+export type EntityType = string;
+export type Domain = 'eventEditor';
+export type MenuKey = string;
+
+export interface SubscriptionData<E, T> {
+	entityType: T;
+	entity: E;
+}
+
+export type EntitySubscriptionCallback<
+	E extends Entity,
+	EntityType extends string,
+	MenuKey extends string,
+	AO = AdditionalSubscriptionCbOptions
+> = SubscriptionCallback<MenuKey, SubscriptionData<E, EntityType>, AO>;
+
+export type EntityActionsMenuCallback<E extends Entity, MenuKey extends string> = (
+	entity: E,
+	entityActionsManager: EntityActionsManager<MenuKey>
+) => void;
+
+export interface ActionsMenuComponentProps<E extends Entity> {
+	entity: E;
+	menuItemProps?: ActionsMenuItemProps;
+	[key: string]: any;
+}
+
+export interface ActionsMenuItemProps {
+	[key: string]: any;
+}
 
 export interface EntityActionsManager<MenuKey extends string> {
 	registerMenuItem: (key: MenuKey, component: React.ReactType) => void;

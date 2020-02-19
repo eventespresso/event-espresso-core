@@ -4,13 +4,14 @@ import {
 	useEntityActions,
 	useEntityActionsManager,
 	AdditionalSubscriptionCbOptions,
-} from '@appLayout/entityActionMenu';
-import { DateMenuKey, TicketMenuKey, Domain, EntityType } from './types';
-import { Entity } from '../../services/apollo/types';
+} from '@appLayout/entityActionsMenu';
+import { Domain } from './types';
+import { Entity } from '../../../../domain/eventEditor/services/apollo/types';
 
-const useEntityActionMenuItems = <
+const useEntityActionsMenuItems = <
 	E extends Entity,
-	MenuKey extends DateMenuKey | TicketMenuKey,
+	EntityType extends string,
+	MenuKey extends string,
 	AO = AdditionalSubscriptionCbOptions
 >(
 	entityType: EntityType,
@@ -37,4 +38,4 @@ const useEntityActionMenuItems = <
 	return Object.entries<React.ReactType>(menuItems).map(([menuKey, Component], i) => <Component key={menuKey + i} />);
 };
 
-export default useEntityActionMenuItems;
+export default useEntityActionsMenuItems;
