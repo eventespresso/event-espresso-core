@@ -22,7 +22,7 @@ const FormModal: React.FC<FormModalProps> = ({
 
 	// formConfig has the priority
 	if (formConfig) {
-		return <EspressoForm {...formConfig} formWrapper={FormModalForm} />;
+		return <EspressoForm {...extraProps} {...formConfig} formWrapper={FormModalForm} />;
 	}
 
 	return (

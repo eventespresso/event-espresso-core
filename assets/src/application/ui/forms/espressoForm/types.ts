@@ -1,7 +1,7 @@
 import React from 'react';
 import { FormRenderProps, FormProps, FieldRenderProps, FieldProps as RFFFieldProps } from 'react-final-form';
 import { FieldArrayProps } from 'react-final-form-arrays';
-import { FormState } from 'final-form';
+import { FormState, AnyObject } from 'final-form';
 
 import { SelectOptions, ButtonProps, FormItemProps } from './adapters/types';
 
@@ -68,7 +68,7 @@ export interface FieldCondition {
 
 export type FieldConditions = Array<FieldCondition>;
 
-export interface EspressoFormProps extends FormProps, AdditionalFormProps {}
+export interface EspressoFormProps<FormValues = AnyObject> extends FormProps<FormValues>, AdditionalFormProps {}
 
 export interface FormRendererProps extends FormRenderProps, AdditionalFormProps {}
 

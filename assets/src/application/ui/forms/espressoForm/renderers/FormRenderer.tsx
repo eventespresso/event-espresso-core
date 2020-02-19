@@ -17,7 +17,6 @@ const dataStyle: CSSProperties = {
 
 const FormRenderer: React.FC<FormRendererProps> = (props) => {
 	const {
-		handleSubmit,
 		submitting,
 		sections = [],
 		fields = [],

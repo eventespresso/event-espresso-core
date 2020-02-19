@@ -19,7 +19,7 @@ const modalStyle: CSSProperties = {
 	transform: 'translate(-50%, -50%)',
 };
 
-const FormModalForm: React.FC<FormModalFormProps> = ({ form, submitting, pristine, onClose, children }) => {
+const FormModalForm: React.FC<FormModalFormProps> = ({ form, submitting, pristine, onClose, children, title }) => {
 	const submitButton: ButtonProps = {
 		disabled: submitting || pristine,
 		htmlType: 'submit',
@@ -42,6 +42,7 @@ const FormModalForm: React.FC<FormModalFormProps> = ({ form, submitting, pristin
 
 	return (
 		<Modal
+			title={title}
 			visible={true}
 			onOk={onClose}
 			style={modalStyle}
