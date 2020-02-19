@@ -1,4 +1,5 @@
 import React from 'react';
+import { TooltipPropsWithTitle } from 'antd/lib/tooltip';
 
 import { Icon } from '../../display/espressoIcon';
 
@@ -21,11 +22,13 @@ export enum EspressoButtonType {
 
 export interface EspressoButtonProps {
 	buttonText?: string;
+	buttonType?: EspressoButtonType;
 	buttonProps?: object;
 	htmlClass?: string;
-	icon?: Icon | string;
+	icon?: Icon | JSX.Element | string;
 	onClick: ClickHandler;
 	size?: EspressoButtonSize;
-	btnType?: EspressoButtonType;
+	tooltip?: string;
+	tooltipProps?: Partial<TooltipPropsWithTitle>;
 	[key: string]: any;
 }
