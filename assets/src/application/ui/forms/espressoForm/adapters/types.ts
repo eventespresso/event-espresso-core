@@ -21,4 +21,4 @@ export interface SelectOptionProps extends OptionProps {
 
 export type SelectOptions = Array<SelectOptionProps>;
 
-export type FormItemProps = AntdFormItemProps;
+export type FormItemProps = Omit<AntdFormItemProps, 'children'>;
