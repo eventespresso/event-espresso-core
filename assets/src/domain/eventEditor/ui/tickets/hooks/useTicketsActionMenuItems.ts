@@ -1,11 +1,11 @@
 import React from 'react';
 
 import { Ticket } from '../../../services/apollo/types';
-import { useEntityActionMenuItems, TicketMenuKey, ActionsMenuItemProps } from '../../entityActionMenu';
+import { useEntityActionsMenuItems, EntityType, MenuKey, ActionsMenuItemProps } from '@appLayout/entityActionsMenu';
 import { AdditionalTicketMenuOptions } from '../types';
 
 const useTicketsActionMenuItems = (ticket: Ticket, menuItemProps?: ActionsMenuItemProps): Array<React.ReactNode> => {
-	return useEntityActionMenuItems<Ticket, TicketMenuKey, AdditionalTicketMenuOptions>('ticket', ticket, {
+	return useEntityActionsMenuItems<Ticket, EntityType, MenuKey, AdditionalTicketMenuOptions>('ticket', ticket, {
 		ticketMenuItemProps: menuItemProps,
 	});
 };
