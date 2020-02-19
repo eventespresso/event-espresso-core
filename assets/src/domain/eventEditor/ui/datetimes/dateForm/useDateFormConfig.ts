@@ -1,5 +1,6 @@
 import { __ } from '@wordpress/i18n';
 import { format, parseISO, parse } from 'date-fns';
+import { ProfileOutlined, CalendarOutlined, ControlOutlined } from '@ant-design/icons';
 
 import { EspressoFormProps, dateFormat, timeFormat } from '@application/ui/forms/espressoForm';
 import useDatetimeItem from '../../../services/apollo/queries/datetimes/useDatetimeItem';
@@ -52,6 +53,7 @@ const useDateFormConfig = (id: EntityId, config?: EspressoFormProps): DateFormCo
 		sections: [
 			{
 				name: 'basics',
+				icon: ProfileOutlined,
 				title: __('Basics'),
 				fields: [
 					{
@@ -68,6 +70,7 @@ const useDateFormConfig = (id: EntityId, config?: EspressoFormProps): DateFormCo
 			},
 			{
 				name: 'dateTime',
+				icon: CalendarOutlined,
 				title: __('Date & Time'),
 				fields: [
 					{
@@ -105,6 +108,7 @@ const useDateFormConfig = (id: EntityId, config?: EspressoFormProps): DateFormCo
 			},
 			{
 				name: 'details',
+				icon: ControlOutlined,
 				title: __('Details'),
 				fields: [
 					{

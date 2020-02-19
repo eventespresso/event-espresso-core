@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { CSSProperties } from 'react';
 import { FormRenderProps, FormProps, FieldRenderProps, FieldProps as RFFFieldProps } from 'react-final-form';
 import { FieldArrayProps } from 'react-final-form-arrays';
 import { FormState, AnyObject } from 'final-form';
@@ -104,6 +104,7 @@ export interface RenderFieldProps extends FieldProps {}
 export interface SectionProps {
 	name: string;
 	title?: string | React.ReactNode;
+	icon?: React.ComponentType<{ style: CSSProperties }>;
 	fields: FieldList;
 	/**
 	 * If true, each field inside the section
