@@ -108,9 +108,9 @@ const useMutationHandler: MutationHandler = (getMutationOptions) => {
 			 */
 			const onMutationError = (error: Error, onError: OnMutationErrorFn, mutationType: MutationType): void => {
 				const dismissMessage = getToasterMessage(mutationType);
-				const successMessage = `error ${getToasterMessage(mutationType)}`;
+				const errorMessage = `error ${getToasterMessage(mutationType)}`;
 				toaster.dismiss(dismissMessage);
-				toaster.success(successMessage);
+				toaster.error(errorMessage);
 
 				updateResult({
 					loading: false,
