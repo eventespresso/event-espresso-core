@@ -29,21 +29,23 @@ const FormRenderer: React.FC<FormRendererProps> = (props) => {
 	} = props;
 
 	const formOutput = (
-		<div className='form-wrapper'>
-			<Form layout={layout}>
-				{sections.length ? <RenderSections sections={sections} /> : null}
+		<div className='ee-form'>
+			<div className='form-wrapper'>
+				<Form layout={layout}>
+					{sections.length ? <RenderSections sections={sections} /> : null}
 
-				{fields.length ? <RenderFields fields={fields} /> : null}
+					{fields.length ? <RenderFields fields={fields} /> : null}
 
-				{/* May be formWrapper handles form submission */}
-				{submitButton ? (
-					<Submit submitting={submitting} submitButton={submitButton} resetButton={resetButton} />
+					{/* May be formWrapper handles form submission */}
+					{submitButton ? (
+						<Submit submitting={submitting} submitButton={submitButton} resetButton={resetButton} />
+					) : null}
+				</Form>
+
+				{debugFields.length ? (
+					<pre style={dataStyle}>{JSON.stringify(pick(debugFields, form.getState()), null, 2)}</pre>
 				) : null}
-			</Form>
-
-			{debugFields.length ? (
-				<pre style={dataStyle}>{JSON.stringify(pick(debugFields, form.getState()), null, 2)}</pre>
-			) : null}
+			</div>
 		</div>
 	);
 

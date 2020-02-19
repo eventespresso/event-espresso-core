@@ -116,11 +116,6 @@ const useDateFormConfig = (id: EntityId, config?: EspressoFormProps): DateFormCo
 						name: 'isTrashed',
 						label: __('Trash'),
 						fieldType: 'switch',
-						formItemProps: {
-							labelCol: { span: 4 },
-							wrapperCol: { span: 14 },
-							labelAlign: 'left',
-						},
 					},
 				],
 			},
