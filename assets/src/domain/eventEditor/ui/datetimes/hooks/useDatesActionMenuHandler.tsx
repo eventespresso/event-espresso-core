@@ -1,14 +1,15 @@
 import React, { useCallback } from 'react';
+import { __ } from '@wordpress/i18n';
 
 import EditDateButton from '../dateCard/EditDateButton';
 import DeleteDateButton from '../dateCard/DeleteDateButton';
 import { EspressoButton } from '@application/ui/input';
 import { Datetime } from '../../../services/apollo/types';
-import { EntitySubscriptionCallback, DateMenuKey } from '../../entityActionMenu/';
+import { EntitySubscriptionCallback, MenuKey, EntityType } from '@appLayout/entityActionsMenu';
 import { AdditionalDateMenuOptions } from '../types';
 import { useStatus, TypeName } from '@appServices/apollo/status';
 
-type DatesSubscriptionCallback = EntitySubscriptionCallback<Datetime, DateMenuKey, AdditionalDateMenuOptions>;
+type DatesSubscriptionCallback = EntitySubscriptionCallback<Datetime, EntityType, MenuKey, AdditionalDateMenuOptions>;
 
 const useDatesActionMenuHandler = (): DatesSubscriptionCallback => {
 	return useCallback<DatesSubscriptionCallback>(
@@ -21,7 +22,13 @@ const useDatesActionMenuHandler = (): DatesSubscriptionCallback => {
 			registerMenuItem('editDate', () => <EditDateButton {...menuItemProps} />);
 
 			registerMenuItem('assignTickets', () => (
-				<EspressoButton icon='form' onClick={() => console.log('You clicked TAM')} {...menuItemProps} />
+				<EspressoButton
+					icon='tags'
+					tooltip={__('assign tickets')}
+					tooltipProps={{ placement: 'right' }}
+					onClick={() => console.log('You clicked TAM')}
+					{...menuItemProps}
+				/>
 			));
 
 			registerMenuItem('deleteTicket', () => {
