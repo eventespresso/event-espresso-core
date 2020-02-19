@@ -7,8 +7,8 @@ const SelectField: React.FC<SelectProps> = ({ input, mode, options, ...selectPro
 		if (optgroup && optionGroups.length) {
 			return (
 				<Select.OptGroup label={optgroup} key={`${optgroup}${index}`}>
-					{optionGroups.map(({ label: optLabel, ...opts }, i) => (
-						<Select.Option {...opts} key={`${opts.value}${i}`}>
+					{optionGroups.map(({ label: optLabel, value, ...opts }, i) => (
+						<Select.Option {...opts} value={value} key={`${value}${i}`}>
 							{optLabel}
 						</Select.Option>
 					))}
@@ -16,7 +16,7 @@ const SelectField: React.FC<SelectProps> = ({ input, mode, options, ...selectPro
 			);
 		}
 		return (
-			<Select.Option {...optionProps} key={`${optionProps.value}${index}`}>
+			<Select.Option {...optionProps} value={optionProps.value} key={`${optionProps.value}${index}`}>
 				{label}
 			</Select.Option>
 		);
