@@ -8,13 +8,8 @@ import {
 import { Domain } from './types';
 import { Entity } from '../../../../domain/eventEditor/services/apollo/types';
 
-const useEntityActionsMenuItems = <
-	E extends Entity,
-	EntityType extends string,
-	MenuKey extends string,
-	AO = AdditionalSubscriptionCbOptions
->(
-	entityType: EntityType,
+const useEntityActionsMenuItems = <E extends Entity, AO = AdditionalSubscriptionCbOptions>(
+	entityType: string,
 	entity: E,
 	// additionalOptions will be passed back to the callback
 	// make sure to pass it as object with your own unique keys
@@ -22,8 +17,8 @@ const useEntityActionsMenuItems = <
 	additionalOptions?: AO,
 	filterByEntityType = true
 ): Array<React.ReactNode> => {
-	const entityActionsManager = useEntityActionsManager<EntityType, MenuKey>(entityType, entity.id);
-	const { getSubscriptions } = useEntityActions<Domain, EntityType, MenuKey>('eventEditor');
+	const entityActionsManager = useEntityActionsManager(entityType, entity.id);
+	const { getSubscriptions } = useEntityActions<Domain>('eventEditor');
 
 	const { getMenuItems } = entityActionsManager;
 
