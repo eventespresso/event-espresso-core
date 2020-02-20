@@ -2,8 +2,10 @@ import React, { CSSProperties } from 'react';
 import { FormRenderProps, FormProps, FieldRenderProps, FieldProps as RFFFieldProps } from 'react-final-form';
 import { FieldArrayProps } from 'react-final-form-arrays';
 import { FormState, AnyObject } from 'final-form';
+import { ButtonProps as AntdButtonProps } from 'antd/lib/button';
+import { FormItemProps as AntdFormItemProps } from 'antd/es/form';
 
-import { SelectOptions, ButtonProps, FormItemProps } from './adapters/types';
+export type ButtonProps = AntdButtonProps;
 
 export interface FormButtonProps extends ButtonProps {
 	label?: string;
@@ -21,6 +23,20 @@ interface AdditionalFormProps extends FormContextProps {
 	formWrapper?: React.ReactType;
 	debugFields?: Array<keyof FormState<any>>; // The fields from RFF form state to display in debug
 }
+
+export type FormItemProps = Omit<AntdFormItemProps, 'children'>;
+
+export interface OptionProps {
+	label?: string;
+	value?: string;
+}
+
+export interface SelectOptionProps extends OptionProps {
+	optgroup?: string;
+	options?: Array<OptionProps>;
+}
+
+export type SelectOptions = Array<SelectOptionProps>;
 
 export interface AdditionalFieldProps {
 	label?: React.ReactNode | string;
@@ -104,7 +120,7 @@ export interface RenderFieldProps extends FieldProps {}
 export interface SectionProps {
 	name: string;
 	title?: string | React.ReactNode;
-	icon?: React.ComponentType<{ style: CSSProperties }>;
+	icon?: React.ComponentType<{ className: string }>;
 	fields: FieldList;
 	/**
 	 * If true, each field inside the section

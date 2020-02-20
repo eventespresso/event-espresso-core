@@ -1,7 +1,6 @@
 import { SelectProps as AntdSelectProps, SelectValue } from 'antd/lib/select';
 import { ButtonProps as AntdButtonProps } from 'antd/lib/button';
-import { FieldRendererProps } from '../types';
-import { FormItemProps as AntdFormItemProps } from 'antd/es/form';
+import { FieldRendererProps } from '../forms/espressoForm/types';
 
 export type ButtonProps = AntdButtonProps;
 
@@ -20,5 +19,3 @@ export interface SelectOptionProps extends OptionProps {
 }
 
 export type SelectOptions = Array<SelectOptionProps>;
-
-export type FormItemProps = Omit<AntdFormItemProps, 'children'>;
