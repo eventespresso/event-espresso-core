@@ -1,7 +1,7 @@
 import React from 'react';
 import classNames from 'classnames';
 import { Button, Tooltip } from 'antd';
-import Icon from 'antd/lib/icon';
+import Icon from '@ant-design/icons';
 
 import { EspressoButtonProps, EspressoButtonSize, EspressoButtonType } from './types';
 import { EspressoIcon, isEspressoIcon } from '../../display';
@@ -36,29 +36,20 @@ const EspressoButton: React.FC<EspressoButtonProps> = ({
 	});
 	let eeButton: JSX.Element;
 	// check if icon prop is just an icon name (like "calendar") and if not, assume it is JSX
-	if (typeof icon === 'string') {
-		if (isEspressoIcon(icon)) {
-			// custom EE icon
-			const svgSize = buttonText ? size : 20;
-			const svgIcon = () => <EspressoIcon icon={icon} svgSize={svgSize} />;
-			if (svgIcon) {
-				eeButton = (
-					<Button {...buttonProps} onClick={onClick} className={className}>
-						{buttonText && buttonText}
-						<Icon component={svgIcon} />
-					</Button>
-				);
-			}
-		} else {
-			// AntD icon
+	if (typeof icon === 'string' && isEspressoIcon(icon)) {
+		// custom EE icon
+		const svgSize = buttonText ? size : 20;
+		const svgIcon = () => <EspressoIcon icon={icon} svgSize={svgSize} />;
+		if (svgIcon) {
 			eeButton = (
-				<Button {...buttonProps} icon={icon} onClick={onClick} className={className}>
+				<Button {...buttonProps} onClick={onClick} className={className}>
 					{buttonText && buttonText}
+					<Icon component={svgIcon} />
 				</Button>
 			);
 		}
 	} else {
-		// JSX element icon
+		// AntD or JSX element icon
 		eeButton = (
 			<Button {...buttonProps} onClick={onClick} className={className}>
 				{icon}
