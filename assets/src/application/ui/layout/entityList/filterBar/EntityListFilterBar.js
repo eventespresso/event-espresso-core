@@ -2,7 +2,7 @@
  * External imports
  */
 import * as React from 'react';
-import { Icon } from 'antd';
+import Icon from 'antd/lib/icon';
 import EspressoButton from '../../../input/EspressoButton';
 import { __ } from '@wordpress/i18n';
 
@@ -61,7 +61,7 @@ const EntityListFilterBar = ({ listId, entityFilters = null }) => {
 		() => (
 			<>
 				<label className='esprs-button-label screen-reader-text' htmlFor={`ee-grid-view-btn-${listId}`}>
-					{__('list view')}
+					{__('grid view')}
 				</label>
 				<EspressoButton
 					id={`ee-grid-view-btn-${listId}`}
@@ -84,7 +84,7 @@ const EntityListFilterBar = ({ listId, entityFilters = null }) => {
 				<EspressoButton
 					id={`ee-grid-filter-btn-${listId}`}
 					icon='filter'
-					tooltip={__('filter')}
+					tooltip={__('show filters')}
 					onClick={toggleEntityFilters}
 					className={showEntityFilters ? 'ee-filter-bar-filter ee-active-filters' : 'ee-filter-bar-filter'}
 				/>
