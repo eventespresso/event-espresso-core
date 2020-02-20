@@ -1,8 +1,11 @@
-import React from 'react';
+import React, { CSSProperties } from 'react';
 import { FormRenderProps, FormProps, FieldRenderProps, FieldProps as RFFFieldProps } from 'react-final-form';
 import { FieldArrayProps } from 'react-final-form-arrays';
+import { FormState, AnyObject } from 'final-form';
+import { ButtonProps as AntdButtonProps } from 'antd/lib/button';
+import { FormItemProps as AntdFormItemProps } from 'antd/es/form';
 
-import { SelectOptions, ButtonProps, FormItemProps } from './adapters/types';
+export type ButtonProps = AntdButtonProps;
 
 export interface FormButtonProps extends ButtonProps {
 	label?: string;
@@ -18,11 +21,36 @@ interface AdditionalFormProps extends FormContextProps {
 	submitButton?: FormButtonProps;
 	resetButton?: FormButtonProps;
 	formWrapper?: React.ReactType;
+	debugFields?: Array<keyof FormState<any>>; // The fields from RFF form state to display in debug
 }
+
+export type FormItemProps = Omit<AntdFormItemProps, 'children'>;
+
+export interface OptionProps {
+	label?: string;
+	value?: string;
+}
+
+export interface SelectOptionProps extends OptionProps {
+	optgroup?: string;
+	options?: Array<OptionProps>;
+}
+
+export type SelectOptions = Array<SelectOptionProps>;
 
 export interface AdditionalFieldProps {
 	label?: React.ReactNode | string;
-	fieldType: 'text' | 'textarea' | 'switch' | 'select' | 'multicheck' | 'number' | 'radio' | 'group';
+	fieldType:
+		| 'text'
+		| 'textarea'
+		| 'switch'
+		| 'select'
+		| 'multicheck'
+		| 'number'
+		| 'radio'
+		| 'group'
+		| 'datepicker'
+		| 'timepicker';
 	htmlType?: string;
 	before?: React.ReactNode | string;
 	after?: React.ReactNode | string;
@@ -56,7 +84,7 @@ export interface FieldCondition {
 
 export type FieldConditions = Array<FieldCondition>;
 
-export interface EspressoFormProps extends FormProps, AdditionalFormProps {}
+export interface EspressoFormProps<FormValues = AnyObject> extends FormProps<FormValues>, AdditionalFormProps {}
 
 export interface FormRendererProps extends FormRenderProps, AdditionalFormProps {}
 
@@ -91,7 +119,8 @@ export interface RenderFieldProps extends FieldProps {}
 
 export interface SectionProps {
 	name: string;
-	title?: string;
+	title?: string | React.ReactNode;
+	icon?: React.ComponentType<{ className: string }>;
 	fields: FieldList;
 	/**
 	 * If true, each field inside the section

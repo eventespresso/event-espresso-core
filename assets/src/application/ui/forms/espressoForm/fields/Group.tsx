@@ -17,7 +17,13 @@ const Group: React.FC<FieldProps> = ({ subFields, label, name: groupName, before
 						const name = `${groupName}.${fieldname}`;
 						return (
 							<div className='field-group-item' key={name + i}>
-								<Field render={FieldRenderer} {...props} fieldType={fieldType} name={name} />
+								<Field
+									render={FieldRenderer}
+									{...props}
+									fieldType={fieldType}
+									name={name}
+									formItemProps={{ wrapperCol: { span: 16 }, labelCol: { span: 8 } }}
+								/>
 							</div>
 						);
 					})}

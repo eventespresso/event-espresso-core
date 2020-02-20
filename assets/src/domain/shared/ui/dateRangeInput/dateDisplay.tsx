@@ -1,8 +1,8 @@
 import React from 'react';
 import { Tag } from 'antd';
-import Icon from '@ant-design/icons';
 import classNames from 'classnames';
 import { format, isValid } from 'date-fns';
+import { ArrowRightOutlined } from '@ant-design/icons';
 
 const FORMAT = 'EE MMM eo, yyyy';
 const FORMAT_TIME = 'EE MMM eo, yyyy p';
@@ -56,7 +56,7 @@ export const DateRangeDisplay: React.FC<DateRangeDisplayProps> = ({
 	return (
 		<div className={classNames('docs-date-range', className)}>
 			<DateTag withTime={withTime} date={start} color={startColor} format={formatString} />
-			<Icon type='arrow-right' style={{ marginRight: '8px' }} />
+			<ArrowRightOutlined style={{ marginRight: '8px' }} />
 			<DateTag withTime={withTime} date={end} color={endColor} format={formatString} />
 		</div>
 	);

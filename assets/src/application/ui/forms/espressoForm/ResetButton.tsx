@@ -2,26 +2,20 @@ import React from 'react';
 import { __ } from '@wordpress/i18n';
 import { useForm } from 'react-final-form';
 
-import { Button } from './adapters';
-import { FormButtonProps } from './types';
+import { EspressoButton, EspressoButtonProps } from '../../input';
 
-interface ResetButtonProps extends FormButtonProps {
-	disabled?: boolean;
-}
-
-const ResetButton: React.FC<ResetButtonProps> = ({ disabled, label, ...props }) => {
+const ResetButton: React.FC<EspressoButtonProps> = ({ disabled, label, ...props }) => {
 	const form = useForm();
 	return (
 		<div className='reset-button'>
-			<Button
+			<EspressoButton
 				htmlType='reset'
 				disabled={disabled}
-				className='reset-button'
+				htmlClass='reset-button'
 				onClick={() => form.reset()}
+				buttonText={label || __('Reset')}
 				{...props}
-			>
-				{label || __('Reset')}
-			</Button>
+			/>
 		</div>
 	);
 };

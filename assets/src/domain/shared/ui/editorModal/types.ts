@@ -1,5 +1,5 @@
-// @ts-nocheck
-import { EditorModalProps, EntityId } from '../../../../application/ui/layout/editorModal/types';
+import { EditorModalProps } from '@appLayout/editorModal';
+import { EntityId } from '@edtrServices/apollo/types';
 
 export type EditorModals = {
 	addDatetime: EditorModalProps;

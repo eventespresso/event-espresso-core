@@ -8,7 +8,7 @@ import {
 	DAY_ONLY_SHORT_FORMAT,
 	MONTH_ONLY_LONG_FORMAT,
 	LOCALIZED_DATE_AND_TIME_FULL_FORMAT,
-} from '@appConstants/date-fns-formats';
+} from '@appConstants/dateFnsFormats';
 
 export enum CalendarPageSize {
 	TINY = 'tiny',

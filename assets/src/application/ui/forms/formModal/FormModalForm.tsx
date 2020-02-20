@@ -1,6 +1,7 @@
 import React, { CSSProperties } from 'react';
 import { __ } from '@wordpress/i18n';
 import { ButtonProps } from 'antd/lib/button';
+import { SaveOutlined } from '@ant-design/icons';
 import { Modal } from 'antd';
 
 import { FormModalFormProps } from './types';
@@ -19,11 +20,11 @@ const modalStyle: CSSProperties = {
 	transform: 'translate(-50%, -50%)',
 };
 
-const FormModalForm: React.FC<FormModalFormProps> = ({ form, submitting, pristine, onClose, children }) => {
+const FormModalForm: React.FC<FormModalFormProps> = ({ form, submitting, pristine, onClose, children, title }) => {
 	const submitButton: ButtonProps = {
 		disabled: submitting || pristine,
 		htmlType: 'submit',
-		icon: 'save',
+		icon: <SaveOutlined />,
 		onClick: (click) => {
 			click.preventDefault();
 			form.submit();
@@ -42,6 +43,7 @@ const FormModalForm: React.FC<FormModalFormProps> = ({ form, submitting, pristin
 
 	return (
 		<Modal
+			title={title}
 			visible={true}
 			onOk={onClose}
 			style={modalStyle}

@@ -12,7 +12,7 @@ export interface FormModalProps extends FormProps {
 
 export interface FormComponentProps {
 	id?: string;
-	title?: string;
+	title?: string | React.ReactNode;
 	form?: FormApi;
 	values?: any;
 	submitting?: boolean;
@@ -21,6 +21,7 @@ export interface FormComponentProps {
 }
 
 export interface FormModalFormProps extends FormRenderProps {
+	title?: string | React.ReactNode;
 	FormComponent?: React.NamedExoticComponent<FormComponentProps>;
 	onClose?: (e?: any) => void;
 }
