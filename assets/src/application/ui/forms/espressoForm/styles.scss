@@ -1,49 +1,42 @@
-$border: 1px solid #ccc;
-
 .ee-form {
 	.form-wrapper {
 		max-width: 900px;
-		padding-top: 1em;
-		padding-bottom: 1em;
+		padding: 0;
 		margin: 0 auto;
 	}
-	.field-group-wrapper {
-		border: $border;
-		padding: 0.5em;
-		border-radius: 0.5em;
-		margin-bottom: 2em;
+
+	.sections-wrapper {
+		padding: 0 0 1rem;
 	}
+
+	.section-wrapper {
+		padding: 2.5em 0 1rem;
+		display: flex;
+		flex-wrap: wrap;
+	}
+	.section-wrapper + .section-wrapper {
+		border-top: 3px solid var(--ee-color-grey-14);
+	}
+	.section-heading {
+		position: relative;
+		h3 {
+			margin: 0;
+		}
+	}
+
+	.section-heading-icon {
+		color: var(--ee-color-grey-13);
+		display: inline-block;
+		font-size: var(--ee-font-size-extreme);
+		position: absolute;
+		top: 2rem;
+		left: 0.25rem;
+	}
+
 	.field-group-items {
 		display: flex;
 		flex-wrap: wrap;
 		width: 100%;
-	}
-	@media only screen and (max-width: 782px) {
-		.field-group-item {
-			flex: 0 100%;
-		}
-		.section-heading,
-		.section-body {
-			flex: 0 100%;
-		}
-	}
-	@media only screen and (min-width: 782px) {
-		.field-group-item {
-			flex: 0 49%;
-			padding: 0 0.5em;
-		}
-		.section-heading {
-			flex: 0 25%;
-		}
-		.section-body {
-			flex: 0 75%;
-		}
-	}
-	.section-wrapper {
-		border-top: $border;
-		padding-top: 1.5em;
-		display: flex;
-		flex-wrap: wrap;
 	}
 	.repeatable-wrap {
 		margin-bottom: 1em;
@@ -59,6 +52,46 @@ $border: 1px solid #ccc;
 
 		> div {
 			padding: 0 0.5em;
+		}
+	}
+
+	.ant-input,
+	.ant-picker,
+	.ant-input-number {
+		border: 2px solid var(--ee-color-grey-10);
+		border-radius: var(--ee-border-radius-small);
+		border-right-width: 2px !important;
+		&:focus,
+		&.ant-picker-focused,
+		&.ant-input-number-focused {
+			border-color: var(--ee-color-primary);
+			box-shadow: 0 0 0 1px var(--ee-color-primary);
+		}
+	}
+	.ant-input-number-input {
+		border: none;
+	}
+
+	@media only screen and (max-width: 782px) {
+		.field-group-item {
+			flex: 0 100%;
+		}
+		.section-heading,
+		.section-body {
+			flex: 0 100%;
+		}
+	}
+
+	@media only screen and (min-width: 782px) {
+		.field-group-item {
+			flex: 0 49%;
+			padding: 0 0.5em;
+		}
+		.section-heading {
+			flex: 0 20%;
+		}
+		.section-body {
+			flex: 0 80%;
 		}
 	}
 }
