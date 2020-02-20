@@ -7,20 +7,6 @@ import parseInfinity from '../../../utils/parse-infinity';
  * @function
  * @param {Object} DateTimeEntity model object
  * @param {boolean} includeTrashed if true will not filter out trashed entities
- * @return {boolean} true if event date is occurring NOW
- */
-export const isActive = (DateTimeEntity, includeTrashed = false) => {
-	return (
-		isValidEntityOrArchive(DateTimeEntity, includeTrashed) &&
-		DateTimeEntity.start.diffNow().asSeconds() < 0 &&
-		DateTimeEntity.end.diffNow().asSeconds() > 0
-	);
-};
-
-/**
- * @function
- * @param {Object} DateTimeEntity model object
- * @param {boolean} includeTrashed if true will not filter out trashed entities
  * @return {boolean} true if end date is in the past
  */
 export const isExpired = (DateTimeEntity, includeTrashed = false) => {
