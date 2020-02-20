@@ -17,11 +17,9 @@ const { MODEL } = MODEL_NAMES;
  * @param {Object} DateTimeEntity model object
  * @throws {TypeError}
  */
-const assertDateTimeEntity = ( DateTimeEntity ) => {
-	if ( ! isModelEntityOfModel( DateTimeEntity, MODEL ) ) {
-		throw new TypeError(
-			'The provided entity is not a datetime instance'
-		);
+const assertDateTimeEntity = (DateTimeEntity) => {
+	if (!isModelEntityOfModel(DateTimeEntity, MODEL)) {
+		throw new TypeError('The provided entity is not a datetime instance');
 	}
 };
 
@@ -31,9 +29,8 @@ const assertDateTimeEntity = ( DateTimeEntity ) => {
  * @param {boolean} includeTrashed if true will not filter out trashed entities
  * @return {boolean} true if event date is valid entity or archive
  */
-const isValidEntityOrArchive = ( DateTimeEntity, includeTrashed ) => {
-	return ( includeTrashed && assertDateTimeEntity( DateTimeEntity ) ) ||
-        ( ! includeTrashed && ! isTrashed( DateTimeEntity ) );
+const isValidEntityOrArchive = (DateTimeEntity, includeTrashed) => {
+	return (includeTrashed && assertDateTimeEntity(DateTimeEntity)) || (!includeTrashed && !isTrashed(DateTimeEntity));
 };
 
 /**
@@ -42,10 +39,12 @@ const isValidEntityOrArchive = ( DateTimeEntity, includeTrashed ) => {
  * @param {boolean} includeTrashed if true will not filter out trashed entities
  * @return {boolean} true if event date is occurring NOW
  */
-export const isActive = ( DateTimeEntity, includeTrashed = false ) => {
-	return isValidEntityOrArchive( DateTimeEntity, includeTrashed ) &&
-	DateTimeEntity.start.diffNow().asSeconds() < 0 &&
-	DateTimeEntity.end.diffNow().asSeconds() > 0;
+export const isActive = (DateTimeEntity, includeTrashed = false) => {
+	return (
+		isValidEntityOrArchive(DateTimeEntity, includeTrashed) &&
+		DateTimeEntity.start.diffNow().asSeconds() < 0 &&
+		DateTimeEntity.end.diffNow().asSeconds() > 0
+	);
 };
 
 /**
@@ -54,9 +53,8 @@ export const isActive = ( DateTimeEntity, includeTrashed = false ) => {
  * @param {boolean} includeTrashed if true will not filter out trashed entities
  * @return {boolean} true if end date is in the past
  */
-export const isExpired = ( DateTimeEntity, includeTrashed = false ) => {
-	return isValidEntityOrArchive( DateTimeEntity, includeTrashed ) &&
-	DateTimeEntity.end.diffNow().asSeconds() < 0;
+export const isExpired = (DateTimeEntity, includeTrashed = false) => {
+	return isValidEntityOrArchive(DateTimeEntity, includeTrashed) && DateTimeEntity.end.diffNow().asSeconds() < 0;
 };
 
 /**
@@ -65,10 +63,12 @@ export const isExpired = ( DateTimeEntity, includeTrashed = false ) => {
  * @param {boolean} includeTrashed if true will not filter out trashed entities
  * @return {boolean} true if end date is in the past
  */
-export const isRecentlyExpired = ( DateTimeEntity, includeTrashed = false ) => {
-	return isValidEntityOrArchive( DateTimeEntity, includeTrashed ) &&
-	DateTimeEntity.end.diffNow().asSeconds() < 0 &&
-	DateTimeEntity.end.diffNow().asSeconds() > ( MONTH_IN_SECONDS * -1 );
+export const isRecentlyExpired = (DateTimeEntity, includeTrashed = false) => {
+	return (
+		isValidEntityOrArchive(DateTimeEntity, includeTrashed) &&
+		DateTimeEntity.end.diffNow().asSeconds() < 0 &&
+		DateTimeEntity.end.diffNow().asSeconds() > MONTH_IN_SECONDS * -1
+	);
 };
 
 /**
@@ -77,15 +77,12 @@ export const isRecentlyExpired = ( DateTimeEntity, includeTrashed = false ) => {
  * @param {boolean} includeTrashed if true will not filter out trashed entities
  * @return {boolean} true if tickets sold meets or exceeds registration limit
  */
-export const isSoldOut = ( DateTimeEntity, includeTrashed = false ) => {
-	if (
-		( includeTrashed && ! assertDateTimeEntity( DateTimeEntity ) ) ||
-		( ! includeTrashed && isTrashed( DateTimeEntity ) )
-	) {
+export const isSoldOut = (DateTimeEntity, includeTrashed = false) => {
+	if ((includeTrashed && !assertDateTimeEntity(DateTimeEntity)) || (!includeTrashed && isTrashed(DateTimeEntity))) {
 		return false;
 	}
 	let cap = DateTimeEntity.regLimit;
-	cap = parseInfinity( cap, true );
+	cap = parseInfinity(cap, true);
 	return cap !== Infinity && DateTimeEntity.sold >= cap;
 };
 
@@ -95,9 +92,8 @@ export const isSoldOut = ( DateTimeEntity, includeTrashed = false ) => {
  * @param {boolean} includeTrashed if true will not filter out trashed entities
  * @return {boolean} true if start date is in the future
  */
-export const isUpcoming = ( DateTimeEntity, includeTrashed = false ) => {
-	return isValidEntityOrArchive( DateTimeEntity, includeTrashed ) &&
-	DateTimeEntity.start.diffNow().asSeconds() > 0;
+export const isUpcoming = (DateTimeEntity, includeTrashed = false) => {
+	return isValidEntityOrArchive(DateTimeEntity, includeTrashed) && DateTimeEntity.start.diffNow().asSeconds() > 0;
 };
 
 /**
@@ -105,8 +101,8 @@ export const isUpcoming = ( DateTimeEntity, includeTrashed = false ) => {
  * @param {Object} DateTimeEntity model object
  * @return {boolean} true if date is archived
  */
-export const isTrashed = ( DateTimeEntity ) => {
-	assertDateTimeEntity( DateTimeEntity );
+export const isTrashed = (DateTimeEntity) => {
+	assertDateTimeEntity(DateTimeEntity);
 	return DateTimeEntity.deleted;
 };
 
@@ -138,42 +134,10 @@ export const isTrashed = ( DateTimeEntity ) => {
 /**
  * @function
  * @param {Object} DateTimeEntity model object
- * @return {string} status ID
- */
-export const status = ( DateTimeEntity ) => {
-	if ( isTrashed( DateTimeEntity ) ) {
-		return DATETIME_STATUS_ID.TRASHED;
-	}
-	if ( isExpired( DateTimeEntity ) ) {
-		return DATETIME_STATUS_ID.EXPIRED;
-	}
-	if ( isSoldOut( DateTimeEntity ) ) {
-		return DATETIME_STATUS_ID.SOLD_OUT;
-	}
-	if ( isUpcoming( DateTimeEntity ) ) {
-		return DATETIME_STATUS_ID.UPCOMING;
-	}
-	if ( isActive( DateTimeEntity ) ) {
-		return DATETIME_STATUS_ID.ACTIVE;
-	}
-	// PLZ SEE NOTE ABOVE
-	// if ( isCancelled( DateTimeEntity ) ) {
-	// 	return DATETIME_STATUS_ID.CANCELLED;
-	// }
-	// if ( isPostponed( DateTimeEntity ) ) {
-	// 	return DATETIME_STATUS_ID.POSTPONED;
-	// }
-	assertDateTimeEntity( DateTimeEntity );
-	return DATETIME_STATUS_ID.INACTIVE;
-};
-
-/**
- * @function
- * @param {Object} DateTimeEntity model object
  * @return {string}    CSS class for the background color
  */
-export const getBackgroundColorClass = ( DateTimeEntity ) => {
-	return `ee-status-background-color-${ status( DateTimeEntity ) }`;
+export const getBackgroundColorClass = (DateTimeEntity) => {
+	return `ee-status-background-color-${status(DateTimeEntity)}`;
 };
 
 /**
@@ -181,33 +145,33 @@ export const getBackgroundColorClass = ( DateTimeEntity ) => {
  * @param {Object} DateTimeEntity model object
  * @return {string} date status
  */
-export const getDateTimeStatusTextLabel = ( DateTimeEntity ) => {
+export const getDateTimeStatusTextLabel = (DateTimeEntity) => {
 	let dateStatus = '';
-	switch ( status( DateTimeEntity ) ) {
-		case DATETIME_STATUS_ID.SOLD_OUT :
-			dateStatus = __( 'sold out', 'event_espresso' );
+	switch (status(DateTimeEntity)) {
+		case DATETIME_STATUS_ID.SOLD_OUT:
+			dateStatus = __('sold out', 'event_espresso');
 			break;
-		case DATETIME_STATUS_ID.EXPIRED :
-			dateStatus = __( 'expired', 'event_espresso' );
+		case DATETIME_STATUS_ID.EXPIRED:
+			dateStatus = __('expired', 'event_espresso');
 			break;
-		case DATETIME_STATUS_ID.UPCOMING :
-			dateStatus = __( 'upcoming', 'event_espresso' );
+		case DATETIME_STATUS_ID.UPCOMING:
+			dateStatus = __('upcoming', 'event_espresso');
 			break;
-		case DATETIME_STATUS_ID.ACTIVE :
-			dateStatus = __( 'active', 'event_espresso' );
+		case DATETIME_STATUS_ID.ACTIVE:
+			dateStatus = __('active', 'event_espresso');
 			break;
-		case DATETIME_STATUS_ID.TRASHED :
-			dateStatus = __( 'archived', 'event_espresso' );
+		case DATETIME_STATUS_ID.TRASHED:
+			dateStatus = __('archived', 'event_espresso');
 			break;
-		case DATETIME_STATUS_ID.CANCELLED :
-			dateStatus = __( 'cancelled', 'event_espresso' );
+		case DATETIME_STATUS_ID.CANCELLED:
+			dateStatus = __('cancelled', 'event_espresso');
 			break;
-		case DATETIME_STATUS_ID.POSTPONED :
-			dateStatus = __( 'postponed', 'event_espresso' );
+		case DATETIME_STATUS_ID.POSTPONED:
+			dateStatus = __('postponed', 'event_espresso');
 			break;
-		case DATETIME_STATUS_ID.INACTIVE :
+		case DATETIME_STATUS_ID.INACTIVE:
 		default:
-			dateStatus = __( 'inactive', 'event_espresso' );
+			dateStatus = __('inactive', 'event_espresso');
 			break;
 	}
 	return dateStatus;
