@@ -2,7 +2,8 @@ import { __ } from '@wordpress/i18n';
 import { format, parseISO, parse } from 'date-fns';
 import { ProfileOutlined, CalendarOutlined, ControlOutlined } from '@ant-design/icons';
 
-import { EspressoFormProps, dateFormat, timeFormat } from '@application/ui/forms/espressoForm';
+import { defaultDateFormat, defaultTimeFormat } from '@appConstants/momentFormats';
+import { EspressoFormProps } from '@application/ui/forms/espressoForm';
 import useDatetimeItem from '../../../services/apollo/queries/datetimes/useDatetimeItem';
 import { EntityId } from '@edtrServices/apollo/types';
 import { PLUS_ONE_MONTH, PLUS_TWO_MONTHS } from '../../../../shared/constants/defaultDates';
@@ -34,7 +35,7 @@ const useDateFormConfig = (id: EntityId, config?: EspressoFormProps): DateFormCo
 		// convert "dateTime" object to proper "startDate" and "endDate"
 		const startDateStr = `${dateTime.startDate} ${dateTime.startTime}`;
 		const endDateStr = `${dateTime.endDate} ${dateTime.endTime}`;
-		const formatStr = `${dateFormat} ${timeFormat}`;
+		const formatStr = `${defaultDateFormat} ${defaultTimeFormat}`;
 
 		const startDate = parse(startDateStr, formatStr, new Date());
 		const endDate = parse(endDateStr, formatStr, new Date());
@@ -82,25 +83,25 @@ const useDateFormConfig = (id: EntityId, config?: EspressoFormProps): DateFormCo
 								name: 'startDate',
 								label: __('Start Date'),
 								fieldType: 'datepicker',
-								initialValue: format(startDate, dateFormat),
+								initialValue: format(startDate, defaultDateFormat),
 							},
 							{
 								name: 'startTime',
 								label: __('Start Time'),
 								fieldType: 'timepicker',
-								initialValue: format(startDate, timeFormat),
+								initialValue: format(startDate, defaultTimeFormat),
 							},
 							{
 								name: 'endDate',
 								label: __('End Date'),
 								fieldType: 'datepicker',
-								initialValue: format(endDate, dateFormat),
+								initialValue: format(endDate, defaultDateFormat),
 							},
 							{
 								name: 'endTime',
 								label: __('End Time'),
 								fieldType: 'timepicker',
-								initialValue: format(endDate, timeFormat),
+								initialValue: format(endDate, defaultTimeFormat),
 							},
 						],
 					},
