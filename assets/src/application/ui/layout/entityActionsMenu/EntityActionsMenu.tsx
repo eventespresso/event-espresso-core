@@ -2,8 +2,8 @@ import React from 'react';
 import classNames from 'classnames';
 
 export enum EntityActionsMenuLayout {
-	Horizontal = '--horizontal',
-	Vertical = '--vertical',
+	Horizontal = 'horizontal',
+	Vertical = 'vertical',
 }
 
 export interface EntityActionsMenuProps {
@@ -19,15 +19,14 @@ const EntityActionsMenu: React.FC<EntityActionsMenuProps> = ({
 	menuItems,
 	...menuProps
 }) => {
-	className = className ? `${className} ee-entity-actions-menu` : 'ee-entity-actions-menu';
-	const classes = classNames({
+	className = classNames({
 		[className]: className,
 		'ee-entity-actions-menu': true,
 		'ee-entity-actions-menu--horizontal': layout === EntityActionsMenuLayout.Horizontal,
 		'ee-entity-actions-menu--vertical': layout === EntityActionsMenuLayout.Vertical,
 	});
 	return (
-		<div className={classes} {...menuProps}>
+		<div className={className} {...menuProps}>
 			{menuItems}
 		</div>
 	);
