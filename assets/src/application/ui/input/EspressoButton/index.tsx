@@ -6,6 +6,9 @@ import Icon from '@ant-design/icons';
 import { EspressoButtonProps, EspressoButtonSize, EspressoButtonType } from './types';
 import { EspressoIcon, isEspressoIcon } from '../../display';
 
+// temporary!
+const Icon: React.FC<{ component?: React.ReactNode }> = () => null;
+
 /**
  * Button wrapper for adding styles
  */

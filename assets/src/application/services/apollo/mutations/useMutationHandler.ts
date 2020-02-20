@@ -87,7 +87,7 @@ const useMutationHandler: MutationHandler = (getMutationOptions) => {
 				const dismissMessage = getToasterMessage(mutationType);
 				const successMessage = `successfully ${getToasterMessage(mutationType, 'ed')}`;
 				toaster.dismiss(dismissMessage);
-				toaster.success(successMessage);
+				toaster.success({ message: successMessage });
 				const { data, errors } = response;
 				const error = errors && errors.length > 0 ? new ApolloError({ graphQLErrors: errors }) : undefined;
 
@@ -110,7 +110,7 @@ const useMutationHandler: MutationHandler = (getMutationOptions) => {
 				const dismissMessage = getToasterMessage(mutationType);
 				const errorMessage = `error ${getToasterMessage(mutationType)}`;
 				toaster.dismiss(dismissMessage);
-				toaster.error(errorMessage);
+				toaster.error({ message: errorMessage });
 
 				updateResult({
 					loading: false,

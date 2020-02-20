@@ -6,6 +6,8 @@ import useErrorToast from './useErrorToast';
 import useInfoToast from './useInfoToast';
 import useLoadingToast from './useLoadingToast';
 import useSuccessToast from './useSuccessToast';
+import useWarningToast from './useWarningToast';
+
 import { ToastContext } from '../context/ToastProvider';
 
 const useToaster = (): ToasterHook => {
@@ -18,6 +20,7 @@ const useToaster = (): ToasterHook => {
 		info: useInfoToast(toaster, hash),
 		loading: useLoadingToast(toaster, hash),
 		success: useSuccessToast(toaster, hash),
+		warning: useWarningToast(toaster, hash),
 	};
 };
 

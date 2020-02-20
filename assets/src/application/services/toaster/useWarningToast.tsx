@@ -2,10 +2,10 @@ import { useCallback } from 'react';
 import { notification } from 'antd';
 import { ArgsProps } from 'antd/lib/notification';
 
-import { InfoToast, InfoToastCallback } from './types';
+import { WarningToast, WarningToastCallback } from './types';
 
-const useInfoToast: InfoToast = (toaster, hash) =>
-	useCallback<InfoToastCallback>(
+const useWarningToast: WarningToast = (toaster, hash) =>
+	useCallback<WarningToastCallback>(
 		({ message = '', placement = 'bottomRight', ...rest }) => {
 			if (message) {
 				const args: ArgsProps = {
@@ -13,11 +13,10 @@ const useInfoToast: InfoToast = (toaster, hash) =>
 					message,
 					placement,
 				};
-
-				notification.info(args);
+				notification.warning(args);
 			}
 		},
 		[toaster, hash]
 	);
 
-export default useInfoToast;
+export default useWarningToast;

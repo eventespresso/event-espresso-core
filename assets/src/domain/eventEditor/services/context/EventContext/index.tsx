@@ -16,7 +16,7 @@ const EventEditorEventIdProvider: React.FC<ContextProviderProps> = ({ children }
 	const eventId = pathOr<number>(0, ['eeEditorData', 'event', 'dbId'], window);
 
 	if (!eventId) {
-		toaster.error('Event ID is empty or invalid.');
+		toaster.error({ message: 'Event ID is empty or invalid.' });
 	}
 	return eventId ? <Provider value={eventId}>{children}</Provider> : null;
 };

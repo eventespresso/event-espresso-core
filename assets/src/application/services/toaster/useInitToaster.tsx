@@ -12,7 +12,7 @@ const useInitToaster: ToasterInit = ({ loadingMessage, successMessage }): Toaste
 
 		if (!initialized) {
 			toaster.loading(loadingFlag, loadingMessage);
-			toaster.error(loadingError);
+			toaster.error({ message: loadingError });
 		}
 
 		useEffect((): void => {
@@ -25,11 +25,11 @@ const useInitToaster: ToasterInit = ({ loadingMessage, successMessage }): Toaste
 	return {
 		onCompleted: (): void => {
 			toaster.dismiss(loadingMessage);
-			toaster.success(successMessage);
+			toaster.success({ message: successMessage });
 		},
 		onError: (error: ApolloError): void => {
 			toaster.dismiss(loadingMessage);
-			toaster.error(error);
+			toaster.error({ message: error });
 		},
 		initializationNotices: useInitializationNotices,
 	};

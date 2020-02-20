@@ -1,7 +1,7 @@
 import React from 'react';
 import { Badge } from 'antd';
-import { BadgeProps } from 'antd/lib/badge';
 import { ClockCircleOutlined } from '@ant-design/icons';
+import { BadgeProps } from 'antd/lib/badge';
 
 import './style.scss';
 

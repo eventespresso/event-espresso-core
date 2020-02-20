@@ -19,12 +19,12 @@ const useFetchDatetimes = (): FetchEntitiesResult<DatetimesList> => {
 		onCompleted: (): void => {
 			setIsLoaded(TypeName.datetimes, true);
 			toaster.dismiss(toasterMessage);
-			toaster.success(`datetimes initialized`);
+			toaster.success({ message: 'datetimes initialized' });
 		},
 		onError: (error): void => {
 			setIsError(TypeName.datetimes, true);
 			toaster.dismiss(toasterMessage);
-			toaster.error(error);
+			toaster.error({ message: error });
 		},
 	});
 
@@ -34,7 +34,7 @@ const useFetchDatetimes = (): FetchEntitiesResult<DatetimesList> => {
 
 	if (!initialized) {
 		toaster.loading(loading, toasterMessage);
-		toaster.error(error);
+		toaster.error({ message: error });
 	}
 
 	useEffect(() => {
