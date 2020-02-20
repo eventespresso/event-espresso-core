@@ -1,6 +1,7 @@
 import React from 'react';
 import classNames from 'classnames';
-import { Button, Icon, Tooltip } from 'antd';
+import { Button, Tooltip } from 'antd';
+import Icon from 'antd/lib/icon';
 
 import { EspressoButtonProps, EspressoButtonSize, EspressoButtonType } from './types';
 import { EspressoIcon, isEspressoIcon } from '../../display';
@@ -12,15 +13,15 @@ const EspressoButton: React.FC<EspressoButtonProps> = ({
 	icon,
 	onClick,
 	tooltip,
-	htmlClass,
+	className,
 	buttonText,
 	size = EspressoButtonSize.DEFAULT,
 	buttonType = EspressoButtonType.DEFAULT,
 	tooltipProps = {},
 	...buttonProps
 }) => {
-	let classes = classNames({
-		[htmlClass]: htmlClass,
+	className = classNames({
+		[className]: className,
 		'esprs-button': true,
 		'esprs-btn-accent': buttonType === EspressoButtonType.ACCENT,
 		'esprs-btn-default': buttonType === EspressoButtonType.DEFAULT,
@@ -30,37 +31,36 @@ const EspressoButton: React.FC<EspressoButtonProps> = ({
 		'esprs-btn-small': size === EspressoButtonSize.SMALL,
 		'esprs-btn-big': size === EspressoButtonSize.BIG,
 		'esprs-btn-huge': size === EspressoButtonSize.HUGE,
+		'ant-btn-icon-only': !buttonText,
 		'ee-noIcon': !icon,
 	});
 	let eeButton: JSX.Element;
 	// check if icon prop is just an icon name (like "calendar") and if not, assume it is JSX
 	if (typeof icon === 'string') {
-		// custom EE icon
 		if (isEspressoIcon(icon)) {
-			const svgSize = buttonText ? size : 16;
-			const renderedIcon = () => <EspressoIcon icon={icon} svgSize={svgSize} />;
-			if (renderedIcon) {
-				classes += buttonText ? '' : ' ant-btn-icon-only';
+			// custom EE icon
+			const svgSize = buttonText ? size : 20;
+			const svgIcon = () => <EspressoIcon icon={icon} svgSize={svgSize} />;
+			if (svgIcon) {
 				eeButton = (
-					<Button {...buttonProps} onClick={onClick} className={classes}>
+					<Button {...buttonProps} onClick={onClick} className={className}>
 						{buttonText && buttonText}
-						<Icon component={renderedIcon} />
+						<Icon component={svgIcon} />
 					</Button>
 				);
 			}
 		} else {
 			// AntD icon
 			eeButton = (
-				<Button {...buttonProps} icon={icon} onClick={onClick} className={classes}>
+				<Button {...buttonProps} icon={icon} onClick={onClick} className={className}>
 					{buttonText && buttonText}
 				</Button>
 			);
 		}
 	} else {
 		// JSX element icon
-		classes += buttonText ? '' : ' ant-btn-icon-only';
 		eeButton = (
-			<Button {...buttonProps} onClick={onClick} className={classes}>
+			<Button {...buttonProps} onClick={onClick} className={className}>
 				{icon}
 				{buttonText && buttonText}
 			</Button>
