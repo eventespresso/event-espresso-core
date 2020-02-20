@@ -45,21 +45,21 @@ const useOptimisticResponse = (): OptimisticResCb => {
 			__typename: 'EspressoTicket',
 		};
 		// Get rid of null or undefined values
-		const filtereInput = filter(compose(not, isNil), input);
+		const filteredInput = filter(compose(not, isNil), input);
 		let data: TicketItem, ticket: Ticket;
 		switch (mutationType) {
 			case MutationType.Create:
 				espressoTicket = {
 					...espressoTicket,
 					...TICKET_DEFAULTS,
-					...filtereInput,
+					...filteredInput,
 					prices: null,
 				};
 				break;
 			case MutationType.Delete:
 				espressoTicket = {
 					...espressoTicket,
-					...filtereInput,
+					...filteredInput,
 				};
 				break;
 			case MutationType.Update:
@@ -78,7 +78,7 @@ const useOptimisticResponse = (): OptimisticResCb => {
 				espressoTicket = {
 					...espressoTicket,
 					...ticket,
-					...filtereInput,
+					...filteredInput,
 					prices: null,
 				};
 		}

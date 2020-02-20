@@ -41,20 +41,20 @@ const useOptimisticResponse = (): OptimisticResCb => {
 			__typename: 'EspressoDatetime',
 		};
 		// Get rid of null or undefined values
-		const filtereInput = filter(compose(not, isNil), input);
+		const filteredInput = filter(compose(not, isNil), input);
 		let data: DatetimeItem, datetime: Datetime;
 		switch (mutationType) {
 			case MutationType.Create:
 				espressoDatetime = {
 					...espressoDatetime,
 					...DATETIME_DEFAULTS,
-					...filtereInput,
+					...filteredInput,
 				};
 				break;
 			case MutationType.Delete:
 				espressoDatetime = {
 					...espressoDatetime,
-					...filtereInput,
+					...filteredInput,
 				};
 				break;
 			case MutationType.Update:
@@ -73,7 +73,7 @@ const useOptimisticResponse = (): OptimisticResCb => {
 				espressoDatetime = {
 					...espressoDatetime,
 					...datetime,
-					...filtereInput,
+					...filteredInput,
 				};
 		}
 
