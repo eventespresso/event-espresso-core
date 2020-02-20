@@ -2,9 +2,9 @@
  * External imports
  */
 import * as React from 'react';
-import Icon from 'antd/lib/icon';
-import EspressoButton from '../../../input/EspressoButton';
+import { AppstoreFilled, FilterOutlined, TableOutlined } from '@ant-design/icons';
 import { __ } from '@wordpress/i18n';
+import EspressoButton from '../../../input/EspressoButton';
 
 /**
  * Internal dependencies
@@ -39,7 +39,7 @@ const EntityListFilterBar = ({ listId, entityFilters = null }) => {
 				<EspressoButton
 					id={`ee-list-view-btn-${listId}`}
 					className={view === 'list' ? 'ee-filter-bar-filter ee-active-filters' : 'ee-filter-bar-filter'}
-					icon='table'
+					icon={<TableOutlined />}
 					tooltip={__('list view')}
 					onClick={setListView}
 				/>
@@ -65,7 +65,7 @@ const EntityListFilterBar = ({ listId, entityFilters = null }) => {
 				</label>
 				<EspressoButton
 					id={`ee-grid-view-btn-${listId}`}
-					icon={<Icon type='appstore' theme='filled' />}
+					icon={<AppstoreFilled />}
 					className={view === 'grid' ? 'ee-filter-bar-filter ee-active-filters' : 'ee-filter-bar-filter'}
 					tooltip={__('grid view')}
 					onClick={setGridView}
@@ -83,7 +83,7 @@ const EntityListFilterBar = ({ listId, entityFilters = null }) => {
 				</label>
 				<EspressoButton
 					id={`ee-grid-filter-btn-${listId}`}
-					icon='filter'
+					icon={<FilterOutlined />}
 					tooltip={__('show filters')}
 					onClick={toggleEntityFilters}
 					className={showEntityFilters ? 'ee-filter-bar-filter ee-active-filters' : 'ee-filter-bar-filter'}

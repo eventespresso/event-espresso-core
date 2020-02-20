@@ -1,4 +1,5 @@
 import React, { useCallback } from 'react';
+import { TagsOutlined } from '@ant-design/icons';
 import { __ } from '@wordpress/i18n';
 
 import EditDateButton from '../dateCard/EditDateButton';
@@ -23,7 +24,7 @@ const useDatesActionMenuHandler = (): DatesSubscriptionCallback => {
 
 			registerMenuItem('assignTickets', () => (
 				<EspressoButton
-					icon='tags'
+					icon={<TagsOutlined />}
 					tooltip={__('assign tickets')}
 					tooltipProps={{ placement: 'right' }}
 					onClick={() => console.log('You clicked TAM')}

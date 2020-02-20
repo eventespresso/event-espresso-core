@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { DeleteOutlined } from '@ant-design/icons';
 import { __ } from '@wordpress/i18n';
 
 import { EspressoButton } from '@application/ui/input';
@@ -11,7 +12,7 @@ const DeleteDateButton: React.FC<ListItemProps> = ({ id, ...rest }) => {
 
 	return (
 		<EspressoButton
-			icon='delete'
+			icon={<DeleteOutlined />}
 			tooltip={__('delete datetime')}
 			tooltipProps={{ placement: 'right' }}
 			onClick={(): MutationResult => deleteEntity({ id })}

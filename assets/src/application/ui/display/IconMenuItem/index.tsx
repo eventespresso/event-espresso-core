@@ -1,6 +1,7 @@
 import React from 'react';
-import { Badge, Icon } from 'antd';
+import { Badge } from 'antd';
 import { BadgeProps } from 'antd/lib/badge';
+import { ClockCircleOutlined } from '@ant-design/icons';
 
 import './style.scss';
 
@@ -11,7 +12,7 @@ interface IconMenuItemProps extends BadgeProps {
 }
 
 const IconMenuItem = ({ children, showClock, ...props }: IconMenuItemProps) => {
-	const count = showClock ? <Icon type='clock-circle' style={{ color: '#f5222d' }} /> : props.count;
+	const count = showClock ? <ClockCircleOutlined style={{ color: '#f5222d' }} /> : props.count;
 	const id = props.id ? `ee-icon-menu-item-${props.id}` : 'ee-icon-menu-item';
 
 	return (
