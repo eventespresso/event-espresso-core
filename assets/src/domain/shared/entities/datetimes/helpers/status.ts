@@ -1,19 +1,23 @@
 import { Datetime } from '@edtrServices/apollo/types';
+import isTrashed from '../../../services/predicates/isTrashed';
+import isExpired from '../predicates/isExpired';
 
-const status = (DateTimeEntity) => {
-	if (isTrashed(DateTimeEntity)) {
+import { DATETIME_STATUS_ID } from '../constants';
+
+const status = (date: Datetime): string => {
+	if (isTrashed(date)) {
 		return DATETIME_STATUS_ID.TRASHED;
 	}
-	if (isExpired(DateTimeEntity)) {
+	if (isExpired(date)) {
 		return DATETIME_STATUS_ID.EXPIRED;
 	}
-	if (isSoldOut(DateTimeEntity)) {
+	if (isSoldOut(date)) {
 		return DATETIME_STATUS_ID.SOLD_OUT;
 	}
-	if (isUpcoming(DateTimeEntity)) {
+	if (isUpcoming(date)) {
 		return DATETIME_STATUS_ID.UPCOMING;
 	}
-	if (isActive(DateTimeEntity)) {
+	if (isActive(date)) {
 		return DATETIME_STATUS_ID.ACTIVE;
 	}
 	// PLZ SEE NOTE ABOVE

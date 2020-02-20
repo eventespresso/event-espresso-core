@@ -134,15 +134,6 @@ export const isTrashed = (DateTimeEntity) => {
 /**
  * @function
  * @param {Object} DateTimeEntity model object
- * @return {string}    CSS class for the background color
- */
-export const getBackgroundColorClass = (DateTimeEntity) => {
-	return `ee-status-background-color-${status(DateTimeEntity)}`;
-};
-
-/**
- * @function
- * @param {Object} DateTimeEntity model object
  * @return {string} date status
  */
 export const getDateTimeStatusTextLabel = (DateTimeEntity) => {
