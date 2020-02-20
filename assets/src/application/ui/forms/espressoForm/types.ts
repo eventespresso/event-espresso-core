@@ -92,15 +92,15 @@ export interface FormRendererProps extends FormRenderProps, AdditionalFormProps 
 
 export interface FieldRendererProps<FieldValue = any>
 	extends FieldRenderProps<FieldValue>,
-		FieldProps<string, FieldValue> {}
+		FieldProps<AnyObject, FieldValue> {}
 
 export interface RepeatableRendererProps<FieldValue = any>
 	extends FieldArrayProps<FieldValue, any>,
-		AdditionalFieldProps<string> {}
+		AdditionalFieldProps<AnyObject> {}
 
 export interface FieldProps<FormValues = AnyObject, FieldValue = any>
 	extends AdditionalFieldProps<FormValues>,
-		Omit<RFFFieldProps<FieldValue, FieldRendererProps>, 'name'> {
+		RFFFieldProps<FieldValue, FieldRendererProps> {
 	name: string & keyof FormValues;
 }
 
@@ -121,7 +121,7 @@ export interface RenderSectionsProps {
 	sections: SectionList;
 }
 
-export interface RenderFieldProps extends FieldProps<string> {}
+export interface RenderFieldProps extends FieldProps<AnyObject> {}
 
 export interface SectionProps<FormValues = AnyObject> {
 	name: string;
