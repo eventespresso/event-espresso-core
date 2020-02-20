@@ -1,14 +1,14 @@
 import React from 'react';
 import { parse } from 'date-fns';
-import { DatePicker as CustomDatePicker } from '../components';
-import { dateFormat } from '../constants';
+import DatePickerBase from './DatePickerBase';
+import { defaultDateFormat } from '../../../constants/momentFormats';
 
 const DatePicker = ({ input, ...rest }) => {
 	return (
-		<CustomDatePicker
+		<DatePickerBase
 			{...input}
 			{...rest}
-			value={input.value ? parse(input.value, dateFormat, new Date()) : input.value}
+			value={input.value ? parse(input.value, defaultDateFormat, new Date()) : input.value}
 			onChange={(_, dateString) => input.onChange(dateString)}
 		/>
 	);
