@@ -1,10 +1,8 @@
-import React, { useCallback } from 'react';
+import { useCallback } from 'react';
 import { __ } from '@wordpress/i18n';
 import { FormProps } from 'react-final-form';
 
-import DateForm from './dateForm/DateForm';
 import useDateFormConfig from './dateForm/useDateFormConfig';
-import { DateItemFormProps } from './types';
 import { useEditorModal, EditorModal, ModalClose } from '@appLayout/editorModal';
 import { useDatetimeMutator, CreateDatetimeInput } from '@edtrServices/apollo/mutations';
 import useEvent from '@edtrServices/apollo/queries/events/useEvent';

@@ -1,5 +1,5 @@
 import { __ } from '@wordpress/i18n';
-import { format, parseISO, parse } from 'date-fns';
+import { format, parseISO } from 'date-fns';
 import { ProfileOutlined, CalendarOutlined, ControlOutlined } from '@ant-design/icons';
 
 import { defaultDateFormat, defaultTimeFormat } from '@appConstants/momentFormats';
@@ -7,17 +7,14 @@ import { EspressoFormProps } from '@application/ui/forms/espressoForm';
 import useDatetimeItem from '../../../services/apollo/queries/datetimes/useDatetimeItem';
 import { EntityId } from '@edtrServices/apollo/types';
 import { PLUS_ONE_MONTH, PLUS_TWO_MONTHS } from '../../../../shared/constants/defaultDates';
+import { processDateAndTime, DateAndTime } from '../../../../shared/services/utils/processDateAndTime';
+import { DatetimeBaseInput } from '@edtrServices/apollo/mutations';
 
-interface DateFormShape {
+interface DateFormShape extends DatetimeBaseInput, DateAndTime {
 	name?: string;
 	description?: string;
 	capacity?: number;
-	dateTime?: {
-		startDate: string;
-		startTime: string;
-		endDate: string;
-		endTime: string;
-	};
+	dateTime?: DateAndTime;
 	isTrashed?: boolean;
 }
 
@@ -33,12 +30,7 @@ const useDateFormConfig = (id: EntityId, config?: EspressoFormProps): DateFormCo
 
 	const onSubmitFrom: DateFormConfig['onSubmit'] = ({ dateTime, ...rest }, form, ...restParams) => {
 		// convert "dateTime" object to proper "startDate" and "endDate"
-		const startDateStr = `${dateTime.startDate} ${dateTime.startTime}`;
-		const endDateStr = `${dateTime.endDate} ${dateTime.endTime}`;
-		const formatStr = `${defaultDateFormat} ${defaultTimeFormat}`;
-
-		const startDate = parse(startDateStr, formatStr, new Date());
-		const endDate = parse(endDateStr, formatStr, new Date());
+		const { startDate, endDate } = processDateAndTime(dateTime);
 
 		const values = { ...rest, startDate, endDate };
 
