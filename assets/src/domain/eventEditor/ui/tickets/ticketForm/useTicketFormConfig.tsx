@@ -4,7 +4,7 @@ import { format, parseISO } from 'date-fns';
 import { ProfileOutlined, CalendarOutlined, ControlOutlined } from '@ant-design/icons';
 import { pick } from 'ramda';
 
-import { defaultDateFormat, defaultTimeFormat } from '@appConstants/momentFormats';
+import { CONVERT_TO_MOMENT_DATE_FORMAT, CONVERT_TO_MOMENT_TIME_FORMAT } from '@appConstants/dateFnsFormats';
 import { EspressoFormProps } from '@application/ui/forms/espressoForm';
 import useTicketItem from '../../../services/apollo/queries/tickets/useTicketItem';
 import { EntityId, Ticket } from '@edtrServices/apollo/types';
@@ -63,10 +63,10 @@ const useTicketFormConfig = (id: EntityId, config?: EspressoFormProps): TicketFo
 	const initialValues: TicketFormShape = {
 		...pick<Omit<Partial<Ticket>, 'prices'>, keyof Ticket>(FIELD_NAMES, restProps),
 		dateTime: {
-			startDate: format(startDate, defaultDateFormat),
-			startTime: format(startDate, defaultTimeFormat),
-			endDate: format(endDate, defaultDateFormat),
-			endTime: format(endDate, defaultTimeFormat),
+			startDate: format(startDate, CONVERT_TO_MOMENT_DATE_FORMAT),
+			startTime: format(startDate, CONVERT_TO_MOMENT_TIME_FORMAT),
+			endDate: format(endDate, CONVERT_TO_MOMENT_DATE_FORMAT),
+			endTime: format(endDate, CONVERT_TO_MOMENT_TIME_FORMAT),
 		},
 	};
 

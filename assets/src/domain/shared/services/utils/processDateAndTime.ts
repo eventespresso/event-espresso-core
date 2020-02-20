@@ -1,4 +1,4 @@
-import { defaultDateFormat, defaultTimeFormat } from '@appConstants/momentFormats';
+import { CONVERT_TO_MOMENT_DATE_FORMAT, CONVERT_TO_MOMENT_TIME_FORMAT } from '@appConstants/dateFnsFormats';
 import { parse } from 'date-fns';
 
 export interface DateAndTime {
@@ -17,7 +17,7 @@ type ProcessDateAndTime = (dateTime: DateAndTime, backupDate?: Date) => StartAnd
 
 export const processDateAndTime: ProcessDateAndTime = (dateTime, backupDate = new Date()) => {
 	let startDate: Date, endDate: Date;
-	const formatStr = `${defaultDateFormat} ${defaultTimeFormat}`;
+	const formatStr = `${CONVERT_TO_MOMENT_DATE_FORMAT} ${CONVERT_TO_MOMENT_TIME_FORMAT}`;
 
 	if (dateTime.startDate && dateTime.startTime) {
 		const startDateStr = `${dateTime.startDate} ${dateTime.startTime}`;

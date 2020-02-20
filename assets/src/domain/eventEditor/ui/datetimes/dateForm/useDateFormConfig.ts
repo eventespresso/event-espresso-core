@@ -3,7 +3,7 @@ import { format, parseISO } from 'date-fns';
 import { ProfileOutlined, CalendarOutlined, ControlOutlined } from '@ant-design/icons';
 import { pick } from 'ramda';
 
-import { defaultDateFormat, defaultTimeFormat } from '@appConstants/momentFormats';
+import { CONVERT_TO_MOMENT_DATE_FORMAT, CONVERT_TO_MOMENT_TIME_FORMAT } from '@appConstants/dateFnsFormats';
 import { EspressoFormProps } from '@application/ui/forms/espressoForm';
 import useDatetimeItem from '../../../services/apollo/queries/datetimes/useDatetimeItem';
 import { EntityId, Datetime } from '@edtrServices/apollo/types';
@@ -43,10 +43,10 @@ const useDateFormConfig = (id: EntityId, config?: EspressoFormProps): DateFormCo
 	const initialValues: DateFormShape = {
 		...pick<Partial<Datetime>, keyof Datetime>(FIELD_NAMES, restProps),
 		dateTime: {
-			startDate: format(startDate, defaultDateFormat),
-			startTime: format(startDate, defaultTimeFormat),
-			endDate: format(endDate, defaultDateFormat),
-			endTime: format(endDate, defaultTimeFormat),
+			startDate: format(startDate, CONVERT_TO_MOMENT_DATE_FORMAT),
+			startTime: format(startDate, CONVERT_TO_MOMENT_TIME_FORMAT),
+			endDate: format(endDate, CONVERT_TO_MOMENT_DATE_FORMAT),
+			endTime: format(endDate, CONVERT_TO_MOMENT_TIME_FORMAT),
 		},
 	};
 
