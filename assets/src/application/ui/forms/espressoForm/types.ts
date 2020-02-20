@@ -119,7 +119,8 @@ export interface RenderFieldProps extends FieldProps {}
 
 export interface SectionProps {
 	name: string;
-
+	title?: string | React.ReactNode;
+	icon?: React.ComponentType<{ className: string }>;
 	fields: FieldList;
 	/**
 	 * If true, each field inside the section
