@@ -1,6 +1,7 @@
 import React, { CSSProperties } from 'react';
 import { __ } from '@wordpress/i18n';
 import { ButtonProps } from 'antd/lib/button';
+import { SaveOutlined } from '@ant-design/icons';
 import { Modal } from 'antd';
 
 import { FormModalFormProps } from './types';
@@ -23,7 +24,7 @@ const FormModalForm: React.FC<FormModalFormProps> = ({ form, submitting, pristin
 	const submitButton: ButtonProps = {
 		disabled: submitting || pristine,
 		htmlType: 'submit',
-		icon: 'save',
+		icon: <SaveOutlined />,
 		onClick: (click) => {
 			click.preventDefault();
 			form.submit();

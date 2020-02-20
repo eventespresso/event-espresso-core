@@ -16,8 +16,9 @@ const RenderSection: React.FC<SectionProps> = ({
 		<div className='section-wrapper'>
 			<div className='section-heading'>
 				<h3>
-					{<Icon style={{ marginRight: '1em' }} />}
 					{title}
+					<br />
+					{<Icon className='section-heading-icon' />}
 				</h3>
 			</div>
 			<div className='section-body' style={{}}>
