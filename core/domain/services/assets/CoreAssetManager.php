@@ -391,9 +391,9 @@ class CoreAssetManager extends AssetManager
                 );
             }
         }
-        $this->addCss(self::CSS_HANDLE_CORE_CSS_DEFAULT, ['dashicons']);
-        $this->addCss(self::CSS_HANDLE_COMPONENTS, [self::CSS_HANDLE_CORE_CSS_DEFAULT]);
-        $this->addCss(self::CSS_HANDLE_HOCS);
+    //     $this->addCss(self::CSS_HANDLE_CORE_CSS_DEFAULT, ['dashicons']);
+    //     $this->addCss(self::CSS_HANDLE_COMPONENTS, [self::CSS_HANDLE_CORE_CSS_DEFAULT]);
+    //     $this->addCss(self::CSS_HANDLE_HOCS);
     }
 
 

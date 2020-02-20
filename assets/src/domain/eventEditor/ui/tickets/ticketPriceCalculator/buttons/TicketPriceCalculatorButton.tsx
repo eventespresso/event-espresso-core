@@ -1,5 +1,6 @@
 import React from 'react';
 import { EspressoButton } from '@application/ui/input';
+import { __ } from '@wordpress/i18n';
 
 import { TpcButtonDataProps } from '../types';
 import { useEditorModal } from '../../../../../../application/ui/layout/editorModal';
@@ -13,7 +14,15 @@ const TicketPriceCalculatorButton: React.FC<TpcButtonDataProps> = ({ ticketId, .
 			entityId: ticketId,
 		});
 	};
-	return <EspressoButton icon='calculator' onClick={onClick} {...buttonProps} />;
+	return (
+		<EspressoButton
+			icon='calculator'
+			onClick={onClick}
+			tooltip={__('ticket price calculator')}
+			tooltipProps={{ placement: 'left' }}
+			{...buttonProps}
+		/>
+	);
 };
 
 export default TicketPriceCalculatorButton;

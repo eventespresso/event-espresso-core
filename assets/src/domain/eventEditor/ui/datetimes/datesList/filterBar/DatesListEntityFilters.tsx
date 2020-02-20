@@ -15,7 +15,6 @@ import ShowDatesControl from './controls/ShowDatesControl';
  * @param {string} displayDates
  * @return {Object} EditorDatesListView with added DateListFilters
  */
-
 const DatesListEntityFilters: React.FC = () => {
 	const {
 		datesSortedBy,

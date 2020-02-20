@@ -1,5 +1,6 @@
 import React from 'react';
-import { Icon, Tag } from 'antd';
+import { Tag } from 'antd';
+import Icon from '@ant-design/icons';
 import classNames from 'classnames';
 import { format, isValid } from 'date-fns';
 

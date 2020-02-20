@@ -1,41 +1,29 @@
-// @ts-nocheck
-import React, { CSSProperties } from 'react';
+import React from 'react';
 import { Typography } from 'antd';
 import { __ } from '@wordpress/i18n';
 
+import { CalendarDateRange } from '@appCalendars/dateDisplay';
 import TicketActionsMenu from './TicketActionsMenu';
 import TicketDetails from './TicketDetails';
 import useTicketItem from '@edtrServices/apollo/queries/tickets/useTicketItem';
 import TicketProvider from '@edtrServices/context/TicketContext';
-import { CurrencyInput } from '@appInputs';
+import CurrencyInput from '@appInputs/CurrencyInput';
 import useRelations from '@appServices/apollo/relations/useRelations';
-import EntityPaperFrame from '@appLayout/EntityPaperFrame';
+import EntityCard from '@appLayout/EntityCard';
 import DatetimeIdTag from '../../datetimes/DatetimeIdTag';
 import { ListItemProps } from '../../../interfaces/types';
 import { priceStyle } from './styles';
 import { useTicketMutator } from '@edtrServices/apollo/mutations';
 import { InlineEditHeading, InlineEditTextArea } from '@appInputs/InlineEditInput';
+import statusBgColorClass from '../../../../shared/entities/tickets/helpers/statusBgColorClass';
 
-const menuWrapperStype: CSSProperties = {
-	alignItems: 'stretch',
+const menuStype: React.CSSProperties = {
+	alignContent: 'flex-start',
+	alignItems: 'center',
 	boxSizing: 'border-box',
-	flex: '0, 0, 3rem',
-	padding: '.5rem',
-};
-const menuStype: CSSProperties = {
 	display: 'flex',
-	flexWrap: 'wrap',
-	position: 'absolute',
-	right: '0.5em',
-	flexDirection: 'column',
-	top: '0.5em',
-};
-
-const btnStyle: CSSProperties = {
-	background: 'var(--ee-background-color)',
-	border: '1px solid var(--ee-color-grey-8)',
-	color: 'var(--ee-color-black)',
-	margin: '0 0 .5rem',
+	flexFlow: 'column nowrap',
+	height: '100%',
 };
 
 const TicketCard: React.FC<ListItemProps> = ({ id }) => {
@@ -48,56 +36,66 @@ const TicketCard: React.FC<ListItemProps> = ({ id }) => {
 		entityId: id,
 		relation: 'datetimes',
 	});
+
+	const bgClass = statusBgColorClass(ticket);
+
 	return ticket ? (
 		<TicketProvider id={ticket.id}>
-			<EntityPaperFrame entity={ticket}>
-				<div>
-					<InlineEditHeading
-						onChange={(name: string): void => {
-							if (name !== ticket.name) {
-								updateEntity({ name });
-							}
-						}}
-					>
-						{ticket.name ? ticket.name : __('Edit title...')}
-					</InlineEditHeading>
-				</div>
-				<div>
-					<InlineEditTextArea
-						onChange={(description: string): void => {
-							if (description !== ticket.description) {
-								updateEntity({ description });
-							}
-						}}
-					>
-						{ticket.description ? ticket.description : __('Edit description...')}
-					</InlineEditTextArea>
-				</div>
-				<div>
-					<Typography.Title level={4} style={priceStyle}>
-						<CurrencyInput
-							id={ticket.id}
-							amount={parseFloat(ticket.price)}
-							placeholder={__('set price...')}
-							onChange={({ amount: price }: any): void => {
-								if (price !== ticket.price) {
-									updateEntity({ price });
+			<EntityCard
+				entity={ticket}
+				actionsMenu={<TicketActionsMenu entity={ticket} style={menuStype} />}
+				sidebar={
+					<CalendarDateRange
+						headerText={__('sales start')}
+						className={bgClass}
+						startDate={ticket.startDate}
+						endDate={ticket.endDate}
+					/>
+				}
+				details={
+					<>
+						<InlineEditHeading
+							onChange={(name: string): void => {
+								if (name !== ticket.name) {
+									updateEntity({ name });
 								}
 							}}
-						/>
-					</Typography.Title>
-				</div>
-				<div>
-					{__('Related Dates:')}{' '}
-					{relatedDates.filter(Boolean).map((datetimeId) => (
-						<DatetimeIdTag key={datetimeId} id={datetimeId} />
-					))}
-				</div>
-				<div style={menuWrapperStype}>
-					<TicketActionsMenu entity={ticket} menuItemProps={{ style: btnStyle }} style={menuStype} />
-				</div>
-				<TicketDetails ticket={ticket} updateTicket={updateEntity} />
-			</EntityPaperFrame>
+						>
+							{ticket.name ? ticket.name : __('Edit title...')}
+						</InlineEditHeading>
+						<InlineEditTextArea
+							onChange={(description: string): void => {
+								if (description !== ticket.description) {
+									updateEntity({ description });
+								}
+							}}
+						>
+							{ticket.description ? ticket.description : __('Edit description...')}
+						</InlineEditTextArea>
+						<Typography.Title level={4} style={priceStyle}>
+							<CurrencyInput
+								id={ticket.id}
+								amount={ticket.price}
+								placeholder={__('set price...')}
+								onChange={({ amount: price }: any): void => {
+									price = parseFloat(price);
+									if (price !== ticket.price) {
+										updateEntity({ price });
+									}
+								}}
+							/>
+						</Typography.Title>
+						<div>
+							{__('Related Dates:')}{' '}
+							{relatedDates.filter(Boolean).map((datetimeId) => (
+								<DatetimeIdTag key={datetimeId} id={datetimeId} />
+							))}
+						</div>
+						<TicketDetails ticket={ticket} updateTicket={updateEntity} />
+					</>
+				}
+				reverse
+			/>
 		</TicketProvider>
 	) : null;
 };

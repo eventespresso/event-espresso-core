@@ -13,10 +13,8 @@ import {
 
 const NAMESPACE = 'espresso';
 
-const useEntityActions = <Domain extends string, EntityType extends string, MenuKey extends string>(
-	domain: Domain
-): EntityActions<EntityType, MenuKey> => {
-	const subscribe: SubscribeFn<EntityType, MenuKey> = (callback, options): VoidFunction => {
+const useEntityActions = <Domain extends string>(domain: Domain): EntityActions => {
+	const subscribe: SubscribeFn = (callback, options): VoidFunction => {
 		// runtime check
 		if (typeof callback !== 'function') {
 			return;
@@ -32,27 +30,24 @@ const useEntityActions = <Domain extends string, EntityType extends string, Menu
 		};
 	};
 
-	const getSubscriptions = (options: SubscriptionsOptions<EntityType> = {}): Subscriptions<EntityType, MenuKey> => {
+	const getSubscriptions = (options: SubscriptionsOptions = {}): Subscriptions => {
 		const { entityType } = options;
-		const allSubscriptions = pathOr<Subscriptions<EntityType, MenuKey>>(
+		const allSubscriptions = pathOr<Subscriptions>(
 			{},
 			[domain, 'entityActions', 'subscriptions'],
 			window[NAMESPACE]
 		);
 		if (entityType) {
-			return filter<Subscription<EntityType, MenuKey>>(
-				({ options }) => entityType === options.entityType,
-				allSubscriptions
-			);
+			return filter<Subscription>(({ options }) => entityType === options.entityType, allSubscriptions);
 		}
 		return allSubscriptions;
 	};
 
-	const setSubscriptions = (subscriptions: Subscriptions<EntityType, MenuKey>): void => {
+	const setSubscriptions = (subscriptions: Subscriptions): void => {
 		updateEntityActions('subscriptions', subscriptions);
 	};
 
-	const updateSubscription = ({ id, callback, options, action }: UpdateSubscriptionProps<EntityType, MenuKey>) => {
+	const updateSubscription = ({ id, callback, options, action }: UpdateSubscriptionProps) => {
 		const subscriptions = getSubscriptions();
 
 		const newSubscriptions =
@@ -61,7 +56,7 @@ const useEntityActions = <Domain extends string, EntityType extends string, Menu
 		setSubscriptions(newSubscriptions);
 	};
 
-	const updateEntityActions = (key: keyof EntityActionsData<EntityType, MenuKey>, value: any) => {
+	const updateEntityActions = (key: keyof EntityActionsData, value: any) => {
 		window[NAMESPACE] = assocPath([domain, 'entityActions', key], value, window[NAMESPACE]);
 	};
 

@@ -64,6 +64,6 @@ class EspressoEditorAssetManager extends AssetManager
     private function registerStyleSheets()
     {
         $this->addCss(self::CSS_HANDLE_EDITOR);
-        $this->addCss(self::CSS_HANDLE_EDITOR_PROTOTYPE, [self::CSS_HANDLE_EDITOR]);
+        // $this->addCss(self::CSS_HANDLE_EDITOR_PROTOTYPE, [self::CSS_HANDLE_EDITOR]);
     }
 }

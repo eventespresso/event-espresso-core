@@ -5,15 +5,12 @@ import { EntityActionsManager, EntityMenuItems, MenuRegistry } from './types';
 
 let menuRegistry: MenuRegistry = {};
 
-const useEntityActionsManager = <EntityType extends string, MenuKey extends string>(
-	entityType: EntityType,
-	entityId: string
-): EntityActionsManager<MenuKey> => {
+const useEntityActionsManager = (entityType: string, entityId: string): EntityActionsManager => {
 	const [menuItems, setMenuItems] = useState([]);
 
-	const getMapKey = (itemKey: MenuKey) => `${entityType}:${entityId}:${itemKey}`;
+	const getMapKey = (itemKey: string) => `${entityType}:${entityId}:${itemKey}`;
 
-	const registerMenuItem = (key: MenuKey, component: React.ReactType): void => {
+	const registerMenuItem = (key: string, component: React.ReactType): void => {
 		const mapKey = getMapKey(key);
 		if (!menuItems.includes(mapKey)) {
 			setMenuItems((items) => [...items, mapKey]);
@@ -23,7 +20,7 @@ const useEntityActionsManager = <EntityType extends string, MenuKey extends stri
 		}
 	};
 
-	const unRegisterMenuItem = (key: MenuKey): void => {
+	const unRegisterMenuItem = (key: string): void => {
 		const mapKey = getMapKey(key);
 		if (menuItems.includes(mapKey)) {
 			setMenuItems(menuItems.filter((_key_) => mapKey !== _key_));
@@ -31,7 +28,7 @@ const useEntityActionsManager = <EntityType extends string, MenuKey extends stri
 		delete menuRegistry[mapKey];
 	};
 
-	const getMenuItems = () => pathOr<EntityMenuItems<MenuKey>>({}, [entityType, entityId], menuRegistry);
+	const getMenuItems = () => pathOr<EntityMenuItems>({}, [entityType, entityId], menuRegistry);
 
 	return { registerMenuItem, unRegisterMenuItem, getMenuItems };
 };

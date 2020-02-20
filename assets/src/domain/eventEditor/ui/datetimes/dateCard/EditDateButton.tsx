@@ -1,4 +1,6 @@
 import React from 'react';
+import { EditOutlined } from '@ant-design/icons';
+import { __ } from '@wordpress/i18n';
 
 import { EspressoButton } from '@application/ui/input';
 import { EditItemButtonProps } from '../../../interfaces/types';
@@ -16,7 +18,15 @@ const EditDateButton: React.FC<EditItemButtonProps> = ({ ...rest }) => {
 			entityId,
 		});
 
-	return <EspressoButton icon='edit' onClick={onClick} {...rest} />;
+	return (
+		<EspressoButton
+			icon={<EditOutlined />}
+			tooltip={__('edit datetime')}
+			tooltipProps={{ placement: 'right' }}
+			onClick={onClick}
+			{...rest}
+		/>
+	);
 };
 
 export default EditDateButton;

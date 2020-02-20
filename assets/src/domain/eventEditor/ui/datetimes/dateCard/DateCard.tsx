@@ -17,52 +17,10 @@ import statusBgColorClass from '../../../../shared/entities/datetimes/helpers/st
 
 import useRelations from '@appServices/apollo/relations/useRelations';
 import { useStatus, TypeName } from '@appServices/apollo/status';
-import EntityPaperFrame from '@appLayout/EntityPaperFrame';
+import EntityCard from '@appLayout/EntityCard';
 import { ListItemProps } from '@edtrInterfaces';
 import { useDatetimeMutator } from '@edtrServices/apollo/mutations';
 import { InlineEditHeading, InlineEditTextArea } from '@appInputs/InlineEditInput';
-
-
-const cardStype: CSSProperties = {
-	alignItems: 'stretch',
-	boxSizing: 'border-box',
-	display: 'flex',
-	flexFlow: 'row nowrap', // change row to row-reverse for tickets
-	height: '100%',
-	padding: '0',
-	justifyContent: 'space-between',
-};
-
-const dateStype: CSSProperties = {
-	alignItems: 'stretch',
-	boxSizing: 'border-box',
-	padding: 0,
-	width: '25%',
-};
-
-const detailsStype: CSSProperties = {
-	boxSizing: 'border-box',
-	padding: '.5rem 1rem',
-	maxWidth: 'calc(75% - 3rem)',
-};
-
-const detailsWrapperStype: CSSProperties = {
-	alignContent: 'space-between',
-	alignItems: 'center',
-	boxSizing: 'border-box',
-	display: 'flex',
-	flexFlow: 'column nowrap',
-	height: '100%',
-	justifyContent: 'space-between',
-	width: '100%',
-};
-
-const menuWrapperStype: CSSProperties = {
-	alignItems: 'stretch',
-	boxSizing: 'border-box',
-	flex: '0, 0, 3rem',
-	padding: '0.25rem',
-};
 
 const menuStype: CSSProperties = {
 	alignContent: 'flex-start',
@@ -71,13 +29,6 @@ const menuStype: CSSProperties = {
 	display: 'flex',
 	flexFlow: 'column nowrap',
 	height: '100%',
-};
-
-const btnStyle: CSSProperties = {
-	background: 'var(--ee-background-color)',
-	border: '1px solid var(--ee-color-grey-8)',
-	color: 'var(--ee-color-black)',
-	margin: '0.25rem',
 };
 
 const hdrStyle: CSSProperties = {
@@ -132,55 +83,51 @@ const DateCard: React.FC<ListItemProps> = ({ id }) => {
 
 	return date ? (
 		<DatetimeProvider id={date.id}>
-			<EntityPaperFrame entity={date}>
-				<div style={cardStype}>
-					<div style={dateStype}>
-						<CalendarDateRange
-							headerText={__('starts')}
-							className={bgClass}
-							startDate={range[0]}
-							endDate={range[1]}
-						/>
-					</div>
-					<div style={detailsStype}>
-						<div style={detailsWrapperStype}>
-							{/* the following will be replaced by the date entity details */}
-							<InlineEditHeading
-								style={hdrStyle}
-								className={'ee-focus-priority-2'}
-								onChange={(name: string): void => {
-									if (name !== date.name) {
-										updateEntity({ name });
-									}
-								}}
-								ellipsis={{ rows: 2 }}
-							>
-								{date.name ? date.name : __('Edit title...')}
-							</InlineEditHeading>
-							<InlineEditTextArea
-								style={textStyle}
-								onChange={(description: string): void => {
-									if (description !== date.description) {
-										updateEntity({ description });
-									}
-								}}
-								ellipsis={{ rows: 2, expandable: true }}
-							>
-								{date.description ? date.description : __('Edit description...')}
-							</InlineEditTextArea>
-							{/* the following will be replaced by the entity details panel */}
-							<div>
-								{__('Related Tickets:') + ' '}
-								{relatedTicketTags}
-							</div>
-							<DateDetails datetime={date} updateDatetime={updateEntity} />
+			<EntityCard
+				entity={date}
+				actionsMenu={<DateActionsMenu entity={date} style={menuStype} />}
+				sidebar={
+					<CalendarDateRange
+						headerText={__('starts')}
+						className={bgClass}
+						startDate={range[0]}
+						endDate={range[1]}
+					/>
+				}
+				details={
+					<>
+						<InlineEditHeading
+							style={hdrStyle}
+							className={'ee-focus-priority-2'}
+							onChange={(name: string): void => {
+								if (name !== date.name) {
+									updateEntity({ name });
+								}
+							}}
+							ellipsis={{ rows: 2 }}
+						>
+							{date.name ? date.name : __('Edit title...')}
+						</InlineEditHeading>
+						<InlineEditTextArea
+							style={textStyle}
+							onChange={(description: string): void => {
+								if (description !== date.description) {
+									updateEntity({ description });
+								}
+							}}
+							ellipsis={{ rows: 2, expandable: true }}
+						>
+							{date.description ? date.description : __('Edit description...')}
+						</InlineEditTextArea>
+						{/* the following will be replaced by the entity details panel */}
+						<div>
+							{__('Related Tickets:') + ' '}
+							{relatedTicketTags}
 						</div>
-					</div>
-					<div style={menuWrapperStype}>
-						<DateActionsMenu entity={date} menuItemProps={{ style: btnStyle }} style={menuStype} />
-					</div>
-				</div>
-			</EntityPaperFrame>
+						<DateDetails datetime={date} updateDatetime={updateEntity} />
+					</>
+				}
+			/>
 		</DatetimeProvider>
 	) : null;
 };

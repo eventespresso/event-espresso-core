@@ -6,8 +6,8 @@ import { BiggieCalendarDate, MediumCalendarDate, CalendarDateProps } from '../in
 import { TIME_ONLY_12H_SHORT_FORMAT } from '@appConstants/date-fns-formats';
 
 export interface CalendarDateRange extends CalendarDateProps {
-	startDate: Date;
-	endDate: Date;
+	startDate: Date | string;
+	endDate: Date | string;
 }
 
 /**

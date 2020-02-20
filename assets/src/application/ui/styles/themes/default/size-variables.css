@@ -1,0 +1,46 @@
+:root {
+	/** font sizes **/
+	--ee-font-size-micro: 0.6rem;
+	--ee-font-size-tiny: 0.7rem;
+	--ee-font-size-smaller: 0.8rem;
+	--ee-font-size-small: 0.9rem;
+	--ee-font-size-default: 1rem;
+	--ee-font-size-big: 1.2rem;
+	--ee-font-size-bigger: 1.5rem;
+	--ee-font-size-huge: 2rem;
+	--ee-font-size-extreme: 3rem;
+	--ee-line-height-modifier: 1.5;
+
+	/** padding sizes **/
+	--ee-padding-nano: 0.125rem;
+	--ee-padding-micro: 0.25rem;
+	--ee-padding-tiny: 0.5rem;
+	--ee-padding-smaller: 0.75rem;
+	--ee-padding-small: 1rem;
+	--ee-padding-default: 1.5rem;
+	--ee-padding-big: 2rem;
+	--ee-padding-bigger: 2.5rem;
+	--ee-padding-huge: 3rem;
+	--ee-padding-extreme: 4rem;
+
+	/** margin sizes **/
+	--ee-margin-nano: 0.125rem;
+	--ee-margin-micro: 0.25rem;
+	--ee-margin-tiny: 0.5rem;
+	--ee-margin-smaller: 0.75rem;
+	--ee-margin-small: 1rem;
+	--ee-margin-default: 1.5rem;
+	--ee-margin-big: 2rem;
+	--ee-margin-bigger: 2.5rem;
+	--ee-margin-huge: 3rem;
+	--ee-margin-extreme: 4rem;
+
+	/** border radius sizes **/
+	--ee-border-radius-none: 0px;
+	--ee-border-radius-small: 3px;
+	--ee-border-radius-default: 6px;
+	--ee-border-radius-big: 12px;
+	--ee-border-radius-bigger: 24px;
+	--ee-border-radius-huge: 48px;
+	--ee-border-radius-full: 3000px;
+}

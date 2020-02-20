@@ -1,4 +1,5 @@
 import React from 'react';
+import { TagsOutlined } from '@ant-design/icons';
 import { __ } from '@wordpress/i18n';
 
 import { EspressoButton } from '../../../../../application/ui/input';
@@ -12,7 +13,7 @@ const AddNewTicketButton: React.FC = () => {
 			editorId: 'addTicket',
 		});
 	};
-	return <EspressoButton icon={'tickets-alt'} buttonText={__('Add New Ticket')} onClick={onClick} />;
+	return <EspressoButton icon={<TagsOutlined />} buttonText={__('Add New Ticket')} onClick={onClick} />;
 };
 
 export default AddNewTicketButton;
