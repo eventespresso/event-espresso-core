@@ -3,7 +3,7 @@ import { differenceInCalendarDays, format, parseISO, isValid } from 'date-fns';
 import { __ } from '@wordpress/i18n';
 
 import { BiggieCalendarDate, MediumCalendarDate, CalendarDateProps } from '../index';
-import { TIME_ONLY_12H_SHORT_FORMAT } from '@appConstants/date-fns-formats';
+import { TIME_ONLY_12H_SHORT_FORMAT } from '@appConstants/dateFnsFormats';
 
 export interface CalendarDateRange extends CalendarDateProps {
 	startDate: Date | string;

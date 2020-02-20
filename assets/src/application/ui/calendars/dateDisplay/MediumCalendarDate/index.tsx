@@ -11,7 +11,7 @@ import {
 	TIME_ONLY_12H_SHORT_FORMAT,
 	WEEKDAY_ONLY_FULL_FORMAT,
 	YEAR_ONLY_LONG_FORMAT,
-} from '@appConstants/date-fns-formats';
+} from '@appConstants/dateFnsFormats';
 
 export interface MediumCalendarDateProps extends CalendarDateProps {
 	date: Date;
