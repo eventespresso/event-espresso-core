@@ -3,6 +3,7 @@ import isActive from '../predicates/isActive';
 import isExpired from '../predicates/isExpired';
 import isSoldOut from '../predicates/isSoldOut';
 import isTrashed from '../../../services/predicates/isTrashed';
+import isUpcoming from '../predicates/isUpcoming';
 
 import { DATETIME_STATUS_ID } from '../constants';
 
@@ -23,15 +24,7 @@ const status = (date: Datetime): string => {
 		return DATETIME_STATUS_ID.UPCOMING;
 	}
 
-	// PLZ SEE NOTE ABOVE
-	// if ( isCancelled( DateTimeEntity ) ) {
-	// 	return DATETIME_STATUS_ID.CANCELLED;
-	// }
-	// if ( isPostponed( DateTimeEntity ) ) {
-	// 	return DATETIME_STATUS_ID.POSTPONED;
-	// }
-	// assertDateTimeEntity(DateTimeEntity);
-	// return DATETIME_STATUS_ID.INACTIVE;
+	return DATETIME_STATUS_ID.INACTIVE;
 };
 
 export default status;
