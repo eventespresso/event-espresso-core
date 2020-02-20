@@ -1,17 +1,9 @@
-/**
- * External dependencies
- */
-import { is } from 'ramda';
+import isActive from '../../isActive';
 
-/**
- * Internal dependencies
- */
 import { DatetimeFilterFn } from '../types';
 
 const activeOnly: DatetimeFilterFn = (dates) => {
-	return dates.filter(({ isActive }) => {
-		return is(Boolean, isActive) && isActive;
-	});
+	return dates.filter(isActive);
 };
 
 export default activeOnly;
