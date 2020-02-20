@@ -1,11 +1,12 @@
 import { __ } from '@wordpress/i18n';
 
+import { Datetime } from '@edtrServices/apollo/types';
 import status from './status';
 import { DATETIME_STATUS_ID } from '../constants';
 
-const getDateTimeStatusTextLabel = (dates) => {
+const getDateTimeStatusTextLabel = (date: Datetime): string => {
 	let dateStatus = '';
-	switch (status(dates)) {
+	switch (status(date)) {
 		case DATETIME_STATUS_ID.SOLD_OUT:
 			dateStatus = __('sold out', 'event_espresso');
 			break;

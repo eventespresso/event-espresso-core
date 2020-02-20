@@ -1,26 +1,7 @@
-/**
- * External imports
- */
 import { __ } from '@eventespresso/i18n';
-import { isModelEntityOfModel } from '@eventespresso/validators';
 
-/**
- * Internal imports
- */
-import { DATETIME_STATUS_ID, MODEL_NAMES, MONTH_IN_SECONDS } from './constants';
+import { MONTH_IN_SECONDS } from './constants';
 import parseInfinity from '../../../utils/parse-infinity';
-
-const { MODEL } = MODEL_NAMES;
-
-/**
- * @function
- * @param {Object} DateTimeEntity model object
- * @param {boolean} includeTrashed if true will not filter out trashed entities
- * @return {boolean} true if event date is valid entity or archive
- */
-const isValidEntityOrArchive = (DateTimeEntity, includeTrashed) => {
-	return (includeTrashed && assertDateTimeEntity(DateTimeEntity)) || (!includeTrashed && !isTrashed(DateTimeEntity));
-};
 
 /**
  * @function
@@ -81,41 +62,4 @@ export const isSoldOut = (DateTimeEntity, includeTrashed = false) => {
  * @param {boolean} includeTrashed if true will not filter out trashed entities
  * @return {boolean} true if start date is in the future
  */
-export const isUpcoming = (DateTimeEntity, includeTrashed = false) => {
-	return isValidEntityOrArchive(DateTimeEntity, includeTrashed) && DateTimeEntity.start.diffNow().asSeconds() > 0;
-};
-
-/**
- * @function
- * @param {Object} DateTimeEntity model object
- * @return {boolean} true if date is archived
- */
-export const isTrashed = (DateTimeEntity) => {
-	assertDateTimeEntity(DateTimeEntity);
-	return DateTimeEntity.deleted;
-};
-
-// PLZ NOTE:
-// leaving the following code in because it can be used if/when we decide
-// to fully support these datetime statuses which are currently defined
-// on the EE_Datetime model object class but not yet used
-
-// /**
-//  * @function
-//  * @param {Object} DateTimeEntity model object
-//  * @return {boolean} true if date is cancelled
-//  */
-// export const isCancelled = ( DateTimeEntity ) => {
-// 	assertDateTimeEntity( DateTimeEntity );
-// 	return DateTimeEntity.cancelled;
-// };
-//
-// /**
-//  * @function
-//  * @param {Object} DateTimeEntity model object
-//  * @return {boolean} true if date has been postponed
-//  */
-// export const isPostponed = ( DateTimeEntity ) => {
-// 	assertDateTimeEntity( DateTimeEntity );
-// 	return DateTimeEntity.postponed;
-// };
+export const isUpcoming = (DateTimeEntity, includeTrashed = false) => {};

@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import { Trashable } from '../../../../eventEditor/services/apollo/types';
 
 /**
