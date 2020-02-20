@@ -9,16 +9,6 @@ import parseInfinity from '../../../utils/parse-infinity';
  * @param {boolean} includeTrashed if true will not filter out trashed entities
  * @return {boolean} true if end date is in the past
  */
-export const isExpired = (DateTimeEntity, includeTrashed = false) => {
-	return isValidEntityOrArchive(DateTimeEntity, includeTrashed) && DateTimeEntity.end.diffNow().asSeconds() < 0;
-};
-
-/**
- * @function
- * @param {Object} DateTimeEntity model object
- * @param {boolean} includeTrashed if true will not filter out trashed entities
- * @return {boolean} true if end date is in the past
- */
 export const isRecentlyExpired = (DateTimeEntity, includeTrashed = false) => {
 	return (
 		isValidEntityOrArchive(DateTimeEntity, includeTrashed) &&
