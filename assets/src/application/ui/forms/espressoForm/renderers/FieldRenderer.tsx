@@ -1,4 +1,5 @@
 import React from 'react';
+import classnames from 'classnames';
 
 import { FormItem, MappedField } from '../adapters';
 import { FieldRendererProps } from '../types';
@@ -18,9 +19,9 @@ const FieldRenderer: React.FC<FieldRendererProps> = (props) => {
 			validateStatus={validateStatus}
 			hasFeedback={meta.touched && !!(meta.error || meta.submitError)}
 			help={meta.touched && (meta.error || meta.submitError)}
-			className={`form-item form-item-${rest.fieldType}`}
 			{...formItemLayout}
 			{...formItemProps}
+			className={classnames('form-item', `form-item-${rest.fieldType}`, formItemProps?.className)}
 		>
 			<>
 				{before}
