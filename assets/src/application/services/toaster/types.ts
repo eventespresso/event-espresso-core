@@ -1,5 +1,6 @@
 import { ApolloError } from 'apollo-client';
 import { IToaster, IActionProps, ILinkProps } from '@blueprintjs/core';
+import { ArgsProps } from 'antd/lib/notification';
 
 export type ErrorIcon = 'globe-network' | 'layout-auto' | 'warning-sign' | JSX.Element;
 
@@ -11,20 +12,10 @@ export type DismissToast = (toaster: IToaster, hash: ToasterHash) => DismissToas
 export type DismissToastCallback = (message: ToasterMsg) => void;
 
 export type ErrorToast = (toaster: IToaster, hash: ToasterHash) => ErrorToastCallback;
-export type ErrorToastCallback = (
-	message: ToasterMsg | ApolloError,
-	timeout?: number,
-	action?: ToasterAction,
-	onDismiss?: OnDismissFn
-) => void;
+export type ErrorToastCallback = (props: ArgsProps) => void;
 
 export type InfoToast = (toaster: IToaster, hash: ToasterHash) => InfoToastCallback;
-export type InfoToastCallback = (
-	message: ToasterMsg,
-	timeout?: number,
-	action?: ToasterAction,
-	onDismiss?: OnDismissFn
-) => void;
+export type InfoToastCallback = (props: ArgsProps) => void;
 
 export type LoadingToast = (toaster: IToaster, hash: ToasterHash) => LoadingToastCallback;
 export type LoadingToastCallback = (
@@ -36,12 +27,7 @@ export type LoadingToastCallback = (
 ) => void;
 
 export type SuccessToast = (toaster: IToaster, hash: ToasterHash) => SuccessToastCallback;
-export type SuccessToastCallback = (
-	message: ToasterMsg,
-	timeout?: number,
-	action?: ToasterAction,
-	onDismiss?: OnDismissFn
-) => void;
+export type SuccessToastCallback = (props: ArgsProps) => void;
 
 export type ToasterInit = (props: ToasterInitProps) => ToasterInitCallbacks;
 export interface ToasterInitProps {
@@ -66,4 +52,8 @@ export interface ToasterHook {
 	info: InfoToastCallback;
 	loading: LoadingToastCallback;
 	success: SuccessToastCallback;
+	warning: WarningToastCallback;
 }
+
+export type WarningToast = (toaster: IToaster, hash: ToasterHash) => SuccessToastCallback;
+export type WarningToastCallback = (props: ArgsProps) => void;

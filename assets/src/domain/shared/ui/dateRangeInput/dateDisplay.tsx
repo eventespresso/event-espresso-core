@@ -1,8 +1,8 @@
 import React from 'react';
-import { Tag } from 'antd';
 import classNames from 'classnames';
-import { format, isValid } from 'date-fns';
+import { Tag } from 'antd';
 import { ArrowRightOutlined } from '@ant-design/icons';
+import { format, isValid } from 'date-fns';
 
 const FORMAT = 'EE MMM eo, yyyy';
 const FORMAT_TIME = 'EE MMM eo, yyyy p';

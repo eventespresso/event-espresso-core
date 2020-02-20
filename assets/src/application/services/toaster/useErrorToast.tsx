@@ -1,39 +1,36 @@
 import React, { useCallback } from 'react';
 import { ApolloError } from 'apollo-client';
-import { Intent } from '@blueprintjs/core';
+import { notification } from 'antd';
+import Icon, { CloseCircleTwoTone, GlobalOutlined } from '@ant-design/icons';
+import { ArgsProps } from 'antd/lib/notification';
 
 import IconGraphQL from './IconGraphQL';
-import { ErrorIcon, ErrorToast, ErrorToastCallback, ToasterMsg } from './types';
+import { ErrorToast, ErrorToastCallback, ToasterMsg } from './types';
 
 const useErrorToast: ErrorToast = (toaster, hash) =>
 	useCallback<ErrorToastCallback>(
-		(message, timeout = 5000, action = {}, onDismiss = null) => {
-			let icon: ErrorIcon = 'warning-sign';
+		({ message = '', placement = 'bottomRight', ...rest }) => {
+			let icon = <CloseCircleTwoTone twoToneColor='var(--ee-color-accent)' />;
+
 			let errorMessage: ToasterMsg;
+
 			if (message instanceof ApolloError) {
 				errorMessage = message.message;
 				if (message.graphQLErrors) {
-					icon = <IconGraphQL />;
+					icon = <Icon component={IconGraphQL} />;
 				} else if (message.networkError) {
-					icon = 'globe-network';
-				} else {
-					icon = 'layout-auto';
+					icon = <GlobalOutlined />;
 				}
-			} else {
-				errorMessage = message;
 			}
+
+			const args: ArgsProps = {
+				...rest,
+				message: errorMessage || message,
+				placement,
+			};
+
 			if (errorMessage) {
-				toaster.show(
-					{
-						action,
-						icon,
-						intent: Intent.DANGER,
-						message: errorMessage,
-						onDismiss,
-						timeout,
-					},
-					hash()
-				);
+				notification.error({ ...args, icon });
 			}
 		},
 		[toaster, hash]
