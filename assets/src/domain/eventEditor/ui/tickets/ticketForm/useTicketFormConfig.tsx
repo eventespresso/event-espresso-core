@@ -2,11 +2,12 @@ import React from 'react';
 import { __ } from '@wordpress/i18n';
 import { format, parseISO } from 'date-fns';
 import { ProfileOutlined, CalendarOutlined, ControlOutlined } from '@ant-design/icons';
+import { pick } from 'ramda';
 
 import { defaultDateFormat, defaultTimeFormat } from '@appConstants/momentFormats';
 import { EspressoFormProps } from '@application/ui/forms/espressoForm';
 import useTicketItem from '../../../services/apollo/queries/tickets/useTicketItem';
-import { EntityId } from '@edtrServices/apollo/types';
+import { EntityId, Ticket } from '@edtrServices/apollo/types';
 import { PLUS_ONE_MONTH, PLUS_TWO_MONTHS } from '../../../../shared/constants/defaultDates';
 import { processDateAndTime, DateAndTime } from '../../../../shared/services/utils/processDateAndTime';
 import { TicketBaseInput } from '@edtrServices/apollo/mutations';
@@ -18,8 +19,22 @@ interface TicketFormShape extends TicketBaseInput, DateAndTime {
 
 type TicketFormConfig = EspressoFormProps<TicketFormShape>;
 
+const FIELD_NAMES: Array<keyof Ticket> = [
+	'description',
+	'isDefault',
+	'isRequired',
+	'isTaxable',
+	'isTrashed',
+	'max',
+	'min',
+	'name',
+	'price',
+	'quantity',
+	'uses',
+];
+
 const useTicketFormConfig = (id: EntityId, config?: EspressoFormProps): TicketFormConfig => {
-	const { name, description, quantity, startDate: start, endDate: end } = useTicketItem({ id }) || {};
+	const { startDate: start, endDate: end, ...restProps } = useTicketItem({ id }) || {};
 
 	const startDate = start ? parseISO(start) : PLUS_ONE_MONTH;
 	const endDate = end ? parseISO(end) : PLUS_TWO_MONTHS;
@@ -45,10 +60,20 @@ const useTicketFormConfig = (id: EntityId, config?: EspressoFormProps): TicketFo
 		},
 	};
 
+	const initialValues: TicketFormShape = {
+		...pick<Omit<Partial<Ticket>, 'prices'>, keyof Ticket>(FIELD_NAMES, restProps),
+		dateTime: {
+			startDate: format(startDate, defaultDateFormat),
+			startTime: format(startDate, defaultTimeFormat),
+			endDate: format(endDate, defaultDateFormat),
+			endTime: format(endDate, defaultTimeFormat),
+		},
+	};
+
 	return {
 		...config,
 		onSubmit: onSubmitFrom,
-		initialValues: { name, description, quantity },
+		initialValues,
 		layout: 'horizontal',
 		debugFields: ['values'],
 		sections: [
