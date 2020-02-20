@@ -1,9 +1,10 @@
 import { useCallback } from 'react';
-import { pathOr, filter, compose, not, isNil } from 'ramda';
+import { pathOr } from 'ramda';
 import { useApolloClient } from '@apollo/react-hooks';
 
-import { MutationType, MutationInput } from '../../../../../../application/services/apollo/mutations/types';
-import { ucFirst } from '../../../../../../application/services/utilities/text';
+import { MutationType, MutationInput } from '@appServices/apollo/mutations/types';
+import { removeNullAndUndefined } from '@appServices/utilities/predicates';
+import { ucFirst } from '@appServices/utilities/text';
 import { queries } from '../../queries';
 import { Datetime, DatetimeItem } from '../../types';
 import { PLUS_ONE_MONTH, PLUS_TWO_MONTHS } from '../../../../../shared/constants/defaultDates';
@@ -41,7 +42,7 @@ const useOptimisticResponse = (): OptimisticResCb => {
 			__typename: 'EspressoDatetime',
 		};
 		// Get rid of null or undefined values
-		const filteredInput = filter(compose(not, isNil), input);
+		const filteredInput = removeNullAndUndefined(input);
 		let data: DatetimeItem, datetime: Datetime;
 		switch (mutationType) {
 			case MutationType.Create:
