@@ -15,17 +15,6 @@ const { MODEL } = MODEL_NAMES;
 /**
  * @function
  * @param {Object} DateTimeEntity model object
- * @throws {TypeError}
- */
-const assertDateTimeEntity = (DateTimeEntity) => {
-	if (!isModelEntityOfModel(DateTimeEntity, MODEL)) {
-		throw new TypeError('The provided entity is not a datetime instance');
-	}
-};
-
-/**
- * @function
- * @param {Object} DateTimeEntity model object
  * @param {boolean} includeTrashed if true will not filter out trashed entities
  * @return {boolean} true if event date is valid entity or archive
  */
@@ -130,40 +119,3 @@ export const isTrashed = (DateTimeEntity) => {
 // 	assertDateTimeEntity( DateTimeEntity );
 // 	return DateTimeEntity.postponed;
 // };
-
-/**
- * @function
- * @param {Object} DateTimeEntity model object
- * @return {string} date status
- */
-export const getDateTimeStatusTextLabel = (DateTimeEntity) => {
-	let dateStatus = '';
-	switch (status(DateTimeEntity)) {
-		case DATETIME_STATUS_ID.SOLD_OUT:
-			dateStatus = __('sold out', 'event_espresso');
-			break;
-		case DATETIME_STATUS_ID.EXPIRED:
-			dateStatus = __('expired', 'event_espresso');
-			break;
-		case DATETIME_STATUS_ID.UPCOMING:
-			dateStatus = __('upcoming', 'event_espresso');
-			break;
-		case DATETIME_STATUS_ID.ACTIVE:
-			dateStatus = __('active', 'event_espresso');
-			break;
-		case DATETIME_STATUS_ID.TRASHED:
-			dateStatus = __('archived', 'event_espresso');
-			break;
-		case DATETIME_STATUS_ID.CANCELLED:
-			dateStatus = __('cancelled', 'event_espresso');
-			break;
-		case DATETIME_STATUS_ID.POSTPONED:
-			dateStatus = __('postponed', 'event_espresso');
-			break;
-		case DATETIME_STATUS_ID.INACTIVE:
-		default:
-			dateStatus = __('inactive', 'event_espresso');
-			break;
-	}
-	return dateStatus;
-};
