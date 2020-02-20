@@ -1,5 +1,5 @@
 import { useCallback } from 'react';
-import { pathOr } from 'ramda';
+import { pathOr, filter, compose, not, isNil } from 'ramda';
 import { useApolloClient } from '@apollo/react-hooks';
 
 import { MutationType, MutationInput } from '../../../../../../application/services/apollo/mutations/types';
@@ -40,19 +40,21 @@ const useOptimisticResponse = (): OptimisticResCb => {
 		let espressoDatetime = {
 			__typename: 'EspressoDatetime',
 		};
+		// Get rid of null or undefined values
+		const filtereInput = filter(compose(not, isNil), input);
 		let data: DatetimeItem, datetime: Datetime;
 		switch (mutationType) {
 			case MutationType.Create:
 				espressoDatetime = {
 					...espressoDatetime,
 					...DATETIME_DEFAULTS,
-					...input,
+					...filtereInput,
 				};
 				break;
 			case MutationType.Delete:
 				espressoDatetime = {
 					...espressoDatetime,
-					...input,
+					...filtereInput,
 				};
 				break;
 			case MutationType.Update:
@@ -71,7 +73,7 @@ const useOptimisticResponse = (): OptimisticResCb => {
 				espressoDatetime = {
 					...espressoDatetime,
 					...datetime,
-					...input,
+					...filtereInput,
 				};
 		}
 

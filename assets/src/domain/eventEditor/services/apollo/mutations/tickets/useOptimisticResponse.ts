@@ -1,5 +1,5 @@
 import { useCallback } from 'react';
-import { pathOr } from 'ramda';
+import { pathOr, filter, compose, not, isNil } from 'ramda';
 import { useApolloClient } from '@apollo/react-hooks';
 
 import { MutationType, MutationInput } from '../../../../../../application/services/apollo/mutations/types';
@@ -44,20 +44,22 @@ const useOptimisticResponse = (): OptimisticResCb => {
 		let espressoTicket: any = {
 			__typename: 'EspressoTicket',
 		};
+		// Get rid of null or undefined values
+		const filtereInput = filter(compose(not, isNil), input);
 		let data: TicketItem, ticket: Ticket;
 		switch (mutationType) {
 			case MutationType.Create:
 				espressoTicket = {
 					...espressoTicket,
 					...TICKET_DEFAULTS,
-					...input,
+					...filtereInput,
 					prices: null,
 				};
 				break;
 			case MutationType.Delete:
 				espressoTicket = {
 					...espressoTicket,
-					...input,
+					...filtereInput,
 				};
 				break;
 			case MutationType.Update:
@@ -76,7 +78,7 @@ const useOptimisticResponse = (): OptimisticResCb => {
 				espressoTicket = {
 					...espressoTicket,
 					...ticket,
-					...input,
+					...filtereInput,
 					prices: null,
 				};
 		}
