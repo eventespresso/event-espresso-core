@@ -1,6 +1,16 @@
+export { default as Button } from './Button';
 export { default as CurrencyInput } from './CurrencyInput';
+export { default as DatePicker } from './DateTimePicker/DatePicker';
 export { default as EspressoButton } from './EspressoButton';
+export { default as MultiCheck } from './MultiCheck';
+export { default as Number } from './Number';
+export { default as PerPageControl } from './PerPageControl';
+export { default as Radio } from './Radio';
+export { default as SearchInput } from './SearchInput';
+export { default as Select } from './Select';
+export { default as Switch } from './Switch';
+export { default as Text } from './Text';
+export { default as TextArea } from './TextArea';
+export { default as TimePicker } from './DateTimePicker/TimePicker';
 export * from './EspressoButton/types';
 export * from './InlineEditInput';
-export { default as PerPageControl } from './PerPageControl';
-export { default as SearchInput } from './SearchInput';
