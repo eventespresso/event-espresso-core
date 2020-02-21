@@ -1,5 +1,5 @@
-import { parseISO } from 'date-fns';
 import { isNil } from 'ramda';
+import { parseISO } from 'date-fns';
 
 import { now } from '../filters';
 import { isValidOrTrashed } from '../../../../services/predicates';

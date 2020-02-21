@@ -1,9 +1,10 @@
 import { Ticket } from '@edtrServices/apollo/types';
+import isExpired from '../predicates/isExpired';
 import isTrashed from '../../../services/predicates/isTrashed';
 import { TICKET_STATUS_ID } from '../constants';
 
 const status = (ticket: Ticket) => {
-	if (isExpired(ticketEntity)) {
+	if (isExpired({ ticket })) {
 		return TICKET_STATUS_ID.EXPIRED;
 	}
 	if (isOnSale(ticketEntity)) {
