@@ -1,6 +1,5 @@
-/**
- * Internal dependencies
- */
+import { parseISO, formatISO } from 'date-fns';
+
 import { Datetime } from '../../../../../eventEditor/services/apollo/types';
 import { ShowDates } from '../../../../../eventEditor/interfaces/datetimes/types';
 
@@ -16,7 +15,7 @@ import soldOutOnly from './soldOutOnly';
 import trashedOnly from './trashedOnly';
 import upcomingOnly from './upcomingOnly';
 
-export const now = new Date();
+export const now = parseISO(formatISO(new Date()));
 
 interface FilterDates {
 	dates: Datetime[];

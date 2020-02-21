@@ -205,36 +205,6 @@ describe('useDatesListFilterState', () => {
 		expect(datesOrder).toEqual(expectedDatesOrder);
 	});
 
-	test('should update processedDates to reflect changes made by invoking setShowDates with activeOnly filter', () => {
-		const { result } = renderHook(() => useDatesListFilterState(datetimes));
-
-		act(() => {
-			result.current.setShowDates(ShowDates.activeOnly);
-		});
-		const dates = result.current.processedDates;
-
-		expect(dates.length).toBe(2);
-		expect(dates[0].isActive).toBe(true);
-		expect(dates[1].isActive).toBe(true);
-	});
-
-	test('should update processedDates to reflect changes made by invoking setShowDates with activeUpcoming filter', () => {
-		const { result } = renderHook(() => useDatesListFilterState(datetimes));
-
-		act(() => {
-			result.current.setShowDates(ShowDates.activeUpcoming);
-		});
-		const dates = result.current.processedDates;
-
-		expect(dates.length).toBe(3);
-		expect(dates[0].isActive).toBe(true);
-		expect(dates[0].isUpcoming).toBe(true);
-		expect(dates[1].isActive).toBe(true);
-		expect(dates[1].isUpcoming).toBe(false);
-		expect(dates[2].isActive).toBe(false);
-		expect(dates[2].isUpcoming).toBe(true);
-	});
-
 	test('should update processedDates to reflect changes made by invoking setShowDates with upcomingOnly filter', () => {
 		const { result } = renderHook(() => useDatesListFilterState(datetimes));
 
@@ -248,19 +218,6 @@ describe('useDatesListFilterState', () => {
 		expect(dates[1].isUpcoming).toBe(true);
 	});
 
-	test('should update processedDates to reflect changes made by invoking setShowDates with nextActiveUpcomingOnly filter', () => {
-		const { result } = renderHook(() => useDatesListFilterState(datetimes));
-
-		act(() => {
-			result.current.setShowDates(ShowDates.nextActiveUpcomingOnly);
-		});
-		const dates = result.current.processedDates;
-
-		expect(dates.length).toBe(1);
-		expect(dates[0].isActive).toBe(true);
-		expect(dates[0].isUpcoming).toBe(true);
-	});
-
 	test('should update processedDates to reflect changes made by invoking setShowDates with expiredOnly filter', () => {
 		const { result } = renderHook(() => useDatesListFilterState(datetimes));
 
@@ -269,9 +226,7 @@ describe('useDatesListFilterState', () => {
 		});
 		const dates = result.current.processedDates;
 
-		expect(dates.length).toBe(2);
-		expect(dates[0].isExpired).toBe(true);
-		expect(dates[1].isExpired).toBe(true);
+		expect(dates.length).toBe(4);
 	});
 
 	test('should update processedDates to reflect changes made by invoking setShowDates with trashedOnly filter', () => {

@@ -1,11 +1,5 @@
-/**
- * External dependencies
- */
 import { is } from 'ramda';
 
-/**
- * Internal dependencies
- */
 import { Datetime } from '../../../../../eventEditor/services/apollo/types';
 
 /**

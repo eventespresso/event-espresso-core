@@ -1,3 +1,5 @@
+import { parseISO, formatISO } from 'date-fns';
+
 import allOnSaleAndPending from './allOnSaleAndPending';
 import trashedOnly from './trashedOnly';
 import expiredOnly from './expiredOnly';
@@ -11,7 +13,7 @@ import soldOutOnly from './soldOutOnly';
 import { ShowTickets } from '../../../../../eventEditor/interfaces/ticket/types';
 import { Ticket } from '../../../../../eventEditor/services/apollo/types';
 
-export const now = new Date();
+export const now = parseISO(formatISO(new Date()));
 
 interface FilterTickets {
 	tickets: Ticket[];

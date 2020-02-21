@@ -5,10 +5,9 @@ import allOnSaleAndPending from './index';
 import isOnSale from '../../isOnSale';
 import isPending from '../../isPending';
 import { nodes as tickets } from '../../../../../../eventEditor/services/apollo/queries/tickets/test/data';
+import { now } from '../index';
 
 describe('allOnSaleAndPending', () => {
-	const now = new Date();
-
 	it('should return an empty array if tickets are not on sale and not pending', () => {
 		const updatedTickets = tickets.map((ticket) => {
 			const startDate = formatISO(new Date(2008, 8, 18, 19, 0, 52));

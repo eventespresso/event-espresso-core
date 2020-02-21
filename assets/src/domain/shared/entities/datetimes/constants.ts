@@ -1,5 +1,3 @@
-import { values } from 'lodash';
-
 export const MODEL_NAMES = {
 	MODEL: 'datetime',
 	RELATION: 'datetimes',
@@ -16,7 +14,7 @@ export const DATETIME_STATUS_ID = {
 	UPCOMING: 'DTU',
 };
 
-export const DATETIME_STATUS_IDS = values( DATETIME_STATUS_ID );
+export const DATETIME_STATUS_IDS = Object.values(DATETIME_STATUS_ID);
 
 export const MINUTE_IN_SECONDS = 60;
 export const HOUR_IN_SECONDS = MINUTE_IN_SECONDS * 60;
