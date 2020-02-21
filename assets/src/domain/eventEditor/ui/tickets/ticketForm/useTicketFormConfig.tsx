@@ -51,13 +51,10 @@ const useTicketFormConfig = (id: EntityId, config?: EspressoFormProps): TicketFo
 	};
 
 	const adjacentFormItemProps = {
+		className: 'form-item-pair',
 		labelCol: { span: 10 },
-		wrapperCol: { span: 14 },
-		labelAlign: 'left' as 'left',
-		style: {
-			width: '49%',
-			display: 'inline-flex',
-		},
+		wrapperCol: { span: 12 },
+		labelAlign: 'right' as 'right',
 	};
 
 	const initialValues: TicketFormShape = {
@@ -109,7 +106,7 @@ const useTicketFormConfig = (id: EntityId, config?: EspressoFormProps): TicketFo
 				],
 			},
 			{
-				name: 'dateTime',
+				name: 'sales',
 				icon: CalendarOutlined,
 				title: __('Ticket Sales'),
 				fields: [

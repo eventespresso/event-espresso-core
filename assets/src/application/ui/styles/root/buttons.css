@@ -271,6 +271,17 @@
 	border: inherit;
 }
 
+/* SPECIAL FORM STYLES */
+
+.ant-input-group-addon .esprs-button.ant-btn.ant-btn-icon-only:not([disabled]),
+.ant-input-group-addon .esprs-button.ant-btn:active.ant-btn-icon-only:not([disabled]),
+.ant-input-group-addon .esprs-button.ant-btn:focus.ant-btn-icon-only:not([disabled]),
+.ant-input-group-addon .esprs-button.ant-btn:visited.ant-btn-icon-only:not([disabled]) {
+	background: none;
+	border: none;
+	box-shadow: none;
+}
+
 /* Media Queries for specific screen sizes
  * -------------------------------------------------------------------------*/
 
