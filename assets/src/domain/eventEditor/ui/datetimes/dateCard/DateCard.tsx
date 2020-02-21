@@ -22,15 +22,6 @@ import { ListItemProps } from '@edtrInterfaces';
 import { useDatetimeMutator } from '@edtrServices/apollo/mutations';
 import { InlineEditHeading, InlineEditTextArea } from '@appInputs/InlineEditInput';
 
-const menuStype: CSSProperties = {
-	alignContent: 'flex-start',
-	alignItems: 'center',
-	boxSizing: 'border-box',
-	display: 'flex',
-	flexFlow: 'column nowrap',
-	height: '100%',
-};
-
 const hdrStyle: CSSProperties = {
 	color: 'var(--ee-default-text-color)',
 	fontSize: 'var(--ee-font-size-bigger )',
@@ -85,7 +76,7 @@ const DateCard: React.FC<ListItemProps> = ({ id }) => {
 		<DatetimeProvider id={date.id}>
 			<EntityCard
 				entity={date}
-				actionsMenu={<DateActionsMenu entity={date} style={menuStype} />}
+				actionsMenu={<DateActionsMenu entity={date} />}
 				sidebar={
 					<CalendarDateRange
 						headerText={__('starts')}

@@ -17,15 +17,6 @@ import { useTicketMutator } from '@edtrServices/apollo/mutations';
 import { InlineEditHeading, InlineEditTextArea } from '@appInputs/InlineEditInput';
 import statusBgColorClass from '../../../../shared/entities/tickets/helpers/statusBgColorClass';
 
-const menuStype: React.CSSProperties = {
-	alignContent: 'flex-start',
-	alignItems: 'center',
-	boxSizing: 'border-box',
-	display: 'flex',
-	flexFlow: 'column nowrap',
-	height: '100%',
-};
-
 const TicketCard: React.FC<ListItemProps> = ({ id }) => {
 	const ticket = useTicketItem({ id });
 	const { updateEntity } = useTicketMutator(id);
@@ -43,7 +34,7 @@ const TicketCard: React.FC<ListItemProps> = ({ id }) => {
 		<TicketProvider id={ticket.id}>
 			<EntityCard
 				entity={ticket}
-				actionsMenu={<TicketActionsMenu entity={ticket} style={menuStype} />}
+				actionsMenu={<TicketActionsMenu entity={ticket} />}
 				sidebar={
 					<CalendarDateRange
 						headerText={__('sales start')}

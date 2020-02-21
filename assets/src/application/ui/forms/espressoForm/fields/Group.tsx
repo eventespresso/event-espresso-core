@@ -22,7 +22,7 @@ const Group: React.FC<FieldProps> = ({ subFields, label, name: groupName, before
 									{...props}
 									fieldType={fieldType}
 									name={name}
-									formItemProps={{ wrapperCol: { span: 16 }, labelCol: { span: 8 } }}
+									formItemProps={{ wrapperCol: { span: 12 }, labelCol: { span: 10 } }}
 								/>
 							</div>
 						);

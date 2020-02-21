@@ -129,7 +129,9 @@
 		clear: both;
 		float: none;
 		height: auto;
-		padding: var(--ee-padding-micro);
+		min-height: unset;
+		min-width: unset;
+		padding: var(--ee-padding-micro) var(--ee-padding-micro) var(--ee-padding-tiny);
 		position: relative;
 		right: unset;
 		width: 100% !important;

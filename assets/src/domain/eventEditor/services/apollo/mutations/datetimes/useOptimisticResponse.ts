@@ -3,6 +3,7 @@ import { pathOr } from 'ramda';
 import { useApolloClient } from '@apollo/react-hooks';
 
 import { MutationType, MutationInput } from '../../../../../../application/services/apollo/mutations/types';
+import { removeNullAndUndefined } from '../../../../../../application/services/utilities/predicates';
 import { ucFirst } from '../../../../../../application/services/utilities/text';
 import { queries } from '../../queries';
 import { Datetime, DatetimeItem } from '../../types';
@@ -40,19 +41,21 @@ const useOptimisticResponse = (): OptimisticResCb => {
 		let espressoDatetime = {
 			__typename: 'EspressoDatetime',
 		};
+		// Get rid of null or undefined values
+		const filteredInput = removeNullAndUndefined(input);
 		let data: DatetimeItem, datetime: Datetime;
 		switch (mutationType) {
 			case MutationType.Create:
 				espressoDatetime = {
 					...espressoDatetime,
 					...DATETIME_DEFAULTS,
-					...input,
+					...filteredInput,
 				};
 				break;
 			case MutationType.Delete:
 				espressoDatetime = {
 					...espressoDatetime,
-					...input,
+					...filteredInput,
 				};
 				break;
 			case MutationType.Update:
@@ -71,7 +74,7 @@ const useOptimisticResponse = (): OptimisticResCb => {
 				espressoDatetime = {
 					...espressoDatetime,
 					...datetime,
-					...input,
+					...filteredInput,
 				};
 		}
 

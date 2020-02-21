@@ -3,6 +3,7 @@ import { pathOr } from 'ramda';
 import { useApolloClient } from '@apollo/react-hooks';
 
 import { MutationType, MutationInput } from '../../../../../../application/services/apollo/mutations/types';
+import { removeNullAndUndefined } from '../../../../../../application/services/utilities/predicates';
 import { ucFirst } from '../../../../../../application/services/utilities/text';
 import { queries } from '../../queries';
 import { Ticket, TicketItem } from '../../types';
@@ -44,20 +45,22 @@ const useOptimisticResponse = (): OptimisticResCb => {
 		let espressoTicket: any = {
 			__typename: 'EspressoTicket',
 		};
+		// Get rid of null or undefined values
+		const filteredInput = removeNullAndUndefined(input);
 		let data: TicketItem, ticket: Ticket;
 		switch (mutationType) {
 			case MutationType.Create:
 				espressoTicket = {
 					...espressoTicket,
 					...TICKET_DEFAULTS,
-					...input,
+					...filteredInput,
 					prices: null,
 				};
 				break;
 			case MutationType.Delete:
 				espressoTicket = {
 					...espressoTicket,
-					...input,
+					...filteredInput,
 				};
 				break;
 			case MutationType.Update:
@@ -76,7 +79,7 @@ const useOptimisticResponse = (): OptimisticResCb => {
 				espressoTicket = {
 					...espressoTicket,
 					...ticket,
-					...input,
+					...filteredInput,
 					prices: null,
 				};
 		}

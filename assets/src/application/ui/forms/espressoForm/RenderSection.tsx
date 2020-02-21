@@ -15,11 +15,8 @@ const RenderSection: React.FC<SectionProps> = ({
 	return (
 		<div className='section-wrapper'>
 			<div className='section-heading'>
-				<h3>
-					{title}
-					<br />
-					{<Icon className='section-heading-icon' />}
-				</h3>
+				{<Icon className='section-heading-icon' />}
+				<h3>{title}</h3>
 			</div>
 			<div className='section-body' style={{}}>
 				<RenderFields fields={fields} namespace={addSectionToFieldNames ? name : null} />

@@ -3,6 +3,7 @@ import { OperationVariables } from 'apollo-client';
 
 import { MutationInput, MutationType } from '@appServices/apollo/mutations/types';
 import { Entity as BaseEntity, Datetime, DatetimeEdge, Ticket, TicketEdge, Price, PriceEdge } from '../types';
+import { Merge } from '@application/services/utilities/types';
 
 export interface MutationCallbackFnArgs {
 	proxy?: DataProxy;
@@ -79,9 +80,6 @@ export interface MutatorGeneratedObject {
 }
 
 export type MutationHandler = <MI = MutationInput>(mutationType: MutationType, input: MI) => MutatorGeneratedObject;
-
-// merges two types
-type Merge<A, B> = Omit<A, keyof B> & B extends infer O ? { [K in keyof O]: O[K] } : never;
 
 export interface MutationInputWithId {
 	clientMutationId: string;

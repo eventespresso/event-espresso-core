@@ -13,8 +13,8 @@ const useFormItemLayout = (): FormItemLayoutProps => {
 
 	return layout === 'horizontal'
 		? {
-				labelCol: { span: 4 },
-				wrapperCol: { span: 14 },
+				labelCol: { span: 5 },
+				wrapperCol: { span: 18 },
 		  }
 		: null;
 };

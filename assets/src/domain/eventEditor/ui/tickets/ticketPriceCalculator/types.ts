@@ -1,4 +1,5 @@
 import { Entity, EntityId, Price, Ticket } from '../../../services/apollo/types';
+import { EspressoButtonProps } from '@application/ui/input';
 
 export interface AddPriceModifierDataProps extends WithPriceModifierProp {
 	name: string;
@@ -46,7 +47,7 @@ export enum TpcActionType {
 	CalculateTicketTotal = 'CALCULATE_TICKET_TOTAL',
 }
 
-export interface TpcButtonDataProps {
+export interface TpcButtonDataProps extends Partial<EspressoButtonProps> {
 	ticketId: EntityId;
 }
 

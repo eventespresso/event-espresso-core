@@ -1,3 +1,4 @@
+import React from 'react';
 import { __ } from '@wordpress/i18n';
 import { format, parseISO } from 'date-fns';
 import { ProfileOutlined, CalendarOutlined, ControlOutlined } from '@ant-design/icons';
@@ -5,33 +6,42 @@ import { pick } from 'ramda';
 
 import { CONVERT_TO_MOMENT_DATE_FORMAT, CONVERT_TO_MOMENT_TIME_FORMAT } from '@appConstants/dateFnsFormats';
 import { EspressoFormProps } from '@application/ui/forms/espressoForm';
-import useDatetimeItem from '../../../services/apollo/queries/datetimes/useDatetimeItem';
-import { EntityId, Datetime } from '@edtrServices/apollo/types';
+import useTicketItem from '../../../services/apollo/queries/tickets/useTicketItem';
+import { EntityId, Ticket } from '@edtrServices/apollo/types';
 import { PLUS_ONE_MONTH, PLUS_TWO_MONTHS } from '../../../../shared/constants/defaultDates';
 import { processDateAndTime, DateAndTime } from '../../../../shared/services/utils/processDateAndTime';
-import { DatetimeBaseInput } from '@edtrServices/apollo/mutations';
+import { TicketBaseInput } from '@edtrServices/apollo/mutations';
+import TicketPriceCalculatorButton from '../ticketPriceCalculator/buttons/TicketPriceCalculatorButton';
 
-interface DateFormShape extends DatetimeBaseInput, DateAndTime {
-	name?: string;
-	description?: string;
-	capacity?: number;
+interface TicketFormShape extends TicketBaseInput, DateAndTime {
 	dateTime?: DateAndTime;
-	isTrashed?: boolean;
 }
 
-type DateFormConfig = EspressoFormProps<DateFormShape>;
+type TicketFormConfig = EspressoFormProps<TicketFormShape>;
 
-const FIELD_NAMES: Array<keyof Datetime> = ['name', 'description', 'capacity', 'isTrashed'];
+const FIELD_NAMES: Array<keyof Ticket> = [
+	'description',
+	'isDefault',
+	'isRequired',
+	'isTaxable',
+	'isTrashed',
+	'max',
+	'min',
+	'name',
+	'price',
+	'quantity',
+	'uses',
+];
 
-const useDateFormConfig = (id: EntityId, config?: EspressoFormProps): DateFormConfig => {
-	const { startDate: start, endDate: end, ...restProps } = useDatetimeItem({ id }) || {};
+const useTicketFormConfig = (id: EntityId, config?: EspressoFormProps): TicketFormConfig => {
+	const { startDate: start, endDate: end, ...restProps } = useTicketItem({ id }) || {};
 
 	const startDate = start ? parseISO(start) : PLUS_ONE_MONTH;
 	const endDate = end ? parseISO(end) : PLUS_TWO_MONTHS;
 
 	const { onSubmit } = config;
 
-	const onSubmitFrom: DateFormConfig['onSubmit'] = ({ dateTime, ...rest }, form, ...restParams) => {
+	const onSubmitFrom: TicketFormConfig['onSubmit'] = ({ dateTime, ...rest }, form, ...restParams) => {
 		// convert "dateTime" object to proper "startDate" and "endDate"
 		const { startDate, endDate } = processDateAndTime(dateTime);
 
@@ -40,8 +50,15 @@ const useDateFormConfig = (id: EntityId, config?: EspressoFormProps): DateFormCo
 		return onSubmit(values, form, ...restParams);
 	};
 
-	const initialValues: DateFormShape = {
-		...pick<Partial<Datetime>, keyof Datetime>(FIELD_NAMES, restProps),
+	const adjacentFormItemProps = {
+		className: 'form-item-pair',
+		labelCol: { span: 10 },
+		wrapperCol: { span: 12 },
+		labelAlign: 'right' as 'right',
+	};
+
+	const initialValues: TicketFormShape = {
+		...pick<Omit<Partial<Ticket>, 'prices'>, keyof Ticket>(FIELD_NAMES, restProps),
 		dateTime: {
 			startDate: format(startDate, CONVERT_TO_MOMENT_DATE_FORMAT),
 			startTime: format(startDate, CONVERT_TO_MOMENT_TIME_FORMAT),
@@ -72,12 +89,26 @@ const useDateFormConfig = (id: EntityId, config?: EspressoFormProps): DateFormCo
 						label: __('Description'),
 						fieldType: 'textarea',
 					},
+					{
+						name: 'price',
+						label: __('Price'),
+						fieldType: 'text',
+						addonAfter: id ? (
+							<TicketPriceCalculatorButton ticketId={id} style={{ margin: 0, height: 'auto' }} />
+						) : null,
+						formItemProps: adjacentFormItemProps,
+					},
+					{
+						name: 'isTaxable',
+						label: __('Taxable'),
+						fieldType: 'switch',
+					},
 				],
 			},
 			{
-				name: 'dateTime',
+				name: 'sales',
 				icon: CalendarOutlined,
-				title: __('Date & Time'),
+				title: __('Ticket Sales'),
 				fields: [
 					{
 						name: 'dateTime',
@@ -114,14 +145,46 @@ const useDateFormConfig = (id: EntityId, config?: EspressoFormProps): DateFormCo
 				title: __('Details'),
 				fields: [
 					{
-						name: 'capacity',
-						label: __('Capacity'),
+						name: 'quantity',
+						label: __('Quantity For Sale'),
 						fieldType: 'number',
+						formItemProps: adjacentFormItemProps,
+					},
+					{
+						name: 'uses',
+						label: __('Number of Uses'),
+						fieldType: 'number',
+						formItemProps: adjacentFormItemProps,
+					},
+					{
+						name: 'min',
+						label: __('Minimum Quantity'),
+						fieldType: 'number',
+						formItemProps: adjacentFormItemProps,
+					},
+					{
+						name: 'max',
+						label: __('Maximum Quantity'),
+						fieldType: 'number',
+						formItemProps: adjacentFormItemProps,
+					},
+					{
+						name: 'isRequired',
+						label: __('Required Ticket'),
+						fieldType: 'switch',
+						formItemProps: adjacentFormItemProps,
+					},
+					{
+						name: 'isDefault',
+						label: __('Default Ticket'),
+						fieldType: 'switch',
+						formItemProps: adjacentFormItemProps,
 					},
 					{
 						name: 'isTrashed',
 						label: __('Trash'),
 						fieldType: 'switch',
+						formItemProps: adjacentFormItemProps,
 					},
 				],
 			},
@@ -129,4 +192,4 @@ const useDateFormConfig = (id: EntityId, config?: EspressoFormProps): DateFormCo
 	};
 };
 
-export default useDateFormConfig;
+export default useTicketFormConfig;
