@@ -38,39 +38,95 @@ class TicketMutation
     {
         $args = [];
 
-        if (! empty($input['name'])) {
-            $args['TKT_name'] = sanitize_text_field($input['name']);
+        if (! empty($input['datetimes'])) {
+            $args['datetimes'] = array_map('sanitize_text_field', (array) $input['datetimes']);
         }
 
         if (! empty($input['description'])) {
             $args['TKT_description'] = sanitize_text_field($input['description']);
         }
 
-        if (! empty($input['price'])) {
-            $args['TKT_price'] = (float) $input['price'];
-        }
-
-        if (! empty($input['startDate'])) {
-            $args['TKT_start_date'] = new DateTime(sanitize_text_field($input['startDate']));
-        }
-
         if (! empty($input['endDate'])) {
             $args['TKT_end_date'] = new DateTime(sanitize_text_field($input['endDate']));
         }
 
-        if (! empty($input['datetimes'])) {
-            $args['datetimes'] = array_map('sanitize_text_field', (array) $input['datetimes']);
+        if (array_key_exists('isDefault', $input)) {
+            $args['TKT_is_default'] = (bool) $input['isDefault'];
         }
 
-        if (! empty($input['prices'])) {
-            $args['prices'] = array_map('sanitize_text_field', (array) $input['prices']);
+        if (array_key_exists('isRequired', $input)) {
+            $args['TKT_required'] = (bool) $input['isRequired'];
+        }
+
+        if (array_key_exists('isTaxable', $input)) {
+            $args['TKT_taxable'] = (bool) $input['isTaxable'];
         }
 
         if (array_key_exists('isTrashed', $input)) {
             $args['TKT_deleted'] = (bool) $input['isTrashed'];
         }
 
-        // Likewise the other fields...
+        if (array_key_exists('max', $input)) {
+            $args['TKT_max'] = (int) $input['max'];
+        }
+
+        if (array_key_exists('min', $input)) {
+            $args['TKT_min'] = (int) $input['min'];
+        }
+
+        if (! empty($input['name'])) {
+            $args['TKT_name'] = sanitize_text_field($input['name']);
+        }
+
+        if (array_key_exists('order', $input)) {
+            $args['TKT_order'] = (int) $input['order'];
+        }
+
+        if (! empty($input['parent'])) {
+            $parts = Relay::fromGlobalId(sanitize_text_field($input['parent']));
+            $args['TKT_parent'] = (! empty($parts['id']) && is_int($parts['id'])) ? $parts['id'] : null;
+        }
+
+        if (! empty($input['price'])) {
+            $args['TKT_price'] = (float) $input['price'];
+        }
+
+        if (! empty($input['prices'])) {
+            $args['prices'] = array_map('sanitize_text_field', (array) $input['prices']);
+        }
+
+        if (array_key_exists('quantity', $input)) {
+            $args['TKT_qty'] = (int) $input['quantity'];
+        }
+
+        if (array_key_exists('reserved', $input)) {
+            $args['TKT_reserved'] = (int) $input['reserved'];
+        }
+
+        if (array_key_exists('reverseCalculate', $input)) {
+            $args['TKT_reverse_calculate'] = (bool) $input['reverseCalculate'];
+        }
+
+        if (array_key_exists('row', $input)) {
+            $args['TKT_row'] = (int) $input['row'];
+        }
+
+        if (array_key_exists('sold', $input)) {
+            $args['TKT_sold'] = (int) $input['sold'];
+        }
+
+        if (! empty($input['startDate'])) {
+            $args['TKT_start_date'] = new DateTime(sanitize_text_field($input['startDate']));
+        }
+
+        if (array_key_exists('uses', $input)) {
+            $args['TKT_uses'] = (int) $input['uses'];
+        }
+
+        if (! empty($input['wpUser'])) {
+            $parts = Relay::fromGlobalId(sanitize_text_field($input['wpUser']));
+            $args['TKT_wp_user'] = (! empty($parts['id']) && is_int($parts['id'])) ? $parts['id'] : null;
+        }
 
         return $args;
     }

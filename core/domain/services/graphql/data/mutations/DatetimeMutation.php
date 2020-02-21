@@ -32,38 +32,61 @@ class DatetimeMutation
     {
         $args = [];
 
-        if (! empty($input['eventId'])) {
-            $args['EVT_ID'] = absint($input['eventId']);
-        } elseif (! empty($input['event'])) {
-            $parts = Relay::fromGlobalId($input['event']);
-            $args['EVT_ID'] = (! empty($parts['id']) && is_int($parts['id'])) ? $parts['id'] : null;
-        }
-
-        if (! empty($input['name'])) {
-            $args['DTT_name'] = sanitize_text_field($input['name']);
+        if (array_key_exists('capacity', $input)) {
+            $args['DTT_reg_limit'] = (int) $input['capacity'];
         }
 
         if (! empty($input['description'])) {
             $args['DTT_description'] = sanitize_text_field($input['description']);
         }
 
-        if (! empty($input['startDate'])) {
-            $args['DTT_EVT_start'] = new DateTime(sanitize_text_field($input['startDate']));
-        }
-
         if (! empty($input['endDate'])) {
             $args['DTT_EVT_end'] = new DateTime(sanitize_text_field($input['endDate']));
         }
 
-        if (! empty($input['tickets'])) {
-            $args['tickets'] = array_map('sanitize_text_field', (array) $input['tickets']);
+        if (! empty($input['eventId'])) {
+            $args['EVT_ID'] = absint($input['eventId']);
+        } elseif (! empty($input['event'])) {
+            $parts = Relay::fromGlobalId(sanitize_text_field($input['event']));
+            $args['EVT_ID'] = (! empty($parts['id']) && is_int($parts['id'])) ? $parts['id'] : null;
+        }
+
+        if (array_key_exists('isPrimary', $input)) {
+            $args['DTT_is_primary'] = (bool) $input['isPrimary'];
         }
 
         if (array_key_exists('isTrashed', $input)) {
             $args['DTT_deleted'] = (bool) $input['isTrashed'];
         }
 
-        // Likewise the other fields...
+        if (! empty($input['name'])) {
+            $args['DTT_name'] = sanitize_text_field($input['name']);
+        }
+
+        if (array_key_exists('order', $input)) {
+            $args['DTT_order'] = (int) $input['order'];
+        }
+
+        if (! empty($input['parent'])) {
+            $parts = Relay::fromGlobalId(sanitize_text_field($input['parent']));
+            $args['DTT_parent'] = (! empty($parts['id']) && is_int($parts['id'])) ? $parts['id'] : null;
+        }
+
+        if (array_key_exists('reserved', $input)) {
+            $args['DTT_reserved'] = (int) $input['reserved'];
+        }
+
+        if (array_key_exists('sold', $input)) {
+            $args['DTT_sold'] = (int) $input['sold'];
+        }
+
+        if (! empty($input['startDate'])) {
+            $args['DTT_EVT_start'] = new DateTime(sanitize_text_field($input['startDate']));
+        }
+
+        if (! empty($input['tickets'])) {
+            $args['tickets'] = array_map('sanitize_text_field', (array) $input['tickets']);
+        }
 
         return $args;
     }
