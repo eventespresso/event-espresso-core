@@ -35,6 +35,6 @@ describe('nextActiveUpcomingOnly', () => {
 		]);
 
 		expect(filteredDates.length).toBe(1);
-		expect(filteredDates[0].id).toBe('abc');
+		expect(filteredDates[0].id).toBe('def');
 	});
 });
