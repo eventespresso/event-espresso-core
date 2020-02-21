@@ -72,7 +72,7 @@
 		"@babel/core": "7.8.3",
 		"@babel/plugin-proposal-class-properties": "^7.7.4",
 		"@babel/runtime-corejs3": "^7.8.4",
-		"@wordpress/a11y": "^2.5.1",
+		"@wordpress/a11y": "^2.7.0",
 		"@wordpress/api-fetch": "^3.8.0",
 		"@wordpress/autop": "^2.5.1",
 		"@wordpress/babel-plugin-makepot": "^3.3.0",
