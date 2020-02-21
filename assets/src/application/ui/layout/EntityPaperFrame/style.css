@@ -62,10 +62,11 @@
 	box-shadow: var(--ee-box-shadow-big-diffuse);
 	box-sizing: border-box;
 	height: 100%;
-	min-height: calc(var(--ee-font-size-default) * 12);
+	/* min-height: calc(var(--ee-font-size-default) * 12); */
 	/* max-width: calc(var(--ee-font-size-small) * 33); */
-	min-width: calc(var(--ee-font-size-small) * 27);
+	/* min-width: calc(var(--ee-font-size-small) * 27); */
 	position: relative;
+	width: 100%;
 	vertical-align: bottom;
 }
 
