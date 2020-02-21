@@ -269,9 +269,7 @@ describe('useDatesListFilterState', () => {
 		});
 		const dates = result.current.processedDates;
 
-		expect(dates.length).toBe(2);
-		expect(dates[0].isExpired).toBe(true);
-		expect(dates[1].isExpired).toBe(true);
+		expect(dates.length).toBe(4);
 	});
 
 	test('should update processedDates to reflect changes made by invoking setShowDates with trashedOnly filter', () => {
