@@ -7,9 +7,7 @@ export interface DatetimeBaseInput {
 	event?: EntityId;
 	eventId?: number;
 	isPrimary?: boolean;
-	isSoldOut?: boolean;
 	isTrashed?: boolean;
-	length?: number;
 	name?: string;
 	order?: number;
 	parent?: string;
