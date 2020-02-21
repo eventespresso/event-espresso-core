@@ -7,10 +7,10 @@ import { isValidOrTrashed } from '../../../services/predicates';
 
 const isActive = (date: Datetime, includeTrashed = false): boolean => {
 	return (
-		// (isValidOrTrashed(date, includeTrashed) &&
-		// 	diff('seconds', parseISO(date.startDate), new Date()) < 0 &&
-		// 	diff('seconds', parseISO(date.endDate), new Date()) > 0) ||
-		is(Boolean, isActive) && date.isActive
+		(isValidOrTrashed(date, includeTrashed) &&
+			diff('seconds', parseISO(date.startDate), new Date()) < 0 &&
+			diff('seconds', parseISO(date.endDate), new Date()) > 0) ||
+		(is(Boolean, isActive) && date.isActive)
 	);
 };
 

@@ -5,7 +5,7 @@ import { Datetime } from '../../../../eventEditor/services/apollo/types';
 import { diff } from '../../../../../application/services/utilities/date';
 import { isValidOrTrashed } from '../../../services/predicates';
 
-const isUpcoming = (date: Datetime, includeTrashed: boolean): boolean => {
+const isUpcoming = (date: Datetime, includeTrashed = false): boolean => {
 	const checkIfUpcoming = (): boolean => diff('seconds', parseISO(date.startDate), new Date()) > 0;
 	const predicates = [
 		(): boolean => isValidOrTrashed(date, includeTrashed) && checkIfUpcoming(),
