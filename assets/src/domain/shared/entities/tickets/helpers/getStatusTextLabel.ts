@@ -4,7 +4,7 @@ import status from './status';
 import { Ticket } from '@edtrServices/apollo/types';
 import { TICKET_STATUS_ID } from '../constants';
 
-const getTicketStatusTextLabel = (ticket: Ticket): string => {
+const getStatusTextLabel = (ticket: Ticket): string => {
 	let ticketStatus = '';
 	switch (status(ticket)) {
 		case TICKET_STATUS_ID.TRASHED:
@@ -26,4 +26,4 @@ const getTicketStatusTextLabel = (ticket: Ticket): string => {
 	return ticketStatus;
 };
 
-export default getTicketStatusTextLabel;
+export default getStatusTextLabel;

@@ -4,7 +4,7 @@ import { Datetime } from '@edtrServices/apollo/types';
 import status from './status';
 import { DATETIME_STATUS_ID } from '../constants';
 
-const getDateTimeStatusTextLabel = (date: Datetime): string => {
+const getStatusTextLabel = (date: Datetime): string => {
 	let dateStatus = '';
 	switch (status(date)) {
 		case DATETIME_STATUS_ID.SOLD_OUT:
@@ -37,4 +37,4 @@ const getDateTimeStatusTextLabel = (date: Datetime): string => {
 	return dateStatus;
 };
 
-export default getDateTimeStatusTextLabel;
+export default getStatusTextLabel;
