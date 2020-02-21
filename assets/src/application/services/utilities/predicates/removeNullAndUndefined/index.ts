@@ -1,5 +1,7 @@
 import { filter, compose, not, isNil } from 'ramda';
 
-const removeNullAndUndefined = <T>(filterable: T): T => filter(compose(not, isNil), filterable);
+type Obj = { [key: string]: any };
+
+const removeNullAndUndefined = <T>(filterable: T[] | Obj): T[] | Obj => filter(compose(not, isNil), filterable);
 
 export default removeNullAndUndefined;
