@@ -1,6 +1,5 @@
-/**
- * Internal dependencies
- */
+import { formatISO } from 'date-fns';
+
 import nextActiveUpcomingOnly from './index';
 import { nodes as datetimes } from '../../../../../../eventEditor/services/apollo/queries/datetimes/test/data';
 
@@ -19,7 +18,7 @@ describe('nextActiveUpcomingOnly', () => {
 	it('Should return an array of nextActiveUpcomingOnly date', () => {
 		const filteredDates = nextActiveUpcomingOnly([
 			{ ...datetime, id: 'abc', isActive: false },
-			{ ...datetime, id: 'def', isUpcoming: true },
+			{ ...datetime, id: 'def', isUpcoming: true, startDate: formatISO(new Date(2987, 1 /* Feb */, 11)) },
 			{ ...datetime, id: 'xyz', isUpcoming: false },
 		]);
 
@@ -30,7 +29,7 @@ describe('nextActiveUpcomingOnly', () => {
 	it('Should return an array of nextActiveUpcomingOnly dates', () => {
 		const filteredDates = nextActiveUpcomingOnly([
 			{ ...datetime, id: 'abc', isActive: true },
-			{ ...datetime, id: 'def', isUpcoming: true },
+			{ ...datetime, id: 'def', isUpcoming: true, startDate: formatISO(new Date(2030, 1 /* Feb */, 11)) },
 			{ ...datetime, id: 'xyz', isUpcoming: false },
 		]);
 
