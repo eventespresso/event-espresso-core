@@ -60,12 +60,6 @@ class Price extends TypeBase
                 esc_html__('Price ID', 'event_espresso')
             ),
             new GraphQLField(
-                'name',
-                'String',
-                'name',
-                esc_html__('Price Name', 'event_espresso')
-            ),
-            new GraphQLField(
                 'amount',
                 'Float',
                 'amount',
@@ -77,17 +71,59 @@ class Price extends TypeBase
                 'desc',
                 esc_html__('Price description', 'event_espresso')
             ),
+            new GraphQLOutputField(
+                'isBasePrice',
+                'Boolean',
+                'is_base_price',
+                esc_html__('Flag indicating price is a base price type.', 'event_espresso')
+            ),
             new GraphQLField(
-                'overrides',
-                'Int',
-                'overrides',
-                esc_html__('Price ID for a global Price that will be overridden by this Price.', 'event_espresso')
+                'isDefault',
+                'Boolean',
+                'is_default',
+                esc_html__('Flag indicating price is the default one.', 'event_espresso')
+            ),
+            new GraphQLOutputField(
+                'isDiscount',
+                'Boolean',
+                'is_discount',
+                esc_html__('Flag indicating price is a discount.', 'event_espresso')
+            ),
+            new GraphQLOutputField(
+                'isPercent',
+                'Boolean',
+                'is_percent',
+                esc_html__('Flag indicating price is a percentage.', 'event_espresso')
+            ),
+            new GraphQLOutputField(
+                'isTax',
+                'Boolean',
+                'is_tax',
+                esc_html__('Flag indicating price is a tax.', 'event_espresso')
+            ),
+            new GraphQLField(
+                'isTrashed',
+                'Boolean',
+                'deleted',
+                esc_html__('Flag indicating price has been trashed.', 'event_espresso')
+            ),
+            new GraphQLField(
+                'name',
+                'String',
+                'name',
+                esc_html__('Price Name', 'event_espresso')
             ),
             new GraphQLField(
                 'order',
                 'Int',
                 'order',
                 esc_html__('Order of Application of Price.', 'event_espresso')
+            ),
+            new GraphQLField(
+                'overrides',
+                'Int',
+                'overrides',
+                esc_html__('Price ID for a global Price that will be overridden by this Price.', 'event_espresso')
             ),
             new GraphQLOutputField(
                 'parent',
@@ -112,42 +148,6 @@ class Price extends TypeBase
                 'ID',
                 null,
                 esc_html__('The price type ID', 'event_espresso')
-            ),
-            new GraphQLField(
-                'isTrashed',
-                'Boolean',
-                'deleted',
-                esc_html__('Flag indicating price has been trashed.', 'event_espresso')
-            ),
-            new GraphQLField(
-                'isDefault',
-                'Boolean',
-                'is_default',
-                esc_html__('Flag indicating price is the default one.', 'event_espresso')
-            ),
-            new GraphQLOutputField(
-                'isPercent',
-                'Boolean',
-                'is_percent',
-                esc_html__('Flag indicating price is a percentage.', 'event_espresso')
-            ),
-            new GraphQLOutputField(
-                'isBasePrice',
-                'Boolean',
-                'is_base_price',
-                esc_html__('Flag indicating price is a base price type.', 'event_espresso')
-            ),
-            new GraphQLOutputField(
-                'isDiscount',
-                'Boolean',
-                'is_discount',
-                esc_html__('Flag indicating price is a discount.', 'event_espresso')
-            ),
-            new GraphQLOutputField(
-                'isTax',
-                'Boolean',
-                'is_tax',
-                esc_html__('Flag indicating price is a tax.', 'event_espresso')
             ),
             new GraphQLOutputField(
                 'wpUser',

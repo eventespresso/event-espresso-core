@@ -67,11 +67,15 @@ class Ticket extends TypeBase
                 'ID',
                 esc_html__('Ticket ID', 'event_espresso')
             ),
-            new GraphQLField(
-                'name',
-                'String',
-                'name',
-                esc_html__('Ticket Name', 'event_espresso')
+            new GraphQLInputField(
+                'datetimes',
+                ['list_of' => 'ID'],
+                null,
+                sprintf(
+                    '%1$s %2$s',
+                    esc_html__('Globally unique IDs of the datetimes related to the ticket.', 'event_espresso'),
+                    esc_html__('Ignored if empty.', 'event_espresso')
+                )
             ),
             new GraphQLField(
                 'description',
@@ -80,24 +84,61 @@ class Ticket extends TypeBase
                 esc_html__('Description of Ticket', 'event_espresso')
             ),
             new GraphQLField(
-                'startDate',
-                'String',
-                'start_date',
-                esc_html__('Start date and time of the Ticket', 'event_espresso'),
-                [$this, 'formatDatetime']
-            ),
-            new GraphQLField(
                 'endDate',
                 'String',
                 'end_date',
                 esc_html__('End date and time of the Ticket', 'event_espresso'),
                 [$this, 'formatDatetime']
             ),
+            new GraphQLOutputField(
+                'event',
+                $this->namespace . 'Event',
+                null,
+                esc_html__('Event of the ticket.', 'event_espresso')
+            ),
             new GraphQLField(
-                'min',
-                'Int',
-                'min',
-                esc_html__('Minimum quantity of this ticket that must be purchased', 'event_espresso')
+                'isDefault',
+                'Boolean',
+                'is_default',
+                esc_html__('Flag indicating that this ticket is a default ticket', 'event_espresso')
+            ),
+            new GraphQLOutputField(
+                'isFree',
+                'Boolean',
+                'is_free',
+                esc_html__('Flag indicating whether the ticket is free.', 'event_espresso')
+            ),
+            new GraphQLField(
+                'isRequired',
+                'Boolean',
+                'required',
+                esc_html__(
+                    'Flag indicating whether this ticket must be purchased with a transaction',
+                    'event_espresso'
+                )
+            ),
+            new GraphQLOutputField(
+                'isSoldOut',
+                'Boolean',
+                null,
+                esc_html__('Flag indicating whether the ticket is sold out', 'event_espresso'),
+                null,
+                [$this, 'getIsSoldOut']
+            ),
+            new GraphQLField(
+                'isTaxable',
+                'Boolean',
+                'taxable',
+                esc_html__(
+                    'Flag indicating whether there is tax applied on this ticket',
+                    'event_espresso'
+                )
+            ),
+            new GraphQLField(
+                'isTrashed',
+                'Boolean',
+                'deleted',
+                esc_html__('Flag indicating ticket has been trashed.', 'event_espresso')
             ),
             new GraphQLField(
                 'max',
@@ -110,16 +151,50 @@ class Ticket extends TypeBase
                 [$this, 'parseInfiniteValue']
             ),
             new GraphQLField(
+                'min',
+                'Int',
+                'min',
+                esc_html__('Minimum quantity of this ticket that must be purchased', 'event_espresso')
+            ),
+            new GraphQLField(
+                'name',
+                'String',
+                'name',
+                esc_html__('Ticket Name', 'event_espresso')
+            ),
+            new GraphQLField(
+                'order',
+                'Int',
+                'order',
+                esc_html__('The order in which the Datetime is displayed', 'event_espresso')
+            ),
+            new GraphQLOutputField(
+                'parent',
+                $this->name(),
+                null,
+                esc_html__('The parent ticket of the current ticket', 'event_espresso')
+            ),
+            new GraphQLInputField(
+                'parent',
+                'ID',
+                null,
+                esc_html__('The parent ticket ID', 'event_espresso')
+            ),
+            new GraphQLField(
                 'price',
                 'Float',
                 'price',
                 esc_html__('Final calculated price for ticket', 'event_espresso')
             ),
-            new GraphQLField(
-                'sold',
-                'Int',
-                'sold',
-                esc_html__('Number of this ticket sold', 'event_espresso')
+            new GraphQLInputField(
+                'prices',
+                ['list_of' => 'ID'],
+                null,
+                sprintf(
+                    '%1$s %2$s',
+                    esc_html__('Globally unique IDs of the prices related to the ticket.', 'event_espresso'),
+                    esc_html__('Ignored if empty.', 'event_espresso')
+                )
             ),
             new GraphQLField(
                 'quantity',
@@ -138,53 +213,45 @@ class Ticket extends TypeBase
                 )
             ),
             new GraphQLField(
-                'uses',
-                'Int',
-                'uses',
-                esc_html__('Number of datetimes this ticket can be used at', 'event_espresso'),
-                [$this, 'parseInfiniteValue']
-            ),
-            new GraphQLField(
-                'isRequired',
+                'reverseCalculate',
                 'Boolean',
-                'required',
+                'reverse_calculate',
                 esc_html__(
-                    'Flag indicating whether this ticket must be purchased with a transaction',
+                    'Flag indicating whether ticket calculations should run in reverse and calculate the base ticket price from the provided ticket total.',
                     'event_espresso'
                 )
-            ),
-            new GraphQLField(
-                'isTaxable',
-                'Boolean',
-                'taxable',
-                esc_html__(
-                    'Flag indicating whether there is tax applied on this ticket',
-                    'event_espresso'
-                )
-            ),
-            new GraphQLField(
-                'isDefault',
-                'Boolean',
-                'is_default',
-                esc_html__('Flag indicating that this ticket is a default ticket', 'event_espresso')
-            ),
-            new GraphQLField(
-                'isTrashed',
-                'Boolean',
-                'deleted',
-                esc_html__('Flag indicating ticket has been trashed.', 'event_espresso')
-            ),
-            new GraphQLField(
-                'order',
-                'Int',
-                'order',
-                esc_html__('The order in which the Datetime is displayed', 'event_espresso')
             ),
             new GraphQLField(
                 'row',
                 'Int',
                 'row',
                 esc_html__('How tickets are displayed in the ui', 'event_espresso')
+            ),
+            new GraphQLField(
+                'sold',
+                'Int',
+                'sold',
+                esc_html__('Number of this ticket sold', 'event_espresso')
+            ),
+            new GraphQLOutputField(
+                'status',
+                $this->namespace . 'TicketStatusEnum',
+                'ticket_status',
+                esc_html__('Ticket status', 'event_espresso')
+            ),
+            new GraphQLField(
+                'startDate',
+                'String',
+                'start_date',
+                esc_html__('Start date and time of the Ticket', 'event_espresso'),
+                [$this, 'formatDatetime']
+            ),
+            new GraphQLField(
+                'uses',
+                'Int',
+                'uses',
+                esc_html__('Number of datetimes this ticket can be used at', 'event_espresso'),
+                [$this, 'parseInfiniteValue']
             ),
             new GraphQLOutputField(
                 'wpUser',
@@ -197,73 +264,6 @@ class Ticket extends TypeBase
                 'Int',
                 null,
                 esc_html__('Ticket Creator ID', 'event_espresso')
-            ),
-            new GraphQLOutputField(
-                'parent',
-                $this->name(),
-                null,
-                esc_html__('The parent ticket of the current ticket', 'event_espresso')
-            ),
-            new GraphQLInputField(
-                'parent',
-                'ID',
-                null,
-                esc_html__('The parent ticket ID', 'event_espresso')
-            ),
-            new GraphQLField(
-                'reverseCalculate',
-                'Boolean',
-                'reverse_calculate',
-                esc_html__(
-                    'Flag indicating whether ticket calculations should run in reverse and calculate the base ticket price from the provided ticket total.',
-                    'event_espresso'
-                )
-            ),
-            new GraphQLField(
-                'isFree',
-                'Boolean',
-                'is_free',
-                esc_html__('Flag indicating whether the ticket is free.', 'event_espresso')
-            ),
-            new GraphQLOutputField(
-                'event',
-                $this->namespace . 'Event',
-                null,
-                esc_html__('Event of the ticket.', 'event_espresso')
-            ),
-            new GraphQLInputField(
-                'datetimes',
-                ['list_of' => 'ID'],
-                null,
-                sprintf(
-                    '%1$s %2$s',
-                    esc_html__('Globally unique IDs of the datetimes related to the ticket.', 'event_espresso'),
-                    esc_html__('Ignored if empty.', 'event_espresso')
-                )
-            ),
-            new GraphQLInputField(
-                'prices',
-                ['list_of' => 'ID'],
-                null,
-                sprintf(
-                    '%1$s %2$s',
-                    esc_html__('Globally unique IDs of the prices related to the ticket.', 'event_espresso'),
-                    esc_html__('Ignored if empty.', 'event_espresso')
-                )
-            ),
-            new GraphQLOutputField(
-                'status',
-                $this->namespace . 'TicketStatusEnum',
-                'ticket_status',
-                esc_html__('Ticket status', 'event_espresso')
-            ),
-            new GraphQLOutputField(
-                'isSoldOut',
-                'Boolean',
-                null,
-                esc_html__('Flag indicating whether the ticket is sold out', 'event_espresso'),
-                null,
-                [$this, 'getIsSoldOut']
             ),
         ];
     }
