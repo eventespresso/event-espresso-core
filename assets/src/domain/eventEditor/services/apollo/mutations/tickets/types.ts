@@ -5,7 +5,6 @@ export interface TicketBaseInput {
 	description?: string;
 	endDate?: string;
 	isDefault?: boolean;
-	isFree?: boolean;
 	isRequired?: boolean;
 	isTaxable?: boolean;
 	isTrashed?: boolean;
