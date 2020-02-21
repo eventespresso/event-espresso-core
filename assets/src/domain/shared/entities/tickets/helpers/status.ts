@@ -10,17 +10,21 @@ const status = (ticket: Ticket): string => {
 	if (isTrashed(ticket)) {
 		return TICKET_STATUS_ID.TRASHED;
 	}
+
 	if (isExpired({ ticket })) {
 		return TICKET_STATUS_ID.EXPIRED;
 	}
-	if (isOnSale(ticket)) {
-		return TICKET_STATUS_ID.ONSALE;
-	}
+
 	if (isSoldOut(ticket)) {
 		return TICKET_STATUS_ID.SOLD_OUT;
 	}
+
 	if (isPending(ticket)) {
 		return TICKET_STATUS_ID.PENDING;
+	}
+
+	if (isOnSale(ticket)) {
+		return TICKET_STATUS_ID.ONSALE;
 	}
 
 	return '';
