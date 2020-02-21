@@ -19,6 +19,7 @@ use GraphQL\Type\Definition\ResolveInfo;
 use WPGraphQL\AppContext;
 use WPGraphQL\Type\Object\RootQuery;
 use DateTime;
+use DateTimeZone;
 
 /**
  * Class TypeBase
@@ -286,7 +287,11 @@ abstract class TypeBase implements TypeInterface
     public function formatDatetime($datetime, EE_Base_Class $source)
     {
         $format   = $source->get_format();
-        $datetime = DateTime::createFromFormat($format, $datetime);
+        // create date object based on local timezone
+        $datetime = DateTime::createFromFormat($format, $datetime, new DateTimeZone($source->get_timezone()));
+        // change the timezone to UTC
+        $datetime->setTimezone(new DateTimeZone('UTC'));
+
         return $datetime->format(DateTime::RFC3339);
     }
 }
