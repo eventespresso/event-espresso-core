@@ -8,29 +8,29 @@ const getDateTimeStatusTextLabel = (date: Datetime): string => {
 	let dateStatus = '';
 	switch (status(date)) {
 		case DATETIME_STATUS_ID.SOLD_OUT:
-			dateStatus = __('sold out', 'event_espresso');
+			dateStatus = __('sold out');
 			break;
 		case DATETIME_STATUS_ID.EXPIRED:
-			dateStatus = __('expired', 'event_espresso');
+			dateStatus = __('expired');
 			break;
 		case DATETIME_STATUS_ID.UPCOMING:
-			dateStatus = __('upcoming', 'event_espresso');
+			dateStatus = __('upcoming');
 			break;
 		case DATETIME_STATUS_ID.ACTIVE:
-			dateStatus = __('active', 'event_espresso');
+			dateStatus = __('active');
 			break;
 		case DATETIME_STATUS_ID.TRASHED:
-			dateStatus = __('archived', 'event_espresso');
+			dateStatus = __('trashed');
 			break;
 		case DATETIME_STATUS_ID.CANCELLED:
-			dateStatus = __('cancelled', 'event_espresso');
+			dateStatus = __('cancelled');
 			break;
 		case DATETIME_STATUS_ID.POSTPONED:
-			dateStatus = __('postponed', 'event_espresso');
+			dateStatus = __('postponed');
 			break;
 		case DATETIME_STATUS_ID.INACTIVE:
 		default:
-			dateStatus = __('inactive', 'event_espresso');
+			dateStatus = __('inactive');
 			break;
 	}
 

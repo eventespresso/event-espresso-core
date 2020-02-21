@@ -8,20 +8,24 @@ import isUpcoming from '../predicates/isUpcoming';
 import { DATETIME_STATUS_ID } from '../constants';
 
 const status = (date: Datetime): string => {
-	if (isActive(date)) {
-		return DATETIME_STATUS_ID.ACTIVE;
-	}
-	if (isExpired(date)) {
-		return DATETIME_STATUS_ID.EXPIRED;
-	}
-	if (isSoldOut(date)) {
-		return DATETIME_STATUS_ID.SOLD_OUT;
-	}
 	if (isTrashed(date)) {
 		return DATETIME_STATUS_ID.TRASHED;
 	}
+
+	if (isExpired(date)) {
+		return DATETIME_STATUS_ID.EXPIRED;
+	}
+
+	if (isSoldOut(date)) {
+		return DATETIME_STATUS_ID.SOLD_OUT;
+	}
+
 	if (isUpcoming(date)) {
 		return DATETIME_STATUS_ID.UPCOMING;
+	}
+
+	if (isActive(date)) {
+		return DATETIME_STATUS_ID.ACTIVE;
 	}
 
 	return DATETIME_STATUS_ID.INACTIVE;

@@ -4,11 +4,11 @@ export const MODEL_NAMES = {
 };
 
 export const TICKET_STATUS_ID = {
-	SOLD_OUT: 'TKS',
 	EXPIRED: 'TKE',
-	ARCHIVED: 'TKA',
-	PENDING: 'TKP',
 	ONSALE: 'TKO',
+	PENDING: 'TKP',
+	SOLD_OUT: 'TKS',
+	TRASHED: 'TKT',
 };
 
 export const TICKET_STATUS_IDS = Object.values(TICKET_STATUS_ID);
