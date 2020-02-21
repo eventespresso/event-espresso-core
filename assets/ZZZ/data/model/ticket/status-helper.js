@@ -37,20 +37,6 @@ const isValidEntityOrArchive = (ticketEntity, includeArchived) => {
  * @function
  * @param {Object} ticketEntity model object
  * @param {boolean} includeArchived if true will not filter out archived entities
- * @return {boolean} true if ticket is currently available for purchase
- */
-export const isOnSale = (ticketEntity, includeArchived = false) => {
-	return (
-		isValidEntityOrArchive(ticketEntity, includeArchived) &&
-		ticketEntity.startDate.diffNow() < 0 &&
-		ticketEntity.endDate.diffNow() > 0
-	);
-};
-
-/**
- * @function
- * @param {Object} ticketEntity model object
- * @param {boolean} includeArchived if true will not filter out archived entities
  * @return {boolean} true if tickets sold meets or exceeds available quantity
  */
 export const isSoldOut = (ticketEntity, includeArchived = false) => {
