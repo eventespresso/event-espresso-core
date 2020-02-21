@@ -1,6 +1,4 @@
-/**
- * External imports
- */
+import React from 'react';
 import PropTypes from 'prop-types';
 
 /**
@@ -13,32 +11,15 @@ import PropTypes from 'prop-types';
  * @return {Object} rendered thead
 
  */
-const Table = ( {
-	children,
-	tableId,
-	tableClass,
-	captionID,
-	captionText,
-	...extraProps
-} ) => {
-	const classes = tableClass ?
-		`${ tableClass } ee-rspnsv-table` :
-		'ee-rspnsv-table';
+const Table = ({ children, tableId, tableClass, captionID, captionText, ...extraProps }) => {
+	const classes = tableClass ? `${tableClass} ee-rspnsv-table` : 'ee-rspnsv-table';
 	return (
-		<div
-			role={ 'region' }
-			aria-labelledby={ captionID }
-			className={ 'ee-rspnsv-table-wrapper' }
-			tabIndex="0"
-		>
-			<table id={ tableId } className={ classes } { ...extraProps }>
-				<caption
-					id={ captionID }
-					className={ 'screen-reader-text' }
-				>
-					{ captionText }
+		<div role={'region'} aria-labelledby={captionID} className={'ee-rspnsv-table-wrapper'} tabIndex='0'>
+			<table id={tableId} className={classes} {...extraProps}>
+				<caption id={captionID} className={'screen-reader-text'}>
+					{captionText}
 				</caption>
-				{ children }
+				{children}
 			</table>
 		</div>
 	);

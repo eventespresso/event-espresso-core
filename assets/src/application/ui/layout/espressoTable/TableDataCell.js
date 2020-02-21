@@ -1,6 +1,4 @@
-/**
- * External imports
- */
+import React from 'react';
 import classNames from 'classnames';
 import PropTypes from 'prop-types';
 
@@ -14,27 +12,14 @@ import PropTypes from 'prop-types';
  * @param {Object} extraProps
  * @return {Object} rendered <th> heading cell
  */
-const TableDataCell = ( {
-	children,
-	rowNumber,
-	colNumber,
-	htmlId,
-	htmlClass,
-	cssClasses,
-	...extraProps
-} ) => {
-	const id = htmlId ?
-		`${ htmlId }-row-${ rowNumber }-col-${ colNumber }` :
-		`ee-rspnsv-table-row-${ rowNumber }-col-${ colNumber }`;
-	const classes = classNames(
-		htmlClass,
-		'ee-rspnsv-table-body-td',
-		`ee-col-${ colNumber }`,
-		cssClasses.bodyTdClass
-	);
+const TableDataCell = ({ children, rowNumber, colNumber, htmlId, htmlClass, cssClasses, ...extraProps }) => {
+	const id = htmlId
+		? `${htmlId}-row-${rowNumber}-col-${colNumber}`
+		: `ee-rspnsv-table-row-${rowNumber}-col-${colNumber}`;
+	const classes = classNames(htmlClass, 'ee-rspnsv-table-body-td', `ee-col-${colNumber}`, cssClasses.bodyTdClass);
 	return (
-		<td id={ id } className={ classes } { ...extraProps } >
-			{ children }
+		<td id={id} className={classes} {...extraProps}>
+			{children}
 		</td>
 	);
 };
