@@ -5,6 +5,7 @@ import { Datetime } from '../../../../eventEditor/services/apollo/types';
 import { diff } from '../../../../../application/services/utilities/date';
 import { isTrashed } from '../../../services/predicates';
 import { isValidOrTrashed } from '../../../services/predicates';
+import { now } from './filters';
 
 const isExpired = (date: Datetime): boolean => {
 	return (
@@ -12,7 +13,7 @@ const isExpired = (date: Datetime): boolean => {
 		is(Boolean, date.isExpired) &&
 		date.isExpired &&
 		!isTrashed(date) &&
-		diff('seconds', parseISO(date.endDate), new Date()) < 0
+		diff('seconds', parseISO(date.endDate), now) < 0
 	);
 };
 

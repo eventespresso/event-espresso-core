@@ -4,10 +4,9 @@ import { pipe } from 'ramda';
 import pendingOnly from './index';
 import isPending from '../../isPending';
 import { nodes as tickets } from '../../../../../../eventEditor/services/apollo/queries/tickets/test/data';
+import { now } from '../index';
 
 describe('pendingOnly', () => {
-	const now = new Date();
-
 	it('should return an empty array if tickets started in the past', () => {
 		const updatedTickets = tickets.map((ticket) => {
 			const startDate = formatISO(new Date(2008, 8, 18, 19, 0, 52));
