@@ -1,6 +1,12 @@
-const getTicketStatusTextLabel = (ticketEntity) => {
+import { __ } from '@wordpress/i18n';
+
+import status from './status';
+import { Ticket } from '@edtrServices/apollo/types';
+import { TICKET_STATUS_ID } from '../constants';
+
+const getTicketStatusTextLabel = (ticket: Ticket): string => {
 	let ticketStatus = '';
-	switch (status(ticketEntity)) {
+	switch (status(ticket)) {
 		case TICKET_STATUS_ID.SOLD_OUT:
 			ticketStatus = __('sold out', 'event_espresso');
 			break;
