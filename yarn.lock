@@ -2896,7 +2896,7 @@
     gettext-parser "^1.3.1"
     lodash "^4.17.15"
 
-"@wordpress/babel-preset-default@^4.10.0":
+"@wordpress/babel-preset-default@^4.10.0", "@wordpress/babel-preset-default@^4.6.2":
   version "4.10.0"
   resolved "https://registry.yarnpkg.com/@wordpress/babel-preset-default/-/babel-preset-default-4.10.0.tgz#84b490c660ad0b1377c7e1fea5c1ed08c45656d4"
   integrity sha512-fVwtjumi0iIvaD2iTw/X2zK7dQnl0bwUy3L7mBU0M5WkUQ6C4wd6ukA+HRGSH8QKqqxm4ZL1OQnpshJfgioxfw==
@@ -3170,6 +3170,15 @@
     webpack "^4.8.3"
     webpack-sources "^1.3.0"
 
+"@wordpress/dependency-extraction-webpack-plugin@^2.3.0":
+  version "2.3.0"
+  resolved "https://registry.yarnpkg.com/@wordpress/dependency-extraction-webpack-plugin/-/dependency-extraction-webpack-plugin-2.3.0.tgz#7faac44967808d8c9c5855a3651e9ea7ed20f50d"
+  integrity sha512-FwEN0PuFr3Q5IdDLgerkIspiHkePNbzem71R3RlUevaSmnw+iH9/0Jzg4uIQ8KCMBpbrn1gAmhgdaTgTDn3EfQ==
+  dependencies:
+    json2php "^0.0.4"
+    webpack "^4.8.3"
+    webpack-sources "^1.3.0"
+
 "@wordpress/deprecated@^2.7.0":
   version "2.7.0"
   resolved "https://registry.yarnpkg.com/@wordpress/deprecated/-/deprecated-2.7.0.tgz#9e9702795b468e79f7d7aa7fe98af6cd256bf636"
@@ -3438,14 +3447,14 @@
     memize "^1.0.5"
     rememo "^3.0.0"
 
-"@wordpress/scripts@^7.1.0":
-  version "7.1.0"
-  resolved "https://registry.yarnpkg.com/@wordpress/scripts/-/scripts-7.1.0.tgz#c5ff1e5a9f4ee2f71e12c41f4e4ae6c6f9e2a0fe"
-  integrity sha512-m9nTZAOLFp/kLEUQSnh2ZGvpZKH7WPeio0z23CPk9eLO6VCSeuMVGvg1uCBLr/Agvx+KfVMzftI3iSuqj9i3Wg==
+"@wordpress/scripts@^7.1.1":
+  version "7.1.1"
+  resolved "https://registry.yarnpkg.com/@wordpress/scripts/-/scripts-7.1.1.tgz#f449405624756033b2feb9513a6f7324e0bd7d12"
+  integrity sha512-QKMMmWUoT6vMdtYiXqqtWquhyirno8plTVPJnZf2pEbe2eQTJc6YEIMaUtbFFT75dxUlQmrzZUeX2CTlYGji+A==
   dependencies:
     "@svgr/webpack" "^4.3.3"
     "@wordpress/babel-preset-default" "^4.10.0"
-    "@wordpress/dependency-extraction-webpack-plugin" "^2.2.0"
+    "@wordpress/dependency-extraction-webpack-plugin" "^2.3.0"
     "@wordpress/eslint-plugin" "^4.0.0"
     "@wordpress/jest-preset-default" "^5.4.0"
     "@wordpress/npm-package-json-lint-config" "^2.2.0"
