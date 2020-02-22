@@ -18,6 +18,7 @@ env:
     - WP_VERSION=latest WP_MULTISITE=0
 
 before_install:
+  - npm i -g npm@latest
    - |
       if [[ "$SKIP_XDEBUG_REMOVE" != "true" ]]; then
         cp $HOME/.phpenv/versions/$(phpenv global)/etc/conf.d/xdebug.ini /tmp
