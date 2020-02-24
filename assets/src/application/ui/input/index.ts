@@ -10,6 +10,7 @@ export { default as SearchInput } from './SearchInput';
 export { default as Select } from './Select';
 export { default as Switch } from './Switch';
 export { default as Text } from './Text';
+export { default as Hidden } from './Hidden';
 export { default as TextArea } from './TextArea';
 export { default as TimePicker } from './DateTimePicker/TimePicker';
 export * from './EspressoButton/types';

@@ -11,6 +11,11 @@ const FieldRenderer: React.FC<FieldRendererProps> = (props) => {
 
 	const formItemLayout = useFormItemLayout();
 
+	// no layout stuff needed for hidden field
+	if (props.fieldType === 'hidden') {
+		<MappedField {...rest} />;
+	}
+
 	const validateStatus = getValidateStatus(meta);
 	return (
 		<FormItem

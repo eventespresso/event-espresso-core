@@ -43,6 +43,7 @@ export interface AdditionalFieldProps<FormValues = AnyObject> {
 	fieldType:
 		| 'text'
 		| 'textarea'
+		| 'hidden'
 		| 'switch'
 		| 'select'
 		| 'multicheck'
