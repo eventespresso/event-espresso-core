@@ -1,6 +1,6 @@
 import { CONVERT_TO_MOMENT_DATE_FORMAT, CONVERT_TO_MOMENT_TIME_FORMAT } from '@appConstants/dateFnsFormats';
-import { parse, isValid } from 'date-fns';
-import { __, sprintf } from '@wordpress/i18n';
+import { parse, isValid, parseISO } from 'date-fns';
+import { __ } from '@wordpress/i18n';
 import * as yup from 'yup';
 
 export interface DateAndTime {
@@ -51,22 +51,22 @@ export const dateAndTimeSchema = yup.object({
 	startDate: yup
 		.date()
 		.transform(transformDate) // make sure we have Date object
-		.required(() => sprintf(__('%s is required'), __('Start Date'))),
+		.required(() => __('Start Date is required')),
 	startTime: yup
 		.date()
 		.transform(transformTime)
-		.required(() => sprintf(__('%s is required'), __('Start Time'))),
+		.required(() => __('Start Time is required')),
 	endDate: yup
 		.date()
 		.transform(transformDate)
-		.required(() => sprintf(__('%s is required'), __('End Date')))
+		.required(() => __('End Date is required'))
 		.when(['startDate'], (startDate: Date, schema: yup.DateSchema) => {
 			return schema.min(startDate, () => __('End Date & Time must be set later than the Start Date & Time'));
 		}),
 	endTime: yup
 		.date()
 		.transform(transformTime)
-		.required(() => sprintf(__('%s is required'), __('End Time')))
+		.required(() => __('End Time is required'))
 		.when(
 			['startDate', 'startTime', 'endDate'],
 			(startDate: Date, startTime: Date, endDate: Date, schema: yup.DateSchema) => {
@@ -83,3 +83,10 @@ export const dateAndTimeSchema = yup.object({
 			}
 		),
 });
+
+export const prepareDateForForm = (mayBeDate: any, defaultDate: Date): Date => {
+	if (mayBeDate) {
+		return mayBeDate instanceof Date ? mayBeDate : parseISO(mayBeDate);
+	}
+	return defaultDate;
+};

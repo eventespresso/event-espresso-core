@@ -1,5 +1,5 @@
 import { __, sprintf } from '@wordpress/i18n';
-import { format, parseISO } from 'date-fns';
+import { format } from 'date-fns';
 import { ProfileOutlined, CalendarOutlined, ControlOutlined } from '@ant-design/icons';
 import { pick } from 'ramda';
 
@@ -8,7 +8,7 @@ import { EspressoFormProps } from '@application/ui/forms/espressoForm';
 import useDatetimeItem from '../../../services/apollo/queries/datetimes/useDatetimeItem';
 import { EntityId, Datetime } from '@edtrServices/apollo/types';
 import { PLUS_ONE_MONTH, PLUS_TWO_MONTHS } from '../../../../shared/constants/defaultDates';
-import { processDateAndTime } from '../../../../shared/services/utils/dateAndTime';
+import { processDateAndTime, prepareDateForForm } from '../../../../shared/services/utils/dateAndTime';
 import { validate } from './formValidation';
 import { DateFormShape } from './types';
 
@@ -19,16 +19,8 @@ const FIELD_NAMES: Array<keyof Datetime> = ['name', 'description', 'capacity', '
 const useDateFormConfig = (id: EntityId, config?: EspressoFormProps): DateFormConfig => {
 	const { startDate: start, endDate: end, ...restProps } = useDatetimeItem({ id }) || {};
 
-	let startDate = PLUS_ONE_MONTH;
-	let endDate = PLUS_TWO_MONTHS;
-
-	if (start) {
-		// "start" and "end" may be from Optimistic response as Date
-		startDate = (start as any) instanceof Date ? (start as any) : parseISO(start);
-	}
-	if (end) {
-		endDate = (end as any) instanceof Date ? (end as any) : parseISO(end);
-	}
+	const startDate = prepareDateForForm(start, PLUS_ONE_MONTH);
+	const endDate = prepareDateForForm(end, PLUS_TWO_MONTHS);
 
 	const { onSubmit } = config;
 

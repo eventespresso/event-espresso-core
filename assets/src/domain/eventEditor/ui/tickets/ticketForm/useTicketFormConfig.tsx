@@ -1,6 +1,6 @@
 import React from 'react';
 import { __, sprintf } from '@wordpress/i18n';
-import { format, parseISO } from 'date-fns';
+import { format } from 'date-fns';
 import { ProfileOutlined, CalendarOutlined, ControlOutlined } from '@ant-design/icons';
 import { pick } from 'ramda';
 
@@ -9,7 +9,7 @@ import { EspressoFormProps } from '@application/ui/forms/espressoForm';
 import useTicketItem from '../../../services/apollo/queries/tickets/useTicketItem';
 import { EntityId, Ticket } from '@edtrServices/apollo/types';
 import { PLUS_ONE_MONTH, PLUS_TWO_MONTHS } from '../../../../shared/constants/defaultDates';
-import { processDateAndTime } from '../../../../shared/services/utils/dateAndTime';
+import { processDateAndTime, prepareDateForForm } from '../../../../shared/services/utils/dateAndTime';
 import TicketPriceCalculatorButton from '../ticketPriceCalculator/buttons/TicketPriceCalculatorButton';
 import { validate } from './formValidation';
 import { TicketFormShape } from './types';
@@ -33,8 +33,8 @@ const FIELD_NAMES: Array<keyof Ticket> = [
 const useTicketFormConfig = (id: EntityId, config?: EspressoFormProps): TicketFormConfig => {
 	const { startDate: start, endDate: end, ...restProps } = useTicketItem({ id }) || {};
 
-	const startDate = start ? parseISO(start) : PLUS_ONE_MONTH;
-	const endDate = end ? parseISO(end) : PLUS_TWO_MONTHS;
+	const startDate = prepareDateForForm(start, PLUS_ONE_MONTH);
+	const endDate = prepareDateForForm(end, PLUS_TWO_MONTHS);
 
 	const { onSubmit } = config;
 
