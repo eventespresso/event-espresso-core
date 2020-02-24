@@ -9,6 +9,7 @@ import {
 	Radio,
 	DatePicker,
 	TimePicker,
+	Hidden,
 } from '../../../input';
 import { FieldRendererProps } from '../types';
 
@@ -41,6 +42,8 @@ const MappedField: React.FC<Omit<FieldRendererProps, 'meta'>> = ({ fieldType, ..
 			break;
 		case 'timepicker':
 			Component = TimePicker;
+		case 'hidden':
+			Component = Hidden;
 			break;
 		default:
 			Component = () => null;
