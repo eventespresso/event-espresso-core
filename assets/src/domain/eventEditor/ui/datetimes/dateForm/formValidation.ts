@@ -1,4 +1,4 @@
-import { __, sprintf } from '@wordpress/i18n';
+import { __ } from '@wordpress/i18n';
 import * as yup from 'yup';
 
 import { yupToFinalFormErrors } from '@application/ui/forms/espressoForm';
@@ -12,7 +12,7 @@ export const validate = async (values: DateFormShape) => {
 const validationSchema = yup.object({
 	name: yup
 		.string()
-		.required(() => sprintf(__('%s is required'), __('Name')))
-		.min(3, () => sprintf(__('%s must be at least three characters'), __('Name'))),
+		.required(() => __('Name is required'))
+		.min(3, () => __('Name must be at least three characters')),
 	dateTime: dateAndTimeSchema,
 });
