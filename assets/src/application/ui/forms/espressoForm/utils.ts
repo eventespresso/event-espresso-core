@@ -1,5 +1,6 @@
 import { FieldMetaState } from 'react-final-form';
-import { getIn, AnyObject } from 'final-form';
+import { setIn, getIn, AnyObject } from 'final-form';
+import { ObjectSchema, ValidationError } from 'yup';
 
 import { FieldConditions } from './types';
 
@@ -78,4 +79,20 @@ export const evalFieldConditions = (conditions: FieldConditions, formData: AnyOb
 		conditionsApply = satisfied.length === conditions.length;
 	}
 	return conditionsApply;
+};
+
+/**
+ * Converts yup errors object into RFF error shape
+ * @param validationSchema
+ * @param values
+ */
+export const yupToFinalFormErrors = async <T>(validationSchema: ObjectSchema, values: T) => {
+	try {
+		await validationSchema.validate(values, { abortEarly: false });
+	} catch (error) {
+		return (error as ValidationError).inner.reduce(
+			(formError, innerError) => setIn(formError, innerError.path, innerError.message),
+			{}
+		);
+	}
 };

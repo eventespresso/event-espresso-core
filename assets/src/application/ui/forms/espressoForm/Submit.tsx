@@ -6,16 +6,17 @@ import ResetButton from './ResetButton';
 
 export interface SubmitProps extends Omit<EspressoButtonProps, 'onClick' | 'loading'> {
 	submitting: boolean;
+	hasErrors?: boolean;
 }
 
-const Submit: React.FC<SubmitProps> = ({ submitting, submitButton, resetButton }) => {
+const Submit: React.FC<SubmitProps> = ({ submitting, hasErrors, submitButton, resetButton }) => {
 	return (
 		<div className='submit-wrapper'>
 			<div className='submit-button'>
 				<EspressoButton
 					icon='save'
 					htmlType='submit'
-					disabled={submitting}
+					disabled={hasErrors || submitting}
 					loading={submitting}
 					className='submit-button'
 					type='primary'
