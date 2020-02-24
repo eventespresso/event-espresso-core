@@ -102,7 +102,7 @@ export const evalFieldConditions = (conditions: FieldConditions, formData: AnyOb
  *     {
  *         ...
  *         path: 'dateTime.endDate',
- *         message: 'End date must be before start date',
+ *         message: 'End date must be after start date',
  *         ...
  *     },
  * ]
@@ -112,7 +112,7 @@ export const evalFieldConditions = (conditions: FieldConditions, formData: AnyOb
  *     price: 'Price is required',
  *     dateTime: {
  *         startDate: 'Start date must not be in the past',
- *         endDate: 'Start date must not be in the past',
+ *         endDate: 'End date must be after start date',
  *     },
  * }
  * @link https://github.com/jquense/yup#validationerrorerrors-string--arraystring-value-any-path-string
