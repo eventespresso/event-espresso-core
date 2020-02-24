@@ -5,6 +5,7 @@ import classNames from 'classnames';
 
 import { Entity } from '@appServices/apollo/types';
 import EmptyState from '@appDisplay/EmptyState';
+import { EntityPagination } from '../pagination';
 import './style.scss';
 
 interface EntityListProps {
@@ -25,6 +26,7 @@ const EntityList = ({
 	filterState,
 	htmlClass = '',
 	noResultsText = '',
+	paginationProps,
 	view = 'grid',
 	...otherProps
 }: EntityListProps) => {
@@ -37,11 +39,18 @@ const EntityList = ({
 	}
 
 	const classes = classNames('ee-editor-entity-list', htmlClass);
+	const renderView =
+		view === 'grid' ? (
+			<EntityGridView entities={filteredEntities} className={classes} {...otherProps} />
+		) : (
+			<EntityListView entities={filteredEntities} className={classes} {...otherProps} />
+		);
 
-	return view === 'grid' ? (
-		<EntityGridView entities={filteredEntities} className={classes} {...otherProps} />
-	) : (
-		<EntityListView entities={filteredEntities} className={classes} {...otherProps} />
+	return (
+		<>
+			{renderView}
+			<EntityPagination {...paginationProps} showSizeChanger />
+		</>
 	);
 };
 

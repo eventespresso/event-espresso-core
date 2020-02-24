@@ -9,9 +9,8 @@ import './style.scss';
  * @return EntityPagination
  */
 const EntityPagination = ({
-	current,
 	onChange,
-	pageSize = 10,
+	pageSize = 6,
 	pageSizeOptions = ['6', '12', '24', '48'],
 	showTotal,
 	total,
@@ -21,7 +20,6 @@ const EntityPagination = ({
 		<div className='ee-entity-pagination'>
 			<Pagination
 				{...rest}
-				current={current}
 				onChange={onChange}
 				pageSize={pageSize}
 				pageSizeOptions={pageSizeOptions}
