@@ -25,6 +25,8 @@ const FormRenderer: React.FC<FormRendererProps> = (props) => {
 		layout,
 		formWrapper: FormWrapper,
 		debugFields,
+		hasValidationErrors,
+		hasSubmitErrors,
 		form,
 	} = props;
 
@@ -38,7 +40,12 @@ const FormRenderer: React.FC<FormRendererProps> = (props) => {
 
 					{/* May be formWrapper handles form submission */}
 					{submitButton ? (
-						<Submit submitting={submitting} submitButton={submitButton} resetButton={resetButton} />
+						<Submit
+							hasErrors={hasValidationErrors || hasSubmitErrors}
+							submitting={submitting}
+							submitButton={submitButton}
+							resetButton={resetButton}
+						/>
 					) : null}
 				</Form>
 
