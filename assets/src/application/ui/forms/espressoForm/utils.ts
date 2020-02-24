@@ -82,31 +82,32 @@ export const evalFieldConditions = (conditions: FieldConditions, formData: AnyOb
 };
 
 /**
- * Converts yup errors object into RFF error shape
- * error.inner is an array of all errors, an error may be like:
+ * Converts yup errors object into RFF error shape.
+ *
+ * error.inner is an array of all errors like:
  *
  * error.inner = [
  *     {
  *         ...
- *         path: price,
+ *         path: 'price',
  *         message: 'Price is required',
  *         ...
  *     },
  *     {
  *         ...
- *         path: dateTime.startDate,
+ *         path: 'dateTime.startDate',
  *         message: 'Start date must not be in the past',
  *         ...
  *     },
  *     {
  *         ...
- *         path: dateTime.endDate,
+ *         path: 'dateTime.endDate',
  *         message: 'End date must be before start date',
  *         ...
  *     },
  * ]
  *
- * After error.inner.reduce, we will get:
+ * After error.inner.reduce(), we will get:
  * {
  *     price: 'Price is required',
  *     dateTime: {
