@@ -30,8 +30,10 @@ const FormModalForm: React.FC<FormModalFormProps> = ({
 	children,
 	title,
 }) => {
+	const submitDisabled = submitting || pristine || hasValidationErrors || hasSubmitErrors;
+
 	const submitButton: ButtonProps = {
-		disabled: submitting || pristine || hasValidationErrors || hasSubmitErrors,
+		disabled: submitDisabled,
 		htmlType: 'submit',
 		icon: <SaveOutlined />,
 		onClick: (click) => {
