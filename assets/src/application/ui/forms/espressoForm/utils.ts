@@ -83,6 +83,8 @@ export const evalFieldConditions = (conditions: FieldConditions, formData: AnyOb
 
 /**
  * Converts yup errors object into RFF error shape
+ * @link https://github.com/jquense/yup#validationerrorerrors-string--arraystring-value-any-path-string
+ * @link https://final-form.org/docs/final-form/types/Config#validation-errors
  * @param validationSchema
  * @param values
  */
