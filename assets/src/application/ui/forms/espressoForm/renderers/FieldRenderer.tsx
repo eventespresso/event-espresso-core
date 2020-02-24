@@ -13,7 +13,7 @@ const FieldRenderer: React.FC<FieldRendererProps> = (props) => {
 
 	// no layout stuff needed for hidden field
 	if (props.fieldType === 'hidden') {
-		<MappedField {...rest} />;
+		return <MappedField {...rest} />;
 	}
 
 	const validateStatus = getValidateStatus(meta);
