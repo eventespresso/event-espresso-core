@@ -83,6 +83,37 @@ export const evalFieldConditions = (conditions: FieldConditions, formData: AnyOb
 
 /**
  * Converts yup errors object into RFF error shape
+ * error.inner is an array of all errors, an error may be like:
+ *
+ * error.inner = [
+ *     {
+ *         ...
+ *         path: price,
+ *         message: 'Price is required',
+ *         ...
+ *     },
+ *     {
+ *         ...
+ *         path: dateTime.startDate,
+ *         message: 'Start date must not be in the past',
+ *         ...
+ *     },
+ *     {
+ *         ...
+ *         path: dateTime.endDate,
+ *         message: 'End date must be before start date',
+ *         ...
+ *     },
+ * ]
+ *
+ * After error.inner.reduce, we will get:
+ * {
+ *     price: 'Price is required',
+ *     dateTime: {
+ *         startDate: 'Start date must not be in the past',
+ *         endDate: 'Start date must not be in the past',
+ *     },
+ * }
  * @link https://github.com/jquense/yup#validationerrorerrors-string--arraystring-value-any-path-string
  * @link https://final-form.org/docs/final-form/types/Config#validation-errors
  * @param validationSchema
@@ -91,10 +122,17 @@ export const evalFieldConditions = (conditions: FieldConditions, formData: AnyOb
 export const yupToFinalFormErrors = async <T>(validationSchema: ObjectSchema, values: T) => {
 	try {
 		await validationSchema.validate(values, { abortEarly: false });
-	} catch (error) {
-		return (error as ValidationError).inner.reduce(
-			(formError, innerError) => setIn(formError, innerError.path, innerError.message),
-			{}
-		);
+	} catch (err) {
+		// type annotate the error
+		const error: ValidationError = err;
+		console.log(error);
+		/**
+		 
+		 */
+		return error.inner.reduce((formError, innerError) => {
+			// Update formError at apropriate path - innerError.path
+			// which is dot-and-bracket syntax (e.g. "some.values[3].whatever")
+			return setIn(formError, innerError.path, innerError.message);
+		}, {});
 	}
 };
