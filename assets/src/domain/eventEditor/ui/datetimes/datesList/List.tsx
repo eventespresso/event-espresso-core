@@ -8,6 +8,7 @@ import { Datetime } from '@edtrServices/apollo/types';
 
 import { EntityList } from '@appLayout/entityList';
 import useEntityListFilterState from '@appLayout/entityList/filterBar/useEntityListFilterState';
+import useDatesListFilterState from './filterBar/useDatesListFilterState';
 import GridView from './views/Grid';
 import ListView from './views/List';
 
@@ -18,10 +19,11 @@ interface ListProps {
 const List: React.FC<ListProps> = ({ datetimes }) => {
 	const header = <H3 style={{ margin: '2rem 0 .5rem' }}>{__('Dates List')}</H3>;
 	const filterState = useEntityListFilterState();
+	const { processedDates, ...datesListFilterStateProps } = useDatesListFilterState(datetimes);
 
 	const entityListProps = {
 		...filterState,
-		entities: datetimes,
+		entities: processedDates,
 		EntityGridView: GridView,
 		EntityListView: ListView,
 	};
@@ -29,7 +31,7 @@ const List: React.FC<ListProps> = ({ datetimes }) => {
 	return (
 		<>
 			{header}
-			<DatesListFilterBar filterState={filterState} />
+			<DatesListFilterBar datesListFilterStateProps={datesListFilterStateProps} filterState={filterState} />
 			<EntityList {...entityListProps} />
 			<AddNewDateButton />
 		</>

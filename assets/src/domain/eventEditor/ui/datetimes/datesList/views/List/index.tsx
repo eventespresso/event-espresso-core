@@ -25,7 +25,15 @@ const noZebraStripe = ['row', 'stripe', 'name', 'actions'];
  * @member {Object} otherProps
  * @return {Object} rendered table of Event Dates
  */
-const DatesListView = ({ datetimes, allEventDates, showDate, setEntityIds, setSortBy, htmlClass, ...otherProps }) => {
+const DatesListView = ({
+	entities: datetimes,
+	allEventDates,
+	showDate,
+	setEntityIds,
+	setSortBy,
+	htmlClass,
+	...otherProps
+}) => {
 	const formRows = datetimes.map((dateEntity) => {
 		const columns = datesListTableRow(dateEntity, otherProps);
 		return columns;

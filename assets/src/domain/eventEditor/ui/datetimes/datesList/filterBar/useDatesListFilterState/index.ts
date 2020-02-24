@@ -36,7 +36,7 @@ const useDatesListFilterState = (dates: Datetime[]): DatesListFilterStateManager
 		dates,
 		datesSortedBy: DatesSorted.chronologically,
 		displayDates: DisplayDates.start,
-		processedDates: [],
+		processedDates: dates,
 		showDates: ShowDates.all,
 	};
 	const [state, dispatch] = useReducer(reducer, initialState);
