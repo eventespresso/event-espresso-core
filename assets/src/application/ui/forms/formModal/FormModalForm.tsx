@@ -20,9 +20,20 @@ const modalStyle: CSSProperties = {
 	transform: 'translate(-50%, -50%)',
 };
 
-const FormModalForm: React.FC<FormModalFormProps> = ({ form, submitting, pristine, onClose, children, title }) => {
+const FormModalForm: React.FC<FormModalFormProps> = ({
+	form,
+	submitting,
+	hasValidationErrors,
+	hasSubmitErrors,
+	pristine,
+	onClose,
+	children,
+	title,
+}) => {
+	const submitDisabled = submitting || pristine || hasValidationErrors || hasSubmitErrors;
+
 	const submitButton: ButtonProps = {
-		disabled: submitting || pristine,
+		disabled: submitDisabled,
 		htmlType: 'submit',
 		icon: <SaveOutlined />,
 		onClick: (click) => {

@@ -42,6 +42,7 @@ const MappedField: React.FC<Omit<FieldRendererProps, 'meta'>> = ({ fieldType, ..
 			break;
 		case 'timepicker':
 			Component = TimePicker;
+			break;
 		case 'hidden':
 			Component = Hidden;
 			break;

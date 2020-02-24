@@ -7,7 +7,7 @@ import { getValidateStatus } from '../utils';
 import useFormItemLayout from '../hooks/useFormItemLayout';
 
 const FieldRenderer: React.FC<FieldRendererProps> = (props) => {
-	const { label, desc, meta, before, after, formItemProps, ...rest } = props;
+	const { label, desc, required, meta, before, after, formItemProps, ...rest } = props;
 
 	const formItemLayout = useFormItemLayout();
 
@@ -21,6 +21,7 @@ const FieldRenderer: React.FC<FieldRendererProps> = (props) => {
 		<FormItem
 			label={label}
 			extra={desc}
+			required={required}
 			validateStatus={validateStatus}
 			hasFeedback={meta.touched && !!(meta.error || meta.submitError)}
 			help={meta.touched && (meta.error || meta.submitError)}

@@ -1,6 +1,6 @@
 import React from 'react';
-import { __ } from '@wordpress/i18n';
-import { format, parseISO } from 'date-fns';
+import { __, sprintf } from '@wordpress/i18n';
+import { format } from 'date-fns';
 import { ProfileOutlined, CalendarOutlined, ControlOutlined } from '@ant-design/icons';
 import { pick } from 'ramda';
 
@@ -9,13 +9,10 @@ import { EspressoFormProps } from '@application/ui/forms/espressoForm';
 import useTicketItem from '../../../services/apollo/queries/tickets/useTicketItem';
 import { EntityId, Ticket } from '@edtrServices/apollo/types';
 import { PLUS_ONE_MONTH, PLUS_TWO_MONTHS } from '../../../../shared/constants/defaultDates';
-import { processDateAndTime, DateAndTime } from '../../../../shared/services/utils/processDateAndTime';
-import { TicketBaseInput } from '@edtrServices/apollo/mutations';
+import { processDateAndTime, prepareDateForForm } from '../../../../shared/services/utils/dateAndTime';
 import TicketPriceCalculatorButton from '../ticketPriceCalculator/buttons/TicketPriceCalculatorButton';
-
-interface TicketFormShape extends TicketBaseInput, DateAndTime {
-	dateTime?: DateAndTime;
-}
+import { validate } from './formValidation';
+import { TicketFormShape } from './types';
 
 type TicketFormConfig = EspressoFormProps<TicketFormShape>;
 
@@ -36,8 +33,8 @@ const FIELD_NAMES: Array<keyof Ticket> = [
 const useTicketFormConfig = (id: EntityId, config?: EspressoFormProps): TicketFormConfig => {
 	const { startDate: start, endDate: end, ...restProps } = useTicketItem({ id }) || {};
 
-	const startDate = start ? parseISO(start) : PLUS_ONE_MONTH;
-	const endDate = end ? parseISO(end) : PLUS_TWO_MONTHS;
+	const startDate = prepareDateForForm(start, PLUS_ONE_MONTH);
+	const endDate = prepareDateForForm(end, PLUS_TWO_MONTHS);
 
 	const { onSubmit } = config;
 
@@ -71,8 +68,9 @@ const useTicketFormConfig = (id: EntityId, config?: EspressoFormProps): TicketFo
 		...config,
 		onSubmit: onSubmitFrom,
 		initialValues,
+		validate,
 		layout: 'horizontal',
-		debugFields: ['values'],
+		debugFields: ['values', 'errors'],
 		sections: [
 			{
 				name: 'basics',
@@ -83,6 +81,7 @@ const useTicketFormConfig = (id: EntityId, config?: EspressoFormProps): TicketFo
 						name: 'name',
 						label: __('Name'),
 						fieldType: 'text',
+						min: 3,
 					},
 					{
 						name: 'description',
@@ -92,6 +91,12 @@ const useTicketFormConfig = (id: EntityId, config?: EspressoFormProps): TicketFo
 					{
 						name: 'price',
 						label: __('Price'),
+						desc: sprintf(
+							__(
+								'The total amount of money charged for this ticket. Leave blank to make this ticket selection free.%sClick the button after the input to use the Ticket Price Calculator'
+							),
+							' \n'
+						),
 						fieldType: 'text',
 						addonAfter: id ? (
 							<TicketPriceCalculatorButton ticketId={id} style={{ margin: 0, height: 'auto' }} />
@@ -102,6 +107,9 @@ const useTicketFormConfig = (id: EntityId, config?: EspressoFormProps): TicketFo
 						name: 'isTaxable',
 						label: __('Taxable'),
 						fieldType: 'switch',
+						desc: __(
+							'If enabled, all configured taxes will be applied to the price of this ticket upon purchase.'
+						),
 					},
 				],
 			},
@@ -149,36 +157,66 @@ const useTicketFormConfig = (id: EntityId, config?: EspressoFormProps): TicketFo
 						label: __('Quantity For Sale'),
 						fieldType: 'number',
 						formItemProps: adjacentFormItemProps,
+						min: -1,
+						desc: sprintf(
+							__(
+								'The maximum number of this ticket available for sale.%sSet to 0 stop sales or set to -1 for no limit.'
+							),
+							'\n'
+						),
 					},
 					{
 						name: 'uses',
 						label: __('Number of Uses'),
 						fieldType: 'number',
 						formItemProps: adjacentFormItemProps,
+						min: 0,
+						desc: sprintf(
+							__(
+								'Controls the total number of times this ticket can be used, regardless of the number of dates it is assigned to.%sExample: A ticket might have access to 4 different dates, but setting this field to 2 would mean that the ticket could only be used twice. Leave blank for no limit.'
+							),
+							'\n'
+						),
 					},
 					{
 						name: 'min',
 						label: __('Minimum Quantity'),
 						fieldType: 'number',
 						formItemProps: adjacentFormItemProps,
+						min: 0,
+						desc: sprintf(
+							__(
+								'The minimum quantity that can be selected for this ticket. Use this to create ticket bundles or graduated pricing.%sLeave blank for no minimum.'
+							),
+							'\n'
+						),
 					},
 					{
 						name: 'max',
 						label: __('Maximum Quantity'),
 						fieldType: 'number',
 						formItemProps: adjacentFormItemProps,
+						min: -1,
+						desc: sprintf(
+							__(
+								'The maximum quantity that can be selected for this ticket. Use this to create ticket bundles or graduated pricing.%sSet to -1 for no maximum.'
+							),
+							'\n'
+						),
 					},
 					{
 						name: 'isRequired',
 						label: __('Required Ticket'),
 						fieldType: 'switch',
 						formItemProps: adjacentFormItemProps,
+						desc: __('If enabled, the ticket will appear first in frontend ticket lists.'),
 					},
 					{
 						name: 'isDefault',
 						label: __('Default Ticket'),
 						fieldType: 'switch',
 						formItemProps: adjacentFormItemProps,
+						desc: __('If enabled, the ticket will appear on all new events.'),
 					},
 					{
 						name: 'isTrashed',
