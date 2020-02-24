@@ -126,10 +126,6 @@ export const yupToFinalFormErrors = async <T>(validationSchema: ObjectSchema, va
 	} catch (err) {
 		// type annotate the error
 		const error: ValidationError = err;
-		console.log(error);
-		/**
-		 
-		 */
 		return error.inner.reduce((formError, innerError) => {
 			// Update formError at apropriate path - innerError.path
 			// which is dot-and-bracket syntax (e.g. "some.values[3].whatever")
