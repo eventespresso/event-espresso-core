@@ -18,7 +18,6 @@ const useEntityPagination = ({ entities, perPage }) => {
 
 	const onChange = (page) => {
 		const slicedEntities = slice(perPage * (page - 1), perPage * page)(entities);
-		console.log(slicedEntities.length);
 		setCurrentPage(slicedEntities);
 	};
 

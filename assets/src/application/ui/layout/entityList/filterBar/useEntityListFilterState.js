@@ -48,21 +48,6 @@ const useEntityListFilterState = () => {
 	const showEntityFilters = state.showEntityFilters;
 	const view = state.view;
 
-	const actions = {
-		setGridView,
-		setListView,
-		setPerPage,
-		setSearchText,
-		toggleEntityFilters,
-	};
-
-	const configs = {
-		perPage,
-		searchText,
-		showEntityFilters,
-		view,
-	};
-
 	return {
 		perPage,
 		searchText,

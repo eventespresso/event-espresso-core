@@ -1,5 +1,6 @@
-import React from 'react';
 import { Datetime } from '../../../../services/apollo/types';
+import { CardView } from '../cardView';
+import { TableView } from '../tableView';
 
 import useEntityListFilterState from '@appLayout/entityList/filterBar/useEntityListFilterState';
 import useDatesListFilterState from '../filterBar/useDatesListFilterState';
@@ -13,8 +14,20 @@ const useFilteredDatetimes = (datetimes: Datetime[]): any => {
 		perPage: filterState.perPage,
 	});
 
-	return {
+	const viewProps = {
+		EntityGridView: CardView,
+		EntityListView: TableView,
+		view: filterState.view,
+	};
+
+	const entityListProps = {
+		...viewProps,
 		entities: paginatedEntities,
+		paginationProps,
+	};
+
+	return {
+		entityListProps,
 		filterBarProps,
 		filterState,
 		paginationProps,

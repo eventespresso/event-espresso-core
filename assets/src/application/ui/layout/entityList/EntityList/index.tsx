@@ -14,7 +14,6 @@ interface EntityListProps {
 	entities: Entity[];
 	EntityGridView: React.ElementType;
 	EntityListView: React.ElementType;
-	filterState?: any;
 	noResultsText?: string;
 	paginationProps: PaginationProps;
 	view?: 'grid' | 'list';
@@ -24,7 +23,6 @@ const EntityList = ({
 	entities = [],
 	EntityGridView,
 	EntityListView,
-	filterState,
 	noResultsText = '',
 	paginationProps,
 	view = 'grid',
