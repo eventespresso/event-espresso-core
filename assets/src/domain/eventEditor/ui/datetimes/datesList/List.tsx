@@ -4,8 +4,8 @@ import { H3 } from '@blueprintjs/core/lib/esm';
 
 import DatesListFilterBar from './filterBar/DatesListFilterBar';
 import AddNewDateButton from './AddNewDateButton';
-import DatetimeCard from '../dateCard/DateCard';
-import { Datetime } from '../../../services/apollo/types';
+import DatetimeCard from './cardView/DateCard';
+import { Datetime } from '@edtrServices/apollo/types';
 
 const listStyle: CSSProperties = {
 	display: 'flex',

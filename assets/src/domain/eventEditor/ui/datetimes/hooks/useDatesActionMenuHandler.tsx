@@ -2,10 +2,10 @@ import React, { useCallback } from 'react';
 import { TagsOutlined } from '@ant-design/icons';
 import { __ } from '@wordpress/i18n';
 
-import EditDateButton from '../dateCard/EditDateButton';
-import DeleteDateButton from '../dateCard/DeleteDateButton';
+import EditDateButton from '../datesList/actionsMenu/EditDateButton';
+import DeleteDateButton from '../datesList/actionsMenu/DeleteDateButton';
 import { EspressoButton } from '@application/ui/input';
-import { Datetime } from '../../../services/apollo/types';
+import { Datetime } from '@edtrServices/apollo/types';
 import { EntitySubscriptionCallback } from '@appLayout/entityActionsMenu';
 import { AdditionalDateMenuOptions } from '../types';
 import { useStatus, TypeName } from '@appServices/apollo/status';

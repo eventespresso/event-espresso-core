@@ -3,8 +3,8 @@ import { __ } from '@wordpress/i18n';
 
 import AddNewDateButton from './AddNewDateButton';
 import List from './List';
-import useDatetimes from '../../../services/apollo/queries/datetimes/useDatetimes';
-import { useStatus, TypeName } from '../../../../../application/services/apollo/status';
+import useDatetimes from '@edtrServices/apollo/queries/datetimes/useDatetimes';
+import { useStatus, TypeName } from '@appServices/apollo/status';
 
 import { EmptyState, ErrorIndicator, LoadingIndicator } from '@appDisplay/index';
 

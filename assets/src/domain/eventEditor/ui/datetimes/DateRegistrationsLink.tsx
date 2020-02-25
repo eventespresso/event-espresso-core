@@ -1,5 +1,5 @@
 import React from 'react';
-import { Datetime } from '../../services/apollo/types';
+import { Datetime } from '@edtrServices/apollo/types';
 
 interface DateRegistrationsLinkProps {
 	datetime: Datetime;

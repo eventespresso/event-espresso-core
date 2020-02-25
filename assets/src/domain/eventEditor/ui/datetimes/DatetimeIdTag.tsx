@@ -1,6 +1,6 @@
 import React from 'react';
-import useDatetimeItem from '../../services/apollo/queries/datetimes/useDatetimeItem';
-import { ListItemProps } from '../../interfaces/types';
+import useDatetimeItem from '@edtrServices/apollo/queries/datetimes/useDatetimeItem';
+import { ListItemProps } from '@edtrInterfaces/types';
 
 const DatetimeIdTag: React.FC<ListItemProps> = ({ id }) => {
 	const { dbId } = useDatetimeItem({ id }) || {};

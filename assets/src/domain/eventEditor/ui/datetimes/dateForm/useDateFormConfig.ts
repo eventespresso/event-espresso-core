@@ -5,7 +5,7 @@ import { pick } from 'ramda';
 
 import { CONVERT_TO_MOMENT_DATE_FORMAT, CONVERT_TO_MOMENT_TIME_FORMAT } from '@appConstants/dateFnsFormats';
 import { EspressoFormProps } from '@application/ui/forms/espressoForm';
-import useDatetimeItem from '../../../services/apollo/queries/datetimes/useDatetimeItem';
+import useDatetimeItem from '@edtrServices/apollo/queries/datetimes/useDatetimeItem';
 import { EntityId, Datetime } from '@edtrServices/apollo/types';
 import { PLUS_ONE_MONTH, PLUS_TWO_MONTHS } from '../../../../shared/constants/defaultDates';
 import { processDateAndTime, prepareDateForForm } from '../../../../shared/services/utils/dateAndTime';
