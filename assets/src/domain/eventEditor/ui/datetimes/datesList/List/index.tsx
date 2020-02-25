@@ -8,7 +8,7 @@ import AddNewDateButton from '../AddNewDateButton';
 import { Datetime } from '../../../../services/apollo/types';
 import { EntityList } from '@appLayout/entityList';
 import { CardView } from '../cardView';
-import ListView from '../views/List';
+import { TableView } from '../tableView';
 
 import useList from './useList';
 
@@ -24,7 +24,7 @@ const List: React.FC<ListProps> = ({ datetimes }) => {
 		...filterState,
 		entities,
 		EntityGridView: CardView,
-		EntityListView: ListView,
+		EntityListView: TableView,
 		paginationProps,
 	};
 

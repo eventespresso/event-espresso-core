@@ -25,7 +25,7 @@ const noZebraStripe = ['row', 'stripe', 'name', 'actions'];
  * @member {Object} otherProps
  * @return {Object} rendered table of Event Dates
  */
-const DatesListView = ({
+const TableView = ({
 	entities: datetimes,
 	allEventDates,
 	showDate,
@@ -54,4 +54,4 @@ const DatesListView = ({
 	);
 };
 
-export default DatesListView;
+export default TableView;
