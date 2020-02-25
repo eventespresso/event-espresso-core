@@ -4,7 +4,7 @@ const EMPTY_ARRAY = [];
 
 const useEntityPagination = ({ entities, perPage }) => {
 	const initialPaginatedEntities = slice(0, perPage)(entities);
-	const [paginatedEntities, setCurrentPage] = useState(initialPaginatedEntities);
+	const [paginatedEntities, setPaginatedEntities] = useState(initialPaginatedEntities);
 	const total = entities.length;
 	// const pageNumber = parseInt(currentPage, 10);
 	// const lastPage = Math.ceil(entities.length / perPage);
@@ -18,7 +18,7 @@ const useEntityPagination = ({ entities, perPage }) => {
 
 	const onChange = (page) => {
 		const slicedEntities = slice(perPage * (page - 1), perPage * page)(entities);
-		setCurrentPage(slicedEntities);
+		setPaginatedEntities(slicedEntities);
 	};
 
 	return {

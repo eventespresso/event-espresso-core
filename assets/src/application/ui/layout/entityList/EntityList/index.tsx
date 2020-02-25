@@ -36,7 +36,7 @@ const EntityList = ({
 		return <EmptyState className='ee-entity-list-no-results' description={description} />;
 	}
 
-	const className = classNames('ee-editor-entity-list', props.c);
+	const className = classNames('ee-editor-entity-list', props.className);
 	const EntityView = view === 'grid' ? EntityGridView : EntityListView;
 
 	return (

@@ -1,5 +1,4 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 
 /**
  * @param {mixed} children
@@ -34,21 +33,21 @@ const TableHeaderCell = ({ children, rowNumber, colNumber, rowType, htmlId, html
 	);
 };
 
-TableHeaderCell.propTypes = {
-	children: PropTypes.node,
-	rowNumber: PropTypes.number.isRequired,
-	colNumber: PropTypes.number.isRequired,
-	rowType: PropTypes.string,
-	htmlId: PropTypes.string,
-	htmlClass: PropTypes.string,
-	cssClasses: PropTypes.object,
-};
+// TableHeaderCell.propTypes = {
+// 	children: PropTypes.node,
+// 	rowNumber: PropTypes.number.isRequired,
+// 	colNumber: PropTypes.number.isRequired,
+// 	rowType: PropTypes.string,
+// 	htmlId: PropTypes.string,
+// 	htmlClass: PropTypes.string,
+// 	cssClasses: PropTypes.object,
+// };
 
-TableHeaderCell.defaultProps = {
-	rowType: 'body',
-	htmlId: '',
-	htmlClass: '',
-	cssClasses: {},
-};
+// TableHeaderCell.defaultProps = {
+// 	rowType: 'body',
+// 	htmlId: '',
+// 	htmlClass: '',
+// 	cssClasses: {},
+// };
 
 export default TableHeaderCell;

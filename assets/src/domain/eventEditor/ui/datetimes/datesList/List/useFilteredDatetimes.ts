@@ -8,11 +8,16 @@ import { useEntityPagination } from '@appLayout/entityList/pagination';
 
 const useFilteredDatetimes = (datetimes: Datetime[]): any => {
 	const filterState = useEntityListFilterState();
-	const { processedDates, ...filterBarProps } = useDatesListFilterState(datetimes);
+	const { processedDates, ...entityFiltersProps } = useDatesListFilterState(datetimes);
 	const { paginatedEntities, ...paginationProps } = useEntityPagination({
 		entities: processedDates,
 		perPage: filterState.perPage,
 	});
+
+	const filterBarProps = {
+		entityFiltersProps,
+		filterState,
+	};
 
 	const viewProps = {
 		EntityGridView: CardView,

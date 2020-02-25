@@ -6,10 +6,6 @@ import { AppstoreFilled, FilterOutlined, TableOutlined } from '@ant-design/icons
 import { __ } from '@wordpress/i18n';
 import EspressoButton from '../../../input/EspressoButton';
 
-/**
- * Internal dependencies
- */
-import useEntityListFilterState from './useEntityListFilterState';
 import Collapsible from './Collapsible';
 import './style.css';
 

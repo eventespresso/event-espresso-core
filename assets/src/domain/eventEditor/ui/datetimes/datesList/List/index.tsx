@@ -16,13 +16,12 @@ interface ListProps {
 
 const List: React.FC<ListProps> = ({ datetimes }) => {
 	const header = <H3 style={{ margin: '2rem 0 .5rem' }}>{__('Dates List')}</H3>;
-	const { entityListProps, filterBarProps, filterState } = useFilteredDatetimes(datetimes);
+	const { entityListProps, filterBarProps } = useFilteredDatetimes(datetimes);
 
 	return (
 		<>
 			{header}
-			// @ts-ignore
-			<DatesListFilterBar datesListFilterStateProps={filterBarProps} filterState={filterState} />
+			<DatesListFilterBar {...filterBarProps} />
 			<EntityList {...entityListProps} />
 			<Divider dashed />
 			<AddNewDateButton />

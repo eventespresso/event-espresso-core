@@ -9,9 +9,9 @@ import DatesListEntityFilters from './DatesListEntityFilters';
  *
  * @return {Object} EditorDatesListView with added DateListFilters
  */
-const DatesListFilterBar: React.FC = ({ filterState, datesListFilterStateProps }: any) => {
+const DatesListFilterBar: React.FC = ({ entityFiltersProps, filterState }: any) => {
 	const listId = 'event-editor-dates-list';
-	const entityFilters = <DatesListEntityFilters {...datesListFilterStateProps} />;
+	const entityFilters = <DatesListEntityFilters {...entityFiltersProps} />;
 
 	return <EntityListFilterBar entityFilters={entityFilters} filterState={filterState} listId={listId} />;
 };

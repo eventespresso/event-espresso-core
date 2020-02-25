@@ -1,6 +1,5 @@
 import React from 'react';
 import classNames from 'classnames';
-import PropTypes from 'prop-types';
 import { Draggable } from 'react-beautiful-dnd';
 
 /**
@@ -71,23 +70,23 @@ const TableRow = ({
 	);
 };
 
-TableRow.propTypes = {
-	rowData: PropTypes.object.isRequired,
-	children: PropTypes.node.isRequired,
-	rowNumber: PropTypes.number.isRequired,
-	rowType: PropTypes.string,
-	htmlId: PropTypes.string,
-	htmlClass: PropTypes.string,
-	cssClasses: PropTypes.object,
-	sortable: PropTypes.bool,
-};
+// TableRow.propTypes = {
+// 	rowData: PropTypes.object.isRequired,
+// 	children: PropTypes.node.isRequired,
+// 	rowNumber: PropTypes.number.isRequired,
+// 	rowType: PropTypes.string,
+// 	htmlId: PropTypes.string,
+// 	htmlClass: PropTypes.string,
+// 	cssClasses: PropTypes.object,
+// 	sortable: PropTypes.bool,
+// };
 
-TableRow.defaultProps = {
-	rowType: 'body',
-	htmlId: '',
-	htmlClass: '',
-	cssClasses: {},
-	sortable: false,
-};
+// TableRow.defaultProps = {
+// 	rowType: 'body',
+// 	htmlId: '',
+// 	htmlClass: '',
+// 	cssClasses: {},
+// 	sortable: false,
+// };
 
 export default TableRow;
