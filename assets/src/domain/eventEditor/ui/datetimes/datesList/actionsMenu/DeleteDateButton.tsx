@@ -4,7 +4,7 @@ import { __ } from '@wordpress/i18n';
 
 import { EspressoButton } from '@application/ui/input';
 import { MutationResult } from '@appServices/apollo/mutations';
-import { ListItemProps } from '../../../interfaces/types';
+import { ListItemProps } from '@edtrInterfaces/types';
 import { useDatetimeMutator } from '@edtrServices/apollo/mutations';
 
 const DeleteDateButton: React.FC<ListItemProps> = ({ id, ...rest }) => {

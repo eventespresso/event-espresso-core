@@ -5,8 +5,8 @@ import InfinitySymbol from '@application/valueObjects/InfinitySymbol';
 import parseInfinity from '@appServices/utilities/parseInfinity';
 import { EntityDetailsPanel } from '@appDisplay/enityDetails';
 import { MutatorFn } from '@appServices/apollo/mutations';
-import { Datetime } from '../../../services/apollo/types';
-import DateRegistrationsLink from '../DateRegistrationsLink';
+import { Datetime } from '@edtrServices/apollo/types';
+import DateRegistrationsLink from '../../DateRegistrationsLink';
 
 interface DateDetailsProps {
 	datetime: Datetime;

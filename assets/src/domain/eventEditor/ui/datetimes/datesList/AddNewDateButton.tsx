@@ -1,8 +1,8 @@
 import React, { CSSProperties } from 'react';
 import { __ } from '@wordpress/i18n';
 
-import { EspressoButton } from '../../../../../application/ui/input';
-import { useEditorModal } from '../../../../../application/ui/layout/editorModal';
+import { EspressoButton } from '@application/ui/input';
+import { useEditorModal } from '@application/ui/layout/editorModal';
 
 const btnRowStyle: CSSProperties = {
 	display: 'flex',

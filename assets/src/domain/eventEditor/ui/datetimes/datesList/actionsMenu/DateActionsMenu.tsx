@@ -1,8 +1,8 @@
 import React from 'react';
 
 import { ActionsMenuComponentProps } from '@appLayout/entityActionsMenu';
-import useDatesActionMenuItems from '../hooks/useDatesActionMenuItems';
-import { Datetime } from '../../../services/apollo/types';
+import useDatesActionMenuItems from '../../hooks/useDatesActionMenuItems';
+import { Datetime } from '@edtrServices/apollo/types';
 
 const DateActionsMenu: React.FC<ActionsMenuComponentProps<Datetime>> = ({ entity, menuItemProps, ...menuProps }) => {
 	const menuItems = useDatesActionMenuItems(entity, menuItemProps);

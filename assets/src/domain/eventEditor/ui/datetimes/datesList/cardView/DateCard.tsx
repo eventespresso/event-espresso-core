@@ -6,14 +6,14 @@ import { __ } from '@wordpress/i18n';
 
 import { CalendarDateRange } from '@appCalendars';
 import DateDetails from './DateDetails';
-import DateActionsMenu from './DateActionsMenu';
+import DateActionsMenu from '../actionsMenu/DateActionsMenu';
 
 import { DatetimeProvider } from '@edtrServices/context/DatetimeContext';
 import useDatetimeItem from '@edtrServices/apollo/queries/datetimes/useDatetimeItem';
-import TicketIdTag from '../../tickets/TicketIdTag';
+import TicketIdTag from '../../../tickets/TicketIdTag';
 
-import { PLUS_ONE_MONTH, PLUS_TWO_MONTHS } from '../../../../shared/constants/defaultDates';
-import statusBgColorClass from '../../../../shared/entities/datetimes/helpers/statusBgColorClass';
+import { PLUS_ONE_MONTH, PLUS_TWO_MONTHS } from '../../../../../shared/constants/defaultDates';
+import statusBgColorClass from '../../../../../shared/entities/datetimes/helpers/statusBgColorClass';
 
 import useRelations from '@appServices/apollo/relations/useRelations';
 import { useStatus, TypeName } from '@appServices/apollo/status';
