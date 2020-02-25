@@ -40,16 +40,11 @@ const EntityList = ({
 	}
 
 	const classes = classNames('ee-editor-entity-list', htmlClass);
-	const renderView =
-		view === 'grid' ? (
-			<EntityGridView entities={filteredEntities} className={classes} {...otherProps} />
-		) : (
-			<EntityListView entities={filteredEntities} className={classes} {...otherProps} />
-		);
+	const EntityView = view === 'grid' ? EntityGridView : EntityListView;
 
 	return (
 		<>
-			{renderView}
+			<EntityView entities={filteredEntities} className={classes} {...otherProps} />
 			<EntityPagination {...paginationProps} showSizeChanger />
 		</>
 	);
