@@ -5,7 +5,7 @@ import useEntityListFilterState from '@appLayout/entityList/filterBar/useEntityL
 import useDatesListFilterState from '../filterBar/useDatesListFilterState';
 import { useEntityPagination } from '@appLayout/entityList/pagination';
 
-const useList = (datetimes: Datetime[]): any => {
+const useFilteredDatetimes = (datetimes: Datetime[]): any => {
 	const filterState = useEntityListFilterState();
 	const { processedDates, ...filterBarProps } = useDatesListFilterState(datetimes);
 	const { paginatedEntities, ...paginationProps } = useEntityPagination({
@@ -21,4 +21,4 @@ const useList = (datetimes: Datetime[]): any => {
 	};
 };
 
-export default useList;
+export default useFilteredDatetimes;

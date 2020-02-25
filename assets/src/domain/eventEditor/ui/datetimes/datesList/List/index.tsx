@@ -10,7 +10,7 @@ import { EntityList } from '@appLayout/entityList';
 import { CardView } from '../cardView';
 import { TableView } from '../tableView';
 
-import useList from './useList';
+import useFilteredDatetimes from './useFilteredDatetimes';
 
 interface ListProps {
 	datetimes: Datetime[];
@@ -18,7 +18,7 @@ interface ListProps {
 
 const List: React.FC<ListProps> = ({ datetimes }) => {
 	const header = <H3 style={{ margin: '2rem 0 .5rem' }}>{__('Dates List')}</H3>;
-	const { entities, filterBarProps, filterState, paginationProps } = useList(datetimes);
+	const { entities, filterBarProps, filterState, paginationProps } = useFilteredDatetimes(datetimes);
 
 	const entityListProps = {
 		...filterState,
@@ -31,6 +31,7 @@ const List: React.FC<ListProps> = ({ datetimes }) => {
 	return (
 		<>
 			{header}
+			// @ts-ignore
 			<DatesListFilterBar datesListFilterStateProps={filterBarProps} filterState={filterState} />
 			<EntityList {...entityListProps} />
 			<Divider dashed />

@@ -10,11 +10,11 @@ import { EntityPagination } from '../pagination';
 import './style.scss';
 
 interface EntityListProps {
+	className?: string;
 	entities: Entity[];
 	EntityGridView: React.ElementType;
 	EntityListView: React.ElementType;
 	filterState?: any;
-	htmlClass?: string;
 	noResultsText?: string;
 	paginationProps: PaginationProps;
 	view?: 'grid' | 'list';
@@ -25,11 +25,10 @@ const EntityList = ({
 	EntityGridView,
 	EntityListView,
 	filterState,
-	htmlClass = '',
 	noResultsText = '',
 	paginationProps,
 	view = 'grid',
-	...otherProps
+	...props
 }: EntityListProps) => {
 	// verify array and remove undefined
 	const filteredEntities = Array.isArray(entities) ? without([undefined], entities) : [];
@@ -39,12 +38,12 @@ const EntityList = ({
 		return <EmptyState className='ee-entity-list-no-results' description={description} />;
 	}
 
-	const classes = classNames('ee-editor-entity-list', htmlClass);
+	const className = classNames('ee-editor-entity-list', props.c);
 	const EntityView = view === 'grid' ? EntityGridView : EntityListView;
 
 	return (
 		<>
-			<EntityView entities={filteredEntities} className={classes} {...otherProps} />
+			<EntityView entities={filteredEntities} className={className} {...props} />
 			<EntityPagination {...paginationProps} showSizeChanger />
 		</>
 	);
