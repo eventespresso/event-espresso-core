@@ -1738,6 +1738,7 @@ class Messages_Admin_Page extends EE_Admin_Page
                 'messenger'    => $message_template_group->messenger(),
                 'context'      => $context,
                 'GRP_ID'       => $GRP_ID,
+                'evt_id'       => $EVT_ID,
                 'action'       => 'preview_message',
             ),
             $this->_admin_base_url
@@ -1752,6 +1753,7 @@ class Messages_Admin_Page extends EE_Admin_Page
             'page'    => 'espresso_messages',
             'action'  => 'edit_message_template',
             'id'      => $GRP_ID,
+            'evt_id'  => $EVT_ID,
             'context' => $context,
             'extra'   => $preview_button,
         );
@@ -2154,6 +2156,7 @@ class Messages_Admin_Page extends EE_Admin_Page
         // let's add a button to go back to the edit view
         $query_args = array(
             'id'      => $this->_req_data['GRP_ID'],
+            'evt_id'  => $this->_req_data['evt_id'],
             'context' => $this->_req_data['context'],
             'action'  => 'edit_message_template',
         );
