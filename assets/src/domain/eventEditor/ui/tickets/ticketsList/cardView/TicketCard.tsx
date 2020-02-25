@@ -14,7 +14,7 @@ import DatetimeIdTag from '../../../datetimes/DatetimeIdTag';
 import { ListItemProps } from '@edtrInterfaces/types';
 import { useTicketMutator } from '@edtrServices/apollo/mutations';
 import { InlineEditHeading, InlineEditTextArea } from '@appInputs/InlineEditInput';
-import statusBgColorClass from '../../../../../shared/entities/tickets/helpers/statusBgColorClass';
+import statusBgColorClass from '@sharedEntities/tickets/helpers/statusBgColorClass';
 
 const TicketCard: React.FC<ListItemProps> = ({ id }) => {
 	const ticket = useTicketItem({ id });
