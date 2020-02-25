@@ -13,7 +13,7 @@ import './style.css';
  * EntityListFilterBar
  * a group of inputs for controlling how a list of entities is displayed
  */
-const EntityListFilterBar = ({ entityFilters = null, filterState, listId }) => {
+const EntityListFilterBar = ({ entityFilters = null, filterState, listId }: any) => {
 	if (!filterState) return null;
 
 	const {
