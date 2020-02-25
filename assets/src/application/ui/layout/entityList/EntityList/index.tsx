@@ -1,7 +1,8 @@
-import React, { useContext } from 'react';
+import React from 'react';
 import { __ } from '@wordpress/i18n';
 import { without } from 'ramda';
 import classNames from 'classnames';
+import { PaginationProps } from 'antd/lib/pagination';
 
 import { Entity } from '@appServices/apollo/types';
 import EmptyState from '@appDisplay/EmptyState';
@@ -9,13 +10,13 @@ import { EntityPagination } from '../pagination';
 import './style.scss';
 
 interface EntityListProps {
-	context?: any;
 	entities: Entity[];
 	EntityGridView: React.ElementType;
 	EntityListView: React.ElementType;
 	filterState?: any;
 	htmlClass?: string;
 	noResultsText?: string;
+	paginationProps: PaginationProps;
 	view?: 'grid' | 'list';
 }
 
