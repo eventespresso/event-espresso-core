@@ -6,10 +6,10 @@ import { useReducer } from 'react';
 /**
  * Internal dependencies
  */
-import { Datetime } from '@edtrServices/apollo/types';
-import { DatesSorted, DisplayDates, ShowDates } from '@edtrInterfaces/datetimes/types';
-import filters from '@sharedEntities/datetimes/predicates/filters';
-import sorters from '@sharedEntities/datetimes/predicates/sorters';
+import { Datetime } from '../../../../../services/apollo/types';
+import { DatesSorted, DisplayDates, ShowDates } from '../../../../../interfaces/datetimes/types';
+import filters from '../../../../../../shared/entities/datetimes/predicates/filters';
+import sorters from '../../../../../../shared/entities/datetimes/predicates/sorters';
 
 enum ActionType {
 	SET_DATES_SORTED_BY = 'SET_DATES_SORTED_BY',
