@@ -10,7 +10,7 @@ import Table from './Table';
 import TableHeader from './TableHeader';
 import TableBody from './TableBody';
 import TableFooter from './TableFooter';
-import './style.css';
+import './style.scss';
 
 /**
  * ResponsiveDataGrid responsive-table
