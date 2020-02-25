@@ -6,10 +6,10 @@ import { useReducer } from 'react';
 /**
  * Internal dependencies
  */
-import filters from '../../../../../../shared/entities/tickets/predicates/filters';
-import sorters from '../../../../../../shared/entities/tickets/predicates/sorters';
-import { DisplayDates, ShowTickets, SortTicketsBy } from '../../../../../interfaces/ticket/types';
-import { Ticket } from '../../../../../services/apollo/types';
+import filters from '@sharedEntities/tickets/predicates/filters';
+import sorters from '@sharedEntities/tickets/predicates/sorters';
+import { DisplayDates, ShowTickets, SortTicketsBy } from '@edtrInterfaces/ticket/types';
+import { Ticket } from '@edtrServices/apollo/types';
 
 enum ActionType {
 	SET_DISPLAY_TICKET_DATE = 'SET_DISPLAY_TICKET_DATE',

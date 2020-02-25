@@ -8,7 +8,7 @@ import { __ } from '@wordpress/i18n';
 /**
  * Internal imports
  */
-import { SortTicketsBy } from '../../../../../interfaces/ticket/types';
+import { SortTicketsBy } from '@edtrInterfaces/ticket/types';
 
 interface TicketsSortedByControlProps {
 	sortTicketsBy: SortTicketsBy;

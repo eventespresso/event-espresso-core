@@ -8,7 +8,7 @@ import { __ } from '@wordpress/i18n';
 /**
  * Internal imports
  */
-import { ShowTickets } from '../../../../../interfaces/ticket/types';
+import { ShowTickets } from '@edtrInterfaces/ticket/types';
 
 interface ShowDatesControlProps {
 	isChained?: boolean;

@@ -1,5 +1,5 @@
 import { DatetimeBaseInput } from '@edtrServices/apollo/mutations';
-import { DateAndTime } from '../../../../shared/services/utils/dateAndTime';
+import { DateAndTime } from '@sharedServices/utils/dateAndTime';
 
 export interface DateFormShape extends DatetimeBaseInput, DateAndTime {
 	name?: string;

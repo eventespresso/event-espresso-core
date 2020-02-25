@@ -1,6 +1,6 @@
 import React from 'react';
 
-import EntityListFilterBar from '../../../../../../application/ui/layout/entityList/filterBar/EntityListFilterBar';
+import EntityListFilterBar from '@appLayout/entityList/filterBar/EntityListFilterBar';
 import TicketsListEntityFilters from './TicketsListEntityFilters';
 
 /**
