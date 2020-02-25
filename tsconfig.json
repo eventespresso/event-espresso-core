@@ -24,7 +24,11 @@
 			"@edtrHooks/*": ["assets/src/domain/eventEditor/hooks/*"],
 			"@edtrInterfaces/*": ["assets/src/domain/eventEditor/interfaces/*"],
 			"@edtrServices/*": ["assets/src/domain/eventEditor/services/*"],
-			"@edtrUI/*": ["assets/src/domain/eventEditor/ui/*"]
+			"@edtrUI/*": ["assets/src/domain/eventEditor/ui/*"],
+			"@sharedConstants/*": ["assets/src/domain/shared/constants/*"],
+			"@sharedServices/*": ["assets/src/domain/shared/services/*"],
+			"@sharedEntities/*": ["assets/src/domain/shared/entities/*"],
+			"@sharedUI/*": ["assets/src/domain/shared/ui/*"]
 		},
 		"resolveJsonModule": true,
 		"skipLibCheck": true,

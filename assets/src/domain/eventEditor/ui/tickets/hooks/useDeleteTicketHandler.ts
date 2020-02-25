@@ -1,8 +1,8 @@
 import { useCallback } from 'react';
 
-import useTicketPrices from '../../../services/apollo/queries/tickets/useTicketPrices';
-import { ListItemProps } from '../../../interfaces/types';
-import { BackwardSubscription } from '../../../../../application/services/apollo/mutations';
+import useTicketPrices from '@edtrServices/apollo/queries/tickets/useTicketPrices';
+import { ListItemProps } from '@edtrInterfaces/types';
+import { BackwardSubscription } from '@appServices/apollo/mutations';
 import { useTicketMutator, usePriceMutator } from '@edtrServices/apollo/mutations';
 
 type VoidFn = () => void;

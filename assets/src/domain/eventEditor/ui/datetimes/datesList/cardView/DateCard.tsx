@@ -12,8 +12,8 @@ import { DatetimeProvider } from '@edtrServices/context/DatetimeContext';
 import useDatetimeItem from '@edtrServices/apollo/queries/datetimes/useDatetimeItem';
 import TicketIdTag from '../../../tickets/TicketIdTag';
 
-import { PLUS_ONE_MONTH, PLUS_TWO_MONTHS } from '../../../../../shared/constants/defaultDates';
-import statusBgColorClass from '../../../../../shared/entities/datetimes/helpers/statusBgColorClass';
+import { PLUS_ONE_MONTH, PLUS_TWO_MONTHS } from '@sharedConstants/defaultDates';
+import statusBgColorClass from '@sharedEntities/datetimes/helpers/statusBgColorClass';
 
 import useRelations from '@appServices/apollo/relations/useRelations';
 import { useStatus, TypeName } from '@appServices/apollo/status';

@@ -4,7 +4,7 @@
 import React, { useMemo } from 'react';
 import { SelectControl } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
-import { ShowDates } from '../../../../../interfaces/datetimes/types';
+import { ShowDates } from '@edtrInterfaces/datetimes/types';
 
 interface ShowDatesControlProps {
 	showDates: ShowDates;

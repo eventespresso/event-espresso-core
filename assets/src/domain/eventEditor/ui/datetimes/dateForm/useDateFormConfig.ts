@@ -7,8 +7,8 @@ import { CONVERT_TO_MOMENT_DATE_FORMAT, CONVERT_TO_MOMENT_TIME_FORMAT } from '@a
 import { EspressoFormProps } from '@application/ui/forms/espressoForm';
 import useDatetimeItem from '@edtrServices/apollo/queries/datetimes/useDatetimeItem';
 import { EntityId, Datetime } from '@edtrServices/apollo/types';
-import { PLUS_ONE_MONTH, PLUS_TWO_MONTHS } from '../../../../shared/constants/defaultDates';
-import { processDateAndTime, prepareDateForForm } from '../../../../shared/services/utils/dateAndTime';
+import { PLUS_ONE_MONTH, PLUS_TWO_MONTHS } from '@sharedConstants/defaultDates';
+import { processDateAndTime, prepareDateForForm } from '@sharedServices/utils/dateAndTime';
 import { validate } from './formValidation';
 import { DateFormShape } from './types';
 

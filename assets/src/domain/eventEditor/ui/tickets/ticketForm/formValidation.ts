@@ -3,7 +3,7 @@ import * as yup from 'yup';
 
 import { yupToFinalFormErrors } from '@application/ui/forms/espressoForm';
 import { TicketFormShape } from './types';
-import { dateAndTimeSchema } from '../../../../shared/services/utils/dateAndTime';
+import { dateAndTimeSchema } from '@sharedServices/utils/dateAndTime';
 
 export const validate = async (values: TicketFormShape) => {
 	return await yupToFinalFormErrors(validationSchema, values);

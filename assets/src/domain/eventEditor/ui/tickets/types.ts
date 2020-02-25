@@ -1,4 +1,4 @@
-import { EntityId } from '../../services/apollo/types';
+import { EntityId } from '@edtrServices/apollo/types';
 import { ActionsMenuItemProps } from '@appLayout/entityActionsMenu';
 
 export interface EditTicketProps {

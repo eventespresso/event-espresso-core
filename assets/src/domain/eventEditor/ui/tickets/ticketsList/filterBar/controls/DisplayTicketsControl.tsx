@@ -8,7 +8,7 @@ import { __ } from '@wordpress/i18n';
 /**
  * Internal imports
  */
-import { DisplayDates } from '../../../../../interfaces/ticket/types';
+import { DisplayDates } from '@edtrInterfaces/ticket/types';
 
 interface DisplayTicketsControlProps {
 	displayTicketDate: DisplayDates;
