@@ -1,6 +1,6 @@
 import React, { CSSProperties } from 'react';
 
-import DatetimeCard from '../../dateCard/DateCard';
+import DateCard from '../cardView/DateCard';
 
 const listStyle: CSSProperties = {
 	display: 'flex',
@@ -13,7 +13,7 @@ const Grid = ({ entities: datetimes }) => {
 	return (
 		<div style={listStyle}>
 			{datetimes.map((date) => (
-				<DatetimeCard id={date.id} key={date.id} />
+				<DateCard id={date.id} key={date.id} />
 			))}
 		</div>
 	);
