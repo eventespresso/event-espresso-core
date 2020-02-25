@@ -6,7 +6,7 @@ import { pick } from 'ramda';
 
 import { CONVERT_TO_MOMENT_DATE_FORMAT, CONVERT_TO_MOMENT_TIME_FORMAT } from '@appConstants/dateFnsFormats';
 import { EspressoFormProps } from '@application/ui/forms/espressoForm';
-import useTicketItem from '../../../services/apollo/queries/tickets/useTicketItem';
+import useTicketItem from '@edtrServices/apollo/queries/tickets/useTicketItem';
 import { EntityId, Ticket } from '@edtrServices/apollo/types';
 import { PLUS_ONE_MONTH, PLUS_TWO_MONTHS } from '../../../../shared/constants/defaultDates';
 import { processDateAndTime, prepareDateForForm } from '../../../../shared/services/utils/dateAndTime';

@@ -12,8 +12,8 @@ import EmptyState from '@appDisplay/EmptyState';
 import ErrorIndicator from '@appDisplay/ErrorIndicator';
 import LoadingIndicator from '@appDisplay/LoadingIndicator';
 import List from './List';
-import useTickets from '../../../services/apollo/queries/tickets/useTickets';
-import { useStatus, TypeName } from '../../../../../application/services/apollo/status';
+import useTickets from '@edtrServices/apollo/queries/tickets/useTickets';
+import { useStatus, TypeName } from '@appServices/apollo/status';
 
 const TicketsList: React.FC = () => {
 	const tickets = useTickets();

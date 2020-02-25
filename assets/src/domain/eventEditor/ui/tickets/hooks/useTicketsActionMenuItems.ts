@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { Ticket } from '../../../services/apollo/types';
+import { Ticket } from '@edtrServices/apollo/types';
 import { useEntityActionsMenuItems, ActionsMenuItemProps } from '@appLayout/entityActionsMenu';
 import { AdditionalTicketMenuOptions } from '../types';
 

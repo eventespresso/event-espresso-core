@@ -3,19 +3,18 @@ import { Typography } from 'antd';
 import { __ } from '@wordpress/i18n';
 
 import { CalendarDateRange } from '@appCalendars/dateDisplay';
-import TicketActionsMenu from './TicketActionsMenu';
+import TicketActionsMenu from '../actionsMenu/TicketActionsMenu';
 import TicketDetails from './TicketDetails';
 import useTicketItem from '@edtrServices/apollo/queries/tickets/useTicketItem';
 import TicketProvider from '@edtrServices/context/TicketContext';
 import CurrencyInput from '@appInputs/CurrencyInput';
 import useRelations from '@appServices/apollo/relations/useRelations';
 import EntityCard from '@appLayout/EntityCard';
-import DatetimeIdTag from '../../datetimes/DatetimeIdTag';
-import { ListItemProps } from '../../../interfaces/types';
-import { priceStyle } from './styles';
+import DatetimeIdTag from '../../../datetimes/DatetimeIdTag';
+import { ListItemProps } from '@edtrInterfaces/types';
 import { useTicketMutator } from '@edtrServices/apollo/mutations';
 import { InlineEditHeading, InlineEditTextArea } from '@appInputs/InlineEditInput';
-import statusBgColorClass from '../../../../shared/entities/tickets/helpers/statusBgColorClass';
+import statusBgColorClass from '../../../../../shared/entities/tickets/helpers/statusBgColorClass';
 
 const TicketCard: React.FC<ListItemProps> = ({ id }) => {
 	const ticket = useTicketItem({ id });
@@ -63,7 +62,7 @@ const TicketCard: React.FC<ListItemProps> = ({ id }) => {
 						>
 							{ticket.description ? ticket.description : __('Edit description...')}
 						</InlineEditTextArea>
-						<Typography.Title level={4} style={priceStyle}>
+						<Typography.Title level={4} style={{ color: 'grey' }}>
 							<CurrencyInput
 								id={ticket.id}
 								amount={ticket.price}

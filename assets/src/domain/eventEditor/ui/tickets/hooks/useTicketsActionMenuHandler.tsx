@@ -1,12 +1,12 @@
 import React, { useCallback } from 'react';
 import { __ } from '@wordpress/i18n';
 
-import EditTicketButton from '../ticketCard/EditTicketButton';
-import DeleteTicketButton from '../ticketCard/DeleteTicketButton';
+import EditTicketButton from '../ticketsList/actionsMenu/EditTicketButton';
+import DeleteTicketButton from '../ticketsList/actionsMenu/DeleteTicketButton';
 import { EspressoButton } from '@application/ui/input';
 import TicketPriceCalculatorButton from '../ticketPriceCalculator/buttons/TicketPriceCalculatorButton';
 import { EntitySubscriptionCallback } from '@appLayout/entityActionsMenu';
-import { Ticket } from '../../../services/apollo/types';
+import { Ticket } from '@edtrServices/apollo/types';
 import { AdditionalTicketMenuOptions } from '../types';
 import { useStatus, TypeName } from '@appServices/apollo/status';
 

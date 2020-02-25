@@ -1,7 +1,7 @@
 import React from 'react';
 
-import useTicketItem from '../../services/apollo/queries/tickets/useTicketItem';
-import { ListItemProps } from '../../interfaces/types';
+import useTicketItem from '@edtrServices/apollo/queries/tickets/useTicketItem';
+import { ListItemProps } from '@edtrInterfaces/types';
 
 const TicketIdTag: React.FC<ListItemProps> = ({ id }) => {
 	const { dbId } = useTicketItem({ id }) || {};

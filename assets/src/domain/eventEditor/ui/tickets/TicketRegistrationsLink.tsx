@@ -1,5 +1,5 @@
 import React from 'react';
-import { Ticket } from '../../services/apollo/types';
+import { Ticket } from '@edtrServices/apollo/types';
 
 interface TicketRegistrationsLinkProps {
 	ticket: Ticket;

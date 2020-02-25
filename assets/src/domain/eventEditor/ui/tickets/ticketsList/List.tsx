@@ -9,9 +9,9 @@ import { __ } from '@wordpress/i18n';
  * Internal dependencies
  */
 import AddNewTicketButton from './AddNewTicketButton';
-import { Ticket } from '../../../services/apollo/types';
+import { Ticket } from '@edtrServices/apollo/types';
 import TicketListFilterBar from './filterBar/TicketListFilterBar';
-import TicketCard from '../ticketCard/TicketCard';
+import TicketCard from './cardView/TicketCard';
 
 const listStyle = {
 	display: 'flex',

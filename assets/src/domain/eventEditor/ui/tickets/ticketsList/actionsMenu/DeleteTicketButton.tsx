@@ -3,8 +3,8 @@ import { DeleteOutlined } from '@ant-design/icons';
 import { EspressoButton } from '@application/ui/input';
 import { __ } from '@wordpress/i18n';
 
-import useDeleteTicketHandler from '../hooks/useDeleteTicketHandler';
-import { ListItemProps } from '../../../interfaces/types';
+import useDeleteTicketHandler from '../../hooks/useDeleteTicketHandler';
+import { ListItemProps } from '@edtrInterfaces/types';
 
 const DeleteTicketButton: React.FC<ListItemProps> = ({ id, ...rest }) => {
 	const handleDeleteTicket = useDeleteTicketHandler({ id });
