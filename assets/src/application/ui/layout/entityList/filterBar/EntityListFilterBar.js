@@ -17,7 +17,9 @@ import './style.css';
  * EntityListFilterBar
  * a group of inputs for controlling how a list of entities is displayed
  */
-const EntityListFilterBar = ({ listId, entityFilters = null }) => {
+const EntityListFilterBar = ({ entityFilters = null, filterState, listId }) => {
+	if (!filterState) return null;
+
 	const {
 		perPage,
 		searchText,
@@ -28,7 +30,7 @@ const EntityListFilterBar = ({ listId, entityFilters = null }) => {
 		showEntityFilters,
 		toggleEntityFilters,
 		view,
-	} = useEntityListFilterState();
+	} = filterState;
 
 	const listViewButton = React.useMemo(
 		() => (

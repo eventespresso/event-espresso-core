@@ -1,18 +1,15 @@
-import React, { CSSProperties } from 'react';
+import React from 'react';
 import { __ } from '@wordpress/i18n';
 import { H3 } from '@blueprintjs/core/lib/esm';
 
 import DatesListFilterBar from './filterBar/DatesListFilterBar';
 import AddNewDateButton from './AddNewDateButton';
-import DatetimeCard from './cardView/DateCard';
 import { Datetime } from '@edtrServices/apollo/types';
 
-const listStyle: CSSProperties = {
-	display: 'flex',
-	flexFlow: 'row wrap',
-	justifyContent: 'space-between',
-	width: '100%',
-};
+import { EntityList } from '@appLayout/entityList';
+import useEntityListFilterState from '@appLayout/entityList/filterBar/useEntityListFilterState';
+import GridView from './views/Grid';
+import ListView from './views/List';
 
 interface ListProps {
 	datetimes: Datetime[];
@@ -20,24 +17,22 @@ interface ListProps {
 
 const List: React.FC<ListProps> = ({ datetimes }) => {
 	const header = <H3 style={{ margin: '2rem 0 .5rem' }}>{__('Dates List')}</H3>;
+	const filterState = useEntityListFilterState();
 
-	const datetimesList = (
-		<>
-			<div style={listStyle}>
-				{datetimes.map((date) => (
-					<DatetimeCard id={date.id} key={date.id} />
-				))}
-			</div>
-			<AddNewDateButton />
-		</>
-	);
+	const entityListProps = {
+		...filterState,
+		entities: datetimes,
+		EntityGridView: GridView,
+		EntityListView: ListView,
+	};
 
 	return (
-		<div>
+		<>
 			{header}
-			<DatesListFilterBar />
-			{datetimesList}
-		</div>
+			<DatesListFilterBar filterState={filterState} />
+			<EntityList {...entityListProps} />
+			<AddNewDateButton />
+		</>
 	);
 };
 

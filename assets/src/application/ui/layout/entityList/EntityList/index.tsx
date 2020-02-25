@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { __ } from '@wordpress/i18n';
 import { without } from 'ramda';
 import classNames from 'classnames';
@@ -8,36 +8,24 @@ import EmptyState from '@appDisplay/EmptyState';
 import './style.scss';
 
 interface EntityListProps {
+	context?: any;
 	entities: Entity[];
 	EntityGridView: React.ElementType;
 	EntityListView: React.ElementType;
-	htmlClass: string;
-	view: 'grid' | 'list';
-	noResultsText: string;
+	filterState?: any;
+	htmlClass?: string;
+	noResultsText?: string;
+	view?: 'grid' | 'list';
 }
 
-/**
- * EntityList
- * base component for displaying a list of entities (dates, tickets, etc)
- * as either a list table or grid of entity blocks
- *
- * @function
- * @param {Array} entities
- * @param {Component} EntityGridView
- * @param {Component} EntityListView
- * @param {string} htmlClass
- * @param {string} view
- * @param {string} noResultsText
- * @param {mixed} otherProps
- * @return {Component} list of rendered entities
- */
 const EntityList = ({
 	entities = [],
 	EntityGridView,
 	EntityListView,
+	filterState,
 	htmlClass = '',
-	view = 'grid',
 	noResultsText = '',
+	view = 'grid',
 	...otherProps
 }: EntityListProps) => {
 	// verify array and remove undefined
@@ -49,6 +37,7 @@ const EntityList = ({
 	}
 
 	const classes = classNames('ee-editor-entity-list', htmlClass);
+
 	return view === 'grid' ? (
 		<EntityGridView entities={filteredEntities} className={classes} {...otherProps} />
 	) : (
