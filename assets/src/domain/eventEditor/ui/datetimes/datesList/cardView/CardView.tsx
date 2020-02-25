@@ -1,6 +1,6 @@
 import React, { CSSProperties } from 'react';
 
-import DateCard from '../cardView/DateCard';
+import DateCard from './DateCard';
 
 const listStyle: CSSProperties = {
 	display: 'flex',
@@ -9,7 +9,7 @@ const listStyle: CSSProperties = {
 	width: '100%',
 };
 
-const Grid = ({ entities: datetimes }) => {
+const CardView = ({ entities: datetimes }) => {
 	return (
 		<div style={listStyle}>
 			{datetimes.map((date) => (
@@ -19,4 +19,4 @@ const Grid = ({ entities: datetimes }) => {
 	);
 };
 
-export default Grid;
+export default CardView;
