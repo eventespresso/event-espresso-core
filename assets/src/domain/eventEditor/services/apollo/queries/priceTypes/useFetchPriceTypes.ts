@@ -13,16 +13,18 @@ const useFetchPriceTypes = (): FetchEntitiesResult<PriceTypesList> => {
 	const toaster = useToaster();
 	const loadingToastKey = useRef(toaster.generateKey());
 
+	const dismissLoading = (): void => toaster.dismiss(loadingToastKey.current);
+
 	const { data, error, loading } = useQuery<PriceTypesList>(query, {
 		...options,
 		onCompleted: (): void => {
 			setIsLoaded(TypeName.priceTypes, true);
-			toaster.dismiss(loadingToastKey.current);
+			dismissLoading();
 			toaster.success({ message: 'prices initialized' });
 		},
 		onError: (error): void => {
 			setIsError(TypeName.priceTypes, true);
-			toaster.dismiss(loadingToastKey.current);
+			dismissLoading();
 			toaster.error({ message: error });
 		},
 	});
@@ -35,7 +37,7 @@ const useFetchPriceTypes = (): FetchEntitiesResult<PriceTypesList> => {
 				message: 'initializing prices',
 			});
 		} else if (!loading) {
-			toaster.dismiss(loadingToastKey.current);
+			dismissLoading();
 		}
 	}, [loading]);
 

@@ -48,7 +48,7 @@ const useToastManager = ({ maxToasts = 6, ...toastArgs }: ToastManagerProps): To
 
 		let type: IconType,
 			icon: React.ReactNode,
-			duration = 5;
+			duration = 4;
 
 		if (toastType === 'loading') {
 			icon = <Spin size='small' />;

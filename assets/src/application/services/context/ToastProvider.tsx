@@ -8,7 +8,6 @@ const ToastContext = createContext(null);
 const ToastProvider: React.FC<ProviderProps> = (props) => {
 	const toaster = useToastManager({
 		placement: 'bottomRight',
-		duration: 3,
 	});
 
 	return <ToastContext.Provider value={toaster}>{props.children}</ToastContext.Provider>;

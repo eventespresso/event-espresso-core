@@ -18,17 +18,19 @@ const useFetchTickets = (skipFetch: boolean = null): FetchEntitiesResult<Tickets
 	const toaster = useToaster();
 	const loadingToastKey = useRef(toaster.generateKey());
 
+	const dismissLoading = (): void => toaster.dismiss(loadingToastKey.current);
+
 	const { data, error, loading } = useQuery<TicketsList>(query, {
 		...options,
 		skip,
 		onCompleted: (): void => {
 			setIsLoaded(TypeName.tickets, true);
-			toaster.dismiss(loadingToastKey.current);
+			dismissLoading();
 			toaster.success({ message: `tickets initialized` });
 		},
 		onError: (error): void => {
 			setIsError(TypeName.tickets, true);
-			toaster.dismiss(loadingToastKey.current);
+			dismissLoading();
 			toaster.error({ message: error });
 		},
 	});
@@ -42,7 +44,7 @@ const useFetchTickets = (skipFetch: boolean = null): FetchEntitiesResult<Tickets
 				message: 'initializing tickets',
 			});
 		} else if (!loading) {
-			toaster.dismiss(loadingToastKey.current);
+			dismissLoading();
 		}
 	}, [loading]);
 
