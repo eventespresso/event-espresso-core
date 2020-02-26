@@ -6,6 +6,7 @@ import { PaginationProps } from 'antd/lib/pagination';
 
 import { Entity } from '@appServices/apollo/types';
 import EmptyState from '@appDisplay/EmptyState';
+import EntityListFilterBar from '@appLayout/entityList/filterBar/EntityListFilterBar';
 import { EntityPagination } from '../pagination';
 import './style.scss';
 
@@ -14,6 +15,9 @@ interface EntityListProps {
 	entities: Entity[];
 	EntityGridView: React.ElementType;
 	EntityListView: React.ElementType;
+	entityFilters: React.ElementType;
+	filterState: any;
+	listId?: string;
 	noResultsText?: string;
 	paginationProps: PaginationProps;
 	view?: 'grid' | 'list';
@@ -23,6 +27,9 @@ const EntityList = ({
 	entities = [],
 	EntityGridView,
 	EntityListView,
+	entityFilters,
+	filterState,
+	listId = '',
 	noResultsText = '',
 	paginationProps,
 	view = 'grid',
@@ -41,6 +48,7 @@ const EntityList = ({
 
 	return (
 		<>
+			<EntityListFilterBar entityFilters={entityFilters} filterState={filterState} listId={listId} />;
 			<EntityView entities={filteredEntities} className={className} {...props} />
 			<EntityPagination {...paginationProps} showSizeChanger />
 		</>

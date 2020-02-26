@@ -14,11 +14,6 @@ const useFilteredDatetimes = (datetimes: Datetime[]): any => {
 		perPage: filterState.perPage,
 	});
 
-	const filterBarProps = {
-		entityFiltersProps,
-		filterState,
-	};
-
 	const viewProps = {
 		EntityGridView: DateCardList,
 		EntityListView: TableView,
@@ -27,14 +22,14 @@ const useFilteredDatetimes = (datetimes: Datetime[]): any => {
 
 	const entityListProps = {
 		...viewProps,
+		filterState,
 		entities: paginatedEntities,
 		paginationProps,
 	};
 
 	return {
 		entityListProps,
-		filterBarProps,
-		filterState,
+		entityFiltersProps,
 		paginationProps,
 	};
 };
