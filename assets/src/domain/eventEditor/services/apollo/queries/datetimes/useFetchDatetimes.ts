@@ -25,7 +25,7 @@ const useFetchDatetimes = (): FetchEntitiesResult<DatetimesList> => {
 		onError: (error): void => {
 			setIsError(TypeName.datetimes, true);
 			dismissLoading();
-			toaster.error({ message: error });
+			toaster.error({ message: error.message });
 		},
 	});
 

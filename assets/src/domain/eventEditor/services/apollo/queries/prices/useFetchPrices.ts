@@ -31,7 +31,7 @@ const useFetchPrices = (skipFetch: boolean = null): FetchEntitiesResult<PricesLi
 		onError: (error): void => {
 			setIsError(TypeName.prices, true);
 			dismissLoading();
-			toaster.error({ message: error });
+			toaster.error({ message: error.message });
 		},
 	});
 

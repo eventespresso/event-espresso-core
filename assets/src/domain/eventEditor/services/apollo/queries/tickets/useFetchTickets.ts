@@ -31,7 +31,7 @@ const useFetchTickets = (skipFetch: boolean = null): FetchEntitiesResult<Tickets
 		onError: (error): void => {
 			setIsError(TypeName.tickets, true);
 			dismissLoading();
-			toaster.error({ message: error });
+			toaster.error({ message: error.message });
 		},
 	});
 

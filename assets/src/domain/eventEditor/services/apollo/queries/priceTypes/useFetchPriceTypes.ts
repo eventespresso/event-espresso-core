@@ -25,7 +25,7 @@ const useFetchPriceTypes = (): FetchEntitiesResult<PriceTypesList> => {
 		onError: (error): void => {
 			setIsError(TypeName.priceTypes, true);
 			dismissLoading();
-			toaster.error({ message: error });
+			toaster.error({ message: error.message });
 		},
 	});
 
