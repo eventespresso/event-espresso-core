@@ -1,16 +1,23 @@
 import * as React from 'react';
 import { AppstoreFilled, FilterOutlined, TableOutlined } from '@ant-design/icons';
 import { __ } from '@wordpress/i18n';
-import EspressoButton from '../../../input/EspressoButton';
 
+import EspressoButton from '../../../input/EspressoButton';
 import Collapsible from './Collapsible';
+import { EntityListFilterState } from './useEntityListFilterState';
 import './style.css';
+
+interface EntityListFilterBarProps {
+	entityFilters: React.ReactNode;
+	filterState: EntityListFilterState;
+	listId?: string;
+}
 
 /**
  * EntityListFilterBar
  * a group of inputs for controlling how a list of entities is displayed
  */
-const EntityListFilterBar = ({ entityFilters = null, filterState, listId }: any) => {
+const EntityListFilterBar: React.FC<EntityListFilterBarProps> = ({ entityFilters = null, filterState, listId }) => {
 	if (!filterState) return null;
 
 	const {
