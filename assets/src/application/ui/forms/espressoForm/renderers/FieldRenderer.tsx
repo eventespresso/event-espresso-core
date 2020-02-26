@@ -33,6 +33,7 @@ const FieldRenderer: React.FC<FieldRendererProps> = (props) => {
 					{fieldInfo}
 				</>
 			}
+			colon={false}
 			extra={desc}
 			required={required}
 			validateStatus={validateStatus}
