@@ -16,7 +16,7 @@ const useFetchTickets = (skipFetch: boolean = null): FetchEntitiesResult<Tickets
 	const skip = skipFetch !== null ? skipFetch : !datetimeIn.length || isLoaded(TypeName.tickets);
 
 	const toaster = useToaster();
-	const loadingToastKey = useRef('ttttttt' /* toaster.generateKey() */);
+	const loadingToastKey = useRef(toaster.generateKey());
 
 	const { data, error, loading } = useQuery<TicketsList>(query, {
 		...options,

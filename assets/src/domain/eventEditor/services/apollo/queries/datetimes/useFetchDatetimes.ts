@@ -11,7 +11,7 @@ const useFetchDatetimes = (): FetchEntitiesResult<DatetimesList> => {
 	const { query, ...options } = useDatetimeQueryOptions();
 
 	const toaster = useToaster();
-	const loadingToastKey = useRef('dddddd' /* toaster.generateKey() */);
+	const loadingToastKey = useRef(toaster.generateKey());
 
 	const { data, error, loading } = useQuery<DatetimesList>(query, {
 		...options,

@@ -16,7 +16,7 @@ const useFetchPrices = (skipFetch: boolean = null): FetchEntitiesResult<PricesLi
 	const skip = skipFetch !== null ? skipFetch : !ticketIn.length || isLoaded(TypeName.prices);
 
 	const toaster = useToaster();
-	const loadingToastKey = useRef('pppppp' /* toaster.generateKey() */);
+	const loadingToastKey = useRef(toaster.generateKey());
 
 	const { data, error, loading } = useQuery<PricesList>(query, {
 		...options,

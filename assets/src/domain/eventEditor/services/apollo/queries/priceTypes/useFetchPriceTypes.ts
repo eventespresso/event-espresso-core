@@ -11,7 +11,7 @@ const useFetchPriceTypes = (): FetchEntitiesResult<PriceTypesList> => {
 	const { query, ...options } = usePriceTypeQueryOptions();
 
 	const toaster = useToaster();
-	const loadingToastKey = useRef('nnnnnnn' /* toaster.generateKey() */);
+	const loadingToastKey = useRef(toaster.generateKey());
 
 	const { data, error, loading } = useQuery<PriceTypesList>(query, {
 		...options,
