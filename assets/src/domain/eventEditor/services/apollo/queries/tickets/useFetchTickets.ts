@@ -1,13 +1,12 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef } from 'react';
 import { useQuery } from '@apollo/react-hooks';
-import useToaster from '../../../../../../application/services/toaster/useToaster';
+import { useToaster, useLoadingToast } from '../../../../../../application/services/toaster';
 import { useStatus, TypeName } from '../../../../../../application/services/apollo/status';
 import useTicketQueryOptions from './useTicketQueryOptions';
 import { FetchEntitiesResult } from '../types';
 import { TicketsList } from '../../types';
 
 const useFetchTickets = (skipFetch: boolean = null): FetchEntitiesResult<TicketsList> => {
-	const [initialized, setInitialized] = useState(false);
 	const { setIsLoading, setIsLoaded, setIsError, isLoaded } = useStatus();
 	const { query, ...options } = useTicketQueryOptions();
 
@@ -17,37 +16,30 @@ const useFetchTickets = (skipFetch: boolean = null): FetchEntitiesResult<Tickets
 	const skip = skipFetch !== null ? skipFetch : !datetimeIn.length || isLoaded(TypeName.tickets);
 
 	const toaster = useToaster();
-	const toasterMessage = 'initializing tickets';
+	const loadingToastKey = useRef(toaster.generateKey());
+
+	const dismissLoading = (): void => toaster.dismiss(loadingToastKey.current);
 
 	const { data, error, loading } = useQuery<TicketsList>(query, {
 		...options,
 		skip,
 		onCompleted: (): void => {
 			setIsLoaded(TypeName.tickets, true);
-			toaster.dismiss(toasterMessage);
+			dismissLoading();
 			toaster.success({ message: `tickets initialized` });
 		},
 		onError: (error): void => {
 			setIsError(TypeName.tickets, true);
-			toaster.dismiss(toasterMessage);
-			toaster.error({ message: error });
+			dismissLoading();
+			toaster.error({ message: error.message });
 		},
 	});
+
+	useLoadingToast({ loading, message: 'initializing tickets', toastKey: loadingToastKey.current });
 
 	useEffect(() => {
 		setIsLoading(TypeName.tickets, loading);
 	}, [loading]);
-
-	if (!initialized) {
-		toaster.loading(loading, toasterMessage);
-		toaster.error({ message: error });
-	}
-
-	useEffect(() => {
-		if (!initialized && !loading) {
-			setInitialized(true);
-		}
-	}, [initialized]);
 
 	return {
 		data,

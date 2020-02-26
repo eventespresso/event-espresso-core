@@ -1,6 +1,6 @@
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { useQuery } from '@apollo/react-hooks';
-import useInitToaster from '../../../../../../application/services/toaster/useInitToaster';
+import { useToaster, useLoadingToast } from '../../../../../../application/services/toaster';
 import usePriceTypeQueryOptions from './usePriceTypeQueryOptions';
 import { useStatus, TypeName } from '../../../../../../application/services/apollo/status';
 import { FetchEntitiesResult } from '../types';
@@ -10,28 +10,30 @@ const useFetchPriceTypes = (): FetchEntitiesResult<PriceTypesList> => {
 	const { setIsLoading, setIsLoaded, setIsError } = useStatus();
 	const { query, ...options } = usePriceTypeQueryOptions();
 
-	const { onCompleted, onError, initializationNotices } = useInitToaster({
-		loadingMessage: `initializing price types`,
-		successMessage: 'price types initialized',
-	});
+	const toaster = useToaster();
+	const loadingToastKey = useRef(toaster.generateKey());
+
+	const dismissLoading = (): void => toaster.dismiss(loadingToastKey.current);
 
 	const { data, error, loading } = useQuery<PriceTypesList>(query, {
 		...options,
 		onCompleted: (): void => {
 			setIsLoaded(TypeName.priceTypes, true);
-			onCompleted();
+			dismissLoading();
+			toaster.success({ message: 'prices initialized' });
 		},
 		onError: (error): void => {
 			setIsError(TypeName.priceTypes, true);
-			onError(error);
+			dismissLoading();
+			toaster.error({ message: error.message });
 		},
 	});
+
+	useLoadingToast({ loading, message: 'initializing price types', toastKey: loadingToastKey.current });
 
 	useEffect(() => {
 		setIsLoading(TypeName.priceTypes, loading);
 	}, [loading]);
-
-	initializationNotices(loading, error);
 
 	return {
 		data,
