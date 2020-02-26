@@ -11,7 +11,7 @@ import './style.scss';
 const EntityPagination = ({
 	onChange,
 	pageSize = 6,
-	pageSizeOptions = ['6', '12', '24', '48'],
+	pageSizeOptions = ['2', '6', '12', '24', '48'],
 	showTotal,
 	total,
 	...rest

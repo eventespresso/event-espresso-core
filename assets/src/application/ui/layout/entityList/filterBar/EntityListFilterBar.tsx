@@ -1,6 +1,3 @@
-/**
- * External imports
- */
 import * as React from 'react';
 import { AppstoreFilled, FilterOutlined, TableOutlined } from '@ant-design/icons';
 import { __ } from '@wordpress/i18n';
@@ -17,11 +14,9 @@ const EntityListFilterBar = ({ entityFilters = null, filterState, listId }: any)
 	if (!filterState) return null;
 
 	const {
-		perPage,
 		searchText,
 		setListView,
 		setGridView,
-		setPerPage,
 		setSearchText,
 		showEntityFilters,
 		toggleEntityFilters,
@@ -102,9 +97,7 @@ const EntityListFilterBar = ({ entityFilters = null, filterState, listId }: any)
 			<Collapsible
 				entityFilters={entityFilters}
 				listId={listId}
-				perPage={perPage}
 				searchText={searchText}
-				setPerPage={setPerPage}
 				setSearchText={setSearchText}
 				showEntityFilters={showEntityFilters}
 			/>

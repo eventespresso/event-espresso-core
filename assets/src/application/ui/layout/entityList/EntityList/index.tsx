@@ -7,7 +7,9 @@ import { PaginationProps } from 'antd/lib/pagination';
 import { Entity } from '@appServices/apollo/types';
 import EmptyState from '@appDisplay/EmptyState';
 import EntityListFilterBar from '@appLayout/entityList/filterBar/EntityListFilterBar';
+import useEntityListFilterState from '@appLayout/entityList/filterBar/useEntityListFilterState';
 import { EntityPagination } from '../pagination';
+import { useEntityPagination } from '@appLayout/entityList/pagination';
 import './style.scss';
 
 interface EntityListProps {
@@ -15,12 +17,9 @@ interface EntityListProps {
 	entities: Entity[];
 	EntityGridView: React.ElementType;
 	EntityListView: React.ElementType;
-	entityFilters: React.ElementType;
-	filterState: any;
+	entityFilters: React.ReactNode;
 	listId?: string;
 	noResultsText?: string;
-	paginationProps: PaginationProps;
-	view?: 'grid' | 'list';
 }
 
 const EntityList = ({
@@ -28,15 +27,17 @@ const EntityList = ({
 	EntityGridView,
 	EntityListView,
 	entityFilters,
-	filterState,
 	listId = '',
 	noResultsText = '',
-	paginationProps,
-	view = 'grid',
 	...props
 }: EntityListProps) => {
 	// verify array and remove undefined
 	const filteredEntities = Array.isArray(entities) ? without([undefined], entities) : [];
+	const filterState = useEntityListFilterState();
+	const { view } = filterState;
+	const { paginatedEntities, ...paginationProps } = useEntityPagination({
+		entities: filteredEntities,
+	});
 
 	if (filteredEntities.length === 0) {
 		const description = noResultsText !== '' ? noResultsText : __('no results found');
@@ -49,7 +50,7 @@ const EntityList = ({
 	return (
 		<>
 			<EntityListFilterBar entityFilters={entityFilters} filterState={filterState} listId={listId} />;
-			<EntityView entities={filteredEntities} className={className} {...props} />
+			<EntityView entities={paginatedEntities} className={className} {...props} />
 			<EntityPagination {...paginationProps} showSizeChanger />
 		</>
 	);

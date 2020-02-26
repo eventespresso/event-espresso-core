@@ -3,23 +3,21 @@ import React from 'react';
 import DatesSortedControl from './controls/DatesSortedControl';
 import DisplayDatesControl from './controls/DisplayDatesControl';
 import ShowDatesControl from './controls/ShowDatesControl';
+import { DatesListFilterStateManager } from '@edtrUI/datetimes/datesList/filterBar/useDatesListFilterState';
+
+type Props = Omit<DatesListFilterStateManager, 'dates' | 'processedDates'>;
 
 /**
  * filters for controlling the display of a list of Event Dates
- *
- * @param {string} showDates
- * @param {string} datesSortedBy
- * @param {string} displayDates
- * @return {Object} EditorDatesListView with added DateListFilters
  */
-const DatesListEntityFilters: React.FC = ({
+const DatesListEntityFilters: React.FC<Props> = ({
 	datesSortedBy,
 	displayDates,
 	setDatesSortedBy,
 	setDisplayDates,
 	setShowDates,
 	showDates,
-}: any) => {
+}) => {
 	return (
 		<>
 			<div className='ee-show-dates-filter ee-filter-bar-filter'>

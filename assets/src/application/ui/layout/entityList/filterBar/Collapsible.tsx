@@ -1,7 +1,7 @@
 import React, { useRef } from 'react';
 import { useSpring, animated } from 'react-spring';
 
-import { PerPageControl, SearchInput } from '../../../input';
+import { SearchInput } from '../../../input';
 import useRect from '../../../../services/hooks/useRect';
 
 type voidFn = () => void;
@@ -9,9 +9,7 @@ type voidFn = () => void;
 interface CollapsibleProps {
 	entityFilters: JSX.Element;
 	listId: string;
-	perPage: number;
 	searchText: string;
-	setPerPage: voidFn;
 	setSearchText: voidFn;
 	showEntityFilters: boolean;
 }
@@ -24,9 +22,7 @@ interface CollapsibleProps {
 const Collapsible: React.FC<CollapsibleProps> = ({
 	entityFilters = null,
 	listId,
-	perPage,
 	searchText,
-	setPerPage,
 	setSearchText,
 	showEntityFilters = false,
 }) => {
@@ -41,7 +37,6 @@ const Collapsible: React.FC<CollapsibleProps> = ({
 		<animated.div style={props}>
 			<div className='ee-filter-bar-filter-collapsible' ref={ref}>
 				{entityFilters}
-				<PerPageControl listId={listId} perPage={perPage} setPerPage={setPerPage} />
 				<SearchInput listId={listId} searchText={searchText} setSearchText={setSearchText} />
 			</div>
 		</animated.div>

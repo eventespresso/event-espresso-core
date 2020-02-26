@@ -6,8 +6,10 @@ import AddNewDateButton from '../AddNewDateButton';
 import DatesListEntityFilters from '../filterBar/DatesListEntityFilters';
 import { Datetime } from '../../../../services/apollo/types';
 import { EntityList } from '@appLayout/entityList';
+import { DateCardList } from '../cardView';
+import { TableView } from '../tableView';
 
-import useFilteredDatetimes from './useFilteredDatetimes';
+import useDatesListFilterState from '../filterBar/useDatesListFilterState';
 
 interface ListProps {
 	datetimes: Datetime[];
@@ -16,7 +18,8 @@ interface ListProps {
 const { Title } = Typography;
 
 const List: React.FC<ListProps> = ({ datetimes }) => {
-	const { entityListProps, entityFiltersProps } = useFilteredDatetimes(datetimes);
+	const { processedDates, ...entityFiltersProps } = useDatesListFilterState(datetimes);
+
 	const header = (
 		<Title level={3} style={{ marginBottom: '1.5rem' }}>
 			{__('Dates List')}
@@ -24,6 +27,12 @@ const List: React.FC<ListProps> = ({ datetimes }) => {
 	);
 	const entityFilters = <DatesListEntityFilters {...entityFiltersProps} />;
 	const listId = 'event-editor-dates-list';
+
+	const entityListProps = {
+		entities: processedDates,
+		EntityGridView: DateCardList,
+		EntityListView: TableView,
+	};
 
 	return (
 		<>

@@ -4,7 +4,6 @@ export { default as DatePicker } from './DateTimePicker/DatePicker';
 export { default as EspressoButton } from './EspressoButton';
 export { default as MultiCheck } from './MultiCheck';
 export { default as Number } from './Number';
-export { default as PerPageControl } from './PerPageControl';
 export { default as Radio } from './Radio';
 export { default as SearchInput } from './SearchInput';
 export { default as Select } from './Select';

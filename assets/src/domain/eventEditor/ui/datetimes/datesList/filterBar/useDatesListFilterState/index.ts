@@ -1,11 +1,5 @@
-/**
- * External dependencies
- */
 import { useReducer } from 'react';
 
-/**
- * Internal dependencies
- */
 import { Datetime } from '../../../../../services/apollo/types';
 import { DatesSorted, DisplayDates, ShowDates } from '../../../../../interfaces/datetimes/types';
 import filters from '../../../../../../shared/entities/datetimes/predicates/filters';
@@ -25,7 +19,7 @@ interface DatesListFilterState {
 	showDates: ShowDates;
 }
 
-interface DatesListFilterStateManager extends DatesListFilterState {
+export interface DatesListFilterStateManager extends DatesListFilterState {
 	setDatesSortedBy: (datesSortedBy: DatesSorted) => void;
 	setDisplayDates: (displayDates: DisplayDates) => void;
 	setShowDates: (showDates: ShowDates) => void;

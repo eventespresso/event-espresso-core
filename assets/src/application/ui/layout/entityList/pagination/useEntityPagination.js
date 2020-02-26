@@ -1,8 +1,7 @@
 import { useState } from 'react';
 import { slice } from 'ramda';
-const EMPTY_ARRAY = [];
 
-const useEntityPagination = ({ entities, perPage }) => {
+const useEntityPagination = ({ entities, perPage = 6 }) => {
 	const initialPaginatedEntities = slice(0, perPage)(entities);
 	const [paginatedEntities, setPaginatedEntities] = useState(initialPaginatedEntities);
 	const total = entities.length;
