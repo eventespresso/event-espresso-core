@@ -1,5 +1,7 @@
 import React from 'react';
 import classNames from 'classnames';
+import { Tooltip } from 'antd';
+import { InfoCircleOutlined } from '@ant-design/icons';
 
 import { FormItem, MappedField } from '../adapters';
 import { FieldRendererProps } from '../types';
@@ -7,7 +9,7 @@ import { getValidateStatus } from '../utils';
 import useFormItemLayout from '../hooks/useFormItemLayout';
 
 const FieldRenderer: React.FC<FieldRendererProps> = (props) => {
-	const { label, desc, required, meta, before, after, formItemProps, ...rest } = props;
+	const { label, desc, required, meta, before, after, info, formItemProps, ...rest } = props;
 
 	const formItemLayout = useFormItemLayout();
 
@@ -16,10 +18,21 @@ const FieldRenderer: React.FC<FieldRendererProps> = (props) => {
 		return <MappedField {...rest} />;
 	}
 
+	const fieldInfo = info ? (
+		<Tooltip placement='right' title={info}>
+			<InfoCircleOutlined className='tooltip' />
+		</Tooltip>
+	) : null;
+
 	const validateStatus = getValidateStatus(meta);
 	return (
 		<FormItem
-			label={label}
+			label={
+				<>
+					{label}
+					{fieldInfo}
+				</>
+			}
 			extra={desc}
 			required={required}
 			validateStatus={validateStatus}
