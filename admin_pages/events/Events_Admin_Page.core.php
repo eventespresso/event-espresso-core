@@ -1780,16 +1780,16 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
         if (isset($this->_req_data['month_range']) && $this->_req_data['month_range'] != '') {
             $DateTime = new DateTime(
                 $year_r . '-' . $month_r . '-01 00:00:00',
-                new DateTimeZone(EEM_Datetime::instance()->get_timezone())
+                new DateTimeZone('UTC')
             );
-            $start = $DateTime->format(implode(' ', $start_formats));
-            $end = $DateTime->setDate(
+            $start = $DateTime->getTimestamp();
+            //Set the datetime to be the end of the month.
+            $DateTime->setDate(
                 $year_r,
                 $month_r,
-                $DateTime
-                    ->format('t')
-            )->setTime(23, 59, 59)
-                            ->format(implode(' ', $start_formats));
+                $DateTime->format('t')
+            )->setTime(23, 59, 59);
+            $end = $DateTime->getTimestamp();
             $where['Datetime.DTT_EVT_start'] = array('BETWEEN', array($start, $end));
         } elseif (isset($this->_req_data['status']) && $this->_req_data['status'] == 'today') {
             $DateTime = new DateTime('now', new DateTimeZone(EEM_Event::instance()->get_timezone()));
@@ -1852,6 +1852,8 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
             ),
             $this->_req_data
         );
+                d($query_params);
+
         // let's first check if we have special requests coming in.
         if (isset($this->_req_data['active_status'])) {
             switch ($this->_req_data['active_status']) {
