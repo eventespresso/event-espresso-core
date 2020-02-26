@@ -1,6 +1,6 @@
 import { useEffect, useRef } from 'react';
 import { useQuery } from '@apollo/react-hooks';
-import { useToaster } from '../../../../../../application/services/toaster';
+import { useToaster, useLoadingToast } from '../../../../../../application/services/toaster';
 import usePriceTypeQueryOptions from './usePriceTypeQueryOptions';
 import { useStatus, TypeName } from '../../../../../../application/services/apollo/status';
 import { FetchEntitiesResult } from '../types';
@@ -29,16 +29,10 @@ const useFetchPriceTypes = (): FetchEntitiesResult<PriceTypesList> => {
 		},
 	});
 
+	useLoadingToast({ loading, message: 'initializing price types', toastKey: loadingToastKey.current });
+
 	useEffect(() => {
 		setIsLoading(TypeName.priceTypes, loading);
-		if (loading && !toaster.isToastOpen(loadingToastKey.current)) {
-			toaster.loading({
-				key: loadingToastKey.current,
-				message: 'initializing prices',
-			});
-		} else if (!loading) {
-			dismissLoading();
-		}
 	}, [loading]);
 
 	return {

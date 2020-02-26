@@ -11,3 +11,9 @@ export interface Toaster extends Omit<NotificationInstance, 'open'> {
 	isToastOpen: (key: string) => boolean;
 	generateKey: uuidv4Interface;
 }
+
+export interface LoadingToastProps {
+	toastKey: string;
+	loading: boolean;
+	message: string;
+}

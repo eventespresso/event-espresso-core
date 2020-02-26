@@ -31,7 +31,7 @@ const useToastManager = ({ maxToasts = 6, ...toastArgs }: ToastManagerProps): To
 	const closeIfAtLimit = (): void => {
 		if (toastStack.length === maxToasts) {
 			// remove the oldest toast.
-			// closeToast(toastStack[toastStack.length - 1]);
+			closeToast(toastStack[toastStack.length - 1]);
 		}
 	};
 
