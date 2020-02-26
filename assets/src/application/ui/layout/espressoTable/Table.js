@@ -1,5 +1,4 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 
 /**
  * @param {Array} children
@@ -23,21 +22,6 @@ const Table = ({ children, tableId, tableClass, captionID, captionText, ...extra
 			</table>
 		</div>
 	);
-};
-
-Table.propTypes = {
-	children: PropTypes.node,
-	tableId: PropTypes.string,
-	tableClass: PropTypes.string,
-	captionID: PropTypes.string,
-	captionText: PropTypes.string,
-};
-
-Table.defaultProps = {
-	tableId: '',
-	tableClass: '',
-	captionID: '',
-	captionText: '',
 };
 
 export default Table;

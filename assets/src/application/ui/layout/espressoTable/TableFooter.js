@@ -63,35 +63,4 @@ const TableFooter = ({ tableId, cssClasses, footerRows, rowCount, ...extraProps 
 	) : null;
 };
 
-// TableFooter.propTypes = {
-// 	tableId: PropTypes.string.isRequired,
-// 	rowCount: PropTypes.number.isRequired,
-// 	cssClasses: PropTypes.object,
-// 	footerRows: PropTypes.arrayOf(
-// 		PropTypes.shape({
-// 			type: PropTypes.string.isRequired,
-// 			key: PropTypes.string.isRequired,
-// 			id: PropTypes.string,
-// 			class: PropTypes.string,
-// 			extraProps: PropTypes.object,
-// 			cells: PropTypes.arrayOf(
-// 				PropTypes.shape({
-// 					type: PropTypes.string.isRequired,
-// 					key: PropTypes.string.isRequired,
-// 					value: PropTypes.node.isRequired,
-// 					id: PropTypes.string,
-// 					class: PropTypes.string,
-// 					render: PropTypes.func,
-// 					extraProps: PropTypes.object,
-// 				})
-// 			).isRequired,
-// 		})
-// 	),
-// };
-
-// TableFooter.defaultProps = {
-// 	footerRows: EMPTY_ARRAY,
-// 	cssClasses: {},
-// };
-
 export default TableFooter;

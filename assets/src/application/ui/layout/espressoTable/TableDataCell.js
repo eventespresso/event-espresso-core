@@ -23,19 +23,4 @@ const TableDataCell = ({ children, rowNumber, colNumber, htmlId, htmlClass, cssC
 	);
 };
 
-// TableDataCell.propTypes = {
-// 	children: PropTypes.node,
-// 	rowNumber: PropTypes.number.isRequired,
-// 	colNumber: PropTypes.number.isRequired,
-// 	htmlId: PropTypes.string,
-// 	htmlClass: PropTypes.string,
-// 	cssClasses: PropTypes.object,
-// };
-
-// TableDataCell.defaultProps = {
-// 	htmlId: '',
-// 	htmlClass: '',
-// 	cssClasses: {},
-// };
-
 export default TableDataCell;

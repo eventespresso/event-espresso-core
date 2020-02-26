@@ -4,9 +4,6 @@ import { isFunction } from 'lodash';
 import warning from 'warning';
 import { DragDropContext, Droppable } from 'react-beautiful-dnd';
 
-/**
- * Internal dependencies
- */
 import TableRow from './TableRow';
 import TableHeaderCell from './TableHeaderCell';
 import TableDataCell from './TableDataCell';
@@ -137,45 +134,5 @@ const TableBody = ({
 		</tbody>
 	);
 };
-
-// TableBody.propTypes = {
-// 	tableId: PropTypes.string.isRequired,
-// 	headerRowCount: PropTypes.number.isRequired,
-// 	tableRows: PropTypes.arrayOf(
-// 		PropTypes.shape({
-// 			type: PropTypes.string.isRequired,
-// 			key: PropTypes.string.isRequired,
-// 			id: PropTypes.string,
-// 			class: PropTypes.string,
-// 			extraProps: PropTypes.object,
-// 			cells: PropTypes.arrayOf(
-// 				PropTypes.shape({
-// 					type: PropTypes.string.isRequired,
-// 					key: PropTypes.string.isRequired,
-// 					value: PropTypes.node.isRequired,
-// 					id: PropTypes.string,
-// 					class: PropTypes.string,
-// 					render: PropTypes.func,
-// 					extraProps: PropTypes.object,
-// 				})
-// 			).isRequired,
-// 		})
-// 	).isRequired,
-// 	cssClasses: PropTypes.object,
-// 	hasRowHeaders: PropTypes.bool,
-// 	primaryHeader: PropTypes.object,
-// 	onBeforeDragStart: PropTypes.func,
-// 	onDragStart: PropTypes.func,
-// 	onDragUpdate: PropTypes.func,
-// 	onDragEnd: PropTypes.func,
-// };
-
-// TableBody.defaultProps = {
-// 	cssClasses: {},
-// 	onBeforeDragStart: null,
-// 	onDragStart: null,
-// 	onDragUpdate: null,
-// 	onDragEnd: null,
-// };
 
 export default TableBody;
