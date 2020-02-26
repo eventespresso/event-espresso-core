@@ -1,5 +1,5 @@
 import { Datetime } from '../../../../services/apollo/types';
-import { CardView } from '../cardView';
+import { DateCardList } from '../cardView';
 import { TableView } from '../tableView';
 
 import useEntityListFilterState from '@appLayout/entityList/filterBar/useEntityListFilterState';
@@ -20,7 +20,7 @@ const useFilteredDatetimes = (datetimes: Datetime[]): any => {
 	};
 
 	const viewProps = {
-		EntityGridView: CardView,
+		EntityGridView: DateCardList,
 		EntityListView: TableView,
 		view: filterState.view,
 	};

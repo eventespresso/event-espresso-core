@@ -9,7 +9,7 @@ const listStyle: CSSProperties = {
 	width: '100%',
 };
 
-const CardView = ({ entities: datetimes }) => {
+const DateCardList = ({ entities: datetimes }) => {
 	return (
 		<div style={listStyle}>
 			{datetimes.map((date) => (
@@ -19,4 +19,4 @@ const CardView = ({ entities: datetimes }) => {
 	);
 };
 
-export default CardView;
+export default DateCardList;
