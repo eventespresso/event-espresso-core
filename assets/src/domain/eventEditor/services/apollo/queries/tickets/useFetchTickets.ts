@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef } from 'react';
 import { useQuery } from '@apollo/react-hooks';
 import useToaster from '../../../../../../application/services/toaster/useToaster';
 import { useStatus, TypeName } from '../../../../../../application/services/apollo/status';
@@ -7,7 +7,6 @@ import { FetchEntitiesResult } from '../types';
 import { TicketsList } from '../../types';
 
 const useFetchTickets = (skipFetch: boolean = null): FetchEntitiesResult<TicketsList> => {
-	const [initialized, setInitialized] = useState(false);
 	const { setIsLoading, setIsLoaded, setIsError, isLoaded } = useStatus();
 	const { query, ...options } = useTicketQueryOptions();
 
@@ -17,37 +16,35 @@ const useFetchTickets = (skipFetch: boolean = null): FetchEntitiesResult<Tickets
 	const skip = skipFetch !== null ? skipFetch : !datetimeIn.length || isLoaded(TypeName.tickets);
 
 	const toaster = useToaster();
-	const toasterMessage = 'initializing tickets';
+	const loadingToastKey = useRef('ttttttt' /* toaster.generateKey() */);
 
 	const { data, error, loading } = useQuery<TicketsList>(query, {
 		...options,
 		skip,
 		onCompleted: (): void => {
 			setIsLoaded(TypeName.tickets, true);
-			toaster.dismiss(toasterMessage);
+			toaster.dismiss(loadingToastKey.current);
 			toaster.success({ message: `tickets initialized` });
 		},
 		onError: (error): void => {
 			setIsError(TypeName.tickets, true);
-			toaster.dismiss(toasterMessage);
+			toaster.dismiss(loadingToastKey.current);
 			toaster.error({ message: error });
 		},
 	});
 
 	useEffect(() => {
 		setIsLoading(TypeName.tickets, loading);
-	}, [loading]);
 
-	if (!initialized) {
-		toaster.loading(loading, toasterMessage);
-		toaster.error({ message: error });
-	}
-
-	useEffect(() => {
-		if (!initialized && !loading) {
-			setInitialized(true);
+		if (loading && !toaster.isToastOpen(loadingToastKey.current)) {
+			toaster.loading({
+				key: loadingToastKey.current,
+				message: 'initializing tickets',
+			});
+		} else if (!loading) {
+			toaster.dismiss(loadingToastKey.current);
 		}
-	}, [initialized]);
+	}, [loading]);
 
 	return {
 		data,

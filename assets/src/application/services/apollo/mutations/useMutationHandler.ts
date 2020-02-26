@@ -54,7 +54,7 @@ const useMutationHandler: MutationHandler = (getMutationOptions) => {
 			 * @param {string} mutationType Type of mutation - CREATE|UPDATE|DELETE
 			 * @param {string} suffix       Suffix to be added to mutation typeName
 			 */
-			const getToasterMessage = (mutationType: MutationType, suffix: 'ing' | 'ed' = 'ing'): any => {
+			const getToasterMessage = (mutationType: MutationType, suffix: 'ing' | 'ed' = 'ing'): string => {
 				// For example "CREATE" will become "creating" or "created"
 				const verb = mutationType.toLowerCase().replace(/e$/, suffix);
 				// e.g. "updating datetime"
@@ -62,11 +62,19 @@ const useMutationHandler: MutationHandler = (getMutationOptions) => {
 			};
 
 			/**
+			 * @param {string} mutationType Type of mutation - CREATE|UPDATE|DELETE
+			 */
+			const getToasterKey = (mutationType: MutationType): string => {
+				return `${mutationType}:${id}`;
+			};
+
+			/**
 			 *
 			 */
 			const onMutationStart = (mutationType: MutationType): void => {
 				const message = getToasterMessage(mutationType);
-				toaster.loading(true, message);
+				const key = getToasterKey(mutationType);
+				toaster.loading({ key, message });
 
 				updateResult({
 					loading: true,
@@ -84,9 +92,8 @@ const useMutationHandler: MutationHandler = (getMutationOptions) => {
 				onCompleted: OnMutationCompletedFn,
 				mutationType: MutationType
 			): void => {
-				const dismissMessage = getToasterMessage(mutationType);
+				toaster.dismiss(getToasterKey(mutationType));
 				const successMessage = `successfully ${getToasterMessage(mutationType, 'ed')}`;
-				toaster.dismiss(dismissMessage);
 				toaster.success({ message: successMessage });
 				const { data, errors } = response;
 				const error = errors && errors.length > 0 ? new ApolloError({ graphQLErrors: errors }) : undefined;
@@ -107,9 +114,8 @@ const useMutationHandler: MutationHandler = (getMutationOptions) => {
 			 *
 			 */
 			const onMutationError = (error: Error, onError: OnMutationErrorFn, mutationType: MutationType): void => {
-				const dismissMessage = getToasterMessage(mutationType);
 				const errorMessage = `error ${getToasterMessage(mutationType)}`;
-				toaster.dismiss(dismissMessage);
+				toaster.dismiss(getToasterKey(mutationType));
 				toaster.error({ message: errorMessage });
 
 				updateResult({

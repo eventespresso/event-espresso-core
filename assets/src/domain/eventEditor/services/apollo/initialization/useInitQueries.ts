@@ -4,6 +4,7 @@ import useFetchPriceTypes from '../queries/priceTypes/useFetchPriceTypes';
 import useFetchPrices from '../queries/prices/useFetchPrices';
 import { useFetchCurrentUser, useFetchGeneralSettings } from '../../../../shared/services/apollo/queries';
 import useCacheRehydration from './useCacheRehydration';
+import useEvent from '../queries/events/useEvent';
 
 const useInitQueries = (): void => {
 	useCacheRehydration();
@@ -25,6 +26,9 @@ const useInitQueries = (): void => {
 
 	// initiate general settings fetching.
 	useFetchGeneralSettings();
+
+	// pre-fetch event data
+	useEvent();
 };
 
 export default useInitQueries;

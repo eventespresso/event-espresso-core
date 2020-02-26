@@ -35,6 +35,7 @@ const FormModalForm: React.FC<FormModalFormProps> = ({
 	const submitButton: ButtonProps = {
 		disabled: submitDisabled,
 		htmlType: 'submit',
+		loading: submitting,
 		icon: <SaveOutlined />,
 		onClick: (click) => {
 			click.preventDefault();
