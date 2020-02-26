@@ -2,7 +2,6 @@ import React from 'react';
 import { __ } from '@wordpress/i18n';
 import { without } from 'ramda';
 import classNames from 'classnames';
-import { PaginationProps } from 'antd/lib/pagination';
 
 import { Entity } from '@appServices/apollo/types';
 import EmptyState from '@appDisplay/EmptyState';
@@ -51,7 +50,7 @@ const EntityList = ({
 		<>
 			<EntityListFilterBar entityFilters={entityFilters} filterState={filterState} listId={listId} />;
 			<EntityView entities={paginatedEntities} className={className} {...props} />
-			<EntityPagination {...paginationProps} showSizeChanger />
+			<EntityPagination {...paginationProps} />
 		</>
 	);
 };

@@ -1,7 +1,8 @@
 import { useState } from 'react';
 import { slice } from 'ramda';
 
-const useEntityPagination = ({ entities, perPage = 6 }) => {
+const useEntityPagination = ({ entities }) => {
+	const [perPage, setPerPage] = useState(6);
 	const initialPaginatedEntities = slice(0, perPage)(entities);
 	const [paginatedEntities, setPaginatedEntities] = useState(initialPaginatedEntities);
 	const total = entities.length;
@@ -20,9 +21,16 @@ const useEntityPagination = ({ entities, perPage = 6 }) => {
 		setPaginatedEntities(slicedEntities);
 	};
 
+	const onShowSizeChange = (current, size) => {
+		const slicedEntities = slice(size * (current - 1), size * current)(entities);
+		setPerPage(size);
+		setPaginatedEntities(slicedEntities);
+	};
+
 	return {
 		// currentPage: actualPageNumber,
 		onChange,
+		onShowSizeChange,
 		paginatedEntities,
 		total,
 		// setCurrentPage,
