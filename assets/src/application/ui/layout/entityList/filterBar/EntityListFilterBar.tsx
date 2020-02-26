@@ -8,7 +8,7 @@ import { EntityListFilterState } from './useEntityListFilterState';
 import './style.css';
 
 interface EntityListFilterBarProps {
-	entityFilters: React.ReactNode;
+	entityFilters: JSX.Element;
 	filterState: EntityListFilterState;
 	listId?: string;
 }
