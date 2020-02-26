@@ -1783,7 +1783,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
                 new DateTimeZone('UTC')
             );
             $start = $DateTime->getTimestamp();
-            //Set the datetime to be the end of the month.
+            // set the datetime to be the end of the month
             $DateTime->setDate(
                 $year_r,
                 $month_r,
