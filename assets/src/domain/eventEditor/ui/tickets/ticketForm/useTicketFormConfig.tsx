@@ -92,7 +92,7 @@ const useTicketFormConfig = (id: EntityId, config?: EspressoFormProps): TicketFo
 					{
 						name: 'price',
 						label: __('Price'),
-						desc: sprintf(
+						info: sprintf(
 							__(
 								'The total amount of money charged for this ticket. Leave blank to make this ticket selection free.%sClick the button after the input to use the Ticket Price Calculator'
 							),
@@ -108,7 +108,7 @@ const useTicketFormConfig = (id: EntityId, config?: EspressoFormProps): TicketFo
 						name: 'isTaxable',
 						label: __('Taxable'),
 						fieldType: 'switch',
-						desc: __(
+						info: __(
 							'If enabled, all configured taxes will be applied to the price of this ticket upon purchase.'
 						),
 					},
@@ -159,7 +159,7 @@ const useTicketFormConfig = (id: EntityId, config?: EspressoFormProps): TicketFo
 						fieldType: 'number',
 						formItemProps: adjacentFormItemProps,
 						min: -1,
-						desc: sprintf(
+						info: sprintf(
 							__(
 								'The maximum number of this ticket available for sale.%sSet to 0 stop sales or set to -1 for no limit.'
 							),
@@ -172,7 +172,7 @@ const useTicketFormConfig = (id: EntityId, config?: EspressoFormProps): TicketFo
 						fieldType: 'number',
 						formItemProps: adjacentFormItemProps,
 						min: 0,
-						desc: sprintf(
+						info: sprintf(
 							__(
 								'Controls the total number of times this ticket can be used, regardless of the number of dates it is assigned to.%sExample: A ticket might have access to 4 different dates, but setting this field to 2 would mean that the ticket could only be used twice. Leave blank for no limit.'
 							),
@@ -185,7 +185,7 @@ const useTicketFormConfig = (id: EntityId, config?: EspressoFormProps): TicketFo
 						fieldType: 'number',
 						formItemProps: adjacentFormItemProps,
 						min: 0,
-						desc: sprintf(
+						info: sprintf(
 							__(
 								'The minimum quantity that can be selected for this ticket. Use this to create ticket bundles or graduated pricing.%sLeave blank for no minimum.'
 							),
@@ -198,7 +198,7 @@ const useTicketFormConfig = (id: EntityId, config?: EspressoFormProps): TicketFo
 						fieldType: 'number',
 						formItemProps: adjacentFormItemProps,
 						min: -1,
-						desc: sprintf(
+						info: sprintf(
 							__(
 								'The maximum quantity that can be selected for this ticket. Use this to create ticket bundles or graduated pricing.%sSet to -1 for no maximum.'
 							),
@@ -210,14 +210,14 @@ const useTicketFormConfig = (id: EntityId, config?: EspressoFormProps): TicketFo
 						label: __('Required Ticket'),
 						fieldType: 'switch',
 						formItemProps: adjacentFormItemProps,
-						desc: __('If enabled, the ticket will appear first in frontend ticket lists.'),
+						info: __('If enabled, the ticket will appear first in frontend ticket lists.'),
 					},
 					{
 						name: 'isDefault',
 						label: __('Default Ticket'),
 						fieldType: 'switch',
 						formItemProps: adjacentFormItemProps,
-						desc: __('If enabled, the ticket will appear on all new events.'),
+						info: __('If enabled, the ticket will appear on all new events.'),
 					},
 					{
 						name: 'isTrashed',
