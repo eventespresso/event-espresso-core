@@ -12,6 +12,8 @@ import { TableView } from './tableView';
 
 import useDatesListFilterState from './filterBar/useDatesListFilterState';
 
+import './styles.scss';
+
 interface ListProps {
 	datetimes: Datetime[];
 }
@@ -22,7 +24,7 @@ const List: React.FC<ListProps> = ({ datetimes }) => {
 	const { processedDates, ...entityFiltersProps } = useDatesListFilterState(datetimes);
 	const entityFilters = <DatesListEntityFilters {...entityFiltersProps} />;
 	const header = (
-		<Title level={3} style={{ marginBottom: '1.5rem' }}>
+		<Title className='event-editor-dates-list-header' level={3}>
 			{__('Dates List')}
 		</Title>
 	);
