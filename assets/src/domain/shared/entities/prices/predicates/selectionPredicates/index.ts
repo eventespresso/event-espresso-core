@@ -1,6 +1,7 @@
 import { filter, find, includes, propEq } from 'ramda';
 
-import { EntityId, EntityDbId, Price } from '../../../../../eventEditor/services/apollo/types';
+import { EntityId, EntityDbId } from '@appServices/apollo/types';
+import { Price } from '../../../../../eventEditor/services/apollo/types';
 import { PRICE_FIELDS, PRICE_INPUT_FIELDS } from '../priceFields';
 import { findEntityByDbId, findEntityByGuid } from '../../../../services/predicates';
 

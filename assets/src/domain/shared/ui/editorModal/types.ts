@@ -1,5 +1,5 @@
 import { EditorModalProps } from '@appLayout/editorModal';
-import { EntityId } from '@edtrServices/apollo/types';
+import { EntityId } from '@appServices/apollo/types';
 
 export type EditorModals = {
 	addDatetime: EditorModalProps;

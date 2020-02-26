@@ -1,6 +1,6 @@
 import { DataProxy } from 'apollo-cache';
 import { OperationVariables } from 'apollo-client';
-import { EntityId } from '../types';
+import { EntityId } from '@appServices/apollo/types';
 
 export type ReadQueryOptions<TVariables = OperationVariables> = DataProxy.Query<TVariables>;
 

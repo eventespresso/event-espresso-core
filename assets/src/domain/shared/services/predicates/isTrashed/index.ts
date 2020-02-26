@@ -1,4 +1,4 @@
-import { Trashable } from '../../../../eventEditor/services/apollo/types';
+import { Trashable } from '@appServices/apollo/types';
 
 /**
  * @function

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Entity } from '@edtrServices/apollo/types';
+import { Entity } from '@appServices/apollo/types';
 
 export type Domain = 'eventEditor';
 

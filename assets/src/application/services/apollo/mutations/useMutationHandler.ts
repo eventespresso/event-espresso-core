@@ -5,8 +5,8 @@ import { FetchResult } from 'apollo-link';
 
 import useIfMounted from '../../hooks/useIfMounted';
 import useToaster from '../../toaster/useToaster';
+import { Entity as BaseType } from '../types';
 import {
-	BaseType,
 	OnMutationCompletedFn,
 	OnMutationErrorFn,
 	MutationResult,

@@ -1,12 +1,6 @@
-/**
- * External dependencies
- */
 import { trim } from 'ramda';
 
-/**
- * Internal dependencies
- */
-import { Entity } from '@edtrServices/apollo/types';
+import { Entity } from '@appServices/apollo/types';
 
 type EntityFieldSearchProps = {
 	entities: Entity[];

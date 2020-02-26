@@ -1,8 +1,5 @@
 import { MutationOptions } from 'apollo-client';
-
-export interface BaseType {
-	id: string;
-}
+import { Entity as BaseType } from '../types';
 
 export type MutationOptionsCb = <Type extends BaseType, MI = MutationInput>(
 	mutationType: MutationType,

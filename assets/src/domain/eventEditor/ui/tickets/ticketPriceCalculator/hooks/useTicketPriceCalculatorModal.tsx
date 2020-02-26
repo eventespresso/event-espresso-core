@@ -14,7 +14,7 @@ import defaultPrice from '../defaultPriceModifier';
 import { sortByPriceOrderIdAsc } from '../../../../../shared/entities/prices/predicates/sortingPredicates';
 import { copyPriceFields } from '../../../../../shared/entities/prices/predicates/updatePredicates';
 import { copyTicketFields } from '../../../../../shared/entities/tickets/predicates/updatePredicates';
-import { EntityId } from '../../../../services/apollo/types';
+import { EntityId } from '@appServices/apollo/types';
 import { useEditorModal, EditorModal, ModalClose } from '../../../../../../application/ui/layout/editorModal';
 
 const INITIAL_STATE: TpcFormData = {

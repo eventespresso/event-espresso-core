@@ -1,4 +1,4 @@
-import { EntityId } from '@edtrServices/apollo/types';
+import { EntityId } from '@appServices/apollo/types';
 
 type RelationEntity = 'datetimes' | 'tickets' | 'prices' | 'priceTypes';
 

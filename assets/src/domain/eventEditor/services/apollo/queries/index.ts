@@ -4,7 +4,8 @@ import { GET_PRICE, GET_PRICES } from './prices';
 import { GET_PRICE_TYPE, GET_PRICE_TYPES } from './priceTypes';
 import { GET_CURRENT_USER, GET_GENERAL_SETTINGS } from '../../../../shared/services/apollo/queries';
 
-import { EntityEdge, DatetimeEdge, TicketEdge, PriceEdge, PriceTypeEdge } from '../types';
+import { DatetimeEdge, TicketEdge, PriceEdge, PriceTypeEdge } from '../types';
+import { EntityEdge } from '@appServices/apollo/types';
 
 export const queries = {
 	/* datetimes */

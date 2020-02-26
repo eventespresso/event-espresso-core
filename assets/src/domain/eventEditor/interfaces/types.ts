@@ -1,7 +1,8 @@
 import { RelationalData } from '../../../application/services/apollo/relations/types';
 import { JsDataProps } from '../../../application/services/config/types';
 import { CurrentUserProps, GeneralSettings } from '../../../application/valueObjects/config/types';
-import { DatetimeEdge, TicketEdge, PriceEdge, PriceTypeEdge, EntityId } from '../services/apollo/types';
+import { DatetimeEdge, TicketEdge, PriceEdge, PriceTypeEdge } from '../services/apollo/types';
+import { EntityId } from '@appServices/apollo/types';
 
 export interface EventData {
 	dbId: number;

@@ -3,7 +3,7 @@ import { __ } from '@wordpress/i18n';
 import { without } from 'ramda';
 import classNames from 'classnames';
 
-import { Entity } from '@edtrServices/apollo/types';
+import { Entity } from '@appServices/apollo/types';
 import EmptyState from '@appDisplay/EmptyState';
 import './style.scss';
 
