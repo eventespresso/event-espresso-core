@@ -2,7 +2,8 @@ import { DataProxy } from 'apollo-cache';
 import { OperationVariables } from 'apollo-client';
 
 import { MutationInput, MutationType } from '@appServices/apollo/mutations/types';
-import { Entity as BaseEntity, Datetime, DatetimeEdge, Ticket, TicketEdge, Price, PriceEdge } from '../types';
+import { Entity as BaseEntity } from '@appServices/apollo/types';
+import { Datetime, DatetimeEdge, Ticket, TicketEdge, Price, PriceEdge } from '../types';
 import { Merge } from '@application/services/utilities/types';
 
 export interface MutationCallbackFnArgs {

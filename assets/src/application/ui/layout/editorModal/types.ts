@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import { EntityId } from '@edtrServices/apollo/types';
+import { EntityId } from '@appServices/apollo/types';
 import { EditorModals } from '../../../../domain/shared/ui/editorModal/types';
 import { EspressoFormProps } from '@application/ui/forms/espressoForm';
 

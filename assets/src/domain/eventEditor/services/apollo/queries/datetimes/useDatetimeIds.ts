@@ -1,5 +1,5 @@
 import useDatetimes from './useDatetimes';
-import { EntityId } from '../../types';
+import { EntityId } from '@appServices/apollo/types';
 
 const useDatetimeIds = (): EntityId[] => {
 	const datetimes = useDatetimes();

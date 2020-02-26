@@ -1,7 +1,7 @@
 import classNames from 'classnames';
 import React, { useMemo } from 'react';
 import shortenGuid from '@appServices/utilities/text/shortenGuid';
-import { EntityId, EntityDbId } from '@edtrServices/apollo/types';
+import { EntityId, EntityDbId } from '@appServices/apollo/types';
 
 import './style.css';
 

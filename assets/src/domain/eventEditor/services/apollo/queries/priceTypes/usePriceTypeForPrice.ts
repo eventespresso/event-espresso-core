@@ -2,7 +2,8 @@ import isEmpty from 'ramda/src/isEmpty';
 import useRelations from '../../../../../../application/services/apollo/relations/useRelations';
 import usePriceTypes from './usePriceTypes';
 import useDefaultPriceType from './useDefaultPriceType';
-import { PriceType, EntityId } from '../../types';
+import { EntityId } from '@appServices/apollo/types';
+import { PriceType } from '../../types';
 
 /**
  * A custom react hook for retrieving the related priceType from cache for the given Price entity

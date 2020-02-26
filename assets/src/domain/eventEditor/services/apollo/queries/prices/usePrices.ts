@@ -3,7 +3,8 @@ import { pathOr } from 'ramda';
 import { entitiesWithGuIdInArray } from '../../../../../shared/services/predicates';
 import { useStatus, TypeName } from '../../../../../../application/services/apollo/status';
 import usePriceQueryOptions from './usePriceQueryOptions';
-import { Price, PricesList, EntityId } from '../../types';
+import { EntityId } from '@appServices/apollo/types';
+import { Price, PricesList } from '../../types';
 import useCacheQuery from '../useCacheQuery';
 /**
  * A custom react hook for retrieving all the prices from cache

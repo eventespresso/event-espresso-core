@@ -4,7 +4,8 @@ import { DataProxy } from 'apollo-cache';
 import { FetchResult } from 'apollo-link';
 import { pathOr } from 'ramda';
 
-import { MutationType, MutationOptionsCb, BaseType } from '@appServices/apollo/mutations';
+import { Entity as BaseType } from '@appServices/apollo/types';
+import { MutationType, MutationOptionsCb } from '@appServices/apollo/mutations';
 import { OnUpdateFn, TypeName } from './types';
 import { useMutationHandler, mutations } from './';
 

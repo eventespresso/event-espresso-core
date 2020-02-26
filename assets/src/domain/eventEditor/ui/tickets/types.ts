@@ -1,5 +1,5 @@
-import { EntityId } from '@edtrServices/apollo/types';
 import { ActionsMenuItemProps } from '@appLayout/entityActionsMenu';
+import { EntityId } from '@appServices/apollo/types';
 
 export interface EditTicketProps {
 	position?: string;

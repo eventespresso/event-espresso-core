@@ -6,7 +6,7 @@ import {
 	AdditionalSubscriptionCbOptions,
 } from '@appLayout/entityActionsMenu';
 import { Domain } from './types';
-import { Entity } from '../../../../domain/eventEditor/services/apollo/types';
+import { Entity } from '@appServices/apollo/types';
 
 const useEntityActionsMenuItems = <E extends Entity, AO = AdditionalSubscriptionCbOptions>(
 	entityType: string,

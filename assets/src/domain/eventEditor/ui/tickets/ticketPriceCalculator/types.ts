@@ -1,5 +1,6 @@
-import { Entity, EntityId, Price, Ticket } from '../../../services/apollo/types';
+import { Price, Ticket } from '../../../services/apollo/types';
 import { EspressoButtonProps } from '@application/ui/input';
+import { Entity, EntityId } from '@appServices/apollo/types';
 
 export interface AddPriceModifierDataProps extends WithPriceModifierProp {
 	name: string;

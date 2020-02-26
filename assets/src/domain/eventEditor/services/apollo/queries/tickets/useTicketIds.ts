@@ -1,5 +1,5 @@
 import useTickets from './useTickets';
-import { EntityId } from '../../types';
+import { EntityId } from '@appServices/apollo/types';
 
 const useTicketIds = (): EntityId[] => {
 	const tickets = useTickets();

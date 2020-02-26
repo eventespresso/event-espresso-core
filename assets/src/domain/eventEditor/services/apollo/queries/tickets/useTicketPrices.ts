@@ -1,6 +1,7 @@
 import useRelations from '../../../../../../application/services/apollo/relations/useRelations';
 import usePrices from '../prices/usePrices';
-import { Price, EntityId } from '../../types';
+import { EntityId } from '@appServices/apollo/types';
+import { Price } from '../../types';
 /**
  * A custom react hook for retrieving the related prices
  * for the given `ticket` identified by `ticket.id`

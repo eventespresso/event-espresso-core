@@ -2,7 +2,8 @@ import { difference } from 'ramda';
 import { useCallback } from 'react';
 
 import { FnCallback, TpcFormData } from '../types';
-import { EntityId, Price } from '../../../../services/apollo/types';
+import { EntityId } from '@appServices/apollo/types';
+import { Price } from '../../../../services/apollo/types';
 import { cloneAndNormalizePrice } from '../../../../../shared/entities/prices/predicates/updatePredicates';
 import toBoolean from '../../../../../../application/services/utilities/converters/toBoolean';
 import parsedAmount from '../../../../../../application/services/utilities/money/parsedAmount';

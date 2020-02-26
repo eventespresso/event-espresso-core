@@ -2,7 +2,8 @@ import { assoc, includes, map, when } from 'ramda';
 
 import { TICKET_FIELDS, TICKET_INPUT_FIELDS } from '../ticketFields';
 import { entityHasGuid } from '../../../../services/predicates';
-import { EntityId, Ticket } from '@edtrServices/apollo/types';
+import { EntityId } from '@appServices/apollo/types';
+import { Ticket } from '@edtrServices/apollo/types';
 
 interface UpdateTicketPriceForTicketProps {
 	amount: number;

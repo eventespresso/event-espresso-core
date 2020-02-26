@@ -1,4 +1,4 @@
-import { EntityId } from '../../types';
+import { EntityId } from '@appServices/apollo/types';
 
 export interface PriceBaseInput {
 	amount?: number;
