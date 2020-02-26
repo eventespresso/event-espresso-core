@@ -46,7 +46,6 @@ const useEntityListFilterState = (): EntityListFilterState => {
 		});
 	};
 
-	const perPage = state.perPage;
 	const searchText = state.searchText;
 	const showEntityFilters = state.showEntityFilters;
 	const view = state.view;
@@ -63,7 +62,7 @@ const useEntityListFilterState = (): EntityListFilterState => {
 };
 
 const reducer = (state, action) => {
-	const { perPage, searchText, view } = action;
+	const { searchText, view } = action;
 
 	switch (action.type) {
 		case 'SET_SEARCH_TEXT':
