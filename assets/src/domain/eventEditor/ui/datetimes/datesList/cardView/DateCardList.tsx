@@ -1,17 +1,11 @@
-import React, { CSSProperties } from 'react';
-
+import React from 'react';
 import DateCard from './DateCard';
 
-const listStyle: CSSProperties = {
-	display: 'flex',
-	flexFlow: 'row wrap',
-	justifyContent: 'space-between',
-	width: '100%',
-};
+import './styles.scss';
 
 const DateCardList = ({ entities: datetimes }) => {
 	return (
-		<div style={listStyle}>
+		<div className='event-editor-date-card-list'>
 			{datetimes.map((date) => (
 				<DateCard id={date.id} key={date.id} />
 			))}
