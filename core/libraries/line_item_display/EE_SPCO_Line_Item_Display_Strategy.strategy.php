@@ -267,6 +267,13 @@ class EE_SPCO_Line_Item_Display_Strategy implements EEI_Line_Item_Display
             $options
         );
         $name_and_desc .= $line_item->is_taxable() ? ' * ' : '';
+        $name_and_desc = apply_filters(
+            'FHEE__EE_SPCO_Line_Item_Display_Strategy___ticket_row__name_and_desc',
+            $name_and_desc,
+            $line_item,
+            $options
+        );
+
         // name td
         $html .= EEH_HTML::td( /*__FUNCTION__ .*/
             $name_and_desc,
@@ -334,6 +341,13 @@ class EE_SPCO_Line_Item_Display_Strategy implements EEI_Line_Item_Display
             $options
         );
         $name_and_desc .= $line_item->is_taxable() ? ' * ' : '';
+        $name_and_desc = apply_filters(
+            'FHEE__EE_SPCO_Line_Item_Display_Strategy__item_row__name_and_desc',
+            $name_and_desc,
+            $line_item,
+            $options
+        );
+
         // name td
         $html .= EEH_HTML::td($name_and_desc, '', 'item_l');
         // price td
