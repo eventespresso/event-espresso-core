@@ -2139,6 +2139,11 @@ class Messages_Admin_Page extends EE_Admin_Page
         }
 
         EE_Registry::instance()->REQ->set('GRP_ID', $this->_req_data['GRP_ID']);
+        
+        // if we have an evt_id set on the request, use it.
+        $EVT_ID = isset($this->_req_data['evt_id']) && ! empty($this->_req_data['evt_id'])
+        ? absint($this->_req_data['evt_id'])
+        : false;
 
 
         // get the preview!
@@ -2156,7 +2161,7 @@ class Messages_Admin_Page extends EE_Admin_Page
         // let's add a button to go back to the edit view
         $query_args = array(
             'id'      => $this->_req_data['GRP_ID'],
-            'evt_id'  => $this->_req_data['evt_id'],
+            'evt_id'  => $EVT_ID,
             'context' => $this->_req_data['context'],
             'action'  => 'edit_message_template',
         );
