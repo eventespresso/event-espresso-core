@@ -17,7 +17,7 @@ interface EntityListFilterBarProps {
  * EntityListFilterBar
  * a group of inputs for controlling how a list of entities is displayed
  */
-const EntityListFilterBar: React.FC<EntityListFilterBarProps> = ({ entityFilters = null, filterState, listId }) => {
+const EntityListFilterBar: React.FC<EntityListFilterBarProps> = ({ entityFilters, filterState, listId }) => {
 	if (!filterState) return null;
 
 	const {
@@ -47,16 +47,7 @@ const EntityListFilterBar: React.FC<EntityListFilterBarProps> = ({ entityFilters
 		),
 		[listId, view, setListView]
 	);
-	/*
-	buttonText?: string;
-	buttonProps?: object;
-	htmlClass?: string;
-	icon?: Icon | string;
-	onClick: ClickHandler;
-	size?: EspressoButtonSize;
-	btnType?: EspressoButtonType;
-	[key: string]: any;
-*/
+
 	const gridViewButton = React.useMemo(
 		() => (
 			<>

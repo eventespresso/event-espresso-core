@@ -20,7 +20,7 @@ interface CollapsibleProps {
  * and is intended to be used only in context with that parent component.
  */
 const Collapsible: React.FC<CollapsibleProps> = ({
-	entityFilters = null,
+	entityFilters,
 	listId,
 	searchText,
 	setSearchText,
