@@ -1,3 +1,4 @@
+// @ts-nocheck
 import React from 'react';
 import classNames from 'classnames';
 import uuidv4 from 'uuid/v4';
@@ -10,23 +11,13 @@ import Table from './Table';
 import TableHeader from './TableHeader';
 import TableBody from './TableBody';
 import TableFooter from './TableFooter';
-import './style.css';
+import './style.scss';
 
 /**
  * ResponsiveDataGrid responsive-table
  * produces a table like structure for displaying tabular data
  * in a grid that collapses properly on smaller screens
  *
- * @param {string} instanceId
- * @param {Array} headerRows
- * @param {Array} tableRows
- * @param {Array} footerRows
- * @param {Object} metaData
- * @param {Object} classes
- * @param {Function} onBeforeDragStart
- * @param {Function} onDragStart
- * @param {Function} onDragUpdate
- * @param {Function} onDragEnd
  */
 const ResponsiveTable = ({
 	headerRows = [],
@@ -39,7 +30,7 @@ const ResponsiveTable = ({
 	onDragUpdate,
 	onDragEnd,
 	...props
-}) => {
+}: any) => {
 	const primaryHeader = find(headerRows, 'primary');
 	const instanceId = props.instanceId || uuidv4();
 	if (!primaryHeader || isEmpty(tableRows)) {

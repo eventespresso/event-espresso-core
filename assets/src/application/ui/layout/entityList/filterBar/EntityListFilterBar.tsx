@@ -1,34 +1,34 @@
-/**
- * External imports
- */
 import * as React from 'react';
 import { AppstoreFilled, FilterOutlined, TableOutlined } from '@ant-design/icons';
 import { __ } from '@wordpress/i18n';
-import EspressoButton from '../../../input/EspressoButton';
 
-/**
- * Internal dependencies
- */
-import useEntityListFilterState from './useEntityListFilterState';
+import EspressoButton from '../../../input/EspressoButton';
 import Collapsible from './Collapsible';
+import { EntityListFilterState } from './useEntityListFilterState';
 import './style.css';
+
+interface EntityListFilterBarProps {
+	entityFilters: JSX.Element;
+	filterState: EntityListFilterState;
+	listId?: string;
+}
 
 /**
  * EntityListFilterBar
  * a group of inputs for controlling how a list of entities is displayed
  */
-const EntityListFilterBar = ({ listId, entityFilters = null }) => {
+const EntityListFilterBar: React.FC<EntityListFilterBarProps> = ({ entityFilters, filterState, listId }) => {
+	if (!filterState) return null;
+
 	const {
-		perPage,
 		searchText,
 		setListView,
 		setGridView,
-		setPerPage,
 		setSearchText,
 		showEntityFilters,
 		toggleEntityFilters,
 		view,
-	} = useEntityListFilterState();
+	} = filterState;
 
 	const listViewButton = React.useMemo(
 		() => (
@@ -47,16 +47,7 @@ const EntityListFilterBar = ({ listId, entityFilters = null }) => {
 		),
 		[listId, view, setListView]
 	);
-	/*
-	buttonText?: string;
-	buttonProps?: object;
-	htmlClass?: string;
-	icon?: Icon | string;
-	onClick: ClickHandler;
-	size?: EspressoButtonSize;
-	btnType?: EspressoButtonType;
-	[key: string]: any;
-*/
+
 	const gridViewButton = React.useMemo(
 		() => (
 			<>
@@ -104,9 +95,7 @@ const EntityListFilterBar = ({ listId, entityFilters = null }) => {
 			<Collapsible
 				entityFilters={entityFilters}
 				listId={listId}
-				perPage={perPage}
 				searchText={searchText}
-				setPerPage={setPerPage}
 				setSearchText={setSearchText}
 				showEntityFilters={showEntityFilters}
 			/>

@@ -1,6 +1,16 @@
 import { useReducer } from 'react';
 
-const useEntityListFilterState = () => {
+export interface EntityListFilterState {
+	searchText: any;
+	setGridView: any;
+	setListView: any;
+	setSearchText: any;
+	showEntityFilters: any;
+	toggleEntityFilters: any;
+	view?: 'grid' | 'list';
+}
+
+const useEntityListFilterState = (): EntityListFilterState => {
 	const initialState = {
 		perPage: 6,
 		searchText: '',
@@ -23,13 +33,6 @@ const useEntityListFilterState = () => {
 		});
 	};
 
-	const setPerPage = (perPage) => {
-		dispatch({
-			perPage,
-			type: 'SET_PER_PAGE',
-		});
-	};
-
 	const setSearchText = (searchText) => {
 		dispatch({
 			searchText,
@@ -43,17 +46,14 @@ const useEntityListFilterState = () => {
 		});
 	};
 
-	const perPage = state.perPage;
 	const searchText = state.searchText;
 	const showEntityFilters = state.showEntityFilters;
 	const view = state.view;
 
 	return {
-		perPage,
 		searchText,
 		setGridView,
 		setListView,
-		setPerPage,
 		setSearchText,
 		showEntityFilters,
 		toggleEntityFilters,
@@ -62,12 +62,9 @@ const useEntityListFilterState = () => {
 };
 
 const reducer = (state, action) => {
-	const { perPage, searchText, view } = action;
+	const { searchText, view } = action;
 
 	switch (action.type) {
-		case 'SET_PER_PAGE':
-			return { ...state, perPage };
-
 		case 'SET_SEARCH_TEXT':
 			return { ...state, searchText };
 

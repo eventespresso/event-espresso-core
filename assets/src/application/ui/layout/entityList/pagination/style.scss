@@ -8,6 +8,12 @@
 	flex-flow: row nowrap;
 	justify-content: flex-end;
 
+	.ant-pagination-options-size-changer {
+		&.ant-select {
+			width: 6.5rem;
+		}
+	}
+
 	.pagination {
 		display: inline-block;
 		padding-left: 0;

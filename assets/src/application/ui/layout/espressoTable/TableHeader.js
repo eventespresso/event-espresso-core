@@ -54,33 +54,4 @@ const TableHeader = ({ tableId, headerRows, cssClasses, ...extraProps }) => {
 	);
 };
 
-// TableHeader.propTypes = {
-// 	tableId: PropTypes.string.isRequired,
-// 	cssClasses: PropTypes.object,
-// 	headerRows: PropTypes.arrayOf(
-// 		PropTypes.shape({
-// 			type: PropTypes.string.isRequired,
-// 			key: PropTypes.string.isRequired,
-// 			id: PropTypes.string,
-// 			class: PropTypes.string,
-// 			extraProps: PropTypes.object,
-// 			cells: PropTypes.arrayOf(
-// 				PropTypes.shape({
-// 					type: PropTypes.string.isRequired,
-// 					key: PropTypes.string.isRequired,
-// 					value: PropTypes.node.isRequired,
-// 					id: PropTypes.string,
-// 					class: PropTypes.string,
-// 					render: PropTypes.func,
-// 					extraProps: PropTypes.object,
-// 				})
-// 			).isRequired,
-// 		})
-// 	).isRequired,
-// };
-
-// TableHeader.defaultProps = {
-// 	cssClasses: {},
-// };
-
 export default TableHeader;

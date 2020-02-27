@@ -1,6 +1,5 @@
 import React from 'react';
 import classNames from 'classnames';
-import { useCallback } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { ResponsiveTable } from '@appLayout/espressoTable';
 
@@ -26,7 +25,15 @@ const noZebraStripe = ['row', 'stripe', 'name', 'actions'];
  * @member {Object} otherProps
  * @return {Object} rendered table of Event Dates
  */
-const DatesListView = ({ datetimes, allEventDates, showDate, setEntityIds, setSortBy, htmlClass, ...otherProps }) => {
+const TableView = ({
+	entities: datetimes,
+	allEventDates,
+	showDate,
+	setEntityIds,
+	setSortBy,
+	htmlClass,
+	...otherProps
+}) => {
 	const formRows = datetimes.map((dateEntity) => {
 		const columns = datesListTableRow(dateEntity, otherProps);
 		return columns;
@@ -47,4 +54,4 @@ const DatesListView = ({ datetimes, allEventDates, showDate, setEntityIds, setSo
 	);
 };
 
-export default DatesListView;
+export default TableView;

@@ -1,43 +1,42 @@
-import React, { CSSProperties } from 'react';
+import React from 'react';
 import { __ } from '@wordpress/i18n';
-import { H3 } from '@blueprintjs/core/lib/esm';
+import { Divider, Typography } from 'antd';
 
-import DatesListFilterBar from './filterBar/DatesListFilterBar';
+import { EntityList } from '@appLayout/entityList';
 import AddNewDateButton from './AddNewDateButton';
-import DatetimeCard from './cardView/DateCard';
-import { Datetime } from '@edtrServices/apollo/types';
+import { CardView } from './cardView';
+import { TableView } from './tableView';
+import DatesListEntityFilters from './filterBar/DatesListEntityFilters';
+import useDatesListFilterState from './filterBar/useDatesListFilterState';
+import { Datetime } from '../../../services/apollo/types';
+import './styles.scss';
 
-const listStyle: CSSProperties = {
-	display: 'flex',
-	flexFlow: 'row wrap',
-	justifyContent: 'space-between',
-	width: '100%',
-};
+const { Title } = Typography;
 
 interface ListProps {
 	datetimes: Datetime[];
 }
 
 const List: React.FC<ListProps> = ({ datetimes }) => {
-	const header = <H3 style={{ margin: '2rem 0 .5rem' }}>{__('Dates List')}</H3>;
-
-	const datetimesList = (
-		<>
-			<div style={listStyle}>
-				{datetimes.map((date) => (
-					<DatetimeCard id={date.id} key={date.id} />
-				))}
-			</div>
-			<AddNewDateButton />
-		</>
-	);
+	const { processedDates, ...entityFiltersProps } = useDatesListFilterState(datetimes);
+	const entityFilters = <DatesListEntityFilters {...entityFiltersProps} />;
+	const listId = 'event-editor-dates-list';
 
 	return (
-		<div>
-			{header}
-			<DatesListFilterBar />
-			{datetimesList}
-		</div>
+		<>
+			<Title className='event-editor-dates-list-header' level={3}>
+				{__('Dates List')}
+			</Title>
+			<EntityList
+				entities={processedDates}
+				entityFilters={entityFilters}
+				EntityGridView={CardView}
+				EntityListView={TableView}
+				listId={listId}
+			/>
+			<Divider dashed />
+			<AddNewDateButton />
+		</>
 	);
 };
 

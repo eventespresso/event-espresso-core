@@ -17,14 +17,4 @@ const ResponsiveCell = ({ heading, value }) => {
 	);
 };
 
-// ResponsiveCell.propTypes = {
-// 	heading: PropTypes.node,
-// 	value: PropTypes.node,
-// };
-
-// ResponsiveCell.defaultProps = {
-// 	heading: '',
-// 	value: '',
-// };
-
 export default ResponsiveCell;

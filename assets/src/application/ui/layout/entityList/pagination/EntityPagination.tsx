@@ -8,23 +8,20 @@ import './style.scss';
  * Adds pagination to an "EntityList" component
  * @return EntityPagination
  */
-const EntityPagination = ({
-	current,
-	onChange,
-	pageSize = 10,
-	pageSizeOptions = ['6', '12', '24', '48'],
+const EntityPagination: React.FC<PaginationProps> = ({
+	pageSizeOptions = ['2', '6', '12', '24', '48'],
+	showSizeChanger = true,
 	showTotal,
 	total,
 	...rest
-}: PaginationProps) => {
+}) => {
 	return (
 		<div className='ee-entity-pagination'>
 			<Pagination
 				{...rest}
-				current={current}
-				onChange={onChange}
-				pageSize={pageSize}
+				defaultPageSize={6}
 				pageSizeOptions={pageSizeOptions}
+				showSizeChanger={showSizeChanger}
 				showTotal={showTotal}
 				total={total}
 			/>
