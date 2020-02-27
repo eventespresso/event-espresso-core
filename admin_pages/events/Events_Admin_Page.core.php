@@ -1852,7 +1852,6 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
             ),
             $this->_req_data
         );
-                d($query_params);
 
         // let's first check if we have special requests coming in.
         if (isset($this->_req_data['active_status'])) {
