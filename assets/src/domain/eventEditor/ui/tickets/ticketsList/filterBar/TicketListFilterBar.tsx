@@ -1,6 +1,7 @@
 import React from 'react';
 
 import EntityListFilterBar from '@appLayout/entityList/filterBar/EntityListFilterBar';
+import useEntityListFilterState from '@appLayout/entityList/filterBar/useEntityListFilterState';
 import TicketsListEntityFilters from './TicketsListEntityFilters';
 
 /**
@@ -10,10 +11,11 @@ import TicketsListEntityFilters from './TicketsListEntityFilters';
  * @return {Object} EditorTicketsListView with added TicketListFilters
  */
 const TicketListFilterBar: React.FC = () => {
+	const filterState = useEntityListFilterState();
 	const listId = 'event-editor-tickets-list';
 	const entityFilters = <TicketsListEntityFilters />;
 
-	return <EntityListFilterBar listId={listId} entityFilters={entityFilters} />;
+	return <EntityListFilterBar entityFilters={entityFilters} filterState={filterState} listId={listId} />;
 };
 
 export default TicketListFilterBar;
