@@ -342,7 +342,7 @@ class EE_SPCO_Line_Item_Display_Strategy implements EEI_Line_Item_Display
         );
         $name_and_desc .= $line_item->is_taxable() ? ' * ' : '';
         $name_and_desc = apply_filters(
-            'FHEE__EE_SPCO_Line_Item_Display_Strategy__item_row__name_and_desc',
+            'FHEE__EE_SPCO_Line_Item_Display_Strategy___item_row__name_and_desc',
             $name_and_desc,
             $line_item,
             $options
