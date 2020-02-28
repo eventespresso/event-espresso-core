@@ -5,6 +5,7 @@ import { getClient } from '../../../../../infrastructure/services/apollo/Apollo'
 import { ToastProvider } from '../../../../../application/services/context/ToastProvider';
 import { RelationsProvider } from '../../../../../application/services/context/RelationsProvider';
 import { StatusProvider } from '../../../../../application/services/context/StatusProvider';
+import { ModalProvider } from '../../../../../application/services/context/ModalProvider';
 import { ConfigProvider } from '../../../../../application/services/context/ConfigProvider';
 import { EditorModalProvider } from '../../../../../application/services/context/EditorModalProvider';
 import { EventEditorEventIdProvider } from '../EventContext';
@@ -42,7 +43,9 @@ export const CommonProviders: ContextProvider = ({ children }) => (
 			<ConfigProvider>
 				<EventEditorEventIdProvider>
 					<RelationsProvider>
-						<EditorModalProvider>{children}</EditorModalProvider>
+						<EditorModalProvider>
+							<ModalProvider>{children}</ModalProvider>
+						</EditorModalProvider>
 					</RelationsProvider>
 				</EventEditorEventIdProvider>
 			</ConfigProvider>
