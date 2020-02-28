@@ -17,8 +17,10 @@
 	box-shadow: var(--ee-box-shadow-tiny);
 	cursor: pointer;
 	display: inline-block;
+	font-family: 'Segoe UI', Candara, 'Bitstream Vera Sans', 'DejaVu Sans', 'Bitstream Vera Sans', 'Trebuchet MS',
+		Verdana, 'Verdana Ref', sans-serif;
 	font-size: var(--ee-font-size-default);
-	font-weight: normal;
+	font-weight: bold;
 	line-height: var(--ee-font-size-default);
 	margin: 0 0 var(--ee-margin-smaller);
 	outline: none !important;
@@ -37,7 +39,7 @@
 .esprs-button.ant-btn:visited:not(.ant-btn-icon-only) {
 	box-sizing: content-box !important;
 	min-height: var(--ee-font-size-big);
-	padding: var(--ee-padding-tiny) var(--ee-padding-small);
+	padding: var(--ee-padding-tiny) var(--ee-padding-default) var(--ee-padding-tiny) var(--ee-padding-small);
 }
 
 .esprs-button.ant-btn.ant-btn-icon-only,
@@ -105,7 +107,8 @@
 .esprs-btn-default.ant-btn.ant-btn-icon-only:not([disabled]) {
 	background: var(--ee-color-grey-15);
 	border-color: var(--ee-color-grey-14) var(--ee-color-grey-14) var(--ee-color-grey-15);
-	color: var(--ee-text-on-grey-14);
+	/* color: var(--ee-text-on-grey-14); */
+	color: var(--ee-default-text-color-low-contrast);
 }
 .esprs-btn-default.ant-btn.ant-btn-icon-only:not([disabled]) path {
 	fill: var(--ee-text-on-grey-14);

@@ -113,9 +113,9 @@
 	color: var(--ee-default-text-color);
 	display: inline-block;
 	font-size: var(--ee-font-size-default);
-	line-height: 1;
+	line-height: var(--ee-font-size-bigger);
 	height: var(--ee-icon-button-size) !important;
-	padding: var(--ee-padding-micro) var(--ee-padding-tiny);
+	padding: 0 var(--ee-padding-tiny);
 	transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
 	vertical-align: middle;
 	width: 100%;
@@ -126,13 +126,13 @@
 }
 
 .ee-entity-list-filter-bar-wrapper select {
-	padding: var(--ee-padding-micro) var(--ee-padding-default) var(--ee-padding-micro) var(--ee-padding-tiny);
+	padding: 0 var(--ee-padding-default) 0 var(--ee-padding-tiny);
 }
 
 .ee-entity-list-filter-bar-wrapper select option {
-	line-height: 20 !important;
-	min-height: calc(var(--ee-padding-small) * 30) !important;
-	padding: calc(var(--ee-padding-small) * 10) var(--ee-padding-tiny) !important;
+	line-height: var(--ee-font-size-extreme) !important;
+	min-height: var(--ee-icon-button-size) !important;
+	padding: 0 var(--ee-padding-small) !important;
 }
 
 .ee-entity-list-filter-bar-wrapper .components-base-control + .components-base-control {
