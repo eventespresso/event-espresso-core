@@ -1,6 +1,6 @@
 /** -------------------------------------------------------------------------
  * Event Espresso EspressoButton Stylesheet
- * © 2019 Event Espresso
+ * © 2020 Event Espresso
  * ------------------------------------------------------------------------- */
 
 :root {
@@ -37,7 +37,7 @@
 .esprs-button.ant-btn:visited:not(.ant-btn-icon-only) {
 	box-sizing: content-box !important;
 	min-height: var(--ee-font-size-big);
-	padding: var(--ee-padding-tiny) var(--ee-padding-small) var(--ee-padding-smaller);
+	padding: var(--ee-padding-tiny) var(--ee-padding-small);
 }
 
 .esprs-button.ant-btn.ant-btn-icon-only,

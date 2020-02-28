@@ -1,6 +1,6 @@
 /** -------------------------------------------------------------------------
  * Event Espresso EntityList Stylesheet
- * © 2018 Event Espresso
+ * © 2020 Event Espresso
  * ------------------------------------------------------------------------- */
 
 .ee-entity-list {
@@ -8,7 +8,7 @@
 
 	&__header {
 		&.ant-typography {
-			margin-bottom: 1.5rem;
+			margin-bottom: var(--ee-margin-default);
 		}
 	}
 
@@ -16,13 +16,9 @@
 		display: flex;
 		flex-flow: row wrap;
 		justify-content: flex-end;
-		margin: 0 0 2rem;
+		margin: 0 0 var(--ee-margin-big);
 		width: 100%;
 	}
-
-	// &:not(.ee-rspnsv-table) {
-	// 	width: 101.3%;
-	// }
 
 	&.ee-rspnsv-table {
 		width: 100%;
@@ -38,9 +34,9 @@
 	&--no-results {
 		background: var(--ee-color-grey-14);
 		color: var(--ee-text-on-grey-14);
-		font-size: 1rem;
+		font-size: var(--ee-font-size-default);
 		font-weight: normal;
-		padding: 4rem 2rem;
+		padding: var(--ee-padding-extreme) var(--ee-padding-big);
 		text-align: center;
 	}
 }
