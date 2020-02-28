@@ -1,13 +1,13 @@
 import React from 'react';
 
-import { TicketsListFilterStateManager } from './useTicketsListFilterState';
+import { FilterStateManager } from './useTicketsListFilterState/types';
 import DisplayTicketsControl from './controls/DisplayTicketsControl';
 import ShowTicketsControl from './controls/ShowTicketsControl';
 import TicketsChainedButton from './controls/TicketsChainedButton';
 import TicketsSortedByControl from './controls/TicketsSortedByControl';
-import './style.css';
+import './style.scss';
 
-type Props = Omit<TicketsListFilterStateManager, 'tickets' | 'filteredEntities'>;
+type Props = Omit<FilterStateManager, 'tickets' | 'filteredEntities'>;
 
 /**
  * filters for controlling the display of a list of Tickets

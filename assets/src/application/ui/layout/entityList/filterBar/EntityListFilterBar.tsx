@@ -28,7 +28,7 @@ const EntityListFilterBar: React.FC<EntityListFilterBarProps> = ({ entityFilters
 		showEntityFilters,
 		toggleEntityFilters,
 		view,
-	} = filterState;
+	}: EntityListFilterState = filterState;
 
 	const listViewButton = React.useMemo(
 		() => (
