@@ -168,13 +168,13 @@ describe('useDatesListFilterState', () => {
 		expect(result.current.showDates).toBe('upcomingOnly');
 	});
 
-	test('should update processedDates to reflect changes made by invoking setDatesSortedBy', () => {
+	test('should update filteredEntities to reflect changes made by invoking setDatesSortedBy', () => {
 		const { result } = renderHook(() => useDatesListFilterState(datetimes));
 
 		act(() => {
 			result.current.setDatesSortedBy(DatesSorted.chronologically);
 		});
-		const startDates = R.map(R.view(R.lensProp('startDate')))(result.current.processedDates);
+		const startDates = R.map(R.view(R.lensProp('startDate')))(result.current.filteredEntities);
 		const expectedstartDates = [
 			'2000-01-12T08:00:00+00:00',
 			'2009-12-18T11:31:00+00:00',
@@ -186,62 +186,62 @@ describe('useDatesListFilterState', () => {
 		act(() => {
 			result.current.setDatesSortedBy(DatesSorted.byId);
 		});
-		const ids = R.map(R.view(R.lensProp('id')))(result.current.processedDates);
+		const ids = R.map(R.view(R.lensProp('id')))(result.current.filteredEntities);
 		const expectedIds = ['RGF0ZXRpbWU6ODM=', 'RGF0ZXRpbWU6ODU=', 'RGF0ZXRpbWU6ODU=', 'WGF0ZXRpbWU6ODM='];
 		expect(ids).toEqual(expectedIds);
 
 		act(() => {
 			result.current.setDatesSortedBy(DatesSorted.byName);
 		});
-		const names = R.map(R.view(R.lensProp('name')))(result.current.processedDates);
+		const names = R.map(R.view(R.lensProp('name')))(result.current.filteredEntities);
 		const expectedNames = ['another title', 'just another datetime', 'test', 'test'];
 		expect(names).toEqual(expectedNames);
 
 		act(() => {
 			result.current.setDatesSortedBy(DatesSorted.byOrder);
 		});
-		const datesOrder = R.map(R.view(R.lensProp('order')))(result.current.processedDates);
+		const datesOrder = R.map(R.view(R.lensProp('order')))(result.current.filteredEntities);
 		const expectedDatesOrder = [-2, -1, 1, 1];
 		expect(datesOrder).toEqual(expectedDatesOrder);
 	});
 
-	test('should update processedDates to reflect changes made by invoking setShowDates with upcomingOnly filter', () => {
+	test('should update filteredEntities to reflect changes made by invoking setShowDates with upcomingOnly filter', () => {
 		const { result } = renderHook(() => useDatesListFilterState(datetimes));
 
 		act(() => {
 			result.current.setShowDates(ShowDates.upcomingOnly);
 		});
-		const dates = result.current.processedDates;
+		const dates = result.current.filteredEntities;
 
 		expect(dates.length).toBe(2);
 		expect(dates[0].isUpcoming).toBe(true);
 		expect(dates[1].isUpcoming).toBe(true);
 	});
 
-	test('should update processedDates to reflect changes made by invoking setShowDates with expiredOnly filter', () => {
+	test('should update filteredEntities to reflect changes made by invoking setShowDates with expiredOnly filter', () => {
 		const { result } = renderHook(() => useDatesListFilterState(datetimes));
 
 		act(() => {
 			result.current.setShowDates(ShowDates.expiredOnly);
 		});
-		const dates = result.current.processedDates;
+		const dates = result.current.filteredEntities;
 
 		expect(dates.length).toBe(4);
 	});
 
-	test('should update processedDates to reflect changes made by invoking setShowDates with trashedOnly filter', () => {
+	test('should update filteredEntities to reflect changes made by invoking setShowDates with trashedOnly filter', () => {
 		const { result } = renderHook(() => useDatesListFilterState(datetimes));
 
 		act(() => {
 			result.current.setShowDates(ShowDates.trashedOnly);
 		});
-		const dates = result.current.processedDates;
+		const dates = result.current.filteredEntities;
 
 		expect(dates.length).toBe(1);
 		expect(dates[0].isTrashed).toBe(true);
 	});
 
-	test('should update processedDates to reflect changes made by invoking setShowDates with recentlyExpiredOnly filter', () => {
+	test('should update filteredEntities to reflect changes made by invoking setShowDates with recentlyExpiredOnly filter', () => {
 		const rawDates = [
 			{
 				...datetimes[1],
@@ -272,7 +272,7 @@ describe('useDatesListFilterState', () => {
 		act(() => {
 			result.current.setShowDates(ShowDates.recentlyExpiredOnly);
 		});
-		const resultDates = result.current.processedDates;
+		const resultDates = result.current.filteredEntities;
 
 		expect(resultDates.length).toBe(2);
 	});
