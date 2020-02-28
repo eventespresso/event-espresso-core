@@ -1,33 +1,33 @@
 import React from 'react';
 import { __ } from '@wordpress/i18n';
 
+import { EntityList } from '@appLayout/entityList';
 import AddNewDateButton from './AddNewDateButton';
-import List from './List';
-import useDatetimes from '@edtrServices/apollo/queries/datetimes/useDatetimes';
-import { useStatus, TypeName } from '@appServices/apollo/status';
-
-import { EmptyState, ErrorIndicator, LoadingIndicator } from '@appDisplay/index';
+import { DateCard } from './cardView';
+import { TableView } from './tableView';
+import DatesListEntityFilters from './filterBar/DatesListEntityFilters';
+import useDatesListFilterState from './filterBar/useDatesListFilterState';
+import { TypeName } from '@appServices/apollo/status';
+import useDatetimes from '../../../services/apollo/queries/datetimes/useDatetimes';
 
 const DatesList: React.FC = () => {
 	const datetimes = useDatetimes();
-	const noDatetimes = datetimes.length === 0;
-	const { isError, isLoading } = useStatus();
-	const error = isError(TypeName.datetimes);
-	const loading = isLoading(TypeName.datetimes);
+	const { filteredEntities, ...entityFiltersProps } = useDatesListFilterState(datetimes);
+	const entityFilters = <DatesListEntityFilters {...entityFiltersProps} />;
 
-	if (loading) return <LoadingIndicator message={__('loading dates...')} />;
-
-	if (error) return <ErrorIndicator />;
-
-	if (noDatetimes) {
-		return (
-			<EmptyState description={__('try changing filter settings')} title={__('NO DATES FOR YOU !!!')}>
-				<AddNewDateButton />
-			</EmptyState>
-		);
-	}
-
-	return <List datetimes={datetimes} />;
+	return (
+		<EntityList
+			entities={filteredEntities}
+			entityFilters={entityFilters}
+			entityType={TypeName.datetimes}
+			CardView={DateCard}
+			TableView={TableView}
+			footer={<AddNewDateButton />}
+			listId={'event-editor-dates-list'}
+			headerText={__('Event Dates')}
+			loadingText={__('loading event dates...')}
+		/>
+	);
 };
 
 export default DatesList;
