@@ -1,36 +1,11 @@
-import gql from 'graphql-tag';
+export * from './queries';
 
-export const PRICE_TYPE_ATTRIBUTES: any = gql`
-	fragment priceTypeAttributes on EspressoPriceType {
-		id
-		dbId
-		baseType
-		isBasePrice
-		isDiscount
-		isPercent
-		isTax
-		isTrashed
-		name
-		order
-	}
-`;
+export { default as usePriceTypes } from './usePriceTypes';
 
-export const GET_PRICE_TYPE: any = gql`
-	query GET_PRICE_TYPE($id: ID!) {
-		priceType(id: $id) {
-			...priceTypeAttributes
-		}
-	}
-	${PRICE_TYPE_ATTRIBUTES}
-`;
+export { default as useDefaultPriceType } from './useDefaultPriceType';
 
-export const GET_PRICE_TYPES: any = gql`
-	query GET_PRICE_TYPES {
-		espressoPriceTypes {
-			nodes {
-				...priceTypeAttributes
-			}
-		}
-	}
-	${PRICE_TYPE_ATTRIBUTES}
-`;
+export { default as usePriceTypeForPrice } from './usePriceTypeForPrice';
+
+export { default as usePriceTypeQueryOptions } from './usePriceTypeQueryOptions';
+
+export { default as useFetchPriceTypes } from './useFetchPriceTypes';
