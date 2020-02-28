@@ -47,17 +47,6 @@
 			"last 1 safari version"
 		]
 	},
-	"husky": {
-		"hooks": {
-			"pre-commit": "lint-staged"
-		}
-	},
-	"lint-staged": {
-		"assets/src/**/*.{js,jsx,ts,tsx,json,css,scss,md}": [
-			"prettier --write",
-			"git add"
-		]
-	},
 	"babel": {
 		"presets": [
 			"react-app"
@@ -231,7 +220,6 @@
 		"graphql": "^14.6.0",
 		"graphql-tools": "^4.0.6",
 		"handlebars": "^4.7.3",
-		"husky": "^4.2.3",
 		"jest": "^25.1.0",
 		"jest-environment-jsdom-fourteen": "1.0.1",
 		"jest-resolve": "25.1.0",
