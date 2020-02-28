@@ -1,31 +1,27 @@
 import React from 'react';
-/**
- * Internal dependencies
- */
+
+import { TicketsListFilterStateManager } from './useTicketsListFilterState';
 import DisplayTicketsControl from './controls/DisplayTicketsControl';
 import ShowTicketsControl from './controls/ShowTicketsControl';
 import TicketsChainedButton from './controls/TicketsChainedButton';
 import TicketsSortedByControl from './controls/TicketsSortedByControl';
-import useTicketListFilterState from './useTicketListFilterState';
 import './style.css';
+
+type Props = Omit<TicketsListFilterStateManager, 'tickets' | 'filteredEntities'>;
 
 /**
  * filters for controlling the display of a list of Tickets
- *
- * @return {Object} EditorTicketsListView with added TicketListFilters
  */
-const TicketsListEntityFilters: React.FC = () => {
-	const {
-		displayTicketDate,
-		isChained,
-		setDisplayTicketDate,
-		setShowTickets,
-		setSortTicketsBy,
-		showTickets,
-		sortTicketsBy,
-		toggleIsChained,
-	} = useTicketListFilterState();
-
+const TicketsListEntityFilters: React.FC<Props> = ({
+	displayTicketDate,
+	isChained,
+	setDisplayTicketDate,
+	setShowTickets,
+	setSortTicketsBy,
+	showTickets,
+	sortTicketsBy,
+	toggleIsChained,
+}) => {
 	return (
 		<>
 			<div className='ee-show-tickets-filter ee-filter-bar-filter'>
