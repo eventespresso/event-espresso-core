@@ -4,6 +4,7 @@ import { __ } from '@wordpress/i18n';
 
 import EditDateButton from '../datesList/actionsMenu/EditDateButton';
 import DeleteDateButton from '../datesList/actionsMenu/DeleteDateButton';
+import AssignTicketsButton from '../datesList/actionsMenu/AssignTicketsButton';
 import { EspressoButton } from '@application/ui/input';
 import { Datetime } from '@edtrServices/apollo/types';
 import { EntitySubscriptionCallback } from '@appLayout/entityActionsMenu';
@@ -22,15 +23,7 @@ const useDatesActionMenuHandler = (): DatesSubscriptionCallback => {
 
 			registerMenuItem('editDate', () => <EditDateButton {...menuItemProps} />);
 
-			registerMenuItem('assignTickets', () => (
-				<EspressoButton
-					icon={<TagsOutlined />}
-					tooltip={__('assign tickets')}
-					tooltipProps={{ placement: 'right' }}
-					onClick={() => console.log('You clicked TAM')}
-					{...menuItemProps}
-				/>
-			));
+			registerMenuItem('assignTickets', () => <AssignTicketsButton id={date.id} {...menuItemProps} />);
 
 			registerMenuItem('deleteTicket', () => {
 				const { isLoaded } = useStatus();
