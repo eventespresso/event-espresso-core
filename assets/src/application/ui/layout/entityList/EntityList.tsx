@@ -65,7 +65,7 @@ const EntityList: React.FC<EntityListProps<Entity>> = ({
 			{entityList}
 			<EntityPagination {...paginationProps} />
 			<Divider dashed />
-			{footer}
+			<div className={'ee-entity-list__footer'}>{footer}</div>
 		</div>
 	);
 };

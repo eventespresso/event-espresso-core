@@ -12,6 +12,14 @@
 		}
 	}
 
+	&__footer {
+		display: flex;
+		flex-flow: row wrap;
+		justify-content: flex-end;
+		margin: 0 0 2rem;
+		width: 100%;
+	}
+
 	// &:not(.ee-rspnsv-table) {
 	// 	width: 101.3%;
 	// }
