@@ -3,7 +3,7 @@ import { __ } from '@wordpress/i18n';
 
 import EditTicketButton from '../ticketsList/actionsMenu/EditTicketButton';
 import DeleteTicketButton from '../ticketsList/actionsMenu/DeleteTicketButton';
-import { EspressoButton } from '@application/ui/input';
+import AssignDatesButton from '../ticketsList/actionsMenu/AssignDatesButton';
 import TicketPriceCalculatorButton from '../ticketPriceCalculator/buttons/TicketPriceCalculatorButton';
 import { EntitySubscriptionCallback } from '@appLayout/entityActionsMenu';
 import { Ticket } from '@edtrServices/apollo/types';
@@ -19,15 +19,7 @@ const useTicketsActionMenuHandler = (): TicketsSubscriptionCallback => {
 				<EditTicketButton key={ticket.id + 'editTicket'} {...menuItemProps} />
 			));
 
-			registerMenuItem('assignDates', () => (
-				<EspressoButton
-					icon='calendar'
-					onClick={() => console.log('You clicked TAM')}
-					tooltip={__('assign dates')}
-					tooltipProps={{ placement: 'left' }}
-					{...menuItemProps}
-				/>
-			));
+			registerMenuItem('assignDates', () => <AssignDatesButton id={ticket.id} {...menuItemProps} />);
 
 			registerMenuItem('ticketPriceCalculator', () => {
 				const { isLoaded } = useStatus();

@@ -1,26 +1,13 @@
 import React from 'react';
 
 import { TAMProps } from './types';
-import { TAMProvider } from './TAMProvider';
-import useTAMState from './useTAMState';
+import useTAMDatesAndTickets from './useTAMDatesAndTickets';
+import RenderTable from './RenderTable';
+import './styles.scss';
 
 const TicketAssignmentsManager: React.FC<TAMProps> = ({ assignmentType, entityId }) => {
-	return (
-		<TAMProvider>
-			<span>
-				{assignmentType}: {entityId} <TestComponent entityId={entityId} />
-			</span>
-		</TAMProvider>
-	);
-};
-
-const TestComponent = ({ entityId }) => {
-	const { getAssignedTickets } = useTAMState();
-	return (
-		<span>
-			The Date is related to these tickets: {JSON.stringify(getAssignedTickets({ datetimeId: entityId }))}
-		</span>
-	);
+	const datesAndTickets = useTAMDatesAndTickets({ assignmentType, entityId });
+	return <RenderTable {...datesAndTickets} />;
 };
 
 export default TicketAssignmentsManager;

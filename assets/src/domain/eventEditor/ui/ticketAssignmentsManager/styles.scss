@@ -1,0 +1,18 @@
+#ticket-assignment-manager {
+	td,
+	th {
+		text-align: center;
+	}
+	.no-assignments {
+		background-color: var(--ee-color-hot-pink) !important;
+	}
+	.new-assignment {
+		background-color: var(--ee-color-green) !important;
+	}
+	.old-assignment {
+		background-color: var(--ee-color-blue) !important;
+	}
+	.removed-assignment {
+		background-color: var(--ee-color-hot-pink) !important;
+	}
+}

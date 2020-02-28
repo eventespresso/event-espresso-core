@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { mapObjIndexed, pickBy, pathOr } from 'ramda';
+import { mapObjIndexed, pickBy, pathOr, isEmpty } from 'ramda';
 
 import { RelationalData, RelationalEntity, PossibleRelation } from '@appServices/apollo/relations';
 
@@ -13,6 +13,10 @@ const useValidateTAMData = (assignmentManager) => {
 	const TAMData: RelationalData = assignmentManager.getData();
 
 	useEffect(() => {
+		// may be the data is not initialized yet
+		if (isEmpty(TAMData)) {
+			return;
+		}
 		// loop through TAM data to find entities with no relations
 		// See the data shape, please check the shape of RelationalData
 		const newTAMData: PossibleRelation = mapObjIndexed((relationalEntity, entity) => {

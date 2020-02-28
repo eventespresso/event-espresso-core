@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import { pick, map } from 'ramda';
 
 import { useRelationsManager, RelationFunctionProps, RelationalData } from '@appServices/apollo/relations';
@@ -32,12 +33,19 @@ const useAssignmentManager = (): AM => {
 		updateAssignment({ datetimeId, ticketId });
 	};
 
+	// args are same
+	const toggleAssignment: AM['addAssignment'] = ({ datetimeId, ticketId }) => {
+		const assignedTickets = getAssignedTickets({ datetimeId });
+		const remove = assignedTickets.includes(ticketId);
+		updateAssignment({ datetimeId, ticketId, remove });
+	};
+
 	const removeAssignment: AM['removeAssignment'] = ({ datetimeId, ticketId }) => {
 		updateAssignment({ datetimeId, ticketId, remove: true });
 	};
 
 	// args are same
-	const updateAssignment: AM['addAssignment'] = ({ datetimeId, ticketId, remove = false }) => {
+	const updateAssignment: AM['removeAssignment'] = ({ datetimeId, ticketId, remove = false }) => {
 		// relation from datetimes towards tickets
 		const datetimeToTockets: RelationFunctionProps = {
 			entity: 'datetimes',
@@ -84,6 +92,7 @@ const useAssignmentManager = (): AM => {
 		initialize,
 		addAssignment,
 		removeAssignment,
+		toggleAssignment,
 		getAssignedTickets,
 		getAssignedDates,
 	};
