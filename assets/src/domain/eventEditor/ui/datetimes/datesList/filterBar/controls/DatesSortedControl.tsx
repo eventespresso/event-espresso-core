@@ -12,10 +12,6 @@ interface DatesSortedControlProps {
 }
 /**
  * filter for controlling the sorting of a list of Event Dates
- *
- * @param {string} datesSortedBy
- * @param {Function} setDatesSortedBy
- * @return {Object} rendered control
  */
 const DatesSortedControl: React.FC<DatesSortedControlProps> = ({ datesSortedBy, setDatesSortedBy }) => {
 	return useMemo(() => {
@@ -26,19 +22,19 @@ const DatesSortedControl: React.FC<DatesSortedControlProps> = ({ datesSortedBy, 
 				value={datesSortedBy}
 				options={[
 					{
-						value: 'chronologically',
+						value: DatesSorted.chronologically,
 						label: __('chronologically'),
 					},
 					{
-						value: 'byName',
+						value: DatesSorted.byName,
 						label: __('by date name'),
 					},
 					{
-						value: 'byId',
+						value: DatesSorted.byId,
 						label: __('by date ID'),
 					},
 					{
-						value: 'byOrder',
+						value: DatesSorted.byOrder,
 						label: __('by custom order'),
 					},
 				]}
