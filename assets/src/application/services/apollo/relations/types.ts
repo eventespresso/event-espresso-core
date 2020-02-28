@@ -8,14 +8,14 @@ interface CommonProps {
 	relationIds?: EntityId[];
 }
 
-type PossibleRelation = {
+export type PossibleRelation = {
 	datetimes?: EntityId[];
 	tickets?: EntityId[];
 	prices?: EntityId[];
 	priceTypes?: EntityId[];
 };
 
-type RelationalEntity = {
+export type RelationalEntity = {
 	[key: string]: PossibleRelation;
 };
 
