@@ -89,6 +89,12 @@
 	vertical-align: middle;
 }
 
+.esprs-button.ant-btn > .anticon + span,
+.esprs-button.ant-btn > span + .anticon {
+	margin-left: var(--ee-margin-smaller);
+	vertical-align: middle;
+}
+
 .esprs-button .img-wrap span {
 	line-height: 24px;
 }

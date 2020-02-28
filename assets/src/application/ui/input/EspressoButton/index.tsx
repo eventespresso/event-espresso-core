@@ -43,8 +43,8 @@ const EspressoButton: React.FC<EspressoButtonProps> = ({
 		if (svgIcon) {
 			eeButton = (
 				<Button {...buttonProps} onClick={onClick} className={className}>
-					{buttonText && buttonText}
 					<Icon component={svgIcon} />
+					{buttonText && buttonText}
 				</Button>
 			);
 		}
