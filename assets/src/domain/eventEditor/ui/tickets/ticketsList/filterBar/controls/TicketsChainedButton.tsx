@@ -3,7 +3,7 @@
  */
 import React from 'react';
 import { LinkOutlined } from '@ant-design/icons';
-import { EspressoButton, EspressoButtonType } from '@application/ui/input/espressoButton';
+import { EspressoButton, EspressoButtonType } from '@application/ui/input/EspressoButton';
 import { __ } from '@wordpress/i18n';
 
 interface TicketsChainedButtonProps {

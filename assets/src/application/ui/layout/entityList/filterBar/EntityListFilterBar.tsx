@@ -2,7 +2,7 @@ import * as React from 'react';
 import { AppstoreFilled, FilterOutlined, TableOutlined } from '@ant-design/icons';
 import { __ } from '@wordpress/i18n';
 
-import { EspressoButton, EspressoButtonType } from '../../../input/espressoButton';
+import { EspressoButton, EspressoButtonType } from '../../../input/EspressoButton';
 import Collapsible from './Collapsible';
 import { EntityListFilterState } from './useEntityListFilterState';
 import './style.css';
