@@ -1,7 +1,7 @@
 import React from 'react';
 import { __, sprintf } from '@wordpress/i18n';
 
-import EspressoButton from '../../../input/EspressoButton';
+import { EspressoButton } from '../../../input';
 import { RepeatableRendererProps } from '../types';
 import { Field, Group } from '../fields';
 
