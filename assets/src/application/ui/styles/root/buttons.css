@@ -28,7 +28,7 @@
 	text-decoration: none;
 	text-align: center;
 	text-shadow: var(--ee-text-shadow-inset-light);
-	top: -1px;
+	top: 0;
 	transition: border-color 0.1s ease 0.1s, color 0.1s ease 0.1s !important;
 	vertical-align: middle;
 }
@@ -51,7 +51,7 @@
 }
 
 .esprs-button:active:not([disabled]) {
-	top: 0;
+	top: 1px;
 }
 .esprs-button.ant-btn:hover {
 	cursor: pointer;
@@ -101,25 +101,22 @@
 	line-height: 24px;
 }
 
+.esprs-button.ant-btn.ant-btn-icon-only:not([disabled]) path {
+	transition: fill 0.1s ease 0.1s, color 0.1s ease 0.1s !important;
+}
+
 /* BUTTON COLORS */
 
 /* DEFAULT */
 .esprs-btn-default.ant-btn.ant-btn-icon-only:not([disabled]) {
 	background: var(--ee-color-grey-15);
 	border-color: var(--ee-color-grey-14) var(--ee-color-grey-14) var(--ee-color-grey-15);
-	/* color: var(--ee-text-on-grey-14); */
 	color: var(--ee-default-text-color-low-contrast);
-}
-.esprs-btn-default.ant-btn.ant-btn-icon-only:not([disabled]) path {
-	fill: var(--ee-text-on-grey-14);
 }
 
 .esprs-btn-default.ant-btn.ant-btn-icon-only:hover:not([disabled]) {
 	border-color: var(--ee-color-grey-9) var(--ee-color-grey-9) var(--ee-color-grey-10);
 	color: var(--ee-color-primary);
-}
-.esprs-btn-default.ant-btn.ant-btn-icon-only:hover:not([disabled]) path {
-	fill: var(--ee-color-primary);
 }
 
 .esprs-btn-default.ant-btn:not([disabled]):not(.ant-btn-icon-only) {
@@ -130,9 +127,38 @@
 .esprs-btn-default.ant-btn:hover:not([disabled]):not(.ant-btn-icon-only) {
 	background: var(--ee-color-grey-14);
 }
+
+.esprs-btn-default.ant-btn.ant-btn-icon-only:not([disabled]) path,
 .esprs-btn-default.ant-btn:not([disabled]):not(.ant-btn-icon-only),
 .esprs-btn-default.ant-btn:hover:not([disabled]):not(.ant-btn-icon-only) path {
 	fill: var(--ee-text-on-grey-14);
+}
+.esprs-btn-default.ant-btn.ant-btn-icon-only:hover:not([disabled]) path {
+	fill: var(--ee-color-primary);
+}
+
+/* MINIMAL */
+.esprs-btn-minimal.ant-btn.ant-btn-icon-only:not([disabled]),
+.esprs-btn-minimal.ant-btn:not([disabled]):not(.ant-btn-icon-only) {
+	background: none;
+	border: 1px solid var(--ee-default-text-color-low-contrast);
+	box-shadow: none;
+	color: var(--ee-default-text-color);
+}
+
+.esprs-btn-minimal.ant-btn.ant-btn-icon-only:hover:not([disabled]),
+.esprs-btn-minimal.ant-btn:hover:not([disabled]):not(.ant-btn-icon-only) {
+	border-color: var(--ee-color-primary);
+	color: var(--ee-color-primary);
+}
+
+.esprs-btn-minimal.ant-btn.ant-btn-icon-only:not([disabled]) path,
+.esprs-btn-minimal.ant-btn:not([disabled]):not(.ant-btn-icon-only),
+.esprs-btn-minimal.ant-btn:hover:not([disabled]):not(.ant-btn-icon-only) path {
+	fill: var(--ee-default-text-color);
+}
+.esprs-btn-minimal.ant-btn.ant-btn-icon-only:hover:not([disabled]) path {
+	fill: var(--ee-color-primary);
 }
 
 /* PRIMARY */
@@ -179,6 +205,8 @@
 .esprs-btn-accent.ant-btn:hover:not([disabled]) {
 	background: var(--ee-color-accent-low-contrast);
 }
+
+/* DISABLED */
 
 .esprs-button.ant-btn.esprs-btn-default:disabled,
 .esprs-button.ant-btn.esprs-btn-primary:disabled,
