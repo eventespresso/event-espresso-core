@@ -1,8 +1,6 @@
 import React from 'react';
-import { TooltipPropsWithTitle } from 'antd/lib/tooltip';
-
-import { Icon } from '../../display/espressoIcon';
 import { NativeButtonProps } from 'antd/lib/button/button';
+import { TooltipPropsWithTitle } from 'antd/lib/tooltip';
 
 export type ClickHandler = (click?: React.MouseEvent<HTMLElement>) => void;
 
@@ -17,6 +15,7 @@ export enum EspressoButtonSize {
 export enum EspressoButtonType {
 	ACCENT = 'ACCENT',
 	DEFAULT = 'DEFAULT',
+	MINIMAL = 'MINIMAL',
 	PRIMARY = 'PRIMARY',
 	SECONDARY = 'SECONDARY',
 }

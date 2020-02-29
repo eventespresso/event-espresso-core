@@ -26,6 +26,7 @@ const EspressoButton: React.FC<EspressoButtonProps> = ({
 		'esprs-btn-accent': buttonType === EspressoButtonType.ACCENT,
 		'esprs-btn-default': buttonType === EspressoButtonType.DEFAULT,
 		'esprs-btn-primary': buttonType === EspressoButtonType.PRIMARY,
+		'esprs-btn-minimal': buttonType === EspressoButtonType.MINIMAL,
 		'esprs-btn-secondary': buttonType === EspressoButtonType.SECONDARY,
 		'esprs-btn-tiny': buttonSize === EspressoButtonSize.TINY,
 		'esprs-btn-small': buttonSize === EspressoButtonSize.SMALL,
