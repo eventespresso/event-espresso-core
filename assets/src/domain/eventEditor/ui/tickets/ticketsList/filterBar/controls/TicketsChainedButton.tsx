@@ -3,7 +3,7 @@
  */
 import React from 'react';
 import { LinkOutlined } from '@ant-design/icons';
-import EspressoButton from '@appInputs/EspressoButton';
+import { EspressoButton, EspressoButtonType } from '@application/ui/input/espressoButton';
 import { __ } from '@wordpress/i18n';
 
 interface TicketsChainedButtonProps {
@@ -24,15 +24,16 @@ const TicketsChainedButton: React.FC<TicketsChainedButtonProps> = ({ isChained, 
 				{__('Only Show Tickets for Dates Above')}
 			</label>
 			<EspressoButton
-				id={'ee-ticket-list-filter-bar-is-chained'}
+				buttonType={EspressoButtonType.MINIMAL}
 				className={
 					isChained
 						? 'ee-filter-bar-filter ee-active-filters ee-ticket-list-is-chained'
 						: 'ee-filter-bar-filter ee-ticket-list-not-chained'
 				}
 				icon={<LinkOutlined />}
-				tooltip={tooltip}
+				id={'ee-ticket-list-filter-bar-is-chained'}
 				onClick={toggleIsChained}
+				tooltip={tooltip}
 			/>
 		</>
 	);
