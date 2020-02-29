@@ -25,6 +25,7 @@
 .ee-filter-bar-filter-collapsible {
 	display: flex;
 	flex-flow: row wrap;
+	padding: 0 0 var(--ee-padding-small);
 }
 
 .ee-filter-bar-filter-collapsible > div {

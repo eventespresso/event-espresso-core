@@ -64,8 +64,8 @@ const EntityList: React.FC<EntityListProps<Entity>> = ({
 			<EntityListFilterBar entityFilters={entityFilters} filterState={filterState} listId={listId} />
 			{entityList}
 			<EntityPagination {...paginationProps} />
-			<Divider dashed />
 			<div className={'ee-entity-list__footer'}>{footer}</div>
+			<Divider dashed />
 		</div>
 	);
 };
