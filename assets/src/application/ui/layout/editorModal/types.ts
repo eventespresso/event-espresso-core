@@ -4,14 +4,14 @@
 import { EntityId } from '@appServices/apollo/types';
 import { EditorModals } from '../../../../domain/shared/ui/editorModal/types';
 import { EspressoFormProps } from '@application/ui/forms/espressoForm';
+import { AnyObject } from '@appServices/utilities/types';
 
 export type EditorId = keyof EditorModals;
 
-export interface EditorState {
+export interface EditorState extends AnyObject {
 	editorId: EditorId;
 	isOpen: boolean;
 	entityId?: EntityId;
-	[key: string]: any;
 }
 
 export type EditorStack = EditorState[];
