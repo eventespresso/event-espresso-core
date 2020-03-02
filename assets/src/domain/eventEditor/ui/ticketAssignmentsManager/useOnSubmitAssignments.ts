@@ -1,35 +1,58 @@
 import { useCallback } from 'react';
-import { pathOr, filter, equals } from 'ramda';
+import { pathOr } from 'ramda';
 
-import { useRelations, RelationalEntity, PossibleRelation } from '@appServices/apollo/relations';
+import { useRelations, RelationalData } from '@appServices/apollo/relations';
 import { EntityId } from '@appServices/apollo/types';
-import { useDatetimeMutator } from '@edtrServices/apollo/mutations';
+import { useDatetimeMutator, useTicketMutator } from '@edtrServices/apollo/mutations';
+import { prepareEntitiesForUpdate } from './utils';
 
 const useOnSubmitAssignments = () => {
-	const { getData } = useRelations();
+	const { getData: getExistingData } = useRelations();
 	const { updateEntity: updateDatetime } = useDatetimeMutator();
+	const { updateEntity: updateTicket } = useTicketMutator();
 
 	return useCallback(
-		async (data): Promise<void> => {
-			const existingData = pathOr<RelationalEntity>({}, ['datetimes'], getData());
-			const newData = pathOr<RelationalEntity>({}, ['datetimes'], data);
+		async (data: RelationalData): Promise<void> => {
+			const existingData = getExistingData();
 
-			// prepare the list of dates that need to be mutated
-			// avoid updating the dates that haven't changed.
-			const datesToUpdate = filter<[EntityId, PossibleRelation]>(([entityId, possibleRelation]) => {
-				const newRelatedTickets = pathOr<EntityId[]>([], ['tickets'], possibleRelation);
-				const oldRelatedTickets = pathOr<EntityId[]>([], [entityId, 'tickets'], existingData);
-				// make sure to sort them before compare
-				// to make sure that they are actually different
-				return !equals(newRelatedTickets.sort(), oldRelatedTickets.sort());
-			}, Object.entries(newData));
-
-			datesToUpdate.forEach(([id, possibleRelation]) => {
-				const tickets = pathOr<EntityId[]>([], ['tickets'], possibleRelation);
-				updateDatetime({ id, tickets });
+			/**
+			 * Lets prepare a list of dates and tickets that need to be mutated
+			 * avoiding updating the ones that haven't changed.
+			 */
+			const datesToUpdate = prepareEntitiesForUpdate({
+				entity: 'datetimes',
+				existingData,
+				newData: data,
+				relation: 'tickets',
 			});
+			const ticketsToUpdate = prepareEntitiesForUpdate({
+				entity: 'tickets',
+				existingData,
+				newData: data,
+				relation: 'datetimes',
+			});
+
+			/**
+			 * Now we have both dates and tickets list ready.
+			 * To reduce the number of mutation requests,
+			 * we will update the list that is less in size,
+			 * because the relation can be updated both ways.
+			 *
+			 * PS: Separate loops to avoid TS mess and make type checks strict.
+			 */
+			if (ticketsToUpdate.length < datesToUpdate.length) {
+				ticketsToUpdate.forEach(([id, possibleRelation]) => {
+					const datetimes = pathOr<EntityId[]>([], ['datetimes'], possibleRelation);
+					updateTicket({ id, datetimes });
+				});
+			} else {
+				datesToUpdate.forEach(([id, possibleRelation]) => {
+					const tickets = pathOr<EntityId[]>([], ['tickets'], possibleRelation);
+					updateDatetime({ id, tickets });
+				});
+			}
 		},
-		[getData, updateDatetime]
+		[getExistingData, updateDatetime, updateTicket]
 	);
 };
 
