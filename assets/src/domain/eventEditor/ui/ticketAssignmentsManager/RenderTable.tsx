@@ -20,7 +20,7 @@ const RenderTable: React.FC<RenderTableProps> = ({ datetimes, tickets }) => {
 		<Table<Datetime>
 			dataSource={datetimes}
 			rowKey={(item) => item.id}
-			pagination={{ pageSize: 5 }}
+			pagination={{ pageSize: 6 }}
 			rowClassName={(datetime) => getRowClass(datetime)}
 			id='ticket-assignment-manager'
 			bordered
