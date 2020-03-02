@@ -29,7 +29,11 @@ const RenderTable: React.FC<RenderTableProps> = ({ datetimes, tickets }) => {
 				title={null}
 				key={'titlecol'}
 				className='title-col'
-				render={(_, datetime) => <span>{datetime.name}</span>}
+				render={(_, datetime) => (
+					<span>
+						{datetime.dbId}: {datetime.name}
+					</span>
+				)}
 			/>
 
 			{tickets.map((ticket) => {
