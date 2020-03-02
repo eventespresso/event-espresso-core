@@ -23,12 +23,12 @@ const noZebraStripe = ['row', 'stripe', 'name', 'actions'];
  * @return {Object} rendered table of Event Dates
  */
 const TableView = ({
+	className,
 	entities: datetimes,
 	allEventDates,
 	showDate,
 	setEntityIds,
 	setSortBy,
-	htmlClass,
 	...otherProps
 }) => {
 	const formRows = datetimes.map((dateEntity) => {
@@ -36,7 +36,7 @@ const TableView = ({
 		return columns;
 	});
 
-	htmlClass = classNames(htmlClass, 'ee-dates-list-list-view');
+	const tableClassName = classNames(className, 'ee-dates-list-list-view');
 
 	return (
 		<ResponsiveTable
@@ -46,7 +46,7 @@ const TableView = ({
 				tableId: 'date-entities-list-view',
 				tableCaption: __('Event Dates', 'event_espresso'),
 			}}
-			classes={{ tableClass: htmlClass }}
+			className={{ tableClassName }}
 		/>
 	);
 };

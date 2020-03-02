@@ -1,12 +1,8 @@
-// @ts-nocheck
 import React from 'react';
 import classNames from 'classnames';
 import uuidv4 from 'uuid/v4';
 import { find, isEmpty } from 'lodash'; // to be replaced with ramda
 
-/**
- * Internal dependencies
- */
 import Table from './Table';
 import TableHeader from './TableHeader';
 import TableBody from './TableBody';
@@ -20,11 +16,11 @@ import './style.scss';
  *
  */
 const ResponsiveTable = ({
+	className = {},
 	headerRows = [],
 	tableRows = [],
 	footerRows = [],
 	metaData = {},
-	classes = {},
 	onBeforeDragStart,
 	onDragStart,
 	onDragUpdate,
@@ -43,26 +39,35 @@ const ResponsiveTable = ({
 	const headerRowCount = headerRows.length;
 	const tableRowCount = tableRows.length;
 
-	const tableClass = classNames(classes.tableClass, `ee-rspnsv-table-column-count-${primaryHeader.cells.length}`, {
-		'ee-rspnsv-table-has-row-headers': hasRowHeaders,
-	});
+	const tableClassName = classNames(
+		className.tableClassName,
+		`ee-rspnsv-table-column-count-${primaryHeader.cells.length}`,
+		{
+			'ee-rspnsv-table-has-row-headers': hasRowHeaders,
+		}
+	);
 
 	const cssClasses = {
-		tableClass,
-		headerClass: classes.headerClass || '',
-		headerRowClass: classes.headerRowClass || '',
-		headerThClass: classes.headerThClass || '',
-		bodyClass: classes.bodyClass || '',
-		bodyRowClass: classes.bodyRowClass || '',
-		bodyThClass: classes.bodyThClass || '',
-		bodyTdClass: classes.bodyTdClass || '',
-		footerClass: classes.footerClass || '',
-		footerRowClass: classes.footerRowClass || '',
-		footerThClass: classes.footerThClass || '',
+		headerClass: className.headerClass || '',
+		headerRowClass: className.headerRowClass || '',
+		headerThClass: className.headerThClass || '',
+		bodyClass: className.bodyClass || '',
+		bodyRowClass: className.bodyRowClass || '',
+		bodyThClass: className.bodyThClass || '',
+		bodyTdClass: className.bodyTdClass || '',
+		footerClass: className.footerClass || '',
+		footerRowClass: className.footerRowClass || '',
+		footerThClass: className.footerThClass || '',
+		tableClassName,
 	};
 
 	return (
-		<Table tableId={tableId} tableClass={cssClasses.tableClass} captionID={captionID} captionText={tableCaption}>
+		<Table
+			tableId={tableId}
+			tableClassName={cssClasses.tableClassName}
+			captionID={captionID}
+			captionText={tableCaption}
+		>
 			<TableHeader tableId={tableId} headerRows={headerRows} cssClasses={cssClasses} />
 			<TableBody
 				tableId={tableId}
@@ -85,47 +90,5 @@ const ResponsiveTable = ({
 		</Table>
 	);
 };
-
-// const cellShape = PropTypes.shape({
-// 	type: PropTypes.string.isRequired,
-// 	key: PropTypes.string.isRequired,
-// 	value: PropTypes.node.isRequired,
-// 	id: PropTypes.string,
-// 	class: PropTypes.string,
-// 	render: PropTypes.func,
-// 	extraProps: PropTypes.object,
-// });
-// const rowShape = PropTypes.shape({
-// 	type: PropTypes.string.isRequired,
-// 	key: PropTypes.string.isRequired,
-// 	id: PropTypes.string,
-// 	class: PropTypes.string,
-// 	extraProps: PropTypes.object,
-// 	cells: PropTypes.arrayOf(cellShape).isRequired,
-// });
-// ResponsiveTable.propTypes = {
-// 	instanceId: PropTypes.number.isRequired,
-// 	headerRows: PropTypes.arrayOf(rowShape).isRequired,
-// 	tableRows: PropTypes.arrayOf(rowShape).isRequired,
-// 	footerRows: PropTypes.arrayOf(rowShape),
-// 	metaData: PropTypes.shape({
-// 		tableCaption: PropTypes.string.isRequired,
-// 		tableId: PropTypes.string,
-// 		hasRowHeaders: PropTypes.bool,
-// 	}).isRequired,
-// 	classes: PropTypes.shape({
-// 		tableClass: PropTypes.string,
-// 		headerClass: PropTypes.string,
-// 		headerRowClass: PropTypes.string,
-// 		headerThClass: PropTypes.string,
-// 		bodyClass: PropTypes.string,
-// 		bodyRowClass: PropTypes.string,
-// 		bodyThClass: PropTypes.string,
-// 		bodyTdClass: PropTypes.string,
-// 		footerClass: PropTypes.string,
-// 		footerRowClass: PropTypes.string,
-// 		footerThClass: PropTypes.string,
-// 	}),
-// };
 
 export default ResponsiveTable;
