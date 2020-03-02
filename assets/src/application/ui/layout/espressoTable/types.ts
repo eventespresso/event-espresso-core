@@ -6,7 +6,7 @@ interface Cell {
 	value: React.ReactNode;
 	id?: string;
 	className?: string;
-	render?: ({ row, col, column }) => JSX.Element;
+	render?: ({ row, col, column, cellData }) => JSX.Element;
 }
 
 interface FooterRow {

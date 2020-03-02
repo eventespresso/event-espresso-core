@@ -3,16 +3,15 @@ import classNames from 'classnames';
 import warning from 'warning';
 import { DragDropContext, Droppable } from 'react-beautiful-dnd';
 
+import { isFunc } from '@appServices/utilities/function';
 import TableRow from './TableRow';
 import TableHeaderCell from './TableHeaderCell';
 import TableDataCell from './TableDataCell';
 import ResponsiveCell from './ResponsiveCell';
 
 import { RowType, TableBodyProps } from './types';
-import { Row } from 'antd';
 
 const TableBody: React.FC<TableBodyProps> = ({
-	className,
 	headerRowCount,
 	hasRowHeaders,
 	onBeforeDragStart,
@@ -22,11 +21,12 @@ const TableBody: React.FC<TableBodyProps> = ({
 	primaryHeader,
 	tableId,
 	tableRows,
+	...props
 }) => {
 	const tableCell = (rowNumber, colNumber, column, cellData) => {
 		return hasRowHeaders && colNumber === 0 ? (
 			<TableHeaderCell
-				className={className}
+				className={props.className}
 				key={`row-${rowNumber}-col-${colNumber}`}
 				rowNumber={rowNumber}
 				colNumber={colNumber}
@@ -38,7 +38,7 @@ const TableBody: React.FC<TableBodyProps> = ({
 			</TableHeaderCell>
 		) : (
 			<TableDataCell
-				className={className}
+				className={props.className}
 				colNumber={colNumber}
 				key={`row-${rowNumber}-col-${colNumber}`}
 				rowNumber={rowNumber}
@@ -51,7 +51,7 @@ const TableBody: React.FC<TableBodyProps> = ({
 	};
 
 	const tableBodyRows = tableRows.map((row, rowNumber) => {
-		const sortable = typeof onDragEnd === 'function';
+		const sortable = isFunc(onDragEnd);
 
 		return (
 			<TableRow
@@ -61,7 +61,7 @@ const TableBody: React.FC<TableBodyProps> = ({
 				rowType={RowType.body}
 				htmlId={row.id || tableId}
 				rowClassName={row.className}
-				className={className}
+				className={props.className}
 				headerRowCount={headerRowCount}
 				sortable={sortable}
 			>
@@ -73,7 +73,7 @@ const TableBody: React.FC<TableBodyProps> = ({
 						`Missing "value" property for table cell at ` + `row ${rowNumber} column ${colNumber}.`
 					);
 
-					if (typeof cellData.render === 'function') {
+					if (isFunc(cellData.render)) {
 						return cellData.render({ row: rowNumber, col: colNumber, column, cellData });
 					}
 
@@ -83,7 +83,7 @@ const TableBody: React.FC<TableBodyProps> = ({
 		);
 	});
 
-	const htmlClass = classNames(className.bodyClassName, 'ee-rspnsv-table-body');
+	const className = classNames(props?.className?.bodyClassName, 'ee-rspnsv-table-body');
 
 	return onDragEnd !== null ? (
 		<DragDropContext
@@ -96,9 +96,8 @@ const TableBody: React.FC<TableBodyProps> = ({
 				{({ innerRef, droppableProps, placeholder }, { isDraggingOver }) => (
 					<tbody
 						ref={innerRef}
-						className={htmlClass}
+						className={className}
 						style={{
-							...droppableProps.style,
 							border: isDraggingOver ? '1px solid lightgreen' : 'none',
 							borderSpacing: isDraggingOver ? '2px' : '0',
 						}}
@@ -111,7 +110,7 @@ const TableBody: React.FC<TableBodyProps> = ({
 			</Droppable>
 		</DragDropContext>
 	) : (
-		<tbody className={htmlClass}>{tableBodyRows}</tbody>
+		<tbody className={className}>{tableBodyRows}</tbody>
 	);
 };
 
