@@ -1,25 +1,32 @@
 import { useDatetimes, useTickets, useDatetimeItem, useTicketItem } from '@edtrServices/apollo/queries';
 import { TAMProps, DatesAndTickets } from './types';
+import { useEntityPagination } from '@appLayout/entityList/pagination';
+import useDatesListFilterState from '../datetimes/datesList/filterBar/useDatesListFilterState';
+import { Datetime } from '@edtrServices/apollo/types';
 
-/**
- * @todo Use filters for currently visible dates/tickets
- */
 const useTAMDatesAndTickets = ({ assignmentType, entityId }: TAMProps): DatesAndTickets => {
+	const allDatetimes = useDatetimes();
+	const allTickets = useTickets();
+	const singleDate = useDatetimeItem({ id: entityId });
+	const singleTicket = useTicketItem({ id: entityId });
+	const { filteredEntities } = useDatesListFilterState(allDatetimes);
+	const { paginatedEntities: paginatedDates } = useEntityPagination<Datetime>({ entities: filteredEntities });
+
 	switch (assignmentType) {
 		case 'forAll':
 			return {
-				datetimes: useDatetimes(),
-				tickets: useTickets(),
+				datetimes: paginatedDates,
+				tickets: allTickets,
 			};
 		case 'forDate':
 			return {
-				datetimes: [useDatetimeItem({ id: entityId })],
-				tickets: useTickets(),
+				datetimes: [singleDate],
+				tickets: allTickets,
 			};
 		case 'forTicket':
 			return {
-				tickets: [useTicketItem({ id: entityId })],
-				datetimes: useDatetimes(),
+				tickets: [singleTicket],
+				datetimes: allDatetimes,
 			};
 	}
 };

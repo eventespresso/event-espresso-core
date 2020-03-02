@@ -5,10 +5,10 @@ import { Entity } from '@appServices/apollo/types';
 import { PaginationProps, onChangeFn, onShowSizeChangeFn } from './types';
 import { EntityListComponentProps } from '../types';
 
-const useEntityPagination = ({ entities }: EntityListComponentProps<Entity>): PaginationProps => {
+const useEntityPagination = <E extends Entity>({ entities }: EntityListComponentProps<E>): PaginationProps<E> => {
 	const [pageNumber, setPageNumber] = useState(1);
 	const [perPage, setPerPage] = useState(6);
-	const paginatedEntities = slice<Entity>(perPage * (pageNumber - 1), perPage * pageNumber, entities);
+	const paginatedEntities = slice<E>(perPage * (pageNumber - 1), perPage * pageNumber, entities);
 	const total = entities.length;
 
 	const onChange: onChangeFn = useCallback((newPageNumber) => setPageNumber(newPageNumber), []);
