@@ -1,6 +1,7 @@
 import { EntityId } from '@appServices/apollo/types';
 import { RelationsManager } from '@appServices/apollo/relations';
 import { Datetime, Ticket } from '@edtrServices/apollo/types';
+import { ColumnTitleProps } from 'antd/lib/table/interface';
 
 export type AssignmentType = 'forDate' | 'forTicket' | 'forAll';
 
@@ -21,27 +22,27 @@ export interface SetAssignmentFnArgs extends AssignmentFnArgs {
 }
 
 export interface AssignmentManager {
+	addAssignment: (args: AssignmentFnArgs) => void;
+	getAssignedDates: (args: Pick<AssignmentFnArgs, 'ticketId'>) => EntityId[];
+	getAssignedTickets: (args: Pick<AssignmentFnArgs, 'datetimeId'>) => EntityId[];
 	getData: RelationsManager['getData'];
 	initialize: RelationsManager['setData'];
-	addAssignment: (args: AssignmentFnArgs) => void;
 	removeAssignment: (args: SetAssignmentFnArgs) => void;
 	toggleAssignment: (args: AssignmentFnArgs) => void;
-	getAssignedTickets: (args: Pick<AssignmentFnArgs, 'datetimeId'>) => EntityId[];
-	getAssignedDates: (args: Pick<AssignmentFnArgs, 'ticketId'>) => EntityId[];
 }
 
 export interface TAMStateManager extends Omit<AssignmentManager, 'initialize'> {
+	getAssignmentStatus: (args: AssignmentFnArgs) => AssignmentStatus;
 	hasNoAssignedDates: (options: Pick<AssignmentFnArgs, 'ticketId'>) => boolean;
 	hasNoAssignedTickets: (options: Pick<AssignmentFnArgs, 'datetimeId'>) => boolean;
-	hasOrphanTickets: () => boolean;
 	hasOrphanDates: () => boolean;
 	hasOrphanEntities: () => boolean;
-	getAssignmentStatus: (args: AssignmentFnArgs) => AssignmentStatus;
+	hasOrphanTickets: () => boolean;
 }
 
 export interface TicketAssignmentsManager {
-	assignTicketsToDate: (options: Pick<AssignmentFnArgs, 'datetimeId'>) => void;
 	assignDatesToTicket: (options: Pick<AssignmentFnArgs, 'ticketId'>) => void;
+	assignTicketsToDate: (options: Pick<AssignmentFnArgs, 'datetimeId'>) => void;
 	assignToAll: () => void;
 }
 
@@ -54,5 +55,9 @@ export interface RenderTableProps extends DatesAndTickets {}
 
 export interface RenderCellProps {
 	datetime: Datetime;
+	ticket: Ticket;
+}
+
+export interface TicketHeaderProps extends ColumnTitleProps<Datetime> {
 	ticket: Ticket;
 }

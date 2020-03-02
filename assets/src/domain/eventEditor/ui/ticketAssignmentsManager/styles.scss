@@ -1,18 +1,27 @@
 #ticket-assignment-manager {
+	tbody {
+		tr,
+		td {
+			height: 100px;
+		}
+	}
 	td,
 	th {
 		text-align: center;
+		&:not(.title-col) {
+			width: 100px;
+		}
 	}
 	.no-assignments {
-		background-color: var(--ee-color-hot-pink) !important;
+		background-color: var(--ee-color-accent) !important;
 	}
 	.new-assignment {
-		background-color: var(--ee-color-green) !important;
+		background-color: var(--ee-color-secondary) !important;
 	}
 	.old-assignment {
-		background-color: var(--ee-color-blue) !important;
+		background-color: var(--ee-color-primary) !important;
 	}
 	.removed-assignment {
-		background-color: var(--ee-color-hot-pink) !important;
+		background-color: var(--ee-color-accent) !important;
 	}
 }

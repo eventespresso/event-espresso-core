@@ -4,6 +4,7 @@ import { Table } from 'antd';
 import { RenderTableProps } from './types';
 import { Datetime } from '@edtrServices/apollo/types';
 import RenderCell from './RenderCell';
+import TicketHeader from './TicketHeader';
 import useRowClassName from './useRowClassName';
 import useColClassName from './useColClassName';
 import useCellProps from './useCellProps';
@@ -24,12 +25,17 @@ const RenderTable: React.FC<RenderTableProps> = ({ datetimes, tickets }) => {
 			id='ticket-assignment-manager'
 			bordered
 		>
-			<Column<Datetime> title={null} key={'titlecol'} render={(_, datetime) => <span>{datetime.name}</span>} />
+			<Column<Datetime>
+				title={null}
+				key={'titlecol'}
+				className='title-col'
+				render={(_, datetime) => <span>{datetime.name}</span>}
+			/>
 
 			{tickets.map((ticket) => {
 				return (
 					<Column<Datetime>
-						title={ticket.name}
+						title={(props) => <TicketHeader {...props} ticket={ticket} />}
 						key={ticket.id}
 						className={getColClass(ticket)}
 						onCell={({ id: datetimeId }) => getCellProps({ datetimeId, ticketId: ticket.id })}
