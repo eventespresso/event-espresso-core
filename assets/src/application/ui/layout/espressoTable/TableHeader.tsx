@@ -15,13 +15,13 @@ const TableHeader: React.FC<TableHeaderProps> = ({ headerRows, tableId, ...props
 		<thead className={className}>
 			{headerRows.map((headerRow, row) => (
 				<TableRow
-					rowData={headerRow}
+					className={props.className}
+					htmlId={headerRow.id || tableId}
+					headerRowClassName={headerRow.className || ''}
 					key={`header-row-${row}`}
+					rowData={headerRow}
 					rowNumber={row}
 					rowType={RowType.header}
-					htmlId={headerRow.id || tableId}
-					htmlClass={headerRow.className || ''}
-					className={className}
 				>
 					{headerRow.cells.map((column, col) => {
 						warning(column.hasOwnProperty('value'), `Missing "value" property for header column ${col}.`);

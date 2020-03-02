@@ -6,7 +6,14 @@ interface Cell {
 	value: React.ReactNode;
 	id?: string;
 	className?: string;
-	render?: ({ row, col, column, cellData }) => JSX.Element;
+	render?: (props: CellRemder) => JSX.Element;
+}
+
+interface CellRemder {
+	row: any;
+	col: any;
+	column: any;
+	cellData?: any;
 }
 
 interface FooterRow {
@@ -108,12 +115,13 @@ export interface TableRowProps {
 	children: React.ReactNode;
 	className: TableClassName;
 	headerRows?: HeaderRow[];
+	headerRowClassName?: string;
 	headerRowCount?: number;
 	htmlId?: string;
 	id?: string;
 	key: string;
 	rowData: any;
-	rowClassName: any;
+	rowClassName?: string;
 	rowNumber: number;
 	rowType?: RowType;
 	sortable?: boolean;
