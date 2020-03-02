@@ -17,8 +17,8 @@ test('useTicketListFilterState initial state result', () => {
 	expect(is(Boolean, currentResult.isChained)).toBe(true);
 	expect(currentResult.isChained).toBe(false);
 
-	expect(is(Array, currentResult.processedTickets)).toBe(true);
-	expect(currentResult.processedTickets).toEqual([]);
+	expect(is(Array, currentResult.filteredEntities)).toBe(true);
+	expect(currentResult.filteredEntities).toEqual([]);
 
 	expect(is(String, currentResult.showTickets)).toBe(true);
 	expect(currentResult.showTickets).toBe(ShowTickets.all);

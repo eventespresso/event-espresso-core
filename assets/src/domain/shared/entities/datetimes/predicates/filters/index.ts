@@ -19,15 +19,11 @@ export const now = parseISO(formatISO(new Date()));
 
 interface FilterDates {
 	dates: Datetime[];
-	show?: string;
+	show: ShowDates;
 }
 
 /**
  * reduces dates array based on value of the "showDates" filter
- *
- * @param {Array} dateEntities    original dateEntities array
- * @param {string} showDates    value for the "showDates" filter
- * @return {Array}         filtered dateEntities array
  */
 const filters = ({ dates, show = ShowDates.activeUpcoming }: FilterDates): Datetime[] => {
 	switch (show) {

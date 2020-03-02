@@ -1,27 +1,27 @@
-import { useState } from 'react';
 import { slice } from 'ramda';
+import { useCallback, useState } from 'react';
 
 import { Entity } from '@appServices/apollo/types';
-
 import { PaginationProps, onChangeFn, onShowSizeChangeFn } from './types';
-import { EntityListComponentProps } from '../EntityList/types';
+import { EntityListComponentProps } from '../types';
 
 const useEntityPagination = ({ entities }: EntityListComponentProps<Entity>): PaginationProps => {
+	const [pageNumber, setPageNumber] = useState(1);
 	const [perPage, setPerPage] = useState(6);
-	const initialPaginatedEntities = slice(0, perPage)(entities);
-	const [paginatedEntities, setPaginatedEntities] = useState(initialPaginatedEntities);
+	const paginatedEntities = slice<Entity>(perPage * (pageNumber - 1), perPage * pageNumber, entities);
 	const total = entities.length;
 
-	const onChange: onChangeFn = (page) => {
-		const slicedEntities = slice(perPage * (page - 1), perPage * page)(entities);
-		setPaginatedEntities(slicedEntities);
-	};
+	const onChange: onChangeFn = useCallback((newPageNumber) => setPageNumber(newPageNumber), []);
 
-	const onShowSizeChange: onShowSizeChangeFn = (current, size) => {
-		const slicedEntities = slice(size * (current - 1), size * current)(entities);
-		setPerPage(size);
-		setPaginatedEntities(slicedEntities);
-	};
+	const onShowSizeChange: onShowSizeChangeFn = useCallback((newPageNumber, newPerPage) => {
+		// the pagination component will recalculate the page number
+		// if it goes out of range after changing the perPage value,
+		// so save that else we'll get no results returned
+		if (newPageNumber && newPageNumber !== pageNumber) {
+			setPageNumber(newPageNumber);
+		}
+		setPerPage(newPerPage);
+	}, []);
 
 	return {
 		onChange,

@@ -1,6 +1,6 @@
 /** -------------------------------------------------------------------------
  * Event Espresso EspressoButton Stylesheet
- * © 2019 Event Espresso
+ * © 2020 Event Espresso
  * ------------------------------------------------------------------------- */
 
 :root {
@@ -17,8 +17,10 @@
 	box-shadow: var(--ee-box-shadow-tiny);
 	cursor: pointer;
 	display: inline-block;
+	font-family: 'Segoe UI', Candara, 'Bitstream Vera Sans', 'DejaVu Sans', 'Bitstream Vera Sans', 'Trebuchet MS',
+		Verdana, 'Verdana Ref', sans-serif;
 	font-size: var(--ee-font-size-default);
-	font-weight: normal;
+	font-weight: bold;
 	line-height: var(--ee-font-size-default);
 	margin: 0 0 var(--ee-margin-smaller);
 	outline: none !important;
@@ -26,7 +28,7 @@
 	text-decoration: none;
 	text-align: center;
 	text-shadow: var(--ee-text-shadow-inset-light);
-	top: -1px;
+	top: 0;
 	transition: border-color 0.1s ease 0.1s, color 0.1s ease 0.1s !important;
 	vertical-align: middle;
 }
@@ -37,7 +39,7 @@
 .esprs-button.ant-btn:visited:not(.ant-btn-icon-only) {
 	box-sizing: content-box !important;
 	min-height: var(--ee-font-size-big);
-	padding: var(--ee-padding-tiny) var(--ee-padding-small) var(--ee-padding-smaller);
+	padding: var(--ee-padding-tiny) var(--ee-padding-default) var(--ee-padding-tiny) var(--ee-padding-small);
 }
 
 .esprs-button.ant-btn.ant-btn-icon-only,
@@ -49,7 +51,7 @@
 }
 
 .esprs-button:active:not([disabled]) {
-	top: 0;
+	top: 1px;
 }
 .esprs-button.ant-btn:hover {
 	cursor: pointer;
@@ -89,8 +91,18 @@
 	vertical-align: middle;
 }
 
+.esprs-button.ant-btn > .anticon + span,
+.esprs-button.ant-btn > span + .anticon {
+	margin-left: var(--ee-margin-smaller);
+	vertical-align: middle;
+}
+
 .esprs-button .img-wrap span {
 	line-height: 24px;
+}
+
+.esprs-button.ant-btn.ant-btn-icon-only:not([disabled]) path {
+	transition: fill 0.1s ease 0.1s, color 0.1s ease 0.1s !important;
 }
 
 /* BUTTON COLORS */
@@ -99,18 +111,12 @@
 .esprs-btn-default.ant-btn.ant-btn-icon-only:not([disabled]) {
 	background: var(--ee-color-grey-15);
 	border-color: var(--ee-color-grey-14) var(--ee-color-grey-14) var(--ee-color-grey-15);
-	color: var(--ee-text-on-grey-14);
-}
-.esprs-btn-default.ant-btn.ant-btn-icon-only:not([disabled]) path {
-	fill: var(--ee-text-on-grey-14);
+	color: var(--ee-default-text-color-low-contrast);
 }
 
 .esprs-btn-default.ant-btn.ant-btn-icon-only:hover:not([disabled]) {
 	border-color: var(--ee-color-grey-9) var(--ee-color-grey-9) var(--ee-color-grey-10);
 	color: var(--ee-color-primary);
-}
-.esprs-btn-default.ant-btn.ant-btn-icon-only:hover:not([disabled]) path {
-	fill: var(--ee-color-primary);
 }
 
 .esprs-btn-default.ant-btn:not([disabled]):not(.ant-btn-icon-only) {
@@ -121,9 +127,38 @@
 .esprs-btn-default.ant-btn:hover:not([disabled]):not(.ant-btn-icon-only) {
 	background: var(--ee-color-grey-14);
 }
+
+.esprs-btn-default.ant-btn.ant-btn-icon-only:not([disabled]) path,
 .esprs-btn-default.ant-btn:not([disabled]):not(.ant-btn-icon-only),
 .esprs-btn-default.ant-btn:hover:not([disabled]):not(.ant-btn-icon-only) path {
 	fill: var(--ee-text-on-grey-14);
+}
+.esprs-btn-default.ant-btn.ant-btn-icon-only:hover:not([disabled]) path {
+	fill: var(--ee-color-primary);
+}
+
+/* MINIMAL */
+.esprs-btn-minimal.ant-btn.ant-btn-icon-only:not([disabled]),
+.esprs-btn-minimal.ant-btn:not([disabled]):not(.ant-btn-icon-only) {
+	background: none;
+	border: 1px solid var(--ee-default-text-color-low-contrast);
+	box-shadow: none;
+	color: var(--ee-default-text-color);
+}
+
+.esprs-btn-minimal.ant-btn.ant-btn-icon-only:hover:not([disabled]),
+.esprs-btn-minimal.ant-btn:hover:not([disabled]):not(.ant-btn-icon-only) {
+	border-color: var(--ee-color-primary);
+	color: var(--ee-color-primary);
+}
+
+.esprs-btn-minimal.ant-btn.ant-btn-icon-only:not([disabled]) path,
+.esprs-btn-minimal.ant-btn:not([disabled]):not(.ant-btn-icon-only),
+.esprs-btn-minimal.ant-btn:hover:not([disabled]):not(.ant-btn-icon-only) path {
+	fill: var(--ee-default-text-color);
+}
+.esprs-btn-minimal.ant-btn.ant-btn-icon-only:hover:not([disabled]) path {
+	fill: var(--ee-color-primary);
 }
 
 /* PRIMARY */
@@ -170,6 +205,8 @@
 .esprs-btn-accent.ant-btn:hover:not([disabled]) {
 	background: var(--ee-color-accent-low-contrast);
 }
+
+/* DISABLED */
 
 .esprs-button.ant-btn.esprs-btn-default:disabled,
 .esprs-button.ant-btn.esprs-btn-primary:disabled,

@@ -3,9 +3,6 @@ import classNames from 'classnames';
 import { __ } from '@wordpress/i18n';
 import { ResponsiveTable } from '@appLayout/espressoTable';
 
-/**
- * Internal dependencies
- */
 import datesListTableHeader from './datesListTableHeader';
 import datesListTableRow from './datesListTableRow';
 import './editor-date-entities-list-view.css';

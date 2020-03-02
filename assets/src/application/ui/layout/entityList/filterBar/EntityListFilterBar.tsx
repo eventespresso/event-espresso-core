@@ -2,7 +2,7 @@ import * as React from 'react';
 import { AppstoreFilled, FilterOutlined, TableOutlined } from '@ant-design/icons';
 import { __ } from '@wordpress/i18n';
 
-import EspressoButton from '../../../input/EspressoButton';
+import { EspressoButton, EspressoButtonType } from '../../../input/EspressoButton';
 import Collapsible from './Collapsible';
 import { EntityListFilterState } from './useEntityListFilterState';
 import './style.css';
@@ -28,20 +28,21 @@ const EntityListFilterBar: React.FC<EntityListFilterBarProps> = ({ entityFilters
 		showEntityFilters,
 		toggleEntityFilters,
 		view,
-	} = filterState;
+	}: EntityListFilterState = filterState;
 
 	const listViewButton = React.useMemo(
 		() => (
 			<>
 				<label className='esprs-button-label screen-reader-text' htmlFor={`ee-list-view-btn-${listId}`}>
-					{__('list view')}
+					{__('table view')}
 				</label>
 				<EspressoButton
-					id={`ee-list-view-btn-${listId}`}
+					buttonType={EspressoButtonType.MINIMAL}
 					className={view === 'list' ? 'ee-filter-bar-filter ee-active-filters' : 'ee-filter-bar-filter'}
 					icon={<TableOutlined />}
-					tooltip={__('list view')}
+					id={`ee-list-view-btn-${listId}`}
 					onClick={setListView}
+					tooltip={__('table view')}
 				/>
 			</>
 		),
@@ -52,14 +53,15 @@ const EntityListFilterBar: React.FC<EntityListFilterBarProps> = ({ entityFilters
 		() => (
 			<>
 				<label className='esprs-button-label screen-reader-text' htmlFor={`ee-grid-view-btn-${listId}`}>
-					{__('grid view')}
+					{__('card view')}
 				</label>
 				<EspressoButton
-					id={`ee-grid-view-btn-${listId}`}
-					icon={<AppstoreFilled />}
+					buttonType={EspressoButtonType.MINIMAL}
 					className={view === 'grid' ? 'ee-filter-bar-filter ee-active-filters' : 'ee-filter-bar-filter'}
-					tooltip={__('grid view')}
+					icon={<AppstoreFilled />}
+					id={`ee-grid-view-btn-${listId}`}
 					onClick={setGridView}
+					tooltip={__('card view')}
 				/>
 			</>
 		),
@@ -73,11 +75,12 @@ const EntityListFilterBar: React.FC<EntityListFilterBarProps> = ({ entityFilters
 					{__('show filters')}
 				</label>
 				<EspressoButton
-					id={`ee-grid-filter-btn-${listId}`}
-					icon={<FilterOutlined />}
-					tooltip={__('show filters')}
-					onClick={toggleEntityFilters}
+					buttonType={EspressoButtonType.MINIMAL}
 					className={showEntityFilters ? 'ee-filter-bar-filter ee-active-filters' : 'ee-filter-bar-filter'}
+					icon={<FilterOutlined />}
+					id={`ee-grid-filter-btn-${listId}`}
+					onClick={toggleEntityFilters}
+					tooltip={__('show filters')}
 				/>
 			</>
 		),

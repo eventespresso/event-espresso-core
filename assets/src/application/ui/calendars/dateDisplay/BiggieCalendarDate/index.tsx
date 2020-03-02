@@ -1,7 +1,7 @@
 import { format, parseISO, isValid } from 'date-fns';
 import React, { useCallback } from 'react';
 
-import EspressoButton from '@appInputs/EspressoButton';
+import { EspressoButton } from '@application/ui/input/EspressoButton';
 import {
 	DAY_ONLY_SHORT_FORMAT,
 	MONTH_ONLY_FULL_FORMAT,

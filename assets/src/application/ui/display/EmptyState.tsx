@@ -1,5 +1,7 @@
 import * as React from 'react';
-import { Empty } from 'antd';
+import { Empty, Typography } from 'antd';
+
+const { Text, Title } = Typography;
 
 interface EmptyStateProps {
 	children?: React.ReactNode;
@@ -10,19 +12,15 @@ interface EmptyStateProps {
 
 const EmptyState = ({ className, children, description, title }: EmptyStateProps) => {
 	return (
-		<div className={className}>
-			<Empty
-				description={
-					<>
-						{title && title}
-						<span>{description}</span>
-					</>
-				}
-				image={Empty.PRESENTED_IMAGE_SIMPLE}
-			/>
-
+		<Empty className={className} description='' image={Empty.PRESENTED_IMAGE_SIMPLE}>
+			{title && (
+				<Title type='secondary' level={4}>
+					{title}
+				</Title>
+			)}
+			{description && <Text>{description}</Text>}
 			{children && children}
-		</div>
+		</Empty>
 	);
 };
 

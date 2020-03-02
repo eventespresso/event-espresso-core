@@ -26,55 +26,55 @@ const ShowDatesControl: React.FC<ShowDatesControlProps> = ({ showDates, setShowD
 				value={showDates}
 				options={[
 					{
-						value: 'all',
+						value: ShowDates.all,
 						label: __('all dates'),
 					},
 					{
-						value: 'active-upcoming',
+						value: ShowDates.activeUpcoming,
 						label: __('all active and upcoming'),
 					},
 					{
-						value: 'active-only',
+						value: ShowDates.activeOnly,
 						label: __('active dates only'),
 					},
 					{
-						value: 'upcoming-only',
+						value: ShowDates.upcomingOnly,
 						label: __('upcoming dates only'),
 					},
 					{
-						value: 'next-active-upcoming-only',
+						value: ShowDates.nextActiveUpcomingOnly,
 						label: __('next active or upcoming only'),
 					},
 					{
-						value: 'sold-out-only',
+						value: ShowDates.soldOutOnly,
 						label: __('sold out dates only'),
 					},
 					{
-						value: 'above-90-capacity',
+						value: ShowDates.above90Capacity,
 						label: __('dates above 90% capacity'),
 					},
 					{
-						value: 'above-75-capacity',
+						value: ShowDates.above75Capacity,
 						label: __('dates above 75% capacity'),
 					},
 					{
-						value: 'above-50-capacity',
+						value: ShowDates.above50Capacity,
 						label: __('dates above 50% capacity'),
 					},
 					{
-						value: 'below-50-capacity',
+						value: ShowDates.below50Capacity,
 						label: __('dates below 50% capacity'),
 					},
 					{
-						value: 'recently-expired-only',
+						value: ShowDates.recentlyExpiredOnly,
 						label: __('recently expired dates'),
 					},
 					{
-						value: 'expired-only',
+						value: ShowDates.expiredOnly,
 						label: __('all expired dates'),
 					},
 					{
-						value: 'trashed-only',
+						value: ShowDates.trashedOnly,
 						label: __('trashed dates only'),
 					},
 				]}

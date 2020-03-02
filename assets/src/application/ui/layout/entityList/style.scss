@@ -1,0 +1,48 @@
+/** -------------------------------------------------------------------------
+ * Event Espresso EntityList Stylesheet
+ * © 2020 Event Espresso
+ * ------------------------------------------------------------------------- */
+
+.ee-entity-list {
+	width: 100%;
+
+	&__header {
+		&.ant-typography {
+			color: var(--ee-default-text-color-super-low-contrast);
+			font-family: 'Segoe UI', Candara, 'Bitstream Vera Sans', 'DejaVu Sans', 'Bitstream Vera Sans',
+				'Trebuchet MS', Verdana, 'Verdana Ref', sans-serif;
+			font-size: calc(var(--ee-font-size-big) * 2);
+			font-weight: bold;
+			line-height: calc(var(--ee-line-height-modifier) * 0.875);
+			margin: var(--ee-margin-default) 0 var(--ee-margin-small);
+		}
+	}
+
+	&__footer {
+		display: flex;
+		flex-flow: row wrap;
+		justify-content: flex-end;
+		margin: 0 0 var(--ee-margin-big);
+		width: 100%;
+	}
+
+	&.ee-rspnsv-table {
+		width: 100%;
+	}
+
+	&__card-view {
+		display: flex;
+		flex-flow: row wrap;
+		justify-content: space-between;
+		width: 100%;
+	}
+
+	&--no-results {
+		background: var(--ee-color-grey-14);
+		color: var(--ee-text-on-grey-14);
+		font-size: var(--ee-font-size-default);
+		font-weight: normal;
+		padding: var(--ee-padding-extreme) var(--ee-padding-big);
+		text-align: center;
+	}
+}

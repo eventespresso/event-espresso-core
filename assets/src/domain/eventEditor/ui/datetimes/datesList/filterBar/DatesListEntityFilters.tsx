@@ -1,11 +1,11 @@
 import React from 'react';
 
+import { FilterStateManager } from './useDatesListFilterState/types';
 import DatesSortedControl from './controls/DatesSortedControl';
 import DisplayDatesControl from './controls/DisplayDatesControl';
 import ShowDatesControl from './controls/ShowDatesControl';
-import { DatesListFilterStateManager } from '@edtrUI/datetimes/datesList/filterBar/useDatesListFilterState';
 
-type Props = Omit<DatesListFilterStateManager, 'dates' | 'processedDates'>;
+type Props = Omit<FilterStateManager, 'dates' | 'filteredEntities'>;
 
 /**
  * filters for controlling the display of a list of Event Dates
