@@ -12,9 +12,9 @@ const RenderCell: React.FC<RenderCellProps> = ({ datetime, ticket }) => {
 
 	const onClick = () => toggleAssignment({ datetimeId: datetime.id, ticketId: ticket.id });
 
-	const Icon = getCellIcon({ datetimeId: datetime.id, ticketId: ticket.id });
+	const icon = getCellIcon({ datetimeId: datetime.id, ticketId: ticket.id });
 
-	return <Button type='link' onClick={onClick} icon={<Icon />} />;
+	return <Button type='link' onClick={onClick} icon={icon} />;
 };
 
 export default RenderCell;

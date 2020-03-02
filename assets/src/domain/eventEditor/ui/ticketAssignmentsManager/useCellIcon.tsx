@@ -1,10 +1,14 @@
-import { useCallback } from 'react';
+import React, { useCallback, CSSProperties } from 'react';
 import { TagsOutlined, CloseOutlined, MinusOutlined } from '@ant-design/icons';
 
 import useTAMState from './useTAMState';
 import { AssignmentFnArgs } from './types';
 
-type Callback = (args: AssignmentFnArgs) => React.ReactType;
+type Callback = (args: AssignmentFnArgs) => React.ReactNode;
+
+const iconStyle: CSSProperties = {
+	color: '#fff',
+};
 
 const useCellIcon = (): Callback => {
 	const { getAssignmentStatus } = useTAMState();
@@ -15,11 +19,11 @@ const useCellIcon = (): Callback => {
 			switch (status) {
 				case 'NEW':
 				case 'OLD':
-					return TagsOutlined;
+					return <TagsOutlined style={iconStyle} />;
 				case 'REMOVED':
-					return CloseOutlined;
+					return <CloseOutlined style={iconStyle} />;
 				default:
-					return MinusOutlined;
+					return <MinusOutlined />;
 			}
 		},
 		[getAssignmentStatus]
