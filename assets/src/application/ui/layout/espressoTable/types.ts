@@ -1,3 +1,5 @@
+import { Responders } from 'react-beautiful-dnd';
+
 interface Cell {
 	type: string;
 	key: string;
@@ -28,20 +30,29 @@ export interface ResponsiveCellProps {
 	value: string;
 }
 
+export interface ResponsiveTableProps extends Responders {
+	className: TableClassName;
+	footerRows: FooterRow[];
+	headerRows: HeaderRow[];
+	instanceId: string;
+	metaData: {
+		tableCaption: string;
+		tableId?: string;
+		hasRowHeaders?: boolean;
+	};
+	tableRows: TableRowProps[];
+}
+
 export enum RowType {
 	body = 'body',
 	footer = 'footer',
 	header = 'header',
 }
 
-export interface TableBodyProps {
+export interface TableBodyProps extends Responders {
 	className: TableClassName;
 	headerRowCount: number;
 	hasRowHeaders: boolean;
-	onBeforeDragStart: () => void;
-	onDragEnd: () => void;
-	onDragStart: () => void;
-	onDragUpdate: () => void;
 	primaryHeader: any;
 	tableId: TableId;
 	tableRows: TableRowProps[];

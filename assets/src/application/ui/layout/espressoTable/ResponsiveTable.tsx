@@ -9,31 +9,27 @@ import TableBody from './TableBody';
 import TableFooter from './TableFooter';
 import './style.scss';
 
-/**
- * ResponsiveDataGrid responsive-table
- * produces a table like structure for displaying tabular data
- * in a grid that collapses properly on smaller screens
- *
- */
-const ResponsiveTable = ({
+import { ResponsiveTableProps } from './types';
+
+const ResponsiveTable: React.FC<ResponsiveTableProps> = ({
 	className = {},
-	headerRows = [],
-	tableRows = [],
 	footerRows = [],
+	headerRows = [],
 	metaData = {},
 	onBeforeDragStart,
+	onDragEnd,
 	onDragStart,
 	onDragUpdate,
-	onDragEnd,
+	tableRows = [],
 	...props
-}: any) => {
+}) => {
 	const primaryHeader = find(headerRows, 'primary');
 	const instanceId = props.instanceId || uuidv4();
 	if (!primaryHeader || isEmpty(tableRows)) {
 		return null;
 	}
 	const tableId = metaData.tableId || `ee-rspnsv-table-${instanceId}`;
-	const tableCaption = metaData.tableCaption || '';
+	const tableCaption = metaData.tableCaption;
 	const captionID = `${tableId}-caption`;
 	const hasRowHeaders = !!metaData.hasRowHeaders;
 	const headerRowCount = headerRows.length;
