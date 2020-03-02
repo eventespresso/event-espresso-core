@@ -23,6 +23,17 @@ export interface HeaderRow {
 	type: string;
 }
 
+export interface ResponsiveCellProps {
+	heading: string;
+	value: string;
+}
+
+export enum RowType {
+	body = 'body',
+	footer = 'footer',
+	header = 'header',
+}
+
 export interface TableBodyProps {
 	className: TableClassName;
 	headerRowCount: number;
@@ -48,12 +59,6 @@ interface TableClassName {
 	footerRowClassName?: string;
 	footerThClassName?: string;
 	tableClassName?: string;
-}
-
-export enum RowType {
-	body = 'body',
-	footer = 'footer',
-	header = 'header',
 }
 
 export interface TableFooterProps {
