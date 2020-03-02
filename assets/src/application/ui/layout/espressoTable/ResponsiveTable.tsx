@@ -58,12 +58,7 @@ const ResponsiveTable: React.FC<ResponsiveTableProps> = ({
 	};
 
 	return (
-		<Table
-			captionID={captionID}
-			captionText={tableCaption}
-			tableId={tableId}
-			tableClassName={cssClasses.tableClassName}
-		>
+		<Table captionID={captionID} captionText={tableCaption} className={cssClasses.tableClassName} tableId={tableId}>
 			<TableHeader className={cssClasses} headerRows={headerRows} tableId={tableId} />
 			<TableBody
 				className={cssClasses}
