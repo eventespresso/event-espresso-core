@@ -68,7 +68,7 @@ const ResponsiveTable = ({
 			captionID={captionID}
 			captionText={tableCaption}
 		>
-			<TableHeader tableId={tableId} headerRows={headerRows} cssClasses={cssClasses} />
+			<TableHeader className={cssClasses} headerRows={headerRows} tableId={tableId} />
 			<TableBody
 				tableId={tableId}
 				tableRows={tableRows}

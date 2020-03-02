@@ -19,7 +19,9 @@ const TableHeaderCell = ({ children, rowNumber, colNumber, rowType, htmlId, html
 		? `${htmlClass} ee-rspnsv-table-${rowType}-th ee-col-${colNumber}`
 		: `ee-rspnsv-table-${rowType}-th ee-col-${colNumber}`;
 	const rowTypeClass = rowType + 'ThClass';
+
 	classes = cssClasses[rowTypeClass] ? `${classes} ${cssClasses[rowTypeClass]}` : classes;
+
 	if (rowType === 'header') {
 		extraProps.role = 'columnheader';
 		extraProps.scope = 'col';

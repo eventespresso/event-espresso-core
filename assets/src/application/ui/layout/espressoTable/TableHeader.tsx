@@ -3,23 +3,16 @@ import classNames from 'classnames';
 import { isFunction } from 'lodash';
 import warning from 'warning';
 
-/**
- * Internal dependencies
- */
 import TableRow from './TableRow';
 import TableHeaderCell from './TableHeaderCell';
 
-/**
- * @param {string} tableId
- * @param {Array} headerRows
- * @param {Object} cssClasses
- * @param {Object} extraProps
- * @return {Object} rendered thead
- */
-const TableHeader = ({ tableId, headerRows, cssClasses, ...extraProps }) => {
-	const htmlClass = classNames(cssClasses.headerClass, 'ee-rspnsv-table-header');
+import { TableHeaderProps } from './types';
+
+const TableHeader: React.FC<TableHeaderProps> = ({ headerRows, tableId, ...props }) => {
+	const className = classNames(props.className.headerClassName, 'ee-rspnsv-table-header');
+
 	return (
-		<thead className={htmlClass} {...extraProps}>
+		<thead className={className}>
 			{headerRows.map((headerRow, row) => (
 				<TableRow
 					rowData={headerRow}
@@ -27,13 +20,13 @@ const TableHeader = ({ tableId, headerRows, cssClasses, ...extraProps }) => {
 					rowNumber={row}
 					rowType={'header'}
 					htmlId={headerRow.id || tableId}
-					htmlClass={headerRow.class || ''}
-					cssClasses={cssClasses}
+					htmlClass={headerRow.className || ''}
+					className={className}
 				>
 					{headerRow.cells.map((column, col) => {
 						warning(column.hasOwnProperty('value'), `Missing "value" property for header column ${col}.`);
 						return isFunction(column.render) ? (
-							column.render(row, col, column)
+							column.render({ row, col, column })
 						) : (
 							<TableHeaderCell
 								key={`row-${row}-col-${col}`}
@@ -41,8 +34,8 @@ const TableHeader = ({ tableId, headerRows, cssClasses, ...extraProps }) => {
 								colNumber={col}
 								rowType={'header'}
 								htmlId={column.id || tableId}
-								htmlClass={column.class || ''}
-								cssClasses={cssClasses}
+								htmlClass={column.className || ''}
+								className={className}
 							>
 								{column.value || ''}
 							</TableHeaderCell>
