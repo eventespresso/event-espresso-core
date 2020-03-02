@@ -22,6 +22,7 @@ export interface HeaderRow {
 	extraProps: object;
 	id?: string;
 	key: string;
+	primary: boolean;
 	type: string;
 }
 

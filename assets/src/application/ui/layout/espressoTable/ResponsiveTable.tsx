@@ -1,15 +1,15 @@
 import React from 'react';
 import classNames from 'classnames';
 import uuidv4 from 'uuid/v4';
-import { find, isEmpty } from 'lodash'; // to be replaced with ramda
 
+import { isEmpty } from '@appServices/utilities/array';
 import Table from './Table';
 import TableHeader from './TableHeader';
 import TableBody from './TableBody';
 import TableFooter from './TableFooter';
 import './style.scss';
 
-import { ResponsiveTableProps } from './types';
+import { HeaderRow, ResponsiveTableProps } from './types';
 
 const ResponsiveTable: React.FC<ResponsiveTableProps> = ({
 	className = {},
@@ -23,7 +23,7 @@ const ResponsiveTable: React.FC<ResponsiveTableProps> = ({
 	tableRows = [],
 	...props
 }) => {
-	const primaryHeader = find(headerRows, 'primary');
+	const primaryHeader = headerRows.find((row) => row.primary === true);
 	const instanceId = props.instanceId || uuidv4();
 	if (!primaryHeader || isEmpty(tableRows)) {
 		return null;
@@ -59,28 +59,28 @@ const ResponsiveTable: React.FC<ResponsiveTableProps> = ({
 
 	return (
 		<Table
-			tableId={tableId}
-			tableClassName={cssClasses.tableClassName}
 			captionID={captionID}
 			captionText={tableCaption}
+			tableId={tableId}
+			tableClassName={cssClasses.tableClassName}
 		>
 			<TableHeader className={cssClasses} headerRows={headerRows} tableId={tableId} />
 			<TableBody
 				className={cssClasses}
-				tableId={tableId}
-				tableRows={tableRows}
 				hasRowHeaders={hasRowHeaders}
-				primaryHeader={primaryHeader}
 				headerRowCount={headerRowCount}
 				onBeforeDragStart={onBeforeDragStart}
 				onDragStart={onDragStart}
 				onDragUpdate={onDragUpdate}
 				onDragEnd={onDragEnd}
+				primaryHeader={primaryHeader}
+				tableId={tableId}
+				tableRows={tableRows}
 			/>
 			<TableFooter
 				className={cssClasses}
-				tableId={tableId}
 				footerRows={footerRows}
+				tableId={tableId}
 				rowCount={headerRowCount + tableRowCount}
 			/>
 		</Table>
