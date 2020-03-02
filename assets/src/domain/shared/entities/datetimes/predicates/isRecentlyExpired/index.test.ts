@@ -15,7 +15,7 @@ describe('isRecentlyExpired', () => {
 
 	it('should return false if endDate is more than a month ago', () => {
 		datetimes.forEach((datetime) => {
-			const newDatetime: any = { ...datetime, endDate: formatISO(sub('months', new Date(), 1)) };
+			const newDatetime: any = { ...datetime, endDate: formatISO(sub('days', new Date(), 31)) };
 			const result = isRecentlyExpired(newDatetime);
 			expect(result).toBe(false);
 		});
