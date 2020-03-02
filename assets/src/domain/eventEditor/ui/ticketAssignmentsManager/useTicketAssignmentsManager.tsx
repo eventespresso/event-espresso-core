@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useCallback } from 'react';
 import { __ } from '@wordpress/i18n';
 import TicketAssignmentsManager from './TicketAssignmentsManager';
 import { ButtonProps } from 'antd/lib/button';
@@ -8,9 +8,11 @@ import { TAMProps, TicketAssignmentsManager as TAM } from './types';
 import useModal from '@appLayout/modal/useModal';
 import withTAMProvider from './withTAMProvider';
 import useTAMState from './useTAMState';
+import useOnSubmitAssignments from './useOnSubmitAssignments';
 
 const useTicketAssignmentsManager = (): TAM => {
 	const modal = useModal();
+	const submitAssignments = useOnSubmitAssignments();
 	let openModal: ReturnType<ModalFunc>;
 
 	const assignTicketsToDate: TAM['assignTicketsToDate'] = ({ datetimeId }) => {
@@ -46,11 +48,17 @@ const useTicketAssignmentsManager = (): TAM => {
 	const formContent: React.FC<TAMProps> = (props) => {
 		const { hasOrphanEntities, getData } = useTAMState();
 
-		const onSubmit: ButtonProps['onClick'] = (click) => {
-			click.preventDefault();
-			console.log('data', getData());
-			destroyModal();
-		};
+		const hasErrors = hasOrphanEntities();
+		const data = getData();
+
+		const onSubmit: ButtonProps['onClick'] = useCallback(
+			async (click) => {
+				click.preventDefault();
+				destroyModal();
+				await submitAssignments(data);
+			},
+			[data]
+		);
 
 		useEffect(() => {
 			if (openModal) {
@@ -62,7 +70,7 @@ const useTicketAssignmentsManager = (): TAM => {
 					},
 				});
 			}
-		}, [hasOrphanEntities]);
+		}, [hasErrors, onSubmit]);
 
 		return <TicketAssignmentsManager {...props} />;
 	};
