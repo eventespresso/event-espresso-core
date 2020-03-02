@@ -1,24 +1,29 @@
 import React from 'react';
 import classNames from 'classnames';
 
-/**
- * @param {mixed} children
- * @param {number} rowNumber
- * @param {number} colNumber
- * @param {string} htmlId
- * @param {string} htmlClass
- * @param {Object} cssClasses
- * @param {Object} extraProps
- * @return {Object} rendered <th> heading cell
- */
-const TableDataCell = ({ children, rowNumber, colNumber, htmlId, htmlClass, className, ...extraProps }) => {
+import { TableDataCellProps } from './types';
+
+const TableDataCell: React.FC<TableDataCellProps> = ({
+	children,
+	colNumber,
+	htmlId,
+	htmlClassName,
+	rowNumber,
+	...props
+}) => {
 	const id = htmlId
 		? `${htmlId}-row-${rowNumber}-col-${colNumber}`
 		: `ee-rspnsv-table-row-${rowNumber}-col-${colNumber}`;
-	const classes = classNames(htmlClass, 'ee-rspnsv-table-body-td', `ee-col-${colNumber}`, className.bodyTdClassName);
+
+	const className = classNames(
+		htmlClassName,
+		'ee-rspnsv-table-body-td',
+		`ee-col-${colNumber}`,
+		props.className.bodyTdClassName
+	);
 
 	return (
-		<td id={id} className={classes} {...extraProps}>
+		<td id={id} className={className}>
 			{children}
 		</td>
 	);

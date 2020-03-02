@@ -67,6 +67,15 @@ export interface TableBodyProps extends Responders {
 	tableRows: TableRowProps[];
 }
 
+export interface TableDataCellProps {
+	className: TableClassName;
+	children: React.ReactNode;
+	rowNumber: number;
+	colNumber: number;
+	htmlId?: string;
+	htmlClassName?: string;
+}
+
 interface TableClassName {
 	headerClassName?: string;
 	headerRowClassName?: string;
