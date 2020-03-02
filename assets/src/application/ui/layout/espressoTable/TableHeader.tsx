@@ -6,10 +6,10 @@ import warning from 'warning';
 import TableRow from './TableRow';
 import TableHeaderCell from './TableHeaderCell';
 
-import { TableHeaderProps } from './types';
+import { RowType, TableHeaderProps } from './types';
 
 const TableHeader: React.FC<TableHeaderProps> = ({ headerRows, tableId, ...props }) => {
-	const className = classNames(props.className.headerClassNameName, 'ee-rspnsv-table-header');
+	const className = classNames(props.className.headerClassName, 'ee-rspnsv-table-header');
 
 	return (
 		<thead className={className}>
@@ -18,7 +18,7 @@ const TableHeader: React.FC<TableHeaderProps> = ({ headerRows, tableId, ...props
 					rowData={headerRow}
 					key={`header-row-${row}`}
 					rowNumber={row}
-					rowType={'header'}
+					rowType={RowType.header}
 					htmlId={headerRow.id || tableId}
 					htmlClass={headerRow.className || ''}
 					className={className}
@@ -32,7 +32,7 @@ const TableHeader: React.FC<TableHeaderProps> = ({ headerRows, tableId, ...props
 								key={`row-${row}-col-${col}`}
 								rowNumber={row}
 								colNumber={col}
-								rowType={'header'}
+								rowType={RowType.header}
 								htmlId={column.id || tableId}
 								htmlClass={column.className || ''}
 								className={className}

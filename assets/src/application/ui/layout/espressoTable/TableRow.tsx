@@ -2,7 +2,7 @@ import React from 'react';
 import classNames from 'classnames';
 import { Draggable } from 'react-beautiful-dnd';
 
-import { TableRowProps } from './types';
+import { RowType, TableRowProps } from './types';
 
 const TableRow: React.FC<TableRowProps> = ({
 	children,
@@ -12,7 +12,7 @@ const TableRow: React.FC<TableRowProps> = ({
 	htmlId = '',
 	rowClassName = '',
 	className,
-	rowType = 'body',
+	rowType = RowType.body,
 	sortable = false,
 }) => {
 	if (!rowData) {

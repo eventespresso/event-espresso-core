@@ -3,54 +3,47 @@ import classNames from 'classnames';
 import { isFunction } from 'lodash';
 import warning from 'warning';
 
-/**
- * Internal dependencies
- */
+import { isEmpty } from '@appServices/utilities/array';
 import TableRow from './TableRow';
 import TableHeaderCell from './TableHeaderCell';
 
-const EMPTY_ARRAY = [];
+import { RowType, TableFooterProps } from './types';
 
-/**
- * @param {string} tableId
- * @param {Array} footerRows
- * @param {Object} cssClasses
- * @param {number} rowCount
- * @param {Object} extraProps
- * @return {Object} rendered thead
- */
-const TableFooter = ({ tableId, cssClasses, footerRows, rowCount, ...extraProps }) => {
-	const htmlClass = classNames(cssClasses.footerClassName, 'ee-rspnsv-table-footer');
-	return footerRows !== EMPTY_ARRAY ? (
-		<tfoot className={htmlClass} {...extraProps}>
-			{footerRows.map((footerRow, row) => {
-				row += rowCount;
+const TableFooter: React.FC<TableFooterProps> = ({ tableId, footerRows, rowCount, ...props }) => {
+	const className = classNames(props.className.footerClassName, 'ee-rspnsv-table-footer');
+
+	return !isEmpty(footerRows) ? (
+		<tfoot className={className}>
+			{footerRows.map((footerRow, index) => {
+				const row = index + rowCount;
+
 				return (
 					<TableRow
 						rowData={footerRow}
 						key={`row-${row}`}
 						rowNumber={row}
-						rowType={'footer'}
+						rowType={RowType.footer}
 						htmlId={footerRow.id || tableId}
-						htmlClass={footerRow.class || ''}
-						cssClasses={cssClasses}
+						rowClassName={footerRow.footerRowClassName || ''}
+						className={props.className}
 					>
 						{footerRow.cells.map((column, col) => {
 							warning(
 								column.hasOwnProperty('value'),
 								`Missing "value" property for footer column ${col}.`
 							);
+
 							return isFunction(column.render) ? (
-								column.render(row, col, column)
+								column.render({ row, col, column })
 							) : (
 								<TableHeaderCell
 									key={`row-${row}-col-${col}`}
 									rowNumber={row}
 									colNumber={col}
-									rowType={'footer'}
+									rowType={RowType.footer}
 									htmlId={column.id || tableId}
-									htmlClass={column.class || ''}
-									cssClasses={cssClasses}
+									htmlClass={column.className || ''}
+									className={className}
 								>
 									{column.value || ''}
 								</TableHeaderCell>

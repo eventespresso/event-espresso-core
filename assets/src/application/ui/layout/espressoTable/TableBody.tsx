@@ -8,7 +8,8 @@ import TableHeaderCell from './TableHeaderCell';
 import TableDataCell from './TableDataCell';
 import ResponsiveCell from './ResponsiveCell';
 
-import { TableBodyProps } from './types';
+import { RowType, TableBodyProps } from './types';
+import { Row } from 'antd';
 
 const TableBody: React.FC<TableBodyProps> = ({
 	className,
@@ -29,7 +30,7 @@ const TableBody: React.FC<TableBodyProps> = ({
 				key={`row-${rowNumber}-col-${colNumber}`}
 				rowNumber={rowNumber}
 				colNumber={colNumber}
-				rowType={'body'}
+				rowType={RowType.body}
 				htmlId={cellData.id || tableId}
 				htmlClass={cellData.class || ''}
 			>
@@ -57,7 +58,7 @@ const TableBody: React.FC<TableBodyProps> = ({
 				rowData={row}
 				key={`body-row-${row.key}`}
 				rowNumber={rowNumber}
-				rowType={'body'}
+				rowType={RowType.body}
 				htmlId={row.id || tableId}
 				rowClassName={row.className}
 				className={className}

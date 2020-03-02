@@ -1,24 +1,16 @@
-interface TableClassName {
-	headerClassName?: string;
-	headerRowClassName?: string;
-	headerThClassName?: string;
-	bodyClassName?: string;
-	bodyRowClassName?: string;
-	bodyThClassName?: string;
-	bodyTdClassName?: string;
-	footerClassName?: string;
-	footerRowClassName?: string;
-	footerThClassName?: string;
-	tableClassName?: string;
-}
-
 interface Cell {
 	type: string;
 	key: string;
 	value: React.ReactNode;
 	id?: string;
 	className?: string;
-	render: ({ row, col, column, cellData }) => React.ReactNode;
+	render?: ({ row, col, column }) => JSX.Element;
+}
+
+interface FooterRow {
+	cells: Cell[];
+	footerRowClassName?: string;
+	id?: string;
 }
 
 export interface HeaderRow {
@@ -29,14 +21,6 @@ export interface HeaderRow {
 	id?: string;
 	key: string;
 	type: string;
-}
-
-export interface TableRow {
-	type: string;
-	key: string;
-	id?: string;
-	className?: string;
-	cells: Cell[];
 }
 
 export interface TableBodyProps {
@@ -52,6 +36,33 @@ export interface TableBodyProps {
 	tableRows: TableRowProps[];
 }
 
+interface TableClassName {
+	headerClassName?: string;
+	headerRowClassName?: string;
+	headerThClassName?: string;
+	bodyClassName?: string;
+	bodyRowClassName?: string;
+	bodyThClassName?: string;
+	bodyTdClassName?: string;
+	footerClassName?: string;
+	footerRowClassName?: string;
+	footerThClassName?: string;
+	tableClassName?: string;
+}
+
+export enum RowType {
+	body = 'body',
+	footer = 'footer',
+	header = 'header',
+}
+
+export interface TableFooterProps {
+	className: TableClassName;
+	footerRows: FooterRow[];
+	tableId: string;
+	rowCount: number;
+}
+
 export interface TableHeaderProps {
 	className: TableClassName;
 	headerRows: HeaderRow[];
@@ -59,22 +70,18 @@ export interface TableHeaderProps {
 }
 
 export interface TableRowProps {
-	cells: Cell[];
+	cells?: Cell[];
 	children: React.ReactNode;
 	className: TableClassName;
-	headerRows: HeaderRow[];
-	headerRowCount: number;
+	headerRows?: HeaderRow[];
+	headerRowCount?: number;
 	htmlId?: string;
 	id?: string;
 	key: string;
 	rowData: any;
-	// rowData: {
-	// 	className?: string;
-	// 	key: string;
-	// };
 	rowClassName: any;
 	rowNumber: number;
-	rowType?: string;
+	rowType?: RowType;
 	sortable?: boolean;
 }
 

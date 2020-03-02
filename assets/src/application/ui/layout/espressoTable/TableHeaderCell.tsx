@@ -28,8 +28,9 @@ const TableHeaderCell = ({ children, rowNumber, colNumber, rowType, htmlId, html
 	} else if (rowType === 'body') {
 		extraProps.scope = 'row';
 	}
+
 	return (
-		<th id={id} className={classes} {...extraProps}>
+		<th id={id} className={classes}>
 			{children}
 		</th>
 	);

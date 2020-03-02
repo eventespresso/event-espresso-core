@@ -82,9 +82,9 @@ const ResponsiveTable = ({
 				onDragEnd={onDragEnd}
 			/>
 			<TableFooter
+				className={cssClasses}
 				tableId={tableId}
 				footerRows={footerRows}
-				cssClasses={cssClasses}
 				rowCount={headerRowCount + tableRowCount}
 			/>
 		</Table>
