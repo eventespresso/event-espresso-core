@@ -58,12 +58,12 @@ const useTAMStateManager = (): TAMStateManager => {
 
 	return {
 		...assignmentManager,
+		getAssignmentStatus,
 		hasNoAssignedDates,
 		hasNoAssignedTickets,
-		hasOrphanTickets,
 		hasOrphanDates,
 		hasOrphanEntities,
-		getAssignmentStatus,
+		hasOrphanTickets,
 	};
 };
 

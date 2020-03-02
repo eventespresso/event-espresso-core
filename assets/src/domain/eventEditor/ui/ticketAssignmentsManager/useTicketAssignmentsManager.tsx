@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import { __ } from '@wordpress/i18n';
 import TicketAssignmentsManager from './TicketAssignmentsManager';
 import { ButtonProps } from 'antd/lib/button';
