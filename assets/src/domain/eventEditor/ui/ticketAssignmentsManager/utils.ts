@@ -22,10 +22,10 @@ export const prepareEntitiesForUpdate = ({
 	const newEntities = pathOr<RelationalEntity>({}, [entity], newData);
 
 	return filter<EntitiesToUpdate[0]>(([entityId, possibleRelation]) => {
-		const newRelatedDates = pathOr<EntityId[]>([], [relation], possibleRelation);
-		const oldRelatedDates = pathOr<EntityId[]>([], [entityId, relation], existingEntities);
+		const newRelatedEntities = pathOr<EntityId[]>([], [relation], possibleRelation);
+		const oldRelatedEntities = pathOr<EntityId[]>([], [entityId, relation], existingEntities);
 		// make sure to sort them before compare
 		// to make sure that they are actually different
-		return !equals(newRelatedDates.sort(), oldRelatedDates.sort());
+		return !equals(newRelatedEntities.sort(), oldRelatedEntities.sort());
 	}, Object.entries(newEntities));
 };
