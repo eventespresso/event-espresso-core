@@ -50,6 +50,14 @@ export enum RowType {
 	header = 'header',
 }
 
+export interface TableProps {
+	captionID: string;
+	captionText: string;
+	children: React.ReactNode;
+	className?: string;
+	tableId?: string;
+}
+
 export interface TableBodyProps extends Responders {
 	className: TableClassName;
 	headerRowCount: number;

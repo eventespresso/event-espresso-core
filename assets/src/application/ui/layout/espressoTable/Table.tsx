@@ -1,27 +1,14 @@
 import React from 'react';
 import classNames from 'classnames';
 
-interface TableProps {
-	captionID: string;
-	captionText: string;
-	children: React.ReactNode;
-	tableClassName: string;
-	tableId: string;
-}
+import { TableProps } from './types';
 
-const Table: React.FC<TableProps> = ({
-	captionID = '',
-	captionText = '',
-	children,
-	tableClassName = '',
-	tableId = '',
-	...extraProps
-}) => {
-	const className = classNames('ee-rspnsv-table', tableClassName);
+const Table: React.FC<TableProps> = ({ captionID = '', captionText = '', children, tableId = '', ...props }) => {
+	const className = classNames('ee-rspnsv-table', props.className);
 
 	return (
 		<div role={'region'} aria-labelledby={captionID} className={'ee-rspnsv-table-wrapper'} tabIndex={0}>
-			<table id={tableId} className={className} {...extraProps}>
+			<table id={tableId} className={className}>
 				<caption id={captionID} className={'screen-reader-text'}>
 					{captionText}
 				</caption>

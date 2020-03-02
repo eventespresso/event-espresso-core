@@ -9,7 +9,7 @@ import TableBody from './TableBody';
 import TableFooter from './TableFooter';
 import './style.scss';
 
-import { HeaderRow, ResponsiveTableProps } from './types';
+import { ResponsiveTableProps } from './types';
 
 const ResponsiveTable: React.FC<ResponsiveTableProps> = ({
 	className = {},
