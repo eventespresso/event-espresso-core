@@ -1,6 +1,5 @@
 import React from 'react';
 import classNames from 'classnames';
-import { isFunction } from 'lodash';
 import warning from 'warning';
 import { DragDropContext, Droppable } from 'react-beautiful-dnd';
 
@@ -9,62 +8,41 @@ import TableHeaderCell from './TableHeaderCell';
 import TableDataCell from './TableDataCell';
 import ResponsiveCell from './ResponsiveCell';
 
-/**
- * @param {string} tableId
- * @param {Array} tableRows
- * @param {Object} cssClasses
- * @param {boolean} hasRowHeaders
- * @param {Object} primaryHeader
- * @param {number} headerRowCount
- * @param {Function} onBeforeDragStart
- * @param {Function} onDragStart
- * @param {Function} onDragUpdate
- * @param {Function} onDragEnd
- * @param {Object} extraProps
- * @return {Object} rendered thead
- */
-const TableBody = ({
-	tableId,
-	tableRows,
-	cssClasses,
-	hasRowHeaders,
-	primaryHeader,
+import { TableBodyProps } from './types';
+
+const TableBody: React.FC<TableBodyProps> = ({
+	className,
 	headerRowCount,
+	hasRowHeaders,
 	onBeforeDragStart,
+	onDragEnd,
 	onDragStart,
 	onDragUpdate,
-	onDragEnd,
-	...extraProps
+	primaryHeader,
+	tableId,
+	tableRows,
 }) => {
-	/**
-	 * @function
-	 * @param {number} rowNumber
-	 * @param {number} colNumber
-	 * @param {Object} column
-	 * @param {Object} cellData
-	 * @return {Object} rendered headings row
-	 */
 	const tableCell = (rowNumber, colNumber, column, cellData) => {
 		return hasRowHeaders && colNumber === 0 ? (
 			<TableHeaderCell
+				className={className}
 				key={`row-${rowNumber}-col-${colNumber}`}
 				rowNumber={rowNumber}
 				colNumber={colNumber}
 				rowType={'body'}
 				htmlId={cellData.id || tableId}
 				htmlClass={cellData.class || ''}
-				cssClasses={cssClasses}
 			>
 				{cellData.value || ''}
 			</TableHeaderCell>
 		) : (
 			<TableDataCell
+				className={className}
+				colNumber={colNumber}
 				key={`row-${rowNumber}-col-${colNumber}`}
 				rowNumber={rowNumber}
-				colNumber={colNumber}
 				htmlId={cellData.id || tableId}
 				htmlClass={cellData.class || ''}
-				cssClasses={cssClasses}
 			>
 				<ResponsiveCell heading={column.value} value={cellData.value} />
 			</TableDataCell>
@@ -72,6 +50,8 @@ const TableBody = ({
 	};
 
 	const tableBodyRows = tableRows.map((row, rowNumber) => {
+		const sortable = typeof onDragEnd === 'function';
+
 		return (
 			<TableRow
 				rowData={row}
@@ -79,10 +59,10 @@ const TableBody = ({
 				rowNumber={rowNumber}
 				rowType={'body'}
 				htmlId={row.id || tableId}
-				htmlClass={row.class || ''}
-				cssClasses={cssClasses}
+				rowClassName={row.className}
+				className={className}
 				headerRowCount={headerRowCount}
-				sortable={typeof onDragEnd === 'function'}
+				sortable={sortable}
 			>
 				{row.cells.map((cellData, colNumber) => {
 					const column = primaryHeader.cells[colNumber];
@@ -91,16 +71,18 @@ const TableBody = ({
 						cellData.hasOwnProperty('value'),
 						`Missing "value" property for table cell at ` + `row ${rowNumber} column ${colNumber}.`
 					);
-					if (isFunction(cellData.render)) {
-						return cellData.render(rowNumber, colNumber, column, cellData);
+
+					if (typeof cellData.render === 'function') {
+						return cellData.render({ row: rowNumber, col: colNumber, column, cellData });
 					}
+
 					return tableCell(rowNumber, colNumber, column, cellData);
 				})}
 			</TableRow>
 		);
 	});
 
-	const htmlClass = classNames(cssClasses.bodyClass, 'ee-rspnsv-table-body');
+	const htmlClass = classNames(className.bodyClassName, 'ee-rspnsv-table-body');
 
 	return onDragEnd !== null ? (
 		<DragDropContext
@@ -120,7 +102,6 @@ const TableBody = ({
 							borderSpacing: isDraggingOver ? '2px' : '0',
 						}}
 						{...droppableProps}
-						{...extraProps}
 					>
 						{tableBodyRows}
 						{placeholder}
@@ -129,9 +110,7 @@ const TableBody = ({
 			</Droppable>
 		</DragDropContext>
 	) : (
-		<tbody className={htmlClass} {...extraProps}>
-			{tableBodyRows}
-		</tbody>
+		<tbody className={htmlClass}>{tableBodyRows}</tbody>
 	);
 };
 

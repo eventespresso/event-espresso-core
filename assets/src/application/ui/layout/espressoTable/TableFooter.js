@@ -20,7 +20,7 @@ const EMPTY_ARRAY = [];
  * @return {Object} rendered thead
  */
 const TableFooter = ({ tableId, cssClasses, footerRows, rowCount, ...extraProps }) => {
-	const htmlClass = classNames(cssClasses.footerClass, 'ee-rspnsv-table-footer');
+	const htmlClass = classNames(cssClasses.footerClassName, 'ee-rspnsv-table-footer');
 	return footerRows !== EMPTY_ARRAY ? (
 		<tfoot className={htmlClass} {...extraProps}>
 			{footerRows.map((footerRow, row) => {

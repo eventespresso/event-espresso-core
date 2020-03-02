@@ -7,11 +7,11 @@ import React from 'react';
  * @param {string} rowType
  * @param {string} htmlId
  * @param {string} htmlClass
- * @param {Object} cssClasses
+ * @param {Object} className
  * @param {Object} extraProps
  * @return {Object} rendered <th> heading cell
  */
-const TableHeaderCell = ({ children, rowNumber, colNumber, rowType, htmlId, htmlClass, cssClasses, ...extraProps }) => {
+const TableHeaderCell = ({ children, rowNumber, colNumber, rowType, htmlId, htmlClass, className, ...extraProps }) => {
 	const id = htmlId
 		? `${htmlId}-${rowType}-row-${rowNumber}-col-${colNumber}`
 		: `ee-rspnsv-table-${rowType}-row-${rowNumber}-col-${colNumber}`;
@@ -20,7 +20,7 @@ const TableHeaderCell = ({ children, rowNumber, colNumber, rowType, htmlId, html
 		: `ee-rspnsv-table-${rowType}-th ee-col-${colNumber}`;
 	const rowTypeClass = rowType + 'ThClass';
 
-	classes = cssClasses[rowTypeClass] ? `${classes} ${cssClasses[rowTypeClass]}` : classes;
+	classes = className[rowTypeClass] ? `${classes} ${className[rowTypeClass]}` : classes;
 
 	if (rowType === 'header') {
 		extraProps.role = 'columnheader';

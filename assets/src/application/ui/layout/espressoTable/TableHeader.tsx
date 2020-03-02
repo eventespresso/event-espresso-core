@@ -9,7 +9,7 @@ import TableHeaderCell from './TableHeaderCell';
 import { TableHeaderProps } from './types';
 
 const TableHeader: React.FC<TableHeaderProps> = ({ headerRows, tableId, ...props }) => {
-	const className = classNames(props.className.headerClassName, 'ee-rspnsv-table-header');
+	const className = classNames(props.className.headerClassNameName, 'ee-rspnsv-table-header');
 
 	return (
 		<thead className={className}>

@@ -18,21 +18,64 @@ interface Cell {
 	value: React.ReactNode;
 	id?: string;
 	className?: string;
-	render: ({ row, col, column }) => React.ReactNode;
-	extraProps: object;
+	render: ({ row, col, column, cellData }) => React.ReactNode;
 }
 
 export interface HeaderRow {
+	cells: Cell[];
+	children?: React.ReactNode;
+	className?: string;
+	extraProps: object;
+	id?: string;
+	key: string;
+	type: string;
+}
+
+export interface TableRow {
 	type: string;
 	key: string;
 	id?: string;
 	className?: string;
-	extraProps: object;
 	cells: Cell[];
+}
+
+export interface TableBodyProps {
+	className: TableClassName;
+	headerRowCount: number;
+	hasRowHeaders: boolean;
+	onBeforeDragStart: () => void;
+	onDragEnd: () => void;
+	onDragStart: () => void;
+	onDragUpdate: () => void;
+	primaryHeader: any;
+	tableId: TableId;
+	tableRows: TableRowProps[];
 }
 
 export interface TableHeaderProps {
 	className: TableClassName;
 	headerRows: HeaderRow[];
-	tableId: string;
+	tableId: TableId;
 }
+
+export interface TableRowProps {
+	cells: Cell[];
+	children: React.ReactNode;
+	className: TableClassName;
+	headerRows: HeaderRow[];
+	headerRowCount: number;
+	htmlId?: string;
+	id?: string;
+	key: string;
+	rowData: any;
+	// rowData: {
+	// 	className?: string;
+	// 	key: string;
+	// };
+	rowClassName: any;
+	rowNumber: number;
+	rowType?: string;
+	sortable?: boolean;
+}
+
+type TableId = string;

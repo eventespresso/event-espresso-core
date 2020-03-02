@@ -48,16 +48,16 @@ const ResponsiveTable = ({
 	);
 
 	const cssClasses = {
-		headerClass: className.headerClass || '',
-		headerRowClass: className.headerRowClass || '',
-		headerThClass: className.headerThClass || '',
-		bodyClass: className.bodyClass || '',
-		bodyRowClass: className.bodyRowClass || '',
-		bodyThClass: className.bodyThClass || '',
-		bodyTdClass: className.bodyTdClass || '',
-		footerClass: className.footerClass || '',
-		footerRowClass: className.footerRowClass || '',
-		footerThClass: className.footerThClass || '',
+		headerClassName: className.headerClassName || '',
+		headerRowClassName: className.headerRowClassName || '',
+		headerThClassName: className.headerThClassName || '',
+		bodyClassName: className.bodyClassName || '',
+		bodyRowClassName: className.bodyRowClassName || '',
+		bodyThClassName: className.bodyThClassName || '',
+		bodyTdClassName: className.bodyTdClassName || '',
+		footerClassName: className.footerClassName || '',
+		footerRowClassName: className.footerRowClassName || '',
+		footerThClassName: className.footerThClassName || '',
 		tableClassName,
 	};
 
@@ -70,12 +70,12 @@ const ResponsiveTable = ({
 		>
 			<TableHeader className={cssClasses} headerRows={headerRows} tableId={tableId} />
 			<TableBody
+				className={cssClasses}
 				tableId={tableId}
 				tableRows={tableRows}
 				hasRowHeaders={hasRowHeaders}
 				primaryHeader={primaryHeader}
 				headerRowCount={headerRowCount}
-				cssClasses={cssClasses}
 				onBeforeDragStart={onBeforeDragStart}
 				onDragStart={onDragStart}
 				onDragUpdate={onDragUpdate}

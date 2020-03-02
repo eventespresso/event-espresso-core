@@ -11,11 +11,12 @@ import classNames from 'classnames';
  * @param {Object} extraProps
  * @return {Object} rendered <th> heading cell
  */
-const TableDataCell = ({ children, rowNumber, colNumber, htmlId, htmlClass, cssClasses, ...extraProps }) => {
+const TableDataCell = ({ children, rowNumber, colNumber, htmlId, htmlClass, className, ...extraProps }) => {
 	const id = htmlId
 		? `${htmlId}-row-${rowNumber}-col-${colNumber}`
 		: `ee-rspnsv-table-row-${rowNumber}-col-${colNumber}`;
-	const classes = classNames(htmlClass, 'ee-rspnsv-table-body-td', `ee-col-${colNumber}`, cssClasses.bodyTdClass);
+	const classes = classNames(htmlClass, 'ee-rspnsv-table-body-td', `ee-col-${colNumber}`, className.bodyTdClassName);
+
 	return (
 		<td id={id} className={classes} {...extraProps}>
 			{children}
