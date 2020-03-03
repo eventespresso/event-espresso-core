@@ -785,7 +785,14 @@ class General_Settings_Admin_Page extends EE_Admin_Page
                         'id'   => ',',
                         'text' => __(', (comma)', 'event_espresso'),
                     ),
-                    array('id' => '.', 'text' => __('. (decimal)', 'event_espresso')),
+                    array(
+                        'id' => '.',
+                        'text' => __('. (decimal)', 'event_espresso')
+                    ),
+                    array(
+                        'id' => '&nbsp;',
+                        'text' => __('(space)', 'event_espresso')
+                    )
                 ),
                 'use_desc_4_label' => true,
                 'disabled'         => $CNT_cur_disabled,
