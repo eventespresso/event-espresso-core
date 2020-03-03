@@ -1,8 +1,7 @@
 import React from 'react';
-import { EditOutlined } from '@ant-design/icons';
 import { __ } from '@wordpress/i18n';
 
-import { EspressoButton } from '@application/ui/input';
+import { EspressoButton, Icon } from '@application/ui/input';
 import { EditItemButtonProps } from '@edtrInterfaces/types';
 import { useDatetimeContext } from '@edtrHooks/index';
 import { useDatetimeItem } from '@edtrServices/apollo/queries';
@@ -23,7 +22,7 @@ const EditDateButton: React.FC<EditItemButtonProps> = ({ ...rest }) => {
 
 	return (
 		<EspressoButton
-			icon={<EditOutlined />}
+			icon={Icon.EDIT}
 			tooltip={__('edit datetime')}
 			tooltipProps={{ placement: 'right' }}
 			onClick={onClick}
