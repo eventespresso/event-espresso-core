@@ -5,12 +5,12 @@ import { __ } from '@wordpress/i18n';
 import { EspressoButton } from '@application/ui/input';
 import { EditItemButtonProps } from '@edtrInterfaces/types';
 import { useDatetimeContext } from '@edtrHooks/index';
-import { useEditorModal } from '@appLayout/editorModal';
+import { useFormModal } from '@appLayout/formModal';
 
 const EditDateButton: React.FC<EditItemButtonProps> = ({ ...rest }) => {
 	const { id: entityId } = useDatetimeContext();
 
-	const { openEditor } = useEditorModal();
+	const { openEditor } = useFormModal();
 
 	const onClick = (): void =>
 		openEditor({

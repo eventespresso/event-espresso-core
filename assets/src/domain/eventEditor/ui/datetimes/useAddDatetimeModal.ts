@@ -3,13 +3,13 @@ import { __ } from '@wordpress/i18n';
 import { FormProps } from 'react-final-form';
 
 import useDateFormConfig from './dateForm/useDateFormConfig';
-import { useEditorModal, EditorModal, ModalClose } from '@appLayout/editorModal';
+import { useFormModal, FormModal, ModalClose } from '@appLayout/formModal';
 import { useDatetimeMutator, CreateDatetimeInput } from '@edtrServices/apollo/mutations';
 import useEvent from '@edtrServices/apollo/queries/events/useEvent';
 
-const useAddDatetimeModal: EditorModal = () => {
+const useAddDatetimeModal: FormModal = () => {
 	const { createEntity } = useDatetimeMutator();
-	const { closeEditor } = useEditorModal();
+	const { closeEditor } = useFormModal();
 
 	const { name: eventName = '' } = useEvent() || {};
 

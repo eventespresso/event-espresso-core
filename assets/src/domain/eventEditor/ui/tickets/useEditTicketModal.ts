@@ -3,13 +3,13 @@ import { __ } from '@wordpress/i18n';
 import { FormProps } from 'react-final-form';
 
 import useTicketFormConfig from './ticketForm/useTicketFormConfig';
-import { useEditorModal, EditorModal, ModalClose } from '@appLayout/editorModal';
+import { useFormModal, FormModal, ModalClose } from '@appLayout/formModal';
 import { useTicketMutator, UpdateTicketInput } from '@edtrServices/apollo/mutations';
 import useEvent from '@edtrServices/apollo/queries/events/useEvent';
 
-const useEditTicketModal: EditorModal = (entityId) => {
+const useEditTicketModal: FormModal = (entityId) => {
 	const { updateEntity } = useTicketMutator(entityId);
-	const { closeEditor } = useEditorModal();
+	const { closeEditor } = useFormModal();
 
 	const { name: eventName = '' } = useEvent() || {};
 
