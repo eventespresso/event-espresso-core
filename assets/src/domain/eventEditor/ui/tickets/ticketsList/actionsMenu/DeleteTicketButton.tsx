@@ -1,6 +1,5 @@
 import React from 'react';
-import { DeleteOutlined } from '@ant-design/icons';
-import { EspressoButton } from '@application/ui/input';
+import { EspressoButton, Icon } from '@application/ui/input';
 import { __ } from '@wordpress/i18n';
 
 import useDeleteTicketHandler from '../../hooks/useDeleteTicketHandler';
@@ -11,7 +10,7 @@ const DeleteTicketButton: React.FC<ListItemProps> = ({ id, ...rest }) => {
 
 	return (
 		<EspressoButton
-			icon={<DeleteOutlined />}
+			icon={Icon.TRASH}
 			onClick={handleDeleteTicket}
 			tooltip={__('delete ticket')}
 			tooltipProps={{ placement: 'left' }}

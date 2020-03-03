@@ -1,8 +1,7 @@
 import React, { CSSProperties } from 'react';
 import { __ } from '@wordpress/i18n';
-import { TagsOutlined } from '@ant-design/icons';
 
-import { EspressoButton } from '@application/ui/input';
+import { EspressoButton, Icon } from '@application/ui/input';
 import { useFormModal } from '@appLayout/formModal';
 import useTicketAssignmentsManager from '../../ticketAssignmentsManager/useTicketAssignmentsManager';
 
@@ -30,12 +29,8 @@ const AddNewDateButton: React.FC = () => {
 
 	return (
 		<div style={btnRowStyle}>
-			<EspressoButton icon={'calendar'} buttonText={__('Add New Date')} onClick={onClickAddNew} />
-			<EspressoButton
-				icon={<TagsOutlined />}
-				buttonText={__('Ticket Assignments')}
-				onClick={onClickAssignments}
-			/>
+			<EspressoButton icon={Icon.CALENDAR} buttonText={__('Add New Date')} onClick={onClickAddNew} />
+			<EspressoButton icon={Icon.TICKET_ALT} buttonText={__('Ticket Assignments')} onClick={onClickAssignments} />
 		</div>
 	);
 };

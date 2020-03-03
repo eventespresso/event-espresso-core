@@ -1,8 +1,7 @@
 import * as React from 'react';
-import { DeleteOutlined } from '@ant-design/icons';
 import { __ } from '@wordpress/i18n';
 
-import { EspressoButton } from '@application/ui/input';
+import { EspressoButton, Icon } from '@application/ui/input';
 import { MutationResult } from '@appServices/apollo/mutations';
 import { ListItemProps } from '@edtrInterfaces/types';
 import { useDatetimeMutator } from '@edtrServices/apollo/mutations';
@@ -12,7 +11,7 @@ const DeleteDateButton: React.FC<ListItemProps> = ({ id, ...rest }) => {
 
 	return (
 		<EspressoButton
-			icon={<DeleteOutlined />}
+			icon={Icon.TRASH}
 			tooltip={__('delete datetime')}
 			tooltipProps={{ placement: 'right' }}
 			onClick={(): MutationResult => deleteEntity({ id })}
