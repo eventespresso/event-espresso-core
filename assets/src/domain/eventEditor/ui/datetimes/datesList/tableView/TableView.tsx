@@ -12,15 +12,6 @@ const noZebraStripe = ['row', 'stripe', 'name', 'actions'];
 /**
  * EditorDateEntitiesListView
  * Displays event date details in a standard list table like view
- *
- * @function
- * @param {Object} props
- * @member {Array} entities         filtered array of Event Date model objects
- * @member {Array} allEventDates    array of ALL Event Date model objects
- * @member {string} showDate
- * @member {string} htmlClass
- * @member {Object} otherProps
- * @return {Object} rendered table of Event Dates
  */
 const TableView = ({
 	className,
@@ -40,13 +31,13 @@ const TableView = ({
 
 	return (
 		<ResponsiveTable
+			className={{ tableClassName }}
 			headerRows={[datesListTableHeader()]}
-			tableRows={formRows}
 			metaData={{
 				tableId: 'date-entities-list-view',
 				tableCaption: __('Event Dates', 'event_espresso'),
 			}}
-			className={{ tableClassName }}
+			tableRows={formRows}
 		/>
 	);
 };

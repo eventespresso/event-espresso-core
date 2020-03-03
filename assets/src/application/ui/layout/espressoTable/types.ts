@@ -1,4 +1,10 @@
-import { Responders } from 'react-beautiful-dnd';
+import {
+	OnBeforeCaptureResponder,
+	OnBeforeDragStartResponder,
+	OnDragStartResponder,
+	OnDragUpdateResponder,
+	OnDragEndResponder,
+} from 'react-beautiful-dnd';
 
 interface Cell {
 	type: string;
@@ -33,6 +39,14 @@ export interface HeaderRow {
 	type: string;
 }
 
+interface Responders {
+	onBeforeCapture?: OnBeforeCaptureResponder;
+	onBeforeDragStart?: OnBeforeDragStartResponder;
+	onDragStart?: OnDragStartResponder;
+	onDragUpdate?: OnDragUpdateResponder;
+	onDragEnd?: OnDragEndResponder;
+}
+
 export interface ResponsiveCellProps {
 	heading: string;
 	value: string;
@@ -40,9 +54,9 @@ export interface ResponsiveCellProps {
 
 export interface ResponsiveTableProps extends Responders {
 	className: TableClassName;
-	footerRows: FooterRow[];
+	footerRows?: FooterRow[];
 	headerRows: HeaderRow[];
-	instanceId: string;
+	instanceId?: string;
 	metaData: {
 		tableCaption: string;
 		tableId?: string;
