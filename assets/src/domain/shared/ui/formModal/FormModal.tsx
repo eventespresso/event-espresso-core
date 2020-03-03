@@ -1,13 +1,13 @@
 import React from 'react';
 import { pathOr } from 'ramda';
-import FormModal from '../../../../application/ui/forms/formModal/FormModal';
-import { useEditorModal, EditorState } from '../../../../application/ui/layout/editorModal';
+import { ModalForm } from '@application/ui/forms/modalForm';
+import { useFormModal, EditorState } from '@appLayout/formModal';
 import useEditors from './useEditors';
 
 const DEFAULT_EDITOR: EditorState = { editorId: null, entityId: '', isOpen: false };
 
-const EditorModal: React.FC = () => {
-	const { editors: editorModals } = useEditorModal();
+const FormModal: React.FC = () => {
+	const { editors: editorModals } = useFormModal();
 	const { editorId, entityId = '', isOpen } = pathOr<EditorState>(
 		DEFAULT_EDITOR,
 		[editorModals.length - 1],
@@ -23,7 +23,7 @@ const EditorModal: React.FC = () => {
 	const { formComponent, initialValues = {}, onSubmit, onClose, ...rest } = editorProps;
 	return (
 		editorId && (
-			<FormModal
+			<ModalForm
 				key={editorId + entityId}
 				FormComponent={formComponent}
 				initialValues={initialValues}
@@ -36,4 +36,4 @@ const EditorModal: React.FC = () => {
 	);
 };
 
-export default EditorModal;
+export default FormModal;
