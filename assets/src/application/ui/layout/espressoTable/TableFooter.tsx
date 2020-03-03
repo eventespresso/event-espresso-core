@@ -24,7 +24,7 @@ const TableFooter: React.FC<TableFooterProps> = ({ tableId, footerRows, rowCount
 						key={`row-${row}`}
 						rowNumber={row}
 						rowType={RowType.footer}
-						htmlId={footerRow.id || tableId}
+						id={footerRow.id || `${tableId}-footer`}
 						rowClassName={footerRow.footerRowClassName}
 						className={props.className}
 					>
@@ -43,8 +43,8 @@ const TableFooter: React.FC<TableFooterProps> = ({ tableId, footerRows, rowCount
 									colNumber={col}
 									rowType={RowType.footer}
 									id={column.id || tableId}
-									htmlClassName={column.className}
-									className={className}
+									tableHeaderCellClassName={column.className}
+									className={props.className}
 								>
 									{column.value || ''}
 								</TableHeaderCell>

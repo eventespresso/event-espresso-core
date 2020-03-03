@@ -9,16 +9,16 @@ const TableRow: React.FC<TableRowProps> = ({
 	rowData,
 	rowNumber,
 	headerRowCount,
-	htmlId = '',
 	rowClassName = '',
 	className,
 	rowType = RowType.body,
 	sortable = false,
+	...props
 }) => {
 	if (!rowData) {
 		return null;
 	}
-	const id = htmlId ? `${htmlId}-row-${rowNumber}` : `ee-rspnsv-table-row-${rowNumber}`;
+	const id = props.id ? `${props.id}-row-${rowNumber}` : `ee-rspnsv-table-row-${rowNumber}`;
 	const css = classNames(
 		rowClassName,
 		`ee-rspnsv-table-${rowType}-row`,

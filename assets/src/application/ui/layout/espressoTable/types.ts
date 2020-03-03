@@ -130,7 +130,6 @@ export interface TableRowProps {
 	headerRows?: HeaderRow[];
 	headerRowClassName?: string;
 	headerRowCount?: number;
-	htmlId?: string;
 	id?: string;
 	key: string;
 	rowData: any;
