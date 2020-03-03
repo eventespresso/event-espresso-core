@@ -4,7 +4,7 @@ import { ButtonProps } from 'antd/lib/button';
 import { SaveOutlined } from '@ant-design/icons';
 import { Modal } from 'antd';
 
-import { FormModalFormProps } from './types';
+import { RenderModalFormProps } from './types';
 
 const modalStyle: CSSProperties = {
 	boxSizing: 'border-box',
@@ -20,7 +20,7 @@ const modalStyle: CSSProperties = {
 	transform: 'translate(-50%, -50%)',
 };
 
-const FormModalForm: React.FC<FormModalFormProps> = ({
+const RenderModalForm: React.FC<RenderModalFormProps> = ({
 	form,
 	submitting,
 	hasValidationErrors,
@@ -71,4 +71,4 @@ const FormModalForm: React.FC<FormModalFormProps> = ({
 	);
 };
 
-export default FormModalForm;
+export default RenderModalForm;

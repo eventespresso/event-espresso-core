@@ -1,7 +1,7 @@
 import React, { CSSProperties } from 'react';
 
-import { FormModalFormProps } from './types';
-import FormModalForm from './FormModalForm';
+import { RenderModalFormProps } from './types';
+import RenderModalForm from './RenderModalForm';
 
 const formStyle: CSSProperties = {
 	boxSizing: 'border-box',
@@ -16,11 +16,11 @@ const dataStyle: CSSProperties = {
 	backgroundColor: '#26203d',
 };
 
-const FormRenderer: React.FC<FormModalFormProps> = (props) => {
+const FormRenderer: React.FC<RenderModalFormProps> = (props) => {
 	const { FormComponent, form, values, handleSubmit, submitting, pristine, ...formProps } = props;
 
 	return (
-		<FormModalForm {...props}>
+		<RenderModalForm {...props}>
 			<form onSubmit={handleSubmit}>
 				<div style={formStyle}>
 					<FormComponent
@@ -33,7 +33,7 @@ const FormRenderer: React.FC<FormModalFormProps> = (props) => {
 				</div>
 				<pre style={dataStyle}>{JSON.stringify(values, null, 2)}</pre>
 			</form>
-		</FormModalForm>
+		</RenderModalForm>
 	);
 };
 export default FormRenderer;
