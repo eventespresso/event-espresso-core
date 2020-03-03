@@ -74,15 +74,6 @@ export interface TableBodyProps extends Responders {
 	tableRows: TableRowProps[];
 }
 
-export interface TableDataCellProps {
-	className: TableClassName;
-	children: React.ReactNode;
-	rowNumber: number;
-	colNumber: number;
-	htmlId?: string;
-	htmlClassName?: string;
-}
-
 interface TableClassName {
 	headerClassName?: string;
 	headerRowClassName?: string;
@@ -95,6 +86,16 @@ interface TableClassName {
 	footerRowClassName?: string;
 	footerThClassName?: string;
 	tableClassName?: string;
+}
+
+export interface TableDataCellProps {
+	className: TableClassName;
+	children: React.ReactNode;
+	rowNumber: number;
+	colNumber: number;
+	id?: string;
+	htmlClassName?: string;
+	tableDataCellClassName?: string;
 }
 
 export interface TableFooterProps {

@@ -6,17 +6,16 @@ import { TableDataCellProps } from './types';
 const TableDataCell: React.FC<TableDataCellProps> = ({
 	children,
 	colNumber,
-	htmlId,
-	htmlClassName,
+	tableDataCellClassName,
 	rowNumber,
 	...props
 }) => {
-	const id = htmlId
-		? `${htmlId}-row-${rowNumber}-col-${colNumber}`
+	const id = props.id
+		? `${props.id}-row-${rowNumber}-col-${colNumber}`
 		: `ee-rspnsv-table-row-${rowNumber}-col-${colNumber}`;
 
 	const className = classNames(
-		htmlClassName,
+		tableDataCellClassName,
 		'ee-rspnsv-table-body-td',
 		`ee-col-${colNumber}`,
 		props.className.bodyTdClassName

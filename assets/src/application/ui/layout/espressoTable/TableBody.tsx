@@ -40,10 +40,10 @@ const TableBody: React.FC<TableBodyProps> = ({
 			<TableDataCell
 				className={props.className}
 				colNumber={colNumber}
+				id={cellData.id || tableId}
 				key={`row-${rowNumber}-col-${colNumber}`}
 				rowNumber={rowNumber}
-				htmlId={cellData.id || tableId}
-				htmlClass={cellData.class || ''}
+				tableDataCellClassName={cellData.class || ''}
 			>
 				<ResponsiveCell heading={column.value} value={cellData.value} />
 			</TableDataCell>
