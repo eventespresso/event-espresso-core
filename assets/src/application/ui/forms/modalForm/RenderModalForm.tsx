@@ -8,16 +8,9 @@ import { RenderModalFormProps } from './types';
 
 const modalStyle: CSSProperties = {
 	boxSizing: 'border-box',
-	maxHeight: '90%',
 	maxWidth: '1200px',
 	minHeight: '50%',
 	minWidth: '320px',
-	width: '80%',
-	overflowY: 'scroll',
-	position: 'absolute' as 'absolute',
-	left: '50%',
-	top: '50%',
-	transform: 'translate(-50%, -50%)',
 };
 
 const RenderModalForm: React.FC<RenderModalFormProps> = ({
