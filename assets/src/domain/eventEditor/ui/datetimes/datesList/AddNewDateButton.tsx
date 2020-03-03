@@ -3,7 +3,7 @@ import { __ } from '@wordpress/i18n';
 import { TagsOutlined } from '@ant-design/icons';
 
 import { EspressoButton } from '@application/ui/input';
-import { useEditorModal } from '@application/ui/layout/editorModal';
+import { useFormModal } from '@appLayout/formModal';
 import useTicketAssignmentsManager from '../../ticketAssignmentsManager/useTicketAssignmentsManager';
 
 const btnRowStyle: CSSProperties = {
@@ -15,7 +15,7 @@ const btnRowStyle: CSSProperties = {
 };
 
 const AddNewDateButton: React.FC = () => {
-	const { openEditor } = useEditorModal();
+	const { openEditor } = useFormModal();
 	const { assignToAll } = useTicketAssignmentsManager();
 
 	const onClickAssignments = (): void => {

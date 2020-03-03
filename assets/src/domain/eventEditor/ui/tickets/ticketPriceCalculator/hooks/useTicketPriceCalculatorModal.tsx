@@ -1,6 +1,7 @@
 // @ts-nocheck
 import { useState, useEffect, useCallback } from 'react';
 import { isEmpty, isNil } from 'ramda';
+import { __, sprintf } from '@wordpress/i18n';
 
 import useOnSubmitPrices from './useOnSubmitPrices';
 import useTicketPriceCalculatorFormDecorator from './useTicketPriceCalculatorFormDecorator';
@@ -14,15 +15,14 @@ import defaultPrice from '../defaultPriceModifier';
 import { sortByPriceOrderIdAsc } from '../../../../../shared/entities/prices/predicates/sortingPredicates';
 import { copyPriceFields } from '../../../../../shared/entities/prices/predicates/updatePredicates';
 import { copyTicketFields } from '../../../../../shared/entities/tickets/predicates/updatePredicates';
-import { EntityId } from '@appServices/apollo/types';
-import { useEditorModal, EditorModal, ModalClose } from '../../../../../../application/ui/layout/editorModal';
+import { useFormModal, FormModal, ModalClose } from '@appLayout/formModal';
 
 const INITIAL_STATE: TpcFormData = {
 	ticket: null,
 	prices: [],
 };
 
-const useTicketPriceCalculatorModal: EditorModal = (ticketId: EntityId) => {
+const useTicketPriceCalculatorModal: FormModal = ({ entityId: ticketId }) => {
 	const [initialValues, setInitialValues] = useState<TpcFormData>(INITIAL_STATE);
 	const decorator = useTicketPriceCalculatorFormDecorator();
 	const mutators = useTicketPriceCalculatorFormMutators();
@@ -30,7 +30,7 @@ const useTicketPriceCalculatorModal: EditorModal = (ticketId: EntityId) => {
 	const defaultPriceModifier = usePriceModifier(defaultPrice);
 	const submitPrices = useOnSubmitPrices(prices);
 	const ticket = useTicketItem({ id: ticketId });
-	const { closeEditor } = useEditorModal();
+	const { closeEditor } = useFormModal();
 
 	useEffect(() => {
 		const updatable =
@@ -58,6 +58,7 @@ const useTicketPriceCalculatorModal: EditorModal = (ticketId: EntityId) => {
 		onClose,
 		decorators: [decorator],
 		mutators,
+		title: sprintf(__('Price Calculator for Ticket: %s'), ticket?.name),
 	};
 };
 

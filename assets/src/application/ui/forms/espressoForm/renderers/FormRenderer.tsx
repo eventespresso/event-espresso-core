@@ -6,14 +6,7 @@ import { FormRendererProps } from '../types';
 import Submit from '../Submit';
 import RenderFields from '../RenderFields';
 import RenderSections from '../RenderSections';
-
-const dataStyle: CSSProperties = {
-	borderRadius: '5px',
-	boxSizing: 'border-box',
-	padding: '1em 2em',
-	color: '#a9ce47',
-	backgroundColor: '#26203d',
-};
+import { DebugInfo } from '../../../display';
 
 const FormRenderer: React.FC<FormRendererProps> = (props) => {
 	const {
@@ -48,10 +41,7 @@ const FormRenderer: React.FC<FormRendererProps> = (props) => {
 						/>
 					) : null}
 				</Form>
-
-				{debugFields.length ? (
-					<pre style={dataStyle}>{JSON.stringify(pick(debugFields, form.getState()), null, 2)}</pre>
-				) : null}
+				{debugFields.length ? <DebugInfo data={pick(debugFields, form.getState())} /> : null}
 			</div>
 		</div>
 	);

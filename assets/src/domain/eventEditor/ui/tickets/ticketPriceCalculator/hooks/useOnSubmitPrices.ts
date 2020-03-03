@@ -7,7 +7,7 @@ import { Price } from '../../../../services/apollo/types';
 import { cloneAndNormalizePrice } from '../../../../../shared/entities/prices/predicates/updatePredicates';
 import toBoolean from '../../../../../../application/services/utilities/converters/toBoolean';
 import parsedAmount from '../../../../../../application/services/utilities/money/parsedAmount';
-import { ModalSubmit } from '../../../../../../application/ui/layout/editorModal';
+import { ModalSubmit } from '../../../../../../application/ui/layout/formModal';
 import { useTicketMutator, usePriceMutator } from '@edtrServices/apollo/mutations';
 import { copyTicketFields } from '../../../../../shared/entities/tickets/predicates/updatePredicates';
 import { isTicketInputField } from '../../../../../shared/entities/tickets/predicates/selectionPredicates';

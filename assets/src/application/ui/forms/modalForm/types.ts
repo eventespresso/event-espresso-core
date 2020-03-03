@@ -3,7 +3,7 @@ import { FormProps, FormRenderProps } from 'react-final-form';
 import { FormApi } from 'final-form';
 import { EspressoFormProps } from '@application/ui/forms/espressoForm';
 
-export interface FormModalProps extends FormProps {
+export interface ModalFormProps extends FormProps {
 	FormComponent?: React.NamedExoticComponent;
 	formConfig?: EspressoFormProps;
 	onClose: (e?: any) => void;
@@ -20,7 +20,7 @@ export interface FormComponentProps {
 	formReset?: boolean;
 }
 
-export interface FormModalFormProps extends FormRenderProps {
+export interface RenderModalFormProps extends FormRenderProps {
 	title?: string | React.ReactNode;
 	FormComponent?: React.NamedExoticComponent<FormComponentProps>;
 	onClose?: (e?: any) => void;

@@ -1,11 +1,9 @@
 import React, { useCallback } from 'react';
-import { TagsOutlined } from '@ant-design/icons';
 import { __ } from '@wordpress/i18n';
 
 import EditDateButton from '../datesList/actionsMenu/EditDateButton';
 import DeleteDateButton from '../datesList/actionsMenu/DeleteDateButton';
 import AssignTicketsButton from '../datesList/actionsMenu/AssignTicketsButton';
-import { EspressoButton } from '@application/ui/input';
 import { Datetime } from '@edtrServices/apollo/types';
 import { EntitySubscriptionCallback } from '@appLayout/entityActionsMenu';
 import { AdditionalDateMenuOptions } from '../types';

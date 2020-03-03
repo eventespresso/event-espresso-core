@@ -7,7 +7,7 @@ import { RelationsProvider } from '../../../../../application/services/context/R
 import { StatusProvider } from '../../../../../application/services/context/StatusProvider';
 import { ModalProvider } from '../../../../../application/services/context/ModalProvider';
 import { ConfigProvider } from '../../../../../application/services/context/ConfigProvider';
-import { EditorModalProvider } from '../../../../../application/services/context/EditorModalProvider';
+import { FormModalProvider } from '../../../../../application/services/context/FormModalProvider';
 import { EventEditorEventIdProvider } from '../EventContext';
 import { ContextProvider } from '../types';
 
@@ -43,9 +43,9 @@ export const CommonProviders: ContextProvider = ({ children }) => (
 			<ConfigProvider>
 				<EventEditorEventIdProvider>
 					<RelationsProvider>
-						<EditorModalProvider>
+						<FormModalProvider>
 							<ModalProvider>{children}</ModalProvider>
-						</EditorModalProvider>
+						</FormModalProvider>
 					</RelationsProvider>
 				</EventEditorEventIdProvider>
 			</ConfigProvider>

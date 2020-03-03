@@ -1,14 +1,14 @@
 import React from 'react';
 import { Form as ReactFinalForm } from 'react-final-form';
 
-import { FormModalProps } from './types';
-import FormModalForm from './FormModalForm';
+import { ModalFormProps } from './types';
+import RenderModalForm from './RenderModalForm';
 import FormRenderer from './FormRenderer';
 import { EspressoForm } from '@application/ui/forms/espressoForm';
 
-import './styles.css';
+import './styles.scss';
 
-const FormModal: React.FC<FormModalProps> = ({
+const ModalForm: React.FC<ModalFormProps> = ({
 	FormComponent,
 	formConfig,
 	initialValues,
@@ -22,7 +22,7 @@ const FormModal: React.FC<FormModalProps> = ({
 
 	// formConfig has the priority
 	if (formConfig) {
-		return <EspressoForm {...extraProps} {...formConfig} formWrapper={FormModalForm} />;
+		return <EspressoForm {...extraProps} {...formConfig} formWrapper={RenderModalForm} />;
 	}
 
 	return (
@@ -37,4 +37,4 @@ const FormModal: React.FC<FormModalProps> = ({
 	);
 };
 
-export default FormModal;
+export default ModalForm;
