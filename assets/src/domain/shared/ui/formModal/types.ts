@@ -1,5 +1,5 @@
 import { FormModalProps } from '@application/ui/layout/formModal';
-import { EntityId } from '@appServices/apollo/types';
+import { EntityId, EntityDbId } from '@appServices/apollo/types';
 
 export type FormModals = {
 	addDatetime: FormModalProps;
@@ -9,4 +9,9 @@ export type FormModals = {
 	ticketPriceCalculator: FormModalProps;
 };
 
-export type FormModalsHook = (entityId: EntityId) => FormModals;
+export interface FormModalsHookProps {
+	entityId?: EntityId;
+	entityDbId?: EntityDbId;
+}
+
+export type FormModalsHook = (props: FormModalsHookProps) => FormModals;

@@ -14,7 +14,6 @@ import defaultPrice from '../defaultPriceModifier';
 import { sortByPriceOrderIdAsc } from '../../../../../shared/entities/prices/predicates/sortingPredicates';
 import { copyPriceFields } from '../../../../../shared/entities/prices/predicates/updatePredicates';
 import { copyTicketFields } from '../../../../../shared/entities/tickets/predicates/updatePredicates';
-import { EntityId } from '@appServices/apollo/types';
 import { useFormModal, FormModal, ModalClose } from '@appLayout/formModal';
 
 const INITIAL_STATE: TpcFormData = {
@@ -22,7 +21,7 @@ const INITIAL_STATE: TpcFormData = {
 	prices: [],
 };
 
-const useTicketPriceCalculatorModal: FormModal = (ticketId: EntityId) => {
+const useTicketPriceCalculatorModal: FormModal = ({ entityId: ticketId }) => {
 	const [initialValues, setInitialValues] = useState<TpcFormData>(INITIAL_STATE);
 	const decorator = useTicketPriceCalculatorFormDecorator();
 	const mutators = useTicketPriceCalculatorFormMutators();

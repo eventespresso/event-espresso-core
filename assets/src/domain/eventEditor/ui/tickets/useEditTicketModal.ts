@@ -1,5 +1,5 @@
 import { useCallback } from 'react';
-import { __ } from '@wordpress/i18n';
+import { __, sprintf } from '@wordpress/i18n';
 import { FormProps } from 'react-final-form';
 
 import useTicketFormConfig from './ticketForm/useTicketFormConfig';
@@ -7,7 +7,7 @@ import { useFormModal, FormModal, ModalClose } from '@appLayout/formModal';
 import { useTicketMutator, UpdateTicketInput } from '@edtrServices/apollo/mutations';
 import useEvent from '@edtrServices/apollo/queries/events/useEvent';
 
-const useEditTicketModal: FormModal = (entityId) => {
+const useEditTicketModal: FormModal = ({ entityId, entityDbId }) => {
 	const { updateEntity } = useTicketMutator(entityId);
 	const { closeEditor } = useFormModal();
 
@@ -27,7 +27,7 @@ const useEditTicketModal: FormModal = (entityId) => {
 	const formConfig = useTicketFormConfig(entityId, { onSubmit });
 
 	return {
-		title: `${eventName}: ${__('Update ticket')}`,
+		title: `${eventName}: ${sprintf(__('Edit ticket %s'), `#${entityDbId}`)}`,
 		formConfig,
 		onClose,
 	};

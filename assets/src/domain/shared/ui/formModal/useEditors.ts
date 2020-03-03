@@ -1,18 +1,18 @@
 import { useMemo } from 'react';
 
-import { EditorModalsHook } from '.';
+import { FormModalsHook } from './types';
 import useAddDatetimeModal from '../../../eventEditor/ui/datetimes/useAddDatetimeModal';
 import useEditDatetimeModal from '../../../eventEditor/ui/datetimes/useEditDatetimeModal';
 import useAddTicketModal from '../../../eventEditor/ui/tickets/useAddTicketModal';
 import useEditTicketModal from '../../../eventEditor/ui/tickets/useEditTicketModal';
 import useTicketPriceCalculatorModal from '../../../eventEditor/ui/tickets/ticketPriceCalculator/hooks/useTicketPriceCalculatorModal';
 
-const useEditors: EditorModalsHook = (entityId) => {
+const useEditors: FormModalsHook = ({ entityId, entityDbId }) => {
 	const addDatetime = useAddDatetimeModal();
-	const editDatetime = useEditDatetimeModal(entityId);
+	const editDatetime = useEditDatetimeModal({ entityId, entityDbId });
 	const addTicket = useAddTicketModal();
-	const editTicket = useEditTicketModal(entityId);
-	const ticketPriceCalculator = useTicketPriceCalculatorModal(entityId);
+	const editTicket = useEditTicketModal({ entityId, entityDbId });
+	const ticketPriceCalculator = useTicketPriceCalculatorModal({ entityId, entityDbId });
 
 	return useMemo(() => {
 		return {

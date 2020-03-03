@@ -8,13 +8,13 @@ const DEFAULT_EDITOR: EditorState = { editorId: null, entityId: '', isOpen: fals
 
 const FormModal: React.FC = () => {
 	const { editors: editorModals } = useFormModal();
-	const { editorId, entityId = '', isOpen } = pathOr<EditorState>(
+	const { editorId, entityId = '', entityDbId = 0, isOpen } = pathOr<EditorState>(
 		DEFAULT_EDITOR,
 		[editorModals.length - 1],
 		editorModals
 	);
 	// get array of editors
-	const editors = useEditors(entityId);
+	const editors = useEditors({ entityId, entityDbId });
 	const editorProps = editors[editorId];
 	if (!editorId || !editorProps) {
 		return null;

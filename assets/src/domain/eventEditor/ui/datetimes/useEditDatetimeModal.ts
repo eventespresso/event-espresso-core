@@ -1,5 +1,5 @@
 import { useCallback } from 'react';
-import { __ } from '@wordpress/i18n';
+import { __, sprintf } from '@wordpress/i18n';
 import { FormProps } from 'react-final-form';
 
 import useDateFormConfig from './dateForm/useDateFormConfig';
@@ -7,7 +7,7 @@ import { useFormModal, FormModal, ModalClose } from '@application/ui/layout/form
 import { useDatetimeMutator, UpdateDatetimeInput } from '@edtrServices/apollo/mutations';
 import useEvent from '@edtrServices/apollo/queries/events/useEvent';
 
-const useEditDatetimeModal: FormModal = (entityId) => {
+const useEditDatetimeModal: FormModal = ({ entityId, entityDbId }) => {
 	const { updateEntity } = useDatetimeMutator(entityId);
 	const { closeEditor } = useFormModal();
 
@@ -27,7 +27,7 @@ const useEditDatetimeModal: FormModal = (entityId) => {
 	const formConfig = useDateFormConfig(entityId, { onSubmit });
 
 	return {
-		title: `${eventName}: ${__('Update datetime')}`,
+		title: `${eventName}: ${sprintf(__('Edit datetime %s'), `#${entityDbId}`)}`,
 		formConfig,
 		onClose,
 	};
