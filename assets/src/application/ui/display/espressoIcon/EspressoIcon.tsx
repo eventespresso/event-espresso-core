@@ -1,35 +1,16 @@
 import React from 'react';
 import classNames from 'classnames';
 
-import { SvgPath } from './svgPaths';
-import { EspressoIconProps, Icon } from './types';
+import { svgPath } from './svgPaths';
+import { EspressoIconProps } from './types';
 
 /**
  * Custom Event Espresso Dashicons
  */
 const EspressoIcon: React.FC<EspressoIconProps> = ({ icon, svgSize = 20, className, isPressed, ...otherProps }) => {
 	let path: string;
-	switch (icon) {
-		case Icon.CALCULATOR:
-			path = SvgPath.CALCULATOR;
-			break;
 
-		case Icon.CALENDAR:
-			path = SvgPath.CALENDAR;
-			break;
-
-		case Icon.REM:
-			path = SvgPath.REM;
-			break;
-
-		case Icon.ROTATE:
-			path = SvgPath.ROTATE;
-			break;
-
-		case Icon.SAVE:
-			path = SvgPath.SAVE;
-			break;
-	}
+	path = svgPath[icon];
 
 	if (!path) {
 		return null;
