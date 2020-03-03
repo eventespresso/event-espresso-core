@@ -38,13 +38,13 @@ const TableFooter: React.FC<TableFooterProps> = ({ tableId, footerRows, rowCount
 								column.render({ row, col, column })
 							) : (
 								<TableHeaderCell
+									className={props.className}
+									colNumber={col}
+									id={column.id || `${tableId}-footer-cell`}
 									key={`row-${row}-col-${col}`}
 									rowNumber={row}
-									colNumber={col}
 									rowType={RowType.footer}
-									id={column.id || `${tableId}-footer-cell`}
 									tableHeaderCellClassName={column.className}
-									className={props.className}
 								>
 									{column.value || ''}
 								</TableHeaderCell>
