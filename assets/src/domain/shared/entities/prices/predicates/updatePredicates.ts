@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { assoc, map, pickBy, when } from 'ramda';
 
 import { isBasePrice, isPriceField, isPriceInputField } from './selectionPredicates';
