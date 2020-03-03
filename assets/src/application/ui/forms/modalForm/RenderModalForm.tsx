@@ -1,17 +1,10 @@
-import React, { CSSProperties } from 'react';
+import React from 'react';
 import { __ } from '@wordpress/i18n';
 import { ButtonProps } from 'antd/lib/button';
 import { SaveOutlined } from '@ant-design/icons';
 import { Modal } from 'antd';
 
 import { RenderModalFormProps } from './types';
-
-const modalStyle: CSSProperties = {
-	boxSizing: 'border-box',
-	maxWidth: '1200px',
-	minHeight: '50%',
-	minWidth: '320px',
-};
 
 const RenderModalForm: React.FC<RenderModalFormProps> = ({
 	form,
@@ -51,15 +44,16 @@ const RenderModalForm: React.FC<RenderModalFormProps> = ({
 			title={title}
 			visible={true}
 			onOk={onClose}
-			style={modalStyle}
 			okText={__('Submit')}
 			okButtonProps={submitButton}
 			cancelText={__('Reset')}
 			cancelButtonProps={resetButton}
 			onCancel={onClose}
 			width={'80%'}
+			wrapClassName='ee-modal-form'
+			bodyStyle={{ padding: 0 }}
 		>
-			{children}
+			<div className='form-body'>{children}</div>
 		</Modal>
 	);
 };

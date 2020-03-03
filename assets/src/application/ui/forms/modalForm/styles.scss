@@ -1,0 +1,25 @@
+.ee-modal-form {
+	& > div {
+		box-sizing: border-box;
+		max-width: 1200px;
+		min-height: 50%;
+		min-width: 320px;
+		height: calc(100vh - 100px);
+		top: 50px;
+		padding-bottom: 0px;
+	}
+	.form-body {
+		padding: 24px;
+		height: calc(100vh - 230px);
+		overflow: scroll;
+		box-sizing: content-box;
+		scrollbar-width: none; /* Firefox */
+		-ms-overflow-style: none; /* Internet Explorer 10+ */
+
+		/* WebKit */
+		&::-webkit-scrollbar {
+			width: 0;
+			height: 0;
+		}
+	}
+}

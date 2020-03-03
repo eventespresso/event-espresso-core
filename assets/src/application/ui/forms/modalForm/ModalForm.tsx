@@ -6,7 +6,7 @@ import RenderModalForm from './RenderModalForm';
 import FormRenderer from './FormRenderer';
 import { EspressoForm } from '@application/ui/forms/espressoForm';
 
-import './styles.css';
+import './styles.scss';
 
 const ModalForm: React.FC<ModalFormProps> = ({
 	FormComponent,
