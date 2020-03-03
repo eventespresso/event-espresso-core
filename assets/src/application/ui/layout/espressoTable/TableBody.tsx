@@ -85,6 +85,11 @@ const TableBody: React.FC<TableBodyProps> = ({
 
 	const className = classNames(props?.className?.bodyClassName, 'ee-rspnsv-table-body');
 
+	const tableBodyProps: React.HTMLAttributes<HTMLElement> = {
+		...props,
+		className,
+	};
+
 	return onDragEnd !== null ? (
 		<DragDropContext
 			onBeforeDragStart={onBeforeDragStart}
@@ -99,15 +104,8 @@ const TableBody: React.FC<TableBodyProps> = ({
 						borderSpacing: isDraggingOver ? '2px' : '0',
 					};
 
-					const tableBodyProps: React.HTMLAttributes<HTMLElement> = {
-						...droppableProps,
-						...props,
-						className,
-						style,
-					};
-
 					return (
-						<tbody {...tableBodyProps} ref={innerRef}>
+						<tbody ref={innerRef} style={style} {...droppableProps} {...tableBodyProps}>
 							{tableBodyRows}
 							{placeholder}
 						</tbody>
@@ -116,7 +114,7 @@ const TableBody: React.FC<TableBodyProps> = ({
 			</Droppable>
 		</DragDropContext>
 	) : (
-		<tbody className={className}>{tableBodyRows}</tbody>
+		<tbody {...tableBodyProps}>{tableBodyRows}</tbody>
 	);
 };
 
