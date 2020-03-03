@@ -2,7 +2,7 @@ import { useCallback } from 'react';
 import { __, sprintf } from '@wordpress/i18n';
 import { FormProps } from 'react-final-form';
 
-import useTicketFormConfig from './ticketForm/useTicketFormConfig';
+import useTicketFormConfig from '../ticketForm/useTicketFormConfig';
 import { useFormModal, FormModal, ModalClose } from '@appLayout/formModal';
 import { useTicketMutator, UpdateTicketInput } from '@edtrServices/apollo/mutations';
 import useEvent from '@edtrServices/apollo/queries/events/useEvent';

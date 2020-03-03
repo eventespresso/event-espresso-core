@@ -2,7 +2,7 @@ import { useCallback } from 'react';
 import { __, sprintf } from '@wordpress/i18n';
 import { FormProps } from 'react-final-form';
 
-import useDateFormConfig from './dateForm/useDateFormConfig';
+import useDateFormConfig from '../dateForm/useDateFormConfig';
 import { useFormModal, FormModal, ModalClose } from '@application/ui/layout/formModal';
 import { useDatetimeMutator, UpdateDatetimeInput } from '@edtrServices/apollo/mutations';
 import useEvent from '@edtrServices/apollo/queries/events/useEvent';
