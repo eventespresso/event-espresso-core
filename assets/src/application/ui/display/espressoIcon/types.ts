@@ -13,7 +13,7 @@ export enum Icon {
 	ROTATE = 'rotate',
 	SAVE = 'save',
 	EDIT = 'edit',
-	TICKET = 'ticket',
+	TICKET = 'ticket-alt',
 	TRASH = 'trash',
 	FILTER = 'filter',
 }

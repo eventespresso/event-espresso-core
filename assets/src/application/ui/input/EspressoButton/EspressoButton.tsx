@@ -1,7 +1,7 @@
 import React from 'react';
 import classNames from 'classnames';
 import { Button, Tooltip } from 'antd';
-import AntDIcon from '@ant-design/icons';
+import AntIcon from '@ant-design/icons';
 
 import { EspressoButtonProps, EspressoButtonSize, EspressoButtonType, Icon } from './types';
 import { EspressoIcon, isEspressoIcon } from '../../display';
@@ -43,12 +43,7 @@ const EspressoButton: React.FC<EspressoButtonProps> = ({
 		const svgIcon = () => <EspressoIcon icon={icon as Icon} svgSize={svgSize} />;
 		if (svgIcon) {
 			eeButton = (
-				<Button
-					{...buttonProps}
-					onClick={onClick}
-					className={className}
-					icon={<AntDIcon component={svgIcon} />}
-				>
+				<Button {...buttonProps} onClick={onClick} className={className} icon={<AntIcon component={svgIcon} />}>
 					{buttonText && buttonText}
 				</Button>
 			);
