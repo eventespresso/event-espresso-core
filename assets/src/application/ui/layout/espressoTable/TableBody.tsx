@@ -32,7 +32,7 @@ const TableBody: React.FC<TableBodyProps> = ({
 				colNumber={colNumber}
 				rowType={RowType.body}
 				id={cellData.id || tableId}
-				htmlClass={cellData.class || ''}
+				tableHeaderCellClassName={cellData.class}
 			>
 				{cellData.value || ''}
 			</TableHeaderCell>
@@ -93,20 +93,26 @@ const TableBody: React.FC<TableBodyProps> = ({
 			onDragEnd={onDragEnd}
 		>
 			<Droppable droppableId={`${tableId}-droppable`}>
-				{({ innerRef, droppableProps, placeholder }, { isDraggingOver }) => (
-					<tbody
-						ref={innerRef}
-						className={className}
-						style={{
-							border: isDraggingOver ? '1px solid lightgreen' : 'none',
-							borderSpacing: isDraggingOver ? '2px' : '0',
-						}}
-						{...droppableProps}
-					>
-						{tableBodyRows}
-						{placeholder}
-					</tbody>
-				)}
+				{({ innerRef, droppableProps, placeholder }, { isDraggingOver }) => {
+					const style = {
+						border: isDraggingOver ? '1px solid lightgreen' : 'none',
+						borderSpacing: isDraggingOver ? '2px' : '0',
+					};
+
+					const tableBodyProps: React.HTMLAttributes<HTMLElement> = {
+						...droppableProps,
+						...props,
+						className,
+						style,
+					};
+
+					return (
+						<tbody {...tableBodyProps} ref={innerRef}>
+							{tableBodyRows}
+							{placeholder}
+						</tbody>
+					);
+				}}
 			</Droppable>
 		</DragDropContext>
 	) : (
