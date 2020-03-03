@@ -10,13 +10,17 @@ import { RowType, TableHeaderProps } from './types';
 
 const TableHeader: React.FC<TableHeaderProps> = ({ headerRows, tableId, ...props }) => {
 	const className = classNames(props.className.headerClassName, 'ee-rspnsv-table-header');
+	const theadProps: React.HTMLAttributes<HTMLElement> = {
+		...props,
+		className,
+	};
 
 	return (
-		<thead className={className}>
+		<thead {...theadProps}>
 			{headerRows.map((headerRow, row) => (
 				<TableRow
 					className={props.className}
-					htmlId={headerRow.id || tableId}
+					id={headerRow.id || `${tableId}-header`}
 					headerRowClassName={headerRow.className || ''}
 					key={`header-row-${row}`}
 					rowData={headerRow}
@@ -29,13 +33,13 @@ const TableHeader: React.FC<TableHeaderProps> = ({ headerRows, tableId, ...props
 							column.render({ row, col, column })
 						) : (
 							<TableHeaderCell
+								className={props.className}
+								colNumber={col}
 								key={`row-${row}-col-${col}`}
 								rowNumber={row}
-								colNumber={col}
 								rowType={RowType.header}
-								htmlId={column.id || tableId}
-								htmlClass={column.className || ''}
-								className={className}
+								id={column.id || `${tableId}-header-cell`}
+								tableHeaderCellClassName={className}
 							>
 								{column.value || ''}
 							</TableHeaderCell>
