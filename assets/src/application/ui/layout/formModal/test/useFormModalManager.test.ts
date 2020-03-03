@@ -1,15 +1,9 @@
-/**
- * External dependencies
- */
 import { renderHook, act } from '@testing-library/react-hooks';
 
-/**
- * Internal dependencies
- */
-import { useEditorModalManager, EditorState } from '..';
+import { useFormModalManager, EditorState } from '..';
 import { ApolloMockedProvider } from '../../../../../domain/eventEditor/services/context/TestContext';
 
-describe('useEditorModalManager', () => {
+describe('useFormModalManager', () => {
 	const modalId1: EditorState = {
 		editorId: 'addDatetime',
 		entityId: 'randomEntityId1',
@@ -29,13 +23,13 @@ describe('useEditorModalManager', () => {
 	const wrapper = ApolloMockedProvider();
 
 	it('should have empty stack by default', () => {
-		const { result } = renderHook(() => useEditorModalManager(), { wrapper });
+		const { result } = renderHook(() => useFormModalManager(), { wrapper });
 		currentlyOpenEditor = result.current.currentlyOpenEditor();
 		expect(currentlyOpenEditor).toBeUndefined();
 	});
 
 	it('should stack multiple modals', () => {
-		const { result } = renderHook(() => useEditorModalManager(), { wrapper });
+		const { result } = renderHook(() => useFormModalManager(), { wrapper });
 		const openEditor = result.current.openEditor;
 
 		// Open first modal
@@ -60,7 +54,7 @@ describe('useEditorModalManager', () => {
 		expect(currentlyOpenEditor).toEqual(modalId3);
 	});
 	it('should not do anything if we try to close other than last opened modal', () => {
-		const { result } = renderHook(() => useEditorModalManager(), { wrapper });
+		const { result } = renderHook(() => useFormModalManager(), { wrapper });
 		const openEditor = result.current.openEditor;
 		const closeEditor = result.current.closeEditor;
 
@@ -83,7 +77,7 @@ describe('useEditorModalManager', () => {
 	});
 
 	it('should allow closing last opened modal', () => {
-		const { result } = renderHook(() => useEditorModalManager(), { wrapper });
+		const { result } = renderHook(() => useFormModalManager(), { wrapper });
 		const openEditor = result.current.openEditor;
 		const closeEditor = result.current.closeEditor;
 
@@ -107,7 +101,7 @@ describe('useEditorModalManager', () => {
 	});
 
 	it('should close the last modal', () => {
-		const { result } = renderHook(() => useEditorModalManager(), { wrapper });
+		const { result } = renderHook(() => useFormModalManager(), { wrapper });
 		const openEditor = result.current.openEditor;
 		const closeEditor = result.current.closeEditor;
 
@@ -129,7 +123,7 @@ describe('useEditorModalManager', () => {
 	});
 
 	it('should close all editors', () => {
-		const { result } = renderHook(() => useEditorModalManager(), { wrapper });
+		const { result } = renderHook(() => useFormModalManager(), { wrapper });
 		const closeAllEditors = result.current.closeAllEditors;
 		const openEditor = result.current.openEditor;
 
