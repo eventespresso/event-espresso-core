@@ -1,11 +1,6 @@
-/**
- * External dependencies
- */
+// @ts-nocheck
 import { allPass, filter, find, propEq } from 'ramda';
 
-/**
- * Internal dependencies
- */
 import { PriceType } from '../../../../../eventEditor/services/apollo/types';
 
 // the following return `true` if price type satisfies predicate
