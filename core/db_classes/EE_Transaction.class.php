@@ -1691,4 +1691,25 @@ class EE_Transaction extends EE_Base_Class implements EEI_Transaction
             }
         }
     }
+
+
+    /**
+     * @since $VID:$
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws ReflectionException
+     * @throws RuntimeException
+     */
+    public function recalculateLineItems()
+    {
+        $total_line_item = $this->total_line_item(false);
+        $success = false;
+        if ($total_line_item instanceof EE_Line_Item) {
+            EEH_Line_Item::resetIsTaxableForTickets($total_line_item);
+            $success = EEH_Line_Item::apply_taxes($total_line_item, true);
+        }
+        return $success;
+    }
 }
