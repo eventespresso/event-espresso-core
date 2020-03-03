@@ -9,11 +9,11 @@ export interface EspressoIconProps {
 export enum Icon {
 	CALCULATOR = 'calculator',
 	CALENDAR = 'calendar',
-	REM = 'recurring-date',
-	ROTATE = 'image-rotate',
+	REM = 'rem',
+	ROTATE = 'rotate',
 	SAVE = 'save',
 	EDIT = 'edit',
-	TICKET_ALT = 'ticket-alt',
+	TICKET = 'ticket',
 	TRASH = 'trash',
 	FILTER = 'filter',
 }

@@ -30,7 +30,7 @@ const AddNewDateButton: React.FC = () => {
 	return (
 		<div style={btnRowStyle}>
 			<EspressoButton icon={Icon.CALENDAR} buttonText={__('Add New Date')} onClick={onClickAddNew} />
-			<EspressoButton icon={Icon.TICKET_ALT} buttonText={__('Ticket Assignments')} onClick={onClickAssignments} />
+			<EspressoButton icon={Icon.TICKET} buttonText={__('Ticket Assignments')} onClick={onClickAssignments} />
 		</div>
 	);
 };

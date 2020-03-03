@@ -13,7 +13,7 @@ const AssignTicketsButton: React.FC<EditItemModalProps> = ({ id, ...rest }) => {
 	};
 	return (
 		<EspressoButton
-			icon={Icon.TICKET_ALT}
+			icon={Icon.TICKET}
 			tooltip={__('assign tickets')}
 			tooltipProps={{ placement: 'right' }}
 			onClick={onClick}
