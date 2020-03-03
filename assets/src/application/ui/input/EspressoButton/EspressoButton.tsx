@@ -37,7 +37,7 @@ const EspressoButton: React.FC<EspressoButtonProps> = ({
 	});
 	let eeButton: JSX.Element;
 	// check if icon prop is just an icon name (like "calendar") and if not, assume it is JSX
-	if (typeof icon === 'string' && isEspressoIcon(icon)) {
+	if (isEspressoIcon(icon)) {
 		// custom EE icon
 		const svgSize = buttonText ? buttonSize : 20;
 		const svgIcon = () => <EspressoIcon icon={icon as Icon} svgSize={svgSize} />;
