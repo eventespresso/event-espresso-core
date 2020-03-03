@@ -13,7 +13,7 @@ import {
 
 export const INITIAL_STATE: EditorStack = [];
 
-const useEditorModalManager = (): EditorStateManager => {
+const useFormModalManager = (): EditorStateManager => {
 	const [state, dispatch] = useReducer<EditorStateReducer>(reducer, INITIAL_STATE);
 
 	const openEditor = (options: OpenEditorOptions): void => {
@@ -68,4 +68,4 @@ const reducer: EditorStateReducer = (state, action) => {
 	}
 };
 
-export default useEditorModalManager;
+export default useFormModalManager;
