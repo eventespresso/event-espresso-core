@@ -1,37 +1,44 @@
 import React from 'react';
+import classNames from 'classnames';
 
-const TableHeaderCell = ({
+import { TableHeaderCellProps } from './types';
+
+const TableHeaderCell: React.FC<TableHeaderCellProps> = ({
 	children,
-	className,
 	colNumber,
-	htmlId = '',
-	htmlClassName = '',
+	tableHeaderCellClassName = '',
 	rowNumber,
 	rowType,
-	...extraProps
+	...props
 }) => {
-	const id = htmlId
-		? `${htmlId}-${rowType}-row-${rowNumber}-col-${colNumber}`
+	const id = props.id
+		? `${props.id}-${rowType}-row-${rowNumber}-col-${colNumber}`
 		: `ee-rspnsv-table-${rowType}-row-${rowNumber}-col-${colNumber}`;
-	let classes = htmlClassName
-		? `${htmlClassName} ee-rspnsv-table-${rowType}-th ee-col-${colNumber}`
-		: `ee-rspnsv-table-${rowType}-th ee-col-${colNumber}`;
+
 	const rowTypeClass = rowType + 'ThClass';
 
-	classes = className[rowTypeClass] ? `${classes} ${className[rowTypeClass]}` : classes;
+	const className = classNames(
+		{
+			[`${tableHeaderCellClassName} ee-rspnsv-table-${rowType}-th ee-col-${colNumber}`]: tableHeaderCellClassName,
+			[`ee-rspnsv-table-${rowType}-th ee-col-${colNumber}`]: !tableHeaderCellClassName,
+		},
+		props.className[rowTypeClass]
+	);
 
 	if (rowType === 'header') {
-		extraProps.role = 'columnheader';
-		extraProps.scope = 'col';
+		props.role = 'columnheader';
+		props.scope = 'col';
 	} else if (rowType === 'body') {
-		extraProps.scope = 'row';
+		props.scope = 'row';
 	}
 
-	return (
-		<th id={id} className={classes}>
-			{children}
-		</th>
-	);
+	const tableHeaderProps: React.HTMLAttributes<HTMLElement> = {
+		...props,
+		className,
+		id,
+	};
+
+	return <th {...tableHeaderProps}>{children}</th>;
 };
 
 export default TableHeaderCell;

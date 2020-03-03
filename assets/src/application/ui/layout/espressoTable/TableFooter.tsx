@@ -42,7 +42,7 @@ const TableFooter: React.FC<TableFooterProps> = ({ tableId, footerRows, rowCount
 									rowNumber={row}
 									colNumber={col}
 									rowType={RowType.footer}
-									htmlId={column.id || tableId}
+									id={column.id || tableId}
 									htmlClassName={column.className}
 									className={className}
 								>

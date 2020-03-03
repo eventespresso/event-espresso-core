@@ -6,10 +6,10 @@ interface Cell {
 	value: React.ReactNode;
 	id?: string;
 	className?: string;
-	render?: (props: CellRemder) => JSX.Element;
+	render?: (props: CellRender) => JSX.Element;
 }
 
-interface CellRemder {
+interface CellRender {
 	row: any;
 	col: any;
 	column: any;
@@ -108,6 +108,18 @@ export interface TableHeaderProps {
 	className: TableClassName;
 	headerRows: HeaderRow[];
 	tableId: TableId;
+}
+
+export interface TableHeaderCellProps {
+	className: TableClassName;
+	colNumber: number;
+	id?: string;
+	// WAI-ARIA
+	role?: string;
+	rowNumber: number;
+	rowType?: RowType;
+	scope?: string;
+	tableHeaderCellClassName?: string;
 }
 
 export interface TableRowProps {
