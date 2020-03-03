@@ -21,11 +21,13 @@ const TableDataCell: React.FC<TableDataCellProps> = ({
 		props.className.bodyTdClassName
 	);
 
-	return (
-		<td id={id} className={className}>
-			{children}
-		</td>
-	);
+	const tableDataProps: React.HTMLAttributes<HTMLElement> = {
+		...props,
+		className,
+		id,
+	};
+
+	return <td {...tableDataProps}>{children}</td>;
 };
 
 export default TableDataCell;
