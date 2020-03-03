@@ -55,14 +55,14 @@ const TableBody: React.FC<TableBodyProps> = ({
 
 		return (
 			<TableRow
-				rowData={row}
-				key={`body-row-${row.key}`}
-				rowNumber={rowNumber}
-				rowType={RowType.body}
-				htmlId={row.id || tableId}
-				rowClassName={row.className}
 				className={props.className}
 				headerRowCount={headerRowCount}
+				id={row.id || `${tableId}-row`}
+				key={`body-row-${row.key}`}
+				rowData={row}
+				rowClassName={row.rowClassName}
+				rowNumber={rowNumber}
+				rowType={RowType.body}
 				sortable={sortable}
 			>
 				{row.cells.map((cellData, colNumber) => {
@@ -73,7 +73,7 @@ const TableBody: React.FC<TableBodyProps> = ({
 						`Missing "value" property for table cell at ` + `row ${rowNumber} column ${colNumber}.`
 					);
 
-					if (isFunc(cellData.render)) {
+					if (cellData.render) {
 						return cellData.render({ row: rowNumber, col: colNumber, column, cellData });
 					}
 
