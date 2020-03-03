@@ -1,6 +1,7 @@
 // @ts-nocheck
 import { useState, useEffect, useCallback } from 'react';
 import { isEmpty, isNil } from 'ramda';
+import { __, sprintf } from '@wordpress/i18n';
 
 import useOnSubmitPrices from './useOnSubmitPrices';
 import useTicketPriceCalculatorFormDecorator from './useTicketPriceCalculatorFormDecorator';
@@ -57,6 +58,7 @@ const useTicketPriceCalculatorModal: FormModal = ({ entityId: ticketId }) => {
 		onClose,
 		decorators: [decorator],
 		mutators,
+		title: sprintf(__('Price Calculator for Ticket: %s'), ticket?.name),
 	};
 };
 

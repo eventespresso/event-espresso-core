@@ -1,6 +1,6 @@
 import React from 'react';
 import { H2, HTMLTable } from '@blueprintjs/core';
-import { __, sprintf } from '@wordpress/i18n';
+import { __ } from '@wordpress/i18n';
 
 import TicketPriceModifierRowIterator from './TicketPriceModifierRowIterator';
 import TicketPriceTotalRow from './TicketPriceTotalRow';
@@ -17,7 +17,6 @@ const TicketPriceCalculatorForm: React.FC<TpcForm> = ({ form, values: { ticket }
 	const toggleCalcDir = (): void => form.mutators.toggleCalcDir();
 	return (
 		<>
-			<H2 style={styles.hdr}>{sprintf(__('Price Calculator for Ticket: %s'), ticket.name)}</H2>
 			<div style={styles.div}>
 				<HTMLTable interactive striped style={styles.table}>
 					<thead>
