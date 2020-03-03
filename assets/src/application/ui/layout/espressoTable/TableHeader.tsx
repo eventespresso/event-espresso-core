@@ -3,46 +3,43 @@ import classNames from 'classnames';
 import { isFunction } from 'lodash';
 import warning from 'warning';
 
-/**
- * Internal dependencies
- */
 import TableRow from './TableRow';
 import TableHeaderCell from './TableHeaderCell';
 
-/**
- * @param {string} tableId
- * @param {Array} headerRows
- * @param {Object} cssClasses
- * @param {Object} extraProps
- * @return {Object} rendered thead
- */
-const TableHeader = ({ tableId, headerRows, cssClasses, ...extraProps }) => {
-	const htmlClass = classNames(cssClasses.headerClass, 'ee-rspnsv-table-header');
+import { RowType, TableHeaderProps } from './types';
+
+const TableHeader: React.FC<TableHeaderProps> = ({ headerRows, tableId, ...props }) => {
+	const className = classNames(props.className.headerClassName, 'ee-rspnsv-table-header');
+	const theadProps: React.HTMLAttributes<HTMLElement> = {
+		...props,
+		className,
+	};
+
 	return (
-		<thead className={htmlClass} {...extraProps}>
+		<thead {...theadProps}>
 			{headerRows.map((headerRow, row) => (
 				<TableRow
-					rowData={headerRow}
+					className={props.className}
+					id={headerRow.id || `${tableId}-header`}
+					headerRowClassName={headerRow.className || ''}
 					key={`header-row-${row}`}
+					rowData={headerRow}
 					rowNumber={row}
-					rowType={'header'}
-					htmlId={headerRow.id || tableId}
-					htmlClass={headerRow.class || ''}
-					cssClasses={cssClasses}
+					rowType={RowType.header}
 				>
 					{headerRow.cells.map((column, col) => {
 						warning(column.hasOwnProperty('value'), `Missing "value" property for header column ${col}.`);
 						return isFunction(column.render) ? (
-							column.render(row, col, column)
+							column.render({ row, col, column })
 						) : (
 							<TableHeaderCell
+								className={props.className}
+								colNumber={col}
 								key={`row-${row}-col-${col}`}
 								rowNumber={row}
-								colNumber={col}
-								rowType={'header'}
-								htmlId={column.id || tableId}
-								htmlClass={column.class || ''}
-								cssClasses={cssClasses}
+								rowType={RowType.header}
+								id={column.id || `${tableId}-header-cell`}
+								tableHeaderCellClassName={className}
 							>
 								{column.value || ''}
 							</TableHeaderCell>

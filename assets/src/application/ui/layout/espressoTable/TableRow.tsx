@@ -2,41 +2,30 @@ import React from 'react';
 import classNames from 'classnames';
 import { Draggable } from 'react-beautiful-dnd';
 
-/**
- * @param {Object} rowData
- * @param {Array} children
- * @param {number} rowNumber
- * @param {number} headerRowCount
- * @param {string} htmlId
- * @param {string} htmlClass
- * @param {Object} cssClasses
- * @param {string} rowType
- * @param {boolean} sortable
- * @param {Object} extraProps
- * @return {Object} rendered tr
- */
-const TableRow = ({
-	rowData,
+import { RowType, TableRowProps } from './types';
+
+const TableRow: React.FC<TableRowProps> = ({
 	children,
+	rowData,
 	rowNumber,
 	headerRowCount,
-	htmlId,
-	htmlClass,
-	cssClasses,
-	rowType,
-	sortable,
-	...extraProps
+	rowClassName = '',
+	className,
+	rowType = RowType.body,
+	sortable = false,
+	...props
 }) => {
 	if (!rowData) {
 		return null;
 	}
-	const id = htmlId ? `${htmlId}-row-${rowNumber}` : `ee-rspnsv-table-row-${rowNumber}`;
+	const id = props.id ? `${props.id}-row-${rowNumber}` : `ee-rspnsv-table-row-${rowNumber}`;
 	const css = classNames(
-		htmlClass,
+		rowClassName,
 		`ee-rspnsv-table-${rowType}-row`,
 		`ee-row-${rowNumber}`,
-		cssClasses[`${rowType}RowClass`]
+		className[`${rowType}RowClass`]
 	);
+
 	return sortable ? (
 		<Draggable key={rowData.key} draggableId={rowData.key} index={rowNumber}>
 			{({ innerRef, draggableProps, dragHandleProps }, { isDragging }) => {
@@ -56,7 +45,6 @@ const TableRow = ({
 						}}
 						{...draggableProps}
 						{...dragHandleProps}
-						{...extraProps}
 					>
 						{children}
 					</tr>
@@ -64,7 +52,7 @@ const TableRow = ({
 			}}
 		</Draggable>
 	) : (
-		<tr id={id} className={css} {...extraProps}>
+		<tr id={id} className={css}>
 			{children}
 		</tr>
 	);

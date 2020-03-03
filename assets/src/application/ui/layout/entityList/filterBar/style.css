@@ -5,15 +5,16 @@
 
 .ee-entity-list-filter-bar-wrapper {
 	background: var(--ee-background-color);
+	border-bottom-color: var(--ee-color-grey-12);
+	border-bottom-style: solid;
+	border-bottom-width: 1px;
 	-webkit-box-sizing: border-box;
 	-moz-box-sizing: border-box;
 	box-sizing: border-box;
 	color: var(--ee-default-text-color);
-	padding: 0 var(--ee-padding-tiny) var(--ee-padding-tiny);
-	border-bottom-color: var(--ee-color-grey-12);
-	border-bottom-style: solid;
-	border-bottom-width: 1px;
 	margin: 0 0 var(--ee-margin-small);
+	overflow: hidden;
+	padding: 0 var(--ee-padding-tiny) var(--ee-padding-tiny);
 }
 
 .ee-filter-bar-filter-main {
