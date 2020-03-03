@@ -31,7 +31,7 @@ const TableBody: React.FC<TableBodyProps> = ({
 				rowNumber={rowNumber}
 				colNumber={colNumber}
 				rowType={RowType.body}
-				id={cellData.id || tableId}
+				id={cellData.id || `${tableId}-header-cell`}
 				tableHeaderCellClassName={cellData.class}
 			>
 				{cellData.value || ''}
@@ -40,7 +40,7 @@ const TableBody: React.FC<TableBodyProps> = ({
 			<TableDataCell
 				className={props.className}
 				colNumber={colNumber}
-				id={cellData.id || tableId}
+				id={cellData.id || `${tableId}-data-cell`}
 				key={`row-${rowNumber}-col-${colNumber}`}
 				rowNumber={rowNumber}
 				tableDataCellClassName={cellData.class || ''}
