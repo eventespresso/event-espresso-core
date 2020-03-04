@@ -1,4 +1,6 @@
-export const PRICE_INPUT_FIELDS = [
+import { UpdatePriceInput } from '@edtrServices/apollo/mutations';
+
+export const PRICE_INPUT_FIELDS: Array<keyof UpdatePriceInput> = [
 	'amount',
 	'desc',
 	'isDefault',
