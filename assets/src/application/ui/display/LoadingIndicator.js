@@ -1,8 +1,8 @@
 /**
  * External dependencies
  */
-import * as React from 'react';
-import { Callout, H6, Spinner } from '@blueprintjs/core/lib/esm';
+import React from 'react';
+import { Callout, H6, Spinner } from '@blueprintjs/core/lib/cjs';
 
 export const boxStyle = {
 	padding: '2rem',

@@ -19,9 +19,11 @@ import { useUpdateDatetimeList, useUpdatePriceTypeList, useUpdateTicketList, use
 import {
 	useCurrentUserQueryOptions,
 	useUpdateCurrentUserCache,
+} from '../../../../shared/services/apollo/queries/currentUser';
+import {
 	useGeneralSettingsQueryOptions,
 	useUpdateGeneralSettingsCache,
-} from '../../../../shared/services/apollo/queries';
+} from '../../../../shared/services/apollo/queries/generalSettings';
 
 const useCacheRehydration = (): void => {
 	const { initialize: initializeRelations, isInitialized: relationsInitialized } = useRelations();
