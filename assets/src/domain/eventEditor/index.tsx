@@ -1,12 +1,6 @@
-/**
- * External imports
- */
 import React from 'react';
 import { render } from 'react-dom';
 
-/**
- * Internal imports
- */
 import './interfaces/types';
 import '../../application/ui/styles/themes/default';
 import EventEditor from './ui/EventEditor';

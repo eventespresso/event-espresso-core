@@ -26,7 +26,7 @@ describe('RelationsProvider', () => {
 		expect(relationsProvider.getData).toBeInstanceOf(Function);
 		expect(relationsProvider.getRelations).toBeInstanceOf(Function);
 		expect(relationsProvider.removeRelation).toBeInstanceOf(Function);
-		expect(relationsProvider.setData).toBeInstanceOf(Function);
+		expect(relationsProvider.initialize).toBeInstanceOf(Function);
 		expect(relationsProvider.updateRelations).toBeInstanceOf(Function);
 	});
 
