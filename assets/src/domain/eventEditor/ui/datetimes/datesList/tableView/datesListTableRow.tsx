@@ -2,6 +2,7 @@ import React from 'react';
 import { format } from 'date-fns';
 
 import DateRegistrationsLink from '@edtrUI/datetimes/DateRegistrationsLink';
+import DateActionsMenu from '@edtrUI/datetimes/datesList/actionsMenu/DateActionsMenu';
 import { Datetime } from '../../../../services/apollo/types';
 import { DisplayDates } from '../../../../interfaces/datetimes/types';
 import { getBackgroundColorClassName, status } from '@sharedEntities/datetimes/helpers';
@@ -75,6 +76,12 @@ const datesListTableRow = ({ datetime, displayDates }: Props) => {
 			className:
 				'ee-date-list-cell ee-date-list-col-registrations ee-rspnsv-table-column-smaller ee-centered-column',
 			value: <DateRegistrationsLink datetime={datetime} />,
+		},
+		{
+			key: 'actions',
+			type: 'cell',
+			className: 'ee-date-list-cell ee-date-list-col-actions ee-rspnsv-table-column-big',
+			value: <DateActionsMenu entity={datetime} />,
 		},
 	];
 

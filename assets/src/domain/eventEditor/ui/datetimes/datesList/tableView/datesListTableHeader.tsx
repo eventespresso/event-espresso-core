@@ -78,6 +78,12 @@ const datesListTableHeader = (displayDates: DisplayDates) => {
 				</>
 			),
 		},
+		{
+			key: 'actions',
+			type: 'cell',
+			className: 'ee-date-list-col-hdr ee-date-list-col-actions ee-rspnsv-table-column-big ee-centered-column',
+			value: <span className={'ee-rspnsv-table-long-label'}>{__('Actions', 'event_espresso')}</span>,
+		},
 	];
 
 	const cells = cellsData.filter((cell) => {
