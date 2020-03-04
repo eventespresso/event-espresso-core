@@ -67,17 +67,6 @@ const datesListTableHeader = (displayDates: DisplayDates) => {
 			value: __('Sold', 'event_espresso'),
 		},
 		{
-			key: 'reserved',
-			type: 'cell',
-			className: 'ee-date-list-col-hdr ee-date-list-col-reserved ee-rspnsv-table-column-tiny ee-number-column',
-			value: (
-				<>
-					<span className={'ee-rspnsv-table-long-label'}>{__('Reserved', 'event_espresso')}</span>
-					<span className={'ee-rspnsv-table-short-label'}>{__('Rsrvd', 'event_espresso')}</span>
-				</>
-			),
-		},
-		{
 			key: 'registrations',
 			type: 'cell',
 			className:

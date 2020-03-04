@@ -101,12 +101,6 @@ const datesListTableRow = ({ datetime, displayDates }: Props) => {
 			value: datetime.sold || 0,
 		},
 		{
-			key: 'reserved',
-			type: 'cell',
-			className: 'ee-date-list-cell ee-date-list-col-reserved ee-rspnsv-table-column-tiny ee-number-column',
-			value: datetime.reserved,
-		},
-		{
 			key: 'registrations',
 			type: 'cell',
 			className:
