@@ -1,14 +1,6 @@
-import gql from 'graphql-tag';
+export * from './queries';
 
-export const GET_GENERAL_SETTINGS: any = gql`
-	query GET_GENERAL_SETTINGS {
-		generalSettings {
-			dateFormat
-			timeFormat
-			timezone
-		}
-	}
-`;
+export { default as useGeneralSettingsQueryOptions } from './useGeneralSettingsQueryOptions';
 
 export { default as useFetchGeneralSettings } from './useFetchGeneralSettings';
 
