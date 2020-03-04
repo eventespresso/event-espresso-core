@@ -32,7 +32,7 @@ const TableBody: React.FC<TableBodyProps> = ({
 				colNumber={colNumber}
 				rowType={RowType.body}
 				id={cellData.id || `${tableId}-header-cell`}
-				tableHeaderCellClassName={cellData.class}
+				tableHeaderCellClassName={cellData.className}
 			>
 				{cellData.value || ''}
 			</TableHeaderCell>
@@ -43,7 +43,7 @@ const TableBody: React.FC<TableBodyProps> = ({
 				id={cellData.id || `${tableId}-data-cell`}
 				key={`row-${rowNumber}-col-${colNumber}`}
 				rowNumber={rowNumber}
-				tableDataCellClassName={cellData.class || ''}
+				tableDataCellClassName={cellData.className || ''}
 			>
 				<ResponsiveCell heading={column.value} value={cellData.value} />
 			</TableDataCell>
@@ -52,6 +52,8 @@ const TableBody: React.FC<TableBodyProps> = ({
 
 	const tableBodyRows = tableRows.map((row, rowNumber) => {
 		const sortable = isFunc(onDragEnd);
+
+		console.log({ row });
 
 		return (
 			<TableRow

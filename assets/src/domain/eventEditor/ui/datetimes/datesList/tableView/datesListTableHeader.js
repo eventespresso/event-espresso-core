@@ -13,30 +13,30 @@ const datesListTableHeader = () => {
 		key: 'dates-list-header',
 		type: 'row',
 		primary: true,
-		class: 'ee-editor-date-list-items-header-row',
+		className: 'ee-editor-date-list-items-header-row',
 		cells: [
 			{
 				key: 'stripe',
 				type: 'cell',
-				class: 'ee-date-list-col-hdr ee-entity-list-status-stripe ee-rspnsv-table-column-micro',
+				className: 'ee-date-list-col-hdr ee-entity-list-status-stripe ee-rspnsv-table-column-micro',
 				value: '',
 			},
 			{
 				key: 'id',
 				type: 'cell',
-				class: 'ee-date-list-col-hdr ee-date-list-col-id ee-number-column ee-rspnsv-table-column-tiny',
+				className: 'ee-date-list-col-hdr ee-date-list-col-id ee-number-column ee-rspnsv-table-column-tiny',
 				value: __('ID', 'event_espresso'),
 			},
 			{
 				key: 'name',
 				type: 'cell',
-				class: 'ee-date-list-col-hdr ee-date-list-col-name ee-rspnsv-table-column-huge',
+				className: 'ee-date-list-col-hdr ee-date-list-col-name ee-rspnsv-table-column-huge',
 				value: __('Name', 'event_espresso'),
 			},
 			{
 				key: 'start',
 				type: 'cell',
-				class: 'ee-date-list-col-hdr ee-date-list-col-name-start ee-rspnsv-table-column-default',
+				className: 'ee-date-list-col-hdr ee-date-list-col-name-start ee-rspnsv-table-column-default',
 				value: (
 					<>
 						<span className={'ee-rspnsv-table-long-label'}>{__('Start Date', 'event_espresso')}</span>
@@ -47,7 +47,7 @@ const datesListTableHeader = () => {
 			{
 				key: 'end',
 				type: 'cell',
-				class: 'ee-date-list-col-hdr ee-date-list-col-end ee-rspnsv-table-column-default',
+				className: 'ee-date-list-col-hdr ee-date-list-col-end ee-rspnsv-table-column-default',
 				value: (
 					<>
 						<span className={'ee-rspnsv-table-long-label'}>{__('End Date', 'event_espresso')}</span>
@@ -58,7 +58,8 @@ const datesListTableHeader = () => {
 			{
 				key: 'capacity',
 				type: 'cell',
-				class: 'ee-date-list-col-hdr ee-date-list-col-capacity ee-rspnsv-table-column-tiny ee-number-column',
+				className:
+					'ee-date-list-col-hdr ee-date-list-col-capacity ee-rspnsv-table-column-tiny ee-number-column',
 				value: (
 					<>
 						<span className={'ee-rspnsv-table-long-label'}>{__('Capacity', 'event_espresso')}</span>
@@ -69,13 +70,13 @@ const datesListTableHeader = () => {
 			{
 				key: 'sold',
 				type: 'cell',
-				class: 'ee-date-list-col-hdr ee-date-list-col-sold ee-rspnsv-table-column-tiny ee-number-column',
+				className: 'ee-date-list-col-hdr ee-date-list-col-sold ee-rspnsv-table-column-tiny ee-number-column',
 				value: __('Sold', 'event_espresso'),
 			},
 			{
 				key: 'registrations',
 				type: 'cell',
-				class:
+				className:
 					'ee-date-list-col-hdr ee-date-list-col-registrations ee-rspnsv-table-column-smaller ee-centered-column',
 				value: (
 					<>
