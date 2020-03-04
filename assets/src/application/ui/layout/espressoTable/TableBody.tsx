@@ -53,8 +53,6 @@ const TableBody: React.FC<TableBodyProps> = ({
 	const tableBodyRows = tableRows.map((row, rowNumber) => {
 		const sortable = isFunc(onDragEnd);
 
-		console.log({ row });
-
 		return (
 			<TableRow
 				className={props.className}

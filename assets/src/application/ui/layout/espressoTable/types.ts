@@ -32,7 +32,7 @@ export interface HeaderRow {
 	cells: Cell[];
 	children?: React.ReactNode;
 	className?: string;
-	extraProps: object;
+	extraProps?: object;
 	id?: string;
 	key: string;
 	primary: boolean;
