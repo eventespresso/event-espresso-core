@@ -1,5 +1,5 @@
 // @ts-nocheck
-import React from 'react';
+import React, { HtmlHTMLAttributes } from 'react';
 
 import { InlineEditText } from '../InlineEditInput';
 import { parsedAmount, useMoneyDisplay } from '@appServices/utilities/money';
@@ -11,14 +11,27 @@ interface CurrencyInputProps {
 	amount: string | number;
 	placeholder?: string;
 	onChange?: (result?: { amount: string | number; id: string }) => void;
+	tag?: 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6' | 'p';
+	inputProps?: React.HTMLAttributes;
+	wrapperProps?: React.HTMLAttributes;
 }
 
-const CurrencyInput: React.FC<CurrencyInputProps> = ({ id = '', amount = 0, onChange = nullFunc }) => {
+const CurrencyInput: React.FC<CurrencyInputProps> = ({
+	id = '',
+	amount = 0,
+	onChange = nullFunc,
+	tag = 'p',
+	inputProps = {},
+	wrapperProps = {},
+}) => {
 	const { formatAmount, beforeAmount, afterAmount } = useMoneyDisplay();
+	const before = beforeAmount ? <span className={'ee-currency-input__before-amount'}>{beforeAmount} </span> : '';
+	const after = afterAmount ? <span className={'ee-currency-input__after-amount'}> {afterAmount}</span> : '';
 	const formattedAmount = formatAmount(amount);
+	const Wrapper = tag;
 	return (
-		<>
-			{beforeAmount}
+		<Wrapper className={'ee-currency-input'} {...wrapperProps}>
+			{before}
 			<InlineEditText
 				key={id}
 				onChange={(value: string) => {
@@ -27,11 +40,12 @@ const CurrencyInput: React.FC<CurrencyInputProps> = ({ id = '', amount = 0, onCh
 						onChange({ amount: newAmount, id });
 					}
 				}}
+				{...inputProps}
 			>
 				{formattedAmount}
 			</InlineEditText>
-			{afterAmount}
-		</>
+			{after}
+		</Wrapper>
 	);
 };
 

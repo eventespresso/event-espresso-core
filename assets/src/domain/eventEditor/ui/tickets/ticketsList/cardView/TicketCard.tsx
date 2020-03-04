@@ -1,5 +1,4 @@
 import React from 'react';
-import { Typography } from 'antd';
 import { __ } from '@wordpress/i18n';
 
 import { CalendarDateRange } from '@appCalendars/dateDisplay';
@@ -62,19 +61,18 @@ const TicketCard: React.FC<ListItemProps> = ({ id }) => {
 						>
 							{ticket.description ? ticket.description : __('Edit description...')}
 						</InlineEditTextArea>
-						<Typography.Title level={4} style={{ color: 'grey' }}>
-							<CurrencyInput
-								id={ticket.id}
-								amount={ticket.price}
-								placeholder={__('set price...')}
-								onChange={({ amount: price }: any): void => {
-									price = parseFloat(price);
-									if (price !== ticket.price) {
-										updateEntity({ price });
-									}
-								}}
-							/>
-						</Typography.Title>
+						<CurrencyInput
+							id={ticket.id}
+							amount={ticket.price}
+							placeholder={__('set price...')}
+							onChange={({ amount: price }: any): void => {
+								price = parseFloat(price);
+								if (price !== ticket.price) {
+									updateEntity({ price });
+								}
+							}}
+							tag={'h3'}
+						/>
 						<div>
 							{__('Related Dates:')}{' '}
 							{relatedDates.filter(Boolean).map((datetimeId) => (

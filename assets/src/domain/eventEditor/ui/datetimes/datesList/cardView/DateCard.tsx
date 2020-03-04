@@ -95,7 +95,6 @@ const DateCard: React.FC<ListItemProps> = ({ id }) => {
 									updateEntity({ name });
 								}
 							}}
-							ellipsis={{ rows: 2 }}
 						>
 							{date.name ? date.name : __('Edit title...')}
 						</InlineEditHeading>
@@ -106,7 +105,6 @@ const DateCard: React.FC<ListItemProps> = ({ id }) => {
 									updateEntity({ description });
 								}
 							}}
-							ellipsis={{ rows: 2, expandable: true }}
 						>
 							{date.description ? date.description : __('Edit description...')}
 						</InlineEditTextArea>
