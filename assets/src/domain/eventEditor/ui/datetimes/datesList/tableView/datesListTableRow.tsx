@@ -1,10 +1,12 @@
 import React from 'react';
 import { format } from 'date-fns';
 
+import DateRegistrationsLink from '@edtrUI/datetimes/DateRegistrationsLink';
 import { Datetime } from '../../../../services/apollo/types';
 import { DisplayDates } from '../../../../interfaces/datetimes/types';
 import { getBackgroundColorClassName, status } from '@sharedEntities/datetimes/helpers';
 import { shortenGuid } from '@appServices/utilities/text';
+
 import '../../../../../../application/ui/styles/root/entity-status.css';
 
 const DATE_TIME_FORMAT = 'EEE MMM yy h:mm a';
@@ -66,6 +68,12 @@ const datesListTableRow = ({ datetime, displayDates }: Props) => {
 			type: 'cell',
 			className: 'ee-date-list-cell ee-date-list-col-reserved ee-rspnsv-table-column-tiny ee-number-column',
 			value: datetime.reserved,
+		},
+		{
+			key: 'registrations',
+			type: 'cell',
+			class: 'ee-date-list-cell ee-date-list-col-registrations ee-rspnsv-table-column-smaller ee-centered-column',
+			value: <DateRegistrationsLink datetime={datetime} />,
 		},
 	];
 

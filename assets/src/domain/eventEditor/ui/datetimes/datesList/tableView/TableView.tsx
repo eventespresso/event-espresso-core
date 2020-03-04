@@ -27,9 +27,7 @@ const TableView = ({
 		const columns = datesListTableRow({ datetime, displayDates, ...props });
 		return columns;
 	});
-
 	const headerRows = datesListTableHeader(displayDates);
-
 	const tableClassName = classNames(className, 'ee-dates-list-list-view');
 
 	return (
