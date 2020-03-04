@@ -3,9 +3,9 @@ import { useRelations } from '../../../../../application/services/apollo/relatio
 import './data';
 
 const useSetRelationalData = (): void => {
-	const { setData } = useRelations();
+	const { initialize } = useRelations();
 	useEffect(() => {
-		setData(window.eeEditorData.event.relations);
+		initialize(window.eeEditorData.event.relations);
 	}, []);
 };
 

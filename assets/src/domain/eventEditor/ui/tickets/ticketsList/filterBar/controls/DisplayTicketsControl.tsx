@@ -1,7 +1,7 @@
 /**
  * External imports
  */
-import * as React from 'react';
+import React from 'react';
 import { SelectControl } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 

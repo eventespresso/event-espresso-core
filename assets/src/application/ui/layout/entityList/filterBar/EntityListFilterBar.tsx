@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React from 'react';
 import { AppstoreFilled, FilterOutlined, TableOutlined } from '@ant-design/icons';
 import { __ } from '@wordpress/i18n';
 

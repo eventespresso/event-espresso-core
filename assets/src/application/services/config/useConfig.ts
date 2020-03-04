@@ -1,8 +1,8 @@
 import { useContext } from 'react';
 
-import { Config } from './types';
+import { ConfigDataProps } from './types';
 import { ConfigContext } from '../context/ConfigProvider';
 
-const useConfig = (): Config => useContext<Config>(ConfigContext);
+const useConfig = (): ConfigDataProps => useContext<ConfigDataProps>(ConfigContext);
 
 export default useConfig;

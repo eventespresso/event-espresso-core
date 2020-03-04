@@ -1,13 +1,11 @@
-/**
- * External imports
- */
-import React, { createContext, useState } from 'react';
-import { useConfigData, ConfigDataProps, Config } from '../config';
+import React, { createContext } from 'react';
+import { useConfigData, ConfigDataProps } from '../config';
 import { CurrentUser, DateTimeFormats } from '../../valueObjects/config';
 import { ProviderProps } from './types';
-import { useCurrentUser, useGeneralSettings } from '../../../domain/shared/services/apollo/queries';
+import { useCurrentUser } from '../../../domain/shared/services/apollo/queries/currentUser';
+import { useGeneralSettings } from '../../../domain/shared/services/apollo/queries/generalSettings';
 
-const ConfigContext = createContext<Config | null>(null);
+const ConfigContext = createContext<ConfigDataProps | null>(null);
 
 const { Provider, Consumer: ConfigConsumer } = ConfigContext;
 
@@ -16,14 +14,13 @@ const ConfigProvider: React.FC<ProviderProps> = ({ children }) => {
 	const currentUser = useCurrentUser();
 	const generalSettings = useGeneralSettings();
 
-	const value: ConfigDataProps = {
+	const config: ConfigDataProps = {
 		...ConfigData,
 		currentUser: currentUser && CurrentUser(currentUser),
 		dateTimeFormats: generalSettings && DateTimeFormats(generalSettings),
 	};
 
-	const [config, setConfig] = useState<ConfigDataProps>(value);
-	return <Provider value={{ config, setConfig }}>{children}</Provider>;
+	return <Provider value={config}>{children}</Provider>;
 };
 
 export { ConfigProvider, ConfigConsumer, ConfigContext };

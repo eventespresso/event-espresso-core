@@ -13,7 +13,7 @@ interface TimeZoneTime {
 const useTimeZoneTime = (): TimeZoneTime => {
 	const config = useConfig();
 
-	const timezone = path<string>(['config', 'timezone', 'name'], config);
+	const timezone = path<string>(['timezone', 'name'], config);
 
 	const localTimeToUtc: DateFn = (date) => {
 		return localToUtc(date, timezone);

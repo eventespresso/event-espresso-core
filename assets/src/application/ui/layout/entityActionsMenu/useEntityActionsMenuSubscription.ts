@@ -1,9 +1,9 @@
 import { useEffect } from 'react';
 
-import { useEntityActions } from '@appLayout/entityActionsMenu';
+import { useEntityActions } from './';
 import useDatesActionMenuHandler from '../../../../domain/eventEditor/ui/datetimes/hooks/useDatesActionMenuHandler';
 import useTicketsActionMenuHandler from '../../../../domain/eventEditor/ui/tickets/hooks/useTicketsActionMenuHandler';
-import { Domain, SubscriptionsOptions } from './types';
+import { Domain } from './types';
 
 const useEntityActionsMenuSubscription = () => {
 	const { subscribe } = useEntityActions<Domain>('eventEditor');

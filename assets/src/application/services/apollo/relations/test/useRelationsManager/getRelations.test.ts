@@ -35,11 +35,11 @@ describe('RelationsManager.getRelations()', () => {
 		expect(relatedIds).toEqual([]);
 	});
 
-	it('returns an empty array when data is set using setData but the entity does not exist', () => {
+	it('returns an empty array when data is set using initialize but the entity does not exist', () => {
 		const { result } = renderHook(() => useRelationsManager());
 
 		act(() => {
-			result.current.setData(relationalData);
+			result.current.initialize(relationalData);
 		});
 
 		const relatedIds = result.current.getRelations({
@@ -51,7 +51,7 @@ describe('RelationsManager.getRelations()', () => {
 		expect(relatedIds).toEqual([]);
 	});
 
-	it('returns an empty array when data is set using setData but the related entities do not exist', () => {
+	it('returns an empty array when data is set using initialize but the related entities do not exist', () => {
 		const { result } = renderHook(() => useRelationsManager());
 
 		const pathToRelatedEntityIds = ['datetimes', existingRelationalEntityId, 'tickets'];
@@ -60,7 +60,7 @@ describe('RelationsManager.getRelations()', () => {
 		const modifiedData = assocPath(pathToRelatedEntityIds, [], relationalData);
 
 		act(() => {
-			result.current.setData(modifiedData);
+			result.current.initialize(modifiedData);
 		});
 
 		const relatedIds = result.current.getRelations({
@@ -90,7 +90,7 @@ describe('RelationsManager.getRelations()', () => {
 		expect(relatedIds).toEqual(passedRelatedIds);
 	});
 
-	it('returns an array of related entity ids when the data is set via setData', () => {
+	it('returns an array of related entity ids when the data is set via initialize', () => {
 		const { result } = renderHook(() => useRelationsManager());
 
 		let relatedIds = result.current.getRelations({
@@ -103,7 +103,7 @@ describe('RelationsManager.getRelations()', () => {
 		expect(relatedIds).toEqual([]);
 
 		act(() => {
-			result.current.setData(relationalData);
+			result.current.initialize(relationalData);
 		});
 
 		relatedIds = result.current.getRelations({

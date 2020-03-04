@@ -1,8 +1,8 @@
 /**
  * External dependencies
  */
-import * as React from 'react';
-import { Callout, NonIdealState, Spinner } from '@blueprintjs/core/lib/esm';
+import React from 'react';
+import { Callout, NonIdealState, Spinner } from '@blueprintjs/core/lib/cjs';
 
 const ErrorIndicator = () => (
 	<Callout>

@@ -1,10 +1,6 @@
 import React from 'react';
 
-import {
-	useEntityActions,
-	useEntityActionsManager,
-	AdditionalSubscriptionCbOptions,
-} from '@appLayout/entityActionsMenu';
+import { useEntityActions, useEntityActionsManager, AdditionalSubscriptionCbOptions } from './';
 import { Domain } from './types';
 import { Entity } from '@appServices/apollo/types';
 

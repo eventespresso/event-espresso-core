@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { notification, Spin } from 'antd';
 import { ArgsProps, IconType } from 'antd/lib/notification';
-import uuidv4 from 'uuid/v4';
+import { v4 as uuidv4 } from 'uuid';
 import { without } from 'ramda';
 
 import { ToastManagerProps, Toaster } from './types';

@@ -24,11 +24,11 @@ describe('RelationsManager.getData()', () => {
 		expect(relationalState).toEqual(relationalData);
 	});
 
-	it('returns the relational state set via setData', () => {
+	it('returns the relational state set via initialize', () => {
 		const { result } = renderHook(() => useRelationsManager());
 
 		act(() => {
-			result.current.setData(relationalData);
+			result.current.initialize(relationalData);
 		});
 
 		const relationalState = result.current.getData();

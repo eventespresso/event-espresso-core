@@ -1,5 +1,5 @@
 import { useQuery } from '@apollo/react-hooks';
-import { GET_CURRENT_USER } from '.';
+import { GET_CURRENT_USER } from './';
 import { FetchEntitiesResult } from '../../../../../eventEditor/services/apollo/queries/types';
 import { Viewer } from '../../../../../../application/valueObjects/config/types';
 

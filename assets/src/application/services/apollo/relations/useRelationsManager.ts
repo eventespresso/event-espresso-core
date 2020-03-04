@@ -1,4 +1,4 @@
-import { useReducer } from 'react';
+import { useReducer, useState } from 'react';
 import { pathOr, assocPath, dissocPath, clone } from 'ramda';
 import { RelationAction, RelationFunctionProps, RelationsManager, RelationalData } from './types';
 
@@ -6,15 +6,22 @@ const INITIAL_STATE: RelationalData = {};
 
 const useRelationsManager = (data: RelationalData = INITIAL_STATE): RelationsManager => {
 	const [state, dispatch] = useReducer(relationsReducer, data);
+	const [initialized, setInitialized] = useState(false);
 
 	/**
 	 * Sets the relational data.
 	 *
 	 * @param {object} data Relational data
 	 */
-	const setData = (data: RelationalData): void => {
+	const initialize = (data: RelationalData): void => {
 		dispatch({ type: 'SET_DATA', data });
+		setInitialized(true);
 	};
+
+	/**
+	 * Whether the relations manager has been initialized.
+	 */
+	const isInitialized = (): boolean => initialized;
 
 	/**
 	 * Retrieve the relational data.
@@ -120,7 +127,8 @@ const useRelationsManager = (data: RelationalData = INITIAL_STATE): RelationsMan
 	};
 
 	return {
-		setData,
+		initialize,
+		isInitialized,
 		getData,
 		getRelations,
 		addRelation,

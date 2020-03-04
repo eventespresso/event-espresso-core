@@ -1,7 +1,7 @@
 // @ts-nocheck
 import React from 'react';
 
-import { InlineEditText } from '@appInputs/InlineEditInput';
+import { InlineEditText } from '../InlineEditInput';
 import { parsedAmount, useMoneyDisplay } from '@appServices/utilities/money';
 
 const nullFunc = (args?: any) => {};

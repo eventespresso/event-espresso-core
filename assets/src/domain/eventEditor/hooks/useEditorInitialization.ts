@@ -1,7 +1,6 @@
-import useInitQueries from '../services/apollo/initialization/useInitQueries';
-import useI18nData from '../services/apollo/initialization/useI18nData';
+import { useInitQueries, useI18nData } from '../services/apollo';
 import { setLocaleData } from '@wordpress/i18n';
-import { useEntityActionsMenuSubscription } from '@appLayout/entityActionsMenu';
+import { useEntityActionsMenuSubscription } from '../../../application/ui/layout/entityActionsMenu';
 
 const useEditorInitialization = (): void => {
 	// init i18n
