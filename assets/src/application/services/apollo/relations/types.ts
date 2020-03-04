@@ -39,7 +39,8 @@ export interface RelationAction extends CommonProps {
 }
 
 export interface RelationsManager {
-	setData: (data: RelationalData) => void;
+	initialize: (data: RelationalData) => void;
+	isInitialized: () => boolean;
 	getData: () => RelationalData;
 	getRelations: (options: RelationFunctionProps) => EntityId[];
 	addRelation: (options: RelationFunctionProps) => void;

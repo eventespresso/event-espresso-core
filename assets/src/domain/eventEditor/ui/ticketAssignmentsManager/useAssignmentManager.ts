@@ -10,7 +10,13 @@ type AM = AssignmentManager;
 const useAssignmentManager = (): AM => {
 	// Create a fresh instance to manage current relations/assignments
 	// without modifying/mutating the existing relations
-	const { setData, getData, getRelations, addRelation, removeRelation } = useRelationsManager();
+	const {
+		initialize: initializeRelations,
+		getData,
+		getRelations,
+		addRelation,
+		removeRelation,
+	} = useRelationsManager();
 
 	const getAssignedTickets: AM['getAssignedTickets'] = ({ datetimeId }) => {
 		return getRelations({
@@ -83,7 +89,7 @@ const useAssignmentManager = (): AM => {
 			}, relationalEntity);
 		}, newData);
 
-		setData(newData);
+		initializeRelations(newData);
 	};
 
 	return {
