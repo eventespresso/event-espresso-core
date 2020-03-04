@@ -1705,11 +1705,10 @@ class EE_Transaction extends EE_Base_Class implements EEI_Transaction
     public function recalculateLineItems()
     {
         $total_line_item = $this->total_line_item(false);
-        $success = false;
         if ($total_line_item instanceof EE_Line_Item) {
             EEH_Line_Item::resetIsTaxableForTickets($total_line_item);
-            $success = EEH_Line_Item::apply_taxes($total_line_item, true);
+            return EEH_Line_Item::apply_taxes($total_line_item, true);
         }
-        return $success;
+        return false;
     }
 }
