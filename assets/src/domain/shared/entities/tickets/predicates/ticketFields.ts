@@ -1,9 +1,10 @@
-export const TICKET_INPUT_FIELDS = [
+import { UpdateTicketInput } from '@edtrServices/apollo/mutations';
+
+export const TICKET_INPUT_FIELDS: Array<keyof UpdateTicketInput> = [
 	'datetimes',
 	'description',
 	'endDate',
 	'isDefault',
-	'isFree',
 	'isRequired',
 	'isTaxable',
 	'isTrashed',
@@ -24,4 +25,4 @@ export const TICKET_INPUT_FIELDS = [
 	'wpUser',
 ];
 
-export const TICKET_FIELDS = [...TICKET_INPUT_FIELDS, 'id', 'dbId', 'isSoldOut'];
+export const TICKET_FIELDS = [...TICKET_INPUT_FIELDS, 'id', 'dbId', 'isSoldOut', 'isFree'];
