@@ -1,14 +1,18 @@
 import React from 'react';
+import { format } from 'date-fns';
 
+import { Datetime } from '../../../../services/apollo/types';
 import { getBackgroundColorClassName, status } from '@sharedEntities/datetimes/helpers';
 import { shortenGuid } from '@appServices/utilities/text';
 import '../../../../../../application/ui/styles/root/entity-status.css';
+
+const DATE_TIME_FORMAT = 'EEE MMM yy h:mm a';
 
 /**
  * EditorDateEntityListItem
  * Displays Event Date as a table row similar to existing eventEntity editor UI
  */
-const datesListTableRow = (dateEntity, otherProps) => {
+const datesListTableRow = (dateEntity: Datetime, otherProps) => {
 	const bgClassName = getBackgroundColorClassName(dateEntity);
 	const id = dateEntity.dbId || shortenGuid(dateEntity.id);
 	const statusClassName = status(dateEntity);
@@ -37,6 +41,18 @@ const datesListTableRow = (dateEntity, otherProps) => {
 				className:
 					'ee-date-list-cell ee-date-list-col-name ee-rspnsv-table-column-bigger ee-rspnsv-table-hide-on-mobile',
 				value: dateEntity.name,
+			},
+			{
+				key: 'start',
+				type: 'cell',
+				class: 'ee-date-list-cell ee-date-list-col-start ee-rspnsv-table-column-default',
+				value: format(new Date(dateEntity.startDate), DATE_TIME_FORMAT),
+			},
+			{
+				key: 'end',
+				type: 'cell',
+				class: 'ee-date-list-cell ee-date-list-col-end ee-rspnsv-table-column-default',
+				value: format(new Date(dateEntity.endDate), DATE_TIME_FORMAT),
 			},
 			{
 				key: 'sold',
