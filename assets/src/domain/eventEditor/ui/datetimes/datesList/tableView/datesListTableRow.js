@@ -1,6 +1,7 @@
 import React from 'react';
-import { getBackgroundColorClassName, status } from '@sharedEntities/datetimes/helpers';
 
+import { getBackgroundColorClassName, status } from '@sharedEntities/datetimes/helpers';
+import { shortenGuid } from '@appServices/utilities/text';
 import '../../../../../../application/ui/styles/root/entity-status.css';
 
 /**
@@ -8,8 +9,10 @@ import '../../../../../../application/ui/styles/root/entity-status.css';
  * Displays Event Date as a table row similar to existing eventEntity editor UI
  */
 const datesListTableRow = (dateEntity, otherProps) => {
-	const statusClassName = status(dateEntity);
 	const bgClassName = getBackgroundColorClassName(dateEntity);
+	const id = dateEntity.dbId || shortenGuid(dateEntity.id);
+	const statusClassName = status(dateEntity);
+
 	return {
 		key: `row-${dateEntity.id}`,
 		type: 'row',
@@ -26,7 +29,7 @@ const datesListTableRow = (dateEntity, otherProps) => {
 				key: 'id',
 				type: 'cell',
 				className: 'ee-date-list-cell ee-date-list-col-id ee-rspnsv-table-column-tiny ee-number-column',
-				value: dateEntity.id,
+				value: id,
 			},
 			{
 				key: 'name',
