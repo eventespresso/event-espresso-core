@@ -1,6 +1,6 @@
 import React from 'react';
 import classNames from 'classnames';
-import uuidv4 from 'uuid/v4';
+import { v4 as uuidv4 } from 'uuid';
 
 import { isEmpty } from '@appServices/utilities/array';
 import Table from './Table';
