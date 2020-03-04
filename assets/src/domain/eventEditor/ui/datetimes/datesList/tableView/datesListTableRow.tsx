@@ -48,13 +48,13 @@ const datesListTableRow = ({ datetime, displayDates }: Props) => {
 		{
 			key: 'start',
 			type: 'cell',
-			class: 'ee-date-list-cell ee-date-list-col-start ee-rspnsv-table-column-default',
+			className: 'ee-date-list-cell ee-date-list-col-start ee-rspnsv-table-column-default',
 			value: format(new Date(datetime.startDate), DATE_TIME_FORMAT),
 		},
 		{
 			key: 'end',
 			type: 'cell',
-			class: 'ee-date-list-cell ee-date-list-col-end ee-rspnsv-table-column-default',
+			className: 'ee-date-list-cell ee-date-list-col-end ee-rspnsv-table-column-default',
 			value: format(new Date(datetime.endDate), DATE_TIME_FORMAT),
 		},
 		{
@@ -72,7 +72,8 @@ const datesListTableRow = ({ datetime, displayDates }: Props) => {
 		{
 			key: 'registrations',
 			type: 'cell',
-			class: 'ee-date-list-cell ee-date-list-col-registrations ee-rspnsv-table-column-smaller ee-centered-column',
+			className:
+				'ee-date-list-cell ee-date-list-col-registrations ee-rspnsv-table-column-smaller ee-centered-column',
 			value: <DateRegistrationsLink datetime={datetime} />,
 		},
 	];
