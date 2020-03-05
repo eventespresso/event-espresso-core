@@ -5,6 +5,8 @@ import { ResponsiveTable } from '@appLayout/espressoTable';
 
 import datesListTableHeader from './datesListTableHeader';
 import datesListTableRow from './datesListTableRow';
+import useDatetimeItem from '@edtrServices/apollo/queries/datetimes/useDatetimeItem';
+
 import './editor-date-entities-list-view.css';
 
 const noZebraStripe = ['row', 'stripe', 'name', 'actions'];
@@ -23,7 +25,8 @@ const TableView = ({
 	setSortBy,
 	...props
 }) => {
-	const formRows = datetimes.map((datetime) => {
+	const formRows = datetimes.map(({ id }) => {
+		const datetime = useDatetimeItem({ id });
 		const columns = datesListTableRow({ datetime, displayDates, ...props });
 		return columns;
 	});
