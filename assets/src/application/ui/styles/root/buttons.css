@@ -9,6 +9,7 @@
 
 .esprs-button.ant-btn,
 .esprs-button.ant-btn:active,
+.esprs-button.ant-btn:not([disabled]):active,
 .esprs-button.ant-btn:focus,
 .esprs-button.ant-btn:visited {
 	border-radius: var(--ee-border-radius-small);
@@ -33,6 +34,10 @@
 	vertical-align: middle;
 }
 
+.esprs-button.ant-btn:focus {
+	box-shadow: 0 0 0 1px var(--ee-color-primary), 0 2px 2px rgba(0, 0, 0, 0.6);
+}
+
 .esprs-button.ant-btn:not(.ant-btn-icon-only),
 .esprs-button.ant-btn:active:not(.ant-btn-icon-only),
 .esprs-button.ant-btn:focus:not(.ant-btn-icon-only),
@@ -50,19 +55,20 @@
 	width: var(--ee-icon-button-size);
 }
 
-.esprs-button:active:not([disabled]) {
+.esprs-button.ant-btn:active:not([disabled]) {
 	top: 1px;
 }
+
 .esprs-button.ant-btn:hover {
 	cursor: pointer;
 }
 
-.esprs-button + .esprs-button {
+.esprs-button.ant-btn + .esprs-button.ant-btn {
 	margin-left: var(--ee-margin-default);
 }
 
-.esprs-button-label + .esprs-button.ant-btn-icon-only {
-	margin-right: var(--ee-margin-smaller);
+.esprs-button-label + .esprs-button.ant-btn {
+	margin-right: var(--ee-margin-small) !important;
 }
 
 .esprs-button .text-wrap {
@@ -144,6 +150,11 @@
 	border: 1px solid var(--ee-default-text-color-low-contrast);
 	box-shadow: none;
 	color: var(--ee-default-text-color);
+}
+
+.esprs-btn-minimal.ant-btn.ant-btn-icon-only:focus {
+	border-color: var(--ee-color-primary);
+	box-shadow: 0 0 0 1px var(--ee-color-primary);
 }
 
 .esprs-btn-minimal.ant-btn.ant-btn-icon-only:hover:not([disabled]),
@@ -306,6 +317,14 @@
 .ee-entity-menu .esprs-btn-secondary.esprs-button.ant-btn:hover,
 .ee-entity-menu .esprs-btn-accent.esprs-button.ant-btn:hover {
 	border: inherit;
+}
+
+.ee-entity-menu .esprs-btn-default.esprs-button.ant-btn:focus,
+.ee-entity-menu .esprs-btn-primary.esprs-button.ant-btn:focus,
+.ee-entity-menu .esprs-btn-secondary.esprs-button.ant-btn:focus,
+.ee-entity-menu .esprs-btn-accent.esprs-button.ant-btn:focus {
+	border: 1px solid var(--ee-color-primary);
+	box-shadow: 0 0 0 1px var(--ee-color-primary);
 }
 
 /* SPECIAL FORM STYLES */

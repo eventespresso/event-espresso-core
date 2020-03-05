@@ -43,7 +43,13 @@ const EspressoButton: React.FC<EspressoButtonProps> = ({
 		const svgIcon = () => <EspressoIcon icon={icon as Icon} svgSize={svgSize} />;
 		if (svgIcon) {
 			eeButton = (
-				<Button {...buttonProps} onClick={onClick} className={className} icon={<AntIcon component={svgIcon} />}>
+				<Button
+					{...buttonProps}
+					className={className}
+					icon={<AntIcon component={svgIcon} />}
+					onClick={onClick}
+					tabIndex={0}
+				>
 					{buttonText && buttonText}
 				</Button>
 			);
@@ -51,7 +57,7 @@ const EspressoButton: React.FC<EspressoButtonProps> = ({
 	} else {
 		// AntD or JSX element icon
 		eeButton = (
-			<Button {...buttonProps} onClick={onClick} className={className} icon={icon}>
+			<Button {...buttonProps} className={className} icon={icon} onClick={onClick} tabIndex={0}>
 				{buttonText && buttonText}
 			</Button>
 		);
