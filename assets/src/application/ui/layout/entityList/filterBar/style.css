@@ -21,6 +21,7 @@
 	display: flex;
 	flex-flow: row wrap;
 	align-items: flex-start;
+	padding: 1px 0 0;
 }
 
 .ee-filter-bar-filter-collapsible {
@@ -82,8 +83,13 @@
 	margin-top: var(--ee-margin-micro);
 }
 
-.ee-entity-list-filter-bar-wrapper .components-icon-button.ee-active-filters {
+.ee-entity-list-filter-bar-wrapper .esprs-button.ant-btn.ee-filter-bar-filter.ee-active-filters {
+	border: 1px solid var(--ee-color-primary);
 	color: var(--ee-color-primary);
+}
+
+.ee-entity-list-filter-bar-wrapper .esprs-button.ant-btn.ee-filter-bar-filter.ee-active-filters path {
+	fill: var(--ee-color-primary);
 }
 
 .ee-entity-list-filter-bar-wrapper .components-base-control__label {

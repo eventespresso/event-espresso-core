@@ -2,7 +2,7 @@ import React from 'react';
 import { AppstoreFilled, FilterOutlined, TableOutlined } from '@ant-design/icons';
 import { __ } from '@wordpress/i18n';
 
-import { EspressoButton, EspressoButtonType } from '../../../input/EspressoButton';
+import { EspressoButton, EspressoButtonType, Icon } from '../../../input/EspressoButton';
 import Collapsible from './Collapsible';
 import { EntityListFilterState } from './useEntityListFilterState';
 import './style.css';
@@ -39,7 +39,7 @@ const EntityListFilterBar: React.FC<EntityListFilterBarProps> = ({ entityFilters
 				<EspressoButton
 					buttonType={EspressoButtonType.MINIMAL}
 					className={view === 'list' ? 'ee-filter-bar-filter ee-active-filters' : 'ee-filter-bar-filter'}
-					icon={<TableOutlined />}
+					icon={Icon.LIST_VIEW}
 					id={`ee-list-view-btn-${listId}`}
 					onClick={setListView}
 					tooltip={__('table view')}
@@ -77,7 +77,7 @@ const EntityListFilterBar: React.FC<EntityListFilterBarProps> = ({ entityFilters
 				<EspressoButton
 					buttonType={EspressoButtonType.MINIMAL}
 					className={showEntityFilters ? 'ee-filter-bar-filter ee-active-filters' : 'ee-filter-bar-filter'}
-					icon={<FilterOutlined />}
+					icon={Icon.FILTER}
 					id={`ee-grid-filter-btn-${listId}`}
 					onClick={toggleEntityFilters}
 					tooltip={__('show filters')}

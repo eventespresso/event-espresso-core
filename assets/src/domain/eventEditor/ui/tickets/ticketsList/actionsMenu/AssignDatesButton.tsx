@@ -13,7 +13,7 @@ const AssignDatesButton: React.FC<EditItemModalProps> = ({ id, ...rest }) => {
 	};
 	return (
 		<EspressoButton
-			icon={Icon.TICKET}
+			icon={Icon.CALENDAR}
 			tooltip={__('assign dates')}
 			tooltipProps={{ placement: 'right' }}
 			onClick={onClick}

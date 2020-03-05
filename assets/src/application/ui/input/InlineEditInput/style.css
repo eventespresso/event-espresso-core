@@ -5,7 +5,18 @@
 	transition: all 0.1s ease;
 	transition-delay: 0.3s;
 }
-.ee-inline-edit:hover .ant-typography-edit {
+
+.ee-inline-edit:focus,
+.ee-inline-edit:hover {
+	outline: none;
+}
+
+.ee-inline-edit:focus {
+	color: var(--ee-color-primary-low-contrast) !important;
+}
+
+.ee-inline-edit:hover .ant-typography-edit,
+.ee-inline-edit .ant-typography-edit:focus {
 	margin: 0 0.5rem;
 	opacity: 1;
 	transform: scale(1);

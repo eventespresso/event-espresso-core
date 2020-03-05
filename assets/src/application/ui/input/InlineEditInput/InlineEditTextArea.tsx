@@ -3,8 +3,9 @@ import React from 'react';
 import Editable from './Editable';
 import { TextAreaProps } from './types';
 
-const InlineEditTextArea: React.FC<TextAreaProps> = ({ ...rest }) => {
-	return <Editable inputType='textarea' ellipsis={{ rows: 3, expandable: true }} {...rest} />;
+const InlineEditTextArea: React.FC<TextAreaProps> = ({ ellipsis, ...rest }) => {
+	ellipsis = ellipsis ? ellipsis : { rows: 2, expandable: true };
+	return <Editable inputType='textarea' ellipsis {...rest} />;
 };
 
 export default InlineEditTextArea;

@@ -16,6 +16,9 @@ export enum Icon {
 	TICKET = 'ticket-alt',
 	TRASH = 'trash',
 	FILTER = 'filter',
+	LIST_VIEW = 'list-view',
+	UNLINK = 'editor-unlink',
+	LINK = 'admin-links',
 }
 
 export type SvgPath = {

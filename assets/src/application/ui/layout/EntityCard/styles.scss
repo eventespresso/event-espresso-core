@@ -4,7 +4,6 @@
 	display: flex;
 	flex-flow: row nowrap;
 	height: 100%;
-	padding: 0;
 	justify-content: space-between;
 
 	&--reverse-layout {
@@ -30,13 +29,49 @@
 		box-sizing: border-box;
 		display: flex;
 		flex-flow: column nowrap;
+		font-family: 'Segoe UI', Candara, 'Bitstream Vera Sans', 'DejaVu Sans', 'Bitstream Vera Sans', 'Trebuchet MS',
+			Verdana, 'Verdana Ref', sans-serif;
 		height: 100%;
+		line-height: calc(var(--ee-line-height-modifier) * 0.875);
 		justify-content: space-between;
 		text-align: center;
 		width: 100%;
 
 		> div {
 			width: 100%;
+		}
+
+		.entity-card-details {
+			&__name {
+				color: var(--ee-default-text-color);
+				font-size: var(--ee-font-size-bigger);
+				font-weight: bold;
+				letter-spacing: var(--ee-letter-spacing-font-size-huge);
+				line-height: calc(var(--ee-line-height-modifier) * 0.6);
+				margin: 0.25rem 0 0.75rem;
+				padding: 0;
+				text-align: center;
+				width: 100%;
+			}
+
+			&__description {
+				font-size: var(--ee-font-size-default);
+				margin: 0 0 0.75rem;
+				text-align: center;
+				width: 100%;
+			}
+
+			&__price {
+				text-align: center;
+				margin: 0 0 0.75rem;
+				width: 100%;
+
+				> span {
+					color: var(--ee-default-text-color-super-low-contrast);
+					font-size: var(--ee-font-size-bigger);
+					font-weight: bolder;
+				}
+			}
 		}
 	}
 

@@ -1,5 +1,5 @@
 import React from 'react';
-import { TextProps } from 'antd/es/typography/Text';
+import { TextProps } from './types';
 
 import Editable from './Editable';
 

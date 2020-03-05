@@ -1,5 +1,4 @@
 import React from 'react';
-import { Typography } from 'antd';
 import { __ } from '@wordpress/i18n';
 
 import { CalendarDateRange } from '@appCalendars/dateDisplay';
@@ -45,8 +44,11 @@ const TicketCard: React.FC<ListItemProps> = ({ id }) => {
 				details={
 					<>
 						<InlineEditHeading
+							level={3}
+							className={'entity-card-details__name'}
 							onChange={(name: string): void => {
 								if (name !== ticket.name) {
+									updateEntity({ name });
 									updateEntity({ name });
 								}
 							}}
@@ -54,6 +56,7 @@ const TicketCard: React.FC<ListItemProps> = ({ id }) => {
 							{ticket.name ? ticket.name : __('Edit title...')}
 						</InlineEditHeading>
 						<InlineEditTextArea
+							className={'entity-card-details__description'}
 							onChange={(description: string): void => {
 								if (description !== ticket.description) {
 									updateEntity({ description });
@@ -62,20 +65,21 @@ const TicketCard: React.FC<ListItemProps> = ({ id }) => {
 						>
 							{ticket.description ? ticket.description : __('Edit description...')}
 						</InlineEditTextArea>
-						<Typography.Title level={4} style={{ color: 'grey' }}>
-							<CurrencyInput
-								id={ticket.id}
-								amount={ticket.price}
-								placeholder={__('set price...')}
-								onChange={({ amount: price }: any): void => {
-									price = parseFloat(price);
-									if (price !== ticket.price) {
-										updateEntity({ price });
-									}
-								}}
-							/>
-						</Typography.Title>
-						<div>
+						<CurrencyInput
+							id={ticket.id}
+							amount={ticket.price}
+							placeholder={__('set price...')}
+							inputProps={{ ellipsis: false }}
+							wrapperProps={{ className: 'entity-card-details__price' }}
+							onChange={({ amount: price }: any): void => {
+								price = parseFloat(price);
+								if (price !== ticket.price) {
+									updateEntity({ price });
+								}
+							}}
+							tag={'h3'}
+						/>
+						<div style={{ margin: '0 0 .5rem' }}>
 							{__('Related Dates:')}{' '}
 							{relatedDates.filter(Boolean).map((datetimeId) => (
 								<DatetimeIdTag key={datetimeId} id={datetimeId} />

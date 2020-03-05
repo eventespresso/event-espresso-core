@@ -14,7 +14,7 @@
 			font-size: calc(var(--ee-font-size-big) * 2);
 			font-weight: bold;
 			line-height: calc(var(--ee-line-height-modifier) * 0.875);
-			margin: var(--ee-margin-default) 0 var(--ee-margin-small);
+			margin: var(--ee-margin-big) 0 var(--ee-margin-smaller);
 		}
 	}
 
@@ -33,7 +33,7 @@
 	&__card-view {
 		display: flex;
 		flex-flow: row wrap;
-		justify-content: space-between;
+		justify-content: space-around;
 		width: 100%;
 	}
 
