@@ -1,0 +1,114 @@
+$breakpoints: (
+	mobile: 768px,
+	laptop: 1240px,
+	desktop-lg: 1800px,
+);
+
+@mixin breakpoint($breakpoint, $direction) {
+	@if map-has-key($breakpoints, $breakpoint) {
+		// Get the breakpoint value.
+		$breakpoint-value: map-get($breakpoints, $breakpoint);
+
+		@if $direction == max {
+			@media only screen and (max-width: ($breakpoint-value - 1)) {
+				@content;
+			}
+		} @else if $direction == min {
+			@media (min-width: $breakpoint-value) {
+				@content;
+			}
+		} @else {
+			@media ($direction: $breakpoint-value) {
+				@content;
+			}
+		}
+
+		// If the breakpoint doesn't exist in the map.
+	} @else {
+		@if $direction == max {
+			@if $breakpoint == 782px or $breakpoint == 600px {
+				@media screen and (max-width: $breakpoint) {
+					@content;
+				}
+			} @else {
+				@media only screen and (max-width: $breakpoint) {
+					@content;
+				}
+			}
+		} @else if $direction == min {
+			@media (min-width: $breakpoint) {
+				@content;
+			}
+		} @else {
+			@media ($direction: $breakpoint) {
+				@content;
+			}
+		}
+	}
+}
+
+@mixin max360px {
+	@include breakpoint(360px, max) {
+		@content;
+	}
+}
+
+@mixin max480px {
+	@include breakpoint(480px, max) {
+		@content;
+	}
+}
+
+@mixin max600px {
+	@include breakpoint(600px, max) {
+		@content;
+	}
+}
+
+@mixin max782px {
+	@include breakpoint(782px, max) {
+		@content;
+	}
+}
+
+@mixin max850px {
+	@include breakpoint(850px, max) {
+		@content;
+	}
+}
+
+@mixin max960px {
+	@include breakpoint(960px, max) {
+		@content;
+	}
+}
+
+@mixin max1024px {
+	@include breakpoint(1024px, max) {
+		@content;
+	}
+}
+
+@mixin max1280px {
+	@include breakpoint(1280px, max) {
+		@content;
+	}
+}
+
+@mixin max1366px {
+	@include breakpoint(1366px, max) {
+		@content;
+	}
+}
+
+@mixin max1766px {
+	@include breakpoint(1766px, max) {
+		@content;
+	}
+}
+
+@mixin max1920px {
+	@include breakpoint(1920px, max) {
+		@content;
+	}
+}

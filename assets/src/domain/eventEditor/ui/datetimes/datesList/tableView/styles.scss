@@ -1,58 +1,17 @@
-$breakpoints: (
-	mobile: 600px,
-	tablet: 782px,
-	laptop: 1240px,
-	desktop-lg: 1800px,
-);
-
-@mixin breakpoint($breakpoint, $direction) {
-	@if map-has-key($breakpoints, $breakpoint) {
-		// Get the breakpoint value.
-		$breakpoint-value: map-get($breakpoints, $breakpoint);
-
-		@if $direction == max {
-			@media (max-width: ($breakpoint-value - 1)) {
-				@content;
-			}
-		} @else if $direction == min {
-			@media (min-width: $breakpoint-value) {
-				@content;
-			}
-		} @else {
-			@media ($direction: $breakpoint-value) {
-				@content;
-			}
-		}
-
-		// If the breakpoint doesn't exist in the map.
-	} @else {
-		@if $direction == max {
-			@media (max-width: $breakpoint) {
-				@content;
-			}
-		} @else if $direction == min {
-			@media (min-width: $breakpoint) {
-				@content;
-			}
-		} @else {
-			@media ($direction: $breakpoint) {
-				@content;
-			}
-		}
-	}
-}
+@import '../../../../../../application/ui/styles/mixins/breakpoint.scss';
 
 .ee-editor-date-actions-menu {
-	@include breakpoint(mobile, max) {
+	@include max360px {
 		justify-content: center;
 	}
-	@include breakpoint(tablet, max) {
+
+	@include max782px {
 		justify-content: start;
 	}
 }
 
 .ee-rspnsv-table .ee-date-list-col-actions.ee-rspnsv-table-body-td .ee-rspnsv-table-mobile-only-column-value {
-	@include breakpoint(mobile, max) {
+	@include max360px {
 		clear: both;
 		width: 100%;
 	}
