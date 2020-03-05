@@ -2,7 +2,7 @@ import React from 'react';
 import classNames from 'classnames';
 import { Tooltip } from 'antd';
 import { InfoCircleOutlined } from '@ant-design/icons';
-import uuidv4 from 'uuid/v4';
+import { v4 as uuidv4 } from 'uuid';
 
 import { FormItem, MappedField } from '../adapters';
 import { FieldRendererProps } from '../types';
@@ -22,9 +22,11 @@ const FieldRenderer: React.FC<FieldRendererProps> = (props) => {
 	const tooltipKey = info ? uuidv4() : null;
 
 	const fieldInfo = info ? (
-		<Tooltip placement='right' title={info} id={tooltipKey}>
-			<InfoCircleOutlined className='tooltip' />
-		</Tooltip>
+		<span id={tooltipKey}>
+			<Tooltip placement='right' title={info}>
+				<InfoCircleOutlined className='tooltip' />
+			</Tooltip>
+		</span>
 	) : null;
 
 	const validateStatus = getValidateStatus(meta);
