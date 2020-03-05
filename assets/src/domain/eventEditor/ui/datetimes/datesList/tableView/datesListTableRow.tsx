@@ -4,15 +4,15 @@ import { __ } from '@wordpress/i18n';
 
 import DateRegistrationsLink from '@edtrUI/datetimes/DateRegistrationsLink';
 import DateActionsMenu from '@edtrUI/datetimes/datesList/actionsMenu/DateActionsMenu';
-import { Datetime } from '../../../../services/apollo/types';
-import { DisplayDates } from '../../../../interfaces/datetimes/types';
+import { Datetime } from '@edtrServices/apollo/types';
+import { DisplayDates } from '@edtrInterfaces/datetimes/types';
 import { ENTITY_LIST_DATE_TIME_FORMAT } from '@appConstants/dateFnsFormats';
 import { getBackgroundColorClassName, status } from '@sharedEntities/datetimes/helpers';
 import { InlineEditText } from '@appInputs/InlineEditInput';
 import { shortenGuid } from '@appServices/utilities/text';
 import { useDatetimeMutator } from '@edtrServices/apollo/mutations';
 
-import '../../../../../../application/ui/styles/root/entity-status.css';
+import '@application/ui/styles/root/entity-status.css';
 
 interface Props {
 	datetime: Datetime;
