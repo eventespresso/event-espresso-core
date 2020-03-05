@@ -1,5 +1,5 @@
 import { slice } from 'ramda';
-import { useCallback, useState } from 'react';
+import { useCallback, useState, useRef, useEffect } from 'react';
 
 import { Entity } from '@appServices/apollo/types';
 import { PaginationProps, onChangeFn, onShowSizeChangeFn } from './types';
@@ -10,6 +10,13 @@ const useEntityPagination = <E extends Entity>({ entities }: EntityListComponent
 	const [perPage, setPerPage] = useState(6);
 	const paginatedEntities = slice<E>(perPage * (pageNumber - 1), perPage * pageNumber, entities);
 	const total = entities.length;
+	const previousCount = useRef(total);
+
+	useEffect(() => {
+		if (previousCount.current !== total) {
+			setPageNumber(1);
+		}
+	}, [total]);
 
 	const onChange: onChangeFn = useCallback((newPageNumber) => setPageNumber(newPageNumber), []);
 
