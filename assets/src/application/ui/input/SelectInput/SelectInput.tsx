@@ -12,7 +12,7 @@ const SelectInput: React.FC<SelectInputProps> = React.memo(({ id, label, classNa
 	const htmlId = id ? `ee-select-input-${id}` : null;
 	return (
 		<BaseInput label={label} id={htmlId} className={className}>
-			<Select style={{ width: 'auto' }} id={htmlId} size='middle' dropdownMatchSelectWidth={true} {...rest} />
+			<Select id={htmlId} size='middle' dropdownMatchSelectWidth={true} {...rest} />
 		</BaseInput>
 	);
 });
