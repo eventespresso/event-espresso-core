@@ -139,18 +139,19 @@ export interface TableHeaderCellProps {
 
 export interface TableRowProps {
 	cells?: Cell[];
-	children: React.ReactNode;
-	className: TableClassName;
+	children?: React.ReactNode;
+	className: TableClassName | string;
 	headerRows?: HeaderRow[];
 	headerRowClassName?: string;
 	headerRowCount?: number;
 	id?: string;
 	key: string;
-	rowData: any;
+	rowData?: any;
 	rowClassName?: string;
-	rowNumber: number;
+	rowNumber?: number;
 	rowType?: RowType;
 	sortable?: boolean;
+	type?: string;
 }
 
 type TableId = string;
