@@ -6,14 +6,13 @@ import DateRegistrationsLink from '@edtrUI/datetimes/DateRegistrationsLink';
 import DateActionsMenu from '@edtrUI/datetimes/datesList/actionsMenu/DateActionsMenu';
 import { Datetime } from '../../../../services/apollo/types';
 import { DisplayDates } from '../../../../interfaces/datetimes/types';
+import { ENTITY_LIST_DATE_TIME_FORMAT } from '@appConstants/dateFnsFormats';
 import { getBackgroundColorClassName, status } from '@sharedEntities/datetimes/helpers';
 import { InlineEditText } from '@appInputs/InlineEditInput';
 import { shortenGuid } from '@appServices/utilities/text';
 import { useDatetimeMutator } from '@edtrServices/apollo/mutations';
 
 import '../../../../../../application/ui/styles/root/entity-status.css';
-
-const DATE_TIME_FORMAT = 'EEE MMM yy h:mm a';
 
 interface Props {
 	datetime: Datetime;
@@ -85,13 +84,13 @@ const datesListTableRow = ({ datetime, displayDates }: Props) => {
 			key: 'start',
 			type: 'cell',
 			className: 'ee-date-list-cell ee-date-list-col-start ee-rspnsv-table-column-default',
-			value: format(new Date(datetime.startDate), DATE_TIME_FORMAT),
+			value: format(new Date(datetime.startDate), ENTITY_LIST_DATE_TIME_FORMAT),
 		},
 		{
 			key: 'end',
 			type: 'cell',
 			className: 'ee-date-list-cell ee-date-list-col-end ee-rspnsv-table-column-default',
-			value: format(new Date(datetime.endDate), DATE_TIME_FORMAT),
+			value: format(new Date(datetime.endDate), ENTITY_LIST_DATE_TIME_FORMAT),
 		},
 		capacity,
 		{
