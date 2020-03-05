@@ -36,8 +36,12 @@ const Collapsible: React.FC<CollapsibleProps> = ({
 	return (
 		<animated.div style={props}>
 			<div className='ee-filter-bar-filter-collapsible' ref={ref}>
-				{entityFilters}
-				<SearchInput listId={listId} searchText={searchText} setSearchText={setSearchText} />
+				{showEntityFilters && (
+					<>
+						{entityFilters}
+						<SearchInput listId={listId} searchText={searchText} setSearchText={setSearchText} />
+					</>
+				)}
 			</div>
 		</animated.div>
 	);
