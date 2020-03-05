@@ -44,7 +44,7 @@ $breakpoints: (
 
 .ee-editor-date-actions-menu {
 	@include breakpoint(mobile, max) {
-		justify-content: start;
+		justify-content: center;
 	}
 	@include breakpoint(tablet, max) {
 		justify-content: start;
