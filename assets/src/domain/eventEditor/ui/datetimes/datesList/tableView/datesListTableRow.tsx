@@ -1,12 +1,15 @@
 import React from 'react';
 import { format } from 'date-fns';
+import { __ } from '@wordpress/i18n';
 
 import DateRegistrationsLink from '@edtrUI/datetimes/DateRegistrationsLink';
 import DateActionsMenu from '@edtrUI/datetimes/datesList/actionsMenu/DateActionsMenu';
 import { Datetime } from '../../../../services/apollo/types';
 import { DisplayDates } from '../../../../interfaces/datetimes/types';
 import { getBackgroundColorClassName, status } from '@sharedEntities/datetimes/helpers';
+import { InlineEditText } from '@appInputs/InlineEditInput';
 import { shortenGuid } from '@appServices/utilities/text';
+import { useDatetimeMutator } from '@edtrServices/apollo/mutations';
 
 import '../../../../../../application/ui/styles/root/entity-status.css';
 
@@ -25,6 +28,44 @@ const datesListTableRow = ({ datetime, displayDates }: Props) => {
 	const bgClassName = getBackgroundColorClassName(datetime);
 	const id = datetime.dbId || shortenGuid(datetime.id);
 	const statusClassName = status(datetime);
+	const { updateEntity } = useDatetimeMutator(datetime.id);
+
+	const capacity = {
+		key: 'capacity',
+		type: 'cell',
+		className: 'ee-date-list-cell ee-date-list-col-capacity ee-rspnsv-table-column-tiny ee-number-column',
+		value: (
+			<InlineEditText
+				className={'ee-focus-priority-5'}
+				onChange={(capacity: string): void => {
+					if (capacity !== String(datetime.capacity)) {
+						updateEntity({ capacity: Number(capacity) });
+					}
+				}}
+			>
+				{datetime.capacity ? datetime.capacity : __('Edit capacity...')}
+			</InlineEditText>
+		),
+	};
+
+	const name = {
+		key: 'name',
+		type: 'cell',
+		className:
+			'ee-date-list-cell ee-date-list-col-name ee-rspnsv-table-column-bigger ee-rspnsv-table-hide-on-mobile',
+		value: (
+			<InlineEditText
+				className={'ee-focus-priority-5'}
+				onChange={(name: string): void => {
+					if (name !== datetime.name) {
+						updateEntity({ name });
+					}
+				}}
+			>
+				{datetime.name ? datetime.name : __('Edit title...')}
+			</InlineEditText>
+		),
+	};
 
 	const cellsData = [
 		{
@@ -39,13 +80,7 @@ const datesListTableRow = ({ datetime, displayDates }: Props) => {
 			className: 'ee-date-list-cell ee-date-list-col-id ee-rspnsv-table-column-tiny ee-number-column',
 			value: id,
 		},
-		{
-			key: 'name',
-			type: 'cell',
-			className:
-				'ee-date-list-cell ee-date-list-col-name ee-rspnsv-table-column-bigger ee-rspnsv-table-hide-on-mobile',
-			value: datetime.name,
-		},
+		name,
 		{
 			key: 'start',
 			type: 'cell',
@@ -58,11 +93,12 @@ const datesListTableRow = ({ datetime, displayDates }: Props) => {
 			className: 'ee-date-list-cell ee-date-list-col-end ee-rspnsv-table-column-default',
 			value: format(new Date(datetime.endDate), DATE_TIME_FORMAT),
 		},
+		capacity,
 		{
 			key: 'sold',
 			type: 'cell',
 			className: 'ee-date-list-cell ee-date-list-col-sold ee-rspnsv-table-column-tiny ee-number-column',
-			value: datetime.sold,
+			value: datetime.sold || 0,
 		},
 		{
 			key: 'reserved',
