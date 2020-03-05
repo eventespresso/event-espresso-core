@@ -1,23 +1,59 @@
-/** -------------------------------------------------------------------------
- * Event Espresso DatesList List View Stylesheet
- * © 2018 Event Espresso
- * ------------------------------------------------------------------------- */
+$breakpoints: (
+	mobile: 600px,
+	tablet: 782px,
+	laptop: 1240px,
+	desktop-lg: 1800px,
+);
 
-/* WordPress Admin Media Query Breakpoint: Tablet */
-@media screen and (max-width: 782px) {
-	.ee-editor-date-actions-menu {
+@mixin breakpoint($breakpoint, $direction) {
+	@if map-has-key($breakpoints, $breakpoint) {
+		// Get the breakpoint value.
+		$breakpoint-value: map-get($breakpoints, $breakpoint);
+
+		@if $direction == max {
+			@media (max-width: ($breakpoint-value - 1)) {
+				@content;
+			}
+		} @else if $direction == min {
+			@media (min-width: $breakpoint-value) {
+				@content;
+			}
+		} @else {
+			@media ($direction: $breakpoint-value) {
+				@content;
+			}
+		}
+
+		// If the breakpoint doesn't exist in the map.
+	} @else {
+		@if $direction == max {
+			@media (max-width: $breakpoint) {
+				@content;
+			}
+		} @else if $direction == min {
+			@media (min-width: $breakpoint) {
+				@content;
+			}
+		} @else {
+			@media ($direction: $breakpoint) {
+				@content;
+			}
+		}
+	}
+}
+
+.ee-editor-date-actions-menu {
+	@include breakpoint(mobile, max) {
+		justify-content: start;
+	}
+	@include breakpoint(tablet, max) {
 		justify-content: start;
 	}
 }
 
-/* WordPress Admin Media Query Breakpoint: Smartphone */
-@media screen and (max-width: 600px) {
-	.ee-rspnsv-table .ee-date-list-col-actions.ee-rspnsv-table-body-td .ee-rspnsv-table-mobile-only-column-value {
+.ee-rspnsv-table .ee-date-list-col-actions.ee-rspnsv-table-body-td .ee-rspnsv-table-mobile-only-column-value {
+	@include breakpoint(mobile, max) {
 		clear: both;
 		width: 100%;
-	}
-
-	.ee-editor-date-actions-menu {
-		justify-content: center;
 	}
 }
