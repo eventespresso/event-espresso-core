@@ -40,7 +40,7 @@ const EspressoButton = React.forwardRef<Button, EspressoButtonProps>((props, ref
 		'ant-btn-icon-only': !buttonText,
 		'ee-noIcon': !icon,
 	});
-	let eeButton: React.ReactNode;
+	let eeButton: JSX.Element;
 	// check if icon prop is just an icon name (like "calendar") and if not, assume it is JSX
 	if (isEspressoIcon(icon)) {
 		// custom EE icon
