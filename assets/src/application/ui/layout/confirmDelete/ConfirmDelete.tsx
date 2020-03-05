@@ -4,7 +4,7 @@ import { PopconfirmProps } from 'antd/lib/popconfirm';
 import { __ } from '@wordpress/i18n';
 
 interface ConfirmDeleteProps extends Omit<PopconfirmProps, 'title'> {
-	message: string;
+	message?: string;
 }
 
 const ConfirmDelete: React.FC<ConfirmDeleteProps> = ({ children, message, ...props }) => {
