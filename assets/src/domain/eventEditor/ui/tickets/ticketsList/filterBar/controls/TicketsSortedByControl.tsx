@@ -2,8 +2,8 @@
  * External imports
  */
 import React from 'react';
-import { SelectControl } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
+import { SelectInput } from '@appInputs/SelectInput';
 
 /**
  * Internal imports
@@ -22,10 +22,10 @@ interface TicketsSortedByControlProps {
  * @param {string} sortTicketsBy
  * @return {Object} rendered control
  */
-const TicketsSortedByControl: React.FC<TicketsSortedByControlProps> = ({ setSortTicketsBy, sortTicketsBy }) => {
-	return React.useMemo(() => {
+const TicketsSortedByControl: React.FC<TicketsSortedByControlProps> = React.memo(
+	({ setSortTicketsBy, sortTicketsBy }) => {
 		return (
-			<SelectControl
+			<SelectInput
 				label={__('sort')}
 				className='ee-ticket-list-filter-bar-order-select'
 				value={sortTicketsBy}
@@ -48,9 +48,10 @@ const TicketsSortedByControl: React.FC<TicketsSortedByControlProps> = ({ setSort
 					},
 				]}
 				onChange={setSortTicketsBy}
+				size='large'
 			/>
 		);
-	}, [sortTicketsBy, setSortTicketsBy]);
-};
+	}
+);
 
 export default TicketsSortedByControl;

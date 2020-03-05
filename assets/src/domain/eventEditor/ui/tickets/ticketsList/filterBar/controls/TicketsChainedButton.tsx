@@ -2,7 +2,6 @@
  * External imports
  */
 import React from 'react';
-import { LinkOutlined } from '@ant-design/icons';
 import { EspressoButton, EspressoButtonType, Icon } from '@application/ui/input/EspressoButton';
 import { __ } from '@wordpress/i18n';
 

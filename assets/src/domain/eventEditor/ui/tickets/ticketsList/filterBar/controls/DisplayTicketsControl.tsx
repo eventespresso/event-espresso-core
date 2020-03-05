@@ -2,8 +2,8 @@
  * External imports
  */
 import React from 'react';
-import { SelectControl } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
+import { SelectInput } from '@appInputs/SelectInput';
 
 /**
  * Internal imports
@@ -22,10 +22,10 @@ interface DisplayTicketsControlProps {
  * @param {Function} setDisplayTicketDate
  * @return {Object} rendered control
  */
-const DisplayTicketsControl: React.FC<DisplayTicketsControlProps> = ({ displayTicketDate, setDisplayTicketDate }) => {
-	return React.useMemo(() => {
+const DisplayTicketsControl: React.FC<DisplayTicketsControlProps> = React.memo(
+	({ displayTicketDate, setDisplayTicketDate }) => {
 		return (
-			<SelectControl
+			<SelectInput
 				label={__('display')}
 				className='ee-ticket-list-filter-bar-display-select'
 				value={displayTicketDate}
@@ -44,9 +44,10 @@ const DisplayTicketsControl: React.FC<DisplayTicketsControlProps> = ({ displayTi
 					},
 				]}
 				onChange={setDisplayTicketDate}
+				size='large'
 			/>
 		);
-	}, [displayTicketDate, setDisplayTicketDate]);
-};
+	}
+);
 
 export default DisplayTicketsControl;
