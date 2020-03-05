@@ -1,0 +1,9 @@
+.ee-base-input {
+	.ee-base-input-label {
+		color: var(--ee-default-text-color);
+		display: block;
+		font-weight: bold;
+		margin: var(--ee-margin-micro) var(--ee-margin-micro) 0;
+		white-space: nowrap;
+	}
+}

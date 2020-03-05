@@ -39,7 +39,7 @@ const Collapsible: React.FC<CollapsibleProps> = ({
 				{showEntityFilters && (
 					<>
 						{entityFilters}
-						<SearchInput listId={listId} searchText={searchText} setSearchText={setSearchText} />
+						<SearchInput id={listId} searchText={searchText} setSearchText={setSearchText} />
 					</>
 				)}
 			</div>
