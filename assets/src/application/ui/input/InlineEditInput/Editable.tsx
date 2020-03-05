@@ -13,20 +13,12 @@ const EditableTypes = {
 	textarea: Paragraph,
 };
 
-const Editable = ({ inputType, onChange, ellipsis, className, ...rest }: EditableProps) => {
+const Editable: React.FC<EditableProps> = ({ inputType, onChange, className, ...rest }) => {
 	const Component = EditableTypes[inputType];
 
 	const htmlClasses = classNames('ee-inline-edit', `ee-inline-edit-${inputType}`, className);
 
-	return (
-		<Component
-			className={htmlClasses}
-			editable={{
-				onChange,
-			}}
-			{...rest}
-		/>
-	);
+	return <Component className={htmlClasses} editable={{ onChange }} tabIndex={0} {...rest} />;
 };
 
 export default Editable;
