@@ -8,11 +8,13 @@
 
 .ee-inline-edit:focus,
 .ee-inline-edit:hover {
-	color: var(--ee-color-secondary) !important;
 	outline: none;
 }
 
-.ee-inline-edit:focus .ant-typography-edit,
+.ee-inline-edit:focus {
+	color: var(--ee-color-primary-low-contrast) !important;
+}
+
 .ee-inline-edit:hover .ant-typography-edit,
 .ee-inline-edit .ant-typography-edit:focus {
 	margin: 0 0.5rem;
