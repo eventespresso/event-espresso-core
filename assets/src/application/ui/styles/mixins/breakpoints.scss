@@ -1,13 +1,13 @@
-$breakpoints: (
+$breakpointsMapping: (
 	mobile: 768px,
 	laptop: 1240px,
 	desktop-lg: 1800px,
 );
 
 @mixin breakpoint($breakpoint, $direction) {
-	@if map-has-key($breakpoints, $breakpoint) {
+	@if map-has-key($breakpointsMapping, $breakpoint) {
 		// Get the breakpoint value.
-		$breakpoint-value: map-get($breakpoints, $breakpoint);
+		$breakpoint-value: map-get($breakpointsMapping, $breakpoint);
 
 		@if $direction == max {
 			@media only screen and (max-width: ($breakpoint-value - 1)) {
