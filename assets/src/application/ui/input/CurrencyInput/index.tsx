@@ -1,5 +1,5 @@
 // @ts-nocheck
-import React, { HtmlHTMLAttributes } from 'react';
+import React from 'react';
 
 import { InlineEditText } from '../InlineEditInput';
 import { parsedAmount, useMoneyDisplay } from '@appServices/utilities/money';
