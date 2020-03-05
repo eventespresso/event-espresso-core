@@ -127,11 +127,11 @@ const datesListTableRow = ({ datetime, displayDates }: Props) => {
 	});
 
 	return {
+		cells,
+		className: `ee-editor-date-list-view-row ${statusClassName}`,
+		id: `ee-editor-date-list-view-row-${datetime.id}`,
 		key: `row-${datetime.id}`,
 		type: 'row',
-		id: `ee-editor-date-list-view-row-${datetime.id}`,
-		className: `ee-editor-date-list-view-row ${statusClassName}`,
-		cells,
 	};
 };
 
