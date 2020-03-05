@@ -17,7 +17,7 @@ export interface EntityListComponentProps<T extends Entity> {
 
 export interface EntityListProps<T extends Entity> extends EntityListComponentProps<T> {
 	CardView: React.JSXElementConstructor<CardViewProps>;
-	TableView: React.JSXElementConstructor<EntityListComponentProps<T>>;
+	displayDates?: string;
 	entityFilters: JSX.Element;
 	entityType: TypeName;
 	footer: JSX.Element;
@@ -26,4 +26,5 @@ export interface EntityListProps<T extends Entity> extends EntityListComponentPr
 	loadingText?: string;
 	noResultsTitle?: string;
 	noResultsDesc?: string;
+	TableView: React.JSXElementConstructor<EntityListComponentProps<T>>;
 }

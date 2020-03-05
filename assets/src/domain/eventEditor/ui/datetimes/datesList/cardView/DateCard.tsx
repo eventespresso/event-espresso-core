@@ -1,7 +1,6 @@
 // @ts-nocheck
 import React, { useState } from 'react';
 import { parseISO } from 'date-fns';
-
 import { __ } from '@wordpress/i18n';
 
 import { CalendarDateRange } from '@appCalendars';

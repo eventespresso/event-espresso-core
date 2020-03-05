@@ -29,6 +29,7 @@ const TableHeader: React.FC<TableHeaderProps> = ({ headerRows, tableId, ...props
 				>
 					{headerRow.cells.map((column, col) => {
 						warning(column.hasOwnProperty('value'), `Missing "value" property for header column ${col}.`);
+
 						return isFunction(column.render) ? (
 							column.render({ row, col, column })
 						) : (
@@ -39,7 +40,7 @@ const TableHeader: React.FC<TableHeaderProps> = ({ headerRows, tableId, ...props
 								rowNumber={row}
 								rowType={RowType.header}
 								id={column.id || `${tableId}-header-cell`}
-								tableHeaderCellClassName={className}
+								tableHeaderCellClassName={column.className}
 							>
 								{column.value || ''}
 							</TableHeaderCell>

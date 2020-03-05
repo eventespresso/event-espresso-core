@@ -2,8 +2,9 @@ import React from 'react';
 import { Typography } from 'antd';
 import classNames from 'classnames';
 
-import './style.css';
 import { EditableProps } from './types';
+
+import './style.css';
 
 const { Text, Title, Paragraph } = Typography;
 

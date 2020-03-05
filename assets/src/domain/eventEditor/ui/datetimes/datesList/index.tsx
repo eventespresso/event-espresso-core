@@ -17,15 +17,16 @@ const DatesList: React.FC = () => {
 
 	return (
 		<EntityList
+			CardView={DateCard}
+			displayDates={entityFiltersProps.displayDates}
 			entities={filteredEntities}
 			entityFilters={entityFilters}
 			entityType={TypeName.datetimes}
-			CardView={DateCard}
-			TableView={TableView}
 			footer={<AddNewDateButton />}
-			listId={'event-editor-dates-list'}
 			headerText={__('Event Dates')}
+			listId={'event-editor-dates-list'}
 			loadingText={__('loading event dates...')}
+			TableView={TableView}
 		/>
 	);
 };
