@@ -17,6 +17,7 @@ const useEntityPagination = <E extends Entity>({ entities }: EntityListComponent
 		if (previousCount.current !== total) {
 			// reset page number to 1
 			setPageNumber(1);
+			previousCount.current = total;
 		}
 	}, [total]);
 
