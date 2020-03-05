@@ -44,8 +44,11 @@ const TicketCard: React.FC<ListItemProps> = ({ id }) => {
 				details={
 					<>
 						<InlineEditHeading
+							level={3}
+							className={'entity-card-details__name'}
 							onChange={(name: string): void => {
 								if (name !== ticket.name) {
+									updateEntity({ name });
 									updateEntity({ name });
 								}
 							}}
@@ -53,6 +56,7 @@ const TicketCard: React.FC<ListItemProps> = ({ id }) => {
 							{ticket.name ? ticket.name : __('Edit title...')}
 						</InlineEditHeading>
 						<InlineEditTextArea
+							className={'entity-card-details__description'}
 							onChange={(description: string): void => {
 								if (description !== ticket.description) {
 									updateEntity({ description });
@@ -65,6 +69,8 @@ const TicketCard: React.FC<ListItemProps> = ({ id }) => {
 							id={ticket.id}
 							amount={ticket.price}
 							placeholder={__('set price...')}
+							inputProps={{ ellipsis: false }}
+							wrapperProps={{ className: 'entity-card-details__price' }}
 							onChange={({ amount: price }: any): void => {
 								price = parseFloat(price);
 								if (price !== ticket.price) {
@@ -73,7 +79,7 @@ const TicketCard: React.FC<ListItemProps> = ({ id }) => {
 							}}
 							tag={'h3'}
 						/>
-						<div>
+						<div style={{ margin: '0 0 .5rem' }}>
 							{__('Related Dates:')}{' '}
 							{relatedDates.filter(Boolean).map((datetimeId) => (
 								<DatetimeIdTag key={datetimeId} id={datetimeId} />

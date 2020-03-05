@@ -22,23 +22,6 @@ import { ListItemProps } from '@edtrInterfaces';
 import { useDatetimeMutator } from '@edtrServices/apollo/mutations';
 import { InlineEditHeading, InlineEditTextArea } from '@appInputs/InlineEditInput';
 
-const hdrStyle: CSSProperties = {
-	color: 'var(--ee-default-text-color)',
-	fontSize: 'var(--ee-font-size-bigger )',
-	fontWeight: 'bold',
-	letterSpacing: 'var(--ee-letter-spacing-font-size-huge)',
-	lineHeight: 'calc(var(--ee-line-height-modifier) * .875)',
-	margin: '0 0 .25rem',
-	padding: 0,
-	textAlign: 'center',
-	width: '100%',
-};
-
-const textStyle: CSSProperties = {
-	textAlign: 'center',
-	width: '100%',
-};
-
 const DateCard: React.FC<ListItemProps> = ({ id }) => {
 	const date = useDatetimeItem({ id });
 	const { isLoaded } = useStatus();
@@ -88,8 +71,8 @@ const DateCard: React.FC<ListItemProps> = ({ id }) => {
 				details={
 					<>
 						<InlineEditHeading
-							style={hdrStyle}
-							className={'ee-focus-priority-2'}
+							level={3}
+							className={'entity-card-details__name'}
 							onChange={(name: string): void => {
 								if (name !== date.name) {
 									updateEntity({ name });
@@ -99,7 +82,7 @@ const DateCard: React.FC<ListItemProps> = ({ id }) => {
 							{date.name ? date.name : __('Edit title...')}
 						</InlineEditHeading>
 						<InlineEditTextArea
-							style={textStyle}
+							className={'entity-card-details__description'}
 							onChange={(description: string): void => {
 								if (description !== date.description) {
 									updateEntity({ description });
@@ -109,7 +92,7 @@ const DateCard: React.FC<ListItemProps> = ({ id }) => {
 							{date.description ? date.description : __('Edit description...')}
 						</InlineEditTextArea>
 						{/* the following will be replaced by the entity details panel */}
-						<div>
+						<div style={{ margin: '0 0 .5rem' }}>
 							{__('Related Tickets:') + ' '}
 							{relatedTicketTags}
 						</div>

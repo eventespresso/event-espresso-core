@@ -5,24 +5,19 @@
 
 .ee-entity-paper-frame-wrapper {
 	box-sizing: border-box;
-	margin: 0 0.6% var(--ee-margin-default);
-	max-width: calc(var(--ee-font-size-small) * 50);
-	min-height: calc(var(--ee-font-size-default) * 12);
-	min-width: calc(var(--ee-font-size-small) * 30);
+	margin: var(--ee-margin-small);
+	max-width: calc(var(--ee-font-size-small) * 40);
+	min-height: calc(var(--ee-font-size-small) * 16);
+	min-width: calc(var(--ee-font-size-small) * 32);
 	padding: var(--ee-font-size-default) 0 0;
 	position: relative;
-	width: 32%;
+	width: 31%;
 }
 
 .ee-entity-paper-frame {
-	/* bottom: 0; */
 	box-sizing: border-box;
 	height: 100%;
-	/* min-height: calc(var(--ee-font-size-small) * 11); */
-	/* max-width: calc(var(--ee-font-size-small) * 33); */
-	/* vertical-align: bottom; */
 	width: 100%;
-	/* position: absolute; */
 	z-index: 0;
 }
 
@@ -62,17 +57,10 @@
 	box-shadow: var(--ee-box-shadow-big-diffuse);
 	box-sizing: border-box;
 	height: 100%;
-	/* min-height: calc(var(--ee-font-size-default) * 12); */
-	/* max-width: calc(var(--ee-font-size-small) * 33); */
-	/* min-width: calc(var(--ee-font-size-small) * 27); */
 	position: relative;
 	width: 100%;
 	vertical-align: bottom;
 }
-
-/* .ee-entity-wrapper > div:first-of-type {
-	box-shadow: var(--ee-box-shadow-tiny-inset-diffuse);
-} */
 
 /* Media Queries for specific screen sizes
  * -------------------------------------------------------------------------*/
@@ -82,16 +70,12 @@
 
 @media only screen and (max-width: 1766px) {
 	.ee-entity-paper-frame-wrapper {
-		/* margin-right: 1.5%; */
-		width: 48.5%;
+		width: 46%;
 	}
 }
 
 @media only screen and (max-width: 1366px) {
-	.ee-entity-wrapper,
-	.ee-entity-paper-frame,
 	.ee-entity-paper-frame-wrapper {
-		max-width: 525px;
 		width: 100%;
 	}
 }
@@ -108,15 +92,8 @@
 
 /* WordPress Admin Media Query Breakpoint: one column on the post write/edit screen */
 @media only screen and (max-width: 850px) {
-	.ee-entity-wrapper,
-	.ee-entity-paper-frame,
 	.ee-entity-paper-frame-wrapper {
 		width: 100%;
-	}
-
-	.ee-entity-wrapper,
-	.ee-entity-paper-frame {
-		max-width: 525px;
 	}
 }
 
@@ -126,8 +103,6 @@
 
 /* WordPress Admin Media Query Breakpoint: Smartphone */
 @media screen and (max-width: 600px) {
-	.ee-entity-wrapper,
-	.ee-entity-paper-frame,
 	.ee-entity-paper-frame-wrapper {
 		max-width: 100%;
 		min-width: 100%;
