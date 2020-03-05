@@ -5,7 +5,8 @@ import { __ } from '@wordpress/i18n';
 import { EspressoButton, EspressoButtonType, Icon } from '../../../input/EspressoButton';
 import Collapsible from './Collapsible';
 import { EntityListFilterState } from './useEntityListFilterState';
-import './style.css';
+
+import './style.scss';
 
 interface EntityListFilterBarProps {
 	entityFilters: JSX.Element;
