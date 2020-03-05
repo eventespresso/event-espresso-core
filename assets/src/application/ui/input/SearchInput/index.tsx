@@ -1,26 +1,29 @@
-import React, { useMemo } from 'react';
-import { TextControl } from '@wordpress/components';
+import React from 'react';
 import { __ } from '@wordpress/i18n';
+import { Input } from 'antd';
+import { InputProps } from 'antd/lib/input';
 
-type voidFn = () => void;
+import { BaseInput } from '../BaseInput';
 
-interface SearchInputProps {
-	listId: string;
+interface SearchInputProps extends InputProps {
 	searchText: string;
-	setSearchText: voidFn;
+	setSearchText: (text?: string) => void;
 }
 
-const SearchInput: React.FC<SearchInputProps> = ({ listId, searchText, setSearchText }) =>
-	useMemo(() => {
-		return typeof setSearchText === 'function' ? (
-			<TextControl
-				id={`ee-search-text-${listId}`}
-				label={__('search')}
+const SearchInput: React.FC<SearchInputProps> = React.memo(({ id, searchText, setSearchText, className, ...rest }) => {
+	const htmlId = `ee-search-input-${id}`;
+	return typeof setSearchText === 'function' ? (
+		<BaseInput label={__('search')} id={htmlId} className={className}>
+			<Input
+				id={htmlId}
 				className='ee-entity-list-filter-bar-search'
 				value={searchText}
-				onChange={setSearchText}
+				onChange={(e) => setSearchText(e.target.value)}
+				size='middle'
+				{...rest}
 			/>
-		) : null;
-	}, [listId, searchText, setSearchText]);
+		</BaseInput>
+	) : null;
+});
 
 export default SearchInput;
