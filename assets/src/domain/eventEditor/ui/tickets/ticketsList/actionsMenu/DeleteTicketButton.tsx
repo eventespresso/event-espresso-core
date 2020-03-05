@@ -4,18 +4,20 @@ import { __ } from '@wordpress/i18n';
 
 import useDeleteTicketHandler from '../../hooks/useDeleteTicketHandler';
 import { ListItemProps } from '@edtrInterfaces/types';
+import { ConfirmDelete } from '@appLayout/confirmDelete';
 
 const DeleteTicketButton: React.FC<ListItemProps> = ({ id, ...rest }) => {
 	const handleDeleteTicket = useDeleteTicketHandler({ id });
 
 	return (
-		<EspressoButton
-			icon={Icon.TRASH}
-			onClick={handleDeleteTicket}
-			tooltip={__('delete ticket')}
-			tooltipProps={{ placement: 'left' }}
-			{...rest}
-		/>
+		<ConfirmDelete onConfirm={handleDeleteTicket}>
+			<EspressoButton
+				icon={Icon.TRASH}
+				tooltip={__('delete ticket')}
+				tooltipProps={{ placement: 'left' }}
+				{...rest}
+			/>
+		</ConfirmDelete>
 	);
 };
 

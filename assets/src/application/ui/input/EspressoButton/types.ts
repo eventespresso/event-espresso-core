@@ -28,7 +28,7 @@ export interface EspressoButtonProps extends Partial<NativeButtonProps> {
 	buttonType?: EspressoButtonType;
 	className?: string;
 	disabled?: boolean;
-	onClick: ClickHandler;
+	onClick?: ClickHandler;
 	tooltip?: string;
 	tooltipProps?: Partial<TooltipPropsWithTitle>;
 	icon?: EspressoIcon | React.ReactNode;

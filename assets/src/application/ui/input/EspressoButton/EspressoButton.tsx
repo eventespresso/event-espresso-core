@@ -8,20 +8,25 @@ import { EspressoIcon, isEspressoIcon } from '../../display';
 
 /**
  * Button wrapper for adding styles
+ *
+ * forwardRef to be able to accept
+ * onMouseEnter, onMouseLeave, onFocus, onClick events from parent
  */
-const EspressoButton: React.FC<EspressoButtonProps> = ({
-	icon,
-	onClick,
-	buttonText,
-	buttonSize = EspressoButtonSize.DEFAULT,
-	buttonType = EspressoButtonType.DEFAULT,
-	className,
-	tooltip,
-	tooltipProps = {},
-	...buttonProps
-}) => {
-	className = classNames({
-		[className]: className,
+const EspressoButton = React.forwardRef<Button, EspressoButtonProps>((props, ref) => {
+	const {
+		icon,
+		onClick,
+		buttonText,
+		buttonSize = EspressoButtonSize.DEFAULT,
+		buttonType = EspressoButtonType.DEFAULT,
+		className: htmlClass,
+		tooltip,
+		tooltipProps = {},
+		...buttonProps
+	} = props;
+
+	const className = classNames({
+		[htmlClass]: htmlClass,
 		'esprs-button': true,
 		'esprs-btn-accent': buttonType === EspressoButtonType.ACCENT,
 		'esprs-btn-default': buttonType === EspressoButtonType.DEFAULT,
@@ -49,6 +54,7 @@ const EspressoButton: React.FC<EspressoButtonProps> = ({
 					icon={<AntIcon component={svgIcon} />}
 					onClick={onClick}
 					tabIndex={0}
+					ref={ref}
 				>
 					{buttonText && buttonText}
 				</Button>
@@ -57,7 +63,7 @@ const EspressoButton: React.FC<EspressoButtonProps> = ({
 	} else {
 		// AntD or JSX element icon
 		eeButton = (
-			<Button {...buttonProps} className={className} icon={icon} onClick={onClick} tabIndex={0}>
+			<Button {...buttonProps} className={className} icon={icon} onClick={onClick} tabIndex={0} ref={ref}>
 				{buttonText && buttonText}
 			</Button>
 		);
@@ -69,6 +75,6 @@ const EspressoButton: React.FC<EspressoButtonProps> = ({
 	) : (
 		eeButton
 	);
-};
+});
 
 export default EspressoButton;
