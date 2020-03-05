@@ -7,18 +7,18 @@ import { parsedAmount, useMoneyDisplay } from '@appServices/utilities/money';
 const nullFunc = (args?: any) => {};
 
 interface CurrencyInputProps {
-	id: string;
 	amount: string | number;
-	placeholder?: string;
-	onChange?: (result?: { amount: string | number; id: string }) => void;
-	tag?: 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6' | 'p';
+	id: string;
 	inputProps?: React.HTMLAttributes;
+	onChange?: (result?: { amount: string | number; id: string }) => void;
+	placeholder?: string;
+	tag?: 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6' | 'p';
 	wrapperProps?: React.HTMLAttributes;
 }
 
 const CurrencyInput: React.FC<CurrencyInputProps> = ({
-	id = '',
 	amount = 0,
+	id = '',
 	onChange = nullFunc,
 	tag = 'p',
 	inputProps = {},
