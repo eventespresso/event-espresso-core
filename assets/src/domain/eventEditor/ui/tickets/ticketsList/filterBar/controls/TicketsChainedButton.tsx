@@ -20,8 +20,8 @@ const TicketsChainedButton: React.FC<TicketsChainedButtonProps> = ({ isChained, 
 		? __('tickets list is linked to dates list and is showing tickets for above dates only')
 		: __('tickets list is unlinked and is showing tickets for all event dates');
 	const className = isChained
-		? 'ee-filter-bar-filter ee-active-filters ee-ticket-list-is-chained'
-		: 'ee-filter-bar-filter ee-ticket-list-not-chained';
+		? 'ee-filter-bar-filter-btn ee-active-filters ee-ticket-list-is-chained'
+		: 'ee-filter-bar-filter-btn ee-ticket-list-not-chained';
 	const icon = isChained ? Icon.LINK : Icon.UNLINK;
 	return (
 		<>
