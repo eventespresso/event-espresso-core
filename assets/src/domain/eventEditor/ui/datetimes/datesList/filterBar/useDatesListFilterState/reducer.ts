@@ -1,6 +1,7 @@
 import { Action, ActionType, FilterState } from './types';
-import { DatesSorted, DisplayDates, ShowDates } from '../../../../../interfaces/datetimes/types';
+import { DatesSorted, ShowDates } from '../../../../../interfaces/datetimes/types';
 import { Datetime } from '../../../../../services/apollo/types';
+import { DisplayDates } from '@edtrInterfaces/shared/types';
 import filters from '../../../../../../shared/entities/datetimes/predicates/filters';
 import sorters from '../../../../../../shared/entities/datetimes/predicates/sorters';
 

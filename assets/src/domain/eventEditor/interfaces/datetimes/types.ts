@@ -5,12 +5,6 @@ export enum DatesSorted {
 	byOrder = 'byOrder',
 }
 
-export enum DisplayDates {
-	start = 'start',
-	end = 'end',
-	both = 'both',
-}
-
 export enum ShowDates {
 	activeUpcoming = 'activeUpcoming',
 	activeOnly = 'activeOnly',

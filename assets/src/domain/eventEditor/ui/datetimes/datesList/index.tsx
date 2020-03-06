@@ -1,13 +1,13 @@
 import React from 'react';
 import { __ } from '@wordpress/i18n';
 
-import { EntityList } from '@appLayout/entityList';
 import AddNewDateButton from './AddNewDateButton';
 import { DateCard } from './cardView';
-import { TableView } from './tableView';
 import DatesListEntityFilters from './filterBar/DatesListEntityFilters';
-import useDatesListFilterState from './filterBar/useDatesListFilterState';
+import { EntityList } from '@appLayout/entityList';
+import { TableView } from './tableView';
 import { TypeName } from '@appServices/apollo/status';
+import useDatesListFilterState from './filterBar/useDatesListFilterState';
 import useDatetimes from '../../../services/apollo/queries/datetimes/useDatetimes';
 
 const DatesList: React.FC = () => {

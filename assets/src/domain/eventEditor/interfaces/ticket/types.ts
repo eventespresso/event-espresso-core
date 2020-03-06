@@ -5,12 +5,6 @@ export enum SortTicketsBy {
 	order = 'order',
 }
 
-export enum DisplayDates {
-	start = 'start',
-	end = 'end',
-	both = 'both',
-}
-
 export enum ShowTickets {
 	above50Sold = 'above-50-sold',
 	above75Sold = 'above-75-sold',

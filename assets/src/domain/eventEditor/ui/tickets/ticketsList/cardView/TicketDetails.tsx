@@ -2,7 +2,7 @@ import React, { useMemo } from 'react';
 import { __ } from '@wordpress/i18n';
 
 import TicketRegistrationsLink from '../../TicketRegistrationsLink';
-import useTicketRegistrationCount from '../../hooks/useTicketRegistrationCount';
+import useTicketRegistrationCount from '@edtrUI/tickets/hooks/useTicketRegistrationCount';
 import InfinitySymbol from '@application/valueObjects/InfinitySymbol';
 import parseInfinity from '@appServices/utilities/parseInfinity';
 import { EntityDetailsPanel } from '@appDisplay/enityDetails';

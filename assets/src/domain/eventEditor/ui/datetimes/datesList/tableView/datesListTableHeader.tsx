@@ -1,7 +1,8 @@
 import React from 'react';
 import { __ } from '@wordpress/i18n';
 
-import { DisplayDates } from '../../../../interfaces/datetimes/types';
+import { DisplayDates } from '@edtrInterfaces/shared/types';
+import { displayDatesFilter } from '@appLayout/espressoTable/utils';
 
 /**
  * DatesListTableHeader
@@ -86,24 +87,14 @@ const datesListTableHeader = (displayDates: DisplayDates) => {
 		},
 	];
 
-	const cells = cellsData.filter((cell) => {
-		if (displayDates === DisplayDates.start && cell.key === 'end') {
-			return null;
-		}
-
-		if (displayDates === DisplayDates.end && cell.key === 'start') {
-			return null;
-		}
-
-		return cell;
-	});
+	const cells = cellsData.filter(displayDatesFilter(displayDates));
 
 	return {
-		key: 'dates-list-header',
-		type: 'row',
-		primary: true,
-		className: 'ee-editor-date-list-items-header-row',
 		cells,
+		className: 'ee-editor-date-list-items-header-row',
+		key: 'dates-list-header',
+		primary: true,
+		type: 'row',
 	};
 };
 

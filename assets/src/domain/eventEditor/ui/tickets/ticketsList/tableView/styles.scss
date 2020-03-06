@@ -1,0 +1,18 @@
+@import '../../../../../../application/ui/styles/mixins/breakpoints.scss';
+
+.ee-editor-date-actions-menu {
+	@include max360px {
+		justify-content: center;
+	}
+
+	@include max782px {
+		justify-content: start;
+	}
+}
+
+.ee-rspnsv-table .ee-date-list-col-actions.ee-rspnsv-table-body-td .ee-rspnsv-table-mobile-only-column-value {
+	@include max360px {
+		clear: both;
+		width: 100%;
+	}
+}

@@ -1,10 +1,10 @@
 import React from 'react';
 import classNames from 'classnames';
 import { __ } from '@wordpress/i18n';
-import { ResponsiveTable } from '@appLayout/espressoTable';
 
 import datesListTableHeader from './datesListTableHeader';
 import datesListTableRow from './datesListTableRow';
+import { ResponsiveTable } from '@appLayout/espressoTable';
 import useDatetimeItem from '@edtrServices/apollo/queries/datetimes/useDatetimeItem';
 
 import { TableViewProps } from './types';

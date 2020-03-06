@@ -13,7 +13,7 @@ import DatetimeIdTag from '../../../datetimes/DatetimeIdTag';
 import { ListItemProps } from '@edtrInterfaces/types';
 import { useTicketMutator } from '@edtrServices/apollo/mutations';
 import { InlineEditHeading, InlineEditTextArea } from '@appInputs/InlineEditInput';
-import statusBgColorClass from '@sharedEntities/tickets/helpers/statusBgColorClass';
+import statusBgColorClassName from '@sharedEntities/tickets/helpers/statusBgColorClassName';
 
 const TicketCard: React.FC<ListItemProps> = ({ id }) => {
 	const ticket = useTicketItem({ id });
@@ -26,7 +26,7 @@ const TicketCard: React.FC<ListItemProps> = ({ id }) => {
 		relation: 'datetimes',
 	});
 
-	const bgClass = statusBgColorClass(ticket);
+	const bgClassName = statusBgColorClassName(ticket);
 
 	return ticket ? (
 		<TicketProvider id={ticket.id}>
@@ -36,7 +36,7 @@ const TicketCard: React.FC<ListItemProps> = ({ id }) => {
 				sidebar={
 					<CalendarDateRange
 						headerText={__('sales start')}
-						className={bgClass}
+						className={bgClassName}
 						startDate={ticket.startDate}
 						endDate={ticket.endDate}
 					/>

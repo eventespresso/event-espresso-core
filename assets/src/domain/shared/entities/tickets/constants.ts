@@ -8,7 +8,7 @@ export const TICKET_STATUS_ID = {
 	ONSALE: 'TKO',
 	PENDING: 'TKP',
 	SOLD_OUT: 'TKS',
-	TRASHED: 'TKT',
+	TRASHED: 'TKA',
 };
 
 export const TICKET_STATUS_IDS = Object.values(TICKET_STATUS_ID);

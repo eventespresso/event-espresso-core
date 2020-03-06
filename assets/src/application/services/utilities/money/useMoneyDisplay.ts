@@ -18,6 +18,7 @@ const useMoneyDisplay = (): MoneyDisplay => {
 	const afterAmount = config.currency.signB4 ? '' : config.currency.sign;
 	const beforeAmount = config.currency.signB4 ? config.currency.sign : '';
 	const formatMoney = formatAmount(config.currency.decimalPlaces);
+
 	return {
 		afterAmount,
 		beforeAmount,

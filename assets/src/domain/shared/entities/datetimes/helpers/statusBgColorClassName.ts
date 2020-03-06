@@ -1,6 +1,6 @@
 import { Datetime } from '@edtrServices/apollo/types';
 
-const statusBgColorClass = (date: Datetime): string => {
+const statusBgColorClassName = (date: Datetime): string => {
 	if (date.isTrashed) {
 		return 'ee-status-background-color-DTT';
 	}
@@ -16,4 +16,4 @@ const statusBgColorClass = (date: Datetime): string => {
 	return 'ee-status-background-color-DTU';
 };
 
-export default statusBgColorClass;
+export default statusBgColorClassName;
