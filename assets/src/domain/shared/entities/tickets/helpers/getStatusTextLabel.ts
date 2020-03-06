@@ -7,7 +7,7 @@ import { TICKET_STATUS_ID } from '../constants';
 const getStatusTextLabel = (ticket: Ticket): string => {
 	let ticketStatus = '';
 	switch (status(ticket)) {
-		case TICKET_STATUS_ID.ARCHIVED:
+		case TICKET_STATUS_ID.TRASHED:
 			ticketStatus = __('trashed');
 			break;
 		case TICKET_STATUS_ID.EXPIRED:

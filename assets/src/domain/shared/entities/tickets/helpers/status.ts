@@ -7,7 +7,7 @@ import { TICKET_STATUS_ID } from '../constants';
 
 const status = (ticket: Ticket): string => {
 	if (isTrashed(ticket)) {
-		return TICKET_STATUS_ID.ARCHIVED;
+		return TICKET_STATUS_ID.TRASHED;
 	}
 
 	if (isExpired({ ticket })) {
