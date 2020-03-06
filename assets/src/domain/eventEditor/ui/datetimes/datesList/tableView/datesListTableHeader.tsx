@@ -2,6 +2,7 @@ import React from 'react';
 import { __ } from '@wordpress/i18n';
 
 import { DisplayDates } from '@edtrInterfaces/types';
+import { displayDatesFilter } from '@appLayout/espressoTable/utils';
 
 /**
  * DatesListTableHeader
@@ -86,17 +87,7 @@ const datesListTableHeader = (displayDates: DisplayDates) => {
 		},
 	];
 
-	const cells = cellsData.filter((cell) => {
-		if (displayDates === DisplayDates.start && cell.key === 'end') {
-			return null;
-		}
-
-		if (displayDates === DisplayDates.end && cell.key === 'start') {
-			return null;
-		}
-
-		return cell;
-	});
+	const cells = cellsData.filter(displayDatesFilter(displayDates));
 
 	return {
 		cells,

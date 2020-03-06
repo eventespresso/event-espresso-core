@@ -3,7 +3,7 @@ import classNames from 'classnames';
 import { __ } from '@wordpress/i18n';
 
 import ticketsListTableHeader from './ticketsListTableHeader';
-import datesListTableRow from './datesListTableRow';
+import ticketsListTableRow from './ticketsListTableRow';
 import { ResponsiveTable } from '@appLayout/espressoTable';
 import useDatetimeItem from '@edtrServices/apollo/queries/datetimes/useDatetimeItem';
 
@@ -20,7 +20,7 @@ const noZebraStripe = ['row', 'stripe', 'name', 'actions'];
 const TableView: React.FC<TableViewProps> = ({ className, displayDates, entities: datetimes, showDate, ...props }) => {
 	const formRows = datetimes.map(({ id }) => {
 		const datetime = useDatetimeItem({ id });
-		const columns = datesListTableRow({ datetime, displayDates, ...props });
+		const columns = ticketsListTableRow({ datetime, displayDates, ...props });
 		return columns;
 	});
 

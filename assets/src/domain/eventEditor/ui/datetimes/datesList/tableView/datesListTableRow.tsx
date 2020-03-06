@@ -6,6 +6,7 @@ import DateRegistrationsLink from '@edtrUI/datetimes/DateRegistrationsLink';
 import DateActionsMenu from '@edtrUI/datetimes/datesList/actionsMenu/DateActionsMenu';
 import { Datetime } from '@edtrServices/apollo/types';
 import { DisplayDates } from '@edtrInterfaces/types';
+import { displayDatesFilter } from '@appLayout/espressoTable/utils';
 import { ENTITY_LIST_DATE_TIME_FORMAT } from '@appConstants/dateFnsFormats';
 import { getBackgroundColorClassName, status } from '@sharedEntities/datetimes/helpers';
 import { InlineEditText } from '@appInputs/InlineEditInput';
@@ -114,17 +115,7 @@ const datesListTableRow = ({ datetime, displayDates }: Props) => {
 		},
 	];
 
-	const cells = cellsData.filter((cell) => {
-		if (displayDates === DisplayDates.start && cell.key === 'end') {
-			return null;
-		}
-
-		if (displayDates === DisplayDates.end && cell.key === 'start') {
-			return null;
-		}
-
-		return cell;
-	});
+	const cells = cellsData.filter(displayDatesFilter(displayDates));
 
 	return {
 		cells,
