@@ -8,7 +8,7 @@ import PropTypes from 'prop-types';
  * Internal dependencies
  */
 import EditorTicketEntityGridItem from './editor-ticket-entity-grid-item';
-import useTicketsRegistrationCount from '../use-tickets-registration-count';
+import useTicketsRegistrationCount from '../../../../../../../ZZZ/editor/events/tickets/editor-ticket/use-tickets-registration-count';
 import './editor-ticket-entities-grid-view.css';
 
 /**
@@ -22,31 +22,21 @@ import './editor-ticket-entities-grid-view.css';
  * @param {mixed} otherProps
  * @return {Component}          list of rendered Tickets
  */
-const EditorTicketEntitiesGridView = ( {
-	entities,
-	htmlClass,
-	...otherProps
-} ) => {
-	const classes = htmlClass ?
-		`${ htmlClass } ee-tickets-list-grid-view` :
-		'ee-tickets-list-list-view';
+const EditorTicketEntitiesGridView = ({ entities, htmlClass, ...otherProps }) => {
+	const classes = htmlClass ? `${htmlClass} ee-tickets-list-grid-view` : 'ee-tickets-list-list-view';
 	const registrationCounts = useTicketsRegistrationCount();
 	return (
-		<div className={ classes }>
-			{
-				entities.map(
-					function( ticketEntity ) {
-						return isModelEntityOfModel( ticketEntity, 'ticket' ) ? (
-							<EditorTicketEntityGridItem
-								key={ ticketEntity.id }
-								ticketEntity={ ticketEntity }
-								registrationCount={ registrationCounts[ ticketEntity.id ] || 0 }
-								{ ...otherProps }
-							/>
-						) : null;
-					}
-				)
-			}
+		<div className={classes}>
+			{entities.map(function(ticketEntity) {
+				return isModelEntityOfModel(ticketEntity, 'ticket') ? (
+					<EditorTicketEntityGridItem
+						key={ticketEntity.id}
+						ticketEntity={ticketEntity}
+						registrationCount={registrationCounts[ticketEntity.id] || 0}
+						{...otherProps}
+					/>
+				) : null;
+			})}
 		</div>
 	);
 };
