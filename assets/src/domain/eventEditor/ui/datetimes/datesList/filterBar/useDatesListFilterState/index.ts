@@ -4,7 +4,7 @@ import reducer from './reducer';
 import { ActionType, FilterState, FilterStateManager } from './types';
 import { Datetime } from '../../../../../services/apollo/types';
 import { DatesSorted, ShowDates } from '../../../../../interfaces/datetimes/types';
-import { DisplayDates } from '@edtrInterfaces/types';
+import { DisplayDates } from '@edtrInterfaces/shared/types';
 
 const useDatesListFilterState = (dates: Datetime[]): FilterStateManager => {
 	const initialState: FilterState = {

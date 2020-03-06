@@ -2,7 +2,7 @@ import { useEffect, useReducer } from 'react';
 
 import reducer from './reducer';
 import { ActionType, FilterState, FilterStateManager } from './types';
-import { DisplayDates } from '@edtrInterfaces/types';
+import { DisplayDates } from '@edtrInterfaces/shared/types';
 import { ShowTickets, SortTicketsBy } from '../../../../../interfaces/ticket/types';
 import { Ticket } from '../../../../../services/apollo/types';
 

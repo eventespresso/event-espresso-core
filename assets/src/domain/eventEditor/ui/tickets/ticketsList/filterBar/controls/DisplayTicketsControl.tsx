@@ -3,7 +3,7 @@ import { __ } from '@wordpress/i18n';
 import { SelectInput } from '@appInputs/SelectInput';
 import { SetDisplayTicketDateInterface } from '../useTicketsListFilterState/types';
 
-import { DisplayDates } from '@edtrInterfaces/types';
+import { DisplayDates } from '@edtrInterfaces/shared/types';
 
 interface DisplayTicketsControlProps {
 	displayTicketDate: DisplayDates;

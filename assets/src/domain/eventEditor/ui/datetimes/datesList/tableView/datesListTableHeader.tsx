@@ -1,7 +1,7 @@
 import React from 'react';
 import { __ } from '@wordpress/i18n';
 
-import { DisplayDates } from '@edtrInterfaces/types';
+import { DisplayDates } from '@edtrInterfaces/shared/types';
 import { displayDatesFilter } from '@appLayout/espressoTable/utils';
 
 /**

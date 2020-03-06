@@ -1,6 +1,6 @@
 import { Datetime } from '../../../../../services/apollo/types';
 import { DatesSorted, ShowDates } from '../../../../../interfaces/datetimes/types';
-import { DisplayDates } from '@edtrInterfaces/types';
+import { DisplayDates } from '@edtrInterfaces/shared/types';
 
 export interface Action {
 	payload: any;

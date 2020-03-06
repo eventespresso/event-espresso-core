@@ -1,4 +1,4 @@
-import { DisplayDates } from '@edtrInterfaces/types';
+import { DisplayDates } from '@edtrInterfaces/shared/types';
 import { ShowTickets, SortTicketsBy } from '@edtrInterfaces/ticket/types';
 import { Ticket } from '../../../../../services/apollo/types';
 

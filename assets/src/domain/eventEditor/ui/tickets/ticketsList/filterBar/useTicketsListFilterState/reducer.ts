@@ -1,5 +1,5 @@
 import { Action, ActionType, FilterState } from './types';
-import { DisplayDates } from '@edtrInterfaces/types';
+import { DisplayDates } from '@edtrInterfaces/shared/types';
 import { ShowTickets, SortTicketsBy } from '../../../../../interfaces/ticket/types';
 import { Ticket } from '../../../../../services/apollo/types';
 import filters from '../../../../../../shared/entities/tickets/predicates/filters';

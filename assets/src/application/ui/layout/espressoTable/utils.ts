@@ -1,7 +1,7 @@
 import React, { Children } from 'react';
 import { castArray, filter, first, isArray, isEmpty, isFunction, last, reject } from 'lodash';
 
-import { DisplayDates } from '@edtrInterfaces/types';
+import { DisplayDates } from '@edtrInterfaces/shared/types';
 
 export const displayDatesFilter = (displayDates) => (cell) => {
 	if (displayDates === DisplayDates.start && cell.key === 'end') {

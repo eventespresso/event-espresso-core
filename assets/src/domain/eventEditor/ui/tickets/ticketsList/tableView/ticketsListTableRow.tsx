@@ -3,7 +3,7 @@ import { format } from 'date-fns';
 import { __ } from '@wordpress/i18n';
 
 import { displayDatesFilter } from '@appLayout/espressoTable/utils';
-import { DisplayDates } from '@edtrInterfaces/types';
+import { DisplayDates } from '@edtrInterfaces/shared/types';
 import { ENTITY_LIST_DATE_TIME_FORMAT } from '@appConstants/dateFnsFormats';
 import { getBackgroundColorClassName, status } from '@sharedEntities/tickets/helpers';
 import { InlineEditText } from '@appInputs/InlineEditInput';

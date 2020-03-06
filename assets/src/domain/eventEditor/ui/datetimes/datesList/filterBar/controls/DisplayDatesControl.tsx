@@ -1,6 +1,6 @@
 import React from 'react';
 import { __ } from '@wordpress/i18n';
-import { DisplayDates } from '@edtrInterfaces/types';
+import { DisplayDates } from '@edtrInterfaces/shared/types';
 import { SelectInput } from '@appInputs/SelectInput';
 import { SetDisplayDatesInterface } from '../useDatesListFilterState/types';
 

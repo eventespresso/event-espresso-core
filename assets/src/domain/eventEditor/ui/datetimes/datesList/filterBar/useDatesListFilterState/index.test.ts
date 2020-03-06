@@ -5,7 +5,7 @@ import { sub } from '../../../../../../../application/services/utilities/date';
 import { formatISO } from 'date-fns';
 import { Datetime } from '../../../../../services/apollo/types';
 import { DatesSorted, ShowDates } from '../../../../../interfaces/datetimes/types';
-import { DisplayDates } from '@edtrInterfaces/types';
+import { DisplayDates } from '@edtrInterfaces/shared/types';
 import { DatetimeStatus } from '../../../../../services/apollo/types';
 
 import useDatesListFilterState from './index';
