@@ -2,14 +2,14 @@ import { useReducer } from 'react';
 
 import reducer from './reducer';
 import { DatetimesFilterState, DatetimesFilterStateManager, DatetimesToShow } from './types';
-import { DateToDisplay, SortBy } from '@sharedServices/filterState';
+import { DisplayStartOrEndDate, SortBy } from '@sharedServices/filterState';
 import { useEntityListFilterStateManager } from '@appLayout/entityList/filterBar';
 
 type FSM = DatetimesFilterStateManager;
 
 const useDatesListFilterStateManager = (): FSM => {
 	const initialState: DatetimesFilterState = {
-		dateToDisplay: DateToDisplay.start,
+		displayStartOrEndDate: DisplayStartOrEndDate.start,
 		datetimesToShow: DatetimesToShow.all,
 	};
 
@@ -17,10 +17,10 @@ const useDatesListFilterStateManager = (): FSM => {
 
 	const entityFilterState = useEntityListFilterStateManager<SortBy>('date');
 
-	const setDateToDisplay: FSM['setDateToDisplay'] = (dateToDisplay) => {
+	const setDisplayStartOrEndDate: FSM['setDisplayStartOrEndDate'] = (displayStartOrEndDate) => {
 		dispatch({
-			type: 'SET_DATE_TO_DISPLAY',
-			dateToDisplay,
+			type: 'SET_DISPLAY_START_OR_END_DATE',
+			displayStartOrEndDate,
 		});
 	};
 
@@ -39,7 +39,7 @@ const useDatesListFilterStateManager = (): FSM => {
 	return {
 		...state,
 		...entityFilterState,
-		setDateToDisplay,
+		setDisplayStartOrEndDate,
 		setDatetimesToShow,
 	};
 };

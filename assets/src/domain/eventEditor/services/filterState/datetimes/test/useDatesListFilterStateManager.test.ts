@@ -1,6 +1,6 @@
 import { act, renderHook } from '@testing-library/react-hooks';
 
-import { DateToDisplay } from '@sharedServices/filterState';
+import { DisplayStartOrEndDate } from '@sharedServices/filterState';
 import { useDatesListFilterStateManager } from '../';
 import { DatetimesToShow } from '../types';
 
@@ -9,10 +9,10 @@ describe('useDatesListFilterStateManager', () => {
 		const { result } = renderHook(() => useDatesListFilterStateManager());
 
 		expect(typeof result.current.sortBy).toBe('string');
-		expect(typeof result.current.dateToDisplay).toBe('string');
+		expect(typeof result.current.displayStartOrEndDate).toBe('string');
 
 		expect(typeof result.current.setSortBy).toBe('function');
-		expect(typeof result.current.setDateToDisplay).toBe('function');
+		expect(typeof result.current.setDisplayStartOrEndDate).toBe('function');
 		expect(typeof result.current.setDatetimesToShow).toBe('function');
 	});
 
@@ -40,23 +40,23 @@ describe('useDatesListFilterStateManager', () => {
 		expect(result.current.sortBy).toBe('date');
 	});
 
-	test('should update dateToDisplay by invoking setDateToDisplay with corresponding accepted enums', () => {
+	test('should update displayStartOrEndDate by invoking setDisplayStartOrEndDate with corresponding accepted enums', () => {
 		const { result } = renderHook(() => useDatesListFilterStateManager());
 
 		act(() => {
-			result.current.setDateToDisplay(DateToDisplay.start);
+			result.current.setDisplayStartOrEndDate(DisplayStartOrEndDate.start);
 		});
-		expect(result.current.dateToDisplay).toBe('start');
+		expect(result.current.displayStartOrEndDate).toBe('start');
 
 		act(() => {
-			result.current.setDateToDisplay(DateToDisplay.end);
+			result.current.setDisplayStartOrEndDate(DisplayStartOrEndDate.end);
 		});
-		expect(result.current.dateToDisplay).toBe('end');
+		expect(result.current.displayStartOrEndDate).toBe('end');
 
 		act(() => {
-			result.current.setDateToDisplay(DateToDisplay.both);
+			result.current.setDisplayStartOrEndDate(DisplayStartOrEndDate.both);
 		});
-		expect(result.current.dateToDisplay).toBe('both');
+		expect(result.current.displayStartOrEndDate).toBe('both');
 	});
 
 	test('should update datetimesToShow by invoking setDatetimesToShow with corresponding accepted enums', () => {

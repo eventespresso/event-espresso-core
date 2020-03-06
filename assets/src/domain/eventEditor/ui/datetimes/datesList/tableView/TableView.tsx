@@ -17,14 +17,14 @@ const noZebraStripe = ['row', 'stripe', 'name', 'actions'];
  * EditorDateEntitiesListView
  * Displays event date details in a standard list table like view
  */
-const TableView: React.FC<TableViewProps> = ({ className, displayDates, entities: datetimes, showDate, ...props }) => {
+const TableView: React.FC<TableViewProps> = ({ className, displayStartOrEndDate, entities: datetimes, ...props }) => {
 	const formRows = datetimes.map(({ id }) => {
 		const datetime = useDatetimeItem({ id });
-		const columns = datesListTableRow({ datetime, displayDates, ...props });
+		const columns = datesListTableRow({ datetime, displayStartOrEndDate, ...props });
 		return columns;
 	});
 
-	const headerRows = datesListTableHeader(displayDates);
+	const headerRows = datesListTableHeader(displayStartOrEndDate);
 	const tableClassName = classNames(className, 'ee-dates-list-list-view');
 
 	return (
