@@ -1,5 +1,4 @@
 import { useMemo, useState, useEffect } from 'react';
-import { slice } from 'ramda';
 
 import { useDatetimes } from '@edtrServices/apollo/queries';
 import { Datetime } from '@edtrServices/apollo';
@@ -13,17 +12,22 @@ const useFilteredDatetimes = (): Array<Datetime> => {
 
 	const { sortBy, datetimesToShow, perPage, pageNumber, setTotal, total } = useDatesListFilterState();
 
-	const paginatedDatetimes = useMemo<Array<Datetime>>(() => {
+	// Flter the list
+	const filteredDatetimes = useMemo<Array<Datetime>>(() => {
 		const filteredDates = filters({ dates, show: datetimesToShow });
-
-		const sortedDates = sorters({ dates: filteredDates, order: sortBy });
-
-		const paginatedDates = slice<Datetime>(perPage * (pageNumber - 1), perPage * pageNumber, sortedDates);
-
 		setSavedTotal(filteredDates.length);
+		return filters({ dates, show: datetimesToShow });
+	}, [dates, datetimesToShow]);
 
-		return paginatedDates;
-	}, [dates, sortBy, datetimesToShow, perPage, pageNumber]);
+	// sort it
+	const sortedDatetimes = useMemo<Array<Datetime>>(() => {
+		return sorters({ dates: filteredDatetimes, sortBy });
+	}, [filteredDatetimes, sortBy]);
+
+	// paginate it
+	const paginatedDatetimes = useMemo<Array<Datetime>>(() => {
+		return sortedDatetimes.slice(perPage * (pageNumber - 1), perPage * pageNumber);
+	}, [sortedDatetimes, perPage, pageNumber]);
 
 	// Avoid synchronous state update
 	useEffect(() => {
