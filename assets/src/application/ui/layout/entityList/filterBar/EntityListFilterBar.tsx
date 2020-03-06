@@ -13,7 +13,7 @@ import './style.scss';
  * EntityListFilterBar
  * a group of inputs for controlling how a list of entities is displayed
  */
-const EntityListFilterBar: React.FC<EntityListFilterBarProps> = ({ entityFilters, filterState, listId }) => {
+const EntityListFilterBar: React.FC<EntityListFilterBarProps<any>> = ({ entityFilters, filterState, listId }) => {
 	if (!filterState) return null;
 
 	const {
@@ -24,7 +24,7 @@ const EntityListFilterBar: React.FC<EntityListFilterBarProps> = ({ entityFilters
 		showEntityFilters,
 		toggleEntityFilters,
 		view,
-	}: EntityListFilterState = filterState;
+	} = filterState;
 
 	return (
 		<div className='ee-entity-list-filter-bar'>

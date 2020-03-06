@@ -1,3 +1,7 @@
 export * from './Collapsible';
+
 export * from './EntityListFilterBar';
-export * from './useEntityListFilterState';
+
+export * from './types';
+
+export { default as useEntityListFilterStateManager } from './useEntityListFilterStateManager';
