@@ -1,7 +1,7 @@
 import { parseISO, formatISO } from 'date-fns';
 
-import { Datetime } from '../../../../../eventEditor/services/apollo/types';
-import { ShowDates } from '../../../../../eventEditor/interfaces/datetimes/types';
+import { Datetime } from '@edtrServices/apollo';
+import { DatetimesToShow } from '@edtrServices/filterState';
 
 import aboveCapacity from './aboveCapacity';
 import activeOnly from './activeOnly';
@@ -19,39 +19,39 @@ export const now = parseISO(formatISO(new Date()));
 
 interface FilterDates {
 	dates: Datetime[];
-	show: ShowDates;
+	show: DatetimesToShow;
 }
 
 /**
  * reduces dates array based on value of the "showDates" filter
  */
-const filters = ({ dates, show = ShowDates.activeUpcoming }: FilterDates): Datetime[] => {
+const filters = ({ dates, show = DatetimesToShow.activeUpcoming }: FilterDates): Datetime[] => {
 	switch (show) {
-		case ShowDates.above50Capacity:
+		case DatetimesToShow.above50Capacity:
 			return aboveCapacity({ dates, capacity: 50 });
-		case ShowDates.above75Capacity:
+		case DatetimesToShow.above75Capacity:
 			return aboveCapacity({ dates, capacity: 75 });
-		case ShowDates.above90Capacity:
+		case DatetimesToShow.above90Capacity:
 			return aboveCapacity({ dates, capacity: 90 });
-		case ShowDates.activeOnly:
+		case DatetimesToShow.activeOnly:
 			return activeOnly(dates);
-		case ShowDates.activeUpcoming:
+		case DatetimesToShow.activeUpcoming:
 			return activeUpcoming(dates);
-		case ShowDates.all:
+		case DatetimesToShow.all:
 			return allDates(dates);
-		case ShowDates.below50Capacity:
+		case DatetimesToShow.below50Capacity:
 			return belowCapacity({ dates, capacity: 50 });
-		case ShowDates.expiredOnly:
+		case DatetimesToShow.expiredOnly:
 			return expiredOnly(dates);
-		case ShowDates.nextActiveUpcomingOnly:
+		case DatetimesToShow.nextActiveUpcomingOnly:
 			return nextActiveUpcomingOnly(dates);
-		case ShowDates.recentlyExpiredOnly:
+		case DatetimesToShow.recentlyExpiredOnly:
 			return recentlyExpiredOnly(dates);
-		case ShowDates.soldOutOnly:
+		case DatetimesToShow.soldOutOnly:
 			return soldOutOnly(dates);
-		case ShowDates.trashedOnly:
+		case DatetimesToShow.trashedOnly:
 			return trashedOnly(dates);
-		case ShowDates.upcomingOnly:
+		case DatetimesToShow.upcomingOnly:
 			return upcomingOnly(dates);
 	}
 

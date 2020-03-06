@@ -1,18 +1,12 @@
-/**
- * External dependencies
- */
 import { prop, sortBy } from 'ramda';
 import { compareAsc, parseISO } from 'date-fns';
 
-/**
- * Internal dependencies
- */
-import { Datetime } from '../../../../../eventEditor/services/apollo/types';
-import { DatesSorted } from '../../../../../eventEditor/interfaces/datetimes/types';
+import { Datetime } from '@edtrServices/apollo';
+import { SortBy } from '@sharedServices/filterState';
 
 interface SortDates {
 	dates: Datetime[];
-	order?: DatesSorted;
+	order?: SortBy;
 }
 
 /**
@@ -21,17 +15,17 @@ interface SortDates {
  *
  * @return {Array}         filtered dateEntities array
  */
-const sorters = ({ dates, order = DatesSorted.chronologically }: SortDates): Datetime[] => {
+const sorters = ({ dates, order = 'date' }: SortDates): Datetime[] => {
 	switch (order) {
-		case DatesSorted.chronologically:
+		case 'date':
 			return dates.sort(({ startDate: dateLeft }, { startDate: dateRight }) =>
 				compareAsc(parseISO(dateLeft), parseISO(dateRight))
 			);
-		case DatesSorted.byId:
+		case 'id':
 			return sortBy(prop('id'))(dates);
-		case DatesSorted.byName:
+		case 'name':
 			return sortBy(prop('name'))(dates);
-		case DatesSorted.byOrder:
+		case 'order':
 			return sortBy(prop('order'))(dates);
 		default:
 			return dates;
