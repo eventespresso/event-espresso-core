@@ -99,28 +99,26 @@ export const isTableDataCell = (element) => {
  * @param {Array} exclude
  * @return {Array} columns
  */
-export const addZebraStripesOnMobile = (formRows, exclude) => {
-	return Array.isArray(formRows)
-		? formRows.map((formRow) => {
-				let x = 0;
-				formRow.cells =
-					formRow.cells && Array.isArray(formRow.cells)
-						? formRow.cells.map((cell) => {
-								if (!cell.key || exclude.indexOf(cell.key) > -1) {
-									return cell;
-								}
-								x++;
-								if (x % 2 === 0) {
-									cell.className = cell.className
-										? cell.className + ' ee-zebra-stripe-on-mobile'
-										: 'ee-zebra-stripe-on-mobile';
-								}
-								return cell;
-						  })
-						: [];
-				return formRow;
-		  })
-		: [];
+export const addZebraStripesOnMobile = (exclude) => (formRow) => {
+	let x = 0;
+	const newFormRow = { ...formRow };
+
+	newFormRow.cells =
+		newFormRow.cells && Array.isArray(newFormRow.cells)
+			? newFormRow.cells.map((cell) => {
+					if (!cell.key || exclude.indexOf(cell.key) > -1) {
+						return cell;
+					}
+					x++;
+					if (x % 2 === 0) {
+						cell.className = cell.className
+							? cell.className + ' ee-zebra-stripe-on-mobile'
+							: 'ee-zebra-stripe-on-mobile';
+					}
+					return cell;
+			  })
+			: [];
+	return formRow;
 };
 
 /**

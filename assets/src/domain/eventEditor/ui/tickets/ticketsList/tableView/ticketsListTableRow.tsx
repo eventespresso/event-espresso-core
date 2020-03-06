@@ -10,9 +10,8 @@ import { InlineEditText } from '@appInputs/InlineEditInput';
 import { shortenGuid } from '@appServices/utilities/text';
 import { Ticket } from '@edtrServices/apollo/types';
 import TicketActionsMenu from '@edtrUI/tickets/ticketsList/actionsMenu/TicketActionsMenu';
-import { useTicketMutator } from '@edtrServices/apollo/mutations';
-
 import { useMoneyDisplay } from '@appServices/utilities/money';
+import { useTicketMutator } from '@edtrServices/apollo/mutations';
 
 import '@application/ui/styles/root/entity-status.css';
 
