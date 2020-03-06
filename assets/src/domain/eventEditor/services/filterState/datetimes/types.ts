@@ -1,4 +1,5 @@
 import {
+	SortBy,
 	EntityFilterState,
 	EntityFilterAction,
 	EntityFilterActionType,
@@ -18,7 +19,7 @@ export interface DatetimesFilterAction
 		EntityFilterAction<DatetimesFilterActionType> {}
 
 export interface DatetimesFilterStateManager
-	extends EntityListFilterStateManager,
+	extends EntityListFilterStateManager<SortBy>,
 		EntityFilterStateManager,
 		DatetimesFilterState {
 	setDatetimesToShow: (datetimesToShow: DatetimesToShow) => void;

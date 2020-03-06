@@ -1,4 +1,4 @@
-import { useReducer, useEffect } from 'react';
+import { useReducer } from 'react';
 
 import reducer from './reducer';
 import { DatetimesFilterState, DatetimesFilterStateManager, DatetimesToShow } from './types';
@@ -14,10 +14,6 @@ const useDatesListFilterStateManager = (): FSM => {
 	};
 
 	const [state, dispatch] = useReducer(reducer, initialState);
-
-	useEffect(() => {
-		console.log('Dates FS', state);
-	}, [state]);
 
 	const entityFilterState = useEntityListFilterStateManager<SortBy>('date');
 

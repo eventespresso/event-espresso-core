@@ -1,4 +1,4 @@
-import { useReducer, useEffect } from 'react';
+import { useReducer } from 'react';
 
 import {
 	BasicSortBy,
@@ -22,10 +22,6 @@ const useEntityListFilterStateManager = <SortBy = BasicSortBy>(defaultSortBy: So
 		view: 'grid',
 	};
 	const [state, dispatch] = useReducer(getReducer<SortBy>(), initialState);
-
-	useEffect(() => {
-		console.log('Entity FS', state);
-	}, [state]);
 
 	const setSortBy: FSM['setSortBy'] = (sortBy) => {
 		dispatch({

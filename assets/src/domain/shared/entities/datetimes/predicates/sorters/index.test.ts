@@ -1,11 +1,10 @@
 import { compareAsc, parseISO } from 'date-fns';
 
 import sorters from './index';
-import { DatesSorted } from '../../../../../eventEditor/interfaces/datetimes/types';
 import { nodes as dates } from '../../../../../eventEditor/services/apollo/queries/datetimes/test/data';
 
 describe('sorters', () => {
-	it('should return dates sorted in default chronological order if no sort prop is provided', () => {
+	it('should return dates sorted in default chronological order if no sortBy prop is provided', () => {
 		const sortedDates = sorters({ dates });
 		sortedDates.forEach((currentDatetime, index) => {
 			const nextDatetime = sortedDates.length <= index + 1 ? sortedDates[index + 1] : null;
@@ -16,8 +15,8 @@ describe('sorters', () => {
 		});
 	});
 
-	it('should return dates sorted in chronological order if sort prop is set to `chronologically`', () => {
-		const sortedDates = sorters({ dates, order: DatesSorted.chronologically });
+	it('should return dates sorted in chronological order if sortBy prop is set to `date`', () => {
+		const sortedDates = sorters({ dates, order: 'date' });
 		sortedDates.forEach((currentDatetime, index) => {
 			const nextDatetime = sortedDates.length <= index + 1 ? sortedDates[index + 1] : null;
 			if (nextDatetime) {
@@ -27,8 +26,8 @@ describe('sorters', () => {
 		});
 	});
 
-	it('should return dates sorted by Id if sort prop is set to `byId`', () => {
-		const sortedDates = sorters({ dates, order: DatesSorted.byId });
+	it('should return dates sorted by Id if sortBy prop is set to `id`', () => {
+		const sortedDates = sorters({ dates, order: 'id' });
 		sortedDates.forEach((currentDatetime, index) => {
 			const nextDatetime = sortedDates.length <= index + 1 ? sortedDates[index + 1] : null;
 			if (nextDatetime) {
@@ -38,8 +37,8 @@ describe('sorters', () => {
 		});
 	});
 
-	it('should return dates sorted by name if sort prop is set to `byName`', () => {
-		const sortedDates = sorters({ dates, order: DatesSorted.byName });
+	it('should return dates sorted by name if sortBy prop is set to `name`', () => {
+		const sortedDates = sorters({ dates, order: 'name' });
 		sortedDates.forEach((currentDatetime, index) => {
 			const nextDatetime = sortedDates.length <= index + 1 ? sortedDates[index + 1] : null;
 			if (nextDatetime) {
@@ -49,8 +48,8 @@ describe('sorters', () => {
 		});
 	});
 
-	it('should return dates sorted by order if sort prop is set to `byOrder`', () => {
-		const sortedDates = sorters({ dates, order: DatesSorted.byOrder });
+	it('should return dates sorted by order if sortBy prop is set to `order`', () => {
+		const sortedDates = sorters({ dates, order: 'order' });
 		sortedDates.forEach((currentDatetime, index) => {
 			const nextDatetime = sortedDates.length <= index + 1 ? sortedDates[index + 1] : null;
 			if (nextDatetime) {
