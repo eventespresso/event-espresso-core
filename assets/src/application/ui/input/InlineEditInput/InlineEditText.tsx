@@ -4,7 +4,7 @@ import Editable from './Editable';
 import { TextProps } from './types';
 
 const InlineEditText: React.FC<TextProps> = ({ ...rest }) => {
-	return <Editable inputType='text' ellipsis {...rest} />;
+	return <Editable ellipsis {...rest} inputType='text' />;
 };
 
 export default InlineEditText;
