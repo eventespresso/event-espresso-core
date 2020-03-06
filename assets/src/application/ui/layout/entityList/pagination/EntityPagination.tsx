@@ -3,18 +3,24 @@ import { Pagination } from 'antd';
 import { PaginationProps } from 'antd/lib/pagination';
 
 import './style.scss';
+import { EntityListFilterStateManager } from '../filterBar';
+
+interface EntityPaginationProps<ELFS extends EntityListFilterStateManager> extends PaginationProps {
+	filterState: ELFS;
+}
 
 /**
  * Adds pagination to an "EntityList" component
  * @return EntityPagination
  */
-const EntityPagination: React.FC<PaginationProps> = ({
+const EntityPagination: React.FC<EntityPaginationProps<any>> = ({
 	pageSizeOptions = ['2', '6', '12', '24', '48'],
 	showSizeChanger = true,
 	showTotal,
-	total,
+	filterState,
 	...rest
 }) => {
+	const { total, setPageNumber, setPerPage, pageNumber }: EntityListFilterStateManager = filterState;
 	return (
 		<div className='ee-entity-pagination'>
 			<Pagination
@@ -24,6 +30,9 @@ const EntityPagination: React.FC<PaginationProps> = ({
 				showSizeChanger={showSizeChanger}
 				showTotal={showTotal}
 				total={total}
+				onChange={setPageNumber}
+				onShowSizeChange={setPerPage}
+				current={pageNumber}
 			/>
 		</div>
 	);

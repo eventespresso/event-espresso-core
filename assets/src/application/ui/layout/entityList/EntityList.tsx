@@ -3,9 +3,8 @@ import { __ } from '@wordpress/i18n';
 import { Divider, Typography } from 'antd';
 
 import { EmptyState, ErrorIndicator, LoadingIndicator } from '@appDisplay/index';
+import { EntityListFilterState } from './filterBar';
 import EntityListFilterBar from '@appLayout/entityList/filterBar/EntityListFilterBar';
-import useEntityListFilterState from '@appLayout/entityList/filterBar/useEntityListFilterState';
-import { useEntityPagination } from '@appLayout/entityList/pagination';
 import { Entity } from '@appServices/apollo/types';
 import { useStatus } from '@appServices/apollo/status';
 
@@ -16,10 +15,11 @@ import './style.scss';
 
 const { Title } = Typography;
 
-const EntityList: React.FC<EntityListProps<Entity>> = ({
+const EntityList: React.FC<any> = <ELFS extends EntityListFilterState>({
 	CardView,
 	className,
 	entities = [],
+	filterState,
 	entityFilters,
 	entityType,
 	footer,
@@ -29,9 +29,7 @@ const EntityList: React.FC<EntityListProps<Entity>> = ({
 	noResultsDesc,
 	TableView,
 	...props
-}) => {
-	const filterState = useEntityListFilterState();
-	const { paginatedEntities, ...paginationProps } = useEntityPagination({ entities });
+}: EntityListProps<Entity, ELFS>) => {
 	const { isError, isLoading } = useStatus();
 	const error = isError(entityType);
 	const loading = isLoading(entityType);
@@ -43,16 +41,16 @@ const EntityList: React.FC<EntityListProps<Entity>> = ({
 	let entityList: JSX.Element;
 	const { view } = filterState;
 
-	if (paginatedEntities.length === 0) {
+	if (entities.length === 0) {
 		const title = noResultsTitle ? noResultsTitle : __('no results found');
 		const description = noResultsDesc ? noResultsDesc : __('try changing filter settings');
 		entityList = <EmptyState className='ee-entity-list--no-results' title={title} description={description} />;
 	} else {
 		entityList =
 			view === 'grid' ? (
-				<CardList CardView={CardView} entities={paginatedEntities} className={className} {...props} />
+				<CardList CardView={CardView} entities={entities} className={className} {...props} />
 			) : (
-				<TableView entities={paginatedEntities} className={className} {...props} />
+				<TableView entities={entities} className={className} {...props} />
 			);
 	}
 
@@ -63,7 +61,7 @@ const EntityList: React.FC<EntityListProps<Entity>> = ({
 			</Title>
 			<EntityListFilterBar entityFilters={entityFilters} filterState={filterState} listId={listId} />
 			{entityList}
-			<EntityPagination {...paginationProps} />
+			<EntityPagination filterState={filterState} />
 			<div className={'ee-entity-list__footer'}>{footer}</div>
 			<Divider dashed />
 		</div>
