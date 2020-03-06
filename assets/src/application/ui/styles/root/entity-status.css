@@ -306,11 +306,11 @@
 	color: var(--ee-text-on-grey-7);
 }
 
-/** ticket trashed **/
-.ee-status-color-TKT {
+/** ticket archived **/
+.ee-status-color-TKA {
 	color: var(--ee-color-grey-3);
 }
-.ee-status-background-color-TKT {
+.ee-status-background-color-TKA {
 	background-color: var(--ee-color-grey-3);
 	color: var(--ee-text-on-grey-3);
 }
