@@ -5,12 +5,15 @@ const statusBgColorClassName = (ticket: Ticket): string => {
 	if (ticket.isTrashed) {
 		return 'ee-status-background-color-TKA';
 	}
+
 	if (isExpired({ ticket })) {
 		return 'ee-status-background-color-TKE';
 	}
+
 	if (isOnSale(ticket)) {
 		return 'ee-status-background-color-TKO';
 	}
+
 	if (isSoldOut(ticket)) {
 		return 'ee-status-background-color-TKS';
 	}

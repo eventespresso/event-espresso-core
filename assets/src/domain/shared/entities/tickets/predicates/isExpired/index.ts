@@ -14,6 +14,8 @@ interface Props {
 const isExpired = ({ ticket, includeTrashed = false }: Props): boolean => {
 	const validationChecks = !isNil(ticket) && isValidOrTrashed(ticket, includeTrashed);
 
+	console.log('validationChecks', validationChecks);
+
 	return validationChecks && diff('minutes', parseISO(ticket.endDate), now) < 0;
 };
 
