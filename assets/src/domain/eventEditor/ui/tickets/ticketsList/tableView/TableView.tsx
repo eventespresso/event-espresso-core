@@ -2,10 +2,10 @@ import React from 'react';
 import classNames from 'classnames';
 import { __ } from '@wordpress/i18n';
 
+import { ResponsiveTable } from '@appLayout/espressoTable';
 import ticketsListTableHeader from './ticketsListTableHeader';
 import ticketsListTableRow from './ticketsListTableRow';
-import { ResponsiveTable } from '@appLayout/espressoTable';
-import useDatetimeItem from '@edtrServices/apollo/queries/datetimes/useDatetimeItem';
+import useTicketItem from '@edtrServices/apollo/queries/tickets/useTicketItem';
 
 import { TableViewProps } from './types';
 
@@ -17,10 +17,10 @@ const noZebraStripe = ['row', 'stripe', 'name', 'actions'];
  * EditorTicketsListView
  * Displays tickets in a standard list table like view
  */
-const TableView: React.FC<TableViewProps> = ({ className, displayDates, entities: datetimes, showDate, ...props }) => {
-	const formRows = datetimes.map(({ id }) => {
-		const datetime = useDatetimeItem({ id });
-		const columns = ticketsListTableRow({ datetime, displayDates, ...props });
+const TableView: React.FC<TableViewProps> = ({ className, displayDates, entities: tickets, showDate, ...props }) => {
+	const formRows = tickets.map(({ id }) => {
+		const ticket = useTicketItem({ id });
+		const columns = ticketsListTableRow({ displayDates, ticket, ...props });
 		return columns;
 	});
 

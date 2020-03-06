@@ -3,9 +3,9 @@ import { __ } from '@wordpress/i18n';
 
 import AddNewTicketButton from './AddNewTicketButton';
 import { EntityList } from '@appLayout/entityList';
+import { TableView } from './tableView';
 import { TicketCard } from './cardView';
 import TicketsListEntityFilters from './filterBar/TicketsListEntityFilters';
-import { TableView } from './tableView';
 import { TypeName } from '@appServices/apollo/status';
 import useTicketsListFilterState from './filterBar/useTicketsListFilterState';
 import useTickets from '../../../services/apollo/queries/tickets/useTickets';
@@ -18,7 +18,7 @@ const TicketsList: React.FC = () => {
 	return (
 		<EntityList
 			CardView={TicketCard}
-			// displayDates={entityFiltersProps.displayDates}
+			displayDates={entityFiltersProps.displayTicketDate}
 			entities={filteredEntities}
 			entityFilters={entityFilters}
 			entityType={TypeName.tickets}
