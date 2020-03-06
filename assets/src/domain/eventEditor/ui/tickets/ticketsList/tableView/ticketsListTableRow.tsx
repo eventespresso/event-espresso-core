@@ -12,6 +12,7 @@ import { Ticket } from '@edtrServices/apollo/types';
 import TicketActionsMenu from '@edtrUI/tickets/ticketsList/actionsMenu/TicketActionsMenu';
 import { useMoneyDisplay } from '@appServices/utilities/money';
 import { useTicketMutator } from '@edtrServices/apollo/mutations';
+import useTicketRegistrationCount from '@edtrUI/tickets/hooks/useTicketRegistrationCount';
 
 import '@application/ui/styles/root/entity-status.css';
 
@@ -24,6 +25,7 @@ const ticketsListTableRow = ({ ticket, displayDates }: Props) => {
 	const bgClassName = getBackgroundColorClassName(ticket);
 	const { formatAmount } = useMoneyDisplay();
 	const id = ticket.dbId || shortenGuid(ticket.id);
+	const registrationCount = useTicketRegistrationCount(ticket.id);
 	const statusClassName = status(ticket);
 	const { updateEntity } = useTicketMutator(ticket.id);
 
@@ -104,10 +106,11 @@ const ticketsListTableRow = ({ ticket, displayDates }: Props) => {
 			value: ticket.sold,
 		},
 		{
-			key: 'reserved',
+			key: 'registrations',
 			type: 'cell',
-			className: 'ee-ticket-list-cell ee-ticket-list-col-reserved ee-rspnsv-table-column-tiny ee-number-column',
-			value: ticket.reserved,
+			className:
+				'ee-ticket-list-cell ee-ticket-list-col-registrations ee-rspnsv-table-column-smaller ee-centered-column',
+			value: registrationCount, // should be count of related registrations
 		},
 		{
 			key: 'actions',

@@ -66,14 +66,14 @@ const ticketsListTableHeader = (displayDates: DisplayDates) => {
 			value: __('Sold', 'event_espresso'),
 		},
 		{
-			key: 'reserved',
+			key: 'registrations',
 			type: 'cell',
 			className:
-				'ee-ticket-list-col-hdr ee-ticket-list-col-reserved ee-rspnsv-table-column-tiny ee-number-column',
+				'ee-ticket-list-col-hdr ee-ticket-list-col-registrations ee-rspnsv-table-column-smaller ee-centered-column',
 			value: (
 				<>
-					<span className={'ee-rspnsv-table-long-label'}>{__('Reserved', 'event_espresso')}</span>
-					<span className={'ee-rspnsv-table-short-label'}>{__('Rsrvd', 'event_espresso')}</span>
+					<span className={'ee-rspnsv-table-long-label'}>{__('Registrations', 'event_espresso')}</span>
+					<span className={'ee-rspnsv-table-short-label'}>{__('Regs', 'event_espresso')}</span>
 				</>
 			),
 		},
