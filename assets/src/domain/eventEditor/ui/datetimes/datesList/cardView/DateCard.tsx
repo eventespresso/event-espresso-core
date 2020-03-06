@@ -12,7 +12,7 @@ import useDatetimeItem from '@edtrServices/apollo/queries/datetimes/useDatetimeI
 import TicketIdTag from '../../../tickets/TicketIdTag';
 
 import { PLUS_ONE_MONTH, PLUS_TWO_MONTHS } from '@sharedConstants/defaultDates';
-import statusBgColorClass from '@sharedEntities/datetimes/helpers/statusBgColorClass';
+import statusBgColorClassName from '@sharedEntities/datetimes/helpers/statusBgColorClassName';
 
 import useRelations from '@appServices/apollo/relations/useRelations';
 import { useStatus, TypeName } from '@appServices/apollo/status';
@@ -52,7 +52,7 @@ const DateCard: React.FC<ListItemProps> = ({ id }) => {
 		relatedTicketIds.filter(Boolean).map((ticketId) => <TicketIdTag key={ticketId} id={ticketId} />);
 	relatedTicketTags = relatedTicketTags ? relatedTicketTags : __('none');
 
-	const bgClass = statusBgColorClass(date);
+	const bgClassName = statusBgColorClassName(date);
 
 	return date ? (
 		<DatetimeProvider id={date.id}>
@@ -62,7 +62,7 @@ const DateCard: React.FC<ListItemProps> = ({ id }) => {
 				sidebar={
 					<CalendarDateRange
 						headerText={__('starts')}
-						className={bgClass}
+						className={bgClassName}
 						startDate={range[0]}
 						endDate={range[1]}
 					/>

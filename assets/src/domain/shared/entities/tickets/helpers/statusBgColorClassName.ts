@@ -1,7 +1,7 @@
 import { Ticket } from '@edtrServices/apollo/types';
 import { isExpired, isOnSale, isPending, isSoldOut } from '../predicates';
 
-const statusBgColorClass = (ticket: Ticket): string => {
+const statusBgColorClassName = (ticket: Ticket): string => {
 	if (ticket.isTrashed) {
 		return 'ee-status-background-color-TKA';
 	}
@@ -20,4 +20,4 @@ const statusBgColorClass = (ticket: Ticket): string => {
 	return 'ee-status-background-color-TKT';
 };
 
-export default statusBgColorClass;
+export default statusBgColorClassName;
