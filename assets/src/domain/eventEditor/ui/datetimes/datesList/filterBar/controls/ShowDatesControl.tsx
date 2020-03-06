@@ -2,10 +2,11 @@ import React from 'react';
 import { __ } from '@wordpress/i18n';
 import { ShowDates } from '@edtrInterfaces/datetimes/types';
 import { SelectInput } from '@appInputs/SelectInput';
+import { SetShowDatesInterface } from '../useDatesListFilterState/types';
 
 interface ShowDatesControlProps {
 	showDates: ShowDates;
-	setShowDates: (showDates: ShowDates) => void;
+	setShowDates: SetShowDatesInterface;
 }
 /**
  * filter for controlling which dates display in a list of Event Dates
@@ -18,7 +19,7 @@ const ShowDatesControl: React.FC<ShowDatesControlProps> = React.memo(({ showDate
 	return (
 		<SelectInput
 			label={__('show')}
-			className='espresso-date-list-filter-bar-show-select'
+			className='ee-date-list-filter-bar-show-select'
 			value={showDates}
 			options={[
 				{
@@ -75,7 +76,6 @@ const ShowDatesControl: React.FC<ShowDatesControlProps> = React.memo(({ showDate
 				},
 			]}
 			onChange={setShowDates}
-			size='large'
 		/>
 	);
 });

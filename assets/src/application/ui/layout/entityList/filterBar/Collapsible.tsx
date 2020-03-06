@@ -1,18 +1,9 @@
 import React, { useRef } from 'react';
 import { useSpring, animated } from 'react-spring';
 
+import { CollapsibleProps } from './types';
 import { SearchInput } from '../../../input';
 import useRect from '../../../../services/hooks/useRect';
-
-type voidFn = () => void;
-
-interface CollapsibleProps {
-	entityFilters: JSX.Element;
-	listId: string;
-	searchText: string;
-	setSearchText: voidFn;
-	showEntityFilters: boolean;
-}
 
 /**
  * Collapsible
@@ -39,7 +30,12 @@ const Collapsible: React.FC<CollapsibleProps> = ({
 				{showEntityFilters && (
 					<>
 						{entityFilters}
-						<SearchInput id={listId} searchText={searchText} setSearchText={setSearchText} />
+						<SearchInput
+							className={'ee-filter-bar-filter ee-filter-bar-filter--big'}
+							id={listId}
+							searchText={searchText}
+							setSearchText={setSearchText}
+						/>
 					</>
 				)}
 			</div>

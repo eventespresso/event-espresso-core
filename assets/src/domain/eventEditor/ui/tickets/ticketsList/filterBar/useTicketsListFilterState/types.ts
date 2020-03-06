@@ -23,9 +23,21 @@ export interface FilterState {
 	sortTicketsBy: SortTicketsBy;
 }
 
+export interface SetDisplayTicketDateInterface {
+	(displayDates: DisplayDates): void;
+}
+
+export interface SetShowTicketsInterface {
+	(showTickets: ShowTickets): void;
+}
+
+export interface SetSortTicketsByInterface {
+	(sortTicketsBy: SortTicketsBy): void;
+}
+
 export interface FilterStateManager extends FilterState {
-	setSortTicketsBy: (sortTicketsBy: SortTicketsBy) => void;
-	setDisplayTicketDate: (displayDates: DisplayDates) => void;
-	setShowTickets: (showTickets: ShowTickets) => void;
+	setDisplayTicketDate: SetDisplayTicketDateInterface;
+	setShowTickets: SetShowTicketsInterface;
+	setSortTicketsBy: SetSortTicketsByInterface;
 	toggleIsChained: () => void;
 }

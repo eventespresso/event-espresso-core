@@ -24,16 +24,16 @@ const TicketsListEntityFilters: React.FC<Props> = ({
 }) => {
 	return (
 		<>
-			<div className='ee-show-tickets-filter ee-filter-bar-filter'>
+			<div className='ee-show-tickets-filter ee-filter-bar-filter ee-filter-bar-filter--bigger'>
 				<ShowTicketsControl isChained={isChained} showTickets={showTickets} setShowTickets={setShowTickets} />
 			</div>
-			<div className='ee-ticket-dates-chained-filter ee-filter-bar-filter'>
+			<div className='ee-ticket-dates-chained-filter ee-filter-bar-filter ee-filter-bar-filter--micro'>
 				<TicketsChainedButton isChained={isChained} toggleIsChained={toggleIsChained} />
 			</div>
 			<div className='ee-sort-tickets-filter ee-filter-bar-filter'>
 				<TicketsSortedByControl sortTicketsBy={sortTicketsBy} setSortTicketsBy={setSortTicketsBy} />
 			</div>
-			<div className='ee-display-ticket-dates-filter ee-filter-bar-filter'>
+			<div className='ee-display-ticket-dates-filter ee-filter-bar-filter ee-filter-bar-filter--big'>
 				<DisplayTicketsControl
 					displayTicketDate={displayTicketDate}
 					setDisplayTicketDate={setDisplayTicketDate}

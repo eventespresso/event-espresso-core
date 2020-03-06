@@ -20,7 +20,7 @@ const DatesListEntityFilters: React.FC<Props> = ({
 }) => {
 	return (
 		<>
-			<div className='ee-show-dates-filter ee-filter-bar-filter'>
+			<div className='ee-show-dates-filter ee-filter-bar-filter ee-filter-bar-filter--bigger'>
 				<ShowDatesControl showDates={showDates} setShowDates={setShowDates} />
 			</div>
 			<div className='ee-sort-dates-filter ee-filter-bar-filter'>

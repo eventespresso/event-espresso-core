@@ -80,8 +80,8 @@
 			&:focus,
 			&.ant-picker-focused,
 			&.ant-input-number-focused {
-				border-color: var(--ee-color-primary);
-				box-shadow: 0 0 0 1px var(--ee-color-primary);
+				border-color: var(--ee-color-primary-low-contrast);
+				box-shadow: 0 0 0 1px var(--ee-color-primary-low-contrast);
 			}
 		}
 

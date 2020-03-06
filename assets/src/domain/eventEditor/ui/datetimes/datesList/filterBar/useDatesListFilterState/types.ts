@@ -21,8 +21,20 @@ export interface FilterState {
 	showDates: ShowDates;
 }
 
+export interface SetDatesSortedByInterface {
+	(datesSortedBy: DatesSorted): void;
+}
+
+export interface SetDisplayDatesInterface {
+	(displayDates: DisplayDates): void;
+}
+
+export interface SetShowDatesInterface {
+	(showDates: ShowDates): void;
+}
+
 export interface FilterStateManager extends FilterState {
-	setDatesSortedBy: (datesSortedBy: DatesSorted) => void;
-	setDisplayDates: (displayDates: DisplayDates) => void;
-	setShowDates: (showDates: ShowDates) => void;
+	setDatesSortedBy: SetDatesSortedByInterface;
+	setDisplayDates: SetDisplayDatesInterface;
+	setShowDates: SetShowDatesInterface;
 }

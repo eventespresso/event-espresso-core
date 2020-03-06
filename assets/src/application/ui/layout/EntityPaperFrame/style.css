@@ -8,7 +8,7 @@
 	margin: var(--ee-margin-small);
 	max-width: calc(var(--ee-font-size-small) * 40);
 	min-height: calc(var(--ee-font-size-small) * 16);
-	min-width: calc(var(--ee-font-size-small) * 32);
+	min-width: calc(var(--ee-font-size-small) * 30);
 	padding: var(--ee-font-size-default) 0 0;
 	position: relative;
 	width: 31%;

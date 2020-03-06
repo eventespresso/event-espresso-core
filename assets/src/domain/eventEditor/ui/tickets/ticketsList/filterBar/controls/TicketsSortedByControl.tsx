@@ -1,18 +1,12 @@
-/**
- * External imports
- */
 import React from 'react';
 import { __ } from '@wordpress/i18n';
 import { SelectInput } from '@appInputs/SelectInput';
-
-/**
- * Internal imports
- */
 import { SortTicketsBy } from '@edtrInterfaces/ticket/types';
+import { SetSortTicketsByInterface } from '../useTicketsListFilterState/types';
 
 interface TicketsSortedByControlProps {
 	sortTicketsBy: SortTicketsBy;
-	setSortTicketsBy: (sortTicketsBy: SortTicketsBy) => void;
+	setSortTicketsBy: SetSortTicketsByInterface;
 }
 
 /**
@@ -48,7 +42,6 @@ const TicketsSortedByControl: React.FC<TicketsSortedByControlProps> = React.memo
 					},
 				]}
 				onChange={setSortTicketsBy}
-				size='large'
 			/>
 		);
 	}

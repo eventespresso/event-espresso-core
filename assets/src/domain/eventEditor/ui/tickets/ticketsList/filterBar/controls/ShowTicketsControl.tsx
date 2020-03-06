@@ -1,19 +1,13 @@
-/**
- * External imports
- */
 import React from 'react';
 import { __ } from '@wordpress/i18n';
 import { SelectInput } from '@appInputs/SelectInput';
-
-/**
- * Internal imports
- */
 import { ShowTickets } from '@edtrInterfaces/ticket/types';
+import { SetShowTicketsInterface } from '../useTicketsListFilterState/types';
 
 interface ShowDatesControlProps {
 	isChained?: boolean;
 	showTickets: ShowTickets;
-	setShowTickets: (showTickets: ShowTickets) => void;
+	setShowTickets: SetShowTicketsInterface;
 }
 
 /**
@@ -83,7 +77,6 @@ const ShowTicketsControl: React.FC<ShowDatesControlProps> = React.memo(({ isChai
 				},
 			]}
 			onChange={setShowTickets}
-			size='large'
 		/>
 	);
 });
