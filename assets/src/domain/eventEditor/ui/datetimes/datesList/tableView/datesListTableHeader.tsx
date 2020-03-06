@@ -1,7 +1,7 @@
 import React from 'react';
 import { __ } from '@wordpress/i18n';
 
-import { DisplayDates } from '../../../../interfaces/datetimes/types';
+import { DisplayDates } from '@edtrInterfaces/types';
 
 /**
  * DatesListTableHeader

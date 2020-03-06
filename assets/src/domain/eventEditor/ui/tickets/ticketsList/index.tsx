@@ -1,13 +1,13 @@
 import React from 'react';
 import { __ } from '@wordpress/i18n';
 
-import { EntityList } from '@appLayout/entityList';
 import AddNewTicketButton from './AddNewTicketButton';
+import { EntityList } from '@appLayout/entityList';
 import { TicketCard } from './cardView';
-// import { TableView } from './tableView';
 import TicketsListEntityFilters from './filterBar/TicketsListEntityFilters';
-import useTicketsListFilterState from './filterBar/useTicketsListFilterState';
+import { TableView } from './tableView';
 import { TypeName } from '@appServices/apollo/status';
+import useTicketsListFilterState from './filterBar/useTicketsListFilterState';
 import useTickets from '../../../services/apollo/queries/tickets/useTickets';
 
 const TicketsList: React.FC = () => {
@@ -17,15 +17,16 @@ const TicketsList: React.FC = () => {
 
 	return (
 		<EntityList
+			CardView={TicketCard}
+			// displayDates={entityFiltersProps.displayDates}
 			entities={filteredEntities}
 			entityFilters={entityFilters}
 			entityType={TypeName.tickets}
-			CardView={TicketCard}
-			TableView={null}
 			footer={<AddNewTicketButton />}
-			listId={'event-editor-tickets-list'}
 			headerText={__('Available Tickets')}
+			listId={'event-editor-tickets-list'}
 			loadingText={__('loading tickets...')}
+			TableView={TableView}
 		/>
 	);
 };

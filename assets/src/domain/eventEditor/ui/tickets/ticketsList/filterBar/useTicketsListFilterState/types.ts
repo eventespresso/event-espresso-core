@@ -1,4 +1,5 @@
-import { DisplayDates, ShowTickets, SortTicketsBy } from '../../../../../interfaces/ticket/types';
+import { DisplayDates } from '@edtrInterfaces/types';
+import { ShowTickets, SortTicketsBy } from '@edtrInterfaces/ticket/types';
 import { Ticket } from '../../../../../services/apollo/types';
 
 export interface Action {

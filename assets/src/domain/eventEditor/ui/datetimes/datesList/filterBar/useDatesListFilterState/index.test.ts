@@ -4,7 +4,8 @@ import * as R from 'ramda';
 import { sub } from '../../../../../../../application/services/utilities/date';
 import { formatISO } from 'date-fns';
 import { Datetime } from '../../../../../services/apollo/types';
-import { DatesSorted, DisplayDates, ShowDates } from '../../../../../interfaces/datetimes/types';
+import { DatesSorted, ShowDates } from '../../../../../interfaces/datetimes/types';
+import { DisplayDates } from '@edtrInterfaces/types';
 import { DatetimeStatus } from '../../../../../services/apollo/types';
 
 import useDatesListFilterState from './index';

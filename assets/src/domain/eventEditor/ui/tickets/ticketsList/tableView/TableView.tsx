@@ -1,10 +1,10 @@
 import React from 'react';
 import classNames from 'classnames';
 import { __ } from '@wordpress/i18n';
-import { ResponsiveTable } from '@appLayout/espressoTable';
 
-import datesListTableHeader from './datesListTableHeader';
+import ticketsListTableHeader from './ticketsListTableHeader';
 import datesListTableRow from './datesListTableRow';
+import { ResponsiveTable } from '@appLayout/espressoTable';
 import useDatetimeItem from '@edtrServices/apollo/queries/datetimes/useDatetimeItem';
 
 import { TableViewProps } from './types';
@@ -14,8 +14,8 @@ import './styles.scss';
 const noZebraStripe = ['row', 'stripe', 'name', 'actions'];
 
 /**
- * EditorDateEntitiesListView
- * Displays event date details in a standard list table like view
+ * EditorTicketsListView
+ * Displays tickets in a standard list table like view
  */
 const TableView: React.FC<TableViewProps> = ({ className, displayDates, entities: datetimes, showDate, ...props }) => {
 	const formRows = datetimes.map(({ id }) => {
@@ -24,8 +24,8 @@ const TableView: React.FC<TableViewProps> = ({ className, displayDates, entities
 		return columns;
 	});
 
-	const headerRows = datesListTableHeader(displayDates);
-	const tableClassName = classNames(className, 'ee-dates-list-list-view');
+	const headerRows = ticketsListTableHeader(displayDates);
+	const tableClassName = classNames(className, 'ee-tickets-list-list-view');
 
 	return (
 		<ResponsiveTable

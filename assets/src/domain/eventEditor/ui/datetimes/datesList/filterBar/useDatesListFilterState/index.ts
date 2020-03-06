@@ -3,7 +3,8 @@ import { useEffect, useReducer } from 'react';
 import reducer from './reducer';
 import { ActionType, FilterState, FilterStateManager } from './types';
 import { Datetime } from '../../../../../services/apollo/types';
-import { DatesSorted, DisplayDates, ShowDates } from '../../../../../interfaces/datetimes/types';
+import { DatesSorted, ShowDates } from '../../../../../interfaces/datetimes/types';
+import { DisplayDates } from '@edtrInterfaces/types';
 
 const useDatesListFilterState = (dates: Datetime[]): FilterStateManager => {
 	const initialState: FilterState = {

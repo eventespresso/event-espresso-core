@@ -25,6 +25,12 @@ export interface EEJSData {
 	data: JsDataProps;
 }
 
+export enum DisplayDates {
+	start = 'start',
+	end = 'end',
+	both = 'both',
+}
+
 declare global {
 	interface Window {
 		eeEditorData: EEEditorData;

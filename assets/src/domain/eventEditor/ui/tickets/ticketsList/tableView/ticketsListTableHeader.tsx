@@ -1,13 +1,9 @@
 import React from 'react';
 import { __ } from '@wordpress/i18n';
 
-import { DisplayDates } from '../../../../interfaces/datetimes/types';
+import { DisplayDates } from '@edtrInterfaces/types';
 
-/**
- * DatesListTableHeader
- * header details for the Dates list table
- */
-const datesListTableHeader = (displayDates: DisplayDates) => {
+const ticketsListTableHeader = (displayDates: DisplayDates) => {
 	const cellsData = [
 		{
 			key: 'stripe',
@@ -107,4 +103,4 @@ const datesListTableHeader = (displayDates: DisplayDates) => {
 	};
 };
 
-export default datesListTableHeader;
+export default ticketsListTableHeader;

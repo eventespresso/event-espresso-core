@@ -5,7 +5,7 @@ import { __ } from '@wordpress/i18n';
 import DateRegistrationsLink from '@edtrUI/datetimes/DateRegistrationsLink';
 import DateActionsMenu from '@edtrUI/datetimes/datesList/actionsMenu/DateActionsMenu';
 import { Datetime } from '@edtrServices/apollo/types';
-import { DisplayDates } from '@edtrInterfaces/datetimes/types';
+import { DisplayDates } from '@edtrInterfaces/types';
 import { ENTITY_LIST_DATE_TIME_FORMAT } from '@appConstants/dateFnsFormats';
 import { getBackgroundColorClassName, status } from '@sharedEntities/datetimes/helpers';
 import { InlineEditText } from '@appInputs/InlineEditInput';

@@ -1,6 +1,7 @@
 import { renderHook } from '@testing-library/react-hooks';
 import { is } from 'ramda';
-import { DisplayDates, ShowTickets, SortTicketsBy } from '../../../../../interfaces/ticket/types';
+import { DisplayDates } from '@edtrInterfaces/types';
+import { ShowTickets, SortTicketsBy } from '../../../../../interfaces/ticket/types';
 
 import useTicketListFilterState from './index';
 import { tickets } from '../../../../../../shared/entities/tickets/predicates/test/data';
