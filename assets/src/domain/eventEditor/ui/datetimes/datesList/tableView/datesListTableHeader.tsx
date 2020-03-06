@@ -99,11 +99,11 @@ const datesListTableHeader = (displayDates: DisplayDates) => {
 	});
 
 	return {
-		key: 'dates-list-header',
-		type: 'row',
-		primary: true,
-		className: 'ee-editor-date-list-items-header-row',
 		cells,
+		className: 'ee-editor-date-list-items-header-row',
+		key: 'dates-list-header',
+		primary: true,
+		type: 'row',
 	};
 };
 
