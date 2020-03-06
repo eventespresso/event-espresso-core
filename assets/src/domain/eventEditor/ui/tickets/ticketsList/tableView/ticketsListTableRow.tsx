@@ -104,6 +104,12 @@ const ticketsListTableRow = ({ ticket, displayDates }: Props) => {
 			value: ticket.sold,
 		},
 		{
+			key: 'reserved',
+			type: 'cell',
+			className: 'ee-ticket-list-cell ee-ticket-list-col-reserved ee-rspnsv-table-column-tiny ee-number-column',
+			value: ticket.reserved,
+		},
+		{
 			key: 'actions',
 			type: 'cell',
 			className: 'ee-ticket-list-cell ee-ticket-list-col-actions ee-rspnsv-table-column-big',

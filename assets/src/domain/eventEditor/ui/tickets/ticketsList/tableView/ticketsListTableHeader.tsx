@@ -2,6 +2,7 @@ import React from 'react';
 import { __ } from '@wordpress/i18n';
 
 import { DisplayDates } from '@edtrInterfaces/types';
+import { displayDatesFilter } from '@appLayout/espressoTable/utils';
 
 const ticketsListTableHeader = (displayDates: DisplayDates) => {
 	const cellsData = [
@@ -52,15 +53,11 @@ const ticketsListTableHeader = (displayDates: DisplayDates) => {
 			value: __('Price', 'event_espresso'),
 		},
 		{
-			key: 'capacity',
+			key: 'quantity',
 			type: 'cell',
-			className: 'ee-ticket-list-col-hdr ee-ticket-list-col-qty ee-rspnsv-table-column-tiny ee-number-column',
-			value: (
-				<>
-					<span className={'ee-rspnsv-table-long-label'}>{__('Quantity', 'event_espresso')}</span>
-					<span className={'ee-rspnsv-table-short-label'}>{__('Qty', 'event_espresso')}</span>
-				</>
-			),
+			className:
+				'ee-ticket-list-col-hdr ee-ticket-list-col-quantity ee-rspnsv-table-column-tiny ee-number-column',
+			value: __('Quantity', 'event_espresso'),
 		},
 		{
 			key: 'sold',
@@ -81,18 +78,6 @@ const ticketsListTableHeader = (displayDates: DisplayDates) => {
 			),
 		},
 		{
-			key: 'registrations',
-			type: 'cell',
-			className:
-				'ee-ticket-list-col-hdr ee-ticket-list-col-registrations ee-rspnsv-table-column-smaller ee-centered-column',
-			value: (
-				<>
-					<span className={'ee-rspnsv-table-long-label'}>{__('Registrations', 'event_espresso')}</span>
-					<span className={'ee-rspnsv-table-short-label'}>{__('Regs', 'event_espresso')}</span>
-				</>
-			),
-		},
-		{
 			key: 'actions',
 			type: 'cell',
 			className:
@@ -101,17 +86,7 @@ const ticketsListTableHeader = (displayDates: DisplayDates) => {
 		},
 	];
 
-	const cells = cellsData.filter((cell) => {
-		if (displayDates === DisplayDates.start && cell.key === 'end') {
-			return null;
-		}
-
-		if (displayDates === DisplayDates.end && cell.key === 'start') {
-			return null;
-		}
-
-		return cell;
-	});
+	const cells = cellsData.filter(displayDatesFilter(displayDates));
 
 	return {
 		cells,
