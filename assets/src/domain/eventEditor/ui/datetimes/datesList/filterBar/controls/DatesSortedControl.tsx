@@ -2,10 +2,11 @@ import React from 'react';
 import { __ } from '@wordpress/i18n';
 import { DatesSorted } from '@edtrInterfaces/datetimes/types';
 import { SelectInput } from '@appInputs/SelectInput';
+import { SetDatesSortedByInterface } from '../useDatesListFilterState/types';
 
 interface DatesSortedControlProps {
 	datesSortedBy: DatesSorted;
-	setDatesSortedBy: (datesSortedBy: DatesSorted) => void;
+	setDatesSortedBy: SetDatesSortedByInterface;
 }
 /**
  * filter for controlling the sorting of a list of Event Dates
@@ -14,7 +15,7 @@ const DatesSortedControl: React.FC<DatesSortedControlProps> = React.memo(({ date
 	return (
 		<SelectInput
 			label={__('sort')}
-			className='espresso-date-list-filter-bar-order-select'
+			className='ee-date-list-filter-bar-order-select'
 			value={datesSortedBy}
 			options={[
 				{
@@ -35,7 +36,6 @@ const DatesSortedControl: React.FC<DatesSortedControlProps> = React.memo(({ date
 				},
 			]}
 			onChange={setDatesSortedBy}
-			size='large'
 		/>
 	);
 });

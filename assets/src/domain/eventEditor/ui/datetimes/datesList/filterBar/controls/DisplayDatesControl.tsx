@@ -2,10 +2,11 @@ import React from 'react';
 import { __ } from '@wordpress/i18n';
 import { DisplayDates } from '@edtrInterfaces/datetimes/types';
 import { SelectInput } from '@appInputs/SelectInput';
+import { SetDisplayDatesInterface } from '../useDatesListFilterState/types';
 
 interface DisplayDatesControlProps {
 	displayDates: DisplayDates;
-	setDisplayDates: (displayDates: DisplayDates) => void;
+	setDisplayDates: SetDisplayDatesInterface;
 }
 /**
  * filter for controlling which dates display in a list of Event Dates
@@ -14,7 +15,7 @@ const DisplayDatesControl: React.FC<DisplayDatesControlProps> = React.memo(({ di
 	return (
 		<SelectInput
 			label={__('display')}
-			className='espresso-date-list-filter-bar-display-select'
+			className='ee-date-list-filter-bar-display-select'
 			value={displayDates}
 			options={[
 				{
@@ -31,7 +32,6 @@ const DisplayDatesControl: React.FC<DisplayDatesControlProps> = React.memo(({ di
 				},
 			]}
 			onChange={setDisplayDates}
-			size='large'
 		/>
 	);
 });

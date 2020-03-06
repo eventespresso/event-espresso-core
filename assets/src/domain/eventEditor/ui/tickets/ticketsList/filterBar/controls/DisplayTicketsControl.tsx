@@ -4,6 +4,7 @@
 import React from 'react';
 import { __ } from '@wordpress/i18n';
 import { SelectInput } from '@appInputs/SelectInput';
+import { SetDisplayTicketDateInterface } from '../useTicketsListFilterState/types';
 
 /**
  * Internal imports
@@ -12,7 +13,7 @@ import { DisplayDates } from '@edtrInterfaces/ticket/types';
 
 interface DisplayTicketsControlProps {
 	displayTicketDate: DisplayDates;
-	setDisplayTicketDate: (displayDates: DisplayDates) => void;
+	setDisplayTicketDate: SetDisplayTicketDateInterface;
 }
 
 /**
@@ -44,7 +45,6 @@ const DisplayTicketsControl: React.FC<DisplayTicketsControlProps> = React.memo(
 					},
 				]}
 				onChange={setDisplayTicketDate}
-				size='large'
 			/>
 		);
 	}
