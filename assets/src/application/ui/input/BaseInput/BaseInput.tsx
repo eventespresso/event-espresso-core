@@ -13,14 +13,12 @@ interface BaseInputProps {
 const BaseInput: React.FC<BaseInputProps> = ({ id, label, className, children }) => {
 	return (
 		<div className={classnames('ee-base-input', className)}>
-			<div className='ee-base-input-field'>
-				{label && (
-					<label className='ee-base-input-label' htmlFor={id}>
-						{label}
-					</label>
-				)}
-				{children}
-			</div>
+			{label && (
+				<label className='ee-base-input-label' htmlFor={id}>
+					{label}
+				</label>
+			)}
+			{children}
 		</div>
 	);
 };
