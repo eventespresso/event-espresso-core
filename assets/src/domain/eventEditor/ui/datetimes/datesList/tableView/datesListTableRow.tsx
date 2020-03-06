@@ -5,8 +5,8 @@ import { __ } from '@wordpress/i18n';
 import DateRegistrationsLink from '@edtrUI/datetimes/DateRegistrationsLink';
 import DateActionsMenu from '@edtrUI/datetimes/datesList/actionsMenu/DateActionsMenu';
 import { Datetime } from '@edtrServices/apollo/types';
-import { DisplayDates } from '@edtrInterfaces/shared/types';
 import { displayDatesFilter } from '@appLayout/espressoTable/utils';
+import { DateToDisplay } from '@sharedServices/filterState';
 import { ENTITY_LIST_DATE_TIME_FORMAT } from '@appConstants/dateFnsFormats';
 import { getBackgroundColorClassName, status } from '@sharedEntities/datetimes/helpers';
 import { InlineEditText } from '@appInputs/InlineEditInput';
@@ -17,14 +17,14 @@ import '@application/ui/styles/root/entity-status.css';
 
 interface Props {
 	datetime: Datetime;
-	displayDates: DisplayDates;
+	dateToDisplay: DateToDisplay;
 }
 
 /**
  * EditorDateEntityListItem
  * Displays Event Date as a table row similar to existing eventEntity editor UI
  */
-const datesListTableRow = ({ datetime, displayDates }: Props) => {
+const datesListTableRow = ({ datetime, dateToDisplay }: Props) => {
 	const bgClassName = getBackgroundColorClassName(datetime);
 	const id = datetime.dbId || shortenGuid(datetime.id);
 	const statusClassName = status(datetime);
@@ -115,7 +115,7 @@ const datesListTableRow = ({ datetime, displayDates }: Props) => {
 		},
 	];
 
-	const cells = cellsData.filter(displayDatesFilter(displayDates));
+	const cells = cellsData.filter(displayDatesFilter(dateToDisplay));
 
 	return {
 		cells,

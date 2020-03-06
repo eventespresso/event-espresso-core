@@ -1,14 +1,14 @@
 import React from 'react';
 import { __ } from '@wordpress/i18n';
 
-import { DisplayDates } from '@edtrInterfaces/shared/types';
+import { DateToDisplay } from '@sharedServices/filterState';
 import { displayDatesFilter } from '@appLayout/espressoTable/utils';
 
 /**
  * DatesListTableHeader
  * header details for the Dates list table
  */
-const datesListTableHeader = (displayDates: DisplayDates) => {
+const datesListTableHeader = (dateToDisplay: DateToDisplay) => {
 	const cellsData = [
 		{
 			key: 'stripe',
@@ -87,7 +87,7 @@ const datesListTableHeader = (displayDates: DisplayDates) => {
 		},
 	];
 
-	const cells = cellsData.filter(displayDatesFilter(displayDates));
+	const cells = cellsData.filter(displayDatesFilter(dateToDisplay));
 
 	return {
 		cells,

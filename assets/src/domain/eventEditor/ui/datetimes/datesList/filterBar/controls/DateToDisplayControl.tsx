@@ -11,7 +11,7 @@ interface DisplayDatesControlProps {
 /**
  * filter for controlling which dates display in a list of Event Dates
  */
-const DisplayDatesControl: React.FC<DisplayDatesControlProps> = React.memo(({ displayDates, setDisplayDates }) => {
+const DateToDisplayControl: React.FC<DateToDisplayControlProps> = React.memo(({ dateToDisplay, setDateToDisplay }) => {
 	return (
 		<SelectInput
 			label={__('display')}
@@ -19,15 +19,15 @@ const DisplayDatesControl: React.FC<DisplayDatesControlProps> = React.memo(({ di
 			value={displayDates}
 			options={[
 				{
-					value: DisplayDates.start,
+					value: DateToDisplay.start,
 					label: __('start dates only'),
 				},
 				{
-					value: DisplayDates.end,
+					value: DateToDisplay.end,
 					label: __('end dates only'),
 				},
 				{
-					value: DisplayDates.both,
+					value: DateToDisplay.both,
 					label: __('start and end dates'),
 				},
 			]}
@@ -36,4 +36,4 @@ const DisplayDatesControl: React.FC<DisplayDatesControlProps> = React.memo(({ di
 	);
 });
 
-export default DisplayDatesControl;
+export default DateToDisplayControl;
