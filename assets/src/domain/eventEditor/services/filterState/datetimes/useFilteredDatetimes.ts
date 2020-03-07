@@ -1,4 +1,4 @@
-import { useMemo, useState, useEffect } from 'react';
+import { useMemo, useEffect } from 'react';
 
 import { useDatetimes } from '@edtrServices/apollo/queries';
 import { Datetime } from '@edtrServices/apollo';
@@ -8,14 +8,11 @@ import sorters from '@sharedEntities/datetimes/predicates/sorters';
 
 const useFilteredDatetimes = (): Array<Datetime> => {
 	const dates = useDatetimes();
-	const [savedTotal, setSavedTotal] = useState(0);
 
 	const { sortBy, datetimesToShow, perPage, pageNumber, setTotal, total } = useDatesListFilterState();
 
 	// Flter the list
 	const filteredDatetimes = useMemo<Array<Datetime>>(() => {
-		const filteredDates = filters({ dates, show: datetimesToShow });
-		setSavedTotal(filteredDates.length);
 		return filters({ dates, show: datetimesToShow });
 	}, [dates, datetimesToShow]);
 
@@ -31,10 +28,10 @@ const useFilteredDatetimes = (): Array<Datetime> => {
 
 	// Avoid synchronous state update
 	useEffect(() => {
-		if (total !== savedTotal) {
-			setTotal(savedTotal);
+		if (total !== filteredDatetimes.length) {
+			setTotal(filteredDatetimes.length);
 		}
-	}, [total, savedTotal]);
+	}, [total, filteredDatetimes]);
 
 	return paginatedDatetimes;
 };

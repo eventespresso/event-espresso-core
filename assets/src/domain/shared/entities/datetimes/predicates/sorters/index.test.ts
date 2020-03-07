@@ -1,7 +1,7 @@
 import { compareAsc, parseISO } from 'date-fns';
 
 import sorters from './index';
-import { nodes as dates } from '../../../../../eventEditor/services/apollo/queries/datetimes/test/data';
+import { nodes as dates } from '@edtrServices/apollo/queries/datetimes/test/data';
 
 describe('sorters', () => {
 	it('should return dates sorted in default chronological order if no sortBy prop is provided', () => {
@@ -16,7 +16,7 @@ describe('sorters', () => {
 	});
 
 	it('should return dates sorted in chronological order if sortBy prop is set to `date`', () => {
-		const sortedDates = sorters({ dates, order: 'date' });
+		const sortedDates = sorters({ dates, sortBy: 'date' });
 		sortedDates.forEach((currentDatetime, index) => {
 			const nextDatetime = sortedDates.length <= index + 1 ? sortedDates[index + 1] : null;
 			if (nextDatetime) {
@@ -27,7 +27,7 @@ describe('sorters', () => {
 	});
 
 	it('should return dates sorted by Id if sortBy prop is set to `id`', () => {
-		const sortedDates = sorters({ dates, order: 'id' });
+		const sortedDates = sorters({ dates, sortBy: 'id' });
 		sortedDates.forEach((currentDatetime, index) => {
 			const nextDatetime = sortedDates.length <= index + 1 ? sortedDates[index + 1] : null;
 			if (nextDatetime) {
@@ -38,7 +38,7 @@ describe('sorters', () => {
 	});
 
 	it('should return dates sorted by name if sortBy prop is set to `name`', () => {
-		const sortedDates = sorters({ dates, order: 'name' });
+		const sortedDates = sorters({ dates, sortBy: 'name' });
 		sortedDates.forEach((currentDatetime, index) => {
 			const nextDatetime = sortedDates.length <= index + 1 ? sortedDates[index + 1] : null;
 			if (nextDatetime) {
@@ -49,7 +49,7 @@ describe('sorters', () => {
 	});
 
 	it('should return dates sorted by order if sortBy prop is set to `order`', () => {
-		const sortedDates = sorters({ dates, order: 'order' });
+		const sortedDates = sorters({ dates, sortBy: 'order' });
 		sortedDates.forEach((currentDatetime, index) => {
 			const nextDatetime = sortedDates.length <= index + 1 ? sortedDates[index + 1] : null;
 			if (nextDatetime) {
