@@ -18,7 +18,7 @@ import './styles.scss';
  * EditorTicketsListView
  * Displays tickets in a standard list table like view
  */
-const TableView: React.FC<TableViewProps> = ({ className, displayDates, entities: tickets, showDate, ...props }) => {
+const TableView: React.FC<TableViewProps> = ({ className, displayDates, entities: tickets, ...props }) => {
 	const formRows = tickets.map(({ id }) => {
 		const ticket = useTicketItem({ id });
 		const columns = ticketsListTableRow({ displayDates, ticket, ...props });

@@ -2,7 +2,6 @@ import React from 'react';
 
 import Collapsible from './Collapsible';
 import { EntityListFilterBarProps } from './types';
-import { EntityListFilterStateManager } from './';
 import GridViewFilterButton from './buttons/GridView';
 import ListViewFilterButton from './buttons/ListView';
 import ToggleFiltersButton from './buttons/ToggleFilters';
@@ -24,7 +23,7 @@ const EntityListFilterBar: React.FC<EntityListFilterBarProps> = ({ entityFilters
 		showEntityFilters,
 		toggleEntityFilters,
 		view,
-	}: EntityListFilterStateManager = filterState;
+	} = filterState;
 
 	return (
 		<div className='ee-entity-list-filter-bar'>
