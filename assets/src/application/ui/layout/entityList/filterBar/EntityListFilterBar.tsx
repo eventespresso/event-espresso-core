@@ -2,7 +2,7 @@ import React from 'react';
 
 import Collapsible from './Collapsible';
 import { EntityListFilterBarProps } from './types';
-import { EntityListFilterState } from './useEntityListFilterState';
+import { EntityListFilterStateManager } from './';
 import GridViewFilterButton from './buttons/GridView';
 import ListViewFilterButton from './buttons/ListView';
 import ToggleFiltersButton from './buttons/ToggleFilters';
@@ -13,7 +13,7 @@ import './style.scss';
  * EntityListFilterBar
  * a group of inputs for controlling how a list of entities is displayed
  */
-const EntityListFilterBar: React.FC<EntityListFilterBarProps<any>> = ({ entityFilters, filterState, listId }) => {
+const EntityListFilterBar: React.FC<EntityListFilterBarProps> = ({ entityFilters, filterState, listId }) => {
 	if (!filterState) return null;
 
 	const {
@@ -24,7 +24,7 @@ const EntityListFilterBar: React.FC<EntityListFilterBarProps<any>> = ({ entityFi
 		showEntityFilters,
 		toggleEntityFilters,
 		view,
-	} = filterState;
+	}: EntityListFilterStateManager = filterState;
 
 	return (
 		<div className='ee-entity-list-filter-bar'>

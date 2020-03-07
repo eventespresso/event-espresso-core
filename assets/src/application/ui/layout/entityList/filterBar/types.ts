@@ -2,13 +2,13 @@ export interface CollapsibleProps {
 	entityFilters: JSX.Element;
 	listId: string;
 	searchText: string;
-	setSearchText: VoidFunction;
+	setSearchText: (text: string) => void;
 	showEntityFilters: boolean;
 }
 
 export interface EntityListFilterBarProps {
 	entityFilters: JSX.Element;
-	filterState: EntityListFilterState;
+	filterState: EntityListFilterStateManager;
 	listId?: string;
 }
 

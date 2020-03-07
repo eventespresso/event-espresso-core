@@ -3,7 +3,7 @@ import { __ } from '@wordpress/i18n';
 import { Divider, Typography } from 'antd';
 
 import { EmptyState, ErrorIndicator, LoadingIndicator } from '@appDisplay/index';
-import { EntityListFilterState } from './filterBar';
+import { EntityListFilterStateManager } from './filterBar';
 import EntityListFilterBar from '@appLayout/entityList/filterBar/EntityListFilterBar';
 import { Entity } from '@appServices/apollo/types';
 import { useStatus } from '@appServices/apollo/status';
@@ -15,7 +15,7 @@ import './style.scss';
 
 const { Title } = Typography;
 
-const EntityList: React.FC<any> = <ELFS extends EntityListFilterState>({
+const EntityList: React.FC<any> = <ELFS extends EntityListFilterStateManager>({
 	CardView,
 	className,
 	entities = [],
