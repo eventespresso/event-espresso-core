@@ -1,8 +1,6 @@
 import React from 'react';
 
-import SortByControl from './controls/SortByControl';
-import DisplayStartOrEndDateControl from './controls/DisplayStartOrEndDateControl';
-import DatetimesToShowControl from './controls/DatetimesToShowControl';
+import { DatetimesToShowControl, DisplayStartOrEndDateControl, SortByControl } from './controls';
 import { useDatesListFilterState } from '@edtrServices/filterState';
 
 /**
@@ -19,13 +17,13 @@ const DatesListEntityFilters: React.FC = () => {
 	} = useDatesListFilterState();
 	return (
 		<>
-			<div className='ee-show-dates-filter ee-filter-bar-filter'>
+			<div className='ee-dates-datetimes-to-show-filter ee-filter-bar-filter'>
 				<DatetimesToShowControl datetimesToShow={datetimesToShow} setDatetimesToShow={setDatetimesToShow} />
 			</div>
-			<div className='ee-sort-dates-filter ee-filter-bar-filter'>
+			<div className='ee-dates-sort-by-filter ee-filter-bar-filter'>
 				<SortByControl sortBy={sortBy} setSortBy={setSortBy} />
 			</div>
-			<div className='ee-display-dates-dates-filter ee-filter-bar-filter'>
+			<div className='ee-dates-display-start-or-end-date-filter ee-filter-bar-filter'>
 				<DisplayStartOrEndDateControl
 					displayStartOrEndDate={displayStartOrEndDate}
 					setDisplayStartOrEndDate={setDisplayStartOrEndDate}

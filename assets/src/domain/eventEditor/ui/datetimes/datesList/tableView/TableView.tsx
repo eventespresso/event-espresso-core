@@ -5,7 +5,7 @@ import { __ } from '@wordpress/i18n';
 import datesListTableHeader from './datesListTableHeader';
 import datesListTableRow from './datesListTableRow';
 import { ResponsiveTable } from '@appLayout/espressoTable';
-import useDatetimeItem from '@edtrServices/apollo/queries/datetimes/useDatetimeItem';
+import { useDatetimeItem } from '@edtrServices/apollo/queries';
 
 import { TableViewProps } from './types';
 

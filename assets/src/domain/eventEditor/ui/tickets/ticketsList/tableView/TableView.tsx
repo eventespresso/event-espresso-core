@@ -6,7 +6,7 @@ import { __ } from '@wordpress/i18n';
 import { ResponsiveTable } from '@appLayout/espressoTable';
 import ticketsListTableHeader from './ticketsListTableHeader';
 import ticketsListTableRow from './ticketsListTableRow';
-import useTicketItem from '@edtrServices/apollo/queries/tickets/useTicketItem';
+import { useTicketItem } from '@edtrServices/apollo/queries';
 
 import { TableViewProps } from './types';
 
@@ -18,14 +18,14 @@ import './styles.scss';
  * EditorTicketsListView
  * Displays tickets in a standard list table like view
  */
-const TableView: React.FC<TableViewProps> = ({ className, displayDates, entities: tickets, ...props }) => {
+const TableView: React.FC<TableViewProps> = ({ className, displayStartOrEndDate, entities: tickets, ...props }) => {
 	const formRows = tickets.map(({ id }) => {
 		const ticket = useTicketItem({ id });
-		const columns = ticketsListTableRow({ displayDates, ticket, ...props });
+		const columns = ticketsListTableRow({ displayStartOrEndDate, ticket, ...props });
 		return columns;
 	});
 
-	const headerRows = ticketsListTableHeader(displayDates);
+	const headerRows = ticketsListTableHeader(displayStartOrEndDate);
 	const tableClassName = classNames(className, 'ee-tickets-list-list-view');
 
 	return (
