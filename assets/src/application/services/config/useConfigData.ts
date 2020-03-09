@@ -17,9 +17,11 @@ import { JsDataProps, ConfigDataProps } from './types';
 
 export const useConfigData = (): ConfigDataProps => {
 	const data = pathOr<JsDataProps>(null, ['eejsdata', 'data'], window);
+
 	if (!data) {
 		return null;
 	}
+
 	return {
 		brandName: data.brandName || 'Event Espresso',
 		currency: Currency(data.currency_config as CurrencyProps),
