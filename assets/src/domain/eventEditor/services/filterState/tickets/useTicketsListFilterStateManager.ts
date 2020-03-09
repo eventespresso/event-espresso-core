@@ -37,7 +37,7 @@ const useTicketsListFilterStateManager = (): FSM => {
 		});
 	};
 
-	const toggleIsChained: FSM['toggleIsChained'] = (): void => {
+	const toggleIsChained: FSM['toggleIsChained'] = () => {
 		dispatch({
 			type: 'TOGGLE_IS_CHAINED',
 		});
