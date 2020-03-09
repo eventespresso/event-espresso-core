@@ -40,6 +40,9 @@ class EEM_Question extends EEM_Soft_Delete_Base
     // constant used to indicate that the question type is an email input
     const QST_type_email = 'EMAIL';
 
+    // constant used to indicate that the question type is an email input
+    const QST_type_email_confirm = 'EMAIL_CONFIRM';
+
     // constant used to indicate that the question type is a US-formatted phone number
     const QST_type_us_phone = 'US_PHONE';
 
@@ -122,6 +125,7 @@ class EEM_Question extends EEM_Soft_Delete_Base
                 EEM_Question::QST_type_date => __('Date Picker', 'event_espresso'),
                 EEM_Question::QST_type_html_textarea => __('HTML Textarea', 'event_espresso'),
                 EEM_Question::QST_type_email => __('Email', 'event_espresso'),
+                EEM_Question::QST_type_email_confirm => __('Confirm Email', 'event_espresso'),
                 EEM_Question::QST_type_us_phone => __('USA - Format Phone', 'event_espresso'),
                 EEM_Question::QST_type_decimal => __('Number', 'event_espresso'),
                 EEM_Question::QST_type_int => __('Whole Number', 'event_espresso'),
@@ -143,6 +147,7 @@ class EEM_Question extends EEM_Soft_Delete_Base
                 EEM_Question::QST_type_date => __('A popup calendar that allows date selections', 'event_espresso'),
                 EEM_Question::QST_type_html_textarea => __('A multi line text input field that allows HTML', 'event_espresso'),
                 EEM_Question::QST_type_email => __('A text field that must contain a valid Email address', 'event_espresso'),
+                EEM_Question::QST_type_email_confirm => __('A text field that must contain a valid Email address and be equal to Email field', 'event_espresso'),
                 EEM_Question::QST_type_us_phone => __('A text field that must contain a valid US phone number', 'event_espresso'),
                 EEM_Question::QST_type_decimal => __('A text field that allows number values with decimals', 'event_espresso'),
                 EEM_Question::QST_type_int => __('A text field that only allows whole numbers (no decimals)', 'event_espresso'),
@@ -160,6 +165,7 @@ class EEM_Question extends EEM_Soft_Delete_Base
                     EEM_Question::QST_type_date,
                     EEM_Question::QST_type_html_textarea,
                     EEM_Question::QST_type_email,
+                    EEM_Question::QST_type_email_confirm,
                     EEM_Question::QST_type_us_phone,
                     EEM_Question::QST_type_decimal,
                     EEM_Question::QST_type_int,
@@ -313,6 +319,7 @@ class EEM_Question extends EEM_Soft_Delete_Base
                     EEM_Attendee::system_question_fname,
                     EEM_Attendee::system_question_lname,
                     EEM_Attendee::system_question_email,
+                    EEM_Attendee::system_question_email_confirm,
                     EEM_Attendee::system_question_phone
                 );
                 break;

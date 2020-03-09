@@ -1227,6 +1227,11 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step
         $form_input = '',
         $input_value = ''
     ) {
+        // If emailc is sent it's not saved
+        if ((string) $form_input === 'emailc') {
+            return true;
+        }
+
         // \EEH_Debug_Tools::printr( __FUNCTION__, __CLASS__, __FILE__, __LINE__, 2 );
         // \EEH_Debug_Tools::printr( $form_input, '$form_input', __FILE__, __LINE__ );
         // \EEH_Debug_Tools::printr( $input_value, '$input_value', __FILE__, __LINE__ );

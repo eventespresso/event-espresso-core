@@ -602,7 +602,11 @@ class EE_Question extends EE_Soft_Delete_Base_Class implements EEI_Duplicatable
                 $result->remove_validation_strategy('EE_Plaintext_Validation_Strategy');
                 break;
             case EEM_Question::QST_type_email:
-                $result = new EE_Email_Input($input_constructor_args);
+                    $result = new EE_Email_Input($input_constructor_args);
+                break;
+            // Email confirm
+            case EEM_Question::QST_type_email_confirm:
+                $result = new EE_Email_Confirm_Input($input_constructor_args);
                 break;
             case EEM_Question::QST_type_us_phone:
                 $result = new EE_Phone_Input($input_constructor_args);
