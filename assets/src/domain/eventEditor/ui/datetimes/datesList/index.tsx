@@ -30,4 +30,4 @@ const DatesList: React.FC = () => {
 	);
 };
 
-export default withEntityListContext(DatetimesListProvider, DatesList);
+export default withEntityListContext({ Provider: DatetimesListProvider, Component: DatesList });

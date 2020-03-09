@@ -30,4 +30,4 @@ const TicketsList: React.FC = () => {
 	);
 };
 
-export default withEntityListContext(TicketsListProvider, TicketsList);
+export default withEntityListContext({ Provider: TicketsListProvider, Component: TicketsList });
