@@ -1,15 +1,15 @@
 import React from 'react';
 import { __ } from '@wordpress/i18n';
 
-import { DisplayStartOrEndDate } from '@sharedServices/filterState';
-import { displayDatesFilter } from '@appLayout/espressoTable/utils';
+import { Cell } from '@appLayout/espressoTable';
+import { DisplayStartOrEndDate, filterCellByStartOrEndDate } from '@sharedServices/filterState';
 
 /**
  * DatesListTableHeader
  * header details for the Dates list table
  */
 const datesListTableHeader = (displayStartOrEndDate: DisplayStartOrEndDate) => {
-	const cellsData = [
+	const cellsData: Array<Cell> = [
 		{
 			key: 'stripe',
 			type: 'cell',
@@ -87,7 +87,7 @@ const datesListTableHeader = (displayStartOrEndDate: DisplayStartOrEndDate) => {
 		},
 	];
 
-	const cells = cellsData.filter(displayDatesFilter(displayStartOrEndDate));
+	const cells = cellsData.filter(filterCellByStartOrEndDate(displayStartOrEndDate));
 
 	return {
 		cells,

@@ -5,8 +5,7 @@ import { __ } from '@wordpress/i18n';
 import DateRegistrationsLink from '@edtrUI/datetimes/DateRegistrationsLink';
 import DateActionsMenu from '@edtrUI/datetimes/datesList/actionsMenu/DateActionsMenu';
 import { Datetime } from '@edtrServices/apollo/types';
-import { DisplayStartOrEndDate } from '@sharedServices/filterState';
-import { displayDatesFilter } from '@appLayout/espressoTable/utils';
+import { DisplayStartOrEndDate, filterCellByStartOrEndDate } from '@sharedServices/filterState';
 import { ENTITY_LIST_DATE_TIME_FORMAT } from '@appConstants/dateFnsFormats';
 import { getBackgroundColorClassName, status } from '@sharedEntities/datetimes/helpers';
 import { InlineEditText } from '@appInputs/InlineEditInput';
@@ -115,7 +114,7 @@ const datesListTableRow = ({ datetime, displayStartOrEndDate }: Props) => {
 		},
 	];
 
-	const cells = cellsData.filter(displayDatesFilter(displayStartOrEndDate));
+	const cells = cellsData.filter(filterCellByStartOrEndDate(displayStartOrEndDate));
 
 	return {
 		cells,

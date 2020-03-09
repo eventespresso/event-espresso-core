@@ -3,11 +3,11 @@ import { __ } from '@wordpress/i18n';
 
 import AddNewDateButton from './AddNewDateButton';
 import { DateCard } from './cardView';
-import DatesListEntityFilters from './filterBar/DatesListEntityFilters';
+import { DatesListEntityFilters } from './filterBar';
+import { DatetimesListProvider, withEntityListContext } from '@edtrServices/context/EntityListContext';
 import { EntityList } from '@appLayout/entityList';
 import { TableView } from './tableView';
 import { TypeName } from '@appServices/apollo/status';
-import { DatetimesListProvider } from '@edtrServices/context/EntityListContext';
 import { useDatesListFilterState, useFilteredDatetimes } from '@edtrServices/filterState';
 
 const DatesList: React.FC = () => {
@@ -30,12 +30,4 @@ const DatesList: React.FC = () => {
 	);
 };
 
-const WrappedDatesList: React.FC = () => {
-	return (
-		<DatetimesListProvider>
-			<DatesList />
-		</DatetimesListProvider>
-	);
-};
-
-export default WrappedDatesList;
+export default withEntityListContext(DatetimesListProvider, DatesList);
