@@ -23,7 +23,7 @@ const sorters = ({ tickets, sortBy = 'date' }: SortByProps): Ticket[] => {
 		case 'name':
 			return sortWith([ascend(propOr(null, 'name'))], tickets);
 		case 'id':
-			return sortWith([ascend(prop('id'))], tickets);
+			return sortWith([ascend(prop('dbId'))], tickets);
 		case 'order':
 			return sortWith([ascend(propOr(null, 'order'))], tickets);
 	}
