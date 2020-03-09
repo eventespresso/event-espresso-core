@@ -22,28 +22,42 @@ class EE_DMS_4_10_0_Confirm_Email extends EE_Data_Migration_Script_Stage_Table
         parent::__construct();
     }
 
+    /**
+     * @todo This needs more research
+     * @param string $version_array
+     * @return boolean
+     */
+    public function can_migrate_from_version($version_array)
+    {
+        // $version_string = $version_array['Core'];
+        // if (version_compare($version_string, '4.0.0.decaf', '>')) {
+        //     return true;
+        // }
+        // return false;
+    }
 
     /**
-     * Add the new system field to be available for end users
-     * 
-     * @param int $num_items
-     * @return int number of items ACTUALLY migrated
+     * takes care of migrating this particular row from the OLD table to whatever its
+     * representation is in the new database. If there are errors, use $this->add_error to log them. If there is a
+     * fatal error which prevents all future migrations, throw an exception describing it
+     *
+     * @param array $old_row an associative array where keys are column names and values are their values.
+     * @return null
      */
-    public function _migration_step($num_items = 50)
+    protected function _migrate_old_row($old_row)
     {
-        $this->insert_confirm_email_system_field();
-        return 1;
+        return null;
     }
 
 
     /**
-     * insert_confirm_email_system_field
+     * Insert the new Confirm Email system field
      *
      * @access public
      * @static
      * @return void
      */
-    public function insert_confirm_email_system_field()
+    public function schema_changes_after_migration()
     {
         global $wpdb;
         $question_table = $wpdb->prefix . "esp_question";

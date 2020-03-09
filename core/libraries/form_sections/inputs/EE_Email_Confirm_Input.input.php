@@ -1,10 +1,11 @@
 <?php
 /**
- * EE_Email_Input
+ * EE_Email_Confirm_Input
  *
  * @package         Event Espresso
  * @subpackage
- * @author              Mike Nelson
+ * @since           4.10.4
+ * @author          Rafael Goulart
  */
 class EE_Email_Confirm_Input extends EE_Form_Input_Base
 {
