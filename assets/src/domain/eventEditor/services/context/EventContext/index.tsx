@@ -1,6 +1,3 @@
-/**
- * External imports
- */
 import React, { createContext } from 'react';
 import pathOr from 'ramda/src/pathOr';
 
