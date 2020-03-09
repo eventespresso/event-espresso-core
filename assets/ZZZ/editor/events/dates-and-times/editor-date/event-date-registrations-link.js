@@ -18,44 +18,31 @@ const { ADMIN_ROUTES, ADMIN_ROUTE_ACTION_DEFAULT, getAdminUrl } = routes;
  * @param {BaseEntity} dateEntity    The date object.
  * @return {Object} rendered link to registrations list table for datetime
  */
-const EventDateRegistrationsLink = ( { dateEntity } ) => {
-	return useMemo(
-		() => {
-			const regListUrl = addQueryArgs(
-				getAdminUrl(
-					ADMIN_ROUTES.REGISTRATIONS,
-					ADMIN_ROUTE_ACTION_DEFAULT
-				),
-				{
-					event_id: dateEntity.evtId,
-					datetime_id: dateEntity.id,
-					return: 'edit',
-				}
-			);
-			return (
-				<Tooltip
-					text={ __(
-						'view registrations for this date.',
-						'event_espresso'
-					) }
+const EventDateRegistrationsLink = ({ dateEntity }) => {
+	return useMemo(() => {
+		const regListUrl = addQueryArgs(getAdminUrl(ADMIN_ROUTES.REGISTRATIONS, ADMIN_ROUTE_ACTION_DEFAULT), {
+			event_id: dateEntity.evtId,
+			datetime_id: dateEntity.id,
+			return: 'edit',
+		});
+
+		return (
+			<Tooltip text={__('view registrations for this date.', 'event_espresso')}>
+				<a
+					href={regListUrl}
+					className={'ee-editor-details-reg-url-link'}
+					target={'_blank'}
+					rel={'noopener norefferer'}
 				>
-					<a
-						href={ regListUrl }
-						className={ 'ee-editor-details-reg-url-link' }
-						target={ '_blank' }
-						rel={ 'noopener norefferer' }
-					>
-						<Dashicon icon="groups" size={ 24 } />
-					</a>
-				</Tooltip>
-			);
-		},
-		[ dateEntity.evtId, dateEntity.id ]
-	);
+					<Dashicon icon='groups' size={24} />
+				</a>
+			</Tooltip>
+		);
+	}, [dateEntity.evtId, dateEntity.id]);
 };
 
 EventDateRegistrationsLink.propTypes = {
 	dateEntity: PropTypes.object.isRequired,
 };
 
-export default ifValidDateEntity( EventDateRegistrationsLink );
+export default ifValidDateEntity(EventDateRegistrationsLink);

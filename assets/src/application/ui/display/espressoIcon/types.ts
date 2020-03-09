@@ -9,16 +9,17 @@ export interface EspressoIconProps {
 export enum Icon {
 	CALCULATOR = 'calculator',
 	CALENDAR = 'calendar',
+	EDIT = 'edit',
+	FILTER = 'filter',
+	GROUPS = 'groups',
+	LINK = 'admin-links',
+	LIST_VIEW = 'list-view',
 	REM = 'rem',
 	ROTATE = 'rotate',
 	SAVE = 'save',
-	EDIT = 'edit',
 	TICKET = 'ticket-alt',
 	TRASH = 'trash',
-	FILTER = 'filter',
-	LIST_VIEW = 'list-view',
 	UNLINK = 'editor-unlink',
-	LINK = 'admin-links',
 }
 
 export type SvgPath = {

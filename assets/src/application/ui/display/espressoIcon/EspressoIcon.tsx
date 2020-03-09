@@ -15,6 +15,7 @@ const EspressoIcon: React.FC<EspressoIconProps> = ({ icon, svgSize = 20, classNa
 	if (!path) {
 		return null;
 	}
+
 	const htmlClass = classNames(className, 'dashicon', `dashicons-${icon}`, 'espresso-icon');
 
 	return (
