@@ -2,8 +2,8 @@ import React from 'react';
 import { format } from 'date-fns';
 import { __ } from '@wordpress/i18n';
 
-import { displayDatesFilter } from '@appLayout/espressoTable/utils';
-import { DisplayDates } from '@edtrInterfaces/shared/types';
+import { Cell } from '@appLayout/espressoTable';
+import { DisplayStartOrEndDate, filterCellByStartOrEndDate } from '@sharedServices/filterState';
 import { ENTITY_LIST_DATE_TIME_FORMAT } from '@appConstants/dateFnsFormats';
 import { getBackgroundColorClassName, status } from '@sharedEntities/tickets/helpers';
 import { InlineEditText } from '@appInputs/InlineEditInput';
@@ -18,10 +18,10 @@ import '@application/ui/styles/root/entity-status.css';
 
 interface Props {
 	ticket: Ticket;
-	displayDates: DisplayDates;
+	displayStartOrEndDate: DisplayStartOrEndDate;
 }
 
-const ticketsListTableRow = ({ ticket, displayDates }: Props) => {
+const ticketsListTableRow = ({ ticket, displayStartOrEndDate }: Props) => {
 	const bgClassName = getBackgroundColorClassName(ticket);
 	const { formatAmount } = useMoneyDisplay();
 	const id = ticket.dbId || shortenGuid(ticket.id);
@@ -66,7 +66,7 @@ const ticketsListTableRow = ({ ticket, displayDates }: Props) => {
 		),
 	};
 
-	const cellsData = [
+	const cellsData: Array<Cell> = [
 		{
 			key: 'stripe',
 			type: 'cell',
@@ -120,7 +120,7 @@ const ticketsListTableRow = ({ ticket, displayDates }: Props) => {
 		},
 	];
 
-	const cells = cellsData.filter(displayDatesFilter(displayDates));
+	const cells = cellsData.filter(filterCellByStartOrEndDate(displayStartOrEndDate));
 
 	return {
 		cells,

@@ -1,5 +1,7 @@
 import { parseISO, formatISO } from 'date-fns';
 
+import { Ticket } from '@edtrServices/apollo';
+import { TicketsToShow } from '@edtrServices/filterState';
 import allOnSaleAndPending from './allOnSaleAndPending';
 import trashedOnly from './trashedOnly';
 import expiredOnly from './expiredOnly';
@@ -10,14 +12,11 @@ import percentSoldAtOrAbove from './percentSoldAtOrAbove';
 import percentSoldBelow from './percentSoldBelow';
 import soldOutOnly from './soldOutOnly';
 
-import { ShowTickets } from '../../../../../eventEditor/interfaces/ticket/types';
-import { Ticket } from '../../../../../eventEditor/services/apollo/types';
-
 export const now = parseISO(formatISO(new Date()));
 
 interface FilterTickets {
 	tickets: Ticket[];
-	show?: ShowTickets;
+	show?: TicketsToShow;
 }
 
 /**
@@ -27,31 +26,31 @@ interface FilterTickets {
  * @param {string} show    value for the "show" filter
  * @return {Array}         filtered tickets array
  */
-const filters = ({ tickets, show = ShowTickets.nextOnSaleOrPendingOnly }: FilterTickets): Ticket[] => {
+const filters = ({ tickets, show = TicketsToShow.nextOnSaleOrPendingOnly }: FilterTickets): Ticket[] => {
 	switch (show) {
-		case ShowTickets.above50Sold:
+		case TicketsToShow.above50Sold:
 			return percentSoldAtOrAbove({ percentage: 50, tickets });
-		case ShowTickets.above75Sold:
+		case TicketsToShow.above75Sold:
 			return percentSoldAtOrAbove({ percentage: 75, tickets });
-		case ShowTickets.above90Sold:
+		case TicketsToShow.above90Sold:
 			return percentSoldAtOrAbove({ percentage: 90, tickets });
-		case ShowTickets.all:
+		case TicketsToShow.all:
 			return tickets;
-		case ShowTickets.trashedOnly:
+		case TicketsToShow.trashedOnly:
 			return trashedOnly(tickets);
-		case ShowTickets.below50Sold:
+		case TicketsToShow.below50Sold:
 			return percentSoldBelow({ percentage: 50, tickets });
-		case ShowTickets.expiredOnly:
+		case TicketsToShow.expiredOnly:
 			return expiredOnly(tickets);
-		case ShowTickets.nextOnSaleOrPendingOnly:
+		case TicketsToShow.nextOnSaleOrPendingOnly:
 			return nextOnSaleOrPendingOnly(tickets);
-		case ShowTickets.onSaleAndPending:
+		case TicketsToShow.onSaleAndPending:
 			return allOnSaleAndPending(tickets);
-		case ShowTickets.onSaleOnly:
+		case TicketsToShow.onSaleOnly:
 			return onSaleOnly(tickets);
-		case ShowTickets.pendingOnly:
+		case TicketsToShow.pendingOnly:
 			return pendingOnly(tickets);
-		case ShowTickets.soldOutOnly:
+		case TicketsToShow.soldOutOnly:
 			return soldOutOnly(tickets);
 		default:
 			return tickets;

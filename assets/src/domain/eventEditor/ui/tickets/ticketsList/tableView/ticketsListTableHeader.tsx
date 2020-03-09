@@ -1,11 +1,11 @@
 import React from 'react';
 import { __ } from '@wordpress/i18n';
 
-import { DisplayDates } from '@edtrInterfaces/shared/types';
-import { displayDatesFilter } from '@appLayout/espressoTable/utils';
+import { Cell } from '@appLayout/espressoTable';
+import { DisplayStartOrEndDate, filterCellByStartOrEndDate } from '@sharedServices/filterState';
 
-const ticketsListTableHeader = (displayDates: DisplayDates) => {
-	const cellsData = [
+const ticketsListTableHeader = (displayStartOrEndDate: DisplayStartOrEndDate) => {
+	const cellsData: Array<Cell> = [
 		{
 			key: 'stripe',
 			type: 'cell',
@@ -86,7 +86,7 @@ const ticketsListTableHeader = (displayDates: DisplayDates) => {
 		},
 	];
 
-	const cells = cellsData.filter(displayDatesFilter(displayDates));
+	const cells = cellsData.filter(filterCellByStartOrEndDate(displayStartOrEndDate));
 
 	return {
 		cells,
