@@ -20,25 +20,25 @@ const TicketsSortedByControl: React.FC<TicketsSortedByControlProps> = React.memo
 	({ setSortTicketsBy, sortTicketsBy }) => {
 		return (
 			<SelectInput
-				label={__('sort')}
+				label={__('sort by')}
 				className='ee-ticket-list-filter-bar-order-select'
 				value={sortTicketsBy}
 				options={[
 					{
 						value: SortTicketsBy.date,
-						label: __('by ticket sale date'),
+						label: __('ticket sale date'),
 					},
 					{
 						value: SortTicketsBy.name,
-						label: __('by ticket name'),
+						label: __('ticket name'),
 					},
 					{
 						value: SortTicketsBy.id,
-						label: __('by ticket ID'),
+						label: __('ticket ID'),
 					},
 					{
 						value: SortTicketsBy.order,
-						label: __('by custom order'),
+						label: __('custom order'),
 					},
 				]}
 				onChange={setSortTicketsBy}

@@ -1,10 +1,10 @@
-import { DisplayDates } from '@edtrInterfaces/shared/types';
+import { DisplayStartOrEndDate } from '@sharedServices/filterState';
+import { DatetimesToShow } from '@edtrServices/filterState';
 import { Entity } from '@appServices/apollo/types';
-import { ShowDates } from '@edtrInterfaces/datetimes/types';
 
 export interface TableViewProps {
 	className?: string;
-	displayDates: DisplayDates;
+	displayStartOrEndDate: DisplayStartOrEndDate;
 	entities: Entity[];
-	showDate: ShowDates;
+	datetimesToShow: DatetimesToShow;
 }

@@ -7,20 +7,19 @@ import DatesListEntityFilters from './filterBar/DatesListEntityFilters';
 import { EntityList } from '@appLayout/entityList';
 import { TableView } from './tableView';
 import { TypeName } from '@appServices/apollo/status';
-import useDatesListFilterState from './filterBar/useDatesListFilterState';
-import useDatetimes from '../../../services/apollo/queries/datetimes/useDatetimes';
+import { DatetimesListProvider } from '@edtrServices/context/EntityListContext';
+import { useDatesListFilterState, useFilteredDatetimes } from '@edtrServices/filterState';
 
 const DatesList: React.FC = () => {
-	const datetimes = useDatetimes();
-	const { filteredEntities, ...entityFiltersProps } = useDatesListFilterState(datetimes);
-	const entityFilters = <DatesListEntityFilters {...entityFiltersProps} />;
+	const filteredDates = useFilteredDatetimes();
+	const filterState = useDatesListFilterState();
 
 	return (
 		<EntityList
 			CardView={DateCard}
-			displayDates={entityFiltersProps.displayDates}
-			entities={filteredEntities}
-			entityFilters={entityFilters}
+			entities={filteredDates}
+			filterState={filterState}
+			entityFilters={<DatesListEntityFilters />}
 			entityType={TypeName.datetimes}
 			footer={<AddNewDateButton />}
 			headerText={__('Event Dates')}
@@ -31,4 +30,12 @@ const DatesList: React.FC = () => {
 	);
 };
 
-export default DatesList;
+const WrappedDatesList: React.FC = () => {
+	return (
+		<DatetimesListProvider>
+			<DatesList />
+		</DatetimesListProvider>
+	);
+};
+
+export default WrappedDatesList;

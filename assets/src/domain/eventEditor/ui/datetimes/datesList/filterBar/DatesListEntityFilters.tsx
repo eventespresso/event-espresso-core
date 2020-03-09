@@ -1,33 +1,35 @@
 import React from 'react';
 
-import { FilterStateManager } from './useDatesListFilterState/types';
-import DatesSortedControl from './controls/DatesSortedControl';
-import DisplayDatesControl from './controls/DisplayDatesControl';
-import ShowDatesControl from './controls/ShowDatesControl';
-
-type Props = Omit<FilterStateManager, 'dates' | 'filteredEntities'>;
+import SortByControl from './controls/SortByControl';
+import DisplayStartOrEndDateControl from './controls/DisplayStartOrEndDateControl';
+import DatetimesToShowControl from './controls/DatetimesToShowControl';
+import { useDatesListFilterState } from '@edtrServices/filterState';
 
 /**
  * filters for controlling the display of a list of Event Dates
  */
-const DatesListEntityFilters: React.FC<Props> = ({
-	datesSortedBy,
-	displayDates,
-	setDatesSortedBy,
-	setDisplayDates,
-	setShowDates,
-	showDates,
-}) => {
+const DatesListEntityFilters: React.FC = () => {
+	const {
+		displayStartOrEndDate,
+		datetimesToShow,
+		setDisplayStartOrEndDate,
+		setDatetimesToShow,
+		setSortBy,
+		sortBy,
+	} = useDatesListFilterState();
 	return (
 		<>
-			<div className='ee-show-dates-filter ee-filter-bar-filter ee-filter-bar-filter--bigger'>
-				<ShowDatesControl showDates={showDates} setShowDates={setShowDates} />
+			<div className='ee-show-dates-filter ee-filter-bar-filter'>
+				<DatetimesToShowControl datetimesToShow={datetimesToShow} setDatetimesToShow={setDatetimesToShow} />
 			</div>
 			<div className='ee-sort-dates-filter ee-filter-bar-filter'>
-				<DatesSortedControl datesSortedBy={datesSortedBy} setDatesSortedBy={setDatesSortedBy} />
+				<SortByControl sortBy={sortBy} setSortBy={setSortBy} />
 			</div>
 			<div className='ee-display-dates-dates-filter ee-filter-bar-filter'>
-				<DisplayDatesControl displayDates={displayDates} setDisplayDates={setDisplayDates} />
+				<DisplayStartOrEndDateControl
+					displayStartOrEndDate={displayStartOrEndDate}
+					setDisplayStartOrEndDate={setDisplayStartOrEndDate}
+				/>
 			</div>
 		</>
 	);
