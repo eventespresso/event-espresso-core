@@ -1,13 +1,9 @@
 import { useReducer } from 'react';
 
-import {
-	BasicSortBy,
-	EntityListFilterState,
-	EntityListFilterStateManager,
-	EntityListFilterStateReducer,
-} from './types';
+import { BasicSortBy, EntityListFilterState, EntityListFilterStateManager } from './types';
 import getReducer from './reducer';
 
+// create a shorter generic to use at multiple places.
 type ELFSM<SortBy = BasicSortBy> = EntityListFilterStateManager<SortBy>;
 
 const useEntityListFilterStateManager = <SortBy = BasicSortBy>(defaultSortBy: SortBy): ELFSM<SortBy> => {
