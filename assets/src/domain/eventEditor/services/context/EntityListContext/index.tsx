@@ -9,9 +9,3 @@ export const DatetimesListProvider: React.FC<ContextProviderProps> = ({ children
 	const filters = useDatesListFilterStateManager();
 	return <DatetimesListContext.Provider value={{ filters }}>{children}</DatetimesListContext.Provider>;
 };
-
-/* export const TicketListContext = createContext<EntityListContextProps<TicketsFilterStateManager>>(null);
-export const TicketListProvider: React.FC<ContextProviderProps> = ({ children }) => {
-	const filters = useDatesListFilterState();
-	return <TicketListContext.Provider value={{ filters }}>{children}</TicketListContext.Provider>;
-}; */

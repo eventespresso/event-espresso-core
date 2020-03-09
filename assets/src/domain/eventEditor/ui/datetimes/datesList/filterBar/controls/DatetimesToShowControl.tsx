@@ -76,7 +76,6 @@ const DatetimesToShowControl: React.FC<DatetimesToShowControlProps> = React.memo
 					},
 				]}
 				onChange={setDatetimesToShow}
-				size='large'
 			/>
 		);
 	}

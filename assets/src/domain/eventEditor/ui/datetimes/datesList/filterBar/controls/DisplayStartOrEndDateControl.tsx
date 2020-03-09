@@ -32,7 +32,6 @@ const DisplayStartOrEndDateControl: React.FC<DisplayStartOrEndDateControlProps> 
 					},
 				]}
 				onChange={setDisplayStartOrEndDate}
-				size='large'
 			/>
 		);
 	}

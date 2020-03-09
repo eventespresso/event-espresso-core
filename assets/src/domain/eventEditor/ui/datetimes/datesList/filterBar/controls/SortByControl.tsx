@@ -41,7 +41,6 @@ const SortByControl: React.FC<SortByControlProps> = React.memo(({ sortBy, setSor
 			value={sortBy}
 			options={options}
 			onChange={setSortBy}
-			size='large'
 		/>
 	);
 });
