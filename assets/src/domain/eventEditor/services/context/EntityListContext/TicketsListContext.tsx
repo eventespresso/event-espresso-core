@@ -9,5 +9,6 @@ export const TicketsListContext = createContext<TicketsListContextProps>(null);
 
 export const TicketsListProvider: React.FC<ContextProviderProps> = ({ children }) => {
 	const filters = useTicketsListFilterStateManager();
-	return <TicketsListContext.Provider value={{ filters }}>{children}</TicketsListContext.Provider>;
+	const value = { filters };
+	return <TicketsListContext.Provider value={value}>{children}</TicketsListContext.Provider>;
 };

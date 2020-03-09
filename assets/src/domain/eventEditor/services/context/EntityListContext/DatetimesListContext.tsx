@@ -9,5 +9,6 @@ export const DatetimesListContext = createContext<DatetimesListContextProps>(nul
 
 export const DatetimesListProvider: React.FC<ContextProviderProps> = ({ children }) => {
 	const filters = useDatesListFilterStateManager();
-	return <DatetimesListContext.Provider value={{ filters }}>{children}</DatetimesListContext.Provider>;
+	const value = { filters };
+	return <DatetimesListContext.Provider value={value}>{children}</DatetimesListContext.Provider>;
 };
