@@ -10,11 +10,11 @@ import { EspressoIcon, Icon } from '@appDisplay/espressoIcon';
 import getAdminUrl from '@sharedServices/utils/url/getAdminUrl';
 import { useConfigData } from '@appServices/config';
 
-interface DateRegistrationsLinkProps {
+interface Props {
 	datetime: Datetime;
 }
 
-const DateRegistrationsLink: React.FC<DateRegistrationsLinkProps> = ({ datetime }) => {
+const DateRegistrationsLink: React.FC<Props> = ({ datetime }) => {
 	const {
 		siteUrl: { admin },
 	} = useConfigData();
