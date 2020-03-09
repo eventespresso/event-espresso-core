@@ -13,8 +13,6 @@ import './style.scss';
  * a group of inputs for controlling how a list of entities is displayed
  */
 const EntityListFilterBar: React.FC<EntityListFilterBarProps> = ({ entityFilters, filterState, listId }) => {
-	if (!filterState) return null;
-
 	const {
 		searchText,
 		setListView,

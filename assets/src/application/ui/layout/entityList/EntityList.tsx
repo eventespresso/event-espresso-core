@@ -4,7 +4,7 @@ import { Divider, Typography } from 'antd';
 
 import { EmptyState, ErrorIndicator, LoadingIndicator } from '@appDisplay/index';
 import { EntityListFilterStateManager } from './filterBar';
-import EntityListFilterBar from '@appLayout/entityList/filterBar/EntityListFilterBar';
+import EntityListFilterBar from './withValidFilterState';
 import { Entity } from '@appServices/apollo/types';
 import { useStatus } from '@appServices/apollo/status';
 
