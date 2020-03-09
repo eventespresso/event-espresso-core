@@ -1,42 +1,43 @@
 import React from 'react';
 
-import { FilterStateManager } from './useTicketsListFilterState/types';
-import DisplayTicketsControl from './controls/DisplayTicketsControl';
-import ShowTicketsControl from './controls/ShowTicketsControl';
-import TicketsChainedButton from './controls/TicketsChainedButton';
-import TicketsSortedByControl from './controls/TicketsSortedByControl';
+import { DisplayStartOrEndDateControl, SortByControl, TicketsChainedButton, TicketsToShowControl } from './controls';
+import { useTicketsListFilterState } from '@edtrServices/filterState';
 import './style.scss';
-
-type Props = Omit<FilterStateManager, 'tickets' | 'filteredEntities'>;
 
 /**
  * filters for controlling the display of a list of Tickets
  */
-const TicketsListEntityFilters: React.FC<Props> = ({
-	displayTicketDate,
-	isChained,
-	setDisplayTicketDate,
-	setShowTickets,
-	setSortTicketsBy,
-	showTickets,
-	sortTicketsBy,
-	toggleIsChained,
-}) => {
+const TicketsListEntityFilters: React.FC = () => {
+	const {
+		displayStartOrEndDate,
+		isChained,
+		setDisplayStartOrEndDate,
+		setSortBy,
+		setTicketsToShow,
+		sortBy,
+		ticketsToShow,
+		toggleIsChained,
+	} = useTicketsListFilterState();
+
 	return (
 		<>
-			<div className='ee-show-tickets-filter ee-filter-bar-filter ee-filter-bar-filter--bigger'>
-				<ShowTicketsControl isChained={isChained} showTickets={showTickets} setShowTickets={setShowTickets} />
+			<div className='ee-tickets-to-show-filter ee-filter-bar-filter ee-filter-bar-filter--bigger'>
+				<TicketsToShowControl
+					isChained={isChained}
+					ticketsToShow={ticketsToShow}
+					setTicketsToShow={setTicketsToShow}
+				/>
 			</div>
 			<div className='ee-ticket-dates-chained-filter ee-filter-bar-filter ee-filter-bar-filter--micro'>
 				<TicketsChainedButton isChained={isChained} toggleIsChained={toggleIsChained} />
 			</div>
-			<div className='ee-sort-tickets-filter ee-filter-bar-filter'>
-				<TicketsSortedByControl sortTicketsBy={sortTicketsBy} setSortTicketsBy={setSortTicketsBy} />
+			<div className='ee-tickets-sort-by-filter ee-filter-bar-filter'>
+				<SortByControl sortBy={sortBy} setSortBy={setSortBy} />
 			</div>
-			<div className='ee-display-ticket-dates-filter ee-filter-bar-filter ee-filter-bar-filter--big'>
-				<DisplayTicketsControl
-					displayTicketDate={displayTicketDate}
-					setDisplayTicketDate={setDisplayTicketDate}
+			<div className='ee-tickets-display-start-or-end-date-filter ee-filter-bar-filter'>
+				<DisplayStartOrEndDateControl
+					displayStartOrEndDate={displayStartOrEndDate}
+					setDisplayStartOrEndDate={setDisplayStartOrEndDate}
 				/>
 			</div>
 		</>
