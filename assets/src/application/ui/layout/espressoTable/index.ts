@@ -18,3 +18,4 @@ export const EspressoTable = {
 
 export { default as ResponsiveTable } from './ResponsiveTable';
 export * from './utils';
+export * from './types';

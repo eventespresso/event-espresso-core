@@ -6,7 +6,7 @@ import {
 	OnDragEndResponder,
 } from 'react-beautiful-dnd';
 
-interface Cell {
+export interface Cell {
 	type: string;
 	key: string;
 	value: React.ReactNode;
