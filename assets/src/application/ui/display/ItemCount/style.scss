@@ -1,0 +1,20 @@
+/** -------------------------------------------------------------------------
+ * Event Espresso ItemCount Stylesheet
+ * © 2020 Event Espresso
+ * ------------------------------------------------------------------------- */
+
+.ee-item-count {
+	&--has-items {
+		.ant-badge-count {
+			background: var(--ee-color-bright-blue);
+		}
+	}
+
+	&--no-items {
+		.ant-badge-count {
+			background: var(--ee-color-hot-pink);
+			font-size: var(--ee-font-size-tiny);
+			font-weight: bold;
+		}
+	}
+}
