@@ -7,7 +7,7 @@ import { ADMIN_ROUTES } from '@sharedConstants/adminRoutes';
 import { EspressoIcon, Icon } from '@appDisplay/espressoIcon';
 import getAdminUrl from '@sharedServices/utils/url/getAdminUrl';
 import { Ticket } from '@edtrServices/apollo/types';
-import { useConfigData } from '@appServices/config';
+import useConfig from '@appServices/config/useConfig';
 import useEventId from '@edtrServices/apollo/queries/events/useEventId';
 
 interface Props {
@@ -17,7 +17,7 @@ interface Props {
 const TicketRegistrationsLink: React.FC<Props> = ({ ticket }) => {
 	const {
 		siteUrl: { admin },
-	} = useConfigData();
+	} = useConfig();
 	const adminUrl = getAdminUrl({ adminSiteUrl: admin, page: ADMIN_ROUTES.REGISTRATIONS });
 	const eventId = useEventId();
 	const regListUrl = addQueryArgs(adminUrl, {
