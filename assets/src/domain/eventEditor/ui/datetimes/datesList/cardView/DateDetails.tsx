@@ -1,19 +1,16 @@
 import React from 'react';
 import { __ } from '@wordpress/i18n';
 
-import InfinitySymbol from '@application/valueObjects/InfinitySymbol';
-import parseInfinity from '@appServices/utilities/parseInfinity';
 import { EntityDetailsPanel } from '@appDisplay/enityDetails';
-import { MutatorFn } from '@appServices/apollo/mutations';
 import { Datetime } from '@edtrServices/apollo/types';
 import DateRegistrationsLink from '../../DateRegistrationsLink';
+import DateCapacity from './DateCapacity';
 
 interface DateDetailsProps {
 	datetime: Datetime;
-	updateDatetime: MutatorFn;
 }
 
-const DateDetails: React.FC<DateDetailsProps> = ({ datetime, updateDatetime }) => {
+const DateDetails: React.FC<DateDetailsProps> = ({ datetime }) => {
 	const details = [
 		{
 			id: 'ee-event-date-sold',
@@ -23,14 +20,7 @@ const DateDetails: React.FC<DateDetailsProps> = ({ datetime, updateDatetime }) =
 		{
 			id: 'ee-event-date-capacity',
 			label: __('capacity'),
-			value: <InfinitySymbol value={datetime.capacity} asInt />,
-			onChange: (cap: any) => {
-				const capacity = parseInfinity(cap, true);
-				updateDatetime({ capacity });
-				/**
-				 * @TODO update related tickets capacity
-				 */
-			},
+			value: <DateCapacity datetime={datetime} />,
 		},
 		{
 			id: 'ee-event-date-registrations',
