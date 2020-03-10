@@ -1,8 +1,5 @@
-import { pathOr } from 'ramda';
-
 import usePriceTypeQueryOptions from './usePriceTypeQueryOptions';
-import { entitiesWithGuIdInArray } from '../../../../../shared/services/predicates';
-import { useStatus, TypeName } from '../../../../../../application/services/apollo/status';
+import { entitiesWithGuIdInArray } from '@sharedServices/predicates';
 import { EntityId } from '@appServices/apollo/types';
 import { PriceType, PriceTypesList } from '../../types';
 import useCacheQuery from '../useCacheQuery';
@@ -14,13 +11,9 @@ import useCacheQuery from '../useCacheQuery';
  */
 const usePriceTypes = (include: EntityId[] = []): PriceType[] => {
 	const options = usePriceTypeQueryOptions();
-	const { isLoaded } = useStatus();
 	const { data } = useCacheQuery<PriceTypesList>(options);
 
-	if (!isLoaded(TypeName.priceTypes)) {
-		return [];
-	}
-	const priceTypes = pathOr<PriceType[]>([], ['espressoPriceTypes', 'nodes'], data);
+	const priceTypes = data?.espressoPriceTypes?.nodes || [];
 
 	return include.length ? entitiesWithGuIdInArray(priceTypes, include) : priceTypes;
 };
