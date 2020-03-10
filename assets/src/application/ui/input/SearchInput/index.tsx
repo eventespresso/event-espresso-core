@@ -19,7 +19,7 @@ const SearchInput: React.FC<SearchInputProps> = React.memo(({ id, searchText, se
 				className='ee-entity-list-filter-bar-search'
 				value={searchText}
 				onChange={(e) => setSearchText(e.target.value)}
-				size='middle'
+				onPressEnter={(e) => e.preventDefault()}
 				{...rest}
 			/>
 		</BaseInput>
