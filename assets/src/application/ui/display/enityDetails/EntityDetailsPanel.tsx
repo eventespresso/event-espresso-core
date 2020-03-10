@@ -1,6 +1,6 @@
 import React, { Fragment } from 'react';
 
-import './style.css';
+import './style.scss';
 import DetailsSeparator from './DetailsSeparator';
 import EntityDetail from './EntityDetail';
 import { EntityDetailsPanelProps } from './types';
