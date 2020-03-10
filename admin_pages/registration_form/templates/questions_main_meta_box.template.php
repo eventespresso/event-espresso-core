@@ -123,8 +123,7 @@ if ($QST_system === 'country') {
                 }
 
                 // Only display Confirm email for
-                if (
-                    empty($QST_system)
+                if (empty($QST_system)
                     || (! empty($QST_system) && $QST_system !== EEM_Attendee::system_question_email_confirm)
                 ) {
                     unset($question_types[ EEM_Question::QST_type_email_confirm ]);
