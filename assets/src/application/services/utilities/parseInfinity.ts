@@ -1,22 +1,35 @@
 import { isNil } from 'ramda';
 
-const parseInfinity = (number: any, asInt = false): number => {
+interface ParseInfinity {
+	(mayBeNumber: any, defaultValue?: number, asFloat?: boolean): number;
+}
+
+const parseInfinity: ParseInfinity = (mayBeNumber, defaultValue = -1, asFloat = false) => {
 	// returns true for any possible value that could represent infinity
-	const representsInfinity = (value: any): boolean =>
-		value < 0 || value === '' || value === 'INF' || value === Infinity || isNil(value);
+	const representsInfinity = (value: any): boolean => {
+		return value < 0 || value === '' || value === 'INF' || value === Infinity || isNil(value);
+	};
 
-	if (number && number.type && number.type.name === 'InfinitySymbol') {
-		number = number.props.value;
+	let parsedValue: number = mayBeNumber;
+
+	// If it is infinity
+	if (representsInfinity(parsedValue)) {
+		// `parsedValue` is now expected to be a "number"
+		parsedValue = defaultValue;
 	}
 
-	number = representsInfinity(number) ? Infinity : number;
-	number = number !== Infinity && asInt ? parseInt(number, 10) : number;
-
-	if (isNaN(number)) {
-		number = asInt ? -1 : Infinity;
+	// If it is not a number (including Infinity)
+	if (typeof parsedValue !== 'number') {
+		// Try to parse it as number
+		parsedValue = asFloat ? parseFloat(parsedValue) : parseInt(parsedValue, 10);
 	}
 
-	return number;
+	// if still no luck
+	if (isNaN(parsedValue)) {
+		parsedValue = defaultValue;
+	}
+
+	return parsedValue;
 };
 
 export default parseInfinity;
