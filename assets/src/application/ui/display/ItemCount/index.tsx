@@ -6,22 +6,33 @@ import classNames from 'classnames';
 import './style.scss';
 
 interface ItemCountProps extends BadgeProps {
-	id?: string;
-	showClock?: boolean;
+	zeroCountChar?: string | JSX.Element;
 }
 
-const ItemCount: React.FC<ItemCountProps> = ({ children, title, count, ...props }) => {
+const ItemCount: React.FC<ItemCountProps> = ({
+	children,
+	count,
+	title = ' ',
+	zeroCountChar = '!',
+	...props
+}) => {
 	const className = classNames(props.className, 'ee-item-count', {
 		'ee-item-count--has-items': count > 0,
 		'ee-item-count--no-items': count === 0,
 	});
-	const offset = props.offset || [-5, 5];
+	const offset = props.offset || [5, 5];
+	const value = count > 0 ? count : zeroCountChar;
 
-	const countBadge = <span className='ant-badge-count'>{count}</span>;
-	const countNode = title ? <Tooltip title={title}>{countBadge}</Tooltip> : countBadge;
+	const countNode = (
+		<Tooltip title={title}>
+			<span className='ant-badge-count' style={{ right: `${offset[0]}px`, top: `${offset[1]}px` }}>
+				{value}
+			</span>
+		</Tooltip>
+	);
 
 	return (
-		<Badge {...props} className={className} count={countNode} offset={offset} showZero>
+		<Badge {...props} className={className} count={countNode} offset={offset}>
 			{children}
 		</Badge>
 	);
