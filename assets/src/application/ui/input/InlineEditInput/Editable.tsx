@@ -4,7 +4,7 @@ import classNames from 'classnames';
 
 import { EditableProps } from './types';
 
-import './style.css';
+import './style.scss';
 
 const { Text, Title, Paragraph } = Typography;
 

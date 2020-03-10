@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import classNames from 'classnames';
 
-import parseInfinity from '@appServices/utilities/parseInfinity';
+import parseInfinity from '@appServices/utilities/number/parseInfinity';
 import Editable from './Editable';
 import { TextProps } from './types';
 
@@ -34,8 +34,10 @@ const InlineEditInfinity: React.FC<TextProps> = ({ children, onChange, className
 			output = `${value}`;
 			break;
 	}
-
-	const htmlClasseName = classNames('ee-infinity-sign', className);
+	const htmlClasseName = classNames({
+		className,
+		'ee-infinity-sign': output === '∞',
+	});
 
 	return (
 		<Editable {...rest} editable={editable} inputType='text' className={htmlClasseName}>
