@@ -1,7 +1,8 @@
 export { default as Avatar } from './Avatar';
-export * from './espressoIcon';
-export { default as EmptyState } from './EmptyState';
-export * from './EntityIDs';
-export { default as ErrorIndicator } from './ErrorIndicator';
-export { default as LoadingIndicator } from './LoadingIndicator';
 export { default as DebugInfo } from './DebugInfo';
+export { default as EmptyState } from './EmptyState';
+export { default as ErrorIndicator } from './ErrorIndicator';
+export { LoadingIndicator } from './loadingIndicator';
+
+export * from './espressoIcon';
+export * from './EntityIDs';

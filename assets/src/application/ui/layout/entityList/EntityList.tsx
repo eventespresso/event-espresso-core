@@ -34,7 +34,7 @@ const EntityList: React.FC<any> = <ELFS extends EntityListFilterStateManager>({
 	const error = isError(entityType);
 	const loading = isLoading(entityType);
 
-	if (loading) return <LoadingIndicator message={__('loading...')} />;
+	if (loading) return <LoadingIndicator tip={__('loading...')} />;
 
 	if (error) return <ErrorIndicator />;
 
