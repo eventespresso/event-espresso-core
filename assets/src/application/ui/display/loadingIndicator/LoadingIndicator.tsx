@@ -4,7 +4,8 @@ import { Spin } from 'antd';
 import { SpinProps } from 'antd/lib/spin';
 
 const LoadingIndicator: React.FC<SpinProps> = (props) => {
-	const antIcon = <LoadingOutlined style={{ fontSize: 24 }} spin />;
+	const style = { fontSize: 24 };
+	const antIcon = <LoadingOutlined style={style} spin />;
 
 	return <Spin indicator={antIcon} {...props} />;
 };
