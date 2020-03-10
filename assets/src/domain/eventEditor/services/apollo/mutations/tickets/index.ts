@@ -39,4 +39,6 @@ export const DELETE_TICKET = gql`
 
 export { default as useTicketMutator } from './useTicketMutator';
 
+export { default as useTicketQuantityForCapacity } from './useTicketQuantityForCapacity';
+
 export * from './types';
