@@ -1,7 +1,6 @@
-import useRelations from '../../../../../../application/services/apollo/relations/useRelations';
-import usePrices from '../prices/usePrices';
 import { EntityId } from '@appServices/apollo/types';
 import { Price } from '../../types';
+import { useRelatedPrices } from '../prices';
 /**
  * A custom react hook for retrieving the related prices
  * for the given `ticket` identified by `ticket.id`
@@ -9,18 +8,13 @@ import { Price } from '../../types';
  * @param {string}  ticketId ticket.id
  */
 const useTicketPrices = (ticketId: EntityId): Price[] => {
-	const { getRelations } = useRelations();
-	// get related price Ids for this ticket
-	const relatedPriceIds = getRelations({
+	// get price objects.
+	const relatedPrices = useRelatedPrices({
 		entity: 'tickets',
 		entityId: ticketId,
-		relation: 'prices',
 	});
 
-	// get price objects.
-	const relatedPrices = usePrices(relatedPriceIds);
-
-	return relatedPriceIds.length ? relatedPrices : [];
+	return relatedPrices;
 };
 
 export default useTicketPrices;
