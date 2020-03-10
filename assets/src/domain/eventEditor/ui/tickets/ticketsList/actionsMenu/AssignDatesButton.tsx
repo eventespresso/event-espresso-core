@@ -4,24 +4,28 @@ import { __ } from '@wordpress/i18n';
 import { EspressoButton, Icon } from '@application/ui/input';
 import { EditItemModalProps } from '@edtrInterfaces/types';
 import ItemCount from '@appDisplay/ItemCount';
-import useRelations from '@appServices/apollo/relations/useRelations';
+import { useRelatedDatetimes } from '@edtrServices/apollo/queries';
 import useTicketAssignmentsManager from '@edtrUI/ticketAssignmentsManager/useTicketAssignmentsManager';
 
 const AssignDatesButton: React.FC<EditItemModalProps> = ({ id, ...rest }) => {
 	const { assignDatesToTicket } = useTicketAssignmentsManager();
-	const { getRelations } = useRelations();
-	const relatedDatetimeIds = getRelations({
+
+	const relatedDatetimes = useRelatedDatetimes({
 		entity: 'tickets',
 		entityId: id,
-		relation: 'datetimes',
 	});
-	const count = relatedDatetimeIds.length;
+	const count = relatedDatetimes.length;
+
+	const relatedDatetimeDbIds = relatedDatetimes.map(({ dbId }) => dbId);
+
+	const title = count ? `${__('Related Dates:')} ${relatedDatetimeDbIds.join(', ')}` : '';
+
 	const onClick = (): void => {
 		assignDatesToTicket({ ticketId: id });
 	};
 
 	return (
-		<ItemCount count={count}>
+		<ItemCount count={count} title={title}>
 			<EspressoButton
 				icon={Icon.CALENDAR}
 				tooltip={__('assign dates')}
