@@ -1,19 +1,14 @@
-import { isNil } from 'ramda';
+import isInfinite from './isInfinite';
 
 interface ParseInfinity {
 	(mayBeNumber: any, defaultValue?: number, asFloat?: boolean): number;
 }
 
 const parseInfinity: ParseInfinity = (mayBeNumber, defaultValue = -1, asFloat = false) => {
-	// returns true for any possible value that could represent infinity
-	const representsInfinity = (value: any): boolean => {
-		return value < 0 || value === '' || value === 'INF' || value === Infinity || isNil(value);
-	};
-
 	let parsedValue: number = mayBeNumber;
 
 	// If it is infinity
-	if (representsInfinity(parsedValue)) {
+	if (isInfinite(parsedValue)) {
 		// `parsedValue` is now expected to be a "number"
 		parsedValue = defaultValue;
 	}
