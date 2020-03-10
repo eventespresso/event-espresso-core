@@ -14,7 +14,7 @@ describe('useTicketItem', () => {
 		});
 		waitForValueToChange(() => result.current);
 
-		expect(result.current).toBe(null);
+		expect(result.current).toBe(undefined);
 	});
 
 	it('checks for non existent ticket when the cache is NOT empty', () => {
@@ -27,7 +27,7 @@ describe('useTicketItem', () => {
 		);
 		waitForValueToChange(() => result.current);
 
-		expect(result.current).toBe(null);
+		expect(result.current).toBe(undefined);
 	});
 
 	it('checks for an existent ticket', () => {

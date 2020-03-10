@@ -1,4 +1,3 @@
-import { pathOr } from 'ramda';
 import { GET_EVENT } from './';
 import { Event, EventData } from '../../types';
 import { ReadQueryOptions } from '../types';
@@ -15,7 +14,7 @@ const useEvent = (): Event => {
 	};
 	const { data } = useCacheQuery<EventData>({ ...options, fetchPolicy: 'cache-first' });
 
-	return pathOr<Event>(null, ['espressoEventBy'], data);
+	return data?.espressoEventBy;
 };
 
 export default useEvent;

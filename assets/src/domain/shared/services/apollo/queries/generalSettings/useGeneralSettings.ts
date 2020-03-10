@@ -1,8 +1,6 @@
-import pathOr from 'ramda/src/pathOr';
-
 import { GET_GENERAL_SETTINGS } from './';
-import { ReadQueryOptions, useCacheQuery } from '../../../../../eventEditor/services/apollo/queries';
-import { GeneralSettings, GeneralSettingsData } from '../../../../../../application/valueObjects/config/types';
+import { ReadQueryOptions, useCacheQuery } from '@edtrServices/apollo/queries';
+import { GeneralSettings, GeneralSettingsData } from '@application/valueObjects/config/types';
 /**
  * A custom react hook for retrieving GeneralSettings
  */
@@ -12,7 +10,7 @@ const useGeneralSettings = (): GeneralSettings => {
 	};
 	const { data } = useCacheQuery<GeneralSettingsData>(options);
 
-	return pathOr<GeneralSettings>(null, ['generalSettings'], data);
+	return data?.generalSettings;
 };
 
 export default useGeneralSettings;
