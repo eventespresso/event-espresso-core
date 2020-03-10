@@ -1227,8 +1227,8 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step
         $form_input = '',
         $input_value = ''
     ) {
-        // If emailc is sent it's not saved
-        if ((string) $form_input === 'emailc') {
+        // If email_confirm is sent it's not saved
+        if ((string) $form_input === 'email_confirm') {
             return true;
         }
 

@@ -88,7 +88,7 @@ class EEM_Attendee extends EEM_CPT_Base
 
     const system_question_email = 'email';
 
-    const system_question_email_confirm = 'emailc';
+    const system_question_email_confirm = 'email_confirm';
 
     const system_question_address = 'address';
 

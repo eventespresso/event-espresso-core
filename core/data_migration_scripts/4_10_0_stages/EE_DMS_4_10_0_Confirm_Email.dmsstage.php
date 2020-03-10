@@ -62,10 +62,9 @@ class EE_DMS_4_10_0_Confirm_Email extends EE_Data_Migration_Script_Stage_Table
         global $wpdb;
         $question_table = $wpdb->prefix . "esp_question";
         if ($this->_get_table_analysis()->tableExists($question_table)) {
-
             // First checks if the field already exists
             $SQL_exists = "SELECT COUNT(*) FROM " . $question_table;
-            $exists = $wpdb->get_var($$SQL_exists);
+            $exists = $wpdb->get_var($SQL_exists);
 
             if ($exists == 0) {
                 // It doesn't exist
@@ -75,11 +74,14 @@ class EE_DMS_4_10_0_Confirm_Email extends EE_Data_Migration_Script_Stage_Table
 
                 // Insert using next order available
                 $SQL_insert = "INSERT INTO " . $question_table . " (
-                    QST_display_text, QST_admin_label, QST_system, QST_type, QST_required, QST_required_text, QST_order, QST_admin_only, QST_max, QST_wp_user, QST_deleted) VALUES
-                    ('Confirm Email Address',	'Confirm Email Address',	'emailc',	'EMAIL_CONFIRM',	1,	'This field is required',	" . ($max_order + 1) . ",	0,	-1,	1,	0);";
+                    QST_display_text, QST_admin_label, QST_system, QST_type,
+                    QST_required, QST_required_text, QST_order, QST_admin_only,
+                    QST_max, QST_wp_user, QST_deleted) VALUES
+                    ('Confirm Email Address', 'Confirm Email Address', 'email_confirm',
+                    'EMAIL_CONFIRM', 1, 'This field is required', 
+                    " . ($max_order + 1) . ",	0,	-1,	1,	0);";
                 $wpdb->query($SQL_insert);
             }
         }
     }
-
 }

@@ -903,7 +903,7 @@ class EEH_Activation implements ResettableInterface
             'fname',
             'lname',
             'email',
-            'emailc',
+            'email_confirm',
             'address',
             'address2',
             'city',
@@ -967,11 +967,11 @@ class EEH_Activation implements ResettableInterface
                             'QST_deleted'       => 0,
                         );
                         break;
-                    case 'emailc':
+                    case 'email_confirm':
                         $QST_values = array(
                             'QST_display_text'  => __('Confirm Email Address', 'event_espresso'),
                             'QST_admin_label'   => __('Confirm Email Address - System Question', 'event_espresso'),
-                            'QST_system'        => 'emailc',
+                            'QST_system'        => 'email_confirm',
                             'QST_type'          => 'EMAIL_CONFIRM',
                             'QST_required'      => 1,
                             'QST_required_text' => __('This field is required', 'event_espresso'),
@@ -1095,7 +1095,7 @@ class EEH_Activation implements ResettableInterface
                     );
                     $QST_ID = $wpdb->insert_id;
                     // QUESTION GROUP QUESTIONS
-                    if (in_array($QST_system, array('fname', 'lname', 'email', 'emailc'))) {
+                    if (in_array($QST_system, array('fname', 'lname', 'email', 'email_confirm'))) {
                         $system_question_we_want = EEM_Question_Group::system_personal;
                     } else {
                         $system_question_we_want = EEM_Question_Group::system_address;

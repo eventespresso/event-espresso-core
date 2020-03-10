@@ -24,7 +24,7 @@ class EE_Equal_To_Validation_Strategy extends EE_Text_Validation_Strategy
     public function __construct($validation_error_message = '', $compare_to)
     {
         if (! $validation_error_message) {
-            $validation_error_message = esc_html__('Confirm email doesn\'t match.', 'event_espresso');
+            $validation_error_message = esc_html__('Fields do not match.', 'event_espresso');
         }
         parent::__construct($validation_error_message);
         $this->_compare_to = $compare_to;
@@ -57,5 +57,4 @@ class EE_Equal_To_Validation_Strategy extends EE_Text_Validation_Strategy
     {
         return array('equalTo' => $this->_compare_to, 'messages' => array('equalTo' => $this->get_validation_error_message()));
     }
-
 }

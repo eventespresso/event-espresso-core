@@ -4,7 +4,7 @@
  *
  * @package         Event Espresso
  * @subpackage
- * @since           4.10.4
+ * @since           $VID:$
  * @author          Rafael Goulart
  */
 class EE_Email_Confirm_Input extends EE_Form_Input_Base
@@ -29,7 +29,7 @@ class EE_Email_Confirm_Input extends EE_Form_Input_Base
                 isset($input_settings['validation_error_message'])
                     ? $input_settings['validation_error_message']
                     : null,
-            '#' . str_replace('emailc', 'email', $input_settings['html_id'])
+                '#' . str_replace('email_confirm', 'email', $input_settings['html_id'])
             )
         );
         parent::__construct($input_settings);
