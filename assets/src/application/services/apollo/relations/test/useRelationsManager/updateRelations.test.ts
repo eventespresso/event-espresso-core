@@ -11,7 +11,7 @@ describe('RelationsManager.updateRelations()', () => {
 	it('returns an updated array of related entity ids after using updateRelations', () => {
 		const { result } = renderHook(() => useRelationsManager(relationalData));
 
-		const options: RelationFunctionProps = {
+		const options: RelationFunctionProps<'datetimes'> = {
 			entity: 'datetimes',
 			entityId: existingRelationalEntityId,
 			relation: 'tickets',
