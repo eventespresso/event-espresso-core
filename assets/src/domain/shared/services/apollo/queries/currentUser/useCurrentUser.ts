@@ -1,8 +1,6 @@
-import pathOr from 'ramda/src/pathOr';
-
 import { GET_CURRENT_USER } from './';
-import { ReadQueryOptions, useCacheQuery } from '../../../../../eventEditor/services/apollo/queries';
-import { CurrentUserProps, Viewer } from '../../../../../../application/valueObjects/config/types';
+import { ReadQueryOptions, useCacheQuery } from '@edtrServices/apollo/queries';
+import { CurrentUserProps, Viewer } from '@application/valueObjects/config/types';
 
 /**
  * A custom react hook for retrieving CurrentUser
@@ -13,7 +11,7 @@ const useCurrentUser = (): CurrentUserProps => {
 	};
 	const { data } = useCacheQuery<Viewer>(options);
 
-	return pathOr<CurrentUserProps>(null, ['viewer'], data);
+	return data?.viewer;
 };
 
 export default useCurrentUser;

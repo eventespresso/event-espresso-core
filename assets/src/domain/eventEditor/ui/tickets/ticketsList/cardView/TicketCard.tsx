@@ -7,9 +7,7 @@ import TicketDetails from './TicketDetails';
 import useTicketItem from '@edtrServices/apollo/queries/tickets/useTicketItem';
 import TicketProvider from '@edtrServices/context/TicketContext';
 import CurrencyInput from '@appInputs/CurrencyInput';
-import useRelations from '@appServices/apollo/relations/useRelations';
 import EntityCard from '@appLayout/EntityCard';
-import DatetimeIdTag from '../../../datetimes/DatetimeIdTag';
 import { ListItemProps } from '@edtrInterfaces/types';
 import { useTicketMutator } from '@edtrServices/apollo/mutations';
 import { InlineEditHeading, InlineEditTextArea } from '@appInputs/InlineEditInput';
@@ -18,13 +16,6 @@ import statusBgColorClassName from '@sharedEntities/tickets/helpers/statusBgColo
 const TicketCard: React.FC<ListItemProps> = ({ id }) => {
 	const ticket = useTicketItem({ id });
 	const { updateEntity } = useTicketMutator(id);
-	const { getRelations } = useRelations();
-	// get related datetimes for this datetime
-	const relatedDates = getRelations({
-		entity: 'tickets',
-		entityId: id,
-		relation: 'datetimes',
-	});
 
 	const bgClassName = statusBgColorClassName(ticket);
 
@@ -79,12 +70,6 @@ const TicketCard: React.FC<ListItemProps> = ({ id }) => {
 							}}
 							tag={'h3'}
 						/>
-						<div style={{ margin: '0 0 .5rem' }}>
-							{__('Related Dates:')}{' '}
-							{relatedDates.filter(Boolean).map((datetimeId) => (
-								<DatetimeIdTag key={datetimeId} id={datetimeId} />
-							))}
-						</div>
 						<TicketDetails ticket={ticket} updateTicket={updateEntity} />
 					</>
 				}

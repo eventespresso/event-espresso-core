@@ -1,7 +1,17 @@
 import { EntityId } from '@appServices/apollo/types';
-import { RelationsManager } from '@appServices/apollo/relations';
+import { RelationsManager, RelationalData, PossibleRelation } from '@appServices/apollo/relations';
 import { Datetime, Ticket } from '@edtrServices/apollo/types';
 import { ColumnTitleProps } from 'antd/lib/table/interface';
+
+export type TAMRelationEntity = 'datetimes' | 'tickets';
+
+export type TAMPossibleRelation = Pick<PossibleRelation<null>, TAMRelationEntity>;
+
+export type TAMRelationalEntity = {
+	[key: string]: TAMPossibleRelation;
+};
+
+export type TAMRelationalData = Pick<RelationalData, TAMRelationEntity>;
 
 export type AssignmentType = 'forDate' | 'forTicket' | 'forAll';
 

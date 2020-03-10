@@ -1,11 +1,12 @@
 import { useReducer, useState } from 'react';
-import { pathOr, assocPath, dissocPath, clone } from 'ramda';
-import { RelationAction, RelationFunctionProps, RelationsManager, RelationalData } from './types';
+import { pathOr } from 'ramda';
+import { RelationsManager as RM, RelationalData } from './types';
+import reducer from './reducer';
 
 const INITIAL_STATE: RelationalData = {};
 
-const useRelationsManager = (data: RelationalData = INITIAL_STATE): RelationsManager => {
-	const [state, dispatch] = useReducer(relationsReducer, data);
+const useRelationsManager = (data: RelationalData = INITIAL_STATE): RM => {
+	const [state, dispatch] = useReducer(reducer, data);
 	const [initialized, setInitialized] = useState(false);
 
 	/**
@@ -13,20 +14,20 @@ const useRelationsManager = (data: RelationalData = INITIAL_STATE): RelationsMan
 	 *
 	 * @param {object} data Relational data
 	 */
-	const initialize = (data: RelationalData): void => {
-		dispatch({ type: 'SET_DATA', data });
+	const initialize: RM['initialize'] = (data) => {
+		dispatch({ type: 'INITIALIZE', data });
 		setInitialized(true);
 	};
 
 	/**
 	 * Whether the relations manager has been initialized.
 	 */
-	const isInitialized = (): boolean => initialized;
+	const isInitialized: RM['isInitialized'] = () => initialized;
 
 	/**
 	 * Retrieve the relational data.
 	 */
-	const getData = (): RelationalData => {
+	const getData: RM['getData'] = () => {
 		return state;
 	};
 
@@ -38,7 +39,7 @@ const useRelationsManager = (data: RelationalData = INITIAL_STATE): RelationsMan
 	 * @param {String} entityId     GUID for entity
 	 * @param {String} relation     data Type for relation
 	 */
-	const getRelations = ({ entity, entityId, relation }: RelationFunctionProps): string[] => {
+	const getRelations: RM['getRelations'] = ({ entity, entityId, relation }) => {
 		return pathOr([], [entity, entityId, relation], state);
 	};
 
@@ -50,7 +51,7 @@ const useRelationsManager = (data: RelationalData = INITIAL_STATE): RelationsMan
 	 * @param {String} relation     data Type for relation
 	 * @param {String} relationId   GUID for related entity
 	 */
-	const addRelation = ({ entity, entityId, relation, relationId }: RelationFunctionProps): void => {
+	const addRelation: RM['addRelation'] = ({ entity, entityId, relation, relationId }) => {
 		dispatch({
 			type: 'ADD_RELATION',
 			entity,
@@ -69,7 +70,7 @@ const useRelationsManager = (data: RelationalData = INITIAL_STATE): RelationsMan
 	 * @param {String} relation         data Type for relation
 	 * @param {String[]} relationIds    array of GUIDs for related entities
 	 */
-	const updateRelations = ({ entity, entityId, relation, relationIds }: RelationFunctionProps): void => {
+	const updateRelations: RM['updateRelations'] = ({ entity, entityId, relation, relationIds }) => {
 		dispatch({
 			type: 'UPDATE_RELATIONS',
 			entity,
@@ -93,7 +94,7 @@ const useRelationsManager = (data: RelationalData = INITIAL_STATE): RelationsMan
 	 * @param {String} relation     data Type for relation
 	 * @param {String} relationId   GUID for related entity
 	 */
-	const removeRelation = ({ entity, entityId, relation, relationId }: RelationFunctionProps): void => {
+	const removeRelation: RM['removeRelation'] = ({ entity, entityId, relation, relationId }) => {
 		dispatch({
 			type: 'REMOVE_RELATION',
 			entity,
@@ -118,7 +119,7 @@ const useRelationsManager = (data: RelationalData = INITIAL_STATE): RelationsMan
 	 * @param {String} entity       data Type for entity
 	 * @param {String} entityId     GUID for entity
 	 */
-	const dropRelations = ({ entity, entityId }: RelationFunctionProps): void => {
+	const dropRelations: RM['dropRelations'] = ({ entity, entityId }) => {
 		dispatch({
 			type: 'DROP_RELATIONS',
 			entity,
@@ -136,80 +137,6 @@ const useRelationsManager = (data: RelationalData = INITIAL_STATE): RelationsMan
 		updateRelations,
 		dropRelations,
 	};
-};
-
-const relationsReducer = (state: RelationalData, action: RelationAction): RelationalData => {
-	const { entity, entityId, relation, relationId, relationIds } = action;
-	let newState: RelationalData, relations: string[];
-	switch (action.type) {
-		case 'SET_DATA':
-			return action.data;
-
-		case 'ADD_RELATION':
-			relations = pathOr([], [entity, entityId, relation], state);
-			// If the relation already exists
-			if (relations.includes(relationId)) {
-				return state;
-			}
-			newState = assocPath([entity, entityId, relation], [...relations, relationId], state);
-			return newState;
-
-		case 'REMOVE_RELATION':
-			newState = clone(state);
-			// existing relation list.
-			relations = pathOr([], [entity, entityId, relation], newState);
-			// if relationId is given remove it from the list.
-			if (relationId) {
-				return assocPath(
-					[entity, entityId, relation],
-					relations.filter((id) => id !== relationId),
-					newState
-				);
-			}
-
-			if (relations.length) {
-				/**
-				 * If we are here, it means that we have values for `entityId` in `relation`
-				 * i.e. if we are trying to remove a datetime (`entityId`) from all the tickets
-				 * we luckily have `state.datetimes[entityId].tickets` list, which means we know
-				 * from where to remove `entityId`.
-				 */
-				relations.forEach((id) => {
-					newState = assocPath(
-						[relation, id, entity],
-						pathOr([], [relation, id, entity], newState).filter((_id: string) => _id !== entityId),
-						newState
-					);
-				});
-				return newState;
-			}
-			/**
-			 * If we are here it means that we don't have the values for `entityId` in `relation`
-			 * which means we will have to loop through all the entries in `state[relation]`
-			 * to remove `entityId` from them.
-			 * For example if we are trying to remove a datetime (`entityId`) from all the tickets,
-			 * We will loop through `state.tickets` to delete `entityId` from `state.tickets[ticketId].datetimes`
-			 */
-			for (const id in newState[relation]) {
-				newState = assocPath(
-					[relation, id, entity],
-					pathOr([], [relation, id, entity], newState).filter((_id: string) => _id !== entityId),
-					newState
-				);
-			}
-			return newState;
-
-		case 'UPDATE_RELATIONS':
-			newState = assocPath([entity, entityId, relation], relationIds, state);
-			return newState;
-
-		case 'DROP_RELATIONS':
-			newState = dissocPath([entity, entityId], state);
-			return newState;
-
-		default:
-			throw new Error();
-	}
 };
 
 export default useRelationsManager;

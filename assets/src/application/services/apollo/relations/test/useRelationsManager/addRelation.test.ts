@@ -13,7 +13,7 @@ describe('RelationsManager.addRelation()', () => {
 	it('makes no difference when trying to add an already existing relation', () => {
 		const { result } = renderHook(() => useRelationsManager(relationalData));
 
-		const options: RelationFunctionProps = {
+		const options: RelationFunctionProps<'datetimes'> = {
 			entity: 'datetimes',
 			entityId: existingRelationalEntityId,
 			relation: 'tickets',
@@ -43,7 +43,7 @@ describe('RelationsManager.addRelation()', () => {
 	it('returns an updated array of related entity ids after using addRelation', () => {
 		const { result } = renderHook(() => useRelationsManager(relationalData));
 
-		const options: RelationFunctionProps = {
+		const options: RelationFunctionProps<'datetimes'> = {
 			entity: 'datetimes',
 			entityId: existingRelationalEntityId,
 			relation: 'tickets',

@@ -18,7 +18,7 @@ describe('useDatetimeItem', () => {
 		});
 		waitForValueToChange(() => result.current);
 
-		expect(result.current).toBe(null);
+		expect(result.current).toBe(undefined);
 	});
 
 	it('checks for non existent datetime when the cache is NOT empty', () => {
@@ -31,7 +31,7 @@ describe('useDatetimeItem', () => {
 		);
 		waitForValueToChange(() => result.current);
 
-		expect(result.current).toBe(null);
+		expect(result.current).toBe(undefined);
 	});
 
 	it('checks for an existent datetime', () => {

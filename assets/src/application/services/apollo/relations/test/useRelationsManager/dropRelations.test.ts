@@ -11,7 +11,7 @@ describe('RelationsManager.dropRelations()', () => {
 	it('returns an empty array for related entity ids after using dropRelations', () => {
 		const { result } = renderHook(() => useRelationsManager(relationalData));
 
-		const options: RelationFunctionProps = {
+		const options: RelationFunctionProps<'datetimes'> = {
 			entity: 'datetimes',
 			entityId: existingRelationalEntityId,
 			relation: 'tickets',

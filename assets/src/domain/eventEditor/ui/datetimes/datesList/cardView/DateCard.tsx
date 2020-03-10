@@ -1,56 +1,31 @@
-// @ts-nocheck
-import React, { useState } from 'react';
+import React from 'react';
 import { parseISO } from 'date-fns';
 import { __ } from '@wordpress/i18n';
 
-import { CalendarDateRange } from '@appCalendars';
+import { CalendarDateRange } from '@appCalendars/dateDisplay';
 import DateDetails from './DateDetails';
 import DateActionsMenu from '../actionsMenu/DateActionsMenu';
 
 import { DatetimeProvider } from '@edtrServices/context/DatetimeContext';
 import useDatetimeItem from '@edtrServices/apollo/queries/datetimes/useDatetimeItem';
-import TicketIdTag from '../../../tickets/TicketIdTag';
-
 import { PLUS_ONE_MONTH, PLUS_TWO_MONTHS } from '@sharedConstants/defaultDates';
 import statusBgColorClassName from '@sharedEntities/datetimes/helpers/statusBgColorClassName';
 
-import useRelations from '@appServices/apollo/relations/useRelations';
-import { useStatus, TypeName } from '@appServices/apollo/status';
 import EntityCard from '@appLayout/EntityCard';
-import { ListItemProps } from '@edtrInterfaces';
+import { ListItemProps } from '@edtrInterfaces/types';
 import { useDatetimeMutator } from '@edtrServices/apollo/mutations';
 import { InlineEditHeading, InlineEditTextArea } from '@appInputs/InlineEditInput';
 
 const DateCard: React.FC<ListItemProps> = ({ id }) => {
 	const date = useDatetimeItem({ id });
-	const { isLoaded } = useStatus();
 	const { updateEntity } = useDatetimeMutator(id);
-	const { getRelations } = useRelations();
 
 	const startDate = parseISO(date.startDate) || PLUS_ONE_MONTH;
 	const endDate = parseISO(date.endDate) || PLUS_TWO_MONTHS;
-	const defaultRangeValues: [Date, Date] = [startDate, endDate];
-	const [range, setRange] = useState<[Date, Date]>(defaultRangeValues);
 
 	if (!date) {
 		return null;
 	}
-
-	const ticketsLoaded = isLoaded(TypeName.tickets);
-
-	// get related ticket IDs for this datetime
-	const relatedTicketIds =
-		ticketsLoaded &&
-		getRelations({
-			entity: 'datetimes',
-			entityId: id,
-			relation: 'tickets',
-		});
-
-	let relatedTicketTags =
-		ticketsLoaded &&
-		relatedTicketIds.filter(Boolean).map((ticketId) => <TicketIdTag key={ticketId} id={ticketId} />);
-	relatedTicketTags = relatedTicketTags ? relatedTicketTags : __('none');
 
 	const bgClassName = statusBgColorClassName(date);
 
@@ -63,8 +38,8 @@ const DateCard: React.FC<ListItemProps> = ({ id }) => {
 					<CalendarDateRange
 						headerText={__('starts')}
 						className={bgClassName}
-						startDate={range[0]}
-						endDate={range[1]}
+						startDate={startDate}
+						endDate={endDate}
 					/>
 				}
 				details={
@@ -90,11 +65,6 @@ const DateCard: React.FC<ListItemProps> = ({ id }) => {
 						>
 							{date.description ? date.description : __('Edit description...')}
 						</InlineEditTextArea>
-						{/* the following will be replaced by the entity details panel */}
-						<div style={{ margin: '0 0 .5rem' }}>
-							{__('Related Tickets:') + ' '}
-							{relatedTicketTags}
-						</div>
 						<DateDetails datetime={date} updateDatetime={updateEntity} />
 					</>
 				}

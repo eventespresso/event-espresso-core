@@ -13,7 +13,7 @@ describe('RelationsManager.removeRelation()', () => {
 	it('makes no difference when trying to remove a non-existant relation', () => {
 		const { result } = renderHook(() => useRelationsManager(relationalData));
 
-		const options: RelationFunctionProps = {
+		const options: RelationFunctionProps<'datetimes'> = {
 			entity: 'datetimes',
 			entityId: existingRelationalEntityId,
 			relation: 'tickets',
@@ -43,7 +43,7 @@ describe('RelationsManager.removeRelation()', () => {
 	it('returns an updated array of related entity ids after using removeRelation WITH `relationId`', () => {
 		const { result } = renderHook(() => useRelationsManager(relationalData));
 
-		const options: RelationFunctionProps = {
+		const options: RelationFunctionProps<'datetimes'> = {
 			entity: 'datetimes',
 			entityId: existingRelationalEntityId,
 			relation: 'tickets',
@@ -75,7 +75,7 @@ describe('RelationsManager.removeRelation()', () => {
 	it('removes entityId from all `relation` lists after using removeRelation WITHOUT `relationId`', () => {
 		const { result } = renderHook(() => useRelationsManager(relationalData));
 
-		const options: RelationFunctionProps = {
+		const options: RelationFunctionProps<'datetimes'> = {
 			entity: 'datetimes',
 			entityId: existingRelationalEntityId,
 			relation: 'tickets',

@@ -1,4 +1,3 @@
-import { pathOr } from 'ramda';
 import { GET_TICKET } from '../tickets';
 import { Ticket, TicketItem } from '../../types';
 import { EntityItemProps, ReadQueryOptions } from '../types';
@@ -13,7 +12,7 @@ const useTicketItem = ({ id }: EntityItemProps): Ticket => {
 	};
 	const { data } = useCacheQuery<TicketItem>(options);
 
-	return pathOr<Ticket>(null, ['ticket'], data);
+	return data?.ticket;
 };
 
 export default useTicketItem;

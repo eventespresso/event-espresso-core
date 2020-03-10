@@ -73,7 +73,7 @@ describe('useTicketPrices', () => {
 			relation: 'prices',
 		});
 
-		const { result, waitForValueToChange } = renderHook(
+		const { result, waitForNextUpdate } = renderHook(
 			() => {
 				useInitTicketTestCache();
 				useInitPriceTestCache();
@@ -81,7 +81,7 @@ describe('useTicketPrices', () => {
 			},
 			{ wrapper }
 		);
-		await waitForValueToChange(() => result.current, { timeout });
+		await waitForNextUpdate({ timeout });
 
 		const { current: cachedTicketPrices } = result;
 
