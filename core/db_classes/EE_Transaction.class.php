@@ -1694,7 +1694,7 @@ class EE_Transaction extends EE_Base_Class implements EEI_Transaction
 
 
     /**
-     * @since $VID:$
+     * @since 4.10.4.p
      * @throws EE_Error
      * @throws InvalidArgumentException
      * @throws InvalidDataTypeException
