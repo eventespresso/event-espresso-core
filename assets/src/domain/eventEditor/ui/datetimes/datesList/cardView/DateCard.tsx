@@ -2,7 +2,7 @@ import React from 'react';
 import { parseISO } from 'date-fns';
 import { __ } from '@wordpress/i18n';
 
-import { CalendarDateRange } from '@appCalendars';
+import { CalendarDateRange } from '@appCalendars/dateDisplay';
 import DateDetails from './DateDetails';
 import DateActionsMenu from '../actionsMenu/DateActionsMenu';
 

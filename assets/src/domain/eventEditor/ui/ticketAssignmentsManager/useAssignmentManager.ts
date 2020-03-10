@@ -1,7 +1,7 @@
 import { pick, map } from 'ramda';
 
-import { useRelationsManager, RelationFunctionProps, RelationalData } from '@appServices/apollo/relations';
-import { AssignmentManager } from './types';
+import { useRelationsManager, RelationFunctionProps } from '@appServices/apollo/relations';
+import { AssignmentManager, TAMRelationalData } from './types';
 
 type AM = AssignmentManager;
 /**
@@ -52,14 +52,14 @@ const useAssignmentManager = (): AM => {
 	// args are same
 	const updateAssignment: AM['removeAssignment'] = ({ datetimeId, ticketId, remove = false }) => {
 		// relation from datetimes towards tickets
-		const datetimeToTickets: RelationFunctionProps = {
+		const datetimeToTickets: RelationFunctionProps<'datetimes'> = {
 			entity: 'datetimes',
 			entityId: datetimeId,
 			relation: 'tickets',
 			relationId: ticketId,
 		};
 		// relation from tickets towards datetimes
-		const ticketsToDatetimes: RelationFunctionProps = {
+		const ticketsToDatetimes: RelationFunctionProps<'tickets'> = {
 			entity: 'tickets',
 			entityId: ticketId,
 			relation: 'datetimes',
@@ -76,8 +76,8 @@ const useAssignmentManager = (): AM => {
 		}
 	};
 
-	const initialize: AM['initialize'] = (data: RelationalData) => {
-		const relationsToPick: Array<keyof Pick<RelationalData, 'datetimes' | 'tickets'>> = ['datetimes', 'tickets'];
+	const initialize: AM['initialize'] = (data: TAMRelationalData) => {
+		const relationsToPick: Array<keyof TAMRelationalData> = ['datetimes', 'tickets'];
 		// pick only datetimes and tickets from relational data
 		let newData = pick(relationsToPick, data);
 

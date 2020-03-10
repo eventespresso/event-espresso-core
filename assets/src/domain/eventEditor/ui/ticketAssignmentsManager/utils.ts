@@ -1,25 +1,25 @@
 import { pathOr, filter, equals } from 'ramda';
 
 import { EntityId } from '@appServices/apollo/types';
-import { RelationalEntity, PossibleRelation, RelationalData } from '@appServices/apollo/relations';
+import { TAMPossibleRelation, TAMRelationalEntity, TAMRelationalData, TAMRelationEntity } from './types';
 
-type EntitiesToUpdate = Array<[EntityId, PossibleRelation]>;
+type EntitiesToUpdate = Array<[EntityId, TAMPossibleRelation]>;
 
-interface EntitiesForUpdateOptions {
-	entity: 'datetimes' | 'tickets';
-	existingData: RelationalData;
-	newData: RelationalData;
-	relation: 'datetimes' | 'tickets';
+interface EntitiesForUpdateOptions<Entity extends TAMRelationEntity> {
+	entity: Entity;
+	existingData: TAMRelationalData;
+	newData: TAMRelationalData;
+	relation: Exclude<TAMRelationEntity, Entity>;
 }
 
-export const prepareEntitiesForUpdate = ({
+export const prepareEntitiesForUpdate = <Entity extends TAMRelationEntity>({
 	entity,
 	existingData,
 	newData,
 	relation,
-}: EntitiesForUpdateOptions): EntitiesToUpdate => {
-	const existingEntities = pathOr<RelationalEntity>({}, [entity], existingData);
-	const newEntities = pathOr<RelationalEntity>({}, [entity], newData);
+}: EntitiesForUpdateOptions<Entity>): EntitiesToUpdate => {
+	const existingEntities = pathOr<TAMRelationalEntity>({}, [entity], existingData);
+	const newEntities = pathOr<TAMRelationalEntity>({}, [entity], newData);
 
 	return filter<EntitiesToUpdate[0]>(([entityId, possibleRelation]) => {
 		const newRelatedEntities = pathOr<EntityId[]>([], [relation], possibleRelation);

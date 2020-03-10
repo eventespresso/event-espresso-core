@@ -1,10 +1,11 @@
 import { useCallback } from 'react';
 import { pathOr } from 'ramda';
 
-import { useRelations, RelationalData } from '@appServices/apollo/relations';
+import { useRelations } from '@appServices/apollo/relations';
 import { EntityId } from '@appServices/apollo/types';
 import { useDatetimeMutator, useTicketMutator } from '@edtrServices/apollo/mutations';
 import { prepareEntitiesForUpdate } from './utils';
+import { TAMRelationalData } from './types';
 
 const useOnSubmitAssignments = () => {
 	const { getData: getExistingData } = useRelations();
@@ -12,7 +13,7 @@ const useOnSubmitAssignments = () => {
 	const { updateEntity: updateTicket } = useTicketMutator();
 
 	return useCallback(
-		async (data: RelationalData): Promise<void> => {
+		async (data: TAMRelationalData): Promise<void> => {
 			const existingData = getExistingData();
 
 			/**
