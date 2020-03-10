@@ -1,8 +1,8 @@
 import React, { useCallback, CSSProperties } from 'react';
 import { TagsOutlined, CloseOutlined, MinusOutlined } from '@ant-design/icons';
 
-import useTAMState from './useTAMState';
-import { AssignmentFnArgs } from './types';
+import useTAMState from '../useTAMState';
+import { AssignmentFnArgs } from '../types';
 
 type Callback = (args: AssignmentFnArgs) => React.ReactNode;
 

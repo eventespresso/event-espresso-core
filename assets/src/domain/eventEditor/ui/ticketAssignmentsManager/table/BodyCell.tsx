@@ -1,11 +1,11 @@
 import React from 'react';
 import { Button } from 'antd';
 
-import { RenderCellProps } from './types';
-import useTAMState from './useTAMState';
+import { RenderCellProps } from '../types';
+import useTAMState from '../useTAMState';
 import useCellIcon from './useCellIcon';
 
-const RenderCell: React.FC<RenderCellProps> = ({ datetime, ticket }) => {
+const BodyCell: React.FC<RenderCellProps> = ({ datetime, ticket }) => {
 	const { toggleAssignment } = useTAMState();
 
 	const getCellIcon = useCellIcon();
@@ -17,4 +17,4 @@ const RenderCell: React.FC<RenderCellProps> = ({ datetime, ticket }) => {
 	return <Button type='link' onClick={onClick} icon={icon} />;
 };
 
-export default RenderCell;
+export default BodyCell;

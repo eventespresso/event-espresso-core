@@ -53,7 +53,8 @@ export interface ResponsiveCellProps {
 }
 
 export interface ResponsiveTableProps extends Responders {
-	className: TableClassName;
+	bodyRows: BodyRow[];
+	className?: TableClassName;
 	footerRows?: FooterRow[];
 	headerRows: HeaderRow[];
 	instanceId?: string;
@@ -62,7 +63,6 @@ export interface ResponsiveTableProps extends Responders {
 		tableId?: string;
 		hasRowHeaders?: boolean;
 	};
-	tableRows: TableRowProps[];
 }
 
 export enum RowType {
@@ -80,12 +80,12 @@ export interface TableProps {
 }
 
 export interface TableBodyProps extends Responders {
+	bodyRows: BodyRow[];
 	className: TableClassName;
 	headerRowCount: number;
 	hasRowHeaders: boolean;
 	primaryHeader: any;
 	tableId: TableId;
-	tableRows: TableRowProps[];
 }
 
 interface TableClassName {
@@ -137,7 +137,7 @@ export interface TableHeaderCellProps {
 	tableHeaderCellClassName?: string;
 }
 
-export interface TableRowProps {
+export interface BodyRow {
 	cells?: Cell[];
 	children?: React.ReactNode;
 	className: TableClassName | string;

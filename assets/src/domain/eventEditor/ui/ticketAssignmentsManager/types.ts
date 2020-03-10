@@ -1,7 +1,6 @@
 import { EntityId } from '@appServices/apollo/types';
 import { RelationsManager, RelationalData, PossibleRelation } from '@appServices/apollo/relations';
 import { Datetime, Ticket } from '@edtrServices/apollo/types';
-import { ColumnTitleProps } from 'antd/lib/table/interface';
 
 export type TAMRelationEntity = 'datetimes' | 'tickets';
 
@@ -65,9 +64,5 @@ export interface RenderTableProps extends DatesAndTickets {}
 
 export interface RenderCellProps {
 	datetime: Datetime;
-	ticket: Ticket;
-}
-
-export interface TicketHeaderProps extends ColumnTitleProps<Datetime> {
 	ticket: Ticket;
 }

@@ -2,9 +2,9 @@ import React from 'react';
 import classNames from 'classnames';
 import { Draggable } from 'react-beautiful-dnd';
 
-import { RowType, TableRowProps } from './types';
+import { RowType, BodyRow } from './types';
 
-const TableRow: React.FC<TableRowProps> = ({
+const TableRow: React.FC<BodyRow> = ({
 	children,
 	rowData,
 	rowNumber,
