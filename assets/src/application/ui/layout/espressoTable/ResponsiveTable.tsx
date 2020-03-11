@@ -12,6 +12,7 @@ import './style.scss';
 import { ResponsiveTableProps } from './types';
 
 const ResponsiveTable: React.FC<ResponsiveTableProps> = ({
+	bodyRows = [],
 	className = {},
 	footerRows = [],
 	headerRows = [],
@@ -20,12 +21,11 @@ const ResponsiveTable: React.FC<ResponsiveTableProps> = ({
 	onDragEnd,
 	onDragStart,
 	onDragUpdate,
-	tableRows = [],
 	...props
 }) => {
 	const primaryHeader = headerRows.find((row) => row.primary === true);
 	const instanceId = props.instanceId || uuidv4();
-	if (!primaryHeader || isEmpty(tableRows)) {
+	if (!primaryHeader || isEmpty(bodyRows)) {
 		return null;
 	}
 	const tableId = metaData.tableId || `ee-rspnsv-table-${instanceId}`;
@@ -33,7 +33,7 @@ const ResponsiveTable: React.FC<ResponsiveTableProps> = ({
 	const captionID = `${tableId}-caption`;
 	const hasRowHeaders = !!metaData.hasRowHeaders;
 	const headerRowCount = headerRows.length;
-	const tableRowCount = tableRows.length;
+	const tableRowCount = bodyRows.length;
 
 	const tableClassName = classNames(
 		className.tableClassName,
@@ -61,6 +61,7 @@ const ResponsiveTable: React.FC<ResponsiveTableProps> = ({
 		<Table captionID={captionID} captionText={tableCaption} className={cssClasses.tableClassName} tableId={tableId}>
 			<TableHeader className={cssClasses} headerRows={headerRows} tableId={tableId} />
 			<TableBody
+				bodyRows={bodyRows}
 				className={cssClasses}
 				hasRowHeaders={hasRowHeaders}
 				headerRowCount={headerRowCount}
@@ -70,7 +71,6 @@ const ResponsiveTable: React.FC<ResponsiveTableProps> = ({
 				onDragEnd={onDragEnd}
 				primaryHeader={primaryHeader}
 				tableId={tableId}
-				tableRows={tableRows}
 			/>
 			<TableFooter
 				className={cssClasses}

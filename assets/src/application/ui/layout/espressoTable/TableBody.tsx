@@ -12,6 +12,7 @@ import ResponsiveCell from './ResponsiveCell';
 import { RowType, TableBodyProps } from './types';
 
 const TableBody: React.FC<TableBodyProps> = ({
+	bodyRows,
 	headerRowCount,
 	hasRowHeaders,
 	onBeforeDragStart,
@@ -20,7 +21,6 @@ const TableBody: React.FC<TableBodyProps> = ({
 	onDragUpdate,
 	primaryHeader,
 	tableId,
-	tableRows,
 	...props
 }) => {
 	const tableCell = (rowNumber, colNumber, column, cellData) => {
@@ -50,7 +50,7 @@ const TableBody: React.FC<TableBodyProps> = ({
 		);
 	};
 
-	const tableBodyRows = tableRows.map((row, rowNumber) => {
+	const tableBodyRows = bodyRows.map((row, rowNumber) => {
 		const sortable = isFunc(onDragEnd);
 
 		return (

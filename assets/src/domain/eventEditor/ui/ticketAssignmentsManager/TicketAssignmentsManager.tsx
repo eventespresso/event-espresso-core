@@ -1,17 +1,17 @@
 import React from 'react';
 
+import ErrorMessage from './ErrorMessage';
+import { Table } from './table';
 import { TAMProps } from './types';
 import useTAMDatesAndTickets from './useTAMDatesAndTickets';
-import RenderTable from './RenderTable';
-import ErrorMessage from './ErrorMessage';
-import './styles.scss';
 
 const TicketAssignmentsManager: React.FC<TAMProps> = ({ assignmentType, entityId }) => {
 	const datesAndTickets = useTAMDatesAndTickets({ assignmentType, entityId });
+
 	return (
 		<>
 			<ErrorMessage />
-			<RenderTable {...datesAndTickets} />
+			<Table {...datesAndTickets} />
 		</>
 	);
 };
