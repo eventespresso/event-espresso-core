@@ -1,11 +1,11 @@
 import { useState } from 'react';
 import { pathOr, assocPath } from 'ramda';
 
-import { EntityActionsManager, EntityMenuItems, MenuRegistry } from './types';
+import { EntityActionsMenu, EntityMenuItems, MenuRegistry } from './types';
 
 let menuRegistry: MenuRegistry = {};
 
-const useEntityActionsManager = (entityType: string, entityId: string): EntityActionsManager => {
+const useEntityActionsMenu = (entityType: string, entityId: string): EntityActionsMenu => {
 	const [menuItems, setMenuItems] = useState([]);
 
 	const getMapKey = (itemKey: string) => `${entityType}:${entityId}:${itemKey}`;
@@ -33,4 +33,4 @@ const useEntityActionsManager = (entityType: string, entityId: string): EntityAc
 	return { registerMenuItem, unRegisterMenuItem, getMenuItems };
 };
 
-export default useEntityActionsManager;
+export default useEntityActionsMenu;
