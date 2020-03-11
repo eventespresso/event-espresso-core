@@ -5,12 +5,12 @@ use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
 
 /**
- * Class EE_Email_Validation_Strategy
+ * Class EE_Equal_To_Validation_Strategy
  *
  * @package               Event Espresso
  * @subpackage            core
- * @author                Mike Nelson
- * @since                 4.6
+ * @since                 $VID:$
+ * @author                Rafael Goulart
  */
 class EE_Equal_To_Validation_Strategy extends EE_Text_Validation_Strategy
 {
