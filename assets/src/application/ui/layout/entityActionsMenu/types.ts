@@ -1,8 +1,6 @@
 import React from 'react';
 import { Entity } from '@appServices/apollo/types';
 
-export type Domain = 'eventEditor';
-
 export interface SubscriptionData<E, T> {
 	entityType: T;
 	entity: E;
@@ -77,11 +75,7 @@ export type Subscriptions = {
 	[key: string]: Subscription;
 };
 
-export type SubscriptionCallback<D = any, AO = AdditionalSubscriptionCbOptions> = (
-	data: D,
-	entityActionsManager: EntityActionsManager,
-	additionalOptions?: AO
-) => void;
+export type SubscriptionCallback<D = any> = (data: D, entityActionsManager: EntityActionsManager) => void;
 
 export interface AdditionalSubscriptionCbOptions {
 	[key: string]: any;

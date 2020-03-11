@@ -1,27 +1,22 @@
 import React from 'react';
 
-import { useEntityActions, useEntityActionsManager, AdditionalSubscriptionCbOptions } from './';
-import { Domain } from './types';
 import { Entity } from '@appServices/apollo/types';
+import { useEntityActions, useEntityActionsManager } from '@appLayout/entityActionsMenu';
 
-const useEntityActionsMenuItems = <E extends Entity, AO = AdditionalSubscriptionCbOptions>(
+const useEntityActionsMenuItems = <E extends Entity>(
 	entityType: string,
 	entity: E,
-	// additionalOptions will be passed back to the callback
-	// make sure to pass it as object with your own unique keys
-	// so as to identify what you are interested in.
-	additionalOptions?: AO,
 	filterByEntityType = true
 ): Array<React.ReactNode> => {
 	const entityActionsManager = useEntityActionsManager(entityType, entity.id);
-	const { getSubscriptions } = useEntityActions<Domain>('eventEditor');
+	const { getSubscriptions } = useEntityActions('eventEditor');
 
 	const { getMenuItems } = entityActionsManager;
 
 	const subscriptions = getSubscriptions({ entityType: filterByEntityType ? entityType : null });
 
 	Object.values(subscriptions).forEach(({ callback }) => {
-		callback({ entityType, entity }, entityActionsManager, additionalOptions);
+		callback({ entityType, entity }, entityActionsManager);
 	});
 
 	const menuItems = getMenuItems();

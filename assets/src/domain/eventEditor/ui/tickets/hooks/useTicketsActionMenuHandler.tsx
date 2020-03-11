@@ -13,30 +13,23 @@ import { useStatus, TypeName } from '@appServices/apollo/status';
 type TicketsSubscriptionCallback = EntitySubscriptionCallback<Ticket, AdditionalTicketMenuOptions>;
 
 const useTicketsActionMenuHandler = (): TicketsSubscriptionCallback => {
-	return useCallback<TicketsSubscriptionCallback>(
-		({ entity: ticket }, { registerMenuItem }, { ticketMenuItemProps: menuItemProps }) => {
-			registerMenuItem('editTicket', () => (
-				<EditTicketButton key={ticket.id + 'editTicket'} {...menuItemProps} />
-			));
+	return useCallback<TicketsSubscriptionCallback>(({ entity: ticket }, { registerMenuItem }) => {
+		registerMenuItem('editTicket', () => <EditTicketButton key={ticket.id + 'editTicket'} />);
 
-			registerMenuItem('assignDates', () => <AssignDatesButton id={ticket.id} {...menuItemProps} />);
+		registerMenuItem('assignDates', () => <AssignDatesButton id={ticket.id} />);
 
-			registerMenuItem('ticketPriceCalculator', () => {
-				const { isLoaded } = useStatus();
-				/* Hide price calculator unless prices are loaded */
-				return (
-					isLoaded(TypeName.prices) && <TicketPriceCalculatorButton ticketId={ticket.id} {...menuItemProps} />
-				);
-			});
+		registerMenuItem('ticketPriceCalculator', () => {
+			const { isLoaded } = useStatus();
+			/* Hide price calculator unless prices are loaded */
+			return isLoaded(TypeName.prices) && <TicketPriceCalculatorButton ticketId={ticket.id} />;
+		});
 
-			registerMenuItem('deleteTicket', () => {
-				const { isLoaded } = useStatus();
-				/* Delete button should be hidden to avoid relational inconsistencies */
-				return isLoaded(TypeName.prices) && <DeleteTicketButton id={ticket.id} {...menuItemProps} />;
-			});
-		},
-		[]
-	);
+		registerMenuItem('deleteTicket', () => {
+			const { isLoaded } = useStatus();
+			/* Delete button should be hidden to avoid relational inconsistencies */
+			return isLoaded(TypeName.prices) && <DeleteTicketButton id={ticket.id} />;
+		});
+	}, []);
 };
 
 export default useTicketsActionMenuHandler;

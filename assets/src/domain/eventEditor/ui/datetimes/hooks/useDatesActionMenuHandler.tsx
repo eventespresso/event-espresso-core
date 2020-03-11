@@ -12,25 +12,22 @@ import { useStatus, TypeName } from '@appServices/apollo/status';
 type DatesSubscriptionCallback = EntitySubscriptionCallback<Datetime, AdditionalDateMenuOptions>;
 
 const useDatesActionMenuHandler = (): DatesSubscriptionCallback => {
-	return useCallback<DatesSubscriptionCallback>(
-		({ entityType, entity: date }, { registerMenuItem }, { dateMenuItemProps: menuItemProps }) => {
-			// although this is not needed
-			if (entityType !== 'datetime') {
-				return;
-			}
+	return useCallback<DatesSubscriptionCallback>(({ entityType, entity: date }, { registerMenuItem }) => {
+		// although this is not needed
+		if (entityType !== 'datetime') {
+			return;
+		}
 
-			registerMenuItem('editDate', () => <EditDateButton {...menuItemProps} />);
+		registerMenuItem('editDate', () => <EditDateButton />);
 
-			registerMenuItem('assignTickets', () => <AssignTicketsButton id={date.id} {...menuItemProps} />);
+		registerMenuItem('assignTickets', () => <AssignTicketsButton id={date.id} />);
 
-			registerMenuItem('deleteTicket', () => {
-				const { isLoaded } = useStatus();
-				/* Delete button should be hidden to avoid relational inconsistencies */
-				return isLoaded(TypeName.tickets) && <DeleteDateButton id={date.id} {...menuItemProps} />;
-			});
-		},
-		[]
-	);
+		registerMenuItem('deleteTicket', () => {
+			const { isLoaded } = useStatus();
+			/* Delete button should be hidden to avoid relational inconsistencies */
+			return isLoaded(TypeName.tickets) && <DeleteDateButton id={date.id} />;
+		});
+	}, []);
 };
 
 export default useDatesActionMenuHandler;
