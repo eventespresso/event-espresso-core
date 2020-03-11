@@ -14,10 +14,10 @@ const useFilterBarService: FBSH = (domain) => {
 	});
 
 	const getSubscriptions: FBS['getSubscriptions'] = (options = {}) => {
-		const { entityType } = options;
+		const { listId } = options;
 		const allSubscriptions = getServiceSubscriptions();
-		if (entityType) {
-			return filter(({ options }) => entityType === options.entityType, allSubscriptions);
+		if (listId) {
+			return filter(({ options }) => listId === options.listId, allSubscriptions);
 		}
 		return allSubscriptions;
 	};

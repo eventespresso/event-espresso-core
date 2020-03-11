@@ -1,31 +1,32 @@
 import React from 'react';
-import { Entity } from '@appServices/apollo/types';
 import { Subscriptions } from '@appServices/subscription';
+import { EntityListFilterStateManager as ELFSM } from '../filterState';
 
-export interface SubscriptionsOptions<T extends string> {
-	entityType?: T; // to limit the subscription only to specific entityType
+export interface FilterBarSubscriptionsOptions<L extends string> {
+	listId?: L; // to limit the subscription only to specific listId
 }
 
-export interface SubscriptionData<E extends Entity, T extends string> extends SubscriptionsOptions<T> {
-	entity: E;
+export interface FilterBarSubscriptionData<FS extends ELFSM, L extends string>
+	extends FilterBarSubscriptionsOptions<L> {
+	filterState: FS;
 }
 
 export interface FilterBarService {
-	subscribe: SubscribeFn;
-	getSubscriptions: <E extends Entity, T extends string>(
-		options?: SubscriptionsOptions<T>
-	) => Subscriptions<SubscriptionData<E, T>, SubscriptionsOptions<T>>;
+	subscribe: FilterBarSubscribeFn;
+	getSubscriptions: <FS extends ELFSM, L extends string>(
+		options?: FilterBarSubscriptionsOptions<L>
+	) => Subscriptions<FilterBarSubscriptionData<FS, L>, FilterBarSubscriptionsOptions<L>>;
 }
 
 export type FilterBarServiceHook = <Domain extends string>(domain: Domain) => FilterBarService;
 
-export type SubscribeFn = <E extends Entity, T extends string>(
-	cb: FilterBarSubscriptionCb<E, T>,
-	options?: SubscriptionsOptions<T>
+export type FilterBarSubscribeFn = <FS extends ELFSM, L extends string>(
+	cb: FilterBarSubscriptionCb<FS, L>,
+	options?: FilterBarSubscriptionsOptions<L>
 ) => VoidFunction;
 
-export type FilterBarSubscriptionCb<E extends Entity, T extends string> = (
-	data: SubscriptionData<E, T>,
+export type FilterBarSubscriptionCb<FS extends ELFSM, L extends string> = (
+	data: FilterBarSubscriptionData<FS, L>,
 	filterBar: FilterBar
 ) => void;
 
