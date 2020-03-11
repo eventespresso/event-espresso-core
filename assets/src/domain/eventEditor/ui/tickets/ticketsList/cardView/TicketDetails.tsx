@@ -2,7 +2,6 @@ import React, { useMemo } from 'react';
 import { __ } from '@wordpress/i18n';
 
 import TicketRegistrationsLink from '../../TicketRegistrationsLink';
-import useTicketRegistrationCount from '@edtrUI/tickets/hooks/useTicketRegistrationCount';
 import { EntityDetailsPanel } from '@appDisplay/enityDetails';
 import { Ticket } from '@edtrServices/apollo/types';
 import TicketQuantity from './TicketQuantity';
@@ -12,8 +11,6 @@ interface TicketDetailsProps {
 }
 
 const TicketDetails: React.FC<TicketDetailsProps> = ({ ticket }) => {
-	const registrationCount = useTicketRegistrationCount(ticket.id);
-
 	return useMemo(() => {
 		const details = [
 			{
@@ -25,11 +22,6 @@ const TicketDetails: React.FC<TicketDetailsProps> = ({ ticket }) => {
 				id: 'ee-ticket-qty',
 				label: __('quantity'),
 				value: <TicketQuantity ticket={ticket} />,
-			},
-			{
-				id: 'ee-ticket-reserved',
-				label: __('reg count'),
-				value: registrationCount,
 			},
 			{
 				id: 'ee-ticket-registrations',
