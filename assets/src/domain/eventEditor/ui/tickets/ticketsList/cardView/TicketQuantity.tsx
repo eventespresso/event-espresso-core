@@ -1,7 +1,7 @@
 import React from 'react';
 
 import { Ticket } from '@edtrServices/apollo/types';
-import parseInfinity from '@appServices/utilities/parseInfinity';
+import parseInfinity from '@appServices/utilities/number/parseInfinity';
 import { InlineEditInfinity, TextProps } from '@appInputs/InlineEditInput';
 import { useTicketMutator } from '@edtrServices/apollo/mutations';
 

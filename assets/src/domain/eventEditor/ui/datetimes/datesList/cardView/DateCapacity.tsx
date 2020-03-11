@@ -1,7 +1,7 @@
 import React from 'react';
 
 import { Datetime } from '@edtrServices/apollo/types';
-import parseInfinity from '@appServices/utilities/parseInfinity';
+import parseInfinity from '@appServices/utilities/number/parseInfinity';
 import { InlineEditInfinity, TextProps } from '@appInputs/InlineEditInput';
 import {
 	useDatetimeMutator,
