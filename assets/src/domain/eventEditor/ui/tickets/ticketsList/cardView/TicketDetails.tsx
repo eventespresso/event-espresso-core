@@ -2,21 +2,15 @@ import React, { useMemo } from 'react';
 import { __ } from '@wordpress/i18n';
 
 import TicketRegistrationsLink from '../../TicketRegistrationsLink';
-import useTicketRegistrationCount from '@edtrUI/tickets/hooks/useTicketRegistrationCount';
-import InfinitySymbol from '@application/valueObjects/InfinitySymbol';
-import parseInfinity from '@appServices/utilities/parseInfinity';
 import { EntityDetailsPanel } from '@appDisplay/enityDetails';
-import { MutatorFn } from '@appServices/apollo/mutations';
 import { Ticket } from '@edtrServices/apollo/types';
+import TicketQuantity from './TicketQuantity';
 
 interface TicketDetailsProps {
 	ticket: Ticket;
-	updateTicket: MutatorFn;
 }
 
-const TicketDetails: React.FC<TicketDetailsProps> = ({ ticket, updateTicket }) => {
-	const registrationCount = useTicketRegistrationCount(ticket.id);
-
+const TicketDetails: React.FC<TicketDetailsProps> = ({ ticket }) => {
 	return useMemo(() => {
 		const details = [
 			{
@@ -27,21 +21,7 @@ const TicketDetails: React.FC<TicketDetailsProps> = ({ ticket, updateTicket }) =
 			{
 				id: 'ee-ticket-qty',
 				label: __('quantity'),
-				value: <InfinitySymbol value={ticket.quantity} asInt />,
-				editable: {
-					type: 'text',
-					valueType: 'infinite',
-					onChange: (value: any) => {
-						const quantity = parseInfinity(value, true);
-						updateTicket({ quantity });
-						return <InfinitySymbol value={quantity} asInt />;
-					},
-				},
-			},
-			{
-				id: 'ee-ticket-reserved',
-				label: __('reg count'),
-				value: registrationCount,
+				value: <TicketQuantity ticket={ticket} />,
 			},
 			{
 				id: 'ee-ticket-registrations',

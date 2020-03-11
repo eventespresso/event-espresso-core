@@ -22,7 +22,7 @@ const TicketRegistrationsLink: React.FC<Props> = ({ ticket }) => {
 	const eventId = useEventId();
 	const regListUrl = addQueryArgs(adminUrl, {
 		event_id: eventId,
-		ticket_id: ticket.id,
+		ticket_id: ticket.dbId,
 		return: 'edit',
 	});
 	const title = __('view registrations for this ticket.');

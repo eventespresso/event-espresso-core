@@ -22,7 +22,7 @@ const DateRegistrationsLink: React.FC<Props> = ({ datetime }) => {
 	const eventId = useEventId();
 	const regListUrl = addQueryArgs(adminUrl, {
 		event_id: eventId,
-		datetime_id: datetime.id,
+		datetime_id: datetime.dbId,
 		return: 'edit',
 	});
 	const title = __('view registrations for this date.');

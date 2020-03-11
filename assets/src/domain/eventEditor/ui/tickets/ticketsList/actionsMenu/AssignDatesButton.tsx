@@ -18,7 +18,11 @@ const AssignDatesButton: React.FC<EditItemModalProps> = ({ id, ...rest }) => {
 
 	const relatedDatetimeDbIds = relatedDatetimes.map(({ dbId }) => dbId);
 
-	const title = count ? `${__('Related Dates:')} ${relatedDatetimeDbIds.join(', ')}` : '';
+	const title = count
+		? `${__('Related Dates:')} ${relatedDatetimeDbIds.join(', ')}`
+		: __(
+				'There are no event dates assigned to this ticket. Please click the calendar icon to update the assignments.'
+		  );
 
 	const onClick = (): void => {
 		assignDatesToTicket({ ticketId: id });

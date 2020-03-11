@@ -65,7 +65,7 @@ const DateCard: React.FC<ListItemProps> = ({ id }) => {
 						>
 							{date.description ? date.description : __('Edit description...')}
 						</InlineEditTextArea>
-						<DateDetails datetime={date} updateDatetime={updateEntity} />
+						<DateDetails datetime={date} />
 					</>
 				}
 			/>

@@ -70,7 +70,7 @@ const TicketCard: React.FC<ListItemProps> = ({ id }) => {
 							}}
 							tag={'h3'}
 						/>
-						<TicketDetails ticket={ticket} updateTicket={updateEntity} />
+						<TicketDetails ticket={ticket} />
 					</>
 				}
 				reverse

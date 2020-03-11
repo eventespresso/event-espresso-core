@@ -13,8 +13,12 @@
 	&--no-items {
 		.ant-badge-count {
 			background: var(--ee-color-hot-pink);
-			font-size: var(--ee-font-size-tiny);
-			font-weight: bold;
+			font-size: 1rem;
+			font-weight: bolder;
+			line-height: 1.1rem;
+		}
+		path {
+			fill: var(--ee-color-hot-pink);
 		}
 	}
 }
