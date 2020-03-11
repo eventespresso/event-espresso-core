@@ -1,11 +1,11 @@
-import { useMemo, useEffect } from 'react';
+import { useEffect, useMemo } from 'react';
 
-import { entityListSearch } from '@appServices/utilities/text';
-import { useDatetimes } from '@edtrServices/apollo/queries';
 import { Datetime } from '@edtrServices/apollo';
-import useDatesListFilterState from './useDatesListFilterState';
+import { entityListSearch } from '@appServices/utilities/text';
 import filters from '@sharedEntities/datetimes/predicates/filters';
 import sorters from '@sharedEntities/datetimes/predicates/sorters';
+import useDatesListFilterState from './useDatesListFilterState';
+import { useDatetimes } from '@edtrServices/apollo/queries';
 
 const useFilteredDatetimes = (): Array<Datetime> => {
 	const dates = useDatetimes();
@@ -28,10 +28,6 @@ const useFilteredDatetimes = (): Array<Datetime> => {
 
 	// search entities
 	const searchResults = useMemo<Array<Datetime>>(() => {
-		if (!searchText) {
-			return filteredEntities;
-		}
-
 		return entityListSearch({
 			entities: filteredEntities,
 			searchFields: ['name', 'description'],

@@ -1,11 +1,11 @@
-import { useMemo, useEffect } from 'react';
+import { useEffect, useMemo } from 'react';
 
-import { entityListSearch } from '@appServices/utilities/text';
-import { useTickets } from '@edtrServices/apollo/queries';
 import { Ticket } from '@edtrServices/apollo';
-import useTicketsListFilterState from './useTicketsListFilterState';
+import { entityListSearch } from '@appServices/utilities/text';
 import filters from '@sharedEntities/tickets/predicates/filters';
 import sorters from '@sharedEntities/tickets/predicates/sorters';
+import { useTickets } from '@edtrServices/apollo/queries';
+import useTicketsListFilterState from './useTicketsListFilterState';
 
 const useFilteredTickets = (): Array<Ticket> => {
 	const tickets = useTickets();
@@ -28,10 +28,6 @@ const useFilteredTickets = (): Array<Ticket> => {
 
 	// search entities
 	const searchResults = useMemo<Array<Ticket>>(() => {
-		if (!searchText) {
-			return filteredEntities;
-		}
-
 		return entityListSearch({
 			entities: filteredEntities,
 			searchFields: ['name', 'description'],
