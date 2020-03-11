@@ -5,11 +5,11 @@ import EditTicketButton from '../ticketsList/actionsMenu/EditTicketButton';
 import DeleteTicketButton from '../ticketsList/actionsMenu/DeleteTicketButton';
 import AssignDatesButton from '../ticketsList/actionsMenu/AssignDatesButton';
 import TicketPriceCalculatorButton from '../ticketPriceCalculator/buttons/TicketPriceCalculatorButton';
-import { SubscriptionCallback } from '@appLayout/entityActionsMenu';
+import { EntityActionsSubscriptionCb } from '@appLayout/entityActionsMenu';
 import { Ticket } from '@edtrServices/apollo/types';
 import { useStatus, TypeName } from '@appServices/apollo/status';
 
-type TicketsSubscriptionCallback = SubscriptionCallback<Ticket, 'ticket'>;
+type TicketsSubscriptionCallback = EntityActionsSubscriptionCb<Ticket, 'ticket'>;
 
 const useTicketsActionMenuHandler = (): TicketsSubscriptionCallback => {
 	return useCallback<TicketsSubscriptionCallback>(({ entity: ticket }, { registerMenuItem }) => {

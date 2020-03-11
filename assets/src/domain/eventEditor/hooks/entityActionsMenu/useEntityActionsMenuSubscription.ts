@@ -1,11 +1,11 @@
 import { useEffect } from 'react';
 
-import { useEntityActions } from '@appLayout/entityActionsMenu';
-import useDatesActionMenuHandler from '../ui/datetimes/hooks/useDatesActionMenuHandler';
-import useTicketsActionMenuHandler from '../ui/tickets/hooks/useTicketsActionMenuHandler';
+import { useEntityActionsService } from '@appLayout/entityActionsMenu';
+import useDatesActionMenuHandler from '../../ui/datetimes/hooks/useDatesActionMenuHandler';
+import useTicketsActionMenuHandler from '../../ui/tickets/hooks/useTicketsActionMenuHandler';
 
 const useEntityActionsMenuSubscription = (): void => {
-	const { subscribe } = useEntityActions('eventEditor');
+	const { subscribe } = useEntityActionsService('eventEditor');
 	const datesActionHandler = useDatesActionMenuHandler();
 	const ticketsActionHandler = useTicketsActionMenuHandler();
 

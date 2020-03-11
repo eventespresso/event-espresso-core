@@ -1,8 +1,6 @@
-import { TicketsList } from '../services/apollo/types';
-import { WriteQueryOptions } from '../services/apollo/queries/types';
 import useUpdateEntityList from './useUpdateEntityList';
-import useTicketQueryOptions from '../services/apollo/queries/tickets/useTicketQueryOptions';
-import { CacheUpdaterFn } from '../../shared/services/apollo/queries/types';
+import { TicketsList, useTicketQueryOptions, WriteQueryOptions } from '@edtrServices/apollo';
+import { CacheUpdaterFn } from '@sharedServices/apollo/queries';
 
 const useUpdateTicketList = (
 	writeQueryOptions: WriteQueryOptions<TicketsList> = undefined
