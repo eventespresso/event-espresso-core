@@ -7,7 +7,7 @@
  *
  * @package     Event Espresso
  * @author         Mike Nelson
- * @since         $VID:$
+ * @since         4.10.4.p
  *
  */
 class EED_Ticket_Sales_Monitor_Mock extends EED_Ticket_Sales_Monitor
