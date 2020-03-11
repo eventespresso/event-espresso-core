@@ -1,6 +1,6 @@
 import { Entity } from '@appServices/apollo/types';
-import entityListSearch from './';
 import { EntityListSearchProps } from './types';
+import entityListSearch from './';
 
 // Create a test entity to add more fields
 interface TestEntity extends Entity {
@@ -28,7 +28,7 @@ const entities: TestEntity[] = [
 	},
 ];
 
-const searhArgs: EntityListSearchProps<TestEntity> = {
+const searchArgs: EntityListSearchProps<TestEntity> = {
 	entities,
 	searchFields: ['name', 'description'],
 	searchText: '',
@@ -36,7 +36,7 @@ const searhArgs: EntityListSearchProps<TestEntity> = {
 
 describe('entityListSearch', () => {
 	it('should return two results by name and description', () => {
-		const searchResult = entityListSearch({ ...searhArgs, searchText: 'test' });
+		const searchResult = entityListSearch({ ...searchArgs, searchText: 'test' });
 
 		expect(Array.isArray(searchResult)).toBe(true);
 		expect(searchResult.length).toBe(2);
@@ -44,7 +44,7 @@ describe('entityListSearch', () => {
 	});
 
 	it('Should return the same result as with trimmed search term', () => {
-		const searchResult = entityListSearch({ ...searhArgs, searchText: '    test    ' });
+		const searchResult = entityListSearch({ ...searchArgs, searchText: '    test    ' });
 
 		expect(Array.isArray(searchResult)).toBe(true);
 		expect(searchResult.length).toBe(2);
@@ -52,7 +52,7 @@ describe('entityListSearch', () => {
 	});
 
 	it('should return two results', () => {
-		const searchResult = entityListSearch({ ...searhArgs, searchText: 'another' });
+		const searchResult = entityListSearch({ ...searchArgs, searchText: 'another' });
 
 		expect(Array.isArray(searchResult)).toBe(true);
 		expect(searchResult.length).toBe(2);
@@ -61,7 +61,7 @@ describe('entityListSearch', () => {
 	});
 
 	it('Should not search anything if search text is just whitespaces', () => {
-		const searchResult = entityListSearch({ ...searhArgs, searchText: '          ' });
+		const searchResult = entityListSearch({ ...searchArgs, searchText: '          ' });
 
 		expect(Array.isArray(searchResult)).toBe(true);
 		expect(searchResult.length).toBe(3);
@@ -69,7 +69,7 @@ describe('entityListSearch', () => {
 	});
 
 	it('Should return empty array if empty entity list is provided and no search term is provided ', () => {
-		const searchResult = entityListSearch({ ...searhArgs, entities: [], searchText: '' });
+		const searchResult = entityListSearch({ ...searchArgs, entities: [], searchText: '' });
 
 		expect(Array.isArray(searchResult)).toBe(true);
 		expect(searchResult.length).toBe(0);

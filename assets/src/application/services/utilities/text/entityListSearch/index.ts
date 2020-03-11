@@ -17,7 +17,7 @@ const entityListSearch = <E extends Entity>({
 	const textToSearch = searchText.trim().toLowerCase();
 
 	return entities.filter((entity) => {
-		// Pick the desied search fields.
+		// Pick the desired search fields.
 		const fields = pick(searchFields as Readonly<string[]>, entity);
 		// Get field values.
 		const fieldValues: string[] = Object.values(fields);
