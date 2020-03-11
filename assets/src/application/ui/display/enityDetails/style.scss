@@ -12,6 +12,7 @@
 	height: var(--ee-font-size-extreme);
 	justify-content: center; /* space-between */
 	line-height: var(--ee-font-size-big);
+	margin: 0;
 	min-width: calc(var(--ee-font-size-tiny) * 21);
 	text-align: center;
 	vertical-align: bottom;
@@ -150,12 +151,13 @@
 	.ee-entity-details-panel-div {
 		flex-direction: column;
 		height: auto;
-		padding: var(--ee-padding-smaller) 0 0;
+		padding: var(--ee-padding-smaller) 0;
 		text-align: center;
 		width: 100%;
 
 		.ee-entity-details-div {
 			flex-direction: row;
+			line-height: calc(var(--ee-font-size-default) * 2);
 			max-width: unset;
 			text-align: center;
 			width: 100%;
@@ -164,13 +166,16 @@
 		.ee-entity-details-value-div {
 			padding-left: var(--ee-padding-tiny);
 			text-align: center;
+			vertical-align: middle;
 			width: 25%;
 		}
 
 		.ee-entity-details-label-div {
 			color: var(--ee-default-text-color-high-contrast);
+			font-size: var(--ee-font-size-smaller);
 			letter-spacing: 0;
 			text-align: right;
+			vertical-align: middle;
 			width: 50%;
 		}
 
