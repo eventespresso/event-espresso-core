@@ -1,9 +1,11 @@
 import React from 'react';
+import classNames from 'classnames';
 import { differenceInCalendarDays, format, parseISO, isValid } from 'date-fns';
 import { __ } from '@wordpress/i18n';
 
 import { BiggieCalendarDate, MediumCalendarDate, CalendarDateProps } from '../index';
 import { TIME_ONLY_12H_SHORT_FORMAT } from '@appConstants/dateFnsFormats';
+import './style.scss';
 
 export interface CalendarDateRange extends CalendarDateProps {
 	startDate: Date | string;
@@ -27,22 +29,16 @@ export const CalendarDateRange: React.FC<CalendarDateRange> = ({
 		return null;
 	}
 	if (differenceInCalendarDays(startDateObject, endDateObject) !== 0) {
+		const htmlClassName = classNames(className, 'ee-calendar-date-range-wrapper');
 		return (
-			<MediumCalendarDate
-				date={startDateObject}
-				className={className}
-				showTime={showTime}
-				addWrapper
-				footerText={
-					<MediumCalendarDate
-						key={'end-date'}
-						date={endDateObject}
-						headerText={__('to', 'event_espresso')}
-						showTime={showTime}
-						footerText={footerText}
-					/>
-				}
-			/>
+			<div className={htmlClassName}>
+				<div className={'ee-calendar-date-range'}>
+					<MediumCalendarDate date={startDateObject} key={'start-date'} showTime={showTime} />
+					<div className={'ee-calendar-date-range__divider'}>{__('to', 'event_espresso')}</div>
+					<MediumCalendarDate date={endDateObject} key={'end-date'} showTime={showTime} />
+				</div>
+				{footerText && <div className={'ee-calendar-date-range__footer'}>{footerText}</div>}
+			</div>
 		);
 	}
 	const time =

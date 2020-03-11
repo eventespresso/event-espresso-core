@@ -1,0 +1,92 @@
+.ee-medium-calendar-date-wrapper {
+	align-items: center;
+	box-sizing: border-box;
+	color: var(--ee-color-white);
+	display: flex;
+	flex-flow: column nowrap;
+	font-weight: normal;
+	line-height: var(--ee-font-size-default);
+	height: 100%;
+	min-height: calc(var(--ee-padding-micro) * 45);
+	min-width: calc(var(--ee-padding-micro) * 34);
+	padding: var(--ee-padding-tiny) var(--ee-padding-micro);
+	text-align: center;
+	vertical-align: bottom;
+	width: 100%;
+}
+
+.ee-medium-calendar-date-header {
+	color: rgba(255, 255, 255, 0.9);
+	font-size: var(--ee-font-size-tiny);
+	letter-spacing: var(--ee-letter-spacing-font-size-micro);
+	margin: 0 0 var(--ee-margin-micro);
+}
+
+.ee-medium-calendar-date {
+	.ee-mcd-weekday {
+		font-size: var(--ee-font-size-smaller);
+		line-height: var(--ee-font-size-big);
+		letter-spacing: var(--ee-letter-spacing-font-size-tiny);
+	}
+
+	.ee-mcd-month-day {
+		font-size: var(--ee-font-size-bigger);
+		font-weight: bold;
+		line-height: var(--ee-font-size-bigger);
+	}
+
+	.ee-mcd-day {
+		margin: 0 0 0 var(--ee-margin-smaller);
+	}
+
+	.ee-mcd-year {
+		font-size: var(--ee-font-size-tiny);
+		letter-spacing: var(--ee-letter-spacing-font-size-micro);
+		line-height: var(--ee-font-size-default);
+		left: var(--ee-padding-nano);
+		margin: var(--ee-margin-nano) 0 0;
+		position: relative;
+		top: var(--ee-padding-micro);
+	}
+
+	.ee-mcd-time {
+		font-size: var(--ee-font-size-tiny);
+		line-height: var(--ee-font-size-default);
+	}
+}
+
+.ee-medium-calendar-date-footer {
+	display: flex;
+	flex-flow: column nowrap;
+	font-size: var(--ee-font-size-smaller);
+	line-height: var(--ee-font-size-bigger);
+	margin: var(--ee-margin-nano) 0 0;
+	padding: var(--ee-padding-micro) 0;
+
+	.ee-status-tag {
+		display: block;
+		font-weight: bold;
+		letter-spacing: var(--ee-letter-spacing-font-size-micro);
+		text-transform: uppercase;
+	}
+
+	.ee-medium-calendar-date-header {
+		margin: 0;
+	}
+}
+
+/* Media Queries for specific screen sizes
+ * -------------------------------------------------------------------------*/
+
+@media only screen and (max-width: 480px) {
+	.ee-medium-calendar-date-wrapper {
+		align-items: center;
+		flex-flow: row nowrap;
+		justify-content: space-evenly;
+
+		.ee-medium-calendar-date-footer {
+			align-items: center;
+			flex-flow: row nowrap;
+		}
+	}
+}

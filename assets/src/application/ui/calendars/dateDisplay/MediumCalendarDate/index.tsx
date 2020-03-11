@@ -1,8 +1,9 @@
 import React from 'react';
+import classNames from 'classnames';
 import { format, parseISO, isValid } from 'date-fns';
 import { __ } from '@wordpress/i18n';
 
-import './style.css';
+import './style.scss';
 import { CalendarDateProps } from '../types';
 
 import {
@@ -33,7 +34,7 @@ export const MediumCalendarDate: React.FC<MediumCalendarDateProps> = ({
 	if (!isValid(dateObject)) {
 		return null;
 	}
-	className += ' ee-medium-calendar-date-wrapper';
+	const htmlClassName = classNames(className, 'ee-medium-calendar-date-wrapper');
 	const mediumDate = (
 		<>
 			{headerText && <div className='ee-medium-calendar-date-header'>{headerText}</div>}
@@ -49,9 +50,9 @@ export const MediumCalendarDate: React.FC<MediumCalendarDateProps> = ({
 						<span className='ee-mcd-time'>&nbsp;{format(dateObject, TIME_ONLY_12H_SHORT_FORMAT)}</span>
 					)}
 				</div>
-				{footerText && <div className='ee-medium-calendar-date-footer'>{footerText}</div>}
 			</div>
+			{footerText && <div className='ee-medium-calendar-date-footer'>{footerText}</div>}
 		</>
 	);
-	return addWrapper ? <div className={className}>{mediumDate}</div> : mediumDate;
+	return addWrapper ? <div className={htmlClassName}>{mediumDate}</div> : mediumDate;
 };
