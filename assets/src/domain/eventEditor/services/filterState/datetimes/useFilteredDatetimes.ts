@@ -1,25 +1,44 @@
-import { useMemo, useEffect } from 'react';
+import { useEffect, useMemo } from 'react';
 
-import { useDatetimes } from '@edtrServices/apollo/queries';
 import { Datetime } from '@edtrServices/apollo';
-import useDatesListFilterState from './useDatesListFilterState';
+import { entityListSearch } from '@appServices/utilities/text';
 import filters from '@sharedEntities/datetimes/predicates/filters';
 import sorters from '@sharedEntities/datetimes/predicates/sorters';
+import useDatesListFilterState from './useDatesListFilterState';
+import { useDatetimes } from '@edtrServices/apollo/queries';
 
 const useFilteredDatetimes = (): Array<Datetime> => {
 	const dates = useDatetimes();
 
-	const { sortBy, datetimesToShow, perPage, pageNumber, setTotal, total, setPageNumber } = useDatesListFilterState();
+	const {
+		datetimesToShow,
+		pageNumber,
+		perPage,
+		searchText,
+		setPageNumber,
+		setTotal,
+		sortBy,
+		total,
+	} = useDatesListFilterState();
 
 	// Flter the list
 	const filteredEntities = useMemo<Array<Datetime>>(() => {
 		return filters({ dates, show: datetimesToShow });
 	}, [dates, datetimesToShow]);
 
+	// search entities
+	const searchResults = useMemo<Array<Datetime>>(() => {
+		return entityListSearch({
+			entities: filteredEntities,
+			searchFields: ['name', 'description'],
+			searchText,
+		});
+	}, [filteredEntities, searchText]);
+
 	// sort it
 	const sortedEntities = useMemo<Array<Datetime>>(() => {
-		return sorters({ dates: filteredEntities, sortBy });
-	}, [filteredEntities, sortBy]);
+		return sorters({ dates: searchResults, sortBy });
+	}, [searchResults, sortBy]);
 
 	// paginate it
 	const paginatedEntities = useMemo<Array<Datetime>>(() => {
@@ -28,10 +47,10 @@ const useFilteredDatetimes = (): Array<Datetime> => {
 
 	// Avoid synchronous state update
 	useEffect(() => {
-		if (total !== filteredEntities.length) {
-			setTotal(filteredEntities.length);
+		if (total !== searchResults.length) {
+			setTotal(searchResults.length);
 		}
-	}, [total, filteredEntities]);
+	}, [total, searchResults]);
 
 	useEffect(() => {
 		// If there are no paginated entities and current pageNumber is not 1
