@@ -34,7 +34,7 @@ const TableView: React.FC<TableViewProps> = ({ className, displayStartOrEndDate,
 			headerRows={[headerRows]}
 			metaData={{
 				tableId: 'date-entities-list-view',
-				tableCaption: __('Event Datesaaas', 'event_espresso'),
+				tableCaption: __('Event Dates', 'event_espresso'),
 			}}
 		/>
 	);
