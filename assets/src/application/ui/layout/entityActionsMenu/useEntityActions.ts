@@ -1,20 +1,14 @@
 import { pathOr, assocPath, omit, filter } from 'ramda';
 import { v4 as uuidv4 } from 'uuid';
 
-import {
-	SubscribeFn,
-	Subscriptions,
-	Subscription,
-	SubscriptionsOptions,
-	EntityActions,
-	EntityActionsData,
-	UpdateSubscriptionProps,
-} from './types';
+import { Subscriptions, EntityActions, EntityActionsData, UpdateSubscriptionProps } from './types';
 
 const NAMESPACE = 'espresso';
 
+type EA = EntityActions;
+
 const useEntityActions = <Domain extends string>(domain: Domain): EntityActions => {
-	const subscribe: SubscribeFn = (callback, options): VoidFunction => {
+	const subscribe: EA['subscribe'] = (callback, options) => {
 		// runtime check
 		if (typeof callback !== 'function') {
 			return;
@@ -30,20 +24,16 @@ const useEntityActions = <Domain extends string>(domain: Domain): EntityActions 
 		};
 	};
 
-	const getSubscriptions = (options: SubscriptionsOptions = {}): Subscriptions => {
+	const getSubscriptions: EA['getSubscriptions'] = (options = {}) => {
 		const { entityType } = options;
-		const allSubscriptions = pathOr<Subscriptions>(
-			{},
-			[domain, 'entityActions', 'subscriptions'],
-			window[NAMESPACE]
-		);
+		const allSubscriptions = pathOr({}, [domain, 'entityActions', 'subscriptions'], window[NAMESPACE]);
 		if (entityType) {
-			return filter<Subscription>(({ options }) => entityType === options.entityType, allSubscriptions);
+			return filter(({ options }) => entityType === options.entityType, allSubscriptions);
 		}
 		return allSubscriptions;
 	};
 
-	const setSubscriptions = (subscriptions: Subscriptions): void => {
+	const setSubscriptions = (subscriptions: Subscriptions<any, string>): void => {
 		updateEntityActions('subscriptions', subscriptions);
 	};
 

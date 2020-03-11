@@ -1,40 +1,6 @@
 import React from 'react';
 import { Entity } from '@appServices/apollo/types';
 
-export interface SubscriptionData<E, T> {
-	entityType: T;
-	entity: E;
-}
-
-export type EntitySubscriptionCallback<E extends Entity, AO = AdditionalSubscriptionCbOptions> = SubscriptionCallback<
-	SubscriptionData<E, AO>
->;
-
-export type EntityActionsMenuCallback<E extends Entity> = (
-	entity: E,
-	entityActionsManager: EntityActionsManager
-) => void;
-
-export interface ActionsMenuComponentProps<E extends Entity> {
-	entity: E;
-	menuItemProps?: ActionsMenuItemProps;
-	[key: string]: any;
-}
-
-export interface ActionsMenuItemProps {
-	[key: string]: any;
-}
-
-export interface EntityActionsManager {
-	registerMenuItem: (key: string, component: React.ReactType) => void;
-	unRegisterMenuItem: (key: string) => void;
-	getMenuItems: () => EntityMenuItems;
-}
-
-export type EntityMenuItems = {
-	[key: string]: React.ReactType;
-};
-
 /**
  * e.g.
  * menuRegistry = {
@@ -60,40 +26,62 @@ export type MenuRegistry = {
 	};
 };
 
-export type SubscribeFn = (cb: SubscriptionCallback, options?: SubscriptionsOptions) => VoidFunction;
+export type SubscribeFn = <E extends Entity, T extends string>(
+	cb: SubscriptionCallback<E, T>,
+	options?: SubscriptionsOptions<T>
+) => VoidFunction;
 
-export interface SubscriptionsOptions {
-	entityType?: string; // to limit the subscription only to specific entityType
+export type SubscriptionCallback<E extends Entity, T extends string> = (
+	data: SubscriptionData<E, T>,
+	entityActionsManager: EntityActionsManager
+) => void;
+
+export interface SubscriptionData<E, T> {
+	entityType: T;
+	entity: E;
 }
 
-export interface Subscription {
-	callback: SubscriptionCallback;
-	options: SubscriptionsOptions;
+export interface EntityActionsManager {
+	registerMenuItem: (key: string, component: React.ReactType) => void;
+	unRegisterMenuItem: (key: string) => void;
+	getMenuItems: () => EntityMenuItems;
 }
 
-export type Subscriptions = {
-	[key: string]: Subscription;
+export type EntityMenuItems = {
+	[key: string]: React.ReactType;
 };
 
-export type SubscriptionCallback<D = any> = (data: D, entityActionsManager: EntityActionsManager) => void;
-
-export interface AdditionalSubscriptionCbOptions {
-	[key: string]: any;
+export interface SubscriptionsOptions<T extends string> {
+	entityType?: T; // to limit the subscription only to specific entityType
 }
+
+export interface Subscription<E extends Entity, T extends string> {
+	callback: SubscriptionCallback<E, T>;
+	options: SubscriptionsOptions<T>;
+}
+
+export type Subscriptions<E extends Entity, T extends string> = {
+	[key: string]: Subscription<E, T>;
+};
 
 export interface EntityActionsData {
 	subscribe: SubscribeFn;
-	subscriptions: Subscriptions;
+	subscriptions: Subscriptions<any, string>;
 }
 
 export interface EntityActions {
 	subscribe: SubscribeFn;
-	getSubscriptions: (options?: SubscriptionsOptions) => Subscriptions;
+	getSubscriptions: <E extends Entity, T extends string>(options?: SubscriptionsOptions<T>) => Subscriptions<E, T>;
 }
 
 export interface UpdateSubscriptionProps {
 	id: string;
-	callback?: SubscriptionCallback;
-	options?: SubscriptionsOptions;
+	callback?: SubscriptionCallback<any, string>;
+	options?: SubscriptionsOptions<string>;
 	action?: 'add' | 'remove';
+}
+
+export interface ActionsMenuComponentProps<E extends Entity> {
+	entity: E;
+	[key: string]: any;
 }

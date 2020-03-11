@@ -5,11 +5,10 @@ import EditDateButton from '../datesList/actionsMenu/EditDateButton';
 import DeleteDateButton from '../datesList/actionsMenu/DeleteDateButton';
 import AssignTicketsButton from '../datesList/actionsMenu/AssignTicketsButton';
 import { Datetime } from '@edtrServices/apollo/types';
-import { EntitySubscriptionCallback } from '@appLayout/entityActionsMenu';
-import { AdditionalDateMenuOptions } from '../types';
+import { SubscriptionCallback } from '@appLayout/entityActionsMenu';
 import { useStatus, TypeName } from '@appServices/apollo/status';
 
-type DatesSubscriptionCallback = EntitySubscriptionCallback<Datetime, AdditionalDateMenuOptions>;
+type DatesSubscriptionCallback = SubscriptionCallback<Datetime, 'datetime'>;
 
 const useDatesActionMenuHandler = (): DatesSubscriptionCallback => {
 	return useCallback<DatesSubscriptionCallback>(({ entityType, entity: date }, { registerMenuItem }) => {
