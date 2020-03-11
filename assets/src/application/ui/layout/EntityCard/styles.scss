@@ -1,4 +1,7 @@
 .entity-card {
+	--ee-sidebar-width: 9rem;
+	--ee-menu-width: 4rem;
+
 	align-items: stretch;
 	box-sizing: border-box;
 	display: flex;
@@ -14,13 +17,13 @@
 		align-items: stretch;
 		box-sizing: border-box;
 		padding: 0;
-		width: calc(var(--ee-padding-micro) * 34);
+		min-width: var(--ee-sidebar-width);
 	}
 
 	&__details-wrapper {
 		box-sizing: border-box;
-		padding: 0.5rem 1rem;
-		width: calc(100% - calc(var(--ee-padding-micro) * 34) - 3rem);
+		padding: var(--ee-padding-tiny) var(--ee-padding-small);
+		width: calc(100% - var(--ee-sidebar-width) - var(--ee-menu-width));
 	}
 
 	&__details {
@@ -48,7 +51,7 @@
 				font-weight: bold;
 				letter-spacing: var(--ee-letter-spacing-font-size-huge);
 				line-height: calc(var(--ee-line-height-modifier) * 0.75);
-				margin: 0.25rem 0 0.75rem;
+				margin: var(--ee-margin-micro) 0 var(--ee-margin-smaller);
 				padding: 0;
 				text-align: center;
 				width: 100%;
@@ -56,14 +59,14 @@
 
 			&__description {
 				font-size: var(--ee-font-size-default);
-				margin: 0 0 0.75rem;
+				margin: 0 0 var(--ee-margin-tiny);
 				text-align: center;
 				width: 100%;
 			}
 
 			&__price {
 				text-align: center;
-				margin: 0 0 0.75rem;
+				margin: 0 0 var(--ee-margin-smaller);
 				width: 100%;
 
 				> span {
@@ -78,8 +81,8 @@
 	&__menu {
 		align-items: stretch;
 		box-sizing: border-box;
-		flex: 0 0 3rem;
-		padding: 0.25rem;
+		flex: 0 0 var(--ee-menu-width);
+		padding: var(--ee-padding-micro);
 	}
 
 	/* Media Queries for specific screen sizes
@@ -91,17 +94,32 @@
 	@media only screen and (max-width: 1366px) {
 	}
 	@media only screen and (max-width: 1280px) {
+		// :root {
+		// 	--ee-entity-card-width: calc(var(--ee-entity-paper-frame-base) * 2.4);
+		// }
 	}
 	@media only screen and (max-width: 1024px) {
+		// :root {
+		// 	--ee-entity-card-width: calc(var(--ee-entity-paper-frame-base) * 1.8);
+		// }
 	}
 	/* WordPress Admin Media Query Breakpoint: Auto-folding of the admin menu */
 	@media only screen and (max-width: 960px) {
+		// :root {
+		// 	--ee-entity-card-width: calc(var(--ee-entity-paper-frame-base) * 2);
+		// }
 	}
 	/* WordPress Admin Media Query Breakpoint: one column on the post write/edit screen */
 	@media only screen and (max-width: 850px) {
+		// :root {
+		// 	--ee-entity-card-width: calc(var(--ee-entity-paper-frame-base) * 2.25);
+		// }
 	}
 	/* WordPress Admin Media Query Breakpoint: Tablet */
 	@media screen and (max-width: 782px) {
+		// :root {
+		// 	--ee-entity-card-width: calc(var(--ee-entity-paper-frame-base) * 2);
+		// }
 	}
 	/* WordPress Admin Media Query Breakpoint: Smartphone */
 	@media screen and (max-width: 600px) {

@@ -5,13 +5,8 @@
 
 .ee-entity-paper-frame-wrapper {
 	box-sizing: border-box;
-	margin: var(--ee-margin-small);
-	max-width: calc(var(--ee-font-size-small) * 40);
-	min-height: calc(var(--ee-font-size-small) * 16);
-	min-width: calc(var(--ee-font-size-small) * 30);
 	padding: var(--ee-font-size-default) 0 0;
 	position: relative;
-	width: 31%;
 }
 
 .ee-entity-paper-frame {
@@ -60,58 +55,4 @@
 	position: relative;
 	width: 100%;
 	vertical-align: bottom;
-}
-
-/* Media Queries for specific screen sizes
- * -------------------------------------------------------------------------*/
-
-@media only screen and (max-width: 1920px) {
-}
-
-@media only screen and (max-width: 1766px) {
-	.ee-entity-paper-frame-wrapper {
-		width: 46%;
-	}
-}
-
-@media only screen and (max-width: 1366px) {
-	.ee-entity-paper-frame-wrapper {
-		width: 100%;
-	}
-}
-
-@media only screen and (max-width: 1280px) {
-}
-
-@media only screen and (max-width: 1024px) {
-}
-
-/* WordPress Admin Media Query Breakpoint: Auto-folding of the admin menu */
-@media only screen and (max-width: 960px) {
-}
-
-/* WordPress Admin Media Query Breakpoint: one column on the post write/edit screen */
-@media only screen and (max-width: 850px) {
-	.ee-entity-paper-frame-wrapper {
-		width: 100%;
-	}
-}
-
-/* WordPress Admin Media Query Breakpoint: Tablet */
-@media screen and (max-width: 782px) {
-}
-
-/* WordPress Admin Media Query Breakpoint: Smartphone */
-@media screen and (max-width: 600px) {
-	.ee-entity-paper-frame-wrapper {
-		max-width: 100%;
-		min-width: 100%;
-		width: 100%;
-	}
-}
-
-@media only screen and (max-width: 480px) {
-}
-
-@media only screen and (max-width: 360px) {
 }

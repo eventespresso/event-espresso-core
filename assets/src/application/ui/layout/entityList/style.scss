@@ -31,10 +31,16 @@
 	}
 
 	&__card-view {
-		display: flex;
-		flex-flow: row wrap;
-		justify-content: space-around;
+		display: grid;
+		gap: var(--ee-margin-big);
+		grid-template-columns: repeat(auto-fit, minmax(445px, 1fr));
+		grid-auto-rows: 275px;
 		width: 100%;
+
+		.ee-entity-card-wrapper {
+			justify-self: center;
+			max-width: 615px;
+		}
 	}
 
 	&--no-results {
@@ -44,5 +50,14 @@
 		font-weight: normal;
 		padding: var(--ee-padding-extreme) var(--ee-padding-big);
 		text-align: center;
+	}
+}
+
+@media only screen and (max-width: 480px) {
+	.ee-entity-list {
+		&__card-view {
+			grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+			grid-auto-rows: unset;
+		}
 	}
 }
