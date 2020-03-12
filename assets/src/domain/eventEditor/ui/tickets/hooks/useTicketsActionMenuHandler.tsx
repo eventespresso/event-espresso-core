@@ -37,10 +37,12 @@ const useTicketsActionMenuHandler = (): TicketsSubscriptionCallback => {
 
 		registerMenuItem(
 			'deleteTicket',
-			withPricesLoaded(({ loaded }) => {
-				/* Delete button should be hidden to avoid relational inconsistencies */
-				return loaded && <DeleteTicketButton id={ticket.id} />;
-			})
+			withDatesLoaded(
+				withPricesLoaded(({ loaded }) => {
+					/* Delete button should be hidden to avoid relational inconsistencies */
+					return loaded && <DeleteTicketButton id={ticket.id} />;
+				})
+			)
 		);
 	}, []);
 };
