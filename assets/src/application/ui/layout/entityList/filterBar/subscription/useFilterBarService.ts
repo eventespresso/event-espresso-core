@@ -13,14 +13,11 @@ const useFilterBarService: FBShook = (domain) => {
 		service,
 	});
 
-	const getSubscriptions: FBS['getSubscriptions'] = (options = {}) => {
-		const { listId } = options;
+	const getSubscriptions: FBS['getSubscriptions'] = (args = {}) => {
+		const { listId } = args;
 		const allSubscriptions = getServiceSubscriptions();
 		if (listId) {
-			return filter(
-				({ options: subscriptionOptions }) => listId === subscriptionOptions.listId,
-				allSubscriptions
-			);
+			return filter(({ options }) => listId === options.listId, allSubscriptions);
 		}
 		return allSubscriptions;
 	};

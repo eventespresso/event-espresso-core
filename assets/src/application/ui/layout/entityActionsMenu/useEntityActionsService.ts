@@ -13,14 +13,11 @@ const useEntityActionsService: EAShook = (domain) => {
 		service,
 	});
 
-	const getSubscriptions: EAS['getSubscriptions'] = (options = {}) => {
-		const { entityType } = options;
+	const getSubscriptions: EAS['getSubscriptions'] = (args = {}) => {
+		const { entityType } = args;
 		const allSubscriptions = getServiceSubscriptions();
 		if (entityType) {
-			return filter(
-				({ options: subscriptionOptions }) => entityType === subscriptionOptions.entityType,
-				allSubscriptions
-			);
+			return filter(({ options }) => entityType === args.entityType, allSubscriptions);
 		}
 		return allSubscriptions;
 	};
