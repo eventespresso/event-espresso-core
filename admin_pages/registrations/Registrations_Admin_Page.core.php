@@ -2712,6 +2712,21 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
         // first we start with the transaction... ultimately, we WILL not delete permanently if there are any related
         // registrations on the transaction that are NOT trashed.
         $TXN = $REG->get_first_related('Transaction');
+        if (! $TXN instanceof EE_Transaction) {
+            EE_Error::add_error(
+                sprintf(
+                    esc_html__(
+                        'Unable to permanently delete registration %d because its related transaction has already been deleted. If you can restore the related transaction to the database then this registration can be deleted.',
+                        'event_espresso'
+                    ),
+                    $REG->id()
+                ),
+                __FILE__,
+                __FUNCTION__,
+                __LINE__
+            );
+            return false;
+        }
         $REGS = $TXN->get_many_related('Registration');
         $all_trashed = true;
         foreach ($REGS as $registration) {
