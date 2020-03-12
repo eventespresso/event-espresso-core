@@ -108,15 +108,15 @@ export type ElementRegistry = {
 
 type Path = Array<string>;
 
-export interface SubscriptionUIOptions<D extends string, S extends string> extends SubscriptionServiceOptions<D, S> {
+export interface UIRegistryOptions<D extends string, S extends string> extends SubscriptionServiceOptions<D, S> {
 	path: Path;
 }
 
-export type SubscriptionUIRegistryHook = <ElementProps, D extends string, S extends string>(
-	options: SubscriptionUIOptions<D, S>
-) => SubscriptionUIRegistry<ElementProps>;
+export type UIRegistryHook = <ElementProps, D extends string, S extends string>(
+	options: UIRegistryOptions<D, S>
+) => UIRegistry<ElementProps>;
 
-export interface SubscriptionUIRegistry<ElementProps = any> {
+export interface UIRegistry<ElementProps = any> {
 	registerElement: (key: string, component: React.FC<ElementProps>, priority?: number) => void;
 	unRegisterElement: (key: string, priority?: number) => void;
 	getElements: () => UIElements<ElementProps>;

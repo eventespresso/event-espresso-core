@@ -2,14 +2,11 @@ import { useState } from 'react';
 import { assocPath, dissocPath, omit, pathOr } from 'ramda';
 import { AnyObject } from '@appServices/utilities/types';
 
-import { ElementRegistry, SubscriptionUIRegistry, SubscriptionUIRegistryHook } from './types';
-
-type SUIRhook = SubscriptionUIRegistryHook;
-type SUIR = SubscriptionUIRegistry;
+import { ElementRegistry, UIRegistry, UIRegistryHook } from './types';
 
 let elementRegistry: ElementRegistry = {};
 
-const useSubscriptionUIRegistry: SUIRhook = ({ domain, service, path }) => {
+const useUIRegistry: UIRegistryHook = ({ domain, service, path }) => {
 	const [registeredElements, setRegisteredElements] = useState<AnyObject<boolean>>({});
 
 	const pathToElements = [domain, service, ...path];
@@ -19,7 +16,7 @@ const useSubscriptionUIRegistry: SUIRhook = ({ domain, service, path }) => {
 		return `${pathToElementsStr}:${elementKey}:${priority}`;
 	};
 
-	const registerElement: SUIR['registerElement'] = (key, component, priority = 10) => {
+	const registerElement: UIRegistry['registerElement'] = (key, component, priority = 10) => {
 		const registrationKey = getRegistrationKey(key, priority);
 
 		if (!(registrationKey in registeredElements)) {
@@ -30,7 +27,7 @@ const useSubscriptionUIRegistry: SUIRhook = ({ domain, service, path }) => {
 		}
 	};
 
-	const unRegisterElement: SUIR['unRegisterElement'] = (key, priority = 10) => {
+	const unRegisterElement: UIRegistry['unRegisterElement'] = (key, priority = 10) => {
 		const registrationKey = getRegistrationKey(key, priority);
 		if (registrationKey in registeredElements) {
 			// Remove the element from registered elements
@@ -43,7 +40,7 @@ const useSubscriptionUIRegistry: SUIRhook = ({ domain, service, path }) => {
 	/**
 	 * Returns the list of registered UI elements.
 	 */
-	const getElements: SUIR['getElements'] = () => {
+	const getElements: UIRegistry['getElements'] = () => {
 		/**
 		 * This list is of this shape:
 		 * [
@@ -62,4 +59,4 @@ const useSubscriptionUIRegistry: SUIRhook = ({ domain, service, path }) => {
 	return { registerElement, unRegisterElement, getElements };
 };
 
-export default useSubscriptionUIRegistry;
+export default useUIRegistry;

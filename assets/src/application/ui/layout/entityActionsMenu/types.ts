@@ -1,6 +1,6 @@
 import React from 'react';
 import { Entity } from '@appServices/apollo/types';
-import { BaseSubscriptionOptions, Subscriptions, SubscriptionUIRegistry } from '@appServices/subscription';
+import { BaseSubscriptionOptions, Subscriptions, UIRegistry } from '@appServices/subscription';
 
 export interface EntityActionsSubscriptionsOptions<T extends string> {
 	entityType?: T; // to limit the subscription only to specific entityType
@@ -40,7 +40,7 @@ export type EntityActionsMenuRegistryHook = <D extends string, ET extends string
 	options: EntityActionsMenuOptions<D, ET>
 ) => EntityActionsMenuRegistry;
 
-export type EntityActionsMenuRegistry = SubscriptionUIRegistry;
+export type EntityActionsMenuRegistry = UIRegistry;
 
 export interface ActionsMenuComponentProps<E extends Entity> {
 	entity: E;

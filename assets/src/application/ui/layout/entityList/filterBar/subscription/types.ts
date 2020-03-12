@@ -1,5 +1,5 @@
 import React from 'react';
-import { BaseSubscriptionOptions, Subscriptions, SubscriptionUIRegistry } from '@appServices/subscription';
+import { BaseSubscriptionOptions, Subscriptions, UIRegistry } from '@appServices/subscription';
 import { EntityListFilterStateManager } from '../filterState';
 
 type ELFSM = EntityListFilterStateManager<any>;
@@ -44,7 +44,7 @@ export interface FilterBarUIComponentProps<FS extends ELFSM> {
 	filterState: FS;
 }
 
-export type FilterBarUIRegistry<FS extends ELFSM> = SubscriptionUIRegistry<FilterBarUIComponentProps<FS>>;
+export type FilterBarUIRegistry<FS extends ELFSM> = UIRegistry<FilterBarUIComponentProps<FS>>;
 
 export type FilterBarUIElementsHook = <FS extends ELFSM, D extends string, L extends string>(
 	options: BaseSubscriptionOptions<D> & FilterBarUISubscriptionData<FS, L>

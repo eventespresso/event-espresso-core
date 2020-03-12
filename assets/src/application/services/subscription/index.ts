@@ -1,5 +1,5 @@
 export { default as useSubscriptionService } from './useSubscriptionService';
 
-export { default as useSubscriptionUIRegistry } from './useSubscriptionUIRegistry';
+export { default as useUIRegistry } from './useUIRegistry';
 
 export * from './types';
