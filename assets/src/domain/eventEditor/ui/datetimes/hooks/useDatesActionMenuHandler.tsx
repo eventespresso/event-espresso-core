@@ -6,7 +6,8 @@ import DeleteDateButton from '../datesList/actionsMenu/DeleteDateButton';
 import AssignTicketsButton from '../datesList/actionsMenu/AssignTicketsButton';
 import { Datetime } from '@edtrServices/apollo/types';
 import { EntityActionsSubscriptionCb } from '@appLayout/entityActionsMenu';
-import { useStatus, TypeName } from '@appServices/apollo/status';
+import { TypeName } from '@appServices/apollo/status';
+import withIsLoaded from '@sharedUI/hoc/withIsLoaded';
 
 type DatesSubscriptionCallback = EntityActionsSubscriptionCb<Datetime, 'datetime'>;
 
@@ -16,16 +17,25 @@ const useDatesActionMenuHandler = (): DatesSubscriptionCallback => {
 		if (entityType !== 'datetime') {
 			return;
 		}
+		const withTicketsLoaded = withIsLoaded(TypeName.tickets);
 
 		registerMenuItem('editDate', () => <EditDateButton />);
 
-		registerMenuItem('assignTickets', () => <AssignTicketsButton id={date.id} />);
+		registerMenuItem(
+			'assignTickets',
+			withTicketsLoaded(({ loaded }) => {
+				/* Hide TAM unless tickets are loaded */
+				return loaded && <AssignTicketsButton id={date.id} />;
+			})
+		);
 
-		registerMenuItem('deleteTicket', () => {
-			const { isLoaded } = useStatus();
-			/* Delete button should be hidden to avoid relational inconsistencies */
-			return isLoaded(TypeName.tickets) && <DeleteDateButton id={date.id} />;
-		});
+		registerMenuItem(
+			'deleteTicket',
+			withTicketsLoaded(({ loaded }) => {
+				/* Delete button should be hidden to avoid relational inconsistencies */
+				return loaded && <DeleteDateButton id={date.id} />;
+			})
+		);
 	}, []);
 };
 
