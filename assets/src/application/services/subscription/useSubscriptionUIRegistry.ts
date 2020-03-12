@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { assocPath, dissocPath, omit, pathOr } from 'ramda';
 import { AnyObject } from '@appServices/utilities/types';
 
@@ -11,10 +11,6 @@ let elementRegistry: ElementRegistry = {};
 
 const useSubscriptionUIRegistry: SUIRhook = ({ domain, service, path }) => {
 	const [registeredElements, setRegisteredElements] = useState<AnyObject<boolean>>({});
-
-	useEffect(() => {
-		console.log('elementRegistry', elementRegistry);
-	}, [registeredElements]);
 
 	const pathToElements = [domain, service, ...path];
 	const pathToElementsStr = pathToElements.join(':');

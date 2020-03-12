@@ -8,14 +8,11 @@ type FBS = FilterBarUISubscription;
 type FBShook = FilterBarUISubscriptionHook;
 
 const useFilterBarUISubscription: FBShook = (domain) => {
-	const { getSubscriptions: getServiceSubscriptions, ...restServices } = useSubscriptionService({
-		domain,
-		service,
-	});
+	const { getSubscriptions: getUISubscriptions, ...restServices } = useSubscriptionService({ domain, service });
 
 	const getSubscriptions: FBS['getSubscriptions'] = (args = {}) => {
 		const { listId } = args;
-		const allSubscriptions = getServiceSubscriptions();
+		const allSubscriptions = getUISubscriptions();
 		if (listId) {
 			return filter(({ options }) => listId === options.listId, allSubscriptions);
 		}
