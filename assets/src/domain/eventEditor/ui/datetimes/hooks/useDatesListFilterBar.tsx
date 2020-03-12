@@ -1,11 +1,11 @@
 import React, { useCallback } from 'react';
 import { __ } from '@wordpress/i18n';
 
-import { FilterBarSubscriptionCb } from '@appLayout/entityList/filterBar';
+import { FilterBarUISubscriptionCb } from '@appLayout/entityList/filterBar';
 import { DatetimesFilterStateManager } from '@edtrServices/filterState';
-import { DatetimesToShowControl, SortByControl, DisplayStartOrEndDateControl } from '../datesList/filterBar/controls';
+import { DatetimesToShowControl, DisplayStartOrEndDateControl, SortByControl } from '../datesList/filterBar/controls';
 
-type DatesListFilterBarCallback = FilterBarSubscriptionCb<DatetimesFilterStateManager, 'dates-list'>;
+type DatesListFilterBarCallback = FilterBarUISubscriptionCb<DatetimesFilterStateManager, 'dates-list'>;
 
 const useDatesListFilterBar = (): DatesListFilterBarCallback => {
 	return useCallback<DatesListFilterBarCallback>(({ listId }, { registerElement: registerFilterBarItem }) => {

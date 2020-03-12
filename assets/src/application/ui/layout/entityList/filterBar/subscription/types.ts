@@ -4,49 +4,48 @@ import { EntityListFilterStateManager } from '../filterState';
 
 type ELFSM = EntityListFilterStateManager<any>;
 
-export interface FilterBarSubscriptionsOptions<L extends string> {
+export interface FilterBarUISubscriptionsOptions<L extends string> {
 	listId?: L; // to limit the subscription only to specific listId
 }
 
-export interface FilterBarSubscriptionData<FS extends ELFSM, L extends string>
-	extends FilterBarSubscriptionsOptions<L> {
+export interface FilterBarUISubscriptionData<FS extends ELFSM, L extends string>
+	extends FilterBarUISubscriptionsOptions<L> {
 	filterState: FS;
 }
 
-export interface FilterBarService {
-	subscribe: FilterBarSubscribeFn;
+export interface FilterBarUISubscription {
+	subscribe: FilterBarUISubscribeFn;
 	getSubscriptions: <FS extends ELFSM, L extends string>(
-		options?: FilterBarSubscriptionsOptions<L>
-	) => Subscriptions<FilterBarSubscriptionData<FS, L>, FilterBarSubscriptionsOptions<L>>;
+		options?: FilterBarUISubscriptionsOptions<L>
+	) => Subscriptions<FilterBarUISubscriptionData<FS, L>, FilterBarUISubscriptionsOptions<L>>;
 }
 
-export type FilterBarServiceHook = <Domain extends string>(domain: Domain) => FilterBarService;
+export type FilterBarUISubscriptionHook = <Domain extends string>(domain: Domain) => FilterBarUISubscription;
 
-export type FilterBarSubscribeFn = <FS extends ELFSM, L extends string>(
-	cb: FilterBarSubscriptionCb<FS, L>,
-	options?: FilterBarSubscriptionsOptions<L>
+export type FilterBarUISubscribeFn = <FS extends ELFSM, L extends string>(
+	cb: FilterBarUISubscriptionCb<FS, L>,
+	options?: FilterBarUISubscriptionsOptions<L>
 ) => VoidFunction;
 
-export type FilterBarSubscriptionCb<FS extends ELFSM, L extends string> = (
-	data: FilterBarSubscriptionData<FS, L>,
-	filterBar: FilterBarUI<FS>
+export type FilterBarUISubscriptionCb<FS extends ELFSM, L extends string> = (
+	data: FilterBarUISubscriptionData<FS, L>,
+	filterBarUIRegistry: FilterBarUIRegistry<FS>
 ) => void;
 
-/* UI related types */
 export interface FilterBarUIOptions<D extends string, L extends string> extends BaseSubscriptionOptions<D> {
 	listId: L;
 }
 
-export type FilterBarUIHook = <D extends string, L extends string, FS extends ELFSM>(
+export type FilterBarUIRegistryHook = <D extends string, L extends string, FS extends ELFSM>(
 	options: FilterBarUIOptions<D, L>
-) => FilterBarUI<FS>;
+) => FilterBarUIRegistry<FS>;
 
-export interface FilterBarComponentProps<FS extends ELFSM> {
+export interface FilterBarUIComponentProps<FS extends ELFSM> {
 	filterState: FS;
 }
 
-export type FilterBarUI<FS extends ELFSM> = SubscriptionUIRegistry<FilterBarComponentProps<FS>>;
+export type FilterBarUIRegistry<FS extends ELFSM> = SubscriptionUIRegistry<FilterBarUIComponentProps<FS>>;
 
-export type FilterBarUIItemsHook = <FS extends ELFSM, D extends string, L extends string>(
-	options: BaseSubscriptionOptions<D> & FilterBarSubscriptionData<FS, L>
+export type FilterBarUIElementsHook = <FS extends ELFSM, D extends string, L extends string>(
+	options: BaseSubscriptionOptions<D> & FilterBarUISubscriptionData<FS, L>
 ) => Array<React.ReactNode>;

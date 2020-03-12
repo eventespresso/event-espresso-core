@@ -1,7 +1,7 @@
 import React, { useCallback } from 'react';
 import { __ } from '@wordpress/i18n';
 
-import { FilterBarSubscriptionCb } from '@appLayout/entityList/filterBar';
+import { FilterBarUISubscriptionCb } from '@appLayout/entityList/filterBar';
 import { TicketsFilterStateManager } from '@edtrServices/filterState';
 import {
 	DisplayStartOrEndDateControl,
@@ -10,7 +10,7 @@ import {
 	TicketsToShowControl,
 } from '../ticketsList/filterBar/controls';
 
-type TicketsListFilterBarCallback = FilterBarSubscriptionCb<TicketsFilterStateManager, 'tickets-list'>;
+type TicketsListFilterBarCallback = FilterBarUISubscriptionCb<TicketsFilterStateManager, 'tickets-list'>;
 
 const useTicketsListFilterBar = (): TicketsListFilterBarCallback => {
 	return useCallback<TicketsListFilterBarCallback>(({ listId }, { registerElement: registerFilterBarItem }) => {

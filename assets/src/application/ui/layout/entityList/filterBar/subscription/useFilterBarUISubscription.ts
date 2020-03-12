@@ -1,13 +1,13 @@
 import { filter } from 'ramda';
 
 import { useSubscriptionService } from '@appServices/subscription';
-import { FilterBarService, FilterBarServiceHook } from './types';
+import { FilterBarUISubscription, FilterBarUISubscriptionHook } from './types';
 import { serviceName as service } from './constants';
 
-type FBS = FilterBarService;
-type FBShook = FilterBarServiceHook;
+type FBS = FilterBarUISubscription;
+type FBShook = FilterBarUISubscriptionHook;
 
-const useFilterBarUIService: FBShook = (domain) => {
+const useFilterBarUISubscription: FBShook = (domain) => {
 	const { getSubscriptions: getServiceSubscriptions, ...restServices } = useSubscriptionService({
 		domain,
 		service,
@@ -25,4 +25,4 @@ const useFilterBarUIService: FBShook = (domain) => {
 	return { ...restServices, getSubscriptions };
 };
 
-export default useFilterBarUIService;
+export default useFilterBarUISubscription;

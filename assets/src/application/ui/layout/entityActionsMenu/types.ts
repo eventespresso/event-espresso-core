@@ -11,14 +11,14 @@ export interface EntityActionsSubscriptionData<E extends Entity, T extends strin
 	entity: E;
 }
 
-export interface EntityActionsService {
+export interface EntityActionsSubscription {
 	subscribe: EntityActionsSubscribeFn;
 	getSubscriptions: <E extends Entity, T extends string>(
 		options?: EntityActionsSubscriptionsOptions<T>
 	) => Subscriptions<EntityActionsSubscriptionData<E, T>, EntityActionsSubscriptionsOptions<T>>;
 }
 
-export type EntityActionsServiceHook = <Domain extends string>(domain: Domain) => EntityActionsService;
+export type EntityActionsSubscriptionHook = <Domain extends string>(domain: Domain) => EntityActionsSubscription;
 
 export type EntityActionsSubscribeFn = <E extends Entity, T extends string>(
 	cb: EntityActionsSubscriptionCb<E, T>,
@@ -27,7 +27,7 @@ export type EntityActionsSubscribeFn = <E extends Entity, T extends string>(
 
 export type EntityActionsSubscriptionCb<E extends Entity, T extends string> = (
 	data: EntityActionsSubscriptionData<E, T>,
-	entityActionsMenu: EntityActionsMenu
+	entityActionsMenu: EntityActionsMenuRegistry
 ) => void;
 
 /* UI related types */
@@ -36,11 +36,11 @@ export interface EntityActionsMenuOptions<D extends string, ET extends string> e
 	entityId: string;
 }
 
-export type EntityActionsMenuHook = <D extends string, ET extends string>(
+export type EntityActionsMenuRegistryHook = <D extends string, ET extends string>(
 	options: EntityActionsMenuOptions<D, ET>
-) => EntityActionsMenu;
+) => EntityActionsMenuRegistry;
 
-export type EntityActionsMenu = SubscriptionUIRegistry;
+export type EntityActionsMenuRegistry = SubscriptionUIRegistry;
 
 export interface ActionsMenuComponentProps<E extends Entity> {
 	entity: E;

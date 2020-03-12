@@ -1,13 +1,13 @@
 import { filter } from 'ramda';
 
 import { useSubscriptionService } from '@appServices/subscription';
-import { EntityActionsService, EntityActionsServiceHook } from './types';
+import { EntityActionsSubscription, EntityActionsSubscriptionHook } from './types';
 import { serviceName as service } from './constants';
 
-type EAS = EntityActionsService;
-type EAShook = EntityActionsServiceHook;
+type EAS = EntityActionsSubscription;
+type EAShook = EntityActionsSubscriptionHook;
 
-const useEntityActionsService: EAShook = (domain) => {
+const useEntityActionsSubscription: EAShook = (domain) => {
 	const { getSubscriptions: getServiceSubscriptions, ...restServices } = useSubscriptionService({
 		domain,
 		service,
@@ -25,4 +25,4 @@ const useEntityActionsService: EAShook = (domain) => {
 	return { ...restServices, getSubscriptions };
 };
 
-export default useEntityActionsService;
+export default useEntityActionsSubscription;

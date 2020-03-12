@@ -1,7 +1,7 @@
-export { default as useFilterBarUIService } from './useFilterBarUIService';
+export { default as useFilterBarUISubscription } from './useFilterBarUISubscription';
 
-export { default as useFilterBarUI } from './useFilterBarUI';
+export { default as useFilterBarUIRegistry } from './useFilterBarUIRegistry';
 
-export { default as useFilterBarUIItems } from './useFilterBarUIItems';
+export { default as useFilterBarUIElements } from './useFilterBarUIElements';
 
 export * from './types';

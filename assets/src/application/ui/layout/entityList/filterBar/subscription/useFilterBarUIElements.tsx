@@ -1,13 +1,13 @@
 import React from 'react';
 
-import { useFilterBarUIService, useFilterBarUI } from '.';
-import { FilterBarUIItemsHook } from './types';
+import { useFilterBarUISubscription, useFilterBarUIRegistry } from '.';
+import { FilterBarUIElementsHook } from './types';
 
-const useFilterBarUIItems: FilterBarUIItemsHook = ({ domain, listId, filterState }) => {
-	const filterBar = useFilterBarUI({ domain, listId });
-	const { getSubscriptions } = useFilterBarUIService(domain);
+const useFilterBarUIElements: FilterBarUIElementsHook = ({ domain, listId, filterState }) => {
+	const filterBarUIRegistry = useFilterBarUIRegistry({ domain, listId });
+	const { getSubscriptions } = useFilterBarUISubscription(domain);
 
-	const { getElements } = filterBar;
+	const { getElements } = filterBarUIRegistry;
 
 	// get all subscriptions for the service
 	const subscriptions = getSubscriptions({ listId });
@@ -15,7 +15,7 @@ const useFilterBarUIItems: FilterBarUIItemsHook = ({ domain, listId, filterState
 	// invoke all the subscription callbacks
 	// to let them register their UI elements
 	Object.values(subscriptions).forEach(({ callback }) => {
-		callback({ listId }, filterBar);
+		callback({ listId }, filterBarUIRegistry);
 	});
 
 	// Get the list of all UI elements
@@ -27,4 +27,4 @@ const useFilterBarUIItems: FilterBarUIItemsHook = ({ domain, listId, filterState
 	});
 };
 
-export default useFilterBarUIItems;
+export default useFilterBarUIElements;

@@ -1,7 +1,7 @@
 export { default as EntityActionsMenu } from './EntityActionsMenu';
 
-export { default as useEntityActionsService } from './useEntityActionsService';
+export { default as useEntityActionsSubscription } from './useEntityActionsSubscription';
 
-export { default as useEntityActionsMenu } from './useEntityActionsMenu';
+export { default as useEntityActionsMenuRegistry } from './useEntityActionsMenuRegistry';
 
 export * from './types';
