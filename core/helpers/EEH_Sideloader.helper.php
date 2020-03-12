@@ -207,7 +207,7 @@ class EEH_Sideloader extends EEH_Base
     public function sideload()
     {
         // setup temp dir
-        $temp_file = wp_tempnam($this->_upload_from);
+        $temp_file = wp_tempnam($this->_download_from);
 
         if (!$temp_file) {
             EE_Error::add_error(
@@ -223,7 +223,7 @@ class EEH_Sideloader extends EEH_Base
 
         $wp_remote_args = apply_filters('FHEE__EEH_Sideloader__sideload__wp_remote_args', array( 'timeout' => 500, 'stream' => true, 'filename' => $temp_file ), $this, $temp_file);
 
-        $response = wp_safe_remote_get($this->_upload_from, $wp_remote_args);
+        $response = wp_safe_remote_get($this->_download_from, $wp_remote_args);
 
         if (is_wp_error($response) || 200 != wp_remote_retrieve_response_code($response)) {
             unlink($temp_file);
@@ -231,7 +231,7 @@ class EEH_Sideloader extends EEH_Base
                 EE_Error::add_error(
                     sprintf(
                         esc_html__('Unable to upload the file. Either the path given to upload from is incorrect, or something else happened. Here is the path given: %s', 'event_espresso'),
-                        $this->_upload_from
+                        $this->_download_from
                     ),
                     __FILE__,
                     __FUNCTION__,
