@@ -1,6 +1,9 @@
 import { WriteQueryOptions } from '@edtrServices/apollo/queries';
 import { CacheUpdaterFn, useUpdateCache } from '@sharedServices/apollo/queries';
 
+/**
+ * Updates entity list Apollo cache
+ */
 const useUpdateEntityList = <List = any>(
 	writeQueryOptions: WriteQueryOptions<List> = undefined
 ): CacheUpdaterFn<List> => {

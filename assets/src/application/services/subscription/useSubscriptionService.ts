@@ -1,5 +1,6 @@
 import { assocPath, omit } from 'ramda';
 import { v4 as uuidv4 } from 'uuid';
+import invariant from 'invariant';
 
 import {
 	ServiceRegistry,
@@ -16,10 +17,7 @@ type SR = ServiceRegistry;
 
 const useSubscriptionService: SubscriptionServiceHook = ({ domain, service }) => {
 	const subscribe: SS['subscribe'] = (callback, options) => {
-		// runtime check
-		if (typeof callback !== 'function') {
-			return;
-		}
+		invariant(typeof callback === 'function', 'subscribe `callback` must be a function');
 
 		const subscriptionId = uuidv4();
 
@@ -53,12 +51,16 @@ const useSubscriptionService: SubscriptionServiceHook = ({ domain, service }) =>
 		updateServiceRegistry('subscriptions', subscriptions);
 	};
 
+	/**
+	 * Updates/Sets/Exposes the value globally
+	 */
 	const updateServiceRegistry = <K extends keyof SR>(key: K, value: SR[K]): void => {
 		window[NAMESPACE] = assocPath([domain, service, key], value, window[NAMESPACE]);
 	};
 
 	const subscribeFn = window[NAMESPACE]?.[domain]?.[service]?.subscribe || null;
 
+	// check if the `subscribe` function path has not been exposed globally
 	if (typeof subscribeFn !== 'function') {
 		updateServiceRegistry('subscribe', subscribe);
 	}
