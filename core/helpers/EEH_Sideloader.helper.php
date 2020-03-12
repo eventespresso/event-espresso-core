@@ -21,13 +21,6 @@ class EEH_Sideloader extends EEH_Base
     private $_upload_to;
 
     /**
-     * @since   4.1.0
-     * @var     string
-     * @deprecated since version $VID:$
-     */
-    private $_upload_from;
-
-    /**
      * @since   $VID:$
      * @var     string
      */
