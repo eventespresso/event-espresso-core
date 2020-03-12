@@ -5,38 +5,46 @@ import EditTicketButton from '../ticketsList/actionsMenu/EditTicketButton';
 import DeleteTicketButton from '../ticketsList/actionsMenu/DeleteTicketButton';
 import AssignDatesButton from '../ticketsList/actionsMenu/AssignDatesButton';
 import TicketPriceCalculatorButton from '../ticketPriceCalculator/buttons/TicketPriceCalculatorButton';
-import { EntitySubscriptionCallback } from '@appLayout/entityActionsMenu';
+import { EntityActionsSubscriptionCb } from '@appLayout/entityActionsMenu';
 import { Ticket } from '@edtrServices/apollo/types';
-import { AdditionalTicketMenuOptions } from '../types';
-import { useStatus, TypeName } from '@appServices/apollo/status';
+import { TypeName } from '@appServices/apollo/status';
+import withIsLoaded from '@sharedUI/hoc/withIsLoaded';
 
-type TicketsSubscriptionCallback = EntitySubscriptionCallback<Ticket, AdditionalTicketMenuOptions>;
+type TicketsSubscriptionCallback = EntityActionsSubscriptionCb<Ticket, 'ticket'>;
 
 const useTicketsActionMenuHandler = (): TicketsSubscriptionCallback => {
-	return useCallback<TicketsSubscriptionCallback>(
-		({ entity: ticket }, { registerMenuItem }, { ticketMenuItemProps: menuItemProps }) => {
-			registerMenuItem('editTicket', () => (
-				<EditTicketButton key={ticket.id + 'editTicket'} {...menuItemProps} />
-			));
+	return useCallback<TicketsSubscriptionCallback>(({ entity: ticket }, { registerMenuItem }) => {
+		const withPricesLoaded = withIsLoaded(TypeName.prices);
+		const withDatesLoaded = withIsLoaded(TypeName.datetimes);
 
-			registerMenuItem('assignDates', () => <AssignDatesButton id={ticket.id} {...menuItemProps} />);
+		registerMenuItem('editTicket', () => <EditTicketButton key={ticket.id + 'editTicket'} />);
 
-			registerMenuItem('ticketPriceCalculator', () => {
-				const { isLoaded } = useStatus();
+		registerMenuItem(
+			'assignDates',
+			withDatesLoaded(({ loaded }) => {
+				/* Hide TAM unless dates are loaded */
+				return loaded && <AssignDatesButton id={ticket.id} />;
+			})
+		);
+
+		registerMenuItem(
+			'ticketPriceCalculator',
+			withPricesLoaded(({ loaded }) => {
 				/* Hide price calculator unless prices are loaded */
-				return (
-					isLoaded(TypeName.prices) && <TicketPriceCalculatorButton ticketId={ticket.id} {...menuItemProps} />
-				);
-			});
+				return loaded && <TicketPriceCalculatorButton ticketId={ticket.id} />;
+			})
+		);
 
-			registerMenuItem('deleteTicket', () => {
-				const { isLoaded } = useStatus();
-				/* Delete button should be hidden to avoid relational inconsistencies */
-				return isLoaded(TypeName.prices) && <DeleteTicketButton id={ticket.id} {...menuItemProps} />;
-			});
-		},
-		[]
-	);
+		registerMenuItem(
+			'deleteTicket',
+			withDatesLoaded(
+				withPricesLoaded(({ loaded }) => {
+					/* Delete button should be hidden to avoid relational inconsistencies */
+					return loaded && <DeleteTicketButton id={ticket.id} />;
+				})
+			)
+		);
+	}, []);
 };
 
 export default useTicketsActionMenuHandler;

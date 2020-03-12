@@ -1,13 +1,10 @@
 import React from 'react';
 
 import { Ticket } from '@edtrServices/apollo/types';
-import { useEntityActionsMenuItems, ActionsMenuItemProps } from '@appLayout/entityActionsMenu';
-import { AdditionalTicketMenuOptions } from '../types';
+import { useEntityActionsMenuItems } from '@edtrHooks/index';
 
-const useTicketsActionMenuItems = (ticket: Ticket, menuItemProps?: ActionsMenuItemProps): Array<React.ReactNode> => {
-	return useEntityActionsMenuItems<Ticket, AdditionalTicketMenuOptions>('ticket', ticket, {
-		ticketMenuItemProps: menuItemProps,
-	});
+const useTicketsActionMenuItems = (ticket: Ticket): Array<React.ReactNode> => {
+	return useEntityActionsMenuItems('ticket', ticket);
 };
 
 export default useTicketsActionMenuItems;

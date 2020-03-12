@@ -1,8 +1,6 @@
-import { DatetimesList } from '../services/apollo/types';
-import { WriteQueryOptions } from '../services/apollo/queries/types';
 import useUpdateEntityList from './useUpdateEntityList';
-import useDatetimeQueryOptions from '../services/apollo/queries/datetimes/useDatetimeQueryOptions';
-import { CacheUpdaterFn } from '../../shared/services/apollo/queries/types';
+import { useDatetimeQueryOptions, WriteQueryOptions, DatetimesList } from '@edtrServices/apollo';
+import { CacheUpdaterFn } from '@sharedServices/apollo/queries';
 
 const useUpdateDatetimeList = (
 	writeQueryOptions: WriteQueryOptions<DatetimesList> = undefined

@@ -1,13 +1,10 @@
 import React from 'react';
 
 import { Datetime } from '@edtrServices/apollo/types';
-import { useEntityActionsMenuItems, ActionsMenuItemProps } from '@appLayout/entityActionsMenu';
-import { AdditionalDateMenuOptions } from '../types';
+import { useEntityActionsMenuItems } from '@edtrHooks/index';
 
-const useDatesActionMenuItems = (datetime: Datetime, menuItemProps?: ActionsMenuItemProps): Array<React.ReactNode> => {
-	return useEntityActionsMenuItems<Datetime, AdditionalDateMenuOptions>('datetime', datetime, {
-		dateMenuItemProps: menuItemProps,
-	});
+const useDatesActionMenuItems = (datetime: Datetime): Array<React.ReactNode> => {
+	return useEntityActionsMenuItems('datetime', datetime);
 };
 
 export default useDatesActionMenuItems;

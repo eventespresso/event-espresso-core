@@ -5,32 +5,38 @@ import EditDateButton from '../datesList/actionsMenu/EditDateButton';
 import DeleteDateButton from '../datesList/actionsMenu/DeleteDateButton';
 import AssignTicketsButton from '../datesList/actionsMenu/AssignTicketsButton';
 import { Datetime } from '@edtrServices/apollo/types';
-import { EntitySubscriptionCallback } from '@appLayout/entityActionsMenu';
-import { AdditionalDateMenuOptions } from '../types';
-import { useStatus, TypeName } from '@appServices/apollo/status';
+import { EntityActionsSubscriptionCb } from '@appLayout/entityActionsMenu';
+import { TypeName } from '@appServices/apollo/status';
+import withIsLoaded from '@sharedUI/hoc/withIsLoaded';
 
-type DatesSubscriptionCallback = EntitySubscriptionCallback<Datetime, AdditionalDateMenuOptions>;
+type DatesSubscriptionCallback = EntityActionsSubscriptionCb<Datetime, 'datetime'>;
 
 const useDatesActionMenuHandler = (): DatesSubscriptionCallback => {
-	return useCallback<DatesSubscriptionCallback>(
-		({ entityType, entity: date }, { registerMenuItem }, { dateMenuItemProps: menuItemProps }) => {
-			// although this is not needed
-			if (entityType !== 'datetime') {
-				return;
-			}
+	return useCallback<DatesSubscriptionCallback>(({ entityType, entity: date }, { registerMenuItem }) => {
+		// although this is not needed
+		if (entityType !== 'datetime') {
+			return;
+		}
+		const withTicketsLoaded = withIsLoaded(TypeName.tickets);
 
-			registerMenuItem('editDate', () => <EditDateButton {...menuItemProps} />);
+		registerMenuItem('editDate', () => <EditDateButton />);
 
-			registerMenuItem('assignTickets', () => <AssignTicketsButton id={date.id} {...menuItemProps} />);
+		registerMenuItem(
+			'assignTickets',
+			withTicketsLoaded(({ loaded }) => {
+				/* Hide TAM unless tickets are loaded */
+				return loaded && <AssignTicketsButton id={date.id} />;
+			})
+		);
 
-			registerMenuItem('deleteTicket', () => {
-				const { isLoaded } = useStatus();
+		registerMenuItem(
+			'deleteTicket',
+			withTicketsLoaded(({ loaded }) => {
 				/* Delete button should be hidden to avoid relational inconsistencies */
-				return isLoaded(TypeName.tickets) && <DeleteDateButton id={date.id} {...menuItemProps} />;
-			});
-		},
-		[]
-	);
+				return loaded && <DeleteDateButton id={date.id} />;
+			})
+		);
+	}, []);
 };
 
 export default useDatesActionMenuHandler;

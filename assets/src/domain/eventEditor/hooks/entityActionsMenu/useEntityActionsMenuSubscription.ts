@@ -1,12 +1,11 @@
 import { useEffect } from 'react';
 
-import { useEntityActions } from './';
-import useDatesActionMenuHandler from '../../../../domain/eventEditor/ui/datetimes/hooks/useDatesActionMenuHandler';
-import useTicketsActionMenuHandler from '../../../../domain/eventEditor/ui/tickets/hooks/useTicketsActionMenuHandler';
-import { Domain } from './types';
+import { useEntityActionsService } from '@appLayout/entityActionsMenu';
+import useDatesActionMenuHandler from '../../ui/datetimes/hooks/useDatesActionMenuHandler';
+import useTicketsActionMenuHandler from '../../ui/tickets/hooks/useTicketsActionMenuHandler';
 
-const useEntityActionsMenuSubscription = () => {
-	const { subscribe } = useEntityActions<Domain>('eventEditor');
+const useEntityActionsMenuSubscription = (): void => {
+	const { subscribe } = useEntityActionsService('eventEditor');
 	const datesActionHandler = useDatesActionMenuHandler();
 	const ticketsActionHandler = useTicketsActionMenuHandler();
 
@@ -14,7 +13,7 @@ const useEntityActionsMenuSubscription = () => {
 		const unsubscribeDatesAction = subscribe(datesActionHandler, { entityType: 'datetime' });
 		const unsubscribeTicketsAction = subscribe(ticketsActionHandler, { entityType: 'ticket' });
 
-		return () => {
+		return (): void => {
 			unsubscribeDatesAction();
 			unsubscribeTicketsAction();
 		};

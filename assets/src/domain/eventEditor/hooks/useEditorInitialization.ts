@@ -1,6 +1,8 @@
-import { useInitQueries, useI18nData } from '../services/apollo';
 import { setLocaleData } from '@wordpress/i18n';
-import { useEntityActionsMenuSubscription } from '../../../application/ui/layout/entityActionsMenu';
+
+import { useI18nData, useInitQueries } from '@edtrServices/apollo';
+import { useEntityActionsMenuSubscription } from './entityActionsMenu';
+import { useFilterBarSubscription } from './filterBar';
 
 const useEditorInitialization = (): void => {
 	// init i18n
@@ -9,6 +11,9 @@ const useEditorInitialization = (): void => {
 
 	// set menu subscription
 	useEntityActionsMenuSubscription();
+
+	// set filter bar subscription
+	useFilterBarSubscription();
 
 	// Fire initial queries
 	useInitQueries();
