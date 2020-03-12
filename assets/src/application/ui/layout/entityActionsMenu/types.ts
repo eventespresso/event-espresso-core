@@ -1,6 +1,6 @@
 import React from 'react';
 import { Entity } from '@appServices/apollo/types';
-import { Subscriptions } from '@appServices/subscription';
+import { BaseSubscriptionOptions, Subscriptions, UIRegistry } from '@appServices/subscription';
 
 export interface EntityActionsSubscriptionsOptions<T extends string> {
 	entityType?: T; // to limit the subscription only to specific entityType
@@ -11,14 +11,14 @@ export interface EntityActionsSubscriptionData<E extends Entity, T extends strin
 	entity: E;
 }
 
-export interface EntityActionsService {
+export interface EntityActionsSubscription {
 	subscribe: EntityActionsSubscribeFn;
 	getSubscriptions: <E extends Entity, T extends string>(
 		options?: EntityActionsSubscriptionsOptions<T>
 	) => Subscriptions<EntityActionsSubscriptionData<E, T>, EntityActionsSubscriptionsOptions<T>>;
 }
 
-export type EntityActionsServiceHook = <Domain extends string>(domain: Domain) => EntityActionsService;
+export type EntityActionsSubscriptionHook = <Domain extends string>(domain: Domain) => EntityActionsSubscription;
 
 export type EntityActionsSubscribeFn = <E extends Entity, T extends string>(
 	cb: EntityActionsSubscriptionCb<E, T>,
@@ -27,14 +27,20 @@ export type EntityActionsSubscribeFn = <E extends Entity, T extends string>(
 
 export type EntityActionsSubscriptionCb<E extends Entity, T extends string> = (
 	data: EntityActionsSubscriptionData<E, T>,
-	entityActionsMenu: EntityActionsMenu
+	entityActionsMenu: EntityActionsMenuRegistry
 ) => void;
 
-export interface EntityActionsMenu {
-	registerMenuItem: (key: string, component: React.ReactType) => void;
-	unRegisterMenuItem: (key: string) => void;
-	getMenuItems: () => EntityMenuItems;
+/* UI related types */
+export interface EntityActionsMenuOptions<D extends string, ET extends string> extends BaseSubscriptionOptions<D> {
+	entityType: ET;
+	entityId: string;
 }
+
+export type EntityActionsMenuRegistryHook = <D extends string, ET extends string>(
+	options: EntityActionsMenuOptions<D, ET>
+) => EntityActionsMenuRegistry;
+
+export type EntityActionsMenuRegistry = UIRegistry;
 
 export interface ActionsMenuComponentProps<E extends Entity> {
 	entity: E;
@@ -43,29 +49,4 @@ export interface ActionsMenuComponentProps<E extends Entity> {
 
 export type EntityMenuItems = {
 	[key: string]: React.ReactType;
-};
-
-/**
- * e.g.
- * menuRegistry = {
- *     datetime: {
- *         YTBUKTUYRytB: {
- *             editDate: () => null,
- *             assignTickets: () => null,
- *         },
- *     },
- *     ticket: {
- *         KJGNFGHFjhfbY: {
- *             editTicket: () => null,
- *             tpc: () => null,
- *         },
- *     },
- * }
- */
-export type MenuRegistry = {
-	// entityType e.g. "datetime"
-	[key: string]: {
-		// entityId
-		[key: string]: EntityMenuItems;
-	};
 };

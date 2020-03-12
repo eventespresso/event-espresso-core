@@ -5,6 +5,8 @@ import { EntityListFilterBarProps } from './types';
 import GridViewFilterButton from './buttons/GridView';
 import ListViewFilterButton from './buttons/ListView';
 import ToggleFiltersButton from './buttons/ToggleFilters';
+import { useFilterBarUIElements } from './subscription';
+import { EntityListFilterStateManager as ELFSM } from './filterState';
 
 import './style.scss';
 
@@ -12,7 +14,11 @@ import './style.scss';
  * EntityListFilterBar
  * a group of inputs for controlling how a list of entities is displayed
  */
-const EntityListFilterBar: React.FC<EntityListFilterBarProps> = ({ entityFilters, filterState, listId }) => {
+const EntityListFilterBar = <FS extends ELFSM>({
+	domain,
+	filterState,
+	listId,
+}: EntityListFilterBarProps<FS>): JSX.Element => {
 	const {
 		searchText,
 		setListView,
@@ -22,6 +28,8 @@ const EntityListFilterBar: React.FC<EntityListFilterBarProps> = ({ entityFilters
 		toggleEntityFilters,
 		view,
 	} = filterState;
+
+	const filerBarItems = useFilterBarUIElements({ domain, filterState, listId });
 
 	return (
 		<div className='ee-entity-list-filter-bar'>
@@ -36,7 +44,7 @@ const EntityListFilterBar: React.FC<EntityListFilterBarProps> = ({ entityFilters
 			</div>
 
 			<Collapsible
-				entityFilters={entityFilters}
+				entityFilters={filerBarItems}
 				listId={listId}
 				searchText={searchText}
 				setSearchText={setSearchText}

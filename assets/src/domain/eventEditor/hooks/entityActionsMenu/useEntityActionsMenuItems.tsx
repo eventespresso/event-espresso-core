@@ -1,27 +1,28 @@
 import React from 'react';
 
 import { Entity } from '@appServices/apollo/types';
-import { useEntityActionsService, useEntityActionsMenu } from '@appLayout/entityActionsMenu';
+import { useEntityActionsSubscription, useEntityActionsMenuRegistry } from '@appLayout/entityActionsMenu';
+import { domain } from '@edtrServices/constants';
 
 const useEntityActionsMenuItems = <E extends Entity, T extends string>(
 	entityType: T,
 	entity: E,
 	filterByEntityType = true
 ): Array<React.ReactNode> => {
-	const entityActionsMenu = useEntityActionsMenu(entityType, entity.id);
-	const { getSubscriptions } = useEntityActionsService('eventEditor');
+	const entityActionsMenuRegistry = useEntityActionsMenuRegistry({ domain, entityType, entityId: entity.id });
+	const { getSubscriptions } = useEntityActionsSubscription(domain);
 
-	const { getMenuItems } = entityActionsMenu;
+	const { getElements } = entityActionsMenuRegistry;
 
 	const subscriptions = getSubscriptions({ entityType: filterByEntityType ? entityType : null });
 
 	Object.values(subscriptions).forEach(({ callback }) => {
-		callback({ entityType, entity }, entityActionsMenu);
+		callback({ entityType, entity }, entityActionsMenuRegistry);
 	});
 
-	const menuItems = getMenuItems();
+	const menuItems = getElements();
 
-	return Object.entries<React.ReactType>(menuItems).map(([menuKey, Component], i) => <Component key={menuKey + i} />);
+	return Object.entries(menuItems).map(([itemKey, Component], i) => <Component key={itemKey + i} />);
 };
 
 export default useEntityActionsMenuItems;

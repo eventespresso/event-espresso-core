@@ -6,9 +6,9 @@ import { EntityList } from '@appLayout/entityList';
 import { TableView } from './tableView';
 import { TicketsListProvider, withEntityListContext } from '@edtrServices/context/EntityListContext';
 import { TicketCard } from './cardView';
-import { TicketsListEntityFilters } from './filterBar';
 import { TypeName } from '@appServices/apollo/status';
 import { useTicketsListFilterState, useFilteredTickets } from '@edtrServices/filterState';
+import { domain } from '@edtrServices/constants';
 
 const TicketsList: React.FC = () => {
 	const filteredTickets = useFilteredTickets();
@@ -17,13 +17,13 @@ const TicketsList: React.FC = () => {
 	return (
 		<EntityList
 			CardView={TicketCard}
+			domain={domain}
 			entities={filteredTickets}
-			filterState={filterState}
-			entityFilters={<TicketsListEntityFilters />}
 			entityType={TypeName.tickets}
+			filterState={filterState}
 			footer={<AddNewTicketButton />}
 			headerText={__('Available Tickets')}
-			listId={'event-editor-tickets-list'}
+			listId={'tickets-list'}
 			loadingText={__('loading tickets...')}
 			TableView={TableView}
 		/>

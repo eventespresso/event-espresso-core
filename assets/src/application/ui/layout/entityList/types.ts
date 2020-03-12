@@ -12,21 +12,21 @@ export interface CardViewProps {
 }
 
 export interface EntityListComponentProps<T extends Entity> {
-	entities: T[];
 	className?: string;
+	entities: T[];
 }
 
 export interface EntityListProps<T extends Entity, ELFS = EntityListFilterStateManager>
 	extends EntityListComponentProps<T> {
 	CardView: React.JSXElementConstructor<CardViewProps>;
-	filterState: ELFS;
-	entityFilters: JSX.Element;
+	domain: string;
 	entityType: TypeName;
+	filterState: ELFS;
 	footer: JSX.Element;
 	headerText: string;
 	listId: string;
 	loadingText?: string;
-	noResultsTitle?: string;
 	noResultsDesc?: string;
+	noResultsTitle?: string;
 	TableView: React.JSXElementConstructor<EntityListComponentProps<T>>;
 }

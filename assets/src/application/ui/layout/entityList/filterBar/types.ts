@@ -1,16 +1,17 @@
-import { EntityListFilterStateManager } from './filterState';
+import React from 'react';
+import { EntityListFilterStateManager as ELFSM } from './filterState';
 
 export interface CollapsibleProps {
-	entityFilters: JSX.Element;
+	entityFilters: React.ReactNode;
 	listId: string;
 	searchText: string;
 	setSearchText: (text: string) => void;
 	showEntityFilters: boolean;
 }
 
-export interface EntityListFilterBarProps {
-	entityFilters: JSX.Element;
-	filterState: EntityListFilterStateManager;
+export interface EntityListFilterBarProps<FS extends ELFSM> {
+	domain: string;
+	filterState: FS;
 	listId?: string;
 }
 

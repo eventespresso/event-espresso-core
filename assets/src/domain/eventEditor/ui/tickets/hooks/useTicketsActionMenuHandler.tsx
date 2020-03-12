@@ -13,7 +13,7 @@ import withIsLoaded from '@sharedUI/hoc/withIsLoaded';
 type TicketsSubscriptionCallback = EntityActionsSubscriptionCb<Ticket, 'ticket'>;
 
 const useTicketsActionMenuHandler = (): TicketsSubscriptionCallback => {
-	return useCallback<TicketsSubscriptionCallback>(({ entity: ticket }, { registerMenuItem }) => {
+	return useCallback<TicketsSubscriptionCallback>(({ entity: ticket }, { registerElement: registerMenuItem }) => {
 		const withPricesLoaded = withIsLoaded(TypeName.prices);
 		const withDatesLoaded = withIsLoaded(TypeName.datetimes);
 
