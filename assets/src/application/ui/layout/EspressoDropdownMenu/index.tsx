@@ -29,7 +29,7 @@ const DropdownMenu: React.FC<DropdownMenuProps> = ({
 	controls,
 	icon = 'menu',
 	label,
-	popoverProps,
+	popoverProps = { position: 'top center' },
 	toggleProps,
 	menuProps,
 }) => {
@@ -54,102 +54,99 @@ const DropdownMenu: React.FC<DropdownMenuProps> = ({
 	);
 
 	return (
-		<div className='ee-dropdown-menu'>
-			<Dropdown
-				className={classnames(' components-dropdown-menu', className)}
-				popoverProps={mergedPopoverProps}
-				renderToggle={({ isOpen, onToggle }) => {
-					const openOnArrowDown = (event) => {
-						if (!isOpen && event.keyCode === DOWN) {
-							event.preventDefault();
-							event.stopPropagation();
-							onToggle();
-						}
-					};
-					const mergedToggleProps = mergeProps(
-						// @ts-ignore
-						{
-							className: classnames('components-dropdown-menu__toggle', {
-								'is-opened': isOpen,
-							}),
-						},
-						toggleProps
-					);
+		<Dropdown
+			className={classnames(' components-dropdown-menu', className)}
+			popoverProps={mergedPopoverProps}
+			renderToggle={({ isOpen, onToggle }) => {
+				const openOnArrowDown = (event) => {
+					if (!isOpen && event.keyCode === DOWN) {
+						event.preventDefault();
+						event.stopPropagation();
+						onToggle();
+					}
+				};
+				const mergedToggleProps = mergeProps(
+					// @ts-ignore
+					{
+						className: classnames('components-dropdown-menu__toggle', {
+							'is-opened': isOpen,
+						}),
+					},
+					toggleProps
+				);
 
-					return (
-						<EspressoButton
-							{...mergedToggleProps}
-							icon={icon}
-							onClick={(event) => {
-								onToggle(event);
-								if (mergedToggleProps.onClick) {
-									mergedToggleProps.onClick(event);
-								}
-							}}
-							onKeyDown={(event) => {
-								openOnArrowDown(event);
-								if (mergedToggleProps.onKeyDown) {
-									mergedToggleProps.onKeyDown(event);
-								}
-							}}
-							aria-haspopup='true'
-							aria-expanded={isOpen}
-							label={label}
-						>
-							{mergedToggleProps.children}
-						</EspressoButton>
-					);
-				}}
-				renderContent={(props) => {
-					const mergedMenuProps = mergeProps(
-						// @ts-ignore
-						{
-							'aria-label': label,
-							className: classnames('components-dropdown-menu__menu'),
-						},
-						menuProps
-					);
+				return (
+					<EspressoButton
+						{...mergedToggleProps}
+						icon={icon}
+						onClick={(event) => {
+							onToggle(event);
+							if (mergedToggleProps.onClick) {
+								mergedToggleProps.onClick(event);
+							}
+						}}
+						onKeyDown={(event) => {
+							openOnArrowDown(event);
+							if (mergedToggleProps.onKeyDown) {
+								mergedToggleProps.onKeyDown(event);
+							}
+						}}
+						aria-haspopup='true'
+						aria-expanded={isOpen}
+						label={label}
+					>
+						{mergedToggleProps.children}
+					</EspressoButton>
+				);
+			}}
+			renderContent={(props) => {
+				const mergedMenuProps = mergeProps(
+					// @ts-ignore
+					{
+						'aria-label': label,
+						className: classnames('components-dropdown-menu__menu'),
+					},
+					menuProps
+				);
 
-					return (
-						<NavigableMenu {...mergedMenuProps} role='menu'>
-							{isFunction(children) ? children(props) : null}
-							{flatMap(controlSets, (controlSet, indexOfSet) =>
-								controlSet.map((control, indexOfControl) => (
-									<EspressoButton
-										key={[indexOfSet, indexOfControl].join()}
-										onClick={(event) => {
-											event.stopPropagation();
-											props.onClose();
-											if (control.onClick) {
-												control.onClick();
-											}
-										}}
-										className={classnames('components-dropdown-menu__menu-item', {
-											'has-separator': indexOfSet > 0 && indexOfControl === 0,
-											'is-active': control.isActive,
-										})}
-										icon={control.icon}
-										aria-checked={
-											control.role === 'menuitemcheckbox' || control.role === 'menuitemradio'
-												? control.isActive
-												: undefined
+				return (
+					<NavigableMenu {...mergedMenuProps} role='menu'>
+						{isFunction(children) ? children(props) : null}
+						{flatMap(controlSets, (controlSet, indexOfSet) =>
+							controlSet.map((control, indexOfControl) => (
+								<EspressoButton
+									aria-checked={
+										control.role === 'menuitemcheckbox' || control.role === 'menuitemradio'
+											? control.isActive
+											: undefined
+									}
+									buttonText={control.title}
+									className={classnames('components-dropdown-menu__menu-item', {
+										'has-separator': indexOfSet > 0 && indexOfControl === 0,
+										'is-active': control.isActive,
+									})}
+									disabled={control.isDisabled}
+									icon={control.icon}
+									key={[indexOfSet, indexOfControl].join()}
+									onClick={(event) => {
+										event.stopPropagation();
+										props.onClose();
+										if (control.onClick) {
+											control.onClick();
 										}
-										role={
-											control.role === 'menuitemcheckbox' || control.role === 'menuitemradio'
-												? control.role
-												: 'menuitem'
-										}
-										disabled={control.isDisabled}
-									>
-										{control.title}
-									</EspressoButton>
-								))
-							)}
-						</NavigableMenu>
-					);
-				}}
-			/>
-		</div>
+									}}
+									role={
+										control.role === 'menuitemcheckbox' || control.role === 'menuitemradio'
+											? control.role
+											: 'menuitem'
+									}
+								/>
+							))
+						)}
+					</NavigableMenu>
+				);
+			}}
+		/>
 	);
 };
 
