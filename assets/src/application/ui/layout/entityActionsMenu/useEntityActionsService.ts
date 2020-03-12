@@ -5,9 +5,9 @@ import { EntityActionsService, EntityActionsServiceHook } from './types';
 import { serviceName as service } from './constants';
 
 type EAS = EntityActionsService;
-type EASH = EntityActionsServiceHook;
+type EAShook = EntityActionsServiceHook;
 
-const useEntityActionsService: EASH = (domain) => {
+const useEntityActionsService: EAShook = (domain) => {
 	const { getSubscriptions: getServiceSubscriptions, ...restServices } = useSubscriptionService({
 		domain,
 		service,

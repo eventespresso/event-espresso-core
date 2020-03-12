@@ -4,12 +4,12 @@ import { AnyObject } from '@appServices/utilities/types';
 
 import { ElementRegistry, SubscriptionUIRegistry, SubscriptionUIRegistryHook } from './types';
 
-type SUIRH = SubscriptionUIRegistryHook;
+type SUIRhook = SubscriptionUIRegistryHook;
 type SUIR = SubscriptionUIRegistry;
 
 let elementRegistry: ElementRegistry = {};
 
-const useSubscriptionUIRegistry: SUIRH = ({ domain, service, path }) => {
+const useSubscriptionUIRegistry: SUIRhook = ({ domain, service, path }) => {
 	const [registeredElements, setRegisteredElements] = useState<AnyObject<boolean>>({});
 
 	useEffect(() => {
@@ -50,14 +50,14 @@ const useSubscriptionUIRegistry: SUIRH = ({ domain, service, path }) => {
 	const getElements: SUIR['getElements'] = () => {
 		/**
 		 * This list is of this shape:
-		 * {
+		 * [
 		 *     9: {
 		 *         datetimesToShow: () => null,
 		 *     },
 		 *     10: {
 		 *         sortBy: () => null,
 		 *     },
-		 * }
+		 * ]
 		 */
 		const elementsWithPriority = pathOr([], pathToElements, elementRegistry);
 		return Object.assign({}, ...elementsWithPriority);

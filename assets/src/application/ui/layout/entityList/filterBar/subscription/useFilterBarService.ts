@@ -5,9 +5,9 @@ import { FilterBarService, FilterBarServiceHook } from './types';
 import { serviceName as service } from './constants';
 
 type FBS = FilterBarService;
-type FBSH = FilterBarServiceHook;
+type FBShook = FilterBarServiceHook;
 
-const useFilterBarService: FBSH = (domain) => {
+const useFilterBarService: FBShook = (domain) => {
 	const { getSubscriptions: getServiceSubscriptions, ...restServices } = useSubscriptionService({
 		domain,
 		service,
