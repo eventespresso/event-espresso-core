@@ -4,37 +4,26 @@ import { flatMap, isEmpty, isFunction } from 'lodash'; // to be replaced with ra
 import { DOWN } from '@wordpress/keycodes';
 import { Dropdown, NavigableMenu } from '@wordpress/components';
 
-import { AnyObject } from '@appServices/utilities/types';
 import { EspressoButton } from '@application/ui/input';
+
+import { DropdownMenuProps } from './types';
 
 import './style.scss';
 
-type Props = {
-	children(props: AnyObject): JSX.Element;
-	className?: string;
-	controls?: [];
-	icon?: string | null;
-	menuProps?: AnyObject;
-	label: string;
-	popoverProps?: AnyObject;
-	toggleProps?: AnyObject;
-	[key: string]: any;
-};
-
-const mergeProps = (defaultProps: Props, props: Props) => {
+const mergeProps = (defaultProps: DropdownMenuProps, props: DropdownMenuProps) => {
 	const mergedProps = {
 		...defaultProps,
 		...props,
 	};
 
-	if (props.className && defaultProps.className) {
-		mergedProps.className = classnames(props.className, defaultProps.className);
+	if (props?.className && defaultProps?.className) {
+		mergedProps.className = classnames(props?.className, defaultProps?.className);
 	}
 
 	return mergedProps;
 };
 
-const DropdownMenu: React.FC<Props> = ({
+const DropdownMenu: React.FC<DropdownMenuProps> = ({
 	children,
 	className,
 	controls,
@@ -106,7 +95,6 @@ const DropdownMenu: React.FC<Props> = ({
 							aria-haspopup='true'
 							aria-expanded={isOpen}
 							label={label}
-							showTooltip
 						>
 							{mergedToggleProps.children}
 						</EspressoButton>
