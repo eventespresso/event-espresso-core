@@ -2,16 +2,17 @@ import React from 'react';
 
 import { Entity } from '@appServices/apollo/types';
 import { useEntityActionsService, useEntityActionsMenu } from '@appLayout/entityActionsMenu';
+import { domain } from '@edtrServices/constants';
 
 const useEntityActionsMenuItems = <E extends Entity, T extends string>(
 	entityType: T,
 	entity: E,
 	filterByEntityType = true
 ): Array<React.ReactNode> => {
-	const entityActionsMenu = useEntityActionsMenu(entityType, entity.id);
-	const { getSubscriptions } = useEntityActionsService('eventEditor');
+	const entityActionsMenu = useEntityActionsMenu({ domain, entityType, entityId: entity.id });
+	const { getSubscriptions } = useEntityActionsService(domain);
 
-	const { getMenuItems } = entityActionsMenu;
+	const { getElements } = entityActionsMenu;
 
 	const subscriptions = getSubscriptions({ entityType: filterByEntityType ? entityType : null });
 
@@ -19,9 +20,9 @@ const useEntityActionsMenuItems = <E extends Entity, T extends string>(
 		callback({ entityType, entity }, entityActionsMenu);
 	});
 
-	const menuItems = getMenuItems();
+	const menuItems = getElements();
 
-	return Object.entries<React.ReactType>(menuItems).map(([menuKey, Component], i) => <Component key={menuKey + i} />);
+	return Object.entries(menuItems).map(([itemKey, Component], i) => <Component key={itemKey + i} />);
 };
 
 export default useEntityActionsMenuItems;

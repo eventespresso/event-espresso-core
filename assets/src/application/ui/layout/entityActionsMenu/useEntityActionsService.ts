@@ -17,7 +17,10 @@ const useEntityActionsService: EASH = (domain) => {
 		const { entityType } = options;
 		const allSubscriptions = getServiceSubscriptions();
 		if (entityType) {
-			return filter(({ options }) => entityType === options.entityType, allSubscriptions);
+			return filter(
+				({ options: subscriptionOptions }) => entityType === subscriptionOptions.entityType,
+				allSubscriptions
+			);
 		}
 		return allSubscriptions;
 	};
