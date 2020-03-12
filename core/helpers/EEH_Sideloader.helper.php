@@ -68,7 +68,7 @@ class EEH_Sideloader extends EEH_Base
     {
         $defaults = array(
             '_upload_to' => $this->_get_wp_uploads_dir(),
-            '_upload_from' => '',
+            '_download_from' => '',
             '_permissions' => 0644,
             '_new_file_name' => 'EE_Sideloader_' . uniqid() . '.default'
             );
