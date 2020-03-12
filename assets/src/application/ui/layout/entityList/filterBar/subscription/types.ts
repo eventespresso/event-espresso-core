@@ -1,6 +1,8 @@
 import React from 'react';
-import { Subscriptions } from '@appServices/subscription';
-import { EntityListFilterStateManager as ELFSM } from '../filterState';
+import { BaseSubscriptionOptions, Subscriptions, SubscriptionUIRegistry } from '@appServices/subscription';
+import { EntityListFilterStateManager } from '../filterState';
+
+type ELFSM = EntityListFilterStateManager<any>;
 
 export interface FilterBarSubscriptionsOptions<L extends string> {
 	listId?: L; // to limit the subscription only to specific listId
@@ -27,15 +29,24 @@ export type FilterBarSubscribeFn = <FS extends ELFSM, L extends string>(
 
 export type FilterBarSubscriptionCb<FS extends ELFSM, L extends string> = (
 	data: FilterBarSubscriptionData<FS, L>,
-	filterBar: FilterBar
+	filterBar: FilterBar<FS>
 ) => void;
 
-export interface FilterBar {
-	registerFilterBarItem: (key: string, component: React.ReactType) => void;
-	unRegisterFilterBarItem: (key: string) => void;
-	getFilterBarItems: () => FilterBarItems;
+/* UI related types */
+export interface FilterBarOptions<D extends string, L extends string> extends BaseSubscriptionOptions<D> {
+	listId: L;
 }
 
-export type FilterBarItems = {
-	[key: string]: React.ReactType;
-};
+export type FilterBarHook = <D extends string, L extends string, FS extends ELFSM>(
+	options: FilterBarOptions<D, L>
+) => FilterBar<FS>;
+
+export interface FilterBarComponentProps<FS extends ELFSM> {
+	filterState: FS;
+}
+
+export type FilterBar<FS extends ELFSM> = SubscriptionUIRegistry<FilterBarComponentProps<FS>>;
+
+export type FilterBarItemsHook = <FS extends ELFSM, D extends string, L extends string>(
+	options: BaseSubscriptionOptions<D> & FilterBarSubscriptionData<FS, L>
+) => Array<React.ReactNode>;

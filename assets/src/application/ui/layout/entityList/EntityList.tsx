@@ -17,17 +17,18 @@ const { Title } = Typography;
 
 const EntityList: React.FC<any> = <ELFS extends EntityListFilterStateManager>({
 	CardView,
+	TableView,
 	className,
+	domain,
 	entities = [],
-	filterState,
 	entityFilters,
 	entityType,
+	filterState,
 	footer,
 	headerText,
 	listId,
-	noResultsTitle,
 	noResultsDesc,
-	TableView,
+	noResultsTitle,
 	...props
 }: EntityListProps<Entity, ELFS>) => {
 	const { isError, isLoading } = useStatus();
@@ -59,7 +60,12 @@ const EntityList: React.FC<any> = <ELFS extends EntityListFilterStateManager>({
 			<Title className='ee-entity-list__header' level={3}>
 				{headerText}
 			</Title>
-			<EntityListFilterBar entityFilters={entityFilters} filterState={filterState} listId={listId} />
+			<EntityListFilterBar
+				domain={domain}
+				entityFilters={entityFilters}
+				filterState={filterState}
+				listId={listId}
+			/>
 			{entityList}
 			<EntityPagination filterState={filterState} />
 			<div className={'ee-entity-list__footer'}>{footer}</div>

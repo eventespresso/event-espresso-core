@@ -17,7 +17,10 @@ const useFilterBarService: FBSH = (domain) => {
 		const { listId } = options;
 		const allSubscriptions = getServiceSubscriptions();
 		if (listId) {
-			return filter(({ options }) => listId === options.listId, allSubscriptions);
+			return filter(
+				({ options: subscriptionOptions }) => listId === subscriptionOptions.listId,
+				allSubscriptions
+			);
 		}
 		return allSubscriptions;
 	};
