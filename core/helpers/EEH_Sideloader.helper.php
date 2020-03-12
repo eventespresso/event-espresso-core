@@ -288,4 +288,45 @@ class EEH_Sideloader extends EEH_Base
         @unlink($temp_file);
         return true;
     }
+
+    // deprecated
+
+    /**
+     * sets the _upload_from property to the location we should download the file from.
+     *
+     * @param string $upload_from The full path to the file we should sideload.
+     * @return void
+     * @deprecated since version $VID:$
+     */
+    public function set_upload_from($upload_from)
+    {
+        EE_Error::doing_it_wrong(
+            __CLASS__ . '::' . __FUNCTION__,
+            __(
+                'EEH_Sideloader::set_upload_from was renamed to EEH_Sideloader::set_download_from',
+                'event_espresso'
+            ),
+            '$VID:$'
+        );
+        $this->set_download_from($upload_from);
+    }
+
+
+    /**
+     * @since 4.1.0
+     * @return string
+     * @deprecated since version $VID:$
+     */
+    public function get_upload_from()
+    {
+        EE_Error::doing_it_wrong(
+            __CLASS__ . '::' . __FUNCTION__,
+            __(
+                'EEH_Sideloader::get_upload_from was renamed to EEH_Sideloader::get_download_from',
+                'event_espresso'
+            ),
+            '$VID:$'
+        );
+        return $this->_download_from;
+    }
 } //end EEH_Template class
