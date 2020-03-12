@@ -17,14 +17,12 @@ class EEH_Sideloader extends EEH_Base
     /**
      * @since   4.1.0
      * @var     string
-     * @access  private
      */
     private $_upload_to;
 
     /**
      * @since   4.1.0
      * @var     string
-     * @access  private
      * @deprecated since version $VID:$
      */
     private $_upload_from;
@@ -32,21 +30,18 @@ class EEH_Sideloader extends EEH_Base
     /**
      * @since   $VID:$
      * @var     string
-     * @access  private
      */
     private $_download_from;
 
     /**
      * @since   4.1.0
      * @var     string
-     * @access  private
      */
     private $_permissions;
 
     /**
      * @since   4.1.0
      * @var     string
-     * @access  private
      */
     private $_new_file_name;
 
@@ -55,7 +50,6 @@ class EEH_Sideloader extends EEH_Base
      * constructor allows the user to set the properties on the sideloader on construct.  However, there are also setters for doing so.
      *
      * @since 4.1.0
-     * @access public
      * @param array $init array fo initializing the sideloader if keys match the properties.
      */
     public function __construct($init = array())
@@ -68,7 +62,6 @@ class EEH_Sideloader extends EEH_Base
      * sets the properties for class either to defaults or using incoming initialization array
      *
      * @since 4.1.0
-     * @access private
      * @param  array  $init array on init (keys match properties others ignored)
      * @return void
      */
@@ -100,7 +93,6 @@ class EEH_Sideloader extends EEH_Base
 
     /**
      * @since 4.1.0
-     * @access private
      * @return void
      */
     private function _get_wp_uploads_dir()
