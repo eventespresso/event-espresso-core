@@ -17,7 +17,7 @@ const useEntityActionsService: EAShook = (domain) => {
 		const { entityType } = args;
 		const allSubscriptions = getServiceSubscriptions();
 		if (entityType) {
-			return filter(({ options }) => entityType === args.entityType, allSubscriptions);
+			return filter(({ options }) => entityType === options.entityType, allSubscriptions);
 		}
 		return allSubscriptions;
 	};
