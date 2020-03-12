@@ -9,6 +9,7 @@ import { EntityList } from '@appLayout/entityList';
 import { TableView } from './tableView';
 import { TypeName } from '@appServices/apollo/status';
 import { useDatesListFilterState, useFilteredDatetimes } from '@edtrServices/filterState';
+import { domain } from '@edtrServices/constants';
 
 const DatesList: React.FC = () => {
 	const filteredDates = useFilteredDatetimes();
@@ -17,13 +18,14 @@ const DatesList: React.FC = () => {
 	return (
 		<EntityList
 			CardView={DateCard}
+			domain={domain}
 			entities={filteredDates}
-			filterState={filterState}
 			entityFilters={<DatesListEntityFilters />}
 			entityType={TypeName.datetimes}
+			filterState={filterState}
 			footer={<AddNewDateButton />}
 			headerText={__('Event Dates')}
-			listId={'event-editor-dates-list'}
+			listId={'dates-list'}
 			loadingText={__('loading event dates...')}
 			TableView={TableView}
 		/>
