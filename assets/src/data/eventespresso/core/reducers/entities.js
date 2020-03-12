@@ -3,7 +3,7 @@
  */
 import { fromJS, Map } from 'immutable';
 import { isEmpty, difference } from 'lodash';
-import { DEFAULT_CORE_STATE } from '@eventespresso/model';
+import { DEFAULT_CORE_STATE, singularModelName } from '@eventespresso/model';
 import { isModelEntity, isModelEntityOfModel } from '@eventespresso/validators';
 import { normalizeEntityId } from '@eventespresso/helpers';
 
@@ -11,7 +11,7 @@ import { normalizeEntityId } from '@eventespresso/helpers';
  * Internal imports
  */
 import { ACTION_TYPES } from '../actions/action-types';
-const { entities: types } = ACTION_TYPES;
+const { entities: types, resets: resetTypes } = ACTION_TYPES;
 
 /**
  * This replaces any entities in the incoming object with matching entities (by
@@ -160,6 +160,12 @@ export default function entities(
 				return receiveEntity( state, action );
 			case types.REMOVE_ENTITY_BY_ID :
 				return removeEntityById( state, action );
+			case resetTypes.RESET_ALL_STATE :
+				return fromJS( DEFAULT_CORE_STATE.entities );
+			case resetTypes.RESET_STATE_FOR_MODEL :
+				return state.has( singularModelName( action.modelName ) ) ?
+					state.set( singularModelName( action.modelName ), Map() ) :
+					state;
 		}
 	}
 	return state;

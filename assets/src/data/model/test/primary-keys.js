@@ -19,6 +19,8 @@ describe( 'primaryKeys', () => {
 				ticket: 'TKT_ID',
 				venue: 'VNU_ID',
 				term: [ 'TERM_ID', 'TAXONOMY_ID' ],
+				checkin: [ 'CHK_ID' ],
+				registration: [ 'REG_ID' ],
 			},
 		);
 	} );
@@ -31,7 +33,7 @@ describe( 'valuesForCombinedPrimaryKeys()', () => {
 			valuesForCombinedPrimaryKeys( 'EVT_ID', {} );
 		};
 		expect( t ).toThrow( Exception );
-		expect( t ).toThrowError( 'The provided value is not an array.' );
+		expect( t ).toThrow( 'The provided value is not an array.' );
 	} );
 
 	it( 'throws an Exception if the provided entity does not have any' +
@@ -63,7 +65,7 @@ describe( 'valueForPrimaryKey()', () => {
 			valueForPrimaryKey( 'EVT_ID', { TERM_ID: 10 } );
 		};
 		expect( t ).toThrow( Exception );
-		expect( t ).toThrowError( /does not have the given property/ );
+		expect( t ).toThrow( /does not have the given property/ );
 	} );
 	it( 'returns the expected value for the provided key from the provided' +
 		' entity.', () => {
@@ -79,7 +81,7 @@ describe( 'getPrimaryKey()', () => {
 				getPrimaryKey( 'invalid_model' );
 			};
 			expect( t ).toThrow( Exception );
-			expect( t ).toThrowError( /does not have the given property/ );
+			expect( t ).toThrow( /does not have the given property/ );
 		},
 	);
 
@@ -96,7 +98,7 @@ describe( 'getPrimaryKeyQueryString()', () => {
 		'data', () => {
 		const t = () => getPrimaryKeyQueryString( 'cheese', [ 2 ] );
 		expect( t ).toThrow( Exception );
-		expect( t ).toThrowError( /does not have the given property/ );
+		expect( t ).toThrow( /does not have the given property/ );
 	} );
 	it( 'returns the expected query string for the given model', () => {
 		expect( getPrimaryKeyQueryString( 'event', [ 10, 11 ] ) ).toEqual(
@@ -127,7 +129,7 @@ describe( 'keyEntitiesByPrimaryKeyValue()', () => {
 		};
 		expect( t ).toThrow( Exception );
 		expect( t )
-			.toThrowError( 'The provided array of entities must not be empty' );
+			.toThrow( 'The provided array of entities must not be empty' );
 	} );
 	it( 'throws an error if entities is not an array', () => {
 		const t = () => {
@@ -135,7 +137,7 @@ describe( 'keyEntitiesByPrimaryKeyValue()', () => {
 		};
 		expect( t ).toThrow( Exception );
 		expect( t )
-			.toThrowError( 'The provided value is not an array.' );
+			.toThrow( 'The provided value is not an array.' );
 	} );
 	it( 'returns the expected format for the entity records which is a ' +
 		'collection indexed by the primary keys for the entities' +

@@ -34,7 +34,7 @@ class RouteMatchSpecificationCollectionTest extends PHPUnit_Framework_TestCase
      */
     protected function getRequest()
     {
-        return new Request(array(), array(), array(), array());
+        return new Request(array(), array(), array(), array(), array());
     }
 
     /**

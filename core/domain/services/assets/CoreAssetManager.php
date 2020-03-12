@@ -9,6 +9,7 @@ use EE_Template_Config;
 use EED_Core_Rest_Api;
 use EEH_DTT_Helper;
 use EEH_Qtip_Loader;
+use EventEspresso\core\domain\Domain;
 use EventEspresso\core\domain\DomainInterface;
 use EventEspresso\core\domain\values\assets\JavascriptAsset;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
@@ -57,9 +58,6 @@ class CoreAssetManager extends AssetManager
      */
     const JS_HANDLE_LODASH = 'lodash';
 
-    // EE JS assets handles
-    const JS_HANDLE_MANIFEST = 'ee-manifest';
-
     const JS_HANDLE_JS_CORE = 'eejs-core';
 
     const JS_HANDLE_VENDOR = 'eventespresso-vendor';
@@ -94,6 +92,8 @@ class CoreAssetManager extends AssetManager
     const CSS_HANDLE_CUSTOM = 'espresso_custom_css';
 
     const CSS_HANDLE_COMPONENTS = 'eventespresso-components';
+
+    const CSS_HANDLE_CORE_CSS_DEFAULT = 'eventespresso-core-css-default';
 
     /**
      * @var EE_Currency_Config $currency_config
@@ -167,10 +167,11 @@ class CoreAssetManager extends AssetManager
 
 
     /**
-     * @since 4.9.62.p
      * @throws DuplicateCollectionIdentifierException
      * @throws InvalidDataTypeException
      * @throws InvalidEntityException
+     * @throws DomainException
+     * @since 4.9.62.p
      */
     public function addStylesheetFiles()
     {
@@ -194,108 +195,25 @@ class CoreAssetManager extends AssetManager
         // conditionally load third-party libraries that WP core MIGHT have.
         $this->registerWpAssets();
 
-        $this->addJavascript(
-            CoreAssetManager::JS_HANDLE_MANIFEST,
-            $this->registry->getJsUrl($this->domain->assetNamespace(), 'manifest')
+        $this->addJs(self::JS_HANDLE_JS_CORE)->setHasInlineData();
+        $this->addJs(self::JS_HANDLE_VENDOR);
+        $this->addJs(self::JS_HANDLE_VALIDATORS)->setRequiresTranslation();
+        $this->addJs(self::JS_HANDLE_HELPERS)->setRequiresTranslation();
+        $this->addJs(self::JS_HANDLE_MODEL)->setRequiresTranslation();
+        $this->addJs(self::JS_HANDLE_VALUE_OBJECTS)->setRequiresTranslation();
+        $this->addJs(self::JS_HANDLE_DATA_STORES)->setRequiresTranslation()->setInlineDataCallback(
+            static function () {
+                wp_add_inline_script(
+                    CoreAssetManager::JS_HANDLE_DATA_STORES,
+                    is_admin()
+                        ? 'wp.apiFetch.use( eejs.middleWares.apiFetch.capsMiddleware( eejs.middleWares.apiFetch.CONTEXT_CAPS_EDIT ) )'
+                        : 'wp.apiFetch.use( eejs.middleWares.apiFetch.capsMiddleware )'
+                );
+            }
         );
-
-        $this->addJavascript(
-            CoreAssetManager::JS_HANDLE_JS_CORE,
-            $this->registry->getJsUrl($this->domain->assetNamespace(), 'eejs'),
-            array(CoreAssetManager::JS_HANDLE_MANIFEST)
-        )
-        ->setHasInlineData();
-
-        $this->addJavascript(
-            CoreAssetManager::JS_HANDLE_VENDOR,
-            $this->registry->getJsUrl($this->domain->assetNamespace(), 'vendor'),
-            array(
-                CoreAssetManager::JS_HANDLE_JS_CORE,
-                CoreAssetManager::JS_HANDLE_REACT,
-                CoreAssetManager::JS_HANDLE_REACT_DOM,
-                CoreAssetManager::JS_HANDLE_LODASH,
-            )
-        );
-
-        $this->addJavascript(
-            CoreAssetManager::JS_HANDLE_VALIDATORS,
-            $this->registry->getJsUrl($this->domain->assetNamespace(), 'validators')
-        )->setRequiresTranslation();
-
-        $this->addJavascript(
-            CoreAssetManager::JS_HANDLE_HELPERS,
-            $this->registry->getJsUrl($this->domain->assetNamespace(), 'helpers'),
-            array(
-                CoreAssetManager::JS_HANDLE_VALIDATORS
-            )
-        )->setRequiresTranslation();
-
-        $this->addJavascript(
-            CoreAssetManager::JS_HANDLE_MODEL,
-            $this->registry->getJsUrl($this->domain->assetNamespace(), 'model'),
-            array(
-                CoreAssetManager::JS_HANDLE_HELPERS
-            )
-        )->setRequiresTranslation();
-
-        $this->addJavascript(
-            CoreAssetManager::JS_HANDLE_VALUE_OBJECTS,
-            $this->registry->getJsUrl($this->domain->assetNamespace(), 'valueObjects'),
-            array(
-                CoreAssetManager::JS_HANDLE_MODEL
-            )
-        )->setRequiresTranslation();
-
-        $this->addJavascript(
-            CoreAssetManager::JS_HANDLE_DATA_STORES,
-            $this->registry->getJsUrl($this->domain->assetNamespace(), 'data-stores'),
-            array(
-                CoreAssetManager::JS_HANDLE_VENDOR,
-                'wp-data',
-                'wp-api-fetch',
-                CoreAssetManager::JS_HANDLE_VALUE_OBJECTS
-            )
-        )
-             ->setRequiresTranslation()
-             ->setInlineDataCallback(
-                 function() {
-                     wp_add_inline_script(
-                         CoreAssetManager::JS_HANDLE_DATA_STORES,
-                         is_admin()
-                             ? 'wp.apiFetch.use( eejs.middleWares.apiFetch.capsMiddleware( eejs.middleWares.apiFetch.CONTEXT_CAPS_EDIT ) )'
-                             : 'wp.apiFetch.use( eejs.middleWares.apiFetch.capsMiddleware )'
-                     );
-                 }
-             );
-
-        $this->addJavascript(
-            CoreAssetManager::JS_HANDLE_HOCS,
-            $this->registry->getJsUrl($this->domain->assetNamespace(), 'hocs'),
-            array(
-                CoreAssetManager::JS_HANDLE_DATA_STORES,
-                CoreAssetManager::JS_HANDLE_VALUE_OBJECTS,
-                'wp-components',
-            )
-        )->setRequiresTranslation();
-
-        $this->addJavascript(
-            CoreAssetManager::JS_HANDLE_COMPONENTS,
-            $this->registry->getJsUrl($this->domain->assetNamespace(), 'components'),
-            array(
-                CoreAssetManager::JS_HANDLE_DATA_STORES,
-                CoreAssetManager::JS_HANDLE_VALUE_OBJECTS,
-                'wp-components',
-            )
-        )
-        ->setRequiresTranslation();
-
-        $this->addJavascript(
-            CoreAssetManager::JS_HANDLE_EDITOR_HOCS,
-            $this->registry->getJsUrl($this->domain->assetNamespace(), 'editor-hocs'),
-            array(
-                CoreAssetManager::JS_HANDLE_COMPONENTS
-            )
-        )->setRequiresTranslation();
+        $this->addJs(self::JS_HANDLE_HOCS, [self::JS_HANDLE_DATA_STORES])->setRequiresTranslation();
+        $this->addJs(self::JS_HANDLE_COMPONENTS, [self::JS_HANDLE_DATA_STORES])->setRequiresTranslation();
+        $this->addJs(self::JS_HANDLE_EDITOR_HOCS)->setRequiresTranslation();
 
         $this->registry->addData('eejs_api_nonce', wp_create_nonce('wp_rest'));
         $this->registry->addData(
@@ -309,6 +227,8 @@ class CoreAssetManager extends AssetManager
                 'admin_url' => admin_url('/'),
             )
         );
+        // Event Espresso brand name
+        $this->registry->addData('brandName', Domain::brandName());
         /** site formatting values **/
         $this->registry->addData(
             'site_formats',
@@ -345,7 +265,7 @@ class CoreAssetManager extends AssetManager
             array(CoreAssetManager::JS_HANDLE_JQUERY)
         )
         ->setInlineDataCallback(
-            function () {
+            static function () {
                 wp_localize_script(
                     CoreAssetManager::JS_HANDLE_CORE,
                     CoreAssetManager::JS_HANDLE_I18N,
@@ -372,22 +292,22 @@ class CoreAssetManager extends AssetManager
         if (version_compare($wp_version, '5.0.beta', '>=')) {
             return;
         }
-        $this->addVendorJavascript(CoreAssetManager::JS_HANDLE_REACT)
-            ->setVersion('16.6.0');
+        $this->addVendorJavascript(CoreAssetManager::JS_HANDLE_REACT, [], true, '16.6.0');
         $this->addVendorJavascript(
             CoreAssetManager::JS_HANDLE_REACT_DOM,
-            array(CoreAssetManager::JS_HANDLE_REACT)
-        )->setVersion('16.6.0');
-        $this->addVendorJavascript(CoreAssetManager::JS_HANDLE_LODASH)
+            array(CoreAssetManager::JS_HANDLE_REACT),
+            true,
+            '16.6.0'
+        );
+        $this->addVendorJavascript(CoreAssetManager::JS_HANDLE_LODASH, [], true, '4.17.11')
             ->setInlineDataCallback(
-                function() {
+                static function() {
                     wp_add_inline_script(
                         CoreAssetManager::JS_HANDLE_LODASH,
                         'window.lodash = _.noConflict();'
                     );
                 }
-            )
-            ->setVersion('4.17.11');
+            );
     }
 
 
@@ -439,10 +359,11 @@ class CoreAssetManager extends AssetManager
 
 
     /**
-     * @since 4.9.62.p
      * @throws DuplicateCollectionIdentifierException
      * @throws InvalidDataTypeException
      * @throws InvalidEntityException
+     * @throws DomainException
+     * @since 4.9.62.p
      */
     private function loadCoreCss()
     {
@@ -463,13 +384,8 @@ class CoreAssetManager extends AssetManager
                 );
             }
         }
-        $this->addStylesheet(
-            CoreAssetManager::CSS_HANDLE_COMPONENTS,
-            $this->registry->getCssUrl(
-                $this->domain->assetNamespace(),
-                'components'
-            )
-        );
+        $this->addCss(self::CSS_HANDLE_CORE_CSS_DEFAULT, ['dashicons']);
+        $this->addCss(self::CSS_HANDLE_COMPONENTS, [self::CSS_HANDLE_CORE_CSS_DEFAULT]);
     }
 
 
@@ -487,16 +403,18 @@ class CoreAssetManager extends AssetManager
         $this->addJavascript(
             CoreAssetManager::JS_HANDLE_JQUERY_VALIDATE,
             EE_GLOBAL_ASSETS_URL . 'scripts/jquery.validate.min.js',
-            array(CoreAssetManager::JS_HANDLE_JQUERY)
-        )
-        ->setVersion('1.15.0');
+            array(CoreAssetManager::JS_HANDLE_JQUERY),
+            true,
+            '1.15.0'
+        );
 
         $this->addJavascript(
             CoreAssetManager::JS_HANDLE_JQUERY_VALIDATE_EXTRA,
             EE_GLOBAL_ASSETS_URL . 'scripts/jquery.validate.additional-methods.min.js',
-            array(CoreAssetManager::JS_HANDLE_JQUERY_VALIDATE)
-        )
-        ->setVersion('1.15.0');
+            array(CoreAssetManager::JS_HANDLE_JQUERY_VALIDATE),
+            true,
+            '1.15.0'
+        );
     }
 
 
@@ -516,9 +434,10 @@ class CoreAssetManager extends AssetManager
         $this->addJavascript(
             CoreAssetManager::JS_HANDLE_ACCOUNTING_CORE,
             EE_THIRD_PARTY_URL . 'accounting/accounting.js',
-            array(CoreAssetManager::JS_HANDLE_UNDERSCORE)
-        )
-        ->setVersion('0.3.2');
+            array(CoreAssetManager::JS_HANDLE_UNDERSCORE),
+            true,
+            '0.3.2'
+        );
 
         $this->addJavascript(
             CoreAssetManager::JS_HANDLE_ACCOUNTING,
@@ -533,8 +452,7 @@ class CoreAssetManager extends AssetManager
                      $this->getAccountingSettings()
                  );
             }
-        )
-        ->setVersion();
+        );
     }
 
 
@@ -559,26 +477,16 @@ class CoreAssetManager extends AssetManager
     /**
      * assets that are used in the WordPress admin
      *
-     * @since 4.9.62.p
      * @throws DuplicateCollectionIdentifierException
      * @throws InvalidDataTypeException
      * @throws InvalidEntityException
+     * @throws DomainException
+     * @since 4.9.62.p
      */
     private function registerAdminAssets()
     {
-        $this->addJavascript(
-            CoreAssetManager::JS_HANDLE_WP_PLUGINS_PAGE,
-            $this->registry->getJsUrl($this->domain->assetNamespace(), 'wp-plugins-page'),
-            array(
-                CoreAssetManager::JS_HANDLE_JQUERY,
-                CoreAssetManager::JS_HANDLE_VENDOR,
-            )
-        )
-        ->setRequiresTranslation();
-
-        $this->addStylesheet(
-            CoreAssetManager::JS_HANDLE_WP_PLUGINS_PAGE,
-            $this->registry->getCssUrl($this->domain->assetNamespace(), 'wp-plugins-page')
-        );
+        $this->addJs(self::JS_HANDLE_WP_PLUGINS_PAGE)->setRequiresTranslation();
+        // note usage of the "JS_HANDLE.." constant is intentional here because css uses the same handle.
+        $this->addCss(self::JS_HANDLE_WP_PLUGINS_PAGE);
     }
 }

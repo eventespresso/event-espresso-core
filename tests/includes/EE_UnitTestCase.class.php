@@ -112,7 +112,7 @@ class EE_UnitTestCase extends WP_UnitTestCase
         add_filter('FHEE__EEH_Activation__drop_index__short_circuit', '__return_true');
 
         // load factories
-        EEH_Autoloader::register_autoloaders_for_each_file_in_folder(EE_TESTS_DIR . 'includes' . DS . 'factories');
+        EEH_Autoloader::register_autoloaders_for_each_file_in_folder(EE_TESTS_DIR . 'includes/factories');
         $this->factory = new EE_UnitTest_Factory();
 
         //IF we detect we're running tests on WP4.1, then we need to make sure current_user_can tests pass by implementing
@@ -876,9 +876,9 @@ class EE_UnitTestCase extends WP_UnitTestCase
                     $args[$fk->get_name()] = $fk->get_default_value();
                 }
             } elseif ($relation instanceof EE_Belongs_To_Relation) {
-                $obj = $this->new_model_obj_with_dependencies($related_model_name);
                 $fk = $model->get_foreign_key_to($related_model_name);
                 if (!isset($args[$fk->get_name()])) {
+                    $obj = $this->new_model_obj_with_dependencies($related_model_name);
                     $args[$fk->get_name()] = $obj->ID();
                 }
             }
@@ -1047,18 +1047,19 @@ class EE_UnitTestCase extends WP_UnitTestCase
      * registrations, tickets, datetimes, events, attendees, questions, answers, etc).
      *
      * @param array $options         {
-     * 	@type int    $ticket_types    the number of different ticket types in this transaction. Default 1
+     * 	@type int    $ticket_types/$tickets    the number of different ticket types in this transaction. Default 1
      * 	@type int    $taxable_tickets how many of those ticket types should be taxable. Default EE_INF
+     * @type int fixed_ticket_price_modifiers the number of fixed ticket price modifiers to use on the tickets. Defaults to 1.
+     * @type string $reg_status the status of the transaction's registration. Defaults to "RAP"
+     * @type boolean $setup_reg whether to add a registration or not onto the transaction. Defaults to true
+     * @type int $tkt_qty the number of tickest available for purchase that the transaction is for
+     * @type string/int/Datetime $timestamp to use on the transaction and registration and payments etc
      * }
      * @return EE_Transaction
      * @throws \EE_Error
      */
     protected function new_typical_transaction($options = array())
     {
-        /** @var EE_Transaction $txn */
-        $txn = $this->new_model_obj_with_dependencies('Transaction', array('TXN_paid' => 0));
-        $total_line_item = EEH_Line_Item::create_total_line_item($txn->ID());
-        $total_line_item->save_this_and_descendants_to_txn($txn->ID());
         $ticket_types = isset($options['ticket_types'])
             ? $options['ticket_types']
             : $ticket_types = 1;
@@ -1080,6 +1081,19 @@ class EE_UnitTestCase extends WP_UnitTestCase
         $ticket_types = isset($options['tickets'])
             ? count($options['tickets'])
             : $ticket_types;
+        $timestamp = isset($options['timestamp'])
+            ? $options['timestamp']
+            : current_time('timestamp');
+        /** @var EE_Transaction $txn */
+        $txn = $this->new_model_obj_with_dependencies(
+            'Transaction',
+            array(
+                'TXN_paid' => 0,
+                'TXN_timestamp' => $timestamp
+            )
+        );
+        $total_line_item = EEH_Line_Item::create_total_line_item($txn->ID());
+        $total_line_item->save_this_and_descendants_to_txn($txn->ID());
         $taxes = EEM_Price::instance()->get_all_prices_that_are_taxes();
         for ($i = 1; $i <= $ticket_types; $i++) {
             /** @var EE_Ticket $ticket */
@@ -1088,9 +1102,14 @@ class EE_UnitTestCase extends WP_UnitTestCase
                 $reg_final_price = $ticket->price();
                 $datetime = $ticket->first_datetime();
             } else {
+
                 $ticket = $this->new_model_obj_with_dependencies(
                     'Ticket',
-                    array('TKT_price' => $i * 10, 'TKT_taxable' => $taxable_tickets-- > 0 ? true : false)
+                    array(
+                        'TKT_price' => $i * 10,
+                        'TKT_taxable' => $taxable_tickets-- > 0 ? true : false,
+                        'TKT_reserved' => $setup_reg && $reg_status === EEM_Registration::status_id_pending_payment ? 1 : 0
+                    )
                 );
                 $sum_of_sub_prices = 0;
                 for ($j = 1; $j <= $fixed_ticket_price_modifiers; $j++) {
@@ -1133,7 +1152,8 @@ class EE_UnitTestCase extends WP_UnitTestCase
                         'EVT_ID'          => $datetime->get('EVT_ID'),
                         'REG_count'       => 1,
                         'REG_group_size'  => 1,
-                        'REG_final_price' => $reg_final_price
+                        'REG_final_price' => $reg_final_price,
+                        'REG_date' => $timestamp
                     )
                 );
             }
@@ -1307,17 +1327,7 @@ class EE_UnitTestCase extends WP_UnitTestCase
      */
     public function simulate_x_number_ticket_sales(EE_ticket $ticket, $qty = 1)
     {
-        $ticket->increase_sold($qty);
-        $ticket->save();
-        $datetimes = $ticket->datetimes();
-        if (is_array($datetimes)) {
-            foreach ($datetimes as $datetime) {
-                if ($datetime instanceof EE_Datetime) {
-                    $datetime->increase_sold($qty);
-                    $datetime->save();
-                }
-            }
-        }
+        $ticket->increaseSold($qty);
     }
 
 
@@ -1329,17 +1339,7 @@ class EE_UnitTestCase extends WP_UnitTestCase
      */
     public function reverse_x_number_ticket_sales(EE_ticket $ticket, $qty = 1)
     {
-        $ticket->decrease_sold($qty);
-        $ticket->save();
-        $datetimes = $ticket->datetimes();
-        if (is_array($datetimes)) {
-            foreach ($datetimes as $datetime) {
-                if ($datetime instanceof EE_Datetime) {
-                    $datetime->decrease_sold($qty);
-                    $datetime->save();
-                }
-            }
-        }
+        $ticket->decreaseSold($qty);
     }
 
 

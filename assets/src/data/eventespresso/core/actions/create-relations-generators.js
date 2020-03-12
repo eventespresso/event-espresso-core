@@ -2,10 +2,7 @@
  * External imports
  */
 import { isModelEntityOfModel } from '@eventespresso/validators';
-import {
-	singularModelName,
-	pluralModelName,
-} from '@eventespresso/model';
+import { singularModelName } from '@eventespresso/model';
 import warning from 'warning';
 import { InvalidModelEntity } from '@eventespresso/eejs';
 import { getIdsFromBaseEntityArray } from '@eventespresso/helpers';
@@ -13,12 +10,8 @@ import { getIdsFromBaseEntityArray } from '@eventespresso/helpers';
 /**
  * Internal imports
  */
-import {
-	receiveRelatedEntities,
-	receiveDirtyRelationAddition,
-} from './receive-relations';
-import { receiveEntitiesAndResolve } from './create-entities-generators';
-import { resolveGetEntityByIdForIds } from '../../base-resolvers';
+import { dispatch, select, resolveSelect } from '../../base-controls';
+import { REDUCER_KEY } from '../constants';
 
 /**
  * Action generator yielding actions that add the relation to the state for a
@@ -35,9 +28,9 @@ function* createRelation(
 	relationName,
 	relationEntity
 ) {
-	relationName = pluralModelName( relationName );
-	const singularRelationName = singularModelName( relationName );
-	if ( ! isModelEntityOfModel( relationEntity, singularRelationName ) ) {
+	relationName = singularModelName( relationName );
+	modelName = singularModelName( modelName );
+	if ( ! isModelEntityOfModel( relationEntity, relationName ) ) {
 		warning(
 			false,
 			'The provided relation entity (%s) is not a base entity instance' +
@@ -47,25 +40,26 @@ function* createRelation(
 		);
 		return;
 	}
-	yield receiveEntitiesAndResolve(
-		singularRelationName,
-		[ relationEntity ]
+	yield dispatch(
+		REDUCER_KEY,
+		'receiveEntityAndResolve',
+		relationEntity
 	);
-	yield receiveRelatedEntities(
+	yield dispatch(
+		REDUCER_KEY,
+		'receiveRelatedEntities',
 		modelName,
 		entityId,
 		relationName,
 		[ relationEntity.id ]
 	);
-	yield receiveDirtyRelationAddition(
+	yield dispatch(
+		REDUCER_KEY,
+		'receiveDirtyRelationAddition',
 		relationName,
 		relationEntity.id,
 		modelName,
 		entityId,
-	);
-	yield resolveGetEntityByIdForIds(
-		singularRelationName,
-		[ relationEntity.id ]
 	);
 }
 
@@ -84,38 +78,140 @@ function* createRelations(
 	relationName,
 	relationEntities,
 ) {
-	relationName = pluralModelName( relationName );
-	const singularRelationName = singularModelName( relationName );
+	modelName = singularModelName( modelName );
+	relationName = singularModelName( relationName );
 
 	try {
-		assertArrayHasEntitiesForModel( relationEntities, singularRelationName );
+		assertArrayHasEntitiesForModel( relationEntities, relationName );
 	} catch ( exception ) {
 		warning(
 			false,
 			'Incoming relation Entities do not contain BaseEntity instances ' +
 			'for the given relation model (%s)',
-			'',
-			singularRelationName,
+			relationName,
 		);
 		return;
 	}
-	let relationIds = getIdsFromBaseEntityArray( relationEntities );
-	yield receiveEntitiesAndResolve( singularRelationName, relationEntities );
-	yield receiveRelatedEntities(
+	const relationIds = getIdsFromBaseEntityArray( relationEntities );
+	yield dispatch(
+		REDUCER_KEY,
+		'receiveEntitiesAndResolve',
+		relationName,
+		relationEntities
+	);
+	yield dispatch(
+		REDUCER_KEY,
+		'receiveRelatedEntities',
 		modelName,
 		entityId,
 		relationName,
 		relationIds,
 	);
-	relationIds = [ ...relationIds ];
-	while ( relationIds.length > 0 ) {
-		yield receiveDirtyRelationAddition(
+	const modelEntity = yield resolveSelect(
+		REDUCER_KEY,
+		'getEntityById',
+		modelName,
+		entityId,
+	);
+	yield dispatch(
+		'core/data',
+		'finishResolution',
+		REDUCER_KEY,
+		'getRelatedEntities',
+		[ modelEntity, relationName ]
+	);
+	const relationsToResolve = [ ...relationEntities ];
+	while ( relationsToResolve.length > 0 ) {
+		const relationEntity = relationsToResolve.pop();
+		yield dispatch(
+			REDUCER_KEY,
+			'receiveDirtyRelationAddition',
 			relationName,
-			relationIds.pop(),
+			relationEntity.id,
 			modelName,
 			entityId,
 		);
+		yield dispatch(
+			'core/data',
+			'finishResolution',
+			REDUCER_KEY,
+			'getRelatedEntities',
+			[ relationEntity, modelName ]
+		);
 	}
+}
+
+/**
+ * This action is used to ensure a relation Entity related to the given
+ * model entity id is both added to the state and various selectors for these
+ * are resolved so no additional resolution happens for these.
+ *
+ * The purpose for this action is to allow for doing more efficient batch
+ * queries of entities from an api request and then triggering the resolution of
+ * any more granular selectors that have resolvers.  This basically allows one
+ * to hydrate the `eventespresso/core` state with more efficient queries.
+ *
+ * @param {BaseEntity} relationEntity
+ * @param {string} modelName
+ * @param {number|string} modelId
+ */
+function* resolveRelationRecordForRelation(
+	relationEntity,
+	modelName,
+	modelId
+) {
+	modelName = singularModelName( modelName );
+	const relationName = singularModelName( relationEntity.modelName );
+	const hasEntity = yield select(
+		'core/data',
+		'hasFinishedResolution',
+		REDUCER_KEY,
+		'getEntityById',
+		[ relationName, relationEntity.id ]
+	);
+	relationEntity = hasEntity ?
+		yield select(
+			REDUCER_KEY,
+			'getEntityById',
+			relationName,
+			relationEntity.id
+		) :
+		relationEntity;
+	if ( ! hasEntity ) {
+		yield dispatch(
+			REDUCER_KEY,
+			'receiveEntityAndResolve',
+			relationEntity
+		);
+	}
+	yield dispatch(
+		REDUCER_KEY,
+		'receiveRelatedEntities',
+		modelName,
+		modelId,
+		relationName,
+		[ relationEntity.id ]
+	);
+	const modelEntity = yield resolveSelect(
+		REDUCER_KEY,
+		'getEntityById',
+		modelName,
+		modelId
+	);
+	yield dispatch(
+		'core/data',
+		'finishResolution',
+		REDUCER_KEY,
+		'getRelatedEntities',
+		[ modelEntity, relationName ]
+	);
+	yield dispatch(
+		'core/data',
+		'finishResolution',
+		REDUCER_KEY,
+		'getRelatedEntities',
+		[ relationEntity, modelName ]
+	);
 }
 
 /**
@@ -128,6 +224,7 @@ function* createRelations(
  * @throws InvalidModelEntity
  */
 const assertArrayHasEntitiesForModel = ( entities, relationModelName ) => {
+	relationModelName = singularModelName( relationModelName );
 	for ( const entity of entities ) {
 		if ( ! isModelEntityOfModel( entity, relationModelName ) ) {
 			throw new InvalidModelEntity( '', entity );
@@ -135,4 +232,4 @@ const assertArrayHasEntitiesForModel = ( entities, relationModelName ) => {
 	}
 };
 
-export { createRelation, createRelations };
+export { createRelation, createRelations, resolveRelationRecordForRelation };

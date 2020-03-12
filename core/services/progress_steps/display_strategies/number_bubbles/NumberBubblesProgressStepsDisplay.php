@@ -39,6 +39,6 @@ class NumberBubblesProgressStepsDisplay implements ProgressStepsDisplayInterface
     public function getTemplate()
     {
         // return plugin_dir_path( __FILE__ ) . 'number_bubbles.template.php';
-        return __DIR__ . DS . 'number_bubbles.template.php';
+        return __DIR__ . '/number_bubbles.template.php';
     }
 }

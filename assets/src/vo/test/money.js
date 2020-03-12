@@ -58,12 +58,22 @@ describe( 'Money Value Object', () => {
 					'settings',
 					{
 						...settings,
-						...DefaultCurrency.toAccountingSettings(),
+						...DefaultCurrency.toAccountingSettings().currency,
 					}
 				);
 				expect( testMoney.formatter ).toHaveProperty( 'format' );
 			}
 		);
+		it( 'formatter has correct settings from currency', () => {
+			const currency = new Currency(
+				{
+					code: 'dolla',
+					sign: '🥇',
+				}
+			);
+			const money = new Money( testDecimal, currency );
+			expect( money.formatter.settings.symbol ).toBe( '🥇' );
+		} );
 		it( 'expects three Money objects constructed using various types' +
 			' of amounts that result in the same value are equal as ' +
 			'expected', () => {
@@ -397,6 +407,27 @@ describe( 'Money Value Object', () => {
 				' string output', () => {
 				expect( testMoney + '' ).toBe( '$1.25' );
 			} );
+			it( 'returns expected formatted string for currency ' +
+				'settings', () => {
+				const currency = new Currency(
+					{
+						code: 'dolla',
+						sign: '🥇',
+						signB4: false,
+					}
+				);
+				const money = new Money( testDecimal, currency );
+				expect( money + '' ).toBe( '1.25🥇' );
+			} );
+			it( 'returns correct decimal places when set to 0', () => {
+				const currency = new Currency( {
+					code: 'dolla',
+					sign: '$',
+					decimalPlaces: 0,
+				} );
+				const money = new Money( testDecimal, currency );
+				expect( money + '' ).toBe( '$1' );
+			} );
 		} );
 		describe( 'toJSON()', () => {
 			it( 'returns the expected serialized JSON string representing the' +
@@ -464,6 +495,33 @@ describe( 'Money Value Object', () => {
 					}
 				)
 			) ).toThrow();
+		} );
+	} );
+	describe( 'Money.fromMoneyValue', () => {
+		it( 'throws a TypeError if provided currency is not a Currency ' +
+			'vo', () => {
+			expect( () => Money.fromMoneyValue( '10.10' ) )
+				.toThrow( TypeError );
+		} );
+		it( 'converts a number as expected', () => {
+			expect( Money.fromMoneyValue( 10, DefaultCurrency ).toNumber() )
+				.toBe( 10 );
+			expect( Money.fromMoneyValue( 10.10, DefaultCurrency ).toNumber() )
+				.toBe( 10.1 );
+		} );
+		it( 'converts a money value for the currency passed in as ' +
+			'expected', () => {
+			expect( Money.fromMoneyValue( '$10.10', DefaultCurrency ).toNumber() )
+				.toBe( 10.1 );
+		} );
+		it( 'throws an error with an invalid money value string', () => {
+			expect( () => Money.fromMoneyValue( 'fail fail', DefaultCurrency ) )
+				.toThrow();
+		} );
+		it( 'throws an error with a money value having a different currency ' +
+			'sign than the provided currency value object.', () => {
+			expect( () => Money.fromMoneyValue( '10,10€', DefaultCurrency ) )
+				.toThrow();
 		} );
 	} );
 } );

@@ -46,6 +46,12 @@ interface RequestInterface extends RequestTypeContextCheckerInterface
 
 
     /**
+     * @return array
+     */
+    public function filesParams();
+
+
+    /**
      * returns contents of $_REQUEST
      *
      * @return array
@@ -118,15 +124,25 @@ interface RequestInterface extends RequestTypeContextCheckerInterface
 
 
     /**
+     * remove params
+     *
+     * @param array $keys
+     * @param bool   $unset_from_global_too
+     */
+    public function unSetRequestParams(array $keys, $unset_from_global_too = false);
+
+
+    /**
      * @return string
      */
     public function ipAddress();
 
 
     /**
+     * @param boolean $relativeToWpRoot whether to return the uri relative to WordPress' home URL, or not.
      * @return string
      */
-    public function requestUri();
+    public function requestUri($relativeToWpRoot = false);
 
 
     /**

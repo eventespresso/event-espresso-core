@@ -47,6 +47,7 @@ class EE_Billing_Attendee_Info_Form extends EE_Billing_Info_Form
     public function populate_from_attendee($attendee)
     {
         $attendee = EEM_Attendee::instance()->ensure_is_obj($attendee);
+
         /** @var $attendee EE_Attendee */
         $this->populate_defaults(
             apply_filters(
@@ -58,7 +59,7 @@ class EE_Billing_Attendee_Info_Form extends EE_Billing_Info_Form
                     'address'=>$attendee->address(),
                     'address2'=>$attendee->address2(),
                     'city'=>$attendee->city(),
-                    'state'=> $attendee->state_ID(),
+                    'state'=> $this->getAttendeeStateValueForForm($attendee),
                     'country'=> $attendee->country_ID(),
                     'zip'=>$attendee->zip(),
                     'phone'=>$attendee->phone(),
@@ -67,6 +68,38 @@ class EE_Billing_Attendee_Info_Form extends EE_Billing_Info_Form
                 $this
             )
         );
+    }
+
+    /**
+     * Gets the default value to use for the billing form's state value.
+     * @since 4.10.0.p
+     * @param EE_Attendee $attendee
+     * @return string
+     * @throws EE_Error2
+     */
+    protected function getAttendeeStateValueForForm(EE_Attendee $attendee)
+    {
+        // If the state input was removed, just return a blank string.
+        if (! $this->has_subsection('state')) {
+            return '';
+        }
+        $state_input =  $this->get_input('state', false);
+        if ($state_input instanceof EE_State_Select_Input) {
+            $state_field_to_use =  $state_input->valueFieldName();
+        } else {
+            $state_field_to_use = 'STA_ID';
+        }
+        switch ($state_field_to_use) {
+            case 'STA_abbrev':
+                $state_value = $attendee->state_abbrev();
+                break;
+            case 'STA_name':
+                $state_value = $attendee->state_name();
+                break;
+            default:
+                $state_value = $attendee->state_ID();
+        }
+        return $state_value;
     }
 
 

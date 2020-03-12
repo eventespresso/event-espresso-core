@@ -6,11 +6,8 @@ import * as Accounting from 'accounting-js';
 import isShallowEqual from '@wordpress/is-shallow-equal';
 import { Exception } from '@eventespresso/eejs';
 import { isEmpty } from 'lodash';
-
-/**
- * Internal imports
- */
-import { Currency } from './currency';
+import { instanceOf } from '@eventespresso/validators';
+import { sprintf } from '@eventespresso/i18n';
 
 /**
  * Asserts if incoming value is an instance of Money
@@ -18,7 +15,7 @@ import { Currency } from './currency';
  * @throws {TypeError}
  */
 const assertMoney = ( money ) => {
-	if ( ! ( money instanceof Money ) ) {
+	if ( ! ( instanceOf( money, 'Money' ) ) ) {
 		throw new TypeError( 'Instance of Money required' );
 	}
 };
@@ -29,7 +26,7 @@ const assertMoney = ( money ) => {
  * @throws {TypeError}
  */
 const assertCurrency = ( currency ) => {
-	if ( ! ( currency instanceof Currency ) ) {
+	if ( ! ( instanceOf( currency, 'Currency' ) ) ) {
 		throw new TypeError( 'Instance of Currency required' );
 	}
 };
@@ -135,7 +132,7 @@ export default class Money {
 	setCurrency( currency ) {
 		Money.assertCurrency( currency );
 		// if there's already a currency set, then return a new object.
-		if ( this.currency instanceof Currency ) {
+		if ( instanceOf( this.currency, 'Currency' ) ) {
 			return new Money( this.amount, currency );
 		}
 		this.currency = currency;
@@ -150,9 +147,11 @@ export default class Money {
 	 * property.
 	 */
 	setAmount( amount ) {
-		const value = amount instanceof Decimal ? amount.toNumber() : amount;
+		const value = instanceOf( amount, 'Decimal' ) ?
+			amount.toNumber() :
+			amount;
 		// if there's already an amount set, then return a new object.
-		if ( this.amount instanceof Decimal ) {
+		if ( instanceOf( this.amount, 'Decimal' ) ) {
 			return new Money( new Decimal( value ), this.currency );
 		}
 		this.amount = new Decimal( value );
@@ -167,11 +166,11 @@ export default class Money {
 	setFormatter() {
 		// only initialize if its not already initialized
 		if ( isEmpty( this.formatter ) ) {
-			Accounting.settings = {
-				...Accounting.settings,
-				...this.currency.toAccountingSettings(),
+			this.formatter = { ...Accounting };
+			this.formatter.settings = {
+				...this.formatter.settings,
+				...this.currency.toAccountingSettings().currency,
 			};
-			this.formatter = Accounting;
 		}
 		return this;
 	}
@@ -290,7 +289,7 @@ export default class Money {
 		// convert ratios to decimal and generate total.
 		ratios.forEach( ( ratio ) => {
 			convertedRatios.push(
-				ratio instanceof Decimal ? ratio : new Decimal( ratio )
+				instanceOf( ratio, 'Decimal' ) ? ratio : new Decimal( ratio )
 			);
 			total = total.plus( ratio );
 		} );
@@ -461,7 +460,7 @@ export default class Money {
 	toString() {
 		return this.formatter.format(
 			this.amount.toNumber(),
-			Accounting.settings
+			this.formatter.settings
 		);
 	}
 
@@ -516,5 +515,46 @@ export default class Money {
 	 */
 	static assertSameCurrency = ( currencyA, currencyB ) => {
 		assertSameCurrency( currencyA, currencyB );
+	}
+
+	/**
+	 * Receives an incoming value that could be a money formatted
+	 * string and returns a Money value object with the correct value
+	 * considering the provided currency.
+	 *
+	 * @param {string|number} moneyValue
+	 * @param {Currency} currency
+	 *
+	 * @return {Money} An instance of a money value object
+	 */
+	static fromMoneyValue = ( moneyValue, currency ) => {
+		assertCurrency( currency );
+		// detect if incoming value has a currency sign not matching provided
+		// currency.  This doesn't provide full protection from improper
+		// values sent in but is an initial safeguard.
+		if ( typeof moneyValue === 'string' ) {
+			const match = moneyValue.match( /[^\d\.\,\s]+/ );
+			if ( match && match[ 0 ] !== currency.sign ) {
+				// The first error message is used if we have just one character
+				// returned which is likely the currency symbol.  Otherwise,
+				// give a more generic message.
+				const message = match[ 0 ].length === 1 ?
+					sprintf(
+						'The provided money value has a %1$s sign in it, but the provided currency value object defines %2$s as the currency sign.',
+						match[ 0 ],
+						currency.sign
+					) :
+					sprintf(
+						'The provided money value has non numeric strings in it (%1$s), please double-check the value.',
+						match[ 0 ]
+					);
+
+				throw new Error( message );
+			}
+		}
+		// set the initial value object using the currency
+		const money = new Money( 0, currency );
+		// set a new value using the parse on the formatter.
+		return money.setAmount( money.formatter.parse( moneyValue ) );
 	}
 }

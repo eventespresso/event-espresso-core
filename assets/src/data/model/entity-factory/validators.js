@@ -147,9 +147,7 @@ export const isShallowValidValueForField = (
 	if ( isEnum && ! isValid ) {
 		throw new TypeError(
 			sprintf(
-				'The given "%s" fieldName is not valid for the defined ' +
-				'schema.  It must be a "%s" and it must be one of "%s". ' +
-				'The fieldValue given was "%s"',
+				'The given "%s" fieldName is not valid for the defined schema.  It must be a "%s" and it must be one of "%s". The fieldValue given was "%s"',
 				fieldName,
 				schema[ fieldName ].enum.join(),
 				fieldValue

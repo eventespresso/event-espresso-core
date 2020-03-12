@@ -16,7 +16,7 @@ describe( 'eejs', () => {
 			throw new Exception( 'error thrown' );
 		};
 		it( 'should throw error with msg "error thrown"', () => {
-			expect( t ).toThrowError( 'error thrown' );
+			expect( t ).toThrow( 'error thrown' );
 		} );
 		it( 'should throw an error which is an instance of "Exception"', () => {
 			expect( t ).toThrow( Exception );
@@ -25,7 +25,7 @@ describe( 'eejs', () => {
 	describe( 'routes', () => {
 		it( 'provides the url to the events admin page by default.', () => {
 			expect( routes.getAdminUrl() ).toEqual(
-				'https://eetest.test/wp-admin/?admin.php&page=espresso_events&action=default'
+				'https://eetest.test/wp-admin/admin.php?page=espresso_events&action=default'
 			);
 		} );
 	} );

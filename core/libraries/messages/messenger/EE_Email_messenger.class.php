@@ -186,7 +186,7 @@ class EE_Email_messenger extends EE_messenger
      */
     public function do_secondary_messenger_hooks($sending_messenger_name)
     {
-        if ($sending_messenger_name = 'html') {
+        if ($sending_messenger_name === 'html') {
             add_filter('FHEE__EE_Messages_Template_Pack__get_variation', array($this, 'add_email_css'), 10, 8);
         }
     }

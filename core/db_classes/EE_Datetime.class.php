@@ -239,50 +239,75 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class
 
 
     /**
-     * increments sold by amount passed by $qty
+     * Increments sold by amount passed by $qty, and persists it immediately to the database.
+     * Simultaneously decreases the reserved count, unless $also_decrease_reserved is false.
      *
      * @param int $qty
+     * @param boolean $also_decrease_reserved
+     * @return boolean indicating success
      * @throws ReflectionException
      * @throws InvalidArgumentException
      * @throws InvalidInterfaceException
      * @throws InvalidDataTypeException
      * @throws EE_Error
      */
-    public function increase_sold($qty = 1)
+    public function increaseSold($qty = 1, $also_decrease_reserved = true)
     {
-        $sold = $this->sold() + $qty;
-        // remove ticket reservation
-        $this->decrease_reserved($qty);
-        $this->set_sold($sold);
+        $qty = absint($qty);
+        if ($also_decrease_reserved) {
+            $success = $this->adjustNumericFieldsInDb(
+                [
+                    'DTT_reserved' => $qty * -1,
+                    'DTT_sold' => $qty
+                ]
+            );
+        } else {
+            $success = $this->adjustNumericFieldsInDb(
+                [
+                    'DTT_sold' => $qty
+                ]
+            );
+        }
+
         do_action(
             'AHEE__EE_Datetime__increase_sold',
             $this,
             $qty,
-            $sold
+            $this->sold(),
+            $success
         );
+        return $success;
     }
 
 
     /**
-     * decrements (subtracts) sold amount passed by $qty
+     * Decrements (subtracts) sold amount passed by $qty directly in the DB and on the model object. (Ie, no need
+     * to save afterwards.)
      *
      * @param int $qty
+     * @return boolean indicating success
      * @throws ReflectionException
      * @throws InvalidArgumentException
      * @throws InvalidInterfaceException
      * @throws InvalidDataTypeException
      * @throws EE_Error
      */
-    public function decrease_sold($qty = 1)
+    public function decreaseSold($qty = 1)
     {
-        $sold = $this->sold() - $qty;
-        $this->set_sold($sold);
+        $qty = absint($qty);
+        $success = $this->adjustNumericFieldsInDb(
+            [
+                'DTT_sold' => $qty * -1
+            ]
+        );
         do_action(
             'AHEE__EE_Datetime__decrease_sold',
             $this,
             $qty,
-            $sold
+            $this->sold(),
+            $success
         );
+        return $success;
     }
 
 
@@ -321,50 +346,63 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class
 
 
     /**
-     * increments reserved by amount passed by $qty
+     * Increments reserved by amount passed by $qty, and persists it immediately to the database.
      *
      * @param int $qty
-     * @return void
+     * @return boolean indicating success
      * @throws ReflectionException
      * @throws InvalidArgumentException
      * @throws InvalidInterfaceException
      * @throws InvalidDataTypeException
      * @throws EE_Error
      */
-    public function increase_reserved($qty = 1)
+    public function increaseReserved($qty = 1)
     {
-        $reserved = $this->reserved() + absint($qty);
+        $qty = absint($qty);
+        $success = $this->incrementFieldConditionallyInDb(
+            'DTT_reserved',
+            'DTT_sold',
+            'DTT_reg_limit',
+            $qty
+        );
         do_action(
             'AHEE__EE_Datetime__increase_reserved',
             $this,
             $qty,
-            $reserved
+            $this->reserved(),
+            $success
         );
-        $this->set_reserved($reserved);
+        return $success;
     }
 
 
     /**
-     * decrements (subtracts) reserved by amount passed by $qty
+     * Decrements (subtracts) reserved by amount passed by $qty, and persists it immediately to the database.
      *
      * @param int $qty
-     * @return void
+     * @return boolean indicating success
      * @throws ReflectionException
      * @throws InvalidArgumentException
      * @throws InvalidInterfaceException
      * @throws InvalidDataTypeException
      * @throws EE_Error
      */
-    public function decrease_reserved($qty = 1)
+    public function decreaseReserved($qty = 1)
     {
-        $reserved = $this->reserved() - absint($qty);
+        $qty = absint($qty);
+        $success = $this->adjustNumericFieldsInDb(
+            [
+                'DTT_reserved' => $qty * -1
+            ]
+        );
         do_action(
             'AHEE__EE_Datetime__decrease_reserved',
             $this,
             $qty,
-            $reserved
+            $this->reserved(),
+            $success
         );
-        $this->set_reserved($reserved);
+        return $success;
     }
 
 
@@ -1255,7 +1293,7 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class
 
     /**
      * Updates the DTT_sold attribute (and saves) based on the number of registrations for this datetime
-     * (via the tickets). into account
+     * (via the tickets).
      *
      * @return int
      * @throws ReflectionException
@@ -1275,14 +1313,110 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class
                 ),
             )
         );
-        $sold = $this->sold();
-        if ($count_regs_for_this_datetime > $sold) {
-            $this->increase_sold($count_regs_for_this_datetime - $sold);
-            $this->save();
-        } elseif ($count_regs_for_this_datetime < $sold) {
-            $this->decrease_sold($count_regs_for_this_datetime - $sold);
-            $this->save();
-        }
+        $this->set_sold($count_regs_for_this_datetime);
+        $this->save();
         return $count_regs_for_this_datetime;
+    }
+
+
+    /*******************************************************************
+     ***********************  DEPRECATED METHODS  **********************
+     *******************************************************************/
+
+
+    /**
+     * Increments sold by amount passed by $qty, and persists it immediately to the database.
+     *
+     * @deprecated 4.9.80.p
+     * @param int $qty
+     * @return boolean
+     * @throws ReflectionException
+     * @throws InvalidArgumentException
+     * @throws InvalidInterfaceException
+     * @throws InvalidDataTypeException
+     * @throws EE_Error
+     */
+    public function increase_sold($qty = 1)
+    {
+        EE_Error::doing_it_wrong(
+            __FUNCTION__,
+            esc_html__('Please use EE_Datetime::increaseSold() instead', 'event_espresso'),
+            '4.9.80.p',
+            '5.0.0.p'
+        );
+        return $this->increaseSold($qty);
+    }
+
+
+    /**
+     * Decrements (subtracts) sold amount passed by $qty directly in the DB and on the model object. (Ie, no need
+     * to save afterwards.)
+     *
+     * @deprecated 4.9.80.p
+     * @param int $qty
+     * @return boolean
+     * @throws ReflectionException
+     * @throws InvalidArgumentException
+     * @throws InvalidInterfaceException
+     * @throws InvalidDataTypeException
+     * @throws EE_Error
+     */
+    public function decrease_sold($qty = 1)
+    {
+        EE_Error::doing_it_wrong(
+            __FUNCTION__,
+            esc_html__('Please use EE_Datetime::decreaseSold() instead', 'event_espresso'),
+            '4.9.80.p',
+            '5.0.0.p'
+        );
+        return $this->decreaseSold($qty);
+    }
+
+
+    /**
+     * Increments reserved by amount passed by $qty, and persists it immediately to the database.
+     *
+     * @deprecated 4.9.80.p
+     * @param int $qty
+     * @return boolean indicating success
+     * @throws ReflectionException
+     * @throws InvalidArgumentException
+     * @throws InvalidInterfaceException
+     * @throws InvalidDataTypeException
+     * @throws EE_Error
+     */
+    public function increase_reserved($qty = 1)
+    {
+        EE_Error::doing_it_wrong(
+            __FUNCTION__,
+            esc_html__('Please use EE_Datetime::increaseReserved() instead', 'event_espresso'),
+            '4.9.80.p',
+            '5.0.0.p'
+        );
+        return $this->increaseReserved($qty);
+    }
+
+
+    /**
+     * Decrements (subtracts) reserved by amount passed by $qty, and persists it immediately to the database.
+     *
+     * @deprecated 4.9.80.p
+     * @param int $qty
+     * @return boolean
+     * @throws ReflectionException
+     * @throws InvalidArgumentException
+     * @throws InvalidInterfaceException
+     * @throws InvalidDataTypeException
+     * @throws EE_Error
+     */
+    public function decrease_reserved($qty = 1)
+    {
+        EE_Error::doing_it_wrong(
+            __FUNCTION__,
+            esc_html__('Please use EE_Datetime::decreaseReserved() instead', 'event_espresso'),
+            '4.9.80.p',
+            '5.0.0.p'
+        );
+        return $this->decreaseReserved($qty);
     }
 }

@@ -386,7 +386,8 @@ final class EE_System implements ResettableInterface
         // also, don't load the basic auth when a plugin is getting activated, because
         // it could be the basic auth plugin, and it doesn't check if its methods are already defined
         // and causes a fatal error
-        if ($this->request->getRequestParam('activate') !== 'true'
+        if (($this->request->isWordPressApi() || $this->request->isApi())
+            && $this->request->getRequestParam('activate') !== 'true'
             && ! function_exists('json_basic_auth_handler')
             && ! function_exists('json_basic_auth_error')
             && ! in_array(
@@ -395,7 +396,7 @@ final class EE_System implements ResettableInterface
                 true
             )
         ) {
-            include_once EE_THIRD_PARTY . 'wp-api-basic-auth' . DS . 'basic-auth.php';
+            include_once EE_THIRD_PARTY . 'wp-api-basic-auth/basic-auth.php';
         }
         do_action('AHEE__EE_System__load_espresso_addons__complete');
     }
@@ -848,12 +849,14 @@ final class EE_System implements ResettableInterface
         $this->loader->getShared('EE_Load_Textdomain');
         // load textdomain
         EE_Load_Textdomain::load_textdomain();
+        // load caf stuff a chance to play during the activation process too.
+        $this->_maybe_brew_regular();
         // load and setup EE_Config and EE_Network_Config
         $config = $this->loader->getShared('EE_Config');
         $this->loader->getShared('EE_Network_Config');
         // setup autoloaders
         // enable logging?
-        if ($config->admin->use_full_logging) {
+        if ($config->admin->use_remote_logging) {
             $this->loader->getShared('EE_Log');
         }
         // check for activation errors
@@ -864,8 +867,6 @@ final class EE_System implements ResettableInterface
         }
         // get model names
         $this->_parse_model_names();
-        // load caf stuff a chance to play during the activation process too.
-        $this->_maybe_brew_regular();
         // configure custom post type definitions
         $this->loader->getShared('EventEspresso\core\domain\entities\custom_post_types\CustomTaxonomyDefinitions');
         $this->loader->getShared('EventEspresso\core\domain\entities\custom_post_types\CustomPostTypeDefinitions');

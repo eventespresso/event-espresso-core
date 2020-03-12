@@ -63,69 +63,70 @@ export const ADMIN_ROUTE_ACTION_DEFAULT = 'default';
  * @type { { string: { string: string } } }
  */
 export const ADMIN_ROUTE_ACTIONS = {
-	[ ADMIN_ROUTES.EVENTS ]: {
+	EVENTS: {
 		OVERVIEW: ADMIN_ROUTE_ACTION_DEFAULT,
 		CATEGORY_LIST: 'category_list',
 		TEMPLATES: 'template_settings',
 		DEFAULT_SETTINGS: 'default_event_settings',
 		DEFAULT_TICKETS: 'ticket_list_table',
 	},
-	[ ADMIN_ROUTES.REGISTRATIONS ]: {
+	REGISTRATIONS: {
 		OVERVIEW: ADMIN_ROUTE_ACTION_DEFAULT,
 		EVENT_CHECKIN: 'event_registrations',
 		CONTACT_LIST: 'contact_list',
 		REPORTS: 'reports',
 	},
-	[ ADMIN_ROUTES.TRANSACTIONS ]: {
+	TRANSACTIONS: {
 		OVERVIEW: ADMIN_ROUTE_ACTION_DEFAULT,
 		REPORTS: 'reports',
 	},
-	[ ADMIN_ROUTES.MESSAGES ]: {
+	MESSAGES: {
 		MESSAGE_ACTIVITY: ADMIN_ROUTE_ACTION_DEFAULT,
 		DEFAULT_MESSAGE_TEMPLATES: 'global_mtps',
 		CUSTOM_MESSAGE_TEMPLATES: 'custom_mtps',
 		SETTINGS: 'settings',
 	},
-	[ ADMIN_ROUTES.PRICES ]: {
+	PRICES: {
 		DEFAULT_PRICING: ADMIN_ROUTE_ACTION_DEFAULT,
 		PRICE_TYPES: 'price_types',
 		TAX_SETTINGS: 'tax_settings',
 	},
-	[ ADMIN_ROUTES.REGISTRATION_FORMS ]: {
+	FORMS: {
 		QUESTIONS: ADMIN_ROUTE_ACTION_DEFAULT,
 		QUESTION_GROUPS: 'question_groups',
 		REG_FORM_SETTINGS: 'view_reg_form_settings',
 	},
-	[ ADMIN_ROUTES.VENUES ]: {
+	VENUES: {
 		OVERVIEW: ADMIN_ROUTE_ACTION_DEFAULT,
 		CATEGORIES: 'category_list',
+		EDIT: 'edit',
 		GOOGLE_MAPS: 'google_map_settings',
 	},
-	[ ADMIN_ROUTES.GENERAL_SETTINGS ]: {
+	SETTINGS: {
 		YOUR_ORGANIZATION: ADMIN_ROUTE_ACTION_DEFAULT,
 		CRITICAL_PAGES: 'critical_pages',
 		ADMIN_OPTIONS: 'admin_option_settings',
 		COUNTRIES: 'country_settings',
 		PRIVACY_SETTINGS: 'privacy_settings',
 	},
-	[ ADMIN_ROUTES.PAYMENT_METHODS ]: {
+	PAYMENT_METHODS: {
 		PAYMENT_METHODS: ADMIN_ROUTE_ACTION_DEFAULT,
 		SETTINGS: 'payment_settings',
 		LOGS: 'payment_log',
 	},
-	[ ADMIN_ROUTES.MAINTENANCE ]: {
+	MAINTENANCE: {
 		MAINTENANCE: ADMIN_ROUTE_ACTION_DEFAULT,
 		RESET_OR_DELETE_DATA: 'data_reset',
 		DATETIME_UTILITIES: 'datetime_tools',
 		SYSTEM_INFORMATION: 'system_status',
 	},
-	[ ADMIN_ROUTES.HELP_AND_SUPPORT ]: {
+	SUPPORT: {
 		SUPPORT: ADMIN_ROUTE_ACTION_DEFAULT,
 		FAQ: 'faq',
 		DEVELOPERS: 'developers',
 		SHORTCODES: 'shortcodes',
 	},
-	[ ADMIN_ROUTES.ABOUT ]: {
+	ABOUT: {
 		WHATS_NEW: ADMIN_ROUTE_ACTION_DEFAULT,
 		ABOUT: 'overview',
 		CREDITS: 'credits',
@@ -144,5 +145,5 @@ export const getAdminUrl = (
 	page = ADMIN_ROUTES.EVENTS,
 	action = ADMIN_ROUTE_ACTION_DEFAULT
 ) => {
-	return `${ ADMIN_URL }?admin.php&page=${ page }&action=${ action }`;
+	return `${ ADMIN_URL }admin.php?page=${ page }&action=${ action }`;
 };

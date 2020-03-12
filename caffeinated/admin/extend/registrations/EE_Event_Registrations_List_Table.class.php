@@ -142,7 +142,7 @@ class EE_Event_Registrations_List_Table extends EE_Admin_List_Table
             )
                 ? array('ATT_lname' => true)
                 : array('ATT_fname' => true),
-            'Event'    => array('Event.EVT.Name' => false),
+            'Event'    => array('Event.EVT_name' => false),
         );
         $this->_hidden_columns = array();
         $this->_evt = EEM_Event::instance()->get_one_by_ID($evt_id);

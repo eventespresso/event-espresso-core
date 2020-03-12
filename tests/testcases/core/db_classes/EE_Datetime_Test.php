@@ -1,5 +1,8 @@
 <?php
 
+use EventEspresso\core\exceptions\InvalidDataTypeException;
+use EventEspresso\core\exceptions\InvalidInterfaceException;
+
 if (!defined('EVENT_ESPRESSO_VERSION'))
 	exit('No direct script access allowed');
 
@@ -17,19 +20,37 @@ if (!defined('EVENT_ESPRESSO_VERSION'))
  */
 class EE_Datetime_Test extends EE_UnitTestCase{
 
+    /**
+     * @since 4.9.80.p
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws ReflectionException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     */
 	function test_increase_sold(){
-		$d = EE_Datetime::new_instance();
-		$this->assertEquals($d->get('DTT_sold'),0);
-		$d->increase_sold();
-		$this->assertEquals($d->get('DTT_sold'),1);
-		$d->increase_sold(2);
-		$this->assertEquals($d->get('DTT_sold'),3);
+	    $original_sold_count = 5;
+	    $original_reserved_count = 10;
+		$d = EE_Datetime::new_instance(
+		    [
+		        'DTT_sold' => $original_sold_count,
+                'DTT_reserved' => $original_reserved_count
+            ]
+        );
+		$this->assertEquals($d->get('DTT_sold'), $original_sold_count);
+        $this->assertEquals($d->get('DTT_reserved'), $original_reserved_count);
+		$d->increaseSold();
+		$this->assertEquals($d->get('DTT_sold'), $original_sold_count + 1);
+        $this->assertEquals($d->get('DTT_reserved'), $original_reserved_count - 1);
+		$d->increaseSold(2, false);
+		$this->assertEquals($d->get('DTT_sold'), $original_sold_count + 3);
+        $this->assertEquals($d->get('DTT_reserved'), $original_reserved_count - 1);
 	}
 	function test_decrease_sold(){
 		$d = EE_Datetime::new_instance(array('DTT_sold'=>5));
-		$d->decrease_sold();
+		$d->decreaseSold();
 		$this->assertEquals(4,$d->get('DTT_sold'));
-		$d->decrease_sold(2);
+		$d->decreaseSold(2);
 		$this->assertEquals(2,$d->get('DTT_sold'));
 	}
 	/**
@@ -124,18 +145,21 @@ class EE_Datetime_Test extends EE_UnitTestCase{
 	/**
 	 * This tests the ticket_types_available_for_purchase method.
 	 * @since 4.6.0
+     * @group testDate
 	 */
 	public function test_ticket_types_available_for_purchase() {
-		//@todo remove once test fixed.
-		$this->markTestSkipped(
-			'See https://events.codebasehq.com/projects/event-espresso/tickets/9635'
-		);/**/
 		//setup some dates we'll use for testing with.
 		$timezone = new DateTimeZone( 'America/Toronto' );
-		$upcoming_start_date = new DateTime( "now +1day", $timezone );
-		$past_start_date = new DateTime( "now -2days", $timezone );
-		$upcoming_end_date = new DateTime( "now +2days", $timezone );
-		$current = new DateTime( "now", $timezone );
+        $now_for_test = new DateTime( 'now', $timezone );
+        // set time explicitly
+        $now_for_test->setTime(14, 00);
+        $upcoming_start_date = clone $now_for_test;
+        $past_start_date = clone $now_for_test;
+        $upcoming_end_date = clone $now_for_test;
+        $upcoming_start_date->add(new DateInterval('P1D'));
+		$past_start_date->sub(new DateInterval('P2D'));
+		$upcoming_end_date->add(new DateInterval('P2D'));
+		$current = clone $now_for_test;
 		$formats = array( 'Y-d-m',  'h:i a' );
 		$full_format = implode( ' ', $formats );
 
@@ -208,6 +232,7 @@ class EE_Datetime_Test extends EE_UnitTestCase{
 
 	/**
 	 * @group 8861
+     * @doesNotPerformAssertions
 	 */
 	public function test_tickets_remaining() {
         $this->loadTestScenarios();

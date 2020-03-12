@@ -361,7 +361,9 @@ class EEM_Transaction extends EEM_Base
                     'STS_ID'        => EEM_Transaction::failed_status_code,
                     'Payment.PAY_ID' => array( 'IS NULL' ),
                     'TXN_timestamp' => array('<', time() - $time_to_leave_alone)
-                )
+                ),
+                'order_by' => ['TXN_timestamp' => 'ASC'],
+                'limit' => 1000
             ),
             $time_to_leave_alone
         );
@@ -380,15 +382,17 @@ class EEM_Transaction extends EEM_Base
         if (! empty($txn_ids) && is_array($txn_ids)) {
             // first, make sure these TXN's are removed the "ee_locked_transactions" array
             EEM_Transaction::unset_locked_transactions($txn_ids);
+
+            // Create IDs placeholder.
+            $placeholders = array_fill(0, count($txn_ids), '%d');
+            
+            // Glue it together to use inside $wpdb->prepare.
+            $format = implode(', ', $placeholders);
+
             // let's get deletin'...
-            // Why no wpdb->prepare?  Because the data is trusted.
             // We got the ids from the original query to get them FROM
             // the db (which is sanitized) so no need to prepare them again.
-            $query   = '
-				DELETE
-				FROM ' . $this->table() . '
-				WHERE
-					TXN_ID IN ( ' . implode(",", $txn_ids) . ')';
+            $query   = $wpdb->prepare("DELETE FROM " . $this->table() . " WHERE TXN_ID IN ( $format )", $txn_ids);
             $deleted = $wpdb->query($query);
         }
         if ($deleted) {

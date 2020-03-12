@@ -7,7 +7,17 @@
  */
 class EEM_Event_Question_Group extends EEM_Base
 {
-    // private instance of the Attendee object
+    /**
+     * Name of the field indicating an event should use the question group for the primary attendee
+     */
+    const PRIMARY = 'EQG_primary';
+
+    /**
+     * Name of hte field indicating an event should use the question group for additional attendees
+     */
+    const ADDITIONAL = 'EQG_additional';
+
+    // private instance of the Event_Question_Group object
     protected static $_instance = null;
 
     protected function __construct($timezone = null)
@@ -22,7 +32,8 @@ class EEM_Event_Question_Group extends EEM_Base
                 'EQG_ID'=>new EE_Primary_Key_Int_Field('EQG_ID', __('Event to Question Group Link ID', 'event_espresso')),
                 'EVT_ID'=>new EE_Foreign_Key_Int_Field('EVT_ID', __('Event ID', 'event_espresso'), false, 0, 'Event'),
                 'QSG_ID'=>new EE_Foreign_Key_Int_Field('QSG_ID', __('Question Group Id', 'event_espresso'), false, 0, 'Question_Group'),
-                'EQG_primary'=>new EE_Boolean_Field('EQG_primary', __('Flag indicating question is only for primary attendees', 'event_espresso'), false, false)
+                'EQG_primary'=>new EE_Boolean_Field('EQG_primary', __('Flag indicating question is only for primary attendees', 'event_espresso'), false, false),
+                'EQG_additional'=>new EE_Boolean_Field('EQG_additional', __('Flag indicating question is only for additional attendees', 'event_espresso'), false, false)
             )
         );
         $this->_model_relations = array(
@@ -36,5 +47,32 @@ class EEM_Event_Question_Group extends EEM_Base
         $this->_cap_restriction_generators[ EEM_Base::caps_edit ] = new EE_Restriction_Generator_Event_Related_Protected($path_to_event);
         $this->_cap_restriction_generators[ EEM_Base::caps_delete ] = new EE_Restriction_Generator_Event_Related_Protected($path_to_event, EEM_Base::caps_edit);
         parent::__construct($timezone);
+    }
+
+    /**
+     * Decides whether to use the 'EQG_primary' or newer 'EQG_additional' for use in queries, based on whether
+     * this is concerning primary attendees or additional attendees.
+     * If 1, true, or "primary" is passed in, returns EQG_primary. If 0, false, or "additional" is passed in, returns
+     * EQG_additional.
+     * @since 4.10.0.p
+     * @param string|boolean|int $context
+     * @return string
+     */
+    public function fieldNameForContext($context)
+    {
+        // Basically do a strict switch statement.
+        switch (true) {
+            case $context === 'additional':
+            case $context === false:
+            case $context === 0:
+                $field_name = EEM_Event_Question_Group::ADDITIONAL;
+                break;
+            case $context === 'primary':
+            case $context === true:
+            case $context === 1:
+            default:
+                $field_name = EEM_Event_Question_Group::PRIMARY;
+        }
+        return apply_filters('FHEE__EEM_Event_Question_Group__fieldNameForContext', $field_name, $context);
     }
 }

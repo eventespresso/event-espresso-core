@@ -12,14 +12,9 @@ import {
 /**
  * External dependencies
  */
-import { select } from '@wordpress/data';
+import { registerStore, select } from '@wordpress/data';
 import { Exception } from '@eventespresso/eejs';
 import { Set, OrderedMap, Map } from 'immutable';
-
-jest.mock( '@wordpress/data', () => ( {
-	...require.requireActual( '@wordpress/data' ),
-	select: jest.fn().mockReturnValue( {} ),
-} ) );
 
 describe( 'testing getters', () => {
 	const testConditions = [
@@ -137,6 +132,8 @@ describe( 'getEntitiesByIds()', () => {
 
 describe( 'isRequesting()', () => {
 	beforeAll( () => {
+		// we don't need original store here.
+		registerStore( 'core/data', { selectors: {}, reducer: () => {} } );
 		select( 'core/data' ).isResolving = jest.fn().mockReturnValue( false );
 	} );
 	afterAll( () => {
@@ -178,7 +175,7 @@ describe( 'isRequesting()', () => {
 					'some_query_string=1'
 				);
 			};
-			expect( testCondition ).toThrowError( Exception );
+			expect( testCondition ).toThrow( Exception );
 		} );
 		testConditions.forEach( ( [
 			description,
@@ -201,7 +198,7 @@ describe( 'isRequesting()', () => {
 			const testCondition = () => {
 				isRequestingItems( state, 'invalid', 'some_query_string=1' );
 			};
-			expect( testCondition ).toThrowError( Exception );
+			expect( testCondition ).toThrow( Exception );
 		} );
 		testConditions.forEach( ( [
 			description,

@@ -22,8 +22,8 @@ class EE_PMT_Paypal_Pro extends EE_PMT_Base
     {
         require_once($this->file_folder().'EEG_Paypal_Pro.gateway.php');
         $this->_gateway = new EEG_Paypal_Pro();
-        $this->_pretty_name = __("Paypal Pro", 'event_espresso');
-        $this->_default_description = __('Please provide the following billing information.', 'event_espresso');
+        $this->_pretty_name = esc_html__("Paypal Pro", 'event_espresso');
+        $this->_default_description = esc_html__('Please provide the following billing information.', 'event_espresso');
         $this->_requires_https = true;
         parent::__construct($pm_instance);
     }
@@ -63,22 +63,22 @@ class EE_PMT_Paypal_Pro extends EE_PMT_Base
             //              'html_id'=> 'ee-Paypal_Pro-billing-form',
                 'subsections'=>array(
                     'credit_card'=>new EE_Credit_Card_Input(
-                        array( 'required'=>true, 'html_class' => 'ee-billing-qstn', 'html_label_text' => __('Card Number', 'event_espresso'))
+                        array( 'required'=>true, 'html_class' => 'ee-billing-qstn', 'html_label_text' => esc_html__('Card Number', 'event_espresso'))
                     ),
                     'credit_card_type'=>new EE_Select_Input(
                         // the options are set dynamically
                         array_intersect_key(EE_PMT_Paypal_Pro::card_types_supported(), array_flip($allowed_types)),
-                        array( 'required'=>true, 'html_class' => 'ee-billing-qstn', 'html_label_text' => __('Card Type', 'event_espresso'))
+                        array( 'required'=>true, 'html_class' => 'ee-billing-qstn', 'html_label_text' => esc_html__('Card Type', 'event_espresso'))
                     ),
                     'exp_month'=>new EE_Credit_Card_Month_Input(
                         true,
-                        array( 'required'=>true, 'html_class' => 'ee-billing-qstn', 'html_label_text' =>  __('Expiry Month', 'event_espresso')  )
+                        array( 'required'=>true, 'html_class' => 'ee-billing-qstn', 'html_label_text' =>  esc_html__('Expiry Month', 'event_espresso')  )
                     ),
                     'exp_year'=>new EE_Credit_Card_Year_Input(
-                        array( 'required'=>true, 'html_class' => 'ee-billing-qstn', 'html_label_text' => __('Expiry Year', 'event_espresso')  )
+                        array( 'required'=>true, 'html_class' => 'ee-billing-qstn', 'html_label_text' => esc_html__('Expiry Year', 'event_espresso')  )
                     ),
                     'cvv'=>new EE_CVV_Input(
-                        array( 'required'=>true, 'html_class' => 'ee-billing-qstn', 'html_label_text' => __('CVV', 'event_espresso') )
+                        array( 'required'=>true, 'html_class' => 'ee-billing-qstn', 'html_label_text' => esc_html__('CVV', 'event_espresso') )
                     ),
                 )
             )
@@ -103,7 +103,7 @@ class EE_PMT_Paypal_Pro extends EE_PMT_Base
                 'credit_card'
             );
             $billing_form->add_subsections(
-                array( 'debug_content' => new EE_Form_Section_HTML_From_Template(dirname(__FILE__).DS.'templates'.DS.'paypal_pro_debug_info.template.php')),
+                array( 'debug_content' => new EE_Form_Section_HTML_From_Template(dirname(__FILE__).'/templates/paypal_pro_debug_info.template.php')),
                 'first_name'
             );
             $billing_form->get_input('credit_card_type')->set_default('Visa');
@@ -123,10 +123,10 @@ class EE_PMT_Paypal_Pro extends EE_PMT_Base
     public static function card_types_supported()
     {
         return array(
-            'Visa'=>  __("Visa", 'event_espresso'),
-            'MasterCard'=>  __("MasterCard", 'event_espresso'),
-            'Amex'=>  __("American Express", 'event_espresso'),
-            'Discover'=>  __("Discover", 'event_espresso')
+            'Visa'=>  esc_html__("Visa", 'event_espresso'),
+            'MasterCard'=>  esc_html__("MasterCard", 'event_espresso'),
+            'Amex'=>  esc_html__("American Express", 'event_espresso'),
+            'Discover'=>  esc_html__("Discover", 'event_espresso')
             );
     }
 
@@ -141,7 +141,7 @@ class EE_PMT_Paypal_Pro extends EE_PMT_Base
     {
         return array(
             $this->get_help_tab_name() => array(
-                        'title' => __('PayPal Pro Settings', 'event_espresso'),
+                        'title' => esc_html__('PayPal Pro Settings', 'event_espresso'),
                         'filename' => 'payment_methods_overview_paypalpro'
                         ),
         );
@@ -159,5 +159,37 @@ class EE_PMT_Paypal_Pro extends EE_PMT_Base
         $billing_values['country'] = $billing_form->get_input_value('country');
         $billing_values['credit_card_type'] = $billing_form->get_input_value('credit_card_type');
         return $billing_values;
+    }
+
+    /**
+     * Override parent to account for a change in extra meta inputs in 4.9.75.p
+     * @since 4.9.79.p
+     * @param EE_Payment_Method $payment_method_instance
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws ReflectionException
+     * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
+     * @throws \EventEspresso\core\exceptions\InvalidInterfaceException
+     */
+    public function set_instance($payment_method_instance)
+    {
+        // Check for the old extra meta inputs
+        $old_extra_metas = EEM_Extra_Meta::instance()->get_all(
+            [
+                [
+                    'EXM_type' => 'Payment_Method',
+                    'OBJ_ID' => $payment_method_instance->ID(),
+                    'EXM_key' => ['IN', ['username', 'password', 'signature']],
+                ]
+            ]
+        );
+        // If they existed, set the new ones instead
+        if (!empty($old_extra_metas)) {
+            foreach ($old_extra_metas as $old_extra_meta) {
+                $old_extra_meta->set('EXM_key', 'api_' . $old_extra_meta->get('EXM_key'));
+                $old_extra_meta->save();
+            }
+        }
+        return parent::set_instance($payment_method_instance);
     }
 }

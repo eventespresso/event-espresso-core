@@ -3,7 +3,6 @@
  */
 import {
 	DEFAULT_CORE_STATE,
-	pluralModelName,
 	singularModelName,
 } from '@eventespresso/model';
 import { fromJS, Set, Map } from 'immutable';
@@ -17,7 +16,7 @@ import cuid from 'cuid';
  * Internal imports.
  */
 import { ACTION_TYPES } from '../actions/action-types';
-const { relations: types } = ACTION_TYPES;
+const { relations: types, resets: resetTypes } = ACTION_TYPES;
 
 /**
  * Used to determine whether the relation exists in the provided map.
@@ -55,7 +54,7 @@ const hasRelation = ( state, action, relationMap ) => {
 	// still here? Okay, let's do a reverse lookup then, where the relation may
 	// be stored with the relation as the originating entity.
 	relationName = singularModelName( relationName );
-	modelName = pluralModelName( modelName );
+	modelName = singularModelName( modelName );
 	const entityIds = state.getIn(
 		[ queueType, relationName, relationEntityId, modelName ],
 	);
@@ -281,10 +280,8 @@ function replaceOldRelationIdWithNewRelationId( state, action ) {
  * @return {Immutable.Map} Returns either new state or existing state.
  */
 const replaceIds = ( stateProperty, state, modelName, oldId, newId ) => {
-	const pluralName = pluralModelName( modelName );
-	const singularName = singularModelName( modelName );
-	const topLevelName = stateProperty === 'index' ? pluralName : singularName;
-	const mainPath = [ stateProperty, topLevelName, oldId ];
+	modelName = singularModelName( modelName );
+	const mainPath = [ stateProperty, modelName, oldId ];
 
 	// first do top-level checks if it doesn't exist, bail.
 	if ( ! state.hasIn( mainPath ) ) {
@@ -295,7 +292,7 @@ const replaceIds = ( stateProperty, state, modelName, oldId, newId ) => {
 
 	state = state
 		.deleteIn( mainPath )
-		.setIn( [ stateProperty, topLevelName, newId ], mainRecord );
+		.setIn( [ stateProperty, modelName, newId ], mainRecord );
 
 	// mainRecord provides the index to the other records needing updated.
 	mainRecord.forEach( ( mapOrIds, relationModelName ) => {
@@ -304,7 +301,7 @@ const replaceIds = ( stateProperty, state, modelName, oldId, newId ) => {
 				queueType,
 				relationModelName,
 				relationId,
-				topLevelName,
+				modelName,
 			];
 			let ids = state.getIn( relationPath ) || Set();
 			ids = ids.delete( oldId ).add( newId );
@@ -325,13 +322,13 @@ const replaceIds = ( stateProperty, state, modelName, oldId, newId ) => {
 			const relationPath = [ 'index', relationModelName ];
 			mapOrIds.forEach( ( relationId ) => {
 				let indexRecord = state.getIn(
-					[ ...relationPath, relationId, topLevelName ]
+					[ ...relationPath, relationId, modelName ]
 				);
 				let ids = indexRecord.get( stateProperty ) || Set();
 				ids = ids.delete( oldId ).add( newId );
 				indexRecord = indexRecord.set( stateProperty, ids );
 				state = state.setIn(
-					[ ...relationPath, relationId, topLevelName ],
+					[ ...relationPath, relationId, modelName ],
 					indexRecord
 				);
 			} );
@@ -356,28 +353,28 @@ const normalizeActionForState = ( state, action ) => {
 	action.relationEntityId = normalizeEntityId( action.relationEntityId );
 	// we only use index to help with normalization
 	const index = state.get( 'index' );
-	const { modelName, relationName, relationEntityId, entityId } = action;
+	const modelName = singularModelName( action.modelName );
+	const relationName = singularModelName( action.relationName );
+	const { relationEntityId, entityId } = action;
 	if ( modelName &&
 		relationName &&
-		index.has( pluralModelName( modelName ) )
+		index.has( modelName )
 	) {
 		// okay this model has already been used as a relation on another model
 		// so let's normalize and make it the relation instead.
 		return {
 			...action,
-			modelName: singularModelName( relationName ),
+			modelName: relationName,
 			entityId: relationEntityId,
-			relationName: pluralModelName( modelName ),
+			relationName: modelName,
 			relationEntityId: entityId,
 		};
 	}
 	// we can return as is but lets normalize the incoming names
 	return {
 		...action,
-		modelName: modelName ? singularModelName( modelName ) : modelName,
-		relationName: relationName ?
-			pluralModelName( relationName ) :
-			relationName,
+		modelName,
+		relationName,
 	};
 };
 
@@ -548,14 +545,12 @@ const clearRelatedEntitiesForEntity = (
  * @return {Immutable.Map} Either the original state or new state if it was updated.
  */
 function removeRelatedEntitiesForEntity( state, action ) {
-	const { modelName } = action;
-	const pluralName = pluralModelName( modelName );
-	const singleName = singularModelName( modelName );
+	const modelName = singularModelName( action.modelName );
 	const entityId = normalizeEntityId( action.entityId );
 	[
-		[ pluralName, entityId, 'index', [ 'add', 'delete' ] ],
-		[ singleName, entityId, 'add' ],
-		[ singleName, entityId, 'delete' ],
+		[ modelName, entityId, 'index', [ 'add', 'delete' ] ],
+		[ modelName, entityId, 'add' ],
+		[ modelName, entityId, 'delete' ],
 	].forEach( ( [
 		modelRemoved,
 		entityIdRemoved,
@@ -569,6 +564,77 @@ function removeRelatedEntitiesForEntity( state, action ) {
 	} );
 	return state;
 }
+
+/**
+ * Handles clearing the given model from the state.
+ *
+ * @param {Immutable.Map} state
+ * @param {Object} action
+ *
+ * @return {Immutable.Map} New state.
+ */
+const clearStateForModel = ( state, action ) => {
+	const modelName = singularModelName( action.modelName );
+	// index record path
+	state = clearModelFromSubstate(
+		state,
+		'index',
+		modelName,
+	);
+
+	// delete record path
+	state = clearModelFromSubstate(
+		state,
+		'delete',
+		modelName,
+	);
+
+	// add record path
+	state = clearModelFromSubstate(
+		state,
+		'add',
+		modelName,
+	);
+	return state;
+};
+
+/**
+ * For the given arguments clears the model from the substate on the given state
+ * for the given substate key.
+ *
+ * @param {Immutable.Map} state
+ * @param {string} subStateKey
+ * @param {string} modelName
+ * @return {Immutable.Map} The new state.
+ */
+const clearModelFromSubstate = (
+	state,
+	subStateKey,
+	modelName,
+) => {
+	state = state.deleteIn( [ subStateKey, modelName ] );
+	let subState = state.get( subStateKey );
+	subState = subState.withMutations( ( mutatedState ) => {
+		state.get( subStateKey ).forEach( ( entityMaps, relationName ) => {
+			entityMaps.forEach( ( modelMap, relationEntityId ) => {
+				const deletePath = [
+					relationName,
+					relationEntityId,
+					modelName,
+				];
+				mutatedState.deleteIn( deletePath );
+				removeEmptyFromState(
+					mutatedState,
+					deletePath,
+					1,
+					false,
+				);
+			} );
+		} );
+	} );
+	state = state.set( subStateKey, subState );
+	return state;
+};
 
 /**
  * exports useful for testing.
@@ -595,7 +661,15 @@ export default (
 			return replaceOldRelationIdWithNewRelationId( state, action );
 		case types.REMOVE_RELATED_ENTITIES_FOR_ENTITY:
 			return removeRelatedEntitiesForEntity( state, action );
-		default:
+		case resetTypes.RESET_ALL_STATE:
+			return fromJS( DEFAULT_CORE_STATE.dirty.relations );
+		case resetTypes.RESET_STATE_FOR_MODEL:
+			return clearStateForModel( state, action );
+		case types.RECEIVE_DIRTY_RELATION_ADDITION:
+		case types.REMOVE_DIRTY_RELATION_ADDITION:
+		case types.RECEIVE_DIRTY_RELATION_DELETION:
+		case types.REMOVE_DIRTY_RELATION_DELETION:
 			return dirtyRelations( state, action );
 	}
+	return state;
 };

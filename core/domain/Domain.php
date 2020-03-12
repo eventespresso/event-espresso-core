@@ -15,7 +15,6 @@ use EventEspresso\core\domain\values\Version;
  */
 class Domain extends DomainBase implements CaffeinatedInterface
 {
-
     /**
      * URL path component used to denote an API request
      */
@@ -65,5 +64,17 @@ class Domain extends DomainBase implements CaffeinatedInterface
     {
         $this->caffeinated = (! defined('EE_DECAF') || EE_DECAF !== true)
             && is_readable($this->pluginPath() . 'caffeinated/brewing_regular.php');
+    }
+
+
+    /**
+     * This should be used everywhere the Event Espresso brand name is referenced in public facing interfaces
+     * to allow for filtering the brand.
+     *
+     * @return string
+     */
+    public static function brandName()
+    {
+        return (string) apply_filters('FHEE__EventEspresso_core_domain_Domain__brandName', 'Event Espresso');
     }
 }

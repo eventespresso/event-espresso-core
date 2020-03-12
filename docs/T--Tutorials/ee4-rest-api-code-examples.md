@@ -50,7 +50,7 @@ if ($count > 0){
 ?>
 </div>
 <div id="footer"><p>Showing <strong><?php echo $count ?></strong> events, that start after <strong><?php echo date('l jS \o\f F Y h:i:s A', strtotime($curdate_utc)) ?> UTC</strong>, using this url:<br />
-<a href="<?php echo $data_url ?>" target="_blank"><?php echo $data_url ?></a></p>
+<a href="<?php echo $data_url ?>" target="_blank" rel="noopener noreferrer"><?php echo $data_url ?></a></p>
 </body>
 </html>
 ```

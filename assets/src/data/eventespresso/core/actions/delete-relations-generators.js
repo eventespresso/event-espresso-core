@@ -1,7 +1,6 @@
 /**
  * Internal Imports
  */
-import { removeEntityById } from './remove-entities';
 import {
 	receiveDirtyRelationDeletion,
 } from './receive-relations';
@@ -12,10 +11,7 @@ import {
 /**
  * External imports
  */
-import {
-	singularModelName,
-	pluralModelName,
-} from '@eventespresso/model';
+import { singularModelName } from '@eventespresso/model';
 
 /**
  * Action generator yielding actions for handling removing the queued relations
@@ -32,6 +28,7 @@ function* removeDirtyRelationForAddition(
 	relationName,
 	relationEntityId,
 ) {
+	modelName = singularModelName( modelName );
 	yield removeDirtyRelationAddition(
 		relationName,
 		relationEntityId,
@@ -55,23 +52,23 @@ function* removeRelationForEntity(
 	relationName,
 	relationEntityId
 ) {
-	const singularRelationName = singularModelName( relationName );
-	const pluralRelationName = pluralModelName( relationName );
-	yield removeEntityById( singularRelationName, relationEntityId );
+	modelName = singularModelName( modelName );
+	relationName = singularModelName( relationName );
 	yield removeRelatedEntities(
 		modelName,
 		entityId,
 		relationName,
 		[ relationEntityId ],
 	);
-	yield removeDirtyRelationForAddition(
+	yield removeDirtyRelationAddition(
 		modelName,
 		entityId,
 		relationName,
 		relationEntityId,
 	);
+
 	yield receiveDirtyRelationDeletion(
-		pluralRelationName,
+		relationName,
 		relationEntityId,
 		modelName,
 		entityId

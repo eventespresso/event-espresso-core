@@ -14,17 +14,17 @@ class EEG_Paypal_Pro extends EE_Onsite_Gateway
     /**
      * @var $_paypal_api_username string
      */
-    protected $_username = null;
+    protected $_api_username = null;
 
     /**
-     * @var $_password string
+     * @var $_api_password string
      */
-    protected $_password = null;
+    protected $_api_password = null;
 
     /**
-     * @var $_signature string
+     * @var $_api_signature string
      */
-    protected $_signature = null;
+    protected $_api_signature = null;
 
     /**
      * @var $_credit_card_types array with the keys for credit card types accepted on this account
@@ -259,7 +259,7 @@ class EEG_Paypal_Pro extends EE_Onsite_Gateway
             'shiptocity'     => substr($use_registration_address_info
                 ? $attendee->city()
                 : $billing_info['city'], 0, 40),
-            'state'          => substr($use_registration_address_info
+            'shiptostate'          => substr($use_registration_address_info
                 ? $attendee->state_name()
                 : $billing_info['state'], 0, 40),
             'shiptocountry'  => $use_registration_address_info
@@ -322,7 +322,7 @@ class EEG_Paypal_Pro extends EE_Onsite_Gateway
             }
             if (empty($PayPalResult['RAWRESPONSE'])) {
                 $payment->set_status($this->_pay_model->failed_status());
-                $payment->set_gateway_response(__('No response received from Paypal Pro', 'event_espresso'));
+                $payment->set_gateway_response(esc_html__('No response received from Paypal Pro', 'event_espresso'));
                 $payment->set_details($PayPalResult);
             } else {
                 if ($this->_APICallSuccessful($PayPalResult)) {
@@ -460,12 +460,12 @@ class EEG_Paypal_Pro extends EE_Onsite_Gateway
         }
         // Now that we have each chunk we need to go ahead and append them all together for our entire NVP string
         $NVPRequest = 'USER='
-                      . $this->_username
+                      . $this->_api_username
                       . '&PWD='
-                      . $this->_password
+                      . $this->_api_password
                       . '&VERSION=64.0'
                       . '&SIGNATURE='
-                      . $this->_signature
+                      . $this->_api_signature
                       . $DPFieldsNVP
                       . $CCDetailsNVP
                       . $PayerInfoNVP

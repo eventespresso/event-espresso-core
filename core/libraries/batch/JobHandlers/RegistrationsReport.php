@@ -125,7 +125,13 @@ class RegistrationsReport extends JobHandlerFile
      */
     protected function get_filename()
     {
-        return sprintf("event-espresso-registrations-%s.csv", str_replace(':', '-', current_time('mysql')));
+        return apply_filters(
+            'FHEE__EventEspressoBatchRequest__JobHandlers__RegistrationsReport__get_filename',
+            sprintf(
+                "event-espresso-registrations-%s.csv",
+                str_replace(array(':', ' '), '-', current_time('mysql'))
+            )
+        );
     }
 
 
@@ -145,10 +151,11 @@ class RegistrationsReport extends JobHandlerFile
                 $this->_change_registration_where_params_to_question_where_params($registration_query_params[0]),
             );
         }
-        $question_query_params[0]['QST_system'] = array(
-            'NOT_IN',
-            array_keys(EEM_Attendee::instance()->system_question_to_attendee_field_mapping()),
-        );
+        // Make sure it's not a system question
+        $question_query_params[0]['OR*not-system-questions'] = [
+            'QST_system' => '',
+            'QST_system*null' => ['IS_NULL']
+        ];
         if (apply_filters(
             'FHEE__EventEspressoBatchRequest__JobHandlers__RegistrationsReport___get_question_labels__only_include_answered_questions',
             false,
@@ -455,6 +462,11 @@ class RegistrationsReport extends JobHandlerFile
                 ));
                 // now fill out the questions THEY answered
                 foreach ($answers as $answer_row) {
+                    if ($answer_row['Question.QST_system']) {
+                        // it's an answer to a system question. That was already displayed as part of the attendee
+                        // fields, so don't write it out again thanks.
+                        continue;
+                    }
                     if ($answer_row['Question.QST_ID']) {
                         $question_label = EEH_Export::prepare_value_from_db_for_display(
                             EEM_Question::instance(),

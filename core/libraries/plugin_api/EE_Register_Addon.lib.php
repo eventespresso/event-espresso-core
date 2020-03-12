@@ -1065,6 +1065,10 @@ class EE_Register_Addon implements EEI_Plugin_API
         $addon->set_config_section(self::$_settings[ $addon_name ]['config_section']);
         $addon->set_config_class(self::$_settings[ $addon_name ]['config_class']);
         $addon->set_config_name(self::$_settings[ $addon_name ]['config_name']);
+        // setup the add-on's pue_slug if we have one.
+        if (! empty(self::$_settings[ $addon_name ]['pue_options']['pue_plugin_slug'])) {
+            $addon->setPueSlug(self::$_settings[ $addon_name ]['pue_options']['pue_plugin_slug']);
+        }
         // unfortunately this can't be hooked in upon construction, because we don't have
         // the plugin mainfile's path upon construction.
         register_deactivation_hook($addon->get_main_plugin_file(), array($addon, 'deactivation'));
@@ -1090,7 +1094,7 @@ class EE_Register_Addon implements EEI_Plugin_API
     public static function load_pue_update()
     {
         // load PUE client
-        require_once EE_THIRD_PARTY . 'pue' . DS . 'pue-client.php';
+        require_once EE_THIRD_PARTY . 'pue/pue-client.php';
         $license_server = defined('PUE_UPDATES_ENDPOINT') ? PUE_UPDATES_ENDPOINT : 'https://eventespresso.com';
         // cycle thru settings
         foreach (self::$_settings as $settings) {

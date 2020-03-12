@@ -12,7 +12,6 @@ import {
 /**
  * External Imports.
  */
-import { isEmpty } from 'lodash';
 import moment from 'moment-timezone';
 
 /**
@@ -31,15 +30,23 @@ export default class ServerDateTime extends DateTime {
 	 *
 	 * @param {string} iso8601DateString
 	 * @param {string} locale
+	 * @param {string} timezone
 	 */
 	constructor(
 		iso8601DateString = '',
-		locale = DEFAULT_VALID_LOCALE
+		locale = DEFAULT_VALID_LOCALE,
+		timezone = DEFAULT_TIMEZONE_STRING,
 	) {
-		if ( HAS_TIMEZONE_STRING ) {
-			super( iso8601DateString, DEFAULT_TIMEZONE_STRING, locale );
+		// we only want to use the timezone value if the server indicates there
+		// is a a timezone string or if constructing an instance for a non UTC
+		// value timezone (HAS_TIMEZONE_STRING is just a shortcut check).
+		if (
+			HAS_TIMEZONE_STRING ||
+			( !! timezone && timezone !== 'UTC' )
+		) {
+			super( iso8601DateString, timezone, locale );
 		} else {
-			const datetime = isEmpty( iso8601DateString ) ?
+			const datetime = !! iso8601DateString ?
 				moment().utcOffset( DEFAULT_OFFSET, true ).locale( locale ) :
 				moment( iso8601DateString )
 					.utcOffset( DEFAULT_OFFSET, true )
@@ -60,13 +67,13 @@ export default class ServerDateTime extends DateTime {
 	 */
 	static fromISO( ISOString, locale = DEFAULT_VALID_LOCALE ) {
 		return HAS_TIMEZONE_STRING ?
-			new ServerDateTime(
+			new this(
 				super
 					.fromISO( ISOString, DEFAULT_TIMEZONE_STRING )
 					.toISO(),
 				locale
 			) :
-			new ServerDateTime(
+			new this(
 				super
 					.fromISOWithOffset( ISOString, DEFAULT_OFFSET )
 					.toISO(),
@@ -86,13 +93,13 @@ export default class ServerDateTime extends DateTime {
 	 */
 	static fromJSDate( date, locale = DEFAULT_VALID_LOCALE ) {
 		return HAS_TIMEZONE_STRING ?
-			new ServerDateTime(
+			new this(
 				super
 					.fromJSDate( date, DEFAULT_TIMEZONE_STRING )
 					.toISO(),
 				locale
 			) :
-			new ServerDateTime(
+			new this(
 				super
 					.fromJSDateWithOffset( date, DEFAULT_OFFSET )
 					.toISO(),

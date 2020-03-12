@@ -3,6 +3,7 @@
  */
 import { EventSchema } from '@test/fixtures';
 import { DEFAULT_SCHEMA_STATE } from '@eventespresso/model';
+import { Map, fromJS } from 'immutable';
 
 /**
  * Internal dependencies
@@ -11,9 +12,9 @@ import {
 	receiveSchema,
 	receiveFactory,
 	receiveRelationEndpointForEntity,
+	receiveRelationSchema,
 } from '../reducers';
 import { eventFactory } from '../../test/fixtures/base';
-import { fromJS } from 'immutable';
 import { ACTION_TYPES as types } from '../action-types';
 
 const expectedDefaultState = {
@@ -26,6 +27,7 @@ const expectedDefaultState = {
 	relationEndpoints: fromJS(
 		{ datetime: {}, event: {}, term: {}, ticket: {}, venue: {} }
 	),
+	relationSchema: Map(),
 };
 
 describe( 'receiveSchema()', () => {
@@ -149,7 +151,7 @@ describe( 'receiveSchema()', () => {
 						endpoint: 'event/10/datetimes',
 					},
 					originalState.setIn(
-						[ 'event', 10, 'datetimes' ],
+						[ 'event', 10, 'datetime' ],
 						'event/10/datetimes'
 					),
 					false,
@@ -162,7 +164,7 @@ describe( 'receiveSchema()', () => {
 						endpoint: 'event/10/datetimes',
 					},
 					originalState.setIn(
-						[ 'event', 10, 'datetimes' ],
+						[ 'event', 10, 'datetime' ],
 						'event/10/datetimes'
 					),
 					true,
@@ -173,6 +175,52 @@ describe( 'receiveSchema()', () => {
 				originalState,
 				types.RECEIVE_RELATION_ENDPOINT_FOR_MODEL_ENTITY,
 				receiveRelationEndpointForEntity
+			);
+		} );
+	} );
+	describe( types.RECEIVE_RELATION_SCHEMA + ' action handling', () => {
+		describe( 'returns correct state for multiple consecutive ' +
+			'queries', () => {
+			const originalState = expectedDefaultState.relationSchema;
+			const testConditions = [
+				[
+					'event',
+					{
+						relationName: 'datetimes',
+						relationSchema: { foo: 'bar' },
+					},
+					originalState
+						.setIn( [ 'event', 'datetime' ], { foo: 'bar' } ),
+					false,
+				],
+				[
+					'datetime',
+					{
+						relationName: 'events',
+						relationSchema: { foo: 'bar' },
+					},
+					originalState
+						.setIn( [ 'event', 'datetime' ], { foo: 'bar' } )
+						.setIn( [ 'datetime', 'event' ], { foo: 'bar' } ),
+					false,
+				],
+				[
+					'datetime',
+					{
+						relationName: 'event',
+						relationSchema: { foo: 'bar' },
+					},
+					originalState
+						.setIn( [ 'event', 'datetime' ], { foo: 'bar' } )
+						.setIn( [ 'datetime', 'event' ], { foo: 'bar' } ),
+					true,
+				],
+			];
+			testRunner(
+				testConditions,
+				originalState,
+				types.RECEIVE_RELATION_SCHEMA,
+				receiveRelationSchema
 			);
 		} );
 	} );

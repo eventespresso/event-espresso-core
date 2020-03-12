@@ -3,6 +3,7 @@
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
 use EventEspresso\core\services\loaders\LoaderFactory;
+use EventEspresso\core\services\loaders\LoaderInterface;
 use EventEspresso\core\services\request\middleware\RecommendedVersions;
 
 /**
@@ -84,6 +85,10 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page
      */
     protected $_cpt_model_obj = false;
 
+    /**
+     * @var LoaderInterface $loader ;
+     */
+    protected $loader;
 
     /**
      * This will hold an array of autosave containers that will be used to obtain input values and hook into the WP
@@ -150,6 +155,20 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page
      */
     abstract public function delete_cpt_item($post_id);
 
+
+    /**
+     * @return LoaderInterface
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     */
+    protected function getLoader()
+    {
+        if (! $this->loader instanceof LoaderInterface) {
+            $this->loader = LoaderFactory::getLoader();
+        }
+        return $this->loader;
+    }
 
     /**
      * Just utilizing the method EE_Admin exposes for doing things before page setup.
@@ -248,7 +267,7 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page
         foreach ($current_metaboxes as $box_context) {
             foreach ($box_context as $box_details) {
                 foreach ($box_details as $box) {
-                    if (is_array($box['callback'])
+                    if (is_array($box) && is_array($box['callback'])
                         && (
                             $box['callback'][0] instanceof EE_Admin_Page
                             || $box['callback'][0] instanceof EE_Admin_Hooks
@@ -397,8 +416,8 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page
         // This is for any plugins that are doing things properly
         // and hooking into the load page hook for core wp cpt routes.
         global $pagenow;
+        add_action('load-' . $pagenow, array($this, 'modify_current_screen'), 20);
         do_action('load-' . $pagenow);
-        $this->modify_current_screen();
         add_action('admin_enqueue_scripts', array($this, 'setup_autosave_hooks'), 30);
         // we route REALLY early.
         try {
@@ -453,7 +472,7 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page
     private function _supports_page_templates($cpt_name)
     {
         /** @var EventEspresso\core\domain\entities\custom_post_types\CustomPostTypeDefinitions $custom_post_types */
-        $custom_post_types = LoaderFactory::getLoader()->getShared(
+        $custom_post_types = $this->getLoader()->getShared(
             'EventEspresso\core\domain\entities\custom_post_types\CustomPostTypeDefinitions'
         );
         $cpt_args = $custom_post_types->getDefinitions();
@@ -716,7 +735,7 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page
         if ($ignore_route_check) {
             $post_type = get_post_type($id);
             /** @var EventEspresso\core\domain\entities\custom_post_types\CustomPostTypeDefinitions $custom_post_types */
-            $custom_post_types = LoaderFactory::getLoader()->getShared(
+            $custom_post_types = $this->getLoader()->getShared(
                 'EventEspresso\core\domain\entities\custom_post_types\CustomPostTypeDefinitions'
             );
             $model_names = $custom_post_types->getCustomPostTypeModelNames($post_type);

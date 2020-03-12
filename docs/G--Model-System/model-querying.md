@@ -123,7 +123,7 @@ EEM_Base::get_all($query_params = array())
 Basic method for retrieving model objects from a model.
 #### Parameters
 ##### $query_params
-`array` Documented in [Model Query Params Documentation](model-query-params.md]).
+`array` Documented in [Model Query Params Documentation](model-query-params.md).
 
 ##### Returns
 `EE_Base_Class[]` Array of [model objects](using-ee4-model-objects.md) of the corresponding type. Eg `EEM_Event::get_all()` will return an array of `EE_Event` objects `EEM_Venue::get_all()` will return an array of `EE_Venue` objects, `EEM_Question::get_all()` will return an array of `EE_Question` objects, etc.
@@ -189,7 +189,7 @@ Similar to `get_all()`, except it returns an array exactly like `$wpdb->get_resu
 This is useful in cases where speed is a top priority, as this skips a processing step.
 #### Parameters
 ##### $query_params
-`array` Documented in [Model Query Params Documentation](model-query-params.md]).
+`array` Documented in [Model Query Params Documentation](model-query-params.md).
 
 ##### $output
 One of four pre-defined constants. Please [read the WPDB documentation on $output_type](https://codex.wordpress.org/Class_Reference/wpdb#SELECT_Generic_Results).
@@ -238,7 +238,7 @@ This is exactly like get_all, but only returns the first model object found inst
 
 #### Parameters
 ##### $query_params
-`array` Documented in [Model Query Params Documentation](model-query-params.md]). Only slight modification: the key "limit" is overridden to always return exactly one item.
+`array` Documented in [Model Query Params Documentation](model-query-params.md). Only slight modification: the key "limit" is overridden to always return exactly one item.
 
 #### Returns
 `EE_Base_Class | null` [Model objects](using-ee4-model-objects.md) of the corresponding type
@@ -258,6 +258,7 @@ EEM_Base::get_one_by_ID($id)
 This is exactly like using EEM_Event::instance()->get_one( array( array( 'EVT_ID' => 234 ), 'default_where_conditions' => 'other_models_only' ) );  Eg.
 Because you have the ID of the item you're looking for, default where conditions are not used on the model being queried. This means the item could be trashed and it will be returned just fine.
 
+Note: not all models have a primary key field. Please [read about model primary keys](models-primary-keys.md).
 ##### $id
 int|string The ID of the model object you want to retrieve.
 
@@ -281,7 +282,7 @@ When this is passed a model object it gets all model objects which appear to be 
 array|EE_Base_Class $model_object_or_attributes_array If its an array, it's field-value pairs
 
 ##### $query_params
-`array` Documented in [Model Query Params Documentation](model-query-params.md]).
+`array` Documented in [Model Query Params Documentation](model-query-params.md).
 
 #### Returns
 `EE_Base_Class[]` Array of [model objects](using-ee4-model-objects.md) of the corresponding type. Eg `EEM_Event::get_all()` will return an array of `EE_Event` objects `EEM_Venue::get_all()` will return an array of `EE_Venue` objects, `EEM_Question::get_all()` will return an array of `EE_Question` objects, etc.
@@ -325,6 +326,52 @@ if( ! $conflicting_events ){
 
 (see the [model objects docs](using-ee4-model-objects.md) for info on EE_Event::new_instance(...) and the save() method)
 
+### get_col()
+
+```php
+EEM_Base::get_col($query_params = array(), $field_to_select = null)
+```
+
+Wrapper for `$wpdb->get_col()` which returns a flat array of values from the model's `$field_to_select` field,
+using the provided model query parameters.
+
+#### Parameters
+##### $query_params
+`array` Documented in [Model Query Params Documentation](model-query-params.md).
+
+##### $field_to_select
+`string | null` the name of the model field (not necessarily the same as its corresponding database column). Defaults to the field's primary key.
+
+#### Returns
+`array` A flat array of values for the requested field from the matching database rows.
+
+#### Examples
+
+```php
+$ids_of_datetimes_for_event_123 = EEM_Datetime::instance()->get_col(
+    [
+        [
+            'EVT_ID' => 123
+        ]
+    ]
+);
+```
+
+```php
+$countries_of_event_attendees = EEM_Attendee::instance()->get_col(
+    [
+        [
+            'Registration.EVT_ID' => 123
+        ],
+        'group_by' => 'CNT_ISO'
+    ],
+    'CNT_ISO'
+);
+```
+
+
+(see the [model objects docs](using-ee4-model-objects.md) for info on EE_Event::new_instance(...) and the save() method)
+
 ### count()
 
 ```php
@@ -334,7 +381,7 @@ This is passed the exact same query_params array as get_all, but only returns a 
 
 #### Parameters
 ##### $query_params
-`array` Documented in [Model Query Params Documentation](model-query-params.md]).
+`array` Documented in [Model Query Params Documentation](model-query-params.md).
 
 ##### $field_to_count
 `string` field on model to count by (not column name)
@@ -365,7 +412,7 @@ This method is like count, but simply returns a boolean indicating whether anyth
 
 #### Parameters
 ##### $query_params
-`array` Documented in [Model Query Params Documentation](model-query-params.md]).
+`array` Documented in [Model Query Params Documentation](model-query-params.md).
 
 #### Returns
 `boolean` Whether or not any model object exists matching the query parameters.
@@ -390,7 +437,7 @@ When this is passed a field name and query_params array it returns the sum of al
 
 #### Parameters
 ##### $query_params
-`array` Documented in [Model Query Params Documentation](model-query-params.md]).
+`array` Documented in [Model Query Params Documentation](model-query-params.md).
 
 ##### $field_to_sum
 `string` Name of the field to sum.
@@ -468,7 +515,7 @@ Updates existing data, Usually it would be better to [retrieve a model object an
 `array` Keys are field names, values are their desired values (put in the format returned by model objects).
 
 ##### $query_params
-`array` Documented in [Model Query Params Documentation](model-query-params.md]).
+`array` Documented in [Model Query Params Documentation](model-query-params.md).
 
 #### Returns
 `int` How many database rows were affected.
@@ -496,7 +543,7 @@ EEM_Base::delete($query_params, $allow_blocking = true)
 
 #### Parameters
 ##### $query_params
-`array` Documented in [Model Query Params Documentation](model-query-params.md]).
+`array` Documented in [Model Query Params Documentation](model-query-params.md).
 
 ##### $allow_blocking
 `boolean` Only applies to soft-deletion/trashing. If set to true, model objects will not be deleted if there is another model object with a foreign key to the
@@ -533,7 +580,7 @@ For non-soft-deletable model objects, this is the same as `delete()`.
 
 #### Parameters
 ##### $query_params
-`array` Documented in [Model Query Params Documentation](model-query-params.md]).
+`array` Documented in [Model Query Params Documentation](model-query-params.md).
 
 ##### $allow_blocking
 `boolean` If set to true, model objects will not be deleted if there is another model object with a foreign key to the
@@ -679,4 +726,4 @@ $payments = EEM_Payment::instance()->get_all(
 	
 
 
-Please read [the documentation specifically about dates and times in Event Espresso](https://github.com/eventespresso/event-espresso-core/blob/master/docs/F--Datetime-System/dates-times-timezones-in-models.md) for related information on dealing with datetime fields on model objects, and see ]our developer blog post](http://developer.eventespresso.com/important-changes-to-ee-datetime-system-coming-to-ee/) about helper functions for working with datetimes.
+Please read [the documentation specifically about dates and times in Event Espresso](https://github.com/eventespresso/event-espresso-core/blob/master/docs/F--Datetime-System/dates-times-timezones-in-models.md) for related information on dealing with datetime fields on model objects, and see [our developer blog post](http://developer.eventespresso.com/important-changes-to-ee-datetime-system-coming-to-ee/) about helper functions for working with datetimes.

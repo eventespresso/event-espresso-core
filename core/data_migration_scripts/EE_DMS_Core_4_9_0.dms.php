@@ -1,4 +1,7 @@
 <?php
+
+use EventEspresso\core\exceptions\InvalidDataTypeException;
+use EventEspresso\core\exceptions\InvalidInterfaceException;
 use EventEspresso\core\services\database\TableAnalysis;
 use EventEspresso\core\services\database\TableManager;
 
@@ -61,7 +64,7 @@ class EE_DMS_Core_4_9_0 extends EE_Data_Migration_Script_Base
     public function can_migrate_from_version($version_array)
     {
         $version_string = $version_array['Core'];
-        if (version_compare($version_string, '4.9.0', '<=') && version_compare($version_string, '4.8.0', '>=')) {
+        if (version_compare($version_string, '4.9.0.decaf', '<') && version_compare($version_string, '4.8.0.decaf', '>=')) {
             //          echo "$version_string can be migrated from";
             return true;
         } elseif (! $version_string) {
@@ -404,7 +407,7 @@ class EE_DMS_Core_4_9_0 extends EE_Data_Migration_Script_Base
 				QST_system varchar(25) DEFAULT NULL,
 				QST_type varchar(25) NOT NULL DEFAULT "TEXT",
 				QST_required tinyint(1) unsigned NOT NULL DEFAULT 0,
-				QST_required_text varchar(100) NULL,
+				QST_required_text text NULL,
 				QST_order tinyint(2) unsigned NOT NULL DEFAULT 0,
 				QST_admin_only tinyint(1) NOT NULL DEFAULT 0,
 				QST_max smallint(5) NOT NULL DEFAULT -1,
@@ -412,7 +415,7 @@ class EE_DMS_Core_4_9_0 extends EE_Data_Migration_Script_Base
 				QST_deleted tinyint(2) unsigned NOT NULL DEFAULT 0,
 				PRIMARY KEY  (QST_ID),
 				KEY QST_order (QST_order)';
-        $this->_table_has_not_changed_since_previous($table_name, $sql, 'ENGINE=InnoDB');
+        $this->_table_is_changed_in_this_version($table_name, $sql, 'ENGINE=InnoDB');
         $table_name = 'esp_question_group_question';
         $sql = "QGQ_ID int(10) unsigned NOT NULL AUTO_INCREMENT,
 				QSG_ID int(10) unsigned NOT NULL,
@@ -591,6 +594,21 @@ class EE_DMS_Core_4_9_0 extends EE_Data_Migration_Script_Base
 				UNIQUE KEY QSG_identifier_UNIQUE (QSG_identifier),
 				KEY QSG_order (QSG_order)';
         $this->_table_has_not_changed_since_previous($table_name, $sql, 'ENGINE=InnoDB');
+        $this->insert_default_data();
+        return true;
+    }
+
+    /**
+     * Inserts default data after parent was called.
+     * @since 4.10.0.p
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws ReflectionException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     */
+    public function insert_default_data()
+    {
         /** @var EE_DMS_Core_4_1_0 $script_4_1_defaults */
         $script_4_1_defaults = EE_Registry::instance()->load_dms('Core_4_1_0');
         // (because many need to convert old string states to foreign keys into the states table)
@@ -611,7 +629,6 @@ class EE_DMS_Core_4_9_0 extends EE_Data_Migration_Script_Base
         $script_4_8_defaults->verify_new_currencies();
         $this->verify_db_collations();
         $this->verify_db_collations_again();
-        return true;
     }
 
 

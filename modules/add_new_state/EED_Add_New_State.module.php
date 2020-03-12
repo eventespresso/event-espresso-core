@@ -159,14 +159,14 @@ class EED_Add_New_State extends EED_Module
      */
     public static function set_definitions()
     {
-        define('ANS_ASSETS_URL', plugin_dir_url(__FILE__) . 'assets' . DS);
+        define('ANS_ASSETS_URL', plugin_dir_url(__FILE__) . 'assets/');
         define(
             'ANS_TEMPLATES_PATH',
             str_replace(
                 '\\',
-                DS,
+                '/',
                 plugin_dir_path(__FILE__)
-            ) . 'templates' . DS
+            ) . 'templates/'
         );
     }
 
@@ -392,7 +392,7 @@ class EED_Add_New_State extends EED_Module
                                     'New State/Province Abbreviation',
                                     'event_espresso'
                                 ) . ' *',
-                                'html_other_attributes' => 'size="24"',
+                                'other_html_attributes' => 'size="24"',
                                 'default'               => EE_Registry::instance()->REQ->get($abbrv_name, ''),
                                 'required'              => false,
                             )
@@ -409,7 +409,7 @@ class EED_Add_New_State extends EED_Module
                                     'submit-' . $new_state_submit_id,
                                     'ee-form-add-new-state-submit button button-secondary',
                                     '',
-                                    'data-target="' . $new_state_submit_id . '"'
+                                    'data-target="' . $new_state_submit_id . '" data-value-field-name="' . $input->valueFieldName(). '"'
                                 )
                             )
                         ),

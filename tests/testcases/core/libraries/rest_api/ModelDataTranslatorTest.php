@@ -271,10 +271,15 @@ class ModelDataTranslatorTest extends EE_REST_TestCase
     public function dataProviderForTestPrepareFieldValueFromJsonOk()
     {
         $serialized_field = new EE_Maybe_Serialized_Simple_HTML_Field('whatever', 'Whatever', true);
+        $bool_field = new EE_Boolean_Field('whatever2', 'whatever2', true);
         return array(
-            array('1', '1', $serialized_field),
-            array('stringy', 'stringy', $serialized_field),
-            array(array('foo' => 'bar'), array('foo' => 'bar'), $serialized_field),
+            ['1', '1', $serialized_field],
+            ['stringy', 'stringy', $serialized_field],
+            [['foo' => 'bar'], ['foo' => 'bar'], $serialized_field],
+            [false, 'false', $bool_field],
+            [false, 0, $bool_field],
+            [true, 'true', $bool_field],
+            [true, 1, $bool_field],
         );
     }
 

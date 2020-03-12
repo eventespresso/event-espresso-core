@@ -220,10 +220,10 @@ class EEH_File extends EEH_Base implements EEHI_File
         if (empty($folder)) {
             return false;
         }
-        // remove ending DS
+        // remove ending /
         $folder = EEH_File::standardise_directory_separators(rtrim($folder, '/\\'));
         $parent_folder = EEH_File::get_parent_folder($folder);
-        // add DS to folder
+        // add / to folder
         $folder = EEH_File::end_with_directory_separator($folder);
         $wp_filesystem = EEH_File::_get_wp_filesystem($folder);
         if (! $wp_filesystem->is_dir(EEH_File::convert_local_filepath_to_remote_filepath($folder))) {
@@ -318,11 +318,11 @@ class EEH_File extends EEH_Base implements EEHI_File
      */
     public static function get_parent_folder($file_or_folder_path)
     {
-        // find the last DS, ignoring a DS on the very end
+        // find the last /, ignoring a / on the very end
         // eg if given "/var/something/somewhere/", we want to get "somewhere"'s
         // parent folder, "/var/something/"
         $ds = strlen($file_or_folder_path) > 1
-            ? strrpos($file_or_folder_path, DS, -2)
+            ? strrpos($file_or_folder_path, '/', -2)
             : strlen($file_or_folder_path);
         return substr($file_or_folder_path, 0, $ds + 1);
     }
@@ -533,26 +533,26 @@ class EEH_File extends EEH_Base implements EEHI_File
 
     /**
      * standardise_directory_separators
-     *  convert all directory separators in a file path to whatever is set for DS
+     *  convert all directory separators in a file path.
      * @param string $file_path
      * @return string
      */
     public static function standardise_directory_separators($file_path)
     {
-        return str_replace(array( '\\', '/' ), DS, $file_path);
+        return str_replace(array( '\\', '/' ), '/', $file_path);
     }
 
 
 
     /**
      * end_with_directory_separator
-     *  ensures that file path ends with DS
+     *  ensures that file path ends with '/'
      * @param string $file_path
      * @return string
      */
     public static function end_with_directory_separator($file_path)
     {
-        return rtrim($file_path, '/\\') . DS;
+        return rtrim($file_path, '/\\') . '/';
     }
 
 
@@ -630,6 +630,7 @@ class EEH_File extends EEH_Base implements EEHI_File
 
         $full_dest_path = EEH_File::standardise_directory_separators($destination_file);
         $folder = EEH_File::remove_filename_from_filepath($full_dest_path);
+        EEH_File::ensure_folder_exists_and_is_writable($folder);
         if (! EEH_File::verify_is_writable($folder, 'folder')) {
             if (defined('WP_DEBUG') && WP_DEBUG) {
                 $msg = sprintf(__('The file located at "%2$s" is not writable.', 'event_espresso'), $full_dest_path);
@@ -683,6 +684,6 @@ class EEH_File extends EEH_Base implements EEHI_File
     public static function convert_local_filepath_to_remote_filepath($local_filepath)
     {
         $wp_filesystem = EEH_File::_get_wp_filesystem($local_filepath);
-        return str_replace(WP_CONTENT_DIR . DS, $wp_filesystem->wp_content_dir(), $local_filepath);
+        return str_replace(WP_CONTENT_DIR . '/', $wp_filesystem->wp_content_dir(), $local_filepath);
     }
 }

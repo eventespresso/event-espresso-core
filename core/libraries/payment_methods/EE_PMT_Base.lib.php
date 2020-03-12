@@ -138,7 +138,7 @@ abstract class EE_PMT_Base
         }
         // if the child didn't specify a default button, use the credit card one
         if ($this->_default_button_url === null) {
-            $this->_default_button_url = EE_PLUGIN_DIR_URL . 'payment_methods' . DS . 'pay-by-credit-card.png';
+            $this->_default_button_url = EE_PLUGIN_DIR_URL . 'payment_methods/pay-by-credit-card.png';
         }
     }
 
@@ -159,7 +159,7 @@ abstract class EE_PMT_Base
     {
         $reflector = new ReflectionClass(get_class($this));
         $fn = $reflector->getFileName();
-        $this->_file_folder = dirname($fn) . DS;
+        $this->_file_folder = dirname($fn) . '/';
     }
 
 
@@ -168,10 +168,10 @@ abstract class EE_PMT_Base
      */
     protected function _set_file_url()
     {
-        $plugins_dir_fixed = str_replace('\\', DS, WP_PLUGIN_DIR);
-        $file_folder_fixed = str_replace('\\', DS, $this->file_folder());
+        $plugins_dir_fixed = str_replace('\\', '/', WP_PLUGIN_DIR);
+        $file_folder_fixed = str_replace('\\', '/', $this->file_folder());
         $file_path = str_replace($plugins_dir_fixed, WP_PLUGIN_URL, $file_folder_fixed);
-        $this->_file_url = $file_path;
+        $this->_file_url = set_url_scheme($file_path);
     }
 
     /**
@@ -682,7 +682,7 @@ abstract class EE_PMT_Base
     public function payment_overview_content(EE_Payment $payment)
     {
         return EEH_Template::display_template(
-            EE_LIBRARIES . 'payment_methods' . DS . 'templates' . DS . 'payment_details_content.template.php',
+            EE_LIBRARIES . 'payment_methods/templates/payment_details_content.template.php',
             array('payment_method' => $this->_pm_instance, 'payment' => $payment),
             true
         );
@@ -825,7 +825,7 @@ abstract class EE_PMT_Base
     public function introductory_html()
     {
         return EEH_Template::locate_template(
-            $this->file_folder() . 'templates' . DS . strtolower($this->system_name()) . '_intro.template.php',
+            $this->file_folder() . 'templates/' . strtolower($this->system_name()) . '_intro.template.php',
             array('pmt_obj' => $this, 'pm_instance' => $this->_pm_instance)
         );
     }

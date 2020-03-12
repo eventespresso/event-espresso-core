@@ -3,6 +3,7 @@
 namespace EventEspresso\core\libraries\rest_api;
 
 use DomainException;
+use EE_Boolean_Field;
 use EE_Capabilities;
 use EE_Datetime_Field;
 use EE_Error;
@@ -183,6 +184,9 @@ class ModelDataTranslator
                     )
                 );
             }
+        } elseif ($field_obj instanceof EE_Boolean_Field) {
+            // Interpreted the strings "false", "true", "on", "off" appropriately.
+            $new_value = filter_var($original_value, FILTER_VALIDATE_BOOLEAN);
         } else {
             $new_value = $original_value;
         }

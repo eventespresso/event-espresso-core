@@ -2,7 +2,7 @@
  * espresso_invisible_recaptcha.js
  *
  * @license GNU General Public License v2.0
- * @version 0.1
+ * @version 0.2
  * @author  Event Espresso
  * @link    http://www.eventespresso.com
  *
@@ -24,6 +24,16 @@ function espressoLoadRecaptcha() {
         if (typeof eeRecaptcha === 'undefined'){
             return;
         }
+
+        // Display an error.
+        var display_error = function (msg) {
+            $('#espresso-ajax-notices').eeCenter('fixed');
+            var espresso_ajax_msg = $('#espresso-ajax-notices-error');
+            espresso_ajax_msg.children('.espresso-notices-msg').html(msg);
+            $('#espresso-ajax-loading').fadeOut('fast');
+            espresso_ajax_msg.removeClass('hidden').show().delay(12000).fadeOut();
+        };
+
         // convert truthy values to pure booleans
         eeRecaptcha.recaptcha_passed = eeRecaptcha.recaptcha_passed === 'true' || eeRecaptcha.recaptcha_passed === '1';
         eeRecaptcha.disable_submit = eeRecaptcha.disable_submit === 'true' || eeRecaptcha.disable_submit === '1';
@@ -58,6 +68,16 @@ function espressoLoadRecaptcha() {
                                 console.log(JSON.stringify('FORM SUBMIT CALLBACK', null, 4));
                                 console.log(JSON.stringify('eeRecaptcha.token: ' + token, null, 4));
                             }
+                            // Check if the token really exists. Show an error if not.
+                            if (typeof token !== 'string' || ! token.trim() || $('.g-recaptcha-response').length <= 0) {
+                                display_error(eeRecaptcha.failed_message);
+                                // Reset the recaptcha.
+                                grecaptcha.reset();
+                                $submit.removeData('g-recaptcha-id');
+                                // Re-enable the submit button.
+                                $submit.prop('disabled', false).removeClass('disabled ee-button-disabled');
+                                return;
+                            }
                             // $recaptcha_div.parent().find('.g-recaptcha-response').val(token);
                             $('.g-recaptcha-response').each(function() {
                                 $(this).val(token);
@@ -79,7 +99,8 @@ function espressoLoadRecaptcha() {
                             setTimeout(
                                 function() {
                                     $submit.click();
-                                    if (eeRecaptcha.disable_submit !== true) {
+
+                                    if ($submit.data('ee-disable-after-recaptcha') === true && eeRecaptcha.disable_submit !== true) {
                                         $submit.prop('disabled', true).addClass('disabled ee-button-disabled');
                                     }
                                 },

@@ -866,13 +866,13 @@ class EE_Error extends Exception
         // check for success messages
         if (self::$_espresso_notices['success'] && ! empty(self::$_espresso_notices['success'])) {
             // combine messages
-            $success_messages .= implode(self::$_espresso_notices['success'], '<br />');
+            $success_messages .= implode('<br />', self::$_espresso_notices['success']);
             $print_scripts = true;
         }
         // check for attention messages
         if (self::$_espresso_notices['attention'] && ! empty(self::$_espresso_notices['attention'])) {
             // combine messages
-            $attention_messages .= implode(self::$_espresso_notices['attention'], '<br />');
+            $attention_messages .= implode('<br />', self::$_espresso_notices['attention']);
             $print_scripts = true;
         }
         // check for error messages
@@ -881,7 +881,7 @@ class EE_Error extends Exception
                 ? __('The following errors have occurred:<br />', 'event_espresso')
                 : __('An error has occurred:<br />', 'event_espresso');
             // combine messages
-            $error_messages .= implode(self::$_espresso_notices['errors'], '<br />');
+            $error_messages .= implode('<br />', self::$_espresso_notices['errors']);
             $print_scripts = true;
         }
         if ($format_output) {

@@ -7,7 +7,7 @@ import { Money, SiteCurrency } from '@eventespresso/value-objects';
 /**
  * External Imports
  */
-import { Component } from 'react';
+import { Component } from '@wordpress/element';
 import renderer from 'react-test-renderer';
 
 jest.mock( '@eventespresso/eejs', () => ( {
@@ -35,6 +35,7 @@ describe( 'withMoney()', () => {
 	};
 
 	const getWrappedTestComponent = ( testProps, testMap = [] ) => {
+		// eslint-disable-next-line @wordpress/no-unused-vars-before-return
 		const Wrapped = getEnhancedComponent( testMap );
 		return <Wrapped { ...testProps } />;
 	};

@@ -138,7 +138,7 @@ function can_use_espresso_conditionals( $conditional_tag ) {
 		EE_Error::doing_it_wrong(
 			__FUNCTION__,
 			sprintf(
-				__( 'The "%s" conditional tag can not be used until after the "init" hook has run, but works best when used within a theme\'s template files.','event_espresso'),
+				esc_html__( 'The "%s" conditional tag can not be used until after the "init" hook has run, but works best when used within a theme\'s template files.','event_espresso'),
 				$conditional_tag
 			),
 			'4.4.0'
@@ -259,24 +259,32 @@ if ( ! function_exists( 'espresso_event_reg_button' )) {
 	 * @return string
 	 */
 	function espresso_event_reg_button( $btn_text_if_active = NULL, $btn_text_if_inactive = FALSE, $EVT_ID = FALSE ) {
-		$event_status = EEH_Event_View::event_active_status( $EVT_ID );
+		$event = EEH_Event_View::get_event( $EVT_ID );
+		if ( ! $event instanceof EE_Event ) {
+			return;
+		}
+		$event_status = $event->get_active_status();
 		switch ( $event_status ) {
 			case EE_Datetime::sold_out :
-				$btn_text = __('Sold Out', 'event_espresso');
+				$btn_text = esc_html__('Sold Out', 'event_espresso');
 				$class = 'ee-pink';
 				break;
 			case EE_Datetime::expired :
-				$btn_text = __('Event is Over', 'event_espresso');
+				$btn_text = esc_html__('Event is Over', 'event_espresso');
 				$class = 'ee-grey';
 				break;
 			case EE_Datetime::inactive :
-				$btn_text = __('Event Not Active', 'event_espresso');
+				$btn_text = esc_html__('Event Not Active', 'event_espresso');
 				$class = 'ee-grey';
+				break;
+			case EE_Datetime::cancelled :
+				$btn_text = esc_html__('Event was Cancelled', 'event_espresso');
+				$class = 'ee-red';
 				break;
 			case EE_Datetime::upcoming :
 			case EE_Datetime::active :
 			default :
-				$btn_text =! empty( $btn_text_if_active ) ? $btn_text_if_active : __( 'Register Now', 'event_espresso' );
+				$btn_text =! empty( $btn_text_if_active ) ? $btn_text_if_active : esc_html__( 'Register Now', 'event_espresso' );
 				$class = 'ee-green';
 		}
 		if ( $event_status < 1 && ! empty( $btn_text_if_inactive )) {
@@ -284,7 +292,7 @@ if ( ! function_exists( 'espresso_event_reg_button' )) {
 			$class = 'ee-grey';
 		}
 		?>
-		<a class="ee-button ee-register-button <?php echo $class; ?>" href="<?php espresso_event_link_url(); ?>"<?php echo \EED_Events_Archive::link_target(); ?>>
+		<a class="ee-button ee-register-button <?php echo $class; ?>" href="<?php espresso_event_link_url( $EVT_ID ); ?>"<?php echo \EED_Events_Archive::link_target(); ?>>
 			<?php echo $btn_text; ?>
 		</a>
 	<?php
@@ -482,7 +490,7 @@ if ( ! function_exists( 'espresso_list_of_event_dates' )) {
 			}
 			$html .= $format ? '</ul>' : '';
 		} else {
-			$html = $format ?  '<p><span class="dashicons dashicons-marker pink-text"></span>' . __( 'There are no upcoming dates for this event.', 'event_espresso' ) . '</p><br/>' : '';
+			$html = $format ?  '<p><span class="dashicons dashicons-marker pink-text"></span>' . esc_html__( 'There are no upcoming dates for this event.', 'event_espresso' ) . '</p><br/>' : '';
 		}
 		if ( $echo ) {
 			echo $html;
@@ -542,7 +550,8 @@ if ( ! function_exists( 'espresso_event_date_range' )) {
 			$time_format = ! empty( $time_format ) ? $time_format : get_option( 'time_format' );
 			$time_format = apply_filters( 'FHEE__espresso_event_date_range__time_format', $time_format );
 			$html = sprintf(
-				__( '%1$s - %2$s', 'event_espresso' ),
+				/* translators: 1: first event date, 2: last event date */
+				esc_html__( '%1$s - %2$s', 'event_espresso' ),
 				EEH_Event_View::the_earliest_event_date( $date_format, $time_format, $EVT_ID ),
 				EEH_Event_View::the_latest_event_date( $date_format, $time_format, $EVT_ID )
 			);

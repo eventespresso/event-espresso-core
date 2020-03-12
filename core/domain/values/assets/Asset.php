@@ -27,6 +27,11 @@ abstract class Asset
     const FILE_EXTENSION_DISTRIBUTION_JS = '.dist.js';
 
     /**
+     * Indicates the file extension for a build distribution dependencies json file.
+     */
+    const FILE_EXTENSION_DISTRIBUTION_DEPS = '.dist.deps.php';
+
+    /**
      * indicates a Cascading Style Sheet asset
      */
     const TYPE_CSS = 'css';
@@ -35,6 +40,15 @@ abstract class Asset
      * indicates a Javascript asset
      */
     const TYPE_JS = 'js';
+
+    /**
+     * indicates a JSON asset
+     */
+    CONST TYPE_JSON = 'json';
+    /**
+     * indicates a PHP asset
+     */
+    CONST TYPE_PHP = 'php';
 
     /**
      * indicates a Javascript manifest file

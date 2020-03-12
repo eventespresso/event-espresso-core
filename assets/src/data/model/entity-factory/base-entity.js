@@ -2,6 +2,7 @@
  * External imports
  */
 import { isArray, upperFirst, camelCase } from 'lodash';
+import memoize from 'memize';
 
 /**
  * Internal imports
@@ -52,8 +53,14 @@ class BaseEntity {
 		);
 		createGetter( this, 'modelName', modelName );
 		createGetter( this, 'originalFieldsAndValues', entityFieldsAndValues );
+		createGetter(
+			this,
+			'fieldsToPersistOnInsert',
+			new Set( Object.keys( entityFieldsAndValues ) )
+		);
 		createEntityGettersAndSetters( this );
 		createPersistingGettersAndSetters( this );
+		Object.seal( this );
 	}
 
 	/**
@@ -113,6 +120,30 @@ class BaseEntity {
 		return ( fieldName ) => this.protectedFields.indexOf( fieldName ) > -1;
 	}
 
+	/**
+	 * Used to clone the current entity object.  This results in an instance of
+	 * BaseEntity that is equivalent as this current instance (except it will
+	 * have a new generated id).
+	 *
+	 * @return {BaseEntity} A new instance of BaseEntity
+	 */
+	get clone() {
+		return ( keepId = false ) => {
+			const createFactory = memoize( () => createEntityFactory(
+				this.modelName,
+				{ $schema: {}, properties: this.schema },
+				this.fieldPrefixes
+			) );
+			const factory = createFactory();
+			const newEntity = factory.createNew( this.forClone );
+			if ( keepId ) {
+				newEntity.id = this.id;
+				setSaveState( newEntity, this.saveState, true );
+			}
+			return newEntity;
+		};
+	}
+
 	static name = 'BaseEntity'
 }
 
@@ -160,7 +191,7 @@ const createEntityFactory = ( modelName, schema, fieldPrefixes = [] ) => {
 		 * is for from any given factory.
 		 * @type string
 		 */
-		modelName: modelName,
+		modelName,
 		/**
 		 * This is the class definition for the Entity.  Typically this is
 		 * retrieved for the ability to do instanceof checks.

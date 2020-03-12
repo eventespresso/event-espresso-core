@@ -30,12 +30,12 @@ class EE_Payment_Processor_With_Messages_Test extends EE_Payment_Processor_Test{
 		$this->_pretend_addon_hook_time();
 		EE_Register_Payment_Method::register('onsite', array(
 			'payment_method_paths'=>array(
-				EE_TESTS_DIR . 'mocks' . DS . 'payment_methods' . DS . 'Mock_Onsite'
+				EE_TESTS_DIR . 'mocks/payment_methods/Mock_Onsite'
 			)
 		));
 		EE_Register_Payment_Method::register('offsite',array(
 			'payment_method_paths' => array(
-				EE_TESTS_DIR . 'mocks' . DS . 'payment_methods' . DS . 'Mock_Offsite'
+				EE_TESTS_DIR . 'mocks/payment_methods/Mock_Offsite'
 			)
 		));
 		EE_Payment_Method_Manager::instance()->reset();

@@ -45,6 +45,13 @@ class RequestMock extends Request
     public $server;
 
     /**
+     * $_FILES parameters
+     *
+     * @var array $files
+     */
+    private $files;
+
+    /**
      * $_REQUEST parameters
      *
      * @var array $request
@@ -76,12 +83,19 @@ class RequestMock extends Request
     public $is_bot;
 
 
-    public function __construct(array $get, array $post, array $cookie, array $server, $ip_address = '0.0.0.0')
-    {
+    public function __construct(
+        array $get,
+        array $post,
+        array $cookie,
+        array $server,
+        array $files = array(),
+        $ip_address = '0.0.0.0'
+    ) {
         $this->get = $get;
         $this->post = $post;
         $this->cookie = $cookie;
         $this->server = $server;
+        $this->files = $files;
         $this->request = array_merge($this->get, $this->post);
         $this->ip_address = $this->visitorIp($ip_address);
         parent::__construct($get, $post, $cookie, $server);
@@ -182,6 +196,7 @@ class RequestMock extends Request
 
 
     /**
+     * @param string $visitor_ip
      * @return string
      */
     public function visitorIp($visitor_ip = '0.0.0.0')
@@ -191,9 +206,10 @@ class RequestMock extends Request
 
 
     /**
+     * @param bool $relativeToWpRoot
      * @return string
      */
-    public function requestUri()
+    public function requestUri($relativeToWpRoot = false)
     {
         return isset($this->server['REQUEST_URI']) ? $this->server['REQUEST_URI'] : '';
     }

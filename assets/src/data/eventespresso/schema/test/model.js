@@ -2,9 +2,8 @@
  * External imports
  */
 import { EventSchema, DateTimeSchema } from '@test/fixtures';
-import { select } from '@wordpress/data';
+import { registerStore, select } from '@wordpress/data';
 import { isUndefined } from 'lodash';
-import { isGenerator } from '@eventespresso/validators';
 
 /**
  * Internal imports
@@ -14,19 +13,18 @@ import { createEntitySelectors, createEntityResolvers } from '../model';
 import { mockStateForTests } from './fixtures';
 import * as selectors from '../selectors';
 import * as resolvers from '../resolvers';
+import { resolveSelect } from '../../base-controls';
+import { REDUCER_KEY as SCHEMA_REDUCER_KEY } from '../constants';
 
 jest.mock( '../../../model', () => ( {
 	...require.requireActual( '../../../model' ),
 	MODEL_NAMES: [ 'event', 'datetime' ],
 } ) );
 
-jest.mock( '@wordpress/data', () => ( {
-	...require.requireActual( '@wordpress/data' ),
-	select: jest.fn().mockReturnValue( {} ),
-} ) );
-
 describe( 'createEntitySelectors', () => {
 	beforeAll( () => {
+		// we don't need original store here.
+		registerStore( 'core/data', { selectors: {}, reducer: () => {} } );
 		select( 'core/data' ).isResolving = jest.fn().mockReturnValue( false );
 	} );
 	afterAll( () => {
@@ -95,7 +93,7 @@ describe( 'createEntityResolvers()', () => {
 		],
 		[
 			'getEventFactory',
-			'generator',
+			[ SCHEMA_REDUCER_KEY, 'getSchemaForModel', 'event' ],
 		],
 		[
 			'getDatetimeSchema',
@@ -103,7 +101,7 @@ describe( 'createEntityResolvers()', () => {
 		],
 		[
 			'getDatetimeFactory',
-			'generator',
+			[ SCHEMA_REDUCER_KEY, 'getSchemaForModel', 'datetime' ],
 		],
 	];
 	describe( 'creates expected resolvers for given modelNames', () => {
@@ -123,10 +121,10 @@ describe( 'createEntityResolvers()', () => {
 						expect( initialResponse.request ).toEqual(
 							expectedResponse
 						);
-					} else if ( expectedResponse === 'generator' ) {
-						expect( isGenerator( initialResponse ) ).toBe( true );
 					} else {
-						expect( initialResponse ).toEqual( expectedResponse );
+						expect( initialResponse ).toEqual(
+							resolveSelect( ...expectedResponse )
+						);
 					}
 				} );
 			} );

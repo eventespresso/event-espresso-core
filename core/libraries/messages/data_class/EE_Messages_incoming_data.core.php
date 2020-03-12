@@ -443,7 +443,8 @@ abstract class EE_Messages_incoming_data
 
                     // make sure the tickets have the line items setup for them.
                     foreach ($ticket_line_items_for_event as $line_id => $line_item) {
-                        if ($line_item instanceof EE_Line_Item) {
+                        // only add the ticket line items if we already have this ticket in the $tickets array.
+                        if ($line_item instanceof EE_Line_Item && isset($tickets[ $line_item->ticket()->ID() ])) {
                             $tickets[ $line_item->ticket()->ID() ]['line_item']      = $line_item;
                             $tickets[ $line_item->ticket()->ID() ]['sub_line_items'] = $line_item->children();
                             $line_items[ $line_item->ID() ]['children']              = $line_item->children();

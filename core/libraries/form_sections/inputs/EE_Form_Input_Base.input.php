@@ -33,13 +33,6 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable
     protected $_html_label_class;
 
     /**
-     * any additional html attributes that you may want to add
-     *
-     * @var string
-     */
-    protected $_html_other_attributes;
-
-    /**
      * style for teh html label tag
      *
      * @var string
@@ -526,7 +519,19 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable
      */
     public function html_other_attributes()
     {
-        return ! empty($this->_html_other_attributes) ? ' ' . $this->_html_other_attributes : '';
+        EE_Error::doing_it_wrong(
+            __METHOD__,
+            sprintf(
+                esc_html__(
+                    'This method is no longer in use. You should replace it by %s',
+                    'event_espresso'
+                ),
+                'EE_Form_Section_Base::other_html_attributes()'
+            ),
+            '4.10.2.p'
+        );
+
+        return $this->other_html_attributes();
     }
 
 
@@ -536,7 +541,19 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable
      */
     public function set_html_other_attributes($html_other_attributes)
     {
-        $this->_html_other_attributes = $html_other_attributes;
+        EE_Error::doing_it_wrong(
+            __METHOD__,
+            sprintf(
+                esc_html__(
+                    'This method is no longer in use. You should replace it by %s',
+                    'event_espresso'
+                ),
+                'EE_Form_Section_Base::set_other_html_attributes()'
+            ),
+            '4.10.2.p'
+        );
+
+        $this->set_other_html_attributes($html_other_attributes);
     }
 
 
@@ -616,7 +633,7 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable
      * @param string $value
      * @return null|string
      */
-    private function _sanitize($value)
+    protected function _sanitize($value)
     {
         return $value !== null ? stripslashes(html_entity_decode(trim($value))) : null;
     }

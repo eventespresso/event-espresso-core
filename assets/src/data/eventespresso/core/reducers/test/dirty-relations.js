@@ -2,6 +2,7 @@
  * External imports
  */
 import { Map, fromJS, Set } from 'immutable';
+import { DEFAULT_CORE_STATE } from '@eventespresso/model';
 import cuid from 'cuid';
 
 /**
@@ -11,11 +12,12 @@ import {
 	replaceOldRelationIdWithNewRelationId,
 	removeRelatedEntitiesForEntity,
 	dirtyRelations,
+	default as reducer,
 } from '../dirty-relations';
 import { mockStateForTests } from '../../test/fixtures';
 import { ACTION_TYPES } from '../../actions/action-types';
 
-const { relations: types } = ACTION_TYPES;
+const { relations: types, resets: resetTypes } = ACTION_TYPES;
 
 let originalState;
 
@@ -26,7 +28,7 @@ describe( 'dirty relations tests', () => {
 				subState.set(
 					'index',
 					Map().setIn(
-						[ 'datetimes', 20 ],
+						[ 'datetime', 20 ],
 						fromJS( {
 							event: { delete: Set( [ 10 ] ) },
 							ticket: {
@@ -42,7 +44,7 @@ describe( 'dirty relations tests', () => {
 						'event',
 						Map().set(
 							10,
-							fromJS( { datetimes: Set( [ 20 ] ) } ),
+							fromJS( { datetime: Set( [ 20 ] ) } ),
 						)
 					)
 				);
@@ -50,7 +52,7 @@ describe( 'dirty relations tests', () => {
 					[ 'delete', 'ticket' ],
 					Map().set(
 						50,
-						fromJS( { datetimes: Set( [ 20 ] ) } )
+						fromJS( { datetime: Set( [ 20 ] ) } )
 					)
 				);
 				subState.set(
@@ -59,7 +61,7 @@ describe( 'dirty relations tests', () => {
 						'ticket',
 						Map().set(
 							60,
-							fromJS( { datetimes: Set( [ 20 ] ) } )
+							fromJS( { datetime: Set( [ 20 ] ) } )
 						)
 					)
 				);
@@ -109,7 +111,7 @@ describe( 'dirty relations tests', () => {
 			expect( newState.toJS() ).toEqual( {
 				...originalState.toJS(),
 				index: {
-					datetimes: {
+					datetime: {
 						44: {
 							event: { delete: [ 10 ] },
 							ticket: {
@@ -122,19 +124,19 @@ describe( 'dirty relations tests', () => {
 				delete: {
 					event: {
 						10: {
-							datetimes: [ 44 ],
+							datetime: [ 44 ],
 						},
 					},
 					ticket: {
 						50: {
-							datetimes: [ 44 ],
+							datetime: [ 44 ],
 						},
 					},
 				},
 				add: {
 					ticket: {
 						60: {
-							datetimes: [ 44 ],
+							datetime: [ 44 ],
 						},
 					},
 				},
@@ -154,7 +156,7 @@ describe( 'dirty relations tests', () => {
 			expect( newState.toJS() ).toEqual( {
 				...originalState.toJS(),
 				index: {
-					datetimes: {
+					datetime: {
 						20: {
 							event: { delete: [ 10 ] },
 							ticket: {
@@ -167,19 +169,19 @@ describe( 'dirty relations tests', () => {
 				delete: {
 					event: {
 						10: {
-							datetimes: [ 20 ],
+							datetime: [ 20 ],
 						},
 					},
 					ticket: {
 						50: {
-							datetimes: [ 20 ],
+							datetime: [ 20 ],
 						},
 					},
 				},
 				add: {
 					ticket: {
 						44: {
-							datetimes: [ 20 ],
+							datetime: [ 20 ],
 						},
 					},
 				},
@@ -218,7 +220,7 @@ describe( 'dirty relations tests', () => {
 			expect( result.toJS() ).toEqual( {
 				...originalState.toJS(),
 				index: {
-					datetimes: {
+					datetime: {
 						20: {
 							ticket: {
 								delete: [ 50 ],
@@ -230,14 +232,14 @@ describe( 'dirty relations tests', () => {
 				delete: {
 					ticket: {
 						50: {
-							datetimes: [ 20 ],
+							datetime: [ 20 ],
 						},
 					},
 				},
 				add: {
 					ticket: {
 						60: {
-							datetimes: [ 20 ],
+							datetime: [ 20 ],
 						},
 					},
 				},
@@ -296,10 +298,10 @@ describe( 'dirty relations tests', () => {
 						...originalState.toJS(),
 						index: {
 							...originalState.get( 'index' ).toJS(),
-							datetimes: {
+							datetime: {
 								20: {
 									...originalState.getIn(
-										[ 'index', 'datetimes', 20 ]
+										[ 'index', 'datetime', 20 ]
 									).toJS(),
 									ticket: {
 										delete: [ 50 ],
@@ -312,10 +314,10 @@ describe( 'dirty relations tests', () => {
 							...originalState.get( 'add' ).toJS(),
 							ticket: {
 								60: {
-									datetimes: [ 20 ],
+									datetime: [ 20 ],
 								},
 								400: {
-									datetimes: [ 20 ],
+									datetime: [ 20 ],
 								},
 							},
 						},
@@ -329,10 +331,10 @@ describe( 'dirty relations tests', () => {
 						...originalState.toJS(),
 						index: {
 							...originalState.get( 'index' ).toJS(),
-							datetimes: {
+							datetime: {
 								20: {
 									...originalState.getIn(
-										[ 'index', 'datetimes', 20 ]
+										[ 'index', 'datetime', 20 ]
 									).toJS(),
 									ticket: {
 										delete: [ 50, 400 ],
@@ -345,10 +347,10 @@ describe( 'dirty relations tests', () => {
 							...originalState.get( 'delete' ).toJS(),
 							ticket: {
 								50: {
-									datetimes: [ 20 ],
+									datetime: [ 20 ],
 								},
 								400: {
-									datetimes: [ 20 ],
+									datetime: [ 20 ],
 								},
 							},
 						},
@@ -389,7 +391,7 @@ describe( 'dirty relations tests', () => {
 						...originalState.toJS(),
 						index: {
 							...originalState.get( 'index' ).toJS(),
-							datetimes: {
+							datetime: {
 								20: {
 									event: {
 										delete: [ 10 ],
@@ -411,7 +413,7 @@ describe( 'dirty relations tests', () => {
 						...originalState.toJS(),
 						index: {
 							...originalState.get( 'index' ).toJS(),
-							datetimes: {
+							datetime: {
 								20: {
 									event: {
 										delete: [ 10 ],
@@ -491,6 +493,47 @@ describe( 'dirty relations tests', () => {
 					} );
 				} );
 			} );
+		} );
+	} );
+	describe( 'RESET_ALL_STATE', () => {
+		it( 'resets the state to its default', () => {
+			const newState = reducer( originalState, {
+				type: resetTypes.RESET_ALL_STATE,
+			} );
+			expect( newState ).not.toBe( originalState );
+			expect( newState ).toEqual(
+				fromJS( DEFAULT_CORE_STATE.dirty.relations )
+			);
+		} );
+	} );
+	describe( 'RESET_STATE_FOR_MODEL', () => {
+		let expectedState;
+		beforeEach( () => {
+			expectedState = originalState
+				.deleteIn( [ 'index', 'datetime', 20, 'event' ] )
+				.deleteIn( [ 'delete', 'event' ] );
+		} );
+		it( 'only resets the state for the given model name', () => {
+			const newState = reducer(
+				originalState,
+				{
+					type: resetTypes.RESET_STATE_FOR_MODEL,
+					modelName: 'event',
+				}
+			);
+			expect( newState ).not.toBe( originalState );
+			expect( newState.toJS() ).toEqual( expectedState.toJS() );
+		} );
+		it( 'resets the state for the a model name that is not ' +
+			'normalized', () => {
+			const newState = reducer(
+				originalState,
+				{
+					type: resetTypes.RESET_STATE_FOR_MODEL,
+					modelName: 'events',
+				}
+			);
+			expect( newState.toJS() ).toEqual( expectedState.toJS() );
 		} );
 	} );
 } );

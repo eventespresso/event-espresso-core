@@ -1,4 +1,4 @@
-<div class="wrap espresso-admin about-wrap">
+<div class="wrap espresso-admin about-wrap full-width-layout">
 
     <h1><?php echo $admin_page_title; ?></h1>
     <div class="about-text"><?php echo ! empty($admin_page_subtitle) ? $admin_page_subtitle : ''; ?></div>

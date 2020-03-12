@@ -83,8 +83,8 @@ class EED_Event_Single extends EED_Module
      */
     public static function set_definitions()
     {
-        define('EVENT_SINGLE_ASSETS_URL', plugin_dir_url(__FILE__) . 'assets' . DS);
-        define('EVENT_SINGLE_TEMPLATES_PATH', plugin_dir_path(__FILE__) . 'templates' . DS);
+        define('EVENT_SINGLE_ASSETS_URL', plugin_dir_url(__FILE__) . 'assets/');
+        define('EVENT_SINGLE_TEMPLATES_PATH', plugin_dir_path(__FILE__) . 'templates/');
     }
 
 
@@ -446,16 +446,16 @@ class EED_Event_Single extends EED_Module
             && apply_filters('FHEE__EED_Event_Single__wp_enqueue_scripts__enable_css', true)
         ) {
             // first check uploads folder
-            if (is_readable(get_stylesheet_directory() . $this->theme . DS . 'style.css')) {
+            if (is_readable(get_stylesheet_directory() . $this->theme . '/style.css')) {
                 wp_register_style(
                     $this->theme,
-                    get_stylesheet_directory_uri() . $this->theme . DS . 'style.css',
+                    get_stylesheet_directory_uri() . $this->theme . '/style.css',
                     array('dashicons', 'espresso_default')
                 );
             } else {
                 wp_register_style(
                     $this->theme,
-                    EE_TEMPLATES_URL . $this->theme . DS . 'style.css',
+                    EE_TEMPLATES_URL . $this->theme . '/style.css',
                     array('dashicons', 'espresso_default')
                 );
             }

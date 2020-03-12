@@ -12,20 +12,17 @@ import {
 } from '../model';
 import * as selectors from '../selectors';
 import * as resolvers from '../resolvers';
-import { select } from '@wordpress/data';
+import { select, registerStore } from '@wordpress/data';
 
 jest.mock( '../../../model', () => ( {
 	...require.requireActual( '../../../model' ),
 	MODEL_NAMES: [ 'event', 'datetime' ],
 } ) );
 
-jest.mock( '@wordpress/data', () => ( {
-	...require.requireActual( '@wordpress/data' ),
-	select: jest.fn().mockReturnValue( {} ),
-} ) );
-
 describe( 'createEntitySelectors()', () => {
 	beforeAll( () => {
+		// we don't need original store here.
+		registerStore( 'core/data', { selectors: {}, reducer: () => {} } );
 		select( 'core/data' ).isResolving = jest.fn().mockReturnValue( false );
 	} );
 	afterAll( () => {
