@@ -3,7 +3,7 @@ import React from 'react';
 import { useFilterBarUIService, useFilterBarUI } from '.';
 import { FilterBarUIItemsHook } from './types';
 
-const useFilterBarItems: FilterBarUIItemsHook = ({ domain, listId, filterState }) => {
+const useFilterBarUIItems: FilterBarUIItemsHook = ({ domain, listId, filterState }) => {
 	const filterBar = useFilterBarUI({ domain, listId });
 	const { getSubscriptions } = useFilterBarUIService(domain);
 
@@ -27,4 +27,4 @@ const useFilterBarItems: FilterBarUIItemsHook = ({ domain, listId, filterState }
 	});
 };
 
-export default useFilterBarItems;
+export default useFilterBarUIItems;
