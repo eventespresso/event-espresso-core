@@ -1,15 +1,27 @@
-// @ts-nocheck
 import React from 'react';
 import classnames from 'classnames';
-import { flatMap, isEmpty, isFunction } from 'lodash';
+import { flatMap, isEmpty, isFunction } from 'lodash'; // to be replaced with ramda
 import { DOWN } from '@wordpress/keycodes';
 import { Dropdown, NavigableMenu } from '@wordpress/components';
 
+import { AnyObject } from '@appServices/utilities/types';
 import { EspressoButton } from '@application/ui/input';
 
 import './style.scss';
 
-function mergeProps(defaultProps = {}, props = {}) {
+type Props = {
+	children(props: AnyObject): JSX.Element;
+	className?: string;
+	controls?: [];
+	icon?: string | null;
+	menuProps?: AnyObject;
+	label: string;
+	popoverProps?: AnyObject;
+	toggleProps?: AnyObject;
+	[key: string]: any;
+};
+
+const mergeProps = (defaultProps: Props, props: Props) => {
 	const mergedProps = {
 		...defaultProps,
 		...props,
@@ -20,9 +32,9 @@ function mergeProps(defaultProps = {}, props = {}) {
 	}
 
 	return mergedProps;
-}
+};
 
-function DropdownMenu({
+const DropdownMenu: React.FC<Props> = ({
 	children,
 	className,
 	controls,
@@ -31,11 +43,7 @@ function DropdownMenu({
 	popoverProps,
 	toggleProps,
 	menuProps,
-	// The following props exist for backward compatibility.
-	menuLabel,
-	position,
-	noIcons,
-}) {
+}) => {
 	if (isEmpty(controls) && !isFunction(children)) {
 		return null;
 	}
@@ -49,9 +57,9 @@ function DropdownMenu({
 		}
 	}
 	const mergedPopoverProps = mergeProps(
+		// @ts-ignore
 		{
 			className: 'components-dropdown-menu__popover',
-			position,
 		},
 		popoverProps
 	);
@@ -70,6 +78,7 @@ function DropdownMenu({
 						}
 					};
 					const mergedToggleProps = mergeProps(
+						// @ts-ignore
 						{
 							className: classnames('components-dropdown-menu__toggle', {
 								'is-opened': isOpen,
@@ -105,9 +114,10 @@ function DropdownMenu({
 				}}
 				renderContent={(props) => {
 					const mergedMenuProps = mergeProps(
+						// @ts-ignore
 						{
-							'aria-label': menuLabel || label,
-							className: classnames('components-dropdown-menu__menu', { 'no-icons': noIcons }),
+							'aria-label': label,
+							className: classnames('components-dropdown-menu__menu'),
 						},
 						menuProps
 					);
@@ -153,6 +163,6 @@ function DropdownMenu({
 			/>
 		</div>
 	);
-}
+};
 
 export default DropdownMenu;
