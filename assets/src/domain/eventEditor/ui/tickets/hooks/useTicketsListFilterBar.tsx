@@ -19,18 +19,14 @@ const useTicketsListFilterBar = (): TicketsListFilterBarCallback => {
 			return;
 		}
 
-		registerFilterBarItem(
-			'ticketsToShow',
-			({ filterState }) => {
-				const { ticketsToShow, setTicketsToShow } = filterState;
-				return (
-					<div className='ee-tickets-tickets-to-show-filter ee-filter-bar-filter'>
-						<TicketsToShowControl ticketsToShow={ticketsToShow} setTicketsToShow={setTicketsToShow} />
-					</div>
-				);
-			},
-			11
-		);
+		registerFilterBarItem('ticketsToShow', ({ filterState }) => {
+			const { ticketsToShow, setTicketsToShow } = filterState;
+			return (
+				<div className='ee-tickets-tickets-to-show-filter ee-filter-bar-filter'>
+					<TicketsToShowControl ticketsToShow={ticketsToShow} setTicketsToShow={setTicketsToShow} />
+				</div>
+			);
+		});
 
 		registerFilterBarItem('isChained', ({ filterState }) => {
 			const { isChained, toggleIsChained } = filterState;
@@ -50,21 +46,17 @@ const useTicketsListFilterBar = (): TicketsListFilterBarCallback => {
 			);
 		});
 
-		registerFilterBarItem(
-			'displayStartOrEndDate',
-			({ filterState }) => {
-				const { displayStartOrEndDate, setDisplayStartOrEndDate } = filterState;
-				return (
-					<div className='ee-tickets-display-start-or-end-ticket-filter ee-filter-bar-filter'>
-						<DisplayStartOrEndDateControl
-							displayStartOrEndDate={displayStartOrEndDate}
-							setDisplayStartOrEndDate={setDisplayStartOrEndDate}
-						/>
-					</div>
-				);
-			},
-			9
-		);
+		registerFilterBarItem('displayStartOrEndDate', ({ filterState }) => {
+			const { displayStartOrEndDate, setDisplayStartOrEndDate } = filterState;
+			return (
+				<div className='ee-tickets-display-start-or-end-ticket-filter ee-filter-bar-filter'>
+					<DisplayStartOrEndDateControl
+						displayStartOrEndDate={displayStartOrEndDate}
+						setDisplayStartOrEndDate={setDisplayStartOrEndDate}
+					/>
+				</div>
+			);
+		});
 	}, []);
 };
 

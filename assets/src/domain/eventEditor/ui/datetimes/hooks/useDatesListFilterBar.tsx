@@ -23,34 +23,26 @@ const useDatesListFilterBar = (): DatesListFilterBarCallback => {
 			);
 		});
 
-		registerFilterBarItem(
-			'sortBy',
-			({ filterState }) => {
-				const { sortBy, setSortBy } = filterState;
-				return (
-					<div className='ee-dates-sort-by-filter ee-filter-bar-filter'>
-						<SortByControl sortBy={sortBy} setSortBy={setSortBy} />
-					</div>
-				);
-			},
-			8
-		);
+		registerFilterBarItem('sortBy', ({ filterState }) => {
+			const { sortBy, setSortBy } = filterState;
+			return (
+				<div className='ee-dates-sort-by-filter ee-filter-bar-filter'>
+					<SortByControl sortBy={sortBy} setSortBy={setSortBy} />
+				</div>
+			);
+		});
 
-		registerFilterBarItem(
-			'displayStartOrEndDate',
-			({ filterState }) => {
-				const { displayStartOrEndDate, setDisplayStartOrEndDate } = filterState;
-				return (
-					<div className='ee-dates-display-start-or-end-date-filter ee-filter-bar-filter'>
-						<DisplayStartOrEndDateControl
-							displayStartOrEndDate={displayStartOrEndDate}
-							setDisplayStartOrEndDate={setDisplayStartOrEndDate}
-						/>
-					</div>
-				);
-			},
-			7
-		);
+		registerFilterBarItem('displayStartOrEndDate', ({ filterState }) => {
+			const { displayStartOrEndDate, setDisplayStartOrEndDate } = filterState;
+			return (
+				<div className='ee-dates-display-start-or-end-date-filter ee-filter-bar-filter'>
+					<DisplayStartOrEndDateControl
+						displayStartOrEndDate={displayStartOrEndDate}
+						setDisplayStartOrEndDate={setDisplayStartOrEndDate}
+					/>
+				</div>
+			);
+		});
 	}, []);
 };
 

@@ -20,7 +20,7 @@ const useDatesActionMenuHandler = (): DatesSubscriptionCallback => {
 			}
 			const withTicketsLoaded = withIsLoaded(TypeName.tickets);
 
-			registerMenuItem('editDate', () => <EditDateButton />, 11);
+			registerMenuItem('editDate', () => <EditDateButton />);
 
 			registerMenuItem(
 				'assignTickets',
