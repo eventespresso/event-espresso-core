@@ -22,6 +22,14 @@ class EEH_Sideloader extends EEH_Base
     private $_upload_to;
 
     /**
+     * @since   4.1.0
+     * @var     string
+     * @access  private
+     * @deprecated since version $VID:$
+     */
+    private $_upload_from;
+
+    /**
      * @since   $VID:$
      * @var     string
      * @access  private
@@ -77,7 +85,8 @@ class EEH_Sideloader extends EEH_Base
 
         foreach ($props as $key => $val) {
             if (EEH_Class_Tools::has_property($this, $key)) {
-                $this->{$key} = $val;
+                $setter = 'set' . $key;
+                $this->$setter($val);
             }
         }
 
