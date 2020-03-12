@@ -55,29 +55,41 @@ export interface UpdateSubscriptionProps {
  * elementRegistry = {
  *     eventEditor: {
  *         entityListFilterBar: {
- *             'dates-list: {
- *                  datetimesToShow: () => null,
- *                  sortBy: () => null,
- *                  search: () => null,
- *             },
- *             'tickets-list': {
+ *             'dates-list: [
+ *                 9: {
+ *                      sortBy: () => null,
+ *                 },
+ *                 10: {
+ *                      datetimesToShow: () => null,
+ *                      search: () => null,
+ *                 },
+ *             ],
+ *             'tickets-list': [
+ *                 10: {
+ *                     sortBy: () => null,
  *                  ticketsToShow: () => null,
- *                  sortBy: () => null,
- *                  search: () => null,
- *             },
+ *                 },
+ *                 11: {
+ *                      search: () => null,
+ *                 },
+ *             ],
  *         },
  *         entityActions: {
  *             datetime: {
- *                 YTBUKTUYRytB: {
- *                     editDate: () => null,
- *                     assignTickets: () => null,
- *                 },
+ *                 YTBUKTUYRytB: [
+ *                     10 : {
+ *                         editDate: () => null,
+ *                         assignTickets: () => null,
+ *                     }
+ *                 ],
  *             },
  *             ticket: {
- *                 KJGNFGHFjhfbY: {
- *                     editTicket: () => null,
- *                     tpc: () => null,
- *                 },
+ *                 KJGNFGHFjhfbY: [
+ *                     10 : {
+ *                         editTicket: () => null,
+ *                         tpc: () => null,
+ *                     }
+ *                 ],
  *             },
  *         },
  *     },
