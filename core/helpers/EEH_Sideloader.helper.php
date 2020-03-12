@@ -76,10 +76,25 @@ class EEH_Sideloader extends EEH_Base
 
         $props = array_merge($defaults, $init);
 
-        foreach ($props as $key => $val) {
-            if (property_exists($this, $key)) {
-                $setter = 'set' . $key;
+        foreach ($props as $propery => $val) {
+            $setter = 'set' . $propery;
+            if (method_exists($this, $setter)) {
                 $this->$setter($val);
+            } else {
+                 // No setter found.
+                EE_Error::add_error(
+                    sprintf(
+                        esc_html__(
+                            'EEH_Sideloader::%1$s not found. There is no setter for the %2$s propery.',
+                            'event_espresso'
+                        ),
+                        $setter,
+                        $propery
+                    ),
+                    __FILE__,
+                    __FUNCTION__,
+                    __LINE__
+                );
             }
         }
 
