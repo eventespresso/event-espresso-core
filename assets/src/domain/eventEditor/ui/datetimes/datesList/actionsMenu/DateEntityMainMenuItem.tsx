@@ -23,7 +23,7 @@ const DateEntityMainMenuItem = () => {
 
 	return (
 		<EspressoDropdownMenu
-			icon={Icon.EDIT}
+			icon={Icon.MORE}
 			label={__('event date main menu')}
 			controls={[
 				{
@@ -37,6 +37,7 @@ const DateEntityMainMenuItem = () => {
 				// 	icon: 'admin-page',
 				// 	onClick: useCopyDateEntity(dateEntity),
 				// },
+				// so basically you'll clone the date, remove the guid and dbid, then create a new date using what's left over
 				{
 					title: __('trash date'),
 					icon: 'trash',

@@ -14,6 +14,7 @@ export enum Icon {
 	GROUPS = 'groups',
 	LINK = 'admin-links',
 	LIST_VIEW = 'list-view',
+	MORE = 'more',
 	REM = 'rem',
 	ROTATE = 'rotate',
 	SAVE = 'save',
