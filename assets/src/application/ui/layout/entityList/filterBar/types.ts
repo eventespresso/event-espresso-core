@@ -11,7 +11,6 @@ export interface CollapsibleProps {
 
 export interface EntityListFilterBarProps<FS extends ELFSM> {
 	domain: string;
-	entityFilters: React.ReactNode;
 	filterState: FS;
 	listId?: string;
 }

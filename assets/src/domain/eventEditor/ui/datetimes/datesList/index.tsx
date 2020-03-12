@@ -3,7 +3,6 @@ import { __ } from '@wordpress/i18n';
 
 import AddNewDateButton from './AddNewDateButton';
 import { DateCard } from './cardView';
-import { DatesListEntityFilters } from './filterBar';
 import { DatetimesListProvider, withEntityListContext } from '@edtrServices/context/EntityListContext';
 import { EntityList } from '@appLayout/entityList';
 import { TableView } from './tableView';
@@ -20,7 +19,6 @@ const DatesList: React.FC = () => {
 			CardView={DateCard}
 			domain={domain}
 			entities={filteredDates}
-			entityFilters={<DatesListEntityFilters />}
 			entityType={TypeName.datetimes}
 			filterState={filterState}
 			footer={<AddNewDateButton />}

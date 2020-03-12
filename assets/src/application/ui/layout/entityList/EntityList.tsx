@@ -21,7 +21,6 @@ const EntityList: React.FC<any> = <ELFS extends EntityListFilterStateManager>({
 	className,
 	domain,
 	entities = [],
-	entityFilters,
 	entityType,
 	filterState,
 	footer,
@@ -60,12 +59,7 @@ const EntityList: React.FC<any> = <ELFS extends EntityListFilterStateManager>({
 			<Title className='ee-entity-list__header' level={3}>
 				{headerText}
 			</Title>
-			<EntityListFilterBar
-				domain={domain}
-				entityFilters={entityFilters}
-				filterState={filterState}
-				listId={listId}
-			/>
+			<EntityListFilterBar domain={domain} filterState={filterState} listId={listId} />
 			{entityList}
 			<EntityPagination filterState={filterState} />
 			<div className={'ee-entity-list__footer'}>{footer}</div>

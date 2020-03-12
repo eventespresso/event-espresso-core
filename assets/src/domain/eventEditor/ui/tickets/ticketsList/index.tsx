@@ -6,7 +6,6 @@ import { EntityList } from '@appLayout/entityList';
 import { TableView } from './tableView';
 import { TicketsListProvider, withEntityListContext } from '@edtrServices/context/EntityListContext';
 import { TicketCard } from './cardView';
-import { TicketsListEntityFilters } from './filterBar';
 import { TypeName } from '@appServices/apollo/status';
 import { useTicketsListFilterState, useFilteredTickets } from '@edtrServices/filterState';
 import { domain } from '@edtrServices/constants';
@@ -20,7 +19,6 @@ const TicketsList: React.FC = () => {
 			CardView={TicketCard}
 			domain={domain}
 			entities={filteredTickets}
-			entityFilters={<TicketsListEntityFilters />}
 			entityType={TypeName.tickets}
 			filterState={filterState}
 			footer={<AddNewTicketButton />}

@@ -2,10 +2,15 @@ import React, { useCallback } from 'react';
 import { __ } from '@wordpress/i18n';
 
 import { FilterBarSubscriptionCb } from '@appLayout/entityList/filterBar';
-import { TicketsFilterStateManager as DFSM } from '@edtrServices/filterState';
-import { TicketsToShowControl, SortByControl, DisplayStartOrEndDateControl } from '../ticketsList/filterBar/controls';
+import { TicketsFilterStateManager } from '@edtrServices/filterState';
+import {
+	DisplayStartOrEndDateControl,
+	SortByControl,
+	TicketsChainedButton,
+	TicketsToShowControl,
+} from '../ticketsList/filterBar/controls';
 
-type TicketsListFilterBarCallback = FilterBarSubscriptionCb<DFSM, 'tickets-list'>;
+type TicketsListFilterBarCallback = FilterBarSubscriptionCb<TicketsFilterStateManager, 'tickets-list'>;
 
 const useTicketsListFilterBar = (): TicketsListFilterBarCallback => {
 	return useCallback<TicketsListFilterBarCallback>(({ listId }, { registerElement: registerFilterBarItem }) => {
@@ -26,6 +31,15 @@ const useTicketsListFilterBar = (): TicketsListFilterBarCallback => {
 			},
 			11
 		);
+
+		registerFilterBarItem('isChained', ({ filterState }) => {
+			const { isChained, toggleIsChained } = filterState;
+			return (
+				<div className='ee-ticket-dates-chained-filter ee-filter-bar-filter ee-filter-bar-filter--micro'>
+					<TicketsChainedButton isChained={isChained} toggleIsChained={toggleIsChained} />
+				</div>
+			);
+		});
 
 		registerFilterBarItem('sortBy', ({ filterState }) => {
 			const { sortBy, setSortBy } = filterState;

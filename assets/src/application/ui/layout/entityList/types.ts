@@ -20,7 +20,6 @@ export interface EntityListProps<T extends Entity, ELFS = EntityListFilterStateM
 	extends EntityListComponentProps<T> {
 	CardView: React.JSXElementConstructor<CardViewProps>;
 	domain: string;
-	entityFilters: JSX.Element;
 	entityType: TypeName;
 	filterState: ELFS;
 	footer: JSX.Element;
