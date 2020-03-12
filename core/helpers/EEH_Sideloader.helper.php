@@ -22,11 +22,11 @@ class EEH_Sideloader extends EEH_Base
     private $_upload_to;
 
     /**
-     * @since   4.1.0
+     * @since   $VID:$
      * @var     string
      * @access  private
      */
-    private $_upload_from;
+    private $_download_from;
 
     /**
      * @since   4.1.0
