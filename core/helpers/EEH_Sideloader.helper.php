@@ -115,15 +115,15 @@ class EEH_Sideloader extends EEH_Base
 
 
     /**
-     * sets the _upload_from property to the location we should download the file from.
+     * sets the _download_from property to the location we should download the file from.
      *
      * @since $VID:$
-     * @param string $upload_from The full path to the file we should sideload.
+     * @param string $download_from The full path to the file we should sideload.
      * @return void
      */
-    public function set_upload_from($upload_from)
+    public function set_download_from($download_from)
     {
-        $this->_upload_from = $upload_from;
+        $this->_download_from = $download_from;
     }
 
 
