@@ -29,24 +29,24 @@ export type FilterBarSubscribeFn = <FS extends ELFSM, L extends string>(
 
 export type FilterBarSubscriptionCb<FS extends ELFSM, L extends string> = (
 	data: FilterBarSubscriptionData<FS, L>,
-	filterBar: FilterBar<FS>
+	filterBar: FilterBarUI<FS>
 ) => void;
 
 /* UI related types */
-export interface FilterBarOptions<D extends string, L extends string> extends BaseSubscriptionOptions<D> {
+export interface FilterBarUIOptions<D extends string, L extends string> extends BaseSubscriptionOptions<D> {
 	listId: L;
 }
 
-export type FilterBarHook = <D extends string, L extends string, FS extends ELFSM>(
-	options: FilterBarOptions<D, L>
-) => FilterBar<FS>;
+export type FilterBarUIHook = <D extends string, L extends string, FS extends ELFSM>(
+	options: FilterBarUIOptions<D, L>
+) => FilterBarUI<FS>;
 
 export interface FilterBarComponentProps<FS extends ELFSM> {
 	filterState: FS;
 }
 
-export type FilterBar<FS extends ELFSM> = SubscriptionUIRegistry<FilterBarComponentProps<FS>>;
+export type FilterBarUI<FS extends ELFSM> = SubscriptionUIRegistry<FilterBarComponentProps<FS>>;
 
-export type FilterBarItemsHook = <FS extends ELFSM, D extends string, L extends string>(
+export type FilterBarUIItemsHook = <FS extends ELFSM, D extends string, L extends string>(
 	options: BaseSubscriptionOptions<D> & FilterBarSubscriptionData<FS, L>
 ) => Array<React.ReactNode>;

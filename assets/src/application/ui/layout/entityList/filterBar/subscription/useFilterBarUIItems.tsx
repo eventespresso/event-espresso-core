@@ -1,11 +1,11 @@
 import React from 'react';
 
-import { useFilterBarService, useFilterBar } from './';
-import { FilterBarItemsHook } from './types';
+import { useFilterBarUIService, useFilterBarUI } from '.';
+import { FilterBarUIItemsHook } from './types';
 
-const useFilterBarItems: FilterBarItemsHook = ({ domain, listId, filterState }) => {
-	const filterBar = useFilterBar({ domain, listId });
-	const { getSubscriptions } = useFilterBarService(domain);
+const useFilterBarItems: FilterBarUIItemsHook = ({ domain, listId, filterState }) => {
+	const filterBar = useFilterBarUI({ domain, listId });
+	const { getSubscriptions } = useFilterBarUIService(domain);
 
 	const { getElements } = filterBar;
 

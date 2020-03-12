@@ -1,7 +1,7 @@
-export { default as useFilterBarService } from './useFilterBarService';
+export { default as useFilterBarUIService } from './useFilterBarUIService';
 
-export { default as useFilterBar } from './useFilterBar';
+export { default as useFilterBarUI } from './useFilterBarUI';
 
-export { default as useFilterBarItems } from './useFilterBarItems';
+export { default as useFilterBarUIItems } from './useFilterBarUIItems';
 
 export * from './types';

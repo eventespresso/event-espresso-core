@@ -7,7 +7,7 @@ import { serviceName as service } from './constants';
 type FBS = FilterBarService;
 type FBShook = FilterBarServiceHook;
 
-const useFilterBarService: FBShook = (domain) => {
+const useFilterBarUIService: FBShook = (domain) => {
 	const { getSubscriptions: getServiceSubscriptions, ...restServices } = useSubscriptionService({
 		domain,
 		service,
@@ -25,4 +25,4 @@ const useFilterBarService: FBShook = (domain) => {
 	return { ...restServices, getSubscriptions };
 };
 
-export default useFilterBarService;
+export default useFilterBarUIService;

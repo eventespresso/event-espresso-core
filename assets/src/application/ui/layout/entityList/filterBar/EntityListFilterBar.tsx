@@ -5,7 +5,7 @@ import { EntityListFilterBarProps } from './types';
 import GridViewFilterButton from './buttons/GridView';
 import ListViewFilterButton from './buttons/ListView';
 import ToggleFiltersButton from './buttons/ToggleFilters';
-import { useFilterBarItems } from './subscription';
+import { useFilterBarUIItems } from './subscription';
 import { EntityListFilterStateManager as ELFSM } from './filterState';
 
 import './style.scss';
@@ -29,7 +29,7 @@ const EntityListFilterBar = <FS extends ELFSM>({
 		view,
 	} = filterState;
 
-	const filerBarItems = useFilterBarItems({ domain, filterState, listId });
+	const filerBarItems = useFilterBarUIItems({ domain, filterState, listId });
 
 	return (
 		<div className='ee-entity-list-filter-bar'>
