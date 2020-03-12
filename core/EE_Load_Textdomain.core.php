@@ -60,7 +60,7 @@ class EE_Load_Textdomain extends EE_Base
         // load sideloader and sideload the .POT file as this is should always be included.
         $sideloader_args = array(
             '_upload_to'     => EE_PLUGIN_DIR_PATH . 'languages/',
-            '_upload_from'   => 'https://github.com/eventespresso/languages-ee4/blob/master/event_espresso.pot?raw=true',
+            '_download_from'   => 'https://github.com/eventespresso/languages-ee4/blob/master/event_espresso.pot?raw=true',
             '_new_file_name' => 'event_espresso.pot',
         );
         $sideloader = EE_Registry::instance()->load_helper('Sideloader', $sideloader_args, false);
@@ -72,12 +72,12 @@ class EE_Load_Textdomain extends EE_Base
         }
 
         // made it here so let's get the language files from the github repo, first the .mo file
-        $sideloader->set_upload_from('https://github.com/eventespresso/languages-ee4/blob/master/event_espresso-' . self::$_lang . '.mo?raw=true');
+        $sideloader->set_download_from('https://github.com/eventespresso/languages-ee4/blob/master/event_espresso-' . self::$_lang . '.mo?raw=true');
         $sideloader->set_new_file_name('event_espresso-' . self::$_lang . '.mo');
         $sideloader->sideload();
 
         // now the .po file:
-        $sideloader->set_upload_from('https://github.com/eventespresso/languages-ee4/blob/master/event_espresso-' . self::$_lang . '.po?raw=true');
+        $sideloader->set_download_from('https://github.com/eventespresso/languages-ee4/blob/master/event_espresso-' . self::$_lang . '.po?raw=true');
         $sideloader->set_new_file_name('event_espresso-' . self::$_lang . '.po');
         $sideloader->sideload();
 
