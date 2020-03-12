@@ -1,6 +1,6 @@
 import { AnyObject } from '@appServices/utilities/types';
 
-export interface DropdownMenuProps {
+export interface DropdownMenuProps extends AnyObject {
 	children(props: AnyObject): JSX.Element;
 	className?: string;
 	controls?: [];
@@ -9,5 +9,4 @@ export interface DropdownMenuProps {
 	label: string;
 	popoverProps?: AnyObject;
 	toggleProps?: AnyObject;
-	[key: string]: any;
 }
