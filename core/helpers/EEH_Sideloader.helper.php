@@ -166,12 +166,12 @@ class EEH_Sideloader extends EEH_Base
 
 
     /**
-     * @since 4.1.0
+     * @since $VID:$
      * @return string
      */
-    public function get_upload_from()
+    public function get_download_from()
     {
-        return $this->_upload_from;
+        return $this->_download_from;
     }
 
 
