@@ -1,12 +1,12 @@
 import { useEffect } from 'react';
 
-import { useFilterBarUISubscription } from '@appLayout/entityList/filterBar';
+import { useFilterBarUISubscription as useAppFilterBarUISubscription } from '@appLayout/entityList/filterBar';
 import useDatesListFilterBar from '../../ui/datetimes/hooks/useDatesListFilterBar';
 import useTicketsListFilterBar from '../../ui/tickets/hooks/useTicketsListFilterBar';
 import { domain } from '@edtrServices/constants';
 
-const useFilterBarSubscription = (): void => {
-	const { subscribe } = useFilterBarUISubscription(domain);
+const useFilterBarUISubscription = (): void => {
+	const { subscribe } = useAppFilterBarUISubscription(domain);
 	const datesListFilterBar = useDatesListFilterBar();
 	const ticketsListFilterBar = useTicketsListFilterBar();
 
@@ -21,4 +21,4 @@ const useFilterBarSubscription = (): void => {
 	}, []);
 };
 
-export default useFilterBarSubscription;
+export default useFilterBarUISubscription;

@@ -2,7 +2,7 @@ import { setLocaleData } from '@wordpress/i18n';
 
 import { useI18nData, useInitQueries } from '@edtrServices/apollo';
 import { useEntityActionsMenuSubscription } from './entityActionsMenu';
-import { useFilterBarSubscription } from './filterBar';
+import { useFilterBarUISubscription, useFilterBarService } from './filterBar';
 
 const useEditorInitialization = (): void => {
 	// init i18n
@@ -13,7 +13,8 @@ const useEditorInitialization = (): void => {
 	useEntityActionsMenuSubscription();
 
 	// set filter bar subscription
-	useFilterBarSubscription();
+	useFilterBarUISubscription();
+	useFilterBarService();
 
 	// Fire initial queries
 	useInitQueries();

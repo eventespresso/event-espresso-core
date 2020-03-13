@@ -1,1 +1,3 @@
-export { default as useFilterBarSubscription } from './useFilterBarSubscription';
+export { default as useFilterBarService } from './useFilterBarService';
+
+export { default as useFilterBarUISubscription } from './useFilterBarUISubscription';
