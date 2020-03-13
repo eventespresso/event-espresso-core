@@ -14,7 +14,7 @@ export type SubscriptionServiceHook = <D extends string, S extends string, SR = 
 
 export interface SubscriptionService<SR = ServiceRegistry> {
 	addToServiceRegistry: <K extends keyof SR>(key: K, value: SR[K]) => void;
-	getServiceRegistryItem: <K extends keyof SR>(key: K) => SR[K];
+	getServiceRegistryItem: <K extends keyof SR>(key: K, defaultValue?: any) => SR[K];
 	getSubscriptions: <CbArgs = AnyObject, Options = AnyObject, CbReturn = void>() => Subscriptions<
 		CbArgs,
 		Options,

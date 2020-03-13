@@ -25,8 +25,8 @@ const useSubscriptionService: SubscriptionServiceHook = ({ domain, service }) =>
 		return window[NAMESPACE]?.[domain]?.[service]?.subscriptions || {};
 	};
 
-	const getServiceRegistryItem: SS['getServiceRegistryItem'] = (key) => {
-		return window[NAMESPACE]?.[domain]?.[service]?.[key];
+	const getServiceRegistryItem: SS['getServiceRegistryItem'] = (key, defaultValue) => {
+		return window[NAMESPACE]?.[domain]?.[service]?.[key] || defaultValue;
 	};
 
 	const addToServiceRegistry: SS['addToServiceRegistry'] = (key, value) => {
