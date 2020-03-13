@@ -8,33 +8,34 @@ export interface SubscriptionServiceOptions<D extends string, S extends string> 
 	service: S;
 }
 
-export type SubscriptionServiceHook = <D extends string, S extends string>(
+export type SubscriptionServiceHook = <D extends string, S extends string, SR = ServiceRegistry>(
 	options: SubscriptionServiceOptions<D, S>
-) => SubscriptionService;
+) => SubscriptionService<SR>;
 
-export interface SubscriptionService {
+export interface SubscriptionService<SR = ServiceRegistry> {
+	addToServiceRegistry: <K extends keyof SR>(key: K, value: SR[K]) => void;
+	getServiceRegistryItem: <K extends keyof SR>(key: K) => SR[K];
+	getSubscriptions: <CbArgs = AnyObject, Options = AnyObject, CbReturn = void>() => Subscriptions<
+		CbArgs,
+		Options,
+		CbReturn
+	>;
 	subscribe: SubscribeFn;
-	getSubscriptions: <Data = AnyObject, Options = AnyObject>() => Subscriptions<Data, Options>;
 }
 
-export type SubscribeFn = <Data = AnyObject, Options = AnyObject>(
-	cb: SubscriptionCallback<Data>,
+export type SubscribeFn = <CbArgs = AnyObject, Options = AnyObject, CbReturn = void>(
+	cb: SubscriptionCallback<CbArgs, CbReturn>,
 	options?: Options
 ) => VoidFunction;
 
-export interface SubscriptionCallback<TA0 = any, TA1 = any, TA2 = any, TA3 = any> {
-	<A0 = TA0>(a0?: A0): void;
-	<A0 = TA0, A1 = TA1>(a0?: A0, a1?: A1): void;
-	<A0 = TA0, A1 = TA1, A2 = TA2>(a0?: A0, a1?: A1, a2?: A2): void;
-	<A0 = TA0, A1 = TA1, A2 = TA2, A3 = TA3>(a0?: A0, a1?: A1, a2?: A2, a3?: A3): void;
-}
+export type SubscriptionCallback<CbArgs = AnyObject, CbReturn = void> = (args: CbArgs) => CbReturn;
 
-export type Subscriptions<Data = AnyObject, Options = AnyObject> = {
-	[key: string]: Subscription<Data, Options>;
+export type Subscriptions<CbArgs = AnyObject, Options = AnyObject, CbReturn = void> = {
+	[key: string]: Subscription<CbArgs, Options, CbReturn>;
 };
 
-export interface Subscription<Data = AnyObject, Options = AnyObject> {
-	callback: SubscriptionCallback<Data>;
+export interface Subscription<CbArgs = AnyObject, Options = AnyObject, CbReturn = void> {
+	callback: SubscriptionCallback<CbArgs, CbReturn>;
 	options: Options;
 }
 

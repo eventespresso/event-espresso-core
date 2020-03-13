@@ -2,19 +2,11 @@ import { assocPath, omit } from 'ramda';
 import { v4 as uuidv4 } from 'uuid';
 import invariant from 'invariant';
 
-import {
-	ServiceRegistry,
-	SubscriptionService,
-	SubscriptionServiceHook,
-	Subscriptions,
-	UpdateSubscriptionProps,
-} from './types';
+import { SubscriptionService, SubscriptionServiceHook, Subscriptions, UpdateSubscriptionProps } from './types';
 
 const NAMESPACE = 'espresso';
 
 type SS = SubscriptionService;
-type SR = ServiceRegistry;
-
 const useSubscriptionService: SubscriptionServiceHook = ({ domain, service }) => {
 	const subscribe: SS['subscribe'] = (callback, options) => {
 		invariant(typeof callback === 'function', 'subscribe `callback` must be a function');
@@ -31,6 +23,21 @@ const useSubscriptionService: SubscriptionServiceHook = ({ domain, service }) =>
 
 	const getSubscriptions: SS['getSubscriptions'] = () => {
 		return window[NAMESPACE]?.[domain]?.[service]?.subscriptions || {};
+	};
+
+	const getServiceRegistryItem: SS['getServiceRegistryItem'] = (key) => {
+		return window[NAMESPACE]?.[domain]?.[service]?.[key];
+	};
+
+	const addToServiceRegistry: SS['addToServiceRegistry'] = (key, value) => {
+		updateServiceRegistry(key, value);
+	};
+
+	/**
+	 * Updates/Sets/Exposes the value globally
+	 */
+	const updateServiceRegistry: SS['addToServiceRegistry'] = (key, value) => {
+		window[NAMESPACE] = assocPath([domain, service, key], value, window[NAMESPACE]);
 	};
 
 	const updateSubscription = ({ id, callback, options, action }: UpdateSubscriptionProps): void => {
@@ -51,21 +58,19 @@ const useSubscriptionService: SubscriptionServiceHook = ({ domain, service }) =>
 		updateServiceRegistry('subscriptions', subscriptions);
 	};
 
-	/**
-	 * Updates/Sets/Exposes the value globally
-	 */
-	const updateServiceRegistry = <K extends keyof SR>(key: K, value: SR[K]): void => {
-		window[NAMESPACE] = assocPath([domain, service, key], value, window[NAMESPACE]);
-	};
-
-	const subscribeFn = window[NAMESPACE]?.[domain]?.[service]?.subscribe || null;
+	const subscribeFn = getServiceRegistryItem('subscribe');
 
 	// check if the `subscribe` function path has not been exposed globally
 	if (typeof subscribeFn !== 'function') {
-		updateServiceRegistry('subscribe', subscribe);
+		addToServiceRegistry('subscribe', subscribe);
 	}
 
-	return { getSubscriptions, subscribe };
+	return {
+		addToServiceRegistry,
+		getServiceRegistryItem,
+		getSubscriptions,
+		subscribe,
+	};
 };
 
 export default useSubscriptionService;
