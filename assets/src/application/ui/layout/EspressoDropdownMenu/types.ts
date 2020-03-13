@@ -1,6 +1,6 @@
 import { AnyObject } from '@appServices/utilities/types';
 
-export interface DropdownMenuProps extends AnyObject {
+export interface EspressoDropdownMenuProps extends AnyObject {
 	children(props: AnyObject): JSX.Element;
 	className?: string;
 	controls?: [];

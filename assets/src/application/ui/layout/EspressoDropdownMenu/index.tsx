@@ -6,11 +6,11 @@ import { Dropdown, NavigableMenu } from '@wordpress/components';
 
 import { EspressoButton } from '@application/ui/input';
 
-import { DropdownMenuProps } from './types';
+import { EspressoDropdownMenuProps as Props } from './types';
 
 import './style.scss';
 
-const mergeProps = (defaultProps: DropdownMenuProps, props: DropdownMenuProps) => {
+const mergeProps = (defaultProps: Props, props: Props) => {
 	const mergedProps = {
 		...defaultProps,
 		...props,
@@ -23,7 +23,7 @@ const mergeProps = (defaultProps: DropdownMenuProps, props: DropdownMenuProps) =
 	return mergedProps;
 };
 
-const DropdownMenu: React.FC<DropdownMenuProps> = ({
+const EspressoDropdownMenu: React.FC<Props> = ({
 	children,
 	className,
 	controls,
@@ -150,4 +150,4 @@ const DropdownMenu: React.FC<DropdownMenuProps> = ({
 	);
 };
 
-export default DropdownMenu;
+export default EspressoDropdownMenu;

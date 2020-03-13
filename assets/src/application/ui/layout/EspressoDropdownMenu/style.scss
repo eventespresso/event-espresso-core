@@ -20,10 +20,8 @@
 }
 
 .components-dropdown-menu__menu {
+	padding: var(--ee-padding-smaller) var(--ee-padding-smaller) var(--ee-padding-small);
 	width: 100%;
-	padding: 7px 0;
-	font-size: 13px;
-	line-height: 1.4;
 
 	.components-dropdown-menu__menu-item,
 	.components-menu-item {
