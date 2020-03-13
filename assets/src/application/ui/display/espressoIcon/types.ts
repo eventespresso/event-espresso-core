@@ -9,6 +9,7 @@ export interface EspressoIconProps {
 export enum Icon {
 	CALCULATOR = 'calculator',
 	CALENDAR = 'calendar',
+	COPY = 'copy',
 	EDIT = 'edit',
 	FILTER = 'filter',
 	GROUPS = 'groups',

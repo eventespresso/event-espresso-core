@@ -1,4 +1,5 @@
 import React from 'react';
+import { omit } from 'ramda';
 import { __ } from '@wordpress/i18n';
 
 import { EspressoDropdownMenu } from '@application/ui/layout';
@@ -10,15 +11,33 @@ import { useFormModal } from '@appLayout/formModal';
 
 const DateEntityMainMenuItem = () => {
 	const { id } = useDatetimeContext();
-	const { dbId: entityDbId } = useDatetimeItem({ id }) || {};
-	const { openEditor } = useFormModal();
+	const datetime = useDatetimeItem({ id });
+
+	const { createEntity } = useDatetimeMutator();
 	const { deleteEntity } = useDatetimeMutator(id);
+	const { openEditor } = useFormModal();
+
+	const newDatetime = omit(
+		[
+			'dbId',
+			'id',
+			'isActive',
+			'isExpired',
+			'isSoldOut',
+			'isTrashed',
+			'isUpcoming',
+			'length',
+			'status',
+			'__typename',
+		],
+		datetime
+	);
 
 	const onEditClick = (): void =>
 		openEditor({
 			editorId: 'editDatetime',
 			entityId: id,
-			entityDbId,
+			entityDbId: datetime.dbId,
 		});
 
 	return (
@@ -30,17 +49,15 @@ const DateEntityMainMenuItem = () => {
 					title: __('edit date'),
 					icon: Icon.EDIT,
 					onClick: onEditClick,
-					// onClick: useOpenEditor(useEventDateEditorId(dateEntity)),
 				},
-				// {
-				// 	title: __('copy date'),
-				// 	icon: 'admin-page',
-				// 	onClick: useCopyDateEntity(dateEntity),
-				// },
-				// so basically you'll clone the date, remove the guid and dbid, then create a new date using what's left over
+				{
+					title: __('copy date'),
+					icon: Icon.COPY,
+					onClick: () => createEntity(newDatetime),
+				},
 				{
 					title: __('trash date'),
-					icon: 'trash',
+					icon: Icon.TRASH,
 					onClick: () => deleteEntity({ id }),
 				},
 			]}
