@@ -1,0 +1,50 @@
+import { useEffect } from 'react';
+
+import { useFilterBarService } from '@appLayout/entityList/filterBar';
+import filterTckets from '@sharedEntities/tickets/predicates/filters';
+import sortTckets from '@sharedEntities/tickets/predicates/sorters';
+import { domain, ticketsList } from '@edtrServices/constants';
+import { entityListSearch } from '@appServices/utilities/text';
+import { Ticket } from '@edtrServices/apollo';
+import { TicketsFilterStateManager } from '@edtrServices/filterState';
+
+type Domain = typeof domain;
+type TFSM = TicketsFilterStateManager;
+
+const useTicketsFilterBarService = (): void => {
+	const {
+		registerFilter: registerTicketsFilter,
+		registerSearch: registerTicketsSearch,
+		registerSorter: registerTicketsSorter,
+	} = useFilterBarService<Domain, typeof ticketsList, Ticket, TFSM>(domain, ticketsList);
+
+	useEffect(() => {
+		// Register filter
+		const unsubscribeTicketsFilter = registerTicketsFilter(({ entityList, filterState }) => {
+			return filterTckets({ tickets: entityList, show: filterState.ticketsToShow });
+		});
+
+		// Register search
+		const unsubscribeTicketsSearch = registerTicketsSearch(({ entityList, filterState }) => {
+			return entityListSearch<Ticket>({
+				entities: entityList,
+				searchFields: ['name', 'description'],
+				searchText: filterState.searchText,
+			});
+		});
+
+		// Register sorter
+		const unsubscribeTicketsSorter = registerTicketsSorter(({ entityList, filterState }) => {
+			return sortTckets({ tickets: entityList, sortBy: filterState.sortBy });
+		});
+
+		// Housekeeping
+		return (): void => {
+			unsubscribeTicketsFilter();
+			unsubscribeTicketsSearch();
+			unsubscribeTicketsSorter();
+		};
+	}, []);
+};
+
+export default useTicketsFilterBarService;

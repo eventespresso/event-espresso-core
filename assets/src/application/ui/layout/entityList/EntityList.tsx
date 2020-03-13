@@ -3,7 +3,7 @@ import { __ } from '@wordpress/i18n';
 import { Divider, Typography } from 'antd';
 
 import { EmptyState, ErrorIndicator, LoadingIndicator } from '@appDisplay/index';
-import { EntityListFilterStateManager } from './filterBar';
+import { EntityListFilterStateManager, useFilteredEntities } from './filterBar';
 import EntityListFilterBar from './withValidFilterState';
 import { Entity } from '@appServices/apollo/types';
 import { useStatus } from '@appServices/apollo/status';
@@ -34,6 +34,8 @@ const EntityList: React.FC<any> = <ELFS extends EntityListFilterStateManager>({
 	const error = isError(entityType);
 	const loading = isLoading(entityType);
 
+	const filteredEntities = useFilteredEntities(domain, listId, entities, filterState);
+
 	if (loading) return <LoadingIndicator tip={__('loading...')} />;
 
 	if (error) return <ErrorIndicator />;
@@ -41,16 +43,16 @@ const EntityList: React.FC<any> = <ELFS extends EntityListFilterStateManager>({
 	let entityList: JSX.Element;
 	const { view } = filterState;
 
-	if (entities.length === 0) {
+	if (filteredEntities.length === 0) {
 		const title = noResultsTitle ? noResultsTitle : __('no results found');
 		const description = noResultsDesc ? noResultsDesc : __('try changing filter settings');
 		entityList = <EmptyState className='ee-entity-list--no-results' title={title} description={description} />;
 	} else {
 		entityList =
 			view === 'grid' ? (
-				<CardList CardView={CardView} entities={entities} className={className} {...props} />
+				<CardList CardView={CardView} entities={filteredEntities} className={className} {...props} />
 			) : (
-				<TableView entities={entities} className={className} {...props} />
+				<TableView entities={filteredEntities} className={className} {...props} />
 			);
 	}
 

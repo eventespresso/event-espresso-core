@@ -13,11 +13,12 @@ import {
 type TicketsListFilterBarCallback = FilterBarUISubscriptionCb<TicketsFilterStateManager, 'tickets-list'>;
 
 const useTicketsListFilterBar = (): TicketsListFilterBarCallback => {
-	return useCallback<TicketsListFilterBarCallback>(({ listId }, { registerElement: registerFilterBarItem }) => {
+	return useCallback<TicketsListFilterBarCallback>(({ listId, registry }) => {
 		// although this is not needed
 		if (listId !== 'tickets-list') {
 			return;
 		}
+		const { registerElement: registerFilterBarItem } = registry;
 
 		registerFilterBarItem('ticketsToShow', ({ filterState }) => {
 			const { ticketsToShow, setTicketsToShow } = filterState;

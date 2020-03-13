@@ -1,11 +1,10 @@
 import { useUIRegistry } from '@appServices/subscription';
-import { FilterBarUIRegistryHook } from './types';
-import { serviceName as service } from './constants';
+import { FilterBarUIRegistryHook, FilterBarServiceType } from './types';
 
 const useFilterBarUIRegistry: FilterBarUIRegistryHook = ({ domain, listId }) => {
 	const path = [listId];
 
-	return useUIRegistry({ domain, service, path });
+	return useUIRegistry({ domain, path, service: FilterBarServiceType.UI });
 };
 
 export default useFilterBarUIRegistry;

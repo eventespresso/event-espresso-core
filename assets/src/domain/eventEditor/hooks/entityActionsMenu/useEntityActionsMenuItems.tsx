@@ -9,15 +9,15 @@ const useEntityActionsMenuItems = <E extends Entity, T extends string>(
 	entity: E,
 	filterByEntityType = true
 ): Array<React.ReactNode> => {
-	const entityActionsMenuRegistry = useEntityActionsMenuRegistry({ domain, entityType, entityId: entity.id });
+	const registry = useEntityActionsMenuRegistry({ domain, entityType, entityId: entity.id });
 	const { getSubscriptions } = useEntityActionsSubscription(domain);
 
-	const { getElements } = entityActionsMenuRegistry;
+	const { getElements } = registry;
 
 	const subscriptions = getSubscriptions({ entityType: filterByEntityType ? entityType : null });
 
 	Object.values(subscriptions).forEach(({ callback }) => {
-		callback({ entityType, entity }, entityActionsMenuRegistry);
+		callback({ entityType, entity, registry });
 	});
 
 	const menuItems = getElements();

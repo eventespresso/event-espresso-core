@@ -4,10 +4,10 @@ import { useFilterBarUISubscription, useFilterBarUIRegistry } from '.';
 import { FilterBarUIElementsHook } from './types';
 
 const useFilterBarUIElements: FilterBarUIElementsHook = ({ domain, listId, filterState }) => {
-	const filterBarUIRegistry = useFilterBarUIRegistry({ domain, listId });
+	const registry = useFilterBarUIRegistry({ domain, listId });
 	const { getSubscriptions } = useFilterBarUISubscription(domain);
 
-	const { getElements } = filterBarUIRegistry;
+	const { getElements } = registry;
 
 	// get all subscriptions for the service
 	const subscriptions = getSubscriptions({ listId });
@@ -15,7 +15,7 @@ const useFilterBarUIElements: FilterBarUIElementsHook = ({ domain, listId, filte
 	// invoke all the subscription callbacks
 	// to let them register their UI elements
 	Object.values(subscriptions).forEach(({ callback }) => {
-		callback({ listId }, filterBarUIRegistry);
+		callback({ listId, registry });
 	});
 
 	// Get the list of all UI elements
