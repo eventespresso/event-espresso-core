@@ -21,7 +21,7 @@ export interface FilterBarSubscriptionsBaseOptions<L extends string> {
 	listId?: L; // to limit the subscription only to specific listId
 }
 
-export interface EntityActionsSubscriptionCbArgs<FS extends ELFSM, L extends string>
+export interface FilterBarSubscriptionCbArgs<FS extends ELFSM, L extends string>
 	extends FilterBarSubscriptionsBaseOptions<L> {
 	registry: FilterBarUIRegistry<FS>;
 }
@@ -30,7 +30,7 @@ export interface FilterBarUISubscription {
 	subscribe: FilterBarUISubscribeFn;
 	getSubscriptions: <FS extends ELFSM, L extends string>(
 		options?: FilterBarSubscriptionsBaseOptions<L>
-	) => Subscriptions<EntityActionsSubscriptionCbArgs<FS, L>, FilterBarSubscriptionsBaseOptions<L>>;
+	) => Subscriptions<FilterBarSubscriptionCbArgs<FS, L>, FilterBarSubscriptionsBaseOptions<L>>;
 }
 
 export type FilterBarUISubscriptionHook = <Domain extends string>(domain: Domain) => FilterBarUISubscription;
@@ -41,7 +41,7 @@ export type FilterBarUISubscribeFn = <FS extends ELFSM, L extends string>(
 ) => VoidFunction;
 
 export type FilterBarUISubscriptionCb<FS extends ELFSM, L extends string> = (
-	args: EntityActionsSubscriptionCbArgs<FS, L>
+	args: FilterBarSubscriptionCbArgs<FS, L>
 ) => void;
 
 export interface FilterBarUIOptions<D extends string, L extends string> extends BaseSubscriptionOptions<D> {
@@ -98,9 +98,7 @@ export interface FilterBarServiceFns<L extends string, E extends Entity, FS exte
 	registerSearch: FilterBarServiceRegistryFn<L, E, FS>;
 }
 
-export type FilterBarServiceCb<FS extends ELFSM, L extends string> = (
-	args: EntityActionsSubscriptionCbArgs<FS, L>
-) => void;
+export type FilterBarServiceCb<FS extends ELFSM, L extends string> = (args: FilterBarSubscriptionCbArgs<FS, L>) => void;
 
 interface FilterBarServiceFnOptions<L extends string> extends FilterBarSubscriptionsBaseOptions<L> {
 	type: string;
