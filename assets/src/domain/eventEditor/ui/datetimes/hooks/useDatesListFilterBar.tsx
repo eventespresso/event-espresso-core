@@ -8,11 +8,12 @@ import { DatetimesToShowControl, DisplayStartOrEndDateControl, SortByControl } f
 type DatesListFilterBarCallback = FilterBarUISubscriptionCb<DatetimesFilterStateManager, 'dates-list'>;
 
 const useDatesListFilterBar = (): DatesListFilterBarCallback => {
-	return useCallback<DatesListFilterBarCallback>(({ listId }, { registerElement: registerFilterBarItem }) => {
+	return useCallback<DatesListFilterBarCallback>(({ listId, registry }) => {
 		// although this is not needed
 		if (listId !== 'dates-list') {
 			return;
 		}
+		const { registerElement: registerFilterBarItem } = registry;
 
 		registerFilterBarItem('datetimesToShow', ({ filterState }) => {
 			const { datetimesToShow, setDatetimesToShow } = filterState;

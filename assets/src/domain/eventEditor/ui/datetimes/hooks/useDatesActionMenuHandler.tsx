@@ -12,34 +12,33 @@ import withIsLoaded from '@sharedUI/hoc/withIsLoaded';
 type DatesSubscriptionCallback = EntityActionsSubscriptionCb<Datetime, 'datetime'>;
 
 const useDatesActionMenuHandler = (): DatesSubscriptionCallback => {
-	return useCallback<DatesSubscriptionCallback>(
-		({ entityType, entity: date }, { registerElement: registerMenuItem }) => {
-			// although this is not needed
-			if (entityType !== 'datetime') {
-				return;
-			}
-			const withTicketsLoaded = withIsLoaded(TypeName.tickets);
+	return useCallback<DatesSubscriptionCallback>(({ entityType, entity: date, registry }) => {
+		// although this is not needed
+		if (entityType !== 'datetime') {
+			return;
+		}
 
-			registerMenuItem('editDate', () => <EditDateButton />);
+		const { registerElement: registerMenuItem } = registry;
+		const withTicketsLoaded = withIsLoaded(TypeName.tickets);
 
-			registerMenuItem(
-				'assignTickets',
-				withTicketsLoaded(({ loaded }) => {
-					/* Hide TAM unless tickets are loaded */
-					return loaded && <AssignTicketsButton id={date.id} />;
-				})
-			);
+		registerMenuItem('editDate', () => <EditDateButton />);
 
-			registerMenuItem(
-				'deleteTicket',
-				withTicketsLoaded(({ loaded }) => {
-					/* Delete button should be hidden to avoid relational inconsistencies */
-					return loaded && <DeleteDateButton id={date.id} />;
-				})
-			);
-		},
-		[]
-	);
+		registerMenuItem(
+			'assignTickets',
+			withTicketsLoaded(({ loaded }) => {
+				/* Hide TAM unless tickets are loaded */
+				return loaded && <AssignTicketsButton id={date.id} />;
+			})
+		);
+
+		registerMenuItem(
+			'deleteTicket',
+			withTicketsLoaded(({ loaded }) => {
+				/* Delete button should be hidden to avoid relational inconsistencies */
+				return loaded && <DeleteDateButton id={date.id} />;
+			})
+		);
+	}, []);
 };
 
 export default useDatesActionMenuHandler;

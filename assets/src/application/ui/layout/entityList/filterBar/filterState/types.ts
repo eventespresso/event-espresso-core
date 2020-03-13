@@ -1,3 +1,5 @@
+import { Entity } from '@appServices/apollo/types';
+
 export type BasicSortBy = 'name' | 'id';
 
 export interface EntityListFilterState<SortBy = BasicSortBy> {
@@ -38,3 +40,16 @@ export type EntityListFilterStateReducer<SortBy = BasicSortBy> = (
 	state: EntityListFilterState<SortBy>,
 	action: EntityListFilterAction<SortBy>
 ) => EntityListFilterState<SortBy>;
+
+/***************************/
+type ELFSM = EntityListFilterStateManager;
+export type EntityFilterServiceHook = <D extends string, L extends string, E extends Entity, FS extends ELFSM>(
+	domain: D,
+	listId: L
+) => EntityFilterService<E, FS>;
+
+export interface EntityFilterService<E extends Entity, FS extends ELFSM> {
+	applyFilters: (entityList: Array<E>, filterState: FS) => Array<E>;
+	applySearches: (entityList: Array<E>, filterState: FS) => Array<E>;
+	applySorters: (entityList: Array<E>, filterState: FS) => Array<E>;
+}

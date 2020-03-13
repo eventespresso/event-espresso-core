@@ -6,16 +6,17 @@ export interface EntityActionsSubscriptionsOptions<T extends string> {
 	entityType?: T; // to limit the subscription only to specific entityType
 }
 
-export interface EntityActionsSubscriptionData<E extends Entity, T extends string>
+export interface EntityActionsSubscriptionCbArgs<E extends Entity, T extends string>
 	extends EntityActionsSubscriptionsOptions<T> {
 	entity: E;
+	registry: EntityActionsMenuRegistry;
 }
 
 export interface EntityActionsSubscription {
 	subscribe: EntityActionsSubscribeFn;
 	getSubscriptions: <E extends Entity, T extends string>(
 		options?: EntityActionsSubscriptionsOptions<T>
-	) => Subscriptions<EntityActionsSubscriptionData<E, T>, EntityActionsSubscriptionsOptions<T>>;
+	) => Subscriptions<EntityActionsSubscriptionCbArgs<E, T>, EntityActionsSubscriptionsOptions<T>>;
 }
 
 export type EntityActionsSubscriptionHook = <Domain extends string>(domain: Domain) => EntityActionsSubscription;
@@ -26,8 +27,7 @@ export type EntityActionsSubscribeFn = <E extends Entity, T extends string>(
 ) => VoidFunction;
 
 export type EntityActionsSubscriptionCb<E extends Entity, T extends string> = (
-	data: EntityActionsSubscriptionData<E, T>,
-	entityActionsMenu: EntityActionsMenuRegistry
+	args: EntityActionsSubscriptionCbArgs<E, T>
 ) => void;
 
 /* UI related types */
