@@ -4,26 +4,27 @@ import { __ } from '@wordpress/i18n';
 import AddNewTicketButton from './AddNewTicketButton';
 import { EntityList } from '@appLayout/entityList';
 import { TableView } from './tableView';
+import { useTickets } from '@edtrServices/apollo/queries';
 import { TicketsListProvider, withEntityListContext } from '@edtrServices/context/EntityListContext';
 import { TicketCard } from './cardView';
 import { TypeName } from '@appServices/apollo/status';
-import { useTicketsListFilterState, useFilteredTickets } from '@edtrServices/filterState';
-import { domain } from '@edtrServices/constants';
+import { useTicketsListFilterState } from '@edtrServices/filterState';
+import { domain, ticketsList } from '@edtrServices/constants';
 
 const TicketsList: React.FC = () => {
-	const filteredTickets = useFilteredTickets();
+	const tickets = useTickets();
 	const filterState = useTicketsListFilterState();
 
 	return (
 		<EntityList
 			CardView={TicketCard}
 			domain={domain}
-			entities={filteredTickets}
+			entities={tickets}
 			entityType={TypeName.tickets}
 			filterState={filterState}
 			footer={<AddNewTicketButton />}
 			headerText={__('Available Tickets')}
-			listId={'tickets-list'}
+			listId={ticketsList}
 			loadingText={__('loading tickets...')}
 			TableView={TableView}
 		/>
