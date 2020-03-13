@@ -2,6 +2,6 @@ export { default as useTicketsListFilterState } from './useTicketsListFilterStat
 
 export { default as useTicketsListFilterStateManager } from './useTicketsListFilterStateManager';
 
-export { default as useFilteredTickets } from './useFilteredTickets';
+export { default as useTicketsFilterBarService } from './useTicketsFilterBarService';
 
 export * from './types';

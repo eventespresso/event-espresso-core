@@ -2,6 +2,6 @@ export { default as useDatesListFilterState } from './useDatesListFilterState';
 
 export { default as useDatesListFilterStateManager } from './useDatesListFilterStateManager';
 
-export { default as useFilteredDatetimes } from './useFilteredDatetimes';
+export { default as useDatesFilterBarService } from './useDatesFilterBarService';
 
 export * from './types';
