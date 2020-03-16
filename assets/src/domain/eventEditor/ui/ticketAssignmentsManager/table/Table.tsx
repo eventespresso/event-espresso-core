@@ -4,10 +4,11 @@ import { __ } from '@wordpress/i18n';
 import getBodyRows from './getBodyRows';
 import getHeaderRows from './getHeaderRows';
 import { ResponsiveTable } from '@appLayout/espressoTable';
+import { DatesAndTickets } from '../types';
 
 import './styles.scss';
 
-const Table: React.FC<any> = ({ datetimes, tickets }) => {
+const Table: React.FC<DatesAndTickets> = ({ datetimes, tickets }) => {
 	const bodyRows = getBodyRows({ datetimes, tickets });
 	const headerRows = getHeaderRows(tickets);
 
@@ -17,7 +18,7 @@ const Table: React.FC<any> = ({ datetimes, tickets }) => {
 			headerRows={headerRows}
 			metaData={{
 				tableId: 'ticket-assignment-manager',
-				tableCaption: __('Ticket Assignment Manager', 'event_espresso'),
+				tableCaption: __('Ticket Assignment Manager'),
 			}}
 		/>
 	);

@@ -1,13 +1,14 @@
 import React from 'react';
 import { __ } from '@wordpress/i18n';
-import { ExclamationCircleOutlined } from '@ant-design/icons';
-import { Typography } from 'antd';
+import { Alert } from 'antd';
 
 import useTAMState from './useTAMState';
 
-const { Paragraph } = Typography;
+interface ErrorMessageProps {
+	asAlert?: boolean;
+}
 
-const ErrorMessage = () => {
+const ErrorMessage: React.FC<ErrorMessageProps> = ({ asAlert = true }) => {
 	const { hasOrphanDates, hasOrphanTickets } = useTAMState();
 
 	let errorMessage = null;
@@ -21,13 +22,16 @@ const ErrorMessage = () => {
 			'Event Dates must always have at least one Ticket assigned to them but one or more of the Event Dates below does not have any. Please correct the assignments for the highlighted cells.'
 		);
 	}
-	return (
-		errorMessage && (
-			<Paragraph type='danger'>
-				<ExclamationCircleOutlined /> {errorMessage}
-			</Paragraph>
-		)
-	);
+
+	if (!errorMessage) {
+		return null;
+	}
+
+	if (asAlert) {
+		return <Alert message={__('Error')} description={errorMessage} type='error' showIcon />;
+	}
+
+	return errorMessage;
 };
 
 export default ErrorMessage;
