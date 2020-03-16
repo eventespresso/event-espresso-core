@@ -1,27 +1,25 @@
 import React from 'react';
-import { __ } from '@wordpress/i18n';
 import classNames from 'classnames';
 
 import { Cell } from '@appLayout/espressoTable';
-import { Datetime, Ticket } from '@edtrServices/apollo/types';
-
 import BodyCell from './BodyCell';
 import useTAMState from '../useTAMState';
+import { DatesAndTickets } from '../types';
+import useRowClassName from './useRowClassName';
+import useColClassName from './useColClassName';
 
-type Props = {
-	datetimes: Datetime[];
-	tickets: Ticket[];
-};
-
-const getBodyRows = ({ datetimes, tickets }: Props) => {
+const getBodyRows = ({ datetimes, tickets }: DatesAndTickets) => {
 	const { getAssignmentStatus } = useTAMState();
+
+	const getRowClass = useRowClassName();
+	const getColClass = useColClassName();
 
 	const formRows = datetimes.map((datetime) => {
 		const datetimeCell: Cell = {
 			key: 'datetime',
 			type: 'cell',
 			className: 'ee-date-list-col-hdr ee-rspnsv-table-column-micro',
-			value: datetime.name,
+			value: `${datetime.dbId}: ${datetime.name}`,
 		};
 
 		const cells: Array<Cell> = tickets.map((ticket) => {
@@ -29,7 +27,8 @@ const getBodyRows = ({ datetimes, tickets }: Props) => {
 
 			const className = classNames(
 				status && `${status.toLowerCase()}-assignment`,
-				'ee-date-list-col-hdr ee-rspnsv-table-column-huge text-center'
+				'ee-date-list-col-hdr ee-rspnsv-table-column-huge text-center',
+				getColClass(ticket)
 			);
 
 			return {
@@ -43,7 +42,8 @@ const getBodyRows = ({ datetimes, tickets }: Props) => {
 		return {
 			cells: [datetimeCell, ...cells],
 			className: 'ticket-assignment-manager-table-body-row',
-			key: 'ticket-assignment-manager-table-body-row',
+			rowClassName: getRowClass(datetime),
+			key: datetime.id,
 			primary: true,
 			type: 'row',
 		};
