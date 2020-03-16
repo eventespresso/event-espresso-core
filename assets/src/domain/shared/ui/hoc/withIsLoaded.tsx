@@ -3,38 +3,40 @@ import React from 'react';
 import { useStatus, TypeName } from '@appServices/apollo/status';
 
 interface ComponentProps {
-	loaded: boolean;
+	loaded?: boolean;
 }
-
-type IsLoadedHOC = <Props>(Component: React.FC<ComponentProps & Props>, props?: Props) => React.FC<ComponentProps>;
-
 /**
- * `loaded` prop of the component returned by isLoadedHOC can be
- * from a parent isLoadedHOC. It allows nesting of isLoadedHOC like
+ * `loaded` prop of the returned component can be
+ * from a parent HOC. It allows nesting of HOC like
  *
  * ```ts
  *     const SomeComponent: React.FC = () => {
- *         const withPricesLoaded = withIsLoaded(TypeName.prices);
- *         const withDatesLoaded = withIsLoaded(TypeName.datetimes);
- *
- *         return withDatesLoaded( withPricesLoaded(({ loaded }) => {
- *             return loaded && <span>{'Dates and Prices loaded'}</span>
- *         }));
+ *         return <span>{'Dates and Prices loaded'}</span>;
  *     }
+ *     export default withIsLoaded(
+ *         TypeName.datetimes,
+ *         withIsLoaded(TypeName.prices, ({ loaded }) => {
+ *             return loaded && <SomeComponent />;
+ *         })
+ *     );
  * ```
  */
-const withIsLoaded = (typeName: TypeName): IsLoadedHOC => {
-	const isLoadedHOC: IsLoadedHOC = (Component, props) => {
-		return ({ loaded: parentLoaded }) => {
-			const { isLoaded } = useStatus();
+function withIsLoaded<Props>(
+	typeName: TypeName,
+	Component: React.ComponentType<ComponentProps & Props>
+): React.FC<ComponentProps & Props> {
+	return ({ loaded: parentLoaded, ...rest }) => {
+		const { isLoaded } = useStatus();
 
-			const loaded = (typeof parentLoaded === 'undefined' || parentLoaded) && isLoaded(typeName);
+		const loaded = (typeof parentLoaded === 'undefined' || parentLoaded) && isLoaded(typeName);
 
-			return <Component {...props} loaded={loaded} />;
-		};
+		/**
+		 * Cast `rest` as Props to avoid negative side effect
+		 * @link https://devblogs.microsoft.com/typescript/announcing-typescript-3-2/#object-spread-on-generic-types
+		 */
+		return <Component {...rest as Props} loaded={loaded} />;
 	};
 
-	return isLoadedHOC;
 };
 
 export default withIsLoaded;

@@ -5,20 +5,22 @@ import { EspressoButton, Icon } from '@application/ui/input';
 import { EntityListItemProps } from '@appLayout/entityList';
 import { useDatetimeMutator } from '@edtrServices/apollo/mutations';
 import { ConfirmDelete } from '@appLayout/confirmDelete';
+import { TypeName } from '@appServices/apollo/status';
+import withIsLoaded from '@sharedUI/hoc/withIsLoaded';
 
-const DeleteDateButton: React.FC<EntityListItemProps> = ({ id, ...rest }) => {
+const DeleteDateButton: React.FC<EntityListItemProps> = ({ id }) => {
 	const { deleteEntity } = useDatetimeMutator(id);
+
+	const tooltipProps = { placement: 'right' };
 
 	return (
 		<ConfirmDelete onConfirm={() => deleteEntity({ id })}>
-			<EspressoButton
-				icon={Icon.TRASH}
-				tooltip={__('delete datetime')}
-				tooltipProps={{ placement: 'right' }}
-				{...rest}
-			/>
+			<EspressoButton icon={Icon.TRASH} tooltip={__('delete datetime')} tooltipProps={tooltipProps} />
 		</ConfirmDelete>
 	);
 };
 
-export default DeleteDateButton;
+export default withIsLoaded<EntityListItemProps>(TypeName.tickets, ({ loaded, id }) => {
+	/* Delete button should be hidden to avoid relational inconsistencies */
+	return loaded && <DeleteDateButton id={id} />;
+});

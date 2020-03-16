@@ -6,8 +6,10 @@ import { EntityListItemProps } from '@appLayout/entityList';
 import ItemCount from '@appDisplay/ItemCount';
 import { useRelatedDatetimes } from '@edtrServices/apollo/queries';
 import useTicketAssignmentsManager from '@edtrUI/ticketAssignmentsManager/useTicketAssignmentsManager';
+import { TypeName } from '@appServices/apollo/status';
+import withIsLoaded from '@sharedUI/hoc/withIsLoaded';
 
-const AssignDatesButton: React.FC<EntityListItemProps> = ({ id, ...rest }) => {
+const AssignDatesButton: React.FC<EntityListItemProps> = ({ id }) => {
 	const { assignDatesToTicket } = useTicketAssignmentsManager();
 
 	const relatedDatetimes = useRelatedDatetimes({
@@ -28,17 +30,21 @@ const AssignDatesButton: React.FC<EntityListItemProps> = ({ id, ...rest }) => {
 		assignDatesToTicket({ ticketId: id });
 	};
 
+	const tooltipProps = { placement: 'right' };
+
 	return (
 		<ItemCount count={count} title={title}>
 			<EspressoButton
 				icon={Icon.CALENDAR}
 				tooltip={__('assign dates')}
-				tooltipProps={{ placement: 'right' }}
+				tooltipProps={tooltipProps}
 				onClick={onClick}
-				{...rest}
 			/>
 		</ItemCount>
 	);
 };
 
-export default AssignDatesButton;
+export default withIsLoaded<EntityListItemProps>(TypeName.datetimes, ({ loaded, id }) => {
+	/* Hide TAM unless dates are loaded */
+	return loaded && <AssignDatesButton id={id} />;
+});

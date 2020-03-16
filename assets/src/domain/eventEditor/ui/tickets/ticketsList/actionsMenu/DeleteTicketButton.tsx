@@ -5,6 +5,8 @@ import { __ } from '@wordpress/i18n';
 import useDeleteTicketHandler from '../../hooks/useDeleteTicketHandler';
 import { EntityListItemProps } from '@appLayout/entityList';
 import { ConfirmDelete } from '@appLayout/confirmDelete';
+import { TypeName } from '@appServices/apollo/status';
+import withIsLoaded from '@sharedUI/hoc/withIsLoaded';
 
 const DeleteTicketButton: React.FC<EntityListItemProps> = ({ id, ...rest }) => {
 	const handleDeleteTicket = useDeleteTicketHandler({ id });
@@ -21,4 +23,10 @@ const DeleteTicketButton: React.FC<EntityListItemProps> = ({ id, ...rest }) => {
 	);
 };
 
-export default DeleteTicketButton;
+export default withIsLoaded(
+	TypeName.datetimes,
+	withIsLoaded<EntityListItemProps>(TypeName.prices, ({ loaded, id }) => {
+		/* Delete button should be hidden to avoid relational inconsistencies */
+		return loaded && <DeleteTicketButton id={id} />;
+	})
+);
