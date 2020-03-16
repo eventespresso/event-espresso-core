@@ -1,10 +1,12 @@
-import React from 'react';
-import { __ } from '@wordpress/i18n';
+import classNames from 'classnames';
 
 import { Cell } from '@appLayout/espressoTable';
 import { Ticket } from '@edtrServices/apollo/types';
+import useColClassName from './useColClassName';
 
 const getHeaderRows = (tickets: Ticket[]) => {
+	const getColClass = useColClassName();
+
 	const emptyCell: Cell = {
 		key: 'empty',
 		type: 'cell',
@@ -15,14 +17,14 @@ const getHeaderRows = (tickets: Ticket[]) => {
 	const cells: Array<Cell> = tickets.map((ticket) => ({
 		key: ticket.id,
 		type: 'cell',
-		className: 'ee-rspnsv-table-column-huge',
-		value: __(ticket.name, 'event_espresso'),
+		className: classNames('ee-rspnsv-table-column-huge', getColClass(ticket)),
+		value: `${ticket.dbId}: ${ticket.name}`,
 	}));
 
 	return [
 		{
 			cells: [emptyCell, ...cells],
-			className: 'ticket-assignment-manager-table-header-row',
+			rowClassName: 'ticket-assignment-manager-table-header-row',
 			key: 'ticket-assignment-manager-table-header-row',
 			primary: true,
 			type: 'row',

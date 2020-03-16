@@ -9,6 +9,7 @@ import useModal from '@appLayout/modal/useModal';
 import withTAMProvider from './withTAMProvider';
 import useTAMState from './useTAMState';
 import useOnSubmitAssignments from './useOnSubmitAssignments';
+import ErrorMessage from './ErrorMessage';
 
 const useTicketAssignmentsManager = (): TAM => {
 	const modal = useModal();
@@ -60,14 +61,35 @@ const useTicketAssignmentsManager = (): TAM => {
 			[data]
 		);
 
+		const onCancel: ButtonProps['onClick'] = useCallback(
+			(click) => {
+				click.preventDefault();
+				if (hasErrors) {
+					modal.error({
+						title: __('Error'),
+						content: withTAMProvider(ErrorMessage, { asAlert: false }),
+						maskClosable: true,
+					});
+				} else {
+					destroyModal();
+				}
+			},
+			[hasErrors]
+		);
+
 		useEffect(() => {
 			if (openModal) {
 				openModal.update({
 					okButtonProps: {
 						...submitButton,
-						disabled: hasOrphanEntities(),
+						disabled: hasErrors,
 						onClick: onSubmit,
 					},
+					cancelButtonProps: {
+						...cancelButton,
+						onClick: onCancel,
+					},
+					maskClosable: !hasErrors,
 				});
 			}
 		}, [hasErrors, onSubmit]);
@@ -77,7 +99,7 @@ const useTicketAssignmentsManager = (): TAM => {
 
 	const showModal = (options: TAMProps) => {
 		openModal = modal.confirm({
-			title: 'Ticket Assignment Manager',
+			title: __('Ticket Assignment Manager'),
 			content: withTAMProvider(formContent, options),
 			okButtonProps: submitButton,
 			cancelButtonProps: cancelButton,

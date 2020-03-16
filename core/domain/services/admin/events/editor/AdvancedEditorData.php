@@ -562,9 +562,7 @@ QUERY;
             foreach ($related_models as $key => $model) {
                 // Get the IDs of related entities for the datetime ID.
                 $Ids = $model->get_col([['Datetime.DTT_ID' => $datetimeId]]);
-                if (! empty($Ids)) {
-                    $data['datetimes'][ $GID ][ $key ] = self::convertToGlobalId($model->item_name(), $Ids);
-                }
+                $data['datetimes'][ $GID ][ $key ] = empty($Ids) ? [] : self::convertToGlobalId($model->item_name(), $Ids);
             }
         }
 
@@ -584,9 +582,7 @@ QUERY;
             foreach ($related_models as $key => $model) {
                 // Get the IDs of related entities for the ticket ID.
                 $Ids = $model->get_col([['Ticket.TKT_ID' => $ticketId]]);
-                if (! empty($Ids)) {
-                    $data['tickets'][ $GID ][ $key ] = self::convertToGlobalId($model->item_name(), $Ids);
-                }
+                $data['tickets'][ $GID ][ $key ] = empty($Ids) ? [] : self::convertToGlobalId($model->item_name(), $Ids);
             }
         }
 
@@ -603,9 +599,7 @@ QUERY;
             foreach ($related_models as $key => $model) {
                 // Get the IDs of related entities for the price ID.
                 $Ids = $model->get_col([['Price.PRC_ID' => $priceId]]);
-                if (! empty($Ids)) {
-                    $data['prices'][ $GID ][ $key ] = self::convertToGlobalId($model->item_name(), $Ids);
-                }
+                $data['prices'][ $GID ][ $key ] = empty($Ids) ? [] : self::convertToGlobalId($model->item_name(), $Ids);
             }
         }
 

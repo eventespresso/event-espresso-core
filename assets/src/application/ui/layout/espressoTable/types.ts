@@ -140,7 +140,7 @@ export interface TableHeaderCellProps {
 export interface BodyRow {
 	cells?: Cell[];
 	children?: React.ReactNode;
-	className: TableClassName | string;
+	className?: TableClassName | string;
 	headerRows?: HeaderRow[];
 	headerRowClassName?: string;
 	headerRowCount?: number;
