@@ -13,6 +13,7 @@ import TicketActionsMenu from '@edtrUI/tickets/ticketsList/actionsMenu/TicketAct
 import { useMoneyDisplay } from '@appServices/utilities/money';
 import { useTicketMutator } from '@edtrServices/apollo/mutations';
 import useTicketRegistrationCount from '@edtrUI/tickets/hooks/useTicketRegistrationCount';
+import TicketQuantity from '../cardView/TicketQuantity';
 
 import '@application/ui/styles/root/entity-status.css';
 
@@ -52,18 +53,7 @@ const ticketsListTableRow = ({ ticket, displayStartOrEndDate }: Props) => {
 		key: 'quantity',
 		type: 'cell',
 		className: 'ee-ticket-list-cell ee-ticket-list-col-quantity ee-rspnsv-table-column-tiny ee-number-column',
-		value: (
-			<InlineEditText
-				className={'ee-focus-priority-5'}
-				onChange={(quantity: string): void => {
-					if (quantity !== String(ticket.quantity)) {
-						updateEntity({ quantity: Number(quantity) });
-					}
-				}}
-			>
-				{ticket.quantity ? ticket.quantity : __('Edit quantity...')}
-			</InlineEditText>
-		),
+		value: <TicketQuantity ticket={ticket} />,
 	};
 
 	const cellsData: Array<Cell> = [

@@ -1,8 +1,8 @@
 import React from 'react';
 
 interface ContextHOCArgs {
-	Provider: React.ReactType;
-	Component: React.ReactType;
+	Provider: React.ComponentType;
+	Component: React.ComponentType;
 	[key: string]: any;
 }
 

@@ -14,7 +14,7 @@ import {
 import { FieldRendererProps } from '../types';
 
 const MappedField: React.FC<Omit<FieldRendererProps, 'meta'>> = ({ fieldType, ...rest }) => {
-	let Component: React.ReactType;
+	let Component: React.ElementType;
 	switch (fieldType) {
 		case 'text':
 			Component = Text;

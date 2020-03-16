@@ -48,5 +48,5 @@ export interface ActionsMenuComponentProps<E extends Entity> {
 }
 
 export type EntityMenuItems = {
-	[key: string]: React.ReactType;
+	[key: string]: React.ComponentType;
 };
