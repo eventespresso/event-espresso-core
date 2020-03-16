@@ -6,6 +6,8 @@ import { EntityListItemProps } from '@appLayout/entityList';
 import ItemCount from '@appDisplay/ItemCount';
 import { useRelatedTickets } from '@edtrServices/apollo/queries';
 import useTicketAssignmentsManager from '@edtrUI/ticketAssignmentsManager/useTicketAssignmentsManager';
+import { TypeName } from '@appServices/apollo/status';
+import withIsLoaded from '@sharedUI/hoc/withIsLoaded';
 
 const AssignTicketsButton: React.FC<EntityListItemProps> = ({ id }) => {
 	const { assignTicketsToDate } = useTicketAssignmentsManager();
@@ -38,4 +40,8 @@ const AssignTicketsButton: React.FC<EntityListItemProps> = ({ id }) => {
 	);
 };
 
-export default AssignTicketsButton;
+
+export default withIsLoaded<EntityListItemProps>(TypeName.tickets, ({ loaded, id }) => {
+	/* Hide TAM unless tickets are loaded */
+	return loaded && <AssignTicketsButton id={id} />;
+});;

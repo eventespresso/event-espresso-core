@@ -4,6 +4,8 @@ import { __ } from '@wordpress/i18n';
 
 import { TpcButtonDataProps } from '../types';
 import { useFormModal } from '@appLayout/formModal';
+import { TypeName } from '@appServices/apollo/status';
+import withIsLoaded from '@sharedUI/hoc/withIsLoaded';
 
 const TicketPriceCalculatorButton: React.FC<TpcButtonDataProps> = ({ ticketId, ...buttonProps }) => {
 	const { openEditor } = useFormModal();
@@ -25,4 +27,7 @@ const TicketPriceCalculatorButton: React.FC<TpcButtonDataProps> = ({ ticketId, .
 	);
 };
 
-export default TicketPriceCalculatorButton;
+export default withIsLoaded<TpcButtonDataProps>(TypeName.prices, ({ loaded, id }) => {
+	/* Hide price calculator unless prices are loaded */
+	return loaded && <TicketPriceCalculatorButton ticketId={id} />;
+});;
