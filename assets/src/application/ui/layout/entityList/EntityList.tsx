@@ -8,16 +8,14 @@ import EntityListFilterBar from './withValidFilterState';
 import { Entity } from '@appServices/apollo/types';
 import { useStatus } from '@appServices/apollo/status';
 
-import CardList from './CardList';
 import { EntityListProps } from './types';
 import { EntityPagination } from './pagination';
 import './style.scss';
 
 const { Title } = Typography;
 
-const EntityList: React.FC<any> = <ELFS extends EntityListFilterStateManager>({
+const EntityList = <E extends Entity, ELFS extends EntityListFilterStateManager<any>>({
 	CardView,
-	TableView,
 	className,
 	domain,
 	entities = [],
@@ -28,8 +26,8 @@ const EntityList: React.FC<any> = <ELFS extends EntityListFilterStateManager>({
 	listId,
 	noResultsDesc,
 	noResultsTitle,
-	...props
-}: EntityListProps<Entity, ELFS>) => {
+	TableView,
+}: EntityListProps<E, ELFS>) => {
 	const { isError, isLoading } = useStatus();
 	const error = isError(entityType);
 	const loading = isLoading(entityType);
@@ -48,12 +46,9 @@ const EntityList: React.FC<any> = <ELFS extends EntityListFilterStateManager>({
 		const description = noResultsDesc ? noResultsDesc : __('try changing filter settings');
 		entityList = <EmptyState className='ee-entity-list--no-results' title={title} description={description} />;
 	} else {
-		entityList =
-			view === 'grid' ? (
-				<CardList CardView={CardView} entities={filteredEntities} className={className} {...props} />
-			) : (
-				<TableView entities={filteredEntities} className={className} {...props} />
-			);
+		const Component = view === 'grid' ? CardView : TableView;
+
+		entityList = <Component entities={filteredEntities} className={className} filterState={filterState} />;
 	}
 
 	return (

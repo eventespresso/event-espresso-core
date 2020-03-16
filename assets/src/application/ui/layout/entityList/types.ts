@@ -3,30 +3,37 @@ import { Entity, EntityId } from '@appServices/apollo/types';
 import { TypeName } from '@appServices/apollo/status';
 import { EntityListFilterStateManager } from './filterBar';
 
-export interface CardListProps<T extends Entity> extends EntityListComponentProps<T> {
-	CardView: React.JSXElementConstructor<CardViewProps>;
+type ELFSM = EntityListFilterStateManager<any>;
+
+export interface EntityCardListProps<E extends Entity> {
+	EntityCard: React.ComponentType<EntityListItemProps>;
+	entities: Array<E>;
 }
 
-export interface CardViewProps {
+/**
+ * This common type can be used/extended by many UI components
+ */
+export interface EntityListItemProps {
 	id: EntityId;
 }
 
-export interface EntityListComponentProps<T extends Entity> {
+export interface EntityListViewProps<E extends Entity, FS extends ELFSM> {
 	className?: string;
-	entities: T[];
+	entities: Array<E>;
+	filterState: FS;
 }
 
-export interface EntityListProps<T extends Entity, ELFS = EntityListFilterStateManager>
-	extends EntityListComponentProps<T> {
-	CardView: React.JSXElementConstructor<CardViewProps>;
+export type EntityListComponent<E extends Entity, FS extends ELFSM> = React.ComponentType<EntityListViewProps<E, FS>>;
+
+export interface EntityListProps<E extends Entity, FS extends ELFSM> extends EntityListViewProps<E, FS> {
+	CardView: EntityListComponent<E, FS>;
 	domain: string;
 	entityType: TypeName;
-	filterState: ELFS;
-	footer: JSX.Element;
+	footer: React.ReactNode;
 	headerText: string;
 	listId: string;
 	loadingText?: string;
 	noResultsDesc?: string;
 	noResultsTitle?: string;
-	TableView: React.JSXElementConstructor<EntityListComponentProps<T>>;
+	TableView: EntityListComponent<E, FS>;
 }
