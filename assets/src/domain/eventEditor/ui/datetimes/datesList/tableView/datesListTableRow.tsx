@@ -11,6 +11,7 @@ import { getBackgroundColorClassName, status } from '@sharedEntities/datetimes/h
 import { InlineEditText } from '@appInputs/InlineEditInput';
 import { shortenGuid } from '@appServices/utilities/text';
 import { useDatetimeMutator } from '@edtrServices/apollo/mutations';
+import DateCapacity from '../cardView/DateCapacity';
 
 import '@application/ui/styles/root/entity-status.css';
 
@@ -33,18 +34,7 @@ const datesListTableRow = ({ datetime, displayStartOrEndDate }: Props) => {
 		key: 'capacity',
 		type: 'cell',
 		className: 'ee-date-list-cell ee-date-list-col-capacity ee-rspnsv-table-column-tiny ee-number-column',
-		value: (
-			<InlineEditText
-				className={'ee-focus-priority-5'}
-				onChange={(capacity: string): void => {
-					if (capacity !== String(datetime.capacity)) {
-						updateEntity({ capacity: Number(capacity) });
-					}
-				}}
-			>
-				{datetime.capacity ? datetime.capacity : __('Edit capacity...')}
-			</InlineEditText>
-		),
+		value: <DateCapacity datetime={datetime} />,
 	};
 
 	const name = {

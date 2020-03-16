@@ -2,12 +2,12 @@ import React from 'react';
 import { __ } from '@wordpress/i18n';
 
 import { EspressoButton, Icon } from '@application/ui/input';
-import { EditItemModalProps } from '@edtrInterfaces/types';
+import { EntityListItemProps } from '@appLayout/entityList';
 import ItemCount from '@appDisplay/ItemCount';
 import { useRelatedTickets } from '@edtrServices/apollo/queries';
 import useTicketAssignmentsManager from '@edtrUI/ticketAssignmentsManager/useTicketAssignmentsManager';
 
-const AssignTicketsButton: React.FC<EditItemModalProps> = ({ id, ...rest }) => {
+const AssignTicketsButton: React.FC<EntityListItemProps> = ({ id }) => {
 	const { assignTicketsToDate } = useTicketAssignmentsManager();
 
 	const relatedTickets = useRelatedTickets({
@@ -33,7 +33,6 @@ const AssignTicketsButton: React.FC<EditItemModalProps> = ({ id, ...rest }) => {
 				tooltip={__('assign tickets')}
 				tooltipProps={{ placement: 'right' }}
 				onClick={onClick}
-				{...rest}
 			/>
 		</ItemCount>
 	);
