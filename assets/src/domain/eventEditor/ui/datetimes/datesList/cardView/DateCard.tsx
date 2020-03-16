@@ -12,11 +12,11 @@ import { PLUS_ONE_MONTH, PLUS_TWO_MONTHS } from '@sharedConstants/defaultDates';
 import statusBgColorClassName from '@sharedEntities/datetimes/helpers/statusBgColorClassName';
 
 import EntityCard from '@appLayout/EntityCard';
-import { ListItemProps } from '@edtrInterfaces/types';
+import { EntityListItemProps } from '@appLayout/entityList';
 import { useDatetimeMutator } from '@edtrServices/apollo/mutations';
 import { InlineEditHeading, InlineEditTextArea } from '@appInputs/InlineEditInput';
 
-const DateCard: React.FC<ListItemProps> = ({ id }) => {
+const DateCard: React.FC<EntityListItemProps> = ({ id }) => {
 	const date = useDatetimeItem({ id });
 	const { updateEntity } = useDatetimeMutator(id);
 

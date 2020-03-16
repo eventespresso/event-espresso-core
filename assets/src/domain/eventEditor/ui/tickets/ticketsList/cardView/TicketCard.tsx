@@ -8,12 +8,12 @@ import useTicketItem from '@edtrServices/apollo/queries/tickets/useTicketItem';
 import TicketProvider from '@edtrServices/context/TicketContext';
 import CurrencyInput from '@appInputs/CurrencyInput';
 import EntityCard from '@appLayout/EntityCard';
-import { ListItemProps } from '@edtrInterfaces/types';
+import { EntityListItemProps } from '@appLayout/entityList';
 import { useTicketMutator } from '@edtrServices/apollo/mutations';
 import { InlineEditHeading, InlineEditTextArea } from '@appInputs/InlineEditInput';
 import statusBgColorClassName from '@sharedEntities/tickets/helpers/statusBgColorClassName';
 
-const TicketCard: React.FC<ListItemProps> = ({ id }) => {
+const TicketCard: React.FC<EntityListItemProps> = ({ id }) => {
 	const ticket = useTicketItem({ id });
 	const { updateEntity } = useTicketMutator(id);
 

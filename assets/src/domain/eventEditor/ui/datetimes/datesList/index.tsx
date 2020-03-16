@@ -2,7 +2,7 @@ import React from 'react';
 import { __ } from '@wordpress/i18n';
 
 import AddNewDateButton from './AddNewDateButton';
-import { DateCard } from './cardView';
+import { CardView } from './cardView';
 import { DatetimesListProvider, withEntityListContext } from '@edtrServices/context/EntityListContext';
 import { useDatetimes } from '@edtrServices/apollo/queries';
 import { EntityList } from '@appLayout/entityList';
@@ -17,7 +17,7 @@ const DatesList: React.FC = () => {
 
 	return (
 		<EntityList
-			CardView={DateCard}
+			CardView={CardView}
 			domain={domain}
 			entities={datetimes}
 			entityType={TypeName.datetimes}
