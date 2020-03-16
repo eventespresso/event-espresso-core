@@ -1,13 +1,13 @@
 import { useCallback } from 'react';
 
 import useTicketPrices from '@edtrServices/apollo/queries/tickets/useTicketPrices';
-import { ListItemProps } from '@edtrInterfaces/types';
+import { EntityListItemProps } from '@appLayout/entityList';
 import { BackwardSubscription } from '@appServices/apollo/mutations';
 import { useTicketMutator, usePriceMutator } from '@edtrServices/apollo/mutations';
 
 type VoidFn = () => void;
 
-const useDeleteTicketHandler = ({ id }: ListItemProps): VoidFn => {
+const useDeleteTicketHandler = ({ id }: EntityListItemProps): VoidFn => {
 	const { deleteEntity: deleteTicket } = useTicketMutator();
 	const relatedPrices = useTicketPrices(id);
 	const { deleteEntity: deletePrice } = usePriceMutator();

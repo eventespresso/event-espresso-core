@@ -3,10 +3,10 @@ import { EspressoButton, Icon } from '@application/ui/input';
 import { __ } from '@wordpress/i18n';
 
 import useDeleteTicketHandler from '../../hooks/useDeleteTicketHandler';
-import { ListItemProps } from '@edtrInterfaces/types';
+import { EntityListItemProps } from '@appLayout/entityList';
 import { ConfirmDelete } from '@appLayout/confirmDelete';
 
-const DeleteTicketButton: React.FC<ListItemProps> = ({ id, ...rest }) => {
+const DeleteTicketButton: React.FC<EntityListItemProps> = ({ id, ...rest }) => {
 	const handleDeleteTicket = useDeleteTicketHandler({ id });
 
 	return (

@@ -1,1 +1,1 @@
-export { default as DateCard } from './DateCard';
+export { default as CardView } from './CardView';

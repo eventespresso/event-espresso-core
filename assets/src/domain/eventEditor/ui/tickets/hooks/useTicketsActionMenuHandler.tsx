@@ -19,7 +19,7 @@ const useTicketsActionMenuHandler = (): TicketsSubscriptionCallback => {
 
 		const { registerElement: registerMenuItem } = registry;
 
-		registerMenuItem('editTicket', () => <EditTicketButton key={ticket.id + 'editTicket'} />);
+		registerMenuItem('editTicket', () => <EditTicketButton />);
 
 		registerMenuItem(
 			'assignDates',

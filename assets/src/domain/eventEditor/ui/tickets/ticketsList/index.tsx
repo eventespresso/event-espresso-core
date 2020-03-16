@@ -3,10 +3,10 @@ import { __ } from '@wordpress/i18n';
 
 import AddNewTicketButton from './AddNewTicketButton';
 import { EntityList } from '@appLayout/entityList';
+import { CardView } from './cardView';
 import { TableView } from './tableView';
 import { useTickets } from '@edtrServices/apollo/queries';
 import { TicketsListProvider, withEntityListContext } from '@edtrServices/context/EntityListContext';
-import { TicketCard } from './cardView';
 import { TypeName } from '@appServices/apollo/status';
 import { useTicketsListFilterState } from '@edtrServices/filterState';
 import { domain, ticketsList } from '@edtrServices/constants';
@@ -17,7 +17,7 @@ const TicketsList: React.FC = () => {
 
 	return (
 		<EntityList
-			CardView={TicketCard}
+			CardView={CardView}
 			domain={domain}
 			entities={tickets}
 			entityType={TypeName.tickets}

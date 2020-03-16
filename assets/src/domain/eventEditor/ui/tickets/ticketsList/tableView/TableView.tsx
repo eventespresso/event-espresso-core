@@ -7,8 +7,7 @@ import { ResponsiveTable } from '@appLayout/espressoTable';
 import ticketsListTableHeader from './ticketsListTableHeader';
 import ticketsListTableRow from './ticketsListTableRow';
 import { useTicketItem } from '@edtrServices/apollo/queries';
-
-import { TableViewProps } from './types';
+import { TicketsListViewProps } from '../types';
 
 import './styles.scss';
 
@@ -18,10 +17,11 @@ import './styles.scss';
  * EditorTicketsListView
  * Displays tickets in a standard list table like view
  */
-const TableView: React.FC<TableViewProps> = ({ className, displayStartOrEndDate, entities: tickets, ...props }) => {
-	const formRows = tickets.map(({ id }) => {
-		const ticket = useTicketItem({ id });
-		const columns = ticketsListTableRow({ displayStartOrEndDate, ticket, ...props });
+const TableView: React.FC<TicketsListViewProps> = ({ className, filterState, entities: tickets }) => {
+	const { displayStartOrEndDate } = filterState;
+
+	const formRows = tickets.map((ticket) => {
+		const columns = ticketsListTableRow({ displayStartOrEndDate, ticket });
 		return columns;
 	});
 
@@ -35,7 +35,7 @@ const TableView: React.FC<TableViewProps> = ({ className, displayStartOrEndDate,
 			headerRows={[headerRows]}
 			metaData={{
 				tableId: 'date-entities-list-view',
-				tableCaption: __('Event Dates', 'event_espresso'),
+				tableCaption: __('Tickets'),
 			}}
 		/>
 	);

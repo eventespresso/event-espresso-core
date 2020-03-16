@@ -2,12 +2,11 @@ import React from 'react';
 import { __ } from '@wordpress/i18n';
 
 import { EspressoButton, Icon } from '@application/ui/input';
-import { EditItemButtonProps } from '@edtrInterfaces/types';
 import { useDatetimeContext } from '@edtrHooks/index';
 import { useDatetimeItem } from '@edtrServices/apollo/queries';
 import { useFormModal } from '@appLayout/formModal';
 
-const EditDateButton: React.FC<EditItemButtonProps> = ({ ...rest }) => {
+const EditDateButton: React.FC = () => {
 	const { id: entityId } = useDatetimeContext();
 	const { dbId: entityDbId } = useDatetimeItem({ id: entityId }) || {};
 
@@ -26,7 +25,6 @@ const EditDateButton: React.FC<EditItemButtonProps> = ({ ...rest }) => {
 			tooltip={__('edit datetime')}
 			tooltipProps={{ placement: 'right' }}
 			onClick={onClick}
-			{...rest}
 		/>
 	);
 };
