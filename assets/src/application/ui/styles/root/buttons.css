@@ -91,9 +91,10 @@
 }
 
 .esprs-button.ant-btn .anticon {
+	display: inline-flex;
 	font-size: 20px;
-	position: relative;
 	margin: 0;
+	position: relative;
 	vertical-align: middle;
 }
 

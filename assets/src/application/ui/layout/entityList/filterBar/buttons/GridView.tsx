@@ -8,6 +8,7 @@ import { EspressoButton, EspressoButtonType } from '../../../../input/EspressoBu
 const GridViewFilterButton: React.FC<GridViewFilterButtonProps> = ({ listId, setGridView, view }) =>
 	React.useMemo(() => {
 		const filterId = `ee-grid-view-btn-${listId}`;
+
 		return (
 			<>
 				<label className='esprs-button-label screen-reader-text' htmlFor={filterId}>

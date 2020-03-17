@@ -8,6 +8,7 @@ export interface EntityListFilterState<SortBy = BasicSortBy> {
 	total: number;
 	searchText: string;
 	showEntityFilters: boolean;
+	showLegend: boolean;
 	sortBy: SortBy;
 	view?: 'grid' | 'list';
 }
@@ -19,7 +20,8 @@ export type EntityListFilterActionType =
 	| 'SET_TOTAL'
 	| 'SET_SEARCH_TEXT'
 	| 'SET_VIEW'
-	| 'TOGGLE_ENTITY_FILTERS';
+	| 'TOGGLE_ENTITY_FILTERS'
+	| 'TOGGLE_LEGEND';
 
 export interface EntityListFilterAction<SortBy = BasicSortBy> extends Partial<EntityListFilterState<SortBy>> {
 	type: EntityListFilterActionType;
@@ -34,6 +36,7 @@ export interface EntityListFilterStateManager<SortBy = BasicSortBy> extends Enti
 	setGridView: VoidFunction;
 	setListView: VoidFunction;
 	toggleEntityFilters: VoidFunction;
+	toggleLegend: VoidFunction;
 }
 
 export type EntityListFilterStateReducer<SortBy = BasicSortBy> = (

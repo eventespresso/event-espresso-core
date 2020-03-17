@@ -5,6 +5,9 @@ import { EntityListFilterBarProps } from './types';
 import GridViewFilterButton from './buttons/GridView';
 import ListViewFilterButton from './buttons/ListView';
 import ToggleFiltersButton from './buttons/ToggleFilters';
+import LegendButton from './buttons/LegendButton';
+import { SearchInput } from '@application/ui/input';
+import { EntityListLegend } from '@application/ui/display';
 import { useFilterBarUIElements } from './subscription';
 import { EntityListFilterStateManager as ELFSM } from './filterState';
 
@@ -17,6 +20,7 @@ import './style.scss';
 const EntityListFilterBar = <FS extends ELFSM>({
 	domain,
 	filterState,
+	legendConfig,
 	listId,
 }: EntityListFilterBarProps<FS>): JSX.Element => {
 	const {
@@ -25,7 +29,9 @@ const EntityListFilterBar = <FS extends ELFSM>({
 		setGridView,
 		setSearchText,
 		showEntityFilters,
+		showLegend,
 		toggleEntityFilters,
+		toggleLegend,
 		view,
 	} = filterState;
 
@@ -41,15 +47,22 @@ const EntityListFilterBar = <FS extends ELFSM>({
 					showFilters={showEntityFilters}
 					toggleFilters={toggleEntityFilters}
 				/>
+				<LegendButton listId={listId} showLegend={showLegend} toggleLegend={toggleLegend} />
 			</div>
 
-			<Collapsible
-				entityFilters={filerBarItems}
-				listId={listId}
-				searchText={searchText}
-				setSearchText={setSearchText}
-				showEntityFilters={showEntityFilters}
-			/>
+			<Collapsible showEntityFilters={showEntityFilters}>
+				{filerBarItems}
+				<SearchInput
+					className={'ee-filter-bar-filter ee-filter-bar-filter--big'}
+					id={listId}
+					searchText={searchText}
+					setSearchText={setSearchText}
+				/>
+			</Collapsible>
+
+			<Collapsible showEntityFilters={showLegend}>
+				<EntityListLegend legendConfig={legendConfig} />
+			</Collapsible>
 		</div>
 	);
 };

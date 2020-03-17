@@ -23,6 +23,7 @@ const EntityList = <E extends Entity, ELFS extends EntityListFilterStateManager<
 	filterState,
 	footer,
 	headerText,
+	legendConfig,
 	listId,
 	noResultsDesc,
 	noResultsTitle,
@@ -56,7 +57,12 @@ const EntityList = <E extends Entity, ELFS extends EntityListFilterStateManager<
 			<Title className='ee-entity-list__header' level={3}>
 				{headerText}
 			</Title>
-			<EntityListFilterBar domain={domain} filterState={filterState} listId={listId} />
+			<EntityListFilterBar
+				domain={domain}
+				filterState={filterState}
+				legendConfig={legendConfig}
+				listId={listId}
+			/>
 			{entityList}
 			<EntityPagination filterState={filterState} />
 			<div className={'ee-entity-list__footer'}>{footer}</div>
