@@ -7,6 +7,7 @@ export const legendConfig: LegendConfig = {
 		{ icon: Icon.EDIT, description: 'Edit Event Details' },
 		{ icon: Icon.CALENDAR, description: 'View Assigned Dates' },
 		{ icon: Icon.CALCULATOR, description: 'View Ticket Price Calculator' },
+		{ icon: Icon.TRASH, description: 'Move Ticket to Trash' },
 	],
 	swatches: {
 		TKA: __('Trashed'),
