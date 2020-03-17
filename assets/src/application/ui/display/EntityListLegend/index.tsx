@@ -2,7 +2,7 @@ import React from 'react';
 import classNames from 'classnames';
 import { Row, Col } from 'antd';
 
-import { EspressoIcon, Icon } from '@appDisplay/espressoIcon';
+import { EspressoIcon } from '@appDisplay/espressoIcon';
 import { LegendConfig } from './types';
 import './style.scss';
 
@@ -12,6 +12,7 @@ interface Props {
 
 const EntityListLegend: React.FC<Props> = ({ legendConfig }) => {
 	const { icons, swatches } = legendConfig;
+
 	return (
 		<Row className='ee-row'>
 			<Col span={12}>

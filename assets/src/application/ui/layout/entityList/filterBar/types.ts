@@ -3,7 +3,7 @@ import { EntityListFilterStateManager as ELFSM } from './filterState';
 import { LegendConfig } from '@application/ui/display/EntityListLegend/types';
 
 export interface CollapsibleProps {
-	showEntityFilters: boolean;
+	show: boolean;
 }
 
 export interface EntityListFilterBarProps<FS extends ELFSM> {
