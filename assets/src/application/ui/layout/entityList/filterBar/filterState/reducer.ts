@@ -26,9 +26,6 @@ const getReducer = <SortBy = BasicSortBy>(): EntityListFilterStateReducer<SortBy
 			case 'TOGGLE_ENTITY_FILTERS':
 				return { ...state, showEntityFilters: !state.showEntityFilters };
 
-			case 'TOGGLE_LEGEND':
-				return { ...state, showLegend: !state.showLegend };
-
 			default:
 				throw new Error('Unexpected action');
 		}

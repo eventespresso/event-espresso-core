@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 
 import Collapsible from './Collapsible';
 import { EntityListFilterBarProps } from './types';
@@ -23,19 +23,19 @@ const EntityListFilterBar = <FS extends ELFSM>({
 	legendConfig,
 	listId,
 }: EntityListFilterBarProps<FS>): JSX.Element => {
+	const [showLegend, setShowLegend] = useState(false);
 	const {
 		searchText,
 		setListView,
 		setGridView,
 		setSearchText,
 		showEntityFilters,
-		showLegend,
 		toggleEntityFilters,
-		toggleLegend,
 		view,
 	} = filterState;
 
 	const filerBarItems = useFilterBarUIElements({ domain, filterState, listId });
+	const toggleLegend = () => setShowLegend(!showLegend);
 
 	return (
 		<div className='ee-entity-list-filter-bar'>

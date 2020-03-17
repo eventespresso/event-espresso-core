@@ -15,7 +15,6 @@ const useEntityListFilterStateManager = <SortBy = BasicSortBy>(defaultSortBy: So
 		total: null,
 		searchText: '',
 		showEntityFilters: false,
-		showLegend: false,
 		sortBy: defaultSortBy,
 		view: 'grid',
 	};
@@ -82,12 +81,6 @@ const useEntityListFilterStateManager = <SortBy = BasicSortBy>(defaultSortBy: So
 		});
 	};
 
-	const toggleLegend: FSM['toggleLegend'] = () => {
-		dispatch({
-			type: 'TOGGLE_LEGEND',
-		});
-	};
-
 	return {
 		...state,
 		setSortBy,
@@ -98,7 +91,6 @@ const useEntityListFilterStateManager = <SortBy = BasicSortBy>(defaultSortBy: So
 		setListView,
 		setSearchText,
 		toggleEntityFilters,
-		toggleLegend,
 	};
 };
 
