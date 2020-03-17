@@ -17,11 +17,11 @@ const EntityListLegend: React.FC<Props> = ({ legendConfig }) => {
 		<Row className='ee-row'>
 			<Col span={12}>
 				<dl className='ee-list-table-legend'>
-					{Object.entries(icons).map(([icon, text]) => {
+					{Object.entries(icons).map(([icon, description]) => {
 						return (
 							<dt>
 								<EspressoIcon icon={icon} svgSize={18} />
-								<span className='ee-legend-description'>{text}</span>
+								<span className='ee-legend-description'>{description}</span>
 							</dt>
 						);
 					})}
@@ -29,7 +29,7 @@ const EntityListLegend: React.FC<Props> = ({ legendConfig }) => {
 			</Col>
 			<Col span={12}>
 				<dl className='ee-list-table-legend'>
-					{Object.entries(swatches).map(([swatchClassName, text]) => {
+					{Object.entries(swatches).map(([swatchClassName, description]) => {
 						return (
 							<dt>
 								<span
@@ -38,7 +38,7 @@ const EntityListLegend: React.FC<Props> = ({ legendConfig }) => {
 										'ee-status-background-color-' + swatchClassName
 									)}
 								></span>
-								<span className='ee-legend-description'>{text}</span>
+								<span className='ee-legend-description'>{description}</span>
 							</dt>
 						);
 					})}
