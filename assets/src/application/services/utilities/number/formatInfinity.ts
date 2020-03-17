@@ -7,7 +7,7 @@ const formatInfinity: FormatInfinity = (value, defaultValue = '') => {
 	if (isInfinite(value)) {
 		return defaultValue;
 	}
-	return `${value}`;
+	return value.toString();
 };
 
 export default formatInfinity;
