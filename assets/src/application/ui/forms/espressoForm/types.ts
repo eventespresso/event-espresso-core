@@ -61,6 +61,7 @@ export interface AdditionalFieldProps<FormValues = AnyObject> {
 	isRepeatable?: boolean;
 	conditions?: FieldConditions;
 	formItemProps?: FormItemProps;
+	parseAsInfinity?: boolean;
 	[key: string]: any;
 }
 
