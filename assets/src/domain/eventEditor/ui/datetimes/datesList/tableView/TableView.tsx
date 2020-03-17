@@ -22,7 +22,7 @@ const TableView: React.FC<DatesListViewProps> = ({ className, filterState, entit
 			bodyRowGenerator={datesListTableRow}
 			headerRowGenerator={datesListTableHeader}
 			className={tableClassName}
-			tableId='date-entities-list-view'
+			tableId='date-entities-table-view'
 			tableCaption={__('Event Dates')}
 		/>
 	);

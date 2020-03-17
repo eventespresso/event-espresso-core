@@ -20,8 +20,8 @@ const TableView: React.FC<TicketsListViewProps> = ({ className, filterState, ent
 			bodyRowGenerator={ticketsListTableRow}
 			headerRowGenerator={ticketsListTableHeader}
 			className={tableClassName}
-			tableId='date-entities-list-view'
-			tableCaption={__('Event Dates')}
+			tableId='ticket-entities-table-view'
+			tableCaption={__('Tickets')}
 		/>
 	);
 };
