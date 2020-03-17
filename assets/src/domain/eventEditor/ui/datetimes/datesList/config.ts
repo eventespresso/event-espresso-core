@@ -2,11 +2,11 @@ import { Icon } from '@appDisplay/espressoIcon';
 import { LegendConfig } from '@application/ui/display/EntityListLegend/types';
 
 export const legendConfig: LegendConfig = {
-	icons: {
-		[Icon.EDIT]: 'Edit Event Details',
-		[Icon.GROUPS]: 'View Registrations for Event',
-		[Icon.TICKET]: 'View Assigned Tickets',
-	},
+	icons: [
+		{ icon: Icon.EDIT, description: 'Edit Event Details' },
+		{ icon: Icon.GROUPS, description: 'View Registrations for Event' },
+		{ icon: Icon.TICKET, description: 'View Assigned Tickets' },
+	],
 	swatches: {
 		DTT: 'Trashed',
 		DTE: 'Expired',

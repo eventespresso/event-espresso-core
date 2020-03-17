@@ -1,11 +1,12 @@
 import { Icon } from '@appDisplay/espressoIcon';
 
-type Icons = {
-	[key in Icon]?: string;
+type IconType = {
+	icon: Icon;
+	description: string;
 };
 
 export interface LegendConfig {
-	icons: Icons;
+	icons: IconType[];
 	swatches: {
 		[key: string]: string;
 	};
