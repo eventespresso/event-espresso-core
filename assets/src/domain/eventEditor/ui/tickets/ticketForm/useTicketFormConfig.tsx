@@ -157,11 +157,12 @@ const useTicketFormConfig = (id: EntityId, config?: EspressoFormProps): TicketFo
 						name: 'quantity',
 						label: __('Quantity For Sale'),
 						fieldType: 'number',
+						parseAsInfinity: true,
 						formItemProps: adjacentFormItemProps,
 						min: -1,
 						info: sprintf(
 							__(
-								'The maximum number of this ticket available for sale.%sSet to 0 stop sales or set to -1 for no limit.'
+								'The maximum number of this ticket available for sale.%sSet to 0 stop sales or leave blank for no limit.'
 							),
 							'\n'
 						),
@@ -170,6 +171,7 @@ const useTicketFormConfig = (id: EntityId, config?: EspressoFormProps): TicketFo
 						name: 'uses',
 						label: __('Number of Uses'),
 						fieldType: 'number',
+						parseAsInfinity: true,
 						formItemProps: adjacentFormItemProps,
 						min: 0,
 						info: sprintf(
@@ -196,11 +198,12 @@ const useTicketFormConfig = (id: EntityId, config?: EspressoFormProps): TicketFo
 						name: 'max',
 						label: __('Maximum Quantity'),
 						fieldType: 'number',
+						parseAsInfinity: true,
 						formItemProps: adjacentFormItemProps,
 						min: -1,
 						info: sprintf(
 							__(
-								'The maximum quantity that can be selected for this ticket. Use this to create ticket bundles or graduated pricing.%sSet to -1 for no maximum.'
+								'The maximum quantity that can be selected for this ticket. Use this to create ticket bundles or graduated pricing.%sLeave blank for no maximum.'
 							),
 							'\n'
 						),
