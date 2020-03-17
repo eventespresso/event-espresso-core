@@ -4,8 +4,8 @@ import { __ } from '@wordpress/i18n';
 
 import { EntityTable } from '@appLayout/entityList';
 import { DatesListViewProps } from '../types';
-import datesListTableHeader from './datesListTableHeader';
-import datesListTableRow from './datesListTableRow';
+import headerRowGenerator from './headerRowGenerator';
+import bodyRowGenerator from './bodyRowGenerator';
 
 import './styles.scss';
 
@@ -19,8 +19,8 @@ const TableView: React.FC<DatesListViewProps> = ({ className, filterState, entit
 		<EntityTable
 			entities={entities}
 			filterState={filterState}
-			bodyRowGenerator={datesListTableRow}
-			headerRowGenerator={datesListTableHeader}
+			bodyRowGenerator={bodyRowGenerator}
+			headerRowGenerator={headerRowGenerator}
 			className={tableClassName}
 			tableId='date-entities-table-view'
 			tableCaption={__('Event Dates')}

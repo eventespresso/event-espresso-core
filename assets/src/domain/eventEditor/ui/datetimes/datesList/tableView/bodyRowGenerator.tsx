@@ -23,7 +23,7 @@ type DatesTableBodyRowGen = BodyRowGeneratorFn<Datetime, DatetimesFilterStateMan
  * EditorDateEntityListItem
  * Displays Event Date as a table row similar to existing eventEntity editor UI
  */
-const datesListTableRow: DatesTableBodyRowGen = ({ entity: datetime, filterState }) => {
+const bodyRowGenerator: DatesTableBodyRowGen = ({ entity: datetime, filterState }) => {
 	const { displayStartOrEndDate } = filterState;
 	const bgClassName = getBackgroundColorClassName(datetime);
 	const id = datetime.dbId || shortenGuid(datetime.id);
@@ -115,4 +115,4 @@ const datesListTableRow: DatesTableBodyRowGen = ({ entity: datetime, filterState
 	};
 };
 
-export default datesListTableRow;
+export default bodyRowGenerator;

@@ -12,7 +12,7 @@ type DatesTableHeaderRowGen = HeaderRowGeneratorFn<DatetimesFilterStateManager>;
  * DatesListTableHeader
  * header details for the Dates list table
  */
-const datesListTableHeader: DatesTableHeaderRowGen = (filterState) => {
+const headerRowGenerator: DatesTableHeaderRowGen = (filterState) => {
 	const { displayStartOrEndDate } = filterState;
 
 	const cellsData: Array<Cell> = [
@@ -104,4 +104,4 @@ const datesListTableHeader: DatesTableHeaderRowGen = (filterState) => {
 	};
 };
 
-export default datesListTableHeader;
+export default headerRowGenerator;

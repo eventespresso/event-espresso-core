@@ -3,8 +3,8 @@ import classNames from 'classnames';
 import { __ } from '@wordpress/i18n';
 
 import { EntityTable } from '@appLayout/entityList';
-import ticketsListTableHeader from './ticketsListTableHeader';
-import ticketsListTableRow from './ticketsListTableRow';
+import headerRowGenerator from './headerRowGenerator';
+import bodyRowGenerator from './bodyRowGenerator';
 import { TicketsListViewProps } from '../types';
 
 /**
@@ -17,8 +17,8 @@ const TableView: React.FC<TicketsListViewProps> = ({ className, filterState, ent
 		<EntityTable
 			entities={entities}
 			filterState={filterState}
-			bodyRowGenerator={ticketsListTableRow}
-			headerRowGenerator={ticketsListTableHeader}
+			bodyRowGenerator={bodyRowGenerator}
+			headerRowGenerator={headerRowGenerator}
 			className={tableClassName}
 			tableId='ticket-entities-table-view'
 			tableCaption={__('Tickets')}

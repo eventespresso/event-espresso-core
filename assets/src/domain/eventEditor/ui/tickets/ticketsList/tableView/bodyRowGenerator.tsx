@@ -21,7 +21,7 @@ import '@application/ui/styles/root/entity-status.css';
 
 type TicketsTableBodyRowGen = BodyRowGeneratorFn<Ticket, TicketsFilterStateManager>;
 
-const ticketsListTableRow: TicketsTableBodyRowGen = ({ entity: ticket, filterState }) => {
+const bodyRowGenerator: TicketsTableBodyRowGen = ({ entity: ticket, filterState }) => {
 	const { displayStartOrEndDate } = filterState;
 
 	const bgClassName = getBackgroundColorClassName(ticket);
@@ -122,4 +122,4 @@ const ticketsListTableRow: TicketsTableBodyRowGen = ({ entity: ticket, filterSta
 	};
 };
 
-export default ticketsListTableRow;
+export default bodyRowGenerator;

@@ -8,7 +8,7 @@ import { TicketsFilterStateManager } from '@edtrServices/filterState';
 
 type TicketsTableHeaderRowGen = HeaderRowGeneratorFn<TicketsFilterStateManager>;
 
-const ticketsListTableHeader: TicketsTableHeaderRowGen = (filterState) => {
+const headerRowGenerator: TicketsTableHeaderRowGen = (filterState) => {
 	const { displayStartOrEndDate } = filterState;
 
 	const cellsData: Array<Cell> = [
@@ -103,4 +103,4 @@ const ticketsListTableHeader: TicketsTableHeaderRowGen = (filterState) => {
 	};
 };
 
-export default ticketsListTableHeader;
+export default headerRowGenerator;
