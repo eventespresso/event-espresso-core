@@ -2,7 +2,7 @@ import React from 'react';
 import classNames from 'classnames';
 import { Row, Col } from 'antd';
 
-import { EspressoIcon } from '@appDisplay/espressoIcon';
+import { EspressoIcon, Icon } from '@appDisplay/espressoIcon';
 import { LegendConfig } from './types';
 import './style.scss';
 
@@ -20,7 +20,7 @@ const EntityListLegend: React.FC<Props> = ({ legendConfig }) => {
 					{Object.entries(icons).map(([icon, description]) => {
 						return (
 							<dt>
-								<EspressoIcon icon={icon} svgSize={18} />
+								<EspressoIcon icon={icon as Icon} svgSize={18} />
 								<span className='ee-legend-description'>{description}</span>
 							</dt>
 						);
