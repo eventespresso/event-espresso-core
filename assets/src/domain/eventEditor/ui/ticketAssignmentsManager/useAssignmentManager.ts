@@ -1,4 +1,4 @@
-import { pick, map } from 'ramda';
+import { pick, map, mapObjIndexed } from 'ramda';
 
 import { useRelationsManager, RelationFunctionProps } from '@appServices/apollo/relations';
 import { AssignmentManager, TAMRelationalData } from './types';
@@ -11,10 +11,11 @@ const useAssignmentManager = (): AM => {
 	// Create a fresh instance to manage current relations/assignments
 	// without modifying/mutating the existing relations
 	const {
-		initialize: initializeRelations,
+		addRelation,
 		getData,
 		getRelations,
-		addRelation,
+		initialize: initializeRelations,
+		isInitialized,
 		removeRelation,
 	} = useRelationsManager();
 
@@ -76,18 +77,24 @@ const useAssignmentManager = (): AM => {
 		}
 	};
 
-	const initialize: AM['initialize'] = (data: TAMRelationalData) => {
+	const initialize: AM['initialize'] = (data: TAMRelationalData, forDate) => {
 		const relationsToPick: Array<keyof TAMRelationalData> = ['datetimes', 'tickets'];
 		// pick only datetimes and tickets from relational data
 		let newData = pick(relationsToPick, data);
 
 		// Remove other relations from newData
 		// like ticket to price relations
-		newData = map((relationalEntity) => {
+		newData = mapObjIndexed((relationalEntity, entity) => {
+			// If TAM is only for a single datetime
+			// limit relations to that datetime
+			const relationalEntityToUse =
+				entity === 'datetimes' && forDate ? pick([forDate], relationalEntity) : relationalEntity;
 			return map((relation) => {
 				return pick(relationsToPick, relation);
-			}, relationalEntity);
+			}, relationalEntityToUse);
 		}, newData);
+
+		console.log('newData', newData);
 
 		initializeRelations(newData);
 	};
@@ -98,6 +105,7 @@ const useAssignmentManager = (): AM => {
 		getAssignedTickets,
 		getData,
 		initialize,
+		isInitialized,
 		removeAssignment,
 		toggleAssignment,
 	};
