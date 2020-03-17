@@ -63,7 +63,7 @@ export const CalendarPageDate: React.FC<CalendarPageDateProps> = ({
 	};
 
 	const getDivider = (startDate: Date, endDate: Date) => {
-		return startDate && endDate && <div className='ee-calendar-page-date-to'>{__('TO', 'event_espresso')}</div>;
+		return startDate && endDate && <div className='ee-calendar-page-date-to'>{__('TO')}</div>;
 	};
 
 	const renderCalendarPage = (date: Date, statusClassName: string, startOrEnd = 'start') => {

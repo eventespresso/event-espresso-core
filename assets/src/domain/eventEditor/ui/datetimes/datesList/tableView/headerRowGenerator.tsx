@@ -2,13 +2,19 @@ import React from 'react';
 import { __ } from '@wordpress/i18n';
 
 import { Cell } from '@appLayout/espressoTable';
-import { DisplayStartOrEndDate, filterCellByStartOrEndDate } from '@sharedServices/filterState';
+import { filterCellByStartOrEndDate } from '@sharedServices/filterState';
+import { HeaderRowGeneratorFn } from '@appLayout/entityList';
+import { DatetimesFilterStateManager } from '@edtrServices/filterState';
+
+type DatesTableHeaderRowGen = HeaderRowGeneratorFn<DatetimesFilterStateManager>;
 
 /**
  * DatesListTableHeader
  * header details for the Dates list table
  */
-const datesListTableHeader = (displayStartOrEndDate: DisplayStartOrEndDate) => {
+const headerRowGenerator: DatesTableHeaderRowGen = (filterState) => {
+	const { displayStartOrEndDate } = filterState;
+
 	const cellsData: Array<Cell> = [
 		{
 			key: 'stripe',
@@ -20,13 +26,13 @@ const datesListTableHeader = (displayStartOrEndDate: DisplayStartOrEndDate) => {
 			key: 'id',
 			type: 'cell',
 			className: 'ee-date-list-col-hdr ee-date-list-col-id ee-number-column ee-rspnsv-table-column-tiny',
-			value: __('ID', 'event_espresso'),
+			value: __('ID'),
 		},
 		{
 			key: 'name',
 			type: 'cell',
 			className: 'ee-date-list-col-hdr ee-date-list-col-name ee-rspnsv-table-column-huge',
-			value: __('Name', 'event_espresso'),
+			value: __('Name'),
 		},
 		{
 			key: 'start',
@@ -34,8 +40,8 @@ const datesListTableHeader = (displayStartOrEndDate: DisplayStartOrEndDate) => {
 			className: 'ee-date-list-col-hdr ee-date-list-col-name-start ee-rspnsv-table-column-default',
 			value: (
 				<>
-					<span className={'ee-rspnsv-table-long-label'}>{__('Start Date', 'event_espresso')}</span>
-					<span className={'ee-rspnsv-table-short-label'}>{__('Start', 'event_espresso')}</span>
+					<span className={'ee-rspnsv-table-long-label'}>{__('Start Date')}</span>
+					<span className={'ee-rspnsv-table-short-label'}>{__('Start')}</span>
 				</>
 			),
 		},
@@ -45,8 +51,8 @@ const datesListTableHeader = (displayStartOrEndDate: DisplayStartOrEndDate) => {
 			className: 'ee-date-list-col-hdr ee-date-list-col-end ee-rspnsv-table-column-default',
 			value: (
 				<>
-					<span className={'ee-rspnsv-table-long-label'}>{__('End Date', 'event_espresso')}</span>
-					<span className={'ee-rspnsv-table-short-label'}>{__('End', 'event_espresso')}</span>
+					<span className={'ee-rspnsv-table-long-label'}>{__('End Date')}</span>
+					<span className={'ee-rspnsv-table-short-label'}>{__('End')}</span>
 				</>
 			),
 		},
@@ -56,8 +62,8 @@ const datesListTableHeader = (displayStartOrEndDate: DisplayStartOrEndDate) => {
 			className: 'ee-date-list-col-hdr ee-date-list-col-capacity ee-rspnsv-table-column-tiny ee-number-column',
 			value: (
 				<>
-					<span className={'ee-rspnsv-table-long-label'}>{__('Capacity', 'event_espresso')}</span>
-					<span className={'ee-rspnsv-table-short-label'}>{__('Cap', 'event_espresso')}</span>
+					<span className={'ee-rspnsv-table-long-label'}>{__('Capacity')}</span>
+					<span className={'ee-rspnsv-table-short-label'}>{__('Cap')}</span>
 				</>
 			),
 		},
@@ -65,7 +71,7 @@ const datesListTableHeader = (displayStartOrEndDate: DisplayStartOrEndDate) => {
 			key: 'sold',
 			type: 'cell',
 			className: 'ee-date-list-col-hdr ee-date-list-col-sold ee-rspnsv-table-column-tiny ee-number-column',
-			value: __('Sold', 'event_espresso'),
+			value: __('Sold'),
 		},
 		{
 			key: 'registrations',
@@ -74,8 +80,8 @@ const datesListTableHeader = (displayStartOrEndDate: DisplayStartOrEndDate) => {
 				'ee-date-list-col-hdr ee-date-list-col-registrations ee-rspnsv-table-column-smaller ee-centered-column',
 			value: (
 				<>
-					<span className={'ee-rspnsv-table-long-label'}>{__('Reg list', 'event_espresso')}</span>
-					<span className={'ee-rspnsv-table-short-label'}>{__('Regs', 'event_espresso')}</span>
+					<span className={'ee-rspnsv-table-long-label'}>{__('Reg list')}</span>
+					<span className={'ee-rspnsv-table-short-label'}>{__('Regs')}</span>
 				</>
 			),
 		},
@@ -83,7 +89,7 @@ const datesListTableHeader = (displayStartOrEndDate: DisplayStartOrEndDate) => {
 			key: 'actions',
 			type: 'cell',
 			className: 'ee-date-list-col-hdr ee-date-list-col-actions ee-rspnsv-table-column-big ee-centered-column',
-			value: <span className={'ee-rspnsv-table-long-label'}>{__('Actions', 'event_espresso')}</span>,
+			value: <span className={'ee-rspnsv-table-long-label'}>{__('Actions')}</span>,
 		},
 	];
 
@@ -98,4 +104,4 @@ const datesListTableHeader = (displayStartOrEndDate: DisplayStartOrEndDate) => {
 	};
 };
 
-export default datesListTableHeader;
+export default headerRowGenerator;
