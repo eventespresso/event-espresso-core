@@ -3,16 +3,14 @@ import classNames from 'classnames';
 import { Row, Col } from 'antd';
 
 import { EspressoIcon, Icon } from '@appDisplay/espressoIcon';
-import { LegendConfig } from '@edtrUI/datetimes/datesList/config';
+import { LegendConfig } from './types';
 import './style.scss';
 
 interface Props {
-	children?: React.ReactNode;
-	className?: string;
 	legendConfig: LegendConfig;
 }
 
-const EntityListLegend: React.FC<Props> = ({ children, legendConfig, ...props }) => {
+const EntityListLegend: React.FC<Props> = ({ legendConfig }) => {
 	const { icons, swatches } = legendConfig;
 	return (
 		<Row className='ee-row'>
@@ -21,7 +19,7 @@ const EntityListLegend: React.FC<Props> = ({ children, legendConfig, ...props })
 					{Object.entries(icons).map(([icon, text]) => {
 						return (
 							<dt>
-								<EspressoIcon icon={icon} svgSize={24} />
+								<EspressoIcon icon={icon} svgSize={18} />
 								<span className='ee-legend-description'>{text}</span>
 							</dt>
 						);

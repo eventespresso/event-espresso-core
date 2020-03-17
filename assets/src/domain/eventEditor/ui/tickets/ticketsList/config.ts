@@ -4,8 +4,8 @@ import { LegendConfig } from '@application/ui/display/EntityListLegend/types';
 export const legendConfig: LegendConfig = {
 	icons: {
 		[Icon.EDIT]: 'Edit Event Details',
-		[Icon.GROUPS]: 'View Registrations for Event',
-		[Icon.TICKET]: 'View Assigned Tickets',
+		[Icon.CALENDAR]: 'View Assigned Dates',
+		[Icon.CALCULATOR]: 'View Ticket Price Calculator',
 	},
 	swatches: {
 		DTT: 'Trashed',

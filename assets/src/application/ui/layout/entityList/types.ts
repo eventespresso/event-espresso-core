@@ -1,8 +1,9 @@
 import React from 'react';
-import { Entity, EntityId } from '@appServices/apollo/types';
-import { TypeName } from '@appServices/apollo/status';
-import { EntityListFilterStateManager } from './filterBar';
 import { BodyRow, HeaderRow } from '@appLayout/espressoTable';
+import { Entity, EntityId } from '@appServices/apollo/types';
+import { EntityListFilterStateManager } from './filterBar';
+import { LegendConfig } from '@application/ui/display/EntityListLegend/types';
+import { TypeName } from '@appServices/apollo/status';
 
 type ELFSM = EntityListFilterStateManager<any>;
 
@@ -48,6 +49,7 @@ export interface EntityListProps<E extends Entity, FS extends ELFSM> extends Ent
 	entityType: TypeName;
 	footer: React.ReactNode;
 	headerText: string;
+	legendConfig: LegendConfig;
 	listId: string;
 	loadingText?: string;
 	noResultsDesc?: string;

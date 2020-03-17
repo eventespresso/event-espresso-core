@@ -1,5 +1,6 @@
 import React from 'react';
 import { EntityListFilterStateManager as ELFSM } from './filterState';
+import { LegendConfig } from '@application/ui/display/EntityListLegend/types';
 
 export interface CollapsibleProps {
 	showEntityFilters: boolean;
@@ -8,6 +9,7 @@ export interface CollapsibleProps {
 export interface EntityListFilterBarProps<FS extends ELFSM> {
 	domain: string;
 	filterState: FS;
+	legendConfig: LegendConfig;
 	listId?: string;
 }
 

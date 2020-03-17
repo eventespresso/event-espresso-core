@@ -9,8 +9,9 @@
 	}
 	&-list-table-legend {
 		dt {
-			display: flex;
 			align-items: center;
+			display: flex;
+			margin-bottom: 5px;
 		}
 	}
 	&-legend-description,

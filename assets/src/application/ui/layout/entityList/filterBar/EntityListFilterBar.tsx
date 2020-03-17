@@ -2,12 +2,12 @@ import React from 'react';
 
 import Collapsible from './Collapsible';
 import { EntityListFilterBarProps } from './types';
+import { EntityListLegend } from '@application/ui/display';
 import GridViewFilterButton from './buttons/GridView';
+import LegendButton from './buttons/LegendButton';
 import ListViewFilterButton from './buttons/ListView';
 import ToggleFiltersButton from './buttons/ToggleFilters';
-import LegendButton from './buttons/LegendButton';
 import { SearchInput } from '@application/ui/input';
-import { EntityListLegend } from '@application/ui/display';
 import { useFilterBarUIElements } from './subscription';
 import { EntityListFilterStateManager as ELFSM } from './filterState';
 
