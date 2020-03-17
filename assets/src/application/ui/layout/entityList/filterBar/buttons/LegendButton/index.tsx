@@ -15,6 +15,7 @@ const LegendButton: React.FC<ToggleLegendButtonProps> = ({ listId, showLegend, t
 	const iconProps = useSpring({
 		transform: `rotate(${showLegend ? 0 : 180}deg)`,
 	});
+	const label = __(`${showLegend ? 'hide' : 'show'} legend`);
 	const icon = (
 		<animated.div style={iconProps}>
 			<CompassFilled />
@@ -29,10 +30,10 @@ const LegendButton: React.FC<ToggleLegendButtonProps> = ({ listId, showLegend, t
 				icon={icon}
 				id={id}
 				onClick={toggleLegend}
-				tooltip={__('show filters')}
+				tooltip={label}
 			/>
 			<label className='esprs-button-label' htmlFor={id}>
-				{__(`${showLegend ? 'hide' : 'show'} legend`)}
+				{label}
 			</label>
 		</div>
 	);

@@ -9,6 +9,7 @@ const ToggleFiltersButton: React.FC<ToggleFiltersButtonProps> = ({ listId, showF
 	React.useMemo(() => {
 		const className = classNames('ee-filter-bar-filter-btn', { 'ee-active-filters': showFilters });
 		const filterId = `ee-toggle-filters-btn-${listId}`;
+		const tooltip = __(`${showFilters ? 'hide' : 'show'} filters`);
 
 		return (
 			<>
@@ -21,7 +22,7 @@ const ToggleFiltersButton: React.FC<ToggleFiltersButtonProps> = ({ listId, showF
 					icon={Icon.FILTER}
 					id={filterId}
 					onClick={toggleFilters}
-					tooltip={__('show filters')}
+					tooltip={tooltip}
 				/>
 			</>
 		);
