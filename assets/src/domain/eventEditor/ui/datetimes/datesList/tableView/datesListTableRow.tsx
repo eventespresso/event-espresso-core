@@ -5,26 +5,26 @@ import { __ } from '@wordpress/i18n';
 import DateRegistrationsLink from '@edtrUI/datetimes/DateRegistrationsLink';
 import DateActionsMenu from '@edtrUI/datetimes/datesList/actionsMenu/DateActionsMenu';
 import { Datetime } from '@edtrServices/apollo/types';
-import { DisplayStartOrEndDate, filterCellByStartOrEndDate } from '@sharedServices/filterState';
+import { filterCellByStartOrEndDate } from '@sharedServices/filterState';
 import { ENTITY_LIST_DATE_TIME_FORMAT } from '@appConstants/dateFnsFormats';
 import { getBackgroundColorClassName, status } from '@sharedEntities/datetimes/helpers';
 import { InlineEditText } from '@appInputs/InlineEditInput';
 import { shortenGuid } from '@appServices/utilities/text';
 import { useDatetimeMutator } from '@edtrServices/apollo/mutations';
 import DateCapacity from '../cardView/DateCapacity';
+import { BodyRowGeneratorFn } from '@appLayout/entityList';
+import { DatetimesFilterStateManager } from '@edtrServices/filterState';
 
 import '@application/ui/styles/root/entity-status.css';
 
-interface Props {
-	datetime: Datetime;
-	displayStartOrEndDate: DisplayStartOrEndDate;
-}
+type DatesTableBodyRowGen = BodyRowGeneratorFn<Datetime, DatetimesFilterStateManager>;
 
 /**
  * EditorDateEntityListItem
  * Displays Event Date as a table row similar to existing eventEntity editor UI
  */
-const datesListTableRow = ({ datetime, displayStartOrEndDate }: Props) => {
+const datesListTableRow: DatesTableBodyRowGen = ({ entity: datetime, filterState }) => {
+	const { displayStartOrEndDate } = filterState;
 	const bgClassName = getBackgroundColorClassName(datetime);
 	const id = datetime.dbId || shortenGuid(datetime.id);
 	const statusClassName = status(datetime);

@@ -2,13 +2,19 @@ import React from 'react';
 import { __ } from '@wordpress/i18n';
 
 import { Cell } from '@appLayout/espressoTable';
-import { DisplayStartOrEndDate, filterCellByStartOrEndDate } from '@sharedServices/filterState';
+import { filterCellByStartOrEndDate } from '@sharedServices/filterState';
+import { HeaderRowGeneratorFn } from '@appLayout/entityList';
+import { DatetimesFilterStateManager } from '@edtrServices/filterState';
+
+type DatesTableHeaderRowGen = HeaderRowGeneratorFn<DatetimesFilterStateManager>;
 
 /**
  * DatesListTableHeader
  * header details for the Dates list table
  */
-const datesListTableHeader = (displayStartOrEndDate: DisplayStartOrEndDate) => {
+const datesListTableHeader: DatesTableHeaderRowGen = (filterState) => {
+	const { displayStartOrEndDate } = filterState;
+
 	const cellsData: Array<Cell> = [
 		{
 			key: 'stripe',
