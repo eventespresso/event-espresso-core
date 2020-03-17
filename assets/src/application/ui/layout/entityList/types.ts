@@ -2,12 +2,16 @@ import React from 'react';
 import { Entity, EntityId } from '@appServices/apollo/types';
 import { TypeName } from '@appServices/apollo/status';
 import { EntityListFilterStateManager } from './filterBar';
+import { BodyRow, HeaderRow } from '@appLayout/espressoTable';
 
 type ELFSM = EntityListFilterStateManager<any>;
 
-export interface EntityCardListProps<E extends Entity> {
-	EntityCard: React.ComponentType<EntityListItemProps>;
+export interface EntityListBaseProps<E extends Entity> {
 	entities: Array<E>;
+}
+
+export interface EntityCardListProps<E extends Entity> extends EntityListBaseProps<E> {
+	EntityCard: React.ComponentType<EntityListItemProps>;
 }
 
 /**
@@ -17,10 +21,23 @@ export interface EntityListItemProps {
 	id: EntityId;
 }
 
-export interface EntityListViewProps<E extends Entity, FS extends ELFSM> {
+export interface EntityListViewProps<E extends Entity, FS extends ELFSM> extends EntityListBaseProps<E> {
 	className?: string;
-	entities: Array<E>;
 	filterState: FS;
+}
+
+interface BodyRowGeneratorFnProps<E extends Entity, FS extends ELFSM> {
+	entity: E;
+	filterState: FS;
+}
+export type BodyRowGeneratorFn<E extends Entity, FS extends ELFSM> = (props: BodyRowGeneratorFnProps<E, FS>) => BodyRow;
+export type HeaderRowGeneratorFn<FS extends ELFSM> = (filerState: FS) => HeaderRow;
+
+export interface EntityTableProps<E extends Entity, FS extends ELFSM> extends EntityListViewProps<E, FS> {
+	bodyRowGenerator: BodyRowGeneratorFn<E, FS>;
+	headerRowGenerator: HeaderRowGeneratorFn<FS>;
+	tableCaption?: string;
+	tableId?: string;
 }
 
 export type EntityListComponent<E extends Entity, FS extends ELFSM> = React.ComponentType<EntityListViewProps<E, FS>>;
