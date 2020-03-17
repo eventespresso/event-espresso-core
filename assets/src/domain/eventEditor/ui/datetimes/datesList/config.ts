@@ -1,5 +1,6 @@
 import { Icon } from '@appDisplay/espressoIcon';
 import { LegendConfig } from '@application/ui/display/EntityListLegend/types';
+import { __ } from '@wordpress/i18n';
 
 export const legendConfig: LegendConfig = {
 	icons: [
@@ -8,9 +9,10 @@ export const legendConfig: LegendConfig = {
 		{ icon: Icon.TICKET, description: 'View Assigned Tickets' },
 	],
 	swatches: {
-		DTT: 'Trashed',
-		DTE: 'Expired',
-		DTS: 'Sold Out',
-		DTA: 'Active',
+		DTA: __('Active'),
+		DTT: __('Trashed'),
+		DTE: __('Expired'),
+		DTS: __('Sold Out'),
+		DTU: __('Upcoming'),
 	},
 };

@@ -1,5 +1,6 @@
 import { Icon } from '@appDisplay/espressoIcon';
 import { LegendConfig } from '@application/ui/display/EntityListLegend/types';
+import { __ } from '@wordpress/i18n';
 
 export const legendConfig: LegendConfig = {
 	icons: [
@@ -8,9 +9,10 @@ export const legendConfig: LegendConfig = {
 		{ icon: Icon.CALCULATOR, description: 'View Ticket Price Calculator' },
 	],
 	swatches: {
-		DTT: 'Trashed',
-		DTE: 'Expired',
-		DTS: 'Sold Out',
-		DTA: 'Active',
+		TKA: __('Trashed'),
+		TKE: __('Expired'),
+		TKO: __('On Sale'),
+		TKS: __('Sold Out'),
+		TKP: __('Pending'),
 	},
 };

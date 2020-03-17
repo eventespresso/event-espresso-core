@@ -17,10 +17,10 @@ const EntityListLegend: React.FC<Props> = ({ legendConfig }) => {
 		<Row className='ee-row'>
 			<Col span={12}>
 				<dl className='ee-list-table-legend'>
-					{Object.entries(icons).map(([icon, description]) => {
+					{icons.map(({ icon, description }) => {
 						return (
 							<dt>
-								<EspressoIcon icon={icon as Icon} svgSize={18} />
+								<EspressoIcon aria-label={description} icon={icon as Icon} svgSize={18} />
 								<span className='ee-legend-description'>{description}</span>
 							</dt>
 						);
@@ -33,6 +33,7 @@ const EntityListLegend: React.FC<Props> = ({ legendConfig }) => {
 						return (
 							<dt>
 								<span
+									aria-label={description}
 									className={classNames(
 										'ee-status-legend',
 										'ee-status-background-color-' + swatchClassName
