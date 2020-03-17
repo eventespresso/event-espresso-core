@@ -205,9 +205,9 @@ $id = ! empty($QST_system) ? '_disabled' : '';
                                     $edit_link = EE_Admin_Page::add_query_args_and_nonce($edit_query_args, EE_FORMS_ADMIN_URL);
 
                                     echo '<a href="' . $edit_link . '" target="_blank" title="' .
-                                        esc_attr__(
-                                            'Edit Question',
-                                            'event_espresso'
+                                        sprintf(
+                                            esc_attr__('Edit %s', 'event_espresso'),
+                                            $question->admin_label()
                                         )
                                         . '"><span class="dashicons dashicons-edit"></span>
                                         </a>';
