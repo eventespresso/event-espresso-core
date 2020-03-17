@@ -1,14 +1,14 @@
 import { useState, useEffect } from 'react';
 import { mapObjIndexed, pickBy, pathOr, isEmpty } from 'ramda';
 
-import { TAMPossibleRelation, TAMRelationalEntity, TAMRelationalData } from './types';
+import { TAMPossibleRelation, TAMRelationalEntity, TAMRelationalData, AssignmentManager } from './types';
 
 const DEFAULT_VALIDATION_DATA: TAMPossibleRelation = {
 	datetimes: [],
 	tickets: [],
 };
 
-const useValidateTAMData = (assignmentManager) => {
+const useValidateTAMData = (assignmentManager: AssignmentManager): TAMPossibleRelation => {
 	const [validationData, setValidationData] = useState(DEFAULT_VALIDATION_DATA);
 	const TAMData: TAMRelationalData = assignmentManager.getData();
 
