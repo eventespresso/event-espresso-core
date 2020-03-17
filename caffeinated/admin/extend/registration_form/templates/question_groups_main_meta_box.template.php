@@ -206,7 +206,7 @@ $id = ! empty($QST_system) ? '_disabled' : '';
 
                                     echo '<a href="' . $edit_link . '" target="_blank" title="' .
                                         esc_attr__(
-                                            'Edit Event',
+                                            'Edit Question',
                                             'event_espresso'
                                         )
                                         . '"><span class="dashicons dashicons-edit"></span>
