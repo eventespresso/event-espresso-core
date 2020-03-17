@@ -118,10 +118,11 @@ const useDateFormConfig = (id: EntityId, config?: EspressoFormProps): DateFormCo
 						name: 'capacity',
 						label: __('Capacity'),
 						fieldType: 'number',
+						parseAsInfinity: true,
 						min: -1,
 						info: sprintf(
 							__(
-								'The maximum number of registrants that can attend the event at this particular date.%sSet to 0 to close registration or set to -1 for no limit.'
+								'The maximum number of registrants that can attend the event at this particular date.%sSet to 0 to close registration or leave blank for no limit.'
 							),
 							'\n'
 						),
