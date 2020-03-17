@@ -22,13 +22,13 @@ const ticketsListTableHeader: TicketsTableHeaderRowGen = (filterState) => {
 			key: 'id',
 			type: 'cell',
 			className: 'ee-ticket-list-col-hdr ee-ticket-list-col-id ee-number-column ee-rspnsv-table-column-tiny',
-			value: __('ID', 'event_espresso'),
+			value: __('ID'),
 		},
 		{
 			key: 'name',
 			type: 'cell',
 			className: 'ee-ticket-list-col-hdr ee-ticket-list-col-name ee-rspnsv-table-column-bigger',
-			value: __('Name', 'event_espresso'),
+			value: __('Name'),
 		},
 		{
 			key: 'start',
@@ -36,8 +36,8 @@ const ticketsListTableHeader: TicketsTableHeaderRowGen = (filterState) => {
 			className: 'ee-ticket-list-col-hdr ee-ticket-list-col-name-start ee-rspnsv-table-column-default',
 			value: (
 				<>
-					<span className={'ee-rspnsv-table-long-label'}>{__('Goes on Sale', 'event_espresso')}</span>
-					<span className={'ee-rspnsv-table-short-label'}>{__('On Sale', 'event_espresso')}</span>
+					<span className={'ee-rspnsv-table-long-label'}>{__('Goes on Sale')}</span>
+					<span className={'ee-rspnsv-table-short-label'}>{__('On Sale')}</span>
 				</>
 			),
 		},
@@ -47,8 +47,8 @@ const ticketsListTableHeader: TicketsTableHeaderRowGen = (filterState) => {
 			className: 'ee-ticket-list-col-hdr ee-ticket-list-col-end ee-rspnsv-table-column-default',
 			value: (
 				<>
-					<span className={'ee-rspnsv-table-long-label'}>{__('Sale Ends', 'event_espresso')}</span>
-					<span className={'ee-rspnsv-table-short-label'}>{__('Ends', 'event_espresso')}</span>
+					<span className={'ee-rspnsv-table-long-label'}>{__('Sale Ends')}</span>
+					<span className={'ee-rspnsv-table-short-label'}>{__('Ends')}</span>
 				</>
 			),
 		},
@@ -56,20 +56,20 @@ const ticketsListTableHeader: TicketsTableHeaderRowGen = (filterState) => {
 			key: 'price',
 			type: 'cell',
 			className: 'ee-ticket-list-col-hdr ee-ticket-list-col-price ee-rspnsv-table-column-tiny ee-number-column',
-			value: __('Price', 'event_espresso'),
+			value: __('Price'),
 		},
 		{
 			key: 'quantity',
 			type: 'cell',
 			className:
 				'ee-ticket-list-col-hdr ee-ticket-list-col-quantity ee-rspnsv-table-column-tiny ee-number-column',
-			value: __('Quantity', 'event_espresso'),
+			value: __('Quantity'),
 		},
 		{
 			key: 'sold',
 			type: 'cell',
 			className: 'ee-ticket-list-col-hdr ee-ticket-list-col-sold ee-rspnsv-table-column-tiny ee-number-column',
-			value: __('Sold', 'event_espresso'),
+			value: __('Sold'),
 		},
 		{
 			key: 'registrations',
@@ -78,8 +78,8 @@ const ticketsListTableHeader: TicketsTableHeaderRowGen = (filterState) => {
 				'ee-ticket-list-col-hdr ee-ticket-list-col-registrations ee-rspnsv-table-column-smaller ee-centered-column',
 			value: (
 				<>
-					<span className={'ee-rspnsv-table-long-label'}>{__('Registrations', 'event_espresso')}</span>
-					<span className={'ee-rspnsv-table-short-label'}>{__('Regs', 'event_espresso')}</span>
+					<span className={'ee-rspnsv-table-long-label'}>{__('Registrations')}</span>
+					<span className={'ee-rspnsv-table-short-label'}>{__('Regs')}</span>
 				</>
 			),
 		},
@@ -88,7 +88,7 @@ const ticketsListTableHeader: TicketsTableHeaderRowGen = (filterState) => {
 			type: 'cell',
 			className:
 				'ee-ticket-list-col-hdr ee-ticket-list-col-actions ee-rspnsv-table-column-big ee-centered-column',
-			value: <span className={'ee-rspnsv-table-long-label'}>{__('Actions', 'event_espresso')}</span>,
+			value: <span className={'ee-rspnsv-table-long-label'}>{__('Actions')}</span>,
 		},
 	];
 

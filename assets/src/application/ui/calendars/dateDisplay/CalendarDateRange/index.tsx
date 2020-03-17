@@ -34,7 +34,7 @@ export const CalendarDateRange: React.FC<CalendarDateRange> = ({
 			<div className={htmlClassName}>
 				<div className={'ee-calendar-date-range'}>
 					<MediumCalendarDate date={startDateObject} key={'start-date'} showTime={showTime} />
-					<div className={'ee-calendar-date-range__divider'}>{__('to', 'event_espresso')}</div>
+					<div className={'ee-calendar-date-range__divider'}>{__('to')}</div>
 					<MediumCalendarDate date={endDateObject} key={'end-date'} showTime={showTime} />
 				</div>
 				{footerText && <div className={'ee-calendar-date-range__footer'}>{footerText}</div>}
