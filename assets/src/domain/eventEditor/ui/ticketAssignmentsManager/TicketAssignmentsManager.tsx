@@ -13,15 +13,17 @@ const TicketAssignmentsManager: React.FC<TAMProps> = ({ assignmentType, entityId
 	const relations = useRelations();
 	const { initialize, isInitialized } = useTAMState();
 
+	const initialized = isInitialized();
+
 	useEffect(() => {
-		if (!isInitialized()) {
+		if (!initialized) {
 			// If TAM is only for a single datetime
 			// limit relations to that datetime
 			const forDate = assignmentType === 'forDate' ? entityId : null;
 			// initialize with existing data
 			initialize(relations.getData(), forDate);
 		}
-	}, [isInitialized()]);
+	}, [initialized]);
 
 	return (
 		<>
