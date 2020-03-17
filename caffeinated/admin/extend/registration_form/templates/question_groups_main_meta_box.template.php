@@ -192,6 +192,27 @@ $id = ! empty($QST_system) ? '_disabled' : '';
                                            name="question_orders[<?php echo $question_ID; ?>]"
                                            value="<?php echo $question_order; ?>">
                                 </label>
+                                <?php
+                                if (EE_Registry::instance()->CAP->current_user_can(
+                                    'ee_edit_question',
+                                    'espresso_registration_form_edit_question',
+                                    $question->ID()
+                                )) {
+                                    $edit_query_args = array(
+                                        'action' => 'edit_question',
+                                        'QST_ID' => $question->ID(),
+                                    );
+                                    $edit_link = EE_Admin_Page::add_query_args_and_nonce($edit_query_args, EE_FORMS_ADMIN_URL);
+
+                                    echo '<a href="' . $edit_link . '" target="_blank" title="' .
+                                        esc_attr__(
+                                            'Edit Event',
+                                            'event_espresso'
+                                        )
+                                        . '"><span class="dashicons dashicons-edit"></span>
+                                        </a>';
+                                }
+                                ?>
                             </li>
                             <?php
                             $question_order++;
