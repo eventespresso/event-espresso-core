@@ -14,8 +14,10 @@ const Field: React.FC<FieldProps> = ({ conditions, parseAsInfinity, ...rest }) =
 	const extraProps: RFFFieldProps = parseAsInfinity
 		? {
 				// `format` will convert infinite value from form (like -1) to empty string
+				// before it gets passed to the input
 				format: (value: number) => formatInfinity(value),
 				// `parse` will convert empty string from the field to infinite value (like -1)
+				// before it is added to form values object
 				parse: (value: any) => parseInfinity(value),
 		  }
 		: {};
