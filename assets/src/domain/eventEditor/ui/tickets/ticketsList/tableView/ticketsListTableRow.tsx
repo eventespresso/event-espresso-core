@@ -3,7 +3,7 @@ import { format } from 'date-fns';
 import { __ } from '@wordpress/i18n';
 
 import { Cell } from '@appLayout/espressoTable';
-import { DisplayStartOrEndDate, filterCellByStartOrEndDate } from '@sharedServices/filterState';
+import { filterCellByStartOrEndDate } from '@sharedServices/filterState';
 import { ENTITY_LIST_DATE_TIME_FORMAT } from '@appConstants/dateFnsFormats';
 import { getBackgroundColorClassName, status } from '@sharedEntities/tickets/helpers';
 import { InlineEditText } from '@appInputs/InlineEditInput';
@@ -14,15 +14,16 @@ import { useMoneyDisplay } from '@appServices/utilities/money';
 import { useTicketMutator } from '@edtrServices/apollo/mutations';
 import useTicketRegistrationCount from '@edtrUI/tickets/hooks/useTicketRegistrationCount';
 import TicketQuantity from '../cardView/TicketQuantity';
+import { BodyRowGeneratorFn } from '@appLayout/entityList';
+import { TicketsFilterStateManager } from '@edtrServices/filterState';
 
 import '@application/ui/styles/root/entity-status.css';
 
-interface Props {
-	ticket: Ticket;
-	displayStartOrEndDate: DisplayStartOrEndDate;
-}
+type TicketsTableBodyRowGen = BodyRowGeneratorFn<Ticket, TicketsFilterStateManager>;
 
-const ticketsListTableRow = ({ ticket, displayStartOrEndDate }: Props) => {
+const ticketsListTableRow: TicketsTableBodyRowGen = ({ entity: ticket, filterState }) => {
+	const { displayStartOrEndDate } = filterState;
+
 	const bgClassName = getBackgroundColorClassName(ticket);
 	const { formatAmount } = useMoneyDisplay();
 	const id = ticket.dbId || shortenGuid(ticket.id);

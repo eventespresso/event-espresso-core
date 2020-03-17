@@ -2,9 +2,15 @@ import React from 'react';
 import { __ } from '@wordpress/i18n';
 
 import { Cell } from '@appLayout/espressoTable';
-import { DisplayStartOrEndDate, filterCellByStartOrEndDate } from '@sharedServices/filterState';
+import { filterCellByStartOrEndDate } from '@sharedServices/filterState';
+import { HeaderRowGeneratorFn } from '@appLayout/entityList';
+import { TicketsFilterStateManager } from '@edtrServices/filterState';
 
-const ticketsListTableHeader = (displayStartOrEndDate: DisplayStartOrEndDate) => {
+type TicketsTableHeaderRowGen = HeaderRowGeneratorFn<TicketsFilterStateManager>;
+
+const ticketsListTableHeader: TicketsTableHeaderRowGen = (filterState) => {
+	const { displayStartOrEndDate } = filterState;
+
 	const cellsData: Array<Cell> = [
 		{
 			key: 'stripe',
