@@ -94,8 +94,6 @@ const useAssignmentManager = (): AM => {
 			}, relationalEntityToUse);
 		}, newData);
 
-		console.log('newData', newData);
-
 		initializeRelations(newData);
 	};
 
