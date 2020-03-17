@@ -1,3 +1,4 @@
+import { AnyObject } from '@appServices/utilities/types';
 import { Icon } from '@appDisplay/espressoIcon';
 
 type IconType = {
@@ -7,7 +8,5 @@ type IconType = {
 
 export interface LegendConfig {
 	icons: IconType[];
-	swatches: {
-		[key: string]: string;
-	};
+	swatches: AnyObject;
 }
