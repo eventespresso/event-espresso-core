@@ -4,9 +4,9 @@ import { __ } from '@wordpress/i18n';
 
 export const legendConfig: LegendConfig = {
 	icons: [
-		{ icon: Icon.EDIT, description: 'Edit Event Details' },
-		{ icon: Icon.CALENDAR, description: 'View Assigned Dates' },
-		{ icon: Icon.CALCULATOR, description: 'View Ticket Price Calculator' },
+		{ icon: Icon.EDIT, description: 'Edit Ticket Details' },
+		{ icon: Icon.CALENDAR, description: 'Manage Date Assignments' },
+		{ icon: Icon.CALCULATOR, description: 'Ticket Price Calculator' },
 		{ icon: Icon.TRASH, description: 'Move Ticket to Trash' },
 	],
 	swatches: {
