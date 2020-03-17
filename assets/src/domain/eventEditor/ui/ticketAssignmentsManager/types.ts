@@ -35,12 +35,13 @@ export interface AssignmentManager {
 	getAssignedDates: (args: Pick<AssignmentFnArgs, 'ticketId'>) => EntityId[];
 	getAssignedTickets: (args: Pick<AssignmentFnArgs, 'datetimeId'>) => EntityId[];
 	getData: RelationsManager['getData'];
-	initialize: RelationsManager['initialize'];
+	initialize: (data: TAMRelationalData, forDate: EntityId) => void;
+	isInitialized: RelationsManager['isInitialized'];
 	removeAssignment: (args: SetAssignmentFnArgs) => void;
 	toggleAssignment: (args: AssignmentFnArgs) => void;
 }
 
-export interface TAMStateManager extends Omit<AssignmentManager, 'initialize'> {
+export interface TAMStateManager extends AssignmentManager {
 	getAssignmentStatus: (args: AssignmentFnArgs) => AssignmentStatus;
 	hasNoAssignedDates: (options: Pick<AssignmentFnArgs, 'ticketId'>) => boolean;
 	hasNoAssignedTickets: (options: Pick<AssignmentFnArgs, 'datetimeId'>) => boolean;

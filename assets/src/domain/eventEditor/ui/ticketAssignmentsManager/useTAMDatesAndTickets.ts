@@ -20,8 +20,8 @@ const useTAMDatesAndTickets = ({ assignmentType, entityId }: TAMProps): DatesAnd
 			};
 		case 'forTicket':
 			return {
-				tickets: [singleTicket],
 				datetimes: allDatetimes,
+				tickets: [singleTicket],
 			};
 	}
 };

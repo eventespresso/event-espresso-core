@@ -1,7 +1,7 @@
 import { pathOr, filter, equals } from 'ramda';
 
 import { EntityId } from '@appServices/apollo/types';
-import { TAMPossibleRelation, TAMRelationalEntity, TAMRelationalData, TAMRelationEntity } from './types';
+import { TAMPossibleRelation, TAMRelationEntity, TAMRelationalData, TAMRelationalEntity } from './types';
 
 type EntitiesToUpdate = Array<[EntityId, TAMPossibleRelation]>;
 
