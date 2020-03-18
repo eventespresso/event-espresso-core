@@ -1,13 +1,15 @@
-.ee-description-list-grid {
-	display: grid;
-	grid-template-rows: repeat(4, 20px);
-	grid-gap: 10px;
-	grid-auto-flow: column;
-	grid-auto-columns: 50% 20% 20%;
-	margin-top: 20px;
-	width: 100%;
-	div {
-		align-items: center;
-		display: flex;
+.ee {
+	&-description-list-grid {
+		display: grid;
+		grid-template-rows: repeat(4, 20px);
+		grid-gap: 10px;
+		grid-auto-flow: column;
+		grid-auto-columns: 50% 20% 20%;
+		margin-top: 20px;
+		width: 100%;
+		> div {
+			align-items: center;
+			display: flex;
+		}
 	}
 }
