@@ -2,12 +2,12 @@ import React from 'react';
 import { omit } from 'ramda';
 import { __ } from '@wordpress/i18n';
 
-import { Copy } from '@application/ui/layout/entityActionsMenu/mainMenu';
+import { Copy } from '@application/ui/layout/entityActionsMenu/entityMenuItems';
 import { useDatetimeContext } from '@edtrHooks/index';
 import { useDatetimeItem } from '@edtrServices/apollo/queries';
 import { useDatetimeMutator } from '@edtrServices/apollo/mutations';
 
-const CopyDate = () => {
+const CopyDate = (props) => {
 	const { id } = useDatetimeContext();
 	const datetime = useDatetimeItem({ id });
 	const { createEntity } = useDatetimeMutator();
@@ -28,7 +28,7 @@ const CopyDate = () => {
 	);
 	const onClick = () => createEntity(newDatetime);
 
-	return <Copy entityType='datetime' onClick={onClick} />;
+	return <Copy {...props} entityType='datetime' onClick={onClick} />;
 };
 
 export default CopyDate;

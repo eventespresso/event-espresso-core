@@ -10,7 +10,6 @@ import withIsLoaded from '@sharedUI/hoc/withIsLoaded';
 
 const DeleteDateButton: React.FC<EntityListItemProps> = ({ id }) => {
 	const { deleteEntity } = useDatetimeMutator(id);
-
 	const tooltipProps = { placement: 'right' };
 
 	return (
