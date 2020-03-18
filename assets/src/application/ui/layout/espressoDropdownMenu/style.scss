@@ -25,14 +25,26 @@
 
 	.components-dropdown-menu__menu-item,
 	.components-menu-item {
-		background-color: transparent !important;
 		border: none !important;
 		box-shadow: unset !important;
 		cursor: pointer;
-		margin: 0 !important; // important was needed because it is conflicting with EspressoButton styles
+		font-size: var(--ee-font-size-small);
+		font-weight: inherit;
+		margin: 0 0 5px !important; // important was needed because it is conflicting with EspressoButton styles
 		outline: none;
 		padding: 0 !important;
 		width: 100% !important; // important was needed because it is conflicting with EspressoButton styles
+
+		&:focus:not(:disabled):not([aria-disabled='true']):not(.is-secondary) {
+			color: #191e23;
+			background-color: var(--ee-color-grey-14);
+			border: none;
+			box-shadow: none;
+			font-size: var(--ee-font-size-small);
+			font-weight: inherit;
+			outline-offset: -2px;
+			outline: 1px dotted #555d66 !important;
+		}
 	}
 
 	.components-dropdown-menu__menu-item.has-separator,
@@ -55,26 +67,7 @@
 		height: 1px;
 	}
 
-	.components-dropdown-menu__menu-item:focus:not(:disabled):not([aria-disabled='true']):not(.is-secondary),
-	.components-menu-item:focus:not(:disabled):not([aria-disabled='true']):not(.is-secondary) {
-		color: #191e23;
-		border: none;
-		box-shadow: none;
-		outline-offset: -2px;
-		outline: 1px dotted #555d66 !important;
-	}
-
 	.components-dropdown-menu__menu-item {
-		&:hover,
-		&:not(:disabled):not([aria-disabled='true']):not(.is-secondary):not(.is-tertiary):not(.is-primary):hover {
-			color: #191e23;
-			border: none;
-			background: #f3f4f5 !important;
-			box-shadow: none;
-		}
-	}
-
-	.components-menu-item {
 		&:hover,
 		&:not(:disabled):not([aria-disabled='true']):not(.is-secondary):not(.is-tertiary):not(.is-primary):hover {
 			color: #191e23;
@@ -126,15 +119,6 @@
 		.dashicon {
 			margin-right: 4px;
 		}
-	}
-
-	.components-dropdown-menu__menu-item:focus:not(:disabled):not([aria-disabled='true']):not(.is-secondary),
-	.components-menu-item:focus:not(:disabled):not([aria-disabled='true']):not(.is-secondary) {
-		color: #191e23;
-		border: none;
-		box-shadow: none;
-		outline-offset: -2px;
-		outline: 1px dotted #555d66;
 	}
 
 	.components-dropdown-menu__menu-item {
@@ -355,10 +339,11 @@
 
 .components-popover {
 	.components-popover__content {
-		position: absolute;
+		box-shadow: var(--ee-box-shadow-small);
 		height: auto;
+		min-width: 200px;
+		position: absolute;
 		overflow-y: auto;
-		min-width: 260px;
 	}
 
 	&.is-expanded .components-popover__content {
