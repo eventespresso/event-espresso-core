@@ -107,6 +107,7 @@ const useTicketAssignmentsManager = (): TAM => {
 			cancelText: __('Cancel'),
 			maskClosable: true,
 			centered: true,
+			width: '80%',
 		});
 	};
 
