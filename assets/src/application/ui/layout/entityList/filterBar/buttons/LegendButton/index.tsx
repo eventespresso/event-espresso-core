@@ -11,16 +11,16 @@ import './style.scss';
 
 const LegendButton: React.FC<ToggleLegendButtonProps> = ({ listId, showLegend, toggleLegend }) => {
 	const className = classNames('ee-filter-bar-filter-btn', { 'ee-active-legend': showLegend });
-	const id = `ee-toggle-legend-btn-${listId}`;
 	const iconProps = useSpring({
 		transform: `rotate(${showLegend ? 0 : 180}deg)`,
 	});
-	const label = __(`${showLegend ? 'hide' : 'show'} legend`);
 	const icon = (
 		<animated.div style={iconProps}>
 			<CompassFilled />
 		</animated.div>
 	);
+	const id = `ee-toggle-legend-btn-${listId}`;
+	const label = __(`${showLegend ? 'hide' : 'show'} legend`);
 
 	return (
 		<div className='ee-toggle-legend-btn'>

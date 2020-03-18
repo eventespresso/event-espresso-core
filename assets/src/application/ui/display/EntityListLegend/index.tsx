@@ -1,8 +1,8 @@
 import React from 'react';
-import classNames from 'classnames';
-import { Row, Col } from 'antd';
 
+import ColorSwatch from '@appDisplay/ColorSwatch';
 import { EspressoIcon, Icon } from '@appDisplay/espressoIcon';
+import { DescriptionList } from '@appLayout/descriptionList';
 import { LegendConfig } from './types';
 import './style.scss';
 
@@ -12,41 +12,25 @@ interface Props {
 
 const EntityListLegend: React.FC<Props> = ({ legendConfig }) => {
 	const { icons, swatches } = legendConfig;
+	const iconsSource = icons.map(({ icon, description }) => {
+		return {
+			term: <EspressoIcon aria-label={description} icon={icon as Icon} svgSize={18} />,
+			description: <span className='ee-legend-description'>{description}</span>,
+		};
+	});
 
-	return (
-		<Row className='ee-row'>
-			<Col span={12}>
-				<dl className='ee-list-table-legend'>
-					{icons.map(({ icon, description }) => {
-						return (
-							<dt>
-								<EspressoIcon aria-label={description} icon={icon as Icon} svgSize={18} />
-								<span className='ee-legend-description'>{description}</span>
-							</dt>
-						);
-					})}
-				</dl>
-			</Col>
-			<Col span={12}>
-				<dl className='ee-list-table-legend'>
-					{Object.entries(swatches).map(([swatchClassName, description]) => {
-						return (
-							<dt>
-								<span
-									aria-label={description}
-									className={classNames(
-										'ee-status-legend',
-										'ee-status-background-color-' + swatchClassName
-									)}
-								></span>
-								<span className='ee-legend-description'>{description}</span>
-							</dt>
-						);
-					})}
-				</dl>
-			</Col>
-		</Row>
-	);
+	const swatchesSource = Object.entries(swatches).map(([swatchClassName, description]) => {
+		const colorSwatchClassName = 'ee-status-background-color-' + swatchClassName;
+
+		return {
+			term: <ColorSwatch className={colorSwatchClassName} label={description} />,
+			description: <span className='ee-legend-description'>{description}</span>,
+		};
+	});
+
+	const dataSource = [...iconsSource, ...swatchesSource];
+
+	return <DescriptionList dataSource={dataSource} />;
 };
 
 export default EntityListLegend;
