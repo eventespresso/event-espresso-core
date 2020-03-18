@@ -6,7 +6,7 @@ import { Icon } from '@application/ui/input';
 import { MenuItemProps } from './types';
 
 const Trash: React.FC<MenuItemProps> = ({ entityType, onClick }) => {
-	return <EspressoDropdownMenuItem icon={Icon.TRASH} onClick={onClick} title={__('edit ' + entityType)} />;
+	return <EspressoDropdownMenuItem icon={Icon.TRASH} onClick={onClick} title={__('trash ' + entityType)} />;
 };
 
 export default Trash;

@@ -8,7 +8,7 @@ import { useDatetimeMutator } from '@edtrServices/apollo/mutations';
 const TrashDate = () => {
 	const { id } = useDatetimeContext();
 	const { deleteEntity } = useDatetimeMutator(id);
-	const onClick = (): void => deleteEntity(id);
+	const onClick = () => deleteEntity(id);
 
 	return <Trash entityType='datetime' onClick={onClick} />;
 };
