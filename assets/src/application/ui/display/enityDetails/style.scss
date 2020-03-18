@@ -21,6 +21,13 @@
 	.ee-inline-edit-text {
 		font-size: var(--ee-font-size-big);
 		line-height: var(--ee-font-size-big);
+
+		&.ee-infinity-sign {
+			color: var(--ee-default-text-color);
+			font-size: var(--ee-font-size-bigger);
+			line-height: 0.9;
+			vertical-align: middle;
+		}
 	}
 
 	.ee-entity-details-div {
