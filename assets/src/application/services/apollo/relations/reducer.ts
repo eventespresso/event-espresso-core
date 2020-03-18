@@ -2,6 +2,8 @@ import { pathOr, assocPath, dissocPath, clone } from 'ramda';
 import { RelationsReducer, RelationalData } from './types';
 
 const reducer: RelationsReducer = (state, action) => {
+	console.log('action', action);
+
 	const { entity, entityId, relation, relationId, relationIds } = action;
 	let newState: RelationalData, relations: string[];
 	switch (action.type) {
