@@ -10,3 +10,9 @@ export interface EspressoDropdownMenuProps extends AnyObject {
 	popoverProps?: AnyObject;
 	toggleProps?: AnyObject;
 }
+
+export interface EspressoDropdownMenuItemProps extends AnyObject {
+	icon?: string;
+	onClick?: any;
+	title?: string;
+}
