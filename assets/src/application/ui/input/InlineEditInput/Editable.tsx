@@ -20,7 +20,7 @@ const Editable: React.FC<EditableProps> = ({ inputType, ellipsis, onChange, clas
 
 	const htmlClasses = classNames('ee-inline-edit', `ee-inline-edit-${inputType}`, className);
 
-	return <Component className={htmlClasses} editable={{ onChange }} ellipsis={ellipsis} tabIndex={0} {...rest} />;
+	return <Component className={htmlClasses} editable={{ onChange }} tabIndex={0} {...rest} />;
 };
 
 export default Editable;
