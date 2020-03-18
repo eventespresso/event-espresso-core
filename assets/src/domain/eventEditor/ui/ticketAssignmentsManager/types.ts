@@ -16,7 +16,7 @@ export type AssignmentType = 'forDate' | 'forTicket' | 'forAll';
 
 export type AssignmentStatus = 'OLD' | 'NEW' | 'REMOVED';
 
-export interface TAMProps {
+export interface BaseProps {
 	assignmentType: AssignmentType;
 	entityId?: EntityId;
 }
@@ -41,7 +41,7 @@ export interface AssignmentManager {
 	toggleAssignment: (args: AssignmentFnArgs) => void;
 }
 
-export interface TAMStateManager extends AssignmentManager {
+export interface DataStateManager extends AssignmentManager {
 	getAssignmentStatus: (args: AssignmentFnArgs) => AssignmentStatus;
 	hasNoAssignedDates: (options: Pick<AssignmentFnArgs, 'ticketId'>) => boolean;
 	hasNoAssignedTickets: (options: Pick<AssignmentFnArgs, 'datetimeId'>) => boolean;
