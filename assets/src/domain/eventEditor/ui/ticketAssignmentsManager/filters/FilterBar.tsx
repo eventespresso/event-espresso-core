@@ -36,15 +36,19 @@ const FilterBar = () => {
 				</>
 			)}
 
-			<ShowExpiredTicketsControl
-				showExpiredTickets={showExpiredTickets}
-				setShowExpiredTickets={setShowExpiredTickets}
-			/>
-
-			<ShowTrashedTicketsControl
-				showTrashedTickets={showTrashedTickets}
-				setShowTrashedTickets={setShowTrashedTickets}
-			/>
+			{assignmentType !== 'forTicket' && (
+				// useless when TAM is for single ticket
+				<>
+					<ShowExpiredTicketsControl
+						showExpiredTickets={showExpiredTickets}
+						setShowExpiredTickets={setShowExpiredTickets}
+					/>
+					<ShowTrashedTicketsControl
+						showTrashedTickets={showTrashedTickets}
+						setShowTrashedTickets={setShowTrashedTickets}
+					/>
+				</>
+			)}
 		</div>
 	);
 };
