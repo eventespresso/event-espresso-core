@@ -1,4 +1,4 @@
-import { useReducer, useEffect } from 'react';
+import { useReducer } from 'react';
 
 import { FilterState, FilterStateManager, FilterStateManagerHook } from './types';
 import { now } from '@sharedEntities/datetimes/predicates/filters';
@@ -15,10 +15,6 @@ const initialState: FilterState = {
 
 const useFilterStateManager: FilterStateManagerHook = () => {
 	const [state, dispatch] = useReducer(reducer, initialState);
-
-	useEffect(() => {
-		console.log('filterState', state);
-	}, [state]);
 
 	const setDatesByMonth: FSM['setDatesByMonth'] = (datesByMonth) => {
 		dispatch({

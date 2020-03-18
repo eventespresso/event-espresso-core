@@ -12,8 +12,6 @@ const TicketAssignmentsManager: React.FC = () => {
 	const datesAndTickets = useDatesAndTickets();
 	const dataState = useDataState();
 
-	console.log('datesAndTickets', datesAndTickets);
-
 	return (
 		<div id='ticket-assignment-manager'>
 			<FilterBar />

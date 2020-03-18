@@ -25,14 +25,15 @@ const FilterBar = () => {
 
 	return (
 		<div className='filter-bar'>
-			<DatesByMonthControl datesByMonth={datesByMonth} setDatesByMonth={setDatesByMonth} />
-
 			{assignmentType !== 'forDate' && (
 				// useless when TAM is for single date
-				<ShowTrashedDatesControl
-					showTrashedDates={showTrashedDates}
-					setShowTrashedDates={setShowTrashedDates}
-				/>
+				<>
+					<DatesByMonthControl datesByMonth={datesByMonth} setDatesByMonth={setDatesByMonth} />
+					<ShowTrashedDatesControl
+						showTrashedDates={showTrashedDates}
+						setShowTrashedDates={setShowTrashedDates}
+					/>
+				</>
 			)}
 
 			<ShowExpiredTicketsControl

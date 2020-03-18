@@ -7,11 +7,9 @@ const useFilteredTickets = () => {
 	const { showExpiredTickets, showTrashedTickets } = useFilterState();
 	const tickets = useTickets();
 
-	console.log('tickets', tickets);
-
 	if (!showExpiredTickets) {
 		// `includeTrashed` already takes care of `showTrashedTickets`, so return
-		return tickets.filter((ticket) => !isExpired({ ticket, includeTrashed: showTrashedTickets }));
+		return tickets.filter((ticket) => !isExpired({ ticket, includeTrashed: !showTrashedTickets }));
 	}
 
 	if (!showTrashedTickets) {
