@@ -15,7 +15,7 @@ const EditableTypes = {
 };
 // Leave `ellipsis` unused to avoid TS conflict
 /* eslint-disable no-unused-vars */
-const Editable: React.FC<EditableProps> = ({ inputType, ellipsis, onChange, className, ...rest }) => {
+const Editable: React.FC<EditableProps> = ({ inputType, onChange, className, ...rest }) => {
 	const Component = EditableTypes[inputType];
 
 	const htmlClasses = classNames('ee-inline-edit', `ee-inline-edit-${inputType}`, className);
