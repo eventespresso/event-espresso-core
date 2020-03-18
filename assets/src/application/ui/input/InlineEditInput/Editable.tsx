@@ -13,14 +13,21 @@ const EditableTypes = {
 	heading: Title,
 	textarea: Paragraph,
 };
-// Leave `ellipsis` unused to avoid TS conflict
-/* eslint-disable no-unused-vars */
 const Editable: React.FC<EditableProps> = ({ inputType, ellipsis, onChange, className, ...rest }) => {
 	const Component = EditableTypes[inputType];
 
 	const htmlClasses = classNames('ee-inline-edit', `ee-inline-edit-${inputType}`, className);
 
-	return <Component className={htmlClasses} editable={{ onChange }} ellipsis={ellipsis} tabIndex={0} {...rest} />;
+	return (
+		<Component
+			className={htmlClasses}
+			editable={{ onChange }}
+			// TS treats ellipsis as a prop for Typography.Text
+			ellipsis={ellipsis as boolean}
+			tabIndex={0}
+			{...rest}
+		/>
+	);
 };
 
 export default Editable;
