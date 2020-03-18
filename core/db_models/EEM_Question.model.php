@@ -404,6 +404,7 @@ class EEM_Question extends EEM_Soft_Delete_Base
             'city' => 45,
             'zip' => 12,
             'email' => 255,
+            'email_confirm' => 255,
             'phone' => 45,
         );
     }
