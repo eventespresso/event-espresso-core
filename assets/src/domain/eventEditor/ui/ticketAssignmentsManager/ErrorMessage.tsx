@@ -6,10 +6,11 @@ import useTAMState from './useTAMState';
 
 interface ErrorMessageProps {
 	asAlert?: boolean;
+	TAMState?: ReturnType<typeof useTAMState>;
 }
 
-const ErrorMessage: React.FC<ErrorMessageProps> = ({ asAlert = true }) => {
-	const { hasOrphanDates, hasOrphanTickets } = useTAMState();
+const ErrorMessage: React.FC<ErrorMessageProps> = ({ asAlert = true, TAMState }) => {
+	const { hasOrphanDates, hasOrphanTickets } = useTAMState() || TAMState;
 
 	let errorMessage = null;
 

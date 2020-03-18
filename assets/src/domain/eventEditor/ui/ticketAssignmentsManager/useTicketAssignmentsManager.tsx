@@ -47,7 +47,9 @@ const useTicketAssignmentsManager = (): TAM => {
 	};
 
 	const formContent: React.FC<TAMProps> = (props) => {
-		const { hasOrphanEntities, getData } = useTAMState();
+		const TAMState = useTAMState();
+
+		const { hasOrphanEntities, getData } = TAMState;
 
 		const hasErrors = hasOrphanEntities();
 		const data = getData();
@@ -67,7 +69,7 @@ const useTicketAssignmentsManager = (): TAM => {
 				if (hasErrors) {
 					modal.error({
 						title: __('Error'),
-						content: withTAMProvider(ErrorMessage, { asAlert: false }),
+						content: <ErrorMessage TAMState={TAMState} asAlert={false} />,
 						maskClosable: true,
 					});
 				} else {
