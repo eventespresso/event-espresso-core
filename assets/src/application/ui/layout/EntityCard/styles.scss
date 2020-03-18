@@ -60,6 +60,7 @@
 			&__description {
 				font-size: var(--ee-font-size-default);
 				margin: 0 0 var(--ee-margin-tiny);
+				overflow-y: auto;
 				text-align: center;
 				width: 100%;
 			}
