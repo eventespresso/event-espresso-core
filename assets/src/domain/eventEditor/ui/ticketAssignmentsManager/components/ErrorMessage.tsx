@@ -6,11 +6,11 @@ import { useDataState } from '../data';
 
 interface ErrorMessageProps {
 	asAlert?: boolean;
-	dataState?: ReturnType<typeof useDataState>;
+	dataState: ReturnType<typeof useDataState>;
 }
 
 const ErrorMessage: React.FC<ErrorMessageProps> = ({ asAlert = true, dataState }) => {
-	const { hasOrphanDates, hasOrphanTickets } = useDataState() || dataState;
+	const { hasOrphanDates, hasOrphanTickets } = dataState;
 
 	let errorMessage = null;
 
