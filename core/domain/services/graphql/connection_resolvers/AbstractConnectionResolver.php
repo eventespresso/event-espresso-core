@@ -2,6 +2,7 @@
 
 namespace EventEspresso\core\domain\services\graphql\connection_resolvers;
 
+use EE_Base_Class;
 use WPGraphQL\Data\Connection\AbstractConnectionResolver as WPGraphQLConnectionResolver;
 use GraphQLRelay\Relay;
 
@@ -32,6 +33,25 @@ abstract class AbstractConnectionResolver extends WPGraphQLConnectionResolver
         );
         $limit++;
         return $limit;
+    }
+
+    /**
+     * Determine whether or not the the offset is valid, i.e the entity corresponding to the
+     * offset exists. Offset is equivalent to entity ID. So this function is equivalent to
+     * checking if the entity with the given ID exists.
+     *
+     * @access public
+     *
+     * @param int $offset The ID of the node used for the cursor offset
+     *
+     * @return bool
+     */
+    // phpcs:ignore PSR1.Methods.CamelCapsMethodName.NotCamelCaps
+    public function is_valid_offset($offset)
+    {
+        $entity = $this->get_query()->get_one_by_ID($offset);
+        
+        return $entity instanceof EE_Base_Class;
     }
 
 
