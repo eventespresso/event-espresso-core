@@ -68,52 +68,53 @@
 		justify-content: flex-end;
 		margin: 0 var(--ee-margin-small) var(--ee-margin-smaller) 0;
 		max-width: 100%;
-		width: calc(var(--ee-font-size-default) * 12);
+		min-width: calc(var(--ee-font-size-default) * 12);
 		white-space: pre;
-
-		&--auto {
-			width: auto;
-		}
-		&--nano {
-			width: calc(var(--ee-font-size-default) * 2);
-		}
-
-		&--micro {
-			width: calc(var(--ee-font-size-default) * 3);
-		}
-
-		&--tiny {
-			width: calc(var(--ee-font-size-default) * 4);
-		}
-
-		&--smaller {
-			width: calc(var(--ee-font-size-default) * 6);
-		}
-
-		&--small {
-			width: calc(var(--ee-font-size-default) * 9);
-		}
-
-		&--big {
-			width: calc(var(--ee-font-size-default) * 15);
-		}
-
-		&--bigger {
-			width: calc(var(--ee-font-size-default) * 21);
-		}
-
-		&--huge {
-			width: calc(var(--ee-font-size-default) * 32);
-		}
-
-		&--extreme {
-			width: calc(var(--ee-font-size-default) * 48);
-		}
+		width: auto;
 
 		> div,
 		.ant-select,
 		&--full-width {
 			width: 100%;
+		}
+
+		&--auto {
+			width: auto;
+		}
+		&--nano {
+			min-width: calc(var(--ee-font-size-default) * 2);
+		}
+
+		&--micro {
+			min-width: calc(var(--ee-font-size-default) * 3);
+		}
+
+		&--tiny {
+			min-width: calc(var(--ee-font-size-default) * 4);
+		}
+
+		&--smaller {
+			min-width: calc(var(--ee-font-size-default) * 6);
+		}
+
+		&--small {
+			min-width: calc(var(--ee-font-size-default) * 9);
+		}
+
+		&--big {
+			min-width: calc(var(--ee-font-size-default) * 15);
+		}
+
+		&--bigger {
+			min-width: calc(var(--ee-font-size-default) * 21);
+		}
+
+		&--huge {
+			min-width: calc(var(--ee-font-size-default) * 32);
+		}
+
+		&--extreme {
+			min-width: calc(var(--ee-font-size-default) * 48);
 		}
 	}
 }

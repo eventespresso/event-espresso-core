@@ -22,7 +22,7 @@ const TicketsToShowControl: React.FC<TicketsToShowControlProps> = React.memo(
 		return (
 			<SelectInput
 				label={__('show')}
-				className='ee-ticket-list-filter-bar-show-select'
+				className='ee-ticket-list-filter-bar-show-select ee-filter-bar-filter--big'
 				value={ticketsToShow}
 				options={[
 					{

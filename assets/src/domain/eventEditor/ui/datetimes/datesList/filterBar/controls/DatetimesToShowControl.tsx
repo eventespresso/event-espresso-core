@@ -19,7 +19,7 @@ const DatetimesToShowControl: React.FC<DatetimesToShowControlProps> = React.memo
 		return (
 			<SelectInput
 				label={__('show')}
-				className='espresso-date-list-filter-bar-show-select'
+				className='espresso-date-list-filter-bar-show-select ee-filter-bar-filter--big'
 				value={datetimesToShow}
 				options={[
 					{
