@@ -9,7 +9,6 @@ import { useFormModal } from '@appLayout/formModal';
 const EditDateButton: React.FC = () => {
 	const { id: entityId } = useDatetimeContext();
 	const { dbId: entityDbId } = useDatetimeItem({ id: entityId }) || {};
-
 	const { openEditor } = useFormModal();
 
 	const onClick = (): void =>

@@ -1,9 +1,11 @@
 import React, { useCallback } from 'react';
 import { __ } from '@wordpress/i18n';
 
-import EditDateButton from '../datesList/actionsMenu/EditDateButton';
-import DeleteDateButton from '../datesList/actionsMenu/DeleteDateButton';
 import AssignTicketsButton from '../datesList/actionsMenu/AssignTicketsButton';
+import { DateEntityMainMenuItem } from '../datesList/actionsMenu/dateEntityMainMenuItem';
+import DeleteDateButton from '../datesList/actionsMenu/DeleteDateButton';
+import EditDateButton from '../datesList/actionsMenu/EditDateButton';
+
 import { Datetime } from '@edtrServices/apollo/types';
 import { EntityActionsSubscriptionCb } from '@appLayout/entityActionsMenu';
 
@@ -17,6 +19,8 @@ const useDatesActionMenuHandler = (): DatesSubscriptionCallback => {
 		}
 
 		const { registerElement: registerMenuItem } = registry;
+
+		registerMenuItem('mainMenu', () => <DateEntityMainMenuItem />);
 
 		registerMenuItem('editDate', () => <EditDateButton />);
 
