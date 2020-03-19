@@ -24,7 +24,7 @@ const FilterBar = () => {
 	} = useTAMContext();
 
 	return (
-		<div className='filter-bar'>
+		<div className='ee-filter-bar'>
 			{assignmentType !== 'forDate' && (
 				// useless when TAM is for single date
 				<>
