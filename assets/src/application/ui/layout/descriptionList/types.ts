@@ -5,5 +5,5 @@ export interface DescriptionListItemProps {
 }
 
 export interface DescriptionListProps {
-	dataSource: JSX.Element[];
+	dataSource: DescriptionListItemProps[];
 }
