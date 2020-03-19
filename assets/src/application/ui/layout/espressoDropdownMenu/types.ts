@@ -3,7 +3,7 @@ import { AnyObject } from '@appServices/utilities/types';
 export interface EspressoDropdownMenuProps extends AnyObject {
 	children: React.ReactNode;
 	className?: string;
-	icon?: string | null;
+	icon?: string;
 	menuProps?: AnyObject;
 	label: string;
 	popoverProps?: AnyObject;
