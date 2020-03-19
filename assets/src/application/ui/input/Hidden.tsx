@@ -1,7 +1,9 @@
 import React from 'react';
 
-const Hidden = ({ input, ...rest }) => {
-	return <input {...input} {...rest} type='hidden' />;
+interface Props extends React.InputHTMLAttributes<HTMLInputElement> {}
+
+const Hidden: React.FC<Props> = (props) => {
+	return <input {...props} type='hidden' />;
 };
 
 export default Hidden;
