@@ -4,7 +4,7 @@ import Collapsible from './Collapsible';
 import { EntityListFilterBarProps } from './types';
 import { EntityListLegend } from '@application/ui/display';
 import GridViewFilterButton from './buttons/GridView';
-import LegendButton from './buttons/LegendButton';
+import ToggleLegendButton from './buttons/ToggleLegend';
 import ListViewFilterButton from './buttons/ListView';
 import ToggleFiltersButton from './buttons/ToggleFilters';
 import { SearchInput } from '@application/ui/input';
@@ -47,7 +47,7 @@ const EntityListFilterBar = <FS extends ELFSM>({
 					showFilters={showEntityFilters}
 					toggleFilters={toggleEntityFilters}
 				/>
-				<LegendButton listId={listId} showLegend={showLegend} toggleLegend={toggleLegend} />
+				<ToggleLegendButton listId={listId} showLegend={showLegend} toggleLegend={toggleLegend} />
 			</div>
 
 			<Collapsible show={showEntityFilters}>

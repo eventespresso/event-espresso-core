@@ -2,20 +2,18 @@ import React from 'react';
 import classNames from 'classnames';
 import { __ } from '@wordpress/i18n';
 
+import FilterButtonWrap from './FilterButtonWrap';
 import { ToggleFiltersButtonProps } from '../types';
 import { EspressoButton, EspressoButtonType, Icon } from '@appInputs/EspressoButton';
 
-const ToggleFiltersButton: React.FC<ToggleFiltersButtonProps> = ({ listId, showFilters, toggleFilters }) =>
+const ToggleFilters: React.FC<ToggleFiltersButtonProps> = ({ listId, showFilters, toggleFilters }) =>
 	React.useMemo(() => {
 		const className = classNames('ee-filter-bar-filter-btn', { 'ee-active-filters': showFilters });
 		const filterId = `ee-toggle-filters-btn-${listId}`;
 		const tooltip = __(`${showFilters ? 'hide' : 'show'} filters`);
 
 		return (
-			<>
-				<label className='esprs-button-label screen-reader-text' htmlFor={filterId}>
-					{__('show filters')}
-				</label>
+			<FilterButtonWrap id={filterId} label={__('filters')}>
 				<EspressoButton
 					buttonType={EspressoButtonType.MINIMAL}
 					className={className}
@@ -24,8 +22,8 @@ const ToggleFiltersButton: React.FC<ToggleFiltersButtonProps> = ({ listId, showF
 					onClick={toggleFilters}
 					tooltip={tooltip}
 				/>
-			</>
+			</FilterButtonWrap>
 		);
 	}, [listId, showFilters, toggleFilters]);
 
-export default ToggleFiltersButton;
+export default ToggleFilters;

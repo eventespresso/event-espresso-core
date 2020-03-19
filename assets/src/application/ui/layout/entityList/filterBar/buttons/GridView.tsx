@@ -2,6 +2,7 @@ import React from 'react';
 import { AppstoreFilled } from '@ant-design/icons';
 import { __ } from '@wordpress/i18n';
 
+import FilterButtonWrap from './FilterButtonWrap';
 import { GridViewFilterButtonProps } from '../types';
 import { EspressoButton, EspressoButtonType } from '../../../../input/EspressoButton';
 
@@ -10,10 +11,7 @@ const GridViewFilterButton: React.FC<GridViewFilterButtonProps> = ({ listId, set
 		const filterId = `ee-grid-view-btn-${listId}`;
 
 		return (
-			<>
-				<label className='esprs-button-label screen-reader-text' htmlFor={filterId}>
-					{__('card view')}
-				</label>
+			<FilterButtonWrap id={filterId} label={__('card view')}>
 				<EspressoButton
 					buttonType={EspressoButtonType.MINIMAL}
 					className={
@@ -24,7 +22,7 @@ const GridViewFilterButton: React.FC<GridViewFilterButtonProps> = ({ listId, set
 					onClick={setGridView}
 					tooltip={__('card view')}
 				/>
-			</>
+			</FilterButtonWrap>
 		);
 	}, [listId, setGridView, view]);
 
