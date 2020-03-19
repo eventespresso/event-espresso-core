@@ -9,8 +9,9 @@ const TrashDate = (props) => {
 	const { id } = useDatetimeContext();
 	const { deleteEntity } = useDatetimeMutator(id);
 	const onClick = () => deleteEntity({ id });
+	const title = __('trash datetime');
 
-	return <Trash {...props} entityType='datetime' onClick={onClick} />;
+	return <Trash {...props} onClick={onClick} title={title} />;
 };
 
 export default TrashDate;

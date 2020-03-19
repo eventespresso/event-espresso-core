@@ -27,8 +27,9 @@ const CopyDate = (props) => {
 		datetime
 	);
 	const onClick = () => createEntity(newDatetime);
+	const title = __('copy datetime');
 
-	return <Copy {...props} entityType='datetime' onClick={onClick} />;
+	return <Copy {...props} onClick={onClick} title={title} />;
 };
 
 export default CopyDate;
