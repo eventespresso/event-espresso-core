@@ -7,7 +7,6 @@ import { TAMPossibleRelation, TAMRelationEntity, TAMRelationalData, TAMRelationa
 import { Datetime } from '@edtrServices/apollo';
 import { OptionsType } from '@appInputs/SelectInput';
 import sortDates from '@sharedEntities/datetimes/predicates/sorters';
-import { monthNames } from '@appConstants/index';
 
 type EntitiesToUpdate = Array<[EntityId, TAMPossibleRelation]>;
 
@@ -58,13 +57,13 @@ export const getMonthsListFromDatetimes = (dates: Array<Datetime>): OptionsType 
 	const sortedDates = sortDates({ dates });
 
 	const yearWiseMonths = sortedDates.reduce<YearWiseMonths>((acc, { startDate }) => {
-		const parseDate = parseISO(startDate);
-		const year = parseDate.getFullYear();
-		const month = parseDate.getMonth();
+		const parsedDate = parseISO(startDate);
+		const year = parsedDate.getFullYear();
+		const month = parsedDate.getMonth();
 
 		const monthsInTheYear = acc[year] || {};
 		if (!(month in monthsInTheYear)) {
-			monthsInTheYear[month] = monthNames[month];
+			monthsInTheYear[month] = parsedDate.toLocaleString('default', { month: 'long' });
 
 			acc[year] = monthsInTheYear;
 		}
