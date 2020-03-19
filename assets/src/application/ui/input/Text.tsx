@@ -1,8 +1,9 @@
 import React from 'react';
 import { Input } from 'antd';
+import { InputProps } from 'antd/lib/input';
 
-const Text = ({ input, htmlType = 'text', ...rest }) => {
-	return <Input {...input} {...rest} type={htmlType} />;
+const Text: React.FC<InputProps> = ({ type = 'text', ...props }) => {
+	return <Input {...props} onPressEnter={(e) => e.preventDefault()} type={type} />;
 };
 
 export default Text;
