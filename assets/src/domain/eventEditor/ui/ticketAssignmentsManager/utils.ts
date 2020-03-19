@@ -41,7 +41,7 @@ export const prepareEntitiesForUpdate = <Entity extends TAMRelationEntity>({
  * {
  *     2019: {
  *         9: 'October',
- *         10: 'Noember',
+ *         10: 'November',
  *         11: 'December',
  *     },
  *     2020: {
