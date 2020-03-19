@@ -36,7 +36,7 @@
 		width: 100% !important; // important was needed because it is conflicting with EspressoButton styles
 
 		&:focus:not(:disabled):not([aria-disabled='true']):not(.is-secondary) {
-			color: #191e23;
+			color: var(--ee-text-on-grey-14);
 			background-color: var(--ee-color-grey-14);
 			border: none;
 			box-shadow: none;
