@@ -4,14 +4,14 @@ export interface EspressoDropdownMenuProps extends AnyObject {
 	children: React.ReactNode;
 	className?: string;
 	icon?: string;
-	menuProps?: AnyObject;
 	label: string;
+	menuProps?: AnyObject;
 	popoverProps?: AnyObject;
 	toggleProps?: AnyObject;
 }
 
 export interface EspressoDropdownMenuItemProps extends AnyObject {
 	icon?: string;
-	onClick?: any;
+	onClick?: () => void;
 	title?: string;
 }
