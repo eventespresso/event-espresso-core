@@ -1,5 +1,5 @@
 import React from 'react';
-import { omit } from 'ramda';
+import { pick } from 'ramda';
 import { __ } from '@wordpress/i18n';
 
 import { Copy } from '@application/ui/layout/entityActionsMenu/entityMenuItems';
@@ -11,19 +11,8 @@ const CopyDate = (props) => {
 	const { id } = useDatetimeContext();
 	const datetime = useDatetimeItem({ id });
 	const { createEntity } = useDatetimeMutator();
-	const newDatetime = omit(
-		[
-			'dbId',
-			'id',
-			'isActive',
-			'isExpired',
-			'isSoldOut',
-			'isTrashed',
-			'isUpcoming',
-			'length',
-			'status',
-			'__typename',
-		],
+	const newDatetime = pick(
+		['capacity', 'description', 'endDate', 'isPrimary', 'name', 'order', 'reserved', 'sold', 'startDate'],
 		datetime
 	);
 	const onClick = () => createEntity(newDatetime);
