@@ -6,8 +6,7 @@ import inYearAndMonth from '@sharedEntities/datetimes/predicates/filters/inYearA
 const useFilteredDatetimes = () => {
 	const { showTrashedDates, datesByMonth } = useFilterState();
 
-	const [year, month] = datesByMonth.split(':').map(Number);
-	const datesInYearAndMonth = inYearAndMonth([year, month]);
+	const datesInYearAndMonth = inYearAndMonth(datesByMonth);
 
 	const allDates = useDatetimes();
 

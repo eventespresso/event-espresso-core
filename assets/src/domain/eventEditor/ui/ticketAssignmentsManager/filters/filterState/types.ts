@@ -1,7 +1,7 @@
 import { Reducer } from 'react';
 
 export interface FilterState {
-	datesByMonth: string;
+	datesByMonth: [number, number]; //[year, month]
 	showTrashedDates: boolean;
 	showExpiredTickets: boolean;
 	showTrashedTickets: boolean;

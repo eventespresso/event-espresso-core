@@ -7,7 +7,7 @@ import reducer from './reducer';
 type FSM = FilterStateManager;
 
 const initialState: FilterState = {
-	datesByMonth: `${now.getFullYear()}:${now.getMonth()}`,
+	datesByMonth: [now.getFullYear(), now.getMonth()],
 	showExpiredTickets: false,
 	showTrashedDates: false,
 	showTrashedTickets: false,
@@ -17,9 +17,11 @@ const useFilterStateManager: FilterStateManagerHook = () => {
 	const [state, dispatch] = useReducer(reducer, initialState);
 
 	const setDatesByMonth: FSM['setDatesByMonth'] = (datesByMonth) => {
+		const [year, month] = datesByMonth.split(':').map(Number);
+
 		dispatch({
 			type: 'SET_DATES_BY_MONTH',
-			datesByMonth,
+			datesByMonth: [year, month],
 		});
 	};
 
