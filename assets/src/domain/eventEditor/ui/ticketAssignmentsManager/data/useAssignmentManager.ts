@@ -1,7 +1,7 @@
 import { pick, map, mapObjIndexed } from 'ramda';
 
 import { useRelationsManager, RelationFunctionProps } from '@appServices/apollo/relations';
-import { AssignmentManager, TAMRelationalData } from './types';
+import { AssignmentManager, TAMRelationalData } from '../types';
 
 type AM = AssignmentManager;
 /**
@@ -77,7 +77,7 @@ const useAssignmentManager = (): AM => {
 		}
 	};
 
-	const initialize: AM['initialize'] = (data: TAMRelationalData, forDate) => {
+	const initialize: AM['initialize'] = ({ data, assignmentType, entityId }) => {
 		const relationsToPick: Array<keyof TAMRelationalData> = ['datetimes', 'tickets'];
 		// pick only datetimes and tickets from relational data
 		let newData = pick(relationsToPick, data);
@@ -85,10 +85,16 @@ const useAssignmentManager = (): AM => {
 		// Remove other relations from newData
 		// like ticket to price relations
 		newData = mapObjIndexed((relationalEntity, entity) => {
-			// If TAM is only for a single datetime
-			// limit relations to that datetime
-			const relationalEntityToUse =
-				entity === 'datetimes' && forDate ? pick([forDate], relationalEntity) : relationalEntity;
+			let relationalEntityToUse = relationalEntity;
+			// If TAM is only for a single datetime/ticket
+			// limit relations to that datetime/ticket
+			if (
+				(assignmentType === 'forDate' && entity === 'datetimes') ||
+				(assignmentType === 'forTicket' && entity === 'tickets')
+			) {
+				relationalEntityToUse = pick([entityId], relationalEntity);
+			}
+
 			return map((relation) => {
 				return pick(relationsToPick, relation);
 			}, relationalEntityToUse);

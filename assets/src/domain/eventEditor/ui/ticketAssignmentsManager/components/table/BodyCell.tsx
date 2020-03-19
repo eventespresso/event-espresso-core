@@ -1,12 +1,12 @@
 import React from 'react';
 import { Button } from 'antd';
 
-import { RenderCellProps } from '../types';
-import useTAMState from '../useTAMState';
+import { RenderCellProps } from '../../types';
+import { useDataState } from '../../data';
 import useCellIcon from './useCellIcon';
 
 const BodyCell: React.FC<RenderCellProps> = ({ datetime, ticket }) => {
-	const { toggleAssignment } = useTAMState();
+	const { toggleAssignment } = useDataState();
 
 	const getCellIcon = useCellIcon();
 

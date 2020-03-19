@@ -3,13 +3,13 @@ import classNames from 'classnames';
 
 import { Cell } from '@appLayout/espressoTable';
 import BodyCell from './BodyCell';
-import useTAMState from '../useTAMState';
-import { DatesAndTickets } from '../types';
+import { useDataState } from '../../data';
+import { DatesAndTickets } from '../../types';
 import useRowClassName from './useRowClassName';
 import useColClassName from './useColClassName';
 
 const getBodyRows = ({ datetimes, tickets }: DatesAndTickets) => {
-	const { getAssignmentStatus } = useTAMState();
+	const { getAssignmentStatus } = useDataState();
 
 	const getRowClass = useRowClassName();
 	const getColClass = useColClassName();

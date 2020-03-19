@@ -1,12 +1,12 @@
 import { useCallback } from 'react';
 
 import { Datetime } from '@edtrServices/apollo/types';
-import useTAMState from '../useTAMState';
+import { useDataState } from '../../data';
 
 type Callback = (datetime: Datetime) => string;
 
 const useRowClassName = (): Callback => {
-	const { hasNoAssignedTickets } = useTAMState();
+	const { hasNoAssignedTickets } = useDataState();
 
 	return useCallback<Callback>(
 		(datetime) => {

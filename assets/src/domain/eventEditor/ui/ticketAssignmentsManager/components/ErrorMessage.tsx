@@ -2,14 +2,15 @@ import React from 'react';
 import { __ } from '@wordpress/i18n';
 import { Alert } from 'antd';
 
-import useTAMState from './useTAMState';
+import { useDataState } from '../data';
 
 interface ErrorMessageProps {
 	asAlert?: boolean;
+	dataState: ReturnType<typeof useDataState>;
 }
 
-const ErrorMessage: React.FC<ErrorMessageProps> = ({ asAlert = true }) => {
-	const { hasOrphanDates, hasOrphanTickets } = useTAMState();
+const ErrorMessage: React.FC<ErrorMessageProps> = ({ asAlert = true, dataState }) => {
+	const { hasOrphanDates, hasOrphanTickets } = dataState;
 
 	let errorMessage = null;
 

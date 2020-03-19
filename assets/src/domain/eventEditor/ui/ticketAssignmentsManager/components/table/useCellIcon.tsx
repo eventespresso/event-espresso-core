@@ -1,8 +1,9 @@
 import React, { useCallback, CSSProperties } from 'react';
-import { TagsOutlined, CloseOutlined, MinusOutlined } from '@ant-design/icons';
+import AntIcon, { CloseOutlined, MinusOutlined } from '@ant-design/icons';
 
-import useTAMState from '../useTAMState';
-import { AssignmentFnArgs } from '../types';
+import { useDataState } from '../../data';
+import { AssignmentFnArgs } from '../../types';
+import { EspressoIcon, Icon } from '@appDisplay/espressoIcon';
 
 type Callback = (args: AssignmentFnArgs) => React.ReactNode;
 
@@ -11,7 +12,7 @@ const iconStyle: CSSProperties = {
 };
 
 const useCellIcon = (): Callback => {
-	const { getAssignmentStatus } = useTAMState();
+	const { getAssignmentStatus } = useDataState();
 
 	return useCallback<Callback>(
 		({ datetimeId, ticketId }) => {
@@ -19,7 +20,7 @@ const useCellIcon = (): Callback => {
 			switch (status) {
 				case 'NEW':
 				case 'OLD':
-					return <TagsOutlined style={iconStyle} />;
+					return <AntIcon style={iconStyle} component={() => <EspressoIcon icon={Icon.TICKET} />} />;
 				case 'REMOVED':
 					return <CloseOutlined style={iconStyle} />;
 				default:

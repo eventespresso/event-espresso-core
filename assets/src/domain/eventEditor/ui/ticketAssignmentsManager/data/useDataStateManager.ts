@@ -1,16 +1,26 @@
+import { useEffect } from 'react';
+
 import { EntityId } from '@appServices/apollo/types';
 import { useRelations } from '@appServices/apollo/relations';
-import useAssignmentManager from './useAssignmentManager';
-import useValidateTAMData from './useValidateTAMData';
-import { TAMStateManager, AssignmentStatus } from './types';
+import { useAssignmentManager, useValidation } from './';
+import { AssignmentStatus, BaseProps, DataStateManager } from '../types';
 
-const useTAMStateManager = (): TAMStateManager => {
+const useDataStateManager = (props: BaseProps): DataStateManager => {
 	const assignmentManager = useAssignmentManager();
-
 	// The existing relations to be used to create initial data
 	// and to calculate difference between new and old data
 	const relations = useRelations();
-	const orphanEntities = useValidateTAMData(assignmentManager);
+	const orphanEntities = useValidation(assignmentManager);
+
+	const { initialize, isInitialized } = assignmentManager;
+	const initialized = isInitialized();
+
+	useEffect(() => {
+		if (!initialized) {
+			// initialize with existing data
+			initialize({ data: relations.getData(), ...props });
+		}
+	}, [initialized]);
 
 	const hasNoAssignedDates = ({ ticketId }) => orphanEntities.tickets.includes(ticketId);
 
@@ -60,4 +70,4 @@ const useTAMStateManager = (): TAMStateManager => {
 	};
 };
 
-export default useTAMStateManager;
+export default useDataStateManager;

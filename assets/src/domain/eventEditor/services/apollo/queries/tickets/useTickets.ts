@@ -4,7 +4,7 @@ import useCacheQuery from '../useCacheQuery';
 
 const useTickets = (): Array<Ticket> => {
 	const options = useTicketQueryOptions();
-	const { data } = useCacheQuery<TicketsList>(options);
+	const { data } = useCacheQuery<TicketsList>({ ...options, fetchPolicy: 'cache-first' });
 
 	return data?.espressoTickets?.nodes || [];
 };

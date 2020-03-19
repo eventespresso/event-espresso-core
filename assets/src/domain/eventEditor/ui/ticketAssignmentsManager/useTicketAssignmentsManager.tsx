@@ -1,15 +1,13 @@
 import React, { useEffect, useCallback } from 'react';
 import { __ } from '@wordpress/i18n';
-import TicketAssignmentsManager from './TicketAssignmentsManager';
+import { TicketAssignmentsManager, ErrorMessage } from './components';
 import { ButtonProps } from 'antd/lib/button';
 import { ModalFunc } from 'antd/lib/modal/confirm';
 import { SaveOutlined } from '@ant-design/icons';
-import { TAMProps, TicketAssignmentsManager as TAM } from './types';
+import { BaseProps, TicketAssignmentsManager as TAM } from './types';
 import useModal from '@appLayout/modal/useModal';
-import withTAMProvider from './withTAMProvider';
-import useTAMState from './useTAMState';
-import useOnSubmitAssignments from './useOnSubmitAssignments';
-import ErrorMessage from './ErrorMessage';
+import { withContext } from './context';
+import { useDataState, useOnSubmitAssignments } from './data';
 
 const useTicketAssignmentsManager = (): TAM => {
 	const modal = useModal();
@@ -46,8 +44,10 @@ const useTicketAssignmentsManager = (): TAM => {
 		}
 	};
 
-	const formContent: React.FC<TAMProps> = (props) => {
-		const { hasOrphanEntities, getData } = useTAMState();
+	const formContent: React.FC<BaseProps> = (props) => {
+		const dataState = useDataState();
+
+		const { hasOrphanEntities, getData } = dataState;
 
 		const hasErrors = hasOrphanEntities();
 		const data = getData();
@@ -67,7 +67,7 @@ const useTicketAssignmentsManager = (): TAM => {
 				if (hasErrors) {
 					modal.error({
 						title: __('Error'),
-						content: withTAMProvider(ErrorMessage, { asAlert: false }),
+						content: <ErrorMessage dataState={dataState} asAlert={false} />,
 						maskClosable: true,
 					});
 				} else {
@@ -97,17 +97,17 @@ const useTicketAssignmentsManager = (): TAM => {
 		return <TicketAssignmentsManager {...props} />;
 	};
 
-	const showModal = (options: TAMProps) => {
+	const showModal = (options: BaseProps) => {
 		openModal = modal.confirm({
 			title: __('Ticket Assignment Manager'),
-			content: withTAMProvider(formContent, options),
+			content: withContext(formContent, options),
 			okButtonProps: submitButton,
 			cancelButtonProps: cancelButton,
 			okText: __('Submit'),
 			cancelText: __('Cancel'),
 			maskClosable: true,
 			centered: true,
-			width: '80%',
+			width: 'auto',
 		});
 	};
 
