@@ -1,6 +1,3 @@
-/**
- * External dependencies
- */
 import React from 'react';
 import { Callout, NonIdealState, Spinner } from '@blueprintjs/core/lib/cjs';
 

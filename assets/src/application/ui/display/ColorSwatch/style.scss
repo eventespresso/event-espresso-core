@@ -1,0 +1,12 @@
+/** -------------------------------------------------------------------------
+ * Event Espresso ColorSwatch Stylesheet
+ * © 2020 Event Espresso
+ * ------------------------------------------------------------------------- */
+
+.ee {
+	&-color-swatch {
+		display: inline-block;
+		height: var(--ee-font-size-default);
+		width: var(--ee-font-size-default);
+	}
+}

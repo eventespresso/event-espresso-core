@@ -2,8 +2,9 @@ import React from 'react';
 import { __ } from '@wordpress/i18n';
 
 import AddNewTicketButton from './AddNewTicketButton';
-import { EntityList } from '@appLayout/entityList';
 import { CardView } from './cardView';
+import { EntityList } from '@appLayout/entityList';
+import { legendConfig } from './config';
 import { TableView } from './tableView';
 import { useTickets } from '@edtrServices/apollo/queries';
 import { TicketsListProvider, withEntityListContext } from '@edtrServices/context/EntityListContext';
@@ -24,6 +25,7 @@ const TicketsList: React.FC = () => {
 			filterState={filterState}
 			footer={<AddNewTicketButton />}
 			headerText={__('Available Tickets')}
+			legendConfig={legendConfig}
 			listId={ticketsList}
 			loadingText={__('loading tickets...')}
 			TableView={TableView}

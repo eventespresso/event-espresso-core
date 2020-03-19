@@ -7,6 +7,7 @@ import { EspressoButton, EspressoButtonType, Icon } from '../../../../input/Espr
 const ListViewFilterButton: React.FC<ListViewFilterButtonProps> = ({ listId, setListView, view }) =>
 	React.useMemo(() => {
 		const filterId = `ee-list-view-btn-${listId}`;
+
 		return (
 			<>
 				<label className='esprs-button-label screen-reader-text' htmlFor={filterId}>

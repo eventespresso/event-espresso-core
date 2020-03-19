@@ -68,6 +68,7 @@ const EspressoButton = React.forwardRef<Button, EspressoButtonProps>((props, ref
 			</Button>
 		);
 	}
+
 	return tooltip ? (
 		<Tooltip title={tooltip} {...tooltipProps}>
 			{eeButton}

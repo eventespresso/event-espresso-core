@@ -6,6 +6,7 @@ import { CardView } from './cardView';
 import { DatetimesListProvider, withEntityListContext } from '@edtrServices/context/EntityListContext';
 import { useDatetimes } from '@edtrServices/apollo/queries';
 import { EntityList } from '@appLayout/entityList';
+import { legendConfig } from './config';
 import { TableView } from './tableView';
 import { TypeName } from '@appServices/apollo/status';
 import { useDatesListFilterState } from '@edtrServices/filterState';
@@ -24,6 +25,7 @@ const DatesList: React.FC = () => {
 			filterState={filterState}
 			footer={<AddNewDateButton />}
 			headerText={__('Event Dates')}
+			legendConfig={legendConfig}
 			listId={datesList}
 			loadingText={__('loading event dates...')}
 			TableView={TableView}

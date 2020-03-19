@@ -1,12 +1,16 @@
 import React from 'react';
+import classNames from 'classnames';
 import { __ } from '@wordpress/i18n';
 
 import { ToggleFiltersButtonProps } from '../types';
-import { EspressoButton, EspressoButtonType, Icon } from '../../../../input/EspressoButton';
+import { EspressoButton, EspressoButtonType, Icon } from '@appInputs/EspressoButton';
 
 const ToggleFiltersButton: React.FC<ToggleFiltersButtonProps> = ({ listId, showFilters, toggleFilters }) =>
 	React.useMemo(() => {
+		const className = classNames('ee-filter-bar-filter-btn', { 'ee-active-filters': showFilters });
 		const filterId = `ee-toggle-filters-btn-${listId}`;
+		const tooltip = __(`${showFilters ? 'hide' : 'show'} filters`);
+
 		return (
 			<>
 				<label className='esprs-button-label screen-reader-text' htmlFor={filterId}>
@@ -14,11 +18,11 @@ const ToggleFiltersButton: React.FC<ToggleFiltersButtonProps> = ({ listId, showF
 				</label>
 				<EspressoButton
 					buttonType={EspressoButtonType.MINIMAL}
-					className={showFilters ? 'ee-filter-bar-filter-btn ee-active-filters' : 'ee-filter-bar-filter-btn'}
+					className={className}
 					icon={Icon.FILTER}
 					id={filterId}
 					onClick={toggleFilters}
-					tooltip={__('show filters')}
+					tooltip={tooltip}
 				/>
 			</>
 		);
