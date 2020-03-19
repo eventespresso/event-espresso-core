@@ -5,7 +5,7 @@
 		grid-auto-flow: column;
 		grid-gap: var(--ee-margin-small);
 		grid-template-rows: repeat(4, 20px);
-		margin-top: 20px;
+		margin-top: var(--ee-margin-small);
 		width: 100%;
 		> div {
 			align-items: center;

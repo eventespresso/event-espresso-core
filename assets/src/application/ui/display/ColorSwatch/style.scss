@@ -6,7 +6,7 @@
 .ee {
 	&-color-swatch {
 		display: inline-block;
-		height: 18px;
-		width: 18px;
+		height: var(--ee-font-size-default);
+		width: var(--ee-font-size-default);
 	}
 }
