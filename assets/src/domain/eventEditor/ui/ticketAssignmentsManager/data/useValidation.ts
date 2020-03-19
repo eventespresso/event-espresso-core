@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { mapObjIndexed, pickBy, pathOr, isEmpty } from 'ramda';
 
-import { TAMPossibleRelation, TAMRelationalEntity, TAMRelationalData, AssignmentManager } from '../types';
+import { AssignmentManager, TAMPossibleRelation, TAMRelationalData, TAMRelationalEntity } from '../types';
 
 const DEFAULT_VALIDATION_DATA: TAMPossibleRelation = {
 	datetimes: [],

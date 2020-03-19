@@ -15,14 +15,10 @@ const useDataStateManager = (props: BaseProps): DataStateManager => {
 	const { initialize, isInitialized } = assignmentManager;
 	const initialized = isInitialized();
 
-	const { assignmentType, entityId } = props;
 	useEffect(() => {
 		if (!initialized) {
-			// If TAM is only for a single datetime
-			// limit relations to that datetime
-			const forDate = assignmentType === 'forDate' ? entityId : null;
 			// initialize with existing data
-			initialize(relations.getData(), forDate);
+			initialize({ data: relations.getData(), ...props });
 		}
 	}, [initialized]);
 
