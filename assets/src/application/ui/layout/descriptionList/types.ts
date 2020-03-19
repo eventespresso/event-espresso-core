@@ -1,8 +1,9 @@
-type DataSource = {
-	description?: React.ReactNode;
+export interface DescriptionListItemProps {
+	className: string;
+	description: string;
 	term?: React.ReactNode;
-};
+}
 
 export interface DescriptionListProps {
-	dataSource?: DataSource[];
+	dataSource: JSX.Element[];
 }
