@@ -1,8 +1,17 @@
 import React from 'react';
 import { Checkbox } from 'antd';
+import { CheckboxGroupProps } from 'antd/lib/checkbox/Group';
 
 const MultiCheck = ({ input: { value, ...rest }, options, ...restProps }) => {
-	return <Checkbox.Group {...rest} {...restProps} options={options} value={value || []} className='checkbox-group' />;
+	const props: CheckboxGroupProps = {
+		...rest,
+		...restProps,
+		className: 'checkbox-group',
+		options,
+		value: value || [],
+	};
+
+	return <Checkbox.Group {...props} />;
 };
 
 export default MultiCheck;
