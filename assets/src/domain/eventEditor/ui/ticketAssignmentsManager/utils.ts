@@ -1,5 +1,5 @@
 import { pathOr, filter, equals } from 'ramda';
-import { compareAsc, parseISO } from 'date-fns';
+import { parseISO } from 'date-fns';
 
 import { EntityId } from '@appServices/apollo/types';
 import { AnyObject } from '@appServices/utilities/types';
