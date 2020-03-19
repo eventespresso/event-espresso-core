@@ -14,7 +14,7 @@ const EntityListLegend: React.FC<Props> = ({ legendConfig }) => {
 
 	const iconsSource = icons.map(({ icon, description }) => {
 		return {
-			className: 'ee-legend-description',
+			className: 'ee-entity-list-legend-item',
 			description,
 			term: <EspressoIcon aria-label={description} icon={icon as Icon} svgSize={18} />,
 		};
@@ -23,7 +23,7 @@ const EntityListLegend: React.FC<Props> = ({ legendConfig }) => {
 	const swatchesSource = Object.entries(swatches).map(([swatchClassName, description]) => {
 		const colorSwatchClassName = 'ee-status-background-color-' + swatchClassName;
 		return {
-			className: 'ee-legend-description',
+			className: 'ee-entity-list-legend-item',
 			description,
 			term: <ColorSwatch className={colorSwatchClassName} label={description} />,
 		};
