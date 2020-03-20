@@ -13,6 +13,11 @@ export interface EntityListFilterBarProps<FS extends ELFSM> {
 	listId?: string;
 }
 
+export interface FilterButtonWrapProps {
+	id: string;
+	label: string;
+}
+
 export interface GridViewFilterButtonProps {
 	listId?: string;
 	setGridView: VoidFunction;

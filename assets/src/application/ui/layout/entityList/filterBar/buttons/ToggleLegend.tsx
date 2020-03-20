@@ -4,12 +4,11 @@ import { CompassFilled } from '@ant-design/icons';
 import { useSpring, animated } from 'react-spring';
 import { __ } from '@wordpress/i18n';
 
-import { ToggleLegendButtonProps } from '../../types';
+import FilterButtonWrap from './FilterButtonWrap';
+import { ToggleLegendButtonProps } from '../types';
 import { EspressoButton, EspressoButtonType, Icon } from '@appInputs/EspressoButton';
 
-import './style.scss';
-
-const LegendButton: React.FC<ToggleLegendButtonProps> = ({ listId, showLegend, toggleLegend }) => {
+const ToggleLegend: React.FC<ToggleLegendButtonProps> = ({ listId, showLegend, toggleLegend }) => {
 	const className = classNames('ee-filter-bar-filter-btn', { 'ee-active-legend': showLegend });
 	const iconProps = useSpring({
 		transform: `rotate(${showLegend ? 0 : 180}deg)`,
@@ -19,24 +18,21 @@ const LegendButton: React.FC<ToggleLegendButtonProps> = ({ listId, showLegend, t
 			<CompassFilled />
 		</animated.div>
 	);
-	const id = `ee-toggle-legend-btn-${listId}`;
-	const label = __(`${showLegend ? 'hide' : 'show'} legend`);
+	const filterId = `ee-toggle-legend-btn-${listId}`;
+	const tooltip = __(`${showLegend ? 'hide' : 'show'} legend`);
 
 	return (
-		<div className='ee-toggle-legend-btn'>
+		<FilterButtonWrap id={filterId} label={__('legend')}>
 			<EspressoButton
 				buttonType={EspressoButtonType.MINIMAL}
 				className={className}
 				icon={icon}
-				id={id}
+				id={filterId}
 				onClick={toggleLegend}
-				tooltip={label}
+				tooltip={tooltip}
 			/>
-			<label className='esprs-button-label' htmlFor={id}>
-				{label}
-			</label>
-		</div>
+		</FilterButtonWrap>
 	);
 };
 
-export default LegendButton;
+export default ToggleLegend;

@@ -13,7 +13,7 @@
 	box-sizing: border-box;
 	color: var(--ee-default-text-color);
 	margin: 0 0 var(--ee-margin-small);
-	padding: 0 var(--ee-padding-tiny) var(--ee-padding-tiny);
+	padding: 0 0 var(--ee-padding-tiny);
 
 	.esprs-button.ant-btn.ee-filter-bar-filter-btn {
 		border: 2px solid var(--ee-color-grey-10);
@@ -30,14 +30,22 @@
 		display: flex;
 		flex-flow: row wrap;
 		align-items: flex-start;
-		padding: 1px 0 var(--ee-padding-tiny);
+		margin-left: calc(var(--ee-padding-tiny) * -1);
 
-		.esprs-button.ant-btn.ee-filter-bar-filter-btn {
-			&.ee-active-filters {
-				border-color: var(--ee-color-primary);
-				color: var(--ee-color-primary);
-				path {
-					fill: var(--ee-color-primary);
+		.ee-filter-bar-filter-btn-wrap {
+			align-items: center;
+			display: flex;
+			flex-flow: column nowrap;
+			padding: var(--ee-padding-tiny);
+			width: 90px;
+
+			.esprs-button.ant-btn.ee-filter-bar-filter-btn {
+				&.ee-active-filters {
+					border-color: var(--ee-color-primary);
+					color: var(--ee-color-primary);
+					path {
+						fill: var(--ee-color-primary);
+					}
 				}
 			}
 		}
@@ -46,7 +54,7 @@
 	.ee-filter-bar-filter-collapsible {
 		display: flex;
 		flex-flow: row wrap;
-		padding: 0 0 var(--ee-padding-small);
+		padding: 0 var(--ee-padding-small) var(--ee-padding-small);
 
 		.esprs-button.ant-btn.ee-filter-bar-filter-btn {
 			&.ee-active-filters {
@@ -117,54 +125,50 @@
 			min-width: calc(var(--ee-font-size-default) * 48);
 		}
 	}
-}
 
-/* Media Queries for specific screen sizes
- * -------------------------------------------------------------------------*/
+	/* Media Queries for specific screen sizes
+ 	* -------------------------------------------------------------------------*/
 
-@media only screen and (max-width: 1920px) {
-}
+	@media only screen and (max-width: 1920px) {
+	}
 
-@media only screen and (max-width: 1600px) {
-}
+	@media only screen and (max-width: 1600px) {
+	}
 
-@media only screen and (max-width: 1366px) {
-}
+	@media only screen and (max-width: 1366px) {
+	}
 
-@media only screen and (max-width: 1280px) {
-	.ee-entity-list-filter-bar {
+	@media only screen and (max-width: 1280px) {
 		margin: 0 0 var(--ee-margin-default);
 	}
-}
 
-@media only screen and (max-width: 1024px) {
-}
+	@media only screen and (max-width: 1024px) {
+	}
 
-/* WordPress Admin Media Query Breakpoint: Auto-folding of the admin menu */
-@media only screen and (max-width: 960px) {
-}
+	/* WordPress Admin Media Query Breakpoint: Auto-folding of the admin menu */
+	@media only screen and (max-width: 960px) {
+	}
 
-/* WordPress Admin Media Query Breakpoint: one column on the post write/edit screen */
-@media only screen and (max-width: 850px) {
-}
+	/* WordPress Admin Media Query Breakpoint: one column on the post write/edit screen */
+	@media only screen and (max-width: 850px) {
+	}
 
-/* WordPress Admin Media Query Breakpoint: Tablet */
-@media screen and (max-width: 782px) {
-}
+	/* WordPress Admin Media Query Breakpoint: Tablet */
+	@media screen and (max-width: 782px) {
+	}
 
-/* WordPress Admin Media Query Breakpoint: Smartphone */
-@media screen and (max-width: 600px) {
-	.ee-entity-list-filter-bar {
+	/* WordPress Admin Media Query Breakpoint: Smartphone */
+	@media screen and (max-width: 600px) {
 		flex-flow: column nowrap;
 		padding-bottom: var(--ee-padding-small);
 	}
-}
 
-@media only screen and (max-width: 480px) {
-	.ee-entity-list-filter-bar .ee-filter-bar-filter {
-		margin: 0 var(--ee-margin-small) var(--ee-margin-smaller) 0;
+	@media only screen and (max-width: 480px) {
+		.ee-filter-bar-filter {
+			margin: 0 var(--ee-margin-small) var(--ee-margin-smaller) 0;
+		}
 	}
-}
 
-@media only screen and (max-width: 360px) {
+	@media only screen and (max-width: 360px) {
+	}
 }

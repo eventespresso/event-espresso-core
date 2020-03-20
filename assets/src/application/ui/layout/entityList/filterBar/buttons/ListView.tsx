@@ -1,6 +1,7 @@
 import React from 'react';
 import { __ } from '@wordpress/i18n';
 
+import FilterButtonWrap from './FilterButtonWrap';
 import { ListViewFilterButtonProps } from '../types';
 import { EspressoButton, EspressoButtonType, Icon } from '../../../../input/EspressoButton';
 
@@ -9,10 +10,7 @@ const ListViewFilterButton: React.FC<ListViewFilterButtonProps> = ({ listId, set
 		const filterId = `ee-list-view-btn-${listId}`;
 
 		return (
-			<>
-				<label className='esprs-button-label screen-reader-text' htmlFor={filterId}>
-					{__('table view')}
-				</label>
+			<FilterButtonWrap id={filterId} label={__('table view')}>
 				<EspressoButton
 					buttonType={EspressoButtonType.MINIMAL}
 					className={
@@ -23,7 +21,7 @@ const ListViewFilterButton: React.FC<ListViewFilterButtonProps> = ({ listId, set
 					onClick={setListView}
 					tooltip={__('table view')}
 				/>
-			</>
+			</FilterButtonWrap>
 		);
 	}, [listId, setListView, view]);
 
