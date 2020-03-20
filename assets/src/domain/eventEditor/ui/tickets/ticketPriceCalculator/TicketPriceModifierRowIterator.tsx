@@ -1,28 +1,30 @@
 import React from 'react';
-import { FieldArray } from 'react-final-form-arrays';
 
 import TicketPriceModifierRow from './TicketPriceModifierRow';
-import { FieldArrayProps, WithRevCalc } from './types';
+import { useDataState } from './data';
+import AddPriceModifierButton from './buttons/AddPriceModifierButtonData';
 
-const TicketPriceModifierRowIterator: React.FC<WithRevCalc> = ({ reverseCalculate }) => (
-	<FieldArray name={'prices'}>
-		{(props: FieldArrayProps): JSX.Element[] => {
-			const { fields } = props;
-			return fields.map((name: string, index: number) => {
-				const price = fields.value[index];
+// just temporary
+import styles from './inlineStyles';
+
+const TicketPriceModifierRowIterator: React.FC = () => {
+	const { prices } = useDataState();
+
+	return (
+		<>
+			{prices.map((price, index) => {
 				return price ? (
-					<TicketPriceModifierRow
-						key={`${price.id}:${index}`}
-						index={index}
-						name={name}
-						fields={fields}
-						price={price}
-						reverseCalculate={reverseCalculate}
-					/>
+					<TicketPriceModifierRow key={`${price.id}:${index}`} index={index} price={price} />
 				) : null;
-			});
-		}}
-	</FieldArray>
-);
+			})}
+			<tr>
+				<td colSpan={5}></td>
+				<td style={{ ...styles.colWidth7h, ...styles.actions }}>
+					<AddPriceModifierButton index={prices.length} />
+				</td>
+			</tr>
+		</>
+	);
+};
 
 export default TicketPriceModifierRowIterator;

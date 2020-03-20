@@ -1,5 +1,6 @@
 import React, { useCallback } from 'react';
 import { __, sprintf } from '@wordpress/i18n';
+
 // import { TicketAssignmentsManager, ErrorMessage } from './components';
 import { ButtonProps } from 'antd/lib/button';
 import { ModalFunc } from 'antd/lib/modal/confirm';
@@ -52,7 +53,7 @@ const useTicketPriceCalculatorModal: TicketPriceCalculatorModalHook = ({ ticketI
 			cancelText: __('Cancel'),
 			maskClosable: true,
 			centered: true,
-			width: 'auto',
+			width: '80%',
 		});
 	};
 
