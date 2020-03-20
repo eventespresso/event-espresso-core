@@ -6,7 +6,6 @@ export type FormModals = {
 	editDatetime: FormModalProps;
 	addTicket: FormModalProps;
 	editTicket: FormModalProps;
-	ticketPriceCalculator: FormModalProps;
 };
 
 export interface FormModalsHookProps {
