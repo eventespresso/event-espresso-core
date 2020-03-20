@@ -119,6 +119,9 @@ class Extend_Registrations_Admin_Page extends Registrations_Admin_Page
                     'label'      => esc_html__('Event Check-In', 'event_espresso'),
                     'order'      => 10,
                     'persistent' => true,
+                    'url'        => !empty($EVT_ID)
+                        ? self::add_query_args_and_nonce(array('action' => 'event_registrations', 'event_id' => $EVT_ID), $this->_admin_base_url)
+                        : null,
                 ),
                 'help_tabs'     => array(
                     'registrations_event_checkin_help_tab'                       => array(
