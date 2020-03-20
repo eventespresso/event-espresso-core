@@ -8,7 +8,10 @@ export const TICKET_ATTRIBUTES: any = gql`
 		description
 		endDate
 		isDefault
+		isExpired
 		isFree
+		isOnSale
+		isPending
 		isRequired
 		isSoldOut
 		isTaxable

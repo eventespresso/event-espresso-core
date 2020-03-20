@@ -312,7 +312,10 @@ QUERY;
                     description
                     endDate
                     isDefault
+                    isExpired
                     isFree
+                    isOnSale
+                    isPending
                     isRequired
                     isSoldOut
                     isTaxable
