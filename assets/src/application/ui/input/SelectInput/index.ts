@@ -1,5 +1,3 @@
-import { OptionsType as RCOptionType } from 'rc-select/lib/interface/index';
-
+export * from './types';
 export { default as SelectInput } from './SelectInput';
 
-export type OptionsType = RCOptionType;

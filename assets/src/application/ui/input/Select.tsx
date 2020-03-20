@@ -1,4 +1,5 @@
 import React from 'react';
+import { ENTER } from '@wordpress/keycodes';
 import { Select } from 'antd';
 import { SelectProps } from './types';
 
@@ -22,11 +23,12 @@ const SelectField: React.FC<SelectProps> = ({ input, mode, options, ...selectPro
 		);
 	});
 
+	const onInputKeyDown = (e) => e.keyCode === ENTER && e.preventDefault();
 	// make sure the value is an array when mode is "multiple"
 	const value = mode === 'multiple' ? input.value || [] : input.value;
 
 	return (
-		<Select {...input} {...selectProps} mode={mode} value={value}>
+		<Select {...input} {...selectProps} mode={mode} onInputKeyDown={onInputKeyDown} value={value}>
 			{children}
 		</Select>
 	);
