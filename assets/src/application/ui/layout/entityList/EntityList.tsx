@@ -33,7 +33,7 @@ const EntityList = <E extends Entity, ELFS extends EntityListFilterStateManager<
 	const error = isError(entityType);
 	const loading = isLoading(entityType);
 
-	const filteredEntities = useFilteredEntities(domain, listId, entities, filterState);
+	const { paginatedEntities, searchResults } = useFilteredEntities(domain, listId, entities, filterState);
 
 	if (loading) return <LoadingIndicator tip={__('loading...')} />;
 
@@ -42,14 +42,14 @@ const EntityList = <E extends Entity, ELFS extends EntityListFilterStateManager<
 	let entityList: JSX.Element;
 	const { view } = filterState;
 
-	if (filteredEntities.length === 0) {
+	if (paginatedEntities.length === 0) {
 		const title = noResultsTitle ? noResultsTitle : __('no results found');
 		const description = noResultsDesc ? noResultsDesc : __('try changing filter settings');
 		entityList = <EmptyState className='ee-entity-list--no-results' title={title} description={description} />;
 	} else {
 		const Component = view === 'grid' ? CardView : TableView;
 
-		entityList = <Component entities={filteredEntities} className={className} filterState={filterState} />;
+		entityList = <Component entities={paginatedEntities} className={className} filterState={filterState} />;
 	}
 
 	return (
@@ -64,7 +64,7 @@ const EntityList = <E extends Entity, ELFS extends EntityListFilterStateManager<
 				listId={listId}
 			/>
 			{entityList}
-			<EntityPagination filterState={filterState} />
+			<EntityPagination entities={searchResults} filterState={filterState} />
 			<div className={'ee-entity-list__footer'}>{footer}</div>
 			<Divider dashed />
 		</div>

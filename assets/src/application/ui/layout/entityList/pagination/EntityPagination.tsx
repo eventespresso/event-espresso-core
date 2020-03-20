@@ -1,11 +1,14 @@
 import React from 'react';
+import classNames from 'classnames';
 import { Pagination } from 'antd';
 import { PaginationProps } from 'antd/lib/pagination';
 
-import './style.scss';
+import { Entity } from '@appServices/apollo/types';
 import { EntityListFilterStateManager } from '../filterBar';
+import './style.scss';
 
 interface EntityPaginationProps<ELFS extends EntityListFilterStateManager> extends PaginationProps {
+	entities: Entity[];
 	filterState: ELFS;
 }
 
@@ -14,25 +17,29 @@ interface EntityPaginationProps<ELFS extends EntityListFilterStateManager> exten
  * @return EntityPagination
  */
 const EntityPagination: React.FC<EntityPaginationProps<any>> = ({
+	entities,
+	filterState,
 	pageSizeOptions = ['2', '6', '12', '24', '48'],
 	showSizeChanger = true,
 	showTotal,
-	filterState,
 	...rest
 }) => {
-	const { total, setPageNumber, setPerPage, pageNumber }: EntityListFilterStateManager = filterState;
+	const { pageNumber, perPage, setPerPage, setPageNumber, total }: EntityListFilterStateManager = filterState;
+
+	const className = classNames('ee-entity-pagination', { hidePagination: perPage >= entities.length });
+
 	return (
-		<div className='ee-entity-pagination'>
+		<div className={className}>
 			<Pagination
 				{...rest}
+				current={pageNumber}
 				defaultPageSize={6}
+				onChange={setPageNumber}
+				onShowSizeChange={setPerPage}
 				pageSizeOptions={pageSizeOptions}
 				showSizeChanger={showSizeChanger}
 				showTotal={showTotal}
 				total={total}
-				onChange={setPageNumber}
-				onShowSizeChange={setPerPage}
-				current={pageNumber}
 			/>
 		</div>
 	);

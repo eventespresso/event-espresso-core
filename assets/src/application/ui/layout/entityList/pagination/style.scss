@@ -8,6 +8,14 @@
 	flex-flow: row nowrap;
 	justify-content: flex-end;
 
+	&.hidePagination {
+		.ant-pagination-prev,
+		.ant-pagination-item,
+		.ant-pagination-next {
+			display: none;
+		}
+	}
+
 	.ant-pagination {
 		display: inline-block;
 		padding-left: 0;

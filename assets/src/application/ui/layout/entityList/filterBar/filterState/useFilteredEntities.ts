@@ -11,7 +11,7 @@ const useFilteredEntities = <D extends string, L extends string, E extends Entit
 	listId: L,
 	entityList: Array<E>,
 	filterState: FS
-): Array<E> => {
+): { paginatedEntities: Array<E>; searchResults: Array<E> } => {
 	const { pageNumber, perPage, searchText, setPageNumber, setTotal, sortBy, total } = filterState;
 
 	const { applyFilters, applySearches, applySorters } = useEntityFilterService<D, L, E, ELFSM>(domain, listId);
@@ -52,7 +52,7 @@ const useFilteredEntities = <D extends string, L extends string, E extends Entit
 		}
 	}, [paginatedEntities.length]);
 
-	return paginatedEntities;
+	return { paginatedEntities, searchResults };
 };
 
 export default useFilteredEntities;
