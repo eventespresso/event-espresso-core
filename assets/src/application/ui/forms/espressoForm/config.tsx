@@ -49,7 +49,7 @@ export const formConfig: EspressoFormProps = {
 					name: 'email',
 					label: 'Email',
 					fieldType: 'text',
-					type: 'email',
+					htmlType: 'email',
 				},
 				{
 					name: 'phone',
@@ -241,13 +241,13 @@ export const formConfig: EspressoFormProps = {
 			label: 'Price',
 			fieldType: 'text',
 			addonAfter: '$',
-			type: 'number',
+            htmlType: 'number',
 		},
 		{
 			name: 'password',
 			label: 'Password',
 			fieldType: 'text',
-			type: 'password',
+            htmlType: 'password',
 			desc: 'Please enter a strong password',
 		},
 		{
