@@ -1,6 +1,6 @@
 import React from 'react';
 import classNames from 'classnames';
-import { Dropdown, NavigableMenu } from '@wordpress/components';
+import { Dropdown } from '@wordpress/components';
 
 import Content from './Content';
 import { EspressoDropdownMenuProps as Props } from './types';
