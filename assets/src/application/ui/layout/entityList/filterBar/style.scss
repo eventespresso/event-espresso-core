@@ -3,6 +3,8 @@
  * © 2018 Event Espresso
  * ------------------------------------------------------------------------- */
 
+$filter-btn: '.esprs-button.ant-btn.ee-filter-bar-filter-btn';
+
 .ee-entity-list-filter-bar {
 	background: var(--ee-background-color);
 	border-bottom-color: var(--ee-color-grey-12);
@@ -15,54 +17,54 @@
 	margin: 0 0 var(--ee-margin-small);
 	padding: 0 0 var(--ee-padding-tiny);
 
-	.esprs-button.ant-btn.ee-filter-bar-filter-btn {
-		border: 2px solid var(--ee-color-grey-10);
-		box-shadow: none;
-		margin: 0;
-		&:focus,
-		&:hover {
-			border: 1px solid var(--ee-color-primary-low-contrast);
-			box-shadow: 0 0 0 1px var(--ee-color-primary-low-contrast);
-		}
-	}
-
-	.ee-filter-bar-filter-main {
+	&--main {
 		display: flex;
 		flex-flow: row wrap;
 		align-items: flex-start;
 		margin-left: calc(var(--ee-padding-tiny) * -1);
-
-		.ee-filter-bar-filter-btn-wrap {
-			align-items: center;
-			display: flex;
-			flex-flow: column nowrap;
-			padding: var(--ee-padding-tiny);
-			width: 90px;
-
-			.esprs-button.ant-btn.ee-filter-bar-filter-btn {
-				&.ee-active-filters {
-					border-color: var(--ee-color-primary);
-					color: var(--ee-color-primary);
-					path {
-						fill: var(--ee-color-primary);
-					}
-				}
-			}
-		}
 	}
 
-	.ee-filter-bar-filter-collapsible {
+	&--collapsible {
 		display: flex;
 		flex-flow: row wrap;
 		padding: 0 var(--ee-padding-small) var(--ee-padding-small);
-
-		.esprs-button.ant-btn.ee-filter-bar-filter-btn {
+		#{$filter-btn} {
 			&.ee-active-filters {
 				// border: 2px solid var(--ee-color-primary);
 				background: var(--ee-color-primary);
 				color: var(--ee-text-on-primary);
 				path {
 					fill: var(--ee-text-on-primary);
+				}
+			}
+		}
+	}
+
+	&--btn {
+		&.esprs-button.ant-btn {
+			border: 2px solid var(--ee-color-grey-10);
+			box-shadow: none;
+			margin: 0;
+			&:focus,
+			&:hover {
+				border: 1px solid var(--ee-color-primary-low-contrast);
+				box-shadow: 0 0 0 1px var(--ee-color-primary-low-contrast);
+			}
+		}
+		&--wrap {
+			align-items: center;
+			display: flex;
+			flex-flow: column nowrap;
+			padding: var(--ee-padding-tiny);
+			width: 90px;
+			#{$filter-btn} {
+				&.ee-active-filters {
+					border: 1px solid var(--ee-color-primary-low-contrast);
+					box-shadow: 0 0 0 1px var(--ee-color-primary-low-contrast);
+					color: var(--ee-color-primary);
+					path {
+						fill: var(--ee-color-primary);
+					}
 				}
 			}
 		}

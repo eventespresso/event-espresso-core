@@ -8,7 +8,7 @@ import { TableViewFilterButtonProps } from '../types';
 
 const TableViewFilterButton: React.FC<TableViewFilterButtonProps> = ({ listId, setTableView, view }) =>
 	React.useMemo(() => {
-		const className = classNames('ee-filter-bar-filter-btn', { 'ee-active-filters': view === 'table' });
+		const className = classNames('ee-entity-list-filter-bar--btn', { 'ee-active-filters': view === 'table' });
 		const filterId = `ee-table-view-btn-${listId}`;
 
 		return (

@@ -39,7 +39,7 @@ const EntityListFilterBar = <FS extends ELFSM>({
 
 	return (
 		<div className='ee-entity-list-filter-bar'>
-			<div className='ee-filter-bar-filter-main'>
+			<div className='ee-entity-list-filter-bar--main'>
 				<TableViewFilterButton listId={listId} setTableView={setTableView} view={view} />
 				<CardViewFilterButton listId={listId} setCardView={setCardView} view={view} />
 				<ToggleFiltersButton
@@ -50,7 +50,7 @@ const EntityListFilterBar = <FS extends ELFSM>({
 				<ToggleLegendButton listId={listId} showLegend={showLegend} toggleLegend={toggleLegend} />
 			</div>
 
-			<Collapsible show={showEntityFilters}>
+			<Collapsible className='ee-entity-list-filter-bar--collapsible' show={showEntityFilters}>
 				{filerBarItems}
 				<SearchInput
 					className={'ee-filter-bar-filter ee-filter-bar-filter--big'}
@@ -60,7 +60,7 @@ const EntityListFilterBar = <FS extends ELFSM>({
 				/>
 			</Collapsible>
 
-			<Collapsible show={showLegend}>
+			<Collapsible className='ee-entity-list-filter-bar--collapsible' show={showLegend}>
 				<EntityListLegend legendConfig={legendConfig} />
 			</Collapsible>
 		</div>

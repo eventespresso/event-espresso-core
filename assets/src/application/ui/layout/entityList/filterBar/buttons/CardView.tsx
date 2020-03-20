@@ -9,7 +9,7 @@ import { CardViewFilterButtonProps } from '../types';
 
 const CardViewFilterButton: React.FC<CardViewFilterButtonProps> = ({ listId, setCardView, view }) =>
 	React.useMemo(() => {
-		const className = classNames('ee-filter-bar-filter-btn', { 'ee-active-filters': view === 'card' });
+		const className = classNames('ee-entity-list-filter-bar--btn', { 'ee-active-filters': view === 'card' });
 		const filterId = `ee-card-view-btn-${listId}`;
 
 		return (
