@@ -1,6 +1,7 @@
-import { append, findIndex, insert, propEq, update } from 'ramda';
+import { append, findIndex, insert, update } from 'ramda';
 
 import { DataStateReducer, StateInitializer, DataState } from './types';
+import { entityHasGuid } from '@sharedServices/predicates/selectionById';
 
 export const initialState: DataState = {
 	ticket: null,
@@ -40,7 +41,7 @@ const useDataReducer = (initializer: StateInitializer): DataStateReducer => {
 
 			case 'UPDATE_PRICE':
 				// find the index of the price to update
-				const priceIndex = findIndex(propEq('id', id), state.prices);
+				const priceIndex = findIndex(entityHasGuid(id), state.prices);
 				// if price id does not exist
 				if (priceIndex < 0) {
 					return state;
