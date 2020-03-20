@@ -50,7 +50,7 @@ class Extend_Registrations_Admin_Page extends Registrations_Admin_Page
             ? $this->_req_data['_REG_ID']
             : 0;
         $EVT_ID = ! empty($this->_req_data['event_id']) && ! is_array($this->_req_data['event_id'])
-            ? $this->_req_data['event_id']
+            ? absint($this->_req_data['event_id'])
             : 0;
         $new_page_routes = array(
             'reports'                      => array(
