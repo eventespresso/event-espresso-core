@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import { Datetime } from '../../../../../eventEditor/services/apollo/types';
+import { Datetime } from '@edtrServices/apollo/types';
 import validFiniteCapacityLimit from '../validFiniteCapacityLimit';
 import validSold from '../validSold';
 

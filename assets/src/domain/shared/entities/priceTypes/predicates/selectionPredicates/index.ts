@@ -1,7 +1,7 @@
 // @ts-nocheck
 import { allPass, filter, find, propEq } from 'ramda';
 
-import { PriceType } from '../../../../../eventEditor/services/apollo/types';
+import { PriceType } from '@edtrServices/apollo/types';
 
 // the following return `true` if price type satisfies predicate
 // is a base price ?

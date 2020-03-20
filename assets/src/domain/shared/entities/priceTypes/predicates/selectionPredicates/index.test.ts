@@ -10,7 +10,7 @@ import {
 	isFlatFeeSurcharge,
 	getDefaultPriceModifierType,
 } from './index';
-import { PriceBasetype } from '../../../../../eventEditor/services/apollo/types';
+import { PriceBasetype } from '@edtrServices/apollo/types';
 import { nodes as priceTypes } from '../../../../../eventEditor/services/apollo/queries/priceTypes/test/data';
 
 describe('isBasePrice & isNotBasePrice', () => {

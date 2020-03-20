@@ -1,3 +1,3 @@
-import { Ticket } from '../../../../../eventEditor/services/apollo/types';
+import { Ticket } from '@edtrServices/apollo/types';
 
 export type TicketFilterFn = (dates: Array<Ticket>) => Array<Ticket>;

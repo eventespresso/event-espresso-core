@@ -1,6 +1,6 @@
 import { ascend, descend, prop, sort, sortWith } from 'ramda';
 
-import { Price, Ticket } from '../../../../eventEditor/services/apollo/types';
+import { Price, Ticket } from '@edtrServices/apollo/types';
 
 type comparator = <T extends Price>(a: T, b: T) => number;
 type sortPricesFn = <T extends Price>(c: T[]) => T[];
