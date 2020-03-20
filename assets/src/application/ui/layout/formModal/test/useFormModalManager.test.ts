@@ -15,7 +15,7 @@ describe('useFormModalManager', () => {
 		isOpen: true,
 	};
 	const modalId3: EditorState = {
-		editorId: 'ticketPriceCalculator',
+		editorId: 'editDatetime',
 		entityId: 'randomEntityId3',
 		isOpen: true,
 	};

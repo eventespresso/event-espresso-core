@@ -40,7 +40,7 @@ const useDataReducer = (initializer: StateInitializer): DataStateReducer => {
 
 			case 'UPDATE_PRICE':
 				// find the index of the price to update
-				const priceIndex = findIndex(propEq('id', id))(state.prices);
+				const priceIndex = findIndex(propEq('id', id), state.prices);
 				// if price id does not exist
 				if (priceIndex < 0) {
 					return state;
