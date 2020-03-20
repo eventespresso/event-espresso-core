@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
 
+import CardViewFilterButton from './buttons/CardView';
 import Collapsible from './Collapsible';
 import { EntityListFilterBarProps } from './types';
 import { EntityListLegend } from '@application/ui/display';
-import GridViewFilterButton from './buttons/GridView';
+import TableViewFilterButton from './buttons/TableView';
 import ToggleLegendButton from './buttons/ToggleLegend';
-import ListViewFilterButton from './buttons/ListView';
 import ToggleFiltersButton from './buttons/ToggleFilters';
 import { SearchInput } from '@application/ui/input';
 import { useFilterBarUIElements } from './subscription';
@@ -26,8 +26,8 @@ const EntityListFilterBar = <FS extends ELFSM>({
 	const [showLegend, setShowLegend] = useState(false);
 	const {
 		searchText,
-		setListView,
-		setGridView,
+		setCardView,
+		setTableView,
 		setSearchText,
 		showEntityFilters,
 		toggleEntityFilters,
@@ -40,8 +40,8 @@ const EntityListFilterBar = <FS extends ELFSM>({
 	return (
 		<div className='ee-entity-list-filter-bar'>
 			<div className='ee-filter-bar-filter-main'>
-				<ListViewFilterButton listId={listId} setListView={setListView} view={view} />
-				<GridViewFilterButton listId={listId} setGridView={setGridView} view={view} />
+				<TableViewFilterButton listId={listId} setTableView={setTableView} view={view} />
+				<CardViewFilterButton listId={listId} setCardView={setCardView} view={view} />
 				<ToggleFiltersButton
 					listId={listId}
 					showFilters={showEntityFilters}

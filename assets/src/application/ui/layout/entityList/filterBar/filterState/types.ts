@@ -2,14 +2,13 @@ import { Entity } from '@appServices/apollo/types';
 
 export type BasicSortBy = 'name' | 'id';
 
-export interface EntityListFilterState<SortBy = BasicSortBy> {
+export interface EntityListFilterState<SortBy = BasicSortBy> extends View {
 	perPage: number;
 	pageNumber: number;
 	total: number;
 	searchText: string;
 	showEntityFilters: boolean;
 	sortBy: SortBy;
-	view?: 'grid' | 'list';
 }
 
 export type EntityListFilterActionType =
@@ -31,8 +30,8 @@ export interface EntityListFilterStateManager<SortBy = BasicSortBy> extends Enti
 	setPageNumber: (page: number) => void;
 	setTotal: (total: number) => void;
 	setSearchText: (text: string) => void;
-	setGridView: VoidFunction;
-	setListView: VoidFunction;
+	setCardView: VoidFunction;
+	setTableView: VoidFunction;
 	toggleEntityFilters: VoidFunction;
 }
 
@@ -52,4 +51,8 @@ export interface EntityFilterService<E extends Entity, FS extends ELFSM> {
 	applyFilters: (entityList: Array<E>, filterState: FS) => Array<E>;
 	applySearches: (entityList: Array<E>, filterState: FS) => Array<E>;
 	applySorters: (entityList: Array<E>, filterState: FS) => Array<E>;
+}
+
+export interface View {
+	view?: 'card' | 'table';
 }
