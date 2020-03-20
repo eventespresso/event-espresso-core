@@ -51,21 +51,22 @@ $filter-btn: '.esprs-button.ant-btn.ee-entity-list-filter-bar__btn';
 				box-shadow: 0 0 0 1px var(--ee-color-primary-low-contrast);
 			}
 		}
-		&__wrap {
-			align-items: center;
-			display: flex;
-			flex-flow: column nowrap;
-			padding: var(--ee-padding-tiny);
-			width: 90px;
-			#{$filter-btn} {
-				&#{$filter-btn} {
-					&.ee-active-filters {
-						border: 1px solid var(--ee-color-primary-low-contrast);
-						box-shadow: 0 0 0 1px var(--ee-color-primary-low-contrast);
-						color: var(--ee-color-primary);
-						path {
-							fill: var(--ee-color-primary);
-						}
+	}
+
+	&__btn-wrap {
+		align-items: center;
+		display: flex;
+		flex-flow: column nowrap;
+		padding: var(--ee-padding-tiny);
+		width: 90px;
+		#{$filter-btn} {
+			&#{$filter-btn} {
+				&.ee-active-filters {
+					border: 1px solid var(--ee-color-primary-low-contrast);
+					box-shadow: 0 0 0 1px var(--ee-color-primary-low-contrast);
+					color: var(--ee-color-primary);
+					path {
+						fill: var(--ee-color-primary);
 					}
 				}
 			}

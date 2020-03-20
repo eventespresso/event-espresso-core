@@ -5,7 +5,7 @@ import { FilterButtonWrapProps } from '../types';
 
 const FilterButtonWrap: React.FC<FilterButtonWrapProps> = ({ children, id, label }) => {
 	return (
-		<div className='ee-entity-list-filter-bar__btn__wrap'>
+		<div className='ee-entity-list-filter-bar__btn-wrap'>
 			{children}
 			<label className='ee-filter-btn-label' htmlFor={id}>
 				{label}
