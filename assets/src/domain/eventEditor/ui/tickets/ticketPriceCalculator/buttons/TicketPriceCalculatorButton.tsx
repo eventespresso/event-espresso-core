@@ -1,5 +1,5 @@
 import React from 'react';
-import { EspressoButton } from '@application/ui/input';
+import { EspressoButton, EspressoButtonProps } from '@application/ui/input';
 import { __ } from '@wordpress/i18n';
 
 import { BaseProps } from '../types';
@@ -7,7 +7,9 @@ import { TypeName } from '@appServices/apollo/status';
 import withIsLoaded from '@sharedUI/hoc/withIsLoaded';
 import { useTicketPriceCalculatorModal } from '../hooks';
 
-const TicketPriceCalculatorButton: React.FC<BaseProps> = ({ ticketId }) => {
+interface TPCButtonProps extends BaseProps, EspressoButtonProps {}
+
+const TicketPriceCalculatorButton: React.FC<TPCButtonProps> = ({ ticketId, ...buttonProps }) => {
 	const { openModal } = useTicketPriceCalculatorModal({ ticketId });
 
 	return (
@@ -16,11 +18,12 @@ const TicketPriceCalculatorButton: React.FC<BaseProps> = ({ ticketId }) => {
 			onClick={openModal}
 			tooltip={__('ticket price calculator')}
 			tooltipProps={{ placement: 'left' }}
+			{...buttonProps}
 		/>
 	);
 };
 
-export default withIsLoaded<BaseProps>(TypeName.prices, ({ loaded, ticketId }) => {
+export default withIsLoaded<TPCButtonProps>(TypeName.prices, ({ loaded, ticketId, ...buttonProps }) => {
 	/* Hide price calculator unless prices are loaded */
-	return loaded && <TicketPriceCalculatorButton ticketId={ticketId} />;
+	return loaded && <TicketPriceCalculatorButton ticketId={ticketId} {...buttonProps} />;
 });

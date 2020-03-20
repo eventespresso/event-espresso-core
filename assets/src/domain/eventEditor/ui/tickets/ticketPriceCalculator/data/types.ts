@@ -34,12 +34,12 @@ interface UpdatePriceArgs {
 }
 
 export interface DataStateManager extends DataState {
+	addPrice: (price: TpcPriceModifier, index?: number) => void;
+	deletePrice: (id: EntityId, isNew?: boolean) => void;
 	reset: VoidFunction;
 	reverseCalculate: boolean;
 	toggleCalcDir: VoidFunction;
 	updatePrice: (args: UpdatePriceArgs) => void;
-	addPrice: (price: TpcPriceModifier, index?: number) => void;
-	deletePrice: (id: EntityId, isNew?: boolean) => void;
 	updateTicketPrice: (ticketPrice: Ticket['price']) => void;
 }
 
