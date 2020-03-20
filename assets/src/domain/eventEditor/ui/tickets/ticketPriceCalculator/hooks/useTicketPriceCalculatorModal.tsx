@@ -1,64 +1,63 @@
-// @ts-nocheck
-import { useState, useEffect, useCallback } from 'react';
-import { isEmpty, isNil } from 'ramda';
+import React, { useCallback } from 'react';
 import { __, sprintf } from '@wordpress/i18n';
+// import { TicketAssignmentsManager, ErrorMessage } from './components';
+import { ButtonProps } from 'antd/lib/button';
+import { ModalFunc } from 'antd/lib/modal/confirm';
+import { SaveOutlined } from '@ant-design/icons';
+import { TicketPriceCalculatorModalHook } from '../types';
+import useModal from '@appLayout/modal/useModal';
+import { useTicketItem } from '@edtrServices/apollo/queries';
+import TicketPriceCalculator from '../TicketPriceCalculator';
+import { withContext } from '../context';
+// import { useDataState, useOnSubmitAssignments } from './data';
 
-import useOnSubmitPrices from './useOnSubmitPrices';
-import useTicketPriceCalculatorFormDecorator from './useTicketPriceCalculatorFormDecorator';
-import useTicketPriceCalculatorFormMutators from './useTicketPriceCalculatorFormMutators';
-import usePriceModifier from '../usePriceModifier';
-import TicketPriceCalculatorForm from '../TicketPriceCalculatorForm';
-import { TpcFormData } from '../types';
-import useTicketPrices from '../../../../services/apollo/queries/tickets/useTicketPrices';
-import useTicketItem from '../../../../services/apollo/queries/tickets/useTicketItem';
-import defaultPrice from '../defaultPriceModifier';
-import { sortByPriceOrderIdAsc } from '../../../../../shared/entities/prices/predicates/sortingPredicates';
-import { copyPriceFields } from '../../../../../shared/entities/prices/predicates/updatePredicates';
-import { copyTicketFields } from '../../../../../shared/entities/tickets/predicates/updatePredicates';
-import { useFormModal, FormModal, ModalClose } from '@appLayout/formModal';
+const useTicketPriceCalculatorModal: TicketPriceCalculatorModalHook = ({ ticketId }) => {
+	const modal = useModal();
+	// const submitAssignments = useOnSubmitAssignments();
+	let currentOpenModal: ReturnType<ModalFunc>;
 
-const INITIAL_STATE: TpcFormData = {
-	ticket: null,
-	prices: [],
-};
-
-const useTicketPriceCalculatorModal: FormModal = ({ entityId: ticketId }) => {
-	const [initialValues, setInitialValues] = useState<TpcFormData>(INITIAL_STATE);
-	const decorator = useTicketPriceCalculatorFormDecorator();
-	const mutators = useTicketPriceCalculatorFormMutators();
-	const prices = useTicketPrices(ticketId);
-	const defaultPriceModifier = usePriceModifier(defaultPrice);
-	const submitPrices = useOnSubmitPrices(prices);
 	const ticket = useTicketItem({ id: ticketId });
-	const { closeEditor } = useFormModal();
 
-	useEffect(() => {
-		const updatable =
-			!isNil(ticket) && !isEmpty(ticket) && (isNil(initialValues.ticket) || isEmpty(initialValues.ticket));
-		if (updatable) {
-			const sortedPrices = sortByPriceOrderIdAsc(prices);
-			sortedPrices.push(defaultPriceModifier);
-			const formData = {
-				ticket: copyTicketFields(ticket),
-				prices: sortedPrices.map((price) => copyPriceFields(price)), // avoid passing index in .map() as 2nd param
-			};
-			setInitialValues(formData);
+	const onSubmit: ButtonProps['onClick'] = useCallback((click) => {
+		click.preventDefault();
+		destroyModal();
+	}, []);
+
+	const submitButton: ButtonProps = {
+		htmlType: 'submit',
+		icon: <SaveOutlined />,
+		onClick: onSubmit,
+	};
+
+	const cancelButton: ButtonProps = {
+		onClick: (click) => {
+			click.preventDefault();
+			destroyModal();
+		},
+	};
+
+	const destroyModal = () => {
+		if (currentOpenModal) {
+			currentOpenModal.destroy();
 		}
-	}, [prices, ticket]);
+	};
 
-	const onClose = useCallback<ModalClose>((): void => {
-		closeEditor('ticketPriceCalculator');
-		setInitialValues(INITIAL_STATE);
-	}, [closeEditor]);
+	const openModal = () => {
+		currentOpenModal = modal.confirm({
+			title: sprintf(__('Price Calculator for Ticket: %s'), ticket.name),
+			content: withContext(TicketPriceCalculator, { ticketId }),
+			okButtonProps: submitButton,
+			cancelButtonProps: cancelButton,
+			okText: __('Submit'),
+			cancelText: __('Cancel'),
+			maskClosable: true,
+			centered: true,
+			width: 'auto',
+		});
+	};
 
 	return {
-		formComponent: TicketPriceCalculatorForm,
-		onSubmit: submitPrices,
-		initialValues,
-		onClose,
-		decorators: [decorator],
-		mutators,
-		title: sprintf(__('Price Calculator for Ticket: %s'), ticket?.name),
+		openModal,
 	};
 };
 

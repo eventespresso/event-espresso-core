@@ -4,12 +4,13 @@ import { DownCircleOutlined, UpCircleOutlined } from '@ant-design/icons';
 import { __ } from '@wordpress/i18n';
 
 import { EspressoButton } from '@application/ui/input';
-import { useMoneyDisplay } from '@appServices/utilities/money';
+import { TpcFormElement } from './types';
+import { useMoneyDisplay } from '../../../../../application/services/utilities/money';
 
 // just temporary
 import styles from './inlineStyles';
 
-const TicketPriceTotalRow: React.FC = () => {
+const TicketPriceTotalRow: React.FC<TpcFormElement> = ({ ticket, reverseCalculate, toggleCalcDir }) => {
 	const { afterAmount, beforeAmount, formatAmount } = useMoneyDisplay();
 	const calcDirIcon = reverseCalculate ? <UpCircleOutlined /> : <DownCircleOutlined />;
 	const reverseCalc = reverseCalculate ? 'true' : 'false';
