@@ -9,7 +9,7 @@ import { ToggleLegendButtonProps } from '../types';
 import { EspressoButton, EspressoButtonType, Icon } from '@appInputs/EspressoButton';
 
 const ToggleLegend: React.FC<ToggleLegendButtonProps> = ({ listId, showLegend, toggleLegend }) => {
-	const className = classNames('ee-filter-bar-filter-btn', { 'ee-active-legend': showLegend });
+	const className = classNames('ee-entity-list-filter-bar__btn', { 'ee-active-legend': showLegend });
 	const iconProps = useSpring({
 		transform: `rotate(${showLegend ? 0 : 180}deg)`,
 	});

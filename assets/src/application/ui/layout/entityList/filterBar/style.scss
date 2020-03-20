@@ -3,7 +3,7 @@
  * © 2018 Event Espresso
  * ------------------------------------------------------------------------- */
 
-$filter-btn: '.esprs-button.ant-btn.ee-filter-bar-filter-btn';
+$filter-btn: '.esprs-button.ant-btn.ee-entity-list-filter-bar__btn';
 
 .ee-entity-list-filter-bar {
 	background: var(--ee-background-color);
@@ -17,14 +17,14 @@ $filter-btn: '.esprs-button.ant-btn.ee-filter-bar-filter-btn';
 	margin: 0 0 var(--ee-margin-small);
 	padding: 0 0 var(--ee-padding-tiny);
 
-	&--main {
+	&__main {
 		display: flex;
 		flex-flow: row wrap;
 		align-items: flex-start;
 		margin-left: calc(var(--ee-padding-tiny) * -1);
 	}
 
-	&--collapsible {
+	&__collapsible {
 		display: flex;
 		flex-flow: row wrap;
 		padding: 0 var(--ee-padding-small) var(--ee-padding-small);
@@ -40,30 +40,34 @@ $filter-btn: '.esprs-button.ant-btn.ee-filter-bar-filter-btn';
 		}
 	}
 
-	&--btn {
+	&__btn {
 		&.esprs-button.ant-btn {
-			border: 2px solid var(--ee-color-grey-10);
-			box-shadow: none;
-			margin: 0;
-			&:focus,
-			&:hover {
-				border: 1px solid var(--ee-color-primary-low-contrast);
-				box-shadow: 0 0 0 1px var(--ee-color-primary-low-contrast);
+			&#{$filter-btn} {
+				border: 2px solid var(--ee-color-grey-10);
+				box-shadow: none;
+				margin: 0;
+				&:focus,
+				&:hover {
+					border: 1px solid var(--ee-color-primary-low-contrast);
+					box-shadow: 0 0 0 1px var(--ee-color-primary-low-contrast);
+				}
 			}
 		}
-		&--wrap {
+		&__wrap {
 			align-items: center;
 			display: flex;
 			flex-flow: column nowrap;
 			padding: var(--ee-padding-tiny);
 			width: 90px;
 			#{$filter-btn} {
-				&.ee-active-filters {
-					border: 1px solid var(--ee-color-primary-low-contrast);
-					box-shadow: 0 0 0 1px var(--ee-color-primary-low-contrast);
-					color: var(--ee-color-primary);
-					path {
-						fill: var(--ee-color-primary);
+				&#{$filter-btn} {
+					&.ee-active-filters {
+						border: 1px solid var(--ee-color-primary-low-contrast);
+						box-shadow: 0 0 0 1px var(--ee-color-primary-low-contrast);
+						color: var(--ee-color-primary);
+						path {
+							fill: var(--ee-color-primary);
+						}
 					}
 				}
 			}

@@ -8,7 +8,7 @@ import { EspressoButton, EspressoButtonType, Icon } from '@appInputs/EspressoBut
 
 const ToggleFilters: React.FC<ToggleFiltersButtonProps> = ({ listId, showFilters, toggleFilters }) =>
 	React.useMemo(() => {
-		const className = classNames('ee-filter-bar-filter-btn', { 'ee-active-filters': showFilters });
+		const className = classNames('ee-entity-list-filter-bar__btn', { 'ee-active-filters': showFilters });
 		const filterId = `ee-toggle-filters-btn-${listId}`;
 		const tooltip = __(`${showFilters ? 'hide' : 'show'} filters`);
 
