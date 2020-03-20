@@ -47,7 +47,7 @@ const EntityList = <E extends Entity, ELFS extends EntityListFilterStateManager<
 		const description = noResultsDesc ? noResultsDesc : __('try changing filter settings');
 		entityList = <EmptyState className='ee-entity-list--no-results' title={title} description={description} />;
 	} else {
-		const Component = view === 'grid' ? CardView : TableView;
+		const Component = view === 'card' ? CardView : TableView;
 
 		entityList = <Component entities={filteredEntities} className={className} filterState={filterState} />;
 	}

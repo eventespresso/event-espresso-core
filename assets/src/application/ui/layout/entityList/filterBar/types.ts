@@ -1,5 +1,5 @@
 import React from 'react';
-import { EntityListFilterStateManager as ELFSM } from './filterState';
+import { EntityListFilterStateManager as ELFSM, View } from './filterState';
 import { LegendConfig } from '@application/ui/display/EntityListLegend/types';
 
 export interface CollapsibleProps {
@@ -18,16 +18,14 @@ export interface FilterButtonWrapProps {
 	label: string;
 }
 
-export interface GridViewFilterButtonProps {
+export interface CardViewFilterButtonProps extends View {
 	listId?: string;
-	setGridView: VoidFunction;
-	view?: string;
+	setCardView: VoidFunction;
 }
 
-export interface ListViewFilterButtonProps {
+export interface TableViewFilterButtonProps extends View {
 	listId?: string;
-	setListView: () => void;
-	view?: string;
+	setTableView: () => void;
 }
 
 export interface ToggleFiltersButtonProps {

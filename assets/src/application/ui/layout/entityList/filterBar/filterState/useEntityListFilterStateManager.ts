@@ -16,7 +16,7 @@ const useEntityListFilterStateManager = <SortBy = BasicSortBy>(defaultSortBy: So
 		searchText: '',
 		showEntityFilters: false,
 		sortBy: defaultSortBy,
-		view: 'grid',
+		view: 'card',
 	};
 	const [state, dispatch] = useReducer(getReducer<SortBy>(), initialState);
 
@@ -54,17 +54,17 @@ const useEntityListFilterStateManager = <SortBy = BasicSortBy>(defaultSortBy: So
 		});
 	};
 
-	const setGridView: FSM['setGridView'] = () => {
+	const setCardView: FSM['setCardView'] = () => {
 		dispatch({
 			type: 'SET_VIEW',
-			view: 'grid',
+			view: 'card',
 		});
 	};
 
-	const setListView: FSM['setListView'] = () => {
+	const setTableView: FSM['setTableView'] = () => {
 		dispatch({
 			type: 'SET_VIEW',
-			view: 'list',
+			view: 'table',
 		});
 	};
 
@@ -87,8 +87,8 @@ const useEntityListFilterStateManager = <SortBy = BasicSortBy>(defaultSortBy: So
 		setPerPage,
 		setPageNumber,
 		setTotal,
-		setGridView,
-		setListView,
+		setCardView,
+		setTableView,
 		setSearchText,
 		toggleEntityFilters,
 	};
