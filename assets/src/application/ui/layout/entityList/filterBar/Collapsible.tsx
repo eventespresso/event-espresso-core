@@ -19,7 +19,7 @@ const Collapsible: React.FC<CollapsibleProps> = ({ children, show = false }) => 
 
 	return (
 		<animated.div style={props}>
-			<div className='ee-entity-list-filter-bar__collapsible' ref={ref}>
+			<div className='ee-filter-bar__collapsible' ref={ref}>
 				{show && children}
 			</div>
 		</animated.div>

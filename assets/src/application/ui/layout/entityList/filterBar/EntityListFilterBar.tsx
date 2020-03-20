@@ -38,8 +38,8 @@ const EntityListFilterBar = <FS extends ELFSM>({
 	const toggleLegend = () => setShowLegend(!showLegend);
 
 	return (
-		<div className='ee-entity-list-filter-bar'>
-			<div className='ee-entity-list-filter-bar__main'>
+		<div className='ee-filter-bar'>
+			<div className='ee-filter-bar__main'>
 				<TableViewFilterButton listId={listId} setTableView={setTableView} view={view} />
 				<CardViewFilterButton listId={listId} setCardView={setCardView} view={view} />
 				<ToggleFiltersButton
