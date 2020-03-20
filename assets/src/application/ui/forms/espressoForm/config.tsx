@@ -241,13 +241,13 @@ export const formConfig: EspressoFormProps = {
 			label: 'Price',
 			fieldType: 'text',
 			addonAfter: '$',
-            htmlType: 'number',
+			htmlType: 'number',
 		},
 		{
 			name: 'password',
 			label: 'Password',
 			fieldType: 'text',
-            htmlType: 'password',
+			htmlType: 'password',
 			desc: 'Please enter a strong password',
 		},
 		{
