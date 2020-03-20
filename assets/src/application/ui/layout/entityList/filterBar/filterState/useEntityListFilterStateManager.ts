@@ -16,7 +16,7 @@ const useEntityListFilterStateManager = <SortBy = BasicSortBy>(defaultSortBy: So
 		searchText: '',
 		showEntityFilters: false,
 		sortBy: defaultSortBy,
-		view: 'grid',
+		view: 'card',
 	};
 	const [state, dispatch] = useReducer(getReducer<SortBy>(), initialState);
 
