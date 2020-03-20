@@ -6,7 +6,7 @@ const statusBgColorClassName = (ticket: Ticket): string => {
 		return 'ee-status-background-color-TKA';
 	}
 
-	if (isExpired({ ticket })) {
+	if (isExpired(ticket)) {
 		return 'ee-status-background-color-TKE';
 	}
 

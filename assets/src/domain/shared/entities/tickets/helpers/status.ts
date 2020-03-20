@@ -10,7 +10,7 @@ const status = (ticket: Ticket): string => {
 		return TICKET_STATUS_ID.TRASHED;
 	}
 
-	if (isExpired({ ticket })) {
+	if (isExpired(ticket)) {
 		return TICKET_STATUS_ID.EXPIRED;
 	}
 
