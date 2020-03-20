@@ -22,9 +22,6 @@ const EntityPagination: React.FC<EntityPaginationProps<any>> = ({
 	...rest
 }) => {
 	const { pageNumber, perPage, setPerPage, setPageNumber, total }: EntityListFilterStateManager = filterState;
-
-	console.log({ perPage, total });
-
 	const className = classNames('ee-entity-pagination', { hidePagination: total <= perPage });
 
 	return (
