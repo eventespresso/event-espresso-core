@@ -1,11 +1,7 @@
-import { Datetime } from '../../../../eventEditor/services/apollo/types';
-
 import capacityAtOrAbove from './capacityAtOrAbove';
-import { isValidOrTrashed } from '../../../services/predicates';
-import validStatus from './validStatus';
+import { Datetime } from '@edtrServices/apollo/types';
+import { isBooleanTrue } from '@appServices/utilities';
 
-const isSoldOut = (date: Datetime): boolean => {
-	return isValidOrTrashed(date) && ((validStatus(date) && date.isSoldOut) || capacityAtOrAbove(date, 100));
-};
+const isSoldOut = (date: Datetime): boolean => isBooleanTrue(date.isSoldOut) || capacityAtOrAbove(date, 100);
 
 export default isSoldOut;

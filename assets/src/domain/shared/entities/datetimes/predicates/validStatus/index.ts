@@ -1,15 +1,7 @@
-/**
- * External dependencies
- */
 import { is } from 'ramda';
 
-/**
- * Internal dependencies
- */
-import { Datetime } from '../../../../../eventEditor/services/apollo/types';
+import { Datetime } from '@edtrServices/apollo/types';
 
-const validStatus = ({ status }: Datetime): boolean => {
-	return is(String, status);
-};
+const validStatus = ({ status }: Datetime): boolean => is(String, status);
 
 export default validStatus;
