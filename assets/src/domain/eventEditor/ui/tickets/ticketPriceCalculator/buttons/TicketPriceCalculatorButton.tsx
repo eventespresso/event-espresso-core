@@ -2,32 +2,25 @@ import React from 'react';
 import { EspressoButton } from '@application/ui/input';
 import { __ } from '@wordpress/i18n';
 
-import { TpcButtonDataProps } from '../types';
-import { useFormModal } from '@appLayout/formModal';
+import { BaseProps } from '../types';
 import { TypeName } from '@appServices/apollo/status';
 import withIsLoaded from '@sharedUI/hoc/withIsLoaded';
+import { useTicketPriceCalculatorModal } from '../hooks';
 
-const TicketPriceCalculatorButton: React.FC<TpcButtonDataProps> = ({ ticketId, ...buttonProps }) => {
-	const { openEditor } = useFormModal();
+const TicketPriceCalculatorButton: React.FC<BaseProps> = ({ ticketId }) => {
+	const { openModal } = useTicketPriceCalculatorModal({ ticketId });
 
-	const onClick = (): void => {
-		openEditor({
-			editorId: 'ticketPriceCalculator',
-			entityId: ticketId,
-		});
-	};
 	return (
 		<EspressoButton
 			icon='calculator'
-			onClick={onClick}
+			onClick={openModal}
 			tooltip={__('ticket price calculator')}
 			tooltipProps={{ placement: 'left' }}
-			{...buttonProps}
 		/>
 	);
 };
 
-export default withIsLoaded<TpcButtonDataProps>(TypeName.prices, ({ loaded, id }) => {
+export default withIsLoaded<BaseProps>(TypeName.prices, ({ loaded, ticketId }) => {
 	/* Hide price calculator unless prices are loaded */
-	return loaded && <TicketPriceCalculatorButton ticketId={id} />;
-});;
+	return loaded && <TicketPriceCalculatorButton ticketId={ticketId} />;
+});
