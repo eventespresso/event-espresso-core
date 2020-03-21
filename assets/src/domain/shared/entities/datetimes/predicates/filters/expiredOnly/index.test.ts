@@ -27,7 +27,7 @@ describe('expiredOnly', () => {
 		expect(filteredDates[0].id).toBe('xyz');
 	});
 
-	it('Should return an array of dates that are expired', () => {
+	it('Should return an array of 2 dates that are expired', () => {
 		const filteredDates = expiredOnly([
 			{ ...datetime, id: 'abc', isExpired: false },
 			{ ...datetime, id: 'def', isExpired: true },
