@@ -1,19 +1,18 @@
-import { useTickets } from '@edtrServices/apollo/queries';
-import { useFilterState } from '../filters';
 import isExpired from '@sharedEntities/tickets/predicates/isExpired';
 import { isTrashed } from '@sharedServices/predicates';
+import { useFilterState } from '../filters';
+import { useTickets } from '@edtrServices/apollo/queries';
 
 const useFilteredTickets = () => {
 	const { showExpiredTickets, showTrashedTickets } = useFilterState();
-	const tickets = useTickets();
+	let tickets = useTickets();
 
 	if (!showExpiredTickets) {
-		// `includeTrashed` already takes care of `showTrashedTickets`, so return
-		return tickets.filter((ticket) => !isExpired({ ticket, includeTrashed: !showTrashedTickets }));
+		tickets = tickets.filter((ticket) => !isExpired(ticket));
 	}
 
 	if (!showTrashedTickets) {
-		return tickets.filter((ticket) => !isTrashed(ticket));
+		tickets = tickets.filter((ticket) => !isTrashed(ticket));
 	}
 
 	return tickets;
