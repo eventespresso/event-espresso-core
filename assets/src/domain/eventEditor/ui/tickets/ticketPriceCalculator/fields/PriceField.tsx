@@ -12,6 +12,7 @@ interface PriceFieldProps<V = FieldValue, P = {}> extends PriceModifierProps, In
 	component: React.ComponentType<P> | SupportedInputs;
 	field: keyof TpcPriceModifier;
 	format?: <T = V>(value: T, name: keyof TpcPriceModifier) => any;
+	formatOnBlur?: boolean;
 	parse?: <T = V>(value: any, name: keyof TpcPriceModifier) => T;
 }
 
@@ -23,6 +24,7 @@ const PriceField = <V extends FieldValue, P extends {}>({
 	component,
 	field,
 	format = defaultFormat,
+	formatOnBlur,
 	parse = defaultParse,
 	price,
 	value: fieldValue,
@@ -31,16 +33,32 @@ const PriceField = <V extends FieldValue, P extends {}>({
 	const { updatePrice } = useDataState();
 
 	const handlers: InputHTMLAttributes<HTMLInputElement> = {
+		onBlur: React.useCallback(() => {
+			if (formatOnBlur) {
+				const value = price[field];
+				updatePrice({ id: price.id, fieldValues: { [field]: format(value, field) } });
+			}
+		}, [field, format, formatOnBlur, updatePrice, price]),
 		onChange: useCallback(
 			(event) => {
-				const value: any = event?.target?.value || event;
+				const value = event?.target?.value;
 				updatePrice({ id: price.id, fieldValues: { [field]: parse(value, field) } });
 			},
-			[parse, updatePrice, price.amount]
+			[field, parse, updatePrice, price]
 		),
 	};
 
-	const value = format(fieldValue || price[field], field);
+	let value = fieldValue || price[field];
+	if (formatOnBlur) {
+		if (component === 'input') {
+			value = defaultFormat(value, field);
+		}
+	} else {
+		value = format(value, field);
+	}
+	if (value === null) {
+		value = '';
+	}
 
 	if (typeof component === 'string') {
 		return React.createElement(component, { ...handlers, ...rest, children, value });

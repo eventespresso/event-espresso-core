@@ -37,6 +37,7 @@ const PriceAmountInput: React.FC<PriceModifierProps> = ({ price }) => {
 					style={styles.number}
 					disabled={reverseCalculate && price.isBasePrice}
 					format={(amount: unknown) => formatAmount(amount as number) || ''}
+					formatOnBlur
 				/>
 			</div>
 			<div style={styles.aft}>{afterPrice}</div>
