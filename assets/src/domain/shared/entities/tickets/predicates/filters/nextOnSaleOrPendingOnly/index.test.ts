@@ -8,7 +8,7 @@ describe('nextOnSaleOrPendingOnly', () => {
 		const updatedTickets = tickets.map((ticket) => {
 			const startDate = formatISO(new Date(2018, 8, 18, 19, 0, 52));
 			const endDate = formatISO(new Date(2018, 9, 18, 19, 0, 52));
-			return { ...ticket, startDate, endDate };
+			return { ...ticket, startDate, endDate, isOnSale: false, isPending: false };
 		});
 		const filteredTickets = nextOnSaleOrPendingOnly(updatedTickets);
 		expect(filteredTickets).toEqual([]);

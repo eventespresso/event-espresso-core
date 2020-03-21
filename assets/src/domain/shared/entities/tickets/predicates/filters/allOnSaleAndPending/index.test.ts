@@ -12,7 +12,7 @@ describe('allOnSaleAndPending', () => {
 		const updatedTickets = tickets.map((ticket) => {
 			const startDate = formatISO(new Date(2008, 8, 18, 19, 0, 52));
 			const endDate = formatISO(new Date(2009, 8, 18, 19, 0, 52));
-			return { ...ticket, endDate, startDate };
+			return { ...ticket, endDate, startDate, isOnSale: false, isPending: false };
 		});
 		const filteredTickets = allOnSaleAndPending(updatedTickets);
 		expect(filteredTickets).toEqual([]);
@@ -22,7 +22,7 @@ describe('allOnSaleAndPending', () => {
 		const updatedTickets = tickets.map((ticket) => {
 			const startDate = pipe(subWeeks(1), formatISO)(now);
 			const endDate = pipe(addWeeks(1), formatISO)(now);
-			return { ...ticket, endDate, startDate };
+			return { ...ticket, endDate, startDate, isOnSale: true, isPending: false };
 		});
 		const filteredTickets = allOnSaleAndPending(updatedTickets);
 
@@ -36,7 +36,7 @@ describe('allOnSaleAndPending', () => {
 	it('should return an array of pending tickets if start date is in the future', () => {
 		const updatedTickets = tickets.map((ticket) => {
 			const startDate = pipe(addWeeks(1), formatISO)(now);
-			return { ...ticket, startDate };
+			return { ...ticket, startDate, isOnSale: false, isPending: true };
 		});
 		const filteredTickets = allOnSaleAndPending(updatedTickets);
 

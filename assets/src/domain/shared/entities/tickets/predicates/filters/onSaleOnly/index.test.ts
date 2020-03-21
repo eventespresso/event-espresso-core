@@ -11,7 +11,7 @@ describe('onSaleOnly', () => {
 		const updatedTickets = tickets.map((ticket) => {
 			const startDate = formatISO(new Date(2008, 8, 18, 19, 0, 52));
 			const endDate = formatISO(new Date(2009, 8, 18, 19, 0, 52));
-			return { ...ticket, endDate, startDate };
+			return { ...ticket, endDate, startDate, isOnSale: false };
 		});
 		const filteredTickets = onSaleOnly(updatedTickets);
 		expect(filteredTickets).toEqual([]);
@@ -20,7 +20,7 @@ describe('onSaleOnly', () => {
 	it('should return an empty array if tickets start date is in the future', () => {
 		const updatedTickets = tickets.map((ticket) => {
 			const startDate = pipe(addMinutes(1), formatISO)(now);
-			return { ...ticket, startDate };
+			return { ...ticket, startDate, isOnSale: false };
 		});
 		const filteredTickets = onSaleOnly(updatedTickets);
 		expect(filteredTickets).toEqual([]);
@@ -30,7 +30,7 @@ describe('onSaleOnly', () => {
 		const updatedTickets = tickets.map((ticket) => {
 			const startDate = pipe(subWeeks(1), formatISO)(now);
 			const endDate = pipe(subMinutes(1), formatISO)(now);
-			return { ...ticket, endDate, startDate };
+			return { ...ticket, endDate, startDate, isOnSale: false };
 		});
 		const filteredTickets = onSaleOnly(updatedTickets);
 		expect(filteredTickets).toEqual([]);
