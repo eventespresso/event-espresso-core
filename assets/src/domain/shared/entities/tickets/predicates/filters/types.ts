@@ -1,3 +1,9 @@
-import { Ticket } from '@edtrServices/apollo/types';
+import { Ticket } from '@edtrServices/apollo';
+import { TicketsToShow } from '@edtrServices/filterState';
 
-export type TicketFilterFn = (dates: Array<Ticket>) => Array<Ticket>;
+export interface FilterTickets {
+	tickets: Ticket[];
+	show?: TicketsToShow;
+}
+
+export type TicketFilterFn = (tickets: Array<Ticket>) => Array<Ticket>;
