@@ -9,7 +9,6 @@ const useTicketTotalChangeListener: StateChangeListenerHook = (calculatePrice) =
 	// Because of the deps, it will run only when ticket total changes
 	useEffect(() => {
 		calculatePrice();
-		console.log('ticket price changed to: ', ticket?.price);
 	}, [ticket?.price]);
 };
 

@@ -4,7 +4,6 @@ import { useDataState } from '../data';
 import { calculateBasePrice, calculateTicketTotal } from '../utils';
 import usePriceChangeListener from './usePriceChangeListener';
 import usePriceTypeChangeListener from './usePriceTypeChangeListener';
-import useReverseCalcChangeListener from './useReverseCalcChangeListener';
 import useTicketTotalChangeListener from './useTicketTotalChangeListener';
 
 const useStateListeners = (): void => {
@@ -32,8 +31,6 @@ const useStateListeners = (): void => {
 	usePriceChangeListener(calculatePrice);
 	// Subscribe to price priceType changes
 	usePriceTypeChangeListener();
-	// Subscribe to reverseCalculate changes
-	useReverseCalcChangeListener(calculatePrice);
 	// Subscribe to ticket price changes
 	useTicketTotalChangeListener(calculatePrice);
 };

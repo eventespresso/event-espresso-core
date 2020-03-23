@@ -20,14 +20,17 @@ const usePriceTypeChangeListener: StateChangeListenerHook = () => {
 	const priceTypeMapping = useRef<AnyObject<string>>({});
 
 	const [priceTypesStr, setPriceTypesStr] = useState('');
+
 	useEffect(() => {
 		// To avoid triggering the change on every render
 		// convert to JSON to only trigger when the value changes
 		const newPriceTypesStr = JSON.stringify(prices.map((price) => price.priceType));
+		if (newPriceTypesStr === priceTypesStr) {
+			return;
+		}
+
 		setPriceTypesStr(newPriceTypesStr);
-	}, [prices]);
-	// Because of the deps, it will run only when priceTypes change
-	useEffect(() => {
+
 		const newPriceTypeMapping = prices.reduce((acc, price) => {
 			return assocPath([price.id], price.priceType, acc);
 		}, {});
@@ -55,8 +58,7 @@ const usePriceTypeChangeListener: StateChangeListenerHook = () => {
 		}
 		// Make sure to update the mapping
 		priceTypeMapping.current = newPriceTypeMapping;
-		console.log('priceTypeChangedForPriceId: ', priceTypeChangedForPriceId);
-	}, [priceTypesStr]);
+	}, [prices]);
 };
 
 export default usePriceTypeChangeListener;

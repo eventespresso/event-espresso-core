@@ -18,7 +18,7 @@ const BaseField: React.FC<BaseFieldProps> = ({
 	...rest
 }) => {
 	const handlers: InputProps = {
-		onBlur: React.useCallback(() => {
+		onBlur: useCallback(() => {
 			if (formatOnBlur) {
 				setValue(format(getValue(), name));
 			}

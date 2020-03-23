@@ -1,8 +1,8 @@
-import { useEffect, useCallback } from 'react';
+import { useCallback } from 'react';
 import { assocPath, pick } from 'ramda';
 import { StateInitializer } from './types';
 import { BaseProps, TpcPriceModifier } from '../types';
-import { Ticket, useTicketItem, useTicketPrices, usePriceTypes } from '@edtrServices/apollo';
+import { useTicketItem, useTicketPrices, usePriceTypes } from '@edtrServices/apollo';
 import { useRelations } from '@appServices/apollo/relations';
 import { sortByPriceOrderIdAsc } from '@sharedEntities/prices/predicates/sortingPredicates';
 import { ticketFieldsToUse } from '../utils/constants';
@@ -23,10 +23,6 @@ const useInitialState = ({ ticketId }: BaseProps): StateInitializer => {
 
 	// get all related prices
 	const unSortedPrices = useTicketPrices(ticketId);
-
-	useEffect(() => {
-		console.log('unSortedPrices', unSortedPrices);
-	}, [unSortedPrices]);
 
 	//sort'em
 	const sortedPrices = sortByPriceOrderIdAsc(unSortedPrices);

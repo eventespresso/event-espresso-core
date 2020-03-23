@@ -40,9 +40,6 @@ const shouldUpdateTicket = ({
 		return true;
 	}
 
-	console.log('sortedExistingRelatedPriceIds', sortedExistingRelatedPriceIdsJson);
-	console.log('sortedRelatedPriceIds', sortedRelatedPriceIdsJson);
-
 	const existingTicketJson = JSON.stringify(pick(ticketFieldsToUse, existingTicket));
 	const newTicketJson = JSON.stringify(newTicket);
 
@@ -50,9 +47,6 @@ const shouldUpdateTicket = ({
 	if (existingTicketJson !== newTicketJson) {
 		return true;
 	}
-
-	console.log('existingTicketJson', existingTicketJson);
-	console.log('newTicketJson', newTicketJson);
 
 	return false;
 };
