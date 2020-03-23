@@ -10,16 +10,19 @@ import { useTicketPriceCalculatorModal } from '../hooks';
 interface TPCButtonProps extends BaseProps, EspressoButtonProps {}
 
 const TicketPriceCalculatorButton: React.FC<TPCButtonProps> = ({ ticketId, ...buttonProps }) => {
-	const { openModal } = useTicketPriceCalculatorModal({ ticketId });
+	const { openModal, Container } = useTicketPriceCalculatorModal();
 
 	return (
-		<EspressoButton
-			icon='calculator'
-			onClick={openModal}
-			tooltip={__('ticket price calculator')}
-			tooltipProps={{ placement: 'left' }}
-			{...buttonProps}
-		/>
+		<>
+			<EspressoButton
+				icon='calculator'
+				onClick={openModal}
+				tooltip={__('ticket price calculator')}
+				tooltipProps={{ placement: 'left' }}
+				{...buttonProps}
+			/>
+			<Container ticketId={ticketId} />
+		</>
 	);
 };
 
