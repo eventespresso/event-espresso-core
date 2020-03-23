@@ -19,7 +19,7 @@ const calculateTicketTotal = (state: DataState): DataState['ticket']['price'] =>
 	/**
 	 * @todo Make sure the base price (or non percent price) is at the beginning of the list,
 	 * otherwise if a percent price ends up at the beginning, it will have
-	 * no effect on total becaue of multiply by intial total which is 0.
+	 * no effect on total because of multiply by intial total which is 0.
 	 * May be same applies to the sorting in `calculateBasePrice`
 	 */
 	const sortedModifiers = sortByPriceOrderIdAsc(allPrices);
