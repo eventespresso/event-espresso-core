@@ -21,7 +21,7 @@ const useRelatedPrices = ({ entity, entityId }: RelatedPricesProps): Array<Price
 
 	return useMemo(() => {
 		return relatedPriceIds.length ? entitiesWithGuIdInArray(prices, relatedPriceIds) : [];
-	}, [relatedPriceIds.length, prices]);
+	}, [relatedPriceIds, prices]);
 };
 
 export default useRelatedPrices;

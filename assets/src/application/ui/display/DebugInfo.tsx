@@ -18,6 +18,12 @@ interface DebugInfoProps {
 }
 
 const DebugInfo: React.FC<DebugInfoProps> = ({ data, asJson = true, asCollapse = true }) => {
+	const isDev = !process.env.NODE_ENV || process.env.NODE_ENV === 'development';
+
+	if (!isDev) {
+		return null;
+	}
+
 	const dataToRender = asJson ? JSON.stringify(data, null, 2) : data;
 
 	const output = <pre style={dataStyle}>{dataToRender}</pre>;
