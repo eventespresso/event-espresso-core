@@ -1,12 +1,14 @@
 import { TicketsFilterStateReducer } from './types';
 
 const reducer: TicketsFilterStateReducer = (state, action) => {
-	const { type, displayStartOrEndDate, ticketsToShow } = action;
+	const { displayStartOrEndDate, sales, status, type } = action;
 	switch (type) {
 		case 'SET_DISPLAY_START_OR_END_DATE':
 			return { ...state, displayStartOrEndDate };
-		case 'SET_TICKETS_TO_SHOW':
-			return { ...state, ticketsToShow };
+		case 'SET_TICKETS_SALES':
+			return { ...state, sales };
+		case 'SET_TICKETS_STATUS':
+			return { ...state, status };
 		case 'TOGGLE_IS_CHAINED':
 			return { ...state, isChained: !state.isChained };
 		default:

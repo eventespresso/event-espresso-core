@@ -45,10 +45,10 @@ const useDatesFilterBarService = (): void => {
 
 		// Housekeeping
 		return (): void => {
-			unsubscribeSalesFilter();
-			unsubscribeStatusFilter();
 			unsubscribeDatesSearch();
 			unsubscribeDatesSorter();
+			unsubscribeSalesFilter();
+			unsubscribeStatusFilter();
 		};
 	}, []);
 };

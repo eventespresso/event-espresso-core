@@ -1,17 +1,28 @@
 import { useReducer } from 'react';
 
 import reducer from './reducer';
-import { TicketsFilterState, TicketsFilterStateManager, TicketsToShow } from './types';
+import { TicketsFilterState, TicketsFilterStateManager, TicketsSales, TicketsStatus } from './types';
 import { DisplayStartOrEndDate, SortBy } from '@sharedServices/filterState';
 import { useEntityListFilterStateManager } from '@appLayout/entityList/filterBar';
 
 type FSM = TicketsFilterStateManager;
 
+const resetPageNumber = (
+	state: TicketsFilterState,
+	filter: TicketsSales | TicketsStatus,
+	setPageNumber: (number) => void
+): void => {
+	if (filter !== state[filter]) {
+		setPageNumber(1);
+	}
+};
+
 const useTicketsListFilterStateManager = (): FSM => {
 	const initialState: TicketsFilterState = {
 		displayStartOrEndDate: DisplayStartOrEndDate.start,
 		isChained: false,
-		ticketsToShow: TicketsToShow.all,
+		sales: TicketsSales.all,
+		status: TicketsStatus.onSaleAndPending,
 	};
 
 	const [state, dispatch] = useReducer(reducer, initialState);
@@ -25,15 +36,19 @@ const useTicketsListFilterStateManager = (): FSM => {
 		});
 	};
 
-	const setTicketsToShow: FSM['setTicketsToShow'] = (ticketsToShow) => {
-		// if tickets to show changes
-		if (ticketsToShow !== state.ticketsToShow) {
-			// reset page number to 1
-			entityFilterState.setPageNumber(1);
-		}
+	const setSales: FSM['setSales'] = (sales) => {
+		resetPageNumber(state, sales, entityFilterState.setPageNumber);
 		dispatch({
-			type: 'SET_TICKETS_TO_SHOW',
-			ticketsToShow,
+			type: 'SET_SALES',
+			sales,
+		});
+	};
+
+	const setStatus: FSM['setStatus'] = (status) => {
+		resetPageNumber(state, status, entityFilterState.setPageNumber);
+		dispatch({
+			type: 'SET_STATUS',
+			status,
 		});
 	};
 
@@ -46,8 +61,9 @@ const useTicketsListFilterStateManager = (): FSM => {
 	return {
 		...state,
 		...entityFilterState,
+		setSales,
 		setDisplayStartOrEndDate,
-		setTicketsToShow,
+		setStatus,
 		toggleIsChained,
 	};
 };

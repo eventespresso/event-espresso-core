@@ -65,5 +65,7 @@ export const statusFilter = ({ dates: entities, status = Status.activeUpcoming }
 			return trashedOnly(dates);
 		case Status.upcomingOnly:
 			return upcomingOnly(dates);
+		default:
+			return dates;
 	}
 };

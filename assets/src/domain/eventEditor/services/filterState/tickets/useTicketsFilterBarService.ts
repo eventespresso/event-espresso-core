@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 
 import { useFilterBarService } from '@appLayout/entityList/filterBar';
-import filterTckets from '@sharedEntities/tickets/predicates/filters';
+import { salesFilter, statusFilter } from '@sharedEntities/tickets/predicates/filters';
 import sortTckets from '@sharedEntities/tickets/predicates/sorters';
 import { domain, ticketsList } from '@edtrServices/constants';
 import { entityListSearch } from '@appServices/utilities/text';
@@ -19,9 +19,14 @@ const useTicketsFilterBarService = (): void => {
 	} = useFilterBarService<Domain, typeof ticketsList, Ticket, TFSM>(domain, ticketsList);
 
 	useEffect(() => {
-		// Register filter
-		const unsubscribeTicketsFilter = registerTicketsFilter(({ entityList, filterState }) => {
-			return filterTckets({ tickets: entityList, show: filterState.ticketsToShow });
+		// Register sales filter
+		const unsubscribeSalesFilter = registerTicketsFilter(({ entityList, filterState }) => {
+			return salesFilter({ tickets: entityList, sales: filterState.sales });
+		});
+
+		// Register status filter
+		const unsubscribeStatusFilter = registerTicketsFilter(({ entityList, filterState }) => {
+			return statusFilter({ tickets: entityList, status: filterState.status });
 		});
 
 		// Register search
@@ -40,9 +45,10 @@ const useTicketsFilterBarService = (): void => {
 
 		// Housekeeping
 		return (): void => {
-			unsubscribeTicketsFilter();
+			unsubscribeSalesFilter();
 			unsubscribeTicketsSearch();
 			unsubscribeTicketsSorter();
+			unsubscribeStatusFilter();
 		};
 	}, []);
 };

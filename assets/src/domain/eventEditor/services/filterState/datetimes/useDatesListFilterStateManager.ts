@@ -1,7 +1,7 @@
 import { useReducer } from 'react';
 
 import reducer from './reducer';
-import { DatetimesFilterState, DatetimesFilterStateManager, Sales, Status } from './types';
+import { DatetimesFilterState, DatetimesFilterStateManager, DatetimeSales, DatetimeStatus } from './types';
 import { DisplayStartOrEndDate, SortBy } from '@sharedServices/filterState';
 import { useEntityListFilterStateManager } from '@appLayout/entityList/filterBar';
 
@@ -9,7 +9,7 @@ type FSM = DatetimesFilterStateManager;
 
 const resetPageNumber = (
 	state: DatetimesFilterState,
-	filter: Sales | Status,
+	filter: DatetimeSales | DatetimeStatus,
 	setPageNumber: (number) => void
 ): void => {
 	if (filter !== state[filter]) {
@@ -20,8 +20,8 @@ const resetPageNumber = (
 const useDatesListFilterStateManager = (): FSM => {
 	const initialState: DatetimesFilterState = {
 		displayStartOrEndDate: DisplayStartOrEndDate.start,
-		sales: Sales.all,
-		status: Status.activeUpcoming,
+		sales: DatetimeSales.all,
+		status: DatetimeStatus.activeUpcoming,
 	};
 
 	const [state, dispatch] = useReducer(reducer, initialState);
