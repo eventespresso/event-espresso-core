@@ -1,4 +1,4 @@
-import { useReducer, useCallback, useMemo } from 'react';
+import { useCallback, useMemo, useReducer } from 'react';
 
 import { DataStateManager, DataStateManagerHook } from './types';
 import useDataReducer, { initialState } from './useDataReducer';
@@ -11,9 +11,11 @@ const useDataStateManager: DataStateManagerHook = (props) => {
 	const dataReducer = useDataReducer(initializer);
 	const [state, dispatch] = useReducer(dataReducer, initialState, initializer);
 
+	const getData: DSM['getData'] = useCallback(() => state, [state]);
+
 	const toggleCalcDir: DSM['toggleCalcDir'] = useCallback(() => {
 		dispatch({
-			type: 'TOGGLE_REVERSE_CALCULATE',
+			type: 'TOGGLE_CALC_DIR',
 		});
 	}, [dispatch]);
 
@@ -22,6 +24,16 @@ const useDataStateManager: DataStateManagerHook = (props) => {
 			dispatch({
 				type: 'UPDATE_TICKET_PRICE',
 				ticketPrice,
+			});
+		},
+		[dispatch]
+	);
+
+	const setPrices: DSM['setPrices'] = useCallback(
+		(prices) => {
+			dispatch({
+				type: 'SET_PRICES',
+				prices,
 			});
 		},
 		[dispatch]
@@ -71,16 +83,18 @@ const useDataStateManager: DataStateManagerHook = (props) => {
 		});
 	}, [dispatch]);
 
-	const reverseCalculate: boolean = useMemo(() => Boolean(state.ticket.reverseCalculate), [
-		state.ticket.reverseCalculate,
+	const reverseCalculate: boolean = useMemo(() => Boolean(state.ticket?.reverseCalculate), [
+		state.ticket?.reverseCalculate,
 	]);
 
 	return {
 		...state,
 		addPrice,
 		deletePrice,
+		getData,
 		reset,
 		reverseCalculate,
+		setPrices,
 		toggleCalcDir,
 		updatePrice,
 		updateTicketPrice,

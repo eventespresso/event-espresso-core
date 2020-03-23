@@ -11,13 +11,14 @@ export interface DataState {
 }
 
 export type DataActionType =
-	| 'UPDATE_TICKET_PRICE'
-	| 'TOGGLE_REVERSE_CALCULATE'
 	| 'ADD_PRICE'
-	| 'UPDATE_PRICE'
-	| 'DELETE_PRICE'
 	| 'ADD_PRICE_TO_DELETED'
-	| 'RESET';
+	| 'DELETE_PRICE'
+	| 'RESET'
+	| 'SET_PRICES'
+	| 'TOGGLE_CALC_DIR'
+	| 'UPDATE_PRICE'
+	| 'UPDATE_TICKET_PRICE';
 
 export interface DataAction extends Partial<DataState>, Partial<UpdatePriceArgs> {
 	type: DataActionType;
@@ -36,8 +37,10 @@ interface UpdatePriceArgs {
 export interface DataStateManager extends DataState {
 	addPrice: (price: TpcPriceModifier, index?: number) => void;
 	deletePrice: (id: EntityId, isNew?: boolean) => void;
+	getData: () => DataState;
 	reset: VoidFunction;
 	reverseCalculate: boolean;
+	setPrices: (prices: DataState['prices']) => void;
 	toggleCalcDir: VoidFunction;
 	updatePrice: (args: UpdatePriceArgs) => void;
 	updateTicketPrice: (ticketPrice: Ticket['price']) => void;

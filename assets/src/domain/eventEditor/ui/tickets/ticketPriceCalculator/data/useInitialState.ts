@@ -1,12 +1,11 @@
-import { useCallback } from 'react';
+import { useEffect, useCallback } from 'react';
 import { assocPath, pick } from 'ramda';
 import { StateInitializer } from './types';
 import { BaseProps, TpcPriceModifier } from '../types';
 import { Ticket, useTicketItem, useTicketPrices, usePriceTypes } from '@edtrServices/apollo';
 import { useRelations } from '@appServices/apollo/relations';
 import { sortByPriceOrderIdAsc } from '@sharedEntities/prices/predicates/sortingPredicates';
-
-const ticketFieldsToPick: Array<keyof Partial<Ticket>> = ['id', 'name', 'price', 'reverseCalculate'];
+import { ticketFieldsToUse } from '../utils/constants';
 
 /**
  * Initializes the data state dynamically by
@@ -20,10 +19,15 @@ const useInitialState = ({ ticketId }: BaseProps): StateInitializer => {
 
 	// get the full ticket object
 	const wholeTicket = useTicketItem({ id: ticketId });
-	const ticket = pick(ticketFieldsToPick, wholeTicket);
+	const ticket = pick(ticketFieldsToUse, wholeTicket);
 
-	// get all prices
+	// get all related prices
 	const unSortedPrices = useTicketPrices(ticketId);
+
+	useEffect(() => {
+		console.log('unSortedPrices', unSortedPrices);
+	}, [unSortedPrices]);
+
 	//sort'em
 	const sortedPrices = sortByPriceOrderIdAsc(unSortedPrices);
 
@@ -44,7 +48,7 @@ const useInitialState = ({ ticketId }: BaseProps): StateInitializer => {
 		(initialState) => {
 			return { ...initialState, ticket, prices };
 		},
-		[ticketId]
+		[ticket, prices]
 	);
 };
 

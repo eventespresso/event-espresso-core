@@ -11,10 +11,10 @@ export const initialState: DataState = {
 
 const useDataReducer = (initializer: StateInitializer): DataStateReducer => {
 	const dataReducer: DataStateReducer = (state, action) => {
-		const { type, id, index, fieldValues, ticketPrice, price } = action;
+		const { type, id, index, fieldValues, ticketPrice, price, prices } = action;
 
 		switch (type) {
-			case 'TOGGLE_REVERSE_CALCULATE':
+			case 'TOGGLE_CALC_DIR':
 				return {
 					...state,
 					ticket: {
@@ -29,6 +29,11 @@ const useDataReducer = (initializer: StateInitializer): DataStateReducer => {
 						...state.ticket,
 						price: ticketPrice,
 					},
+				};
+			case 'SET_PRICES':
+				return {
+					...state,
+					prices,
 				};
 
 			case 'ADD_PRICE':
@@ -48,16 +53,16 @@ const useDataReducer = (initializer: StateInitializer): DataStateReducer => {
 				}
 				// get the price object
 				const priceToUpdate = state.prices[priceIndex];
+
+				// update the price object
+				const updatedPrice = { ...priceToUpdate, ...fieldValues, isModified: true };
+
 				// update the prices list
-				const prices = update<typeof state.prices[0]>(
-					priceIndex,
-					{ ...priceToUpdate, ...fieldValues },
-					state.prices
-				);
+				const updatedPrices = update<typeof state.prices[0]>(priceIndex, updatedPrice, state.prices);
 				return priceIndex > -1
 					? {
 							...state,
-							prices,
+							prices: updatedPrices,
 					  }
 					: state;
 
