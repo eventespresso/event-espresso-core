@@ -5,6 +5,7 @@ defined('EVENT_ESPRESSO_VERSION') || exit;
 /** @var string $event_description */
 /** @var string $event_start */
 /** @var string $event_end */
+/** @var string $event_status */
 /** @var string $currency */
 /** @var array $event_tickets */
 /** @var string $venue_name */
@@ -22,6 +23,7 @@ defined('EVENT_ESPRESSO_VERSION') || exit;
   "endDate": "<?php echo $event_end; ?>",
   "description": <?php echo wp_json_encode($event_description); ?>,
   "url": "<?php echo $event_permalink; ?>",
+  "eventStatus": "https://schema.org/<?php echo $event_status; ?>",
   "offers": [
     <?php
     $i = 0;
