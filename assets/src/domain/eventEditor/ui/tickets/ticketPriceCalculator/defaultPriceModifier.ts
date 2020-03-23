@@ -1,7 +1,7 @@
-import { Price } from '../../../services/apollo/types';
+import { Price } from '@edtrServices/apollo';
 
 const defaultPriceModifier: Price = {
-	id: 'NEW_PRICE',
+	id: '',
 	dbId: 0,
 	amount: null,
 	desc: '',

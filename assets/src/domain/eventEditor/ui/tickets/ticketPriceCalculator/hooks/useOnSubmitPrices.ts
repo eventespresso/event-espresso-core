@@ -1,77 +1,95 @@
-import { difference } from 'ramda';
 import { useCallback } from 'react';
 
-import { FnCallback, TpcFormData } from '../types';
+import parsedAmount from '@appServices/utilities/money/parsedAmount';
+import toBoolean from '@appServices/utilities/converters/toBoolean';
 import { EntityId } from '@appServices/apollo/types';
-import { Price } from '../../../../services/apollo/types';
-import { cloneAndNormalizePrice } from '../../../../../shared/entities/prices/predicates/updatePredicates';
-import toBoolean from '../../../../../../application/services/utilities/converters/toBoolean';
-import parsedAmount from '../../../../../../application/services/utilities/money/parsedAmount';
-import { ModalSubmit } from '../../../../../../application/ui/layout/formModal';
+import { useRelations } from '@appServices/apollo/relations';
+import { cloneAndNormalizePrice } from '@sharedEntities/prices/predicates/updatePredicates';
+import { copyTicketFields } from '@sharedEntities/tickets/predicates/updatePredicates';
+import { isTicketInputField } from '@sharedEntities/tickets/predicates/selectionPredicates';
+import { useDataState } from '../data';
+import { shouldUpdateTicket } from '../utils';
 import { useTicketMutator, usePriceMutator } from '@edtrServices/apollo/mutations';
-import { copyTicketFields } from '../../../../../shared/entities/tickets/predicates/updatePredicates';
-import { isTicketInputField } from '../../../../../shared/entities/tickets/predicates/selectionPredicates';
+import { useTicketItem } from '@edtrServices/apollo/queries';
 
-const useOnSubmitPrices = (existingPrices: Price[]): FnCallback => {
-	const { createEntity, updateEntity, deleteEntity } = usePriceMutator();
+const useOnSubmitPrices = (): VoidFunction => {
+	const { deletedPrices: deletedPriceIds, prices, ticket } = useDataState();
+
+	const { createEntity: createPrice, deleteEntity: deletePrice, updateEntity: updatePrice } = usePriceMutator();
 	const { updateEntity: updateTicket } = useTicketMutator();
-	const existingPriceIds = existingPrices.map(({ id }) => id);
+	const existingTicket = useTicketItem({ id: ticket.id });
+	const { getRelations } = useRelations();
 
 	// Async to make sure that prices are handled before updating the ticket.
-	return useCallback<ModalSubmit>(
-		async ({ ticket, prices = [] }: TpcFormData): Promise<void> => {
-			const updatedPriceIds: EntityId[] = [];
-			const createdPriceIds: EntityId[] = [];
+	return useCallback(async () => {
+		const relatedPriceIds: EntityId[] = [];
 
-			// make sure to complete all price operations before updating the ticket
-			await Promise.all(
-				// covert the price operations into promises
-				prices.map((price) => {
-					if (price.id === 'NEW_PRICE') {
-						return Promise.resolve(price);
-					}
-					const id = price.id;
-					const normalizedPriceFields = cloneAndNormalizePrice(price);
-					// if it's a newly added price
-					if (!id) {
-						return new Promise((resolve, onError) => {
-							const onCompleted = ({ createEspressoPrice: { espressoPrice: price } }): void => {
-								createdPriceIds.push(price.id);
-								resolve(price);
-							};
-							createEntity({ ...normalizedPriceFields }, { onCompleted, onError });
-						});
-					}
+		// make sure to complete all price mutatons before updating the ticket
+		await Promise.all(
+			// convert the price mutatons into promises
+			prices.map(({ isNew, isModified, ...price }) => {
+				// if it's not new or modified, no need to do anything
+				if (!(isNew || isModified)) {
+					// retain the existing relation
+					relatedPriceIds.push(price.id);
+					return Promise.resolve(price);
+				}
+				const normalizedPriceFields = cloneAndNormalizePrice(price);
+				// if it's a newly added price
+				if (isNew) {
 					return new Promise((resolve, onError) => {
-						const onCompleted = ({ updateEspressoPrice: { espressoPrice: price } }): void => {
-							updatedPriceIds.push(price.id);
+						const onCompleted = ({ createEspressoPrice: { espressoPrice: price } }): void => {
+							relatedPriceIds.push(price.id);
 							resolve(price);
 						};
-						updateEntity({ id, ...normalizedPriceFields }, { onCompleted, onError });
+						createPrice({ ...normalizedPriceFields }, { onCompleted, onError });
 					});
-				})
-			);
+				}
+				// it's surely an existing price that's been modified
+				return new Promise((resolve, onError) => {
+					const onCompleted = ({ updateEspressoPrice: { espressoPrice: price } }): void => {
+						relatedPriceIds.push(price.id);
+						resolve(price);
+					};
+					updatePrice({ id: price.id, ...normalizedPriceFields }, { onCompleted, onError });
+				});
+			})
+		);
 
-			// the unlucky prices.
-			const deletedPriceIds = difference<EntityId>(existingPriceIds, updatedPriceIds);
-			// Delete all unlucky ones
-			await Promise.all(
-				deletedPriceIds.map((id) => {
-					return new Promise((onCompleted, onError) => deleteEntity({ id }, { onCompleted, onError }));
-				})
-			);
+		// Delete all unlucky ones
+		await Promise.all(
+			deletedPriceIds.map((id) => {
+				return new Promise((onCompleted, onError) => deletePrice({ id }, { onCompleted, onError }));
+			})
+		);
 
-			const normalizedTicketFields = {
-				...copyTicketFields(ticket, isTicketInputField),
-				id: ticket.id,
-				price: parsedAmount(ticket.price || '0'),
-				reverseCalculate: toBoolean(ticket.reverseCalculate),
-			};
-			// Finally update the ticket price relation
-			updateTicket({ ...normalizedTicketFields, prices: [...updatedPriceIds, ...createdPriceIds] });
-		},
-		[existingPriceIds, createEntity, updateEntity, deleteEntity, updateTicket]
-	);
+		const normalizedTicketFields = {
+			...copyTicketFields(ticket, isTicketInputField),
+			id: ticket.id,
+			price: parsedAmount(ticket.price || '0'),
+			reverseCalculate: toBoolean(ticket.reverseCalculate),
+		};
+		// Finally update the ticket and its price relation, if needed
+		const ticketNeedsUpdate = shouldUpdateTicket({
+			existingTicket,
+			getRelations,
+			newTicket: ticket,
+			relatedPriceIds,
+		});
+		if (ticketNeedsUpdate) {
+			updateTicket({ ...normalizedTicketFields, prices: relatedPriceIds });
+		}
+	}, [
+		createPrice,
+		deletePrice,
+		deletedPriceIds,
+		existingTicket,
+		getRelations,
+		prices,
+		ticket,
+		updatePrice,
+		updateTicket,
+	]);
 };
 
 export default useOnSubmitPrices;

@@ -1,6 +1,5 @@
-import { TpcPriceModifier } from './types';
-import { Price } from '../../../services/apollo/types';
-import usePriceTypeForPrice from '../../../services/apollo/queries/priceTypes/usePriceTypeForPrice';
+import { TpcPriceModifier } from '../types';
+import { Price, usePriceTypeForPrice } from '@edtrServices/apollo';
 
 const usePriceModifier = (price: Price): TpcPriceModifier => {
 	const priceType = usePriceTypeForPrice(price.id);

@@ -1,33 +1,34 @@
-// @ts-nocheck
 import React, { useCallback } from 'react';
 import { __ } from '@wordpress/i18n';
+import { v4 as uuidv4 } from 'uuid';
 
 import AddPriceModifierButton from './AddPriceModifierButton';
-import { AddPriceModifierDataProps } from '../types';
-import usePriceTypeForPrice from '../../../../services/apollo/queries/priceTypes/usePriceTypeForPrice';
-import { Price } from '../../../../services/apollo/types';
+import { usePriceTypeForPrice } from '@edtrServices/apollo/queries';
+import { PriceModifierProps, TpcPriceModifier } from '../types';
+import { usePriceModifier } from '../hooks';
+import defaultPrice from '../defaultPriceModifier';
+import { useDataState } from '../data';
 
-const AddPriceModifierButtonData = ({ name, price, push, reset, sort }: AddPriceModifierDataProps) => {
-	const baseType = usePriceTypeForPrice(price.id);
+const AddPriceModifierButtonData: React.FC<Partial<PriceModifierProps>> = ({ index }) => {
+	const defaultPriceModifier = usePriceModifier(defaultPrice);
+	const baseType = usePriceTypeForPrice(defaultPriceModifier.id);
+
+	const { addPrice } = useDataState();
+
 	const addPriceModifier = useCallback(() => {
-		if (Number(price.amount)) {
-			const newPrice: Price = {
-				...price,
-				id: '',
-				isBasePrice: baseType.isBasePrice,
-				isDiscount: baseType.isDiscount,
-				isPercent: baseType.isPercent,
-				isTax: baseType.isTax,
-				order: baseType.order,
-			};
-			push(newPrice);
-			reset(name);
-			sort();
-		} else {
-			alert(__('Please enter an amount for the new price modifier.'));
-			return;
-		}
-	}, [price.name, price.priceType, price.desc, price.amount]);
+		const newPrice: TpcPriceModifier = {
+			...defaultPriceModifier,
+			id: uuidv4(),
+			isBasePrice: baseType.isBasePrice,
+			isDiscount: baseType.isDiscount,
+			isPercent: baseType.isPercent,
+			isTax: baseType.isTax,
+			order: baseType.order,
+			isNew: true,
+		};
+
+		addPrice(newPrice, index + 1);
+	}, [index]);
 	return <AddPriceModifierButton addPriceModifier={addPriceModifier} />;
 };
 export default AddPriceModifierButtonData;

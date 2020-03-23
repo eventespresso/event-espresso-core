@@ -1,35 +1,31 @@
 import React from 'react';
-import { Field } from 'react-final-form';
+
+import { PriceModifierProps } from '../types';
+import { PriceField } from '../fields';
+import { usePriceTypes } from '@edtrServices/apollo/queries';
+import { getPriceModifiers } from '@sharedEntities/priceTypes/predicates/selectionPredicates';
 
 // just temporary
 import styles from '../inlineStyles';
-import { Price, PriceType } from '../../../../services/apollo/types';
-import usePriceTypeForPrice from '../../../../services/apollo/queries/priceTypes/usePriceTypeForPrice';
 
-interface PriceTypeInputProps {
-	name: string;
-	price: Price;
-	priceTypes: PriceType[];
-	modifierOptions: PriceType[];
-}
-
-const PriceTypeInput: React.FC<PriceTypeInputProps> = ({ name, price, priceTypes, modifierOptions }) => {
-	const relatedPriceType = usePriceTypeForPrice(price.id);
+const PriceTypeInput: React.FC<PriceModifierProps> = ({ price }) => {
+	const priceTypes = usePriceTypes();
+	const modifierOptions = getPriceModifiers(priceTypes);
 	const options = price.isBasePrice ? priceTypes : modifierOptions;
 	return (
-		<Field
+		<PriceField
+			field='priceType'
+			price={price}
 			component={'select'}
-			initialValue={relatedPriceType.id}
-			name={`${name}.priceType`}
 			disabled={price.isBasePrice}
 			style={styles.input}
 		>
-			{options.map((option: PriceType) => (
+			{options.map((option) => (
 				<option key={option.id} value={option.id}>
 					{option.name}
 				</option>
 			))}
-		</Field>
+		</PriceField>
 	);
 };
 

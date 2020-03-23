@@ -1,19 +1,20 @@
 import React from 'react';
-import { Field } from 'react-final-form';
 import { DownCircleOutlined, UpCircleOutlined } from '@ant-design/icons';
 import { __ } from '@wordpress/i18n';
 
 import { EspressoButton } from '@application/ui/input';
-import { TpcFormElement } from './types';
-import { useMoneyDisplay } from '../../../../../application/services/utilities/money';
+import { useMoneyDisplay, parsedAmount } from '@appServices/utilities/money';
+import { useDataState } from '../data';
+import { TicketPriceField } from '../fields';
 
 // just temporary
-import styles from './inlineStyles';
+import styles from '../inlineStyles';
 
-const TicketPriceTotalRow: React.FC<TpcFormElement> = ({ ticket, reverseCalculate, toggleCalcDir }) => {
+const TicketPriceTotalRow: React.FC = () => {
 	const { afterAmount, beforeAmount, formatAmount } = useMoneyDisplay();
+	const { reverseCalculate, toggleCalcDir } = useDataState();
 	const calcDirIcon = reverseCalculate ? <UpCircleOutlined /> : <DownCircleOutlined />;
-	const reverseCalc = reverseCalculate ? 'true' : 'false';
+
 	return (
 		<tr>
 			<th colSpan={4} style={styles.total}>
@@ -21,23 +22,15 @@ const TicketPriceTotalRow: React.FC<TpcFormElement> = ({ ticket, reverseCalculat
 			</th>
 			<th style={{ ...styles.colWidth15, ...styles.amount }}>
 				<div style={styles.money}>
-					<Field type={'hidden'} component={'input'} initialValue={ticket.id} name={'ticket.id'} />
 					<div style={styles.b4}>{beforeAmount}</div>
 					<div style={styles.currency}>
-						<Field
-							type={'hidden'}
-							component={'input'}
-							initialValue={reverseCalc}
-							name={'ticket.reverseCalculate'}
-						/>
-						<Field
+						<TicketPriceField
+							component='input'
 							type={'number'}
-							component={'input'}
-							initialValue={ticket.price}
-							name={'ticket.price'}
 							style={styles.number}
 							disabled={!reverseCalculate}
-							format={formatAmount}
+							format={(price) => formatAmount(price) || ''}
+							parse={(price) => parsedAmount(price)}
 							formatOnBlur
 						/>
 					</div>

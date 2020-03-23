@@ -75,7 +75,7 @@ export const updatePriceAmountForPrice = <T extends Price>({ prices, guid, amoun
  * @return {Price} price
  */
 export const cloneAndNormalizePrice = <T extends Price>(price: T): T => {
-	const { ...priceFields } = copyPriceFields(price, isPriceInputField);
+	const priceFields = copyPriceFields(price, isPriceInputField);
 	return {
 		...priceFields,
 		amount: parsedAmount(price.amount || '0'),

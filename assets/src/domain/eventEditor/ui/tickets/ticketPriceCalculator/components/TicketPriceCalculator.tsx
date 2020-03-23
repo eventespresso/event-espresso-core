@@ -1,20 +1,19 @@
 import React from 'react';
-import { H2, HTMLTable } from '@blueprintjs/core';
+import { HTMLTable } from '@blueprintjs/core';
 import { __ } from '@wordpress/i18n';
 
+import { useDataState } from '../data';
+import { DebugInfo } from '@appDisplay/index';
 import TicketPriceModifierRowIterator from './TicketPriceModifierRowIterator';
 import TicketPriceTotalRow from './TicketPriceTotalRow';
-import { TpcForm } from './types';
+import styles from '../inlineStyles';
+import { useInitStateListeners } from '../stateListeners';
 
-// just temporary
-import styles from './inlineStyles';
+const TicketPriceCalculator: React.FC = () => {
+	// initialize state listeners
+	useInitStateListeners();
 
-const TicketPriceCalculatorForm: React.FC<TpcForm> = ({ form, values: { ticket } }) => {
-	if (!ticket) {
-		return null;
-	}
-	const reverseCalculate = Boolean(ticket.reverseCalculate);
-	const toggleCalcDir = (): void => form.mutators.toggleCalcDir();
+	const dataState = useDataState();
 	return (
 		<>
 			<div style={styles.div}>
@@ -29,20 +28,13 @@ const TicketPriceCalculatorForm: React.FC<TpcForm> = ({ form, values: { ticket }
 							<th style={{ ...styles.colWidth7h, ...styles.actions }}>{__('Actions')}</th>
 						</tr>
 					</thead>
-					<tbody>
-						<TicketPriceModifierRowIterator reverseCalculate={reverseCalculate} />
-					</tbody>
-					<tfoot>
-						<TicketPriceTotalRow
-							reverseCalculate={reverseCalculate}
-							ticket={ticket}
-							toggleCalcDir={toggleCalcDir}
-						/>
-					</tfoot>
+					<tbody>{<TicketPriceModifierRowIterator />}</tbody>
+					<tfoot>{<TicketPriceTotalRow />}</tfoot>
 				</HTMLTable>
 			</div>
+			<DebugInfo data={dataState} />
 		</>
 	);
 };
 
-export default TicketPriceCalculatorForm;
+export default TicketPriceCalculator;

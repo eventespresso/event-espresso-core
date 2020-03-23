@@ -1,17 +1,10 @@
 import React from 'react';
-import { Field } from 'react-final-form';
 
-import { PriceInputProps } from '../types';
+import { PriceModifierProps } from '../types';
+import { PriceField } from '../fields';
 
-const PriceIdInput: React.FC<PriceInputProps> = ({ name, price }) => {
-	return (
-		<>
-			<Field type={'hidden'} component={'input'} initialValue={price.id} name={`${name}.id`} />
-			<Field type={'hidden'} component={'input'} initialValue={price.isDiscount} name={`${name}.isDiscount`} />
-			<Field type={'hidden'} component={'input'} initialValue={price.isPercent} name={`${name}.isPercent`} />
-			<Field type={'text'} component={'input'} initialValue={price.dbId} name={`${name}.dbId`} disabled />
-		</>
-	);
+const PriceIdInput: React.FC<PriceModifierProps> = ({ price }) => {
+	return <PriceField field='dbId' price={price} type={'text'} component={'input'} disabled />;
 };
 
 export default PriceIdInput;

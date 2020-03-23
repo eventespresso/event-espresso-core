@@ -1,18 +1,19 @@
 import React from 'react';
-import { Field } from 'react-final-form';
 import { __ } from '@wordpress/i18n';
+
+import { PriceModifierProps } from '../types';
+import { PriceField } from '../fields';
 
 // just temporary
 import styles from '../inlineStyles';
-import { PriceInputProps } from '../types';
 
-const PriceNameInput: React.FC<PriceInputProps> = ({ name, price }) => {
+const PriceNameInput: React.FC<PriceModifierProps> = ({ price }) => {
 	return (
-		<Field
+		<PriceField
+			field='name'
+			price={price}
 			type={'text'}
 			component={'input'}
-			initialValue={price.name}
-			name={`${name}.name`}
 			placeholder={__('label...')}
 			style={styles.input}
 		/>

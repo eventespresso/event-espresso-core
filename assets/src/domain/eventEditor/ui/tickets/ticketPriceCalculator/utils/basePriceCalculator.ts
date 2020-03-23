@@ -1,12 +1,6 @@
-import { Price } from '../../../../services/apollo/types';
-import parsedAmount from '../../../../../../application/services/utilities/money/parsedAmount';
+import { Price } from '@edtrServices/apollo';
+import { parsedAmount } from '@appServices/utilities/money';
 
-/**
- * @function
- * @param {number} currentTotal
- * @param {Price} formData for price
- * @return {number} calculations based on price modifier
- */
 const basePriceCalculator = (currentTotal: number, { isPercent, isDiscount, amount }: Price): number => {
 	amount = parsedAmount(amount || 0);
 	const total = parsedAmount(currentTotal || 0);

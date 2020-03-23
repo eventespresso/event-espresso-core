@@ -1,16 +1,11 @@
 import { useMemo } from 'react';
-import { useRelations, RelationEntity } from '@appServices/apollo/relations';
+import { useRelations } from '@appServices/apollo/relations';
 import { entitiesWithGuIdInArray } from '@sharedServices/predicates';
 import useTickets from './useTickets';
 import { Ticket } from '../../types';
-import { EntityId } from '@appServices/apollo/types';
+import { RelatedEntitiesHook } from '../types';
 
-interface RelatedTicketsProps {
-	entity: Exclude<RelationEntity, 'tickets'>;
-	entityId: EntityId;
-}
-
-const useRelatedTickets = ({ entity, entityId }: RelatedTicketsProps): Array<Ticket> => {
+const useRelatedTickets: RelatedEntitiesHook<Ticket, 'tickets'> = ({ entity, entityId }) => {
 	const tickets = useTickets();
 	const { getRelations } = useRelations();
 	const relatedTicketIds = getRelations({

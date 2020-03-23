@@ -1,14 +1,16 @@
 import React from 'react';
 import { DeleteOutlined } from '@ant-design/icons';
+
 import { EspressoButton } from '@application/ui/input';
+import { PriceModifierProps } from '../types';
+import { useDataState } from '../data';
 
-type DeletePriceModifierButtonProps = {
-	index: number;
-	remove: (index: number) => void;
-};
+const DeletePriceModifierButton: React.FC<PriceModifierProps> = ({ price }) => {
+	const { deletePrice } = useDataState();
 
-const DeletePriceModifierButton: React.FC<DeletePriceModifierButtonProps> = ({ index, remove }) => {
-	return <EspressoButton key='delete' icon={<DeleteOutlined />} onClick={(): void => remove(index)} />;
+	const onClick = () => deletePrice(price.id, price.isNew);
+
+	return <EspressoButton icon={<DeleteOutlined />} onClick={onClick} />;
 };
 
 export default DeletePriceModifierButton;

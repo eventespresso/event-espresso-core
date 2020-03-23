@@ -1,16 +1,11 @@
 import { useMemo } from 'react';
-import { useRelations, RelationEntity } from '@appServices/apollo/relations';
+import { useRelations } from '@appServices/apollo/relations';
 import { entitiesWithGuIdInArray } from '@sharedServices/predicates';
 import useDatetimes from './useDatetimes';
 import { Datetime } from '../../types';
-import { EntityId } from '@appServices/apollo/types';
+import { RelatedEntitiesHook } from '../types';
 
-interface RelatedDatetimesProps {
-	entity: Exclude<RelationEntity, 'datetimes'>;
-	entityId: EntityId;
-}
-
-const useRelatedDatetimes = ({ entity, entityId }: RelatedDatetimesProps): Array<Datetime> => {
+const useRelatedDatetimes: RelatedEntitiesHook<Datetime, 'datetimes'> = ({ entity, entityId }) => {
 	const datetimes = useDatetimes();
 	const { getRelations } = useRelations();
 	const relatedDatetimeIds = getRelations({

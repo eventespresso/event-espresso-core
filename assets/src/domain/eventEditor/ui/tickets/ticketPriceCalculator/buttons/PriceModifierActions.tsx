@@ -1,24 +1,27 @@
-import React from 'react';
+import React, { CSSProperties } from 'react';
 
 import AddPriceModifierButton from './AddPriceModifierButtonData';
 import DeletePriceModifierButton from './DeletePriceModifierButton';
-import { TpcModifierFormRowProps } from '../types';
+import { PriceModifierProps } from '../types';
 
-const PriceModifierActions: React.FC<TpcModifierFormRowProps> = ({
-	index,
-	name,
-	price,
-	fields: { push, remove, reset, sort },
-}) => {
+// just temporary
+const style: CSSProperties = {
+	display: 'flex',
+	flexDirection: 'row',
+};
+
+const PriceModifierActions: React.FC<PriceModifierProps> = ({ index, price }) => {
 	const actions = [];
-	const key = `${price.id}-${index}`;
-	if (price.id === 'NEW_PRICE') {
-		actions.push(
-			<AddPriceModifierButton key={key} name={name} price={price} push={push} reset={reset} sort={sort} />
-		);
-	} else if (!price.isBasePrice) {
-		actions.push(<DeletePriceModifierButton key={key} index={index} remove={remove} />);
+
+	actions.push(<AddPriceModifierButton key={'add'} index={index} />);
+
+	if (!price.isBasePrice) {
+		actions.push(<DeletePriceModifierButton key={'delete'} price={price} />);
 	}
-	return <>{actions}</>;
+	return (
+		<div className='modifier-actions' style={style}>
+			{actions}
+		</div>
+	);
 };
 export default PriceModifierActions;

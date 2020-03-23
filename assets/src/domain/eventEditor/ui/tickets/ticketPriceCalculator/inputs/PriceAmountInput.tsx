@@ -1,20 +1,17 @@
 import React from 'react';
-import { Field } from 'react-final-form';
 import { __ } from '@wordpress/i18n';
+
+import { PriceModifierProps } from '../types';
+import { PriceField } from '../fields';
+import { useMoneyDisplay, parsedAmount } from '@appServices/utilities/money';
+import { useDataState } from '../data';
 
 // just temporary
 import styles from '../inlineStyles';
-import { Price } from '../../../../services/apollo/types';
-import { useMoneyDisplay } from '../../../../../../application/services/utilities/money';
 const percentSign = '%';
 
-interface PriceAmountInputProps {
-	name: string;
-	price: Price;
-	reverseCalculate: boolean;
-}
-
-const PriceAmountInput: React.FC<PriceAmountInputProps> = ({ name, price, reverseCalculate }) => {
+const PriceAmountInput: React.FC<PriceModifierProps> = ({ price }) => {
+	const { reverseCalculate } = useDataState();
 	const { currency, formatAmount } = useMoneyDisplay();
 	const sign = price.isPercent ? percentSign : currency.sign;
 	let b4Price = '';
@@ -31,15 +28,19 @@ const PriceAmountInput: React.FC<PriceAmountInputProps> = ({ name, price, revers
 		<div style={styles.money}>
 			<div style={styles.b4}>{b4Price}</div>
 			<div style={styles.currency}>
-				<Field
+				<PriceField
+					field='amount'
+					price={price}
 					type={'number'}
 					component={'input'}
-					initialValue={price.amount}
-					name={`${name}.amount`}
 					placeholder={__('amount...')}
 					style={styles.number}
 					disabled={reverseCalculate && price.isBasePrice}
-					format={formatAmount}
+					format={(amount) => formatAmount(amount) || ''}
+					parse={(amount) => {
+						const parsedValue = parsedAmount(amount);
+						return isNaN(parsedValue) ? null : parsedValue;
+					}}
 					formatOnBlur
 				/>
 			</div>

@@ -51,25 +51,22 @@ const testCases = [
 		result: '-1',
 	},
 	{
-		desc: 'returns NaN when amount is null',
+		desc: 'returns empty string when amount is null',
 		decimalPlaces: 3,
 		amount: null,
-		testFn: (val: any): boolean => isNaN(val),
-		result: true,
+		result: '',
 	},
 	{
-		desc: 'returns NaN when amount is empty string',
+		desc: 'returns empty string when amount is empty string',
 		decimalPlaces: 3,
 		amount: '',
-		testFn: (val: any): boolean => isNaN(val),
-		result: true,
+		result: '',
 	},
 	{
-		desc: 'returns NaN when amount is undefined',
+		desc: 'returns empty string when amount is undefined',
 		decimalPlaces: 3,
 		amount: undefined,
-		testFn: (val: any): boolean => isNaN(val),
-		result: true,
+		result: '',
 	},
 ];
 

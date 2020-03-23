@@ -15,7 +15,7 @@ describe('useFormModalManager', () => {
 		isOpen: true,
 	};
 	const modalId3: EditorState = {
-		editorId: 'ticketPriceCalculator',
+		editorId: 'editDatetime',
 		entityId: 'randomEntityId3',
 		isOpen: true,
 	};
@@ -70,7 +70,7 @@ describe('useFormModalManager', () => {
 		currentlyOpenEditor = result.current.currentlyOpenEditor();
 		expect(currentlyOpenEditor).toEqual(modalId3);
 		act(() => {
-			closeEditor('editDatetime');
+			closeEditor('addTicket');
 		});
 		currentlyOpenEditor = result.current.currentlyOpenEditor();
 		expect(currentlyOpenEditor).toEqual(modalId3);
