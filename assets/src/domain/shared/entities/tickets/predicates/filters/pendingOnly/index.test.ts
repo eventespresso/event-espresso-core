@@ -10,7 +10,7 @@ describe('pendingOnly', () => {
 	it('should return an empty array if tickets started in the past', () => {
 		const updatedTickets = tickets.map((ticket) => {
 			const startDate = formatISO(new Date(2008, 8, 18, 19, 0, 52));
-			return { ...ticket, startDate };
+			return { ...ticket, startDate, isPending: false };
 		});
 		const filteredTickets = pendingOnly(updatedTickets);
 		expect(filteredTickets).toEqual([]);

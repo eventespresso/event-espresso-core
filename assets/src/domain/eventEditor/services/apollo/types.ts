@@ -76,7 +76,10 @@ export interface Ticket extends Entity, Trashable {
 	description: string;
 	endDate: string; // ISO string
 	isDefault: boolean;
+	isExpired: boolean;
 	isFree: boolean;
+	isOnSale: boolean;
+	isPending: boolean;
 	isRequired: boolean;
 	isSoldOut: boolean;
 	isTaxable: boolean;

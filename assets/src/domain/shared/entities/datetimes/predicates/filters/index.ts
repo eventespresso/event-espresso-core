@@ -12,50 +12,49 @@ import expiredOnly from './expiredOnly';
 import nextActiveUpcomingOnly from './nextActiveUpcomingOnly';
 import recentlyExpiredOnly from './recentlyExpiredOnly';
 import soldOutOnly from './soldOutOnly';
-import trashedOnly from './trashedOnly';
 import upcomingOnly from './upcomingOnly';
+import notTrashed from '../../../../services/predicates/filters/notTrashed';
+import trashedOnly from '../../../../services/predicates/filters/trashedOnly';
+
+import { FilterDates } from './types';
 
 export const now = parseISO(formatISO(new Date()));
-
-interface FilterDates {
-	dates: Datetime[];
-	show: DatetimesToShow;
-}
 
 /**
  * reduces dates array based on value of the "showDates" filter
  */
 const filters = ({ dates, show = DatetimesToShow.activeUpcoming }: FilterDates): Datetime[] => {
+	const noTrashedDates = notTrashed(dates);
 	switch (show) {
 		case DatetimesToShow.above50Capacity:
-			return aboveCapacity({ dates, capacity: 50 });
+			return aboveCapacity({ dates: noTrashedDates, capacity: 50 });
 		case DatetimesToShow.above75Capacity:
-			return aboveCapacity({ dates, capacity: 75 });
+			return aboveCapacity({ dates: noTrashedDates, capacity: 75 });
 		case DatetimesToShow.above90Capacity:
-			return aboveCapacity({ dates, capacity: 90 });
+			return aboveCapacity({ dates: noTrashedDates, capacity: 90 });
 		case DatetimesToShow.activeOnly:
-			return activeOnly(dates);
+			return activeOnly(noTrashedDates);
 		case DatetimesToShow.activeUpcoming:
-			return activeUpcoming(dates);
+			return activeUpcoming(noTrashedDates);
 		case DatetimesToShow.all:
-			return allDates(dates);
+			return allDates(noTrashedDates);
 		case DatetimesToShow.below50Capacity:
-			return belowCapacity({ dates, capacity: 50 });
+			return belowCapacity({ dates: noTrashedDates, capacity: 50 });
 		case DatetimesToShow.expiredOnly:
-			return expiredOnly(dates);
+			return expiredOnly(noTrashedDates);
 		case DatetimesToShow.nextActiveUpcomingOnly:
-			return nextActiveUpcomingOnly(dates);
+			return nextActiveUpcomingOnly(noTrashedDates);
 		case DatetimesToShow.recentlyExpiredOnly:
-			return recentlyExpiredOnly(dates);
+			return recentlyExpiredOnly(noTrashedDates);
 		case DatetimesToShow.soldOutOnly:
-			return soldOutOnly(dates);
+			return soldOutOnly(noTrashedDates);
 		case DatetimesToShow.trashedOnly:
 			return trashedOnly(dates);
 		case DatetimesToShow.upcomingOnly:
-			return upcomingOnly(dates);
+			return upcomingOnly(noTrashedDates);
+		default:
+			return noTrashedDates;
 	}
-
-	return dates;
 };
 
 export default filters;

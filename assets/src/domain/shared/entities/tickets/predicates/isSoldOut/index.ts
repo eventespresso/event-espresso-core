@@ -1,10 +1,7 @@
+import { isBooleanTrue } from '@appServices/utilities';
 import { Ticket } from '@edtrServices/apollo/types';
-import { isValidOrTrashed } from '../../../../services/predicates';
 
-const isSoldOut = (ticket: Ticket): boolean => {
-	const { quantity, sold } = ticket;
-
-	return isValidOrTrashed(ticket) && isFinite(quantity) && quantity <= sold;
-};
+const isSoldOut = (ticket: Ticket): boolean =>
+	isBooleanTrue(ticket.isSoldOut) || (isFinite(ticket.quantity) && ticket.quantity <= ticket.sold);
 
 export default isSoldOut;

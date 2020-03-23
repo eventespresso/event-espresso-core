@@ -1,6 +1,6 @@
 import { is } from 'ramda';
 
-import { Datetime } from '../../../../../eventEditor/services/apollo/types';
+import { Datetime } from '@edtrServices/apollo/types';
 
 /**
  * @param {Object} date event object

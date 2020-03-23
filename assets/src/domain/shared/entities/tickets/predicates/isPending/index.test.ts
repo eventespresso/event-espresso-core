@@ -5,20 +5,47 @@ import isPending from './index';
 import { nodes as tickets } from '../../../../../eventEditor/services/apollo/queries/tickets/test/data';
 import { now } from '../filters';
 
-describe('isPending', () => {
-	it('should return false if ticket start date is in the past', () => {
-		tickets.forEach((ticket) => {
-			const startDate = formatISO(sub('weeks', now, 1));
-			const newTicket = { ...ticket, startDate };
-			expect(isPending(newTicket)).toBe(false);
-		});
-	});
+const testCases = [
+	{
+		desc: 'returns false when ticket.isPending is false AND startDate is in the past',
+		pending: false,
+		futureStart: false,
+		result: false,
+	},
+	{
+		desc: 'returns true when ticket.isPending is false BUT startDate is in the future',
+		pending: false,
+		futureStart: true,
+		result: true,
+	},
+	{
+		desc: 'returns true when ticket.isPending is true BUT startDate is in the past',
+		pending: true,
+		futureStart: false,
+		result: true,
+	},
+	{
+		desc: 'returns true when ticket.isPending is true AND startDate is in the future',
+		pending: true,
+		futureStart: true,
+		result: true,
+	},
+];
 
-	it('should return true if ticket start date is in the future', () => {
-		tickets.forEach((ticket) => {
-			const startDate = formatISO(add('weeks', now, 1));
-			const newTicket = { ...ticket, startDate };
-			expect(isPending(newTicket)).toBe(true);
+const modifyDate = (inFuture: boolean): Date => (inFuture ? add('weeks', now, 1) : sub('weeks', now, 1));
+
+describe('isPending', () => {
+	tickets.forEach((ticket) => {
+		testCases.forEach(({ desc, pending, futureStart, result }) => {
+			const startDate = modifyDate(futureStart);
+			const newTicket = {
+				...ticket,
+				isPending: pending,
+				startDate: formatISO(startDate),
+			};
+			it(desc, () => {
+				expect(isPending(newTicket)).toBe(result);
+			});
 		});
 	});
 });

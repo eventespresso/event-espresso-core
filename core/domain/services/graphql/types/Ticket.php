@@ -103,10 +103,28 @@ class Ticket extends TypeBase
                 esc_html__('Flag indicating that this ticket is a default ticket', 'event_espresso')
             ),
             new GraphQLOutputField(
+                'isExpired',
+                'Boolean',
+                'is_expired',
+                esc_html__('Flag indicating ticket is no longer available because its available dates have expired', 'event_espresso')
+            ),
+            new GraphQLOutputField(
                 'isFree',
                 'Boolean',
                 'is_free',
                 esc_html__('Flag indicating whether the ticket is free.', 'event_espresso')
+            ),
+            new GraphQLOutputField(
+                'isOnSale',
+                'Boolean',
+                'is_on_sale',
+                esc_html__('Flag indicating ticket ticket is on sale or not', 'event_espresso')
+            ),
+            new GraphQLOutputField(
+                'isPending',
+                'Boolean',
+                'is_pending',
+                esc_html__('Flag indicating ticket is yet to go on sale or not', 'event_espresso')
             ),
             new GraphQLField(
                 'isRequired',

@@ -5,7 +5,7 @@ import { TicketFilterFn } from '../types';
 
 const allOnSaleAndPending: TicketFilterFn = (tickets) => {
 	const isOnSaleOrIsPending = anyPass([isOnSale, isPending]);
-	const onSaleAndPending = filter(isOnSaleOrIsPending)(tickets);
+	const onSaleAndPending = filter(isOnSaleOrIsPending, tickets);
 	return onSaleAndPending;
 };
 

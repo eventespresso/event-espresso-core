@@ -1,6 +1,6 @@
 import { is } from 'ramda';
 
-import { Datetime } from '../../../../../eventEditor/services/apollo/types';
+import { Datetime } from '@edtrServices/apollo/types';
 
 const validSold = ({ sold }: Datetime): boolean => {
 	return is(Number, sold);

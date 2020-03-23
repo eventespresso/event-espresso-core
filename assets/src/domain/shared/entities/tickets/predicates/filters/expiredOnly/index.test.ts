@@ -6,16 +6,10 @@ import { diff, add } from '../../../../../../../application/services/utilities/d
 import { now } from '../index';
 
 describe('expiredOnly', () => {
-	it('should return an empty array if tickets are trashed', () => {
-		const updatedTickets = tickets.map((ticket) => ({ ...ticket, isTrashed: true }));
-		const filteredTickets = expiredOnly(updatedTickets);
-		expect(filteredTickets).toEqual([]);
-	});
-
 	it('should return an empty array if tickets are not expired', () => {
 		const updatedTickets = tickets.map((ticket) => {
 			const endDate = formatISO(add('weeks', now, 1));
-			return { ...ticket, endDate };
+			return { ...ticket, endDate, isExpired: false };
 		});
 		const filteredTickets = expiredOnly(updatedTickets);
 		expect(filteredTickets).toEqual([]);
