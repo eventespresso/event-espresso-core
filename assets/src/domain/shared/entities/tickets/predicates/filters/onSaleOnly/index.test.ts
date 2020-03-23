@@ -4,7 +4,7 @@ import { pipe } from 'ramda';
 import onSaleOnly from './index';
 import isOnSale from '../../isOnSale';
 import { nodes as tickets } from '../../../../../../eventEditor/services/apollo/queries/tickets/test/data';
-import { now } from '../';
+import { now } from '@sharedServices/utils/dateAndTime';
 
 describe('onSaleOnly', () => {
 	it('should return an empty array if tickets are not on sale', () => {

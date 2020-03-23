@@ -4,7 +4,7 @@ import { pipe } from 'ramda';
 import pendingOnly from './index';
 import isPending from '../../isPending';
 import { nodes as tickets } from '../../../../../../eventEditor/services/apollo/queries/tickets/test/data';
-import { now } from '../index';
+import { now } from '@sharedServices/utils/dateAndTime';
 
 describe('pendingOnly', () => {
 	it('should return an empty array if tickets started in the past', () => {

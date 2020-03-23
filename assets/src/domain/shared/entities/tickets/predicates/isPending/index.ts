@@ -1,7 +1,7 @@
 import { parseISO } from 'date-fns';
 
 import { diff, isBooleanTrue } from '@appServices/utilities';
-import { now } from '../filters';
+import { now } from '@sharedServices/utils/dateAndTime';
 import { Ticket } from '@edtrServices/apollo/types';
 
 /**
