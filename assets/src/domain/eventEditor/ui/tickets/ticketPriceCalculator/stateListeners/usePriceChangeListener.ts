@@ -5,7 +5,7 @@ import { useDataState } from '../data';
 import { StateChangeListenerHook } from './types';
 
 // the flags that change when priceType is changed
-const pirceBooleanFlags = ['isDiscount', 'isPercent', 'isTax'];
+const priceBooleanFlags = ['isDiscount', 'isPercent', 'isTax'];
 
 const usePriceChangeListener: StateChangeListenerHook = (calculatePrice) => {
 	const { prices } = useDataState();
@@ -16,10 +16,10 @@ const usePriceChangeListener: StateChangeListenerHook = (calculatePrice) => {
 		// To avoid triggering the change on every render
 		// collect all the prices (excluding empty/zero)
 		// convert to JSON to only trigger when the value changes
-		const priceAmounts = JSON.stringify(prices.map((price) => price.amount).filter(Boolean));
-		const booleanFlags = JSON.stringify(prices.map((price) => pick(pirceBooleanFlags, price)));
-		setPriceAmountsStr(priceAmounts);
-		setBooleanFlags(booleanFlags);
+		const newPriceAmountsStr = JSON.stringify(prices.map((price) => price.amount).filter(Boolean));
+		const newBooleanFlagsStr = JSON.stringify(prices.map((price) => pick(priceBooleanFlags, price)));
+		setPriceAmountsStr(newPriceAmountsStr);
+		setBooleanFlags(newBooleanFlagsStr);
 	}, [prices]);
 	// Because of the deps, it will run only when price amount or priceType changes
 	useEffect(() => {
