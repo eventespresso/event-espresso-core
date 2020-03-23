@@ -26,7 +26,7 @@ const usePriceTypeChangeListener: StateChangeListenerHook = () => {
 		const newPriceTypesStr = JSON.stringify(prices.map((price) => price.priceType));
 		setPriceTypesStr(newPriceTypesStr);
 	}, [prices]);
-	// Because of the deps, it will run only when priceTypes changes
+	// Because of the deps, it will run only when priceTypes change
 	useEffect(() => {
 		const newPriceTypeMapping = prices.reduce((acc, price) => {
 			return assocPath([price.id], price.priceType, acc);
