@@ -53,7 +53,7 @@ const useDatesListFilterBar = (): DatesListFilterBarCallback => {
 		registerFilterBarItem('sortBy', ({ filterState }) => {
 			const { sortBy, setSortBy } = filterState;
 			return (
-				<div className='ee-dates-sort-by-filter ee-filter-bar-filter'>
+				<div className='ee-filter-bar__select'>
 					<SortByControl sortBy={sortBy} setSortBy={setSortBy} />
 				</div>
 			);
