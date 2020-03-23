@@ -3,7 +3,7 @@ import { __ } from '@wordpress/i18n';
 
 import { PriceModifierProps } from '../types';
 import { PriceField } from '../fields';
-import { useMoneyDisplay } from '@appServices/utilities/money';
+import { useMoneyDisplay, parsedAmount } from '@appServices/utilities/money';
 import { useDataState } from '../data';
 
 // just temporary
@@ -36,7 +36,11 @@ const PriceAmountInput: React.FC<PriceModifierProps> = ({ price }) => {
 					placeholder={__('amount...')}
 					style={styles.number}
 					disabled={reverseCalculate && price.isBasePrice}
-					format={(amount: unknown) => formatAmount(amount as number) || ''}
+					format={(amount) => formatAmount(amount) || ''}
+					parse={(amount) => {
+						const parsedValue = parsedAmount(amount);
+						return isNaN(parsedValue) ? null : parsedValue;
+					}}
 					formatOnBlur
 				/>
 			</div>
