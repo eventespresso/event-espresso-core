@@ -1,16 +1,11 @@
 import { useMemo } from 'react';
-import { useRelations, RelationEntity } from '@appServices/apollo/relations';
+import { useRelations } from '@appServices/apollo/relations';
 import { entitiesWithGuIdInArray } from '@sharedServices/predicates';
 import usePrices from './usePrices';
 import { Price } from '../../types';
-import { EntityId } from '@appServices/apollo/types';
+import { RelatedEntitiesHook } from '../types';
 
-interface RelatedPricesProps {
-	entity: Exclude<RelationEntity, 'prices'>;
-	entityId: EntityId;
-}
-
-const useRelatedPrices = ({ entity, entityId }: RelatedPricesProps): Array<Price> => {
+const useRelatedPrices: RelatedEntitiesHook<Price, 'prices'> = ({ entity, entityId }) => {
 	const prices = usePrices();
 	const { getRelations } = useRelations();
 	const relatedPriceIds = getRelations({
