@@ -13,7 +13,6 @@ const StatusControl: React.FC<StatusControlProps> = React.memo(({ status, setSta
 	return (
 		<SelectInput
 			label={__('status')}
-			className='espresso-date-list-filter-bar-show-select'
 			value={status}
 			options={[
 				{

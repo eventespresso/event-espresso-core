@@ -14,7 +14,6 @@ const SalesControl: React.FC<StatusControlProps> = React.memo(({ isChained, sale
 	return (
 		<SelectInput
 			label={__('sales')}
-			className='espresso-date-list-filter-bar-show-select'
 			value={sales}
 			options={[
 				{

@@ -39,11 +39,11 @@ export enum TicketsSales {
 
 export enum TicketsStatus {
 	all = 'all',
-	trashedOnly = 'trashed-only',
 	expiredOnly = 'expired-only',
 	nextOnSaleOrPendingOnly = 'next-on-sale-or-pending-only',
 	onSaleAndPending = 'on-sale-and-pending',
 	onSaleOnly = 'on-sale-only',
 	pendingOnly = 'pending-only',
 	soldOutOnly = 'sold-out-only',
+	trashedOnly = 'trashed-only',
 }
