@@ -1,9 +1,9 @@
 import React from 'react';
 
 import { ContextProvider } from './ContextProvider';
-import { BaseProps } from '../types';
+import { WithContextProps } from './types';
 
-const withContext = (Component: React.ComponentType, props: BaseProps) => {
+const withContext = (Component: React.ComponentType, props: WithContextProps) => {
 	return (
 		<ContextProvider {...props}>
 			<Component />

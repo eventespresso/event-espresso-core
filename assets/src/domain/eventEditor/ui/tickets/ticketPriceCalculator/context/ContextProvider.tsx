@@ -7,10 +7,10 @@ const Context = createContext<ContextProps>(null);
 
 const { Provider, Consumer } = Context;
 
-const ContextProvider: React.FC<ProviderProps> = ({ children, ticketId }) => {
+const ContextProvider: React.FC<ProviderProps> = ({ children, ticketId, ...rest }) => {
 	const value: ContextProps = {
 		dataState: useDataStateManager({ ticketId }),
-		ticketId,
+		...rest,
 	};
 
 	return <Provider value={value}>{children}</Provider>;
