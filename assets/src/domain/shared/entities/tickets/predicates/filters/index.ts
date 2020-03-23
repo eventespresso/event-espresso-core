@@ -34,6 +34,7 @@ export const salesFilter = ({ tickets: entities, sales = TicketsSales.all }: Sal
 		case TicketsSales.above90Sold:
 			return percentSoldAtOrAbove({ percentage: 90, tickets });
 		case TicketsSales.all:
+			// we don't normally want to show trashed tickets
 			return entities;
 		case TicketsSales.below50Sold:
 			return percentSoldBelow({ percentage: 50, tickets });
@@ -56,6 +57,7 @@ export const statusFilter = ({
 	const tickets = notTrashed(entities);
 	switch (status) {
 		case TicketsStatus.all:
+			// we don't normally want to show trashed tickets
 			return entities;
 		case TicketsStatus.trashedOnly:
 			// unless the user specifically requests it

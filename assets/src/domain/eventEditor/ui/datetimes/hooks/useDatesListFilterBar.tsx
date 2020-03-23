@@ -5,8 +5,8 @@ import { FilterBarUISubscriptionCb } from '@appLayout/entityList/filterBar';
 import { DatetimesFilterStateManager } from '@edtrServices/filterState';
 import {
 	DisplayStartOrEndDateControl,
-	SortByControl,
 	SalesControl,
+	SortByControl,
 	StatusControl,
 } from '../datesList/filterBar/controls';
 
