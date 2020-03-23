@@ -9,10 +9,11 @@ import {
 import { EntityListFilterStateManager } from '@appLayout/entityList/filterBar';
 
 export interface DatetimesFilterState extends EntityFilterState {
-	datetimesToShow: DatetimesToShow;
+	sales: Sales;
+	status: Status;
 }
 
-export type DatetimesFilterActionType = 'SET_DATETIMES_TO_SHOW' | EntityFilterActionType;
+export type DatetimesFilterActionType = 'SET_SALES' | 'SET_STATUS' | EntityFilterActionType;
 
 export interface DatetimesFilterAction
 	extends Partial<DatetimesFilterState>,
@@ -22,23 +23,28 @@ export interface DatetimesFilterStateManager
 	extends EntityListFilterStateManager<SortBy>,
 		EntityFilterStateManager,
 		DatetimesFilterState {
-	setDatetimesToShow: (datetimesToShow: DatetimesToShow) => void;
+	setSales: (sales: Sales) => void;
+	setStatus: (status: Status) => void;
 }
 
 export type DatetimesFilterStateReducer = EntityFilterStateReducer<DatetimesFilterState, DatetimesFilterAction>;
 
-export enum DatetimesToShow {
+export enum Status {
 	activeUpcoming = 'activeUpcoming',
 	activeOnly = 'activeOnly',
-	above90Capacity = 'above90Capacity',
-	above75Capacity = 'above75Capacity',
-	above50Capacity = 'above50Capacity',
 	all = 'all',
-	below50Capacity = 'below50Capacity',
 	expiredOnly = 'expiredOnly',
 	nextActiveUpcomingOnly = 'nextActiveUpcomingOnly',
 	recentlyExpiredOnly = 'recentlyExpiredOnly',
 	soldOutOnly = 'soldOutOnly',
 	trashedOnly = 'trashedOnly',
 	upcomingOnly = 'upcomingOnly',
+}
+
+export enum Sales {
+	above90Capacity = 'above90Capacity',
+	above75Capacity = 'above75Capacity',
+	above50Capacity = 'above50Capacity',
+	all = 'all',
+	below50Capacity = 'below50Capacity',
 }

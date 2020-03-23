@@ -2,7 +2,7 @@ import { act, renderHook } from '@testing-library/react-hooks';
 
 import { DisplayStartOrEndDate } from '@sharedServices/filterState';
 import { useDatesListFilterStateManager } from '../';
-import { DatetimesToShow } from '../types';
+import { Status } from '../types';
 
 describe('useDatesListFilterStateManager', () => {
 	test('useDatesListFilterStateManager result', () => {
@@ -13,7 +13,7 @@ describe('useDatesListFilterStateManager', () => {
 
 		expect(typeof result.current.setSortBy).toBe('function');
 		expect(typeof result.current.setDisplayStartOrEndDate).toBe('function');
-		expect(typeof result.current.setDatetimesToShow).toBe('function');
+		expect(typeof result.current.setStatus).toBe('function');
 	});
 
 	test('should update sortBy by invoking setSortBy with corresponding accepted enums', () => {
@@ -59,17 +59,17 @@ describe('useDatesListFilterStateManager', () => {
 		expect(result.current.displayStartOrEndDate).toBe('both');
 	});
 
-	test('should update datetimesToShow by invoking setDatetimesToShow with corresponding accepted enums', () => {
+	test('should update Status by invoking setStatus with corresponding accepted enums', () => {
 		const { result } = renderHook(() => useDatesListFilterStateManager());
 
 		act(() => {
-			result.current.setDatetimesToShow(DatetimesToShow.all);
+			result.current.setStatus(Status.all);
 		});
-		expect(result.current.datetimesToShow).toBe('all');
+		expect(result.current.status).toBe('all');
 
 		act(() => {
-			result.current.setDatetimesToShow(DatetimesToShow.upcomingOnly);
+			result.current.setStatus(Status.upcomingOnly);
 		});
-		expect(result.current.datetimesToShow).toBe('upcomingOnly');
+		expect(result.current.status).toBe('upcomingOnly');
 	});
 });

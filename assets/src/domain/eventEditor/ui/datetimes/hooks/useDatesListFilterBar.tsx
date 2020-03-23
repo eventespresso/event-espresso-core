@@ -3,7 +3,7 @@ import { __ } from '@wordpress/i18n';
 
 import { FilterBarUISubscriptionCb } from '@appLayout/entityList/filterBar';
 import { DatetimesFilterStateManager } from '@edtrServices/filterState';
-import { DatetimesToShowControl, DisplayStartOrEndDateControl, SortByControl } from '../datesList/filterBar/controls';
+import { DisplayStartOrEndDateControl, SortByControl, StatusControl } from '../datesList/filterBar/controls';
 
 type DatesListFilterBarCallback = FilterBarUISubscriptionCb<DatetimesFilterStateManager, 'dates-list'>;
 
@@ -15,11 +15,11 @@ const useDatesListFilterBar = (): DatesListFilterBarCallback => {
 		}
 		const { registerElement: registerFilterBarItem } = registry;
 
-		registerFilterBarItem('datetimesToShow', ({ filterState }) => {
-			const { datetimesToShow, setDatetimesToShow } = filterState;
+		registerFilterBarItem('status', ({ filterState }) => {
+			const { status, setStatus } = filterState;
 			return (
-				<div className='ee-dates-datetimes-to-show-filter ee-filter-bar-filter'>
-					<DatetimesToShowControl datetimesToShow={datetimesToShow} setDatetimesToShow={setDatetimesToShow} />
+				<div className='ee-filter-bar__filter ee-dates-datetimes-to-show-filter'>
+					<StatusControl setStatus={setStatus} status={status} />
 				</div>
 			);
 		});

@@ -1,7 +1,7 @@
 import { parseISO, formatISO } from 'date-fns';
 
 import { Datetime } from '@edtrServices/apollo';
-import { DatetimesToShow } from '@edtrServices/filterState';
+import { Sales, Status } from '@edtrServices/filterState';
 
 import aboveCapacity from './aboveCapacity';
 import activeOnly from './activeOnly';
@@ -16,45 +16,54 @@ import upcomingOnly from './upcomingOnly';
 import notTrashed from '../../../../services/predicates/filters/notTrashed';
 import trashedOnly from '../../../../services/predicates/filters/trashedOnly';
 
-import { FilterDates } from './types';
+import { SalesFilter, StatusFilter } from './types';
 
 export const now = parseISO(formatISO(new Date()));
 
 /**
- * reduces dates array based on value of the "showDates" filter
+ * reduces dates array based on value of the "sales" filter
  */
-const filters = ({ dates, show = DatetimesToShow.activeUpcoming }: FilterDates): Datetime[] => {
-	const noTrashedDates = notTrashed(dates);
-	switch (show) {
-		case DatetimesToShow.above50Capacity:
-			return aboveCapacity({ dates: noTrashedDates, capacity: 50 });
-		case DatetimesToShow.above75Capacity:
-			return aboveCapacity({ dates: noTrashedDates, capacity: 75 });
-		case DatetimesToShow.above90Capacity:
-			return aboveCapacity({ dates: noTrashedDates, capacity: 90 });
-		case DatetimesToShow.activeOnly:
-			return activeOnly(noTrashedDates);
-		case DatetimesToShow.activeUpcoming:
-			return activeUpcoming(noTrashedDates);
-		case DatetimesToShow.all:
-			return allDates(noTrashedDates);
-		case DatetimesToShow.below50Capacity:
-			return belowCapacity({ dates: noTrashedDates, capacity: 50 });
-		case DatetimesToShow.expiredOnly:
-			return expiredOnly(noTrashedDates);
-		case DatetimesToShow.nextActiveUpcomingOnly:
-			return nextActiveUpcomingOnly(noTrashedDates);
-		case DatetimesToShow.recentlyExpiredOnly:
-			return recentlyExpiredOnly(noTrashedDates);
-		case DatetimesToShow.soldOutOnly:
-			return soldOutOnly(noTrashedDates);
-		case DatetimesToShow.trashedOnly:
-			return trashedOnly(dates);
-		case DatetimesToShow.upcomingOnly:
-			return upcomingOnly(noTrashedDates);
+export const salesFilter = ({ dates: entities, sales = Sales.all }: SalesFilter): Datetime[] => {
+	const dates = notTrashed(entities);
+	switch (sales) {
+		case Sales.above50Capacity:
+			return aboveCapacity({ dates, capacity: 50 });
+		case Sales.above75Capacity:
+			return aboveCapacity({ dates, capacity: 75 });
+		case Sales.above90Capacity:
+			return aboveCapacity({ dates, capacity: 90 });
+		case Sales.all:
+			return allDates(dates);
+		case Sales.below50Capacity:
+			return belowCapacity({ dates, capacity: 50 });
 		default:
-			return noTrashedDates;
+			return dates;
 	}
 };
 
-export default filters;
+/**
+ * reduces dates array based on value of the "status" filter
+ */
+export const statusFilter = ({ dates: entities, status = Status.activeUpcoming }: StatusFilter): Datetime[] => {
+	const dates = notTrashed(entities);
+	switch (status) {
+		case Status.activeOnly:
+			return activeOnly(dates);
+		case Status.activeUpcoming:
+			return activeUpcoming(dates);
+		case Status.all:
+			return allDates(dates);
+		case Status.expiredOnly:
+			return expiredOnly(dates);
+		case Status.nextActiveUpcomingOnly:
+			return nextActiveUpcomingOnly(dates);
+		case Status.recentlyExpiredOnly:
+			return recentlyExpiredOnly(dates);
+		case Status.soldOutOnly:
+			return soldOutOnly(dates);
+		case Status.trashedOnly:
+			return trashedOnly(dates);
+		case Status.upcomingOnly:
+			return upcomingOnly(dates);
+	}
+};
