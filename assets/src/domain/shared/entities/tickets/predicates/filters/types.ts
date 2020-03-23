@@ -5,6 +5,7 @@ export interface SalesFilter {
 	tickets: Ticket[];
 	sales: TicketsSales;
 }
+
 export interface StatusFilter {
 	tickets: Ticket[];
 	status: TicketsStatus;

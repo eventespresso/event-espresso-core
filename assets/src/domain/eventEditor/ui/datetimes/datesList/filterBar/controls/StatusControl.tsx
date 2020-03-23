@@ -2,11 +2,11 @@ import React from 'react';
 import { __ } from '@wordpress/i18n';
 
 import { SelectInput } from '@appInputs/SelectInput';
-import { Status } from '@edtrServices/filterState';
+import { DatetimeStatus } from '@edtrServices/filterState';
 
 interface StatusControlProps {
-	status: Status;
-	setStatus: (datetimesToShow: Status) => void;
+	status: DatetimeStatus;
+	setStatus: (status: DatetimeStatus) => void;
 }
 
 const StatusControl: React.FC<StatusControlProps> = React.memo(({ status, setStatus }) => {
@@ -17,39 +17,39 @@ const StatusControl: React.FC<StatusControlProps> = React.memo(({ status, setSta
 			value={status}
 			options={[
 				{
-					value: Status.all,
+					value: DatetimeStatus.all,
 					label: __('all dates'),
 				},
 				{
-					value: Status.activeUpcoming,
+					value: DatetimeStatus.activeUpcoming,
 					label: __('all active and upcoming'),
 				},
 				{
-					value: Status.activeOnly,
+					value: DatetimeStatus.activeOnly,
 					label: __('active dates only'),
 				},
 				{
-					value: Status.upcomingOnly,
+					value: DatetimeStatus.upcomingOnly,
 					label: __('upcoming dates only'),
 				},
 				{
-					value: Status.nextActiveUpcomingOnly,
+					value: DatetimeStatus.nextActiveUpcomingOnly,
 					label: __('next active or upcoming only'),
 				},
 				{
-					value: Status.soldOutOnly,
+					value: DatetimeStatus.soldOutOnly,
 					label: __('sold out dates only'),
 				},
 				{
-					value: Status.recentlyExpiredOnly,
+					value: DatetimeStatus.recentlyExpiredOnly,
 					label: __('recently expired dates'),
 				},
 				{
-					value: Status.expiredOnly,
+					value: DatetimeStatus.expiredOnly,
 					label: __('all expired dates'),
 				},
 				{
-					value: Status.trashedOnly,
+					value: DatetimeStatus.trashedOnly,
 					label: __('trashed dates only'),
 				},
 			]}

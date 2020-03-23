@@ -2,7 +2,7 @@ import { act, renderHook } from '@testing-library/react-hooks';
 
 import { DisplayStartOrEndDate } from '@sharedServices/filterState';
 import { useTicketsListFilterStateManager } from '../';
-import { TicketsToShow } from '../types';
+import { TicketsSales, TicketsStatus } from '../types';
 
 describe('useTicketsListFilterStateManager', () => {
 	test('useTicketsListFilterStateManager initial state and result', () => {
@@ -13,7 +13,8 @@ describe('useTicketsListFilterStateManager', () => {
 
 		expect(typeof result.current.setSortBy).toBe('function');
 		expect(typeof result.current.setDisplayStartOrEndDate).toBe('function');
-		expect(typeof result.current.setTicketsToShow).toBe('function');
+		expect(typeof result.current.setSales).toBe('function');
+		expect(typeof result.current.setStatus).toBe('function');
 		expect(result.current.isChained).toBe(false);
 	});
 
@@ -60,17 +61,21 @@ describe('useTicketsListFilterStateManager', () => {
 		expect(result.current.displayStartOrEndDate).toBe('both');
 	});
 
-	test('should update ticketsToShow by invoking setTicketsToShow with corresponding accepted enums', () => {
+	test('should update sales by invoking setSales with corresponding accepted enums', () => {
 		const { result } = renderHook(() => useTicketsListFilterStateManager());
 
 		act(() => {
-			result.current.setTicketsToShow(TicketsToShow.all);
+			result.current.setSales(TicketsSales.above50Sold);
 		});
-		expect(result.current.ticketsToShow).toBe('all');
+		expect(result.current.sales).toBe('above-50-sold');
+	});
+
+	test('should update status by invoking setStatus with corresponding accepted enums', () => {
+		const { result } = renderHook(() => useTicketsListFilterStateManager());
 
 		act(() => {
-			result.current.setTicketsToShow(TicketsToShow.above50Sold);
+			result.current.setStatus(TicketsStatus.all);
 		});
-		expect(result.current.ticketsToShow).toBe('above-50-sold');
+		expect(result.current.status).toBe('all');
 	});
 });

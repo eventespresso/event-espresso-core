@@ -7,16 +7,6 @@ import { useEntityListFilterStateManager } from '@appLayout/entityList/filterBar
 
 type FSM = TicketsFilterStateManager;
 
-const resetPageNumber = (
-	state: TicketsFilterState,
-	filter: TicketsSales | TicketsStatus,
-	setPageNumber: (number) => void
-): void => {
-	if (filter !== state[filter]) {
-		setPageNumber(1);
-	}
-};
-
 const useTicketsListFilterStateManager = (): FSM => {
 	const initialState: TicketsFilterState = {
 		displayStartOrEndDate: DisplayStartOrEndDate.start,
@@ -29,6 +19,12 @@ const useTicketsListFilterStateManager = (): FSM => {
 
 	const entityFilterState = useEntityListFilterStateManager<SortBy>('date');
 
+	const resetPageNumber = (filter: TicketsSales | TicketsStatus): void => {
+		if (filter !== state[filter]) {
+			entityFilterState.setPageNumber(1);
+		}
+	};
+
 	const setDisplayStartOrEndDate: FSM['setDisplayStartOrEndDate'] = (displayStartOrEndDate) => {
 		dispatch({
 			type: 'SET_DISPLAY_START_OR_END_DATE',
@@ -37,7 +33,7 @@ const useTicketsListFilterStateManager = (): FSM => {
 	};
 
 	const setSales: FSM['setSales'] = (sales) => {
-		resetPageNumber(state, sales, entityFilterState.setPageNumber);
+		resetPageNumber(sales);
 		dispatch({
 			type: 'SET_SALES',
 			sales,
@@ -45,7 +41,7 @@ const useTicketsListFilterStateManager = (): FSM => {
 	};
 
 	const setStatus: FSM['setStatus'] = (status) => {
-		resetPageNumber(state, status, entityFilterState.setPageNumber);
+		resetPageNumber(status);
 		dispatch({
 			type: 'SET_STATUS',
 			status,
@@ -61,8 +57,8 @@ const useTicketsListFilterStateManager = (): FSM => {
 	return {
 		...state,
 		...entityFilterState,
-		setSales,
 		setDisplayStartOrEndDate,
+		setSales,
 		setStatus,
 		toggleIsChained,
 	};

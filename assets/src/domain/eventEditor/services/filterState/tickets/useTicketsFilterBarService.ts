@@ -21,12 +21,12 @@ const useTicketsFilterBarService = (): void => {
 	useEffect(() => {
 		// Register sales filter
 		const unsubscribeSalesFilter = registerTicketsFilter(({ entityList, filterState }) => {
-			return salesFilter({ tickets: entityList, sales: filterState.sales });
+			return salesFilter({ sales: filterState.sales, tickets: entityList });
 		});
 
 		// Register status filter
 		const unsubscribeStatusFilter = registerTicketsFilter(({ entityList, filterState }) => {
-			return statusFilter({ tickets: entityList, status: filterState.status });
+			return statusFilter({ status: filterState.status, tickets: entityList });
 		});
 
 		// Register search
@@ -46,9 +46,9 @@ const useTicketsFilterBarService = (): void => {
 		// Housekeeping
 		return (): void => {
 			unsubscribeSalesFilter();
+			unsubscribeStatusFilter();
 			unsubscribeTicketsSearch();
 			unsubscribeTicketsSorter();
-			unsubscribeStatusFilter();
 		};
 	}, []);
 };

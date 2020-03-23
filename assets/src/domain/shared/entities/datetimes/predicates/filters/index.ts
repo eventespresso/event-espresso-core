@@ -1,7 +1,7 @@
 import { parseISO, formatISO } from 'date-fns';
 
 import { Datetime } from '@edtrServices/apollo';
-import { Sales, Status } from '@edtrServices/filterState';
+import { DatetimeSales, DatetimeStatus } from '@edtrServices/filterState';
 
 import aboveCapacity from './aboveCapacity';
 import activeOnly from './activeOnly';
@@ -23,18 +23,18 @@ export const now = parseISO(formatISO(new Date()));
 /**
  * reduces dates array based on value of the "sales" filter
  */
-export const salesFilter = ({ dates: entities, sales = Sales.all }: SalesFilter): Datetime[] => {
+export const salesFilter = ({ dates: entities, sales = DatetimeSales.all }: SalesFilter): Datetime[] => {
 	const dates = notTrashed(entities);
 	switch (sales) {
-		case Sales.above50Capacity:
+		case DatetimeSales.above50Capacity:
 			return aboveCapacity({ dates, capacity: 50 });
-		case Sales.above75Capacity:
+		case DatetimeSales.above75Capacity:
 			return aboveCapacity({ dates, capacity: 75 });
-		case Sales.above90Capacity:
+		case DatetimeSales.above90Capacity:
 			return aboveCapacity({ dates, capacity: 90 });
-		case Sales.all:
+		case DatetimeSales.all:
 			return allDates(dates);
-		case Sales.below50Capacity:
+		case DatetimeSales.below50Capacity:
 			return belowCapacity({ dates, capacity: 50 });
 		default:
 			return dates;
@@ -44,26 +44,26 @@ export const salesFilter = ({ dates: entities, sales = Sales.all }: SalesFilter)
 /**
  * reduces dates array based on value of the "status" filter
  */
-export const statusFilter = ({ dates: entities, status = Status.activeUpcoming }: StatusFilter): Datetime[] => {
+export const statusFilter = ({ dates: entities, status = DatetimeStatus.activeUpcoming }: StatusFilter): Datetime[] => {
 	const dates = notTrashed(entities);
 	switch (status) {
-		case Status.activeOnly:
+		case DatetimeStatus.activeOnly:
 			return activeOnly(dates);
-		case Status.activeUpcoming:
+		case DatetimeStatus.activeUpcoming:
 			return activeUpcoming(dates);
-		case Status.all:
+		case DatetimeStatus.all:
 			return allDates(dates);
-		case Status.expiredOnly:
+		case DatetimeStatus.expiredOnly:
 			return expiredOnly(dates);
-		case Status.nextActiveUpcomingOnly:
+		case DatetimeStatus.nextActiveUpcomingOnly:
 			return nextActiveUpcomingOnly(dates);
-		case Status.recentlyExpiredOnly:
+		case DatetimeStatus.recentlyExpiredOnly:
 			return recentlyExpiredOnly(dates);
-		case Status.soldOutOnly:
+		case DatetimeStatus.soldOutOnly:
 			return soldOutOnly(dates);
-		case Status.trashedOnly:
+		case DatetimeStatus.trashedOnly:
 			return trashedOnly(dates);
-		case Status.upcomingOnly:
+		case DatetimeStatus.upcomingOnly:
 			return upcomingOnly(dates);
 		default:
 			return dates;
