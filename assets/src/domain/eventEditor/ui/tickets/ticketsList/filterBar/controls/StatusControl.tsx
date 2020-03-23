@@ -22,19 +22,6 @@ const StatusControl: React.FC<StatusControlProps> = React.memo(({ isChained, sta
 					label: isChained ? __('all tickets for above dates') : __('all tickets for all dates'),
 				},
 				{
-					value: TicketsStatus.trashedOnly,
-					label: __('trashed tickets only'),
-				},
-
-				{
-					value: TicketsStatus.expiredOnly,
-					label: __('expired tickets only'),
-				},
-				{
-					value: TicketsStatus.nextOnSaleOrPendingOnly,
-					label: __('next on sale or sale pending only'),
-				},
-				{
 					value: TicketsStatus.onSaleAndPending,
 					label: __('all on sale and sale pending'),
 				},
@@ -46,10 +33,21 @@ const StatusControl: React.FC<StatusControlProps> = React.memo(({ isChained, sta
 					value: TicketsStatus.pendingOnly,
 					label: __('sale pending tickets only'),
 				},
-
+				{
+					value: TicketsStatus.nextOnSaleOrPendingOnly,
+					label: __('next on sale or sale pending only'),
+				},
 				{
 					value: TicketsStatus.soldOutOnly,
 					label: __('sold out tickets only'),
+				},
+				{
+					value: TicketsStatus.expiredOnly,
+					label: __('expired tickets only'),
+				},
+				{
+					value: TicketsStatus.trashedOnly,
+					label: __('trashed tickets only'),
 				},
 			]}
 			onChange={setStatus}
