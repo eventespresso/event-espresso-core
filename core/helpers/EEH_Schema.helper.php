@@ -50,15 +50,14 @@ class EEH_Schema
         $template_args['event_end'] = $primary_datetime->end_date(DateTime::ATOM);
         unset($primary_datetime);
         switch ($event->status()) {
-            case 'cancelled':
+            case EEM_Event::cancelled:
                 $event_status = 'EventCancelled';
                 break;
-            case 'postponed':
+            case EEM_Event::postponed:
                 $event_status = 'EventPostponed';
                 break;
             default:
                 $event_status = 'EventScheduled';
-                break;
         }
         $template_args['event_status'] = $event_status;
         $template_args['currency'] = EE_Registry::instance()->CFG->currency->code;
