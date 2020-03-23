@@ -22,16 +22,16 @@ const SalesControl: React.FC<StatusControlProps> = React.memo(({ isChained, sale
 					label: isChained ? __('all tickets for above dates') : __('all tickets for all dates'),
 				},
 				{
-					value: TicketsSales.above50Sold,
-					label: __('tickets with 50% or more sold'),
+					value: TicketsSales.above90Sold,
+					label: __('tickets with 90% or more sold'),
 				},
 				{
 					value: TicketsSales.above75Sold,
 					label: __('tickets with 75% or more sold'),
 				},
 				{
-					value: TicketsSales.above90Sold,
-					label: __('tickets with 90% or more sold'),
+					value: TicketsSales.above50Sold,
+					label: __('tickets with 50% or more sold'),
 				},
 				{
 					value: TicketsSales.below50Sold,
