@@ -73,13 +73,17 @@ $filter-btn: '.esprs-button.ant-btn.ee-filter-bar__btn';
 		}
 	}
 
-	.ee-filter-bar-filter {
+	&__filter,
+	&__select {
+		margin: 0 var(--ee-margin-small) var(--ee-margin-smaller) 0;
+	}
+
+	&__filter {
 		align-items: flex-start;
 		display: flex;
 		flex-flow: column nowrap;
 		height: auto;
 		justify-content: flex-end;
-		margin: 0 var(--ee-margin-small) var(--ee-margin-smaller) 0;
 		max-width: 100%;
 		min-width: calc(var(--ee-font-size-default) * 12);
 		white-space: pre;
@@ -112,10 +116,6 @@ $filter-btn: '.esprs-button.ant-btn.ee-filter-bar__btn';
 
 		&--small {
 			min-width: calc(var(--ee-font-size-default) * 9);
-		}
-
-		&--big {
-			min-width: calc(var(--ee-font-size-default) * 15);
 		}
 
 		&--bigger {
@@ -169,7 +169,7 @@ $filter-btn: '.esprs-button.ant-btn.ee-filter-bar__btn';
 	}
 
 	@media only screen and (max-width: 480px) {
-		.ee-filter-bar-filter {
+		.ee-filter-bar__filter {
 			margin: 0 var(--ee-margin-small) var(--ee-margin-smaller) 0;
 		}
 	}

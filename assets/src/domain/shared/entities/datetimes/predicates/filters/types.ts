@@ -1,14 +1,14 @@
 import { Datetime } from '@edtrServices/apollo/types';
-import { Sales, Status } from '@edtrServices/filterState';
+import { DatetimeSales, DatetimeStatus } from '@edtrServices/filterState';
 
 export type DatetimeFilterFn = (dates: Array<Datetime>) => Array<Datetime>;
 
 export interface SalesFilter {
 	dates: Datetime[];
-	sales: Sales;
+	sales: DatetimeSales;
 }
 
 export interface StatusFilter {
 	dates: Datetime[];
-	status: Status;
+	status: DatetimeStatus;
 }

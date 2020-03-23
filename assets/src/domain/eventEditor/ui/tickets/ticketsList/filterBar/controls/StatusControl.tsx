@@ -14,7 +14,7 @@ const StatusControl: React.FC<StatusControlProps> = React.memo(({ isChained, sta
 	return (
 		<SelectInput
 			label={__('status')}
-			className='espresso-date-list-filter-bar-show-select ee-filter-bar-filter--big'
+			className='espresso-date-list-filter-bar-show-select'
 			value={status}
 			options={[
 				{

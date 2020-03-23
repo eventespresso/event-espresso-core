@@ -41,7 +41,7 @@ const useDatesListFilterBar = (): DatesListFilterBarCallback => {
 		registerFilterBarItem('displayStartOrEndDate', ({ filterState }) => {
 			const { displayStartOrEndDate, setDisplayStartOrEndDate } = filterState;
 			return (
-				<div className='ee-dates-display-start-or-end-date-filter ee-filter-bar-filter'>
+				<div className='ee-filter-bar__select'>
 					<DisplayStartOrEndDateControl
 						displayStartOrEndDate={displayStartOrEndDate}
 						setDisplayStartOrEndDate={setDisplayStartOrEndDate}

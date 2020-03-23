@@ -33,7 +33,7 @@ const useTicketsListFilterBar = (): TicketsListFilterBarCallback => {
 		registerFilterBarItem('isChained', ({ filterState }) => {
 			const { isChained, toggleIsChained } = filterState;
 			return (
-				<div className='ee-ticket-dates-chained-filter ee-filter-bar-filter ee-filter-bar-filter--micro'>
+				<div className='ee-ticket-dates-chained-filter ee-filter-bar__filter ee-filter-bar-filter--micro'>
 					<TicketsChainedButton isChained={isChained} toggleIsChained={toggleIsChained} />
 				</div>
 			);
