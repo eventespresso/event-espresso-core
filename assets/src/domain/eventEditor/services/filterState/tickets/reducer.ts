@@ -5,9 +5,9 @@ const reducer: TicketsFilterStateReducer = (state, action) => {
 	switch (type) {
 		case 'SET_DISPLAY_START_OR_END_DATE':
 			return { ...state, displayStartOrEndDate };
-		case 'SET_TICKETS_SALES':
+		case 'SET_SALES':
 			return { ...state, sales };
-		case 'SET_TICKETS_STATUS':
+		case 'SET_STATUS':
 			return { ...state, status };
 		case 'TOGGLE_IS_CHAINED':
 			return { ...state, isChained: !state.isChained };
