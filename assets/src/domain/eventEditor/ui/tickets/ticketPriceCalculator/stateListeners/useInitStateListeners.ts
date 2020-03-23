@@ -3,7 +3,6 @@ import { useCallback } from 'react';
 import { useDataState } from '../data';
 import { calculateBasePrice, calculateTicketTotal } from '../utils';
 import usePriceChangeListener from './usePriceChangeListener';
-import usePriceTypeChangeListener from './usePriceTypeChangeListener';
 import useReverseCalcChangeListener from './useReverseCalcChangeListener';
 import useTicketTotalChangeListener from './useTicketTotalChangeListener';
 
