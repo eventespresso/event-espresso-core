@@ -118,6 +118,10 @@ $filter-btn: '.esprs-button.ant-btn.ee-filter-bar__btn';
 			min-width: calc(var(--ee-font-size-default) * 9);
 		}
 
+		&--big {
+			min-width: calc(var(--ee-font-size-default) * 15);
+		}
+
 		&--bigger {
 			min-width: calc(var(--ee-font-size-default) * 21);
 		}
