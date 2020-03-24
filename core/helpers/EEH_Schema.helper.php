@@ -97,7 +97,7 @@ class EEH_Schema
             $template_args['venue_locality'] = $venue->city();
             $template_args['venue_region'] = $venue->state_name();
             $template_args['venue_address'] = $venue->address();
-            if ($venue->virtual_url() != '') {
+            if ($venue->virtual_url() !== '') {
                 $template_args['event_attendance_mode'] = 'OnlineEventAttendanceMode';
             }
             if ($venue->virtual_url() != '' && $venue->address() != '') {
