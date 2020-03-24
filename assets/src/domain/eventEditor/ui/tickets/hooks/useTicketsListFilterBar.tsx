@@ -5,9 +5,10 @@ import { FilterBarUISubscriptionCb } from '@appLayout/entityList/filterBar';
 import { TicketsFilterStateManager } from '@edtrServices/filterState';
 import {
 	DisplayStartOrEndDateControl,
+	SalesControl,
 	SortByControl,
 	TicketsChainedButton,
-	TicketsToShowControl,
+	StatusControl,
 } from '../ticketsList/filterBar/controls';
 
 type TicketsListFilterBarCallback = FilterBarUISubscriptionCb<TicketsFilterStateManager, 'tickets-list'>;
@@ -20,11 +21,11 @@ const useTicketsListFilterBar = (): TicketsListFilterBarCallback => {
 		}
 		const { registerElement: registerFilterBarItem } = registry;
 
-		registerFilterBarItem('ticketsToShow', ({ filterState }) => {
-			const { ticketsToShow, setTicketsToShow } = filterState;
+		registerFilterBarItem('status', ({ filterState }) => {
+			const { status, setStatus } = filterState;
 			return (
-				<div className='ee-tickets-tickets-to-show-filter ee-filter-bar-filter'>
-					<TicketsToShowControl ticketsToShow={ticketsToShow} setTicketsToShow={setTicketsToShow} />
+				<div className='ee-filter-bar__filter ee-dates-datetimes-to-show-filter'>
+					<StatusControl setStatus={setStatus} status={status} />
 				</div>
 			);
 		});
@@ -32,17 +33,17 @@ const useTicketsListFilterBar = (): TicketsListFilterBarCallback => {
 		registerFilterBarItem('isChained', ({ filterState }) => {
 			const { isChained, toggleIsChained } = filterState;
 			return (
-				<div className='ee-ticket-dates-chained-filter ee-filter-bar-filter ee-filter-bar-filter--micro'>
+				<div className='ee-ticket-dates-chained-filter ee-filter-bar__filter ee-filter-bar-filter--micro'>
 					<TicketsChainedButton isChained={isChained} toggleIsChained={toggleIsChained} />
 				</div>
 			);
 		});
 
-		registerFilterBarItem('sortBy', ({ filterState }) => {
-			const { sortBy, setSortBy } = filterState;
+		registerFilterBarItem('sales', ({ filterState }) => {
+			const { sales, setSales } = filterState;
 			return (
-				<div className='ee-tickets-sort-by-filter ee-filter-bar-filter'>
-					<SortByControl sortBy={sortBy} setSortBy={setSortBy} />
+				<div className='ee-filter-bar__filter ee-dates-datetimes-to-show-filter'>
+					<SalesControl sales={sales} setSales={setSales} />
 				</div>
 			);
 		});
@@ -55,6 +56,15 @@ const useTicketsListFilterBar = (): TicketsListFilterBarCallback => {
 						displayStartOrEndDate={displayStartOrEndDate}
 						setDisplayStartOrEndDate={setDisplayStartOrEndDate}
 					/>
+				</div>
+			);
+		});
+
+		registerFilterBarItem('sortBy', ({ filterState }) => {
+			const { sortBy, setSortBy } = filterState;
+			return (
+				<div className='ee-tickets-sort-by-filter ee-filter-bar-filter'>
+					<SortByControl sortBy={sortBy} setSortBy={setSortBy} />
 				</div>
 			);
 		});

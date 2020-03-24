@@ -53,7 +53,7 @@ const EntityListFilterBar = <FS extends ELFSM>({
 			<Collapsible show={showEntityFilters}>
 				{filerBarItems}
 				<SearchInput
-					className={'ee-filter-bar-filter ee-filter-bar-filter--big'}
+					className={'ee-filter-bar__filter'}
 					id={listId}
 					searchText={searchText}
 					setSearchText={setSearchText}

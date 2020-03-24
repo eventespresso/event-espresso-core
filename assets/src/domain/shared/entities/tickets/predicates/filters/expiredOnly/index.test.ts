@@ -3,7 +3,7 @@ import { formatISO, parseISO } from 'date-fns';
 import expiredOnly from './index';
 import { nodes as tickets } from '../../../../../../eventEditor/services/apollo/queries/tickets/test/data';
 import { diff, add } from '../../../../../../../application/services/utilities/date';
-import { now } from '../index';
+import { now } from '@sharedServices/utils/dateAndTime';
 
 describe('expiredOnly', () => {
 	it('should return an empty array if tickets are not expired', () => {

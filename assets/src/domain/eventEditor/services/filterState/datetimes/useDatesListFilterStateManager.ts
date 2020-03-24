@@ -1,7 +1,7 @@
 import { useReducer } from 'react';
 
 import reducer from './reducer';
-import { DatetimesFilterState, DatetimesFilterStateManager, DatetimesToShow } from './types';
+import { DatetimesFilterState, DatetimesFilterStateManager, DatetimeSales, DatetimeStatus } from './types';
 import { DisplayStartOrEndDate, SortBy } from '@sharedServices/filterState';
 import { useEntityListFilterStateManager } from '@appLayout/entityList/filterBar';
 
@@ -10,12 +10,19 @@ type FSM = DatetimesFilterStateManager;
 const useDatesListFilterStateManager = (): FSM => {
 	const initialState: DatetimesFilterState = {
 		displayStartOrEndDate: DisplayStartOrEndDate.start,
-		datetimesToShow: DatetimesToShow.all,
+		sales: DatetimeSales.all,
+		status: DatetimeStatus.activeUpcoming,
 	};
 
 	const [state, dispatch] = useReducer(reducer, initialState);
 
 	const entityFilterState = useEntityListFilterStateManager<SortBy>('date');
+
+	const resetPageNumber = (filter: DatetimeSales | DatetimeStatus): void => {
+		if (filter !== state[filter]) {
+			entityFilterState.setPageNumber(1);
+		}
+	};
 
 	const setDisplayStartOrEndDate: FSM['setDisplayStartOrEndDate'] = (displayStartOrEndDate) => {
 		dispatch({
@@ -24,15 +31,19 @@ const useDatesListFilterStateManager = (): FSM => {
 		});
 	};
 
-	const setDatetimesToShow: FSM['setDatetimesToShow'] = (datetimesToShow) => {
-		// if datetimes to show changes
-		if (datetimesToShow !== state.datetimesToShow) {
-			// reset page number to 1
-			entityFilterState.setPageNumber(1);
-		}
+	const setSales: FSM['setSales'] = (sales) => {
+		resetPageNumber(sales);
 		dispatch({
-			type: 'SET_DATETIMES_TO_SHOW',
-			datetimesToShow,
+			type: 'SET_SALES',
+			sales,
+		});
+	};
+
+	const setStatus: FSM['setStatus'] = (status) => {
+		resetPageNumber(status);
+		dispatch({
+			type: 'SET_STATUS',
+			status,
 		});
 	};
 
@@ -40,7 +51,8 @@ const useDatesListFilterStateManager = (): FSM => {
 		...state,
 		...entityFilterState,
 		setDisplayStartOrEndDate,
-		setDatetimesToShow,
+		setSales,
+		setStatus,
 	};
 };
 

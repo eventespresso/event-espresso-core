@@ -1,5 +1,5 @@
 import { CONVERT_TO_MOMENT_DATE_FORMAT, CONVERT_TO_MOMENT_TIME_FORMAT } from '@appConstants/dateFnsFormats';
-import { parse, isValid, parseISO } from 'date-fns';
+import { formatISO, isValid, parse, parseISO } from 'date-fns';
 import { __ } from '@wordpress/i18n';
 import * as yup from 'yup';
 
@@ -83,6 +83,8 @@ export const dateAndTimeSchema = yup.object({
 			}
 		),
 });
+
+export const now = parseISO(formatISO(new Date()));
 
 export const prepareDateForForm = (mayBeDate: any, defaultDate: Date): Date => {
 	if (mayBeDate) {

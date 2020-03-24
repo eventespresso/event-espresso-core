@@ -1,9 +1,14 @@
 import { Ticket } from '@edtrServices/apollo';
-import { TicketsToShow } from '@edtrServices/filterState';
+import { TicketsSales, TicketsStatus } from '@edtrServices/filterState';
 
-export interface FilterTickets {
+export interface SalesFilter {
 	tickets: Ticket[];
-	show?: TicketsToShow;
+	sales: TicketsSales;
+}
+
+export interface StatusFilter {
+	tickets: Ticket[];
+	status: TicketsStatus;
 }
 
 export type TicketFilterFn = (tickets: Array<Ticket>) => Array<Ticket>;

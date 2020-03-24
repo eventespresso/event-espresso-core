@@ -3,7 +3,7 @@ import { add, sub } from '../../../../../../application/services/utilities/date'
 
 import isPending from './index';
 import { nodes as tickets } from '../../../../../eventEditor/services/apollo/queries/tickets/test/data';
-import { now } from '../filters';
+import { now } from '@sharedServices/utils/dateAndTime';
 
 const testCases = [
 	{

@@ -2,7 +2,7 @@ import { act, renderHook } from '@testing-library/react-hooks';
 
 import { DisplayStartOrEndDate } from '@sharedServices/filterState';
 import { useDatesListFilterStateManager } from '../';
-import { DatetimesToShow } from '../types';
+import { DatetimeSales, DatetimeStatus } from '../types';
 
 describe('useDatesListFilterStateManager', () => {
 	test('useDatesListFilterStateManager result', () => {
@@ -13,7 +13,7 @@ describe('useDatesListFilterStateManager', () => {
 
 		expect(typeof result.current.setSortBy).toBe('function');
 		expect(typeof result.current.setDisplayStartOrEndDate).toBe('function');
-		expect(typeof result.current.setDatetimesToShow).toBe('function');
+		expect(typeof result.current.setStatus).toBe('function');
 	});
 
 	test('should update sortBy by invoking setSortBy with corresponding accepted enums', () => {
@@ -59,17 +59,31 @@ describe('useDatesListFilterStateManager', () => {
 		expect(result.current.displayStartOrEndDate).toBe('both');
 	});
 
-	test('should update datetimesToShow by invoking setDatetimesToShow with corresponding accepted enums', () => {
+	test('should update sales by invoking setSales with corresponding accepted enums', () => {
 		const { result } = renderHook(() => useDatesListFilterStateManager());
 
 		act(() => {
-			result.current.setDatetimesToShow(DatetimesToShow.all);
+			result.current.setSales(DatetimeSales.all);
 		});
-		expect(result.current.datetimesToShow).toBe('all');
+		expect(result.current.sales).toBe('all');
 
 		act(() => {
-			result.current.setDatetimesToShow(DatetimesToShow.upcomingOnly);
+			result.current.setSales(DatetimeSales.above90Capacity);
 		});
-		expect(result.current.datetimesToShow).toBe('upcomingOnly');
+		expect(result.current.sales).toBe('above90Capacity');
+	});
+
+	test('should update Status by invoking setStatus with corresponding accepted enums', () => {
+		const { result } = renderHook(() => useDatesListFilterStateManager());
+
+		act(() => {
+			result.current.setStatus(DatetimeStatus.all);
+		});
+		expect(result.current.status).toBe('all');
+
+		act(() => {
+			result.current.setStatus(DatetimeStatus.upcomingOnly);
+		});
+		expect(result.current.status).toBe('upcomingOnly');
 	});
 });

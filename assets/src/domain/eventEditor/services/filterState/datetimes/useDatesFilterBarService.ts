@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 
 import { useFilterBarService } from '@appLayout/entityList/filterBar';
-import filterDates from '@sharedEntities/datetimes/predicates/filters';
+import { salesFilter, statusFilter } from '@sharedEntities/datetimes/predicates/filters';
 import sortDates from '@sharedEntities/datetimes/predicates/sorters';
 import { datesList, domain } from '@edtrServices/constants';
 import { entityListSearch } from '@appServices/utilities/text';
@@ -19,9 +19,14 @@ const useDatesFilterBarService = (): void => {
 	} = useFilterBarService<Domain, typeof datesList, Datetime, DFSM>(domain, datesList);
 
 	useEffect(() => {
-		// Register filter
-		const unsubscribeDatesFilter = registerDatesFilter(({ entityList, filterState }) => {
-			return filterDates({ dates: entityList, show: filterState.datetimesToShow });
+		// Register sales filter
+		const unsubscribeSalesFilter = registerDatesFilter(({ entityList, filterState }) => {
+			return salesFilter({ dates: entityList, sales: filterState.sales });
+		});
+
+		// Register status filter
+		const unsubscribeStatusFilter = registerDatesFilter(({ entityList, filterState }) => {
+			return statusFilter({ dates: entityList, status: filterState.status });
 		});
 
 		// Register search
@@ -40,9 +45,10 @@ const useDatesFilterBarService = (): void => {
 
 		// Housekeeping
 		return (): void => {
-			unsubscribeDatesFilter();
 			unsubscribeDatesSearch();
 			unsubscribeDatesSorter();
+			unsubscribeSalesFilter();
+			unsubscribeStatusFilter();
 		};
 	}, []);
 };

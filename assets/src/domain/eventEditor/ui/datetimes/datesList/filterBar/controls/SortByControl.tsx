@@ -34,6 +34,7 @@ const SortByControl: React.FC<SortByControlProps> = React.memo(({ sortBy, setSor
 			label: __('custom order'),
 		},
 	];
+
 	return (
 		<SelectInput
 			label={__('sort by')}

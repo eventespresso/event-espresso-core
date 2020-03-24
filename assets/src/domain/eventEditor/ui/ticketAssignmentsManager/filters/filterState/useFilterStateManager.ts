@@ -1,7 +1,7 @@
 import { useReducer } from 'react';
 
 import { FilterState, FilterStateManager, FilterStateManagerHook } from './types';
-import { now } from '@sharedEntities/datetimes/predicates/filters';
+import { now } from '@sharedServices/utils/dateAndTime';
 import reducer from './reducer';
 
 type FSM = FilterStateManager;
