@@ -23,11 +23,10 @@ const TicketsChainedButton: React.FC<TicketsChainedButtonProps> = ({ isChained, 
 		? 'ee-filter-bar-filter-btn ee-active-filters ee-ticket-list-is-chained'
 		: 'ee-filter-bar-filter-btn ee-ticket-list-not-chained';
 	const icon = isChained ? Icon.LINK : Icon.UNLINK;
+
 	return (
 		<>
-			<label className='esprs-button-label screen-reader-text' htmlFor={'ee-ticket-list-filter-bar-is-chained'}>
-				{__('Only Show Tickets for Dates Above')}
-			</label>
+			<label className='esprs-button-label screen-reader-text'>{__('Only Show Tickets for Dates Above')}</label>
 			<EspressoButton
 				buttonType={EspressoButtonType.MINIMAL}
 				className={className}

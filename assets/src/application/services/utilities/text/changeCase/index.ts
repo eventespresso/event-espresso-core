@@ -1,6 +1,3 @@
-/**
- * External dependencies
- */
 import { is } from 'ramda';
 
 export const lcFirst = (str: string): string => {
