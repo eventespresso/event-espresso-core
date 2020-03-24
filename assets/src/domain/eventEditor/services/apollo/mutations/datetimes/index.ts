@@ -1,5 +1,5 @@
 import gql from 'graphql-tag';
-import { DATETIME_ATTRIBUTES } from '../../queries/datetimes';
+import { DATETIME_ATTRIBUTES } from '@edtrServices/apollo/queries/datetimes';
 
 export const CREATE_DATETIME = gql`
 	mutation CREATE_DATETIME($input: CreateEspressoDatetimeInput!) {

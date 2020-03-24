@@ -1,15 +1,36 @@
-import usePriceQueryOptions from '../../queries/prices/usePriceQueryOptions';
+import { findIndex, update } from 'ramda';
+
 import { CacheUpdaterFn, CacheUpdaterFnArgs } from '../types';
-import { WriteQueryOptions } from '../../queries/types';
-import { Price, PricesList } from '../../types';
+import { Price, PricesList } from '@edtrServices/apollo/types';
+import { WriteQueryOptions } from '@edtrServices/apollo/queries/types';
+import { entityHasGuid } from '@sharedServices/predicates/selectionById';
+import { usePriceQueryOptions } from '@edtrServices/apollo/queries/prices';
 
 const useUpdatePriceCache = (): CacheUpdaterFn => {
 	const queryOptions = usePriceQueryOptions();
 
-	const updatePriceCache = ({ proxy, prices, price, remove = false }: CacheUpdaterFnArgs): void => {
+	const updatePriceCache = ({ proxy, prices, price, action }: CacheUpdaterFnArgs): void => {
 		const { nodes = [] } = prices;
-		// remove from or add to the list
-		const newNodes = remove ? nodes.filter(({ id }: Price) => id !== price.id) : [...nodes, price];
+		let newNodes: Array<Price>, priceIndex: number;
+		switch (action) {
+			case 'add':
+				newNodes = [...nodes, price];
+				break;
+			case 'update':
+				// find the index of the price to update
+				priceIndex = findIndex(entityHasGuid(price.id), nodes);
+				// if price exists
+				if (priceIndex >= 0) {
+					newNodes = update(priceIndex, price, nodes);
+				}
+				break;
+			case 'remove':
+				newNodes = nodes.filter(({ id }) => id !== price.id);
+				break;
+			default:
+				newNodes = nodes;
+				break;
+		}
 
 		// write the data to cache without
 		// mutating the cache directly

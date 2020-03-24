@@ -1,8 +1,8 @@
-import { useRelations, RelationsManager } from '../../../../../../application/services/apollo/relations';
 import { PriceMutationCallbackFn, PriceMutationCallbackFnArgs } from '../types';
+import { useRelations } from '@appServices/apollo/relations';
 
 const useOnUpdatePrice = (): PriceMutationCallbackFn => {
-	const { updateRelations } = useRelations() as RelationsManager;
+	const { updateRelations } = useRelations();
 
 	const onUpdatePrice = ({ price, priceTypeId }: PriceMutationCallbackFnArgs): void => {
 		const { id: priceId } = price;

@@ -1,8 +1,8 @@
 import { useCallback } from 'react';
 
+import { parseInfinity } from '@appServices/utilities/number';
 import { Ticket } from '@edtrServices/apollo';
 import { UpdateTicketInput } from '@edtrServices/apollo/mutations';
-import parseInfinity from '@appServices/utilities/number/parseInfinity';
 
 type InputGenerator = (ticket: Ticket) => UpdateTicketInput;
 type UpdateCallback = (capacity: number) => InputGenerator;

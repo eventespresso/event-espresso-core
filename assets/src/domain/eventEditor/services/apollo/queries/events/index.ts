@@ -1,28 +1,5 @@
-import gql from 'graphql-tag';
+export * from './queries';
 
-export const EVENT_ATTRIBUTES: any = gql`
-	fragment eventAttributes on EspressoEvent {
-		id
-		dbId
-		desc
-		name
-		isActive
-		isCancelled
-		isExpired
-		isInactive
-		isPostponed
-		isSoldOut
-		isUpcoming
-		order
-		shortDesc
-	}
-`;
+export { default as useEvent } from './useEvent';
 
-export const GET_EVENT: any = gql`
-	query GET_EVENT($id: Int!) {
-		espressoEventBy(espressoEventId: $id) {
-			...eventAttributes
-		}
-	}
-	${EVENT_ATTRIBUTES}
-`;
+export { default as useEventId } from './useEventId';

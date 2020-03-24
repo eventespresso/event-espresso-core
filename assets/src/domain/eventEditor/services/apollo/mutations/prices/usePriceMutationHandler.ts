@@ -1,14 +1,14 @@
 import { OperationVariables } from 'apollo-client';
 import { pathOr } from 'ramda';
 
-import usePriceQueryOptions from '../../queries/prices/usePriceQueryOptions';
 import useOnCreatePrice from './useOnCreatePrice';
-import useOnUpdatePrice from './useOnUpdatePrice';
 import useOnDeletePrice from './useOnDeletePrice';
-import { MutationType, MutationInput } from '../../../../../../application/services/apollo/mutations';
-import { Price, PriceEdge, PricesList } from '../../types';
-import { DEFAULT_PRICE_LIST_DATA as DEFAULT_LIST_DATA } from '../../queries';
+import useOnUpdatePrice from './useOnUpdatePrice';
+import { DEFAULT_PRICE_LIST_DATA as DEFAULT_LIST_DATA } from '@edtrServices/apollo/queries';
 import { MutationHandler, OnUpdateFnOptions, MutatorGeneratedObject } from '../types';
+import { MutationType, MutationInput } from '@appServices/apollo/mutations';
+import { Price, PriceEdge, PricesList } from '@edtrServices/apollo/types';
+import { usePriceQueryOptions } from '@edtrServices/apollo/queries/prices';
 
 /**
  *

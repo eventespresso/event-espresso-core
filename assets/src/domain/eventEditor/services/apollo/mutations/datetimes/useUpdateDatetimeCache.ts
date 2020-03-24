@@ -1,15 +1,36 @@
-import useDatetimeQueryOptions from '../../queries/datetimes/useDatetimeQueryOptions';
+import { findIndex, update } from 'ramda';
+
 import { CacheUpdaterFn, CacheUpdaterFnArgs } from '../types';
-import { WriteQueryOptions } from '../../queries/types';
-import { Datetime, DatetimesList } from '../../types';
+import { Datetime, DatetimesList } from '@edtrServices/apollo/types';
+import { WriteQueryOptions } from '@edtrServices/apollo/queries/types';
+import { entityHasGuid } from '@sharedServices/predicates/selectionById';
+import { useDatetimeQueryOptions } from '@edtrServices/apollo/queries/datetimes';
 
 const useUpdateDatetimeCache = (): CacheUpdaterFn => {
 	const queryOptions = useDatetimeQueryOptions();
 
-	const updateDatetimeCache = ({ proxy, datetimes, datetime, remove = false }: CacheUpdaterFnArgs): void => {
+	const updateDatetimeCache = ({ proxy, datetimes, datetime, action }: CacheUpdaterFnArgs): void => {
 		const { nodes = [] } = datetimes;
-		// remove from or add to the list
-		const newNodes = remove ? nodes.filter(({ id }: Datetime) => id !== datetime.id) : [...nodes, datetime];
+		let newNodes: Array<Datetime>, datetimeIndex: number;
+		switch (action) {
+			case 'add':
+				newNodes = [...nodes, datetime];
+				break;
+			case 'update':
+				// find the index of the datetime to update
+				datetimeIndex = findIndex(entityHasGuid(datetime.id), nodes);
+				// if datetime exists
+				if (datetimeIndex >= 0) {
+					newNodes = update(datetimeIndex, datetime, nodes);
+				}
+				break;
+			case 'remove':
+				newNodes = nodes.filter(({ id }) => id !== datetime.id);
+				break;
+			default:
+				newNodes = nodes;
+				break;
+		}
 
 		// write the data to cache without
 		// mutating the cache directly

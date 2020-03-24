@@ -1,9 +1,9 @@
-import { useRelations, RelationsManager } from '../../../../../../application/services/apollo/relations';
-import { PriceMutationCallbackFn, PriceMutationCallbackFnArgs, CacheUpdaterFn } from '../types';
 import useUpdatePriceCache from './useUpdatePriceCache';
+import { PriceMutationCallbackFn, PriceMutationCallbackFnArgs, CacheUpdaterFn } from '../types';
+import { useRelations } from '@appServices/apollo/relations';
 
 const useOnDeletePrice = (): PriceMutationCallbackFn => {
-	const { dropRelations, removeRelation } = useRelations() as RelationsManager;
+	const { dropRelations, removeRelation } = useRelations();
 
 	const updatePriceCache: CacheUpdaterFn = useUpdatePriceCache();
 
@@ -23,7 +23,7 @@ const useOnDeletePrice = (): PriceMutationCallbackFn => {
 			});
 		}
 		// Update price cache.
-		updatePriceCache({ proxy, prices, price, remove: true });
+		updatePriceCache({ proxy, prices, price, action: 'remove' });
 	};
 
 	return onDeletePrice;

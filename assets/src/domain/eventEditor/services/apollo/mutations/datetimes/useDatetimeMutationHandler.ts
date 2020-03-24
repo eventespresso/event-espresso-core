@@ -1,16 +1,16 @@
 import { pathOr } from 'ramda';
 
-import useDatetimeQueryOptions from '../../queries/datetimes/useDatetimeQueryOptions';
-import useOnCreateDatetime from './useOnCreateDatetime';
-import useOnUpdateDatetime from './useOnUpdateDatetime';
-import useOnDeleteDatetime from './useOnDeleteDatetime';
-import { MutationType } from '../../../../../../application/services/apollo/mutations';
-import { DEFAULT_DATETIME_LIST_DATA as DEFAULT_LIST_DATA } from '../../queries';
-import { Datetime, DatetimeEdge, DatetimesList } from '../../types';
-import { EntityId } from '@appServices/apollo/types';
-import useOptimisticResponse from './useOptimisticResponse';
 import useMutationVariables from './useMutationVariables';
+import useOnCreateDatetime from './useOnCreateDatetime';
+import useOnDeleteDatetime from './useOnDeleteDatetime';
+import useOnUpdateDatetime from './useOnUpdateDatetime';
+import useOptimisticResponse from './useOptimisticResponse';
+import { DEFAULT_DATETIME_LIST_DATA as DEFAULT_LIST_DATA } from '@edtrServices/apollo/queries';
+import { Datetime, DatetimeEdge, DatetimesList } from '@edtrServices/apollo/types';
+import { EntityId } from '@appServices/apollo/types';
+import { MutationType } from '@appServices/apollo/mutations';
 import { OnUpdateFnOptions, MutationHandler } from '../types';
+import { useDatetimeQueryOptions } from '@edtrServices/apollo/queries/datetimes';
 
 const useDatetimeMutationHandler = (): MutationHandler => {
 	const options = useDatetimeQueryOptions();

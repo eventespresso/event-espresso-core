@@ -1,7 +1,7 @@
+import { CreateTicketInput, DeleteTicketInput, UpdateTicketInput } from './types';
 import { MutatorFnGn } from '@appServices/apollo/mutations';
+import { Ticket } from '@edtrServices/apollo/types';
 import { useMutator, TypeName } from '../';
-import { Ticket } from '../../types';
-import { CreateTicketInput, UpdateTicketInput, DeleteTicketInput } from './types';
 
 interface TicketMutator {
 	createEntity: MutatorFnGn<CreateTicketInput>;

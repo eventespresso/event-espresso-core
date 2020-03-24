@@ -39,17 +39,17 @@ export type PriceMutationCallbackFn = (args: PriceMutationCallbackFnArgs) => voi
 
 /* Generic cache updater */
 export interface CacheUpdaterFnArgs extends MutationCallbackFnArgs {
-	datetimes?: DatetimeEdge;
+	action: 'add' | 'update' | 'remove';
 	datetime?: Datetime;
-	tickets?: TicketEdge;
-	ticket?: Ticket;
+	datetimeId?: string;
+	datetimeIn?: string[];
+	datetimes?: DatetimeEdge;
 	price?: Price;
 	prices?: PriceEdge;
-	datetimeIn?: string[];
-	datetimeId?: string;
-	ticketIn?: string[];
+	ticket?: Ticket;
 	ticketId?: string;
-	remove?: boolean;
+	ticketIn?: string[];
+	tickets?: TicketEdge;
 }
 
 export type CacheUpdaterFn = (args: CacheUpdaterFnArgs) => void;

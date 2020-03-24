@@ -1,11 +1,11 @@
-import { useRelations, RelationsManager } from '../../../../../../application/services/apollo/relations';
-import { TicketMutationCallbackFn, TicketMutationCallbackFnArgs } from '../types';
-import useUpdateTicketCache from './useUpdateTicketCache';
 import updatePriceCache from './updatePriceCache';
-import { Ticket } from '../../types';
+import useUpdateTicketCache from './useUpdateTicketCache';
+import { Ticket } from '@edtrServices/apollo/types';
+import { TicketMutationCallbackFn, TicketMutationCallbackFnArgs } from '../types';
+import { useRelations } from '@appServices/apollo/relations';
 
 const useOnDeleteTicket = (): TicketMutationCallbackFn => {
-	const { dropRelations, removeRelation } = useRelations() as RelationsManager;
+	const { dropRelations, removeRelation } = useRelations();
 
 	const updateTicketCache = useUpdateTicketCache();
 
@@ -17,7 +17,7 @@ const useOnDeleteTicket = (): TicketMutationCallbackFn => {
 
 			// Update prices cache for the changed tickets,
 			// to avoid refetching of prices.
-			updatePriceCache({ proxy, ticketIn, ticketId, remove: true });
+			updatePriceCache({ proxy, ticketIn, ticketId, action: 'remove' });
 
 			// Remove the ticket from all datetime relations
 			removeRelation({
@@ -38,7 +38,7 @@ const useOnDeleteTicket = (): TicketMutationCallbackFn => {
 			});
 		}
 		// Update ticket cache after price cache is updated.
-		updateTicketCache({ proxy, tickets, ticket, remove: true });
+		updateTicketCache({ proxy, tickets, ticket, action: 'remove' });
 	};
 
 	return onDeleteTicket;

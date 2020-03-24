@@ -1,11 +1,8 @@
-import { queries } from '../../queries';
 import { CacheUpdaterFnArgs } from '../types';
-import { ReadQueryOptions, WriteQueryOptions } from '../../queries/types';
-import { TicketsList } from '../../types';
+import { GET_TICKETS, ReadQueryOptions, WriteQueryOptions } from '@edtrServices/apollo/queries';
+import { TicketsList } from '@edtrServices/apollo/types';
 
-const { GET_TICKETS } = queries;
-
-const updateTicketCache = ({ proxy, datetimeIn, datetimeId, remove = false }: CacheUpdaterFnArgs): void => {
+const updateTicketCache = ({ proxy, datetimeIn, datetimeId, action }: CacheUpdaterFnArgs): void => {
 	const queryOptions: ReadQueryOptions = {
 		query: GET_TICKETS,
 		variables: {
@@ -27,7 +24,19 @@ const updateTicketCache = ({ proxy, datetimeIn, datetimeId, remove = false }: Ca
 		return;
 	}
 
-	const newDatetimeIn = remove ? datetimeIn.filter((id: string) => id !== datetimeId) : [...datetimeIn, datetimeId];
+	let newDatetimeIn: typeof datetimeIn;
+
+	switch (action) {
+		case 'add':
+			newDatetimeIn = [...datetimeIn, datetimeId];
+			break;
+		case 'remove':
+			newDatetimeIn = datetimeIn.filter((id: string) => id !== datetimeId);
+			break;
+		default:
+			newDatetimeIn = datetimeIn;
+			break;
+	}
 
 	const writeOptions: WriteQueryOptions = {
 		query: GET_TICKETS,
