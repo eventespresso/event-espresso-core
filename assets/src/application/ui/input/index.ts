@@ -1,3 +1,4 @@
+export { default as BaseInput } from './BaseInput/BaseInput';
 export { default as Button } from './Button';
 export { default as CurrencyInput } from './CurrencyInput';
 export { default as DatePicker } from './DateTimePicker/DatePicker';

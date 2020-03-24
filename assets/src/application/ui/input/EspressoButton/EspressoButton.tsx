@@ -1,5 +1,6 @@
 import React from 'react';
 import classNames from 'classnames';
+import { isMobile } from 'react-device-detect';
 import { Button, Tooltip } from 'antd';
 import AntIcon from '@ant-design/icons';
 
@@ -76,7 +77,7 @@ const EspressoButton = React.forwardRef<Button, EspressoButtonProps>(
 			);
 		}
 
-		return tooltip ? (
+		return tooltip && !isMobile ? (
 			<Tooltip title={tooltip} {...tooltipProps}>
 				{eeButton}
 			</Tooltip>

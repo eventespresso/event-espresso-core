@@ -2,6 +2,7 @@
  * Event Espresso EntityListFilterBar Stylesheet
  * © 2018 Event Espresso
  * ------------------------------------------------------------------------- */
+@import '../../../styles/mixins/breakpoints.scss';
 
 $filter-btn: '.esprs-button.ant-btn.ee-filter-bar__btn';
 
@@ -73,6 +74,26 @@ $filter-btn: '.esprs-button.ant-btn.ee-filter-bar__btn';
 		}
 	}
 
+	&__chain {
+		@include max782px {
+			&#{$filter-btn} {
+				width: 100%;
+			}
+		}
+		&--active {
+			&#{$filter-btn} {
+				&:focus,
+				&:hover {
+					svg {
+						path {
+							fill: var(--ee-color-white);
+						}
+					}
+				}
+			}
+		}
+	}
+
 	&__filter {
 		align-items: flex-start;
 		display: flex;
@@ -84,6 +105,10 @@ $filter-btn: '.esprs-button.ant-btn.ee-filter-bar__btn';
 		min-width: calc(var(--ee-font-size-default) * 12);
 		white-space: pre;
 		width: auto;
+
+		@include max782px {
+			width: 100%;
+		}
 
 		> div,
 		.ant-select,
