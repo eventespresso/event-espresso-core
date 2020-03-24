@@ -5,7 +5,7 @@ import { SelectInput } from '@appInputs/SelectInput';
 import { TicketsStatus } from '@edtrServices/filterState';
 
 interface StatusControlProps {
-	isChained?: boolean;
+	isChained: boolean;
 	status: TicketsStatus;
 	setStatus: (datetimesToShow: TicketsStatus) => void;
 }

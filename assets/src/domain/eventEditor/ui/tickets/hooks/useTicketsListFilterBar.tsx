@@ -22,10 +22,10 @@ const useTicketsListFilterBar = (): TicketsListFilterBarCallback => {
 		const { registerElement: registerFilterBarItem } = registry;
 
 		registerFilterBarItem('status', ({ filterState }) => {
-			const { status, setStatus } = filterState;
+			const { isChained, status, setStatus } = filterState;
 			return (
 				<div className='ee-filter-bar__filter'>
-					<StatusControl setStatus={setStatus} status={status} />
+					<StatusControl isChained={isChained} setStatus={setStatus} status={status} />
 				</div>
 			);
 		});
