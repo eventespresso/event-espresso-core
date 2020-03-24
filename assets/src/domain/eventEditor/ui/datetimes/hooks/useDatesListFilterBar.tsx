@@ -41,7 +41,7 @@ const useDatesListFilterBar = (): DatesListFilterBarCallback => {
 		registerFilterBarItem('displayStartOrEndDate', ({ filterState }) => {
 			const { displayStartOrEndDate, setDisplayStartOrEndDate } = filterState;
 			return (
-				<div className='ee-filter-bar__select'>
+				<div className='ee-filter-bar__filter'>
 					<DisplayStartOrEndDateControl
 						displayStartOrEndDate={displayStartOrEndDate}
 						setDisplayStartOrEndDate={setDisplayStartOrEndDate}
@@ -53,7 +53,7 @@ const useDatesListFilterBar = (): DatesListFilterBarCallback => {
 		registerFilterBarItem('sortBy', ({ filterState }) => {
 			const { sortBy, setSortBy } = filterState;
 			return (
-				<div className='ee-filter-bar__select'>
+				<div className='ee-filter-bar__filter'>
 					<SortByControl sortBy={sortBy} setSortBy={setSortBy} />
 				</div>
 			);

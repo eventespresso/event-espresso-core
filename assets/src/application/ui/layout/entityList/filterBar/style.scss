@@ -73,9 +73,10 @@ $filter-btn: '.esprs-button.ant-btn.ee-filter-bar__btn';
 		}
 	}
 
-	&__filter,
-	&__select {
-		margin: 0 var(--ee-margin-small) var(--ee-margin-smaller) 0;
+	&__chain {
+		button.esprs-button.ant-btn {
+			margin-bottom: 0;
+		}
 	}
 
 	&__filter {
@@ -84,6 +85,7 @@ $filter-btn: '.esprs-button.ant-btn.ee-filter-bar__btn';
 		flex-flow: column nowrap;
 		height: auto;
 		justify-content: flex-end;
+		margin: 0 var(--ee-margin-small) var(--ee-margin-smaller) 0;
 		max-width: 100%;
 		min-width: calc(var(--ee-font-size-default) * 12);
 		white-space: pre;
