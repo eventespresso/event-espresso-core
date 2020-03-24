@@ -5,11 +5,18 @@ import { EntityId } from '@appServices/apollo/types';
 
 const useTicketQueryOptions = (datetimeIn: EntityId[] = []): ReadQueryOptions => {
 	const datetimeIds = useDatetimeIds();
+
+	const newDatetimeIn = datetimeIn.length ? datetimeIn : datetimeIds;
+
+	// Sort the IDs list which may be out of order,
+	// thus changing the key used to access apollo cache
+	newDatetimeIn.sort();
+
 	const options: ReadQueryOptions = {
 		query: GET_TICKETS,
 		variables: {
 			where: {
-				datetimeIn: datetimeIn.length ? datetimeIn : datetimeIds,
+				datetimeIn: newDatetimeIn,
 			},
 		},
 	};

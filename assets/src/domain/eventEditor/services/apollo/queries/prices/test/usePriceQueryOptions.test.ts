@@ -18,6 +18,6 @@ describe('usePriceQueryOptions()', () => {
 		);
 		await waitForValueToChange(() => result.current, { timeout });
 
-		expect(result.current.variables.where.ticketIn).toEqual(nodes.map(({ id }) => id));
+		expect(result.current.variables.where.ticketIn).toEqual(nodes.map(({ id }) => id).sort());
 	});
 });
