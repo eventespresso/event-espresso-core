@@ -10,7 +10,7 @@ interface BaseInputProps {
 	children?: React.ReactNode;
 }
 
-const BaseInput: React.FC<BaseInputProps> = ({ id, label, className, children }) => {
+const BaseInput: React.FC<BaseInputProps> = ({ children, className, id, label }) => {
 	return (
 		<div className={classnames('ee-base-input', className)}>
 			{label && (
