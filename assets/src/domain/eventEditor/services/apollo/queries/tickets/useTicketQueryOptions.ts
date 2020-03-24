@@ -11,7 +11,7 @@ const useTicketQueryOptions = (datetimeIn: EntityId[] = []): ReadQueryOptions =>
 	let newDatetimeIn = datetimeIn.length ? datetimeIn : datetimeIds;
 
 	// Sort the IDs list which may be out of order,
-	// thus changing the key used to access apollo cache
+	// thus changing the key used to access Apollo Cache
 	newDatetimeIn = sortBy(identity, newDatetimeIn);
 
 	const options: ReadQueryOptions = {
