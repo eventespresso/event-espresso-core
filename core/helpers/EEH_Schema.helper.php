@@ -100,7 +100,7 @@ class EEH_Schema
             if ($venue->virtual_url() !== '') {
                 $template_args['event_attendance_mode'] = 'OnlineEventAttendanceMode';
             }
-            if ($venue->virtual_url() != '' && $venue->address() != '') {
+            if ($venue->virtual_url() !== '' && $venue->address() !== '') {
                 $template_args['event_attendance_mode'] = 'MixedEventAttendanceMode';
             }
         }
