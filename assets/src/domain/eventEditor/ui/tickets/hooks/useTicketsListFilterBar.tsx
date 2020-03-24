@@ -24,7 +24,7 @@ const useTicketsListFilterBar = (): TicketsListFilterBarCallback => {
 		registerFilterBarItem('status', ({ filterState }) => {
 			const { status, setStatus } = filterState;
 			return (
-				<div className='ee-filter-bar__filter ee-dates-datetimes-to-show-filter'>
+				<div className='ee-filter-bar__filter'>
 					<StatusControl setStatus={setStatus} status={status} />
 				</div>
 			);
@@ -33,7 +33,7 @@ const useTicketsListFilterBar = (): TicketsListFilterBarCallback => {
 		registerFilterBarItem('isChained', ({ filterState }) => {
 			const { isChained, toggleIsChained } = filterState;
 			return (
-				<div className='ee-ticket-dates-chained-filter ee-filter-bar__filter ee-filter-bar-filter--micro'>
+				<div className='ee-filter-bar__chain ee-filter-bar__filter ee-filter-bar__filter--micro'>
 					<TicketsChainedButton isChained={isChained} toggleIsChained={toggleIsChained} />
 				</div>
 			);
@@ -42,7 +42,7 @@ const useTicketsListFilterBar = (): TicketsListFilterBarCallback => {
 		registerFilterBarItem('sales', ({ filterState }) => {
 			const { sales, setSales } = filterState;
 			return (
-				<div className='ee-filter-bar__filter ee-dates-datetimes-to-show-filter'>
+				<div className='ee-filter-bar__filter'>
 					<SalesControl sales={sales} setSales={setSales} />
 				</div>
 			);
@@ -51,7 +51,7 @@ const useTicketsListFilterBar = (): TicketsListFilterBarCallback => {
 		registerFilterBarItem('displayStartOrEndDate', ({ filterState }) => {
 			const { displayStartOrEndDate, setDisplayStartOrEndDate } = filterState;
 			return (
-				<div className='ee-tickets-display-start-or-end-ticket-filter ee-filter-bar-filter'>
+				<div className='ee-filter-bar__filter'>
 					<DisplayStartOrEndDateControl
 						displayStartOrEndDate={displayStartOrEndDate}
 						setDisplayStartOrEndDate={setDisplayStartOrEndDate}
@@ -63,7 +63,7 @@ const useTicketsListFilterBar = (): TicketsListFilterBarCallback => {
 		registerFilterBarItem('sortBy', ({ filterState }) => {
 			const { sortBy, setSortBy } = filterState;
 			return (
-				<div className='ee-tickets-sort-by-filter ee-filter-bar-filter'>
+				<div className='ee-filter-bar__filter'>
 					<SortByControl sortBy={sortBy} setSortBy={setSortBy} />
 				</div>
 			);

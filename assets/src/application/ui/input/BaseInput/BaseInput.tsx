@@ -1,5 +1,5 @@
 import React from 'react';
-import classnames from 'classnames';
+import classNames from 'classnames';
 
 import './style.scss';
 
@@ -10,9 +10,9 @@ interface BaseInputProps {
 	children?: React.ReactNode;
 }
 
-const BaseInput: React.FC<BaseInputProps> = ({ id, label, className, children }) => {
+const BaseInput: React.FC<BaseInputProps> = ({ children, className, id, label }) => {
 	return (
-		<div className={classnames('ee-base-input', className)}>
+		<div className={classNames('ee-base-input', className)}>
 			{label && (
 				<label className='ee-base-input-label' htmlFor={id}>
 					{label}

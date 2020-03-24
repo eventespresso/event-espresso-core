@@ -10,18 +10,18 @@ interface SearchInputProps extends InputProps {
 	setSearchText: (text?: string) => void;
 }
 
-const SearchInput: React.FC<SearchInputProps> = React.memo(({ id, searchText, setSearchText, className, ...rest }) => {
-	const htmlId = `ee-search-input-${id}`;
+const SearchInput: React.FC<SearchInputProps> = React.memo(({ className, searchText, setSearchText, ...props }) => {
+	const id = `ee-search-input-${props.id}`;
 
 	return typeof setSearchText === 'function' ? (
-		<BaseInput label={__('search')} id={htmlId} className={className}>
+		<BaseInput label={__('search')} id={id} className={className}>
 			<Input
-				id={htmlId}
+				{...props}
+				id={id}
 				className='ee-entity-list-filter-bar-search'
 				value={searchText}
 				onChange={(e) => setSearchText(e.target.value)}
 				onPressEnter={(e) => e.preventDefault()}
-				{...rest}
 			/>
 		</BaseInput>
 	) : null;
