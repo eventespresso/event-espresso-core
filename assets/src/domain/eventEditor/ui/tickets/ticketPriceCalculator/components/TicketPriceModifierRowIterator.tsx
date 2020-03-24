@@ -17,12 +17,6 @@ const TicketPriceModifierRowIterator: React.FC = () => {
 					<TicketPriceModifierRow key={`${price.id}:${index}`} index={index} price={price} />
 				) : null;
 			})}
-			<tr>
-				<td colSpan={5}></td>
-				<td style={{ ...styles.colWidth7h, ...styles.actions, textAlign: 'left' }}>
-					<AddPriceModifierButton index={prices.length} />
-				</td>
-			</tr>
 		</>
 	);
 };
