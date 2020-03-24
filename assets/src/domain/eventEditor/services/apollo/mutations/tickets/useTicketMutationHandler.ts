@@ -1,16 +1,16 @@
 import { pathOr } from 'ramda';
 
-import useTicketQueryOptions from '../../queries/tickets/useTicketQueryOptions';
-import useOnCreateTicket from './useOnCreateTicket';
-import useOnUpdateTicket from './useOnUpdateTicket';
-import useOnDeleteTicket from './useOnDeleteTicket';
-import { MutationType } from '../../../../../../application/services/apollo/mutations';
-import { DEFAULT_TICKET_LIST_DATA as DEFAULT_LIST_DATA } from '../../queries';
-import { Ticket, TicketEdge, Price, TicketsList } from '../../types';
-import { EntityId } from '@appServices/apollo/types';
-import useOptimisticResponse from './useOptimisticResponse';
 import useMutationVariables from './useMutationVariables';
+import useOnCreateTicket from './useOnCreateTicket';
+import useOnDeleteTicket from './useOnDeleteTicket';
+import useOnUpdateTicket from './useOnUpdateTicket';
+import useOptimisticResponse from './useOptimisticResponse';
+import { DEFAULT_TICKET_LIST_DATA as DEFAULT_LIST_DATA } from '@edtrServices/apollo/queries';
+import { EntityId } from '@appServices/apollo/types';
 import { MutationHandler, OnUpdateFnOptions } from '../types';
+import { MutationType } from '@appServices/apollo/mutations';
+import { Ticket, TicketEdge, Price, TicketsList } from '@edtrServices/apollo/types';
+import { useTicketQueryOptions } from '@edtrServices/apollo/queries/tickets';
 
 const useTicketMutationHandler = (): MutationHandler => {
 	const options = useTicketQueryOptions();
@@ -41,14 +41,14 @@ const useTicketMutationHandler = (): MutationHandler => {
 			const tickets = pathOr<TicketEdge>(DEFAULT_LIST_DATA, ['espressoTickets'], data);
 			const datetimeIds = pathOr<Array<EntityId>>([], ['datetimes'], input);
 
-			const priceIds = pathOr<Price[]>([], ['nodes'], prices).map(({ id }: Price) => id);
+			const priceIds = pathOr<Price[]>([], ['nodes'], prices).map(({ id }) => id);
 
 			switch (mutationType) {
 				case MutationType.Create:
 					onCreateTicket({ proxy, tickets, ticket, datetimeIds, prices });
 					break;
 				case MutationType.Update:
-					onUpdateTicket({ ticket, datetimeIds, priceIds });
+					onUpdateTicket({ proxy, tickets, ticket, datetimeIds, priceIds });
 					break;
 				case MutationType.Delete:
 					onDeleteTicket({ proxy, tickets, ticket });

@@ -1,11 +1,12 @@
-import { assocPath, pathOr } from 'ramda';
-import { queries, DEFAULT_PRICE_LIST_DATA } from '../../queries';
-import { CacheUpdaterFnArgs } from '../types';
-import { ReadQueryOptions, WriteQueryOptions } from '../../queries/types';
-import { Price, PricesList } from '../../types';
-const { GET_PRICES } = queries;
+import { assocPath, pathOr, uniqBy } from 'ramda';
 
-const updatePriceCache = ({ proxy, prices = null, ticketIn, ticketId, remove = false }: CacheUpdaterFnArgs): void => {
+import { CacheUpdaterFnArgs } from '../types';
+import { DEFAULT_PRICE_LIST_DATA, GET_PRICES } from '@edtrServices/apollo/queries';
+import { Price, PricesList } from '@edtrServices/apollo/types';
+import { ReadQueryOptions, WriteQueryOptions } from '@edtrServices/apollo/queries/types';
+import { entityDbId } from '@sharedServices/predicates/selectionById';
+
+const updatePriceCache = ({ proxy, prices = null, ticketIn, ticketId, action }: CacheUpdaterFnArgs): void => {
 	const queryOptions: ReadQueryOptions = {
 		query: GET_PRICES,
 		variables: {
@@ -24,13 +25,25 @@ const updatePriceCache = ({ proxy, prices = null, ticketIn, ticketId, remove = f
 		};
 	}
 
-	const newTicketIn = remove ? ticketIn.filter((id) => id !== ticketId) : [...ticketIn, ticketId];
+	let newTicketIn: typeof ticketIn;
+
+	switch (action) {
+		case 'add':
+			newTicketIn = [...ticketIn, ticketId];
+			break;
+		case 'remove':
+			newTicketIn = ticketIn.filter((id: string) => id !== ticketId);
+			break;
+	}
+
 	const priceNodes = pathOr<Price[]>([], ['nodes'], prices);
 	const pathToNodes = ['espressoPrices', 'nodes'];
 
-	if (!remove && priceNodes.length) {
+	if (action === 'add' && priceNodes.length) {
 		const existingPrices = pathOr<Price[]>([], pathToNodes, data);
-		data = assocPath<Price[], PricesList>(pathToNodes, [...existingPrices, ...priceNodes], data);
+		// make sure that default prices are not repeated
+		const newPrices = uniqBy(entityDbId, [...existingPrices, ...priceNodes]);
+		data = assocPath<Price[], PricesList>(pathToNodes, newPrices, data);
 	}
 	const nodes = pathOr<Price[]>([], pathToNodes, data);
 	// if there are no prices

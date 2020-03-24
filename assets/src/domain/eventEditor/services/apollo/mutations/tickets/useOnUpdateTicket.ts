@@ -1,10 +1,13 @@
-import { useRelations, RelationsManager } from '../../../../../../application/services/apollo/relations';
+import useUpdateTicketCache from './useUpdateTicketCache';
 import { TicketMutationCallbackFn, TicketMutationCallbackFnArgs } from '../types';
+import { useRelations } from '@appServices/apollo/relations';
 
 const useOnUpdateTicket = (): TicketMutationCallbackFn => {
-	const { updateRelations, addRelation, removeRelation } = useRelations() as RelationsManager;
+	const { updateRelations, addRelation, removeRelation } = useRelations();
 
-	const onUpdateTicket = ({ ticket, datetimeIds, priceIds }: TicketMutationCallbackFnArgs): void => {
+	const updateTicketCache = useUpdateTicketCache();
+
+	const onUpdateTicket = ({ proxy, tickets, ticket, datetimeIds, priceIds }: TicketMutationCallbackFnArgs): void => {
 		if (ticket.id && datetimeIds && datetimeIds.length) {
 			const { id: ticketId } = ticket;
 
@@ -59,6 +62,8 @@ const useOnUpdateTicket = (): TicketMutationCallbackFn => {
 					relationId: ticketId,
 				});
 			});
+			// Update ticket cache.
+			updateTicketCache({ proxy, tickets, ticket, action: 'update' });
 		}
 	};
 

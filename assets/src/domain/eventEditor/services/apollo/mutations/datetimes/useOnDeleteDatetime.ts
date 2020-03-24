@@ -1,10 +1,10 @@
-import { useRelations, RelationsManager } from '../../../../../../application/services/apollo/relations';
-import { DatetimeMutationCallbackFn, DatetimeMutationCallbackFnArgs, CacheUpdaterFn } from '../types';
 import updateTicketCache from './updateTicketCache';
 import useUpdateDatetimeCache from './useUpdateDatetimeCache';
+import { DatetimeMutationCallbackFn, DatetimeMutationCallbackFnArgs, CacheUpdaterFn } from '../types';
+import { useRelations } from '@appServices/apollo/relations';
 
 const useOnDeleteDatetime = (): DatetimeMutationCallbackFn => {
-	const { dropRelations, removeRelation } = useRelations() as RelationsManager;
+	const { dropRelations, removeRelation } = useRelations();
 
 	const updateDatetimeCache: CacheUpdaterFn = useUpdateDatetimeCache();
 
@@ -16,7 +16,7 @@ const useOnDeleteDatetime = (): DatetimeMutationCallbackFn => {
 
 			// Update tickets cache for the changed datetimes,
 			// to avoid refetching of tickets.
-			updateTicketCache({ proxy, datetimeIn, datetimeId, remove: true });
+			updateTicketCache({ proxy, datetimeIn, datetimeId, action: 'remove' });
 
 			// Remove the datetime from all ticket relations
 			removeRelation({
@@ -31,7 +31,7 @@ const useOnDeleteDatetime = (): DatetimeMutationCallbackFn => {
 			});
 		}
 		// Update datetime cache after tickets cache is updated.
-		updateDatetimeCache({ proxy, datetimes, datetime, remove: true });
+		updateDatetimeCache({ proxy, datetimes, datetime, action: 'remove' });
 	};
 
 	return onDeleteDatetime;

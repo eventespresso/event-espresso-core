@@ -1,12 +1,13 @@
 import { pathOr } from 'ramda';
-import { useRelations, RelationsManager } from '../../../../../../application/services/apollo/relations';
-import useUpdateTicketCache from './useUpdateTicketCache';
+
 import updatePriceCache from './updatePriceCache';
+import useUpdateTicketCache from './useUpdateTicketCache';
+import { Ticket, Price } from '@edtrServices/apollo/types';
 import { TicketMutationCallbackFn, TicketMutationCallbackFnArgs } from '../types';
-import { Ticket, Price } from '../../types';
+import { useRelations } from '@appServices/apollo/relations';
 
 const useOnCreateTicket = (): TicketMutationCallbackFn => {
-	const { updateRelations, addRelation } = useRelations() as RelationsManager;
+	const { updateRelations, addRelation } = useRelations();
 
 	const updateTicketCache = useUpdateTicketCache();
 
@@ -18,7 +19,7 @@ const useOnCreateTicket = (): TicketMutationCallbackFn => {
 
 			// Update prices cache for the changed tickets,
 			// to avoid refetching of prices.
-			updatePriceCache({ proxy, prices, ticketIn, ticketId });
+			updatePriceCache({ proxy, prices, ticketIn, ticketId, action: 'add' });
 
 			// Set relations with datetimes
 			updateRelations({
@@ -54,7 +55,7 @@ const useOnCreateTicket = (): TicketMutationCallbackFn => {
 			});
 		}
 		// Update ticket cache after price cache is updated.
-		updateTicketCache({ proxy, tickets, ticket });
+		updateTicketCache({ proxy, tickets, ticket, action: 'add' });
 	};
 
 	return onCreateTicket;
