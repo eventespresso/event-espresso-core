@@ -33,6 +33,9 @@ const updateTicketCache = ({ proxy, datetimeIn, datetimeId, action }: CacheUpdat
 		case 'remove':
 			newDatetimeIn = datetimeIn.filter((id: string) => id !== datetimeId);
 			break;
+		default:
+			newDatetimeIn = datetimeIn;
+			break;
 	}
 
 	const writeOptions: WriteQueryOptions = {

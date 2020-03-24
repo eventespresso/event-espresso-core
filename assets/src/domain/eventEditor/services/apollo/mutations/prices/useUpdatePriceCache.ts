@@ -27,6 +27,9 @@ const useUpdatePriceCache = (): CacheUpdaterFn => {
 			case 'remove':
 				newNodes = nodes.filter(({ id }) => id !== price.id);
 				break;
+			default:
+				newNodes = nodes;
+				break;
 		}
 
 		// write the data to cache without

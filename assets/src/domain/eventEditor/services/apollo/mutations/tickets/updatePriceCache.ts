@@ -34,6 +34,9 @@ const updatePriceCache = ({ proxy, prices = null, ticketIn, ticketId, action }: 
 		case 'remove':
 			newTicketIn = ticketIn.filter((id: string) => id !== ticketId);
 			break;
+		default:
+			newTicketIn = ticketIn;
+			break;
 	}
 
 	const priceNodes = pathOr<Price[]>([], ['nodes'], prices);
