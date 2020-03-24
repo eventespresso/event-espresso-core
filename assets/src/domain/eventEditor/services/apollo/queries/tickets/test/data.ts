@@ -28,7 +28,7 @@ export const nodes: Ticket[] = [
 		price: 20.5,
 		quantity: 100,
 		reserved: 0,
-		reverseCalculate: true,
+		reverseCalculate: false,
 		sold: 5,
 		startDate: formatISO(new Date(2018, 8, 18, 19, 0, 52)),
 		uses: -1,
