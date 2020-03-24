@@ -1,7 +1,7 @@
+import { CreateDatetimeInput, UpdateDatetimeInput, DeleteDatetimeInput } from './types';
+import { Datetime } from '@edtrServices/apollo/types';
 import { MutatorFnGn } from '@appServices/apollo/mutations';
 import { useMutator, TypeName } from '../';
-import { Datetime } from '../../types';
-import { CreateDatetimeInput, UpdateDatetimeInput, DeleteDatetimeInput } from './types';
 
 interface DatetimeMutator {
 	createEntity: MutatorFnGn<CreateDatetimeInput>;

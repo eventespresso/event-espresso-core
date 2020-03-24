@@ -2,28 +2,27 @@ import { useEffect } from 'react';
 import { pathOr } from 'ramda';
 
 import useCacheRehydrationData from './useCacheRehydrationData';
-import useRelations from '../../../../../application/services/apollo/relations/useRelations';
-import { useStatus, TypeName } from '../../../../../application/services/apollo/status';
+import { useRelations } from '@appServices/apollo/relations';
+import { useStatus, TypeName } from '@appServices/apollo/status';
 import {
 	DEFAULT_DATETIME_LIST_DATA,
 	DEFAULT_TICKET_LIST_DATA,
 	DEFAULT_PRICE_LIST_DATA,
 	DEFAULT_PRICE_TYPE_LIST_DATA,
 } from '../queries';
-import usePriceTypeQueryOptions from '../queries/priceTypes/usePriceTypeQueryOptions';
-import useDatetimeQueryOptions from '../queries/datetimes/useDatetimeQueryOptions';
-import useTicketQueryOptions from '../queries/tickets/useTicketQueryOptions';
-import usePriceQueryOptions from '../queries/prices/usePriceQueryOptions';
+import {
+	useDatetimeQueryOptions,
+	usePriceQueryOptions,
+	usePriceTypeQueryOptions,
+	useTicketQueryOptions,
+} from '../queries';
 import { Datetime, Ticket } from '../types';
 import { useUpdateDatetimeList, useUpdatePriceTypeList, useUpdateTicketList, useUpdatePriceList } from '../../../hooks';
-import {
-	useCurrentUserQueryOptions,
-	useUpdateCurrentUserCache,
-} from '../../../../shared/services/apollo/queries/currentUser';
+import { useCurrentUserQueryOptions, useUpdateCurrentUserCache } from '@sharedServices/apollo/queries/currentUser';
 import {
 	useGeneralSettingsQueryOptions,
 	useUpdateGeneralSettingsCache,
-} from '../../../../shared/services/apollo/queries/generalSettings';
+} from '@sharedServices/apollo/queries/generalSettings';
 
 const useCacheRehydration = (): void => {
 	const { initialize: initializeRelations, isInitialized: relationsInitialized } = useRelations();

@@ -2,8 +2,8 @@ import { useCallback } from 'react';
 
 import { EntityId } from '@appServices/apollo/types';
 import { Ticket } from '@edtrServices/apollo';
-import { useTicketMutator, UpdateTicketInput } from '@edtrServices/apollo/mutations';
 import { useRelatedTickets } from '@edtrServices/apollo/queries';
+import { useTicketMutator, UpdateTicketInput } from '@edtrServices/apollo/mutations';
 
 type InputGenerator = (ticket: Ticket) => UpdateTicketInput;
 type UpdateCallback = (inputGenerator: InputGenerator) => void;

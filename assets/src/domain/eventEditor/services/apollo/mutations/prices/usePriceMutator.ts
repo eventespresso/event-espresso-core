@@ -1,7 +1,7 @@
+import { CreatePriceInput, DeletePriceInput, UpdatePriceInput } from './types';
 import { MutatorFnGn } from '@appServices/apollo/mutations';
+import { Price } from '@edtrServices/apollo/types';
 import { useMutator, TypeName } from '../';
-import { Price } from '../../types';
-import { CreatePriceInput, UpdatePriceInput, DeletePriceInput } from './types';
 
 interface PriceMutator {
 	createEntity: MutatorFnGn<CreatePriceInput>;

@@ -1,8 +1,8 @@
-import { useRelations, RelationsManager } from '../../../../../../application/services/apollo/relations';
 import { DatetimeMutationCallbackFn, DatetimeMutationCallbackFnArgs } from '../types';
+import { useRelations } from '@appServices/apollo/relations';
 
 const useOnUpdateDatetime = (): DatetimeMutationCallbackFn => {
-	const { updateRelations, addRelation, removeRelation } = useRelations() as RelationsManager;
+	const { updateRelations, addRelation, removeRelation } = useRelations();
 
 	const onUpdateDatetime = ({ datetime, tickets }: DatetimeMutationCallbackFnArgs): void => {
 		if (datetime.id && tickets && tickets.length) {

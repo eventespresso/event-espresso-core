@@ -1,8 +1,8 @@
 import { useCallback } from 'react';
 import { OperationVariables } from 'apollo-client';
 
-import useEventId from '../../queries/events/useEventId';
 import { MutationType, MutationInput } from '@appServices/apollo/mutations';
+import { useEventId } from '@edtrServices/apollo/queries/events';
 
 type MutationVariablesCb = (mutationType: MutationType, input: MutationInput) => OperationVariables;
 

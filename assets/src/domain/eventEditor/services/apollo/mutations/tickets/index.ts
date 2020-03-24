@@ -1,5 +1,5 @@
 import gql from 'graphql-tag';
-import { TICKET_ATTRIBUTES, TICKET_PRICES_ATTRIBUTE } from '../../queries/tickets';
+import { TICKET_ATTRIBUTES, TICKET_PRICES_ATTRIBUTE } from '@edtrServices/apollo/queries/tickets';
 
 export const CREATE_TICKET = gql`
 	mutation CREATE_TICKET($input: CreateEspressoTicketInput!) {

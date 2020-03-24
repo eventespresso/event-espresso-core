@@ -1,5 +1,5 @@
 import gql from 'graphql-tag';
-import { PRICE_ATTRIBUTES } from '../../queries/prices';
+import { PRICE_ATTRIBUTES } from '@edtrServices/apollo/queries/prices';
 
 export const CREATE_PRICE = gql`
 	mutation CREATE_PRICE($input: CreateEspressoPriceInput!) {
