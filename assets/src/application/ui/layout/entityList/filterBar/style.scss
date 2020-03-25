@@ -51,6 +51,11 @@ $filter-btn: '.esprs-button.ant-btn.ee-filter-bar__btn';
 				border: 2px solid var(--ee-color-primary-low-contrast);
 				box-shadow: 0 0 0 1px var(--ee-color-primary-low-contrast);
 			}
+			&--active {
+				&#{$filter-btn} {
+					border-color: var(--ee-color-primary-low-contrast);
+				}
+			}
 		}
 	}
 
@@ -63,7 +68,7 @@ $filter-btn: '.esprs-button.ant-btn.ee-filter-bar__btn';
 		#{$filter-btn} {
 			&--active {
 				&#{$filter-btn} {
-					border: 1px solid var(--ee-color-primary-low-contrast);
+					border-color: var(--ee-color-primary-low-contrast);
 					box-shadow: 0 0 0 1px var(--ee-color-primary-low-contrast);
 					color: var(--ee-color-primary);
 					path {

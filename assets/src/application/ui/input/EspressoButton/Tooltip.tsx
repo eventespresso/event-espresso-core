@@ -1,8 +1,7 @@
 import React from 'react';
-import classNames from 'classnames';
-import { withViewportMatch } from '@wordpress/viewport';
 import { Tooltip as DefaultTooltip } from 'antd';
 import { TooltipPropsWithTitle } from 'antd/lib/tooltip';
+import { withViewportMatch } from '@appDisplay/viewport';
 import { __ } from '@wordpress/i18n';
 
 import { isEmpty } from '@appServices/utilities/string';
