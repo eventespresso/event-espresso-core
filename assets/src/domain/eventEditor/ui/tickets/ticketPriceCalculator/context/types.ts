@@ -3,7 +3,7 @@ import { BaseProps } from '../types';
 import { DataStateManager } from '../data';
 
 export interface ExtraContextProps {
-	onCloseModal: VoidFunction;
+	onCloseModal?: VoidFunction;
 }
 
 export interface ProviderProps extends AppProviderProps, BaseProps, ExtraContextProps {}

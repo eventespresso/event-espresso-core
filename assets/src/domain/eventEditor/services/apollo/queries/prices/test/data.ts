@@ -41,7 +41,7 @@ export const nodes: Price[] = [
 	{
 		id: 'price-pqr',
 		dbId: 4,
-		amount: 97,
+		amount: 10,
 		desc: 'PQR desc',
 		isBasePrice: false,
 		isDefault: false,
