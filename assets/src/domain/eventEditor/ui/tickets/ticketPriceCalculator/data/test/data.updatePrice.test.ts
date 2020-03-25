@@ -30,9 +30,6 @@ describe('TPC:data.updatePrice', () => {
 		// Make sure the state is properly set before moving ahead
 		act(() => result.current.dataState.reset());
 
-		// this doesn't work
-		// const { baseType, dataState, defaultPriceModifier } = result.current;
-
 		// generate an id for the price
 		const newPriceId = uuidv4();
 
