@@ -1,6 +1,7 @@
 import React from 'react';
 import { render } from 'react-dom';
 
+import './services/publicPath';
 import './interfaces/types';
 import '../../application/ui/styles/themes/default';
 import EventEditor from './ui/EventEditor';
