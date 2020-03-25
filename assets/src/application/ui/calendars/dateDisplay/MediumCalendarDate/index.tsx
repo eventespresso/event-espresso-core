@@ -2,6 +2,7 @@ import React from 'react';
 import classNames from 'classnames';
 import { format, parseISO, isValid } from 'date-fns';
 import { __ } from '@wordpress/i18n';
+import TimezoneTimeInfo from '../TimezoneTimeInfo';
 
 import './style.scss';
 import { CalendarDateProps } from '../types';
@@ -30,28 +31,27 @@ export const MediumCalendarDate: React.FC<MediumCalendarDateProps> = ({
 	addWrapper = false,
 	showTime = false,
 }) => {
-	const dateObject = date instanceof Date ? date : parseISO(date);
+	const dateObject: Date = date instanceof Date ? date : parseISO(date);
 	if (!isValid(dateObject)) {
 		return null;
 	}
-	const htmlClassName = classNames(className, 'ee-medium-calendar-date-wrapper');
+	const htmlClassName = classNames(className, 'ee-medium-calendar-date__wrapper');
 	const mediumDate = (
 		<>
-			{headerText && <div className='ee-medium-calendar-date-header'>{headerText}</div>}
+			{headerText && <div className='ee-medium-calendar-date__header'>{headerText}</div>}
 			<div className='ee-medium-calendar-date'>
-				<div className='ee-mcd-weekday'>{format(dateObject, WEEKDAY_ONLY_FULL_FORMAT)}</div>
-				<div className='ee-mcd-month-day'>
-					<span className='ee-mcd-month'>{format(dateObject, MONTH_ONLY_LONG_FORMAT)}</span>
-					<span className='ee-mcd-day'>{format(dateObject, DAY_ONLY_SHORT_FORMAT)}</span>
+				<div className='ee-mcd__weekday'>{format(dateObject, WEEKDAY_ONLY_FULL_FORMAT)}</div>
+				<div className='ee-mcd__month-day'>
+					<span className='ee-mcd__month'>{format(dateObject, MONTH_ONLY_LONG_FORMAT)}</span>
+					<span className='ee-mcd__day'>{format(dateObject, DAY_ONLY_SHORT_FORMAT)}</span>
 				</div>
-				<div className='ee-mcd-year'>
+				<div className='ee-mcd__year'>
 					{format(dateObject, YEAR_ONLY_LONG_FORMAT)}
-					{showTime && (
-						<span className='ee-mcd-time'>&nbsp;{format(dateObject, TIME_ONLY_12H_SHORT_FORMAT)}</span>
-					)}
+					<TimezoneTimeInfo date={dateObject} inline />
+					{showTime && <span className='ee-mcd__time'>{format(dateObject, TIME_ONLY_12H_SHORT_FORMAT)}</span>}
 				</div>
 			</div>
-			{footerText && <div className='ee-medium-calendar-date-footer'>{footerText}</div>}
+			{footerText && <div className='ee-medium-calendar-date__footer'>{footerText}</div>}
 		</>
 	);
 	return addWrapper ? <div className={htmlClassName}>{mediumDate}</div> : mediumDate;

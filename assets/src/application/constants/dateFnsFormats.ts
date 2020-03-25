@@ -1,7 +1,7 @@
 // Format patterns
 
-export const DAY_ONLY_FORMAT = 'e'; // 1 - 31
-export const DAY_ONLY_SHORT_FORMAT = 'ee'; // 01 - 31
+export const DAY_ONLY_FORMAT = 'd'; // 1 - 31
+export const DAY_ONLY_SHORT_FORMAT = 'dd'; // 01 - 31
 
 export const MONTH_ONLY_FORMAT = 'M'; // 1 - 12
 export const MONTH_ONLY_SHORT_FORMAT = 'MM'; // 01 - 12
@@ -29,7 +29,7 @@ export const LOCALIZED_DATE_AND_TIME_SHORT_FORMAT = 'PPpp'; // December 31, 2020
 export const LOCALIZED_DATE_AND_TIME_LONG_FORMAT = 'PPPppp'; // December 31st, 2020 at 11:59:59 PM GMT+08:00
 export const LOCALIZED_DATE_AND_TIME_FULL_FORMAT = 'PPPPpppp'; // Thursday, December 31st, 2020 at 11:59:59 PM GMT+08:00
 
-export const TIME_ONLY_12H_SHORT_FORMAT = 'h:mm aaaa'; // 11:59 pm
-export const TIME_ONLY_12H_LONG_FORMAT = 'hh:mm:ss aaaa'; // 11:59:59 pm
+export const TIME_ONLY_12H_SHORT_FORMAT = 'h:mm a'; // 11:59 pm
+export const TIME_ONLY_12H_LONG_FORMAT = 'hh:mm:ss b'; // 11:59:59 pm
 export const TIME_ONLY_24H_SHORT_FORMAT = 'H:mm'; // 23:59
 export const TIME_ONLY_24H_LONG_FORMAT = 'HH:mm:ss'; // 23:59:59
