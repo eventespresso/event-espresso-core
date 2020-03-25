@@ -82,7 +82,6 @@ $filter-btn: '.esprs-button.ant-btn.ee-filter-bar__btn';
 	&__chain {
 		&--active {
 			&#{$filter-btn} {
-				&:focus,
 				&:hover {
 					svg {
 						path {
