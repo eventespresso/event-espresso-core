@@ -10,7 +10,7 @@ import { removeNullAndUndefined } from '@appServices/utilities/predicates';
 import { ucFirst } from '@appServices/utilities/text';
 
 export const TICKET_DEFAULTS: Ticket = {
-	id: 'NEW',
+	id: '',
 	dbId: 0,
 	description: '',
 	endDate: PLUS_TWO_MONTHS.toISOString(),
