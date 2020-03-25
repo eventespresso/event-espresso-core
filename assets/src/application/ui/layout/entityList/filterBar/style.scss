@@ -48,7 +48,7 @@ $filter-btn: '.esprs-button.ant-btn.ee-filter-bar__btn';
 			margin: 0;
 			&:focus,
 			&:hover {
-				border: 1px solid var(--ee-color-primary-low-contrast);
+				border: 2px solid var(--ee-color-primary-low-contrast);
 				box-shadow: 0 0 0 1px var(--ee-color-primary-low-contrast);
 			}
 		}
@@ -75,11 +75,6 @@ $filter-btn: '.esprs-button.ant-btn.ee-filter-bar__btn';
 	}
 
 	&__chain {
-		@include max782px {
-			&#{$filter-btn} {
-				width: 100%;
-			}
-		}
 		&--active {
 			&#{$filter-btn} {
 				&:focus,

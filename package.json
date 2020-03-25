@@ -189,7 +189,7 @@
 		"@wordpress/scripts": "^7.1.2",
 		"@wordpress/server-side-render": "^1.8.3",
 		"@wordpress/url": "^2.11.0",
-		"@wordpress/viewport": "^2.13.1",
+		"@wordpress/viewport": "^2.13.2",
 		"autoprefixer": "^9.7.4",
 		"babel-eslint": "^10.1.0",
 		"babel-plugin-dev-expression": "^0.2.2",
