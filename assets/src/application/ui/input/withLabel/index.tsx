@@ -1,5 +1,7 @@
 import React from 'react';
 
+import './style.scss';
+
 interface Props {
 	id?: string;
 	label?: string;

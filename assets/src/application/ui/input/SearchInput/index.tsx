@@ -3,7 +3,7 @@ import { __ } from '@wordpress/i18n';
 import { Input } from 'antd';
 import { InputProps } from 'antd/lib/input';
 
-import { BaseInput } from '../BaseInput';
+import { withLabel } from '@application/ui/input';
 
 interface SearchInputProps extends InputProps {
 	searchText: string;
@@ -12,19 +12,20 @@ interface SearchInputProps extends InputProps {
 
 const SearchInput: React.FC<SearchInputProps> = React.memo(({ className, searchText, setSearchText, ...props }) => {
 	const id = `ee-search-input-${props.id}`;
+	const label = __('search');
 
-	return typeof setSearchText === 'function' ? (
-		<BaseInput label={__('search')} id={id} className={className}>
-			<Input
-				{...props}
-				id={id}
-				className='ee-entity-list-filter-bar-search'
-				value={searchText}
-				onChange={(e) => setSearchText(e.target.value)}
-				onPressEnter={(e) => e.preventDefault()}
-			/>
-		</BaseInput>
-	) : null;
+	const LabeledInput = withLabel(
+		<Input
+			{...props}
+			id={id}
+			className='ee-entity-list-filter-bar-search'
+			value={searchText}
+			onChange={(e) => setSearchText(e.target.value)}
+			onPressEnter={(e) => e.preventDefault()}
+		/>
+	)({ id, label });
+
+	return typeof setSearchText === 'function' ? LabeledInput : null;
 });
 
 export default SearchInput;

@@ -3,7 +3,7 @@ import { ENTER } from '@wordpress/keycodes';
 import { SelectProps, SelectValue } from 'antd/lib/select';
 import { Select } from 'antd';
 
-import { BaseInput } from '../BaseInput';
+import { withLabel } from '@application/ui/input';
 
 interface SelectInputProps extends SelectProps<SelectValue> {
 	label: string;
@@ -13,17 +13,9 @@ const SelectInput: React.FC<SelectInputProps> = React.memo(({ id, label, classNa
 	const htmlId = id ? `ee-select-input-${id}` : null;
 	const onInputKeyDown = (e) => e.keyCode === ENTER && e.preventDefault();
 
-	return (
-		<BaseInput label={label} id={htmlId} className={className}>
-			<Select
-				id={htmlId}
-				size='middle'
-				dropdownMatchSelectWidth={true}
-				onInputKeyDown={onInputKeyDown}
-				{...rest}
-			/>
-		</BaseInput>
-	);
+	return withLabel(
+		<Select id={htmlId} size='middle' dropdownMatchSelectWidth={true} onInputKeyDown={onInputKeyDown} {...rest} />
+	)({ id, label });
 });
 
 export default SelectInput;
