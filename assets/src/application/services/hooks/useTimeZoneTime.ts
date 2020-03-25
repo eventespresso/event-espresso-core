@@ -1,5 +1,5 @@
 import { path } from 'ramda';
-import { format as formatDate, parseISO, isValid } from 'date-fns';
+import { parseISO, isValid } from 'date-fns';
 
 import useConfig from '../config/useConfig';
 import { localToUtc, utcToLocal } from '../utilities/date';
