@@ -8,7 +8,7 @@ import { BiggieCalendarDate, MediumCalendarDate, CalendarDateProps } from '../in
 import { TIME_ONLY_12H_SHORT_FORMAT } from '@appConstants/dateFnsFormats';
 import './style.scss';
 
-export interface CalendarDateRange extends CalendarDateProps {
+export interface CalendarDateRangeProps extends CalendarDateProps {
 	startDate: Date | string;
 	endDate: Date | string;
 }
@@ -16,7 +16,7 @@ export interface CalendarDateRange extends CalendarDateProps {
 /**
  * Displays a pair of calendar dates representing a date range
  */
-export const CalendarDateRange: React.FC<CalendarDateRange> = ({
+export const CalendarDateRange: React.FC<CalendarDateRangeProps> = ({
 	startDate,
 	endDate,
 	headerText = '',
