@@ -8,7 +8,7 @@ import { BiggieCalendarDate, MediumCalendarDate, CalendarDateProps } from '../in
 import { TIME_ONLY_12H_SHORT_FORMAT } from '@appConstants/dateFnsFormats';
 import './style.scss';
 
-export interface CalendarDateRangeProps extends CalendarDateProps {
+interface CalendarDateRangeProps extends CalendarDateProps {
 	startDate: Date | string;
 	endDate: Date | string;
 }
@@ -17,20 +17,22 @@ export interface CalendarDateRangeProps extends CalendarDateProps {
  * Displays a pair of calendar dates representing a date range
  */
 export const CalendarDateRange: React.FC<CalendarDateRangeProps> = ({
-	startDate,
-	endDate,
-	headerText = '',
-	footerText = '',
 	className = '',
+	endDate,
+	footerText = '',
+	headerText = '',
 	showTime = true,
+	startDate,
 }) => {
 	const { formatForSite: format } = useTimeZoneTime();
 
 	const startDateObject = startDate instanceof Date ? startDate : parseISO(startDate);
 	const endDateObject = endDate instanceof Date ? endDate : parseISO(endDate);
+
 	if (!isValid(startDateObject) || !isValid(endDateObject)) {
 		return null;
 	}
+
 	if (differenceInCalendarDays(startDateObject, endDateObject) !== 0) {
 		const htmlClassName = classNames(className, 'ee-calendar-date-range-wrapper');
 		return (
@@ -47,6 +49,7 @@ export const CalendarDateRange: React.FC<CalendarDateRangeProps> = ({
 	const time =
 		format(startDateObject, TIME_ONLY_12H_SHORT_FORMAT + ' - ') + format(endDateObject, TIME_ONLY_12H_SHORT_FORMAT);
 	const headerTxt = headerText ? headerText : <span>&nbsp;</span>;
+
 	return (
 		<BiggieCalendarDate
 			date={startDateObject}
