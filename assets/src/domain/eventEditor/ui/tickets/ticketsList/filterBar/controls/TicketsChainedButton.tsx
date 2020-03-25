@@ -2,7 +2,7 @@ import React from 'react';
 import classNames from 'classnames';
 import { __ } from '@wordpress/i18n';
 
-import { BaseInput, EspressoButton, EspressoButtonType, Icon } from '@application/ui/input';
+import { EspressoButton, EspressoButtonType, Icon, withLabel } from '@application/ui/input';
 
 interface TicketsChainedButtonProps {
 	isChained?: boolean;
@@ -19,25 +19,25 @@ const TicketsChainedButton: React.FC<TicketsChainedButtonProps> = ({ isChained, 
 		'ee-filter-bar__btn--active': isChained,
 		'ee-filter-bar__chain--active': isChained,
 	});
-
+	const id = 'ee-ticket-list-filter-bar-is-chained';
 	const icon = isChained ? Icon.LINK : Icon.UNLINK;
 	const label = __('link');
 	const tooltip = isChained
 		? __('tickets list is linked to dates list and is showing tickets for above dates only')
 		: __('tickets list is unlinked and is showing tickets for all event dates');
 
-	return (
-		<BaseInput label={label}>
-			<EspressoButton
-				buttonType={EspressoButtonType.MINIMAL}
-				className={className}
-				icon={icon}
-				id={'ee-ticket-list-filter-bar-is-chained'}
-				onClick={toggleIsChained}
-				tooltip={tooltip}
-			/>
-		</BaseInput>
-	);
+	const LabeledButton = withLabel(
+		<EspressoButton
+			buttonType={EspressoButtonType.MINIMAL}
+			className={className}
+			icon={icon}
+			id={id}
+			onClick={toggleIsChained}
+			tooltip={tooltip}
+		/>
+	)({ id, label });
+
+	return LabeledButton;
 };
 
 export default TicketsChainedButton;
