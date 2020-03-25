@@ -2,7 +2,7 @@ import React from 'react';
 import classNames from 'classnames';
 import { __ } from '@wordpress/i18n';
 
-import { EspressoButton, EspressoButtonType, Icon } from '@application/ui/input/EspressoButton';
+import { EspressoButton, EspressoButtonType, Icon, withLabel } from '@application/ui/input';
 
 interface TicketsChainedButtonProps {
 	isChained?: boolean;
@@ -15,28 +15,29 @@ interface TicketsChainedButtonProps {
  * will appear, otherwise ALL tickets will appear (subject to other filters)
  */
 const TicketsChainedButton: React.FC<TicketsChainedButtonProps> = ({ isChained, toggleIsChained }) => {
-	const className = classNames('ee-filter-bar__btn', {
+	const className = classNames('ee-filter-bar__btn ee-filter-bar__chain', {
 		'ee-filter-bar__btn--active': isChained,
+		'ee-filter-bar__chain--active': isChained,
 	});
-
+	const id = 'ee-ticket-list-filter-bar-is-chained';
 	const icon = isChained ? Icon.LINK : Icon.UNLINK;
+	const label = __('link');
 	const tooltip = isChained
 		? __('tickets list is linked to dates list and is showing tickets for above dates only')
 		: __('tickets list is unlinked and is showing tickets for all event dates');
 
-	return (
-		<>
-			<label className='esprs-button-label screen-reader-text'>{__('Only Show Tickets for Dates Above')}</label>
-			<EspressoButton
-				buttonType={EspressoButtonType.MINIMAL}
-				className={className}
-				icon={icon}
-				id={'ee-ticket-list-filter-bar-is-chained'}
-				onClick={toggleIsChained}
-				tooltip={tooltip}
-			/>
-		</>
-	);
+	const LabeledButton = withLabel(
+		<EspressoButton
+			buttonType={EspressoButtonType.MINIMAL}
+			className={className}
+			icon={icon}
+			id={id}
+			onClick={toggleIsChained}
+			tooltip={tooltip}
+		/>
+	)({ id, label });
+
+	return LabeledButton;
 };
 
 export default TicketsChainedButton;

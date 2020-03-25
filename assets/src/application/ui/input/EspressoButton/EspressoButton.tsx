@@ -1,11 +1,12 @@
 import React from 'react';
 import classNames from 'classnames';
-import { Button, Tooltip } from 'antd';
+import { Button } from 'antd';
 import AntIcon from '@ant-design/icons';
 
 import { EspressoButtonProps, EspressoButtonSize, EspressoButtonType, Icon } from './types';
 import { EspressoIcon, isEspressoIcon } from '../../display';
 import { isEmpty } from '@appServices/utilities/string';
+import Tooltip from './Tooltip';
 
 /**
  * Button wrapper for adding styles
@@ -77,9 +78,7 @@ const EspressoButton = React.forwardRef<Button, EspressoButtonProps>(
 		}
 
 		return tooltip ? (
-			<Tooltip title={tooltip} {...tooltipProps}>
-				{eeButton}
-			</Tooltip>
+			<Tooltip {...tooltipProps} button={eeButton} buttonText={buttonText} tooltip={tooltip} />
 		) : (
 			eeButton
 		);

@@ -11,5 +11,6 @@ export { default as Text } from './Text';
 export { default as Hidden } from './Hidden';
 export { default as TextArea } from './TextArea';
 export { default as TimePicker } from './DateTimePicker/TimePicker';
+export { default as withLabel } from './withLabel';
 export * from './EspressoButton';
 export * from './InlineEditInput';

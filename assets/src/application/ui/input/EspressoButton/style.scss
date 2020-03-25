@@ -1,0 +1,23 @@
+$filter-btn: '.esprs-button.ant-btn.ee-filter-bar__btn';
+
+.esprs-button {
+	&__mobile-tooltip-wrapper {
+		display: flex;
+		flex-direction: row;
+		label {
+			display: none;
+		}
+		#{$filter-btn} {
+			&#{$filter-btn} {
+				margin-right: 0.5rem;
+				padding: 0.4rem;
+			}
+		}
+	}
+	&__mobile-tooltip {
+		align-items: center;
+		display: flex;
+		line-height: 1.3;
+		white-space: normal;
+	}
+}

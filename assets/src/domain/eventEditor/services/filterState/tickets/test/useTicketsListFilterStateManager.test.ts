@@ -15,7 +15,7 @@ describe('useTicketsListFilterStateManager', () => {
 		expect(typeof result.current.setDisplayStartOrEndDate).toBe('function');
 		expect(typeof result.current.setSales).toBe('function');
 		expect(typeof result.current.setStatus).toBe('function');
-		expect(result.current.isChained).toBe(false);
+		expect(result.current.isChained).toBe(true);
 	});
 
 	test('should update sortBy by invoking setSortBy with corresponding accepted enums', () => {

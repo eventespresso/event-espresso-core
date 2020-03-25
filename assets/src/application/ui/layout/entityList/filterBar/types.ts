@@ -15,6 +15,7 @@ export interface EntityListFilterBarProps<FS extends ELFSM> {
 
 export interface FilterButtonWrapProps {
 	id: string;
+	isMobile?: boolean;
 	label: string;
 }
 

@@ -10,7 +10,7 @@ type FSM = TicketsFilterStateManager;
 const useTicketsListFilterStateManager = (): FSM => {
 	const initialState: TicketsFilterState = {
 		displayStartOrEndDate: DisplayStartOrEndDate.start,
-		isChained: false,
+		isChained: true,
 		sales: TicketsSales.all,
 		status: TicketsStatus.onSaleAndPending,
 	};

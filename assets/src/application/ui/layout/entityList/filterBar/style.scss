@@ -2,6 +2,7 @@
  * Event Espresso EntityListFilterBar Stylesheet
  * © 2018 Event Espresso
  * ------------------------------------------------------------------------- */
+@import '../../../styles/mixins/breakpoints.scss';
 
 $filter-btn: '.esprs-button.ant-btn.ee-filter-bar__btn';
 
@@ -47,8 +48,13 @@ $filter-btn: '.esprs-button.ant-btn.ee-filter-bar__btn';
 			margin: 0;
 			&:focus,
 			&:hover {
-				border: 1px solid var(--ee-color-primary-low-contrast);
+				border: 2px solid var(--ee-color-primary-low-contrast);
 				box-shadow: 0 0 0 1px var(--ee-color-primary-low-contrast);
+			}
+			&--active {
+				&#{$filter-btn} {
+					border-color: var(--ee-color-primary-low-contrast);
+				}
 			}
 		}
 	}
@@ -62,11 +68,25 @@ $filter-btn: '.esprs-button.ant-btn.ee-filter-bar__btn';
 		#{$filter-btn} {
 			&--active {
 				&#{$filter-btn} {
-					border: 1px solid var(--ee-color-primary-low-contrast);
+					border-color: var(--ee-color-primary-low-contrast);
 					box-shadow: 0 0 0 1px var(--ee-color-primary-low-contrast);
 					color: var(--ee-color-primary);
 					path {
 						fill: var(--ee-color-primary);
+					}
+				}
+			}
+		}
+	}
+
+	&__chain {
+		&--active {
+			&#{$filter-btn} {
+				&:hover {
+					svg {
+						path {
+							fill: var(--ee-color-white);
+						}
 					}
 				}
 			}
@@ -84,6 +104,10 @@ $filter-btn: '.esprs-button.ant-btn.ee-filter-bar__btn';
 		min-width: calc(var(--ee-font-size-default) * 12);
 		white-space: pre;
 		width: auto;
+
+		@include max782px {
+			width: 100%;
+		}
 
 		> div,
 		.ant-select,

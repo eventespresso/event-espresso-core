@@ -1,5 +1,5 @@
-.ee-base-input {
-	.ee-base-input-label {
+.ee-with-label {
+	&__input-label {
 		color: var(--ee-default-text-color);
 		display: block;
 		font-weight: bold;
