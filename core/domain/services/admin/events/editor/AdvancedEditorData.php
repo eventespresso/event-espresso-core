@@ -169,7 +169,9 @@ var eeEditorData={$data};
 
         $i18n = self::getJedLocaleData('event_espresso');
 
-        return compact('event', 'graphqlEndpoint', 'currentUser', 'generalSettings', 'i18n');
+        $assets_url = EE_PLUGIN_DIR_URL . 'assets/dist/';
+
+        return compact('event', 'graphqlEndpoint', 'currentUser', 'generalSettings', 'i18n', 'assets_url');
     }
 
 
