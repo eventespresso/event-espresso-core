@@ -1,0 +1,184 @@
+/** -------------------------------------------------------------------------
+ * Event Espresso BiggieCalendarDate Stylesheet
+ * © 2020 Event Espresso
+ * ------------------------------------------------------------------------- */
+.ee-biggie-calendar-date {
+	&__wrapper {
+		box-sizing: border-box;
+		color: var(--ee-color-white);
+		flex: 0, 0, calc(var(--ee-padding-micro) * 34);
+		height: 100%;
+		min-height: calc(var(--ee-padding-micro) * 45);
+		min-width: calc(var(--ee-padding-micro) * 34);
+		padding: var(--ee-padding-tiny) var(--ee-padding-micro);
+		text-align: center;
+		width: 100%;
+		vertical-align: bottom;
+	}
+
+	&__header {
+		font-size: var(--ee-font-size-micro);
+		letter-spacing: var(--ee-letter-spacing-font-size-micro);
+		line-height: var(--ee-font-size-bigger);
+		margin: 0 0 var(--ee-margin-micro);
+	}
+
+	.ee-bcd {
+		&__weekday {
+			font-size: var(--ee-font-size-smaller);
+			font-weight: normal;
+			line-height: var(--ee-font-size-big);
+			letter-spacing: var(--ee-letter-spacing-font-size-tiny);
+		}
+
+		&__month {
+			font-size: calc(var(--ee-font-size-tiny) * 2);
+			font-weight: bold;
+			line-height: calc(var(--ee-font-size-tiny) * 2);
+		}
+
+		&__month-day-sep {
+			display: none;
+		}
+
+		&__day {
+			opacity: 0.8;
+			font-size: calc(var(--ee-font-size-big) * 2);
+			font-weight: bold;
+			line-height: calc(var(--ee-font-size-big) * 2);
+			text-shadow: var(--ee-text-shadow-inset);
+		}
+
+		&__year {
+			font-size: var(--ee-font-size-tiny);
+			letter-spacing: calc(var(--ee-letter-spacing-font-size-micro) * 2);
+			line-height: var(--ee-font-size-default);
+			left: var(--ee-padding-nano);
+			position: relative;
+		}
+
+		&__time {
+			font-size: var(--ee-font-size-smaller);
+		}
+	}
+
+	&__footer {
+		font-size: var(--ee-font-size-smaller);
+		line-height: var(--ee-font-size-bigger);
+		margin: var(--ee-margin-micro) 0 0;
+		text-shadow: var(--ee-text-shadow-inset);
+		white-space: pre-line;
+
+		.ee-status-tag {
+			display: block;
+			font-weight: bold;
+			letter-spacing: var(--ee-letter-spacing-font-size-micro);
+			text-transform: uppercase;
+		}
+	}
+
+	.ee-edit-calendar-date-btn {
+		color: rgba(255, 255, 255, 0.5);
+		display: inline-block;
+
+		&:focus:enabled,
+		&:not(:disabled):not([aria-disabled='true']):not(.is-default):hover,
+		&:not(:disabled):not([aria-disabled='true']):not(.is-default):active {
+			background-color: transparent;
+			color: var(--ee-color-white);
+			box-shadow: none;
+		}
+	}
+
+	/* Media Queries for specific screen sizes
+ * -------------------------------------------------------------------------*/
+
+	@media only screen and (max-width: 1920px) {
+	}
+
+	@media only screen and (max-width: 1600px) {
+	}
+
+	@media only screen and (max-width: 1366px) {
+	}
+
+	@media only screen and (max-width: 1280px) {
+	}
+
+	@media only screen and (max-width: 1024px) {
+	}
+
+	/* WordPress Admin Media Query Breakpoint: Auto-folding of the admin menu */
+	@media only screen and (max-width: 960px) {
+	}
+
+	/* WordPress Admin Media Query Breakpoint: one column on the post write/edit screen */
+	@media only screen and (max-width: 850px) {
+	}
+
+	/* WordPress Admin Media Query Breakpoint: Tablet */
+	@media screen and (max-width: 782px) {
+	}
+
+	/* WordPress Admin Media Query Breakpoint: Smartphone */
+	@media screen and (max-width: 600px) {
+	}
+
+	@media only screen and (max-width: 480px) {
+		&__wrapper {
+			clear: both;
+			float: none;
+			height: auto;
+			min-height: unset;
+			min-width: unset;
+			padding: var(--ee-padding-micro) var(--ee-padding-micro) var(--ee-padding-tiny);
+			position: relative;
+			right: unset;
+			width: 100% !important;
+
+			&.ee-bcd-pos-left {
+				float: none;
+			}
+
+			&.ee-bcd-pos-right {
+				float: none;
+			}
+
+			.ee-biggie-calendar-date {
+				&__header,
+				&__footer,
+				.ee-bcd-month-day-sep {
+					line-height: calc(var(--ee-font-size-big) - 3px);
+				}
+
+				&__header,
+				&__footer {
+					margin: 0;
+				}
+			}
+		}
+
+		.ee-bcd {
+			&__weekday,
+			&__month,
+			&__day,
+			&__year {
+				color: var(--ee-color-white);
+				display: inline-block;
+				font-size: var(--ee-font-size-default);
+				font-weight: normal;
+				line-height: calc(var(--ee-font-size-big) - 3px);
+				letter-spacing: 0;
+				margin: 0 var(--ee-margin-micro);
+				text-shadow: none;
+			}
+
+			&__year {
+				left: unset;
+			}
+		}
+	}
+
+	@media only screen and (max-width: 360px) {
+	}
+}
