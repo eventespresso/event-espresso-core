@@ -10,7 +10,7 @@ import { removeNullAndUndefined } from '@appServices/utilities/predicates';
 import { ucFirst } from '@appServices/utilities/text';
 
 export const DATETIME_DEFAULTS: Datetime = {
-	id: 'NEW',
+	id: '',
 	dbId: 0,
 	capacity: -1,
 	description: '',
