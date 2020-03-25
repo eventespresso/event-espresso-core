@@ -8,7 +8,7 @@ import { isEmpty } from '@appServices/utilities/string';
 import './style.scss';
 
 interface TicketsChainedButtonProps extends TooltipPropsWithTitle {
-	button: JSX.Element;
+	button: React.ReactNode;
 	buttonText?: string;
 	isMobile?: boolean;
 	tooltip?: string;
