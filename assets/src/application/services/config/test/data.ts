@@ -15,8 +15,8 @@ export const mockEeJsData: JsDataProps = {
 		subunits: 1000,
 	},
 	locale: {
-		user: 'mn_ZR',
-		site: 'mn_ZR',
+		user: 'mn-ZR',
+		site: 'mn-ZR',
 	},
 	eejs_api_nonce: 'abc123',
 	paths: {
