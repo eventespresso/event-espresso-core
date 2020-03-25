@@ -70,10 +70,6 @@ class EE_Event_Registrations_List_Table extends EE_Admin_List_Table
         );
         $columns = array();
         // $columns['_Reg_Status'] = '';
-        if (! empty($evt_id)) {
-            $columns['cb'] = '<input type="checkbox" />'; // Render a checkbox instead of text
-            $this->_has_checkbox_column = true;
-        }
         $this->_columns = array(
             '_REG_att_checked_in' => '<span class="dashicons dashicons-yes ee-icon-size-18"></span>',
             'ATT_name'            => __('Registrant', 'event_espresso'),
@@ -84,6 +80,14 @@ class EE_Event_Registrations_List_Table extends EE_Admin_List_Table
             'TXN_paid'            => __('Paid', 'event_espresso'),
             'TXN_total'           => __('Total', 'event_espresso'),
         );
+        // Add/remove columns when an event has been selected
+        if (! empty($evt_id)) {
+            // Render a checkbox column
+            $columns['cb'] = '<input type="checkbox" />';
+            $this->_has_checkbox_column = true;
+            // Remove the 'Event' column
+            unset($this->_columns['Event']);
+        }
         $this->_columns = array_merge($columns, $this->_columns);
         $this->_primary_column = '_REG_att_checked_in';
         if (! empty($evt_id)
