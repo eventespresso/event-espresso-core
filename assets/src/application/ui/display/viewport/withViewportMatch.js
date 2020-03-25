@@ -1,6 +1,6 @@
 import React from 'react';
 import { mapObjIndexed } from 'ramda';
-import { createHigherOrderComponent, pure, useViewportMatch } from '@wordpress/compose';
+import { useViewportMatch } from '@wordpress/compose';
 
 /**
  * Higher-order component creator, creating a new component which renders with
@@ -39,12 +39,13 @@ const withViewportMatch = (queries) => {
 			// eslint-disable-next-line react-hooks/rules-of-hooks
 			return useViewportMatch(breakpointName, operator);
 		}, queries);
-	return createHigherOrderComponent((WrappedComponent) => {
-		return pure((props) => {
+
+	return (WrappedComponent) => {
+		return (props) => {
 			const queriesResult = useViewPortQueriesResult();
 			return <WrappedComponent {...props} {...queriesResult} />;
-		});
-	}, 'withViewportMatch');
+		};
+	};
 };
 
 export default withViewportMatch;
