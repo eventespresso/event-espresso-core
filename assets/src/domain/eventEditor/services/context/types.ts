@@ -11,8 +11,10 @@ export interface EntityContextProps extends ContextProviderProps {
 }
 
 export interface EntityListContextProps<E extends Entity, T> extends ContextProviderProps {
-	entities: E[];
+	allEntities: E[];
 	filters: T;
+	entities: E[];
+	setEntities: (entities: E[]) => void;
 }
 
 export interface EntityContextProviderProps extends ContextProviderProps, EntityContextProps {}

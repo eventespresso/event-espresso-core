@@ -4,8 +4,8 @@ import DateCard from './DateCard';
 import { DatetimesListContext } from '../../../../services/context/EntityListContext';
 
 const CardView = () => {
-	const value = useContext(DatetimesListContext);
-	return <EntityCardList EntityCard={DateCard} entities={value.entities} />;
+	const { entities } = useContext(DatetimesListContext);
+	return <EntityCardList EntityCard={DateCard} entities={entities} />;
 };
 
 export default CardView;

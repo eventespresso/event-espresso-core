@@ -3,12 +3,10 @@ import { LoadingNotice } from '@appDisplay/loadingNotice';
 
 const CardView = React.lazy(() => import('./CardView'));
 
-const CardViewLoader = () => {
-	return (
-		<Suspense fallback={<LoadingNotice />}>
-			<CardView />
-		</Suspense>
-	);
-};
+const CardViewLoader = () => (
+	<Suspense fallback={<LoadingNotice />}>
+		<CardView />
+	</Suspense>
+);
 
 export default CardViewLoader;
