@@ -12,22 +12,13 @@ interface Props {
 	displayDate: DisplayStartOrEndDate;
 	endDate: string;
 	footerText?: string;
-	headerPrefix?: string;
 	headerText?: string;
 	showDate?: boolean;
 	startDate: string;
 }
 
 const CalendarDateSwitcher: React.FC<Props> = React.memo(
-	({
-		className,
-		displayDate = DisplayStartOrEndDate.start,
-		footerText,
-		headerPrefix,
-		headerText,
-
-		...props
-	}) => {
+	({ className, displayDate = DisplayStartOrEndDate.start, footerText, headerText, ...props }) => {
 		const startDate = parseISO(props.startDate) || PLUS_ONE_MONTH;
 		const endDate = parseISO(props.endDate) || PLUS_TWO_MONTHS;
 
@@ -38,7 +29,7 @@ const CalendarDateSwitcher: React.FC<Props> = React.memo(
 						className={className}
 						date={endDate}
 						footerText={footerText}
-						headerText={`${headerPrefix || ''}${headerText || __('ends')}`}
+						headerText={headerText || __('ends')}
 						showTime
 					/>
 				);
@@ -59,7 +50,7 @@ const CalendarDateSwitcher: React.FC<Props> = React.memo(
 						className={className}
 						date={startDate}
 						footerText={footerText}
-						headerText={`${headerPrefix || ''}${headerText || __('starts')}`}
+						headerText={headerText || __('starts')}
 						showTime
 					/>
 				);
@@ -69,7 +60,7 @@ const CalendarDateSwitcher: React.FC<Props> = React.memo(
 						className={className}
 						date={startDate}
 						footerText={footerText}
-						headerText={`${headerPrefix || ''}${headerText || __('starts')}`}
+						headerText={headerText || __('starts')}
 					/>
 				);
 		}

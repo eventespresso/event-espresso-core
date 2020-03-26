@@ -31,7 +31,6 @@ const TicketCard: React.FC<EntityListItemProps> = React.memo(({ id }) => {
 						className={bgClassName}
 						displayDate={displayStartOrEndDate}
 						endDate={ticket.endDate}
-						headerPrefix={__('sales ')}
 						startDate={ticket.startDate}
 					/>
 				}
