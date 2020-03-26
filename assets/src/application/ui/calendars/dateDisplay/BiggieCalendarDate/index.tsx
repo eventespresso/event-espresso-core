@@ -22,12 +22,12 @@ export interface BiggieCalendarDateProps extends CalendarDateProps {
  * Displays a full calendar date, but REALLY BIG!!!
  */
 export const BiggieCalendarDate: React.FC<BiggieCalendarDateProps> = ({
-	date,
 	className,
-	headerText,
-	footerText,
-	onEdit = null,
+	date,
 	editButton = {},
+	footerText,
+	headerText,
+	onEdit = null,
 	showTime = false,
 }) => {
 	const { formatForSite: format } = useTimeZoneTime();

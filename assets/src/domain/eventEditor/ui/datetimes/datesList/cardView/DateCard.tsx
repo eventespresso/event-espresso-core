@@ -1,27 +1,23 @@
 import React from 'react';
-import { parseISO } from 'date-fns';
 import { __ } from '@wordpress/i18n';
-
-import { CalendarDateRange } from '@appCalendars/dateDisplay';
+import { CalendarDateSwitcher } from '@appCalendars/dateDisplay';
 import DateDetails from './DateDetails';
 import DateActionsMenu from '../actionsMenu/DateActionsMenu';
 
 import { DatetimeProvider } from '@edtrServices/context/DatetimeContext';
 import useDatetimeItem from '@edtrServices/apollo/queries/datetimes/useDatetimeItem';
-import { PLUS_ONE_MONTH, PLUS_TWO_MONTHS } from '@sharedConstants/defaultDates';
 import statusBgColorClassName from '@sharedEntities/datetimes/helpers/statusBgColorClassName';
 
 import EntityCard from '@appLayout/EntityCard';
 import { EntityListItemProps } from '@appLayout/entityList';
-import { useDatetimeMutator } from '@edtrServices/apollo/mutations';
 import { InlineEditHeading, InlineEditTextArea } from '@appInputs/InlineEditInput';
+import { useDatesListFilterState } from '@edtrServices/filterState';
+import { useDatetimeMutator } from '@edtrServices/apollo/mutations';
 
-const DateCard: React.FC<EntityListItemProps> = ({ id }) => {
+const DateCard: React.FC<EntityListItemProps> = React.memo(({ id }) => {
+	const { displayStartOrEndDate } = useDatesListFilterState();
 	const date = useDatetimeItem({ id });
 	const { updateEntity } = useDatetimeMutator(id);
-
-	const startDate = parseISO(date.startDate) || PLUS_ONE_MONTH;
-	const endDate = parseISO(date.endDate) || PLUS_TWO_MONTHS;
 
 	if (!date) {
 		return null;
@@ -35,11 +31,11 @@ const DateCard: React.FC<EntityListItemProps> = ({ id }) => {
 				entity={date}
 				actionsMenu={<DateActionsMenu entity={date} />}
 				sidebar={
-					<CalendarDateRange
-						headerText={__('starts')}
+					<CalendarDateSwitcher
 						className={bgClassName}
-						startDate={startDate}
-						endDate={endDate}
+						displayDate={displayStartOrEndDate}
+						endDate={date.endDate}
+						startDate={date.startDate}
 					/>
 				}
 				details={
@@ -71,6 +67,6 @@ const DateCard: React.FC<EntityListItemProps> = ({ id }) => {
 			/>
 		</DatetimeProvider>
 	) : null;
-};
+});
 
 export default DateCard;
