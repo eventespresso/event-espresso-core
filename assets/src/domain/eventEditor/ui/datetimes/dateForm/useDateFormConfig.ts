@@ -1,5 +1,4 @@
 import { __, sprintf } from '@wordpress/i18n';
-import { format } from 'date-fns';
 import { ProfileOutlined, CalendarOutlined, ControlOutlined } from '@ant-design/icons';
 import { pick } from 'ramda';
 
@@ -12,6 +11,7 @@ import { PLUS_ONE_MONTH, PLUS_TWO_MONTHS } from '@sharedConstants/defaultDates';
 import { processDateAndTime, prepareDateForForm } from '@sharedServices/utils/dateAndTime';
 import { validate } from './formValidation';
 import { DateFormShape } from './types';
+import { useTimeZoneTime } from '@appServices/hooks';
 
 type DateFormConfig = EspressoFormProps<DateFormShape>;
 
@@ -20,14 +20,16 @@ const FIELD_NAMES: Array<keyof Datetime> = ['name', 'description', 'capacity', '
 const useDateFormConfig = (id: EntityId, config?: EspressoFormProps): DateFormConfig => {
 	const { startDate: start, endDate: end, ...restProps } = useDatetimeItem({ id }) || {};
 
+	const { formatForSite: format, siteTimeToUtc } = useTimeZoneTime();
+
 	const startDate = prepareDateForForm(start, PLUS_ONE_MONTH);
 	const endDate = prepareDateForForm(end, PLUS_TWO_MONTHS);
 
 	const { onSubmit } = config;
 
 	const onSubmitFrom: DateFormConfig['onSubmit'] = ({ dateTime, ...rest }, form, ...restParams) => {
-		// convert "dateTime" object to proper "startDate" and "endDate"
-		const { startDate, endDate } = processDateAndTime(dateTime);
+		// convert "dateTime" object to proper UTC "startDate" and "endDate"
+		const { startDate, endDate } = processDateAndTime(dateTime, siteTimeToUtc);
 
 		const values = { ...rest, startDate, endDate };
 
