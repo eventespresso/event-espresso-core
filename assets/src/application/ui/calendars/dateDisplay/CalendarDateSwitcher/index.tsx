@@ -22,6 +22,16 @@ const CalendarDateSwitcher: React.FC<Props> = React.memo(
 		const startDate = parseISO(props.startDate) || PLUS_ONE_MONTH;
 		const endDate = parseISO(props.endDate) || PLUS_TWO_MONTHS;
 
+		const start = (
+			<BiggieCalendarDate
+				className={className}
+				date={startDate}
+				footerText={footerText}
+				headerText={headerText || __('starts')}
+				showTime
+			/>
+		);
+
 		switch (displayDate) {
 			case 'end':
 				return (
@@ -45,24 +55,9 @@ const CalendarDateSwitcher: React.FC<Props> = React.memo(
 					/>
 				);
 			case 'start':
-				return (
-					<BiggieCalendarDate
-						className={className}
-						date={startDate}
-						footerText={footerText}
-						headerText={headerText || __('starts')}
-						showTime
-					/>
-				);
+				return start;
 			default:
-				return (
-					<BiggieCalendarDate
-						className={className}
-						date={startDate}
-						footerText={footerText}
-						headerText={headerText || __('starts')}
-					/>
-				);
+				return start;
 		}
 	}
 );
