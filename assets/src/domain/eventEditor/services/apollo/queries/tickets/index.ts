@@ -4,6 +4,8 @@ export { default as useFetchTickets } from './useFetchTickets';
 
 export { default as useRelatedTickets } from './useRelatedTickets';
 
+export { default as useRelatedTicketsForDates } from './useRelatedTicketsForDates';
+
 export { default as useTicketIds } from './useTicketIds';
 
 export { default as useTicketItem } from './useTicketItem';

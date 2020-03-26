@@ -7,6 +7,7 @@ import { domain, ticketsList } from '@edtrServices/constants';
 import { entityListSearch } from '@appServices/utilities/text';
 import { Ticket } from '@edtrServices/apollo';
 import { TicketsFilterStateManager } from '@edtrServices/filterState';
+import { useRelatedTicketsForDates } from '@edtrServices/apollo/queries';
 
 type Domain = typeof domain;
 type TFSM = TicketsFilterStateManager;
@@ -17,8 +18,14 @@ const useTicketsFilterBarService = (): void => {
 		registerSearch: registerTicketsSearch,
 		registerSorter: registerTicketsSorter,
 	} = useFilterBarService<Domain, typeof ticketsList, Ticket, TFSM>(domain, ticketsList);
+	const relatedTickets = useRelatedTicketsForDates(['bla bla']);
 
 	useEffect(() => {
+		// Register chain filter
+		const unsubscribeChainFilter = registerTicketsFilter(({ entityList, filterState }) => {
+			return relatedTickets;
+		});
+
 		// Register sales filter
 		const unsubscribeSalesFilter = registerTicketsFilter(({ entityList, filterState }) => {
 			return salesFilter({ sales: filterState.sales, tickets: entityList });
@@ -45,6 +52,7 @@ const useTicketsFilterBarService = (): void => {
 
 		// Housekeeping
 		return (): void => {
+			unsubscribeChainFilter();
 			unsubscribeSalesFilter();
 			unsubscribeStatusFilter();
 			unsubscribeTicketsSearch();

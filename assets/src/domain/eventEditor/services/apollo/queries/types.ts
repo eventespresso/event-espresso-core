@@ -26,3 +26,7 @@ export type RelatedEntitiesHook<E extends Entity, RE extends RelationEntity> = (
 	entity: Exclude<RelationEntity, RE>;
 	entityId: EntityId;
 }) => Array<E>;
+
+export type RelatedTicketsForDates = {
+	datetimeIds: string[];
+};
