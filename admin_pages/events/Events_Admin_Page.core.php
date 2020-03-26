@@ -526,6 +526,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
                     'label'      => esc_html__('Preview Deletion', 'event_espresso'),
                     'order'      => 15,
                     'persistent' => false,
+                    'url'        => '',
                 ),
                 'require_nonce' => false
             )
