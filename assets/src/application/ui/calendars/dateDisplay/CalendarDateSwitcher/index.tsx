@@ -37,8 +37,9 @@ const CalendarDateSwitcher: React.FC<Props> = React.memo(
 					<BiggieCalendarDate
 						className={className}
 						date={endDate}
-						headerText={`${headerPrefix || ''}${headerText || __('ends')}`}
 						footerText={footerText}
+						headerText={`${headerPrefix || ''}${headerText || __('ends')}`}
+						showTime
 					/>
 				);
 			case 'both':
@@ -59,6 +60,7 @@ const CalendarDateSwitcher: React.FC<Props> = React.memo(
 						date={startDate}
 						footerText={footerText}
 						headerText={`${headerPrefix || ''}${headerText || __('starts')}`}
+						showTime
 					/>
 				);
 			default:
