@@ -1,6 +1,5 @@
 import React from 'react';
 import { __, sprintf } from '@wordpress/i18n';
-import { format } from 'date-fns';
 import { ProfileOutlined, CalendarOutlined, ControlOutlined } from '@ant-design/icons';
 import { pick } from 'ramda';
 
@@ -14,6 +13,7 @@ import { processDateAndTime, prepareDateForForm } from '@sharedServices/utils/da
 import TicketPriceCalculatorButton from '../ticketPriceCalculator/buttons/TicketPriceCalculatorButton';
 import { validate } from './formValidation';
 import { TicketFormShape } from './types';
+import { useTimeZoneTime } from '@appServices/hooks';
 
 type TicketFormConfig = EspressoFormProps<TicketFormShape>;
 
@@ -34,14 +34,16 @@ const FIELD_NAMES: Array<keyof Ticket> = [
 const useTicketFormConfig = (id: EntityId, config?: EspressoFormProps): TicketFormConfig => {
 	const { startDate: start, endDate: end, ...restProps } = useTicketItem({ id }) || {};
 
+	const { formatForSite: format, siteTimeToUtc } = useTimeZoneTime();
+
 	const startDate = prepareDateForForm(start, PLUS_ONE_MONTH);
 	const endDate = prepareDateForForm(end, PLUS_TWO_MONTHS);
 
 	const { onSubmit } = config;
 
 	const onSubmitFrom: TicketFormConfig['onSubmit'] = ({ dateTime, ...rest }, form, ...restParams) => {
-		// convert "dateTime" object to proper "startDate" and "endDate"
-		const { startDate, endDate } = processDateAndTime(dateTime);
+		// convert "dateTime" object to proper UTC "startDate" and "endDate"
+		const { startDate, endDate } = processDateAndTime(dateTime, siteTimeToUtc);
 
 		const values = { ...rest, startDate, endDate };
 

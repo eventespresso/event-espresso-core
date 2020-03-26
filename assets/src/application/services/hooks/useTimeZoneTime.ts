@@ -2,7 +2,7 @@ import { path } from 'ramda';
 import { parseISO, isValid } from 'date-fns';
 
 import useConfig from '../config/useConfig';
-import { localToUtc, utcToLocal } from '../utilities/date';
+import { format as formatTz, utcToZonedTime, zonedTimeToUtc } from 'date-fns-tz';
 
 type DateFn = (date: Date | string | number) => Date;
 type FormatDateFn = (date: Date, options?: Intl.DateTimeFormatOptions) => string;
@@ -10,10 +10,14 @@ type FormatDateFn = (date: Date, options?: Intl.DateTimeFormatOptions) => string
 interface TimeZoneTime {
 	formatDateForSite: FormatDateFn;
 	formatDateForUser: FormatDateFn;
+	formatForSite: (localDate: Date, formatStr: string) => string;
 	formatUtcDateForSite: FormatDateFn;
 	formatUtcDateForUser: FormatDateFn;
-	localTimeToUtc: DateFn;
-	utcToLocalTime: DateFn;
+	siteTimeToUtc: DateFn;
+	userTimeToUtc: DateFn;
+	userToSiteTime: DateFn;
+	utcToSiteTime: DateFn;
+	utcToUserTime: DateFn;
 }
 
 const deafultOptions: Intl.DateTimeFormatOptions = {
@@ -85,21 +89,51 @@ const useTimeZoneTime = (): TimeZoneTime => {
 		return dateObject.toLocaleString(userLC, { ...formatOptions, timeZone: 'UTC' });
 	};
 
-	const localTimeToUtc: DateFn = (date) => {
-		return localToUtc(date, siteTZ);
+	/**
+	 * generates a string from local date for the given timezone, default to site timezone
+	 */
+	const formatForSite: TimeZoneTime['formatForSite'] = (localDate, formatStr) => {
+		// Convert the local date to UTC
+		const utcDate = userTimeToUtc(localDate);
+		// Now convert the UTC date to site timezone
+		const zonedDate = utcToSiteTime(utcDate);
+		return formatTz(zonedDate, formatStr, { timeZone: siteTZ });
 	};
 
-	const utcToLocalTime: DateFn = (isoDate) => {
-		return utcToLocal(isoDate, siteTZ);
+	const userToSiteTime: DateFn = (localDate) => {
+		// First convert the local date to UTC
+		const utcDate = zonedTimeToUtc(localDate, userTZ);
+		// Now convert the UTC date to site timezone
+		return utcToZonedTime(utcDate, siteTZ);
+	};
+
+	const userTimeToUtc: DateFn = (date) => {
+		return zonedTimeToUtc(date, userTZ);
+	};
+
+	const utcToUserTime: DateFn = (date) => {
+		return utcToZonedTime(date, userTZ);
+	};
+
+	const siteTimeToUtc: DateFn = (date) => {
+		return zonedTimeToUtc(date, siteTZ);
+	};
+
+	const utcToSiteTime: DateFn = (date) => {
+		return utcToZonedTime(date, siteTZ);
 	};
 
 	return {
 		formatDateForSite,
 		formatDateForUser,
+		formatForSite,
 		formatUtcDateForSite,
 		formatUtcDateForUser,
-		localTimeToUtc,
-		utcToLocalTime,
+		siteTimeToUtc,
+		userTimeToUtc,
+		userToSiteTime,
+		utcToSiteTime,
+		utcToUserTime,
 	};
 };
 

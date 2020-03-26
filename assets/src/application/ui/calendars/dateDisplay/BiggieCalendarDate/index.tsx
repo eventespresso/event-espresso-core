@@ -1,6 +1,7 @@
-import { format, parseISO, isValid } from 'date-fns';
 import React, { useCallback } from 'react';
+import { parseISO, isValid } from 'date-fns';
 
+import { useTimeZoneTime } from '@appServices/hooks';
 import { EspressoButton } from '@application/ui/input/EspressoButton';
 import TimezoneTimeInfo from '../TimezoneTimeInfo';
 import {
@@ -29,6 +30,8 @@ export const BiggieCalendarDate: React.FC<BiggieCalendarDateProps> = ({
 	editButton = {},
 	showTime = false,
 }) => {
+	const { formatForSite: format } = useTimeZoneTime();
+
 	const onEditHandler = useCallback((event) => onEdit(event), [onEdit]);
 	const dateObject = date instanceof Date ? date : parseISO(date);
 	if (!isValid(dateObject)) {

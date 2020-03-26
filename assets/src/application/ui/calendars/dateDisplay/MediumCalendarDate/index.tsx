@@ -1,8 +1,9 @@
 import React from 'react';
 import classNames from 'classnames';
-import { format, parseISO, isValid } from 'date-fns';
+import { parseISO, isValid } from 'date-fns';
 import { __ } from '@wordpress/i18n';
 import TimezoneTimeInfo from '../TimezoneTimeInfo';
+import { useTimeZoneTime } from '@appServices/hooks';
 
 import './style.scss';
 import { CalendarDateProps } from '../types';
@@ -31,6 +32,8 @@ export const MediumCalendarDate: React.FC<MediumCalendarDateProps> = ({
 	addWrapper = false,
 	showTime = false,
 }) => {
+	const { formatForSite: format } = useTimeZoneTime();
+
 	const dateObject: Date = date instanceof Date ? date : parseISO(date);
 	if (!isValid(dateObject)) {
 		return null;
