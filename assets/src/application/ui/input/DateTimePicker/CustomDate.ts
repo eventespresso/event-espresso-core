@@ -49,13 +49,30 @@ const CustomDate: GenerateConfig<Date> = {
 		getWeek: (locale: string, value) => getWeek(value, { locale: { code: locale, ...enUS } }),
 		format: (locale: string, date, formatStr: string) => {
 			// convert moment format to date-fns format
-			const formatString = formatStr.replace(/[YD]/g, (match) => match.toLowerCase());
 			return format(date, formatString, { locale: { code: locale, ...enUS } });
 		},
 		/** Should only return validate date instance */
 		parse: (locale: string, text: string, formats: string[]) => {
 			return text && parse(text, formats[0], new Date(), { locale: { code: locale, ...enUS } });
 		},
+		/**
+		 * @todo localize the week and month names
+		 */
+		getShortWeekDays: (locale: string) => ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'],
+		getShortMonths: (locale: string) => [
+			'Jan',
+			'Feb',
+			'Mar',
+			'Apr',
+			'May',
+			'Jun',
+			'Jul',
+			'Aug',
+			'Sep',
+			'Oct',
+			'Nov',
+			'Dec',
+		],
 	},
 };
 
