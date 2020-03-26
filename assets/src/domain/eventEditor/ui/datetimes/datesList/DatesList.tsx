@@ -2,9 +2,13 @@ import React from 'react';
 import { __ } from '@wordpress/i18n';
 
 import AddNewDateButton from './AddNewDateButton';
-import { CardView } from './cardView';
-import { DatetimesListProvider, withEntityListContext } from '@edtrServices/context/EntityListContext';
-import { useDatetimes } from '@edtrServices/apollo/queries';
+import { CardViewLoader } from './cardView';
+import {
+	DatetimesListContext,
+	DatetimesListProvider,
+	withEntityListContext,
+} from '@edtrServices/context/EntityListContext';
+// import { useDatetimes } from '@edtrServices/apollo/queries';
 import { EntityList } from '@appLayout/entityList';
 import { legendConfig } from './config';
 import { TableView } from './tableView';
@@ -13,14 +17,14 @@ import { useDatesListFilterState } from '@edtrServices/filterState';
 import { domain, datesList } from '@edtrServices/constants';
 
 const DatesList: React.FC = () => {
-	const datetimes = useDatetimes();
 	const filterState = useDatesListFilterState();
 
 	return (
 		<EntityList
-			CardView={CardView}
+			CardView={CardViewLoader}
+			context={DatetimesListContext}
 			domain={domain}
-			entities={datetimes}
+			// entities={datetimes}
 			entityType={TypeName.datetimes}
 			filterState={filterState}
 			footer={<AddNewDateButton />}

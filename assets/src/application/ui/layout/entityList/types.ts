@@ -8,7 +8,7 @@ import { TypeName } from '@appServices/apollo/status';
 type ELFSM = EntityListFilterStateManager<any>;
 
 export interface EntityListBaseProps<E extends Entity> {
-	entities: Array<E>;
+	entities?: Array<E>;
 }
 
 export interface EntityCardListProps<E extends Entity> extends EntityListBaseProps<E> {
@@ -45,6 +45,7 @@ export type EntityListComponent<E extends Entity, FS extends ELFSM> = React.Comp
 
 export interface EntityListProps<E extends Entity, FS extends ELFSM> extends EntityListViewProps<E, FS> {
 	CardView: EntityListComponent<E, FS>;
+	context: any;
 	domain: string;
 	entityType: TypeName;
 	footer: React.ReactNode;

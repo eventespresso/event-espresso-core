@@ -1,10 +1,11 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { EntityCardList } from '@appLayout/entityList';
-import { DatesListViewProps } from '../types';
 import DateCard from './DateCard';
+import { DatetimesListContext } from '../../../../services/context/EntityListContext';
 
-const CardView: React.FC<DatesListViewProps> = ({ entities }) => {
-	return <EntityCardList EntityCard={DateCard} entities={entities} />;
+const CardView = () => {
+	const value = useContext(DatetimesListContext);
+	return <EntityCardList EntityCard={DateCard} entities={value.entities} />;
 };
 
 export default CardView;

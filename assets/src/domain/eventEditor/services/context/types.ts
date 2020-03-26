@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { EntityId } from '@appServices/apollo/types';
+import { Entity, EntityId } from '@appServices/apollo/types';
 
 export interface ContextProviderProps {
 	children?: React.ReactNode;
@@ -10,7 +10,8 @@ export interface EntityContextProps extends ContextProviderProps {
 	id: EntityId;
 }
 
-export interface EntityListContextProps<T> extends ContextProviderProps {
+export interface EntityListContextProps<E extends Entity, T> extends ContextProviderProps {
+	entities: E[];
 	filters: T;
 }
 
