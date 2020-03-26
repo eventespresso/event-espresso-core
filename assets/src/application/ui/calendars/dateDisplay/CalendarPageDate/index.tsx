@@ -1,7 +1,9 @@
 import React from 'react';
-import { format, parseISO, isValid } from 'date-fns';
+import { parseISO, isValid } from 'date-fns';
 import { Tooltip } from 'antd';
 import { __ } from '@wordpress/i18n';
+
+import { useTimeZoneTime } from '@appServices/hooks';
 
 import './style.scss';
 import {
@@ -36,6 +38,8 @@ export const CalendarPageDate: React.FC<CalendarPageDateProps> = ({
 	statusClassName,
 	...otherProps
 }) => {
+	const { formatForSite: format } = useTimeZoneTime();
+
 	const startDateObject = startDate instanceof Date ? startDate : parseISO(startDate);
 	const endDateObject = endDate instanceof Date ? endDate : parseISO(endDate);
 	if (!isValid(startDateObject) && !isValid(endDateObject)) {

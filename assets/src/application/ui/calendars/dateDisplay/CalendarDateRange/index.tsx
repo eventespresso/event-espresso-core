@@ -1,8 +1,9 @@
 import React from 'react';
 import classNames from 'classnames';
-import { differenceInCalendarDays, format, parseISO, isValid } from 'date-fns';
+import { differenceInCalendarDays, parseISO, isValid } from 'date-fns';
 import { __ } from '@wordpress/i18n';
 
+import { useTimeZoneTime } from '@appServices/hooks';
 import { BiggieCalendarDate, MediumCalendarDate, CalendarDateProps } from '../index';
 import { TIME_ONLY_12H_SHORT_FORMAT } from '@appConstants/dateFnsFormats';
 import './style.scss';
@@ -23,6 +24,8 @@ export const CalendarDateRange: React.FC<CalendarDateRange> = ({
 	className = '',
 	showTime = true,
 }) => {
+	const { formatForSite: format } = useTimeZoneTime();
+
 	const startDateObject = startDate instanceof Date ? startDate : parseISO(startDate);
 	const endDateObject = endDate instanceof Date ? endDate : parseISO(endDate);
 	if (!isValid(startDateObject) || !isValid(endDateObject)) {
