@@ -3,32 +3,34 @@ import { formatISO, isValid, parse, parseISO } from 'date-fns';
 import { __ } from '@wordpress/i18n';
 import * as yup from 'yup';
 
-export interface DateAndTime {
-	startDate?: string;
+interface StartAndEndDate {
+	startDate: string;
+	endDate: string;
+}
+
+export interface DateAndTime extends Partial<StartAndEndDate> {
 	startTime?: string;
-	endDate?: string;
 	endTime?: string;
 }
 
-interface StartAndEndDate {
-	startDate: Date;
-	endDate: Date;
-}
+type ProcessDateAndTime = (
+	dateTime: DateAndTime,
+	siteTimeToUtc: (date: Date) => Date,
+	backupDate?: Date
+) => StartAndEndDate;
 
-type ProcessDateAndTime = (dateTime: DateAndTime, backupDate?: Date) => StartAndEndDate;
-
-export const processDateAndTime: ProcessDateAndTime = (dateTime, backupDate = new Date()) => {
-	let startDate: Date, endDate: Date;
+export const processDateAndTime: ProcessDateAndTime = (dateTime, siteTimeToUtc, backupDate = new Date()) => {
+	let startDate: string, endDate: string;
 	const formatStr = `${CONVERT_TO_MOMENT_DATE_FORMAT} ${CONVERT_TO_MOMENT_TIME_FORMAT}`;
 
 	if (dateTime.startDate && dateTime.startTime) {
 		const startDateStr = `${dateTime.startDate} ${dateTime.startTime}`;
-		startDate = parse(startDateStr, formatStr, backupDate);
+		startDate = siteTimeToUtc(parse(startDateStr, formatStr, backupDate)).toISOString();
 	}
 
 	if (dateTime.endDate && dateTime.endTime) {
 		const endDateStr = `${dateTime.endDate} ${dateTime.endTime}`;
-		endDate = parse(endDateStr, formatStr, backupDate);
+		endDate = siteTimeToUtc(parse(endDateStr, formatStr, backupDate)).toISOString();
 	}
 	return { startDate, endDate };
 };
