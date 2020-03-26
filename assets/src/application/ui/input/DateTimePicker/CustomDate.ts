@@ -49,6 +49,7 @@ const CustomDate: GenerateConfig<Date> = {
 		getWeek: (locale: string, value) => getWeek(value, { locale: { code: locale, ...enUS } }),
 		format: (locale: string, date, formatStr: string) => {
 			// convert moment format to date-fns format
+			const formatString = formatStr.replace(/[YD]/g, (match) => match.toLowerCase());
 			return format(date, formatString, { locale: { code: locale, ...enUS } });
 		},
 		/** Should only return validate date instance */
