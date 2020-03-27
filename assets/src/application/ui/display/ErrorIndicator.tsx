@@ -1,11 +1,7 @@
 import React from 'react';
-import { Callout, NonIdealState, Spinner } from '@blueprintjs/core/lib/cjs';
+import { Result } from 'antd';
+import { ResultProps } from 'antd/lib/result';
 
-const ErrorIndicator = () => (
-	<Callout>
-		<Spinner size={Spinner.SIZE_SMALL} />
-		<NonIdealState icon={'warning-sign'} />
-	</Callout>
-);
+const ErrorIndicator: React.FC<ResultProps> = (props) => <Result status='warning' {...props} />;
 
 export default ErrorIndicator;
