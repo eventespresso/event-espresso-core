@@ -1,5 +1,5 @@
 import React from 'react';
-import { withViewportMatch } from '@appDisplay/viewport';
+// import { withViewportMatch } from '@appDisplay/viewport';
 import { __ } from '@wordpress/i18n';
 
 import { FilterButtonWrapProps } from '../types';
@@ -15,4 +15,5 @@ const FilterButtonWrap: React.FC<FilterButtonWrapProps> = ({ children, id, isMob
 	</div>
 );
 
-export default withViewportMatch({ isMobile: '< small' })(FilterButtonWrap);
+export default FilterButtonWrap;
+// export default withViewportMatch({ isMobile: '< small' })(FilterButtonWrap);

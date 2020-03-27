@@ -1,5 +1,4 @@
 import React from 'react';
-import { HTMLTable } from '@blueprintjs/core';
 import { __ } from '@wordpress/i18n';
 
 import { useDataState } from '../data';
@@ -17,7 +16,7 @@ const TicketPriceCalculator: React.FC = () => {
 	return (
 		<>
 			<div style={styles.div}>
-				<HTMLTable interactive striped style={styles.table}>
+				<table style={styles.table}>
 					<thead>
 						<tr>
 							<th style={{ ...styles.colWidth7h, ...styles.cell }}>{__('ID')}</th>
@@ -30,7 +29,7 @@ const TicketPriceCalculator: React.FC = () => {
 					</thead>
 					<tbody>{<TicketPriceModifierRowIterator />}</tbody>
 					<tfoot>{<TicketPriceTotalRow />}</tfoot>
-				</HTMLTable>
+				</table>
 			</div>
 			<DebugInfo data={dataState} />
 		</>
