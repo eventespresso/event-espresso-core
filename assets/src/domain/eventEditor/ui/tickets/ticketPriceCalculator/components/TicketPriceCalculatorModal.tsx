@@ -1,9 +1,9 @@
-import React, { useCallback } from 'react';
+import React from 'react';
 import { __, sprintf } from '@wordpress/i18n';
-import { ButtonProps } from 'antd/lib/button';
-import { SaveOutlined } from '@ant-design/icons';
 import { Modal } from 'antd';
 
+import resetButtonProps from '../buttons/resetButtonProps';
+import submitButtonProps from '../buttons/submitButtonProps';
 import TicketPriceCalculator from './TicketPriceCalculator';
 import { useTPCContext } from '../context';
 import { useOnSubmitPrices } from '../hooks';
@@ -17,30 +17,8 @@ const TicketPriceCalculatorModal: React.FC = () => {
 	} = useTPCContext();
 
 	const submitPrices = useOnSubmitPrices();
-
-	const submitButton: ButtonProps = {
-		htmlType: 'submit',
-		icon: <SaveOutlined />,
-		onClick: useCallback(
-			(click) => {
-				click.preventDefault();
-				submitPrices();
-				onCloseModal();
-			},
-			[onCloseModal, submitPrices]
-		),
-	};
-
-	const resetButton: ButtonProps = {
-		htmlType: 'reset',
-		onClick: useCallback(
-			(click) => {
-				click.preventDefault();
-				reset();
-			},
-			[reset]
-		),
-	};
+	const submitButton = submitButtonProps({ onCloseModal, submitPrices });
+	const resetButton = resetButtonProps({ reset });
 
 	return (
 		<Modal
