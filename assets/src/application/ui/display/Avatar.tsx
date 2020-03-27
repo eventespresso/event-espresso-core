@@ -1,3 +1,4 @@
+import React from 'react';
 import { Avatar as DefaultAvatar, Badge } from 'antd';
 import { AvatarProps } from 'antd/lib/avatar';
 import { BadgeProps } from 'antd/lib/badge';
