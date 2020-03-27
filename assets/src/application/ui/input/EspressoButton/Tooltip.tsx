@@ -1,7 +1,7 @@
 import React from 'react';
 import { Tooltip as DefaultTooltip } from 'antd';
 import { TooltipPropsWithTitle } from 'antd/lib/tooltip';
-import { withViewportMatch } from '@appDisplay/viewport';
+// import { withViewportMatch } from '@appDisplay/viewport';
 import { __ } from '@wordpress/i18n';
 
 import { isEmpty } from '@appServices/utilities/string';
@@ -11,14 +11,13 @@ interface TicketsChainedButtonProps extends TooltipPropsWithTitle {
 	button: JSX.Element;
 	buttonText?: string;
 	isMobile?: boolean;
-	tooltip?: string;
 }
 
-const Tooltip: React.FC<TicketsChainedButtonProps> = ({ button, buttonText, isMobile, tooltip, ...props }) => {
+const Tooltip: React.FC<TicketsChainedButtonProps> = ({ button, buttonText, isMobile, title, ...props }) => {
 	const mobileHelpText = isEmpty(buttonText) ? (
 		<div className='esprs-button__mobile-tooltip-wrapper'>
 			{button}
-			<div className='esprs-button__mobile-tooltip'>{tooltip}</div>
+			<div className='esprs-button__mobile-tooltip'>{title}</div>
 		</div>
 	) : (
 		button
@@ -27,10 +26,11 @@ const Tooltip: React.FC<TicketsChainedButtonProps> = ({ button, buttonText, isMo
 	return isMobile ? (
 		mobileHelpText
 	) : (
-		<DefaultTooltip title={tooltip} {...props}>
+		<DefaultTooltip title={title} {...props}>
 			{button}
 		</DefaultTooltip>
 	);
 };
 
-export default withViewportMatch({ isMobile: '< small' })(Tooltip);
+export default Tooltip;
+// export default withViewportMatch({ isMobile: '< small' })(Tooltip);

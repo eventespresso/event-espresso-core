@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
 
-import CardViewFilterButton from './buttons/CardView';
+import CardViewFilterButton from './buttons/CardViewFilterButton';
 import Collapsible from './Collapsible';
 import { EntityListFilterBarProps } from './types';
 import { EntityListLegend } from '@application/ui/display';
-import TableViewFilterButton from './buttons/TableView';
-import ToggleLegendButton from './buttons/ToggleLegend';
-import ToggleFiltersButton from './buttons/ToggleFilters';
+import TableViewFilterButton from './buttons/TableViewFilterButton';
+import ToggleLegendButton from './buttons/ToggleLegendButton';
+import ToggleFiltersButton from './buttons/ToggleFiltersButton';
 import { SearchInput } from '@application/ui/input';
 import { useFilterBarUIElements } from './subscription';
 import { EntityListFilterStateManager as ELFSM } from './filterState';

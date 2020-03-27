@@ -6,9 +6,9 @@ import { __ } from '@wordpress/i18n';
 
 import FilterButtonWrap from './FilterButtonWrap';
 import { ToggleLegendButtonProps } from '../types';
-import { EspressoButton, EspressoButtonType, Icon } from '@appInputs/EspressoButton';
+import { EspressoButton, EspressoButtonType } from '@appInputs/EspressoButton';
 
-const ToggleLegend: React.FC<ToggleLegendButtonProps> = ({ listId, showLegend, toggleLegend }) => {
+const ToggleLegendButton: React.FC<ToggleLegendButtonProps> = ({ listId, showLegend, toggleLegend }) => {
 	const className = classNames('ee-filter-bar__btn', { 'ee-filter-bar__btn--active': showLegend });
 	const iconProps = useSpring({
 		transform: `rotate(${showLegend ? 0 : 180}deg)`,
@@ -35,4 +35,4 @@ const ToggleLegend: React.FC<ToggleLegendButtonProps> = ({ listId, showLegend, t
 	);
 };
 
-export default ToggleLegend;
+export default ToggleLegendButton;
