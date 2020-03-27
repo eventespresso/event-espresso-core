@@ -2,23 +2,20 @@ import React from 'react';
 import { __, sprintf } from '@wordpress/i18n';
 import { Modal } from 'antd';
 
-import resetButtonProps from '../buttons/resetButtonProps';
-import submitButtonProps from '../buttons/submitButtonProps';
+import useResetButtonProps from '../buttons/useResetButtonProps';
+import useSubmitButtonProps from '../buttons/useSubmitButtonProps';
 import TicketPriceCalculator from './TicketPriceCalculator';
 import { useTPCContext } from '../context';
-import { useOnSubmitPrices } from '../hooks';
 
 import './styles.scss';
 
 const TicketPriceCalculatorModal: React.FC = () => {
 	const {
 		onCloseModal,
-		dataState: { ticket, reset },
+		dataState: { ticket },
 	} = useTPCContext();
-
-	const submitPrices = useOnSubmitPrices();
-	const submitButton = submitButtonProps({ onCloseModal, submitPrices });
-	const resetButton = resetButtonProps({ reset });
+	const resetButton = useResetButtonProps();
+	const submitButton = useSubmitButtonProps();
 
 	return (
 		<Modal
