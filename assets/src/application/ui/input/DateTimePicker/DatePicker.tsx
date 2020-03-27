@@ -8,6 +8,7 @@ const DatePicker = ({ input, ...rest }) => {
 		<DatePickerBase
 			{...input}
 			{...rest}
+			inputReadOnly
 			value={input.value ? parse(input.value, CONVERT_TO_MOMENT_DATE_FORMAT, new Date()) : input.value}
 			onChange={(_, dateString) => input.onChange(dateString)}
 		/>

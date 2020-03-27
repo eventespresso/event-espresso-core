@@ -8,6 +8,7 @@ const TimePicker = ({ input, ...rest }) => {
 		<TimePickerBase
 			{...input}
 			{...rest}
+			inputReadOnly
 			value={input.value ? parse(input.value, CONVERT_TO_MOMENT_TIME_FORMAT, new Date()) : input.value}
 			onChange={(_, dateString) => input.onChange(dateString)}
 		/>

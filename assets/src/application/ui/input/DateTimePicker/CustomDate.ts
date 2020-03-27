@@ -56,6 +56,24 @@ const CustomDate: GenerateConfig<Date> = {
 		parse: (locale: string, text: string, formats: string[]) => {
 			return text && parse(text, formats[0], new Date(), { locale: { code: locale, ...enUS } });
 		},
+		/**
+		 * @todo localize the week and month names
+		 */
+		getShortWeekDays: (locale: string) => ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'],
+		getShortMonths: (locale: string) => [
+			'Jan',
+			'Feb',
+			'Mar',
+			'Apr',
+			'May',
+			'Jun',
+			'Jul',
+			'Aug',
+			'Sep',
+			'Oct',
+			'Nov',
+			'Dec',
+		],
 	},
 };
 
