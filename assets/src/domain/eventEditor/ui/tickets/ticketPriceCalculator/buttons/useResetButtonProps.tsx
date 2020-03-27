@@ -1,22 +1,23 @@
 import { useCallback } from 'react';
 import { ButtonProps } from 'antd/lib/button';
 
-import { useTPCContext } from '../context';
+type Props = {
+	reset: () => void;
+};
 
-const useResetButtonProps = useCallback((): ButtonProps => {
-	const {
-		dataState: { reset },
-	} = useTPCContext();
-
-	const onClick = (e) => {
-		e.preventDefault();
-		reset();
-	};
+const useResetButtonProps = ({ reset }: Props): ButtonProps => {
+	const onClick = useCallback(
+		(e) => {
+			e.preventDefault();
+			reset();
+		},
+		[reset]
+	);
 
 	return {
 		htmlType: 'reset',
 		onClick,
 	};
-}, []);
+};
 
 export default useResetButtonProps;

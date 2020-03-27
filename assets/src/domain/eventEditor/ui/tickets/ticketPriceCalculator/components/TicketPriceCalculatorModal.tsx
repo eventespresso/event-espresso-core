@@ -5,6 +5,7 @@ import { Modal } from 'antd';
 import useResetButtonProps from '../buttons/useResetButtonProps';
 import useSubmitButtonProps from '../buttons/useSubmitButtonProps';
 import TicketPriceCalculator from './TicketPriceCalculator';
+import { useOnSubmitPrices } from '../hooks';
 import { useTPCContext } from '../context';
 
 import './styles.scss';
@@ -12,10 +13,11 @@ import './styles.scss';
 const TicketPriceCalculatorModal: React.FC = () => {
 	const {
 		onCloseModal,
-		dataState: { ticket },
+		dataState: { reset, ticket },
 	} = useTPCContext();
-	const resetButton = useResetButtonProps();
-	const submitButton = useSubmitButtonProps();
+	const submitPrices = useOnSubmitPrices();
+	const resetButton = useResetButtonProps({ reset });
+	const submitButton = useSubmitButtonProps({ onCloseModal, submitPrices });
 
 	return (
 		<Modal

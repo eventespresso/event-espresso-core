@@ -1,23 +1,25 @@
 import { useCallback } from 'react';
 import { ButtonProps } from 'antd/lib/button';
 
-import { useTPCContext } from '../context';
-import { useOnSubmitPrices } from '../hooks';
+type Props = {
+	onCloseModal: VoidFunction;
+	submitPrices: VoidFunction;
+};
 
-const useSubmitButtonProps = useCallback((): ButtonProps => {
-	const { onCloseModal } = useTPCContext();
-	const submitPrices = useOnSubmitPrices();
-
-	const onClick = (e) => {
-		e.preventDefault();
-		submitPrices();
-		onCloseModal();
-	};
+const useSubmitButtonProps = ({ onCloseModal, submitPrices }: Props): ButtonProps => {
+	const onClick = useCallback(
+		(e) => {
+			e.preventDefault();
+			submitPrices();
+			onCloseModal();
+		},
+		[submitPrices]
+	);
 
 	return {
 		htmlType: 'reset',
 		onClick,
 	};
-}, []);
+};
 
 export default useSubmitButtonProps;
