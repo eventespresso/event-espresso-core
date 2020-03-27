@@ -14,16 +14,35 @@
 class EEH_Sideloader extends EEH_Base
 {
 
+    /**
+     * @since   4.1.0
+     * @var     string
+     */
     private $_upload_to;
-    private $_upload_from;
+
+    /**
+     * @since   $VID:$
+     * @var     string
+     */
+    private $_download_from;
+
+    /**
+     * @since   4.1.0
+     * @var     string
+     */
     private $_permissions;
+
+    /**
+     * @since   4.1.0
+     * @var     string
+     */
     private $_new_file_name;
 
 
     /**
      * constructor allows the user to set the properties on the sideloader on construct.  However, there are also setters for doing so.
      *
-     * @access public
+     * @since 4.1.0
      * @param array $init array fo initializing the sideloader if keys match the properties.
      */
     public function __construct($init = array())
@@ -35,7 +54,7 @@ class EEH_Sideloader extends EEH_Base
     /**
      * sets the properties for class either to defaults or using incoming initialization array
      *
-     * @access private
+     * @since 4.1.0
      * @param  array  $init array on init (keys match properties others ignored)
      * @return void
      */
@@ -43,16 +62,32 @@ class EEH_Sideloader extends EEH_Base
     {
         $defaults = array(
             '_upload_to' => $this->_get_wp_uploads_dir(),
-            '_upload_from' => '',
+            '_download_from' => '',
             '_permissions' => 0644,
             '_new_file_name' => 'EE_Sideloader_' . uniqid() . '.default'
             );
 
         $props = array_merge($defaults, $init);
 
-        foreach ($props as $key => $val) {
-            if (EEH_Class_Tools::has_property($this, $key)) {
-                $this->{$key} = $val;
+        foreach ($props as $property => $val) {
+            $setter = 'set' . $property;
+            if (method_exists($this, $setter)) {
+                $this->$setter($val);
+            } else {
+                 // No setter found.
+                EE_Error::add_error(
+                    sprintf(
+                        esc_html__(
+                            'EEH_Sideloader::%1$s not found. There is no setter for the %2$s property.',
+                            'event_espresso'
+                        ),
+                        $setter,
+                        $property
+                    ),
+                    __FILE__,
+                    __FUNCTION__,
+                    __LINE__
+                );
             }
         }
 
@@ -62,41 +97,107 @@ class EEH_Sideloader extends EEH_Base
 
 
     // utilities
+
+
+    /**
+     * @since 4.1.0
+     * @return void
+     */
     private function _get_wp_uploads_dir()
     {
     }
 
     // setters
+
+
+    /**
+     * sets the _upload_to property to the directory to upload to.
+     *
+     * @since 4.1.0
+     * @param $upload_to_folder
+     * @return void
+     */
     public function set_upload_to($upload_to_folder)
     {
         $this->_upload_to = $upload_to_folder;
     }
-    public function set_upload_from($upload_from_folder)
+
+
+    /**
+     * sets the _download_from property to the location we should download the file from.
+     *
+     * @since $VID:$
+     * @param string $download_from The full path to the file we should sideload.
+     * @return void
+     */
+    public function set_download_from($download_from)
     {
-        $this->_upload_from_folder = $upload_from_folder;
+        $this->_download_from = $download_from;
     }
+
+
+    /**
+     * sets the _permissions property used on the sideloaded file.
+     *
+     * @since 4.1.0
+     * @param int $permissions
+     * @return void
+     */
     public function set_permissions($permissions)
     {
         $this->_permissions = $permissions;
     }
+
+
+    /**
+     * sets the _new_file_name property used on the sideloaded file.
+     *
+     * @since 4.1.0
+     * @param string $new_file_name
+     * @return void
+     */
     public function set_new_file_name($new_file_name)
     {
         $this->_new_file_name = $new_file_name;
     }
 
     // getters
+
+
+    /**
+     * @since 4.1.0
+     * @return string
+     */
     public function get_upload_to()
     {
         return $this->_upload_to;
     }
-    public function get_upload_from()
+
+
+    /**
+     * @since $VID:$
+     * @return string
+     */
+    public function get_download_from()
     {
-        return $this->_upload_from;
+        return $this->_download_from;
     }
+
+
+    /**
+     * @since 4.1.0
+     * @return int
+     */
     public function get_permissions()
     {
         return $this->_permissions;
     }
+
+
+    /**
+     * @since 4.1.0
+     * @return string
+     */
     public function get_new_file_name()
     {
         return $this->_new_file_name;
@@ -104,10 +205,18 @@ class EEH_Sideloader extends EEH_Base
 
 
     // upload methods
+
+
+    /**
+     * Downloads the file using the WordPress HTTP API.
+     *
+     * @since 4.1.0
+     * @return bool
+     */
     public function sideload()
     {
         // setup temp dir
-        $temp_file = wp_tempnam($this->_upload_from);
+        $temp_file = wp_tempnam($this->_download_from);
 
         if (!$temp_file) {
             EE_Error::add_error(
@@ -123,7 +232,7 @@ class EEH_Sideloader extends EEH_Base
 
         $wp_remote_args = apply_filters('FHEE__EEH_Sideloader__sideload__wp_remote_args', array( 'timeout' => 500, 'stream' => true, 'filename' => $temp_file ), $this, $temp_file);
 
-        $response = wp_safe_remote_get($this->_upload_from, $wp_remote_args);
+        $response = wp_safe_remote_get($this->_download_from, $wp_remote_args);
 
         if (is_wp_error($response) || 200 != wp_remote_retrieve_response_code($response)) {
             unlink($temp_file);
@@ -131,7 +240,7 @@ class EEH_Sideloader extends EEH_Base
                 EE_Error::add_error(
                     sprintf(
                         esc_html__('Unable to upload the file. Either the path given to upload from is incorrect, or something else happened. Here is the path given: %s', 'event_espresso'),
-                        $this->_upload_from
+                        $this->_download_from
                     ),
                     __FILE__,
                     __FUNCTION__,
@@ -188,4 +297,45 @@ class EEH_Sideloader extends EEH_Base
         @unlink($temp_file);
         return true;
     }
-} //end EEH_Template class
+
+    // deprecated
+
+    /**
+     * sets the _upload_from property to the location we should download the file from.
+     *
+     * @param string $upload_from The full path to the file we should sideload.
+     * @return void
+     * @deprecated since version $VID:$
+     */
+    public function set_upload_from($upload_from)
+    {
+        EE_Error::doing_it_wrong(
+            __CLASS__ . '::' . __FUNCTION__,
+            __(
+                'EEH_Sideloader::set_upload_from was renamed to EEH_Sideloader::set_download_from',
+                'event_espresso'
+            ),
+            '$VID:$'
+        );
+        $this->set_download_from($upload_from);
+    }
+
+
+    /**
+     * @since 4.1.0
+     * @return string
+     * @deprecated since version $VID:$
+     */
+    public function get_upload_from()
+    {
+        EE_Error::doing_it_wrong(
+            __CLASS__ . '::' . __FUNCTION__,
+            __(
+                'EEH_Sideloader::get_upload_from was renamed to EEH_Sideloader::get_download_from',
+                'event_espresso'
+            ),
+            '$VID:$'
+        );
+        return $this->_download_from;
+    }
+} //end EEH_Sideloader class
