@@ -1,10 +1,45 @@
-.ee-with-label {
-	&__input-label {
-		color: var(--ee-default-text-color);
-		display: block;
-		font-weight: bold;
-		margin: var(--ee-margin-micro) var(--ee-margin-micro) 0;
-		white-space: nowrap;
+.ee-input-label {
+	color: var(--ee-default-text-color);
+	font-weight: bold;
+	white-space: nowrap;
+
+	&__wrapper {
+		display: flex;
+		padding: var(--ee-padding-tiny);
+
+		&--bottom {
+			align-items: center;
+			flex-flow: column-reverse nowrap;
+
+			label {
+				margin: var(--ee-margin-micro) var(--ee-margin-micro) 0;
+			}
+		}
+
+		&--left {
+			flex-flow: row nowrap;
+
+			label {
+				margin: 0 0 0 var(--ee-margin-micro);
+			}
+		}
+
+		&--right {
+			flex-flow: row-reverse nowrap;
+
+			label {
+				margin: 0 var(--ee-margin-micro) 0 0;
+			}
+		}
+
+		&--top {
+			align-items: center;
+			flex-flow: column nowrap;
+
+			label {
+				margin: 0 var(--ee-margin-micro) var(--ee-margin-micro);
+			}
+		}
 	}
 
 	.ant-input,

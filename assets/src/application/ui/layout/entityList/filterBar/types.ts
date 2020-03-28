@@ -13,12 +13,6 @@ export interface EntityListFilterBarProps<FS extends ELFSM> {
 	listId?: string;
 }
 
-export interface FilterButtonWrapProps {
-	id: string;
-	isMobile?: boolean;
-	label: string;
-}
-
 export interface CardViewFilterButtonProps extends View {
 	listId?: string;
 	setCardView: VoidFunction;
