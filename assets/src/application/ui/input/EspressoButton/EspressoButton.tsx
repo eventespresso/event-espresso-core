@@ -1,12 +1,12 @@
 import React from 'react';
-import classNames from 'classnames';
-import { Button } from 'antd';
 import AntIcon from '@ant-design/icons';
+import { Button } from 'antd';
+import classNames from 'classnames';
 
 import { EspressoButtonProps, EspressoButtonSize, EspressoButtonType, Icon } from './types';
-import { EspressoIcon, isEspressoIcon } from '../../display';
-import { isEmpty } from '@appServices/utilities/string';
-import Tooltip from './Tooltip';
+import { EspressoIcon, isEspressoIcon, withLabel, withTooltip } from '../../display';
+
+type ButtonType = React.ComponentType;
 
 /**
  * Button wrapper for adding styles
@@ -14,7 +14,7 @@ import Tooltip from './Tooltip';
  * forwardRef to be able to accept
  * onMouseEnter, onMouseLeave, onFocus, onClick events from parent
  */
-const EspressoButton = React.forwardRef<Button, EspressoButtonProps>(
+const EspressoButton = React.forwardRef<ButtonType, EspressoButtonProps>(
 	(
 		{
 			icon,
@@ -23,14 +23,10 @@ const EspressoButton = React.forwardRef<Button, EspressoButtonProps>(
 			buttonSize = EspressoButtonSize.DEFAULT,
 			buttonType = EspressoButtonType.DEFAULT,
 			className: htmlClass,
-			tooltip,
-			tooltipProps = {},
 			...props
 		},
 		ref
 	) => {
-		const ariaLabel = isEmpty(buttonText) && !isEmpty(tooltip) ? tooltip : null;
-		const buttonProps = { ...props, 'aria-label': ariaLabel };
 		const className = classNames({
 			[htmlClass]: htmlClass,
 			'esprs-button': true,
@@ -47,17 +43,15 @@ const EspressoButton = React.forwardRef<Button, EspressoButtonProps>(
 			'ee-noIcon': !icon,
 		});
 
-		let eeButton: JSX.Element;
-
 		// check if icon prop is just an icon name (like "calendar") and if not, assume it is JSX
 		if (isEspressoIcon(icon)) {
 			// custom EE icon
 			const svgSize = buttonText ? buttonSize : 20;
 			const svgIcon = () => <EspressoIcon icon={icon as Icon} svgSize={svgSize} />;
 			if (svgIcon) {
-				eeButton = (
+				return (
 					<Button
-						{...buttonProps}
+						{...props}
 						className={className}
 						icon={<AntIcon component={svgIcon} />}
 						onClick={onClick}
@@ -68,21 +62,15 @@ const EspressoButton = React.forwardRef<Button, EspressoButtonProps>(
 					</Button>
 				);
 			}
-		} else {
-			// AntD or JSX element icon
-			eeButton = (
-				<Button {...buttonProps} className={className} icon={icon} onClick={onClick} tabIndex={0} ref={ref}>
-					{buttonText && buttonText}
-				</Button>
-			);
 		}
 
-		return tooltip ? (
-			<Tooltip {...tooltipProps} button={eeButton} buttonText={buttonText} title={tooltip} />
-		) : (
-			eeButton
+		// AntD or JSX element icon
+		return (
+			<Button {...props} className={className} icon={icon} onClick={onClick} tabIndex={0} ref={ref}>
+				{buttonText && buttonText}
+			</Button>
 		);
 	}
 );
 
-export default EspressoButton;
+export default withLabel<ButtonType, EspressoButtonProps>(withTooltip<ButtonType, EspressoButtonProps>(EspressoButton));
