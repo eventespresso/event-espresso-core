@@ -2,7 +2,7 @@ import React from 'react';
 import { __ } from '@wordpress/i18n';
 
 import TicketRegistrationsLink from '../../TicketRegistrationsLink';
-import { EntityDetailsPanel } from '@appDisplay/enityDetails';
+import { EntityDetailsPanel } from '@application/ui/display/entityDetailsPanel';
 import { Ticket } from '@edtrServices/apollo/types';
 import TicketQuantity from './TicketQuantity';
 

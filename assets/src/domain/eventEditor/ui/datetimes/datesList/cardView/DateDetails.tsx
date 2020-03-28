@@ -1,7 +1,7 @@
 import React from 'react';
 import { __ } from '@wordpress/i18n';
 
-import { EntityDetailsPanel } from '@appDisplay/enityDetails';
+import { EntityDetailsPanel } from '@application/ui/display/entityDetailsPanel';
 import { Datetime } from '@edtrServices/apollo/types';
 import DateRegistrationsLink from '../../DateRegistrationsLink';
 import DateCapacity from './DateCapacity';
