@@ -1,0 +1,14 @@
+@import '../../styles/mixins/breakpoints.scss';
+
+.ee-mobile-help-text {
+	display: none;
+
+	@include max782px {
+		display: inline-block;
+
+		&__btn-wrap {
+			display: flex;
+			flex-direction: row;
+		}
+	}
+}
