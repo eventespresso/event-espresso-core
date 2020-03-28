@@ -31,7 +31,6 @@ $filter-btn: '.esprs-button.ant-btn.ee-filter-bar__btn';
 		padding: 0 var(--ee-padding-small) var(--ee-padding-small);
 		#{$filter-btn} {
 			&--active {
-				// border: 2px solid var(--ee-color-primary);
 				background: var(--ee-color-primary);
 				color: var(--ee-text-on-primary);
 				path {
@@ -60,10 +59,6 @@ $filter-btn: '.esprs-button.ant-btn.ee-filter-bar__btn';
 	}
 
 	&__btn-wrap {
-		align-items: center;
-		display: flex;
-		flex-flow: column nowrap;
-		padding: var(--ee-padding-tiny);
 		width: 90px;
 		#{$filter-btn} {
 			&--active {
