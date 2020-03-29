@@ -1,26 +1,30 @@
 import React from 'react';
-import classNames from 'classnames';
 import { parseISO } from 'date-fns';
 import { __ } from '@wordpress/i18n';
 
+import { BiggieCalendarDate, CalendarDateRange } from '../';
+import { CalendarDateSwitcherProps } from './types';
 import { DisplayStartOrEndDate } from '@sharedServices/filterState';
 import { PLUS_ONE_MONTH, PLUS_TWO_MONTHS } from '@sharedConstants/defaultDates';
-import { BiggieCalendarDate, CalendarDateRange } from '../';
+import switchTenseForDate from '@sharedServices/utils/switchTenseForDate';
 
-interface Props {
-	className?: string;
-	displayDate: DisplayStartOrEndDate;
-	endDate: string;
-	footerText?: string;
-	headerText?: string;
-	showDate?: boolean;
-	startDate: string;
-}
+const headerFuture = 'sale starts';
+const headerPast = 'sale started';
+const footerFuture = 'sale ends';
+const footerPast = 'sale ended';
 
-const CalendarDateSwitcher: React.FC<Props> = React.memo(
-	({ className, displayDate = DisplayStartOrEndDate.start, footerText, headerText, ...props }) => {
+const CalendarDateSwitcher: React.FC<CalendarDateSwitcherProps> = React.memo(
+	({ className, displayDate = DisplayStartOrEndDate.start, ...props }) => {
 		const startDate = parseISO(props.startDate) || PLUS_ONE_MONTH;
 		const endDate = parseISO(props.endDate) || PLUS_TWO_MONTHS;
+		const { footerText, headerText } = switchTenseForDate({
+			endDate: props.endDate,
+			footerFuture,
+			footerPast,
+			headerFuture,
+			headerPast,
+			startDate: props.startDate,
+		});
 
 		const start = (
 			<BiggieCalendarDate
