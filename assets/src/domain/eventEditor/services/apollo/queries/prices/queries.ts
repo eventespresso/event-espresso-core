@@ -6,6 +6,7 @@ export const PRICE_ATTRIBUTES: any = gql`
 		id
 		dbId
 		amount
+		cacheId
 		desc
 		isBasePrice
 		isDefault

@@ -1,3 +1,4 @@
+import { useMemo } from 'react';
 import { GET_DATETIME } from '../datetimes';
 import { Datetime, DatetimeItem } from '../../types';
 import { EntityItemProps, ReadQueryOptions } from '../types';
@@ -12,7 +13,7 @@ const useDatetimeItem = ({ id }: EntityItemProps): Datetime => {
 	};
 	const { data } = useCacheQuery<DatetimeItem>(options);
 
-	return data?.datetime;
+	return useMemo(() => data?.datetime, [data?.datetime?.cacheId]);
 };
 
 export default useDatetimeItem;

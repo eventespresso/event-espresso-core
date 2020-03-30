@@ -14,9 +14,7 @@ const useRelatedDatetimes: RelatedEntitiesHook<Datetime, 'datetimes'> = ({ entit
 		relation: 'datetimes',
 	});
 
-	return useMemo(() => {
-		return relatedDatetimeIds.length ? entitiesWithGuIdInArray(datetimes, relatedDatetimeIds) : [];
-	}, [relatedDatetimeIds.length, datetimes]);
+	return useMemo(() => entitiesWithGuIdInArray(datetimes, relatedDatetimeIds), [relatedDatetimeIds, datetimes]);
 };
 
 export default useRelatedDatetimes;

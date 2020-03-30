@@ -5,6 +5,7 @@ export const PRICE_TYPE_ATTRIBUTES: any = gql`
 		id
 		dbId
 		baseType
+		cacheId
 		isBasePrice
 		isDiscount
 		isPercent

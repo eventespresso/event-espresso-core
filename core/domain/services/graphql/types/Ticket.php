@@ -67,6 +67,12 @@ class Ticket extends TypeBase
                 'ID',
                 esc_html__('Ticket ID', 'event_espresso')
             ),
+            new GraphQLOutputField(
+                'cacheId',
+                ['non_null' => 'String'],
+                null,
+                esc_html__('The cache ID of the object.', 'event_espresso')
+            ),
             new GraphQLInputField(
                 'datetimes',
                 ['list_of' => 'ID'],

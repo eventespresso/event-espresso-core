@@ -1,6 +1,7 @@
 import { useCallback } from 'react';
 import { pathOr } from 'ramda';
 import { useApolloClient } from '@apollo/react-hooks';
+import { v4 as uuidv4 } from 'uuid';
 
 import { Datetime, DatetimeItem } from '@edtrServices/apollo/types';
 import { GET_DATETIME } from '@edtrServices/apollo/queries';
@@ -12,6 +13,7 @@ import { ucFirst } from '@appServices/utilities/text';
 export const DATETIME_DEFAULTS: Datetime = {
 	id: '',
 	dbId: 0,
+	cacheId: uuidv4(),
 	capacity: -1,
 	description: '',
 	endDate: PLUS_TWO_MONTHS.toISOString(),
@@ -36,7 +38,7 @@ const useOptimisticResponse = (): OptimisticResCb => {
 	const client = useApolloClient();
 
 	return useCallback<OptimisticResCb>((mutationType, input) => {
-		let espressoDatetime = {
+		let espressoDatetime: Partial<Datetime> = {
 			__typename: 'EspressoDatetime',
 		};
 		// Get rid of null or undefined values
@@ -73,6 +75,7 @@ const useOptimisticResponse = (): OptimisticResCb => {
 					...espressoDatetime,
 					...datetime,
 					...filteredInput,
+					cacheId: uuidv4(),
 				};
 		}
 

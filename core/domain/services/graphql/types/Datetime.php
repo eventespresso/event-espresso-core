@@ -67,6 +67,12 @@ class Datetime extends TypeBase
                 'ID',
                 esc_html__('The datetime ID.', 'event_espresso')
             ),
+            new GraphQLOutputField(
+                'cacheId',
+                ['non_null' => 'String'],
+                null,
+                esc_html__('The cache ID of the object.', 'event_espresso')
+            ),
             new GraphQLField(
                 'capacity',
                 'Int',

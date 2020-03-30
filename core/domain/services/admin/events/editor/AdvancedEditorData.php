@@ -257,6 +257,7 @@ var eeEditorData={$data};
                 nodes {
                     id
                     dbId
+                    cacheId
                     capacity
                     description
                     endDate
@@ -308,6 +309,7 @@ QUERY;
             {$field_key}(where: \$where, first: \$first, last: \$last) {
                 nodes {
                     id
+                    cacheId
                     dbId
                     description
                     endDate
@@ -368,6 +370,7 @@ QUERY;
                     id
                     dbId
                     amount
+                    cacheId
                     desc
                     isBasePrice
                     isDefault
@@ -414,6 +417,7 @@ QUERY;
                     id
                     dbId
                     baseType
+                    cacheId
                     isBasePrice
                     isDiscount
                     isPercent

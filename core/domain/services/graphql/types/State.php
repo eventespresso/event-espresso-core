@@ -61,6 +61,12 @@ class State extends TypeBase
                 'abbrev',
                 esc_html__('State Abbreviation', 'event_espresso')
             ),
+            new GraphQLOutputField(
+                'cacheId',
+                ['non_null' => 'String'],
+                null,
+                esc_html__('The cache ID of the object.', 'event_espresso')
+            ),
             new GraphQLField(
                 'name',
                 'String',

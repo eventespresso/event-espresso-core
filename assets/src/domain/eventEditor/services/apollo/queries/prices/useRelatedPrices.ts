@@ -14,9 +14,7 @@ const useRelatedPrices: RelatedEntitiesHook<Price, 'prices'> = ({ entity, entity
 		relation: 'prices',
 	});
 
-	return useMemo(() => {
-		return relatedPriceIds.length ? entitiesWithGuIdInArray(prices, relatedPriceIds) : [];
-	}, [relatedPriceIds, prices]);
+	return useMemo(() => entitiesWithGuIdInArray(prices, relatedPriceIds), [relatedPriceIds, prices]);
 };
 
 export default useRelatedPrices;

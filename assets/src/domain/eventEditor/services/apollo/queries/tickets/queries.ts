@@ -5,6 +5,7 @@ export const TICKET_ATTRIBUTES: any = gql`
 	fragment ticketAttributes on EspressoTicket {
 		id
 		dbId
+		cacheId
 		description
 		endDate
 		isDefault

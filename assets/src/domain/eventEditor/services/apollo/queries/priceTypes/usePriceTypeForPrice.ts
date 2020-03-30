@@ -4,6 +4,7 @@ import usePriceTypes from './usePriceTypes';
 import useDefaultPriceType from './useDefaultPriceType';
 import { EntityId } from '@appServices/apollo/types';
 import { PriceType } from '../../types';
+import { entitiesWithGuIdInArray } from '@sharedServices/predicates';
 
 /**
  * A custom react hook for retrieving the related priceType from cache for the given Price entity
@@ -21,8 +22,9 @@ const usePriceTypeForPrice = (priceId: EntityId): PriceType => {
 
 	// get the default price type object
 	const defaultPriceType = useDefaultPriceType();
-	let relatedPriceTypes = usePriceTypes(relatedPriceTypeIds);
-	relatedPriceTypes = relatedPriceTypeIds.length ? relatedPriceTypes : [];
+	const allPriceTypes = usePriceTypes();
+
+	const relatedPriceTypes = entitiesWithGuIdInArray(allPriceTypes, relatedPriceTypeIds);
 
 	return !isEmpty(relatedPriceTypes) ? relatedPriceTypes[0] : defaultPriceType;
 };

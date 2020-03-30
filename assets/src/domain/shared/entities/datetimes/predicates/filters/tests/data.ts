@@ -4,6 +4,7 @@ import { DatetimeStatus } from '../../../../../../eventEditor/services/apollo/ty
 const dates: Datetime[] = [
 	{
 		id: 'RGF0ZXRpbWU6ODM=',
+		cacheId: '',
 		capacity: -1,
 		isActive: true,
 		sold: 0,
@@ -24,6 +25,7 @@ const dates: Datetime[] = [
 	},
 	{
 		id: 'RGF0ZXRpbWU6ODM=',
+		cacheId: '',
 		capacity: 10,
 		isActive: true,
 		sold: 5,
@@ -44,6 +46,7 @@ const dates: Datetime[] = [
 	},
 	{
 		id: 'RGF0ZXRpbWU6ODM=',
+		cacheId: '',
 		capacity: 10,
 		isActive: true,
 		sold: 6,
@@ -64,6 +67,7 @@ const dates: Datetime[] = [
 	},
 	{
 		id: 'RGF0ZXRpbWU6ODM=',
+		cacheId: '',
 		capacity: 10,
 		isActive: true,
 		sold: 7,
@@ -84,6 +88,7 @@ const dates: Datetime[] = [
 	},
 	{
 		id: 'RGF0ZXRpbWU6ODM=',
+		cacheId: '',
 		capacity: 10,
 		isActive: true,
 		sold: 8,
@@ -104,6 +109,7 @@ const dates: Datetime[] = [
 	},
 	{
 		id: 'RGF0ZXRpbWU6ODM=',
+		cacheId: '',
 		capacity: 10,
 		isActive: false,
 		isUpcoming: true,
@@ -124,6 +130,7 @@ const dates: Datetime[] = [
 	},
 	{
 		id: 'RGF0ZXRpbWU6ODM=',
+		cacheId: '',
 		capacity: 10,
 		isActive: false,
 		isUpcoming: true,

@@ -4,6 +4,7 @@ export const DATETIME_ATTRIBUTES: any = gql`
 	fragment datetimeAttributes on EspressoDatetime {
 		id
 		dbId
+		cacheId
 		capacity
 		description
 		endDate

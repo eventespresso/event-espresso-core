@@ -10,6 +10,7 @@ export const nodes: Ticket[] = [
 	{
 		id: 'xyz',
 		dbId: 1,
+		cacheId: '',
 		description: 'some desc',
 		endDate: formatISO(new Date(2019, 8, 18, 19, 0, 52)),
 		isDefault: true,
@@ -37,6 +38,7 @@ export const nodes: Ticket[] = [
 	{
 		id: 'abc',
 		dbId: 3,
+		cacheId: '',
 		description: 'some new desc',
 		endDate: formatISO(new Date(2039, 8, 18, 19, 0, 52)),
 		isDefault: true,
@@ -64,6 +66,7 @@ export const nodes: Ticket[] = [
 	{
 		id: 'def',
 		dbId: 3,
+		cacheId: '',
 		description: 'some new desc',
 		endDate: formatISO(new Date(2029, 8, 18, 19, 0, 52)),
 		isDefault: true,
