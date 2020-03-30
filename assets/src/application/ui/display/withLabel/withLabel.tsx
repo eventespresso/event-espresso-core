@@ -3,10 +3,9 @@ import classNames from 'classnames';
 import { withLabelProps } from './types';
 import './style.scss';
 
-const withLabel = <T extends React.ComponentType, P extends withLabelProps>(
-	WrappedComponent: React.ComponentType<P>
-) => {
-	type refProps = { forwardedRef: React.RefObject<T> };
+const withLabel = <P extends withLabelProps>(WrappedComponent: React.ComponentType<P>) => {
+	type Ref = React.Ref<typeof WrappedComponent>;
+	type refProps = { forwardedRef: Ref };
 	const WithLabel: React.FC<P & refProps> = ({
 		forwardedRef,
 		id,
@@ -33,11 +32,11 @@ const withLabel = <T extends React.ComponentType, P extends withLabelProps>(
 		);
 	};
 
-	const ForwardedComponentWithLabel = (props: P, ref: T) => {
+	const ForwardedComponentWithLabel = (props: P, ref: Ref) => {
 		return <WithLabel {...props} forwardedRef={ref} />;
 	};
 
-	return React.forwardRef<T, P>(ForwardedComponentWithLabel as any);
+	return React.forwardRef(ForwardedComponentWithLabel);
 };
 
 export default withLabel;

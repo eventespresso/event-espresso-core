@@ -6,10 +6,9 @@ import { withTooltipProps } from './types';
 
 import './style.scss';
 
-const withTooltip = <T extends React.ComponentType, P extends withTooltipProps>(
-	WrappedComponent: React.ComponentType<P>
-) => {
-	type refProps = { forwardedRef: React.RefObject<T> };
+const withTooltip = <P extends withTooltipProps>(WrappedComponent: React.ComponentType<P>) => {
+	type Ref = React.Ref<typeof WrappedComponent>;
+	type refProps = { forwardedRef: Ref };
 	const WithTooltip: React.ComponentType<P & refProps> = ({
 		buttonText,
 		forwardedRef,
@@ -34,11 +33,11 @@ const withTooltip = <T extends React.ComponentType, P extends withTooltipProps>(
 		);
 	};
 
-	const ForwardedComponentWithTooltip = (props: P, ref: T) => {
+	const ForwardedComponentWithTooltip = (props: P, ref: Ref) => {
 		return <WithTooltip {...props} forwardedRef={ref} />;
 	};
 
-	return React.forwardRef<T, P>(ForwardedComponentWithTooltip as any);
+	return React.forwardRef(ForwardedComponentWithTooltip);
 };
 
 export default withTooltip;
