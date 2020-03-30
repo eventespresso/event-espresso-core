@@ -1,3 +1,4 @@
+import { isNil } from 'ramda';
 import { parseISO } from 'date-fns';
 
 import { diff } from '@appServices/utilities';
@@ -23,6 +24,17 @@ const switchTenseForDate = ({
 	headerPast,
 	startDate,
 }: SwitchTenseForDate): { footerText: string; headerText: string } => {
+	if (
+		isNil(endDate) ||
+		isNil(footerFuture) ||
+		isNil(footerPast) ||
+		isNil(headerFuture) ||
+		isNil(headerPast) ||
+		isNil(startDate)
+	) {
+		return { footerText: null, headerText: null };
+	}
+
 	const headerText = diff('minutes', parseISO(startDate), now) < 0 ? headerPast : headerFuture;
 	const footerText = diff('minutes', parseISO(endDate), now) < 0 ? footerPast : footerFuture;
 
