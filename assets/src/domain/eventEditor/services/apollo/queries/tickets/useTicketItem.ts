@@ -1,3 +1,5 @@
+import { useMemo } from 'react';
+
 import { GET_TICKET } from '../tickets';
 import { Ticket, TicketItem } from '../../types';
 import { EntityItemProps, ReadQueryOptions } from '../types';
@@ -12,7 +14,7 @@ const useTicketItem = ({ id }: EntityItemProps): Ticket => {
 	};
 	const { data } = useCacheQuery<TicketItem>(options);
 
-	return data?.ticket;
+	return useMemo(() => data?.ticket, [data?.ticket?.cacheId]);
 };
 
 export default useTicketItem;

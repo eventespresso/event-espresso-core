@@ -1,6 +1,7 @@
 import { useCallback } from 'react';
 import { pathOr } from 'ramda';
 import { useApolloClient } from '@apollo/react-hooks';
+import { v4 as uuidv4 } from 'uuid';
 
 import { GET_TICKET } from '@edtrServices/apollo/queries';
 import { MutationType, MutationInput } from '@appServices/apollo/mutations/types';
@@ -12,6 +13,7 @@ import { ucFirst } from '@appServices/utilities/text';
 export const TICKET_DEFAULTS: Ticket = {
 	id: '',
 	dbId: 0,
+	cacheId: uuidv4(),
 	description: '',
 	endDate: PLUS_TWO_MONTHS.toISOString(),
 	isSoldOut: false,
@@ -43,7 +45,7 @@ const useOptimisticResponse = (): OptimisticResCb => {
 	const client = useApolloClient();
 
 	return useCallback<OptimisticResCb>((mutationType, input) => {
-		let espressoTicket: any = {
+		let espressoTicket: Partial<Ticket> = {
 			__typename: 'EspressoTicket',
 		};
 		// Get rid of null or undefined values
@@ -81,6 +83,7 @@ const useOptimisticResponse = (): OptimisticResCb => {
 					...espressoTicket,
 					...ticket,
 					...filteredInput,
+					cacheId: uuidv4(),
 					prices: null,
 				};
 		}
