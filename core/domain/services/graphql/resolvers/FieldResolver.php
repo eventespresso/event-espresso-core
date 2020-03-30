@@ -149,11 +149,10 @@ class FieldResolver extends ResolverBase
     {
         $model_name = $this->model->item_name();
         $ID         = $source->ID();
-        $uniqid     = uniqid();
         // Since cacheId does not need to be globally unique
         // $uniqid is sufficient, still adding the model name and ID
         // may be we need/use them in future.
-        return "{$model_name}:{$ID}:{$uniqid}";
+        return uniqid("{$model_name}:{$ID}:", true);
     }
 
 
