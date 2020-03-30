@@ -2,6 +2,7 @@ import updateTicketCache from './updateTicketCache';
 import useUpdateDatetimeCache from './useUpdateDatetimeCache';
 import { DatetimeMutationCallbackFn, DatetimeMutationCallbackFnArgs, CacheUpdaterFn } from '../types';
 import { useRelations } from '@appServices/apollo/relations';
+import { getGuids } from '@sharedServices/predicates';
 
 const useOnDeleteDatetime = (): DatetimeMutationCallbackFn => {
 	const { dropRelations, removeRelation } = useRelations();
@@ -11,7 +12,7 @@ const useOnDeleteDatetime = (): DatetimeMutationCallbackFn => {
 	const onDeleteDatetime = ({ proxy, datetimes, datetime }: DatetimeMutationCallbackFnArgs): void => {
 		if (datetime.id) {
 			const { nodes = [] } = datetimes;
-			const datetimeIn = nodes.map(({ id }) => id);
+			const datetimeIn = getGuids(nodes).sort();
 			const { id: datetimeId } = datetime;
 
 			// Update tickets cache for the changed datetimes,

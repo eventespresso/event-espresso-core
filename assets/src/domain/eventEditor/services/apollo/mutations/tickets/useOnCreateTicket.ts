@@ -2,9 +2,10 @@ import { pathOr } from 'ramda';
 
 import updatePriceCache from './updatePriceCache';
 import useUpdateTicketCache from './useUpdateTicketCache';
-import { Ticket, Price } from '@edtrServices/apollo/types';
+import { Price } from '@edtrServices/apollo/types';
 import { TicketMutationCallbackFn, TicketMutationCallbackFnArgs } from '../types';
 import { useRelations } from '@appServices/apollo/relations';
+import { getGuids } from '@sharedServices/predicates';
 
 const useOnCreateTicket = (): TicketMutationCallbackFn => {
 	const { updateRelations, addRelation } = useRelations();
@@ -14,7 +15,7 @@ const useOnCreateTicket = (): TicketMutationCallbackFn => {
 	const onCreateTicket = ({ proxy, datetimeIds, ticket, tickets, prices }: TicketMutationCallbackFnArgs): void => {
 		if (ticket.id) {
 			const { nodes = [] } = tickets;
-			const ticketIn = nodes.map(({ id }: Ticket) => id);
+			const ticketIn = getGuids(nodes).sort();
 			const { id: ticketId } = ticket;
 
 			// Update prices cache for the changed tickets,
@@ -38,7 +39,7 @@ const useOnCreateTicket = (): TicketMutationCallbackFn => {
 			});
 
 			// Set relations with prices
-			const priceIds = pathOr<Price[]>([], ['nodes'], prices).map(({ id }: Price) => id);
+			const priceIds = getGuids(pathOr<Price[]>([], ['nodes'], prices));
 			updateRelations({
 				entity: 'tickets',
 				entityId: ticketId,

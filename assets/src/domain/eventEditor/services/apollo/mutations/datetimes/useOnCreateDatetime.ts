@@ -1,8 +1,8 @@
 import updateTicketCache from './updateTicketCache';
 import useUpdateDatetimeCache from './useUpdateDatetimeCache';
-import { Datetime } from '@edtrServices/apollo/types';
 import { DatetimeMutationCallbackFn, DatetimeMutationCallbackFnArgs } from '../types';
 import { useRelations } from '@appServices/apollo/relations';
+import { getGuids } from '@sharedServices/predicates';
 
 const useOnCreateDatetime = (): DatetimeMutationCallbackFn => {
 	const { updateRelations, addRelation } = useRelations();
@@ -12,7 +12,7 @@ const useOnCreateDatetime = (): DatetimeMutationCallbackFn => {
 	const onCreateDatetime = ({ proxy, datetimes, datetime, tickets }: DatetimeMutationCallbackFnArgs): void => {
 		if (datetime.id) {
 			const { nodes = [] } = datetimes;
-			const datetimeIn = nodes.map(({ id }: Datetime) => id);
+			const datetimeIn = getGuids(nodes).sort();
 			const { id: datetimeId } = datetime;
 
 			// Update tickets cache for the changed datetimes,
