@@ -7,13 +7,14 @@ import { ApolloMockedProvider } from '../../../../context/TestContext';
 import { getMutationMocks, mockedDatetimes } from './data';
 import { nodes as tickets } from '../../../queries/tickets/test/data';
 import { useDatetimeMutator } from '../';
+import { getGuids } from '@sharedServices/predicates';
 
 const timeout = 5000; // milliseconds
 
 describe('deleteDatetime', () => {
 	const mockedDatetime = mockedDatetimes.DELETE;
 
-	const ticketIds = tickets.map(({ id }) => id);
+	const ticketIds = getGuids(tickets);
 
 	let mutationMocks = getMutationMocks({}, MutationType.Delete);
 

@@ -10,6 +10,7 @@ import usePrices from '../../../queries/prices/usePrices';
 import { nodes as tickets } from '../../../queries/tickets/test/data';
 import { nodes as priceTypes } from '../../../queries/priceTypes/test/data';
 import { usePriceMutator, CreatePriceInput } from '../';
+import { getGuids } from '@sharedServices/predicates';
 
 const timeout = 5000; // milliseconds
 describe('createPrice', () => {
@@ -90,7 +91,7 @@ describe('createPrice', () => {
 		// wait for mutation promise to resolve
 		await waitForUpdate({ timeout });
 
-		const cachedPriceIds = cacheResult.current.map(({ id }) => id);
+		const cachedPriceIds = getGuids(cacheResult.current);
 
 		expect(cachedPriceIds).toContain(mockedPrice.id);
 	});

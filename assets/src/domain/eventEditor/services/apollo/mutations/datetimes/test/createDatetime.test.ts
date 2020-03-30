@@ -14,6 +14,7 @@ import useDatetimeIds from '../../../queries/datetimes/useDatetimeIds';
 import useInitTicketTestCache from '../../../queries/tickets/test/useInitTicketTestCache';
 import useTickets from '../../../queries/tickets/useTickets';
 import useTicketQueryOptions from '../../../queries/tickets/useTicketQueryOptions';
+import { getGuids } from '@sharedServices/predicates';
 
 const timeout = 5000; // milliseconds
 
@@ -21,7 +22,7 @@ describe('createDatetime', () => {
 	let testInput: MutationInput = { name: 'New Test Date', description: 'New Test Desc' };
 	const mockedDatetime = mockedDatetimes.CREATE;
 
-	const ticketIds = tickets.map(({ id }) => id);
+	const ticketIds = getGuids(tickets);
 
 	let mutationMocks = getMutationMocks(testInput, MutationType.Create);
 

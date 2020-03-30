@@ -4,6 +4,7 @@ import useTicketIds from '../useTicketIds';
 import { ApolloMockedProvider } from '../../../../../services/context/TestContext';
 import { nodes } from './data';
 import useInitTicketTestCache from './useInitTicketTestCache';
+import { getGuids } from '@sharedServices/predicates';
 
 const timeout = 5000; // milliseconds
 describe('useTicketIds()', () => {
@@ -26,7 +27,7 @@ describe('useTicketIds()', () => {
 		await waitForValueToChange(() => result.current, { timeout });
 
 		const { current: cachedTicketIds } = result;
-		const passedTicketIds = nodes.map(({ id }) => id);
+		const passedTicketIds = getGuids(nodes);
 
 		expect(cachedTicketIds.length).toEqual(passedTicketIds.length);
 

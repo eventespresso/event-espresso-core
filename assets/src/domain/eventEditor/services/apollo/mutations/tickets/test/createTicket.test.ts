@@ -12,14 +12,15 @@ import { MutationInput } from '../../../../../../../application/services/apollo/
 import useTicketItem from '../../../queries/tickets/useTicketItem';
 import useTicketIds from '../../../queries/tickets/useTicketIds';
 import { useTicketMutator } from '../';
+import { getGuids } from '@sharedServices/predicates';
 
 const timeout = 5000; // milliseconds
 describe('createTicket', () => {
 	let testInput: MutationInput = { name: 'New Test Ticket', description: 'New Test Desc' };
 	const mockedTicket = mockedTickets.CREATE;
 
-	const datetimeIds = datetimes.map(({ id }) => id);
-	const priceIds = prices.map(({ id }) => id);
+	const datetimeIds = getGuids(datetimes);
+	const priceIds = getGuids(prices);
 
 	let mutationMocks = getMutationMocks(testInput, MutationType.Create);
 

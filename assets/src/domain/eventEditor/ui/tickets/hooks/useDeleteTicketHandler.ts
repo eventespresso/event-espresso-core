@@ -4,6 +4,7 @@ import useTicketPrices from '@edtrServices/apollo/queries/tickets/useTicketPrice
 import { EntityListItemProps } from '@appLayout/entityList';
 import { BackwardSubscription } from '@appServices/apollo/mutations';
 import { useTicketMutator, usePriceMutator } from '@edtrServices/apollo/mutations';
+import { getGuids } from '@sharedServices/predicates';
 
 type VoidFn = () => void;
 
@@ -17,7 +18,7 @@ const useDeleteTicketHandler = ({ id }: EntityListItemProps): VoidFn => {
 			onCompleted: (): void => {
 				// The prices that are not default or tax prices.
 				const pricesToDelete = relatedPrices.filter(({ isDefault, isTax }) => !isDefault && !isTax);
-				const priceIdsToDelete = pricesToDelete.map(({ id }) => id);
+				const priceIdsToDelete = getGuids(pricesToDelete);
 				priceIdsToDelete.forEach((id) => {
 					deletePrice({ id });
 				});

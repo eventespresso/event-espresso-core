@@ -4,6 +4,7 @@ import useTicketQueryOptions from '../useTicketQueryOptions';
 import { ApolloMockedProvider } from '../../../../../services/context/TestContext';
 import { nodes } from '../../datetimes/test/data';
 import useInitDatetimeTestCache from '../../datetimes/test/useInitDatetimeTestCache';
+import { getGuids } from '@sharedServices/predicates';
 
 const timeout = 5000; // milliseconds
 describe('useTicketQueryOptions', () => {
@@ -18,6 +19,6 @@ describe('useTicketQueryOptions', () => {
 		);
 		await waitForValueToChange(() => result.current, { timeout });
 
-		expect(result.current.variables.where.datetimeIn).toEqual(nodes.map(({ id }) => id).sort());
+		expect(result.current.variables.where.datetimeIn).toEqual(getGuids(nodes).sort());
 	});
 });

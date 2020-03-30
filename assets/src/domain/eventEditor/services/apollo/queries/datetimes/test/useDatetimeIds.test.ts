@@ -4,6 +4,7 @@ import useDatetimeIds from '../useDatetimeIds';
 import { ApolloMockedProvider } from '../../../../../services/context/TestContext';
 import { nodes } from './data';
 import useInitDatetimeTestCache from './useInitDatetimeTestCache';
+import { getGuids } from '@sharedServices/predicates';
 
 const timeout = 5000; // milliseconds
 describe('useDatetimeIds()', () => {
@@ -26,7 +27,7 @@ describe('useDatetimeIds()', () => {
 		await waitForValueToChange(() => result.current, { timeout });
 
 		const { current: cachedDatetimeIds } = result;
-		const passedDatetimeIds = nodes.map(({ id }) => id);
+		const passedDatetimeIds = getGuids(nodes);
 
 		expect(cachedDatetimeIds.length).toEqual(passedDatetimeIds.length);
 
