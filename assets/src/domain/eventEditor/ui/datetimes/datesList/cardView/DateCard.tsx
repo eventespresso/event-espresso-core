@@ -11,14 +11,15 @@ import statusBgColorClassName from '@sharedEntities/datetimes/helpers/statusBgCo
 
 import EntityCard from '@appLayout/EntityCard';
 import { EntityListItemProps } from '@appLayout/entityList';
+import { Datetime } from '@edtrServices/apollo/types';
 import { InlineEditHeading, InlineEditTextArea } from '@appInputs/InlineEditInput';
 import { useDatesListFilterState } from '@edtrServices/filterState';
 import { useDatetimeMutator } from '@edtrServices/apollo/mutations';
 
-const DateCard: React.FC<EntityListItemProps> = React.memo(({ id }) => {
+const DateCard: React.FC<EntityListItemProps<Datetime>> = ({ entity }) => {
 	const { displayStartOrEndDate } = useDatesListFilterState();
-	const date = useDatetimeItem({ id });
-	const { updateEntity } = useDatetimeMutator(id);
+	const date = useDatetimeItem({ id: entity.id });
+	const { updateEntity } = useDatetimeMutator(entity.id);
 
 	if (!date) {
 		return null;
@@ -26,7 +27,7 @@ const DateCard: React.FC<EntityListItemProps> = React.memo(({ id }) => {
 
 	const bgClassName = statusBgColorClassName(date);
 
-	return date ? (
+	return (
 		<DatetimeProvider id={date.id}>
 			<EntityCard
 				entity={date}
@@ -67,7 +68,21 @@ const DateCard: React.FC<EntityListItemProps> = React.memo(({ id }) => {
 				}
 			/>
 		</DatetimeProvider>
-	) : null;
-});
+	);
+};
 
-export default DateCard;
+const hasEntityChanged = (
+	prevProps: EntityListItemProps<Datetime>,
+	nextProps: EntityListItemProps<Datetime>
+): boolean => {
+	const prevEntity = JSON.stringify(prevProps.entity);
+	const nextEntity = JSON.stringify(nextProps.entity);
+	console.log('');
+	console.log('%c DateCard ', 'color: LimeGreen;');
+	console.log('%c 	prevEntity', 'color: LimeGreen;', prevEntity);
+	console.log('%c 	nextEntity', 'color: LimeGreen;', nextEntity);
+	console.log('%c 	prevEntity === nextEntity', 'color: LimeGreen;', prevEntity === nextEntity);
+	return prevEntity === nextEntity;
+};
+
+export default React.memo(DateCard, hasEntityChanged);

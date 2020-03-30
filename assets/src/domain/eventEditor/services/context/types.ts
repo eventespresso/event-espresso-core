@@ -14,7 +14,9 @@ export interface EntityListContextProps<E extends Entity, T> extends ContextProv
 	allEntities: E[];
 	filters: T;
 	entities: E[];
+	loading: boolean;
 	setEntities: (entities: E[]) => void;
+	setLoading: (loading: boolean) => void;
 }
 
 export interface EntityContextProviderProps extends ContextProviderProps, EntityContextProps {}

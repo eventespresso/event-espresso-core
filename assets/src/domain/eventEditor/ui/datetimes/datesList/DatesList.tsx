@@ -8,7 +8,6 @@ import {
 	DatetimesListProvider,
 	withEntityListContext,
 } from '@edtrServices/context/EntityListContext';
-// import { useDatetimes } from '@edtrServices/apollo/queries';
 import { EntityList } from '@appLayout/entityList';
 import { legendConfig } from './config';
 import { TableView } from './tableView';
@@ -24,7 +23,6 @@ const DatesList: React.FC = () => {
 			CardView={CardViewLoader}
 			context={DatetimesListContext}
 			domain={domain}
-			// entities={datetimes}
 			entityType={TypeName.datetimes}
 			filterState={filterState}
 			footer={<AddNewDateButton />}

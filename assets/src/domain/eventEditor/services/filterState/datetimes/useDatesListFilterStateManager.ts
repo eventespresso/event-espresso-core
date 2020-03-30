@@ -7,7 +7,7 @@ import { useEntityListFilterStateManager } from '@appLayout/entityList/filterBar
 
 type FSM = DatetimesFilterStateManager;
 
-const useDatesListFilterStateManager = (): FSM => {
+const useDatesListFilterStateManager = (setLoading): FSM => {
 	const initialState: DatetimesFilterState = {
 		displayStartOrEndDate: DisplayStartOrEndDate.start,
 		sales: DatetimeSales.all,
@@ -20,11 +20,18 @@ const useDatesListFilterStateManager = (): FSM => {
 
 	const resetPageNumber = (filter: DatetimeSales | DatetimeStatus): void => {
 		if (filter !== state[filter]) {
+			console.log('%c useDatesListFilterStateManager setPageNumber', 'color: Yellow;', 1);
 			entityFilterState.setPageNumber(1);
 		}
 	};
 
 	const setDisplayStartOrEndDate: FSM['setDisplayStartOrEndDate'] = (displayStartOrEndDate) => {
+		console.log(
+			'%c useDatesListFilterStateManager setDisplayStartOrEndDate',
+			'color: Yellow;',
+			displayStartOrEndDate
+		);
+		setLoading(true);
 		dispatch({
 			type: 'SET_DISPLAY_START_OR_END_DATE',
 			displayStartOrEndDate,
@@ -32,6 +39,8 @@ const useDatesListFilterStateManager = (): FSM => {
 	};
 
 	const setSales: FSM['setSales'] = (sales) => {
+		console.log('%c useDatesListFilterStateManager setSales', 'color: Yellow;', sales);
+		setLoading(true);
 		resetPageNumber(sales);
 		dispatch({
 			type: 'SET_SALES',
@@ -40,6 +49,8 @@ const useDatesListFilterStateManager = (): FSM => {
 	};
 
 	const setStatus: FSM['setStatus'] = (status) => {
+		console.log('%c useDatesListFilterStateManager setStatus', 'color: Yellow;', status);
+		setLoading(true);
 		resetPageNumber(status);
 		dispatch({
 			type: 'SET_STATUS',

@@ -4,6 +4,7 @@ import { Entity, EntityId } from '@appServices/apollo/types';
 import { EntityListFilterStateManager } from './filterBar';
 import { LegendConfig } from '@application/ui/display/EntityListLegend/types';
 import { TypeName } from '@appServices/apollo/status';
+import { EntityListContextProps } from '@edtrServices/context/types';
 
 type ELFSM = EntityListFilterStateManager<any>;
 
@@ -12,14 +13,15 @@ export interface EntityListBaseProps<E extends Entity> {
 }
 
 export interface EntityCardListProps<E extends Entity> extends EntityListBaseProps<E> {
-	EntityCard: React.ComponentType<EntityListItemProps>;
+	EntityCard: React.ComponentType<EntityListItemProps<E>>;
+	loading: boolean;
 }
 
 /**
  * This common type can be used/extended by many UI components
  */
-export interface EntityListItemProps {
-	id: EntityId;
+export interface EntityListItemProps<E extends Entity> {
+	entity: E;
 }
 
 export interface EntityListViewProps<E extends Entity, FS extends ELFSM> extends EntityListBaseProps<E> {
@@ -45,9 +47,10 @@ export type EntityListComponent<E extends Entity, FS extends ELFSM> = React.Comp
 
 export interface EntityListProps<E extends Entity, FS extends ELFSM> extends EntityListViewProps<E, FS> {
 	CardView: EntityListComponent<E, FS>;
-	context: any;
+	context: EntityListContextProps<E, FS>;
 	domain: string;
 	entityType: TypeName;
+	filterState: FS;
 	footer: React.ReactNode;
 	headerText: string;
 	legendConfig: LegendConfig;
