@@ -21,7 +21,7 @@ class EEH_Sideloader extends EEH_Base
     private $_upload_to;
 
     /**
-     * @since   $VID:$
+     * @since   4.10.5.p
      * @var     string
      */
     private $_download_from;
@@ -126,7 +126,7 @@ class EEH_Sideloader extends EEH_Base
     /**
      * sets the _download_from property to the location we should download the file from.
      *
-     * @since $VID:$
+     * @since 4.10.5.p
      * @param string $download_from The full path to the file we should sideload.
      * @return void
      */
@@ -175,7 +175,7 @@ class EEH_Sideloader extends EEH_Base
 
 
     /**
-     * @since $VID:$
+     * @since 4.10.5.p
      * @return string
      */
     public function get_download_from()
@@ -305,7 +305,7 @@ class EEH_Sideloader extends EEH_Base
      *
      * @param string $upload_from The full path to the file we should sideload.
      * @return void
-     * @deprecated since version $VID:$
+     * @deprecated since version 4.10.5.p
      */
     public function set_upload_from($upload_from)
     {
@@ -315,7 +315,7 @@ class EEH_Sideloader extends EEH_Base
                 'EEH_Sideloader::set_upload_from was renamed to EEH_Sideloader::set_download_from',
                 'event_espresso'
             ),
-            '$VID:$'
+            '4.10.5.p'
         );
         $this->set_download_from($upload_from);
     }
@@ -324,7 +324,7 @@ class EEH_Sideloader extends EEH_Base
     /**
      * @since 4.1.0
      * @return string
-     * @deprecated since version $VID:$
+     * @deprecated since version 4.10.5.p
      */
     public function get_upload_from()
     {
@@ -334,7 +334,7 @@ class EEH_Sideloader extends EEH_Base
                 'EEH_Sideloader::get_upload_from was renamed to EEH_Sideloader::get_download_from',
                 'event_espresso'
             ),
-            '$VID:$'
+            '4.10.5.p'
         );
         return $this->_download_from;
     }

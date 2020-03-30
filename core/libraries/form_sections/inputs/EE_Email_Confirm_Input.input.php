@@ -4,7 +4,7 @@
  *
  * @package         Event Espresso
  * @subpackage
- * @since           $VID:$
+ * @since           4.10.5.p
  * @author          Rafael Goulart
  */
 class EE_Email_Confirm_Input extends EE_Form_Input_Base

@@ -9,7 +9,7 @@ use EventEspresso\core\exceptions\InvalidInterfaceException;
  *
  * @package               Event Espresso
  * @subpackage            core
- * @since                 $VID:$
+ * @since                 4.10.5.p
  * @author                Rafael Goulart
  */
 class EE_Equal_To_Validation_Strategy extends EE_Text_Validation_Strategy
