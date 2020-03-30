@@ -9,6 +9,10 @@ export interface Entity {
 	__typename?: string;
 }
 
+export interface Cacheable {
+	cacheId: string;
+}
+
 export interface Trashable {
 	isTrashed: boolean;
 }
