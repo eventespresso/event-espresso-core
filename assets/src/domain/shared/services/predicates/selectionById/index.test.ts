@@ -18,6 +18,7 @@ import {
 } from './index';
 import { nodes as datetimes } from '../../../../eventEditor/services/apollo/queries/datetimes/test/data';
 import { nodes as tickets } from '../../../../eventEditor/services/apollo/queries/tickets/test/data';
+import { getGuids } from '@sharedServices/predicates';
 
 describe('entityDbId', () => {
 	it('should return dbId for each entity', () => {
@@ -78,7 +79,7 @@ describe('findEntityByDbId', () => {
 
 describe('findEntityByGuid', () => {
 	it('should return the entity with corresponding id', () => {
-		const ids = datetimes.map(({ id }) => id);
+		const ids = getGuids(datetimes);
 
 		ids.forEach((id) => {
 			const entity = findEntityByGuid(datetimes)(id);
@@ -124,7 +125,7 @@ describe('entitiesWithDbIdInArray', () => {
 
 describe('entitiesWithGuIdInArray', () => {
 	it('should return an array of entities corresponding to provided ids', () => {
-		const ids = tickets.map(({ id }) => id);
+		const ids = getGuids(tickets);
 		const entities = entitiesWithGuIdInArray(tickets, ids);
 
 		expect(entities.length).toBe(tickets.length);

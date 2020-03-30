@@ -23,6 +23,7 @@ import {
 	useGeneralSettingsQueryOptions,
 	useUpdateGeneralSettingsCache,
 } from '@sharedServices/apollo/queries/generalSettings';
+import { getGuids } from '@sharedServices/predicates';
 
 const useCacheRehydration = (): void => {
 	const { initialize: initializeRelations, isInitialized: relationsInitialized } = useRelations();
@@ -39,8 +40,8 @@ const useCacheRehydration = (): void => {
 	} = useCacheRehydrationData();
 	const { isLoaded } = useStatus();
 
-	const datetimeIn = pathOr<Datetime[]>([], ['nodes'], espressoDatetimes).map(({ id }) => id);
-	const ticketIn = pathOr<Ticket[]>([], ['nodes'], espressoTickets).map(({ id }) => id);
+	const datetimeIn = getGuids(pathOr<Datetime[]>([], ['nodes'], espressoDatetimes));
+	const ticketIn = getGuids(pathOr<Ticket[]>([], ['nodes'], espressoTickets));
 
 	const priceTypeQueryOptions = usePriceTypeQueryOptions();
 	const updatePriceTypeList = useUpdatePriceTypeList();

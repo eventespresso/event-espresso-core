@@ -8,13 +8,14 @@ import { getMutationMocks, mockedDatetimes } from './data';
 import { nodes as tickets } from '../../../queries/tickets/test/data';
 import useInitDatetimeTestCache from '../../../queries/datetimes/test/useInitDatetimeTestCache';
 import { useDatetimeMutator, UpdateDatetimeInput } from '../';
+import { getGuids } from '@sharedServices/predicates';
 
 const timeout = 5000; // milliseconds
 describe('updateDatetime', () => {
 	const mockedDatetime = mockedDatetimes.UPDATE;
 	let testInput: UpdateDatetimeInput = { ...mockedDatetime, name: 'New Test Date', description: 'New Test Desc' };
 
-	const ticketIds = tickets.map(({ id }) => id);
+	const ticketIds = getGuids(tickets);
 
 	let mutationMocks = getMutationMocks({ ...testInput, id: mockedDatetime.id }, MutationType.Update);
 

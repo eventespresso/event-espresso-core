@@ -17,6 +17,7 @@ import {
 	getTaxes,
 } from './index';
 import { nodes as prices } from '../../../../../eventEditor/services/apollo/queries/prices/test/data';
+import { getGuids } from '@sharedServices/predicates';
 
 describe('isPriceField', () => {
 	it('should return true if field is included in price type', () => {
@@ -214,7 +215,7 @@ describe('getPriceByDbId', () => {
 
 describe('getPriceByGuid', () => {
 	it('should return price entity with corresponding id', () => {
-		const ids = prices.map(({ id }) => id);
+		const ids = getGuids(prices);
 		ids.forEach((id) => {
 			const price = getPriceByGuid(prices, id);
 			expect(price.id).toBe(id);

@@ -4,6 +4,7 @@ import usePriceQueryOptions from '../usePriceQueryOptions';
 import { ApolloMockedProvider } from '../../../../../services/context/TestContext';
 import { nodes } from '../../tickets/test/data';
 import useInitTicketTestCache from '../../tickets/test/useInitTicketTestCache';
+import { getGuids } from '@sharedServices/predicates';
 
 const timeout = 5000; // milliseconds
 describe('usePriceQueryOptions()', () => {
@@ -18,6 +19,6 @@ describe('usePriceQueryOptions()', () => {
 		);
 		await waitForValueToChange(() => result.current, { timeout });
 
-		expect(result.current.variables.where.ticketIn).toEqual(nodes.map(({ id }) => id).sort());
+		expect(result.current.variables.where.ticketIn).toEqual(getGuids(nodes).sort());
 	});
 });

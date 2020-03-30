@@ -8,13 +8,14 @@ import { getMutationMocks, mockedTickets } from './data';
 import { nodes as datetimes } from '../../../queries/datetimes/test/data';
 import { nodes as prices } from '../../../queries/prices/test/data';
 import { useTicketMutator } from '../';
+import { getGuids } from '@sharedServices/predicates';
 
 const timeout = 5000; // milliseconds
 describe('deleteTicket', () => {
 	const mockedTicket = mockedTickets.DELETE;
 
-	const datetimeIds = datetimes.map(({ id }) => id);
-	const priceIds = prices.map(({ id }) => id);
+	const datetimeIds = getGuids(datetimes);
+	const priceIds = getGuids(prices);
 
 	let mutationMocks = getMutationMocks({}, MutationType.Delete);
 

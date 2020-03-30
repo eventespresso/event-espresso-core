@@ -5,6 +5,7 @@ import { useCacheRehydration } from '@edtrServices/apollo/initialization';
 import useUpdatePriceTypeList from '../useUpdatePriceTypeList';
 import { usePriceTypeQueryOptions, usePriceTypes } from '@edtrServices/apollo/queries';
 import { ApolloMockedProvider } from '@edtrServices/context/TestContext';
+import { getGuids } from '@sharedServices/predicates';
 
 const timeout = 5000; // milliseconds
 describe('useUpdatePriceTypeList', () => {
@@ -59,7 +60,7 @@ describe('useUpdatePriceTypeList', () => {
 		);
 		await waitForUpdate({ timeout });
 
-		const cachedPriceTypeIds = cacheResult.current.map(({ id }) => id);
+		const cachedPriceTypeIds = getGuids(cacheResult.current);
 
 		expect(cachedPriceTypeIds.length).toBe(priceTypelist.length + 1);
 

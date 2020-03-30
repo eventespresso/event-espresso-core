@@ -6,6 +6,7 @@ import { nodes } from './data';
 import useInitTicketTestCache from './useInitTicketTestCache';
 import useInitPriceTestCache from '../../prices/test/useInitPriceTestCache';
 import { useRelations } from '../../../../../../../application/services/apollo/relations';
+import { getGuids } from '@sharedServices/predicates';
 
 const timeout = 5000; // milliseconds
 describe('useTicketPrices', () => {
@@ -85,7 +86,7 @@ describe('useTicketPrices', () => {
 
 		const { current: cachedTicketPrices } = result;
 
-		const cachedTicketPriceIds = cachedTicketPrices.map(({ id }) => id);
+		const cachedTicketPriceIds = getGuids(cachedTicketPrices);
 
 		expect(cachedTicketPriceIds.length).toEqual(relatedTicketPriceIds.length);
 
