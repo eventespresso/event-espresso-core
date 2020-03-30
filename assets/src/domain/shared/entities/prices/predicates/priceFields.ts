@@ -13,4 +13,13 @@ export const PRICE_INPUT_FIELDS: Array<keyof UpdatePriceInput> = [
 	'wpUser',
 ];
 
-export const PRICE_FIELDS = [...PRICE_INPUT_FIELDS, 'id', 'dbId', 'isBasePrice', 'isDiscount', 'isPercent', 'isTax'];
+export const PRICE_FIELDS = [
+	...PRICE_INPUT_FIELDS,
+	'id',
+	'dbId',
+	'cacheId',
+	'isBasePrice',
+	'isDiscount',
+	'isPercent',
+	'isTax',
+];

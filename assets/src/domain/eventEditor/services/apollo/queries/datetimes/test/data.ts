@@ -10,6 +10,7 @@ export const nodes: Datetime[] = [
 	{
 		id: 'xyz',
 		dbId: 2,
+		cacheId: '',
 		capacity: 40,
 		name: 'Hello',
 		description: 'Test',
@@ -31,6 +32,7 @@ export const nodes: Datetime[] = [
 	{
 		id: 'abc',
 		dbId: 3,
+		cacheId: '',
 		capacity: 100,
 		name: 'Hello World',
 		description: 'Test Desc',
@@ -52,6 +54,7 @@ export const nodes: Datetime[] = [
 	{
 		id: 'def',
 		dbId: 4,
+		cacheId: '',
 		capacity: 420,
 		name: 'Hello World',
 		description: 'Test Desc',

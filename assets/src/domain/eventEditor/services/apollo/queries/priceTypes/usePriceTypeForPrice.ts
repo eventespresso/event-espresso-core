@@ -24,9 +24,7 @@ const usePriceTypeForPrice = (priceId: EntityId): PriceType => {
 	const defaultPriceType = useDefaultPriceType();
 	const allPriceTypes = usePriceTypes();
 
-	const relatedPriceTypes = relatedPriceTypeIds.length
-		? entitiesWithGuIdInArray(allPriceTypes, relatedPriceTypeIds)
-		: [];
+	const relatedPriceTypes = entitiesWithGuIdInArray(allPriceTypes, relatedPriceTypeIds);
 
 	return !isEmpty(relatedPriceTypes) ? relatedPriceTypes[0] : defaultPriceType;
 };

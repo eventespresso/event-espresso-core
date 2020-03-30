@@ -25,6 +25,6 @@ export const TICKET_INPUT_FIELDS: Array<keyof UpdateTicketInput> = [
 	'wpUser',
 ];
 
-const outputOnlyFields = ['dbId', 'id', 'isExpired', 'isFree', 'isOnSale', 'isPending', 'isSoldOut'];
+const outputOnlyFields = ['cacheId', 'dbId', 'id', 'isExpired', 'isFree', 'isOnSale', 'isPending', 'isSoldOut'];
 
 export const TICKET_FIELDS = [...TICKET_INPUT_FIELDS, ...outputOnlyFields];

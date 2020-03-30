@@ -27,8 +27,10 @@ export const findEntityByGuid = <T extends Entity>(entities: T[]) => (guid: Enti
 // the following return a function that:
 // returns an array of entities with specified property found in array of property values supplied to predicate
 export const entitiesWithDbIdInArray = <T extends Entity>(entities: T[], dbidArray: EntityDbId[]): T[] => {
+	if (dbidArray.length === 0) return [];
 	return filter((entity: T) => includes(entityDbId(entity), dbidArray), entities);
 };
 export const entitiesWithGuIdInArray = <T extends Entity>(entities: T[], guidArray: EntityId[]): T[] => {
+	if (guidArray.length === 0) return [];
 	return filter((entity: T) => includes(entityGuId(entity), guidArray), entities);
 };

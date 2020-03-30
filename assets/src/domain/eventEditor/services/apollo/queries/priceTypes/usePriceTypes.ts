@@ -6,9 +6,6 @@ import useCacheQuery from '../useCacheQuery';
 import { getCacheIds } from '@sharedServices/predicates';
 /**
  * A custom react hook for retrieving all the priceTypes from cache
- * limited to the ids passed in `include`
- *
- * @param {array} include Array of price ids to include.
  */
 const usePriceTypes = (): PriceType[] => {
 	const options = usePriceTypeQueryOptions();

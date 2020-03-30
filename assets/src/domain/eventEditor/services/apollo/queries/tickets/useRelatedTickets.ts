@@ -14,9 +14,7 @@ const useRelatedTickets: RelatedEntitiesHook<Ticket, 'tickets'> = ({ entity, ent
 		relation: 'tickets',
 	});
 
-	return useMemo(() => {
-		return relatedTicketIds.length ? entitiesWithGuIdInArray(tickets, relatedTicketIds) : [];
-	}, [relatedTicketIds.length, tickets]);
+	return useMemo(() => entitiesWithGuIdInArray(tickets, relatedTicketIds), [relatedTicketIds, tickets]);
 };
 
 export default useRelatedTickets;

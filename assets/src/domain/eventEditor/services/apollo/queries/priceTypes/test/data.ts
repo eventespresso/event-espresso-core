@@ -9,6 +9,7 @@ export const nodes: PriceType[] = [
 	{
 		id: 'xyz',
 		dbId: 1,
+		cacheId: '',
 		baseType: PriceBasetype.BASE_PRICE,
 		isBasePrice: true,
 		isDiscount: false,
@@ -22,6 +23,7 @@ export const nodes: PriceType[] = [
 	{
 		id: 'abc',
 		dbId: 3,
+		cacheId: '',
 		baseType: PriceBasetype.SURCHARGE,
 		isBasePrice: false,
 		isDiscount: false,
@@ -35,6 +37,7 @@ export const nodes: PriceType[] = [
 	{
 		id: 'pqr',
 		dbId: 4,
+		cacheId: '',
 		baseType: PriceBasetype.DISCOUNT,
 		isBasePrice: false,
 		isDiscount: true,
@@ -48,6 +51,7 @@ export const nodes: PriceType[] = [
 	{
 		id: 'def',
 		dbId: 5,
+		cacheId: '',
 		baseType: PriceBasetype.TAX,
 		isBasePrice: false,
 		isDiscount: false,
