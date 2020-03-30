@@ -104,6 +104,8 @@ class FieldResolver extends ResolverBase
             switch ($fieldName) {
                 case 'id': // the global ID
                     return $this->resolveId($source);
+                case 'cacheId':
+                    return $this->resolveCacheId($source);
                 case 'parent':
                     return $this->resolveParent($source);
                 case 'event':
@@ -133,6 +135,25 @@ class FieldResolver extends ResolverBase
         $ID = $source instanceof EE_Base_Class ? $source->ID() : 0;
 
         return $ID ? Relay::toGlobalId($this->model->item_name(), $ID) : null;
+    }
+
+
+    /**
+     * Resolve the cache ID
+     *
+     * @param mixed     $source
+     * @return string
+     * @since $VID:$
+     */
+    public function resolveCacheId($source)
+    {
+        $model_name = $this->model->item_name();
+        $ID         = $source->ID();
+        $uniqid     = uniqid();
+        // Since cacheId does not need to be globally unique
+        // $uniqid is sufficient, still adding the model name and ID
+        // may be we need/use them in future.
+        return "{$model_name}:{$ID}:{$uniqid}";
     }
 
 

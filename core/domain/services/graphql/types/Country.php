@@ -6,6 +6,7 @@ use EEM_Country;
 use EventEspresso\core\services\graphql\fields\GraphQLFieldInterface;
 use EventEspresso\core\services\graphql\types\TypeBase;
 use EventEspresso\core\services\graphql\fields\GraphQLField;
+use EventEspresso\core\services\graphql\fields\GraphQLOutputField;
 
 /**
  * Class Country
@@ -45,6 +46,12 @@ class Country extends TypeBase
                 ['non_null' => 'ID'],
                 null,
                 esc_html__('The globally unique ID for the object.', 'event_espresso')
+            ),
+            new GraphQLOutputField(
+                'cacheId',
+                ['non_null' => 'String'],
+                null,
+                esc_html__('The cache ID of the object.', 'event_espresso')
             ),
             new GraphQLField(
                 'isActive',
