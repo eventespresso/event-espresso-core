@@ -3,6 +3,7 @@ import { Price } from '@edtrServices/apollo';
 const defaultPriceModifier: Price = {
 	id: '',
 	dbId: 0,
+	cacheId: '',
 	amount: null,
 	desc: '',
 	isBasePrice: false,
