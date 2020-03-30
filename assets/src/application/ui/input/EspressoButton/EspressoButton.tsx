@@ -6,7 +6,7 @@ import classNames from 'classnames';
 import { EspressoButtonProps, EspressoButtonSize, EspressoButtonType, Icon } from './types';
 import { EspressoIcon, isEspressoIcon, withLabel, withTooltip } from '../../display';
 
-type ButtonType = React.ComponentType;
+type ButtonType = React.ComponentType<EspressoButtonProps>;
 
 /**
  * Button wrapper for adding styles
@@ -14,7 +14,7 @@ type ButtonType = React.ComponentType;
  * forwardRef to be able to accept
  * onMouseEnter, onMouseLeave, onFocus, onClick events from parent
  */
-const EspressoButton = React.forwardRef<ButtonType, EspressoButtonProps>(
+const EspressoButton = React.forwardRef<Button, EspressoButtonProps>(
 	(
 		{
 			icon,
@@ -73,4 +73,6 @@ const EspressoButton = React.forwardRef<ButtonType, EspressoButtonProps>(
 	}
 );
 
-export default withLabel<ButtonType, EspressoButtonProps>(withTooltip<ButtonType, EspressoButtonProps>(EspressoButton));
+// Since withLabel and withTooltip accept only a component type
+// Lets cast it
+export default withLabel(withTooltip(EspressoButton as ButtonType) as ButtonType);

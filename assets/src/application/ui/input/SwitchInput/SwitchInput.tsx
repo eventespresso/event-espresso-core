@@ -2,14 +2,12 @@ import React from 'react';
 import { SwitchProps } from 'antd/lib/switch';
 import { Switch } from 'antd';
 
-import { withLabel } from '@application/ui/input';
+import { withLabel, withLabelProps, withTooltipProps } from '@appDisplay/index';
 
-interface SwitchInputProps extends SwitchProps {
-	label: string;
-}
+interface SwitchInputProps extends SwitchProps, Partial<withLabelProps>, Partial<withTooltipProps> {}
 
-const SwitchInput: React.FC<SwitchInputProps> = React.memo(({ label, className, ...rest }) =>
-	withLabel(<Switch {...rest} />)({ label })
-);
+const SwitchInput: React.FC<SwitchInputProps> = React.memo((props) => {
+	return <Switch {...props} />;
+});
 
-export default SwitchInput;
+export default withLabel(SwitchInput);
