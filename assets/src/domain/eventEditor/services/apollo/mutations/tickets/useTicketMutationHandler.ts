@@ -11,6 +11,7 @@ import { MutationHandler, OnUpdateFnOptions } from '../types';
 import { MutationType } from '@appServices/apollo/mutations';
 import { Ticket, TicketEdge, Price, TicketsList } from '@edtrServices/apollo/types';
 import { useTicketQueryOptions } from '@edtrServices/apollo/queries/tickets';
+import { getGuids } from '@sharedServices/predicates';
 
 const useTicketMutationHandler = (): MutationHandler => {
 	const options = useTicketQueryOptions();
@@ -41,7 +42,7 @@ const useTicketMutationHandler = (): MutationHandler => {
 			const tickets = pathOr<TicketEdge>(DEFAULT_LIST_DATA, ['espressoTickets'], data);
 			const datetimeIds = pathOr<Array<EntityId>>([], ['datetimes'], input);
 
-			const priceIds = pathOr<Price[]>([], ['nodes'], prices).map(({ id }) => id);
+			const priceIds = getGuids(pathOr<Price[]>([], ['nodes'], prices));
 
 			switch (mutationType) {
 				case MutationType.Create:
