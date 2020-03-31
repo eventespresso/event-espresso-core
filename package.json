@@ -28,7 +28,7 @@
 		"lint-php:skip-warnings": "composer run-script lint:skip-warnings",
 		"pretty": "prettier --write \"assets/src/**/*.js\"",
 		"build": "node scripts/build.js",
-		"prod": "npm run build",
+		"prod": "npm run lint && npm run build",
 		"test": "npm run lint && npm run test-js",
 		"test-php": "cd tests && phpunit",
 		"test-js": "node scripts/test.js",
