@@ -2,7 +2,7 @@ import React, { useCallback } from 'react';
 import { __ } from '@wordpress/i18n';
 
 import AssignDatesButton from '../ticketsList/actionsMenu/AssignDatesButton';
-import { TicketMainMenuItem } from '../ticketsList/actionsMenu/ticketMainMenuItem';
+import { TicketMainMenuItem } from '../ticketsList/actionsMenu/dropdown';
 import TicketPriceCalculatorButton from '../ticketPriceCalculator/buttons/TicketPriceCalculatorButton';
 import { EntityActionsSubscriptionCb } from '@appLayout/entityActionsMenu';
 import { Ticket } from '@edtrServices/apollo/types';
