@@ -1,6 +1,6 @@
 import { DisplayStartOrEndDate } from '@sharedServices/filterState';
 
-export interface CalendarDateLabels {
+interface CalendarDateLabels {
 	headerPast: string; // sale starts
 	headerFuture: string; // sale started
 	footerPast: string; // sale ends
@@ -11,8 +11,7 @@ export interface CalendarDateSwitcherProps {
 	className?: string;
 	displayDate: DisplayStartOrEndDate;
 	endDate: string;
-	footerText?: string;
-	headerText?: string;
+	labels?: CalendarDateLabels;
 	showDate?: boolean;
 	startDate: string;
 }
