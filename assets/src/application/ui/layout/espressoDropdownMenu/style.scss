@@ -341,9 +341,10 @@
 	.components-popover__content {
 		box-shadow: var(--ee-box-shadow-small);
 		height: auto;
-		min-width: 200px;
+		min-width: 245px;
 		position: absolute;
 		overflow-y: auto;
+		text-align: center;
 	}
 
 	&.is-expanded .components-popover__content {
