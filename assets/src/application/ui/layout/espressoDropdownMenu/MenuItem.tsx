@@ -9,8 +9,8 @@ const EspressoDropdownMenuItem: React.FC<Props> = ({ icon, onClick, title, ...pr
 			{...props}
 			buttonText={title}
 			icon={icon}
-			onClick={(e) => {
-				e.stopPropagation();
+			onClick={(event: React.MouseEvent) => {
+				event.stopPropagation();
 				props.onClose();
 				if (onClick) {
 					onClick();

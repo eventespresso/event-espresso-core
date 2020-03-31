@@ -15,7 +15,7 @@ interface Props extends AnyObject {
 }
 
 const Toggle: React.FC<Props> = ({ icon, isOpen, label, onToggle, toggleProps }) => {
-	const openOnArrowDown = (event) => {
+	const openOnArrowDown = (event: React.KeyboardEvent) => {
 		if (!isOpen && event.keyCode === DOWN) {
 			event.preventDefault();
 			event.stopPropagation();
@@ -36,13 +36,13 @@ const Toggle: React.FC<Props> = ({ icon, isOpen, label, onToggle, toggleProps })
 		<EspressoButton
 			{...mergedToggleProps}
 			icon={icon}
-			onClick={(event: React.SyntheticEvent) => {
+			onClick={(event: React.MouseEvent) => {
 				onToggle(event);
 				if (mergedToggleProps.onClick) {
 					mergedToggleProps.onClick(event);
 				}
 			}}
-			onKeyDown={(event) => {
+			onKeyDown={(event: React.KeyboardEvent) => {
 				openOnArrowDown(event);
 				if (mergedToggleProps.onKeyDown) {
 					mergedToggleProps.onKeyDown(event);
@@ -50,7 +50,7 @@ const Toggle: React.FC<Props> = ({ icon, isOpen, label, onToggle, toggleProps })
 			}}
 			aria-haspopup='true'
 			aria-expanded={isOpen}
-			label={label}
+			tooltip={label}
 		>
 			{mergedToggleProps.children}
 		</EspressoButton>
