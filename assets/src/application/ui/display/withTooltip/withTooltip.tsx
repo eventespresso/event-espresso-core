@@ -1,4 +1,5 @@
 import React from 'react';
+import classNames from 'classnames';
 import { Tooltip as DefaultTooltip } from 'antd';
 import { __ } from '@wordpress/i18n';
 import { isEmpty } from '@appServices/utilities/string';
@@ -12,20 +13,43 @@ const withTooltip = <P extends withTooltipProps>(WrappedComponent: React.Compone
 	const WithTooltip: React.ComponentType<P & refProps> = ({
 		buttonText,
 		forwardedRef,
-		showOnMobile = false,
+		showTooltipOnMobile = false,
 		tooltip,
 		tooltipProps,
 		...props
 	}) => {
 		const ariaLabel = isEmpty(buttonText) && !isEmpty(tooltip) ? tooltip : null;
-		const toolTipped = showOnMobile ? (
-			<div className='ee-mobile-help-text__btn-wrap'>
-				<WrappedComponent {...(props as P)} aria-label={ariaLabel} ref={forwardedRef} tooltip={tooltip} />
-				<div className='ee-mobile-help-text'>{tooltip}</div>
-			</div>
-		) : (
-			<WrappedComponent {...(props as P)} aria-label={ariaLabel} ref={forwardedRef} tooltip={tooltip} />
-		);
+		let toolTipped: React.ReactNode;
+		if (showTooltipOnMobile) {
+			const className = classNames({
+				'ee-mobile-help-text': true,
+				'ee-mobile-help-text--short': tooltip.length < 25,
+				'ee-mobile-help-text--long': tooltip.length > 50,
+			});
+			tooltipProps = { ...tooltipProps, overlayClassName: 'ee-mobile-help-text__tooltip' };
+			toolTipped = (
+				<div className='ee-mobile-help-text__btn-wrap'>
+					<WrappedComponent
+						{...(props as P)}
+						aria-label={ariaLabel}
+						buttonText={buttonText}
+						ref={forwardedRef}
+						tooltip={tooltip}
+					/>
+					<div className={className}>{tooltip}</div>
+				</div>
+			);
+		} else {
+			toolTipped = (
+				<WrappedComponent
+					{...(props as P)}
+					aria-label={ariaLabel}
+					buttonText={buttonText}
+					ref={forwardedRef}
+					tooltip={tooltip}
+				/>
+			);
+		}
 		return (
 			<DefaultTooltip {...tooltipProps} title={tooltip}>
 				{toolTipped}

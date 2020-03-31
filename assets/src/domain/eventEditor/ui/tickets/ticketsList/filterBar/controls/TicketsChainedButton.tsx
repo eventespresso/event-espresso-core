@@ -33,6 +33,7 @@ const TicketsChainedButton: React.FC<TicketsChainedButtonProps> = ({ isChained, 
 			label={__('link')}
 			onClick={toggleIsChained}
 			tooltip={tooltip}
+			showTooltipOnMobile
 		/>
 	);
 };
