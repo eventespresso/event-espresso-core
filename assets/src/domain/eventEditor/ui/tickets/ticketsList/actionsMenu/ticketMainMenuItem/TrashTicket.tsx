@@ -5,12 +5,12 @@ import { Trash } from '@application/ui/layout/entityActionsMenu/entityMenuItems'
 import { useTicketContext } from '@edtrHooks/index';
 import { useTicketMutator } from '@edtrServices/apollo/mutations';
 
-const TrashTicket: React.FC = () => {
+const TrashTicket: React.FC = (props) => {
 	const { id } = useTicketContext();
 	const { deleteEntity } = useTicketMutator(id);
 	const onClick = useCallback(() => deleteEntity({ id }), [id]);
 
-	return <Trash onClick={onClick} title={__('trash ticket')} />;
+	return <Trash {...props} onClick={onClick} title={__('trash ticket')} />;
 };
 
 export default TrashTicket;

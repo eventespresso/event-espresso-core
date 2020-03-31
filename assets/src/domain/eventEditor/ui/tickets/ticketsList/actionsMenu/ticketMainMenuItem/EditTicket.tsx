@@ -6,7 +6,7 @@ import { useTicketContext } from '@edtrHooks/index';
 import { useTicketItem } from '@edtrServices/apollo/queries';
 import { useFormModal } from '@appLayout/formModal';
 
-const EditTicket: React.FC = () => {
+const EditTicket: React.FC = (props) => {
 	const { id } = useTicketContext();
 	const ticket = useTicketItem({ id });
 	const { openEditor } = useFormModal();
@@ -20,7 +20,7 @@ const EditTicket: React.FC = () => {
 		[id]
 	);
 
-	return <Edit onClick={onClick} title={__('edit ticket')} />;
+	return <Edit {...props} onClick={onClick} title={__('edit ticket')} />;
 };
 
 export default EditTicket;

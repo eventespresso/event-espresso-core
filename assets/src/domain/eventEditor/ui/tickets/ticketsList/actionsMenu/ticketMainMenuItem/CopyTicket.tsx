@@ -8,7 +8,7 @@ import { useTicketItem } from '@edtrServices/apollo/queries';
 import { useTicketMutator } from '@edtrServices/apollo/mutations';
 import { useRelations } from '@appServices/apollo/relations';
 
-const CopyTicket: React.FC = () => {
+const CopyTicket: React.FC = (props) => {
 	const { id } = useTicketContext();
 	const ticket = useTicketItem({ id });
 	const { createEntity } = useTicketMutator();
@@ -25,7 +25,7 @@ const CopyTicket: React.FC = () => {
 
 	const onClick = useCallback(() => createEntity({ ...newTicket, datetimes }), [datetimes, newTicket]);
 
-	return <Copy onClick={onClick} title={__('copy ticket')} />;
+	return <Copy {...props} onClick={onClick} title={__('copy ticket')} />;
 };
 
 export default CopyTicket;

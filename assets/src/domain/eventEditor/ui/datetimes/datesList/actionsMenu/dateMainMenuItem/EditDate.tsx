@@ -6,7 +6,7 @@ import { useDatetimeContext } from '@edtrHooks/index';
 import { useDatetimeItem } from '@edtrServices/apollo/queries';
 import { useFormModal } from '@appLayout/formModal';
 
-const EditDate: React.FC = () => {
+const EditDate: React.FC = (props) => {
 	const { id } = useDatetimeContext();
 	const datetime = useDatetimeItem({ id });
 	const { openEditor } = useFormModal();
@@ -20,7 +20,7 @@ const EditDate: React.FC = () => {
 		[id]
 	);
 
-	return <Edit onClick={onClick} title={__('edit datetime')} />;
+	return <Edit {...props} onClick={onClick} title={__('edit datetime')} />;
 };
 
 export default EditDate;

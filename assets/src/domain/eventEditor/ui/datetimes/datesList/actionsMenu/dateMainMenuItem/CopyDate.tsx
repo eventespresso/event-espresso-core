@@ -8,7 +8,7 @@ import { useDatetimeItem } from '@edtrServices/apollo/queries';
 import { useDatetimeMutator } from '@edtrServices/apollo/mutations';
 import { useRelations } from '@appServices/apollo/relations';
 
-const CopyDate: React.FC = () => {
+const CopyDate: React.FC = (props) => {
 	const { id } = useDatetimeContext();
 	const datetime = useDatetimeItem({ id });
 	const { createEntity } = useDatetimeMutator();
@@ -24,7 +24,7 @@ const CopyDate: React.FC = () => {
 	});
 	const onClick = useCallback(() => createEntity({ ...newDatetime, tickets }), [newDatetime, tickets]);
 
-	return <Copy onClick={onClick} title={__('copy datetime')} />;
+	return <Copy {...props} onClick={onClick} title={__('copy datetime')} />;
 };
 
 export default CopyDate;
