@@ -21,7 +21,7 @@ const ToggleFiltersButton: React.FC<ToggleFiltersButtonProps> = React.memo(({ li
 			onClick={toggleFilters}
 			tooltip={tooltip}
 			labelClassName={'ee-filter-bar__btn-wrap'}
-			labelPosition={LabelPosition.BOTTOM}
+			labelPosition={LabelPosition.BOTTOM_CENTER}
 		/>
 	);
 });

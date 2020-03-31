@@ -7,7 +7,15 @@ import { MenuItemProps } from './types';
 
 const Copy: React.FC<MenuItemProps> = ({ onClick, ...props }) => {
 	const title = props.title || __('copy');
-	return <EspressoDropdownMenuItem {...props} icon={Icon.COPY} onClick={onClick} title={title} />;
+	return (
+		<EspressoDropdownMenuItem
+			{...props}
+			icon={Icon.COPY}
+			onClick={onClick}
+			popoverProps={{ position: 'right center' }}
+			title={title}
+		/>
+	);
 };
 
 export default Copy;

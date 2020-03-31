@@ -20,7 +20,7 @@ const TableViewFilterButton: React.FC<TableViewFilterButtonProps> = React.memo((
 			onClick={setTableView}
 			tooltip={__('table view')}
 			labelClassName={'ee-filter-bar__btn-wrap'}
-			labelPosition={LabelPosition.BOTTOM}
+			labelPosition={LabelPosition.BOTTOM_CENTER}
 		/>
 	);
 });

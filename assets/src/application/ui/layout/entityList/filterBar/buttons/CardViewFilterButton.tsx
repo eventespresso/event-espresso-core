@@ -21,7 +21,7 @@ const CardViewFilterButton: React.FC<CardViewFilterButtonProps> = React.memo(({ 
 			onClick={setCardView}
 			tooltip={__('card view')}
 			labelClassName={'ee-filter-bar__btn-wrap'}
-			labelPosition={LabelPosition.BOTTOM}
+			labelPosition={LabelPosition.BOTTOM_CENTER}
 		/>
 	);
 });

@@ -7,7 +7,15 @@ import { MenuItemProps } from './types';
 
 const Edit: React.FC<MenuItemProps> = ({ onClick, ...props }) => {
 	const title = props.title || __('edit');
-	return <EspressoDropdownMenuItem {...props} icon={Icon.EDIT} onClick={onClick} title={title} />;
+	return (
+		<EspressoDropdownMenuItem
+			{...props}
+			icon={Icon.EDIT}
+			onClick={onClick}
+			popoverProps={{ position: 'right center' }}
+			title={title}
+		/>
+	);
 };
 
 export default Edit;
