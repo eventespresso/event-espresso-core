@@ -14,8 +14,32 @@ const CopyTicket: React.FC = (props) => {
 	const { createEntity } = useTicketMutator();
 	const { getRelations } = useRelations();
 	const newTicket = pick(
-		['capacity', 'description', 'endDate', 'isPrimary', 'name', 'order', 'reserved', 'sold', 'startDate'],
-		ticket
+		[
+			'description',
+			'endDate',
+			'isDefault',
+			'isExpired',
+			'isFree',
+			'isOnSale',
+			'isPending',
+			'isRequired',
+			'isSoldOut',
+			'isTaxable',
+			'isTrashed',
+			'max',
+			'min',
+			'name',
+			'order',
+			'price',
+			'quantity',
+			'reverseCalculate',
+			'startDate',
+			'uses',
+		],
+		{
+			...ticket,
+			isSoldOut: false,
+		}
 	);
 	const datetimes = getRelations({
 		entity: 'tickets',
