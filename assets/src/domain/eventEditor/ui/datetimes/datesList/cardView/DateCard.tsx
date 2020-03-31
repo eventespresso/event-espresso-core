@@ -1,6 +1,6 @@
 import React from 'react';
 import { __ } from '@wordpress/i18n';
-import { CalendarDateSwitcher } from '@appCalendars/dateDisplay';
+import CalendarDateSwitcher from '@edtrUI/CalendarDateSwitcher';
 import DateDetails from './DateDetails';
 import DateActionsMenu from '../actionsMenu/DateActionsMenu';
 

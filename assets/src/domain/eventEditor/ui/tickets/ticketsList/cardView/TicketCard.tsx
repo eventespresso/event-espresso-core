@@ -1,7 +1,7 @@
 import React from 'react';
 import { __ } from '@wordpress/i18n';
 
-import { CalendarDateSwitcher } from '@appCalendars/dateDisplay';
+import CalendarDateSwitcher from '@edtrUI/CalendarDateSwitcher';
 import TicketActionsMenu from '../actionsMenu/TicketActionsMenu';
 import TicketDetails from './TicketDetails';
 import useTicketItem from '@edtrServices/apollo/queries/tickets/useTicketItem';
