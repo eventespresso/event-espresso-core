@@ -52,9 +52,6 @@ const sizes = {
 	radiusUnits: 'px',
 };
 
-module.exports = {
-	folder: 'themes/default',
-	colors,
-	meta,
-	sizes,
-};
+const folder = 'themes/default';
+
+export { folder, colors, meta, sizes };
