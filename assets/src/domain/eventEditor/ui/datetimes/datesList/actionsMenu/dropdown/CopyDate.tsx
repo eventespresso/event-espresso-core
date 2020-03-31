@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 import { pick } from 'ramda';
 import { __ } from '@wordpress/i18n';
 
@@ -6,11 +6,13 @@ import { Copy } from '@application/ui/layout/entityActionsMenu/entityMenuItems';
 import { useDatetimeContext } from '@edtrHooks/index';
 import { useDatetimeItem } from '@edtrServices/apollo/queries';
 import { useDatetimeMutator } from '@edtrServices/apollo/mutations';
+import { useEventId } from '@edtrServices/apollo/queries/events';
 import { useRelations } from '@appServices/apollo/relations';
 
-const CopyDate = (props) => {
+const CopyDate: React.FC = (props) => {
 	const { id } = useDatetimeContext();
 	const datetime = useDatetimeItem({ id });
+	const eventId = useEventId();
 	const { createEntity } = useDatetimeMutator();
 	const { getRelations } = useRelations();
 	const newDatetime = pick(
@@ -22,11 +24,9 @@ const CopyDate = (props) => {
 		entityId: id,
 		relation: 'tickets',
 	});
-	const title = __('copy datetime');
+	const onClick = useCallback(() => createEntity({ ...newDatetime, eventId, tickets }), [newDatetime, tickets]);
 
-	const onClick = () => createEntity({ ...newDatetime, tickets });
-
-	return <Copy {...props} onClick={onClick} title={title} />;
+	return <Copy {...props} onClick={onClick} title={__('copy datetime')} />;
 };
 
 export default CopyDate;
