@@ -19,7 +19,7 @@ const withTooltip = <P extends withTooltipProps>(WrappedComponent: React.Compone
 		...props
 	}) => {
 		const ariaLabel = isEmpty(buttonText) && !isEmpty(tooltip) ? tooltip : null;
-		let toolTipped: React.ReactNode;
+		let toolTipped: React.ReactElement;
 		if (showTooltipOnMobile) {
 			const className = classNames({
 				'ee-mobile-help-text': true,
