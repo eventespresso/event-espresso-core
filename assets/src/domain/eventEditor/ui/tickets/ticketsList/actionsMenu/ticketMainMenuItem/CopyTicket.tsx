@@ -3,6 +3,7 @@ import { pick } from 'ramda';
 import { __ } from '@wordpress/i18n';
 
 import { Copy } from '@application/ui/layout/entityActionsMenu/entityMenuItems';
+import { TICKET_INPUT_FIELDS } from '@sharedEntities/tickets/predicates/ticketFields';
 import { useTicketContext } from '@edtrHooks/index';
 import { useTicketItem } from '@edtrServices/apollo/queries';
 import { useTicketMutator } from '@edtrServices/apollo/mutations';
@@ -13,34 +14,10 @@ const CopyTicket: React.FC = (props) => {
 	const ticket = useTicketItem({ id });
 	const { createEntity } = useTicketMutator();
 	const { getRelations } = useRelations();
-	const newTicket = pick(
-		[
-			'description',
-			'endDate',
-			'isDefault',
-			'isExpired',
-			'isFree',
-			'isOnSale',
-			'isPending',
-			'isRequired',
-			'isSoldOut',
-			'isTaxable',
-			'isTrashed',
-			'max',
-			'min',
-			'name',
-			'order',
-			'price',
-			'quantity',
-			'reverseCalculate',
-			'startDate',
-			'uses',
-		],
-		{
-			...ticket,
-			isSoldOut: false,
-		}
-	);
+	const newTicket = pick(TICKET_INPUT_FIELDS, {
+		...ticket,
+		isSoldOut: false,
+	});
 	const datetimes = getRelations({
 		entity: 'tickets',
 		entityId: id,
