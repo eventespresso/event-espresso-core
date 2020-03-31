@@ -17,7 +17,6 @@ const CopyTicket: React.FC = (props) => {
 	const { getRelations } = useRelations();
 	const newTicket = {
 		...copyTicketFields(omit(['prices'], ticket), isTicketInputField),
-		isSoldOut: false,
 	};
 	const datetimes = getRelations({
 		entity: 'tickets',
