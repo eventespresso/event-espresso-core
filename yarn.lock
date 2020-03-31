@@ -1084,6 +1084,13 @@
   dependencies:
     regenerator-runtime "^0.13.4"
 
+"@babel/runtime@^7.9.2":
+  version "7.9.2"
+  resolved "https://registry.yarnpkg.com/@babel/runtime/-/runtime-7.9.2.tgz#d90df0583a3a252f09aaa619665367bae518db06"
+  integrity sha512-NE2DtOdufG7R5vnfQUTehdTfNycfUANEtCa9PssN9O/xmTzP4E08UI797ixaei6hBEVL9BI/PsdJS5x7mWoB9Q==
+  dependencies:
+    regenerator-runtime "^0.13.4"
+
 "@babel/template@^7.4.0", "@babel/template@^7.7.4", "@babel/template@^7.8.3", "@babel/template@^7.8.6":
   version "7.8.6"
   resolved "https://registry.yarnpkg.com/@babel/template/-/template-7.8.6.tgz#86b22af15f828dfb086474f964dcc3e39c43ce2b"
@@ -8098,10 +8105,10 @@ final-form-calculate@^1.3.1:
   resolved "https://registry.yarnpkg.com/final-form-calculate/-/final-form-calculate-1.3.1.tgz#463089114245afa97fea94712bfbfca11da8413e"
   integrity sha512-vZCvQ08w9FIoHLkZMcJSIXQr5TAVLxHfLD0thmm50zcNyJESruqhgvurSjWYPLoJGnIgbIb94Rumdg5ZXX5WiQ==
 
-final-form@^4.18.7:
-  version "4.18.7"
-  resolved "https://registry.yarnpkg.com/final-form/-/final-form-4.18.7.tgz#c30239ac9154cbfbf4f6d19e831f5fc9cbc1ba78"
-  integrity sha512-XdlYYGDcoUcKKVzRJxLg8N/ZG3wVLZvhO7K7PKQWVMjCiIUWdmtBwApw2NFS4P7RJvg8OdF73qGXhhE3K5PuDQ==
+final-form@^4.19.0:
+  version "4.19.0"
+  resolved "https://registry.yarnpkg.com/final-form/-/final-form-4.19.0.tgz#d8f62ca392155a45e0d1599c89f9dcc668ccf0a1"
+  integrity sha512-3vm8qdbe66OqvjZIDAFqMx9Td6nj09cNEHF2N2a6NfBN7/RS4sF8ryxQa3PPBG+CsIqido0DA+AVPPpTIjB85A==
   dependencies:
     "@babel/runtime" "^7.8.3"
 
@@ -15202,7 +15209,17 @@ react-dev-utils@^10.2.0:
     strip-ansi "6.0.0"
     text-table "0.2.0"
 
-react-dom@^16.13.0, react-dom@^16.2.0, react-dom@^16.9.0:
+react-dom@^16.13.1:
+  version "16.13.1"
+  resolved "https://registry.yarnpkg.com/react-dom/-/react-dom-16.13.1.tgz#c1bd37331a0486c078ee54c4740720993b2e0e7f"
+  integrity sha512-81PIMmVLnCNLO/fFOQxdQkvEq/+Hfpv24XNJfpyZhTRfO0QcmQIF/PgCa1zCOj2w1hrn12MFLyaJ/G0+Mxtfag==
+  dependencies:
+    loose-envify "^1.1.0"
+    object-assign "^4.1.1"
+    prop-types "^15.6.2"
+    scheduler "^0.19.1"
+
+react-dom@^16.2.0, react-dom@^16.9.0:
   version "16.13.0"
   resolved "https://registry.yarnpkg.com/react-dom/-/react-dom-16.13.0.tgz#cdde54b48eb9e8a0ca1b3dc9943d9bb409b81866"
   integrity sha512-y09d2c4cG220DzdlFkPTnVvGTszVvNpC73v+AaLGLHbkpy3SSgvYq8x0rNwPJ/Rk/CicTNgk0hbHNw1gMEZAXg==
@@ -15231,13 +15248,13 @@ react-final-form-listeners@^1.0.2:
   dependencies:
     "@babel/runtime" "^7.1.5"
 
-react-final-form@^6.3.5:
-  version "6.3.5"
-  resolved "https://registry.yarnpkg.com/react-final-form/-/react-final-form-6.3.5.tgz#772781071d26d26493b0c8ef4f97f76f06fc1c0f"
-  integrity sha512-btqEp1+n1WO4bUDopBdvUoIuoGHf91n/EOJg0QU5YjhX9CK+4RIsBI0M41lmyT3H6hWv6NELdX5n5zBJyOIXoA==
+react-final-form@^6.4.0:
+  version "6.4.0"
+  resolved "https://registry.yarnpkg.com/react-final-form/-/react-final-form-6.4.0.tgz#7f9064c10a8bee6a02cd3e9b8aff06fa07f9c908"
+  integrity sha512-M7J7f0pnoj0o8sBq3iG6jsWJEh08pNUyl2D4wBC9SJvCNkGdol2UdyjMiEFYD3rz9LIFzQqFSG0kbRBCadqzhA==
   dependencies:
-    "@babel/runtime" "^7.8.3"
-    ts-essentials "^5.0.0"
+    "@babel/runtime" "^7.9.2"
+    ts-essentials "^6.0.3"
 
 react-input-autosize@^2.2.2:
   version "2.2.2"
@@ -15394,7 +15411,16 @@ react-with-styles@^3.2.0:
     prop-types "^15.6.2"
     react-with-direction "^1.3.0"
 
-react@^16.13.0, react@^16.2.0, react@^16.9.0:
+react@^16.13.1:
+  version "16.13.1"
+  resolved "https://registry.yarnpkg.com/react/-/react-16.13.1.tgz#2e818822f1a9743122c063d6410d85c1e3afe48e"
+  integrity sha512-YMZQQq32xHLX0bz5Mnibv1/LHb3Sqzngu7xstSM+vrkE5Kzr9xE0yMByK5kMoTK30YVJE61WfbxIFFvfeDKT1w==
+  dependencies:
+    loose-envify "^1.1.0"
+    object-assign "^4.1.1"
+    prop-types "^15.6.2"
+
+react@^16.2.0, react@^16.9.0:
   version "16.13.0"
   resolved "https://registry.yarnpkg.com/react/-/react-16.13.0.tgz#d046eabcdf64e457bbeed1e792e235e1b9934cf7"
   integrity sha512-TSavZz2iSLkq5/oiE7gnFzmURKZMltmi193rm5HEoUDAXpzT9Kzw6oNZnGoai/4+fUnm7FqS5dwgUL34TujcWQ==
@@ -16400,6 +16426,14 @@ scheduler@^0.19.0:
   version "0.19.0"
   resolved "https://registry.yarnpkg.com/scheduler/-/scheduler-0.19.0.tgz#a715d56302de403df742f4a9be11975b32f5698d"
   integrity sha512-xowbVaTPe9r7y7RUejcK73/j8tt2jfiyTednOvHbA8JoClvMYCp+r8QegLwK/n8zWQAtZb1fFnER4XLBZXrCxA==
+  dependencies:
+    loose-envify "^1.1.0"
+    object-assign "^4.1.1"
+
+scheduler@^0.19.1:
+  version "0.19.1"
+  resolved "https://registry.yarnpkg.com/scheduler/-/scheduler-0.19.1.tgz#4f3e2ed2c1a7d65681f4c854fa8c5a1ccb40f196"
+  integrity sha512-n/zwRWRYSUj0/3g/otKDRPMh6qv2SYMWNq85IEa8iZyAv8od9zDYpGSnpBEjNgcMNq6Scbu5KfIPxNF72R/2EA==
   dependencies:
     loose-envify "^1.1.0"
     object-assign "^4.1.1"
@@ -17930,10 +17964,10 @@ tryer@^1.0.1:
   resolved "https://registry.yarnpkg.com/tryer/-/tryer-1.0.1.tgz#f2c85406800b9b0f74c9f7465b81eaad241252f8"
   integrity sha512-c3zayb8/kWWpycWYg87P71E1S1ZL6b6IJxfb5fvsUgsf0S2MVGaDhDXXjDMpdCpfWXqptc+4mXwmiy1ypXqRAA==
 
-ts-essentials@^5.0.0:
-  version "5.0.0"
-  resolved "https://registry.yarnpkg.com/ts-essentials/-/ts-essentials-5.0.0.tgz#531d590c9cd62652c9d96284904cbdb2a1dd5ca8"
-  integrity sha512-ftKWOm6Jq+/UCBekDfxUjLODEd5XGN2EM/+TIQV9LJ5xSV12je4GqdRyv7pXXGGYmEt/nQa6F00xTWYJ5PMjIQ==
+ts-essentials@^6.0.3:
+  version "6.0.3"
+  resolved "https://registry.yarnpkg.com/ts-essentials/-/ts-essentials-6.0.3.tgz#d9a88760edd67c1ed73265dbd48a165572832efe"
+  integrity sha512-0yRg5v3JQk+8RR7zLo0ior2mbHyOVIYdvH3URqGQ32Mhx2oJ/LLXgfRF4tkoRhlL4x9iamXBCQjhBesb1mHsgg==
 
 ts-invariant@^0.4.0, ts-invariant@^0.4.4:
   version "0.4.4"
