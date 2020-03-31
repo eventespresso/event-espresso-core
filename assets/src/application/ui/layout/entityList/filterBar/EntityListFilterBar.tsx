@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { __ } from '@wordpress/i18n';
 
 import CardViewFilterButton from './buttons/CardViewFilterButton';
 import Collapsible from './Collapsible';
@@ -53,7 +54,12 @@ const EntityListFilterBar = <FS extends ELFSM>({
 			<Collapsible show={showEntityFilters}>
 				{filerBarItems}
 				<div className='ee-filter-bar__filter'>
-					<SearchInput id={listId} searchText={searchText} setSearchText={setSearchText} />
+					<SearchInput
+						id={listId}
+						label={__('search')}
+						searchText={searchText}
+						setSearchText={setSearchText}
+					/>
 				</div>
 			</Collapsible>
 

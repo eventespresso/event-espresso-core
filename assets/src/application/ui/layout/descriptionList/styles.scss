@@ -1,71 +1,70 @@
-.ee {
-	&-description-list {
-		&-grid {
-			display: grid;
-			grid-template-columns: max-content;
-			grid-template-rows: repeat(2, var(--ee-font-size-huge));
-			grid-auto-flow: column;
-			justify-content: start;
-			line-height: var(--ee-font-size-default);
-			place-items: center start;
-			margin-top: var(--ee-margin-small);
-			width: 100%;
+.ee-description-list {
+	&-grid {
+		display: grid;
+		grid-template-columns: max-content;
+		grid-template-rows: repeat(2, var(--ee-font-size-huge));
+		grid-auto-flow: column;
+		justify-content: start;
+		line-height: var(--ee-font-size-default);
+		padding: var(--ee-padding-small);
+		place-items: center start;
+		margin-top: var(--ee-margin-small);
+		width: 100%;
 
-			/* Media Queries for specific screen sizes
+		/* Media Queries for specific screen sizes
  			* -------------------------------------------------------------------------*/
-			@media only screen and (max-width: 1920px) {
-			}
-			@media only screen and (max-width: 1766px) {
-			}
-			@media only screen and (max-width: 1440px) {
-				grid-template-rows: repeat(3, var(--ee-font-size-huge));
-			}
-			@media only screen and (max-width: 1366px) {
-			}
-			@media only screen and (max-width: 1280px) {
-				grid-template-rows: repeat(4, var(--ee-font-size-huge));
-			}
-			@media only screen and (max-width: 1024px) {
-				grid-template-rows: repeat(5, var(--ee-font-size-huge));
-			}
-			/* WordPress Admin Media Query Breakpoint: Auto-folding of the admin menu */
-			@media only screen and (max-width: 960px) {
-			}
-			/* WordPress Admin Media Query Breakpoint: one column on the post write/edit screen */
-			@media only screen and (max-width: 850px) {
-				grid-template-rows: repeat(3, var(--ee-font-size-huge));
-			}
-			/* WordPress Admin Media Query Breakpoint: Tablet */
-			@media screen and (max-width: 782px) {
-				// grid-template-rows: repeat(4, var(--ee-font-size-huge));
-			}
-			/* WordPress Admin Media Query Breakpoint: Smartphone */
-			@media screen and (max-width: 600px) {
-				grid-template-rows: repeat(5, var(--ee-font-size-huge));
-			}
-			@media only screen and (max-width: 480px) {
-				grid-template-rows: repeat(6, var(--ee-font-size-huge));
-			}
-			@media only screen and (max-width: 360px) {
-				grid-auto-flow: unset;
-				grid-template-rows: auto;
-			}
+		@media only screen and (max-width: 1920px) {
+		}
+		@media only screen and (max-width: 1766px) {
+		}
+		@media only screen and (max-width: 1440px) {
+			grid-template-rows: repeat(3, var(--ee-font-size-huge));
+		}
+		@media only screen and (max-width: 1366px) {
+		}
+		@media only screen and (max-width: 1280px) {
+			grid-template-rows: repeat(4, var(--ee-font-size-huge));
+		}
+		@media only screen and (max-width: 1024px) {
+			grid-template-rows: repeat(5, var(--ee-font-size-huge));
+		}
+		/* WordPress Admin Media Query Breakpoint: Auto-folding of the admin menu */
+		@media only screen and (max-width: 960px) {
+		}
+		/* WordPress Admin Media Query Breakpoint: one column on the post write/edit screen */
+		@media only screen and (max-width: 850px) {
+			grid-template-rows: repeat(3, var(--ee-font-size-huge));
+		}
+		/* WordPress Admin Media Query Breakpoint: Tablet */
+		@media screen and (max-width: 782px) {
+			// grid-template-rows: repeat(4, var(--ee-font-size-huge));
+		}
+		/* WordPress Admin Media Query Breakpoint: Smartphone */
+		@media screen and (max-width: 600px) {
+			grid-template-rows: repeat(5, var(--ee-font-size-huge));
+		}
+		@media only screen and (max-width: 480px) {
+			grid-template-rows: repeat(6, var(--ee-font-size-huge));
+		}
+		@media only screen and (max-width: 360px) {
+			grid-auto-flow: unset;
+			grid-template-rows: auto;
+		}
+	}
+
+	&-item {
+		align-items: center;
+		display: flex;
+		padding: var(--ee-padding-smaller) var(--ee-padding-bigger) var(--ee-padding-smaller) 0;
+
+		dt {
+			margin: 0 var(--ee-margin-smaller) 0 0;
+			vertical-align: middle;
 		}
 
-		&-item {
-			align-items: center;
-			display: flex;
-			padding: var(--ee-padding-smaller) var(--ee-padding-bigger) var(--ee-padding-smaller) 0;
-
-			dt {
-				margin: 0 var(--ee-margin-smaller) 0 0;
-				vertical-align: middle;
-			}
-
-			dd {
-				margin: 0;
-				vertical-align: middle;
-			}
+		dd {
+			margin: 0;
+			vertical-align: middle;
 		}
 	}
 }

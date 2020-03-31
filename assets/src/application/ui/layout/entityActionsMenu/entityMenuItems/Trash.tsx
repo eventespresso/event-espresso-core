@@ -7,7 +7,15 @@ import { MenuItemProps } from './types';
 
 const Trash: React.FC<MenuItemProps> = ({ onClick, ...props }) => {
 	const title = props.title || __('trash');
-	return <EspressoDropdownMenuItem {...props} icon={Icon.TRASH} onClick={onClick} title={title} />;
+	return (
+		<EspressoDropdownMenuItem
+			{...props}
+			icon={Icon.TRASH}
+			onClick={onClick}
+			popoverProps={{ position: 'right center' }}
+			title={title}
+		/>
+	);
 };
 
 export default Trash;

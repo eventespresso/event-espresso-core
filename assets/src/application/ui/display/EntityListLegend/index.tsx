@@ -3,13 +3,9 @@ import React from 'react';
 import ColorSwatch from '@appDisplay/ColorSwatch';
 import { EspressoIcon, Icon } from '@appDisplay/espressoIcon';
 import { DescriptionList } from '@appLayout/descriptionList';
-import { LegendConfig } from './types';
+import { EntityListLegendProps } from './types';
 
-interface Props {
-	legendConfig: LegendConfig;
-}
-
-const EntityListLegend: React.FC<Props> = ({ legendConfig }) => {
+const EntityListLegend: React.FC<EntityListLegendProps> = ({ legendConfig }) => {
 	const { icons, swatches } = legendConfig;
 
 	const iconsSource = icons.map(({ icon, description }) => {

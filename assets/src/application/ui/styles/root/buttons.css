@@ -52,6 +52,8 @@
 .esprs-button.ant-btn.ant-btn-icon-only:focus,
 .esprs-button.ant-btn.ant-btn-icon-only:visited {
 	height: var(--ee-icon-button-size);
+	min-height: var(--ee-icon-button-size);
+	min-width: var(--ee-icon-button-size);
 	width: var(--ee-icon-button-size);
 }
 

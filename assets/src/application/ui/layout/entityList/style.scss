@@ -3,6 +3,8 @@
  * © 2020 Event Espresso
  * ------------------------------------------------------------------------- */
 
+@import '../../styles/mixins/breakpoints.scss';
+
 .ee-entity-list {
 	width: 100%;
 
@@ -37,10 +39,17 @@
 		grid-auto-rows: 275px;
 		width: 100%;
 
+		@include max480px {
+			gap: var(--ee-margin-big) 0;
+			grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+			grid-auto-rows: unset;
+		}
+
 		.ee-entity-card-wrapper {
 			justify-self: center;
 			max-width: 615px;
 			min-width: 300px;
+			width: 100%;
 		}
 	}
 
@@ -51,14 +60,5 @@
 		font-weight: normal;
 		padding: var(--ee-padding-extreme) var(--ee-padding-big);
 		text-align: center;
-	}
-}
-
-@media only screen and (max-width: 480px) {
-	.ee-entity-list {
-		&__card-view {
-			grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-			grid-auto-rows: unset;
-		}
 	}
 }

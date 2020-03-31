@@ -16,9 +16,7 @@ const EditDate = (props) => {
 			entityId: id,
 			entityDbId: datetime.dbId,
 		});
-	const title = __('edit datetime');
-
-	return <Edit {...props} onClick={onClick} title={title} />;
+	return <Edit {...props} onClick={onClick} title={__('edit datetime')} />;
 };
 
 export default EditDate;

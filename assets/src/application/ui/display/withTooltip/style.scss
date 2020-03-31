@@ -1,0 +1,30 @@
+@import '../../styles/mixins/breakpoints.scss';
+
+.ee-mobile-help-text {
+	display: none;
+
+	@include max782px {
+		display: inline-block;
+		line-height: 1.25;
+		margin-left: var(--ee-margin-small);
+		max-width: 75%;
+		white-space: normal;
+
+		&__btn-wrap {
+			display: flex;
+			flex-flow: row nowrap;
+		}
+
+		&__tooltip {
+			display: none;
+		}
+
+		&--short {
+			max-width: 50%;
+		}
+
+		&--long {
+			max-width: 100%;
+		}
+	}
+}
