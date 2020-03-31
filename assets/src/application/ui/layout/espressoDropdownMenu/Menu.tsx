@@ -29,6 +29,7 @@ const EspressoDropdownMenu: React.FC<Props> = ({
 	return (
 		<Dropdown
 			className={classNames(' components-dropdown-menu', className)}
+			// @ts-ignore
 			popoverProps={mergedPopoverProps}
 			renderToggle={({ isOpen, onToggle }) => (
 				<Toggle icon={icon} isOpen={isOpen} label={label} onToggle={onToggle} toggleProps={toggleProps} />
