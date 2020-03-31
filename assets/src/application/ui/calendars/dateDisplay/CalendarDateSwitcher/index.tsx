@@ -9,7 +9,7 @@ import { PLUS_ONE_MONTH, PLUS_TWO_MONTHS } from '@sharedConstants/defaultDates';
 import { switchTenseForDate } from '@appServices/utilities/date';
 
 const CalendarDateSwitcher: React.FC<CalendarDateSwitcherProps> = React.memo(
-	({ className, displayDate = DisplayStartOrEndDate.start, labels, ...props }) => {
+	({ className, displayDate = DisplayStartOrEndDate.start, labels = {}, ...props }) => {
 		const startDate = parseISO(props.startDate) || PLUS_ONE_MONTH;
 		const endDate = parseISO(props.endDate) || PLUS_TWO_MONTHS;
 		const headerText = switchTenseForDate(startDate, labels.headerPast, labels.headerFuture);

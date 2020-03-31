@@ -1,14 +1,9 @@
 import { isNil } from 'ramda';
-import { parseISO } from 'date-fns';
 
 import { diff } from '@appServices/utilities';
 import { now } from '@sharedServices/utils/dateAndTime';
 
-const switchTenseForDate = (
-	date: Date | null,
-	textForPastDate: string | null,
-	textForFutureDate: string | null
-): string | null => {
+const switchTenseForDate = (date: Date, textForPastDate: string, textForFutureDate: string): string | null => {
 	if (isNil(date) || isNil(textForPastDate) || isNil(textForFutureDate)) {
 		return null;
 	}
