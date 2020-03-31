@@ -1,10 +1,10 @@
 import { DisplayStartOrEndDate } from '@sharedServices/filterState';
 
 interface CalendarDateLabels {
-	headerPast: string; // sale starts
-	headerFuture: string; // sale started
-	footerPast: string; // sale ends
-	footerFuture: string; // sale ended
+	headerPast?: string;
+	headerFuture?: string;
+	footerPast?: string;
+	footerFuture?: string;
 }
 
 export interface CalendarDateSwitcherProps {
