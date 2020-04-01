@@ -1,5 +1,7 @@
 import React, { useCallback } from 'react';
+import { __ } from '@wordpress/i18n';
 
+import { ConfirmDelete } from '@appLayout/confirmDelete';
 import { EspressoButton, Icon } from '@application/ui/input';
 import { PriceModifierProps } from '../types';
 import { useDataState } from '../data';
@@ -8,7 +10,11 @@ const DeletePriceModifierButton: React.FC<PriceModifierProps> = ({ price }) => {
 	const { deletePrice } = useDataState();
 	const onClick = useCallback(() => deletePrice(price.id, price.isNew), [price.id, price.isNew]);
 
-	return <EspressoButton icon={Icon.TRASH} onClick={onClick} />;
+	return (
+		<ConfirmDelete onConfirm={onClick}>
+			<EspressoButton icon={Icon.TRASH} tooltip={__('delete price modifier')} />;
+		</ConfirmDelete>
+	);
 };
 
 export default DeletePriceModifierButton;
