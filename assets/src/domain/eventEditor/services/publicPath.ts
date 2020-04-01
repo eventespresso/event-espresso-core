@@ -8,7 +8,7 @@ no-var
 */
 /* global __webpack_public_path__ */
 declare var __webpack_public_path__: string;
-__webpack_public_path__ = window?.eeEditorData?.assets_url;
+__webpack_public_path__ = window?.eeEditorData?.assetsUrl;
 
 // not needed
-export const assets_url = __webpack_public_path__;
+export const assetsUrl = __webpack_public_path__;

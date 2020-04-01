@@ -13,7 +13,7 @@ export interface EventData {
 }
 
 export interface EEEditorData {
-	assets_url?: string;
+	assetsUrl?: string;
 	event: EventData;
 	graphqlEndpoint?: string;
 	currentUser?: CurrentUserProps;
