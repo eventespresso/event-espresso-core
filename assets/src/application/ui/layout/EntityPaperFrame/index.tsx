@@ -22,4 +22,4 @@ const EntityPaperFrame = ({ children, className, entity }) => {
 	);
 };
 
-export default React.memo(EntityPaperFrame, getPropsAreEqual(['entity', 'cacheId']));
+export default React.memo(EntityPaperFrame, getPropsAreEqual(['cacheId']));

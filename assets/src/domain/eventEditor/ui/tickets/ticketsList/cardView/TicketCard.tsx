@@ -25,6 +25,7 @@ const TicketCard: React.FC<EntityListItemProps<Ticket>> = ({ entity: ticket }) =
 		<TicketProvider id={ticket.id}>
 			<EntityCard
 				entity={ticket}
+				cacheId={ticket.cacheId + displayStartOrEndDate}
 				actionsMenu={<TicketActionsMenu entity={ticket} />}
 				sidebar={
 					<CalendarDateSwitcher

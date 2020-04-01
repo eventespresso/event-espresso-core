@@ -27,6 +27,7 @@ const DateCard: React.FC<EntityListItemProps<Datetime>> = ({ entity: date }) => 
 		<DatetimeProvider id={date.id}>
 			<EntityCard
 				entity={date}
+				cacheId={date.cacheId + displayStartOrEndDate}
 				actionsMenu={<DateActionsMenu entity={date} />}
 				sidebar={
 					<CalendarDateSwitcher
