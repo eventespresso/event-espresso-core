@@ -17,7 +17,7 @@ import {
 	getTaxes,
 } from './index';
 import { nodes as prices } from '../../../../../eventEditor/services/apollo/queries/prices/test/data';
-import { getGuids } from '@sharedServices/predicates';
+import { getGuids } from '@appServices/predicates';
 
 describe('isPriceField', () => {
 	it('should return true if field is included in price type', () => {

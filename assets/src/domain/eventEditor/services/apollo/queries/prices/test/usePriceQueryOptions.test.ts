@@ -4,7 +4,7 @@ import usePriceQueryOptions from '../usePriceQueryOptions';
 import { ApolloMockedProvider } from '../../../../../services/context/TestContext';
 import { nodes } from '../../tickets/test/data';
 import useInitTicketTestCache from '../../tickets/test/useInitTicketTestCache';
-import { getGuids } from '@sharedServices/predicates';
+import { getGuids } from '@appServices/predicates';
 
 const timeout = 5000; // milliseconds
 describe('usePriceQueryOptions()', () => {

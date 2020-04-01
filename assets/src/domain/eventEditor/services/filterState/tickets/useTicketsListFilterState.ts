@@ -1,13 +1,6 @@
-import { useContext } from 'react';
-import invariant from 'invariant';
+import { TicketsListContextProps, useTicketsListContext } from '../../context/EntityListContext';
 
-import { TicketsListContext, TicketsListContextProps } from '../../context/EntityListContext';
-
-const useTicketsListFilterState = (): TicketsListContextProps['filters'] => {
-	const value = useContext(TicketsListContext);
-
-	invariant(value, 'useTicketsListFilterState must be used inside <TicketsListProvider> component');
-
-	return value?.filters;
+const useTicketsListFilterState = (): TicketsListContextProps['filterState'] => {
+	return useTicketsListContext().filterState;
 };
 export default useTicketsListFilterState;

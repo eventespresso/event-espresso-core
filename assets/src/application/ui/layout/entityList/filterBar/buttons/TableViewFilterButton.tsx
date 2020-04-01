@@ -14,6 +14,7 @@ const TableViewFilterButton: React.FC<TableViewFilterButtonProps> = React.memo((
 		<EspressoButton
 			buttonType={EspressoButtonType.MINIMAL}
 			className={className}
+			disabled={view === 'table'}
 			icon={Icon.TABLE_VIEW}
 			id={filterId}
 			label={__('table view')}

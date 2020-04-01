@@ -3,21 +3,23 @@ import classNames from 'classnames';
 import { __ } from '@wordpress/i18n';
 
 import { EntityTable } from '@appLayout/entityList';
-import { DatesListViewProps } from '../types';
 import headerRowGenerator from './headerRowGenerator';
 import bodyRowGenerator from './bodyRowGenerator';
+import { useDatesListContext } from '@edtrServices/context/EntityListContext';
 
 import './styles.scss';
 
 /**
  * Displays event date details in a standard list table like view
  */
-const TableView: React.FC<DatesListViewProps> = ({ className, filterState, entities }) => {
-	const tableClassName = classNames(className, 'ee-dates-list-list-view');
+const TableView: React.FC = () => {
+	const tableClassName = classNames('ee-dates-list-list-view');
+
+	const { filterState, filteredEntities } = useDatesListContext();
 
 	return (
 		<EntityTable
-			entities={entities}
+			entities={filteredEntities}
 			filterState={filterState}
 			bodyRowGenerator={bodyRowGenerator}
 			headerRowGenerator={headerRowGenerator}

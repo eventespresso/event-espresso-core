@@ -1,4 +1,4 @@
-import { useReducer } from 'react';
+import { useReducer, useCallback } from 'react';
 
 import { BasicSortBy, EntityListFilterState, EntityListFilterStateManager } from './types';
 import getReducer from './reducer';
@@ -14,72 +14,80 @@ const useEntityListFilterStateManager = <SortBy = BasicSortBy>(defaultSortBy: So
 		pageNumber: 1,
 		total: null,
 		searchText: '',
-		showEntityFilters: false,
 		sortBy: defaultSortBy,
 		view: 'card',
 	};
 	const [state, dispatch] = useReducer(getReducer<SortBy>(), initialState);
 
-	const setSortBy: FSM['setSortBy'] = (sortBy) => {
-		dispatch({
-			type: 'SET_SORT_BY',
-			sortBy,
-		});
-	};
+	const setSortBy: FSM['setSortBy'] = useCallback(
+		(sortBy) => {
+			dispatch({
+				type: 'SET_SORT_BY',
+				sortBy,
+			});
+		},
+		[dispatch]
+	);
 
-	const setPerPage: FSM['setPerPage'] = (newPageNumber, newPerPage) => {
-		// the pagination component will recalculate the page number
-		// if it goes out of range after changing the perPage value,
-		// so save that else we'll get no results returned
-		if (newPageNumber && newPageNumber !== state.pageNumber) {
-			setPageNumber(newPageNumber);
-		}
-		dispatch({
-			type: 'SET_PER_PAGE',
-			perPage: newPerPage,
-		});
-	};
+	const setPerPage: FSM['setPerPage'] = useCallback(
+		(newPageNumber, newPerPage) => {
+			// the pagination component will recalculate the page number
+			// if it goes out of range after changing the perPage value,
+			// so save that else we'll get no results returned
+			if (newPageNumber && newPageNumber !== state.pageNumber) {
+				setPageNumber(newPageNumber);
+			}
+			dispatch({
+				type: 'SET_PER_PAGE',
+				perPage: newPerPage,
+			});
+		},
+		[dispatch]
+	);
 
-	const setPageNumber: FSM['setPageNumber'] = (pageNumber) => {
-		dispatch({
-			type: 'SET_PAGE_NUMBER',
-			pageNumber,
-		});
-	};
+	const setPageNumber: FSM['setPageNumber'] = useCallback(
+		(pageNumber) => {
+			dispatch({
+				type: 'SET_PAGE_NUMBER',
+				pageNumber,
+			});
+		},
+		[dispatch]
+	);
 
-	const setTotal: FSM['setTotal'] = (total) => {
-		dispatch({
-			type: 'SET_TOTAL',
-			total,
-		});
-	};
+	const setTotal: FSM['setTotal'] = useCallback(
+		(total) => {
+			dispatch({
+				type: 'SET_TOTAL',
+				total,
+			});
+		},
+		[dispatch]
+	);
 
-	const setCardView: FSM['setCardView'] = () => {
+	const setCardView: FSM['setCardView'] = useCallback(() => {
 		dispatch({
 			type: 'SET_VIEW',
 			view: 'card',
 		});
-	};
+	}, [dispatch]);
 
-	const setTableView: FSM['setTableView'] = () => {
+	const setTableView: FSM['setTableView'] = useCallback(() => {
 		dispatch({
 			type: 'SET_VIEW',
 			view: 'table',
 		});
-	};
+	}, [dispatch]);
 
-	const setSearchText: FSM['setSearchText'] = (searchText) => {
-		dispatch({
-			searchText,
-			type: 'SET_SEARCH_TEXT',
-		});
-	};
-
-	const toggleEntityFilters: FSM['toggleEntityFilters'] = () => {
-		dispatch({
-			type: 'TOGGLE_ENTITY_FILTERS',
-		});
-	};
+	const setSearchText: FSM['setSearchText'] = useCallback(
+		(searchText) => {
+			dispatch({
+				searchText,
+				type: 'SET_SEARCH_TEXT',
+			});
+		},
+		[dispatch]
+	);
 
 	return {
 		...state,
@@ -90,7 +98,6 @@ const useEntityListFilterStateManager = <SortBy = BasicSortBy>(defaultSortBy: So
 		setCardView,
 		setTableView,
 		setSearchText,
-		toggleEntityFilters,
 	};
 };
 

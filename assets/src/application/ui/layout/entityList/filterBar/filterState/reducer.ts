@@ -23,9 +23,6 @@ const getReducer = <SortBy = BasicSortBy>(): EntityListFilterStateReducer<SortBy
 			case 'SET_VIEW':
 				return { ...state, view };
 
-			case 'TOGGLE_ENTITY_FILTERS':
-				return { ...state, showEntityFilters: !state.showEntityFilters };
-
 			default:
 				throw new Error('Unexpected action');
 		}

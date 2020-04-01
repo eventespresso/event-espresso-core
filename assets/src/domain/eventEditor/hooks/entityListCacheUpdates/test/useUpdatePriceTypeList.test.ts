@@ -5,7 +5,7 @@ import { useCacheRehydration } from '@edtrServices/apollo/initialization';
 import useUpdatePriceTypeList from '../useUpdatePriceTypeList';
 import { usePriceTypeQueryOptions, usePriceTypes } from '@edtrServices/apollo/queries';
 import { ApolloMockedProvider } from '@edtrServices/context/TestContext';
-import { getGuids } from '@sharedServices/predicates';
+import { getGuids } from '@appServices/predicates';
 
 const timeout = 5000; // milliseconds
 describe('useUpdatePriceTypeList', () => {

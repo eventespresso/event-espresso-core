@@ -6,4 +6,5 @@ export interface EntityCardProps {
 	entity: Entity;
 	sidebar: JSX.Element;
 	reverse?: boolean;
+	cacheId?: string;
 }

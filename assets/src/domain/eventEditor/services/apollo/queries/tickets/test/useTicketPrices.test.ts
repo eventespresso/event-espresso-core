@@ -6,7 +6,7 @@ import { nodes } from './data';
 import useInitTicketTestCache from './useInitTicketTestCache';
 import useInitPriceTestCache from '../../prices/test/useInitPriceTestCache';
 import { useRelations } from '../../../../../../../application/services/apollo/relations';
-import { getGuids } from '@sharedServices/predicates';
+import { getGuids } from '@appServices/predicates';
 
 const timeout = 5000; // milliseconds
 describe('useTicketPrices', () => {

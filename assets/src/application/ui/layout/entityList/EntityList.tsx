@@ -3,7 +3,7 @@ import { __ } from '@wordpress/i18n';
 import { Divider, Typography } from 'antd';
 
 import { EmptyState, ErrorIndicator, LoadingIndicator } from '@appDisplay/index';
-import { EntityListFilterStateManager, useFilteredEntities } from './filterBar';
+import { EntityListFilterStateManager } from './filterBar';
 import EntityListFilterBar from './withValidFilterState';
 import { Entity } from '@appServices/apollo/types';
 import { useStatus } from '@appServices/apollo/status';
@@ -15,10 +15,7 @@ import './style.scss';
 const { Title } = Typography;
 
 const EntityList = <E extends Entity, ELFS extends EntityListFilterStateManager<any>>({
-	CardView,
-	className,
 	domain,
-	entities = [],
 	entityType,
 	filterState,
 	footer,
@@ -27,29 +24,24 @@ const EntityList = <E extends Entity, ELFS extends EntityListFilterStateManager<
 	listId,
 	noResultsDesc,
 	noResultsTitle,
-	TableView,
+	renderList,
 }: EntityListProps<E, ELFS>) => {
 	const { isError, isLoading } = useStatus();
 	const error = isError(entityType);
 	const loading = isLoading(entityType);
 
-	const filteredEntities = useFilteredEntities(domain, listId, entities, filterState);
-
 	if (loading) return <LoadingIndicator tip={__('loading...')} />;
 
 	if (error) return <ErrorIndicator />;
 
-	let entityList: JSX.Element;
-	const { view } = filterState;
+	let entityList: React.ReactNode;
 
-	if (filteredEntities.length === 0) {
+	if (filterState.total === 0) {
 		const title = noResultsTitle ? noResultsTitle : __('no results found');
 		const description = noResultsDesc ? noResultsDesc : __('try changing filter settings');
 		entityList = <EmptyState className='ee-entity-list--no-results' title={title} description={description} />;
 	} else {
-		const Component = view === 'card' ? CardView : TableView;
-
-		entityList = <Component entities={filteredEntities} className={className} filterState={filterState} />;
+		entityList = renderList();
 	}
 
 	return (

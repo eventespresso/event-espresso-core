@@ -5,7 +5,7 @@ import useUpdateTicketCache from './useUpdateTicketCache';
 import { Price } from '@edtrServices/apollo/types';
 import { TicketMutationCallbackFn, TicketMutationCallbackFnArgs } from '../types';
 import { useRelations } from '@appServices/apollo/relations';
-import { getGuids } from '@sharedServices/predicates';
+import { getGuids } from '@appServices/predicates';
 
 const useOnCreateTicket = (): TicketMutationCallbackFn => {
 	const { updateRelations, addRelation } = useRelations();

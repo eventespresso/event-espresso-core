@@ -25,18 +25,14 @@ const EntityListFilterBar = <FS extends ELFSM>({
 	listId,
 }: EntityListFilterBarProps<FS>): JSX.Element => {
 	const [showLegend, setShowLegend] = useState(false);
-	const {
-		searchText,
-		setCardView,
-		setTableView,
-		setSearchText,
-		showEntityFilters,
-		toggleEntityFilters,
-		view,
-	} = filterState;
+	const toggleLegend = () => setShowLegend(!showLegend);
+
+	const [showEntityFilters, setShowEntityFilters] = useState(false);
+	const toggleEntityFilters = () => setShowEntityFilters((v) => !v);
+
+	const { searchText, setCardView, setTableView, setSearchText, view } = filterState;
 
 	const filerBarItems = useFilterBarUIElements({ domain, filterState, listId });
-	const toggleLegend = () => setShowLegend(!showLegend);
 
 	return (
 		<div className='ee-filter-bar'>

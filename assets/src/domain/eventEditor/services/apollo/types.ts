@@ -1,4 +1,4 @@
-import { Cacheable, Entity, EntityEdge, Trashable } from '@appServices/apollo/types';
+import { Entity, EntityEdge, Trashable } from '@appServices/apollo/types';
 
 export interface Event extends Entity {
 	desc: string;
@@ -27,7 +27,7 @@ export enum DatetimeStatus {
 	inactive = 'DTI',
 }
 
-export interface Datetime extends Entity, Trashable, Cacheable {
+export interface Datetime extends Entity, Trashable {
 	capacity: number;
 	description: string;
 	endDate: string;
@@ -54,7 +54,7 @@ export interface DatetimesList {
 	espressoDatetimes: DatetimeEdge;
 }
 
-export interface Price extends Entity, Trashable, Cacheable {
+export interface Price extends Entity, Trashable {
 	amount: number;
 	desc: string;
 	isBasePrice: boolean;
@@ -72,7 +72,7 @@ export interface PricesList {
 	espressoPrices: PriceEdge;
 }
 
-export interface Ticket extends Entity, Trashable, Cacheable {
+export interface Ticket extends Entity, Trashable {
 	description: string;
 	endDate: string; // ISO string
 	isDefault: boolean;
@@ -113,7 +113,7 @@ export enum PriceBasetype {
 	TAX = 'TAX',
 }
 
-export interface PriceType extends Entity, Trashable, Cacheable {
+export interface PriceType extends Entity, Trashable {
 	baseType: PriceBasetype;
 	isBasePrice: boolean;
 	isDiscount: boolean;

@@ -4,7 +4,6 @@ import { __ } from '@wordpress/i18n';
 import { CalendarDateSwitcher } from '@appCalendars/dateDisplay';
 import TicketActionsMenu from '../actionsMenu/TicketActionsMenu';
 import TicketDetails from './TicketDetails';
-import useTicketItem from '@edtrServices/apollo/queries/tickets/useTicketItem';
 import TicketProvider from '@edtrServices/context/TicketContext';
 import CurrencyInput from '@appInputs/CurrencyInput';
 import EntityCard from '@appLayout/EntityCard';
@@ -13,11 +12,12 @@ import { InlineEditHeading, InlineEditTextArea } from '@appInputs/InlineEditInpu
 import statusBgColorClassName from '@sharedEntities/tickets/helpers/statusBgColorClassName';
 import { useTicketsListFilterState } from '@edtrServices/filterState';
 import { useTicketMutator } from '@edtrServices/apollo/mutations';
+import { Ticket } from '@edtrServices/apollo/types';
+import { getPropsAreEqual } from '@appServices/utilities';
 
-const TicketCard: React.FC<EntityListItemProps> = React.memo(({ id }) => {
+const TicketCard: React.FC<EntityListItemProps<Ticket>> = ({ entity: ticket }) => {
 	const { displayStartOrEndDate } = useTicketsListFilterState();
-	const ticket = useTicketItem({ id });
-	const { updateEntity } = useTicketMutator(id);
+	const { updateEntity } = useTicketMutator(ticket.id);
 
 	const bgClassName = statusBgColorClassName(ticket);
 
@@ -25,6 +25,7 @@ const TicketCard: React.FC<EntityListItemProps> = React.memo(({ id }) => {
 		<TicketProvider id={ticket.id}>
 			<EntityCard
 				entity={ticket}
+				cacheId={ticket.cacheId + displayStartOrEndDate}
 				actionsMenu={<TicketActionsMenu entity={ticket} />}
 				sidebar={
 					<CalendarDateSwitcher
@@ -79,6 +80,6 @@ const TicketCard: React.FC<EntityListItemProps> = React.memo(({ id }) => {
 			/>
 		</TicketProvider>
 	) : null;
-});
+};
 
-export default TicketCard;
+export default React.memo(TicketCard, getPropsAreEqual(['entity', 'cacheId']));

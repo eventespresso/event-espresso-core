@@ -3,7 +3,7 @@ import { useMemo } from 'react';
 import useDatetimeQueryOptions from './useDatetimeQueryOptions';
 import { Datetime, DatetimesList } from '../../types';
 import useCacheQuery from '../useCacheQuery';
-import { getCacheIds } from '@sharedServices/predicates';
+import { getCacheIds } from '@appServices/predicates';
 
 const useDatetimes = (): Array<Datetime> => {
 	const options = useDatetimeQueryOptions();

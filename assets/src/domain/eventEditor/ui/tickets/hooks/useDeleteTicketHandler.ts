@@ -4,7 +4,7 @@ import useTicketPrices from '@edtrServices/apollo/queries/tickets/useTicketPrice
 import { EntityListItemProps } from '@appLayout/entityList';
 import { BackwardSubscription } from '@appServices/apollo/mutations';
 import { useTicketMutator, usePriceMutator } from '@edtrServices/apollo/mutations';
-import { getGuids } from '@sharedServices/predicates';
+import { getGuids } from '@appServices/predicates';
 
 type VoidFn = () => void;
 

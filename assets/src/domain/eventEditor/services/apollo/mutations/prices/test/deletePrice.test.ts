@@ -7,7 +7,7 @@ import { ApolloMockedProvider } from '../../../../context/TestContext';
 import { getMutationMocks, mockedPrices } from './data';
 import { nodes as tickets } from '../../../queries/tickets/test/data';
 import { usePriceMutator } from '../';
-import { getGuids } from '@sharedServices/predicates';
+import { getGuids } from '@appServices/predicates';
 
 const timeout = 5000; // milliseconds
 describe('deletePrice', () => {

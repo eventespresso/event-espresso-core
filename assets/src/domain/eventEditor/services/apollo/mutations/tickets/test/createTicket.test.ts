@@ -12,7 +12,7 @@ import { MutationInput } from '../../../../../../../application/services/apollo/
 import useTicketItem from '../../../queries/tickets/useTicketItem';
 import useTicketIds from '../../../queries/tickets/useTicketIds';
 import { useTicketMutator } from '../';
-import { getGuids } from '@sharedServices/predicates';
+import { getGuids } from '@appServices/predicates';
 
 const timeout = 5000; // milliseconds
 describe('createTicket', () => {

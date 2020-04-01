@@ -1,10 +1,12 @@
 import React from 'react';
 import { EntityCardList } from '@appLayout/entityList';
-import { DatesListViewProps } from '../types';
 import DateCard from './DateCard';
+import { useDatesListContext } from '@edtrServices/context/EntityListContext';
 
-const CardView: React.FC<DatesListViewProps> = ({ entities }) => {
-	return <EntityCardList EntityCard={DateCard} entities={entities} />;
-};
+const CardView: React.FC = React.memo(() => {
+	const { filteredEntities } = useDatesListContext();
+
+	return <EntityCardList EntityCard={DateCard} entities={filteredEntities} />;
+});
 
 export default CardView;

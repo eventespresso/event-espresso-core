@@ -5,6 +5,7 @@ import { EntityDetailsPanel } from '@application/ui/display/entityDetailsPanel';
 import { Datetime } from '@edtrServices/apollo/types';
 import DateRegistrationsLink from '../../DateRegistrationsLink';
 import DateCapacity from './DateCapacity';
+import { getPropsAreEqual } from '@appServices/utilities';
 
 interface DateDetailsProps {
 	datetime: Datetime;
@@ -33,4 +34,4 @@ const DateDetails: React.FC<DateDetailsProps> = ({ datetime }) => {
 	return <EntityDetailsPanel details={details} className='ee-editor-date-details-sold-rsrvd-cap-div' />;
 };
 
-export default DateDetails;
+export default React.memo(DateDetails, getPropsAreEqual(['datetime', 'cacheId']));

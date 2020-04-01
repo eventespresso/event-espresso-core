@@ -23,7 +23,7 @@ import {
 	useGeneralSettingsQueryOptions,
 	useUpdateGeneralSettingsCache,
 } from '@sharedServices/apollo/queries/generalSettings';
-import { getGuids } from '@sharedServices/predicates';
+import { getGuids } from '@appServices/predicates';
 
 const useCacheRehydration = (): void => {
 	const { initialize: initializeRelations, isInitialized: relationsInitialized } = useRelations();

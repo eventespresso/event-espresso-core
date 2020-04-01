@@ -1,6 +1,9 @@
 import React from 'react';
 
-import { EntityId } from '@appServices/apollo/types';
+import { Entity, EntityId } from '@appServices/apollo/types';
+import { EntityListFilterStateManager } from '@appLayout/entityList';
+
+type ELFSM = EntityListFilterStateManager<any>;
 
 export interface ContextProviderProps {
 	children?: React.ReactNode;
@@ -10,8 +13,9 @@ export interface EntityContextProps extends ContextProviderProps {
 	id: EntityId;
 }
 
-export interface EntityListContextProps<T> extends ContextProviderProps {
-	filters: T;
+export interface EntityListContextProps<FS extends ELFSM, E extends Entity> extends ContextProviderProps {
+	filterState: FS;
+	filteredEntities: Array<E>;
 }
 
 export interface EntityContextProviderProps extends ContextProviderProps, EntityContextProps {}

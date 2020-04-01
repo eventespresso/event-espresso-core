@@ -3,6 +3,7 @@ import React from 'react';
 import { EntityTableProps } from './types';
 import { Entity } from '@appServices/apollo/types';
 import { EntityListFilterStateManager } from './filterBar';
+import entitiesUnchanged from '@appServices/utilities/memo/entitiesUnchanged';
 import { ResponsiveTable } from '@appLayout/espressoTable';
 
 type ELFSM = EntityListFilterStateManager<any>;
@@ -32,4 +33,4 @@ const EntityTable = <E extends Entity, FS extends ELFSM>({
 	);
 };
 
-export default EntityTable;
+export default React.memo(EntityTable, entitiesUnchanged);

@@ -10,7 +10,7 @@ import { nodes as prices } from '../../../queries/prices/test/data';
 import { MutationInput } from '../../../../../../../application/services/apollo/mutations/types';
 import useInitTicketTestCache from '../../../queries/tickets/test/useInitTicketTestCache';
 import { useTicketMutator } from '../';
-import { getGuids } from '@sharedServices/predicates';
+import { getGuids } from '@appServices/predicates';
 
 const timeout = 5000; // milliseconds
 describe('updateTicket', () => {

@@ -2,7 +2,7 @@ import updatePriceCache from './updatePriceCache';
 import useUpdateTicketCache from './useUpdateTicketCache';
 import { TicketMutationCallbackFn, TicketMutationCallbackFnArgs } from '../types';
 import { useRelations } from '@appServices/apollo/relations';
-import { getGuids } from '@sharedServices/predicates';
+import { getGuids } from '@appServices/predicates';
 
 const useOnDeleteTicket = (): TicketMutationCallbackFn => {
 	const { dropRelations, removeRelation } = useRelations();

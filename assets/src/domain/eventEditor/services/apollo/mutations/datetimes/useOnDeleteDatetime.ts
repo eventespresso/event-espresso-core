@@ -2,7 +2,7 @@ import updateTicketCache from './updateTicketCache';
 import useUpdateDatetimeCache from './useUpdateDatetimeCache';
 import { DatetimeMutationCallbackFn, DatetimeMutationCallbackFnArgs, CacheUpdaterFn } from '../types';
 import { useRelations } from '@appServices/apollo/relations';
-import { getGuids } from '@sharedServices/predicates';
+import { getGuids } from '@appServices/predicates';
 
 const useOnDeleteDatetime = (): DatetimeMutationCallbackFn => {
 	const { dropRelations, removeRelation } = useRelations();
