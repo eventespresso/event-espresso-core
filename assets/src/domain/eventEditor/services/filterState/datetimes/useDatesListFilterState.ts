@@ -1,13 +1,6 @@
-import { useContext } from 'react';
-import invariant from 'invariant';
+import { DatetimesListContextProps, useDatesListContext } from '../../context/EntityListContext';
 
-import { DatetimesListContext, DatetimesListContextProps } from '../../context/EntityListContext';
-
-const useDatesListFilterState = (): DatetimesListContextProps['filters'] => {
-	const value = useContext(DatetimesListContext);
-
-	invariant(value, 'useDatesListFilterState must be used inside <DatetimesListProvider> component');
-
-	return value?.filters;
+const useDatesListFilterState = (): DatetimesListContextProps['filterState'] => {
+	return useDatesListContext().filterState;
 };
 export default useDatesListFilterState;
