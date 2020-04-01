@@ -6,7 +6,7 @@ import { useFilteredEntities } from '@appLayout/entityList';
 import { domain, datesList } from '@edtrServices/constants';
 import { useDatetimes } from '@edtrServices/apollo/queries';
 import type { Datetime } from '@edtrServices/apollo/types';
-import { getCacheIds } from '@sharedServices/predicates';
+import { getCacheIds } from '@appServices/predicates';
 
 export type DatetimesListContextProps = EntityListContextProps<DatetimesFilterStateManager, Datetime>;
 

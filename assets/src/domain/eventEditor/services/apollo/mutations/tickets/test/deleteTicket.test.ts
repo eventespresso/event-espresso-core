@@ -8,7 +8,7 @@ import { getMutationMocks, mockedTickets } from './data';
 import { nodes as datetimes } from '../../../queries/datetimes/test/data';
 import { nodes as prices } from '../../../queries/prices/test/data';
 import { useTicketMutator } from '../';
-import { getGuids } from '@sharedServices/predicates';
+import { getGuids } from '@appServices/predicates';
 
 const timeout = 5000; // milliseconds
 describe('deleteTicket', () => {

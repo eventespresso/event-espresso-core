@@ -14,7 +14,7 @@ import useDatetimeIds from '../../../queries/datetimes/useDatetimeIds';
 import useInitTicketTestCache from '../../../queries/tickets/test/useInitTicketTestCache';
 import useTickets from '../../../queries/tickets/useTickets';
 import useTicketQueryOptions from '../../../queries/tickets/useTicketQueryOptions';
-import { getGuids } from '@sharedServices/predicates';
+import { getGuids } from '@appServices/predicates';
 
 const timeout = 5000; // milliseconds
 

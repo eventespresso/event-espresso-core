@@ -4,7 +4,7 @@ import useTicketIds from '../useTicketIds';
 import { ApolloMockedProvider } from '../../../../../services/context/TestContext';
 import { nodes } from './data';
 import useInitTicketTestCache from './useInitTicketTestCache';
-import { getGuids } from '@sharedServices/predicates';
+import { getGuids } from '@appServices/predicates';
 
 const timeout = 5000; // milliseconds
 describe('useTicketIds()', () => {

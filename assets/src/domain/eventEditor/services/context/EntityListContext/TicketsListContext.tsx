@@ -6,7 +6,7 @@ import { useFilteredEntities } from '@appLayout/entityList';
 import { domain, ticketsList } from '@edtrServices/constants';
 import { useTickets } from '@edtrServices/apollo/queries';
 import type { Ticket } from '@edtrServices/apollo/types';
-import { getCacheIds } from '@sharedServices/predicates';
+import { getCacheIds } from '@appServices/predicates';
 
 export type TicketsListContextProps = EntityListContextProps<TicketsFilterStateManager, Ticket>;
 

@@ -2,15 +2,15 @@ export type EntityId = string;
 
 export type EntityDbId = number;
 
-export interface Entity {
+export interface Cacheable {
+	cacheId: string;
+}
+
+export interface Entity extends Cacheable {
 	id: EntityId;
 	dbId: EntityDbId;
 	name: string;
 	__typename?: string;
-}
-
-export interface Cacheable {
-	cacheId: string;
 }
 
 export interface Trashable {

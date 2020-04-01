@@ -11,7 +11,7 @@ import { MutationHandler, OnUpdateFnOptions } from '../types';
 import { MutationType } from '@appServices/apollo/mutations';
 import { Ticket, TicketEdge, Price, TicketsList } from '@edtrServices/apollo/types';
 import { useTicketQueryOptions } from '@edtrServices/apollo/queries/tickets';
-import { getGuids } from '@sharedServices/predicates';
+import { getGuids } from '@appServices/predicates';
 
 const useTicketMutationHandler = (): MutationHandler => {
 	const options = useTicketQueryOptions();

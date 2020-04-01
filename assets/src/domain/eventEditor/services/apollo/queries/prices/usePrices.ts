@@ -3,7 +3,7 @@ import { useMemo } from 'react';
 import usePriceQueryOptions from './usePriceQueryOptions';
 import { Price, PricesList } from '../../types';
 import useCacheQuery from '../useCacheQuery';
-import { getCacheIds } from '@sharedServices/predicates';
+import { getCacheIds } from '@appServices/predicates';
 /**
  * A custom react hook for retrieving all the prices from cache
  * limited to the ids passed in `include`

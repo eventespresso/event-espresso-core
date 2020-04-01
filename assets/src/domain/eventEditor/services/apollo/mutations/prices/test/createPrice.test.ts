@@ -10,7 +10,7 @@ import usePrices from '../../../queries/prices/usePrices';
 import { nodes as tickets } from '../../../queries/tickets/test/data';
 import { nodes as priceTypes } from '../../../queries/priceTypes/test/data';
 import { usePriceMutator, CreatePriceInput } from '../';
-import { getGuids } from '@sharedServices/predicates';
+import { getGuids } from '@appServices/predicates';
 
 const timeout = 5000; // milliseconds
 describe('createPrice', () => {

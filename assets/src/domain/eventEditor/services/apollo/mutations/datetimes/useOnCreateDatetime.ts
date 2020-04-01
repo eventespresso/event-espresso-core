@@ -2,7 +2,7 @@ import updateTicketCache from './updateTicketCache';
 import useUpdateDatetimeCache from './useUpdateDatetimeCache';
 import { DatetimeMutationCallbackFn, DatetimeMutationCallbackFnArgs } from '../types';
 import { useRelations } from '@appServices/apollo/relations';
-import { getGuids } from '@sharedServices/predicates';
+import { getGuids } from '@appServices/predicates';
 
 const useOnCreateDatetime = (): DatetimeMutationCallbackFn => {
 	const { updateRelations, addRelation } = useRelations();

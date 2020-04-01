@@ -4,7 +4,7 @@ import useTicketQueryOptions from '../useTicketQueryOptions';
 import { ApolloMockedProvider } from '../../../../../services/context/TestContext';
 import { nodes } from '../../datetimes/test/data';
 import useInitDatetimeTestCache from '../../datetimes/test/useInitDatetimeTestCache';
-import { getGuids } from '@sharedServices/predicates';
+import { getGuids } from '@appServices/predicates';
 
 const timeout = 5000; // milliseconds
 describe('useTicketQueryOptions', () => {

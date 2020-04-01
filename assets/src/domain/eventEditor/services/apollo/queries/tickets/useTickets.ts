@@ -3,7 +3,7 @@ import { useMemo } from 'react';
 import useTicketQueryOptions from './useTicketQueryOptions';
 import { Ticket, TicketsList } from '../../types';
 import useCacheQuery from '../useCacheQuery';
-import { getCacheIds } from '@sharedServices/predicates';
+import { getCacheIds } from '@appServices/predicates';
 
 const useTickets = (): Array<Ticket> => {
 	const options = useTicketQueryOptions();

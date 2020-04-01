@@ -1,6 +1,6 @@
 import useDatetimes from './useDatetimes';
 import { EntityId } from '@appServices/apollo/types';
-import { getGuids } from '@sharedServices/predicates';
+import { getGuids } from '@appServices/predicates';
 
 const useDatetimeIds = (): EntityId[] => {
 	const datetimes = useDatetimes();
