@@ -15,6 +15,7 @@ const CardViewFilterButton: React.FC<CardViewFilterButtonProps> = React.memo(({ 
 		<EspressoButton
 			buttonType={EspressoButtonType.MINIMAL}
 			className={className}
+			disabled={view === 'card'}
 			icon={<AppstoreFilled />}
 			id={filterId}
 			label={__('card view')}
