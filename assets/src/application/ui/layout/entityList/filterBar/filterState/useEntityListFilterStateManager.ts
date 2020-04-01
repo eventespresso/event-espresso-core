@@ -14,7 +14,6 @@ const useEntityListFilterStateManager = <SortBy = BasicSortBy>(defaultSortBy: So
 		pageNumber: 1,
 		total: null,
 		searchText: '',
-		showEntityFilters: false,
 		sortBy: defaultSortBy,
 		view: 'card',
 	};
@@ -90,12 +89,6 @@ const useEntityListFilterStateManager = <SortBy = BasicSortBy>(defaultSortBy: So
 		[dispatch]
 	);
 
-	const toggleEntityFilters: FSM['toggleEntityFilters'] = useCallback(() => {
-		dispatch({
-			type: 'TOGGLE_ENTITY_FILTERS',
-		});
-	}, [dispatch]);
-
 	return {
 		...state,
 		setSortBy,
@@ -105,7 +98,6 @@ const useEntityListFilterStateManager = <SortBy = BasicSortBy>(defaultSortBy: So
 		setCardView,
 		setTableView,
 		setSearchText,
-		toggleEntityFilters,
 	};
 };
 
