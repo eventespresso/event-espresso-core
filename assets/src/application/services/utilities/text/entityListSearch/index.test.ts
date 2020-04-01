@@ -11,18 +11,21 @@ const entities: TestEntity[] = [
 	{
 		id: 'PGF0ZXRpbWU6ODM=',
 		dbId: 83,
+		cacheId: '',
 		name: 'test',
 		description: 'some desc',
 	},
 	{
 		id: 'QGF0ZXRpbWU6ODU=',
 		dbId: 85,
+		cacheId: '',
 		name: 'just another entity',
 		description: 'test desc',
 	},
 	{
 		id: 'RGF0ZXRpbWU6ODU=',
 		dbId: 86,
+		cacheId: '',
 		name: 'another title',
 		description: null,
 	},
