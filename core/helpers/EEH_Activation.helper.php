@@ -1096,7 +1096,7 @@ class EEH_Activation implements ResettableInterface
                     $QST_ID = $wpdb->insert_id;
 
                     // skip adding email_confirm to a question group
-                    if ( $QST_system === 'email_confirm' ) {
+                    if ($QST_system === 'email_confirm') {
                         continue;
                     }
 
