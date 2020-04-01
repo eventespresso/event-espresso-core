@@ -4,7 +4,6 @@ import { __ } from '@wordpress/i18n';
 import { CalendarDateSwitcher } from '@appCalendars/dateDisplay';
 import TicketActionsMenu from '../actionsMenu/TicketActionsMenu';
 import TicketDetails from './TicketDetails';
-import useTicketItem from '@edtrServices/apollo/queries/tickets/useTicketItem';
 import TicketProvider from '@edtrServices/context/TicketContext';
 import CurrencyInput from '@appInputs/CurrencyInput';
 import EntityCard from '@appLayout/EntityCard';

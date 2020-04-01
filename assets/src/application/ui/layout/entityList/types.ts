@@ -18,7 +18,7 @@ export interface EntityCardListProps<E extends Entity> extends EntityListBasePro
 /**
  * This common type can be used/extended by many UI components
  */
-export interface EntityListItemProps<E extends Entity> {
+export interface EntityListItemProps<E extends Entity = Entity> {
 	id?: EntityId;
 	entity?: E;
 }

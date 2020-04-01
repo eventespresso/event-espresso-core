@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { EntityCardList } from '@appLayout/entityList';
 import DateCard from './DateCard';
 import { useDatesListContext } from '@edtrServices/context/EntityListContext';
