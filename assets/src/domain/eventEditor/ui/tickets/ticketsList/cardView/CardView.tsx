@@ -1,10 +1,12 @@
 import React from 'react';
 import { EntityCardList } from '@appLayout/entityList';
-import { TicketsListViewProps } from '../types';
 import TicketCard from './TicketCard';
+import { useTicketsListContext } from '@edtrServices/context/EntityListContext';
 
-const CardView: React.FC<TicketsListViewProps> = ({ entities }) => {
-	return <EntityCardList EntityCard={TicketCard} entities={entities} />;
+const CardView: React.FC = () => {
+	const { filteredEntities } = useTicketsListContext();
+
+	return <EntityCardList EntityCard={TicketCard} entities={filteredEntities} />;
 };
 
 export default CardView;

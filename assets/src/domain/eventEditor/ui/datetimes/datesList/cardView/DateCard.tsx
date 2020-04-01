@@ -6,23 +6,20 @@ import DateDetails from './DateDetails';
 import DateActionsMenu from '../actionsMenu/DateActionsMenu';
 
 import { DatetimeProvider } from '@edtrServices/context/DatetimeContext';
-import useDatetimeItem from '@edtrServices/apollo/queries/datetimes/useDatetimeItem';
 import statusBgColorClassName from '@sharedEntities/datetimes/helpers/statusBgColorClassName';
 
 import EntityCard from '@appLayout/EntityCard';
-import { EntityListItemProps } from '@appLayout/entityList';
+import type { EntityListItemProps } from '@appLayout/entityList';
 import { InlineEditHeading, InlineEditTextArea } from '@appInputs/InlineEditInput';
 import { useDatesListFilterState } from '@edtrServices/filterState';
 import { useDatetimeMutator } from '@edtrServices/apollo/mutations';
+import type { Datetime } from '@edtrServices/apollo/types';
+import { getPropsAreEqual } from '@appServices/utilities';
 
-const DateCard: React.FC<EntityListItemProps> = React.memo(({ id }) => {
+const DateCard: React.FC<EntityListItemProps<Datetime>> = React.memo(({ entity: date }) => {
 	const { displayStartOrEndDate } = useDatesListFilterState();
-	const date = useDatetimeItem({ id });
-	const { updateEntity } = useDatetimeMutator(id);
 
-	if (!date) {
-		return null;
-	}
+	const { updateEntity } = useDatetimeMutator(date.id);
 
 	const bgClassName = statusBgColorClassName(date);
 
@@ -68,6 +65,6 @@ const DateCard: React.FC<EntityListItemProps> = React.memo(({ id }) => {
 			/>
 		</DatetimeProvider>
 	) : null;
-});
+}, getPropsAreEqual(['entity', 'cacheId']));
 
 export default DateCard;

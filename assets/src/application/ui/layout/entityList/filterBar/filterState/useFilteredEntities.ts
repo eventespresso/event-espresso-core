@@ -4,7 +4,7 @@ import { Entity } from '@appServices/apollo/types';
 import { EntityListFilterStateManager } from './types';
 import useEntityFilterService from './useEntityFilterService';
 
-type ELFSM = EntityListFilterStateManager;
+type ELFSM = EntityListFilterStateManager<any>;
 
 const useFilteredEntities = <D extends string, L extends string, E extends Entity, FS extends ELFSM>(
 	domain: D,

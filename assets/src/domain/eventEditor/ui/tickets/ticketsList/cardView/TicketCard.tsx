@@ -13,11 +13,12 @@ import { InlineEditHeading, InlineEditTextArea } from '@appInputs/InlineEditInpu
 import statusBgColorClassName from '@sharedEntities/tickets/helpers/statusBgColorClassName';
 import { useTicketsListFilterState } from '@edtrServices/filterState';
 import { useTicketMutator } from '@edtrServices/apollo/mutations';
+import { Ticket } from '@edtrServices/apollo/types';
+import { getPropsAreEqual } from '@appServices/utilities';
 
-const TicketCard: React.FC<EntityListItemProps> = React.memo(({ id }) => {
+const TicketCard: React.FC<EntityListItemProps<Ticket>> = React.memo(({ entity: ticket }) => {
 	const { displayStartOrEndDate } = useTicketsListFilterState();
-	const ticket = useTicketItem({ id });
-	const { updateEntity } = useTicketMutator(id);
+	const { updateEntity } = useTicketMutator(ticket.id);
 
 	const bgClassName = statusBgColorClassName(ticket);
 
@@ -79,6 +80,6 @@ const TicketCard: React.FC<EntityListItemProps> = React.memo(({ id }) => {
 			/>
 		</TicketProvider>
 	) : null;
-});
+}, getPropsAreEqual(['entity', 'cacheId']));
 
 export default TicketCard;
