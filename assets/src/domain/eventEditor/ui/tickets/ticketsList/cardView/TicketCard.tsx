@@ -15,7 +15,7 @@ import { useTicketMutator } from '@edtrServices/apollo/mutations';
 import { Ticket } from '@edtrServices/apollo/types';
 import { getPropsAreEqual } from '@appServices/utilities';
 
-const TicketCard: React.FC<EntityListItemProps<Ticket>> = React.memo(({ entity: ticket }) => {
+const TicketCard: React.FC<EntityListItemProps<Ticket>> = ({ entity: ticket }) => {
 	const { displayStartOrEndDate } = useTicketsListFilterState();
 	const { updateEntity } = useTicketMutator(ticket.id);
 
@@ -79,6 +79,6 @@ const TicketCard: React.FC<EntityListItemProps<Ticket>> = React.memo(({ entity: 
 			/>
 		</TicketProvider>
 	) : null;
-}, getPropsAreEqual(['entity', 'cacheId']));
+};
 
-export default TicketCard;
+export default React.memo(TicketCard, getPropsAreEqual(['entity', 'cacheId']));

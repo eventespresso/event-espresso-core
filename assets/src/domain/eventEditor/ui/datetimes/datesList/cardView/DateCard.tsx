@@ -16,7 +16,7 @@ import { useDatetimeMutator } from '@edtrServices/apollo/mutations';
 import type { Datetime } from '@edtrServices/apollo/types';
 import { getPropsAreEqual } from '@appServices/utilities';
 
-const DateCard: React.FC<EntityListItemProps<Datetime>> = React.memo(({ entity: date }) => {
+const DateCard: React.FC<EntityListItemProps<Datetime>> = ({ entity: date }) => {
 	const { displayStartOrEndDate } = useDatesListFilterState();
 
 	const { updateEntity } = useDatetimeMutator(date.id);
@@ -65,6 +65,6 @@ const DateCard: React.FC<EntityListItemProps<Datetime>> = React.memo(({ entity: 
 			/>
 		</DatetimeProvider>
 	) : null;
-}, getPropsAreEqual(['entity', 'cacheId']));
+};
 
-export default DateCard;
+export default React.memo(DateCard, getPropsAreEqual(['entity', 'cacheId']));
