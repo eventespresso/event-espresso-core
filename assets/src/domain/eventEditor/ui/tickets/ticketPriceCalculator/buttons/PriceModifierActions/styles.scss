@@ -1,0 +1,12 @@
+$btn: '.esprs-button.esprs-btn-default';
+$btn-size: 30px;
+
+.ee-price-modifier-actions {
+	#{$btn} {
+		margin-bottom: 0;
+		min-height: $btn-size;
+		min-width: $btn-size;
+		height: $btn-size;
+		width: $btn-size;
+	}
+}
