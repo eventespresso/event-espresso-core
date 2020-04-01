@@ -1,4 +1,4 @@
-import { useReducer } from 'react';
+import { useReducer, useCallback } from 'react';
 
 import reducer from './reducer';
 import { DatetimesFilterState, DatetimesFilterStateManager, DatetimeSales, DatetimeStatus } from './types';
@@ -24,28 +24,37 @@ const useDatesListFilterStateManager = (): FSM => {
 		}
 	};
 
-	const setDisplayStartOrEndDate: FSM['setDisplayStartOrEndDate'] = (displayStartOrEndDate) => {
-		dispatch({
-			type: 'SET_DISPLAY_START_OR_END_DATE',
-			displayStartOrEndDate,
-		});
-	};
+	const setDisplayStartOrEndDate: FSM['setDisplayStartOrEndDate'] = useCallback(
+		(displayStartOrEndDate) => {
+			dispatch({
+				type: 'SET_DISPLAY_START_OR_END_DATE',
+				displayStartOrEndDate,
+			});
+		},
+		[dispatch]
+	);
 
-	const setSales: FSM['setSales'] = (sales) => {
-		resetPageNumber(sales);
-		dispatch({
-			type: 'SET_SALES',
-			sales,
-		});
-	};
+	const setSales: FSM['setSales'] = useCallback(
+		(sales) => {
+			resetPageNumber(sales);
+			dispatch({
+				type: 'SET_SALES',
+				sales,
+			});
+		},
+		[dispatch]
+	);
 
-	const setStatus: FSM['setStatus'] = (status) => {
-		resetPageNumber(status);
-		dispatch({
-			type: 'SET_STATUS',
-			status,
-		});
-	};
+	const setStatus: FSM['setStatus'] = useCallback(
+		(status) => {
+			resetPageNumber(status);
+			dispatch({
+				type: 'SET_STATUS',
+				status,
+			});
+		},
+		[dispatch]
+	);
 
 	return {
 		...state,
