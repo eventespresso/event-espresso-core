@@ -3,7 +3,7 @@ import { useEffect, useMemo } from 'react';
 import { Entity } from '@appServices/apollo/types';
 import { EntityListFilterStateManager } from './types';
 import useEntityFilterService from './useEntityFilterService';
-import { getCacheIds } from '@appServices/predicates';
+import { entityListCacheIdString } from '@appServices/utilities/memo';
 
 type ELFSM = EntityListFilterStateManager<any>;
 
@@ -17,26 +17,26 @@ const useFilteredEntities = <D extends string, L extends string, E extends Entit
 
 	const { applyFilters, applySearches, applySorters } = useEntityFilterService<D, L, E, ELFSM>(domain, listId);
 
+	// const cacheIds = entityListCacheIdString(entityList);
 	// Filter the list
 	const filteredEntities = useMemo<Array<E>>(() => {
 		return applyFilters(entityList, filterState);
-	}, [entityList, filterState]);
+	}, [entityListCacheIdString(entityList), filterState]);
 
 	// search entities
 	const searchResults = useMemo<Array<E>>(() => {
 		return applySearches(filteredEntities, filterState);
-	}, [filteredEntities, searchText]);
+	}, [entityListCacheIdString(filteredEntities), searchText]);
 
 	// sort it
 	const sortedEntities = useMemo<Array<E>>(() => {
 		return applySorters(searchResults, filterState);
 	}, [searchResults, sortBy]);
 
-	const cacheIds = JSON.stringify(getCacheIds(sortedEntities));
 	// paginate it
 	const paginatedEntities = useMemo<Array<E>>(() => {
 		return sortedEntities.slice(perPage * (pageNumber - 1), perPage * pageNumber);
-	}, [cacheIds, perPage, pageNumber]);
+	}, [entityListCacheIdString(sortedEntities), perPage, pageNumber]);
 
 	// Avoid synchronous state update
 	useEffect(() => {
