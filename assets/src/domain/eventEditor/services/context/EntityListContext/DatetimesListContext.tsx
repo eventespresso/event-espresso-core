@@ -6,7 +6,6 @@ import { useFilteredEntities } from '@appLayout/entityList';
 import { domain, datesList } from '@edtrServices/constants';
 import { useDatetimes } from '@edtrServices/apollo/queries';
 import type { Datetime } from '@edtrServices/apollo/types';
-import { getCacheIds } from '@appServices/predicates';
 
 export type DatetimesListContextProps = EntityListContextProps<DatetimesFilterStateManager, Datetime>;
 
@@ -20,11 +19,7 @@ export const DatetimesListProvider: React.FC<ContextProviderProps> = ({ children
 	// memoize filter state
 	const filterState = useMemo(() => filters, [filtersStr]);
 
-	const filteredEntitiesList = useFilteredEntities(domain, datesList, datetimes, filterState);
-
-	const cacheIds = JSON.stringify(getCacheIds(filteredEntitiesList));
-	// memoize filtered entities
-	const filteredEntities = useMemo(() => filteredEntitiesList, [cacheIds]);
+	const filteredEntities = useFilteredEntities(domain, datesList, datetimes, filterState);
 
 	const value: DatetimesListContextProps = { filterState, filteredEntities };
 

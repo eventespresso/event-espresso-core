@@ -3,6 +3,7 @@ import { useEffect, useMemo } from 'react';
 import { Entity } from '@appServices/apollo/types';
 import { EntityListFilterStateManager } from './types';
 import useEntityFilterService from './useEntityFilterService';
+import { getCacheIds } from '@appServices/predicates';
 
 type ELFSM = EntityListFilterStateManager<any>;
 
@@ -31,10 +32,11 @@ const useFilteredEntities = <D extends string, L extends string, E extends Entit
 		return applySorters(searchResults, filterState);
 	}, [searchResults, sortBy]);
 
+	const cacheIds = JSON.stringify(getCacheIds(sortedEntities));
 	// paginate it
 	const paginatedEntities = useMemo<Array<E>>(() => {
 		return sortedEntities.slice(perPage * (pageNumber - 1), perPage * pageNumber);
-	}, [sortedEntities, perPage, pageNumber]);
+	}, [cacheIds, perPage, pageNumber]);
 
 	// Avoid synchronous state update
 	useEffect(() => {

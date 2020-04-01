@@ -6,7 +6,6 @@ import { useFilteredEntities } from '@appLayout/entityList';
 import { domain, ticketsList } from '@edtrServices/constants';
 import { useTickets } from '@edtrServices/apollo/queries';
 import type { Ticket } from '@edtrServices/apollo/types';
-import { getCacheIds } from '@appServices/predicates';
 
 export type TicketsListContextProps = EntityListContextProps<TicketsFilterStateManager, Ticket>;
 
@@ -20,11 +19,7 @@ export const TicketsListProvider: React.FC<ContextProviderProps> = ({ children }
 	// memoize filter state
 	const filterState = useMemo(() => filters, [filtersStr]);
 
-	const filteredEntitiesList = useFilteredEntities(domain, ticketsList, datetimes, filterState);
-
-	const cacheIds = getCacheIds(filteredEntitiesList).join(':');
-	// memoize filtered entities
-	const filteredEntities = useMemo(() => filteredEntitiesList, [cacheIds]);
+	const filteredEntities = useFilteredEntities(domain, ticketsList, datetimes, filterState);
 
 	const value: TicketsListContextProps = { filterState, filteredEntities };
 

@@ -4,6 +4,7 @@ import { EntityTableProps } from './types';
 import { Entity } from '@appServices/apollo/types';
 import { EntityListFilterStateManager } from './filterBar';
 import { ResponsiveTable } from '@appLayout/espressoTable';
+import { getCacheIds } from '@appServices/predicates';
 
 type ELFSM = EntityListFilterStateManager<any>;
 
@@ -32,4 +33,9 @@ const EntityTable = <E extends Entity, FS extends ELFSM>({
 	);
 };
 
-export default EntityTable;
+export default React.memo(EntityTable, (prevProps, nextProps) => {
+	const prevValue = JSON.stringify(getCacheIds(prevProps.entities));
+	const nextValue = JSON.stringify(getCacheIds(nextProps.entities));
+
+	return prevValue === nextValue;
+});
