@@ -10,7 +10,7 @@ import './style.css';
  * adds a styled frame that gives the appearance
  * of a piece of paper on a surface
  */
-const EntityPaperFrame = ({ children, className, entity }) => {
+const EntityPaperFrame = ({ cacheId, children, className, entity }) => {
 	const htmlClassName = classNames(className, 'ee-entity-paper-frame-wrapper');
 	return (
 		<div id={`ee-entity-paper-frame-${entity.id}`} className={htmlClassName}>
