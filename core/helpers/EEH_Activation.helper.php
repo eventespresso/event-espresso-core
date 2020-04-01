@@ -1094,6 +1094,12 @@ class EEH_Activation implements ResettableInterface
                         array('%s', '%s', '%s', '%s', '%d', '%s', '%d', '%d', '%d', '%d')
                     );
                     $QST_ID = $wpdb->insert_id;
+
+                    // skip adding email_confirm to a question group
+                    if ( $QST_system === 'email_confirm' ) {
+                        continue;
+                    }
+
                     // QUESTION GROUP QUESTIONS
                     if (in_array($QST_system, array('fname', 'lname', 'email'))) {
                         $system_question_we_want = EEM_Question_Group::system_personal;
