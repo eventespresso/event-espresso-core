@@ -17,26 +17,30 @@ const useFilteredEntities = <D extends string, L extends string, E extends Entit
 
 	const { applyFilters, applySearches, applySorters } = useEntityFilterService<D, L, E, ELFSM>(domain, listId);
 
-	// const cacheIds = entityListCacheIdString(entityList);
+	let cacheIds: string;
 	// Filter the list
+	cacheIds = entityListCacheIdString(entityList);
 	const filteredEntities = useMemo<Array<E>>(() => {
 		return applyFilters(entityList, filterState);
-	}, [entityListCacheIdString(entityList), filterState]);
+	}, [cacheIds, filterState]);
 
 	// search entities
+	cacheIds = entityListCacheIdString(filteredEntities);
 	const searchResults = useMemo<Array<E>>(() => {
 		return applySearches(filteredEntities, filterState);
-	}, [entityListCacheIdString(filteredEntities), searchText]);
+	}, [cacheIds, searchText]);
 
 	// sort it
+	cacheIds = entityListCacheIdString(searchResults);
 	const sortedEntities = useMemo<Array<E>>(() => {
 		return applySorters(searchResults, filterState);
-	}, [searchResults, sortBy]);
+	}, [cacheIds, sortBy]);
 
 	// paginate it
+	cacheIds = entityListCacheIdString(sortedEntities);
 	const paginatedEntities = useMemo<Array<E>>(() => {
 		return sortedEntities.slice(perPage * (pageNumber - 1), perPage * pageNumber);
-	}, [entityListCacheIdString(sortedEntities), perPage, pageNumber]);
+	}, [cacheIds, perPage, pageNumber]);
 
 	// Avoid synchronous state update
 	useEffect(() => {
