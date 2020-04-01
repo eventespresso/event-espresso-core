@@ -6,8 +6,8 @@ import { Entity } from '@appServices/apollo/types';
 const EntityCardList = <E extends Entity>({ EntityCard, entities }: EntityCardListProps<E>) => {
 	return (
 		<div className='ee-entity-list__card-view'>
-			{entities.map(({ id }) => (
-				<EntityCard id={id} key={id} />
+			{entities.map((entity) => (
+				<EntityCard entity={entity} key={entity.id} />
 			))}
 		</div>
 	);

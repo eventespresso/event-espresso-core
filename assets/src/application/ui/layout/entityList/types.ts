@@ -12,14 +12,15 @@ export interface EntityListBaseProps<E extends Entity> {
 }
 
 export interface EntityCardListProps<E extends Entity> extends EntityListBaseProps<E> {
-	EntityCard: React.ComponentType<EntityListItemProps>;
+	EntityCard: React.ComponentType<EntityListItemProps<E>>;
 }
 
 /**
  * This common type can be used/extended by many UI components
  */
-export interface EntityListItemProps {
-	id: EntityId;
+export interface EntityListItemProps<E extends Entity> {
+	id?: EntityId;
+	entity?: E;
 }
 
 export interface EntityListViewProps<E extends Entity, FS extends ELFSM> extends EntityListBaseProps<E> {
@@ -43,8 +44,7 @@ export interface EntityTableProps<E extends Entity, FS extends ELFSM> extends En
 
 export type EntityListComponent<E extends Entity, FS extends ELFSM> = React.ComponentType<EntityListViewProps<E, FS>>;
 
-export interface EntityListProps<E extends Entity, FS extends ELFSM> extends EntityListViewProps<E, FS> {
-	CardView: EntityListComponent<E, FS>;
+export interface EntityListProps<E extends Entity, FS extends ELFSM> extends Partial<EntityListViewProps<E, FS>> {
 	domain: string;
 	entityType: TypeName;
 	footer: React.ReactNode;
@@ -54,5 +54,5 @@ export interface EntityListProps<E extends Entity, FS extends ELFSM> extends Ent
 	loadingText?: string;
 	noResultsDesc?: string;
 	noResultsTitle?: string;
-	TableView: EntityListComponent<E, FS>;
+	renderList?: () => React.ReactNode;
 }
