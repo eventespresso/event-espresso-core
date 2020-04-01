@@ -1,0 +1,13 @@
+$input-number: 'input[type=' number ']';
+
+.ee-input {
+	&__price-field {
+		&--has-error {
+			// this was used to increase specificity, more info: https://sass-lang.com/documentation/at-rules/at-root
+			@at-root #{$input-number}#{&} {
+				background-color: rgb(255, 255, 255);
+				border-color: rgb(255, 77, 79);
+			}
+		}
+	}
+}
