@@ -138,6 +138,7 @@ class EEH_Activation implements ResettableInterface
         EEH_Activation::insert_default_status_codes();
         EEH_Activation::generate_default_message_templates();
         EEH_Activation::create_no_ticket_prices_array();
+        EEH_Activation::removeEmailConfirmFromAddressGroup();
 
         EEH_Activation::validate_messages_system();
         EEH_Activation::insert_default_payment_methods();
@@ -1094,7 +1095,7 @@ class EEH_Activation implements ResettableInterface
                     // QUESTION GROUP QUESTIONS
                     if (in_array($QST_system, $personal_system_group_questions)) {
                         $system_question_we_want = EEM_Question_Group::system_personal;
-                    } else if (in_array($QST_system, $address_system_group_questions)) {
+                    } elseif (in_array($QST_system, $address_system_group_questions)) {
                         $system_question_we_want = EEM_Question_Group::system_address;
                     } else {
                         // QST_system should not be assigned to any group
@@ -1667,5 +1668,27 @@ class EEH_Activation implements ResettableInterface
     {
         self::$_default_creator_id                             = null;
         self::$_initialized_db_content_already_in_this_request = false;
+    }
+
+    /**
+     * Removes 'email_confirm' from the Address info question group on activation
+     * @return void
+     */
+    public static function removeEmailConfirmFromAddressGroup()
+    {
+
+        // Pull the email_confirm question ID.
+        $email_confirm_question_id = EEM_Question::instance()->get_Question_ID_from_system_string(
+            EEM_Attendee::system_question_email_confirm
+        );
+        // Remove the email_confirm question group from the address group questions.
+        EEM_Question_Group_Question::instance()->delete(
+            array(
+                array(
+                    'QST_ID' => $email_confirm_question_id,
+                    'Question_Group.QSG_system' => EEM_Question_Group::system_address,
+                ),
+            )
+        );
     }
 }
