@@ -5,6 +5,7 @@ import TicketRegistrationsLink from '../../TicketRegistrationsLink';
 import { EntityDetailsPanel } from '@application/ui/display/entityDetailsPanel';
 import { Ticket } from '@edtrServices/apollo/types';
 import TicketQuantity from './TicketQuantity';
+import { getPropsAreEqual } from '@appServices/utilities';
 
 interface TicketDetailsProps {
 	ticket: Ticket;
@@ -31,4 +32,4 @@ const TicketDetails: React.FC<TicketDetailsProps> = React.memo(({ ticket }) => {
 	return <EntityDetailsPanel details={details} className='ee-editor-ticket-details-sold-rsrvd-qty-div' />;
 });
 
-export default TicketDetails;
+export default React.memo(TicketDetails, getPropsAreEqual(['ticket', 'cacheId']));

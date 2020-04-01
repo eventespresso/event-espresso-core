@@ -2,6 +2,7 @@ import React from 'react';
 import classNames from 'classnames';
 
 import EntityIDs from '@appDisplay/EntityIDs';
+import { getPropsAreEqual } from '@appServices/utilities';
 import './style.css';
 
 /**
@@ -21,4 +22,4 @@ const EntityPaperFrame = ({ children, className, entity }) => {
 	);
 };
 
-export default EntityPaperFrame;
+export default React.memo(EntityPaperFrame, getPropsAreEqual(['entity', 'cacheId']));

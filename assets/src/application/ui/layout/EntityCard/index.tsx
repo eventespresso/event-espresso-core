@@ -2,6 +2,7 @@ import React from 'react';
 
 import EntityPaperFrame from '../EntityPaperFrame';
 import { EntityCardProps } from './types';
+import { getPropsAreEqual } from '@appServices/utilities';
 import './styles.scss';
 
 const EntityCard: React.FC<EntityCardProps> = ({ actionsMenu, details, entity, sidebar, reverse = false }) => {
@@ -20,4 +21,4 @@ const EntityCard: React.FC<EntityCardProps> = ({ actionsMenu, details, entity, s
 	);
 };
 
-export default EntityCard;
+export default React.memo(EntityCard, getPropsAreEqual(['entity', 'cacheId']));
