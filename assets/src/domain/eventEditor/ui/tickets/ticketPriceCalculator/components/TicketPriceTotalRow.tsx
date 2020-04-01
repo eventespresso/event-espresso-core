@@ -1,5 +1,5 @@
 import React from 'react';
-import { DownCircleOutlined, UpCircleOutlined } from '@ant-design/icons';
+import { DownCircleFilled, UpCircleFilled } from '@ant-design/icons';
 import { __ } from '@wordpress/i18n';
 
 import { EspressoButton } from '@application/ui/input';
@@ -13,7 +13,7 @@ import styles from '../inlineStyles';
 const TicketPriceTotalRow: React.FC = () => {
 	const { afterAmount, beforeAmount, formatAmount } = useMoneyDisplay();
 	const { reverseCalculate, toggleCalcDir } = useDataState();
-	const calcDirIcon = reverseCalculate ? <UpCircleOutlined /> : <DownCircleOutlined />;
+	const calcDirIcon = reverseCalculate ? <UpCircleFilled /> : <DownCircleFilled />;
 
 	return (
 		<tr>

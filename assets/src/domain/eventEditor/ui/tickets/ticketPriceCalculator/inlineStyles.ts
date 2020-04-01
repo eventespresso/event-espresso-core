@@ -8,7 +8,7 @@ const fullWidth: React.CSSProperties = { width: '100%' };
 const inlineBlock: React.CSSProperties = { display: 'inline-block' };
 
 const sign: React.CSSProperties = { ...borderBox, ...inlineBlock, minWidth: '2rem' };
-const actions: React.CSSProperties = { ...cell, ...centered };
+const actions: React.CSSProperties = { ...cell };
 const aft: React.CSSProperties = { ...sign, textAlign: 'left' };
 const amount: React.CSSProperties = { ...cell, maxWidth: '125px', ...centered };
 const b4: React.CSSProperties = { ...alignRight, ...sign };

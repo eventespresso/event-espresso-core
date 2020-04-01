@@ -1,5 +1,5 @@
 import React from 'react';
-import { PlusCircleOutlined } from '@ant-design/icons';
+import { PlusCircleFilled } from '@ant-design/icons';
 import { EspressoButton } from '@application/ui/input';
 
 interface AddPriceModifierButtonProps {
@@ -7,7 +7,7 @@ interface AddPriceModifierButtonProps {
 }
 
 const AddPriceModifierButton: React.FC<AddPriceModifierButtonProps> = ({ addPriceModifier }) => (
-	<EspressoButton icon={<PlusCircleOutlined />} onClick={addPriceModifier} />
+	<EspressoButton icon={<PlusCircleFilled />} onClick={addPriceModifier} />
 );
 
 export default AddPriceModifierButton;

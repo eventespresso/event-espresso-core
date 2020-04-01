@@ -1,5 +1,5 @@
 import React from 'react';
-import { EspressoButton, EspressoButtonProps } from '@application/ui/input';
+import { EspressoButton, EspressoButtonProps, Icon } from '@application/ui/input';
 import { __ } from '@wordpress/i18n';
 
 import { BaseProps } from '../types';
@@ -15,7 +15,7 @@ const TicketPriceCalculatorButton: React.FC<TPCButtonProps> = ({ ticketId, ...bu
 	return (
 		<>
 			<EspressoButton
-				icon='calculator'
+				icon={Icon.CALCULATOR}
 				onClick={openModal}
 				tooltip={__('ticket price calculator')}
 				tooltipProps={{ placement: 'left' }}
