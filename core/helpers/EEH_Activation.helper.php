@@ -898,19 +898,15 @@ class EEH_Activation implements ResettableInterface
         $SQL = "SELECT QST_system FROM $table_name WHERE QST_system != ''";
         // what we have
         $questions = $wpdb->get_col($SQL);
-        // what we should have
-        $QST_systems = array(
-            'fname',
-            'lname',
-            'email',
-            'email_confirm',
-            'address',
-            'address2',
-            'city',
-            'country',
-            'state',
-            'zip',
-            'phone',
+        // all system questions
+        $personal_system_group_questions = ['fname', 'lname', 'email'];
+        $address_system_group_questions = ['address', 'address2', 'city', 'country', 'state', 'zip', 'phone'];
+        $system_questions_not_in_group = ['email_confirm'];
+        // merge all of the system questions we should have
+        $QST_systems = array_merge(
+            $personal_system_group_questions,
+            $address_system_group_questions,
+            $system_questions_not_in_group
         );
         $order_for_group_1 = 1;
         $order_for_group_2 = 1;
