@@ -1,32 +1,18 @@
-import React, { Suspense } from 'react';
+import React from 'react';
 import { __ } from '@wordpress/i18n';
 
 import AddNewTicketButton from './AddNewTicketButton';
 import { EntityList } from '@appLayout/entityList';
 import { legendConfig } from './config';
-import { LoadingNotice } from '@appDisplay/loadingNotice';
 import { TicketsListProvider, withEntityListContext } from '@edtrServices/context/EntityListContext';
 import { TypeName } from '@appServices/apollo/status';
 import { useTicketsListFilterState } from '@edtrServices/filterState';
 import { domain, ticketsList } from '@edtrServices/constants';
-
-const CardView = React.lazy(() => import(/* webpackChunkName: "tickets-card-view" */ './cardView/CardView'));
-const TableView = React.lazy(() => import(/* webpackChunkName: "tickets-table-view" */ './tableView/TableView'));
+import { RenderCardView } from './cardView';
+import { RenderTableView } from './tableView';
 
 const TicketsList: React.FC = () => {
 	const filterState = useTicketsListFilterState();
-
-	const RenderCardView = () => (
-		<Suspense fallback={<LoadingNotice />}>
-			<CardView />
-		</Suspense>
-	);
-
-	const RenderTableView = () => (
-		<Suspense fallback={<LoadingNotice />}>
-			<TableView />
-		</Suspense>
-	);
 
 	return (
 		<EntityList
