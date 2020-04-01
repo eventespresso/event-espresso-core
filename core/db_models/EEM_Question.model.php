@@ -331,8 +331,7 @@ class EEM_Question extends EEM_Soft_Delete_Base
                     EEM_Attendee::system_question_state,
                     EEM_Attendee::system_question_country,
                     EEM_Attendee::system_question_zip,
-                    EEM_Attendee::system_question_phone,
-                    EEM_Attendee::system_question_email_confirm
+                    EEM_Attendee::system_question_phone
                 );
                 break;
         }
