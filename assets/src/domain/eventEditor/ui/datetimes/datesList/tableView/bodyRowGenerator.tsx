@@ -1,45 +1,40 @@
 import React from 'react';
 import { format } from 'date-fns';
-import { createSelector } from 'reselect';
+import { __ } from '@wordpress/i18n';
 
 import DateRegistrationsLink from '@edtrUI/datetimes/DateRegistrationsLink';
 import DateActionsMenu from '@edtrUI/datetimes/datesList/actionsMenu/DateActionsMenu';
 import { Datetime } from '@edtrServices/apollo/types';
-import { filterCellByStartOrEndDate, DisplayStartOrEndDate } from '@sharedServices/filterState';
+import { filterCellByStartOrEndDate } from '@sharedServices/filterState';
 import { ENTITY_LIST_DATE_TIME_FORMAT } from '@appConstants/dateFnsFormats';
 import { getBackgroundColorClassName, status } from '@sharedEntities/datetimes/helpers';
+import { InlineEditText } from '@appInputs/InlineEditInput';
 import { shortenGuid } from '@appServices/utilities/text';
+import { useDatetimeMutator } from '@edtrServices/apollo/mutations';
 import DateCapacity from '../cardView/DateCapacity';
-import { BodyRowGeneratorFn, BodyRowGeneratorFnProps } from '@appLayout/entityList';
+import { BodyRowGeneratorFn } from '@appLayout/entityList';
 import { DatetimesFilterStateManager } from '@edtrServices/filterState';
-import { EditableName } from '../editable';
-import { BodyRow } from '@appLayout/espressoTable';
 
 import '@application/ui/styles/root/entity-status.css';
 
-type DFSM = DatetimesFilterStateManager;
+type DatesTableBodyRowGen = BodyRowGeneratorFn<Datetime, DatetimesFilterStateManager>;
 
-type DatesTableBodyRowGenProps = BodyRowGeneratorFnProps<Datetime, DFSM>;
-
-type BodyRowGeneratorSelector<R = any> = (props: DatesTableBodyRowGenProps) => R;
-
-type DatesTableBodyRowGen = BodyRowGeneratorFn<Datetime, DFSM>;
-
-const getDisplayStartOrEndDate: BodyRowGeneratorSelector<DisplayStartOrEndDate> = (props) => {
-	return props.filterState.displayStartOrEndDate;
-};
-const getEntity: BodyRowGeneratorSelector<Datetime> = (props) => props.entity;
-
-const bodyRowGenCombiner = (displayStartOrEndDate: DisplayStartOrEndDate, datetime: Datetime): BodyRow => {
+/**
+ * EditorDateEntityListItem
+ * Displays Event Date as a table row similar to existing eventEntity editor UI
+ */
+const bodyRowGenerator: DatesTableBodyRowGen = ({ entity: datetime, filterState }) => {
+	const { displayStartOrEndDate } = filterState;
 	const bgClassName = getBackgroundColorClassName(datetime);
 	const id = datetime.dbId || shortenGuid(datetime.id);
 	const statusClassName = status(datetime);
+	const { updateEntity } = useDatetimeMutator(datetime.id);
 
 	const capacity = {
 		key: 'capacity',
 		type: 'cell',
 		className: 'ee-date-list-cell ee-date-list-col-capacity ee-rspnsv-table-column-tiny ee-number-column',
-		value: <DateCapacity entity={datetime} />,
+		value: <DateCapacity datetime={datetime} />,
 	};
 
 	const name = {
@@ -47,7 +42,18 @@ const bodyRowGenCombiner = (displayStartOrEndDate: DisplayStartOrEndDate, dateti
 		type: 'cell',
 		className:
 			'ee-date-list-cell ee-date-list-col-name ee-rspnsv-table-column-bigger ee-rspnsv-table-hide-on-mobile',
-		value: <EditableName className={'ee-focus-priority-5'} entity={datetime} />,
+		value: (
+			<InlineEditText
+				className={'ee-focus-priority-5'}
+				onChange={(name: string): void => {
+					if (name !== datetime.name) {
+						updateEntity({ name });
+					}
+				}}
+			>
+				{datetime.name ? datetime.name : __('Edit title...')}
+			</InlineEditText>
+		),
 	};
 
 	const cellsData = [
@@ -108,14 +114,5 @@ const bodyRowGenCombiner = (displayStartOrEndDate: DisplayStartOrEndDate, dateti
 		type: 'row',
 	};
 };
-
-/**
- * EditorDateEntityListItem
- * Displays Event Date as a table row similar to existing eventEntity editor UI
- */
-const bodyRowGenerator: DatesTableBodyRowGen = createSelector<DatesTableBodyRowGenProps, DisplayStartOrEndDate, Datetime, BodyRow>(
-	[getDisplayStartOrEndDate, getEntity],
-	bodyRowGenCombiner
-);
 
 export default bodyRowGenerator;

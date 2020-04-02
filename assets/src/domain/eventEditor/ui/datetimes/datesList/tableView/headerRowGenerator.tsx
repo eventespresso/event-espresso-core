@@ -1,24 +1,20 @@
 import React from 'react';
 import { __ } from '@wordpress/i18n';
-import { createSelector } from 'reselect';
 
 import { Cell } from '@appLayout/espressoTable';
-import { filterCellByStartOrEndDate, DisplayStartOrEndDate } from '@sharedServices/filterState';
+import { filterCellByStartOrEndDate } from '@sharedServices/filterState';
 import { HeaderRowGeneratorFn } from '@appLayout/entityList';
 import { DatetimesFilterStateManager } from '@edtrServices/filterState';
-import { HeaderRow } from '@appLayout/espressoTable';
 
-type DFSM = DatetimesFilterStateManager;
+type DatesTableHeaderRowGen = HeaderRowGeneratorFn<DatetimesFilterStateManager>;
 
-type HeaderRowGeneratorSelector<R = any> = (filterState: DFSM) => R;
+/**
+ * DatesListTableHeader
+ * header details for the Dates list table
+ */
+const headerRowGenerator: DatesTableHeaderRowGen = (filterState) => {
+	const { displayStartOrEndDate } = filterState;
 
-type DatesTableHeaderRowGen = HeaderRowGeneratorFn<DFSM>;
-
-const getDisplayStartOrEndDate: HeaderRowGeneratorSelector<DisplayStartOrEndDate> = (filterState) => {
-	return filterState.displayStartOrEndDate;
-};
-
-const headerRowGenCombiner = (displayStartOrEndDate: DisplayStartOrEndDate): HeaderRow => {
 	const cellsData: Array<Cell> = [
 		{
 			key: 'stripe',
@@ -107,14 +103,5 @@ const headerRowGenCombiner = (displayStartOrEndDate: DisplayStartOrEndDate): Hea
 		type: 'row',
 	};
 };
-
-/**
- * DatesListTableHeader
- * header details for the Dates list table
- */
-const headerRowGenerator: DatesTableHeaderRowGen = createSelector<DFSM, DisplayStartOrEndDate, HeaderRow>(
-	[getDisplayStartOrEndDate],
-	headerRowGenCombiner
-);
 
 export default headerRowGenerator;
