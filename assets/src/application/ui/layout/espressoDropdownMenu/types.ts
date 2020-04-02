@@ -11,6 +11,7 @@ export interface EspressoDropdownMenuProps extends AnyObject {
 }
 
 export interface EspressoDropdownMenuItemProps extends AnyObject {
+	focusOnMount: boolean;
 	icon?: string;
 	onClick?: () => void;
 	title?: string;

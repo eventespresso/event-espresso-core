@@ -1,12 +1,12 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useRef } from 'react';
 import { __ } from '@wordpress/i18n';
 
-import { Edit } from '@application/ui/layout/entityActionsMenu/entityMenuItems';
+import { Edit, MenuItemProps } from '@application/ui/layout/entityActionsMenu/entityMenuItems';
 import { useDatetimeContext } from '@edtrHooks/index';
 import { useDatetimeItem } from '@edtrServices/apollo/queries';
 import { useFormModal } from '@appLayout/formModal';
 
-const EditDate: React.FC = (props) => {
+const EditDate: React.FC<MenuItemProps> = (props) => {
 	const { id } = useDatetimeContext();
 	const datetime = useDatetimeItem({ id });
 	const { openEditor } = useFormModal();
@@ -19,8 +19,9 @@ const EditDate: React.FC = (props) => {
 			}),
 		[id]
 	);
+	const ref = useRef();
 
-	return <Edit {...props} onClick={onClick} title={__('edit datetime')} />;
+	return <Edit {...props} focusOnMount ref={ref} onClick={onClick} title={__('edit datetime')} />;
 };
 
 export default EditDate;

@@ -3,7 +3,7 @@ import classNames from 'classnames';
 import { DOWN } from '@wordpress/keycodes';
 
 import { AnyObject } from '@appServices/utilities/types';
-import { EspressoButton } from '@application/ui/input';
+import { ButtonType, EspressoButton } from '@application/ui/input';
 import { mergeProps } from './utils';
 
 interface Props extends AnyObject {
@@ -14,11 +14,12 @@ interface Props extends AnyObject {
 	toggleProps?: AnyObject;
 }
 
-const Toggle: React.FC<Props> = ({ icon, isOpen, label, onToggle, toggleProps }) => {
+const Toggle = React.forwardRef<ButtonType, Props>(({ icon, isOpen, label, onToggle, toggleProps }, ref) => {
 	const openOnArrowDown = (event: React.KeyboardEvent) => {
+		console.log('%c onToggle openOnArrowDown()', 'color: DeepSkyBlue;');
+		console.log('%c 	isOpen', 'color: DeepSkyBlue;', isOpen);
+		console.log('%c 	event', 'color: DeepSkyBlue;', event);
 		if (!isOpen && event.keyCode === DOWN) {
-			event.preventDefault();
-			event.stopPropagation();
 			onToggle(event);
 		}
 	};
@@ -51,10 +52,11 @@ const Toggle: React.FC<Props> = ({ icon, isOpen, label, onToggle, toggleProps })
 			aria-haspopup='true'
 			aria-expanded={isOpen}
 			tooltip={label}
+			ref={ref}
 		>
 			{mergedToggleProps.children}
 		</EspressoButton>
 	);
-};
+});
 
 export default Toggle;

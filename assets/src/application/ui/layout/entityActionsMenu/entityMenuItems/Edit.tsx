@@ -5,7 +5,7 @@ import { EspressoDropdownMenuItem } from '@application/ui/layout/espressoDropdow
 import { Icon } from '@application/ui/input';
 import { MenuItemProps } from './types';
 
-const Edit: React.FC<MenuItemProps> = ({ onClick, ...props }) => {
+const Edit = ({ onClick, ...props }: MenuItemProps, ref: React.RefObject<React.ComponentType>) => {
 	const title = props.title || __('edit');
 	return (
 		<EspressoDropdownMenuItem
@@ -14,8 +14,9 @@ const Edit: React.FC<MenuItemProps> = ({ onClick, ...props }) => {
 			onClick={onClick}
 			popoverProps={{ position: 'right center' }}
 			title={title}
+			ref={ref}
 		/>
 	);
 };
 
-export default Edit;
+export default React.forwardRef<React.ComponentType, MenuItemProps>(Edit);
