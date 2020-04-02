@@ -11,9 +11,10 @@ const DeletePriceModifierButton: React.FC<PriceModifierProps> = ({ price }) => {
 	const onClick = useCallback(() => deletePrice(price.id, price.isNew), [price.id, price.isNew]);
 
 	return (
-		<ConfirmDelete onConfirm={onClick}>
-			<EspressoButton icon={Icon.TRASH} tooltip={__('delete price modifier')} />;
-		</ConfirmDelete>
+		<ConfirmDelete
+			children={<EspressoButton icon={Icon.TRASH} tooltip={__('delete price modifier')} />}
+			onConfirm={onClick}
+		/>
 	);
 };
 
