@@ -15,7 +15,7 @@ const useSubmitButtonProps = ({ onCloseModal }: Props): ButtonProps => {
 			submitPrices();
 			onCloseModal();
 		},
-		[submitPrices]
+		[submitPrices, onCloseModal]
 	);
 
 	return {
