@@ -1,14 +1,14 @@
 import React, { createContext } from 'react';
 import pathOr from 'ramda/src/pathOr';
 
-import useToaster from '../../../../../application/services/toaster/useToaster';
+import useToaster from '@appServices/toaster/useToaster';
 import { ContextProviderProps } from '../types';
 
-const EventEditorEventIdContext = createContext<number | null>(null);
+const EventIdContext = createContext<number | null>(null);
 
-const { Provider } = EventEditorEventIdContext;
+const { Provider } = EventIdContext;
 
-const EventEditorEventIdProvider: React.FC<ContextProviderProps> = ({ children }) => {
+const EventIdProvider: React.FC<ContextProviderProps> = ({ children }) => {
 	const toaster = useToaster();
 	const eventId = pathOr<number>(0, ['eeEditorData', 'event', 'dbId'], window);
 
@@ -18,4 +18,4 @@ const EventEditorEventIdProvider: React.FC<ContextProviderProps> = ({ children }
 	return eventId ? <Provider value={eventId}>{children}</Provider> : null;
 };
 
-export { EventEditorEventIdContext, EventEditorEventIdProvider };
+export { EventIdContext, EventIdProvider };

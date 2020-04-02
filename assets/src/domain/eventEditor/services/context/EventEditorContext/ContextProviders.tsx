@@ -8,7 +8,7 @@ import { StatusProvider } from '../../../../../application/services/context/Stat
 import { ModalProvider } from '../../../../../application/services/context/ModalProvider';
 import { ConfigProvider } from '../../../../../application/services/context/ConfigProvider';
 import { FormModalProvider } from '../../../../../application/services/context/FormModalProvider';
-import { EventEditorEventIdProvider } from '../EventContext';
+import { EventIdProvider } from '../EventContext';
 import { ContextProvider } from '../types';
 
 /**
@@ -41,13 +41,13 @@ export const CommonProviders: ContextProvider = ({ children }) => (
 	<ToastProvider>
 		<StatusProvider>
 			<ConfigProvider>
-				<EventEditorEventIdProvider>
+				<EventIdProvider>
 					<RelationsProvider>
 						<FormModalProvider>
 							<ModalProvider>{children}</ModalProvider>
 						</FormModalProvider>
 					</RelationsProvider>
-				</EventEditorEventIdProvider>
+				</EventIdProvider>
 			</ConfigProvider>
 		</StatusProvider>
 	</ToastProvider>
