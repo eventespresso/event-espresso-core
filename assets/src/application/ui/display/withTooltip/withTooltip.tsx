@@ -1,7 +1,10 @@
 import React from 'react';
 import classNames from 'classnames';
+import invariant from 'invariant';
 import { Tooltip as DefaultTooltip } from 'antd';
+import { v4 as uuidv4 } from 'uuid';
 import { __ } from '@wordpress/i18n';
+
 import { isEmpty } from '@appServices/utilities/string';
 import { withTooltipProps } from './types';
 
@@ -11,15 +14,17 @@ const withTooltip = <P extends withTooltipProps>(WrappedComponent: React.Compone
 	type Ref = React.Ref<typeof WrappedComponent>;
 	type refProps = { forwardedRef: Ref };
 	const WithTooltip: React.ComponentType<P & refProps> = ({
-		buttonText,
 		forwardedRef,
 		showTooltipOnMobile = false,
 		tooltip,
 		tooltipProps,
 		...props
 	}) => {
-		const ariaLabel = isEmpty(buttonText) && !isEmpty(tooltip) ? tooltip : null;
+		if (!tooltip) {
+			return <WrappedComponent {...(props as P)} ref={forwardedRef} />;
+		}
 		let toolTipped: React.ReactElement;
+		const tooltipID = props?.id ? `${props.id}-tooltip` : uuidv4();
 
 		if (showTooltipOnMobile) {
 			const className = classNames({
@@ -32,8 +37,7 @@ const withTooltip = <P extends withTooltipProps>(WrappedComponent: React.Compone
 				<div className='ee-mobile-help-text__btn-wrap'>
 					<WrappedComponent
 						{...(props as P)}
-						aria-label={ariaLabel}
-						buttonText={buttonText}
+						aria-describedby={tooltipID}
 						ref={forwardedRef}
 						tooltip={tooltip}
 					/>
@@ -42,17 +46,11 @@ const withTooltip = <P extends withTooltipProps>(WrappedComponent: React.Compone
 			);
 		} else {
 			toolTipped = (
-				<WrappedComponent
-					{...(props as P)}
-					aria-label={ariaLabel}
-					buttonText={buttonText}
-					ref={forwardedRef}
-					tooltip={tooltip}
-				/>
+				<WrappedComponent {...(props as P)} aria-describedby={tooltipID} ref={forwardedRef} tooltip={tooltip} />
 			);
 		}
 		return (
-			<DefaultTooltip {...tooltipProps} title={tooltip}>
+			<DefaultTooltip {...tooltipProps} title={tooltip} id={tooltipID}>
 				{toolTipped}
 			</DefaultTooltip>
 		);
