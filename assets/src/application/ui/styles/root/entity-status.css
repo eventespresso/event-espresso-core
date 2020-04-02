@@ -201,7 +201,7 @@
 
 .ee-status-background-color-DTA {
 	background-color: var(--ee-color-green);
-	color: var(--ee-text-on-green);
+	color: var(--ee-color-white);
 }
 
 /** datetime upcoming **/
@@ -284,7 +284,7 @@
 
 .ee-status-background-color-TKO {
 	background-color: var(--ee-color-green);
-	color: var(--ee-text-on-green);
+	color: var(--ee-color-white);
 }
 
 /** ticket pending **/
