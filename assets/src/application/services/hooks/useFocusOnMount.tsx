@@ -3,7 +3,7 @@ import React, { useEffect } from 'react';
 /**
  * utility hook for setting focus to an HTML element when the component that renders it mounts
  */
-const useFocusOnMount = <T extends HTMLElement>(focusOnMount: boolean, ref: React.RefObject<T>): void => {
+const useFocusOnMount = <T extends React.ComponentType>(focusOnMount: boolean, ref: React.RefObject<T>): void => {
 	useEffect(() => {
 		if (!focusOnMount) {
 			return;
