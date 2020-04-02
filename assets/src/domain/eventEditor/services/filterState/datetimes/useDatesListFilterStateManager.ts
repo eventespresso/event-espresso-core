@@ -55,7 +55,7 @@ const useDatesListFilterStateManager = (): FSM => {
 			setSales,
 			setStatus,
 		}),
-		[state, entityFilterState]
+		[...Object.values(state), ...Object.values(entityFilterState.getState())]
 	);
 };
 

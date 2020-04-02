@@ -63,7 +63,7 @@ const useTicketsListFilterStateManager = (): FSM => {
 			setStatus,
 			toggleIsChained,
 		}),
-		[state, entityFilterState]
+		[...Object.values(state), ...Object.values(entityFilterState.getState())]
 	);
 };
 

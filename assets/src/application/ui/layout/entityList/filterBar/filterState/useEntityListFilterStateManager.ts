@@ -19,6 +19,8 @@ const useEntityListFilterStateManager = <SortBy = BasicSortBy>(defaultSortBy: So
 	};
 	const [state, dispatch] = useReducer(getReducer<SortBy>(), initialState);
 
+	const getState: FSM['getState'] = useCallback(() => state, Object.values(state));
+
 	const setSortBy: FSM['setSortBy'] = useCallback((sortBy) => {
 		dispatch({
 			type: 'SET_SORT_BY',
@@ -77,6 +79,7 @@ const useEntityListFilterStateManager = <SortBy = BasicSortBy>(defaultSortBy: So
 	return useMemo(
 		() => ({
 			...state,
+			getState,
 			setSortBy,
 			setPerPage,
 			setPageNumber,
@@ -85,7 +88,7 @@ const useEntityListFilterStateManager = <SortBy = BasicSortBy>(defaultSortBy: So
 			setTableView,
 			setSearchText,
 		}),
-		[state]
+		Object.values(state)
 	);
 };
 

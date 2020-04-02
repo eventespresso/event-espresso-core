@@ -54,7 +54,7 @@ const useFilterStateManager: FilterStateManagerHook = () => {
 			setShowTrashedDates,
 			setShowTrashedTickets,
 		}),
-		[state]
+		Object.values(state)
 	);
 };
 
