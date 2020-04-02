@@ -9,6 +9,7 @@
 	border-collapse: separate !important;
 	border-spacing: 0 var(--ee-padding-nano) !important;
 	box-sizing: border-box;
+	color: var(--ee-default-text-color);
 	display: table;
 	table-layout: fixed;
 	text-align: left;
@@ -179,6 +180,7 @@
 	.ee-rspnsv-table-body-td.ee-rspnsv-table-column-nano:not(.ee-entity-list-status-stripe),
 	.ee-rspnsv-table-footer-th.ee-rspnsv-table-column-nano:not(.ee-entity-list-status-stripe) {
 		padding: 1px;
+		min-width: 50px;
 		width: 1.25%;
 	}
 
@@ -186,6 +188,7 @@
 	.ee-rspnsv-table-body-td.ee-rspnsv-table-column-micro:not(.ee-entity-list-status-stripe),
 	.ee-rspnsv-table-footer-th.ee-rspnsv-table-column-micro:not(.ee-entity-list-status-stripe) {
 		padding: var(--ee-padding-nano);
+		min-width: 70px;
 		width: 2.5%;
 	}
 
@@ -1555,17 +1558,24 @@
 			display: inline-block;
 			float: left;
 			margin: auto 0;
-			padding-right: var(--ee-padding-smaller);
+			padding-right: var(--ee-padding-small);
 			text-align: right;
 			vertical-align: middle;
 			visibility: visible;
 			width: 38.2%;
 		}
 
-		.ee-rspnsv-table-body-td .ee-rspnsv-table-mobile-only-column-value {
+		.ee-rspnsv-table-body-td .ee-rspnsv-table-mobile-only-column-value,
+		.ee-rspnsv-table-body-td .ee-rspnsv-table-mobile-only-column-value .ee-inline-edit {
+			color: var(--ee-default-text-color-super-high-contrast);
 			display: inline-block;
-			padding-left: var(--ee-padding-smaller);
 			width: 61.8%;
+		}
+
+		.ee-rspnsv-table-body-td.ee-entity-list-status-stripe .ee-rspnsv-table-mobile-only-column-value {
+			color: var(--ee-color-white);
+			text-align: center;
+			width: 100%;
 		}
 
 		.ee-rspnsv-table-long-label,
@@ -1629,6 +1639,9 @@
 			padding: var(--ee-padding-micro) var(--ee-padding-smaller);
 			width: 100%;
 		}
+		.ee-rspnsv-table-body-td.ee-col-1 {
+			padding-top: var(--ee-padding-small) !important;
+		}
 	}
 
 	/* COLUMN SIZES */
@@ -1636,6 +1649,7 @@
 	.ee-rspnsv-table {
 		.ee-rspnsv-table-header-th.ee-entity-list-status-stripe,
 		.ee-rspnsv-table-body-td.ee-entity-list-status-stripe {
+			max-width: unset;
 			width: 0.4%;
 		}
 	}
@@ -1649,6 +1663,7 @@
 	.ee-rspnsv-table {
 		.ee-rspnsv-table-header-th.ee-entity-list-status-stripe,
 		.ee-rspnsv-table-body-td.ee-entity-list-status-stripe {
+			max-width: unset;
 			width: 0.5%;
 		}
 	}

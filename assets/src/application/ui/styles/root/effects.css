@@ -15,3 +15,31 @@
 		transform: rotate(-360deg);
 	}
 }
+
+.ee-fade-in {
+	opacity: 1;
+	animation: ee-fade-in-opacity 0.25s ease-in-out 1;
+}
+
+@keyframes ee-fade-in-opacity {
+	0% {
+		opacity: 0;
+	}
+	100% {
+		opacity: 1;
+	}
+}
+
+.ee-fade-out {
+	opacity: 0;
+	animation: ee-fade-out-opacity 0.25s ease-in-out 1;
+}
+
+@keyframes ee-fade-out-opacity {
+	0% {
+		opacity: 1;
+	}
+	100% {
+		opacity: 0;
+	}
+}

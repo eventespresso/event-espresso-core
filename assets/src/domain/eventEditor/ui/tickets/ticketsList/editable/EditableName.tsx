@@ -3,14 +3,15 @@ import { __ } from '@wordpress/i18n';
 
 import type { TicketItemProps } from '../types';
 import { useTicketMutator } from '@edtrServices/apollo/mutations';
-import { InlineEditHeading } from '@appInputs/InlineEditInput';
+import { InlineEditHeading, InlineEditText } from '@appInputs/InlineEditInput';
 import { getPropsAreEqual } from '@appServices/utilities';
 
 interface EditableNameProps extends TicketItemProps {
 	className?: string;
+	view?: 'card' | 'table';
 }
 
-const EditableName: React.FC<EditableNameProps> = ({ entity: ticket, className }) => {
+const EditableName: React.FC<EditableNameProps> = ({ className, entity: ticket, view = 'card' }) => {
 	const { updateEntity } = useTicketMutator(ticket.id);
 
 	const onChangeName = useCallback(
@@ -22,9 +23,15 @@ const EditableName: React.FC<EditableNameProps> = ({ entity: ticket, className }
 		[ticket.cacheId]
 	);
 
-	return (
+	const ticketName = ticket.name ? ticket.name : __('Edit title...');
+
+	return view === 'table' ? (
+		<InlineEditText className={className} ellipsis={false} onChange={onChangeName}>
+			{ticketName}
+		</InlineEditText>
+	) : (
 		<InlineEditHeading level={3} className={className} onChange={onChangeName}>
-			{ticket.name ? ticket.name : __('Edit title...')}
+			{ticketName}
 		</InlineEditHeading>
 	);
 };

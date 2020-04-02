@@ -15,13 +15,13 @@ const headerRowGenerator: TicketsTableHeaderRowGen = (filterState) => {
 		{
 			key: 'stripe',
 			type: 'cell',
-			className: 'ee-ticket-list-col-hdr ee-entity-list-status-stripe ee-rspnsv-table-column-micro',
+			className: 'ee-ticket-list-col-hdr ee-entity-list-status-stripe ee-rspnsv-table-column-nano',
 			value: '',
 		},
 		{
 			key: 'id',
 			type: 'cell',
-			className: 'ee-ticket-list-col-hdr ee-ticket-list-col-id ee-number-column ee-rspnsv-table-column-tiny',
+			className: 'ee-ticket-list-col-hdr ee-ticket-list-col-id ee-number-column ee-rspnsv-table-column-nano',
 			value: __('ID'),
 		},
 		{

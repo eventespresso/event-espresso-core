@@ -3,14 +3,15 @@ import { __ } from '@wordpress/i18n';
 
 import type { DateItemProps } from '../types';
 import { useDatetimeMutator } from '@edtrServices/apollo/mutations';
-import { InlineEditHeading } from '@appInputs/InlineEditInput';
+import { InlineEditHeading, InlineEditText } from '@appInputs/InlineEditInput';
 import { getPropsAreEqual } from '@appServices/utilities';
 
 interface EditableNameProps extends DateItemProps {
 	className?: string;
+	view?: 'card' | 'table';
 }
 
-const EditableName: React.FC<EditableNameProps> = ({ entity: datetime, className }) => {
+const EditableName: React.FC<EditableNameProps> = ({ className, entity: datetime, view = 'card' }) => {
 	const { updateEntity } = useDatetimeMutator(datetime.id);
 
 	const onChangeName = useCallback(
@@ -22,9 +23,15 @@ const EditableName: React.FC<EditableNameProps> = ({ entity: datetime, className
 		[datetime.cacheId]
 	);
 
-	return (
+	const dateName = datetime.name ? datetime.name : __('Edit title...');
+
+	return view === 'table' ? (
+		<InlineEditText className={className} ellipsis={false} onChange={onChangeName}>
+			{dateName}
+		</InlineEditText>
+	) : (
 		<InlineEditHeading level={3} className={className} onChange={onChangeName}>
-			{datetime.name ? datetime.name : __('Edit title...')}
+			{dateName}
 		</InlineEditHeading>
 	);
 };

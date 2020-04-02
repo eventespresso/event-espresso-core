@@ -2,7 +2,7 @@ import React from 'react';
 import { __ } from '@wordpress/i18n';
 import { Divider, Typography } from 'antd';
 
-import { EmptyState, ErrorIndicator, LoadingIndicator } from '@appDisplay/index';
+import { EmptyState, ErrorIndicator, LoadingNotice } from '@appDisplay/index';
 import { EntityListFilterStateManager } from './filterBar';
 import EntityListFilterBar from './withValidFilterState';
 import { Entity } from '@appServices/apollo/types';
@@ -30,7 +30,7 @@ const EntityList = <E extends Entity, ELFS extends EntityListFilterStateManager<
 	const error = isError(entityType);
 	const loading = isLoading(entityType);
 
-	if (loading) return <LoadingIndicator tip={__('loading...')} />;
+	if (loading) return <LoadingNotice />;
 
 	if (error) return <ErrorIndicator />;
 
@@ -39,7 +39,9 @@ const EntityList = <E extends Entity, ELFS extends EntityListFilterStateManager<
 	if (filterState.total === 0) {
 		const title = noResultsTitle ? noResultsTitle : __('no results found');
 		const description = noResultsDesc ? noResultsDesc : __('try changing filter settings');
-		entityList = <EmptyState className='ee-entity-list--no-results' title={title} description={description} />;
+		entityList = (
+			<EmptyState className='ee-entity-list--no-results ee-fade-in' title={title} description={description} />
+		);
 	} else {
 		entityList = renderList();
 	}

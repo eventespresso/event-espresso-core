@@ -1,0 +1,38 @@
+.ee-loading-notice {
+	background: var(--ee-color-grey-15);
+	padding: var(--ee-padding-bigger);
+	text-align: center;
+
+	.ant-spin {
+		color: var(--ee-text-on-grey-15);
+		font-size: var(--ee-font-size-small);
+
+		.ant-spin-text {
+			margin-top: var(--ee-margin-tiny);
+		}
+	}
+
+	&--small {
+		padding: var(--ee-padding-default);
+
+		.ant-spin {
+			font-size: var(--ee-font-size-tiny);
+
+			.ant-spin-text {
+				margin-top: var(--ee-margin-micro);
+			}
+		}
+	}
+
+	&--large {
+		padding: var(--ee-padding-extreme);
+
+		.ant-spin {
+			font-size: var(--ee-font-size-default);
+
+			.ant-spin-text {
+				margin-top: var(--ee-margin-small);
+			}
+		}
+	}
+}

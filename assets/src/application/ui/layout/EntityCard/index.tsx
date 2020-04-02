@@ -9,7 +9,7 @@ const EntityCard: React.FC<EntityCardProps> = ({ cacheId, actionsMenu, details, 
 	const layout = reverse ? 'entity-card entity-card--reverse-layout' : 'entity-card';
 
 	return (
-		<EntityPaperFrame cacheId={cacheId} className={'ee-entity-card-wrapper'} entity={entity}>
+		<EntityPaperFrame cacheId={cacheId} className={'ee-entity-card-wrapper ee-fade-in'} entity={entity}>
 			<div className={layout}>
 				<div className={'entity-card__sidebar'}>{sidebar}</div>
 				<div className={'entity-card__details-wrapper'}>
