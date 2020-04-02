@@ -9,6 +9,7 @@ import { EspressoIcon, Icon } from '@appDisplay/espressoIcon';
 import getAdminUrl from '@sharedServices/utils/url/getAdminUrl';
 import useConfig from '@appServices/config/useConfig';
 import useEventId from '@edtrServices/apollo/queries/events/useEventId';
+import { getPropsAreEqual } from '@appServices/utilities';
 
 interface Props {
 	datetime: Datetime;
@@ -41,4 +42,4 @@ const DateRegistrationsLink: React.FC<Props> = ({ datetime }) => {
 	);
 };
 
-export default DateRegistrationsLink;
+export default React.memo(DateRegistrationsLink, getPropsAreEqual(['datetime', 'cacheId']));

@@ -9,6 +9,7 @@ import getAdminUrl from '@sharedServices/utils/url/getAdminUrl';
 import { Ticket } from '@edtrServices/apollo/types';
 import useConfig from '@appServices/config/useConfig';
 import useEventId from '@edtrServices/apollo/queries/events/useEventId';
+import { getPropsAreEqual } from '@appServices/utilities';
 
 interface Props {
 	ticket: Ticket;
@@ -41,4 +42,4 @@ const TicketRegistrationsLink: React.FC<Props> = ({ ticket }) => {
 	);
 };
 
-export default TicketRegistrationsLink;
+export default React.memo(TicketRegistrationsLink, getPropsAreEqual(['ticket', 'cacheId']));
