@@ -1,4 +1,4 @@
-import { useReducer, useCallback } from 'react';
+import { useCallback, useMemo, useReducer } from 'react';
 
 import reducer from './reducer';
 import { DatetimesFilterState, DatetimesFilterStateManager, DatetimeSales, DatetimeStatus } from './types';
@@ -24,45 +24,39 @@ const useDatesListFilterStateManager = (): FSM => {
 		}
 	};
 
-	const setDisplayStartOrEndDate: FSM['setDisplayStartOrEndDate'] = useCallback(
-		(displayStartOrEndDate) => {
-			dispatch({
-				type: 'SET_DISPLAY_START_OR_END_DATE',
-				displayStartOrEndDate,
-			});
-		},
-		[dispatch]
-	);
+	const setDisplayStartOrEndDate: FSM['setDisplayStartOrEndDate'] = useCallback((displayStartOrEndDate) => {
+		dispatch({
+			type: 'SET_DISPLAY_START_OR_END_DATE',
+			displayStartOrEndDate,
+		});
+	}, []);
 
-	const setSales: FSM['setSales'] = useCallback(
-		(sales) => {
-			resetPageNumber(sales);
-			dispatch({
-				type: 'SET_SALES',
-				sales,
-			});
-		},
-		[dispatch]
-	);
+	const setSales: FSM['setSales'] = useCallback((sales) => {
+		resetPageNumber(sales);
+		dispatch({
+			type: 'SET_SALES',
+			sales,
+		});
+	}, []);
 
-	const setStatus: FSM['setStatus'] = useCallback(
-		(status) => {
-			resetPageNumber(status);
-			dispatch({
-				type: 'SET_STATUS',
-				status,
-			});
-		},
-		[dispatch]
-	);
+	const setStatus: FSM['setStatus'] = useCallback((status) => {
+		resetPageNumber(status);
+		dispatch({
+			type: 'SET_STATUS',
+			status,
+		});
+	}, []);
 
-	return {
-		...state,
-		...entityFilterState,
-		setDisplayStartOrEndDate,
-		setSales,
-		setStatus,
-	};
+	return useMemo(
+		() => ({
+			...state,
+			...entityFilterState,
+			setDisplayStartOrEndDate,
+			setSales,
+			setStatus,
+		}),
+		[state, entityFilterState]
+	);
 };
 
 export default useDatesListFilterStateManager;
