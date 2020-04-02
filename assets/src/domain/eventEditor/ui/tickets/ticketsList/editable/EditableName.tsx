@@ -17,7 +17,6 @@ const EditableName: React.FC<EditableNameProps> = ({ entity: ticket, className }
 		(name: string): void => {
 			if (name !== ticket.name) {
 				updateEntity({ name });
-				updateEntity({ name });
 			}
 		},
 		[ticket.cacheId]
