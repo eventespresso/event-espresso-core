@@ -8,6 +8,7 @@ import './style.scss';
 
 interface ItemCountProps extends BadgeProps {
 	zeroCountChar?: string | JSX.Element;
+	children: React.ReactNode;
 }
 
 const ItemCount: React.FC<ItemCountProps> = ({ children, count, title = ' ', zeroCountChar = '!', ...props }) => {
@@ -33,4 +34,4 @@ const ItemCount: React.FC<ItemCountProps> = ({ children, count, title = ' ', zer
 	);
 };
 
-export default React.memo(ItemCount, getPropsAreEqual(['count'])) as React.FC<ItemCountProps>;
+export default React.memo(ItemCount, getPropsAreEqual(['count']));
