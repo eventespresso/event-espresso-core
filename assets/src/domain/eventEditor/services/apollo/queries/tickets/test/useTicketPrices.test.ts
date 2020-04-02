@@ -24,9 +24,9 @@ describe('useTicketPrices', () => {
 	});
 
 	it('returns empty array for ticket prices when the ticket does not exist and the cache is empty', async () => {
-		const { result, waitForValueToChange } = renderHook(() => useTicketPrices('fake-id'), { wrapper });
+		const { result, waitForNextUpdate } = renderHook(() => useTicketPrices('fake-id'), { wrapper });
 
-		await waitForValueToChange(() => result.current, { timeout });
+		await waitForNextUpdate({ timeout });
 
 		const { current: cachedTicketPrices } = result;
 
@@ -34,7 +34,7 @@ describe('useTicketPrices', () => {
 	});
 
 	it('returns empty array for ticket prices when the ticket does not exist and the ticket cache is NOT empty', async () => {
-		const { result, waitForValueToChange } = renderHook(
+		const { result, waitForNextUpdate } = renderHook(
 			() => {
 				useInitTicketTestCache();
 				return useTicketPrices('fake-id');
@@ -42,7 +42,7 @@ describe('useTicketPrices', () => {
 			{ wrapper }
 		);
 
-		await waitForValueToChange(() => result.current, { timeout });
+		await waitForNextUpdate({ timeout });
 
 		const { current: cachedTicketPrices } = result;
 
