@@ -11,17 +11,12 @@ const style: CSSProperties = {
 };
 
 const PriceModifierActions: React.FC<PriceModifierProps> = ({ index, price }) => {
-	const actions = [];
-
-	actions.push(<AddPriceModifierButton key={'add'} index={index} />);
-
-	if (!price.isBasePrice) {
-		actions.push(<DeletePriceModifierButton key={'delete'} price={price} />);
-	}
 	return (
-		<div className='modifier-actions' style={style}>
-			{actions}
+		<div className='ee-price-modifier-actions' style={style}>
+			<AddPriceModifierButton key={'add'} index={index} />
+			{!price.isBasePrice && <DeletePriceModifierButton key={'delete'} price={price} />}
 		</div>
 	);
 };
+
 export default PriceModifierActions;

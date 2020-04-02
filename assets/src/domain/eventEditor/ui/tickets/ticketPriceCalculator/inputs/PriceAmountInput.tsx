@@ -1,4 +1,5 @@
 import React from 'react';
+import classNames from 'classnames';
 import { __ } from '@wordpress/i18n';
 
 import { PriceModifierProps } from '../types';
@@ -8,6 +9,8 @@ import { useDataState } from '../data';
 
 // just temporary
 import styles from '../inlineStyles';
+import './styles.scss';
+
 const percentSign = '%';
 
 const PriceAmountInput: React.FC<PriceModifierProps> = ({ price }) => {
@@ -24,11 +27,17 @@ const PriceAmountInput: React.FC<PriceModifierProps> = ({ price }) => {
 		b4Price = sign;
 		afterPrice = '';
 	}
+
+	const className = classNames('ee-input__price-field', {
+		'ee-input__price-field--has-error': Number(price?.amount ?? 0) === 0,
+	});
+
 	return (
 		<div style={styles.money}>
 			<div style={styles.b4}>{b4Price}</div>
 			<div style={styles.currency}>
 				<PriceField
+					className={className}
 					field='amount'
 					price={price}
 					type={'number'}
