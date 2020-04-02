@@ -3,7 +3,7 @@ import classNames from 'classnames';
 import { NavigableMenu } from '@wordpress/components';
 
 import { AnyObject } from '@appServices/utilities/types';
-import { mergeProps } from './utils';
+import { mergeProps } from '../utils';
 
 interface Props extends AnyObject {
 	children: React.ReactNode;
