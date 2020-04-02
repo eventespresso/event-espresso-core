@@ -2,6 +2,7 @@ import React from 'react';
 import { __ } from '@wordpress/i18n';
 import { SelectInput } from '@appInputs/SelectInput';
 import { DisplayStartOrEndDate } from '@sharedServices/filterState';
+import { getPropsAreEqual } from '@appServices/utilities';
 
 interface DisplayStartOrEndDateControlProps {
 	displayStartOrEndDate: DisplayStartOrEndDate;
@@ -37,4 +38,4 @@ const DisplayStartOrEndDateControl: React.FC<DisplayStartOrEndDateControlProps> 
 	}
 );
 
-export default DisplayStartOrEndDateControl;
+export default React.memo(DisplayStartOrEndDateControl, getPropsAreEqual(['displayStartOrEndDate']));

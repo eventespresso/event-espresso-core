@@ -3,6 +3,7 @@ import classNames from 'classnames';
 import { __ } from '@wordpress/i18n';
 
 import { EspressoButton, EspressoButtonType, Icon } from '@application/ui/input';
+import { getPropsAreEqual } from '@appServices/utilities';
 
 interface TicketsChainedButtonProps {
 	isChained?: boolean;
@@ -38,4 +39,4 @@ const TicketsChainedButton: React.FC<TicketsChainedButtonProps> = ({ isChained, 
 	);
 };
 
-export default TicketsChainedButton;
+export default React.memo(TicketsChainedButton, getPropsAreEqual(['isChained']));

@@ -2,6 +2,7 @@ import React from 'react';
 import { __ } from '@wordpress/i18n';
 import { SelectInput } from '@appInputs/SelectInput';
 import { SortBy } from '@sharedServices/filterState';
+import { getPropsAreEqual } from '@appServices/utilities';
 
 interface SortByControlProps {
 	sortBy: SortBy;
@@ -46,4 +47,4 @@ const SortByControl: React.FC<SortByControlProps> = React.memo(({ sortBy, setSor
 	);
 });
 
-export default SortByControl;
+export default React.memo(SortByControl, getPropsAreEqual(['sortBy']));
