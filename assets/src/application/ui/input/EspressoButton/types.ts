@@ -3,6 +3,8 @@ import { NativeButtonProps } from 'antd/lib/button/button';
 import { Icon as EspressoIcon } from '../../display';
 import { withLabelProps, withTooltipProps } from '../../display';
 
+export type ButtonType = React.ComponentType<EspressoButtonProps>;
+
 export type ClickHandler = (click?: React.MouseEvent<HTMLElement>) => void;
 
 export enum EspressoButtonSize {
