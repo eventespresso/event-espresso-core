@@ -2,16 +2,12 @@ import React from 'react';
 import { __ } from '@wordpress/i18n';
 
 import { EntityDetailsPanel } from '@application/ui/display/entityDetailsPanel';
-import { Datetime } from '@edtrServices/apollo/types';
 import DateRegistrationsLink from '../../DateRegistrationsLink';
 import DateCapacity from './DateCapacity';
 import { getPropsAreEqual } from '@appServices/utilities';
+import type { DateItemProps } from '../types';
 
-interface DateDetailsProps {
-	datetime: Datetime;
-}
-
-const DateDetails: React.FC<DateDetailsProps> = ({ datetime }) => {
+const DateDetailsPanel: React.FC<DateItemProps> = ({ entity: datetime }) => {
 	const details = [
 		{
 			id: 'ee-event-date-sold',
@@ -21,7 +17,7 @@ const DateDetails: React.FC<DateDetailsProps> = ({ datetime }) => {
 		{
 			id: 'ee-event-date-capacity',
 			label: __('capacity'),
-			value: <DateCapacity datetime={datetime} />,
+			value: <DateCapacity entity={datetime} />,
 		},
 		{
 			id: 'ee-event-date-registrations',
@@ -34,4 +30,4 @@ const DateDetails: React.FC<DateDetailsProps> = ({ datetime }) => {
 	return <EntityDetailsPanel details={details} className='ee-editor-date-details-sold-rsrvd-cap-div' />;
 };
 
-export default React.memo(DateDetails, getPropsAreEqual(['datetime', 'cacheId']));
+export default React.memo(DateDetailsPanel, getPropsAreEqual(['entity', 'cacheId']));

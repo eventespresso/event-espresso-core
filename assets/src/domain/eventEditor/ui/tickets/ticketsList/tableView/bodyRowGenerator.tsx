@@ -1,21 +1,19 @@
 import React from 'react';
 import { format } from 'date-fns';
-import { __ } from '@wordpress/i18n';
 
 import { Cell } from '@appLayout/espressoTable';
 import { filterCellByStartOrEndDate } from '@sharedServices/filterState';
 import { ENTITY_LIST_DATE_TIME_FORMAT } from '@appConstants/dateFnsFormats';
 import { getBackgroundColorClassName, status } from '@sharedEntities/tickets/helpers';
-import { InlineEditText } from '@appInputs/InlineEditInput';
 import { shortenGuid } from '@appServices/utilities/text';
 import { Ticket } from '@edtrServices/apollo/types';
 import TicketActionsMenu from '@edtrUI/tickets/ticketsList/actionsMenu/TicketActionsMenu';
 import { useMoneyDisplay } from '@appServices/utilities/money';
-import { useTicketMutator } from '@edtrServices/apollo/mutations';
 import useTicketRegistrationCount from '@edtrUI/tickets/hooks/useTicketRegistrationCount';
 import TicketQuantity from '../cardView/TicketQuantity';
 import { BodyRowGeneratorFn } from '@appLayout/entityList';
 import { TicketsFilterStateManager } from '@edtrServices/filterState';
+import { EditableName } from '../editable';
 
 import '@application/ui/styles/root/entity-status.css';
 
@@ -29,32 +27,20 @@ const bodyRowGenerator: TicketsTableBodyRowGen = ({ entity: ticket, filterState 
 	const id = ticket.dbId || shortenGuid(ticket.id);
 	const registrationCount = useTicketRegistrationCount(ticket.id);
 	const statusClassName = status(ticket);
-	const { updateEntity } = useTicketMutator(ticket.id);
 
 	const name = {
 		key: 'name',
 		type: 'cell',
 		className:
 			'ee-ticket-list-cell ee-ticket-list-col-name ee-rspnsv-table-column-bigger ee-rspnsv-table-hide-on-mobile',
-		value: (
-			<InlineEditText
-				className={'ee-focus-priority-5'}
-				onChange={(name: string): void => {
-					if (name !== ticket.name) {
-						updateEntity({ name });
-					}
-				}}
-			>
-				{ticket.name ? ticket.name : __('Edit title...')}
-			</InlineEditText>
-		),
+		value: <EditableName className={'ee-focus-priority-5'} entity={ticket} />,
 	};
 
 	const quantity = {
 		key: 'quantity',
 		type: 'cell',
 		className: 'ee-ticket-list-cell ee-ticket-list-col-quantity ee-rspnsv-table-column-tiny ee-number-column',
-		value: <TicketQuantity ticket={ticket} />,
+		value: <TicketQuantity entity={ticket} />,
 	};
 
 	const cellsData: Array<Cell> = [

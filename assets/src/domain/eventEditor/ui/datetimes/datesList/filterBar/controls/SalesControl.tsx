@@ -3,6 +3,7 @@ import { __ } from '@wordpress/i18n';
 
 import { SelectInput } from '@appInputs/SelectInput';
 import { DatetimeSales } from '@edtrServices/filterState';
+import { getPropsAreEqual } from '@appServices/utilities';
 
 interface StatusControlProps {
 	sales: DatetimeSales;
@@ -41,4 +42,4 @@ const SalesControl: React.FC<StatusControlProps> = React.memo(({ sales, setSales
 	);
 });
 
-export default SalesControl;
+export default React.memo(SalesControl, getPropsAreEqual(['sales']));

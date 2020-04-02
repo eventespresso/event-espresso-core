@@ -1,6 +1,5 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 
-import { Datetime } from '@edtrServices/apollo/types';
 import parseInfinity from '@appServices/utilities/number/parseInfinity';
 import { InlineEditInfinity, TextProps } from '@appInputs/InlineEditInput';
 import {
@@ -8,29 +7,30 @@ import {
 	useUpdateRelatedTickets,
 	useTicketQuantityForCapacity,
 } from '@edtrServices/apollo/mutations';
+import { getPropsAreEqual } from '@appServices/utilities';
+import type { DateItemProps } from '../types';
 
-interface DateCapacityProps {
-	datetime: Datetime;
-}
-
-const DateCapacity: React.FC<DateCapacityProps> = ({ datetime }) => {
+const DateCapacity: React.FC<DateItemProps> = ({ entity: datetime }) => {
 	const { updateEntity } = useDatetimeMutator(datetime.id);
 
 	const updateRelatedTickets = useUpdateRelatedTickets(datetime.id);
 	const ticketQuantityForCapacity = useTicketQuantityForCapacity();
 
-	const onChange: TextProps['onChange'] = (cap) => {
-		const capacity = parseInfinity(cap);
-		if (capacity !== datetime.capacity) {
-			updateEntity({ capacity });
+	const onChange: TextProps['onChange'] = useCallback(
+		(cap) => {
+			const capacity = parseInfinity(cap);
+			if (capacity !== datetime.capacity) {
+				updateEntity({ capacity });
 
-			const inputGenerator = ticketQuantityForCapacity(capacity);
+				const inputGenerator = ticketQuantityForCapacity(capacity);
 
-			updateRelatedTickets(inputGenerator);
-		}
-	};
+				updateRelatedTickets(inputGenerator);
+			}
+		},
+		[datetime.cacheId]
+	);
 
 	return <InlineEditInfinity onChange={onChange}>{datetime.capacity}</InlineEditInfinity>;
 };
 
-export default DateCapacity;
+export default React.memo(DateCapacity, getPropsAreEqual(['entity', 'cacheId']));

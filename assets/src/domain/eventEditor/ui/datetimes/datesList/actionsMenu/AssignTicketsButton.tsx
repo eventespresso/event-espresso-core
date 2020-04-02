@@ -9,7 +9,7 @@ import useTicketAssignmentsManager from '@edtrUI/ticketAssignmentsManager/useTic
 import { TypeName } from '@appServices/apollo/status';
 import withIsLoaded from '@sharedUI/hoc/withIsLoaded';
 
-const AssignTicketsButton: React.FC<EntityListItemProps> = ({ id }) => {
+const AssignTicketsButton: React.FC<EntityListItemProps> = React.memo(({ id }) => {
 	const { assignTicketsToDate } = useTicketAssignmentsManager();
 
 	const relatedTickets = useRelatedTickets({
@@ -38,7 +38,7 @@ const AssignTicketsButton: React.FC<EntityListItemProps> = ({ id }) => {
 			/>
 		</ItemCount>
 	);
-};
+});
 
 
 export default withIsLoaded<EntityListItemProps>(TypeName.tickets, ({ loaded, id }) => {

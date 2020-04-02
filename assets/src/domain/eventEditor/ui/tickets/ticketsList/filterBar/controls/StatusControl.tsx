@@ -3,6 +3,7 @@ import { __ } from '@wordpress/i18n';
 
 import { SelectInput } from '@appInputs/SelectInput';
 import { TicketsStatus } from '@edtrServices/filterState';
+import { getPropsAreEqual } from '@appServices/utilities';
 
 interface StatusControlProps {
 	isChained: boolean;
@@ -54,4 +55,4 @@ const StatusControl: React.FC<StatusControlProps> = React.memo(({ isChained, sta
 	);
 });
 
-export default StatusControl;
+export default React.memo(StatusControl, getPropsAreEqual(['status'], ['isChained']));

@@ -3,6 +3,7 @@ import { __ } from '@wordpress/i18n';
 
 import { SelectInput } from '@appInputs/SelectInput';
 import { DatetimeStatus } from '@edtrServices/filterState';
+import { getPropsAreEqual } from '@appServices/utilities';
 
 interface StatusControlProps {
 	status: DatetimeStatus;
@@ -57,4 +58,4 @@ const StatusControl: React.FC<StatusControlProps> = React.memo(({ status, setSta
 	);
 });
 
-export default StatusControl;
+export default React.memo(StatusControl, getPropsAreEqual(['status']));

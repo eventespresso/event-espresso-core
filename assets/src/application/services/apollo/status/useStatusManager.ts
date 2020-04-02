@@ -1,6 +1,6 @@
-import { useReducer } from 'react';
+import { useCallback, useMemo, useReducer } from 'react';
 import { pathOr } from 'ramda';
-import { StatusManager, StatusState, StatusFlags, StatusAction, StatusGetter, StatusSetter, TypeName } from './types';
+import type { StatusManager, StatusState, StatusFlags, StatusAction, StatusGetter, StatusSetter } from './types';
 
 const INITIAL_FLAGS: StatusFlags = {
 	datetimes: false,
@@ -23,9 +23,7 @@ const useStatusManager = (): StatusManager => {
 	 *
 	 * @param {string} typeName The plural type name like "datetimes", "tickets", "prices"
 	 */
-	const isLoading: StatusGetter = (typeName) => {
-		return pathOr(false, ['loading', typeName], state);
-	};
+	const isLoading: StatusGetter = useCallback((typeName) => pathOr(false, ['loading', typeName], state), [state]);
 
 	/**
 	 * Set `isLoading` for the type.
@@ -33,22 +31,20 @@ const useStatusManager = (): StatusManager => {
 	 * @param {string}  typeName  The plural type name like "datetimes", "tickets", "prices"
 	 * @param {boolean} value Value of the flag
 	 */
-	const setIsLoading: StatusSetter = (typeName, value = true) => {
+	const setIsLoading: StatusSetter = useCallback((typeName, value = true) => {
 		dispatch({
 			type: 'SET_IS_LOADING',
 			typeName,
 			value,
 		});
-	};
+	}, []);
 
 	/**
 	 * Whether a type (e.g. datetimes) has been loaded.
 	 *
 	 * @param {string} typeName The plural type name like "datetimes", "tickets", "prices"
 	 */
-	const isLoaded: StatusGetter = (typeName) => {
-		return pathOr(false, ['completed', typeName], state);
-	};
+	const isLoaded: StatusGetter = useCallback((typeName) => pathOr(false, ['completed', typeName], state), [state]);
 
 	/**
 	 * Set `isLoaded` for the type.
@@ -56,22 +52,20 @@ const useStatusManager = (): StatusManager => {
 	 * @param {string} typeName The plural type name like "datetimes", "tickets", "prices"
 	 * @param {boolean} value Value of the flag
 	 */
-	const setIsLoaded: StatusSetter = (typeName: TypeName, value = true): void => {
+	const setIsLoaded: StatusSetter = useCallback((typeName, value = true) => {
 		dispatch({
 			type: 'SET_IS_LOADED',
 			typeName,
 			value,
 		});
-	};
+	}, []);
 
 	/**
 	 * Whether an error occurred while loading the type (e.g. datetimes).
 	 *
 	 * @param {string} typeName The plural type name like "datetimes", "tickets", "prices"
 	 */
-	const isError: StatusGetter = (typeName: TypeName): boolean => {
-		return pathOr(false, ['error', typeName], state);
-	};
+	const isError: StatusGetter = useCallback((typeName) => pathOr(false, ['error', typeName], state), [state]);
 
 	/**
 	 * Set `isError` for the type.
@@ -79,22 +73,25 @@ const useStatusManager = (): StatusManager => {
 	 * @param {string} typeName The plural type name like "datetimes", "tickets", "prices"
 	 * @param {boolean} value Value of the flag
 	 */
-	const setIsError: StatusSetter = (typeName: TypeName, value = true): void => {
+	const setIsError: StatusSetter = useCallback((typeName, value = true) => {
 		dispatch({
 			type: 'SET_IS_ERROR',
 			typeName,
 			value,
 		});
-	};
+	}, []);
 
-	return {
-		isLoading,
-		setIsLoading,
-		isLoaded,
-		setIsLoaded,
-		isError,
-		setIsError,
-	};
+	return useMemo(
+		() => ({
+			isLoading,
+			setIsLoading,
+			isLoaded,
+			setIsLoaded,
+			isError,
+			setIsError,
+		}),
+		[state]
+	);
 };
 
 const statusReducer = (state: StatusState, action: StatusAction): StatusState => {

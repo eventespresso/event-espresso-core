@@ -1,52 +1,49 @@
-import { useReducer } from 'react';
+import { useCallback, useMemo, useReducer } from 'react';
 import { dropLast, last, path } from 'ramda';
 
-import {
-	EditorStack,
-	EditorState,
-	EditorId,
-	EditorStateManager,
-	EditorStateReducer,
-	ActionType,
-	OpenEditorOptions,
-} from './types';
+import { EditorStack, EditorState, EditorId, EditorStateManager, EditorStateReducer, ActionType } from './types';
 
 export const INITIAL_STATE: EditorStack = [];
 
-const useFormModalManager = (): EditorStateManager => {
+type FM = EditorStateManager;
+
+const useFormModalManager = (): FM => {
 	const [state, dispatch] = useReducer<EditorStateReducer>(reducer, INITIAL_STATE);
 
-	const openEditor = (options: OpenEditorOptions): void => {
+	const openEditor: FM['openEditor'] = useCallback((options) => {
 		dispatch({
 			...options,
 			type: ActionType.OPEN_EDITOR,
 			isOpen: true,
 		});
-	};
+	}, []);
 
-	const currentlyOpenEditor = (): EditorState => last(state);
+	const currentlyOpenEditor: FM['currentlyOpenEditor'] = useCallback(() => last(state), [state]);
 
-	const closeEditor = (editorId: EditorId): void => {
+	const closeEditor: FM['closeEditor'] = useCallback((editorId) => {
 		dispatch({
 			type: ActionType.CLOSE_EDITOR,
 			editorId,
 		});
-	};
+	}, []);
 
-	const closeAllEditors = (): void => {
+	const closeAllEditors: FM['closeAllEditors'] = useCallback(() => {
 		dispatch({
 			type: ActionType.CLOSE_ALL,
 			editorId: null,
 		});
-	};
+	}, []);
 
-	return {
-		editors: state,
-		openEditor,
-		closeEditor,
-		currentlyOpenEditor,
-		closeAllEditors,
-	};
+	return useMemo(
+		() => ({
+			editors: state,
+			openEditor,
+			closeEditor,
+			currentlyOpenEditor,
+			closeAllEditors,
+		}),
+		[state]
+	);
 };
 
 const reducer: EditorStateReducer = (state, action) => {

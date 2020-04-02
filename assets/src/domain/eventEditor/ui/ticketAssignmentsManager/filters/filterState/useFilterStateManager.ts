@@ -1,4 +1,4 @@
-import { useReducer } from 'react';
+import { useCallback, useMemo, useReducer } from 'react';
 
 import { FilterState, FilterStateManager, FilterStateManagerHook } from './types';
 import { now } from '@sharedServices/utils/dateAndTime';
@@ -16,43 +16,46 @@ const initialState: FilterState = {
 const useFilterStateManager: FilterStateManagerHook = () => {
 	const [state, dispatch] = useReducer(reducer, initialState);
 
-	const setDatesByMonth: FSM['setDatesByMonth'] = (datesByMonth) => {
+	const setDatesByMonth: FSM['setDatesByMonth'] = useCallback((datesByMonth) => {
 		const [year, month] = datesByMonth.split(':').map(Number);
 
 		dispatch({
 			type: 'SET_DATES_BY_MONTH',
 			datesByMonth: [year, month],
 		});
-	};
+	}, []);
 
-	const setShowExpiredTickets: FSM['setShowExpiredTickets'] = (showExpiredTickets) => {
+	const setShowExpiredTickets: FSM['setShowExpiredTickets'] = useCallback((showExpiredTickets) => {
 		dispatch({
 			type: 'SET_SHOW_EXPIRED_TICKETS',
 			showExpiredTickets,
 		});
-	};
+	}, []);
 
-	const setShowTrashedDates: FSM['setShowTrashedDates'] = (showTrashedDates) => {
+	const setShowTrashedDates: FSM['setShowTrashedDates'] = useCallback((showTrashedDates) => {
 		dispatch({
 			type: 'SET_SHOW_TRASHED_DATES',
 			showTrashedDates,
 		});
-	};
+	}, []);
 
-	const setShowTrashedTickets: FSM['setShowTrashedTickets'] = (showTrashedTickets) => {
+	const setShowTrashedTickets: FSM['setShowTrashedTickets'] = useCallback((showTrashedTickets) => {
 		dispatch({
 			type: 'SET_SHOW_TRASHED_TICKETS',
 			showTrashedTickets,
 		});
-	};
+	}, []);
 
-	return {
-		...state,
-		setDatesByMonth,
-		setShowExpiredTickets,
-		setShowTrashedDates,
-		setShowTrashedTickets,
-	};
+	return useMemo(
+		() => ({
+			...state,
+			setDatesByMonth,
+			setShowExpiredTickets,
+			setShowTrashedDates,
+			setShowTrashedTickets,
+		}),
+		Object.values(state)
+	);
 };
 
 export default useFilterStateManager;

@@ -3,6 +3,7 @@ import { __ } from '@wordpress/i18n';
 
 import { SelectInput } from '@appInputs/SelectInput';
 import { TicketsSales } from '@edtrServices/filterState';
+import { getPropsAreEqual } from '@appServices/utilities';
 
 interface StatusControlProps {
 	isChained?: boolean;
@@ -42,4 +43,4 @@ const SalesControl: React.FC<StatusControlProps> = React.memo(({ isChained, sale
 	);
 });
 
-export default SalesControl;
+export default React.memo(SalesControl, getPropsAreEqual(['isChained'], ['sales']));

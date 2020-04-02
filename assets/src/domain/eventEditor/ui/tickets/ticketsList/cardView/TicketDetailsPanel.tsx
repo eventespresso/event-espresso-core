@@ -3,15 +3,11 @@ import { __ } from '@wordpress/i18n';
 
 import TicketRegistrationsLink from '../../TicketRegistrationsLink';
 import { EntityDetailsPanel } from '@application/ui/display/entityDetailsPanel';
-import { Ticket } from '@edtrServices/apollo/types';
 import TicketQuantity from './TicketQuantity';
 import { getPropsAreEqual } from '@appServices/utilities';
+import type { TicketItemProps } from '../types';
 
-interface TicketDetailsProps {
-	ticket: Ticket;
-}
-
-const TicketDetails: React.FC<TicketDetailsProps> = React.memo(({ ticket }) => {
+const TicketDetailsPanel: React.FC<TicketItemProps> = React.memo(({ entity: ticket }) => {
 	const details = [
 		{
 			id: 'ee-ticket-sold',
@@ -21,7 +17,7 @@ const TicketDetails: React.FC<TicketDetailsProps> = React.memo(({ ticket }) => {
 		{
 			id: 'ee-ticket-qty',
 			label: __('quantity'),
-			value: <TicketQuantity ticket={ticket} />,
+			value: <TicketQuantity entity={ticket} />,
 		},
 		{
 			id: 'ee-ticket-registrations',
@@ -32,4 +28,4 @@ const TicketDetails: React.FC<TicketDetailsProps> = React.memo(({ ticket }) => {
 	return <EntityDetailsPanel details={details} className='ee-editor-ticket-details-sold-rsrvd-qty-div' />;
 });
 
-export default React.memo(TicketDetails, getPropsAreEqual(['ticket', 'cacheId']));
+export default React.memo(TicketDetailsPanel, getPropsAreEqual(['entity', 'cacheId']));

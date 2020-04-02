@@ -23,6 +23,7 @@ export interface EntityListFilterAction<SortBy = BasicSortBy> extends Partial<En
 }
 
 export interface EntityListFilterStateManager<SortBy = BasicSortBy> extends EntityListFilterState<SortBy> {
+	getState: () => EntityListFilterState<SortBy>;
 	setSortBy: (sortBy: SortBy) => void;
 	setPerPage: (newPageNumber: number, newPerPage: number) => void;
 	setPageNumber: (page: number) => void;

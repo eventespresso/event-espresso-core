@@ -1,5 +1,5 @@
 import React from 'react';
-import { path } from 'ramda';
+import { path, Path } from 'ramda';
 
 type PropsAreEqual<P extends {}> = (
 	prevProps: Readonly<React.PropsWithChildren<P>>,
@@ -9,11 +9,17 @@ type PropsAreEqual<P extends {}> = (
 /**
  * Generates the comparison function that can be used as second argument to React.memo()
  */
-const getPropsAreEqual = <P extends {}>(pathToValue: Parameters<typeof path>[0]): PropsAreEqual<P> => {
+const getPropsAreEqual = <P extends {}>(...paths: Array<Path>): PropsAreEqual<P> => {
 	const propsAreEqual: PropsAreEqual<P> = (prevProps, nextProps): boolean => {
-		const prevValue = path<any>(pathToValue, prevProps);
-		const nextValue = path<any>(pathToValue, nextProps);
-		return prevValue === nextValue;
+		for (const pathToValue of paths) {
+			const prevValue = path<any>(pathToValue, prevProps);
+			const nextValue = path<any>(pathToValue, nextProps);
+
+			if (prevValue !== nextValue) {
+				return false;
+			}
+		}
+		return true;
 	};
 
 	return propsAreEqual;

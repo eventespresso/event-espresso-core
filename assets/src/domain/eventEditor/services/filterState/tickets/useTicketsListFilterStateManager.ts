@@ -1,4 +1,4 @@
-import { useReducer, useCallback } from 'react';
+import { useCallback, useMemo, useReducer } from 'react';
 
 import reducer from './reducer';
 import { TicketsFilterState, TicketsFilterStateManager, TicketsSales, TicketsStatus } from './types';
@@ -25,15 +25,12 @@ const useTicketsListFilterStateManager = (): FSM => {
 		}
 	};
 
-	const setDisplayStartOrEndDate: FSM['setDisplayStartOrEndDate'] = useCallback(
-		(displayStartOrEndDate) => {
-			dispatch({
-				type: 'SET_DISPLAY_START_OR_END_DATE',
-				displayStartOrEndDate,
-			});
-		},
-		[dispatch]
-	);
+	const setDisplayStartOrEndDate: FSM['setDisplayStartOrEndDate'] = useCallback((displayStartOrEndDate) => {
+		dispatch({
+			type: 'SET_DISPLAY_START_OR_END_DATE',
+			displayStartOrEndDate,
+		});
+	}, []);
 
 	const setSales: FSM['setSales'] = (sales) => {
 		resetPageNumber(sales);
@@ -43,31 +40,31 @@ const useTicketsListFilterStateManager = (): FSM => {
 		});
 	};
 
-	const setStatus: FSM['setStatus'] = useCallback(
-		(status) => {
-			resetPageNumber(status);
-			dispatch({
-				type: 'SET_STATUS',
-				status,
-			});
-		},
-		[dispatch]
-	);
+	const setStatus: FSM['setStatus'] = useCallback((status) => {
+		resetPageNumber(status);
+		dispatch({
+			type: 'SET_STATUS',
+			status,
+		});
+	}, []);
 
 	const toggleIsChained: FSM['toggleIsChained'] = useCallback(() => {
 		dispatch({
 			type: 'TOGGLE_IS_CHAINED',
 		});
-	}, [dispatch]);
+	}, []);
 
-	return {
-		...state,
-		...entityFilterState,
-		setDisplayStartOrEndDate,
-		setSales,
-		setStatus,
-		toggleIsChained,
-	};
+	return useMemo(
+		() => ({
+			...state,
+			...entityFilterState,
+			setDisplayStartOrEndDate,
+			setSales,
+			setStatus,
+			toggleIsChained,
+		}),
+		[...Object.values(state), ...Object.values(entityFilterState.getState())]
+	);
 };
 
 export default useTicketsListFilterStateManager;

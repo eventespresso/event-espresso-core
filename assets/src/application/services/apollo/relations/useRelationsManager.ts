@@ -1,4 +1,4 @@
-import { useReducer, useState } from 'react';
+import { useCallback, useMemo, useReducer, useState } from 'react';
 import { pathOr } from 'ramda';
 import { RelationsManager as RM, RelationalData } from './types';
 import reducer from './reducer';
@@ -14,22 +14,20 @@ const useRelationsManager = (data: RelationalData = INITIAL_STATE): RM => {
 	 *
 	 * @param {object} data Relational data
 	 */
-	const initialize: RM['initialize'] = (data) => {
+	const initialize: RM['initialize'] = useCallback((data) => {
 		dispatch({ type: 'INITIALIZE', data });
 		setInitialized(true);
-	};
+	}, []);
 
 	/**
 	 * Whether the relations manager has been initialized.
 	 */
-	const isInitialized: RM['isInitialized'] = () => initialized;
+	const isInitialized: RM['isInitialized'] = useCallback(() => initialized, [initialized]);
 
 	/**
 	 * Retrieve the relational data.
 	 */
-	const getData: RM['getData'] = () => {
-		return state;
-	};
+	const getData: RM['getData'] = useCallback(() => state, [state]);
 
 	/**
 	 * For a given `entity` identified by `entityId`
@@ -39,9 +37,12 @@ const useRelationsManager = (data: RelationalData = INITIAL_STATE): RM => {
 	 * @param {String} entityId     GUID for entity
 	 * @param {String} relation     data Type for relation
 	 */
-	const getRelations: RM['getRelations'] = ({ entity, entityId, relation }) => {
-		return pathOr([], [entity, entityId, relation], state);
-	};
+	const getRelations: RM['getRelations'] = useCallback(
+		({ entity, entityId, relation }) => {
+			return pathOr([], [entity, entityId, relation], state);
+		},
+		[state]
+	);
 
 	/**
 	 * Adds a relations between two entities.
@@ -51,7 +52,7 @@ const useRelationsManager = (data: RelationalData = INITIAL_STATE): RM => {
 	 * @param {String} relation     data Type for relation
 	 * @param {String} relationId   GUID for related entity
 	 */
-	const addRelation: RM['addRelation'] = ({ entity, entityId, relation, relationId }) => {
+	const addRelation: RM['addRelation'] = useCallback(({ entity, entityId, relation, relationId }) => {
 		dispatch({
 			type: 'ADD_RELATION',
 			entity,
@@ -59,7 +60,7 @@ const useRelationsManager = (data: RelationalData = INITIAL_STATE): RM => {
 			relation,
 			relationId,
 		});
-	};
+	}, []);
 
 	/**
 	 * Updates the relation between an entity and related type entities
@@ -70,7 +71,7 @@ const useRelationsManager = (data: RelationalData = INITIAL_STATE): RM => {
 	 * @param {String} relation         data Type for relation
 	 * @param {String[]} relationIds    array of GUIDs for related entities
 	 */
-	const updateRelations: RM['updateRelations'] = ({ entity, entityId, relation, relationIds }) => {
+	const updateRelations: RM['updateRelations'] = useCallback(({ entity, entityId, relation, relationIds }) => {
 		dispatch({
 			type: 'UPDATE_RELATIONS',
 			entity,
@@ -78,7 +79,7 @@ const useRelationsManager = (data: RelationalData = INITIAL_STATE): RM => {
 			relation,
 			relationIds,
 		});
-	};
+	}, []);
 
 	/**
 	 * Removes the relation between two entities.
@@ -94,7 +95,7 @@ const useRelationsManager = (data: RelationalData = INITIAL_STATE): RM => {
 	 * @param {String} relation     data Type for relation
 	 * @param {String} relationId   GUID for related entity
 	 */
-	const removeRelation: RM['removeRelation'] = ({ entity, entityId, relation, relationId }) => {
+	const removeRelation: RM['removeRelation'] = useCallback(({ entity, entityId, relation, relationId }) => {
 		dispatch({
 			type: 'REMOVE_RELATION',
 			entity,
@@ -102,7 +103,7 @@ const useRelationsManager = (data: RelationalData = INITIAL_STATE): RM => {
 			relation,
 			relationId,
 		});
-	};
+	}, []);
 
 	/**
 	 * Removes all the relations originating "FROM" the given entity.
@@ -119,24 +120,27 @@ const useRelationsManager = (data: RelationalData = INITIAL_STATE): RM => {
 	 * @param {String} entity       data Type for entity
 	 * @param {String} entityId     GUID for entity
 	 */
-	const dropRelations: RM['dropRelations'] = ({ entity, entityId }) => {
+	const dropRelations: RM['dropRelations'] = useCallback(({ entity, entityId }) => {
 		dispatch({
 			type: 'DROP_RELATIONS',
 			entity,
 			entityId,
 		});
-	};
+	}, []);
 
-	return {
-		initialize,
-		isInitialized,
-		getData,
-		getRelations,
-		addRelation,
-		removeRelation,
-		updateRelations,
-		dropRelations,
-	};
+	return useMemo(
+		() => ({
+			initialize,
+			isInitialized,
+			getData,
+			getRelations,
+			addRelation,
+			removeRelation,
+			updateRelations,
+			dropRelations,
+		}),
+		[state]
+	);
 };
 
 export default useRelationsManager;

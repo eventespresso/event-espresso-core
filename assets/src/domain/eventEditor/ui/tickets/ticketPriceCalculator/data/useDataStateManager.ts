@@ -17,88 +17,76 @@ const useDataStateManager: DataStateManagerHook = (props) => {
 		dispatch({
 			type: 'TOGGLE_CALC_DIR',
 		});
-	}, [dispatch]);
+	}, []);
 
-	const updateTicketPrice: DSM['updateTicketPrice'] = useCallback(
-		(ticketPrice) => {
-			dispatch({
-				type: 'UPDATE_TICKET_PRICE',
-				ticketPrice,
-			});
-		},
-		[dispatch]
-	);
+	const updateTicketPrice: DSM['updateTicketPrice'] = useCallback((ticketPrice) => {
+		dispatch({
+			type: 'UPDATE_TICKET_PRICE',
+			ticketPrice,
+		});
+	}, []);
 
-	const setPrices: DSM['setPrices'] = useCallback(
-		(prices) => {
-			dispatch({
-				type: 'SET_PRICES',
-				prices,
-			});
-		},
-		[dispatch]
-	);
+	const setPrices: DSM['setPrices'] = useCallback((prices) => {
+		dispatch({
+			type: 'SET_PRICES',
+			prices,
+		});
+	}, []);
 
-	const addPrice: DSM['addPrice'] = useCallback(
-		(price, index) => {
-			dispatch({
-				type: 'ADD_PRICE',
-				index,
-				price,
-			});
-		},
-		[dispatch]
-	);
+	const addPrice: DSM['addPrice'] = useCallback((price, index) => {
+		dispatch({
+			type: 'ADD_PRICE',
+			index,
+			price,
+		});
+	}, []);
 
-	const updatePrice: DSM['updatePrice'] = useCallback(
-		({ id, fieldValues }) => {
-			dispatch({
-				type: 'UPDATE_PRICE',
-				id,
-				fieldValues,
-			});
-		},
-		[dispatch]
-	);
+	const updatePrice: DSM['updatePrice'] = useCallback(({ id, fieldValues }) => {
+		dispatch({
+			type: 'UPDATE_PRICE',
+			id,
+			fieldValues,
+		});
+	}, []);
 
-	const deletePrice: DSM['deletePrice'] = useCallback(
-		(id, isNew) => {
-			if (!isNew) {
-				dispatch({
-					type: 'ADD_PRICE_TO_DELETED',
-					id,
-				});
-			}
+	const deletePrice: DSM['deletePrice'] = useCallback((id, isNew) => {
+		if (!isNew) {
 			dispatch({
-				type: 'DELETE_PRICE',
+				type: 'ADD_PRICE_TO_DELETED',
 				id,
 			});
-		},
-		[dispatch]
-	);
+		}
+		dispatch({
+			type: 'DELETE_PRICE',
+			id,
+		});
+	}, []);
 
 	const reset: DSM['reset'] = useCallback(() => {
 		dispatch({
 			type: 'RESET',
 		});
-	}, [dispatch]);
+	}, []);
 
 	const reverseCalculate: boolean = useMemo(() => Boolean(state.ticket?.reverseCalculate), [
 		state.ticket?.reverseCalculate,
 	]);
 
-	return {
-		...state,
-		addPrice,
-		deletePrice,
-		getData,
-		reset,
-		reverseCalculate,
-		setPrices,
-		toggleCalcDir,
-		updatePrice,
-		updateTicketPrice,
-	};
+	return useMemo(
+		() => ({
+			...state,
+			addPrice,
+			deletePrice,
+			getData,
+			reset,
+			reverseCalculate,
+			setPrices,
+			toggleCalcDir,
+			updatePrice,
+			updateTicketPrice,
+		}),
+		[state]
+	);
 };
 
 export default useDataStateManager;

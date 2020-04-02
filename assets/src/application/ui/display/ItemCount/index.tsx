@@ -2,11 +2,13 @@ import React from 'react';
 import { Badge, Tooltip } from 'antd';
 import { BadgeProps } from 'antd/lib/badge';
 import classNames from 'classnames';
+import { getPropsAreEqual } from '@appServices/utilities';
 
 import './style.scss';
 
 interface ItemCountProps extends BadgeProps {
 	zeroCountChar?: string | JSX.Element;
+	children: React.ReactNode;
 }
 
 const ItemCount: React.FC<ItemCountProps> = ({ children, count, title = ' ', zeroCountChar = '!', ...props }) => {
@@ -32,4 +34,4 @@ const ItemCount: React.FC<ItemCountProps> = ({ children, count, title = ' ', zer
 	);
 };
 
-export default ItemCount;
+export default React.memo(ItemCount, getPropsAreEqual(['count']));
