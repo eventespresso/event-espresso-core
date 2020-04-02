@@ -7,11 +7,11 @@ import DateRegistrationsLink from '../../DateRegistrationsLink';
 import DateCapacity from './DateCapacity';
 import { getPropsAreEqual } from '@appServices/utilities';
 
-interface DateDetailsProps {
+interface DateDetailsPanelProps {
 	datetime: Datetime;
 }
 
-const DateDetails: React.FC<DateDetailsProps> = ({ datetime }) => {
+const DateDetailsPanel: React.FC<DateDetailsPanelProps> = ({ datetime }) => {
 	const details = [
 		{
 			id: 'ee-event-date-sold',
@@ -34,4 +34,4 @@ const DateDetails: React.FC<DateDetailsProps> = ({ datetime }) => {
 	return <EntityDetailsPanel details={details} className='ee-editor-date-details-sold-rsrvd-cap-div' />;
 };
 
-export default React.memo(DateDetails, getPropsAreEqual(['datetime', 'cacheId']));
+export default React.memo(DateDetailsPanel, getPropsAreEqual(['datetime', 'cacheId']));

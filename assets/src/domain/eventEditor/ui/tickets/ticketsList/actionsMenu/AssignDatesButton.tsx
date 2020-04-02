@@ -9,7 +9,7 @@ import useTicketAssignmentsManager from '@edtrUI/ticketAssignmentsManager/useTic
 import { TypeName } from '@appServices/apollo/status';
 import withIsLoaded from '@sharedUI/hoc/withIsLoaded';
 
-const AssignDatesButton: React.FC<EntityListItemProps> = ({ id }) => {
+const AssignDatesButton: React.FC<EntityListItemProps> = React.memo(({ id }) => {
 	const { assignDatesToTicket } = useTicketAssignmentsManager();
 
 	const relatedDatetimes = useRelatedDatetimes({
@@ -42,7 +42,7 @@ const AssignDatesButton: React.FC<EntityListItemProps> = ({ id }) => {
 			/>
 		</ItemCount>
 	);
-};
+});
 
 export default withIsLoaded<EntityListItemProps>(TypeName.datetimes, ({ loaded, id }) => {
 	/* Hide TAM unless dates are loaded */

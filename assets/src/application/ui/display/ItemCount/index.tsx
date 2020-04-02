@@ -2,6 +2,7 @@ import React from 'react';
 import { Badge, Tooltip } from 'antd';
 import { BadgeProps } from 'antd/lib/badge';
 import classNames from 'classnames';
+import { getPropsAreEqual } from '@appServices/utilities';
 
 import './style.scss';
 
@@ -32,4 +33,4 @@ const ItemCount: React.FC<ItemCountProps> = ({ children, count, title = ' ', zer
 	);
 };
 
-export default ItemCount;
+export default React.memo(ItemCount, getPropsAreEqual(['count'])) as React.FC<ItemCountProps>;
