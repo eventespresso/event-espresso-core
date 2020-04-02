@@ -1,13 +1,14 @@
 import React from 'react';
 import { __ } from '@wordpress/i18n';
 
-import { useDataState } from '../data';
 import { DebugInfo } from '@appDisplay/index';
+import Table from './table/Table';
 import TicketPriceModifierRowIterator from './TicketPriceModifierRowIterator';
 import TicketPriceTotalRow from './TicketPriceTotalRow';
-import styles from '../inlineStyles';
+import { useDataState } from '../data';
 import { useInitStateListeners } from '../stateListeners';
 
+import styles from '../inlineStyles';
 import './styles.scss';
 
 const TicketPriceCalculator: React.FC = () => {
@@ -15,6 +16,8 @@ const TicketPriceCalculator: React.FC = () => {
 	useInitStateListeners();
 
 	const dataState = useDataState();
+
+	return <Table prices={dataState.prices} />;
 	return (
 		<>
 			<div className='ee-tpc' style={styles.div}>

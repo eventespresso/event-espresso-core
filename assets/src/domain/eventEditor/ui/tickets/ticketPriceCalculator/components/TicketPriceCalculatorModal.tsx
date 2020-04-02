@@ -1,10 +1,10 @@
 import React from 'react';
-import { __, sprintf } from '@wordpress/i18n';
 import { Modal } from 'antd';
+import { __, sprintf } from '@wordpress/i18n';
 
+import TicketPriceCalculator from './TicketPriceCalculator';
 import useResetButtonProps from '../buttons/useResetButtonProps';
 import useSubmitButtonProps from '../buttons/useSubmitButtonProps';
-import TicketPriceCalculator from './TicketPriceCalculator';
 import { useTPCContext } from '../context';
 
 import './styles.scss';
