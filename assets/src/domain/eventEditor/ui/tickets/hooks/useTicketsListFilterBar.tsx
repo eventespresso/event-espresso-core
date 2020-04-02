@@ -7,7 +7,7 @@ import {
 	DisplayStartOrEndDateControl,
 	SalesControl,
 	SortByControl,
-	TicketsChainedButton,
+	IsChainedButton,
 	StatusControl,
 } from '../ticketsList/filterBar/controls';
 
@@ -34,7 +34,7 @@ const useTicketsListFilterBar = (): TicketsListFilterBarCallback => {
 			const { isChained, toggleIsChained } = filterState;
 			return (
 				<div className='ee-filter-bar__chain ee-filter-bar__filter ee-filter-bar__filter--micro'>
-					<TicketsChainedButton isChained={isChained} toggleIsChained={toggleIsChained} />
+					<IsChainedButton isChained={isChained} toggleIsChained={toggleIsChained} />
 				</div>
 			);
 		});

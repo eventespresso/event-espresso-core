@@ -4,12 +4,9 @@ import { __ } from '@wordpress/i18n';
 import { SelectInput } from '@appInputs/SelectInput';
 import { TicketsSales } from '@edtrServices/filterState';
 import { getPropsAreEqual } from '@appServices/utilities';
+import { TicketsFilterStateManager } from '@edtrServices/filterState';
 
-interface StatusControlProps {
-	isChained?: boolean;
-	sales: TicketsSales;
-	setSales: (sales: TicketsSales) => void;
-}
+type StatusControlProps = Pick<TicketsFilterStateManager, 'isChained' | 'sales' | 'setSales'>;
 
 const SalesControl: React.FC<StatusControlProps> = React.memo(({ isChained, sales, setSales }) => {
 	return (

@@ -2,7 +2,7 @@ import { useMemo } from 'react';
 import { useRelations } from '@appServices/apollo/relations';
 import { entitiesWithGuIdInArray } from '@sharedServices/predicates';
 import useTickets from './useTickets';
-import { keys, pathOr, pickBy, pipe, hasPath } from 'ramda';
+import { keys, pathOr, pickBy, hasPath } from 'ramda';
 
 import { RelatedTicketsForDates } from '../types';
 
