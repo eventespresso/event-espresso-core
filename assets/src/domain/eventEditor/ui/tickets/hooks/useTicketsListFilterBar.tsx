@@ -40,10 +40,10 @@ const useTicketsListFilterBar = (): TicketsListFilterBarCallback => {
 		});
 
 		registerFilterBarItem('sales', ({ filterState }) => {
-			const { sales, setSales } = filterState;
+			const { isChained, sales, setSales } = filterState;
 			return (
 				<div className='ee-filter-bar__filter'>
-					<SalesControl sales={sales} setSales={setSales} />
+					<SalesControl isChained={isChained} sales={sales} setSales={setSales} />
 				</div>
 			);
 		});
