@@ -1,44 +1,37 @@
-import React from 'react';
-import classNames from 'classnames';
-import { Dropdown } from '@wordpress/components';
+import React, { Children, cloneElement } from 'react';
+// import classNames from 'classnames';
+import { Menu as AntMenu } from 'antd';
+// import { NavigableMenu } from '@wordpress/components';
 
-import Content from './Content';
-import { EspressoDropdownMenuProps as Props } from './types';
-import { mergeProps } from './utils';
-import Toggle from './Toggle';
+import { AnyObject } from '@appServices/utilities/types';
+// import { mergeProps } from './utils';
 
-import './style.scss';
+interface Props extends AnyObject {
+	children: React.ReactNode;
+	label: string;
+	menuProps?: AnyObject;
+	onClose?: () => void;
+	popoverProps?: AnyObject;
+	toggleProps?: AnyObject;
+}
 
-const EspressoDropdownMenu: React.FC<Props> = ({
-	children,
-	className,
-	icon = 'menu',
-	label,
-	popoverProps = { position: 'top center' },
-	toggleProps,
-	menuProps,
-}) => {
-	const mergedPopoverProps = mergeProps(
-		// @ts-ignore
-		{
-			className: 'components-dropdown-menu__popover',
-		},
-		popoverProps
-	);
+const Menu: React.FC<Props> = ({ children, label, menuProps, onClose }) => {
+	// const mergedMenuProps = mergeProps(
+	// 	// @ts-ignore
+	// 	{
+	// 		'aria-label': label,
+	// 		// className: classNames('components-dropdown-menu__menu'),
+	// 	},
+	// 	menuProps
+	// );
 
 	return (
-		<Dropdown
-			className={classNames(' components-dropdown-menu', className)}
-			// @ts-ignore
-			popoverProps={mergedPopoverProps}
-			renderToggle={({ isOpen, onToggle }) => (
-				<Toggle icon={icon} isOpen={isOpen} label={label} onToggle={onToggle} toggleProps={toggleProps} />
-			)}
-			renderContent={({ onClose }) => (
-				<Content children={children} label={label} menuProps={menuProps} onClose={onClose} />
-			)}
-		/>
+		<AntMenu aria-label={label} {...menuProps}>
+			{Children.map(children, (child: any, index: number) => (
+				<AntMenu.Item key={index}>{cloneElement(child, { onClose })}</AntMenu.Item>
+			))}
+		</AntMenu>
 	);
 };
 
-export default EspressoDropdownMenu;
+export default Menu;
