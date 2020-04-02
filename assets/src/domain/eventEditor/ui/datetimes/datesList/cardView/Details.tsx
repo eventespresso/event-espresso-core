@@ -1,50 +1,21 @@
-import React, { useCallback } from 'react';
+import React from 'react';
 import { __ } from '@wordpress/i18n';
 
-import { InlineEditHeading, InlineEditTextArea } from '@appInputs/InlineEditInput';
 import DateDetailsPanel from './DateDetailsPanel';
-import { useDatetimeMutator } from '@edtrServices/apollo/mutations';
-import type { Datetime } from '@edtrServices/apollo/types';
 import { getPropsAreEqual } from '@appServices/utilities';
+import { EditableDesc, EditableName } from '../editable';
+import type { DateItemProps } from '../types';
 
-interface DetailsProps {
-	datetime: Datetime;
-}
-
-const Details: React.FC<DetailsProps> = ({ datetime }) => {
-	const { updateEntity } = useDatetimeMutator(datetime.id);
-
-	const onChangeName = useCallback(
-		(name: string): void => {
-			if (name !== datetime.name) {
-				updateEntity({ name });
-			}
-		},
-		[datetime.cacheId]
-	);
-
-	const onChangeDesc = useCallback(
-		(description: string): void => {
-			if (description !== datetime.description) {
-				updateEntity({ description });
-			}
-		},
-		[datetime.cacheId]
-	);
-
+const Details: React.FC<DateItemProps> = ({entity: datetime }) => {
 	return (
 		<>
-			<InlineEditHeading level={3} className={'entity-card-details__name'} onChange={onChangeName}>
-				{datetime.name ? datetime.name : __('Edit title...')}
-			</InlineEditHeading>
+			<EditableName className={'entity-card-details__name'} entity={datetime} />
 
-			<InlineEditTextArea className={'entity-card-details__description'} onChange={onChangeDesc}>
-				{datetime.description ? datetime.description : __('Edit description...')}
-			</InlineEditTextArea>
+			<EditableDesc className={'entity-card-details__description'} entity={datetime} />
 
-			<DateDetailsPanel datetime={datetime} />
+			<DateDetailsPanel entity={datetime} />
 		</>
 	);
 };
 
-export default React.memo(Details, getPropsAreEqual(['datetime', 'cacheId']));
+export default React.memo(Details, getPropsAreEqual(['entity', 'cacheId']));

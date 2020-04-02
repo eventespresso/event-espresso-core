@@ -1,6 +1,5 @@
 import React from 'react';
 import { format } from 'date-fns';
-import { __ } from '@wordpress/i18n';
 
 import DateRegistrationsLink from '@edtrUI/datetimes/DateRegistrationsLink';
 import DateActionsMenu from '@edtrUI/datetimes/datesList/actionsMenu/DateActionsMenu';
@@ -8,12 +7,11 @@ import { Datetime } from '@edtrServices/apollo/types';
 import { filterCellByStartOrEndDate } from '@sharedServices/filterState';
 import { ENTITY_LIST_DATE_TIME_FORMAT } from '@appConstants/dateFnsFormats';
 import { getBackgroundColorClassName, status } from '@sharedEntities/datetimes/helpers';
-import { InlineEditText } from '@appInputs/InlineEditInput';
 import { shortenGuid } from '@appServices/utilities/text';
-import { useDatetimeMutator } from '@edtrServices/apollo/mutations';
 import DateCapacity from '../cardView/DateCapacity';
 import { BodyRowGeneratorFn } from '@appLayout/entityList';
 import { DatetimesFilterStateManager } from '@edtrServices/filterState';
+import { EditableName } from '../editable';
 
 import '@application/ui/styles/root/entity-status.css';
 
@@ -28,13 +26,12 @@ const bodyRowGenerator: DatesTableBodyRowGen = ({ entity: datetime, filterState 
 	const bgClassName = getBackgroundColorClassName(datetime);
 	const id = datetime.dbId || shortenGuid(datetime.id);
 	const statusClassName = status(datetime);
-	const { updateEntity } = useDatetimeMutator(datetime.id);
 
 	const capacity = {
 		key: 'capacity',
 		type: 'cell',
 		className: 'ee-date-list-cell ee-date-list-col-capacity ee-rspnsv-table-column-tiny ee-number-column',
-		value: <DateCapacity datetime={datetime} />,
+		value: <DateCapacity entity={datetime} />,
 	};
 
 	const name = {
@@ -42,18 +39,7 @@ const bodyRowGenerator: DatesTableBodyRowGen = ({ entity: datetime, filterState 
 		type: 'cell',
 		className:
 			'ee-date-list-cell ee-date-list-col-name ee-rspnsv-table-column-bigger ee-rspnsv-table-hide-on-mobile',
-		value: (
-			<InlineEditText
-				className={'ee-focus-priority-5'}
-				onChange={(name: string): void => {
-					if (name !== datetime.name) {
-						updateEntity({ name });
-					}
-				}}
-			>
-				{datetime.name ? datetime.name : __('Edit title...')}
-			</InlineEditText>
-		),
+		value: <EditableName className={'ee-focus-priority-5'} entity={datetime} />,
 	};
 
 	const cellsData = [

@@ -6,13 +6,12 @@ import TicketActionsMenu from '../actionsMenu/TicketActionsMenu';
 import Details from './Details';
 import TicketProvider from '@edtrServices/context/TicketContext';
 import EntityCard from '@appLayout/EntityCard';
-import { EntityListItemProps } from '@appLayout/entityList';
 import statusBgColorClassName from '@sharedEntities/tickets/helpers/statusBgColorClassName';
 import { useTicketsListFilterState } from '@edtrServices/filterState';
-import { Ticket } from '@edtrServices/apollo/types';
 import { getPropsAreEqual } from '@appServices/utilities';
+import type { TicketItemProps } from '../types';
 
-const TicketCard: React.FC<EntityListItemProps<Ticket>> = ({ entity: ticket }) => {
+const TicketCard: React.FC<TicketItemProps> = ({ entity: ticket }) => {
 	const { displayStartOrEndDate } = useTicketsListFilterState();
 
 	const bgClassName = statusBgColorClassName(ticket);
@@ -31,7 +30,7 @@ const TicketCard: React.FC<EntityListItemProps<Ticket>> = ({ entity: ticket }) =
 						startDate={ticket.startDate}
 					/>
 				}
-				details={<Details ticket={ticket} />}
+				details={<Details entity={ticket} />}
 				reverse
 			/>
 		</TicketProvider>

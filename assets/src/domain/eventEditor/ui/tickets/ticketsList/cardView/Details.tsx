@@ -1,72 +1,23 @@
-import React, { useCallback } from 'react';
+import React from 'react';
 import { __ } from '@wordpress/i18n';
 
-import type { Ticket } from '@edtrServices/apollo/types';
-import { InlineEditHeading, InlineEditTextArea } from '@appInputs/InlineEditInput';
 import TicketDetailsPanel from './TicketDetailsPanel';
-import { useTicketMutator } from '@edtrServices/apollo/mutations';
 import { getPropsAreEqual } from '@appServices/utilities';
-import CurrencyInput from '@appInputs/CurrencyInput';
+import { EditableDesc, EditableName, EditablePrice } from '../editable';
+import type { TicketItemProps } from '../types';
 
-interface DetailsProps {
-	ticket: Ticket;
-}
-
-const Details: React.FC<DetailsProps> = ({ ticket }) => {
-	const { updateEntity } = useTicketMutator(ticket.id);
-
-	const onChangeName = useCallback(
-		(name: string): void => {
-			if (name !== ticket.name) {
-				updateEntity({ name });
-				updateEntity({ name });
-			}
-		},
-		[ticket.cacheId]
-	);
-
-	const onChangeDesc = useCallback(
-		(description: string): void => {
-			if (description !== ticket.description) {
-				updateEntity({ description });
-			}
-		},
-		[ticket.cacheId]
-	);
-
-	const onChangePrice = useCallback(
-		({ amount: price }: any): void => {
-			price = parseFloat(price);
-			if (price !== ticket.price) {
-				updateEntity({ price });
-			}
-		},
-		[ticket.cacheId]
-	);
-
+const Details: React.FC<TicketItemProps> = ({ entity: ticket }) => {
 	return (
 		<>
-			<InlineEditHeading level={3} className={'entity-card-details__name'} onChange={onChangeName}>
-				{ticket.name ? ticket.name : __('Edit title...')}
-			</InlineEditHeading>
+			<EditableName className={'entity-card-details__name'} entity={ticket} />
 
-			<InlineEditTextArea className={'entity-card-details__description'} onChange={onChangeDesc}>
-				{ticket.description ? ticket.description : __('Edit description...')}
-			</InlineEditTextArea>
+			<EditableDesc className={'entity-card-details__description'} entity={ticket} />
 
-			<CurrencyInput
-				id={ticket.id}
-				amount={ticket.price}
-				placeholder={__('set price...')}
-				inputProps={{ ellipsis: false }}
-				wrapperProps={{ className: 'entity-card-details__price' }}
-				onChange={onChangePrice}
-				tag={'h3'}
-			/>
+			<EditablePrice className='entity-card-details__price' entity={ticket} />
 
-			<TicketDetailsPanel ticket={ticket} />
+			<TicketDetailsPanel entity={ticket} />
 		</>
 	);
 };
 
-export default React.memo(Details, getPropsAreEqual(['ticket', 'cacheId']));
+export default React.memo(Details, getPropsAreEqual(['entity', 'cacheId']));
