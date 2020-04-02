@@ -41,17 +41,20 @@ const RenderModalForm: React.FC<RenderModalFormProps> = ({
 
 	return (
 		<Modal
+			bodyStyle={{ padding: 0 }}
+			cancelButtonProps={resetButton}
+			cancelText={__('Reset')}
+			centered
+			maskClosable
+			okButtonProps={submitButton}
+			okText={__('Submit')}
+			onCancel={onClose}
+			onOk={onClose}
 			title={title}
 			visible={true}
-			onOk={onClose}
-			okText={__('Submit')}
-			okButtonProps={submitButton}
-			cancelText={__('Reset')}
-			cancelButtonProps={resetButton}
-			onCancel={onClose}
 			width={'80%'}
-			wrapClassName='ee-modal-form'
-			bodyStyle={{ padding: 0 }}
+			wrapClassName='ee-modal ee-modal-form'
+			zIndex={1200}
 		>
 			<div className='form-body'>{children}</div>
 		</Modal>

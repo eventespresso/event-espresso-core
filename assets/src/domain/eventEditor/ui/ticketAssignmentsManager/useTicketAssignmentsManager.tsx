@@ -99,15 +99,17 @@ const useTicketAssignmentsManager = (): TAM => {
 
 	const showModal = (options: BaseProps) => {
 		openModal = modal.confirm({
-			title: __('Ticket Assignment Manager'),
-			content: withContext(formContent, options),
-			okButtonProps: submitButton,
 			cancelButtonProps: cancelButton,
-			okText: __('Submit'),
 			cancelText: __('Cancel'),
-			maskClosable: true,
 			centered: true,
-			width: 'auto',
+			className: 'ee-modal ee-tam-modal',
+			content: withContext(formContent, options),
+			maskClosable: true,
+			okButtonProps: submitButton,
+			okText: __('Submit'),
+			title: __('Ticket Assignment Manager'),
+			width: '80%',
+			zIndex: 1200,
 		});
 	};
 
