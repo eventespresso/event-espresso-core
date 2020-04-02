@@ -39,20 +39,20 @@ const bodyRowGenerator: DatesTableBodyRowGen = ({ entity: datetime, filterState 
 		type: 'cell',
 		className:
 			'ee-date-list-cell ee-date-list-col-name ee-rspnsv-table-column-bigger ee-rspnsv-table-hide-on-mobile',
-		value: <EditableName className={'ee-focus-priority-5'} entity={datetime} />,
+		value: <EditableName className={'ee-focus-priority-5'} entity={datetime} view={'table'} />,
 	};
 
 	const cellsData = [
 		{
 			key: 'stripe',
 			type: 'cell',
-			className: `ee-date-list-cell ee-entity-list-status-stripe ${bgClassName} ee-rspnsv-table-column-micro`,
+			className: `ee-date-list-cell ee-entity-list-status-stripe ${bgClassName} ee-rspnsv-table-column-nano`,
 			value: <div className={'ee-rspnsv-table-show-on-mobile'}>{datetime.name}</div>,
 		},
 		{
 			key: 'id',
 			type: 'cell',
-			className: 'ee-date-list-cell ee-date-list-col-id ee-rspnsv-table-column-tiny ee-number-column',
+			className: 'ee-date-list-cell ee-date-list-col-id ee-rspnsv-table-column-nano ee-number-column',
 			value: id,
 		},
 		name,

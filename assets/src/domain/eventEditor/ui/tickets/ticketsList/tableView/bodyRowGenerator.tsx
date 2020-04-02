@@ -33,7 +33,7 @@ const bodyRowGenerator: TicketsTableBodyRowGen = ({ entity: ticket, filterState 
 		type: 'cell',
 		className:
 			'ee-ticket-list-cell ee-ticket-list-col-name ee-rspnsv-table-column-bigger ee-rspnsv-table-hide-on-mobile',
-		value: <EditableName className={'ee-focus-priority-5'} entity={ticket} />,
+		value: <EditableName className={'ee-focus-priority-5'} entity={ticket} view={'table'} />,
 	};
 
 	const quantity = {
@@ -47,13 +47,13 @@ const bodyRowGenerator: TicketsTableBodyRowGen = ({ entity: ticket, filterState 
 		{
 			key: 'stripe',
 			type: 'cell',
-			className: `ee-ticket-list-cell ee-entity-list-status-stripe ${bgClassName} ee-rspnsv-table-column-micro`,
+			className: `ee-ticket-list-cell ee-entity-list-status-stripe ${bgClassName} ee-rspnsv-table-column-nano`,
 			value: <div className={'ee-rspnsv-table-show-on-mobile'}>{ticket.name}</div>,
 		},
 		{
 			key: 'id',
 			type: 'cell',
-			className: 'ee-ticket-list-cell ee-ticket-list-col-id ee-rspnsv-table-column-tiny ee-number-column',
+			className: 'ee-ticket-list-cell ee-ticket-list-col-id ee-rspnsv-table-column-nano ee-number-column',
 			value: id,
 		},
 		name,

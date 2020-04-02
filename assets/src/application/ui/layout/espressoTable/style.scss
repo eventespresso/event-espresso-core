@@ -179,6 +179,7 @@
 	.ee-rspnsv-table-body-td.ee-rspnsv-table-column-nano:not(.ee-entity-list-status-stripe),
 	.ee-rspnsv-table-footer-th.ee-rspnsv-table-column-nano:not(.ee-entity-list-status-stripe) {
 		padding: 1px;
+		min-width: 50px;
 		width: 1.25%;
 	}
 
@@ -186,6 +187,7 @@
 	.ee-rspnsv-table-body-td.ee-rspnsv-table-column-micro:not(.ee-entity-list-status-stripe),
 	.ee-rspnsv-table-footer-th.ee-rspnsv-table-column-micro:not(.ee-entity-list-status-stripe) {
 		padding: var(--ee-padding-nano);
+		min-width: 70px;
 		width: 2.5%;
 	}
 

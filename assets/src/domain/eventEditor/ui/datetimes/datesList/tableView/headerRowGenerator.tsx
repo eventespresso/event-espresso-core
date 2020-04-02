@@ -19,13 +19,13 @@ const headerRowGenerator: DatesTableHeaderRowGen = (filterState) => {
 		{
 			key: 'stripe',
 			type: 'cell',
-			className: 'ee-date-list-col-hdr ee-entity-list-status-stripe ee-rspnsv-table-column-micro',
+			className: 'ee-date-list-col-hdr ee-entity-list-status-stripe ee-rspnsv-table-column-nano',
 			value: '',
 		},
 		{
 			key: 'id',
 			type: 'cell',
-			className: 'ee-date-list-col-hdr ee-date-list-col-id ee-number-column ee-rspnsv-table-column-tiny',
+			className: 'ee-date-list-col-hdr ee-date-list-col-id ee-number-column ee-rspnsv-table-column-nano',
 			value: __('ID'),
 		},
 		{
