@@ -2,7 +2,7 @@ import { useCallback } from 'react';
 import { ButtonProps } from 'antd/lib/button';
 
 type Props = {
-	reset: () => void;
+	reset: VoidFunction;
 };
 
 const useResetButtonProps = ({ reset }: Props): ButtonProps => {
