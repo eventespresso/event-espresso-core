@@ -5,9 +5,11 @@ import { useOnSubmitPrices } from '../hooks';
 
 type Props = {
 	onCloseModal: VoidFunction;
+	price: number;
 };
 
-const useSubmitButtonProps = ({ onCloseModal }: Props): ButtonProps => {
+const useSubmitButtonProps = ({ onCloseModal, price }: Props): ButtonProps => {
+	const disabled = price === 0;
 	const submitPrices = useOnSubmitPrices();
 	const onClick = useCallback(
 		(e) => {
@@ -19,7 +21,8 @@ const useSubmitButtonProps = ({ onCloseModal }: Props): ButtonProps => {
 	);
 
 	return {
-		htmlType: 'reset',
+		disabled,
+		htmlType: 'submit',
 		onClick,
 	};
 };

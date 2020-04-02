@@ -15,7 +15,7 @@ const TicketPriceCalculatorModal: React.FC = () => {
 		dataState: { reset, ticket },
 	} = useTPCContext();
 	const resetButton = useResetButtonProps({ reset });
-	const submitButton = useSubmitButtonProps({ onCloseModal });
+	const submitButton = useSubmitButtonProps({ onCloseModal, price: ticket?.price ?? 0 });
 
 	return (
 		<Modal
