@@ -1,5 +1,9 @@
 import React from 'react';
 import classNames from 'classnames';
+import invariant from 'invariant';
+import { v4 as uuidv4 } from 'uuid';
+
+import { isEmpty } from '@appServices/utilities/string';
 import { LabelPosition, withLabelProps } from './types';
 import './style.scss';
 
@@ -8,7 +12,6 @@ const withLabel = <P extends withLabelProps>(WrappedComponent: React.ComponentTy
 	type refProps = { forwardedRef: Ref };
 	const WithLabel: React.FC<P & refProps> = ({
 		forwardedRef,
-		id,
 		label,
 		labelClassName,
 		labelPosition = LabelPosition.TOP_LEFT,
@@ -29,15 +32,17 @@ const withLabel = <P extends withLabelProps>(WrappedComponent: React.ComponentTy
 			'ee-input-label__wrapper--left-middle': labelPosition === LabelPosition.LEFT_MIDDLE,
 			'ee-input-label__wrapper--left-top': labelPosition === LabelPosition.LEFT_TOP,
 		});
+		const labelID = props.id ? `${props.id}-label` : uuidv4();
+
 		return label ? (
 			<div className={className}>
-				<label className='ee-input-label' htmlFor={id}>
+				<label className='ee-input-label' id={labelID}>
 					{label}
 				</label>
-				<WrappedComponent {...(props as P)} ref={forwardedRef} />
+				<WrappedComponent {...(props as P)} aria-labelledby={labelID} ref={forwardedRef} />
 			</div>
 		) : (
-			<WrappedComponent {...(props as P)} ref={forwardedRef} />
+			<WrappedComponent {...(props as P)} aria-labelledby={labelID} ref={forwardedRef} />
 		);
 	};
 

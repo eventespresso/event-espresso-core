@@ -15,6 +15,7 @@ export enum LabelPosition {
 }
 
 export interface withLabelProps {
+	ariaLabelledBy?: string;
 	id?: string;
 	label?: string;
 	labelClassName?: string;
