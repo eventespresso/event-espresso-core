@@ -8,6 +8,8 @@ import TicketPriceTotalRow from './TicketPriceTotalRow';
 import styles from '../inlineStyles';
 import { useInitStateListeners } from '../stateListeners';
 
+import './styles.scss';
+
 const TicketPriceCalculator: React.FC = () => {
 	// initialize state listeners
 	useInitStateListeners();
@@ -15,7 +17,7 @@ const TicketPriceCalculator: React.FC = () => {
 	const dataState = useDataState();
 	return (
 		<>
-			<div style={styles.div}>
+			<div className='ee-tpc' style={styles.div}>
 				<table style={styles.table}>
 					<thead>
 						<tr>

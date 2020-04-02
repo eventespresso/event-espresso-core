@@ -1,9 +1,8 @@
 import React, { CSSProperties } from 'react';
 
-import AddPriceModifierButton from '../AddPriceModifierButtonData';
-import DeletePriceModifierButton from '../DeletePriceModifierButton';
-import { PriceModifierProps } from '../../types';
-import './styles.scss';
+import AddPriceModifierButton from './AddPriceModifierButtonData';
+import DeletePriceModifierButton from './DeletePriceModifierButton';
+import { PriceModifierProps } from '../types';
 
 // just temporary
 const style: CSSProperties = {

@@ -5,7 +5,6 @@ import { Modal } from 'antd';
 import useResetButtonProps from '../buttons/useResetButtonProps';
 import useSubmitButtonProps from '../buttons/useSubmitButtonProps';
 import TicketPriceCalculator from './TicketPriceCalculator';
-import { useOnSubmitPrices } from '../hooks';
 import { useTPCContext } from '../context';
 
 import './styles.scss';
@@ -15,9 +14,8 @@ const TicketPriceCalculatorModal: React.FC = () => {
 		onCloseModal,
 		dataState: { reset, ticket },
 	} = useTPCContext();
-	const submitPrices = useOnSubmitPrices();
 	const resetButton = useResetButtonProps({ reset });
-	const submitButton = useSubmitButtonProps({ onCloseModal, submitPrices });
+	const submitButton = useSubmitButtonProps({ onCloseModal });
 
 	return (
 		<Modal
@@ -33,9 +31,9 @@ const TicketPriceCalculatorModal: React.FC = () => {
 			title={sprintf(__('Price Calculator for Ticket: %s'), ticket.name)}
 			visible={true}
 			width={'80%'}
-			wrapClassName='ee-tpc-modal'
+			wrapClassName='ee-tpc__modal'
 		>
-			<div className='tpc-body'>
+			<div className='ee-tpc__body'>
 				<TicketPriceCalculator />
 			</div>
 		</Modal>
