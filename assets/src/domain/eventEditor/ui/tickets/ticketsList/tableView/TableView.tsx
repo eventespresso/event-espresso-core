@@ -1,5 +1,4 @@
 import React from 'react';
-import classNames from 'classnames';
 import { __ } from '@wordpress/i18n';
 
 import { EntityTable } from '@appLayout/entityList';
@@ -11,8 +10,6 @@ import { useTicketsListContext } from '@edtrServices/context/EntityListContext';
  * Displays tickets in a standard list table like view
  */
 const TableView: React.FC = () => {
-	const tableClassName = classNames('ee-tickets-list-list-view');
-
 	const { filterState, filteredEntities } = useTicketsListContext();
 
 	return (
@@ -21,7 +18,7 @@ const TableView: React.FC = () => {
 			filterState={filterState}
 			bodyRowGenerator={bodyRowGenerator}
 			headerRowGenerator={headerRowGenerator}
-			className={tableClassName}
+			className={'ee-tickets-list-list-view ee-fade-in'}
 			tableId='ticket-entities-table-view'
 			tableCaption={__('Tickets')}
 		/>
