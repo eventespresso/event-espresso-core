@@ -4,7 +4,7 @@ import { entitiesWithGuIdInArray } from '@sharedServices/predicates';
 import useTickets from './useTickets';
 import { Ticket } from '../../types';
 import { RelatedEntitiesHook } from '../types';
-import { getCacheIds } from '@appServices/predicates';
+import { entityListCacheIdString } from '@appServices/utilities/memo';
 
 const useRelatedTickets: RelatedEntitiesHook<Ticket, 'tickets'> = ({ entity, entityId }) => {
 	const tickets = useTickets();
@@ -15,7 +15,7 @@ const useRelatedTickets: RelatedEntitiesHook<Ticket, 'tickets'> = ({ entity, ent
 		relation: 'tickets',
 	});
 
-	const cacheIds = JSON.stringify(getCacheIds(tickets));
+	const cacheIds = entityListCacheIdString(tickets);
 	const relatedTicketIdsStr = JSON.stringify(relatedTicketIds);
 
 	return useMemo(() => entitiesWithGuIdInArray(tickets, relatedTicketIds), [relatedTicketIdsStr, cacheIds]);
