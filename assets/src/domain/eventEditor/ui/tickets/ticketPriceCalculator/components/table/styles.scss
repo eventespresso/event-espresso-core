@@ -3,7 +3,7 @@
 		width: 100%;
 		th,
 		td {
-			padding: 0.5rem 0.25rem;
+			padding: var(--ee-padding-tiny) var(--ee-padding-micro);
 		}
 		input,
 		select {
@@ -14,8 +14,7 @@
 		display: flex;
 		&__before {
 			line-height: var(--ee-icon-button-size);
-			margin-left: 15px;
-			margin-right: 10px;
+			margin: 0 var(--ee-margin-smaller) 0 var(--ee-margin-small);
 		}
 	}
 }
