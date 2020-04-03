@@ -1,7 +1,8 @@
 import { useCallback } from 'react';
-import { assocPath, filter, pick, propEq } from 'ramda';
+import { assocPath, pick } from 'ramda';
 
 import defaultPrice from '../defaultPriceModifier';
+import { isBasePrice } from '@sharedEntities/priceTypes/predicates/selectionPredicates';
 import { StateInitializer } from './types';
 import { BaseProps, TpcPriceModifier } from '../types';
 import { sortByPriceOrderIdAsc } from '@sharedEntities/prices/predicates/sortingPredicates';
@@ -19,7 +20,7 @@ const useInitialState = ({ ticketId }: BaseProps): StateInitializer => {
 	const { getRelations } = useRelations();
 
 	const allPriceTypes = usePriceTypes();
-	const [basePriceType] = allPriceTypes.filter(({ isBasePrice }) => isBasePrice === true);
+	const [basePriceType] = allPriceTypes.filter(isBasePrice);
 
 	const defaultPriceModifier = usePriceModifier(defaultPrice);
 	const basePrice = updatePriceModifier(defaultPriceModifier, basePriceType);
@@ -37,9 +38,17 @@ const useInitialState = ({ ticketId }: BaseProps): StateInitializer => {
 	//sort'em
 	const sortedPrices = sortByPriceOrderIdAsc(unSortedPrices);
 
+	const getPrices = () => {
+		const hasBasePrice = sortedPrices.filter(isBasePrice).length;
+
+		if (hasBasePrice) return sortedPrices;
+
+		return [basePrice];
+	};
+
 	// convert to TPC price objects by adding
 	// "priceType" and "priceTypeOrder"
-	const prices = [basePrice, ...sortedPrices].map<TpcPriceModifier>((price) => {
+	const prices = getPrices().map<TpcPriceModifier>((price) => {
 		const priceTypes = getRelations({
 			entity: 'prices',
 			entityId: price.id,
