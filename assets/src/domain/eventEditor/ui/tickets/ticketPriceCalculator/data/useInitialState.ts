@@ -1,11 +1,15 @@
 import { useCallback } from 'react';
-import { assocPath, pick } from 'ramda';
+import { assocPath, filter, pick, propEq } from 'ramda';
+
+import defaultPrice from '../defaultPriceModifier';
 import { StateInitializer } from './types';
 import { BaseProps, TpcPriceModifier } from '../types';
-import { useTicketItem, useTicketPrices, usePriceTypes } from '@edtrServices/apollo';
-import { useRelations } from '@appServices/apollo/relations';
 import { sortByPriceOrderIdAsc } from '@sharedEntities/prices/predicates/sortingPredicates';
 import { ticketFieldsToUse } from '../utils/constants';
+import { updatePriceModifier } from '../utils';
+import { usePriceModifier } from '../hooks';
+import { useRelations } from '@appServices/apollo/relations';
+import { useTicketItem, useTicketPrices, usePriceTypes } from '@edtrServices/apollo';
 
 /**
  * Initializes the data state dynamically by
@@ -13,6 +17,12 @@ import { ticketFieldsToUse } from '../utils/constants';
  */
 const useInitialState = ({ ticketId }: BaseProps): StateInitializer => {
 	const { getRelations } = useRelations();
+
+	const allPriceTypes = usePriceTypes();
+	const [basePriceType] = allPriceTypes.filter(({ isBasePrice }) => isBasePrice === true);
+
+	const defaultPriceModifier = usePriceModifier(defaultPrice);
+	const basePrice = updatePriceModifier(defaultPriceModifier, basePriceType);
 
 	// convert priceType array to {[id]: order}
 	const priceTypeIdOrder = usePriceTypes().reduce((acc, { id, order }) => assocPath([id], order, acc), {});
@@ -29,7 +39,7 @@ const useInitialState = ({ ticketId }: BaseProps): StateInitializer => {
 
 	// convert to TPC price objects by adding
 	// "priceType" and "priceTypeOrder"
-	const prices = sortedPrices.map<TpcPriceModifier>((price) => {
+	const prices = [basePrice, ...sortedPrices].map<TpcPriceModifier>((price) => {
 		const priceTypes = getRelations({
 			entity: 'prices',
 			entityId: price.id,
