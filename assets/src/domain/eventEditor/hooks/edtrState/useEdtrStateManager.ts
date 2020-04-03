@@ -28,7 +28,7 @@ const useEdtrStateManager = (): ESM => {
 			getState,
 			setVisibleDatetimeIds,
 		}),
-		Object.values(state)
+		[state]
 	);
 };
 
