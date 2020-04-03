@@ -1,6 +1,6 @@
 import React from 'react';
 import { ApolloProvider } from '@apollo/react-hooks';
-/* Internal dependencies */
+
 import { getClient } from '../../../../../infrastructure/services/apollo/Apollo';
 import { ToastProvider } from '../../../../../application/services/context/ToastProvider';
 import { RelationsProvider } from '../../../../../application/services/context/RelationsProvider';
@@ -9,7 +9,7 @@ import { ModalProvider } from '../../../../../application/services/context/Modal
 import { ConfigProvider } from '../../../../../application/services/context/ConfigProvider';
 import { FormModalProvider } from '../../../../../application/services/context/FormModalProvider';
 import { EventIdProvider } from '../EventContext';
-import { ContextProvider } from '../types';
+import { EdtrStateProvider } from '../EdtrStateContext';
 
 /**
  * A collection of top level providers wrapped by ApolloProvider.
@@ -17,7 +17,7 @@ import { ContextProvider } from '../types';
  * @param {ReactElement} children The element that should be wrapped.
  * @returns {ReactElement} The wrapped element.
  */
-export const ContextProviders: ContextProvider = ({ children }) => {
+export const ContextProviders: React.FC = ({ children }) => {
 	// Make TS (TS2769) friends with ESLint (react/no-children-prop)
 	const props = {
 		client: getClient(),
@@ -37,14 +37,16 @@ export const ContextProviders: ContextProvider = ({ children }) => {
  * @param {ReactElement} children The element that should be wrapped.
  * @returns {ReactElement} The wrapped element.
  */
-export const CommonProviders: ContextProvider = ({ children }) => (
+export const CommonProviders: React.FC = ({ children }) => (
 	<ToastProvider>
 		<StatusProvider>
 			<ConfigProvider>
 				<EventIdProvider>
 					<RelationsProvider>
 						<FormModalProvider>
-							<ModalProvider>{children}</ModalProvider>
+							<ModalProvider>
+								<EdtrStateProvider>{children}</EdtrStateProvider>
+							</ModalProvider>
 						</FormModalProvider>
 					</RelationsProvider>
 				</EventIdProvider>
