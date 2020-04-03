@@ -43,7 +43,7 @@ const useInitialState = ({ ticketId }: BaseProps): StateInitializer => {
 
 		if (hasBasePrice) return sortedPrices;
 
-		return [basePrice];
+		return [basePrice, ...sortedPrices];
 	};
 
 	// convert to TPC price objects by adding
