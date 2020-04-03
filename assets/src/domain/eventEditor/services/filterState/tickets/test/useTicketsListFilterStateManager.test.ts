@@ -3,10 +3,12 @@ import { act, renderHook } from '@testing-library/react-hooks';
 import { DisplayStartOrEndDate } from '@sharedServices/filterState';
 import { useTicketsListFilterStateManager } from '../';
 import { TicketsSales, TicketsStatus } from '../types';
+import { ApolloMockedProvider } from '@edtrServices/context/TestContext';
 
 describe('useTicketsListFilterStateManager', () => {
+	const wrapper = ApolloMockedProvider();
 	test('useTicketsListFilterStateManager initial state and result', () => {
-		const { result } = renderHook(() => useTicketsListFilterStateManager());
+		const { result } = renderHook(() => useTicketsListFilterStateManager(), { wrapper });
 
 		expect(typeof result.current.sortBy).toBe('string');
 		expect(typeof result.current.displayStartOrEndDate).toBe('string');
@@ -19,7 +21,7 @@ describe('useTicketsListFilterStateManager', () => {
 	});
 
 	test('should update sortBy by invoking setSortBy with corresponding accepted enums', () => {
-		const { result } = renderHook(() => useTicketsListFilterStateManager());
+		const { result } = renderHook(() => useTicketsListFilterStateManager(), { wrapper });
 
 		act(() => {
 			result.current.setSortBy('name');
@@ -43,7 +45,7 @@ describe('useTicketsListFilterStateManager', () => {
 	});
 
 	test('should update displayStartOrEndDate by invoking setDisplayStartOrEndDate with corresponding accepted enums', () => {
-		const { result } = renderHook(() => useTicketsListFilterStateManager());
+		const { result } = renderHook(() => useTicketsListFilterStateManager(), { wrapper });
 
 		act(() => {
 			result.current.setDisplayStartOrEndDate(DisplayStartOrEndDate.start);
@@ -62,7 +64,7 @@ describe('useTicketsListFilterStateManager', () => {
 	});
 
 	test('should update sales by invoking setSales with corresponding accepted enums', () => {
-		const { result } = renderHook(() => useTicketsListFilterStateManager());
+		const { result } = renderHook(() => useTicketsListFilterStateManager(), { wrapper });
 
 		act(() => {
 			result.current.setSales(TicketsSales.above50Sold);
@@ -71,7 +73,7 @@ describe('useTicketsListFilterStateManager', () => {
 	});
 
 	test('should update status by invoking setStatus with corresponding accepted enums', () => {
-		const { result } = renderHook(() => useTicketsListFilterStateManager());
+		const { result } = renderHook(() => useTicketsListFilterStateManager(), { wrapper });
 
 		act(() => {
 			result.current.setStatus(TicketsStatus.all);

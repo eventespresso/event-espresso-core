@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import classNames from 'classnames';
 
 import parseInfinity from '@appServices/utilities/number/parseInfinity';
@@ -8,6 +8,11 @@ import { TextProps } from './types';
 const InlineEditInfinity: React.FC<TextProps> = ({ children, onChange, className, ...rest }) => {
 	const [value, setValue] = useState(children);
 	const [isEditing, setIsEditing] = useState(false);
+
+	// if value updated by parent
+	useEffect(() => {
+		setValue(children);
+	}, [children]);
 
 	const editable: TextProps['editable'] = {
 		editing: isEditing,

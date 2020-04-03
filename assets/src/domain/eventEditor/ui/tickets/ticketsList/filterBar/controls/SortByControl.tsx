@@ -3,11 +3,9 @@ import { __ } from '@wordpress/i18n';
 import { SelectInput } from '@appInputs/SelectInput';
 import { SortBy } from '@sharedServices/filterState';
 import { getPropsAreEqual } from '@appServices/utilities';
+import { TicketsFilterStateManager } from '@edtrServices/filterState';
 
-interface SortByControlProps {
-	sortBy: SortBy;
-	setSortBy: (sortBy: SortBy) => void;
-}
+type SortByControlProps = Pick<TicketsFilterStateManager, 'sortBy' | 'setSortBy'>;
 
 type SortByOptions = Array<{
 	value: SortBy;

@@ -7,13 +7,13 @@ import { useEntityListFilterStateManager } from '@appLayout/entityList/filterBar
 
 type FSM = DatetimesFilterStateManager;
 
-const useDatesListFilterStateManager = (): FSM => {
-	const initialState: DatetimesFilterState = {
-		displayStartOrEndDate: DisplayStartOrEndDate.start,
-		sales: DatetimeSales.all,
-		status: DatetimeStatus.activeUpcoming,
-	};
+const initialState: DatetimesFilterState = {
+	displayStartOrEndDate: DisplayStartOrEndDate.start,
+	sales: DatetimeSales.all,
+	status: DatetimeStatus.activeUpcoming,
+};
 
+const useDatesListFilterStateManager = (): FSM => {
 	const [state, dispatch] = useReducer(reducer, initialState);
 
 	const entityFilterState = useEntityListFilterStateManager<SortBy>('date');
@@ -47,6 +47,9 @@ const useDatesListFilterStateManager = (): FSM => {
 		});
 	}, []);
 
+	const datesFSValues = Object.values(state);
+	const entityFSValues = Object.values(entityFilterState.getState());
+
 	return useMemo(
 		() => ({
 			...state,
@@ -55,7 +58,7 @@ const useDatesListFilterStateManager = (): FSM => {
 			setSales,
 			setStatus,
 		}),
-		[...Object.values(state), ...Object.values(entityFilterState.getState())]
+		[...datesFSValues, ...entityFSValues]
 	);
 };
 

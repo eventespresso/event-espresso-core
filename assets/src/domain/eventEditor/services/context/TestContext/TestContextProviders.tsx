@@ -5,7 +5,6 @@ import { cache } from '../../../../../infrastructure/services/apollo/Apollo';
 import { CommonProviders } from '../EventEditorContext/ContextProviders';
 import { useDomTestData, useResetApolloCache, useSetGlobalStatusFlags, useSetRelationalData } from './';
 import { MockedResponse } from './types';
-import { ContextProvider } from '../types';
 
 /**
  * A top level provider wrapped by Apollo MockedProvider.
@@ -13,7 +12,7 @@ import { ContextProvider } from '../types';
  * @param {ReactElement} children The element that should be wrapped.
  * @returns {ReactElement} The wrapped element.
  */
-export const ApolloMockedProvider = (mocks: ReadonlyArray<MockedResponse> = []): ContextProvider => ({
+export const ApolloMockedProvider = (mocks: ReadonlyArray<MockedResponse> = []): React.FC => ({
 	children,
 }): JSX.Element => {
 	return (
@@ -30,7 +29,7 @@ export const ApolloMockedProvider = (mocks: ReadonlyArray<MockedResponse> = []):
  * @param {ReactElement} children The element that should be wrapped.
  * @returns {ReactElement} The wrapped element.
  */
-export const ApolloAwareWrapper: ContextProvider = ({ children }) => {
+export const ApolloAwareWrapper: React.FC = ({ children }) => {
 	// initialize DOM data
 	useDomTestData();
 	// clear Apollo cache on unmount
@@ -49,7 +48,7 @@ export const ApolloAwareWrapper: ContextProvider = ({ children }) => {
  * @param {ReactElement} children The element that should be wrapped.
  * @returns {ReactElement} The wrapped element.
  */
-export const ContextAwareWrapper: ContextProvider = ({ children }) => {
+export const ContextAwareWrapper: React.FC = ({ children }) => {
 	useSetGlobalStatusFlags();
 	useSetRelationalData();
 	return <>{children}</>;

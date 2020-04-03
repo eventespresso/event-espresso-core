@@ -1,6 +1,6 @@
 import React, { createContext, useMemo } from 'react';
 
-import type { EntityListContextProps, ContextProviderProps } from '../types';
+import type { EntityListContextProps } from '../types';
 import { TicketsFilterStateManager, useTicketsListFilterStateManager } from '../../filterState';
 import { useFilteredEntities } from '@appLayout/entityList';
 import { domain, ticketsList } from '@edtrServices/constants';
@@ -11,15 +11,15 @@ export type TicketsListContextProps = EntityListContextProps<TicketsFilterStateM
 
 export const TicketsListContext = createContext<TicketsListContextProps>(null);
 
-export const TicketsListProvider: React.FC<ContextProviderProps> = ({ children }) => {
-	const datetimes = useTickets();
+export const TicketsListProvider: React.FC = ({ children }) => {
+	const tickets = useTickets();
 	const filters = useTicketsListFilterStateManager();
 
 	const filtersStr = JSON.stringify(filters);
 	// memoize filter state
 	const filterState = useMemo(() => filters, [filtersStr]);
 
-	const filteredEntities = useFilteredEntities(domain, ticketsList, datetimes, filterState);
+	const filteredEntities = useFilteredEntities(domain, ticketsList, tickets, filterState);
 
 	const value: TicketsListContextProps = { filterState, filteredEntities };
 

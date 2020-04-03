@@ -4,11 +4,9 @@ import { __ } from '@wordpress/i18n';
 import { SelectInput } from '@appInputs/SelectInput';
 import { DatetimeSales } from '@edtrServices/filterState';
 import { getPropsAreEqual } from '@appServices/utilities';
+import { DatetimesFilterStateManager } from '@edtrServices/filterState';
 
-interface StatusControlProps {
-	sales: DatetimeSales;
-	setSales: (sales: DatetimeSales) => void;
-}
+type StatusControlProps = Pick<DatetimesFilterStateManager, 'sales' | 'setSales'>;
 
 const SalesControl: React.FC<StatusControlProps> = React.memo(({ sales, setSales }) => {
 	return (

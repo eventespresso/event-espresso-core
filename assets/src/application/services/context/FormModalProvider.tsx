@@ -1,13 +1,12 @@
 import React, { createContext } from 'react';
 
-import { ProviderProps } from './types';
 import { useFormModalManager } from '../../ui/layout/formModal';
 
 const FormModalContext = createContext(null);
 
 const { Provider, Consumer: FormModalConsumer } = FormModalContext;
 
-const FormModalProvider: React.FC<ProviderProps> = (props) => {
+const FormModalProvider: React.FC = (props) => {
 	const formModal = useFormModalManager();
 
 	return <Provider value={formModal}>{props.children}</Provider>;

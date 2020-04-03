@@ -1,11 +1,10 @@
 import React, { createContext } from 'react';
 
-import { ProviderProps } from './types';
 import { useToastManager } from '../toaster';
 
 const ToastContext = createContext(null);
 
-const ToastProvider: React.FC<ProviderProps> = (props) => {
+const ToastProvider: React.FC = (props) => {
 	const toaster = useToastManager({
 		placement: 'bottomRight',
 	});

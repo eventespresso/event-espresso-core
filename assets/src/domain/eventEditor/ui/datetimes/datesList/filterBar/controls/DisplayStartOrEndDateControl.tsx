@@ -3,11 +3,12 @@ import { __ } from '@wordpress/i18n';
 import { SelectInput } from '@appInputs/SelectInput';
 import { DisplayStartOrEndDate } from '@sharedServices/filterState';
 import { getPropsAreEqual } from '@appServices/utilities';
+import { DatetimesFilterStateManager } from '@edtrServices/filterState';
 
-interface DisplayStartOrEndDateControlProps {
-	displayStartOrEndDate: DisplayStartOrEndDate;
-	setDisplayStartOrEndDate: (displayStartOrEndDate: DisplayStartOrEndDate) => void;
-}
+type DisplayStartOrEndDateControlProps = Pick<
+	DatetimesFilterStateManager,
+	'displayStartOrEndDate' | 'setDisplayStartOrEndDate'
+>;
 /**
  * filter for controlling which dates display in a list of Event Dates
  */

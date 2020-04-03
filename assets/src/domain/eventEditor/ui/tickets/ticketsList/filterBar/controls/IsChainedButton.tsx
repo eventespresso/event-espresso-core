@@ -4,18 +4,16 @@ import { __ } from '@wordpress/i18n';
 
 import { EspressoButton, EspressoButtonType, Icon } from '@application/ui/input';
 import { getPropsAreEqual } from '@appServices/utilities';
+import { TicketsFilterStateManager } from '@edtrServices/filterState';
 
-interface TicketsChainedButtonProps {
-	isChained?: boolean;
-	toggleIsChained: () => void;
-}
+type IsChainedButtonProps = Pick<TicketsFilterStateManager, 'isChained' | 'toggleIsChained'>;
 
 /**
  * filter for controlling whether Tickets List is chained to the Dates List
  * if true, then only tickets that are related to the dates in the dates list
  * will appear, otherwise ALL tickets will appear (subject to other filters)
  */
-const TicketsChainedButton: React.FC<TicketsChainedButtonProps> = ({ isChained, toggleIsChained }) => {
+const IsChainedButton: React.FC<IsChainedButtonProps> = ({ isChained, toggleIsChained }) => {
 	const className = classNames('ee-filter-bar__btn ee-filter-bar__chain', {
 		'ee-filter-bar__btn--active': isChained,
 		'ee-filter-bar__chain--active': isChained,
@@ -39,4 +37,4 @@ const TicketsChainedButton: React.FC<TicketsChainedButtonProps> = ({ isChained, 
 	);
 };
 
-export default React.memo(TicketsChainedButton, getPropsAreEqual(['isChained']));
+export default React.memo(IsChainedButton, getPropsAreEqual(['isChained']));

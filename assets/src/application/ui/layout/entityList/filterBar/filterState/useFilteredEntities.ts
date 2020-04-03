@@ -53,8 +53,7 @@ const useFilteredEntities = <D extends string, L extends string, E extends Entit
 		// If there are no paginated entities and current pageNumber is not 1
 		//e.g. When there is only one entity on the last page and it's deleted
 		if (paginatedEntities.length === 0 && pageNumber > 1) {
-			// goto the previous page
-			setPageNumber(pageNumber - 1);
+			setPageNumber(1);
 		}
 	}, [paginatedEntities.length]);
 

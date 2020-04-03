@@ -4,12 +4,9 @@ import { __ } from '@wordpress/i18n';
 import { SelectInput } from '@appInputs/SelectInput';
 import { TicketsStatus } from '@edtrServices/filterState';
 import { getPropsAreEqual } from '@appServices/utilities';
+import { TicketsFilterStateManager } from '@edtrServices/filterState';
 
-interface StatusControlProps {
-	isChained: boolean;
-	status: TicketsStatus;
-	setStatus: (datetimesToShow: TicketsStatus) => void;
-}
+type StatusControlProps = Pick<TicketsFilterStateManager, 'isChained' | 'status' | 'setStatus'>;
 
 const StatusControl: React.FC<StatusControlProps> = React.memo(({ isChained, status, setStatus }) => {
 	return (
