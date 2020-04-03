@@ -7,14 +7,13 @@ import { useEdtrState } from '@edtrHooks/edtrState';
 import { entitiesWithGuIdInArray } from '@sharedServices/predicates';
 
 type IsChainedFilterCallback = (args: { isChained: boolean; tickets: Array<Ticket> }) => Array<Ticket>;
+type IsChainedFilterDeps = any;
 
-type IsChainedFilterTuple = [IsChainedFilterCallback, any];
+type IsChainedFilterTuple = [IsChainedFilterCallback, IsChainedFilterDeps];
 
 const useIsChainedFilter = (): IsChainedFilterTuple => {
 	const { getData } = useRelations();
-	const { getState } = useEdtrState();
-
-	const visibleDatetimeIds = getState().visibleDatetimeIds;
+	const { visibleDatetimeIds } = useEdtrState();
 
 	const relatedTicketIds = keys(
 		pickBy((relations) => {
@@ -24,6 +23,7 @@ const useIsChainedFilter = (): IsChainedFilterTuple => {
 			);
 		}, getData().tickets)
 	);
+
 	const relatedTicketIdsStr = JSON.stringify(relatedTicketIds);
 
 	const callback = useCallback<IsChainedFilterCallback>(

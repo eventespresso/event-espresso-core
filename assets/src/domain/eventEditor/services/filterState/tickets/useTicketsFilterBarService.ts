@@ -28,41 +28,41 @@ const useTicketsFilterBarService = (): void => {
 	 */
 	const [isChainedFilter, isChainedDeps] = useIsChainedFilter();
 	// To avoid multiple filter registrations, we will store the aleady registered
-	// filter unsubscribe callback in ref to use it to remove the existing filter.
-	const chainedFilterRef = useRef<VoidFunction>();
+	// filter unSubscribe callback in ref to use it to remove the existing filter.
+	const unSubIsChainedFilterRef = useRef<VoidFunction>();
 	useEffect(() => {
 		// If already register
-		if (typeof chainedFilterRef.current === 'function') {
+		if (typeof unSubIsChainedFilterRef.current === 'function') {
 			// de-register
-			chainedFilterRef.current();
+			unSubIsChainedFilterRef.current();
 		}
 		// Register isChained filter
-		const unsubscribeIsChainedFilter = registerTicketsFilter(({ entityList, filterState }) => {
+		const unSubscribeIsChainedFilter = registerTicketsFilter(({ entityList, filterState }) => {
 			return isChainedFilter({ isChained: filterState.isChained, tickets: entityList });
 		});
 
-		// update ref.
-		chainedFilterRef.current = unsubscribeIsChainedFilter;
+		// update ref, it won't cause rerendersٖ
+		unSubIsChainedFilterRef.current = unSubscribeIsChainedFilter;
 
 		// Housekeeping
 		return (): void => {
-			unsubscribeIsChainedFilter();
+			unSubscribeIsChainedFilter();
 		};
 	}, [isChainedDeps]);
 
 	useEffect(() => {
 		// Register sales filter
-		const unsubscribeSalesFilter = registerTicketsFilter(({ entityList, filterState }) => {
+		const unSubscribeSalesFilter = registerTicketsFilter(({ entityList, filterState }) => {
 			return salesFilter({ sales: filterState.sales, tickets: entityList });
 		});
 
 		// Register status filter
-		const unsubscribeStatusFilter = registerTicketsFilter(({ entityList, filterState }) => {
+		const unSubscribeStatusFilter = registerTicketsFilter(({ entityList, filterState }) => {
 			return statusFilter({ status: filterState.status, tickets: entityList });
 		});
 
 		// Register search
-		const unsubscribeTicketsSearch = registerTicketsSearch(({ entityList, filterState }) => {
+		const unSubscribeTicketsSearch = registerTicketsSearch(({ entityList, filterState }) => {
 			return entityListSearch<Ticket>({
 				entities: entityList,
 				searchFields: ['name', 'description'],
@@ -71,16 +71,16 @@ const useTicketsFilterBarService = (): void => {
 		});
 
 		// Register sorter
-		const unsubscribeTicketsSorter = registerTicketsSorter(({ entityList, filterState }) => {
+		const unSubscribeTicketsSorter = registerTicketsSorter(({ entityList, filterState }) => {
 			return sortTckets({ tickets: entityList, sortBy: filterState.sortBy });
 		});
 
 		// Housekeeping
 		return (): void => {
-			unsubscribeSalesFilter();
-			unsubscribeStatusFilter();
-			unsubscribeTicketsSearch();
-			unsubscribeTicketsSorter();
+			unSubscribeSalesFilter();
+			unSubscribeStatusFilter();
+			unSubscribeTicketsSearch();
+			unSubscribeTicketsSorter();
 		};
 	}, []);
 };
