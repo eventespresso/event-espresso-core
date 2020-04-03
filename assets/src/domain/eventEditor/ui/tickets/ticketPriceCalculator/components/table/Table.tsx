@@ -8,14 +8,18 @@ import headerRowGenerator from './headerRowGenerator';
 import bodyRowGenerator from './bodyRowGenerator';
 import { TableProps } from '../../data/types';
 import useConfig from '@appServices/config/useConfig';
+import { useDataState } from '../../data';
+import { useMoneyDisplay } from '@appServices/utilities/money';
 
 import './styles.scss';
 
 const Table: React.FC<TableProps> = ({ prices }) => {
 	const config = useConfig();
+	const { formatAmount } = useMoneyDisplay();
+	const { reverseCalculate, toggleCalcDir } = useDataState();
 	const signB4 = config?.currency?.signB4;
 	const bodyRows = prices.map((price, index) => bodyRowGenerator({ index, price }));
-	const footerRow = footerRowsGenerator();
+	const footerRow = footerRowsGenerator({ formatAmount, reverseCalculate, toggleCalcDir });
 	const headerRow = headerRowGenerator({ signB4 });
 
 	return (

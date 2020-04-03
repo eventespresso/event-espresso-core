@@ -6,12 +6,15 @@ import { Cell } from '@appLayout/espressoTable';
 import { EspressoButton } from '@application/ui/input';
 import { parsedAmount } from '@appServices/utilities/money';
 import { TicketPriceField } from '../../fields';
-import { useDataState } from '../../data';
-import { useMoneyDisplay } from '@appServices/utilities/money';
+import { FormatAmountFunction } from '@appServices/utilities/money/formatAmount';
 
-const footerRowsGenerator = () => {
-	const { reverseCalculate, toggleCalcDir } = useMemo(() => useDataState(), []);
-	const { formatAmount } = useMemo(() => useMoneyDisplay(), []);
+interface Props {
+	formatAmount: FormatAmountFunction;
+	reverseCalculate: boolean;
+	toggleCalcDir: VoidFunction;
+}
+
+const footerRowsGenerator = ({ formatAmount, reverseCalculate, toggleCalcDir }: Props) => {
 	const calcDirIcon = reverseCalculate ? <UpCircleFilled /> : <DownCircleFilled />;
 
 	const cells: Array<Cell> = [
