@@ -47,7 +47,7 @@ export interface DataStateManager extends DataState {
 
 export type DataStateReducer = Reducer<DataState, DataAction>;
 
-interface Prices {
+export interface Prices {
 	prices: Array<TpcPriceModifier>;
 }
 

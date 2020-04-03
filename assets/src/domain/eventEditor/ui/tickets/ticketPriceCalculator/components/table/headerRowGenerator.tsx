@@ -4,8 +4,6 @@ import { __ } from '@wordpress/i18n';
 
 import { Cell } from '@appLayout/espressoTable';
 import { getCurrencySignPositionClassName } from '@application/ui/input/priceTypeSign/utils';
-import { HeaderRowGeneratorFn } from '@appLayout/entityList';
-import { DatetimesFilterStateManager } from '@edtrServices/filterState';
 
 type Props = {
 	signB4: boolean;

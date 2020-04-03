@@ -1,15 +1,17 @@
 import { useCallback } from 'react';
 import { ButtonProps } from 'antd/lib/button';
+import { anyPass, isEmpty, isNil } from 'ramda';
 
+import { Prices } from '../data/types';
 import { useOnSubmitPrices } from '../hooks';
 
-type Props = {
+interface Props extends Prices {
 	onCloseModal: VoidFunction;
-	price: number;
-};
+}
 
-const useSubmitButtonProps = ({ onCloseModal, price }: Props): ButtonProps => {
-	const disabled = price === 0;
+const useSubmitButtonProps = ({ onCloseModal, prices }: Props): ButtonProps => {
+	const disabled = prices.length && prices.some(({ amount }) => anyPass([isNil, isEmpty])(amount));
+
 	const submitPrices = useOnSubmitPrices();
 	const onClick = useCallback(
 		(e) => {

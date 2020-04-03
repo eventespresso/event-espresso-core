@@ -38,13 +38,13 @@ const useInitialState = ({ ticketId }: BaseProps): StateInitializer => {
 	//sort'em
 	const sortedPrices = sortByPriceOrderIdAsc(unSortedPrices);
 
-	const getPrices = () => {
+	const getPrices = useCallback(() => {
 		const hasBasePrice = sortedPrices.filter(isBasePrice).length;
 
 		if (hasBasePrice) return sortedPrices;
 
 		return [basePrice, ...sortedPrices];
-	};
+	}, [basePrice, sortedPrices]);
 
 	// convert to TPC price objects by adding
 	// "priceType" and "priceTypeOrder"

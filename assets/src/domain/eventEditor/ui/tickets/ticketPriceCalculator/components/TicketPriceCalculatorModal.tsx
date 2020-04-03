@@ -12,10 +12,10 @@ import './styles.scss';
 const TicketPriceCalculatorModal: React.FC = () => {
 	const {
 		onCloseModal,
-		dataState: { reset, ticket },
+		dataState: { reset, prices, ticket },
 	} = useTPCContext();
 	const resetButton = useResetButtonProps({ reset });
-	const submitButton = useSubmitButtonProps({ onCloseModal, price: ticket?.price ?? 0 });
+	const submitButton = useSubmitButtonProps({ onCloseModal, prices });
 
 	return (
 		<Modal

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { DownCircleFilled, UpCircleFilled } from '@ant-design/icons';
 import { __ } from '@wordpress/i18n';
 
@@ -10,8 +10,8 @@ import { useDataState } from '../../data';
 import { useMoneyDisplay } from '@appServices/utilities/money';
 
 const footerRowsGenerator = () => {
-	const { reverseCalculate, toggleCalcDir } = useDataState();
-	const { formatAmount } = useMoneyDisplay();
+	const { reverseCalculate, toggleCalcDir } = useMemo(() => useDataState(), []);
+	const { formatAmount } = useMemo(() => useMoneyDisplay(), []);
 	const calcDirIcon = reverseCalculate ? <UpCircleFilled /> : <DownCircleFilled />;
 
 	const cells: Array<Cell> = [
