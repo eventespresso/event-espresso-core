@@ -1,11 +1,11 @@
 import React from 'react';
 import { __ } from '@wordpress/i18n';
 import { ButtonProps } from 'antd/lib/button';
-import CloseOutlined from '@ant-design/icons/CloseOutlined';
 import { SaveOutlined } from '@ant-design/icons';
 import { Modal } from 'antd';
 
-import { ConfirmClose } from '@application/ui/layout/confirm';
+import { EspressoModal } from '@application/ui/display';
+
 import { RenderModalFormProps } from './types';
 
 const RenderModalForm: React.FC<RenderModalFormProps> = ({
@@ -18,14 +18,6 @@ const RenderModalForm: React.FC<RenderModalFormProps> = ({
 	children,
 	title,
 }) => {
-	const closeIconToRender = (
-		<ConfirmClose onConfirm={onClose}>
-			<span role='img' aria-label='close' className='anticon anticon-close ant-modal-close-icon'>
-				<CloseOutlined />
-			</span>
-		</ConfirmClose>
-	);
-
 	const submitDisabled = submitting || pristine || hasValidationErrors || hasSubmitErrors;
 
 	const submitButton: ButtonProps = {
@@ -50,23 +42,33 @@ const RenderModalForm: React.FC<RenderModalFormProps> = ({
 	};
 
 	return (
-		<Modal
-			bodyStyle={{ padding: 0 }}
-			closeIcon={closeIconToRender}
-			title={title}
-			visible={true}
-			onOk={onClose}
-			okText={__('Submit')}
-			okButtonProps={submitButton}
-			cancelText={__('Reset')}
-			cancelButtonProps={resetButton}
-			onCancel={onClose}
-			width={'80%'}
-			wrapClassName='ee-modal-form'
-		>
-			<div className='form-body'>{children}</div>
-		</Modal>
+		<div>
+			<EspressoModal
+				aria-label='Warning about next steps'
+				cancelButtonProps={resetButton}
+				cancelText={__('Reset')}
+				onClose={onClose}
+				okButtonProps={submitButton}
+				okText={__('Submit')}
+				title={title}
+			>
+				<div className='form-body'>{children}</div>
+			</EspressoModal>
+		</div>
 	);
+
+	// return (
+	// 	<Modal
+	// 		bodyStyle={{ padding: 0 }}
+	// 		visible={true}
+	// 		onOk={onClose}
+	// 		onCancel={onClose}
+	// 		width={'80%'}
+	// 		wrapClassName='ee-modal-form'
+	// 	>
+	// 		<div className='form-body'>{children}</div>
+	// 	</Modal>
+	// );
 };
 
 export default RenderModalForm;
