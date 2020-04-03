@@ -1,15 +1,4 @@
 import React from 'react';
-import { format } from 'date-fns';
-
-import DateRegistrationsLink from '@edtrUI/datetimes/DateRegistrationsLink';
-import DateActionsMenu from '@edtrUI/datetimes/datesList/actionsMenu/DateActionsMenu';
-import { Datetime } from '@edtrServices/apollo/types';
-import { filterCellByStartOrEndDate } from '@sharedServices/filterState';
-import { ENTITY_LIST_DATE_TIME_FORMAT } from '@appConstants/dateFnsFormats';
-import { getBackgroundColorClassName, status } from '@sharedEntities/datetimes/helpers';
-import { shortenGuid } from '@appServices/utilities/text';
-import { BodyRowGeneratorFn } from '@appLayout/entityList';
-import { DatetimesFilterStateManager } from '@edtrServices/filterState';
 
 import PriceAmountInput from '../../inputs/PriceAmountInput';
 import PriceDescriptionInput from '../../inputs/PriceDescriptionInput';
@@ -17,17 +6,14 @@ import PriceIdInput from '../../inputs/PriceIdInput';
 import PriceNameInput from '../../inputs/PriceNameInput';
 import PriceModifierActions from '../../buttons/PriceModifierActions';
 import PriceTypeInput from '../../inputs/PriceTypeInput';
-import { PriceModifierProps } from '../../types';
+import { TpcPriceModifier } from '../../types';
 
-import '@application/ui/styles/root/entity-status.css';
+type Props = {
+	index: number;
+	price?: TpcPriceModifier;
+};
 
-type DatesTableBodyRowGen = BodyRowGeneratorFn<Datetime, DatetimesFilterStateManager>;
-
-/**
- * EditorDateEntityListItem
- * Displays Event Date as a table row similar to existing eventEntity editor UI
- */
-const bodyRowGenerator: DatesTableBodyRowGen = ({ index, price }) => {
+const bodyRowGenerator = ({ index, price }: Props) => {
 	const cells = [
 		{
 			key: 'id',

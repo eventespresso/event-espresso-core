@@ -1,0 +1,16 @@
+.ee-ticket-price {
+	&-calculator {
+		th,
+		td {
+			padding: 0.5rem 0.25rem;
+		}
+	}
+	&-field {
+		display: flex;
+		&__before-amount {
+			line-height: var(--ee-icon-button-size);
+			margin-left: 15px;
+			margin-right: 10px;
+		}
+	}
+}

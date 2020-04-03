@@ -4,17 +4,14 @@ import { __ } from '@wordpress/i18n';
 
 import { Cell } from '@appLayout/espressoTable';
 import { EspressoButton } from '@application/ui/input';
-import { useMoneyDisplay, parsedAmount } from '@appServices/utilities/money';
-import { useDataState } from '../../data';
+import { parsedAmount } from '@appServices/utilities/money';
 import { TicketPriceField } from '../../fields';
+import { useDataState } from '../../data';
+import { useMoneyDisplay } from '@appServices/utilities/money';
 
-type Props = {
-	signB4: boolean;
-};
-
-const footerRowsGenerator = ({ signB4 }: Props) => {
-	const { afterAmount, beforeAmount, formatAmount } = useMoneyDisplay();
+const footerRowsGenerator = () => {
 	const { reverseCalculate, toggleCalcDir } = useDataState();
+	const { formatAmount } = useMoneyDisplay();
 	const calcDirIcon = reverseCalculate ? <UpCircleFilled /> : <DownCircleFilled />;
 
 	const cells: Array<Cell> = [
@@ -47,18 +44,14 @@ const footerRowsGenerator = ({ signB4 }: Props) => {
 			type: 'cell',
 			className: 'ee-ticket-price-calculator-total ee-number-column',
 			value: (
-				<>
-					<div>{beforeAmount}</div>
-					<TicketPriceField
-						component='input'
-						type={'number'}
-						disabled={!reverseCalculate}
-						format={(price) => formatAmount(price) || ''}
-						parse={(price) => parsedAmount(price)}
-						formatOnBlur
-					/>
-					<div>{afterAmount}</div>
-				</>
+				<TicketPriceField
+					component='input'
+					type={'number'}
+					disabled={!reverseCalculate}
+					format={(price) => formatAmount(price) ?? ''}
+					parse={(price) => parsedAmount(price)}
+					formatOnBlur
+				/>
 			),
 		},
 		{

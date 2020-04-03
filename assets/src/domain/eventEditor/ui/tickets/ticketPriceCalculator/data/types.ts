@@ -4,9 +4,8 @@ import { EntityId } from '@appServices/apollo/types';
 import { Ticket } from '@edtrServices/apollo';
 import { BaseProps, TpcPriceModifier } from '../types';
 
-export interface DataState {
+export interface DataState extends Prices {
 	ticket: Partial<Ticket>;
-	prices: Array<TpcPriceModifier>;
 	deletedPrices: Array<EntityId>;
 }
 
@@ -48,4 +47,10 @@ export interface DataStateManager extends DataState {
 
 export type DataStateReducer = Reducer<DataState, DataAction>;
 
+interface Prices {
+	prices: Array<TpcPriceModifier>;
+}
+
 export type StateInitializer = (arg: DataState) => ReducerState<DataStateReducer>;
+
+export interface TableProps extends Prices {}
