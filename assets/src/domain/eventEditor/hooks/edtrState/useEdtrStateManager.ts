@@ -13,7 +13,7 @@ const initialState: EdtrState = {
 const useEdtrStateManager = (): ESM => {
 	const [state, dispatch] = useReducer(reducer, initialState);
 
-	const getState: ESM['getState'] = useCallback(() => state, Object.values(state));
+	const getState: ESM['getState'] = useCallback(() => state, [state]);
 
 	const setVisibleDatetimeIds: ESM['setVisibleDatetimeIds'] = useCallback((visibleDatetimeIds) => {
 		dispatch({
