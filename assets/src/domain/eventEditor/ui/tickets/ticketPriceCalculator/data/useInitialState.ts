@@ -25,7 +25,7 @@ const useInitialState = ({ ticketId }: BaseProps): StateInitializer => {
 	const basePrice = updatePriceModifier(defaultPriceModifier, basePriceType);
 
 	// convert priceType array to {[id]: order}
-	const priceTypeIdOrder = usePriceTypes().reduce((acc, { id, order }) => assocPath([id], order, acc), {});
+	const priceTypeIdOrder = allPriceTypes.reduce((acc, { id, order }) => assocPath([id], order, acc), {});
 
 	// get the full ticket object
 	const wholeTicket = useTicketItem({ id: ticketId });
