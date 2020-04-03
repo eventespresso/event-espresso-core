@@ -1,6 +1,5 @@
 import React, { createContext } from 'react';
 
-import { ProviderProps } from './types';
 import { Modal } from 'antd';
 import { ModalStaticFunctions } from 'antd/lib/modal/confirm';
 
@@ -10,7 +9,7 @@ const ModalContext = createContext<ModalInstance | null>(null);
 
 const { Provider, Consumer: ModalConsumer } = ModalContext;
 
-const ModalProvider: React.FC<ProviderProps> = ({ children }) => {
+const ModalProvider: React.FC = ({ children }) => {
 	const [modal, contextHolder] = Modal.useModal();
 	return (
 		<Provider value={modal}>
