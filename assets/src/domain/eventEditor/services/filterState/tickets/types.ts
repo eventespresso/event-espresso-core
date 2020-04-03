@@ -25,6 +25,7 @@ export interface TicketsFilterStateManager
 	setSales: (sales: TicketsSales) => void;
 	setStatus: (status: TicketsStatus) => void;
 	toggleIsChained: VoidFunction;
+	visibleDatesStr: string;
 }
 
 export type TicketsFilterStateReducer = EntityFilterStateReducer<TicketsFilterState, TicketsFilterAction>;

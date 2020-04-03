@@ -12,14 +12,14 @@ export type TicketsListContextProps = EntityListContextProps<TicketsFilterStateM
 export const TicketsListContext = createContext<TicketsListContextProps>(null);
 
 export const TicketsListProvider: React.FC = ({ children }) => {
-	const datetimes = useTickets();
+	const tickets = useTickets();
 	const filters = useTicketsListFilterStateManager();
 
 	const filtersStr = JSON.stringify(filters);
 	// memoize filter state
 	const filterState = useMemo(() => filters, [filtersStr]);
 
-	const filteredEntities = useFilteredEntities(domain, ticketsList, datetimes, filterState);
+	const filteredEntities = useFilteredEntities(domain, ticketsList, tickets, filterState);
 
 	const value: TicketsListContextProps = { filterState, filteredEntities };
 

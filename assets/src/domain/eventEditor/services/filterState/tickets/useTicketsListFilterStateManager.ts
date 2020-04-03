@@ -1,23 +1,34 @@
-import { useCallback, useMemo, useReducer } from 'react';
+import { useCallback, useEffect, useMemo, useReducer, useState } from 'react';
 
 import reducer from './reducer';
 import { TicketsFilterState, TicketsFilterStateManager, TicketsSales, TicketsStatus } from './types';
 import { DisplayStartOrEndDate, SortBy } from '@sharedServices/filterState';
 import { useEntityListFilterStateManager } from '@appLayout/entityList/filterBar';
+import { useEdtrState } from '@edtrHooks/edtrState';
 
 type FSM = TicketsFilterStateManager;
 
-const useTicketsListFilterStateManager = (): FSM => {
-	const initialState: TicketsFilterState = {
-		displayStartOrEndDate: DisplayStartOrEndDate.start,
-		isChained: true,
-		sales: TicketsSales.all,
-		status: TicketsStatus.onSaleAndPending,
-	};
+const initialState: TicketsFilterState = {
+	displayStartOrEndDate: DisplayStartOrEndDate.start,
+	isChained: true,
+	sales: TicketsSales.all,
+	status: TicketsStatus.onSaleAndPending,
+};
 
+const useTicketsListFilterStateManager = (): FSM => {
 	const [state, dispatch] = useReducer(reducer, initialState);
+	const [visibleDatesStr, setVisibleDatesStr] = useState('');
+
+	const { visibleDatetimeIds } = useEdtrState();
 
 	const entityFilterState = useEntityListFilterStateManager<SortBy>('date');
+
+	// subscribe to visible dates for isChained
+	useEffect(() => {
+		if (state.isChained) {
+			setVisibleDatesStr(visibleDatetimeIds.join(':'));
+		}
+	}, [visibleDatetimeIds]);
 
 	const resetPageNumber = (filter: TicketsSales | TicketsStatus): void => {
 		if (filter !== state[filter]) {
@@ -54,6 +65,9 @@ const useTicketsListFilterStateManager = (): FSM => {
 		});
 	}, []);
 
+	const ticketFSValues = Object.values(state);
+	const entityFSValues = Object.values(entityFilterState.getState());
+
 	return useMemo(
 		() => ({
 			...state,
@@ -62,8 +76,9 @@ const useTicketsListFilterStateManager = (): FSM => {
 			setSales,
 			setStatus,
 			toggleIsChained,
+			visibleDatesStr,
 		}),
-		[...Object.values(state), ...Object.values(entityFilterState.getState())]
+		[...ticketFSValues, ...entityFSValues, visibleDatesStr]
 	);
 };
 
