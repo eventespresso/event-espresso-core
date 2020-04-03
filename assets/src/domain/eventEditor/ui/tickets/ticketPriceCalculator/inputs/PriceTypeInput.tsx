@@ -5,21 +5,13 @@ import { PriceField } from '../fields';
 import { usePriceTypes } from '@edtrServices/apollo/queries';
 import { getPriceModifiers } from '@sharedEntities/priceTypes/predicates/selectionPredicates';
 
-// just temporary
-import styles from '../inlineStyles';
-
 const PriceTypeInput: React.FC<PriceModifierProps> = ({ price }) => {
 	const priceTypes = usePriceTypes();
 	const modifierOptions = getPriceModifiers(priceTypes);
 	const options = price.isBasePrice ? priceTypes : modifierOptions;
+
 	return (
-		<PriceField
-			field='priceType'
-			price={price}
-			component={'select'}
-			disabled={price.isBasePrice}
-			style={styles.input}
-		>
+		<PriceField field='priceType' price={price} component={'select'} disabled={price.isBasePrice}>
 			{options.map((option) => (
 				<option key={option.id} value={option.id}>
 					{option.name}

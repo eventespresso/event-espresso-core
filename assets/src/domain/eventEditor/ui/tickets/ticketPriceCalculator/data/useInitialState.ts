@@ -1,11 +1,16 @@
 import { useCallback } from 'react';
 import { assocPath, pick } from 'ramda';
+
+import defaultPrice from '../defaultPriceModifier';
+import { isBasePrice } from '@sharedEntities/priceTypes/predicates/selectionPredicates';
 import { StateInitializer } from './types';
 import { BaseProps, TpcPriceModifier } from '../types';
-import { useTicketItem, useTicketPrices, usePriceTypes } from '@edtrServices/apollo';
-import { useRelations } from '@appServices/apollo/relations';
 import { sortByPriceOrderIdAsc } from '@sharedEntities/prices/predicates/sortingPredicates';
 import { ticketFieldsToUse } from '../utils/constants';
+import { updatePriceModifier } from '../utils';
+import { usePriceModifier } from '../hooks';
+import { useRelations } from '@appServices/apollo/relations';
+import { useTicketItem, useTicketPrices, usePriceTypes } from '@edtrServices/apollo';
 
 /**
  * Initializes the data state dynamically by
@@ -14,8 +19,14 @@ import { ticketFieldsToUse } from '../utils/constants';
 const useInitialState = ({ ticketId }: BaseProps): StateInitializer => {
 	const { getRelations } = useRelations();
 
+	const allPriceTypes = usePriceTypes();
+	const [basePriceType] = allPriceTypes.filter(isBasePrice);
+
+	const defaultPriceModifier = usePriceModifier(defaultPrice);
+	const basePrice = updatePriceModifier(defaultPriceModifier, basePriceType);
+
 	// convert priceType array to {[id]: order}
-	const priceTypeIdOrder = usePriceTypes().reduce((acc, { id, order }) => assocPath([id], order, acc), {});
+	const priceTypeIdOrder = allPriceTypes.reduce((acc, { id, order }) => assocPath([id], order, acc), {});
 
 	// get the full ticket object
 	const wholeTicket = useTicketItem({ id: ticketId });
@@ -27,9 +38,17 @@ const useInitialState = ({ ticketId }: BaseProps): StateInitializer => {
 	//sort'em
 	const sortedPrices = sortByPriceOrderIdAsc(unSortedPrices);
 
+	const getPrices = useCallback(() => {
+		const hasBasePrice = sortedPrices.filter(isBasePrice).length;
+
+		if (hasBasePrice) return sortedPrices;
+
+		return [basePrice, ...sortedPrices];
+	}, [basePrice, sortedPrices]);
+
 	// convert to TPC price objects by adding
 	// "priceType" and "priceTypeOrder"
-	const prices = sortedPrices.map<TpcPriceModifier>((price) => {
+	const prices = getPrices().map<TpcPriceModifier>((price) => {
 		const priceTypes = getRelations({
 			entity: 'prices',
 			entityId: price.id,

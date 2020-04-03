@@ -7,8 +7,6 @@ import { PriceField } from '../fields';
 import { useMoneyDisplay, parsedAmount } from '@appServices/utilities/money';
 import { useDataState } from '../data';
 
-// just temporary
-import styles from '../inlineStyles';
 import './styles.scss';
 
 const percentSign = '%';
@@ -33,9 +31,9 @@ const PriceAmountInput: React.FC<PriceModifierProps> = ({ price }) => {
 	});
 
 	return (
-		<div style={styles.money}>
-			<div style={styles.b4}>{b4Price}</div>
-			<div style={styles.currency}>
+		<div className='ee-ticket-price-field'>
+			<div className='ee-ticket-price-field__before'>{b4Price}</div>
+			<div>
 				<PriceField
 					className={className}
 					field='amount'
@@ -43,7 +41,6 @@ const PriceAmountInput: React.FC<PriceModifierProps> = ({ price }) => {
 					type={'number'}
 					component={'input'}
 					placeholder={__('amount...')}
-					style={styles.number}
 					disabled={reverseCalculate && price.isBasePrice}
 					format={(amount) => formatAmount(amount) || ''}
 					parse={(amount) => {
@@ -53,7 +50,7 @@ const PriceAmountInput: React.FC<PriceModifierProps> = ({ price }) => {
 					formatOnBlur
 				/>
 			</div>
-			<div style={styles.aft}>{afterPrice}</div>
+			<div className='ee-ticket-price-field__after'>{afterPrice}</div>
 		</div>
 	);
 };
