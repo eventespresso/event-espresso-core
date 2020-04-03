@@ -1,9 +1,11 @@
 import React from 'react';
 import { __ } from '@wordpress/i18n';
 import { ButtonProps } from 'antd/lib/button';
+import CloseOutlined from '@ant-design/icons/CloseOutlined';
 import { SaveOutlined } from '@ant-design/icons';
 import { Modal } from 'antd';
 
+import { ConfirmClose } from '@application/ui/layout/confirm';
 import { RenderModalFormProps } from './types';
 
 const RenderModalForm: React.FC<RenderModalFormProps> = ({
@@ -16,6 +18,14 @@ const RenderModalForm: React.FC<RenderModalFormProps> = ({
 	children,
 	title,
 }) => {
+	const closeIconToRender = (
+		<ConfirmClose onConfirm={onClose}>
+			<span role='img' aria-label='close' className='anticon anticon-close ant-modal-close-icon'>
+				<CloseOutlined />
+			</span>
+		</ConfirmClose>
+	);
+
 	const submitDisabled = submitting || pristine || hasValidationErrors || hasSubmitErrors;
 
 	const submitButton: ButtonProps = {
@@ -41,6 +51,8 @@ const RenderModalForm: React.FC<RenderModalFormProps> = ({
 
 	return (
 		<Modal
+			bodyStyle={{ padding: 0 }}
+			closeIcon={closeIconToRender}
 			title={title}
 			visible={true}
 			onOk={onClose}
@@ -51,7 +63,6 @@ const RenderModalForm: React.FC<RenderModalFormProps> = ({
 			onCancel={onClose}
 			width={'80%'}
 			wrapClassName='ee-modal-form'
-			bodyStyle={{ padding: 0 }}
 		>
 			<div className='form-body'>{children}</div>
 		</Modal>

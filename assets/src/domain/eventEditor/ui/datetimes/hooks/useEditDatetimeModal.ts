@@ -25,11 +25,12 @@ const useEditDatetimeModal: FormModal = ({ entityId, entityDbId }) => {
 	);
 
 	const formConfig = useDateFormConfig(entityId, { onSubmit });
+	const title = `${eventName}: ${sprintf(__('Edit datetime %s'), `#${entityDbId}`)}`;
 
 	return {
-		title: `${eventName}: ${sprintf(__('Edit datetime %s'), `#${entityDbId}`)}`,
 		formConfig,
 		onClose,
+		title,
 	};
 };
 
