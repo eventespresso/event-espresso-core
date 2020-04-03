@@ -1,6 +1,6 @@
 import React, { createContext, useMemo } from 'react';
 
-import type { EntityListContextProps, ContextProviderProps } from '../types';
+import type { EntityListContextProps } from '../types';
 import { DatetimesFilterStateManager, useDatesListFilterStateManager } from '../../filterState';
 import { useFilteredEntities } from '@appLayout/entityList';
 import { domain, datesList } from '@edtrServices/constants';
@@ -11,7 +11,7 @@ export type DatetimesListContextProps = EntityListContextProps<DatetimesFilterSt
 
 export const DatetimesListContext = createContext<DatetimesListContextProps>(null);
 
-export const DatetimesListProvider: React.FC<ContextProviderProps> = ({ children }) => {
+export const DatetimesListProvider: React.FC = ({ children }) => {
 	const datetimes = useDatetimes();
 	const filters = useDatesListFilterStateManager();
 
