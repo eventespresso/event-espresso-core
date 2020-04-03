@@ -1,13 +1,18 @@
 .ee-ticket-price {
 	&-calculator {
+		width: 100%;
 		th,
 		td {
 			padding: 0.5rem 0.25rem;
 		}
+		input,
+		select {
+			width: 100%;
+		}
 	}
 	&-field {
 		display: flex;
-		&__before-amount {
+		&__before {
 			line-height: var(--ee-icon-button-size);
 			margin-left: 15px;
 			margin-right: 10px;

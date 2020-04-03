@@ -31,8 +31,8 @@ const PriceAmountInput: React.FC<PriceModifierProps> = ({ price }) => {
 	});
 
 	return (
-		<div>
-			<div>{b4Price}</div>
+		<div className='ee-ticket-price-field'>
+			<div className='ee-ticket-price-field__before'>{b4Price}</div>
 			<div>
 				<PriceField
 					className={className}
@@ -50,7 +50,7 @@ const PriceAmountInput: React.FC<PriceModifierProps> = ({ price }) => {
 					formatOnBlur
 				/>
 			</div>
-			<div>{afterPrice}</div>
+			<div className='ee-ticket-price-field__after'>{afterPrice}</div>
 		</div>
 	);
 };

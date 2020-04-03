@@ -19,9 +19,9 @@ const TicketPriceField: React.FC<TicketPriceFieldProps> = (props) => {
 
 	return (
 		<div className='ee-ticket-price-field'>
-			<div className='ee-ticket-price-field__before-amount'>{beforeAmount}</div>
+			<div className='ee-ticket-price-field__before'>{beforeAmount}</div>
 			<BaseField {...props} getValue={getValue} setValue={setValue} name={'ticket.price'} />
-			<div className='ee-ticket-price-field__before-amount'>{afterAmount}</div>
+			<div className='ee-ticket-price-field__after'>{afterAmount}</div>
 		</div>
 	);
 };
