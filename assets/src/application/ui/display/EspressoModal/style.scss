@@ -31,9 +31,9 @@
 }
 
 [data-reach-dialog-content] {
-	width: 60vw;
+	width: 80vw;
 	background: white;
 	outline: none;
-	padding: 2rem;
+	padding: var(--ee-padding-big);
 	position: relative;
 }
