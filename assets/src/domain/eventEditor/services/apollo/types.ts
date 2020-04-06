@@ -89,6 +89,7 @@ export interface Ticket extends Entity, Trashable {
 	price: number;
 	prices?: PriceEdge; // for create and update ticket mutation
 	quantity: number;
+	registrationCount: number;
 	reserved: number;
 	reverseCalculate: boolean;
 	sold: number;

@@ -32,6 +32,7 @@ export const TICKET_DEFAULTS: Ticket = {
 	price: null,
 	prices: null,
 	quantity: -1,
+	registrationCount: 0,
 	reserved: 0,
 	reverseCalculate: true,
 	sold: 0,

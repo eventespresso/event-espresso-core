@@ -9,7 +9,6 @@ import { shortenGuid } from '@appServices/utilities/text';
 import { Ticket } from '@edtrServices/apollo/types';
 import TicketActionsMenu from '@edtrUI/tickets/ticketsList/actionsMenu/TicketActionsMenu';
 import { useMoneyDisplay } from '@appServices/utilities/money';
-import useTicketsRegistrationCount from '@edtrUI/tickets/hooks/useTicketsRegistrationCount';
 import TicketQuantity from '../cardView/TicketQuantity';
 import { BodyRowGeneratorFn } from '@appLayout/entityList';
 import { TicketsFilterStateManager } from '@edtrServices/filterState';
@@ -21,7 +20,6 @@ type TicketsTableBodyRowGen = BodyRowGeneratorFn<Ticket, TicketsFilterStateManag
 
 const useBodyRowGenerator = (): TicketsTableBodyRowGen => {
 	const { formatAmount } = useMoneyDisplay();
-	const { getRegCount } = useTicketsRegistrationCount();
 
 	return useCallback<TicketsTableBodyRowGen>(({ entity: ticket, filterState }) => {
 		const { displayStartOrEndDate } = filterState;
@@ -29,7 +27,7 @@ const useBodyRowGenerator = (): TicketsTableBodyRowGen => {
 		const bgClassName = getBackgroundColorClassName(ticket);
 		const id = ticket.dbId || shortenGuid(ticket.id);
 		const statusClassName = status(ticket);
-		const registrationCount = getRegCount(ticket.id);
+		const { registrationCount } = ticket;
 
 		const name = {
 			key: 'name',

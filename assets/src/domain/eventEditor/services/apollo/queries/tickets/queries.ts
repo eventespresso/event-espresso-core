@@ -23,6 +23,7 @@ export const TICKET_ATTRIBUTES: any = gql`
 		order
 		price
 		quantity
+		registrationCount
 		reserved
 		reverseCalculate
 		sold
