@@ -4,7 +4,7 @@ import { __ } from '@wordpress/i18n';
 
 import useDeleteTicketHandler from '../../hooks/useDeleteTicketHandler';
 import { EntityListItemProps } from '@appLayout/entityList';
-import { ConfirmDelete } from '@application/ui/layout/confirm';
+import { ConfirmDelete } from '@application/ui/input/confirm';
 import { TypeName } from '@appServices/apollo/status';
 import withIsLoaded from '@sharedUI/hoc/withIsLoaded';
 

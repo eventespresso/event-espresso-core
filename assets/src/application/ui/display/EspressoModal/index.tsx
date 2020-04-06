@@ -1,6 +1,6 @@
 import React, { useCallback } from 'react';
 import CloseOutlined from '@ant-design/icons/CloseOutlined';
-import { ConfirmClose } from '@application/ui/layout/confirm';
+import { ConfirmClose } from '@application/ui/input/confirm';
 import { Dialog } from '@reach/dialog';
 import { Button, message } from 'antd';
 

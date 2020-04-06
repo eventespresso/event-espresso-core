@@ -4,7 +4,7 @@ import { __ } from '@wordpress/i18n';
 import { EspressoButton, Icon } from '@application/ui/input';
 import { EntityListItemProps } from '@appLayout/entityList';
 import { useDatetimeMutator } from '@edtrServices/apollo/mutations';
-import { ConfirmDelete } from '@application/ui/layout/confirm';
+import { ConfirmDelete } from '@application/ui/input/confirm';
 import { TypeName } from '@appServices/apollo/status';
 import withIsLoaded from '@sharedUI/hoc/withIsLoaded';
 
