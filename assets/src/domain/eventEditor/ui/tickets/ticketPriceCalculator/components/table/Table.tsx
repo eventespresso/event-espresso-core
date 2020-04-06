@@ -3,9 +3,9 @@ import { __ } from '@wordpress/i18n';
 
 import { ResponsiveTable } from '@appLayout/espressoTable';
 
-import footerRowsGenerator from './footerRowsGenerator';
-import headerRowGenerator from './headerRowGenerator';
-import bodyRowGenerator from './bodyRowGenerator';
+import useBodyRowGenerator from './useBodyRowGenerator';
+import useFooterRowGenerator from './useFooterRowGenerator';
+import useHeaderRowGenerator from './useHeaderRowGenerator';
 import { TableProps } from '../../data/types';
 import useConfig from '@appServices/config/useConfig';
 import { useDataState } from '../../data';
@@ -18,8 +18,13 @@ const Table: React.FC<TableProps> = ({ prices }) => {
 	const { formatAmount } = useMoneyDisplay();
 	const { reverseCalculate, toggleCalcDir } = useDataState();
 	const signB4 = config?.currency?.signB4;
+
+	const bodyRowGenerator = useBodyRowGenerator();
+	const footerRowGenerator = useFooterRowGenerator();
+	const headerRowGenerator = useHeaderRowGenerator();
+
 	const bodyRows = prices.map((price, index) => bodyRowGenerator({ index, price }));
-	const footerRow = footerRowsGenerator({ formatAmount, reverseCalculate, toggleCalcDir });
+	const footerRow = footerRowGenerator({ formatAmount, reverseCalculate, toggleCalcDir });
 	const headerRow = headerRowGenerator({ signB4 });
 
 	return (
@@ -29,8 +34,8 @@ const Table: React.FC<TableProps> = ({ prices }) => {
 			footerRows={[footerRow]}
 			headerRows={[headerRow]}
 			metaData={{
-				tableId: 'date-entities-table-view',
-				tableCaption: __('Event Dates'),
+				tableId: 'ticket-price-calculator-table',
+				tableCaption: __('Ticket Price Calculator'),
 			}}
 		/>
 	);
