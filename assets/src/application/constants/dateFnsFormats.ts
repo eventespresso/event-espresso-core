@@ -33,3 +33,6 @@ export const TIME_ONLY_12H_SHORT_FORMAT = 'h:mm a'; // 11:59 pm
 export const TIME_ONLY_12H_LONG_FORMAT = 'hh:mm:ss b'; // 11:59:59 pm
 export const TIME_ONLY_24H_SHORT_FORMAT = 'H:mm'; // 23:59
 export const TIME_ONLY_24H_LONG_FORMAT = 'HH:mm:ss'; // 23:59:59
+
+// Custom formats
+export const blaBlaFormat = `${MONTH_ONLY_FULL_FORMAT} ${DAY_ONLY_FORMAT}, ${YEAR_ONLY_LONG_FORMAT}`;

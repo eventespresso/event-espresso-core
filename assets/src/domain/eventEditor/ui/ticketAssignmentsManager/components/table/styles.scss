@@ -34,6 +34,13 @@
 					top: 0;
 					left: -5px;
 				}
+				.date-cell__name {
+					font-weight: bold;
+					overflow: hidden;
+					text-overflow: ellipsis;
+					white-space: nowrap;
+					width: calc(300px - (var(--ee-padding-small) * 2));
+				}
 			}
 		}
 	}
