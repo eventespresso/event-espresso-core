@@ -3,7 +3,7 @@ import React from 'react';
 import { EntityTableProps } from './types';
 import { Entity } from '@appServices/apollo/types';
 import { EntityListFilterStateManager } from './filterBar';
-import entitiesUnchanged from '@appServices/utilities/memo/entitiesUnchanged';
+import { entitiesUnchanged } from '@appServices/utilities/memo';
 import { ResponsiveTable } from '@appLayout/espressoTable';
 
 type ELFSM = EntityListFilterStateManager<any>;
