@@ -227,6 +227,12 @@ class Ticket extends TypeBase
                 esc_html__('Quantity of this ticket that is available', 'event_espresso'),
                 [$this, 'parseInfiniteValue']
             ),
+            new GraphQLOutputField(
+                'registrationCount',
+                'Int',
+                'count_registrations',
+                esc_html__('Number of registrations for the ticket', 'event_espresso')
+            ),
             new GraphQLField(
                 'reserved',
                 'Int',

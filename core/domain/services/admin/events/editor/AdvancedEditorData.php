@@ -330,6 +330,7 @@ QUERY;
                     order
                     price
                     quantity
+                    registrationCount
                     reserved
                     reverseCalculate
                     sold
