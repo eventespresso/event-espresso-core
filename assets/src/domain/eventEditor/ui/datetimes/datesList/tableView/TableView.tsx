@@ -2,8 +2,8 @@ import React from 'react';
 import { __ } from '@wordpress/i18n';
 
 import { EntityTable } from '@appLayout/entityList';
-import headerRowGenerator from './headerRowGenerator';
-import bodyRowGenerator from './bodyRowGenerator';
+import useHeaderRowGenerator from './useHeaderRowGenerator';
+import useBodyRowGenerator from './useBodyRowGenerator';
 import { useDatesListContext } from '@edtrServices/context/EntityListContext';
 
 import './styles.scss';
@@ -13,6 +13,9 @@ import './styles.scss';
  */
 const TableView: React.FC = () => {
 	const { filterState, filteredEntities } = useDatesListContext();
+
+	const bodyRowGenerator = useBodyRowGenerator();
+	const headerRowGenerator = useHeaderRowGenerator();
 
 	return (
 		<EntityTable

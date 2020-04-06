@@ -22,7 +22,7 @@ interface CellRender {
 	cellData?: any;
 }
 
-interface FooterRow {
+export interface FooterRow {
 	cells: Cell[];
 	footerRowClassName?: string;
 	id?: string;
