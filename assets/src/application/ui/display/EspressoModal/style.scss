@@ -10,9 +10,9 @@
 	&__footer {
 		margin-top: 10px;
 		text-align: right;
-		background: rgba(0, 0, 0, 0);
-		border-top: 1px solid rgb(240, 240, 240);
-		border-radius: 0 0 2px 2px;
+		background: rgba(0, 0, 0, 0); // huh ? transparent black background ?
+		border-top: 1px solid var(--ee-border-color);
+		border-radius: 0 0 var(--ee-border-radius-small) var(--ee-border-radius-small);
 	}
 }
 
