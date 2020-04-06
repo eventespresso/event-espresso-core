@@ -5,6 +5,7 @@ import { __ } from '@wordpress/i18n';
 import { EspressoButton, EspressoButtonType, Icon } from '@appInputs/EspressoButton';
 import { LabelPosition } from '@application/ui/display';
 import { ToggleFiltersButtonProps } from '../types';
+import { getPropsAreEqual } from '@appServices/utilities';
 
 const ToggleFiltersButton: React.FC<ToggleFiltersButtonProps> = React.memo(({ listId, showFilters, toggleFilters }) => {
 	const className = classNames('ee-filter-bar__btn', { 'ee-filter-bar__btn--active': showFilters });
@@ -26,4 +27,4 @@ const ToggleFiltersButton: React.FC<ToggleFiltersButtonProps> = React.memo(({ li
 	);
 });
 
-export default ToggleFiltersButton;
+export default React.memo(ToggleFiltersButton, getPropsAreEqual(['listId'], ['showFilters']));

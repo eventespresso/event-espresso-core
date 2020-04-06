@@ -7,6 +7,7 @@ import { __ } from '@wordpress/i18n';
 import { EspressoButton, EspressoButtonType } from '@appInputs/EspressoButton';
 import { LabelPosition } from '@application/ui/display';
 import { ToggleLegendButtonProps } from '../types';
+import { getPropsAreEqual } from '@appServices/utilities';
 
 const ToggleLegendButton: React.FC<ToggleLegendButtonProps> = ({ listId, showLegend, toggleLegend }) => {
 	const className = classNames('ee-filter-bar__btn', { 'ee-filter-bar__btn--active': showLegend });
@@ -19,7 +20,7 @@ const ToggleLegendButton: React.FC<ToggleLegendButtonProps> = ({ listId, showLeg
 		</animated.div>
 	);
 	const filterId = `ee-toggle-legend-btn-${listId}`;
-	const tooltip = __(`${showLegend ? 'hide' : 'show'} legend`);
+	const tooltip = showLegend ? __('hide legend') : __('show legend');
 
 	return (
 		<EspressoButton
@@ -36,4 +37,4 @@ const ToggleLegendButton: React.FC<ToggleLegendButtonProps> = ({ listId, showLeg
 	);
 };
 
-export default ToggleLegendButton;
+export default React.memo(ToggleLegendButton, getPropsAreEqual(['listId'], ['showLegend']));

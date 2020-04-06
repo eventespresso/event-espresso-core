@@ -6,8 +6,9 @@ import { __ } from '@wordpress/i18n';
 import { CardViewFilterButtonProps } from '../types';
 import { EspressoButton, EspressoButtonType } from '@application/ui/input';
 import { LabelPosition } from '@application/ui/display';
+import { getPropsAreEqual } from '@appServices/utilities';
 
-const CardViewFilterButton: React.FC<CardViewFilterButtonProps> = React.memo(({ listId, setCardView, view }) => {
+const CardViewFilterButton: React.FC<CardViewFilterButtonProps> = ({ listId, setCardView, view }) => {
 	const className = classNames('ee-filter-bar__btn', { 'ee-filter-bar__btn--active': view === 'card' });
 	const filterId = `ee-card-view-btn-${listId}`;
 
@@ -15,16 +16,15 @@ const CardViewFilterButton: React.FC<CardViewFilterButtonProps> = React.memo(({ 
 		<EspressoButton
 			buttonType={EspressoButtonType.MINIMAL}
 			className={className}
-			disabled={view === 'card'}
 			icon={<AppstoreFilled />}
 			id={filterId}
 			label={__('card view')}
-			onClick={setCardView}
+			onClick={view !== 'card' ? setCardView : null}
 			tooltip={__('card view')}
 			labelClassName={'ee-filter-bar__btn-wrap'}
 			labelPosition={LabelPosition.BOTTOM_CENTER}
 		/>
 	);
-});
+};
 
-export default CardViewFilterButton;
+export default React.memo(CardViewFilterButton, getPropsAreEqual(['listId'], ['view']));
