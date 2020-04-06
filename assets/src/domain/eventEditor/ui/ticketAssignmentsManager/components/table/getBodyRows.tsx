@@ -1,12 +1,15 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import classNames from 'classnames';
 
 import { Cell } from '@appLayout/espressoTable';
 import BodyCell from './BodyCell';
+import DateCell from './DateCell';
+
 import { useDataState } from '../../data';
 import { DatesAndTickets } from '../../types';
 import useRowClassName from './useRowClassName';
 import useColClassName from './useColClassName';
+import { getBackgroundColorClassName } from '@sharedEntities/datetimes/helpers';
 
 const getBodyRows = ({ datetimes, tickets }: DatesAndTickets) => {
 	const { getAssignmentStatus } = useDataState();
@@ -18,8 +21,8 @@ const getBodyRows = ({ datetimes, tickets }: DatesAndTickets) => {
 		const datetimeCell: Cell = {
 			key: 'datetime',
 			type: 'cell',
-			className: 'ee-date-list-col-hdr ee-rspnsv-table-column-micro',
-			value: `${datetime.dbId}: ${datetime.name}`,
+			className: 'ee-date-list-col-hdr ee-rspnsv-table-column-micro date-cell',
+			value: <DateCell datetime={datetime} />,
 		};
 
 		const cells: Array<Cell> = tickets.map((ticket) => {

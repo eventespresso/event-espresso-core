@@ -71,5 +71,5 @@ export interface RenderTableProps extends DatesAndTickets {}
 
 export interface RenderCellProps {
 	datetime: Datetime;
-	ticket: Ticket;
+	ticket?: Ticket;
 }

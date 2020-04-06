@@ -8,6 +8,34 @@
 			padding: 1rem;
 			height: 100px;
 		}
+		tr {
+			background: var(--ee-color-grey-14);
+			&:hover {
+				background: var(--ee-color-grey-13);
+			}
+			&:nth-child(even) {
+				background: var(--ee-color-grey-13);
+				&:hover {
+					background: var(--ee-color-grey-12);
+				}
+			}
+		}
+		td {
+			&.date-cell {
+				border-right: 5px solid var(--ee-color-white);
+				padding: var(--ee-padding-small);
+				width: 300px;
+				position: relative;
+				.date-stripe {
+					display: inline-block;
+					height: 100%;
+					width: 5px;
+					position: absolute;
+					top: 0;
+					left: -5px;
+				}
+			}
+		}
 	}
 	td,
 	th {
