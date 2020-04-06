@@ -12,7 +12,7 @@ const Copy: React.FC<MenuItemProps> = ({ onClick, ...props }) => {
 			{...props}
 			icon={Icon.COPY}
 			onClick={onClick}
-			popoverProps={{ position: 'right center' }}
+			tooltipProps={{ position: 'right center' }}
 			title={title}
 		/>
 	);

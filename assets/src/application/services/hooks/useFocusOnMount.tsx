@@ -14,7 +14,7 @@ const useFocusOnMount = <T extends React.ComponentType>(focusOnMount: boolean, r
 			console.log('%c 	focusOnMount', 'color: MediumSlateBlue;', focusOnMount);
 			console.log('%c 	ref', 'color: MediumSlateBlue;', ref);
 			if (ref.current) {
-				ref.current.focus();
+				ref.current?.buttonNode?.focus();
 			}
 		}, 1);
 		return (): void => clearTimeout(timeout);

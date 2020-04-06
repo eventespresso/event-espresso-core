@@ -13,7 +13,7 @@ const Trash: React.FC<MenuItemProps> = ({ onClick, ...props }) => {
 			{...props}
 			icon={Icon.TRASH}
 			onClick={onClick}
-			popoverProps={{ position: 'right center' }}
+			tooltipProps={{ position: 'right center' }}
 			title={title}
 		/>
 	);

@@ -12,7 +12,7 @@ const Edit = ({ onClick, ...props }: MenuItemProps, ref: React.RefObject<React.C
 			{...props}
 			icon={Icon.EDIT}
 			onClick={onClick}
-			popoverProps={{ position: 'right center' }}
+			tooltipProps={{ position: 'right center' }}
 			title={title}
 			ref={ref}
 		/>
