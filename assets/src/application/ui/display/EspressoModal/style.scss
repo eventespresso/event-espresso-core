@@ -8,7 +8,7 @@
 
 .modal {
 	&__footer {
-		margin-top: 10px;
+		margin-top: var(--ee-margin-smaller);
 		text-align: right;
 		background: rgba(0, 0, 0, 0); // huh ? transparent black background ?
 		border-top: 1px solid var(--ee-border-color);
