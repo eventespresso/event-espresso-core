@@ -9,8 +9,9 @@ import { LOCALIZED_DATE_SHORT_FORMAT } from '@appConstants/dateFnsFormats';
 
 const DateCell: React.FC<RenderCellProps> = ({ datetime }) => {
 	const bgClassName = getBackgroundColorClassName(datetime);
-	const { formatForSite: format } = useTimeZoneTime();
 	const stripeClassName = classNames('date-stripe', bgClassName);
+
+	const { formatForSite: format } = useTimeZoneTime();
 	const startDate = format(parseISO(datetime.startDate), LOCALIZED_DATE_SHORT_FORMAT);
 
 	return (
