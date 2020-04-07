@@ -1,6 +1,8 @@
+import React from 'react';
 import classNames from 'classnames';
 
 import { Cell } from '@appLayout/espressoTable';
+import HeaderCell from './HeaderCell';
 import { Ticket } from '@edtrServices/apollo/types';
 import useColClassName from './useColClassName';
 
@@ -18,7 +20,7 @@ const getHeaderRows = (tickets: Ticket[]) => {
 		key: ticket.id,
 		type: 'cell',
 		className: classNames('ee-rspnsv-table-column-huge', getColClass(ticket)),
-		value: `${ticket.dbId}: ${ticket.name}`,
+		value: <HeaderCell ticket={ticket} />,
 	}));
 
 	return [

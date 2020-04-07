@@ -1,7 +1,33 @@
 #ticket-assignment-manager-table {
 	table-layout: auto;
 	margin: auto;
-
+	thead {
+		th {
+			padding: 0;
+			text-align: center;
+			.header-cell-content {
+				padding: var(--ee-padding-nano) var(--ee-padding-tiny);
+				&__name {
+					font-weight: bold;
+					line-height: 1.1;
+					margin: 0 0 var(--ee-margin-micro);
+					max-height: calc(var(--ee-font-size-default) * 8);
+					overflow: hidden;
+					padding: var(--ee-padding-tiny) 0;
+					text-align: center;
+					width: calc(100px - (var(--ee-padding-smaller) * 2));
+				}
+			}
+			.header-cell-after-content {
+				font-size: var(--ee-font-size-small);
+				font-weight: bold;
+				line-height: var(--ee-line-height-modifier);
+				padding: var(--ee-padding-micro);
+				text-transform: uppercase;
+				width: 100%;
+			}
+		}
+	}
 	tbody {
 		tr,
 		td {
