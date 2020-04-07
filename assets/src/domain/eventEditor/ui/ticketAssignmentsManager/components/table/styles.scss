@@ -23,9 +23,10 @@
 		td {
 			&.date-cell {
 				border-right: 5px solid var(--ee-color-white);
-				padding: var(--ee-padding-small);
-				width: 300px;
+				padding: var(--ee-padding-small) var(--ee-padding-small) var(--ee-padding-small)
+					var(--ee-padding-default);
 				position: relative;
+				width: 300px;
 				.date-stripe {
 					display: inline-block;
 					height: 100%;
@@ -34,12 +35,14 @@
 					top: 0;
 					left: 0;
 				}
-				.date-cell__name {
-					font-weight: bold;
-					overflow: hidden;
-					text-overflow: ellipsis;
-					white-space: nowrap;
-					width: calc(300px - (var(--ee-padding-small) * 2));
+				.date-cell-content {
+					&__name {
+						font-weight: bold;
+						overflow: hidden;
+						text-overflow: ellipsis;
+						white-space: nowrap;
+						width: calc(300px - (var(--ee-padding-small) * 2));
+					}
 				}
 			}
 		}
