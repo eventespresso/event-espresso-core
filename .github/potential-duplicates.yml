@@ -1,9 +1,9 @@
 # Label name and color to set, when potential duplicates are detected
 issueLabel: "status:potential-duplicate"
-labelColor: cfd3d7
+labelColor: efd954
 
 # If similarity is higher than this threshold, issue will be marked as duplicate
-threshold: 0.65
+threshold: 0.8
 
 # Comment to post when potential duplicates are detected
 referenceComment: >
