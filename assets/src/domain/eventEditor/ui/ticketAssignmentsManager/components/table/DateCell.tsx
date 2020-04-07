@@ -5,13 +5,13 @@ import classNames from 'classnames';
 import { RenderCellProps } from '../../types';
 import { getBackgroundColorClassName } from '@sharedEntities/datetimes/helpers';
 import { useTimeZoneTime } from '@appServices/hooks';
-import { blaBlaFormat } from '@appConstants/dateFnsFormats';
+import { LOCALIZED_DATE_SHORT_FORMAT } from '@appConstants/dateFnsFormats';
 
 const DateCell: React.FC<RenderCellProps> = ({ datetime }) => {
 	const bgClassName = getBackgroundColorClassName(datetime);
 	const { formatForSite: format } = useTimeZoneTime();
 	const stripeClassName = classNames('date-stripe', bgClassName);
-	const startDate = format(parseISO(datetime.startDate), blaBlaFormat);
+	const startDate = format(parseISO(datetime.startDate), LOCALIZED_DATE_SHORT_FORMAT);
 
 	return (
 		<>
