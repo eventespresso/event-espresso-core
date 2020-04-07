@@ -15,7 +15,7 @@ import { CalendarDateProps } from '../types';
 import './style.scss';
 
 export interface BiggieCalendarDateProps extends CalendarDateProps {
-	date: Date | string;
+	date: string;
 }
 
 /**
@@ -33,8 +33,7 @@ export const BiggieCalendarDate: React.FC<BiggieCalendarDateProps> = ({
 	const { formatForSite: format } = useTimeZoneTime();
 
 	const onEditHandler = useCallback((event) => onEdit(event), [onEdit]);
-	const dateObject = date instanceof Date ? date : parseISO(date);
-	if (!isValid(dateObject)) {
+	if (!isValid(parseISO(date))) {
 		return null;
 	}
 	className += ' ee-biggie-calendar-date__wrapper';
@@ -54,13 +53,13 @@ export const BiggieCalendarDate: React.FC<BiggieCalendarDateProps> = ({
 		<div className={className}>
 			{headerText && <div className='ee-biggie-calendar-date__header'>{headerText}</div>}
 			<div className='ee-biggie-calendar-date'>
-				<div className='ee-bcd__weekday'>{format(dateObject, WEEKDAY_ONLY_FULL_FORMAT)}</div>
-				<div className='ee-bcd__month'>{format(dateObject, MONTH_ONLY_FULL_FORMAT)}</div>
+				<div className='ee-bcd__weekday'>{format(date, WEEKDAY_ONLY_FULL_FORMAT)}</div>
+				<div className='ee-bcd__month'>{format(date, MONTH_ONLY_FULL_FORMAT)}</div>
 				<div className='ee-bcd__month-day-sep'></div>
-				<div className='ee-bcd__day'>{format(dateObject, DAY_ONLY_SHORT_FORMAT)}</div>
-				<div className='ee-bcd__year'>{format(dateObject, YEAR_ONLY_LONG_FORMAT)}</div>
-				<TimezoneTimeInfo date={dateObject} />
-				{showTime && <div className='ee-bcd__time'>{format(dateObject, TIME_ONLY_12H_SHORT_FORMAT)}</div>}
+				<div className='ee-bcd__day'>{format(date, DAY_ONLY_SHORT_FORMAT)}</div>
+				<div className='ee-bcd__year'>{format(date, YEAR_ONLY_LONG_FORMAT)}</div>
+				<TimezoneTimeInfo date={parseISO(date)} />
+				{showTime && <div className='ee-bcd__time'>{format(date, TIME_ONLY_12H_SHORT_FORMAT)}</div>}
 			</div>
 			{footerText && <div className='ee-biggie-calendar-date__footer'>{footerText}</div>}
 			{editDateButton}

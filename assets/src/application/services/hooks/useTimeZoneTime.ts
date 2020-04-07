@@ -1,5 +1,5 @@
 import { path } from 'ramda';
-import { parseISO, isValid } from 'date-fns';
+import { isDate, isValid, parseISO } from 'date-fns';
 
 import useConfig from '../config/useConfig';
 import { format as formatTz, utcToZonedTime, zonedTimeToUtc } from 'date-fns-tz';
@@ -10,7 +10,7 @@ type FormatDateFn = (date: Date, options?: Intl.DateTimeFormatOptions) => string
 interface TimeZoneTime {
 	formatDateForSite: FormatDateFn;
 	formatDateForUser: FormatDateFn;
-	formatForSite: (localDate: Date, formatStr: string) => string;
+	formatForSite: (localDate: string, formatStr: string) => string;
 	formatUtcDateForSite: FormatDateFn;
 	formatUtcDateForUser: FormatDateFn;
 	siteTimeToUtc: DateFn;
@@ -92,7 +92,8 @@ const useTimeZoneTime = (): TimeZoneTime => {
 	/**
 	 * generates a string from local date for the given timezone, default to site timezone
 	 */
-	const formatForSite: TimeZoneTime['formatForSite'] = (localDate, formatStr) => {
+	const formatForSite: TimeZoneTime['formatForSite'] = (date, formatStr) => {
+		const localDate = parseISO(date);
 		// Convert the local date to UTC
 		const utcDate = userTimeToUtc(localDate);
 		// Now convert the UTC date to site timezone

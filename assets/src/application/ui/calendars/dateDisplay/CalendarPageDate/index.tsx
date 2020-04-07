@@ -20,8 +20,8 @@ export enum CalendarPageSize {
 }
 
 export interface CalendarPageDateProps {
-	startDate?: Date;
-	endDate?: Date;
+	startDate?: string;
+	endDate?: string;
 	size?: CalendarPageSize;
 	statusClassName?: string;
 }
@@ -40,13 +40,11 @@ export const CalendarPageDate: React.FC<CalendarPageDateProps> = ({
 }) => {
 	const { formatForSite: format } = useTimeZoneTime();
 
-	const startDateObject = startDate instanceof Date ? startDate : parseISO(startDate);
-	const endDateObject = endDate instanceof Date ? endDate : parseISO(endDate);
-	if (!isValid(startDateObject) && !isValid(endDateObject)) {
+	if (!isValid(parseISO(startDate)) || !isValid(parseISO(endDate))) {
 		return null;
 	}
 
-	const getStartDate = (startDate: Date, statusClassName: string) => {
+	const getStartDate = (startDate: string, statusClassName: string) => {
 		return (
 			startDate && (
 				<div className='ee-calendar-page-date-wrapper-start'>
@@ -56,7 +54,7 @@ export const CalendarPageDate: React.FC<CalendarPageDateProps> = ({
 		);
 	};
 
-	const getEndDate = (endDate: Date, statusClassName: string) => {
+	const getEndDate = (endDate: string, statusClassName: string) => {
 		return (
 			endDate && (
 				<div className='ee-calendar-page-date-wrapper-end'>
@@ -66,15 +64,17 @@ export const CalendarPageDate: React.FC<CalendarPageDateProps> = ({
 		);
 	};
 
-	const getDivider = (startDate: Date, endDate: Date) => {
+	const getDivider = (startDate: string, endDate: string) => {
 		return startDate && endDate && <div className='ee-calendar-page-date-to'>{__('TO')}</div>;
 	};
 
-	const renderCalendarPage = (date: Date, statusClassName: string, startOrEnd = 'start') => {
+	const renderCalendarPage = (date: string, statusClassName: string, startOrEnd = 'start') => {
 		let className = `ee-calendar-page-date-page ee-calendar-page-date-${startOrEnd}`;
 		className += statusClassName ? ` ${statusClassName}` : '';
+		const title = format(date, LOCALIZED_DATE_AND_TIME_FULL_FORMAT);
+
 		return (
-			<Tooltip title={format(date, LOCALIZED_DATE_AND_TIME_FULL_FORMAT)}>
+			<Tooltip title={title}>
 				<div className={className}>
 					<div className={'ee-calendar-page-date-month'}>{format(date, MONTH_ONLY_LONG_FORMAT)}</div>
 					<div className={'ee-calendar-page-date-day'}>{format(date, DAY_ONLY_SHORT_FORMAT)}</div>
@@ -86,9 +86,9 @@ export const CalendarPageDate: React.FC<CalendarPageDateProps> = ({
 	const className = `ee-calendar-page-date-wrapper ee-calendar-page-date-${size}`;
 	return (
 		<div className={className} {...otherProps}>
-			{getStartDate(startDateObject, statusClassName)}
-			{getDivider(startDateObject, endDateObject)}
-			{getEndDate(endDateObject, statusClassName)}
+			{getStartDate(startDate, statusClassName)}
+			{getDivider(startDate, endDate)}
+			{getEndDate(endDate, statusClassName)}
 		</div>
 	);
 };

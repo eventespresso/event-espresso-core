@@ -9,8 +9,8 @@ import { TIME_ONLY_12H_SHORT_FORMAT } from '@appConstants/dateFnsFormats';
 import './style.scss';
 
 interface CalendarDateRangeProps extends CalendarDateProps {
-	startDate: Date | string;
-	endDate: Date | string;
+	startDate: string;
+	endDate: string;
 }
 
 /**
@@ -26,33 +26,29 @@ export const CalendarDateRange: React.FC<CalendarDateRangeProps> = ({
 }) => {
 	const { formatForSite: format } = useTimeZoneTime();
 
-	const startDateObject = startDate instanceof Date ? startDate : parseISO(startDate);
-	const endDateObject = endDate instanceof Date ? endDate : parseISO(endDate);
-
-	if (!isValid(startDateObject) || !isValid(endDateObject)) {
+	if (!isValid(parseISO(startDate)) || !isValid(parseISO(endDate))) {
 		return null;
 	}
 
-	if (differenceInCalendarDays(startDateObject, endDateObject) !== 0) {
+	if (differenceInCalendarDays(parseISO(startDate), parseISO(endDate)) !== 0) {
 		const htmlClassName = classNames(className, 'ee-calendar-date-range-wrapper');
 		return (
 			<div className={htmlClassName}>
 				<div className={'ee-calendar-date-range'}>
-					<MediumCalendarDate date={startDateObject} key={'start-date'} showTime={showTime} />
+					<MediumCalendarDate date={date} key={'start-date'} showTime={showTime} />
 					<div className={'ee-calendar-date-range__divider'}>{__('to')}</div>
-					<MediumCalendarDate date={endDateObject} key={'end-date'} showTime={showTime} />
+					<MediumCalendarDate date={date} key={'end-date'} showTime={showTime} />
 				</div>
 				{footerText && <div className={'ee-calendar-date-range__footer'}>{footerText}</div>}
 			</div>
 		);
 	}
-	const time =
-		format(startDateObject, TIME_ONLY_12H_SHORT_FORMAT + ' - ') + format(endDateObject, TIME_ONLY_12H_SHORT_FORMAT);
+	const time = format(startDate, TIME_ONLY_12H_SHORT_FORMAT + ' - ') + format(endDate, TIME_ONLY_12H_SHORT_FORMAT);
 	const headerTxt = headerText ? headerText : <span>&nbsp;</span>;
 
 	return (
 		<BiggieCalendarDate
-			date={startDateObject}
+			date={startDate}
 			className={className}
 			headerText={headerTxt}
 			footerText={[time, footerText]}
