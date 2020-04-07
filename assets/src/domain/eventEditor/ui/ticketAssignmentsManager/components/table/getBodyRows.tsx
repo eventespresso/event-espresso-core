@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React from 'react';
 import classNames from 'classnames';
 
 import { Cell } from '@appLayout/espressoTable';
@@ -9,7 +9,6 @@ import { useDataState } from '../../data';
 import { DatesAndTickets } from '../../types';
 import useRowClassName from './useRowClassName';
 import useColClassName from './useColClassName';
-import { getBackgroundColorClassName } from '@sharedEntities/datetimes/helpers';
 
 const getBodyRows = ({ datetimes, tickets }: DatesAndTickets) => {
 	const { getAssignmentStatus } = useDataState();
