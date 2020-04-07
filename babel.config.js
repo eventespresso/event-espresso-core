@@ -1,4 +1,4 @@
-module.exports = function (api) {
+module.exports = function(api) {
 	api.cache(true);
 
 	const presets = ['@babel/preset-env', '@babel/preset-react', '@babel/preset-typescript'];
@@ -22,13 +22,12 @@ module.exports = function (api) {
 			production: {
 				plugins: [
 					'ramda',
-					// @todo Replace @wordpress/babel-plugin-makepot with WP CLI make-pot
-					/* [
+					[
 						'@wordpress/babel-plugin-makepot',
 						{
 							output: 'languages/ee-js.pot',
 						},
-					], */
+					],
 				],
 			},
 		},
