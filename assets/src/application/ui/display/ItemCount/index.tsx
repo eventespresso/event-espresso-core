@@ -7,17 +7,25 @@ import { getPropsAreEqual } from '@appServices/utilities';
 import './style.scss';
 
 interface ItemCountProps extends BadgeProps {
-	zeroCountChar?: string | JSX.Element;
 	children: React.ReactNode;
+	emphasizeZero?: boolean;
+	zeroCountChar?: string | JSX.Element;
 }
 
-const ItemCount: React.FC<ItemCountProps> = ({ children, count, title = ' ', zeroCountChar = '!', ...props }) => {
+const ItemCount: React.FC<ItemCountProps> = ({
+	children,
+	count,
+	emphasizeZero,
+	title = ' ',
+	zeroCountChar,
+	...props
+}) => {
 	const className = classNames(props.className, 'ee-item-count', {
 		'ee-item-count--has-items': count > 0,
-		'ee-item-count--no-items': count === 0,
+		'ee-item-count--no-items': count === 0 && emphasizeZero,
 	});
 	const offset = props.offset || [7, 7];
-	const value = count > 0 ? count : zeroCountChar;
+	const value = count === 0 && typeof zeroCountChar !== 'undefined' ? zeroCountChar : count;
 
 	const countNode = (
 		<Tooltip title={title}>

@@ -13,6 +13,7 @@ import TicketQuantity from '../cardView/TicketQuantity';
 import { BodyRowGeneratorFn } from '@appLayout/entityList';
 import { TicketsFilterStateManager } from '@edtrServices/filterState';
 import { EditableName } from '../editable';
+import TicketRegistrationsLink from '../../TicketRegistrationsLink';
 
 import '@application/ui/styles/root/entity-status.css';
 
@@ -89,7 +90,7 @@ const useBodyRowGenerator = (): TicketsTableBodyRowGen => {
 				type: 'cell',
 				className:
 					'ee-ticket-list-cell ee-ticket-list-col-registrations ee-rspnsv-table-column-smaller ee-centered-column',
-				value: registrationCount, // should be count of related registrations
+				value: <TicketRegistrationsLink ticket={ticket} />,
 			},
 			{
 				key: 'actions',

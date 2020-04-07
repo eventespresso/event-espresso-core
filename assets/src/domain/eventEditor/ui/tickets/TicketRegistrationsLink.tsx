@@ -10,6 +10,7 @@ import { Ticket } from '@edtrServices/apollo/types';
 import useConfig from '@appServices/config/useConfig';
 import useEventId from '@edtrServices/apollo/queries/events/useEventId';
 import { getPropsAreEqual } from '@appServices/utilities';
+import ItemCount from '@appDisplay/ItemCount';
 
 interface Props {
 	ticket: Ticket;
@@ -26,19 +27,22 @@ const TicketRegistrationsLink: React.FC<Props> = ({ ticket }) => {
 		ticket_id: ticket.dbId,
 		return: 'edit',
 	});
-	const title = __('view registrations for this ticket.');
+	const buttonTitle = __('view registrations for this ticket.');
+	const countTitle = __('total registrations.');
 
 	return (
-		<Tooltip title={title}>
-			<a
-				href={regListUrl}
-				className={'ee-editor-details-reg-url-link'}
-				target={'_blank'}
-				rel={'noopener norefferer'}
-			>
-				<EspressoIcon icon={Icon.GROUPS} svgSize={24} />
-			</a>
-		</Tooltip>
+		<ItemCount count={ticket.registrationCount} title={countTitle}>
+			<Tooltip title={buttonTitle}>
+				<a
+					href={regListUrl}
+					className={'ee-editor-details-reg-url-link'}
+					target={'_blank'}
+					rel={'noopener norefferer'}
+				>
+					<EspressoIcon icon={Icon.GROUPS} svgSize={24} />
+				</a>
+			</Tooltip>
+		</ItemCount>
 	);
 };
 
