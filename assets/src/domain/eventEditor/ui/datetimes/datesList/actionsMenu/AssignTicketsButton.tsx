@@ -29,7 +29,7 @@ const AssignTicketsButton: React.FC<EntityListItemProps> = React.memo(({ id }) =
 	};
 
 	return (
-		<ItemCount count={count} title={title}>
+		<ItemCount count={count} title={title} zeroCountChar='!' emphasizeZero>
 			<EspressoButton
 				icon={Icon.TICKET}
 				tooltip={__('assign tickets')}
@@ -40,8 +40,7 @@ const AssignTicketsButton: React.FC<EntityListItemProps> = React.memo(({ id }) =
 	);
 });
 
-
 export default withIsLoaded<EntityListItemProps>(TypeName.tickets, ({ loaded, id }) => {
 	/* Hide TAM unless tickets are loaded */
 	return loaded && <AssignTicketsButton id={id} />;
-});;
+});

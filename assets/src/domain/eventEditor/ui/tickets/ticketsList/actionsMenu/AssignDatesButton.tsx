@@ -33,7 +33,7 @@ const AssignDatesButton: React.FC<EntityListItemProps> = React.memo(({ id }) => 
 	const tooltipProps = { placement: 'right' };
 
 	return (
-		<ItemCount count={count} title={title}>
+		<ItemCount count={count} title={title} zeroCountChar='!' emphasizeZero>
 			<EspressoButton
 				icon={Icon.CALENDAR}
 				tooltip={__('assign dates')}
