@@ -7,7 +7,7 @@ import {
 	CacheResolverMap,
 	NormalizedCacheObject,
 } from 'apollo-cache-inmemory';
-import { HttpLink } from 'apollo-link-http';
+import { BatchHttpLink } from 'apollo-link-batch-http';
 
 const graphqlEndpoint = pathOr<string>('', ['eeEditorData', 'graphqlEndpoint'], window);
 const nonce = pathOr<string>('', ['eejsdata', 'data', 'eejs_api_nonce'], window);
@@ -32,7 +32,7 @@ const cacheConfig: InMemoryCacheConfig = {
 export const cache = new InMemoryCache(cacheConfig);
 
 export const getClient = (): ApolloClient<NormalizedCacheObject> => {
-	const link = new HttpLink({
+	const link = new BatchHttpLink({
 		uri: graphqlEndpoint || '/graphql',
 		headers: {
 			'X-WP-Nonce': nonce,
