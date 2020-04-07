@@ -64,7 +64,7 @@
 		"antd": "^4.1.1",
 		"apollo-cache-inmemory": "^1.6.5",
 		"apollo-client": "^2.6.8",
-		"apollo-link-http": "^1.5.16",
+		"apollo-link-batch-http": "^1.2.13",
 		"classnames": "^2.2.6",
 		"cuid": "^2.1.8",
 		"date-fns": "^2.11.1",

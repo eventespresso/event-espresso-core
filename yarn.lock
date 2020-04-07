@@ -4207,6 +4207,24 @@ apollo-language-server@1.21.0:
     vscode-languageserver "^5.1.0"
     vscode-uri "1.0.6"
 
+apollo-link-batch-http@^1.2.13:
+  version "1.2.13"
+  resolved "https://registry.yarnpkg.com/apollo-link-batch-http/-/apollo-link-batch-http-1.2.13.tgz#22b2e69e321922b4c3b0c9277811328ab6a401ba"
+  integrity sha512-wOuJ7M5GO1UlfWDDEIDX1rPLuy1ZR74olwDGgwOFE/PXiJpphwGg1noNHygp96PExPOwwSzfV+5J31RDVQ3ckA==
+  dependencies:
+    apollo-link "^1.2.13"
+    apollo-link-batch "^1.1.14"
+    apollo-link-http-common "^0.2.15"
+    tslib "^1.9.3"
+
+apollo-link-batch@^1.1.14:
+  version "1.1.14"
+  resolved "https://registry.yarnpkg.com/apollo-link-batch/-/apollo-link-batch-1.1.14.tgz#ee29f05a021b617f7d0f80633cc10c3b8992d930"
+  integrity sha512-KKQnKAVTjDzwtmLyhgTT7s64THPGGD0+4g7E9g/+XpSKURpX03clLaag7GBoiMFAI4P/BA4DtpuqcV7+9PsAfQ==
+  dependencies:
+    apollo-link "^1.2.13"
+    tslib "^1.9.3"
+
 apollo-link-context@^1.0.9:
   version "1.0.19"
   resolved "https://registry.yarnpkg.com/apollo-link-context/-/apollo-link-context-1.0.19.tgz#3c9ba5bf75ed5428567ce057b8837ef874a58987"
@@ -4233,7 +4251,7 @@ apollo-link-http-common@^0.2.15:
     ts-invariant "^0.4.0"
     tslib "^1.9.3"
 
-apollo-link-http@^1.5.16, apollo-link-http@^1.5.5:
+apollo-link-http@^1.5.5:
   version "1.5.16"
   resolved "https://registry.yarnpkg.com/apollo-link-http/-/apollo-link-http-1.5.16.tgz#44fe760bcc2803b8a7f57fc9269173afb00f3814"
   integrity sha512-IA3xA/OcrOzINRZEECI6IdhRp/Twom5X5L9jMehfzEo2AXdeRwAMlH5LuvTZHgKD8V1MBnXdM6YXawXkTDSmJw==
