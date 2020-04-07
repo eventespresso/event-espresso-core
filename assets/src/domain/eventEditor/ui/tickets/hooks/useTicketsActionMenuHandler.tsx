@@ -15,7 +15,7 @@ const useTicketsActionMenuHandler = (): TicketsSubscriptionCallback => {
 
 		registerMenuItem('ticketMainMenu', () => <TicketMainMenuItem />);
 
-		registerMenuItem('assignDates', () => <AssignDatesButton id={ticket.id} />);
+		registerMenuItem('assignDates', () => <AssignDatesButton id={ticket.id} name={ticket.name} />);
 
 		registerMenuItem('ticketPriceCalculator', () => <TicketPriceCalculatorButton ticketId={ticket.id} />);
 	}, []);

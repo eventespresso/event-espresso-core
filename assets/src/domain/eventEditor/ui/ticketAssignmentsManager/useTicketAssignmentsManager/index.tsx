@@ -1,25 +1,29 @@
 import React, { useEffect, useCallback } from 'react';
 import { __ } from '@wordpress/i18n';
-import { TicketAssignmentsManager, ErrorMessage } from './components';
+import { TicketAssignmentsManager, ErrorMessage } from '../components';
 import { ButtonProps } from 'antd/lib/button';
 import { ModalFunc } from 'antd/lib/modal/confirm';
 import { SaveOutlined } from '@ant-design/icons';
-import { BaseProps, TicketAssignmentsManager as TAM } from './types';
+import { BaseProps, TicketAssignmentsManager as TAM } from '../types';
 import useModal from '@appLayout/modal/useModal';
-import { withContext } from './context';
-import { useDataState, useOnSubmitAssignments } from './data';
+import { withContext } from '../context';
+import { useDataState, useOnSubmitAssignments } from '../data';
+
+import './styles.scss';
 
 const useTicketAssignmentsManager = (): TAM => {
 	const modal = useModal();
 	const submitAssignments = useOnSubmitAssignments();
 	let openModal: ReturnType<ModalFunc>;
 
-	const assignTicketsToDate: TAM['assignTicketsToDate'] = ({ datetimeId }) => {
-		showModal({ assignmentType: 'forDate', entityId: datetimeId });
+	const assignTicketsToDate: TAM['assignTicketsToDate'] = ({ datetimeId, name }) => {
+		const title = __('Ticket Assignment Manager for Datetime: ') + `${datetimeId} - ${name}`;
+		showModal({ assignmentType: 'forDate', entityId: datetimeId, title });
 	};
 
-	const assignDatesToTicket: TAM['assignDatesToTicket'] = ({ ticketId }) => {
-		showModal({ assignmentType: 'forTicket', entityId: ticketId });
+	const assignDatesToTicket: TAM['assignDatesToTicket'] = ({ name, ticketId }) => {
+		const title = __('Ticket Assignment Manager for Ticket: ') + `${ticketId} - ${name}`;
+		showModal({ assignmentType: 'forTicket', entityId: ticketId, title });
 	};
 
 	const assignToAll: TAM['assignToAll'] = () => {
@@ -99,7 +103,8 @@ const useTicketAssignmentsManager = (): TAM => {
 
 	const showModal = (options: BaseProps) => {
 		openModal = modal.confirm({
-			title: __('Ticket Assignment Manager'),
+			className: 'ee-ticket-assignments-manager__modal',
+			title: options.title || __('Ticket Assignment Manager'),
 			content: withContext(formContent, options),
 			okButtonProps: submitButton,
 			cancelButtonProps: cancelButton,
