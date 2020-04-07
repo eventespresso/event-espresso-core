@@ -29,10 +29,10 @@
 				.date-stripe {
 					display: inline-block;
 					height: 100%;
-					width: 5px;
+					width: var(--ee-padding-small);
 					position: absolute;
 					top: 0;
-					left: -5px;
+					left: 0;
 				}
 				.date-cell__name {
 					font-weight: bold;
