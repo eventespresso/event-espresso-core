@@ -6,15 +6,15 @@ import TicketActionsMenu from '../actionsMenu/TicketActionsMenu';
 import Details from './Details';
 import TicketProvider from '@edtrServices/context/TicketContext';
 import EntityCard from '@appLayout/EntityCard';
-import statusBgColorClassName from '@sharedEntities/tickets/helpers/statusBgColorClassName';
+import { getStatusTextLabel, statusBgColorClassName } from '@sharedEntities/tickets/helpers';
 import { useTicketsListFilterState } from '@edtrServices/filterState';
 import { getPropsAreEqual } from '@appServices/utilities';
 import type { TicketItemProps } from '../types';
 
 const TicketCard: React.FC<TicketItemProps> = ({ entity: ticket }) => {
 	const { displayStartOrEndDate } = useTicketsListFilterState();
-
 	const bgClassName = statusBgColorClassName(ticket);
+	const footer = getStatusTextLabel(ticket);
 
 	return ticket ? (
 		<TicketProvider id={ticket.id}>
@@ -27,6 +27,7 @@ const TicketCard: React.FC<TicketItemProps> = ({ entity: ticket }) => {
 						className={bgClassName}
 						displayDate={displayStartOrEndDate}
 						endDate={ticket.endDate}
+						labels={{ footer }}
 						startDate={ticket.startDate}
 					/>
 				}

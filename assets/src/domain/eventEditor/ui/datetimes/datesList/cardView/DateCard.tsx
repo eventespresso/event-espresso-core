@@ -5,7 +5,7 @@ import { CalendarDateSwitcher } from '@appCalendars/dateDisplay';
 import DateActionsMenu from '../actionsMenu/DateActionsMenu';
 
 import { DatetimeProvider } from '@edtrServices/context/DatetimeContext';
-import statusBgColorClassName from '@sharedEntities/datetimes/helpers/statusBgColorClassName';
+import { getStatusTextLabel, statusBgColorClassName } from '@sharedEntities/datetimes/helpers';
 
 import EntityCard from '@appLayout/EntityCard';
 import { useDatesListFilterState } from '@edtrServices/filterState';
@@ -14,9 +14,9 @@ import Details from './Details';
 import type { DateItemProps } from '../types';
 
 const DateCard: React.FC<DateItemProps> = ({ entity: date }) => {
-	const { displayStartOrEndDate } = useDatesListFilterState();
-
 	const bgClassName = statusBgColorClassName(date);
+	const { displayStartOrEndDate } = useDatesListFilterState();
+	const footer = getStatusTextLabel(date);
 
 	return date ? (
 		<DatetimeProvider id={date.id}>
@@ -29,6 +29,7 @@ const DateCard: React.FC<DateItemProps> = ({ entity: date }) => {
 						className={bgClassName}
 						displayDate={displayStartOrEndDate}
 						endDate={date.endDate}
+						labels={{ footer }}
 						startDate={date.startDate}
 					/>
 				}
