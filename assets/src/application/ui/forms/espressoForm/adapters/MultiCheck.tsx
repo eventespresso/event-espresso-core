@@ -1,7 +1,7 @@
 import React from 'react';
 
 import { Checkbox, CheckboxGroup } from '@infraUI/inputs';
-import { FieldRendererProps } from '../forms/espressoForm';
+import { FieldRendererProps } from '../types';
 
 const MultiCheck: React.FC<FieldRendererProps> = ({ input, meta, options, ...restProps }) => {
 	const children = options.map(({ label, value, ...rest }, index) => {

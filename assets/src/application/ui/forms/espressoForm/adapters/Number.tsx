@@ -1,7 +1,7 @@
 import React from 'react';
 
 import { NumberInput } from '@infraUI/inputs';
-import { FieldRendererProps } from '../forms/espressoForm';
+import { FieldRendererProps } from '../types';
 
 const NumberField: React.FC<FieldRendererProps> = ({
 	input: { onChange, value, ...input },

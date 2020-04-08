@@ -1,7 +1,7 @@
 import React from 'react';
 
 import { Select } from '@infraUI/inputs';
-import { FieldRendererProps } from '../forms/espressoForm';
+import { FieldRendererProps } from '../types';
 
 const SelectField: React.FC<FieldRendererProps> = ({
 	input,
