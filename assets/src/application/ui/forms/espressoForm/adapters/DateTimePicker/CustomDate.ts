@@ -22,7 +22,7 @@ import {
 	parse,
 } from 'date-fns';
 import { enUS } from 'date-fns/locale';
-import { GenerateConfig } from 'rc-picker/lib/generate/index';
+import { GenerateConfig } from 'rc-picker/lib/generate';
 
 const CustomDate: GenerateConfig<Date> = {
 	getWeekDay,

@@ -51,7 +51,7 @@ const StatusControl: React.FC<StatusControlProps> = React.memo(({ status, setSta
 					label: __('trashed dates only'),
 				},
 			]}
-			onChange={setStatus}
+			onChangeValue={setStatus}
 		/>
 	);
 });

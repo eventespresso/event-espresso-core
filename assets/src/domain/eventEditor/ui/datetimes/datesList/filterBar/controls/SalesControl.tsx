@@ -35,7 +35,7 @@ const SalesControl: React.FC<StatusControlProps> = React.memo(({ sales, setSales
 					label: __('dates below 50% capacity'),
 				},
 			]}
-			onChange={setSales}
+			onChangeValue={setSales}
 		/>
 	);
 });

@@ -1,7 +1,6 @@
-import React, { CSSProperties } from 'react';
+import React from 'react';
 import { pick } from 'ramda';
 
-import { Form } from '../adapters';
 import { FormRendererProps } from '../types';
 import Submit from '../Submit';
 import RenderFields from '../RenderFields';
@@ -26,7 +25,7 @@ const FormRenderer: React.FC<FormRendererProps> = (props) => {
 	const formOutput = (
 		<div className='ee-form'>
 			<div className='form-wrapper'>
-				<Form layout={layout}>
+				<form>
 					{sections.length ? <RenderSections sections={sections} /> : null}
 
 					{fields.length ? <RenderFields fields={fields} /> : null}
@@ -40,7 +39,7 @@ const FormRenderer: React.FC<FormRendererProps> = (props) => {
 							resetButton={resetButton}
 						/>
 					) : null}
-				</Form>
+				</form>
 				{debugFields.length ? <DebugInfo data={pick(debugFields, form.getState())} /> : null}
 			</div>
 		</div>

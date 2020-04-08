@@ -34,7 +34,7 @@ const DisplayStartOrEndDateControl: React.FC<DisplayStartOrEndDateControlProps> 
 						label: __('ticket sales start and end dates'),
 					},
 				]}
-				onChange={setDisplayStartOrEndDate}
+				onChangeValue={setDisplayStartOrEndDate}
 			/>
 		);
 	}

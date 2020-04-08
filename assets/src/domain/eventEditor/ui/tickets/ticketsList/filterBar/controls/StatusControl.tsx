@@ -47,7 +47,7 @@ const StatusControl: React.FC<StatusControlProps> = React.memo(({ isChained, sta
 					label: __('trashed tickets only'),
 				},
 			]}
-			onChange={setStatus}
+			onChangeValue={setStatus}
 		/>
 	);
 });

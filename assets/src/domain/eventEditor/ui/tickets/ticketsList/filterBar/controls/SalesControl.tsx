@@ -35,7 +35,7 @@ const SalesControl: React.FC<StatusControlProps> = React.memo(({ isChained, sale
 					label: __('tickets with less than 50% sold'),
 				},
 			]}
-			onChange={setSales}
+			onChangeValue={setSales}
 		/>
 	);
 });

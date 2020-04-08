@@ -1,6 +1,6 @@
 import React from 'react';
-import { SwitchProps } from 'antd/lib/switch';
-import { Switch } from 'antd';
+
+import { Switch, SwitchProps } from '@infraUI/inputs';
 
 import { withLabel, withLabelProps, withTooltipProps } from '@appDisplay/index';
 

@@ -28,7 +28,9 @@
 			"@sharedConstants/*": ["assets/src/domain/shared/constants/*"],
 			"@sharedServices/*": ["assets/src/domain/shared/services/*"],
 			"@sharedEntities/*": ["assets/src/domain/shared/entities/*"],
-			"@sharedUI/*": ["assets/src/domain/shared/ui/*"]
+			"@sharedUI/*": ["assets/src/domain/shared/ui/*"],
+			"@infraServices/*": ["assets/src/infrastructure/services/*"],
+			"@infraUI/*": ["assets/src/infrastructure/ui/*"]
 		},
 		"resolveJsonModule": true,
 		"skipLibCheck": true,

@@ -9,7 +9,11 @@ type ShowTrashedDatesControlProps = Pick<FilterStateManager, 'showTrashedDates' 
 const ShowTrashedDatesControl: React.FC<ShowTrashedDatesControlProps> = React.memo(
 	({ showTrashedDates, setShowTrashedDates }) => {
 		return (
-			<SwitchInput label={__('show trashed dates')} checked={showTrashedDates} onChange={setShowTrashedDates} />
+			<SwitchInput
+				label={__('show trashed dates')}
+				isChecked={showTrashedDates}
+				onChangeValue={setShowTrashedDates}
+			/>
 		);
 	}
 );

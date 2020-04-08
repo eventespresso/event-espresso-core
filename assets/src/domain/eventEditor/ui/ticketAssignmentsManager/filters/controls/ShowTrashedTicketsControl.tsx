@@ -11,8 +11,8 @@ const ShowTrashedTicketsControl: React.FC<ShowTrashedTicketsControlProps> = Reac
 		return (
 			<SwitchInput
 				label={__('show trashed tickets')}
-				checked={showTrashedTickets}
-				onChange={setShowTrashedTickets}
+				isChecked={showTrashedTickets}
+				onChangeValue={setShowTrashedTickets}
 			/>
 		);
 	}

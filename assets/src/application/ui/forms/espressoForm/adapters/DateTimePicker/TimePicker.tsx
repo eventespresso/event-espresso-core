@@ -1,9 +1,9 @@
 import React from 'react';
 import { parse } from 'date-fns';
 import TimePickerBase from './TimePickerBase';
-import { CONVERT_TO_MOMENT_TIME_FORMAT } from '../../../constants';
+import { CONVERT_TO_MOMENT_TIME_FORMAT } from '@appConstants/dateFnsFormats';
 
-const TimePicker = ({ input, ...rest }) => {
+const TimePicker = ({ input, meta, ...rest }) => {
 	return (
 		<TimePickerBase
 			{...input}
