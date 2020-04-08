@@ -1,30 +1,23 @@
 import React from 'react';
-import { Avatar as DefaultAvatar, Badge } from 'antd';
-import { AvatarProps } from 'antd/lib/avatar';
-import { BadgeProps } from 'antd/lib/badge';
+import { Avatar as DefaultAvatar, AvatarBadge, IAvatar, BoxProps } from '@chakra-ui/core';
 
-interface Props extends AvatarProps {
-	badgeProps?: BadgeProps;
+interface Props extends IAvatar {
+	badgeProps?: BoxProps;
 	userName?: string;
 }
 
 const Avatar = ({ badgeProps, userName, ...avatarProps }: Props) => {
 	if (badgeProps) {
 		return (
-			<Badge {...badgeProps}>
-				<DefaultAvatar {...avatarProps} />
-			</Badge>
+			<DefaultAvatar {...avatarProps}>
+				<AvatarBadge {...badgeProps} />
+			</DefaultAvatar>
 		);
 	}
 
 	if (userName) {
-		const size = avatarProps.size || 'large';
-
-		return (
-			<DefaultAvatar {...avatarProps} size={size}>
-				{userName}
-			</DefaultAvatar>
-		);
+		const size = avatarProps.size || 'lg';
+		return <DefaultAvatar {...avatarProps} name={userName} size={size} />;
 	}
 
 	return <DefaultAvatar {...avatarProps} />;
