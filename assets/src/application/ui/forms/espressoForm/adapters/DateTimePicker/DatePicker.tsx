@@ -3,7 +3,7 @@ import { parse } from 'date-fns';
 import DatePickerBase from './DatePickerBase';
 import { CONVERT_TO_MOMENT_DATE_FORMAT } from '@appConstants/dateFnsFormats';
 
-const DatePicker = ({ input, ...rest }) => {
+const DatePicker = ({ input, meta, ...rest }) => {
 	return (
 		<DatePickerBase
 			{...input}

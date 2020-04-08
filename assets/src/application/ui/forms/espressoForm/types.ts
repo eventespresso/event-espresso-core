@@ -2,8 +2,8 @@ import React from 'react';
 import { FormRenderProps, FormProps, FieldRenderProps, FieldProps as RFFFieldProps } from 'react-final-form';
 import { FieldArrayProps } from 'react-final-form-arrays';
 import { FormState, AnyObject } from 'final-form';
-import { FormItemProps as AntdFormItemProps } from 'antd/es/form';
 import { ButtonProps, OptionsType } from '@infraUI/inputs';
+import { FormControlProps } from '@infraUI/forms';
 
 export interface FormButtonProps extends ButtonProps {
 	label?: string;
@@ -21,8 +21,6 @@ interface AdditionalFormProps<FormValues = AnyObject> extends FormContextProps {
 	formWrapper?: React.ComponentType;
 	debugFields?: Array<keyof FormState<any>>; // The fields from RFF form state to display in debug
 }
-
-export type FormItemProps = Omit<AntdFormItemProps, 'children'>;
 
 export interface AdditionalFieldProps<FormValues = AnyObject> {
 	label?: React.ReactNode | string;
@@ -46,7 +44,7 @@ export interface AdditionalFieldProps<FormValues = AnyObject> {
 	options?: OptionsType;
 	isRepeatable?: boolean;
 	conditions?: FieldConditions;
-	formItemProps?: FormItemProps;
+	formControlProps?: FormControlProps;
 	parseAsInfinity?: boolean;
 	[key: string]: any;
 }

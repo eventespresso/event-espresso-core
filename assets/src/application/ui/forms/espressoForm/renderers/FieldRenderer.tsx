@@ -2,26 +2,22 @@ import React from 'react';
 import classNames from 'classnames';
 import { Tooltip } from 'antd';
 import { InfoCircleOutlined } from '@ant-design/icons';
-import { v4 as uuidv4 } from 'uuid';
 
-import { FormItem, MappedField } from '../adapters';
+import { MappedField } from '../adapters';
 import { FieldRendererProps } from '../types';
-import { getValidateStatus } from '../utils';
-import useFormItemLayout from '../hooks/useFormItemLayout';
+import { FormControl, FormErrorMessage, FormHelperText, FormLabel } from '@infraUI/forms';
 
 const FieldRenderer: React.FC<FieldRendererProps> = (props) => {
-	const { after, before, desc, formItemProps, info, label, required, ...rest } = props;
+	const { after, before, desc, formControlProps, info, label, required, ...rest } = props;
 
 	const { meta } = props;
-
-	const formItemLayout = useFormItemLayout();
 
 	// no layout stuff needed for hidden field
 	if (props.fieldType === 'hidden') {
 		return <MappedField {...rest} />;
 	}
 
-	const tooltipKey = info ? uuidv4() : null;
+	const tooltipKey = info ? props.input.name + '-tooltip' : null;
 
 	const fieldInfo = info ? (
 		<span id={tooltipKey}>
@@ -31,32 +27,24 @@ const FieldRenderer: React.FC<FieldRendererProps> = (props) => {
 		</span>
 	) : null;
 
-	const validateStatus = getValidateStatus(meta);
+	const errorMessage = meta.touched && (meta.error || meta.submitError);
+
 	return (
-		<FormItem
-			label={
-				<>
-					{label}
-					{fieldInfo}
-				</>
-			}
-			htmlFor={props.input.name}
-			colon={false}
-			extra={desc}
-			required={required}
-			validateStatus={validateStatus}
-			hasFeedback={meta.touched && !!(meta.error || meta.submitError)}
-			help={meta.touched && (meta.error || meta.submitError)}
-			{...formItemLayout}
-			{...formItemProps}
-			className={classNames('form-item', `form-item-${rest.fieldType}`, formItemProps?.className)}
+		<FormControl
+			isInvalid={Boolean(errorMessage)}
+			isRequired={required}
+			className={classNames('form-item', `form-item-${rest.fieldType}`, formControlProps?.className)}
 		>
-			<>
-				{before}
-				<MappedField aria-label={label} aria-describedby={tooltipKey} {...rest} />
-				{after}
-			</>
-		</FormItem>
+			<FormLabel htmlFor={props.input.name}>
+				{label}
+				{fieldInfo}
+			</FormLabel>
+			{before}
+			<MappedField aria-label={label} aria-describedby={tooltipKey} {...rest} />
+			{after}
+			{errorMessage ? <FormErrorMessage>{errorMessage}</FormErrorMessage> : null}
+			<FormHelperText>{desc}</FormHelperText>
+		</FormControl>
 	);
 };
 export default FieldRenderer;

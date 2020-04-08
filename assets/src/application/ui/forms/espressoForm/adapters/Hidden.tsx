@@ -1,6 +1,8 @@
 import React from 'react';
 
-const Hidden = ({ input, ...rest }) => {
+import { FieldRendererProps } from '../types';
+
+const Hidden: React.FC<FieldRendererProps> = ({ input, meta, ...rest }) => {
 	return <input {...input} {...rest} type='hidden' />;
 };
 
