@@ -61,7 +61,7 @@ class EEH_Schema
                 $event_status = 'EventScheduled';
         }
         $template_args['event_attendance_mode'] = 'OfflineEventAttendanceMode';
-        $template_args['event_status'] = $event_status;
+        $template_args['event_status'] = '"https://schema.org/' . $event_status . '"';
         $template_args['currency'] = EE_Registry::instance()->CFG->currency->code;
         foreach ($event->tickets() as $original_ticket) {
             // clone tickets so that date formats don't override those for the original ticket
