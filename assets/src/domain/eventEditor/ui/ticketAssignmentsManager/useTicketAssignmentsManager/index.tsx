@@ -17,7 +17,11 @@ const useTicketAssignmentsManager = (): TAM => {
 	let openModal: ReturnType<ModalFunc>;
 
 	const assignTicketsToDate: TAM['assignTicketsToDate'] = ({ datetimeId, name }) => {
-		const title = __('Ticket Assignment Manager for Datetime: ') + `${datetimeId} - ${name}`;
+		const title = sprintf(
+			__('Ticket Assignment Manager for Datetime: %s - %s'),
+			datetimeId,
+			name
+		);
 		showModal({ assignmentType: 'forDate', entityId: datetimeId, title });
 	};
 
