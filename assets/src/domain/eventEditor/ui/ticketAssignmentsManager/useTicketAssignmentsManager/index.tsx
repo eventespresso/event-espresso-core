@@ -1,5 +1,5 @@
 import React, { useEffect, useCallback } from 'react';
-import { __ } from '@wordpress/i18n';
+import { sprintf, __ } from '@wordpress/i18n';
 import { TicketAssignmentsManager, ErrorMessage } from '../components';
 import { ButtonProps } from 'antd/lib/button';
 import { ModalFunc } from 'antd/lib/modal/confirm';
@@ -17,16 +17,12 @@ const useTicketAssignmentsManager = (): TAM => {
 	let openModal: ReturnType<ModalFunc>;
 
 	const assignTicketsToDate: TAM['assignTicketsToDate'] = ({ datetimeId, name }) => {
-		const title = sprintf(
-			__('Ticket Assignment Manager for Datetime: %s - %s'),
-			datetimeId,
-			name
-		);
+		const title = sprintf(__('Ticket Assignment Manager for Datetime: %s - %s'), datetimeId, name);
 		showModal({ assignmentType: 'forDate', entityId: datetimeId, title });
 	};
 
 	const assignDatesToTicket: TAM['assignDatesToTicket'] = ({ name, ticketId }) => {
-		const title = __('Ticket Assignment Manager for Ticket: ') + `${ticketId} - ${name}`;
+		const title = sprintf(__('Ticket Assignment Manager for Ticket: %s - %s'), ticketId, name);
 		showModal({ assignmentType: 'forTicket', entityId: ticketId, title });
 	};
 
