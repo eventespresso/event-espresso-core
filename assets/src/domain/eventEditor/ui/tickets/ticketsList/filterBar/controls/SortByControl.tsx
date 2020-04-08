@@ -39,7 +39,7 @@ const SortByControl: React.FC<SortByControlProps> = React.memo(({ sortBy, setSor
 			className='espresso-ticket-list-filter-bar-order-select'
 			value={sortBy}
 			options={options}
-			onChange={setSortBy}
+			onChangeValue={setSortBy}
 		/>
 	);
 });

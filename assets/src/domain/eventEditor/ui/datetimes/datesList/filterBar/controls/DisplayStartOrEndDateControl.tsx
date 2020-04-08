@@ -33,7 +33,7 @@ const DisplayStartOrEndDateControl: React.FC<DisplayStartOrEndDateControlProps> 
 						label: __('start and end dates'),
 					},
 				]}
-				onChange={setDisplayStartOrEndDate}
+				onChangeValue={setDisplayStartOrEndDate}
 			/>
 		);
 	}
