@@ -18,7 +18,7 @@ const SearchInput: React.FC<SearchInputProps> = React.memo(({ className, searchT
 			id={id}
 			className='ee-entity-list-filter-bar-search'
 			value={searchText}
-			onChange={(e: React.ChangeEvent<HTMLInputElement>) => setSearchText(e.target.value)}
+			onChangeValue={setSearchText}
 		/>
 	) : null;
 });
