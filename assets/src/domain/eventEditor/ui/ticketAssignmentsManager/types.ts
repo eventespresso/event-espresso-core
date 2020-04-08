@@ -24,7 +24,7 @@ export interface BaseProps {
 
 export interface AssignmentFnArgs {
 	datetimeId: EntityId;
-	name: string;
+	name?: string;
 	ticketId: EntityId;
 }
 
