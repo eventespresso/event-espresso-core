@@ -13,8 +13,8 @@ import {
 } from '../../../input';
 import { FieldRendererProps } from '../types';
 
-const MappedField: React.FC<Omit<FieldRendererProps, 'meta'>> = ({ fieldType, ...rest }) => {
-	let Component: React.ElementType;
+const MappedField: React.FC<FieldRendererProps> = ({ fieldType, ...rest }) => {
+	let Component: React.ComponentType<Omit<FieldRendererProps, 'fieldType'>>;
 	switch (fieldType) {
 		case 'text':
 			Component = Text;

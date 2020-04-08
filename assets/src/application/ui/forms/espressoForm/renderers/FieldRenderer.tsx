@@ -10,7 +10,9 @@ import { getValidateStatus } from '../utils';
 import useFormItemLayout from '../hooks/useFormItemLayout';
 
 const FieldRenderer: React.FC<FieldRendererProps> = (props) => {
-	const { after, before, desc, formItemProps, info, label, meta, required, ...rest } = props;
+	const { after, before, desc, formItemProps, info, label, required, ...rest } = props;
+
+	const { meta } = props;
 
 	const formItemLayout = useFormItemLayout();
 

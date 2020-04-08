@@ -2,10 +2,8 @@ import React from 'react';
 import { FormRenderProps, FormProps, FieldRenderProps, FieldProps as RFFFieldProps } from 'react-final-form';
 import { FieldArrayProps } from 'react-final-form-arrays';
 import { FormState, AnyObject } from 'final-form';
-import { ButtonProps as AntdButtonProps } from 'antd/lib/button';
 import { FormItemProps as AntdFormItemProps } from 'antd/es/form';
-
-export type ButtonProps = AntdButtonProps;
+import { ButtonProps, OptionsType } from '@infraUI/inputs';
 
 export interface FormButtonProps extends ButtonProps {
 	label?: string;
@@ -26,18 +24,6 @@ interface AdditionalFormProps<FormValues = AnyObject> extends FormContextProps {
 
 export type FormItemProps = Omit<AntdFormItemProps, 'children'>;
 
-export interface OptionProps {
-	label?: string;
-	value?: string;
-}
-
-export interface SelectOptionProps extends OptionProps {
-	optgroup?: string;
-	options?: Array<OptionProps>;
-}
-
-export type SelectOptions = Array<SelectOptionProps>;
-
 export interface AdditionalFieldProps<FormValues = AnyObject> {
 	label?: React.ReactNode | string;
 	fieldType:
@@ -57,7 +43,7 @@ export interface AdditionalFieldProps<FormValues = AnyObject> {
 	after?: React.ReactNode | string;
 	desc?: React.ReactNode | string;
 	subFields?: FieldList<FormValues>;
-	options?: SelectOptions;
+	options?: OptionsType;
 	isRepeatable?: boolean;
 	conditions?: FieldConditions;
 	formItemProps?: FormItemProps;
