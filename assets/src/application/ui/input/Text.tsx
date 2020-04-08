@@ -1,8 +1,10 @@
 import React from 'react';
-import { Input } from 'antd';
 
-const Text = ({ htmlType = 'text', input, ...props }) => {
-	return <Input {...input} {...props} onPressEnter={(e) => e.preventDefault()} type={htmlType} />;
+import { TextInput } from '@infraUI/inputs';
+import { FieldRendererProps } from '../forms/espressoForm';
+
+const Text: React.FC<FieldRendererProps> = ({ htmlType = 'text', input, meta: { error, submitError }, ...rest }) => {
+	return <TextInput {...input} isInvalid={error || submitError} {...rest} />;
 };
 
 export default Text;

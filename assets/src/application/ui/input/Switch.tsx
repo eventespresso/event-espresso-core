@@ -1,8 +1,10 @@
 import React from 'react';
-import { Switch } from 'antd';
 
-const SwitchField = ({ input, ...rest }) => {
-	return <Switch {...input} {...rest} checked={Boolean(input.value)} />;
+import { Switch } from '@infraUI/inputs';
+import { FieldRendererProps } from '../forms/espressoForm';
+
+const SwitchField: React.FC<FieldRendererProps> = ({ input, meta: { error, submitError }, ...rest }) => {
+	return <Switch {...input} isChecked={Boolean(input.value)} isInvalid={error || submitError} {...rest} />;
 };
 
 export default SwitchField;

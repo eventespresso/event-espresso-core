@@ -1,4 +1,3 @@
-export { default as Button } from './Button';
 export { default as CurrencyInput } from './CurrencyInput';
 export { default as DatePicker } from './DateTimePicker/DatePicker';
 export { default as MultiCheck } from './MultiCheck';

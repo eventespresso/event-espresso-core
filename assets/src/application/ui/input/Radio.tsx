@@ -1,17 +1,21 @@
 import React from 'react';
-import { Radio } from 'antd';
 
-const RadioField = ({ input: { value, ...input }, options, ...radioProps }) => {
+import { Radio, RadioGroup } from '@infraUI/inputs';
+import { FieldRendererProps } from '../forms/espressoForm';
+
+const RadioField: React.FC<FieldRendererProps> = ({ input, meta, options, ...restProps }) => {
+	const children = options.map(({ label, value, ...rest }, index) => {
+		return (
+			<Radio value={value} {...rest} key={`${value}${index}`}>
+				{label}
+			</Radio>
+		);
+	});
+
 	return (
-		<Radio.Group {...input} {...radioProps}>
-			{options.map(({ value: optValue, label }, i) => {
-				return (
-					<Radio key={optValue + i} value={optValue} checked={value === optValue}>
-						{label}
-					</Radio>
-				);
-			})}
-		</Radio.Group>
+		<RadioGroup {...input} {...restProps}>
+			{children}
+		</RadioGroup>
 	);
 };
 

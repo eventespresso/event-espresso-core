@@ -1,10 +1,10 @@
 import React from 'react';
-import { Input } from 'antd';
-import { InputProps } from 'antd/lib/input';
+
+import { TextInput, TextInputProps } from '@infraUI/inputs';
 
 import { withLabel, withLabelProps, withTooltipProps } from '@appDisplay/index';
 
-interface SearchInputProps extends InputProps, Partial<withLabelProps>, Partial<withTooltipProps> {
+interface SearchInputProps extends TextInputProps, Partial<withLabelProps>, Partial<withTooltipProps> {
 	searchText: string;
 	setSearchText: (text?: string) => void;
 }
@@ -13,13 +13,12 @@ const SearchInput: React.FC<SearchInputProps> = React.memo(({ className, searchT
 	const id = `ee-search-input-${props.id}`;
 
 	return typeof setSearchText === 'function' ? (
-		<Input
+		<TextInput
 			{...props}
 			id={id}
 			className='ee-entity-list-filter-bar-search'
 			value={searchText}
-			onChange={(e) => setSearchText(e.target.value)}
-			onPressEnter={(e) => e.preventDefault()}
+			onChange={(e: React.ChangeEvent<HTMLInputElement>) => setSearchText(e.target.value)}
 		/>
 	) : null;
 });

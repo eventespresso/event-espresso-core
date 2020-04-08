@@ -1,8 +1,10 @@
 import React from 'react';
-import { Input } from 'antd';
 
-const TextArea = ({ input, ...rest }) => {
-	return <Input.TextArea {...input} {...rest} onPressEnter={(e) => e.preventDefault()} />;
+import { TextArea as AdaptedTextArea } from '@infraUI/inputs';
+import { FieldRendererProps } from '../forms/espressoForm';
+
+const TextArea: React.FC<FieldRendererProps> = ({ input, meta: { error, submitError }, ...rest }) => {
+	return <AdaptedTextArea {...input} isInvalid={error || submitError} {...rest} />;
 };
 
 export default TextArea;

@@ -1,17 +1,24 @@
 import React from 'react';
-import { Checkbox } from 'antd';
-import { CheckboxGroupProps } from 'antd/lib/checkbox/Group';
 
-const MultiCheck = ({ input: { value, ...rest }, options, ...restProps }) => {
-	const props: CheckboxGroupProps = {
-		...rest,
-		...restProps,
-		className: 'checkbox-group',
-		options,
-		value: value || [],
-	};
+import { Checkbox, CheckboxGroup } from '@infraUI/inputs';
+import { FieldRendererProps } from '../forms/espressoForm';
 
-	return <Checkbox.Group {...props} />;
+const MultiCheck: React.FC<FieldRendererProps> = ({ input, meta, options, ...restProps }) => {
+	const children = options.map(({ label, value, ...rest }, index) => {
+		return (
+			<Checkbox value={value} {...rest} key={`${value}${index}`}>
+				{label}
+			</Checkbox>
+		);
+	});
+
+	const value = input.value || [];
+
+	return (
+		<CheckboxGroup {...input} {...restProps} value={value}>
+			{children}
+		</CheckboxGroup>
+	);
 };
 
 export default MultiCheck;
