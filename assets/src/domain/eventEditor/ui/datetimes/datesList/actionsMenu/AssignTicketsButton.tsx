@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 import { __ } from '@wordpress/i18n';
 
 import { EspressoButton, Icon } from '@application/ui/input';
@@ -9,7 +9,7 @@ import useTicketAssignmentsManager from '@edtrUI/ticketAssignmentsManager/useTic
 import { TypeName } from '@appServices/apollo/status';
 import withIsLoaded from '@sharedUI/hoc/withIsLoaded';
 
-const AssignTicketsButton: React.FC<EntityListItemProps> = React.memo(({ id }) => {
+const AssignTicketsButton: React.FC<EntityListItemProps> = React.memo(({ id, name }) => {
 	const { assignTicketsToDate } = useTicketAssignmentsManager();
 
 	const relatedTickets = useRelatedTickets({
@@ -24,9 +24,9 @@ const AssignTicketsButton: React.FC<EntityListItemProps> = React.memo(({ id }) =
 		? `${__('Related Tickets:')} ${relatedTicketDbIds.join(', ')}`
 		: __('There are no tickets assigned to this datetime. Please click the ticket icon to update the assignments.');
 
-	const onClick = (): void => {
-		assignTicketsToDate({ datetimeId: id });
-	};
+	const onClick = useCallback((): void => {
+		assignTicketsToDate({ datetimeId: id, name });
+	}, [id, name]);
 
 	return (
 		<ItemCount count={count} title={title} zeroCountChar='!' emphasizeZero>
@@ -40,7 +40,7 @@ const AssignTicketsButton: React.FC<EntityListItemProps> = React.memo(({ id }) =
 	);
 });
 
-export default withIsLoaded<EntityListItemProps>(TypeName.tickets, ({ loaded, id }) => {
+export default withIsLoaded<EntityListItemProps>(TypeName.tickets, ({ loaded, id, name }) => {
 	/* Hide TAM unless tickets are loaded */
-	return loaded && <AssignTicketsButton id={id} />;
+	return loaded && <AssignTicketsButton id={id} name={name}/>;
 });

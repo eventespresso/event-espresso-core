@@ -3,6 +3,8 @@ import classNames from 'classnames';
 
 import { Cell } from '@appLayout/espressoTable';
 import BodyCell from './BodyCell';
+import DateCell from './DateCell';
+
 import { useDataState } from '../../data';
 import { DatesAndTickets } from '../../types';
 import useRowClassName from './useRowClassName';
@@ -18,8 +20,8 @@ const getBodyRows = ({ datetimes, tickets }: DatesAndTickets) => {
 		const datetimeCell: Cell = {
 			key: 'datetime',
 			type: 'cell',
-			className: 'ee-date-list-col-hdr ee-rspnsv-table-column-micro',
-			value: `${datetime.dbId}: ${datetime.name}`,
+			className: 'ee-date-list-col-hdr ee-rspnsv-table-column-micro date-cell',
+			value: <DateCell datetime={datetime} />,
 		};
 
 		const cells: Array<Cell> = tickets.map((ticket) => {
@@ -27,7 +29,7 @@ const getBodyRows = ({ datetimes, tickets }: DatesAndTickets) => {
 
 			const className = classNames(
 				status && `${status.toLowerCase()}-assignment`,
-				'ee-date-list-col-hdr ee-rspnsv-table-column-huge text-center',
+				'ee-date-list-col-hdr ee-rspnsv-table-column-huge text-center relation-cell',
 				getColClass(ticket)
 			);
 

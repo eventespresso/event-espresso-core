@@ -19,10 +19,12 @@ export type AssignmentStatus = 'OLD' | 'NEW' | 'REMOVED';
 export interface BaseProps {
 	assignmentType: AssignmentType;
 	entityId?: EntityId;
+	title?: string;
 }
 
 export interface AssignmentFnArgs {
 	datetimeId: EntityId;
+	name?: string;
 	ticketId: EntityId;
 }
 
@@ -55,8 +57,8 @@ export interface DataStateManager extends AssignmentManager {
 }
 
 export interface TicketAssignmentsManager {
-	assignDatesToTicket: (options: Pick<AssignmentFnArgs, 'ticketId'>) => void;
-	assignTicketsToDate: (options: Pick<AssignmentFnArgs, 'datetimeId'>) => void;
+	assignDatesToTicket: (options: Pick<AssignmentFnArgs, 'name' | 'ticketId'>) => void;
+	assignTicketsToDate: (options: Pick<AssignmentFnArgs, 'datetimeId' | 'name'>) => void;
 	assignToAll: () => void;
 }
 
@@ -68,6 +70,6 @@ export interface DatesAndTickets {
 export interface RenderTableProps extends DatesAndTickets {}
 
 export interface RenderCellProps {
-	datetime: Datetime;
-	ticket: Ticket;
+	datetime?: Datetime;
+	ticket?: Ticket;
 }

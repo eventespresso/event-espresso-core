@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 import { __ } from '@wordpress/i18n';
 
 import { EspressoButton, Icon } from '@application/ui/input';
@@ -9,7 +9,7 @@ import useTicketAssignmentsManager from '@edtrUI/ticketAssignmentsManager/useTic
 import { TypeName } from '@appServices/apollo/status';
 import withIsLoaded from '@sharedUI/hoc/withIsLoaded';
 
-const AssignDatesButton: React.FC<EntityListItemProps> = React.memo(({ id }) => {
+const AssignDatesButton: React.FC<EntityListItemProps> = React.memo(({ id, name }) => {
 	const { assignDatesToTicket } = useTicketAssignmentsManager();
 
 	const relatedDatetimes = useRelatedDatetimes({
@@ -26,9 +26,9 @@ const AssignDatesButton: React.FC<EntityListItemProps> = React.memo(({ id }) => 
 				'There are no event dates assigned to this ticket. Please click the calendar icon to update the assignments.'
 		  );
 
-	const onClick = (): void => {
-		assignDatesToTicket({ ticketId: id });
-	};
+	const onClick = useCallback((): void => {
+		assignDatesToTicket({ name, ticketId: id });
+	}, [id, name]);
 
 	const tooltipProps = { placement: 'right' };
 
@@ -44,7 +44,7 @@ const AssignDatesButton: React.FC<EntityListItemProps> = React.memo(({ id }) => 
 	);
 });
 
-export default withIsLoaded<EntityListItemProps>(TypeName.datetimes, ({ loaded, id }) => {
+export default withIsLoaded<EntityListItemProps>(TypeName.datetimes, ({ id, loaded, name }) => {
 	/* Hide TAM unless dates are loaded */
-	return loaded && <AssignDatesButton id={id} />;
+	return loaded && <AssignDatesButton id={id} name={name} />;
 });

@@ -20,7 +20,7 @@ const useDatesActionMenuHandler = (): DatesSubscriptionCallback => {
 
 		registerMenuItem('dateMainMenu', () => <DateMainMenuItem />);
 
-		registerMenuItem('assignTickets', () => <AssignTicketsButton id={date.id} />);
+		registerMenuItem('assignTickets', () => <AssignTicketsButton id={date.id} name={date.name} />);
 	}, []);
 };
 
