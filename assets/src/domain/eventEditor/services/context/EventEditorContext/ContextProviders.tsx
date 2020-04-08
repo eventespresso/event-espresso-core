@@ -2,12 +2,13 @@ import React from 'react';
 import { ApolloProvider } from '@apollo/react-hooks';
 
 import { getClient } from '../../../../../infrastructure/services/apollo/Apollo';
-import { ToastProvider } from '../../../../../application/services/context/ToastProvider';
-import { RelationsProvider } from '../../../../../application/services/context/RelationsProvider';
-import { StatusProvider } from '../../../../../application/services/context/StatusProvider';
-import { ModalProvider } from '../../../../../application/services/context/ModalProvider';
-import { ConfigProvider } from '../../../../../application/services/context/ConfigProvider';
-import { FormModalProvider } from '../../../../../application/services/context/FormModalProvider';
+import { ToastProvider } from '@appServices/context/ToastProvider';
+import { RelationsProvider } from '@appServices/context/RelationsProvider';
+import { StatusProvider } from '@appServices/context/StatusProvider';
+import { ModalProvider } from '@appServices/context/ModalProvider';
+import { ConfigProvider } from '@appServices/context/ConfigProvider';
+import { FormModalProvider } from '@appServices/context/FormModalProvider';
+import { ThemeProvider } from '@appServices/theme';
 import { EventIdProvider } from '../EventContext';
 import { EdtrStateProvider } from '../EdtrStateContext';
 
@@ -38,21 +39,23 @@ export const ContextProviders: React.FC = ({ children }) => {
  * @returns {ReactElement} The wrapped element.
  */
 export const CommonProviders: React.FC = ({ children }) => (
-	<ToastProvider>
-		<StatusProvider>
-			<ConfigProvider>
-				<EventIdProvider>
-					<RelationsProvider>
-						<FormModalProvider>
-							<ModalProvider>
-								<EdtrStateProvider>{children}</EdtrStateProvider>
-							</ModalProvider>
-						</FormModalProvider>
-					</RelationsProvider>
-				</EventIdProvider>
-			</ConfigProvider>
-		</StatusProvider>
-	</ToastProvider>
+	<ThemeProvider>
+		<ToastProvider>
+			<StatusProvider>
+				<ConfigProvider>
+					<EventIdProvider>
+						<RelationsProvider>
+							<FormModalProvider>
+								<ModalProvider>
+									<EdtrStateProvider>{children}</EdtrStateProvider>
+								</ModalProvider>
+							</FormModalProvider>
+						</RelationsProvider>
+					</EventIdProvider>
+				</ConfigProvider>
+			</StatusProvider>
+		</ToastProvider>
+	</ThemeProvider>
 );
 
 export default ContextProviders;
