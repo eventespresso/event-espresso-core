@@ -1,5 +1,5 @@
 import React from 'react';
-import { Avatar as DefaultAvatar, AvatarBadge, IAvatar, BoxProps } from '@chakra-ui/core';
+import { Avatar as ChakraAvatar, AvatarBadge, IAvatar, BoxProps } from '@chakra-ui/core';
 
 interface Props extends IAvatar {
 	badgeProps?: BoxProps;
@@ -9,18 +9,18 @@ interface Props extends IAvatar {
 const Avatar = ({ badgeProps, userName, ...avatarProps }: Props) => {
 	if (badgeProps) {
 		return (
-			<DefaultAvatar {...avatarProps}>
+			<ChakraAvatar {...avatarProps}>
 				<AvatarBadge {...badgeProps} />
-			</DefaultAvatar>
+			</ChakraAvatar>
 		);
 	}
 
 	if (userName) {
 		const size = avatarProps.size || 'lg';
-		return <DefaultAvatar {...avatarProps} name={userName} size={size} />;
+		return <ChakraAvatar {...avatarProps} name={userName} size={size} />;
 	}
 
-	return <DefaultAvatar {...avatarProps} />;
+	return <ChakraAvatar {...avatarProps} />;
 };
 
 export default Avatar;

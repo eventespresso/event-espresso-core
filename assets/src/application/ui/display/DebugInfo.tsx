@@ -1,15 +1,14 @@
-import React, { CSSProperties } from 'react';
-import { Collapse } from 'antd';
+import React from 'react';
+import { Button, Collapse } from '@chakra-ui/core';
+import styled from '@emotion/styled';
 
-const { Panel } = Collapse;
-
-const dataStyle: CSSProperties = {
-	borderRadius: '5px',
-	boxSizing: 'border-box',
-	padding: '1em 2em',
-	color: '#a9ce47',
-	backgroundColor: '#26203d',
-};
+const Pre = styled.pre`
+	border-radius: 5px;
+	box-sizing: border-box;
+	padding: 1em 2em;
+	color: #a9ce47;
+	background-color: #26203d;
+`;
 
 interface DebugInfoProps {
 	data: any;
@@ -18,6 +17,7 @@ interface DebugInfoProps {
 }
 
 const DebugInfo: React.FC<DebugInfoProps> = ({ data, asJson = true, asCollapse = true }) => {
+	const [show, setShow] = React.useState(false);
 	const isDev = !process.env.NODE_ENV || process.env.NODE_ENV === 'development';
 
 	if (!isDev) {
@@ -26,18 +26,23 @@ const DebugInfo: React.FC<DebugInfoProps> = ({ data, asJson = true, asCollapse =
 
 	const dataToRender = asJson ? JSON.stringify(data, null, 2) : data;
 
-	const output = <pre style={dataStyle}>{dataToRender}</pre>;
+	const output = <Pre>{dataToRender}</Pre>;
 
 	if (!asCollapse) {
 		return output;
 	}
 
+	const handleToggle = () => setShow(!show);
+
 	return (
-		<Collapse>
-			<Panel header='Debug Info' key='debug-info'>
+		<>
+			<Button size='sm' onClick={handleToggle} mt='1rem'>
+				{show ? 'Hide' : 'Show'} Debug Info
+			</Button>
+			<Collapse mt={4} isOpen={show}>
 				{output}
-			</Panel>
-		</Collapse>
+			</Collapse>
+		</>
 	);
 };
 
