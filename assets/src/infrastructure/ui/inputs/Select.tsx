@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 import { Select as ChakraSelect } from '@chakra-ui/core';
 
 import type { SelectProps } from './types';
@@ -25,15 +25,19 @@ const Select: React.FC<SelectProps> = ({ children, options = [], onChange, onCha
 			);
 		});
 
-	const onChangeHandler: SelectProps['onChange'] = (event) => {
-		if (typeof onChangeValue === 'function') {
-			onChangeValue(event.target.value, event);
-		}
+	const onChangeHandler: SelectProps['onChange'] = useCallback(
+		(event) => {
+			if (typeof onChangeValue === 'function') {
+				onChangeValue(event.target.value, event);
+			}
 
-		if (typeof onChange === 'function') {
-			onChange(event);
-		}
-	};
+			if (typeof onChange === 'function') {
+				onChange(event);
+			}
+		},
+		[onChange, onChangeValue]
+	);
+
 	return (
 		<ChakraSelect {...props} onChange={onChangeHandler}>
 			{childNodes}
