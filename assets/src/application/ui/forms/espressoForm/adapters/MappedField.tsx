@@ -1,16 +1,14 @@
 import React from 'react';
-import {
-	Text,
-	TextArea,
-	Select,
-	Switch,
-	MultiCheck,
-	Number as NumberField,
-	Radio,
-	DatePicker,
-	TimePicker,
-	Hidden,
-} from '../../../input';
+
+import Text from './Text';
+import TextArea from './TextArea';
+import Select from './Select';
+import Switch from './Switch';
+import MultiCheck from './MultiCheck';
+import Radio from './Radio';
+import { DatePicker, TimePicker } from './DateTimePicker';
+import Hidden from './Hidden';
+import NumberField from './Number';
 import { FieldRendererProps } from '../types';
 
 const MappedField: React.FC<FieldRendererProps> = ({ fieldType, ...rest }) => {
