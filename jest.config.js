@@ -32,6 +32,8 @@ module.exports = {
 		'@sharedServices/(.*)': '<rootDir>/assets/src/domain/shared/services/$1',
 		'@sharedEntities/(.*)': '<rootDir>/assets/src/domain/shared/entities/$1',
 		'@sharedUI/(.*)': '<rootDir>/assets/src/domain/shared/ui/$1',
+		'@infraServices/(.*)': '<rootDir>/assets/src/infrastructure/services/$1',
+		'@infraUI/(.*)': '<rootDir>/assets/src/infrastructure/ui/$1',
 	},
 	moduleFileExtensions: ['web.js', 'js', 'web.ts', 'ts', 'web.tsx', 'tsx', 'json', 'web.jsx', 'jsx', 'node'],
 	watchPlugins: ['jest-watch-typeahead/filename', 'jest-watch-typeahead/testname'],

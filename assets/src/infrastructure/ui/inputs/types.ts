@@ -14,8 +14,8 @@ import type {
 	SwitchProps as ChakraSwitchProps,
 } from '@chakra-ui/core';
 
-export interface CommonInputProps<T> {
-	onChangeValue?: (value: React.ReactText, event: React.ChangeEvent<T>) => void;
+export interface CommonInputProps<T = Element, V = React.ReactText> {
+	onChangeValue?: (value: V, event: React.ChangeEvent<T> | React.FormEvent<T>) => void;
 }
 
 export interface ButtonProps extends Partial<ChakraButtonProps> {
@@ -50,7 +50,7 @@ export interface SelectProps extends ChakraSelectProps, CommonInputProps<HTMLSel
 	options?: OptionsType;
 }
 
-export interface SwitchProps extends ChakraSwitchProps {}
+export interface SwitchProps extends ChakraSwitchProps, CommonInputProps<HTMLInputElement, boolean> {}
 
 export interface TextareaProps extends React.ComponentProps<typeof ChakraTextarea> {}
 
