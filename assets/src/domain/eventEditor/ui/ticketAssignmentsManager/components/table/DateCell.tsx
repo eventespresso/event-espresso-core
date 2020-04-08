@@ -12,7 +12,7 @@ const DateCell: React.FC<RenderCellProps> = ({ datetime }) => {
 	const stripeClassName = classNames('date-stripe', bgClassName);
 
 	const { formatForSite: format } = useTimeZoneTime();
-	const startDate = format(datetime.startDate, LOCALIZED_DATE_SHORT_FORMAT);
+	const startDate = format(parseISO(datetime.startDate), LOCALIZED_DATE_SHORT_FORMAT);
 
 	return (
 		<div className='date-cell-content'>

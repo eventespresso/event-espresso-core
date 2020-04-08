@@ -17,7 +17,7 @@ import {
 } from '@appConstants/dateFnsFormats';
 
 export interface MediumCalendarDateProps extends CalendarDateProps {
-	date: string;
+	date: Date;
 	addWrapper?: boolean;
 }
 
@@ -34,7 +34,8 @@ export const MediumCalendarDate: React.FC<MediumCalendarDateProps> = ({
 }) => {
 	const { formatForSite: format } = useTimeZoneTime();
 
-	if (!isValid(parseISO(date))) {
+	const dateObject: Date = date instanceof Date ? date : parseISO(date);
+	if (!isValid(dateObject)) {
 		return null;
 	}
 	const htmlClassName = classNames(className, 'ee-medium-calendar-date__wrapper');
@@ -42,15 +43,15 @@ export const MediumCalendarDate: React.FC<MediumCalendarDateProps> = ({
 		<>
 			{headerText && <div className='ee-medium-calendar-date__header'>{headerText}</div>}
 			<div className='ee-medium-calendar-date'>
-				<div className='ee-mcd__weekday'>{format(date, WEEKDAY_ONLY_FULL_FORMAT)}</div>
+				<div className='ee-mcd__weekday'>{format(dateObject, WEEKDAY_ONLY_FULL_FORMAT)}</div>
 				<div className='ee-mcd__month-day'>
-					<span className='ee-mcd__month'>{format(date, MONTH_ONLY_LONG_FORMAT)}</span>
-					<span className='ee-mcd__day'>{format(date, DAY_ONLY_SHORT_FORMAT)}</span>
+					<span className='ee-mcd__month'>{format(dateObject, MONTH_ONLY_LONG_FORMAT)}</span>
+					<span className='ee-mcd__day'>{format(dateObject, DAY_ONLY_SHORT_FORMAT)}</span>
 				</div>
 				<div className='ee-mcd__year'>
-					{format(date, YEAR_ONLY_LONG_FORMAT)}
-					<TimezoneTimeInfo date={parseISO(date)} inline />
-					{showTime && <span className='ee-mcd__time'>{format(date, TIME_ONLY_12H_SHORT_FORMAT)}</span>}
+					{format(dateObject, YEAR_ONLY_LONG_FORMAT)}
+					<TimezoneTimeInfo date={dateObject} inline />
+					{showTime && <span className='ee-mcd__time'>{format(dateObject, TIME_ONLY_12H_SHORT_FORMAT)}</span>}
 				</div>
 			</div>
 			{footerText && <div className='ee-medium-calendar-date__footer'>{footerText}</div>}
