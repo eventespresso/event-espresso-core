@@ -1,13 +1,10 @@
 import React from 'react';
-import { LoadingOutlined } from '@ant-design/icons';
-import { Spin } from 'antd';
-import { SpinProps } from 'antd/lib/spin';
+import { ISpinnerProps } from '@chakra-ui/core';
 
-const LoadingIndicator: React.FC<SpinProps> = (props) => {
-	const style = { fontSize: 24 };
-	const antIcon = <LoadingOutlined style={style} spin />;
+import { Spinner } from '@appDisplay/index';
 
-	return <Spin indicator={antIcon} {...props} />;
+const LoadingIndicator: React.FC<ISpinnerProps> = (props) => {
+	return <Spinner {...props} size='lg' />;
 };
 
 export default LoadingIndicator;

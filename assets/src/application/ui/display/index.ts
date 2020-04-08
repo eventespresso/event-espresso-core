@@ -7,6 +7,7 @@ export { default as ErrorIndicator } from './ErrorIndicator';
 export { default as EspressoAlert } from './EspressoAlert';
 export { default as ItemCount } from './ItemCount';
 export { default as LoadingIndicator } from './LoadingIndicator';
+export { default as Spinner } from './Spinner';
 
 export * from './entityDetailsPanel';
 export * from './espressoIcon';
