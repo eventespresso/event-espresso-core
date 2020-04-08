@@ -24,7 +24,9 @@ const EmptyState = ({ className, children, description, title }: EmptyStateProps
 			<AlertTitle mt={4} mb={1} fontSize='lg'>
 				{title}
 			</AlertTitle>
+
 			{description && <AlertDescription maxWidth='sm'>{description}</AlertDescription>}
+
 			{children && children}
 		</Alert>
 	);
