@@ -18,7 +18,9 @@ export interface CommonInputProps<T> {
 	onChangeValue?: (value: React.ReactText, event: React.ChangeEvent<T>) => void;
 }
 
-export interface ButtonProps extends ChakraButtonProps {}
+export interface ButtonProps extends Partial<ChakraButtonProps> {
+	buttonText?: React.ReactNode;
+}
 
 export interface CheckboxProps extends ChakraCheckboxProps {}
 
