@@ -36,6 +36,7 @@
 		}
 		tr {
 			background: var(--ee-color-grey-14);
+			padding: 0;
 			&:hover {
 				background: var(--ee-color-grey-13);
 			}
@@ -71,6 +72,24 @@
 					}
 				}
 			}
+			&.relation-cell {
+				height: 100px;
+				padding: var(--ee-padding-nano);
+				width: 100px;
+				.ee-rspnsv-table-mobile-only-column-value {
+					height: 100%;
+				}
+				button {
+					height: 100%;
+					width: 100%;
+					span,
+					svg {
+						height: var(--ee-icon-button-size);
+						padding: 0;
+						width: var(--ee-icon-button-size);
+					}
+				}
+			}
 		}
 	}
 	td,
@@ -86,15 +105,23 @@
 		}
 	}
 	.no-assignments {
-		background-color: var(--ee-color-accent) !important;
+		button {
+			background-color: var(--ee-color-accent) !important;
+		}
 	}
 	.new-assignment {
-		background-color: var(--ee-color-secondary) !important;
+		button {
+			background-color: var(--ee-color-secondary) !important;
+		}
 	}
 	.old-assignment {
-		background-color: var(--ee-color-primary) !important;
+		button {
+			background-color: var(--ee-color-primary) !important;
+		}
 	}
 	.removed-assignment {
-		background-color: var(--ee-color-accent) !important;
+		button {
+			background-color: var(--ee-color-accent) !important;
+		}
 	}
 }

@@ -29,7 +29,7 @@ const getBodyRows = ({ datetimes, tickets }: DatesAndTickets) => {
 
 			const className = classNames(
 				status && `${status.toLowerCase()}-assignment`,
-				'ee-date-list-col-hdr ee-rspnsv-table-column-huge text-center',
+				'ee-date-list-col-hdr ee-rspnsv-table-column-huge text-center relation-cell',
 				getColClass(ticket)
 			);
 
