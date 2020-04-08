@@ -11,23 +11,20 @@ interface EmptyStateProps {
 const EmptyState = ({ className, children, description, title }: EmptyStateProps) => {
 	return (
 		<Alert
-			status='warning'
-			variant='subtle'
+			backgroundColor='var(--ee-color-grey-15)'
+			className={className}
 			flexDirection='column'
 			justifyContent='center'
+			status='warning'
+			variant='subtle'
 			textAlign='center'
-			height='200px'
 		>
 			<AlertIcon name='question-outline' size='96px' color='gray.100' />
 
 			<AlertTitle mt={4} mb={1} fontSize='lg'>
 				{title}
 			</AlertTitle>
-			{description && (
-				<AlertDescription maxWidth='sm'>
-					Thanks for submitting your application. Our team will get back to you soon.
-				</AlertDescription>
-			)}
+			{description && <AlertDescription maxWidth='sm'>{description}</AlertDescription>}
 			{children && children}
 		</Alert>
 	);
