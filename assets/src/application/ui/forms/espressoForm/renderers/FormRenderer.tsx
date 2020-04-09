@@ -5,7 +5,7 @@ import { FormRendererProps } from '../types';
 import Submit from '../Submit';
 import RenderFields from '../RenderFields';
 import RenderSections from '../RenderSections';
-import { DebugInfo } from '@infraUI/display';
+import { DebugInfo } from '@appDisplay/index';
 
 const FormRenderer: React.FC<FormRendererProps> = (props) => {
 	const {

@@ -1,6 +1,7 @@
-import React, { useCallback } from 'react';
-import { Button, Collapse } from '@chakra-ui/core';
+import React from 'react';
 import styled from '@emotion/styled';
+
+import { Collapse } from '@infraUI/display';
 
 const Pre = styled.pre`
 	border-radius: 5px;
@@ -17,7 +18,6 @@ interface DebugInfoProps {
 }
 
 const DebugInfo: React.FC<DebugInfoProps> = ({ data, asJson = true, asCollapse = true }) => {
-	const [show, setShow] = React.useState(false);
 	const isDev = !process.env.NODE_ENV || process.env.NODE_ENV === 'development';
 
 	if (!isDev) {
@@ -32,18 +32,7 @@ const DebugInfo: React.FC<DebugInfoProps> = ({ data, asJson = true, asCollapse =
 		return output;
 	}
 
-	const handleToggle = useCallback(() => setShow(!show), [show]);
-
-	return (
-		<>
-			<Button size='sm' onClick={handleToggle} mt='1rem'>
-				{show ? 'Hide' : 'Show'} Debug Info
-			</Button>
-			<Collapse mt={4} isOpen={show}>
-				{output}
-			</Collapse>
-		</>
-	);
+	return <Collapse buttonText='Debug Info'>{output}</Collapse>;
 };
 
 export default DebugInfo;
