@@ -2,7 +2,8 @@ import React from 'react';
 import { __ } from '@wordpress/i18n';
 import { Divider, Typography } from 'antd';
 
-import { EmptyState, ErrorIndicator, LoadingNotice } from '@infraUI/display';
+import { ErrorIndicator, LoadingNotice } from '@infraUI/display';
+import { EmptyState } from '@appDisplay/index';
 import { EntityListFilterStateManager } from './filterBar';
 import EntityListFilterBar from './withValidFilterState';
 import { Entity } from '@appServices/apollo/types';

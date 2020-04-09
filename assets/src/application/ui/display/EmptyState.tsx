@@ -1,6 +1,7 @@
 import React from 'react';
 import classNames from 'classnames';
-import { Alert, AlertIcon, AlertTitle, AlertDescription } from '@chakra-ui/core';
+
+import { Alert } from '@infraUI/display';
 
 interface EmptyStateProps {
 	children?: React.ReactNode;
@@ -11,25 +12,25 @@ interface EmptyStateProps {
 
 const EmptyState: React.FC<EmptyStateProps> = ({ children, description, title, ...props }) => {
 	const className = classNames(props.className, 'ee-empty-state');
+	const iconProps = {
+		color: 'gray.100',
+		name: 'question-outline',
+		size: '96px',
+	};
 
 	return (
 		<Alert
 			backgroundColor='var(--ee-color-grey-15)'
 			className={className}
+			description={description}
 			flexDirection='column'
 			justifyContent='center'
+			iconProps={iconProps}
 			status='warning'
-			variant='subtle'
 			textAlign='center'
+			title={title}
+			variant='subtle'
 		>
-			<AlertIcon name='question-outline' size='96px' color='gray.100' />
-
-			<AlertTitle mt={4} mb={1} fontSize='lg'>
-				{title}
-			</AlertTitle>
-
-			{description && <AlertDescription maxWidth='sm'>{description}</AlertDescription>}
-
 			{children && children}
 		</Alert>
 	);

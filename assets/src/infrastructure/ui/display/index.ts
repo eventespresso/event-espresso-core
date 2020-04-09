@@ -2,7 +2,6 @@ export { default as Avatar } from './Avatar';
 export { default as Alert } from './Alert';
 export { default as AlertDialog } from './AlertDialog';
 export { default as Collapse } from './Collapse';
-export { default as EmptyState } from './EmptyState';
 export { default as ErrorIndicator } from './ErrorIndicator';
 export { default as LoadingIndicator } from './LoadingIndicator';
 export { default as Popover } from './Popover';
