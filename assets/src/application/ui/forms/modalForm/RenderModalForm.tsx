@@ -1,8 +1,16 @@
-import React from 'react';
+import React, { useCallback, useMemo } from 'react';
 import { __ } from '@wordpress/i18n';
-import { ButtonProps } from 'antd/lib/button';
 import { SaveOutlined } from '@ant-design/icons';
-import { Modal } from 'antd';
+import {
+	Modal,
+	ModalBody,
+	ModalCloseButton,
+	ModalContent,
+	ModalFooter,
+	ModalHeader,
+	ModalOverlay,
+} from '@infraUI/layout/modal';
+import { Button, ButtonProps } from '@infraUI/inputs';
 
 import { RenderModalFormProps } from './types';
 
@@ -18,42 +26,58 @@ const RenderModalForm: React.FC<RenderModalFormProps> = ({
 }) => {
 	const submitDisabled = submitting || pristine || hasValidationErrors || hasSubmitErrors;
 
-	const submitButton: ButtonProps = {
-		disabled: submitDisabled,
-		htmlType: 'submit',
-		loading: submitting,
-		icon: <SaveOutlined />,
-		onClick: (click) => {
+	const onSubmit = useCallback(
+		(click) => {
 			click.preventDefault();
 			form.submit();
 			onClose(click);
 		},
-	};
+		[form.submit, onClose]
+	);
 
-	const resetButton: ButtonProps = {
-		disabled: submitting || pristine,
-		htmlType: 'reset',
-		onClick: (click) => {
+	const onReset = useCallback(
+		(click) => {
 			click.preventDefault();
 			form.reset();
 		},
-	};
+		[form.reset]
+	);
+
+	const submitButton: ButtonProps = useMemo(
+		() => ({
+			isDisabled: submitDisabled,
+			type: 'submit',
+			isLoading: submitting,
+			leftIcon: () => <SaveOutlined />,
+			onClick: onSubmit,
+			buttonText: __('Submit'),
+		}),
+		[submitDisabled, submitting, onSubmit]
+	);
+
+	const resetButton: ButtonProps = useMemo(
+		() => ({
+			isDisabled: submitting || pristine,
+			type: 'reset',
+			onClick: onReset,
+			buttonText: __('Reset'),
+		}),
+		[submitting, pristine, onReset]
+	);
 
 	return (
-		<Modal
-			title={title}
-			visible={true}
-			onOk={onClose}
-			okText={__('Submit')}
-			okButtonProps={submitButton}
-			cancelText={__('Reset')}
-			cancelButtonProps={resetButton}
-			onCancel={onClose}
-			width={'80%'}
-			wrapClassName='ee-modal-form'
-			bodyStyle={{ padding: 0 }}
-		>
-			<div className='form-body'>{children}</div>
+		<Modal isOpen={true} onClose={onClose} isCentered scrollBehavior='inside' size='xl'>
+			<ModalOverlay />
+			<ModalContent className='ee-modal-form'>
+				<ModalHeader>{title}</ModalHeader>
+				<ModalCloseButton />
+				<ModalBody className='form-body'>{children}</ModalBody>
+
+				<ModalFooter>
+					<Button mr={3} {...resetButton} />
+					<Button variantColor='blue' {...submitButton} />
+				</ModalFooter>
+			</ModalContent>
 		</Modal>
 	);
 };
