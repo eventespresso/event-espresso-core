@@ -5,16 +5,7 @@ import TicketPriceCalculator from './TicketPriceCalculator';
 import useResetButtonProps from '../buttons/useResetButtonProps';
 import useSubmitButtonProps from '../buttons/useSubmitButtonProps';
 import { useTPCContext } from '../context';
-import {
-	Modal,
-	ModalBody,
-	ModalCloseButton,
-	ModalContent,
-	ModalFooter,
-	ModalHeader,
-	ModalOverlay,
-} from '@infraUI/layout/modal';
-import { Button } from '@infraUI/inputs';
+import { Modal } from '@infraUI/layout/modal';
 
 import './styles.scss';
 
@@ -23,25 +14,20 @@ const TicketPriceCalculatorModal: React.FC = () => {
 		onCloseModal,
 		dataState: { reset, prices, ticket },
 	} = useTPCContext();
-	const resetButton = useResetButtonProps({ reset });
-	const submitButton = useSubmitButtonProps({ onCloseModal, prices });
+	const resetButtonProps = useResetButtonProps({ reset });
+	const submitButtonProps = useSubmitButtonProps({ onCloseModal, prices });
 
 	return (
-		<Modal isOpen={true} onClose={onCloseModal} isCentered scrollBehavior='inside' size='xl'>
-			<ModalOverlay />
-			<ModalContent className='ee-tpc__modal'>
-				<ModalHeader>{sprintf(__('Price Calculator for Ticket: %s'), ticket.name)}</ModalHeader>
-				<ModalCloseButton />
-
-				<ModalBody className='ee-tpc__body'>
-					<TicketPriceCalculator />
-				</ModalBody>
-
-				<ModalFooter>
-					<Button mr={3} {...resetButton} />
-					<Button variantColor='blue' {...submitButton} />
-				</ModalFooter>
-			</ModalContent>
+		<Modal
+			isOpen={true}
+			onClose={onCloseModal}
+			className='ee-tpc__modal'
+			bodyClassName='ee-tpc__body'
+			submitButtonProps={submitButtonProps}
+			cancelButtonProps={resetButtonProps}
+			title={sprintf(__('Price Calculator for Ticket: %s'), ticket.name)}
+		>
+			<TicketPriceCalculator />
 		</Modal>
 	);
 };

@@ -1,16 +1,8 @@
 import React, { useCallback, useMemo } from 'react';
 import { __ } from '@wordpress/i18n';
 import { SaveOutlined } from '@ant-design/icons';
-import {
-	Modal,
-	ModalBody,
-	ModalCloseButton,
-	ModalContent,
-	ModalFooter,
-	ModalHeader,
-	ModalOverlay,
-} from '@infraUI/layout/modal';
-import { Button, ButtonProps } from '@infraUI/inputs';
+import { Modal } from '@infraUI/layout/modal';
+import { ButtonProps } from '@infraUI/inputs';
 
 import { RenderModalFormProps } from './types';
 
@@ -37,7 +29,7 @@ const RenderModalForm: React.FC<RenderModalFormProps> = ({
 
 	const onReset = useCallback(() => form.reset(), [form.reset]);
 
-	const submitButton: ButtonProps = useMemo(
+	const submitButtonProps: ButtonProps = useMemo(
 		() => ({
 			isDisabled: submitDisabled,
 			type: 'submit',
@@ -49,7 +41,7 @@ const RenderModalForm: React.FC<RenderModalFormProps> = ({
 		[submitDisabled, submitting, onSubmit]
 	);
 
-	const resetButton: ButtonProps = useMemo(
+	const resetButtonProps: ButtonProps = useMemo(
 		() => ({
 			isDisabled: submitting || pristine,
 			type: 'reset',
@@ -60,19 +52,16 @@ const RenderModalForm: React.FC<RenderModalFormProps> = ({
 	);
 
 	return (
-		<Modal isOpen={true} onClose={onClose} isCentered scrollBehavior='inside' size='xl'>
-			<ModalOverlay />
-			<ModalContent className='ee-modal-form'>
-				<ModalHeader>{title}</ModalHeader>
-				<ModalCloseButton />
-
-				<ModalBody className='ee-modal-form__body'>{children}</ModalBody>
-
-				<ModalFooter>
-					<Button mr={3} {...resetButton} />
-					<Button variantColor='blue' {...submitButton} />
-				</ModalFooter>
-			</ModalContent>
+		<Modal
+			isOpen={true}
+			onClose={onClose}
+			className='ee-modal-form'
+			bodyClassName='ee-modal-form__body'
+			submitButtonProps={submitButtonProps}
+			cancelButtonProps={resetButtonProps}
+			title={title}
+		>
+			{children}
 		</Modal>
 	);
 };
