@@ -12,6 +12,6 @@ export { default as MenuList } from './MenuList';
 
 export { default as MenuOptionGroup } from './MenuOptionGroup';
 
-export { default as MenuTrigger } from './MenuTrigger';
+export { default as MenuToggle } from './MenuToggle';
 
 export * from './types';
