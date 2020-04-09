@@ -1,31 +1,30 @@
 import React from 'react';
-import { Alert, AlertIcon, AlertTitle, AlertDescription, IAlert } from '@chakra-ui/core';
 
-interface Props extends IAlert {
+import { Alert } from '@infraUI/display';
+
+interface ErrorIndicatorProps {
 	description?: string;
 	title?: string;
 }
 
-const ErrorIndicator: React.FC<Props> = ({ description, title, ...props }) => {
+const ErrorIndicator: React.FC<ErrorIndicatorProps> = ({ description, title }) => {
+	const iconProps = {
+		color: 'red.500',
+		name: 'warning-2',
+		size: '96px',
+	};
+
 	return (
 		<Alert
-			{...props}
+			description={description}
 			flexDirection='column'
 			justifyContent='center'
+			iconProps={iconProps}
 			status='error'
 			variant='subtle'
 			textAlign='center'
-		>
-			<AlertIcon name='warning-2' size='96px' color='red.500' />
-
-			{title && (
-				<AlertTitle mt={4} mb={1} fontSize='lg'>
-					{title}
-				</AlertTitle>
-			)}
-
-			{description && <AlertDescription maxWidth='sm'>{description}</AlertDescription>}
-		</Alert>
+			title={title}
+		/>
 	);
 };
 

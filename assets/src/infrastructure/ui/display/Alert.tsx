@@ -7,7 +7,7 @@ interface Props extends AlertProps {
 	title: string;
 }
 
-const Alert: React.FC<Props> = ({ description, iconProps, title, ...props }) => (
+const Alert: React.FC<Props> = ({ children, description, iconProps, title, ...props }) => (
 	<ChakraAlert
 		{...props}
 		variant='subtle'
@@ -21,6 +21,7 @@ const Alert: React.FC<Props> = ({ description, iconProps, title, ...props }) => 
 			{title}
 		</AlertTitle>
 		{description && <AlertDescription maxWidth='sm'>{description}</AlertDescription>}
+		{children && children}
 	</ChakraAlert>
 );
 
