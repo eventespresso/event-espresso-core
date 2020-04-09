@@ -21,8 +21,8 @@ const TicketPriceCalculatorModal: React.FC = () => {
 		<Modal
 			isOpen={true}
 			onClose={onCloseModal}
-			className='ee-tpc__modal'
-			bodyClassName='ee-tpc__body'
+			className='ee-tpc-modal'
+			bodyClassName='ee-tpc-modal__body'
 			submitButtonProps={submitButtonProps}
 			cancelButtonProps={resetButtonProps}
 			title={sprintf(__('Price Calculator for Ticket: %s'), ticket.name)}
