@@ -3,9 +3,9 @@ import React from 'react';
 import DropdownMenuList from './DropdownMenuList';
 import DropdownToggle from './DropdownToggle';
 import { Menu } from '@infraUI/layout/menu';
-import { DropdownMenuProps as Props } from './types';
+import { DropdownMenuProps } from './types';
 
-const DropdownMenu: React.FC<Props> = ({ children, className, menuListProps, toggleProps }) => {
+const DropdownMenu: React.FC<DropdownMenuProps> = ({ children, className, menuListProps, toggleProps }) => {
 	return (
 		<Menu>
 			{({ isOpen, onClose }) => (

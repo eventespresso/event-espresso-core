@@ -3,9 +3,9 @@ import classNames from 'classnames';
 
 import { EspressoIcon } from '@application/ui/display';
 import { MenuItem } from '@infraUI/layout/menu';
-import { DropdownMenuItemProps as Props } from './types';
+import { DropdownMenuItemProps } from './types';
 
-const DropdownMenuItem: React.FC<Props> = ({ icon, title, className, ...rest }) => {
+const DropdownMenuItem: React.FC<DropdownMenuItemProps> = ({ icon, title, className, ...rest }) => {
 	const newClassName = classNames('components-dropdown-menu__menu-item', className);
 	return (
 		<MenuItem {...rest} className={newClassName} role='menuitem'>
