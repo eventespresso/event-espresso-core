@@ -3,9 +3,13 @@ import { Button as ChakraButton } from '@chakra-ui/core';
 
 import type { ButtonProps } from './types';
 
-const Button: React.FC<ButtonProps> = ({ children, buttonText, ...props }) => {
+const Button = React.forwardRef<typeof ChakraButton, ButtonProps>(({ children, buttonText, ...props }, ref) => {
 	const text = children || buttonText;
-	return <ChakraButton {...props}>{text}</ChakraButton>;
-};
+	return (
+		<ChakraButton {...props} ref={ref}>
+			{text}
+		</ChakraButton>
+	);
+});
 
 export default Button;
