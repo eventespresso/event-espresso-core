@@ -1,11 +1,20 @@
 import React from 'react';
-import { Modal } from 'antd';
 import { __, sprintf } from '@wordpress/i18n';
 
 import TicketPriceCalculator from './TicketPriceCalculator';
 import useResetButtonProps from '../buttons/useResetButtonProps';
 import useSubmitButtonProps from '../buttons/useSubmitButtonProps';
 import { useTPCContext } from '../context';
+import {
+	Modal,
+	ModalBody,
+	ModalCloseButton,
+	ModalContent,
+	ModalFooter,
+	ModalHeader,
+	ModalOverlay,
+} from '@infraUI/layout/modal';
+import { Button } from '@infraUI/inputs';
 
 import './styles.scss';
 
@@ -18,24 +27,21 @@ const TicketPriceCalculatorModal: React.FC = () => {
 	const submitButton = useSubmitButtonProps({ onCloseModal, prices });
 
 	return (
-		<Modal
-			bodyStyle={{ padding: 0 }}
-			cancelButtonProps={resetButton}
-			cancelText={__('Reset')}
-			centered
-			maskClosable
-			okButtonProps={submitButton}
-			okText={__('Submit')}
-			onCancel={onCloseModal}
-			onOk={onCloseModal}
-			title={sprintf(__('Price Calculator for Ticket: %s'), ticket.name)}
-			visible={true}
-			width={'80%'}
-			wrapClassName='ee-tpc__modal'
-		>
-			<div className='ee-tpc__body'>
-				<TicketPriceCalculator />
-			</div>
+		<Modal isOpen={true} onClose={onCloseModal} isCentered scrollBehavior='inside' size='xl'>
+			<ModalOverlay />
+			<ModalContent className='ee-tpc__modal'>
+				<ModalHeader>{sprintf(__('Price Calculator for Ticket: %s'), ticket.name)}</ModalHeader>
+				<ModalCloseButton />
+
+				<ModalBody className='ee-tpc__body'>
+					<TicketPriceCalculator />
+				</ModalBody>
+
+				<ModalFooter>
+					<Button mr={3} {...resetButton} />
+					<Button variantColor='blue' {...submitButton} />
+				</ModalFooter>
+			</ModalContent>
 		</Modal>
 	);
 };

@@ -35,13 +35,7 @@ const RenderModalForm: React.FC<RenderModalFormProps> = ({
 		[form.submit, onClose]
 	);
 
-	const onReset = useCallback(
-		(click) => {
-			click.preventDefault();
-			form.reset();
-		},
-		[form.reset]
-	);
+	const onReset = useCallback(() => form.reset(), [form.reset]);
 
 	const submitButton: ButtonProps = useMemo(
 		() => ({
@@ -71,6 +65,7 @@ const RenderModalForm: React.FC<RenderModalFormProps> = ({
 			<ModalContent className='ee-modal-form'>
 				<ModalHeader>{title}</ModalHeader>
 				<ModalCloseButton />
+
 				<ModalBody className='form-body'>{children}</ModalBody>
 
 				<ModalFooter>
