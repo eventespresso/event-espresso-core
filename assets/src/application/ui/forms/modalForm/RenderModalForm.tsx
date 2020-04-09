@@ -66,7 +66,7 @@ const RenderModalForm: React.FC<RenderModalFormProps> = ({
 				<ModalHeader>{title}</ModalHeader>
 				<ModalCloseButton />
 
-				<ModalBody className='form-body'>{children}</ModalBody>
+				<ModalBody className='ee-modal-form__body'>{children}</ModalBody>
 
 				<ModalFooter>
 					<Button mr={3} {...resetButton} />
