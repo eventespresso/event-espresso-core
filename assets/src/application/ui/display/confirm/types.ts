@@ -1,7 +1,6 @@
 import { EspressoButtonProps } from '@application/ui/input';
-import { AlertDialogProps } from '@infraUI/display';
 
-export interface ConfirmProps extends AlertDialogProps {
+export interface ConfirmProps {
 	buttonProps: EspressoButtonProps;
 	onConfirm: VoidFunction;
 	type: 'delete';
