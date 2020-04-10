@@ -4,7 +4,7 @@ import { ArgsProps, IconType } from 'antd/lib/notification';
 import { v4 as uuidv4 } from 'uuid';
 import { without } from 'ramda';
 
-import { Spinner } from '@infraUI/display';
+// import { Spinner } from '@infraUI/display';
 import { ToastManagerProps, Toaster } from './types';
 
 const useToastManager = ({ maxToasts = 6, ...toastArgs }: ToastManagerProps): Toaster => {

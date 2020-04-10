@@ -1,9 +1,9 @@
 import React from 'react';
 import { __ } from '@wordpress/i18n';
-import { GlobalOutlined } from '@ant-design/icons';
-import { Popover } from 'antd';
+import { Icons } from '@chakra-ui/core/dist/theme/icons';
 
 import { Tooltip } from '@infraUI/display';
+import { Popover } from '@infraUI/display';
 import { useTimeZoneTime } from '@appServices/hooks';
 
 import './style.scss';
@@ -34,7 +34,7 @@ const TimezoneTimeInfo: React.FC<Props> = ({ date }) => {
 	);
 	const label = __('click for timezone\ninformation');
 	const iconProps = {
-		icon: GlobalOutlined,
+		icon: 'info-outline' as Icons,
 		label,
 	};
 

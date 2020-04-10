@@ -9,12 +9,13 @@ import {
 	PopoverArrow,
 	PopoverCloseButton,
 } from '@chakra-ui/core';
+import { Icons } from '@chakra-ui/core/dist/theme/icons';
 import { __ } from '@wordpress/i18n';
 
-interface IconProps {
+type IconProps = {
 	label: string;
-	icon: React.ComponentType;
-}
+	icon: Icons;
+};
 
 interface PopoverProps {
 	content: JSX.Element;
