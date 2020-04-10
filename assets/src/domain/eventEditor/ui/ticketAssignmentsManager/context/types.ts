@@ -1,9 +1,15 @@
 import { DataStateManager, BaseProps } from '../types';
 import { FilterStateManager } from '../filters/filterState';
 
-export interface ProviderProps extends BaseProps {}
+export interface ExtraContextProps {
+	onCloseModal?: VoidFunction;
+}
 
-export interface ContextProps extends BaseProps {
+export interface ProviderProps extends BaseProps, ExtraContextProps {}
+
+export interface ContextProps extends BaseProps, ExtraContextProps {
 	dataState: DataStateManager;
 	filterState: FilterStateManager;
 }
+
+export interface WithContextProps extends ExtraContextProps, BaseProps {}
