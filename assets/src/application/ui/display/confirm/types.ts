@@ -4,5 +4,4 @@ export interface ConfirmProps {
 	buttonProps: EspressoButtonProps;
 	onConfirm: VoidFunction;
 	title?: string;
-	type: 'delete';
 }
