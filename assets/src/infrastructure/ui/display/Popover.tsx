@@ -10,7 +10,6 @@ import {
 	PopoverCloseButton,
 } from '@chakra-ui/core';
 import { Icons } from '@chakra-ui/core/dist/theme/icons';
-import { __ } from '@wordpress/i18n';
 
 type IconProps = {
 	label: string;
