@@ -1,7 +1,9 @@
 import React from 'react';
-import { Badge, Tooltip } from 'antd';
-import { BadgeProps } from 'antd/lib/badge';
 import classNames from 'classnames';
+import { Badge } from 'antd';
+import { BadgeProps } from 'antd/lib/badge';
+
+import { Tooltip } from '@infraUI/display';
 import { getPropsAreEqual } from '@appServices/utilities';
 
 import './style.scss';

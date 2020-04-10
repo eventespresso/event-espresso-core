@@ -2,6 +2,7 @@ import React from 'react';
 import classNames from 'classnames';
 import { Tooltip as DefaultTooltip } from 'antd';
 import { __ } from '@wordpress/i18n';
+
 import { isEmpty } from '@appServices/utilities/string';
 import { withTooltipProps } from './types';
 

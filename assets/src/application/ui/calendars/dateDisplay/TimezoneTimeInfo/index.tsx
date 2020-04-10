@@ -2,8 +2,10 @@ import React from 'react';
 import classNames from 'classnames';
 import { __ } from '@wordpress/i18n';
 import { GlobalOutlined } from '@ant-design/icons';
-import { Popover, Tooltip } from 'antd';
-import useTimeZoneTime from '../../../../services/hooks/useTimeZoneTime';
+import { Popover } from 'antd';
+
+import { Tooltip } from '@infraUI/display';
+import { useTimeZoneTime } from '@appServices/hooks';
 
 import './style.scss';
 
@@ -37,7 +39,7 @@ const TimezoneTimeInfo: React.FC<OffsetInfoProps> = ({ className, date, inline =
 	return (
 		<Popover content={content} title={__('This Date Converted To:')} trigger={'click'} align={{ offset: [0, -60] }}>
 			<div className={htmlClassName}>
-				<Tooltip title={__('click for timezone\ninformation')} mouseEnterDelay={1}>
+				<Tooltip title={__('click for timezone\ninformation')} showDelay={1}>
 					<GlobalOutlined />
 				</Tooltip>
 			</div>

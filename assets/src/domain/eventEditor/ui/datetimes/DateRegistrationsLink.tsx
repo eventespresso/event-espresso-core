@@ -1,15 +1,15 @@
 import React from 'react';
 import { addQueryArgs } from '@wordpress/url';
-import { Tooltip } from 'antd';
 import { __ } from '@wordpress/i18n';
 
 import { ADMIN_ROUTES } from '@sharedConstants/adminRoutes';
 import { Datetime } from '@edtrServices/apollo/types';
 import { EspressoIcon, Icon } from '@appDisplay/espressoIcon';
 import getAdminUrl from '@sharedServices/utils/url/getAdminUrl';
+import { getPropsAreEqual } from '@appServices/utilities';
+import { Tooltip } from '@infraUI/display';
 import useConfig from '@appServices/config/useConfig';
 import useEventId from '@edtrServices/apollo/queries/events/useEventId';
-import { getPropsAreEqual } from '@appServices/utilities';
 
 interface Props {
 	datetime: Datetime;
