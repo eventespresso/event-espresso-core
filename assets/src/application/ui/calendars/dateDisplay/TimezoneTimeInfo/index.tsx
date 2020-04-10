@@ -55,4 +55,4 @@ const TimezoneTimeInfo: React.FC<Props> = ({ date }) => {
 	);
 };
 
-export default TimezoneTimeInfo;
+export default React.memo(TimezoneTimeInfo);
