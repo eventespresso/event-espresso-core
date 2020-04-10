@@ -1,11 +1,9 @@
-import { ISpinnerProps } from '@chakra-ui/core';
+import { IAlertDialog, ISpinnerProps, TooltipProps as ChakraTooltipProps } from '@chakra-ui/core';
 
-import { EspressoButtonProps } from '@application/ui/input';
-import { TooltipProps as ChakraTooltipProps } from '@chakra-ui/core';
-
-export interface AlertDialogProps {
-	buttonProps: EspressoButtonProps;
-	onConfirm: VoidFunction;
+export interface AlertDialogProps extends IAlertDialog {
+	cancelButton: React.ReactNode;
+	header: React.ReactNode;
+	okButton: React.ReactNode;
 	title?: string;
 }
 

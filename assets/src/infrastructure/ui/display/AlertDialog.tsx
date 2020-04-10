@@ -6,42 +6,33 @@ import {
 	AlertDialogHeader,
 	AlertDialogContent,
 	AlertDialogOverlay,
-	Button,
 } from '@chakra-ui/core';
-import { __ } from '@wordpress/i18n';
 
-import { EspressoButton } from '@application/ui/input';
 import { AlertDialogProps } from './types';
 
-const AlertDialog: React.FC<AlertDialogProps> = ({ buttonProps, onConfirm, title }) => {
-	const [isOpen, setIsOpen] = React.useState(false);
-	const cancelRef = React.useRef();
-	const onClose = () => setIsOpen(false);
-	const onDelete = () => {
-		onClose();
-		onConfirm();
-	};
-
+const AlertDialog: React.FC<AlertDialogProps> = ({
+	cancelButton,
+	header,
+	isOpen,
+	leastDestructiveRef,
+	onClose,
+	okButton,
+	title,
+}) => {
 	return (
 		<>
-			<EspressoButton {...buttonProps} onClick={() => setIsOpen(true)} />
-
-			<ChakraAlertDialog isOpen={isOpen} leastDestructiveRef={cancelRef} onClose={onClose}>
+			<ChakraAlertDialog isOpen={isOpen} leastDestructiveRef={leastDestructiveRef} onClose={onClose}>
 				<AlertDialogOverlay />
 				<AlertDialogContent>
-					{buttonProps?.tooltip && (
+					{header && (
 						<AlertDialogHeader fontSize='lg' fontWeight='bold' textTransform='capitalize'>
-							{buttonProps.tooltip}
+							{header}
 						</AlertDialogHeader>
 					)}
 					<AlertDialogBody>{title}</AlertDialogBody>
 					<AlertDialogFooter>
-						<Button ref={cancelRef} onClick={onClose}>
-							{__('No')}
-						</Button>
-						<Button variantColor='red' onClick={onDelete} ml={3}>
-							{__('Yes')}
-						</Button>
+						{cancelButton}
+						{okButton}
 					</AlertDialogFooter>
 				</AlertDialogContent>
 			</ChakraAlertDialog>

@@ -18,8 +18,8 @@ type IconProps = {
 };
 
 interface PopoverProps {
-	content: JSX.Element;
-	header?: string;
+	content: React.ReactNode;
+	header?: React.ReactNode;
 	iconProps: IconProps;
 }
 

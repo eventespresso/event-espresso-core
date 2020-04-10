@@ -1,19 +1,49 @@
-import React from 'react';
+import React, { useCallback, useMemo } from 'react';
+import { Button, useDisclosure } from '@chakra-ui/core';
 import { __ } from '@wordpress/i18n';
 
-import { AlertDialog, AlertDialogProps } from '@infraUI/display';
-import ConfirmDelete from './ConfirmDelete';
+import { EspressoButton } from '@application/ui/input';
+import { AlertDialog } from '@infraUI/display';
 
-interface ConfirmProps extends AlertDialogProps {
-	type: 'delete';
-}
+import { ConfirmProps } from './types';
 
-const Confirm: React.FC<ConfirmProps> = ({ type, ...props }) => {
-	if (type === 'delete') {
-		return <ConfirmDelete {...props} />;
-	}
+const Confirm: React.FC<ConfirmProps> = ({ buttonProps, onConfirm, type, ...props }) => {
+	const { isOpen, onOpen, onClose } = useDisclosure();
+	const cancelRef = React.useRef();
+	const onDelete = useCallback(() => {
+		onConfirm();
+		onClose();
+	}, [onConfirm]);
+	const title = useMemo(() => {
+		if (type === 'delete') {
+			return props.title || __('Are you sure you want to delete this?');
+		}
+		return props.title;
+	}, [props.title]);
 
-	return <AlertDialog {...props} />;
+	return (
+		<>
+			<EspressoButton {...buttonProps} onClick={onOpen} />
+			<AlertDialog
+				{...props}
+				cancelButton={
+					<Button ref={cancelRef} onClick={onClose}>
+						{__('No')}
+					</Button>
+				}
+				header={buttonProps?.tooltip}
+				isOpen={isOpen}
+				leastDestructiveRef={cancelRef}
+				okButton={
+					<Button variantColor='red' onClick={onDelete} ml={3}>
+						{__('Yes')}
+					</Button>
+				}
+				onClose={onClose}
+				title={title}
+			/>
+		</>
+	);
 };
 
 export default Confirm;
