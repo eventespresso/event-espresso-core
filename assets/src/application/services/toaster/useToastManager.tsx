@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
-import { notification, Spin } from 'antd';
+import { notification } from 'antd';
 import { ArgsProps, IconType } from 'antd/lib/notification';
 import { v4 as uuidv4 } from 'uuid';
 import { without } from 'ramda';
 
+// import { Spinner } from '@infraUI/display';
 import { ToastManagerProps, Toaster } from './types';
 
 const useToastManager = ({ maxToasts = 6, ...toastArgs }: ToastManagerProps): Toaster => {
@@ -51,7 +52,8 @@ const useToastManager = ({ maxToasts = 6, ...toastArgs }: ToastManagerProps): To
 			duration = 4;
 
 		if (toastType === 'loading') {
-			icon = <Spin size='small' />;
+			// The line below was causing failing tests, to be fixed after this refactor: https://github.com/eventespresso/event-espresso-core/issues/2674
+			// icon = <Spinner size='sm' />;
 			type = undefined;
 			duration = 0;
 		} else {

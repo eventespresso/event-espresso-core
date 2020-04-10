@@ -1,6 +1,6 @@
 import React, { Suspense } from 'react';
 
-import { LoadingNotice } from '@appDisplay/loadingNotice';
+import { LoadingNotice } from '@infraUI/display';
 
 const TableView = React.lazy(() => import(/* webpackChunkName: "tickets-table-view" */ './TableView'));
 

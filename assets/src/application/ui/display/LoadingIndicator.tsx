@@ -1,13 +1,11 @@
 import React from 'react';
-import { LoadingOutlined } from '@ant-design/icons';
-import { Spin } from 'antd';
-import { SpinProps } from 'antd/lib/spin';
+import { __ } from '@wordpress/i18n';
 
-const LoadingIndicator: React.FC<SpinProps> = (props) => {
-	const style = { fontSize: 24 };
-	const antIcon = <LoadingOutlined style={style} spin />;
+import { Spinner, SpinnerProps } from '@infraUI/display';
 
-	return <Spin indicator={antIcon} {...props} />;
+const LoadingIndicator: React.FC<SpinnerProps> = (props) => {
+	const label = props.label || __('loading ..');
+	return <Spinner {...props} label={label} size='lg' />;
 };
 
 export default LoadingIndicator;

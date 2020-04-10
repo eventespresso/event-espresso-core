@@ -2,7 +2,7 @@ import React, { CSSProperties } from 'react';
 
 import { RenderModalFormProps } from './types';
 import RenderModalForm from './RenderModalForm';
-import { DebugInfo } from '../../display';
+import { DebugInfo } from '@appDisplay/index';
 
 const formStyle: CSSProperties = {
 	boxSizing: 'border-box',

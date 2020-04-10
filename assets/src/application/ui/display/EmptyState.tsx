@@ -1,7 +1,7 @@
 import React from 'react';
-import { Empty, Typography } from 'antd';
+import classNames from 'classnames';
 
-const { Text, Title } = Typography;
+import { Alert } from '@infraUI/display';
 
 interface EmptyStateProps {
 	children?: React.ReactNode;
@@ -10,18 +10,30 @@ interface EmptyStateProps {
 	title?: string;
 }
 
-const EmptyState = ({ className, children, description, title }: EmptyStateProps) => {
+const EmptyState: React.FC<EmptyStateProps> = ({ children, description, title, ...props }) => {
+	const className = classNames(props.className, 'ee-empty-state');
+	const iconProps = {
+		color: 'gray.100',
+		name: 'question-outline',
+		size: '96px',
+	};
+
 	return (
-		<Empty className={className} description='' image={Empty.PRESENTED_IMAGE_SIMPLE}>
-			{title && (
-				<Title type='secondary' level={4}>
-					{title}
-				</Title>
-			)}
-			{description && <Text>{description}</Text>}
+		<Alert
+			backgroundColor='var(--ee-color-grey-15)'
+			className={className}
+			description={description}
+			flexDirection='column'
+			justifyContent='center'
+			iconProps={iconProps}
+			status='warning'
+			textAlign='center'
+			title={title}
+			variant='subtle'
+		>
 			{children && children}
-		</Empty>
+		</Alert>
 	);
 };
 
-export default EmptyState;
+export default React.memo(EmptyState);

@@ -1,9 +1,10 @@
 import React, { useCallback } from 'react';
+import classNames from 'classnames';
 import { parseISO, isValid } from 'date-fns';
 
-import { useTimeZoneTime } from '@appServices/hooks';
+import { CalendarDateProps } from '../types';
 import { EspressoButton } from '@application/ui/input/EspressoButton';
-import TimezoneTimeInfo from '../TimezoneTimeInfo';
+import { TimezoneTimeInfo } from '@application/ui/display';
 import {
 	DAY_ONLY_SHORT_FORMAT,
 	MONTH_ONLY_FULL_FORMAT,
@@ -11,7 +12,7 @@ import {
 	WEEKDAY_ONLY_FULL_FORMAT,
 	YEAR_ONLY_LONG_FORMAT,
 } from '@appConstants/dateFnsFormats';
-import { CalendarDateProps } from '../types';
+import { useTimeZoneTime } from '@appServices/hooks';
 import './style.scss';
 
 export interface BiggieCalendarDateProps extends CalendarDateProps {
@@ -22,13 +23,13 @@ export interface BiggieCalendarDateProps extends CalendarDateProps {
  * Displays a full calendar date, but REALLY BIG!!!
  */
 export const BiggieCalendarDate: React.FC<BiggieCalendarDateProps> = ({
-	className,
 	date,
 	editButton = {},
 	footerText,
 	headerText,
 	onEdit = null,
 	showTime = false,
+	...props
 }) => {
 	const { formatForSite: format } = useTimeZoneTime();
 
@@ -37,7 +38,7 @@ export const BiggieCalendarDate: React.FC<BiggieCalendarDateProps> = ({
 	if (!isValid(dateObject)) {
 		return null;
 	}
-	className += ' ee-biggie-calendar-date__wrapper';
+	const className = classNames(props.className, 'ee-biggie-calendar-date__wrapper');
 
 	const editDateButton = typeof onEdit === 'function' && (
 		<EspressoButton

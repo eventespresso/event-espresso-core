@@ -1,8 +1,5 @@
-import { SpinProps, SpinSize } from 'antd/lib/spin';
+import { ISpinnerProps } from '@chakra-ui/core';
 
-export interface LoadingNoticeProps {
+export interface LoadingNoticeProps extends ISpinnerProps {
 	className?: string;
-	loading?: boolean | SpinProps;
-	size?: SpinSize;
-	tip?: string;
 }

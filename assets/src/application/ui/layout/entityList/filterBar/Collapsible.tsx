@@ -2,7 +2,7 @@ import React, { useRef } from 'react';
 import { useSpring, animated } from 'react-spring';
 
 import { CollapsibleProps } from './types';
-import useRect from '../../../../services/hooks/useRect';
+import { useRect } from '@appServices/hooks';
 
 /**
  * Collapsible

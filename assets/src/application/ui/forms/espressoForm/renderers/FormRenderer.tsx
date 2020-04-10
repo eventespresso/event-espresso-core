@@ -5,7 +5,7 @@ import { FormRendererProps } from '../types';
 import Submit from '../Submit';
 import RenderFields from '../RenderFields';
 import RenderSections from '../RenderSections';
-import { DebugInfo } from '../../../display';
+import { DebugInfo } from '@appDisplay/index';
 
 const FormRenderer: React.FC<FormRendererProps> = (props) => {
 	const {
@@ -40,7 +40,7 @@ const FormRenderer: React.FC<FormRendererProps> = (props) => {
 						/>
 					) : null}
 				</form>
-				{debugFields.length ? <DebugInfo data={pick(debugFields, form.getState())} /> : null}
+				{debugFields.length && <DebugInfo data={pick(debugFields, form.getState())} />}
 			</div>
 		</div>
 	);

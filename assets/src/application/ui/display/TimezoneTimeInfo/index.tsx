@@ -1,21 +1,19 @@
 import React from 'react';
 import classNames from 'classnames';
+import { IconButton } from '@chakra-ui/core';
 import { __ } from '@wordpress/i18n';
-import { GlobalOutlined } from '@ant-design/icons';
-import { Popover } from 'antd';
 
-import { Tooltip } from '@infraUI/display';
+import { Popover, Tooltip } from '@infraUI/display';
 import { useTimeZoneTime } from '@appServices/hooks';
 
 import './style.scss';
 
-export interface OffsetInfoProps {
+export interface Props {
 	className?: string;
 	date: Date;
-	inline?: boolean;
 }
 
-const TimezoneTimeInfo: React.FC<OffsetInfoProps> = ({ className, date, inline = false }) => {
+const TimezoneTimeInfo: React.FC<Props> = ({ date, ...props }) => {
 	const { formatDateForSite, formatDateForUser, formatUtcDateForSite } = useTimeZoneTime();
 	const content = (
 		<div>
@@ -35,16 +33,22 @@ const TimezoneTimeInfo: React.FC<OffsetInfoProps> = ({ className, date, inline =
 			<div className={'ee-focus-priority-6'}>{formatUtcDateForSite(date)}</div>
 		</div>
 	);
-	const htmlClassName = classNames(className, 'ee-timezone-info', { 'ee-timezone-info--inline': inline });
+	const className = classNames(props.className, 'ee-timezone-info');
+	const label = __('click for timezone\ninformation');
+
 	return (
-		<Popover content={content} title={__('This Date Converted To:')} trigger={'click'} align={{ offset: [0, -60] }}>
-			<div className={htmlClassName}>
-				<Tooltip title={__('click for timezone\ninformation')} showDelay={1}>
-					<GlobalOutlined />
-				</Tooltip>
-			</div>
-		</Popover>
+		<div className={className}>
+			<Popover
+				content={content}
+				header={__('This Date Converted To:')}
+				trigger={
+					<Tooltip title={label}>
+						<IconButton aria-label={label} icon='info-outline' variant='unstyled' />
+					</Tooltip>
+				}
+			/>
+		</div>
 	);
 };
 
-export default TimezoneTimeInfo;
+export default React.memo(TimezoneTimeInfo);
