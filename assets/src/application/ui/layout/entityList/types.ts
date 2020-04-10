@@ -21,7 +21,6 @@ export interface EntityCardListProps<E extends Entity> extends EntityListBasePro
 export interface EntityListItemProps<E extends Entity = Entity> {
 	entity?: E;
 	id?: EntityId;
-	name?: string;
 }
 
 export interface EntityListViewProps<E extends Entity, FS extends ELFSM> extends EntityListBaseProps<E> {

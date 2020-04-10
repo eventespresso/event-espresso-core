@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react';
+import React from 'react';
 import { __ } from '@wordpress/i18n';
 
 import { EspressoButton, Icon } from '@application/ui/input';
@@ -9,12 +9,12 @@ import useTicketAssignmentsManager from '@edtrUI/ticketAssignmentsManager/useTic
 import { TypeName } from '@appServices/apollo/status';
 import withIsLoaded from '@sharedUI/hoc/withIsLoaded';
 
-const AssignTicketsButton: React.FC<EntityListItemProps> = React.memo(({ id, name }) => {
-	const { assignTicketsToDate } = useTicketAssignmentsManager();
+const AssignTicketsButton: React.FC<EntityListItemProps> = React.memo(({ entity }) => {
+	const { ModalContainer, onOpen, ...disclosure } = useTicketAssignmentsManager();
 
 	const relatedTickets = useRelatedTickets({
 		entity: 'datetimes',
-		entityId: id,
+		entityId: entity.id,
 	});
 	const count = relatedTickets.length;
 
@@ -24,23 +24,22 @@ const AssignTicketsButton: React.FC<EntityListItemProps> = React.memo(({ id, nam
 		? `${__('Related Tickets:')} ${relatedTicketDbIds.join(', ')}`
 		: __('There are no tickets assigned to this datetime. Please click the ticket icon to update the assignments.');
 
-	const onClick = useCallback((): void => {
-		assignTicketsToDate({ datetimeId: id, name });
-	}, [id, name]);
-
 	return (
-		<ItemCount count={count} title={title} zeroCountChar='!' emphasizeZero>
-			<EspressoButton
-				icon={Icon.TICKET}
-				tooltip={__('assign tickets')}
-				tooltipProps={{ placement: 'right' }}
-				onClick={onClick}
-			/>
-		</ItemCount>
+		<>
+			<ItemCount count={count} title={title} zeroCountChar='!' emphasizeZero>
+				<EspressoButton
+					icon={Icon.TICKET}
+					tooltip={__('assign tickets')}
+					tooltipProps={{ placement: 'right' }}
+					onClick={onOpen}
+				/>
+			</ItemCount>
+			<ModalContainer assignmentType='forDate' entity={entity} {...disclosure} />
+		</>
 	);
 });
 
-export default withIsLoaded<EntityListItemProps>(TypeName.tickets, ({ loaded, id, name }) => {
+export default withIsLoaded<EntityListItemProps>(TypeName.tickets, ({ entity, loaded }) => {
 	/* Hide TAM unless tickets are loaded */
-	return loaded && <AssignTicketsButton id={id} name={name}/>;
+	return loaded && <AssignTicketsButton entity={entity} />;
 });
