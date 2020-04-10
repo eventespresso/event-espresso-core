@@ -1,11 +1,11 @@
 import React from 'react';
 import classNames from 'classnames';
-import { Tooltip } from 'antd';
-import { InfoCircleOutlined } from '@ant-design/icons';
+import { Icon } from '@chakra-ui/core';
 
-import { MappedField } from '../adapters';
 import { FieldRendererProps } from '../types';
 import { FormControl, FormErrorMessage, FormHelperText, FormLabel } from '@infraUI/forms';
+import { MappedField } from '../adapters';
+import { Tooltip } from '@infraUI/display';
 
 const FieldRenderer: React.FC<FieldRendererProps> = (props) => {
 	const { after, before, desc, formControlProps, info, label, required, ...rest } = props;
@@ -19,14 +19,6 @@ const FieldRenderer: React.FC<FieldRendererProps> = (props) => {
 
 	const tooltipKey = info ? props.input.name + '-tooltip' : null;
 
-	const fieldInfo = info ? (
-		<span id={tooltipKey}>
-			<Tooltip placement='right' title={info}>
-				<InfoCircleOutlined className='tooltip' />
-			</Tooltip>
-		</span>
-	) : null;
-
 	const errorMessage = meta.touched && (meta.error || meta.submitError);
 
 	return (
@@ -37,7 +29,11 @@ const FieldRenderer: React.FC<FieldRendererProps> = (props) => {
 		>
 			<FormLabel htmlFor={props.input.name}>
 				{label}
-				{fieldInfo}
+				{info && (
+					<Tooltip placement='right' title={info}>
+						<Icon marginLeft='var(--ee-margin-micro)' name='info-outline' />
+					</Tooltip>
+				)}
 			</FormLabel>
 			{before}
 			<MappedField aria-label={label} aria-describedby={tooltipKey} {...rest} />
