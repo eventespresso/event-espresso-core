@@ -25,7 +25,6 @@ const Confirm: React.FC<ConfirmProps> = ({ buttonProps, onConfirm, type, ...prop
 		<>
 			<EspressoButton {...buttonProps} onClick={onOpen} />
 			<AlertDialog
-				{...props}
 				cancelButton={
 					<Button ref={cancelRef} onClick={onClose}>
 						{__('No')}

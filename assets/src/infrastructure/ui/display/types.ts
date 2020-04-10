@@ -1,6 +1,6 @@
 import { IAlertDialog, ISpinnerProps, TooltipProps as ChakraTooltipProps } from '@chakra-ui/core';
 
-export interface AlertDialogProps extends IAlertDialog {
+export interface AlertDialogProps extends Omit<IAlertDialog, 'children'> {
 	cancelButton: React.ReactNode;
 	header: React.ReactNode;
 	okButton: React.ReactNode;

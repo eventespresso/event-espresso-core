@@ -40,7 +40,7 @@ const FormRenderer: React.FC<FormRendererProps> = (props) => {
 						/>
 					) : null}
 				</form>
-				{debugFields.length ? <DebugInfo data={pick(debugFields, form.getState())} /> : null}
+				{debugFields.length && <DebugInfo data={pick(debugFields, form.getState())} />}
 			</div>
 		</div>
 	);

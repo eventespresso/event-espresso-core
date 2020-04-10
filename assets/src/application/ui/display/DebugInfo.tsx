@@ -1,6 +1,8 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 import styled from '@emotion/styled';
+import { __ } from '@wordpress/i18n';
 
+import { EspressoButton } from '@application/ui/input';
 import { Collapse } from '@infraUI/display';
 
 const Pre = styled.pre`
@@ -18,6 +20,7 @@ interface DebugInfoProps {
 }
 
 const DebugInfo: React.FC<DebugInfoProps> = ({ data, asJson = true, asCollapse = true }) => {
+	const [show, setShow] = React.useState(false);
 	const isDev = !process.env.NODE_ENV || process.env.NODE_ENV === 'development';
 
 	if (!isDev) {
@@ -31,8 +34,15 @@ const DebugInfo: React.FC<DebugInfoProps> = ({ data, asJson = true, asCollapse =
 	if (!asCollapse) {
 		return output;
 	}
+	const buttonText = show ? __('Hide Debug Info') : __('Show Debug Info');
+	const handleToggle = useCallback(() => setShow(!show), [show]);
 
-	return <Collapse buttonText='Debug Info'>{output}</Collapse>;
+	return (
+		<>
+			<EspressoButton buttonText={buttonText} onClick={handleToggle}></EspressoButton>
+			<Collapse isOpen={show}>{output}</Collapse>
+		</>
+	);
 };
 
 export default DebugInfo;

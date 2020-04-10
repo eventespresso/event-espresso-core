@@ -18,26 +18,24 @@ const AlertDialog: React.FC<AlertDialogProps> = ({
 	onClose,
 	okButton,
 	title,
-}) => {
-	return (
-		<>
-			<ChakraAlertDialog isOpen={isOpen} leastDestructiveRef={leastDestructiveRef} onClose={onClose}>
-				<AlertDialogOverlay />
-				<AlertDialogContent>
-					{header && (
-						<AlertDialogHeader fontSize='lg' fontWeight='bold' textTransform='capitalize'>
-							{header}
-						</AlertDialogHeader>
-					)}
-					<AlertDialogBody>{title}</AlertDialogBody>
-					<AlertDialogFooter>
-						{cancelButton}
-						{okButton}
-					</AlertDialogFooter>
-				</AlertDialogContent>
-			</ChakraAlertDialog>
-		</>
-	);
-};
+}) => (
+	<>
+		<ChakraAlertDialog isOpen={isOpen} leastDestructiveRef={leastDestructiveRef} onClose={onClose}>
+			<AlertDialogOverlay />
+			<AlertDialogContent>
+				{header && (
+					<AlertDialogHeader fontSize='lg' fontWeight='bold' textTransform='capitalize'>
+						{header}
+					</AlertDialogHeader>
+				)}
+				<AlertDialogBody>{title}</AlertDialogBody>
+				<AlertDialogFooter>
+					{cancelButton}
+					{okButton}
+				</AlertDialogFooter>
+			</AlertDialogContent>
+		</ChakraAlertDialog>
+	</>
+);
 
 export default AlertDialog;

@@ -1,5 +1,4 @@
 import React from 'react';
-import { __ } from '@wordpress/i18n';
 
 import { DebugInfo } from '@appDisplay/index';
 import Table from './table/Table';
