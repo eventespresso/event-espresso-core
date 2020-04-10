@@ -3,9 +3,7 @@ $input-number: 'input[type=' number ']';
 $input-text: 'input[type=' text ']';
 
 .ee-tpc {
-	&__modal {
-		max-width: 75rem !important;
-	}
+	max-width: 75rem !important;
 	&__body {
 		#{$input-number},
 		#{$input-text},

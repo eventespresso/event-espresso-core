@@ -4,14 +4,15 @@ import { __ } from '@wordpress/i18n';
 
 import { ButtonProps } from '@infraUI/inputs';
 
-import { Prices } from '../data/types';
 import { useOnSubmitPrices } from '../hooks';
+import { useTPCContext } from '../context';
 
-interface Props extends Prices {
-	onCloseModal: VoidFunction;
-}
+const useSubmitButtonProps = (): ButtonProps => {
+	const {
+		onClose,
+		dataState: { prices },
+	} = useTPCContext();
 
-const useSubmitButtonProps = ({ onCloseModal, prices }: Props): ButtonProps => {
 	const isDisabled = prices.length && prices.some(({ amount }) => anyPass([isNil, isEmpty])(amount));
 
 	const submitPrices = useOnSubmitPrices();
@@ -19,9 +20,9 @@ const useSubmitButtonProps = ({ onCloseModal, prices }: Props): ButtonProps => {
 		(e) => {
 			e.preventDefault();
 			submitPrices();
-			onCloseModal();
+			onClose();
 		},
-		[submitPrices, onCloseModal]
+		[submitPrices, onClose]
 	);
 
 	return useMemo<ButtonProps>(

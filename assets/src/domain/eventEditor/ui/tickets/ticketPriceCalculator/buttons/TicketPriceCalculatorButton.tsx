@@ -5,23 +5,23 @@ import { __ } from '@wordpress/i18n';
 import { BaseProps } from '../types';
 import { TypeName } from '@appServices/apollo/status';
 import withIsLoaded from '@sharedUI/hoc/withIsLoaded';
-import { useTicketPriceCalculatorModal } from '../hooks';
+import { useTicketPriceCalculator } from '../hooks';
 
 interface TPCButtonProps extends BaseProps, EspressoButtonProps {}
 
 const TicketPriceCalculatorButton: React.FC<TPCButtonProps> = ({ ticketId, ...buttonProps }) => {
-	const { openModal, Container } = useTicketPriceCalculatorModal();
+	const { ModalContainer, onOpen, ...disclosure } = useTicketPriceCalculator();
 
 	return (
 		<>
 			<EspressoButton
 				icon={Icon.CALCULATOR}
-				onClick={openModal}
+				onClick={onOpen}
 				tooltip={__('ticket price calculator')}
 				tooltipProps={{ placement: 'left' }}
 				{...buttonProps}
 			/>
-			<Container ticketId={ticketId} />
+			<ModalContainer ticketId={ticketId} {...disclosure} />
 		</>
 	);
 };

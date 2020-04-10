@@ -6,11 +6,16 @@ export interface BaseProps {
 	ticketId: EntityId;
 }
 
-export type TicketPriceCalculatorModalHook = () => TicketPriceCalculatorModal;
+export interface ModalContainerProps extends BaseProps, Omit<Disclosure, 'onOpen'> {}
 
-export interface TicketPriceCalculatorModal {
-	openModal: VoidFunction;
-	Container: React.FC<BaseProps>;
+export interface Disclosure {
+	isOpen: boolean;
+	onOpen: VoidFunction;
+	onClose: VoidFunction;
+}
+
+export interface TicketPriceCalculator extends Disclosure {
+	ModalContainer: React.FC<ModalContainerProps>;
 }
 
 export interface TpcPriceModifier extends Price {
