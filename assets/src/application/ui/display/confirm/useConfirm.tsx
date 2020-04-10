@@ -7,19 +7,13 @@ import { AlertDialog } from '@infraUI/display';
 
 import { ConfirmProps } from './types';
 
-const Confirm: React.FC<ConfirmProps> = ({ buttonProps, onConfirm, type, ...props }) => {
+const Confirm: React.FC<ConfirmProps> = ({ buttonProps, onConfirm, title }) => {
 	const { isOpen, onOpen, onClose } = useDisclosure();
 	const cancelRef = React.useRef();
 	const onDelete = useCallback(() => {
 		onConfirm();
 		onClose();
 	}, [onConfirm]);
-	const title = useMemo(() => {
-		if (type === 'delete') {
-			return props.title || __('Are you sure you want to delete this?');
-		}
-		return props.title;
-	}, [props.title]);
 
 	return (
 		<>
