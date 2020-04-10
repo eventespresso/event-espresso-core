@@ -3,7 +3,7 @@ import classNames from 'classnames';
 import { parseISO, isValid } from 'date-fns';
 import { __ } from '@wordpress/i18n';
 
-import { TimezoneTimeInfo } from '@infraUI/display';
+import { TimezoneTimeInfo } from '@application/ui/display';
 import { useTimeZoneTime } from '@appServices/hooks';
 
 import './style.scss';

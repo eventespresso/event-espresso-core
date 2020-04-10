@@ -1,14 +1,4 @@
 import React from 'react';
-import {
-	IconButton,
-	Popover,
-	PopoverTrigger,
-	PopoverContent,
-	PopoverHeader,
-	PopoverBody,
-	PopoverArrow,
-	PopoverCloseButton,
-} from '@chakra-ui/core';
 import { __ } from '@wordpress/i18n';
 import { GlobalOutlined } from '@ant-design/icons';
 import { Popover } from 'antd';
@@ -43,6 +33,10 @@ const TimezoneTimeInfo: React.FC<Props> = ({ date }) => {
 		</div>
 	);
 	const label = __('click for timezone\ninformation');
+	const iconProps = {
+		icon: GlobalOutlined,
+		label,
+	};
 
 	return (
 		<Popover content={content} title={__('This Date Converted To:')} trigger={'click'} align={{ offset: [0, -60] }}>

@@ -4,7 +4,7 @@ import { parseISO, isValid } from 'date-fns';
 
 import { CalendarDateProps } from '../types';
 import { EspressoButton } from '@application/ui/input/EspressoButton';
-import { TimezoneTimeInfo } from '@infraUI/display';
+import { TimezoneTimeInfo } from '@application/ui/display';
 import {
 	DAY_ONLY_SHORT_FORMAT,
 	MONTH_ONLY_FULL_FORMAT,

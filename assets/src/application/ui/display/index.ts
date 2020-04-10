@@ -1,6 +1,7 @@
 export { default as ColorSwatch } from './ColorSwatch';
 export { default as EntityListLegend } from './EntityListLegend';
 export { default as ItemCount } from './ItemCount';
+export { default as TimezoneTimeInfo } from './TimezoneTimeInfo';
 
 export * from './entityDetailsPanel';
 export * from './espressoIcon';
