@@ -239,7 +239,7 @@ class EEH_Sideloader extends EEH_Base
             if (defined('WP_DEBUG') && WP_DEBUG) {
                 EE_Error::add_error(
                     sprintf(
-                        esc_html__('Unable to upload the file. Either the path given to upload from is incorrect, or something else happened. Here is the path given: %s', 'event_espresso'),
+                        esc_html__('Unable to upload the file. Either the path given to download from is incorrect, or something else happened. Here is the path given: %s', 'event_espresso'),
                         $this->_download_from
                     ),
                     __FILE__,
