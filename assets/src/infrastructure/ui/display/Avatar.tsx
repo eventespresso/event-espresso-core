@@ -1,12 +1,12 @@
 import React from 'react';
 import { Avatar as ChakraAvatar, AvatarBadge, IAvatar, BoxProps } from '@chakra-ui/core';
 
-interface Props extends IAvatar {
+interface AvatarProps extends IAvatar {
 	badgeProps?: BoxProps;
 	userName?: string;
 }
 
-const Avatar = ({ badgeProps, userName, ...avatarProps }: Props) => {
+const Avatar: React.FC<AvatarProps> = ({ badgeProps, userName, ...avatarProps }) => {
 	if (badgeProps) {
 		return (
 			<ChakraAvatar {...avatarProps}>

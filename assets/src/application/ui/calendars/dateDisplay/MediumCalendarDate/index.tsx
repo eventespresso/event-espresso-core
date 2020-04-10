@@ -2,7 +2,8 @@ import React from 'react';
 import classNames from 'classnames';
 import { parseISO, isValid } from 'date-fns';
 import { __ } from '@wordpress/i18n';
-import TimezoneTimeInfo from '../TimezoneTimeInfo';
+
+import { TimezoneTimeInfo } from '@infraUI/display';
 import { useTimeZoneTime } from '@appServices/hooks';
 
 import './style.scss';
@@ -50,7 +51,7 @@ export const MediumCalendarDate: React.FC<MediumCalendarDateProps> = ({
 				</div>
 				<div className='ee-mcd__year'>
 					{format(dateObject, YEAR_ONLY_LONG_FORMAT)}
-					<TimezoneTimeInfo date={dateObject} inline />
+					<TimezoneTimeInfo date={dateObject} />
 					{showTime && <span className='ee-mcd__time'>{format(dateObject, TIME_ONLY_12H_SHORT_FORMAT)}</span>}
 				</div>
 			</div>

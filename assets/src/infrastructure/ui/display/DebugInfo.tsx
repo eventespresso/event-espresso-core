@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 import { Button, Collapse } from '@chakra-ui/core';
 import styled from '@emotion/styled';
 
@@ -32,7 +32,7 @@ const DebugInfo: React.FC<DebugInfoProps> = ({ data, asJson = true, asCollapse =
 		return output;
 	}
 
-	const handleToggle = () => setShow(!show);
+	const handleToggle = useCallback(() => setShow(!show), [show]);
 
 	return (
 		<>

@@ -1,7 +1,7 @@
 import React from 'react';
 import { __ } from '@wordpress/i18n';
 
-import { DebugInfo } from '@appDisplay/index';
+import { DebugInfo } from '@infraUI/display';
 import Table from './table/Table';
 import { useDataState } from '../data';
 import { useInitStateListeners } from '../stateListeners';

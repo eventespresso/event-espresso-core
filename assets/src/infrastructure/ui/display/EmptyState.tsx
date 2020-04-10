@@ -1,4 +1,5 @@
 import React from 'react';
+import classNames from 'classnames';
 import { Alert, AlertIcon, AlertTitle, AlertDescription } from '@chakra-ui/core';
 
 interface EmptyStateProps {
@@ -8,7 +9,9 @@ interface EmptyStateProps {
 	title?: string;
 }
 
-const EmptyState = ({ className, children, description, title }: EmptyStateProps) => {
+const EmptyState: React.FC<EmptyStateProps> = ({ children, description, title, ...props }) => {
+	const className = classNames(props.className, 'ee-empty-state');
+
 	return (
 		<Alert
 			backgroundColor='var(--ee-color-grey-15)'

@@ -2,9 +2,9 @@ import React, { useCallback } from 'react';
 import classNames from 'classnames';
 import { parseISO, isValid } from 'date-fns';
 
-import { useTimeZoneTime } from '@appServices/hooks';
+import { CalendarDateProps } from '../types';
 import { EspressoButton } from '@application/ui/input/EspressoButton';
-import TimezoneTimeInfo from '../TimezoneTimeInfo';
+import { TimezoneTimeInfo } from '@infraUI/display';
 import {
 	DAY_ONLY_SHORT_FORMAT,
 	MONTH_ONLY_FULL_FORMAT,
@@ -12,7 +12,7 @@ import {
 	WEEKDAY_ONLY_FULL_FORMAT,
 	YEAR_ONLY_LONG_FORMAT,
 } from '@appConstants/dateFnsFormats';
-import { CalendarDateProps } from '../types';
+import { useTimeZoneTime } from '@appServices/hooks';
 import './style.scss';
 
 export interface BiggieCalendarDateProps extends CalendarDateProps {

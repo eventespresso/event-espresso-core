@@ -1,7 +1,12 @@
 import React from 'react';
 import { Alert, AlertIcon, AlertTitle, AlertDescription } from '@chakra-ui/core';
 
-const Error = ({ description, title }) => {
+interface ErrorProps {
+	description: string;
+	title: string;
+}
+
+const Error: React.FC<ErrorProps> = ({ description, title }) => {
 	return (
 		<Alert
 			status='error'

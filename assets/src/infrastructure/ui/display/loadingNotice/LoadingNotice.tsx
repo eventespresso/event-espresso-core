@@ -1,6 +1,6 @@
 import React from 'react';
 import classNames from 'classnames';
-import { Spinner } from '@appDisplay/index';
+import { Spinner } from '@infraUI/display';
 import { _x, sprintf } from '@wordpress/i18n';
 
 import { LoadingNoticeProps } from './types';

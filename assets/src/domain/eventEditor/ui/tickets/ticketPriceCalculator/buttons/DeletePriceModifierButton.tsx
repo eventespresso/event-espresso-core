@@ -1,7 +1,7 @@
 import React, { useCallback } from 'react';
 import { __ } from '@wordpress/i18n';
 
-import { ConfirmDelete } from '@appLayout/confirmDelete';
+import { ConfirmDelete } from '@infraUI/display';
 import { Icon } from '@application/ui/input';
 import { PriceModifierProps } from '../types';
 import { useDataState } from '../data';

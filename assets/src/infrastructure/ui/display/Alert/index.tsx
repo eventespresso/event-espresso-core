@@ -3,12 +3,12 @@ import { IAlert } from '@chakra-ui/core';
 
 import Error from './Error';
 
-interface Props extends IAlert {
+interface AlertProps extends IAlert {
 	description: string;
 	title: string;
 }
 
-const EspressoAlert: React.FC<Props> = ({ description, status, title }) => {
+const Alert: React.FC<AlertProps> = ({ description, status, title }) => {
 	if (status === 'error') {
 		return <Error description={description} title={title} />;
 	}
@@ -16,4 +16,4 @@ const EspressoAlert: React.FC<Props> = ({ description, status, title }) => {
 	return null;
 };
 
-export default React.memo(EspressoAlert);
+export default React.memo(Alert);

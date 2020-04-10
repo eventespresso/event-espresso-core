@@ -1,6 +1,6 @@
 import React, { Suspense } from 'react';
 
-import { LoadingNotice } from '@appDisplay/loadingNotice';
+import { LoadingNotice } from '@infraUI/display';
 
 const CardView = React.lazy(() => import(/* webpackChunkName: "dates-card-view" */ './CardView'));
 
