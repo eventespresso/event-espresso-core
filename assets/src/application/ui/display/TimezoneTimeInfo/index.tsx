@@ -1,6 +1,6 @@
 import React from 'react';
 import classNames from 'classnames';
-import { Icons } from '@chakra-ui/core/dist/theme/icons';
+import { IconButton } from '@chakra-ui/core';
 import { __ } from '@wordpress/i18n';
 
 import { Popover, Tooltip } from '@infraUI/display';
@@ -35,14 +35,18 @@ const TimezoneTimeInfo: React.FC<Props> = ({ date, ...props }) => {
 	);
 	const className = classNames(props.className, 'ee-timezone-info');
 	const label = __('click for timezone\ninformation');
-	const iconProps = {
-		icon: 'info-outline' as Icons,
-		label,
-	};
 
 	return (
 		<div className={className}>
-			<Popover content={content} header={__('This Date Converted To:')} iconProps={iconProps} />
+			<Popover
+				content={content}
+				header={__('This Date Converted To:')}
+				trigger={
+					<Tooltip title={label}>
+						<IconButton aria-label={label} icon='info-outline' variant='unstyled' />
+					</Tooltip>
+				}
+			/>
 		</div>
 	);
 };

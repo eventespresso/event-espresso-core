@@ -1,6 +1,5 @@
 import React from 'react';
 import {
-	IconButton,
 	Popover as ChakraPopover,
 	PopoverTrigger,
 	PopoverContent,
@@ -9,25 +8,17 @@ import {
 	PopoverArrow,
 	PopoverCloseButton,
 } from '@chakra-ui/core';
-import { Icons } from '@chakra-ui/core/dist/theme/icons';
-
-type IconProps = {
-	label: string;
-	icon: Icons;
-};
 
 interface PopoverProps {
 	content: React.ReactNode;
 	header?: React.ReactNode;
-	iconProps: IconProps;
+	trigger: React.ReactNode;
 }
 
-const Popover: React.FC<PopoverProps> = ({ content, header, iconProps, ...props }) => {
+const Popover: React.FC<PopoverProps> = ({ content, header, trigger, ...props }) => {
 	return (
 		<ChakraPopover {...props}>
-			<PopoverTrigger>
-				<IconButton aria-label={iconProps.label} icon={iconProps.icon} variant='unstyled' />
-			</PopoverTrigger>
+			<PopoverTrigger>{trigger}</PopoverTrigger>
 			<PopoverContent zIndex={4}>
 				<PopoverArrow />
 				<PopoverCloseButton className='ee-popover__close-button' color='var(--ee-color-black)' />
