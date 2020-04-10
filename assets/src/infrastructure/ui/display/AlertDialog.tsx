@@ -1,6 +1,6 @@
 import React from 'react';
 import {
-	AlertDialog,
+	AlertDialog as ChakraAlertDialog,
 	AlertDialogBody,
 	AlertDialogFooter,
 	AlertDialogHeader,
@@ -8,16 +8,12 @@ import {
 	AlertDialogOverlay,
 	Button,
 } from '@chakra-ui/core';
-import { EspressoButton, EspressoButtonProps } from '@application/ui/input';
 import { __ } from '@wordpress/i18n';
 
-interface ConfirmDeleteProps {
-	buttonProps: EspressoButtonProps;
-	onConfirm: VoidFunction;
-	title?: string;
-}
+import { EspressoButton } from '@application/ui/input';
+import { AlertDialogProps } from './types';
 
-const ConfirmDelete: React.FC<ConfirmDeleteProps> = ({ buttonProps, onConfirm, ...props }) => {
+const AlertDialog: React.FC<AlertDialogProps> = ({ buttonProps, onConfirm, title }) => {
 	const [isOpen, setIsOpen] = React.useState(false);
 	const cancelRef = React.useRef();
 	const onClose = () => setIsOpen(false);
@@ -25,13 +21,12 @@ const ConfirmDelete: React.FC<ConfirmDeleteProps> = ({ buttonProps, onConfirm, .
 		onClose();
 		onConfirm();
 	};
-	const title = props.title || __('Are you sure you want to delete this?');
 
 	return (
 		<>
 			<EspressoButton {...buttonProps} onClick={() => setIsOpen(true)} />
 
-			<AlertDialog isOpen={isOpen} leastDestructiveRef={cancelRef} onClose={onClose}>
+			<ChakraAlertDialog isOpen={isOpen} leastDestructiveRef={cancelRef} onClose={onClose}>
 				<AlertDialogOverlay />
 				<AlertDialogContent>
 					{buttonProps?.tooltip && (
@@ -49,9 +44,9 @@ const ConfirmDelete: React.FC<ConfirmDeleteProps> = ({ buttonProps, onConfirm, .
 						</Button>
 					</AlertDialogFooter>
 				</AlertDialogContent>
-			</AlertDialog>
+			</ChakraAlertDialog>
 		</>
 	);
 };
 
-export default ConfirmDelete;
+export default AlertDialog;
