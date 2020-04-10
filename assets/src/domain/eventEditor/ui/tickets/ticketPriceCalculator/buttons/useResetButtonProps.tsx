@@ -1,22 +1,19 @@
-import { useCallback, useMemo } from 'react';
+import { useMemo } from 'react';
 import { __ } from '@wordpress/i18n';
 
 import { ButtonProps } from '@infraUI/inputs';
+import { useDataState } from '../data';
 
-type Props = {
-	reset: VoidFunction;
-};
-
-const useResetButtonProps = ({ reset }: Props): ButtonProps => {
-	const onClick = useCallback(() => reset(), [reset]);
+const useResetButtonProps = (): ButtonProps => {
+	const { reset } = useDataState();
 
 	return useMemo<ButtonProps>(
 		() => ({
 			buttonText: __('Reset'),
-			onClick,
+			onClick: reset,
 			type: 'reset',
 		}),
-		[onClick]
+		[reset]
 	);
 };
 

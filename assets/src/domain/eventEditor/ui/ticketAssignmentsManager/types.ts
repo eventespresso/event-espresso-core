@@ -1,4 +1,4 @@
-import { EntityId } from '@appServices/apollo/types';
+import { Entity, EntityId } from '@appServices/apollo/types';
 import { RelationsManager, RelationalData, PossibleRelation } from '@appServices/apollo/relations';
 import { Datetime, Ticket } from '@edtrServices/apollo/types';
 
@@ -16,15 +16,14 @@ export type AssignmentType = 'forDate' | 'forTicket' | 'forAll';
 
 export type AssignmentStatus = 'OLD' | 'NEW' | 'REMOVED';
 
-export interface BaseProps {
+export interface BaseProps<E extends Entity = Entity> {
 	assignmentType: AssignmentType;
-	entityId?: EntityId;
+	entity?: E;
 	title?: string;
 }
 
 export interface AssignmentFnArgs {
 	datetimeId: EntityId;
-	name?: string;
 	ticketId: EntityId;
 }
 
@@ -56,10 +55,16 @@ export interface DataStateManager extends AssignmentManager {
 	hasOrphanTickets: () => boolean;
 }
 
-export interface TicketAssignmentsManager {
-	assignDatesToTicket: (options: Pick<AssignmentFnArgs, 'name' | 'ticketId'>) => void;
-	assignTicketsToDate: (options: Pick<AssignmentFnArgs, 'datetimeId' | 'name'>) => void;
-	assignToAll: () => void;
+export interface ModalContainerProps extends BaseProps, Omit<Disclosure, 'onOpen'> {}
+
+export interface Disclosure {
+	isOpen: boolean;
+	onOpen: VoidFunction;
+	onClose: VoidFunction;
+}
+
+export interface TicketAssignmentsManager extends Disclosure {
+	ModalContainer: React.ComponentType<ModalContainerProps>;
 }
 
 export interface DatesAndTickets {

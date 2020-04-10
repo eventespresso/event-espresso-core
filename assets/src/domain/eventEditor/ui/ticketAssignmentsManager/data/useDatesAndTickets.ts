@@ -5,13 +5,13 @@ import useFilteredDatetimes from './useFilteredDatetimes';
 import useFilteredTickets from './useFilteredTickets';
 
 const useDatesAndTickets = (): DatesAndTickets => {
-	const { assignmentType, entityId } = useTAMContext();
+	const { assignmentType, entity } = useTAMContext();
 
 	const filteredDatetimes = useFilteredDatetimes();
 	const filteredTickets = useFilteredTickets();
 
-	const singleDatetime = useDatetimeItem({ id: entityId });
-	const singleTicket = useTicketItem({ id: entityId });
+	const singleDatetime = useDatetimeItem({ id: entity?.id });
+	const singleTicket = useTicketItem({ id: entity?.id });
 
 	switch (assignmentType) {
 		case 'forAll':

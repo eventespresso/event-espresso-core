@@ -10,7 +10,7 @@ import { EntityActionsSubscriptionCb } from '@appLayout/entityActionsMenu';
 type DatesSubscriptionCallback = EntityActionsSubscriptionCb<Datetime, 'datetime'>;
 
 const useDatesActionMenuHandler = (): DatesSubscriptionCallback => {
-	return useCallback<DatesSubscriptionCallback>(({ entityType, entity: date, registry }) => {
+	return useCallback<DatesSubscriptionCallback>(({ entityType, entity, registry }) => {
 		// although this is not needed
 		if (entityType !== 'datetime') {
 			return;
@@ -20,7 +20,7 @@ const useDatesActionMenuHandler = (): DatesSubscriptionCallback => {
 
 		registerMenuItem('dateMainMenu', () => <DateMainMenuItem />);
 
-		registerMenuItem('assignTickets', () => <AssignTicketsButton id={date.id} name={date.name} />);
+		registerMenuItem('assignTickets', () => <AssignTicketsButton entity={entity} />);
 	}, []);
 };
 

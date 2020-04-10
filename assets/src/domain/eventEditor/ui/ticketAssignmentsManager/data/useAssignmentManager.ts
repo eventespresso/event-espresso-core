@@ -77,22 +77,22 @@ const useAssignmentManager = (): AM => {
 		}
 	};
 
-	const initialize: AM['initialize'] = ({ data, assignmentType, entityId }) => {
+	const initialize: AM['initialize'] = ({ data, assignmentType, entity }) => {
 		const relationsToPick: Array<keyof TAMRelationalData> = ['datetimes', 'tickets'];
 		// pick only datetimes and tickets from relational data
 		let newData = pick(relationsToPick, data);
 
 		// Remove other relations from newData
 		// like ticket to price relations
-		newData = mapObjIndexed((relationalEntity, entity) => {
+		newData = mapObjIndexed((relationalEntity, entityType) => {
 			let relationalEntityToUse = relationalEntity;
 			// If TAM is only for a single datetime/ticket
 			// limit relations to that datetime/ticket
 			if (
-				(assignmentType === 'forDate' && entity === 'datetimes') ||
-				(assignmentType === 'forTicket' && entity === 'tickets')
+				(assignmentType === 'forDate' && entityType === 'datetimes') ||
+				(assignmentType === 'forTicket' && entityType === 'tickets')
 			) {
-				relationalEntityToUse = pick([entityId], relationalEntity);
+				relationalEntityToUse = pick([entity.id], relationalEntity);
 			}
 
 			return map((relation) => {

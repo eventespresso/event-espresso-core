@@ -11,18 +11,18 @@ import './styles.scss';
 
 const TicketPriceCalculatorModal: React.FC = () => {
 	const {
-		onCloseModal,
-		dataState: { reset, prices, ticket },
+		onClose,
+		dataState: { ticket },
 	} = useTPCContext();
-	const resetButtonProps = useResetButtonProps({ reset });
-	const submitButtonProps = useSubmitButtonProps({ onCloseModal, prices });
+	const resetButtonProps = useResetButtonProps();
+	const submitButtonProps = useSubmitButtonProps();
 
 	return (
 		<Modal
 			isOpen={true}
-			onClose={onCloseModal}
-			className='ee-tpc-modal'
-			bodyClassName='ee-tpc-modal__body'
+			onClose={onClose}
+			className='ee-tpc'
+			bodyClassName='ee-tpc__body'
 			submitButtonProps={submitButtonProps}
 			cancelButtonProps={resetButtonProps}
 			title={sprintf(__('Price Calculator for Ticket: %s'), ticket.name)}

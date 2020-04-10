@@ -1,6 +1,3 @@
-/**
- * External imports
- */
 import React, { createContext } from 'react';
 
 import { useDataStateManager } from '../data';
@@ -11,12 +8,13 @@ const Context = createContext<ContextProps>(null);
 
 const { Provider, Consumer } = Context;
 
-const ContextProvider: React.FC<ProviderProps> = ({ children, assignmentType, entityId }) => {
+const ContextProvider: React.FC<ProviderProps> = ({ children, assignmentType, entity, ...rest }) => {
 	const value: ContextProps = {
-		dataState: useDataStateManager({ assignmentType, entityId }),
+		dataState: useDataStateManager({ assignmentType, entity }),
 		filterState: useFilterStateManager(),
 		assignmentType,
-		entityId,
+		entity,
+		...rest,
 	};
 
 	return <Provider value={value}>{children}</Provider>;

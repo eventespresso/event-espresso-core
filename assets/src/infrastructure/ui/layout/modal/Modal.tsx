@@ -18,6 +18,7 @@ const Modal: React.FC<ModalProps> = ({
 	className,
 	content,
 	footerContent,
+	isClosable = true,
 	submitButtonProps,
 	title,
 	...props
@@ -36,11 +37,18 @@ const Modal: React.FC<ModalProps> = ({
 		);
 	}
 	return (
-		<ChakraModal isCentered scrollBehavior='inside' size='xl' {...props}>
+		<ChakraModal
+			// closeOnEsc={isClosable}
+			closeOnOverlayClick={isClosable}
+			isCentered
+			scrollBehavior='inside'
+			size='xl'
+			{...props}
+		>
 			<ModalOverlay />
 			<ModalContent className={className}>
 				<ModalHeader>{title}</ModalHeader>
-				<ModalCloseButton />
+				<ModalCloseButton isDisabled={!isClosable} />
 
 				<ModalBody className={bodyClassName}>{children || content}</ModalBody>
 

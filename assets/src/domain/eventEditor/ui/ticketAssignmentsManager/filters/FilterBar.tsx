@@ -24,7 +24,7 @@ const FilterBar = () => {
 	} = useTAMContext();
 
 	return (
-		<div className='ee-filter-bar'>
+		<div className='ee-ticket-assignments-manager__filter-bar'>
 			{assignmentType !== 'forDate' && (
 				// useless when TAM is for single date
 				<>

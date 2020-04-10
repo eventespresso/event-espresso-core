@@ -15,11 +15,7 @@ const btnRowStyle: CSSProperties = {
 
 const AddNewDateButton: React.FC = () => {
 	const { openEditor } = useFormModal();
-	const { assignToAll } = useTicketAssignmentsManager();
-
-	const onClickAssignments = (): void => {
-		assignToAll();
-	};
+	const { ModalContainer, onOpen, ...disclosure } = useTicketAssignmentsManager();
 
 	const onClickAddNew = (): void => {
 		openEditor({
@@ -30,7 +26,8 @@ const AddNewDateButton: React.FC = () => {
 	return (
 		<div style={btnRowStyle}>
 			<EspressoButton icon={Icon.CALENDAR} buttonText={__('Add New Date')} onClick={onClickAddNew} />
-			<EspressoButton icon={Icon.TICKET} buttonText={__('Ticket Assignments')} onClick={onClickAssignments} />
+			<EspressoButton icon={Icon.TICKET} buttonText={__('Ticket Assignments')} onClick={onOpen} />
+			<ModalContainer assignmentType='forAll' {...disclosure} />
 		</div>
 	);
 };
