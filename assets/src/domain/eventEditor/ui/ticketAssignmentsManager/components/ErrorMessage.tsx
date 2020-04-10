@@ -1,6 +1,6 @@
 import React from 'react';
 import { __ } from '@wordpress/i18n';
-import { Alert } from 'antd';
+import { EspressoAlert } from '@application/ui/display';
 
 import { useDataState } from '../data';
 
@@ -29,7 +29,7 @@ const ErrorMessage: React.FC<ErrorMessageProps> = ({ asAlert = true, dataState }
 	}
 
 	if (asAlert) {
-		return <Alert message={__('Error')} description={errorMessage} type='error' showIcon />;
+		return <EspressoAlert description={errorMessage} status='error' title={__('Error')} />;
 	}
 
 	return errorMessage;
