@@ -18,13 +18,11 @@ import { useTimeZoneTime } from '@appServices/hooks';
 
 import './style.scss';
 
-export interface OffsetInfoProps {
-	className?: string;
+export interface Props {
 	date: Date;
-	inline?: boolean;
 }
 
-const TimezoneTimeInfo: React.FC<OffsetInfoProps> = ({ date, inline = false }) => {
+const TimezoneTimeInfo: React.FC<Props> = ({ date }) => {
 	const { formatDateForSite, formatDateForUser, formatUtcDateForSite } = useTimeZoneTime();
 	const content = (
 		<div>
