@@ -1,5 +1,14 @@
 import React from 'react';
-import classNames from 'classnames';
+import {
+	IconButton,
+	Popover,
+	PopoverTrigger,
+	PopoverContent,
+	PopoverHeader,
+	PopoverBody,
+	PopoverArrow,
+	PopoverCloseButton,
+} from '@chakra-ui/core';
 import { __ } from '@wordpress/i18n';
 import { GlobalOutlined } from '@ant-design/icons';
 import { Popover } from 'antd';
@@ -15,7 +24,7 @@ export interface OffsetInfoProps {
 	inline?: boolean;
 }
 
-const TimezoneTimeInfo: React.FC<OffsetInfoProps> = ({ className, date, inline = false }) => {
+const TimezoneTimeInfo: React.FC<OffsetInfoProps> = ({ date, inline = false }) => {
 	const { formatDateForSite, formatDateForUser, formatUtcDateForSite } = useTimeZoneTime();
 	const content = (
 		<div>
@@ -35,7 +44,8 @@ const TimezoneTimeInfo: React.FC<OffsetInfoProps> = ({ className, date, inline =
 			<div className={'ee-focus-priority-6'}>{formatUtcDateForSite(date)}</div>
 		</div>
 	);
-	const htmlClassName = classNames(className, 'ee-timezone-info', { 'ee-timezone-info--inline': inline });
+	const label = __('click for timezone\ninformation');
+
 	return (
 		<Popover content={content} title={__('This Date Converted To:')} trigger={'click'} align={{ offset: [0, -60] }}>
 			<div className={htmlClassName}>

@@ -1,4 +1,5 @@
 import React, { useCallback } from 'react';
+import classNames from 'classnames';
 import { parseISO, isValid } from 'date-fns';
 
 import { useTimeZoneTime } from '@appServices/hooks';
@@ -22,13 +23,13 @@ export interface BiggieCalendarDateProps extends CalendarDateProps {
  * Displays a full calendar date, but REALLY BIG!!!
  */
 export const BiggieCalendarDate: React.FC<BiggieCalendarDateProps> = ({
-	className,
 	date,
 	editButton = {},
 	footerText,
 	headerText,
 	onEdit = null,
 	showTime = false,
+	...props
 }) => {
 	const { formatForSite: format } = useTimeZoneTime();
 
@@ -37,7 +38,7 @@ export const BiggieCalendarDate: React.FC<BiggieCalendarDateProps> = ({
 	if (!isValid(dateObject)) {
 		return null;
 	}
-	className += ' ee-biggie-calendar-date__wrapper';
+	const className = classNames(props.className, 'ee-biggie-calendar-date__wrapper');
 
 	const editDateButton = typeof onEdit === 'function' && (
 		<EspressoButton
