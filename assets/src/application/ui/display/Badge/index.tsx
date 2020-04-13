@@ -1,10 +1,9 @@
 import React from 'react';
 import classNames from 'classnames';
+import { Badge } from 'antd';
 import { BadgeProps } from 'antd/lib/badge';
 
-import { Badge, Tooltip } from '@infraUI/display';
-
-import { getPropsAreEqual } from '@appServices/utilities';
+import { Tooltip } from '@infraUI/display';
 
 import './style.scss';
 
@@ -14,14 +13,7 @@ interface ItemCountProps extends BadgeProps {
 	zeroCountChar?: string | JSX.Element;
 }
 
-const ItemCount: React.FC<ItemCountProps> = ({
-	children,
-	count,
-	emphasizeZero,
-	title = ' ',
-	zeroCountChar,
-	...props
-}) => {
+const Badge: React.FC<ItemCountProps> = ({ children, count, emphasizeZero, title = ' ', zeroCountChar, ...props }) => {
 	const className = classNames(props.className, 'ee-item-count', {
 		'ee-item-count--has-items': count > 0,
 		'ee-item-count--no-items': count === 0 && emphasizeZero,
@@ -38,13 +30,10 @@ const ItemCount: React.FC<ItemCountProps> = ({
 	);
 
 	return (
-		<div className='ee-item-count__wrapper'>
-			<Badge {...props} className={className}>
-				{value}
-			</Badge>
+		<Badge {...props} className={className} count={countNode} offset={offset}>
 			{children}
-		</div>
+		</Badge>
 	);
 };
 
-export default React.memo(ItemCount, getPropsAreEqual(['count']));
+export default React.memo(Badge);
