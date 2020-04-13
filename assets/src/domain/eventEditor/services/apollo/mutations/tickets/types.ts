@@ -3,7 +3,7 @@ import { EntityId } from '@appServices/apollo/types';
 export interface TicketBaseInput {
 	datetimes?: Array<EntityId>;
 	description?: string;
-	endDate?: string;
+	endDate?: string | Date;
 	isDefault?: boolean;
 	isRequired?: boolean;
 	isTaxable?: boolean;
@@ -20,7 +20,7 @@ export interface TicketBaseInput {
 	reverseCalculate?: boolean;
 	row?: number;
 	sold?: number;
-	startDate?: string;
+	startDate?: string | Date;
 	uses?: number;
 	wpUser?: number;
 }

@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { Timepicker } from '@appInputs/dateTime';
+import { Timepicker } from '@infraUI/inputs/dateTime';
 import { FieldRendererProps } from '../types';
 
 const TimePicker: React.FC<FieldRendererProps> = ({ input, meta, ...rest }) => {
@@ -9,8 +9,8 @@ const TimePicker: React.FC<FieldRendererProps> = ({ input, meta, ...rest }) => {
 			{...input}
 			{...rest}
 			format='12'
-			// 600 seconds(10 mins)
-			step={600}
+			// 300 seconds(5 minutes)
+			step={300}
 		/>
 	);
 };

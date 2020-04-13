@@ -3,7 +3,7 @@ import { EntityId } from '@appServices/apollo/types';
 export interface DatetimeBaseInput {
 	capacity?: number;
 	description?: string;
-	endDate?: string;
+	endDate?: string | Date;
 	event?: EntityId;
 	eventId?: number;
 	isPrimary?: boolean;
@@ -13,7 +13,7 @@ export interface DatetimeBaseInput {
 	parent?: string;
 	reserved?: number;
 	sold?: number;
-	startDate?: string;
+	startDate?: string | Date;
 	tickets?: Array<EntityId>;
 }
 

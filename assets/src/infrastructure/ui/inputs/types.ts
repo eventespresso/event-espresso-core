@@ -15,7 +15,7 @@ import type {
 } from '@chakra-ui/core';
 
 export interface CommonInputProps<T = Element, V = React.ReactText> {
-	onChangeValue?: (value: V, event: React.ChangeEvent<T> | React.FormEvent<T>) => void;
+	onChangeValue?: (value: V, event?: React.ChangeEvent<T> | React.FormEvent<T>) => void;
 }
 
 export interface ButtonProps extends Partial<ChakraButtonProps> {
