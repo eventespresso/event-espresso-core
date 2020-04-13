@@ -1,14 +1,13 @@
 import { __, sprintf } from '@wordpress/i18n';
 import { ProfileOutlined, CalendarOutlined, ControlOutlined } from '@ant-design/icons';
 import { pick } from 'ramda';
+import { parseISO } from 'date-fns';
 
-import { CONVERT_TO_MOMENT_DATE_FORMAT, CONVERT_TO_MOMENT_TIME_FORMAT } from '@appConstants/dateFnsFormats';
 import { EspressoFormProps } from '@application/ui/forms/espressoForm';
 import useDatetimeItem from '@edtrServices/apollo/queries/datetimes/useDatetimeItem';
 import { Datetime } from '@edtrServices/apollo/types';
 import { EntityId } from '@appServices/apollo/types';
-import { PLUS_ONE_MONTH, PLUS_TWO_MONTHS } from '@sharedConstants/defaultDates';
-import { processDateAndTime, prepareDateForForm } from '@sharedServices/utils/dateAndTime';
+import { processDateAndTime } from '@sharedServices/utils/dateAndTime';
 import { validate } from './formValidation';
 import { DateFormShape } from './types';
 import { useTimeZoneTime } from '@appServices/hooks';
@@ -20,10 +19,10 @@ const FIELD_NAMES: Array<keyof Datetime> = ['name', 'description', 'capacity', '
 const useDateFormConfig = (id: EntityId, config?: EspressoFormProps): DateFormConfig => {
 	const { startDate: start, endDate: end, ...restProps } = useDatetimeItem({ id }) || {};
 
-	const { formatForSite: format, siteTimeToUtc } = useTimeZoneTime();
+	const { siteTimeToUtc, utcToSiteTime } = useTimeZoneTime();
 
-	const startDate = prepareDateForForm(start, PLUS_ONE_MONTH);
-	const endDate = prepareDateForForm(end, PLUS_TWO_MONTHS);
+	const startDate = start ? utcToSiteTime(parseISO(start)) : null;
+	const endDate = end ? utcToSiteTime(parseISO(end)) : null;
 
 	const { onSubmit } = config;
 
@@ -39,10 +38,10 @@ const useDateFormConfig = (id: EntityId, config?: EspressoFormProps): DateFormCo
 	const initialValues: DateFormShape = {
 		...pick<Partial<Datetime>, keyof Datetime>(FIELD_NAMES, restProps),
 		dateTime: {
-			startDate: format(startDate, CONVERT_TO_MOMENT_DATE_FORMAT),
-			startTime: format(startDate, CONVERT_TO_MOMENT_TIME_FORMAT),
-			endDate: format(endDate, CONVERT_TO_MOMENT_DATE_FORMAT),
-			endTime: format(endDate, CONVERT_TO_MOMENT_TIME_FORMAT),
+			startDate: startDate,
+			startTime: startDate,
+			endDate: endDate,
+			endTime: endDate,
 		},
 	};
 
