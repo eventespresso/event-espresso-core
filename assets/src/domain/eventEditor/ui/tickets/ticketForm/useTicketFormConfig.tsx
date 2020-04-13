@@ -2,14 +2,13 @@ import React from 'react';
 import { __, sprintf } from '@wordpress/i18n';
 import { ProfileOutlined, CalendarOutlined, ControlOutlined } from '@ant-design/icons';
 import { pick } from 'ramda';
+import { parseISO } from 'date-fns';
 
-import { CONVERT_TO_MOMENT_DATE_FORMAT, CONVERT_TO_MOMENT_TIME_FORMAT } from '@appConstants/dateFnsFormats';
 import { EspressoFormProps } from '@application/ui/forms/espressoForm';
 import useTicketItem from '@edtrServices/apollo/queries/tickets/useTicketItem';
 import { Ticket } from '@edtrServices/apollo/types';
 import { EntityId } from '@appServices/apollo/types';
-import { PLUS_ONE_MONTH, PLUS_TWO_MONTHS } from '@sharedConstants/defaultDates';
-import { processDateAndTime, prepareDateForForm } from '@sharedServices/utils/dateAndTime';
+import { processDateAndTime } from '@sharedServices/utils/dateAndTime';
 import TicketPriceCalculatorButton from '../ticketPriceCalculator/buttons/TicketPriceCalculatorButton';
 import { validate } from './formValidation';
 import { TicketFormShape } from './types';
@@ -34,10 +33,10 @@ const FIELD_NAMES: Array<keyof Ticket> = [
 const useTicketFormConfig = (id: EntityId, config?: EspressoFormProps): TicketFormConfig => {
 	const { startDate: start, endDate: end, ...restProps } = useTicketItem({ id }) || {};
 
-	const { formatForSite: format, siteTimeToUtc } = useTimeZoneTime();
+	const { siteTimeToUtc, utcToSiteTime } = useTimeZoneTime();
 
-	const startDate = prepareDateForForm(start, PLUS_ONE_MONTH);
-	const endDate = prepareDateForForm(end, PLUS_TWO_MONTHS);
+	const startDate = start ? utcToSiteTime(parseISO(start)) : null;
+	const endDate = end ? utcToSiteTime(parseISO(end)) : null;
 
 	const { onSubmit } = config;
 
@@ -60,10 +59,10 @@ const useTicketFormConfig = (id: EntityId, config?: EspressoFormProps): TicketFo
 	const initialValues: TicketFormShape = {
 		...pick<Omit<Partial<Ticket>, 'prices'>, keyof Ticket>(FIELD_NAMES, restProps),
 		dateTime: {
-			startDate: format(startDate, CONVERT_TO_MOMENT_DATE_FORMAT),
-			startTime: format(startDate, CONVERT_TO_MOMENT_TIME_FORMAT),
-			endDate: format(endDate, CONVERT_TO_MOMENT_DATE_FORMAT),
-			endTime: format(endDate, CONVERT_TO_MOMENT_TIME_FORMAT),
+			startDate: startDate,
+			startTime: startDate,
+			endDate: endDate,
+			endTime: endDate,
 		},
 	};
 

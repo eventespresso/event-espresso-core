@@ -1,16 +1,21 @@
-import { CONVERT_TO_MOMENT_DATE_FORMAT, CONVERT_TO_MOMENT_TIME_FORMAT } from '@appConstants/dateFnsFormats';
-import { formatISO, isValid, parse, parseISO } from 'date-fns';
+import {
+	CONVERT_TO_MOMENT_DATE_FORMAT,
+	CONVERT_TO_MOMENT_TIME_FORMAT,
+	DEFAULT_DATE_FORMAT,
+	DEFAULT_TIME_FORMAT,
+} from '@appConstants/dateFnsFormats';
+import { formatISO, isValid, parse, parseISO, format } from 'date-fns';
 import { __ } from '@wordpress/i18n';
 import * as yup from 'yup';
 
 interface StartAndEndDate {
-	startDate: string;
-	endDate: string;
+	startDate: string | Date;
+	endDate: string | Date;
 }
 
 export interface DateAndTime extends Partial<StartAndEndDate> {
-	startTime?: string;
-	endTime?: string;
+	startTime?: string | Date;
+	endTime?: string | Date;
 }
 
 type ProcessDateAndTime = (
@@ -24,12 +29,18 @@ export const processDateAndTime: ProcessDateAndTime = (dateTime, siteTimeToUtc, 
 	const formatStr = `${CONVERT_TO_MOMENT_DATE_FORMAT} ${CONVERT_TO_MOMENT_TIME_FORMAT}`;
 
 	if (dateTime.startDate && dateTime.startTime) {
-		const startDateStr = `${dateTime.startDate} ${dateTime.startTime}`;
+		const startDateStr = `${format(dateTime.startDate as Date, DEFAULT_DATE_FORMAT)} ${format(
+			dateTime.startTime as Date,
+			DEFAULT_TIME_FORMAT
+		)}`;
 		startDate = siteTimeToUtc(parse(startDateStr, formatStr, backupDate)).toISOString();
 	}
 
 	if (dateTime.endDate && dateTime.endTime) {
-		const endDateStr = `${dateTime.endDate} ${dateTime.endTime}`;
+		const endDateStr = `${format(dateTime.endDate as Date, DEFAULT_DATE_FORMAT)} ${format(
+			dateTime.endTime as Date,
+			DEFAULT_TIME_FORMAT
+		)}`;
 		endDate = siteTimeToUtc(parse(endDateStr, formatStr, backupDate)).toISOString();
 	}
 	return { startDate, endDate };
