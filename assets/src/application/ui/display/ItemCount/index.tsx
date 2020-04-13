@@ -17,7 +17,7 @@ interface ItemCountProps extends BadgeProps {
 const ItemCount: React.FC<ItemCountProps> = ({
 	children,
 	count,
-	emphasizeZero,
+	emphasizeZero = true,
 	title = ' ',
 	zeroCountChar,
 	...props
@@ -28,19 +28,16 @@ const ItemCount: React.FC<ItemCountProps> = ({
 	});
 	const offset = props.offset || [7, 7];
 	const value = count === 0 && typeof zeroCountChar !== 'undefined' ? zeroCountChar : count;
-
 	const countNode = (
-		<Tooltip title={title}>
-			<span className='ant-badge-count' style={{ right: `${offset[0]}px`, top: `${offset[1]}px` }}>
-				{value}
-			</span>
+		<Tooltip placement='top' title={title}>
+			<span>{value}</span>
 		</Tooltip>
 	);
 
 	return (
 		<div className='ee-item-count__wrapper'>
-			<Badge {...props} className={className}>
-				{value}
+			<Badge {...props} className={className} style={{ right: `${offset[0]}px`, top: `${offset[1]}px` }}>
+				{countNode}
 			</Badge>
 			{children}
 		</div>
