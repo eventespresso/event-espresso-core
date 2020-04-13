@@ -1,11 +1,10 @@
 import React from 'react';
 import classNames from 'classnames';
-import { IconButton } from '@chakra-ui/core';
 import { __ } from '@wordpress/i18n';
 
-import { Popover, Tooltip } from '@infraUI/display';
+import { Popover } from '@infraUI/display';
 import { useTimeZoneTime } from '@appServices/hooks';
-
+import Trigger from './Trigger';
 import './style.scss';
 
 export interface Props {
@@ -34,18 +33,13 @@ const TimezoneTimeInfo: React.FC<Props> = ({ date, ...props }) => {
 		</div>
 	);
 	const className = classNames(props.className, 'ee-timezone-info');
-	const label = __('click for timezone\ninformation');
 
 	return (
 		<div className={className}>
 			<Popover
 				content={content}
 				header={__('This Date Converted To:')}
-				trigger={
-					<Tooltip title={label}>
-						<IconButton aria-label={label} icon='info-outline' variant='unstyled' />
-					</Tooltip>
-				}
+				trigger={<Trigger label={__('click for timezone\ninformation')} />}
 			/>
 		</div>
 	);
