@@ -7,5 +7,5 @@ export { default as Popover } from './Popover';
 export { default as Spinner } from './Spinner';
 export { default as Tooltip } from './Tooltip';
 
-export * from '../../../application/ui/display/loadingNotice';
 export * from './types';
+export * from './pagination';
