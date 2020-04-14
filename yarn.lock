@@ -14002,7 +14002,7 @@ rc-notification@~4.0.0:
     rc-animate "2.x"
     rc-util "^4.0.4"
 
-rc-pagination@~2.2.0:
+rc-pagination@^2.2.0, rc-pagination@~2.2.0:
   version "2.2.0"
   resolved "https://registry.yarnpkg.com/rc-pagination/-/rc-pagination-2.2.0.tgz#8daaab1b6ad664da2ddea842f86687b692eb775d"
   integrity sha512-fXempMD/kvHu8tsiW70uPjn1pI4mdD62xFG9drcBh17gj5CbCjazrjpWS615RSauk3b2BBgIcAJzREAMvlAkFQ==
