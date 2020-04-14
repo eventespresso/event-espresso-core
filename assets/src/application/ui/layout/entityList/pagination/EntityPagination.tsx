@@ -1,6 +1,6 @@
 import React from 'react';
 import classNames from 'classnames';
-import { Pagination, PaginationProps } from '@infraUI/navigation';
+import { Pagination, PaginationProps } from '@infraUI/display';
 
 import { EntityListFilterStateManager } from '../filterBar';
 import './style.scss';
