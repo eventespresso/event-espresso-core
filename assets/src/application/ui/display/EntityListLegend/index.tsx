@@ -1,7 +1,7 @@
 import React from 'react';
 
 import ColorSwatch from '@appDisplay/ColorSwatch';
-import { Icon, IconName } from '@appDisplay/Icons';
+import { Icon, IconName } from '@appDisplay/icons';
 import { DescriptionList } from '@appLayout/descriptionList';
 import { EntityListLegendProps } from './types';
 

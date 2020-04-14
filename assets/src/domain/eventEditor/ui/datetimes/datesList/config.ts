@@ -1,4 +1,4 @@
-import { IconName } from '@appDisplay/Icons';
+import { IconName } from '@appDisplay/icons';
 import { LegendConfig } from '@application/ui/display/EntityListLegend/types';
 import { __ } from '@wordpress/i18n';
 

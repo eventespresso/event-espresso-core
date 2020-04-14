@@ -2,7 +2,7 @@ import React from 'react';
 import classNames from 'classnames';
 import { __ } from '@wordpress/i18n';
 
-import { Filter } from '@appDisplay/Icons';
+import { Filter } from '@appDisplay/icons';
 import { IconButton } from '@appInputs/Button';
 import { LabelPosition } from '@application/ui/display';
 import { ToggleFiltersButtonProps } from '../types';

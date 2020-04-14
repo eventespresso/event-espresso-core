@@ -15,7 +15,7 @@ import {
 } from '@appConstants/dateFnsFormats';
 import { useTimeZoneTime } from '@appServices/hooks';
 import './style.scss';
-import { Calendar } from '@appDisplay/Icons';
+import { Calendar } from '@appDisplay/icons';
 
 export interface BiggieCalendarDateProps extends CalendarDateProps {
 	date: Date | string;

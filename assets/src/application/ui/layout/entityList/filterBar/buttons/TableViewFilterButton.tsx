@@ -2,7 +2,7 @@ import React from 'react';
 import classNames from 'classnames';
 import { __ } from '@wordpress/i18n';
 
-import { TableView } from '@appDisplay/Icons';
+import { TableView } from '@appDisplay/icons';
 import { IconButton } from '@application/ui/input';
 import { LabelPosition } from '@application/ui/display';
 import { TableViewFilterButtonProps } from '../types';

@@ -1,7 +1,7 @@
 import React, { CSSProperties } from 'react';
 import { __ } from '@wordpress/i18n';
 
-import { Calendar, Ticket } from '@appDisplay/Icons';
+import { Calendar, Ticket } from '@appDisplay/icons';
 import { Button } from '@application/ui/input';
 import { useFormModal } from '@appLayout/formModal';
 import useTicketAssignmentsManager from '../../ticketAssignmentsManager/useTicketAssignmentsManager';

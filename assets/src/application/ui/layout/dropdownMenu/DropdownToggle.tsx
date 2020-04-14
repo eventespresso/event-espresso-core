@@ -1,7 +1,7 @@
 import React from 'react';
 import classNames from 'classnames';
 
-import { More } from '@appDisplay/Icons';
+import { More } from '@appDisplay/icons';
 import { DropdownToggleProps } from './types';
 import { IconButton } from '@infraUI/inputs';
 import { MenuToggle } from '@infraUI/layout/menu';

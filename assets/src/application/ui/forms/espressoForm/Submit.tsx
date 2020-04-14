@@ -4,7 +4,7 @@ import { __ } from '@wordpress/i18n';
 import { Button, ButtonProps } from '../../input';
 import ResetButton from './ResetButton';
 import { FormButtonProps } from './types';
-import { Save } from '@appDisplay/Icons';
+import { Save } from '@appDisplay/icons';
 
 export interface SubmitProps extends Omit<ButtonProps, 'onClick' | 'loading'> {
 	submitting: boolean;

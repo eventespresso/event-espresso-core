@@ -3,7 +3,7 @@ import { addQueryArgs } from '@wordpress/url';
 import { __ } from '@wordpress/i18n';
 
 import { ADMIN_ROUTES } from '@sharedConstants/adminRoutes';
-import { Groups } from '@appDisplay/Icons';
+import { Groups } from '@appDisplay/icons';
 import getAdminUrl from '@sharedServices/utils/url/getAdminUrl';
 import { getPropsAreEqual } from '@appServices/utilities';
 import { Ticket } from '@edtrServices/apollo/types';

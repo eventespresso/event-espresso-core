@@ -3,7 +3,7 @@ import classNames from 'classnames';
 import { __ } from '@wordpress/i18n';
 
 import { IconButton } from '@application/ui/input';
-import { Link, Unlink } from '@appDisplay/Icons';
+import { Link, Unlink } from '@appDisplay/icons';
 import { getPropsAreEqual } from '@appServices/utilities';
 import { TicketsFilterStateManager } from '@edtrServices/filterState';
 

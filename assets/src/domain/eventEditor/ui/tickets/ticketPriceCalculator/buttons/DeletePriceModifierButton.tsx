@@ -2,7 +2,7 @@ import React, { useCallback } from 'react';
 import { __ } from '@wordpress/i18n';
 
 import { ConfirmDelete } from '@appDisplay/confirm';
-import { Trash } from '@appDisplay/Icons';
+import { Trash } from '@appDisplay/icons';
 import { PriceModifierProps } from '../types';
 import { useDataState } from '../data';
 

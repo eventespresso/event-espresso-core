@@ -1,5 +1,5 @@
 import { AnyObject } from '@appServices/utilities/types';
-import { IconName } from '@appDisplay/Icons';
+import { IconName } from '@appDisplay/icons';
 
 export interface EntityListLegendProps {
 	legendConfig: LegendConfig;

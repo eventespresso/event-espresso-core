@@ -1,7 +1,7 @@
 import React from 'react';
 import { __ } from '@wordpress/i18n';
 
-import { Calendar } from '@appDisplay/Icons';
+import { Calendar } from '@appDisplay/icons';
 import { IconButton } from '@application/ui/input';
 import { EntityListItemProps } from '@appLayout/entityList';
 import ItemCount from '@appDisplay/ItemCount';

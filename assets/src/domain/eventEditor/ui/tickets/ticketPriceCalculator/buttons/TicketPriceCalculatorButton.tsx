@@ -2,7 +2,7 @@ import React from 'react';
 import { __ } from '@wordpress/i18n';
 
 import { IconButton, IconButtonProps } from '@appInputs/Button';
-import { Calculator } from '@appDisplay/Icons';
+import { Calculator } from '@appDisplay/icons';
 import { BaseProps } from '../types';
 import { TypeName } from '@appServices/apollo/status';
 import withIsLoaded from '@sharedUI/hoc/withIsLoaded';
