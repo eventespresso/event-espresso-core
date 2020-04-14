@@ -5,7 +5,7 @@ import { useDataState } from '../../data';
 import { AssignmentFnArgs } from '../../types';
 import { Ticket } from '@appDisplay/espressoIcons';
 
-type Callback = (args: AssignmentFnArgs) => React.ReactNode;
+type Callback = (args: AssignmentFnArgs) => React.ComponentType;
 
 const iconStyle: CSSProperties = {
 	color: '#fff',
@@ -20,11 +20,11 @@ const useCellIcon = (): Callback => {
 			switch (status) {
 				case 'NEW':
 				case 'OLD':
-					return <AntIcon style={iconStyle} component={Ticket} />;
+					return () => <AntIcon style={iconStyle} component={Ticket} />;
 				case 'REMOVED':
-					return <CloseOutlined style={iconStyle} />;
+					return () => <CloseOutlined style={iconStyle} />;
 				default:
-					return <MinusOutlined />;
+					return () => <MinusOutlined />;
 			}
 		},
 		[getAssignmentStatus]

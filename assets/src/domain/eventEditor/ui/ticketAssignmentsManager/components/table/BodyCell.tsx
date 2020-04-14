@@ -1,6 +1,6 @@
 import React from 'react';
-import { Button } from 'antd';
 
+import { Button } from '@infraUI/inputs';
 import { RenderCellProps } from '../../types';
 import { useDataState } from '../../data';
 import useCellIcon from './useCellIcon';
@@ -14,7 +14,7 @@ const BodyCell: React.FC<RenderCellProps> = ({ datetime, ticket }) => {
 
 	const icon = getCellIcon({ datetimeId: datetime.id, ticketId: ticket.id });
 
-	return <Button type='link' onClick={onClick} icon={icon} />;
+	return <Button variant='link' onClick={onClick} icon={icon} />;
 };
 
 export default BodyCell;
