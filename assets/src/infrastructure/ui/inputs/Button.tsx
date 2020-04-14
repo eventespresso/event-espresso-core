@@ -3,10 +3,12 @@ import { Button as ChakraButton } from '@chakra-ui/core';
 
 import type { ButtonProps } from './types';
 
-const Button = React.forwardRef<typeof ChakraButton, ButtonProps>(({ children, buttonText, ...props }, ref) => {
+type ButtonType = React.ComponentType<ButtonProps>;
+
+const Button = React.forwardRef<ButtonType, ButtonProps>(({ children, buttonText, icon, ...props }, ref) => {
 	const text = children || buttonText;
 	return (
-		<ChakraButton {...props} ref={ref}>
+		<ChakraButton {...props} ref={ref} leftIcon={icon}>
 			{text}
 		</ChakraButton>
 	);
