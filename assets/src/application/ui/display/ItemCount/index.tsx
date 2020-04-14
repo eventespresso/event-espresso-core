@@ -1,23 +1,24 @@
 import React from 'react';
 import classNames from 'classnames';
-import { Badge } from 'antd';
-import { BadgeProps } from 'antd/lib/badge';
 
-import { Tooltip } from '@infraUI/display';
+import { Badge, BadgeProps, Tooltip } from '@infraUI/display';
 import { getPropsAreEqual } from '@appServices/utilities';
 
 import './style.scss';
 
 interface ItemCountProps extends BadgeProps {
 	children: React.ReactNode;
+	/** Number to show in badge */
+	count?: React.ReactNode;
 	emphasizeZero?: boolean;
+	offset?: [number | string, number | string];
 	zeroCountChar?: string | JSX.Element;
 }
 
 const ItemCount: React.FC<ItemCountProps> = ({
 	children,
 	count,
-	emphasizeZero,
+	emphasizeZero = true,
 	title = ' ',
 	zeroCountChar,
 	...props
@@ -28,19 +29,19 @@ const ItemCount: React.FC<ItemCountProps> = ({
 	});
 	const offset = props.offset || [7, 7];
 	const value = count === 0 && typeof zeroCountChar !== 'undefined' ? zeroCountChar : count;
-
 	const countNode = (
-		<Tooltip title={title}>
-			<span className='ant-badge-count' style={{ right: `${offset[0]}px`, top: `${offset[1]}px` }}>
-				{value}
-			</span>
+		<Tooltip placement='top' title={title}>
+			<span>{value}</span>
 		</Tooltip>
 	);
 
 	return (
-		<Badge {...props} className={className} count={countNode} offset={offset}>
+		<div className='ee-item-count__wrapper'>
+			<Badge {...props} className={className} style={{ right: `${offset[0]}px`, top: `${offset[1]}px` }}>
+				{countNode}
+			</Badge>
 			{children}
-		</Badge>
+		</div>
 	);
 };
 

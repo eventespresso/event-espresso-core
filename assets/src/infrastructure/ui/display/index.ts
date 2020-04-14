@@ -1,6 +1,7 @@
 export { default as Avatar } from './Avatar';
 export { default as Alert } from './Alert';
 export { default as AlertDialog } from './AlertDialog';
+export { default as Badge } from './Badge';
 export { default as Collapse } from './Collapse';
 export { default as Popover } from './Popover';
 export { default as Spinner } from './Spinner';

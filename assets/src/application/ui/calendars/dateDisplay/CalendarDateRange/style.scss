@@ -16,6 +16,11 @@
 		flex-flow: column nowrap;
 		height: 100%;
 		justify-content: space-evenly;
+		&__footer {
+			font-weight: 700;
+			letter-spacing: var(--ee-letter-spacing-font-size-micro);
+			text-transform: uppercase;
+		}
 	}
 
 	@media only screen and (max-width: 480px) {

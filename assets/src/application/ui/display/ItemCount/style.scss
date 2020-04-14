@@ -4,21 +4,34 @@
  * ------------------------------------------------------------------------- */
 
 .ee-item-count {
-	&--has-items {
-		.ant-badge-count {
+	&__wrapper {
+		position: relative;
+	}
+	&.ee-item-count {
+		border-radius: var(--ee-border-radius-full);
+		box-sizing: border-box;
+		box-shadow: var(--ee-box-shadow-tiny);
+		color: var(--ee-color-white);
+		font-size: var(--ee-font-size-tiny);
+		font-weight: normal;
+		height: calc(var(--ee-font-size-default) + 1px);
+		line-height: var(--ee-font-size-micro);
+		padding: var(--ee-padding-micro);
+		position: absolute;
+		right: 0;
+		text-align: center;
+		text-shadow: var(--ee-text-shadow-inset);
+		top: 0;
+		vertical-align: top;
+		min-width: calc(var(--ee-font-size-default) + 1px);
+		&--has-items {
 			background: var(--ee-color-bright-blue);
 		}
-	}
-
-	&--no-items {
-		.ant-badge-count {
+		&--no-items {
 			background: var(--ee-color-hot-pink);
-			font-size: 1rem;
-			font-weight: bolder;
-			line-height: 1.1rem;
-		}
-		path {
-			fill: var(--ee-color-hot-pink);
+			font-size: var(--ee-font-size-tiny);
+			font-weight: bold;
+			line-height: 1;
 		}
 	}
 }
