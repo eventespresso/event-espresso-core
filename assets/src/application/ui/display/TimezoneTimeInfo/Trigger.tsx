@@ -10,6 +10,7 @@ interface Props {
 
 const Trigger: React.FC<Props> = forwardRef(({ label, onClick }, ref) => {
 	return (
+		// TODO: refactor this by using `withTooltip` when that is updated with chakra components
 		<Tooltip onClick={onClick} title={label}>
 			<IconButton aria-label={label} icon='info-outline' onClick={onClick} ref={ref} variant='unstyled' />
 		</Tooltip>
