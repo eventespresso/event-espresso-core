@@ -1,7 +1,8 @@
 import React from 'react';
 import { __ } from '@wordpress/i18n';
 
-import { EspressoButton, Icon } from '@application/ui/input';
+import { Calendar } from '@appDisplay/espressoIcons';
+import { EspressoIconButton } from '@application/ui/input';
 import { EntityListItemProps } from '@appLayout/entityList';
 import ItemCount from '@appDisplay/ItemCount';
 import { useRelatedDatetimes } from '@edtrServices/apollo/queries';
@@ -26,16 +27,17 @@ const AssignDatesButton: React.FC<EntityListItemProps> = React.memo(({ entity })
 				'There are no event dates assigned to this ticket. Please click the calendar icon to update the assignments.'
 		  );
 
-	const tooltipProps = { placement: 'right' };
+	const tooltipProps = { placement: 'right' as 'right' };
 
 	return (
 		<>
 			<ItemCount count={count} title={title} zeroCountChar='!' emphasizeZero>
-				<EspressoButton
-					icon={Icon.CALENDAR}
+				<EspressoIconButton
+					icon={Calendar}
 					tooltip={__('assign dates')}
 					tooltipProps={tooltipProps}
 					onClick={onOpen}
+					variant='ghost'
 				/>
 			</ItemCount>
 			<ModalContainer assignmentType='forTicket' entity={entity} {...disclosure} />

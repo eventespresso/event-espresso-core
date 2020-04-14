@@ -9,7 +9,7 @@ export interface DropdownMenuProps extends Omit<MenuProps, 'isOpen'> {
 }
 
 export interface DropdownMenuItemProps extends MenuItemProps {
-	icon?: Icon;
+	icon?: React.ComponentType<any>;
 	title?: string;
 }
 

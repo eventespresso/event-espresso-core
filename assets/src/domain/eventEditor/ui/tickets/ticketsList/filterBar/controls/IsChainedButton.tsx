@@ -2,7 +2,8 @@ import React from 'react';
 import classNames from 'classnames';
 import { __ } from '@wordpress/i18n';
 
-import { EspressoButton, EspressoButtonType, Icon } from '@application/ui/input';
+import { EspressoIconButton } from '@application/ui/input';
+import { Link, Unlink } from '@appDisplay/espressoIcons';
 import { getPropsAreEqual } from '@appServices/utilities';
 import { TicketsFilterStateManager } from '@edtrServices/filterState';
 
@@ -18,14 +19,13 @@ const IsChainedButton: React.FC<IsChainedButtonProps> = ({ isChained, toggleIsCh
 		'ee-filter-bar__btn--active': isChained,
 		'ee-filter-bar__chain--active': isChained,
 	});
-	const icon = isChained ? Icon.LINK : Icon.UNLINK;
+	const icon = isChained ? Link : Unlink;
 	const tooltip = isChained
 		? __('tickets list is linked to dates list and is showing tickets for above dates only')
 		: __('tickets list is unlinked and is showing tickets for all event dates');
 
 	return (
-		<EspressoButton
-			buttonType={EspressoButtonType.MINIMAL}
+		<EspressoIconButton
 			className={className}
 			icon={icon}
 			id={'ee-ticket-list-filter-bar-is-chained'}
@@ -33,6 +33,7 @@ const IsChainedButton: React.FC<IsChainedButtonProps> = ({ isChained, toggleIsCh
 			onClick={toggleIsChained}
 			tooltip={tooltip}
 			showTooltipOnMobile
+			variant='outline'
 		/>
 	);
 };

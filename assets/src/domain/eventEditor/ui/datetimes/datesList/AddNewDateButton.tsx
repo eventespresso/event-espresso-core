@@ -1,7 +1,8 @@
 import React, { CSSProperties } from 'react';
 import { __ } from '@wordpress/i18n';
 
-import { EspressoButton, Icon } from '@application/ui/input';
+import { Calendar, Ticket } from '@appDisplay/espressoIcons';
+import { EspressoButton } from '@application/ui/input';
 import { useFormModal } from '@appLayout/formModal';
 import useTicketAssignmentsManager from '../../ticketAssignmentsManager/useTicketAssignmentsManager';
 
@@ -25,8 +26,14 @@ const AddNewDateButton: React.FC = () => {
 
 	return (
 		<div style={btnRowStyle}>
-			<EspressoButton icon={Icon.CALENDAR} buttonText={__('Add New Date')} onClick={onClickAddNew} />
-			<EspressoButton icon={Icon.TICKET} buttonText={__('Ticket Assignments')} onClick={onOpen} />
+			<EspressoButton
+				buttonText={__('Add New Date')}
+				icon={Calendar}
+				mr={2}
+				onClick={onClickAddNew}
+				variant='outline'
+			/>
+			<EspressoButton buttonText={__('Ticket Assignments')} icon={Ticket} onClick={onOpen} variant='outline' />
 			<ModalContainer assignmentType='forAll' {...disclosure} />
 		</div>
 	);

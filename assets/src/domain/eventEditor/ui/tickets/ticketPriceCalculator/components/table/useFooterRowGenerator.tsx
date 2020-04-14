@@ -3,7 +3,7 @@ import { DownCircleFilled, UpCircleFilled } from '@ant-design/icons';
 import { __ } from '@wordpress/i18n';
 
 import { Cell } from '@appLayout/espressoTable';
-import { EspressoButton } from '@application/ui/input';
+import { EspressoIconButton } from '@application/ui/input';
 import { parsedAmount } from '@appServices/utilities/money';
 import { TicketPriceField } from '../../fields';
 import { FormatAmountFunction } from '@appServices/utilities/money/formatAmount';
@@ -19,7 +19,7 @@ type FooterRowGenerator = (props: Props) => FooterRow;
 
 const useFooterRowGenerator = (): FooterRowGenerator => {
 	return useCallback<FooterRowGenerator>(({ formatAmount, reverseCalculate, toggleCalcDir }: Props) => {
-		const calcDirIcon = reverseCalculate ? <UpCircleFilled /> : <DownCircleFilled />;
+		const calcDirIcon = reverseCalculate ? UpCircleFilled : DownCircleFilled;
 
 		const cells: Array<Cell> = [
 			{
@@ -65,7 +65,7 @@ const useFooterRowGenerator = (): FooterRowGenerator => {
 				key: 'actions',
 				type: 'cell',
 				className: 'ee-ticket-price-calculator-total-actions',
-				value: <EspressoButton icon={calcDirIcon} onClick={toggleCalcDir} />,
+				value: <EspressoIconButton icon={calcDirIcon} onClick={toggleCalcDir} variant='outline' />,
 			},
 		];
 

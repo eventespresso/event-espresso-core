@@ -1,4 +1,4 @@
-import { Icon } from '@appDisplay/espressoIcon';
+import { Icon } from '@appDisplay/espressoIcons';
 import { LegendConfig } from '@application/ui/display/EntityListLegend/types';
 import { __ } from '@wordpress/i18n';
 

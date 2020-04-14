@@ -3,7 +3,7 @@ import AntIcon, { CloseOutlined, MinusOutlined } from '@ant-design/icons';
 
 import { useDataState } from '../../data';
 import { AssignmentFnArgs } from '../../types';
-import { EspressoIcon, Icon } from '@appDisplay/espressoIcon';
+import { Ticket } from '@appDisplay/espressoIcons';
 
 type Callback = (args: AssignmentFnArgs) => React.ReactNode;
 
@@ -20,7 +20,7 @@ const useCellIcon = (): Callback => {
 			switch (status) {
 				case 'NEW':
 				case 'OLD':
-					return <AntIcon style={iconStyle} component={() => <EspressoIcon icon={Icon.TICKET} />} />;
+					return <AntIcon style={iconStyle} component={Ticket} />;
 				case 'REMOVED':
 					return <CloseOutlined style={iconStyle} />;
 				default:

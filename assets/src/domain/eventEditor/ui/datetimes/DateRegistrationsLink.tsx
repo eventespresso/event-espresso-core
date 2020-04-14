@@ -4,7 +4,7 @@ import { __ } from '@wordpress/i18n';
 
 import { ADMIN_ROUTES } from '@sharedConstants/adminRoutes';
 import { Datetime } from '@edtrServices/apollo/types';
-import { EspressoIcon, Icon } from '@appDisplay/espressoIcon';
+import { Groups } from '@appDisplay/espressoIcons';
 import getAdminUrl from '@sharedServices/utils/url/getAdminUrl';
 import { getPropsAreEqual } from '@appServices/utilities';
 import { Tooltip } from '@infraUI/display';
@@ -36,7 +36,7 @@ const DateRegistrationsLink: React.FC<Props> = ({ datetime }) => {
 				target={'_blank'}
 				rel={'noopener norefferer'}
 			>
-				<EspressoIcon icon={Icon.GROUPS} svgSize={24} />
+				<Groups svgSize={24} />
 			</a>
 		</Tooltip>
 	);
