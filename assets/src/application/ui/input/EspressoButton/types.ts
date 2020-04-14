@@ -1,7 +1,7 @@
 import React from 'react';
-import { NativeButtonProps } from 'antd/lib/button/button';
 import { Icon as EspressoIcon } from '../../display';
 import { withLabelProps, withTooltipProps } from '../../display';
+import { ButtonProps } from '@infraUI/inputs';
 
 export type ClickHandler = (click?: React.MouseEvent<HTMLElement>) => void;
 
@@ -21,18 +21,12 @@ export enum EspressoButtonType {
 	SECONDARY = 'SECONDARY',
 }
 
-export interface EspressoButtonProps
-	extends Partial<NativeButtonProps>,
-		Partial<withLabelProps>,
-		Partial<withTooltipProps> {
-	buttonSize?: EspressoButtonSize;
-	buttonText?: string;
+export interface EspressoButtonProps extends ButtonProps, Partial<withLabelProps>, Partial<withTooltipProps> {
 	buttonType?: EspressoButtonType;
-	className?: string;
-	disabled?: boolean;
-	onClick?: ClickHandler;
-	icon?: EspressoIcon | React.ReactNode;
-	[key: string]: any;
+	buttonSize?: EspressoButtonSize;
 }
 
-export { EspressoIcon as Icon };
+export interface EspressoIconButtonProps
+	extends Omit<ButtonProps, 'children' | 'buttonText'>,
+		Partial<withLabelProps>,
+		Partial<withTooltipProps> {}
