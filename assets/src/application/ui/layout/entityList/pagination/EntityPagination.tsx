@@ -1,12 +1,11 @@
 import React from 'react';
 import classNames from 'classnames';
-import { Pagination } from 'antd';
-import { PaginationProps } from 'antd/lib/pagination';
+import { Pagination, PaginationProps } from '@infraUI/navigation';
 
 import { EntityListFilterStateManager } from '../filterBar';
 import './style.scss';
 
-interface EntityPaginationProps<ELFS extends EntityListFilterStateManager> extends PaginationProps {
+interface EntityPaginationProps<ELFS extends EntityListFilterStateManager> extends Partial<PaginationProps> {
 	filterState: ELFS;
 }
 
@@ -16,8 +15,7 @@ interface EntityPaginationProps<ELFS extends EntityListFilterStateManager> exten
  */
 const EntityPagination: React.FC<EntityPaginationProps<any>> = ({
 	filterState,
-	pageSizeOptions = ['2', '6', '12', '24', '48'],
-	showSizeChanger = true,
+	showPerPageChanger = true,
 	showTotal,
 	...rest
 }) => {
@@ -28,12 +26,12 @@ const EntityPagination: React.FC<EntityPaginationProps<any>> = ({
 		<div className={className}>
 			<Pagination
 				{...rest}
-				current={pageNumber}
-				defaultPageSize={6}
-				onChange={setPageNumber}
-				onShowSizeChange={setPerPage}
-				pageSizeOptions={pageSizeOptions}
-				showSizeChanger={showSizeChanger}
+				defaultPerPage={6}
+				onChangePageNumber={setPageNumber}
+				onChangePerPage={setPerPage}
+				pageNumber={pageNumber}
+				perPage={perPage}
+				showPerPageChanger={showPerPageChanger}
 				showTotal={showTotal}
 				total={total}
 			/>

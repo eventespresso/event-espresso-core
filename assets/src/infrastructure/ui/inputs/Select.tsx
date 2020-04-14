@@ -39,7 +39,12 @@ const Select: React.FC<SelectProps> = ({ children, options = [], onChange, onCha
 	);
 
 	return (
-		<ChakraSelect {...props} onChange={onChangeHandler}>
+		<ChakraSelect
+			// fix the double icon issue
+			icon={() => null}
+			{...props}
+			onChange={onChangeHandler}
+		>
 			{childNodes}
 		</ChakraSelect>
 	);
