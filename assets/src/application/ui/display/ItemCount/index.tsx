@@ -1,16 +1,17 @@
 import React from 'react';
 import classNames from 'classnames';
-import { BadgeProps } from 'antd/lib/badge';
 
-import { Badge, Tooltip } from '@infraUI/display';
-
+import { Badge, BadgeProps, Tooltip } from '@infraUI/display';
 import { getPropsAreEqual } from '@appServices/utilities';
 
 import './style.scss';
 
 interface ItemCountProps extends BadgeProps {
 	children: React.ReactNode;
+	/** Number to show in badge */
+	count?: React.ReactNode;
 	emphasizeZero?: boolean;
+	offset?: [number | string, number | string];
 	zeroCountChar?: string | JSX.Element;
 }
 

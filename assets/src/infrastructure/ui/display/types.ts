@@ -1,4 +1,9 @@
-import { IAlertDialog, ISpinnerProps, TooltipProps as ChakraTooltipProps } from '@chakra-ui/core';
+import {
+	BadgeProps as ChakraBadgeProps,
+	IAlertDialog,
+	ISpinnerProps,
+	TooltipProps as ChakraTooltipProps,
+} from '@chakra-ui/core';
 
 export interface AlertDialogProps extends Omit<IAlertDialog, 'children'> {
 	cancelButton: React.ReactNode;
@@ -7,6 +12,7 @@ export interface AlertDialogProps extends Omit<IAlertDialog, 'children'> {
 	title?: string;
 }
 
+export interface BadgeProps extends ChakraBadgeProps {}
 export interface SpinnerProps extends ISpinnerProps {}
 
 export interface TooltipProps extends Omit<ChakraTooltipProps, 'aria-label'> {
