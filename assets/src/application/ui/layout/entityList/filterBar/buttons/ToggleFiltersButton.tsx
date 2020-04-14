@@ -2,8 +2,8 @@ import React from 'react';
 import classNames from 'classnames';
 import { __ } from '@wordpress/i18n';
 
-import { Filter } from '@appDisplay/espressoIcons';
-import { EspressoIconButton } from '@appInputs/EspressoButton';
+import { Filter } from '@appDisplay/Icons';
+import { IconButton } from '@appInputs/Button';
 import { LabelPosition } from '@application/ui/display';
 import { ToggleFiltersButtonProps } from '../types';
 import { getPropsAreEqual } from '@appServices/utilities';
@@ -14,7 +14,7 @@ const ToggleFiltersButton: React.FC<ToggleFiltersButtonProps> = React.memo(({ li
 	const tooltip = __(`${showFilters ? 'hide' : 'show'} filters`);
 
 	return (
-		<EspressoIconButton
+		<IconButton
 			className={className}
 			icon={Filter}
 			id={filterId}

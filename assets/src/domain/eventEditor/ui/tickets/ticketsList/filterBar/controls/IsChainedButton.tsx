@@ -2,8 +2,8 @@ import React from 'react';
 import classNames from 'classnames';
 import { __ } from '@wordpress/i18n';
 
-import { EspressoIconButton } from '@application/ui/input';
-import { Link, Unlink } from '@appDisplay/espressoIcons';
+import { IconButton } from '@application/ui/input';
+import { Link, Unlink } from '@appDisplay/Icons';
 import { getPropsAreEqual } from '@appServices/utilities';
 import { TicketsFilterStateManager } from '@edtrServices/filterState';
 
@@ -25,7 +25,7 @@ const IsChainedButton: React.FC<IsChainedButtonProps> = ({ isChained, toggleIsCh
 		: __('tickets list is unlinked and is showing tickets for all event dates');
 
 	return (
-		<EspressoIconButton
+		<IconButton
 			className={className}
 			icon={icon}
 			id={'ee-ticket-list-filter-bar-is-chained'}

@@ -1,7 +1,7 @@
 import React from 'react';
 import { __, sprintf } from '@wordpress/i18n';
 
-import { EspressoButton } from '../../../input';
+import { Button } from '@appInputs/Button';
 import { RepeatableRendererProps } from '../types';
 import { Field, Group } from '../fields';
 import { CloseOutlined } from '@ant-design/icons';
@@ -28,7 +28,7 @@ const RepeatableRenderer: React.FC<Omit<RepeatableRendererProps, 'component'>> =
 							label={
 								<>
 									{sprintf(__('Entry %d'), index + 1)}
-									<EspressoButton
+									<Button
 										className='remove-item'
 										size='sm'
 										icon={CloseOutlined}
@@ -40,9 +40,9 @@ const RepeatableRenderer: React.FC<Omit<RepeatableRendererProps, 'component'>> =
 					</div>
 				);
 			})}
-			<EspressoButton className='add-item' onClick={() => fields.push(undefined)}>
+			<Button className='add-item' onClick={() => fields.push(undefined)}>
 				{__('Add')}
-			</EspressoButton>
+			</Button>
 		</>
 	);
 };

@@ -4,7 +4,7 @@ import { __ } from '@wordpress/i18n';
 
 import { ADMIN_ROUTES } from '@sharedConstants/adminRoutes';
 import { Datetime } from '@edtrServices/apollo/types';
-import { Groups } from '@appDisplay/espressoIcons';
+import { Groups } from '@appDisplay/Icons';
 import getAdminUrl from '@sharedServices/utils/url/getAdminUrl';
 import { getPropsAreEqual } from '@appServices/utilities';
 import { Tooltip } from '@infraUI/display';

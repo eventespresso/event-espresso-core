@@ -1,8 +1,8 @@
 import React from 'react';
 import { __ } from '@wordpress/i18n';
 
-import { Calendar } from '@appDisplay/espressoIcons';
-import { EspressoIconButton } from '@application/ui/input';
+import { Calendar } from '@appDisplay/Icons';
+import { IconButton } from '@application/ui/input';
 import { EntityListItemProps } from '@appLayout/entityList';
 import ItemCount from '@appDisplay/ItemCount';
 import { useRelatedDatetimes } from '@edtrServices/apollo/queries';
@@ -32,7 +32,7 @@ const AssignDatesButton: React.FC<EntityListItemProps> = React.memo(({ entity })
 	return (
 		<>
 			<ItemCount count={count} title={title} zeroCountChar='!' emphasizeZero>
-				<EspressoIconButton
+				<IconButton
 					icon={Calendar}
 					tooltip={__('assign dates')}
 					tooltipProps={tooltipProps}

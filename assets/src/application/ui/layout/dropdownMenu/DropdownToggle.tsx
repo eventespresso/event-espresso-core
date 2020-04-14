@@ -1,9 +1,9 @@
 import React from 'react';
 import classNames from 'classnames';
 
-import { More } from '@appDisplay/espressoIcons';
+import { More } from '@appDisplay/Icons';
 import { DropdownToggleProps } from './types';
-import { IconButton } from '@chakra-ui/core';
+import { IconButton } from '@infraUI/inputs';
 import { MenuToggle } from '@infraUI/layout/menu';
 import { Tooltip } from '@infraUI/display';
 

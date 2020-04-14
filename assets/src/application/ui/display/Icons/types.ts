@@ -1,11 +1,11 @@
-export interface EspressoIconProps {
-	name: Icon | keyof SvgPath;
+export interface IconProps {
+	name: IconName | keyof SvgPath;
 	svgSize?: number;
 	className?: string;
 	otherProps?: object;
 }
 
-export enum Icon {
+export enum IconName {
 	CALCULATOR = 'calculator',
 	CALENDAR = 'calendar',
 	COPY = 'copy',
@@ -25,5 +25,5 @@ export enum Icon {
 }
 
 export type SvgPath = {
-	[key in Icon]: string;
+	[key in IconName]: string;
 };

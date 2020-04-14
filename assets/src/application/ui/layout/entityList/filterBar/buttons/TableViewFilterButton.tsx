@@ -2,8 +2,8 @@ import React from 'react';
 import classNames from 'classnames';
 import { __ } from '@wordpress/i18n';
 
-import { TableView } from '@appDisplay/espressoIcons';
-import { EspressoIconButton } from '@application/ui/input';
+import { TableView } from '@appDisplay/Icons';
+import { IconButton } from '@application/ui/input';
 import { LabelPosition } from '@application/ui/display';
 import { TableViewFilterButtonProps } from '../types';
 import { getPropsAreEqual } from '@appServices/utilities';
@@ -13,7 +13,7 @@ const TableViewFilterButton: React.FC<TableViewFilterButtonProps> = React.memo((
 	const filterId = `ee-table-view-btn-${listId}`;
 
 	return (
-		<EspressoIconButton
+		<IconButton
 			className={className}
 			icon={TableView}
 			id={filterId}

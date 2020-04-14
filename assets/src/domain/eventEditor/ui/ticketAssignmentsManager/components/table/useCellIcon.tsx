@@ -3,7 +3,7 @@ import AntIcon, { CloseOutlined, MinusOutlined } from '@ant-design/icons';
 
 import { useDataState } from '../../data';
 import { AssignmentFnArgs } from '../../types';
-import { Ticket } from '@appDisplay/espressoIcons';
+import { Ticket } from '@appDisplay/Icons';
 
 type Callback = (args: AssignmentFnArgs) => React.ComponentType;
 

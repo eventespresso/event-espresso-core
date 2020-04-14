@@ -4,7 +4,7 @@ import { AppstoreFilled } from '@ant-design/icons';
 import { __ } from '@wordpress/i18n';
 
 import { CardViewFilterButtonProps } from '../types';
-import { EspressoIconButton } from '@application/ui/input';
+import { IconButton } from '@application/ui/input';
 import { LabelPosition } from '@application/ui/display';
 import { getPropsAreEqual } from '@appServices/utilities';
 
@@ -13,7 +13,7 @@ const CardViewFilterButton: React.FC<CardViewFilterButtonProps> = ({ listId, set
 	const filterId = `ee-card-view-btn-${listId}`;
 
 	return (
-		<EspressoIconButton
+		<IconButton
 			className={className}
 			icon={() => <AppstoreFilled />}
 			id={filterId}

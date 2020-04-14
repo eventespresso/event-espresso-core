@@ -1,12 +1,12 @@
 import { AnyObject } from '@appServices/utilities/types';
-import { Icon } from '@appDisplay/espressoIcons';
+import { IconName } from '@appDisplay/Icons';
 
 export interface EntityListLegendProps {
 	legendConfig: LegendConfig;
 }
 
 type IconType = {
-	icon: Icon;
+	icon: IconName;
 	description: string;
 };
 

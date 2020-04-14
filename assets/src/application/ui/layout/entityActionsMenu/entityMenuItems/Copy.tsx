@@ -2,7 +2,7 @@ import React from 'react';
 import { __ } from '@wordpress/i18n';
 
 import { DropdownMenuItem } from '@application/ui/layout/dropdownMenu';
-import { Copy as CopyIcon } from '@appDisplay/espressoIcons';
+import { Copy as CopyIcon } from '@appDisplay/Icons';
 import { MenuItemProps } from './types';
 
 const Copy: React.FC<MenuItemProps> = ({ onClick, ...props }) => {

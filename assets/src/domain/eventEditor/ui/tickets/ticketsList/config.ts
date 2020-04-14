@@ -1,13 +1,13 @@
-import { Icon } from '@appDisplay/espressoIcons';
+import { IconName } from '@appDisplay/Icons';
 import { LegendConfig } from '@application/ui/display/EntityListLegend/types';
 import { __ } from '@wordpress/i18n';
 
 export const legendConfig: LegendConfig = {
 	icons: [
-		{ icon: Icon.EDIT, description: 'Edit Ticket Details' },
-		{ icon: Icon.CALENDAR, description: 'Manage Date Assignments' },
-		{ icon: Icon.CALCULATOR, description: 'Ticket Price Calculator' },
-		{ icon: Icon.TRASH, description: 'Move Ticket to Trash' },
+		{ icon: IconName.EDIT, description: 'Edit Ticket Details' },
+		{ icon: IconName.CALENDAR, description: 'Manage Date Assignments' },
+		{ icon: IconName.CALCULATOR, description: 'Ticket Price Calculator' },
+		{ icon: IconName.TRASH, description: 'Move Ticket to Trash' },
 	],
 	swatches: {
 		TKA: __('Trashed'),

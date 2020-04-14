@@ -1,11 +1,10 @@
 import React from 'react';
-import { Icon as EspressoIcon } from '../../display';
 import { withLabelProps, withTooltipProps } from '../../display';
-import { ButtonProps } from '@infraUI/inputs';
+import { ButtonProps as ButtonAdapterProps } from '@infraUI/inputs';
 
 export type ClickHandler = (click?: React.MouseEvent<HTMLElement>) => void;
 
-export enum EspressoButtonSize {
+export enum ButtonSize {
 	TINY = 18,
 	SMALL = 21,
 	DEFAULT = 24,
@@ -13,7 +12,7 @@ export enum EspressoButtonSize {
 	HUGE = 30,
 }
 
-export enum EspressoButtonType {
+export enum ButtonType {
 	ACCENT = 'ACCENT',
 	DEFAULT = 'DEFAULT',
 	MINIMAL = 'MINIMAL',
@@ -21,12 +20,12 @@ export enum EspressoButtonType {
 	SECONDARY = 'SECONDARY',
 }
 
-export interface EspressoButtonProps extends ButtonProps, Partial<withLabelProps>, Partial<withTooltipProps> {
-	buttonType?: EspressoButtonType;
-	buttonSize?: EspressoButtonSize;
+export interface ButtonProps extends ButtonAdapterProps, Partial<withLabelProps>, Partial<withTooltipProps> {
+	buttonType?: ButtonType;
+	buttonSize?: ButtonSize;
 }
 
-export interface EspressoIconButtonProps
+export interface IconButtonProps
 	extends Omit<ButtonProps, 'children' | 'buttonText'>,
 		Partial<withLabelProps>,
 		Partial<withTooltipProps> {}

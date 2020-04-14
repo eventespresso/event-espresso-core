@@ -3,7 +3,7 @@ import classNames from 'classnames';
 import { parseISO, isValid } from 'date-fns';
 
 import { CalendarDateProps } from '../types';
-import { EspressoButton } from '@application/ui/input/EspressoButton';
+import { Button } from '@application/ui/input/Button';
 import { TimezoneTimeInfo } from '@application/ui/display';
 import { LabelPosition } from '@appDisplay/withLabel';
 import {
@@ -15,7 +15,7 @@ import {
 } from '@appConstants/dateFnsFormats';
 import { useTimeZoneTime } from '@appServices/hooks';
 import './style.scss';
-import { Calendar } from '@appDisplay/espressoIcons';
+import { Calendar } from '@appDisplay/Icons';
 
 export interface BiggieCalendarDateProps extends CalendarDateProps {
 	date: Date | string;
@@ -43,7 +43,7 @@ export const BiggieCalendarDate: React.FC<BiggieCalendarDateProps> = ({
 	const className = classNames(props.className, 'ee-biggie-calendar-date__wrapper');
 
 	const editDateButton = typeof onEdit === 'function' && (
-		<EspressoButton
+		<Button
 			className='ee-edit-calendar-date-btn'
 			onClick={onEditHandler}
 			onKeyPress={onEditHandler}

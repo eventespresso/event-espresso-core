@@ -1,12 +1,12 @@
 import React from 'react';
 import { __ } from '@wordpress/i18n';
 
-import { EspressoButton, EspressoButtonProps } from '../../input';
+import { Button, ButtonProps } from '../../input';
 import ResetButton from './ResetButton';
 import { FormButtonProps } from './types';
-import { Save } from '@appDisplay/espressoIcons';
+import { Save } from '@appDisplay/Icons';
 
-export interface SubmitProps extends Omit<EspressoButtonProps, 'onClick' | 'loading'> {
+export interface SubmitProps extends Omit<ButtonProps, 'onClick' | 'loading'> {
 	submitting: boolean;
 	hasErrors?: boolean;
 	resetButton: FormButtonProps;
@@ -17,7 +17,7 @@ const Submit: React.FC<SubmitProps> = ({ submitting, hasErrors, submitButton, re
 	return (
 		<div className='submit-wrapper'>
 			<div className='submit-button'>
-				<EspressoButton
+				<Button
 					icon={Save}
 					type='submit'
 					isDisabled={hasErrors || submitting}

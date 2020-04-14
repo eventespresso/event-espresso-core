@@ -2,7 +2,7 @@ import React from 'react';
 import { __ } from '@wordpress/i18n';
 
 import { DropdownMenuItem } from '@application/ui/layout/dropdownMenu';
-import { Edit as EditIcon } from '@appDisplay/espressoIcons';
+import { Edit as EditIcon } from '@appDisplay/Icons';
 import { MenuItemProps } from './types';
 
 const Edit: React.FC<MenuItemProps> = ({ onClick, ...props }) => {

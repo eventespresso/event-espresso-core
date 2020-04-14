@@ -2,7 +2,7 @@ import React from 'react';
 import { __ } from '@wordpress/i18n';
 
 import { DropdownMenuItem } from '@application/ui/layout/dropdownMenu';
-import { Trash as TrashIcon } from '@appDisplay/espressoIcons';
+import { Trash as TrashIcon } from '@appDisplay/Icons';
 import { MenuItemProps } from './types';
 
 const Trash: React.FC<MenuItemProps> = ({ onClick, ...props }) => {

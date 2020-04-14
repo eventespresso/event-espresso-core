@@ -1,8 +1,8 @@
 import React from 'react';
 import { __ } from '@wordpress/i18n';
 
-import { Ticket } from '@appDisplay/espressoIcons';
-import { EspressoIconButton } from '@application/ui/input';
+import { Ticket } from '@appDisplay/Icons';
+import { IconButton } from '@application/ui/input';
 import { EntityListItemProps } from '@appLayout/entityList';
 import ItemCount from '@appDisplay/ItemCount';
 import { useRelatedTickets } from '@edtrServices/apollo/queries';
@@ -30,7 +30,7 @@ const AssignTicketsButton: React.FC<EntityListItemProps> = React.memo(({ entity 
 	return (
 		<>
 			<ItemCount count={count} title={title} zeroCountChar='!' emphasizeZero>
-				<EspressoIconButton
+				<IconButton
 					icon={Ticket}
 					tooltip={__('assign tickets')}
 					tooltipProps={tooltipProps}

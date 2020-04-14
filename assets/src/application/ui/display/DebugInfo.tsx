@@ -2,7 +2,7 @@ import React, { useCallback } from 'react';
 import styled from '@emotion/styled';
 import { __ } from '@wordpress/i18n';
 
-import { EspressoButton } from '@application/ui/input';
+import { Button } from '@application/ui/input';
 import { Collapse } from '@infraUI/display';
 
 const Pre = styled.pre`
@@ -39,7 +39,7 @@ const DebugInfo: React.FC<DebugInfoProps> = ({ data, asJson = true, asCollapse =
 
 	return (
 		<>
-			<EspressoButton buttonText={buttonText} onClick={handleToggle}></EspressoButton>
+			<Button buttonText={buttonText} onClick={handleToggle} />
 			<Collapse isOpen={show}>{output}</Collapse>
 		</>
 	);

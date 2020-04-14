@@ -4,7 +4,7 @@ import { CompassFilled } from '@ant-design/icons';
 import { useSpring, animated } from 'react-spring';
 import { __ } from '@wordpress/i18n';
 
-import { EspressoIconButton } from '@appInputs/EspressoButton';
+import { IconButton } from '@appInputs/Button';
 import { LabelPosition } from '@application/ui/display';
 import { ToggleLegendButtonProps } from '../types';
 import { getPropsAreEqual } from '@appServices/utilities';
@@ -23,7 +23,7 @@ const ToggleLegendButton: React.FC<ToggleLegendButtonProps> = ({ listId, showLeg
 	const tooltip = showLegend ? __('hide legend') : __('show legend');
 
 	return (
-		<EspressoIconButton
+		<IconButton
 			className={className}
 			icon={icon}
 			id={filterId}
