@@ -1,10 +1,9 @@
 import React from 'react';
 
-import Editable from './Editable';
-import { TextProps } from './types';
+import { Editable, EditableProps } from '@infraUI/inputs';
 
-const InlineEditText: React.FC<TextProps> = ({ ellipsis = true, ...rest }) => {
-	return <Editable {...rest} ellipsis={ellipsis} inputType='text' />;
+const InlineEditText: React.FC<EditableProps> = (props) => {
+	return <Editable {...props} />;
 };
 
 export default InlineEditText;

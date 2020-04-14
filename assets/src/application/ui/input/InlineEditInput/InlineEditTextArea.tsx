@@ -1,11 +1,13 @@
 import React from 'react';
 
-import Editable from './Editable';
-import { TextAreaProps } from './types';
+import { Editable, EditableProps } from '@infraUI/inputs';
 
-const InlineEditTextArea: React.FC<TextAreaProps> = ({ ellipsis, ...rest }) => {
-	const ellipsisOptions = ellipsis ? ellipsis : { rows: 3, expandable: true };
-	return <Editable ellipsis={ellipsisOptions} {...rest} inputType='textarea' />;
+const InlineEditTextArea: React.FC<EditableProps> = (props) => {
+	const editableInputProps = {
+		as: 'textarea',
+	};
+
+	return <Editable {...props} editableInputProps={editableInputProps} />;
 };
 
 export default InlineEditTextArea;

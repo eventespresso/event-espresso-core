@@ -13,7 +13,9 @@ interface EditableDescProps extends DateItemProps {
 const EditableDesc: React.FC<EditableDescProps> = ({ entity: datetime, className }) => {
 	const { updateEntity } = useDatetimeMutator(datetime.id);
 
-	const onChangeDesc = useCallback(
+	const defaultValue = datetime.description ? datetime.description : __('Edit description...');
+
+	const onSubmit = useCallback(
 		(description: string): void => {
 			if (description !== datetime.description) {
 				updateEntity({ description });
@@ -22,11 +24,7 @@ const EditableDesc: React.FC<EditableDescProps> = ({ entity: datetime, className
 		[datetime.cacheId]
 	);
 
-	return (
-		<InlineEditTextArea className={className} onChange={onChangeDesc}>
-			{datetime.description ? datetime.description : __('Edit description...')}
-		</InlineEditTextArea>
-	);
+	return <InlineEditTextArea className={className} defaultValue={defaultValue} onSubmit={onSubmit} />;
 };
 
 export default React.memo(EditableDesc, getPropsAreEqual(['entity', 'description']));
