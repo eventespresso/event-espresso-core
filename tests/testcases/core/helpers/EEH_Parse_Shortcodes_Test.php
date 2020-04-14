@@ -364,6 +364,7 @@ class EEH_Parse_Shortcodes_Test extends EE_UnitTestCase
      * object in the data sent to the parsers.
      *
      * @group 7659
+     * * @doesNotPerformAssertions
      */
     public function test_invalid_attendee_obj_EE_Attendee_Shortcodes()
     {
