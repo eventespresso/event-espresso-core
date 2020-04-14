@@ -1,6 +1,6 @@
 /* import React, { Suspense } from 'react';
 
-import { LoadingNotice } from '@infraUI/display';
+import { LoadingNotice } from '@appDisplay/loadingNotice';
 import { DatepickerProps, TimepickerProps } from './types'; */
 
 // const LazyDatepicker = React.lazy(() => import(/* webpackChunkName: "datepicker" */ './Datepicker'));

@@ -4,7 +4,7 @@ import { AppstoreFilled } from '@ant-design/icons';
 import { __ } from '@wordpress/i18n';
 
 import { CardViewFilterButtonProps } from '../types';
-import { EspressoButton, EspressoButtonType } from '@application/ui/input';
+import { IconButton } from '@application/ui/input';
 import { LabelPosition } from '@application/ui/display';
 import { getPropsAreEqual } from '@appServices/utilities';
 
@@ -13,16 +13,16 @@ const CardViewFilterButton: React.FC<CardViewFilterButtonProps> = ({ listId, set
 	const filterId = `ee-card-view-btn-${listId}`;
 
 	return (
-		<EspressoButton
-			buttonType={EspressoButtonType.MINIMAL}
+		<IconButton
 			className={className}
-			icon={<AppstoreFilled />}
+			icon={() => <AppstoreFilled />}
 			id={filterId}
 			label={__('card view')}
 			onClick={view !== 'card' ? setCardView : null}
 			tooltip={__('card view')}
 			labelClassName={'ee-filter-bar__btn-wrap'}
 			labelPosition={LabelPosition.BOTTOM_CENTER}
+			variant='outline'
 		/>
 	);
 };

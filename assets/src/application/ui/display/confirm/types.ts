@@ -1,7 +1,7 @@
-import { EspressoButtonProps } from '@application/ui/input';
+import { ButtonProps } from '@application/ui/input';
 
 export interface ConfirmProps {
-	buttonProps: EspressoButtonProps;
+	buttonProps: ButtonProps;
 	onConfirm: VoidFunction;
 	title?: string;
 }

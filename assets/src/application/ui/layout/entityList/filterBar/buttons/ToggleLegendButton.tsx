@@ -4,7 +4,7 @@ import { CompassFilled } from '@ant-design/icons';
 import { useSpring, animated } from 'react-spring';
 import { __ } from '@wordpress/i18n';
 
-import { EspressoButton, EspressoButtonType } from '@appInputs/EspressoButton';
+import { IconButton } from '@appInputs/Button';
 import { LabelPosition } from '@application/ui/display';
 import { ToggleLegendButtonProps } from '../types';
 import { getPropsAreEqual } from '@appServices/utilities';
@@ -14,7 +14,7 @@ const ToggleLegendButton: React.FC<ToggleLegendButtonProps> = ({ listId, showLeg
 	const iconProps = useSpring({
 		transform: `rotate(${showLegend ? 0 : 180}deg)`,
 	});
-	const icon = (
+	const icon = () => (
 		<animated.div style={iconProps}>
 			<CompassFilled />
 		</animated.div>
@@ -23,8 +23,7 @@ const ToggleLegendButton: React.FC<ToggleLegendButtonProps> = ({ listId, showLeg
 	const tooltip = showLegend ? __('hide legend') : __('show legend');
 
 	return (
-		<EspressoButton
-			buttonType={EspressoButtonType.MINIMAL}
+		<IconButton
 			className={className}
 			icon={icon}
 			id={filterId}
@@ -33,6 +32,7 @@ const ToggleLegendButton: React.FC<ToggleLegendButtonProps> = ({ listId, showLeg
 			tooltip={tooltip}
 			labelClassName={'ee-filter-bar__btn-wrap'}
 			labelPosition={LabelPosition.BOTTOM_CENTER}
+			variant='outline'
 		/>
 	);
 };

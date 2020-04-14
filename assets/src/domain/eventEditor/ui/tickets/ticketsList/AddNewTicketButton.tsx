@@ -1,7 +1,8 @@
 import React from 'react';
 import { __ } from '@wordpress/i18n';
 
-import { EspressoButton, Icon } from '@appInputs/index';
+import { Calendar } from '@appDisplay/icons';
+import { Button } from '@appInputs/index';
 import { useFormModal } from '@appLayout/formModal';
 
 const AddNewTicketButton: React.FC = () => {
@@ -12,7 +13,7 @@ const AddNewTicketButton: React.FC = () => {
 			editorId: 'addTicket',
 		});
 	};
-	return <EspressoButton icon={Icon.CALENDAR} buttonText={__('Add New Ticket')} onClick={onClick} />;
+	return <Button buttonText={__('Add New Ticket')} icon={Calendar} onClick={onClick} variant='outline' />;
 };
 
 export default AddNewTicketButton;

@@ -1,9 +1,11 @@
-import React, { forwardRef } from 'react';
+import React from 'react';
 import { IconButton as ChakraIconButton } from '@chakra-ui/core';
 
 import { IconButtonProps } from './types';
 
-const IconButton: React.FC<IconButtonProps> = forwardRef((props, ref) => {
+type ButtonType = React.ComponentType<IconButtonProps>;
+
+const IconButton = React.forwardRef<ButtonType, IconButtonProps>((props, ref) => {
 	return <ChakraIconButton {...props} ref={ref} />;
 });
 

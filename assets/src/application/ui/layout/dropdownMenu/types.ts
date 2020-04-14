@@ -1,4 +1,4 @@
-import { Icon } from '@application/ui/display';
+import { IconName } from '@application/ui/display';
 import { MenuProps, MenuItemProps, MenuToggleProps, MenuListProps } from '@infraUI/layout/menu';
 import { withTooltipProps } from '@application/ui/display';
 
@@ -9,12 +9,12 @@ export interface DropdownMenuProps extends Omit<MenuProps, 'isOpen'> {
 }
 
 export interface DropdownMenuItemProps extends MenuItemProps {
-	icon?: Icon;
+	icon?: React.ComponentType<any>;
 	title?: string;
 }
 
 export interface DropdownToggleProps extends MenuToggleProps, withTooltipProps {
-	icon?: Icon;
+	icon?: IconName;
 	isOpen?: boolean;
 	onClose?: VoidFunction;
 }

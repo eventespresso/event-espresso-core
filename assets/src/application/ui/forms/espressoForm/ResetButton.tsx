@@ -2,18 +2,18 @@ import React from 'react';
 import { __ } from '@wordpress/i18n';
 import { useForm } from 'react-final-form';
 
-import { EspressoButton, EspressoButtonProps } from '../../input';
+import { Button, ButtonProps } from '../../input';
 
-const ResetButton: React.FC<EspressoButtonProps> = ({ disabled, label, ...props }) => {
+const ResetButton: React.FC<ButtonProps> = ({ isDisabled, buttonText, ...props }) => {
 	const form = useForm();
 	return (
 		<div className='reset-button'>
-			<EspressoButton
-				htmlType='reset'
-				disabled={disabled}
-				htmlClass='reset-button'
+			<Button
+				type='reset'
+				isDisabled={isDisabled}
+				className='reset-button'
 				onClick={() => form.reset()}
-				buttonText={label || __('Reset')}
+				buttonText={buttonText || __('Reset')}
 				{...props}
 			/>
 		</div>

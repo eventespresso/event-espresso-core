@@ -21,13 +21,16 @@ export interface CommonInputProps<T = Element, V = React.ReactText> {
 
 export interface ButtonProps extends Partial<ChakraButtonProps> {
 	buttonText?: React.ReactNode;
+	icon?: React.ComponentType<any>;
 }
 
 export interface CheckboxProps extends ChakraCheckboxProps {}
 
 export interface CheckboxGroupProps extends ChakraCheckboxGroupProps {}
 
-export interface IconButtonProps extends ChakraIconButtonProps {}
+export interface IconButtonProps extends ChakraIconButtonProps {
+	icon: React.ComponentType<any>;
+}
 
 export interface NumberInputProps extends ChakraNumberInputProps {
 	inputFieldProps?: ChakraInputProps;

@@ -6,7 +6,7 @@ import { ButtonProps, OptionsType } from '@infraUI/inputs';
 import { FormControlProps } from '@infraUI/forms';
 
 export interface FormButtonProps extends ButtonProps {
-	label?: string;
+	buttonText?: string;
 }
 
 export interface FormContextProps {

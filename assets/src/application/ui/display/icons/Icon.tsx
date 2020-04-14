@@ -2,21 +2,19 @@ import React from 'react';
 import classNames from 'classnames';
 
 import { svgPath } from './svgPaths';
-import { EspressoIconProps } from './types';
+import { IconProps } from './types';
 
 /**
  * Custom Event Espresso Dashicons
  */
-const EspressoIcon: React.FC<EspressoIconProps> = ({ icon, svgSize = 20, className, isPressed, ...otherProps }) => {
-	let path: string;
-
-	path = svgPath[icon];
+const Icon = React.forwardRef<SVGSVGElement, IconProps>(({ name, svgSize = 20, className, ...otherProps }, ref) => {
+	const path = svgPath[name];
 
 	if (!path) {
 		return null;
 	}
 
-	const htmlClass = classNames(className, 'dashicon', `dashicons-${icon}`, 'espresso-icon');
+	const newClassName = classNames(className, 'dashicon', `dashicons-${name}`, 'espresso-icon');
 
 	return (
 		<svg
@@ -27,12 +25,13 @@ const EspressoIcon: React.FC<EspressoIconProps> = ({ icon, svgSize = 20, classNa
 			width={svgSize}
 			height={svgSize}
 			viewBox='0 0 20 20'
-			className={htmlClass}
+			className={newClassName}
+			ref={ref}
 			{...otherProps}
 		>
 			<path d={path} />
 		</svg>
 	);
-};
+});
 
-export default EspressoIcon;
+export default Icon;

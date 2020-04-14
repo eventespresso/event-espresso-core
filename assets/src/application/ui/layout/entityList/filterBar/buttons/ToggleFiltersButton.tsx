@@ -2,7 +2,8 @@ import React from 'react';
 import classNames from 'classnames';
 import { __ } from '@wordpress/i18n';
 
-import { EspressoButton, EspressoButtonType, Icon } from '@appInputs/EspressoButton';
+import { Filter } from '@appDisplay/icons';
+import { IconButton } from '@appInputs/Button';
 import { LabelPosition } from '@application/ui/display';
 import { ToggleFiltersButtonProps } from '../types';
 import { getPropsAreEqual } from '@appServices/utilities';
@@ -13,16 +14,16 @@ const ToggleFiltersButton: React.FC<ToggleFiltersButtonProps> = React.memo(({ li
 	const tooltip = __(`${showFilters ? 'hide' : 'show'} filters`);
 
 	return (
-		<EspressoButton
-			buttonType={EspressoButtonType.MINIMAL}
+		<IconButton
 			className={className}
-			icon={Icon.FILTER}
+			icon={Filter}
 			id={filterId}
 			label={__('filters')}
 			onClick={toggleFilters}
 			tooltip={tooltip}
 			labelClassName={'ee-filter-bar__btn-wrap'}
 			labelPosition={LabelPosition.BOTTOM_CENTER}
+			variant='outline'
 		/>
 	);
 });

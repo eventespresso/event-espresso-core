@@ -3,7 +3,7 @@ import { addQueryArgs } from '@wordpress/url';
 import { __ } from '@wordpress/i18n';
 
 import { ADMIN_ROUTES } from '@sharedConstants/adminRoutes';
-import { EspressoIcon, Icon } from '@appDisplay/espressoIcon';
+import { Groups } from '@appDisplay/icons';
 import getAdminUrl from '@sharedServices/utils/url/getAdminUrl';
 import { getPropsAreEqual } from '@appServices/utilities';
 import { Ticket } from '@edtrServices/apollo/types';
@@ -40,7 +40,7 @@ const TicketRegistrationsLink: React.FC<Props> = ({ ticket }) => {
 					target={'_blank'}
 					rel={'noopener norefferer'}
 				>
-					<EspressoIcon icon={Icon.GROUPS} svgSize={24} />
+					<Groups svgSize={24} />
 				</a>
 			</Tooltip>
 		</ItemCount>

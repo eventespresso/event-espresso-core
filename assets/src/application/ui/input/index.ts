@@ -1,6 +1,6 @@
 export { default as CurrencyInput } from './CurrencyInput';
 
-export * from './EspressoButton';
+export * from './Button';
 export * from './InlineEditInput';
 export * from './SearchInput';
 export * from './SelectInput';
