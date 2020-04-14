@@ -10,10 +10,9 @@ import './style.scss';
 export interface Props {
 	className?: string;
 	date: Date;
-	inline?: boolean;
 }
 
-const TimezoneTimeInfo: React.FC<Props> = ({ date, inline = true, ...props }) => {
+const TimezoneTimeInfo: React.FC<Props> = ({ date, ...props }) => {
 	const { formatDateForSite, formatDateForUser, formatUtcDateForSite } = useTimeZoneTime();
 	const content = (
 		<div>
@@ -33,7 +32,7 @@ const TimezoneTimeInfo: React.FC<Props> = ({ date, inline = true, ...props }) =>
 			<div className={'ee-focus-priority-6'}>{formatUtcDateForSite(date)}</div>
 		</div>
 	);
-	const className = classNames(props.className, 'ee-timezone-info', { 'ee-timezone-info--inline': inline });
+	const className = classNames(props.className, 'ee-timezone-info');
 
 	return (
 		<div className={className}>

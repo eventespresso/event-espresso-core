@@ -1,16 +1,13 @@
 .ee-timezone-info {
-	display: block;
+	display: inline-block;
 	margin: 0 auto;
 	position: relative;
 	[role='dialog'] {
-		position: absolute;
-		min-width: 260px;
 		left: 0;
+		min-width: 260px;
+		position: absolute;
 		[x-arrow] {
 			display: none;
 		}
-	}
-	&--inline {
-		display: inline-block;
 	}
 }
