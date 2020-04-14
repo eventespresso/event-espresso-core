@@ -1,9 +1,9 @@
 import React from 'react';
 
-import { Editable, EditableProps } from '@infraUI/inputs';
+import { Editable, EditableProps, EditableInputProps } from '@infraUI/inputs';
 
 const InlineEditTextArea: React.FC<EditableProps> = (props) => {
-	const editableInputProps = {
+	const editableInputProps: EditableInputProps = {
 		as: 'textarea',
 	};
 

@@ -1,12 +1,8 @@
-import { TextProps as AntdTextProps } from 'antd/es/typography/Text';
-import { BlockProps } from 'antd/es/typography/Base';
-
-export interface AdditionalProps extends BlockProps, Omit<AntdTextProps, 'ellipsis'> {
-	ellipsis?: boolean | EllipsisConfig;
-	onChange?: (text: string) => void;
+export interface AdditionalProps {
+	className?: string;
+	value?: number;
+	onSubmit?: (text: string) => void;
 }
-
-// type BaseProps = Omit<BlockProps, 'editable'>;
 
 export interface EditableProps extends HeadingProps, AdditionalProps {
 	inputType: InputType;

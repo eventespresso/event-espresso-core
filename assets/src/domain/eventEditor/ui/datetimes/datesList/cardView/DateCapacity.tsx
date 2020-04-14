@@ -16,7 +16,7 @@ const DateCapacity: React.FC<DateItemProps> = ({ entity: datetime }) => {
 	const updateRelatedTickets = useUpdateRelatedTickets(datetime.id);
 	const ticketQuantityForCapacity = useTicketQuantityForCapacity();
 
-	const onChange: TextProps['onChange'] = useCallback(
+	const onSubmit: TextProps['onSubmit'] = useCallback(
 		(cap) => {
 			const capacity = parseInfinity(cap);
 			if (capacity !== datetime.capacity) {
@@ -30,7 +30,7 @@ const DateCapacity: React.FC<DateItemProps> = ({ entity: datetime }) => {
 		[datetime.cacheId]
 	);
 
-	return <InlineEditInfinity onChange={onChange}>{datetime.capacity}</InlineEditInfinity>;
+	return <InlineEditInfinity onSubmit={onSubmit} value={datetime.capacity} />;
 };
 
 export default React.memo(DateCapacity, getPropsAreEqual(['entity', 'cacheId']));

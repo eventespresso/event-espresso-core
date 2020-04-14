@@ -1,53 +1,44 @@
 import React, { useEffect, useState } from 'react';
 import classNames from 'classnames';
 
+import { Editable, EditableInputProps } from '@infraUI/inputs';
 import parseInfinity from '@appServices/utilities/number/parseInfinity';
-import Editable from './Editable';
 import { TextProps } from './types';
 
-const InlineEditInfinity: React.FC<TextProps> = ({ children, onChange, className, ...rest }) => {
-	const [value, setValue] = useState(children);
-	const [isEditing, setIsEditing] = useState(false);
+const InlineEditInfinity: React.FC<TextProps> = (props) => {
+	const [value, setValue] = useState(props.value);
 
 	// if value updated by parent
 	useEffect(() => {
-		setValue(children);
-	}, [children]);
+		setValue(props.value);
+	}, [props.value]);
 
-	const editable: TextProps['editable'] = {
-		editing: isEditing,
-		onChange: (val) => {
-			const parsedValue = parseInfinity(val);
-			setValue(parsedValue);
-			setIsEditing(false);
-			if (typeof onChange === 'function') {
-				onChange(`${parsedValue}`);
-			}
-		},
-		onStart: () => setIsEditing(true),
+	const onSubmit: TextProps['onSubmit'] = (val) => {
+		const parsedValue = parseInfinity(val);
+		setValue(parsedValue);
+
+		if (typeof props.onSubmit === 'function') {
+			props.onSubmit(`${parsedValue}`);
+		}
 	};
 
-	let output: string;
-	switch (true) {
-		case isEditing && value < 0:
-			output = '';
-			break;
-		case !isEditing && value < 0:
-			output = '∞';
-			break;
-		default:
-			output = `${value}`;
-			break;
-	}
-	const htmlClasseName = classNames({
-		className,
+	const output: string = value < 0 ? '∞' : String(value);
+	const className = classNames(props.className, {
 		'ee-infinity-sign': output === '∞',
 	});
 
+	const editableInputProps: EditableInputProps = {
+		as: 'input',
+		type: 'text',
+	};
+
 	return (
-		<Editable {...rest} editable={editable} inputType='text' className={htmlClasseName}>
-			{output}
-		</Editable>
+		<Editable
+			className={className}
+			defaultValue={output}
+			editableInputProps={editableInputProps}
+			onSubmit={onSubmit}
+		/>
 	);
 };
 

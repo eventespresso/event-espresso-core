@@ -9,7 +9,7 @@ import type { TicketItemProps } from '../types';
 const TicketQuantity: React.FC<TicketItemProps> = ({ entity: ticket }) => {
 	const { updateEntity } = useTicketMutator(ticket.id);
 
-	const onChange: TextProps['onChange'] = useCallback(
+	const onSubmit: TextProps['onSubmit'] = useCallback(
 		(qty) => {
 			const quantity = parseInfinity(qty);
 			if (quantity !== ticket.quantity) {
@@ -19,7 +19,7 @@ const TicketQuantity: React.FC<TicketItemProps> = ({ entity: ticket }) => {
 		[ticket.cacheId]
 	);
 
-	return <InlineEditInfinity onChange={onChange}>{ticket.quantity}</InlineEditInfinity>;
+	return <InlineEditInfinity onSubmit={onSubmit} value={ticket.quantity} />;
 };
 
 export default React.memo(TicketQuantity, getPropsAreEqual(['entity', 'cacheId']));
