@@ -38,7 +38,6 @@ const Button = React.forwardRef<typeof ButtonAdapter, ButtonProps>(
 			'esprs-btn-small': buttonSize === ButtonSize.SMALL,
 			'esprs-btn-big': buttonSize === ButtonSize.BIG,
 			'esprs-btn-huge': buttonSize === ButtonSize.HUGE,
-			'ant-btn-icon-only': !buttonText,
 			'ee-noIcon': !icon,
 		});
 
