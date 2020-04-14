@@ -5,6 +5,7 @@ import type {
 	CheckboxProps as ChakraCheckboxProps,
 	CheckboxGroupProps as ChakraCheckboxGroupProps,
 	FlexProps as ChakraFlexProps,
+	IconButtonProps as ChakraIconButtonProps,
 	InputProps as ChakraInputProps,
 	NumberInputProps as ChakraNumberInputProps,
 	PseudoBoxProps as ChakraPseudoBoxProps,
@@ -25,6 +26,8 @@ export interface ButtonProps extends Partial<ChakraButtonProps> {
 export interface CheckboxProps extends ChakraCheckboxProps {}
 
 export interface CheckboxGroupProps extends ChakraCheckboxGroupProps {}
+
+export interface IconButtonProps extends ChakraIconButtonProps {}
 
 export interface NumberInputProps extends ChakraNumberInputProps {
 	inputFieldProps?: ChakraInputProps;

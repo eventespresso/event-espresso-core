@@ -1,7 +1,7 @@
 import React, { forwardRef } from 'react';
-import { IconButton } from '@chakra-ui/core';
 
 import { Tooltip } from '@infraUI/display';
+import { IconButton } from '@infraUI/inputs';
 
 interface Props {
 	label: string;
