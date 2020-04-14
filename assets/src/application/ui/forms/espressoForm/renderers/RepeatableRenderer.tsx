@@ -4,6 +4,7 @@ import { __, sprintf } from '@wordpress/i18n';
 import { EspressoButton } from '../../../input';
 import { RepeatableRendererProps } from '../types';
 import { Field, Group } from '../fields';
+import { CloseOutlined } from '@ant-design/icons';
 
 const RepeatableRenderer: React.FC<Omit<RepeatableRendererProps, 'component'>> = ({
 	fields,
@@ -29,10 +30,8 @@ const RepeatableRenderer: React.FC<Omit<RepeatableRendererProps, 'component'>> =
 									{sprintf(__('Entry %d'), index + 1)}
 									<EspressoButton
 										className='remove-item'
-										shape='circle'
-										EspressoButtonSize='small'
-										icon='close'
-										type='danger'
+										size='sm'
+										icon={CloseOutlined}
 										onClick={() => fields.remove(index)}
 									/>
 								</>

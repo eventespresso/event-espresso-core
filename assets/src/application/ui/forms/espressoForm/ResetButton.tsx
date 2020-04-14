@@ -4,16 +4,16 @@ import { useForm } from 'react-final-form';
 
 import { EspressoButton, EspressoButtonProps } from '../../input';
 
-const ResetButton: React.FC<EspressoButtonProps> = ({ disabled, label, ...props }) => {
+const ResetButton: React.FC<EspressoButtonProps> = ({ isDisabled, buttonText, ...props }) => {
 	const form = useForm();
 	return (
 		<div className='reset-button'>
 			<EspressoButton
-				htmlType='reset'
-				disabled={disabled}
-				htmlClass='reset-button'
+				type='reset'
+				isDisabled={isDisabled}
+				className='reset-button'
 				onClick={() => form.reset()}
-				buttonText={label || __('Reset')}
+				buttonText={buttonText || __('Reset')}
 				{...props}
 			/>
 		</div>

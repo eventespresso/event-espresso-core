@@ -15,7 +15,7 @@ const EspressoIcon = React.forwardRef<SVGSVGElement, EspressoIconProps>(
 			return null;
 		}
 
-		const htmlClass = classNames(className, 'dashicon', `dashicons-${name}`, 'espresso-icon');
+		const newClassName = classNames(className, 'dashicon', `dashicons-${name}`, 'espresso-icon');
 
 		return (
 			<svg
@@ -26,7 +26,7 @@ const EspressoIcon = React.forwardRef<SVGSVGElement, EspressoIconProps>(
 				width={svgSize}
 				height={svgSize}
 				viewBox='0 0 20 20'
-				className={htmlClass}
+				className={newClassName}
 				ref={ref}
 				{...otherProps}
 			>

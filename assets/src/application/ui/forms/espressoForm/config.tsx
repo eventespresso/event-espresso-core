@@ -23,10 +23,10 @@ export const formConfig: EspressoFormProps = {
 		return errors;
 	},
 	submitButton: {
-		label: 'Save Changes',
+		buttonText: 'Save Changes',
 	},
 	resetButton: {
-		label: 'Reset',
+		buttonText: 'Reset',
 	},
 	sections: [
 		{

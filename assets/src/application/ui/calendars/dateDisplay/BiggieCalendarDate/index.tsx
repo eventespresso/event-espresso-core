@@ -5,6 +5,7 @@ import { parseISO, isValid } from 'date-fns';
 import { CalendarDateProps } from '../types';
 import { EspressoButton } from '@application/ui/input/EspressoButton';
 import { TimezoneTimeInfo } from '@application/ui/display';
+import { LabelPosition } from '@appDisplay/withLabel';
 import {
 	DAY_ONLY_SHORT_FORMAT,
 	MONTH_ONLY_FULL_FORMAT,
@@ -14,6 +15,7 @@ import {
 } from '@appConstants/dateFnsFormats';
 import { useTimeZoneTime } from '@appServices/hooks';
 import './style.scss';
+import { Calendar } from '@appDisplay/espressoIcons';
 
 export interface BiggieCalendarDateProps extends CalendarDateProps {
 	date: Date | string;
@@ -46,8 +48,8 @@ export const BiggieCalendarDate: React.FC<BiggieCalendarDateProps> = ({
 			onClick={onEditHandler}
 			onKeyPress={onEditHandler}
 			tooltip={editButton.tooltip}
-			labelPosition={editButton.tooltipPosition}
-			icon='calendar'
+			labelPosition={editButton.tooltipPosition as LabelPosition}
+			icon={Calendar}
 		/>
 	);
 
