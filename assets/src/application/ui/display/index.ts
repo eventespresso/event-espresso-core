@@ -8,7 +8,7 @@ export { default as ItemCount } from './ItemCount';
 export { default as TimezoneTimeInfo } from './TimezoneTimeInfo';
 
 export * from './entityDetailsPanel';
-export * from './espressoIcon';
+export * from './espressoIcons';
 export * from './loadingNotice';
 export * from './EntityIDs';
 export * from './withLabel';

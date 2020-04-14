@@ -1,9 +1,8 @@
 export interface EspressoIconProps {
-	icon: Icon | keyof SvgPath;
+	name: Icon | keyof SvgPath;
 	svgSize?: number;
 	className?: string;
 	otherProps?: object;
-	isPressed?: boolean;
 }
 
 export enum Icon {
