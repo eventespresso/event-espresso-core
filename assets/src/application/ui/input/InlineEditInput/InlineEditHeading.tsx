@@ -1,11 +1,10 @@
 import React from 'react';
 
-import Editable from './Editable';
 import { HeadingProps } from './types';
+import { Editable } from '@infraUI/inputs';
 
-const InlineEditHeading: React.FC<HeadingProps> = ({ ellipsis, level = 4, ...rest }) => {
-	const ellipsisOptions = ellipsis ? ellipsis : { rows: 2, expandable: false };
-	return <Editable ellipsis={ellipsisOptions} level={level} {...rest} inputType='heading' />;
+const InlineEditHeading: React.FC<HeadingProps> = ({ ...rest }) => {
+	return <Editable placeholder='' as='h4' {...rest} inputType='heading' />;
 };
 
 export default InlineEditHeading;
