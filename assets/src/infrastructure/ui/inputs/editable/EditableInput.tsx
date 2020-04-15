@@ -1,0 +1,41 @@
+import React from 'react';
+import { EditableInput as ChakraEditableInput, PseudoBoxProps } from '@chakra-ui/core';
+import { ESCAPE, ENTER } from '@wordpress/keycodes';
+
+import { EditableInputProps } from './types';
+
+/**
+ * Inserts substring into a string at a given postion.
+ */
+const insertStrAt = (str: string, subStr: string, pos: number): string => {
+	return `${str.slice(0, pos)}${subStr}${str.slice(pos)}`;
+};
+
+const EditableInput: React.FC<EditableInputProps> = ({ inputType, onCancel, setValue }) => {
+	let textareaProps: PseudoBoxProps;
+
+	if (inputType === 'textarea') {
+		// Since Chakra has no editable textarea yet
+		// we will use this hack
+		textareaProps = {
+			as: 'textarea',
+			// pass or own onKeyDown handler for a11y
+			onKeyDown: (e) => {
+				if (e.keyCode === ENTER) {
+					const cursorPosition = (e.target as HTMLInputElement).selectionStart;
+					// prevent submit
+					e.preventDefault();
+
+					// insert newline at the current cursor position
+					setValue((v) => insertStrAt(v, `\n`, cursorPosition));
+				} else if (e.keyCode === ESCAPE) {
+					onCancel();
+				}
+			},
+		};
+	}
+
+	return <ChakraEditableInput {...textareaProps} />;
+};
+
+export default EditableInput;
