@@ -2,7 +2,7 @@ export interface IconProps {
 	name: IconName | keyof SvgPath;
 	svgSize?: number;
 	className?: string;
-	otherProps?: object;
+	viewBox?: string;
 }
 
 export enum IconName {

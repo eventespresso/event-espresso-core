@@ -4,7 +4,7 @@ import { __ } from '@wordpress/i18n';
 import { ButtonProps } from '@infraUI/inputs';
 import { useTAMContext } from '../context';
 
-const useCancelButtonProps = (): ButtonProps => {
+const useCancelButtonProps = ({ onOpenErrorModal }): ButtonProps => {
 	const { dataState, onCloseModal } = useTAMContext();
 
 	const { hasOrphanEntities } = dataState;
@@ -13,8 +13,7 @@ const useCancelButtonProps = (): ButtonProps => {
 
 	const onClick: ButtonProps['onClick'] = useCallback(() => {
 		if (hasErrors) {
-			// @todo integrate alert with an alert dialog and <ErrorMessage />
-			alert(__('Please fix the errors.'));
+			onOpenErrorModal();
 		} else {
 			onCloseModal();
 		}

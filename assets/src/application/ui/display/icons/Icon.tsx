@@ -7,7 +7,7 @@ import { IconProps } from './types';
 /**
  * Custom Event Espresso Dashicons
  */
-const Icon = React.forwardRef<SVGSVGElement, IconProps>(({ name, svgSize = 20, className, ...otherProps }, ref) => {
+const Icon = React.forwardRef<SVGSVGElement, IconProps>(({ className, name, svgSize = 20, ...props }, ref) => {
 	const path = svgPath[name];
 
 	if (!path) {
@@ -15,6 +15,7 @@ const Icon = React.forwardRef<SVGSVGElement, IconProps>(({ name, svgSize = 20, c
 	}
 
 	const newClassName = classNames(className, 'dashicon', `dashicons-${name}`, 'espresso-icon');
+	const viewBox = props.viewBox || '0 0 20 20';
 
 	return (
 		<svg
@@ -24,10 +25,10 @@ const Icon = React.forwardRef<SVGSVGElement, IconProps>(({ name, svgSize = 20, c
 			xmlns='http://www.w3.org/2000/svg'
 			width={svgSize}
 			height={svgSize}
-			viewBox='0 0 20 20'
+			viewBox={viewBox}
 			className={newClassName}
 			ref={ref}
-			{...otherProps}
+			{...props}
 		>
 			<path d={path} />
 		</svg>

@@ -33,7 +33,14 @@ const RenderModalForm: React.FC<RenderModalFormProps> = ({
 	const onReset = useCallback(() => form.reset(), [form.reset]);
 
 	const closeButton = (
-		<ConfirmClose buttonProps={{ className: 'confirm-close', icon: Close, variant: 'unstyled' as 'unstyled' }} />
+		<ConfirmClose
+			buttonProps={{
+				className: 'confirm-close',
+				icon: Close,
+				variant: 'unstyled' as 'unstyled',
+			}}
+			onConfirm={onClose}
+		/>
 	);
 
 	const submitButtonProps: ButtonProps = useMemo(
@@ -64,6 +71,7 @@ const RenderModalForm: React.FC<RenderModalFormProps> = ({
 			cancelButtonProps={resetButtonProps}
 			className='ee-modal-form'
 			closeButton={closeButton}
+			closeOnEsc={pristine}
 			isOpen={true}
 			onClose={onClose}
 			submitButtonProps={submitButtonProps}
