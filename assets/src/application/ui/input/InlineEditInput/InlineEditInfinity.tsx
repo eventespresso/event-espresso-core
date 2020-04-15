@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import classNames from 'classnames';
 
-import { Editable, EditableInputProps } from '@infraUI/inputs';
+import { Button, EditableBase, EditableInput } from '@infraUI/inputs';
 import parseInfinity from '@appServices/utilities/number/parseInfinity';
 import { TextProps } from './types';
+import './style.scss';
 
 const InlineEditInfinity: React.FC<TextProps> = (props) => {
 	const [value, setValue] = useState(props.value);
@@ -23,22 +24,23 @@ const InlineEditInfinity: React.FC<TextProps> = (props) => {
 	};
 
 	const output: string = value < 0 ? '∞' : String(value);
-	const className = classNames(props.className, {
+	const className = classNames(props.className, 'ee-inline-edit-infinity', {
 		'ee-infinity-sign': output === '∞',
 	});
 
-	const editableInputProps: EditableInputProps = {
-		as: 'input',
-		type: 'text',
-	};
-
 	return (
-		<Editable
-			className={className}
-			defaultValue={output}
-			editableInputProps={editableInputProps}
-			onSubmit={onSubmit}
-		/>
+		<EditableBase className={className} defaultValue={String(value)} onSubmit={onSubmit}>
+			{({ isEditing, onRequestEdit }) => (
+				<>
+					{!isEditing && (
+						<Button onClick={onRequestEdit} variant='unstyled'>
+							{output}
+						</Button>
+					)}
+					<EditableInput className="'ee-inline-edit-infinity__input" />
+				</>
+			)}
+		</EditableBase>
 	);
 };
 
