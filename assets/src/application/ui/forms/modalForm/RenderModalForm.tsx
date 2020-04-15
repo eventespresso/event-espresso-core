@@ -37,7 +37,7 @@ const RenderModalForm: React.FC<RenderModalFormProps> = ({
 			buttonProps={{
 				className: 'confirm-close',
 				icon: Close,
-				variant: 'unstyled' as 'unstyled',
+				variant: 'unstyled',
 			}}
 			onConfirm={onClose}
 		/>
