@@ -27,10 +27,10 @@ const DateCapacity: React.FC<DateItemProps> = ({ entity: datetime }) => {
 				updateRelatedTickets(inputGenerator);
 			}
 		},
-		[datetime.cacheId]
+		[datetime.cacheId, updateRelatedTickets]
 	);
 
-	return <InlineEditInfinity onChange={onChange}>{datetime.capacity}</InlineEditInfinity>;
+	return <InlineEditInfinity onChangeValue={onChange} value={`${datetime.capacity}`} />;
 };
 
 export default React.memo(DateCapacity, getPropsAreEqual(['entity', 'cacheId']));

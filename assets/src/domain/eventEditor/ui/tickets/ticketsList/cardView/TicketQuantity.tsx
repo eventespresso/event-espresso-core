@@ -19,7 +19,7 @@ const TicketQuantity: React.FC<TicketItemProps> = ({ entity: ticket }) => {
 		[ticket.cacheId]
 	);
 
-	return <InlineEditInfinity onChange={onChange}>{ticket.quantity}</InlineEditInfinity>;
+	return <InlineEditInfinity onChangeValue={onChange} value={`${ticket.quantity}`} />;
 };
 
 export default React.memo(TicketQuantity, getPropsAreEqual(['entity', 'cacheId']));

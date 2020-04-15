@@ -26,13 +26,9 @@ const EditableName: React.FC<EditableNameProps> = ({ className, entity: ticket, 
 	const ticketName = ticket.name ? ticket.name : __('Edit title...');
 
 	return view === 'table' ? (
-		<InlineEditText className={className} ellipsis={false} onChange={onChangeName}>
-			{ticketName}
-		</InlineEditText>
+		<InlineEditText className={className} onChangeValue={onChangeName} value={ticketName} />
 	) : (
-		<InlineEditHeading level={3} className={className} onChange={onChangeName}>
-			{ticketName}
-		</InlineEditHeading>
+		<InlineEditHeading className={className} onChangeValue={onChangeName} value={ticketName} />
 	);
 };
 

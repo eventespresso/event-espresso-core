@@ -22,11 +22,9 @@ const EditableDesc: React.FC<EditableDescProps> = ({ entity: ticket, className }
 		[ticket.cacheId]
 	);
 
-	return (
-		<InlineEditTextArea className={className} onChange={onChangeDesc}>
-			{ticket.description ? ticket.description : __('Edit description...')}
-		</InlineEditTextArea>
-	);
+	const ticketDesc = ticket.description ? ticket.description : __('Edit description...');
+
+	return <InlineEditTextArea className={className} onChangeValue={onChangeDesc} value={ticketDesc} />;
 };
 
 export default React.memo(EditableDesc, getPropsAreEqual(['entity', 'description']));
