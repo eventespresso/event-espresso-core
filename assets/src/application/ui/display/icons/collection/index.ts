@@ -1,5 +1,6 @@
 export { default as Calculator } from './Calculator';
 export { default as Calendar } from './Calendar';
+export { default as Close } from './Close';
 export { default as Copy } from './Copy';
 export { default as Edit } from './Edit';
 export { default as Filter } from './Filter';

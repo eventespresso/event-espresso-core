@@ -8,6 +8,7 @@ export interface IconProps {
 export enum IconName {
 	CALCULATOR = 'calculator',
 	CALENDAR = 'calendar',
+	CLOSE = 'close',
 	COPY = 'copy',
 	EDIT = 'edit',
 	FILTER = 'filter',

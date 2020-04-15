@@ -1,8 +1,11 @@
 import React, { useCallback, useMemo } from 'react';
 import { __ } from '@wordpress/i18n';
 import { SaveOutlined } from '@ant-design/icons';
-import { Modal } from '@infraUI/layout/modal';
+
 import { ButtonProps } from '@infraUI/inputs';
+import { Close } from '@appDisplay/icons';
+import { ConfirmClose } from '@appDisplay/confirm';
+import { Modal } from '@infraUI/layout/modal';
 
 import { RenderModalFormProps } from './types';
 
@@ -29,6 +32,10 @@ const RenderModalForm: React.FC<RenderModalFormProps> = ({
 
 	const onReset = useCallback(() => form.reset(), [form.reset]);
 
+	const closeButton = (
+		<ConfirmClose buttonProps={{ className: 'confirm-close', icon: Close, variant: 'unstyled' as 'unstyled' }} />
+	);
+
 	const submitButtonProps: ButtonProps = useMemo(
 		() => ({
 			isDisabled: submitDisabled,
@@ -53,12 +60,13 @@ const RenderModalForm: React.FC<RenderModalFormProps> = ({
 
 	return (
 		<Modal
+			bodyClassName='ee-modal-form__body'
+			cancelButtonProps={resetButtonProps}
+			className='ee-modal-form'
+			closeButton={closeButton}
 			isOpen={true}
 			onClose={onClose}
-			className='ee-modal-form'
-			bodyClassName='ee-modal-form__body'
 			submitButtonProps={submitButtonProps}
-			cancelButtonProps={resetButtonProps}
 			title={title}
 		>
 			{children}
