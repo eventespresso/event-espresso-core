@@ -4,19 +4,9 @@ export interface AdditionalProps {
 	onSubmit?: (text: string) => void;
 }
 
-export interface EditableProps extends HeadingProps, AdditionalProps {
+export interface EditableProps extends AdditionalProps {
 	inputType: InputType;
 	tabIndex?: number;
-}
-
-interface EllipsisConfig {
-	rows?: number;
-	expandable?: boolean;
-	onExpand?: () => void;
-}
-
-export interface HeadingProps extends AdditionalProps {
-	level?: 1 | 2 | 3 | 4;
 }
 
 export type InputType = 'text' | 'heading' | 'textarea';

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Editable as ChakraEditable, EditableInput, EditablePreview, PseudoBox } from '@chakra-ui/core';
+import { Editable as ChakraEditable, EditableInput, EditablePreview } from '@chakra-ui/core';
 
 import { EditableProps } from './types';
 
