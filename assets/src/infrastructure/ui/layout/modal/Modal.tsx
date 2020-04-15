@@ -21,6 +21,7 @@ const Modal: React.FC<ModalProps> = ({
 	content,
 	footerContent,
 	isClosable = true,
+	scrollBehavior = 'inside',
 	submitButtonProps,
 	title,
 	...props
@@ -43,12 +44,11 @@ const Modal: React.FC<ModalProps> = ({
 			// closeOnEsc={isClosable}
 			closeOnOverlayClick={isClosable}
 			isCentered
-			scrollBehavior='inside'
-			size='xl'
+			scrollBehavior={scrollBehavior}
 			{...props}
 		>
 			<ModalOverlay />
-			<ModalContent className={className}>
+			<ModalContent role='alertdialog' className={className}>
 				<ModalHeader>{title}</ModalHeader>
 
 				{closeButton ? closeButton : <ModalCloseButton isDisabled={!isClosable} />}
