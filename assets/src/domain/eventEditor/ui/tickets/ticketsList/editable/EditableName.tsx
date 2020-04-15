@@ -30,7 +30,7 @@ const EditableName: React.FC<EditableNameProps> = ({ className, entity: ticket, 
 		defaultValue: ticketName,
 	};
 
-	return view === 'table' ? <InlineEditText {...editableProps} /> : <InlineEditHeading {...editableProps} />;
+	return view === 'table' ? <InlineEditText {...editableProps} /> : <InlineEditHeading {...editableProps} as='h3' />;
 };
 
 export default React.memo(EditableName, getPropsAreEqual(['entity', 'name']));
