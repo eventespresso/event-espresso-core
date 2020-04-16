@@ -14,6 +14,8 @@ interface EditableNameProps extends DateItemProps {
 const EditableName: React.FC<EditableNameProps> = ({ className, entity: datetime, view = 'card' }) => {
 	const { updateEntity } = useDatetimeMutator(datetime.id);
 
+	const as = view === 'table' ? 'p' : 'h4';
+
 	const onChangeName = useCallback(
 		(name: string): void => {
 			if (name !== datetime.name) {
@@ -25,11 +27,7 @@ const EditableName: React.FC<EditableNameProps> = ({ className, entity: datetime
 
 	const dateName = datetime.name ? datetime.name : __('Edit title...');
 
-	return view === 'table' ? (
-		<InlineEditText className={className} onChangeValue={onChangeName} value={dateName} />
-	) : (
-		<InlineEditHeading className={className} onChangeValue={onChangeName} value={dateName} />
-	);
+	return <InlineEditText as={as} className={className} onChangeValue={onChangeName} value={dateName} />;
 };
 
 export default React.memo(EditableName, getPropsAreEqual(['entity', 'name']));
