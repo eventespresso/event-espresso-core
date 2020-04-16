@@ -1049,7 +1049,35 @@ final class EE_System implements ResettableInterface
             $this->loader->getShared('EventEspresso\core\services\licensing\LicenseService');
             do_action('AHEE__EE_System__brew_espresso__after_pue_init');
         }
+        if ($this->request->isGQL()) {
+            add_action( 'setup_theme', [$this, 'loadWpGraphql'], 10 );
+        }
         do_action('AHEE__EE_System__brew_espresso__complete', $this);
+    }
+
+
+    /**
+     * @return void
+     */
+    public function loadWpGraphql()
+    {
+        if (! class_exists('WPGraphQL')) {
+            require_once EE_THIRD_PARTY . 'wp-graphql/wp-graphql.php';
+            add_action(
+                'AHEE__EE_System__core_loaded_and_ready',
+                static function() {
+                    try {
+                        // load handler for EE GraphQL requests
+                        $graphQL_manager = $this->loader->getShared(
+                            'EventEspresso\core\services\graphql\GraphQLManager'
+                        );
+                        $graphQL_manager->init();
+                    } catch (Exception $exception) {
+                        new ExceptionStackTraceDisplay($exception);
+                    }
+                }
+            );
+        }
     }
 
 
@@ -1199,17 +1227,6 @@ final class EE_System implements ResettableInterface
         // always load template tags, because it's faster than checking if it's a front-end request, and many page
         // builders require these even on the front-end
         require_once EE_PUBLIC . 'template_tags.php';
-        // load handler for GraphQL requests
-        if (class_exists('WPGraphQL') && $this->request->isGQL()) {
-            try {
-                $graphQL_manager = $this->loader->getShared(
-                    'EventEspresso\core\services\graphql\GraphQLManager'
-                );
-                $graphQL_manager->init();
-            } catch (Exception $exception) {
-                new ExceptionStackTraceDisplay($exception);
-            }
-        }
         do_action('AHEE__EE_System__set_hooks_for_shortcodes_modules_and_addons');
     }
 
