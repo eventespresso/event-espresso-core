@@ -1063,12 +1063,13 @@ final class EE_System implements ResettableInterface
     {
         if (! class_exists('WPGraphQL')) {
             require_once EE_THIRD_PARTY . 'wp-graphql/wp-graphql.php';
+            $system = $this;
             add_action(
                 'AHEE__EE_System__core_loaded_and_ready',
-                static function() {
+                static function() use ($system) {
                     try {
                         // load handler for EE GraphQL requests
-                        $graphQL_manager = $this->loader->getShared(
+                        $graphQL_manager = $system->loader->getShared(
                             'EventEspresso\core\services\graphql\GraphQLManager'
                         );
                         $graphQL_manager->init();
