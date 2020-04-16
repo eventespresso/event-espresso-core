@@ -1,54 +1,44 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback } from 'react';
 import classNames from 'classnames';
 
 import parseInfinity from '@appServices/utilities/number/parseInfinity';
-import Editable from './Editable';
+import { InlineEdit, InlineEditPreviewProps } from '@infraUI/inputs';
 import { TextProps } from './types';
+import { isInfinite } from '@application/services';
 
-const InlineEditInfinity: React.FC<TextProps> = ({ children, onChange, className, ...rest }) => {
-	const [value, setValue] = useState(children);
-	const [isEditing, setIsEditing] = useState(false);
-
-	// if value updated by parent
-	useEffect(() => {
-		setValue(children);
-	}, [children]);
-
-	const editable: TextProps['editable'] = {
-		editing: isEditing,
-		onChange: (val) => {
-			const parsedValue = parseInfinity(val);
-			setValue(parsedValue);
-			setIsEditing(false);
-			if (typeof onChange === 'function') {
-				onChange(`${parsedValue}`);
-			}
-		},
-		onStart: () => setIsEditing(true),
-	};
-
-	let output: string;
-	switch (true) {
-		case isEditing && value < 0:
-			output = '';
-			break;
-		case !isEditing && value < 0:
-			output = '∞';
-			break;
-		default:
-			output = `${value}`;
-			break;
-	}
-	const htmlClasseName = classNames({
-		className,
-		'ee-infinity-sign': output === '∞',
+const Preview: React.FC<InlineEditPreviewProps> = ({ value, onRequestEdit, isEditing }) => {
+	const isInfinity = isInfinite(value);
+	const classeName = classNames({
+		'ee-infinity-sign': isInfinity,
 	});
 
+	if (isEditing) {
+		return null;
+	}
+
+	let output = isInfinity ? '∞' : value;
+
 	return (
-		<Editable {...rest} editable={editable} inputType='text' className={htmlClasseName}>
+		<span className={classeName} onClick={onRequestEdit}>
 			{output}
-		</Editable>
+		</span>
 	);
+};
+
+const InlineEditInfinity: React.FC<TextProps> = ({ onChangeValue, value, ...rest }) => {
+	const isInfinity = isInfinite(value);
+
+	const onChangeHandler = useCallback<TextProps['onChangeValue']>(
+		(val) => {
+			const parsedValue = parseInfinity(val);
+			if (typeof onChangeValue === 'function') {
+				onChangeValue(parsedValue);
+			}
+		},
+		[onChangeValue]
+	);
+
+	return <InlineEdit {...rest} onChangeValue={onChangeHandler} Preview={Preview} value={isInfinity ? '' : value} />;
 };
 
 export default InlineEditInfinity;

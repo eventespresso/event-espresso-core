@@ -23,7 +23,6 @@ const EditablePrice: React.FC<EditablePriceProps> = ({ entity: ticket, className
 		[ticket.cacheId]
 	);
 
-	const inputProps = { ellipsis: false };
 	const wrapperProps = { className };
 
 	return (
@@ -31,7 +30,6 @@ const EditablePrice: React.FC<EditablePriceProps> = ({ entity: ticket, className
 			id={ticket.id}
 			amount={ticket.price}
 			placeholder={__('set price...')}
-			inputProps={inputProps}
 			wrapperProps={wrapperProps}
 			onChange={onChangePrice}
 			tag={'h3'}

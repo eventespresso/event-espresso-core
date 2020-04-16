@@ -11,3 +11,4 @@ export * from './predicates';
 export * from './text';
 
 export { cancelClickEvent } from './cancelClickEvent';
+export { default as usePrevious } from './usePrevious';

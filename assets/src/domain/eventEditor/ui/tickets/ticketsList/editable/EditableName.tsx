@@ -3,7 +3,7 @@ import { __ } from '@wordpress/i18n';
 
 import type { TicketItemProps } from '../types';
 import { useTicketMutator } from '@edtrServices/apollo/mutations';
-import { InlineEditHeading, InlineEditText } from '@appInputs/InlineEditInput';
+import { InlineEditText } from '@appInputs/InlineEditInput';
 import { getPropsAreEqual } from '@appServices/utilities';
 
 interface EditableNameProps extends TicketItemProps {
@@ -25,14 +25,13 @@ const EditableName: React.FC<EditableNameProps> = ({ className, entity: ticket, 
 
 	const ticketName = ticket.name ? ticket.name : __('Edit title...');
 
-	return view === 'table' ? (
-		<InlineEditText className={className} ellipsis={false} onChange={onChangeName}>
-			{ticketName}
-		</InlineEditText>
-	) : (
-		<InlineEditHeading level={3} className={className} onChange={onChangeName}>
-			{ticketName}
-		</InlineEditHeading>
+	return (
+		<InlineEditText
+			tag={view === 'table' ? 'p' : 'h4'}
+			className={className}
+			onChangeValue={onChangeName}
+			value={ticketName}
+		/>
 	);
 };
 
