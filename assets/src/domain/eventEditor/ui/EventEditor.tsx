@@ -1,20 +1,20 @@
 import React from 'react';
 
-import { useEditorInitialization } from '../../hooks';
-import { FormModal } from '../../../shared/ui/formModal';
+import { useEditorInitialization } from '../hooks';
+import { FormModal } from '../../shared/ui/formModal';
 import { useStatus, TypeName } from '@appServices/apollo/status';
-import { DatesList } from '../datetimes/datesList';
-import { TicketsList } from '../tickets/ticketsList';
-import './styles.scss';
+import { DatesList } from './datetimes/datesList';
+import { TicketsList } from './tickets/ticketsList';
+import './styles.css';
+import ManualToaster from '@appServices/toaster/ManualToaster';
 
 const EventEditor: React.FC = () => {
 	useEditorInitialization();
-
 	const { isLoaded } = useStatus();
-
 	return (
 		<>
 			{isLoaded(TypeName.datetimes) && <FormModal />}
+			<ManualToaster />
 			<DatesList />
 			<TicketsList />
 		</>
