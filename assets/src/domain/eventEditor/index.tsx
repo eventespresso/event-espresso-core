@@ -1,24 +1,25 @@
 import React from 'react';
-import { render } from 'react-dom';
 
 import './services/publicPath';
 import './interfaces/types';
 import '../../application/ui/styles/themes/default/index.scss';
 import EventEditor from './ui/EventEditor';
 import { ContextProviders } from './services/context/EventEditorContext';
+import { renderDomElement } from '@appServices/utilities';
 
-const container = document.getElementById('normal-sortables');
+const setupEditor = (): void => {
+	const Editor: React.FC = () => (
+		<ContextProviders>
+			<EventEditor />
+		</ContextProviders>
+	);
+	renderDomElement({
+		appendToTarget: false,
+		domElementToRender: <Editor />,
+		containerID: 'ee-event-editor',
+		containerClassName: 'ee-editor-container',
+		targetElementID: 'normal-sortables',
+	});
+};
 
-const editor = document.createElement('div');
-
-editor.className = 'ee-event-editor';
-
-container.prepend(editor);
-
-const Editor: React.FC = () => (
-	<ContextProviders>
-		<EventEditor />
-	</ContextProviders>
-);
-
-render(<Editor />, editor);
+setupEditor();
