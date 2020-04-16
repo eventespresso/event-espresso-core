@@ -15,6 +15,7 @@ use EventEspresso\core\interfaces\ResettableInterface;
 use EventEspresso\core\services\loaders\LoaderFactory;
 use EventEspresso\core\services\loaders\LoaderInterface;
 use EventEspresso\core\services\request\RequestInterface;
+use EventEspresso\core\services\route_match\RouteMatchSpecificationManager;
 
 /**
  * EE_System
@@ -97,6 +98,11 @@ final class EE_System implements ResettableInterface
      * @var RequestInterface $request
      */
     private $request;
+
+    /**
+     * @var RouteMatchSpecificationManager $route_manager
+     */
+    private $route_manager;
 
     /**
      * @var EE_Maintenance_Mode $maintenance_mode
@@ -941,7 +947,7 @@ final class EE_System implements ResettableInterface
     public function loadRouteMatchSpecifications()
     {
         try {
-            $this->loader->getShared(
+            $this->route_manager = $this->loader->getShared(
                 'EventEspresso\core\services\route_match\RouteMatchSpecificationManager'
             );
         } catch (Exception $exception) {
@@ -1032,6 +1038,7 @@ final class EE_System implements ResettableInterface
      * which runs during the WP 'plugins_loaded' action at priority 9
      *
      * @return void
+     * @throws Exception
      */
     public function brew_espresso()
     {
@@ -1049,35 +1056,38 @@ final class EE_System implements ResettableInterface
             $this->loader->getShared('EventEspresso\core\services\licensing\LicenseService');
             do_action('AHEE__EE_System__brew_espresso__after_pue_init');
         }
-        if ($this->request->isGQL()) {
-            add_action( 'setup_theme', [$this, 'loadWpGraphql'], 10 );
-        }
+        $this->loadWpGraphql();
         do_action('AHEE__EE_System__brew_espresso__complete', $this);
     }
 
 
     /**
      * @return void
+     * @throws Exception
      */
     public function loadWpGraphql()
     {
-        if (! class_exists('WPGraphQL')) {
-            require_once EE_THIRD_PARTY . 'wp-graphql/wp-graphql.php';
-            $system = $this;
-            add_action(
-                'AHEE__EE_System__core_loaded_and_ready',
-                static function() use ($system) {
-                    try {
-                        // load handler for EE GraphQL requests
-                        $graphQL_manager = $system->loader->getShared(
-                            'EventEspresso\core\services\graphql\GraphQLManager'
-                        );
-                        $graphQL_manager->init();
-                    } catch (Exception $exception) {
-                        new ExceptionStackTraceDisplay($exception);
-                    }
+        try {
+
+            if ($this->request->isGQL()
+                || (
+                    $this->route_manager instanceof RouteMatchSpecificationManager
+                    && $this->route_manager->routeMatchesCurrentRequest(
+                        'EventEspresso\core\domain\entities\route_match\specifications\admin\EspressoEventEditor'
+                    )
+                )
+            ) {
+                if (! class_exists('WPGraphQL')) {
+                    require_once EE_THIRD_PARTY . 'wp-graphql/wp-graphql.php';
                 }
-            );
+                // load handler for EE GraphQL requests
+                $graphQL_manager = $this->loader->getShared(
+                    'EventEspresso\core\services\graphql\GraphQLManager'
+                );
+                $graphQL_manager->init();
+            }
+        } catch (Exception $exception) {
+            new ExceptionStackTraceDisplay($exception);
         }
     }
 
