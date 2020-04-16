@@ -3,9 +3,8 @@ import { __ } from '@wordpress/i18n';
 import { SaveOutlined } from '@ant-design/icons';
 
 import { ButtonProps } from '@infraUI/inputs';
-import { Close } from '@appDisplay/icons';
 import { ConfirmClose } from '@appDisplay/confirm';
-import { Modal } from '@infraUI/layout/modal';
+import { Modal, modalCloseButtonProps } from '@infraUI/layout/modal';
 
 import { RenderModalFormProps } from './types';
 
@@ -32,16 +31,7 @@ const RenderModalForm: React.FC<RenderModalFormProps> = ({
 
 	const onReset = useCallback(() => form.reset(), [form.reset]);
 
-	const closeButton = (
-		<ConfirmClose
-			buttonProps={{
-				className: 'confirm-close',
-				icon: Close,
-				variant: 'unstyled',
-			}}
-			onConfirm={onClose}
-		/>
-	);
+	const closeButton = !pristine && <ConfirmClose buttonProps={modalCloseButtonProps} onConfirm={onClose} />;
 
 	const submitButtonProps: ButtonProps = useMemo(
 		() => ({

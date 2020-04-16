@@ -2,7 +2,7 @@ import { useCallback, useMemo } from 'react';
 import { __ } from '@wordpress/i18n';
 
 import { ButtonProps } from '@infraUI/inputs';
-import { useTAMContext } from '../context';
+import { useTAMContext } from '../../../context';
 
 const useCancelButtonProps = (): ButtonProps => {
 	const { dataState, onCloseModal } = useTAMContext();
