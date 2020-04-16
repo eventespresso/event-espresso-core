@@ -12,17 +12,13 @@ const useCancelButtonProps = (): ButtonProps => {
 	const hasErrors = hasOrphanEntities();
 
 	const onClick: ButtonProps['onClick'] = useCallback(() => {
-		if (hasErrors) {
-			// @todo integrate alert with an alert dialog and <ErrorMessage />
-			alert(__('Please fix the errors.'));
-		} else {
-			onCloseModal();
-		}
+		onCloseModal();
 	}, [hasErrors]);
 
 	return useMemo<ButtonProps>(
 		() => ({
 			buttonText: __('Cancel'),
+			isDisabled: hasErrors,
 			onClick,
 			type: 'reset',
 		}),

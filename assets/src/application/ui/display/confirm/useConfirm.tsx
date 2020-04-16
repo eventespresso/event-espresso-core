@@ -8,19 +8,20 @@ import { Button as ButtonAdapter } from '@infraUI/inputs';
 
 import { ConfirmProps } from './types';
 
-// TODO: fix file name and add suport for IconButton e.g. for TPC delete price button
-
-const Confirm: React.FC<ConfirmProps> = ({ buttonProps, onConfirm, title }) => {
+const useConfirm: React.FC<ConfirmProps> = ({ children, buttonProps, onConfirm, title }) => {
 	const { isOpen, onOpen, onClose } = useDisclosure();
 	const cancelRef = React.useRef();
 	const onDelete = useCallback(() => {
-		onConfirm();
+		if (typeof onConfirm === 'function') {
+			onConfirm();
+		}
 		onClose();
 	}, [onConfirm]);
 
 	return (
 		<>
 			<Button {...buttonProps} onClick={onOpen} />
+
 			<AlertDialog
 				cancelButton={<ButtonAdapter buttonText={__('No')} ref={cancelRef} onClick={onClose} />}
 				header={buttonProps?.tooltip}
@@ -34,4 +35,4 @@ const Confirm: React.FC<ConfirmProps> = ({ buttonProps, onConfirm, title }) => {
 	);
 };
 
-export default Confirm;
+export default useConfirm;

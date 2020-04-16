@@ -8,17 +8,20 @@ import {
 	ModalHeader,
 	ModalOverlay,
 } from '@chakra-ui/core';
-import { ModalProps } from './types';
+
 import { Button } from '@infraUI/inputs';
+import { ModalProps } from './types';
 
 const Modal: React.FC<ModalProps> = ({
 	bodyClassName,
 	cancelButtonProps,
 	children,
 	className,
+	closeButton,
 	content,
 	footerContent,
 	isClosable = true,
+	scrollBehavior = 'inside',
 	submitButtonProps,
 	title,
 	...props
@@ -41,14 +44,14 @@ const Modal: React.FC<ModalProps> = ({
 			// closeOnEsc={isClosable}
 			closeOnOverlayClick={isClosable}
 			isCentered
-			scrollBehavior='inside'
-			size='xl'
+			scrollBehavior={scrollBehavior}
 			{...props}
 		>
 			<ModalOverlay />
-			<ModalContent className={className}>
+			<ModalContent role='alertdialog' className={className}>
 				<ModalHeader>{title}</ModalHeader>
-				<ModalCloseButton isDisabled={!isClosable} />
+
+				{closeButton ? closeButton : <ModalCloseButton isDisabled={!isClosable} />}
 
 				<ModalBody className={bodyClassName}>{children || content}</ModalBody>
 

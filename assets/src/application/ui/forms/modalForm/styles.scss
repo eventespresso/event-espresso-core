@@ -1,3 +1,15 @@
 .ee-modal-form {
 	max-width: 75rem !important;
+	.confirm-close {
+		display: inline-flex;
+		position: absolute;
+		top: 8px;
+		right: 12px;
+		min-width: auto;
+		width: var(--ee-padding-big);
+		height: var(--ee-padding-big);
+		svg {
+			margin: 0;
+		}
+	}
 }

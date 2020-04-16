@@ -2,12 +2,13 @@ export interface IconProps {
 	name: IconName | keyof SvgPath;
 	svgSize?: number;
 	className?: string;
-	otherProps?: object;
+	viewBox?: string;
 }
 
 export enum IconName {
 	CALCULATOR = 'calculator',
 	CALENDAR = 'calendar',
+	CLOSE = 'close',
 	COPY = 'copy',
 	EDIT = 'edit',
 	FILTER = 'filter',

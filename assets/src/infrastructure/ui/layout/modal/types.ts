@@ -6,6 +6,7 @@ export interface ModalProps extends React.ComponentProps<typeof Modal> {
 	bodyClassName?: string;
 	cancelButtonProps?: ButtonProps;
 	className?: string;
+	closeButton?: React.ReactNode;
 	content?: React.ReactNode;
 	footerContent?: React.ReactNode;
 	isClosable?: boolean;
