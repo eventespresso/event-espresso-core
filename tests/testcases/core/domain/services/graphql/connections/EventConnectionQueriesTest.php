@@ -4,9 +4,9 @@ namespace EventEspresso\tests\testcases\core\domain\services\graphql\connections
 
 use EE_Dependency_Map;
 use EE_Error;
-use EE_UnitTestCase;
+use EventEspresso\tests\testcases\core\domain\services\graphql\GraphQLUnitTestCase;
 
-class EventConnectionQueriesTest extends EE_UnitTestCase
+class EventConnectionQueriesTest extends GraphQLUnitTestCase
 {
     public $current_time;
     public $current_date;
@@ -14,7 +14,7 @@ class EventConnectionQueriesTest extends EE_UnitTestCase
     public $created_post_ids;
     public $admin;
     public $subscriber;
-    
+
     public function setUp()
     {
         parent::setUp();
