@@ -6,7 +6,14 @@ import InlineEditInput from './InlineEditInput';
 import InlineEditPreview from './InlineEditPreview';
 import { usePrevious } from '@appServices/utilities';
 
-const InlineEdit: React.FC<InlineEditProps> = ({ onChangeValue, value, defaultValue, ...props }) => {
+const InlineEdit: React.FC<InlineEditProps> = ({
+	defaultValue,
+	inputType,
+	onChangeValue,
+	value,
+	placeholder = '',
+	...props
+}) => {
 	const [currentValue, setCurrentValue] = useState(defaultValue || value);
 	const [prevSubmitValue, setPrevSubmitValue] = useState(currentValue);
 
@@ -30,7 +37,13 @@ const InlineEdit: React.FC<InlineEditProps> = ({ onChangeValue, value, defaultVa
 	}, [currentValue, onChangeValue]);
 
 	return (
-		<ChakraEditable {...props} onChange={setCurrentValue} onSubmit={onSubmitHandler} value={currentValue}>
+		<ChakraEditable
+			{...props}
+			onChange={setCurrentValue}
+			onSubmit={onSubmitHandler}
+			placeholder={placeholder}
+			value={currentValue}
+		>
 			{({ isEditing, onCancel, onRequestEdit }) => {
 				const onCancelEdit = useCallback(() => {
 					onCancel();
@@ -46,11 +59,7 @@ const InlineEdit: React.FC<InlineEditProps> = ({ onChangeValue, value, defaultVa
 							onRequestEdit={onRequestEdit}
 							value={currentValue}
 						/>
-						<InlineEditInput
-							inputType={props.inputType}
-							setValue={setCurrentValue}
-							onCancel={onCancelEdit}
-						/>
+						<InlineEditInput inputType={inputType} setValue={setCurrentValue} onCancel={onCancelEdit} />
 					</>
 				);
 			}}

@@ -15,7 +15,9 @@ const Preview: React.FC<InlineEditPreviewProps> = ({ value, onRequestEdit, isEdi
 	if (isEditing) {
 		return null;
 	}
+
 	let output = isInfinity ? '∞' : value;
+
 	return (
 		<span className={classeName} onClick={onRequestEdit}>
 			{output}
@@ -36,16 +38,7 @@ const InlineEditInfinity: React.FC<TextProps> = ({ onChangeValue, value, ...rest
 		[onChangeValue]
 	);
 
-	return (
-		<InlineEdit
-			{...rest}
-			inputType='text'
-			onChangeValue={onChangeHandler}
-			placeholder=''
-			Preview={Preview}
-			value={isInfinity ? '' : value}
-		/>
-	);
+	return <InlineEdit {...rest} onChangeValue={onChangeHandler} Preview={Preview} value={isInfinity ? '' : value} />;
 };
 
 export default InlineEditInfinity;

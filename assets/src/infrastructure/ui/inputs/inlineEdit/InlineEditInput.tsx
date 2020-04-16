@@ -5,7 +5,7 @@ import { ESCAPE, ENTER } from '@wordpress/keycodes';
 import { InlineEditInputProps } from './types';
 
 /**
- * Inserts substring into a string at a given postion.
+ * Inserts substring into a string at a given position.
  */
 const insertStrAt = (str: string, subStr: string, pos: number): string => {
 	return `${str.slice(0, pos)}${subStr}${str.slice(pos)}`;
