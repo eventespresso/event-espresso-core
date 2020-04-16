@@ -4,7 +4,7 @@ import { Editable as ChakraEditable } from '@chakra-ui/core';
 import type { EditableProps } from './types';
 import EditableInput from './EditableInput';
 import EditablePreview from './EditablePreview';
-import { usePrevious } from '@infraServices/hooks';
+import { usePrevious } from '@appServices/utilities';
 
 const Editable: React.FC<EditableProps> = ({ onChangeValue, value, defaultValue, ...props }) => {
 	const [currentValue, setCurrentValue] = useState(defaultValue || value);
