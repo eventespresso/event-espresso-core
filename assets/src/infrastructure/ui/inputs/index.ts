@@ -20,6 +20,6 @@ export { default as TextInput } from './TextInput';
 
 export { default as TextArea } from './TextArea';
 
-export * from './editable';
+export * from './inlineEdit';
 
 export * from './types';

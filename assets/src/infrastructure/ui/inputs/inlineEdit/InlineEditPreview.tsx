@@ -1,10 +1,9 @@
 import React from 'react';
 import { EditablePreview as ChakraEditablePreview } from '@chakra-ui/core';
 
-import type { EditablePreviewProps } from './types';
+import type { InlineEditPreviewProps } from './types';
 
-const EditablePreview: React.FC<EditablePreviewProps> = ({
-	inputType,
+const InlineEditPreview: React.FC<InlineEditPreviewProps> = ({
 	isEditing,
 	onRequestEdit,
 	Preview,
@@ -18,4 +17,4 @@ const EditablePreview: React.FC<EditablePreviewProps> = ({
 	);
 };
 
-export default EditablePreview;
+export default InlineEditPreview;

@@ -5,17 +5,17 @@ import { CommonInputProps } from '../types';
 
 export type InputType = 'text' | 'heading' | 'textarea';
 
-export interface EditableProps extends Partial<ChakraEditableProps>, CommonInputProps<HTMLInputElement> {
+export interface InlineEditProps extends Partial<ChakraEditableProps>, CommonInputProps<HTMLInputElement> {
 	inputType?: InputType;
-	Preview?: React.ComponentType<EditablePreviewProps>;
+	Preview?: React.ComponentType<InlineEditPreviewProps>;
 }
 
-export interface EditablePreviewProps extends Partial<Omit<EditableProps, 'onChange' | 'onChangeValue'>> {
+export interface InlineEditPreviewProps extends Partial<Omit<InlineEditProps, 'onChange' | 'onChangeValue'>> {
 	isEditing?: boolean;
 	onRequestEdit?: VoidFunction;
 }
 
-export interface EditableInputProps extends Pick<EditableProps, 'inputType'> {
+export interface InlineEditInputProps extends Pick<InlineEditProps, 'inputType'> {
 	onCancel: VoidFunction;
 	setValue: React.Dispatch<React.SetStateAction<string>>;
 }

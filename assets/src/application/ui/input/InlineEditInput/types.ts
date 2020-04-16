@@ -1,7 +1,7 @@
-import { EditableProps } from '@infraUI/inputs';
+import { InlineEditProps } from '@infraUI/inputs';
 
-export interface TextAreaProps extends Omit<EditableProps, 'inputType'> {}
+export interface TextAreaProps extends Omit<InlineEditProps, 'inputType'> {}
 
-export interface TextProps extends Omit<EditableProps, 'inputType'> {
+export interface TextProps extends Omit<InlineEditProps, 'inputType'> {
 	tag?: React.ElementType;
 }

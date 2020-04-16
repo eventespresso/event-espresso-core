@@ -2,11 +2,11 @@ import React, { useCallback } from 'react';
 import classNames from 'classnames';
 
 import parseInfinity from '@appServices/utilities/number/parseInfinity';
-import { Editable, EditablePreviewProps } from '@infraUI/inputs';
+import { InlineEdit, InlineEditPreviewProps } from '@infraUI/inputs';
 import { TextProps } from './types';
 import { isInfinite } from '@application/services';
 
-const Preview: React.FC<EditablePreviewProps> = ({ value, onRequestEdit, isEditing }) => {
+const Preview: React.FC<InlineEditPreviewProps> = ({ value, onRequestEdit, isEditing }) => {
 	const isInfinity = isInfinite(value);
 	const classeName = classNames({
 		'ee-infinity-sign': isInfinity,
@@ -37,7 +37,7 @@ const InlineEditInfinity: React.FC<TextProps> = ({ onChangeValue, value, ...rest
 	);
 
 	return (
-		<Editable
+		<InlineEdit
 			{...rest}
 			inputType='text'
 			onChangeValue={onChangeHandler}

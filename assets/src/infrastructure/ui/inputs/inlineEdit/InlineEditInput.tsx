@@ -2,7 +2,7 @@ import React from 'react';
 import { EditableInput as ChakraEditableInput, PseudoBoxProps } from '@chakra-ui/core';
 import { ESCAPE, ENTER } from '@wordpress/keycodes';
 
-import { EditableInputProps } from './types';
+import { InlineEditInputProps } from './types';
 
 /**
  * Inserts substring into a string at a given postion.
@@ -11,7 +11,7 @@ const insertStrAt = (str: string, subStr: string, pos: number): string => {
 	return `${str.slice(0, pos)}${subStr}${str.slice(pos)}`;
 };
 
-const EditableInput: React.FC<EditableInputProps> = ({ inputType, onCancel, setValue }) => {
+const InlineEditInput: React.FC<InlineEditInputProps> = ({ inputType, onCancel, setValue }) => {
 	let textareaProps: PseudoBoxProps;
 
 	if (inputType === 'textarea') {
@@ -38,4 +38,4 @@ const EditableInput: React.FC<EditableInputProps> = ({ inputType, onCancel, setV
 	return <ChakraEditableInput {...textareaProps} />;
 };
 
-export default EditableInput;
+export default InlineEditInput;
