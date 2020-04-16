@@ -3,7 +3,7 @@ import { __ } from '@wordpress/i18n';
 
 import type { DateItemProps } from '../types';
 import { useDatetimeMutator } from '@edtrServices/apollo/mutations';
-import { InlineEditHeading, InlineEditText } from '@appInputs/InlineEditInput';
+import { InlineEditText } from '@appInputs/InlineEditInput';
 import { getPropsAreEqual } from '@appServices/utilities';
 
 interface EditableNameProps extends DateItemProps {
@@ -13,8 +13,6 @@ interface EditableNameProps extends DateItemProps {
 
 const EditableName: React.FC<EditableNameProps> = ({ className, entity: datetime, view = 'card' }) => {
 	const { updateEntity } = useDatetimeMutator(datetime.id);
-
-	const as = view === 'table' ? 'p' : 'h4';
 
 	const onChangeName = useCallback(
 		(name: string): void => {
@@ -27,7 +25,14 @@ const EditableName: React.FC<EditableNameProps> = ({ className, entity: datetime
 
 	const dateName = datetime.name ? datetime.name : __('Edit title...');
 
-	return <InlineEditText as={as} className={className} onChangeValue={onChangeName} value={dateName} />;
+	return (
+		<InlineEditText
+			as={view === 'table' ? 'p' : 'h4'}
+			className={className}
+			onChangeValue={onChangeName}
+			value={dateName}
+		/>
+	);
 };
 
 export default React.memo(EditableName, getPropsAreEqual(['entity', 'name']));
