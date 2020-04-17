@@ -1068,6 +1068,9 @@ final class EE_System implements ResettableInterface
      */
     public function loadWpGraphql()
     {
+        if (PHP_VERSION_ID < 70000) {
+            return;
+        }
         // @todo get rid of this.
         $thisIsTemporarilyHereForTests = true;
         try {

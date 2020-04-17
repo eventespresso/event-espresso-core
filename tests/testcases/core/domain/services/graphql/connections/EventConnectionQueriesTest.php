@@ -18,6 +18,12 @@ class EventConnectionQueriesTest extends GraphQLUnitTestCase
     public function setUp()
     {
         parent::setUp();
+        if (PHP_VERSION_ID < 70000) {
+            $this->markTestSkipped(
+                'WP GraphQL compatible with PHP 7+ only'
+            );
+            return;
+        }
 
         $this->current_time     = strtotime('- 1 day');
         $this->current_date     = date('Y-m-d H:i:s', $this->current_time);

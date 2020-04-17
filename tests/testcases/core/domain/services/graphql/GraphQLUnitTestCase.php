@@ -31,13 +31,15 @@ class GraphQLUnitTestCase extends EE_UnitTestCase
     public function setUp()
     {
         parent::setUp();
-        if (! class_exists('WPGraphQL')) {
-            require_once EE_THIRD_PARTY . 'wp-graphql/wp-graphql.php';
-        }
         // load handler for EE GraphQL requests
         $graphQL_manager = LoaderFactory::getLoader()->getShared(
             'EventEspresso\core\services\graphql\GraphQLManager'
         );
         $graphQL_manager->init();
+    }
+
+    public function testDumb()
+    {
+        $this->assertTrue(true);
     }
 }
