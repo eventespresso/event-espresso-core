@@ -1068,6 +1068,8 @@ final class EE_System implements ResettableInterface
      */
     public function loadWpGraphql()
     {
+        // @todo get rid of this.
+        $thisIsTemporarilyHereForTests = true;
         try {
             if ($this->request->isGQL()
                 || (
@@ -1076,6 +1078,7 @@ final class EE_System implements ResettableInterface
                         'EventEspresso\core\domain\entities\route_match\specifications\admin\EspressoEventEditor'
                     )
                 )
+                || $thisIsTemporarilyHereForTests
             ) {
                 if (! class_exists('WPGraphQL')) {
                     require_once EE_THIRD_PARTY . 'wp-graphql/wp-graphql.php';
