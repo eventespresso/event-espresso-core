@@ -1,9 +1,9 @@
 import React from 'react';
 import classNames from 'classnames';
-import { Tooltip as DefaultTooltip } from 'antd';
 import { __ } from '@wordpress/i18n';
 
 import { isEmpty } from '@appServices/utilities/string';
+import { Tooltip, TooltipProps } from '@infraUI/display';
 import { withTooltipProps } from './types';
 
 import './style.scss';
@@ -16,11 +16,13 @@ const withTooltip = <P extends withTooltipProps>(WrappedComponent: React.Compone
 		forwardedRef,
 		showTooltipOnMobile = false,
 		tooltip,
-		tooltipProps,
 		...props
 	}) => {
 		const ariaLabel = isEmpty(buttonText as string) && !isEmpty(tooltip) ? tooltip : null;
+		const title = tooltip || (buttonText as string);
+
 		let toolTipped: React.ReactElement;
+		let tooltipProps: TooltipProps;
 
 		if (showTooltipOnMobile) {
 			const className = classNames({
@@ -28,7 +30,7 @@ const withTooltip = <P extends withTooltipProps>(WrappedComponent: React.Compone
 				'ee-mobile-help-text--short': tooltip.length < 25,
 				'ee-mobile-help-text--long': tooltip.length > 50,
 			});
-			tooltipProps = { ...tooltipProps, overlayClassName: 'ee-mobile-help-text__tooltip' };
+			tooltipProps = { ...props.tooltipProps, overlayClassName: 'ee-mobile-help-text__tooltip' };
 			toolTipped = (
 				<div className='ee-mobile-help-text__btn-wrap'>
 					<WrappedComponent
@@ -52,10 +54,11 @@ const withTooltip = <P extends withTooltipProps>(WrappedComponent: React.Compone
 				/>
 			);
 		}
+
 		return (
-			<DefaultTooltip {...tooltipProps} title={tooltip}>
+			<Tooltip {...tooltipProps} title={title}>
 				{toolTipped}
-			</DefaultTooltip>
+			</Tooltip>
 		);
 	};
 

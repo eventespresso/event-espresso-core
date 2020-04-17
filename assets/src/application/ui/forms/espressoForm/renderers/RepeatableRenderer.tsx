@@ -27,7 +27,7 @@ const RepeatableRenderer: React.FC<Omit<RepeatableRendererProps, 'component'>> =
 							name={fieldName}
 							label={
 								<>
-									{sprintf(__('Entry %d'), index + 1)}
+									{sprintf(__('Entry %d'), `${index + 1}`)}
 									<Button
 										className='remove-item'
 										size='sm'

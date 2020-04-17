@@ -1,8 +1,8 @@
-import { TooltipPropsWithTitle } from 'antd/lib/tooltip';
+import { TooltipProps } from '@infraUI/display';
 
 export interface withTooltipProps {
 	buttonText?: React.ReactNode;
 	showTooltipOnMobile?: boolean;
 	tooltip?: string;
-	tooltipProps?: Partial<TooltipPropsWithTitle>;
+	tooltipProps?: TooltipProps;
 }

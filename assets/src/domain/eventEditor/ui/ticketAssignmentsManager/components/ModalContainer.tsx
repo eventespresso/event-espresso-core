@@ -10,9 +10,9 @@ const ModalContainer: React.FC<ModalContainerProps> = ({ isOpen, onClose, ...pro
 
 	let title = '';
 	if (assignmentType === 'forDate') {
-		title = sprintf(__('Ticket Assignment Manager for Datetime: %s - %s'), entity.dbId, entity.name);
+		title = sprintf(__('Ticket Assignment Manager for Datetime: %s - %s'), `${entity.dbId}`, entity.name);
 	} else if (assignmentType === 'forTicket') {
-		title = sprintf(__('Ticket Assignment Manager for Ticket: %s - %s'), entity.dbId, entity.name);
+		title = sprintf(__('Ticket Assignment Manager for Ticket: %s - %s'), `${entity.dbId}`, entity.name);
 	}
 
 	return isOpen && withContext(TicketAssignmentsManagerModal, { ...props, title, onCloseModal: onClose });

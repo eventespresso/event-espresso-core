@@ -1,11 +1,12 @@
 import React from 'react';
 import { __ } from '@wordpress/i18n';
 
-import { IconButton, IconButtonProps } from '@appInputs/Button';
 import { Calculator } from '@appDisplay/icons';
-import { BaseProps } from '../types';
+import { IconButton, IconButtonProps } from '@appInputs/Button';
 import { TypeName } from '@appServices/apollo/status';
 import withIsLoaded from '@sharedUI/hoc/withIsLoaded';
+
+import { BaseProps } from '../types';
 import { useTicketPriceCalculator } from '../hooks';
 
 interface TPCButtonProps extends BaseProps, IconButtonProps {}
@@ -14,6 +15,7 @@ const TicketPriceCalculatorButton: React.FC<TPCButtonProps> = ({ ticketId, ...bu
 	const { ModalContainer, onOpen, ...disclosure } = useTicketPriceCalculator();
 
 	const tooltipProps = { placement: 'left' as 'left' };
+
 	return (
 		<>
 			<IconButton

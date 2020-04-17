@@ -1,18 +1,16 @@
 import React from 'react';
 import { __ } from '@wordpress/i18n';
-import { Divider, Typography } from 'antd';
 
 import { EmptyState, ErrorIndicator, LoadingNotice } from '@appDisplay/index';
 import { EntityListFilterStateManager } from './filterBar';
 import EntityListFilterBar from './withValidFilterState';
 import { Entity } from '@appServices/apollo/types';
+import { Divider, Heading } from '@infraUI/display';
 import { useStatus } from '@appServices/apollo/status';
 
 import { EntityListProps } from './types';
 import { EntityPagination } from './pagination';
 import './style.scss';
-
-const { Title } = Typography;
 
 const EntityList = <E extends Entity, ELFS extends EntityListFilterStateManager<any>>({
 	domain,
@@ -48,9 +46,9 @@ const EntityList = <E extends Entity, ELFS extends EntityListFilterStateManager<
 
 	return (
 		<div className={'ee-entity-list'}>
-			<Title className='ee-entity-list__header' level={3}>
+			<Heading className='ee-entity-list__header' as='h3'>
 				{headerText}
-			</Title>
+			</Heading>
 			<EntityListFilterBar
 				domain={domain}
 				filterState={filterState}

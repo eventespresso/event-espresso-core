@@ -1,5 +1,7 @@
 import {
 	BadgeProps as ChakraBadgeProps,
+	BoxProps,
+	HeadingProps as ChakraHeadingProps,
 	IAlertDialog,
 	ISpinnerProps,
 	TooltipProps as ChakraTooltipProps,
@@ -13,9 +15,17 @@ export interface AlertDialogProps extends Omit<IAlertDialog, 'children'> {
 }
 
 export interface BadgeProps extends ChakraBadgeProps {}
+
+export interface DividerProps extends Omit<BoxProps, 'aria-orientation'> {
+	dashed?: boolean;
+	orientation?: BoxProps['aria-orientation'];
+}
+
+export interface HeadingProps extends ChakraHeadingProps {}
+
 export interface SpinnerProps extends ISpinnerProps {}
 
-export interface TooltipProps extends Omit<ChakraTooltipProps, 'aria-label'> {
+export interface TooltipProps extends Omit<ChakraTooltipProps, 'aria-label' | 'children'> {
 	['aria-label']?: string;
-	title: string;
+	title?: string;
 }
