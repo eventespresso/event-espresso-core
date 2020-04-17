@@ -174,23 +174,22 @@ class EventConnectionQueriesTest extends GraphQLUnitTestCase
         /**
          * Let's query the first post in our data set so we can test against it
          */
-        $first_post      = new WP_Query(
+        $first_post      = new \WP_Query(
             [
+                'post_type'      => 'espresso_events',
                 'posts_per_page' => 1,
             ]
         );
         $first_post_id   = $first_post->posts[0]->ID;
         $expected_cursor = \GraphQLRelay\Connection\ArrayConnection::offsetToCursor($first_post_id);
         $this->assertNotEmpty($results);
-        $this->assertEquals(1, count($results['data']['posts']['edges']));
-        $this->assertEquals($first_post_id, $results['data']['posts']['edges'][0]['node']['postId']);
-        $this->assertEquals($expected_cursor, $results['data']['posts']['edges'][0]['cursor']);
-        $this->assertEquals($expected_cursor, $results['data']['posts']['pageInfo']['startCursor']);
-        $this->assertEquals($expected_cursor, $results['data']['posts']['pageInfo']['endCursor']);
-        $this->assertEquals($first_post_id, $results['data']['posts']['nodes'][0]['postId']);
-        $this->assertEquals(false, $results['data']['posts']['pageInfo']['hasPreviousPage']);
-        $this->assertEquals(true, $results['data']['posts']['pageInfo']['hasNextPage']);
-
-        $this->forwardPagination($expected_cursor);
+        $this->assertEquals(1, count($results['data']['espressoEvents']['edges']));
+        $this->assertEquals($first_post_id, $results['data']['espressoEvents']['edges'][0]['node']['databaseId']);
+        $this->assertEquals($expected_cursor, $results['data']['espressoEvents']['edges'][0]['cursor']);
+        $this->assertEquals($expected_cursor, $results['data']['espressoEvents']['pageInfo']['startCursor']);
+        $this->assertEquals($expected_cursor, $results['data']['espressoEvents']['pageInfo']['endCursor']);
+        $this->assertEquals($first_post_id, $results['data']['espressoEvents']['nodes'][0]['databaseId']);
+        $this->assertEquals(false, $results['data']['espressoEvents']['pageInfo']['hasPreviousPage']);
+        $this->assertEquals(true, $results['data']['espressoEvents']['pageInfo']['hasNextPage']);
     }
 }
