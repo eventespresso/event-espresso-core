@@ -131,33 +131,19 @@ class EventConnectionQueriesTest extends GraphQLUnitTestCase
 					cursor
 					node {
 						id
-						databaseId
+						dbId
 						name
-						date
 						desc
 					}
 				}
 				nodes {
 				  id
-				  databaseId
+				  dbId
 				}
 			}
 		}';
 
         return do_graphql_request($query, 'eventsQuery', $variables);
-    }
-
-    private function getReturnField($data, $post, $field = '')
-    {
-        $data = (isset($data['data']['posts']['edges'][ $post ]['node'])) ? $data['data']['posts']['edges'][ $post ]['node'] : null;
-
-        if (empty($field)) {
-            return $data;
-        } elseif (! empty($data)) {
-            $data = $data[ $field ];
-        }
-
-        return $data;
     }
 
     public function testFirstEvent()
@@ -184,11 +170,11 @@ class EventConnectionQueriesTest extends GraphQLUnitTestCase
         $expected_cursor = \GraphQLRelay\Connection\ArrayConnection::offsetToCursor($first_post_id);
         $this->assertNotEmpty($results);
         $this->assertEquals(1, count($results['data']['espressoEvents']['edges']));
-        $this->assertEquals($first_post_id, $results['data']['espressoEvents']['edges'][0]['node']['databaseId']);
+        $this->assertEquals($first_post_id, $results['data']['espressoEvents']['edges'][0]['node']['dbId']);
         $this->assertEquals($expected_cursor, $results['data']['espressoEvents']['edges'][0]['cursor']);
         $this->assertEquals($expected_cursor, $results['data']['espressoEvents']['pageInfo']['startCursor']);
         $this->assertEquals($expected_cursor, $results['data']['espressoEvents']['pageInfo']['endCursor']);
-        $this->assertEquals($first_post_id, $results['data']['espressoEvents']['nodes'][0]['databaseId']);
+        $this->assertEquals($first_post_id, $results['data']['espressoEvents']['nodes'][0]['dbId']);
         $this->assertEquals(false, $results['data']['espressoEvents']['pageInfo']['hasPreviousPage']);
         $this->assertEquals(true, $results['data']['espressoEvents']['pageInfo']['hasNextPage']);
     }

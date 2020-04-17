@@ -39,7 +39,5 @@ class GraphQLUnitTestCase extends EE_UnitTestCase
             'EventEspresso\core\services\graphql\GraphQLManager'
         );
         $graphQL_manager->init();
-
     }
-
 }
