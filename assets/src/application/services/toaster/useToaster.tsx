@@ -41,15 +41,6 @@ const useToaster: UseToaster = (config) => {
 	const addToast: AddToast = useCallback(
 		({ className, duration, isClosable, key, message, onClose, position, title, type }) => {
 			const id = generateKey(key, options.toastKeyPrefix);
-			console.log(
-				'%c addToast (key, id, type, message, position)',
-				'color: DarkOrange;',
-				key,
-				id,
-				type,
-				message,
-				position
-			);
 			const toast: WithAnimationProps = {
 				className,
 				duration: typeof duration !== 'undefined' ? duration : options.duration,
@@ -72,7 +63,6 @@ const useToaster: UseToaster = (config) => {
 
 	const generateKey: KeyGenerator = useCallback((key, prefix) => {
 		const id = key || uuidv4();
-		console.log('%c KeyGenerator', 'color: MediumAquaMarine;', key, prefix, id);
 		return prefix ? `${prefix}:${id}` : `${id}`;
 	}, []);
 
