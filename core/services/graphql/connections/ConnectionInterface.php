@@ -30,14 +30,4 @@ interface ConnectionInterface
      * @since $VID:$
      */
     public function resolveConnection($entity, $args, $context, $info);
-
-    /**
-     * @param $id
-     * @param $args
-     * @param $context
-     * @param $info
-     * @return EE_Base_Class
-     * @since $VID:$
-     */
-    public function resolveNode($id, $args, $context, $info);
 }

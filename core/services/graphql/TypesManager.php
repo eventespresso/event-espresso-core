@@ -6,6 +6,7 @@ use EventEspresso\core\services\collections\CollectionDetailsException;
 use EventEspresso\core\services\collections\CollectionLoaderException;
 use EventEspresso\core\services\graphql\types\TypeCollection;
 use EventEspresso\core\services\graphql\types\TypeInterface;
+use EventEspresso\core\domain\services\graphql\data\loaders as Loaders;
 
 /**
  * Class TypesManager
@@ -44,6 +45,28 @@ class TypesManager
     {
         $this->types->loadTypes();
         add_action('graphql_register_types', [$this, 'configureTypes'], 10);
+
+        add_filter('graphql_data_loaders', [$this, 'registerLoaders'], 10, 2);
+    }
+
+
+    /**
+     * @param array      $loaders The loaders accessible in the AppContext
+     * @param AppContext $context The AppContext
+     *
+     * @since $VID:$
+     */
+    public function registerLoaders($loaders, $context)
+    {
+        $newLoaders = [
+            'espresso_datetime'  => new Loaders\DatetimeLoader($context),
+            'espresso_price'     => new Loaders\PriceLoader($context),
+            'espresso_priceType' => new Loaders\PriceTypeLoader($context),
+            'espresso_ticket'    => new Loaders\TicketLoader($context),
+            'espresso_venue'     => new Loaders\VenueLoader($context),
+        ];
+
+        return array_merge($loaders, $newLoaders);
     }
 
 
