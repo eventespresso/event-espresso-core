@@ -10,12 +10,18 @@ import { Button as ButtonAdapter } from '@infraUI/inputs';
 import { Modal, ModalProps } from '@infraUI/layout/modal';
 
 interface Props extends ModalProps {
+	cancelBtnText?: string;
+	header?: string;
+	okBtnText?: string;
 	showAlertOnEscape: boolean;
 }
 
 const ModalWithAlert: React.FC<Props> = ({ children, showAlertOnEscape, ...props }) => {
 	const { isOpen, onOpen, onClose } = useDisclosure();
 	const cancelRef = React.useRef();
+	const cancelBtnText = props.cancelBtnText || __('No');
+	const header = props.header || __('Are you sure you want to close this?');
+	const okBtnText = props.okBtnText || __('Yes');
 	const onEscape = ({ keyCode }) => keyCode === ESCAPE && onOpen();
 
 	useEffect(() => {
@@ -33,12 +39,12 @@ const ModalWithAlert: React.FC<Props> = ({ children, showAlertOnEscape, ...props
 			</Modal>
 			{showAlertOnEscape && (
 				<AlertDialog
-					cancelButton={<ButtonAdapter buttonText={__('No')} ref={cancelRef} onClick={onClose} />}
-					header={__('Are you sure you want to close this modal?')}
+					cancelButton={<ButtonAdapter buttonText={cancelBtnText} ref={cancelRef} onClick={onClose} />}
+					header={header}
 					isOpen={isOpen}
 					leastDestructiveRef={cancelRef}
 					okButton={
-						<ButtonAdapter buttonText={__('Yes')} variantColor='red' onClick={props.onClose} ml={3} />
+						<ButtonAdapter buttonText={okBtnText} variantColor='red' onClick={props.onClose} ml={3} />
 					}
 					onClose={onClose}
 				/>
