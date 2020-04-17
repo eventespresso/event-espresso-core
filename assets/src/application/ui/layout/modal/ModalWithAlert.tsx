@@ -21,7 +21,11 @@ const ModalWithAlert: React.FC<Props> = ({ children, showAlertOnEscape, ...props
 	const cancelBtnText = props.cancelBtnText || __('No');
 	const header = props.header || __('Are you sure you want to close this?');
 	const okBtnText = props.okBtnText || __('Yes');
-	const onEscape = ({ keyCode }) => keyCode === ESCAPE && onOpen();
+	const onEscape = ({ keyCode }): void => {
+		if (keyCode === ESCAPE) {
+			onOpen();
+		}
+	};
 
 	useEffect(() => {
 		canUseDOM && document.addEventListener('keydown', onEscape);
