@@ -28,10 +28,14 @@ const ModalWithAlert: React.FC<Props> = ({ children, showAlertOnEscape, ...props
 	};
 
 	useEffect(() => {
-		canUseDOM && document.addEventListener('keydown', onEscape);
+		if (canUseDOM) {
+			document.addEventListener('keydown', onEscape);
+		}
 
 		return () => {
-			canUseDOM && document.removeEventListener('keydown', onEscape);
+			if (canUseDOM) {
+				document.removeEventListener('keydown', onEscape);
+			}
 		};
 	}, []);
 
