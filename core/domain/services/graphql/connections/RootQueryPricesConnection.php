@@ -43,7 +43,6 @@ class RootQueryPricesConnection extends AbstractRootQueryConnection
             'connectionTypeName' => "{$this->namespace}RootQueryPricesConnection",
             'connectionArgs'     => TicketPricesConnection::get_connection_args(),
             'resolve'            => [$this, 'resolveConnection'],
-            'resolveNode'        => [$this, 'resolveNode']
         ];
     }
 

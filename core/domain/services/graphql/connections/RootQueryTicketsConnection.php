@@ -43,7 +43,6 @@ class RootQueryTicketsConnection extends AbstractRootQueryConnection
             'connectionTypeName' => "{$this->namespace}RootQueryTicketsConnection",
             'connectionArgs'     => DatetimeTicketsConnection::get_connection_args(),
             'resolve'            => [$this, 'resolveConnection'],
-            'resolveNode'        => [$this, 'resolveNode']
         ];
     }
 

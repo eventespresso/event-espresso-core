@@ -54,6 +54,19 @@ abstract class AbstractConnectionResolver extends WPGraphQLConnectionResolver
         return $entity instanceof EE_Base_Class;
     }
 
+    /**
+     * Validates Model.
+     *
+     * @param array $entity Entity node.
+     *
+     * @return bool
+     */
+    // phpcs:ignore PSR1.Methods.CamelCapsMethodName.NotCamelCaps
+    protected function is_valid_model($entity)
+    {
+        return $entity instanceof EE_Base_Class;
+    }
+
 
     /**
      * This sets up the "allowed" args, and translates the GraphQL-friendly keys to model

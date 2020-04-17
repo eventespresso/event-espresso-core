@@ -45,7 +45,6 @@ class EventDatetimesConnection extends ConnectionBase
             'connectionTypeName' => "{$this->namespace}EventDatetimesConnection",
             'connectionArgs'     => self::get_connection_args(),
             'resolve'            => [$this, 'resolveConnection'],
-            'resolveNode'        => [$this, 'resolveNode']
         ];
     }
 
@@ -63,20 +62,6 @@ class EventDatetimesConnection extends ConnectionBase
     {
         $resolver = new DatetimeConnectionResolver($entity, $args, $context, $info);
         return $resolver->get_connection();
-    }
-
-
-    /**
-     * @param $id
-     * @param $args
-     * @param $context
-     * @param $info
-     * @return EE_Base_Class
-     * @since $VID:$
-     */
-    public function resolveNode($id, $args, $context, $info)
-    {
-        return $this->model->get_one_by_ID($id);
     }
 
     /**
