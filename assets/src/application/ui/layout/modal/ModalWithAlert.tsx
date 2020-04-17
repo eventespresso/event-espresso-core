@@ -1,10 +1,9 @@
-import React, { useCallback, useEffect, useMemo } from 'react';
+import React, { useEffect } from 'react';
 import { useDisclosure } from '@chakra-ui/core';
 import { __ } from '@wordpress/i18n';
-import { canUseDOM } from 'exenv';
+import { canUseDOM } from '@appServices/utilities/dom';
 import { ESCAPE } from '@wordpress/keycodes';
 
-import { ButtonProps } from '@infraUI/inputs';
 import { AlertDialog } from '@infraUI/display';
 import { Button as ButtonAdapter } from '@infraUI/inputs';
 import { Modal, ModalProps } from '@infraUI/layout/modal';
