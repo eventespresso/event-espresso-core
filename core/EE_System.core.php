@@ -669,7 +669,8 @@ final class EE_System implements ResettableInterface
         $previous_version_parts = explode('.', $previous_version);
         $current_version_parts = explode('.', espresso_version());
         return isset($previous_version_parts[0], $previous_version_parts[1], $current_version_parts[0], $current_version_parts[1])
-               && ($previous_version_parts[0] !== $current_version_parts[0]
+               && (
+                   $previous_version_parts[0] !== $current_version_parts[0]
                    || $previous_version_parts[1] !== $current_version_parts[1]
                );
     }
@@ -1068,7 +1069,6 @@ final class EE_System implements ResettableInterface
     public function loadWpGraphql()
     {
         try {
-
             if ($this->request->isGQL()
                 || (
                     $this->route_manager instanceof RouteMatchSpecificationManager
