@@ -16,6 +16,11 @@ use WPGraphQL\Model\Post;
  */
 class VenueConnectionResolver extends AbstractConnectionResolver
 {
+    // phpcs:ignore PSR1.Methods.CamelCapsMethodName.NotCamelCaps
+    public function get_loader_name()
+    {
+        return 'espresso_venue';
+    }
 
     /**
      * @return EEM_Venue
@@ -32,12 +37,12 @@ class VenueConnectionResolver extends AbstractConnectionResolver
 
 
     /**
-     * Return an array of items from the query
+     * Return an array of item IDs from the query
      *
      * @return array
      */
     // phpcs:ignore PSR1.Methods.CamelCapsMethodName.NotCamelCaps
-    public function get_items()
+    public function get_ids()
     {
         $results = $this->query->get_col($this->query_args);
 

@@ -44,7 +44,6 @@ class EventVenuesConnection extends ConnectionBase
             'fromFieldName'      => 'venues',
             'connectionTypeName' => "{$this->namespace}EventVenuesConnection",
             'resolve'            => [$this, 'resolveConnection'],
-            'resolveNode'        => [$this, 'resolveNode'],
         ];
     }
 
@@ -62,19 +61,5 @@ class EventVenuesConnection extends ConnectionBase
     {
         $resolver = new VenueConnectionResolver($entity, $args, $context, $info);
         return $resolver->get_connection();
-    }
-
-
-    /**
-     * @param $id
-     * @param $args
-     * @param $context
-     * @param $info
-     * @return EE_Base_Class
-     * @since $VID:$
-     */
-    public function resolveNode($id, $args, $context, $info)
-    {
-        return DataSource::resolve_post_object($id, $context);
     }
 }

@@ -43,7 +43,6 @@ class RootQueryDatetimesConnection extends AbstractRootQueryConnection
             'connectionTypeName' => "{$this->namespace}RootQueryDatetimesConnection",
             'connectionArgs'     => EventDatetimesConnection::get_connection_args(),
             'resolve'            => [$this, 'resolveConnection'],
-            'resolveNode'        => [$this, 'resolveNode']
         ];
     }
 

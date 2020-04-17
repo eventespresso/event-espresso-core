@@ -42,7 +42,6 @@ class RootQueryPriceTypesConnection extends AbstractRootQueryConnection
             'fromFieldName'      => lcfirst($this->namespace) . 'PriceTypes',
             'connectionTypeName' => "{$this->namespace}RootQueryPriceTypesConnection",
             'resolve'            => [$this, 'resolveConnection'],
-            'resolveNode'        => [$this, 'resolveNode']
         ];
     }
 

@@ -14,6 +14,11 @@ use ReflectionException;
  */
 class PriceTypeConnectionResolver extends AbstractConnectionResolver
 {
+    // phpcs:ignore PSR1.Methods.CamelCapsMethodName.NotCamelCaps
+    public function get_loader_name()
+    {
+        return 'espresso_priceType';
+    }
 
     /**
      * @return EEM_Price_Type
@@ -30,12 +35,12 @@ class PriceTypeConnectionResolver extends AbstractConnectionResolver
 
 
     /**
-     * Return an array of items from the query
+     * Return an array of item IDs from the query
      *
      * @return array
      */
     // phpcs:ignore PSR1.Methods.CamelCapsMethodName.NotCamelCaps
-    public function get_items()
+    public function get_ids()
     {
         $results = $this->query->get_col($this->query_args);
 
