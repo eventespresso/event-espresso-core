@@ -2,7 +2,7 @@
 
 namespace EventEspresso\core\domain\services\graphql\data\loaders;
 
-use EEM_PriceType;
+use EEM_Price_Type;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
 use InvalidArgumentException;
@@ -21,7 +21,7 @@ class PriceTypeLoader extends AbstractLoader
      */
     protected function getQuery()
     {
-        return EEM_PriceType::instance();
+        return EEM_Price_Type::instance();
     }
 
     /**
