@@ -26,8 +26,8 @@ describe('diff.days', () => {
 			expect(result).toBe(0);
 		});
 
-		it('the same for the swapped dates', () => {
-			const result = diff('days', new Date(2014, 8 /* Sep */, 4, 23, 59), new Date(2014, 8 /* Sep */, 5, 0, 0));
+		it('the same for the different dates', () => {
+			const result = diff('days', new Date(2014, 8 /* Sep */, 5, 23, 10), new Date(2014, 8 /* Sep */, 5, 0, 0));
 			expect(result).toBe(0);
 		});
 

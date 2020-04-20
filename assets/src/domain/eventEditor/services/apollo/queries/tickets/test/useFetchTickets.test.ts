@@ -19,13 +19,13 @@ describe('useFetchTickets', () => {
 				wrapper: ApolloMockedProvider(),
 			}
 		);
+
 		await waitForValueToChange(() => queryResult.current, { timeout });
 		const wrapper = ApolloMockedProvider(errorMocks.map((mock) => ({ ...mock, request: queryResult.current })));
 		/* Set query options and the wrapper */
 
 		const { result, waitForValueToChange: waitForChange } = renderHook(
 			() => {
-				useInitDatetimeTestCache();
 				return useFetchTickets(false);
 			},
 			{

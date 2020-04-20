@@ -20,10 +20,7 @@ use EventEspresso\core\services\collections\DuplicateCollectionIdentifierExcepti
 class EspressoEditorAssetManager extends AssetManager
 {
     const JS_HANDLE_EDITOR = 'eventespresso-editor';
-    const JS_HANDLE_EDITOR_PROTOTYPE = 'eventespresso-editor-prototype';
     const CSS_HANDLE_EDITOR = 'eventespresso-editor';
-    const CSS_HANDLE_EDITOR_PROTOTYPE = 'eventespresso-editor-prototype';
-
 
     /**
      * @throws InvalidDataTypeException
@@ -49,7 +46,6 @@ class EspressoEditorAssetManager extends AssetManager
     private function registerJavascript()
     {
         $this->addJs(self::JS_HANDLE_EDITOR, [CoreAssetManager::JS_HANDLE_JS_CORE])->setRequiresTranslation();
-        $this->addJs(self::JS_HANDLE_EDITOR_PROTOTYPE, [self::JS_HANDLE_EDITOR])->setRequiresTranslation();
     }
 
 
@@ -64,6 +60,5 @@ class EspressoEditorAssetManager extends AssetManager
     private function registerStyleSheets()
     {
         $this->addCss(self::CSS_HANDLE_EDITOR);
-        // $this->addCss(self::CSS_HANDLE_EDITOR_PROTOTYPE, [self::CSS_HANDLE_EDITOR]);
     }
 }
