@@ -2,8 +2,8 @@ import { useCallback, useMemo } from 'react';
 import { __ } from '@wordpress/i18n';
 
 import { ButtonProps } from '@infraUI/inputs';
-import { useOnSubmitAssignments } from '../data';
-import { useTAMContext } from '../context';
+import { useOnSubmitAssignments } from '../../../data';
+import { useTAMContext } from '../../../context';
 
 const useSubmitButtonProps = (): ButtonProps => {
 	const { dataState, onCloseModal } = useTAMContext();

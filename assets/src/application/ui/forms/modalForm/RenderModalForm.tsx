@@ -3,9 +3,9 @@ import { __ } from '@wordpress/i18n';
 import { SaveOutlined } from '@ant-design/icons';
 
 import { ButtonProps } from '@infraUI/inputs';
-import { Close } from '@appDisplay/icons';
 import { ConfirmClose } from '@appDisplay/confirm';
-import { Modal } from '@infraUI/layout/modal';
+import { ModalWithAlert } from '@appLayout/modal';
+import { modalCloseButtonProps } from '@infraUI/layout/modal';
 
 import { RenderModalFormProps } from './types';
 
@@ -32,16 +32,7 @@ const RenderModalForm: React.FC<RenderModalFormProps> = ({
 
 	const onReset = useCallback(() => form.reset(), [form.reset]);
 
-	const closeButton = (
-		<ConfirmClose
-			buttonProps={{
-				className: 'confirm-close',
-				icon: Close,
-				variant: 'unstyled',
-			}}
-			onConfirm={onClose}
-		/>
-	);
+	const closeButton = !pristine && <ConfirmClose buttonProps={modalCloseButtonProps} onConfirm={onClose} />;
 
 	const submitButtonProps: ButtonProps = useMemo(
 		() => ({
@@ -66,19 +57,19 @@ const RenderModalForm: React.FC<RenderModalFormProps> = ({
 	);
 
 	return (
-		<Modal
+		<ModalWithAlert
 			bodyClassName='ee-modal-form__body'
 			cancelButtonProps={resetButtonProps}
 			className='ee-modal-form'
 			closeButton={closeButton}
-			closeOnEsc={pristine}
 			isOpen={true}
 			onClose={onClose}
+			showAlertOnEscape={!pristine}
 			submitButtonProps={submitButtonProps}
 			title={title}
 		>
 			{children}
-		</Modal>
+		</ModalWithAlert>
 	);
 };
 
