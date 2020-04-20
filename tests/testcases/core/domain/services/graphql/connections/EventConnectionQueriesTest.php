@@ -4,51 +4,27 @@ namespace EventEspresso\tests\testcases\core\domain\services\graphql\connections
 
 use EE_Dependency_Map;
 use EE_Error;
-use EventEspresso\tests\testcases\core\domain\services\graphql\GraphQLUnitTestCase;
+use EEM_Event;
 
-class EventConnectionQueriesTest extends GraphQLUnitTestCase
+class EventConnectionQueriesTest extends BaseQueriesTest
 {
     public $current_time;
     public $current_date;
     public $current_date_gmt;
-    public $created_post_ids;
-    public $admin;
-    public $subscriber;
+    public $created_event_ids;
 
     public function setUp()
     {
+        $this->model_name = 'Event';
         parent::setUp();
-        if (PHP_VERSION_ID < 70000) {
-            $this->markTestSkipped(
-                'WP GraphQL compatible with PHP 7+ only'
-            );
-            return;
-        }
+
+        $this->model = EEM_Event::instance();
 
         $this->current_time     = strtotime('- 1 day');
         $this->current_date     = date('Y-m-d H:i:s', $this->current_time);
         $this->current_date_gmt = gmdate('Y-m-d H:i:s', $this->current_time);
-        $this->admin            = $this->factory()->user->create(
-            [
-                'role' => 'administrator',
-            ]
-        );
-        $this->subscriber       = $this->factory()->user->create(
-            [
-                'role' => 'subscriber',
-            ]
-        );
 
-        $this->created_post_ids = $this->create_posts();
-
-        $this->app_context = new \WPGraphQL\AppContext();
-
-        $this->app_info = new \GraphQL\Type\Definition\ResolveInfo(array());
-    }
-
-    public function tearDown()
-    {
-        parent::tearDown();
+        $this->created_event_ids = $this->create_events();
     }
 
     public function createPostObject($args)
@@ -102,7 +78,7 @@ class EventConnectionQueriesTest extends GraphQLUnitTestCase
      *
      * @return array
      */
-    public function create_posts($count = 20)
+    public function create_events($count = 20)
     {
 
         // Create posts
@@ -126,62 +102,120 @@ class EventConnectionQueriesTest extends GraphQLUnitTestCase
     public function eventsQuery($variables)
     {
         $query = 'query eventsQuery($first:Int $last:Int $after:String $before:String $where:RootQueryToEspressoEventConnectionWhereArgs ){
-			espressoEvents( first:$first last:$last after:$after before:$before where:$where ) {
-				pageInfo {
-					hasNextPage
-					hasPreviousPage
-					startCursor
-					endCursor
-				}
-				edges {
-					cursor
-					node {
-						id
-						dbId
-						name
-						desc
-					}
-				}
-				nodes {
-				  id
-				  dbId
-				}
-			}
-		}';
+            espressoEvents( first:$first last:$last after:$after before:$before where:$where ) {
+                pageInfo {
+                    hasNextPage
+                    hasPreviousPage
+                    startCursor
+                    endCursor
+                }
+                edges {
+                    cursor
+                    node {
+                        id
+                        dbId
+                        name
+                        desc
+                    }
+                }
+                nodes {
+                    id
+                    dbId
+                }
+            }
+        }';
+        
+        /**
+         * Set the current user as the subscriber so we can test
+         */
+        wp_set_current_user($this->subscriber);
 
         return do_graphql_request($query, 'eventsQuery', $variables);
+    }
+
+    public function eventByQuery($variables)
+    {
+        $query = 'query GET_EVENT($id: ID!) {
+            espressoEvent(id: $id, idType: DATABASE_ID) {
+                id
+                dbId
+                desc
+                name
+            }
+        }';
+        
+        /**
+         * Set the current user as the subscriber so we can test
+         */
+        wp_set_current_user($this->subscriber);
+
+        return do_graphql_request($query, 'GET_EVENT', $variables);
     }
 
     public function testFirstEvent()
     {
 
         /**
-         * Here we're querying the first post in our dataset
+         * Here we're querying the first event in our dataset
          */
         $variables = [
             'first' => 1,
+            'where' => [
+                'orderby' => [
+                    [
+                        'field' => 'TITLE',
+                        'order' => 'DESC'
+                    ]
+                ]
+            ]
         ];
-        $results   = $this->eventsQuery($variables);
+        $results = $this->eventsQuery($variables);
 
-        /**
-         * Let's query the first post in our data set so we can test against it
-         */
-        $first_post      = new \WP_Query(
+        $events = $this->model->get_all(
             [
-                'post_type'      => 'espresso_events',
-                'posts_per_page' => 1,
+                'limit'    => 1,
+                'order_by' => 'EVT_name'
             ]
         );
-        $first_post_id   = $first_post->posts[0]->ID;
-        $expected_cursor = \GraphQLRelay\Connection\ArrayConnection::offsetToCursor($first_post_id);
+
+        $first_event     = reset($events);
+        $first_event_id  = $first_event->ID();
+        $expected_cursor = \GraphQLRelay\Connection\ArrayConnection::offsetToCursor($first_event_id);
         $this->assertNotEmpty($results);
         $this->assertEquals(1, count($results['data']['espressoEvents']['edges']));
-        $this->assertEquals($first_post_id, $results['data']['espressoEvents']['edges'][0]['node']['dbId']);
-        $this->assertEquals($expected_cursor, $results['data']['espressoEvents']['edges'][0]['cursor']);
+
+        $first_edge = $results['data']['espressoEvents']['edges'][0];
+
+        // fields
+        $this->assertEquals($first_event_id, $first_edge['node']['dbId']);
+        $this->assertEquals($first_event->name(), $first_edge['node']['name']);
+        $this->assertEquals($first_event->description(), $first_edge['node']['desc']);
+
+        // pagination
+        $this->assertEquals($expected_cursor, $first_edge['cursor']);
         $this->assertEquals($expected_cursor, $results['data']['espressoEvents']['pageInfo']['startCursor']);
         $this->assertEquals($expected_cursor, $results['data']['espressoEvents']['pageInfo']['endCursor']);
-        $this->assertEquals($first_post_id, $results['data']['espressoEvents']['nodes'][0]['dbId']);
+        $this->assertEquals($first_event_id, $results['data']['espressoEvents']['nodes'][0]['dbId']);
         $this->assertEquals(false, $results['data']['espressoEvents']['pageInfo']['hasPreviousPage']);
         $this->assertEquals(true, $results['data']['espressoEvents']['pageInfo']['hasNextPage']);
+    }
+
+    public function testEventBy()
+    {
+        $randomEventId   = $this->created_event_ids[array_rand($this->created_event_ids)];
+
+        $variables = [
+            'id' => $randomEventId,
+        ];
+        $result   = $this->eventByQuery($variables);
+
+        $event = $this->model->get_one_by_ID($randomEventId);
+
+        $this->assertNotEmpty($result);
+
+        // fields
+        $this->assertEquals($randomEventId, $result['data']['espressoEvent']['dbId']);
+        $this->assertEquals($event->name(), $result['data']['espressoEvent']['name']);
+        $this->assertEquals($event->description(), $result['data']['espressoEvent']['desc']);
     }
 }

@@ -19,8 +19,8 @@ export const EVENT_ATTRIBUTES: any = gql`
 `;
 
 export const GET_EVENT: any = gql`
-	query GET_EVENT($id: Int!) {
-		espressoEventBy(espressoEventId: $id) {
+	query GET_EVENT($id: ID!) {
+		espressoEvent(id: $id, idType: DATABASE_ID) {
 			...eventAttributes
 		}
 	}
