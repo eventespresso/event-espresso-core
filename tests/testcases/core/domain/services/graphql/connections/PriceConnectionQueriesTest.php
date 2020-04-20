@@ -4,14 +4,14 @@ namespace EventEspresso\tests\testcases\core\domain\services\graphql\connections
 
 use EE_Dependency_Map;
 use EE_Error;
-use EEM_Datetime;
-use EEM_Event;
+use EEM_Price;
+use EEM_Ticket;
 use EventEspresso\tests\testcases\core\domain\services\graphql\GraphQLUnitTestCase;
+use GraphQLRelay\Relay;
 
-class DatetimeConnectionQueriesTest extends GraphQLUnitTestCase
+class PriceConnectionQueriesTest extends GraphQLUnitTestCase
 {
     public $subscriber;
-    public $datetime;
 
     public function setUp()
     {
@@ -23,15 +23,13 @@ class DatetimeConnectionQueriesTest extends GraphQLUnitTestCase
             return;
         }
 
-        $this->model = EEM_Datetime::instance();
+        $this->model = EEM_Price::instance();
 
         $this->subscriber       = $this->factory()->user->create(
             [
                 'role' => 'subscriber',
             ]
         );
-
-        $this->datetime = $this->new_model_obj_with_dependencies('Datetime');
 
         $this->app_context = new \WPGraphQL\AppContext();
 
@@ -56,16 +54,16 @@ class DatetimeConnectionQueriesTest extends GraphQLUnitTestCase
         // Create entities
         $created_entities = [];
         for ($i = 1; $i <= $count; $i ++) {
-            $created_entities[ $i ] = $this->new_model_obj_with_dependencies('Datetime');
+            $created_entities[ $i ] = $this->new_model_obj_with_dependencies('Price');
         }
 
         return $created_entities;
     }
 
-    public function datetimesQuery($variables)
+    public function pricesQuery($variables)
     {
-        $query = 'query datetimesQuery($first:Int $last:Int $after:String $before:String $where:EspressoRootQueryDatetimesConnectionWhereArgs ){
-			espressoDatetimes( first:$first last:$last after:$after before:$before where:$where ) {
+        $query = 'query pricesQuery($first:Int $last:Int $after:String $before:String $where:EspressoRootQueryPricesConnectionWhereArgs ){
+			espressoPrices( first:$first last:$last after:$after before:$before where:$where ) {
 				pageInfo {
 					startCursor
 					endCursor
@@ -76,7 +74,8 @@ class DatetimeConnectionQueriesTest extends GraphQLUnitTestCase
 						id
 						dbId
 						name
-						description
+                        desc
+                        amount
 					}
 				}
 				nodes {
@@ -91,19 +90,18 @@ class DatetimeConnectionQueriesTest extends GraphQLUnitTestCase
          */
         wp_set_current_user($this->subscriber);
 
-        return do_graphql_request($query, 'datetimesQuery', $variables);
+        return do_graphql_request($query, 'pricesQuery', $variables);
     }
 
-    public function testFirstDatetime()
+    public function testFirstPrice()
     {
-
         /**
          * Here we're querying the first entity in our dataset
          */
         $variables = [
             'first' => 1,
         ];
-        $results   = $this->datetimesQuery($variables);
+        $results   = $this->pricesQuery($variables);
 
         /**
          * Let's query the entities in our data set so we can test against it
@@ -113,32 +111,25 @@ class DatetimeConnectionQueriesTest extends GraphQLUnitTestCase
                 'limit' => 1,
             ]
         );
-
         $first_entity    = reset($entities);
         $first_entity_id = $first_entity->ID();
         $expected_cursor = \GraphQLRelay\Connection\ArrayConnection::offsetToCursor($first_entity_id);
         $this->assertNotEmpty($results);
-        $this->assertEquals(1, count($results['data']['espressoDatetimes']['edges']));
+        $this->assertEquals(1, count($results['data']['espressoPrices']['edges']));
 
-        $first_edge = $results['data']['espressoDatetimes']['edges'][0];
+        $first_edge = $results['data']['espressoPrices']['edges'][0];
 
         // fields
         $this->assertEquals($first_entity_id, $first_edge['node']['dbId']);
         $this->assertEquals($first_entity->name(), $first_edge['node']['name']);
-        $this->assertEquals($first_entity->description(), $first_edge['node']['description']);
-
-        // pagination
-        $this->assertEquals($expected_cursor, $first_edge['cursor']);
-        $this->assertEquals($expected_cursor, $results['data']['espressoDatetimes']['pageInfo']['startCursor']);
-        $this->assertEquals($expected_cursor, $results['data']['espressoDatetimes']['pageInfo']['endCursor']);
-        $this->assertEquals($first_entity_id, $results['data']['espressoDatetimes']['nodes'][0]['dbId']);
+        $this->assertEquals($first_entity->desc(), $first_edge['node']['desc']);
+        $this->assertEquals($first_entity->amount(), $first_edge['node']['amount']);
     }
 
-    public function testDatetimesByEventId()
+    public function testPricesByTicketId()
     {
-        $events = EEM_Event::instance()->get_all();
-
-        $first_event = reset($events);
+        $tickets = EEM_Ticket::instance()->get_all();
+        $first_ticket = reset($tickets);
 
         /**
          * Here we're querying the first entity in our dataset
@@ -146,11 +137,10 @@ class DatetimeConnectionQueriesTest extends GraphQLUnitTestCase
         $variables = [
             'first' => 1,
             'where' => [
-                'eventId' => $first_event->ID(),
+                'ticketId' => $first_ticket->ID(),
             ]
         ];
-
-        $results   = $this->datetimesQuery($variables);
+        $results   = $this->pricesQuery($variables);
 
         /**
          * Let's query the entities in our data set so we can test against it
@@ -160,24 +150,57 @@ class DatetimeConnectionQueriesTest extends GraphQLUnitTestCase
                 'limit' => 1,
             ]
         );
-
         $first_entity    = reset($entities);
         $first_entity_id = $first_entity->ID();
         $expected_cursor = \GraphQLRelay\Connection\ArrayConnection::offsetToCursor($first_entity_id);
         $this->assertNotEmpty($results);
-        $this->assertEquals(1, count($results['data']['espressoDatetimes']['edges']));
+        $this->assertEquals(1, count($results['data']['espressoPrices']['edges']));
 
-        $first_edge = $results['data']['espressoDatetimes']['edges'][0];
+        $first_edge = $results['data']['espressoPrices']['edges'][0];
 
         // fields
         $this->assertEquals($first_entity_id, $first_edge['node']['dbId']);
         $this->assertEquals($first_entity->name(), $first_edge['node']['name']);
-        $this->assertEquals($first_entity->description(), $first_edge['node']['description']);
+        $this->assertEquals($first_entity->desc(), $first_edge['node']['desc']);
+        $this->assertEquals($first_entity->amount(), $first_edge['node']['amount']);
+    }
 
-        // pagination
-        $this->assertEquals($expected_cursor, $first_edge['cursor']);
-        $this->assertEquals($expected_cursor, $results['data']['espressoDatetimes']['pageInfo']['startCursor']);
-        $this->assertEquals($expected_cursor, $results['data']['espressoDatetimes']['pageInfo']['endCursor']);
-        $this->assertEquals($first_entity_id, $results['data']['espressoDatetimes']['nodes'][0]['dbId']);
+    public function testPricesByTicketIn()
+    {
+        $tickets = EEM_Ticket::instance()->get_all();
+        $first_ticket = reset($tickets);
+
+        /**
+         * Here we're querying the first entity in our dataset
+         */
+        $variables = [
+            'first' => 1,
+            'where' => [
+                'ticketIn' => [Relay::toGlobalId('Ticket', $first_ticket->ID())],
+            ]
+        ];
+        $results   = $this->pricesQuery($variables);
+
+        /**
+         * Let's query the entities in our data set so we can test against it
+         */
+        $entities = $this->model->get_all(
+            [
+                'limit' => 1,
+            ]
+        );
+        $first_entity    = reset($entities);
+        $first_entity_id = $first_entity->ID();
+        $expected_cursor = \GraphQLRelay\Connection\ArrayConnection::offsetToCursor($first_entity_id);
+        $this->assertNotEmpty($results);
+        $this->assertEquals(1, count($results['data']['espressoPrices']['edges']));
+
+        $first_edge = $results['data']['espressoPrices']['edges'][0];
+
+        // fields
+        $this->assertEquals($first_entity_id, $first_edge['node']['dbId']);
+        $this->assertEquals($first_entity->name(), $first_edge['node']['name']);
+        $this->assertEquals($first_entity->desc(), $first_edge['node']['desc']);
+        $this->assertEquals($first_entity->amount(), $first_edge['node']['amount']);
     }
 }

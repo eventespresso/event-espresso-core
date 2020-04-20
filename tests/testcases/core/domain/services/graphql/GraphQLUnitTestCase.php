@@ -22,6 +22,11 @@ class GraphQLUnitTestCase extends EE_UnitTestCase
 {
 
     /**
+     * @var EEM_Base $model
+     */
+    protected $model;
+
+    /**
      * @throws EE_Error
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
