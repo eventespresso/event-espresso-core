@@ -1,13 +1,14 @@
 import React from 'react';
 import { __ } from '@wordpress/i18n';
 
-import { Ticket } from '@appDisplay/icons';
-import { IconButton } from '@application/ui/input';
 import { EntityListItemProps } from '@appLayout/entityList';
+import { IconButton } from '@application/ui/input';
 import ItemCount from '@appDisplay/ItemCount';
+import { Ticket } from '@appDisplay/icons';
+import { TypeName } from '@appServices/apollo/status';
+
 import { useRelatedTickets } from '@edtrServices/apollo/queries';
 import useTicketAssignmentsManager from '@edtrUI/ticketAssignmentsManager/useTicketAssignmentsManager';
-import { TypeName } from '@appServices/apollo/status';
 import withIsLoaded from '@sharedUI/hoc/withIsLoaded';
 
 const AssignTicketsButton: React.FC<EntityListItemProps> = React.memo(({ entity }) => {

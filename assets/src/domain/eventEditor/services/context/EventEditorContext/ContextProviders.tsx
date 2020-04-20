@@ -5,7 +5,6 @@ import { getClient } from '../../../../../infrastructure/services/apollo/Apollo'
 import { ToastProvider } from '@appServices/context/ToastProvider';
 import { RelationsProvider } from '@appServices/context/RelationsProvider';
 import { StatusProvider } from '@appServices/context/StatusProvider';
-import { ModalProvider } from '@appServices/context/ModalProvider';
 import { ConfigProvider } from '@appServices/context/ConfigProvider';
 import { FormModalProvider } from '@appServices/context/FormModalProvider';
 import { ThemeProvider } from '@appServices/theme';
@@ -46,9 +45,7 @@ export const CommonProviders: React.FC = ({ children }) => (
 					<EventIdProvider>
 						<RelationsProvider>
 							<FormModalProvider>
-								<ModalProvider>
-									<EdtrStateProvider>{children}</EdtrStateProvider>
-								</ModalProvider>
+								<EdtrStateProvider>{children}</EdtrStateProvider>
 							</FormModalProvider>
 						</RelationsProvider>
 					</EventIdProvider>
