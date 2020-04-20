@@ -11,6 +11,7 @@ class PriceTypeConnectionQueriesTest extends BaseQueriesTest
     public function setUp()
     {
         $this->model_name = 'Price_Type';
+        $this->skip_create_entities = true;
         parent::setUp();
 
         $this->model = EEM_Price_Type::instance();

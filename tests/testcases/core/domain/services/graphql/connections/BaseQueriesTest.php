@@ -15,7 +15,7 @@ class BaseQueriesTest extends GraphQLUnitTestCase
      */
     protected $model;
     public $model_name;
-
+    public $skip_create_entities;
     public $created_entities;
     public $admin;
     public $subscriber;
@@ -38,7 +38,7 @@ class BaseQueriesTest extends GraphQLUnitTestCase
             ]
         );
 
-        $this->created_entities = $this->create_entities();
+        $this->created_entities = $this->skip_create_entities ? [] : $this->create_entities();
 
         $this->app_context = new \WPGraphQL\AppContext();
 
