@@ -8,10 +8,10 @@ import { Button as ButtonAdapter } from '@infraUI/inputs';
 
 import { ConfirmProps } from './types';
 
-const useConfirm: React.FC<ConfirmProps> = ({ children, buttonProps, onConfirm, title }) => {
+const useConfirm: React.FC<ConfirmProps> = ({ buttonProps, onConfirm, title }) => {
 	const { isOpen, onOpen, onClose } = useDisclosure();
 	const cancelRef = React.useRef();
-	const onDelete = useCallback(() => {
+	const onClickHandler = useCallback(() => {
 		if (typeof onConfirm === 'function') {
 			onConfirm();
 		}
@@ -27,7 +27,7 @@ const useConfirm: React.FC<ConfirmProps> = ({ children, buttonProps, onConfirm, 
 				header={buttonProps?.tooltip}
 				isOpen={isOpen}
 				leastDestructiveRef={cancelRef}
-				okButton={<ButtonAdapter buttonText={__('Yes')} variantColor='red' onClick={onDelete} ml={3} />}
+				okButton={<ButtonAdapter buttonText={__('Yes')} variantColor='red' onClick={onClickHandler} ml={3} />}
 				onClose={onClose}
 				title={title}
 			/>

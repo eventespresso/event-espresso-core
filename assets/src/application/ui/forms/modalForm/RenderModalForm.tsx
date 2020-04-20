@@ -4,7 +4,8 @@ import { SaveOutlined } from '@ant-design/icons';
 
 import { ButtonProps } from '@infraUI/inputs';
 import { ConfirmClose } from '@appDisplay/confirm';
-import { Modal, modalCloseButtonProps } from '@infraUI/layout/modal';
+import { ModalWithAlert } from '@appLayout/modal';
+import { modalCloseButtonProps } from '@infraUI/layout/modal';
 
 import { RenderModalFormProps } from './types';
 
@@ -56,19 +57,19 @@ const RenderModalForm: React.FC<RenderModalFormProps> = ({
 	);
 
 	return (
-		<Modal
+		<ModalWithAlert
 			bodyClassName='ee-modal-form__body'
 			cancelButtonProps={resetButtonProps}
 			className='ee-modal-form'
 			closeButton={closeButton}
-			closeOnEsc={pristine}
 			isOpen={true}
 			onClose={onClose}
+			showAlertOnEscape={!pristine}
 			submitButtonProps={submitButtonProps}
 			title={title}
 		>
 			{children}
-		</Modal>
+		</ModalWithAlert>
 	);
 };
 
