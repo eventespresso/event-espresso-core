@@ -2,38 +2,13 @@
 
 namespace EventEspresso\tests\testcases\core\domain\services\graphql\mutators;
 
-use EventEspresso\tests\testcases\core\domain\services\graphql\GraphQLUnitTestCase;
-
-class TicketCreateTest extends GraphQLUnitTestCase
+class TicketCreateTest extends BaseMutationTest
 {
-    public $name;
-    public $description;
-    public $client_mutation_id;
-    public $admin;
-    public $subscriber;
-
     public function setUp()
     {
+        $this->model_name = 'Ticket';
         // before
         parent::setUp();
-        if (PHP_VERSION_ID < 70000) {
-            $this->markTestSkipped(
-                'WP GraphQL compatible with PHP 7+ only'
-            );
-            return;
-        }
-
-        $this->name               = 'some name';
-        $this->description        = 'some description';
-        $this->client_mutation_id = 'someUniqueId';
-
-        $this->admin = $this->factory()->user->create([
-            'role' => 'administrator',
-        ]);
-
-        $this->subscriber = $this->factory()->user->create([
-            'role' => 'subscriber',
-        ]);
     }
 
     /**
@@ -53,19 +28,14 @@ class TicketCreateTest extends GraphQLUnitTestCase
                 }
             }
         }
-		';
+        ';
 
-        $variables = wp_json_encode([
-            'input' => [
-                'clientMutationId' => $this->client_mutation_id,
-                'name'             => $this->name,
-                'description'      => $this->description,
-            ]
-        ]);
-
-        $actual = do_graphql_request($mutation, 'createEntity', $variables);
-
-        return $actual;
+        $input = [
+            'name'             => $this->name,
+            'description'      => $this->description,
+        ];
+        
+        return $this->runCreateMutation($mutation, $input);
     }
 
     /**

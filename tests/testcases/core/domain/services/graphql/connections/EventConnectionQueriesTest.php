@@ -5,53 +5,26 @@ namespace EventEspresso\tests\testcases\core\domain\services\graphql\connections
 use EE_Dependency_Map;
 use EE_Error;
 use EEM_Event;
-use EventEspresso\tests\testcases\core\domain\services\graphql\GraphQLUnitTestCase;
 
-class EventConnectionQueriesTest extends GraphQLUnitTestCase
+class EventConnectionQueriesTest extends BaseQueriesTest
 {
     public $current_time;
     public $current_date;
     public $current_date_gmt;
     public $created_event_ids;
-    public $admin;
-    public $subscriber;
 
     public function setUp()
     {
+        $this->model_name = 'Event';
         parent::setUp();
-        if (PHP_VERSION_ID < 70000) {
-            $this->markTestSkipped(
-                'WP GraphQL compatible with PHP 7+ only'
-            );
-            return;
-        }
 
         $this->model = EEM_Event::instance();
 
         $this->current_time     = strtotime('- 1 day');
         $this->current_date     = date('Y-m-d H:i:s', $this->current_time);
         $this->current_date_gmt = gmdate('Y-m-d H:i:s', $this->current_time);
-        $this->admin            = $this->factory()->user->create(
-            [
-                'role' => 'administrator',
-            ]
-        );
-        $this->subscriber       = $this->factory()->user->create(
-            [
-                'role' => 'subscriber',
-            ]
-        );
 
         $this->created_event_ids = $this->create_events();
-
-        $this->app_context = new \WPGraphQL\AppContext();
-
-        $this->app_info = new \GraphQL\Type\Definition\ResolveInfo(array());
-    }
-
-    public function tearDown()
-    {
-        parent::tearDown();
     }
 
     public function createPostObject($args)
@@ -196,7 +169,7 @@ class EventConnectionQueriesTest extends GraphQLUnitTestCase
                 ]
             ]
         ];
-        $results   = $this->eventsQuery($variables);
+        $results = $this->eventsQuery($variables);
 
         $events = $this->model->get_all(
             [
@@ -205,8 +178,8 @@ class EventConnectionQueriesTest extends GraphQLUnitTestCase
             ]
         );
 
-        $first_event      = reset($events);
-        $first_event_id   = $first_event->ID();
+        $first_event     = reset($events);
+        $first_event_id  = $first_event->ID();
         $expected_cursor = \GraphQLRelay\Connection\ArrayConnection::offsetToCursor($first_event_id);
         $this->assertNotEmpty($results);
         $this->assertEquals(1, count($results['data']['espressoEvents']['edges']));
@@ -229,7 +202,7 @@ class EventConnectionQueriesTest extends GraphQLUnitTestCase
 
     public function testEventBy()
     {
-        $randomEventId = $this->created_event_ids[array_rand($this->created_event_ids)];
+        $randomEventId   = $this->created_event_ids[array_rand($this->created_event_ids)];
 
         $variables = [
             'id' => $randomEventId,

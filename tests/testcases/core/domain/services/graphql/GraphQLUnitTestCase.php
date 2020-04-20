@@ -22,11 +22,6 @@ class GraphQLUnitTestCase extends EE_UnitTestCase
 {
 
     /**
-     * @var EEM_Base $model
-     */
-    protected $model;
-
-    /**
      * @throws EE_Error
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
@@ -36,6 +31,12 @@ class GraphQLUnitTestCase extends EE_UnitTestCase
     public function setUp()
     {
         parent::setUp();
+        if (PHP_VERSION_ID < 70000) {
+            $this->markTestSkipped(
+                'WP GraphQL compatible with PHP 7+ only'
+            );
+            return;
+        }
         // load handler for EE GraphQL requests
         $graphQL_manager = LoaderFactory::getLoader()->getShared(
             'EventEspresso\core\services\graphql\GraphQLManager'

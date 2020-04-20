@@ -5,57 +5,15 @@ namespace EventEspresso\tests\testcases\core\domain\services\graphql\connections
 use EE_Dependency_Map;
 use EE_Error;
 use EEM_Ticket;
-use EventEspresso\tests\testcases\core\domain\services\graphql\GraphQLUnitTestCase;
 
-class TicketConnectionQueriesTest extends GraphQLUnitTestCase
+class TicketConnectionQueriesTest extends BaseQueriesTest
 {
-    public $subscriber;
-
     public function setUp()
     {
+        $this->model_name = 'Ticket';
         parent::setUp();
-        if (PHP_VERSION_ID < 70000) {
-            $this->markTestSkipped(
-                'WP GraphQL compatible with PHP 7+ only'
-            );
-            return;
-        }
 
         $this->model = EEM_Ticket::instance();
-
-        $this->subscriber       = $this->factory()->user->create(
-            [
-                'role' => 'subscriber',
-            ]
-        );
-
-        $this->app_context = new \WPGraphQL\AppContext();
-
-        $this->app_info = new \GraphQL\Type\Definition\ResolveInfo(array());
-    }
-
-    public function tearDown()
-    {
-        parent::tearDown();
-    }
-
-    /**
-     * Creates several entities for use in cursor query tests
-     *
-     * @param  int $count Number of entities to create.
-     *
-     * @return array
-     */
-    public function create_entities($count = 20)
-    {
-
-        // Create entities
-        $created_entities = [];
-        for ($i = 1; $i <= $count; $i ++) {
-            $created_entities[ $i ] = $this->new_model_obj_with_dependencies('Ticket');
-        }
-
-        return $created_entities;
     }
 
     public function ticketsQuery($variables)

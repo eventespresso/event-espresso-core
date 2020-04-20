@@ -6,60 +6,15 @@ use EE_Dependency_Map;
 use EE_Error;
 use EEM_Datetime;
 use EEM_Event;
-use EventEspresso\tests\testcases\core\domain\services\graphql\GraphQLUnitTestCase;
 
-class DatetimeConnectionQueriesTest extends GraphQLUnitTestCase
+class DatetimeConnectionQueriesTest extends BaseQueriesTest
 {
-    public $subscriber;
-    public $datetime;
-
     public function setUp()
     {
+        $this->model_name = 'Datetime';
         parent::setUp();
-        if (PHP_VERSION_ID < 70000) {
-            $this->markTestSkipped(
-                'WP GraphQL compatible with PHP 7+ only'
-            );
-            return;
-        }
 
         $this->model = EEM_Datetime::instance();
-
-        $this->subscriber       = $this->factory()->user->create(
-            [
-                'role' => 'subscriber',
-            ]
-        );
-
-        $this->datetime = $this->new_model_obj_with_dependencies('Datetime');
-
-        $this->app_context = new \WPGraphQL\AppContext();
-
-        $this->app_info = new \GraphQL\Type\Definition\ResolveInfo(array());
-    }
-
-    public function tearDown()
-    {
-        parent::tearDown();
-    }
-
-    /**
-     * Creates several entities for use in cursor query tests
-     *
-     * @param  int $count Number of entities to create.
-     *
-     * @return array
-     */
-    public function create_entities($count = 20)
-    {
-
-        // Create entities
-        $created_entities = [];
-        for ($i = 1; $i <= $count; $i ++) {
-            $created_entities[ $i ] = $this->new_model_obj_with_dependencies('Datetime');
-        }
-
-        return $created_entities;
     }
 
     public function datetimesQuery($variables)

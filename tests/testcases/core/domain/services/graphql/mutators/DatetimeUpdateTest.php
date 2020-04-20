@@ -2,43 +2,15 @@
 
 namespace EventEspresso\tests\testcases\core\domain\services\graphql\mutators;
 
-use EventEspresso\tests\testcases\core\domain\services\graphql\GraphQLUnitTestCase;
 use GraphQLRelay\Relay;
 
-class DatetimeUpdateTest extends GraphQLUnitTestCase
+class DatetimeUpdateTest extends BaseMutationTest
 {
-    public $name;
-    public $description;
-    public $client_mutation_id;
-    public $admin;
-    public $subscriber;
-    public $entity;
-
     public function setUp()
     {
+        $this->model_name = 'Datetime';
         // before
         parent::setUp();
-        if (PHP_VERSION_ID < 70000) {
-            $this->markTestSkipped(
-                'WP GraphQL compatible with PHP 7+ only'
-            );
-            return;
-        }
-
-
-        $this->name               = 'some name';
-        $this->description        = 'some description';
-        $this->client_mutation_id = 'someUniqueId';
-
-        $this->admin = $this->factory()->user->create([
-            'role' => 'administrator',
-        ]);
-
-        $this->subscriber = $this->factory()->user->create([
-            'role' => 'subscriber',
-        ]);
-
-        $this->entity = $this->new_model_obj_with_dependencies('Datetime');
     }
 
     /**
@@ -62,13 +34,7 @@ class DatetimeUpdateTest extends GraphQLUnitTestCase
         }
         ';
         
-        $input['clientMutationId'] = $this->client_mutation_id;
-
-        $variables = wp_json_encode([
-            'input' => $input
-        ]);
-
-        return do_graphql_request($mutation, 'updateEntity', $variables);
+        return $this->runCreateMutation($mutation, $input);
     }
 
     /**

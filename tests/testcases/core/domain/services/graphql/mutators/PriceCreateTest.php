@@ -2,41 +2,18 @@
 
 namespace EventEspresso\tests\testcases\core\domain\services\graphql\mutators;
 
-use EventEspresso\tests\testcases\core\domain\services\graphql\GraphQLUnitTestCase;
 use GraphQLRelay\Relay;
 
-class PriceCreateTest extends GraphQLUnitTestCase
+class PriceCreateTest extends BaseMutationTest
 {
-    public $name;
-    public $desc;
-    public $client_mutation_id;
-    public $admin;
-    public $subscriber;
     public $priceType;
 
     public function setUp()
     {
+        $this->model_name = 'Price';
         // before
         parent::setUp();
-        if (PHP_VERSION_ID < 70000) {
-            $this->markTestSkipped(
-                'WP GraphQL compatible with PHP 7+ only'
-            );
-            return;
-        }
 
-
-        $this->name               = 'some name';
-        $this->desc               = 'some desc';
-        $this->client_mutation_id = 'someUniqueId';
-
-        $this->admin = $this->factory()->user->create([
-            'role' => 'administrator',
-        ]);
-
-        $this->subscriber = $this->factory()->user->create([
-            'role' => 'subscriber',
-        ]);
         $this->priceType = $this->new_model_obj_with_dependencies('Price_Type');
     }
 
@@ -58,16 +35,8 @@ class PriceCreateTest extends GraphQLUnitTestCase
             }
         }
         ';
-        
-        $input['clientMutationId'] = $this->client_mutation_id;
 
-        $variables = wp_json_encode([
-            'input' => $input
-        ]);
-
-        $actual = do_graphql_request($mutation, 'createEntity', $variables);
-
-        return $actual;
+        return $this->runCreateMutation($mutation, $input);
     }
 
     /**
@@ -85,7 +54,7 @@ class PriceCreateTest extends GraphQLUnitTestCase
 
         $input = [
             'name' => $this->name,
-            'desc' => $this->desc,
+            'desc' => $this->description,
         ];
 
         /**
@@ -115,7 +84,7 @@ class PriceCreateTest extends GraphQLUnitTestCase
 
         $input = [
             'name' => $this->name,
-            'desc' => $this->desc,
+            'desc' => $this->description,
         ];
 
         /**
@@ -143,7 +112,7 @@ class PriceCreateTest extends GraphQLUnitTestCase
 
         $input = [
             'name'      => $this->name,
-            'desc'      => $this->desc,
+            'desc'      => $this->description,
             'priceType' => Relay::toGlobalId('Price_Type', $this->priceType->ID()),
         ];
 
@@ -162,7 +131,7 @@ class PriceCreateTest extends GraphQLUnitTestCase
                     'clientMutationId' => $this->client_mutation_id,
                     'espressoPrice' => [
                         'name' => $this->name,
-                        'desc' => $this->desc,
+                        'desc' => $this->description,
                     ],
                 ],
             ],
