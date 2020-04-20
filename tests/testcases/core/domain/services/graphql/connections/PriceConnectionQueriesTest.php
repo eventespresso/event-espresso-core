@@ -36,11 +36,6 @@ class PriceConnectionQueriesTest extends GraphQLUnitTestCase
         $this->app_info = new \GraphQL\Type\Definition\ResolveInfo(array());
     }
 
-    public function tearDown()
-    {
-        parent::tearDown();
-    }
-
     /**
      * Creates several entities for use in cursor query tests
      *
