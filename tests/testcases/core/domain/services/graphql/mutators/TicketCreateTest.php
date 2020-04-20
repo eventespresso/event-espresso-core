@@ -45,14 +45,14 @@ class TicketCreateTest extends GraphQLUnitTestCase
     {
         $mutation = '
 		mutation CreateTicket($input: CreateEspressoTicketInput!) {
-			createEspressoTicket(input: $input) {
-				clientMutationId
-				espressoTicket {
-					name
-					description
-				}
-			}
-		}
+            createEspressoTicket(input: $input) {
+                clientMutationId
+                espressoTicket {
+                    name
+                    description
+                }
+            }
+        }
 		';
 
         $variables = wp_json_encode([

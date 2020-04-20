@@ -61,25 +61,25 @@ class PriceTypeConnectionQueriesTest extends GraphQLUnitTestCase
     public function priceTypesQuery($variables)
     {
         $query = 'query priceTypesQuery($first:Int $last:Int $after:String $before:String ){
-			espressoPriceTypes( first:$first last:$last after:$after before:$before ) {
-				pageInfo {
-					startCursor
-					endCursor
-				}
-				edges {
-					cursor
-					node {
-						id
-						dbId
-						name
-					}
-				}
-				nodes {
-				  id
-				  dbId
-				}
-			}
-		}';
+            espressoPriceTypes( first:$first last:$last after:$after before:$before ) {
+                pageInfo {
+                    startCursor
+                    endCursor
+                }
+                edges {
+                    cursor
+                    node {
+                        id
+                        dbId
+                        name
+                    }
+                }
+                nodes {
+                    id
+                    dbId
+                }
+            }
+        }';
         
         /**
          * Set the current user as the subscriber so we can test

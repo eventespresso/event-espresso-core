@@ -47,15 +47,15 @@ class PriceDeleteTest extends GraphQLUnitTestCase
         $mutation = '
 		mutation DeletePrice($input: DeleteEspressoPriceInput!) {
             deleteEspressoPrice(input: $input) {
-				clientMutationId
-				espressoPrice {
+                clientMutationId
+                espressoPrice {
                     id
                     dbId
-					name
+                    name
                     isTrashed
-				}
-			}
-		}
+                }
+            }
+        }
 		';
 
         $variables = wp_json_encode([

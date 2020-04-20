@@ -51,15 +51,15 @@ class DatetimeUpdateTest extends GraphQLUnitTestCase
         $mutation = '
 		mutation UpdateDatetime($input: UpdateEspressoDatetimeInput!) {
             updateEspressoDatetime(input: $input) {
-				clientMutationId
-				espressoDatetime {
+                clientMutationId
+                espressoDatetime {
                     id
                     dbId
                     name
                     description
-				}
-			}
-		}
+                }
+            }
+        }
         ';
         
         $input['clientMutationId'] = $this->client_mutation_id;

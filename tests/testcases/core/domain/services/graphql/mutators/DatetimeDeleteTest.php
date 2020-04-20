@@ -47,15 +47,15 @@ class DatetimeDeleteTest extends GraphQLUnitTestCase
         $mutation = '
 		mutation DeleteDatetime($input: DeleteEspressoDatetimeInput!) {
             deleteEspressoDatetime(input: $input) {
-				clientMutationId
-				espressoDatetime {
+                clientMutationId
+                espressoDatetime {
                     id
                     dbId
-					name
+                    name
                     isTrashed
-				}
-			}
-		}
+                }
+            }
+        }
 		';
 
         $variables = wp_json_encode([

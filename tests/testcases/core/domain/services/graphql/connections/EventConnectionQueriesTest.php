@@ -129,27 +129,27 @@ class EventConnectionQueriesTest extends GraphQLUnitTestCase
     public function eventsQuery($variables)
     {
         $query = 'query eventsQuery($first:Int $last:Int $after:String $before:String $where:RootQueryToEspressoEventConnectionWhereArgs ){
-			espressoEvents( first:$first last:$last after:$after before:$before where:$where ) {
-				pageInfo {
-					hasNextPage
-					hasPreviousPage
-					startCursor
-					endCursor
-				}
-				edges {
-					cursor
-					node {
-						id
-						dbId
-						name
-						desc
-					}
-				}
-				nodes {
-				  id
-				  dbId
-				}
-			}
+            espressoEvents( first:$first last:$last after:$after before:$before where:$where ) {
+                pageInfo {
+                    hasNextPage
+                    hasPreviousPage
+                    startCursor
+                    endCursor
+                }
+                edges {
+                    cursor
+                    node {
+                        id
+                        dbId
+                        name
+                        desc
+                    }
+                }
+                nodes {
+                    id
+                    dbId
+                }
+            }
         }';
         
         /**

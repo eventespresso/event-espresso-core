@@ -52,15 +52,15 @@ class PriceUpdateTest extends GraphQLUnitTestCase
         $mutation = '
 		mutation UpdatePrice($input: UpdateEspressoPriceInput!) {
             updateEspressoPrice(input: $input) {
-				clientMutationId
-				espressoPrice {
+                clientMutationId
+                espressoPrice {
                     id
                     dbId
                     name
                     desc
-				}
-			}
-		}
+                }
+            }
+        }
         ';
         
         $input['clientMutationId'] = $this->client_mutation_id;

@@ -46,15 +46,15 @@ class TicketDeleteTest extends GraphQLUnitTestCase
         $mutation = '
 		mutation DeleteTicket($input: DeleteEspressoTicketInput!) {
             deleteEspressoTicket(input: $input) {
-				clientMutationId
-				espressoTicket {
+                clientMutationId
+                espressoTicket {
                     id
                     dbId
-					name
+                    name
                     isTrashed
-				}
-			}
-		}
+                }
+            }
+        }
 		';
 
         $variables = wp_json_encode([

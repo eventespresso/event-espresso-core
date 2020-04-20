@@ -63,27 +63,27 @@ class PriceConnectionQueriesTest extends GraphQLUnitTestCase
     public function pricesQuery($variables)
     {
         $query = 'query pricesQuery($first:Int $last:Int $after:String $before:String $where:EspressoRootQueryPricesConnectionWhereArgs ){
-			espressoPrices( first:$first last:$last after:$after before:$before where:$where ) {
-				pageInfo {
-					startCursor
-					endCursor
-				}
-				edges {
-					cursor
-					node {
-						id
-						dbId
-						name
+            espressoPrices( first:$first last:$last after:$after before:$before where:$where ) {
+                pageInfo {
+                    startCursor
+                    endCursor
+                }
+                edges {
+                    cursor
+                    node {
+                        id
+                        dbId
+                        name
                         desc
                         amount
-					}
-				}
-				nodes {
-				  id
-				  dbId
-				}
-			}
-		}';
+                    }
+                }
+                nodes {
+                    id
+                    dbId
+                }
+            }
+        }';
         
         /**
          * Set the current user as the subscriber so we can test

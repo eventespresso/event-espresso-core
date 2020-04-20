@@ -65,26 +65,26 @@ class DatetimeConnectionQueriesTest extends GraphQLUnitTestCase
     public function datetimesQuery($variables)
     {
         $query = 'query datetimesQuery($first:Int $last:Int $after:String $before:String $where:EspressoRootQueryDatetimesConnectionWhereArgs ){
-			espressoDatetimes( first:$first last:$last after:$after before:$before where:$where ) {
-				pageInfo {
-					startCursor
-					endCursor
-				}
-				edges {
-					cursor
-					node {
-						id
-						dbId
-						name
-						description
-					}
-				}
-				nodes {
-				  id
-				  dbId
-				}
-			}
-		}';
+            espressoDatetimes( first:$first last:$last after:$after before:$before where:$where ) {
+                pageInfo {
+                    startCursor
+                    endCursor
+                }
+                edges {
+                    cursor
+                    node {
+                        id
+                        dbId
+                        name
+                        description
+                    }
+                }
+                nodes {
+                    id
+                    dbId
+                }
+            }
+        }';
         
         /**
          * Set the current user as the subscriber so we can test

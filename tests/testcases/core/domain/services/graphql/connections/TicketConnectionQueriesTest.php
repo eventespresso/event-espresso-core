@@ -61,17 +61,17 @@ class TicketConnectionQueriesTest extends GraphQLUnitTestCase
     public function ticketsQuery($variables)
     {
         $query = 'query ticketsQuery($first:Int $last:Int $after:String $before:String $where:EspressoRootQueryTicketsConnectionWhereArgs ){
-			espressoTickets( first:$first last:$last after:$after before:$before where:$where ) {
-				pageInfo {
-					startCursor
-					endCursor
-				}
+            espressoTickets( first:$first last:$last after:$after before:$before where:$where ) {
+                pageInfo {
+                    startCursor
+                    endCursor
+                }
 				edges {
-					cursor
-					node {
-						id
-						dbId
-						name
+                    cursor
+                    node {
+                        id
+                        dbId
+                        name
                         description
                         prices {
                             nodes {
@@ -80,14 +80,14 @@ class TicketConnectionQueriesTest extends GraphQLUnitTestCase
                                 name
                             }
                         }
-					}
-				}
-				nodes {
-				  id
-				  dbId
-				}
-			}
-		}';
+                    }
+                }
+                nodes {
+                    id
+                    dbId
+                }
+            }
+        }';
         
         /**
          * Set the current user as the subscriber so we can test

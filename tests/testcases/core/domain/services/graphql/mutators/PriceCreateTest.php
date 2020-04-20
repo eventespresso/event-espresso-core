@@ -49,14 +49,14 @@ class PriceCreateTest extends GraphQLUnitTestCase
     {
         $mutation = '
 		mutation CreatePrice($input: CreateEspressoPriceInput!) {
-			createEspressoPrice(input: $input) {
-				clientMutationId
-				espressoPrice {
-					name
-					desc
-				}
-			}
-		}
+            createEspressoPrice(input: $input) {
+                clientMutationId
+                espressoPrice {
+                    name
+                    desc
+                }
+            }
+        }
         ';
         
         $input['clientMutationId'] = $this->client_mutation_id;

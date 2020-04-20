@@ -50,15 +50,15 @@ class TicketUpdateTest extends GraphQLUnitTestCase
         $mutation = '
 		mutation UpdateTicket($input: UpdateEspressoTicketInput!) {
             updateEspressoTicket(input: $input) {
-				clientMutationId
-				espressoTicket {
+                clientMutationId
+                espressoTicket {
                     id
                     dbId
                     name
                     description
-				}
-			}
-		}
+                }
+            }
+        }
         ';
         
         $input['clientMutationId'] = $this->client_mutation_id;

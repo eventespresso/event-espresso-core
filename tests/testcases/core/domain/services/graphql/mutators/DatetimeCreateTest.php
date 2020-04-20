@@ -46,14 +46,14 @@ class DatetimeCreateTest extends GraphQLUnitTestCase
     {
         $mutation = '
 		mutation CreateDatetime($input: CreateEspressoDatetimeInput!) {
-			createEspressoDatetime(input: $input) {
-				clientMutationId
-				espressoDatetime {
-					name
-					description
-				}
-			}
-		}
+            createEspressoDatetime(input: $input) {
+                clientMutationId
+                espressoDatetime {
+                    name
+                    description
+                }
+            }
+        }
 		';
 
         $variables = wp_json_encode([
