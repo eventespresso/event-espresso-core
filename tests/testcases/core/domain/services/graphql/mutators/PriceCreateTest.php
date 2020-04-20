@@ -3,18 +3,15 @@
 namespace EventEspresso\tests\testcases\core\domain\services\graphql\mutators;
 
 use GraphQLRelay\Relay;
+use EEM_Price_Type;
 
 class PriceCreateTest extends BaseMutationTest
 {
-    public $priceType;
-
     public function setUp()
     {
         $this->model_name = 'Price';
         // before
         parent::setUp();
-
-        $this->priceType = $this->new_model_obj_with_dependencies('Price_Type');
     }
 
     /**
@@ -103,7 +100,9 @@ class PriceCreateTest extends BaseMutationTest
      */
     public function testCreateEntityByAdminWithPriceType()
     {
+        $priceTypes = EEM_Price_Type::instance()->get_all();
 
+        $priceType = reset($priceTypes);
         /**
          * Set the current user as the admin role so we
          * can test the mutation
@@ -113,7 +112,7 @@ class PriceCreateTest extends BaseMutationTest
         $input = [
             'name'      => $this->name,
             'desc'      => $this->description,
-            'priceType' => Relay::toGlobalId('Price_Type', $this->priceType->ID()),
+            'priceType' => Relay::toGlobalId('Price_Type', $priceType->ID()),
         ];
 
         /**

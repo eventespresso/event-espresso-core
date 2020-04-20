@@ -6,14 +6,11 @@ use GraphQLRelay\Relay;
 
 class PriceUpdateTest extends BaseMutationTest
 {
-    public $priceType;
-
     public function setUp()
     {
         $this->model_name = 'Price';
         // before
         parent::setUp();
-        $this->priceType = $this->new_model_obj_with_dependencies('Price_Type');
     }
 
     /**
