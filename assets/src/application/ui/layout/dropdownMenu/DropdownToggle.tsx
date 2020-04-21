@@ -9,8 +9,8 @@ import { Tooltip } from '@infraUI/display';
 
 const DropdownToggle = React.forwardRef<typeof MenuToggle, DropdownToggleProps>(
 	({ icon = More, isOpen, tooltip, ...toggleProps }, ref) => {
-		const className = classNames('components-dropdown-menu__toggle', toggleProps.className, {
-			'is-opened': isOpen,
+		const className = classNames('ee-dropdown-menu__toggle', toggleProps.className, {
+			'ee-dropdown-menu__toggle--open': isOpen,
 		});
 
 		return (

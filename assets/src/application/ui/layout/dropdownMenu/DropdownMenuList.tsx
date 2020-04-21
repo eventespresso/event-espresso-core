@@ -5,7 +5,7 @@ import { MenuList, MenuListProps } from '@infraUI/layout/menu';
 import './style.scss';
 
 const DropdownMenuList: React.FC<MenuListProps> = ({ children, placement = 'top', ...props }) => {
-	const className = classNames('ee-components-dropdown-menu__list', props.className);
+	const className = classNames('ee-dropdown-menu__list', props.className);
 
 	return (
 		<MenuList {...props} className={className} placement={placement}>
