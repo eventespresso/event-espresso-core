@@ -1,12 +1,14 @@
 <?php
+
+use EventEspresso\core\exceptions\InvalidDataTypeException;
+use EventEspresso\core\exceptions\InvalidInterfaceException;
+
 /**
  * EE_Load_Textdomain
  *
  * @package        Event Espresso
  * @subpackage     /includes/core/EE_Load_Textdomain.core.php
  * @author         Darren Ethier
- *
- * ------------------------------------------------------------------------
  */
 class EE_Load_Textdomain extends EE_Base
 {
@@ -16,7 +18,7 @@ class EE_Load_Textdomain extends EE_Base
      *
      * @var string
      */
-    private static $_lang;
+    private static $locale;
 
 
     /**
@@ -24,20 +26,29 @@ class EE_Load_Textdomain extends EE_Base
      * repo (if necessary) and then loading it for translations. should only be called in wp plugins_loaded callback
      *
      * @return void
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws ReflectionException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
      */
     public static function load_textdomain()
     {
-        self::_maybe_get_langfiles();
+        EE_Load_Textdomain::loadTranslationsForLocale();
         // now load the textdomain
-        if (! empty(self::$_lang) && is_readable(EE_LANGUAGES_SAFE_DIR . 'event_espresso-' . self::$_lang . '.mo')) {
-            load_plugin_textdomain('event_espresso', false, EE_LANGUAGES_SAFE_LOC);
-        } elseif (! empty(self::$_lang)
-                  && is_readable(EE_LANGUAGES_SAFE_DIR . 'event-espresso-4-' . self::$_lang . '.mo')
-        ) {
-            load_textdomain('event_espresso', EE_LANGUAGES_SAFE_DIR . 'event-espresso-4-' . self::$_lang . '.mo');
-        } else {
-            load_plugin_textdomain('event_espresso', false, dirname(EE_PLUGIN_BASENAME) . '/languages/');
+        if (!empty(EE_Load_Textdomain::$locale)) {
+            $old_mo_path = EE_LANGUAGES_SAFE_DIR . 'event_espresso-' . EE_Load_Textdomain::$locale . '.mo';
+            if (is_readable($old_mo_path)) {
+                load_plugin_textdomain('event_espresso', false, EE_LANGUAGES_SAFE_LOC);
+                return;
+            }
+            $EE4_mo_path = EE_LANGUAGES_SAFE_DIR . 'event_espresso-4-' . EE_Load_Textdomain::$locale . '.mo';
+            if (is_readable($EE4_mo_path)) {
+                load_textdomain('event_espresso', $EE4_mo_path);
+                return;
+            }
         }
+        load_plugin_textdomain('event_espresso', false, dirname(EE_PLUGIN_BASENAME) . '/languages/');
     }
 
 
@@ -47,41 +58,55 @@ class EE_Load_Textdomain extends EE_Base
      * @access private
      * @static
      * @return void
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws ReflectionException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
      */
-    private static function _maybe_get_langfiles()
+    private static function loadTranslationsForLocale()
     {
-        self::$_lang = get_locale();
-        if ($has_check = get_option('ee_lang_check_' . self::$_lang . '_' . EVENT_ESPRESSO_VERSION)
-                         || empty(self::$_lang)
-        ) {
+        EE_Load_Textdomain::$locale = get_locale();
+        // can't download a language file if a language isn't set <taps temple>
+        if (empty(EE_Load_Textdomain::$locale)) {
+            return;
+        }
+        $language_check_option_name = 'ee_lang_check_' . EE_Load_Textdomain::$locale . '_' . EVENT_ESPRESSO_VERSION;
+        // check if language files has already been sideloaded
+        if (get_option($language_check_option_name)) {
             return;
         }
 
-        // load sideloader and sideload the .POT file as this is should always be included.
+        $repo_base_URL = 'https://github.com/eventespresso/languages-ee4/blob/master/event_espresso';
+
+        // load sideloader and sideload the .POT file as this should always be included.
         $sideloader_args = array(
             '_upload_to'     => EE_PLUGIN_DIR_PATH . 'languages/',
-            '_download_from'   => 'https://github.com/eventespresso/languages-ee4/blob/master/event_espresso.pot?raw=true',
+            '_download_from'   => $repo_base_URL .'.pot?raw=true',
             '_new_file_name' => 'event_espresso.pot',
         );
+        /** @var EEH_Sideloader $sideloader */
         $sideloader = EE_Registry::instance()->load_helper('Sideloader', $sideloader_args, false);
         $sideloader->sideload();
 
-        // if lang is en_US or empty then lets just get out.  (Event Espresso core is en_US)
-        if (empty(self::$_lang) || self::$_lang == 'en_US') {
+        // if locale is "en_US" then lets just get out, since Event Espresso core is already "en_US"
+        if (EE_Load_Textdomain::$locale === 'en_US') {
             return;
         }
+        $repo_locale_URL = $repo_base_URL . '-' . EE_Load_Textdomain::$locale;
+        $file_name_base = 'event_espresso-' . EE_Load_Textdomain::$locale;
 
         // made it here so let's get the language files from the github repo, first the .mo file
-        $sideloader->set_download_from('https://github.com/eventespresso/languages-ee4/blob/master/event_espresso-' . self::$_lang . '.mo?raw=true');
-        $sideloader->set_new_file_name('event_espresso-' . self::$_lang . '.mo');
+        $sideloader->set_download_from("{$repo_locale_URL}.mo?raw=true");
+        $sideloader->set_new_file_name("{$file_name_base}.mo");
         $sideloader->sideload();
 
         // now the .po file:
-        $sideloader->set_download_from('https://github.com/eventespresso/languages-ee4/blob/master/event_espresso-' . self::$_lang . '.po?raw=true');
-        $sideloader->set_new_file_name('event_espresso-' . self::$_lang . '.po');
+        $sideloader->set_download_from("{$repo_locale_URL}.po?raw=true");
+        $sideloader->set_new_file_name("{$file_name_base}.po");
         $sideloader->sideload();
 
         // set option so the above only runs when EE updates.
-        update_option('ee_lang_check_' . self::$_lang . '_' . EVENT_ESPRESSO_VERSION, 1);
+        update_option($language_check_option_name, 1);
     }
 }
