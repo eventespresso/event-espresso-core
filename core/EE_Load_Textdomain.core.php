@@ -91,6 +91,8 @@ class EE_Load_Textdomain extends EE_Base
 
         // if locale is "en_US" then lets just get out, since Event Espresso core is already "en_US"
         if (EE_Load_Textdomain::$locale === 'en_US') {
+            // but set option first else we'll forever be downloading the pot file
+            update_option($language_check_option_name, 1);
             return;
         }
         $repo_locale_URL = $repo_base_URL . '-' . EE_Load_Textdomain::$locale;
