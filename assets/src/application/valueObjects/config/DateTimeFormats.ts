@@ -3,8 +3,8 @@ import { defaultDateFormat, defaultTimeFormat } from './defaultDateTimeFormats';
 
 export const DateTimeFormats = (formats: DateTimeFormatsProps): DateTimeFormatsProps => {
 	const maybeDefault = {
-		dateFormat: formats.dateFormat || defaultDateFormat,
-		timeFormat: formats.timeFormat || defaultTimeFormat,
+		dateFormat: formats?.dateFormat || defaultDateFormat,
+		timeFormat: formats?.timeFormat || defaultTimeFormat,
 		dateTimeFormat: '',
 	};
 	return {
