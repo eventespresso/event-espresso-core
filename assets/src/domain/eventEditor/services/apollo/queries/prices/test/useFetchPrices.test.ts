@@ -25,7 +25,6 @@ describe('useFetchPrices', () => {
 
 		const { result, waitForNextUpdate } = renderHook(
 			() => {
-				useInitTicketTestCache();
 				return useFetchPrices(false);
 			},
 			{

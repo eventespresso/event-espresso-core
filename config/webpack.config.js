@@ -52,7 +52,7 @@ const sassModuleRegex = /\.module\.(scss|sass)$/;
 
 // This is the production and development configuration.
 // It is focused on developer experience, fast rebuilds, and a minimal bundle.
-module.exports = function(webpackEnv) {
+module.exports = function (webpackEnv) {
 	const isEnvDevelopment = webpackEnv === 'development';
 	const isEnvProduction = webpackEnv === 'production';
 
@@ -285,7 +285,6 @@ module.exports = function(webpackEnv) {
 			alias: {
 				// Support React Native Web
 				// https://www.smashingmagazine.com/2016/08/a-glimpse-into-the-future-with-react-native-for-web/
-				'@eventespresso/eejs': entries['eejs-core'],
 				// Allows for better profiling with ReactDevTools
 				...(isEnvProductionProfile && {
 					'react-dom$': 'react-dom/profiling',

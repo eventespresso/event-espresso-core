@@ -3,7 +3,7 @@ import { render } from 'react-dom';
 
 import './services/publicPath';
 import './interfaces/types';
-import '../../application/ui/styles/themes/default';
+import '../../application/ui/styles/themes/default/index.scss';
 import EventEditor from './ui/EventEditor';
 import { ContextProviders } from './services/context/EventEditorContext';
 

@@ -5,8 +5,11 @@ const fs = require('fs');
 const url = require('url');
 
 const ASSETS = 'assets';
+const ASSETS_FOLDER = 'assets';
+const DIST_FOLDER = 'dist';
 const SOURCE_FOLDER = 'src';
-const appSrc = `./${ASSETS}/${SOURCE_FOLDER}`;
+const ASSETS_DIST_FOLDER = `${ASSETS_FOLDER}/${DIST_FOLDER}`;
+const ASSETS_SOURCE_FOLDER = `${ASSETS_FOLDER}/${SOURCE_FOLDER}`;
 
 // Make sure any symlinks in the project folder are resolved:
 // https://github.com/facebook/create-react-app/issues/637
@@ -65,39 +68,29 @@ const resolveModule = (resolveFn, filePath) => {
 	return resolveFn(`${filePath}.js`);
 };
 
-const assetsPath = 'assets/ZZZ/';
-
 // config after eject: we're in ./config/
 module.exports = {
 	appPath: resolveApp('.'),
-	appBuild: resolveApp('assets/dist'),
+	appBuild: resolveApp(ASSETS_DIST_FOLDER),
 	appPublic: resolveApp('public'),
 	appHtml: resolveApp('public/index.html'),
-	appIndexJs: resolveModule(resolveApp, `${appSrc}/domain/eventEditor/index`),
+	appIndexJs: resolveModule(resolveApp, ASSETS_SOURCE_FOLDER + `/domain/eventEditor/index`),
 	appPackageJson: resolveApp('package.json'),
-	appSrc: resolveApp(appSrc),
+	appSrc: resolveApp(ASSETS_SOURCE_FOLDER),
 	appTsConfig: resolveApp('tsconfig.json'),
 	appJsConfig: resolveApp('jsconfig.json'),
 	appNodeModules: resolveApp('node_modules'),
 	dotenv: resolveApp('.env'),
 	entries: {
-		'eejs-core': resolveModule(resolveApp, assetsPath + 'eejs/index'),
-		'eventespresso-vendor': resolveModule(resolveApp, assetsPath + 'eejs/vendor/index'),
-		'eventespresso-editor': resolveModule(resolveApp, assetsPath + 'editor/index'),
-		'eventespresso-editor-prototype': resolveModule(resolveApp, './assets/src/domain/eventEditor/index'),
+		'eventespresso-editor': resolveModule(resolveApp, ASSETS_SOURCE_FOLDER + '/domain/eventEditor/index'),
 		// To be done as part of: https://github.com/eventespresso/event-espresso-core/issues/2250
 		// 'ee-wp-plugins-page': resolveModule(resolveApp, assetsPath + 'wp-plugins-page/index'),
 		// 'eventespresso-core-blocks': resolveModule(resolveApp, assetsPath + 'blocks/index'),
 		// 'eventespresso-core-blocks-frontend': resolveModule(resolveApp, assetsPath + 'blocks/index-frontend'),
-		'eventespresso-core-css-default': resolveModule(
-			resolveApp,
-			assetsPath + 'components/ui/styles/themes/default/index'
-		),
 	},
 
 	proxySetup: resolveApp('src/setupProxy.js'),
-	pathToDistFolder: path.resolve(ASSETS, 'dist') + '/',
-	pathToEDTRv1: path.resolve(ASSETS, 'ZZZ') + '/',
+	pathToDistFolder: path.resolve(ASSETS, DIST_FOLDER) + '/',
 	publicUrl: getPublicUrl(resolveApp('package.json')),
 	servedPath: getServedPath(resolveApp('package.json')),
 	testsSetup: resolveModule(resolveApp, 'src/setupTests'),
