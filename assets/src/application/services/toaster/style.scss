@@ -1,6 +1,9 @@
 #espresso-toast-container {
-	> div {
-		padding: var(--ee-padding-default);
+	--ee-toast-icon-size: 24px;
+	--ee-toast-btn-size: 12px;
+
+	.ee-animated-toast__container {
+		margin: 0 1rem 1rem 0;
 	}
 
 	.ee-toaster-notice {
@@ -11,10 +14,10 @@
 		color: var(--ee-default-text-color);
 		display: flex;
 		flex-flow: row nowrap;
-		font-size: 1rem;
-		line-height: 1;
+		font-size: 1.1rem;
+		line-height: 1.2rem;
 		justify-content: space-around;
-		margin: var(--ee-margin-tiny) 0;
+		margin: var(--ee-margin-nano) 0;
 		max-width: 40rem;
 		min-width: 20rem;
 		overflow: hidden;
@@ -22,59 +25,56 @@
 		position: relative;
 
 		&__icon {
-			height: 24px;
+			height: var(--ee-toast-icon-size);
 			left: 0.125rem;
 			justify-self: flex-start;
 			position: relative;
-			top: 0.125rem;
-			width: 24px;
+			width: var(--ee-toast-icon-size);
 		}
 
 		&__body {
 			flex: 1;
-			padding: 0 var(--ee-padding-default);
+			padding: var(--ee-padding-nano) var(--ee-padding-default) var(--ee-padding-micro);
 		}
 
 		&__close-btn {
+			background-color: transparent;
 			color: #99a29d;
 			justify-self: flex-end;
-			height: var(--ee-icon-button-size);
-			width: var(--ee-icon-button-size);
+			height: var(--ee-toast-icon-size);
+			min-width: var(--ee-toast-icon-size);
+			width: var(--ee-toast-icon-size);
+
+			svg {
+				height: var(--ee-toast-btn-size);
+				min-width: var(--ee-toast-btn-size);
+				width: var(--ee-toast-btn-size);
+			}
 		}
 
 		&--error {
 			background-color: #f60d59;
 			color: #fff;
-			font-size: 1.1rem;
+			font-size: 1.2rem;
+			line-height: 1.3rem;
 			.ee-toaster-notice__icon,
 			.ee-toaster-notice__close-btn {
 				color: #fff;
 			}
 		}
 
-		&--info {
-			.ee-toaster-notice__icon {
-				color: #023fac;
-			}
-		}
-
 		&--loading {
 			.ee-toaster-notice__icon {
 				animation: var(--ee-animation-spin);
-				color: #61e6f5;
-			}
-		}
-
-		&--success {
-			.ee-toaster-notice__icon {
-				color: #00873a;
 			}
 		}
 
 		&--warning {
 			background-color: #ffe932;
 			color: #1a1919;
-			font-size: 1.1rem;
+			font-size: 1.2rem;
+			line-height: 1.3rem;
+
 			.ee-toaster-notice__icon,
 			.ee-toaster-notice__close-btn {
 				color: #3b413e;
