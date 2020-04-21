@@ -17,6 +17,7 @@ use EventEspresso\core\services\graphql\fields\GraphQLOutputField;
 use EventEspresso\core\domain\services\graphql\mutators\DatetimeCreate;
 use EventEspresso\core\domain\services\graphql\mutators\DatetimeDelete;
 use EventEspresso\core\domain\services\graphql\mutators\DatetimeUpdate;
+use EventEspresso\core\domain\services\graphql\mutators\EntityReorder;
 use InvalidArgumentException;
 use ReflectionException;
 use WPGraphQL\AppContext;
@@ -304,6 +305,36 @@ class Datetime extends TypeBase
                     ],
                 ],
                 'mutateAndGetPayload' => DatetimeCreate::mutateAndGetPayload($this->model, $this),
+            ]
+        );
+        
+        // Register mutation to update an entity.
+        register_graphql_mutation(
+            'reordoer' . $this->namespace . 'Entities',
+            [
+                'inputFields'         => [
+                    'Ids'      => [
+                        'type'        => [
+                            'non_null' => ['list_of' => 'ID'],
+                        ],
+                        'description' => esc_html__('List of entity guids in the order that is desired.', 'event_espresso'),
+                    ],
+                    'entityType' => [
+                        'type'        => [
+                            'non_null' => $this->namespace . 'ModelNameEnum',
+                        ],
+                        'description' => esc_html__('The entity type of the IDs', 'event_espresso'),
+                    ],
+                ],
+                'outputFields'        => [
+                    'ok' => [
+                        'type'    => 'Boolean',
+                        'resolve' => function ($payload) {
+                            return (bool) $payload['ok'];
+                        },
+                    ],
+                ],
+                'mutateAndGetPayload' => EntityReorder::mutateAndGetPayload(),
             ]
         );
     }
