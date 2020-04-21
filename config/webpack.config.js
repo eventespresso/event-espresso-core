@@ -22,7 +22,6 @@ const ModuleNotFoundPlugin = require('react-dev-utils/ModuleNotFoundPlugin');
 const ForkTsCheckerWebpackPlugin = require('react-dev-utils/ForkTsCheckerWebpackPlugin');
 const typescriptFormatter = require('react-dev-utils/typescriptFormatter');
 const postcssNormalize = require('postcss-normalize');
-const DependencyExtractionWebpackPlugin = require('@wordpress/dependency-extraction-webpack-plugin');
 const miniExtract = require('mini-css-extract-plugin');
 
 const paths = require('./paths');
