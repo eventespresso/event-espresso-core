@@ -11,6 +11,7 @@ import { processDateAndTime } from '@sharedServices/utils/dateAndTime';
 import { validate } from './formValidation';
 import { DateFormShape } from './types';
 import { useTimeZoneTime } from '@appServices/hooks';
+import { PLUS_ONE_MONTH, PLUS_TWO_MONTHS } from '@sharedConstants/defaultDates';
 
 type DateFormConfig = EspressoFormProps<DateFormShape>;
 
@@ -21,8 +22,8 @@ const useDateFormConfig = (id: EntityId, config?: EspressoFormProps): DateFormCo
 
 	const { siteTimeToUtc, utcToSiteTime } = useTimeZoneTime();
 
-	const startDate = start ? utcToSiteTime(parseISO(start)) : null;
-	const endDate = end ? utcToSiteTime(parseISO(end)) : null;
+	const startDate = start ? utcToSiteTime(parseISO(start)) : PLUS_ONE_MONTH;
+	const endDate = end ? utcToSiteTime(parseISO(end)) : PLUS_TWO_MONTHS;
 
 	const { onSubmit } = config;
 

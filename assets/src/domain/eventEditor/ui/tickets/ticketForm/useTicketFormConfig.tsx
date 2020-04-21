@@ -13,6 +13,7 @@ import TicketPriceCalculatorButton from '../ticketPriceCalculator/buttons/Ticket
 import { validate } from './formValidation';
 import { TicketFormShape } from './types';
 import { useTimeZoneTime } from '@appServices/hooks';
+import { PLUS_ONE_MONTH, PLUS_TWO_MONTHS } from '@sharedConstants/defaultDates';
 
 type TicketFormConfig = EspressoFormProps<TicketFormShape>;
 
@@ -35,8 +36,8 @@ const useTicketFormConfig = (id: EntityId, config?: EspressoFormProps): TicketFo
 
 	const { siteTimeToUtc, utcToSiteTime } = useTimeZoneTime();
 
-	const startDate = start ? utcToSiteTime(parseISO(start)) : null;
-	const endDate = end ? utcToSiteTime(parseISO(end)) : null;
+	const startDate = start ? utcToSiteTime(parseISO(start)) : PLUS_ONE_MONTH;
+	const endDate = end ? utcToSiteTime(parseISO(end)) : PLUS_TWO_MONTHS;
 
 	const { onSubmit } = config;
 
