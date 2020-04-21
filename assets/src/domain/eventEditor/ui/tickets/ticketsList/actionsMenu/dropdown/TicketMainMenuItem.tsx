@@ -11,6 +11,7 @@ const TicketMainMenuItem: React.FC = () => {
 	const toggleProps: DropdownToggleProps = {
 		tooltip: __('ticket main menu'),
 	};
+
 	return (
 		<DropdownMenu toggleProps={toggleProps}>
 			<EditTicket />

@@ -14,7 +14,6 @@ const DropdownToggle = React.forwardRef<typeof MenuToggle, DropdownToggleProps>(
 		});
 
 		return (
-			//TODO: refactor this to take advantage of `withTooltip` when and if that will be based off chakra
 			<Tooltip title={tooltip}>
 				<MenuToggle
 					as={IconButton}

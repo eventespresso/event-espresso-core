@@ -1,8 +1,10 @@
 import React from 'react';
 
+import { Menu } from '@infraUI/layout/menu';
+
 import DropdownMenuList from './DropdownMenuList';
 import DropdownToggle from './DropdownToggle';
-import { Menu } from '@infraUI/layout/menu';
+
 import { DropdownMenuProps } from './types';
 
 const DropdownMenu: React.FC<DropdownMenuProps> = ({ children, className, menuListProps, toggleProps }) => {

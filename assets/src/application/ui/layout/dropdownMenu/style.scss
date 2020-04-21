@@ -1,0 +1,7 @@
+.ee-components-dropdown-menu {
+	&__list {
+		&[role='menu'] {
+			z-index: 2;
+		}
+	}
+}
