@@ -55,9 +55,7 @@ const TableHeader: React.FC<TableHeaderProps> = ({ headerRows, showDragHandle, t
 							rowNumber={row}
 							rowType={RowType.header}
 							id={`${tableId}-header-cell-draghandle`}
-						>
-							{''}
-						</TableHeaderCell>
+						/>
 					)}
 				</TableRow>
 			))}
