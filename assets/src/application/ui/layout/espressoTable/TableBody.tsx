@@ -20,6 +20,7 @@ const TableBody: React.FC<TableBodyProps> = ({
 	onDragStart,
 	onDragUpdate,
 	primaryHeader,
+	showDragHandle,
 	tableId,
 	...props
 }) => {
@@ -63,6 +64,7 @@ const TableBody: React.FC<TableBodyProps> = ({
 				rowClassName={row.rowClassName}
 				rowNumber={rowNumber}
 				rowType={RowType.body}
+				showDragHandle={showDragHandle}
 				sortable={sortable}
 			>
 				{row.cells.map((cellData, colNumber) => {

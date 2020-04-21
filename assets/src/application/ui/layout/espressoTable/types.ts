@@ -6,6 +6,10 @@ import {
 	OnDragEndResponder,
 } from 'react-beautiful-dnd';
 
+interface CommonProps {
+	showDragHandle?: boolean;
+}
+
 export interface Cell {
 	type: string;
 	key: string;
@@ -52,7 +56,7 @@ export interface ResponsiveCellProps {
 	value: string;
 }
 
-export interface ResponsiveTableProps extends Responders {
+export interface ResponsiveTableProps extends Responders, CommonProps {
 	bodyRows: BodyRow[];
 	className?: TableClassName;
 	footerRows?: FooterRow[];
@@ -79,7 +83,7 @@ export interface TableProps {
 	tableId?: string;
 }
 
-export interface TableBodyProps extends Responders {
+export interface TableBodyProps extends Responders, CommonProps {
 	bodyRows: BodyRow[];
 	className: TableClassName;
 	headerRowCount: number;
@@ -112,14 +116,14 @@ export interface TableDataCellProps {
 	tableDataCellClassName?: string;
 }
 
-export interface TableFooterProps {
+export interface TableFooterProps extends CommonProps {
 	className: TableClassName;
 	footerRows: FooterRow[];
 	tableId: string;
 	rowCount: number;
 }
 
-export interface TableHeaderProps {
+export interface TableHeaderProps extends CommonProps {
 	className: TableClassName;
 	headerRows: HeaderRow[];
 	tableId: TableId;
@@ -137,7 +141,7 @@ export interface TableHeaderCellProps {
 	tableHeaderCellClassName?: string;
 }
 
-export interface BodyRow {
+export interface BodyRow extends CommonProps {
 	cells?: Cell[];
 	children?: React.ReactNode;
 	className?: TableClassName | string;
