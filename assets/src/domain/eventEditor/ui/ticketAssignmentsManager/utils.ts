@@ -1,12 +1,13 @@
-import { pathOr, filter, equals } from 'ramda';
+import { equals, filter, isEmpty, pathOr } from 'ramda';
 import { parseISO } from 'date-fns';
 
 import { EntityId } from '@appServices/apollo/types';
 import { AnyObject } from '@appServices/utilities/types';
 import { TAMPossibleRelation, TAMRelationEntity, TAMRelationalData, TAMRelationalEntity } from './types';
 import { Datetime } from '@edtrServices/apollo';
-import { OptionsType } from '@appInputs/SelectInput';
+import { OptionsType } from '@infraUI/inputs';
 import sortDates from '@sharedEntities/datetimes/predicates/sorters';
+import activeUpcoming from '@sharedEntities/datetimes/predicates/filters/activeUpcoming';
 
 type EntitiesToUpdate = Array<[EntityId, TAMPossibleRelation]>;
 
@@ -53,7 +54,7 @@ export const prepareEntitiesForUpdate = <Entity extends TAMRelationEntity>({
  */
 type YearWiseMonths = AnyObject<AnyObject<string>>;
 
-export const getMonthsListFromDatetimes = (dates: Array<Datetime>): OptionsType => {
+const getYearWiseMonthsFromDates = (dates: Array<Datetime>): YearWiseMonths => {
 	const sortedDates = sortDates({ dates });
 
 	const yearWiseMonths = sortedDates.reduce<YearWiseMonths>((acc, { startDate }) => {
@@ -70,19 +71,39 @@ export const getMonthsListFromDatetimes = (dates: Array<Datetime>): OptionsType 
 		return acc;
 	}, {});
 
+	return yearWiseMonths;
+};
+
+export const getMonthsListFromDatetimes = (dates: Array<Datetime>): OptionsType => {
+	const yearWiseMonths = getYearWiseMonthsFromDates(dates);
+
 	const list = Object.entries(yearWiseMonths).map(([year, months]) => {
 		return {
 			key: year,
 			label: year,
-			options: Object.entries(months).map(([number, name]) => {
+			options: Object.entries(months).map(([monthNumber, monthName]) => {
 				return {
-					key: `${year}:${number}`,
-					label: name,
-					value: `${year}:${number}`,
+					key: `${year}:${monthNumber}`,
+					label: monthName,
+					value: `${year}:${monthNumber}`,
 				};
 			}),
 		};
 	});
 
 	return list;
+};
+
+export const getYearMonthForNextDate = (dates: Array<Datetime>): string => {
+	const yearWiseMonths = getYearWiseMonthsFromDates(activeUpcoming(dates));
+
+	if (!isEmpty(yearWiseMonths)) {
+		const firstYear = Number(Object.keys(yearWiseMonths)[0]);
+		const firstYearMonths = yearWiseMonths[firstYear];
+		const firstMonth = Number(Object.keys(firstYearMonths)[0]);
+
+		return `${firstYear}:${firstMonth}`;
+	}
+
+	return '';
 };
