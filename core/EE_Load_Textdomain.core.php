@@ -37,14 +37,14 @@ class EE_Load_Textdomain extends EE_Base
         EE_Load_Textdomain::loadTranslationsForLocale();
         // now load the textdomain
         if (!empty(EE_Load_Textdomain::$locale)) {
-            $old_mo_path = EE_LANGUAGES_SAFE_DIR . 'event_espresso-' . EE_Load_Textdomain::$locale . '.mo';
-            if (is_readable($old_mo_path)) {
+            $github_mo_path = EE_LANGUAGES_SAFE_DIR . 'event_espresso-' . EE_Load_Textdomain::$locale . '.mo';
+            if (is_readable($github_mo_path)) {
                 load_plugin_textdomain('event_espresso', false, EE_LANGUAGES_SAFE_LOC);
                 return;
             }
-            $EE4_mo_path = EE_LANGUAGES_SAFE_DIR . 'event_espresso-4-' . EE_Load_Textdomain::$locale . '.mo';
-            if (is_readable($EE4_mo_path)) {
-                load_textdomain('event_espresso', $EE4_mo_path);
+            $glotpress_mo_path = EE_LANGUAGES_SAFE_DIR . 'event_espresso-4-' . EE_Load_Textdomain::$locale . '.mo';
+            if (is_readable($glotpress_mo_path)) {
+                load_textdomain('event_espresso', $glotpress_mo_path);
                 return;
             }
         }
