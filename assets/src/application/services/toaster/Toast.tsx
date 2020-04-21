@@ -1,85 +1,84 @@
 import React from 'react';
-import { ToastAlert, ToastAlertButtonProps } from '@infraUI/display';
+import classNames from 'classnames';
+import ReachAlert from '@reach/alert';
+import { __ } from '@wordpress/i18n';
 
-import withAnimation from './withAnimation';
+import { Box, Icon, IconProps } from '@infraUI/display';
+import { IconButton } from '@infraUI/inputs';
+import { ThemeProvider } from '@appServices/theme';
 import { ToastProps, TOAST_STATUS } from './types';
+import withAnimation from './withAnimation';
 
-const Toast: React.FC<ToastProps> = ({
+type IconName = IconProps['name'];
+
+const baseClass = 'ee-toaster-notice';
+
+const statusIcons = {
+	ERROR: 'warning',
+	INFO: 'info-outline',
+	LOADING: 'spinner',
+	SUCCESS: 'check',
+	WARNING: 'warning-2',
+};
+const iconColors = {
+	ERROR: 'white',
+	INFO: 'blue.500',
+	LOADING: 'cyan.500',
+	SUCCESS: 'green.500',
+	WARNING: 'grey.900',
+};
+
+const Toast: React.FC<Omit<ToastProps, 'position'>> = ({
 	className,
 	message,
 	isClosable = true,
 	onClose,
+	messageProps,
+	titleProps,
 	type = TOAST_STATUS.INFO,
 	title,
 	...props
 }) => {
-	console.log('%c Toast', 'color: Cyan;');
-	console.log('%c 	message', 'color: Cyan;', message, props);
-	const bodyProps = {
-		// color: 'cyan.500',
-		// color: 'cyan',
-		name: 'spinner',
-	};
-	const btnProps: ToastAlertButtonProps = {
-		// color: 'cyan.500',
-		// color: 'cyan',
-		name: 'spinner',
-		onClose,
-		isClosable,
-	};
-	const iconProps = {
-		// color: 'cyan.500',
-		// color: 'cyan',
-		name: 'spinner',
-	};
-	// const noticeProps = { color: 'grey.900', text: message };
-	// const titleProps = { color: 'grey.900', text: title };
-	const noticeProps = { text: message };
-	const titleProps = { text: title };
+	const icon: string = statusIcons[type] as IconName;
+	const iconColor: string = iconColors[type];
 
-	// const variant: 'subtle' | 'solid' = 'subtle';
-	let variant: 'subtle' | 'solid' = 'subtle';
-	switch (type) {
-		case TOAST_STATUS.ERROR:
-			iconProps.name = 'warning';
-			// iconProps.color = 'white';
-			// titleProps.color = 'white';
-			variant = 'solid';
-			break;
-		case TOAST_STATUS.INFO:
-			iconProps.name = 'info-outline';
-			// iconProps.color = 'blue.500';
-			// iconProps.color = 'blue';
-			break;
-		case TOAST_STATUS.LOADING:
-			iconProps.name = 'spinner';
-			// iconProps.color = 'cyan.500';
-			// iconProps.color = 'cyan';
-			break;
-		case TOAST_STATUS.SUCCESS:
-			iconProps.name = 'check';
-			// iconProps.color = 'green.500';
-			// iconProps.color = 'green';
-			break;
-		case TOAST_STATUS.WARNING:
-			iconProps.name = 'warning-2';
-			// iconProps.color = 'gray.900';
-			// iconProps.color = 'gray';
-			variant = 'solid';
-			break;
-	}
+	const status = type.toLowerCase();
+	const htmlClasses = classNames(className, baseClass, `${baseClass}--${status}`);
+
 	return (
-		<ToastAlert
-			baseClassName={'ee-toaster-notice'}
-			btnProps={btnProps}
-			iconProps={iconProps}
-			noticeProps={noticeProps}
-			status={type}
-			titleProps={titleProps}
-			variant={variant}
-			{...bodyProps}
-			{...props}
-		/>
+		<ThemeProvider>
+			<ReachAlert>
+				<Box role='alert' className={htmlClasses} {...props}>
+					{icon && <Icon className={`${baseClass}__icon`} color={iconColor} name={icon} />}
+					<Box className={`${baseClass}__body`}>
+						{title && (
+							<Box
+								fontWeight='bold'
+								lineHeight='normal'
+								className={`${baseClass}__title`}
+								{...titleProps}
+							>
+								{title}
+							</Box>
+						)}
+						{message && (
+							<Box className={`${baseClass}__text`} {...messageProps}>
+								{message}
+							</Box>
+						)}
+					</Box>
+					{isClosable && (
+						<IconButton
+							aria-label={__('Close')}
+							icon={'close'}
+							className={`${baseClass}__close-btn`}
+							onClick={onClose}
+							size={'sm'}
+						/>
+					)}
+				</Box>
+			</ReachAlert>
+		</ThemeProvider>
 	);
 };
 
