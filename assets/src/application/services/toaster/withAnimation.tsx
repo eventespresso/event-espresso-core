@@ -1,11 +1,10 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { useTransition, animated } from 'react-spring';
-import ReachAlert from '@reach/alert';
 
 import getAnimation from './utilities/getAnimation';
 import getToastContainerStyle from './utilities/getToastContainerStyle';
 import { PositionsType, ToastProps, WithAnimationProps } from './types';
-import useTimeout from './useTimeout';
+import useTimeout from '../utilities/useTimeout';
 
 /**
  * adapted from:
@@ -19,7 +18,6 @@ const withAnimation = (Toast: React.FC<ToastProps>): React.FC<WithAnimationProps
 		duration = 30000,
 		...toastProps
 	}) => {
-		console.log('%c withAnimation', 'color: Tomato;');
 		const container = useRef<HTMLDivElement | null>(null);
 		const [timeout, setTimeout] = useState(duration);
 		const [display, setDisplay] = useState(true);
@@ -43,7 +41,6 @@ const withAnimation = (Toast: React.FC<ToastProps>): React.FC<WithAnimationProps
 		};
 
 		const animation = getAnimation({ container, onRest: onRemove, position });
-		console.log('%c 	animation', 'color: Tomato;', animation);
 		const transition = useTransition(display, null, animation);
 		const style = useMemo(() => getToastContainerStyle(position), [position]);
 
@@ -55,8 +52,6 @@ const withAnimation = (Toast: React.FC<ToastProps>): React.FC<WithAnimationProps
 			}
 		}, [requestClose]);
 
-		console.log('%c 	position', 'color: Tomato;', position);
-		console.log('%c 	toastProps', 'color: Tomato;', toastProps);
 		const transitionResults = transition.map(
 			({ key, item, props }) =>
 				item && (
@@ -79,9 +74,7 @@ const withAnimation = (Toast: React.FC<ToastProps>): React.FC<WithAnimationProps
 							ref={container}
 							className='ee-animated-toast__wrapper'
 						>
-							<ReachAlert>
-								<Toast position={position as PositionsType} style={props} {...toastProps} />
-							</ReachAlert>
+							<Toast position={position as PositionsType} style={props} {...toastProps} />
 						</animated.div>
 					</animated.div>
 				)
