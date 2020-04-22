@@ -30,7 +30,9 @@ const useSystemNotificationsManager: SystemNotificationsManager = (options?) => 
 			}
 			if (key) {
 				dissmissToast(key);
+				return 'dissmissed';
 			}
+			return 'loading...';
 		},
 		[addToast, dissmissToast]
 	);

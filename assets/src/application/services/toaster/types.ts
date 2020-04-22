@@ -1,3 +1,5 @@
+import { BoxProps } from '@infraUI/display';
+
 type AddToastProps = Omit<ToastProps, 'timestamp' | 'loading'>;
 export type LoadingToastProps = Partial<Omit<ToastProps, 'timestamp'>>;
 export type AddToast = (props: Partial<AddToastProps>) => ToastKey;
@@ -32,6 +34,12 @@ export type SystemNotificationsToaster = {
 	warning: AddToast;
 };
 
+export interface ToastAlertButtonProps {
+	isClosable?: boolean;
+	name?: string;
+	onClose: (event: React.MouseEvent) => void;
+}
+
 export enum TOAST_STATUS {
 	ERROR = 'ERROR',
 	INFO = 'INFO',
@@ -62,11 +70,13 @@ export interface ToastProps {
 	key: ToastKey;
 	loading?: boolean;
 	message: string;
+	messageProps?: BoxProps;
 	onClose: onCloseFn;
 	position: PositionsType;
 	style?: Partial<React.CSSProperties>;
 	timestamp: number;
 	title?: string;
+	titleProps?: BoxProps;
 	type: ToastStatus;
 }
 
