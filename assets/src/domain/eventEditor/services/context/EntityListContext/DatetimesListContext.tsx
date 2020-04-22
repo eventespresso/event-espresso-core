@@ -8,6 +8,7 @@ import { useDatetimes } from '@edtrServices/apollo/queries';
 import type { Datetime } from '@edtrServices/apollo/types';
 import { useEdtrState } from '@edtrHooks/edtrState';
 import { getGuids } from '@appServices/predicates';
+import notTrashed from '@sharedServices/predicates/filters/notTrashed';
 
 export type DatetimesListContextProps = EntityListContextProps<DatetimesFilterStateManager, Datetime>;
 
@@ -21,13 +22,29 @@ export const DatetimesListProvider: React.FC = ({ children }) => {
 	// memoize filter state
 	const filterState = useMemo(() => filters, [filtersStr]);
 
-	const filteredEntities = useFilteredEntities(domain, datesList, datetimes, filterState);
+	const { setSortBy, sortingEnabled } = filterState;
+
+	let filteredEntities = useFilteredEntities(domain, datesList, datetimes, filterState);
+
+	if (filterState.sortingEnabled) {
+		filteredEntities = notTrashed(filteredEntities);
+	}
 
 	// Update Edtr state for isChained filter
 	const { setVisibleDatetimeIds } = useEdtrState();
 	useEffect(() => {
-		setVisibleDatetimeIds(getGuids(filteredEntities));
-	}, [filteredEntities]);
+		// update only when not sorting
+		if (!sortingEnabled) {
+			setVisibleDatetimeIds(getGuids(filteredEntities));
+		}
+	}, [filteredEntities, sortingEnabled]);
+
+	// set sortBy to 'order' when sorting is enabled
+	useEffect(() => {
+		if (sortingEnabled) {
+			setSortBy('order');
+		}
+	}, [sortingEnabled]);
 
 	const value: DatetimesListContextProps = { filterState, filteredEntities };
 

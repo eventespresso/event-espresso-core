@@ -13,7 +13,7 @@ const useFilteredEntities = <D extends string, L extends string, E extends Entit
 	entityList: Array<E>,
 	filterState: FS
 ): Array<E> => {
-	const { pageNumber, perPage, searchText, setPageNumber, setTotal, sortBy, total } = filterState;
+	const { pageNumber, perPage, searchText, setPageNumber, setTotal, sortBy, sortingEnabled, total } = filterState;
 
 	const { applyFilters, applySearches, applySorters } = useEntityFilterService<D, L, E, ELFSM>(domain, listId);
 
@@ -21,13 +21,13 @@ const useFilteredEntities = <D extends string, L extends string, E extends Entit
 	// Filter the list
 	cacheIds = entityListCacheIdString(entityList);
 	const filteredEntities = useMemo<Array<E>>(() => {
-		return applyFilters(entityList, filterState);
+		return sortingEnabled ? entityList : applyFilters(entityList, filterState);
 	}, [cacheIds, filterState]);
 
 	// search entities
 	cacheIds = entityListCacheIdString(filteredEntities);
 	const searchResults = useMemo<Array<E>>(() => {
-		return applySearches(filteredEntities, filterState);
+		return sortingEnabled ? filteredEntities : applySearches(filteredEntities, filterState);
 	}, [cacheIds, searchText]);
 
 	// sort it
@@ -39,7 +39,7 @@ const useFilteredEntities = <D extends string, L extends string, E extends Entit
 	// paginate it
 	cacheIds = entityListCacheIdString(sortedEntities);
 	const paginatedEntities = useMemo<Array<E>>(() => {
-		return sortedEntities.slice(perPage * (pageNumber - 1), perPage * pageNumber);
+		return sortingEnabled ? sortedEntities : sortedEntities.slice(perPage * (pageNumber - 1), perPage * pageNumber);
 	}, [cacheIds, perPage, pageNumber]);
 
 	// Avoid synchronous state update
