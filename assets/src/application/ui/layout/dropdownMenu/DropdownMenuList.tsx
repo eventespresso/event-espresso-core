@@ -2,7 +2,6 @@ import React, { Children, cloneElement } from 'react';
 import classNames from 'classnames';
 
 import { MenuList, MenuListProps } from '@infraUI/layout/menu';
-import './style.scss';
 
 const DropdownMenuList: React.FC<MenuListProps> = ({ children, placement = 'top', ...props }) => {
 	const className = classNames('ee-dropdown-menu__list', props.className);
