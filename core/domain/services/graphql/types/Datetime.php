@@ -310,7 +310,7 @@ class Datetime extends TypeBase
         
         // Register mutation to update an entity.
         register_graphql_mutation(
-            'reordoer' . $this->namespace . 'Entities',
+            'reorder' . $this->namespace . 'Entities',
             [
                 'inputFields'         => [
                     'entityIds'  => [
