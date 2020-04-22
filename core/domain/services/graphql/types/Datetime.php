@@ -313,7 +313,7 @@ class Datetime extends TypeBase
             'reordoer' . $this->namespace . 'Entities',
             [
                 'inputFields'         => [
-                    'Ids'      => [
+                    'entityIds'  => [
                         'type'        => [
                             'non_null' => ['list_of' => 'ID'],
                         ],
