@@ -39,9 +39,7 @@ const useFetchPrices = (skipFetch: boolean = null): FetchEntitiesResult<PricesLi
 		if (loadingToastKey.current === '') {
 			loadingToastKey.current = toaster.generateKey(null, `loading-${TypeName.prices}`);
 		}
-		// if (loading) {
 		toaster.loading({ loading, message: 'initializing prices', key: loadingToastKey.current });
-		// }
 		setIsLoading(TypeName.prices, loading);
 	}, [loading]);
 

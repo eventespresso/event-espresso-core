@@ -20,7 +20,7 @@ const useFetchPriceTypes = (): FetchEntitiesResult<PriceTypesList> => {
 		onCompleted: (): void => {
 			setIsLoaded(TypeName.priceTypes, true);
 			dismissLoading();
-			toaster.success({ message: 'prices initialized' });
+			toaster.success({ message: 'price types initialized' });
 		},
 		onError: (error): void => {
 			setIsError(TypeName.priceTypes, true);
@@ -33,9 +33,7 @@ const useFetchPriceTypes = (): FetchEntitiesResult<PriceTypesList> => {
 		if (loadingToastKey.current === '') {
 			loadingToastKey.current = toaster.generateKey(null, `loading-${TypeName.priceTypes}`);
 		}
-		// if (loading) {
 		toaster.loading({ loading, message: 'initializing price types', key: loadingToastKey.current });
-		// }
 		setIsLoading(TypeName.priceTypes, loading);
 	}, [loading]);
 

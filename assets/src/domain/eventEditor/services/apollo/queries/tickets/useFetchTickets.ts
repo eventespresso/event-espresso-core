@@ -26,7 +26,7 @@ const useFetchTickets = (skipFetch: boolean = null): FetchEntitiesResult<Tickets
 		onCompleted: (): void => {
 			setIsLoaded(TypeName.tickets, true);
 			dismissLoading();
-			toaster.success({ message: `tickets initialized` });
+			toaster.success({ message: 'tickets initialized' });
 		},
 		onError: (error): void => {
 			setIsError(TypeName.tickets, true);
@@ -39,9 +39,7 @@ const useFetchTickets = (skipFetch: boolean = null): FetchEntitiesResult<Tickets
 		if (loadingToastKey.current === '') {
 			loadingToastKey.current = toaster.generateKey(null, `loading-${TypeName.tickets}`);
 		}
-		// if (loading) {
 		toaster.loading({ loading, message: 'initializing tickets', key: loadingToastKey.current });
-		// }
 		setIsLoading(TypeName.tickets, loading);
 	}, [loading]);
 

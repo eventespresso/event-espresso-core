@@ -35,9 +35,7 @@ const useFetchDatetimes = (): FetchEntitiesResult<DatetimesList> => {
 		if (loadingToastKey.current === '') {
 			loadingToastKey.current = toaster.generateKey(null, `loading-${TypeName.datetimes}`);
 		}
-		// if (loading) {
 		toaster.loading({ loading, message: 'initializing datetimes', key: loadingToastKey.current });
-		// }
 		setIsLoading(TypeName.datetimes, loading);
 	}, [loading]);
 
