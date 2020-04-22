@@ -19,7 +19,7 @@ const DropdownToggle = React.forwardRef<typeof MenuToggle, DropdownToggleProps>(
 					as={IconButton}
 					// @ts-ignore
 					icon={More}
-					variant='ghost'
+					variant='unstyled'
 					{...toggleProps}
 					className={className}
 					ref={ref}
