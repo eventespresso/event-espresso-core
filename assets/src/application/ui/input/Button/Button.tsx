@@ -5,6 +5,8 @@ import { Button as ButtonAdapter } from '@infraUI/inputs';
 import { ButtonProps, ButtonSize, ButtonType } from './types';
 import { withLabel, withTooltip } from '../../display';
 
+import './style.scss';
+
 type BtnType = React.ComponentType<ButtonProps>;
 
 /**
