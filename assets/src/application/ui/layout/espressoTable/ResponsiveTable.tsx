@@ -2,6 +2,7 @@ import React from 'react';
 import classNames from 'classnames';
 import { v4 as uuidv4 } from 'uuid';
 
+import { isFunc } from '@appServices/utilities/function';
 import { isEmpty } from '@appServices/utilities/array';
 import Table from './Table';
 import TableHeader from './TableHeader';
@@ -57,9 +58,16 @@ const ResponsiveTable: React.FC<ResponsiveTableProps> = ({
 		tableClassName,
 	};
 
+	const showDragHandle = props.showDragHandle && isFunc(onDragEnd);
+
 	return (
 		<Table captionID={captionID} captionText={tableCaption} className={cssClasses.tableClassName} tableId={tableId}>
-			<TableHeader className={cssClasses} headerRows={headerRows} tableId={tableId} />
+			<TableHeader
+				className={cssClasses}
+				headerRows={headerRows}
+				showDragHandle={showDragHandle}
+				tableId={tableId}
+			/>
 			<TableBody
 				bodyRows={bodyRows}
 				className={cssClasses}
@@ -70,6 +78,7 @@ const ResponsiveTable: React.FC<ResponsiveTableProps> = ({
 				onDragUpdate={onDragUpdate}
 				onDragEnd={onDragEnd}
 				primaryHeader={primaryHeader}
+				showDragHandle={showDragHandle}
 				tableId={tableId}
 			/>
 			<TableFooter
@@ -77,6 +86,7 @@ const ResponsiveTable: React.FC<ResponsiveTableProps> = ({
 				footerRows={footerRows}
 				tableId={tableId}
 				rowCount={headerRowCount + tableRowCount}
+				showDragHandle={showDragHandle}
 			/>
 		</Table>
 	);

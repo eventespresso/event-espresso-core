@@ -1,6 +1,7 @@
 import React from 'react';
 import classNames from 'classnames';
 import { Draggable } from 'react-beautiful-dnd';
+import { Icon } from '@chakra-ui/core';
 
 import { RowType, BodyRow } from './types';
 
@@ -12,6 +13,7 @@ const TableRow: React.FC<BodyRow> = ({
 	rowClassName = '',
 	className,
 	rowType = RowType.body,
+	showDragHandle,
 	sortable = false,
 	...props
 }) => {
@@ -44,9 +46,14 @@ const TableRow: React.FC<BodyRow> = ({
 							display: isDragging ? 'table' : 'table-row',
 						}}
 						{...draggableProps}
-						{...dragHandleProps}
+						{...(!showDragHandle && dragHandleProps)}
 					>
 						{children}
+						{showDragHandle && (
+							<td {...dragHandleProps}>
+								<Icon name='drag-handle' />
+							</td>
+						)}
 					</tr>
 				);
 			}}

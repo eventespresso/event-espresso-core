@@ -8,7 +8,7 @@ import TableHeaderCell from './TableHeaderCell';
 
 import { RowType, TableHeaderProps } from './types';
 
-const TableHeader: React.FC<TableHeaderProps> = ({ headerRows, tableId, ...props }) => {
+const TableHeader: React.FC<TableHeaderProps> = ({ headerRows, showDragHandle, tableId, ...props }) => {
 	const className = classNames(props.className.headerClassName, 'ee-rspnsv-table-header');
 	const theadProps: React.HTMLAttributes<HTMLElement> = {
 		...props,
@@ -46,6 +46,17 @@ const TableHeader: React.FC<TableHeaderProps> = ({ headerRows, tableId, ...props
 							</TableHeaderCell>
 						);
 					})}
+
+					{showDragHandle && (
+						<TableHeaderCell
+							className={props.className}
+							colNumber={headerRow.cells.length}
+							key={`row-${row}-col-${headerRow.cells.length}`}
+							rowNumber={row}
+							rowType={RowType.header}
+							id={`${tableId}-header-cell-draghandle`}
+						/>
+					)}
 				</TableRow>
 			))}
 		</thead>
