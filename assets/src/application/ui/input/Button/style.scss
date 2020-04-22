@@ -46,7 +46,7 @@
 		font-size: var(--ee-font-size-default);
 		font-weight: bold;
 		line-height: var(--ee-font-size-default);
-		margin: 0 0 var(--ee-margin-smaller);
+		// margin: 0 0 var(--ee-margin-smaller); Setting margins on these states is a bit confusing, needs discussion.
 		outline: none !important;
 		position: relative;
 		text-decoration: none;
