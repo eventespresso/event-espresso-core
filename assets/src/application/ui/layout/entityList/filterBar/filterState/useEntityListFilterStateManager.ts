@@ -15,6 +15,7 @@ const useEntityListFilterStateManager = <SortBy = BasicSortBy>(defaultSortBy: So
 		total: null,
 		searchText: '',
 		sortBy: defaultSortBy,
+		sortingEnabled: false,
 		view: 'card',
 	};
 	const [state, dispatch] = useReducer(getReducer<SortBy>(), initialState);
@@ -76,6 +77,12 @@ const useEntityListFilterStateManager = <SortBy = BasicSortBy>(defaultSortBy: So
 		});
 	}, []);
 
+	const toggleSorting: FSM['toggleSorting'] = useCallback(() => {
+		dispatch({
+			type: 'TOGGLE_SORTING',
+		});
+	}, []);
+
 	return useMemo(
 		() => ({
 			...state,
@@ -87,6 +94,7 @@ const useEntityListFilterStateManager = <SortBy = BasicSortBy>(defaultSortBy: So
 			setCardView,
 			setTableView,
 			setSearchText,
+			toggleSorting,
 		}),
 		Object.values(state)
 	);
