@@ -8,10 +8,10 @@ import { LabelPosition } from '@application/ui/display';
 import { ToggleFiltersButtonProps } from '../types';
 import { getPropsAreEqual } from '@appServices/utilities';
 
-const ToggleFiltersButton: React.FC<ToggleFiltersButtonProps> = React.memo(({ listId, showFilters, toggleFilters }) => {
+const ToggleFiltersButton: React.FC<ToggleFiltersButtonProps> = ({ listId, showFilters, toggleFilters, ...rest }) => {
 	const className = classNames('ee-filter-bar__btn', { 'ee-filter-bar__btn--active': showFilters });
 	const filterId = `ee-toggle-filters-btn-${listId}`;
-	const tooltip = __(`${showFilters ? 'hide' : 'show'} filters`);
+	const tooltip = showFilters ? __('hide filters') : __('show filters');
 
 	return (
 		<IconButton
@@ -24,8 +24,9 @@ const ToggleFiltersButton: React.FC<ToggleFiltersButtonProps> = React.memo(({ li
 			labelClassName={'ee-filter-bar__btn-wrap'}
 			labelPosition={LabelPosition.BOTTOM_CENTER}
 			variant='outline'
+			{...rest}
 		/>
 	);
-});
+};
 
-export default React.memo(ToggleFiltersButton, getPropsAreEqual(['listId'], ['showFilters']));
+export default React.memo(ToggleFiltersButton, getPropsAreEqual(['listId'], ['showFilters'], ['isDisabled']));
