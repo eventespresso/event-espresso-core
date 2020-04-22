@@ -7,7 +7,7 @@ import { IconProps } from './types';
 /**
  * Custom Event Espresso Dashicons
  */
-const Icon = React.forwardRef<SVGSVGElement, IconProps>(({ className, name, svgSize = 20, ...props }, ref) => {
+const Icon = React.forwardRef<SVGSVGElement, IconProps>(({ className, name, svgSize = 20, color, ...props }, ref) => {
 	const path = svgPath[name];
 
 	if (!path) {
@@ -19,15 +19,16 @@ const Icon = React.forwardRef<SVGSVGElement, IconProps>(({ className, name, svgS
 
 	return (
 		<svg
-			role={'img'}
 			aria-hidden={true}
-			focusable={false}
-			xmlns='http://www.w3.org/2000/svg'
-			width={svgSize}
-			height={svgSize}
-			viewBox={viewBox}
 			className={newClassName}
+			focusable={false}
+			fill={color}
+			height={svgSize}
 			ref={ref}
+			role={'img'}
+			viewBox={viewBox}
+			width={svgSize}
+			xmlns='http://www.w3.org/2000/svg'
 			{...props}
 		>
 			<path d={path} />
