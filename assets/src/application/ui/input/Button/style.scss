@@ -105,10 +105,6 @@
 			}
 		}
 
-		&:active:not([disabled]) {
-			top: 1px;
-		}
-
 		&:hover {
 			cursor: pointer;
 		}
