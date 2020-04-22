@@ -16,6 +16,7 @@
 		font-weight: normal;
 		height: calc(var(--ee-font-size-default) + 1px);
 		line-height: var(--ee-font-size-micro);
+		min-width: calc(var(--ee-font-size-default) + 1px);
 		padding: var(--ee-padding-micro);
 		position: absolute;
 		right: 0;
@@ -23,7 +24,7 @@
 		text-shadow: var(--ee-text-shadow-inset);
 		top: 0;
 		vertical-align: top;
-		min-width: calc(var(--ee-font-size-default) + 1px);
+		z-index: 1;
 		&--has-items {
 			background: var(--ee-color-bright-blue);
 		}

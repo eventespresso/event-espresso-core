@@ -4,10 +4,11 @@ import classNames from 'classnames';
 import { MenuItem } from '@infraUI/layout/menu';
 import { DropdownMenuItemProps } from './types';
 
-const DropdownMenuItem: React.FC<DropdownMenuItemProps> = ({ icon: Icon, title, className, ...rest }) => {
-	const newClassName = classNames('components-dropdown-menu__menu-item', className);
+const DropdownMenuItem: React.FC<DropdownMenuItemProps> = ({ icon: Icon, title, ...props }) => {
+	const className = classNames('ee-dropdown-menu__item', props.className);
+
 	return (
-		<MenuItem {...rest} className={newClassName} role='menuitem'>
+		<MenuItem {...props} className={className} role='menuitem'>
 			{Icon && <Icon />}
 			<span>{title}</span>
 		</MenuItem>

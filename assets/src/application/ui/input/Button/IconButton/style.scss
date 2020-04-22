@@ -1,0 +1,27 @@
+/** -------------------------------------------------------------------------
+ * Event Espresso Button Stylesheet
+ * © 2020 Event Espresso
+ * ------------------------------------------------------------------------- */
+
+.ee-button.ee-button {
+	&.ee-icon-button {
+		background: none;
+		border: 1px solid var(--ee-background-color) !important;
+		box-shadow: none;
+		color: var(--ee-default-text-color);
+		height: calc(var(--ee-icon-button-size) + 2px);
+		margin: 0 0 var(--ee-margin-micro);
+		padding: 0 8px;
+		width: calc(var(--ee-icon-button-size) + 2px);
+		svg {
+			display: inline-block;
+			flex: 0 0 auto;
+		}
+		&:hover {
+			background: var(--ee-background-color) !important;
+			box-shadow: none !important;
+			color: var(--ee-color-primary) !important;
+			border: 1px solid var(--ee-border-color) !important;
+		}
+	}
+}

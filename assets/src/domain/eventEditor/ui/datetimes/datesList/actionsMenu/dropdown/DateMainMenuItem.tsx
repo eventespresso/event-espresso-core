@@ -11,6 +11,7 @@ const DateMainMenuItem: React.FC = () => {
 	const toggleProps: DropdownToggleProps = {
 		tooltip: __('event date main menu'),
 	};
+
 	return (
 		<DropdownMenu toggleProps={toggleProps}>
 			<EditDate />

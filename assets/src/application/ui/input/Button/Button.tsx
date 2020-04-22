@@ -5,6 +5,8 @@ import { Button as ButtonAdapter } from '@infraUI/inputs';
 import { ButtonProps, ButtonSize, ButtonType } from './types';
 import { withLabel, withTooltip } from '../../display';
 
+import './style.scss';
+
 type BtnType = React.ComponentType<ButtonProps>;
 
 /**
@@ -26,18 +28,17 @@ const Button = React.forwardRef<typeof ButtonAdapter, ButtonProps>(
 		},
 		ref
 	) => {
-		const className = classNames({
+		const className = classNames('ee-button', {
 			[htmlClass]: htmlClass,
-			'esprs-button': true,
-			'esprs-btn-accent': buttonType === ButtonType.ACCENT,
-			'esprs-btn-default': buttonType === ButtonType.DEFAULT,
-			'esprs-btn-primary': buttonType === ButtonType.PRIMARY,
-			'esprs-btn-minimal': buttonType === ButtonType.MINIMAL,
-			'esprs-btn-secondary': buttonType === ButtonType.SECONDARY,
-			'esprs-btn-tiny': buttonSize === ButtonSize.TINY,
-			'esprs-btn-small': buttonSize === ButtonSize.SMALL,
-			'esprs-btn-big': buttonSize === ButtonSize.BIG,
-			'esprs-btn-huge': buttonSize === ButtonSize.HUGE,
+			'ee-btn-accent': buttonType === ButtonType.ACCENT,
+			'ee-btn-default': buttonType === ButtonType.DEFAULT,
+			'ee-btn-primary': buttonType === ButtonType.PRIMARY,
+			'ee-btn-minimal': buttonType === ButtonType.MINIMAL,
+			'ee-btn-secondary': buttonType === ButtonType.SECONDARY,
+			'ee-btn-tiny': buttonSize === ButtonSize.TINY,
+			'ee-btn-small': buttonSize === ButtonSize.SMALL,
+			'ee-btn-big': buttonSize === ButtonSize.BIG,
+			'ee-btn-huge': buttonSize === ButtonSize.HUGE,
 			'ee-noIcon': !icon,
 		});
 

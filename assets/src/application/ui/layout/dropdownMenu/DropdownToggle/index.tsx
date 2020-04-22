@@ -2,25 +2,26 @@ import React from 'react';
 import classNames from 'classnames';
 
 import { More } from '@appDisplay/icons';
-import { DropdownToggleProps } from './types';
+import { DropdownToggleProps } from '../types';
 import { IconButton } from '@infraUI/inputs';
 import { MenuToggle } from '@infraUI/layout/menu';
 import { Tooltip } from '@infraUI/display';
 
+import './style.scss';
+
 const DropdownToggle = React.forwardRef<typeof MenuToggle, DropdownToggleProps>(
 	({ icon = More, isOpen, tooltip, ...toggleProps }, ref) => {
-		const className = classNames('components-dropdown-menu__toggle', toggleProps.className, {
-			'is-opened': isOpen,
+		const className = classNames('ee-dropdown-menu__toggle', toggleProps.className, {
+			'ee-dropdown-menu__toggle--open': isOpen,
 		});
 
 		return (
-			//TODO: refactor this to take advantage of `withTooltip` when and if that will be based off chakra
 			<Tooltip title={tooltip}>
 				<MenuToggle
 					as={IconButton}
 					// @ts-ignore
 					icon={More}
-					variant='ghost'
+					variant='unstyled'
 					{...toggleProps}
 					className={className}
 					ref={ref}
