@@ -65,7 +65,7 @@ const useMutationHandler: MutationHandler = (getMutationOptions) => {
 			 * @param {string} mutationType Type of mutation - CREATE|UPDATE|DELETE
 			 */
 			const getToasterKey = (mutationType: MutationType): string => {
-				return `${mutationType}:${id}`;
+				return `${mutationType}:${typeName}:${id}`;
 			};
 
 			/**
