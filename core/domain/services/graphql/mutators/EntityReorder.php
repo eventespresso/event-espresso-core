@@ -49,7 +49,7 @@ class EntityReorder
              */
             if (! current_user_can('ee_edit_events')) {
                 throw new UserError(
-                    esc_html__('Sorry, you are not allowed to reorder entities', 'event_espresso')
+                    esc_html__('Sorry, you do not have the required permissions to reorder entities', 'event_espresso')
                 );
             }
 
@@ -69,7 +69,12 @@ class EntityReorder
             $model = EE_Registry::instance()->load_model($entityType);
 
             if (!($model instanceof EEM_Base)) {
-                throw new UserError(esc_html__('Some error occured. Did you supply a valid entity type?', 'event_espresso'));
+                throw new UserError(
+                    esc_html__(
+                        'A valid data model could not be obtained. Did you supply a valid entity type?',
+                        'event_espresso'
+                    )
+                );
             }
 
             // convert GUIDs to DB IDs
@@ -84,7 +89,9 @@ class EntityReorder
              * If we could not get DB IDs for some GUIDs
              */
             if (count($entityDbids) !== count($entityGuids)) {
-                throw new UserError(esc_html__('No entities found to update.', 'event_espresso'));
+                throw new UserError(
+                    esc_html__('Sorry, update cancelled due to missing or invalid entity IDs.', 'event_espresso')
+                );
             }
 
             // e.g. DTT_ID, TKT_ID
@@ -104,7 +111,7 @@ class EntityReorder
              * If we could not get exactly same number of entities for the given DB IDs
              */
             if (count($entityDbids) !== count($entities)) {
-                throw new UserError(esc_html__('No entities found to update..', 'event_espresso'));
+                throw new UserError(esc_html__('Sorry, update cancelled due to missing entities.', 'event_espresso'));
             }
 
             // Make sure we have an instance for every ID.
@@ -112,7 +119,7 @@ class EntityReorder
                 if (isset($entities[ $entityDbid ]) && $entities[ $entityDbid ] instanceof EE_Base_Class) {
                     continue;
                 }
-                throw new UserError(esc_html__('No entities found to update...', 'event_espresso'));
+                throw new UserError(esc_html__('Sorry, update cancelled due to invalid entities.', 'event_espresso'));
             }
 
             $orderKey  = $keyPrefix . '_order'; // e.g. "TKT_order"

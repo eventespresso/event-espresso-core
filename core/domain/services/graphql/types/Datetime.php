@@ -317,13 +317,13 @@ class Datetime extends TypeBase
                         'type'        => [
                             'non_null' => ['list_of' => 'ID'],
                         ],
-                        'description' => esc_html__('List of entity guids in the order that is desired.', 'event_espresso'),
+                        'description' => esc_html__('The reordered list of entity GUIDs.', 'event_espresso'),
                     ],
                     'entityType' => [
                         'type'        => [
                             'non_null' => $this->namespace . 'ModelNameEnum',
                         ],
-                        'description' => esc_html__('The entity type of the IDs', 'event_espresso'),
+                        'description' => esc_html__('The entity type for the IDs', 'event_espresso'),
                     ],
                 ],
                 'outputFields'        => [
