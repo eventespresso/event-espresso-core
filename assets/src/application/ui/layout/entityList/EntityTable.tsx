@@ -14,6 +14,7 @@ const EntityTable = <E extends Entity, FS extends ELFSM>({
 	entities,
 	filterState,
 	headerRowGenerator,
+	onSort,
 	tableCaption,
 	tableId,
 }: EntityTableProps<E, FS>) => {
@@ -29,6 +30,7 @@ const EntityTable = <E extends Entity, FS extends ELFSM>({
 				tableId,
 				tableCaption,
 			}}
+			onDragEnd={onSort}
 		/>
 	);
 };

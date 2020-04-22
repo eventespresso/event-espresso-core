@@ -4,6 +4,7 @@ import { Entity, EntityId } from '@appServices/apollo/types';
 import { EntityListFilterStateManager } from './filterBar';
 import { LegendConfig } from '@application/ui/display/EntityListLegend/types';
 import { TypeName } from '@appServices/apollo/status';
+import { ResponsiveTableProps } from '@appLayout/espressoTable';
 
 type ELFSM = EntityListFilterStateManager<any>;
 
@@ -40,6 +41,7 @@ export interface EntityTableProps<E extends Entity, FS extends ELFSM> extends En
 	headerRowGenerator: HeaderRowGeneratorFn<FS>;
 	tableCaption?: string;
 	tableId?: string;
+	onSort?: ResponsiveTableProps['onDragEnd'];
 }
 
 export type EntityListComponent<E extends Entity, FS extends ELFSM> = React.ComponentType<EntityListViewProps<E, FS>>;

@@ -35,6 +35,8 @@ export const DELETE_DATETIME = gql`
 
 export { default as useDatetimeMutator } from './useDatetimeMutator';
 
+export { default as useReorderDatetimes } from './useReorderDatetimes';
+
 export { default as useUpdateRelatedTickets } from './useUpdateRelatedTickets';
 
 export * from './types';
