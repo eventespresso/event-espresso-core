@@ -1,12 +1,7 @@
-import { assoc, map, propEq, reject, when } from 'ramda';
-import { ToasterActionType, ToastKey, ToasterState, ToasterStateReducer, WithAnimationProps } from './types';
+import { map, reject } from 'ramda';
 
-type predicate = (toast: WithAnimationProps) => boolean;
-type mapper = (toast: WithAnimationProps) => WithAnimationProps;
-
-const hasKey = (key: ToastKey): predicate => propEq('key', key);
-const requestClose = (toast: WithAnimationProps): WithAnimationProps => assoc('requestClose', true, toast);
-const dismissToast = (key: ToastKey): mapper => when(hasKey(key), requestClose);
+import { dismissToast, hasKey, requestClose } from './utilities/reducerUtilities';
+import { ToasterActionType, ToasterState, ToasterStateReducer, WithAnimationProps } from './types';
 
 export const toasterStateReducer: ToasterStateReducer = (state, action) => {
 	let newState: ToasterState;
@@ -32,7 +27,5 @@ export const toasterStateReducer: ToasterStateReducer = (state, action) => {
 			newState = [];
 			break;
 	}
-	console.log('%c ToasterStateReducer action', 'color: Yellow;', action);
-	console.log('%c ToasterStateReducer newState', 'color: LimeGreen;', newState);
 	return newState ? newState : state;
 };
