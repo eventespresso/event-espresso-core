@@ -5,7 +5,7 @@
 
 @import '../../../styles/mixins/breakpoints.scss';
 
-$filter-btn: '.esprs-button.ant-btn.ee-filter-bar__btn';
+$filter-btn: '.ee-button.ee-filter-bar__btn';
 
 .ee-filter-bar {
 	background: var(--ee-background-color);

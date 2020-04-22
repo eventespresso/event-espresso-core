@@ -8,18 +8,11 @@ import { withLabel, withTooltip } from '../../display';
 type BtnType = React.ComponentType<IconButtonProps>;
 
 const IconButton = React.forwardRef<typeof IconButtonAdapter, IconButtonAdapterProps>(
-	({ className, icon, onClick, ...props }, ref) => {
-		const newClassName = classNames('esprs-button', className);
+	({ icon, onClick, ...props }, ref) => {
+		const className = classNames('ee-button', props.className);
 
 		return (
-			<IconButtonAdapter
-				{...props}
-				className={newClassName}
-				icon={icon}
-				onClick={onClick}
-				tabIndex={0}
-				ref={ref}
-			/>
+			<IconButtonAdapter {...props} className={className} icon={icon} onClick={onClick} tabIndex={0} ref={ref} />
 		);
 	}
 );
