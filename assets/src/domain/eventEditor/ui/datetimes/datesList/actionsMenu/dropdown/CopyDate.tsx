@@ -3,15 +3,13 @@ import { pick } from 'ramda';
 import { __ } from '@wordpress/i18n';
 
 import { Copy } from '@application/ui/layout/entityActionsMenu/entityMenuItems';
-import { useDatetimeContext } from '@edtrHooks/index';
-import { useDatetimeItem } from '@edtrServices/apollo/queries';
 import { useDatetimeMutator } from '@edtrServices/apollo/mutations';
 import { useEventId } from '@edtrServices/apollo/queries/events';
 import { useRelations } from '@appServices/apollo/relations';
 
-const CopyDate: React.FC = (props) => {
-	const { id } = useDatetimeContext();
-	const datetime = useDatetimeItem({ id });
+import { DateMenuItemProps } from './types';
+
+const CopyDate: React.FC<DateMenuItemProps> = ({ datetime, ...props }) => {
 	const eventId = useEventId();
 	const { createEntity } = useDatetimeMutator();
 	const { getRelations } = useRelations();
@@ -21,7 +19,7 @@ const CopyDate: React.FC = (props) => {
 	);
 	const tickets = getRelations({
 		entity: 'datetimes',
-		entityId: id,
+		entityId: datetime.id,
 		relation: 'tickets',
 	});
 	const onClick = useCallback(() => createEntity({ ...newDatetime, eventId, tickets }), [newDatetime, tickets]);
