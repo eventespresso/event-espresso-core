@@ -7,13 +7,6 @@
 	&__wrapper {
 		position: relative;
 		min-width: 55px;
-		.ee-editor-details-reg-url-link {
-			align-items: center;
-			display: flex;
-			height: calc(var(--ee-icon-button-size) + 2px);
-			justify-content: center;
-			width: calc(var(--ee-icon-button-size) + 2px);
-		}
 	}
 	&.ee-item-count {
 		border-radius: var(--ee-border-radius-full);

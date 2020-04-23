@@ -4,10 +4,9 @@ import { __ } from '@wordpress/i18n';
 
 import { ADMIN_ROUTES } from '@sharedConstants/adminRoutes';
 import { Datetime } from '@edtrServices/apollo/types';
-import { Groups } from '@appDisplay/icons';
 import getAdminUrl from '@sharedServices/utils/url/getAdminUrl';
 import { getPropsAreEqual } from '@appServices/utilities';
-import { Tooltip } from '@infraUI/display';
+import { RegistrationsLink } from '@appLayout/entityList';
 import useConfig from '@appServices/config/useConfig';
 import useEventId from '@edtrServices/apollo/queries/events/useEventId';
 
@@ -28,18 +27,7 @@ const DateRegistrationsLink: React.FC<Props> = ({ datetime }) => {
 	});
 	const title = __('view registrations for this date.');
 
-	return (
-		<Tooltip title={title}>
-			<a
-				href={regListUrl}
-				className={'ee-editor-details-reg-url-link'}
-				target={'_blank'}
-				rel={'noopener norefferer'}
-			>
-				<Groups svgSize={24} />
-			</a>
-		</Tooltip>
-	);
+	return <RegistrationsLink href={regListUrl} title={title} />;
 };
 
 export default React.memo(DateRegistrationsLink, getPropsAreEqual(['datetime', 'cacheId']));
