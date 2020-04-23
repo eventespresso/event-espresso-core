@@ -10,9 +10,11 @@
 	}
 }
 
-.ee-rspnsv-table .ee-date-list-col-actions.ee-rspnsv-table-body-td .ee-rspnsv-table-mobile-only-column-value {
-	@include max360px {
-		clear: both;
-		width: 100%;
+.ee-rspnsv-table .ee-actions-column {
+	&.ee-rspnsv-table-body-td .ee-rspnsv-table-mobile-only-column-value {
+		@include max360px {
+			clear: both;
+			width: 100%;
+		}
 	}
 }

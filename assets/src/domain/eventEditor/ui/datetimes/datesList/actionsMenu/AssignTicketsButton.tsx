@@ -31,13 +31,7 @@ const AssignTicketsButton: React.FC<EntityListItemProps> = React.memo(({ entity 
 	return (
 		<>
 			<ItemCount count={count} title={title} zeroCountChar='!' emphasizeZero>
-				<IconButton
-					icon={Ticket}
-					tooltip={__('assign tickets')}
-					tooltipProps={tooltipProps}
-					onClick={onOpen}
-					variant='ghost'
-				/>
+				<IconButton icon={Ticket} tooltip={__('assign tickets')} tooltipProps={tooltipProps} onClick={onOpen} />
 			</ItemCount>
 			<ModalContainer assignmentType='forDate' entity={entity} {...disclosure} />
 		</>

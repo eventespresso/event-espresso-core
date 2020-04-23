@@ -1,0 +1,56 @@
+.ee-editor-details-reg-url-link {
+	align-items: center;
+	border: 1px solid transparent;
+	border-radius: var(--ee-border-radius-small);
+	box-shadow: none;
+	-webkit-box-sizing: border-box;
+	-moz-box-sizing: border-box;
+	box-sizing: border-box;
+	color: var(--ee-default-text-color);
+	display: inline-flex;
+	font-size: var(--ee-font-size-default);
+	height: var(--ee-icon-button-size);
+	justify-content: center;
+	line-height: var(--ee-font-size-default);
+	margin: 0 auto calc(var(--ee-font-size-bigger) / -4);
+	outline-style: none;
+	text-decoration: none !important;
+	width: var(--ee-icon-button-size);
+
+	path {
+		fill: var(--ee-default-text-color);
+	}
+
+	&:visited {
+		color: var(--ee-color-primary-high-contrast);
+
+		path {
+			fill: var(--ee-color-primary-high-contrast);
+		}
+	}
+
+	&:hover {
+		color: var(--ee-color-primary);
+
+		path {
+			fill: var(--ee-color-primary);
+		}
+	}
+
+	&:active {
+		color: var(--ee-color-primary-low-contrast);
+
+		path {
+			fill: var(--ee-color-primary-low-contrast);
+		}
+	}
+
+	&:hover {
+		border: 1px solid var(--ee-border-color) !important;
+	}
+
+	&:focus {
+		border: 1px solid var(--ee-color-primary-low-contrast);
+		box-shadow: none;
+	}
+}

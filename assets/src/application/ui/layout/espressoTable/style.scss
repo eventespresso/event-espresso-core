@@ -22,6 +22,21 @@
 		}
 	}
 
+	.ee-rspnsv-table-body {
+		.ee-centered-column {
+			.ee-rspnsv-table-mobile-only-column-value {
+				display: inline-flex;
+				justify-content: center;
+			}
+		}
+		.ee-actions-column {
+			.ee-entity-menu {
+				display: flex;
+				justify-content: center;
+			}
+		}
+	}
+
 	.ee-rspnsv-table-body .ee-rspnsv-table-body-row,
 	.ee-rspnsv-table-footer .ee-rspnsv-table-footer-row {
 		box-sizing: border-box;

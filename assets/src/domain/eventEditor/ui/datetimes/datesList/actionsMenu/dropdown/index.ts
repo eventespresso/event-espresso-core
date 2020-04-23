@@ -1,1 +1,1 @@
-export { default as DateMainMenuItem } from './DateMainMenuItem';
+export { default as DateMainMenu } from './DateMainMenu';

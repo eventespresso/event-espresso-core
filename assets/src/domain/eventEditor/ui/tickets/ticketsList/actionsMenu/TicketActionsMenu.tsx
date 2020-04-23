@@ -9,7 +9,7 @@ const TicketActionsMenu: React.FC<ActionsMenuComponentProps<Ticket>> = ({ entity
 	const menuItems = useTicketsActionMenuItems(entity);
 
 	return (
-		<div className={`ee-entity-menu ee-datetime-menu`} {...menuProps}>
+		<div className='ee-entity-menu' {...menuProps}>
 			{menuItems}
 		</div>
 	);

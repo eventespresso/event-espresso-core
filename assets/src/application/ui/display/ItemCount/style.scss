@@ -6,6 +6,7 @@
 .ee-item-count {
 	&__wrapper {
 		position: relative;
+		min-width: 55px;
 	}
 	&.ee-item-count {
 		border-radius: var(--ee-border-radius-full);
