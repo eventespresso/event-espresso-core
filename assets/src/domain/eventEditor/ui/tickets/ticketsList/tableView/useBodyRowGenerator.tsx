@@ -23,26 +23,29 @@ const useBodyRowGenerator = (): TicketsTableBodyRowGen => {
 	const { formatAmount } = useMoneyDisplay();
 
 	return useCallback<TicketsTableBodyRowGen>(({ entity: ticket, filterState }) => {
-		const { displayStartOrEndDate } = filterState;
+		const { displayStartOrEndDate, sortingEnabled } = filterState;
 
 		const bgClassName = getBackgroundColorClassName(ticket);
 		const id = ticket.dbId || shortenGuid(ticket.id);
 		const statusClassName = status(ticket);
-		const { registrationCount } = ticket;
 
 		const name = {
 			key: 'name',
 			type: 'cell',
 			className:
 				'ee-ticket-list-cell ee-ticket-list-col-name ee-rspnsv-table-column-bigger ee-rspnsv-table-hide-on-mobile',
-			value: <EditableName className={'ee-focus-priority-5'} entity={ticket} view={'table'} />,
+			value: sortingEnabled ? (
+				ticket.name
+			) : (
+				<EditableName className={'ee-focus-priority-5'} entity={ticket} view={'table'} />
+			),
 		};
 
 		const quantity = {
 			key: 'quantity',
 			type: 'cell',
 			className: 'ee-ticket-list-cell ee-ticket-list-col-quantity ee-rspnsv-table-column-tiny ee-number-column',
-			value: <TicketQuantity entity={ticket} />,
+			value: sortingEnabled ? ticket.quantity : <TicketQuantity entity={ticket} />,
 		};
 
 		const cellsData: Array<Cell> = [
@@ -90,13 +93,13 @@ const useBodyRowGenerator = (): TicketsTableBodyRowGen => {
 				type: 'cell',
 				className:
 					'ee-ticket-list-cell ee-ticket-list-col-registrations ee-rspnsv-table-column-smaller ee-centered-column',
-				value: <TicketRegistrationsLink ticket={ticket} />,
+				value: sortingEnabled ? '-' : <TicketRegistrationsLink ticket={ticket} />,
 			},
 			{
 				key: 'actions',
 				type: 'cell',
 				className: 'ee-ticket-list-cell ee-ticket-list-col-actions ee-rspnsv-table-column-big',
-				value: <TicketActionsMenu entity={ticket} />,
+				value: sortingEnabled ? '-' : <TicketActionsMenu entity={ticket} />,
 			},
 		];
 

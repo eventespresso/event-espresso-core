@@ -13,7 +13,7 @@ const useFilteredEntities = <D extends string, L extends string, E extends Entit
 	entityList: Array<E>,
 	filterState: FS
 ): Array<E> => {
-	const { pageNumber, perPage, searchText, setPageNumber, setTotal, sortBy, total } = filterState;
+	const { pageNumber, perPage, searchText, setPageNumber, setTotal, sortBy, sortingEnabled, total } = filterState;
 
 	const { applyFilters, applySearches, applySorters } = useEntityFilterService<D, L, E, ELFSM>(domain, listId);
 
@@ -21,12 +21,18 @@ const useFilteredEntities = <D extends string, L extends string, E extends Entit
 	// Filter the list
 	cacheIds = entityListCacheIdString(entityList);
 	const filteredEntities = useMemo<Array<E>>(() => {
+		if (sortingEnabled) {
+			return entityList;
+		}
 		return applyFilters(entityList, filterState);
 	}, [cacheIds, filterState]);
 
 	// search entities
 	cacheIds = entityListCacheIdString(filteredEntities);
 	const searchResults = useMemo<Array<E>>(() => {
+		if (sortingEnabled) {
+			return filteredEntities;
+		}
 		return applySearches(filteredEntities, filterState);
 	}, [cacheIds, searchText]);
 
@@ -39,6 +45,10 @@ const useFilteredEntities = <D extends string, L extends string, E extends Entit
 	// paginate it
 	cacheIds = entityListCacheIdString(sortedEntities);
 	const paginatedEntities = useMemo<Array<E>>(() => {
+		if (sortingEnabled) {
+			return sortedEntities;
+		}
+		// entities for current page
 		return sortedEntities.slice(perPage * (pageNumber - 1), perPage * pageNumber);
 	}, [cacheIds, perPage, pageNumber]);
 

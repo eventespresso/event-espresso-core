@@ -5,12 +5,15 @@ import { EntityTable } from '@appLayout/entityList';
 import useHeaderRowGenerator from './useHeaderRowGenerator';
 import useBodyRowGenerator from './useBodyRowGenerator';
 import { useTicketsListContext } from '@edtrServices/context/EntityListContext';
+import { useReorderTickets } from '@edtrServices/apollo/mutations';
 
 /**
  * Displays tickets in a standard list table like view
  */
 const TableView: React.FC = () => {
 	const { filterState, filteredEntities } = useTicketsListContext();
+
+	const { sortResponder: sortTickets } = useReorderTickets(filteredEntities);
 
 	const bodyRowGenerator = useBodyRowGenerator();
 	const headerRowGenerator = useHeaderRowGenerator();
@@ -24,6 +27,7 @@ const TableView: React.FC = () => {
 			className={'ee-tickets-list-list-view ee-fade-in'}
 			tableId='ticket-entities-table-view'
 			tableCaption={__('Tickets')}
+			onSort={sortTickets}
 		/>
 	);
 };

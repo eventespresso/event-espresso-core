@@ -1,8 +1,11 @@
-export interface IconProps {
+import { SVGProps } from 'react';
+
+export interface IconProps extends SVGProps<SVGSVGElement> {
 	name: IconName | keyof SvgPath;
 	svgSize?: number;
 	className?: string;
 	viewBox?: string;
+	color?: string;
 }
 
 export enum IconName {
@@ -19,6 +22,7 @@ export enum IconName {
 	REM = 'rem',
 	ROTATE = 'rotate',
 	SAVE = 'save',
+	SORT = 'sort',
 	TABLE_VIEW = 'table-view',
 	TICKET = 'ticket-alt',
 	TRASH = 'trash',

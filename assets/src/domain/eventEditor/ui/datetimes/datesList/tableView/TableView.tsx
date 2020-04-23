@@ -5,6 +5,7 @@ import { EntityTable } from '@appLayout/entityList';
 import useHeaderRowGenerator from './useHeaderRowGenerator';
 import useBodyRowGenerator from './useBodyRowGenerator';
 import { useDatesListContext } from '@edtrServices/context/EntityListContext';
+import { useReorderDatetimes } from '@edtrServices/apollo/mutations';
 
 import './styles.scss';
 
@@ -13,6 +14,8 @@ import './styles.scss';
  */
 const TableView: React.FC = () => {
 	const { filterState, filteredEntities } = useDatesListContext();
+
+	const { sortResponder: sortDates } = useReorderDatetimes(filteredEntities);
 
 	const bodyRowGenerator = useBodyRowGenerator();
 	const headerRowGenerator = useHeaderRowGenerator();
@@ -26,6 +29,7 @@ const TableView: React.FC = () => {
 			className={'ee-dates-list-list-view ee-fade-in'}
 			tableId='date-entities-table-view'
 			tableCaption={__('Event Dates')}
+			onSort={sortDates}
 		/>
 	);
 };

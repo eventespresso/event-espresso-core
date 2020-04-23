@@ -56,7 +56,10 @@ const EntityList = <E extends Entity, ELFS extends EntityListFilterStateManager<
 				listId={listId}
 			/>
 			{entityList}
-			<EntityPagination filterState={filterState} />
+			{
+				// disable pogination when sorting
+				!filterState.sortingEnabled && <EntityPagination filterState={filterState} />
+			}
 			<div className={'ee-entity-list__footer'}>{footer}</div>
 			<Divider dashed />
 		</div>

@@ -11,6 +11,7 @@ export { default as More } from './More';
 export { default as Rem } from './Rem';
 export { default as Rotate } from './Rotate';
 export { default as Save } from './Save';
+export { default as Sort } from './Sort';
 export { default as TableView } from './TableView';
 export { default as Ticket } from './Ticket';
 export { default as Trash } from './Trash';

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { __ } from '@wordpress/i18n';
 
 import CardViewFilterButton from './buttons/CardViewFilterButton';
@@ -8,6 +8,7 @@ import { EntityListLegend } from '@application/ui/display';
 import TableViewFilterButton from './buttons/TableViewFilterButton';
 import ToggleLegendButton from './buttons/ToggleLegendButton';
 import ToggleFiltersButton from './buttons/ToggleFiltersButton';
+import ToggleSortingButton from './buttons/ToggleSortingButton';
 import { SearchInput } from '@application/ui/input';
 import { useFilterBarUIElements } from './subscription';
 import { EntityListFilterStateManager as ELFSM } from './filterState';
@@ -30,9 +31,16 @@ const EntityListFilterBar = <FS extends ELFSM>({
 	const [showEntityFilters, setShowEntityFilters] = useState(false);
 	const toggleEntityFilters = () => setShowEntityFilters((v) => !v);
 
-	const { searchText, setCardView, setTableView, setSearchText, view } = filterState;
+	const { searchText, setCardView, setTableView, setSearchText, sortingEnabled, toggleSorting, view } = filterState;
 
 	const filerBarItems = useFilterBarUIElements({ domain, filterState, listId });
+
+	useEffect(() => {
+		if (sortingEnabled) {
+			setShowEntityFilters(false);
+			setShowLegend(false);
+		}
+	}, [sortingEnabled]);
 
 	return (
 		<div className='ee-filter-bar'>
@@ -43,8 +51,15 @@ const EntityListFilterBar = <FS extends ELFSM>({
 					listId={listId}
 					showFilters={showEntityFilters}
 					toggleFilters={toggleEntityFilters}
+					isDisabled={sortingEnabled}
 				/>
-				<ToggleLegendButton listId={listId} showLegend={showLegend} toggleLegend={toggleLegend} />
+				<ToggleSortingButton listId={listId} sortingEnabled={sortingEnabled} toggleSorting={toggleSorting} />
+				<ToggleLegendButton
+					listId={listId}
+					showLegend={showLegend}
+					toggleLegend={toggleLegend}
+					isDisabled={sortingEnabled}
+				/>
 			</div>
 
 			<Collapsible show={showEntityFilters}>

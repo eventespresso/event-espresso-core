@@ -21,7 +21,13 @@ const getReducer = <SortBy = BasicSortBy>(): EntityListFilterStateReducer<SortBy
 				return { ...state, sortBy };
 
 			case 'SET_VIEW':
-				return { ...state, view };
+				// disable sorting when card view is selected
+				return { ...state, view, sortingEnabled: view === 'card' ? false : state.sortingEnabled };
+
+			case 'TOGGLE_SORTING':
+				const sortingEnabled = !state.sortingEnabled;
+				// switch to table view when sorting enabled
+				return { ...state, sortingEnabled, view: sortingEnabled ? 'table' : state.view };
 
 			default:
 				throw new Error('Unexpected action');

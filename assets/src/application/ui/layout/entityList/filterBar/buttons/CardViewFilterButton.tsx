@@ -8,7 +8,7 @@ import { IconButton } from '@application/ui/input';
 import { LabelPosition } from '@application/ui/display';
 import { getPropsAreEqual } from '@appServices/utilities';
 
-const CardViewFilterButton: React.FC<CardViewFilterButtonProps> = ({ listId, setCardView, view }) => {
+const CardViewFilterButton: React.FC<CardViewFilterButtonProps> = ({ listId, setCardView, view, ...rest }) => {
 	const className = classNames('ee-filter-bar__btn', { 'ee-filter-bar__btn--active': view === 'card' });
 	const filterId = `ee-card-view-btn-${listId}`;
 
@@ -23,6 +23,7 @@ const CardViewFilterButton: React.FC<CardViewFilterButtonProps> = ({ listId, set
 			labelClassName={'ee-filter-bar__btn-wrap'}
 			labelPosition={LabelPosition.BOTTOM_CENTER}
 			variant='outline'
+			{...rest}
 		/>
 	);
 };
