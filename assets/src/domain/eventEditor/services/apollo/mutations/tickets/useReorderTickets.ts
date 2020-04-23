@@ -37,11 +37,11 @@ const useReorderTickets = (filteredEntities: Array<Ticket>): ReorderTickets => {
 
 	const sortResponder = useCallback<SortResponder>(
 		({ destination, source }) => {
-			if (
-				!destination ||
-				(source.index === destination.index && destination.droppableId === source.droppableId) ||
-				destination.droppableId !== 'ticket-entities-table-view-droppable'
-			) {
+			const noDestination = !destination;
+			const noChange = source.index === destination.index && destination.droppableId === source.droppableId;
+			const notOurListOfInterest = destination.droppableId !== 'ticket-entities-table-view-droppable';
+
+			if (noDestination || noChange || notOurListOfInterest) {
 				return;
 			}
 			sortEntities({

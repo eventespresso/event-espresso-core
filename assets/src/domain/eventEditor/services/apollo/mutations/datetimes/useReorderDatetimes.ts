@@ -37,11 +37,11 @@ const useReorderDatetimes = (filteredEntities: Array<Datetime>): ReorderDatetime
 
 	const sortResponder = useCallback<SortResponder>(
 		({ destination, source }) => {
-			if (
-				!destination ||
-				(source.index === destination.index && destination.droppableId === source.droppableId) ||
-				destination.droppableId !== 'date-entities-table-view-droppable'
-			) {
+			const noDestination = !destination;
+			const noChange = source.index === destination.index && destination.droppableId === source.droppableId;
+			const notOurListOfInterest = destination.droppableId !== 'date-entities-table-view-droppable';
+
+			if (noDestination || noChange || notOurListOfInterest) {
 				return;
 			}
 			sortEntities({
