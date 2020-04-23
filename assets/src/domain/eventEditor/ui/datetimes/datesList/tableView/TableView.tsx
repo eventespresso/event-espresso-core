@@ -15,7 +15,7 @@ import './styles.scss';
 const TableView: React.FC = () => {
 	const { filterState, filteredEntities } = useDatesListContext();
 
-	const sortDates = useReorderDatetimes(filteredEntities);
+	const { sortResponder: sortDates } = useReorderDatetimes(filteredEntities);
 
 	const bodyRowGenerator = useBodyRowGenerator();
 	const headerRowGenerator = useHeaderRowGenerator();

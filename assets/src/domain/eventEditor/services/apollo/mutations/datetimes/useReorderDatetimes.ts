@@ -9,28 +9,18 @@ import { useUpdateDatetimeList } from '@edtrHooks/index';
 
 type SortResponder = EntityTableProps<Datetime, DFSM>['onSort'];
 
-const useReorderDatetimes = (filteredEntities: Array<Datetime>): SortResponder => {
-	const reorderEntities = useReorderEntities<Datetime>({ entityType: 'DATETIME' });
+interface ReorderDatetimes {
+	sortResponder: SortResponder;
+}
+
+const useReorderDatetimes = (filteredEntities: Array<Datetime>): ReorderDatetimes => {
+	const { sortEntities } = useReorderEntities<Datetime>({ entityType: 'DATETIME' });
 	const allEntities = useDatetimes();
 	const queryOptions = useDatetimeQueryOptions();
 	const updateDatetimeList = useUpdateDatetimeList();
 
-	return useCallback<SortResponder>(
-		({ destination, source }) => {
-			if (
-				!destination ||
-				(source.index === destination.index && destination.droppableId === source.droppableId) ||
-				destination.droppableId !== 'date-entities-table-view-droppable'
-			) {
-				return;
-			}
-			const updatedEntities = reorderEntities({
-				allEntities,
-				filteredEntities,
-				newIndex: destination.index,
-				oldIndex: source.index,
-			});
-
+	const updateEntityList = useCallback(
+		(updatedEntities) => {
 			updateDatetimeList({
 				...queryOptions,
 				data: {
@@ -41,8 +31,30 @@ const useReorderDatetimes = (filteredEntities: Array<Datetime>): SortResponder =
 				},
 			});
 		},
-		[filteredEntities, allEntities, reorderEntities]
+		[queryOptions, updateDatetimeList]
 	);
+
+	const sortResponder = useCallback<SortResponder>(
+		({ destination, source }) => {
+			if (
+				!destination ||
+				(source.index === destination.index && destination.droppableId === source.droppableId) ||
+				destination.droppableId !== 'date-entities-table-view-droppable'
+			) {
+				return;
+			}
+			sortEntities({
+				allEntities,
+				filteredEntities,
+				newIndex: destination.index,
+				oldIndex: source.index,
+				updateEntityList,
+			});
+		},
+		[filteredEntities, allEntities, sortEntities, updateEntityList]
+	);
+
+	return { sortResponder };
 };
 
 export default useReorderDatetimes;

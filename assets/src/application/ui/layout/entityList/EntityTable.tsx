@@ -1,4 +1,5 @@
 import React from 'react';
+import classNames from 'classnames';
 
 import { EntityTableProps } from './types';
 import { Entity } from '@appServices/apollo/types';
@@ -21,10 +22,12 @@ const EntityTable = <E extends Entity, FS extends ELFSM>({
 	const bodyRows = entities.map((entity) => bodyRowGenerator({ entity, filterState }));
 	const headerRow = headerRowGenerator(filterState);
 
+	const newclassName = classNames(className, 'ee-entity-table');
+
 	return (
 		<ResponsiveTable
 			bodyRows={bodyRows}
-			className={{ tableClassName: className }}
+			className={{ tableClassName: newclassName }}
 			headerRows={[headerRow]}
 			metaData={{
 				tableId,

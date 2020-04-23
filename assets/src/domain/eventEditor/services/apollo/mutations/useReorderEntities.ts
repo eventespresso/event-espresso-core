@@ -1,5 +1,11 @@
-import { useCallback } from 'react';
-import { clone } from 'ramda';
+import { useCallback, useEffect, useState } from 'react';
+import { useMutation } from '@apollo/react-hooks';
+import gql from 'graphql-tag';
+import { clone, reverse } from 'ramda';
+import { useDebouncedCallback } from 'use-debounce';
+
+import { EntityId } from '@appServices/apollo/types';
+import { getGuids } from '@appServices/predicates';
 import { Datetime, Ticket } from '../types';
 
 type Entity = Datetime | Ticket;
@@ -13,16 +19,66 @@ interface CallbackArgs<E extends Entity> {
 	filteredEntities: Array<E>;
 	newIndex: number;
 	oldIndex: number;
+	updateEntityList: (updatedEntities: Array<E>) => void;
 }
 
-type ReorderCallback<E extends Entity> = (args: CallbackArgs<E>) => Array<E>;
+type SortCallback<E extends Entity> = (args: CallbackArgs<E>) => void;
 
-const useReorderEntities = <E extends Entity>({ entityType }: ReorderEntitiesProps): ReorderCallback<E> => {
-	return useCallback<ReorderCallback<E>>(
-		({ allEntities: allEntitiesList, filteredEntities, newIndex, oldIndex }) => {
+const REORDER_ENTITIES = gql`
+	mutation REORDER_ENTITIES($input: ReorderEspressoEntitiesInput!) {
+		reorderEspressoEntities(input: $input) {
+			ok
+		}
+	}
+`;
+
+interface ReorderEntities<E extends Entity> {
+	cancel: VoidFunction;
+	done: VoidFunction;
+	sortEntities: SortCallback<E>;
+}
+
+const useReorderEntities = <E extends Entity>({ entityType }: ReorderEntitiesProps): ReorderEntities<E> => {
+	const [allEntityGuids, setAllEntityGuids] = useState<Array<EntityId>>([]);
+	useEffect(() => {
+		if (allEntityGuids.length) {
+			done();
+		}
+	}, [allEntityGuids.join(':')]);
+
+	const [mutate, result] = useMutation(REORDER_ENTITIES);
+	useEffect(() => {
+		console.log(result);
+	}, [result]);
+
+	const [runMutation, cancelDebounce] = useDebouncedCallback((...args) => {
+		console.log('runMutation called');
+		mutate(...args);
+	}, 5000); // delay in MS
+
+	const done = useCallback(() => {
+		runMutation({
+			variables: {
+				input: {
+					clientMutationId: 'REORDER_ENTITIES',
+					entityIds: allEntityGuids,
+					entityType,
+				},
+			},
+		});
+	}, [allEntityGuids, entityType, runMutation]);
+
+	const cancel = useCallback(() => {
+		cancelDebounce();
+	}, [cancelDebounce]);
+
+	const sortEntities = useCallback<SortCallback<E>>(
+		({ allEntities: allEntitiesList, filteredEntities, newIndex, oldIndex, updateEntityList }) => {
 			if (newIndex === oldIndex || newIndex < 0 || oldIndex < 0) {
 				return;
 			}
+			// cancel existing debounce
+			cancel();
 
 			const entities = clone(filteredEntities);
 			const allEntities = clone(allEntitiesList);
@@ -42,9 +98,11 @@ const useReorderEntities = <E extends Entity>({ entityType }: ReorderEntitiesPro
 
 				return entity;
 			});
+			// setEntities(entities);
+
 			// reorder the list of all entities as well...
 			// reverse the reordered list of entities
-			const reversed = entities.reverse();
+			const reversed = reverse(entities);
 			reversed.forEach((entity) => {
 				// add each entity to the beginning of the allEntities array
 				allEntities.unshift(entity);
@@ -56,10 +114,14 @@ const useReorderEntities = <E extends Entity>({ entityType }: ReorderEntitiesPro
 				return entity;
 			});
 
-			return allEntities;
+			updateEntityList(allEntities);
+
+			setAllEntityGuids(getGuids(allEntities));
 		},
 		[entityType]
 	);
+
+	return { cancel, done, sortEntities };
 };
 
 export default useReorderEntities;

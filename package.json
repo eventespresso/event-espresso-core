@@ -88,12 +88,13 @@
 		"react-spring": "^8.0.27",
 		"styletron-engine-atomic": "^1.4.6",
 		"styletron-react": "^5.2.7",
+		"use-debounce": "^3.4.1",
 		"uuid": "^7.0.3",
 		"warning": "^4.0.3",
 		"yup": "^0.28.3"
 	},
 	"devDependencies": {
-		"@apollo/react-testing": "^3.1.4",		
+		"@apollo/react-testing": "^3.1.4",
 		"@babel/core": "^7.9.0",
 		"@babel/plugin-proposal-class-properties": "^7.8.3",
 		"@babel/plugin-transform-runtime": "^7.9.0",

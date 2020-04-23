@@ -28,8 +28,11 @@
 		width: 100%;
 	}
 
-	&.ee-rspnsv-table {
+	.ee-entity-table {
 		width: 100%;
+		.ee-rspnsv-table-body-row {
+			height: 3em;
+		}
 	}
 
 	&__card-view {
