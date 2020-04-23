@@ -5,14 +5,12 @@ import { __ } from '@wordpress/i18n';
 import { Copy } from '@application/ui/layout/entityActionsMenu/entityMenuItems';
 import { copyTicketFields } from '@sharedEntities/tickets/predicates/updatePredicates';
 import { isTicketInputField } from '@sharedEntities/tickets/predicates/selectionPredicates';
-import { useTicketContext } from '@edtrHooks/index';
-import { useTicketItem } from '@edtrServices/apollo/queries';
 import { useTicketMutator } from '@edtrServices/apollo/mutations';
 import { useRelations } from '@appServices/apollo/relations';
 
-const CopyTicket: React.FC = (props) => {
-	const { id } = useTicketContext();
-	const ticket = useTicketItem({ id });
+import { TicketMainMenuProps } from './types';
+
+const CopyTicket: React.FC<TicketMainMenuProps> = ({ ticket, ...props }) => {
 	const { createEntity } = useTicketMutator();
 	const { getRelations } = useRelations();
 	const newTicket = {
@@ -20,7 +18,7 @@ const CopyTicket: React.FC = (props) => {
 	};
 	const datetimes = getRelations({
 		entity: 'tickets',
-		entityId: id,
+		entityId: ticket.id,
 		relation: 'datetimes',
 	});
 

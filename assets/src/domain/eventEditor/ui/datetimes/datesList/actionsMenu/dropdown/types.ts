@@ -1,9 +1,5 @@
 import { Datetime } from '@edtrServices/apollo/types';
 
-export interface DateMainMenuItemProps {
-	datetime: Datetime;
-}
-
-export interface DateMenuItemProps {
+export interface DateMainMenuProps {
 	datetime: Datetime;
 }

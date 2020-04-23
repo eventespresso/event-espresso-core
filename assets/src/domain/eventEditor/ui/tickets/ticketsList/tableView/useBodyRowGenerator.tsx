@@ -98,7 +98,7 @@ const useBodyRowGenerator = (): TicketsTableBodyRowGen => {
 			{
 				key: 'actions',
 				type: 'cell',
-				className: 'ee-ticket-list-cell ee-ticket-list-col-actions ee-rspnsv-table-column-big',
+				className: 'ee-ticket-list-cell ee-ticket-list-col-actions ee-actions-column ee-rspnsv-table-column-big',
 				value: sortingEnabled ? '-' : <TicketActionsMenu entity={ticket} />,
 			},
 		];

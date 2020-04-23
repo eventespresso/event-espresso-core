@@ -4,9 +4,9 @@ import { __ } from '@wordpress/i18n';
 import { Edit } from '@application/ui/layout/entityActionsMenu/entityMenuItems';
 import { useFormModal } from '@appLayout/formModal';
 
-import { DateMenuItemProps } from './types';
+import { DateMainMenuProps } from './types';
 
-const EditDate: React.FC<DateMenuItemProps> = ({ datetime, ...props }) => {
+const EditDate: React.FC<DateMainMenuProps> = ({ datetime, ...props }) => {
 	const { openEditor } = useFormModal();
 	const onClick = useCallback(
 		() =>

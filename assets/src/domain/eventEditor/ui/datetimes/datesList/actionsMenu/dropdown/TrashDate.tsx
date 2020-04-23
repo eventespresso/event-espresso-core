@@ -4,9 +4,9 @@ import { __ } from '@wordpress/i18n';
 import { Trash } from '@application/ui/layout/entityActionsMenu/entityMenuItems';
 import { useDatetimeMutator } from '@edtrServices/apollo/mutations';
 
-import { DateMenuItemProps } from './types';
+import { DateMainMenuProps } from './types';
 
-const TrashDate: React.FC<DateMenuItemProps> = ({ datetime, ...props }) => {
+const TrashDate: React.FC<DateMainMenuProps> = ({ datetime, ...props }) => {
 	const id = datetime?.id;
 	const { deleteEntity } = useDatetimeMutator(id);
 	const onClick = useCallback(() => deleteEntity({ id }), [id]);

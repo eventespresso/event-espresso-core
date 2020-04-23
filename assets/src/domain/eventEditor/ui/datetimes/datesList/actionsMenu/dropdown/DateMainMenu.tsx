@@ -7,9 +7,9 @@ import CopyDate from './CopyDate';
 import EditDate from './EditDate';
 import TrashDate from './TrashDate';
 
-import { DateMainMenuItemProps } from './types';
+import { DateMainMenuProps } from './types';
 
-const DateMainMenuItem: React.FC<DateMainMenuItemProps> = ({ datetime }) => {
+const DateMainMenu: React.FC<DateMainMenuProps> = ({ datetime }) => {
 	const toggleProps: DropdownToggleProps = {
 		tooltip: __('event date main menu'),
 	};
@@ -23,4 +23,4 @@ const DateMainMenuItem: React.FC<DateMainMenuItemProps> = ({ datetime }) => {
 	);
 };
 
-export default DateMainMenuItem;
+export default DateMainMenu;

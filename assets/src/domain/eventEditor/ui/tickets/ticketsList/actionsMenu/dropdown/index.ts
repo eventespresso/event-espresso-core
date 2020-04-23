@@ -1,1 +1,1 @@
-export { default as TicketMainMenuItem } from './TicketMainMenuItem';
+export { default as TicketMainMenu } from './TicketMainMenu';

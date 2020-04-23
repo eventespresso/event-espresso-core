@@ -7,18 +7,20 @@ import CopyTicket from './CopyTicket';
 import EditTicket from './EditTicket';
 import TrashTicket from './TrashTicket';
 
-const TicketMainMenuItem: React.FC = () => {
+import { TicketMainMenuProps } from './types';
+
+const TicketMainMenu: React.FC<TicketMainMenuProps> = ({ ticket }) => {
 	const toggleProps: DropdownToggleProps = {
 		tooltip: __('ticket main menu'),
 	};
 
 	return (
 		<DropdownMenu toggleProps={toggleProps}>
-			<EditTicket />
-			<CopyTicket />
-			<TrashTicket />
+			<EditTicket ticket={ticket} />
+			<CopyTicket ticket={ticket} />
+			<TrashTicket ticket={ticket} />
 		</DropdownMenu>
 	);
 };
 
-export default TicketMainMenuItem;
+export default TicketMainMenu;

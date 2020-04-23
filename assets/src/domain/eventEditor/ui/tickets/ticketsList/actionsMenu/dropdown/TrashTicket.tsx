@@ -2,11 +2,12 @@ import React, { useCallback } from 'react';
 import { __ } from '@wordpress/i18n';
 
 import { Trash } from '@application/ui/layout/entityActionsMenu/entityMenuItems';
-import { useTicketContext } from '@edtrHooks/index';
 import { useTicketMutator } from '@edtrServices/apollo/mutations';
 
-const TrashTicket: React.FC = (props) => {
-	const { id } = useTicketContext();
+import { TicketMainMenuProps } from './types';
+
+const TrashTicket: React.FC<TicketMainMenuProps> = ({ ticket, ...props }) => {
+	const id = ticket?.id;
 	const { deleteEntity } = useTicketMutator(id);
 	const onClick = useCallback(() => deleteEntity({ id }), [id]);
 

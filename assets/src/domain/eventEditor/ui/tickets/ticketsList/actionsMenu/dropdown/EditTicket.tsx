@@ -2,22 +2,20 @@ import React, { useCallback } from 'react';
 import { __ } from '@wordpress/i18n';
 
 import { Edit } from '@application/ui/layout/entityActionsMenu/entityMenuItems';
-import { useTicketContext } from '@edtrHooks/index';
-import { useTicketItem } from '@edtrServices/apollo/queries';
 import { useFormModal } from '@appLayout/formModal';
 
-const EditTicket: React.FC = (props) => {
-	const { id } = useTicketContext();
-	const ticket = useTicketItem({ id });
+import { TicketMainMenuProps } from './types';
+
+const EditTicket: React.FC<TicketMainMenuProps> = ({ ticket, ...props }) => {
 	const { openEditor } = useFormModal();
 	const onClick = useCallback(
 		() =>
 			openEditor({
 				editorId: 'editTicket',
-				entityId: id,
+				entityId: ticket.id,
 				entityDbId: ticket.dbId,
 			}),
-		[id]
+		[ticket.id]
 	);
 
 	return <Edit {...props} onClick={onClick} title={__('edit ticket')} />;

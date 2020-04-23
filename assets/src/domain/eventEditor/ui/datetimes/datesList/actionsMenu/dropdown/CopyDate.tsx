@@ -7,9 +7,9 @@ import { useDatetimeMutator } from '@edtrServices/apollo/mutations';
 import { useEventId } from '@edtrServices/apollo/queries/events';
 import { useRelations } from '@appServices/apollo/relations';
 
-import { DateMenuItemProps } from './types';
+import { DateMainMenuProps } from './types';
 
-const CopyDate: React.FC<DateMenuItemProps> = ({ datetime, ...props }) => {
+const CopyDate: React.FC<DateMainMenuProps> = ({ datetime, ...props }) => {
 	const eventId = useEventId();
 	const { createEntity } = useDatetimeMutator();
 	const { getRelations } = useRelations();
