@@ -40,11 +40,12 @@ interface ReorderEntities<E extends Entity> {
 
 const useReorderEntities = <E extends Entity>({ entityType }: ReorderEntitiesProps): ReorderEntities<E> => {
 	const [allEntityGuids, setAllEntityGuids] = useState<Array<EntityId>>([]);
+	const allEntityGuidsStr = allEntityGuids.join(':');
 	useEffect(() => {
 		if (allEntityGuids.length) {
 			done();
 		}
-	}, [allEntityGuids.join(':')]);
+	}, [allEntityGuidsStr]);
 
 	const [mutate, result] = useMutation(REORDER_ENTITIES);
 	useEffect(() => {

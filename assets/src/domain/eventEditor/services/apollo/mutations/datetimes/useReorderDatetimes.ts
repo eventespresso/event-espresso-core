@@ -1,6 +1,6 @@
 import { useCallback } from 'react';
 
-import { Datetime } from '../../types';
+import { Datetime, DatetimeEdge } from '../../types';
 import useReorderEntities from '../useReorderEntities';
 import { EntityTableProps } from '@appLayout/entityList';
 import { DatetimesFilterStateManager as DFSM } from '@edtrServices/filterState';
@@ -21,13 +21,14 @@ const useReorderDatetimes = (filteredEntities: Array<Datetime>): ReorderDatetime
 
 	const updateEntityList = useCallback(
 		(updatedEntities) => {
+			const espressoDatetimes: DatetimeEdge = {
+				nodes: updatedEntities,
+				__typename: 'EspressoRootQueryDatetimesConnection',
+			};
 			updateDatetimeList({
 				...queryOptions,
 				data: {
-					espressoDatetimes: {
-						nodes: updatedEntities,
-						__typename: 'EspressoRootQueryDatetimesConnection',
-					},
+					espressoDatetimes,
 				},
 			});
 		},

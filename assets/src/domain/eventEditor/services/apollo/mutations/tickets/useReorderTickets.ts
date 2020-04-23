@@ -1,6 +1,6 @@
 import { useCallback } from 'react';
 
-import { Ticket } from '../../types';
+import { Ticket, TicketEdge } from '../../types';
 import useReorderEntities from '../useReorderEntities';
 import { EntityTableProps } from '@appLayout/entityList';
 import { TicketsFilterStateManager as DFSM } from '@edtrServices/filterState';
@@ -21,13 +21,14 @@ const useReorderTickets = (filteredEntities: Array<Ticket>): ReorderTickets => {
 
 	const updateEntityList = useCallback(
 		(updatedEntities) => {
+			const espressoTickets: TicketEdge = {
+				nodes: updatedEntities,
+				__typename: 'EspressoRootQueryTicketsConnection',
+			};
 			updateTicketList({
 				...queryOptions,
 				data: {
-					espressoTickets: {
-						nodes: updatedEntities,
-						__typename: 'EspressoRootQueryTicketsConnection',
-					},
+					espressoTickets,
 				},
 			});
 		},
