@@ -7,7 +7,9 @@ import { useTicketMutator } from '@edtrServices/apollo/mutations';
 import { TicketMainMenuProps } from './types';
 
 const TrashTicket: React.FC<TicketMainMenuProps> = ({ ticket, ...props }) => {
-	const id = ticket?.id;
+	if (!ticket) return null;
+
+	const id = ticket.id;
 	const { deleteEntity } = useTicketMutator(id);
 	const onClick = useCallback(() => deleteEntity({ id }), [id]);
 

@@ -7,7 +7,9 @@ import { useDatetimeMutator } from '@edtrServices/apollo/mutations';
 import { DateMainMenuProps } from './types';
 
 const TrashDate: React.FC<DateMainMenuProps> = ({ datetime, ...props }) => {
-	const id = datetime?.id;
+	if (!datetime) return null;
+
+	const id = datetime.id;
 	const { deleteEntity } = useDatetimeMutator(id);
 	const onClick = useCallback(() => deleteEntity({ id }), [id]);
 
