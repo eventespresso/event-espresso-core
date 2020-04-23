@@ -1,8 +1,9 @@
 import { useCallback, useEffect, useState } from 'react';
 import { useMutation } from '@apollo/react-hooks';
 import gql from 'graphql-tag';
-import { clone, reverse } from 'ramda';
+import { clone } from 'ramda';
 import { useDebouncedCallback } from 'use-debounce';
+import { MutationResult } from '@apollo/react-common';
 
 import { EntityId } from '@appServices/apollo/types';
 import { getGuids } from '@appServices/predicates';
@@ -35,6 +36,7 @@ const REORDER_ENTITIES = gql`
 interface ReorderEntities<E extends Entity> {
 	cancel: VoidFunction;
 	done: VoidFunction;
+	result: MutationResult;
 	sortEntities: SortCallback<E>;
 }
 
@@ -48,14 +50,8 @@ const useReorderEntities = <E extends Entity>({ entityType }: ReorderEntitiesPro
 	}, [allEntityGuidsStr]);
 
 	const [mutate, result] = useMutation(REORDER_ENTITIES);
-	useEffect(() => {
-		console.log(result);
-	}, [result]);
 
-	const [runMutation, cancelDebounce] = useDebouncedCallback((...args) => {
-		console.log('runMutation called');
-		mutate(...args);
-	}, 5000); // delay in MS
+	const [runMutation, cancelDebounce] = useDebouncedCallback(mutate, 5000); // delay in MS
 
 	const done = useCallback(() => {
 		runMutation({
@@ -67,7 +63,7 @@ const useReorderEntities = <E extends Entity>({ entityType }: ReorderEntitiesPro
 				},
 			},
 		});
-	}, [allEntityGuids, entityType, runMutation]);
+	}, [allEntityGuidsStr, entityType, runMutation]);
 
 	const cancel = useCallback(() => {
 		cancelDebounce();
@@ -82,7 +78,7 @@ const useReorderEntities = <E extends Entity>({ entityType }: ReorderEntitiesPro
 			cancel();
 
 			const entities = clone(filteredEntities);
-			const allEntities = clone(allEntitiesList);
+			let allEntities = clone(allEntitiesList);
 
 			// remove entity from existing location in filtered list
 			const [removed] = entities.splice(oldIndex, 1);
@@ -99,15 +95,10 @@ const useReorderEntities = <E extends Entity>({ entityType }: ReorderEntitiesPro
 
 				return entity;
 			});
-			// setEntities(entities);
 
-			// reorder the list of all entities as well...
-			// reverse the reordered list of entities
-			const reversed = reverse(entities);
-			reversed.forEach((entity) => {
-				// add each entity to the beginning of the allEntities array
-				allEntities.unshift(entity);
-			});
+			// insert ordered entities at the beginning of the array
+			// which means trashed ones will land up at the end
+			allEntities = [...entities, ...allEntities];
 			// but now we need to reset the order properties for ALL entities
 			allEntities.map((entity, index) => {
 				// add 1 so we don't end up with order: 0
@@ -122,7 +113,7 @@ const useReorderEntities = <E extends Entity>({ entityType }: ReorderEntitiesPro
 		[entityType]
 	);
 
-	return { cancel, done, sortEntities };
+	return { cancel, done, result, sortEntities };
 };
 
 export default useReorderEntities;

@@ -9,6 +9,7 @@ import type { Datetime } from '@edtrServices/apollo/types';
 import { useEdtrState } from '@edtrHooks/edtrState';
 import { getGuids } from '@appServices/predicates';
 import notTrashed from '@sharedServices/predicates/filters/notTrashed';
+import { entityListCacheIdString } from '@application/services';
 
 export type DatetimesListContextProps = EntityListContextProps<DatetimesFilterStateManager, Datetime>;
 
@@ -32,12 +33,13 @@ export const DatetimesListProvider: React.FC = ({ children }) => {
 
 	// Update Edtr state for isChained filter
 	const { setVisibleDatetimeIds } = useEdtrState();
+	const cacheIdStr = entityListCacheIdString(filteredEntities);
 	useEffect(() => {
 		// update only when not sorting
 		if (!sortingEnabled) {
 			setVisibleDatetimeIds(getGuids(filteredEntities));
 		}
-	}, [filteredEntities, sortingEnabled]);
+	}, [cacheIdStr, sortingEnabled]);
 
 	// set sortBy to 'order' when sorting is enabled
 	useEffect(() => {
