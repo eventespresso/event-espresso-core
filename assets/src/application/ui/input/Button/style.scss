@@ -7,16 +7,31 @@
 	--ee-icon-button-size: 36px;
 }
 
+.ee-btn-base.ee-btn-base {
+	border-style: solid;
+	border-width: 1px;
+	cursor: pointer;
+	display: inline-flex;
+	top: 0;
+
+	&:hover {
+		border-color: var(--ee-color-primary-low-contrast);
+		color: var(--ee-color-primary-high-contrast);
+		box-shadow: 0 0 0 1px var(--ee-color-primary-low-contrast);
+	}
+
+	&:focus {
+		border-color: var(--ee-color-primary);
+		box-shadow: 0 0 0 1px var(--ee-color-primary);
+	}
+}
+
 .ee-event-editor {
 	.ee-button.ee-button {
 		border-radius: var(--ee-border-radius-small);
-		border-style: solid;
-		border-width: 1px;
 		border-bottom: none;
 		box-shadow: var(--ee-box-shadow-tiny);
 		color: var(--ee-text-on-grey-14) !important;
-		cursor: pointer;
-		display: inline-flex;
 		font-family: 'Segoe UI', Candara, 'Bitstream Vera Sans', 'DejaVu Sans', 'Bitstream Vera Sans', 'Trebuchet MS',
 			Verdana, 'Verdana Ref', sans-serif;
 		font-size: var(--ee-font-size-default);
@@ -28,7 +43,6 @@
 		text-decoration: none;
 		text-align: center;
 		text-shadow: var(--ee-text-shadow-inset-light);
-		top: 0;
 		transition: border-color 0.1s ease 0.1s, color 0.1s ease 0.1s !important;
 		vertical-align: middle;
 
@@ -59,23 +73,6 @@
 
 		&:active {
 			box-shadow: none;
-		}
-
-		&:hover {
-			&:not(:disabled):not([aria-disabled='true']):not(.is-secondary):not(.is-primary):not(.is-tertiary):not(.is-link) {
-				background-color: rgb(255, 255, 255);
-				color: rgb(25, 30, 35);
-				box-shadow: inset 0 0 0 1px #555d66, inset 0 0 0 2px #fff;
-			}
-		}
-
-		&:focus {
-			box-shadow: 0 0 0 1px var(--ee-color-primary-low-contrast), 0 2px 2px rgba(0, 0, 0, 0.6);
-			&:not(:disabled) {
-				background-color: rgb(255, 255, 255);
-				color: rgb(25, 30, 35);
-				box-shadow: inset 0 0 0 1px #6c7781, inset 0 0 0 2px #fff;
-			}
 		}
 
 		&:not(.ant-btn-icon-only),

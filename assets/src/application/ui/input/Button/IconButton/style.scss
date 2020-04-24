@@ -3,12 +3,12 @@
  * © 2020 Event Espresso
  * ------------------------------------------------------------------------- */
 
-.ee-button.ee-button {
+.ee-btn-base {
 	&.ee-icon-button {
 		background: none;
-		border: 1px solid var(--ee-background-color) !important;
+		border-color: var(--ee-background-color);
 		box-shadow: none;
-		color: var(--ee-default-text-color) !important;
+		color: var(--ee-default-text-color);
 		height: calc(var(--ee-icon-button-size));
 		margin: 0 0 var(--ee-margin-micro);
 		padding: 0 8px;
