@@ -2,9 +2,9 @@ import React from 'react';
 import { __, sprintf } from '@wordpress/i18n';
 
 import { Button } from '@appInputs/Button';
+import { CloseOutlined } from '@appDisplay/icons/svgs';
 import { RepeatableRendererProps } from '../types';
 import { Field, Group } from '../fields';
-import { CloseOutlined } from '@ant-design/icons';
 
 const RepeatableRenderer: React.FC<Omit<RepeatableRendererProps, 'component'>> = ({
 	fields,

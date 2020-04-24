@@ -1,8 +1,8 @@
 import React, { useCallback } from 'react';
-import { DownCircleFilled, UpCircleFilled } from '@ant-design/icons';
 import { __ } from '@wordpress/i18n';
 
 import { Cell } from '@appLayout/espressoTable';
+import { DownCircleFilled, UpCircleFilled } from '@appDisplay/icons/svgs';
 import { IconButton } from '@application/ui/input';
 import { parsedAmount } from '@appServices/utilities/money';
 import { TicketPriceField } from '../../fields';
