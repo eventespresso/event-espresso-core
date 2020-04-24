@@ -1,11 +1,12 @@
 import React, { useCallback, useMemo } from 'react';
 import { __ } from '@wordpress/i18n';
-import { SaveOutlined } from '@ant-design/icons';
+import {} from '@ant-design/icons';
 
 import { ButtonProps } from '@infraUI/inputs';
 import { ConfirmClose } from '@appDisplay/confirm';
 import { ModalWithAlert } from '@appLayout/modal';
 import { modalCloseButtonProps } from '@infraUI/layout/modal';
+import { SaveOutlined } from '@appDisplay/icons/svgs';
 
 import { RenderModalFormProps } from './types';
 
@@ -39,7 +40,7 @@ const RenderModalForm: React.FC<RenderModalFormProps> = ({
 			isDisabled: submitDisabled,
 			type: 'submit',
 			isLoading: submitting,
-			leftIcon: () => <SaveOutlined />,
+			icon: SaveOutlined,
 			onClick: onSubmit,
 			buttonText: __('Submit'),
 		}),
