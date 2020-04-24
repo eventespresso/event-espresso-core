@@ -87,8 +87,8 @@ class EE_Load_Textdomain extends EE_Base
         );
         /** @var EEH_Sideloader $sideloader */
         $sideloader = EE_Registry::instance()->load_helper('Sideloader', $sideloader_args, false);
-        // don't sideload the .POT file if Multisite is enabled
-        if (! is_multisite()) {
+        // sideload the .POT file only for main site of the network, or if not running Multisite.
+        if (is_main_site()) {
             $sideloader->sideload();
         }
 
