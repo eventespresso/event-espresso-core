@@ -1,8 +1,8 @@
 import { __, sprintf } from '@wordpress/i18n';
-import { ProfileOutlined, CalendarOutlined, ControlOutlined } from '@ant-design/icons';
 import { pick } from 'ramda';
 import { parseISO } from 'date-fns';
 
+import { CalendarOutlined, ControlOutlined, ProfileOutlined } from '@appDisplay/icons/svgs';
 import { EspressoFormProps } from '@application/ui/forms/espressoForm';
 import useDatetimeItem from '@edtrServices/apollo/queries/datetimes/useDatetimeItem';
 import { Datetime } from '@edtrServices/apollo/types';

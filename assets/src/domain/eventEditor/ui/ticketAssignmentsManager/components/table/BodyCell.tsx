@@ -14,7 +14,7 @@ const BodyCell: React.FC<RenderCellProps> = ({ datetime, ticket }) => {
 
 	const icon = getCellIcon({ datetimeId: datetime.id, ticketId: ticket.id });
 
-	return <Button variant='link' onClick={onClick} icon={icon} />;
+	return <Button icon={icon} margin='auto' onClick={onClick} variant='link' />;
 };
 
 export default BodyCell;
