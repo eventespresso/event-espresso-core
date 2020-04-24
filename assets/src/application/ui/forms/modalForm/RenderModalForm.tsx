@@ -1,6 +1,5 @@
 import React, { useCallback, useMemo } from 'react';
 import { __ } from '@wordpress/i18n';
-import {} from '@ant-design/icons';
 
 import { ButtonProps } from '@infraUI/inputs';
 import { ConfirmClose } from '@appDisplay/confirm';
