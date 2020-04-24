@@ -1,16 +1,19 @@
-.ee-ticket-price-calculator {
-	width: 100%;
-	th,
-	td {
-		padding: var(--ee-padding-tiny) var(--ee-padding-micro);
-	}
-	input,
-	select {
+.ee-ticket-price {
+	&-calculator {
 		width: 100%;
-	}
-	&__actions {
-		.ee-icon-button {
-			margin-bottom: 0;
+		th,
+		td {
+			padding: var(--ee-padding-tiny) var(--ee-padding-micro);
+		}
+		input,
+		select {
+			width: 100%;
+		}
+
+		&__actions {
+			.ee-button.ee-icon-button {
+				margin-bottom: 0;
+			}
 		}
 	}
 
