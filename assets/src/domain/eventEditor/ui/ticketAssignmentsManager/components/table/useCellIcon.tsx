@@ -20,7 +20,7 @@ const useCellIcon = (): Callback => {
 				case 'REMOVED':
 					return () => <CloseOutlined fill='white' />;
 				default:
-					return () => <MinusOutlined />;
+					return () => <MinusOutlined fill='white' />;
 			}
 		},
 		[getAssignmentStatus]
