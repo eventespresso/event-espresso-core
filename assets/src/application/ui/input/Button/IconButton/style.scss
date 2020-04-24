@@ -9,10 +9,11 @@
 		border: 1px solid var(--ee-background-color) !important;
 		box-shadow: none;
 		color: var(--ee-default-text-color) !important;
-		height: calc(var(--ee-icon-button-size) + 2px);
+		height: calc(var(--ee-icon-button-size));
 		margin: 0 0 var(--ee-margin-micro);
 		padding: 0 8px;
-		width: calc(var(--ee-icon-button-size) + 2px);
+		top: 0;
+		width: calc(var(--ee-icon-button-size));
 		svg {
 			display: inline-block;
 			flex: 0 0 auto;

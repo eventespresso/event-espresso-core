@@ -13,6 +13,8 @@ const IconButton = React.forwardRef<typeof IconButtonAdapter, IconButtonAdapterP
 	({ icon, onClick, ...props }, ref) => {
 		const className = classNames('ee-button ee-icon-button', props.className);
 
+		console.log({ props });
+
 		return (
 			<IconButtonAdapter {...props} className={className} icon={icon} onClick={onClick} tabIndex={0} ref={ref} />
 		);
