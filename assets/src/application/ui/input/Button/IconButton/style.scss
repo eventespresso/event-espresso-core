@@ -8,7 +8,7 @@
 		background: none;
 		border: 1px solid var(--ee-background-color) !important;
 		box-shadow: none;
-		color: var(--ee-default-text-color);
+		color: var(--ee-default-text-color) !important;
 		height: calc(var(--ee-icon-button-size) + 2px);
 		margin: 0 0 var(--ee-margin-micro);
 		padding: 0 8px;
