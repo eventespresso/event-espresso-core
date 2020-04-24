@@ -1,9 +1,9 @@
 import React from 'react';
 import { __, sprintf } from '@wordpress/i18n';
-import { ProfileOutlined, CalendarOutlined, ControlOutlined } from '@ant-design/icons';
 import { pick } from 'ramda';
 import { parseISO } from 'date-fns';
 
+import { CalendarOutlined, ControlOutlined, ProfileOutlined } from '@appDisplay/icons/svgs';
 import { EspressoFormProps } from '@application/ui/forms/espressoForm';
 import useTicketItem from '@edtrServices/apollo/queries/tickets/useTicketItem';
 import { Ticket } from '@edtrServices/apollo/types';

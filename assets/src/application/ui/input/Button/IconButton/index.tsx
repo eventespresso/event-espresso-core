@@ -11,7 +11,7 @@ type BtnType = React.ComponentType<IconButtonProps>;
 
 const IconButton = React.forwardRef<typeof IconButtonAdapter, IconButtonAdapterProps>(
 	({ icon, onClick, ...props }, ref) => {
-		const className = classNames('ee-button ee-icon-button', props.className);
+		const className = classNames('ee-btn-base ee-icon-button', props.className);
 
 		return (
 			<IconButtonAdapter {...props} className={className} icon={icon} onClick={onClick} tabIndex={0} ref={ref} />

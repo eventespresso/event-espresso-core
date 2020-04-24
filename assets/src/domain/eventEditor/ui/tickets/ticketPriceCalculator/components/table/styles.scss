@@ -9,7 +9,14 @@
 		select {
 			width: 100%;
 		}
+
+		&__actions {
+			.ee-icon-button {
+				margin-bottom: 0;
+			}
+		}
 	}
+
 	&-field {
 		display: flex;
 		&__before {

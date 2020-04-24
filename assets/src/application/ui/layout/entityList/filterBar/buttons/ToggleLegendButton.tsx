@@ -1,12 +1,13 @@
 import React from 'react';
 import classNames from 'classnames';
-import { CompassFilled } from '@ant-design/icons';
 import { useSpring, animated } from 'react-spring';
 import { __ } from '@wordpress/i18n';
 
+import { CompassFilled } from '@appDisplay/icons/svgs';
 import { IconButton } from '@appInputs/Button';
 import { LabelPosition } from '@application/ui/display';
 import { ToggleLegendButtonProps } from '../types';
+
 import { getPropsAreEqual } from '@appServices/utilities';
 
 const ToggleLegendButton: React.FC<ToggleLegendButtonProps> = ({ listId, showLegend, toggleLegend, ...rest }) => {

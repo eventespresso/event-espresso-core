@@ -1,8 +1,8 @@
 import React from 'react';
 import classNames from 'classnames';
-import { AppstoreFilled } from '@ant-design/icons';
 import { __ } from '@wordpress/i18n';
 
+import { AppstoreFilled } from '@appDisplay/icons/svgs';
 import { CardViewFilterButtonProps } from '../types';
 import { IconButton } from '@application/ui/input';
 import { LabelPosition } from '@application/ui/display';
@@ -15,7 +15,7 @@ const CardViewFilterButton: React.FC<CardViewFilterButtonProps> = ({ listId, set
 	return (
 		<IconButton
 			className={className}
-			icon={() => <AppstoreFilled />}
+			icon={AppstoreFilled}
 			id={filterId}
 			label={__('card view')}
 			onClick={view !== 'card' ? setCardView : null}

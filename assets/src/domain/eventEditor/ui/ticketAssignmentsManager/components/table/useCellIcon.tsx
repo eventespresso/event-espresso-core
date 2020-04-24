@@ -1,15 +1,11 @@
-import React, { useCallback, CSSProperties } from 'react';
-import AntIcon, { CloseOutlined, MinusOutlined } from '@ant-design/icons';
+import React, { useCallback } from 'react';
 
-import { useDataState } from '../../data';
 import { AssignmentFnArgs } from '../../types';
+import { CloseOutlined, MinusOutlined } from '@appDisplay/icons/svgs';
 import { Ticket } from '@appDisplay/icons';
+import { useDataState } from '../../data';
 
 type Callback = (args: AssignmentFnArgs) => React.ComponentType;
-
-const iconStyle: CSSProperties = {
-	color: '#fff',
-};
 
 const useCellIcon = (): Callback => {
 	const { getAssignmentStatus } = useDataState();
@@ -20,11 +16,11 @@ const useCellIcon = (): Callback => {
 			switch (status) {
 				case 'NEW':
 				case 'OLD':
-					return () => <AntIcon style={iconStyle} component={Ticket} />;
+					return () => <Ticket fill='white' />;
 				case 'REMOVED':
-					return () => <CloseOutlined style={iconStyle} />;
+					return () => <CloseOutlined fill='white' />;
 				default:
-					return () => <MinusOutlined />;
+					return () => <MinusOutlined fill='white' />;
 			}
 		},
 		[getAssignmentStatus]

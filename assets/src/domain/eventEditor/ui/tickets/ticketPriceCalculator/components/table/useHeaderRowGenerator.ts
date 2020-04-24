@@ -50,7 +50,7 @@ const useHeaderRowGenerator = (): HeaderRowGenerator => {
 			{
 				key: 'actions',
 				type: 'cell',
-				className: 'ee-ticket-price-calculator-actions',
+				className: 'ee-ticket-price-calculator__actions',
 				value: __('Actions', 'event_espresso'),
 			},
 		];

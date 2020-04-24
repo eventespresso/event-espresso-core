@@ -1,9 +1,9 @@
 import React from 'react';
 import classNames from 'classnames';
-import { Icon } from '@chakra-ui/core';
 
 import { FieldRendererProps } from '../types';
 import { FormControl, FormErrorMessage, FormHelperText, FormLabel } from '@infraUI/forms';
+import { InfoCircleOutlined } from '@appDisplay/icons/svgs';
 import { MappedField } from '../adapters';
 import { Tooltip } from '@infraUI/display';
 
@@ -31,7 +31,7 @@ const FieldRenderer: React.FC<FieldRendererProps> = (props) => {
 				{label}
 				{info && (
 					<Tooltip placement='right' title={info}>
-						<Icon marginLeft='var(--ee-margin-micro)' name='info-outline' />
+						<InfoCircleOutlined />
 					</Tooltip>
 				)}
 			</FormLabel>

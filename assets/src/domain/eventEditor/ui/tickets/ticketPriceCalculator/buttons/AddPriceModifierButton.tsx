@@ -1,8 +1,8 @@
 import React from 'react';
-import { PlusCircleFilled } from '@ant-design/icons';
 import { __ } from '@wordpress/i18n';
 
 import { IconButton } from '@application/ui/input';
+import { PlusCircleFilled } from '@appDisplay/icons/svgs';
 
 interface AddPriceModifierButtonProps {
 	addPriceModifier: VoidFunction;

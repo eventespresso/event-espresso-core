@@ -52,7 +52,7 @@ const useBodyRowGenerator = (): BodyRowGenerator => {
 			{
 				key: 'actions',
 				type: 'cell',
-				className: 'ee-ticket-price-calculator-price-actions',
+				className: 'ee-ticket-price-calculator__actions',
 				value: <PriceModifierActions index={index} price={price} />,
 			},
 		];
