@@ -2,15 +2,16 @@
 
 namespace EventEspresso\core\domain\services\graphql\mutators;
 
-use EEM_Event;
 use EE_Event;
+use EEM_Event;
+use Exception;
 use WP_Post_Type;
 use EventEspresso\core\domain\services\graphql\types\Event;
 use EventEspresso\core\domain\services\graphql\data\mutations\EventMutation;
 use GraphQL\Type\Definition\ResolveInfo;
 use WPGraphQL\AppContext;
 
-class EventUpdate
+class EventUpdate extends EntityMutator
 {
 
     /**
@@ -31,6 +32,7 @@ class EventUpdate
          * @param string       $mutation_name    The name of the mutation (ex: create, update, delete)
          * @param AppContext   $context          The AppContext passed down to all resolvers
          * @param ResolveInfo  $info             The ResolveInfo passed down to all resolvers
+         * @return array|void
          */
         return static function (
             $id,
@@ -43,19 +45,28 @@ class EventUpdate
             $model,
             $type
         ) {
-            // Make sure we are dealing with the right entity.
-            if (! property_exists($post_type_object, 'graphql_single_name')
-                || $post_type_object->graphql_single_name !== $type->name()) {
-                return;
-            }
+            try {
+                // Make sure we are dealing with the right entity.
+                if (! property_exists($post_type_object, 'graphql_single_name')
+                    || $post_type_object->graphql_single_name !== $type->name()) {
+                    return;
+                }
 
-            $entity = $model->get_one_by_ID($id);
-
-            if ($entity instanceof EE_Event) {
+                /** @var EE_Event $entity */
+                $entity = EntityMutator::getEntityFromID($model, $id);
                 $args = EventMutation::prepareFields($input, $mutation_name);
 
                 // Update the entity
                 $entity->save($args);
+
+            } catch (Exception $exception) {
+                return EntityMutator::FormatException(
+                    $exception,
+                    esc_html__(
+                        'The datetime could not be updated because of the following error(s)',
+                        'event_espresso'
+                    )
+                );
             }
         };
     }
