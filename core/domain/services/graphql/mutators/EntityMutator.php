@@ -138,19 +138,21 @@ abstract class EntityMutator
 
 
     /**
-     * @param $results
+     * @param        $results
+     * @param string $message
      * @throws RuntimeException
      * @since $VID:$
      */
-    protected static function validateResults($results)
+    protected static function validateResults($results, $message = '')
     {
         if (empty($results)) {
-            throw new RuntimeException(
-                esc_html__(
+            $message = $message !== ''
+                ? $message
+                : esc_html__(
                     'An unknown error occurred. Please check your server\'s error  logs for more information',
                     'event_espresso'
-                )
-            );
+                );
+            throw new RuntimeException($message);
         }
     }
 
