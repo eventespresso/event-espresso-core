@@ -11,7 +11,7 @@ import './style.scss';
 
 const DropdownToggle = React.forwardRef<typeof MenuToggle, DropdownToggleProps>(
 	({ icon = More, isOpen, tooltip, ...toggleProps }, ref) => {
-		const className = classNames('ee-btn-base ee-icon-btn ee-dropdown-menu__toggle', toggleProps.className, {
+		const className = classNames('ee-icon-btn ee-dropdown-menu__toggle', toggleProps.className, {
 			'ee-dropdown-menu__toggle--open': isOpen,
 		});
 

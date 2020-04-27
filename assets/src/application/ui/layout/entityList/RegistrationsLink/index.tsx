@@ -14,7 +14,12 @@ interface Props {
 const RegistrationsLink: React.FC<Props> = ({ href, title }) => {
 	return (
 		<Tooltip title={title}>
-			<a href={href} className={'ee-editor-details-reg-url-link'} target={'_blank'} rel={'noopener norefferer'}>
+			<a
+				href={href}
+				className={'ee-btn-base ee-editor-details-reg-url-link'}
+				target={'_blank'}
+				rel={'noopener norefferer'}
+			>
 				<Groups svgSize={24} />
 			</a>
 		</Tooltip>

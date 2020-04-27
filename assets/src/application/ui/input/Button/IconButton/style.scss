@@ -3,7 +3,7 @@
  * © 2020 Event Espresso
  * ------------------------------------------------------------------------- */
 
-.ee-btn-base {
+.ee-btn-base.ee-btn-base {
 	&.ee-icon-btn {
 		background: none;
 		border-color: var(--ee-background-color);
@@ -15,7 +15,8 @@
 		top: 0;
 		width: calc(var(--ee-icon-button-size));
 		&:hover {
-			background: none;
+			background: var(--ee-background-color);
+			color: var(--ee-color-primary);
 		}
 		svg {
 			display: inline-block;

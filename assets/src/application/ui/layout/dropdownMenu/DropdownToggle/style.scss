@@ -1,12 +1,5 @@
 button.ee-dropdown-menu__toggle {
 	background: none !important;
-	border: 1px solid var(--ee-background-color) !important;
-	color: var(--ee-default-text-color) !important;
-	display: inline-flex;
-	height: calc(var(--ee-icon-button-size) + 2px);
-	margin: 0;
-	padding: var(--ee-padding-tiny);
-	width: calc(var(--ee-icon-button-size) + 2px);
 	svg {
 		display: inline-block;
 	}

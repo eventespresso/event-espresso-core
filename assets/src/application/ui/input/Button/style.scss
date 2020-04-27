@@ -46,11 +46,15 @@
 	}
 
 	&.ee-icon-btn {
-		&:hover {
-			@extend .ee-btn-base-hover;
-		}
-		&:focus {
-			@extend .ee-btn-base-focus;
+		@at-root {
+			button#{&} {
+				&:hover {
+					@extend .ee-btn-base-hover;
+				}
+				&:focus {
+					@extend .ee-btn-base-focus;
+				}
+			}
 		}
 	}
 
