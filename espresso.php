@@ -111,9 +111,34 @@ if (function_exists('espresso_version')) {
         function espresso_plugin_activation()
         {
             update_option('ee_espresso_activation', true);
+
+            // Run WP GraphQL activation callback
+            if (PHP_VERSION_ID < 70000) {
+                return;
+            }
+            if (! class_exists('WPGraphQL')) {
+                require_once EE_THIRD_PARTY . 'wp-graphql/wp-graphql.php';
+            }
+            graphql_init()->activate();
         }
 
         register_activation_hook(EVENT_ESPRESSO_MAIN_FILE, 'espresso_plugin_activation');
+
+        /**
+         * espresso_plugin_deactivation
+         */
+        function espresso_plugin_deactivation()
+        {
+            // Run WP GraphQL deactivation callback
+            if (PHP_VERSION_ID < 70000) {
+                return;
+            }
+            if (! class_exists('WPGraphQL')) {
+                require_once EE_THIRD_PARTY . 'wp-graphql/wp-graphql.php';
+            }
+            graphql_init()->deactivate();
+        }
+        register_deactivation_hook(EVENT_ESPRESSO_MAIN_FILE, 'espresso_plugin_deactivation');
 
         require_once __DIR__ . '/core/bootstrap_espresso.php';
         bootstrap_espresso();
