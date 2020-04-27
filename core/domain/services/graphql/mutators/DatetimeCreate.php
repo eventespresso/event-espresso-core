@@ -2,20 +2,22 @@
 
 namespace EventEspresso\core\domain\services\graphql\mutators;
 
-use EEM_Datetime;
 use EE_Datetime;
+use EEM_Datetime;
+use EE_Error;
 use EventEspresso\core\domain\services\graphql\types\Datetime;
 use EventEspresso\core\domain\services\graphql\data\mutations\DatetimeMutation;
-
-use EE_Error;
-use InvalidArgumentException;
-use ReflectionException;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
-
-use GraphQL\Type\Definition\ResolveInfo;
-use WPGraphQL\AppContext;
+use Exception;
+use GraphQL\Error\FormattedError;
 use GraphQL\Error\UserError;
+use GraphQL\Type\Definition\ResolveInfo;
+use InvalidArgumentException;
+use OutOfBoundsException;
+use ReflectionException;
+use RuntimeException;
+use WPGraphQL\AppContext;
 
 class DatetimeCreate
 {
@@ -45,34 +47,52 @@ class DatetimeCreate
          */
         return static function ($input, AppContext $context, ResolveInfo $info) use ($model, $type) {
 
-            /**
-             * Stop now if a user isn't allowed to create a datetime.
-             */
-            if (! current_user_can('ee_edit_events')) {
-                // translators: the %1$s is the name of the object being mutated
-                throw new UserError(
-                    sprintf(esc_html__('Sorry, you are not allowed to create %1$s', 'event_espresso'), $type->name())
+            try {
+                /**
+                 * Stop now if a user isn't allowed to create a datetime.
+                 */
+                if (! current_user_can('ee_edit_events')) {
+                    throw new UserError(
+                        esc_html__('Insufficient Permissions!', 'event_espresso')
+                    );
+                }
+
+                $tickets = [];
+
+                $args = DatetimeMutation::prepareFields($input);
+
+                if (isset($args['tickets'])) {
+                    $tickets = $args['tickets'];
+                    unset($args['tickets']);
+                }
+
+                $entity = EE_Datetime::new_instance($args);
+                $id = $entity->save();
+                if (empty($id)) {
+                    throw new OutOfBoundsException(
+                        esc_html__(
+                            'An unknown error occurred. Please check your server\'s error  logs for more information',
+                            'event_espresso'
+                        )
+                    );
+                }
+
+                if (! empty($tickets)) {
+                    DatetimeMutation::setRelatedTickets($entity, $tickets);
+                }
+            } catch (Exception $exception) {
+                return FormattedError::createFromException(
+                    new RuntimeException(
+                        sprintf(
+                            // translators: %1$s error message
+                            esc_html__(
+                                'The datetime could not be created because of the following error(s): %1$s',
+                                'event_espresso'
+                            ),
+                            $exception->getMessage()
+                        )
+                    )
                 );
-            }
-
-            $tickets = [];
-
-            $args = DatetimeMutation::prepareFields($input);
-
-            if (isset($args['tickets'])) {
-                $tickets = $args['tickets'];
-                unset($args['tickets']);
-            }
-
-            $entity = EE_Datetime::new_instance($args);
-            $id = $entity->save();
-
-            if (empty($id)) {
-                throw new UserError(esc_html__('The object failed to create but no error was provided', 'event_espresso'));
-            }
-
-            if (! empty($tickets)) {
-                DatetimeMutation::setRelatedTickets($entity, $tickets);
             }
 
             return [
