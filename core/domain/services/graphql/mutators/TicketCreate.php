@@ -62,7 +62,7 @@ class TicketCreate extends EntityMutator
                     TicketMutation::addDefaultPrices($entity, $model);
                 }
             } catch (Exception $exception) {
-                return EntityMutator::FormatException(
+                return EntityMutator::CompileExceptions(
                     $exception,
                     esc_html__(
                         'The ticket could not be created because of the following error(s)',

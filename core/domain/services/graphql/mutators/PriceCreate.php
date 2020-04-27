@@ -48,7 +48,7 @@ class PriceCreate extends EntityMutator
                 $id = $entity->save();
                 EntityMutator::validateResults($id);
             } catch (Exception $exception) {
-                return EntityMutator::FormatException(
+                return EntityMutator::CompileExceptions(
                     $exception,
                     esc_html__(
                         'The price could not be created because of the following error(s)',

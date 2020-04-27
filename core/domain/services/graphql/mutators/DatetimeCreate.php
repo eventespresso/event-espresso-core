@@ -50,7 +50,7 @@ class DatetimeCreate extends EntityMutator
                     DatetimeMutation::setRelatedTickets($entity, $tickets);
                 }
             } catch (Exception $exception) {
-                return EntityMutator::FormatException(
+                return EntityMutator::CompileExceptions(
                     $exception,
                     esc_html__(
                         'The datetime could not be created because of the following error(s)',

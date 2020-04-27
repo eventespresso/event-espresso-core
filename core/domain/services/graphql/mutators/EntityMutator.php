@@ -5,12 +5,10 @@ namespace EventEspresso\core\domain\services\graphql\mutators;
 use EE_Base_Class;
 use EEM_Base;
 use Exception;
-use GraphQL\Error\FormattedError;
 use GraphQL\Error\UserError;
 use GraphQLRelay\Relay;
 use OutOfBoundsException;
 use RuntimeException;
-use Throwable;
 
 /**
  * Class EntityMutator
@@ -160,11 +158,10 @@ abstract class EntityMutator
     /**
      * @param Exception $exception
      * @param string    $message_prefix
-     * @return array
-     * @throws Throwable
+     * @throws RuntimeException
      * @since $VID:$
      */
-    protected static function FormatException(Exception $exception, $message_prefix = '')
+    protected static function CompileExceptions(Exception $exception, $message_prefix = '')
     {
         $message_prefix = $message_prefix !== ''
             ? $message_prefix
@@ -172,10 +169,8 @@ abstract class EntityMutator
                 'The mutation could not be executed because of the following error(s)',
                 'event_espresso'
             );
-        return FormattedError::createFromException(
-            new RuntimeException(
-                sprintf('%1$s: %2$s',$message_prefix, $exception->getMessage())
-            )
+        throw new RuntimeException(
+            sprintf('%1$s: %2$s',$message_prefix, $exception->getMessage())
         );
     }
 }

@@ -38,7 +38,7 @@ class TicketDelete extends EntityMutator
                 $result = ! empty($input['deletePermanently']) ? $entity->delete_permanently() : $entity->delete();
                 EntityMutator::validateResults($result);
             } catch (Exception $exception) {
-                return EntityMutator::FormatException(
+                return EntityMutator::CompileExceptions(
                     $exception,
                     esc_html__(
                         'The ticket could not be deleted because of the following error(s)',
