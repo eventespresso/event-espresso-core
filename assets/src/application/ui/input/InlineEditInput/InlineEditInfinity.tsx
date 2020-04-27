@@ -38,7 +38,15 @@ const InlineEditInfinity: React.FC<TextProps> = ({ onChangeValue, value, ...rest
 		[onChangeValue]
 	);
 
-	return <InlineEdit {...rest} onChangeValue={onChangeHandler} Preview={Preview} value={isInfinity ? '' : value} />;
+	return (
+		<InlineEdit
+			{...rest}
+			inputType='number'
+			onChangeValue={onChangeHandler}
+			Preview={Preview}
+			value={isInfinity ? '' : value}
+		/>
+	);
 };
 
 export default InlineEditInfinity;

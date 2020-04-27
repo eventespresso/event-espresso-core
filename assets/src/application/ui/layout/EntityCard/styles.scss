@@ -55,14 +55,25 @@
 				padding: 0;
 				text-align: center;
 				width: 100%;
+				.ee-input-inline {
+					transform: translateY(-25%);
+				}
 			}
 
 			&__description {
 				font-size: var(--ee-font-size-default);
 				margin: 0 0 var(--ee-margin-tiny);
-				overflow-y: auto;
+				min-height: 42px;
+				position: relative;
 				text-align: center;
 				width: 100%;
+				textarea {
+					background-color: white;
+					margin: 0;
+					position: absolute;
+					right: 0;
+					top: 0;
+				}
 			}
 
 			&__price {

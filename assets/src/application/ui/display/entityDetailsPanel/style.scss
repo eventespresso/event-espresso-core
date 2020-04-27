@@ -18,6 +18,12 @@
 	vertical-align: bottom;
 	width: 100%;
 
+	.ee-entity-details-value-div {
+		.ee-input-inline {
+			transform: translateY(25%);
+		}
+	}
+
 	.ee-inline-edit-text {
 		font-size: var(--ee-font-size-big);
 		line-height: var(--ee-font-size-big);
@@ -63,10 +69,8 @@
 		border-left: 1px solid rgba(0, 0, 0, 0.25);
 		height: calc(var(--ee-font-size-big) + var(--ee-font-size-bigger));
 	}
-}
 
-.entity-card--reverse-layout {
-	.ee-entity-details-panel-div {
+	.entity-card--reverse-layout & {
 		align-self: flex-end;
 	}
 }

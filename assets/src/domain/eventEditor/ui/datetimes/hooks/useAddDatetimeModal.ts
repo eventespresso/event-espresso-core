@@ -25,11 +25,12 @@ const useAddDatetimeModal: FormModal = () => {
 	);
 
 	const formConfig = useDateFormConfig(null, { onSubmit });
+	const title = eventName ? `${eventName}: ${__('New Datetime')}` : __('New Datetime');
 
 	return {
-		title: `${eventName}: ${__('New Datetime')}`,
 		formConfig,
 		onClose,
+		title,
 	};
 };
 
