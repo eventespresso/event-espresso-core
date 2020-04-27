@@ -87,7 +87,10 @@ class EE_Load_Textdomain extends EE_Base
         );
         /** @var EEH_Sideloader $sideloader */
         $sideloader = EE_Registry::instance()->load_helper('Sideloader', $sideloader_args, false);
-        $sideloader->sideload();
+        // sideload the .POT file only for main site of the network, or if not running Multisite.
+        if (is_main_site()) {
+            $sideloader->sideload();
+        }
 
         // if locale is "en_US" then lets just get out, since Event Espresso core is already "en_US"
         if (EE_Load_Textdomain::$locale === 'en_US') {
