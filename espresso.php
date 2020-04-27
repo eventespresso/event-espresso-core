@@ -129,8 +129,6 @@ if (function_exists('espresso_version')) {
          */
         function espresso_plugin_deactivation()
         {
-            update_option('ee_espresso_activation', true);
-
             // Run WP GraphQL deactivation callback
             if (PHP_VERSION_ID < 70000) {
                 return;
