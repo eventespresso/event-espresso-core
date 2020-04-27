@@ -59,7 +59,9 @@ const useOnSubmitPrices = (): VoidFunction => {
 		// Delete all unlucky ones
 		await Promise.all(
 			deletedPriceIds.map((id) => {
-				return new Promise((onCompleted, onError) => deletePrice({ id }, { onCompleted, onError }));
+				return new Promise((onCompleted, onError) =>
+					deletePrice({ id, deletePermanently: true }, { onCompleted, onError })
+				);
 			})
 		);
 
