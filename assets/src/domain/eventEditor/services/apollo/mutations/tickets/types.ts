@@ -33,4 +33,5 @@ export interface UpdateTicketInput extends TicketBaseInput {
 
 export interface DeleteTicketInput {
 	id?: EntityId;
+	deletePermanently?: boolean;
 }

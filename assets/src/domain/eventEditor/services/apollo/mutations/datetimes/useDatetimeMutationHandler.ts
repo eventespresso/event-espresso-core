@@ -22,7 +22,7 @@ const useDatetimeMutationHandler = (): MutationHandler => {
 	const getMutationVariables = useMutationVariables();
 	const getOptimisticResponse = useOptimisticResponse();
 
-	const mutationHandler: MutationHandler = <MI>(mutationType: MutationType, input: MI) => {
+	const mutationHandler: MutationHandler = (mutationType, input) => {
 		const variables = getMutationVariables(mutationType, input);
 		const optimisticResponse = getOptimisticResponse(mutationType, input);
 
@@ -45,7 +45,7 @@ const useDatetimeMutationHandler = (): MutationHandler => {
 					onUpdateDatetime({ datetime, tickets });
 					break;
 				case MutationType.Delete:
-					onDeleteDatetime({ proxy, datetimes, datetime });
+					onDeleteDatetime({ proxy, datetimes, datetime, deletePermanently: input?.deletePermanently });
 					break;
 			}
 		};

@@ -14,7 +14,7 @@ const prices = { ...priceEdge, __typename: 'EspressoTicketPricesConnectionEdge' 
 export const mockedTickets = {
 	[MutationType.Create]: { ...tickets[0], id: tickets[0].id + '-alpha' }, // make sure to change the ID to make it different}
 	[MutationType.Update]: { ...tickets[0], prices },
-	[MutationType.Delete]: { id: tickets[0].id, __typename: tickets[0].__typename },
+	[MutationType.Delete]: tickets[0],
 };
 
 export const getMutationMocks = (
@@ -60,7 +60,7 @@ export const getMockResult = (mutationInput: MutationInput, mutationType: Mutati
 				__typename: `${ucFirst(mutationType.toLowerCase())}EspressoTicketPayload`,
 				espressoTicket:
 					MutationType.Delete === mutationType
-						? mockedTickets[mutationType]
+						? { ...mockedTickets[mutationType], ...input }
 						: { ...mockedTickets[mutationType], ...input, prices },
 			},
 		},

@@ -1,5 +1,4 @@
 import { useCallback } from 'react';
-import { pathOr } from 'ramda';
 import { useApolloClient } from '@apollo/react-hooks';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -43,7 +42,19 @@ const useOptimisticResponse = (): OptimisticResCb => {
 		};
 		// Get rid of null or undefined values
 		const filteredInput = removeNullAndUndefined(input);
-		let data: DatetimeItem, datetime: Datetime;
+		let data: DatetimeItem;
+		try {
+			data = client.readQuery<DatetimeItem>({
+				query: GET_DATETIME,
+				variables: {
+					id: input.id,
+				},
+			});
+		} catch (error) {
+			// do nothing
+		}
+		const datetime = data?.datetime;
+
 		switch (mutationType) {
 			case MutationType.Create:
 				espressoDatetime = {
@@ -55,28 +66,20 @@ const useOptimisticResponse = (): OptimisticResCb => {
 			case MutationType.Delete:
 				espressoDatetime = {
 					...espressoDatetime,
+					...datetime,
 					...filteredInput,
+					isTrashed: true,
+					cacheId: uuidv4(),
 				};
 				break;
 			case MutationType.Update:
-				try {
-					data = client.readQuery<DatetimeItem>({
-						query: GET_DATETIME,
-						variables: {
-							id: input.id,
-						},
-					});
-				} catch (error) {
-					// do nothing
-				}
-				datetime = pathOr<Datetime>(null, ['datetime'], data);
-
 				espressoDatetime = {
 					...espressoDatetime,
 					...datetime,
 					...filteredInput,
 					cacheId: uuidv4(),
 				};
+				break;
 		}
 
 		const lcMutationtype = mutationType.toLowerCase();

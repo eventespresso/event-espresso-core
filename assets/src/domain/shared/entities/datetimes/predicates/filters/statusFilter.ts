@@ -3,14 +3,13 @@ import { DatetimeStatus } from '@edtrServices/filterState';
 
 import activeOnly from './activeOnly';
 import activeUpcoming from './activeUpcoming';
-import allDates from './allDates';
 import expiredOnly from './expiredOnly';
 import nextActiveUpcomingOnly from './nextActiveUpcomingOnly';
 import recentlyExpiredOnly from './recentlyExpiredOnly';
 import soldOutOnly from './soldOutOnly';
 import upcomingOnly from './upcomingOnly';
-import notTrashed from '../../../../services/predicates/filters/notTrashed';
-import trashedOnly from '../../../../services/predicates/filters/trashedOnly';
+import notTrashed from '@sharedServices/predicates/filters/notTrashed';
+import trashedOnly from '@sharedServices/predicates/filters/trashedOnly';
 
 import { StatusFilter } from './types';
 
@@ -25,7 +24,7 @@ const statusFilter = ({ dates: entities, status = DatetimeStatus.activeUpcoming 
 		case DatetimeStatus.activeUpcoming:
 			return activeUpcoming(dates);
 		case DatetimeStatus.all:
-			return allDates(dates);
+			return entities;
 		case DatetimeStatus.expiredOnly:
 			return expiredOnly(dates);
 		case DatetimeStatus.nextActiveUpcomingOnly:
@@ -35,7 +34,7 @@ const statusFilter = ({ dates: entities, status = DatetimeStatus.activeUpcoming 
 		case DatetimeStatus.soldOutOnly:
 			return soldOutOnly(dates);
 		case DatetimeStatus.trashedOnly:
-			return trashedOnly(dates);
+			return trashedOnly(entities);
 		case DatetimeStatus.upcomingOnly:
 			return upcomingOnly(dates);
 		default:

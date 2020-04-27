@@ -31,10 +31,11 @@ export const DELETE_TICKET = gql`
 	mutation DELETE_TICKET($input: DeleteEspressoTicketInput!) {
 		deleteEspressoTicket(input: $input) {
 			espressoTicket {
-				id
+				...ticketAttributes
 			}
 		}
 	}
+	${TICKET_ATTRIBUTES}
 `;
 
 export { default as useTicketMutator } from './useTicketMutator';

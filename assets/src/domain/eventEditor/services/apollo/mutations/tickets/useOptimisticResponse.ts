@@ -1,5 +1,4 @@
 import { useCallback } from 'react';
-import { pathOr } from 'ramda';
 import { useApolloClient } from '@apollo/react-hooks';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -51,7 +50,19 @@ const useOptimisticResponse = (): OptimisticResCb => {
 		};
 		// Get rid of null or undefined values
 		const filteredInput = removeNullAndUndefined(input);
-		let data: TicketItem, ticket: Ticket;
+		let data: TicketItem;
+		try {
+			data = client.readQuery<TicketItem>({
+				query: GET_TICKET,
+				variables: {
+					id: input.id,
+				},
+			});
+		} catch (error) {
+			// do nothing
+		}
+		const ticket = data?.ticket;
+
 		switch (mutationType) {
 			case MutationType.Create:
 				espressoTicket = {
@@ -64,22 +75,13 @@ const useOptimisticResponse = (): OptimisticResCb => {
 			case MutationType.Delete:
 				espressoTicket = {
 					...espressoTicket,
+					...ticket,
 					...filteredInput,
+					isTrashed: true,
+					cacheId: uuidv4(),
 				};
 				break;
 			case MutationType.Update:
-				try {
-					data = client.readQuery<TicketItem>({
-						query: GET_TICKET,
-						variables: {
-							id: input.id,
-						},
-					});
-				} catch (error) {
-					// do nothing
-				}
-				ticket = pathOr<Ticket>(null, ['ticket'], data);
-
 				espressoTicket = {
 					...espressoTicket,
 					...ticket,
@@ -87,6 +89,7 @@ const useOptimisticResponse = (): OptimisticResCb => {
 					cacheId: uuidv4(),
 					prices: null,
 				};
+				break;
 		}
 
 		const lcMutationtype = mutationType.toLowerCase();

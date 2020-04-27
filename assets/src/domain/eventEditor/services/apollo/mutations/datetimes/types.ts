@@ -25,4 +25,5 @@ export interface UpdateDatetimeInput extends DatetimeBaseInput {
 
 export interface DeleteDatetimeInput {
 	id?: EntityId;
+	deletePermanently?: boolean;
 }

@@ -2,17 +2,14 @@ import { Datetime } from '@edtrServices/apollo';
 import { DatetimeSales } from '@edtrServices/filterState';
 
 import aboveCapacity from './aboveCapacity';
-import allDates from './allDates';
 import belowCapacity from './belowCapacity';
-import notTrashed from '../../../../services/predicates/filters/notTrashed';
 
 import { SalesFilter } from './types';
 
 /**
  * reduces dates array based on value of the "sales" filter
  */
-const salesFilter = ({ dates: entities, sales = DatetimeSales.all }: SalesFilter): Datetime[] => {
-	const dates = notTrashed(entities);
+const salesFilter = ({ dates, sales = DatetimeSales.all }: SalesFilter): Datetime[] => {
 	switch (sales) {
 		case DatetimeSales.above50Capacity:
 			return aboveCapacity({ dates, capacity: 50 });
@@ -20,8 +17,6 @@ const salesFilter = ({ dates: entities, sales = DatetimeSales.all }: SalesFilter
 			return aboveCapacity({ dates, capacity: 75 });
 		case DatetimeSales.above90Capacity:
 			return aboveCapacity({ dates, capacity: 90 });
-		case DatetimeSales.all:
-			return allDates(dates);
 		case DatetimeSales.below50Capacity:
 			return belowCapacity({ dates, capacity: 50 });
 		default:

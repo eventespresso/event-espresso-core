@@ -23,4 +23,5 @@ export interface UpdatePriceInput extends PriceBaseInput {
 
 export interface DeletePriceInput {
 	id?: EntityId;
+	deletePermanently?: boolean;
 }

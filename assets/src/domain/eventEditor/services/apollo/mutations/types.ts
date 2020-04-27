@@ -10,8 +10,12 @@ export interface MutationCallbackFnArgs {
 	proxy?: DataProxy;
 }
 
+interface CommonArgs {
+	deletePermanently?: boolean;
+}
+
 /* Datetime specific */
-export interface DatetimeMutationCallbackFnArgs extends MutationCallbackFnArgs {
+export interface DatetimeMutationCallbackFnArgs extends MutationCallbackFnArgs, CommonArgs {
 	datetime: Datetime;
 	datetimes?: DatetimeEdge;
 	tickets?: string[];
@@ -19,7 +23,7 @@ export interface DatetimeMutationCallbackFnArgs extends MutationCallbackFnArgs {
 export type DatetimeMutationCallbackFn = (args: DatetimeMutationCallbackFnArgs) => void;
 
 /* Ticket specific */
-export interface TicketMutationCallbackFnArgs extends MutationCallbackFnArgs {
+export interface TicketMutationCallbackFnArgs extends MutationCallbackFnArgs, CommonArgs {
 	ticket: Ticket;
 	tickets?: TicketEdge;
 	datetimeIds?: string[];
@@ -29,7 +33,7 @@ export interface TicketMutationCallbackFnArgs extends MutationCallbackFnArgs {
 export type TicketMutationCallbackFn = (args: TicketMutationCallbackFnArgs) => void;
 
 /* Price specific */
-export interface PriceMutationCallbackFnArgs extends MutationCallbackFnArgs {
+export interface PriceMutationCallbackFnArgs extends MutationCallbackFnArgs, CommonArgs {
 	price: Price;
 	prices?: PriceEdge;
 	priceTypeId?: string;
@@ -80,7 +84,10 @@ export interface MutatorGeneratedObject {
 	variables: OperationVariables;
 }
 
-export type MutationHandler = <MI = MutationInput>(mutationType: MutationType, input: MI) => MutatorGeneratedObject;
+export type MutationHandler = <MI extends MutationInput = MutationInput>(
+	mutationType: MutationType,
+	input: MI
+) => MutatorGeneratedObject;
 
 export interface MutationInputWithId {
 	clientMutationId: string;

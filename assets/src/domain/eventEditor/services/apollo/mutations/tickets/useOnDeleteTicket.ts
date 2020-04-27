@@ -9,15 +9,16 @@ const useOnDeleteTicket = (): TicketMutationCallbackFn => {
 
 	const updateTicketCache = useUpdateTicketCache();
 
-	const onDeleteTicket = ({ proxy, tickets, ticket }: TicketMutationCallbackFnArgs): void => {
-		if (ticket.id) {
+	const onDeleteTicket = ({ proxy, tickets, ticket, deletePermanently }: TicketMutationCallbackFnArgs): void => {
+		const action = deletePermanently ? 'remove' : 'update';
+		if (ticket.id && deletePermanently) {
 			const { nodes = [] } = tickets;
-			const ticketIn = getGuids(nodes).sort();
+			const ticketIn = getGuids(nodes);
 			const { id: ticketId } = ticket;
 
 			// Update prices cache for the changed tickets,
 			// to avoid refetching of prices.
-			updatePriceCache({ proxy, ticketIn, ticketId, action: 'remove' });
+			updatePriceCache({ proxy, ticketIn, ticketId, action });
 
 			// Remove the ticket from all datetime relations
 			removeRelation({
@@ -38,7 +39,7 @@ const useOnDeleteTicket = (): TicketMutationCallbackFn => {
 			});
 		}
 		// Update ticket cache after price cache is updated.
-		updateTicketCache({ proxy, tickets, ticket, action: 'remove' });
+		updateTicketCache({ proxy, tickets, ticket: { ...ticket, isTrashed: true }, action });
 	};
 
 	return onDeleteTicket;
