@@ -43,7 +43,19 @@ const useOptimisticResponse = (): OptimisticResCb => {
 		};
 		// Get rid of null or undefined values
 		const filteredInput = removeNullAndUndefined(input);
-		let data: DatetimeItem, datetime: Datetime;
+		let data: DatetimeItem;
+		try {
+			data = client.readQuery<DatetimeItem>({
+				query: GET_DATETIME,
+				variables: {
+					id: input.id,
+				},
+			});
+		} catch (error) {
+			// do nothing
+		}
+		const datetime = pathOr<Datetime>(null, ['datetime'], data);
+
 		switch (mutationType) {
 			case MutationType.Create:
 				espressoDatetime = {
@@ -55,28 +67,20 @@ const useOptimisticResponse = (): OptimisticResCb => {
 			case MutationType.Delete:
 				espressoDatetime = {
 					...espressoDatetime,
+					...datetime,
 					...filteredInput,
+					isTrashed: true,
+					cacheId: uuidv4(),
 				};
 				break;
 			case MutationType.Update:
-				try {
-					data = client.readQuery<DatetimeItem>({
-						query: GET_DATETIME,
-						variables: {
-							id: input.id,
-						},
-					});
-				} catch (error) {
-					// do nothing
-				}
-				datetime = pathOr<Datetime>(null, ['datetime'], data);
-
 				espressoDatetime = {
 					...espressoDatetime,
 					...datetime,
 					...filteredInput,
 					cacheId: uuidv4(),
 				};
+				break;
 		}
 
 		const lcMutationtype = mutationType.toLowerCase();

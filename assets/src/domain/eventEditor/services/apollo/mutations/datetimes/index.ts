@@ -27,10 +27,11 @@ export const DELETE_DATETIME = gql`
 	mutation DELETE_DATETIME($input: DeleteEspressoDatetimeInput!) {
 		deleteEspressoDatetime(input: $input) {
 			espressoDatetime {
-				id
+				...datetimeAttributes
 			}
 		}
 	}
+	${DATETIME_ATTRIBUTES}
 `;
 
 export { default as useDatetimeMutator } from './useDatetimeMutator';

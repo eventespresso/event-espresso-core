@@ -1,6 +1,7 @@
 import { CacheUpdaterFnArgs } from '../types';
 import { GET_TICKETS, ReadQueryOptions, WriteQueryOptions } from '@edtrServices/apollo/queries';
 import { TicketsList } from '@edtrServices/apollo/types';
+import { sortBy, identity } from 'ramda';
 
 const updateTicketCache = ({ proxy, datetimeIn, datetimeId, action }: CacheUpdaterFnArgs): void => {
 	const queryOptions: ReadQueryOptions = {
@@ -31,7 +32,7 @@ const updateTicketCache = ({ proxy, datetimeIn, datetimeId, action }: CacheUpdat
 			newDatetimeIn = [...datetimeIn, datetimeId];
 			break;
 		case 'remove':
-			newDatetimeIn = datetimeIn.filter((id: string) => id !== datetimeId);
+			newDatetimeIn = datetimeIn.filter((id) => id !== datetimeId);
 			break;
 		default:
 			newDatetimeIn = datetimeIn;
@@ -43,7 +44,7 @@ const updateTicketCache = ({ proxy, datetimeIn, datetimeId, action }: CacheUpdat
 		data,
 		variables: {
 			where: {
-				datetimeIn: newDatetimeIn,
+				datetimeIn: sortBy(identity, newDatetimeIn),
 			},
 		},
 	};
@@ -51,6 +52,7 @@ const updateTicketCache = ({ proxy, datetimeIn, datetimeId, action }: CacheUpdat
 	// write the data to cache without
 	// mutating the cache directly
 	proxy.writeQuery<TicketsList>(writeOptions);
+	console.log('ticket');
 };
 
 export default updateTicketCache;
