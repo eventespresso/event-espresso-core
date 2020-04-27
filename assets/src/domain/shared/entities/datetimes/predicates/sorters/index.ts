@@ -1,4 +1,4 @@
-import { prop, sortBy as sortByFn } from 'ramda';
+import { prop, sort, sortBy as sortByFn } from 'ramda';
 import { compareAsc, parseISO } from 'date-fns';
 
 import { Datetime } from '@edtrServices/apollo';
@@ -18,9 +18,9 @@ interface SortDates {
 const sorters = ({ dates, sortBy = 'date' }: SortDates): Datetime[] => {
 	switch (sortBy) {
 		case 'date':
-			return dates.sort(({ startDate: dateLeft }, { startDate: dateRight }) =>
-				compareAsc(parseISO(dateLeft), parseISO(dateRight))
-			);
+			return sort(({ startDate: dateLeft }, { startDate: dateRight }) => {
+				return compareAsc(parseISO(dateLeft), parseISO(dateRight));
+			}, dates);
 		case 'id':
 			return sortByFn(prop('dbId'))(dates);
 		case 'name':

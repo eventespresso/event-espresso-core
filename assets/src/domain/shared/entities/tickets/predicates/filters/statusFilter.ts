@@ -6,8 +6,8 @@ import nextOnSaleOrPendingOnly from './nextOnSaleOrPendingOnly';
 import onSaleOnly from './onSaleOnly';
 import pendingOnly from './pendingOnly';
 import soldOutOnly from './soldOutOnly';
-import notTrashed from '../../../../services/predicates/filters/notTrashed';
-import trashedOnly from '../../../../services/predicates/filters/trashedOnly';
+import notTrashed from '@sharedServices/predicates/filters/notTrashed';
+import trashedOnly from '@sharedServices/predicates/filters/trashedOnly';
 
 import { StatusFilter } from './types';
 
