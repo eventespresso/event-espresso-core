@@ -50,7 +50,7 @@ class DatetimeUpdate extends EntityMutator
                     DatetimeMutation::setRelatedTickets($entity, $tickets);
                 }
             } catch (Exception $exception) {
-                return EntityMutator::CompileExceptions(
+                return EntityMutator::HandleExceptions(
                     $exception,
                     esc_html__(
                         'The datetime could not be updated because of the following error(s)',

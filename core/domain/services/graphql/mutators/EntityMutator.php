@@ -85,7 +85,8 @@ abstract class EntityMutator
      * @throws OutOfBoundsException
      * @since $VID:$
      */
-    protected static function getEntityIDFromGlobalId(EEM_Base $model, array $input) {
+    protected static function getEntityIDFromGlobalId(EEM_Base $model, array $input)
+    {
         $id_parts = ! empty($input['id']) ? Relay::fromGlobalId($input['id']) : null;
         $id = ! empty($id_parts['id']) ? absint($id_parts['id']) : 0;
         if ($id > 0) {
@@ -161,7 +162,7 @@ abstract class EntityMutator
      * @throws RuntimeException
      * @since $VID:$
      */
-    protected static function CompileExceptions(Exception $exception, $message_prefix = '')
+    protected static function HandleExceptions(Exception $exception, $message_prefix = '')
     {
         $message_prefix = $message_prefix !== ''
             ? $message_prefix
@@ -170,7 +171,7 @@ abstract class EntityMutator
                 'event_espresso'
             );
         throw new RuntimeException(
-            sprintf('%1$s: %2$s',$message_prefix, $exception->getMessage())
+            sprintf('%1$s: %2$s', $message_prefix, $exception->getMessage())
         );
     }
 }

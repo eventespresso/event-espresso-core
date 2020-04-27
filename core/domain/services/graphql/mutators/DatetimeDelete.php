@@ -38,7 +38,7 @@ class DatetimeDelete extends EntityMutator
                 $result = ! empty($input['deletePermanently']) ? $entity->delete_permanently() : $entity->delete();
                 EntityMutator::validateResults($result);
             } catch (Exception $exception) {
-                return EntityMutator::CompileExceptions(
+                return EntityMutator::HandleExceptions(
                     $exception,
                     esc_html__(
                         'The datetime could not be deleted because of the following error(s)',
