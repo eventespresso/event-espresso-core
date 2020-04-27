@@ -10,12 +10,12 @@ export interface MutationCallbackFnArgs {
 	proxy?: DataProxy;
 }
 
-interface CommponArgs {
+interface CommonArgs {
 	deletePermanently?: boolean;
 }
 
 /* Datetime specific */
-export interface DatetimeMutationCallbackFnArgs extends MutationCallbackFnArgs, CommponArgs {
+export interface DatetimeMutationCallbackFnArgs extends MutationCallbackFnArgs, CommonArgs {
 	datetime: Datetime;
 	datetimes?: DatetimeEdge;
 	tickets?: string[];
@@ -23,7 +23,7 @@ export interface DatetimeMutationCallbackFnArgs extends MutationCallbackFnArgs, 
 export type DatetimeMutationCallbackFn = (args: DatetimeMutationCallbackFnArgs) => void;
 
 /* Ticket specific */
-export interface TicketMutationCallbackFnArgs extends MutationCallbackFnArgs, CommponArgs {
+export interface TicketMutationCallbackFnArgs extends MutationCallbackFnArgs, CommonArgs {
 	ticket: Ticket;
 	tickets?: TicketEdge;
 	datetimeIds?: string[];
@@ -33,7 +33,7 @@ export interface TicketMutationCallbackFnArgs extends MutationCallbackFnArgs, Co
 export type TicketMutationCallbackFn = (args: TicketMutationCallbackFnArgs) => void;
 
 /* Price specific */
-export interface PriceMutationCallbackFnArgs extends MutationCallbackFnArgs, CommponArgs {
+export interface PriceMutationCallbackFnArgs extends MutationCallbackFnArgs, CommonArgs {
 	price: Price;
 	prices?: PriceEdge;
 	priceTypeId?: string;

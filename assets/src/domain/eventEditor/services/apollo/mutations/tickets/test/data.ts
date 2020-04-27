@@ -60,7 +60,7 @@ export const getMockResult = (mutationInput: MutationInput, mutationType: Mutati
 				__typename: `${ucFirst(mutationType.toLowerCase())}EspressoTicketPayload`,
 				espressoTicket:
 					MutationType.Delete === mutationType
-						? mockedTickets[mutationType]
+						? { ...mockedTickets[mutationType], ...input }
 						: { ...mockedTickets[mutationType], ...input, prices },
 			},
 		},

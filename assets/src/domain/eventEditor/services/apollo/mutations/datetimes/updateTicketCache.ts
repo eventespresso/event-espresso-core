@@ -52,7 +52,6 @@ const updateTicketCache = ({ proxy, datetimeIn, datetimeId, action }: CacheUpdat
 	// write the data to cache without
 	// mutating the cache directly
 	proxy.writeQuery<TicketsList>(writeOptions);
-	console.log('ticket');
 };
 
 export default updateTicketCache;

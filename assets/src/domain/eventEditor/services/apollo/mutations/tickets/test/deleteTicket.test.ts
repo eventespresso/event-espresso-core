@@ -86,23 +86,12 @@ describe('deleteTicket', () => {
 		});
 
 		expect(relatedDatetimeIds.length).toBe(1);
-
-		// check if all the passed datetimes are related to the ticket
-		datetimeIds.forEach((datetimeId) => {
-			const relatedTicketIds = mutationResult.current.relationsManager.getRelations({
-				entity: 'datetimes',
-				entityId: datetimeId,
-				relation: 'tickets',
-			});
-
-			expect(relatedTicketIds).not.toContain(mockedTicket.id);
-		});
 	});
 
 	it('checks for datetime relation update after mutation - permanent delete', async () => {
+		const testInput = { deletePermanently: true };
 		// Add related datetime Ids to the mutation input
-
-		mutationMocks = getMutationMocks({}, MutationType.Delete);
+		mutationMocks = getMutationMocks(testInput, MutationType.Delete);
 
 		const wrapper = ApolloMockedProvider(mutationMocks);
 
@@ -119,7 +108,7 @@ describe('deleteTicket', () => {
 		await waitForValueToChange(() => mutationResult.current, { timeout });
 
 		act(() => {
-			mutationResult.current.mutator.deleteEntity({ deletePermanently: true });
+			mutationResult.current.mutator.deleteEntity(testInput);
 		});
 
 		// wait for mutation promise to resolve
@@ -176,21 +165,11 @@ describe('deleteTicket', () => {
 		});
 
 		expect(relatedPriceIds.length).toBe(2);
-
-		// check if all the passed prices are related to the ticket
-		priceIds.forEach((priceId) => {
-			const relatedTicketIds = mutationResult.current.relationsManager.getRelations({
-				entity: 'prices',
-				entityId: priceId,
-				relation: 'tickets',
-			});
-
-			expect(relatedTicketIds).not.toContain(mockedTicket.id);
-		});
 	});
 
 	it('checks for price relation update after mutation - permanent delete', async () => {
-		mutationMocks = getMutationMocks({}, MutationType.Delete);
+		const testInput = { deletePermanently: true };
+		mutationMocks = getMutationMocks(testInput, MutationType.Delete);
 
 		const wrapper = ApolloMockedProvider(mutationMocks);
 
@@ -207,7 +186,7 @@ describe('deleteTicket', () => {
 		await waitForValueToChange(() => mutationResult.current, { timeout });
 
 		act(() => {
-			mutationResult.current.mutator.deleteEntity({ deletePermanently: true });
+			mutationResult.current.mutator.deleteEntity(testInput);
 		});
 
 		// wait for mutation promise to resolve
