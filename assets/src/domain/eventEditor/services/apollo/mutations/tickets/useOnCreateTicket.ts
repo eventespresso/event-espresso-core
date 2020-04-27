@@ -15,7 +15,7 @@ const useOnCreateTicket = (): TicketMutationCallbackFn => {
 	const onCreateTicket = ({ proxy, datetimeIds, ticket, tickets, prices }: TicketMutationCallbackFnArgs): void => {
 		if (ticket.id) {
 			const { nodes = [] } = tickets;
-			const ticketIn = getGuids(nodes).sort();
+			const ticketIn = getGuids(nodes);
 			const { id: ticketId } = ticket;
 
 			// Update prices cache for the changed tickets,

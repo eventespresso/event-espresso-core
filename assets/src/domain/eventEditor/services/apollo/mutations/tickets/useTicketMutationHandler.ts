@@ -52,7 +52,7 @@ const useTicketMutationHandler = (): MutationHandler => {
 					onUpdateTicket({ proxy, tickets, ticket, datetimeIds, priceIds });
 					break;
 				case MutationType.Delete:
-					onDeleteTicket({ proxy, tickets, ticket });
+					onDeleteTicket({ proxy, tickets, ticket, deletePermanently: input?.deletePermanently });
 					break;
 			}
 		};
