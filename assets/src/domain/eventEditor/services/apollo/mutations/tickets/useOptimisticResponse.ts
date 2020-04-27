@@ -1,5 +1,4 @@
 import { useCallback } from 'react';
-import { pathOr } from 'ramda';
 import { useApolloClient } from '@apollo/react-hooks';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -62,7 +61,7 @@ const useOptimisticResponse = (): OptimisticResCb => {
 		} catch (error) {
 			// do nothing
 		}
-		const ticket = pathOr<Ticket>(null, ['ticket'], data);
+		const ticket = data?.ticket;
 
 		switch (mutationType) {
 			case MutationType.Create:

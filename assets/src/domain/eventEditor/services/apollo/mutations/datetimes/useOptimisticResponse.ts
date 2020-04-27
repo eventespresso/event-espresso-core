@@ -1,5 +1,4 @@
 import { useCallback } from 'react';
-import { pathOr } from 'ramda';
 import { useApolloClient } from '@apollo/react-hooks';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -54,7 +53,7 @@ const useOptimisticResponse = (): OptimisticResCb => {
 		} catch (error) {
 			// do nothing
 		}
-		const datetime = pathOr<Datetime>(null, ['datetime'], data);
+		const datetime = data?.datetime;
 
 		switch (mutationType) {
 			case MutationType.Create:

@@ -12,7 +12,7 @@ import { mutations } from '../..';
 export const mockedDatetimes = {
 	[MutationType.Create]: { ...datetimes[0], id: datetimes[0].id + '-alpha' }, // make sure to change the ID to make it different}
 	[MutationType.Update]: datetimes[0],
-	[MutationType.Delete]: { id: datetimes[0].id, __typename: datetimes[0].__typename },
+	[MutationType.Delete]: datetimes[0],
 };
 
 export const getMutationMocks = (

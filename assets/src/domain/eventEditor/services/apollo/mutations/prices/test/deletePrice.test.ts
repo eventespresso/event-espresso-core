@@ -51,7 +51,52 @@ describe('deletePrice', () => {
 		expect(idFromMutationData).toEqual(idFromMockData);
 	});
 
-	it('checks for ticket relation update after mutation', async () => {
+	it('checks for ticket relation update after mutation - trash', async () => {
+		// Add related ticket Ids to the mutation input
+		mutationMocks = getMutationMocks({}, MutationType.Delete);
+
+		const wrapper = ApolloMockedProvider(mutationMocks);
+
+		const { result: mutationResult, waitForNextUpdate, waitForValueToChange } = renderHook(
+			() => ({
+				mutator: usePriceMutator(mockedPrice.id),
+				relationsManager: useRelations(),
+			}),
+			{
+				wrapper,
+			}
+		);
+
+		await waitForValueToChange(() => mutationResult.current, { timeout });
+
+		act(() => {
+			mutationResult.current.mutator.deleteEntity({});
+		});
+
+		// wait for mutation promise to resolve
+		await waitForNextUpdate({ timeout });
+
+		const relatedTicketIds = mutationResult.current.relationsManager.getRelations({
+			entity: 'prices',
+			entityId: mockedPrice.id,
+			relation: 'tickets',
+		});
+
+		expect(relatedTicketIds.length).toBe(1);
+
+		// check if all the passed tickets are related to the price
+		ticketIds.forEach((ticketId) => {
+			const relatedPriceIds = mutationResult.current.relationsManager.getRelations({
+				entity: 'tickets',
+				entityId: ticketId,
+				relation: 'prices',
+			});
+
+			expect(relatedPriceIds).not.toContain(mockedPrice.id);
+		});
+	});
+
+	it('checks for ticket relation update after mutation - permanent delete', async () => {
 		// Add related ticket Ids to the mutation input
 		mutationMocks = getMutationMocks({}, MutationType.Delete);
 
@@ -96,7 +141,7 @@ describe('deletePrice', () => {
 		});
 	});
 
-	it('checks for priceType relation update after mutation', async () => {
+	it('checks for priceType relation update after mutation - trash', async () => {
 		mutationMocks = getMutationMocks({}, MutationType.Delete);
 
 		const wrapper = ApolloMockedProvider(mutationMocks);
@@ -115,6 +160,39 @@ describe('deletePrice', () => {
 
 		act(() => {
 			mutationResult.current.mutator.deleteEntity({});
+		});
+
+		// wait for mutation promise to resolve
+		await waitForNextUpdate({ timeout });
+
+		const relatedPriceTypeIds = mutationResult.current.relationsManager.getRelations({
+			entity: 'prices',
+			entityId: mockedPrice.id,
+			relation: 'priceTypes',
+		});
+
+		expect(relatedPriceTypeIds.length).toBe(1);
+	});
+
+	it('checks for priceType relation update after mutation - permanent delete', async () => {
+		mutationMocks = getMutationMocks({}, MutationType.Delete);
+
+		const wrapper = ApolloMockedProvider(mutationMocks);
+
+		const { result: mutationResult, waitForNextUpdate, waitForValueToChange } = renderHook(
+			() => ({
+				mutator: usePriceMutator(mockedPrice.id),
+				relationsManager: useRelations(),
+			}),
+			{
+				wrapper,
+			}
+		);
+
+		await waitForValueToChange(() => mutationResult.current, { timeout });
+
+		act(() => {
+			mutationResult.current.mutator.deleteEntity({ deletePermanently: true });
 		});
 
 		// wait for mutation promise to resolve
