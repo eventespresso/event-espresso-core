@@ -2,22 +2,15 @@
 
 namespace EventEspresso\core\domain\services\graphql\mutators;
 
-use EEM_Ticket;
 use EE_Ticket;
+use EEM_Ticket;
 use EventEspresso\core\domain\services\graphql\types\Ticket;
 use EventEspresso\core\domain\services\graphql\data\mutations\TicketMutation;
-
-use EE_Error;
-use InvalidArgumentException;
-use ReflectionException;
-use EventEspresso\core\exceptions\InvalidDataTypeException;
-use EventEspresso\core\exceptions\InvalidInterfaceException;
-
+use Exception;
 use GraphQL\Type\Definition\ResolveInfo;
 use WPGraphQL\AppContext;
-use GraphQL\Error\UserError;
 
-class TicketCreate
+class TicketCreate extends EntityMutator
 {
 
     /**
@@ -36,57 +29,48 @@ class TicketCreate
          * @param AppContext  $context The AppContext passed down to all resolvers
          * @param ResolveInfo $info    The ResolveInfo passed down to all resolvers
          * @return array
-         * @throws UserError
-         * @throws ReflectionException
-         * @throws InvalidArgumentException
-         * @throws InvalidInterfaceException
-         * @throws InvalidDataTypeException
-         * @throws EE_Error
          */
         return static function ($input, AppContext $context, ResolveInfo $info) use ($model, $type) {
+            try {
 
-            /**
-             * Stop now if a user isn't allowed to create an entity.
-             */
-            if (! current_user_can('ee_edit_events')) {
-                // translators: the %1$s is the name of the object being mutated
-                throw new UserError(
-                    sprintf(esc_html__('Sorry, you are not allowed to create %1$s', 'event_espresso'), $type->name())
+                EntityMutator::checkPermissions($model);
+
+                $datetimes = [];
+                $prices = [];
+
+                $args = TicketMutation::prepareFields($input);
+
+                if (isset($args['datetimes'])) {
+                    $datetimes = $args['datetimes'];
+                    unset($args['datetimes']);
+                }
+                if (isset($args['prices'])) {
+                    $prices = $args['prices'];
+                    unset($args['prices']);
+                }
+
+                $entity = EE_Ticket::new_instance($args);
+                $id = $entity->save();
+                EntityMutator::validateResults($id);
+
+                if (! empty($datetimes)) {
+                    TicketMutation::setRelatedDatetimes($entity, $datetimes);
+                }
+                // if prices are passed.
+                if (! empty($prices)) {
+                    TicketMutation::setRelatedPrices($entity, $prices);
+                } else {
+                    TicketMutation::addDefaultPrices($entity, $model);
+                }
+
+            } catch (Exception $exception) {
+                return EntityMutator::FormatException(
+                    $exception,
+                    esc_html__(
+                        'The ticket could not be created because of the following error(s)',
+                        'event_espresso'
+                    )
                 );
-            }
-
-            $datetimes = [];
-            $prices = [];
-
-            $args = TicketMutation::prepareFields($input);
-
-            if (isset($args['datetimes'])) {
-                $datetimes = $args['datetimes'];
-                unset($args['datetimes']);
-            }
-            if (isset($args['prices'])) {
-                $prices = $args['prices'];
-                unset($args['prices']);
-            }
-
-            $entity = EE_Ticket::new_instance($args);
-            $id = $entity->save();
-
-            if (empty($id)) {
-                throw new UserError(esc_html__(
-                    'The object failed to create but no error was provided',
-                    'event_espresso'
-                ));
-            }
-
-            if (! empty($datetimes)) {
-                TicketMutation::setRelatedDatetimes($entity, $datetimes);
-            }
-            // if prices are passed.
-            if (! empty($prices)) {
-                TicketMutation::setRelatedPrices($entity, $prices);
-            } else {
-                TicketMutation::addDefaultPrices($entity, $model);
             }
 
             return [
