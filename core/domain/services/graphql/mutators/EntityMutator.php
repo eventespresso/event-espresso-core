@@ -162,7 +162,7 @@ abstract class EntityMutator
      * @throws RuntimeException
      * @since $VID:$
      */
-    protected static function HandleExceptions(Exception $exception, $message_prefix = '')
+    protected static function handleExceptions(Exception $exception, $message_prefix = '')
     {
         $message_prefix = $message_prefix !== ''
             ? $message_prefix

@@ -58,7 +58,7 @@ class TicketUpdate extends EntityMutator
                     TicketMutation::setRelatedPrices($entity, $prices);
                 }
             } catch (Exception $exception) {
-                return EntityMutator::HandleExceptions(
+                return EntityMutator::handleExceptions(
                     $exception,
                     esc_html__(
                         'The ticket could not be deleted because of the following error(s)',
