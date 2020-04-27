@@ -554,7 +554,6 @@ QUERY;
         $datetimeIds = $eem_datetime->get_col([
             [
                 'EVT_ID'      => $eventId,
-                'DTT_deleted' => ['IN', [true, false]],
             ],
             'default_where_conditions' => 'minimum',
         ]);
