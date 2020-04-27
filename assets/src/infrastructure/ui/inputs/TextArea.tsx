@@ -1,10 +1,12 @@
 import React from 'react';
+import classNames from 'classnames';
 import { Textarea as ChakraTextarea } from '@chakra-ui/core';
 
 import type { TextareaProps } from './types';
 
 const TextArea: React.FC<TextareaProps> = (props) => {
-	return <ChakraTextarea {...props} />;
+	const className = classNames('ee-input-base ee-textarea', props.className);
+	return <ChakraTextarea {...props} className={className} />;
 };
 
 export default TextArea;

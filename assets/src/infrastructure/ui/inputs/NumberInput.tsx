@@ -1,4 +1,5 @@
 import React from 'react';
+import classNames from 'classnames';
 import {
 	NumberInput as ChakraNumberInput,
 	NumberInputField,
@@ -10,15 +11,17 @@ import {
 import type { NumberInputProps } from './types';
 
 const NumberInput: React.FC<NumberInputProps> = ({
+	decrementStepperProps,
+	incrementStepperProps,
 	inputFieldProps,
 	inputStepperProps,
-	incrementStepperProps,
-	decrementStepperProps,
-	...numberInputProps
+	...props
 }) => {
+	const inputFieldClassName = classNames('ee-input-base ee-input', props.className);
+
 	return (
-		<ChakraNumberInput {...numberInputProps}>
-			<NumberInputField {...inputFieldProps} />
+		<ChakraNumberInput {...props}>
+			<NumberInputField {...inputFieldProps} className={inputFieldClassName} />
 			<NumberInputStepper {...inputStepperProps}>
 				<NumberIncrementStepper {...incrementStepperProps} />
 				<NumberDecrementStepper {...decrementStepperProps} />

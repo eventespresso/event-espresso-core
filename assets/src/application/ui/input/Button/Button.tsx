@@ -28,7 +28,7 @@ const Button = React.forwardRef<typeof ButtonAdapter, ButtonProps>(
 		},
 		ref
 	) => {
-		const className = classNames('ee-button', {
+		const className = classNames('ee-btn', {
 			[htmlClass]: htmlClass,
 			'ee-btn-accent': buttonType === ButtonType.ACCENT,
 			'ee-btn-default': buttonType === ButtonType.DEFAULT,

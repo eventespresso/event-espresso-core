@@ -1,4 +1,5 @@
 import React, { useCallback } from 'react';
+import classNames from 'classnames';
 import { TimePicker as BaseUITimePicker } from 'baseui/timepicker';
 
 import { TimepickerProps } from './types';
@@ -7,6 +8,7 @@ import withBaseProvider from './withBaseProvider';
 import './style.scss';
 
 const Timepicker: React.FC<TimepickerProps> = ({ onChange, onChangeValue, ...props }) => {
+	const className = classNames('ee-time-picker', props.className);
 	const onChangeHandler: TimepickerProps['onChange'] = useCallback(
 		(date) => {
 			if (typeof onChangeValue === 'function') {
@@ -20,7 +22,11 @@ const Timepicker: React.FC<TimepickerProps> = ({ onChange, onChangeValue, ...pro
 		[onChange, onChangeValue]
 	);
 
-	return <BaseUITimePicker {...props} onChange={onChangeHandler} />;
+	return (
+		<div className={className}>
+			<BaseUITimePicker {...props} onChange={onChangeHandler} />
+		</div>
+	);
 };
 
 export default withBaseProvider(Timepicker);

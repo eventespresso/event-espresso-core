@@ -1,10 +1,10 @@
-export { default as Button } from './Button';
+import './style.scss';
+
+export { Button, IconButton } from './Button';
 
 export { default as Checkbox } from './Checkbox';
 
 export { default as CheckboxGroup } from './CheckboxGroup';
-
-export { default as IconButton } from './IconButton';
 
 export { default as NumberInput } from './NumberInput';
 

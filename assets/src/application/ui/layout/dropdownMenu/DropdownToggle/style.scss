@@ -7,17 +7,6 @@ button.ee-dropdown-menu__toggle {
 	margin: 0;
 	padding: var(--ee-padding-tiny);
 	width: calc(var(--ee-icon-button-size) + 2px);
-	&:hover {
-		background: var(--ee-background-color) !important;
-		border: 1px solid var(--ee-border-color) !important;
-		box-shadow: none !important;
-	}
-	&:focus {
-		color: var(--ee-color-black);
-		box-shadow: var(--ee-box-shadow-wp-icon-btn-focus);
-		outline: 2px solid rgba(0, 0, 0, 0);
-		outline-offset: -2px;
-	}
 	svg {
 		display: inline-block;
 	}
