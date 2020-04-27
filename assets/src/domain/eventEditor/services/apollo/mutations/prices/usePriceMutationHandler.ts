@@ -60,7 +60,7 @@ const usePriceMutationHandler = (): MutationHandler => {
 					onUpdatePrice({ price, priceTypeId });
 					break;
 				case MutationType.Delete:
-					onDeletePrice({ proxy, prices, price });
+					onDeletePrice({ proxy, prices, price, deletePermanently: input?.deletePermanently });
 					break;
 			}
 		};

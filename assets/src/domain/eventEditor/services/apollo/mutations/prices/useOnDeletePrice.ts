@@ -1,15 +1,16 @@
 import useUpdatePriceCache from './useUpdatePriceCache';
-import { PriceMutationCallbackFn, PriceMutationCallbackFnArgs, CacheUpdaterFn } from '../types';
+import { PriceMutationCallbackFn, PriceMutationCallbackFnArgs } from '../types';
 import { useRelations } from '@appServices/apollo/relations';
 
 const useOnDeletePrice = (): PriceMutationCallbackFn => {
 	const { dropRelations, removeRelation } = useRelations();
 
-	const updatePriceCache: CacheUpdaterFn = useUpdatePriceCache();
+	const updatePriceCache = useUpdatePriceCache();
 
-	const onDeletePrice = ({ proxy, prices, price }: PriceMutationCallbackFnArgs): void => {
+	const onDeletePrice = ({ proxy, prices, price, deletePermanently }: PriceMutationCallbackFnArgs): void => {
 		const { id: priceId } = price;
-		if (priceId) {
+		const action = deletePermanently ? 'remove' : 'update';
+		if (priceId && deletePermanently) {
 			// Remove the price from all tickets relations
 			removeRelation({
 				entity: 'prices',
@@ -23,7 +24,7 @@ const useOnDeletePrice = (): PriceMutationCallbackFn => {
 			});
 		}
 		// Update price cache.
-		updatePriceCache({ proxy, prices, price, action: 'remove' });
+		updatePriceCache({ proxy, prices, price: { ...price, isTrashed: true }, action });
 	};
 
 	return onDeletePrice;
