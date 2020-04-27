@@ -14,6 +14,9 @@
 		padding: 0 8px;
 		top: 0;
 		width: calc(var(--ee-icon-button-size));
+		&:hover {
+			background: none;
+		}
 		svg {
 			display: inline-block;
 			flex: 0 0 auto;
