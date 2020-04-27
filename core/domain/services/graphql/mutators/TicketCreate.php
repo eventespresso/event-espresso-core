@@ -32,7 +32,6 @@ class TicketCreate extends EntityMutator
          */
         return static function ($input, AppContext $context, ResolveInfo $info) use ($model, $type) {
             try {
-
                 EntityMutator::checkPermissions($model);
 
                 $datetimes = [];
@@ -62,7 +61,6 @@ class TicketCreate extends EntityMutator
                 } else {
                     TicketMutation::addDefaultPrices($entity, $model);
                 }
-
             } catch (Exception $exception) {
                 return EntityMutator::FormatException(
                     $exception,

@@ -32,7 +32,6 @@ class TicketUpdate extends EntityMutator
          */
         return static function ($input, AppContext $context, ResolveInfo $info) use ($model, $type) {
             try {
-
                 /** @var EE_Ticket $entity */
                 $entity = EntityMutator::getEntityFromInputData($model, $input);
 
@@ -58,7 +57,6 @@ class TicketUpdate extends EntityMutator
                 if (! empty($prices)) {
                     TicketMutation::setRelatedPrices($entity, $prices);
                 }
-
             } catch (Exception $exception) {
                 return EntityMutator::FormatException(
                     $exception,

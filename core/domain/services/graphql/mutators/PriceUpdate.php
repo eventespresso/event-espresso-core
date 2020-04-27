@@ -32,7 +32,6 @@ class PriceUpdate extends EntityMutator
          */
         return static function ($input, AppContext $context, ResolveInfo $info) use ($model, $type) {
             try {
-
                 /** @var EE_Price $entity */
                 $entity = EntityMutator::getEntityFromInputData($model, $input);
 
@@ -40,7 +39,6 @@ class PriceUpdate extends EntityMutator
 
                 // Update the entity
                 $entity->save($args);
-
             } catch (Exception $exception) {
                 return EntityMutator::FormatException(
                     $exception,

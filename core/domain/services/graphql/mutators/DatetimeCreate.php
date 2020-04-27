@@ -32,7 +32,6 @@ class DatetimeCreate extends EntityMutator
          */
         return static function ($input, AppContext $context, ResolveInfo $info) use ($model, $type) {
             try {
-
                 EntityMutator::checkPermissions($model);
 
                 $tickets = [];
@@ -50,7 +49,6 @@ class DatetimeCreate extends EntityMutator
                 if (! empty($tickets)) {
                     DatetimeMutation::setRelatedTickets($entity, $tickets);
                 }
-
             } catch (Exception $exception) {
                 return EntityMutator::FormatException(
                     $exception,

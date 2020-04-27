@@ -32,7 +32,6 @@ class DatetimeUpdate extends EntityMutator
          */
         return static function ($input, AppContext $context, ResolveInfo $info) use ($model, $type) {
             try {
-
                 /** @var EE_Datetime $entity */
                 $entity = EntityMutator::getEntityFromInputData($model, $input);
 
@@ -50,7 +49,6 @@ class DatetimeUpdate extends EntityMutator
                 if (! empty($tickets)) {
                     DatetimeMutation::setRelatedTickets($entity, $tickets);
                 }
-
             } catch (Exception $exception) {
                 return EntityMutator::FormatException(
                     $exception,

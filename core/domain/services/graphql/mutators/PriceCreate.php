@@ -33,7 +33,6 @@ class PriceCreate extends EntityMutator
          */
         return static function ($input, AppContext $context, ResolveInfo $info) use ($model, $type) {
             try {
-
                 EntityMutator::checkPermissions($model);
 
                 $args = PriceMutation::prepareFields($input);
@@ -48,7 +47,6 @@ class PriceCreate extends EntityMutator
                 $entity = EE_Price::new_instance($args);
                 $id = $entity->save();
                 EntityMutator::validateResults($id);
-
             } catch (Exception $exception) {
                 return EntityMutator::FormatException(
                     $exception,

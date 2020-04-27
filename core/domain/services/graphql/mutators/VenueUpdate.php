@@ -46,7 +46,6 @@ class VenueUpdate extends EntityMutator
             $type
         ) {
             try {
-
                 // Make sure we are dealing with the right entity.
                 if (! property_exists($post_type_object, 'graphql_single_name')
                     || $post_type_object->graphql_single_name !== $type->name()
@@ -60,7 +59,6 @@ class VenueUpdate extends EntityMutator
 
                 // Update the entity
                 $entity->save($args);
-
             } catch (Exception $exception) {
                 return EntityMutator::FormatException(
                     $exception,

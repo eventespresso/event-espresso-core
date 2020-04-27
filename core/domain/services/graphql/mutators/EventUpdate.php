@@ -58,7 +58,6 @@ class EventUpdate extends EntityMutator
 
                 // Update the entity
                 $entity->save($args);
-
             } catch (Exception $exception) {
                 return EntityMutator::FormatException(
                     $exception,

@@ -31,13 +31,11 @@ class PriceDelete extends EntityMutator
          */
         return static function ($input, AppContext $context, ResolveInfo $info) use ($model, $type) {
             try {
-
                 /** @var EE_Price $entity */
                 $entity = EntityMutator::getEntityFromInputData($model, $input);
                 // Delete the entity
                 $result = ! empty($input['deletePermanently']) ? $entity->delete_permanently() : $entity->delete();
                 EntityMutator::validateResults($result);
-
             } catch (Exception $exception) {
                 return EntityMutator::FormatException(
                     $exception,
