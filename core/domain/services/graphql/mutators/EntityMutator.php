@@ -71,7 +71,7 @@ abstract class EntityMutator
             $message = sprintf(
                 esc_html_x(
                     'We\'re sorry but you do not have the required permissions to execute %1$s mutations!',
-                    'A missing or invalid entity(datetime/ticket/etc) ID was received.',
+                    'We\'re sorry but you do not have the required permissions to execute entity(datetime/ticket/etc) mutations!',
                     'event_espresso'
                 ),
                 strtolower($model_name)
