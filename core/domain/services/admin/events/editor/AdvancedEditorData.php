@@ -535,12 +535,6 @@ QUERY;
      */
     public static function getRelationalData($eventId)
     {
-        $prefixes = [
-            'datetimes'  => 'DTT',
-            'tickets'    => 'TKT',
-            'prices'     => 'PRC',
-            'priceTypes' => 'PRT',
-        ];
         $data = [
             'datetimes'  => [],
             'tickets'    => [],
@@ -557,19 +551,20 @@ QUERY;
             'tickets' => $eem_ticket,
         ];
         // Get the IDs of event datetimes.
-        $datetimeIds = $eem_datetime->get_col([[
-            'EVT_ID'      => $eventId,
-            'DTT_deleted' => ['IN', [true, false]],
-        ]]);
+        $datetimeIds = $eem_datetime->get_col([
+            [
+                'EVT_ID'      => $eventId,
+                'DTT_deleted' => ['IN', [true, false]],
+            ],
+            'default_where_conditions' => 'minimum',
+        ]);
         foreach ($datetimeIds as $datetimeId) {
             $GID = self::convertToGlobalId($eem_datetime->item_name(), $datetimeId);
             foreach ($related_models as $key => $model) {
-                $deletedKey = "{$prefixes[$key]}_deleted";
                 // Get the IDs of related entities for the datetime ID.
                 $Ids = $model->get_col([
                     [
                         'Datetime.DTT_ID' => $datetimeId,
-                        $deletedKey       => ['IN', [true, false]],
                     ],
                     'default_where_conditions' => 'minimum',
                 ]);
@@ -583,21 +578,20 @@ QUERY;
             'prices'    => $eem_price,
         ];
         // Get the IDs of all datetime tickets.
-        $ticketIds = $eem_ticket->get_col([[
-            'Datetime.DTT_ID' => ['IN', $datetimeIds],
-            'TKT_deleted'     => ['IN', [true, false]],
-        ]]);
+        $ticketIds = $eem_ticket->get_col([
+            [
+                'Datetime.DTT_ID' => ['IN', $datetimeIds],
+            ],
+            'default_where_conditions' => 'minimum',
+            ]);
         foreach ($ticketIds as $ticketId) {
             $GID = self::convertToGlobalId($eem_ticket->item_name(), $ticketId);
 
             foreach ($related_models as $key => $model) {
-                $deletedKey = "{$prefixes[$key]}_deleted";
-
                 // Get the IDs of related entities for the ticket ID.
                 $Ids = $model->get_col([
                     [
                         'Ticket.TKT_ID' => $ticketId,
-                        $deletedKey     => ['IN', [true, false]],
                     ],
                     'default_where_conditions' => 'minimum',
                 ]);
@@ -611,18 +605,15 @@ QUERY;
             'priceTypes' => $eem_price_type,
         ];
         // Get the IDs of all ticket prices.
-        $priceIds = $eem_price->get_col([['Ticket.TKT_ID' => ['in', $ticketIds]]]);
+        $priceIds = $eem_price->get_col([['Ticket.TKT_ID' => ['IN', $ticketIds]]]);
         foreach ($priceIds as $priceId) {
             $GID = self::convertToGlobalId($eem_price->item_name(), $priceId);
 
             foreach ($related_models as $key => $model) {
-                $deletedKey = "{$prefixes[$key]}_deleted";
-
                 // Get the IDs of related entities for the price ID.
                 $Ids = $model->get_col([
                     [
                         'Price.PRC_ID' => $priceId,
-                        $deletedKey    => ['IN', [true, false]],
                     ],
                     'default_where_conditions' => 'minimum',
                 ]);
