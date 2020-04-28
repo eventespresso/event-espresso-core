@@ -18,9 +18,9 @@ const useFilterBarService: FBShook = (domain, entityListId) => {
 		service: FilterBarServiceType.FILTER,
 	});
 
-	const registerCallback = ({ callback, listId, type }) => {
+	const registerCallback = ({ callback, listId, priority, type }) => {
 		invariant(listId, 'No `listId` provided');
-		return subscribe(callback, { listId, type });
+		return subscribe(callback, { listId, priority, type });
 	};
 
 	const getCallbacks = ({ listId = entityListId, type }) => {
@@ -53,16 +53,16 @@ const useFilterBarService: FBShook = (domain, entityListId) => {
 		return getCallbacks({ listId, type: 'search' });
 	};
 
-	const registerFilter: FBSRegistry['registerFilter'] = (callback, listId = entityListId) => {
-		return registerCallback({ callback, listId, type: 'filter' });
+	const registerFilter: FBSRegistry['registerFilter'] = (callback, priority = 10, listId = entityListId) => {
+		return registerCallback({ callback, listId, priority, type: 'filter' });
 	};
 
-	const registerSorter: FBSRegistry['registerSorter'] = (callback, listId = entityListId) => {
-		return registerCallback({ callback, listId, type: 'sort' });
+	const registerSorter: FBSRegistry['registerSorter'] = (callback, priority = 10, listId = entityListId) => {
+		return registerCallback({ callback, listId, priority, type: 'sort' });
 	};
 
-	const registerSearch: FBSRegistry['registerSearch'] = (callback, listId = entityListId) => {
-		return registerCallback({ callback, listId, type: 'search' });
+	const registerSearch: FBSRegistry['registerSearch'] = (callback, priority = 10, listId = entityListId) => {
+		return registerCallback({ callback, listId, priority, type: 'search' });
 	};
 
 	// Expose the regsitry functions globally

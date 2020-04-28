@@ -3,6 +3,7 @@ import { Entity } from '@appServices/apollo/types';
 import { EntityFilterService, EntityListFilterStateManager } from './types';
 import { useFilterBarService, FilterBarServiceCbArgs } from '../subscription';
 import { SubscriptionCallback } from '@appServices/subscription';
+import { sortBy, pathOr } from 'ramda';
 
 type ELFSM = EntityListFilterStateManager;
 
@@ -17,7 +18,8 @@ const useEntityFilterService = <D extends string, L extends string, E extends En
 	const getCallbackList = (
 		mappedCallbackList: ReturnType<typeof getFilters>
 	): Array<SubscriptionCallback<FilterBarServiceCbArgs<E, ELFSM>, E[]>> => {
-		return Object.values(mappedCallbackList).map(({ callback }) => callback);
+		const subscriptions = sortBy(pathOr(10, ['options', 'priority']), Object.values(mappedCallbackList));
+		return subscriptions.map(({ callback }) => callback);
 	};
 
 	const applyCallbacks = (
