@@ -13,7 +13,7 @@ const useTicketsActionMenuHandler = (): TicketsSubscriptionCallback => {
 	return useCallback<TicketsSubscriptionCallback>(({ entity: ticket, registry }) => {
 		const { registerElement: registerMenuItem } = registry;
 
-		registerMenuItem('ticketMainMenu', () => <TicketMainMenu ticket={ticket} />);
+		registerMenuItem('ticketMainMenu', () => <TicketMainMenu id={ticket.id} />);
 
 		registerMenuItem('assignDates', () => <AssignDatesButton entity={ticket} />);
 

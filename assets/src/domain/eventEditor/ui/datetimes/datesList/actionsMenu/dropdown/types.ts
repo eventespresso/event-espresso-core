@@ -1,5 +1,3 @@
-import { Datetime } from '@edtrServices/apollo/types';
+import { EntityListItemProps } from '@application/ui/layout';
 
-export interface DateMainMenuProps {
-	datetime: Datetime;
-}
+export type DateMainMenuProps = Pick<EntityListItemProps, 'id'>;

@@ -3,14 +3,16 @@ import { __ } from '@wordpress/i18n';
 
 import { Trash } from '@application/ui/layout/entityActionsMenu/entityMenuItems';
 import { useDatetimeMutator } from '@edtrServices/apollo/mutations';
+import { useDatetimeItem } from '@edtrServices/apollo';
 
 import { DateMainMenuProps } from './types';
 import { isTrashed } from '@sharedServices/predicates';
 
-const TrashDate: React.FC<DateMainMenuProps> = ({ datetime, ...props }) => {
+const TrashDate: React.FC<DateMainMenuProps> = ({ id, ...props }) => {
+	const datetime = useDatetimeItem({ id });
 	if (!datetime) return null;
 
-	const { id, cacheId } = datetime;
+	const { cacheId } = datetime;
 	const trashed = isTrashed(datetime);
 
 	const { deleteEntity } = useDatetimeMutator(id);

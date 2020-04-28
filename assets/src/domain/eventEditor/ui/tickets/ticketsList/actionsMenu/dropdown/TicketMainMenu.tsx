@@ -9,16 +9,16 @@ import TrashTicket from './TrashTicket';
 
 import { TicketMainMenuProps } from './types';
 
-const TicketMainMenu: React.FC<TicketMainMenuProps> = ({ ticket }) => {
+const TicketMainMenu: React.FC<TicketMainMenuProps> = ({ id }) => {
 	const toggleProps: DropdownToggleProps = {
 		tooltip: __('ticket main menu'),
 	};
 
 	return (
 		<DropdownMenu toggleProps={toggleProps}>
-			<EditTicket ticket={ticket} />
-			<CopyTicket ticket={ticket} />
-			<TrashTicket ticket={ticket} />
+			<EditTicket id={id} />
+			<CopyTicket id={id} />
+			<TrashTicket id={id} />
 		</DropdownMenu>
 	);
 };

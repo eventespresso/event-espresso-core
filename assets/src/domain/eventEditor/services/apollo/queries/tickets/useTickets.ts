@@ -7,7 +7,7 @@ import { getCacheIds } from '@appServices/predicates';
 
 const useTickets = (): Array<Ticket> => {
 	const options = useTicketQueryOptions();
-	const { data } = useCacheQuery<TicketsList>({ ...options, fetchPolicy: 'cache-first' });
+	const { data } = useCacheQuery<TicketsList>(options);
 
 	const nodes = data?.espressoTickets?.nodes || [];
 

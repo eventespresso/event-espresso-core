@@ -6,10 +6,12 @@ import { Copy } from '@application/ui/layout/entityActionsMenu/entityMenuItems';
 import { useDatetimeMutator } from '@edtrServices/apollo/mutations';
 import { useEventId } from '@edtrServices/apollo/queries/events';
 import { useRelations } from '@appServices/apollo/relations';
+import { useDatetimeItem } from '@edtrServices/apollo';
 
 import { DateMainMenuProps } from './types';
 
-const CopyDate: React.FC<DateMainMenuProps> = ({ datetime, ...props }) => {
+const CopyDate: React.FC<DateMainMenuProps> = ({ id, ...props }) => {
+	const datetime = useDatetimeItem({ id });
 	const eventId = useEventId();
 	const { createEntity } = useDatetimeMutator();
 	const { getRelations } = useRelations();
