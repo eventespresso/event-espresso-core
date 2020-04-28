@@ -2,7 +2,14 @@
 
 namespace EventEspresso\tests\testcases\core\domain\services\graphql\mutators;
 
+use EE_Error;
+use EventEspresso\core\exceptions\InvalidDataTypeException;
+use EventEspresso\core\exceptions\InvalidInterfaceException;
 use GraphQLRelay\Relay;
+use InvalidArgumentException;
+use PHPUnit\Framework\AssertionFailedError;
+use PHPUnit\Framework\Exception;
+use ReflectionException;
 
 class DatetimeDeleteTest extends BaseMutationTest
 {
@@ -13,9 +20,12 @@ class DatetimeDeleteTest extends BaseMutationTest
         parent::setUp();
     }
 
+
     /**
      * This processes a mutation to delete an entity
      *
+     * @param      $id
+     * @param bool $deletePermanently
      * @return array
      */
     public function deleteMutation($id, $deletePermanently = false)
@@ -37,8 +47,16 @@ class DatetimeDeleteTest extends BaseMutationTest
         return $this->runDeleteMutation($mutation, $id, $deletePermanently);
     }
 
+
     /**
      * This tests to make sure a user without proper capabilities cannot delete an entity
+     *
+     * @throws EE_Error
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws InvalidArgumentException
+     * @throws Exception
+     * @throws ReflectionException
      */
     public function testDeleteWithoutProperCapabilities()
     {
@@ -57,8 +75,17 @@ class DatetimeDeleteTest extends BaseMutationTest
         $this->assertArrayHasKey('errors', $result);
     }
 
+
     /**
      * This tests to make sure an admin can delete an entity
+     *
+     * @throws EE_Error
+     * @throws Exception
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws ReflectionException
+     * @throws AssertionFailedError
      */
     public function testDeleteWithAdmin()
     {

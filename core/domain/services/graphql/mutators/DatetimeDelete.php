@@ -27,7 +27,7 @@ class DatetimeDelete extends EntityMutator
          * @param array       $input   The input for the mutation
          * @param AppContext  $context The AppContext passed down to all resolvers
          * @param ResolveInfo $info    The ResolveInfo passed down to all resolvers
-         * @return array
+         * @return array|void
          */
         return static function ($input, AppContext $context, ResolveInfo $info) use ($model, $type) {
             try {
@@ -38,7 +38,7 @@ class DatetimeDelete extends EntityMutator
                 $result = ! empty($input['deletePermanently']) ? $entity->delete_permanently() : $entity->delete();
                 EntityMutator::validateResults($result);
             } catch (Exception $exception) {
-                return EntityMutator::handleExceptions(
+                EntityMutator::handleExceptions(
                     $exception,
                     esc_html__(
                         'The datetime could not be deleted because of the following error(s)',
