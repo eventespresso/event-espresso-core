@@ -1,3 +1,5 @@
-import { EntityListItemProps } from '@application/ui/layout';
+import { Ticket } from '@edtrServices/apollo/types';
 
-export type TicketMainMenuProps = Pick<EntityListItemProps, 'id'>;
+export interface TicketMainMenuProps {
+	ticket: Ticket;
+}
