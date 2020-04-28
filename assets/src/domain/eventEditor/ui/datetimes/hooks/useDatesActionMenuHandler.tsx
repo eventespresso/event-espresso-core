@@ -18,7 +18,7 @@ const useDatesActionMenuHandler = (): DatesSubscriptionCallback => {
 
 		const { registerElement: registerMenuItem } = registry;
 
-		registerMenuItem('dateMainMenu', () => <DateMainMenu id={entity.id} />);
+		registerMenuItem('dateMainMenu', () => <DateMainMenu datetime={entity} />);
 
 		registerMenuItem('assignTickets', () => <AssignTicketsButton entity={entity} />);
 	}, []);

@@ -3,12 +3,10 @@ import { __ } from '@wordpress/i18n';
 
 import { Edit } from '@application/ui/layout/entityActionsMenu/entityMenuItems';
 import { useFormModal } from '@appLayout/formModal';
-import { useTicketItem } from '@edtrServices/apollo';
 
 import { TicketMainMenuProps } from './types';
 
-const EditTicket: React.FC<TicketMainMenuProps> = ({ id, ...props }) => {
-	const ticket = useTicketItem({ id });
+const EditTicket: React.FC<TicketMainMenuProps> = ({ ticket, ...props }) => {
 	const { openEditor } = useFormModal();
 	const onClick = useCallback(
 		() =>

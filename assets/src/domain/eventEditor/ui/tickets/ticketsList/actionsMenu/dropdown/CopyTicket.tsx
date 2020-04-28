@@ -7,12 +7,10 @@ import { copyTicketFields } from '@sharedEntities/tickets/predicates/updatePredi
 import { isTicketInputField } from '@sharedEntities/tickets/predicates/selectionPredicates';
 import { useTicketMutator } from '@edtrServices/apollo/mutations';
 import { useRelations } from '@appServices/apollo/relations';
-import { useTicketItem } from '@edtrServices/apollo';
 
 import { TicketMainMenuProps } from './types';
 
-const CopyTicket: React.FC<TicketMainMenuProps> = ({ id, ...props }) => {
-	const ticket = useTicketItem({ id });
+const CopyTicket: React.FC<TicketMainMenuProps> = ({ ticket, ...props }) => {
 	const { createEntity } = useTicketMutator();
 	const { getRelations } = useRelations();
 	const newTicket = {
