@@ -39,7 +39,7 @@ const useTicketsFilterBarService = (): void => {
 		// Register isChained filter
 		const unSubscribeIsChainedFilter = registerTicketsFilter(({ entityList, filterState }) => {
 			return isChainedFilter({ isChained: filterState.isChained, tickets: entityList });
-		});
+		}, 9); // we want isChained to run first
 
 		// update ref, it won't cause rerendersٖ
 		unSubIsChainedFilterRef.current = unSubscribeIsChainedFilter;
@@ -54,12 +54,12 @@ const useTicketsFilterBarService = (): void => {
 		// Register sales filter
 		const unSubscribeSalesFilter = registerTicketsFilter(({ entityList, filterState }) => {
 			return salesFilter({ sales: filterState.sales, tickets: entityList });
-		});
+		}, 11);
 
 		// Register status filter
 		const unSubscribeStatusFilter = registerTicketsFilter(({ entityList, filterState }) => {
 			return statusFilter({ status: filterState.status, tickets: entityList });
-		});
+		}, 10); // 10 by default
 
 		// Register search
 		const unSubscribeTicketsSearch = registerTicketsSearch(({ entityList, filterState }) => {
