@@ -111,6 +111,7 @@ export type FilterBarServiceFn = <FS extends ELFSM, L extends string>(
 
 export type FilterBarServiceRegistryFn<L extends string, E extends Entity, FS extends ELFSM> = (
 	callback: SubscriptionCallback<FilterBarServiceCbArgs<E, FS>>,
+	priority?: number,
 	listId?: L
 ) => ReturnType<SubscribeFn>;
 

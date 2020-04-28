@@ -22,12 +22,12 @@ const useDatesFilterBarService = (): void => {
 		// Register sales filter
 		const unsubscribeSalesFilter = registerDatesFilter(({ entityList, filterState }) => {
 			return salesFilter({ dates: entityList, sales: filterState.sales });
-		});
+		}, 11);
 
 		// Register status filter
 		const unsubscribeStatusFilter = registerDatesFilter(({ entityList, filterState }) => {
 			return statusFilter({ dates: entityList, status: filterState.status });
-		});
+		}, 9);
 
 		// Register search
 		const unsubscribeDatesSearch = registerDatesSearch(({ entityList, filterState }) => {
