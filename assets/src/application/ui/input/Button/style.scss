@@ -23,6 +23,7 @@
 		border-color: var(--ee-color-primary);
 		box-shadow: 0 0 0 1px var(--ee-color-primary);
 	}
+
 	&.ee-btn {
 		border-radius: var(--ee-border-radius-small);
 		border-bottom: none;
@@ -35,6 +36,7 @@
 		line-height: var(--ee-font-size-default);
 		margin: 0 0 var(--ee-margin-smaller);
 		outline: none !important;
+		padding: var(--ee-padding-tiny) var(--ee-padding-small) var(--ee-padding-smaller);
 		position: relative;
 		text-decoration: none;
 		text-align: center;
@@ -50,25 +52,25 @@
 		&:not([disabled]):active,
 		&:focus,
 		&:visited {
-			border-radius: var(--ee-border-radius-small);
-			border-style: solid;
-			border-width: 1px;
-			box-shadow: var(--ee-box-shadow-tiny);
-			cursor: pointer;
-			font-family: 'Segoe UI', Candara, 'Bitstream Vera Sans', 'DejaVu Sans', 'Bitstream Vera Sans',
-				'Trebuchet MS', Verdana, 'Verdana Ref', sans-serif;
-			font-size: var(--ee-font-size-default);
-			font-weight: bold;
-			line-height: var(--ee-font-size-default);
-			// margin: 0 0 var(--ee-margin-smaller); Setting margins on these states is a bit confusing, needs discussion.
-			outline: none !important;
-			position: relative;
-			text-decoration: none;
-			text-align: center;
-			text-shadow: var(--ee-text-shadow-inset-light);
-			top: 0;
-			transition: border-color 0.1s ease 0.1s, color 0.1s ease 0.1s !important;
-			vertical-align: middle;
+			// border-radius: var(--ee-border-radius-small);
+			// border-style: solid;
+			// border-width: 1px;
+			// box-shadow: var(--ee-box-shadow-tiny);
+			// cursor: pointer;
+			// font-family: 'Segoe UI', Candara, 'Bitstream Vera Sans', 'DejaVu Sans', 'Bitstream Vera Sans',
+			// 	'Trebuchet MS', Verdana, 'Verdana Ref', sans-serif;
+			// font-size: var(--ee-font-size-default);
+			// font-weight: bold;
+			// line-height: var(--ee-font-size-default);
+			// // margin: 0 0 var(--ee-margin-smaller); Setting margins on these states is a bit confusing, needs discussion.
+			// outline: none !important;
+			// position: relative;
+			// text-decoration: none;
+			// text-align: center;
+			// text-shadow: var(--ee-text-shadow-inset-light);
+			// top: 0;
+			// transition: border-color 0.1s ease 0.1s, color 0.1s ease 0.1s !important;
+			// vertical-align: middle;
 		}
 
 		&:active {

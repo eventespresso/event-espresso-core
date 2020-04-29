@@ -20,7 +20,6 @@ const AddNewDateButton: React.FC = () => {
 	return (
 		<>
 			<ButtonGroup marginBottom='2rem'>
-				<Button buttonText={__('Default')} />
 				<Button buttonText={__('Add New Date')} icon={Calendar} mr={2} onClick={onClickAddNew} />
 				<Button buttonText={__('Ticket Assignments')} icon={Ticket} onClick={onOpen} />
 			</ButtonGroup>
