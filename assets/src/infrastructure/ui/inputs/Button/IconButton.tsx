@@ -2,7 +2,7 @@ import React from 'react';
 import classNames from 'classnames';
 import { IconButton as ChakraIconButton } from '@chakra-ui/core';
 
-import { IconButtonProps } from '../types';
+import { IconButtonProps } from './types';
 
 type ButtonType = React.ComponentType<IconButtonProps>;
 

@@ -12,7 +12,6 @@
 	border-width: 1px;
 	cursor: pointer;
 	display: inline-flex;
-	top: 0;
 
 	&:hover {
 		border-color: var(--ee-color-primary-low-contrast);
@@ -24,10 +23,7 @@
 		border-color: var(--ee-color-primary);
 		box-shadow: 0 0 0 1px var(--ee-color-primary);
 	}
-}
-
-.ee-event-editor {
-	.ee-button.ee-button {
+	&.ee-btn {
 		border-radius: var(--ee-border-radius-small);
 		border-bottom: none;
 		box-shadow: var(--ee-box-shadow-tiny);
@@ -45,7 +41,11 @@
 		text-shadow: var(--ee-text-shadow-inset-light);
 		transition: border-color 0.1s ease 0.1s, color 0.1s ease 0.1s !important;
 		vertical-align: middle;
+	}
+}
 
+.ee-event-editor {
+	.ee-btn.ee-btn {
 		&:active,
 		&:not([disabled]):active,
 		&:focus,
@@ -104,7 +104,7 @@
 			cursor: pointer;
 		}
 
-		+ .ee-button {
+		+ .ee-btn {
 			margin-left: var(--ee-margin-default);
 		}
 
@@ -154,7 +154,7 @@
 		}
 	}
 
-	.ee-button-label + .ee-button.ant-btn {
+	.ee-btn-label + .ee-btn.ant-btn {
 		margin-right: var(--ee-margin-small) !important;
 	}
 
@@ -162,20 +162,7 @@
 
 	/* DEFAULT */
 
-	.ee-btn-default.ant-btn {
-		&.ant-btn-icon-only {
-			&:not([disabled]) {
-				background: var(--ee-color-grey-15);
-				border-color: var(--ee-color-grey-14) var(--ee-color-grey-14) var(--ee-color-grey-15);
-				color: var(--ee-default-text-color-low-contrast);
-			}
-
-			&:hover:not([disabled]) {
-				border-color: var(--ee-color-grey-9) var(--ee-color-grey-9) var(--ee-color-grey-10);
-				color: var(--ee-color-primary);
-			}
-		}
-
+	.ee-btn-default {
 		&:not([disabled]):not(.ant-btn-icon-only) {
 			background: var(--ee-color-grey-15);
 			border-color: var(--ee-color-grey-14) var(--ee-color-grey-14) var(--ee-color-grey-15);
@@ -298,7 +285,7 @@
 
 	/* DISABLED */
 
-	.ee-button.ant-btn {
+	.ee-btn.ant-btn {
 		&.ee-btn-default:disabled,
 		&.ee-btn-primary:disabled,
 		&.ee-btn-secondary:disabled,
@@ -319,7 +306,7 @@
 
 	/* BUTTON SIZES */
 
-	.ee-btn-tiny.ee-button {
+	.ee-btn-tiny.ee-btn {
 		&.ant-btn {
 			font-size: var(--ee-font-size-tiny);
 			min-height: var(--ee-font-size-smaller);
@@ -341,7 +328,7 @@
 		}
 	}
 
-	.ee-btn-small.ee-button {
+	.ee-btn-small.ee-btn {
 		&.ant-btn {
 			font-size: var(--ee-font-size-smaller);
 			min-height: var(--ee-font-size-small);
@@ -371,7 +358,7 @@
 		}
 	}
 
-	.ee-btn-big.ee-button {
+	.ee-btn-big.ee-btn {
 		&.ant-btn {
 			font-size: var(--ee-font-size-big);
 			min-height: var(--ee-font-size-bigger);
@@ -393,7 +380,7 @@
 		}
 	}
 
-	.ee-btn-huge.ee-button {
+	.ee-btn-huge.ee-btn {
 		&.ant-btn {
 			font-size: var(--ee-font-size-bigger);
 			min-height: var(--ee-font-size-huge);
@@ -418,27 +405,27 @@
 	/* ACTION MENU ITEMS */
 
 	.ee-entity-menu {
-		.ee-btn-default.ee-button.ant-btn:not([disabled]),
-		.ee-btn-primary.ee-button.ant-btn:not([disabled]),
-		.ee-btn-secondary.ee-button.ant-btn:not([disabled]),
-		.ee-btn-accent.ee-button.ant-btn:not([disabled]) {
+		.ee-btn-default.ee-btn.ant-btn:not([disabled]),
+		.ee-btn-primary.ee-btn.ant-btn:not([disabled]),
+		.ee-btn-secondary.ee-btn.ant-btn:not([disabled]),
+		.ee-btn-accent.ee-btn.ant-btn:not([disabled]) {
 			background: none;
 			border: none;
 			box-shadow: none;
 			margin: var(--ee-margin-micro);
 		}
 
-		.ee-btn-default.ee-button.ant-btn:hover,
-		.ee-btn-primary.ee-button.ant-btn:hover,
-		.ee-btn-secondary.ee-button.ant-btn:hover,
-		.ee-btn-accent.ee-button.ant-btn:hover {
+		.ee-btn-default.ee-btn.ant-btn:hover,
+		.ee-btn-primary.ee-btn.ant-btn:hover,
+		.ee-btn-secondary.ee-btn.ant-btn:hover,
+		.ee-btn-accent.ee-btn.ant-btn:hover {
 			border: inherit;
 		}
 
-		.ee-btn-default.ee-button.ant-btn:focus,
-		.ee-btn-primary.ee-button.ant-btn:focus,
-		.ee-btn-secondary.ee-button.ant-btn:focus,
-		.ee-btn-accent.ee-button.ant-btn:focus {
+		.ee-btn-default.ee-btn.ant-btn:focus,
+		.ee-btn-primary.ee-btn.ant-btn:focus,
+		.ee-btn-secondary.ee-btn.ant-btn:focus,
+		.ee-btn-accent.ee-btn.ant-btn:focus {
 			border: 1px solid var(--ee-color-primary-low-contrast);
 			box-shadow: 0 0 0 1px var(--ee-color-primary-low-contrast);
 		}
@@ -446,7 +433,7 @@
 
 	/* SPECIAL FORM STYLES */
 
-	.ant-input-group-addon .ee-button.ant-btn {
+	.ant-input-group-addon .ee-btn.ant-btn {
 		&.ant-btn-icon-only:not([disabled]),
 		&:active.ant-btn-icon-only:not([disabled]),
 		&:focus.ant-btn-icon-only:not([disabled]),
@@ -463,7 +450,7 @@
 
 /* WordPress Admin Media Query Breakpoint: Smartphone */
 @media screen and (max-width: 600px) {
-	.ee-button + .ee-button {
+	.ee-btn + .ee-btn {
 		.ee-event-editor & {
 			margin-left: var(--ee-margin-smaller);
 		}
@@ -471,7 +458,7 @@
 }
 
 @media only screen and (max-width: 480px) {
-	.ee-button + .ee-button {
+	.ee-btn + .ee-btn {
 		.ee-event-editor & {
 			margin-left: var(--ee-margin-micro);
 		}
@@ -479,8 +466,8 @@
 }
 
 @media only screen and (max-width: 360px) {
-	.ee-button {
-		+ .ee-button {
+	.ee-btn {
+		+ .ee-btn {
 			.ee-event-editor & {
 				margin-left: auto;
 			}

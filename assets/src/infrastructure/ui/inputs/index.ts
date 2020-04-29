@@ -1,12 +1,10 @@
 import './style.scss';
 
-export { default as Button } from './Button';
+export { Button, ButtonGroup, IconButton } from './Button';
 
 export { default as Checkbox } from './Checkbox';
 
 export { default as CheckboxGroup } from './CheckboxGroup';
-
-export { default as IconButton } from './IconButton';
 
 export { default as NumberInput } from './NumberInput';
 
@@ -24,4 +22,5 @@ export { default as TextArea } from './TextArea';
 
 export * from './inlineEdit';
 
+export * from './Button/types';
 export * from './types';
