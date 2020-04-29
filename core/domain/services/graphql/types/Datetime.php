@@ -307,7 +307,7 @@ class Datetime extends TypeBase
                 'mutateAndGetPayload' => DatetimeCreate::mutateAndGetPayload($this->model, $this),
             ]
         );
-        
+
         // Register mutation to update an entity.
         register_graphql_mutation(
             'reorder' . $this->namespace . 'Entities',

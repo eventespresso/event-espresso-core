@@ -195,16 +195,11 @@ class TicketMutation
     /**
      * @param EE_Ticket  $ticket_entity
      * @param EEM_Ticket $ticket_model
-     * @throws DomainException
      * @throws EE_Error
      * @throws InvalidArgumentException
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
-     * @throws ModelConfigurationException
      * @throws ReflectionException
-     * @throws RestException
-     * @throws UnexpectedEntityException
-     * @throws EE_Error
      * @since $VID:$
      */
     public static function addDefaultPrices(EE_Ticket $ticket_entity, EEM_Ticket $ticket_model)
