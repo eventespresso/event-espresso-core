@@ -24,7 +24,9 @@
 		box-shadow: 0 0 0 1px var(--ee-color-primary);
 	}
 
-	&.ee-btn {
+	&.ee-btn.ee-btn {
+		background: var(--ee-color-grey-15);
+		border-color: var(--ee-color-grey-14) var(--ee-color-grey-14) var(--ee-color-grey-15);
 		border-radius: var(--ee-border-radius-small);
 		border-bottom: none;
 		box-shadow: var(--ee-box-shadow-tiny);
@@ -43,11 +45,7 @@
 		text-shadow: var(--ee-text-shadow-inset-light);
 		transition: border-color 0.1s ease 0.1s, color 0.1s ease 0.1s !important;
 		vertical-align: middle;
-	}
-}
 
-.ee-event-editor {
-	.ee-btn.ee-btn {
 		&:active,
 		&:not([disabled]):active,
 		&:focus,
@@ -131,23 +129,9 @@
 
 	/* BUTTON COLORS */
 
-	/* DEFAULT */
-
-	.ee-btn-default {
-		&:not([disabled]) {
-			background: var(--ee-color-grey-15);
-			border-color: var(--ee-color-grey-14) var(--ee-color-grey-14) var(--ee-color-grey-15);
-			color: var(--ee-text-on-grey-14);
-		}
-
-		&:hover:not([disabled]) {
-			background: var(--ee-color-grey-14);
-		}
-	}
-
 	/* MINIMAL */
 
-	.ee-btn-minimal {
+	&.ee-btn--minimal {
 		&:not([disabled]) {
 			background: none;
 			border: 1px solid var(--ee-default-text-color-low-contrast);
@@ -163,7 +147,7 @@
 
 	/* PRIMARY */
 
-	.ee-btn-primary {
+	&.ee-btn--primary {
 		&:not([disabled]) {
 			background: var(--ee-color-primary);
 			border-color: var(--ee-color-primary) var(--ee-color-primary) var(--ee-color-primary-low-contrast);
@@ -177,37 +161,38 @@
 
 	/* SECONDARY */
 
-	.ee-btn-secondary {
+	&.ee-btn--secondary {
 		&:not([disabled]) {
 			background: var(--ee-color-secondary);
 			border-color: var(--ee-color-secondary) var(--ee-color-secondary) var(--ee-color-secondary-low-contrast);
 			color: var(--ee-text-on-secondary);
 		}
-	}
-
-	.ee-btn-secondary:hover:not([disabled]) {
-		background: var(--ee-color-secondary-low-contrast);
+		&:hover:not([disabled]) {
+			background: var(--ee-color-secondary-low-contrast);
+		}
 	}
 
 	/* ACCENT */
 
-	.ee-btn-accent:not([disabled]) {
-		background: var(--ee-color-accent);
-		border-color: var(--ee-color-accent) var(--ee-color-accent) var(--ee-color-accent-low-contrast);
-		color: var(--ee-text-on-accent);
-	}
+	&.ee-btn--accent {
+		&:not([disabled]) {
+			background: var(--ee-color-accent);
+			border-color: var(--ee-color-accent) var(--ee-color-accent) var(--ee-color-accent-low-contrast);
+			color: var(--ee-text-on-accent);
+		}
 
-	.ee-btn-accent:hover:not([disabled]) {
-		background: var(--ee-color-accent-low-contrast);
+		&:hover:not([disabled]) {
+			background: var(--ee-color-accent-low-contrast);
+		}
 	}
 
 	/* DISABLED */
 
-	.ee-btn {
-		&.ee-btn-default:disabled,
-		&.ee-btn-primary:disabled,
-		&.ee-btn-secondary:disabled,
-		&.ee-btn-accent:disabled {
+	&.ee-btn {
+		&.ee-btn--default:disabled,
+		&.ee-btn--primary:disabled,
+		&.ee-btn--secondary:disabled,
+		&.ee-btn--accent:disabled {
 			background: var(--ee-color-grey-11);
 			border-color: var(--ee-color-grey-11) var(--ee-color-grey-11) var(--ee-color-grey-12);
 			color: var(--ee-text-on-grey-11);
@@ -217,7 +202,7 @@
 
 	/* BUTTON SIZES */
 
-	.ee-btn-tiny.ee-btn {
+	&.ee-btn--tiny {
 		font-size: var(--ee-font-size-tiny);
 		min-height: var(--ee-font-size-smaller);
 		line-height: var(--ee-font-size-tiny);
@@ -237,7 +222,7 @@
 		}
 	}
 
-	.ee-btn-small.ee-btn {
+	&.ee-btn--small {
 		font-size: var(--ee-font-size-smaller);
 		min-height: var(--ee-font-size-small);
 		line-height: var(--ee-font-size-smaller);
@@ -265,7 +250,7 @@
 		}
 	}
 
-	.ee-btn-big.ee-btn {
+	&.ee-btn--big {
 		font-size: var(--ee-font-size-big);
 		min-height: var(--ee-font-size-bigger);
 		line-height: var(--ee-font-size-big);
@@ -285,7 +270,7 @@
 		}
 	}
 
-	.ee-btn-huge.ee-btn {
+	&.ee-btn--huge {
 		font-size: var(--ee-font-size-bigger);
 		min-height: var(--ee-font-size-huge);
 		line-height: var(--ee-font-size-bigger);

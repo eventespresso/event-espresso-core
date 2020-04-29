@@ -20,16 +20,9 @@ const Button = React.forwardRef<typeof ButtonAdapter, ButtonProps>(
 		{ buttonSize = ButtonSize.DEFAULT, buttonText, buttonType = ButtonType.DEFAULT, icon, onClick, ...props },
 		ref
 	) => {
-		const className = classNames('ee-btn-base ee-btn', props.className, {
-			'ee-btn-accent': buttonType === ButtonType.ACCENT,
-			'ee-btn-big': buttonSize === ButtonSize.BIG,
-			'ee-btn-default': buttonType === ButtonType.DEFAULT,
-			'ee-btn-huge': buttonSize === ButtonSize.HUGE,
-			'ee-btn-primary': buttonType === ButtonType.PRIMARY,
-			'ee-btn-minimal': buttonType === ButtonType.MINIMAL,
-			'ee-btn-secondary': buttonType === ButtonType.SECONDARY,
-			'ee-btn-small': buttonSize === ButtonSize.SMALL,
-			'ee-btn-tiny': buttonSize === ButtonSize.TINY,
+		const className = classNames(props.className, {
+			[`ee-btn--${buttonType}`]: buttonType !== ButtonType.DEFAULT,
+			[`ee-btn--${buttonSize}`]: buttonSize !== ButtonSize.DEFAULT,
 			'ee-noIcon': !icon,
 		});
 

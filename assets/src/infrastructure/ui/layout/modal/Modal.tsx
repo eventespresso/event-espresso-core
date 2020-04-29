@@ -9,7 +9,7 @@ import {
 	ModalOverlay,
 } from '@chakra-ui/core';
 
-import { Button } from '@infraUI/inputs';
+import { Button } from '@application/ui/input';
 import { ModalProps } from './types';
 
 const Modal: React.FC<ModalProps> = ({

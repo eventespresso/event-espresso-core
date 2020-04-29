@@ -5,7 +5,7 @@ import { canUseDOM } from '@appServices/utilities/dom';
 import { ESCAPE } from '@wordpress/keycodes';
 
 import { AlertDialog } from '@infraUI/display';
-import { Button as ButtonAdapter } from '@infraUI/inputs';
+import { Button } from '@application/ui/input';
 import { Modal, ModalProps } from '@infraUI/layout/modal';
 
 interface Props extends ModalProps {
@@ -46,13 +46,11 @@ const ModalWithAlert: React.FC<Props> = ({ children, showAlertOnEscape, ...props
 			</Modal>
 			{showAlertOnEscape && (
 				<AlertDialog
-					cancelButton={<ButtonAdapter buttonText={cancelBtnText} ref={cancelRef} onClick={onClose} />}
+					cancelButton={<Button buttonText={cancelBtnText} ref={cancelRef} onClick={onClose} />}
 					header={header}
 					isOpen={isOpen}
 					leastDestructiveRef={cancelRef}
-					okButton={
-						<ButtonAdapter buttonText={okBtnText} variantColor='red' onClick={props.onClose} ml={3} />
-					}
+					okButton={<Button buttonText={okBtnText} variantColor='red' onClick={props.onClose} ml={3} />}
 					onClose={onClose}
 				/>
 			)}

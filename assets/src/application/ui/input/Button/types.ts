@@ -5,19 +5,18 @@ import { ButtonProps as ButtonAdapterProps } from '@infraUI/inputs';
 export type ClickHandler = (click?: React.MouseEvent<HTMLElement>) => void;
 
 export enum ButtonSize {
-	TINY = 18,
-	SMALL = 21,
-	DEFAULT = 24,
-	BIG = 27,
-	HUGE = 30,
+	TINY = 'tiny',
+	SMALL = 'small',
+	DEFAULT = 'default',
+	BIG = 'big',
+	HUGE = 'huge',
 }
-
 export enum ButtonType {
-	ACCENT = 'ACCENT',
-	DEFAULT = 'DEFAULT',
-	MINIMAL = 'MINIMAL',
-	PRIMARY = 'PRIMARY',
-	SECONDARY = 'SECONDARY',
+	ACCENT = 'accent',
+	DEFAULT = 'default',
+	MINIMAL = 'minimal',
+	PRIMARY = 'primary',
+	SECONDARY = 'secondary',
 }
 
 export interface ButtonProps extends ButtonAdapterProps, Partial<withLabelProps>, Partial<withTooltipProps> {
