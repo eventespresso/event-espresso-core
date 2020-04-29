@@ -35,7 +35,17 @@ class TicketDelete extends EntityMutator
                 $entity = EntityMutator::getEntityFromInputData($model, $input);
 
                 // Delete the entity
-                $result = ! empty($input['deletePermanently']) ? $entity->delete_permanently() : $entity->delete();
+                if (! empty($input['deletePermanently'])) {
+                    // Remove related prices for the ticket
+                    $entity->delete_related_permanently('Price');
+                    // Remove relation with datetimes
+                    $entity->_remove_relations('Datetime');
+                    // Now delete the ticket permanently
+                    $result = $entity->delete_permanently();
+                } else {
+                    // trash the ticket
+                    $result = $entity->delete();
+                }
                 EntityMutator::validateResults($result);
             } catch (Exception $exception) {
                 EntityMutator::handleExceptions(

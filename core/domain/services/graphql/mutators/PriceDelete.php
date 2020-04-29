@@ -33,8 +33,17 @@ class PriceDelete extends EntityMutator
             try {
                 /** @var EE_Price $entity */
                 $entity = EntityMutator::getEntityFromInputData($model, $input);
+
                 // Delete the entity
-                $result = ! empty($input['deletePermanently']) ? $entity->delete_permanently() : $entity->delete();
+                if (! empty($input['deletePermanently'])) {
+                    // Remove relation with ticket
+                    $entity->_remove_relations('Ticket');
+                    // Now delete the price permanently
+                    $result = $entity->delete_permanently();
+                } else {
+                    // trash the price
+                    $result = $entity->delete();
+                }
                 EntityMutator::validateResults($result);
             } catch (Exception $exception) {
                 EntityMutator::handleExceptions(

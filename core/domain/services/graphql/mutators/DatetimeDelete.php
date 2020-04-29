@@ -35,7 +35,41 @@ class DatetimeDelete extends EntityMutator
                 $entity = EntityMutator::getEntityFromInputData($model, $input);
 
                 // Delete the entity
-                $result = ! empty($input['deletePermanently']) ? $entity->delete_permanently() : $entity->delete();
+                if (! empty($input['deletePermanently'])) {
+                    // all related tickets
+                    $tickets = $entity->tickets();
+                    foreach ($tickets as $ticket) {
+                        // if the ticket is related to only one datetime
+                        if ($ticket->count_related('Datetime') === 1) {
+                            // Remove related prices for the ticket
+                            $ticket->delete_related_permanently('Price');
+                            // Remove relation with datetimes
+                            $ticket->_remove_relations('Datetime');
+                            // delete the ticket permanently
+                            $ticket->delete_permanently();
+                        }
+                    }
+
+                    // Remove relations with tickets
+                    $entity->_remove_relations('Ticket');
+                    // Now delete the datetime permanently
+                    $result = $entity->delete_permanently();
+                } else {
+                    // non trashed related tickets
+                    $tickets = $entity->tickets([[
+                        'TKT_deleted' => false,
+                    ]]);
+                    // loop though all tickets to check if we need to trash any
+                    foreach ($tickets as $ticket) {
+                        // if the ticket is related to a maximum of one datetime
+                        if ($ticket->count_related('Datetime') <= 1) {
+                            // trash the ticket
+                            $ticket->delete();
+                        }
+                    }
+                    // trash the datetime
+                    $result = $entity->delete();
+                }
                 EntityMutator::validateResults($result);
             } catch (Exception $exception) {
                 EntityMutator::handleExceptions(
