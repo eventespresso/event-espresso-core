@@ -1,0 +1,79 @@
+.input-select-textarea-hover {
+	border-color: var(--ee-color-primary-low-contrast);
+	color: var(--ee-color-primary-high-contrast);
+	box-shadow: 0 0 0 1px var(--ee-color-primary-low-contrast);
+}
+
+.input-select-textarea-focus {
+	border-color: var(--ee-color-primary);
+	box-shadow: 0 0 0 1px var(--ee-color-primary);
+}
+
+.ee-input-base {
+	&.ee-input-base {
+		border-color: var(--ee-border-color);
+		border-style: solid;
+		border-width: 2px;
+		&:focus {
+			/* Visible in Windows high-contrast themes */
+			outline-color: transparent;
+			outline-width: 2px;
+			outline-style: solid;
+		}
+	}
+
+	&.ee-date-picker.ee-date-picker {
+		input[type='text'] {
+			&:hover {
+				@extend .input-select-textarea-hover;
+			}
+			&:focus {
+				@extend .input-select-textarea-focus;
+			}
+		}
+	}
+
+	&.ee-input {
+		@at-root {
+			input[type='text']#{&},
+			input[type='password']#{&},
+			input[type='date']#{&},
+			input[type='datetime']#{&},
+			input[type='datetime-local']#{&},
+			input[type='email']#{&},
+			input[type='month']#{&},
+			input[type='number']#{&},
+			input[type='search']#{&},
+			input[type='tel']#{&},
+			input[type='text']#{&},
+			input[type='time']#{&},
+			input[type='url']#{&},
+			input[type='week']#{&} {
+				line-height: inherit;
+				&:hover {
+					@extend .input-select-textarea-hover;
+				}
+				&:focus {
+					@extend .input-select-textarea-focus;
+				}
+			}
+		}
+	}
+
+	&.ee-select {
+		&:hover {
+			@extend .input-select-textarea-hover;
+		}
+		&:focus {
+			@extend .input-select-textarea-focus;
+		}
+	}
+	&.ee-textarea {
+		&:hover {
+			@extend .input-select-textarea-hover;
+		}
+		&:focus {
+			@extend .input-select-textarea-focus;
+		}
+	}
+}

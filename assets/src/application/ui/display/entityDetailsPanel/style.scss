@@ -63,10 +63,8 @@
 		border-left: 1px solid rgba(0, 0, 0, 0.25);
 		height: calc(var(--ee-font-size-big) + var(--ee-font-size-bigger));
 	}
-}
 
-.entity-card--reverse-layout {
-	.ee-entity-details-panel-div {
+	.entity-card--reverse-layout & {
 		align-self: flex-end;
 	}
 }
