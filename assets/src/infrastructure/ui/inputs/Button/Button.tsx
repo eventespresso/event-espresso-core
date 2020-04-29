@@ -2,16 +2,16 @@ import React from 'react';
 import classNames from 'classnames';
 import { Button as ChakraButton } from '@chakra-ui/core';
 
-import type { ButtonProps } from '../types';
+import type { ButtonProps } from './types';
 
 type ButtonType = React.ComponentType<ButtonProps>;
 
 const Button = React.forwardRef<ButtonType, ButtonProps>(({ children, buttonText, icon, ...props }, ref) => {
-	const className = classNames('ee-btn-base', props.className);
+	const className = classNames('ee-btn-base ee-btn', props.className);
 	const text = children || buttonText;
 
 	return (
-		<ChakraButton {...props} className={className} leftIcon={icon} ref={ref}>
+		<ChakraButton {...props} className={className} leftIcon={icon} ref={ref} variant='unstyled'>
 			{text}
 		</ChakraButton>
 	);

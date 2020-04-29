@@ -1,18 +1,11 @@
-import React, { CSSProperties } from 'react';
+import React from 'react';
 import { __ } from '@wordpress/i18n';
 
 import { Calendar, Ticket } from '@appDisplay/icons';
 import { Button } from '@application/ui/input';
+import { ButtonGroup } from '@infraUI/inputs';
 import { useFormModal } from '@appLayout/formModal';
 import useTicketAssignmentsManager from '../../ticketAssignmentsManager/useTicketAssignmentsManager';
-
-const btnRowStyle: CSSProperties = {
-	display: 'flex',
-	flexFlow: 'row wrap',
-	justifyContent: 'flex-end',
-	margin: '0 0 2rem',
-	width: '100%',
-};
 
 const AddNewDateButton: React.FC = () => {
 	const { openEditor } = useFormModal();
@@ -25,11 +18,13 @@ const AddNewDateButton: React.FC = () => {
 	};
 
 	return (
-		<div style={btnRowStyle}>
-			<Button buttonText={__('Add New Date')} icon={Calendar} mr={2} onClick={onClickAddNew} variant='outline' />
-			<Button buttonText={__('Ticket Assignments')} icon={Ticket} onClick={onOpen} variant='outline' />
+		<>
+			<ButtonGroup marginBottom='2rem'>
+				<Button buttonText={__('Add New Date')} icon={Calendar} mr={2} onClick={onClickAddNew} />
+				<Button buttonText={__('Ticket Assignments')} icon={Ticket} onClick={onOpen} />
+			</ButtonGroup>
 			<ModalContainer assignmentType='forAll' {...disclosure} />
-		</div>
+		</>
 	);
 };
 
