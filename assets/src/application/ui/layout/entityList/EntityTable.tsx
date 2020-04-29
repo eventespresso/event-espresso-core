@@ -28,6 +28,7 @@ const EntityTable = <E extends Entity, FS extends ELFSM>({
 		tableId,
 		tableCaption,
 	};
+	const onDragEnd = filterState.sortingEnabled ? onSort : null;
 
 	return (
 		<ResponsiveTable
@@ -35,7 +36,7 @@ const EntityTable = <E extends Entity, FS extends ELFSM>({
 			className={className}
 			headerRows={headerRows}
 			metaData={metaData}
-			onDragEnd={onSort}
+			onDragEnd={onDragEnd}
 		/>
 	);
 };
