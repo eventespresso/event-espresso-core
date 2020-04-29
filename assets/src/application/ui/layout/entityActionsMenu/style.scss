@@ -1,0 +1,26 @@
+.ee-entity-actions-menu {
+	.ee-btn-default.ee-btn:not([disabled]),
+	.ee-btn-primary.ee-btn:not([disabled]),
+	.ee-btn-secondary.ee-btn:not([disabled]),
+	.ee-btn-accent.ee-btn:not([disabled]) {
+		background: none;
+		border: none;
+		box-shadow: none;
+		margin: var(--ee-margin-micro);
+	}
+
+	.ee-btn-default.ee-btn:hover,
+	.ee-btn-primary.ee-btn:hover,
+	.ee-btn-secondary.ee-btn:hover,
+	.ee-btn-accent.ee-btn:hover {
+		border: inherit;
+	}
+
+	.ee-btn-default.ee-btn:focus,
+	.ee-btn-primary.ee-btn:focus,
+	.ee-btn-secondary.ee-btn:focus,
+	.ee-btn-accent.ee-btn:focus {
+		border: 1px solid var(--ee-color-primary-low-contrast);
+		box-shadow: 0 0 0 1px var(--ee-color-primary-low-contrast);
+	}
+}

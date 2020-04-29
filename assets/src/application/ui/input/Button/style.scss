@@ -75,16 +75,7 @@
 			box-shadow: none;
 		}
 
-		&:not(.ant-btn-icon-only),
-		&:active:not(.ant-btn-icon-only),
-		&:focus:not(.ant-btn-icon-only),
-		&:visited:not(.ant-btn-icon-only) {
-			// box-sizing: content-box !important; // Need to ask/ investigate this
-			// min-height: var(--ee-font-size-big); // Also this is questionable
-			// padding: var(--ee-padding-tiny) var(--ee-padding-default) var(--ee-padding-tiny) var(--ee-padding-small); // Also this is questionable
-		}
-
-		&.ant-btn-icon-only {
+		&-icon-only {
 			height: var(--ee-icon-button-size);
 			min-height: var(--ee-icon-button-size);
 			min-width: var(--ee-icon-button-size);
@@ -98,10 +89,6 @@
 				min-width: var(--ee-icon-button-size);
 				width: var(--ee-icon-button-size);
 			}
-		}
-
-		&:hover {
-			cursor: pointer;
 		}
 
 		+ .ee-btn {
@@ -127,34 +114,16 @@
 			vertical-align: middle;
 		}
 
-		&.ant-btn {
-			.anticon {
-				display: inline-flex;
-				font-size: 20px;
-				margin: 0;
-				position: relative;
-				vertical-align: middle;
-			}
-
-			> {
-				.anticon + span,
-				span + .anticon {
-					margin-left: var(--ee-margin-smaller);
-					vertical-align: middle;
-				}
-			}
-		}
-
 		.img-wrap span {
 			line-height: 24px;
 		}
 
-		&.ant-btn.ant-btn-icon-only:not([disabled]) path {
+		&-icon-only:not([disabled]) path {
 			transition: fill 0.1s ease 0.1s, color 0.1s ease 0.1s !important;
 		}
 	}
 
-	.ee-btn-label + .ee-btn.ant-btn {
+	.ee-btn-label + .ee-btn {
 		margin-right: var(--ee-margin-small) !important;
 	}
 
@@ -163,129 +132,76 @@
 	/* DEFAULT */
 
 	.ee-btn-default {
-		&:not([disabled]):not(.ant-btn-icon-only) {
+		&:not([disabled]) {
 			background: var(--ee-color-grey-15);
 			border-color: var(--ee-color-grey-14) var(--ee-color-grey-14) var(--ee-color-grey-15);
 			color: var(--ee-text-on-grey-14);
 		}
 
-		&:hover:not([disabled]):not(.ant-btn-icon-only) {
+		&:hover:not([disabled]) {
 			background: var(--ee-color-grey-14);
-		}
-
-		&.ant-btn-icon-only:not([disabled]) path,
-		&:not([disabled]):not(.ant-btn-icon-only),
-		&:hover:not([disabled]):not(.ant-btn-icon-only) path {
-			fill: var(--ee-text-on-grey-14);
-		}
-
-		&.ant-btn-icon-only:hover:not([disabled]) path {
-			fill: var(--ee-color-primary);
 		}
 	}
 
 	/* MINIMAL */
 
-	.ee-btn-minimal.ant-btn {
-		&.ant-btn-icon-only:not([disabled]),
-		&:not([disabled]):not(.ant-btn-icon-only) {
+	.ee-btn-minimal {
+		&:not([disabled]) {
 			background: none;
 			border: 1px solid var(--ee-default-text-color-low-contrast);
 			box-shadow: none;
 			color: var(--ee-default-text-color);
 		}
 
-		&.ant-btn-icon-only {
-			&:focus {
-				border-color: var(--ee-color-primary-low-contrast);
-				box-shadow: 0 0 0 1px var(--ee-color-primary-low-contrast);
-			}
-
-			&:hover:not([disabled]) {
-				border-color: var(--ee-color-primary);
-				color: var(--ee-color-primary);
-			}
-		}
-
-		&:hover:not([disabled]):not(.ant-btn-icon-only) {
+		&:hover:not([disabled]) {
 			border-color: var(--ee-color-primary);
 			color: var(--ee-color-primary);
-		}
-
-		&.ant-btn-icon-only:not([disabled]) path,
-		&:not([disabled]):not(.ant-btn-icon-only),
-		&:hover:not([disabled]):not(.ant-btn-icon-only) path {
-			fill: var(--ee-default-text-color);
-		}
-
-		&.ant-btn-icon-only:hover:not([disabled]) path {
-			fill: var(--ee-color-primary);
 		}
 	}
 
 	/* PRIMARY */
 
-	.ee-btn-primary.ant-btn {
+	.ee-btn-primary {
 		&:not([disabled]) {
 			background: var(--ee-color-primary);
 			border-color: var(--ee-color-primary) var(--ee-color-primary) var(--ee-color-primary-low-contrast);
 			color: var(--ee-text-on-primary);
-
-			path {
-				fill: var(--ee-text-on-primary);
-			}
 		}
 
 		&:hover:not([disabled]) {
-			path {
-				fill: var(--ee-text-on-primary);
-			}
-
 			background: var(--ee-color-primary-low-contrast);
 		}
 	}
 
 	/* SECONDARY */
 
-	.ee-btn-secondary.ant-btn:not([disabled]) {
-		background: var(--ee-color-secondary);
-		border-color: var(--ee-color-secondary) var(--ee-color-secondary) var(--ee-color-secondary-low-contrast);
-		color: var(--ee-text-on-secondary);
-	}
-
-	.ee-btn-primary.ant-btn {
-		&:not([disabled]) path,
-		&:hover:not([disabled]) path {
-			fill: var(--ee-text-on-secondary);
+	.ee-btn-secondary {
+		&:not([disabled]) {
+			background: var(--ee-color-secondary);
+			border-color: var(--ee-color-secondary) var(--ee-color-secondary) var(--ee-color-secondary-low-contrast);
+			color: var(--ee-text-on-secondary);
 		}
 	}
 
-	.ee-btn-secondary.ant-btn:hover:not([disabled]) {
+	.ee-btn-secondary:hover:not([disabled]) {
 		background: var(--ee-color-secondary-low-contrast);
 	}
 
 	/* ACCENT */
 
-	.ee-btn-accent.ant-btn:not([disabled]) {
+	.ee-btn-accent:not([disabled]) {
 		background: var(--ee-color-accent);
 		border-color: var(--ee-color-accent) var(--ee-color-accent) var(--ee-color-accent-low-contrast);
 		color: var(--ee-text-on-accent);
 	}
 
-	.ee-btn-primary.ant-btn {
-		&:not([disabled]) path,
-		&:hover:not([disabled]) path {
-			fill: var(--ee-text-on-accent);
-		}
-	}
-
-	.ee-btn-accent.ant-btn:hover:not([disabled]) {
+	.ee-btn-accent:hover:not([disabled]) {
 		background: var(--ee-color-accent-low-contrast);
 	}
 
 	/* DISABLED */
 
-	.ee-btn.ant-btn {
+	.ee-btn {
 		&.ee-btn-default:disabled,
 		&.ee-btn-primary:disabled,
 		&.ee-btn-secondary:disabled,
@@ -295,32 +211,23 @@
 			color: var(--ee-text-on-grey-11);
 			cursor: unset;
 		}
-
-		&.ee-btn-default:disabled path,
-		&.ee-btn-primary:disabled path,
-		&.ee-btn-secondary:disabled path,
-		&.ee-btn-accent:disabled path {
-			fill: var(--ee-text-on-grey-11);
-		}
 	}
 
 	/* BUTTON SIZES */
 
 	.ee-btn-tiny.ee-btn {
-		&.ant-btn {
+		font-size: var(--ee-font-size-tiny);
+		min-height: var(--ee-font-size-smaller);
+		line-height: var(--ee-font-size-tiny);
+		padding: var(--ee-padding-nano) var(--ee-padding-tiny) var(--ee-padding-micro);
+
+		&:active,
+		&:focus,
+		&:visited {
 			font-size: var(--ee-font-size-tiny);
 			min-height: var(--ee-font-size-smaller);
 			line-height: var(--ee-font-size-tiny);
 			padding: var(--ee-padding-nano) var(--ee-padding-tiny) var(--ee-padding-micro);
-
-			&:active,
-			&:focus,
-			&:visited {
-				font-size: var(--ee-font-size-tiny);
-				min-height: var(--ee-font-size-smaller);
-				line-height: var(--ee-font-size-tiny);
-				padding: var(--ee-padding-nano) var(--ee-padding-tiny) var(--ee-padding-micro);
-			}
 		}
 
 		.img-wrap span {
@@ -329,20 +236,18 @@
 	}
 
 	.ee-btn-small.ee-btn {
-		&.ant-btn {
+		font-size: var(--ee-font-size-smaller);
+		min-height: var(--ee-font-size-small);
+		line-height: var(--ee-font-size-smaller);
+		padding: var(--ee-padding-micro) var(--ee-padding-smaller) var(--ee-padding-tiny);
+
+		&:active,
+		&:focus,
+		&:visited {
 			font-size: var(--ee-font-size-smaller);
 			min-height: var(--ee-font-size-small);
 			line-height: var(--ee-font-size-smaller);
 			padding: var(--ee-padding-micro) var(--ee-padding-smaller) var(--ee-padding-tiny);
-
-			&:active,
-			&:focus,
-			&:visited {
-				font-size: var(--ee-font-size-smaller);
-				min-height: var(--ee-font-size-small);
-				line-height: var(--ee-font-size-smaller);
-				padding: var(--ee-padding-micro) var(--ee-padding-smaller) var(--ee-padding-tiny);
-			}
 		}
 
 		&:not(.ee-noIcon) .text-wrap {
@@ -359,20 +264,18 @@
 	}
 
 	.ee-btn-big.ee-btn {
-		&.ant-btn {
+		font-size: var(--ee-font-size-big);
+		min-height: var(--ee-font-size-bigger);
+		line-height: var(--ee-font-size-big);
+		padding: var(--ee-padding-smaller) var(--ee-padding-default) var(--ee-padding-small);
+
+		&:active,
+		&:focus,
+		&:visited {
 			font-size: var(--ee-font-size-big);
 			min-height: var(--ee-font-size-bigger);
 			line-height: var(--ee-font-size-big);
 			padding: var(--ee-padding-smaller) var(--ee-padding-default) var(--ee-padding-small);
-
-			&:active,
-			&:focus,
-			&:visited {
-				font-size: var(--ee-font-size-big);
-				min-height: var(--ee-font-size-bigger);
-				line-height: var(--ee-font-size-big);
-				padding: var(--ee-padding-smaller) var(--ee-padding-default) var(--ee-padding-small);
-			}
 		}
 
 		.img-wrap span {
@@ -381,66 +284,22 @@
 	}
 
 	.ee-btn-huge.ee-btn {
-		&.ant-btn {
+		font-size: var(--ee-font-size-bigger);
+		min-height: var(--ee-font-size-huge);
+		line-height: var(--ee-font-size-bigger);
+		padding: var(--ee-padding-smaller) var(--ee-padding-default) var(--ee-padding-small);
+
+		&:active,
+		&:focus,
+		&:visited {
 			font-size: var(--ee-font-size-bigger);
 			min-height: var(--ee-font-size-huge);
 			line-height: var(--ee-font-size-bigger);
 			padding: var(--ee-padding-smaller) var(--ee-padding-default) var(--ee-padding-small);
-
-			&:active,
-			&:focus,
-			&:visited {
-				font-size: var(--ee-font-size-bigger);
-				min-height: var(--ee-font-size-huge);
-				line-height: var(--ee-font-size-bigger);
-				padding: var(--ee-padding-smaller) var(--ee-padding-default) var(--ee-padding-small);
-			}
 		}
 
 		.img-wrap span {
 			line-height: var(--ee-font-size-bigger);
-		}
-	}
-
-	/* ACTION MENU ITEMS */
-
-	.ee-entity-menu {
-		.ee-btn-default.ee-btn.ant-btn:not([disabled]),
-		.ee-btn-primary.ee-btn.ant-btn:not([disabled]),
-		.ee-btn-secondary.ee-btn.ant-btn:not([disabled]),
-		.ee-btn-accent.ee-btn.ant-btn:not([disabled]) {
-			background: none;
-			border: none;
-			box-shadow: none;
-			margin: var(--ee-margin-micro);
-		}
-
-		.ee-btn-default.ee-btn.ant-btn:hover,
-		.ee-btn-primary.ee-btn.ant-btn:hover,
-		.ee-btn-secondary.ee-btn.ant-btn:hover,
-		.ee-btn-accent.ee-btn.ant-btn:hover {
-			border: inherit;
-		}
-
-		.ee-btn-default.ee-btn.ant-btn:focus,
-		.ee-btn-primary.ee-btn.ant-btn:focus,
-		.ee-btn-secondary.ee-btn.ant-btn:focus,
-		.ee-btn-accent.ee-btn.ant-btn:focus {
-			border: 1px solid var(--ee-color-primary-low-contrast);
-			box-shadow: 0 0 0 1px var(--ee-color-primary-low-contrast);
-		}
-	}
-
-	/* SPECIAL FORM STYLES */
-
-	.ant-input-group-addon .ee-btn.ant-btn {
-		&.ant-btn-icon-only:not([disabled]),
-		&:active.ant-btn-icon-only:not([disabled]),
-		&:focus.ant-btn-icon-only:not([disabled]),
-		&:visited.ant-btn-icon-only:not([disabled]) {
-			background: none;
-			border: none;
-			box-shadow: none;
 		}
 	}
 }
@@ -451,7 +310,7 @@
 /* WordPress Admin Media Query Breakpoint: Smartphone */
 @media screen and (max-width: 600px) {
 	.ee-btn + .ee-btn {
-		.ee-event-editor & {
+		&.ee-btn-base {
 			margin-left: var(--ee-margin-smaller);
 		}
 	}
@@ -459,7 +318,7 @@
 
 @media only screen and (max-width: 480px) {
 	.ee-btn + .ee-btn {
-		.ee-event-editor & {
+		&.ee-btn-base {
 			margin-left: var(--ee-margin-micro);
 		}
 	}
@@ -468,7 +327,7 @@
 @media only screen and (max-width: 360px) {
 	.ee-btn {
 		+ .ee-btn {
-			.ee-event-editor & {
+			&.ee-btn-base {
 				margin-left: auto;
 			}
 		}
