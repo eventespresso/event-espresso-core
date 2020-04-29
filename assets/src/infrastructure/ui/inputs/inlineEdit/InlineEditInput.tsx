@@ -20,7 +20,7 @@ const InlineEditInput: React.FC<InlineEditInputProps> = ({ inputType, onCancel, 
 		const textareaProps: PseudoBoxProps = {
 			as: 'textarea',
 			className: 'ee-input-base ee-textarea',
-			// pass or own onKeyDown handler for a11y
+			// pass our own onKeyDown handler for a11y
 			onKeyDown: (e) => {
 				if (e.keyCode === ENTER) {
 					const cursorPosition = (e.target as HTMLInputElement).selectionStart;
