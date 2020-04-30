@@ -2,9 +2,10 @@
 
 namespace EventEspresso\core\domain\services\graphql\types;
 
+use EventEspresso\core\domain\services\admin\events\editor\EventEntityRelations;
+use EventEspresso\core\services\loaders\LoaderFactory;
 use Exception;
 use InvalidArgumentException;
-use ReflectionException;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
 use EventEspresso\core\exceptions\UnexpectedEntityException;
@@ -12,7 +13,6 @@ use EventEspresso\core\exceptions\UnexpectedEntityException;
 use EventEspresso\core\services\graphql\fields\GraphQLFieldInterface;
 use EventEspresso\core\services\graphql\types\TypeBase;
 use EventEspresso\core\services\graphql\fields\GraphQLOutputField;
-use EventEspresso\core\domain\services\admin\events\editor\AdvancedEditorData;
 use GraphQL\Error\UserError;
 use WPGraphQL\AppContext;
 use GraphQL\Type\Definition\ResolveInfo;
@@ -22,7 +22,7 @@ use GraphQL\Type\Definition\ResolveInfo;
  * Description
  *
  * @package EventEspresso\core\domain\services\graphql\types
- * @author  Brent Christensen
+ * @author  Manzoor Wani
  * @since   $VID:$
  */
 class RootQuery extends TypeBase
@@ -74,7 +74,6 @@ class RootQuery extends TypeBase
      * @throws InvalidArgumentException
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
-     * @throws ReflectionException
      * @throws UserError
      * @throws UnexpectedEntityException
      * @since $VID:$
@@ -92,7 +91,10 @@ class RootQuery extends TypeBase
         }
 
         $eventId = absint($args['eventId']);
-
-        return json_encode(AdvancedEditorData::getRelationalData($eventId));
+        /** @var EventEntityRelations $event_entity_relations */
+        $event_entity_relations = LoaderFactory::getLoader()->getShared(
+            'EventEspresso\core\domain\services\admin\events\editor\EventEntityRelations'
+        );
+        return json_encode($event_entity_relations->getData($eventId));
     }
 }
