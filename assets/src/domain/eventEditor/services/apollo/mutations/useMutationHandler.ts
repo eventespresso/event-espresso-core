@@ -12,16 +12,19 @@ const useMutationHandler = (): MutationHandlerCb => {
 	const ticketMutationHandler = useTicketMutationHandler();
 	const priceMutationHandler = usePriceMutationHandler();
 
-	return useCallback((typeName: TypeName): MutationHandler => {
-		switch (typeName) {
-			case TypeName.Datetime:
-				return datetimeMutationHandler;
-			case TypeName.Ticket:
-				return ticketMutationHandler;
-			case TypeName.Price:
-				return priceMutationHandler;
-		}
-	}, []);
+	return useCallback(
+		(typeName: TypeName): MutationHandler => {
+			switch (typeName) {
+				case TypeName.Datetime:
+					return datetimeMutationHandler;
+				case TypeName.Ticket:
+					return ticketMutationHandler;
+				case TypeName.Price:
+					return priceMutationHandler;
+			}
+		},
+		[datetimeMutationHandler, ticketMutationHandler, priceMutationHandler]
+	);
 };
 
 export default useMutationHandler;
