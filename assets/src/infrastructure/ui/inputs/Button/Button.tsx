@@ -11,7 +11,7 @@ const Button = React.forwardRef<ButtonType, ButtonProps>(({ children, buttonText
 	const text = children || buttonText;
 
 	return (
-		<ChakraButton {...props} className={className} leftIcon={icon} ref={ref} variant='unstyled'>
+		<ChakraButton {...props} className={className} leftIcon={icon} ref={ref}>
 			{text}
 		</ChakraButton>
 	);

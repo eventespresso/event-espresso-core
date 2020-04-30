@@ -3,7 +3,7 @@ import classNames from 'classnames';
 
 import { More } from '@appDisplay/icons';
 import { DropdownToggleProps } from '../types';
-import { IconButton } from '@infraUI/inputs';
+import { IconButton } from '@application/ui/input';
 import { MenuToggle } from '@infraUI/layout/menu';
 import { Tooltip } from '@infraUI/display';
 
@@ -21,7 +21,6 @@ const DropdownToggle = React.forwardRef<typeof MenuToggle, DropdownToggleProps>(
 					as={IconButton}
 					// @ts-ignore
 					icon={More}
-					variant='unstyled'
 					{...toggleProps}
 					className={className}
 					ref={ref}

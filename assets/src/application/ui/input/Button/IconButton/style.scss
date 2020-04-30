@@ -3,10 +3,23 @@
  * © 2020 Event Espresso
  * ------------------------------------------------------------------------- */
 
+.btn-focus {
+	border-color: var(--ee-color-primary);
+	box-shadow: 0 0 0 1px var(--ee-color-primary);
+}
+
+.btn-hover {
+	border-color: var(--ee-color-primary-low-contrast);
+	color: var(--ee-color-primary-high-contrast);
+	box-shadow: 0 0 0 1px var(--ee-color-primary-low-contrast);
+}
+
 .ee-btn-base {
 	&.ee-icon-button {
 		background: none;
 		border-color: var(--ee-background-color);
+		border-style: solid;
+		border-width: 2px;
 		box-shadow: none;
 		color: var(--ee-default-text-color);
 		height: calc(var(--ee-icon-button-size));
@@ -18,11 +31,22 @@
 			display: inline-block;
 			flex: 0 0 auto;
 		}
+		&--active {
+			border-color: var(--ee-color-primary-low-contrast);
+			path {
+				fill: var(--ee-text-on-primary);
+			}
+		}
+
+		&:focus {
+			@extend .btn-focus;
+		}
+
 		&:hover {
 			background: var(--ee-background-color) !important;
 			box-shadow: none !important;
 			color: var(--ee-color-primary) !important;
-			border: 1px solid var(--ee-border-color) !important;
+			@extend .btn-hover;
 		}
 	}
 }

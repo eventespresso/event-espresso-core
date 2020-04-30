@@ -19,10 +19,15 @@ const withTooltip = <P extends withTooltipProps>(WrappedComponent: React.Compone
 		...props
 	}) => {
 		const ariaLabel = isEmpty(buttonText as string) && !isEmpty(tooltip) ? tooltip : null;
+		const noTooltip = isEmpty(buttonText as string) && isEmpty(tooltip);
 		const title = tooltip || (buttonText as string);
 
 		let toolTipped: React.ReactElement;
 		let tooltipProps: TooltipProps;
+
+		if (noTooltip) {
+			return <WrappedComponent {...(props as P)} ref={forwardedRef} />;
+		}
 
 		if (showTooltipOnMobile) {
 			const className = classNames({

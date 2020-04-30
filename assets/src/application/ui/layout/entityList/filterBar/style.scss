@@ -5,7 +5,7 @@
 
 @import '../../../styles/mixins/breakpoints.scss';
 
-$filter-btn: '.ee-button.ee-filter-bar__btn';
+$filter-btn: '.ee-filter-bar__btn';
 
 .ee-filter-bar {
 	background: var(--ee-background-color);
@@ -33,16 +33,6 @@ $filter-btn: '.ee-button.ee-filter-bar__btn';
 
 		@include max782px {
 			padding: 0 0 var(--ee-padding-small);
-		}
-
-		#{$filter-btn} {
-			&--active {
-				background: var(--ee-color-primary);
-				color: var(--ee-text-on-primary);
-				path {
-					fill: var(--ee-text-on-primary);
-				}
-			}
 		}
 	}
 
@@ -76,19 +66,6 @@ $filter-btn: '.ee-button.ee-filter-bar__btn';
 			transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
 			vertical-align: middle;
 			width: 100%;
-		}
-
-		.ant-input {
-			padding: var(--ee-padding-micro) var(--ee-padding-tiny);
-
-			&:hover,
-			&:focus {
-				border-color: unset;
-				border-right-width: 2px !important;
-				border: 2px solid var(--ee-color-primary-low-contrast);
-				box-shadow: none;
-				outline: none;
-			}
 		}
 
 		.ant-select,
@@ -179,11 +156,6 @@ $filter-btn: '.ee-button.ee-filter-bar__btn';
 			border: 2px solid var(--ee-color-grey-10);
 			box-shadow: none;
 			margin: 0;
-			&:focus,
-			&:hover {
-				border: 2px solid var(--ee-color-primary-low-contrast);
-				box-shadow: 0 0 0 1px var(--ee-color-primary-low-contrast);
-			}
 			&--active {
 				&#{$filter-btn} {
 					border-color: var(--ee-color-primary-low-contrast);

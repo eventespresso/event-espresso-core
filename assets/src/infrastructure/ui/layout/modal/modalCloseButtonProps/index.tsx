@@ -6,9 +6,8 @@ import { Close } from '@appDisplay/icons';
 import './styles.scss';
 
 const modalCloseButtonProps: ButtonProps = {
-	className: 'ee-confirm-close',
+	className: 'ee-icon-button ee-confirm-close',
 	icon: Close,
-	variant: 'unstyled',
 };
 
 export default modalCloseButtonProps;

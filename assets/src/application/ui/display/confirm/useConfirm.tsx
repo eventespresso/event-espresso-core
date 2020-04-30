@@ -2,10 +2,9 @@ import React, { useCallback } from 'react';
 import { useDisclosure } from '@chakra-ui/core';
 import { __ } from '@wordpress/i18n';
 
-import { Button } from '@application/ui/input';
 import { AlertDialog } from '@infraUI/display';
-import { Button as ButtonAdapter } from '@infraUI/inputs';
-
+import { Button } from '@application/ui/input';
+import { ButtonType } from '@appInputs/Button';
 import { ConfirmProps } from './types';
 
 const useConfirm: React.FC<ConfirmProps> = ({ buttonProps, onConfirm, title }) => {
@@ -23,11 +22,13 @@ const useConfirm: React.FC<ConfirmProps> = ({ buttonProps, onConfirm, title }) =
 			<Button {...buttonProps} onClick={onOpen} />
 
 			<AlertDialog
-				cancelButton={<ButtonAdapter buttonText={__('No')} ref={cancelRef} onClick={onClose} />}
+				cancelButton={<Button buttonText={__('No')} ref={cancelRef} onClick={onClose} />}
 				header={buttonProps?.tooltip}
 				isOpen={isOpen}
 				leastDestructiveRef={cancelRef}
-				okButton={<ButtonAdapter buttonText={__('Yes')} variantColor='red' onClick={onClickHandler} ml={3} />}
+				okButton={
+					<Button buttonText={__('Yes')} buttonType={ButtonType.ACCENT} onClick={onClickHandler} ml={3} />
+				}
 				onClose={onClose}
 				title={title}
 			/>
