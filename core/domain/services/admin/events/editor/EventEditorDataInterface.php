@@ -2,7 +2,6 @@
 
 namespace EventEspresso\core\domain\services\admin\events\editor;
 
-
 /**
  * Class EventEditorData
  * Description

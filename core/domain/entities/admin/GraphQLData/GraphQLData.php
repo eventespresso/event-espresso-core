@@ -2,6 +2,8 @@
 
 namespace EventEspresso\core\domain\entities\admin\GraphQLData;
 
+use Exception;
+
 /**
  * Class GraphQLData
  * Description
@@ -32,7 +34,7 @@ abstract class GraphQLData implements GraphQLDataInterface
                 return $response['data'];
             }
             return null;
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             // do something with the errors thrown
             return null;
         }

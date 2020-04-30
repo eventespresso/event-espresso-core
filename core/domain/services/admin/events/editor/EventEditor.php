@@ -2,7 +2,6 @@
 
 namespace EventEspresso\core\domain\services\admin\events\editor;
 
-
 use DomainException;
 use EE_Admin_Config;
 use EE_Error;
