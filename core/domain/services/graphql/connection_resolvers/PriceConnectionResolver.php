@@ -91,6 +91,8 @@ class PriceConnectionResolver extends AbstractConnectionResolver
         // Avoid multiple entries by join.
         $query_args['group_by'] = 'PRC_ID';
 
+        $query_args['default_where_conditions'] = 'minimum';
+
         /**
          * Collect the input_fields and sanitize them to prepare them for sending to the Query
          */

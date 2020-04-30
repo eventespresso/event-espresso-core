@@ -172,6 +172,10 @@ var eeEditorData={$data};
     {
         $datetimes = $this->getGraphQLDatetimes($eventId);
 
+        // Avoid undefined variable warning in PHP >= 7.3
+        $tickets = null;
+        $prices  = null;
+
         if (empty($datetimes['nodes']) || (isset($_REQUEST['action']) && $_REQUEST['action'] === 'create_new')) {
             $this->addDefaultEntities($eventId);
             $datetimes = $this->getGraphQLDatetimes($eventId);

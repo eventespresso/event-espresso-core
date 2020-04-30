@@ -34,21 +34,12 @@ const useInitialState = ({ ticketId }: BaseProps): StateInitializer => {
 
 	// get all related prices
 	const unSortedPrices = useTicketPrices(ticketId);
-
 	//sort'em
 	const sortedPrices = sortByPriceOrderIdAsc(unSortedPrices);
 
-	const getPrices = useCallback(() => {
-		const hasBasePrice = sortedPrices.filter(isBasePrice).length;
-
-		if (hasBasePrice) return sortedPrices;
-
-		return [basePrice, ...sortedPrices];
-	}, [basePrice, sortedPrices]);
-
 	// convert to TPC price objects by adding
 	// "priceType" and "priceTypeOrder"
-	const prices = getPrices().map<TpcPriceModifier>((price) => {
+	let prices = sortedPrices.map<TpcPriceModifier>((price) => {
 		const priceTypes = getRelations({
 			entity: 'prices',
 			entityId: price.id,
@@ -58,6 +49,14 @@ const useInitialState = ({ ticketId }: BaseProps): StateInitializer => {
 		const priceTypeId = priceTypes[0];
 		return { ...price, priceType: priceTypeId, priceTypeOrder: priceTypeIdOrder[priceTypeId] };
 	});
+
+	const hasBasePrice = prices.filter(isBasePrice).length;
+	// if there is no basePrice
+	if (!hasBasePrice) {
+		// add the base price with `isNew` flag to make sure it's created on submit
+		// `order` as 1 to make sure it remains at the top
+		prices = [{ ...basePrice, order: 1, isNew: true }, ...prices];
+	}
 
 	return useCallback<StateInitializer>(
 		(initialState) => {
