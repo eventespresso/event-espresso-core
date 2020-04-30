@@ -16,6 +16,7 @@ use EEM_Event;
 use EEM_Ticket;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
+use EventEspresso\core\exceptions\ExceptionStackTraceDisplay;
 use InvalidArgumentException;
 use WP_Post;
 
