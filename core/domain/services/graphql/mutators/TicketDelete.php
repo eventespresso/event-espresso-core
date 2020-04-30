@@ -4,8 +4,13 @@ namespace EventEspresso\core\domain\services\graphql\mutators;
 
 use EE_Ticket;
 use EEM_Ticket;
-use EventEspresso\core\domain\services\graphql\types\Ticket;
+use EE_Error;
+use EventEspresso\core\exceptions\InvalidDataTypeException;
+use EventEspresso\core\exceptions\InvalidInterfaceException;
+use InvalidArgumentException;
+use ReflectionException;
 use Exception;
+use EventEspresso\core\domain\services\graphql\types\Ticket;
 use GraphQL\Type\Definition\ResolveInfo;
 use WPGraphQL\AppContext;
 
@@ -36,12 +41,7 @@ class TicketDelete extends EntityMutator
 
                 // Delete the entity
                 if (! empty($input['deletePermanently'])) {
-                    // Remove related prices for the ticket
-                    $entity->delete_related_permanently('Price');
-                    // Remove relation with datetimes
-                    $entity->_remove_relations('Datetime');
-                    // Now delete the ticket permanently
-                    $result = $entity->delete_permanently();
+                    $result = TicketDelete::deleteTicketAndRelations($entity);
                 } else {
                     // trash the ticket
                     $result = $entity->delete();
@@ -61,5 +61,28 @@ class TicketDelete extends EntityMutator
                 'deleted' => $entity,
             ];
         };
+    }
+
+    /**
+     * Deletes a ticket permanently along with its relations.
+     *
+     * @param EE_Ticket $entity
+     * @return bool | int
+     * @throws ReflectionException
+     * @throws InvalidArgumentException
+     * @throws InvalidInterfaceException
+     * @throws InvalidDataTypeException
+     * @throws EE_Error
+     */
+    public static function deleteTicketAndRelations($entity)
+    {
+        // Remove related prices for the ticket
+        $entity->delete_related_permanently('Price');
+        // Remove relation with datetimes
+        $entity->_remove_relations('Datetime');
+        // Now delete the ticket permanently
+        $result = $entity->delete_permanently();
+
+        return $result;
     }
 }

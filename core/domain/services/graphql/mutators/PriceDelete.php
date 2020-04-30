@@ -4,8 +4,13 @@ namespace EventEspresso\core\domain\services\graphql\mutators;
 
 use EE_Price;
 use EEM_Price;
-use EventEspresso\core\domain\services\graphql\types\Price;
+use EE_Error;
+use EventEspresso\core\exceptions\InvalidDataTypeException;
+use EventEspresso\core\exceptions\InvalidInterfaceException;
+use InvalidArgumentException;
+use ReflectionException;
 use Exception;
+use EventEspresso\core\domain\services\graphql\types\Price;
 use GraphQL\Type\Definition\ResolveInfo;
 use WPGraphQL\AppContext;
 
@@ -36,10 +41,7 @@ class PriceDelete extends EntityMutator
 
                 // Delete the entity
                 if (! empty($input['deletePermanently'])) {
-                    // Remove relation with ticket
-                    $entity->_remove_relations('Ticket');
-                    // Now delete the price permanently
-                    $result = $entity->delete_permanently();
+                    $result = PriceDelete::deletePriceAndRelations($entity);
                 } else {
                     // trash the price
                     $result = $entity->delete();
@@ -59,5 +61,26 @@ class PriceDelete extends EntityMutator
                 'deleted' => $entity,
             ];
         };
+    }
+
+    /**
+     * Deletes a price permanently along with its relations.
+     *
+     * @param EE_Price $entity
+     * @return bool | int
+     * @throws ReflectionException
+     * @throws InvalidArgumentException
+     * @throws InvalidInterfaceException
+     * @throws InvalidDataTypeException
+     * @throws EE_Error
+     */
+    public static function deletePriceAndRelations($entity)
+    {
+        // Remove relation with ticket
+        $entity->_remove_relations('Ticket');
+        // Now delete the price permanently
+        $result = $entity->delete_permanently();
+
+        return $result;
     }
 }
