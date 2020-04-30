@@ -80,7 +80,7 @@ export interface MutationHandlers {
 
 export interface MutatorGeneratedObject {
 	onUpdate?: OnUpdateFn;
-	optimisticResponse: any;
+	optimisticResponse?: any;
 	variables: OperationVariables;
 }
 

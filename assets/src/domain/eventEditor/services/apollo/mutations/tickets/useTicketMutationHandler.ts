@@ -1,3 +1,4 @@
+import { useCallback } from 'react';
 import { pathOr } from 'ramda';
 
 import useMutationVariables from './useMutationVariables';
@@ -23,42 +24,45 @@ const useTicketMutationHandler = (): MutationHandler => {
 	const getMutationVariables = useMutationVariables();
 	const getOptimisticResponse = useOptimisticResponse();
 
-	const mutator: MutationHandler = (mutationType, input) => {
-		const variables = getMutationVariables(mutationType, input);
-		const optimisticResponse = getOptimisticResponse(mutationType, input);
+	const mutator = useCallback<MutationHandler>(
+		(mutationType, input) => {
+			const variables = getMutationVariables(mutationType, input);
+			const optimisticResponse = getOptimisticResponse(mutationType, input);
 
-		const onUpdate = ({ proxy, entity }: OnUpdateFnOptions<Ticket>): void => {
-			// extract prices data to avoid
-			// it going to tickets cache
-			const { prices, ...ticket } = entity;
+			const onUpdate = ({ proxy, entity }: OnUpdateFnOptions<Ticket>): void => {
+				// extract prices data to avoid
+				// it going to tickets cache
+				const { prices, ...ticket } = entity;
 
-			// Read the existing data from cache.
-			let data: TicketsList;
-			try {
-				data = proxy.readQuery<TicketsList>(options);
-			} catch (error) {
-				data = null;
-			}
-			const tickets = pathOr<TicketEdge>(DEFAULT_LIST_DATA, ['espressoTickets'], data);
-			const datetimeIds = pathOr<Array<EntityId>>([], ['datetimes'], input);
+				// Read the existing data from cache.
+				let data: TicketsList;
+				try {
+					data = proxy.readQuery<TicketsList>(options);
+				} catch (error) {
+					data = null;
+				}
+				const tickets = pathOr<TicketEdge>(DEFAULT_LIST_DATA, ['espressoTickets'], data);
+				const datetimeIds = pathOr<Array<EntityId>>([], ['datetimes'], input);
 
-			const priceIds = getGuids(pathOr<Price[]>([], ['nodes'], prices));
+				const priceIds = getGuids(pathOr<Price[]>([], ['nodes'], prices));
 
-			switch (mutationType) {
-				case MutationType.Create:
-					onCreateTicket({ proxy, tickets, ticket, datetimeIds, prices });
-					break;
-				case MutationType.Update:
-					onUpdateTicket({ proxy, tickets, ticket, datetimeIds, priceIds });
-					break;
-				case MutationType.Delete:
-					onDeleteTicket({ proxy, tickets, ticket, deletePermanently: input?.deletePermanently });
-					break;
-			}
-		};
+				switch (mutationType) {
+					case MutationType.Create:
+						onCreateTicket({ proxy, tickets, ticket, datetimeIds, prices });
+						break;
+					case MutationType.Update:
+						onUpdateTicket({ proxy, tickets, ticket, datetimeIds, priceIds });
+						break;
+					case MutationType.Delete:
+						onDeleteTicket({ proxy, tickets, ticket, deletePermanently: input?.deletePermanently });
+						break;
+				}
+			};
 
-		return { variables, optimisticResponse, onUpdate };
-	};
+			return { variables, optimisticResponse, onUpdate };
+		},
+		[getMutationVariables, getOptimisticResponse, onCreateTicket, onDeleteTicket, onUpdateTicket, options]
+	);
 
 	return mutator;
 };
