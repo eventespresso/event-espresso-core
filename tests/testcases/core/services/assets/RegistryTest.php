@@ -6,6 +6,7 @@ use EventEspresso\core\domain\values\FullyQualifiedName;
 use EventEspresso\core\domain\values\Version;
 use EventEspresso\core\services\assets\AssetCollection;
 use EventEspresso\core\services\assets\I18nRegistry;
+use EventEspresso\core\services\assets\JedLocaleData;
 use EventEspresso\core\services\assets\Registry;
 
 /**
@@ -49,7 +50,7 @@ class RegistryTest extends EE_UnitTestCase
         );
         $this->registry = new Registry(
             new AssetCollection(),
-            new i18nRegistry($domain)
+            new i18nRegistry($domain, new JedLocaleData())
         );
         parent::setUp();
     }

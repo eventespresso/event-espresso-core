@@ -8,6 +8,7 @@ use EventEspresso\core\exceptions\InvalidClassException;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidFilePathException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
+use EventEspresso\core\services\assets\JedLocaleData;
 use EventEspresso\tests\mocks\core\services\assets\I18nRegistryMock;
 
 class I18nRegistryTest extends EE_UnitTestCase
@@ -46,7 +47,11 @@ class I18nRegistryTest extends EE_UnitTestCase
                 'Skip'
             ),
         );
-        $this->i18n = new I18nRegistryMock($domain, $test_map);
+        $this->i18n = new I18nRegistryMock(
+            $domain,
+            new JedLocaleData(),
+            $test_map
+        );
         parent::setUp();
     }
 
