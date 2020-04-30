@@ -201,7 +201,40 @@ class DisplayTicketSelector
         remove_filter('FHEE__EE_Ticket_Selector__display_ticket_selector_submit', '__return_true');
         // poke and prod incoming event till it tells us what it is
         if (! $this->setEvent($event)) {
-            return false;
+            // If this is not an iFrame request, simply return false.
+            if (! $this->isIframe()) {
+                return false;
+            }
+            // This is an iFrame so return an error.
+            // First, pull the event ID set on the request.
+            $event_id = EE_Registry::instance()->REQ->get('event', 0);
+            // Display stack trace if WP_DEBUG is enabled.
+            if (WP_DEBUG === true && current_user_can('edit_pages')) {
+                new ExceptionStackTraceDisplay(
+                    new InvalidArgumentException(
+                        sprintf(
+                            esc_html__(
+                                'A valid Event ID is required to display the ticket selector.%3$sAn Event with an ID of "%1$s" could not be found.%3$sPlease verify that the embed code added to this post\'s content includes an "%2$s" argument and that its value corresponds to a valid Event ID.',
+                                'event_espresso'
+                            ),
+                            $event_id,
+                            'event',
+                            '<br />'
+                        )
+                    )
+                );
+                return '';
+            }
+            // If WP_DEBUG is not enabled, display a message stating the event could not be found.
+            return EEH_HTML::p(
+                sprintf(
+                    esc_html__(
+                        'An Event with an ID of "%s" could not be found. Please contact the event administrator for assistance.',
+                        'event_espresso'
+                    ),
+                    $event_id
+                )
+            );
         }
         // begin gathering template arguments by getting event status
         $template_args = array('event_status' => $this->event->get_active_status());
