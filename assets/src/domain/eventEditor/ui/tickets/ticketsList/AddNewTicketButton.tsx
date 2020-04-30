@@ -13,7 +13,7 @@ const AddNewTicketButton: React.FC = () => {
 			editorId: 'addTicket',
 		});
 	};
-	return <Button buttonText={__('Add New Ticket')} icon={Calendar} onClick={onClick} variant='outline' />;
+	return <Button buttonText={__('Add New Ticket')} icon={Calendar} onClick={onClick} />;
 };
 
 export default AddNewTicketButton;

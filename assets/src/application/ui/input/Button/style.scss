@@ -7,30 +7,41 @@
 	--ee-icon-button-size: 36px;
 }
 
-.ee-btn-base.ee-btn-base {
+.btn-focus {
+	border-color: var(--ee-color-primary);
+	box-shadow: 0 0 0 1px var(--ee-color-primary);
+}
+
+.btn-hover {
+	border-color: var(--ee-color-primary-low-contrast);
+	color: var(--ee-color-primary-high-contrast);
+	box-shadow: 0 0 0 1px var(--ee-color-primary-low-contrast);
+}
+
+.ee-btn-base {
 	border-style: solid;
-	border-width: 1px;
+	border-top-width: 2px;
+	border-width: 2px;
+	border-width: 2px;
+	border-width: 2px;
 	cursor: pointer;
 	display: inline-flex;
 
-	&:hover {
-		border-color: var(--ee-color-primary-low-contrast);
-		color: var(--ee-color-primary-high-contrast);
-		box-shadow: 0 0 0 1px var(--ee-color-primary-low-contrast);
-	}
-
 	&:focus {
-		border-color: var(--ee-color-primary);
-		box-shadow: 0 0 0 1px var(--ee-color-primary);
+		@extend .btn-focus;
 	}
 
-	&.ee-btn.ee-btn {
+	&:hover {
+		@extend .btn-hover;
+	}
+
+	&.ee-btn {
 		background: var(--ee-color-grey-15);
 		border-color: var(--ee-color-grey-14) var(--ee-color-grey-14) var(--ee-color-grey-15);
 		border-radius: var(--ee-border-radius-small);
-		border-bottom: none;
 		box-shadow: var(--ee-box-shadow-tiny);
-		color: var(--ee-text-on-grey-14) !important;
+		color: var(--ee-text-on-grey-14);
+		display: inline-flex;
 		font-family: 'Segoe UI', Candara, 'Bitstream Vera Sans', 'DejaVu Sans', 'Bitstream Vera Sans', 'Trebuchet MS',
 			Verdana, 'Verdana Ref', sans-serif;
 		font-size: var(--ee-font-size-default);
@@ -46,33 +57,16 @@
 		transition: border-color 0.1s ease 0.1s, color 0.1s ease 0.1s !important;
 		vertical-align: middle;
 
-		&:active,
-		&:not([disabled]):active,
-		&:focus,
-		&:visited {
-			// border-radius: var(--ee-border-radius-small);
-			// border-style: solid;
-			// border-width: 1px;
-			// box-shadow: var(--ee-box-shadow-tiny);
-			// cursor: pointer;
-			// font-family: 'Segoe UI', Candara, 'Bitstream Vera Sans', 'DejaVu Sans', 'Bitstream Vera Sans',
-			// 	'Trebuchet MS', Verdana, 'Verdana Ref', sans-serif;
-			// font-size: var(--ee-font-size-default);
-			// font-weight: bold;
-			// line-height: var(--ee-font-size-default);
-			// // margin: 0 0 var(--ee-margin-smaller); Setting margins on these states is a bit confusing, needs discussion.
-			// outline: none !important;
-			// position: relative;
-			// text-decoration: none;
-			// text-align: center;
-			// text-shadow: var(--ee-text-shadow-inset-light);
-			// top: 0;
-			// transition: border-color 0.1s ease 0.1s, color 0.1s ease 0.1s !important;
-			// vertical-align: middle;
-		}
-
 		&:active {
 			box-shadow: none;
+		}
+
+		&:focus {
+			@extend .btn-focus;
+		}
+
+		&:hover {
+			@extend .btn-hover;
 		}
 
 		&-icon-only {
