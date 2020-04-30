@@ -611,6 +611,7 @@ class EE_Dependency_Map
             ),
             'EventEspresso\core\services\assets\I18nRegistry'                                                             => array(
                 'EventEspresso\core\domain\Domain' => EE_Dependency_Map::load_from_cache,
+                'EventEspresso\core\services\assets\JedLocaleData' => EE_Dependency_Map::load_from_cache,
                 array(),
             ),
             'EventEspresso\core\services\assets\Registry'                                                                 => array(
@@ -898,12 +899,16 @@ class EE_Dependency_Map
             'EventEspresso\core\domain\services\admin\events\default_settings\AdvancedEditorAdminFormSection'  => [
                 'EE_Admin_Config' => EE_Dependency_Map::load_from_cache
             ],
-            'EventEspresso\core\domain\services\admin\events\editor\AdvancedEditorData'  => [
-                'EE_Event'        => EE_Dependency_Map::not_registered,
+            'EventEspresso\core\domain\services\admin\events\editor\EventEditor' => [
                 'EE_Admin_Config' => EE_Dependency_Map::load_from_cache,
-                'EEM_Datetime'    => EE_Dependency_Map::load_from_cache,
-                'EEM_Price'       => EE_Dependency_Map::load_from_cache,
-                'EEM_Ticket'      => EE_Dependency_Map::load_from_cache,
+                'EE_Event'        => EE_Dependency_Map::not_registered,
+                'EventEspresso\core\domain\entities\admin\GraphQLData\CurrentUser' =>
+                    EE_Dependency_Map::not_registered,
+                'EventEspresso\core\domain\services\admin\events\editor\EventEditorGraphQLData' =>
+                    EE_Dependency_Map::load_from_cache,
+                'EventEspresso\core\domain\entities\admin\GraphQLData\GeneralSettings' =>
+                    EE_Dependency_Map::load_from_cache,
+                'EventEspresso\core\services\assets\JedLocaleData' => EE_Dependency_Map::load_from_cache,
             ],
             'EventEspresso\core\services\graphql\GraphQLManager' => [
                 'EventEspresso\core\services\graphql\TypesManager'  => EE_Dependency_Map::load_from_cache,
@@ -979,6 +984,26 @@ class EE_Dependency_Map
             ],
             'EventEspresso\core\domain\services\graphql\connections\EventVenuesConnection' => [
                 'EEM_Venue' => EE_Dependency_Map::load_from_cache,
+            ],
+            'EventEspresso\core\domain\services\admin\events\editor\EventEditorGraphQLData' => [
+                'EventEspresso\core\domain\entities\admin\GraphQLData\Datetimes' => EE_Dependency_Map::load_from_cache,
+                'EventEspresso\core\domain\entities\admin\GraphQLData\Prices' => EE_Dependency_Map::load_from_cache,
+                'EventEspresso\core\domain\entities\admin\GraphQLData\PriceTypes' => EE_Dependency_Map::load_from_cache,
+                'EventEspresso\core\domain\entities\admin\GraphQLData\Tickets' => EE_Dependency_Map::load_from_cache,
+                'EventEspresso\core\domain\services\admin\events\editor\NewEventDefaultEntities' => EE_Dependency_Map::load_from_cache,
+                'EventEspresso\core\domain\services\admin\events\editor\EventEntityRelations' => EE_Dependency_Map::load_from_cache,
+            ],
+            'EventEspresso\core\domain\services\admin\events\editor\EventEntityRelations' => [
+                'EEM_Datetime' => EE_Dependency_Map::load_from_cache,
+                'EEM_Price' => EE_Dependency_Map::load_from_cache,
+                'EEM_Price_Type' => EE_Dependency_Map::load_from_cache,
+                'EEM_Ticket' => EE_Dependency_Map::load_from_cache,
+            ],
+            'EventEspresso\core\domain\services\admin\events\editor\NewEventDefaultEntities' => [
+                'EEM_Datetime' => EE_Dependency_Map::load_from_cache,
+                'EEM_Price' => EE_Dependency_Map::load_from_cache,
+                'EEM_Price_Type' => EE_Dependency_Map::load_from_cache,
+                'EEM_Ticket' => EE_Dependency_Map::load_from_cache,
             ],
         );
     }
