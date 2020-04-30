@@ -1,7 +1,8 @@
 import React, { useCallback, useMemo } from 'react';
 import { __ } from '@wordpress/i18n';
 
-import { ButtonProps } from '@infraUI/inputs';
+import { ButtonProps, ButtonType } from '@appInputs/Button';
+
 import { ConfirmClose } from '@appDisplay/confirm';
 import { ModalWithAlert } from '@appLayout/modal';
 import { modalCloseButtonProps } from '@infraUI/layout/modal';
@@ -36,22 +37,23 @@ const RenderModalForm: React.FC<RenderModalFormProps> = ({
 
 	const submitButtonProps: ButtonProps = useMemo(
 		() => ({
-			isDisabled: submitDisabled,
-			type: 'submit',
-			isLoading: submitting,
-			icon: SaveOutlined,
-			onClick: onSubmit,
 			buttonText: __('Submit'),
+			buttonType: ButtonType.PRIMARY,
+			icon: SaveOutlined,
+			isDisabled: submitDisabled,
+			isLoading: submitting,
+			onClick: onSubmit,
+			type: 'submit',
 		}),
 		[submitDisabled, submitting, onSubmit]
 	);
 
 	const resetButtonProps: ButtonProps = useMemo(
 		() => ({
-			isDisabled: submitting || pristine,
-			type: 'reset',
-			onClick: onReset,
 			buttonText: __('Reset'),
+			isDisabled: submitting || pristine,
+			onClick: onReset,
+			type: 'reset',
 		}),
 		[submitting, pristine, onReset]
 	);
