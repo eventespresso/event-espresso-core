@@ -2,7 +2,6 @@
 
 namespace EventEspresso\core\domain\entities\admin\GraphQLData;
 
-
 /**
  * Class GraphQLDataInterface
  * Description
