@@ -61,7 +61,7 @@ const useTicketMutationHandler = (): MutationHandler => {
 
 			return { variables, optimisticResponse, onUpdate };
 		},
-		[options.variables]
+		[getMutationVariables, getOptimisticResponse, onCreateTicket, onDeleteTicket, onUpdateTicket, options]
 	);
 
 	return mutator;

@@ -73,7 +73,7 @@ const useMutationOptions = <Name extends TypeName>(typeName: Name): MutationOpti
 				...options,
 			};
 		},
-		[getMutationHandler]
+		[getMutationHandler, typeName]
 	);
 };
 

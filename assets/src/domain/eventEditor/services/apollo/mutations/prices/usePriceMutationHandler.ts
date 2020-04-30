@@ -65,7 +65,7 @@ const usePriceMutationHandler = (): MutationHandler => {
 
 			return { variables, onUpdate };
 		},
-		[options.variables]
+		[onCreatePrice, onDeletePrice, onUpdatePrice, options]
 	);
 
 	return mutator;

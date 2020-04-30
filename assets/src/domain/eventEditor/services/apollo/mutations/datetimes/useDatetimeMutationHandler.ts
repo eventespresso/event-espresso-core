@@ -54,7 +54,7 @@ const useDatetimeMutationHandler = (): MutationHandler => {
 
 			return { variables, optimisticResponse, onUpdate };
 		},
-		[options.variables]
+		[getMutationVariables, getOptimisticResponse, onCreateDatetime, onDeleteDatetime, onUpdateDatetime, options]
 	);
 
 	return mutationHandler;
