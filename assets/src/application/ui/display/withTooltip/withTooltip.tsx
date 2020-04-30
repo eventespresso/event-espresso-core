@@ -60,8 +60,6 @@ const withTooltip = <P extends withTooltipProps>(WrappedComponent: React.Compone
 			);
 		}
 
-		console.log('title', title);
-
 		return (
 			<Tooltip {...tooltipProps} title={title}>
 				{toolTipped}

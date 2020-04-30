@@ -22,7 +22,6 @@ const TableViewFilterButton: React.FC<TableViewFilterButtonProps> = ({ listId, s
 			tooltip={__('table view')}
 			labelClassName={'ee-filter-bar__btn-wrap'}
 			labelPosition={LabelPosition.BOTTOM_CENTER}
-			variant='outline'
 			{...rest}
 		/>
 	);

@@ -1,6 +1,6 @@
 .ee-editor-details-reg-url-link {
 	align-items: center;
-	border: 1px solid transparent;
+	border-color: transparent;
 	border-radius: var(--ee-border-radius-small);
 	box-shadow: none;
 	-webkit-box-sizing: border-box;
@@ -16,6 +16,10 @@
 	outline-style: none;
 	text-decoration: none !important;
 	width: var(--ee-icon-button-size);
+
+	&.ee-btn-base {
+		margin-bottom: 0;
+	}
 
 	path {
 		fill: var(--ee-default-text-color);
@@ -43,14 +47,5 @@
 		path {
 			fill: var(--ee-color-primary-low-contrast);
 		}
-	}
-
-	&:hover {
-		border: 1px solid var(--ee-border-color) !important;
-	}
-
-	&:focus {
-		border: 1px solid var(--ee-color-primary-low-contrast);
-		box-shadow: none;
 	}
 }
