@@ -2,7 +2,7 @@ import React, { forwardRef } from 'react';
 
 import { Tooltip } from '@infraUI/display';
 import { GlobalOutlined } from '@appDisplay/icons/svgs';
-import { IconButton } from '@infraUI/inputs';
+import { IconButton } from '@application/ui/input';
 
 interface Props {
 	label: string;
@@ -14,10 +14,11 @@ const Trigger = forwardRef<typeof IconButton, Props>(({ label, onClick }, ref) =
 		<Tooltip onClick={onClick} title={label}>
 			<IconButton
 				aria-label={label}
+				borderless
+				color='white'
 				icon={() => <GlobalOutlined />}
 				onClick={onClick}
 				ref={ref}
-				variant='unstyled'
 			/>
 		</Tooltip>
 	);
