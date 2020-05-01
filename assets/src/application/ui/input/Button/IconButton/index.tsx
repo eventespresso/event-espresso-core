@@ -11,6 +11,7 @@ type BtnType = React.ComponentType<IconButtonProps>;
 
 const IconButton = React.forwardRef<typeof IconButtonAdapter, IconButtonProps>(
 	({ borderless, color, icon, onClick, ...props }, ref) => {
+		const ariaLabel = props['aria-label'] || props.label;
 		const className = classNames(
 			'ee-btn-base ee-icon-button',
 			color && `ee-icon-button-color--${color}`,
@@ -22,7 +23,7 @@ const IconButton = React.forwardRef<typeof IconButtonAdapter, IconButtonProps>(
 
 		return (
 			<IconButtonAdapter
-				aria-label={props['aria-label']}
+				aria-label={ariaLabel}
 				className={className}
 				icon={icon}
 				onClick={onClick}
