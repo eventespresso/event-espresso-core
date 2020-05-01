@@ -13,6 +13,7 @@ import { getPropsAreEqual } from '@appServices/utilities';
 const ToggleLegendButton: React.FC<ToggleLegendButtonProps> = ({ listId, showLegend, toggleLegend, ...rest }) => {
 	const className = classNames('ee-filter-bar__btn', { 'ee-filter-bar__btn--active': showLegend });
 	const iconProps = useSpring({
+		display: 'inline-flex',
 		transform: `rotate(${showLegend ? 0 : 180}deg)`,
 	});
 	const icon = () => (

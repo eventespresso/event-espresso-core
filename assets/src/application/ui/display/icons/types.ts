@@ -22,8 +22,6 @@ export enum IconName {
 	REM = 'rem',
 	ROTATE = 'rotate',
 	SAVE = 'save',
-	SORT = 'sort',
-	TABLE_VIEW = 'table-view',
 	TICKET = 'ticket-alt',
 	TRASH = 'trash',
 	UNLINK = 'editor-unlink',

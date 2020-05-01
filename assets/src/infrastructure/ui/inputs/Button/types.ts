@@ -13,5 +13,5 @@ export interface ButtonProps extends Partial<ChakraButtonProps> {
 export interface ButtonGroupProps extends ChakraButtonGroupProps {}
 
 export interface IconButtonProps extends ChakraIconButtonProps {
-	icon: React.ComponentType<any>;
+	icon?: React.ComponentType<any>;
 }

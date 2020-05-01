@@ -22,6 +22,10 @@ export { ReactComponent as PlusCircleFilled } from './plusCircleFilled.svg';
 
 export { ReactComponent as ProfileOutlined } from './profileOutlined.svg';
 
+export { ReactComponent as Sort } from './sort.svg';
+
 export { ReactComponent as SaveOutlined } from './saveOutlined.svg';
+
+export { ReactComponent as TableView } from './tableView.svg';
 
 export { ReactComponent as UpCircleFilled } from './upCircleFilled.svg';

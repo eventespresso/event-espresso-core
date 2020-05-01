@@ -11,6 +11,7 @@ export enum ButtonSize {
 	BIG = 'big',
 	HUGE = 'huge',
 }
+
 export enum ButtonType {
 	ACCENT = 'accent',
 	DEFAULT = 'default',
@@ -23,8 +24,3 @@ export interface ButtonProps extends ButtonAdapterProps, Partial<withLabelProps>
 	buttonType?: ButtonType;
 	buttonSize?: ButtonSize;
 }
-
-export interface IconButtonProps
-	extends Omit<ButtonProps, 'children' | 'buttonText'>,
-		Partial<withLabelProps>,
-		Partial<withTooltipProps> {}
