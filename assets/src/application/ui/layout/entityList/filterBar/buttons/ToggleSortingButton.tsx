@@ -2,7 +2,7 @@ import React from 'react';
 import classNames from 'classnames';
 import { __ } from '@wordpress/i18n';
 
-import { Sort } from '@appDisplay/icons';
+import { Sort } from '@appDisplay/icons/svgs';
 import { IconButton } from '@appInputs/Button';
 import { LabelPosition } from '@application/ui/display';
 import { ToggleSortingButtonProps } from '../types';
