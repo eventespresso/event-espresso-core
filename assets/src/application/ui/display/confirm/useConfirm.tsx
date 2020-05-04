@@ -3,11 +3,14 @@ import { useDisclosure } from '@chakra-ui/core';
 import { __ } from '@wordpress/i18n';
 
 import { AlertDialog } from '@infraUI/display';
-import { Button } from '@application/ui/input';
 import { ButtonType } from '@appInputs/Button';
+import { Button } from '@application/ui/input';
+import { Button as ButtonAdapter } from '@infraUI/inputs';
+import { DropdownMenuItem } from '@application/ui/layout/dropdownMenu';
+
 import { ConfirmProps } from './types';
 
-const useConfirm: React.FC<ConfirmProps> = ({ buttonProps, onConfirm, title }) => {
+const useConfirm: React.FC<ConfirmProps> = ({ buttonProps, dropdownMenuProps, onConfirm, title }) => {
 	const { isOpen, onOpen, onClose } = useDisclosure();
 	const cancelRef = React.useRef();
 	const onClickHandler = useCallback(() => {
@@ -19,7 +22,9 @@ const useConfirm: React.FC<ConfirmProps> = ({ buttonProps, onConfirm, title }) =
 
 	return (
 		<>
-			<Button {...buttonProps} onClick={onOpen} />
+			{buttonProps && <Button {...buttonProps} onClick={onOpen} />}
+
+			{dropdownMenuProps && <DropdownMenuItem {...dropdownMenuProps} onClick={onOpen} />}
 
 			<AlertDialog
 				cancelButton={<Button buttonText={__('No')} ref={cancelRef} onClick={onClose} />}
