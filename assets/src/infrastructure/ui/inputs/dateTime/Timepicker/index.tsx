@@ -2,8 +2,8 @@ import React, { useCallback } from 'react';
 import classNames from 'classnames';
 import { TimePicker as BaseUITimePicker } from 'baseui/timepicker';
 
-import { TimepickerProps } from './types';
-import withBaseProvider from './withBaseProvider';
+import { TimepickerProps } from '../types';
+import withBaseProvider from '../withBaseProvider';
 
 import './style.scss';
 

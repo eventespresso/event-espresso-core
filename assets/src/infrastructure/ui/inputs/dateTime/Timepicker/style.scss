@@ -1,0 +1,25 @@
+@import '../../style.scss';
+
+.ee-time-picker {
+	[data-baseweb='select'] {
+		align-items: center;
+		display: flex;
+		min-height: 1.875rem;
+		padding: 0 0.5rem;
+
+		> div {
+			background-color: transparent;
+
+			@extend .base-inputs-styles;
+			&:hover {
+				@extend .input-select-textarea-hover;
+			}
+			&:focus {
+				@extend .input-select-textarea-focus;
+			}
+			> div {
+				padding: 0;
+			}
+		}
+	}
+}
