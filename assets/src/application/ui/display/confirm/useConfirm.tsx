@@ -1,10 +1,9 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useRef } from 'react';
 import { useDisclosure } from '@chakra-ui/core';
 import { __ } from '@wordpress/i18n';
 
 import { AlertDialog } from '@infraUI/display';
-import { Button } from '@application/ui/input';
-import { ButtonType } from '@appInputs/Button';
+import { Button, ButtonType } from '@application/ui/input';
 import { ConfirmProps } from './types';
 
 const useConfirm: React.FC<ConfirmProps> = ({ buttonProps, onConfirm, title }) => {

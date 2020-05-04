@@ -5,10 +5,10 @@ import { DropdownMenuItem } from '@application/ui/layout/dropdownMenu';
 import { Trash as TrashIcon } from '@appDisplay/icons';
 import { MenuItemProps } from './types';
 
-const Trash: React.FC<MenuItemProps> = ({ onClick, ...props }) => {
+const Trash: React.FC<MenuItemProps> = ({ ...props }) => {
 	const title = props.title || __('trash');
 
-	return <DropdownMenuItem {...props} icon={TrashIcon} onClick={onClick} title={title} />;
+	return <DropdownMenuItem {...props} icon={TrashIcon} title={title} />;
 };
 
 export default Trash;
