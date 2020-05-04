@@ -23,6 +23,7 @@ const ForkTsCheckerWebpackPlugin = require('react-dev-utils/ForkTsCheckerWebpack
 const typescriptFormatter = require('react-dev-utils/typescriptFormatter');
 const postcssNormalize = require('postcss-normalize');
 const miniExtract = require('mini-css-extract-plugin');
+const camelCase = require('camelcase');
 
 const paths = require('./paths');
 const modules = require('./modules');
@@ -142,6 +143,15 @@ module.exports = function (webpackEnv) {
 		'react-dom': 'ReactDOM',
 	};
 
+	// Define WordPress dependencies
+	const wpPackages = ['components', 'element', 'blocks', 'i18n',  'block-editor'];
+	// Setup externals for all WordPress dependencies
+	wpPackages.forEach((wpPackage) => {
+		externals['@wordpress/' + wpPackage] = {
+			this: ['wp', wpPackage.includes('-') ? camelCase(wpPackage) : wpPackage], // 'block-editor' => 'blockEditor'
+		};
+	});
+
 	return {
 		mode: isEnvProduction ? 'production' : isEnvDevelopment && 'development',
 		// Stop compilation early in production
@@ -179,8 +189,9 @@ module.exports = function (webpackEnv) {
 			jsonpFunction: `webpackJsonp${appPackageJson.name}`,
 			// this defaults to 'window', but by setting it to 'this' then
 			// module chunks which are built will work in web workers as well.
+			libraryTarget: 'this',
 		},
-		// externals,
+		externals,
 		optimization: {
 			minimize: isEnvProduction,
 			minimizer: [
