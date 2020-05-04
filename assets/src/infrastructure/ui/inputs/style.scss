@@ -7,20 +7,50 @@
 .input-select-textarea-focus {
 	border-color: var(--ee-color-primary);
 	box-shadow: 0 0 0 1px var(--ee-color-primary);
+	/* Visible in Windows high-contrast themes */
+	outline-color: transparent;
+	outline-width: 2px;
+	outline-style: solid;
 }
 
-.ee-input-base {
-	&.ee-input-base {
-		border-color: var(--ee-border-color);
-		border-style: solid;
-		border-width: 2px;
-		&:focus {
-			/* Visible in Windows high-contrast themes */
-			outline-color: transparent;
-			outline-width: 2px;
-			outline-style: solid;
-		}
+.base-inputs-styles {
+	border-color: var(--ee-border-color);
+	border-radius: 0.25rem;
+	border-style: solid;
+	border-width: 2px;
+	line-height: inherit;
+	min-height: 2.5rem;
+	&:hover {
+		@extend .input-select-textarea-hover;
 	}
+	&:focus {
+		@extend .input-select-textarea-focus;
+	}
+}
+
+// this approach is needed in cases when classname cannot be applied directly on input
+// and we need to style that input based on it's parent
+.ee-input-base-wrapper {
+	input[type='text'],
+	input[type='password'],
+	input[type='date'],
+	input[type='datetime'],
+	input[type='datetime-local'],
+	input[type='email'],
+	input[type='month'],
+	input[type='number'],
+	input[type='search'],
+	input[type='tel'],
+	input[type='text'],
+	input[type='time'],
+	input[type='url'],
+	input[type='week'] {
+		@extend .base-inputs-styles;
+	}
+}
+
+.ee-input-base.ee-input-base {
+	@extend .base-inputs-styles;
 
 	&.ee-date-picker.ee-date-picker {
 		input[type='text'] {
@@ -49,13 +79,7 @@
 			input[type='time']#{&},
 			input[type='url']#{&},
 			input[type='week']#{&} {
-				line-height: inherit;
-				&:hover {
-					@extend .input-select-textarea-hover;
-				}
-				&:focus {
-					@extend .input-select-textarea-focus;
-				}
+				@extend .base-inputs-styles;
 			}
 		}
 	}
