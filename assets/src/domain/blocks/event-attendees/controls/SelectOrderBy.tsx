@@ -3,6 +3,7 @@ import { SelectControl } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 
 import { AttendeesEditProps } from '../types';
+import OrderByControl from '../../components/OrderByControl';
 
 const SelectOrderBy: React.FC<AttendeesEditProps> = ({ attributes, setAttributes }) => {
 	const { orderBy } = attributes;
@@ -31,11 +32,11 @@ const SelectOrderBy: React.FC<AttendeesEditProps> = ({ attributes, setAttributes
 	];
 
 	return (
-		<SelectControl
+		<OrderByControl
 			label={__('Order Attendees by:', 'event_espresso')}
-			value={orderBy}
+			orderBy={orderBy}
 			options={options}
-			onChange={(orderBy): void => setAttributes({ orderBy })}
+			setOrderBy={(orderBy): void => setAttributes({ orderBy })}
 		/>
 	);
 };
