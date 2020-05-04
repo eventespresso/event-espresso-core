@@ -5,10 +5,10 @@
 		align-items: center;
 		display: flex;
 		min-height: 1.875rem;
-		padding: 0 0.5rem;
 
 		> div {
 			background-color: transparent;
+			padding: 0 0.5rem;
 
 			@extend .base-inputs-styles;
 			&:hover {
@@ -19,6 +19,9 @@
 			}
 			> div {
 				padding: 0;
+				> div {
+					display: contents;
+				}
 			}
 		}
 	}
