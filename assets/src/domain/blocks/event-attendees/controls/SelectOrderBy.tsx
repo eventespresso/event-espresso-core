@@ -2,12 +2,11 @@ import React from 'react';
 import { SelectControl } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 
-interface SelectOrderByProps {
-	setOrderBy?: (orderBy: string) => void;
-	orderBy: string;
-}
+import { AttendeesEditProps } from '../types';
 
-const SelectOrderBy: React.FC<SelectOrderByProps> = ({ setOrderBy, orderBy }) => {
+const SelectOrderBy: React.FC<AttendeesEditProps> = ({ attributes, setAttributes }) => {
+	const { orderBy } = attributes;
+
 	const options: React.ComponentProps<typeof SelectControl>['options'] = [
 		{
 			label: __('Attendee id', 'event_espresso'),
@@ -36,7 +35,7 @@ const SelectOrderBy: React.FC<SelectOrderByProps> = ({ setOrderBy, orderBy }) =>
 			label={__('Order Attendees by:', 'event_espresso')}
 			value={orderBy}
 			options={options}
-			onChange={setOrderBy}
+			onChange={(orderBy): void => setAttributes({ orderBy })}
 		/>
 	);
 };

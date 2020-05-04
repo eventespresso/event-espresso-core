@@ -2,12 +2,10 @@ import React from 'react';
 import { SelectControl } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 
-interface SelectStatusProps {
-	setStatus?: (status: string) => void;
-	status: string;
-}
+import { AttendeesEditProps } from '../types';
 
-const SelectStatus: React.FC<SelectStatusProps> = ({ setStatus, status }) => {
+const SelectStatus: React.FC<AttendeesEditProps> = ({ attributes, setAttributes }) => {
+	const { status } = attributes;
 	const options: React.ComponentProps<typeof SelectControl>['options'] = [
 		{
 			value: 'RAP',
@@ -44,7 +42,7 @@ const SelectStatus: React.FC<SelectStatusProps> = ({ setStatus, status }) => {
 			label={__('Select Registration Status', 'event_espresso')}
 			value={status}
 			options={options}
-			onChange={setStatus}
+			onChange={(status): void => setAttributes({ status })}
 		/>
 	);
 };

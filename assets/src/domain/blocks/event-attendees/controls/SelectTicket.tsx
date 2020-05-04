@@ -1,15 +1,12 @@
 import React from 'react';
 import { SelectControl } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
+
+import { AttendeesEditProps } from '../types';
 import useTickets from '../hooks/useTickets';
 
-interface SelectTicketProps {
-	datetime: string;
-	setTicket?: (ticket: string) => void;
-	ticket: string;
-}
-
-const SelectTicket: React.FC<SelectTicketProps> = ({ datetime, setTicket, ticket }) => {
+const SelectTicket: React.FC<AttendeesEditProps> = ({ attributes, setAttributes }) => {
+	const { datetime, ticket } = attributes;
 	const { data, loading, error } = useTickets(datetime);
 	let options: React.ComponentProps<typeof SelectControl>['options'];
 	if (loading) {
@@ -41,7 +38,7 @@ const SelectTicket: React.FC<SelectTicketProps> = ({ datetime, setTicket, ticket
 			label={__('Select Ticket', 'event_espresso')}
 			value={ticket}
 			options={options}
-			onChange={setTicket}
+			onChange={(ticket): void => setAttributes({ ticket })}
 		/>
 	);
 };

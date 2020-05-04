@@ -1,3 +1,5 @@
+import { BlockEditProps } from '@wordpress/blocks';
+
 export interface EventAttendeesAttributes {
 	event: string; // GUID
 	datetime: string; // GUID
@@ -11,3 +13,5 @@ export interface EventAttendeesAttributes {
 	avatarSize: number;
 	displayOnArchives: boolean;
 }
+
+export type AttendeesEditProps = BlockEditProps<EventAttendeesAttributes>;

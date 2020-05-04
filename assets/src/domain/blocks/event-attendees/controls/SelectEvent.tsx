@@ -1,6 +1,8 @@
 import React from 'react';
 import { SelectControl } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
+
+import { AttendeesEditProps } from '../types';
 import useEvents from '../hooks/useEvents';
 
 interface SelectEventProps {
@@ -8,7 +10,9 @@ interface SelectEventProps {
 	setEvent?: (event: string) => void;
 }
 
-const SelectEvent: React.FC<SelectEventProps> = ({ event, setEvent }) => {
+const SelectEvent: React.FC<AttendeesEditProps> = ({ attributes, setAttributes }) => {
+	const { event } = attributes;
+
 	const { data, loading, error } = useEvents();
 	let options: React.ComponentProps<typeof SelectControl>['options'];
 	if (loading) {
@@ -40,7 +44,7 @@ const SelectEvent: React.FC<SelectEventProps> = ({ event, setEvent }) => {
 			label={__('Select Event', 'event_espresso')}
 			value={event}
 			options={options}
-			onChange={setEvent}
+			onChange={(event): void => setAttributes({ event, datetime: '', ticket: '' })}
 		/>
 	);
 };

@@ -1,15 +1,13 @@
 import React from 'react';
 import { SelectControl } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
+
+import { AttendeesEditProps } from '../types';
 import useDatetimes from '../hooks/useDatetimes';
 
-interface SelectDatetimeProps {
-	datetime: string;
-	event: string;
-	setDatetime?: (datetime: string) => void;
-}
+const SelectDatetime: React.FC<AttendeesEditProps> = ({ attributes, setAttributes }) => {
+	const { datetime, event } = attributes;
 
-const SelectDatetime: React.FC<SelectDatetimeProps> = ({ datetime, event, setDatetime }) => {
 	const { data, loading, error } = useDatetimes(event);
 	let options: React.ComponentProps<typeof SelectControl>['options'];
 	if (loading) {
@@ -41,7 +39,7 @@ const SelectDatetime: React.FC<SelectDatetimeProps> = ({ datetime, event, setDat
 			label={__('Select Datetime', 'event_espresso')}
 			value={datetime}
 			options={options}
-			onChange={setDatetime}
+			onChange={(datetime): void => setAttributes({ datetime, ticket: '' })}
 		/>
 	);
 };
