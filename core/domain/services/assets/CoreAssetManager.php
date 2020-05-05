@@ -39,16 +39,13 @@ class CoreAssetManager extends AssetManager
 
     const JS_HANDLE_JQUERY_VALIDATE_EXTRA = 'jquery-validate-extra-methods';
 
-    const JS_HANDLE_UNDERSCORE = 'underscore';
-
-    const JS_HANDLE_ACCOUNTING_CORE = 'ee-accounting-core';
-
     const JS_HANDLE_JS_CORE = 'eejs-core';
 
     const JS_HANDLE_CORE = 'espresso_core';
 
     const JS_HANDLE_I18N = 'eei18n';
 
+    const JS_HANDLE_VENDOR = 'eventespresso-vendor';
 
     const JS_HANDLE_WP_PLUGINS_PAGE = 'ee-wp-plugins-page';
 
@@ -153,8 +150,8 @@ class CoreAssetManager extends AssetManager
      */
     private function loadCoreJs()
     {
+        $this->addJs(CoreAssetManager::JS_HANDLE_VENDOR);
         $this->addJs(CoreAssetManager::JS_HANDLE_JS_CORE)->setHasInlineData();
-
         $this->registry->addData('eejs_api_nonce', wp_create_nonce('wp_rest'));
         $this->registry->addData(
             'paths',

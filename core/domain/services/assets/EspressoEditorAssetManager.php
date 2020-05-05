@@ -45,18 +45,15 @@ class EspressoEditorAssetManager extends ReactAssetManager
      */
     private function registerJavascript()
     {
-        $dependencies = defined('SCRIPT_DEBUG')
-            ? [
-                ReactAssetManager::JS_HANDLE_REACT_DEV,
-                ReactAssetManager::JS_HANDLE_REACT_DOM_DEV,
+        $this->addJs(
+            EspressoEditorAssetManager::JS_HANDLE_EDITOR,
+            [
+                ReactAssetManager::JS_HANDLE_REACT,
+                ReactAssetManager::JS_HANDLE_REACT_DOM,
+                'wp-i18n'
             ]
-            : [
-                ReactAssetManager::JS_HANDLE_REACT_PROD,
-                ReactAssetManager::JS_HANDLE_REACT_DOM_PROD,
-            ];
-        $this->addJs(EspressoEditorAssetManager::JS_HANDLE_EDITOR, $dependencies)
-             ->setRequiresTranslation();
-    }
+            )->setRequiresTranslation();
+        }
 
 
     /**

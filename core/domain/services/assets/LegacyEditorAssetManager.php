@@ -24,6 +24,8 @@ use EventEspresso\core\services\collections\DuplicateCollectionIdentifierExcepti
 class LegacyEditorAssetManager extends AssetManager
 {
 
+    const JS_HANDLE_UNDERSCORE = 'underscore';
+    const JS_HANDLE_ACCOUNTING_CORE = 'ee-accounting-core';
     const JS_HANDLE_ACCOUNTING = 'ee-accounting';
 
 
@@ -78,9 +80,9 @@ class LegacyEditorAssetManager extends AssetManager
         //accounting.js library
         // @link http://josscrowcroft.github.io/accounting.js/
         $this->addJavascript(
-            CoreAssetManager::JS_HANDLE_ACCOUNTING_CORE,
+            LegacyEditorAssetManager::JS_HANDLE_ACCOUNTING_CORE,
             EE_THIRD_PARTY_URL . 'accounting/accounting.js',
-            [CoreAssetManager::JS_HANDLE_UNDERSCORE],
+            [LegacyEditorAssetManager::JS_HANDLE_UNDERSCORE],
             true,
             '0.3.2'
         );
@@ -88,7 +90,7 @@ class LegacyEditorAssetManager extends AssetManager
         $this->addJavascript(
             LegacyEditorAssetManager::JS_HANDLE_ACCOUNTING,
             EE_GLOBAL_ASSETS_URL . 'scripts/ee-accounting-config.js',
-            [CoreAssetManager::JS_HANDLE_ACCOUNTING_CORE]
+            [LegacyEditorAssetManager::JS_HANDLE_ACCOUNTING_CORE]
         )
              ->setInlineDataCallback(
                  function () {
