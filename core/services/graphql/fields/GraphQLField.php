@@ -51,11 +51,6 @@ class GraphQLField implements GraphQLFieldInterface
     protected $resolver;
 
     /**
-     * @var array $args
-     */
-    protected $args;
-
-    /**
      * @var array $caps
      */
     protected $caps;
@@ -88,7 +83,6 @@ class GraphQLField implements GraphQLFieldInterface
         $description = '',
         callable $formatter = null,
         callable $resolver = null,
-        array $args = [],
         array $caps = []
     ) {
         $this->name = $name;
@@ -97,17 +91,7 @@ class GraphQLField implements GraphQLFieldInterface
         $this->description = $description;
         $this->formatter = $formatter;
         $this->resolver = $resolver;
-        $this->args = $args;
         $this->caps = $caps;
-    }
-
-
-    /**
-     * @return array
-     */
-    public function args()
-    {
-        return $this->args;
     }
 
 

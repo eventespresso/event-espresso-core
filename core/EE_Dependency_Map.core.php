@@ -926,6 +926,9 @@ class EE_Dependency_Map
             'EventEspresso\core\domain\services\graphql\types\Datetime' => [
                 'EEM_Datetime' => EE_Dependency_Map::load_from_cache,
             ],
+            'EventEspresso\core\domain\services\graphql\types\Attendee' => [
+                'EEM_Attendee' => EE_Dependency_Map::load_from_cache,
+            ],
             'EventEspresso\core\domain\services\graphql\types\Event' => [
                 'EEM_Event' => EE_Dependency_Map::load_from_cache,
             ],
@@ -952,6 +955,9 @@ class EE_Dependency_Map
             ],
             'EventEspresso\core\domain\services\graphql\connections\RootQueryDatetimesConnection' => [
                 'EEM_Datetime' => EE_Dependency_Map::load_from_cache,
+            ],
+            'EventEspresso\core\domain\services\graphql\connections\RootQueryAttendeesConnection' => [
+                'EEM_Attendee' => EE_Dependency_Map::load_from_cache,
             ],
             'EventEspresso\core\domain\services\graphql\connections\DatetimeTicketsConnection' => [
                 'EEM_Ticket' => EE_Dependency_Map::load_from_cache,
