@@ -5,4 +5,3 @@ export * from './InlineEditInput';
 export * from './SearchInput';
 export * from './SelectInput';
 export * from './SwitchInput';
-export * from './confirmationDialog';

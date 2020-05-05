@@ -5,7 +5,7 @@ import { Copy } from '@application/ui/layout/entityActionsMenu/entityMenuItems';
 import { DropdownMenu, DropdownToggleProps } from '@application/ui/layout';
 import { Edit } from '@application/ui/layout/entityActionsMenu/entityMenuItems';
 import { Trash } from '@application/ui/layout/entityActionsMenu/entityMenuItems';
-import { useConfirmationDialog } from '@application/ui/input';
+import { useConfirmationDialog } from '@application/ui/display/confirm';
 
 import { TicketMainMenuProps } from './types';
 import useActions from './useActions';
@@ -23,7 +23,7 @@ const TicketMainMenu: React.FC<TicketMainMenuProps> = ({ ticket }) => {
 		tooltip: __('ticket main menu'),
 	};
 
-	const trashTicketTitle = trashed ? __('delete permanently') : __('trash datetime');
+	const trashTicketTitle = trashed ? __('delete permanently') : __('trash ticket');
 
 	return (
 		<>

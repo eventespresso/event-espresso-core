@@ -5,7 +5,6 @@ import { __ } from '@wordpress/i18n';
 import { copyTicketFields } from '@sharedEntities/tickets/predicates/updatePredicates';
 import { isTicketInputField } from '@sharedEntities/tickets/predicates/selectionPredicates';
 import { isTrashed } from '@sharedServices/predicates';
-import { useDatetimeMutator } from '@edtrServices/apollo/mutations';
 import { useFormModal } from '@appLayout/formModal';
 import { useRelations } from '@appServices/apollo/relations';
 import { useTicketItem } from '@edtrServices/apollo';
@@ -23,7 +22,7 @@ const useActions = ({ ticketId }) => {
 	const { id, cacheId } = ticket;
 
 	const { createEntity } = useTicketMutator();
-	const { deleteEntity } = useDatetimeMutator(id);
+	const { deleteEntity } = useTicketMutator(id);
 	const { getRelations } = useRelations();
 
 	const datetimes = getRelations({
