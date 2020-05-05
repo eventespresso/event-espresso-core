@@ -39,7 +39,7 @@ class CurrentUser extends GraphQLData
             }
         }
 QUERY;
-        $this->setParams ([
+        $this->setParams([
             'operation_name' => 'GET_CURRENT_USER',
             'query'          => $query,
         ]);
