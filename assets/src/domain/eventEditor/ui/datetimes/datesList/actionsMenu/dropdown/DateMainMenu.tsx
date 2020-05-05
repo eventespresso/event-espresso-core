@@ -2,7 +2,6 @@ import React from 'react';
 import { __ } from '@wordpress/i18n';
 
 import { DropdownMenu, DropdownToggleProps } from '@application/ui/layout';
-import { useDatetimeItem } from '@edtrServices/apollo';
 import { useConfirmationDialog } from '@application/ui/input';
 import useActions from './useActions';
 
@@ -12,13 +11,10 @@ import TrashDate from './TrashDate';
 
 import { DateMainMenuProps } from './types';
 
-const DateMainMenu: React.FC<DateMainMenuProps> = ({ datetime: entity }) => {
-	// Make sure to subscribe to Apollo cache
-	// to avoid stale data
-	const datetime = useDatetimeItem({ id: entity.id });
+const DateMainMenu: React.FC<DateMainMenuProps> = ({ datetime }) => {
 	const confirmText = __('Are you sure you want to delete this?');
 
-	const { copyDate, editDate, trashDate, trashed } = useActions({ datetime });
+	const { copyDate, editDate, trashDate, trashed } = useActions({ datetimeId: datetime.id });
 
 	const { confirmationDialog, onOpen } = useConfirmationDialog({
 		confirmText,
