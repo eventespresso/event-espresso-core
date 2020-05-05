@@ -2,31 +2,31 @@ import { __ } from '@wordpress/i18n';
 
 const options = [
 	{
-		value: 'RAP',
+		value: 'APPROVED',
 		label: __('Approved', 'event_espresso'),
 	},
 	{
-		value: 'RCN',
+		value: 'CANCELLED',
 		label: __('Cancelled', 'event_espresso'),
 	},
 	{
-		value: 'RDC',
+		value: 'DECLINED',
 		label: __('Declined', 'event_espresso'),
 	},
 	{
-		value: 'RIC',
+		value: 'INCOMPLETE',
 		label: __('Incomplete', 'event_espresso'),
 	},
 	{
-		value: 'RNA',
+		value: 'UNAPPROVED',
 		label: __('Not Approved', 'event_espresso'),
 	},
 	{
-		value: 'RPP',
+		value: 'PENDING_PAYMENT',
 		label: __('Pending Payment', 'event_espresso'),
 	},
 	{
-		value: 'RWL',
+		value: 'WAIT_LIST',
 		label: __('Wait List', 'event_espresso'),
 	},
 ];
