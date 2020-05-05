@@ -71,21 +71,21 @@ class Attendee extends TypeBase
                 ['ee_edit_contacts']
             ),
             new GraphQLOutputField(
-                'avatar',
-                'String',
-                null,
-                esc_html__('Address Part 1', 'event_espresso'),
-                null,
-                [$this, 'getAvatar'],
-                ['ee_edit_contacts']
-            ),
-            new GraphQLOutputField(
                 'address2',
                 'String',
                 'address2',
                 esc_html__('Address Part 2', 'event_espresso'),
                 null,
                 null,
+                ['ee_edit_contacts']
+            ),
+            new GraphQLOutputField(
+                'avatar',
+                'String',
+                null,
+                esc_html__('User avatar URL', 'event_espresso'),
+                null,
+                [$this, 'getAvatar'],
                 ['ee_edit_contacts']
             ),
             new GraphQLOutputField(
