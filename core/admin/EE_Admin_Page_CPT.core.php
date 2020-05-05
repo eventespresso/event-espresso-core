@@ -986,7 +986,6 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page
             'EventEspresso\core\domain\services\assets\LegacyEditorAssetManager'
         );
         add_action('admin_enqueue_scripts', [$this, 'enqueueLegacyEditorAssets'], 100);
-
     }
 
 
@@ -1506,7 +1505,7 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page
             // otherwise EE doesn't support autosave fully, so to prevent user confusion we disable it in edit context.
             if ($creating) {
                 wp_enqueue_script('autosave');
-            } else if (isset($this->_cpt_routes[ $this->_req_data['action'] ])
+            } elseif (isset($this->_cpt_routes[ $this->_req_data['action'] ])
                 && ! isset($this->_labels['hide_add_button_on_cpt_route'][ $this->_req_data['action'] ])
             ) {
                 $create_new_action = apply_filters(
