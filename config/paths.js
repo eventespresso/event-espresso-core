@@ -83,6 +83,7 @@ module.exports = {
 	dotenv: resolveApp('.env'),
 	entries: {
 		'eventespresso-editor': resolveModule(resolveApp, ASSETS_SOURCE_FOLDER + '/domain/eventEditor/index'),
+		'eventespresso-blocks': resolveModule(resolveApp, ASSETS_SOURCE_FOLDER + '/domain/blocks/index'),
 		// To be done as part of: https://github.com/eventespresso/event-espresso-core/issues/2250
 		// 'ee-wp-plugins-page': resolveModule(resolveApp, assetsPath + 'wp-plugins-page/index'),
 		// 'eventespresso-core-blocks': resolveModule(resolveApp, assetsPath + 'blocks/index'),
