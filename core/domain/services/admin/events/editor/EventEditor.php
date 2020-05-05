@@ -107,9 +107,9 @@ class EventEditor
             if (! $eventId) {
                 global $post;
                 $eventId = isset($_REQUEST['post']) ? absint($_REQUEST['post']) : 0;
-                $eventId = $eventId === 0 && $post instanceof WP_Post && $post->post_type === 'espresso_events'
-                    ? $post->ID
-                    : $eventId;
+                // if there's no event ID but there IS a WP Post... then use the Post ID
+                $use_post_id = $eventId === 0 && $post instanceof WP_Post && $post->post_type === 'espresso_events';
+                $eventId = $use_post_id ? $post->ID : $eventId;
             }
             if ($eventId) {
                 $data = $this->getEditorData($eventId);
