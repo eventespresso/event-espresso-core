@@ -20,6 +20,41 @@ abstract class GraphQLData implements GraphQLDataInterface
      */
     protected $namespace = 'Espresso';
 
+    /**
+     * @var array $params
+     */
+    private $params = [];
+
+
+    /**
+     * @param array $params
+     */
+    public function setParams(array $params)
+    {
+        $this->params = $params;
+    }
+
+
+
+    /**
+     * @param string $field_key
+     * @param array  $where_params
+     * @return mixed|null
+     * @since $VID:$
+     */
+    protected function getQueryResponse($field_key, array $where_params = [])
+    {
+        if (! empty($where_params)) {
+            if (! array_key_exists('variables', $this->params)) {
+                $this->params['variables'] = [];
+            }
+            $this->params['variables']['where'] = $where_params;
+        }
+
+        $responseData = $this->makeGraphQLRequest($this->params);
+        return ! empty($responseData[ $field_key ]) ? $responseData[ $field_key ] : null;
+    }
+
 
     /**
      * @param array $data
