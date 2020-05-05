@@ -50,7 +50,8 @@ class EspressoEditorAssetManager extends ReactAssetManager
             [
                 ReactAssetManager::JS_HANDLE_REACT,
                 ReactAssetManager::JS_HANDLE_REACT_DOM,
-                'wp-i18n'
+                'wp-i18n',
+                CoreAssetManager::JS_HANDLE_JS_CORE,
             ]
             )->setRequiresTranslation();
         }
