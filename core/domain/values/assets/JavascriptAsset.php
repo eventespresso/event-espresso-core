@@ -98,6 +98,11 @@ class JavascriptAsset extends BrowserAsset
     public function setRequiresTranslation($requires_translation = true)
     {
         $this->requires_translation = filter_var($requires_translation, FILTER_VALIDATE_BOOLEAN);
+        $dependencies = $this->dependencies();
+        if (! in_array('wp-i18n', $dependencies, true)){
+            $dependencies[] = 'wp-i18n';
+            $this->setDependencies($dependencies);
+        }
         return $this;
     }
 
