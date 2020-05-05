@@ -45,19 +45,14 @@ class Prices extends GraphQLData
             }
         }
 QUERY;
-        $data = [
+        $this->setParams([
             'operation_name' => 'GET_PRICES',
             'variables'      => [
                 'first' => 100,
             ],
             'query'          => $query,
-        ];
+        ]);
 
-        if (! empty($where_params)) {
-            $data['variables']['where'] = $where_params;
-        }
-
-        $responseData = $this->makeGraphQLRequest($data);
-        return ! empty($responseData[ $field_key ]) ? $responseData[ $field_key ] : null;
+        return $this->getQueryResponse($field_key, $where_params);
     }
 }
