@@ -4,7 +4,7 @@ import { __ } from '@wordpress/i18n';
 import attributes from './attributes';
 import EventAttendeesEdit from './edit';
 import type { EventAttendeesAttributes } from './types';
-import './style.css';
+import './style.scss';
 
 registerBlockType<EventAttendeesAttributes>('eventespresso/event-attendees-new', {
 	title: __('Event Attendees New', 'event_espresso'),
