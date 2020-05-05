@@ -1,21 +1,19 @@
 import React from 'react';
 import { __ } from '@wordpress/i18n';
 
-import { DropdownMenu, DropdownToggleProps } from '@application/ui/layout';
-import { useConfirmationDialog } from '@application/ui/input';
-import useActions from './useActions';
-
 import { Copy } from '@application/ui/layout/entityActionsMenu/entityMenuItems';
+import { DropdownMenu, DropdownToggleProps } from '@application/ui/layout';
 import { Edit } from '@application/ui/layout/entityActionsMenu/entityMenuItems';
 import { Trash } from '@application/ui/layout/entityActionsMenu/entityMenuItems';
+import { useConfirmationDialog } from '@application/ui/input';
 
 import { DateMainMenuProps } from './types';
+import useActions from './useActions';
 
 const DateMainMenu: React.FC<DateMainMenuProps> = ({ datetime }) => {
-	const confirmText = __('Are you sure you want to delete this?');
-
 	const { copyDate, editDate, trashDate, trashed } = useActions({ datetimeId: datetime.id });
 
+	const confirmText = __('Are you sure you want to delete this?');
 	const { confirmationDialog, onOpen } = useConfirmationDialog({
 		confirmText,
 		onConfirm: trashDate,

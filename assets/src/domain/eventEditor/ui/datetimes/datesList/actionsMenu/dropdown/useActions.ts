@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react';
+import { useCallback } from 'react';
 import { pick } from 'ramda';
 import { __ } from '@wordpress/i18n';
 
@@ -20,7 +20,6 @@ const useActions = ({ datetimeId }) => {
 	const { openEditor } = useFormModal();
 
 	const { id, cacheId } = datetime;
-	const trashed = isTrashed(datetime);
 
 	const { createEntity } = useDatetimeMutator();
 	const { deleteEntity } = useDatetimeMutator(id);
@@ -40,6 +39,7 @@ const useActions = ({ datetimeId }) => {
 
 		return createEntity({ ...newDatetime, eventId, tickets });
 	}, [datetime, tickets]);
+
 	const editDate = useCallback(
 		() =>
 			openEditor({
@@ -49,6 +49,9 @@ const useActions = ({ datetimeId }) => {
 			}),
 		[datetime.id]
 	);
+
+	const trashed = isTrashed(datetime);
+
 	const trashDate = useCallback(() => deleteEntity({ id, deletePermanently: trashed }), [cacheId, trashed]);
 
 	return {
