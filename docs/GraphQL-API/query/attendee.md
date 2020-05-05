@@ -11,6 +11,7 @@ query GET_ATTENDEES($where: EspressoRootQueryAttendeesConnectionWhereArgs) {
 			node {
 				id
 				dbId
+				avatar
 				firstName
 				lastName
 				bio

@@ -3,10 +3,13 @@
 namespace EventEspresso\core\domain\services\graphql\types;
 
 use EEM_Attendee;
+use EE_Attendee;
 use EventEspresso\core\services\graphql\fields\GraphQLFieldInterface;
 use EventEspresso\core\services\graphql\types\TypeBase;
 use EventEspresso\core\services\graphql\fields\GraphQLField;
 use EventEspresso\core\services\graphql\fields\GraphQLOutputField;
+use WPGraphQL\AppContext;
+use GraphQL\Type\Definition\ResolveInfo;
 
 /**
  * Class Attendee
@@ -65,6 +68,15 @@ class Attendee extends TypeBase
                 esc_html__('Address Part 1', 'event_espresso'),
                 null,
                 null,
+                ['ee_edit_contacts']
+            ),
+            new GraphQLOutputField(
+                'avatar',
+                'String',
+                null,
+                esc_html__('Address Part 1', 'event_espresso'),
+                null,
+                [$this, 'getAvatar'],
                 ['ee_edit_contacts']
             ),
             new GraphQLOutputField(
@@ -167,5 +179,25 @@ class Attendee extends TypeBase
                 ['ee_edit_contacts']
             ),
         ];
+    }
+
+
+    /**
+     * @param EE_Attendee   $source  The source that's passed down the GraphQL queries
+     * @param array       $args    The inputArgs on the field
+     * @param AppContext  $context The AppContext passed down the GraphQL tree
+     * @param ResolveInfo $info    The ResolveInfo passed down the GraphQL tree
+     * @return string
+     * @since $VID:$
+     */
+    public function getAvatar(EE_Attendee $source, array $args, AppContext $context, ResolveInfo $info)
+    {
+        $email = $source->email();
+
+        if (empty($email)) {
+            return get_avatar_url('', array('force_default' => true));
+        }
+        $avatar = get_avatar_url($email);
+        return $avatar ? $avatar : null;
     }
 }
