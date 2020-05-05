@@ -149,7 +149,7 @@ abstract class BrowserAsset extends Asset
     /**
      * @param array $dependencies
      */
-    private function setDependencies(array $dependencies)
+    protected function setDependencies(array $dependencies)
     {
         $this->dependencies = $dependencies;
     }
