@@ -112,7 +112,7 @@ class AttendeeConnectionResolver extends AbstractConnectionResolver
             $where_params = array_merge($where_params, $input_fields);
         }
 
-        list($query_args, $where_params) = $this->mapOrderbyInputArgs($query_args, $where_params, 'TKT_ID');
+        list($query_args, $where_params) = $this->mapOrderbyInputArgs($query_args, $where_params, 'ATT_ID');
 
         $query_args[] = $where_params;
 
