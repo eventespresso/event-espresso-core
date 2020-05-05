@@ -4,6 +4,10 @@ use EventEspresso\core\domain\DomainFactory;
 use EventEspresso\core\domain\values\FilePath;
 use EventEspresso\core\domain\values\FullyQualifiedName;
 use EventEspresso\core\domain\values\Version;
+use EventEspresso\core\exceptions\InvalidClassException;
+use EventEspresso\core\exceptions\InvalidDataTypeException;
+use EventEspresso\core\exceptions\InvalidFilePathException;
+use EventEspresso\core\exceptions\InvalidInterfaceException;
 use EventEspresso\tests\mocks\core\services\assets\I18nRegistryMock;
 
 class I18nRegistryTest extends EE_UnitTestCase
@@ -18,10 +22,10 @@ class I18nRegistryTest extends EE_UnitTestCase
     /**
      * @throws DomainException
      * @throws InvalidArgumentException
-     * @throws \EventEspresso\core\exceptions\InvalidClassException
-     * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
-     * @throws \EventEspresso\core\exceptions\InvalidFilePathException
-     * @throws \EventEspresso\core\exceptions\InvalidInterfaceException
+     * @throws InvalidClassException
+     * @throws InvalidDataTypeException
+     * @throws InvalidFilePathException
+     * @throws InvalidInterfaceException
      * @throws EE_Error
      */
     public function setUp()
@@ -42,10 +46,7 @@ class I18nRegistryTest extends EE_UnitTestCase
                 'Skip'
             ),
         );
-        $this->i18n = new I18nRegistryMock(
-            $test_map,
-            $domain
-        );
+        $this->i18n = new I18nRegistryMock($domain, $test_map);
         parent::setUp();
     }
 

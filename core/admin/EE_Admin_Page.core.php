@@ -177,9 +177,7 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
     /**
      * @Constructor
      * @param bool $routing indicate whether we want to just load the object and handle routing or just load the object.
-     * @throws EE_Error
      * @throws InvalidArgumentException
-     * @throws ReflectionException
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
      */
@@ -492,7 +490,7 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
     {
         $contentid = isset($this->_req_data['contentid']) ? $this->_req_data['contentid'] : '';
         $url = isset($this->_req_data['contenturl']) ? $this->_req_data['contenturl'] : '';
-        self::cached_rss_display($contentid, $url);
+        EE_Admin_Page::cached_rss_display($contentid, $url);
         wp_die();
     }
 
@@ -625,7 +623,6 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
      * Provides a way for related child admin pages to load stuff on the loaded admin page.
      *
      * @return void
-     * @throws ReflectionException
      * @throws EE_Error
      */
     private function _do_other_page_hooks()
@@ -691,7 +688,6 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
      * @throws InvalidArgumentException
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
-     * @throws ReflectionException
      */
     protected function _load_page_dependencies()
     {
@@ -964,7 +960,7 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
                                 'In order to dynamically generate nonces for your actions, use the %s::add_query_args_and_nonce() method. May the Nonce be with you!',
                                 'event_espresso'
                             ),
-                            __CLASS__
+                            EE_Admin_Page::class
                         );
             }
             if (! defined('DOING_AJAX')) {
@@ -1404,6 +1400,7 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
                     }
                     require_once $file_path;
                     if (! class_exists($tour)) {
+                        $error_msg = [];
                         $error_msg[] = sprintf(
                             esc_html__('Something went wrong with loading the %s Help Tour Class.', 'event_espresso'),
                             $tour
@@ -1507,7 +1504,7 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
             $this->_nav_tabs[ $slug ] = array(
                 'url'       => isset($config['nav']['url'])
                     ? $config['nav']['url']
-                    : self::add_query_args_and_nonce(
+                    : EE_Admin_Page::add_query_args_and_nonce(
                         array('action' => $slug),
                         $this->_admin_base_url
                     ),
@@ -1990,7 +1987,6 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
         // ENQUEUE ALL BASICS BY DEFAULT
         wp_enqueue_style('ee-admin-css');
         wp_enqueue_script('ee_admin_js');
-        wp_enqueue_script('ee-accounting');
         wp_enqueue_script('jquery-validate');
         // taking care of metaboxes
         if (empty($this->_cpt_route)
@@ -2483,7 +2479,7 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
             <div id="espresso_news_post_box_content" class="infolinks">
                 <?php
                 // Get RSS Feed(s)
-                self::cached_rss_display(
+                EE_Admin_Page::cached_rss_display(
                     'espresso_news_post_box_content',
                     urlencode(
                         apply_filters(
@@ -3329,10 +3325,9 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
      */
     protected function _generate_admin_form_fields($input_vars = array(), $generator = 'string', $id = false)
     {
-        $content = $generator === 'string'
+        return $generator === 'string'
             ? EEH_Form_Fields::get_form_fields($input_vars, $id)
             : EEH_Form_Fields::get_form_fields_array($input_vars);
-        return $content;
     }
 
 
@@ -3421,7 +3416,7 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
                        . sprintf(
                            esc_html__('The $route argument is required for the %s->%s method.', 'event_espresso'),
                            __FUNCTION__,
-                           __CLASS__
+                           EE_Admin_Page::class
                        );
             EE_Error::add_error($user_msg . '||' . $dev_msg, __FILE__, __FUNCTION__, __LINE__);
         }
@@ -3639,7 +3634,7 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
         do_action('AHEE_redirect_' . $classname . $this->_req_action, $query_args);
         $redirect_url = apply_filters(
             'FHEE_redirect_' . $classname . $this->_req_action,
-            self::add_query_args_and_nonce($query_args, $redirect_url),
+            EE_Admin_Page::add_query_args_and_nonce($query_args, $redirect_url),
             $query_args
         );
         // check if we're doing ajax.  If we are then lets just return the results and js can handle how it wants.
@@ -3769,7 +3764,7 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
         if (! empty($extra_request)) {
             $query_args = array_merge($extra_request, $query_args);
         }
-        $url = self::add_query_args_and_nonce($query_args, $_base_url, false, $exclude_nonce);
+        $url = EE_Admin_Page::add_query_args_and_nonce($query_args, $_base_url, false, $exclude_nonce);
         return EEH_Template::get_button_or_link($url, $this->_labels['buttons'][ $type ], $class);
     }
 
@@ -4125,6 +4120,11 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
     }
 
 
+    /**
+     * @return string
+     * @throws ReflectionException
+     * @since $VID:$
+     */
     protected function _get_dir()
     {
         $reflector = new ReflectionClass(get_class($this));

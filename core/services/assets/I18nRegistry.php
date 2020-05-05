@@ -52,12 +52,12 @@ class I18nRegistry
     /**
      * I18nRegistry constructor.
      *
+     * @param DomainInterface $domain
      * @param array() $i18n_map  An array of script handle names and the strings translated for those handles.  If not
      *                            provided, the class will look for map in root of plugin with filename of
      *                            'translation-map.json'.
-     * @param DomainInterface $domain
      */
-    public function __construct(array $i18n_map = array(), DomainInterface $domain)
+    public function __construct(DomainInterface $domain, array $i18n_map = [])
     {
         $this->domain = $domain;
         $this->setI18nMap($i18n_map);

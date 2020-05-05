@@ -25,8 +25,6 @@ use EE_Config;
 use EE_Form_Section_HTML;
 use EE_Select_Input;
 use EEH_HTML;
-use EventEspresso\core\domain\services\assets\EspressoEditorAssetManager;
-use WP_Post;
 
 /**
  * Class AdvancedEditorAdminForm

@@ -18,14 +18,39 @@ abstract class BrowserAsset extends Asset
 {
 
     /**
-     * @var string $source
+     * @var array $attributes
      */
-    private $source;
+    private $attributes = [];
+
+    /**
+     * @var array $allowed_attributes
+     */
+    private static $allowed_attributes = [
+        Asset::TYPE_CSS => [
+            'crossorigin',
+            'media',
+            'referrerpolicy',
+            'sizes',
+            'type',
+        ],
+        Asset::TYPE_JS => [
+            'async',
+            'charset',
+            'crossorigin',
+            'defer',
+            'type',
+        ]
+    ];
 
     /**
      * @var array $dependencies
      */
     private $dependencies;
+
+    /**
+     * @var string $source
+     */
+    private $source;
 
     /**
      * @var string $version
@@ -63,6 +88,58 @@ abstract class BrowserAsset extends Asset
     /**
      * @return array
      */
+    public function getAttributes()
+    {
+        return $this->attributes;
+    }
+
+
+    /**
+     * @param array $attributes
+     * @throws DomainException
+     * @since $VID:$
+     */
+    public function addAttributes(array $attributes)
+    {
+        if (empty($attributes)) {
+            throw new DomainException(
+                esc_html__('The attributes array needs at least one value.', 'event_espresso')
+            );
+        }
+        foreach ($attributes as $key => $value) {
+            if (is_int($key) && $this->validateAttribute($value)) {
+                $this->attributes[] = $value;
+            } else if ($this->validateAttribute($key)) {
+                $this->attributes[ $key ] = $value;
+            }
+        }
+    }
+
+
+    /**
+     * @param string $attribute
+     * @return bool
+     * @throws DomainException
+     * @since $VID:$
+     */
+    private function validateAttribute($attribute)
+    {
+        $allowed = BrowserAsset::$allowed_attributes[ $this->type() ];
+        if (! in_array($attribute, $allowed, true)) {
+            throw new DomainException(
+                sprintf(
+                    esc_html__('Invalid attribute! The only allowed attributes are: "%1$s"', 'event_espresso'),
+                    implode('", "', $allowed)
+                )
+            );
+        }
+        return true;
+    }
+
+
+    /**
+     * @return array
+     */
     public function dependencies()
     {
         return $this->dependencies;
@@ -72,7 +149,7 @@ abstract class BrowserAsset extends Asset
     /**
      * @param array $dependencies
      */
-    private function setDependencies(array $dependencies)
+    protected function setDependencies(array $dependencies)
     {
         $this->dependencies = $dependencies;
     }

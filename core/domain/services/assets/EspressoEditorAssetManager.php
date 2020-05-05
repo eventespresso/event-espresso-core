@@ -5,7 +5,6 @@ namespace EventEspresso\core\domain\services\assets;
 use DomainException;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidEntityException;
-use EventEspresso\core\services\assets\AssetManager;
 use EventEspresso\core\services\collections\DuplicateCollectionIdentifierException;
 
 
@@ -17,7 +16,7 @@ use EventEspresso\core\services\collections\DuplicateCollectionIdentifierExcepti
  * @author  Brent Christensen
  * @since   $VID:$
  */
-class EspressoEditorAssetManager extends AssetManager
+class EspressoEditorAssetManager extends ReactAssetManager
 {
     const JS_HANDLE_EDITOR = 'eventespresso-editor';
     const CSS_HANDLE_EDITOR = 'eventespresso-editor';
@@ -30,6 +29,7 @@ class EspressoEditorAssetManager extends AssetManager
      */
     public function addAssets()
     {
+        parent::addAssets();
         $this->registerJavascript();
         $this->registerStyleSheets();
     }
@@ -45,8 +45,16 @@ class EspressoEditorAssetManager extends AssetManager
      */
     private function registerJavascript()
     {
-        $this->addJs(self::JS_HANDLE_EDITOR, [CoreAssetManager::JS_HANDLE_JS_CORE])->setRequiresTranslation();
-    }
+        $this->addJs(
+            EspressoEditorAssetManager::JS_HANDLE_EDITOR,
+            [
+                ReactAssetManager::JS_HANDLE_REACT,
+                ReactAssetManager::JS_HANDLE_REACT_DOM,
+                'wp-i18n',
+                CoreAssetManager::JS_HANDLE_JS_CORE,
+            ]
+            )->setRequiresTranslation();
+        }
 
 
     /**
@@ -59,6 +67,6 @@ class EspressoEditorAssetManager extends AssetManager
      */
     private function registerStyleSheets()
     {
-        $this->addCss(self::CSS_HANDLE_EDITOR);
+        $this->addCss(EspressoEditorAssetManager::CSS_HANDLE_EDITOR);
     }
 }

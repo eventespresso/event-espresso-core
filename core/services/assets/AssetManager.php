@@ -5,6 +5,7 @@ namespace EventEspresso\core\services\assets;
 use DomainException;
 use EventEspresso\core\domain\DomainInterface;
 use EventEspresso\core\domain\values\assets\Asset;
+use EventEspresso\core\domain\values\assets\BrowserAsset;
 use EventEspresso\core\domain\values\assets\JavascriptAsset;
 use EventEspresso\core\domain\values\assets\ManifestFile;
 use EventEspresso\core\domain\values\assets\StylesheetAsset;
@@ -263,6 +264,20 @@ abstract class AssetManager implements AssetManagerInterface
             }
         }
         return false;
+    }
+
+
+    /**
+     * @return  void
+     * @since   $VID:$
+     */
+    public function enqueueBrowserAssets()
+    {
+        foreach ($this->assets as $asset) {
+            if ($asset instanceof BrowserAsset) {
+                $asset->enqueueAsset();
+            }
+        }
     }
 
 
