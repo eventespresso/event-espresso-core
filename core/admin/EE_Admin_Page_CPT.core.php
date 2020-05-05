@@ -104,6 +104,12 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page
      */
     protected $_pagenow_map;
 
+    /**
+     * @var EspressoEditorAssetManager $asset_manager
+     */
+    protected $asset_manager;
+
+
 
     /**
      * This is hooked into the WordPress do_action('save_post') hook and runs after the custom post type has been
@@ -169,7 +175,7 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page
             $this->_cpt_routes
         );
         // let's see if the current route has a value for cpt_object_slug if it does we use that instead of the page
-        $this->_cpt_object = isset($this->_req_data['action']) && isset($this->_cpt_routes[ $this->_req_data['action'] ])
+        $this->_cpt_object = isset($this->_req_data['action'], $this->_cpt_routes[ $this->_req_data['action'] ])
             ? get_post_type_object($this->_cpt_routes[ $this->_req_data['action'] ])
             : get_post_type_object($page);
         // tweak pagenow for page loading.
@@ -208,7 +214,7 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page
         global $pagenow, $hook_suffix;
         // possibly reset pagenow.
         if (! empty($this->_req_data['page'])
-            && $this->_req_data['page'] == $this->page_slug
+            && $this->_req_data['page'] === $this->page_slug
             && ! empty($this->_req_data['action'])
             && isset($this->_pagenow_map[ $this->_req_data['action'] ])
         ) {
@@ -291,7 +297,7 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page
         $unsaved_data_msg = array(
             'eventmsg'     => sprintf(
                 __(
-                    "The changes you made to this %s will be lost if you navigate away from this page.",
+                    'The changes you made to this %s will be lost if you navigate away from this page.',
                     'event_espresso'
                 ),
                 $this->_cpt_object->labels->singular_name
@@ -302,21 +308,13 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page
     }
 
 
-    public function load_page_dependencies()
-    {
-        try {
-            $this->_load_page_dependencies();
-        } catch (EE_Error $e) {
-            $e->get_error();
-        }
-    }
-
-
     /**
      * overloading the EE_Admin_Page parent load_page_dependencies so we can get the cpt stuff added in appropriately
      *
      * @access protected
      * @return void
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     protected function _load_page_dependencies()
     {
@@ -488,7 +486,7 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page
             $page_template_count = count(get_page_templates());
         } else {
             $page_template_count = count(get_page_templates($post));
-        };
+        }
 
         if ($page_template_count) {
             $page_template = get_post_meta($post->ID, '_wp_page_template', true);
@@ -587,6 +585,7 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page
      *    - "what" index is what will be used for the value of that input.
      *
      * @return void
+     * @throws EE_Error
      */
     public function do_extra_autosave_stuff()
     {
@@ -619,8 +618,9 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page
      * but take care that you include the defaults here otherwise your core WP admin pages for the cpt won't work!
      *
      * @access protected
-     * @throws EE_Error
      * @return void
+     * @throws ReflectionException
+     * @throws EE_Error
      */
     protected function _extend_page_config_for_cpt()
     {
@@ -797,7 +797,8 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page
      * Execute some basic checks before calling the trash_cpt_item declared in the child class.
      *
      * @param int $post_id
-     * @throws \EE_Error
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     public function before_trash_cpt_item($post_id)
     {
@@ -815,7 +816,8 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page
      * Execute some basic checks before calling the restore_cpt_method in the child class.
      *
      * @param $post_id
-     * @throws \EE_Error
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     public function before_restore_cpt_item($post_id)
     {
@@ -833,7 +835,8 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page
      * Execute some basic checks before calling the delete_cpt_item method in the child class.
      *
      * @param $post_id
-     * @throws \EE_Error
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     public function before_delete_cpt_item($post_id)
     {
@@ -891,6 +894,8 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page
         $admin_config = $this->loader->getShared('EE_Admin_Config');
         if ($admin_config->useAdvancedEditor()) {
             $this->loadEspressoEditorAssetManager();
+        } else {
+            $this->loadLegacyEditorAssetManager();
         }
     }
 
@@ -914,6 +919,7 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page
      * add in any global scripts for cpt routes
      *
      * @return void
+     * @throws EE_Error
      */
     public function load_global_scripts_styles()
     {
@@ -953,10 +959,34 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page
                 'EventEspresso\core\services\assets\Registry'        => EE_Dependency_Map::load_from_cache,
             )
         );
-        $this->loader->getShared(
+        $this->asset_manager = $this->loader->getShared(
             'EventEspresso\core\domain\services\assets\EspressoEditorAssetManager'
         );
-        add_action('admin_enqueue_scripts', array($this, 'enqueueEspressoEditorAssets'), 100);
+        add_action('admin_enqueue_scripts', [$this, 'enqueueEspressoEditorAssets'], 100);
+    }
+
+
+    /**
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     */
+    private function loadLegacyEditorAssetManager()
+    {
+        EE_Dependency_Map::register_dependencies(
+            'EventEspresso\core\domain\services\assets\LegacyEditorAssetManager',
+            array(
+                'EventEspresso\core\domain\Domain'                   => EE_Dependency_Map::load_from_cache,
+                'EventEspresso\core\services\assets\AssetCollection' => EE_Dependency_Map::load_from_cache,
+                'EventEspresso\core\services\assets\Registry'        => EE_Dependency_Map::load_from_cache,
+                'EE_Currency_Config'                                 => EE_Dependency_Map::load_from_cache,
+            )
+        );
+        $this->asset_manager = $this->loader->getShared(
+            'EventEspresso\core\domain\services\assets\LegacyEditorAssetManager'
+        );
+        add_action('admin_enqueue_scripts', [$this, 'enqueueLegacyEditorAssets'], 100);
+
     }
 
 
@@ -968,19 +998,33 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page
      */
     public function enqueueEspressoEditorAssets()
     {
-        wp_enqueue_style(EspressoEditorAssetManager::CSS_HANDLE_EDITOR);
-        wp_enqueue_script(EspressoEditorAssetManager::JS_HANDLE_EDITOR);
+        $this->asset_manager->enqueueBrowserAssets();
     }
+
+
+    /**
+     * enqueue_scripts - Load the scripts and css
+     *
+     * @return void
+     * @throws DomainException
+     */
+    public function enqueueLegacyEditorAssets()
+    {
+        $this->asset_manager->enqueueBrowserAssets();
+        wp_enqueue_script('ee-accounting');
+    }
+
 
     /**
      * This is a wrapper for the insert/update routes for cpt items so we can add things that are common to ALL
      * insert/updates
      *
-     * @param  int     $post_id ID of post being updated
-     * @param  WP_Post $post    Post object from WP
-     * @param  bool    $update  Whether this is an update or a new save.
+     * @param int     $post_id ID of post being updated
+     * @param WP_Post $post    Post object from WP
+     * @param bool    $update  Whether this is an update or a new save.
      * @return void
-     * @throws \EE_Error
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     public function insert_update($post_id, $post, $update)
     {
@@ -1096,6 +1140,7 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page
      * we need to load it NOW, hence our _route_admin_request in here. (Otherwise screen options won't be set).
      *
      * @return void
+     * @throws EE_Error
      */
     public function modify_current_screen()
     {
@@ -1159,6 +1204,8 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page
      * already run in modify_current_screen())
      *
      * @return void
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     public function route_admin_request()
     {
@@ -1192,9 +1239,10 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page
     /**
      * This allows us to redirect the location of revision restores when they happen so it goes to our CPT routes.
      *
-     * @param  string $location Original location url
-     * @param  int    $status   Status for http header
+     * @param string $location Original location url
+     * @param int    $status   Status for http header
      * @return string           new (or original) url to redirect to.
+     * @throws EE_Error
      */
     public function revision_redirect($location, $status)
     {
@@ -1214,7 +1262,7 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page
             'message'  => 5,
         );
         $this->_process_notices($query_args, true);
-        return self::add_query_args_and_nonce($query_args, $admin_url);
+        return EE_Admin_Page_CPT::add_query_args_and_nonce($query_args, $admin_url);
     }
 
 
@@ -1241,7 +1289,7 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page
                 : 'edit',
             'post'   => $id,
         );
-        return self::add_query_args_and_nonce($query_args, $this->_admin_base_url);
+        return EE_Admin_Page_CPT::add_query_args_and_nonce($query_args, $this->_admin_base_url);
     }
 
 
@@ -1249,11 +1297,12 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page
      * Modify the trash link on our cpt edit pages so it has the required query var for triggering redirect properly on
      * our routes.
      *
-     * @param  string $delete_link  original delete link
-     * @param  int    $post_id      id of cpt object
-     * @param  bool   $force_delete whether this is forcing a hard delete instead of trash
+     * @param string $delete_link  original delete link
+     * @param int    $post_id      id of cpt object
+     * @param bool   $force_delete whether this is forcing a hard delete instead of trash
      * @return string new delete link
      * @throws EE_Error
+     * @throws ReflectionException
      */
     public function modify_delete_post_link($delete_link, $post_id, $force_delete)
     {
@@ -1288,9 +1337,10 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page
      * so that we can hijack the default redirect locations for wp custom post types
      * that WE'RE using and send back to OUR routes.  This should only be hooked in on the right route.
      *
-     * @param  string $location This is the incoming currently set redirect location
-     * @param  string $post_id  This is the 'ID' value of the wp_posts table
+     * @param string $location This is the incoming currently set redirect location
+     * @param string $post_id  This is the 'ID' value of the wp_posts table
      * @return string           the new location to redirect to
+     * @throws EE_Error
      */
     public function cpt_post_location_redirect($location, $post_id)
     {
@@ -1331,7 +1381,7 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page
         $message = $message === 1 && ! $this->_cpt_object->publicly_queryable ? 4 : $message;
         $query_args = array_merge(array('message' => $message), $query_args);
         $this->_process_notices($query_args, true);
-        return self::add_query_args_and_nonce($query_args, $admin_url);
+        return EE_Admin_Page_CPT::add_query_args_and_nonce($query_args, $admin_url);
     }
 
 
@@ -1340,6 +1390,7 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page
      *
      * @access public
      * @return void
+     * @throws EE_Error
      */
     public function inject_nav_tabs()
     {
@@ -1455,23 +1506,21 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page
             // otherwise EE doesn't support autosave fully, so to prevent user confusion we disable it in edit context.
             if ($creating) {
                 wp_enqueue_script('autosave');
-            } else {
-                if (isset($this->_cpt_routes[ $this->_req_data['action'] ])
-                    && ! isset($this->_labels['hide_add_button_on_cpt_route'][ $this->_req_data['action'] ])
-                ) {
-                    $create_new_action = apply_filters(
-                        'FHEE__EE_Admin_Page_CPT___edit_cpt_item__create_new_action',
-                        'create_new',
-                        $this
-                    );
-                    $post_new_file = EE_Admin_Page::add_query_args_and_nonce(
-                        array(
-                            'action' => $create_new_action,
-                            'page'   => $this->page_slug,
-                        ),
-                        'admin.php'
-                    );
-                }
+            } else if (isset($this->_cpt_routes[ $this->_req_data['action'] ])
+                && ! isset($this->_labels['hide_add_button_on_cpt_route'][ $this->_req_data['action'] ])
+            ) {
+                $create_new_action = apply_filters(
+                    'FHEE__EE_Admin_Page_CPT___edit_cpt_item__create_new_action',
+                    'create_new',
+                    $this
+                );
+                $post_new_file = EE_Admin_Page::add_query_args_and_nonce(
+                    array(
+                        'action' => $create_new_action,
+                        'page'   => $this->page_slug,
+                    ),
+                    'admin.php'
+                );
             }
             include_once WP_ADMIN_PATH . 'edit-form-advanced.php';
         }

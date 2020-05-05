@@ -43,49 +43,12 @@ class CoreAssetManager extends AssetManager
 
     const JS_HANDLE_ACCOUNTING_CORE = 'ee-accounting-core';
 
-    /**
-     * @since 4.9.71.p
-     */
-    const JS_HANDLE_REACT = 'react';
-
-    /**
-     * @since 4.9.71.p
-     */
-    const JS_HANDLE_REACT_DOM = 'react-dom';
-
-    /**
-     * @since 4.9.71.p
-     */
-    const JS_HANDLE_LODASH = 'lodash';
-
     const JS_HANDLE_JS_CORE = 'eejs-core';
-
-    const JS_HANDLE_VENDOR = 'eventespresso-vendor';
-
-    const JS_HANDLE_UTILS = 'eventespresso-utils';
-
-    const JS_HANDLE_DATA_STORES = 'eventespresso-data-stores';
-
-    const JS_HANDLE_HELPERS = 'eventespresso-helpers';
-
-    const JS_HANDLE_MODEL = 'eventespresso-model';
-    const JS_HANDLE_MODEL_SCHEMA = 'eventespresso-model-schema';
-
-    const JS_HANDLE_VALUE_OBJECTS = 'eventespresso-value-objects';
-
-    const JS_HANDLE_HOCS = 'eventespresso-hocs';
-
-    const JS_HANDLE_COMPONENTS = 'eventespresso-components';
-
-    const JS_HANDLE_HOOKS = 'eventespresso-hooks';
-
-    const JS_HANDLE_VALIDATORS = 'eventespresso-validators';
 
     const JS_HANDLE_CORE = 'espresso_core';
 
     const JS_HANDLE_I18N = 'eei18n';
 
-    const JS_HANDLE_ACCOUNTING = 'ee-accounting';
 
     const JS_HANDLE_WP_PLUGINS_PAGE = 'ee-wp-plugins-page';
 
@@ -93,12 +56,6 @@ class CoreAssetManager extends AssetManager
     const CSS_HANDLE_DEFAULT = 'espresso_default';
 
     const CSS_HANDLE_CUSTOM = 'espresso_custom_css';
-
-    const CSS_HANDLE_COMPONENTS = 'eventespresso-components';
-
-    const CSS_HANDLE_HOCS = 'eventespresso-hocs';
-
-    const CSS_HANDLE_CORE_CSS_DEFAULT = 'eventespresso-core-css-default';
 
     /**
      * @var EE_Currency_Config $currency_config
@@ -162,7 +119,6 @@ class CoreAssetManager extends AssetManager
     {
         $this->loadCoreJs();
         $this->loadJqueryValidate();
-        $this->loadAccountingJs();
         add_action(
             'AHEE__EventEspresso_core_services_assets_Registry__registerScripts__before_script',
             array($this, 'loadQtipJs')
@@ -197,30 +153,7 @@ class CoreAssetManager extends AssetManager
      */
     private function loadCoreJs()
     {
-        // conditionally load third-party libraries that WP core MIGHT have.
-        $this->registerWpAssets();
-
-        $this->addJs(self::JS_HANDLE_JS_CORE)->setHasInlineData();
-        $this->addJs(self::JS_HANDLE_VENDOR);
-        $this->addJs(self::JS_HANDLE_UTILS)->setRequiresTranslation();
-        $this->addJs(self::JS_HANDLE_VALIDATORS)->setRequiresTranslation();
-        $this->addJs(self::JS_HANDLE_HELPERS)->setRequiresTranslation();
-        $this->addJs(self::JS_HANDLE_MODEL)->setRequiresTranslation();
-        $this->addJs(self::JS_HANDLE_MODEL_SCHEMA)->setRequiresTranslation();
-        $this->addJs(self::JS_HANDLE_HOOKS);
-        $this->addJs(self::JS_HANDLE_VALUE_OBJECTS)->setRequiresTranslation();
-        $this->addJs(self::JS_HANDLE_DATA_STORES)->setRequiresTranslation()->setInlineDataCallback(
-            static function () {
-                wp_add_inline_script(
-                    CoreAssetManager::JS_HANDLE_DATA_STORES,
-                    is_admin()
-                        ? 'wp.apiFetch.use( eejs.middleWares.apiFetch.capsMiddleware( eejs.middleWares.apiFetch.CONTEXT_CAPS_EDIT ) )'
-                        : 'wp.apiFetch.use( eejs.middleWares.apiFetch.capsMiddleware )'
-                );
-            }
-        );
-        $this->addJs(self::JS_HANDLE_HOCS, [self::JS_HANDLE_DATA_STORES])->setRequiresTranslation();
-        $this->addJs(self::JS_HANDLE_COMPONENTS, [self::JS_HANDLE_DATA_STORES])->setRequiresTranslation();
+        $this->addJs(CoreAssetManager::JS_HANDLE_JS_CORE)->setHasInlineData();
 
         $this->registry->addData('eejs_api_nonce', wp_create_nonce('wp_rest'));
         $this->registry->addData(
@@ -283,67 +216,6 @@ class CoreAssetManager extends AssetManager
     }
 
 
-    /**
-     * Registers vendor files that are bundled with a later version WP but might not be for the current version of
-     * WordPress in the running environment.
-     *
-     * @throws DuplicateCollectionIdentifierException
-     * @throws InvalidDataTypeException
-     * @throws InvalidEntityException
-     * @throws DomainException
-     * @since 4.9.71.p
-     */
-    private function registerWpAssets()
-    {
-        global $wp_version;
-        if (version_compare($wp_version, '5.0.beta', '>=')) {
-            return;
-        }
-        $this->addVendorJavascript(CoreAssetManager::JS_HANDLE_REACT, [], true, '16.6.0');
-        $this->addVendorJavascript(
-            CoreAssetManager::JS_HANDLE_REACT_DOM,
-            array(CoreAssetManager::JS_HANDLE_REACT),
-            true,
-            '16.6.0'
-        );
-        $this->addVendorJavascript(CoreAssetManager::JS_HANDLE_LODASH, [], true, '4.17.11')
-            ->setInlineDataCallback(
-                static function() {
-                    wp_add_inline_script(
-                        CoreAssetManager::JS_HANDLE_LODASH,
-                        'window.lodash = _.noConflict();'
-                    );
-                }
-            );
-    }
-
-
-    /**
-     * Returns configuration data for the accounting-js library.
-     * @since 4.9.71.p
-     * @return array
-     */
-    private function getAccountingSettings() {
-        return array(
-            'currency' => array(
-                'symbol'    => $this->currency_config->sign,
-                'format'    => array(
-                    'pos'  => $this->currency_config->sign_b4 ? '%s%v' : '%v%s',
-                    'neg'  => $this->currency_config->sign_b4 ? '- %s%v' : '- %v%s',
-                    'zero' => $this->currency_config->sign_b4 ? '%s--' : '--%s',
-                ),
-                'decimal'   => $this->currency_config->dec_mrk,
-                'thousand'  => $this->currency_config->thsnds,
-                'precision' => $this->currency_config->dec_plc,
-            ),
-            'number'   => array(
-                'precision' => $this->currency_config->dec_plc,
-                'thousand'  => $this->currency_config->thsnds,
-                'decimal'   => $this->currency_config->dec_mrk,
-            ),
-        );
-    }
-
 
     /**
      * Returns configuration data for the js Currency VO.
@@ -391,9 +263,6 @@ class CoreAssetManager extends AssetManager
                 );
             }
         }
-    //     $this->addCss(self::CSS_HANDLE_CORE_CSS_DEFAULT, ['dashicons']);
-    //     $this->addCss(self::CSS_HANDLE_COMPONENTS, [self::CSS_HANDLE_CORE_CSS_DEFAULT]);
-    //     $this->addCss(self::CSS_HANDLE_HOCS);
     }
 
 
@@ -427,44 +296,6 @@ class CoreAssetManager extends AssetManager
 
 
     /**
-     * accounting.js for performing client-side calculations
-     *
-     * @since 4.9.62.p
-     * @throws DomainException
-     * @throws DuplicateCollectionIdentifierException
-     * @throws InvalidDataTypeException
-     * @throws InvalidEntityException
-     */
-    private function loadAccountingJs()
-    {
-        //accounting.js library
-        // @link http://josscrowcroft.github.io/accounting.js/
-        $this->addJavascript(
-            CoreAssetManager::JS_HANDLE_ACCOUNTING_CORE,
-            EE_THIRD_PARTY_URL . 'accounting/accounting.js',
-            array(CoreAssetManager::JS_HANDLE_UNDERSCORE),
-            true,
-            '0.3.2'
-        );
-
-        $this->addJavascript(
-            CoreAssetManager::JS_HANDLE_ACCOUNTING,
-            EE_GLOBAL_ASSETS_URL . 'scripts/ee-accounting-config.js',
-            array(CoreAssetManager::JS_HANDLE_ACCOUNTING_CORE)
-        )
-        ->setInlineDataCallback(
-            function () {
-                 wp_localize_script(
-                     CoreAssetManager::JS_HANDLE_ACCOUNTING,
-                     'EE_ACCOUNTING_CFG',
-                     $this->getAccountingSettings()
-                 );
-            }
-        );
-    }
-
-
-    /**
      * registers assets for cleaning your ears
      *
      * @param JavascriptAsset $script
@@ -493,8 +324,8 @@ class CoreAssetManager extends AssetManager
      */
     private function registerAdminAssets()
     {
-        $this->addJs(self::JS_HANDLE_WP_PLUGINS_PAGE)->setRequiresTranslation();
+        $this->addJs(CoreAssetManager::JS_HANDLE_WP_PLUGINS_PAGE)->setRequiresTranslation();
         // note usage of the "JS_HANDLE.." constant is intentional here because css uses the same handle.
-        $this->addCss(self::JS_HANDLE_WP_PLUGINS_PAGE);
+        $this->addCss(CoreAssetManager::JS_HANDLE_WP_PLUGINS_PAGE);
     }
 }

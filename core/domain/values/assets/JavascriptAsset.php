@@ -157,6 +157,32 @@ class JavascriptAsset extends BrowserAsset
      */
     public function enqueueAsset()
     {
+        if ($this->source() === '') {
+            return;
+        }
+        $attributes = $this->getAttributes();
+        if (!empty($attributes)) {
+            add_filter('script_loader_tag', [$this, 'addAttributeTagsToScript'], 10, 2);
+        }
         wp_enqueue_script($this->handle());
+    }
+
+
+    public function addAttributeTagsToScript($tag, $handle)
+    {
+        if ($handle === $this->handle()) {
+            $attributes = $this->getAttributes();
+            $attributes_string = '';
+            foreach ($attributes as $key => $value) {
+                if (is_int($key)) {
+                    $attributes_string .= " {$value}";
+                } else {
+                    $attributes_string .= " {$key}='{$value}'";
+                }
+            }
+            $tag = str_replace('></script>', $attributes_string . '></script>', $tag);
+        }
+
+        return $tag;
     }
 }

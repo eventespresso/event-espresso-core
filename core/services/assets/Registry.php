@@ -442,14 +442,14 @@ class Registry
      */
     public function getAssetUrl($namespace, $chunk_name, $asset_type)
     {
+        $asset_index = $chunk_name . '.' . $asset_type;
         $url = isset(
-            $this->manifest_data[ $namespace ][ $chunk_name . '.' . $asset_type ],
+            $this->manifest_data[ $namespace ][ $asset_index ],
             $this->manifest_data[ $namespace ]['url_base']
         )
             ? $this->manifest_data[ $namespace ]['url_base']
-              . $this->manifest_data[ $namespace ][ $chunk_name . '.' . $asset_type ]
-            : $chunk_name;
-
+              . $this->manifest_data[ $namespace ][ $asset_index ]
+            : '';
         return apply_filters(
             'FHEE__EventEspresso_core_services_assets_Registry__getAssetUrl',
             $url,
@@ -673,10 +673,10 @@ class Registry
         }
         $this->manifest_data[ $namespace ] = $this->decodeManifestFile($manifest_file);
         if (! isset($this->manifest_data[ $namespace ]['url_base'])) {
-            $this->manifest_data[ $namespace ]['url_base'] = trailingslashit($url_base);
+            $this->manifest_data[ $namespace ]['url_base'] = untrailingslashit($url_base);
         }
         if (! isset($this->manifest_data[ $namespace ]['path'])) {
-            $this->manifest_data[ $namespace ]['path'] = $manifest_file_path;
+            $this->manifest_data[ $namespace ]['path'] = untrailingslashit($manifest_file_path);
         }
     }
 
