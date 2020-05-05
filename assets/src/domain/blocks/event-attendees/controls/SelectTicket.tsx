@@ -11,7 +11,8 @@ const SelectTicket: React.FC<AttendeesEditProps> = ({ attributes, setAttributes 
 	const { datetime, ticket } = attributes;
 	const { data, loading, error } = useTickets(datetime);
 
-	const options = buildEntitySelectOptions(data?.espressoTickets?.nodes || [], loading, error);
+	const list = data?.espressoTickets?.nodes || [];
+	const options = buildEntitySelectOptions(list, loading, error);
 
 	return (
 		<SelectControl

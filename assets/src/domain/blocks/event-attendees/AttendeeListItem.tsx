@@ -1,5 +1,4 @@
 import React from 'react';
-import { Fragment } from '@wordpress/element';
 
 import AvatarImage from '../components/AvatarImage';
 
@@ -11,14 +10,12 @@ interface AttendeeListItemProps {
 
 const AttendeeListItem: React.FC<AttendeeListItemProps> = ({ attendee, showGravatar, avatarSize }) => {
 	return (
-		<Fragment>
-			<li>
-				{showGravatar && attendee.avatar && (
-					<AvatarImage url={attendee.avatar} height={avatarSize} width={avatarSize} />
-				)}
-				<span>{attendee.fullName}</span>
-			</li>
-		</Fragment>
+		<li>
+			{showGravatar && attendee.avatar && (
+				<AvatarImage url={attendee.avatar} height={avatarSize} width={avatarSize} />
+			)}
+			<span>{attendee.fullName}</span>
+		</li>
 	);
 };
 export default AttendeeListItem;

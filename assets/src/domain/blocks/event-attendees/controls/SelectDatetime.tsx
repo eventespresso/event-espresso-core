@@ -12,7 +12,8 @@ const SelectDatetime: React.FC<AttendeesEditProps> = ({ attributes, setAttribute
 
 	const { data, loading, error } = useDatetimes(event);
 
-	const options = buildEntitySelectOptions(data?.espressoDatetimes?.nodes || [], loading, error);
+	const list = data?.espressoDatetimes?.nodes || [];
+	const options = buildEntitySelectOptions(list, loading, error);
 	return (
 		<SelectControl
 			label={__('Select Datetime', 'event_espresso')}

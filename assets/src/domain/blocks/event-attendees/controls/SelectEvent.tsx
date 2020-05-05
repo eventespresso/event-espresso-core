@@ -12,7 +12,8 @@ const SelectEvent: React.FC<AttendeesEditProps> = ({ attributes, setAttributes }
 
 	const { data, loading, error } = useEvents();
 
-	const options = buildEntitySelectOptions(data?.espressoEvents?.nodes || [], loading, error);
+	const list = data?.espressoEvents?.nodes || [];
+	const options = buildEntitySelectOptions(list, loading, error);
 
 	return (
 		<SelectControl
