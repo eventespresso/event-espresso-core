@@ -5,9 +5,9 @@ import { DropdownMenu, DropdownToggleProps } from '@application/ui/layout';
 import { useConfirmationDialog } from '@application/ui/input';
 import useActions from './useActions';
 
-import CopyDate from './CopyDate';
-import EditDate from './EditDate';
-import TrashDate from './TrashDate';
+import { Copy } from '@application/ui/layout/entityActionsMenu/entityMenuItems';
+import { Edit } from '@application/ui/layout/entityActionsMenu/entityMenuItems';
+import { Trash } from '@application/ui/layout/entityActionsMenu/entityMenuItems';
 
 import { DateMainMenuProps } from './types';
 
@@ -25,12 +25,14 @@ const DateMainMenu: React.FC<DateMainMenuProps> = ({ datetime }) => {
 		tooltip: __('event date main menu'),
 	};
 
+	const trashDateTitle = trashed ? __('delete permanently') : __('trash datetime');
+
 	return (
 		<>
 			<DropdownMenu toggleProps={toggleProps}>
-				<EditDate editDate={editDate} />
-				<CopyDate copyDate={copyDate} />
-				<TrashDate onClick={onOpen} trashed={trashed} />
+				<Edit onClick={editDate} title={__('edit datetime')} />
+				<Copy onClick={copyDate} title={__('copy datetime')} />
+				<Trash onClick={onOpen} title={trashDateTitle} />
 			</DropdownMenu>
 			{confirmationDialog}
 		</>

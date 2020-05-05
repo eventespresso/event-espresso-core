@@ -26,18 +26,20 @@ const useActions = ({ datetimeId }) => {
 	const { deleteEntity } = useDatetimeMutator(id);
 	const { getRelations } = useRelations();
 
-	const newDatetime = pick(
-		['capacity', 'description', 'endDate', 'isPrimary', 'name', 'order', 'reserved', 'sold', 'startDate'],
-		datetime
-	);
-
 	const tickets = getRelations({
 		entity: 'datetimes',
 		entityId: datetime.id,
 		relation: 'tickets',
 	});
 
-	const copyDate = useCallback(() => createEntity({ ...newDatetime, eventId, tickets }), [newDatetime, tickets]);
+	const copyDate = useCallback(() => {
+		const newDatetime = pick(
+			['capacity', 'description', 'endDate', 'isPrimary', 'name', 'order', 'reserved', 'sold', 'startDate'],
+			datetime
+		);
+
+		return createEntity({ ...newDatetime, eventId, tickets });
+	}, [datetime, tickets]);
 	const editDate = useCallback(
 		() =>
 			openEditor({
