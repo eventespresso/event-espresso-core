@@ -78,7 +78,7 @@ class EventDatetimesConnection extends ConnectionBase
         return array_merge(
             [
                 'orderby'      => [
-                    'type'        => ['list_of' => 'DatetimesConnectionOrderbyInput'],
+                    'type'        => ['list_of' => 'EspressoDatetimesConnectionOrderbyInput'],
                     'description' => esc_html__('What parameter to use to order the objects by.', 'event_espresso'),
                 ],
                 'event'  => [
