@@ -11,7 +11,7 @@ use EventEspresso\core\services\collections\DuplicateCollectionIdentifierExcepti
 
 /**
  * ReactAssetManager
- * assets for routes that utilize React
+ * assets for domain use cases that utilize React
  *
  * @package EventEspresso\core\domain\services\assets
  * @author  Brent Christensen
@@ -19,13 +19,12 @@ use EventEspresso\core\services\collections\DuplicateCollectionIdentifierExcepti
  */
 class ReactAssetManager extends AssetManager
 {
-    const JS_HANDLE_REACT_DEV = 'react-development';
-    const JS_HANDLE_REACT_PROD = 'react-production';
-    const JS_HANDLE_REACT_DOM_DEV = 'react-dom-development';
-    const JS_HANDLE_REACT_DOM_PROD = 'react-dom-production';
-    // base URLs
-    const URL_BASE_UMD_REACT = 'https://unpkg.com/react@16/umd/';
-    const URL_BASE_UMD_REACT_DOM = 'https://unpkg.com/react-dom@16/umd/';
+    const REACT_VERSION = '16.13.1';
+
+    const JS_HANDLE_REACT = 'react';
+
+    const JS_HANDLE_REACT_DOM = 'react-dom';
+
 
     /**
      * @throws InvalidDataTypeException
@@ -35,24 +34,17 @@ class ReactAssetManager extends AssetManager
      */
     public function addAssets()
     {
-        if (defined('SCRIPT_DEBUG')) {
-            $this->addJavascript(
-                ReactAssetManager::JS_HANDLE_REACT_DEV,
-                ReactAssetManager::URL_BASE_UMD_REACT . 'react.development.js'
-            )->addAttributes(['crossorigin']);
-            $this->addJavascript(
-                ReactAssetManager::JS_HANDLE_REACT_DOM_DEV,
-                ReactAssetManager::URL_BASE_UMD_REACT_DOM . 'react-dom.development.js'
-            )->addAttributes(['crossorigin']);
-        } else {
-            $this->addJavascript(
-                ReactAssetManager::JS_HANDLE_REACT_PROD,
-                ReactAssetManager::URL_BASE_UMD_REACT . 'react.production.min.js'
-            )->addAttributes(['crossorigin']);
-            $this->addJavascript(
-                ReactAssetManager::JS_HANDLE_REACT_DOM_PROD,
-                ReactAssetManager::URL_BASE_UMD_REACT_DOM . 'react-dom.production.min.js'
-            )->addAttributes(['crossorigin']);
-        }
+        $this->addVendorJavascript(
+            ReactAssetManager::JS_HANDLE_REACT,
+            [],
+            true,
+            ReactAssetManager::REACT_VERSION
+        );
+        $this->addVendorJavascript(
+            ReactAssetManager::JS_HANDLE_REACT_DOM,
+            [ReactAssetManager::JS_HANDLE_REACT],
+            true,
+            ReactAssetManager::REACT_VERSION
+        );
     }
 }
