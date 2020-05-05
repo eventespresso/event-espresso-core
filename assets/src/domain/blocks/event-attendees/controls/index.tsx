@@ -5,8 +5,8 @@ import { PanelBody } from '@wordpress/components';
 
 import { AttendeesEditProps } from '../types';
 import AttendeeLimit from './AttendeeLimit';
-import ArchiveSetttings from './ArchiveSetttings';
-import GravatarSetttings from './GravatarSetttings';
+import ArchiveSettings from './ArchiveSettings';
+import GravatarSettings from './GravatarSettings';
 import SelectDatetime from './SelectDatetime';
 import SelectEvent from './SelectEvent';
 import SelectOrder from './SelectOrder';
@@ -35,10 +35,10 @@ const Controls: React.FC<AttendeesEditProps> = (props) => {
 				<SelectOrder {...props} />
 			</PanelBody>
 			<PanelBody title={__('Gravatar Setttings', 'event_espresso')}>
-				<GravatarSetttings {...props} />
+				<GravatarSettings {...props} />
 			</PanelBody>
 			<PanelBody title={__('Archive Settings', 'event_espresso')}>
-				<ArchiveSetttings {...props} />
+				<ArchiveSettings {...props} />
 			</PanelBody>
 		</InspectorControls>
 	);

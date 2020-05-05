@@ -4,7 +4,7 @@ import { ToggleControl } from '@wordpress/components';
 
 import { AttendeesEditProps } from '../types';
 
-const ArchiveSetttings: React.FC<AttendeesEditProps> = ({ attributes: { displayOnArchives }, setAttributes }) => {
+const ArchiveSettings: React.FC<AttendeesEditProps> = ({ attributes: { displayOnArchives }, setAttributes }) => {
 	return (
 		<ToggleControl
 			label={__('Display on Archives', 'event_espresso')}
@@ -19,4 +19,4 @@ const ArchiveSetttings: React.FC<AttendeesEditProps> = ({ attributes: { displayO
 	);
 };
 
-export default ArchiveSetttings;
+export default ArchiveSettings;

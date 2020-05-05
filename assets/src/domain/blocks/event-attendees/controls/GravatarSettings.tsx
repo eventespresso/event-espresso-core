@@ -4,7 +4,7 @@ import { RangeControl, ToggleControl } from '@wordpress/components';
 
 import { AttendeesEditProps } from '../types';
 
-const GravatarSetttings: React.FC<AttendeesEditProps> = ({
+const GravatarSettings: React.FC<AttendeesEditProps> = ({
 	attributes: { avatarSize, showGravatar },
 	setAttributes,
 }) => {
@@ -33,4 +33,4 @@ const GravatarSetttings: React.FC<AttendeesEditProps> = ({
 	);
 };
 
-export default GravatarSetttings;
+export default GravatarSettings;
