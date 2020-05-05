@@ -311,6 +311,32 @@ class EE_Attendee extends EE_CPT_Base implements EEI_Contact, EEI_Address, EEI_A
 
 
     /**
+     * get Attendee bio
+     *
+     * @access public
+     * @return string
+     * @throws EE_Error
+     */
+    public function bio()
+    {
+        return $this->get('ATT_bio');
+    }
+
+
+    /**
+     * get Attendee short bio
+     *
+     * @access public
+     * @return string
+     * @throws EE_Error
+     */
+    public function short_bio()
+    {
+        return $this->get('ATT_short_bio');
+    }
+
+
+    /**
      * Gets the attendee's full address as an array so client code can decide hwo to display it
      *
      * @return array numerically indexed, with each part of the address that is known.

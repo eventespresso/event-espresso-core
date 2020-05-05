@@ -264,6 +264,7 @@ class FieldResolver extends ResolverBase
             case $source instanceof EE_State:
                 $country_iso = $source->country_iso();
                 break;
+            case $source instanceof EE_Attendee:
             case $source instanceof EE_Venue:
                 $country_iso = $source->country_ID();
                 break;

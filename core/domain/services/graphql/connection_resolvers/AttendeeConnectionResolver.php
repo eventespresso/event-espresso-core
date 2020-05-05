@@ -2,27 +2,26 @@
 
 namespace EventEspresso\core\domain\services\graphql\connection_resolvers;
 
-use EE_Datetime;
 use EE_Error;
-use EEM_Ticket;
+use EEM_Attendee;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
 use InvalidArgumentException;
 use ReflectionException;
 
 /**
- * Class TicketConnectionResolver
+ * Class DatetimeConnectionResolver
  */
-class TicketConnectionResolver extends AbstractConnectionResolver
+class AttendeeConnectionResolver extends AbstractConnectionResolver
 {
     // phpcs:ignore PSR1.Methods.CamelCapsMethodName.NotCamelCaps
     public function get_loader_name()
     {
-        return 'espresso_ticket';
+        return 'espresso_attendee';
     }
 
     /**
-     * @return EEM_Ticket
+     * @return EEM_Attendee
      * @throws EE_Error
      * @throws InvalidArgumentException
      * @throws InvalidDataTypeException
@@ -31,7 +30,7 @@ class TicketConnectionResolver extends AbstractConnectionResolver
     // phpcs:ignore PSR1.Methods.CamelCapsMethodName.NotCamelCaps
     public function get_query()
     {
-        return EEM_Ticket::instance();
+        return EEM_Attendee::instance();
     }
 
 
@@ -83,13 +82,13 @@ class TicketConnectionResolver extends AbstractConnectionResolver
     // phpcs:ignore PSR1.Methods.CamelCapsMethodName.NotCamelCaps
     public function get_query_args()
     {
-        $where_params = ['TKT_deleted' => ['IN', [true, false]]];
+        $where_params = [];
         $query_args   = [];
 
         $query_args['limit'] = $this->getLimit();
 
         // Avoid multiple entries by join.
-        $query_args['group_by'] = 'TKT_ID';
+        $query_args['group_by'] = 'ATT_ID';
 
         $query_args['default_where_conditions'] = 'minimum';
 
@@ -101,16 +100,9 @@ class TicketConnectionResolver extends AbstractConnectionResolver
             $input_fields = $this->sanitizeInputFields($this->args['where']);
 
             // Use the proper operator.
-            if (! empty($input_fields['Datetime.DTT_ID']) && is_array($input_fields['Datetime.DTT_ID'])) {
-                $input_fields['Datetime.DTT_ID'] = ['in', $input_fields['Datetime.DTT_ID']];
+            if (! empty($input_fields['Registration.Ticket.TKT_ID']) && is_array($input_fields['Registration.Ticket.TKT_ID'])) {
+                $input_fields['Registration.Ticket.TKT_ID'] = ['in', $input_fields['Registration.Ticket.TKT_ID']];
             }
-        }
-
-        /**
-         * Determine where we're at in the Graph and adjust the query context appropriately.
-         */
-        if ($this->source instanceof EE_Datetime) {
-            $where_params['Datetime.DTT_ID'] = $this->source->ID();
         }
 
         /**
@@ -120,7 +112,7 @@ class TicketConnectionResolver extends AbstractConnectionResolver
             $where_params = array_merge($where_params, $input_fields);
         }
 
-        list($query_args, $where_params) = $this->mapOrderbyInputArgs($query_args, $where_params, 'TKT_ID');
+        list($query_args, $where_params) = $this->mapOrderbyInputArgs($query_args, $where_params, 'ATT_ID');
 
         $query_args[] = $where_params;
 
@@ -141,15 +133,16 @@ class TicketConnectionResolver extends AbstractConnectionResolver
     public function sanitizeInputFields(array $where_args)
     {
         $arg_mapping = [
-            'datetime'     => 'Datetime.DTT_ID',
-            'datetimeIn'   => 'Datetime.DTT_ID',
-            'datetimeIdIn' => 'Datetime.DTT_ID',
-            'datetimeId'   => 'Datetime.DTT_ID', // priority.
+            'regTicket'     => 'Registration.Ticket.TKT_ID',
+            'regTicketIn'   => 'Registration.Ticket.TKT_ID',
+            'regTicketIdIn' => 'Registration.Ticket.TKT_ID',
+            'regTicketId'   => 'Registration.Ticket.TKT_ID', // priority.
+            'regStatus'     => 'Registration.Status.STS_ID',
         ];
         return $this->sanitizeWhereArgsForInputFields(
             $where_args,
             $arg_mapping,
-            ['datetime', 'datetimeIn']
+            ['regTicket', 'regTicketIn']
         );
     }
 }

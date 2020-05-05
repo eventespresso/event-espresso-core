@@ -59,6 +59,7 @@ class TypesManager
     public function registerLoaders($loaders, $context)
     {
         $newLoaders = [
+            'espresso_attendee'  => new Loaders\AttendeeLoader($context),
             'espresso_datetime'  => new Loaders\DatetimeLoader($context),
             'espresso_price'     => new Loaders\PriceLoader($context),
             'espresso_priceType' => new Loaders\PriceTypeLoader($context),
