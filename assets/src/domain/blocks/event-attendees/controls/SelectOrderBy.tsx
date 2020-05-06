@@ -11,23 +11,23 @@ const SelectOrderBy: React.FC<AttendeesEditProps> = ({ attributes, setAttributes
 	const options: React.ComponentProps<typeof SelectControl>['options'] = [
 		{
 			label: __('Attendee id', 'event_espresso'),
-			value: 'id',
+			value: 'ID',
 		},
 		{
 			label: __('Last name only', 'event_espresso'),
-			value: 'lastNameOnly',
+			value: 'LAST_NAME',
 		},
 		{
 			label: __('First name only', 'event_espresso'),
-			value: 'firstNameOnly',
+			value: 'FIRST_NAME',
 		},
 		{
 			label: __('First, then Last name', 'event_espresso'),
-			value: 'firstThenLastName',
+			value: 'FIRST_THEN_LAST_NAME',
 		},
 		{
 			label: __('Last, then First name', 'event_espresso'),
-			value: 'lastThenFirstName',
+			value: 'LAST_THEN_FIRST_NAME',
 		},
 	];
 

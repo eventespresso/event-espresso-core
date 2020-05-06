@@ -12,11 +12,11 @@ interface SortOrderControlProps extends SelectControlProps {
 const defaultOptions: React.ComponentProps<typeof SelectControl>['options'] = [
 	{
 		label: __('Ascending', 'event_espresso'),
-		value: 'QUERY_ORDER_ASC',
+		value: 'ASC',
 	},
 	{
 		label: __('Descending', 'event_espresso'),
-		value: 'QUERY_ORDER_DESC',
+		value: 'DESC',
 	},
 ];
 
