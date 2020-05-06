@@ -2,7 +2,6 @@
 
 namespace EventEspresso\core\services\assets;
 
-use EEH_DTT_Helper;
 use EventEspresso\core\domain\DomainInterface;
 
 /**
@@ -50,18 +49,25 @@ class I18nRegistry
     private $i18n_map;
 
     /**
+     * @var JedLocaleData $jed_locale
+     */
+    private $jed_locale;
+
+    /**
      * I18nRegistry constructor.
      *
      * @param DomainInterface $domain
-     * @param array() $i18n_map  An array of script handle names and the strings translated for those handles.  If not
-     *                            provided, the class will look for map in root of plugin with filename of
-     *                            'translation-map.json'.
+     * @param JedLocaleData $jed_locale
+     * @param array() $i18n_map     An array of script handle names and the strings translated for those handles.
+     *                              If not provided, the class will look for map in root of plugin with filename of
+     *                              'translation-map.json'.
      */
-    public function __construct(DomainInterface $domain, array $i18n_map = [])
+    public function __construct(DomainInterface $domain, JedLocaleData $jed_locale, array $i18n_map = [])
     {
         $this->domain = $domain;
+        $this->jed_locale = $jed_locale;
         $this->setI18nMap($i18n_map);
-        add_filter('print_scripts_array', array($this, 'queueI18n'));
+        add_filter('print_scripts_array', [$this, 'queueI18n']);
     }
 
     /**
@@ -170,7 +176,7 @@ class I18nRegistry
      */
     protected function getJedLocaleDataForDomainAndChunk($handle, $domain)
     {
-        $translations = $this->getJedLocaleData($domain);
+        $translations = $this->jed_locale->getData($domain);
         // get index for adding back after extracting strings for this $chunk.
         $index = $translations[''];
         $translations = $this->getLocaleDataMatchingMap(
@@ -208,33 +214,5 @@ class I18nRegistry
     protected function getOriginalStringsForHandleFromMap($handle)
     {
         return isset($this->i18n_map[$handle]) ? $this->i18n_map[$handle] : array();
-    }
-
-    /**
-     * Returns Jed-formatted localization data.
-     *
-     * @param  string $domain Translation domain.
-     * @return array
-     */
-    private function getJedLocaleData($domain)
-    {
-        $translations = get_translations_for_domain($domain);
-
-        $locale = array(
-            '' => array(
-                'domain' => $domain,
-                'lang' => is_admin() ? EEH_DTT_Helper::get_user_locale() : get_locale(),
-            ),
-        );
-
-        if (!empty($translations->headers['Plural-Forms'])) {
-            $locale['']['plural_forms'] = $translations->headers['Plural-Forms'];
-        }
-
-        foreach ($translations->entries as $msgid => $entry) {
-            $locale[$msgid] = $entry->translations;
-        }
-
-        return $locale;
     }
 }
