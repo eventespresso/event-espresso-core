@@ -2,7 +2,7 @@ import { useMemo } from 'react';
 
 import usePriceQueryOptions from './usePriceQueryOptions';
 import { Price, PricesList } from '../../types';
-import useCacheQuery from '../useCacheQuery';
+import { useCacheQuery } from '@dataServices/apollo/queries';
 import { getCacheIds } from '@appServices/predicates';
 /**
  * A custom react hook for retrieving all the prices from cache
