@@ -1,7 +1,6 @@
 import React from 'react';
-import { ApolloProvider } from '@apollo/react-hooks';
 
-import { getClient } from '../../../../../infrastructure/services/apollo/Apollo';
+import withApollo from '@dataServices/apollo/withApollo';
 import { ToastProvider } from '@appServices/context/ToastProvider';
 import { RelationsProvider } from '@appServices/context/RelationsProvider';
 import { StatusProvider } from '@appServices/context/StatusProvider';
@@ -10,25 +9,6 @@ import { FormModalProvider } from '@appServices/context/FormModalProvider';
 import { ThemeProvider } from '@appServices/theme';
 import { EventIdProvider } from '../EventContext';
 import { EdtrStateProvider } from '../EdtrStateContext';
-
-/**
- * A collection of top level providers wrapped by ApolloProvider.
- *
- * @param {ReactElement} children The element that should be wrapped.
- * @returns {ReactElement} The wrapped element.
- */
-export const ContextProviders: React.FC = ({ children }) => {
-	// Make TS (TS2769) friends with ESLint (react/no-children-prop)
-	const props = {
-		client: getClient(),
-		children: null,
-	};
-	return (
-		<ApolloProvider {...props}>
-			<CommonProviders>{children}</CommonProviders>
-		</ApolloProvider>
-	);
-};
 
 /**
  * A collection of top level providers that are used by multiple parts of the application.
@@ -54,5 +34,7 @@ export const CommonProviders: React.FC = ({ children }) => (
 		</ToastProvider>
 	</ThemeProvider>
 );
+
+export const ContextProviders: React.FC = withApollo(CommonProviders);
 
 export default ContextProviders;
