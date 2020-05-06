@@ -16,7 +16,7 @@ export type AssignmentType = 'forDate' | 'forTicket' | 'forAll';
 
 export type AssignmentStatus = 'OLD' | 'NEW' | 'REMOVED';
 
-export interface BaseProps<E extends Entity = Entity> {
+export interface BaseProps<E extends Entity = Datetime | Ticket> {
 	assignmentType: AssignmentType;
 	entity?: E;
 	title?: string;

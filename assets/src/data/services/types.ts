@@ -9,7 +9,6 @@ export interface Cacheable {
 export interface Entity extends Cacheable {
 	id: EntityId;
 	dbId: EntityDbId;
-	name: string;
 	__typename?: string;
 }
 

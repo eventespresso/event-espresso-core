@@ -9,6 +9,7 @@ export interface Event extends Entity {
 	isPostponed: boolean;
 	isSoldOut: boolean;
 	isUpcoming: boolean;
+	name: string;
 	order: number;
 	shortDesc: string;
 }
@@ -37,6 +38,7 @@ export interface Datetime extends Entity, Trashable {
 	isSoldOut: boolean;
 	isUpcoming: boolean;
 	length: number;
+	name: string;
 	order: number;
 	reserved: number;
 	sold: number;
@@ -62,6 +64,7 @@ export interface Price extends Entity, Trashable {
 	isDiscount: boolean;
 	isPercent: boolean;
 	isTax: boolean;
+	name: string;
 	order: number;
 	overrides: number;
 }
@@ -85,6 +88,7 @@ export interface Ticket extends Entity, Trashable {
 	isTaxable: boolean;
 	max: number;
 	min: number;
+	name: string;
 	order: number;
 	price: number;
 	prices?: PriceEdge; // for create and update ticket mutation
@@ -120,6 +124,7 @@ export interface PriceType extends Entity, Trashable {
 	isDiscount: boolean;
 	isPercent: boolean;
 	isTax: boolean;
+	name: string;
 	order: number;
 }
 

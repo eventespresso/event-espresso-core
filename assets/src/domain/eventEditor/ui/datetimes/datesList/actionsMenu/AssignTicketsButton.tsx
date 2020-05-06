@@ -10,8 +10,9 @@ import { TypeName } from '@appServices/apollo/status';
 import { useRelatedTickets } from '@edtrServices/apollo/queries';
 import useTicketAssignmentsManager from '@edtrUI/ticketAssignmentsManager/useTicketAssignmentsManager';
 import withIsLoaded from '@sharedUI/hoc/withIsLoaded';
+import { Datetime } from '@edtrServices/apollo';
 
-const AssignTicketsButton: React.FC<EntityListItemProps> = React.memo(({ entity }) => {
+const AssignTicketsButton: React.FC<EntityListItemProps<Datetime>> = React.memo(({ entity }) => {
 	const { ModalContainer, onOpen, ...disclosure } = useTicketAssignmentsManager();
 
 	const relatedTickets = useRelatedTickets({
@@ -38,7 +39,7 @@ const AssignTicketsButton: React.FC<EntityListItemProps> = React.memo(({ entity 
 	);
 });
 
-export default withIsLoaded<EntityListItemProps>(TypeName.tickets, ({ entity, loaded }) => {
+export default withIsLoaded<EntityListItemProps<Datetime>>(TypeName.tickets, ({ entity, loaded }) => {
 	/* Hide TAM unless tickets are loaded */
 	return loaded && <AssignTicketsButton entity={entity} />;
 });
