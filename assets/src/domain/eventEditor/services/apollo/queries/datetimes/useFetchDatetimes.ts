@@ -11,9 +11,9 @@ const useFetchDatetimes = (): FetchEntitiesResult<DatetimesList> => {
 	const { query, ...options } = useDatetimeQueryOptions();
 
 	const toaster = useSystemNotifications();
-	const loadingToastKey = useRef('');
+	const toastId = useRef(null);
 
-	const dismissLoading = (): void => toaster.dismiss(loadingToastKey.current);
+	const dismissLoading = (): void => toaster.dismiss(toastId.current);
 
 	const { data, error, loading } = useQuery<DatetimesList>(query, {
 		...options,
@@ -31,12 +31,16 @@ const useFetchDatetimes = (): FetchEntitiesResult<DatetimesList> => {
 		},
 	});
 
+	const notify = () => (toastId.current = toaster.loading({ message: 'initializing datetimes' }));
+
 	useEffect(() => {
-		if (loadingToastKey.current === '') {
-			loadingToastKey.current = toaster.generateKey(null, `loading-${TypeName.datetimes}`);
-		}
-		toaster.loading({ loading, message: 'initializing datetimes', key: loadingToastKey.current });
-		setIsLoading(TypeName.datetimes, loading);
+		// if (loadingToastKey.current === '') {
+		// 	loadingToastKey.current = toaster.generateKey(null, `loading-${TypeName.datetimes}`);
+		// }
+
+		notify();
+
+		// setIsLoading(TypeName.datetimes, loading);
 	}, [loading]);
 
 	return {

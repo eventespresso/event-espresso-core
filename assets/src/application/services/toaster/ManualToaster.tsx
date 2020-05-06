@@ -2,24 +2,18 @@ import React from 'react';
 import { Button, ButtonGroup } from '@chakra-ui/core';
 import { v4 as uuidv4 } from 'uuid';
 
-// import { useToaster, UseToasterProps } from '@infraServices/toaster';
-import useSystemNotifications from './useSystemNotifications';
+import { toast } from 'react-toastify';
 
-// const options: UseToasterProps = {
-// 	duration: 5000,
-// 	position: 'bottom-right',
-// };
+import useSystemNotifications from './useSystemNotifications';
 
 const ManualToaster = (): JSX.Element => {
 	const { error, info, loading, success, warning } = useSystemNotifications();
 
-	const loadingNotice = (event: React.MouseEvent): void => {
-		event.preventDefault();
+	const loadingNotice = (): void => {
 		loading({ message: 'loading...', key: uuidv4(), loading: true });
 	};
 
-	const errorNotice = (event: React.MouseEvent): void => {
-		event.preventDefault();
+	const errorNotice = (): void => {
 		error({ message: 'error!!!' });
 	};
 
@@ -39,8 +33,21 @@ const ManualToaster = (): JSX.Element => {
 		warning({ message: 'warning!!!' });
 	};
 
+	const toastId = React.useRef(null);
+
+	const notify = () => (toastId.current = toast('Lorem ipsum dolor'));
+
+	const dismiss = () => toast.dismiss(toastId.current);
+
+	const dismissAll = () => toast.dismiss();
+
 	return (
 		<>
+			<div>
+				<button onClick={notify}>Notify</button>
+				<button onClick={dismiss}>Dismiss</button>
+				<button onClick={dismissAll}>Dismiss All</button>
+			</div>
 			<ButtonGroup spacing={4}>
 				<Button variantColor='cyan' onClick={loadingNotice}>
 					loading

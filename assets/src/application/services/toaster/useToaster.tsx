@@ -95,4 +95,5 @@ const useToaster: UseToaster = (config) => {
 		getToasts,
 	};
 };
+
 export default useToaster;

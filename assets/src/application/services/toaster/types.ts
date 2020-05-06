@@ -80,6 +80,10 @@ export interface ToastProps {
 	type: ToastStatus;
 }
 
+export interface ToastIconProps {
+	type: ToastStatus;
+}
+
 export type ToastStatus = keyof typeof TOAST_STATUS;
 
 export interface ToasterPositionProps {

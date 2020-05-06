@@ -3,33 +3,17 @@ import classNames from 'classnames';
 import ReachAlert from '@reach/alert';
 import { __ } from '@wordpress/i18n';
 
-import { Box, Icon, IconProps } from '@infraUI/display';
+import { Box } from '@infraUI/display';
+import { CloseOutlined } from '@appDisplay/icons/svgs';
 import { IconButton } from '@infraUI/inputs';
 import { ThemeProvider } from '@appServices/theme';
 import { ToastProps, TOAST_STATUS } from './types';
+import ToastIcon from './ToastIcon';
 import withAnimation from './withAnimation';
-
-type IconName = IconProps['name'];
 
 const baseClass = 'ee-toaster-notice';
 
-const statusIcons = {
-	ERROR: 'warning',
-	INFO: 'info-outline',
-	LOADING: 'spinner',
-	SUCCESS: 'check',
-	WARNING: 'warning-2',
-};
-const iconColors = {
-	ERROR: 'white',
-	INFO: 'blue.500',
-	LOADING: 'cyan.500',
-	SUCCESS: 'green.500',
-	WARNING: 'grey.900',
-};
-
 const Toast: React.FC<Omit<ToastProps, 'position'>> = ({
-	className,
 	message,
 	isClosable = true,
 	onClose,
@@ -39,17 +23,14 @@ const Toast: React.FC<Omit<ToastProps, 'position'>> = ({
 	title,
 	...props
 }) => {
-	const icon: string = statusIcons[type] as IconName;
-	const iconColor: string = iconColors[type];
-
 	const status = type.toLowerCase();
-	const htmlClasses = classNames(className, baseClass, `${baseClass}--${status}`);
+	const className = classNames(props.className, baseClass, `${baseClass}--${status}`);
 
 	return (
 		<ThemeProvider>
 			<ReachAlert>
-				<Box role='alert' className={htmlClasses} {...props}>
-					{icon && <Icon className={`${baseClass}__icon`} color={iconColor} name={icon} />}
+				<Box {...props} role='alert' className={className}>
+					<ToastIcon type={type} />
 					<Box className={`${baseClass}__body`}>
 						{title && (
 							<Box
@@ -70,7 +51,7 @@ const Toast: React.FC<Omit<ToastProps, 'position'>> = ({
 					{isClosable && (
 						<IconButton
 							aria-label={__('Close')}
-							icon={'close'}
+							icon={CloseOutlined}
 							className={`${baseClass}__close-btn`}
 							onClick={onClose}
 							size={'sm'}

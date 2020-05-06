@@ -1,7 +1,6 @@
 import React from 'react';
 
 import withApollo from '@dataServices/apollo/withApollo';
-import { ToastProvider } from '@appServices/context/ToastProvider';
 import { RelationsProvider } from '@appServices/context/RelationsProvider';
 import { StatusProvider } from '@appServices/context/StatusProvider';
 import { ConfigProvider } from '@appServices/context/ConfigProvider';
@@ -19,19 +18,17 @@ import { EdtrStateProvider } from '../EdtrStateContext';
  */
 export const CommonProviders: React.FC = ({ children }) => (
 	<ThemeProvider>
-		<ToastProvider>
-			<StatusProvider>
-				<ConfigProvider>
-					<EventIdProvider>
-						<RelationsProvider>
-							<FormModalProvider>
-								<EdtrStateProvider>{children}</EdtrStateProvider>
-							</FormModalProvider>
-						</RelationsProvider>
-					</EventIdProvider>
-				</ConfigProvider>
-			</StatusProvider>
-		</ToastProvider>
+		<StatusProvider>
+			<ConfigProvider>
+				<EventIdProvider>
+					<RelationsProvider>
+						<FormModalProvider>
+							<EdtrStateProvider>{children}</EdtrStateProvider>
+						</FormModalProvider>
+					</RelationsProvider>
+				</EventIdProvider>
+			</ConfigProvider>
+		</StatusProvider>
 	</ThemeProvider>
 );
 
