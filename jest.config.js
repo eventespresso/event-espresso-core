@@ -1,3 +1,23 @@
+function resolveTsconfigPathsToModuleNameMapper() {
+	const tsconfigPath = './tsconfig.json';
+	const { paths } = require(tsconfigPath).compilerOptions;
+
+	const moduleNameMapper = {
+		'^.+\\.module\\.(css|sass|scss)$': 'identity-obj-proxy',
+	};
+
+	Object.entries(paths).forEach(([alias, path]) => {
+		// "@appServices/*" becomes "@appServices/(.*)"
+		const key = alias.replace('/*', '/(.*)');
+		// "assets/src/application/services/*" becomes "<rootDir>/assets/src/application/services/$1"
+		const value = '<rootDir>/' + path[0].replace('/*', '/$1');
+
+		moduleNameMapper[key] = value;
+	});
+
+	return moduleNameMapper;
+}
+
 module.exports = {
 	roots: ['<rootDir>/assets/src'],
 	testMatch: ['<rootDir>/assets/src/**/*.test.{ts,tsx}'],
@@ -13,28 +33,7 @@ module.exports = {
 	testEnvironment: 'jest-environment-jsdom-fourteen',
 	transformIgnorePatterns: ['[/\\\\]node_modules[/\\\\].+\\.(js|jsx|ts|tsx)$', '^.+\\.module\\.(css|sass|scss)$'],
 	modulePaths: [],
-	moduleNameMapper: {
-		'^.+\\.module\\.(css|sass|scss)$': 'identity-obj-proxy',
-		'@application/(.*)': '<rootDir>/assets/src/application/$1',
-		'@appConstants/(.*)': '<rootDir>/assets/src/application/constants/$1',
-		'@appServices/(.*)': '<rootDir>/assets/src/application/services/$1',
-		'@appCalendars/(.*)': '<rootDir>/assets/src/application/ui/calendars/$1',
-		'@appDisplay/(.*)': '<rootDir>/assets/src/application/ui/display/$1',
-		'@appForms/(.*)': '<rootDir>/assets/src/application/ui/forms/$1',
-		'@appInputs/(.*)': '<rootDir>/assets/src/application/ui/input/$1',
-		'@appLayout/(.*)': '<rootDir>/assets/src/application/ui/layout/$1',
-		'@appConfig/(.*)': '<rootDir>/assets/src/application/valueObjects/config/$1',
-		'@edtrHooks/(.*)': '<rootDir>/assets/src/domain/eventEditor/hooks/$1',
-		'@edtrInterfaces/(.*)': '<rootDir>/assets/src/domain/eventEditor/interfaces/$1',
-		'@edtrServices/(.*)': '<rootDir>/assets/src/domain/eventEditor/services/$1',
-		'@edtrUI/(.*)': '<rootDir>/assets/src/domain/eventEditor/ui/$1',
-		'@sharedConstants/(.*)': '<rootDir>/assets/src/domain/shared/constants/$1',
-		'@sharedServices/(.*)': '<rootDir>/assets/src/domain/shared/services/$1',
-		'@sharedEntities/(.*)': '<rootDir>/assets/src/domain/shared/entities/$1',
-		'@sharedUI/(.*)': '<rootDir>/assets/src/domain/shared/ui/$1',
-		'@infraServices/(.*)': '<rootDir>/assets/src/infrastructure/services/$1',
-		'@infraUI/(.*)': '<rootDir>/assets/src/infrastructure/ui/$1',
-	},
+	moduleNameMapper: resolveTsconfigPathsToModuleNameMapper(),
 	moduleFileExtensions: ['web.js', 'js', 'web.ts', 'ts', 'web.tsx', 'tsx', 'json', 'web.jsx', 'jsx', 'node'],
 	watchPlugins: ['jest-watch-typeahead/filename', 'jest-watch-typeahead/testname'],
 };
