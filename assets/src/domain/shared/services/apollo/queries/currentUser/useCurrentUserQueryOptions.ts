@@ -1,5 +1,5 @@
 import { GET_CURRENT_USER } from './queries';
-import { ReadQueryOptions } from '@edtrServices/apollo';
+import { ReadQueryOptions } from '@dataServices/apollo/queries';
 
 const useCurrentUserQueryOptions = (): ReadQueryOptions => {
 	const options: ReadQueryOptions = {

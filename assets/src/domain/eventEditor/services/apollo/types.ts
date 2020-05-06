@@ -1,4 +1,5 @@
 import { Entity, EntityEdge, Trashable } from '@dataServices/types';
+import { DatetimesList as DatetimeList, TicketsList as TicketList } from '@dataServices/apollo/queries';
 
 export interface Event extends Entity {
 	desc: string;
@@ -52,9 +53,7 @@ export interface DatetimeItem {
 
 export type DatetimeEdge<Connection = 'EspressoRootQueryDatetimesConnection'> = EntityEdge<Datetime, Connection>;
 
-export interface DatetimesList {
-	espressoDatetimes: DatetimeEdge;
-}
+export type DatetimesList = DatetimeList<DatetimeEdge>;
 
 export interface Price extends Entity, Trashable {
 	amount: number;
@@ -107,9 +106,7 @@ export interface TicketItem {
 
 export type TicketEdge = EntityEdge<Ticket, 'EspressoRootQueryTicketsConnection'>;
 
-export interface TicketsList {
-	espressoTickets: TicketEdge;
-}
+export type TicketsList = TicketList<TicketEdge>;
 
 export enum PriceBasetype {
 	BASE_PRICE = 'BASE_PRICE',

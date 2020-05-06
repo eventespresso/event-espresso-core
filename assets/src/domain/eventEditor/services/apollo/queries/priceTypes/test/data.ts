@@ -1,7 +1,7 @@
 import { GraphQLError } from 'graphql';
 
 import { PriceType, PriceTypeEdge, PriceBasetype } from '../../../types';
-import { ReadQueryOptions } from '../../types';
+import { ReadQueryOptions } from '@dataServices/apollo/queries';
 
 export const request: ReadQueryOptions = null; // to be generated via Query Options hook
 

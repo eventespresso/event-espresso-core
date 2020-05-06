@@ -1,8 +1,8 @@
 import { useMemo } from 'react';
 import { GET_DATETIME } from '../datetimes';
 import { Datetime, DatetimeItem } from '../../types';
-import { EntityItemProps, ReadQueryOptions } from '../types';
-import { useCacheQuery } from '@dataServices/apollo/queries';
+import { EntityItemProps } from '../types';
+import { useCacheQuery, ReadQueryOptions } from '@dataServices/apollo/queries';
 
 const useDatetimeItem = ({ id }: EntityItemProps): Datetime => {
 	const options: ReadQueryOptions = {

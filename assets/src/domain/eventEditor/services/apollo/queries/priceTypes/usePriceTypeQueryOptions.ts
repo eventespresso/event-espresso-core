@@ -1,5 +1,5 @@
 import { GET_PRICE_TYPES } from '../priceTypes';
-import { ReadQueryOptions } from '../types';
+import { ReadQueryOptions } from '@dataServices/apollo/queries';
 
 const usePriceTypeQueryOptions = (): ReadQueryOptions => {
 	const options: ReadQueryOptions = {

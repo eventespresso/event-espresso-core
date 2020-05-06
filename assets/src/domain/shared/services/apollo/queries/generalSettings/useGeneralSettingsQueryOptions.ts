@@ -1,5 +1,5 @@
 import { GET_GENERAL_SETTINGS } from './queries';
-import { ReadQueryOptions } from '@edtrServices/apollo';
+import { ReadQueryOptions } from '@dataServices/apollo/queries';
 
 const useGeneralSettingsQueryOptions = (): ReadQueryOptions => {
 	const options: ReadQueryOptions = {

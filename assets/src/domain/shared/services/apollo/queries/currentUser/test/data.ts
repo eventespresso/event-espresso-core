@@ -1,6 +1,6 @@
 import { GraphQLError } from 'graphql';
 
-import { ReadQueryOptions } from '../../../../../../eventEditor/services/apollo/queries/types';
+import { ReadQueryOptions } from '@dataServices/apollo/queries';
 import { Viewer } from '../../../../../../../application/valueObjects/config/types';
 import { GET_CURRENT_USER } from '..';
 

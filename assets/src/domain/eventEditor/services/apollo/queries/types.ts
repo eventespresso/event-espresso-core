@@ -1,9 +1,8 @@
 import { DataProxy } from 'apollo-cache';
 import { OperationVariables } from 'apollo-client';
+
 import { Entity, EntityId } from '@dataServices/types';
 import { RelationEntity } from '@appServices/apollo/relations';
-
-export type ReadQueryOptions<TVariables = OperationVariables> = DataProxy.Query<TVariables>;
 
 export type WriteQueryOptions<TData = any, TVariables = OperationVariables> = DataProxy.WriteQueryOptions<
 	TData,
