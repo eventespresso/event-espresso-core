@@ -24,6 +24,7 @@
 			"@dataServices/*": ["assets/src/data/services/*"],
 			"@edtrHooks/*": ["assets/src/domain/eventEditor/hooks/*"],
 			"@edtrInterfaces/*": ["assets/src/domain/eventEditor/interfaces/*"],
+			"@blocksServices/*": ["assets/src/domain/blocks/services/*"],
 			"@edtrServices/*": ["assets/src/domain/eventEditor/services/*"],
 			"@edtrUI/*": ["assets/src/domain/eventEditor/ui/*"],
 			"@infraServices/*": ["assets/src/infrastructure/services/*"],
