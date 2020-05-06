@@ -2,13 +2,8 @@ import { ApolloError } from 'apollo-client';
 import { __ } from '@wordpress/i18n';
 
 import { OptionsType } from '@infraUI/inputs';
-import { Event, Datetime, Ticket } from '@edtrServices/apollo';
 
-export const buildEntitySelectOptions = <E extends Event | Datetime | Ticket>(
-	list: Array<E>,
-	loading: boolean,
-	error: ApolloError
-): OptionsType => {
+export const buildEntitySelectOptions = (list: Array<any>, loading: boolean, error: ApolloError): OptionsType => {
 	if (loading) {
 		return [
 			{

@@ -14,3 +14,12 @@ export interface ReadQueryOptions<TData = any, TVariables = OperationVariables>
 	extends QueryHookOptions<TData, TVariables> {
 	query: DocumentNode;
 }
+
+export type Order = 'ASC' | 'DESC';
+
+type EntityQueryOrderByItem<Field> = {
+	field: Field;
+	order: Order;
+};
+
+export type EntityQueryOrderBy<Field> = Array<EntityQueryOrderByItem<Field>>;
