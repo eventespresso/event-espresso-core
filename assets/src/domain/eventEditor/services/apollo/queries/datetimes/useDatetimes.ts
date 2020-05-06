@@ -2,7 +2,7 @@ import { useMemo } from 'react';
 
 import useDatetimeQueryOptions from './useDatetimeQueryOptions';
 import { Datetime, DatetimesList } from '../../types';
-import useCacheQuery from '@dataServices/apollo/queries/useCacheQuery';
+import { useCacheQuery } from '@dataServices/apollo/queries';
 import { getCacheIds } from '@appServices/predicates';
 
 const useDatetimes = (): Array<Datetime> => {
