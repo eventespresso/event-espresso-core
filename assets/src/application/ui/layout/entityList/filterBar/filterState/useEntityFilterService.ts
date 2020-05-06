@@ -1,5 +1,5 @@
 import { useCallback } from 'react';
-import { Entity } from '@appServices/apollo/types';
+import { Entity } from '@dataServices/types';
 import { EntityFilterService, EntityListFilterStateManager } from './types';
 import { useFilterBarService, FilterBarServiceCbArgs } from '../subscription';
 import { SubscriptionCallback } from '@appServices/subscription';

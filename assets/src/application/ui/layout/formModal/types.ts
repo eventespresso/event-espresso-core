@@ -1,4 +1,4 @@
-import { EntityId, EntityDbId } from '@appServices/apollo/types';
+import { EntityId, EntityDbId } from '@dataServices/types';
 import { FormModals } from '../../../../domain/shared/ui/formModal/types';
 import { EspressoFormProps } from '@application/ui/forms/espressoForm';
 import { AnyObject } from '@appServices/utilities/types';

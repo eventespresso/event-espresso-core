@@ -2,7 +2,7 @@ import React from 'react';
 import classNames from 'classnames';
 
 import { EntityTableProps } from './types';
-import { Entity } from '@appServices/apollo/types';
+import { Entity } from '@dataServices/types';
 import { EntityListFilterStateManager } from './filterBar';
 import { entitiesUnchanged } from '@appServices/utilities/memo';
 import { ResponsiveTable } from '@appLayout/espressoTable';

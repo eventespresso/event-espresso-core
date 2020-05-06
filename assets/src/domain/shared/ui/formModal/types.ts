@@ -1,5 +1,5 @@
 import { FormModalProps } from '@application/ui/layout/formModal';
-import { EntityId, EntityDbId } from '@appServices/apollo/types';
+import { EntityId, EntityDbId } from '@dataServices/types';
 
 export type FormModals = {
 	addDatetime: FormModalProps;

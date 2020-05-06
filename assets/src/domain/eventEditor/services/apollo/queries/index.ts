@@ -1,5 +1,5 @@
 import { DatetimeEdge, TicketEdge, PriceEdge, PriceTypeEdge } from '../types';
-import { EntityEdge } from '@appServices/apollo/types';
+import { EntityEdge } from '@dataServices/types';
 
 export const DEFAULT_ENTITY_LIST_DATA: EntityEdge = {
 	nodes: [],
@@ -37,5 +37,3 @@ export * from './prices';
 export * from './priceTypes';
 
 export * from './types';
-
-export { default as useCacheQuery } from './useCacheQuery';

@@ -1,4 +1,4 @@
-import { Entity, EntityEdge, Trashable } from '@appServices/apollo/types';
+import { Entity, EntityEdge, Trashable } from '@dataServices/types';
 
 export interface Event extends Entity {
 	desc: string;

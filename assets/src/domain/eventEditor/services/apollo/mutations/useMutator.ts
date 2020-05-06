@@ -1,6 +1,6 @@
 import { useMutator as useAppMutator, MutatorObject } from '@appServices/apollo/mutations';
 import { TypeName } from './types';
-import { Entity } from '@appServices/apollo/types';
+import { Entity } from '@dataServices/types';
 import useMutationOptions from './useMutationOptions';
 
 /**

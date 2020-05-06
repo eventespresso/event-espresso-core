@@ -1,5 +1,5 @@
 import { DisplayStartOrEndDate } from '@sharedServices/filterState';
-import { Entity } from '@appServices/apollo/types';
+import { Entity } from '@dataServices/types';
 
 export interface TableViewProps {
 	className?: string;

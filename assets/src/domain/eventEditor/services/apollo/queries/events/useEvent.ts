@@ -1,7 +1,7 @@
 import { GET_EVENT } from './';
 import { Event, EventData } from '../../types';
 import { ReadQueryOptions } from '../types';
-import useCacheQuery from '../useCacheQuery';
+import { useCacheQuery } from '@dataServices/apollo/queries';
 import useEventId from './useEventId';
 
 const useEvent = (): Event => {

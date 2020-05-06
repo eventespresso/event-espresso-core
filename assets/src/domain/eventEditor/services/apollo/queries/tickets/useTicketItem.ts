@@ -3,7 +3,7 @@ import { useMemo } from 'react';
 import { GET_TICKET } from '../tickets';
 import { Ticket, TicketItem } from '../../types';
 import { EntityItemProps, ReadQueryOptions } from '../types';
-import useCacheQuery from '../useCacheQuery';
+import { useCacheQuery } from '@dataServices/apollo/queries';
 
 const useTicketItem = ({ id }: EntityItemProps): Ticket => {
 	const options: ReadQueryOptions = {

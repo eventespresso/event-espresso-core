@@ -1,4 +1,4 @@
-import { Entity } from '@appServices/apollo/types';
+import { Entity } from '@dataServices/types';
 
 export interface EntityCardProps {
 	actionsMenu: JSX.Element;

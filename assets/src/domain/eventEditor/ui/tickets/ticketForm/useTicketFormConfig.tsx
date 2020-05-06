@@ -7,7 +7,7 @@ import { CalendarOutlined, ControlOutlined, ProfileOutlined } from '@appDisplay/
 import { EspressoFormProps } from '@application/ui/forms/espressoForm';
 import useTicketItem from '@edtrServices/apollo/queries/tickets/useTicketItem';
 import { Ticket } from '@edtrServices/apollo/types';
-import { EntityId } from '@appServices/apollo/types';
+import { EntityId } from '@dataServices/types';
 import { processDateAndTime } from '@sharedServices/utils/dateAndTime';
 import TicketPriceCalculatorButton from '../ticketPriceCalculator/buttons/TicketPriceCalculatorButton';
 import { validate } from './formValidation';

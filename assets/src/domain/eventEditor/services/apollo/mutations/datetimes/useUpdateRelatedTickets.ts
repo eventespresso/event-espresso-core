@@ -1,6 +1,6 @@
 import { useCallback } from 'react';
 
-import { EntityId } from '@appServices/apollo/types';
+import { EntityId } from '@dataServices/types';
 import { Ticket } from '@edtrServices/apollo';
 import { useRelatedTickets } from '@edtrServices/apollo/queries';
 import { useTicketMutator, UpdateTicketInput } from '@edtrServices/apollo/mutations';

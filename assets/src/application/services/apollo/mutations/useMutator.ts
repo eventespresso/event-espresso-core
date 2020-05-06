@@ -1,7 +1,7 @@
 import { useCallback } from 'react';
 
 import useMutationHandler from './useMutationHandler';
-import { Entity as BaseType } from '../types';
+import { Entity as BaseType } from '../../../../data/services/types';
 import {
 	Mutator,
 	BackwardSubscription,

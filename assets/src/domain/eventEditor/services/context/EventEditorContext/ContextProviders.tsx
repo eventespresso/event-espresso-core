@@ -35,6 +35,6 @@ export const CommonProviders: React.FC = ({ children }) => (
 	</ThemeProvider>
 );
 
-export const ContextProviders: React.FC = withApollo(CommonProviders);
+export const ContextProviders = withApollo(CommonProviders);
 
 export default ContextProviders;

@@ -7,7 +7,7 @@ import useOnDeleteTicket from './useOnDeleteTicket';
 import useOnUpdateTicket from './useOnUpdateTicket';
 import useOptimisticResponse from './useOptimisticResponse';
 import { DEFAULT_TICKET_LIST_DATA as DEFAULT_LIST_DATA } from '@edtrServices/apollo/queries';
-import { EntityId } from '@appServices/apollo/types';
+import { EntityId } from '@dataServices/types';
 import { MutationHandler, OnUpdateFnOptions } from '../types';
 import { MutationType } from '@appServices/apollo/mutations';
 import { Ticket, TicketEdge, Price, TicketsList } from '@edtrServices/apollo/types';

@@ -1,4 +1,4 @@
-import { Entity, EntityId } from '@appServices/apollo/types';
+import { Entity, EntityId } from '@dataServices/types';
 import { EntityListFilterStateManager } from '@appLayout/entityList';
 
 type ELFSM = EntityListFilterStateManager<any>;

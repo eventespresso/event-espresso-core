@@ -1,4 +1,4 @@
-import { EntityId } from '@appServices/apollo/types';
+import { EntityId } from '@dataServices/types';
 import { Price } from '../../types';
 import { useRelatedPrices } from '../prices';
 /**

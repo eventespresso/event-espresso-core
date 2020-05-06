@@ -1,6 +1,6 @@
 import { useEffect, useMemo } from 'react';
 
-import { Entity } from '@appServices/apollo/types';
+import { Entity } from '@dataServices/types';
 import { EntityListFilterStateManager } from './types';
 import useEntityFilterService from './useEntityFilterService';
 import { entityListCacheIdString } from '@appServices/utilities/memo';

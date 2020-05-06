@@ -1,4 +1,4 @@
-import { Entity } from '@appServices/apollo/types';
+import { Entity } from '@dataServices/types';
 import { ApolloError } from 'apollo-client';
 import { __ } from '@wordpress/i18n';
 

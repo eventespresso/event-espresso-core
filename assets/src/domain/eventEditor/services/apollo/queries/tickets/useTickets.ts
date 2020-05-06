@@ -2,7 +2,7 @@ import { useMemo } from 'react';
 
 import useTicketQueryOptions from './useTicketQueryOptions';
 import { Ticket, TicketsList } from '../../types';
-import useCacheQuery from '../useCacheQuery';
+import { useCacheQuery } from '@dataServices/apollo/queries';
 import { getCacheIds } from '@appServices/predicates';
 
 const useTickets = (): Array<Ticket> => {

@@ -2,7 +2,7 @@ import { useCallback } from 'react';
 
 import parsedAmount from '@appServices/utilities/money/parsedAmount';
 import toBoolean from '@appServices/utilities/converters/toBoolean';
-import { EntityId } from '@appServices/apollo/types';
+import { EntityId } from '@dataServices/types';
 import { useRelations } from '@appServices/apollo/relations';
 import { cloneAndNormalizePrice } from '@sharedEntities/prices/predicates/updatePredicates';
 import { copyTicketFields } from '@sharedEntities/tickets/predicates/updatePredicates';

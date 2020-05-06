@@ -1,4 +1,4 @@
-import { Entity } from '@appServices/apollo/types';
+import { Entity } from '@dataServices/types';
 import { EntityListBaseProps } from '../../../ui/layout/entityList/types';
 import entityListCacheIdString from './entityListCacheIdString';
 

@@ -1,4 +1,4 @@
-import { EntityId } from '@appServices/apollo/types';
+import { EntityId } from '@dataServices/types';
 
 /**
  * converts a GUID like "RGF0ZXRpbWU6NQ==" into "U6NQ=="

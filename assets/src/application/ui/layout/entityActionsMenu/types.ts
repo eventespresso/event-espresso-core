@@ -1,5 +1,5 @@
 import React from 'react';
-import { Entity } from '@appServices/apollo/types';
+import { Entity } from '@dataServices/types';
 import { BaseSubscriptionOptions, Subscriptions, UIRegistry } from '@appServices/subscription';
 
 export interface EntityActionsSubscriptionsOptions<T extends string> {

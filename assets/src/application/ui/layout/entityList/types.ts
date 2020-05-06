@@ -1,6 +1,6 @@
 import React from 'react';
 import { BodyRow, HeaderRow } from '@appLayout/espressoTable';
-import { Entity, EntityId } from '@appServices/apollo/types';
+import { Entity, EntityId } from '@dataServices/types';
 import { EntityListFilterStateManager } from './filterBar';
 import { LegendConfig } from '@application/ui/display/EntityListLegend/types';
 import { TypeName } from '@appServices/apollo/status';

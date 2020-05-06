@@ -1,8 +1,8 @@
 import isEmpty from 'ramda/src/isEmpty';
-import useRelations from '../../../../../../application/services/apollo/relations/useRelations';
+import useRelations from '@appServices/apollo/relations/useRelations';
 import usePriceTypes from './usePriceTypes';
 import useDefaultPriceType from './useDefaultPriceType';
-import { EntityId } from '@appServices/apollo/types';
+import { EntityId } from '@dataServices/types';
 import { PriceType } from '../../types';
 import { entitiesWithGuIdInArray } from '@sharedServices/predicates';
 
