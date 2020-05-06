@@ -5,7 +5,7 @@ import { canUseDOM } from '@appServices/utilities/dom';
 import { ESCAPE } from '@wordpress/keycodes';
 
 import { AlertDialog } from '@infraUI/display';
-import { Button } from '@application/ui/input';
+import { Button, ButtonType } from '@application/ui/input';
 import { Modal, ModalProps } from '@infraUI/layout/modal';
 
 interface Props extends ModalProps {
@@ -19,8 +19,10 @@ const ModalWithAlert: React.FC<Props> = ({ children, showAlertOnEscape, ...props
 	const { isOpen, onOpen, onClose } = useDisclosure();
 	const cancelRef = React.useRef();
 	const cancelBtnText = props.cancelBtnText || __('No');
+	const cancelButton = <Button buttonText={cancelBtnText} ref={cancelRef} onClick={onClose} />;
 	const header = props.header || __('Are you sure you want to close this?');
 	const okBtnText = props.okBtnText || __('Yes');
+	const okButton = <Button buttonText={okBtnText} buttonType={ButtonType.ACCENT} onClick={props.onClose} ml={3} />;
 	const onEscape = ({ keyCode }): void => {
 		if (keyCode === ESCAPE) {
 			onOpen();
@@ -46,11 +48,11 @@ const ModalWithAlert: React.FC<Props> = ({ children, showAlertOnEscape, ...props
 			</Modal>
 			{showAlertOnEscape && (
 				<AlertDialog
-					cancelButton={<Button buttonText={cancelBtnText} ref={cancelRef} onClick={onClose} />}
+					cancelButton={cancelButton}
 					header={header}
 					isOpen={isOpen}
 					leastDestructiveRef={cancelRef}
-					okButton={<Button buttonText={okBtnText} variantColor='red' onClick={props.onClose} ml={3} />}
+					okButton={okButton}
 					onClose={onClose}
 				/>
 			)}
