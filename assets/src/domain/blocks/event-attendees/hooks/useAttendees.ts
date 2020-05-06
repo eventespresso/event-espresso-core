@@ -19,11 +19,42 @@ export const GET_ATTENDEES: any = gql`
 
 type UseAttendees = (props: AttendeesEditProps['attributes']) => QueryResult<any>;
 
-const useAttendees: UseAttendees = ({ ticket, status, limit }) => {
+const getAttendeesOrderBy = (orderBy: string, order: string): Array<any> => {
+	const orderByFirstName = {
+		field: 'FIRST_NAME',
+		order,
+	};
+	const orderByLastName = {
+		field: 'LAST_NAME',
+		order,
+	};
+	let orderByFields = [];
+	switch (orderBy) {
+		case 'FIRST_THEN_LAST_NAME':
+			orderByFields = [orderByFirstName, orderByLastName];
+			break;
+		case 'LAST_THEN_FIRST_NAME':
+			orderByFields = [orderByLastName, orderByFirstName];
+			break;
+		default:
+			orderByFields = [
+				{
+					field: orderBy,
+					order,
+				},
+			];
+			break;
+	}
+
+	return orderByFields;
+};
+
+const useAttendees: UseAttendees = ({ ticket, status, limit, orderBy, order }) => {
 	return useQuery(GET_ATTENDEES, {
 		variables: {
 			first: limit,
 			where: {
+				orderby: getAttendeesOrderBy(orderBy, order),
 				regTicket: ticket,
 				regStatus: status,
 			},
