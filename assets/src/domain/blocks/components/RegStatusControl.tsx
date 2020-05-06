@@ -4,10 +4,11 @@ import { __ } from '@wordpress/i18n';
 
 import statusOptions from '@sharedEntities/registration/statusOptions';
 import { SelectControlProps } from './types';
+import { RegistrationStatus } from '@dataServices/apollo/queries/registrations/types';
 
 interface RegStatusControlProps extends SelectControlProps {
-	setStatus?: (order: string) => void;
-	status: string;
+	setStatus?: (order: RegistrationStatus) => void;
+	status: RegistrationStatus;
 }
 
 const RegStatusControl: React.FC<RegStatusControlProps> = ({ status, setStatus, ...rest }) => {

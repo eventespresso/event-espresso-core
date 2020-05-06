@@ -36,7 +36,7 @@ const SelectOrderBy: React.FC<AttendeesEditProps> = ({ attributes, setAttributes
 			label={__('Order Attendees by:', 'event_espresso')}
 			orderBy={orderBy}
 			options={options}
-			setOrderBy={(orderBy): void => setAttributes({ orderBy })}
+			setOrderBy={(orderBy: AttendeesEditProps['attributes']['orderBy']): void => setAttributes({ orderBy })}
 		/>
 	);
 };

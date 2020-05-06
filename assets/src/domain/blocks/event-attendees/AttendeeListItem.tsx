@@ -1,9 +1,10 @@
 import React from 'react';
 
 import AvatarImage from '../components/AvatarImage';
+import { Attendee } from '@blocksServices/apollo/types';
 
 interface AttendeeListItemProps {
-	attendee: any; // TODO add types for attendee
+	attendee: Attendee;
 	avatarSize?: number;
 	showGravatar?: boolean;
 }
