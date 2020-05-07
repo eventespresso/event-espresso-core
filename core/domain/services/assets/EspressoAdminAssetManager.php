@@ -2,11 +2,7 @@
 
 namespace EventEspresso\core\domain\services\assets;
 
-use DomainException;
-use EventEspresso\core\exceptions\InvalidDataTypeException;
-use EventEspresso\core\exceptions\InvalidEntityException;
 use EventEspresso\core\services\assets\AssetManager;
-use EventEspresso\core\services\collections\DuplicateCollectionIdentifierException;
 
 /**
  * Class EspressoAdminAssetManager
