@@ -61,13 +61,13 @@ class Event extends TypeBase
                 esc_html__('Event Name', 'event_espresso')
             ),
             new GraphQLField(
-                'desc',
+                'description',
                 'String',
                 'description',
                 esc_html__('Event Description', 'event_espresso')
             ),
             new GraphQLField(
-                'shortDesc',
+                'shortDescription',
                 'String',
                 'short_description',
                 esc_html__('Event Short Description', 'event_espresso')

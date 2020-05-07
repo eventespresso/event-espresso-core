@@ -29,7 +29,7 @@ class Prices extends GraphQLData
                     dbId
                     amount
                     cacheId
-                    desc
+                    description
                     isBasePrice
                     isDefault
                     isDiscount
