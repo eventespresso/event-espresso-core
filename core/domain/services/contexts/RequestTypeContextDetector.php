@@ -56,6 +56,8 @@ class RequestTypeContextDetector
 
 
     /**
+     * @param string $globalRouteCondition
+     * @param mixed  $default
      * @return mixed
      */
     private function getGlobalRouteCondition($globalRouteCondition, $default)
