@@ -113,6 +113,12 @@ class RequestTypeContextFactory implements RequestTypeContextFactoryInterface
                     'event_espresso'
                 );
                 break;
+            case RequestTypeContext::UNIT_TEST:
+                $description = esc_html__(
+                    'The current request is occurring while unit testing',
+                    'event_espresso'
+                );
+                break;
             case RequestTypeContext::WP_API:
                 $description = esc_html__(
                     'The current request is for the WordPress REST API',

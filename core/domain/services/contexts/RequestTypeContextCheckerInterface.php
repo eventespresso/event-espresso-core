@@ -127,6 +127,13 @@ interface RequestTypeContextCheckerInterface
 
 
     /**
+     * true if the current request is occurring while unit testing
+     *
+     * @return bool
+     */
+    public function isUnitTest();
+
+    /**
      * true if the current request is for the WP REST API
      *
      * @return bool

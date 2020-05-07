@@ -201,6 +201,17 @@ class RequestTypeContextChecker extends ContextChecker implements RequestTypeCon
 
 
     /**
+     * true if the current request is occurring while unit testing
+     *
+     * @return bool
+     */
+    public function isUnitTest()
+    {
+        return $this->request_type->slug() === RequestTypeContext::UNIT_TEST;
+    }
+
+
+    /**
      * true if the current request is for the WP REST API
      *
      * @return bool

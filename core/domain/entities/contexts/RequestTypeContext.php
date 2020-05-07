@@ -82,6 +82,11 @@ class RequestTypeContext extends Context
     const GQL = 'graphql';
 
     /**
+     * indicates that the current request is occurring while unit testing
+     */
+    const UNIT_TEST = 'ee-unit-tests';
+
+    /**
      * indicates that the current request is for the WP REST API
      */
     const WP_API = 'wp-rest-api';

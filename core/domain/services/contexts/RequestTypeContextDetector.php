@@ -73,6 +73,10 @@ class RequestTypeContextDetector
     public function detectRequestTypeContext()
     {
         // Detect error scrapes
+        if (defined('EE_TESTS_DIR')) {
+            return $this->factory->create(RequestTypeContext::UNIT_TEST);
+        }
+        // Detect error scrapes
         if ($this->request->getRequestParam('wp_scrape_key') !== null
             && $this->request->getRequestParam('wp_scrape_nonce') !== null
         ) {
